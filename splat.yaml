@@ -1,0 +1,94 @@
+name: Dinosaur Planet
+crc1: D0F6A741
+crc2: 7D57761E
+basename: dino
+options:
+  find-file-boundaries: True
+  compiler: IDO
+  mnemonic_ljust: 11
+  platform: n64
+  out_dir: ../
+  target_path: baserom.z64
+  symbol_addrs_path: ./symbol_addrs.txt
+
+segments:
+  - [0x000000, bin, header]
+  - [0x000040, bin, boot]
+  - name: app
+    type: code
+    start: 0x1000
+    vram: 0x80000400
+    subsections:
+    - [0x1000, asm]
+    - [0x13D0, asm]
+    - [0x1460, asm]
+    - [0x1740, c, main]
+    - [0x1E20, asm]
+    - [0x8A350, bin]
+    
+    - [0x10a34f0, bin] # offsets?
+    # mp3s
+    - [0x13a3d54, bin, mp3/0x13a3d54]
+    - [0x13cc7d8, bin, mp3/0x13cc7d8]
+    - [0x13e7ae8, bin, mp3/0x13e7ae8]
+    - [0x13ec8a4, bin, mp3/0x13ec8a4]
+    - [0x13ee828, bin, mp3/0x13ee828]
+    - [0x13efb7c, bin, mp3/0x13efb7c]
+    - [0x13f1b84, bin, mp3/0x13f1b84]
+    - [0x13f5368, bin, mp3/0x13f5368]
+    - [0x13f8638, bin, mp3/0x13f8638]
+    - [0x13fdc94, bin, mp3/0x13fdc94]
+    - [0x1405168, bin, mp3/0x1405168]
+    - [0x140f67c, bin, mp3/0x140f67c]
+    - [0x14141ac, bin, mp3/0x14141ac]
+    - [0x141947c, bin, mp3/0x141947c]
+    - [0x141a6cc, bin, mp3/0x141a6cc]
+    - [0x142264c, bin, mp3/0x142264c]
+    - [0x1426df0, bin, mp3/0x1426df0]
+    - [0x1429eb8, bin, mp3/0x1429eb8]
+    - [0x142b8a8, bin, mp3/0x142b8a8]
+    - [0x142ea74, bin, mp3/0x142ea74]
+    - [0x1431094, bin, mp3/0x1431094]
+    - [0x1435838, bin, mp3/0x1435838]
+    - [0x1437e58, bin, mp3/0x1437e58]
+    - [0x143dc54, bin, mp3/0x143dc54]
+    - [0x143f338, bin, mp3/0x143f338]
+    - [0x1441548, bin, mp3/0x1441548]
+    - [0x1532784, bin, mp3/0x1532784]
+    - [0x15df8c4, bin, mp3/0x15df8c4]
+    - [0x15f7e18, bin, mp3/0x15f7e18]
+    - [0x15fbd18, bin, mp3/0x15fbd18]
+    - [0x1601478, bin, mp3/0x1601478]
+    - [0x161c214, bin, mp3/0x161c214]
+    - [0x1620420, bin, mp3/0x1620420]
+    - [0x1793530, bin, mp3/0x1793530]
+    - [0x1ad53c8, bin, mp3/0x1ad53c8]
+    - [0x1b06020, bin, mp3/0x1b06020]
+    - [0x2197C2A, bin] # more offsets?
+    - [0x297283E, bin] # offsets table? 3654 items
+    - [0x2976156, bin] # end of offsets table (?), total length 8226592? 2 bytes of padding?
+    - [0x29e41a0, bin] # B1 sound file...
+    - [0x2abd930, bin] # B1 sound file...
+    - [0x2b223f0, bin] # ?
+    - [0x2b931a0, bin] # B1 sound file...
+    - [0x2c62500, bin] # B1 sound file...
+    - [0x2c7a050, bin] # B1 sound file...
+    - [0x2c7b3d0, bin] # B1 sound file...
+    - [0x2caf9d0, bin] # B1 sound file...
+    - [0x2e38320, bin] # B1 sound file...
+    - [0x2e484b0, bin] # B1 sound file...
+    - [0x2ee8710, bin] # B1 sound file...
+    - [0x2fd4630, bin] # B1 sound file...
+    - [0x33baa00, bin] # B1 sound file...
+    - [0x33dab00, bin] # B1 sound file...
+    - [0x3613360, bin] # B1 sound file...
+    - [0x36e2be0, bin] # B1 sound file...
+    # - name: game ??? some code around here
+    #   type: code
+    #   start: 0x3831b60
+    #   vram:  0x15000000
+    #   subsections:
+    #     - [0x3831b60, asm]
+    - [0x3b35bd0, bin] # tbd
+    - [0x3b4ffe0, bin, trailer] # 0xFF to end
+  - [0x4000000]
