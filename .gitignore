@@ -3,6 +3,10 @@
 *.n64
 *.ndd
 *.bin
+asm
+bin
+build
+expected
 
 # Prerequisites
 *.d
