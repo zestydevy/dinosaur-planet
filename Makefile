@@ -46,10 +46,10 @@ default: all
 TARGET = dino
 LD_SCRIPT = $(TARGET).ld
 
-all: $(BUILD_DIR) $(TARGET).z64 verify
+all: $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET).z64
+	rm -rf $(BUILD_DIR)
 
 submodules:
 	git submodule update --init --recursive
@@ -84,10 +84,10 @@ $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 	$(OBJCOPY) $< $@ -O binary
 
 # final z64 updates checksum
-$(TARGET).z64: $(BUILD_DIR)/$(TARGET).bin
+$(BUILD_DIR)/$(TARGET).z64: $(BUILD_DIR)/$(TARGET).bin
 	@cp $< $@
 
-verify: $(TARGET).z64
+verify: $(BUILD_DIR)/$(TARGET).z64
 	md5sum -c checksum.md5
 
 .PHONY: all clean default split setup
