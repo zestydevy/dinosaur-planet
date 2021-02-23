@@ -530,8 +530,7 @@ osViModetable = 0x80096cd0; // type:data size:0x1180
 __osCleanupThread = 0x80080df0; // type:func
 gIdleThreadStack = 0x800A3D70; // type:data size:0x100
 gIdleThread = 0x800a5dc0; // type:data size:0x1b0
-D_800A3DB8 = 0x800A3DB8;
-800A3E70
+gMainThread = 0x800A3DB8;
 pi_status_pointer = 0x80097f58; // type:data size:0x4
 __CallBackDmaNew = 0x80001778; // type:func
 NOTosSetTime = 0x8003f4a8; // type:func

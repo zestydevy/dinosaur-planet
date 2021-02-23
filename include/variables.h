@@ -11,6 +11,6 @@ extern OSThread* __osRunQueue;
 extern u8 gIdleThreadStack[IDLE_THREAD_SIZE];
 extern OSThread gIdleThread;
 extern OSThread gMainThread;
-extern u64 gMainThreadStack[0x2000];        // some sort of data
+extern u64 gMainThreadStack[];        // some sort of data
 
 #endif
