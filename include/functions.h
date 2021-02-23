@@ -6,5 +6,6 @@
 
 void bootproc(void);
 void idle(void * arg);
+void mainproc(void * arg);
 
 #endif

@@ -10,13 +10,24 @@
 
 void bootproc(void) {
     osInitialize();
-    osCreateThread(&gMainThread, 1, &idle, NULL, &gMainThreadStack, OS_PRIORITY_IDLE);
-    osStartThread(&gMainThread);
+    osCreateThread(&gIdleThread, 1, &idle, NULL, &gIdleThreadStack[IDLE_THREAD_SIZE], OS_PRIORITY_IDLE);
+    osStartThread(&gIdleThread);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/idle.s")
+void idle(void * arg)
+{
+    osCreateThread(&gMainThread, 3, &mainproc, NULL, &gMainThreadStack, 0xA);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80001130.s")
+    gMainThreadStack[1024] = 0;
+    gMainThreadStack[0] = 0;
+
+    osStartThread(&gMainThread);
+    osSetThreadPri(NULL, OS_PRIORITY_IDLE);
+
+    while (TRUE) {}
+}
+
+#pragma GLOBAL_ASM("asm/nonmatchings/main/tick_two_timers.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80001178.s")
 

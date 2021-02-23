@@ -3,7 +3,7 @@ crc1: D0F6A741
 crc2: 7D57761E
 basename: dino
 options:
-  find-file-boundaries: True
+  find_file_boundaries: yes
   compiler: IDO
   mnemonic_ljust: 11
   platform: n64
