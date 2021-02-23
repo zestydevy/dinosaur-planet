@@ -16,7 +16,7 @@ void bootproc(void) {
 
 void idle(void * arg)
 {
-    osCreateThread(&gMainThread, 3, &mainproc, NULL, &gMainThreadStack, 0xA);
+    osCreateThread(&gMainThread, 3, &mainproc, NULL, &gMainThreadStack[MAIN_THREAD_SIZE], 0xA);
 
     gMainThreadStack[1024] = 0;
     gMainThreadStack[0] = 0;
