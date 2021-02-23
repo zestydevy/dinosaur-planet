@@ -7,6 +7,8 @@ asm
 bin
 build
 expected
+__pycache__
+
 
 # Prerequisites
 *.d
