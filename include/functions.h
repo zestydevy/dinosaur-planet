@@ -8,4 +8,7 @@ void bootproc(void);
 void idle(void * arg);
 void mainproc(void * arg);
 
+void testWrite(void);
+void some_init_func(void);
+
 #endif
