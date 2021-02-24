@@ -27,6 +27,8 @@ segments:
     - [0x1E20, asm]
     - [0x13D70, c, main]
     - [0x15A70, asm]
+    - [0x17500, c, memory]
+    - [0x18820, asm]
     - [0x8A350, bin]
 
   - type: code
