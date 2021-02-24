@@ -10,5 +10,6 @@ void mainproc(void * arg);
 
 void testWrite(void);
 void some_init_func(void);
+void checkDongle(void);
 
 #endif

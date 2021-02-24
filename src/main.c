@@ -48,7 +48,24 @@ void testWrite(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/possible_noop.s")
+void checkDongle(void)
+{
+    u32 head = ACCESS(0x1C000000, s16);
+
+    head <<= 16;
+    head |= ACCESS(0x1C000002, s16);
+
+    if((head == 0x4C534653)  // 'LSFS'
+    || (head == 0x4D504653)) // 'MPFS'
+        return; // if either of these, dont do the EXP ram write below I guess.
+    else {
+        int *write = (int *)(u32)EXPANSION_RAM_START;
+        while((u32)write != 0x80000000) {
+            *write = 0;
+            write -= 2; // hmm...
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/get_ossched.s")
 
