@@ -48,18 +48,35 @@ void testWrite(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
 
-void checkDongle(void)
-{
-    u32 head = ACCESS(0x1C000000, s16);
-
+/*
+ * Probe the copy protection dongle for the correct magic string and
+ * if failed, wipe a majority of RAM to prevent RAM viewing.
+ */
+void checkDongle(void) {
+    // attempt to get the first magic short from the dongle. if it is
+    // connected, this will retrieve correctly.
+    u32 head = ACCESS_1;
+    
+    // append the other part.
     head <<= 16;
-    head |= ACCESS(0x1C000002, s16);
+    head |= ACCESS_2;
 
-    if((head == 0x4C534653)  // 'LSFS'
-    || (head == 0x4D504653)) // 'MPFS'
-        return; // if either of these, dont do the EXP ram write below I guess.
+    /* 
+     * Perform the check against the 2 known codes:
+     *
+     * 'LSFS' (0x4C534653)
+     * 'MPFS' (0x4D504653)
+     *
+     * It is not known which one the original dongle for this ROM
+     * was intended to use.
+     */
+    if((head == 'LSFS') || (head == 'MPFS')) {
+        return;
+    }
     else {
         int *write = (int *)(u32)EXPANSION_RAM_START;
+        // copy protection failed. Wipe every 2nd word to prevent RAM analysis.
+        // probably hackers trying to view our precious data.
         while((u32)write != 0x80000000) {
             *write = 0;
             write -= 2; // hmm...
