@@ -29,7 +29,7 @@ CC_OLD = tools/ido_recomp/linux/7.1/cc
 ASFLAGS = -EB -mtune=vr4300 -march=vr4300 -Iinclude -modd-spreg
 CFLAGS  = -G 0 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul
 CFLAGS += -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
-CFLAGS += -I . -I include
+CFLAGS += -I . -I include -mips2
 LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.txt -T undefined_syms_auto.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/dino.map --no-check-sections
 
 OPTFLAGS := -O2 -g3

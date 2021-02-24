@@ -1,6 +1,22 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainproc.s")
+void mainproc(void * arg)
+{
+    testWrite(); // ROM write check
+    some_init_func();
+
+    while(TRUE) {
+        checkDongle();  // copy protection check
+        
+        if (osMemSize != EXPANSION_SIZE) {
+            init_hasnt_expPak();
+        } else {
+            has_exppak_func();
+        }
+
+        tick_two_timers();
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/some_init_func.s")
 
@@ -44,6 +60,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_initing_rumblepak.s")
 
+/* 
+ * 
+*/
 void testWrite(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }

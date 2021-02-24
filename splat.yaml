@@ -18,6 +18,7 @@ segments:
     type: code
     start: 0x1000
     vram: 0x80000400
+    subalign: 8
     subsections:
     - [0x1000, asm]
     - [0x13D0, asm]
@@ -28,7 +29,9 @@ segments:
     - [0x15A70, asm]
     - [0x8A350, bin]
 
-    
+  - type: code
+    start: 0x10a34f0
+    subsections:
     - [0x10a34f0, bin] # offsets?
     # mp3s
     - [0x13a3d54, bin, mp3/0x13a3d54]
