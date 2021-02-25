@@ -22,7 +22,7 @@ segments:
     subsections:
     - [0x1000, asm]
     - [0x13D0, asm]
-    - [0x1460, asm]
+    - [0x1460, c]
     - [0x1740, c, boot]
     - [0x1E20, asm]
     - [0x13D70, c, main]
