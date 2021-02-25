@@ -1,6 +1,6 @@
 #include "common.h"
 
-void wipe_mem_past_bss(void)
+void initMemory(void)
 {
     u32 addr = (u32)&bss_end;
 
