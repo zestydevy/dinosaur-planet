@@ -1,7 +1,7 @@
 #include "common.h"
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/wipe_mem_past_bss.s")
 #else
 void wipe_mem_past_bss()
 {
