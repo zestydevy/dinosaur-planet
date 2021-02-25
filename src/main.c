@@ -14,7 +14,7 @@ void mainproc(void * arg)
             main_expPak();
         }
 
-        tick_two_timers();
+        threadTimerTick();
     }
 }
 

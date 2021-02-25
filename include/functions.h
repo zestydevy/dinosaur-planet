@@ -12,7 +12,7 @@ void testWrite(void);
 void some_init_func(void);
 void main_no_expPak(void);
 void main_expPak(void);
-void tick_two_timers(void);
+void threadTimerTick(void);
 void checkDongle(void);
 
 #endif

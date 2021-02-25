@@ -27,7 +27,10 @@ void idle(void * arg)
     while (TRUE) {}
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/boot/tick_two_timers.s")
+void threadTimerTick(void) {
+    ++gMainThreadStack[1024];
+    ++gMainThreadStack[0];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/boot/func_80001178.s")
 
