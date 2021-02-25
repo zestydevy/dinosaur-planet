@@ -2,15 +2,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/wipe_mem_past_bss.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/some_mem_func.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_building_struct_for_romcopy.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/malloc.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80016BB4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/reduce_heap_block_.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80016E68.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80016EE0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/increment_heap_block.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8001707C.s")
 
@@ -18,13 +18,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800172E8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017344.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/update_mem_mon_values.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8001753C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800175D4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017610.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/find_heap_block.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017674.s")
 

@@ -9,9 +9,9 @@ void mainproc(void * arg)
         checkDongle();  // copy protection check
         
         if (osMemSize != EXPANSION_SIZE) {
-            init_hasnt_expPak();
+            main_no_expPak();
         } else {
-            has_exppak_func();
+            main_expPak();
         }
 
         tick_two_timers();
@@ -20,9 +20,9 @@ void mainproc(void * arg)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/some_init_func.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/has_exppak_func.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/main_expPak.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/init_hasnt_expPak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/main_no_expPak.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80013D80.s")
 
@@ -50,13 +50,13 @@ void mainproc(void * arg)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_8001443C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/four_funcs_checking_expPak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/four_mallocs.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014508.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014524.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8001454C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/ret1_8001454c.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_initing_rumblepak.s")
 

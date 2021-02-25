@@ -10,8 +10,8 @@ void mainproc(void * arg);
 
 void testWrite(void);
 void some_init_func(void);
-void init_hasnt_expPak(void);
-void has_exppak_func(void);
+void main_no_expPak(void);
+void main_expPak(void);
 void tick_two_timers(void);
 void checkDongle(void);
 

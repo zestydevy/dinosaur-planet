@@ -623,7 +623,6 @@ crash_contpad_array1 = 0x800bfde0; // type:data size:0x14
 crash_contpad_array2 = 0x800bfdf8; // type:data size:0x14
 res_h = 0x800bcdf0; // type:data size:0x8
 res_w = 0x800bcdf8; // type:data size:0x8
-gMainThreadStack = 0x800a3e70; // type:data
 gMainThread = 0x800a5ff0; // type:data size:0x1b0
 float_timer_1 = 0x800918e4; // type:data size:0x4
 float_timer_0 = 0x800918e0; // type:data size:0x4
