@@ -1,9 +1,5 @@
 #include "common.h"
 
-#define mem_mon_val_0 = 0x8008eaa0;
-#define mem_mon_val_1 = 0x8008eaa4;
-#define mem_mon_val_2 = 0x8008eaa8;
-
 void initMemory(void)
 {
     u32 addr = (u32)&bss_end;
