@@ -64,6 +64,6 @@ Mkfile.old
 dkms.conf
 .splat_cache
 dino.ld
-tools/asm_processor/__pycache__/asm_processor.cpython-38.pyc
-tools/asm_processor/__pycache__/asm_processor.cpython-38.pyc
 .splat_cache
+undefined_syms_auto.txt
+tools/asm_processor/__pycache__/asm_processor.cpython-38.pyc
