@@ -58,7 +58,12 @@ void mainproc(void * arg)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/ret1_8001454c.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_initing_rumblepak.s")
+void func_initing_rumblepak(void) {
+    osContStartQuery(0);
+    osContGetQuery(0);
+    osMotorInit(0, 0, 0);
+    func_800683E0(0);
+}
 
 /* 
  * 
@@ -127,13 +132,29 @@ void checkDongle(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014BD4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014C28.s")
+s32 func_80014C28(void)
+{
+    s32 _v1 = D_800B09C3 + 1;
+    if (_v1 >= 5)
+        _v1 = 0;
+    return _v1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014C50.s")
+u8 func_80014C50(void)
+{
+    return D_800B09C3;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014C60.s")
+u8 func_80014C60(void)
+{
+    return D_800B09C4;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014C70.s")
+void func_80014C70(void)
+{
+    _bzero(&D_800AE2B0, 0x3C0);
+    D_800AE670 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014CA0.s")
 
