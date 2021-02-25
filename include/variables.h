@@ -14,4 +14,8 @@ extern OSThread gIdleThread;
 extern OSThread gMainThread;
 extern u64 gMainThreadStack[];        // some sort of data
 
+extern u32 * bss_end;
+extern u16 D_800B1798;
+extern s8 heap_block_array_size;
+
 #endif
