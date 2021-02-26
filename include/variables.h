@@ -42,10 +42,14 @@ struct objectStruct{
 	UNK_TYPE_32 unk0x74;
 	Vec3 positionMirror2; //gets copied twice.
 	Vec3 positionMirror3; //not sure why.
-	byte[21] unk0x98;
-	byte unk0xad;
-	byte unk0xae;
-	byte unk0xaf;
+	float unk0x98;
+	u8 unk0x9c;
+	u8[3] unk0x9d; //aligning?
+	s16 unk0xa0;
+	u8[11] unk0xa2;
+	u8 unk0xad;
+	u8 unk0xae;
+	u8 unk0xaf;
 	s16 unk0xb0;
 	byte[6] unk0xb2;
 	void* CharData; //0x8c1+ struct, has various player data.
@@ -54,7 +58,7 @@ struct objectStruct{
 	UNK_TYPE_32 unk0xc4;
 	void* ptr0xc8;
 	void* ptr0xcc;
-}; //may be bigger, will known when constructor is understood.
+}; //may be bigger, will know when constructor is understood.
 
 //found a 3-array of these, not sure what they're for.
 struct Vec3_Int{
@@ -68,6 +72,7 @@ struct CharacterStats{
 	u8 unk0x0;
 	s8 HPCurr;
 	s8 HPMax; //only shows up to 104, code caps it at 80.
+	u8 unk0x3; //aligning?
 	s16 ManaCurr; //only mods when byte at "CharData"0x8bb is set.
 	s16 ManaMax; //capped at 100.
 	s16 Scarabs; //capped at 999.
@@ -83,6 +88,20 @@ struct HeapBlock {
     s32 mem_used;
 };
 
+//unknown What this is for.
+struct PointersInts{
+	void *prts[2];
+	u32 valA;
+	u32 valB;
+};
+
+
+//use for crash screens
+struct ErrString{
+	u32 code1;
+	u32 code2;
+	char* text;
+};
 
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
@@ -117,9 +136,24 @@ extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
 extern UNK_TYPE_8 D_800AE2B0;
-extern objectStruct*[] object_pointer_array; //first is always player character.
-extern u16 object_count;
-extern Vec3_Int[3] Vec3_Int_array;
+extern bool alSyn_flag;
 
+extern u16 button_input_1[];
+extern u16 button_input_2[];
+extern u8 controller_port_list[];
+extern s8 joy_x_mirror[];
+extern s8 joy_y_mirror[];
+extern u8 joy_x_hold_timer[];
+extern u8 joy_y_hold_timer[];
+extern s8 joy_x_sign[];
+extern s8 joy_y_sign[];
+extern OSThread controller_thread;
+
+extern objectStruct* object_pointer_array[]; //first is always player character.
+extern u16 object_count;
+extern Vec3_Int Vec3_Int_array[];
+extern ErrString err_string_array_cause[];
+extern ErrString err_string_array_fpsr[];
+extern PointersInts pointers_ints_array[];
 
 #endif
