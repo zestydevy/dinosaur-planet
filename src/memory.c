@@ -93,7 +93,17 @@ int func_80016E68(void *a0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017254.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800172E8.s")
+void func_800172E8(s32 arg0) {
+    s32 sp1C;
+
+    sp1C = func_with_status_reg();
+    if (D_800B179C == 0) {
+        func_8001753C(arg0);
+    } else {
+        func_800175D4(arg0);
+    }
+    set_status_reg(sp1C);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/update_mem_mon_values.s")
 
