@@ -45,6 +45,7 @@ extern u8 D_800B09C3;
 extern u8 D_800B09C2;
 extern u8 D_800B09C4;
 extern u8 D_8008C94C;
+extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
 extern UNK_TYPE_8 D_800AE2B0;
