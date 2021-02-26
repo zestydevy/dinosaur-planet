@@ -15,3 +15,5 @@ Windows 10 (WSL)
 1. Place the Dinosaur Planet ROM into the root of the repository as `baserom.z64`.
 2. Set up tools and extract the ROM: `make setup`
 3. Re-build the ROM: `make`
+
+test
