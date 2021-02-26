@@ -11,8 +11,9 @@ typedef u8 UNK_TYPE_8;
 struct HeapBlock {
     s32 items_max;
     s32 items_count;
-    void *ptr;
+    struct HeapBlock *ptr;
     s32 mem_allocated;
+    // s16 index;
     s32 mem_used;
 };
 

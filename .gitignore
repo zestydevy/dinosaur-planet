@@ -10,6 +10,8 @@ build
 expected
 __pycache__
 
+# context file from m2ctx.py
+ctx.c
 
 # Prerequisites
 *.d
