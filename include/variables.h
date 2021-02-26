@@ -16,7 +16,7 @@ typedef float Vec4[4];
 
 //prelimnary, lots of unknowns
 struct objectStruct{
-	s16[3] rotation; //why short?
+	s16 rotation[3]; //why short?
 	s16 unk0x6;
 	float scale;
 	Vec3f position; //note: >300 unit drop causes fall damage.
@@ -25,7 +25,7 @@ struct objectStruct{
 	void* ptr0x30;
 	UNK_TYPE_32 unk0x34;
 	void* ptr0x38;
-	byte[8] unk0x3c;
+	u8 unk0x3c[3];
 	UNK_TYPE_16 unk0x44;
 	UNK_TYPE_16 unk0x46;
 	void* ptr0x48;
@@ -44,14 +44,14 @@ struct objectStruct{
 	Vec3f positionMirror3; //not sure why.
 	float unk0x98;
 	u8 unk0x9c;
-	u8[3] unk0x9d; //aligning?
+	u8 unk0x9d[3]; //aligning?
 	s16 unk0xa0;
-	u8[11] unk0xa2;
+	u8 unk0xa2[11];
 	u8 unk0xad;
 	u8 unk0xae;
 	u8 unk0xaf;
 	s16 unk0xb0;
-	byte[6] unk0xb2;
+	u8 unk0xb2[6];
 	void* CharData; //0x8c1+ struct, has various player data.
 	UNK_TYPE_32 unk0xbc;
 	UNK_TYPE_32 unk0xc0;
@@ -136,7 +136,7 @@ extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
 extern u32 SixtyByFour_Array[60][4];
-extern bool alSyn_flag;
+extern u32 alSyn_flag;
 
 extern u16 button_input_1[];
 extern u16 button_input_2[];
@@ -149,11 +149,11 @@ extern s8 joy_x_sign[];
 extern s8 joy_y_sign[];
 extern OSThread controller_thread;
 
-extern objectStruct* object_pointer_array[]; //first is always player character.
+extern struct objectStruct * object_pointer_array[]; //first is always player character.
 extern u16 object_count;
-extern Vec3_Int Vec3_Int_array[];
-extern ErrString err_string_array_cause[];
-extern ErrString err_string_array_fpsr[];
-extern PointersInts pointers_ints_array[];
+extern struct Vec3_Int Vec3_Int_array[];
+extern struct ErrString err_string_array_cause[];
+extern struct ErrString err_string_array_fpsr[];
+extern struct PointersInts pointers_ints_array[];
 
 #endif
