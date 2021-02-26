@@ -208,12 +208,22 @@ segments:
     - [0x8A210, asm]
     - [0x8A260, asm]
     - [0x8A2B0, asm]
-    - [0x8A350, bin]
 
   - type: code
-    start: 0x10a34f0
+    start: 0x8A350
     subsections:
-    - [0x10a34f0, bin] # offsets?
+    
+    - [0x8A350, bin]
+
+    - [0xA4AA0, bin, assets/AUDIO_tab]
+    - [0xA4B0C, bin, assets/AUDIO]
+    - [0x1BF088, bin, assets/SFX_tab]
+    - [0x1BF098, bin, assets/SFX]
+    - [0x9D65D0, bin, assets/AMBIENT_tab]
+    - [0x9D65E0, bin, assets/AMBIENT]
+    - [0xB033F8, bin, assets/MUSIC_tab]
+    - [0xB03408, bin, assets/MUSIC]
+    - [0x10a34f0, bin, mp3/MPEG_tab] # offsets?
     # mp3s
     - [0x13a3d54, bin, mp3/0x13a3d54]
     - [0x13cc7d8, bin, mp3/0x13cc7d8]
@@ -251,18 +261,48 @@ segments:
     - [0x1793530, bin, mp3/0x1793530]
     - [0x1ad53c8, bin, mp3/0x1ad53c8]
     - [0x1b06020, bin, mp3/0x1b06020]
-    - [0x2197C2A, bin] # more offsets?
-    - [0x297283E, bin] # offsets table? 3654 items
-    - [0x2976156, bin] # end of offsets table (?), total length 8226592? 2 bytes of padding?
-    - [0x29e41a0, bin] # B1 sound file...
-    - [0x2abd930, bin] # B1 sound file...
-    - [0x2b223f0, bin] # ?
-    - [0x2b931a0, bin] # B1 sound file...
-    - [0x2c62500, bin] # B1 sound file...
-    - [0x2c7a050, bin] # B1 sound file...
-    - [0x2c7b3d0, bin] # B1 sound file...
-    - [0x2caf9d0, bin] # B1 sound file...
-    - [0x2e38320, bin] # B1 sound file...
+
+    - [0x1E6ABDC, bin, assets/MUISCACT]
+    - [0x1E6EBDC, bin, assets/CAMACTIO]
+    - [0x1E6F3DC, bin, assets/LACTIONS]
+    - [0x1E793DC, bin, assets/ANIMCURV]
+    - [0x1FD9B24, bin, assets/ANIMCURV_tab]
+    - [0x1FE8EFC, bin, assets/OBJSEQ2C_tab]
+    - [0x1FE9EFE, bin, assets/FONTS]
+    - [0x1FED382, bin, assets/CACHEFON]
+    - [0x1FED382, bin, assets/CACHEFON2]
+    - [0x1FED382, bin, assets/GAMETEXT]
+    - [0x1FFE340, bin, assets/GAMETEXT_tab]
+    - [0x2002AD8, bin, assets/globalma]
+    - [0x2002D24, bin, assets/TABLES]
+    - [0x2003030, bin, assets/TABLES_tab]
+    - [0x2003074, bin, assets/SCREENS]
+    - [0x204E094, bin, assets/SCREENS_tab]
+    - [0x204E0A4, bin, assets/VOXMAP]
+    - [0x20501A4, bin, assets/VOXMAP_tab]
+    - [0x20501AA, bin, assets/tab]
+    - [0x20512EA, bin, assets/SOMETEXTURES]
+    - [0x20E023A, bin, assets/WARPTAB]
+    - [0x20E083A, bin, assets/MAPS]
+    - [0x2197C2A, bin, assets/MAPS_tab]
+    - [0x21986EA, bin, assets/MAPINFO]
+    - [0x219932A, bin, assets/0x219932A]
+    - [0x21993F2, bin, assets/0x21993F2]
+    - [0x219A11E, bin, assets/TEX1]
+    - [0x297283E, bin, assets/TEX1_tab] # 3654 items
+    - [0x2976156, bin, assets/TEXTABLE] # total length 8226592? 2 bytes of padding?
+    - [0x2976C66, bin, assets/TEX0]
+    - [0x2CCADE6, bin, assets/TEX0_tab]
+    - [0x2CCBE42, bin, assets/BLOCKS]
+    - [0x325FE74, bin, assets/BLOCKS_tab]
+    - [0x3260FB4, bin, assets/TRKBLK]
+    - [0x3261024, bin, assets/HITS]
+    - [0x32898A4, bin, assets/HITS_tab]
+    - [0x328A9E0, bin, assets/MODELS_tab]
+    #- [0x328B9F8, bin, assets/]
+    #- [0x325FE74, bin, assets/]
+    #- [0x325FE74, bin, assets/]
+    #- [0x325FE74, bin, assets/]
     - [0x2e484b0, bin] # B1 sound file...
     - [0x2ee8710, bin] # B1 sound file...
     - [0x2fd4630, bin] # B1 sound file...

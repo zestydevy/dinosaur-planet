@@ -1,6 +1,6 @@
 
 BUILD_DIR = build
-ASM_DIRS := asm asm/os
+ASM_DIRS := asm asm/os asm/libultra/os
 DATA_DIRS := bin bin/mp3
 SRC_DIRS := $(shell find src -type d)
 

@@ -58,7 +58,7 @@ void *malloc(s32 arg0, s32 arg1, s32 arg2) {
     return v1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/reduce_heap_block_.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/reduce_heap_block.s")
 
 // a mess, but it matches
 int func_80016E68(void *a0)
@@ -202,4 +202,4 @@ s32 some_memory_monitor(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017BA8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/alHeapAlloc.s")
