@@ -26,10 +26,6 @@ typedef struct {
   UnknownStruct002* unk0;
 } UnknownStruct004;
 
-extern UnknownStruct003 *D_8008C980;
-extern UnknownStruct004 *D_8008C984;
-extern UnknownStruct003 *D_8008C988;
-extern UnknownStruct004 *D_8008C990;
 
 s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3) {
     UnknownStruct000 *tmp;
@@ -38,13 +34,13 @@ s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3) {
     func_800126E0(tmp, 0x49, arg2 * 0x60, 0x60);
     if (tmp != NULL) {
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4)) {
-            D_8008C988->unk0->unk4(arg0, arg1, tmp, arg3);
+            (*D_8008C988)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
         } else if (tmp->unk5C == 3) {
-            D_8008C984->unk0->unk4(arg0, arg1, tmp, arg3, arg2);
+            (*D_8008C984)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         } else if (tmp->unk5C == 5) {
-            D_8008C980->unk0->unk4(arg0, arg1, tmp, arg3);
+            (*D_8008C980)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
         } else if (tmp->unk5C == 6) {
-            D_8008C990->unk0->unk4(arg0, arg1, tmp, arg3, arg2);
+            (*D_8008C990)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);
@@ -58,14 +54,14 @@ s32 func_800009C8(s32 arg0, s32 arg1, u16 arg2, s32 arg3) {
     func_800126E0(tmp, 0x49, arg2 * 0x60, 0x60);
     if (tmp != NULL) {
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4)) {
-            D_8008C988->unk0->unk4(arg0, arg1, tmp, arg3);
+            (*D_8008C988)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
         } else if (tmp->unk5C == 3) {
             tmp->unk2A = 0;
-            D_8008C984->unk0->unk4(arg0, arg1, tmp, arg3, arg2);
+            (*D_8008C984)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         } else if (tmp->unk5C == 5) {
-            D_8008C980->unk0->unk4(arg0, arg1, tmp, arg3);
+            (*D_8008C980)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
         } else if (tmp->unk5C == 6) {
-            D_8008C990->unk0->unk4(arg0, arg1, tmp, arg3, arg2);
+            (*D_8008C990)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);

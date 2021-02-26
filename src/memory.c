@@ -37,7 +37,7 @@ void initMemory(void)
 //      HeapBlock struct, among several other s16 fields,
 //      while find_heap_block deconfirms them.
 #if 0
-void set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
+void _set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
     struct HeapBlock *temp_a0;
     struct HeapBlock *temp_t0;
     struct HeapBlock *temp_a3;
