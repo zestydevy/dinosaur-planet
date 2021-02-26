@@ -10,18 +10,18 @@ typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
 typedef u32 UNK_TYPE_32;
 
-typedef float[2] Vec2;
-typedef float[3] Vec3;
-typedef float[4] Vec4;
+typedef float Vec2[2];
+typedef float Vec3[3];
+typedef float Vec4[4];
 
 //prelimnary, lots of unknowns
 struct objectStruct{
 	s16[3] rotation; //why short?
 	s16 unk0x6;
 	float scale;
-	Vec3 position; //note: >300 unit drop causes fall damage.
-	Vec3 positionMirror; //local vs global?
-	Vec3 speed;
+	Vec3f position; //note: >300 unit drop causes fall damage.
+	Vec3f positionMirror; //local vs global?
+	Vec3f speed;
 	void* ptr0x30;
 	UNK_TYPE_32 unk0x34;
 	void* ptr0x38;
@@ -40,8 +40,8 @@ struct objectStruct{
 	void* ptr0x6c;
 	void* ptr0x70;
 	UNK_TYPE_32 unk0x74;
-	Vec3 positionMirror2; //gets copied twice.
-	Vec3 positionMirror3; //not sure why.
+	Vec3f positionMirror2; //gets copied twice.
+	Vec3f positionMirror3; //not sure why.
 	float unk0x98;
 	u8 unk0x9c;
 	u8[3] unk0x9d; //aligning?
@@ -62,7 +62,7 @@ struct objectStruct{
 
 //found a 3-array of these, not sure what they're for.
 struct Vec3_Int{
-	Vec3 f;
+	Vec3f f;
 	u32 i; //seems to be a 32-bit bool.
 };//used for camera?
 
@@ -135,7 +135,7 @@ extern u8 D_8008C94C;
 extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
-extern UNK_TYPE_8 D_800AE2B0;
+extern u32 SixtyByFour_Array[60][4];
 extern bool alSyn_flag;
 
 extern u16 button_input_1[];
