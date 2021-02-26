@@ -8,23 +8,26 @@ typedef struct {
     u8  unk5C;
 } UnknownStruct000;
 
-typedef struct {
-    u8 pad0[0x4];
-    void (*unk4)(s32, s32, s32, s32);
-} UnknownStruct001;
 
-typedef struct {
-    u8 pad0[0x4];
-    void (*unk4)(s32, s32, s32, s32, u16);
-} UnknownStruct002;
+// Deprecated
 
-typedef struct {
-  UnknownStruct001* unk0;
-} UnknownStruct003;
+// typedef struct {
+//     u8 pad0[0x4];
+//     void (*unk4)(s32, s32, s32, s32);
+// } UnknownStruct001;
 
-typedef struct {
-  UnknownStruct002* unk0;
-} UnknownStruct004;
+// typedef struct {
+//     u8 pad0[0x4];
+//     void (*unk4)(s32, s32, s32, s32, u16);
+// } UnknownStruct002;
+
+// typedef struct {
+//   UnknownStruct001* unk0;
+// } UnknownStruct003;
+
+// typedef struct {
+//   UnknownStruct002* unk0;
+// } UnknownStruct004;
 
 
 s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3) {
