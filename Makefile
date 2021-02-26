@@ -1,7 +1,7 @@
 
 BUILD_DIR = build
 ASM_DIRS := asm asm/os asm/libultra/os
-DATA_DIRS := bin bin/mp3
+DATA_DIRS := bin bin/mp3 bin/assets
 SRC_DIRS := $(shell find src -type d)
 
 C_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
