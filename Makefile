@@ -26,13 +26,16 @@ OBJCOPY = $(CROSS)objcopy
 CC = tools/ido_recomp/linux/5.3/cc
 CC_OLD = tools/ido_recomp/linux/7.1/cc
 
+DEFINE_CFLAGS = -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
+INCLUDE_CFLAGS = -I . -I include
 ASFLAGS = -EB -mtune=vr4300 -march=vr4300 -Iinclude -modd-spreg
-CFLAGS  = -G 0 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul
-CFLAGS += -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
-CFLAGS += -I . -I include -mips2
+CFLAGS  = -G 0 -mips2 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul $(DEFINE_FLAGS) $(INCLUDE_CFLAGS)
 LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.txt -T undefined_syms_auto.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/dino.map --no-check-sections
 
 OPTFLAGS := -O2 -g3
+
+GCC_CFLAGS = -Wall $(DEFINE_CFLAGS) $(INCLUDE_CFLAGS) -fno-PIC -fno-zero-initialized-in-bss -fno-toplevel-reorder -Wno-missing-braces
+CC_CHECK = gcc -fsyntax-only -fno-builtin -nostdinc -fsigned-char -m32 $(GCC_CFLAGS) -std=gnu90 -Wall -Wextra -Wno-format-security -Wno-main -DNON_MATCHING -DAVOID_UB
 
 ######################## Targets #############################
 
@@ -72,6 +75,7 @@ $(BUILD_DIR)/$(TARGET).elf: $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	$(LD) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/%.o: %.c
+	@$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $^
 
 $(BUILD_DIR)/%.o: %.s

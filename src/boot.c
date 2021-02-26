@@ -2,8 +2,8 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/boot/func_80000B40.s")
 
-void n_alSeqpDelete(void) { //TODO: what is this really? looks like an incorrectly named func
-    free();
+void n_alSeqpDelete(s32 arg0) { //TODO: what is this really? looks like an incorrectly named func
+    free(arg0);
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/boot/func_80000D50.s")

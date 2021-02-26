@@ -1,5 +1,11 @@
 #include "common.h"
 
+#define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
+
+s32  increment_heap_block(s32, s32, s32, s32);
+s32  find_heap_block(void *ptr);
+void set_heap_block(struct HeapBlock *heap, s32 size, s32 max);
+
 void initMemory(void)
 {
     u32 addr = (u32)&bss_end;
@@ -26,8 +32,45 @@ void initMemory(void)
     D_800B1798 = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
+// - Needs to use a multiplication to address the heapblock array
+// - This function implies the existence of an `index` field in the 
+//      HeapBlock struct, among several other s16 fields,
+//      while find_heap_block deconfirms them.
+#if 0
+void _set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
+    struct HeapBlock *temp_a0;
+    struct HeapBlock *temp_t0;
+    struct HeapBlock *temp_a3;
+    s32  phi_t1;
+    struct HeapBlock *phi_t0;
 
+    temp_a3 = &heap_block_array[heap_block_array_size++];
+    temp_a3->items_max = max;
+    temp_a3->items_count = 0;
+    temp_a3->ptr = heap;
+    temp_a3->mem_allocated = size;
+    temp_a3->mem_used = 0;
+    if (max > 0) {
+        for (phi_t1 = 0; phi_t1 < temp_a3->items_max; phi_t1++) {
+            heap[phi_t1].index = phi_t1;
+        }
+    }
+    temp_t0 = temp_a3->ptr;
+    temp_a0 = &heap[max];
+    if (((u32)temp_a0 & 0xF) != 0) {
+        temp_t0->items_max = ALIGN16(temp_a0);
+    } else {
+        temp_t0->items_max = temp_a0;
+    }
+    temp_t0->items_count = size - (max * 0x14);
+    temp_t0->ptr = NULL;
+    temp_t0->index = -1;
+    temp_t0->mem_allocated = -1;
+    temp_a3->items_count++;
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
+#endif
 
 void *malloc(s32 arg0, s32 arg1, s32 arg2) {
     void *v1;
@@ -109,28 +152,19 @@ void free(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800175D4.s")
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/find_heap_block.s")
-#else
-// regalloc
 s32 find_heap_block(void *ptr)
 {
     s32 i;
-    struct HeapBlock *block;
-
-    block = heap_block_array;
 
     for (i = 0; i < heap_block_array_size; i++)
     {
-        if (((u32)ptr > (u32)block->ptr) && ((u32)ptr < ((u32)block->ptr + block->mem_allocated)))
-            return i;
-
-        block++;
+        if (((u32)ptr > (u32)heap_block_array[i].ptr))
+            if ((u32)ptr < ((u32)heap_block_array[i].ptr + heap_block_array[i].mem_allocated))
+                return i;
     }
 
     return -1;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017674.s")
 
@@ -210,4 +244,29 @@ s32 some_memory_monitor(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/alHeapAlloc.s")
+// those empty statements get everything into place, except stack
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017BA8.s")
+#else
+extern u32 D_80099228;
+void *func_80017BA8(s32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4) {
+    s32 temp_s0;
+    void *temp_v0;
+
+    temp_s0 = ALIGN16((arg4 * arg3) + 0xF);
+
+    if (!temp_s0) {
+        if (arg4) {
+
+        }
+    }
+
+    if (temp_s0) {
+        
+    }
+
+    temp_v0 = malloc(temp_s0, 0xB, &D_80099228);
+    _bzero(temp_v0, temp_s0);
+    return align_16(temp_v0);
+}
+#endif
