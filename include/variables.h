@@ -149,7 +149,6 @@ extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
 extern u32 SixtyByFour_Array[60][4];
-extern u32 alSyn_flag;
 
 extern u16 button_input_1[];
 extern u16 button_input_2[];
