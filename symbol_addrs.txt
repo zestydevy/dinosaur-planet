@@ -664,3 +664,7 @@ bss_end = 0x800d4370; // type:data
 memblock_1 = 0x8042c000; // type:data
 memblock_2 = 0x80245000; // type:data
 some_controller_init_val = 0x8008c948; // type:data size:0x1
+align_16 = 0x800179A4; // type:func
+align_8 = 0x800179C4; // type:func
+align_4 = 0x800179E4; // type:func
+align_2 = 0x80017A04; // type:func
