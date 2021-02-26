@@ -51,8 +51,29 @@ struct objectStruct{
 	void* CharData; //0x8c1+ struct, has various player data.
 	UNK_TYPE_32 unk0xbc;
 	UNK_TYPE_32 unk0xc0;
-} //may be bigger, will known when constructor is found.
+	UNK_TYPE_32 unk0xc4;
+	void* ptr0xc8;
+	void* ptr0xcc;
+} //may be bigger, will known when constructor is understood.
 
+//found a 3-array of these, not sure what they're for.
+struct Vec3_Int{
+	Vec3 f;
+	u32 i; //seems to be a 32-bit bool.
+}//used for camera?
+
+
+//pointer at 0x34c of "CharData" struct
+struct CharacterStats{
+	u8 unk0x0;
+	s8 HPCurr;
+	s8 HPMax; //only shows up to 104, code caps it at 80.
+	s16 ManaCurr; //only mods when byte at "CharData"0x8bb is set.
+	s16 ManaMax; //capped at 100.
+	s16 Scarabs; //capped at 999.
+	u8 unk0xa;
+	u8 unk0xb;
+}//seemingly consistent addrs: Fox/Sabre at 0x805c3964, Krystal 0x805c3970.
 
 struct HeapBlock {
     s32 items_max;
@@ -61,6 +82,7 @@ struct HeapBlock {
     s32 mem_allocated;
     s32 mem_used;
 };
+
 
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
@@ -95,9 +117,9 @@ extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
 extern UNK_TYPE_8 D_800AE2B0;
-extern objectStruct*{} object_pointer_array;
+extern objectStruct*[] object_pointer_array; //first is always player character.
 extern u16 object_count;
-
+extern Vec3_Int[3] Vec3_Int_array;
 
 
 #endif
