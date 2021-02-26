@@ -108,7 +108,11 @@ void checkDongle(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/get_ossched.s")
+extern osscheduler_;
+
+void *get_ossched(void) {
+    return &osscheduler_;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014614.s")
 
