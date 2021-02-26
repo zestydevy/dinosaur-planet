@@ -28,7 +28,35 @@ void initMemory(void)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/malloc.s")
+
+void *malloc(s32 arg0, s32 arg1, s32 arg2) {
+    void *v1;
+
+    if (arg0 == 0) {
+        get_stack_();
+        v1 = NULL;
+        return v1;
+    }
+    if ((arg0 >= 0x1194) || (osMemSize != 0x800000)) {
+        v1 = increment_heap_block(0, arg0, arg1, arg2);
+        if (v1 == NULL) {
+            get_stack_();
+            v1 = increment_heap_block(1, arg0, arg1, arg2);
+        }
+    } else if (arg0 >= 0x400) {
+        v1 = increment_heap_block(1, arg0, arg1, arg2);
+        if (v1 == NULL) {
+            get_stack_();
+            v1 = increment_heap_block(2, arg0, arg1, arg2);
+        }
+    } else {
+        v1 = increment_heap_block(2, arg0, arg1, arg2);
+    }
+    if (v1 == NULL) {
+        get_stack_();
+    }
+    return v1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/reduce_heap_block_.s")
 
@@ -58,9 +86,7 @@ void initMemory(void)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800178CC.s")
 
-//what the hell do these do?
-
-s32 func_800179A4(s32 a0)
+u32 align_16(u32 a0)
 {
     s32 tmp = a0 & 0xF;
 
@@ -70,7 +96,7 @@ s32 func_800179A4(s32 a0)
     return a0;
 }
 
-s32 func_800179C4(s32 a0) {
+u32 align_8(u32 a0) {
     s32 tmp;
 
     tmp = a0 & 7;
@@ -81,7 +107,7 @@ s32 func_800179C4(s32 a0) {
     return a0;
 }
 
-s32 func_800179E4(s32 a0) {
+u32 align_4(u32 a0) {
     s32 tmp;
 
     tmp = a0 & 3;
@@ -92,7 +118,7 @@ s32 func_800179E4(s32 a0) {
     return a0;
 }
 
-s32 func_80017A04(s32 a0) {
+u32 align_2(u32 a0) {
     s32 tmp;
 
     tmp = a0 & 1;
