@@ -47,7 +47,7 @@ s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3) {
             D_8008C990->unk0->unk4(arg0, arg1, tmp, arg3, arg2);
         }
     }
-    func_800172E8(tmp);
+    free(tmp);
     return 0;
 }
 

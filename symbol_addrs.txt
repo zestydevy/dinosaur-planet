@@ -744,3 +744,4 @@ object_count = 0x800b2934; // type:data size:0x2
 romfunc_enabling_magic = 0xb3a702d8; // type:func
 romfunc_incrementing_timers = 0xb38c5730; // type:func
 osClockRate = 0x8009d884; // type:data
+free = 0x800172E8; // type:func
