@@ -32,26 +32,23 @@ void threadTimerTick(void) {
     ++gMainThreadStack[0];
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/boot/func_80001178.s")
-#else
-// regalloc, swap $a2 and $v1
 void func_80001178(s32 a0, s32 *a1)
 {
     u8  *ptr1;
     s32 *ptr2;
     s32  count;
+    u8  *tmp;
 
     count = 0;
-
+    tmp = (u8 *)a1[2];
+    ptr1 = tmp;
     ptr2 = &a1[2];
-    ptr1 =  a1[2];
 
     while (ptr1) {
         while ((u32)ptr1 < ptr2[1])
             count += *ptr1++;
 
-        ptr1 = ptr2[2];
+        ptr1 = (u8 *)ptr2[2];
         ptr2 += 2;
     }
 
@@ -64,6 +61,10 @@ void func_80001178(s32 a0, s32 *a1)
             ;
     }
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/boot/func_800011F4.s")
+void func_800011F4(s32 a0, s32 *a1)
+{
+    *a1 = 1;
+    func_80001178(a0, a1);
+}
+

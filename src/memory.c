@@ -18,11 +18,11 @@ void initMemory(void)
     {
         set_heap_block((void *)0x8042C000, 0x3D4000, 400);
         set_heap_block((void *)0x80245000, 0x1E7000, 800);
-        set_heap_block((void *)addr, (void *)(0x80119000 - addr), 1200);
+        set_heap_block((void *)addr, 0x80119000 - addr, 1200);
     }
-    
+
     func_80017254(2);
-    
+
     D_800B1798 = 0;
 }
 
@@ -60,7 +60,32 @@ void *malloc(s32 arg0, s32 arg1, s32 arg2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/reduce_heap_block_.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80016E68.s")
+// a mess, but it matches
+int func_80016E68(void *a0)
+{
+    s32 i;
+    s32 tmp;
+    s32 *ptr;
+
+    tmp = find_heap_block(a0);
+
+    i = 0;
+    tmp = (u32)heap_block_array[tmp].ptr;
+
+    while (i != -1)
+    {
+        ptr = (s32 *)(tmp + (i * 0x14));
+        i = *((s16 *)ptr + 6);
+
+        if (a0 == (s32 *)ptr[0])
+            return ptr[1];
+
+        // repeated line
+        i = *((s16 *)ptr + 6);
+    }
+    return -1;
+}
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/increment_heap_block.s")
 
@@ -76,7 +101,28 @@ void *malloc(s32 arg0, s32 arg1, s32 arg2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800175D4.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/find_heap_block.s")
+#else
+// regalloc
+s32 find_heap_block(void *ptr)
+{
+    s32 i;
+    struct HeapBlock *block;
+
+    block = heap_block_array;
+
+    for (i = 0; i < heap_block_array_size; i++)
+    {
+        if (((u32)ptr > (u32)block->ptr) && ((u32)ptr < ((u32)block->ptr + block->mem_allocated)))
+            return i;
+
+        block++;
+    }
+
+    return -1;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017674.s")
 
@@ -113,7 +159,7 @@ u32 align_4(u32 a0) {
     tmp = a0 & 3;
 
     if (tmp > 0)
-        a0 = (a0 - tmp) + 4;
+        a0 += 4 - tmp;
 
     return a0;
 }
@@ -124,7 +170,7 @@ u32 align_2(u32 a0) {
     tmp = a0 & 1;
 
     if (tmp > 0)
-        a0 = (a0 - tmp) + 2;
+        a0 += 2 - tmp;
 
     return a0;
 }

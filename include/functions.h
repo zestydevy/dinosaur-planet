@@ -15,6 +15,7 @@ void main_expPak(void);
 void threadTimerTick(void);
 void checkDongle(void);
 
+s32  find_heap_block(void *ptr);
 void set_heap_block(void * heap, s32 size, s32 max);
 void func_80017254(u32 arg0);
 
