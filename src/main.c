@@ -2,7 +2,7 @@
 #include <PR/sched.h>
 
 void func_8001440C(s32 arg0);
-void func_80014C70(void);
+void clear_SixtyByFour_Array(void);
 void func_800483BC(f32, f32, s32);
 void some_init_func(void);
 void func_80014614(void);
@@ -153,7 +153,7 @@ void _some_init_func(void) {
 void func_800142A0(f32 arg0, f32 arg1, s32 arg2) {
     func_8001440C(0);
     func_800483BC(arg0, arg1, arg2);
-    func_80014C70();
+    clear_SixtyByFour_Array();
     ossceduler_stack = 1;
 }
 
@@ -361,9 +361,9 @@ u8 func_80014C60(void)
     return D_800B09C4;
 }
 
-void func_80014C70(void)
+void clear_SixtyByFour_Array(void)
 {
-    _bzero(&D_800AE2B0, 0x3C0);
+    _bzero(&SixtyByFour_Array, 0x3C0);
     D_800AE670 = 0;
 }
 
