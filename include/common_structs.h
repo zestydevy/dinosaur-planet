@@ -47,4 +47,9 @@ struct OSThread {
     /* 0x1B8 */ void* stackInfo;
 };
 
+typedef struct UnkStruct80014614 {
+    /* 0x00 */ char unk_00 [0x88];
+    /* 0x88 */ s32 (*unk_88)(void);
+} UnkStruct80014614;
+
 #endif
