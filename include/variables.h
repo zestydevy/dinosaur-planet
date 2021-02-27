@@ -126,7 +126,7 @@ extern struct UnkStruct80014614
             **D_8008C9F0, **D_8008C9F4, **D_8008C9F8, **D_8008C9FC,
             **D_8008CA00, **D_8008CA04, **D_8008CA08, **D_8008CA0C,
             **D_8008CA10, **D_8008CA14;
-extern u8 alSyn_flag;
+extern u8 alSynFlag;
 
 extern OSSched *osscheduler_;
 extern struct CharacterStats * charStats_pointer;
@@ -137,8 +137,8 @@ extern Gfx *D_800AE680;
 
 extern u32 * bss_end;
 extern s16 D_800B1798;
-extern u8 heap_block_array_size;
-extern struct HeapBlock heap_block_array[];
+extern u8 heapBlockArray_size;
+extern struct HeapBlock heapBlockArray[];
 extern s8 ossceduler_stack;
 extern u8 D_800B09C1;
 extern u8 D_800B09C3;
@@ -153,27 +153,27 @@ extern struct Vec3_Int SixtyByFour_Array[60]; //seems to buffer player coords wi
 extern u16 button_input_1[];
 extern u16 button_input_2[];
 extern u8 controller_port_list[];
-extern s8 joy_x_mirror[];
-extern s8 joy_y_mirror[];
-extern u8 joy_x_hold_timer[];
-extern u8 joy_y_hold_timer[];
-extern s8 joy_x_sign[];
-extern s8 joy_y_sign[];
+extern s8 joyXMirror[];
+extern s8 joyYMirror[];
+extern u8 joyXHoldTimer[];
+extern u8 joyYHoldTimer[];
+extern s8 joyXSign[];
+extern s8 joyYSign[];
 extern OSThread controller_thread;
 
-extern u8 delay_byte; //60/int(x) FPS x<=6
-extern u8 delay_byte_mirror;
+extern u8 delayByte; //60/int(x) FPS x<=6
+extern u8 delayByte_mirror;
 extern float delayFloat;
 extern float delayFloatMirror;
-extern float inverseDelay; // 1/delay_byte
+extern float inverseDelay; // 1/delayByte
 extern float inverseDelayMirror;
 
 extern struct objectStruct * object_pointer_array[]; //first is always player character.
 extern u16 object_count;
 extern struct Vec3_Int Vec3_Int_array[];
-extern struct ErrString err_string_array_cause[];
-extern struct ErrString err_string_array_fpsr[];
-extern struct PointersInts pointers_ints_array[];
-extern struct UnkStruct_800175D4 pointer_int_array_0[]; // length?
+extern struct ErrString errStringArray_cause[];
+extern struct ErrString errStringArray_fpsr[];
+extern struct PointersInts pointersIntsArray[];
+extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 
 #endif

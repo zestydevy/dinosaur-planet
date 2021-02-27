@@ -14,7 +14,7 @@ void initMemory(void)
     while ((u32)mem < osMemSize)
         *mem++ = -1;
 
-    heap_block_array_size = 0;
+    heapBlockArray_size = 0;
 
     if (osMemSize != EXPANSION_SIZE)
     {
@@ -44,7 +44,7 @@ void _set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
     s32  phi_t1;
     struct HeapBlock *phi_t0;
 
-    temp_a3 = &heap_block_array[heap_block_array_size++];
+    temp_a3 = &heapBlockArray[heapBlockArray_size++];
     temp_a3->items_max = max;
     temp_a3->items_count = 0;
     temp_a3->ptr = heap;
@@ -113,7 +113,7 @@ int func_80016E68(void *a0)
     tmp = find_heap_block(a0);
 
     i = 0;
-    tmp = (u32)heap_block_array[tmp].ptr;
+    tmp = (u32)heapBlockArray[tmp].ptr;
 
     while (i != -1)
     {
@@ -153,8 +153,8 @@ void free(s32 arg0) {
 void func_800175D4(s32 a0)
 {
     s16 *ptr1 = &D_800B1798;
-    pointer_int_array_0[*ptr1].a = a0;
-    pointer_int_array_0[*ptr1].b[0] = D_800B179C;
+    pointerIntArray0[*ptr1].a = a0;
+    pointerIntArray0[*ptr1].b[0] = D_800B179C;
     (*ptr1)++;
 }
 
@@ -162,10 +162,10 @@ s32 find_heap_block(void *ptr)
 {
     s32 i;
 
-    for (i = 0; i < heap_block_array_size; i++)
+    for (i = 0; i < heapBlockArray_size; i++)
     {
-        if (((u32)ptr > (u32)heap_block_array[i].ptr))
-            if ((u32)ptr < ((u32)heap_block_array[i].ptr + heap_block_array[i].mem_allocated))
+        if (((u32)ptr > (u32)heapBlockArray[i].ptr))
+            if ((u32)ptr < ((u32)heapBlockArray[i].ptr + heapBlockArray[i].mem_allocated))
                 return i;
     }
 
@@ -176,7 +176,7 @@ s32 find_heap_block(void *ptr)
 
 struct HeapBlock *func_80017790(s32 a0, s32 a1)
 {
-    return heap_block_array[a0].ptr;
+    return heapBlockArray[a0].ptr;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800177B4.s")
@@ -236,17 +236,17 @@ u32 align_2(u32 a0) {
 */
 s32 some_memory_monitor(s32 arg0) {
     dummied_print_func(&D_800991E0, mem_mon_val_0 / 0x400,
-                        heap_block_array.unkC / 0x400, 
+                        heapBlockArray.unkC / 0x400, 
                         mem_mon_val_1 / 0x400, 
-                        heap_block_array.unk20 / 0x400, 
+                        heapBlockArray.unk20 / 0x400, 
                         mem_mon_val_2 / 0x400, 
-                        heap_block_array.unk34 / 0x400, 
-                        heap_block_array.unk4, 
-                        heap_block_array.unk0, 
-                        heap_block_array.unk18, 
-                        heap_block_array.unk14, 
-                        heap_block_array.unk2C, 
-                        heap_block_array.unk28);
+                        heapBlockArray.unk34 / 0x400, 
+                        heapBlockArray.unk4, 
+                        heapBlockArray.unk0, 
+                        heapBlockArray.unk18, 
+                        heapBlockArray.unk14, 
+                        heapBlockArray.unk2C, 
+                        heapBlockArray.unk28);
     return mem_mon_val_0 + mem_mon_val_1 + mem_mon_val_2;
 }
 #endif
