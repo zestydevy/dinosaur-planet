@@ -61,7 +61,7 @@ split:
 	rm -rf $(DATA_DIRS) $(ASM_DIRS)
 	python3 ./tools/splat/split.py --rom baserom.z64 --outdir . splat.yaml
 
-setup: clean submodules split
+setup: baseverify clean submodules split
 	
 $(BUILD_DIR):
 	echo $(C_FILES)
@@ -90,6 +90,9 @@ $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
 # final z64 updates checksum
 $(BUILD_DIR)/$(TARGET).z64: $(BUILD_DIR)/$(TARGET).bin
 	@cp $< $@
+
+baseverify:
+	md5sum -c baserom.md5
 
 verify: $(BUILD_DIR)/$(TARGET).z64
 	md5sum -c checksum.md5
