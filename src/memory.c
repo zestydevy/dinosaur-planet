@@ -29,7 +29,7 @@ void initMemory(void)
 
     func_80017254(2);
 
-    D_800B1798 = 0;
+    pointerIntArrayCounter = 0;
 }
 
 // - Needs to use a multiplication to address the heapblock array
@@ -152,7 +152,7 @@ void free(s32 arg0) {
 
 void func_800175D4(s32 a0)
 {
-    s16 *ptr1 = &D_800B1798;
+    s16 *ptr1 = &pointerIntArrayCounter;
     pointerIntArray0[*ptr1].a = a0;
     pointerIntArray0[*ptr1].b[0] = D_800B179C;
     (*ptr1)++;

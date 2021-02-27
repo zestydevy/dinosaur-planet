@@ -136,7 +136,6 @@ extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely poin
 extern Gfx *D_800AE680;
 
 extern u32 * bss_end;
-extern s16 D_800B1798;
 extern u8 heapBlockArray_size;
 extern struct HeapBlock heapBlockArray[];
 extern s8 ossceduler_stack;
