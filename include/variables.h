@@ -150,23 +150,24 @@ extern s8 some_controller_init_val;
 extern u32 sixtyByFour_Array_index;
 extern struct Vec3_Int SixtyByFour_Array[60]; //seems to buffer player coords with "timestamp"
 
-extern u16 button_input_1[];
-extern u16 button_input_2[];
-extern u8 controller_port_list[];
-extern s8 joyXMirror[];
-extern s8 joyYMirror[];
-extern u8 joyXHoldTimer[];
-extern u8 joyYHoldTimer[];
-extern s8 joyXSign[];
-extern s8 joyYSign[];
+extern u16 button_input_1[4];
+extern u16 button_input_2[4];
+extern u8 controller_port_list[4]; // inits to 0,1,2,3. used in input getters.
+extern s8 joyXMirror[4];
+extern s8 joyYMirror[4];
+extern u8 joyXHoldTimer[4]; // resets after hitting MenuInputDelay's value.
+extern u8 joyYHoldTimer[4];
+extern s8 joyXSign[4]; //1, 0, or -1 based on input.
+extern s8 joyYSign[4];
 extern OSThread controller_thread;
 
+
 extern u8 delayByte; //60/int(x) FPS x<=6
-extern u8 delayByte_mirror;
+extern u8 delayByteMirror;
 extern float delayFloat;
 extern float delayFloatMirror;
 extern float inverseDelay; // 1/delayByte
-extern float inverseDelayMirror;
+extern float inverseDelayMirror; // why the mirrors, if they aren't used?
 
 extern struct objectStruct * object_pointer_array[]; //first is always player character.
 extern u16 object_count;
