@@ -132,7 +132,7 @@ extern OSSched *osscheduler_;
 extern s32 D_800AE2A0;
 extern s32 D_800AE2A4;
 extern s16 D_800AE2A8;
-extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[];
+extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
 extern Gfx *D_800AE680;
 
 extern u32 * bss_end;
@@ -148,7 +148,7 @@ extern u8 D_8008C94C;
 extern s32 D_800B179C;
 extern s8 some_controller_init_val;
 extern u32 D_800AE670;
-extern u32 SixtyByFour_Array[60][4];
+extern struct Vec3_Int SixtyByFour_Array[60]; //seems to buffer player coords with "timestamp"
 
 extern u16 button_input_1[];
 extern u16 button_input_2[];
@@ -160,6 +160,13 @@ extern u8 joy_y_hold_timer[];
 extern s8 joy_x_sign[];
 extern s8 joy_y_sign[];
 extern OSThread controller_thread;
+
+extern u8 delay_byte; //60/int(x) FPS x<=6
+extern u8 delay_byte_mirror;
+extern float delayFloat;
+extern float delayFloatMirror;
+extern float inverseDelay; // 1/delay_byte
+extern float inverseDelayMirror;
 
 extern struct objectStruct * object_pointer_array[]; //first is always player character.
 extern u16 object_count;
