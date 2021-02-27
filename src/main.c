@@ -2,7 +2,7 @@
 #include <PR/sched.h>
 
 void func_8001440C(s32 arg0);
-void clear_SixtyByFour_Array(void);
+void clear_PlayerPosBuffer(void);
 void func_800483BC(f32, f32, s32);
 void some_init_func(void);
 void func_80014614(void);
@@ -150,7 +150,7 @@ void some_init_func(void) {
 void func_800142A0(f32 arg0, f32 arg1, s32 arg2) {
     func_8001440C(0);
     func_800483BC(arg0, arg1, arg2);
-    clear_SixtyByFour_Array();
+    clear_PlayerPosBuffer();
     ossceduler_stack = 1;
 }
 
@@ -358,12 +358,12 @@ u8 func_80014C60(void)
     return D_800B09C4;
 }
 
-void clear_SixtyByFour_Array(void)
+void clear_PlayerPosBuffer(void)
 {
-    _bzero(&SixtyByFour_Array, 0x3C0);
-    sixtyByFour_Array_index = 0;
+    _bzero(&PlayerPosBuffer, 0x3C0);
+    PlayerPosBuffer_index = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/update_sixtybyFour_array.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/update_PlayerPosBuffer.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")

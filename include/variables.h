@@ -147,19 +147,31 @@ extern u8 D_800B09C4;
 extern u8 D_8008C94C;
 extern s32 D_800B179C;
 extern s8 some_controller_init_val;
-extern u32 sixtyByFour_Array_index;
-extern struct Vec3_Int SixtyByFour_Array[60]; //seems to buffer player coords with "timestamp"
+extern u32 PlayerPosBuffer_index;
+extern struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with "timestamp"
 
-extern u16 button_input_1[4];
-extern u16 button_input_2[4];
-extern u8 controller_port_list[4]; // inits to 0,1,2,3. used in input getters.
+extern u16 buttonInput0[4];
+extern u16 buttonInput1[4];
+extern u16 buttonMask[4]; // starts as 0xFFFF, buttons sometimes get AND'ed with it.
+extern u8 controllerPortList[4]; // inits to 0,1,2,3. used in input getters.
 extern s8 joyXMirror[4];
 extern s8 joyYMirror[4];
 extern u8 joyXHoldTimer[4]; // resets after hitting MenuInputDelay's value.
 extern u8 joyYHoldTimer[4];
 extern s8 joyXSign[4]; //1, 0, or -1 based on input.
 extern s8 joyYSign[4];
+extern u8 MenuInputDelay; //init'd to 5.
 extern OSThread controller_thread;
+
+extern void* framebufferNext;
+extern void* framebufferCurrent;
+extern OSViMode OSViMode_Custom;
+extern u32 CurrentResolutionH[2]; //picked from resolutionArray[video_mode % 7]
+extern u32 CurrentResolutionV[2]; //one for each FB, apparently
+extern void* framebufferPointers[2]; //{FBaddr,FBaddr*H*V*2}
+extern u32 framebufferChoice; 
+extern u32 video_mode;
+extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
 
 extern u8 delayByte; //60/int(x) FPS x<=6
@@ -170,11 +182,13 @@ extern float inverseDelay; // 1/delayByte
 extern float inverseDelayMirror; // why the mirrors, if they aren't used?
 
 extern struct objectStruct * object_pointer_array[]; //first is always player character.
-extern u16 object_count;
+extern u16 objectCount;
 extern struct Vec3_Int Vec3_Int_array[];
+/* not variables
 extern struct ErrString errStringArray_cause[];
 extern struct ErrString errStringArray_fpsr[];
+*/
 extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
-
+extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 #endif
