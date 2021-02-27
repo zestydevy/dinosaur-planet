@@ -136,7 +136,7 @@ extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[];
 extern Gfx *D_800AE680;
 
 extern u32 * bss_end;
-extern u16 D_800B1798;
+extern s16 D_800B1798;
 extern u8 heap_block_array_size;
 extern struct HeapBlock heap_block_array[];
 extern s8 ossceduler_stack;
@@ -167,5 +167,6 @@ extern struct Vec3_Int Vec3_Int_array[];
 extern struct ErrString err_string_array_cause[];
 extern struct ErrString err_string_array_fpsr[];
 extern struct PointersInts pointers_ints_array[];
+extern struct UnkStruct_800175D4 pointer_int_array_0[]; // length?
 
 #endif
