@@ -129,7 +129,7 @@ extern struct UnkStruct80014614
 extern u8 alSyn_flag;
 
 extern OSSched *osscheduler_;
-extern s32 D_800AE2A0;
+extern struct CharacterStats * charStats_pointer;
 extern s32 D_800AE2A4;
 extern s16 D_800AE2A8;
 extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
@@ -147,7 +147,7 @@ extern u8 D_800B09C4;
 extern u8 D_8008C94C;
 extern s32 D_800B179C;
 extern s8 some_controller_init_val;
-extern u32 D_800AE670;
+extern u32 sixtyByFour_Array_index;
 extern struct Vec3_Int SixtyByFour_Array[60]; //seems to buffer player coords with "timestamp"
 
 extern u16 button_input_1[];
