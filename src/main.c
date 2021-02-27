@@ -283,7 +283,7 @@ OSSched *get_ossched(void) {
 void func_80014614(void) {
     func_80012618(&D_800AE2A4, 0x37);
     D_800AE2A8 = func_80037310(0x37) >> 1;
-    D_800AE2A0 = (*D_8008C9F4)->unk_88();
+    charStats_pointer = (*D_8008C9F4)->unk_88();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014670.s")
@@ -361,9 +361,9 @@ u8 func_80014C60(void)
 void clear_SixtyByFour_Array(void)
 {
     _bzero(&SixtyByFour_Array, 0x3C0);
-    D_800AE670 = 0;
+    sixtyByFour_Array_index = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014CA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/update_sixtybyFour_array.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")

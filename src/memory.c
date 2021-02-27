@@ -254,7 +254,7 @@ s32 some_memory_monitor(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
 extern u32 D_80099228;
-void *func_80017BA8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     void *ptr;
 
     arg4 = ALIGN16((arg4 * arg3) + 0xF);
