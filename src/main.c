@@ -367,6 +367,6 @@ void clear_SixtyByFour_Array(void)
     D_800AE670 = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014CA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/update_sixtybyFour_array.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")
