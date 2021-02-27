@@ -120,7 +120,7 @@ void some_init_func(void) {
         (*D_8008C9FC)->unk4.asVoid();
     }
     func_80014614();
-    alSyn_flag = 1;
+    alSynFlag = 1;
     start_alSyn_thread();
     func_80012224(0);
     if (0);
