@@ -246,7 +246,7 @@ s32 some_memory_monitor(s32 arg0) {
 
 // those empty statements get everything into place, except stack
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017BA8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/alHeapAlloc.s")
 #else
 extern u32 D_80099228;
 void *func_80017BA8(s32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4) {
