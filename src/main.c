@@ -26,32 +26,30 @@ void mainproc(void * arg)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/some_init_func.s")
-#else
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
-void _some_init_func(void) {
+void some_init_func(void) {
     struct UnkStruct80014614 *temp_v0;
-    u8 phi_v0;
+    s32 phi_v0;
     struct UnkStruct80014614 **tmp3;
 
     initMemory();
     three_more_mallocs();
     create_some_thread();
 
-    // this comparison is wrong
-    if (osTvType == 0) {
+    if (0) {
+    } else if (osTvType == 0) {
         phi_v0 = 0x10;
     } else if (osTvType == 2) {
         phi_v0 = 0x1E;
     } else {
         phi_v0 = 2;
     }
-    osCreateScheduler(&osscheduler_, 0x800B09C0, 0xD, phi_v0, 1);
+    osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, phi_v0, 1);
     PiManager_thread_func();
     piMan_creator();
     create_3_megs_quues(&osscheduler_);
     four_mallocs();
+    if (0);
     D_800B09C1 = 0;
     D_800AE680 = D_800AE678[D_800B09C1];
     some_controller_init_val = init_controller_data();
@@ -125,7 +123,7 @@ void _some_init_func(void) {
     alSyn_flag = 1;
     start_alSyn_thread();
     func_80012224(0);
-
+    if (0);
     gDPFullSync(D_800AE680++);
     gSPEndDisplayList(D_800AE680++);
     func_800632B0();
@@ -136,7 +134,6 @@ void _some_init_func(void) {
     func_80041D20(0);
     func_80041C6C(0);
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/main_expPak.s")
 

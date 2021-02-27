@@ -61,4 +61,9 @@ typedef struct UnkStruct80014614 {
     /* 0x88 */ s32 (*unk_88)(void);
 } UnkStruct80014614;
 
+struct UnkStruct_800175D4 {
+    s32 a;
+    u8  b[4];
+};
+
 #endif

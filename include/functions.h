@@ -16,5 +16,6 @@ void threadTimerTick(void);
 void checkDongle(void);
 
 void func_80017254(u32 arg0);
+void func_800175D4(s32 a0);
 
 #endif
