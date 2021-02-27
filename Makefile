@@ -59,7 +59,7 @@ submodules:
 
 split:
 	rm -rf $(DATA_DIRS) $(ASM_DIRS)
-	python3.8 ./tools/splat/split.py --rom baserom.z64 --outdir . splat.yaml
+	python3 ./tools/splat/split.py --rom baserom.z64 --outdir . splat.yaml
 
 setup: clean submodules split
 	
