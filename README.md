@@ -22,7 +22,7 @@ Windows 10 (WSL)
 `pip3 install -r requirements.txt`
 
 # To use
-1. Place the non-cracked Dinosaur Planet ROM into the root of the repository as `baserom.z64`.
+1. Place the unmodified, uncracked Dinosaur Planet ROM into the root of the repository as `baserom.z64`.
 2. Set up tools and extract the ROM: `make setup`
 3. Re-build the ROM: `make`
 
