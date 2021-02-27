@@ -235,11 +235,11 @@ u32 align_2(u32 a0) {
  *
 */
 s32 some_memory_monitor(s32 arg0) {
-    dummied_print_func(&D_800991E0, mem_mon_val_0 / 0x400,
+    dummied_print_func(&D_800991E0, memMonVal0 / 0x400,
                         heapBlockArray.unkC / 0x400, 
-                        mem_mon_val_1 / 0x400, 
+                        memMonVal1 / 0x400, 
                         heapBlockArray.unk20 / 0x400, 
-                        mem_mon_val_2 / 0x400, 
+                        memMonVal2 / 0x400, 
                         heapBlockArray.unk34 / 0x400, 
                         heapBlockArray.unk4, 
                         heapBlockArray.unk0, 
@@ -247,7 +247,7 @@ s32 some_memory_monitor(s32 arg0) {
                         heapBlockArray.unk14, 
                         heapBlockArray.unk2C, 
                         heapBlockArray.unk28);
-    return mem_mon_val_0 + mem_mon_val_1 + mem_mon_val_2;
+    return memMonVal0 + memMonVal1 + memMonVal2;
 }
 #endif
 
