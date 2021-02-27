@@ -1,5 +1,5 @@
 # Dinosaur Planet
-A WIP decompilation of Dinosaur Planet for the Nintendo 64, released by Forest of Illusion on Feb. 20, 2021.
+A WIP decompilation of Dinosaur Planet for the Nintendo 64, as released by Forest of Illusion on Feb. 20, 2021.
 
 <b>Note</b>: To use this repository, you must already have a ROM for the game.
 
