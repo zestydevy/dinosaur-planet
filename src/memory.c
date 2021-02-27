@@ -150,7 +150,13 @@ void free(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8001753C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800175D4.s")
+void func_800175D4(s32 a0)
+{
+    s16 *ptr1 = &D_800B1798;
+    pointer_int_array_0[*ptr1].a = a0;
+    pointer_int_array_0[*ptr1].b[0] = D_800B179C;
+    (*ptr1)++;
+}
 
 s32 find_heap_block(void *ptr)
 {
@@ -168,7 +174,10 @@ s32 find_heap_block(void *ptr)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017674.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017790.s")
+struct HeapBlock *func_80017790(s32 a0, s32 a1)
+{
+    return heap_block_array[a0].ptr;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800177B4.s")
 
@@ -244,29 +253,18 @@ s32 some_memory_monitor(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
-// those empty statements get everything into place, except stack
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017BA8.s")
-#else
 extern u32 D_80099228;
-void *func_80017BA8(s32 arg0, s32 arg1, s32 arg2, u32 arg3, u32 arg4) {
-    s32 temp_s0;
-    void *temp_v0;
+void *func_80017BA8(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+    void *ptr;
 
-    temp_s0 = ALIGN16((arg4 * arg3) + 0xF);
+    arg4 = ALIGN16((arg4 * arg3) + 0xF);
 
-    if (!temp_s0) {
-        if (arg4) {
+    // ??
+    if (arg4);
+    if (arg4);
 
-        }
-    }
-
-    if (temp_s0) {
-        
-    }
-
-    temp_v0 = malloc(temp_s0, 0xB, &D_80099228);
-    _bzero(temp_v0, temp_s0);
-    return align_16(temp_v0);
+    ptr = malloc(arg4, 0xB, &D_80099228);
+    _bzero(ptr, arg4);
+    return align_16(ptr);
 }
-#endif
+
