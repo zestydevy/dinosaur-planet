@@ -4,22 +4,22 @@
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
 void func_800483BC(f32, f32, s32);
-void some_init_func(void);
-void func_80014614(void);
-struct UnkStruct80014614 **make_function_struct(s32, s32);
+void game_init(void);
+void init_bittable(void);
+struct UnkStruct80014614 **dll_load_deferred(s32, s32);
 
 void mainproc(void * arg)
 {
-    testWrite(); // ROM write check
-    some_init_func();
+    test_write(); // ROM write check
+    game_init();
 
     while(TRUE) {
-        checkDongle();  // copy protection check
+        check_dongle();  // copy protection check
         
         if (osMemSize != EXPANSION_SIZE) {
-            main_no_expPak();
+            game_tick_no_expansion();
         } else {
-            main_expPak();
+            game_tick();
         }
 
         threadTimerTick();
@@ -27,12 +27,14 @@ void mainproc(void * arg)
 }
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
-void some_init_func(void) {
-    struct UnkStruct80014614 *temp_v0;
+
+void game_init(void) 
+{
+    struct UnkStruct80014614 *temp_AMSEQ_DLL;
     s32 phi_v0;
     struct UnkStruct80014614 **tmp3;
 
-    initMemory();
+    init_memory();
     three_more_mallocs();
     create_some_thread();
 
@@ -46,7 +48,7 @@ void some_init_func(void) {
     }
     osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, phi_v0, 1);
     PiManager_thread_func();
-    piMan_creator();
+    init_filesystem();
     create_3_megs_quues(&osscheduler_);
     four_mallocs();
     if (0);
@@ -55,71 +57,71 @@ void some_init_func(void) {
     some_controller_init_val = init_controller_data();
     controller_thread_func(&osscheduler_);
     crash_thread_func(&osscheduler_);
-    func_8003CC90();
-    func_80041E84();
+    init_textures();
+    init_maps();
     func_8001CD00();
-    func_80017C20();
-    func_8000BC40();
-    func_80020550();
+    init_models();
+    init_dll_system();
+    init_objects();
     func_80060A80();
     func_80053300();
     func_8004D470();
     func_8005C780();
-    func_8000C680();
-    clear_several_values();
-    al_thread_init(&osscheduler_, 0xE);
-    func_8004676C();
+    init_fonts();
+    init_menu_related_globals();
+    init_audio(&osscheduler_, 0xE);
+    init_global_map();
     if (osMemSize != 0x800000) {
-        temp_v0 = make_function_struct(5, 0x24);
-        D_8008C9A0 = D_8008C99C = temp_v0;
-        D_8008C9A4 = make_function_struct(6, 0x12);
-        D_8008C9D0 = make_function_struct(0x15, 5);
-        D_8008C9F4 = make_function_struct(0x1D, 0x2F);
-        D_8008CA00 = make_function_struct(0x1F, 2);
-        D_8008C974 = make_function_struct(0x1C, 4);
+        temp_AMSEQ_DLL = dll_load_deferred(5, 0x24);
+        gDLL_AMSEQ2 = gDLL_AMSEQ = temp_AMSEQ_DLL;
+        gDLL_AMSFX = dll_load_deferred(6, 0x12);
+        gDLL_text = dll_load_deferred(0x15, 5);
+        gDLL_gplay = dll_load_deferred(0x1D, 0x2F);
+        gDLL_savegame = dll_load_deferred(0x1F, 2);
+        D_8008C974 = dll_load_deferred(0x1C, 4);
     } else {
-        D_8008C994 = make_function_struct(1, 0xF);
-        D_8008C978 = make_function_struct(2, 0x17);
-        D_8008C9D8 = make_function_struct(0x17, 8);
-        D_8008C9C8 = make_function_struct(0x12, 0x16);
-        D_8008C97C = make_function_struct(3, 0x1D);
-        D_8008C974 = make_function_struct(0x1C, 4);
-        D_8008C9E0 = make_function_struct(0x19, 0xE);
-        D_8008C980 = make_function_struct(7, 0xF);
-        D_8008C984 = make_function_struct(8, 0xC);
-        D_8008C988 = make_function_struct(9, 8);
-        D_8008C98C = make_function_struct(0xA, 3);
-        D_8008C990 = make_function_struct(0xC, 0xA);
-        D_8008C998 = make_function_struct(4, 0xD);
-        temp_v0 = make_function_struct(5, 0x24);
-        D_8008C9A0 = D_8008C99C = temp_v0;
-        D_8008C9A4 = make_function_struct(6, 0x12);
-        D_8008C9A8 = make_function_struct(0xB, 7);
-        D_8008C9B4 = make_function_struct(0xD, 0xA);
-        D_8008C9B8 = make_function_struct(0xE, 0xC);
-        D_8008C9BC = make_function_struct(0xF, 8);
-        D_8008C9C0 = make_function_struct(0x10, 3);
-        D_8008C9C4 = make_function_struct(0x11, 2);
-        D_8008C9CC = make_function_struct(0x14, 3);
-        D_8008C9D0 = make_function_struct(0x15, 5);
-        D_8008C9D4 = make_function_struct(0x16, 7);
-        D_8008C9DC = make_function_struct(0x18, 7);
-        D_8008C9E4 = make_function_struct(0x1A, 0x26);
-        D_8008C9E8 = make_function_struct(0x4A, 7);
-        D_8008C9F0 = make_function_struct(0x1B, 9);
-        D_8008C9F4 = make_function_struct(0x1D, 0x24);
-        D_8008C9F8 = make_function_struct(0x38, 0xA);
-        D_8008C9FC = make_function_struct(0x1E, 6);
-        D_8008CA00 = make_function_struct(0x1F, 2);
-        D_8008CA08 = make_function_struct(0x20, 6);
-        D_8008CA0C = make_function_struct(0x21, 0x16);
-        D_8008CA10 = make_function_struct(0x3B, 2);
-        D_8008CA14 = make_function_struct(0x36, 0xC);
-        D_8008C9AC = make_function_struct(0x39, 4);
-        D_8008C9B0 = make_function_struct(0x3A, 2);
+        D_8008C994 = dll_load_deferred(1, 0xF);
+        D_8008C978 = dll_load_deferred(2, 0x17);
+        D_8008C9D8 = dll_load_deferred(0x17, 8);
+        D_8008C9C8 = dll_load_deferred(0x12, 0x16);
+        gDLL_ANIM = dll_load_deferred(3, 0x1D);
+        D_8008C974 = dll_load_deferred(0x1C, 4);
+        D_8008C9E0 = dll_load_deferred(0x19, 0xE);
+        D_8008C980 = dll_load_deferred(7, 0xF);
+        D_8008C984 = dll_load_deferred(8, 0xC);
+        gDLL_newclouds = dll_load_deferred(9, 8);
+        gDLL_newstars = dll_load_deferred(0xA, 3);
+        gDLL_minic = dll_load_deferred(0xC, 0xA);
+        gDLL_Race = dll_load_deferred(4, 0xD);
+        temp_AMSEQ_DLL = dll_load_deferred(5, 0x24);
+        gDLL_AMSEQ2 = gDLL_AMSEQ = temp_AMSEQ_DLL;
+        gDLL_AMSFX = dll_load_deferred(6, 0x12);
+        gDLL_newlfx = dll_load_deferred(0xB, 7);
+        gDLL_expgfx = dll_load_deferred(0xD, 0xA);
+        gDLL_modgfx = dll_load_deferred(0xE, 0xC);
+        gDLL_projgfx = dll_load_deferred(0xF, 8);
+        D_8008C9C0 = dll_load_deferred(0x10, 3);
+        D_8008C9C4 = dll_load_deferred(0x11, 2);
+        gDLL_SCREENS = dll_load_deferred(0x14, 3);
+        gDLL_text = dll_load_deferred(0x15, 5);
+        gDLL_subtitles = dll_load_deferred(0x16, 7);
+        gDLL_waterfx = dll_load_deferred(0x18, 7);
+        gDLL_CURVES = dll_load_deferred(0x1A, 0x26);
+        D_8008C9E8 = dll_load_deferred(0x4A, 7);
+        D_8008C9F0 = dll_load_deferred(0x1B, 9);
+        gDLL_gplay = dll_load_deferred(0x1D, 0x24);
+        D_8008C9F8 = dll_load_deferred(0x38, 0xA);
+        D_8008C9FC = dll_load_deferred(0x1E, 6);
+        gDLL_savegame = dll_load_deferred(0x1F, 2);
+        D_8008CA08 = dll_load_deferred(0x20, 6);
+        D_8008CA0C = dll_load_deferred(0x21, 0x16);
+        D_8008CA10 = dll_load_deferred(0x3B, 2);
+        D_8008CA14 = dll_load_deferred(0x36, 0xC);
+        D_8008C9AC = dll_load_deferred(0x39, 4);
+        D_8008C9B0 = dll_load_deferred(0x3A, 2);
         (*D_8008C9FC)->unk4.asVoid();
     }
-    func_80014614();
+    init_bittable();
     alSynFlag = 1;
     start_alSyn_thread();
     func_80012224(0);
@@ -127,7 +129,7 @@ void some_init_func(void) {
     gDPFullSync(D_800AE680++);
     gSPEndDisplayList(D_800AE680++);
     func_800632B0();
-    func_8000F404(2);
+    set_menu_page(2);
     if (osMemSize == EXPANSION_SIZE) {
         func_80014074();
     }
@@ -135,9 +137,9 @@ void some_init_func(void) {
     func_80041C6C(0);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/main_expPak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/main_no_expPak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick_no_expansion.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80013D80.s")
 
@@ -236,7 +238,7 @@ void func_initing_rumblepak(void) {
 /* 
  * 
 */
-void testWrite(void) {
+void test_write(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
 
@@ -244,7 +246,7 @@ void testWrite(void) {
  * Probe the copy protection dongle for the correct magic string and
  * if failed, wipe a majority of RAM to prevent RAM viewing.
  */
-void checkDongle(void) {
+void check_dongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
@@ -280,10 +282,11 @@ OSSched *get_ossched(void) {
     return &osscheduler_;
 }
 
-void func_80014614(void) {
-    func_80012618(&D_800AE2A4, 0x37);
-    D_800AE2A8 = func_80037310(0x37) >> 1;
-    charStats_pointer = (*D_8008C9F4)->unk_88();
+void init_bittable(void) 
+{
+    queue_alloc_load_file(&gFile_BITTABLE, 0x37);
+    gSizeBittable = get_file_size(0x37) >> 1;
+    charStats_pointer = (*gDLL_gplay)->unk_88();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014670.s")
@@ -308,8 +311,8 @@ s32 func_800149AC(s32 arg0) {
 
 void func_80014B1C(void) {
     if (D_8008CA04 == 0) {
-        D_8008C9EC = make_function_struct(0x4B, 0xA);
-        D_8008CA04 = make_function_struct(0x4C, 3);
+        D_8008C9EC = dll_load_deferred(0x4B, 0xA);
+        D_8008CA04 = dll_load_deferred(0x4C, 3);
     }
 }
 
@@ -364,6 +367,34 @@ void clear_PlayerPosBuffer(void)
     PlayerPosBuffer_index = 0;
 }
 
+// matches except for regalloc
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/update_PlayerPosBuffer.s")
+#else
+void update_PlayerPosBuffer(void)
+{
+    s32 index;
+    TActor * player;
+    struct Vec3_Int * pos;
+
+    player = (TActor *)func_80023914();
+    pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
+    D_800AE674 += delayByte;
+
+    if (player != NULL)
+    {
+        pos->f.x = player->position.x;
+        pos->f.y = player->position.y;
+        pos->f.z = player->position.z;
+        pos->i = D_800AE674;
+        index = ++PlayerPosBuffer_index;
+        
+        if (index >= 0x3C) {
+            PlayerPosBuffer_index = 0;
+        }
+    }
+}
+#endif
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")

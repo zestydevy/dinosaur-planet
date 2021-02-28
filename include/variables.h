@@ -16,11 +16,11 @@ typedef float Vec3[3];
 typedef float Vec4[4];
 
 //prelimnary, lots of unknowns
-struct objectStruct{
-	s16 rotation[3]; //why short?
-	s16 unk0x6;
-	float scale;
-	Vec3f position; //note: >300 unit drop causes fall damage.
+typedef struct {
+/*0000*/  s16 rotation[3]; //why short?
+/*0006*/  s16 unk0x6;
+/*0008*/  float scale;
+/*000C*/  Vec3f position; //note: >300 unit drop causes fall damage.
 	Vec3f positionMirror; //local vs global?
 	Vec3f speed;
 	void* ptr0x30;
@@ -59,7 +59,7 @@ struct objectStruct{
 	UNK_TYPE_32 unk0xc4;
 	void* ptr0xc8;
 	void* ptr0xcc;
-}; //may be bigger, will know when constructor is understood.
+} TActor; //may be bigger, will know when constructor is understood.
 
 //found a 3-array of these, not sure what they're for.
 struct Vec3_Int{
@@ -82,12 +82,12 @@ struct CharacterStats{
 };//seemingly consistent addrs: Fox/Sabre at 0x805c3964, Krystal 0x805c3970.
 
 struct HeapBlock {
-    s32 items_max;
-    s32 items_count;
+    s32 maxItems;
+    s32 itemCount;
     struct HeapBlock *ptr;
-    s32 mem_allocated;
+    s32 memAllocated;
     // s16 index;
-    s32 mem_used;
+    s32 memUsed;
 };
 
 //unknown What this is for.
@@ -115,29 +115,35 @@ extern u64 gMainThreadStack[];        // some sort of data
 
 extern u8 D_8008C940;
 extern struct UnkStruct80014614
-            **D_8008C970, **D_8008C974, **D_8008C978, **D_8008C97C,
-            **D_8008C980, **D_8008C984, **D_8008C988, **D_8008C98C,
-            **D_8008C990, **D_8008C994, **D_8008C998, **D_8008C99C,
-            **D_8008C9A0, **D_8008C9A4, **D_8008C9A8, **D_8008C9AC,
-            **D_8008C9B0, **D_8008C9B4, **D_8008C9B8, **D_8008C9BC,
-            **D_8008C9C0, **D_8008C9C4, **D_8008C9C8, **D_8008C9CC,
-            **D_8008C9D0, **D_8008C9D4, **D_8008C9D8, **D_8008C9DC,
-            **D_8008C9E0, **D_8008C9E4, **D_8008C9E8, **D_8008C9EC,
-            **D_8008C9F0, **D_8008C9F4, **D_8008C9F8, **D_8008C9FC,
-            **D_8008CA00, **D_8008CA04, **D_8008CA08, **D_8008CA0C,
+            **D_8008C970, **D_8008C974, **D_8008C978, **gDLL_ANIM,
+            **D_8008C980, **D_8008C984, **gDLL_newclouds, **gDLL_newstars,
+            **gDLL_minic, **D_8008C994, **gDLL_Race, **gDLL_AMSEQ,
+            **gDLL_AMSEQ2, **gDLL_AMSFX, **gDLL_newlfx, **D_8008C9AC,
+            **D_8008C9B0, **gDLL_expgfx, **gDLL_modgfx, **gDLL_projgfx,
+            **D_8008C9C0, **D_8008C9C4, **D_8008C9C8, **gDLL_SCREENS,
+            **gDLL_text, **gDLL_subtitles, **D_8008C9D8, **gDLL_waterfx,
+            **D_8008C9E0, **gDLL_CURVES, **D_8008C9E8, **D_8008C9EC,
+            **D_8008C9F0, **gDLL_gplay, **D_8008C9F8, **D_8008C9FC,
+            **gDLL_savegame, **D_8008CA04, **D_8008CA08, **D_8008CA0C,
             **D_8008CA10, **D_8008CA14;
 extern u8 alSynFlag;
 
 extern OSSched *osscheduler_;
 extern struct CharacterStats * charStats_pointer;
-extern s32 D_800AE2A4;
-extern s16 D_800AE2A8;
+extern s32 gFile_BITTABLE;
+extern s16 gSizeBittable;
 extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
 extern Gfx *D_800AE680;
 
+extern s32 D_800AE674;
+
 extern u32 * bss_end;
-extern u8 heapBlockArray_size;
-extern struct HeapBlock heapBlockArray[];
+extern u8 gHeapBlkListSize;
+extern struct HeapBlock gHeapBlkList[];
+extern char * D_800991E0;
+extern s32 memMonVal0;
+extern s32 memMonVal1;
+extern s32 memMonVal2;
 extern s8 ossceduler_stack;
 extern u8 D_800B09C1;
 extern u8 D_800B09C3;
@@ -185,7 +191,7 @@ extern float delayFloatMirror;
 extern float inverseDelay; // 1/delayByte
 extern float inverseDelayMirror; // why the mirrors, if they aren't used?
 
-extern struct objectStruct * object_pointer_array[]; //first is always player character.
+extern struct TActor * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
 extern struct Vec3_Int Vec3_Int_array[];
 /* not variables
