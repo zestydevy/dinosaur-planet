@@ -120,7 +120,6 @@ pointerIntArray2_func = 0x80003c88; // type:func
 object_ident_matrix = 0x80004464; // type:func
 some_crash_setter = 0x8000bdd0; // type:func
 caption_func = 0x8000ce0c; // type:func
-clear_several_values = 0x8000f380; // type:func
 init_controller_data = 0x80010284; // type:func
 controller_thread_func = 0x8001046c; // type:func
 label_controllerPortList = 0x80010b40; // type:func
