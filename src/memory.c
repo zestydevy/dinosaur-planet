@@ -226,7 +226,7 @@ u32 align_2(u32 a0) {
     return a0;
 }
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/some_memory_monitor.s")
 #else
 /*
@@ -236,17 +236,17 @@ u32 align_2(u32 a0) {
 */
 s32 some_memory_monitor(s32 arg0) {
     dummied_print_func(&D_800991E0, memMonVal0 / 0x400,
-                        heapBlockArray.unkC / 0x400, 
-                        memMonVal1 / 0x400, 
-                        heapBlockArray.unk20 / 0x400, 
-                        memMonVal2 / 0x400, 
-                        heapBlockArray.unk34 / 0x400, 
-                        heapBlockArray.unk4, 
-                        heapBlockArray.unk0, 
-                        heapBlockArray.unk18, 
-                        heapBlockArray.unk14, 
-                        heapBlockArray.unk2C, 
-                        heapBlockArray.unk28);
+                        heapBlockArray[0].mem_allocated / 0x400,
+                        memMonVal1 / 0x400,
+                        heapBlockArray[1].mem_allocated / 0x400,
+                        memMonVal2 / 0x400,
+                        heapBlockArray[2].mem_allocated / 0x400,
+                        heapBlockArray[0].items_count,
+                        heapBlockArray[0].items_max,
+                        heapBlockArray[1].items_count,
+                        heapBlockArray[1].items_max,
+                        heapBlockArray[2].items_count,
+                        heapBlockArray[2].items_max);
     return memMonVal0 + memMonVal1 + memMonVal2;
 }
 #endif
