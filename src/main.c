@@ -371,3 +371,30 @@ void clear_PlayerPosBuffer(void)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/update_PlayerPosBuffer.s")
 #else
+void update_PlayerPosBuffer(void)
+{
+    s32 index;
+    TActor * player;
+    struct Vec3_Int * pos;
+
+    player = (TActor *)func_80023914();
+    pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
+    D_800AE674 += delayByte;
+
+    if (player != NULL)
+    {
+        pos->f.x = player->position.x;
+        pos->f.y = player->position.y;
+        pos->f.z = player->position.z;
+        pos->i = D_800AE674;
+        index = ++PlayerPosBuffer_index;
+        
+        if (index >= 0x3C) {
+            PlayerPosBuffer_index = 0;
+        }
+    }
+}
+#endif
+
+
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")
