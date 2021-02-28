@@ -137,9 +137,9 @@ void game_init(void)
     func_80041C6C(0);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/main_expPak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/main_no_expPak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick_no_expansion.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80013D80.s")
 
