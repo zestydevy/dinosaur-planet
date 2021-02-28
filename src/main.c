@@ -4,17 +4,17 @@
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
 void func_800483BC(f32, f32, s32);
-void some_init_func(void);
+void game_init(void);
 void func_80014614(void);
 struct UnkStruct80014614 **make_function_struct(s32, s32);
 
 void mainproc(void * arg)
 {
-    testWrite(); // ROM write check
-    some_init_func();
+    test_write(); // ROM write check
+    game_init();
 
     while(TRUE) {
-        checkDongle();  // copy protection check
+        check_dongle();  // copy protection check
         
         if (osMemSize != EXPANSION_SIZE) {
             main_no_expPak();
@@ -27,12 +27,12 @@ void mainproc(void * arg)
 }
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
-void some_init_func(void) {
+void game_init(void) {
     struct UnkStruct80014614 *temp_v0;
     s32 phi_v0;
     struct UnkStruct80014614 **tmp3;
 
-    initMemory();
+    init_memory();
     three_more_mallocs();
     create_some_thread();
 
@@ -236,7 +236,7 @@ void func_initing_rumblepak(void) {
 /* 
  * 
 */
-void testWrite(void) {
+void test_write(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
 
@@ -244,7 +244,7 @@ void testWrite(void) {
  * Probe the copy protection dongle for the correct magic string and
  * if failed, wipe a majority of RAM to prevent RAM viewing.
  */
-void checkDongle(void) {
+void check_dongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
@@ -364,6 +364,34 @@ void clear_PlayerPosBuffer(void)
     PlayerPosBuffer_index = 0;
 }
 
+// matches except for regalloc
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/update_PlayerPosBuffer.s")
+#else
+void update_PlayerPosBuffer(void)
+{
+    s32 index;
+    TActor * player;
+    struct Vec3_Int * pos;
+
+    player = (TActor *)func_80023914();
+    pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
+    D_800AE674 += delayByte;
+
+    if (player != NULL)
+    {
+        pos->f.x = player->position.x;
+        pos->f.y = player->position.y;
+        pos->f.z = player->position.z;
+        pos->i = D_800AE674;
+        index = ++PlayerPosBuffer_index;
+        
+        if (index >= 0x3C) {
+            PlayerPosBuffer_index = 0;
+        }
+    }
+}
+#endif
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")

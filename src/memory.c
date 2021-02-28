@@ -6,7 +6,7 @@ s32  increment_heap_block(s32, s32, s32, s32);
 s32  find_heap_block(void *ptr);
 void set_heap_block(struct HeapBlock *heap, s32 size, s32 max);
 
-void initMemory(void)
+void init_memory(void)
 {
     u32 addr = (u32)&bss_end;
 
@@ -14,7 +14,7 @@ void initMemory(void)
     while ((u32)mem < osMemSize)
         *mem++ = -1;
 
-    heapBlockArray_size = 0;
+    gHeapBlkListSize = 0;
 
     if (osMemSize != EXPANSION_SIZE)
     {
@@ -44,29 +44,29 @@ void _set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
     s32  phi_t1;
     struct HeapBlock *phi_t0;
 
-    temp_a3 = &heapBlockArray[heapBlockArray_size++];
-    temp_a3->items_max = max;
-    temp_a3->items_count = 0;
+    temp_a3 = &gHeapBlkList[gHeapBlkListSize++];
+    temp_a3->maxItems = max;
+    temp_a3->itemCount = 0;
     temp_a3->ptr = heap;
-    temp_a3->mem_allocated = size;
-    temp_a3->mem_used = 0;
+    temp_a3->memAllocated = size;
+    temp_a3->memUsed = 0;
     if (max > 0) {
-        for (phi_t1 = 0; phi_t1 < temp_a3->items_max; phi_t1++) {
+        for (phi_t1 = 0; phi_t1 < temp_a3->maxItems; phi_t1++) {
             heap[phi_t1].index = phi_t1;
         }
     }
     temp_t0 = temp_a3->ptr;
     temp_a0 = &heap[max];
     if (((u32)temp_a0 & 0xF) != 0) {
-        temp_t0->items_max = ALIGN16(temp_a0);
+        temp_t0->maxItems = ALIGN16(temp_a0);
     } else {
-        temp_t0->items_max = temp_a0;
+        temp_t0->maxItems = temp_a0;
     }
-    temp_t0->items_count = size - (max * 0x14);
+    temp_t0->itemCount = size - (max * 0x14);
     temp_t0->ptr = NULL;
     temp_t0->index = -1;
-    temp_t0->mem_allocated = -1;
-    temp_a3->items_count++;
+    temp_t0->memAllocated = -1;
+    temp_a3->itemCount++;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
@@ -113,7 +113,7 @@ int func_80016E68(void *a0)
     tmp = find_heap_block(a0);
 
     i = 0;
-    tmp = (u32)heapBlockArray[tmp].ptr;
+    tmp = (u32)gHeapBlkList[tmp].ptr;
 
     while (i != -1)
     {
@@ -162,10 +162,10 @@ s32 find_heap_block(void *ptr)
 {
     s32 i;
 
-    for (i = 0; i < heapBlockArray_size; i++)
+    for (i = 0; i < gHeapBlkListSize; i++)
     {
-        if (((u32)ptr > (u32)heapBlockArray[i].ptr))
-            if ((u32)ptr < ((u32)heapBlockArray[i].ptr + heapBlockArray[i].mem_allocated))
+        if (((u32)ptr > (u32)gHeapBlkList[i].ptr))
+            if ((u32)ptr < ((u32)gHeapBlkList[i].ptr + gHeapBlkList[i].memAllocated))
                 return i;
     }
 
@@ -176,7 +176,7 @@ s32 find_heap_block(void *ptr)
 
 struct HeapBlock *func_80017790(s32 a0, s32 a1)
 {
-    return heapBlockArray[a0].ptr;
+    return gHeapBlkList[a0].ptr;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800177B4.s")
@@ -226,30 +226,26 @@ u32 align_2(u32 a0) {
     return a0;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/some_memory_monitor.s")
-#else
-/*
- * debug memory monitor (ala SM64?)
- * uses a seemingly dummied out print function (could it possibly be restored?)
- *
-*/
-s32 some_memory_monitor(s32 arg0) {
-    dummied_print_func(&D_800991E0, memMonVal0 / 0x400,
-                        heapBlockArray.unkC / 0x400, 
-                        memMonVal1 / 0x400, 
-                        heapBlockArray.unk20 / 0x400, 
-                        memMonVal2 / 0x400, 
-                        heapBlockArray.unk34 / 0x400, 
-                        heapBlockArray.unk4, 
-                        heapBlockArray.unk0, 
-                        heapBlockArray.unk18, 
-                        heapBlockArray.unk14, 
-                        heapBlockArray.unk2C, 
-                        heapBlockArray.unk28);
+s32 dbg_heap_print(s32 arg0)
+{
+    dummied_print_func(
+        &D_800991E0, 
+        memMonVal0 / 0x400,
+        gHeapBlkList[0].memAllocated / 0x400, 
+        memMonVal1 / 0x400, 
+        gHeapBlkList[1].memAllocated / 0x400, 
+        memMonVal2 / 0x400, 
+        gHeapBlkList[2].memAllocated / 0x400, 
+        gHeapBlkList[0].itemCount, 
+        gHeapBlkList[0].maxItems, 
+        gHeapBlkList[1].itemCount, 
+        gHeapBlkList[1].maxItems, 
+        gHeapBlkList[2].itemCount, 
+        gHeapBlkList[2].maxItems
+    );
     return memMonVal0 + memMonVal1 + memMonVal2;
 }
-#endif
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
