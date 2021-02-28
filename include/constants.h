@@ -15,4 +15,6 @@
 #define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
 #define MAIN_THREAD_SIZE 1024
 
+#define DEBUG_LOOP1 do {/* omitted debug code */} while(0)
+
 #endif

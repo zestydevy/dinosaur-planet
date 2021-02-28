@@ -364,10 +364,6 @@ void clear_PlayerPosBuffer(void)
     PlayerPosBuffer_index = 0;
 }
 
-// matches except for regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/update_PlayerPosBuffer.s")
-#else
 void update_PlayerPosBuffer(void)
 {
     s32 index;
@@ -384,6 +380,10 @@ void update_PlayerPosBuffer(void)
         pos->f.y = player->position.y;
         pos->f.z = player->position.z;
         pos->i = D_800AE674;
+
+        // ??
+        DEBUG_LOOP1;
+        
         index = ++PlayerPosBuffer_index;
         
         if (index >= 0x3C) {
@@ -391,7 +391,6 @@ void update_PlayerPosBuffer(void)
         }
     }
 }
-#endif
 
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")
