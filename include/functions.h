@@ -9,7 +9,7 @@ void idle(void * arg);
 void mainproc(void * arg);
 
 void test_write(void);
-void initMemory(void);
+void init_memory(void);
 void main_no_expPak(void);
 void main_expPak(void);
 void threadTimerTick(void);
