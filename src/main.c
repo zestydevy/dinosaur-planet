@@ -137,7 +137,83 @@ void game_init(void)
     func_80041C6C(0);
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick.s")
+#else
+extern u32 *D_8009913C;
+void game_tick(void) {
+    u8 sp27;
+    f32 temp_f0;
+    u8 temp_t9;
+    u8 temp_v0_5;
+    void *temp_a0;
+    u8 phi_v1;
+
+    osSetTime(0);
+    func_80063300();
+    func_80037780(D_800AE678[D_800B09C1], D_800AE680, 0);
+    temp_t9 = D_800B09C1 ^ 1;
+    D_800B09C1 = temp_t9;
+    D_800AE680 = D_800AE678[temp_t9];
+    D_800AE690 = D_800AE688[temp_t9];
+    D_800AE6A0 = D_800AE698[temp_t9];
+    D_800AE6B0 = D_800AE6A8[temp_t9]);
+    func_80063330(D_800AE680, 0, &D_80099130, 0x28E);
+    func_8003CC50(&D_800AE680, 0, 0x80000000);
+    func_8003CC50(&D_800AE680, 1, framebufferCurrent);
+    func_8003CC50(&D_800AE680, 2, D_800BCCB4);
+    func_8003E9F0(&D_800AE680, delayByte);
+    func_80040FD0();
+    func_8003DB5C();
+    temp_a0 = D_80092A90;
+    if (temp_a0->unk28 != 0) {
+        temp_a0->unk28 = 0;
+        gDPPipeSync(D_800AE680++);
+    }
+    gDPSetDepthImage(D_800AE680++, 0x02000000);
+    func_80037EC8(&D_800AE680);
+    sp27 = 2;
+    if (func_80041D5C() == 0) {
+        phi_v1 = 0;
+    } else {
+        sp27 = 2;
+        phi_v1 = 2;
+        if (func_80041D74() == 0) {
+            phi_v1 = 3;
+        }
+    }
+    func_80037A14(&D_800AE680, &D_800AE690, phi_v1);
+    func_80007178();
+    func_80013D80();
+    func_800121DC();
+    (*D_8008C974)->unk4.withThreeArgs(&D_800AE680, &D_800AE690, &D_800AE6A0);
+    (*gDLL_subtitles)->unk1C(&D_800AE680);
+    func_80003CBC();
+    func_800129E4();
+    func_80060B94(&D_800AE680);
+    gDPFullSync(D_800AE680++);
+    gSPEndDisplayList(D_800AE680++);
+    func_80037924();
+    func_80020BB8();
+    update_mem_mon_values();
+    if (D_800B09C2 == 0) {
+        func_80001A3C();
+    }
+    temp_v0_5 = video_func_returning_delay(0);
+    delayByte = temp_v0_5;
+    if (temp_v0_5 >= 7) {
+        delayByte = 6;
+    }
+    delayFloat = delayByte;
+    temp_f0 = delayFloat;
+    inverseDelay = 1.0f / temp_f0;
+    delayByteMirror = delayByte;
+    delayFloatMirror = temp_f0;
+    inverseDelayMirror = 1.0f / delayFloatMirror;
+    func_80014074(&delayFloatMirror);
+    write_cFile_label_pointers(&D_8009913C, 0x37C);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick_no_expansion.s")
 
@@ -367,13 +443,8 @@ void clear_PlayerPosBuffer(void)
     PlayerPosBuffer_index = 0;
 }
 
-// matches except for regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/update_PlayerPosBuffer.s")
-#else
 void update_PlayerPosBuffer(void)
 {
-    s32 index;
     TActor * player;
     struct Vec3_Int * pos;
 
@@ -387,14 +458,12 @@ void update_PlayerPosBuffer(void)
         pos->f.y = player->position.y;
         pos->f.z = player->position.z;
         pos->i = D_800AE674;
-        index = ++PlayerPosBuffer_index;
         
-        if (index >= 0x3C) {
+        if (++PlayerPosBuffer_index >= 0x3C) {
             PlayerPosBuffer_index = 0;
         }
     }
 }
-#endif
 
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")
