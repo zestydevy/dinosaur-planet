@@ -29,7 +29,7 @@ void idle(void * arg)
     while (TRUE) {}
 }
 
-void threadTimerTick(void) {
+void thread_timer_tick(void) {
     ++gMainThreadStack[1024];
     ++gMainThreadStack[0];
 }
