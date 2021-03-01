@@ -34,7 +34,7 @@ LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.t
 
 OPTFLAGS := -O2 -g3
 
-GCC_CFLAGS = -Wall $(DEFINE_CFLAGS) $(INCLUDE_CFLAGS) -fno-PIC -fno-zero-initialized-in-bss -fno-toplevel-reorder -Wno-missing-braces
+GCC_CFLAGS = -Wall $(DEFINE_CFLAGS) $(INCLUDE_CFLAGS) -fno-PIC -fno-zero-initialized-in-bss -fno-toplevel-reorder -Wno-missing-braces -Wno-unknown-pragmas
 CC_CHECK = gcc -fsyntax-only -fno-builtin -nostdinc -fsigned-char -m32 $(GCC_CFLAGS) -std=gnu90 -Wall -Wextra -Wno-format-security -Wno-main -DNON_MATCHING -DAVOID_UB
 
 ######################## Targets #############################
