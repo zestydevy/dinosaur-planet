@@ -22,7 +22,7 @@ void mainproc(void * arg)
             game_tick();
         }
 
-        threadTimerTick();
+        thread_timer_tick();
     }
 }
 
@@ -31,7 +31,7 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
 void game_init(void) 
 {
     struct UnkStruct80014614 *temp_AMSEQ_DLL;
-    s32 phi_v0;
+    s32 tvMode;
     struct UnkStruct80014614 **tmp3;
 
     init_memory();
@@ -39,14 +39,15 @@ void game_init(void)
     create_some_thread();
 
     if (0) {
-    } else if (osTvType == 0) {
-        phi_v0 = 0x10;
-    } else if (osTvType == 2) {
-        phi_v0 = 0x1E;
+    } else if (osTvType == OS_TV_PAL) {
+        tvMode = OS_VI_PAL_LAN1;
+    } else if (osTvType == OS_TV_MPAL) {
+        tvMode = OS_VI_MPAL_LAN1;
     } else {
-        phi_v0 = 2;
+        tvMode = OS_VI_NTSC_LAN1;
     }
-    osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, phi_v0, 1);
+
+    osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, tvMode, 1);
     PiManager_thread_func();
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
