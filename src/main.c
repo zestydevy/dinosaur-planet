@@ -142,7 +142,7 @@ void game_init(void)
 #pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick.s")
 #else
 extern u32 *D_8009913C;
-void game_tick(void) {
+void _game_tick(void) {
     u8 sp27;
     f32 temp_f0;
     u8 temp_t9;
