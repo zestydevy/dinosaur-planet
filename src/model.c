@@ -66,7 +66,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4E4.s")
+void func_8001B4E4(s32 arg0) { //needs arg to match
+    //nothing here, but matches?
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4F0.s")
 
