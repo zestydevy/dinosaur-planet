@@ -36,7 +36,7 @@ void game_init(void)
 
     init_memory();
     three_more_mallocs();
-    create_some_thread();
+    create_asset_thread();
 
     if (0) {
     } else if (osTvType == OS_TV_PAL) {
