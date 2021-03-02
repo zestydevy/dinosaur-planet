@@ -3,7 +3,7 @@
 
 struct UnkMesg800AE270 {
     u8 loadCategory; // loading single or asset?
-    u8 loadType; // type of asset?
+    u8 loadType;
     s32 unk4;  // offset in LUT?
     s32 *unk8;  // LUT?
     s32 unkC;
