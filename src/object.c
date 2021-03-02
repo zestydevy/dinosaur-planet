@@ -4,7 +4,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020778.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A40.s")
+void func_80020A40(void) {
+// 'nother stubbed function...
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A48.s")
 
