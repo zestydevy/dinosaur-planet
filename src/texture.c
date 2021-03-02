@@ -101,3 +101,4 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040CD0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040EFC.s")
+
