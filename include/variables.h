@@ -152,13 +152,11 @@ extern u8 D_800B09C4;
 extern u8 D_8008C94C;
 extern s32 D_800B179C;
 extern s8 some_controller_init_val;
-extern u32 PlayerPosBuffer_index;
+extern s32 PlayerPosBuffer_index;
 extern struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with "timestamp"
 
-extern s32 memMonVal0;
-extern s32 memMonVal1;
-extern s32 memMonVal2;
-extern s32 D_800991E0;
+
+extern int func_printing_null_nil ( char * str, const char * format, ... );
 
 extern u16 buttonInput0[4];
 extern u16 buttonInput1[4];
