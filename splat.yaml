@@ -212,14 +212,22 @@ segments:
     - [0x8A210, c]
     - [0x8A260, c]
     - [0x8A2B0, c]
-
-  - type: code
-    start: 0x8A350
-    subsections:
-    
+    # data/rodata for this section
     - [0x8A350, bin]
 
+    - [0x99CA0, .rodata, queue]
+
+    - [0x99D10, bin]
+    # - [0x99D10, .rodata, main]
+
+    - [0x99DB0, bin]
+
     - [0xA4550, bin, ucode]
+
+  - type: code
+    start: 0xA4AA0
+    subsections:
+    
 
     - [0xA4AA0, bin, assets/AUDIO_tab]
     - [0xA4B0C, bin, assets/AUDIO]
