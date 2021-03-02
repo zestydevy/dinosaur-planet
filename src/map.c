@@ -90,7 +90,29 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004478C.s")
 
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_get_map_id_from_xz_ws.s")
+#else
+s32 floor_f(f32);
+extern s32 gMapCurrentStreamCoords;
+extern s32 D_80092A6C;
+extern u32 *gDecodedGlobalMap;
+s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
+    s32 temp_a1;
+    s32 temp_v1;
+
+    temp_a1 = floor_f(arg0 / 640.0f) - gMapCurrentStreamCoords;
+    temp_v1 = floor_f(arg1 / 640.0f) - D_80092A6C;
+    if ((temp_a1 < 0) || (temp_a1 >= 0x10)) {
+        return -1;
+    }
+    if ((temp_v1 < 0) || (temp_v1 >= 0x10)) {
+        return -1;
+    }
+    return *(gDecodedGlobalMap + (temp_v1 * 0x30 * 4) + (temp_a1 * 0xC));
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800448D0.s")
 
