@@ -5,7 +5,6 @@ f32 vec3_dot(Vec3f *v1, Vec3f *v2) {
     return (v2->z * v1->z) + ((v1->x * v2->x) + (v1->y * v2->y));
 }
 
-
 f32 vec3_hypotenouse(Vec3f *v) {
     return _sqrtf((v->z * v->z) + ((v->x * v->x) + (v->y * v->y)));
 }
