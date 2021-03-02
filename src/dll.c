@@ -4,7 +4,10 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/some_crash_setter.s")
+void some_crash_setter(s32 arg0, s32 arg1) {
+    D_800A7D14 = arg1;
+    D_800A7D10 = arg0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BDE8.s")
 
