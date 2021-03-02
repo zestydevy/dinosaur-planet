@@ -9,7 +9,10 @@ void some_crash_setter(s32 arg0, s32 arg1) {
     D_800A7D10 = arg0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BDE8.s")
+s32 func_8000BDE8(s32 *arg0) {
+    *arg0 = (s32) D_800A7D14;
+    return D_800A7D10;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_deferred.s")
 
