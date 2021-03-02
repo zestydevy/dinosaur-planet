@@ -252,11 +252,11 @@ void _func_80012D04(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
 #endif
 
 
-// regalloc that needs intel on asset_thread_load_single/asset_thread_load_asset
-// to match
+// regalloc
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/queue/asset_thread_main.s")
 #else
+s32 func_with_status_reg(void);
 extern u8 D_800AE29D, D_800AE29E;
 extern struct UnkMesg800AE270 D_800ACB60, D_800ACB80, D_800ACBB0;
 void _asset_thread_main(s32 arg0) {
@@ -272,10 +272,11 @@ void _asset_thread_main(s32 arg0) {
 	    osRecvMesg(&D_800ACB48, &sp34, 1);
 	    switch (sp34->unk0) {
 			case 0:
-	        	asset_thread_load_single();
-	        	break;
-	        case 1: default:
-	        	asset_thread_load_asset();
+				asset_thread_load_single(sp34);
+				break;
+	        case 1:
+	        default:
+	        	asset_thread_load_asset(sp34);
 	        	break;
 	    }
 	    temp_v0 = func_with_status_reg();
