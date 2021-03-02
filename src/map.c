@@ -238,7 +238,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A284.s")
 
-s32 func_8004A2CC(s32 arg0) { //maybe rewrite? idfk
+s32 func_8004A2CC(s32 arg0) { //should this be rewritten?
     return (arg0 * 0x10) + D_800B97A4;
 }
 
