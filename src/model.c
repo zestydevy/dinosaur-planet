@@ -67,7 +67,7 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
 
 void func_8001B4E4(s32 arg0) { //needs arg to match
-    //nothing here, but matches?
+    //nothing here, but matches? // TODO: check early GC binary leftover on SFA kiosk disc?
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4F0.s")
