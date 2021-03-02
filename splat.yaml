@@ -58,8 +58,8 @@ segments:
     - [0x38380, c]
     - [0x3B750, c]
     - [0x3C1B0, c, scheduler]
-    - [0x3D850, c, texture]
-    - [0x3D890, c]
+    - [0x3D850, c]
+    - [0x3D890, c, texture]
     - [0x41BD0, c, map]
     - [0x535C0, c]
     - [0x53F00, c]
@@ -212,12 +212,22 @@ segments:
     - [0x8A210, c]
     - [0x8A260, c]
     - [0x8A2B0, c]
+    # data/rodata for this section
+    - [0x8A350, bin]
+
+    - [0x99CA0, .rodata, queue]
+
+    - [0x99D10, bin]
+    # - [0x99D10, .rodata, main]
+
+    - [0x99DB0, bin]
+
+    - [0xA4550, bin, ucode]
 
   - type: code
-    start: 0x8A350
+    start: 0xA4AA0
     subsections:
     
-    - [0x8A350, bin]
 
     - [0xA4AA0, bin, assets/AUDIO_tab]
     - [0xA4B0C, bin, assets/AUDIO]
