@@ -22,7 +22,14 @@ s32 func_8000BDE8(s32 *arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
+#else
+s32 func_8000C3BC(void) { // tf??? intentional crash? this makes no sense to me
+    *NULL = (u8)0;
+    return 0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 
