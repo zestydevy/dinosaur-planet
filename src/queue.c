@@ -46,8 +46,8 @@ void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s
 struct UnkMesg800AE270 {
 	u8 unk0; // loading single or asset?
 	u8 unk1; // type of asset?
-	s32 unk4;
-	s32 unk8;
+	s32 unk4;  // offset in LUT?
+	s32 unk8;  // LUT?
 	s32 unkC;
 	s32 unk10;
 	s32 unk14;

@@ -58,8 +58,8 @@ segments:
     - [0x38380, c]
     - [0x3B750, c]
     - [0x3C1B0, c, scheduler]
-    - [0x3D850, c, texture]
-    - [0x3D890, c]
+    - [0x3D850, c]
+    - [0x3D890, c, texture]
     - [0x41BD0, c, map]
     - [0x535C0, c]
     - [0x53F00, c]
@@ -218,6 +218,8 @@ segments:
     subsections:
     
     - [0x8A350, bin]
+
+    - [0xA4550, bin, ucode]
 
     - [0xA4AA0, bin, assets/AUDIO_tab]
     - [0xA4B0C, bin, assets/AUDIO]
