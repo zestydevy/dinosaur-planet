@@ -885,3 +885,13 @@ model_setup_anim_playback = 0x80018f80; // type:func
 
 objSetupObjectActual = 0x80021450; // type:func
 createModelInstance = 0x80018314; // type:func
+
+vec3_dot = 0x80016580; // type:func
+vec3_hypotenouse = 0x800165b4; // type:func
+vec3_squared = 0x800165f4; // type:func
+func_80016620 = 0x80016620; // type:func
+func_80016694 = 0x80016694; // type:func
+possible_vec3_normalize = 0x80016708; // type:func
+vec3_c_AminB = 0x8001679c; // type:func
+vec3_AplusBtimesC = 0x800167d4; // type:func
+func_80016820 = 0x80016820; // type:func
