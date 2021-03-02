@@ -198,4 +198,7 @@ extern struct ErrString errStringArray_fpsr[];
 extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
+extern s32 D_800A7D14;
+extern s32 D_800A7D10;
+extern s32 D_800B97A4;
 #endif
