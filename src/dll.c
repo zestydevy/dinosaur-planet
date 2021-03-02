@@ -22,15 +22,11 @@ s32 func_8000BDE8(s32 *arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
-#else
 s32 func_8000C3BC(void) { // this function is super weird
     //*NULL = (u8)0; //it's supposed to to this.... (crash game)
     *(volatile char *)0 = 0;  //but ido optimizes to this
     return 0;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 
