@@ -16,7 +16,9 @@ typedef float Vec3[3];
 typedef float Vec4[4];
 
 //prelimnary, lots of unknowns
-typedef struct {
+//contains pointer-to-own-type fields, so `typedef struct _TActor {`
+//must be used instead of `typedef struct {`
+typedef struct TActor {
 /*0000*/  s16 rotation[3]; //why short?
 /*0006*/  s16 unk0x6;
 /*0008*/  float scale;
@@ -25,7 +27,7 @@ typedef struct {
 	Vec3f speed;
 	void* ptr0x30;
 	UNK_TYPE_32 unk0x34;
-	void* ptr0x38;
+	struct TActor* linkedActor;
 	u8 unk0x3c[3];
 	UNK_TYPE_16 unk0x44;
 	UNK_TYPE_16 unk0x46;
