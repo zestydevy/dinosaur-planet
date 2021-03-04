@@ -1,2 +1,0 @@
-framebufferAddress_ExpPak = 0x80119000;
-framebufferAddress_NoExpPak = 0x802d4000;
