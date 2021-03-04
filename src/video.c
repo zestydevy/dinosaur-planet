@@ -37,7 +37,7 @@ void func_8005CA5C(u32 param1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_video_mode.s")
 #else
 void set_video_mode(u32 mode) {
-    video_mode = mode;
+    gVideoMode = mode;
 }
 #endif
 
@@ -45,7 +45,7 @@ void set_video_mode(u32 mode) {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/get_video_mode.s")
 #else
 u32 get_video_mode() {
-    return video_mode;
+    return gVideoMode;
 }
 #endif
 
@@ -61,12 +61,12 @@ OSMesgQueue* get_addr_of_OSMesgQueue_8005D670() {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_current_resolution_from_video_mode.s")
 #else
 // Note: framebufferIndex was decided on because another function calls this
-//       with framebufferChoice (which is either 0 or 1 presumably) and
-//       CurrentResolutionH and CurrentResolutionV both conveniently contain
+//       with gFramebufferChoice (which is either 0 or 1 presumably) and
+//       gCurrentResolutionH and gCurrentResolutionV both conveniently contain
 //       2 integers, which are likely for each framebuffer.
 void set_current_resolution_from_video_mode(int framebufferIndex) {
-    CurrentResolutionH[framebufferIndex] = resolutionArray[video_mode & 7].h;
-    CurrentResolutionV[framebufferIndex] = resolutionArray[video_mode & 7].v;
+    gCurrentResolutionH[framebufferIndex] = gResolutionArray[gVideoMode & 7].h;
+    gCurrentResolutionV[framebufferIndex] = gResolutionArray[gVideoMode & 7].v;
 }
 #endif
 
@@ -79,8 +79,8 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
  * Returns the current framebuffer's resolution encoded as 0xVVVV_HHHH.
  */
 u32 get_current_resolution_encoded() {
-    return (CurrentResolutionV[framebufferChoice < 1] << 0x10) | 
-            CurrentResolutionH[framebufferChoice < 1];
+    return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) | 
+            gCurrentResolutionH[gFramebufferChoice < 1];
 }
 #endif
 
@@ -101,7 +101,7 @@ void set_custom_vi_mode() {
     }
 
     // Determine VI mode from video mode and VI LPN
-    switch (video_mode & 0x7) {
+    switch (gVideoMode & 0x7) {
         case 0x1:
         default:
             viMode = &osViModeTable[2 + viLpn];
@@ -111,30 +111,30 @@ void set_custom_vi_mode() {
             break;
     }
 
-    // Set OSViMode_custom to the chosen VI mode
+    // Set gOSViModeCustom to the chosen VI mode
     _bcopy(
         viMode,
-        &OSViMode_custom,
+        &gOSViModeCustom,
         0x50 // OSViMode size = 0x50 (80 bytes)
     );
 
     // Make PAL-specific vStart adjustments
     if (osTvType == OS_TV_PAL) {
-        OSViMode_custom.fldRegs[0].vStart -= 0x180000;
-        OSViMode_custom.fldRegs[1].vStart -= 0x180000;
-        OSViMode_custom.fldRegs[0].vStart += 0x10;
-        OSViMode_custom.fldRegs[1].vStart += 0x10;
+        gOSViModeCustom.fldRegs[0].vStart -= 0x180000;
+        gOSViModeCustom.fldRegs[1].vStart -= 0x180000;
+        gOSViModeCustom.fldRegs[0].vStart += 0x10;
+        gOSViModeCustom.fldRegs[1].vStart += 0x10;
     }
 
-    OSViMode_custom.fldRegs[0].vStart += vscale_mod * 0x20000;
-    OSViMode_custom.fldRegs[1].vStart += vscale_mod * 0x20000;
-    OSViMode_custom.fldRegs[0].vStart += vscale_mod * 0x2;
-    OSViMode_custom.fldRegs[1].vStart += vscale_mod * 0x2;
-    OSViMode_custom.comRegs.hStart += hstartMod * 0x20000;
-    OSViMode_custom.comRegs.hStart += hstartMod * 0x2;
+    gOSViModeCustom.fldRegs[0].vStart += vscale_mod * 0x20000;
+    gOSViModeCustom.fldRegs[1].vStart += vscale_mod * 0x20000;
+    gOSViModeCustom.fldRegs[0].vStart += vscale_mod * 0x2;
+    gOSViModeCustom.fldRegs[1].vStart += vscale_mod * 0x2;
+    gOSViModeCustom.comRegs.hStart += hstartMod * 0x20000;
+    gOSViModeCustom.comRegs.hStart += hstartMod * 0x2;
 
     // Use the custom VI mode and set some special features
-    osViSetMode(&OSViMode_custom);
+    osViSetMode(&gOSViModeCustom);
     osViSetSpecialFeatures(OS_VI_DIVOT_ON);
     osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
     osViSetSpecialFeatures(OS_VI_GAMMA_OFF);
@@ -147,6 +147,7 @@ void set_custom_vi_mode() {
 #define framebufferAddress_NoExpPak_addr 0x802d4000
 #define framebufferAddress_ExpPak_addr 0x80119000
 
+// initialize_framebuffers?
 void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
     u32 hRes;
     u32 vRes;
@@ -154,40 +155,40 @@ void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
     u32 temp;
     u32 temp2;
 
-    vRes = (video_mode & 0x7) * 2;
+    vRes = (gVideoMode & 0x7) * 2;
     temp2 = vRes;
-    resPtr = (&resolutionArray) + temp2;
+    resPtr = (&gResolutionArray) + temp2;
 
     hRes = resPtr[0];
     resPtr = resPtr;
     vRes = resPtr[1];
 
-    CurrentResolutionH[0] = hRes;
-    CurrentResolutionH[1] = hRes;
-    CurrentResolutionV[0] = vRes;
-    CurrentResolutionV[1] = vRes;
+    gCurrentResolutionH[0] = hRes;
+    gCurrentResolutionH[1] = hRes;
+    gCurrentResolutionV[0] = vRes;
+    gCurrentResolutionV[1] = vRes;
     
     if (osMemSize != 0x800000)
     {
-        framebufferPointers[0] = 0x802d4000;
-        framebufferPointers[1] = 0x802d4000 + ((param2 * param3) * 2);
-        framebufferStart = 0x802d4000;
+        gFramebufferPointers[0] = 0x802d4000;
+        gFramebufferPointers[1] = 0x802d4000 + ((param2 * param3) * 2);
+        gFramebufferStart = 0x802d4000;
         return;
     }
 
     if (param3 == 0x1e0)
     {
-        framebufferPointers[0] = 0x80119000;
-        framebufferPointers[1] = 0x80119000 + ((param2 * param3) * 2);
-        framebufferStart = 0x80119000;
+        gFramebufferPointers[0] = 0x80119000;
+        gFramebufferPointers[1] = 0x80119000 + ((param2 * param3) * 2);
+        gFramebufferStart = 0x80119000;
         return;
     }
 
     temp = (param2 * param3) * 2;
-    framebufferPointers[0] = 0x80119000;
-    framebufferPointers[1] = 0x80119000 + temp;
-    frameBufferEnd = ((int) (temp + 0x80119000)) + temp;
-    framebufferStart = 0x80200000;
+    gFramebufferPointers[0] = 0x80119000;
+    gFramebufferPointers[1] = 0x80119000 + temp;
+    gFrameBufferEnd = ((int) (temp + 0x80119000)) + temp;
+    gFramebufferStart = 0x80200000;
 }
 #endif
 
@@ -207,29 +208,29 @@ void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/swap_framebuffer_pointers.s")
 #else
 /**
- * Swaps framebufferCurrent and framebufferNext.
+ * Swaps gFramebufferCurrent and gFramebufferNext.
  * 
- * Uses framebufferChoice to keep track of the index for the next framebuffer to swap to.
+ * Uses gFramebufferChoice to keep track of the index for the next framebuffer to swap to.
  */
 void swap_framebuffer_pointers() {
     // Set the current framebuffer to the one last chosen for framebufferNext (see below)
-    framebufferCurrent = framebufferPointers[framebufferChoice];
+    gFramebufferCurrent = gFramebufferPointers[gFramebufferChoice];
     
     // TODO: what is this doing?
-    D_800bccb4 = framebufferStart; // D_800bccb4 = &framebufferCurrent+8
+    D_800bccb4 = gFramebufferStart; // D_800bccb4 = &framebufferCurrent+8
     
     // Swap choice to the other framebuffer index
     //
     // Assuming there are 2 framebuffers, this will flip between 0 and 1:
     //   0 ^ 1 = 1
     //   1 ^ 1 = 0
-    framebufferChoice = framebufferChoice ^ 1;
+    gFramebufferChoice = gFramebufferChoice ^ 1;
 
     // Set next framebuffer to the swapped index
-    framebufferNext = framebufferPointers[framebufferChoice];
+    gFramebufferNext = gFramebufferPointers[gFramebufferChoice];
 
     // TODO: what is this doing?
-    D_800bccb0 = framebufferStart; // D_800bccb0 = &framebufferCurrent+4
+    D_800bccb0 = gFramebufferStart; // D_800bccb0 = &framebufferCurrent+4
 }
 #endif
 

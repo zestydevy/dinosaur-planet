@@ -107,14 +107,6 @@ struct ErrString{
 	char* text;
 };
 
-/**
- * Holds the horizontal and vertical resolution for video related functions.
- */
-typedef struct VideoResolution {
-	u32 h;
-	u32 v;
-} VideoResolution;
-
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
 // this needs double checking. its address is within gMainThreadStack....
@@ -183,23 +175,7 @@ extern s8 joyYSign[4];
 extern u8 MenuInputDelay; //init'd to 5.
 extern OSThread controller_thread;
 
-extern void* framebufferNext;
-extern void* framebufferCurrent;
-extern OSViMode OSViMode_custom;
-extern u32 CurrentResolutionH[2]; //picked from resolutionArray[video_mode % 7]
-extern u32 CurrentResolutionV[2]; //one for each FB, apparently
-extern void* framebufferPointers[2]; //{FBaddr,FBaddr*H*V*2}
-
-extern u32 framebufferAddress_ExpPak;
-extern u32 framebufferAddress_NoExpPak;
-
-extern u32* framebufferStart;
-extern u32* frameBufferEnd;
-extern u32 framebufferChoice; 
-extern u32 video_mode;
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
-extern VideoResolution resolutionArray[];
-
 
 extern u8 delayByte; //60/int(x) FPS x<=6
 extern u8 delayByteMirror;
@@ -226,4 +202,5 @@ extern u32 D_800bccb4;
 extern u32 D_800bccb0;
 extern u8 D_800bcc78;
 extern OSMesgQueue OSMesgQueue_800bcce0;
+
 #endif
