@@ -213,4 +213,7 @@ extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
 extern s8 vscale_mod;
 extern s8 hstartMod;
+
+extern u32 D_800bccb4;
+extern u32 D_800bccb0;
 #endif

@@ -165,7 +165,35 @@ void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/swap_framebuffer_pointers.s")
+#else
+/**
+ * Swaps framebufferCurrent and framebufferNext.
+ * 
+ * Uses framebufferChoice to keep track of the index for the next framebuffer to swap to.
+ */
+void swap_framebuffer_pointers() {
+    // Set the current framebuffer to the one last chosen for framebufferNext (see below)
+    framebufferCurrent = framebufferPointers[framebufferChoice];
+    
+    // TODO: what is this doing?
+    D_800bccb4 = framebufferStart; // D_800bccb4 = &framebufferCurrent+8
+    
+    // Swap choice to the other framebuffer index
+    //
+    // Assuming there are 2 framebuffers, this will flip between 0 and 1:
+    //   0 ^ 1 = 1
+    //   1 ^ 1 = 0
+    framebufferChoice = framebufferChoice ^ 1;
+
+    // Set next framebuffer to the swapped index
+    framebufferNext = framebufferPointers[framebufferChoice];
+
+    // TODO: what is this doing?
+    D_800bccb0 = framebufferStart; // D_800bccb0 = &framebufferCurrent+4
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD2C.s")
 
