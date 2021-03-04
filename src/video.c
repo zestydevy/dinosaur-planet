@@ -72,7 +72,17 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D6C8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D724.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/get_current_resolution_encoded.s")
+#else
+/**
+ * Returns the current framebuffer's resolution encoded as 0xVVVV_HHHH.
+ */
+u32 get_current_resolution_encoded() {
+    return (CurrentResolutionV[framebufferChoice < 1] << 0x10) | 
+            CurrentResolutionH[framebufferChoice < 1];
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_custom_vi_mode.s")

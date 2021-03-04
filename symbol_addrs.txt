@@ -892,3 +892,4 @@ vec3_add_with_scale = 0x800167d4; // type:func
 vec3_reflect = 0x80016820; // type:func
 get_addr_of_OSMesgQueue_8005D670 = 0x8005D670; // type:func
 set_current_resolution_from_video_mode = 0x8005D680; // type:func
+get_current_resolution_encoded = 0x8005D724; // type:func
