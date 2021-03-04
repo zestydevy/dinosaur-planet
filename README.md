@@ -1,4 +1,4 @@
-<img src=https://i.imgur.com/8xvsIyq.png></img>
+<img src=https://media.discordapp.net/attachments/383113459581321217/817157532346351626/banner_out.png></img>
 
 
 A WIP decompilation of Dinosaur Planet for the Nintendo 64, as released by Forest of Illusion on Feb. 20, 2021.
