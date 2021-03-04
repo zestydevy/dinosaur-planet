@@ -217,4 +217,5 @@ extern s8 hstartMod;
 extern u32 D_800bccb4;
 extern u32 D_800bccb0;
 extern u8 D_800bcc78;
+extern OSMesgQueue OSMesgQueue_800bcce0;
 #endif

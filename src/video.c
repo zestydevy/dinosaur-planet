@@ -49,7 +49,13 @@ u32 get_video_mode() {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D670.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/get_addr_of_OSMesgQueue_8005D670.s")
+#else
+OSMesgQueue* get_addr_of_OSMesgQueue_8005D670() {
+    return &OSMesgQueue_800bcce0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D680.s")
 
