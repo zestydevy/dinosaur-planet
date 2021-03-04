@@ -103,7 +103,55 @@ void set_custom_vi_mode() {
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_framebuffer_pointers.s")
+#else
+#define framebufferAddress_NoExpPak_addr 0x802d4000
+#define framebufferAddress_ExpPak_addr 0x80119000
+
+void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
+    u32 hRes;
+    u32 vRes;
+    u32 *resPtr;
+    u32 temp;
+    u32 temp2;
+
+    vRes = (video_mode & 0x7) * 2;
+    temp2 = vRes;
+    resPtr = (&resolutionArray) + temp2;
+
+    hRes = resPtr[0];
+    resPtr = resPtr;
+    vRes = resPtr[1];
+
+    CurrentResolutionH[0] = hRes;
+    CurrentResolutionH[1] = hRes;
+    CurrentResolutionV[0] = vRes;
+    CurrentResolutionV[1] = vRes;
+    
+    if (osMemSize != 0x800000)
+    {
+        framebufferPointers[0] = 0x802d4000;
+        framebufferPointers[1] = 0x802d4000 + ((param2 * param3) * 2);
+        framebufferStart = 0x802d4000;
+        return;
+    }
+
+    if (param3 == 0x1e0)
+    {
+        framebufferPointers[0] = 0x80119000;
+        framebufferPointers[1] = 0x80119000 + ((param2 * param3) * 2);
+        framebufferStart = 0x80119000;
+        return;
+    }
+
+    temp = (param2 * param3) * 2;
+    framebufferPointers[0] = 0x80119000;
+    framebufferPointers[1] = 0x80119000 + temp;
+    frameBufferEnd = ((int) (temp + 0x80119000)) + temp;
+    framebufferStart = 0x80200000;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D9D8.s")
 
