@@ -46,7 +46,62 @@ u32 get_video_mode() {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D724.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/set_custum_vi_mode.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/set_custom_vi_mode.s")
+#else
+void set_custom_vi_mode() {
+    u8 viLpn;
+    OSViMode* viMode;
+
+    // Determine VI LPN from TV type
+    viLpn = OS_VI_NTSC_LPN1;
+    
+    if (osTvType == OS_TV_PAL) {
+        viLpn = OS_VI_PAL_LPN1;
+    } else if (osTvType == OS_TV_MPAL) {
+        viLpn = OS_VI_MPAL_LPN1;
+    }
+
+    // Determine VI mode from video mode and VI LPN
+    switch (video_mode & 0x7) {
+        case 0x1:
+        default:
+            viMode = &osViModeTable[2 + viLpn];
+            break;
+        case 0x6:
+            viMode = &osViModeTable[11 + viLpn];
+            break;
+    }
+
+    // Set OSViMode_custom to the chosen VI mode
+    _bcopy(
+        viMode,
+        &OSViMode_custom,
+        0x50 // OSViMode size = 0x50 (80 bytes)
+    );
+
+    // Make PAL-specific vStart adjustments
+    if (osTvType == OS_TV_PAL) {
+        OSViMode_custom.fldRegs[0].vStart -= 0x180000;
+        OSViMode_custom.fldRegs[1].vStart -= 0x180000;
+        OSViMode_custom.fldRegs[0].vStart += 0x10;
+        OSViMode_custom.fldRegs[1].vStart += 0x10;
+    }
+
+    OSViMode_custom.fldRegs[0].vStart += vscale_mod * 0x20000;
+    OSViMode_custom.fldRegs[1].vStart += vscale_mod * 0x20000;
+    OSViMode_custom.fldRegs[0].vStart += vscale_mod * 0x2;
+    OSViMode_custom.fldRegs[1].vStart += vscale_mod * 0x2;
+    OSViMode_custom.comRegs.hStart += hstartMod * 0x20000;
+    OSViMode_custom.comRegs.hStart += hstartMod * 0x2;
+
+    // Use the custom VI mode and set some special features
+    osViSetMode(&OSViMode_custom);
+    osViSetSpecialFeatures(OS_VI_DIVOT_ON);
+    osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
+    osViSetSpecialFeatures(OS_VI_GAMMA_OFF);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_framebuffer_pointers.s")
 

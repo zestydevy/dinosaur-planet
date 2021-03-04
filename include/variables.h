@@ -175,7 +175,7 @@ extern OSThread controller_thread;
 
 extern void* framebufferNext;
 extern void* framebufferCurrent;
-extern OSViMode OSViMode_Custom;
+extern OSViMode OSViMode_custom;
 extern u32 CurrentResolutionH[2]; //picked from resolutionArray[video_mode % 7]
 extern u32 CurrentResolutionV[2]; //one for each FB, apparently
 extern void* framebufferPointers[2]; //{FBaddr,FBaddr*H*V*2}
@@ -201,4 +201,7 @@ extern struct ErrString errStringArray_fpsr[];
 extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
+
+extern s8 vscale_mod;
+extern s8 hstartMod;
 #endif
