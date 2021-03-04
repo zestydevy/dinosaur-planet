@@ -22,9 +22,21 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D410.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_video_mode.s")
+#else
+void set_video_mode(u32 mode) {
+    video_mode = mode;
+}
+#endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/get_video_mode.s")
+#else
+u32 get_video_mode() {
+    return video_mode;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D670.s")
 
