@@ -8,6 +8,15 @@ void game_init(void);
 void init_bittable(void);
 struct UnkStruct80014614 **dll_load_deferred(s32, s32);
 
+const char gameVer[] = "1.3623";
+const char curentTime[] = "01/12/00 09:19";
+const char gameName[] = "dragon1";
+const char fileName[] = "main/main.c";
+const char fileName2[] = "main/main.c";
+
+const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
+const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
+
 void mainproc(void * arg)
 {
     test_write(); // ROM write check
