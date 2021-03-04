@@ -3,8 +3,19 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C998.s")
+void func_8005C998();
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA5C.s")
+#else
+void func_8005CA5C(u32 param1) {
+    D_800bcc78 = param1;
+
+    if (param1 == 0) {
+        func_8005C998();
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA88.s")
 
