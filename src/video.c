@@ -57,7 +57,18 @@ OSMesgQueue* get_addr_of_OSMesgQueue_8005D670() {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D680.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/set_current_resolution_from_video_mode.s")
+#else
+// Note: framebufferIndex was decided on because another function calls this
+//       with framebufferChoice (which is either 0 or 1 presumably) and
+//       CurrentResolutionH and CurrentResolutionV both conveniently contain
+//       2 integers, which are likely for each framebuffer.
+void set_current_resolution_from_video_mode(int framebufferIndex) {
+    CurrentResolutionH[framebufferIndex] = resolutionArray[video_mode & 7].h;
+    CurrentResolutionV[framebufferIndex] = resolutionArray[video_mode & 7].v;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D6C8.s")
 

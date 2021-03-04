@@ -107,6 +107,14 @@ struct ErrString{
 	char* text;
 };
 
+/**
+ * Holds the horizontal and vertical resolution for video related functions.
+ */
+typedef struct VideoResolution {
+	u32 h;
+	u32 v;
+} VideoResolution;
+
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
 // this needs double checking. its address is within gMainThreadStack....
@@ -190,7 +198,7 @@ extern u32* frameBufferEnd;
 extern u32 framebufferChoice; 
 extern u32 video_mode;
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
-extern u32* resolutionArray;
+extern VideoResolution resolutionArray[];
 
 
 extern u8 delayByte; //60/int(x) FPS x<=6
