@@ -25,7 +25,46 @@ void func_8005CA5C(u32 param1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
+#else
+void _func_8005CD80()
+{
+    UnknownVideoStruct *vStruct;
+    u8 *vStructArray;
+    u8 *vStructArray0x10;
+    u8 *vStructArray0x20;
+    short zero;
+    zero = 0;
+    vStruct = &gUnknownVideoStructs[zero];
+    vStructArray = &vStruct->unk0x18[zero];
+    
+    do
+    {
+        vStructArray0x10 = vStructArray + 0x10;
+        vStructArray0x20 = vStructArray0x10 + 0x10;
+
+        if (vStruct->viMode != NULL)
+        {
+            vStruct->unk0x88 -= 5;
+            
+            if (vStruct->unk0x88 < zero)
+            {
+                vStruct->unk0x88 = zero;
+            }
+
+            vStructArray[0xf] = vStruct->unk0x88;
+            vStructArray0x10[0xf] = vStruct->unk0x88;
+            vStructArray0x10[0x1f] = vStruct->unk0x88;
+            vStructArray0x20[0xf] = vStruct->unk0x88;
+        }
+
+        vStructArray += 0x90;
+        vStruct++;
+    }
+    while ((vStructArray != ((&gMaybeCurrentUnknownVideoStruct.unk0x18[zero])) != 0));
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CDFC.s")
 
