@@ -1,6 +1,6 @@
 #include "common.h"
 
-bool func_8005BC38(u32* param1);
+bool func_8005BC38(u32 *param1);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
 
@@ -116,7 +116,7 @@ u32 get_current_resolution_encoded() {
 #else
 void set_custom_vi_mode() {
     u8 viLpn;
-    OSViMode* viMode;
+    OSViMode *viMode;
 
     // Determine VI LPN from TV type
     viLpn = OS_VI_NTSC_LPN1;

@@ -17,8 +17,8 @@ typedef struct VideoResolution {
 
 extern OSViMode gOSViModeCustom;
 
-extern void* gFramebufferNext;
-extern void* gFramebufferCurrent;
+extern void *gFramebufferNext;
+extern void *gFramebufferCurrent;
 
 /**
  * Holds the horizontal resolution of each framebuffer.
@@ -34,13 +34,13 @@ extern u32 gCurrentResolutionV[2];
  * 
  * {FBaddr,FBaddr*H*V*2} // TODO: <- what does that mean?
  */
-extern void* gFramebufferPointers[2];
+extern void *gFramebufferPointers[2];
 
 extern u32 framebufferAddress_ExpPak;
 extern u32 framebufferAddress_NoExpPak;
 
-extern u32* gFramebufferStart;
-extern u32* gFramebufferEnd;
+extern u32 *gFramebufferStart;
+extern u32 *gFramebufferEnd;
 
 /**
  * A framebuffer index into gFramebufferPointers.
