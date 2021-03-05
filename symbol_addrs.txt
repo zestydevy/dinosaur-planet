@@ -895,3 +895,6 @@ set_current_resolution_from_video_mode = 0x8005D680; // type:func
 get_current_resolution_encoded = 0x8005D724; // type:func
 get_framebuffer_start = 0x8005DD2C; // type:func
 get_framebuffer_end = 0x8005DD3C; // type:func
+
+gPossiblyScreenWidthOrHeight = 0x80092e98; // type:data size:0x4
+gSomeVideoFlag = 0x80092ea0; // type:data size:0x4
