@@ -10,6 +10,7 @@
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
 typedef u32 UNK_TYPE_32;
+typedef u32 bool;
 
 typedef float Vec2[2];
 typedef float Vec3[3];
@@ -202,5 +203,10 @@ extern u32 D_800bccb4;
 extern u32 D_800bccb0;
 extern u8 D_800bcc78;
 extern OSMesgQueue OSMesgQueue_800bcce0;
+
+extern u8 D_800bce34;
+extern u8 D_800bce58;
+extern u8 D_800bce59;
+extern s32 D_800bce28;
 
 #endif

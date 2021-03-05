@@ -1,5 +1,7 @@
 #include "common.h"
 
+bool func_8005BC38(u32* param1);
+
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C998.s")
@@ -70,7 +72,32 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D6C8.s")
+#else
+/**
+ * Returns a video resolution encoded as 0xVVVV_HHHH.
+ * 
+ * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
+ */
+u32 func_8005D6C8() {
+    u32 var1;
+    bool var2;
+
+    var2 = func_8005BC38(&var1);
+
+    if (var2 == FALSE) {
+        return (gCurrentResolutionV[gFramebufferChoice] << 0x10) | 
+                gCurrentResolutionH[gFramebufferChoice];
+    } else {
+        // Turns 0x0000_XXXX into 0xXXXX_XXXX
+        //
+        // Maybe this is to default to a square resolution?
+        // Say, var1 is 480, this encodes the res as 480x480
+        return (var1 << 0x10) | var1;
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/get_current_resolution_encoded.s")
@@ -187,14 +214,28 @@ void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
     temp = (param2 * param3) * 2;
     gFramebufferPointers[0] = 0x80119000;
     gFramebufferPointers[1] = 0x80119000 + temp;
-    gFrameBufferEnd = ((int) (temp + 0x80119000)) + temp;
+    gFramebufferEnd = ((int) (temp + 0x80119000)) + temp;
     gFramebufferStart = 0x80200000;
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D9D8.s")
+#else
+void func_8005D9D8() {
+    D_800bce58 = 0;
+    D_800bce59 = 2;
+    D_800bce34 = 1;
+}
+#endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DA00.s")
+#else
+void func_8005DA00(u32 param1) {
+    D_800bce34 = param1;   
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/video_func_returning_delay.s")
 
@@ -202,7 +243,14 @@ void set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC70.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
+#else
+// Returns an s32 / u8 (floating-point division) casted to an s32
+s32 func_8005DC7C() {
+    return (s32)((f32)D_800bce28 / (f32)D_800bce59);
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/swap_framebuffer_pointers.s")
@@ -234,9 +282,21 @@ void swap_framebuffer_pointers() {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD2C.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/get_framebuffer_start.s")
+#else
+u32* get_framebuffer_start() {
+    return gFramebufferStart;
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD3C.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/get_framebuffer_end.s")
+#else
+u32* get_framebuffer_end() {
+    return gFramebufferEnd;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD4C.s")
 

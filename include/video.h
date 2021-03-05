@@ -11,8 +11,8 @@
  * Holds the horizontal and vertical resolution for video related functions.
  */
 typedef struct VideoResolution {
-	u32 h;
-	u32 v;
+    u32 h;
+    u32 v;
 } VideoResolution;
 
 extern OSViMode gOSViModeCustom;
@@ -40,7 +40,7 @@ extern u32 framebufferAddress_ExpPak;
 extern u32 framebufferAddress_NoExpPak;
 
 extern u32* gFramebufferStart;
-extern u32* gFrameBufferEnd;
+extern u32* gFramebufferEnd;
 
 /**
  * A framebuffer index into gFramebufferPointers.
@@ -51,5 +51,8 @@ extern u32 gFramebufferChoice;
 extern u32 gVideoMode;
 
 extern VideoResolution gResolutionArray[];
+
+extern u32 gPossiblyScreenWidthOrHeight;
+extern bool gSomeVideoFlag;
 
 #endif
