@@ -209,4 +209,7 @@ extern u8 D_800bce58;
 extern u8 D_800bce59;
 extern s32 D_800bce28;
 
+extern u32 D_800bce14;
+extern u8 D_800bce2c;
+
 #endif

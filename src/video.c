@@ -343,7 +343,32 @@ u32* get_framebuffer_end() {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DEE8.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/some_video_setup.s")
+#else
+// TODO: param1 seems likely to be a boolean
+void some_video_setup(u32 param1) {
+    if (param1 != 0) {
+        set_video_mode(7);
+        set_framebuffer_pointers(1, gResolutionArray[7].h, gResolutionArray[7].v);
+
+        set_custom_vi_mode();
+        D_800bce14 = 0xc;
+        osViBlack(1);
+        D_800bce58 = 0;
+        D_800bce2c = 0x5;
+    } else {
+        set_video_mode(1);
+        set_framebuffer_pointers(1, gResolutionArray[0].h, gResolutionArray[0].v);
+
+        set_custom_vi_mode();
+        D_800bce14 = 0xc;
+        osViBlack(1);
+        D_800bce58 = 0;
+        D_800bce2c = 0x5;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/modify_viMode.s")
 
