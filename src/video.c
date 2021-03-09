@@ -339,7 +339,21 @@ u32* get_framebuffer_end() {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD4C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DE94.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/vid_is_size_smaller_than_resolution.s")
+#else
+/**
+ * Returns whether the given width and height is smaller than the current framebuffer's resolution.
+ * 
+ * Note: Both width AND height must be smaller for this to return true.
+ */
+bool vid_is_size_smaller_than_resolution(s32 width, s32 height) {
+    return width >= 0 
+        && (u32)width < gCurrentResolutionH[gFramebufferChoice]
+        && height >= 0 
+        && (u32)height < gCurrentResolutionV[gFramebufferChoice];
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DEE8.s")
 
