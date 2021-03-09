@@ -10,7 +10,7 @@
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
 typedef u32 UNK_TYPE_32;
-typedef u32 bool;
+typedef int bool;
 
 typedef float Vec2[2];
 typedef float Vec3[3];

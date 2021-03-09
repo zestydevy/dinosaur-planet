@@ -119,7 +119,7 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
  * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-u32 func_8005D6C8() {
+bool func_8005D6C8() {
     u32 var1;
     bool var2;
 
