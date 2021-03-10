@@ -196,20 +196,4 @@ extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
-extern s8 vscale_mod;
-extern s8 hstartMod;
-
-extern u32 D_800bccb4;
-extern u32 D_800bccb0;
-extern u8 D_800bcc78;
-extern OSMesgQueue OSMesgQueue_800bcce0;
-
-extern u8 D_800bce34;
-extern u8 D_800bce58;
-extern u8 D_800bce59;
-extern s32 D_800bce28;
-
-extern u32 D_800bce14;
-extern u8 D_800bce2c;
-
 #endif
