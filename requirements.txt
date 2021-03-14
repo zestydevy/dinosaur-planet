@@ -1,5 +1,10 @@
-pypng==0.0.20
-colorama>=0.4.4,<0.5
-python-ranges
-pyyaml
+PyYAML
+ansiwrap
 capstone
+colorama>=0.4.4,<0.5
+cxxfilt
+pypng==0.0.20
+python-Levenshtein
+python-ranges
+textwrap3
+watchdog
