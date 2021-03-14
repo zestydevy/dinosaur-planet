@@ -13,139 +13,139 @@
 
 glabel guMtxXFMF
     mtc1       $a1, $f12
-    lwc1       $f4, ($a0)
+    l.s       $f4, ($a0)
     mtc1       $a2, $f14
-    lwc1       $f8, 0x10($a0)
+    l.s       $f8, 0x10($a0)
     mul.s      $f6, $f4, $f12
     mtc1       $a3, $f16
-    lwc1       $f4, 0x20($a0)
+    l.s       $f4, 0x20($a0)
     mul.s      $f10, $f8, $f14
     lw         $t6, 0x10($sp)
     mul.s      $f8, $f4, $f16
     add.s      $f18, $f6, $f10
-    lwc1       $f10, 0x30($a0)
+    l.s       $f10, 0x30($a0)
     add.s      $f6, $f18, $f8
     add.s      $f4, $f10, $f6
-    swc1       $f4, ($t6)
-    lwc1       $f18, 4($a0)
-    lwc1       $f10, 0x14($a0)
+    s.s       $f4, ($t6)
+    l.s       $f18, 4($a0)
+    l.s       $f10, 0x14($a0)
     lw         $t7, 0x14($sp)
     mul.s      $f8, $f18, $f12
-    lwc1       $f18, 0x24($a0)
+    l.s       $f18, 0x24($a0)
     mul.s      $f6, $f10, $f14
     add.s      $f4, $f8, $f6
     mul.s      $f10, $f18, $f16
-    lwc1       $f6, 0x34($a0)
+    l.s       $f6, 0x34($a0)
     add.s      $f8, $f4, $f10
     add.s      $f18, $f6, $f8
-    swc1       $f18, ($t7)
-    lwc1       $f4, 8($a0)
-    lwc1       $f6, 0x18($a0)
+    s.s       $f18, ($t7)
+    l.s       $f4, 8($a0)
+    l.s       $f6, 0x18($a0)
     lw         $t8, 0x18($sp)
     mul.s      $f10, $f4, $f12
-    lwc1       $f4, 0x28($a0)
+    l.s       $f4, 0x28($a0)
     mul.s      $f8, $f6, $f14
     add.s      $f18, $f10, $f8
     mul.s      $f6, $f4, $f16
-    lwc1       $f8, 0x38($a0)
+    l.s       $f8, 0x38($a0)
     add.s      $f10, $f18, $f6
     add.s      $f4, $f8, $f10
     jr         $ra
-     swc1      $f4, ($t8)
+     s.s      $f4, ($t8)
 
 glabel func_80014F70
-    lwc1       $f4, ($a1)
-    lwc1       $f10, ($a0)
-    lwc1       $f6, 4($a1)
-    lwc1       $f12, 0x10($a0)
+    l.s       $f4, ($a1)
+    l.s       $f10, ($a0)
+    l.s       $f6, 4($a1)
+    l.s       $f12, 0x10($a0)
     mul.s      $f10, $f4, $f10
-    lwc1       $f8, 8($a1)
-    lwc1       $f14, 0x20($a0)
+    l.s       $f8, 8($a1)
+    l.s       $f14, 0x20($a0)
     mul.s      $f12, $f6, $f12
     add.s      $f12, $f10, $f12
     mul.s      $f14, $f8, $f14
-    lwc1       $f10, 4($a0)
+    l.s       $f10, 4($a0)
     mul.s      $f10, $f4, $f10
     add.s      $f16, $f12, $f14
-    lwc1       $f12, 0x14($a0)
-    lwc1       $f14, 0x24($a0)
+    l.s       $f12, 0x14($a0)
+    l.s       $f14, 0x24($a0)
     mul.s      $f12, $f6, $f12
-    swc1       $f16, ($a2)
+    s.s       $f16, ($a2)
     mul.s      $f14, $f8, $f14
     add.s      $f12, $f10, $f12
-    lwc1       $f10, 8($a0)
+    l.s       $f10, 8($a0)
     add.s      $f16, $f12, $f14
     mul.s      $f10, $f4, $f10
-    lwc1       $f12, 0x18($a0)
-    lwc1       $f14, 0x28($a0)
-    swc1       $f16, 4($a2)
+    l.s       $f12, 0x18($a0)
+    l.s       $f14, 0x28($a0)
+    s.s       $f16, 4($a2)
     mul.s      $f12, $f6, $f12
     add.s      $f12, $f10, $f12
     mul.s      $f14, $f8, $f14
     add.s      $f14, $f12, $f14
     jr         $ra
-     swc1      $f14, 8($a2)
+     s.s      $f14, 8($a2)
 
 glabel func_80014FEC
     addiu      $t0, $a0, 0x40
 .L80014FF0:
-    lwc1       $f5, ($a0)
-    lwc1       $f10, ($a1)
-    lwc1       $f4, 4($a0)
-    lwc1       $f12, 0x10($a1)
+    l.s       $f5, ($a0)
+    l.s       $f10, ($a1)
+    l.s       $f4, 4($a0)
+    l.s       $f12, 0x10($a1)
     mul.s      $f10, $f5, $f10
-    lwc1       $f6, 8($a0)
-    lwc1       $f14, 0x20($a1)
+    l.s       $f6, 8($a0)
+    l.s       $f14, 0x20($a1)
     mul.s      $f12, $f4, $f12
-    lwc1       $f8, 0xc($a0)
-    lwc1       $f16, 0x30($a1)
+    l.s       $f8, 0xc($a0)
+    l.s       $f16, 0x30($a1)
     mul.s      $f14, $f6, $f14
     addiu      $a0, $a0, 0x10
     addiu      $a2, $a2, 0x10
     mul.s      $f16, $f8, $f16
     add.s      $f14, $f12, $f14
-    lwc1       $f12, 0x14($a1)
+    l.s       $f12, 0x14($a1)
     add.s      $f16, $f10, $f16
-    lwc1       $f10, 4($a1)
+    l.s       $f10, 4($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x24($a1)
+    l.s       $f14, 0x24($a1)
     mul.s      $f12, $f4, $f12
-    lwc1       $f16, 0x34($a1)
-    swc1       $f18, -0x10($a2)
+    l.s       $f16, 0x34($a1)
+    s.s       $f18, -0x10($a2)
     mul.s      $f14, $f6, $f14
     nop
     mul.s      $f16, $f8, $f16
     add.s      $f14, $f12, $f14
-    lwc1       $f12, 0x18($a1)
+    l.s       $f12, 0x18($a1)
     add.s      $f16, $f10, $f16
-    lwc1       $f10, 8($a1)
+    l.s       $f10, 8($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x28($a1)
+    l.s       $f14, 0x28($a1)
     mul.s      $f12, $f4, $f12
-    lwc1       $f16, 0x38($a1)
-    swc1       $f18, -0xc($a2)
+    l.s       $f16, 0x38($a1)
+    s.s       $f18, -0xc($a2)
     mul.s      $f14, $f6, $f14
     nop
     mul.s      $f16, $f8, $f16
     add.s      $f14, $f12, $f14
-    lwc1       $f12, 0x1c($a1)
+    l.s       $f12, 0x1c($a1)
     add.s      $f16, $f10, $f16
-    lwc1       $f10, 0xc($a1)
+    l.s       $f10, 0xc($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x2c($a1)
+    l.s       $f14, 0x2c($a1)
     mul.s      $f12, $f4, $f12
-    lwc1       $f16, 0x3c($a1)
-    swc1       $f18, -8($a2)
+    l.s       $f16, 0x3c($a1)
+    s.s       $f18, -8($a2)
     mul.s      $f14, $f6, $f14
     nop
     mul.s      $f16, $f8, $f16
     add.s      $f14, $f12, $f14
     add.s      $f16, $f10, $f16
     add.s      $f18, $f14, $f16
-    swc1       $f18, -4($a2)
+    s.s       $f18, -4($a2)
     bnel       $t0, $a0, .L80014FF0
      nop
     jr         $ra
@@ -154,114 +154,114 @@ glabel func_80014FEC
 glabel func_800150E4
     addiu      $t0, $a0, 0x30
 .L800150E8:
-    lwc1       $f5, ($a0)
-    lwc1       $f10, ($a1)
-    lwc1       $f4, 4($a0)
-    lwc1       $f12, 0x10($a1)
+    l.s       $f5, ($a0)
+    l.s       $f10, ($a1)
+    l.s       $f4, 4($a0)
+    l.s       $f12, 0x10($a1)
     mul.s      $f10, $f5, $f10
-    lwc1       $f6, 8($a0)
-    lwc1       $f14, 0x20($a1)
+    l.s       $f6, 8($a0)
+    l.s       $f14, 0x20($a1)
     mul.s      $f12, $f4, $f12
     addiu      $a2, $a2, 0x10
     addiu      $a0, $a0, 0x10
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f12
-    lwc1       $f10, 4($a1)
-    lwc1       $f12, 0x14($a1)
+    l.s       $f10, 4($a1)
+    l.s       $f12, 0x14($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x24($a1)
+    l.s       $f14, 0x24($a1)
     mul.s      $f12, $f4, $f12
-    swc1       $f18, -0x10($a2)
+    s.s       $f18, -0x10($a2)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f12
-    lwc1       $f10, 8($a1)
-    lwc1       $f12, 0x18($a1)
+    l.s       $f10, 8($a1)
+    l.s       $f12, 0x18($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x28($a1)
+    l.s       $f14, 0x28($a1)
     mul.s      $f12, $f4, $f12
-    swc1       $f18, -0xc($a2)
+    s.s       $f18, -0xc($a2)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f12
     add.s      $f18, $f14, $f16
-    swc1       $f18, -8($a2)
+    s.s       $f18, -8($a2)
     bnel       $t0, $a0, .L800150E8
      nop
-    lwc1       $f5, ($a0)
-    lwc1       $f10, ($a1)
-    lwc1       $f4, 4($a0)
-    lwc1       $f12, 0x10($a1)
+    l.s       $f5, ($a0)
+    l.s       $f10, ($a1)
+    l.s       $f4, 4($a0)
+    l.s       $f12, 0x10($a1)
     mul.s      $f10, $f5, $f10
-    lwc1       $f6, 8($a0)
-    lwc1       $f14, 0x20($a1)
+    l.s       $f6, 8($a0)
+    l.s       $f14, 0x20($a1)
     mul.s      $f12, $f4, $f12
-    lwc1       $f16, 0x30($a1)
+    l.s       $f16, 0x30($a1)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f16
-    lwc1       $f10, 4($a1)
+    l.s       $f10, 4($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f14, $f12, $f14
-    lwc1       $f12, 0x14($a1)
+    l.s       $f12, 0x14($a1)
     add.s      $f18, $f14, $f16
     mul.s      $f12, $f4, $f12
-    lwc1       $f14, 0x24($a1)
-    lwc1       $f16, 0x34($a1)
-    swc1       $f18, ($a2)
+    l.s       $f14, 0x24($a1)
+    l.s       $f16, 0x34($a1)
+    s.s       $f18, ($a2)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f16
-    lwc1       $f10, 8($a1)
+    l.s       $f10, 8($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f14, $f12, $f14
-    lwc1       $f12, 0x18($a1)
+    l.s       $f12, 0x18($a1)
     add.s      $f18, $f14, $f16
     mul.s      $f12, $f4, $f12
-    lwc1       $f14, 0x28($a1)
-    lwc1       $f16, 0x38($a1)
-    swc1       $f18, 4($a2)
+    l.s       $f14, 0x28($a1)
+    l.s       $f16, 0x38($a1)
+    s.s       $f18, 4($a2)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f16
     add.s      $f14, $f12, $f14
     add.s      $f18, $f14, $f16
     jr         $ra
-     swc1      $f18, 8($a2)
+     s.s      $f18, 8($a2)
 
 .set reorder
 glabel func_80015204
     addiu      $t0, $a0, 0x30
 1:
-    lwc1       $f5, ($a0)
-    lwc1       $f10, ($a1)
-    lwc1       $f4, 4($a0)
-    lwc1       $f12, 0x10($a1)
+    l.s       $f5, ($a0)
+    l.s       $f10, ($a1)
+    l.s       $f4, 4($a0)
+    l.s       $f12, 0x10($a1)
     mul.s      $f10, $f5, $f10
-    lwc1       $f6, 8($a0)
-    lwc1       $f14, 0x20($a1)
+    l.s       $f6, 8($a0)
+    l.s       $f14, 0x20($a1)
     mul.s      $f12, $f4, $f12
     addiu      $a0, $a0, 0x10
     addiu      $a2, $a2, 0x10
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f12
-    lwc1       $f10, 4($a1)
-    lwc1       $f12, 0x14($a1)
+    l.s       $f10, 4($a1)
+    l.s       $f12, 0x14($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x24($a1)
+    l.s       $f14, 0x24($a1)
     mul.s      $f12, $f4, $f12
-    swc1       $f18, -0x10($a2)
+    s.s       $f18, -0x10($a2)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f12
-    lwc1       $f10, 8($a1)
-    lwc1       $f12, 0x18($a1)
+    l.s       $f10, 8($a1)
+    l.s       $f12, 0x18($a1)
     mul.s      $f10, $f5, $f10
     add.s      $f18, $f14, $f16
-    lwc1       $f14, 0x28($a1)
+    l.s       $f14, 0x28($a1)
     mul.s      $f12, $f4, $f12
-    swc1       $f18, -0xc($a2)
+    s.s       $f18, -0xc($a2)
     mul.s      $f14, $f6, $f14
     add.s      $f16, $f10, $f12
     add.s      $f18, $f14, $f16
-    swc1       $f18, -8($a2)
+    s.s       $f18, -8($a2)
     bnel       $t0, $a0, 1b
     jr         $ra
 
@@ -270,11 +270,11 @@ glabel func_80015298
     mtc1       $at, $f12
     addiu      $t0, $a0, 0x40
 1:
-    lwc1       $f4, ($a0)
-    lwc1       $f6, 4($a0)
-    lwc1       $f8, 8($a0)
+    l.s       $f4, ($a0)
+    l.s       $f6, 4($a0)
+    l.s       $f8, 8($a0)
     mul.s      $f4, $f4, $f12
-    lwc1       $f10, 0xc($a0)
+    l.s       $f10, 0xc($a0)
     addiu      $a0, $a0, 0x10
     mul.s      $f6, $f6, $f12
     addiu      $a1, $a1, 8
@@ -308,20 +308,20 @@ glabel func_80015298
 glabel func_80015330
     lui        $at, 0x4780
     mtc1       $at, $f13
-    lwc1       $f0, ($a0)
-    lwc1       $f1, 4($a0)
-    lwc1       $f2, 8($a0)
+    l.s       $f0, ($a0)
+    l.s       $f1, 4($a0)
+    l.s       $f2, 8($a0)
     mul.s      $f0, $f0, $f13
-    lwc1       $f3, 0x10($a0)
-    lwc1       $f4, 0x14($a0)
-    lwc1       $f5, 0x18($a0)
-    lwc1       $f6, 0x20($a0)
-    lwc1       $f7, 0x24($a0)
-    lwc1       $f8, 0x28($a0)
+    l.s       $f3, 0x10($a0)
+    l.s       $f4, 0x14($a0)
+    l.s       $f5, 0x18($a0)
+    l.s       $f6, 0x20($a0)
+    l.s       $f7, 0x24($a0)
+    l.s       $f8, 0x28($a0)
     cvt.w.s    $f12, $f0
-    lwc1       $f9, 0x30($a0)
-    lwc1       $f10, 0x34($a0)
-    lwc1       $f11, 0x38($a0)
+    l.s       $f9, 0x30($a0)
+    l.s       $f10, 0x34($a0)
+    l.s       $f11, 0x38($a0)
     mul.s      $f1, $f1, $f13
     mfc1       $t4, $f12
     addiu      $t1, $zero, 1
@@ -415,9 +415,9 @@ glabel func_80015330
 glabel func_800154D4
     lui        $at, 0x4780
     mtc1       $at, $f13
-    lwc1       $f0, 0x30($a0)
-    lwc1       $f1, 0x34($a0)
-    lwc1       $f2, 0x38($a0)
+    l.s       $f0, 0x30($a0)
+    l.s       $f1, 0x34($a0)
+    l.s       $f2, 0x38($a0)
     mul.s      $f0, $f0, $f13
     ori        $t1, $zero, 1
     sll        $t2, $t1, 0x10
@@ -601,11 +601,11 @@ glabel func_800156B8
     mtc1       $t2, $f18
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, ($a3)
+    s.s       $f16, ($a3)
     mul.s      $f16, $f8, $f6
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 4($a3)
+    s.s       $f16, 4($a3)
     mul.s      $f16, $f4, $f2
     nop
     mul.s      $f16, $f16, $f8
@@ -615,7 +615,7 @@ glabel func_800156B8
     mtc1       $t2, $f18
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 8($a3)
+    s.s       $f16, 8($a3)
     mul.s      $f16, $f4, $f0
     nop
     mul.s      $f16, $f16, $f10
@@ -625,11 +625,11 @@ glabel func_800156B8
     mtc1       $t2, $f18
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 0x10($a3)
+    s.s       $f16, 0x10($a3)
     mul.s      $f16, $f10, $f6
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 0x14($a3)
+    s.s       $f16, 0x14($a3)
     mul.s      $f16, $f4, $f2
     nop
     mul.s      $f16, $f16, $f10
@@ -639,25 +639,25 @@ glabel func_800156B8
     mtc1       $t2, $f18
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 0x18($a3)
+    s.s       $f16, 0x18($a3)
     mul.s      $f16, $f6, $f0
     nop
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 0x20($a3)
+    s.s       $f16, 0x20($a3)
     mul.s      $f16, $f4, $f18
     neg.s      $f16, $f16
-    swc1       $f16, 0x24($a3)
+    s.s       $f16, 0x24($a3)
     mul.s      $f16, $f6, $f2
     nop
     mul.s      $f16, $f16, $f18
     mtc1       $at, $f18
-    swc1       $f16, 0x28($a3)
+    s.s       $f16, 0x28($a3)
     lw         $t0, 0xc($a1)
     sw         $t0, 0x30($a3)
     lw         $t0, 0x10($a1)
     sw         $t0, 0x34($a3)
     lw         $t0, 0x14($a1)
-    swc1       $f18, 0x3c($a3)
+    s.s       $f18, 0x3c($a3)
     sw         $t0, 0x38($a3)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
@@ -666,35 +666,35 @@ glabel func_800156B8
 
 glabel func_8001588C
     mtc1       $a1, $f18
-    lwc1       $f16, 0x10($a0)
+    l.s       $f16, 0x10($a0)
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 0x10($a0)
-    lwc1       $f16, 0x14($a0)
+    s.s       $f16, 0x10($a0)
+    l.s       $f16, 0x14($a0)
     mul.s      $f16, $f16, $f18
-    swc1       $f16, 0x14($a0)
-    lwc1       $f16, 0x18($a0)
+    s.s       $f16, 0x14($a0)
+    l.s       $f16, 0x18($a0)
     mul.s      $f16, $f16, $f18
     jr         $ra
-     swc1      $f16, 0x18($a0)
+     s.s      $f16, 0x18($a0)
 
 glabel func_800158B8
     mtc1       $a1, $f16
-    lwc1       $f0, 0x10($a0)
-    lwc1       $f4, 0x14($a0)
-    lwc1       $f8, 0x18($a0)
+    l.s       $f0, 0x10($a0)
+    l.s       $f4, 0x14($a0)
+    l.s       $f8, 0x18($a0)
     mul.s      $f0, $f0, $f16
-    lwc1       $f2, 0x30($a0)
-    lwc1       $f6, 0x34($a0)
+    l.s       $f2, 0x30($a0)
+    l.s       $f6, 0x34($a0)
     mul.s      $f4, $f4, $f16
-    lwc1       $f10, 0x38($a0)
+    l.s       $f10, 0x38($a0)
     mul.s      $f8, $f8, $f16
     add.s      $f0, $f0, $f2
     add.s      $f4, $f4, $f6
-    swc1       $f0, 0x30($a0)
+    s.s       $f0, 0x30($a0)
     add.s      $f8, $f8, $f10
-    swc1       $f4, 0x34($a0)
+    s.s       $f4, 0x34($a0)
     jr         $ra
-     swc1      $f8, 0x38($a0)
+     s.s      $f8, 0x38($a0)
 
 glabel func_800158FC
     addiu      $sp, $sp, -8
@@ -736,7 +736,7 @@ glabel func_800158FC
      nop
     mtc1       $v0, $f10
     sw         $zero, 0xc($a3)
-    swc1       $f4, 0x18($a3)
+    s.s       $f4, 0x18($a3)
     cvt.s.w    $f10, $f10
     sw         $zero, 0x1c($a3)
     sw         $zero, 0x2c($a3)
@@ -749,71 +749,71 @@ glabel func_800158FC
     nop
     mul.s      $f18, $f2, $f10
     sub.s      $f16, $f18, $f16
-    swc1       $f16, ($a3)
+    s.s       $f16, ($a3)
     mul.s      $f16, $f4, $f10
     nop
     mul.s      $f16, $f16, $f0
     nop
     mul.s      $f18, $f2, $f8
     add.s      $f16, $f16, $f18
-    swc1       $f16, 4($a3)
+    s.s       $f16, 4($a3)
     mul.s      $f16, $f0, $f6
     neg.s      $f16, $f16
-    swc1       $f16, 8($a3)
+    s.s       $f16, 8($a3)
     mul.s      $f16, $f6, $f8
     neg.s      $f16, $f16
-    swc1       $f16, 0x10($a3)
+    s.s       $f16, 0x10($a3)
     mul.s      $f16, $f6, $f10
-    swc1       $f16, 0x14($a3)
+    s.s       $f16, 0x14($a3)
     mul.s      $f16, $f4, $f8
     nop
     mul.s      $f16, $f16, $f2
     nop
     mul.s      $f18, $f0, $f10
     add.s      $f16, $f16, $f18
-    swc1       $f16, 0x20($a3)
+    s.s       $f16, 0x20($a3)
     mul.s      $f16, $f4, $f10
     nop
     mul.s      $f16, $f16, $f2
     nop
     mul.s      $f18, $f0, $f8
     sub.s      $f16, $f18, $f16
-    lwc1       $f18, ($a3)
-    swc1       $f16, 0x24($a3)
+    l.s       $f18, ($a3)
+    s.s       $f16, 0x24($a3)
     mul.s      $f16, $f2, $f6
-    swc1       $f16, 0x28($a3)
-    lwc1       $f0, 0xc($a1)
-    lwc1       $f2, 0x10($a1)
-    lwc1       $f16, 0x10($a3)
+    s.s       $f16, 0x28($a3)
+    l.s       $f0, 0xc($a1)
+    l.s       $f2, 0x10($a1)
+    l.s       $f16, 0x10($a3)
     mul.s      $f18, $f18, $f0
-    lwc1       $f4, 0x14($a1)
+    l.s       $f4, 0x14($a1)
     mul.s      $f16, $f16, $f2
     add.s      $f16, $f16, $f18
-    lwc1       $f18, 0x20($a3)
+    l.s       $f18, 0x20($a3)
     mul.s      $f18, $f18, $f4
     add.s      $f16, $f16, $f18
-    lwc1       $f18, 4($a3)
-    swc1       $f16, 0x30($a3)
+    l.s       $f18, 4($a3)
+    s.s       $f16, 0x30($a3)
     mul.s      $f18, $f18, $f0
-    lwc1       $f16, 0x14($a3)
+    l.s       $f16, 0x14($a3)
     mul.s      $f16, $f16, $f2
     add.s      $f16, $f16, $f18
-    lwc1       $f18, 0x24($a3)
+    l.s       $f18, 0x24($a3)
     mul.s      $f18, $f18, $f4
     add.s      $f16, $f16, $f18
-    lwc1       $f18, 8($a3)
-    swc1       $f16, 0x34($a3)
+    l.s       $f18, 8($a3)
+    s.s       $f16, 0x34($a3)
     mul.s      $f18, $f18, $f0
-    lwc1       $f16, 0x18($a3)
+    l.s       $f16, 0x18($a3)
     mul.s      $f16, $f16, $f2
     add.s      $f16, $f16, $f18
-    lwc1       $f18, 0x28($a3)
+    l.s       $f18, 0x28($a3)
     mul.s      $f18, $f18, $f4
     add.s      $f16, $f16, $f18
-    swc1       $f16, 0x38($a3)
+    s.s       $f16, 0x38($a3)
     mtc1       $at, $f16
     nop
-    swc1       $f16, 0x3c($a3)
+    s.s       $f16, 0x3c($a3)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
     jr         $ra
@@ -866,7 +866,7 @@ glabel func_80015AE0
     mul.s      $f10, $f10, $f18
     mtc1       $at, $f18
     mul.s      $f12, $f0, $f6
-    swc1       $f18, 0x3c($a3)
+    s.s       $f18, 0x3c($a3)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
     mul.s      $f14, $f2, $f10
@@ -882,14 +882,14 @@ glabel func_80015BB8
      nop
     jal        func_800162F4
      mov.s     $f1, $f0
-    lwc1       $f2, ($a1)
-    lwc1       $f5, 0x20($a1)
-    lwc1       $f3, 4($a1)
+    l.s       $f2, ($a1)
+    l.s       $f5, 0x20($a1)
+    l.s       $f3, 4($a1)
     mul.s      $f8, $f2, $f0
-    lwc1       $f6, 0x24($a1)
-    lwc1       $f4, 8($a1)
+    l.s       $f6, 0x24($a1)
+    l.s       $f4, 8($a1)
     mul.s      $f9, $f5, $f1
-    lwc1       $f7, 0x28($a1)
+    l.s       $f7, 0x28($a1)
     mul.s      $f10, $f3, $f0
     nop
     mul.s      $f11, $f6, $f1
@@ -901,10 +901,10 @@ glabel func_80015BB8
     mul.s      $f5, $f5, $f0
     nop
     mul.s      $f2, $f2, $f1
-    swc1       $f10, 4($a1)
+    s.s       $f10, 4($a1)
     sub.s      $f12, $f12, $f13
     mul.s      $f6, $f6, $f0
-    swc1       $f12, 8($a1)
+    s.s       $f12, 8($a1)
     mul.s      $f3, $f3, $f1
     nop
     mul.s      $f7, $f7, $f0
@@ -913,11 +913,11 @@ glabel func_80015BB8
     sub.s      $f8, $f8, $f9
     add.s      $f5, $f5, $f2
     add.s      $f6, $f6, $f3
-    swc1       $f5, 0x20($a1)
+    s.s       $f5, 0x20($a1)
     add.s      $f7, $f7, $f4
-    swc1       $f6, 0x24($a1)
-    swc1       $f8, ($a1)
-    swc1       $f7, 0x28($a1)
+    s.s       $f6, 0x24($a1)
+    s.s       $f8, ($a1)
+    s.s       $f7, 0x28($a1)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
     jr         $ra
@@ -1008,9 +1008,9 @@ glabel func_80015DAC
     addiu      $sp, $sp, -8
     sd         $ra, ($sp)
     or         $a2, $a0, $zero
-    lwc1       $f4, ($a1)
-    lwc1       $f6, 4($a1)
-    lwc1       $f8, 8($a1)
+    l.s       $f4, ($a1)
+    l.s       $f6, 4($a1)
+    l.s       $f8, 8($a1)
     jal        func_80016110
      lh        $a0, 4($a2)
     mul.s      $f10, $f4, $f0
@@ -1041,12 +1041,12 @@ glabel func_80015DAC
     jal        func_80016144
      nop
     mul.s      $f4, $f4, $f0
-    swc1       $f6, 4($a1)
+    s.s       $f6, 4($a1)
     mul.s      $f8, $f8, $f0
     add.s      $f4, $f4, $f12
     sub.s      $f8, $f8, $f10
-    swc1       $f4, ($a1)
-    swc1       $f8, 8($a1)
+    s.s       $f4, ($a1)
+    s.s       $f8, 8($a1)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
     jr         $ra
@@ -1056,9 +1056,9 @@ glabel func_80015E64
     addiu      $sp, $sp, -8
     sd         $ra, ($sp)
     or         $a2, $a0, $zero
-    lwc1       $f4, ($a1)
-    lwc1       $f6, 4($a1)
-    lwc1       $f8, 8($a1)
+    l.s       $f4, ($a1)
+    l.s       $f6, 4($a1)
+    l.s       $f8, 8($a1)
     jal        func_80016110
      lh        $a0, ($a2)
     mul.s      $f10, $f4, $f0
@@ -1089,12 +1089,12 @@ glabel func_80015E64
     jal        func_80016144
      nop
     mul.s      $f4, $f4, $f0
-    swc1       $f8, 8($a1)
+    s.s       $f8, 8($a1)
     mul.s      $f6, $f6, $f0
     sub.s      $f4, $f4, $f12
     add.s      $f6, $f6, $f10
-    swc1       $f4, ($a1)
-    swc1       $f6, 4($a1)
+    s.s       $f4, ($a1)
+    s.s       $f6, 4($a1)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
     jr         $ra
@@ -1104,7 +1104,7 @@ glabel func_80015F1C
     addiu      $sp, $sp, -8
     sd         $ra, ($sp)
     or         $a2, $a0, $zero
-    lwc1       $f8, 8($a1)
+    l.s       $f8, 8($a1)
     jal        func_80016110
      lh        $a0, 2($a2)
     mul.s      $f6, $f8, $f0
@@ -1118,9 +1118,9 @@ glabel func_80015F1C
     jal        func_80016144
      lh        $a0, ($a2)
     mul.s      $f8, $f8, $f0
-    swc1       $f4, ($a1)
-    swc1       $f6, 4($a1)
-    swc1       $f8, 8($a1)
+    s.s       $f4, ($a1)
+    s.s       $f6, 4($a1)
+    s.s       $f8, 8($a1)
     ld         $ra, ($sp)
     addiu      $sp, $sp, 8
     jr         $ra
@@ -1136,10 +1136,10 @@ glabel func_80015F7C
     lui        $at, 0x3f80
     mtc1       $at, $f18
     nop
-    swc1       $f18, ($a0)
-    swc1       $f18, 0x14($a0)
-    swc1       $f18, 0x28($a0)
-    swc1       $f18, 0x3c($a0)
+    s.s       $f18, ($a0)
+    s.s       $f18, 0x14($a0)
+    s.s       $f18, 0x28($a0)
+    s.s       $f18, 0x3c($a0)
     sw         $a1, 0x30($a0)
     sw         $a2, 0x34($a0)
     jr         $ra
@@ -1160,7 +1160,7 @@ glabel func_80015FC8
     lui        $at, 0x3f80
     mtc1       $at, $f18
     nop
-    swc1       $f18, 0x3c($a0)
+    s.s       $f18, 0x3c($a0)
     sw         $a1, ($a0)
     sw         $a2, 0x14($a0)
     jr         $ra
@@ -1332,10 +1332,10 @@ glabel func_800161D8
 
 
 glabel func_8001621C
-    lwc1       $f0, 0($a0);  lwc1       $f1, 0($a1)
-    lwc1       $f2, 4($a0);  lwc1       $f3, 4($a1)
+    l.s       $f0, 0($a0);  l.s       $f1, 0($a1)
+    l.s       $f2, 4($a0);  l.s       $f3, 4($a1)
     sub.s      $f0, $f0, $f1
-    lwc1       $f4, 8($a0);  lwc1       $f5, 8($a1)
+    l.s       $f4, 8($a0);  l.s       $f5, 8($a1)
     sub.s      $f2, $f2, $f3
     .square $f0
     sub.s      $f4, $f4, $f5
@@ -1347,13 +1347,13 @@ glabel func_8001621C
      sqrt.s    $f0, $f0
 
 glabel func_8001625C
-    lwc1       $f0, ($a0)
-    lwc1       $f1, ($a1)
-    lwc1       $f2, 4($a0)
-    lwc1       $f3, 4($a1)
+    l.s       $f0, ($a0)
+    l.s       $f1, ($a1)
+    l.s       $f2, 4($a0)
+    l.s       $f3, 4($a1)
     sub.s      $f0, $f0, $f1
-    lwc1       $f4, 8($a0)
-    lwc1       $f5, 8($a1)
+    l.s       $f4, 8($a0)
+    l.s       $f5, 8($a1)
     sub.s      $f2, $f2, $f3
     mul.s      $f0, $f0, $f0
     sub.s      $f4, $f4, $f5
@@ -1364,10 +1364,10 @@ glabel func_8001625C
      add.s     $f0, $f0, $f4
 
 glabel func_80016298
-    lwc1       $f0, ($a0)
-    lwc1       $f1, ($a1)
-    lwc1       $f4, 8($a0)
-    lwc1       $f5, 8($a1)
+    l.s       $f0, ($a0)
+    l.s       $f1, ($a1)
+    l.s       $f4, 8($a0)
+    l.s       $f5, 8($a1)
     sub.s      $f0, $f0, $f1
     sub.s      $f4, $f4, $f5
     mul.s      $f0, $f0, $f0
@@ -1378,10 +1378,10 @@ glabel func_80016298
      sqrt.s    $f0, $f0
 
 glabel func_800162C8
-    lwc1       $f0, ($a0)
-    lwc1       $f1, ($a1)
-    lwc1       $f4, 8($a0)
-    lwc1       $f5, 8($a1)
+    l.s       $f0, ($a0)
+    l.s       $f1, ($a1)
+    l.s       $f4, 8($a0)
+    l.s       $f5, 8($a1)
     sub.s      $f0, $f0, $f1
     sub.s      $f4, $f4, $f5
     mul.s      $f0, $f0, $f0
@@ -1412,7 +1412,7 @@ glabel some_getter_from_float_array
     addu       $t2, $t2, $t0
     andi       $t1, $a0, 0x8000
     beqz       $t1, .L80016340
-     lwc1      $f0, ($t2)
+     l.s      $f0, ($t2)
     neg.s      $f0, $f0
 .L80016340:
     jr         $ra
@@ -1521,26 +1521,26 @@ glabel ceil_f
 .set reorder
 glabel func_8001649C
     break      7
-     lwc1      $f10, 0x10($sp)
-    lwc1       $f0, D_800991B0
+     l.s      $f10, 0x10($sp)
+    l.s       $f0, D_800991B0
     mul.s      $f11, $f10, $f10
-    lwc1       $f1, D_800991B4
-    lwc1       $f2, D_800991B8
+    l.s       $f1, D_800991B4
+    l.s       $f2, D_800991B8
     mtc1       $a2, $f16
     lui        $at, %hi(D_800991BC)
     mul.s      $f0, $f0, $f12
-    lwc1       $f3, %lo(D_800991BC)($at)
+    l.s       $f3, %lo(D_800991BC)($at)
     mtc1       $a3, $f18
     lui        $at, %hi(D_800991C0)
-    lwc1       $f4, %lo(D_800991C0)($at)
+    l.s       $f4, %lo(D_800991C0)($at)
     lui        $at, %hi(D_800991C4)
-    lwc1       $f5, %lo(D_800991C4)($at)
+    l.s       $f5, %lo(D_800991C4)($at)
     mul.s      $f1, $f1, $f14
-    lwc1       $f6, D_800991C8
-    lwc1       $f7, D_800991CC
-    lwc1       $f8, D_800991D0
+    l.s       $f6, D_800991C8
+    l.s       $f7, D_800991CC
+    l.s       $f8, D_800991D0
     mul.s      $f2, $f2, $f16
-    lwc1       $f9, D_800991D4
+    l.s       $f9, D_800991D4
     add.s      $f0, $f0, $f1
     mul.s      $f3, $f3, $f18
     nop
