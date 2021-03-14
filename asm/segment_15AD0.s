@@ -10,6 +10,18 @@
     mul.s \reg, \reg, \reg
 .endm
 
+.macro .load_mat4_entry_f reg, mtx, row, col
+    l.s \reg, ((\row * 16) + (\col * 4)) (\mtx)
+.endm
+
+.macro .store_mat4_entry_f reg, mtx, row, col
+    s.s \reg, ((\row * 16) + (\col * 4)) (\mtx)
+.endm
+
+.macro .store_mat4_entry reg, mtx, row, col
+    sw \reg, ((\row * 16) + (\col * 4)) (\mtx)
+.endm
+
 
 glabel guMtxXFMF
     mtc1       $a1, $f12
@@ -88,7 +100,7 @@ glabel func_80014F70
 
 glabel func_80014FEC
     addiu      $t0, $a0, 0x40
-.L80014FF0:
+1:
     l.s       $f5, ($a0)
     l.s       $f10, ($a1)
     l.s       $f4, 4($a0)
@@ -146,14 +158,14 @@ glabel func_80014FEC
     add.s      $f16, $f10, $f16
     add.s      $f18, $f14, $f16
     s.s       $f18, -4($a2)
-    bnel       $t0, $a0, .L80014FF0
+    bnel       $t0, $a0, 1b
      nop
     jr         $ra
      nop
 
 glabel func_800150E4
     addiu      $t0, $a0, 0x30
-.L800150E8:
+1:
     l.s       $f5, ($a0)
     l.s       $f10, ($a1)
     l.s       $f4, 4($a0)
@@ -186,7 +198,7 @@ glabel func_800150E4
     add.s      $f16, $f10, $f12
     add.s      $f18, $f14, $f16
     s.s       $f18, -8($a2)
-    bnel       $t0, $a0, .L800150E8
+    bnel       $t0, $a0, 1b
      nop
     l.s       $f5, ($a0)
     l.s       $f10, ($a1)
@@ -1056,7 +1068,7 @@ glabel func_80015E64
     addiu      $sp, $sp, -8
     sd         $ra, ($sp)
     or         $a2, $a0, $zero
-    l.s       $f4, ($a1)
+    l.s       $f4, 0($a1)
     l.s       $f6, 4($a1)
     l.s       $f8, 8($a1)
     jal        func_80016110
@@ -1126,24 +1138,26 @@ glabel func_80015F1C
     jr         $ra
      nop
 
-glabel func_80015F7C
-    or         $t0, $a0, $zero
+glabel mat4_ident_translate
+    move         $t0, $a0
     addiu      $t1, $t0, 0x40
-.L80015F84:
+1:
     addiu      $t0, $t0, 4
-    bne        $t1, $t0, .L80015F84
+    bne        $t1, $t0, 1b
      sw        $zero, -4($t0)
-    lui        $at, 0x3f80
-    mtc1       $at, $f18
+
+    li.s $f18, 1.0 
     nop
-    s.s       $f18, ($a0)
-    s.s       $f18, 0x14($a0)
-    s.s       $f18, 0x28($a0)
-    s.s       $f18, 0x3c($a0)
-    sw         $a1, 0x30($a0)
-    sw         $a2, 0x34($a0)
+
+    .store_mat4_entry_f $f18, $a0, 0, 0
+    .store_mat4_entry_f $f18, $a0, 1, 1
+    .store_mat4_entry_f $f18, $a0, 2, 2
+    .store_mat4_entry_f $f18, $a0, 3, 3
+
+    .store_mat4_entry $a1, $a0, 3, 0
+    .store_mat4_entry $a2, $a0, 3, 1
     jr         $ra
-     sw        $a3, 0x38($a0)
+    .store_mat4_entry $a3, $a0, 3, 2
 
 glabel func_80015FBC
     lui        $v0, %hi(D_8008CA40)
@@ -1153,9 +1167,9 @@ glabel func_80015FBC
 glabel func_80015FC8
     or         $t0, $a0, $zero
     addiu      $t1, $t0, 0x40
-.L80015FD0:
+1:
     addiu      $t0, $t0, 4
-    bne        $t1, $t0, .L80015FD0
+    bne        $t1, $t0, 1b
      sw        $zero, -4($t0)
     lui        $at, 0x3f80
     mtc1       $at, $f18
@@ -1167,48 +1181,47 @@ glabel func_80015FC8
      sw        $a3, 0x28($a0)
 
 glabel func_80015FFC
-.L80015FFC:
     or         $t0, $a0, $a1
-    bne        $zero, $t0, .L80016010
+    bne        $zero, $t0, 1f
      nop
     jr         $ra
      addiu     $v0, $zero, 0
-.L80016010:
-    bltz       $a0, .L80016028
+1:
+    bltz       $a0, 2f
      nop
-    bltzl      $a1, .L80016048
+    bltzl      $a1, 4f
      negu      $a1, $a1
-    j          .L80016058
+    j          6f
      addiu     $v0, $zero, 0
-.L80016028:
-    bltz       $a1, .L80016038
+2:
+    bltz       $a1, 3f
      negu      $a0, $a0
-    j          .L8001604C
+    j          5f
      ori       $v0, $zero, 0xc000
-.L80016038:
+3:
     negu       $a1, $a1
-    j          .L80016058
+    j          6f
      ori       $v0, $zero, 0x8000
     negu       $a1, $a1
-.L80016048:
+4:
     addiu      $v0, $zero, 0x4000
-.L8001604C:
+5:
     xor        $a0, $a0, $a1
     xor        $a1, $a0, $a1
     xor        $a0, $a0, $a1
-.L80016058:
+6:
     subu       $t0, $a0, $a1
-    bltzl      $t0, .L800160A8
+    bltzl      $t0, 8f
      dsll      $t0, $a0, 0xb
     dsll       $t0, $a1, 0xb
     ddivu      $zero, $t0, $a0
     lui        $t1, %hi(D_8008E294)
     addiu      $t1, $t1, %lo(D_8008E294)
     addiu      $v0, $v0, 0x4000
-    bnez       $a0, .L80016084
+    bnez       $a0, 7f
      nop
     break      7
-.L80016084:
+7:
      mflo      $t0
     mflo       $t0
     andi       $t0, $t0, 0xffe
@@ -1218,14 +1231,14 @@ glabel func_80015FFC
     jr         $ra
      andi      $v0, $v0, 0xffff
     dsll       $t0, $a0, 0xb
-.L800160A8:
+8:
     ddivu      $zero, $t0, $a1
     lui        $t1, %hi(D_8008E294)
     addiu      $t1, $t1, %lo(D_8008E294)
-    bnez       $a1, .L800160C0
+    bnez       $a1, 9f
      nop
     break      7
-.L800160C0:
+9:
      mflo      $t0
     mflo       $t0
     andi       $t0, $t0, 0xffe
@@ -1246,7 +1259,7 @@ glabel round_2_floats
     cvt.w.s    $f14, $f14
     mfc1       $a0, $f12
     mfc1       $a1, $f14
-    j          .L80015FFC
+    j          func_80015FFC
      nop
 
 glabel func_80016110
@@ -1283,11 +1296,11 @@ glabel func_80016178
 
 glabel func_8001617C
     sll        $v0, $a0, 0x11
-    bgezl      $v0, .L80016190
+    bgezl      $v0, 1f
      srl       $t2, $a0, 3
     xori       $a0, $a0, 0x7fff
     srl        $t2, $a0, 3
-.L80016190:
+1:
     lui        $v0, %hi(D_8008CA8C)
     andi       $t2, $t2, 0x7fe
     addiu      $v0, $v0, %lo(D_8008CA8C)
@@ -1301,48 +1314,51 @@ glabel func_8001617C
     sll        $v0, $v0, 1
     mflo       $t2
     srl        $t2, $t2, 3
-    bgez       $a0, .L800161D0
+    bgez       $a0, 2f
      addu      $v0, $v0, $t2
     negu       $v0, $v0
-.L800161D0:
+2:
     jr         $ra
      nop
 
 glabel func_800161D8
     addiu      $a0, $a0, 0x4000
     sll        $v0, $a0, 0x11
-    bgezl      $v0, .L800161F0
+    bgezl      $v0, 1f
      srl       $t2, $a0, 3
     xori       $a0, $a0, 0x7fff
     srl        $t2, $a0, 3
-.L800161F0:
+1:
     lui        $v0, %hi(D_8008CA8C)
     andi       $t2, $t2, 0x7fe
     addiu      $v0, $v0, %lo(D_8008CA8C)
     addu       $v0, $v0, $t2
     lhu        $v0, ($v0)
     sll        $a0, $a0, 0x10
-    bgez       $a0, .L80016214
+    bgez       $a0, 2f
      sll       $v0, $v0, 1
     negu       $v0, $v0
-.L80016214:
+2:
     jr         $ra
      nop
 
 
 
 glabel func_8001621C
-    l.s       $f0, 0($a0);  l.s       $f1, 0($a1)
-    l.s       $f2, 4($a0);  l.s       $f3, 4($a1)
-    sub.s      $f0, $f0, $f1
-    l.s       $f4, 8($a0);  l.s       $f5, 8($a1)
-    sub.s      $f2, $f2, $f3
+    l.s       $f0, 0($a0)
+    l.s       $f1, 0($a1)
+    l.s       $f2, 4($a0)
+    l.s       $f3, 4($a1)
+    sub.s      $f0, $f1
+    l.s       $f4, 8($a0)
+    l.s       $f5, 8($a1)
+    sub.s      $f2, $f3
     .square $f0
-    sub.s      $f4, $f4, $f5
+    sub.s      $f4, $f5
     .square $f2
-    add.s      $f0, $f0, $f2
+    add.s      $f0, $f2
     .square $f4
-    add.s      $f0, $f0, $f4
+    add.s      $f0, $f4
     jr         $ra
      sqrt.s    $f0, $f0
 
@@ -1370,9 +1386,9 @@ glabel func_80016298
     l.s       $f5, 8($a1)
     sub.s      $f0, $f0, $f1
     sub.s      $f4, $f4, $f5
-    mul.s      $f0, $f0, $f0
+    .square    $f0
     nop
-    mul.s      $f4, $f4, $f4
+    .square    $f4
     add.s      $f0, $f0, $f4
     jr         $ra
      sqrt.s    $f0, $f0
@@ -1398,23 +1414,23 @@ glabel some_getter_from_float_array
     srl        $t0, $a0, 4
     andi       $t1, $a0, 0x4000
     addiu      $t2, $t2, %lo(some_ascending_float_array)
-    beqz       $t1, .L80016328
+    beqz       $t1, 2f
      andi      $t0, $t0, 0x3ff
     andi       $t1, $a0, 0xf
-    beql       $t1, $zero, .L80016324
+    beql       $t1, $zero, 1f
      ori       $t1, $zero, 0x400
     addiu      $t0, $t0, 1
     ori        $t1, $zero, 0x400
-.L80016324:
+1:
     sub        $t0, $t1, $t0
-.L80016328:
+2:
     sll        $t0, $t0, 2
     addu       $t2, $t2, $t0
     andi       $t1, $a0, 0x8000
-    beqz       $t1, .L80016340
+    beqz       $t1, 3f
      l.s      $f0, ($t2)
     neg.s      $f0, $f0
-.L80016340:
+3:
     jr         $ra
      nop
 
