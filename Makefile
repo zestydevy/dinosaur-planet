@@ -20,6 +20,10 @@ LD = $(CROSS)ld
 OBJDUMP = $(CROSS)objdump
 OBJCOPY = $(CROSS)objcopy
 
+IRIX_ROOT := tools/ido_as
+QEMU_IRIX := qemu-irix
+IDO_AS = /usr/bin/qemu-irix -silent -L tools/ido_as tools/ido_as/usr/bin/as
+
 #CC         := $(QEMU_IRIX) -L tools/ido7.1_compiler tools/ido7.1_compiler/usr/bin/cc
 #CC_OLD     := $(QEMU_IRIX) -L tools/ido5.3_compiler tools/ido5.3_compiler/usr/bin/cc
 
@@ -43,6 +47,7 @@ $(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(DATA_DIRS) $(COMPRESSED_DIRS) $(MAP_DIRS
 
 build/src/os/O1/%.o: OPTFLAGS := -O1
 build/src/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+build/asm/%.o: ASFLAGS += -mips3 -mabi=32
 
 default: all
 
