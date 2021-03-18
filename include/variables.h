@@ -105,6 +105,45 @@ struct ErrString{
 	char* text;
 };
 
+typedef struct
+{
+	s32 offset;
+	s32 bssSize;
+} DLLTabEntry;
+
+
+typedef struct
+{
+	s32 bank0;
+	s32 bank1;
+	s32 reserved;
+	s32 bank2;
+	DLLTabEntry entries[1];
+} DLLTab;
+
+typedef struct
+{
+	u32 id;
+	s32 refCount;
+	u32 * exports;
+	u32 * end;
+} DLLInst;
+
+typedef void (*DLLFunc)(u32 a);
+
+typedef struct
+{
+	u32 header;
+	u32 * data;
+	u32 * rodata;
+	s16 exportCount;
+	DLLFunc ctor;
+	DLLFunc dtor;
+	u32 * reserved;
+} DLLFile;
+
+
+
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
 // this needs double checking. its address is within gMainThreadStack....
@@ -198,4 +237,10 @@ extern struct ErrString errStringArray_fpsr[];
 extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
+
+extern DLLInst * gLoadedDLLList[];
+extern s32 gLoadedDLLCount;
+
+extern DLLTab * gFile_DLLS_TAB;
+
 #endif
