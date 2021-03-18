@@ -226,6 +226,7 @@ u32 align_2(u32 a0) {
     return a0;
 }
 
+
 s32 dbg_heap_print(s32 arg0)
 {
     dummied_print_func(
@@ -243,6 +244,7 @@ s32 dbg_heap_print(s32 arg0)
         gHeapBlkList[2].itemCount, 
         gHeapBlkList[2].maxItems
     );
+
     return memMonVal0 + memMonVal1 + memMonVal2;
 }
 

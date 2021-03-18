@@ -892,3 +892,5 @@ vec3_normalize = 0x80016708; // type:func
 vec3_sub = 0x8001679c; // type:func
 vec3_add_with_scale = 0x800167d4; // type:func
 vec3_reflect = 0x80016820; // type:func
+
+mat4_ident_translate = 0x80015F7C; // type:func

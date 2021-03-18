@@ -105,7 +105,11 @@ s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
+s32 func_8000C3BC(void) { // This function is quite strange
+    //*NULL = (u8)0; // It's supposed to to this.... (which would crash the game)
+    *(volatile char *)0 = 0;  // but IDO optimizes to this
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 
