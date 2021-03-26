@@ -449,7 +449,7 @@ u8 func_80014C60(void)
 
 void clear_PlayerPosBuffer(void)
 {
-    _bzero(&PlayerPosBuffer, 0x3C0);
+    bzero(&PlayerPosBuffer, 0x3C0);
     PlayerPosBuffer_index = 0;
 }
 

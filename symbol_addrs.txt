@@ -87,7 +87,7 @@ osCreateThread = 0x8005e990; // type:func
 osInitialize = 0x8007c810; // type:func
 __createSpeedParam = 0x8007cca4; // type:func
 osStartThread = 0x8007cd40; // type:func
-_bzero = 0x8007cfe0; // type:func
+bzero = 0x8007cfe0; // type:func
 osInvalICache = 0x8007d080; // type:func
 __ull_div = 0x8007ed58; // type:func
 __ll_mul = 0x8007ee58; // type:func
@@ -894,3 +894,5 @@ vec3_add_with_scale = 0x800167d4; // type:func
 vec3_reflect = 0x80016820; // type:func
 
 mat4_ident_translate = 0x80015F7C; // type:func
+
+n_alSynSetVol = 0x8006C150; // type:func

@@ -101,15 +101,60 @@ s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 }
 */
 
+// close, regalloc and different assignments
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C0B8.s")
+/*
+void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3);
+void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
+{
+    DLLFile * dll;
+    s32 i;
+
+    for (i = 0; i != gLoadedDLLCount; i++) {
+        if (id == gLoadedDLLList[i]->id) {
+            return;
+        }
+    }
+
+    dll = (DLLFile *)malloc(arg2 + arg3, 4, 0);
+    _bcopy((void *)arg1, (void *)dll, arg2);
+
+    if (arg3 != 0) {
+        bzero((void *)((u32)dll + arg2), arg3);
+    }
+    
+    dll_relocate(dll);
+    i = 0;
+    osInvalICache(dll, 0x4000);
+    osInvalDCache(dll, 0x4000);
+
+    for (; i < gLoadedDLLCount; i++) {
+        if ((-1) == gLoadedDLLList[i]->id) {
+            break;
+        }
+    }
+    
+    if (i == gLoadedDLLCount)
+    {
+        if (gLoadedDLLCount == 128) {
+            return;
+        }
+        ++gLoadedDLLCount;
+    }
+
+    gLoadedDLLList[i]->id = id;
+    gLoadedDLLList[i]->exports = (u32 *)((u32)dll + 0x18);
+    gLoadedDLLList[i]->end = (u32 *)(((u32)dll + arg2) + arg3);
+    gLoadedDLLList[i]->refCount = 2;
+
+    dll->ctor((u32)dll);
+
+}
+*/
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 
-s32 func_8000C3BC(void) { // This function is quite strange
-    //*NULL = (u8)0; // It's supposed to to this.... (which would crash the game)
-    *(volatile char *)0 = 0;  // but IDO optimizes to this
-    return 0;
-}
+#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 

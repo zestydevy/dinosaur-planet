@@ -116,19 +116,19 @@ typedef struct
 
 typedef struct
 {
-	s32 bank0;
-	s32 bank1;
-	s32 reserved;
-	s32 bank2;
-	DLLTabEntry entries[1];
+/*0000*/	s32 bank0;
+/*0004*/	s32 bank1;
+/*0008*/	s32 reserved;
+/*000C*/	s32 bank2;
+/*0010*/	DLLTabEntry * entries;
 } DLLTab;
 
 typedef struct
 {
-	u32 id;
-	s32 refCount;
-	u32 * exports;
-	u32 * end;
+/*0000*/	u32 id;
+/*0004*/	s32 refCount;
+/*0008*/	u32 * exports;
+/*000C*/	u32 * end;
 } DLLInst;
 
 typedef void (*DLLFunc)(u32 a);
