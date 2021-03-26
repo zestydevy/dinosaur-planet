@@ -96,7 +96,7 @@ segments:
     - [0x6A170, c]
     - [0x6C490, c]
     - [0x6C530, c]
-    - [0x6CD50, c]
+    - [0x6CD50, c, libultra/libnaudio/n_synsetvol]
     - [0x6CE20, c]
     - [0x6CF50, c]
     - [0x6D2E0, c]
