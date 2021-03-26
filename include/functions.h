@@ -21,7 +21,7 @@ void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
 void * func_80023914(void);
 
-void some_crash_setter(DLLInst * arg0, s32 arg1);
+void some_crash_setter(DLLInst arg0[], s32 arg1);
 
 void free(s32);
 DLLFile * dll_load_from_tab(u32, s32 *);

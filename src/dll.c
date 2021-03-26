@@ -4,15 +4,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
-void some_crash_setter(DLLInst * arg0, s32 arg1) {
+void some_crash_setter(DLLInst arg0[], s32 arg1) {
     gLoadedDLLCount = arg1;
-    gLoadedDLLList[0] = arg0;
+    gLoadedDLLList = arg0;
 }
 
 DLLInst * func_8000BDE8(u32 * arg0);
 DLLInst * func_8000BDE8(u32 * arg0) {
     *arg0 = gLoadedDLLCount;
-    return gLoadedDLLList[0];
+    return gLoadedDLLList;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_deferred.s")
@@ -101,9 +101,7 @@ s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 }
 */
 
-// close, regalloc and different assignments
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C0B8.s")
-/*
+
 void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3);
 void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -111,7 +109,7 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
     s32 i;
 
     for (i = 0; i != gLoadedDLLCount; i++) {
-        if (id == gLoadedDLLList[i]->id) {
+        if (id == (*gLoadedDLLList)[i].id) {
             return;
         }
     }
@@ -129,7 +127,7 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
     osInvalDCache(dll, 0x4000);
 
     for (; i < gLoadedDLLCount; i++) {
-        if ((-1) == gLoadedDLLList[i]->id) {
+        if ((-1) == (*gLoadedDLLList)[i].id) {
             break;
         }
     }
@@ -142,17 +140,17 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
         ++gLoadedDLLCount;
     }
 
-    gLoadedDLLList[i]->id = id;
-    gLoadedDLLList[i]->exports = (u32 *)((u32)dll + 0x18);
-    gLoadedDLLList[i]->end = (u32 *)(((u32)dll + arg2) + arg3);
-    gLoadedDLLList[i]->refCount = 2;
+    (*gLoadedDLLList)[i].id = id;
+    (*gLoadedDLLList)[i].exports = (u32 *)((u32)dll + 0x18);
+    (*gLoadedDLLList)[i].end = (u32 *)(((u32)dll + arg2) + arg3);
+    (*gLoadedDLLList)[i].refCount = 2;
 
     dll->ctor((u32)dll);
 
 }
-*/
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
 
