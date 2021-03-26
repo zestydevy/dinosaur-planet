@@ -101,7 +101,8 @@ s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 }
 */
 
-
+#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C0B8.s")
+/*
 void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3);
 void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -148,6 +149,7 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
     dll->ctor((u32)dll);
 
 }
+*/
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 
