@@ -152,7 +152,56 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 */
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
+/*
+u32 func_8000C258(u32 arg0);
+u32 func_8000C258(u32 arg0)
+{
+    u16 v1;
+    u16 t8;
+    DLLFile * sp0034;
 
+    v1 = ((arg0 - (u32)gLoadedDLLList) - 8);
+
+    if ((v1 & 0xF) != 0) {
+        return 0;
+    }
+
+    t8 = (v1 >> 4);
+
+    if (t8 >= gLoadedDLLCount) {
+        return 0;
+    }
+
+    --(*gLoadedDLLList)[t8].refCount;
+
+    if ((*gLoadedDLLList)[t8].refCount < 0) {
+        return 0;
+    }
+
+    sp0034 = (DLLFile *)((u32)((*gLoadedDLLList)[t8].exports) - 0x18);
+
+    sp0034->dtor((s32)sp0034);
+
+    if ((*gLoadedDLLList)[t8].exports < (*gLoadedDLLList)[t8].end) {
+        u32 * exports = (*gLoadedDLLList)[t8].exports;
+        while (exports < (*gLoadedDLLList)[t8].end)) {
+            exports += 4;
+            *(exports - 0x4) = (u32)0x7000D;
+        }
+    }
+
+    free(sp0034);
+
+    while (gLoadedDLLCount != 0) {
+        if (-1 == (*gLoadedDLLList)[gLoadedDLLCount-1].id) {
+            return 1;
+        }
+        --gLoadedDLLCount;
+    }
+
+    return gLoadedDLLCount;
+}
+*/
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
 
