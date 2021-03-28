@@ -135,10 +135,10 @@ typedef void (*DLLFunc)(u32 a);
 
 typedef struct
 {
-	u32 header;
-	u32 * data;
-	u32 * rodata;
-	s16 exportCount;
+	u32 code;
+	u32 data;
+	s32 relocations;
+	u16 exportCount;
 	DLLFunc ctor;
 	DLLFunc dtor;
 	u32 * reserved;
