@@ -17,9 +17,9 @@ DLLInst * func_8000BDE8(u32 * arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_deferred.s")
 
-// close but needs work in areas
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load.s")
-/*
+#else
 s32 dll_load(u16 arg0, u16 arg1, s32 arg2);
 s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 {
@@ -99,10 +99,12 @@ s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 
     return s0028;
 }
-*/
+#endif
 
+// close
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C0B8.s")
-/*
+#else
 void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3);
 void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -149,10 +151,12 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
     dll->ctor((u32)dll);
 
 }
-*/
+#endif
 
+// close
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
-/*
+#else
 u32 func_8000C258(u32 arg0);
 u32 func_8000C258(u32 arg0)
 {
@@ -201,14 +205,17 @@ u32 func_8000C258(u32 arg0)
 
     return gLoadedDLLCount;
 }
-*/
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 
-// #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_relocate.s")
-u32* gFile_DLLSIMPORTTAB;
+// close
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_relocate.s")
+#else
+extern u32* gFile_DLLSIMPORTTAB;
 void dll_relocate(DLLFile* dll);
 void dll_relocate(DLLFile* dll)
 {
@@ -270,10 +277,12 @@ void dll_relocate(DLLFile* dll)
         }
     }
 }
+#endif
 
 // regalloc
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C648.s")
-/*
+#else
 void func_8000C648(void);
 void func_8000C648(void)
 {
@@ -288,4 +297,4 @@ void func_8000C648(void)
         } while (v0 < a1);
     }
 }
-*/
+#endif
