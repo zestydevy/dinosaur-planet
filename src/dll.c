@@ -251,9 +251,9 @@ void dll_relocate(DLLFile* dll)
 
         while ((entry = *currRelocation) != -3)
         {
+            u32* fn = &target[(u32)entry / 4];
             u32 hi = (u32)relocations >> 16;
             u32 lo = (u32)relocations & 0xffff;
-            u32* fn = &target[(u32)entry / 4];
             fn[0] |= hi;
             fn[1] |= lo;
             currRelocation++;
