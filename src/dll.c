@@ -207,7 +207,69 @@ u32 func_8000C258(u32 arg0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_relocate.s")
+// #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_relocate.s")
+u32* gFile_DLLSIMPORTTAB;
+void dll_relocate(DLLFile* dll);
+void dll_relocate(DLLFile* dll)
+{
+    u32* exports;
+    u32* target = (u32*)((u8*)dll + dll->code);
+    u32 exportCount;
+    s32* relocations;
+    s32* currRelocation;
+    s32 entry;
+
+    *(u32*)&dll->ctor += (u32)target;
+    *(u32*)&dll->dtor += (u32)target;
+
+    exports = (u32*)((u8*)dll + sizeof(DLLFile));
+    for (exportCount = dll->exportCount; exportCount != 0; exportCount--)
+    {
+        *exports++ += (u32)target;
+    }
+
+    if (dll->relocations != -1)
+    {
+        relocations = (s32*)((u8*)dll + dll->relocations);
+        currRelocation = relocations;
+        // currRelocation = (s32*)((u8*)dll + dll->relocations);
+
+        while ((entry = *currRelocation) != -2)
+        {
+            if (entry & 0x80000000)
+            {
+                *currRelocation = gFile_DLLSIMPORTTAB[(entry & 0x7fffffff) - 1];
+            }
+            else
+            {
+                *currRelocation += (s32)target;
+            }
+            currRelocation++;
+        }
+
+        currRelocation++;
+
+        while ((entry = *currRelocation) != -3)
+        {
+            u32* fn = &target[(u32)entry / 4];
+            u32 hi = (u32)relocations >> 16;
+            u32 lo = (u32)relocations & 0xffff;
+            fn[0] |= hi;
+            fn[1] |= lo;
+            currRelocation++;
+        }
+
+        currRelocation++;
+
+        target = (u32*)((u8*)dll + dll->data);
+        
+        while ((entry = *currRelocation) != -1)
+        {
+            target[(u32)entry / 4] += (u32)target;
+            currRelocation++;
+        }
+    }
+}
 
 // regalloc
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C648.s")

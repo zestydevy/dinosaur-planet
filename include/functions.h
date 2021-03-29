@@ -25,7 +25,7 @@ void some_crash_setter(DLLInst arg0[], s32 arg1);
 
 void free(s32);
 DLLFile * dll_load_from_tab(u32, s32 *);
-void dll_relocate(void * arg0);
+void dll_relocate(DLLFile* dll);
 
 void *malloc(s32 arg0, s32 arg1, s32 arg2);
 void _bcopy(const void *src,void *dst,int length);
