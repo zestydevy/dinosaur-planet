@@ -20,8 +20,8 @@ DLLInst * func_8000BDE8(u32 * arg0) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load.s")
 #else
-s32 dll_load(u16 arg0, u16 arg1, s32 arg2);
-s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
+s32 _dll_load(u16 arg0, u16 arg1, s32 arg2);
+s32 _dll_load(u16 arg0, u16 arg1, s32 arg2)
 {
     u16 a3 = (s16)arg0;     // likely a temp var
     s32 v0 = a3;            // likely a temp var
@@ -105,8 +105,8 @@ s32 dll_load(u16 arg0, u16 arg1, s32 arg2)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C0B8.s")
 #else
-void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3);
-void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
+void _func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3);
+void _func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 {
     DLLFile * dll;
     s32 i;
@@ -157,8 +157,8 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 #else
-u32 func_8000C258(u32 arg0);
-u32 func_8000C258(u32 arg0)
+u32 _func_8000C258(u32 arg0);
+u32 _func_8000C258(u32 arg0)
 {
     u16 v1;
     u16 t8;
@@ -207,7 +207,7 @@ u32 func_8000C258(u32 arg0)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C3BC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_throw_fault.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 
@@ -216,8 +216,8 @@ u32 func_8000C258(u32 arg0)
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_relocate.s")
 #else
 extern u32* gFile_DLLSIMPORTTAB;
-void dll_relocate(DLLFile* dll);
-void dll_relocate(DLLFile* dll)
+void _dll_relocate(DLLFile* dll);
+void _dll_relocate(DLLFile* dll)
 {
     u32* exports;
     u32* target = (u32*)((u8*)dll + dll->code);
@@ -283,8 +283,8 @@ void dll_relocate(DLLFile* dll)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C648.s")
 #else
-void func_8000C648(void);
-void func_8000C648(void)
+void _func_8000C648(void);
+void _func_8000C648(void)
 {
     s32 v1 = gLoadedDLLCount;
     s32 v0 = 0;
