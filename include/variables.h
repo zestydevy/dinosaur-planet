@@ -137,7 +137,7 @@ typedef struct
 {
 	u32 code;
 	u32 data;
-	s32 relocations;
+	s32 rodata;
 	u16 exportCount;
 	DLLFunc ctor;
 	DLLFunc dtor;
