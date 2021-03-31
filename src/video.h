@@ -72,8 +72,8 @@ typedef struct _UnknownVideoStruct {
 extern UnknownVideoStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
 extern UnknownHeapVideoStruct *D_800bcc10;
 extern UnknownVideoStruct2 D_800bcc18[4]; // size:0x50
-extern u32 D_800bcc68;
-extern u32 D_800bcc6c;
+extern s32 D_800bcc68;
+extern s32 D_800bcc6c;
 extern u32 D_800bcc70;
 extern u8 D_800bcc78;
 

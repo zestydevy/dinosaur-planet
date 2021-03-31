@@ -1,4 +1,5 @@
 #include "common.h"
+#include "video.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5C470/func_8005B870.s")
 

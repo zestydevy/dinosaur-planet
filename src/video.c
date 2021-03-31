@@ -1,4 +1,5 @@
 #include "common.h"
+#include "video.h"
 
 bool func_8005BC38(u32 *param1);
 void _bcopy(void*, void*, u32);

@@ -901,3 +901,4 @@ vid_is_size_smaller_than_resolution = 0x8005DE94; // type:func
 gPossiblyScreenWidthOrHeight = 0x80092e98; // type:data size:0x4
 gSomeVideoFlag = 0x80092ea0; // type:data size:0x4
 gUnknownVideoStructs = 0x800bb590; // type:data size:0x1680
+OSMesgQueue_800bcce0 = 0x800bcce0;
