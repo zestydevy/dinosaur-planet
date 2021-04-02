@@ -17,4 +17,6 @@
 
 #define DEBUG_LOOP1 do {/* omitted debug code */} while(0)
 
+#define PLAYER_POSBUF_SIZE 0x3C
+
 #endif

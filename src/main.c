@@ -81,7 +81,7 @@ void game_init(void)
     init_menu_related_globals();
     init_audio(&osscheduler_, 0xE);
     init_global_map();
-    if (osMemSize != 0x800000) {
+    if (osMemSize != EXPANSION_SIZE) {
         temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
         gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
         gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 0x12);
@@ -449,7 +449,7 @@ u8 func_80014C60(void)
 
 void clear_PlayerPosBuffer(void)
 {
-    bzero(&PlayerPosBuffer, 0x3C0);
+    bzero(&PlayerPosBuffer, PLAYER_POSBUF_SIZE * sizeof(struct Vec3_Int));
     PlayerPosBuffer_index = 0;
 }
 
@@ -469,7 +469,7 @@ void update_PlayerPosBuffer(void)
         pos->f.z = player->position.z;
         pos->i = D_800AE674;
 
-        if (++PlayerPosBuffer_index >= 0x3C) {
+        if (++PlayerPosBuffer_index >= PLAYER_POSBUF_SIZE) {
             PlayerPosBuffer_index = 0;
         }
     }
