@@ -23,7 +23,7 @@ void * func_80023914(void);
 
 void some_crash_setter(DLLInst arg0[], s32 arg1);
 
-void free(s32);
+void free(void*);
 DLLFile * dll_load_from_tab(u32, s32 *);
 void dll_relocate(DLLFile* dll);
 

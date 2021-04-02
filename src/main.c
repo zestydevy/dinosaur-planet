@@ -460,14 +460,14 @@ void update_PlayerPosBuffer(void)
 
     player = (TActor *)func_80023914();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
-    D_800AE674 += delayByte;
+    gFrameCount += delayByte;
 
     if (player != NULL)
     {
         pos->f.x = player->position.x;
         pos->f.y = player->position.y;
         pos->f.z = player->position.z;
-        pos->i = D_800AE674;
+        pos->i = gFrameCount;
 
         if (++PlayerPosBuffer_index >= PLAYER_POSBUF_SIZE) {
             PlayerPosBuffer_index = 0;

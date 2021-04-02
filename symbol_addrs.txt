@@ -789,10 +789,11 @@ gFile_TABLES_TAB = 0x800b18f8; // type:data size 0x4
 gFile_FONTS_BIN = 0x800a7d34; // type:data size 0x4
 gFile_BITTABLE = 0x800ae2a4; // type:data size 0x4
 
+gFrameCount = 0x800AE674; // type:data size:0x4
 gNumTotalBlocks = 0x800b96cc; // type:data size:0x4
 gNumTRKBLKEntries = 0x800b96c0; // type:data size:0x4
 gDecodedGlobalMap = 0x800b96e8; // type:data size:0x4
-gLoadedMapsDataTable = 0x800b5328; // type:data size 0x4 
+gLoadedMapsDataTable = 0x800b5328; // type:data size 0x4
 gMapReadBuffer = 0x800b9724; // type:data size 0x4
 gNumModelsTabEntries = 0x800b17b0; // type:data size 0x4
 gNumObjectsTabEntries = 0x800b18f0; // type:data size 0x4
@@ -869,7 +870,7 @@ gMapGridTable = 0x800b976c; // type:data size:0x4
 gMapStreamMapIDTable = 0x800b972c; // type:data size:0x4
 gMapStreamMapTable = 0x800b9728; // type:data size:0x4
 gMapCurrentStreamCoords = 0x80092a68; // type:data
-gDisableObjectStreamingFlag = 0x800ae29c; // type:data size:0x1   
+gDisableObjectStreamingFlag = 0x800ae29c; // type:data size:0x1
 
 texture_load = 0x8003cda8; // type:func
 

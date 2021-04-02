@@ -178,7 +178,7 @@ extern s16 gSizeBittable;
 extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
 extern Gfx *D_800AE680;
 
-extern s32 D_800AE674;
+extern s32 gFrameCount;
 
 extern u32 * bss_end;
 extern u8 gHeapBlkListSize;

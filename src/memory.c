@@ -136,12 +136,12 @@ int func_80016E68(void *a0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017254.s")
 
-void free(s32 arg0) {
+void free(void *ptr) {
     s32 sp1C = func_with_status_reg();
     if (D_800B179C == 0) {
-        func_8001753C(arg0);
+        func_8001753C(ptr);
     } else {
-        func_800175D4(arg0);
+        func_800175D4(ptr);
     }
     set_status_reg(sp1C);
 }

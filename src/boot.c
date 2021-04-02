@@ -2,7 +2,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/boot/func_80000B40.s")
 
-void n_alSeqpDelete(s32 arg0) { //TODO: what is this really? looks like an incorrectly named func
+void n_alSeqpDelete(void *arg0) { //TODO: what is this really? looks like an incorrectly named func
     free(arg0);
 }
 
@@ -69,4 +69,3 @@ void func_800011F4(s32 a0, s32 *a1)
     *a1 = 1;
     func_80001178(a0, a1);
 }
-
