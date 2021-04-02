@@ -24,7 +24,7 @@ void mainproc(void * arg)
 
     while(TRUE) {
         check_dongle();  // copy protection check
-        
+
         if (osMemSize != EXPANSION_SIZE) {
             game_tick_no_expansion();
         } else {
@@ -37,7 +37,7 @@ void mainproc(void * arg)
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
 
-void game_init(void) 
+void game_init(void)
 {
     struct UnkStruct80014614 *temp_AMSEQ_DLL;
     s32 tvMode;
@@ -82,47 +82,47 @@ void game_init(void)
     init_audio(&osscheduler_, 0xE);
     init_global_map();
     if (osMemSize != 0x800000) {
-        temp_AMSEQ_DLL = dll_load_deferred(5, 0x24);
+        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
         gDLL_AMSEQ2 = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX = dll_load_deferred(6, 0x12);
-        gDLL_text = dll_load_deferred(0x15, 5);
-        gDLL_gplay = dll_load_deferred(0x1D, 0x2F);
-        gDLL_savegame = dll_load_deferred(0x1F, 2);
+        gDLL_AMSFX = dll_load_deferred(DLL_AMSFX, 0x12);
+        gDLL_text = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_gplay = dll_load_deferred(DLL_GPLAY, 0x2F);
+        gDLL_savegame = dll_load_deferred(DLL_SAVEGAME, 2);
         D_8008C974 = dll_load_deferred(0x1C, 4);
     } else {
         D_8008C994 = dll_load_deferred(1, 0xF);
         D_8008C978 = dll_load_deferred(2, 0x17);
         D_8008C9D8 = dll_load_deferred(0x17, 8);
         D_8008C9C8 = dll_load_deferred(0x12, 0x16);
-        gDLL_ANIM = dll_load_deferred(3, 0x1D);
+        gDLL_ANIM = dll_load_deferred(DLL_ANIM, 0x1D);
         D_8008C974 = dll_load_deferred(0x1C, 4);
         D_8008C9E0 = dll_load_deferred(0x19, 0xE);
         D_8008C980 = dll_load_deferred(7, 0xF);
         D_8008C984 = dll_load_deferred(8, 0xC);
-        gDLL_newclouds = dll_load_deferred(9, 8);
-        gDLL_newstars = dll_load_deferred(0xA, 3);
-        gDLL_minic = dll_load_deferred(0xC, 0xA);
-        gDLL_Race = dll_load_deferred(4, 0xD);
-        temp_AMSEQ_DLL = dll_load_deferred(5, 0x24);
+        gDLL_newclouds = dll_load_deferred(DLL_NEWCLOUDS, 8);
+        gDLL_newstars = dll_load_deferred(DLL_NEWSTARS, 3);
+        gDLL_minic = dll_load_deferred(DLL_MINIC, 0xA);
+        gDLL_Race = dll_load_deferred(DLL_RACE, 0xD);
+        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
         gDLL_AMSEQ2 = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX = dll_load_deferred(6, 0x12);
-        gDLL_newlfx = dll_load_deferred(0xB, 7);
-        gDLL_expgfx = dll_load_deferred(0xD, 0xA);
-        gDLL_modgfx = dll_load_deferred(0xE, 0xC);
-        gDLL_projgfx = dll_load_deferred(0xF, 8);
+        gDLL_AMSFX = dll_load_deferred(DLL_AMSFX, 0x12);
+        gDLL_newlfx = dll_load_deferred(DLL_NEWLFX, 7);
+        gDLL_expgfx = dll_load_deferred(DLL_EXPGFX, 0xA);
+        gDLL_modgfx = dll_load_deferred(DLL_MODGFX, 0xC);
+        gDLL_projgfx = dll_load_deferred(DLL_PROJGFX, 8);
         D_8008C9C0 = dll_load_deferred(0x10, 3);
         D_8008C9C4 = dll_load_deferred(0x11, 2);
-        gDLL_SCREENS = dll_load_deferred(0x14, 3);
-        gDLL_text = dll_load_deferred(0x15, 5);
-        gDLL_subtitles = dll_load_deferred(0x16, 7);
-        gDLL_waterfx = dll_load_deferred(0x18, 7);
-        gDLL_CURVES = dll_load_deferred(0x1A, 0x26);
+        gDLL_SCREENS = dll_load_deferred(DLL_SCREENS, 3);
+        gDLL_text = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
+        gDLL_waterfx = dll_load_deferred(DLL_WATERFX, 7);
+        gDLL_CURVES = dll_load_deferred(DLL_CURVES, 0x26);
         D_8008C9E8 = dll_load_deferred(0x4A, 7);
         D_8008C9F0 = dll_load_deferred(0x1B, 9);
-        gDLL_gplay = dll_load_deferred(0x1D, 0x24);
+        gDLL_gplay = dll_load_deferred(DLL_GPLAY, 0x24);
         D_8008C9F8 = dll_load_deferred(0x38, 0xA);
         D_8008C9FC = dll_load_deferred(0x1E, 6);
-        gDLL_savegame = dll_load_deferred(0x1F, 2);
+        gDLL_savegame = dll_load_deferred(DLL_SAVEGAME, 2);
         D_8008CA08 = dll_load_deferred(0x20, 6);
         D_8008CA0C = dll_load_deferred(0x21, 0x16);
         D_8008CA10 = dll_load_deferred(0x3B, 2);
@@ -321,8 +321,8 @@ void func_initing_rumblepak(void) {
     func_800683E0(0);
 }
 
-/* 
- * 
+/*
+ *
 */
 void test_write(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
@@ -336,12 +336,12 @@ void check_dongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
-    
+
     // append the other part.
     head <<= 16;
     head |= ACCESS_2;
 
-    /* 
+    /*
      * Perform the check against the 2 known codes:
      *
      * 'LSFS' (0x4C534653)
@@ -368,7 +368,7 @@ OSSched *get_ossched(void) {
     return &osscheduler_;
 }
 
-void init_bittable(void) 
+void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(0x37) >> 1;
@@ -468,7 +468,7 @@ void update_PlayerPosBuffer(void)
         pos->f.y = player->position.y;
         pos->f.z = player->position.z;
         pos->i = D_800AE674;
-        
+
         if (++PlayerPosBuffer_index >= 0x3C) {
             PlayerPosBuffer_index = 0;
         }

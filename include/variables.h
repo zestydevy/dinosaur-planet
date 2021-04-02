@@ -6,6 +6,7 @@
 
 #include "constants.h"
 #include "common_structs.h"
+#include "dlls.h"
 
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
@@ -14,12 +15,13 @@ typedef u32 UNK_TYPE_32;
 typedef float Vec2[2];
 typedef float Vec3[3];
 typedef float Vec4[4];
+typedef short Vec3s[3];
 
 //prelimnary, lots of unknowns
 //contains pointer-to-own-type fields, so `typedef struct _TActor {`
 //must be used instead of `typedef struct {`
 typedef struct TActor {
-/*0000*/  s16 rotation[3]; //why short?
+/*0000*/  Vec3s rotation;
 /*0006*/  s16 unk0x6;
 /*0008*/  float scale;
 /*000C*/  Vec3f position; //note: >300 unit drop causes fall damage.
@@ -220,7 +222,7 @@ extern OSViMode OSViMode_Custom;
 extern u32 CurrentResolutionH[2]; //picked from resolutionArray[video_mode % 7]
 extern u32 CurrentResolutionV[2]; //one for each FB, apparently
 extern void* framebufferPointers[2]; //{FBaddr,FBaddr*H*V*2}
-extern u32 framebufferChoice; 
+extern u32 framebufferChoice;
 extern u32 video_mode;
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
