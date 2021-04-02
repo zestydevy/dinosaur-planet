@@ -19,7 +19,7 @@ enum DLL_ID {
     DLL_WATERFX   = 0x18,
     DLL_CURVES    = 0x1A,
     DLL_GPLAY     = 0x1D,
-    DLL_SAVEGAME  = 0x1F,
+    DLL_SAVEGAME  = 0x1F
 };
 
 #endif //_DLLS_H_
