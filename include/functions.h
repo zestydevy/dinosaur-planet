@@ -27,7 +27,7 @@ void free(s32);
 DLLFile * dll_load_from_tab(u32, s32 *);
 void dll_relocate(DLLFile* dll);
 
-void *malloc(s32 arg0, s32 arg1, s32 arg2);
+void *malloc(s32 size, s32 tag, const char *name);
 void _bcopy(const void *src,void *dst,int length);
 
 #endif
