@@ -246,6 +246,8 @@ extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 extern DLLInst (*gLoadedDLLList)[];
 extern s32 gLoadedDLLCount;
 
-extern DLLTab * gFile_DLLS_TAB;
+// extern DLLTab * gFile_DLLS_TAB;
+// FIXME: wtf is the type of gFile_DLLS_TAB?
+extern DLLTabEntry * gFile_DLLS_TAB;
 
 #endif
