@@ -25,7 +25,7 @@ void some_crash_setter(DLLInst arg0[], s32 arg1);
 
 void read_file_region(u32 id, void *dst, u32 offset, u32 size);
 
-void free(s32);
+void free(void* p);
 DLLFile * dll_load_from_tab(u16, s32 *);
 void dll_relocate(DLLFile* dll);
 

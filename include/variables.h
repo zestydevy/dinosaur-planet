@@ -120,7 +120,7 @@ typedef struct
 /*0004*/	s32 bank1;
 /*0008*/	s32 reserved;
 /*000C*/	s32 bank2;
-/*0010*/	DLLTabEntry * entries;
+/*0010*/	DLLTabEntry entries[0];
 } DLLTab;
 
 typedef struct
@@ -141,7 +141,7 @@ typedef struct
 	u16 exportCount;
 	DLLFunc ctor;
 	DLLFunc dtor;
-	u32 * reserved;
+	u32 exports[1]; // Exports table begins here
 } DLLFile;
 
 
@@ -243,11 +243,9 @@ extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
-extern DLLInst (*gLoadedDLLList)[];
+extern DLLInst* gLoadedDLLList;
 extern s32 gLoadedDLLCount;
 
-// extern DLLTab * gFile_DLLS_TAB;
-// FIXME: wtf is the type of gFile_DLLS_TAB?
-extern DLLTabEntry * gFile_DLLS_TAB;
+extern DLLTab * gFile_DLLS_TAB;
 
 #endif
