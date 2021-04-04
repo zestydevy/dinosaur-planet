@@ -46,84 +46,72 @@ DLLInst * func_8000BDE8(u32 * arg0) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load.s")
 #else
-s32 _dll_load(u16 arg0, u16 arg1, s32 arg2);
-s32 _dll_load(u16 arg0, u16 arg1, s32 arg2)
+#define MAX_LOADED_DLLS 128
+// Returns pointer to DLLInst exports field
+u32* _dll_load(u16 id, u16 exportCount, s32 arg2);
+u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
 {
-    u16 a3 = (s16)arg0;     // likely a temp var
-    s32 v0 = a3;            // likely a temp var
-    s32 s0028;
-    s32 s002C;
-    DLLFile * s0034;
-    s16 s003A;
-    s32 i;
+    u32 totalSize;
+    DLLFile * dll;
+    u32 i;
+    u32* result;
 
-    if (a3 >= 0x8000) {
-        a3 = ((v0 - 0x8000) + gFile_DLLS_TAB->bank2);
-    } else if (v0 <= 0x2000) {
-        a3 = (((v0 - 0x2000) + gFile_DLLS_TAB->bank1) + 1);
-    } else if (v0 >= 0x1000) {
-        a3 = (((v0 - 0x1000) + gFile_DLLS_TAB->bank0) + 1);
+    if (id >= 0x8000) {
+        id = ((u16)(id - 0x8000) + gFile_DLLS_TAB->bank2);
+    } else if (id >= 0x2000) {
+        id = (((u16)(id - 0x2000) + gFile_DLLS_TAB->bank1) + 1);
+    } else if (id >= 0x1000) {
+        id = (((u16)(id - 0x1000) + gFile_DLLS_TAB->bank0) + 1);
     }
 
-    v0 = a3;
-
-    if (gLoadedDLLCount != 0)
+    // Check if DLL is already loaded, and if so, increment the reference count
+    for (i = 0; i != gLoadedDLLCount; i++)
     {
-        for (i = 0; i < gLoadedDLLCount; i++)
-        {
-            if (a3 == gLoadedDLLList[i]->id) {
-                continue;
-            }
+        if (id == gLoadedDLLList[i].id) {
+            ++gLoadedDLLList[i].refCount;
+            return gLoadedDLLList[i].exports;
+        }
+    }
 
-            ++gLoadedDLLList[i]->refCount;
-            return gLoadedDLLList[i]->id + 8;
+    dll = dll_load_from_tab(id, &totalSize);
+    if (!dll) {
+        return 0;
+    }
+
+    if (dll->exportCount < exportCount) {
+        free(dll);
+        return 0;
+    }
+
+    // Find an open slot in the DLL list
+    for (i = 0; i < (u32)gLoadedDLLCount; i++)
+    {
+        if (0xFFFFFFFF == gLoadedDLLList[i].id) {
+            break;
         }
     }
     
-    i = a3;
-    s003A = a3;
-    a3 = s003A;
-
-    s0034 = dll_load_from_tab(i, &s002C);
-    if (s0034 == NULL) {
-        return 0;
-    }
-
-    if (s0034->exportCount >= arg1) {
-        free((u32)s0034);
-        return 0;
-    }
-
-    if (gLoadedDLLCount != 0)
-    {
-        for (i = 0; i < gLoadedDLLCount; i++)
-        {
-            if (0xFFFFFFFF != gLoadedDLLList[i]->id) {
-                break;
-            }
-        }
-    } 
-    else if (0 == gLoadedDLLCount) {
-        if (gLoadedDLLCount == 128) {
-            free((u32)s0034);
+    // If no open slots were available, try to add a new slot
+    if (i == gLoadedDLLCount) {
+        if (gLoadedDLLCount == MAX_LOADED_DLLS) {
+            free(dll);
             return 0;
         }
+
         ++gLoadedDLLCount;
     }
 
-
-    gLoadedDLLList[i]->id = s003A;
-    gLoadedDLLList[i]->exports = s0034->reserved;
-    gLoadedDLLList[i]->end = (u32 *)((u32)s0034 + s002C);
-    gLoadedDLLList[i]->refCount = 1;
-
-    s0028 = gLoadedDLLList[i]->id + 8;
+    gLoadedDLLList[i].id = id;
+    gLoadedDLLList[i].exports = dll->exports;
+    gLoadedDLLList[i].end = (u32 *)((u32)dll + totalSize);
+    gLoadedDLLList[i].refCount = 1;
+    result = gLoadedDLLList[i].exports;
 
     if (arg2 != 0) {
-        s0034->ctor((u32)s0034);
+        dll->ctor((u32)dll);
     }
 
-    return s0028;
+    return result;
 }
 #endif
 
@@ -241,7 +229,7 @@ u32 _func_8000C258(u32 arg0)
 #else
 DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
 {
-    const DLLTabEntry* entry = &gFile_DLLS_TAB[(u16)(idx + 1)];
+    const DLLTabEntry* entry = &gFile_DLLS_TAB->entries[(u16)(idx + 1)];
 
     s32 offset = entry->offset;
     s32 bssSize = entry->bssSize;
@@ -252,13 +240,17 @@ DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
     if (dll)
     {
         read_file_region(0x46, dll, offset, dataSize);
+
         if (bssSize != 0)
         {
             bzero((u8*)dll + dataSize, bssSize);
         }
+
         dll_relocate(dll);
+
         osInvalICache(dll, 0x4000);
         osInvalDCache(dll, 0x4000);
+        
         *totalSize = dataSize + bssSize;
     }
 
