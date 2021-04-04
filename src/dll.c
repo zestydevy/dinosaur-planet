@@ -17,18 +17,18 @@ DLLInst * func_8000BDE8(u32 * arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_deferred.s")
 
-#if 0
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load.s")
 #else
 #define MAX_LOADED_DLLS 128
 // Returns pointer to DLLInst exports field
-u32** dll_load(u16 id, u16 exportCount, s32 arg2);
-u32** dll_load(u16 id, u16 exportCount, s32 arg2)
+u32* _dll_load(u16 id, u16 exportCount, s32 arg2);
+u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
 {
     u32 totalSize;
     DLLFile * dll;
     s32 i;
-    u32** result;
+    u32* result;
 
     if (id >= 0x8000) {
         id = ((id - 0x8000) + gFile_DLLS_TAB->bank2);
@@ -39,11 +39,11 @@ u32** dll_load(u16 id, u16 exportCount, s32 arg2)
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
-    for (i = 0; i < gLoadedDLLCount; i++)
+    for (i = 0; i != gLoadedDLLCount; i++)
     {
         if (id == gLoadedDLLList[i].id) {
             ++gLoadedDLLList[i].refCount;
-            return &gLoadedDLLList[i].exports;
+            return gLoadedDLLList[i].exports;
         }
     }
 
@@ -52,19 +52,20 @@ u32** dll_load(u16 id, u16 exportCount, s32 arg2)
         return 0;
     }
 
-    if (dll->exportCount >= exportCount) {
+    if (dll->exportCount < exportCount) {
         free(dll);
         return 0;
     }
 
     // Find an open slot in the DLL list
-    for (i = 0; i < gLoadedDLLCount; i++)
+    for (i = 0; i != gLoadedDLLCount; i++)
     {
         if (0xFFFFFFFF == gLoadedDLLList[i].id) {
             break;
         }
     }
     
+    // If no open slots were available, try to add a new slot
     if (i == gLoadedDLLCount) {
         if (gLoadedDLLCount == MAX_LOADED_DLLS) {
             free(dll);
@@ -202,7 +203,7 @@ u32 _func_8000C258(u32 arg0)
 #else
 DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
 {
-    const DLLTabEntry* entry = &gFile_DLLS_TAB[(u16)(idx + 1)];
+    const DLLTabEntry* entry = &gFile_DLLS_TAB->entries[(u16)(idx + 1)];
 
     s32 offset = entry->offset;
     s32 bssSize = entry->bssSize;
@@ -213,13 +214,17 @@ DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
     if (dll)
     {
         read_file_region(0x46, dll, offset, dataSize);
+
         if (bssSize != 0)
         {
             bzero((u8*)dll + dataSize, bssSize);
         }
+
         dll_relocate(dll);
+
         osInvalICache(dll, 0x4000);
         osInvalDCache(dll, 0x4000);
+        
         *totalSize = dataSize + bssSize;
     }
 

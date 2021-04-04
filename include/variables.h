@@ -120,7 +120,7 @@ typedef struct
 /*0004*/	s32 bank1;
 /*0008*/	s32 reserved;
 /*000C*/	s32 bank2;
-/*0010*/	DLLTabEntry entries[0];
+/*0010*/	DLLTabEntry entries[1];
 } DLLTab;
 
 typedef struct
