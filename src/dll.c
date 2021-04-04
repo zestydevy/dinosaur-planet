@@ -1,6 +1,32 @@
 #include "common.h"
 
+extern u32* gFile_DLLSIMPORTTAB;
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/init_dll_system.s")
+#else
+extern u32 UINT_800a7d1c;
+void queue_alloc_load_file(s32 arg0, u32 id);
+void init_dll_system()
+{
+    queue_alloc_load_file(&gFile_DLLS_TAB, 0x47);
+    queue_alloc_load_file(&gFile_DLLSIMPORTTAB, 0x48);
+
+    // Count DLLs
+    UINT_800a7d1c = 2;
+    while (gFile_DLLS_TAB->entries[UINT_800a7d1c].offset != -1)
+    {
+        UINT_800a7d1c++;
+    }
+
+    gLoadedDLLList = malloc(0x800, 4, 0);
+    for (gLoadedDLLCount = 128; gLoadedDLLCount != 0;)
+    {
+        gLoadedDLLCount--;
+        gLoadedDLLList[gLoadedDLLCount - 1].id = 0xFFFFFFFF;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
@@ -240,7 +266,6 @@ DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
 }
 #endif
 
-extern u32* gFile_DLLSIMPORTTAB;
 void dll_relocate(DLLFile* dll);
 void dll_relocate(DLLFile* dll)
 {
