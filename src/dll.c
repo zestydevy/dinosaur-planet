@@ -2,21 +2,21 @@
 
 extern u32* gFile_DLLSIMPORTTAB;
 
-#if 0
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/init_dll_system.s")
 #else
-extern u32 UINT_800a7d1c;
+extern u32 gDLLCount;
 void queue_alloc_load_file(s32 arg0, u32 id);
-void init_dll_system()
+void _init_dll_system()
 {
     queue_alloc_load_file(&gFile_DLLS_TAB, 0x47);
     queue_alloc_load_file(&gFile_DLLSIMPORTTAB, 0x48);
 
     // Count DLLs
-    UINT_800a7d1c = 2;
-    while (gFile_DLLS_TAB->entries[UINT_800a7d1c].offset != -1)
+    gDLLCount = 2;
+    while (gFile_DLLS_TAB->entries[gDLLCount].offset != -1)
     {
-        UINT_800a7d1c++;
+        gDLLCount++;
     }
 
     gLoadedDLLList = malloc(0x800, 4, 0);
