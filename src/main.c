@@ -371,7 +371,7 @@ OSSched *get_ossched(void) {
 void init_bittable(void) 
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
-    gSizeBittable = get_file_size(0x37) >> 1;
+    gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
     charStats_pointer = (*gDLL_gplay)->unk_88();
 }
 
