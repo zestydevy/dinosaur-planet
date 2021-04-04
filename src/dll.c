@@ -27,15 +27,15 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
 {
     u32 totalSize;
     DLLFile * dll;
-    s32 i;
+    u32 i;
     u32* result;
 
     if (id >= 0x8000) {
-        id = ((id - 0x8000) + gFile_DLLS_TAB->bank2);
+        id = ((u16)(id - 0x8000) + gFile_DLLS_TAB->bank2);
     } else if (id >= 0x2000) {
-        id = (((id - 0x2000) + gFile_DLLS_TAB->bank1) + 1);
+        id = (((u16)(id - 0x2000) + gFile_DLLS_TAB->bank1) + 1);
     } else if (id >= 0x1000) {
-        id = (((id - 0x1000) + gFile_DLLS_TAB->bank0) + 1);
+        id = (((u16)(id - 0x1000) + gFile_DLLS_TAB->bank0) + 1);
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
@@ -58,7 +58,7 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
     }
 
     // Find an open slot in the DLL list
-    for (i = 0; i != gLoadedDLLCount; i++)
+    for (i = 0; i < (u32)gLoadedDLLCount; i++)
     {
         if (0xFFFFFFFF == gLoadedDLLList[i].id) {
             break;
