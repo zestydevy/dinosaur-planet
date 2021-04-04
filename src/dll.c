@@ -209,7 +209,36 @@ u32 _func_8000C258(u32 arg0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_throw_fault.s")
 
+// close
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
+#else
+DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
+{
+    const DLLTabEntry* entry = &gFile_DLLS_TAB[(u16)(idx + 1)];
+
+    s32 offset = entry->offset;
+    s32 bssSize = entry->bssSize;
+    u32 dataSize = entry[1].offset - offset;
+
+    DLLFile* dll = malloc(dataSize + bssSize, 4, 0);
+
+    if (dll)
+    {
+        read_file_region(0x46, dll, offset, dataSize);
+        if (bssSize != 0)
+        {
+            bzero((u8*)dll + dataSize, bssSize);
+        }
+        dll_relocate(dll);
+        osInvalICache(dll, 0x4000);
+        osInvalDCache(dll, 0x4000);
+        *totalSize = dataSize + bssSize;
+    }
+
+    return dll;
+}
+#endif
 
 extern u32* gFile_DLLSIMPORTTAB;
 void dll_relocate(DLLFile* dll);
