@@ -39,11 +39,11 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
-    for (i = 0; i != gLoadedDLLCount; i++)
+    for (i = 0; i < gLoadedDLLCount; i++)
     {
         if (id == gLoadedDLLList[i].id) {
             ++gLoadedDLLList[i].refCount;
-            return gLoadedDLLList[i].exports;
+            return &gLoadedDLLList[i].exports;
         }
     }
 
@@ -51,6 +51,9 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
     if (!dll) {
         return 0;
     }
+
+    // ??
+    if (id);
 
     if (dll->exportCount < exportCount) {
         free(dll);
@@ -79,7 +82,7 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
     gLoadedDLLList[i].exports = dll->exports;
     gLoadedDLLList[i].end = (u32 *)((u32)dll + totalSize);
     gLoadedDLLList[i].refCount = 1;
-    result = gLoadedDLLList[i].exports;
+    result = &gLoadedDLLList[i].exports;
 
     if (arg2 != 0) {
         dll->ctor((u32)dll);
@@ -100,7 +103,7 @@ void _func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
     s32 i;
 
     for (i = 0; i != gLoadedDLLCount; i++) {
-        if (id == (*gLoadedDLLList)[i].id) {
+        if (id == gLoadedDLLList[i].id) {
             return;
         }
     }
@@ -118,7 +121,7 @@ void _func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
     osInvalDCache(dll, 0x4000);
 
     for (; i < gLoadedDLLCount; i++) {
-        if ((-1) == (*gLoadedDLLList)[i].id) {
+        if ((-1) == gLoadedDLLList[i].id) {
             break;
         }
     }
@@ -131,10 +134,10 @@ void _func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
         ++gLoadedDLLCount;
     }
 
-    (*gLoadedDLLList)[i].id = id;
-    (*gLoadedDLLList)[i].exports = (u32 *)((u32)dll + 0x18);
-    (*gLoadedDLLList)[i].end = (u32 *)(((u32)dll + arg2) + arg3);
-    (*gLoadedDLLList)[i].refCount = 2;
+    gLoadedDLLList[i].id = id;
+    gLoadedDLLList[i].exports = (u32 *)((u32)dll + 0x18);
+    gLoadedDLLList[i].end = (u32 *)(((u32)dll + arg2) + arg3);
+    gLoadedDLLList[i].refCount = 2;
 
     dll->ctor((u32)dll);
 
@@ -164,19 +167,19 @@ u32 _func_8000C258(u32 arg0)
         return 0;
     }
 
-    --(*gLoadedDLLList)[t8].refCount;
+    --gLoadedDLLList[t8].refCount;
 
-    if ((*gLoadedDLLList)[t8].refCount < 0) {
+    if (gLoadedDLLList[t8].refCount < 0) {
         return 0;
     }
 
-    sp0034 = (DLLFile *)((u32)((*gLoadedDLLList)[t8].exports) - 0x18);
+    sp0034 = (DLLFile *)((u32)(gLoadedDLLList[t8].exports) - 0x18);
 
     sp0034->dtor((s32)sp0034);
 
-    if ((*gLoadedDLLList)[t8].exports < (*gLoadedDLLList)[t8].end) {
-        u32 * exports = (*gLoadedDLLList)[t8].exports;
-        while (exports < (*gLoadedDLLList)[t8].end)) {
+    if (gLoadedDLLList[t8].exports < gLoadedDLLList[t8].end) {
+        u32 * exports = gLoadedDLLList[t8].exports;
+        while (exports < gLoadedDLLList[t8].end) {
             exports += 4;
             *(exports - 0x4) = (u32)0x7000D;
         }
@@ -185,7 +188,7 @@ u32 _func_8000C258(u32 arg0)
     free(sp0034);
 
     while (gLoadedDLLCount != 0) {
-        if (-1 == (*gLoadedDLLList)[gLoadedDLLCount-1].id) {
+        if (-1 == gLoadedDLLList[gLoadedDLLCount-1].id) {
             return 1;
         }
         --gLoadedDLLCount;
@@ -201,24 +204,33 @@ u32 _func_8000C258(u32 arg0)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
 #else
-DLLFile * _dll_load_from_tab(u16 idx, s32 *totalSize)
+// regalloc/stack
+DLLFile * _dll_load_from_tab(u16 idx, u32 *totalSize)
 {
-    const DLLTabEntry* entry = &gFile_DLLS_TAB->entries[(u16)(idx + 1)];
+    DLLTabEntry* entry;
 
-    s32 offset = entry->offset;
-    s32 bssSize = entry->bssSize;
-    u32 dataSize = entry[1].offset - offset;
+    s32 offset;
+    s32 bssSize;
+    u32 dataSize;
 
-    DLLFile* dll = malloc(dataSize + bssSize, 4, 0);
+    DLLFile *dll;
+
+    idx++;
+    entry = &gFile_DLLS_TAB->entries[idx] - 2;
+
+    offset = entry->offset;
+    bssSize = entry->bssSize;
+    dataSize = entry[1].offset - offset;
+
+    dll = malloc(dataSize + bssSize, 4, 0);
+
+    if (dll)
+        read_file_region(0x46, dll, offset, dataSize);
 
     if (dll)
     {
-        read_file_region(0x46, dll, offset, dataSize);
-
-        if (bssSize != 0)
-        {
+        if (bssSize)
             bzero((u8*)dll + dataSize, bssSize);
-        }
 
         dll_relocate(dll);
 
@@ -297,22 +309,20 @@ void dll_relocate(DLLFile* dll)
     }
 }
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C648.s")
-#else
-void _func_8000C648(void);
-void _func_8000C648(void)
+void func_8000C648(void)
 {
-    s32 v1 = gLoadedDLLCount;
     s32 v0 = 0;
-    s32 a0 = gLoadedDLLList;
+    s32 count = gLoadedDLLCount;
 
-    if (v1 > 0) {
-        s32 a1 = a0 * 16;
-        do {
-            v0 += 16;
-        } while (v0 < a1);
+    if (count > 0)
+    {
+        DLLInst *dll = gLoadedDLLList;
+        do
+        {
+            v0 += sizeof(DLLInst);
+            if (dll++)
+                ;
+
+        } while (v0 < count * 16);
     }
 }
-#endif
