@@ -810,6 +810,7 @@ dll_load = 0x8000be78; // type:func
 dll_load_from_tab = 0x8000c3cc; // type:func
 dll_relocate = 0x8000c4a8; // type:func
 dll_throw_fault = 0x8000C3BC; // type:func
+gDLLCount = 0x800A7D1C; // type:data size:0x4
 
 gDLL_ANIM = 0x8008C97C; // type:data size:0x4
 gDLL_newclouds = 0x8008c988; // type:data size:0x4

@@ -1,6 +1,35 @@
 #include "common.h"
 
+#define MAX_LOADED_DLLS 128
+
+extern u32* gFile_DLLSIMPORTTAB;
+
+// close
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/init_dll_system.s")
+#else
+extern u32 gDLLCount;
+void queue_alloc_load_file(s32 arg0, u32 id);
+void _init_dll_system()
+{
+    queue_alloc_load_file(&gFile_DLLS_TAB, DLLS_TAB);
+    queue_alloc_load_file(&gFile_DLLSIMPORTTAB, DLLSIMPORTTAB_BIN);
+
+    // Count DLLs
+    gDLLCount = 2;
+    while (gFile_DLLS_TAB->entries[gDLLCount].offset != -1)
+    {
+        gDLLCount++;
+    }
+
+    gLoadedDLLList = malloc(MAX_LOADED_DLLS * sizeof(DLLInst), 4, 0);
+    for (gLoadedDLLCount = MAX_LOADED_DLLS; gLoadedDLLCount != 0;)
+    {
+        gLoadedDLLCount--;
+        gLoadedDLLList[gLoadedDLLCount].id = 0xFFFFFFFF;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
@@ -20,7 +49,6 @@ DLLInst * func_8000BDE8(u32 * arg0) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load.s")
 #else
-#define MAX_LOADED_DLLS 128
 // Returns pointer to DLLInst exports field
 u32* _dll_load(u16 id, u16 exportCount, s32 arg2);
 u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
@@ -244,7 +272,6 @@ DLLFile * _dll_load_from_tab(u16 idx, u32 *totalSize)
 }
 #endif
 
-extern u32* gFile_DLLSIMPORTTAB;
 void dll_relocate(DLLFile* dll);
 void dll_relocate(DLLFile* dll)
 {
