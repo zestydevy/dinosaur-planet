@@ -611,7 +611,6 @@ buttonInput1 = 0x800a7fa8; // type:data size:0x8
 get_button_press = 0x80010d9c; // type:func
 flagForButtons_ = 0x8008c8a0; // type:data size:0x4
 status_reg_func_byte = 0x8008ca80; // type:data size:0x1
-romcopy_dat = 0x800b2ec0; // type:data size:0x4
 crash_mesgq = 0x800b3758; // type:data size:0x18
 DLLSIMPORTTAB = 0xb3b064dc; // type:data size:0x818
 gLoadedDLLList = 0x800A7D10; // type:data size:0x4
@@ -772,6 +771,7 @@ init_maps = 0x80041e84; // type:func
 init_bittable = 0x80041e84; // type:func
 
 gFST = 0x800b2ec0; // type:data size 0x4
+gLastFSTIndex = 0x800b2ec4; // type:data size 0x4
 gFile_TEX0_TAB = 0x800b49a0; // type:data size 0x4
 gFile_TEX1_TAB = 0x800b49a4; // type:data size 0x4
 gFile_TEXTABLE = 0x800b49ac; // type:data size 0x4
