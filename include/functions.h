@@ -23,7 +23,7 @@ void * func_80023914(void);
 
 void some_crash_setter(DLLInst arg0[], s32 arg1);
 
-void read_file_region(u32 id, void *dst, u32 offset, u32 size);
+s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 
 void free(void* p);
 DLLFile * dll_load_from_tab(u16, u32 *);
