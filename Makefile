@@ -14,7 +14,15 @@ O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
            $(foreach file,$(DATA_FILES),$(BUILD_DIR)/$(file:.bin=.o)) \
 
 ##################### Compiler Options #######################
-CROSS = mips-linux-gnu-
+ifeq ($(shell type mips-n64-ld >/dev/null 2>/dev/null; echo $$?), 0)
+  CROSS := mips-n64-
+else ifeq ($(shell type mips-linux-gnu-ld >/dev/null 2>/dev/null; echo $$?), 0)
+  CROSS := mips-linux-gnu-
+else ifeq ($(shell type mips64-linux-gnu-ld >/dev/null 2>/dev/null; echo $$?), 0)
+  CROSS := mips64-linux-gnu-
+else
+  CROSS := mips64-elf-
+endif
 AS = $(CROSS)as
 LD = $(CROSS)ld
 OBJDUMP = $(CROSS)objdump
