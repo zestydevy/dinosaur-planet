@@ -30,4 +30,31 @@ void _init_filesystem(void)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/filesystem/get_file_size.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/filesystem/possible_romcopy.s")
+#else
+extern OSIoMesg romcopy_OIMesg;
+extern OSMesgQueue romcopy_mesgq;
+void _possible_romcopy(u32 romAddr, u8* dst, s32 size)
+{
+    s32 chunkSize;
+    OSMesg mesg;
+
+    osInvalDCache(dst, size);
+
+    chunkSize = 0x5000;
+    while (size > 0)
+    {
+        if (size < chunkSize) {
+            chunkSize = size;
+        }
+
+        osPiStartDma(&romcopy_OIMesg, OS_MESG_PRI_NORMAL, OS_READ, romAddr, dst, chunkSize, &romcopy_mesgq);
+        osRecvMesg(&romcopy_mesgq, &mesg, OS_MESG_BLOCK);
+
+        size -= chunkSize;
+        romAddr += chunkSize;
+        dst += chunkSize;
+    }
+}
+#endif
