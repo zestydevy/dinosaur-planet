@@ -2,7 +2,6 @@
 #include "video.h"
 
 bool func_8005BC38(u32 *param1);
-void _bcopy(void*, void*, u32);
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
@@ -273,8 +272,43 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
-
+    
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CDFC.s")
+#else
+void func_8005CDFC(s32 a0) {
+    UnknownVideoStruct *vidStruct;
+    float var1;
+    float var2;
+    s16* var3;
+
+    vidStruct = &gUnknownVideoStructs[0];
+
+    do {
+        if (vidStruct->viMode == NULL) {
+            continue;
+        }
+
+        var1 = D_80092A70 - vidStruct->unk0x78;
+        var2 = D_80092A74 - vidStruct->unk0x7c;
+
+        var3 = &vidStruct->unk0x48[0];
+
+        vidStruct->unk0x78 = vidStruct->unk0x78 + var1;
+        vidStruct->unk0x7c = vidStruct->unk0x7c + var2;
+        
+        vidStruct->unk0x18 = vidStruct->unk0x18 - var1;
+        vidStruct->unk0x1c = vidStruct->unk0x1c - var2;
+        vidStruct->unk0x28 = vidStruct->unk0x28 - var1;
+        vidStruct->unk0x2c = vidStruct->unk0x2c - var2;
+        vidStruct->unk0x38 = vidStruct->unk0x38 - var1;
+        vidStruct->unk0x3c = vidStruct->unk0x3c - var2;
+
+        var3[2] = var3[2] - var2;
+        var3[0] = var3[0] - var1;
+    } while (++vidStruct != &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CF4C.s")
 

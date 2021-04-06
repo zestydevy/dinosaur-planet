@@ -60,10 +60,27 @@ typedef struct _UnknownVideoStruct2 {
 typedef struct _UnknownVideoStruct {
     struct _UnknownHeapVideoStruct *ptrToUnknown1;
     f32 *ptrToUnknown2;
-    u8 unk0x8_padding[124]; // definitely not padding
+    u8 unk0x8_pad[16];
+    s16 unk0x18;
+    s16 unk0x1a;
+    s16 unk0x1c;
+    u8 unk0x1e_pad[10];
+    s16 unk0x28;
+    s16 unk0x2a;
+    s16 unk0x2c;
+    u8 unk0x2e_pad[10];
+    s16 unk0x38;
+    s16 unk0x3a;
+    s16 unk0x3c;
+    u8 unk0x3e_pad[10];
+    s16 unk0x48[4];
+    u8 unk0x4c_pad[40];
+    f32 unk0x78;
+    f32 unk0x7c;
+    u8 unk0x80_pad[4];
     OSViMode *viMode;
     s16 unk0x88;
-    u8 unk0x8a_padding[6]; // probably not padding
+    u8 unk0x8a_padd[6];
 } UnknownVideoStruct;
 
 // Length of gUnknownVideoStructs
@@ -83,6 +100,9 @@ extern void *gFramebufferNext;
 extern void *gFramebufferCurrent;
 extern u32 *D_800bccb4;
 extern u32 *D_800bccb0;
+
+extern f32 D_80092A70;
+extern f32 D_80092A74;
 
 /**
  * Holds the horizontal resolution of each framebuffer.
