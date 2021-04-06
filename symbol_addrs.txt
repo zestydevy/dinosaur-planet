@@ -87,7 +87,7 @@ osCreateThread = 0x8005e990; // type:func
 osInitialize = 0x8007c810; // type:func
 __createSpeedParam = 0x8007cca4; // type:func
 osStartThread = 0x8007cd40; // type:func
-_bzero = 0x8007cfe0; // type:func
+bzero = 0x8007cfe0; // type:func
 osInvalICache = 0x8007d080; // type:func
 __ull_div = 0x8007ed58; // type:func
 __ll_mul = 0x8007ee58; // type:func
@@ -611,9 +611,10 @@ buttonInput1 = 0x800a7fa8; // type:data size:0x8
 get_button_press = 0x80010d9c; // type:func
 flagForButtons_ = 0x8008c8a0; // type:data size:0x4
 status_reg_func_byte = 0x8008ca80; // type:data size:0x1
-romcopy_dat = 0x800b2ec0; // type:data size:0x4
 crash_mesgq = 0x800b3758; // type:data size:0x18
 DLLSIMPORTTAB = 0xb3b064dc; // type:data size:0x818
+gLoadedDLLList = 0x800A7D10; // type:data size:0x4
+gLoadedDLLCount = 0x800A7D14; // type:data size:0x4
 ceil_f = 0x8001648c; // type:func
 gOSViModeCustom = 0x800bcda0; // type:data size:0x50
 gResolutionArray = 0x80093020; // type:data size:0x40
@@ -770,6 +771,7 @@ init_maps = 0x80041e84; // type:func
 init_bittable = 0x80041e84; // type:func
 
 gFST = 0x800b2ec0; // type:data size 0x4
+gLastFSTIndex = 0x800b2ec4; // type:data size 0x4
 gFile_TEX0_TAB = 0x800b49a0; // type:data size 0x4
 gFile_TEX1_TAB = 0x800b49a4; // type:data size 0x4
 gFile_TEXTABLE = 0x800b49ac; // type:data size 0x4
@@ -807,6 +809,8 @@ dll_load_deferred = 0x8000be04; // type:func
 dll_load = 0x8000be78; // type:func
 dll_load_from_tab = 0x8000c3cc; // type:func
 dll_relocate = 0x8000c4a8; // type:func
+dll_throw_fault = 0x8000C3BC; // type:func
+gDLLCount = 0x800A7D1C; // type:data size:0x4
 
 gDLL_ANIM = 0x8008C97C; // type:data size:0x4
 gDLL_newclouds = 0x8008c988; // type:data size:0x4
@@ -890,6 +894,10 @@ vec3_normalize = 0x80016708; // type:func
 vec3_sub = 0x8001679c; // type:func
 vec3_add_with_scale = 0x800167d4; // type:func
 vec3_reflect = 0x80016820; // type:func
+
+mat4_ident_translate = 0x80015F7C; // type:func
+
+n_alSynSetVol = 0x8006C150; // type:func
 
 get_addr_of_OSMesgQueue_8005D670 = 0x8005D670; // type:func
 set_current_resolution_from_video_mode = 0x8005D680; // type:func

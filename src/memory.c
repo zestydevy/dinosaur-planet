@@ -136,12 +136,12 @@ int func_80016E68(void *a0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017254.s")
 
-void free(s32 arg0) {
+void free(void* p) {
     s32 sp1C = func_with_status_reg();
     if (D_800B179C == 0) {
-        func_8001753C(arg0);
+        func_8001753C(p);
     } else {
-        func_800175D4(arg0);
+        func_800175D4(p);
     }
     set_status_reg(sp1C);
 }
@@ -262,7 +262,7 @@ void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     if (arg4);
 
     ptr = malloc(arg4, 0xB, &D_80099228);
-    _bzero(ptr, arg4);
+    bzero(ptr, arg4);
     return align_16(ptr);
 }
 

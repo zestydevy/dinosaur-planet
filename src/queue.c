@@ -1,52 +1,56 @@
 #include "common.h"
 #include "queue.h"
 
-struct UnkStruct800AE1D0 {
+struct UnkStruct8000ADF0 {
     s16 unk0;
 };
-extern struct UnkStruct800AE1D0 *D_800AE1D0;
+extern struct UnkStruct8000ADF0 *D_800ACBC8;
+struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
+
+struct UnkStruct8000B010 {
+    s16 unk0;
+};
+extern struct UnkStruct8000B010 *D_800AE1D0;
+struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
 
 extern u8 gDisableObjectStreamingFlag;
 
 extern u8 D_800AE29D, D_800AE29E;
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/create_asset_thread.s")
-#else
+void asset_thread_main(void);
+
+extern s32 *D_800ACBB8, *D_800ACBD0;
+
+extern s32 *D_800AE1C0, *D_800AE1D8;
+
 extern u64 *D_800AC910; // end of stack
 extern OSThread *D_800AC918;
-void _create_asset_thread(void) {
+
+void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
-    // both structs
     D_800ACBC8 = func_8000ADF0(&D_800ACBB8, &D_800ACBD0, 0x64, 0x1C);
     D_800AE1D0 = func_8000B010(&D_800AE1C0, &D_800AE1D8, 5, 0x14);
     osCreateThread(&D_800AC918, 0x63, &asset_thread_main, 0, &D_800AC910, 0xB);
     osStartThread(&D_800AC918);
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012584.s")
 #else
 void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
-    s32 sp34;
-    s32 sp30;
-    s32 sp2C;
-    s32 sp28;
-    s32 sp24;
-    s32 sp20;
-    u8 sp1C;
     s32 sp18;
+    // TODO: is it really?
+    struct UnkMesg800AE270 sp1C;
 
     sp18 = func_with_status_reg();
     if (func_8000AFDC(D_800ACBC8) == 0) {
-        sp1C = arg1;    
-        sp20 = arg2;
-        sp24 = arg3;
-        sp28 = arg4;
-        sp2C = arg5;
-        sp30 = arg6;
-        sp34 = arg7;
+        sp1C.loadCategory = arg1;
+        sp1C.unk4 = arg2;
+        sp1C.unk8 = arg3;
+        sp1C.unkC = arg4;
+        sp1C.unk10 = arg5;
+        sp1C.unk14 = arg6;
+        sp1C.unk18 = arg7;
         func_8000AE98(D_800ACBC8, &sp1C);
     }
     set_status_reg(sp18);
@@ -204,7 +208,6 @@ void func_80012A4C(void) {
 }
 
 // TODO: struct
-extern u32 *D_800ACBC8;
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012B54.s")
 #else

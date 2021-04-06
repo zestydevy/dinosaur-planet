@@ -8,6 +8,15 @@ void game_init(void);
 void init_bittable(void);
 struct UnkStruct80014614 **dll_load_deferred(s32, s32);
 
+const char gameVer[] = "1.3623";
+const char curentTime[] = "01/12/00 09:19";
+const char gameName[] = "dragon1";
+const char fileName[] = "main/main.c";
+const char fileName2[] = "main/main.c";
+
+const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
+const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
+
 void mainproc(void * arg)
 {
     test_write(); // ROM write check
@@ -362,7 +371,7 @@ OSSched *get_ossched(void) {
 void init_bittable(void) 
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
-    gSizeBittable = get_file_size(0x37) >> 1;
+    gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
     charStats_pointer = (*gDLL_gplay)->unk_88();
 }
 
@@ -440,7 +449,7 @@ u8 func_80014C60(void)
 
 void clear_PlayerPosBuffer(void)
 {
-    _bzero(&PlayerPosBuffer, 0x3C0);
+    bzero(&PlayerPosBuffer, 0x3C0);
     PlayerPosBuffer_index = 0;
 }
 

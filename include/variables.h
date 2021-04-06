@@ -108,6 +108,123 @@ struct ErrString{
 	char* text;
 };
 
+typedef struct
+{
+	s32 offset;
+	s32 bssSize;
+} DLLTabEntry;
+
+
+typedef struct
+{
+/*0000*/	s32 bank0;
+/*0004*/	s32 bank1;
+/*0008*/	s32 reserved;
+/*000C*/	s32 bank2;
+/*0010*/	DLLTabEntry entries[1];
+} DLLTab;
+
+typedef struct
+{
+/*0000*/	u32 id;
+/*0004*/	s32 refCount;
+/*0008*/	u32 * exports;
+/*000C*/	u32 * end;
+} DLLInst;
+
+typedef void (*DLLFunc)(u32 a);
+
+typedef struct
+{
+	u32 code;
+	u32 data;
+	s32 rodata;
+	u16 exportCount;
+	DLLFunc ctor;
+	DLLFunc dtor;
+	u32 exports[1]; // Exports table begins here
+} DLLFile;
+
+typedef enum
+{
+    AUDIO_TAB,
+    AUDIO_BIN,
+    SFX_TAB,
+    SFX_BIN,
+    AMBIENT_TAB,
+    AMBIENT_BIN,
+    MUSIC_TAB,
+    MUSIC_BIN,
+    MPEG_TAB,
+    MPEG_BIN,
+    MUSICACTIONS_BIN,
+    CAMACTIONS_BIN,
+    LACTIONS_BIN,
+    ANIMCURVES_BIN,
+    ANIMCURVES_TAB,
+    OBJSEQ2CURVE_TAB,
+    FONTS_BIN,
+    CACHEFON_BIN,
+    CACHEFON2_BIN,
+    GAMETEXT_BIN,
+    GAMETEXT_TAB,
+    GLOBALMAP_BIN,
+    TABLES_BIN,
+    TABLES_TAB,
+    SCREENS_BIN,
+    SCREENS_TAB,
+    VOXMAP_BIN,
+    VOXMAP_TAB,
+    TEXPRE_TAB,
+    TEXPRE_BIN,
+    WARPTAB_BIN,
+    MAPS_BIN,
+    MAPS_TAB,
+    MAPINFO_BIN,
+    MAPSETUP_IND,
+    MAPSETUP_TAB,
+    TEX1_BIN,
+    TEX1_TAB,
+    TEXTABLE_BIN,
+    TEX0_BIN,
+    TEX0_TAB,
+    BLOCKS_BIN,
+    BLOCKS_TAB,
+    TRKBLK_BIN,
+    HITS_BIN,
+    HITS_TAB,
+    MODELS_TAB,
+    MODELS_BIN,
+    MODELIND_BIN,
+    MODANIM_TAB,
+    MODANIM_BIN,
+    ANIM_TAB,
+    ANIM_BIN,
+    AMAP_TAB,
+    AMAP_BIN,
+    BITTABLE_BIN,
+    WEAPONDATA_BIN,
+    VOXOBJ_TAB,
+    VOXOBJ_BIN,
+    MODLINES_BIN,
+    MODLINES_TAB,
+    SAVEGAME_BIN,
+    SAVEGAME_TAB,
+    OBJSEQ_BIN,
+    OBJSEQ_TAB,
+    OBJECTS_TAB,
+    OBJECTS_BIN,
+    OBJINDEX_BIN,
+    OBJEVENT_BIN,
+    OBJHITS_BIN,
+    DLLS_BIN,
+    DLLS_TAB,
+    DLLSIMPORTTAB_BIN,
+    ENVFXACT_BIN,
+    
+    NUM_FILES
+} EFile;
+
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
 // this needs double checking. its address is within gMainThreadStack....
@@ -195,4 +312,10 @@ extern struct ErrString errStringArray_fpsr[];
 extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
+
+extern DLLInst* gLoadedDLLList;
+extern s32 gLoadedDLLCount;
+
+extern DLLTab * gFile_DLLS_TAB;
+
 #endif

@@ -40,7 +40,8 @@ segments:
     - [0x13030, c]
     - [0x130E0, c, queue]
     - [0x13D70, c, main]
-    - [0x15A70, asm]
+    - [0x15A70, asm, status_register]
+    - [0x15AD0, hasm]
     - [0x17180, c, vec3]
     - [0x17500, c, memory]
     - [0x18820, c, model]
@@ -95,7 +96,7 @@ segments:
     - [0x6A170, c]
     - [0x6C490, c]
     - [0x6C530, c]
-    - [0x6CD50, c]
+    - [0x6CD50, c, libultra/libnaudio/n_synsetvol]
     - [0x6CE20, c]
     - [0x6CF50, c]
     - [0x6D2E0, c]
@@ -216,9 +217,7 @@ segments:
     - [0x8A350, bin]
 
     - [0x99CA0, .rodata, queue]
-
-    - [0x99D10, bin]
-    # - [0x99D10, .rodata, main]
+    - [0x99D10, .rodata, main]
 
     - [0x99DB0, bin]
 
