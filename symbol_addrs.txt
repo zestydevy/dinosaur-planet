@@ -879,6 +879,7 @@ anim_load = 0x80019164; // type:func
 modanim_load = 0x80018c98; // type:func
 
 model_load_create_instance = 0x80017d5c; // type:func
+model_get_stats = 0x800187e4; // type:func
 model_load_anim_remap_table = 0x80018bd8; // type:func
 model_setup_anim_playback = 0x80018f80; // type:func
 
