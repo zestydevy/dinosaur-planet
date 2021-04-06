@@ -153,4 +153,6 @@ extern u32 D_800bce14;
 extern u8 D_800bce2c;
 extern s32 D_80092FF8;
 
+extern s8 D_80093060;
+
 #endif
