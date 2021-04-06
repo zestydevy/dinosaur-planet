@@ -96,7 +96,28 @@ s32 _read_file_region(u32 id, void *dst, u32 offset, s32 size)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/filesystem/func_800372C8.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/filesystem/get_file_size.s")
+#else
+typedef struct
+{
+    s32 count;
+    s32 offsets[1];
+} TFileSystem;
+
+// struct offset difference
+s32 _get_file_size(u32 arg0);
+s32 _get_file_size(u32 arg0)
+{
+    if (gFST->count < arg0) {
+        return 0;
+    }
+
+    ++arg0;
+
+    return gFST->offsets[arg0+1] - gFST->offsets[arg0];
+}
+#endif
 
 // stack
 #if 1
