@@ -46,24 +46,23 @@ DLLInst * func_8000BDE8(u32 * arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_deferred.s")
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load.s")
-#else
 // Returns pointer to DLLInst exports field
-u32* _dll_load(u16 id, u16 exportCount, s32 arg2);
-u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
+u32* dll_load(u16 id, u16 exportCount, s32 arg2)
 {
-    u32 totalSize;
     DLLFile * dll;
     u32 i;
+    u32 totalSize;
     u32* result;
 
     if (id >= 0x8000) {
-        id = ((u16)(id - 0x8000) + gFile_DLLS_TAB->bank2);
+        id -= 0x8000;
+        id += gFile_DLLS_TAB->bank2;
     } else if (id >= 0x2000) {
-        id = (((u16)(id - 0x2000) + gFile_DLLS_TAB->bank1) + 1);
+        id -= 0x2000;
+        id += gFile_DLLS_TAB->bank1 + 1;
     } else if (id >= 0x1000) {
-        id = (((u16)(id - 0x1000) + gFile_DLLS_TAB->bank0) + 1);
+        id -= 0x1000;
+        id += gFile_DLLS_TAB->bank0 + 1;
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
@@ -79,9 +78,6 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
     if (!dll) {
         return 0;
     }
-
-    // ??
-    if (id);
 
     if (dll->exportCount < exportCount) {
         free(dll);
@@ -118,7 +114,6 @@ u32* _dll_load(u16 id, u16 exportCount, s32 arg2)
 
     return result;
 }
-#endif
 
 // close
 #if 1
