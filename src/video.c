@@ -522,9 +522,17 @@ void func_8005DA00(u32 param1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/video_func_returning_delay.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC68.s")
+#else
+void func_8005DC68() {}
+#endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC70.s")
+#else
+void func_8005DC70(int _) {}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
