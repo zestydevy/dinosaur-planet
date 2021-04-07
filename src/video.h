@@ -17,7 +17,7 @@ typedef struct VideoResolution {
 
 #define UNKNOWN_HEAP_VIDEO_STRUCT_SIZE 0x60
 
-typedef struct _UnknownHeapVideoStruct {
+typedef struct _UnkHeapVidStruct {
     f32 unk0x0;
     f32 unk0x4;
     f32 unk0x8;
@@ -42,23 +42,23 @@ typedef struct _UnknownHeapVideoStruct {
     f32 unk0x54;
     f32 unk0x58;
     f32 unk0x5c;
-} UnknownHeapVideoStruct;
+} UnkHeapVidStruct;
 
 #define UNKNOWN_VIDEO_STRUCT_2_SIZE 0x14
 
-typedef struct _UnknownVideoStruct2 {
+typedef struct _UnkVidStruct2 {
     f32 unk0x0;
     f32 unk0x4;
     f32 unk0x8;
     u8 unk0xc;
     u8 unk0xd_padding[3];
     f32 *unk0x10;
-} UnknownVideoStruct2;
+} UnkVidStruct2;
 
 #define UNKNOWN_VIDEO_STRUCT_SIZE 0x90
 
-typedef struct _UnknownVideoStruct {
-    struct _UnknownHeapVideoStruct *ptrToUnknown1;
+typedef struct _UnkVidStruct {
+    struct _UnkHeapVidStruct *ptrToUnknown1;
     f32 *ptrToUnknown2;
     u8 unk0x8_pad[16];
     s16 unk0x18;
@@ -81,14 +81,19 @@ typedef struct _UnknownVideoStruct {
     OSViMode *viMode;
     s16 unk0x88;
     u8 unk0x8a_padd[6];
-} UnknownVideoStruct;
+} UnkVidStruct;
+
+typedef struct _UnkVidStruct3 {
+    s32 unk0x0;
+    s32 unk0x4;
+} UnkVidStruct3;
 
 // Length of gUnknownVideoStructs
 #define UNKNOWN_VIDEO_STRUCTS_COUNT 40
 
-extern UnknownVideoStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
-extern UnknownHeapVideoStruct *D_800bcc10;
-extern UnknownVideoStruct2 D_800bcc18[4]; // size:0x50
+extern UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
+extern UnkHeapVidStruct *D_800bcc10;
+extern UnkVidStruct2 D_800bcc18[4]; // size:0x50
 extern s32 D_800bcc68;
 extern s32 D_800bcc6c;
 extern u32 D_800bcc70;
@@ -98,8 +103,8 @@ extern OSViMode gOSViModeCustom;
 
 extern void *gFramebufferNext;
 extern void *gFramebufferCurrent;
-extern u32 *D_800bccb4;
-extern u32 *D_800bccb0;
+extern u16 *D_800bccb4;
+extern u16 *D_800bccb0;
 
 extern f32 D_80092A70;
 extern f32 D_80092A74;
@@ -123,7 +128,7 @@ extern void *gFramebufferPointers[2];
 extern u32 framebufferAddress_ExpPak;
 extern u32 framebufferAddress_NoExpPak;
 
-extern u32 *gFramebufferStart;
+extern u16 *gFramebufferStart;
 extern u32 *gFramebufferEnd;
 
 /**
@@ -154,5 +159,10 @@ extern u8 D_800bce2c;
 extern s32 D_80092FF8;
 
 extern s8 D_80093060;
+extern UnkVidStruct3 *D_80093068;
+
+extern s32 **D_800BCE18;
+extern u8 D_800BCE20; // index of D_800BCE22?
+extern u8 *D_800BCE22;
 
 #endif

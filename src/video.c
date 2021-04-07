@@ -1,17 +1,17 @@
 #include "common.h"
 #include "video.h"
 
-bool func_8005BC38(u32 *param1);
-void func_8005E550(float[4][4], f32*, f32, f32, f32, f32, f32);
+// From segment_5C470
+bool func_8005BC38(u32*);
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
 #else
-void _func_8005C780() {
-    UnknownVideoStruct2 *vidStruct2;
-    UnknownVideoStruct *vidStruct;
-    UnknownVideoStruct *vidStructsEnd;
-    UnknownHeapVideoStruct *vidHeapStruct;
+// Functionally equivalent, see TODOs
+void func_8005C780() {
+    UnkVidStruct2 *vidStruct2;
+    UnkVidStruct *vidStruct;
+    UnkHeapVidStruct *vidHeapStruct;
 
     vidHeapStruct = D_800bcc10;
 
@@ -22,84 +22,54 @@ void _func_8005C780() {
     D_800bcc10 = malloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
 
     if (1) {
-        vidStructsEnd = &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
         vidStruct = &gUnknownVideoStructs[0];
 
         do {
-            vidStruct->ptrToUnknown1 = (UnknownHeapVideoStruct*)0xdf000000;
+            vidStruct->ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
             vidStruct->ptrToUnknown2 = NULL; 
             goto label_1; label_1: // TODO: This probably shouldn't be necessary
             vidStruct->viMode = NULL;
             vidStruct->unk0x88 = 0;
-        } while (++vidStruct < vidStructsEnd);
+        } while (++vidStruct < &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
 
         // TODO: Figure out how to get this to match in a way that it weaves in `lui   at,0x800c`
-        //       The if (1) stmts get pretty close, but there's probably something missing here
-        //if (1) {
-            vidStruct2 = &D_800bcc18[0];
-            vidStruct2->unk0x10 = 0;
-        //}
+        vidStruct2 = &D_800bcc18[0];
+        vidStruct2->unk0x10 = 0;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0x0 = 0.0f;
-            vidStruct2->unk0x4 = 0.0f;
-        //}
+        vidStruct2->unk0x0 = 0.0f;
+        vidStruct2->unk0x4 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0xc = (u8)0;
-            vidStruct2->unk0x8 = 0.0f;
-        //}
+        vidStruct2->unk0xc = (u8)0;
+        vidStruct2->unk0x8 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2 = &D_800bcc18[1];
-            vidStruct2->unk0x10 = 0;
-        //}
+        vidStruct2 = &D_800bcc18[1];
+        vidStruct2->unk0x10 = 0;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0x0 = 0.0f;
-        //}
+        vidStruct2->unk0x0 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0x4 = 0.0f;
-            vidStruct2->unk0x8 = 0.0f;
-        //}
+        vidStruct2->unk0x4 = 0.0f;
+        vidStruct2->unk0x8 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0xc = (u8)0;
-        //}
+        vidStruct2->unk0xc = (u8)0;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2 = &D_800bcc18[2];
-            vidStruct2->unk0x10 = 0;
-        //}
+        vidStruct2 = &D_800bcc18[2];
+        vidStruct2->unk0x10 = 0;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0x0 = 0.0f;
-            vidStruct2->unk0x4 = 0.0f;
-        //}
+        vidStruct2->unk0x0 = 0.0f;
+        vidStruct2->unk0x4 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0xc = (u8)0;
-            vidStruct2->unk0x8 = 0.0f;
-        //}
+        vidStruct2->unk0xc = (u8)0;
+        vidStruct2->unk0x8 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2 = &D_800bcc18[3];
-            vidStruct2->unk0x10 = 0;
-        //}
+        vidStruct2 = &D_800bcc18[3];
+        vidStruct2->unk0x10 = 0;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0x0 = 0.0f;
-        //}
+        vidStruct2->unk0x0 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0x4 = 0.0f;
-            vidStruct2->unk0x8 = 0.0f;
-        //}
+        vidStruct2->unk0x4 = 0.0f;
+        vidStruct2->unk0x8 = 0.0f;
         // lui   at,0x800c
-        //if (1) {
-            vidStruct2->unk0xc = (u8)0;
-        //}
+        vidStruct2->unk0xc = (u8)0;
     }
 
     D_800bcc10->unk0x0 = -3.0f;
@@ -139,86 +109,57 @@ void _func_8005C780() {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C998.s")
 void func_8005C998();
 #else
+// Functionally equivalent, see TODOs
 void _func_8005C998() {
-    UnknownVideoStruct2 *vidStruct2;
-    UnknownVideoStruct *end = &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
-    UnknownVideoStruct *vidStruct = &gUnknownVideoStructs[0];
+    UnkVidStruct2 *vidStruct2;
+    UnkVidStruct *vidStruct = &gUnknownVideoStructs[0];
 
     do {
-        vidStruct->ptrToUnknown1 = (UnknownHeapVideoStruct*)0xdf000000;
+        vidStruct->ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
         vidStruct->ptrToUnknown2 = NULL; 
         goto label_1; label_1: // TODO: This probably shouldn't be necessary
         vidStruct->viMode = NULL;
         vidStruct->unk0x88 = 0;
-    } while (++vidStruct < end);
+    } while (++vidStruct < &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
 
     // TODO: Figure out how to get this to match in a way that it weaves in `lui   at,0x800c`
-    //       The if (1) stmts get pretty close, but there's probably something missing here
-    //if (1) {
-        vidStruct2 = &D_800bcc18[0];
-        vidStruct2->unk0x10 = 0;
-    //}
+    vidStruct2 = &D_800bcc18[0];
+    vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0x0 = 0.0f;
-        vidStruct2->unk0x4 = 0.0f;
-    //}
+    vidStruct2->unk0x0 = 0.0f;
+    vidStruct2->unk0x4 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0xc = (u8)0;
-        vidStruct2->unk0x8 = 0.0f;
-    //}
+    vidStruct2->unk0xc = (u8)0;
+    vidStruct2->unk0x8 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2 = &D_800bcc18[1];
-        vidStruct2->unk0x10 = 0;
-    //}
+    vidStruct2 = &D_800bcc18[1];
+    vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0x0 = 0.0f;
-    //}
+    vidStruct2->unk0x0 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0x4 = 0.0f;
-        vidStruct2->unk0x8 = 0.0f;
-    //}
+    vidStruct2->unk0x4 = 0.0f;
+    vidStruct2->unk0x8 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0xc = (u8)0;
-    //}
+    vidStruct2->unk0xc = (u8)0;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2 = &D_800bcc18[2];
-        vidStruct2->unk0x10 = 0;
-    //}
+    vidStruct2 = &D_800bcc18[2];
+    vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0x0 = 0.0f;
-        vidStruct2->unk0x4 = 0.0f;
-    //}
+    vidStruct2->unk0x0 = 0.0f;
+    vidStruct2->unk0x4 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0xc = (u8)0;
-        vidStruct2->unk0x8 = 0.0f;
-    //}
+    vidStruct2->unk0xc = (u8)0;
+    vidStruct2->unk0x8 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2 = &D_800bcc18[3];
-        vidStruct2->unk0x10 = 0;
-    //}
+    vidStruct2 = &D_800bcc18[3];
+    vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0x0 = 0.0f;
-    //}
+    vidStruct2->unk0x0 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0x4 = 0.0f;
-        vidStruct2->unk0x8 = 0.0f;
-    //}
+    vidStruct2->unk0x4 = 0.0f;
+    vidStruct2->unk0x8 = 0.0f;
     // lui   at,0x800c
-    //if (1) {
-        vidStruct2->unk0xc = (u8)0;
-    //}
+    vidStruct2->unk0xc = (u8)0;
 }
 #endif
 
@@ -237,12 +178,11 @@ void func_8005CA5C(u32 param1) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA88.s")
 #else
-// TODO: This one is really close
+// Functionally equivalent, not quite regalloc only but extremely close
 void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
 {
     s32 temp1;
     s32 temp2;
-    UnknownVideoStruct2 *v1;
 
     if (D_800bcc78 != 0)
     {
@@ -252,7 +192,7 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
         D_800bcc18[temp1].unk0x0 = a1[0];
 
         temp2 = temp1 + 1;
-        if (1);
+        if (1); // TODO: skeptical about this
 
         D_800bcc18[temp1].unk0x4 = a0[4] + a1[1];
         D_800bcc18[temp1].unk0x8 = a1[2];
@@ -273,15 +213,16 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
-    
+
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CDFC.s")
 #else
-void func_8005CDFC(s32 a0) {
-    UnknownVideoStruct *vidStruct;
+// Functionally equivalent, mainly regalloc, see TODO
+void func_8005CDFC(int _) {
+    UnkVidStruct *vidStruct;
     float var1;
     float var2;
-    s16* var3;
+    s16 *var3;
 
     vidStruct = &gUnknownVideoStructs[0];
 
@@ -290,6 +231,7 @@ void func_8005CDFC(s32 a0) {
             continue;
         }
 
+        // TODO: The order of loads and stores here are slightly out of order
         var1 = D_80092A70 - vidStruct->unk0x78;
         var2 = D_80092A74 - vidStruct->unk0x7c;
 
@@ -320,6 +262,9 @@ void func_8005CDFC(s32 a0) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_video_mode.s")
 #else
+/**
+ * Sets gVideoMode.
+ */
 void set_video_mode(u32 mode) {
     gVideoMode = mode;
 }
@@ -328,6 +273,9 @@ void set_video_mode(u32 mode) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/get_video_mode.s")
 #else
+/**
+ * Returns gVideoMode.
+ */
 u32 get_video_mode() {
     return gVideoMode;
 }
@@ -344,25 +292,29 @@ OSMesgQueue *get_addr_of_OSMesgQueue_8005D670() {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_current_resolution_from_video_mode.s")
 #else
-// Note: framebufferIndex was decided on because another function calls this
-//       with gFramebufferChoice (which is either 0 or 1 presumably) and
-//       gCurrentResolutionH and gCurrentResolutionV both conveniently contain
-//       2 integers, which are likely for each framebuffer.
+/**
+ * Sets gCurrentResolution*[framebufferIndex] to the resolution
+ * specified by gVideoMode from gResolutionArray.
+ */
 void set_current_resolution_from_video_mode(int framebufferIndex) {
+    // Note: framebufferIndex was decided on because another function calls this
+    //       with gFramebufferChoice (which is either 0 or 1 presumably) and
+    //       gCurrentResolutionH and gCurrentResolutionV both conveniently contain
+    //       2 integers, which are likely for each framebuffer.
     gCurrentResolutionH[framebufferIndex] = gResolutionArray[gVideoMode & 7].h;
     gCurrentResolutionV[framebufferIndex] = gResolutionArray[gVideoMode & 7].v;
 }
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D6C8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/video/get_some_resolution_encoded.s")
 #else
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-bool func_8005D6C8() {
+u32 get_some_resolution_encoded() {
     u32 var1;
     bool var2;
 
@@ -382,13 +334,14 @@ bool func_8005D6C8() {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_current_resolution_encoded.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/video/get_other_resolution_encoded.s")
 #else
-// TODO: Rename this! This is not getting the current res, it's getting the res of the OTHER framebuffer!
 /**
- * Returns the current framebuffer's resolution encoded as 0xVVVV_HHHH.
+ * Returns the resolution of the framebuffer not currently in use encoded as 0xVVVV_HHHH.
+ * 
+ * Note: The resolution is found by gCurrentResolution*[gFramebufferChoice < 1]
  */
-u32 get_current_resolution_encoded() {
+u32 get_other_resolution_encoded() {
     return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) | 
             gCurrentResolutionH[gFramebufferChoice < 1];
 }
@@ -459,20 +412,18 @@ void set_framebuffer_pointers(u32, u32, u32);
 #define framebufferAddress_ExpPak_addr 0x80119000
 
 // initialize_framebuffers?
+// Just regalloc differences
 void _set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
     u32 hRes;
     u32 vRes;
-    u32 *resPtr;
+    VideoResolution *resPtr;
     u32 temp;
-    u32 temp2;
 
-    vRes = (gVideoMode & 0x7) * 2;
-    temp2 = vRes;
-    resPtr = (&gResolutionArray) + temp2;
+    vRes = gVideoMode & 0x7;
+    resPtr = &gResolutionArray[vRes];
 
-    hRes = resPtr[0];
-    resPtr = resPtr;
-    vRes = resPtr[1];
+    hRes = resPtr->h;
+    vRes = resPtr->v;
 
     gCurrentResolutionH[0] = hRes;
     gCurrentResolutionH[1] = hRes;
@@ -538,7 +489,6 @@ void func_8005DC70(int _) {}
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
 #else
-// Returns an s32 / u8 (floating-point division) casted to an s32
 s32 func_8005DC7C() {
     return (s32)((f32)D_800bce28 / (f32)D_800bce59);
 }
@@ -577,7 +527,10 @@ void swap_framebuffer_pointers() {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/get_framebuffer_start.s")
 #else
-u32 *get_framebuffer_start() {
+/**
+ * Returns gFramebufferStart.
+ */
+u16 *get_framebuffer_start() {
     return gFramebufferStart;
 }
 #endif
@@ -585,6 +538,9 @@ u32 *get_framebuffer_start() {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/get_framebuffer_end.s")
 #else
+/**
+ * Returns gFramebufferEnd.
+ */
 u32 *get_framebuffer_end() {
     return gFramebufferEnd;
 }
@@ -593,14 +549,14 @@ u32 *get_framebuffer_end() {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD4C.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/vid_is_size_smaller_than_resolution.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/video/is_size_smaller_than_resolution.s")
 #else
 /**
  * Returns whether the given width and height is smaller than the current framebuffer's resolution.
  * 
  * Note: Both width AND height must be smaller for this to return true.
  */
-bool vid_is_size_smaller_than_resolution(s32 width, s32 height) {
+bool is_size_smaller_than_resolution(s32 width, s32 height) {
     return width >= 0 
         && (u32)width < gCurrentResolutionH[gFramebufferChoice]
         && height >= 0 
@@ -608,14 +564,42 @@ bool vid_is_size_smaller_than_resolution(s32 width, s32 height) {
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DEE8.s")
+#else
+// Kind of close? Might be worth starting this one over...
+void func_8005DEE8() {
+    u8 i;
+    s32 v0;
+    s32 *v1;
+    u32 t5;
+    UnkVidStruct3 *t4;
+
+    v1 = D_800BCE18[D_800BCE20];
+
+    for (i = 0; i < D_800BCE22[D_800BCE20]; ++i, v1 += 3) {
+        v0 = v1[1];
+
+        if (v0 >= 0) {
+            t5 = gFramebufferStart[v0] >> 2;
+            t4 = &D_80093068[(t5 >> 0xBu) & 7u];
+
+            v1[0] = (((t5 & 0x7ff) << t4->unk0x0) + t4->unk0x4) >> 3;
+        } else {
+            v1[0] = 0;
+        }
+    }
+
+    D_800BCE20 = D_800BCE20 ^ 1;
+    D_800BCE22[D_800BCE20] = 0;
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/some_video_setup.s")
 #else
-// TODO: param1 seems likely to be a boolean
-void some_video_setup(u32 param1) {
-    if (param1 != 0) {
+void some_video_setup(bool param1) {
+    if (param1) {
         set_video_mode(7);
         set_framebuffer_pointers(1, gResolutionArray[7].h, gResolutionArray[7].v);
 
@@ -699,12 +683,16 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/viMgrMain.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005E550.s")
+void func_8005E550(float[4][4], f32*, f32, f32, f32, f32, f32);
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005E770.s")
 #else
+/**
+ * Note: parameter matrix is an out value.
+ */
 void func_8005E770(
-        Mtx* matrix, f32 *param2, f32 param3, f32 param4, f32 param5, f32 param6, f32 param7) {
+        Mtx *matrix, f32 *param2, f32 param3, f32 param4, f32 param5, f32 param6, f32 param7) {
     f32 _matrix[4][4];
 
     func_8005E550(_matrix, param2, param3, param4, param5, param6, param7);
