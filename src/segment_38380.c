@@ -80,20 +80,21 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/three_more_mallocs.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_8003A418.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/read_le32.s")
 
 extern u32 * D_800918B4;
 void queue_load_file_region_to_ptr(u32,s32,s32,s32);
 void func_8003A418(s32);
-void read_file_8bytes(s32 arg0, s32 arg1, s32 arg2) {
+u32 read_le32(u32 *p);
+u32 read_file_8bytes(s32 arg0, s32 arg1, s32 arg2) {
     if (arg2 != 0) {
         read_file_region(arg0, D_800918B4, arg1, 8);
     } else {
         queue_load_file_region_to_ptr(D_800918B4, arg0, arg1, 8);
     }
-    func_8003A418(D_800918B4);
+    return read_le32(D_800918B4);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_8003A4B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/inflate.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_8003A534.s")
