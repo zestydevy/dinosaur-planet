@@ -70,7 +70,7 @@ typedef struct
 {
 /*0000*/    s32 id;
 /*0004*/    Model *model;
-} LoadedModel;
+} ModelSlot;
 
 typedef struct
 {
@@ -98,39 +98,39 @@ typedef struct
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_80017D2C.s")
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_create_instance.s")
 #else
 #define MAX_LOADED_MODELS 70
 extern void *gAuxBuffer;
-extern s32 INT_800b17b4;
 extern s32 gNumLoadedModels;
-extern s32 *PTR_DAT_800b17a8;
 extern s32 gNumModelsTabEntries;
 extern s32 *gFile_MODELS_TAB;
-extern LoadedModel *gLoadedModels;
+extern s32 gNumFreeModelSlots;
+extern s32 *gFreeModelSlots;
+extern ModelSlot *gLoadedModels;
 void func_80018B14(Model *model);
 u32 read_le32(u32 *p);
+s32 model_load_anim_remap_table(s32 id, s32 param_2, s32 param_3);
 ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
 u32 modanim_load(Model *model, u32 id, void *modanim);
-ModelInstance *_model_load_create_instance(s32 id, u32 flags)
+ModelInstance *model_load_create_instance(s32 id, u32 flags)
 {
     s32 slot;
     u32 offset;
     u32 *tab;
     u32 loadSize;
-    u32 animRemapSize;
     u32 modelSize;
     u32 uncompressedSize;
     u8* compressedData;
-    int isNewSlot;
-    u32 uVar8;
+    s8 isNewSlot;
+    s8 isOldSlot;
+    s8 fail;
     ModelHeader *header;
     s16 unk_0x0;
     s16 unk_0x2_aligned;
     s16 unk_0x4;
     s32 i;
-    int fail;
     Model *model;
     ModelInstance *modelInst;
     void *modanim;
@@ -163,17 +163,20 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
         }
     }
 
-    if (gNumModelsTabEntries <= id) {
+    if (id >= gNumModelsTabEntries) {
         id = 0;
     }
 
-    isNewSlot = INT_800b17b4 < 1;
-    if (isNewSlot) {
+    isNewSlot = FALSE;
+    isOldSlot = FALSE;
+    if (gNumFreeModelSlots > 0) {
+        gNumFreeModelSlots--;
+        slot = gFreeModelSlots[gNumFreeModelSlots];
+        isOldSlot = TRUE;
+    } else {
         slot = gNumLoadedModels;
         gNumLoadedModels++;
-    } else {
-        INT_800b17b4--;
-        slot = PTR_DAT_800b17a8[INT_800b17b4];
+        isNewSlot = TRUE;
     }
 
     tab = &gFile_MODELS_TAB[id];
@@ -186,26 +189,32 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     unk_0x4 = header->unk_0x4;
     unk_0x2_aligned = align_8(header->unk_0x2);
     uncompressedSize = read_le32(&header->uncompressedSize);
-    animRemapSize = model_load_anim_remap_table(id, unk_0x4, unk_0x0);
-    modelSize = animRemapSize + uncompressedSize + 500;
+    modelSize = model_load_anim_remap_table(id, unk_0x4, unk_0x0);
+    modelSize += uncompressedSize + 500;
 
     model = malloc(modelSize, 9, 0);
     if (!model) {
         if (isNewSlot) {
             gNumLoadedModels--;
         } else {
-            INT_800b17b4++;
+            gNumFreeModelSlots++;
         }
 
         return NULL;
     }
 
+    // In order to save memory, load compressed data into the latter portion of the output buffer,
+    // then decompress it in-place.
+    // We must pray that inflate does not overrun its input stream.
     compressedData = (u8*)model + modelSize - loadSize - 0x10;
-    uVar8 = (u32)compressedData & 0xf;
-    if ((s32)compressedData < 0 && uVar8 != 0) {
-        uVar8 -= 0x10;
+    if ((s32)compressedData < 0) {
+        // Align to 16 bytes
+        u32 align = (u32)compressedData & 0xf;
+        if (align != 0) {
+            align -= 0x10;
+        }
+        compressedData -= align;
     }
-    compressedData -= uVar8;
 
     read_file_region(MODELS_BIN, compressedData, offset, loadSize);
     inflate(compressedData + 8, model);
@@ -219,13 +228,13 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     *(u32*)&model->unk_0x14 += (u32)model;
     *(u32*)&model->unk_0xc += (u32)model;
     if (model->unk_0x3c != NULL) {
-        *(u32*)&model->unk_0x3c += (u32)model;
+        model->unk_0x3c = (void*)((u32)model + (u32)model->unk_0x3c);
     }
     if (model->unk_0x38 != NULL) {
-        *(u32*)&model->unk_0x38 += (u32)model;
+        model->unk_0x38 = (void*)((u32)model + (u32)model->unk_0x38);
     }
     if (model->unk_0x1c != NULL) {
-        *(u32*)&model->unk_0x1c += (u32)model;
+        model->unk_0x1c = (void*)((u32)model + (u32)model->unk_0x1c);
     }
 
     model->anims = NULL;
@@ -233,12 +242,12 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     model->unk_0x24 = 0;
 
     if (model->unk_0x20 != NULL) {
-        *(u32*)&model->unk_0x20 += (u32)model;
+        model->unk_0x20 = (void*)((u32)model + (u32)model->unk_0x20);
         if (model->unk_0x50 != NULL) {
-            *(u32*)&model->unk_0x50 += (u32)model;
+            model->unk_0x50 = (void*)((u32)model + (u32)model->unk_0x50);
         }
         if (model->unk_0x54 != NULL) {
-            *(u32*)&model->unk_0x54 += (u32)model;
+            model->unk_0x54 = (void*)((u32)model + (u32)model->unk_0x54);
         }
     } else {
         model->unk_0x50 = NULL;
@@ -246,10 +255,10 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     }
 
     if (model->unk_0x2c != NULL) {
-        *(u32*)&model->unk_0x2c += (u32)model;
+        model->unk_0x2c = (void*)((u32)model + (u32)model->unk_0x2c);
     }
     if (model->unk_0x34 != NULL) {
-        *(u32*)&model->unk_0x34 += (u32)model;
+        model->unk_0x34 = (void*)((u32)model + (u32)model->unk_0x34);
     }
 
     model->unk_0x68 = unk_0x2_aligned + 0x90;
@@ -265,8 +274,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     fail = FALSE;
     for (i = 0; i < model->textureCount; i++)
     {
-        void *texture = texture_load(-((u32)model->textures[i].texture | 0x8000));
-        model->textures[i].texture = texture;
+        model->textures[i].texture = texture_load(-((u32)model->textures[i].texture | 0x8000));
         if (!model->textures[i].texture) {
             fail = TRUE;
         }
@@ -304,6 +312,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     gLoadedModels[slot].id = id;
     gLoadedModels[slot].model = model;
 
+    // How strange to perform this check after the model has already been loaded.
     if (gNumLoadedModels >= MAX_LOADED_MODELS) {
         goto bail;
     }
@@ -314,7 +323,7 @@ bail:
     if (isNewSlot) {
         gNumLoadedModels--;
     } else {
-        INT_800b17b4++;
+        gNumFreeModelSlots++;
     }
 
     func_80018B14(model);
