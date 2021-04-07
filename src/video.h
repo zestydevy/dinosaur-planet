@@ -142,7 +142,10 @@ extern u32 gVideoMode;
 extern VideoResolution gResolutionArray[];
 
 extern u32 gPossiblyScreenWidthOrHeight;
-extern bool gSomeVideoFlag;
+/**
+ * Some boolean.
+ */
+extern int gSomeVideoFlag;
 
 extern s8 gVScaleMod;
 extern s8 gHStartMod;

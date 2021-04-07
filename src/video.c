@@ -1,8 +1,13 @@
 #include "common.h"
 #include "video.h"
 
-// From segment_5C470
-bool func_8005BC38(u32*);
+// func_8005BC38 is from segment_5C470
+/**
+ * If param1 isn't null, sets it to gPossiblyScreenWidthOrHeight.
+ * 
+ * Returns gSomeVideoFlag.
+ */
+int func_8005BC38(u32*);
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
@@ -316,11 +321,11 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
  */
 u32 get_some_resolution_encoded() {
     u32 var1;
-    bool var2;
+    int flag;
 
-    var2 = func_8005BC38(&var1);
+    flag = func_8005BC38(&var1);
 
-    if (var2 == FALSE) {
+    if (flag == FALSE) {
         return (gCurrentResolutionV[gFramebufferChoice] << 0x10) | 
                 gCurrentResolutionH[gFramebufferChoice];
     } else {
@@ -556,7 +561,7 @@ u32 *get_framebuffer_end() {
  * 
  * Note: Both width AND height must be smaller for this to return true.
  */
-bool is_size_smaller_than_resolution(s32 width, s32 height) {
+int is_size_smaller_than_resolution(s32 width, s32 height) {
     return width >= 0 
         && (u32)width < gCurrentResolutionH[gFramebufferChoice]
         && height >= 0 
@@ -598,7 +603,10 @@ void func_8005DEE8() {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/some_video_setup.s")
 #else
-void some_video_setup(bool param1) {
+/**
+ * Note: param1 is most likely a boolean
+ */
+void some_video_setup(int param1) {
     if (param1) {
         set_video_mode(7);
         set_framebuffer_pointers(1, gResolutionArray[7].h, gResolutionArray[7].v);
