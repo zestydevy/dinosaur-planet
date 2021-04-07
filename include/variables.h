@@ -10,6 +10,7 @@
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
 typedef u32 UNK_TYPE_32;
+typedef int bool;
 
 typedef float Vec2[2];
 typedef float Vec3[3];
@@ -292,16 +293,7 @@ extern s8 joyYSign[4];
 extern u8 MenuInputDelay; //init'd to 5.
 extern OSThread controller_thread;
 
-extern void* framebufferNext;
-extern void* framebufferCurrent;
-extern OSViMode OSViMode_Custom;
-extern u32 CurrentResolutionH[2]; //picked from resolutionArray[video_mode % 7]
-extern u32 CurrentResolutionV[2]; //one for each FB, apparently
-extern void* framebufferPointers[2]; //{FBaddr,FBaddr*H*V*2}
-extern u32 framebufferChoice; 
-extern u32 video_mode;
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
-
 
 extern u8 delayByte; //60/int(x) FPS x<=6
 extern u8 delayByteMirror;

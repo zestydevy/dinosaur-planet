@@ -170,7 +170,7 @@ void _game_tick(void) {
     D_800AE6B0 = D_800AE6A8[temp_t9]);
     func_80063330(D_800AE680, 0, &D_80099130, 0x28E);
     func_8003CC50(&D_800AE680, 0, 0x80000000);
-    func_8003CC50(&D_800AE680, 1, framebufferCurrent);
+    func_8003CC50(&D_800AE680, 1, gFramebufferCurrent);
     func_8003CC50(&D_800AE680, 2, D_800BCCB4);
     func_8003E9F0(&D_800AE680, delayByte);
     func_80040FD0();
