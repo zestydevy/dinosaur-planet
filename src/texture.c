@@ -1,4 +1,7 @@
 #include "common.h"
+#include "video.h"
+
+void possibly_resize_copy_line(u16 *a0, s32 a1, s32 a2, u16 *a3);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/init_textures.s")
 
@@ -449,7 +452,35 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EAC0.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EBD4.s")
+#else
+// Functionally equivalent, extremely close to matching
+void func_8003EBD4(s32 a0) {
+    s32 resEncoded = get_some_resolution_encoded();
+
+    s32 hRes = resEncoded & 0xffff;
+    s32 vRes = resEncoded >> 0x10;
+
+    u16 *next = gFramebufferNext;
+    u16 *cur = gFramebufferCurrent;
+
+    s32 hOffset = hRes - a0;
+    s32 vIndex = vRes;
+
+    while (vIndex--) {
+        possibly_resize_copy_line(
+            next + hOffset, 
+            hRes - (hOffset << 1), 
+            hRes, 
+            cur
+        );
+
+        next += hRes;
+        cur += hRes;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EC8C.s")
 
