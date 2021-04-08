@@ -459,7 +459,37 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F074.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F1EC.s")
+#else
+void func_8003F1EC(u16 *a0, s32 a1, s32 a2, u16 *a3) {
+    u16 svar[644];
+
+    s32 v0 = 0;
+    u16 *stackPtr = &svar[0];
+    u16 *memPtr = a0;
+    s32 t1 = 0;
+
+    if (a2 > 0) {
+        do {
+            v0 += a1 % a2;
+
+            *stackPtr = ((*memPtr & -0x843) >> 1) + ((*stackPtr & -0x843) >> 1);
+            stackPtr = stackPtr + 1;
+
+            while (a2 < v0) {
+                v0 = v0 - a2;
+                memPtr = memPtr + 1;
+            }
+
+            t1 = t1 + 1;
+            memPtr += a1 / a2;
+        } while (t1 != a2);
+    }
+
+    _bcopy(&svar[0], a2 + a3, a2 << 1);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F2C4.s")
 
