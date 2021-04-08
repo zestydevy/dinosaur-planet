@@ -460,34 +460,34 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F074.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F1EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/possibly_resize_copy_line.s")
 #else
-void func_8003F1EC(u16 *a0, s32 a1, s32 a2, u16 *a3) {
-    u16 svar[644];
+void possibly_resize_copy_line(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
+    u16 buffer[644];
 
-    s32 v0 = 0;
-    u16 *stackPtr = &svar[0];
-    u16 *memPtr = a0;
-    s32 t1 = 0;
+    s32 var1 = 0;
+    u16 *bufferPtr = &buffer[0];
+    u16 *srcPtr = src;
+    s32 i = 0;
 
-    if (a2 > 0) {
+    if (destWidth > 0) {
         do {
-            v0 += a1 % a2;
+            var1 += srcWidth % destWidth;
 
-            *stackPtr = ((*memPtr & -0x843) >> 1) + ((*stackPtr & -0x843) >> 1);
-            stackPtr = stackPtr + 1;
+            *bufferPtr = ((*srcPtr & -0x843) >> 1) + ((*bufferPtr & -0x843) >> 1);
+            bufferPtr = bufferPtr + 1;
 
-            while (a2 < v0) {
-                v0 = v0 - a2;
-                memPtr = memPtr + 1;
+            while (destWidth < var1) {
+                var1 = var1 - destWidth;
+                srcPtr = srcPtr + 1;
             }
 
-            t1 = t1 + 1;
-            memPtr += a1 / a2;
-        } while (t1 != a2);
+            i = i + 1;
+            srcPtr += srcWidth / destWidth;
+        } while (i != destWidth);
     }
 
-    _bcopy(&svar[0], a2 + a3, a2 << 1);
+    _bcopy(&buffer[0], destWidth + dest, destWidth << 1);
 }
 #endif
 
