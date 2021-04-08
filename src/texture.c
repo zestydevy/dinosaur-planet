@@ -12,7 +12,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003D254.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DA40.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_destroy.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DB5C.s")
 

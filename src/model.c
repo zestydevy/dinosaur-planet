@@ -4,7 +4,19 @@
 
 typedef struct
 {
-/*0000*/    void *texture;
+    // TODO
+/*0000*/    u32 unk_0x0;
+} Texture;
+
+typedef struct
+{
+    // TODO
+/*0000*/    u32 unk_0x0;
+} Animation;
+
+typedef struct
+{
+/*0000*/    Texture *texture;
 /*0004*/    u32 unk_0x4;
 } ModelTexture;
 
@@ -21,10 +33,10 @@ typedef struct
 /*0004*/    void *unk_0x4;
 /*0008*/    ModelUnk0x8 *unk_0x8;
 /*000C*/    void *unk_0xc;
-/*0010*/    void **anims;
+/*0010*/    Animation **anims;
 /*0014*/    void *unk_0x14;
 /*0018*/    void *unk_0x18;
-/*001C*/    u32 unk_0x1c;
+/*001C*/    void *unk_0x1c;
 /*0020*/    void *unk_0x20;
 /*0024*/    u32 unk_0x24;
 /*0028*/    void *unk_0x28;
@@ -44,7 +56,7 @@ typedef struct
 /*0060*/    u16 unk_0x60;
 /*0062*/    s16 unk_0x62;
 /*0064*/    u16 unk_0x64;
-/*0066*/    s16 unk_0x66;
+/*0066*/    s16 animCount;
 /*0068*/    s16 unk_0x68;
 /*006A*/    s16 modelId;
 /*006C*/    u8 unk_0x6c;
@@ -62,8 +74,8 @@ typedef struct
     // TODO
 /*0000*/    Model *model;
 /*0004*/    u8 unk_0x4[0x28 - 0x4];
-/*0028*/    u32 unk_0x28;
-/*002C*/    u32 unk_0x2c;
+/*0028*/    void *unk_0x28;
+/*002C*/    void *unk_0x2c;
 } ModelInstance;
 
 typedef struct
@@ -86,7 +98,7 @@ typedef struct
 
 typedef struct
 {
-/*0000*/    s16 unk_0x0;
+/*0000*/    s16 animCount;
 /*0002*/    s16 unk_0x2;
 /*0004*/    s16 unk_0x4;
 /*0006*/    s16 unk_0x6;
@@ -98,7 +110,7 @@ typedef struct
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_80017D2C.s")
 
-#if 0
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_create_instance.s")
 #else
 #define MAX_LOADED_MODELS 70
@@ -109,45 +121,52 @@ extern s32 *gFile_MODELS_TAB;
 extern s32 gNumFreeModelSlots;
 extern s32 *gFreeModelSlots;
 extern ModelSlot *gLoadedModels;
-void func_80018B14(Model *model);
+void model_destroy(Model *model);
 u32 read_le32(u32 *p);
 s32 model_load_anim_remap_table(s32 id, s32 param_2, s32 param_3);
 ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
 u32 modanim_load(Model *model, u32 id, void *modanim);
-ModelInstance *model_load_create_instance(s32 id, u32 flags)
+Texture *texture_load(s32 id);
+void func_800186CC(Model *model);
+void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
+u32 align_8(u32 a0);
+void inflate(void *src, void *dest);
+ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 {
     s32 slot;
     u32 offset;
-    u32 *tab;
     u32 loadSize;
     u32 modelSize;
     u32 uncompressedSize;
     u8* compressedData;
-    s8 isNewSlot;
-    s8 isOldSlot;
     s8 fail;
     ModelHeader *header;
-    s16 unk_0x0;
+    s16 animCount;
     s16 unk_0x2_aligned;
     s16 unk_0x4;
     s32 i;
+    s8 isOldSlot;
+    s8 isNewSlot;
     Model *model;
     ModelInstance *modelInst;
     void *modanim;
+    s16 unk_0x68;
 
     if (id < 0) {
         id = -id;
     } else {
-        read_file_region(MODELIND_BIN, gAuxBuffer, id * sizeof(s16), 8);
-        id = *(s16*)gAuxBuffer;
+        s16 *idbuf = gAuxBuffer;
+        read_file_region(MODELIND_BIN, idbuf, id * sizeof(s16), 8);
+        id = *idbuf;
     }
 
     // Check to see if model is already loaded
     for (i = 0; i < gNumLoadedModels; i++)
     {
-        if (id == gLoadedModels[i].id)
+        ModelSlot *modelSlot = &gLoadedModels[i];
+        if (id == modelSlot->id)
         {
-            model = gLoadedModels[i].model;
+            model = modelSlot->model;
             modelInst = createModelInstance(model, flags, 0);
             if (modelInst != NULL)
             {
@@ -179,27 +198,29 @@ ModelInstance *model_load_create_instance(s32 id, u32 flags)
         isNewSlot = TRUE;
     }
 
-    tab = &gFile_MODELS_TAB[id];
-    offset = *tab;
-    loadSize = tab[1] - offset;
+    offset = gFile_MODELS_TAB[id];
+    loadSize = gFile_MODELS_TAB[id + 1] - offset;
     read_file_region(MODELS_BIN, gAuxBuffer, offset, 0x10);
 
     header = gAuxBuffer;
-    unk_0x0 = header->unk_0x0;
+    animCount = header->animCount;
     unk_0x4 = header->unk_0x4;
     unk_0x2_aligned = align_8(header->unk_0x2);
+    unk_0x68 = unk_0x2_aligned + 0x90;
     uncompressedSize = read_le32(&header->uncompressedSize);
-    modelSize = model_load_anim_remap_table(id, unk_0x4, unk_0x0);
+    modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
     modelSize += uncompressedSize + 500;
 
     model = malloc(modelSize, 9, 0);
     if (!model) {
-        if (isNewSlot) {
-            gNumLoadedModels--;
-        } else {
+        if (isOldSlot) {
             gNumFreeModelSlots++;
         }
 
+        if (isNewSlot) {
+            gNumLoadedModels--;
+        }
+        
         return NULL;
     }
 
@@ -220,13 +241,13 @@ ModelInstance *model_load_create_instance(s32 id, u32 flags)
     inflate(compressedData + 8, model);
 
     // Convert offsets to pointers
-    *(u32*)&model->textures += (u32)model;
-    *(u32*)&model->unk_0x4 += (u32)model;
-    *(u32*)&model->unk_0x8 += (u32)model;
-    *(u32*)&model->unk_0x28 += (u32)model;
-    *(u32*)&model->unk_0x18 += (u32)model;
-    *(u32*)&model->unk_0x14 += (u32)model;
-    *(u32*)&model->unk_0xc += (u32)model;
+    model->textures = (ModelTexture*)((u32)model->textures + (u32)model);
+    model->unk_0x4 = (void*)((u32)model->unk_0x4 + (u32)model);
+    model->unk_0x8 = (void*)((u32)model->unk_0x8 + (u32)model);
+    model->unk_0x28 = (void*)((u32)model->unk_0x28 + (u32)model);
+    model->unk_0x18 = (void*)((u32)model->unk_0x18 + (u32)model);
+    model->unk_0x14 = (void*)((u32)model->unk_0x14 + (u32)model);
+    model->unk_0xc = (void*)((u32)model->unk_0xc + (u32)model);
     if (model->unk_0x3c != NULL) {
         model->unk_0x3c = (void*)((u32)model + (u32)model->unk_0x3c);
     }
@@ -261,12 +282,12 @@ ModelInstance *model_load_create_instance(s32 id, u32 flags)
         model->unk_0x34 = (void*)((u32)model + (u32)model->unk_0x34);
     }
 
-    model->unk_0x68 = unk_0x2_aligned + 0x90;
-    model->refCount = 1;
+    model->unk_0x68 = unk_0x68;
     model->modelId = id;
-    model->unk_0x71 &= 0xbf;
-    model->unk_0x66 = unk_0x0;
+    model->refCount = 1;
+    model->animCount = animCount;
 
+    model->unk_0x71 &= ~0x40;
     if (unk_0x4 != 0) {
         model->unk_0x71 |= 0x40;
     }
@@ -286,14 +307,14 @@ ModelInstance *model_load_create_instance(s32 id, u32 flags)
 
     for (i = 0; i < model->unk_0x70; i++)
     {
-        if (model->unk_0x8[i].unk_0x0 != 0xff && model->textureCount <= model->unk_0x8[i].unk_0x0) {
+        if (model->unk_0x8[i].unk_0x0 != 0xff && model->unk_0x8[i].unk_0x0 >= model->textureCount) {
             goto bail;
         }
     }
 
     func_800186CC(model);
 
-    modanim = align_8((u32)model + uncompressedSize);
+    modanim = (void*)align_8((u32)model + uncompressedSize);
 
     if (modanim_load(model, id, modanim) != 0) {
         goto bail;
@@ -322,11 +343,13 @@ ModelInstance *model_load_create_instance(s32 id, u32 flags)
 bail:
     if (isNewSlot) {
         gNumLoadedModels--;
-    } else {
+    }
+
+    if (isOldSlot) {
         gNumFreeModelSlots++;
     }
 
-    func_80018B14(model);
+    model_destroy(model);
     return NULL;
 }
 #endif
@@ -399,7 +422,33 @@ u32 _model_get_stats(Model *model, u32 flags, ModelStats *stats, u32 param_4)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_80018A00.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80018B14.s")
+// very close
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/model/model_destroy.s")
+#else
+void texture_destroy(Texture *texture);
+void anim_destroy(Animation *anim);
+void _model_destroy(Model *model)
+{
+    s32 i;
+
+    for (i = 0; i < model->textureCount; i++)
+    {
+        if (model->textures[i].texture != NULL) {
+            texture_destroy(model->textures[i].texture);
+        }
+    }
+
+    if (model->anims != NULL)
+    {
+        for (i = 0; i < model->animCount; i++) {
+            anim_destroy(model->anims[i]);
+        }
+    }
+
+    free(model);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_anim_remap_table.s")
 
@@ -411,7 +460,7 @@ u32 _model_get_stats(Model *model, u32 flags, ModelStats *stats, u32 param_4)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80019388.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/model/anim_destroy.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001943C.s")
 
