@@ -23,7 +23,7 @@ extern DLBuilder *gDLBuilder;
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041040.s")
 #else
 extern DLBuilder *gDLBuilder;
-void func_80041040(Gfx **gdl)
+void _func_80041040(Gfx **gdl)
 {
     Gfx *currGfx = &gDLBuilder->gfx0;
     u8 dirty;

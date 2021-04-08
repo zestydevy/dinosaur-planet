@@ -884,6 +884,8 @@ gDisableObjectStreamingFlag = 0x800ae29c; // type:data size:0x1
 texture_load = 0x8003cda8; // type:func
 texture_destroy = 0x8003da40; // type:func
 
+func_80041210 = 0x80041210; // type:func
+
 anim_load = 0x80019164; // type:func
 anim_destroy = 0x80019388; // type:func
 
