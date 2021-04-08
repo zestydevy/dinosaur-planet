@@ -871,6 +871,8 @@ map_load_streammap = 0x80045910; // type:func
 map_convert_objpositions_to_ws = 0x800462b8; // type:func
 map_find_streammap_index = 0x80045d68; // type:func
 
+gDLBuilder = 0x80092a90; // type:data size:0x4
+UINT_80092a98 = 0x80092a98; // type:data size:0x4
 gMapNumStreamMaps = 0x80092aa4; // type:data size:0x4
 gMapActiveStreamMap = 0x800b96ac; // type:data size:0x4
 gMapGridTable = 0x800b976c; // type:data size:0x4

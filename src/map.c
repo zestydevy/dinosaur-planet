@@ -1,20 +1,166 @@
 #include "common.h"
 
+typedef struct
+{
+/*0000*/    Gfx gfx0;
+/*0008*/    Gfx gfx1;
+/*0010*/    u32 unk_0x10;
+/*0014*/    u8 unk_0x14[0x28 - 0x14];
+/*0028*/    u8 needsPipeSync;
+/*0029*/    u8 unk_0x29;
+} DLBuilder;
+
+extern u32 UINT_80092a98;
+extern DLBuilder *gDLBuilder;
+
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80040FD0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80040FF8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041028.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041040.s")
+#else
+extern DLBuilder *gDLBuilder;
+void func_80041040(Gfx **gdl)
+{
+    Gfx *currGfx = &gDLBuilder->gfx0;
+    u8 dirty;
 
+    if (gDLBuilder->unk_0x29 & 0x1)
+    {
+        gDLBuilder->unk_0x29 &= ~0x1;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = gDLBuilder->gfx0.words.w0 != (**gdl).words.w0 || gDLBuilder->gfx0.words.w1 != (**gdl).words.w1;
+    }
+
+    if (dirty)
+    {
+        *currGfx = **gdl;
+
+        if (gDLBuilder->needsPipeSync)
+        {
+            gDLBuilder->needsPipeSync = FALSE;
+
+            // gDPPipeSync(gdl);
+            (*gdl)->words.w0 = 0xe7000000;
+            (*gdl)->words.w1 = 0;
+            (*gdl)++;
+
+            **gdl = *currGfx;
+        }
+
+        (*gdl)++;
+    }
+}
+#endif
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041118.s")
+#else
+extern u32 UINT_80092a98;
+extern DLBuilder *gDLBuilder;
+void _func_80041118(Gfx **gdl)
+{
+    Gfx *currGfx = &gDLBuilder->gfx1;
+    u8 dirty;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041210.s")
+    if (UINT_80092a98 & 0x2000) {
+        (**gdl).words.w1 &= ~0x30;
+    }
 
+    if (gDLBuilder->unk_0x29 & 0x2)
+    {
+        gDLBuilder->unk_0x29 &= ~0x2;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = gDLBuilder->gfx1.words.w0 != (**gdl).words.w0 || gDLBuilder->gfx1.words.w1 != (**gdl).words.w1;
+    }
+
+    if (dirty)
+    {
+        *currGfx = **gdl;
+
+        if (gDLBuilder->needsPipeSync)
+        {
+            gDLBuilder->needsPipeSync = FALSE;
+
+            // gDPPipeSync(gdl);
+            (*gdl)->words.w0 = 0xe7000000;
+            (*gdl)->words.w1 = 0;
+            (*gdl)++;
+
+            **gdl = *currGfx;
+        }
+
+        (*gdl)++;
+    }
+}
+#endif
+
+void func_80041210(Gfx **gdl)
+{
+    u8 dirty;
+
+    if (UINT_80092a98 & 0x2000) {
+        (**gdl).words.w1 &= ~0x1;
+    }
+
+    if (gDLBuilder->unk_0x29 & 0x40) {
+        gDLBuilder->unk_0x29 &= ~0x40;
+        dirty = TRUE;
+    } else {
+        dirty = gDLBuilder->unk_0x10 != (**gdl).words.w1;
+    }
+
+    if (dirty) {
+        gDLBuilder->unk_0x10 = (**gdl).words.w1;
+        (*gdl)++;
+    }
+}
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800412A4.s")
+#else
+void _func_800412A4(Gfx **gdl, u32 param_2)
+{
+    Gfx *currGfx = *gdl;
+    u32 old_unk_0x10 = gDLBuilder->unk_0x10;
 
+    // ???
+    // gSPSetGeometryMode(gdl, param_2 | gDLBuilder->unk_0x10);
+
+    currGfx->words.w0 = 0xd9000000;
+    currGfx->words.w1 = old_unk_0x10 | param_2;
+
+    func_80041210(gdl);
+}
+#endif
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800412E4.s")
+#else
+void _func_800412E4(Gfx **gdl, u32 param_2)
+{
+    Gfx *currGfx = *gdl;
+    u32 old_unk_0x10 = gDLBuilder->unk_0x10;
+    u32 new_w1 = old_unk_0x10 & ~param_2;
+
+    // ???
+    // gSPSetGeometryMode(gdl, gDLBuilder->unk_0x10 & ~param_2);
+
+    currGfx->words.w0 = 0xd9000000;
+    currGfx->words.w1 = new_w1;
+
+    func_80041210(gdl);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041328.s")
 
