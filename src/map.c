@@ -1,13 +1,19 @@
 #include "common.h"
 
+#define RGBA8(r, g, b, a) (((u32)(r) << 24) | ((u32)(g) << 16) | ((u32)(b) << 8) | (u32)(a))
+
 typedef struct
 {
 /*0000*/    Gfx gfx0;
 /*0008*/    Gfx gfx1;
 /*0010*/    u32 unk_0x10;
-/*0014*/    u8 unk_0x14[0x28 - 0x14];
+/*0014*/    u32 primColor;
+/*0018*/    u32 envColor;
+/*001C*/    u32 unk_0x1c;
+/*0020*/    u32 fillColor;
+/*0024*/    u32 unk_0x24;
 /*0028*/    u8 needsPipeSync;
-/*0029*/    u8 unk_0x29;
+/*0029*/    u8 dirtyFlags;
 } DLBuilder;
 
 extern u32 UINT_80092a98;
@@ -22,15 +28,14 @@ extern DLBuilder *gDLBuilder;
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041040.s")
 #else
-extern DLBuilder *gDLBuilder;
 void _func_80041040(Gfx **gdl)
 {
     Gfx *currGfx = &gDLBuilder->gfx0;
     u8 dirty;
 
-    if (gDLBuilder->unk_0x29 & 0x1)
+    if (gDLBuilder->dirtyFlags & 0x1)
     {
-        gDLBuilder->unk_0x29 &= ~0x1;
+        gDLBuilder->dirtyFlags &= ~0x1;
         dirty = TRUE;
     }
     else
@@ -46,10 +51,7 @@ void _func_80041040(Gfx **gdl)
         {
             gDLBuilder->needsPipeSync = FALSE;
 
-            // gDPPipeSync(gdl);
-            (*gdl)->words.w0 = 0xe7000000;
-            (*gdl)->words.w1 = 0;
-            (*gdl)++;
+            gDPPipeSync((*gdl)++);
 
             **gdl = *currGfx;
         }
@@ -62,8 +64,6 @@ void _func_80041040(Gfx **gdl)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041118.s")
 #else
-extern u32 UINT_80092a98;
-extern DLBuilder *gDLBuilder;
 void _func_80041118(Gfx **gdl)
 {
     Gfx *currGfx = &gDLBuilder->gfx1;
@@ -73,9 +73,9 @@ void _func_80041118(Gfx **gdl)
         (**gdl).words.w1 &= ~0x30;
     }
 
-    if (gDLBuilder->unk_0x29 & 0x2)
+    if (gDLBuilder->dirtyFlags & 0x2)
     {
-        gDLBuilder->unk_0x29 &= ~0x2;
+        gDLBuilder->dirtyFlags &= ~0x2;
         dirty = TRUE;
     }
     else
@@ -91,10 +91,7 @@ void _func_80041118(Gfx **gdl)
         {
             gDLBuilder->needsPipeSync = FALSE;
 
-            // gDPPipeSync(gdl);
-            (*gdl)->words.w0 = 0xe7000000;
-            (*gdl)->words.w1 = 0;
-            (*gdl)++;
+            gDPPipeSync((*gdl)++);
 
             **gdl = *currGfx;
         }
@@ -112,8 +109,8 @@ void func_80041210(Gfx **gdl)
         (**gdl).words.w1 &= ~0x1;
     }
 
-    if (gDLBuilder->unk_0x29 & 0x40) {
-        gDLBuilder->unk_0x29 &= ~0x40;
+    if (gDLBuilder->dirtyFlags & 0x40) {
+        gDLBuilder->dirtyFlags &= ~0x40;
         dirty = TRUE;
     } else {
         dirty = gDLBuilder->unk_0x10 != (**gdl).words.w1;
@@ -125,54 +122,123 @@ void func_80041210(Gfx **gdl)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800412A4.s")
-#else
-void _func_800412A4(Gfx **gdl, u32 param_2)
+void dl_set_geometry_mode(Gfx **gdl, u32 mode)
 {
-    Gfx *currGfx = *gdl;
-    u32 old_unk_0x10 = gDLBuilder->unk_0x10;
+    mode |= gDLBuilder->unk_0x10;
 
-    // ???
-    // gSPSetGeometryMode(gdl, param_2 | gDLBuilder->unk_0x10);
-
-    currGfx->words.w0 = 0xd9000000;
-    currGfx->words.w1 = old_unk_0x10 | param_2;
+    // FIXME: This macro requires the use of #define F3DEX_GBI_2x, but gbi.h fails if it is defined.
+    // gSPSetGeometryMode(*gdl, mode);
+    {
+        Gfx *_g = (Gfx *)((*gdl));
+                                        \
+        _g->words.w0 = _SHIFTL(G_GEOMETRYMODE, 24, 8);
+        _g->words.w1 = (unsigned int)(mode);
+    }
 
     func_80041210(gdl);
 }
-#endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800412E4.s")
-#else
-void _func_800412E4(Gfx **gdl, u32 param_2)
+void dl_clear_geometry_mode(Gfx **gdl, u32 mode)
 {
-    Gfx *currGfx = *gdl;
-    u32 old_unk_0x10 = gDLBuilder->unk_0x10;
-    u32 new_w1 = old_unk_0x10 & ~param_2;
+    mode = gDLBuilder->unk_0x10 & ~mode;
 
-    // ???
-    // gSPSetGeometryMode(gdl, gDLBuilder->unk_0x10 & ~param_2);
-
-    currGfx->words.w0 = 0xd9000000;
-    currGfx->words.w1 = new_w1;
+    // FIXME: This macro requires the use of #define F3DEX_GBI_2x, but gbi.h fails if it is defined.
+    // gSPSetGeometryMode(*gdl, mode);
+    {
+        Gfx *_g = (Gfx *)((*gdl));
+                   
+        // FIXME: does this actually clear geometry mode bits?
+        // then why does it call gSPSetGeometryMode?
+        // gSPClearGeometryMode puts bits to clear in w0.
+        _g->words.w0 = _SHIFTL(G_GEOMETRYMODE, 24, 8);
+        _g->words.w1 = (unsigned int)(mode);
+    }
 
     func_80041210(gdl);
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041328.s")
+void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
+{
+    u32 rgba = RGBA8(r, g, b, a);
+    u8 dirty;
+
+    if (gDLBuilder->dirtyFlags & 0x4)
+    {
+        gDLBuilder->dirtyFlags &= ~0x4;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = rgba != gDLBuilder->primColor;
+    }
+
+    if (dirty)
+    {
+        gDLBuilder->primColor = rgba;
+        gDPSetPrimColor((*gdl)++, 0, 0, r, g, b, a);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041418.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041480.s")
+void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
+{
+    u32 rgba = RGBA8(r, g, b, a);
+    u8 dirty;
+
+    if (gDLBuilder->dirtyFlags & 0x8)
+    {
+        gDLBuilder->dirtyFlags &= ~0x8;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = rgba != gDLBuilder->envColor;
+    }
+
+    if (dirty)
+    {
+        if (gDLBuilder->needsPipeSync)
+        {
+            gDLBuilder->needsPipeSync = FALSE;
+            gDPPipeSync((*gdl)++);
+        }
+
+        gDLBuilder->envColor = rgba;
+        gDPSetEnvColor((*gdl)++, r, g, b, a);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800415A0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041608.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041728.s")
+void dl_set_fill_color(Gfx **gdl, u32 color)
+{
+    u8 dirty;
+
+    if (gDLBuilder->dirtyFlags & 0x10)
+    {
+        gDLBuilder->dirtyFlags &= ~0x10;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = color != gDLBuilder->fillColor;
+    }
+
+    if (dirty)
+    {
+        if (gDLBuilder->needsPipeSync)
+        {
+            gDLBuilder->needsPipeSync = FALSE;
+            gDPPipeSync((*gdl)++);
+        }
+
+        gDLBuilder->fillColor = color;
+        gDPSetFillColor((*gdl)++, color);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800417C8.s")
 
