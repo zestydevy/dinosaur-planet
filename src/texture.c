@@ -505,10 +505,10 @@ void func_8003EBD4(s32 hOffset) {
  * Additionally, values copied to dest have the following applied first:
  *   (value & -0x843) >> 1
  * 
- * destWidth should be less than 644.
+ * destWidth must be less than 644.
  * 
- * NOTE: Please see the TODO in the implementation, this function may also
- * be reading undefined stack memory, which affects the copied values.
+ * NOTE: Please see the note in the implementation, this function also reads 
+ * undefined stack memory, which affects the copied values.
  */
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
     u16 buffer[644];
@@ -522,7 +522,7 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
         do {
             var1 += srcWidth % destWidth;
 
-            // TODO: isn't this reading undefined stack memory???
+            // NOTE: This reads undefined stack memory!
             *bufferPtr = ((*srcPtr & -0x843) >> 1) + ((*bufferPtr & -0x843) >> 1);
             bufferPtr = bufferPtr + 1;
 
