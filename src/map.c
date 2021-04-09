@@ -320,14 +320,13 @@ void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 {
     s32 n;
 
-    for (n = triCount / 2; n != 0; n--)
+    for (n = triCount >> 1; n != 0; n--)
     {
-        gSP2Triangles((*gdl)++, tris[0].v0, tris[0].v1, tris[0].v2, 1, tris[1].v0, tris[1].v1, tris[1].v2, 1);
+        gSP2Triangles((*gdl)++, tris[0].v0, tris[0].v1, tris[0].v2, 0, tris[1].v0, tris[1].v1, tris[1].v2, 0);
         tris += 2;
     }
 
-    if (triCount & 1)
-    {
+    if (triCount & 1) {
         gSP1Triangle((*gdl)++, tris->v0, tris->v1, tris->v2, 0);
     }
 
