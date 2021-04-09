@@ -452,11 +452,13 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EAC0.s")
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EBD4.s")
 #else
-// Functionally equivalent, extremely close to matching
-void func_8003EBD4(s32 a0) {
+/**
+ * Does some sort of copy line-by-line from gFramebufferNext to gFramebufferCurrent.
+ */
+void func_8003EBD4(s32 hOffset) {
     s32 resEncoded = get_some_resolution_encoded();
 
     s32 hRes = resEncoded & 0xffff;
@@ -465,8 +467,9 @@ void func_8003EBD4(s32 a0) {
     u16 *next = gFramebufferNext;
     u16 *cur = gFramebufferCurrent;
 
-    s32 hOffset = hRes - a0;
     s32 vIndex = vRes;
+
+    hOffset = hRes - hOffset;
 
     while (vIndex--) {
         possibly_resize_copy_line(
