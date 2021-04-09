@@ -1,7 +1,7 @@
 #include "common.h"
 #include "video.h"
 
-void possibly_resize_copy_line(u16 *a0, s32 a1, s32 a2, u16 *a3);
+void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/init_textures.s")
 
@@ -457,6 +457,8 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 #else
 /**
  * Does some sort of copy line-by-line from gFramebufferNext to gFramebufferCurrent.
+ * 
+ * Also see weird_resize_copy(), which this function uses to copy data.
  */
 void func_8003EBD4(s32 hOffset) {
     s32 resEncoded = get_some_resolution_encoded();
@@ -472,7 +474,7 @@ void func_8003EBD4(s32 hOffset) {
     hOffset = hRes - hOffset;
 
     while (vIndex--) {
-        possibly_resize_copy_line(
+        weird_resize_copy(
             next + hOffset, 
             hRes - (hOffset << 1), 
             hRes, 
@@ -494,9 +496,21 @@ void func_8003EBD4(s32 hOffset) {
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F074.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/possibly_resize_copy_line.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/weird_resize_copy.s")
 #else
-void possibly_resize_copy_line(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
+/**
+ * Copies data from src to dest+destWidth taking into account differences in width
+ * (e.g. if destWidth is half srcWidth, every other value will be copied from src).
+ * 
+ * Additionally, values copied to dest have the following applied first:
+ *   (value & -0x843) >> 1
+ * 
+ * destWidth should be less than 644.
+ * 
+ * NOTE: Please see the TODO in the implementation, this function may also
+ * be reading undefined stack memory, which affects the copied values.
+ */
+void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
     u16 buffer[644];
 
     s32 var1 = 0;
@@ -508,6 +522,7 @@ void possibly_resize_copy_line(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest)
         do {
             var1 += srcWidth % destWidth;
 
+            // TODO: isn't this reading undefined stack memory???
             *bufferPtr = ((*srcPtr & -0x843) >> 1) + ((*bufferPtr & -0x843) >> 1);
             bufferPtr = bufferPtr + 1;
 

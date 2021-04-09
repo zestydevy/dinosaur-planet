@@ -1025,11 +1025,11 @@ get_framebuffer_start = 0x8005DD2C; // type:func
 get_framebuffer_end = 0x8005DD3C; // type:func
 is_size_smaller_than_resolution = 0x8005DE94; // type:func
 get_some_resolution_encoded = 0x8005D6C8; // type:func
-possibly_resize_copy_line = 0x8003F1EC; // type:func
 
 gPossiblyScreenWidthOrHeight = 0x80092e98; // type:data size:0x4
 gSomeVideoFlag = 0x80092ea0; // type:data size:0x4
 gUnknownVideoStructs = 0x800bb590; // type:data size:0x1680
 OSMesgQueue_800bcce0 = 0x800bcce0;
 
+weird_resize_copy = 0x8003F1EC; // type:func
 clear_framebuffer_current = 0x800630D4; // type:func
