@@ -880,8 +880,15 @@ func_80041210 = 0x80041210; // type:func
 dl_set_geometry_mode = 0x800412a4; // type:func
 dl_clear_geometry_mode = 0x800412e4; // type:func
 dl_set_prim_color = 0x80041328; // type:func
+dl_set_prim_color2 = 0x80041418; // type:func
 dl_set_env_color = 0x80041480; // type:func
+dl_set_env_color2 = 0x800415a0; // type:func
+dl_set_blend_color = 0x80041608; // type:func
 dl_set_fill_color = 0x80041728; // type:func
+dl_set_fog_color = 0x800417c8; // type:func
+func_80041D74 = 0x80041d74; // type:func
+func_80041D8C = 0x80041d8c; // type:func
+func_80041DA4 = 0x80041da4; // type:func
 
 gMapNumStreamMaps = 0x80092aa4; // type:data size:0x4
 gMapActiveStreamMap = 0x800b96ac; // type:data size:0x4

@@ -9,9 +9,9 @@ typedef struct
 /*0010*/    u32 unk_0x10;
 /*0014*/    u32 primColor;
 /*0018*/    u32 envColor;
-/*001C*/    u32 unk_0x1c;
+/*001C*/    u32 fogColor;
 /*0020*/    u32 fillColor;
-/*0024*/    u32 unk_0x24;
+/*0024*/    u32 blendColor;
 /*0028*/    u8 needsPipeSync;
 /*0029*/    u8 dirtyFlags;
 } DLBuilder;
@@ -179,7 +179,12 @@ void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041418.s")
+void dl_set_prim_color2(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
+{
+    gDLBuilder->dirtyFlags |= 0x4;
+    gDLBuilder->needsPipeSync = FALSE;
+    dl_set_prim_color(gdl, r, g, b, a);
+}
 
 void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
 {
@@ -209,9 +214,40 @@ void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800415A0.s")
+void dl_set_env_color2(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
+{
+    gDLBuilder->dirtyFlags |= 0x8;
+    gDLBuilder->needsPipeSync = FALSE;
+    dl_set_env_color(gdl, r, g, b, a);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041608.s")
+void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
+{
+    u32 rgba = RGBA8(r, g, b, a);
+    u8 dirty;
+
+    if (gDLBuilder->dirtyFlags & 0x80)
+    {
+        gDLBuilder->dirtyFlags &= ~0x80;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = rgba != gDLBuilder->blendColor;
+    }
+
+    if (dirty)
+    {
+        if (gDLBuilder->needsPipeSync)
+        {
+            gDLBuilder->needsPipeSync = FALSE;
+            gDPPipeSync((*gdl)++);
+        }
+
+        gDLBuilder->blendColor = rgba;
+        gDPSetBlendColor((*gdl)++, r, g, b, a);
+    }
+}
 
 void dl_set_fill_color(Gfx **gdl, u32 color)
 {
@@ -240,7 +276,33 @@ void dl_set_fill_color(Gfx **gdl, u32 color)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800417C8.s")
+void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
+{
+    u32 rgba = RGBA8(r, g, b, a);
+    u8 dirty;
+
+    if (gDLBuilder->dirtyFlags & 0x20)
+    {
+        gDLBuilder->dirtyFlags &= ~0x20;
+        dirty = TRUE;
+    }
+    else
+    {
+        dirty = rgba != gDLBuilder->fogColor;
+    }
+
+    if (dirty)
+    {
+        if (gDLBuilder->needsPipeSync)
+        {
+            gDLBuilder->needsPipeSync = FALSE;
+            gDPPipeSync((*gdl)++);
+        }
+
+        gDLBuilder->fogColor = rgba;
+        gDPSetFogColor((*gdl)++, r, g, b, a);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800418E8.s")
 
@@ -256,11 +318,20 @@ void dl_set_fill_color(Gfx **gdl, u32 color)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041D5C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041D74.s")
+u32 func_80041D74()
+{
+    return UINT_80092a98 & 0x10;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041D8C.s")
+u32 func_80041D8C()
+{
+    return UINT_80092a98 & 0x100;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041DA4.s")
+u32 func_80041DA4()
+{
+    return UINT_80092a98 & 0x80;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041DBC.s")
 
