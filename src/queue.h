@@ -40,4 +40,6 @@ extern OSMesgQueue D_800ACB48, D_800ACB68, D_800ACB98;
 #define QUEUE_MODEL 6
 #define QUEUE_ANIMATION 7
 
+void queue_load_texture(s32 *arg0, s32 arg1);
+
 #endif

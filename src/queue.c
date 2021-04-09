@@ -100,7 +100,7 @@ void queue_load_map_object(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32
     osRecvMesg(&D_800ACB98, 0, 1);
 }
 
-void queue_load_texture(s32 arg0, s32 arg1) {
+void queue_load_texture(s32 *arg0, s32 arg1) {
     D_800AE270.loadCategory = 1;
     D_800AE270.loadType = QUEUE_TEXTURE;
     D_800AE270.unk4 = arg1;

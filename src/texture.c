@@ -1,5 +1,6 @@
 #include "common.h"
 #include "video.h"
+#include "queue.h"
 
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
@@ -7,7 +8,21 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD6C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD7C.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/queue_load_texture_proxy.s")
+#else
+/**
+ * Calls queue_load_texture with [param] as the second argument.
+ * 
+ * Returns the result of queue_load_texture.
+ */
+s32 queue_load_texture_proxy(s32 param) {
+    s32 var1 = 0;
+    queue_load_texture(&var1, param);
+
+    return var1;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_load.s")
 
