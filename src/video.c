@@ -17,6 +17,7 @@ void func_8005C780() {
     UnkVidStruct2 *vidStruct2;
     UnkVidStruct *vidStruct;
     UnkHeapVidStruct *vidHeapStruct;
+    s32 i;
 
     vidHeapStruct = D_800bcc10;
 
@@ -26,55 +27,21 @@ void func_8005C780() {
 
     D_800bcc10 = malloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
 
-    if (1) {
-        vidStruct = &gUnknownVideoStructs[0];
+    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++)
+    {
+        gUnknownVideoStructs[i].ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
+        gUnknownVideoStructs[i].ptrToUnknown2 = NULL;
+        gUnknownVideoStructs[i].viMode = NULL;
+        gUnknownVideoStructs[i].unk0x88 = 0;
+    }
 
-        do {
-            vidStruct->ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
-            vidStruct->ptrToUnknown2 = NULL; 
-            goto label_1; label_1: // TODO: This probably shouldn't be necessary
-            vidStruct->viMode = NULL;
-            vidStruct->unk0x88 = 0;
-        } while (++vidStruct < &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
-
-        // TODO: Figure out how to get this to match in a way that it weaves in `lui   at,0x800c`
-        vidStruct2 = &D_800bcc18[0];
-        vidStruct2->unk0x10 = 0;
-        // lui   at,0x800c
-        vidStruct2->unk0x0 = 0.0f;
-        vidStruct2->unk0x4 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2->unk0xc = (u8)0;
-        vidStruct2->unk0x8 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2 = &D_800bcc18[1];
-        vidStruct2->unk0x10 = 0;
-        // lui   at,0x800c
-        vidStruct2->unk0x0 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2->unk0x4 = 0.0f;
-        vidStruct2->unk0x8 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2->unk0xc = (u8)0;
-        // lui   at,0x800c
-        vidStruct2 = &D_800bcc18[2];
-        vidStruct2->unk0x10 = 0;
-        // lui   at,0x800c
-        vidStruct2->unk0x0 = 0.0f;
-        vidStruct2->unk0x4 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2->unk0xc = (u8)0;
-        vidStruct2->unk0x8 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2 = &D_800bcc18[3];
-        vidStruct2->unk0x10 = 0;
-        // lui   at,0x800c
-        vidStruct2->unk0x0 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2->unk0x4 = 0.0f;
-        vidStruct2->unk0x8 = 0.0f;
-        // lui   at,0x800c
-        vidStruct2->unk0xc = (u8)0;
+    for (i = 0; i < 4; i++)
+    {
+        D_800bcc18[i].unk0x10 = NULL;
+        D_800bcc18[i].unk0x0 = 0.0f;
+        D_800bcc18[i].unk0x4 = 0.0f;
+        D_800bcc18[i].unk0xc = 0;
+        D_800bcc18[i].unk0x8 = 0.0f;
     }
 
     D_800bcc10->unk0x0 = -3.0f;

@@ -47,12 +47,12 @@ typedef struct _UnkHeapVidStruct {
 #define UNKNOWN_VIDEO_STRUCT_2_SIZE 0x14
 
 typedef struct _UnkVidStruct2 {
-    f32 unk0x0;
-    f32 unk0x4;
-    f32 unk0x8;
-    u8 unk0xc;
-    u8 unk0xd_padding[3];
-    f32 *unk0x10;
+/*0000*/    f32 unk0x0;
+/*0004*/    f32 unk0x4;
+/*0008*/    f32 unk0x8;
+/*000C*/    u8 unk0xc;
+/*000D*/    // padding
+/*0010*/    f32 *unk0x10;
 } UnkVidStruct2;
 
 #define UNKNOWN_VIDEO_STRUCT_SIZE 0x90
