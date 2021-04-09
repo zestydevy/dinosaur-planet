@@ -1,4 +1,5 @@
 #include "common.h"
+#include "video.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_man_array.s")
 
@@ -28,7 +29,23 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/get_err_string.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/func_800630D4.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/clear_framebuffer_current.s")
+#else
+/**
+ * Sets all values of gFramebufferCurrent to 0.
+ */
+void clear_framebuffer_current() {
+    u32 resEncoded = get_some_resolution_encoded();
+    s32 valuesLeft = (/*hRes*/resEncoded & 0xffff) * (/*vRes*/(resEncoded >> 0x10) & 0xffff);
+    u16 *framebufferPtr = gFramebufferCurrent;
+
+    while (valuesLeft--) {
+        *framebufferPtr = 0;
+        ++framebufferPtr;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/write_cFile_label_pointers.s")
 
