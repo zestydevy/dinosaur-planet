@@ -16,6 +16,15 @@ typedef struct
 /*0029*/    u8 dirtyFlags;
 } DLBuilder;
 
+typedef struct
+{
+/*0000*/    u8 unk_0x0;
+/*0001*/    u8 v0;
+/*0002*/    u8 v1;
+/*0003*/    u8 v2;
+/*0004*/    u8 unk_0x4[0x10 - 0x4];
+} DLTri;
+
 extern u32 UINT_80092a98;
 extern DLBuilder *gDLBuilder;
 
@@ -304,7 +313,27 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800418E8.s")
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_triangles.s")
+#else
+void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
+{
+    s32 n;
+
+    for (n = triCount / 2; n != 0; n--)
+    {
+        gSP2Triangles((*gdl)++, tris[0].v0, tris[0].v1, tris[0].v2, 1, tris[1].v0, tris[1].v1, tris[1].v2, 1);
+        tris += 2;
+    }
+
+    if (triCount & 1)
+    {
+        gSP1Triangle((*gdl)++, tris->v0, tris->v1, tris->v2, 0);
+    }
+
+    gDLBuilder->needsPipeSync = TRUE;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041C30.s")
 

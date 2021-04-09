@@ -38,10 +38,10 @@ IDO_AS = /usr/bin/qemu-irix -silent -L tools/ido_as tools/ido_as/usr/bin/as
 CC = tools/ido_recomp/linux/5.3/cc
 CC_OLD = tools/ido_recomp/linux/7.1/cc
 
-DEFINE_CFLAGS = -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
+DEFINE_CFLAGS = -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
 INCLUDE_CFLAGS = -I . -I include
 ASFLAGS = -EB -mtune=vr4300 -march=vr4300 -Iinclude -modd-spreg
-CFLAGS  = -G 0 -mips2 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul $(DEFINE_FLAGS) $(INCLUDE_CFLAGS) -DF3DEX_GBI_2
+CFLAGS  = -G 0 -mips2 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul $(DEFINE_FLAGS) $(INCLUDE_CFLAGS) -DF3DEX_GBI -DF3DEX_GBI_2
 LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.txt -T undefined_syms_auto.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/dino.map --no-check-sections
 
 OPTFLAGS := -O2 -g3
