@@ -9,6 +9,19 @@ typedef struct {
     f32 x, y, z;
 } Vec3f;
 
+// Scale, rotation, translation. Rotations are applied in the order: Yaw -> Pitch -> Roll. (TODO: verify)
+typedef struct
+{
+/*0000*/    s16 yaw; // 16-bit angle in the range [-32768..32768) => [-pi..pi)
+/*0002*/    s16 pitch;
+/*0004*/    s16 roll;
+/*0006*/    // padding inserted by compiler
+/*0008*/    f32 scale;
+/*000C*/    f32 tx;
+/*0010*/    f32 ty;
+/*0014*/    f32 tz;
+} SRT;
+
 typedef struct {
     /* 0x000 */ s32 regs[50];
     /* 0x0C8 */ char unk_0C8[4];
