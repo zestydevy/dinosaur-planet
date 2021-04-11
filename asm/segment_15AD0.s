@@ -881,7 +881,7 @@ glabel func_80015BB8
 /* 167BC 80015BBC FFBF0000 */  sd         $ra, ($sp)
 /* 167C0 80015BC0 0C0058BE */  jal        some_getter_from_float_array
 /* 167C4 80015BC4 00000000 */   nop
-/* 167C8 80015BC8 0C0058BD */  jal        func_800162F4
+/* 167C8 80015BC8 0C0058BD */  jal        fcos16
 /* 167CC 80015BCC 46000046 */   mov.s     $f1, $f0
 /* 167D0 80015BD0 C4A20000 */  lwc1       $f2, ($a1)
 /* 167D4 80015BD4 C4A50020 */  lwc1       $f5, 0x20($a1)
@@ -1395,7 +1395,7 @@ glabel vec3_distance_xz_squared
 /* 16EEC 800162EC 03E00008 */  jr         $ra
 /* 16EF0 800162F0 46040000 */   add.s     $f0, $f0, $f4
 
-glabel func_800162F4
+glabel fcos16
 /* 16EF4 800162F4 24844000 */  addiu      $a0, $a0, 0x4000
 
 glabel some_getter_from_float_array

@@ -917,19 +917,21 @@ model_setup_anim_playback = 0x80018f80; // type:func
 objSetupObjectActual = 0x80021450; // type:func
 createModelInstance = 0x80018314; // type:func
 
+gSineTable = 0x8008ca8c; // type:data size:0x802
+gSineTableF = 0x8008d290; // type:data size:0x1004
+
 matrix_from_srt = 0x800156b8; // type:func
 // lol, cos16 adds pi/2 and continues into sin16.
 cos16_precise = 0x80016178; // type:func
 sin16_precise = 0x8001617c; // type:func
 cos16 = 0x800161d8; // type:func
 sin16 = 0x800161dc; // type:func
-
-gSineTable = 0x8008ca8c; // type:data size:0x802
-
 vec3_distance = 0x8001621c; // type:func
 vec3_distance_squared = 0x8001625c; // type:func
 vec3_distance_xz = 0x80016298; // type:func
 vec3_distance_xz_squared = 0x800162c8; // type:func
+fcos16 = 0x800162f4; // type:func
+fsin16 = 0x800162f8; // type:func
 vec3_dot_product = 0x80016580; // type:func
 vec3_length = 0x800165b4; // type:func
 vec3_length_squared = 0x800165f4; // type:func
