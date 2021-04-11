@@ -32,7 +32,7 @@ void dll_relocate(DLLFile* dll);
 void *malloc(s32 arg0, s32 arg1, s32 arg2);
 void _bcopy(const void *src,void *dst,int length);
 
-void matrix_from_srt(f32 mf[4][4], SRT *srt);
+void matrix_from_srt(MtxF *mf, SRT *srt);
 
 // theta: [-32768..32768) => [-pi..pi)
 // returns: [-65536..65536] => [-1..1]

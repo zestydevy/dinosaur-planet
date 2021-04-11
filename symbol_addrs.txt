@@ -117,6 +117,7 @@ threadTimerTick = 0x80001130; // type:func
 MusPtrBankGetCurrent = 0x800013e0; // type:func
 ortho_some_matrix = 0x800014c0; // type:func
 pointerIntArray2_func = 0x80003c88; // type:func
+func_80004024 = 0x80004024; // type:func
 object_ident_matrix = 0x80004464; // type:func
 some_crash_setter = 0x8000bdd0; // type:func
 caption_func = 0x8000ce0c; // type:func
@@ -506,7 +507,7 @@ rmonmem_rodata_0098 = 0x800a2a68; // type:data
 rmonmem_rodata_00A0 = 0x800a2a70; // type:data
 rmonbrk_rodata_0180 = 0x800a2d70; // type:data size:0x4
 player_bss_003C = 0x800a6a54; // type:data
-aud_dma_text_027C = 0x800a6c68; // type:data
+gMatrices = 0x800a7ba8; // type:data
 player_bss_0048 = 0x800a7d40; // type:data
 __kmc_pt_mode = 0x800cd320; // type:data size:0x4
 __osEventStateTab = 0x800cd330; // type:data size:0xc0
@@ -871,8 +872,13 @@ map_load_streammap = 0x80045910; // type:func
 map_convert_objpositions_to_ws = 0x800462b8; // type:func
 map_find_streammap_index = 0x80045d68; // type:func
 
+gWorldX = 0x80092a70; // type:data size:0x4
+gWorldZ = 0x80092a74; // type:data size:0x4
 gDLBuilder = 0x80092a90; // type:data size:0x4
 UINT_80092a98 = 0x80092a98; // type:data size:0x4
+MtxF_800a6a60 = 0x800a6a60; // type:data size:0x40
+MtxF_800a6aa0 = 0x800a6aa0; // type:data size:0x40
+MtxF_800a6c68 = 0x800a6c68; // type:data size:0x40
 
 func_80041040 = 0x80041040; // type:func
 func_80041118 = 0x80041118; // type:func
@@ -920,6 +926,9 @@ createModelInstance = 0x80018314; // type:func
 gSineTable = 0x8008ca8c; // type:data size:0x802
 gSineTableF = 0x8008d290; // type:data size:0x1004
 
+func_80014fec = 0x80014fec; // type:func
+func_800150e4 = 0x800150e4; // type:func
+matrix_f2l = 0x80015298; // type:func
 matrix_from_srt = 0x800156b8; // type:func
 // lol, cos16 adds pi/2 and continues into sin16.
 cos16_precise = 0x80016178; // type:func

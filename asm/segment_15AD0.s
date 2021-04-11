@@ -82,7 +82,7 @@ glabel func_80014F70
 /* 15BE4 80014FE4 03E00008 */  jr         $ra
 /* 15BE8 80014FE8 E4CE0008 */   swc1      $f14, 8($a2)
 
-glabel func_80014FEC
+glabel func_80014fec
 /* 15BEC 80014FEC 24880040 */  addiu      $t0, $a0, 0x40
 .L80014FF0:
 /* 15BF0 80014FF0 C4850000 */  lwc1       $f5, ($a0)
@@ -147,7 +147,7 @@ glabel func_80014FEC
 /* 15CDC 800150DC 03E00008 */  jr         $ra
 /* 15CE0 800150E0 00000000 */   nop
 
-glabel func_800150E4
+glabel func_800150e4
 /* 15CE4 800150E4 24880030 */  addiu      $t0, $a0, 0x30
 .L800150E8:
 /* 15CE8 800150E8 C4850000 */  lwc1       $f5, ($a0)
@@ -262,7 +262,7 @@ glabel func_80015204
 /* 15E90 80015290 03E00008 */  jr         $ra
 /* 15E94 80015294 00000000 */   nop
 
-glabel func_80015298
+glabel matrix_f2l
 /* 15E98 80015298 3C014780 */  lui        $at, 0x4780
 /* 15E9C 8001529C 44816000 */  mtc1       $at, $f12
 /* 15EA0 800152A0 24880040 */  addiu      $t0, $a0, 0x40

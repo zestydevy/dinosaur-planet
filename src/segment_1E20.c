@@ -146,7 +146,70 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003F0C.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004024.s")
+#else
+extern Mtx *gMatrices[2]; // TODO: how many matrices are there?
+extern f32 gWorldX;
+extern f32 gWorldZ;
+extern MtxF MtxF_800a6a60;
+extern MtxF MtxF_800a6aa0;
+extern MtxF MtxF_800a6c68;
+void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
+{
+    if (!gMatrices[actor->matrixIdx])
+    {
+        MtxF mtxf;
+        TActor *link = actor;
+        u8 isChild = FALSE;
+        f32 oldScale;
+
+        while (link != NULL)
+        {
+            if (link->linkedActor == NULL) {
+                link->srt.tx -= gWorldX;
+                link->srt.tz -= gWorldZ;
+            }
+
+            oldScale = link->srt.scale;
+            if (!(link->unk0xb0 & 0x8)) {
+                link->srt.scale = 1.0f;
+            }
+
+            if (!isChild) {
+                matrix_from_srt(&MtxF_800a6a60, &link->srt);
+            } else {
+                matrix_from_srt(&mtxf, &link->srt);
+                func_800150e4(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
+            }
+
+            link->srt.scale = oldScale;
+
+            if (link->linkedActor == NULL) {
+                link->srt.tx += gWorldX;
+                link->srt.tz += gWorldZ;
+            }
+
+            link = link->linkedActor;
+            isChild = TRUE;
+        }
+
+        func_80014fec(&MtxF_800a6a60, &MtxF_800a6aa0, &MtxF_800a6c68);
+        matrix_f2l(&MtxF_800a6c68, *matrices);
+        gMatrices[actor->matrixIdx] = *matrices;
+        (*matrices)++;
+    }
+
+    // FIXME: Requires #define F3DEX_GBI_2x (???)
+    // gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gMatrices[actor->matrixIdx]), 7);
+    {
+        Gfx *g = (*gdl)++;
+
+        g->words.w0 = 0xda380007;
+        g->words.w1 = OS_K0_TO_PHYSICAL(gMatrices[actor->matrixIdx]);
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004224.s")
 
