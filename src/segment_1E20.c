@@ -180,7 +180,7 @@ void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
                 matrix_from_srt(&MtxF_800a6a60, &link->srt);
             } else {
                 matrix_from_srt(&mtxf, &link->srt);
-                func_800150e4(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
+                matrix_concat_4x3(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
             }
 
             link->srt.scale = oldScale;
@@ -194,7 +194,7 @@ void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
             isChild = TRUE;
         }
 
-        func_80014fec(&MtxF_800a6a60, &MtxF_800a6aa0, &MtxF_800a6c68);
+        matrix_concat(&MtxF_800a6a60, &MtxF_800a6aa0, &MtxF_800a6c68);
         matrix_f2l(&MtxF_800a6c68, *matrices);
         gMatrices[actor->matrixIdx] = *matrices;
         (*matrices)++;
