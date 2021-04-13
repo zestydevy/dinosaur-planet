@@ -42,7 +42,7 @@ DEFINE_CFLAGS = -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI -DF3DEX_GBI_2 -D_MIPS_SZLO
 INCLUDE_CFLAGS = -I . -I include
 ASFLAGS = -EB -mtune=vr4300 -march=vr4300 -Iinclude -modd-spreg
 CFLAGS  = -G 0 -mips2 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul $(DEFINE_FLAGS) $(INCLUDE_CFLAGS) -DF3DEX_GBI -DF3DEX_GBI_2
-LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_funcs_auto.txt -T undefined_syms_auto.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/dino.map --no-check-sections
+LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_syms_auto.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/dino.map --no-check-sections
 
 OPTFLAGS := -O2 -g3
 
