@@ -15,37 +15,52 @@ typedef float Vec2[2];
 typedef float Vec3[3];
 typedef float Vec4[4];
 
+// Scale, rotation, translation. Rotations are applied in the order: Yaw -> Pitch -> Roll. (TODO: verify)
+typedef struct
+{
+/*0000*/    s16 yaw; // 16-bit angle in the range [-32768..32768) => [-pi..pi)
+/*0002*/    s16 pitch;
+/*0004*/    s16 roll;
+/*0006*/    // padding inserted by compiler
+/*0008*/    f32 scale;
+/*000C*/    f32 tx;
+/*0010*/    f32 ty;
+/*0014*/    f32 tz;
+} SRT;
+
 //prelimnary, lots of unknowns
 //contains pointer-to-own-type fields, so `typedef struct _TActor {`
 //must be used instead of `typedef struct {`
 typedef struct TActor {
-/*0000*/  s16 rotation[3]; //why short?
-/*0006*/  s16 unk0x6;
-/*0008*/  float scale;
-/*000C*/  Vec3f position; //note: >300 unit drop causes fall damage.
-	Vec3f positionMirror; //local vs global?
-	Vec3f speed;
-	void* ptr0x30;
-	UNK_TYPE_32 unk0x34;
-	struct TActor* linkedActor;
-	u8 unk0x3c[3];
-	UNK_TYPE_16 unk0x44;
-	UNK_TYPE_16 unk0x46;
-	void* ptr0x48;
-	UNK_TYPE_32 unk0x4c;
-	void* ptr0x50;
-	void* ptr0x54;
-	UNK_TYPE_32 unk0x58;
-	void* ptr0x5c;
-	void* ptr0x60;
-	void* ptr0x64;
-	void* ptr0x68;
-	void* ptr0x6c;
-	void* ptr0x70;
-	UNK_TYPE_32 unk0x74;
-	Vec3f positionMirror2; //gets copied twice.
-	Vec3f positionMirror3; //not sure why.
-	float unk0x98;
+/*0000*/    SRT srt;
+/*0018*/    Vec3f positionMirror; //local vs global?
+/*0024*/    Vec3f speed;
+/*0030*/    struct TActor *linkedActor;
+/*0034*/    u8 unk_0x34;
+/*0035*/    s8 matrixIdx;
+/*0036*/    u8 unk_0x36;
+/*0037*/    u8 unk_0x37;
+/*0038*/    u32 unk_0x38;
+/*003C*/    u8 unk0x3c[0x44 - 0x3c];
+/*0044*/    UNK_TYPE_16 unk0x44;
+/*0046*/    UNK_TYPE_16 unk0x46;
+/*0048*/    void* ptr0x48;
+/*004C*/    UNK_TYPE_32 unk0x4c;
+/*0050*/    void* ptr0x50;
+/*0054*/    void* ptr0x54;
+/*0058*/    UNK_TYPE_32 unk0x58;
+/*005C*/    void* ptr0x5c;
+/*0060*/    void* ptr0x60;
+/*0064*/    void* ptr0x64;
+/*0068*/    void* ptr0x68;
+/*006C*/    void* ptr0x6c;
+/*0070*/    void* ptr0x70;
+/*0074*/    UNK_TYPE_32 unk0x74;
+/*0078*/    Vec3f positionMirror2; //gets copied twice.
+/*0084*/    Vec3f positionMirror3; //not sure why.
+/*0090*/    u32 unk_0x90;
+/*0094*/    u32 unk_0x94;
+/*0098*/    float unk0x98;
 	u8 unk0x9c;
 	u8 unk0x9d[3]; //aligning?
 	s16 unk0xa0;
@@ -53,7 +68,7 @@ typedef struct TActor {
 	u8 unk0xad;
 	u8 unk0xae;
 	u8 unk0xaf;
-	s16 unk0xb0;
+/*00B0*/    u16 unk0xb0;
 	u8 unk0xb2[6];
 	void* CharData; //0x8c1+ struct, has various player data.
 	UNK_TYPE_32 unk0xbc;

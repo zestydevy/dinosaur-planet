@@ -146,7 +146,70 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003F0C.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004024.s")
+#else
+extern Mtx *gRSPMatrices[2]; // TODO: how many matrices are there?
+extern f32 gWorldX;
+extern f32 gWorldZ;
+extern MtxF MtxF_800a6a60;
+extern MtxF MtxF_800a6aa0;
+extern MtxF gAuxMtx2;
+void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
+{
+    if (!gRSPMatrices[actor->matrixIdx])
+    {
+        MtxF mtxf;
+        TActor *link = actor;
+        u8 isChild = FALSE;
+        f32 oldScale;
+
+        while (link != NULL)
+        {
+            if (link->linkedActor == NULL) {
+                link->srt.tx -= gWorldX;
+                link->srt.tz -= gWorldZ;
+            }
+
+            oldScale = link->srt.scale;
+            if (!(link->unk0xb0 & 0x8)) {
+                link->srt.scale = 1.0f;
+            }
+
+            if (!isChild) {
+                matrix_from_srt(&MtxF_800a6a60, &link->srt);
+            } else {
+                matrix_from_srt(&mtxf, &link->srt);
+                matrix_concat_4x3(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
+            }
+
+            link->srt.scale = oldScale;
+
+            if (link->linkedActor == NULL) {
+                link->srt.tx += gWorldX;
+                link->srt.tz += gWorldZ;
+            }
+
+            link = link->linkedActor;
+            isChild = TRUE;
+        }
+
+        matrix_concat(&MtxF_800a6a60, &MtxF_800a6aa0, &gAuxMtx2);
+        matrix_f2l(&gAuxMtx2, *matrices);
+        gRSPMatrices[actor->matrixIdx] = *matrices;
+        (*matrices)++;
+    }
+
+    // FIXME: Requires #define F3DEX_GBI_2x (???)
+    // gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMatrices[actor->matrixIdx]), 7);
+    {
+        Gfx *g = (*gdl)++;
+
+        g->words.w0 = 0xda380007;
+        g->words.w1 = OS_K0_TO_PHYSICAL(gRSPMatrices[actor->matrixIdx]);
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004224.s")
 
@@ -154,15 +217,68 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042A8.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042C8.s")
+#else
+extern MtxF gAuxMtx2;
+extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
+extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
+void _func_800042C8(TActor *actor, int matrixIdx)
+{
+    u8 isChild = FALSE;
+    f32 oldScale;
+    TActor* actorList[2]; // FIXME: really? only two?
+    s32 actorCount = 0;
+    MtxF* pmtx;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/object_ident_matrix.s")
+    while (actor != NULL)
+    {
+        actorList[actorCount++] = actor;
+        actorCount = (s8)actorCount;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004500.s")
+        pmtx = &gActorMatrices[matrixIdx];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004588.s")
+        oldScale = actor->srt.scale;
+        actor->srt.scale = 1.0f;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004610.s")
+        if (!isChild) {
+            matrix_from_srt(pmtx, &actor->srt);
+        } else {
+            matrix_from_srt(&gAuxMtx2, &actor->srt);
+            matrix_concat(pmtx, &gAuxMtx2, pmtx);
+        }
+
+        actor->srt.scale = oldScale;
+
+        actor = actor->linkedActor;
+
+        isChild = TRUE;
+    }
+
+    while (actorCount > 0)
+    {
+        TActor *pactor = actorList[(s8)--actorCount];
+        SRT invsrt;
+
+        invsrt.tx = -pactor->srt.tx;
+        invsrt.ty = -pactor->srt.ty;
+        invsrt.tz = -pactor->srt.tz;
+        invsrt.scale = 1.0f;
+        invsrt.yaw = -pactor->srt.yaw;
+        invsrt.pitch = -pactor->srt.pitch;
+        invsrt.roll = -pactor->srt.roll;
+        matrix_from_srt_reversed(&gInverseActorMatrices[matrixIdx], &invsrt);
+    }
+}
+#endif
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/get_actor_child_position.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_point_by_actor.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_transform_point_by_actor.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_rotate_point_by_actor.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004684.s")
 

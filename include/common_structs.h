@@ -3,6 +3,8 @@
 
 #include "ultra64.h"
 
+typedef f32 MtxF[4][4];
+
 typedef f32 quartic[5];
 
 typedef struct {
