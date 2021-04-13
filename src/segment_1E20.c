@@ -217,15 +217,67 @@ void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042A8.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042C8.s")
+#else
+extern MtxF MtxF_800a6c28;
+extern MtxF MtxF_ARRAY_800a6ca8[2]; // FIXME: how many items are there?
+extern MtxF gInverseMatrices[2]; // FIXME: how many items are there?
+void _func_800042C8(TActor *actor, int matrixIdx)
+{
+    u8 isChild = FALSE;
+    f32 oldScale;
+    TActor* actorList[2]; // FIXME: really? only two?
+    s8 actorCount = 0;
+    MtxF* pmtx;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/object_ident_matrix.s")
+    while (actor != NULL)
+    {
+        actorList[actorCount++] = actor;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004500.s")
+        pmtx = &MtxF_ARRAY_800a6ca8[matrixIdx];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004588.s")
+        oldScale = actor->srt.scale;
+        actor->srt.scale = 1.0f;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004610.s")
+        if (!isChild) {
+            matrix_from_srt(pmtx, &actor->srt);
+        } else {
+            matrix_from_srt(&MtxF_800a6c28, &actor->srt);
+            matrix_concat(pmtx, &MtxF_800a6c28, pmtx);
+        }
+
+        actor->srt.scale = oldScale;
+
+        actor = actor->linkedActor;
+
+        isChild = TRUE;
+    }
+
+    while (actorCount > 0)
+    {
+        TActor *pactor = actorList[--actorCount];
+        SRT invsrt;
+
+        invsrt.tx = -pactor->srt.tx;
+        invsrt.ty = -pactor->srt.ty;
+        invsrt.tz = -pactor->srt.tz;
+        invsrt.scale = 1.0f;
+        invsrt.yaw = -pactor->srt.yaw;
+        invsrt.pitch = -pactor->srt.pitch;
+        invsrt.roll = -pactor->srt.roll;
+        matrix_from_srt_reversed(&gInverseMatrices[matrixIdx], &invsrt);
+    }
+}
+#endif
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/get_actor_child_position.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_point_by_actor.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_transform_point_by_actor.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_rotate_point_by_actor.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004684.s")
 
