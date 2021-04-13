@@ -149,15 +149,15 @@
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004024.s")
 #else
-extern Mtx *gMatrices[2]; // TODO: how many matrices are there?
+extern Mtx *gRSPMatrices[2]; // TODO: how many matrices are there?
 extern f32 gWorldX;
 extern f32 gWorldZ;
 extern MtxF MtxF_800a6a60;
 extern MtxF MtxF_800a6aa0;
-extern MtxF MtxF_800a6c68;
+extern MtxF gAuxMtx2;
 void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
 {
-    if (!gMatrices[actor->matrixIdx])
+    if (!gRSPMatrices[actor->matrixIdx])
     {
         MtxF mtxf;
         TActor *link = actor;
@@ -194,19 +194,19 @@ void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
             isChild = TRUE;
         }
 
-        matrix_concat(&MtxF_800a6a60, &MtxF_800a6aa0, &MtxF_800a6c68);
-        matrix_f2l(&MtxF_800a6c68, *matrices);
-        gMatrices[actor->matrixIdx] = *matrices;
+        matrix_concat(&MtxF_800a6a60, &MtxF_800a6aa0, &gAuxMtx2);
+        matrix_f2l(&gAuxMtx2, *matrices);
+        gRSPMatrices[actor->matrixIdx] = *matrices;
         (*matrices)++;
     }
 
     // FIXME: Requires #define F3DEX_GBI_2x (???)
-    // gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gMatrices[actor->matrixIdx]), 7);
+    // gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMatrices[actor->matrixIdx]), 7);
     {
         Gfx *g = (*gdl)++;
 
         g->words.w0 = 0xda380007;
-        g->words.w1 = OS_K0_TO_PHYSICAL(gMatrices[actor->matrixIdx]);
+        g->words.w1 = OS_K0_TO_PHYSICAL(gRSPMatrices[actor->matrixIdx]);
     }
 }
 #endif
@@ -220,22 +220,23 @@ void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042C8.s")
 #else
-extern MtxF MtxF_800a6c28;
-extern MtxF MtxF_ARRAY_800a6ca8[2]; // FIXME: how many items are there?
-extern MtxF gInverseMatrices[2]; // FIXME: how many items are there?
+extern MtxF gAuxMtx2;
+extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
+extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
 void _func_800042C8(TActor *actor, int matrixIdx)
 {
     u8 isChild = FALSE;
     f32 oldScale;
     TActor* actorList[2]; // FIXME: really? only two?
-    s8 actorCount = 0;
+    s32 actorCount = 0;
     MtxF* pmtx;
 
     while (actor != NULL)
     {
         actorList[actorCount++] = actor;
+        actorCount = (s8)actorCount;
 
-        pmtx = &MtxF_ARRAY_800a6ca8[matrixIdx];
+        pmtx = &gActorMatrices[matrixIdx];
 
         oldScale = actor->srt.scale;
         actor->srt.scale = 1.0f;
@@ -243,8 +244,8 @@ void _func_800042C8(TActor *actor, int matrixIdx)
         if (!isChild) {
             matrix_from_srt(pmtx, &actor->srt);
         } else {
-            matrix_from_srt(&MtxF_800a6c28, &actor->srt);
-            matrix_concat(pmtx, &MtxF_800a6c28, pmtx);
+            matrix_from_srt(&gAuxMtx2, &actor->srt);
+            matrix_concat(pmtx, &gAuxMtx2, pmtx);
         }
 
         actor->srt.scale = oldScale;
@@ -256,7 +257,7 @@ void _func_800042C8(TActor *actor, int matrixIdx)
 
     while (actorCount > 0)
     {
-        TActor *pactor = actorList[--actorCount];
+        TActor *pactor = actorList[(s8)--actorCount];
         SRT invsrt;
 
         invsrt.tx = -pactor->srt.tx;
@@ -266,7 +267,7 @@ void _func_800042C8(TActor *actor, int matrixIdx)
         invsrt.yaw = -pactor->srt.yaw;
         invsrt.pitch = -pactor->srt.pitch;
         invsrt.roll = -pactor->srt.roll;
-        matrix_from_srt_reversed(&gInverseMatrices[matrixIdx], &invsrt);
+        matrix_from_srt_reversed(&gInverseActorMatrices[matrixIdx], &invsrt);
     }
 }
 #endif
