@@ -49,7 +49,7 @@ glabel guMtxXFMF
 /* 15B68 80014F68 03E00008 */  jr         $ra
 /* 15B6C 80014F6C E7040000 */   swc1      $f4, ($t8)
 
-glabel func_80014F70
+glabel vec3_transform_no_translate
 /* 15B70 80014F70 C4A40000 */  lwc1       $f4, ($a1)
 /* 15B74 80014F74 C48A0000 */  lwc1       $f10, ($a0)
 /* 15B78 80014F78 C4A60004 */  lwc1       $f6, 4($a1)
