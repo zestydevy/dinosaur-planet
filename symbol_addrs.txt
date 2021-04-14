@@ -122,6 +122,9 @@ get_actor_child_position = 0x80004464; // type:func
 transform_point_by_actor = 0x80004500; // type:func
 inverse_transform_point_by_actor = 0x80004588; // type:func
 inverse_rotate_point_by_actor = 0x80004610; // type:func
+rotate_point_by_actor = 0x80004684; // type:func
+transform_srt_by_actor = 0x800046f8; // type:func
+transform_point_by_actor_matrix = 0x800049a4; // type:func
 some_crash_setter = 0x8000bdd0; // type:func
 caption_func = 0x8000ce0c; // type:func
 init_controller_data = 0x80010284; // type:func
@@ -738,8 +741,6 @@ romfunc_set_player_hp = 0xb39362d0; // type:func
 romfunc_checking_hp = 0xb3936010; // type:func
 romfunc_copying_button_press = 0xb3831ba8; // type:func
 romfunc_player_movement = 0xb391a76c; // type:func
-object_pointer_array = 0x800b2938; // type:data size:0x408
-objectCount = 0x800b2934; // type:data size:0x2
 romfunc_enabling_magic = 0xb3a702d8; // type:func
 romfunc_incrementing_timers = 0xb38c5730; // type:func
 osClockRate = 0x8009d884; // type:data
@@ -906,7 +907,11 @@ gMapGridTable = 0x800b976c; // type:data size:0x4
 gMapStreamMapIDTable = 0x800b972c; // type:data size:0x4
 gMapStreamMapTable = 0x800b9728; // type:data size:0x4
 gMapCurrentStreamCoords = 0x80092a68; // type:data
-gDisableObjectStreamingFlag = 0x800ae29c; // type:data size:0x1   
+gDisableObjectStreamingFlag = 0x800ae29c; // type:data size:0x1
+
+gActorListIndices = 0x800b28b0; // type:data size:0x84
+gActorCount = 0x800b2934; // type:data size:0x2
+gActorList = 0x800b2938; // type:data size:0x400
 
 texture_load = 0x8003cda8; // type:func
 texture_destroy = 0x8003da40; // type:func
@@ -930,6 +935,7 @@ gSineTable = 0x8008ca8c; // type:data size:0x802
 gSineTableF = 0x8008d290; // type:data size:0x1004
 
 // TODO: verify matrix funcs
+vec3_transform_no_translate = 0x80014f70; // type:func
 matrix_concat = 0x80014fec; // type:func
 matrix_concat_4x3 = 0x800150e4; // type:func
 matrix_concat_3x3 = 0x80015204; // type:func

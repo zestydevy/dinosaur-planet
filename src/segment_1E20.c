@@ -1,5 +1,11 @@
 #include "common.h"
 
+extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
+extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
+
+void vec3_transform_no_translate(MtxF* mf, Vec3f *v, Vec3f *ov);
+void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
+
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001220.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800013BC.s")
@@ -157,12 +163,14 @@ extern MtxF MtxF_800a6aa0;
 extern MtxF gAuxMtx2;
 void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
 {
-    if (!gRSPMatrices[actor->matrixIdx])
+    TActor *link = actor;
+    u8 isChild;
+    f32 oldScale;
+    MtxF mtxf;
+
+    if (gRSPMatrices[link->matrixIdx] == NULL)
     {
-        MtxF mtxf;
-        TActor *link = actor;
-        u8 isChild = FALSE;
-        f32 oldScale;
+        isChild = FALSE;
 
         while (link != NULL)
         {
@@ -215,20 +223,23 @@ void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004258.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042A8.s")
+void func_800042C8(TActor *actor, int matrixIdx);
+void func_800042A8(TActor *actor)
+{
+    func_800042C8(actor, actor->matrixIdx);
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042C8.s")
 #else
 extern MtxF gAuxMtx2;
-extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
-extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
 void _func_800042C8(TActor *actor, int matrixIdx)
 {
     u8 isChild = FALSE;
     f32 oldScale;
     TActor* actorList[2]; // FIXME: really? only two?
     s32 actorCount = 0;
+    s32 i;
     MtxF* pmtx;
 
     while (actor != NULL)
@@ -272,23 +283,174 @@ void _func_800042C8(TActor *actor, int matrixIdx)
 }
 #endif
 
+// regalloc
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/get_actor_child_position.s")
+#else
+void _get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz)
+{
+    if (actor->linkedActor == NULL)
+    {
+        *ox = actor->srt.tx;
+        *oy = actor->srt.ty;
+        *oz = actor->srt.tz;
+    }
+    else
+    {
+        guMtxXFMF(&gActorMatrices[actor->linkedActor->matrixIdx],
+            actor->srt.tx, actor->srt.ty, actor->srt.tz, ox, oy, oz);
+    }
+}
+#endif
 
+// regalloc
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_point_by_actor.s")
+#else
+void _transform_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
+{
+    if (actor != NULL)
+    {
+        guMtxXFMF(&gActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
+    }
+    else
+    {
+        *ox = x;
+        *oy = y;
+        *oz = z;
+    }
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_transform_point_by_actor.s")
+#else
+void _inverse_transform_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
+{
+    if (actor != NULL)
+    {
+        guMtxXFMF(&gInverseActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
+    }
+    else
+    {
+        *ox = x;
+        *oy = y;
+        *oz = z;
+    }
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_rotate_point_by_actor.s")
+#else
+void _inverse_rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, float * oz, TActor *actor)
+{
+    Vec3f v;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004684.s")
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    vec3_transform_no_translate(&gInverseActorMatrices[actor->matrixIdx], &v, &v);
+    *ox = v.x;
+    *oy = v.y;
+    *oz = v.y;
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800046F8.s")
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/rotate_point_by_actor.s")
+#else
+void _rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
+{
+    Vec3f v;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800047C8.s")
+    v.x = x;
+    v.y = y;
+    v.z = z;
+    vec3_transform_no_translate(&gActorMatrices[actor->matrixIdx], &v, &v);
+    *ox = v.x;
+    *oy = v.y;
+    *oz = v.z;
+}
+#endif
+
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_srt_by_actor.s")
+#else
+void _transform_srt_by_actor(SRT *srt, SRT *out, TActor *actor)
+{
+    if (actor == NULL)
+    {
+        out->tx = srt->tx;
+        out->ty = srt->ty;
+        out->tz = srt->tz;
+        out->yaw = srt->yaw;
+        out->pitch = srt->pitch;
+        out->roll = srt->roll;
+    }
+    else
+    {
+        guMtxXFMF(&gActorMatrices[actor->matrixIdx], srt->tx, srt->ty, srt->tz, &out->tx, &out->ty, &out->tz);
+        out->yaw = actor->srt.yaw + srt->yaw;
+        out->pitch = srt->pitch;
+        out->roll = srt->roll;
+    }
+}
+#endif
+
+void func_800047C8(SRT *a, SRT *b, SRT *out)
+{
+    MtxF mf;
+    SRT tempsrt;
+    s32 yaw;
+
+    tempsrt.tx = -b->tx;
+    tempsrt.ty = -b->ty;
+    tempsrt.tz = -b->tz;
+    tempsrt.scale = 1.0f;
+    tempsrt.yaw = -b->yaw;
+    tempsrt.pitch = -b->pitch;
+    tempsrt.roll = -b->roll;
+
+    matrix_from_srt_reversed(&mf, &tempsrt);
+
+    guMtxXFMF(mf, a->tx, a->ty, a->tz, &out->tx, &out->ty, &out->tz);
+
+    yaw = a->yaw - b->yaw;
+    if (yaw > 0x8000) {
+        yaw -= 0xffff;
+    }
+    if (yaw < -0x8000) {
+        yaw += 0xffff;
+    }
+
+    out->yaw = yaw;
+    out->pitch = a->pitch;
+    out->roll = a->roll;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800048D4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800049A4.s")
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_point_by_actor_matrix.s")
+#else
+void _transform_point_by_actor_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
+{
+    if (matrixIdx < 0)
+    {
+        ov->x = v->x;
+        ov->y = v->y;
+        ov->z = v->z;
+    }
+    else
+    {
+        guMtxXFMF(gActorMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004A30.s")
 
