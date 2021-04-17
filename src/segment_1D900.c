@@ -18,7 +18,11 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBD0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBE0.s")
+extern u8 BYTE_80090cb0;
+u8 func_8001EBE0()
+{
+    return BYTE_80090cb0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBF0.s")
 

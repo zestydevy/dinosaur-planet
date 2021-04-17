@@ -665,7 +665,7 @@ glabel matrix_from_srt
 /* 16484 80015884 03E00008 */  jr         $ra
 /* 16488 80015888 00000000 */   nop
 
-glabel func_8001588C
+glabel matrix_prescale_y
 /* 1648C 8001588C 44859000 */  mtc1       $a1, $f18
 /* 16490 80015890 C4900010 */  lwc1       $f16, 0x10($a0)
 /* 16494 80015894 46128402 */  mul.s      $f16, $f16, $f18

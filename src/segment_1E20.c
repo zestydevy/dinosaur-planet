@@ -3,7 +3,7 @@
 extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
 extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
 
-void vec3_transform_no_translate(MtxF* mf, Vec3f *v, Vec3f *ov);
+void vec3_transform_no_translate(MtxF *mf, Vec3f *v, Vec3f *ov);
 void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001220.s")
@@ -153,7 +153,7 @@ void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003F0C.s")
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004024.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/setup_rsp_matrices_for_actor.s")
 #else
 extern Mtx *gRSPMatrices[2]; // TODO: how many matrices are there?
 extern f32 gWorldX;
@@ -161,7 +161,7 @@ extern f32 gWorldZ;
 extern MtxF MtxF_800a6a60;
 extern MtxF MtxF_800a6aa0;
 extern MtxF gAuxMtx2;
-void _func_80004024(Gfx **gdl, Mtx **matrices, TActor *actor)
+void _setup_rsp_matrices_for_actor(Gfx **gdl, Mtx **matrices, TActor *actor)
 {
     TActor *link = actor;
     u8 isChild;
@@ -416,7 +416,7 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
 
     matrix_from_srt_reversed(&mf, &tempsrt);
 
-    guMtxXFMF(mf, a->tx, a->ty, a->tz, &out->tx, &out->ty, &out->tz);
+    guMtxXFMF(&mf, a->tx, a->ty, a->tz, &out->tx, &out->ty, &out->tz);
 
     yaw = a->yaw - b->yaw;
     if (yaw > 0x8000) {

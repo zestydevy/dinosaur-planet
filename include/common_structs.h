@@ -3,7 +3,11 @@
 
 #include "ultra64.h"
 
-typedef f32 MtxF[4][4];
+// typedef f32 MtxF[4][4];
+// For clarity:
+typedef struct {
+    f32 m[4][4];
+} MtxF;
 
 typedef f32 quartic[5];
 
