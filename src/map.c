@@ -28,7 +28,7 @@ typedef struct
 extern u32 UINT_80092a98;
 extern DLBuilder *gDLBuilder;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80040FD0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_set_all_dirty.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80040FF8.s")
 

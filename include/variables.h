@@ -21,12 +21,162 @@ typedef struct
 /*0000*/    s16 yaw; // 16-bit angle in the range [-32768..32768) => [-pi..pi)
 /*0002*/    s16 pitch;
 /*0004*/    s16 roll;
-/*0006*/    // padding inserted by compiler
+/*0006*/    s16 flags;
 /*0008*/    f32 scale;
 /*000C*/    f32 tx;
 /*0010*/    f32 ty;
 /*0014*/    f32 tz;
 } SRT;
+
+typedef struct
+{
+    // TODO
+/*0000*/    u32 unk_0x0;
+} Texture;
+
+typedef struct
+{
+/*0000*/    u8 unk_0x0;
+/*0001*/	u8 unk_0x1;
+/*0002*/	s16 unk_0x2;
+} Animation;
+
+typedef struct
+{
+/*0000*/    u32 unk_0x0;
+/*0004*/    f32 unk_0x4[2];
+/*000C*/    u32 unk_0xc;
+/*0010*/    u32 unk_0x10;
+/*0014*/    f32 unk_0x14[2];
+/*001C*/    u8 *anims[2]; // Each item contains 0x80 bytes of amap data, followed by an Animation structure
+/*0024*/    u8 *anims2[2];
+/*002C*/	u8 *unk_0x2c[2];
+/*0034*/    u8 *unk_0x34[2];
+/*003C*/    u8 unk_0x3c[0x44 - 0x3c];
+/*0044*/    u16 animIndexes[2];
+/*0048*/	u32 unk_0x48;
+/*004C*/	u16 unk_0x4c[2][3];
+/*0058*/    s16 unk_0x58;
+/*005A*/	s16 unk_0x5a;
+/*005C*/	s16 unk_0x5c;
+/*005E*/	u16 unk_0x5e;
+/*0060*/    s8 unk_0x60[2];
+/*0062*/    u8 unk_0x62;
+/*0063*/    s8 unk_0x63;
+} AnimState;
+
+typedef struct
+{
+/*0000*/    Texture *texture;
+/*0004*/    u32 unk_0x4;
+} ModelTexture;
+
+typedef struct
+{
+/*0000*/    u8 unk_0x0;
+/*0001*/    u8 unk_0x1[0x10 - 0x1];
+} ModelUnk0x8;
+
+typedef struct
+{
+/*0000*/	u32 unk_0x0;
+/*0004*/	f32 x;
+/*0008*/	f32 y;
+/*000C*/	f32 z;
+} ModelUnk0x20;
+
+typedef struct
+{
+    // TODO
+/*0000*/    ModelTexture *textures;
+/*0004*/    void *unk_0x4;
+/*0008*/    ModelUnk0x8 *unk_0x8;
+/*000C*/    Gfx *displayList;
+/*0010*/    Animation **anims;
+/*0014*/    void *unk_0x14;
+/*0018*/    void *unk_0x18;
+/*001C*/    void *unk_0x1c;
+/*0020*/    ModelUnk0x20 *unk_0x20;
+/*0024*/    u8 *amap;
+/*0028*/    void *unk_0x28;
+/*002C*/    void *unk_0x2c;
+/*0030*/    u32 unk_0x30;
+/*0034*/    void *unk_0x34;
+/*0038*/    void *unk_0x38;
+/*003C*/    void *unk_0x3c;
+/*0040*/    u32 unk_0x40;
+/*0044*/    u32 unk_0x44;
+/*0048*/    u32 unk_0x48;
+/*004C*/    u32 unk_0x4c;
+/*0050*/    void *unk_0x50;
+/*0054*/    void *unk_0x54;
+/*0058*/    u32 unk_0x58;
+/*005C*/    u32 unk_0x5c;
+/*0060*/    u16 unk_0x60;
+/*0062*/    s16 unk_0x62;
+/*0064*/    u16 unk_0x64;
+/*0066*/    s16 animCount;
+/*0068*/    s16 unk_0x68;
+/*006A*/    s16 modelId;
+/*006C*/    u8 unk_0x6c;
+/*006D*/    u8 unk_0x6d;
+/*006E*/    u8 unk_0x6e;
+/*006F*/    u8 unk_0x6f;
+/*0070*/    u8 unk_0x70;
+/*0071*/    u8 unk_0x71;
+/*0072*/    u8 refCount;
+/*0073*/    u8 textureCount;
+/*0074*/    u8 unk_0x74;
+} Model;
+
+typedef struct {
+/*0000*/    void *unk_0x0[2];
+/*0008*/    MtxF *matrices[2];
+} ModelInstUnk0x4; // size 0x10
+
+typedef struct
+{
+    // TODO
+/*0000*/    Model *model;
+/*0004*/    ModelInstUnk0x4 unk_0x4;
+/*0014*/    void *unk_0x14;
+/*0018*/    Gfx *displayList;
+/*001C*/    u8 unk_0x1c[0x28 - 0x1c];
+/*0028*/    AnimState *animState0;
+/*002C*/    AnimState *animState1;
+/*0030*/    u32 unk_0x30;
+/*0034*/    u16 unk_0x34;
+} ModelInstance;
+
+typedef struct {
+/*0000*/    u8 unk_0x0[0x10 - 0x0];
+/*0010*/	u8 *unk_0x10;
+/*0014*/	u8 unk_0x14[0x44 - 0x14];
+/*0044*/    s32 unk_0x44;
+/*0048*/	u8 unk_0x48[0x5d - 0x48];
+/*005D*/	s8 unk_0x5d;
+/*005E*/    u8 unk_0x5e[0x71 - 0x5e];
+/*0071*/    u8 unk_0x71;
+/*0072*/	u8 unk_0x72;
+} ActorUnk0x50;
+
+typedef struct {
+/*0000*/    u8 unk_0x0[0xc - 0x0];
+/*000C*/    Gfx *gdl;
+/*0010*/    u8 unk_0x10[0x20 - 0x10];
+/*0020*/    f32 tx;
+/*0024*/    f32 ty;
+/*0028*/    f32 tz;
+/*002C*/    u32 unk_0x2c;
+/*0030*/    u32 unk_0x30;
+} ActorUnk0x64;
+
+typedef struct {
+/*0000*/    u8 unk_0x0[0x5a - 0x0];
+/*005A*/    u8 unk_0x5a;
+/*005B*/    u8 unk_0x5b[0x9f - 0x5b];
+/*009F*/    s8 unk_0x9f;
+} ActorObjhitInfo;
 
 //prelimnary, lots of unknowns
 //contains pointer-to-own-type fields, so `typedef struct _TActor {`
@@ -43,40 +193,43 @@ typedef struct TActor {
 /*0038*/    u32 unk_0x38;
 /*003C*/    u8 unk0x3c[0x44 - 0x3c];
 /*0044*/    UNK_TYPE_16 unk0x44;
-/*0046*/    UNK_TYPE_16 unk0x46;
+/*0046*/    s16 unk0x46;
 /*0048*/    void* ptr0x48;
 /*004C*/    UNK_TYPE_32 unk0x4c;
-/*0050*/    void* ptr0x50;
-/*0054*/    void* ptr0x54;
+/*0050*/    ActorUnk0x50* ptr0x50;
+/*0054*/    ActorObjhitInfo* objhitInfo;
 /*0058*/    UNK_TYPE_32 unk0x58;
 /*005C*/    void* ptr0x5c;
 /*0060*/    void* ptr0x60;
-/*0064*/    void* ptr0x64;
-/*0068*/    void* ptr0x68;
-/*006C*/    void* ptr0x6c;
+/*0064*/    ActorUnk0x64* ptr0x64;
+/*0068*/    void **dll;
+/*006C*/    u16 *ptr0x6c;
 /*0070*/    void* ptr0x70;
-/*0074*/    UNK_TYPE_32 unk0x74;
-/*0078*/    Vec3f positionMirror2; //gets copied twice.
+/*0074*/    u32 unk0x74;
+/*0078*/    u32 unk_0x78;
+/*007C*/    ModelInstance **modelInsts;
+/*0080*/    u32 unk_0x80;
 /*0084*/    Vec3f positionMirror3; //not sure why.
 /*0090*/    u32 unk_0x90;
 /*0094*/    u32 unk_0x94;
-/*0098*/    float unk0x98;
-	u8 unk0x9c;
-	u8 unk0x9d[3]; //aligning?
-	s16 unk0xa0;
-	u8 unk0xa2[11];
-	u8 unk0xad;
-	u8 unk0xae;
-	u8 unk0xaf;
+/*0098*/	f32 unk0x98;
+/*009C*/    f32 unk0x9c;
+/*00A0*/    s16 unk0xa0;
+/*00A2*/	s16 unk_0xa2;
+/*00A4*/    u8 unk0xa4[0xad - 0xa4];
+/*00AD*/    s8 modelInstIdx;
+/*00AE*/    u8 unk0xae;
+/*00AF*/    u8 unk0xaf;
 /*00B0*/    u16 unk0xb0;
 	u8 unk0xb2[6];
 	void* CharData; //0x8c1+ struct, has various player data.
 	UNK_TYPE_32 unk0xbc;
 	UNK_TYPE_32 unk0xc0;
 	UNK_TYPE_32 unk0xc4;
-	void* ptr0xc8;
-	void* ptr0xcc;
-} TActor; //may be bigger, will know when constructor is understood.
+/*00C8*/    struct TActor *linkedActor2;
+/*00CC*/    void* ptr0xcc;
+/*00D0*/    u8 unk_0xd0[0xe4 - 0xd0];
+} TActor; // size is 0xe4; other actor-related data is placed in the following memory
 
 //found a 3-array of these, not sure what they're for.
 struct Vec3_Int{
@@ -161,82 +314,82 @@ typedef struct
 
 typedef enum
 {
-    AUDIO_TAB,
-    AUDIO_BIN,
-    SFX_TAB,
-    SFX_BIN,
-    AMBIENT_TAB,
-    AMBIENT_BIN,
-    MUSIC_TAB,
-    MUSIC_BIN,
-    MPEG_TAB,
-    MPEG_BIN,
-    MUSICACTIONS_BIN,
-    CAMACTIONS_BIN,
-    LACTIONS_BIN,
-    ANIMCURVES_BIN,
-    ANIMCURVES_TAB,
-    OBJSEQ2CURVE_TAB,
-    FONTS_BIN,
-    CACHEFON_BIN,
-    CACHEFON2_BIN,
-    GAMETEXT_BIN,
-    GAMETEXT_TAB,
-    GLOBALMAP_BIN,
-    TABLES_BIN,
-    TABLES_TAB,
-    SCREENS_BIN,
-    SCREENS_TAB,
-    VOXMAP_BIN,
-    VOXMAP_TAB,
-    TEXPRE_TAB,
-    TEXPRE_BIN,
-    WARPTAB_BIN,
-    MAPS_BIN,
-    MAPS_TAB,
-    MAPINFO_BIN,
-    MAPSETUP_IND,
-    MAPSETUP_TAB,
-    TEX1_BIN,
-    TEX1_TAB,
-    TEXTABLE_BIN,
-    TEX0_BIN,
-    TEX0_TAB,
-    BLOCKS_BIN,
-    BLOCKS_TAB,
-    TRKBLK_BIN,
-    HITS_BIN,
-    HITS_TAB,
-    MODELS_TAB,
-    MODELS_BIN,
-    MODELIND_BIN,
-    MODANIM_TAB,
-    MODANIM_BIN,
-    ANIM_TAB,
-    ANIM_BIN,
-    AMAP_TAB,
-    AMAP_BIN,
-    BITTABLE_BIN,
-    WEAPONDATA_BIN,
-    VOXOBJ_TAB,
-    VOXOBJ_BIN,
-    MODLINES_BIN,
-    MODLINES_TAB,
-    SAVEGAME_BIN,
-    SAVEGAME_TAB,
-    OBJSEQ_BIN,
-    OBJSEQ_TAB,
-    OBJECTS_TAB,
-    OBJECTS_BIN,
-    OBJINDEX_BIN,
-    OBJEVENT_BIN,
-    OBJHITS_BIN,
-    DLLS_BIN,
-    DLLS_TAB,
-    DLLSIMPORTTAB_BIN,
-    ENVFXACT_BIN,
+/*00*/    AUDIO_TAB,
+/*01*/    AUDIO_BIN,
+/*02*/    SFX_TAB,
+/*03*/    SFX_BIN,
+/*04*/    AMBIENT_TAB,
+/*05*/    AMBIENT_BIN,
+/*06*/    MUSIC_TAB,
+/*07*/    MUSIC_BIN,
+/*08*/    MPEG_TAB,
+/*09*/    MPEG_BIN,
+/*0A*/    MUSICACTIONS_BIN,
+/*0B*/    CAMACTIONS_BIN,
+/*0C*/    LACTIONS_BIN,
+/*0D*/    ANIMCURVES_BIN,
+/*0E*/    ANIMCURVES_TAB,
+/*0F*/    OBJSEQ2CURVE_TAB,
+/*10*/    FONTS_BIN,
+/*11*/    CACHEFON_BIN,
+/*12*/    CACHEFON2_BIN,
+/*13*/    GAMETEXT_BIN,
+/*14*/    GAMETEXT_TAB,
+/*15*/    GLOBALMAP_BIN,
+/*16*/    TABLES_BIN,
+/*17*/    TABLES_TAB,
+/*18*/    SCREENS_BIN,
+/*19*/    SCREENS_TAB,
+/*1A*/    VOXMAP_BIN,
+/*1B*/    VOXMAP_TAB,
+/*1C*/    TEXPRE_TAB,
+/*1D*/    TEXPRE_BIN,
+/*1E*/    WARPTAB_BIN,
+/*1F*/    MAPS_BIN,
+/*20*/    MAPS_TAB,
+/*21*/    MAPINFO_BIN,
+/*22*/    MAPSETUP_IND,
+/*23*/    MAPSETUP_TAB,
+/*24*/    TEX1_BIN,
+/*25*/    TEX1_TAB,
+/*26*/    TEXTABLE_BIN,
+/*27*/    TEX0_BIN,
+/*28*/    TEX0_TAB,
+/*29*/    BLOCKS_BIN,
+/*2A*/    BLOCKS_TAB,
+/*2B*/    TRKBLK_BIN,
+/*2C*/    HITS_BIN,
+/*2D*/    HITS_TAB,
+/*2E*/    MODELS_TAB,
+/*2F*/    MODELS_BIN,
+/*30*/    MODELIND_BIN,
+/*31*/    MODANIM_TAB,
+/*32*/    MODANIM_BIN,
+/*33*/    ANIM_TAB,
+/*34*/    ANIM_BIN,
+/*35*/    AMAP_TAB,
+/*36*/    AMAP_BIN,
+/*37*/    BITTABLE_BIN,
+/*38*/    WEAPONDATA_BIN,
+/*39*/    VOXOBJ_TAB,
+/*3A*/    VOXOBJ_BIN,
+/*3B*/    MODLINES_BIN,
+/*3C*/    MODLINES_TAB,
+/*3D*/    SAVEGAME_BIN,
+/*3E*/    SAVEGAME_TAB,
+/*3F*/    OBJSEQ_BIN,
+/*40*/    OBJSEQ_TAB,
+/*41*/    OBJECTS_TAB,
+/*42*/    OBJECTS_BIN,
+/*43*/    OBJINDEX_BIN,
+/*44*/    OBJEVENT_BIN,
+/*45*/    OBJHITS_BIN,
+/*46*/    DLLS_BIN,
+/*47*/    DLLS_TAB,
+/*48*/    DLLSIMPORTTAB_BIN,
+/*49*/    ENVFXACT_BIN,
     
-    NUM_FILES
+/*4A*/    NUM_FILES
 } EFile;
 
 extern OSThread* __osRunningThread;
