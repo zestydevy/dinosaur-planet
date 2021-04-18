@@ -28,6 +28,19 @@ typedef struct
 extern u32 UINT_80092a98;
 extern DLBuilder *gDLBuilder;
 
+typedef struct
+{
+/*0000*/    f32 x;
+/*0004*/    f32 y;
+/*0008*/    f32 z;
+/*000C*/    f32 d;
+/*0010*/    u8 unk_0x14[4];
+} Plane;
+
+extern f32 gWorldX;
+extern f32 gWorldZ;
+extern Plane gFrustumPlanes[5];
+
 #pragma GLOBAL_ASM("asm/nonmatchings/map/dl_set_all_dirty.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80040FF8.s")
@@ -451,7 +464,25 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800456AC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045864.s")
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
+{
+    u8 i;
+
+    for (i = 0; i < 5; i++)
+    {
+        if (gFrustumPlanes[i].x * (v->x - gWorldX) +
+            gFrustumPlanes[i].y * v->y +
+            gFrustumPlanes[i].z * (v->z - gWorldZ) +
+            gFrustumPlanes[i].d +
+            radius
+            < 0.0f)
+        {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap.s")
 
@@ -555,7 +586,20 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D38.s")
 
+// regalloc
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D68.s")
+#else
+typedef struct
+{
+/*0000*/    u8 unk_0x0[0x22 - 0x0];
+} Struct0x22;
+
+Struct0x22 *_func_80049D68(s32 idx)
+{
+    return &(*(Struct0x22**)0x800b97a8)[idx];
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D88.s")
 

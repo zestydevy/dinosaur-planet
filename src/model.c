@@ -282,7 +282,64 @@ bail:
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/createModelInstance.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_800186CC.s")
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/model/patch_model_display_list_for_textures.s")
+#else
+void _patch_model_display_list_for_textures(Model *model)
+{
+    Gfx *gfx;
+    s32 i;
+
+    for (gfx = model->displayList, i = 0; i < model->displayListLength; i++, gfx++)
+    {
+        u8 cmd = gfx->words.w0 >> 24;
+
+        if (cmd != G_NOOP)
+        {
+            if (cmd == G_DL)
+            {
+                u32 idx = gfx->words.w1;
+                Gfx *texGdl;
+                u8 isRelative = 0;
+
+                if (idx & 0x80000000) {
+                    idx &= 0x7fffffff;
+                    isRelative = 1;
+                }
+
+                texGdl = model->textures[idx].texture->gdl;
+                if (isRelative) {
+                    texGdl += model->textures[idx].texture->gdlIdx;
+                }
+
+                gSPDisplayList(gfx, OS_K0_TO_PHYSICAL(texGdl));
+            }
+        }
+        else
+        {
+            u32 idx = gfx->words.w1;
+            Texture *tex;
+            Gfx *texGdl;
+            u8 isRelative = 0;
+
+            if (idx & 0x80000000) {
+                idx &= 0x7fffffff;
+                isRelative = 1;
+            }
+
+            tex = model->textures[idx].texture;
+            texGdl = tex->gdl;
+            if (isRelative) {
+                texGdl += tex->gdlIdx;
+            }
+
+            gfx->words.w0 = texGdl->words.w0;
+            gfx->words.w1 = (u32)tex + 0x80000020;
+        }
+    }
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_get_stats.s")
@@ -342,11 +399,73 @@ u32 _model_get_stats(Model *model, u32 flags, ModelStats *stats, u32 param_4)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/load_model_display_list.s")
+void load_model_display_list(Model *model, ModelInstance *modelInst)
+{
+    ModelDLInfo *dlInfo = model->dlInfos;
+    ModelDLInfo *dlInfoEnd = dlInfo + model->dlInfoCount;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_800189A8.s")
+    for (; dlInfo < dlInfoEnd; dlInfo++)
+    {
+        modelInst->displayList[dlInfo->idx] = dlInfo->gfx;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80018A00.s")
+void load_model_display_list2(Model *model, ModelInstance *modelInst)
+{
+    ModelDLInfo *dlInfo = model->dlInfos;
+    ModelDLInfo *dlInfoEnd = dlInfo + model->dlInfoCount;
+
+    for (; dlInfo < dlInfoEnd; dlInfo++)
+    {
+        modelInst->displayList[dlInfo->idx] = dlInfo->gfx2;
+    }
+}
+
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/model/destroy_model_instance.s")
+#else
+extern s32 *gFreeModelSlots;
+extern s32 gNumFreeModelSlots;
+extern ModelSlot *gLoadedModels;
+extern s32 gNumLoadedModels;
+void _destroy_model_instance(ModelInstance *modelInst)
+{
+    Model *model;
+
+    if (modelInst == NULL) {
+        return;
+    }
+
+    model = modelInst->model;
+
+    if (model->displayList != modelInst->displayList) {
+        free(modelInst->displayList);
+    }
+    free(modelInst);
+
+    if (--model->refCount <= 0)
+    {
+        s32 slot;
+
+        for (slot = 0; slot < gNumLoadedModels; slot++) {
+            if (gLoadedModels[slot].model == model) {
+                break;
+            }
+        }
+
+        if (slot == gNumLoadedModels)
+        {
+            *(u8*)0x0 = 0; // CRASH!
+        }
+        else
+        {
+            gFreeModelSlots[gNumFreeModelSlots++] = slot;
+            gLoadedModels[slot].id = gLoadedModels[slot].model = -1;
+            model_destroy(model);
+        }
+    }
+}
+#endif
 
 // very close
 #if 1

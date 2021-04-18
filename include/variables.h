@@ -28,11 +28,28 @@ typedef struct
 /*0014*/    f32 tz;
 } SRT;
 
-typedef struct
+typedef struct Texture
 {
-    // TODO
-/*0000*/    u32 unk_0x0;
-} Texture;
+/*0000*/	u8 width;
+/*0001*/	u8 height;
+/*0002*/	u8 format;
+/*0003*/	u8 unk_0x3;
+/*0004*/	u16 unk_0x4;
+/*0006*/	s16 flags;
+/*0008*/	Gfx *gdl;
+/*000C*/	u16 unk_0xc;
+/*000E*/	u16 unk_0xe;
+/*0010*/	u16 unk_0x10;
+/*0012*/	s16 gdlIdx;
+/*0014*/	struct Texture *next;
+/*0018*/	s16 unk_0x18;
+/*001A*/	u8 unk_0x1a;
+/*001B*/	u8 unk_0x1b;
+/*001C*/	u8 cms;
+/*001D*/	u8 masks;
+/*001E*/	u8 cmt;
+/*001F*/	u8 maskt;
+} Texture; // Size: 0x20, followed by texture data
 
 typedef struct
 {
@@ -87,6 +104,14 @@ typedef struct
 
 typedef struct
 {
+/*0000*/	Gfx gfx;
+/*0008*/	Gfx gfx2;
+/*0010*/	s16 idx;
+/*0012*/	u8 unk_0x12[0x18 - 0x12];
+} ModelDLInfo;
+
+typedef struct
+{
     // TODO
 /*0000*/    ModelTexture *textures;
 /*0004*/    void *unk_0x4;
@@ -102,7 +127,7 @@ typedef struct
 /*002C*/    void *unk_0x2c;
 /*0030*/    u32 unk_0x30;
 /*0034*/    void *unk_0x34;
-/*0038*/    void *unk_0x38;
+/*0038*/    ModelDLInfo *dlInfos;
 /*003C*/    void *unk_0x3c;
 /*0040*/    u32 unk_0x40;
 /*0044*/    u32 unk_0x44;
@@ -118,8 +143,7 @@ typedef struct
 /*0066*/    s16 animCount;
 /*0068*/    s16 unk_0x68;
 /*006A*/    s16 modelId;
-/*006C*/    u8 unk_0x6c;
-/*006D*/    u8 unk_0x6d;
+/*006C*/    s16 displayListLength;
 /*006E*/    u8 unk_0x6e;
 /*006F*/    u8 unk_0x6f;
 /*0070*/    u8 unk_0x70;
@@ -127,6 +151,7 @@ typedef struct
 /*0072*/    u8 refCount;
 /*0073*/    u8 textureCount;
 /*0074*/    u8 unk_0x74;
+/*0075*/	u8 dlInfoCount;
 } Model;
 
 typedef struct {

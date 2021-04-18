@@ -182,6 +182,7 @@ func_printing_compile_info = 0x8003be0c; // type:func
 func_setting_float_timers = 0x8003c4e8; // type:func
 track_c_func = 0x8004267c; // type:func
 some_cell_func = 0x80045324; // type:func
+is_sphere_in_frustum = 0x80045864; // type:func
 set_video_mode = 0x8005d650; // type:func
 get_video_mode = 0x8005d660; // type:func
 set_custom_vi_mode = 0x8005d75c; // type:func
@@ -863,7 +864,11 @@ asset_thread_main = 0x80012d94; // type:func
 asset_thread_load_single = 0x80012e9c; // type:func
 asset_thread_load_asset = 0x80013030; // type:func
 
+set_textures_on_gdl = 0x8003e18c; // type:func
 draw_actor = 0x80035000; // type:func
+
+gCurrTex0 = 0x800b49c4; // type:data size:0x4
+gCurrTex1 = 0x800b49c8; // type:data size:0x4
 
 get_file_size = 0x80037310; // type:func
 read_file_8bytes = 0x8003a44c; // type:func
@@ -898,6 +903,8 @@ gActorMatrices = 0x800a6ca8; // type:data
 gInverseActorMatrices = 0x800a7428; // type:data
 gRSPMatrices = 0x800a7ba8; // type:data
 
+gFrustumPlanes = 0x800b4a78; // type:data size:0x64
+
 dl_set_all_dirty = 0x80040fd0; // type:func
 func_80041040 = 0x80041040; // type:func
 func_80041118 = 0x80041118; // type:func
@@ -929,9 +936,9 @@ gActorCount = 0x800b2934; // type:data size:0x2
 gActorList = 0x800b2938; // type:data size:0x400
 
 texture_load = 0x8003cda8; // type:func
+load_texture_to_tmem = 0x8003d14c; // type:func
+load_texture_to_tmem2 = 0x8003d254; // type:func
 texture_destroy = 0x8003da40; // type:func
-
-load_model_display_list = 0x80018950; // type:func
 
 anim_load = 0x80019164; // type:func
 anim_destroy = 0x80019388; // type:func
@@ -939,6 +946,10 @@ anim_destroy = 0x80019388; // type:func
 modanim_load = 0x80018c98; // type:func
 
 model_load_create_instance = 0x80017d5c; // type:func
+patch_model_display_list_for_textures = 0x800186cc; // type:func
+load_model_display_list = 0x80018950; // type:func
+load_model_display_list2 = 0x800189a8; // type:func
+destroy_model_instance = 0x80018a00; // type:func
 model_get_stats = 0x800187e4; // type:func
 model_destroy = 0x80018b14; // type:func
 model_load_anim_remap_table = 0x80018bd8; // type:func
