@@ -1,5 +1,38 @@
 #include "common.h"
 
+#define CAMERA_COUNT 12
+
+typedef struct
+{
+/*0000*/    SRT srt;
+/*0018*/    u8 unk_0x18[0x2c - 0x18];
+/*002C*/    f32 dty;
+/*0030*/    f32 unk_0x30;
+/*0034*/    f32 unk_0x34;
+/*0038*/    f32 unk_0x38;
+/*003C*/    f32 unk_0x3c;
+/*0040*/    u8 unk_0x40[0x5c - 0x40];
+/*005C*/    s8 unk_0x5c;
+/*005D*/    s8 unk_0x5d;
+} Camera;
+
+typedef union
+{
+    Mtx m;
+    MtxF mf;
+} Mtx_MtxF;
+
+typedef struct
+{
+/*0000*/    Mtx_MtxF *mtx;
+/*0004*/    s16 count;
+} MatrixSlot;
+
+extern MatrixSlot gMatrixPool[2]; // FIXME: how many?
+extern u32 gMatrixCount;
+extern Camera gCameras[CAMERA_COUNT];
+extern s8 gUseAlternateCamera;
+extern u32 gCameraSelector;
 extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
 extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
 
@@ -112,15 +145,61 @@ void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_8000356C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800036A4.s")
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/get_vec3_to_camera_normalized.s")
+#else
+f32 _sqrtf(f32 x);
+void _get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
+{
+    f32 nrm;
+    u32 cameraSel = gCameraSelector;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_8000378C.s")
+    *ox = gCameras[cameraSel].srt.translation.x - x;
+    *oy = gCameras[cameraSel].srt.translation.y - y;
+    *oz = gCameras[cameraSel].srt.translation.z - z;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800037D8.s")
+    nrm = _sqrtf(*ox * *ox + *oy * *oy + *oz * *oz);
+    if (nrm != 0.0f)
+    {
+        nrm = 1.0f / nrm;
+        *ox *= nrm;
+        *oy *= nrm;
+        *oz *= nrm;
+    }
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003800.s")
+// Unused
+void rotate_camera(s32 yaw, s32 pitch, s32 roll)
+{
+    gCameras[gCameraSelector].srt.yaw += yaw;
+    gCameras[gCameraSelector].srt.pitch += pitch;
+    gCameras[gCameraSelector].srt.roll += roll;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003860.s")
+Camera *get_main_camera()
+{
+    return &gCameras[gCameraSelector];
+}
+
+Camera *get_camera()
+{
+    if (gUseAlternateCamera) {
+        return &gCameras[gCameraSelector + 4];
+    }
+
+    return &gCameras[gCameraSelector];
+}
+
+Camera *get_camera_array()
+{
+    if (gUseAlternateCamera) {
+        return &gCameras[4];
+    }
+
+    return gCameras;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_8000388C.s")
 
@@ -138,19 +217,99 @@ void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003AA0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003B70.s")
+void func_80003B70(f32 dty)
+{
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003BB0.s")
+    for (i = 0; i < CAMERA_COUNT; i++)
+    {
+        gCameras[i].dty = dty;
+        gCameras[i].unk_0x5d = 0;
+    }
+}
+
+void func_80003bb0(f32 param_1, f32 param_2, f32 param_3)
+{
+    s32 i;
+
+    for (i = 0; i < CAMERA_COUNT; i++)
+    {
+        gCameras[i].dty = param_1;
+        gCameras[i].unk_0x30 = param_1;
+        gCameras[i].unk_0x34 = param_2;
+        gCameras[i].unk_0x38 = 0.0f;
+        gCameras[i].unk_0x3c = param_3;
+        gCameras[i].unk_0x5d = 1;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003C48.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003C68.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/pointerIntArray2_func.s")
+void add_matrix_to_pool(MtxF *mf, s32 count)
+{
+    gMatrixPool[gMatrixCount].mtx = (Mtx_MtxF*)mf;
+    gMatrixPool[gMatrixCount++].count = count;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003CBC.s")
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/tick_cameras.s")
+#else
+extern s8 gMatrixIndex;
+extern f32 gFarPlane;
+f32 fexp(f32 x, u32 iterations);
+f32 fcos16_precise(s16 theta);
+void _tick_cameras()
+{
+    *(s16*)0x8008c524 = *(s16*)0x8008c528;
+    if (*(s16*)0x8008c518 != 0)
+    {
+        *(s16*)0x8008c518 -= *(u8*)0x8008c950;
+        if (*(s16*)0x8008c518 < 0) {
+            *(s16*)0x8008c518 = 0;
+        }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003F0C.s")
+        gFarPlane = (*(f32*)0x800a6270 - *(f32*)0x800a6274) * ((f32)*(s16*)0x8008c518 / *(s16*)0x8008c51c) + *(f32*)0x800a6274;
+    }
+
+    gMatrixPool[gMatrixCount].count = -1;
+    convert_mtxf_to_mtx_in_pool(gMatrixPool);
+    gMatrixCount = 0;
+    gMatrixIndex = 0;
+
+    if (gUseAlternateCamera) {
+        gCameraSelector += 4;
+    }
+
+    if (gCameras[gCameraSelector].unk_0x5d == 0)
+    {
+        gCameras[gCameraSelector].unk_0x5c--;
+        while (gCameras[gCameraSelector].unk_0x5c < 0) {
+            gCameras[gCameraSelector].unk_0x5c++;
+            gCameras[gCameraSelector].dty = -gCameras[gCameraSelector].dty * *(f32*)0x80098398 /* 0.09f */;
+        }
+    }
+    else
+    {
+        if (gCameras[gCameraSelector].unk_0x5d == 1)
+        {
+            f32 exp = fexp(-gCameras[gCameraSelector].unk_0x3c * gCameras[gCameraSelector].unk_0x38, 20);
+            f32 c = fcos16_precise(gCameras[gCameraSelector].unk_0x34 * *(f32*)0x8009839c /* 65535.0f */ * gCameras[gCameraSelector].unk_0x38)
+                    * gCameras[gCameraSelector].unk_0x30 * exp;
+            gCameras[gCameraSelector].dty = c;
+            if (c < *(f32*)0x800983a0 /* 0.1f */ && c > *(f32*)0x800983a4 /* -0.1f */) {
+                gCameras[gCameraSelector].unk_0x5d = -1;
+                gCameras[gCameraSelector].dty = 0.0f;
+            }
+            gCameras[gCameraSelector].unk_0x38 += *(f32*)0x8008c958 /* 1.0f */ / 60.0f;
+        }
+    }
+}
+#endif
+
+// Returns e to the power of x
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/fexp.s")
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/setup_rsp_matrices_for_actor.s")
@@ -406,9 +565,9 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
     SRT tempsrt;
     s32 yaw;
 
-    tempsrt.tx = -b->tx;
-    tempsrt.ty = -b->ty;
-    tempsrt.tz = -b->tz;
+    tempsrt.translation.x = -b->translation.x;
+    tempsrt.translation.y = -b->translation.y;
+    tempsrt.translation.z = -b->translation.z;
     tempsrt.scale = 1.0f;
     tempsrt.yaw = -b->yaw;
     tempsrt.pitch = -b->pitch;
@@ -416,7 +575,7 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
 
     matrix_from_srt_reversed(&mf, &tempsrt);
 
-    guMtxXFMF(&mf, a->tx, a->ty, a->tz, &out->tx, &out->ty, &out->tz);
+    guMtxXFMF(&mf, a->translation.x, a->translation.y, a->translation.z, &out->translation.x, &out->translation.y, &out->translation.z);
 
     yaw = a->yaw - b->yaw;
     if (yaw > 0x8000) {

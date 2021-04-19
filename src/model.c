@@ -1036,6 +1036,6 @@ void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BF70.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001C8D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/model/convert_mtxf_to_mtx_in_pool.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001CAA4.s")

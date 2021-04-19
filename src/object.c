@@ -22,7 +22,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800210DC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021150.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/get_world_actors.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021178.s")
 
