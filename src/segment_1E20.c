@@ -565,9 +565,9 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
     SRT tempsrt;
     s32 yaw;
 
-    tempsrt.translation.x = -b->translation.x;
-    tempsrt.translation.y = -b->translation.y;
-    tempsrt.translation.z = -b->translation.z;
+    tempsrt.transl.x = -b->transl.x;
+    tempsrt.transl.y = -b->transl.y;
+    tempsrt.transl.z = -b->transl.z;
     tempsrt.scale = 1.0f;
     tempsrt.yaw = -b->yaw;
     tempsrt.pitch = -b->pitch;
@@ -575,7 +575,7 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
 
     matrix_from_srt_reversed(&mf, &tempsrt);
 
-    guMtxXFMF(&mf, a->translation.x, a->translation.y, a->translation.z, &out->translation.x, &out->translation.y, &out->translation.z);
+    guMtxXFMF(&mf, a->transl.x, a->transl.y, a->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
 
     yaw = a->yaw - b->yaw;
     if (yaw > 0x8000) {

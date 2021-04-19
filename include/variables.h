@@ -23,7 +23,7 @@ typedef struct
 /*0004*/    s16 roll;
 /*0006*/    s16 flags;
 /*0008*/    f32 scale;
-/*000C*/	Vec3f translation;
+/*000C*/	Vec3f transl;
 } SRT;
 
 typedef struct Texture
