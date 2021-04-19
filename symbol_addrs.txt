@@ -116,7 +116,14 @@ romMain = 0x80000400; // type:func
 threadTimerTick = 0x80001130; // type:func
 MusPtrBankGetCurrent = 0x800013e0; // type:func
 ortho_some_matrix = 0x800014c0; // type:func
-pointerIntArray2_func = 0x80003c88; // type:func
+get_vec3_to_camera_normalized = 0x800036a4; // type:func
+rotate_camera = 0x8000378c; // type:func
+get_main_camera = 0x800037d8; // type:func
+get_camera = 0x80003800; // type:func
+get_camera_array = 0x80003860; // type:func
+add_matrix_to_pool = 0x80003c88; // type:func
+tick_cameras = 0x80003cbc; // type:func
+fexp = 0x80003f0c; // type:func
 setup_rsp_matrices_for_actor = 0x80004024; // type:func
 get_actor_child_position = 0x80004464; // type:func
 transform_point_by_actor = 0x80004500; // type:func
@@ -163,6 +170,7 @@ align_8 = 0x800179c4; // type:func
 align_4 = 0x800179e4; // type:func
 align_2 = 0x80017a04; // type:func
 _alHeapAlloc = 0x80017ba8; // type:func
+convert_mtxf_to_mtx_in_pool = 0x8001c8d4; // type:func
 copy_obj_position_mirrors = 0x8002254c; // type:func
 some_object_struct_func = 0x800225b4; // type:func
 seven_mallocs_and_float = 0x80025d00; // type:func
@@ -182,6 +190,7 @@ func_printing_compile_info = 0x8003be0c; // type:func
 func_setting_float_timers = 0x8003c4e8; // type:func
 track_c_func = 0x8004267c; // type:func
 some_cell_func = 0x80045324; // type:func
+is_sphere_in_frustum = 0x80045864; // type:func
 set_video_mode = 0x8005d650; // type:func
 get_video_mode = 0x8005d660; // type:func
 set_custom_vi_mode = 0x8005d75c; // type:func
@@ -678,6 +687,14 @@ intTimer0 = 0x800918f0; // type:data size:0x4
 intTimer1 = 0x80091904; // type:data size:0x4
 pointersIntsArray = 0x80092540; // type:data size:0x340
 aspectRatioFloat = 0x800bce30; // type:data size:0x4
+gNearPlane = 0x8008c510; // type:data size:0x4
+gFarPlane = 0x8008c514; // type:data size:0x4
+gCameras = 0x800a6278; // type:data size:0x480
+gCameraSelector = 0x800a66fc; // type:data size:0x4
+gUseAlternateCamera = 0x800a6729; // type:data size:0x1
+gMatrixPool = 0x800a6730; // type:data
+gMatrixCount = 0x800a6a50; // type:data size:0x4
+gMatrixIndex = 0x800a7c20; // type:data size:0x1
 some_matrix = 0x800a6ae8; // type:data size:0x40
 __osBbCardChange = 0x800a7d68; // type:data
 osBbUsbDevGetHandle = 0x8005f4d0; // type:data
@@ -816,6 +833,7 @@ gAuxBuffer = 0x800b17b8; // type:data size 0x4
 gNumObjectsTabEntries = 0x800b18f0; // type:data size 0x4
 gNumTablesTabEntries = 0x800b18fc; // type:data size 0x4
 gObjList = 0x800b1920; // type:data size 0x4
+gObjCount = 0x800b1924; // type:data size:0x4
 gNumFonts = 0x800a7d30; // type:data size 0x4
 gSizeBittable = 0x800ae2a8; // type:data size 0x4
 
@@ -863,7 +881,11 @@ asset_thread_main = 0x80012d94; // type:func
 asset_thread_load_single = 0x80012e9c; // type:func
 asset_thread_load_asset = 0x80013030; // type:func
 
+set_textures_on_gdl = 0x8003e18c; // type:func
 draw_actor = 0x80035000; // type:func
+
+gCurrTex0 = 0x800b49c4; // type:data size:0x4
+gCurrTex1 = 0x800b49c8; // type:data size:0x4
 
 get_file_size = 0x80037310; // type:func
 read_file_8bytes = 0x8003a44c; // type:func
@@ -898,6 +920,8 @@ gActorMatrices = 0x800a6ca8; // type:data
 gInverseActorMatrices = 0x800a7428; // type:data
 gRSPMatrices = 0x800a7ba8; // type:data
 
+gFrustumPlanes = 0x800b4a78; // type:data size:0x64
+
 dl_set_all_dirty = 0x80040fd0; // type:func
 func_80041040 = 0x80041040; // type:func
 func_80041118 = 0x80041118; // type:func
@@ -929,9 +953,9 @@ gActorCount = 0x800b2934; // type:data size:0x2
 gActorList = 0x800b2938; // type:data size:0x400
 
 texture_load = 0x8003cda8; // type:func
+load_texture_to_tmem = 0x8003d14c; // type:func
+load_texture_to_tmem2 = 0x8003d254; // type:func
 texture_destroy = 0x8003da40; // type:func
-
-load_model_display_list = 0x80018950; // type:func
 
 anim_load = 0x80019164; // type:func
 anim_destroy = 0x80019388; // type:func
@@ -939,11 +963,16 @@ anim_destroy = 0x80019388; // type:func
 modanim_load = 0x80018c98; // type:func
 
 model_load_create_instance = 0x80017d5c; // type:func
+patch_model_display_list_for_textures = 0x800186cc; // type:func
+load_model_display_list = 0x80018950; // type:func
+load_model_display_list2 = 0x800189a8; // type:func
+destroy_model_instance = 0x80018a00; // type:func
 model_get_stats = 0x800187e4; // type:func
 model_destroy = 0x80018b14; // type:func
 model_load_anim_remap_table = 0x80018bd8; // type:func
 model_setup_anim_playback = 0x80018f80; // type:func
 
+get_world_actors = 0x80021150; // type:func
 objSetupObjectActual = 0x80021450; // type:func
 createModelInstance = 0x80018314; // type:func
 

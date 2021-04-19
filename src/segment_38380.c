@@ -80,12 +80,18 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/three_more_mallocs.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/read_le32.s")
+u32 read_le32(u8 *b)
+{
+    u32 result = *b++;
+    result |= *b++ << 8;
+    result |= *b++ << 16;
+    result |= *b++ << 24;
+    return result;
+}
 
 extern u32 * D_800918B4;
 void queue_load_file_region_to_ptr(u32,s32,s32,s32);
 void func_8003A418(s32);
-u32 read_le32(u32 *p);
 u32 read_file_8bytes(s32 arg0, s32 arg1, s32 arg2) {
     if (arg2 != 0) {
         read_file_region(arg0, D_800918B4, arg1, 8);
