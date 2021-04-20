@@ -152,16 +152,12 @@ typedef struct
 /*0075*/	u8 dlInfoCount;
 } Model;
 
-typedef struct {
-/*0000*/    void *unk_0x0[2];
-/*0008*/    MtxF *matrices[2];
-} ModelInstUnk0x4; // size 0x10
-
 typedef struct
 {
     // TODO
 /*0000*/    Model *model;
-/*0004*/    ModelInstUnk0x4 unk_0x4;
+/*0004*/    void *unk_0x4[2];
+/*000C*/    MtxF *matrices[2];
 /*0014*/    void *unk_0x14;
 /*0018*/    Gfx *displayList;
 /*001C*/    u8 unk_0x1c[0x28 - 0x1c];
@@ -187,11 +183,9 @@ typedef struct {
 /*0000*/    u8 unk_0x0[0xc - 0x0];
 /*000C*/    Gfx *gdl;
 /*0010*/    u8 unk_0x10[0x20 - 0x10];
-/*0020*/    f32 tx;
-/*0024*/    f32 ty;
-/*0028*/    f32 tz;
+/*0020*/    Vec3f tr;
 /*002C*/    u32 unk_0x2c;
-/*0030*/    u32 unk_0x30;
+/*0030*/    u32 flags;
 } ActorUnk0x64;
 
 typedef struct {
