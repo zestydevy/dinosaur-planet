@@ -1151,7 +1151,7 @@ glabel func_80015FBC
 /* 16BC0 80015FC0 03E00008 */  jr         $ra
 /* 16BC4 80015FC4 2442CA40 */   addiu     $v0, $v0, %lo(D_8008CA40)
 
-glabel func_80015FC8
+glabel matrix_scaling
 /* 16BC8 80015FC8 00804025 */  or         $t0, $a0, $zero
 /* 16BCC 80015FCC 25090040 */  addiu      $t1, $t0, 0x40
 .L80015FD0:
