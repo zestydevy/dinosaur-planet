@@ -760,7 +760,7 @@ void func_80004224(Gfx **gdl)
 #else
 extern s8 gMatrixIndex;
 void func_800042C8(TActor *actor, int matrixIdx);
-s32 func_80004258(TActor *actor)
+s32 _func_80004258(TActor *actor)
 {
     func_800042C8(actor, gMatrixIndex);
     gRSPMatrices[gMatrixIndex] = NULL;
