@@ -657,12 +657,9 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/viMgrMain.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005E550.s")
-void func_8005E550(float[4][4], f32*, f32, f32, f32, f32, f32);
+#pragma GLOBAL_ASM("asm/nonmatchings/video/matrix_perspective.s")
+void matrix_perspective(MtxF* mf, f32*, f32, f32, f32, f32, f32);
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005E770.s")
-#else
 /**
  * Note: parameter matrix is an out value.
  */
@@ -670,8 +667,7 @@ void func_8005E770(
         Mtx *matrix, f32 *param2, f32 param3, f32 param4, f32 param5, f32 param6, f32 param7) {
     f32 _matrix[4][4];
 
-    func_8005E550(_matrix, param2, param3, param4, param5, param6, param7);
+    matrix_perspective(_matrix, param2, param3, param4, param5, param6, param7);
     // Convert _matrix from floating point -> fixed point
     guMtxF2L(_matrix, matrix);
 }
-#endif

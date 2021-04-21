@@ -689,7 +689,45 @@ Struct0x22 *_func_80049D68(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E540.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E64C.s")
+#else
+void transform_point_by_actor(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, TActor *actor);
+void func_8005BCE0(TActor *actor, u32 param_2, Gfx **gdl, Mtx **rspMtxs, u32 param_5, u32 param_6, u32 param_7, f32 y, u32 idx);
+void _func_8004E64C(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5)
+{
+    ActorUnk0x64 *unk;
+    Vec3f v0;
+    Vec3f v1;
+
+    unk = actor->ptr0x64;
+    if (unk->gdl != NULL)
+    {
+        if (unk->flags & 0x20)
+        {
+            _bcopy(&actor->srt.transl, &v0, sizeof(Vec3f));
+            _bcopy(&actor->positionMirror, &v1, sizeof(Vec3f));
+            _bcopy(&unk->tr, &actor->srt.transl, sizeof(Vec3f));
+
+            if (actor->linkedActor != NULL) {
+                transform_point_by_actor(unk->tr.x, unk->tr.y, unk->tr.z, &unk->tr.x, &unk->tr.y, &unk->tr.z, actor->linkedActor);
+            } else {
+                _bcopy(&unk->tr, &actor->positionMirror, sizeof(Vec3f));
+            }
+        }
+
+        if (unk->flags & 0x8) {
+            // This function seems to be responsible for drawing shadows.
+            func_8005BCE0(actor, *(s16*)0x80092c18, gdl, rspMtxs, param_4, param_5, *(s8*)0x800bb170, *(f32*)0x800bb18c, unk->flags & 0x3);
+        }
+
+        if (unk->flags & 0x20) {
+            _bcopy(&v0, &actor->srt.transl, sizeof(Vec3f));
+            _bcopy(&v1, &actor->positionMirror, sizeof(Vec3f));
+        }
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E7A8.s")
 

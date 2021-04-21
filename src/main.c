@@ -464,9 +464,9 @@ void update_PlayerPosBuffer(void)
 
     if (player != NULL)
     {
-        pos->f.x = player->srt.translation.x;
-        pos->f.y = player->srt.translation.y;
-        pos->f.z = player->srt.translation.z;
+        pos->f.x = player->srt.transl.x;
+        pos->f.y = player->srt.transl.y;
+        pos->f.z = player->srt.transl.z;
         pos->i = D_800AE674;
         
         if (++PlayerPosBuffer_index >= 0x3C) {

@@ -284,7 +284,40 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_800357B4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_800359D0.s")
+void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
+{
+    Gfx *mygdl;
+    Mtx *outRspMtxs;
+    void *d;
+    u32 mainIdx;
+    u32 otherIdx;
+    ModelInstance *modelInst;
+    ModelInstance *modelInst2;
+
+    mygdl = *gdl;
+    outRspMtxs = *rspMtxs;
+
+    mainIdx = actor->modelInstIdx;
+    if (param_6) {
+        otherIdx = 0;
+    } else {
+        otherIdx = actor->ptr0x50->unk_0x5d - 1;
+    }
+
+    modelInst = actor->modelInsts[mainIdx];
+    modelInst2 = actor->modelInsts[otherIdx];
+
+    d = modelInst->matrices[modelInst->unk_0x34 & 1];
+    rare_gMoveWd(mygdl++, 6, 0xc, d);
+    rare_gMoveWd(mygdl++, 6, 0x14, modelInst2->unk_0x4[(modelInst2->unk_0x34 >> 1) & 0x1]);
+    gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
+
+    dl_set_all_dirty();
+    func_8003DB5C();
+
+    *gdl = mygdl;
+    *rspMtxs = outRspMtxs;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80035AF4.s")
 
