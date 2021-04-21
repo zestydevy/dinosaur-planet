@@ -599,7 +599,41 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A94.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040B34.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/show_framebuffer_corners_kinda.s")
+#else
+/**
+ * Sets the alpha channel of the following corners of the given buffer to 0:
+ * X----------*X
+ * |          |
+ * |          |
+ * |          |
+ * *----------*
+ * X           X
+ * 
+ * Alternatively:
+ * X----------*
+ * X          |
+ * |          |
+ * |          |
+ * *----------*
+ * X
+ * X
+ */
+void show_framebuffer_corners_kinda(u16 *framebuffer, s32 width, s32 height) {
+    // Top right + 1???
+    (framebuffer + width)[0] &= -2;
+
+    // Top left
+    framebuffer[0] &= -2;
+
+    // Bottom right + extra row???
+    (framebuffer + width)[height * width] &= -2;
+
+    // Bottom right + 1???
+    framebuffer[height * width] &= -2;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040B8C.s")
 
