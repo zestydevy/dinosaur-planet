@@ -639,5 +639,35 @@ void show_framebuffer_corners_kinda(u16 *framebuffer, s32 width, s32 height) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040CD0.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040EFC.s")
+#else
+// Should be functionally equivalent, assembly is far off due to a loop being duplicated...
+void _func_80040EFC(u16 *fb1, u16 *fb2, s32 width, s32 height) {
+    s32 i = 0;
+    s32 fbLength = width * height;
+    s32 temp2 = fbLength & 3;
 
+    if (fbLength > 0) {
+        if (temp2 != 0) {
+            // This loop should not unroll and shouldn't be duplicated, 
+            // but currently does get duplicated?
+            while (i++ != temp2) {
+                fb1[i] |= 1;
+                fb2[i] |= 1;
+            }
+
+            // This might be part of the next loop
+            if (i == fbLength) {
+                return;
+            }
+        }
+
+        // This loop needs to unroll
+        do {
+            fb1[i] |= 1;
+            fb2[i] |= 1;
+        } while (++i != fbLength);
+    }
+}
+#endif
