@@ -5,18 +5,18 @@
 void clear_framebuffer_current();
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_man_array.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
 #else
-void update_pi_man_array(s32 index, s32 value) {
+void update_pi_manager_array(s32 index, s32 value) {
     if (index > -1 && index < 5) {
-        pi_man_array[index] = value;
+        gPiManagerArray[index] = value;
     }
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/PiManager_thread_func.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/start_pi_manager_thread.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/PiManagerStarter.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/pi_manager_entry.s")
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/stop_active_app_threads.s")

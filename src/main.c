@@ -57,7 +57,7 @@ void game_init(void)
     }
 
     osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, tvMode, 1);
-    PiManager_thread_func();
+    start_pi_manager_thread();
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
     four_mallocs();
