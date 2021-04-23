@@ -4,6 +4,7 @@
 
 // Definitely something like rand_i2
 int func_800155C4(int min, int max);
+void func_8005324C(u16 *fb1, u16 *fb2, s32);
 
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
@@ -582,7 +583,13 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800402F8.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040378.s")
+#else
+void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height) {
+    func_8005324C(fb1, fb2, width * height >> 2);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800403AC.s")
 
