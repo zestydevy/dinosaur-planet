@@ -517,4 +517,8 @@ extern OSMesg gPiManagerEventQueueBuffer[PI_MANAGER_EVENT_QUEUE_LENGTH];
 extern OSMesg gPiManagerCmdQueueBuffer[PI_MANAGER_CMD_QUEUE_LENGTH];
 extern OSMesgQueue gPiManagerCmdQueue;
 
+extern OSContPad gCrashContPadArray1[MAXCONTROLLERS];
+extern OSContPad gCrashContPadArray2[MAXCONTROLLERS];
+extern OSMesgQueue gCrashControllerMesgQueue;
+
 #endif

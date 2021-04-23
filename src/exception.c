@@ -7,6 +7,7 @@ void pi_manager_entry(void* arg);
 void stop_active_app_threads();
 void crash_controller_getter();
 void check_video_mode_crash_and_clear_framebuffer();
+void some_crash_print(OSThread**, int, int);
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
@@ -114,7 +115,39 @@ void stop_active_app_threads() {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_controller_getter.s")
+#else
+void crash_controller_getter() {
+    // Find first faulted/broke active thread
+    OSThread *thread = __osGetActiveQueue();
+
+    while (thread->priority != -1) {
+        if (thread->priority > OS_PRIORITY_IDLE && 
+            ((thread->flags & OS_FLAG_FAULT) || (thread->flags & OS_FLAG_CPU_BREAK))) {
+            break;
+        }
+
+        thread = thread->tlnext;
+    }
+
+    // Get current controller state
+    osContGetReadData(&gCrashContPadArray1[0]);
+
+    // TODO: Why isn't this called before osContGetReadData?
+    osContStartReadData(&gCrashControllerMesgQueue);
+
+    // Copy gCrashContPadArray1 -> gCrashContPadArray2
+    _bcopy(
+        &gCrashContPadArray1[0], 
+        &gCrashContPadArray2[0], 
+        sizeof(OSContPad) * MAXCONTROLLERS
+    );
+
+    // Print some crash info
+    some_crash_print(&thread, 1, 0);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/some_crash_print.s")
 
