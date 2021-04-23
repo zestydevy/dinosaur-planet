@@ -1,3 +1,4 @@
+#include <PR/os_internal.h>
 #include "common.h"
 #include "video.h"
 
@@ -9,7 +10,27 @@ void clear_framebuffer_current();
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/PiManagerStarter.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/func_8006213C.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/stop_active_app_threads.s")
+#else
+/**
+ * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
+ */
+void stop_active_app_threads() {
+    OSThread *thread;
+
+    thread = __osGetActiveQueue();
+
+    while (thread->priority != -1) {
+        if (thread->priority > OS_PRIORITY_IDLE && 
+            thread->priority <= OS_PRIORITY_APPMAX) {
+            osStopThread(thread);
+        }
+
+        thread = thread->tlnext;
+    };
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_controller_getter.s")
 

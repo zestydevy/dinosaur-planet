@@ -284,7 +284,7 @@ osMotorInit = 0x8007e394; // type:func
 osCreatePiManager = 0x8007e4f0; // type:func
 osViBlack = 0x8007e790; // type:func
 osViSwapBuffer = 0x8007e800; // type:func
-osGetActiveQueue = 0x8007e850; // type:func
+__osGetActiveQueue = 0x8007e850; // type:func
 osViSetMode = 0x8007e860; // type:func
 osViSetEvent = 0x8007e8d0; // type:func
 osSetIntMask = 0x8007e940; // type:func
@@ -1061,5 +1061,6 @@ weird_resize_copy = 0x8003F1EC; // type:func
 queue_load_texture_proxy = 0x8003CD7C; // type:func
 show_framebuffer_corners_kinda = 0x80040B34; // type:func
 
+stop_active_app_threads = 0x8006213C; // type:func
 check_video_mode_crash_and_clear_framebuffer = 0x80062CB8; // type:func
 clear_framebuffer_current = 0x800630D4; // type:func
