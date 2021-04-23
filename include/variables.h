@@ -505,4 +505,6 @@ extern DLLTab * gFile_DLLS_TAB;
 extern int gSomeCrashVideoFlag;
 extern int D_800937F0;
 
+extern int pi_man_array[];
+
 #endif

@@ -4,7 +4,15 @@
 
 void clear_framebuffer_current();
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_man_array.s")
+#else
+void update_pi_man_array(s32 index, s32 value) {
+    if (index > -1 && index < 5) {
+        pi_man_array[index] = value;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/PiManager_thread_func.s")
 
