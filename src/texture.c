@@ -1,6 +1,6 @@
 #include "common.h"
-#include "video.h"
 #include "queue.h"
+#include "video.h"
 
 // Definitely something like rand_i2
 int func_800155C4(int min, int max);
@@ -605,7 +605,7 @@ void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height) {
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040920.s")
 #else
 // regalloc
-void func_80040920(u16 *tex, s32 width, s32 height, int count) {
+void _func_80040920(u16 *tex, s32 width, s32 height, int count) {
     int i = 0;
     s32 offset1;
     s32 offset2;
@@ -634,7 +634,7 @@ void func_800409D0(u16 *fb, s32 width, s32 height) {
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A04.s")
 #else
 // regalloc
-void func_80040A04(u16 *tex, s32 width, s32 height, int count) {
+void _func_80040A04(u16 *tex, s32 width, s32 height, int count) {
     int i = 0;
     s32 offset;
 
@@ -652,7 +652,7 @@ void func_80040A04(u16 *tex, s32 width, s32 height, int count) {
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A94.s")
 #else
 // regalloc
-void func_80040A94(u16 *tex, int width, int height, int count) {
+void _func_80040A94(u16 *tex, int width, int height, int count) {
     int i = 0;
 
     if (count > 0) {
