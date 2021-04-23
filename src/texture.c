@@ -594,7 +594,25 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040870.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040920.s")
+#else
+// regalloc
+void func_80040920(u16 *tex, s32 width, s32 height, int count) {
+    int i = 0;
+    s32 offset1;
+    s32 offset2;
+
+    if (count > 0) {
+        do {
+            offset1 = func_800155C4(0, width);
+            offset2 = func_800155C4(0, height);
+            // Sets alpha to 0
+            tex[offset2 * width + offset1] &= 0xFFFFFFFE;
+        } while (++i != count);
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800409D0.s")
