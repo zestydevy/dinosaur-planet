@@ -596,7 +596,14 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040920.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800409D0.s")
+#else
+void func_800409D0(u16 *fb, s32 width, s32 height) {
+    // Sets center pixel alpha to 0
+    fb[(width >> 1) + (height >> 1) * width] &= 0xFFFE;
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A04.s")
