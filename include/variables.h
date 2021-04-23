@@ -506,5 +506,7 @@ extern int gSomeCrashVideoFlag;
 extern int D_800937F0;
 
 extern int gPiManagerArray[];
+extern u8 gPiManagerThreadStack[OS_PIM_STACKSIZE];
+extern OSThread gPiManagerThread;
 
 #endif

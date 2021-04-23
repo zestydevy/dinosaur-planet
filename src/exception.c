@@ -3,6 +3,7 @@
 #include "video.h"
 
 void clear_framebuffer_current();
+void pi_manager_entry(void* arg);
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
@@ -14,7 +15,28 @@ void update_pi_manager_array(s32 index, s32 value) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/start_pi_manager_thread.s")
+#else
+void start_pi_manager_thread() {
+    int i;
+
+    osCreateThread(
+        /*t*/       &gPiManagerThread, 
+        /*id*/      -1, 
+        /*entry*/   &pi_manager_entry, 
+        /*arg*/     NULL, 
+        /*sp*/      &gPiManagerThreadStack[OS_PIM_STACKSIZE],
+        /*pri*/     OS_PRIORITY_MAX
+    );
+
+    osStartThread(&gPiManagerThread);
+
+    for (i = 0; i < 5; ++i) {
+        gPiManagerArray[i] = -1;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/pi_manager_entry.s")
 
