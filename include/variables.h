@@ -521,4 +521,6 @@ extern OSContPad gCrashContPadArray1[MAXCONTROLLERS];
 extern OSContPad gCrashContPadArray2[MAXCONTROLLERS];
 extern OSMesgQueue gCrashControllerMesgQueue;
 
+extern u16 gCrashButtons[MAXCONTROLLERS];
+
 #endif

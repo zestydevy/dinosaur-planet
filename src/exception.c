@@ -155,7 +155,29 @@ void crash_controller_getter() {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/other_crash_print.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_copy_control_inputs.s")
+#else
+// Functionally equivalent
+void _crash_copy_control_inputs() {
+    int i;
+
+    osContGetReadData(&gCrashContPadArray1[0]);
+    osContStartReadData(&gCrashControllerMesgQueue);
+
+    // TODO: This loop unrolls differently than it should
+    for (i = 0; i < MAXCONTROLLERS; ++i) {
+        gCrashButtons[i] = gCrashContPadArray1[i].button & 
+            (u16)(gCrashContPadArray1[i].button ^ gCrashContPadArray2[i].button);
+    }
+
+    _bcopy(
+        &gCrashContPadArray1[0], 
+        &gCrashContPadArray2[0], 
+        sizeof(OSContPad) * MAXCONTROLLERS
+    );
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/check_video_mode_crash_and_clear_framebuffer.s")
