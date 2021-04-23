@@ -137,7 +137,7 @@ extern u32 *gFramebufferEnd;
  * TODO: figure out more of what this var is used for
  */
 extern u32 gFramebufferChoice; 
-extern u32 gVideoMode;
+extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[];
 
@@ -173,6 +173,11 @@ extern u8 *D_800BCE22;
  * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-s32 get_some_resolution_encoded();
+u32 get_some_resolution_encoded();
+
+/**
+ * Returns gVideoMode.
+ */
+s32 get_video_mode();
 
 #endif

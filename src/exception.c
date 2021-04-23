@@ -1,6 +1,8 @@
 #include "common.h"
 #include "video.h"
 
+void clear_framebuffer_current();
+
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_man_array.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/PiManager_thread_func.s")
@@ -19,7 +21,32 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_copy_control_inputs.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062CB8.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/check_video_mode_crash_and_clear_framebuffer.s")
+#else
+/**
+ * - Sets D_800937F0 to 0
+ * - Sets gSomeCrashVideoFlag if video mode is between 4-6
+ * - Clears the current framebuffer 100 times
+ */
+void check_video_mode_crash_and_clear_framebuffer() {
+    int i;
+
+    D_800937F0 = 0;
+
+    // Set a video crash flag if video mode is between 4-6
+    if (get_video_mode() > 3 && get_video_mode() < 7) {
+        gSomeCrashVideoFlag = 1;
+    } else {
+        gSomeCrashVideoFlag = 0;
+    }
+
+    // Clear framebuffer 100 times
+    for (i = 0; i != 100; ++i) {
+        clear_framebuffer_current();
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062D38.s")
 

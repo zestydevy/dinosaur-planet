@@ -738,7 +738,7 @@ gFramebufferNext = 0x800bcca8; // type:data size:0x4
 romcopy_OIMesg = 0x800b2e30; // type:data size:0x18
 noop_800694d4 = 0x800694d4; // type:func
 noop_80063a8c = 0x80063a8c; // type:func
-some_crash_video_flag = 0x800937f4; // type:data size:0x4
+gSomeCrashVideoFlag = 0x800937f4; // type:data size:0x4
 memMonVal0 = 0x8008eaa0; // type:data size:0x4
 memMonVal1 = 0x8008eaa4; // type:data size:0x4
 memMonVal2 = 0x8008eaa8; // type:data size:0x4
@@ -1058,6 +1058,8 @@ gUnknownVideoStructs = 0x800bb590; // type:data size:0x1680
 OSMesgQueue_800bcce0 = 0x800bcce0;
 
 weird_resize_copy = 0x8003F1EC; // type:func
-clear_framebuffer_current = 0x800630D4; // type:func
 queue_load_texture_proxy = 0x8003CD7C; // type:func
 show_framebuffer_corners_kinda = 0x80040B34; // type:func
+
+check_video_mode_crash_and_clear_framebuffer = 0x80062CB8; // type:func
+clear_framebuffer_current = 0x800630D4; // type:func
