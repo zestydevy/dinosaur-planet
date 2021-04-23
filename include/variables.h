@@ -509,4 +509,12 @@ extern int gPiManagerArray[];
 extern u8 gPiManagerThreadStack[OS_PIM_STACKSIZE];
 extern OSThread gPiManagerThread;
 
+#define PI_MANAGER_EVENT_QUEUE_LENGTH 8
+#define PI_MANAGER_CMD_QUEUE_LENGTH 8
+
+extern OSMesgQueue gPiManagerEventQueue;
+extern OSMesg gPiManagerEventQueueBuffer[PI_MANAGER_EVENT_QUEUE_LENGTH];
+extern OSMesg gPiManagerCmdQueueBuffer[PI_MANAGER_CMD_QUEUE_LENGTH];
+extern OSMesgQueue gPiManagerCmdQueue;
+
 #endif

@@ -1065,3 +1065,7 @@ show_framebuffer_corners_kinda = 0x80040B34; // type:func
 stop_active_app_threads = 0x8006213C; // type:func
 check_video_mode_crash_and_clear_framebuffer = 0x80062CB8; // type:func
 clear_framebuffer_current = 0x800630D4; // type:func
+gPiManagerEventQueue = 0x800bfd58; // type:data size:0x18
+gPiManagerEventQueueBuffer = 0x800bfd70; // type:data size:0x20
+gPiManagerCmdQueueBuffer = 0x800bfd90; // type:data size:0x18
+gPiManagerCmdQueue = 0x800bfdb0; // type:data size:0x20

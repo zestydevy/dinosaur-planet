@@ -4,6 +4,9 @@
 
 void clear_framebuffer_current();
 void pi_manager_entry(void* arg);
+void stop_active_app_threads();
+void crash_controller_getter();
+void check_video_mode_crash_and_clear_framebuffer();
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
@@ -38,7 +41,56 @@ void start_pi_manager_thread() {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/pi_manager_entry.s")
+#else
+#define PI_OS_EVENT_FAULT 8
+#define PI_OS_EVENT_CPU_BREAK 2
+
+void pi_manager_entry(void* arg) {
+    OSMesg msg;
+    s32 evtFlags;
+
+    evtFlags = 0;
+
+    // Listen for OS_EVENT_FAULT and OS_EVENT_CPU_BREAK
+    osCreateMesgQueue(
+        /*mq*/      &gPiManagerEventQueue, 
+        /*msg*/     &gPiManagerEventQueueBuffer[0], 
+        /*count*/   PI_MANAGER_EVENT_QUEUE_LENGTH
+    );
+
+    osSetEventMesg(OS_EVENT_FAULT, &gPiManagerEventQueue, (OSMesg)PI_OS_EVENT_FAULT);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &gPiManagerEventQueue, (OSMesg)PI_OS_EVENT_CPU_BREAK);
+
+    // Start system PI manager thread
+    osCreatePiManager(
+        /*pri*/         OS_PRIORITY_PIMGR, 
+        /*cmdQ*/        &gPiManagerCmdQueue, 
+        /*cmdBuf*/      &gPiManagerCmdQueueBuffer[0], 
+        /*cmdMsgCnt*/   PI_MANAGER_CMD_QUEUE_LENGTH
+    );
+
+    while (TRUE) {
+        // Wait for event
+        osRecvMesg(&gPiManagerEventQueue, &msg, OS_MESG_BLOCK);
+
+        evtFlags |= (s32)msg;
+
+        // If a CPU break or CPU fault occurred...
+        if ((evtFlags & PI_OS_EVENT_FAULT) || (evtFlags & PI_OS_EVENT_CPU_BREAK)) {
+            // Only handle a fault once per message, but if a break is received, this should run 
+            // every time a fault or break is received again regardless of which
+            evtFlags &= ~PI_OS_EVENT_FAULT;
+
+            // Stop app threads and do some crash stuff
+            stop_active_app_threads();
+            check_video_mode_crash_and_clear_framebuffer();
+            crash_controller_getter();
+        }
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/stop_active_app_threads.s")
