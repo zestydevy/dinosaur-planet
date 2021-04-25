@@ -1,9 +1,10 @@
 #include <PR/os_internal.h>
 #include "common.h"
+#include "exception.h"
 #include "video.h"
 
 void clear_framebuffer_current();
-void pi_manager_entry(void* arg);
+void pi_manager_entry(void *arg);
 void stop_active_app_threads();
 void crash_controller_getter();
 void check_video_mode_crash_and_clear_framebuffer();
@@ -12,8 +13,12 @@ void some_crash_print(OSThread**, int, int);
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
 #else
+/**
+ * Sets `gPiManagerArray[index] = value`, unless index is out of range
+ * in which case this function does nothing.
+ */
 void update_pi_manager_array(s32 index, s32 value) {
-    if (index > -1 && index < 5) {
+    if (index >= 0 && index < PI_MANAGER_ARRAY_LENGTH) {
         gPiManagerArray[index] = value;
     }
 }
@@ -36,7 +41,7 @@ void start_pi_manager_thread() {
 
     osStartThread(&gPiManagerThread);
 
-    for (i = 0; i < 5; ++i) {
+    for (i = 0; i < PI_MANAGER_ARRAY_LENGTH; ++i) {
         gPiManagerArray[i] = -1;
     }
 }
@@ -48,7 +53,7 @@ void start_pi_manager_thread() {
 #define PI_OS_EVENT_FAULT 8
 #define PI_OS_EVENT_CPU_BREAK 2
 
-void pi_manager_entry(void* arg) {
+void pi_manager_entry(void *arg) {
     OSMesg msg;
     s32 evtFlags;
 
