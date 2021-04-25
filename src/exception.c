@@ -239,4 +239,36 @@ void clear_framebuffer_current() {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/write_cFile_label_pointers.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_800631E0.s")
+#else
+// Functionally equivalent
+s32 *func_800631E0() {
+    // TODO: Every time c_file_labels is referenced in the original assembly, it's address is
+    // fully recomputed. But the code below calculates it once and reuses a register holding the addr
+
+    s32 labelsIndex;
+    s32 *label;
+    s32 i;
+
+    labelsIndex = c_file_label_index + 1;
+
+    if (labelsIndex == 0xa) {
+        labelsIndex = 0;
+    }
+
+    label = &c_file_labels[labelsIndex];
+
+    for (i = 1; i != 0xa; ++i) {
+        ++labelsIndex;
+        ++label;
+
+        if (labelsIndex == 0xa) {
+            label = &c_file_labels[0];
+            labelsIndex = 0;
+        }
+    }
+
+    return label;
+}
+#endif

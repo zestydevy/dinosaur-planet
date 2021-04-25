@@ -33,4 +33,7 @@ extern OSMesgQueue gCrashControllerMesgQueue;
 
 extern u16 gCrashButtons[MAXCONTROLLERS];
 
+extern u8 c_file_label_index;
+extern s32 c_file_labels[10];
+
 #endif
