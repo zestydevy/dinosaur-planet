@@ -237,34 +237,60 @@ void clear_framebuffer_current() {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/write_cFile_label_pointers.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/exception/write_c_file_label_pointers.s")
+#else
+void write_c_file_label_pointers(char *cFileLabel, s32 a1) {
+    // If gCFileLabelFlag is zero, then zero out gCFileLabels and gSomeCFileInts
+    if (gCFileLabelFlag == 0) {
+        for (gCFileLabelFlag = 0; gCFileLabelFlag < C_FILE_LABELS_LENGTH; ++gCFileLabelFlag) {
+            gCFileLabels[gCFileLabelFlag] = NULL;
+            gSomeCFileInts[gCFileLabelFlag] = 0;
+        }
+
+        gCFileLabelFlag = 1;
+    }
+
+    // Store C file label at next position in gCFileLabels
+    gCFileLabelIndex = gCFileLabelIndex + 1;
+
+    if (gCFileLabelIndex == C_FILE_LABELS_LENGTH) {
+        gCFileLabelIndex = 0;
+    }
+
+    gCFileLabels[gCFileLabelIndex] = cFileLabel;
+    gSomeCFileInts[gCFileLabelIndex] = a1;
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_800631E0.s")
 #else
 // Functionally equivalent
-s32 *func_800631E0() {
-    // TODO: Every time c_file_labels is referenced in the original assembly, it's address is
+char **_func_800631E0() {
+    // TODO: Every time gCFileLabels is referenced in the original assembly, it's address is
     // fully recomputed. But the code below calculates it once and reuses a register holding the addr
 
     s32 labelsIndex;
-    s32 *label;
+    char **label;
     s32 i;
 
-    labelsIndex = c_file_label_index + 1;
+    labelsIndex = gCFileLabelIndex + 1;
 
-    if (labelsIndex == 0xa) {
+    if (labelsIndex == C_FILE_LABELS_LENGTH) {
         labelsIndex = 0;
     }
 
-    label = &c_file_labels[labelsIndex];
+    label = &gCFileLabels[labelsIndex];
 
-    for (i = 1; i != 0xa; ++i) {
+    // TODO: it looks like this loop could be for i 0-10 instead of 1-10 merging the above code,
+    //       but doing so seems to result in the loop not getting unrolled...
+    for (i = 1; i != C_FILE_LABELS_LENGTH; ++i) {
         ++labelsIndex;
         ++label;
 
-        if (labelsIndex == 0xa) {
-            label = &c_file_labels[0];
+        if (labelsIndex == C_FILE_LABELS_LENGTH) {
+            label = &gCFileLabels[0];
             labelsIndex = 0;
         }
     }

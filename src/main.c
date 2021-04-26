@@ -221,7 +221,7 @@ void _game_tick(void) {
     delayFloatMirror = temp_f0;
     inverseDelayMirror = 1.0f / delayFloatMirror;
     func_80014074(&delayFloatMirror);
-    write_cFile_label_pointers(&D_8009913C, 0x37C);
+    write_c_file_label_pointers(&D_8009913C, 0x37C);
 }
 #endif
 

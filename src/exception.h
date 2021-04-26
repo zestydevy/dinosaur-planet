@@ -33,7 +33,12 @@ extern OSMesgQueue gCrashControllerMesgQueue;
 
 extern u16 gCrashButtons[MAXCONTROLLERS];
 
-extern u8 c_file_label_index;
-extern s32 c_file_labels[10];
+// Length of gCFileLabels and gSomeCFileInts
+#define C_FILE_LABELS_LENGTH 10
+
+extern u8 gCFileLabelIndex;
+extern char *gCFileLabels[C_FILE_LABELS_LENGTH];
+extern u8 gCFileLabelFlag;
+extern s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
 
 #endif
