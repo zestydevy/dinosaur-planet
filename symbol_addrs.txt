@@ -1057,4 +1057,7 @@ gSomeVideoFlag = 0x80092ea0; // type:data size:0x4
 gUnknownVideoStructs = 0x800bb590; // type:data size:0x1680
 OSMesgQueue_800bcce0 = 0x800bcce0;
 
+weird_resize_copy = 0x8003F1EC; // type:func
 clear_framebuffer_current = 0x800630D4; // type:func
+queue_load_texture_proxy = 0x8003CD7C; // type:func
+show_framebuffer_corners_kinda = 0x80040B34; // type:func

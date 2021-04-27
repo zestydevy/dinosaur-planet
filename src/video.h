@@ -101,8 +101,8 @@ extern u8 D_800bcc78;
 
 extern OSViMode gOSViModeCustom;
 
-extern void *gFramebufferNext;
-extern void *gFramebufferCurrent;
+extern u16 *gFramebufferNext;
+extern u16 *gFramebufferCurrent;
 extern u16 *D_800bccb4;
 extern u16 *D_800bccb0;
 
@@ -123,7 +123,7 @@ extern u32 gCurrentResolutionV[2];
  * 
  * {FBaddr,FBaddr*H*V*2} // TODO: <- what does that mean?
  */
-extern void *gFramebufferPointers[2];
+extern u16 *gFramebufferPointers[2];
 
 extern u32 framebufferAddress_ExpPak;
 extern u32 framebufferAddress_NoExpPak;
@@ -167,5 +167,12 @@ extern UnkVidStruct3 *D_80093068;
 extern s32 **D_800BCE18;
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 *D_800BCE22;
+
+/**
+ * Returns a video resolution encoded as 0xVVVV_HHHH.
+ * 
+ * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
+ */
+s32 get_some_resolution_encoded();
 
 #endif

@@ -1,10 +1,32 @@
 #include "common.h"
+#include "queue.h"
+#include "video.h"
+
+// Definitely something like rand_i2
+int func_800155C4(int min, int max);
+void func_8005324C(u16 *fb1, u16 *fb2, s32);
+
+void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/init_textures.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD6C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD7C.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/queue_load_texture_proxy.s")
+#else
+/**
+ * Calls queue_load_texture with [param] as the second argument.
+ * 
+ * Returns the result of queue_load_texture.
+ */
+s32 queue_load_texture_proxy(s32 param) {
+    s32 var1 = 0;
+    queue_load_texture(&var1, param);
+
+    return var1;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_load.s")
 
@@ -449,7 +471,40 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EAC0.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EBD4.s")
+#else
+/**
+ * Does some sort of copy line-by-line from gFramebufferNext to gFramebufferCurrent.
+ * 
+ * Also see weird_resize_copy(), which this function uses to copy data.
+ */
+void func_8003EBD4(s32 hOffset) {
+    s32 resEncoded = get_some_resolution_encoded();
+
+    s32 hRes = resEncoded & 0xffff;
+    s32 vRes = resEncoded >> 0x10;
+
+    u16 *next = gFramebufferNext;
+    u16 *cur = gFramebufferCurrent;
+
+    s32 vIndex = vRes;
+
+    hOffset = hRes - hOffset;
+
+    while (vIndex--) {
+        weird_resize_copy(
+            next + hOffset, 
+            hRes - (hOffset << 1), 
+            hRes, 
+            cur
+        );
+
+        next += hRes;
+        cur += hRes;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EC8C.s")
 
@@ -459,7 +514,50 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F074.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F1EC.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/weird_resize_copy.s")
+#else
+/**
+ * Copies data from src to dest+destWidth taking into account differences in width
+ * (e.g. if destWidth is half srcWidth, every other value will be copied from src).
+ * 
+ * Additionally, values copied to dest have the following applied first:
+ *   (value & -0x843) >> 1
+ * 
+ * destWidth must be less than 644.
+ * 
+ * NOTE: Please see the note in the implementation, this function also reads 
+ * undefined stack memory, which affects the copied values.
+ */
+void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
+    u16 buffer[644];
+
+    s32 var1 = 0;
+    u16 *bufferPtr = &buffer[0];
+    u16 *srcPtr = src;
+    s32 i = 0;
+
+    if (destWidth > 0) {
+        do {
+            var1 += srcWidth % destWidth;
+
+            // NOTE: This reads undefined stack memory!
+            *bufferPtr = ((*srcPtr & -0x843) >> 1) + ((*bufferPtr & -0x843) >> 1);
+            bufferPtr = bufferPtr + 1;
+
+            while (destWidth < var1) {
+                var1 = var1 - destWidth;
+                srcPtr = srcPtr + 1;
+            }
+
+            i = i + 1;
+            srcPtr += srcWidth / destWidth;
+        } while (i != destWidth);
+    }
+
+    _bcopy(&buffer[0], destWidth + dest, destWidth << 1);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F2C4.s")
 
@@ -485,7 +583,13 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800402F8.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040378.s")
+#else
+void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height) {
+    func_8005324C(fb1, fb2, width * height >> 2);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800403AC.s")
 
@@ -497,19 +601,138 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040870.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040920.s")
+#else
+// regalloc
+void _func_80040920(u16 *tex, s32 width, s32 height, int count) {
+    int i = 0;
+    s32 offset1;
+    s32 offset2;
 
+    if (count > 0) {
+        do {
+            offset1 = func_800155C4(0, width);
+            offset2 = func_800155C4(0, height);
+            // Sets alpha to 0
+            tex[offset2 * width + offset1] &= 0xFFFFFFFE;
+        } while (++i != count);
+    }
+}
+#endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800409D0.s")
+#else
+void func_800409D0(u16 *fb, s32 width, s32 height) {
+    // Sets center pixel alpha to 0
+    fb[(width >> 1) + (height >> 1) * width] &= 0xFFFE;
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A04.s")
+#else
+// regalloc
+void _func_80040A04(u16 *tex, s32 width, s32 height, int count) {
+    int i = 0;
+    s32 offset;
 
+    if (count > 0) {
+        do {
+            offset = func_800155C4(0, height) * width;
+            // Sets alpha to 0
+            tex[offset] &= 0xFFFFFFFE;
+        } while (++i != count);
+    }
+}
+#endif
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A94.s")
+#else
+// regalloc
+void _func_80040A94(u16 *tex, int width, int height, int count) {
+    int i = 0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040B34.s")
+    if (count > 0) {
+        do {
+            // Sets alpha to 0
+            tex[width + (func_800155C4(0, height) * width)] &= 0xFFFFFFFE;
+        } while (++i != count);
+    }
+}
+#endif
+
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/show_framebuffer_corners_kinda.s")
+#else
+/**
+ * Sets the alpha channel of the following corners of the given buffer to 0:
+ * X----------*X
+ * |          |
+ * |          |
+ * |          |
+ * *----------*
+ * X           X
+ * 
+ * Alternatively:
+ * X----------*
+ * X          |
+ * |          |
+ * |          |
+ * *----------*
+ * X
+ * X
+ */
+void show_framebuffer_corners_kinda(u16 *framebuffer, s32 width, s32 height) {
+    // Top right + 1???
+    (framebuffer + width)[0] &= -2;
+
+    // Top left
+    framebuffer[0] &= -2;
+
+    // Bottom right + extra row???
+    (framebuffer + width)[height * width] &= -2;
+
+    // Bottom right + 1???
+    framebuffer[height * width] &= -2;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040B8C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040CD0.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040EFC.s")
+#else
+// Should be functionally equivalent, assembly is far off due to a loop being duplicated...
+void _func_80040EFC(u16 *fb1, u16 *fb2, s32 width, s32 height) {
+    s32 i = 0;
+    s32 fbLength = width * height;
+    s32 temp2 = fbLength & 3;
 
+    if (fbLength > 0) {
+        if (temp2 != 0) {
+            // This loop should not unroll and shouldn't be duplicated, 
+            // but currently does get duplicated?
+            while (i++ != temp2) {
+                fb1[i] |= 1;
+                fb2[i] |= 1;
+            }
+
+            // This might be part of the next loop
+            if (i == fbLength) {
+                return;
+            }
+        }
+
+        // This loop needs to unroll
+        do {
+            fb1[i] |= 1;
+            fb2[i] |= 1;
+        } while (++i != fbLength);
+    }
+}
+#endif
