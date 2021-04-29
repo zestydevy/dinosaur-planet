@@ -947,6 +947,7 @@ gRSPMatrices = 0x800a7ba8; // type:data
 
 gFrustumPlanes = 0x800b4a78; // type:data size:0x64
 
+dl_segment = 0x8003cc50; // type:func
 dl_set_all_dirty = 0x80040fd0; // type:func
 func_80041040 = 0x80041040; // type:func
 func_80041118 = 0x80041118; // type:func
