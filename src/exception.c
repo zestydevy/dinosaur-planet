@@ -215,7 +215,7 @@ void check_video_mode_crash_and_clear_framebuffer() {
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062D38.s")
 #else
 // Super super close, pretty sure is functionally equiv
-void func_80062D38(s32 col, s32 row, u8 *param3) {
+void _func_80062D38(s32 col, s32 row, u8 *param3) {
     int k;
     u16 *fbTemp;
     u32 res = get_some_resolution_encoded();
