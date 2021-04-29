@@ -2,7 +2,7 @@
 #include "input.h"
 
 void controller_thread_entry(void *arg);
-void func_8003B6E0(int, int*, OSMesgQueue*, int);
+void func_8003B6E0(OSSched *scheduler, int*, OSMesgQueue*, int);
 
 #if 0 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_mesg_queue_2.s")
@@ -39,14 +39,14 @@ void func_80010238() {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/start_controller_thread.s")
 #else
-void start_controller_thread(int a0) {
+void start_controller_thread(OSSched *scheduler) {
     osCreateMesgQueue(
         /*mq*/      &gControllerMesgQueue, 
         /*msg*/     &gControllerMesgQueue_Array[0], 
         /*count*/   CONTROLLER_MESG_QUEUE_LENGTH
     );
 
-    func_8003B6E0(a0, &D_800A8608, &gControllerMesgQueue, 2);
+    func_8003B6E0(scheduler, &D_800A8608, &gControllerMesgQueue, 2);
 
     osCreateMesgQueue(
         /*mq*/      &gControllerMesgQueue3, 
