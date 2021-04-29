@@ -173,6 +173,6 @@ extern u8 *D_800BCE22;
  * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-s32 get_some_resolution_encoded();
+u32 get_some_resolution_encoded();
 
 #endif
