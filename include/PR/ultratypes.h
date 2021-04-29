@@ -62,9 +62,11 @@ typedef double				f64;	/* double prec floating point */
 #define _SIZE_T_DEF			/* exeGCC size_t define label */
 #if (_MIPS_SZLONG == 32)
 typedef unsigned int    size_t;
+typedef unsigned int    uintptr_t;
 #endif
 #if (_MIPS_SZLONG == 64)
 typedef unsigned long   size_t;
+typedef unsigned long   uintptr_t;
 #endif
 #endif
 

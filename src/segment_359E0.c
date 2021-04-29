@@ -284,7 +284,10 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_800357B4.s")
 
-void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_800359D0.s")
+#else
+void _func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
 {
     Gfx *mygdl;
     Mtx *outRspMtxs;
@@ -318,6 +321,7 @@ void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 par
     *gdl = mygdl;
     *rspMtxs = outRspMtxs;
 }
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80035AF4.s")
 

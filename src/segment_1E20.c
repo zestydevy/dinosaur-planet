@@ -291,7 +291,7 @@ void _setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80002C0C.s")
 #else
-void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
+void _func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
 {
     if (!(gViewports[gCameraSelector].flags & 0x1))
     {
@@ -299,11 +299,11 @@ void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
         gRSPViewports[gCameraSelector].vp.vtrans[1] = transY << 2;
         gRSPViewports[gCameraSelector].vp.vscale[0] = scaleX << 2;
         gRSPViewports[gCameraSelector].vp.vscale[1] = scaleY << 2;
-        rare_gSPViewport((*gdl)++, OS_K0_TO_PHYSICAL(&gRSPViewports[gCameraSelector]));
+        gSPViewport((*gdl)++, OS_K0_TO_PHYSICAL(&gRSPViewports[gCameraSelector]));
     }
     else
     {
-        rare_gSPViewport((*gdl)++, OS_K0_TO_PHYSICAL(&gRSPViewports[gCameraSelector + 5 * gCameraGroupSelector + 10]));
+        gSPViewport((*gdl)++, OS_K0_TO_PHYSICAL(&gRSPViewports[gCameraSelector + 5 * gCameraGroupSelector + 10]));
     }
 }
 #endif
@@ -404,9 +404,7 @@ void func_80003168(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale)
     }
     matrix_f2l_4x3(&MtxF_800a6a60, *rspMtxs);
 
-    // rare_gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(*rspMtxs), 0);
-    // ?????? what did rare do to the matrix commands?
-    gDma2p((*gdl)++, G_MTX, OS_K0_TO_PHYSICAL((*rspMtxs)++), 0, 3, 0x38 * 8);
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_LOAD);
 }
 
 u32 func_80003278(u32 a0, u32 a1, u32 a2, u32 a3)
