@@ -612,8 +612,9 @@ osthreadTail = 0x80097ed0; // type:data size:0x8
 sp_task = 0x800cee50; // type:data size:0x40
 get_float_timers = 0x8003b7e0; // type:func
 buttonQueue_ = 0x800a7db0; // type:data
-comtroller_mesgq_ = 0x800a7f18; // type:data size:0x18
-controller_mesgQ2_ = 0x800a7f00; // type:data size:0x18
+gControllerMesgQueue = 0x800a7f18; // type:data size:0x18
+gControllerMesgQueue2 = 0x800a7f00; // type:data size:0x18
+gControllerMesgQueue3 = 0x800a7f30; // type:data size:0x18
 ret1_800112d8 = 0x800112d8; // type:func
 contpad_buffer = 0x800a7db8; // type:data size:0x4
 func_with_controller_buffer = 0x80010c98; // type:func
@@ -1075,3 +1076,5 @@ gPiManagerEventQueue = 0x800bfd58; // type:data size:0x18
 gPiManagerEventQueueBuffer = 0x800bfd70; // type:data size:0x20
 gPiManagerCmdQueueBuffer = 0x800bfd90; // type:data size:0x18
 gPiManagerCmdQueue = 0x800bfdb0; // type:data size:0x20
+
+get_controller_mesg_queue_2 = 0x800101F0; // type:func
