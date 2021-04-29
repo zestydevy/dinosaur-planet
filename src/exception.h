@@ -8,7 +8,8 @@
 #include "variables.h"
 
 extern int gSomeCrashVideoFlag;
-extern int D_800937F0;
+extern s32 D_800937F0;
+extern u16 D_800933C4[];
 
 // Length of gPiManagerArray
 #define PI_MANAGER_ARRAY_LENGTH 5

@@ -211,7 +211,52 @@ void check_video_mode_crash_and_clear_framebuffer() {
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062D38.s")
+#else
+// Super super close, pretty sure is functionally equiv
+void func_80062D38(s32 col, s32 row, u8 *param3) {
+    int k;
+    u16 *fbTemp;
+    u32 res = get_some_resolution_encoded();
+    s32 resWidth = res & 0xffff;
+    int i = 4;
+    u16 *fb = &gFramebufferCurrent[(row * resWidth) + col];
+    u16 *someArray = &D_800933C4[D_800937F0 << 2];
+    u8 temp;
+    u16 *pixelPtr;
+
+    do {
+        k = 1;
+        //v0 = k;
+
+        if (gSomeCrashVideoFlag != 0) {
+            k = 2;
+        }
+
+        while (k--) {
+            temp = *param3;
+
+            fbTemp = fb;
+            fb = fb + resWidth;
+
+            while (temp != 0) {
+                pixelPtr = &someArray[temp & 3];
+                temp >>= 2;
+
+                fbTemp[0] = *pixelPtr;
+                fbTemp[1] = *pixelPtr;
+                fbTemp = fbTemp + 2;
+            }
+
+            //v0 = k;
+        }
+
+        //v0 = i;
+        param3 = param3 + 1;
+    } while (i--);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062E38.s")
 
