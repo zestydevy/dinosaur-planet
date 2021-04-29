@@ -1,6 +1,9 @@
 #include "common.h"
 #include "input.h"
 
+void controller_thread_entry(void *arg);
+void func_8003B6E0(int, int*, OSMesgQueue*, int);
+
 #if 0 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_mesg_queue_2.s")
 #else
@@ -26,16 +29,46 @@ void func_80010238() {
     D_800A8618 = 0xa;
 
     osSendMesg(&gControllerMesgQueue, &D_800A8618, OS_MESG_NOBLOCK);
-    
+
     osRecvMesg(&gControllerMesgQueue3, NULL, OS_MESG_BLOCK);
 }
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/init_controller_data.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_func.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/input/start_controller_thread.s")
+#else
+void start_controller_thread(int a0) {
+    osCreateMesgQueue(
+        /*mq*/      &gControllerMesgQueue, 
+        /*msg*/     &gControllerMesgQueue_Array[0], 
+        /*count*/   CONTROLLER_MESG_QUEUE_LENGTH
+    );
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/update_controller_buffer.s")
+    func_8003B6E0(a0, &D_800A8608, &gControllerMesgQueue, 2);
+
+    osCreateMesgQueue(
+        /*mq*/      &gControllerMesgQueue3, 
+        /*msg*/     &gControllerMesgQueue3_Array[0], 
+        /*count*/   CONTROLLER_MESG_QUEUE_3_LENGTH
+    );
+
+    // Create and start controller thread
+    osCreateThread(
+        /*t*/       &gControllerThread, 
+        /*id*/      CONTROLLER_THREAD_ID, 
+        /*entry*/   &controller_thread_entry, 
+        /*arg*/     NULL, 
+        /*sp*/      &gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE], 
+        /*pri*/     12
+    );
+
+    osStartThread(&gControllerThread);
+}
+#endif
+
+#pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_entry.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/label_controllerPortList.s")
 

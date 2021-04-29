@@ -65,7 +65,7 @@ void game_init(void)
     D_800B09C1 = 0;
     D_800AE680 = D_800AE678[D_800B09C1];
     some_controller_init_val = init_controller_data();
-    controller_thread_func(&osscheduler_);
+    start_controller_thread(&osscheduler_);
     crash_thread_func(&osscheduler_);
     init_textures();
     init_maps();

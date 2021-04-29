@@ -475,7 +475,6 @@ extern u8 joyYHoldTimer[4];
 extern s8 joyXSign[4]; //1, 0, or -1 based on input.
 extern s8 joyYSign[4];
 extern u8 MenuInputDelay; //init'd to 5.
-extern OSThread controller_thread;
 
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
