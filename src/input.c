@@ -70,27 +70,90 @@ void start_controller_thread(OSSched *scheduler) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_entry.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/label_controllerPortList.s")
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/input/setup_controller_port_list.s")
+#else
+void _setup_controller_port_list() {
+    int i;
+
+    for (i = 0; i < MAXCONTROLLERS; ++i) {
+        controllerPortList[i] = i;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/update_controllerPortList.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_listed_port.s")
+#else
+u8 get_listed_port(int port) {
+    return controllerPortList[port];
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010C24.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/input/swap_controller_port_0_and_1.s")
+#else
+void swap_controller_port_0_and_1() {
+    u8 port0 = controllerPortList[0];
 
+    controllerPortList[0] = controllerPortList[1];
+    controllerPortList[1] = port0;
+}
+#endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010C44.s")
+#else
+u16 func_80010C44(int port) {
+    if (port > 0) {
+        return 0;
+    }
+
+    return D_800a7f88[controllerPortList[port]].unk0x0 & buttonMask[port];
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_with_controller_buffer.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_press.s")
+#else
+u16 get_masked_button_press(int port) {
+    if (port > 0) {
+        return 0;
+    }
 
+    return buttonInput0[controllerPortList[port]] & buttonMask[port];
+}
+#endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_button_press.s")
+#else
+u16 get_button_press(int port) {
+    if (port > 0) {
+        return 0;
+    }
+
+    return buttonInput0[controllerPortList[port]];
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010DCC.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_buttonInput1.s")
+#else
+u16 get_masked_buttonInput1(int port) {
+    if (port > 0) {
+        return 0;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/NOOP_80010ec0.s")
+    return buttonInput1[controllerPortList[port]] & buttonMask[port];
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010EC8.s")
 

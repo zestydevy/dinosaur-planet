@@ -464,16 +464,18 @@ extern struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with
 
 extern int func_printing_null_nil ( char * str, const char * format, ... );
 
-extern u16 buttonInput0[4];
-extern u16 buttonInput1[4];
-extern u16 buttonMask[4]; // starts as 0xFFFF, buttons sometimes get AND'ed with it.
-extern u8 controllerPortList[4]; // inits to 0,1,2,3. used in input getters.
-extern s8 joyXMirror[4];
-extern s8 joyYMirror[4];
-extern u8 joyXHoldTimer[4]; // resets after hitting MenuInputDelay's value.
-extern u8 joyYHoldTimer[4];
-extern s8 joyXSign[4]; //1, 0, or -1 based on input.
-extern s8 joyYSign[4];
+extern u16 buttonInput0[MAXCONTROLLERS];
+extern u16 buttonInput1[MAXCONTROLLERS];
+extern u16 buttonMask[MAXCONTROLLERS]; // starts as 0xFFFF, buttons sometimes get AND'ed with it.
+// some kind of virtual->physical port mapping or vise versa
+// inits to 0,1,2,3. used in input getters.
+extern u8 controllerPortList[MAXCONTROLLERS]; 
+extern s8 joyXMirror[MAXCONTROLLERS];
+extern s8 joyYMirror[MAXCONTROLLERS];
+extern u8 joyXHoldTimer[MAXCONTROLLERS]; // resets after hitting MenuInputDelay's value.
+extern u8 joyYHoldTimer[MAXCONTROLLERS];
+extern s8 joyXSign[MAXCONTROLLERS]; //1, 0, or -1 based on input.
+extern s8 joyYSign[MAXCONTROLLERS];
 extern u8 MenuInputDelay; //init'd to 5.
 
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.

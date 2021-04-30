@@ -13,6 +13,12 @@
 #define CONTROLLER_MESG_QUEUE_LENGTH 8
 #define CONTROLLER_MESG_QUEUE_3_LENGTH 1
 
+typedef struct _UnkInputStruct {
+    u16 unk0x0;
+    u16 unk0x2;
+    u16 unk0x4;
+} UnkInputStruct;
+
 extern OSMesgQueue gControllerMesgQueue2;
 extern OSMesgQueue gControllerMesgQueue;
 extern OSMesgQueue gControllerMesgQueue3;
@@ -24,5 +30,7 @@ extern u8 gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE];
 
 extern int D_800A8608;
 extern s16 D_800A8618;
+
+extern UnkInputStruct D_800a7f88[MAXCONTROLLERS];
 
 #endif
