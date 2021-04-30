@@ -15,9 +15,13 @@
 
 typedef struct _UnkInputStruct {
     u16 unk0x0;
-    u16 unk0x2;
+    s8 unk0x2;
+    s8 unk0x3;
     u16 unk0x4;
 } UnkInputStruct;
+
+extern u16 D_8008C8A4;
+extern u8 D_8008C8B0;
 
 extern OSMesgQueue gControllerMesgQueue2;
 extern OSMesgQueue gControllerMesgQueue;

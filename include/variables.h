@@ -472,11 +472,11 @@ extern u16 buttonMask[MAXCONTROLLERS]; // starts as 0xFFFF, buttons sometimes ge
 extern u8 controllerPortList[MAXCONTROLLERS]; 
 extern s8 joyXMirror[MAXCONTROLLERS];
 extern s8 joyYMirror[MAXCONTROLLERS];
-extern u8 joyXHoldTimer[MAXCONTROLLERS]; // resets after hitting MenuInputDelay's value.
+extern u8 joyXHoldTimer[MAXCONTROLLERS]; // resets after hitting menuInputDelay's value.
 extern u8 joyYHoldTimer[MAXCONTROLLERS];
 extern s8 joyXSign[MAXCONTROLLERS]; //1, 0, or -1 based on input.
 extern s8 joyYSign[MAXCONTROLLERS];
-extern u8 MenuInputDelay; //init'd to 5.
+extern s8 menuInputDelay; //init'd to 5.
 
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
