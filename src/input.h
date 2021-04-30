@@ -14,10 +14,8 @@
 #define CONTROLLER_MESG_QUEUE_3_LENGTH 1
 
 typedef struct _UnkInputStruct {
-    u16 unk0x0;
-    s8 unk0x2;
-    s8 unk0x3;
-    u16 unk0x4;
+    OSContPad *unk0x0;
+    u8 _padding[40 - sizeof(OSContPad)];
 } UnkInputStruct;
 
 extern u16 D_8008C8A4;
@@ -35,6 +33,9 @@ extern u8 gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE];
 extern int D_800A8608;
 extern s16 D_800A8618;
 
-extern UnkInputStruct D_800a7f88[MAXCONTROLLERS];
+extern OSContPad gContPads[MAXCONTROLLERS];
+
+extern u8 buttonQueue_[];
+extern UnkInputStruct **contpad_buffer;
 
 #endif

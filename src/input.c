@@ -1,9 +1,10 @@
 #include "common.h"
 #include "input.h"
 
-void controller_thread_entry(void *arg);
 void func_8003B6E0(OSSched *scheduler, int*, OSMesgQueue*, int);
-s8 func_800111BC(s8);
+
+void controller_thread_entry(void *arg);
+s8 handle_stick_deadzone(s8 stick);
 
 #if 0 
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_mesg_queue_2.s")
@@ -113,7 +114,7 @@ u16 func_80010C44(int port) {
         return 0;
     }
 
-    return D_800a7f88[controllerPortList[port]].unk0x0 & buttonMask[port];
+    return gContPads[controllerPortList[port]].button & buttonMask[port];
 }
 #endif
 
@@ -160,13 +161,16 @@ u16 get_masked_button_input1(int port) {
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010EC8.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010F78.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_stick_x.s")
 #else
-s8 func_80010F78(int port) {
+/**
+ * Returns the joystick X value of the controller in the given port with a deadzone applied.
+ */
+s8 get_controller_stick_x(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return func_800111BC(D_800a7f88[controllerPortList[port]].unk0x2);
+        return handle_stick_deadzone(gContPads[controllerPortList[port]].stick_x);
     }
 }
 #endif
@@ -174,18 +178,46 @@ s8 func_80010F78(int port) {
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010FC8.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_8001107C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_stick_y.s")
 #else
-s8 func_8001107C(int port) {
+/**
+ * Returns the joystick Y value of the controller in the given port with a deadzone applied.
+ */
+s8 get_controller_stick_y(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return func_800111BC(D_800a7f88[controllerPortList[port]].unk0x3);
+        return handle_stick_deadzone(gContPads[controllerPortList[port]].stick_y);
     }
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_800110CC.s")
+#else
+// Kinda close, but missing something important
+s8 _func_800110CC(int port, int a1) {
+    int bufferIndex;
+
+    if (port > 0) {
+        return 0;
+    } else {
+        if (a1 < 0) {
+            a1 = 0;
+            bufferIndex = buttonQueue_[0] ^ 1;
+        } else {
+            bufferIndex = buttonQueue_[0] ^ 1;
+
+            if (a1 >= buttonQueue_[bufferIndex]) {
+                a1 = buttonQueue_[bufferIndex] - 1;
+            }
+        }
+
+        return handle_stick_deadzone(
+            contpad_buffer[bufferIndex][a1].unk0x0[controllerPortList[port]].stick_y);
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_joy_xy_sign.s")
@@ -196,7 +228,51 @@ void get_joy_xy_sign(int port, s8 *xSign, s8 *ySign) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_800111BC.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/input/handle_stick_deadzone.s")
+#else
+/**
+ * Applies a lower deadzone of -8,8 and upper deadzone of -70,70 to a joystick axis input.
+ * 
+ * For example:
+ * - If stick is between -8 and 8, the returned value is 0
+ * - If stick is greater than 8 or less than -8, the returned value will be moved towards
+ *   zero by 8 and clamped at an upper value of 70 and a lower value of -70.
+ * 
+ * Returns a joystick axis value between [-70, 70].
+ */
+s8 handle_stick_deadzone(s8 stick) {
+    s8 adjustedStick;
+
+    if (D_8008C8B0 != 0) {
+        return 0;
+    }
+
+    if (stick < 8 && stick > -8) {
+        return 0;
+    }
+
+    if (stick > 0) {
+        stick = stick - 8;
+
+        if (stick > 70) {
+            stick = 70;
+        }
+
+        adjustedStick = stick;
+    } else {
+        stick = stick + 8;
+
+        if (stick < -70) {
+            stick = -70;
+        }
+
+        adjustedStick = stick;
+    }
+
+    return adjustedStick;
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_8001124C.s")
