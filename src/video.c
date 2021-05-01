@@ -237,7 +237,7 @@ void func_8005CDFC(int _) {
 /**
  * Sets gVideoMode.
  */
-void set_video_mode(u32 mode) {
+void set_video_mode(s32 mode) {
     gVideoMode = mode;
 }
 #endif
@@ -248,7 +248,7 @@ void set_video_mode(u32 mode) {
 /**
  * Returns gVideoMode.
  */
-u32 get_video_mode() {
+s32 get_video_mode() {
     return gVideoMode;
 }
 #endif
