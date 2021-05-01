@@ -237,7 +237,7 @@ void func_8005CDFC(int _) {
 /**
  * Sets gVideoMode.
  */
-void set_video_mode(u32 mode) {
+void set_video_mode(s32 mode) {
     gVideoMode = mode;
 }
 #endif
@@ -248,7 +248,7 @@ void set_video_mode(u32 mode) {
 /**
  * Returns gVideoMode.
  */
-u32 get_video_mode() {
+s32 get_video_mode() {
     return gVideoMode;
 }
 #endif
@@ -286,7 +286,7 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
  * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-s32 get_some_resolution_encoded() {
+u32 get_some_resolution_encoded() {
     u32 var1;
     int flag;
 
