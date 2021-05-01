@@ -69,21 +69,21 @@ typedef struct {
  * Function Prototypes
  */
 
-extern int guLoadTextureBlockMipMap(Gfx **glist, unsigned char *tbuf, Image *im, 
-		unsigned char startTile, unsigned char pal, unsigned char cms, 
-		unsigned char cmt, unsigned char masks, unsigned char maskt, 
-		unsigned char shifts, unsigned char shiftt, unsigned char cfs, 
-		unsigned char cft);
+// extern int guLoadTextureBlockMipMap(Gfx **glist, unsigned char *tbuf, Image *im, 
+// 		unsigned char startTile, unsigned char pal, unsigned char cms, 
+// 		unsigned char cmt, unsigned char masks, unsigned char maskt, 
+// 		unsigned char shifts, unsigned char shiftt, unsigned char cfs, 
+// 		unsigned char cft);
 
 extern int 	guGetDPLoadTextureTileSz (int ult, int lrt);
-extern void 	guDPLoadTextureTile (Gfx *glistp, void *timg,
-			int texl_fmt, int texl_size,
-			int img_width, int img_height,
-			int uls, int ult, int lrs, int lrt,
-			int palette,
-			int cms, int cmt,
-			int masks, int maskt,
-			int shifts, int shiftt);
+// extern void 	guDPLoadTextureTile (Gfx *glistp, void *timg,
+// 			int texl_fmt, int texl_size,
+// 			int img_width, int img_height,
+// 			int uls, int ult, int lrs, int lrt,
+// 			int palette,
+// 			int cms, int cmt,
+// 			int masks, int maskt,
+// 			int shifts, int shiftt);
 
 
 /* 

@@ -147,35 +147,14 @@ void func_80041210(Gfx **gdl)
 void dl_set_geometry_mode(Gfx **gdl, u32 mode)
 {
     mode |= gDLBuilder->unk_0x10;
-
-    // FIXME: This macro requires the use of #define F3DEX_GBI_2x, but gbi.h fails if it is defined.
-    // gSPSetGeometryMode(*gdl, mode);
-    {
-        Gfx *_g = (Gfx *)((*gdl));
-                                        \
-        _g->words.w0 = _SHIFTL(G_GEOMETRYMODE, 24, 8);
-        _g->words.w1 = (unsigned int)(mode);
-    }
-
+    gSPLoadGeometryMode(*gdl, mode);
     func_80041210(gdl);
 }
 
 void dl_clear_geometry_mode(Gfx **gdl, u32 mode)
 {
     mode = gDLBuilder->unk_0x10 & ~mode;
-
-    // FIXME: This macro requires the use of #define F3DEX_GBI_2x, but gbi.h fails if it is defined.
-    // gSPSetGeometryMode(*gdl, mode);
-    {
-        Gfx *_g = (Gfx *)((*gdl));
-                   
-        // FIXME: does this actually clear geometry mode bits?
-        // then why does it call gSPSetGeometryMode?
-        // gSPClearGeometryMode puts bits to clear in w0.
-        _g->words.w0 = _SHIFTL(G_GEOMETRYMODE, 24, 8);
-        _g->words.w1 = (unsigned int)(mode);
-    }
-
+    gSPLoadGeometryMode(*gdl, mode);
     func_80041210(gdl);
 }
 
@@ -332,15 +311,17 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
 void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 {
     s32 n;
+    DLTri *tri;
 
-    for (n = triCount >> 1; n != 0; n--)
+    for (n = triCount >> 1; n != 0; n--, tris += 2)
     {
-        gSP2Triangles((*gdl)++, tris[0].v0, tris[0].v1, tris[0].v2, 0, tris[1].v0, tris[1].v1, tris[1].v2, 0);
-        tris += 2;
+        tri = tris;
+        gSP2Triangles((*gdl)++, tri[0].v0, tri[0].v1, tri[0].v2, 0, tri[1].v0, tri[1].v1, tri[1].v2, 0);
     }
 
     if (triCount & 1) {
-        gSP1Triangle((*gdl)++, tris->v0, tris->v1, tris->v2, 0);
+        tri = tris;
+        gSP1Triangle((*gdl)++, tri[0].v0, tri[0].v1, tri[0].v2, 0);
     }
 
     gDLBuilder->needsPipeSync = TRUE;
