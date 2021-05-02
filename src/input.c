@@ -41,24 +41,18 @@ void func_80010238() {
 }
 #endif
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/init_controller_data.s")
 #else
-// Functionally equivalent, extremely close to matching
-/**
- * Initializes SI settings and controller globals.
- * 
- * @returns The index of the last valid inserted controller.
- * For example, if one controller is inserted, 0 will be returned.
- * If no controllers are inserted, -1 will be returned.
- */
-s32 _init_controller_data() {
+s32 init_controller_data() {
     s32 lastControllerIndex;
     s32 i;
     // Bits 0-3 specify which controllers are inserted
     u8 contBitpattern;
 
     // Initialize SI settings
+    //
+    // osContInit requires a message queue associated with SI interrupts
     osCreateMesgQueue(
         &gContInterruptQueue, 
         &gContInterruptBuffer[0],
@@ -72,6 +66,7 @@ s32 _init_controller_data() {
     osContStartReadData(&gContInterruptQueue);
 
     // Setup controller port mapping
+    // TODO: verify this comment
     setup_controller_port_list();
 
     gNoControllers = FALSE;
@@ -79,9 +74,10 @@ s32 _init_controller_data() {
     // Initialize gContPads memory
     bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
 
+    // TODO: comment this
     menuInputDelay = 5;
 
-    // Initialize controller input globals and determine how many controllers are inserted and valid
+    // Initialize controller input globals and determine how many controllers are inserted
     lastControllerIndex = -1;
 
     for (i = 0; i != MAXCONTROLLERS; ++i) {
@@ -92,6 +88,7 @@ s32 _init_controller_data() {
         buttonInput0[i] = 0;
         buttonInput1[i] = 0;
         
+        // Note: Must check bitpattern and errno to determine if a controller is inserted
         if ((contBitpattern & (1 << i)) && !(gContStatuses[i].errno & CONT_NO_RESPONSE_ERROR)) {
             lastControllerIndex = i;
         }
@@ -142,6 +139,7 @@ void start_controller_thread(OSSched *scheduler) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/setup_controller_port_list.s")
 #else
+// Functionally equivalent
 void _setup_controller_port_list() {
     int i;
 

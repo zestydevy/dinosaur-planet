@@ -57,10 +57,21 @@ extern u8 buttonQueue_[];
 extern UnkInputStruct **contpad_buffer;
 
 /**
- * If TRUE, no valid/inserted controllers were detected.
+ * If TRUE, no controllers are inserted.
  * 
  * @see init_controller_data
  */
 extern s32 gNoControllers;
+
+/**
+ * Initializes SI settings and controller globals.
+ * 
+ * @returns The index of the last inserted controller.
+ * For example, if one controller is inserted, 0 will be returned.
+ * If no controllers are inserted, -1 will be returned.
+ */
+s32 init_controller_data();
+
+void start_controller_thread(OSSched *scheduler);
 
 #endif

@@ -457,7 +457,13 @@ extern u8 D_8008C94C;
 extern s32 D_800B179C;
 extern s32 D_800A7D14;
 extern s32 D_800A7D10;
-extern s8 some_controller_init_val;
+/**
+ * The index of the last inserted controller.
+ * 
+ * For example, if one controller is inserted then this will be 0.
+ * If no controllers are inserted, this will be -1.
+ */
+extern s8 gLastInsertedControllerIndex;
 extern s32 PlayerPosBuffer_index;
 extern struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with "timestamp"
 
@@ -472,8 +478,8 @@ extern u16 buttonMask[MAXCONTROLLERS]; // starts as 0xFFFF, buttons sometimes ge
 extern u8 controllerPortList[MAXCONTROLLERS]; 
 extern s8 joyXMirror[MAXCONTROLLERS];
 extern s8 joyYMirror[MAXCONTROLLERS];
-extern u8 joyXHoldTimer[MAXCONTROLLERS]; // resets after hitting menuInputDelay's value.
-extern u8 joyYHoldTimer[MAXCONTROLLERS];
+extern s8 joyXHoldTimer[MAXCONTROLLERS]; // resets after hitting menuInputDelay's value.
+extern s8 joyYHoldTimer[MAXCONTROLLERS];
 extern s8 joyXSign[MAXCONTROLLERS]; //1, 0, or -1 based on input.
 extern s8 joyYSign[MAXCONTROLLERS];
 extern s8 menuInputDelay; //init'd to 5.
