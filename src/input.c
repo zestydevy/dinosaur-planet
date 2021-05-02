@@ -5,12 +5,17 @@ void func_8003B6E0(OSSched *scheduler, int*, OSMesgQueue*, int);
 
 void controller_thread_entry(void *arg);
 s8 handle_stick_deadzone(s8 stick);
+void setup_controller_port_list();
 
 #if 0 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_mesg_queue_2.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_interrupt_queue.s")
 #else
-OSMesgQueue *get_controller_mesg_queue_2() {
-    return &gControllerMesgQueue2;
+/**
+ * @returns The message queue associated with SI controller interrupts.
+ * This is the same message queue that is passed to osContInit.
+ */
+OSMesgQueue *get_controller_interrupt_queue() {
+    return &gContInterruptQueue;
 }
 #endif
 
@@ -20,7 +25,7 @@ OSMesgQueue *get_controller_mesg_queue_2() {
 void func_80010200() {
     D_800A8618 = 0xa;
 
-    osSendMesg(&gControllerMesgQueue, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
+    osSendMesg(&gControllerMesgQueue2, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
 }
 #endif
 
@@ -30,30 +35,92 @@ void func_80010200() {
 void func_80010238() {
     D_800A8618 = 0xa;
 
-    osSendMesg(&gControllerMesgQueue, &D_800A8618, OS_MESG_NOBLOCK);
+    osSendMesg(&gControllerMesgQueue2, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
 
     osRecvMesg(&gControllerMesgQueue3, NULL, OS_MESG_BLOCK);
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/init_controller_data.s")
+#else
+// Functionally equivalent, extremely close to matching
+/**
+ * Initializes SI settings and controller globals.
+ * 
+ * @returns The index of the last valid inserted controller.
+ * For example, if one controller is inserted, 0 will be returned.
+ * If no controllers are inserted, -1 will be returned.
+ */
+s32 _init_controller_data() {
+    s32 lastControllerIndex;
+    s32 i;
+    // Bits 0-3 specify which controllers are inserted
+    u8 contBitpattern;
+
+    // Initialize SI settings
+    osCreateMesgQueue(
+        &gContInterruptQueue, 
+        &gContInterruptBuffer[0],
+        CONT_INTERRUPT_BUFFER_LENGTH);
+
+    osSetEventMesg(OS_EVENT_SI, &gContInterruptQueue, gContInterruptMessage);
+
+    osContInit(&gContInterruptQueue, &contBitpattern, &gContStatuses[0]);
+    
+    // Start reading controller input
+    osContStartReadData(&gContInterruptQueue);
+
+    // Setup controller port mapping
+    setup_controller_port_list();
+
+    gNoControllers = FALSE;
+
+    // Initialize gContPads memory
+    bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
+
+    menuInputDelay = 5;
+
+    // Initialize controller input globals and determine how many controllers are inserted and valid
+    lastControllerIndex = -1;
+
+    for (i = 0; i != MAXCONTROLLERS; ++i) {
+        joyXMirror[i] = joyYMirror[i] = 0;
+        joyYHoldTimer[i] = joyXHoldTimer[i] = 0;
+        joyXSign[i] = joyYSign[i] = 0;
+        
+        buttonInput0[i] = 0;
+        buttonInput1[i] = 0;
+        
+        if ((contBitpattern & (1 << i)) && !(gContStatuses[i].errno & CONT_NO_RESPONSE_ERROR)) {
+            lastControllerIndex = i;
+        }
+    }
+
+    if (lastControllerIndex == -1) {
+        gNoControllers = TRUE;
+    }
+
+    return lastControllerIndex;
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/start_controller_thread.s")
 #else
 void start_controller_thread(OSSched *scheduler) {
     osCreateMesgQueue(
-        /*mq*/      &gControllerMesgQueue, 
-        /*msg*/     &gControllerMesgQueue_Array[0], 
-        /*count*/   CONTROLLER_MESG_QUEUE_LENGTH
+        /*mq*/      &gControllerMesgQueue2, 
+        /*msg*/     &gControllerMesgQueue2Buffer[0], 
+        /*count*/   CONTROLLER_MESG_BUFFER_2_LENGTH
     );
 
-    func_8003B6E0(scheduler, &D_800A8608, &gControllerMesgQueue, 2);
+    func_8003B6E0(scheduler, &D_800A8608, &gControllerMesgQueue2, 2);
 
     osCreateMesgQueue(
         /*mq*/      &gControllerMesgQueue3, 
-        /*msg*/     &gControllerMesgQueue3_Array[0], 
-        /*count*/   CONTROLLER_MESG_QUEUE_3_LENGTH
+        /*msg*/     &gControllerMesgQueue3Buffer[0], 
+        /*count*/   CONTROLLER_MESG_BUFFER_3_LENGTH
     );
 
     // Create and start controller thread
