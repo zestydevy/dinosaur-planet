@@ -16,8 +16,13 @@
 #define CONTROLLER_MESG_BUFFER_3_LENGTH 1
 
 typedef struct _UnkInputStruct {
-    OSContPad *unk0x0;
-    u8 _padding[40 - sizeof(OSContPad)];
+    OSContPad unk0x0[MAXCONTROLLERS];
+    u16 unk0x18;
+    u16 unk0x1a;
+    u8 unk0x1c_pad[2];
+    u16 unk0x1e;
+    u16 unk0x20;
+    u8 unk0x22_pad[6];
 } UnkInputStruct;
 
 extern u16 D_8008C8A4;
@@ -54,7 +59,9 @@ extern s16 D_800A8618;
 extern OSContPad gContPads[MAXCONTROLLERS];
 
 extern u8 buttonQueue_[];
-extern UnkInputStruct **contpad_buffer;
+extern UnkInputStruct *contpad_buffer[2];
+
+extern u8 D_800A7DB2[2];
 
 /**
  * If TRUE, no controllers are inserted.

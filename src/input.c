@@ -257,30 +257,29 @@ s8 get_controller_stick_y(int port) {
 }
 #endif
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_800110CC.s")
 #else
-// Kinda close, but missing something important
-s8 _func_800110CC(int port, int a1) {
-    int bufferIndex;
-
+s8 func_800110CC(int port, int a1) {
+    OSContPad *pads;
+    UnkInputStruct *buffer;
+    
     if (port > 0) {
         return 0;
-    } else {
-        if (a1 < 0) {
-            a1 = 0;
-            bufferIndex = buttonQueue_[0] ^ 1;
-        } else {
-            bufferIndex = buttonQueue_[0] ^ 1;
-
-            if (a1 >= buttonQueue_[bufferIndex]) {
-                a1 = buttonQueue_[bufferIndex] - 1;
-            }
-        }
-
-        return handle_stick_deadzone(
-            contpad_buffer[bufferIndex][a1].unk0x0[controllerPortList[port]].stick_y);
     }
+
+    if (a1 < 0) {
+        a1 = 0;
+    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    }
+
+    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = &buffer[a1];
+
+    pads = buffer->unk0x0;
+
+    return handle_stick_deadzone(pads[controllerPortList[port]].stick_y);
 }
 #endif
 
