@@ -183,7 +183,31 @@ u16 func_80010C44(int port) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_with_controller_buffer.s")
+#else
+u16 func_with_controller_buffer(int port, int a1) {
+    OSContPad *pads;
+    UnkInputStruct *buffer;
+    
+    if (port > 0) {
+        return 0;
+    }
+
+    if (a1 < 0) {
+        a1 = 0;
+    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    }
+
+    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = &buffer[a1];
+
+    pads = buffer->unk0x0;
+
+    return pads[controllerPortList[port]].button & buttonMask[port];
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_press.s")
@@ -209,7 +233,28 @@ u16 get_button_press(int port) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010DCC.s")
+#else
+u16 func_80010DCC(int port, int a1) {
+    UnkInputStruct *buffer;
+    
+    if (port > 0) {
+        return 0;
+    }
+
+    if (a1 < 0) {
+        a1 = 0;
+    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    }
+
+    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = &buffer[a1];
+
+    return buffer->unk0x18[controllerPortList[port]] & buttonMask[port];
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_input1.s")
@@ -223,7 +268,28 @@ u16 get_masked_button_input1(int port) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010EC8.s")
+#else
+u16 func_80010EC8(int port, int a1) {
+    UnkInputStruct *buffer;
+    
+    if (port > 0) {
+        return 0;
+    }
+
+    if (a1 < 0) {
+        a1 = 0;
+    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    }
+
+    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = &buffer[a1];
+
+    return buffer->unk0x20[controllerPortList[port]] & buttonMask[port];
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_stick_x.s")
@@ -240,7 +306,31 @@ s8 get_controller_stick_x(int port) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010FC8.s")
+#else
+s8 func_80010FC8(int port, int a1) {
+    OSContPad *pads;
+    UnkInputStruct *buffer;
+    
+    if (port > 0) {
+        return 0;
+    }
+
+    if (a1 < 0) {
+        a1 = 0;
+    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    }
+
+    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = &buffer[a1];
+
+    pads = buffer->unk0x0;
+
+    return handle_stick_deadzone(pads[controllerPortList[port]].stick_x);
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_stick_y.s")

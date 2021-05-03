@@ -17,12 +17,8 @@
 
 typedef struct _UnkInputStruct {
     OSContPad unk0x0[MAXCONTROLLERS];
-    u16 unk0x18;
-    u16 unk0x1a;
-    u8 unk0x1c_pad[2];
-    u16 unk0x1e;
-    u16 unk0x20;
-    u8 unk0x22_pad[6];
+    u16 unk0x18[MAXCONTROLLERS];
+    u16 unk0x20[MAXCONTROLLERS];
 } UnkInputStruct;
 
 extern u16 D_8008C8A4;
