@@ -522,6 +522,7 @@ __osPfsInodeCacheBank = 0x800981f4; // type:data size:0x1
 __rmonActive = 0x80098200; // type:data size:0x4
 FLOAT_80098388 = 0x80098388; // type:data size:0x4
 FLOAT_8009838c = 0x8009838c; // type:data size:0x4
+FLOAT_8009a9c4 = 0x8009a9c4; // type:data size:0x4
 n_resample_rodata_0000 = 0x800a2730; // type:data size:0x8
 n_resample_rodata_0008 = 0x800a2738; // type:data size:0x4
 __osRcpImTable = 0x800a2760; // type:data

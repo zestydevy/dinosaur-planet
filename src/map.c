@@ -984,6 +984,8 @@ void _block_setup_gdl_groups(Block *block)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_vertices.s")
 #else
+extern f32 FLOAT_8009a9c4; // 8191.0f
+f32 _sqrtf(f32 x);
 void _block_setup_vertices(Block *block)
 {
     s32 i;
@@ -991,29 +993,32 @@ void _block_setup_vertices(Block *block)
     for (i = 0; i < block->shapeCount; i++)
     {
         BlockShape *shape = &block->shapes[i];
-        Gfx *pgdl = &block->gdl0x8[shape->gdlBase];
-        Gfx *pgdlend = &block->gdl0x8[shape[1].gdlBase];
+        EncodedTri *ptri = &block->encodedTris[shape->triBase];
+        EncodedTri *ptriend = &block->encodedTris[shape[1].triBase];
         Vtx_t *pverts = &block->vertices[shape->vtxBase];
 
-        while (pgdl < pgdlend)
+        for (; ptri < ptriend; ptri++)
         {
-            u8 v0 = ((u8*)pgdl)[1];
-            u8 v1 = ((u8*)pgdl)[2];
-            u8 v2 = ((u8*)pgdl)[3];
             Vtx_t *verts[3];
             s16 vx[3];
             s16 vy[3];
             s16 vz[3];
             f32 nx, ny, nz;
+            s32 inx, iny, inz;
             s32 j;
             f32 mag;
+            u8 v0, v1, v2;
 
-            pgdl->words.w0 = (v0 << 13) | (v1 << 7) | (v2 << 1);
-            pgdl->words.w1 = 0;
-
+            v0 = ((u8*)ptri)[1];
             verts[0] = &pverts[v0];
+            v1 = ((u8*)ptri)[2];
             verts[1] = &pverts[v1];
+            v2 = ((u8*)ptri)[3];
             verts[2] = &pverts[v2];
+
+            ptri->d0 = (v2 << 13) | (v1 << 7) | (v0 << 1);
+            ptri->d1 = 0;
+
 
             for (j = 0; j < 3; j++)
             {
@@ -1033,12 +1038,14 @@ void _block_setup_vertices(Block *block)
                 nz /= mag;
             }
 
-            pgdl->words.w0 |= (s32)(nx * 8191.0f) << 18;
-            pgdl->words.w1 |= ((s32)(ny * 8191.0f) & 0x3fff) << 4;
-            pgdl->words.w1 |= (s32)(nz * 8191.0f) << 18;
-            pgdl->words.w1 |= 0x1;
+            inx = nx * FLOAT_8009a9c4; /* 8191.0f */
+            iny = ny * FLOAT_8009a9c4; /* 8191.0f */
+            inz = nz * FLOAT_8009a9c4; /* 8191.0f */
 
-            pgdl++;
+            ptri->d0 |= inx << 18;
+            ptri->d1 |= (iny & 0x3fff) << 4;
+            ptri->d1 |= inz << 18;
+            ptri->d1 |= 0x1;
         }
 
         if (shape->flags & 0x100000) {
