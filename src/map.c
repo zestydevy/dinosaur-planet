@@ -68,6 +68,8 @@ typedef struct
 /*0030*/    s16 vtxFlags;
 /*0032*/    u8 unk_0x32[0x36 - 0x32];
 /*0036*/    s16 shapeCount;
+/*0038*/    u8 unk_0x38[0x40 - 0x38];
+/*0040*/    s16 elevation;
 } Block;
 
 typedef struct
@@ -108,6 +110,12 @@ typedef struct
 extern f32 gWorldX;
 extern f32 gWorldZ;
 extern Plane gFrustumPlanes[5];
+#define MAX_RENDER_LIST_LENGTH 400
+extern u32 gRenderList[MAX_RENDER_LIST_LENGTH];
+extern s16 gRenderListLength;
+#define MAX_BLOCKS 40
+extern Block *gBlocks[MAX_BLOCKS];
+extern s16 gBlocksIdx;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/dl_set_all_dirty.s")
 
@@ -446,9 +454,6 @@ u32 func_80041DA4()
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
 #else
-extern u32 gRenderList[2]; // TODO: how many?
-extern s16 gRenderListLength;
-extern Block *gBlocks[2]; // TOdO: how many?
 extern Gfx *gMainDL;
 extern s16 SHORT_800b51dc;
 extern u32 UINT_800b51e0;
@@ -676,7 +681,55 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043E00.s")
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/map/block_add_to_render_list.s")
+#else
+extern Mtx *gWorldRSPMatrices;
+void matrix_scaling(MtxF *mf, f32 sx, f32 sy, f32 sz);
+void matrix_translation(MtxF *mf, f32 x, f32 y, f32 z);
+void _block_add_to_render_list(Block *block, f32 x, f32 z)
+{
+    s32 oldRenderListLength = gRenderListLength;
+    s32 i;
+
+    for (i = 0; i < block->shapeCount; i++)
+    {
+        u32 shapeFlags = block->shapes[i].flags;
+        
+        if ((shapeFlags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH)
+        {
+            s32 param;
+            if (shapeFlags & 0x4) {
+                param = gBlocksIdx * -400 + 100000 - i;
+                if (shapeFlags & 0x2000) {
+                    param -= 200;
+                }
+            } else {
+                param = gBlocksIdx * -400 + 200000 - i;
+            }
+
+            gRenderList[gRenderListLength] = (param << 14) | (i << 7) | gBlocksIdx;
+            gRenderListLength++;
+        }
+    }
+
+    if (gRenderListLength != oldRenderListLength && gBlocksIdx < MAX_BLOCKS)
+    {
+        MtxF mf, mf2;
+
+        gBlocks[gBlocksIdx] = block;
+        gBlocksIdx++;
+        matrix_translation(&mf, x, 0.0f, z);
+        matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+        gWorldRSPMatrices++;
+        mf.m[3][1] = block->elevation;
+        matrix_scaling(&mf2, 1.0f, 0.05f, 1.0f);
+        matrix_concat(&mf2, &mf, &mf);
+        matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+        gWorldRSPMatrices++;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043FD8.s")
 

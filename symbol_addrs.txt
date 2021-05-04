@@ -928,16 +928,16 @@ inflate = 0x8003a4b4; // type:func
 read_le32 = 0x8003a418; // type:func
 
 draw_render_list = 0x80042da0; // type:func
+block_add_to_render_list = 0x80043e00; // type:func
 
-// TODO: what size?
-gRenderList = 0x800b4ae4; // type:data size:0x8
+gRenderList = 0x800b4ae0; // type:data size:0x640
 gRenderListLength = 0x800b5120; // type:data size:0x2
-// TODO: what size?
-gBlocks = 0x800b5128; // type:data size:0x8
+gBlocks = 0x800b5128; // type:data size:0xa0
+gBlocksIdx = 0x800b51c8; // type:data size:0x2
 gMainDL = 0x800b51cc; // type:data size:0x4
+gWorldRSPMatrices = 0x800b51d0; // type:data size:0x4
 SHORT_800b51dc = 0x800b51dc; // type:data size:0x2
 UINT_800b51e0 = 0x800b51e0; // type:data size:0x4
-
 
 map_get_is_object_streaming_disabled = 0x800129c4; // type:func
 map_get_map_id_from_xz_ws = 0x80044810; // type:func
@@ -1042,7 +1042,7 @@ matrix_f2l_translate_only = 0x800154d4; // type:func
 matrix_from_srt = 0x800156b8; // type:func
 matrix_prescale_y = 0x8001588c; // type:func
 matrix_from_srt_reversed = 0x800158fc; // type:func
-mat4_ident_translate = 0x80015f7c; // type:func
+matrix_translation = 0x80015f7c; // type:func
 matrix_scaling = 0x80015fc8; // type:func
 fsin16_precise = 0x80016110; // type:func
 fcos16_precise = 0x80016144; // type:func

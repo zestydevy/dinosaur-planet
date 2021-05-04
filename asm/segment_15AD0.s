@@ -1127,7 +1127,7 @@ glabel func_80015F1C
 /* 16B74 80015F74 03E00008 */  jr         $ra
 /* 16B78 80015F78 00000000 */   nop
 
-glabel mat4_ident_translate
+glabel matrix_translation
 /* 16B7C 80015F7C 00804025 */  or         $t0, $a0, $zero
 /* 16B80 80015F80 25090040 */  addiu      $t1, $t0, 0x40
 .L80015F84:
