@@ -127,7 +127,7 @@ void game_init(void)
         D_8008CA0C = dll_load_deferred(0x21, 0x16);
         D_8008CA10 = dll_load_deferred(0x3B, 2);
         D_8008CA14 = dll_load_deferred(0x36, 0xC);
-        D_8008C9AC = dll_load_deferred(0x39, 4);
+        gDLL_57 = dll_load_deferred(0x39, 4);
         D_8008C9B0 = dll_load_deferred(0x3A, 2);
         (*D_8008C9FC)->unk4.asVoid();
     }

@@ -335,7 +335,7 @@ void asset_thread_load_single(void) {
                 }
                 break;
             case 1:
-                func_80048724(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
+                block_load(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
                 break;
             case 0:
                 func_80012D04(0, sp2C.unk4, func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);

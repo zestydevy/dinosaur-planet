@@ -418,11 +418,12 @@ extern OSThread gMainThread;
 extern u64 gMainThreadStack[];        // some sort of data
 
 extern u8 D_8008C940;
+extern void ***gDLL_57;
 extern struct UnkStruct80014614
             **D_8008C970, **D_8008C974, **D_8008C978, **gDLL_ANIM,
             **D_8008C980, **D_8008C984, **gDLL_newclouds, **gDLL_newstars,
             **gDLL_minic, **D_8008C994, **gDLL_Race, **gDLL_AMSEQ,
-            **gDLL_AMSEQ2, **gDLL_AMSFX, **gDLL_newlfx, **D_8008C9AC,
+            **gDLL_AMSEQ2, **gDLL_AMSFX, **gDLL_newlfx,
             **D_8008C9B0, **gDLL_expgfx, **gDLL_modgfx, **gDLL_projgfx,
             **D_8008C9C0, **D_8008C9C4, **D_8008C9C8, **gDLL_SCREENS,
             **gDLL_text, **gDLL_subtitles, **D_8008C9D8, **gDLL_waterfx,
