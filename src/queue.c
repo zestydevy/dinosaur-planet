@@ -192,7 +192,7 @@ void func_80012A4C(void) {
                 }
                 break;
             case 1:
-                func_80049024(sp24.unk4, sp24.unk8, sp24.unkC, sp24.unk10);
+                block_emplace(sp24.unk4, sp24.unk8, sp24.unkC, sp24.unk10);
                 break;
             case 6:
                 if (1) {};
@@ -241,10 +241,11 @@ void _func_80012B54(s32 arg0, s32 arg1) {
 }
 #endif
 
+// FIXME: should be a different name?
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012D04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/queue/queue_block_emplace.s")
 #else
-void _func_80012D04(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+void _queue_block_emplace(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 sp34;
     s32 sp30;
     s32 sp2C;
@@ -326,22 +327,22 @@ void asset_thread_load_single(void) {
         set_status_reg(sp28);
         switch (sp2C.unk0) {
             case 5:
-                func_80012D04(5, objSetupObjectActual(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
+                queue_block_emplace(5, objSetupObjectActual(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
                 break;
             case 3:
                 tmp = texture_load(sp2C.unk8, 0);
                 if (sp2C.unk4 != 0) {
-                    func_80012D04(3, sp2C.unk4, tmp, 0, 0);
+                    queue_block_emplace(3, sp2C.unk4, tmp, 0, 0);
                 }
                 break;
             case 1:
                 block_load(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
                 break;
             case 0:
-                func_80012D04(0, sp2C.unk4, func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
+                queue_block_emplace(0, sp2C.unk4, func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
                 break;
             case 6:
-                func_80012D04(6, sp2C.unk4, func_80007620(sp2C.unk8, sp2C.unkC), 0, 0);
+                queue_block_emplace(6, sp2C.unk4, func_80007620(sp2C.unk8, sp2C.unkC), 0, 0);
                 break;
             default:
                 break;

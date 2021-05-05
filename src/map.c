@@ -61,15 +61,22 @@ typedef struct
 /*0004*/    Vtx_t *vertices;
 /*0008*/    EncodedTri *encodedTris;
 /*000C*/    BlockShape *shapes;
-/*0010*/    u8 unk_0x10[0x20 - 0x10];
+/*0010*/    void *unk_0x10;
+/*0014*/    s16 *xzBitmap;
+/*0018*/    u8 unk_0x18[0x20 - 0x18];
 /*0020*/    Vtx_t *vertices2[2];
 /*0028*/    void *unk_0x28;
 /*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
 /*0030*/    s16 vtxFlags;
-/*0032*/    u8 unk_0x32[0x36 - 0x32];
+/*0032*/    s16 vtxCount;
+/*0034*/    s16 unk_0x34;
 /*0036*/    s16 shapeCount;
-/*0038*/    u8 unk_0x38[0x40 - 0x38];
+/*0038*/    u8 unk_0x38[0x3e - 0x38];
+/*003E*/    s16 unk_0x3e;
 /*0040*/    s16 elevation;
+/*0044*/    u16 gdlGroupsOffset;
+/*0046*/    u8 unk_0x46[0x4a - 0x46];
+/*004A*/    u8 textureCount;
 } Block;
 
 typedef struct
@@ -881,7 +888,134 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800485FC.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_load.s")
+#else
+extern u32 *gFile_BLOCKS_TAB;
+extern u8 *gMapReadBuffer;
+void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
+{
+    u32 allocSize;
+    u32 offset;
+    u32 compressedSize;
+    u32 uncompressedSize;
+    u8 *compressedData;
+    Block *block;
+    u8 *p;
+    s32 n;
+    u32 i;
+
+    offset = gFile_BLOCKS_TAB[id];
+    compressedSize = gFile_BLOCKS_TAB[id + 1] - offset;
+    read_file_region(BLOCKS_BIN, gMapReadBuffer, offset, 0x10);
+
+    uncompressedSize = *(u32*)gMapReadBuffer;
+    allocSize = uncompressedSize + hits_get_size(id) + 0x8;
+    block = malloc(allocSize, 5, NULL);
+    if (block == NULL) {
+        return;
+    }
+
+    compressedData = (u8*)block + allocSize - compressedSize - 0x10;
+    if ((s32)compressedData < 0) {
+        // Align to 16 bytes
+        u32 align = (u32)compressedData & 0xf;
+        if (align != 0) {
+            align -= 16;
+        }
+        compressedData -= align;
+    }
+
+    read_file_region(BLOCKS_BIN, compressedData, offset, compressedSize);
+    inflate(compressedData + 4, block);
+
+    // Convert offsets to pointers
+    block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);
+    block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
+    block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
+    block->unk_0x10 = (void*)((u32)block->unk_0x10 + (u32)block);
+    block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
+
+    func_8003CD6C(7);
+
+    for (i = 0; i < block->textureCount; i++) {
+        block->tiles[i].texture = texture_load(-((s32)block->tiles[i].texture | 0x8000));
+    }
+
+    func_8003CD6C(6);
+
+    block_setup_vertices(block);
+
+    block->gdlGroups = (Gfx*)(block->gdlGroupsOffset + (u32)block);
+    block_setup_gdl_groups(block);
+
+    p = block->gdlGroups + block->shapeCount * 3;
+    func_80048B14(block);
+
+    if (block->vtxFlags & 0x8)
+    {
+        Vtx_t *vtx = align_8(p);
+        Vtx_t *srcvtx = block->vertices;
+        BlockShape *shape;
+
+        block->vertices2[0] = vtx;
+        block->vertices2[1] = &vtx[block->vtxCount];
+
+        p = vtx + block->vtxCount * 2;
+
+        shape = block->shapes;
+        for (i = 0; i < block->vtxCount; i++)
+        {
+            if (shape->flags & 0x20000000) {
+                vtx[i].ob[0] = (f32)srcvtx[i].ob[0];
+                vtx[i].ob[1] = (srcvtx[i].ob[1] - block->elevation) * 20.0f;
+                vtx[i].ob[2] = (f32)srcvtx[i].ob[2];
+            } else {
+                vtx[i].ob[0] = srcvtx[i].ob[0];
+                vtx[i].ob[1] = srcvtx[i].ob[1];
+                vtx[i].ob[2] = srcvtx[i].ob[2];
+            }
+
+            vtx[i].cn[0] = srcvtx[i].cn[0];
+            vtx[i].cn[1] = srcvtx[i].cn[1];
+            vtx[i].cn[2] = srcvtx[i].cn[2];
+            vtx[i].cn[3] = srcvtx[i].cn[3];
+            vtx[i].tc[0] = srcvtx[i].tc[0];
+            vtx[i].tc[1] = srcvtx[i].tc[1];
+            vtx[i].flag = srcvtx[i].flag;
+
+            if (i >= shape[1].vtxBase) {
+                shape++;
+            }
+        }
+
+        _bcopy(block->vertices2[0], block->vertices2[1], block->vtxCount * sizeof(Vtx_t));
+    }
+    else
+    {
+        block->vertices2[0] = block->vertices;
+        block->vertices2[1] = block->vertices;
+    }
+
+    p = align_4(p);
+    block->unk_0x28 = p;
+
+    n = block_setup_textures(block);
+
+    p = align_2(p + n);
+    block->xzBitmap = p;
+    block_setup_xz_bitmap(block);
+
+    p = align_8(p + block->unk_0x34 * sizeof(s16));
+    block_load_hits(block, id, queue, p);
+
+    if (queue) {
+        queue_block_emplace(1, block, id, param_2);
+    } else {
+        block_emplace(block, id, param_2, globalMapIdx);
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048B14.s")
 
@@ -893,7 +1027,41 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048F58.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049024.s")
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/map/block_emplace.s")
+#else
+extern u8 gLoadedBlockCount;
+extern s16 *gLoadedBlockIds;
+extern s8 *gBlockIndices[2]; // FIXME: how many?
+extern u8 *gBlockRefCounts;
+extern Block **gLoadedBlocks;
+void _block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
+{
+    s32 slot;
+
+    for (slot = 0; slot < gLoadedBlockCount; slot++) {
+        if (gLoadedBlockIds[slot] == -1) {
+            break;
+        }
+    }
+
+    if (slot == gLoadedBlockCount) {
+        gLoadedBlockCount++;
+    }
+
+    gBlockIndices[globalMapIdx][param_3] = slot;
+    gLoadedBlocks[slot] = block;
+    gLoadedBlockIds[slot] = id;
+    gBlockRefCounts[slot] = 1;
+
+    if (block->unk_0x3e != 0) {
+        block_compute_vertex_colors(block, 0, 0, 1);
+    }
+
+    func_80058F3C();
+}
+#endif
 
 // close
 #if 1
@@ -1059,7 +1227,16 @@ void _block_setup_vertices(Block *block)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800496E4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004984C.s")
+// regalloc
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/map/hits_get_size.s")
+#else
+extern u32 *gFile_HITS_TAB;
+u32 _hits_get_size(s32 id)
+{
+    return gFile_HITS_TAB[id + 1] - gFile_HITS_TAB[id];
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_load_hits.s")
 
@@ -1085,7 +1262,7 @@ Struct0x22 *_func_80049D68(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D88.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049E30.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049FA8.s")
 
@@ -1139,7 +1316,7 @@ Struct0x22 *_func_80049D68(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004C040.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004C1A0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D1D4.s")
 
