@@ -35,7 +35,7 @@ typedef struct Texture
 /*0004*/	u16 unk_0x4;
 /*0006*/	s16 flags;
 /*0008*/	Gfx *gdl;
-/*000C*/	u16 unk_0xc;
+/*000C*/	u16 levels;
 /*000E*/	u16 unk_0xe;
 /*0010*/	u16 unk_0x10;
 /*0012*/	s16 gdlIdx;

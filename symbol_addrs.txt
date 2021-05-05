@@ -977,9 +977,9 @@ gFrustumPlanes = 0x800b4a78; // type:data size:0x64
 
 dl_segment = 0x8003cc50; // type:func
 dl_set_all_dirty = 0x80040fd0; // type:func
-func_80041040 = 0x80041040; // type:func
-func_80041118 = 0x80041118; // type:func
-func_80041210 = 0x80041210; // type:func
+dl_apply_combine = 0x80041040; // type:func
+dl_apply_other_mode = 0x80041118; // type:func
+dl_apply_geometry_mode = 0x80041210; // type:func
 dl_set_geometry_mode = 0x800412a4; // type:func
 dl_clear_geometry_mode = 0x800412e4; // type:func
 dl_set_prim_color = 0x80041328; // type:func
@@ -1003,6 +1003,11 @@ block_load_hits = 0x80049870; // type:func
 block_setup_textures = 0x80049e30; // type:func
 block_setup_xz_bitmap = 0x8004a2e4; // type:func
 
+Gfx_ARRAY_80092880 = 0x80092880; // type:data size:0x40
+Gfx_ARRAY_800928c0 = 0x800928c0; // type:data size:0x40
+Gfx_ARRAY_80092900 = 0x80092900; // type:data size:0x40
+Gfx_ARRAY_80092a00 = 0x80092a00; // type:data size:0x40
+UINT_80092a48 = 0x80092a48; // type:data size:0x4
 gMapCurrentStreamCoords = 0x80092a68; // type:data
 gMapNumStreamMaps = 0x80092aa4; // type:data size:0x4
 gMapActiveStreamMap = 0x800b96ac; // type:data size:0x4

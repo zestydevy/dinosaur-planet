@@ -65,7 +65,7 @@ typedef struct
 /*0014*/    s16 *xzBitmap;
 /*0018*/    u8 unk_0x18[0x20 - 0x18];
 /*0020*/    Vtx_t *vertices2[2];
-/*0028*/    void *unk_0x28;
+/*0028*/    Block_0x28Struct *unk_0x28;
 /*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
 /*0030*/    s16 vtxFlags;
 /*0032*/    s16 vtxCount;
@@ -74,16 +74,20 @@ typedef struct
 /*0038*/    u8 unk_0x38[0x3e - 0x38];
 /*003E*/    s16 unk_0x3e;
 /*0040*/    s16 elevation;
+/*0042*/    u16 unk_0x42;
 /*0044*/    u16 gdlGroupsOffset;
-/*0046*/    u8 unk_0x46[0x4a - 0x46];
+/*0046*/    u8 unk_0x46;
+/*0047*/    u8 unk_0x47;
+/*0048*/    u8 unk_0x48;
+/*0049*/    u8 unk_0x49;
 /*004A*/    u8 textureCount;
 } Block;
 
 typedef struct
 {
-/*0000*/    Gfx gfx0;
-/*0008*/    Gfx gfx1;
-/*0010*/    u32 unk_0x10;
+/*0000*/    Gfx combine;
+/*0008*/    Gfx otherMode;
+/*0010*/    u32 geometryMode;
 /*0014*/    u32 primColor;
 /*0018*/    u32 envColor;
 /*001C*/    u32 fogColor;
@@ -121,8 +125,9 @@ extern Plane gFrustumPlanes[5];
 extern u32 gRenderList[MAX_RENDER_LIST_LENGTH];
 extern s16 gRenderListLength;
 #define MAX_BLOCKS 40
-extern Block *gBlocks[MAX_BLOCKS];
-extern s16 gBlocksIdx;
+extern Block *gBlocksToDraw[MAX_BLOCKS];
+extern s16 gBlocksToDrawIdx;
+extern BlockTexture *gBlockTextures;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/dl_set_all_dirty.s")
 
@@ -131,9 +136,9 @@ extern s16 gBlocksIdx;
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041028.s")
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041040.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_apply_combine.s")
 #else
-void _func_80041040(Gfx **gdl)
+void _dl_apply_combine(Gfx **gdl)
 {
     Gfx *currGfx = &gDLBuilder->gfx0;
     u8 dirty;
@@ -167,9 +172,9 @@ void _func_80041040(Gfx **gdl)
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041118.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_apply_other_mode.s")
 #else
-void _func_80041118(Gfx **gdl)
+void _dl_apply_other_mode(Gfx **gdl)
 {
     Gfx *currGfx = &gDLBuilder->gfx1;
     u8 dirty;
@@ -178,13 +183,10 @@ void _func_80041118(Gfx **gdl)
         (**gdl).words.w1 &= ~0x30;
     }
 
-    if (gDLBuilder->dirtyFlags & 0x2)
-    {
+    if (gDLBuilder->dirtyFlags & 0x2) {
         gDLBuilder->dirtyFlags &= ~0x2;
         dirty = TRUE;
-    }
-    else
-    {
+    } else {
         dirty = gDLBuilder->gfx1.words.w0 != (**gdl).words.w0 || gDLBuilder->gfx1.words.w1 != (**gdl).words.w1;
     }
 
@@ -192,12 +194,9 @@ void _func_80041118(Gfx **gdl)
     {
         *currGfx = **gdl;
 
-        if (gDLBuilder->needsPipeSync)
-        {
+        if (gDLBuilder->needsPipeSync) {
             gDLBuilder->needsPipeSync = FALSE;
-
             gDPPipeSync((*gdl)++);
-
             **gdl = *currGfx;
         }
 
@@ -206,7 +205,7 @@ void _func_80041118(Gfx **gdl)
 }
 #endif
 
-void func_80041210(Gfx **gdl)
+void dl_apply_geometry_mode(Gfx **gdl)
 {
     u8 dirty;
 
@@ -218,27 +217,27 @@ void func_80041210(Gfx **gdl)
         gDLBuilder->dirtyFlags &= ~0x40;
         dirty = TRUE;
     } else {
-        dirty = gDLBuilder->unk_0x10 != (**gdl).words.w1;
+        dirty = gDLBuilder->geometryMode != (**gdl).words.w1;
     }
 
     if (dirty) {
-        gDLBuilder->unk_0x10 = (**gdl).words.w1;
+        gDLBuilder->geometryMode = (**gdl).words.w1;
         (*gdl)++;
     }
 }
 
 void dl_set_geometry_mode(Gfx **gdl, u32 mode)
 {
-    mode |= gDLBuilder->unk_0x10;
+    mode |= gDLBuilder->geometryMode;
     gSPLoadGeometryMode(*gdl, mode);
-    func_80041210(gdl);
+    dl_apply_geometry_mode(gdl);
 }
 
 void dl_clear_geometry_mode(Gfx **gdl, u32 mode)
 {
-    mode = gDLBuilder->unk_0x10 & ~mode;
+    mode = gDLBuilder->geometryMode & ~mode;
     gSPLoadGeometryMode(*gdl, mode);
-    func_80041210(gdl);
+    dl_apply_geometry_mode(gdl);
 }
 
 void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
@@ -473,14 +472,15 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
     s32 i;
     u32 r, g, b;
     u32 unk0, unk1, unk2;
-    s8 cStack93;
+    s8 matrixStatus;
 
     ((DLL57Func)(*gDLL_57)[3])(&r, &g, &b, &unk0, &unk1, &unk2);
 
     for (i = 1; i < gRenderListLength; i++)
     {
-        u32 renderItem = gRenderList[i - 1];
+        u32 renderItem = gRenderList[i];
         u32 index = (renderItem & 0x3f80) >> 7;
+
         if (renderItem & 0x40)
         {
             // Draw actor
@@ -494,7 +494,6 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
             Mtx *rspMtx;
             Texture *tex0;
             Texture *tex1;
-            EncodedTri *ptrilast = NULL;
             EncodedTri *ptri;
             EncodedTri *ptriend;
             Gfx *mygdl;
@@ -504,31 +503,32 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
             Vtx_t *pVerts;
             u32 blockIdx = renderItem & 0x3f;
             u32 force = 0;
+            EncodedTri *ptrilast = NULL;
 
             if (blockIdx != oldBlockIdx)
             {
-                SHORT_800b51dc = -1;
-                rspMtx = &rspMtxs[blockIdx * 2];
-                UINT_800b51e0 = 0;
-                cStack93 = -1;
-                block = gBlocks[blockIdx];
+                matrixStatus = -1;
+                block = gBlocksToDraw[blockIdx];
                 oldBlockIdx = blockIdx;
+                rspMtx = &rspMtxs[blockIdx * 2];
+                SHORT_800b51dc = -1;
+                UINT_800b51e0 = 0;
             }
 
             shape = &block->shapes[index];
 
             if (shape->flags & 0x20000000)
             {
-                if (cStack93 != 2) {
+                if (matrixStatus != 2) {
                     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(&rspMtx[1]), G_MTX_LOAD);
-                    cStack93 = 2;
+                    matrixStatus = 2;
                 }
             }
             else
             {
-                if (cStack93 != 1) {
+                if (matrixStatus != 1) {
                     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(rspMtx), G_MTX_LOAD);
-                    cStack93 = 1;
+                    matrixStatus = 1;
                 }
             }
 
@@ -610,20 +610,19 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
                 }
             }
 
-            shapeIdx = shape - block->shapes;
-            *gMainDL = block->gdlGroups[shapeIdx * 3];
+            shapeIdx = (shape - block->shapes) * 3;
+            *gMainDL = block->gdlGroups[shapeIdx++];
             func_80041210(&gMainDL);
-            *gMainDL = block->gdlGroups[shapeIdx * 3 + 1];
-            func_80041040(&gMainDL);
-            *gMainDL = block->gdlGroups[shapeIdx * 3 + 2];
-            func_80041118(&gMainDL);
+            *gMainDL = block->gdlGroups[shapeIdx++];
+            dl_apply_combine(&gMainDL);
+            *gMainDL = block->gdlGroups[shapeIdx++];
+            dl_apply_other_mode(&gMainDL);
 
+            mygdl = gMainDL;
+            pVerts = block->vertices2[(block->vtxFlags & 0x1) ^ 0x1];
             ptri = &block->encodedTris[shape->triBase];
             ptriend = &block->encodedTris[shape[1].triBase];
 
-            mygdl = gMainDL;
-
-            pVerts = &block->vertices2[(block->vtxFlags & 0x1) ^ 0x1];
             gSPVertex(gMainDL++, OS_K0_TO_PHYSICAL(&pVerts[shape->vtxBase]), shape[1].vtxBase - shape->vtxBase, 0);
 
             for (; ptri < ptriend; ptri++)
@@ -662,16 +661,16 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
                 if (flags & 0x2004)
                 {
                     gDPSetCombine(gMainDL, 0xffffff, 0xffff7dbe);
-                    func_80041040(&gMainDL);
+                    dl_apply_combine(&gMainDL);
                     gDPSetOtherMode(gMainDL, 0x080c00, 0xfa504a50);
-                    func_80041118(&gMainDL);
+                    dl_apply_other_mode(&gMainDL);
                 }
                 else
                 {
                     gDPSetCombine(gMainDL, 0xffffff, 0xffff7dbe);
-                    func_80041040(&gMainDL);
+                    dl_apply_combine(&gMainDL);
                     gDPSetOtherMode(gMainDL, 0x080c00, 0xfa504dd8);
-                    func_80041118(&gMainDL);
+                    dl_apply_other_mode(&gMainDL);
                 }
 
                 _bcopy(mygdl, gMainDL, gfxCount * sizeof(Gfx));
@@ -688,6 +687,7 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
 
+// very close
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_add_to_render_list.s")
 #else
@@ -698,34 +698,31 @@ void _block_add_to_render_list(Block *block, f32 x, f32 z)
 {
     s32 oldRenderListLength = gRenderListLength;
     s32 i;
+    MtxF mf, mf2;
 
     for (i = 0; i < block->shapeCount; i++)
     {
-        u32 shapeFlags = block->shapes[i].flags;
-        
-        if ((shapeFlags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH)
+        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH)
         {
             s32 param;
-            if (shapeFlags & 0x4) {
-                param = gBlocksIdx * -400 + 100000 - i;
-                if (shapeFlags & 0x2000) {
+            if (block->shapes[i].flags & 0x4) {
+                param = 100000 - gBlocksToDrawIdx * 400 - i;
+                if (block->shapes[i].flags & 0x2000) {
                     param -= 200;
                 }
             } else {
-                param = gBlocksIdx * -400 + 200000 - i;
+                param = 200000 - gBlocksToDrawIdx * 400 - i;
             }
 
-            gRenderList[gRenderListLength] = (param << 14) | (i << 7) | gBlocksIdx;
+            gRenderList[gRenderListLength] = (param << 14) | (i << 7) | gBlocksToDrawIdx;
             gRenderListLength++;
         }
     }
 
-    if (gRenderListLength != oldRenderListLength && gBlocksIdx < MAX_BLOCKS)
+    if (oldRenderListLength != gRenderListLength && gBlocksToDrawIdx < MAX_BLOCKS)
     {
-        MtxF mf, mf2;
-
-        gBlocks[gBlocksIdx] = block;
-        gBlocksIdx++;
+        gBlocksToDraw[gBlocksToDrawIdx] = block;
+        gBlocksToDrawIdx++;
         matrix_translation(&mf, x, 0.0f, z);
         matrix_f2l_4x3(&mf, gWorldRSPMatrices);
         gWorldRSPMatrices++;
@@ -1272,9 +1269,24 @@ Struct0x22 *_func_80049D68(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A1E8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A284.s")
+Block_0x28Struct *func_8004A284(Block *block, u32 param_2)
+{
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A2CC.s")
+    for (i = 0; i < block->unk_0x48; i++)
+    {
+        if (block->unk_0x28[i].unk_0x2 == param_2) {
+            return &block->unk_0x28[i];
+        }
+    }
+
+    return NULL;
+}
+
+BlockTexture *func_8004A2CC(s32 idx)
+{
+    return &gBlockTextures[idx];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_xz_bitmap.s")
 
