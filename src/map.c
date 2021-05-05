@@ -895,6 +895,7 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049024.s")
 
+// close
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_gdl_groups.s")
 #else
@@ -904,19 +905,21 @@ void _block_setup_gdl_groups(Block *block)
 
     for (i = 0; i < block->shapeCount; i++)
     {
-        BlockShape *shape = &block->shapes[i];
+        BlockShape *shape;
         Texture *texture;
         s16 texFlags = 0;
         u32 flags;
         Gfx *mygdl;
 
-        shape->unk_0x16 = 0xff;
+        block->shapes[i].unk_0x16 = 0xff;
+        
+        shape = &block->shapes[i];
         flags = shape->flags;
 
         if (shape->tileIdx0 == 0xff) {
             texture = NULL;
         } else {
-            texture= block->tiles[shape->tileIdx0].texture;
+            texture = block->tiles[shape->tileIdx0].texture;
             if (texture != NULL) {
                 texFlags = texture->flags;
             }
@@ -930,7 +933,7 @@ void _block_setup_gdl_groups(Block *block)
             flags |= 0x2;
         }
 
-        if (flags & 0x1) {
+        if (flags != 0) {
             flags &= ~0x1;
         } else {
             flags |= 0x1;
@@ -943,13 +946,12 @@ void _block_setup_gdl_groups(Block *block)
             if (flags & 0x200)
             {
                 flags &= ~0x200;
-                flags |= 0x2;
                 func_8003E9B4(0x4);
             }
             else
             {
                 if ((flags & 0x2000) || (flags & 0x4) || (flags & 0x100000)) {
-                    flags |= 0x6;
+                    flags |= 0x4;
                 } else {
                     func_8003E9B4(0x4);
                 }
