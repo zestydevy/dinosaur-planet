@@ -22,7 +22,7 @@ typedef struct _UnkInputStruct {
 } UnkInputStruct;
 
 extern u16 D_8008C8A4;
-extern u8 D_8008C8B0;
+extern u8 gIgnoreJoystick;
 
 /**
  * The message queue associated with SI controller interrupts.
@@ -54,9 +54,13 @@ extern s16 D_800A8618;
 
 extern OSContPad gContPads[MAXCONTROLLERS];
 
-extern u8 buttonQueue_[];
+extern u8 buttonQueue_;
 extern UnkInputStruct *contpad_buffer[2];
 
+extern UnkInputStruct D_800A7DC0[MAXCONTROLLERS];
+extern UnkInputStruct D_800A7E60[MAXCONTROLLERS];
+
+extern u8 D_800A7DB1;
 extern u8 D_800A7DB2[2];
 
 /**

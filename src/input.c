@@ -23,7 +23,7 @@ OSMesgQueue *get_controller_interrupt_queue() {
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010200.s")
 #else
 void func_80010200() {
-    D_800A8618 = 0xa;
+    D_800A8618 = 0xA;
 
     osSendMesg(&gControllerMesgQueue2, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
 }
@@ -33,7 +33,7 @@ void func_80010200() {
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010238.s")
 #else
 void func_80010238() {
-    D_800A8618 = 0xa;
+    D_800A8618 = 0xA;
 
     osSendMesg(&gControllerMesgQueue2, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
 
@@ -134,7 +134,182 @@ void start_controller_thread(OSSched *scheduler) {
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_entry.s")
+#else
+void controller_thread_entry(void *_) {
+    s16 *contMesg;
+    u32 stackVar1;
+
+    int i; // t3 in asm
+    int k; // v1 in asm
+
+    int totalStickX;
+    int totalStickY;
+    
+    UnkInputStruct *buf2;
+    UnkInputStruct *buf1;
+    UnkInputStruct *struct1;
+    UnkInputStruct *struct2;
+
+    contpad_buffer[0] = &D_800A7DC0[0];
+    contpad_buffer[1] = &D_800A7E60[0];
+
+    D_800A7DB2[0] = 0;
+    D_800A7DB2[1] = 0;
+
+    contMesg = 0;
+
+    buttonQueue_ = 0;
+
+    while (TRUE) {
+        osRecvMesg(&gControllerMesgQueue2, (OSMesg*)&contMesg, OS_MESG_BLOCK);
+
+        if (*contMesg != 1) {
+            if (*contMesg != 0xA) { // ???
+                
+            }
+
+            D_800A7DB1 = 1;
+        } else {
+            stackVar1 = buttonQueue_;
+
+            if (D_800A7DB2[buttonQueue_] < MAXCONTROLLERS) {
+                buf2 = contpad_buffer[buttonQueue_ ^ 1];
+                buf1 = contpad_buffer[buttonQueue_];
+                struct1 = &buf1[D_800A7DB2[buttonQueue_]];
+                struct2 = &buf2[D_800A7DB2[buttonQueue_ ^ 1] - 1];
+
+                D_800A7DB2[buttonQueue_] += 1;
+
+                if ((struct1 - 1) >= buf1) {
+                    struct2 = struct1 - 1;
+                }
+
+                if (osRecvMesg(&gContInterruptQueue, NULL, OS_MESG_NOBLOCK) == 0) {
+                    // Queue not empty
+                    osContGetReadData(struct1->unk0x0);
+                    osContStartReadData(&gContInterruptQueue);
+                } else {
+                    // Queue empty
+                    _bcopy(struct2, struct1, sizeof(UnkInputStruct));
+                }
+
+                for (i = 0; i != MAXCONTROLLERS; ++i) {
+                    if (gNoControllers) {
+                        struct1->unk0x0[i].button = 0;
+                    }
+
+                    struct1->unk0x18[i] = (struct1->unk0x0[i].button & (struct1->unk0x0[i].button ^ struct2->unk0x0[i].button)) & D_8008C8A4;
+                    struct1->unk0x20[i] = (struct2->unk0x0[i].button & (struct1->unk0x0[i].button ^ struct2->unk0x0[i].button)) & D_8008C8A4;
+                }
+            }
+
+            if (D_800A7DB1 == 0) {
+                // NOTE: Could also be a separate do-while starting at the beginning of the while (TRUE)
+                continue;
+            }
+
+            bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
+
+            stackVar1 = buttonQueue_;
+            buf1 = contpad_buffer[buttonQueue_];
+
+            for (i = 0; i != MAXCONTROLLERS; ++i) {
+                totalStickX = 0;
+                totalStickY = 0;
+
+                buttonInput0[i] = 0;
+                buttonInput1[i] = 0;
+
+                for (k = 0; k < D_800A7DB2[buttonQueue_]; ++k) {
+                    buttonInput0[i] |= buf1[k].unk0x18[i];
+                    buttonInput1[i] |= buf1[k].unk0x20[i];
+
+                    gContPads[i].button |= buf1[k].unk0x0[i].button;
+
+                    totalStickX += buf1[k].unk0x0[i].stick_x;
+                    totalStickY += buf1[k].unk0x0[i].stick_y;
+                }
+
+                gContPads[i].stick_x = totalStickX / D_800A7DB2[buttonQueue_];
+                gContPads[i].stick_y = totalStickY / D_800A7DB2[buttonQueue_];
+
+                joyXSign[i] = 0;
+                joyYSign[i] = 0;
+
+                if (gContPads[i].stick_x < -35 && joyXMirror[i] > -36) {
+                    joyXSign[i] = -1;
+
+                    joyYHoldTimer[i] = 0;
+                }
+
+                if (gContPads[i].stick_x > 35 && joyXMirror[i] < 36) {
+                    joyXSign[i] = 1;
+
+                    joyYHoldTimer[i] = 0;
+                }
+
+                if (gContPads[i].stick_y < -35 && joyYMirror[i] > -36) {
+                    joyYSign[i] = -1;
+
+                    joyXHoldTimer[i] = 0;
+                }
+
+                if (gContPads[i].stick_y > 35 && joyYMirror[i] < 36) {
+                    joyYSign[i] = 1;
+
+                    joyXHoldTimer[i] = 0;
+                }
+
+                joyYMirror[i] = gContPads[i].stick_y;
+
+                if (joyYMirror[i] < -35) {
+                    joyXHoldTimer[i] += 1;
+                } else {
+                    if (joyYMirror[i] < 36) {
+                        joyXHoldTimer[i] = 0;
+                    } else {
+                        joyXHoldTimer[i] += 1;
+                    }
+                }
+
+                if (menuInputDelay < joyXHoldTimer[i]) {
+                    joyYMirror[i] = 0;
+                    joyXHoldTimer[i] = 0;
+                }
+
+                joyXMirror[i] = gContPads[i].stick_x;
+
+                if (joyXMirror[i] < -35) {
+                    joyYHoldTimer[i] += 1;
+                } else {
+                    if (joyYHoldTimer[i] < 36) {
+                        joyYHoldTimer[i] = 0;
+                    } else {
+                        joyYHoldTimer[i] += 1;
+                    }
+                }
+
+                if (menuInputDelay < joyYHoldTimer[i]) {
+                    joyXMirror[i] = 0;
+                    joyYHoldTimer[i] = 0;
+                }
+
+                buttonMask[i] = 0xffff;
+            }
+
+            gIgnoreJoystick = FALSE;
+            D_800A7DB1 = 0;
+
+            D_800A7DB2[(buttonQueue_ ^ 1) & 0xff] = 0;
+            buttonQueue_ = buttonQueue_ ^ 1;
+
+            osSendMesg(&gControllerMesgQueue3, &D_800A8618, OS_MESG_NOBLOCK);
+        }
+    }
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/setup_controller_port_list.s")
@@ -196,11 +371,11 @@ u16 func_with_controller_buffer(int port, int a1) {
 
     if (a1 < 0) {
         a1 = 0;
-    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
-        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    } else if (a1 >= D_800A7DB2[buttonQueue_ ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_ ^ 1] - 1;
     }
 
-    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = contpad_buffer[buttonQueue_ ^ 1];
     buffer = &buffer[a1];
 
     pads = buffer->unk0x0;
@@ -245,11 +420,11 @@ u16 func_80010DCC(int port, int a1) {
 
     if (a1 < 0) {
         a1 = 0;
-    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
-        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    } else if (a1 >= D_800A7DB2[buttonQueue_ ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_ ^ 1] - 1;
     }
 
-    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = contpad_buffer[buttonQueue_ ^ 1];
     buffer = &buffer[a1];
 
     return buffer->unk0x18[controllerPortList[port]] & buttonMask[port];
@@ -280,11 +455,11 @@ u16 func_80010EC8(int port, int a1) {
 
     if (a1 < 0) {
         a1 = 0;
-    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
-        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    } else if (a1 >= D_800A7DB2[buttonQueue_ ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_ ^ 1] - 1;
     }
 
-    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = contpad_buffer[buttonQueue_ ^ 1];
     buffer = &buffer[a1];
 
     return buffer->unk0x20[controllerPortList[port]] & buttonMask[port];
@@ -319,11 +494,11 @@ s8 func_80010FC8(int port, int a1) {
 
     if (a1 < 0) {
         a1 = 0;
-    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
-        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    } else if (a1 >= D_800A7DB2[buttonQueue_ ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_ ^ 1] - 1;
     }
 
-    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = contpad_buffer[buttonQueue_ ^ 1];
     buffer = &buffer[a1];
 
     pads = buffer->unk0x0;
@@ -360,11 +535,11 @@ s8 func_800110CC(int port, int a1) {
 
     if (a1 < 0) {
         a1 = 0;
-    } else if (a1 >= D_800A7DB2[buttonQueue_[0] ^ 1]) {
-        a1 = D_800A7DB2[buttonQueue_[0] ^ 1] - 1;
+    } else if (a1 >= D_800A7DB2[buttonQueue_ ^ 1]) {
+        a1 = D_800A7DB2[buttonQueue_ ^ 1] - 1;
     }
 
-    buffer = contpad_buffer[buttonQueue_[0] ^ 1];
+    buffer = contpad_buffer[buttonQueue_ ^ 1];
     buffer = &buffer[a1];
 
     pads = buffer->unk0x0;
@@ -393,12 +568,14 @@ void get_joy_xy_sign(int port, s8 *xSign, s8 *ySign) {
  * - If stick is greater than 8 or less than -8, the returned value will be moved towards
  *   zero by 8 and clamped at an upper value of 70 and a lower value of -70.
  * 
+ * If gIgnoreJoystick is TRUE, this will always return 0.
+ * 
  * Returns a joystick axis value between [-70, 70].
  */
 s8 handle_stick_deadzone(s8 stick) {
     s8 adjustedStick;
 
-    if (D_8008C8B0 != 0) {
+    if (gIgnoreJoystick) {
         return 0;
     }
 
@@ -448,7 +625,7 @@ void set_button_mask(int index, u16 mask) {
 #pragma GLOBAL_ASM("asm/nonmatchings/input/func_80011290.s")
 #else
 void func_80011290(int _) {
-    D_8008C8B0 = 1;
+    gIgnoreJoystick = TRUE;
 }
 #endif
 

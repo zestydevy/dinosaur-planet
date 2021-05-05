@@ -1077,6 +1077,7 @@ gPiManagerEventQueueBuffer = 0x800bfd70; // type:data size:0x20
 gPiManagerCmdQueueBuffer = 0x800bfd90; // type:data size:0x18
 gPiManagerCmdQueue = 0x800bfdb0; // type:data size:0x20
 
+gIgnoreJoystick = 0x8008C8B0; // type:data size:0x1
 gContInterruptBuffer = 0x800A7F48; // type:data size:0x8
 gControllerMesgQueue2Buffer = 0x800A7F50; // type:data size:0x20
 gControllerMesgQueue3Buffer = 0x800A7F70; // type:data size:0x4
