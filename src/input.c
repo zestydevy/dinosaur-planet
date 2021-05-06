@@ -82,7 +82,7 @@ s32 init_controller_data() {
 
     for (i = 0; i != MAXCONTROLLERS; ++i) {
         joyXMirror[i] = joyYMirror[i] = 0;
-        joyYHoldTimer[i] = joyXHoldTimer[i] = 0;
+        joyXHoldTimer[i] = joyYHoldTimer[i] = 0;
         joyXSign[i] = joyYSign[i] = 0;
         
         buttonInput0[i] = 0;
@@ -240,51 +240,30 @@ void controller_thread_entry(void *_) {
 
                 if (gContPads[i].stick_x < -35 && joyXMirror[i] > -36) {
                     joyXSign[i] = -1;
-
-                    joyYHoldTimer[i] = 0;
+                    joyXHoldTimer[i] = 0;
                 }
 
                 if (gContPads[i].stick_x > 35 && joyXMirror[i] < 36) {
                     joyXSign[i] = 1;
-
-                    joyYHoldTimer[i] = 0;
+                    joyXHoldTimer[i] = 0;
                 }
 
                 if (gContPads[i].stick_y < -35 && joyYMirror[i] > -36) {
                     joyYSign[i] = -1;
-
-                    joyXHoldTimer[i] = 0;
+                    joyYHoldTimer[i] = 0;
                 }
 
                 if (gContPads[i].stick_y > 35 && joyYMirror[i] < 36) {
                     joyYSign[i] = 1;
-
-                    joyXHoldTimer[i] = 0;
+                    joyYHoldTimer[i] = 0;
                 }
 
                 joyYMirror[i] = gContPads[i].stick_y;
 
                 if (joyYMirror[i] < -35) {
-                    joyXHoldTimer[i] += 1;
-                } else {
-                    if (joyYMirror[i] < 36) {
-                        joyXHoldTimer[i] = 0;
-                    } else {
-                        joyXHoldTimer[i] += 1;
-                    }
-                }
-
-                if (menuInputDelay < joyXHoldTimer[i]) {
-                    joyYMirror[i] = 0;
-                    joyXHoldTimer[i] = 0;
-                }
-
-                joyXMirror[i] = gContPads[i].stick_x;
-
-                if (joyXMirror[i] < -35) {
                     joyYHoldTimer[i] += 1;
                 } else {
-                    if (joyYHoldTimer[i] < 36) {
+                    if (joyYMirror[i] < 36) {
                         joyYHoldTimer[i] = 0;
                     } else {
                         joyYHoldTimer[i] += 1;
@@ -292,8 +271,25 @@ void controller_thread_entry(void *_) {
                 }
 
                 if (menuInputDelay < joyYHoldTimer[i]) {
-                    joyXMirror[i] = 0;
+                    joyYMirror[i] = 0;
                     joyYHoldTimer[i] = 0;
+                }
+
+                joyXMirror[i] = gContPads[i].stick_x;
+
+                if (joyXMirror[i] < -35) {
+                    joyXHoldTimer[i] += 1;
+                } else {
+                    if (joyXHoldTimer[i] < 36) {
+                        joyXHoldTimer[i] = 0;
+                    } else {
+                        joyXHoldTimer[i] += 1;
+                    }
+                }
+
+                if (menuInputDelay < joyXHoldTimer[i]) {
+                    joyXMirror[i] = 0;
+                    joyXHoldTimer[i] = 0;
                 }
 
                 buttonMask[i] = 0xffff;
