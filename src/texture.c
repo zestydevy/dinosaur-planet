@@ -68,6 +68,10 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/load_texture_to_tmem2.s")
 #else
+extern Gfx Gfx_ARRAY_80092880[8]; // wtf why doesn't this work
+extern Gfx Gfx_ARRAY_800928c0[8];
+extern Gfx Gfx_ARRAY_80092900[8];
+extern Gfx Gfx_ARRAY_80092a00[8];
 void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette)
 {
     Gfx *mygdl = *gdl;
@@ -76,43 +80,44 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
     s32 siz2;
     s32 width;
     s32 height;
-    s32 iVar2;
-    s32 iVar3;
+    s32 sizincr;
+    s32 sizshift;
     s32 line2;
 
     width = texture->width | (texture->unk_0x1b & 0xf0) << 4;
     height = texture->height | (texture->unk_0x1b & 0xf) << 8;
 
+    // This implements a dynamic version of gDPLoadTextureBlock
     switch (texture->format & 0xf)
     {
     case 0:
-        siz = 3;
-        siz2 = 3;
-        iVar2 = 0;
-        iVar3 = 0;
+        siz = G_IM_SIZ_32b;
+        siz2 = G_IM_SIZ_32b;
+        sizincr = G_IM_SIZ_32b_INCR;
+        sizshift = G_IM_SIZ_32b_SHIFT;
         line2 = 2;
         break;
     case 1:
     case 4:
-        siz = 2;
-        siz2 = 2;
-        iVar2 = 0;
-        iVar3 = 0;
+        siz = G_IM_SIZ_16b;
+        siz2 = G_IM_SIZ_16b;
+        sizincr = G_IM_SIZ_16b_INCR;
+        sizshift = G_IM_SIZ_16b_SHIFT;
         line2 = 2;
         break;
     case 2:
     case 5:
-        siz = 2;
-        siz2 = 1;
-        iVar2 = 1;
-        iVar3 = 1;
+        siz = G_IM_SIZ_16b;
+        siz2 = G_IM_SIZ_8b;
+        sizincr = G_IM_SIZ_8b_INCR;
+        sizshift = G_IM_SIZ_8b_SHIFT;
         line2 = 1;
         break;
     default:
-        siz = 2;
-        siz2 = 0;
-        iVar2 = 3;
-        iVar3 = 2;
+        siz = G_IM_SIZ_16b;
+        siz2 = G_IM_SIZ_4b;
+        sizincr = G_IM_SIZ_4b_INCR;
+        sizshift = G_IM_SIZ_4b_SHIFT;
         line2 = 0;
         break;
     }
@@ -121,7 +126,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
     {
     case 0:
     case 1:
-        fmt = 0;
+        fmt = G_IM_FMT_RGBA;
         if ((texture->format >> 4) == 0 || (texture->format >> 4) == 2) {
             texture->flags |= 0x4;
         }
@@ -129,21 +134,21 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
     case 4:
     case 5:
     case 6:
-        fmt = 3;
+        fmt = G_IM_FMT_IA;
         texture->flags |= 0x4;
         break;
     case 7:
-        fmt = 2;
+        fmt = G_IM_FMT_CI;
         break;
     default:
-        fmt = 4;
+        fmt = G_IM_FMT_I;
         break;
     }
 
-    if (siz2 != 0) {
-        line2 *= width;
-    } else {
+    if (siz2 == G_IM_SIZ_4b) {
         line2 = width / 2;
+    } else {
+        line2 *= width;
     }
 
     if (texture->flags & 0xc000)
@@ -151,7 +156,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
         gDPSetTextureImage(mygdl++, fmt, siz, 0, OS_K0_TO_PHYSICAL((u8*)texture + sizeof(Texture)));
         gDPSetTile(mygdl++, fmt, siz, 0, tmem, 7, 0, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
         gDPLoadSync(mygdl++);
-        gDPLoadBlock(mygdl++, 7, 0, 0, ((width * height + iVar2) >> iVar3) - 1, 0);
+        gDPLoadBlock(mygdl++, 7, 0, 0, ((width * height + sizincr) >> sizshift) - 1, 0);
         gDPPipeSync(mygdl++);
         gDPSetTile(mygdl++, fmt, siz2, (line2 + 7) / 8, tmem, tile, palette, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
     }
@@ -160,7 +165,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
         gDPSetTextureImage(mygdl++, fmt, siz, 0, OS_K0_TO_PHYSICAL((u8*)texture + sizeof(Texture)));
         gDPSetTile(mygdl++, fmt, siz, 0, tmem, 7, 0, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
         gDPLoadSync(mygdl++);
-        gDPLoadBlock(mygdl++, 7, 0, 0, ((width * height + iVar2) >> iVar3) - 1, 0);
+        gDPLoadBlock(mygdl++, 7, 0, 0, ((width * height + sizincr) >> sizshift) - 1, 0);
         gDPPipeSync(mygdl++);
 
         if (!(texture->flags & 0x100)) {
@@ -168,7 +173,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
             gDPSetTileSize(mygdl++, 0, 0, 0, (width - 1) * 2, (height - 1) * 2);
         }
 
-        if (fmt == 2) {
+        if (fmt == G_IM_FMT_CI) {
             gDPLoadTLUT(mygdl++, 0x3c, palette, OS_K0_TO_PHYSICAL((u8*)texture + sizeof(Texture) + width * height / 2));
         }
 
@@ -176,7 +181,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
         {
             if ((texture->format & 0xf) == 0)
             {
-                _bcopy(0x80092a00, mygdl, 8 * sizeof(Gfx));
+                _bcopy(Gfx_ARRAY_80092a00, mygdl, 8 * sizeof(Gfx));
                 mygdl += 8;
             }
             else
@@ -184,11 +189,11 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
                 Gfx *mygdl2 = mygdl;
 
                 if ((texture->cmt & 0x2) != 0 && (texture->cms & 0x2) == 0) {
-                    _bcopy(0x800928c0, mygdl2, 8 * sizeof(Gfx));
+                    _bcopy(Gfx_ARRAY_800928c0, mygdl2, 8 * sizeof(Gfx));
                 } else if ((texture->cmt & 0x2) == 0 && (texture->cms & 0x2) != 0) {
-                    _bcopy(0x80092900, mygdl2, 8 * sizeof(Gfx));
+                    _bcopy(Gfx_ARRAY_80092900, mygdl2, 8 * sizeof(Gfx));
                 } else {
-                    _bcopy(0x80092880, mygdl2, 8 * sizeof(Gfx));
+                    _bcopy(Gfx_ARRAY_80092880, mygdl2, 8 * sizeof(Gfx));
                 }
 
                 mygdl += 8;
@@ -237,31 +242,32 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
 #else
 extern Texture *gCurrTex0;
 extern Texture *gCurrTex1;
+extern u32 UINT_80092a48;
 typedef struct
 {
-/*0000*/    Gfx *gdl0;
-/*0004*/    Gfx *gdl1;
+/*0000*/    Gfx *combines;
+/*0004*/    Gfx *otherModes;
 /*0008*/    u32 mask;
 /*000C*/    u32 flags;
 } Foo;
 void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dl_set_env_color2(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 param_7)
+void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes)
 {
     Gfx *mygdl;
     Texture *tex0_;
     Texture *tex1_;
-    u32 flags_;
-    u8 bVar2;
-    u8 bVar3;
+    s32 flags_;
+    u8 isIndexed;
+    u8 isTextured;
     Foo *foos;
     s32 cursor;
     s32 uVar4 = 0;
     u32 geomMode;
-    u32 uStack12;
+    s32 uStack12;
     Foo *foo;
 
-    bVar2 = FALSE;
+    isIndexed = FALSE;
     mygdl = *gdl;
 
     if (tex0 != NULL)
@@ -269,8 +275,8 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
         s32 levelIdx = level >> 16;
         s32 levelCount;
 
-        if (tex0->unk_0xc != 0) {
-            levelCount = tex0->unk_0xc >> 8;
+        if (tex0->levels != 0) {
+            levelCount = tex0->levels >> 8;
         } else {
             levelCount = 0;
         }
@@ -280,13 +286,10 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
         if (levelCount > 1 && levelIdx < levelCount)
         {
-            if (levelIdx > 0 && tex0 != NULL)
-            {
-                s32 i = 0;
-                do {
-                    i++;
-                    tex1_ = tex1_->next;
-                } while (i < levelIdx && tex1_ != NULL);
+            s32 i;
+            
+            for (i = 0; i < levelIdx && tex1_ != NULL; i++) {
+                tex1_ = tex1_->next;
             }
 
             if (tex1_ != NULL) {
@@ -324,13 +327,9 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
                 }
 
                 tex1_ = tex0;
-                if (top > 0 && tex0 != NULL)
-                {
-                    s32 i = 0;
-                    do {
-                        i++;
-                        tex1_ = tex1->next;
-                    } while (i < top && tex1_ != NULL);
+
+                for (i = 0; i < top && tex1_ != NULL; i++) {
+                    tex1_ = tex1_->next;
                 }
 
                 if (tex1_ == NULL) {
@@ -356,7 +355,7 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
             {
                 u8 lev = level >> 8;
 
-                gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(tex1->gdl + tex0_->gdlIdx));
+                gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(tex1_->gdl + tex0_->gdlIdx));
                 dl_set_env_color2(&mygdl, lev, lev, lev, 0);
             }
             else if (flags_ & 0x2000)
@@ -366,22 +365,22 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
         }
 
         uVar4 = tex0->flags & 0x100;
-        bVar3 = TRUE;
+        isTextured = TRUE;
         foos = 0x80092540;
-        bVar2 = (tex0->unk_0x2 & 0xf) == 7;
+        isIndexed = (tex0->format & 0xf) == 7;
         flags = flags_;
     }
     else
     {
-        bVar3 = FALSE;
+        isTextured = FALSE;
         foos = 0x800927a0;
     }
 
-    if (param_7 != 0)
+    if (setModes)
     {
-        flags_ = flags & ~*(u32*)0x80092a48;
+        flags_ = flags & ~UINT_80092a48;
         cursor = (flags_ & 0x70) >> 4;
-        if (bVar3)
+        if (isTextured)
         {
             if (flags_ & 0x400)
             {
@@ -423,34 +422,30 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 
         foo = foos + cursor;
         uStack12 = foo->flags | (flags_ & foo->mask);
-        geomMode = 0x200004;
+        geomMode = G_SHADE | G_SHADING_SMOOTH;
         if (uStack12 & 0x2) {
-            geomMode = 0x200005;
+            geomMode |= G_ZBUFFER;
         }
         if (uStack12 & 0x8) {
-            geomMode |= 0x10000;
+            geomMode |= G_FOG;
         }
         if (!(flags_ & 0x80000000)) {
-            geomMode |= 0x400;
+            geomMode |= G_CULL_BACK;
         }
 
-        // gSPGeometryMode
-        {
-            Gfx *_g = mygdl;
+        gSPLoadGeometryMode(mygdl, geomMode);
+        dl_apply_geometry_mode(&mygdl);
 
-            _g->words.w0 = 0xd9000000;
-            _g->words.w1 = geomMode;
+        mygdl->words.w0 = foo->combines[uStack12 >> 3].words.w0;
+        mygdl->words.w1 = foo->combines[uStack12 >> 3].words.w1;
+        dl_apply_combine(&mygdl);
+
+        mygdl->words.w0 = foo->otherModes[uStack12].words.w0;
+        mygdl->words.w1 = foo->otherModes[uStack12].words.w1;
+        if (isIndexed) {
+            mygdl->words.w0 |= G_TT_RGBA16;
         }
-        func_80041210(&mygdl);
-
-        *mygdl = foo->gdl0[uStack12 >> 3];
-        func_80041040(&mygdl);
-
-        *mygdl = foo->gdl1[uStack12];
-        if (bVar2) {
-            mygdl->words.w0 |= 0x8000;
-        }
-        func_80041118(&mygdl);
+        dl_apply_other_mode(&mygdl);
     }
 
     *gdl = mygdl;

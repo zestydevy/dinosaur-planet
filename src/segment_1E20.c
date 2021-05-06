@@ -681,12 +681,12 @@ void func_8000302C(Gfx **gdl)
 
 extern MtxF MtxF_800a6a60;
 void matrix_scaling(MtxF *mf, f32 sx, f32 sy, f32 sz);
-void mat4_ident_translate(MtxF *mf, f32 x, f32 y, f32 z);
+void matrix_translation(MtxF *mf, f32 x, f32 y, f32 z);
 void func_80003168(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale)
 {
     MtxF mf;
 
-    mat4_ident_translate(&MtxF_800a6a60, x * 640.0f, y, z * 640.0f);
+    matrix_translation(&MtxF_800a6a60, x * 640.0f, y, z * 640.0f);
     if (scale != 1.0f) {
         matrix_scaling(&mf, scale, scale, scale);
         matrix_concat(&mf, &MtxF_800a6a60, &MtxF_800a6a60);
