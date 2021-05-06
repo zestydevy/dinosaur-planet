@@ -138,7 +138,7 @@ void game_init(void)
     if (0);
     gDPFullSync(D_800AE680++);
     gSPEndDisplayList(D_800AE680++);
-    func_800632B0();
+    dl_init_debug_infos();
     set_menu_page(2);
     if (osMemSize == EXPANSION_SIZE) {
         func_80014074();
@@ -168,7 +168,7 @@ void _game_tick(void) {
     D_800AE690 = D_800AE688[temp_t9];
     D_800AE6A0 = D_800AE698[temp_t9];
     D_800AE6B0 = D_800AE6A8[temp_t9]);
-    func_80063330(D_800AE680, 0, &D_80099130, 0x28E);
+    dl_add_debug_info(D_800AE680, 0, &D_80099130, 0x28E);
     func_8003CC50(&D_800AE680, 0, 0x80000000);
     func_8003CC50(&D_800AE680, 1, gFramebufferCurrent);
     func_8003CC50(&D_800AE680, 2, D_800BCCB4);
