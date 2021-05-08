@@ -25,5 +25,5 @@ D_800937F0 = 0x800937F0;
 D_8008C8A4 = 0x8008C8A4;
 gControllerThreadStack = 0x800a8180;
 gPiManagerThreadStack = 0x800beb10;
-joyYMirror = 0x800a7fb8;
-joyXMirror = 0x800a7fb4;
+gLastJoyY = 0x800a7fb8;
+gLastJoyX = 0x800a7fb4;

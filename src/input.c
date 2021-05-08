@@ -4,7 +4,7 @@
 void func_8003B6E0(OSSched *scheduler, int*, OSMesgQueue*, int);
 
 void controller_thread_entry(void *arg);
-s8 handle_stick_deadzone(s8 stick);
+s8 handle_joystick_deadzone(s8 stick);
 void init_virtual_cont_port_map();
 
 #if 0 
@@ -73,16 +73,16 @@ s32 init_controller_data() {
     // Initialize gContPads memory
     bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
 
-    // TODO: comment this
-    menuInputDelay = 5;
+    // Default menu joystick delay to 5 input frames
+    gMenuJoystickDelay = 5;
 
     // Initialize controller input globals and determine how many controllers are inserted
     lastControllerIndex = -1;
 
     for (i = 0; i != MAXCONTROLLERS; ++i) {
-        joyXMirror[i] = joyYMirror[i] = 0;
-        joyXHoldTimer[i] = joyYHoldTimer[i] = 0;
-        joyXSign[i] = joyYSign[i] = 0;
+        gLastJoyX[i] = gLastJoyY[i] = 0;
+        gMenuJoyXHoldTimer[i] = gMenuJoyYHoldTimer[i] = 0;
+        gMenuJoyXSign[i] = gMenuJoyYSign[i] = 0;
         
         gButtonPresses[i] = 0;
         gButtonReleases[i] = 0;
@@ -146,10 +146,10 @@ void controller_thread_entry(void *_) {
     int totalStickX;
     int totalStickY;
     
-    ControllersSnapshot *buf2;
-    ControllersSnapshot *buf1;
-    ControllersSnapshot *struct1;
-    ControllersSnapshot *struct2;
+    ControllersSnapshot *curSnaps;
+    ControllersSnapshot *nextSnaps;
+    ControllersSnapshot *nextSnap;
+    ControllersSnapshot *curSnap;
 
     gContSnapshots[0] = &gContSnapshotsBuffer0[0];
     gContSnapshots[1] = &gContSnapshotsBuffer1[0];
@@ -173,34 +173,38 @@ void controller_thread_entry(void *_) {
         } else {
             stackVar1 = gPrevContSnapshotsI;
 
-            if (gNumBufContSnapshots[gPrevContSnapshotsI] < MAXCONTROLLERS) {
-                buf2 = gContSnapshots[gPrevContSnapshotsI ^ 1];
-                buf1 = gContSnapshots[gPrevContSnapshotsI];
-                struct1 = &buf1[gNumBufContSnapshots[gPrevContSnapshotsI]];
-                struct2 = &buf2[gNumBufContSnapshots[gPrevContSnapshotsI ^ 1] - 1];
+            // Read available controller inputs into a buffer of snapshots
+            if (gNumBufContSnapshots[gPrevContSnapshotsI] < MAX_BUFFERED_CONT_SNAPSHOTS) {
+                curSnaps = gContSnapshots[gPrevContSnapshotsI ^ 1];
+                nextSnaps = gContSnapshots[gPrevContSnapshotsI];
+                nextSnap = &nextSnaps[gNumBufContSnapshots[gPrevContSnapshotsI]];
+                curSnap = &curSnaps[gNumBufContSnapshots[gPrevContSnapshotsI ^ 1] - 1];
 
                 gNumBufContSnapshots[gPrevContSnapshotsI] += 1;
 
-                if ((struct1 - 1) >= buf1) {
-                    struct2 = struct1 - 1;
+                if ((nextSnap - 1) >= nextSnaps) {
+                    curSnap = nextSnap - 1;
                 }
 
                 if (osRecvMesg(&gContInterruptQueue, NULL, OS_MESG_NOBLOCK) == 0) {
                     // Queue not empty
-                    osContGetReadData(struct1->pads);
+                    osContGetReadData(nextSnap->pads);
                     osContStartReadData(&gContInterruptQueue);
                 } else {
                     // Queue empty
-                    _bcopy(struct2, struct1, sizeof(ControllersSnapshot));
+                    _bcopy(curSnap, nextSnap, sizeof(ControllersSnapshot));
                 }
 
                 for (i = 0; i != MAXCONTROLLERS; ++i) {
+                    // If no controllers are inserted, assume no buttons are pressed
                     if (gNoControllers) {
-                        struct1->pads[i].button = 0;
+                        nextSnap->pads[i].button = 0;
                     }
 
-                    struct1->buttonPresses[i] = (struct1->pads[i].button & (struct1->pads[i].button ^ struct2->pads[i].button)) & D_8008C8A4;
-                    struct1->buttonReleases[i] = (struct2->pads[i].button & (struct1->pads[i].button ^ struct2->pads[i].button)) & D_8008C8A4;
+                    // Calculate which buttons were just pressed/released by comparing the next/current
+                    // button inputs
+                    nextSnap->buttonPresses[i] = (nextSnap->pads[i].button & (nextSnap->pads[i].button ^ curSnap->pads[i].button)) & D_8008C8A4;
+                    nextSnap->buttonReleases[i] = (curSnap->pads[i].button & (nextSnap->pads[i].button ^ curSnap->pads[i].button)) & D_8008C8A4;
                 }
             }
 
@@ -209,10 +213,11 @@ void controller_thread_entry(void *_) {
                 continue;
             }
 
+            // Clear cont pads since we're about to update them
             bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
 
             stackVar1 = gPrevContSnapshotsI;
-            buf1 = gContSnapshots[gPrevContSnapshotsI];
+            nextSnaps = gContSnapshots[gPrevContSnapshotsI];
 
             for (i = 0; i != MAXCONTROLLERS; ++i) {
                 totalStickX = 0;
@@ -221,85 +226,96 @@ void controller_thread_entry(void *_) {
                 gButtonPresses[i] = 0;
                 gButtonReleases[i] = 0;
 
+                // Combine each buffered snapshot into a single controller state
                 for (k = 0; k < gNumBufContSnapshots[gPrevContSnapshotsI]; ++k) {
-                    gButtonPresses[i] |= buf1[k].buttonPresses[i];
-                    gButtonReleases[i] |= buf1[k].buttonReleases[i];
+                    gButtonPresses[i] |= nextSnaps[k].buttonPresses[i];
+                    gButtonReleases[i] |= nextSnaps[k].buttonReleases[i];
 
-                    gContPads[i].button |= buf1[k].pads[i].button;
+                    gContPads[i].button |= nextSnaps[k].pads[i].button;
 
-                    totalStickX += buf1[k].pads[i].stick_x;
-                    totalStickY += buf1[k].pads[i].stick_y;
+                    totalStickX += nextSnaps[k].pads[i].stick_x;
+                    totalStickY += nextSnaps[k].pads[i].stick_y;
                 }
 
                 gContPads[i].stick_x = totalStickX / gNumBufContSnapshots[gPrevContSnapshotsI];
                 gContPads[i].stick_y = totalStickY / gNumBufContSnapshots[gPrevContSnapshotsI];
 
-                joyXSign[i] = 0;
-                joyYSign[i] = 0;
+                // Handle menu joystick signs by setting gMenuJoy*Sign to the held direction for one
+                // input frame once initially and again every gMenuJoystickDelay input frames.
+                gMenuJoyXSign[i] = 0;
+                gMenuJoyYSign[i] = 0;
 
-                if (gContPads[i].stick_x < -35 && joyXMirror[i] > -36) {
-                    joyXSign[i] = -1;
-                    joyXHoldTimer[i] = 0;
+                if (gContPads[i].stick_x < -35 && gLastJoyX[i] > -36) {
+                    gMenuJoyXSign[i] = -1;
+                    gMenuJoyXHoldTimer[i] = 0;
                 }
 
-                if (gContPads[i].stick_x > 35 && joyXMirror[i] < 36) {
-                    joyXSign[i] = 1;
-                    joyXHoldTimer[i] = 0;
+                if (gContPads[i].stick_x > 35 && gLastJoyX[i] < 36) {
+                    gMenuJoyXSign[i] = 1;
+                    gMenuJoyXHoldTimer[i] = 0;
                 }
 
-                if (gContPads[i].stick_y < -35 && joyYMirror[i] > -36) {
-                    joyYSign[i] = -1;
-                    joyYHoldTimer[i] = 0;
+                if (gContPads[i].stick_y < -35 && gLastJoyY[i] > -36) {
+                    gMenuJoyYSign[i] = -1;
+                    gMenuJoyYHoldTimer[i] = 0;
                 }
 
-                if (gContPads[i].stick_y > 35 && joyYMirror[i] < 36) {
-                    joyYSign[i] = 1;
-                    joyYHoldTimer[i] = 0;
+                if (gContPads[i].stick_y > 35 && gLastJoyY[i] < 36) {
+                    gMenuJoyYSign[i] = 1;
+                    gMenuJoyYHoldTimer[i] = 0;
                 }
 
-                joyYMirror[i] = gContPads[i].stick_y;
+                gLastJoyY[i] = gContPads[i].stick_y;
 
-                if (joyYMirror[i] < -35) {
-                    joyYHoldTimer[i] += 1;
+                if (gLastJoyY[i] < -35) {
+                    gMenuJoyYHoldTimer[i] += 1;
                 } else {
-                    if (joyYMirror[i] < 36) {
-                        joyYHoldTimer[i] = 0;
+                    if (gLastJoyY[i] < 36) {
+                        gMenuJoyYHoldTimer[i] = 0;
                     } else {
-                        joyYHoldTimer[i] += 1;
+                        gMenuJoyYHoldTimer[i] += 1;
                     }
                 }
 
-                if (menuInputDelay < joyYHoldTimer[i]) {
-                    joyYMirror[i] = 0;
-                    joyYHoldTimer[i] = 0;
+                if (gMenuJoystickDelay < gMenuJoyYHoldTimer[i]) {
+                    gLastJoyY[i] = 0;
+                    gMenuJoyYHoldTimer[i] = 0;
                 }
 
-                joyXMirror[i] = gContPads[i].stick_x;
+                gLastJoyX[i] = gContPads[i].stick_x;
 
-                if (joyXMirror[i] < -35) {
-                    joyXHoldTimer[i] += 1;
+                if (gLastJoyX[i] < -35) {
+                    gMenuJoyXHoldTimer[i] += 1;
                 } else {
-                    if (joyXHoldTimer[i] < 36) {
-                        joyXHoldTimer[i] = 0;
+                    if (gMenuJoyXHoldTimer[i] < 36) {
+                        gMenuJoyXHoldTimer[i] = 0;
                     } else {
-                        joyXHoldTimer[i] += 1;
+                        gMenuJoyXHoldTimer[i] += 1;
                     }
                 }
 
-                if (menuInputDelay < joyXHoldTimer[i]) {
-                    joyXMirror[i] = 0;
-                    joyXHoldTimer[i] = 0;
+                if (gMenuJoystickDelay < gMenuJoyXHoldTimer[i]) {
+                    gLastJoyX[i] = 0;
+                    gMenuJoyXHoldTimer[i] = 0;
                 }
 
+                // Reset button mask to allow all buttons
                 gButtonMask[i] = 0xffff;
             }
 
+            // Reset ignore joystick
             gIgnoreJoystick = FALSE;
+
+            // TODO:
             D_800A7DB1 = 0;
 
+            // Reset buffered snapshot count (since we've handled them all)
             gNumBufContSnapshots[(gPrevContSnapshotsI ^ 1) & 0xff] = 0;
+
+            // Swap snapshot arrays
             gPrevContSnapshotsI = gPrevContSnapshotsI ^ 1;
 
+            // TODO:
             osSendMesg(&gControllerMesgQueue3, &D_800A8618, OS_MESG_NOBLOCK);
         }
     }
@@ -534,7 +550,7 @@ s8 get_joystick_x(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return handle_stick_deadzone(gContPads[gVirtualContPortMap[port]].stick_x);
+        return handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_x);
     }
 }
 #endif
@@ -571,7 +587,7 @@ s8 get_joystick_x_from_buffer(int port, int buffer) {
 
     pads = snapshot->pads;
 
-    return handle_stick_deadzone(pads[gVirtualContPortMap[port]].stick_x);
+    return handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_x);
 }
 #endif
 
@@ -587,7 +603,7 @@ s8 get_joystick_y(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return handle_stick_deadzone(gContPads[gVirtualContPortMap[port]].stick_y);
+        return handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_y);
     }
 }
 #endif
@@ -624,28 +640,35 @@ s8 get_joystick_y_from_buffer(int port, int buffer) {
 
     pads = snapshot->pads;
 
-    return handle_stick_deadzone(pads[gVirtualContPortMap[port]].stick_y);
+    return handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_y);
 }
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_xy_sign.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_menu_xy_sign.s")
 #else
 /**
- * Gets the sign of the X and Y joystick axes on the given controller.
+ * Gets the sign of the X and Y joystick axes of the given controller when menu movement should occur.
+ * 
+ * @details When the user holds a joystick in a given direction, the sign of that direction
+ * can be retrieved here for one input frame initially and again every menu joystick delay frames.
+ * This effectively allows the user to move between menu selections by holding the joystick
+ * without selections changing too quickly.
  * 
  * @param[in] port The controller port.
- * @param[out] xSign The sign of the X axis.
- * @param[out] ySign The sign of the Y axis.
+ * @param[out] xSign The sign of the X axis, non-zero if X-axis movement should occur.
+ * @param[out] ySign The sign of the Y axis, non-zero if Y-axis movement should occur..
+ * 
+ * @see set_menu_joystick_delay
  */
-void get_joystick_xy_sign(int port, s8 *xSign, s8 *ySign) {
-    *xSign = joyXSign[gVirtualContPortMap[port]];
-    *ySign = joyYSign[gVirtualContPortMap[port]];
+void get_joystick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
+    *xSign = gMenuJoyXSign[gVirtualContPortMap[port]];
+    *ySign = gMenuJoyYSign[gVirtualContPortMap[port]];
 }
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/handle_stick_deadzone.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/handle_joystick_deadzone.s")
 #else
 /**
  * Applies a lower deadzone of -8,8 and upper deadzone of -70,70 to a joystick axis input.
@@ -659,7 +682,7 @@ void get_joystick_xy_sign(int port, s8 *xSign, s8 *ySign) {
  * 
  * Returns a joystick axis value between [-70, 70].
  */
-s8 handle_stick_deadzone(s8 stick) {
+s8 handle_joystick_deadzone(s8 stick) {
     s8 adjustedStick;
 
     if (gIgnoreJoystick) {
@@ -723,18 +746,30 @@ void func_80011290(int _) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/set_input_menu_delay.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/set_menu_joystick_delay.s")
 #else
-void set_input_menu_delay(s8 delay) {
-    menuInputDelay = delay;
+/**
+ * Sets the number of input frames that must pass before menu movement occurs due to the
+ * joystick being held in a direction.
+ * 
+ * @see get_joystick_menu_xy_sign for more info.
+ */
+void set_menu_joystick_delay(s8 delay) {
+    gMenuJoystickDelay = delay;
 }
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/reset_input_menu_delay.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/input/reset_menu_joystick_delay.s")
 #else
-void reset_input_menu_delay() {
-    menuInputDelay = 5;
+/**
+ * Resets the number of input frames that must pass before menu movement occurs due to the
+ * joystick being held in a direction to 5.
+ * 
+ * @see get_joystick_menu_xy_sign for more info.
+ */
+void reset_menu_joystick_delay() {
+    gMenuJoystickDelay = 5;
 }
 #endif
 
