@@ -7,9 +7,6 @@ void controller_thread_entry(void *arg);
 s8 handle_joystick_deadzone(s8 stick);
 void init_virtual_cont_port_map();
 
-#if 0 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_controller_interrupt_queue.s")
-#else
 /**
  * @returns The message queue associated with SI controller interrupts.
  * This is the same message queue that is passed to osContInit.
@@ -17,33 +14,36 @@ void init_virtual_cont_port_map();
 OSMesgQueue *get_controller_interrupt_queue() {
     return &gContInterruptQueue;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010200.s")
-#else
-void func_80010200() {
-    D_800A8618 = 0xA;
-
-    osSendMesg(&gControllerMesgQueue2, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
+/**
+ * Signals the controller thread to apply controller inputs to input related globals
+ * used by normal gameplay functions the next time it handles controller input.
+ * 
+ * @details Does not block.
+ * 
+ * @see gContThreadMesgQueue
+ */
+void signal_apply_controller_inputs() {
+    gContQueue2Message = 0xA;
+    osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_80010238.s")
-#else
-void func_80010238() {
-    D_800A8618 = 0xA;
+/**
+ * Signals the controller thread to apply controller inputs to input related globals 
+ * used by normal gameplay functions the next time it handles controller input and 
+ * blocks until this occurs.
+ * 
+ * @see gContThreadMesgQueue
+ */
+void apply_controller_inputs() {
+    // Tell controller thread to apply controller inputs
+    gContQueue2Message = 0xA;
+    osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
 
-    osSendMesg(&gControllerMesgQueue2, (OSMesg)&D_800A8618, OS_MESG_NOBLOCK);
-
-    osRecvMesg(&gControllerMesgQueue3, NULL, OS_MESG_BLOCK);
+    // Block until controller inputs have been applied
+    osRecvMesg(&gContThreadInputsAppliedQueue, NULL, OS_MESG_BLOCK);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/init_controller_data.s")
-#else
 s32 init_controller_data() {
     s32 lastControllerIndex;
     s32 i;
@@ -96,24 +96,20 @@ s32 init_controller_data() {
 
     return lastControllerIndex;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/start_controller_thread.s")
-#else
 void start_controller_thread(OSSched *scheduler) {
     osCreateMesgQueue(
-        /*mq*/      &gControllerMesgQueue2, 
-        /*msg*/     &gControllerMesgQueue2Buffer[0], 
-        /*count*/   CONTROLLER_MESG_BUFFER_2_LENGTH
+        /*mq*/      &gContThreadMesgQueue, 
+        /*msg*/     &gContThreadMesgQueueBuffer[0], 
+        /*count*/   CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH
     );
 
-    func_8003B6E0(scheduler, &D_800A8608, &gControllerMesgQueue2, 2);
+    func_8003B6E0(scheduler, &D_800A8608, &gContThreadMesgQueue, 2);
 
     osCreateMesgQueue(
-        /*mq*/      &gControllerMesgQueue3, 
-        /*msg*/     &gControllerMesgQueue3Buffer[0], 
-        /*count*/   CONTROLLER_MESG_BUFFER_3_LENGTH
+        /*mq*/      &gContThreadInputsAppliedQueue, 
+        /*msg*/     &gContThreadInputsAppliedQueueBuffer[0], 
+        /*count*/   CONT_THREAD_INPUTS_APPLIED_QUEUE_BUFFER_LENGTH
     );
 
     // Create and start controller thread
@@ -128,7 +124,6 @@ void start_controller_thread(OSSched *scheduler) {
 
     osStartThread(&gControllerThread);
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_entry.s")
@@ -161,14 +156,16 @@ void controller_thread_entry(void *_) {
     gPrevContSnapshotsI = 0;
 
     while (TRUE) {
-        osRecvMesg(&gControllerMesgQueue2, (OSMesg*)&contMesg, OS_MESG_BLOCK);
+        // Wait for signal to process input
+        osRecvMesg(&gContThreadMesgQueue, (OSMesg*)&contMesg, OS_MESG_BLOCK);
 
         if (*contMesg != 1) {
             if (*contMesg != 0xA) { // ???
                 
             }
 
-            D_800A7DB1 = 1;
+            // Next time a 1 is received, apply inputs after collecting interrupts
+            gApplyContInputs = TRUE;
         } else {
             stackVar1 = gPrevContSnapshotsI;
 
@@ -207,7 +204,8 @@ void controller_thread_entry(void *_) {
                 }
             }
 
-            if (D_800A7DB1 == 0) {
+            // If we were not signalled to apply inputs, stop here
+            if (gApplyContInputs == FALSE) {
                 // NOTE: Could also be a separate do-while starting at the beginning of the while (TRUE)
                 continue;
             }
@@ -305,8 +303,8 @@ void controller_thread_entry(void *_) {
             // Reset ignore joystick
             gIgnoreJoystick = FALSE;
 
-            // TODO:
-            D_800A7DB1 = 0;
+            // Reset flag for applying inputs
+            gApplyContInputs = FALSE;
 
             // Reset buffered snapshot count (since we've handled them all)
             gNumBufContSnapshots[(gPrevContSnapshotsI ^ 1) & 0xff] = 0;
@@ -314,8 +312,8 @@ void controller_thread_entry(void *_) {
             // Swap snapshot arrays
             gPrevContSnapshotsI = gPrevContSnapshotsI ^ 1;
 
-            // TODO:
-            osSendMesg(&gControllerMesgQueue3, &D_800A8618, OS_MESG_NOBLOCK);
+            // Signal that inputs were applied
+            osSendMesg(&gContThreadInputsAppliedQueue, &gContQueue2Message, OS_MESG_NOBLOCK);
         }
     }
 }
@@ -334,9 +332,6 @@ void _init_virtual_cont_port_map() {
 }
 #endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/update_virtual_cont_port_map.s")
-#else
 /**
  * TODO: Not sure what the intent of this function is, but here's some example in/outs:
  * ports = [3, 0, 2, 1]
@@ -368,22 +363,14 @@ void update_virtual_cont_port_map(s8 ports[MAXCONTROLLERS]) {
         }
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_physical_cont_port.s")
-#else
 /**
  * Maps the given virtual controller port to its corresponding physical port.
  */
 u8 get_physical_cont_port(int virtualPort) {
     return gVirtualContPortMap[virtualPort];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/swap_controller_port_0_and_1.s")
-#else
 /**
  * Swaps the first 2 virtual controller ports.
  */
@@ -393,11 +380,7 @@ void swap_controller_port_0_and_1() {
     gVirtualContPortMap[0] = gVirtualContPortMap[1];
     gVirtualContPortMap[1] = port0;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_buttons.s")
-#else
 /**
  * Gets a masked bitfield of held buttons on the given controller.
  * 
@@ -411,11 +394,7 @@ u16 get_masked_buttons(int port) {
 
     return gContPads[gVirtualContPortMap[port]].button & gButtonMask[port];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_buttons_from_buffer.s")
-#else
 /**
  * Gets a masked bitfield of held buttons on the given controller from the 
  * requested buffered snapshot.
@@ -448,11 +427,7 @@ u16 get_masked_buttons_from_buffer(int port, int buffer) {
 
     return pads[gVirtualContPortMap[port]].button & gButtonMask[port];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_presses.s")
-#else
 /**
  * Gets a masked bitfield of buttons that were just pressed on the given controller.
  * 
@@ -466,11 +441,7 @@ u16 get_masked_button_presses(int port) {
 
     return gButtonPresses[gVirtualContPortMap[port]] & gButtonMask[port];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_button_presses.s")
-#else
 /**
  * Gets a bitfield of buttons that were just pressed on the given controller.
  * 
@@ -483,11 +454,7 @@ u16 get_button_presses(int port) {
 
     return gButtonPresses[gVirtualContPortMap[port]];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_presses_from_buffer.s")
-#else
 /**
  * Gets a masked bitfield of buttons that were just pressed on the given 
  * controller from the requested buffered snapshot.
@@ -517,11 +484,7 @@ u16 get_masked_button_presses_from_buffer(int port, int buffer) {
 
     return snapshot->buttonPresses[gVirtualContPortMap[port]] & gButtonMask[port];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_releases.s")
-#else
 /**
  * Gets a masked bitfield of buttons that were just released on the given controller.
  * 
@@ -535,11 +498,7 @@ u16 get_masked_button_releases(int port) {
 
     return gButtonReleases[gVirtualContPortMap[port]] & gButtonMask[port];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_masked_button_releases_from_buffer.s")
-#else
 /**
  * Gets a masked bitfield of buttons that were just released on the given 
  * controller from the requested buffered snapshot.
@@ -569,11 +528,7 @@ u16 get_masked_button_releases_from_buffer(int port, int buffer) {
 
     return snapshot->buttonReleases[gVirtualContPortMap[port]] & gButtonMask[port];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_x.s")
-#else
 /**
  * Returns the joystick X value of the controller in the given port with a deadzone applied.
  * 
@@ -586,11 +541,7 @@ s8 get_joystick_x(int port) {
         return handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_x);
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_x_from_buffer.s")
-#else
 /**
  * Gets the joystick X value on the given controller from the 
  * requested buffered snapshot with a deadzone applied.
@@ -622,11 +573,7 @@ s8 get_joystick_x_from_buffer(int port, int buffer) {
 
     return handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_x);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_y.s")
-#else
 /**
  * Returns the joystick Y value of the controller in the given port with a deadzone applied.
  * 
@@ -639,11 +586,7 @@ s8 get_joystick_y(int port) {
         return handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_y);
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_y_from_buffer.s")
-#else
 /**
  * Gets the joystick Y value on the given controller from the 
  * requested buffered snapshot with a deadzone applied.
@@ -675,11 +618,7 @@ s8 get_joystick_y_from_buffer(int port, int buffer) {
 
     return handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_y);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/get_joystick_menu_xy_sign.s")
-#else
 /**
  * Gets the sign of the X and Y joystick axes of the given controller when menu movement should occur.
  * 
@@ -698,11 +637,7 @@ void get_joystick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
     *xSign = gMenuJoyXSign[gVirtualContPortMap[port]];
     *ySign = gMenuJoyYSign[gVirtualContPortMap[port]];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/handle_joystick_deadzone.s")
-#else
 /**
  * Applies a lower deadzone of -8,8 and upper deadzone of -70,70 to a joystick axis input.
  * 
@@ -746,19 +681,11 @@ s8 handle_joystick_deadzone(s8 stick) {
 
     return adjustedStick;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_8001124C.s")
-#else
 void func_8001124C() {
     D_8008C8A4 = 0;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/set_button_mask.s")
-#else
 /**
  * Sets the button mask for the given controller.
  * 
@@ -770,19 +697,11 @@ void func_8001124C() {
 void set_button_mask(int port, u16 mask) {
     gButtonMask[port] &= ~mask;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/func_80011290.s")
-#else
 void func_80011290(int _) {
     gIgnoreJoystick = TRUE;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/set_menu_joystick_delay.s")
-#else
 /**
  * Sets the number of input frames that must pass before menu movement occurs due to the
  * joystick being held in a direction.
@@ -792,11 +711,7 @@ void func_80011290(int _) {
 void set_menu_joystick_delay(s8 delay) {
     gMenuJoystickDelay = delay;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/reset_menu_joystick_delay.s")
-#else
 /**
  * Resets the number of input frames that must pass before menu movement occurs due to the
  * joystick being held in a direction to 5.
@@ -806,12 +721,7 @@ void set_menu_joystick_delay(s8 delay) {
 void reset_menu_joystick_delay() {
     gMenuJoystickDelay = 5;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/input/ret1_800112d8.s")
-#else
 int ret1_800112d8() {
     return 1;
 }
-#endif

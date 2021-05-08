@@ -10,10 +10,13 @@
 #define CONTROLLER_THREAD_ID 0x62
 // NOTE: This size is NOT CONFIRMED YET
 #define CONTROLLER_THREAD_STACKSIZE 1152
+
 // The length of gContInterruptBuffer
 #define CONT_INTERRUPT_BUFFER_LENGTH 2
-#define CONTROLLER_MESG_BUFFER_2_LENGTH 8
-#define CONTROLLER_MESG_BUFFER_3_LENGTH 1
+// The length of gContThreadMesgQueueBuffer
+#define CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH 8
+// The length of gContThreadInputsAppliedQueueBuffer
+#define CONT_THREAD_INPUTS_APPLIED_QUEUE_BUFFER_LENGTH 1
 
 // The maximum number of buffered controller snapshots.
 #define MAX_BUFFERED_CONT_SNAPSHOTS 4
@@ -72,7 +75,13 @@ extern u8 gIgnoreJoystick;
  */
 extern u8 gPrevContSnapshotsI;
 
-extern u8 D_800A7DB1;
+/**
+ * Whether the controller thread should apply controller inputs to globals like gContPads
+ * after collecting controller interrupts.
+ * 
+ * @see gContThreadMesgQueue and controller_thread_entry for more info.
+ */
+extern u8 gApplyContInputs;
 
 /**
  * For the current and previous controller snapshots, the number of snapshots that are buffered.
@@ -109,11 +118,34 @@ extern ControllersSnapshot gContSnapshotsBuffer1[MAX_BUFFERED_CONT_SNAPSHOTS];
  * This is the same message queue that is passed to osContInit.
  */
 extern OSMesgQueue gContInterruptQueue;
-extern OSMesgQueue gControllerMesgQueue2;
-extern OSMesgQueue gControllerMesgQueue3;
+/**
+ * A message queue for signalling when the controller thread should process controller
+ * interrupts and potentially to apply them to the controller globals that the game 
+ * reads from for normal gameplay.
+ * 
+ * - For every non-1 value sent to this queue, the controller thread will set a flag saying
+ * that next time the queue gets a value of 1 sent, it will process controller interrupts
+ * AND apply them to globals like gContPads.
+ * - For every value of 1 sent to this queue, the controller thread will process controller
+ * interrupts and if a non-1 value was previously sent also apply them to globals like gContPads.
+ * 
+ * While messages are not sent to this queue, the controller thread will block.
+ * 
+ * Usually, 0xA, 0x1 is repeatedly sent each frame or so (not sure exactly when, but its related
+ * to game ticks) to process controller input.
+ * 
+ * See controller_thread_entry for details.
+ */
+extern OSMesgQueue gContThreadMesgQueue;
+/**
+ * When the controller thread applies controller inputs to input globals used by normal 
+ * gameplay functions, a message is sent to this queue to signal this.
+ */
+extern OSMesgQueue gContThreadInputsAppliedQueue;
+
 extern OSMesg gContInterruptBuffer[CONT_INTERRUPT_BUFFER_LENGTH];
-extern OSMesg gControllerMesgQueue2Buffer[CONTROLLER_MESG_BUFFER_2_LENGTH];
-extern OSMesg gControllerMesgQueue3Buffer[CONTROLLER_MESG_BUFFER_3_LENGTH];
+extern OSMesg gContThreadMesgQueueBuffer[CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH];
+extern OSMesg gContThreadInputsAppliedQueueBuffer[CONT_THREAD_INPUTS_APPLIED_QUEUE_BUFFER_LENGTH];
 
 /**
  * Message sent to the gContInterruptQueue when an SI interrupt occurs.
@@ -202,7 +234,12 @@ extern OSThread gControllerThread;
 extern u8 gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE];
 
 extern int D_800A8608;
-extern s16 D_800A8618;
+/**
+ * The address of this message is sent to gContThreadMesgQueue.
+ * 
+ * @see gContThreadMesgQueue for more info.
+ */
+extern s16 gContQueue2Message;
 
 /**
  * The number of controller input frames that a joystick axis must be held
