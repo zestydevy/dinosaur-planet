@@ -334,7 +334,41 @@ void _init_virtual_cont_port_map() {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/input/update_controllerPortList.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/input/update_virtual_cont_port_map.s")
+#else
+/**
+ * TODO: Not sure what the intent of this function is, but here's some example in/outs:
+ * ports = [3, 0, 2, 1]
+ * gVirtualContPortMap = [0, 2, 3, 1]
+ * 
+ * ports = [0, 1, 2, 3]
+ * gVirtualContPortMap = [1, 2, 3, 0]
+ * 
+ * ports = [1, 3, 2, 0]
+ * gVirtualContPortMap = [0, 1, 2, 3]
+ */
+void update_virtual_cont_port_map(s8 ports[MAXCONTROLLERS]) {
+    int i;
+    int k;
+
+    k = 0;
+
+    for (i = 0; i < MAXCONTROLLERS; ++i) {
+        if (ports[i] != 0) {
+            gVirtualContPortMap[k] = i;
+            k += 1;
+        }
+    }
+
+    for (i = 0; i < MAXCONTROLLERS; ++i) {
+        if (ports[i] == 0) {
+            gVirtualContPortMap[k] = i;
+            k += 1;
+        }
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/input/get_physical_cont_port.s")
