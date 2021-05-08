@@ -68,15 +68,12 @@ s32 init_controller_data() {
     // Set default controller virtual->physical port mapping
     init_virtual_cont_port_map();
 
+    // Initialize controller input globals and determine how many controllers are inserted
     gNoControllers = FALSE;
 
-    // Initialize gContPads memory
     bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
 
-    // Default menu joystick delay to 5 input frames
     gMenuJoystickDelay = 5;
-
-    // Initialize controller input globals and determine how many controllers are inserted
     lastControllerIndex = -1;
 
     for (i = 0; i != MAXCONTROLLERS; ++i) {
@@ -136,6 +133,8 @@ void start_controller_thread(OSSched *scheduler) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_entry.s")
 #else
+// Needs work, but isn't too far off
+// May have minor errors still
 void controller_thread_entry(void *_) {
     s16 *contMesg;
     u32 stackVar1;
@@ -730,7 +729,9 @@ void func_8001124C() {
  * Sets the button mask for the given controller.
  * 
  * @details Bits not set in the mask will result in those corresponding buttons
- * to be ignored.
+ * to be ignored. The button mask will be reset to 0xFFFF after the next input
+ * frame. In other words, setting a button mask only applies to the next set
+ * of button inputs.
  */
 void set_button_mask(int port, u16 mask) {
     gButtonMask[port] &= ~mask;
