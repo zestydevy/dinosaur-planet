@@ -34,6 +34,7 @@ segments:
     - [0xC660, c]
     - [0xC840, c, dll]
     - [0xD280, c]
+    - [0x10DF0, c, input]
     - [0x11EF0, c]
     - [0x11F70, c]
     - [0x12320, c]

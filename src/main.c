@@ -1,5 +1,6 @@
 #include "common.h"
 #include <PR/sched.h>
+#include "input.h"
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
@@ -64,8 +65,8 @@ void game_init(void)
     if (0);
     D_800B09C1 = 0;
     D_800AE680 = D_800AE678[D_800B09C1];
-    some_controller_init_val = init_controller_data();
-    controller_thread_func(&osscheduler_);
+    gLastInsertedControllerIndex = init_controller_data();
+    start_controller_thread(&osscheduler_);
     crash_thread_func(&osscheduler_);
     init_textures();
     init_maps();
@@ -302,11 +303,17 @@ void func_80014508(s8 arg0) {
     D_8008C94C = arg0;
 }
 
-s32 func_80014524(void) {
-    if (some_controller_init_val == -1) {
-        return 1;
+/**
+ * @returns TRUE if no controllers are inserted.
+ * @pre game_init must be called first.
+ * @see game_init, init_controller_data
+ */
+s32 are_no_controllers_inserted(void) {
+    if (gLastInsertedControllerIndex == -1) {
+        // No controllers are inserted
+        return TRUE;
     } else {
-        return 0;
+        return FALSE;
     }
 }
 
