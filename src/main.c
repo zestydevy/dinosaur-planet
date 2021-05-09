@@ -1,5 +1,6 @@
 #include "common.h"
 #include <PR/sched.h>
+#include "crash.h"
 #include "input.h"
 
 void func_8001440C(s32 arg0);
@@ -67,7 +68,7 @@ void game_init(void)
     D_800AE680 = D_800AE678[D_800B09C1];
     gLastInsertedControllerIndex = init_controller_data();
     start_controller_thread(&osscheduler_);
-    crash_thread_func(&osscheduler_);
+    start_crash_thread(&osscheduler_);
     init_textures();
     init_maps();
     func_8001CD00();
