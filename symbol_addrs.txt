@@ -642,7 +642,7 @@ gButtonReleases = 0x800a7fa8; // type:data size:0x8
 get_button_presses = 0x80010d9c; // type:func
 gNoControllers = 0x8008c8a0; // type:data size:0x4
 status_reg_func_byte = 0x8008ca80; // type:data size:0x1
-crash_mesgq = 0x800b3758; // type:data size:0x18
+gCrashMesgQueue = 0x800b3758; // type:data size:0x18
 DLLSIMPORTTAB = 0xb3b064dc; // type:data size:0x818
 gLoadedDLLList = 0x800A7D10; // type:data size:0x4
 gLoadedDLLCount = 0x800A7D14; // type:data size:0x4
@@ -1147,4 +1147,5 @@ handle_joystick_deadzone = 0x800111BC; // type:func
 get_joystick_x = 0x80010F78; // type:func
 get_joystick_y = 0x8001107C; // type:func
 
+gCrashMesgQueueBuffer = 0x800B3754; // type:data size:0x4
 stop_active_app_threads_2 = 0x80037610; // type:func
