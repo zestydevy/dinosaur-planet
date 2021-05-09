@@ -1146,3 +1146,5 @@ swap_controller_port_0_and_1 = 0x80010C24; // type:func
 handle_joystick_deadzone = 0x800111BC; // type:func
 get_joystick_x = 0x80010F78; // type:func
 get_joystick_y = 0x8001107C; // type:func
+
+stop_active_app_threads_2 = 0x80037610; // type:func

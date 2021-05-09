@@ -116,7 +116,7 @@ void stop_active_app_threads() {
         }
 
         thread = thread->tlnext;
-    };
+    }
 }
 #endif
 

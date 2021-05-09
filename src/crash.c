@@ -1,3 +1,4 @@
+#include <PR/os_internal.h>
 #include "common.h"
 #include "crash.h"
 
@@ -43,6 +44,26 @@ void start_crash_thread(OSSched* scheduler) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/crash/crash_thread_entry.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/crash/func_80037610.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/crash/stop_active_app_threads_2.s")
+#else
+/**
+ * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
+ * 
+ * Identical to stop_active_app_threads.
+ */
+void stop_active_app_threads_2() {
+    OSThread *thread = __osGetActiveQueue();
+
+    while (thread->priority != -1) {
+        if (thread->priority > OS_PRIORITY_IDLE && 
+            thread->priority <= OS_PRIORITY_APPMAX) {
+            osStopThread(thread);
+        }
+
+        thread = thread->tlnext;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/crash/func_80037678.s")
