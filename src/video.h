@@ -168,16 +168,18 @@ extern s32 **D_800BCE18;
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 *D_800BCE22;
 
+void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool);
+
+/**
+ * Returns gVideoMode.
+ */
+s32 get_video_mode();
+
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
 u32 get_some_resolution_encoded();
-
-/**
- * Returns gVideoMode.
- */
-s32 get_video_mode();
 
 #endif

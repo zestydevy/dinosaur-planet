@@ -42,4 +42,18 @@ extern char *gCFileLabels[C_FILE_LABELS_LENGTH];
 extern u8 gCFileLabelFlag;
 extern s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
 
+/**
+ * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
+ */
+void stop_active_app_threads();
+
+void some_crash_print(OSThread**, int, int);
+
+/**
+ * - Sets D_800937F0 to 0
+ * - Sets gSomeCrashVideoFlag if video mode is between 4-6
+ * - Clears the current framebuffer 100 times
+ */
+void check_video_mode_crash_and_clear_framebuffer();
+
 #endif

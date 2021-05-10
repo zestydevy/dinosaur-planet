@@ -5,7 +5,6 @@
 
 void clear_framebuffer_current();
 void pi_manager_entry(void *arg);
-void stop_active_app_threads();
 void crash_controller_getter();
 void check_video_mode_crash_and_clear_framebuffer();
 void some_crash_print(OSThread**, int, int);
@@ -101,9 +100,6 @@ void pi_manager_entry(void *arg) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/stop_active_app_threads.s")
 #else
-/**
- * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
- */
 void stop_active_app_threads() {
     OSThread *thread;
 
@@ -116,7 +112,7 @@ void stop_active_app_threads() {
         }
 
         thread = thread->tlnext;
-    };
+    }
 }
 #endif
 
@@ -187,11 +183,6 @@ void _crash_copy_control_inputs() {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/check_video_mode_crash_and_clear_framebuffer.s")
 #else
-/**
- * - Sets D_800937F0 to 0
- * - Sets gSomeCrashVideoFlag if video mode is between 4-6
- * - Clears the current framebuffer 100 times
- */
 void check_video_mode_crash_and_clear_framebuffer() {
     int i;
 

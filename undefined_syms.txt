@@ -27,3 +27,4 @@ gControllerThreadStack = 0x800a8180;
 gPiManagerThreadStack = 0x800beb10;
 gLastJoyY = 0x800a7fb8;
 gLastJoyX = 0x800a7fb4;
+gCrashThreadStack = 0x800B34C8;
