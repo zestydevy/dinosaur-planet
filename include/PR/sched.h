@@ -82,6 +82,7 @@ typedef struct OSScTask_s {
  *
  */
 typedef struct SCClient_s {
+    u8                  unk0x0; /* NOTE: Not from the original sched.h! */
     struct SCClient_s   *next;  /* next client in the list      */
     OSMesgQueue         *msgQ;  /* where to send the frame msg  */
 } OSScClient;
@@ -94,6 +95,7 @@ typedef struct {
     OSMesgQueue cmdQ;
     OSMesg      cmdMsgBuf[OS_SC_MAX_MESGS];
     OSThread    thread;
+    u8          unk0x25c[128]; /* NOTE: Not from the original sched.h! */
     OSScClient  *clientList;
     OSScTask    *audioListHead;
     OSScTask    *gfxListHead;
@@ -107,7 +109,8 @@ typedef struct {
 
 void            osCreateScheduler(OSSched *s, void *stack, OSPri priority,
                                   u8 mode, u8 numFields);
-void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ);
+/* NOTE: param4 is not from the original sched.h! */
+void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4);
 void            osScRemoveClient(OSSched *s, OSScClient *c);
 OSMesgQueue     *osScGetCmdQ(OSSched *s);
 

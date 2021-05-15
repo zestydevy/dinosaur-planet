@@ -1133,6 +1133,7 @@ gContInterruptMessage = 0x800A7F74; // type:data size:0x4
 gContStatuses = 0x800A7F78; // type:data size:0x10
 gControllerThreadStack = 0x800a8180; // type:data
 gContPads = 0x800a7f88; // type:data size:0x18
+gContSchedulerClient = 0x800A8608; // type:data size:0xc
 gContQueue2Message = 0x800A8618; // type:data size:0x2
 get_controller_interrupt_queue = 0x800101F0; // type:func
 signal_apply_controller_inputs = 0x80010200; // type:func
@@ -1149,3 +1150,5 @@ get_joystick_y = 0x8001107C; // type:func
 
 gCrashMesgQueueBuffer = 0x800B3754; // type:data size:0x4
 stop_active_app_threads_2 = 0x80037610; // type:func
+
+osScAddClient = 0x8003B6E0; // type:func
