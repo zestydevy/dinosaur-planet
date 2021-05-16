@@ -163,7 +163,11 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_task_type_string.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/some_dummied_task_func.s")
+#else
+void some_dummied_task_func(int _) { }
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003BAD0.s")
 
