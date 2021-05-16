@@ -144,7 +144,34 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskComplete.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scAppendList.s")
+#else
+void __scAppendList(OSSched *s, OSScTask *t) {
+    u32 type = t->list.t.type;
+
+    if (type == M_AUDTASK) {
+        if (s->audioListTail) {
+            s->audioListTail->next = t;
+        } else {
+            s->audioListHead = t;
+        }
+
+        s->audioListTail = t;
+    } else {
+        if (s->gfxListTail) {
+            s->gfxListTail->next = t;
+        } else {
+            s->gfxListHead = t;
+        }
+
+        s->gfxListTail = t;
+    }
+
+    t->next = NULL;
+    t->state = t->flags & OS_SC_RCP_MASK;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scExec.s")
 
