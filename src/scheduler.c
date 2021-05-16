@@ -1,3 +1,6 @@
+// Thanks to the libreultra project for most of the matching code here.
+// See https://github.com/n64decomp/libreultra/blob/master/src/sched/sched.c
+
 #include "common.h"
 #include "scheduler.h"
 
