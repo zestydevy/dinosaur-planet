@@ -1,9 +1,6 @@
 #include "common.h"
 #include "scheduler.h"
 
-/*
- * private typedefs and defines
- */
 #define VIDEO_MSG       666
 #define RSP_DONE_MSG    667
 #define RDP_DONE_MSG    668
@@ -41,10 +38,7 @@ extern char gStrDITask[];           // "(DI task)\n"
 extern char gStrDIBenchmarkTest[];  // "(DI benchmark test)\n"
 extern char gStrUnknownTaskType[];  // "(Unknown task type)\n"
 
-OSTime D_800B4988;
-
-extern u32 countRegA;
-extern u32 countRegB;
+extern void *D_800918D0;
 
 extern f32 floatTimer0;
 extern f32 floatTimer1;
@@ -53,13 +47,16 @@ extern f32 floatTimer3;
 
 extern s32 intTimer0;
 
-extern f32 D_8009A340;
-extern f32 D_8009A344;
-
 extern u32 D_800918F4;
 extern u32 D_800918F8;
 
-extern void *D_800918D0;
+extern f32 D_8009A340;
+extern f32 D_8009A344;
+
+OSTime D_800B4988;
+
+extern u32 countRegA;
+extern u32 countRegB;
 
 void __scMain(void *arg);
 void func_8003B9C0(OSSched *sc);
@@ -69,7 +66,7 @@ void __scHandleRDP(OSSched *sc);
 s32 __scTaskComplete(OSSched *sc, OSScTask *t);
 void __scAppendList(OSSched *s, OSScTask *t);
 void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
-void __scYield(OSSched *s);
+void __scYield(OSSched *sc);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 
 #if 0
@@ -514,9 +511,9 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scYield.s")
 #else
-void __scYield(OSSched *s) {
-    if (s->curRSPTask->list.t.type == M_GFXTASK) {
-        s->curRSPTask->state |= OS_SC_YIELD;
+void __scYield(OSSched *sc) {
+    if (sc->curRSPTask->list.t.type == M_GFXTASK) {
+        sc->curRSPTask->state |= OS_SC_YIELD;
 
         D_800B4988 = osGetTime();
 
@@ -621,8 +618,9 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
         }
     }
 
-    if (avail != availRCP)
+    if (avail != availRCP) {
         avail = __scSchedule(sc, sp, dp, avail);
+    }
 
     return avail;
 }

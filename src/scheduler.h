@@ -5,6 +5,9 @@
 
 #define OS_SCHEDULER_THREAD_ID 5
 
+/**
+ * @returns The address of s->interruptQ.
+ */
 OSMesgQueue *get_sched_interrupt_queue(OSSched *s);
 
 #endif
