@@ -24,6 +24,8 @@ extern u32 countRegA;
 extern u32 D_800918F4;
 extern u32 D_800918F8;
 
+extern void *D_800918D0;
+
 void __scMain(void *arg);
 
 #if 0
@@ -147,7 +149,43 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskReady.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskComplete.s")
+#else
+// TODO: This matches, but has some illogical oddities
+s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
+    if ((t->state & OS_SC_RCP_MASK) == 0) { /* none of the needs bits set */
+        if (t->msgQ) {
+            if (t->flags & OS_SC_LAST_TASK) {
+                if ((u32)sc->doAudio < 2u) {
+                    sc->frameCount = (u32)t;
+                    return 1;
+                }
+
+                if (t[1].next || t->msg) {
+                    osSendMesg(t->msgQ, t->msg, 1);
+                } else {
+                    osSendMesg(t->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
+                }
+
+                sc->doAudio = 0;
+                return 1;
+            }
+
+            if (t[1].next || t->msg) {
+                osSendMesg(t->msgQ, t->msg, 1);
+                return 1;
+            }
+
+            osSendMesg(t->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
+        }
+
+        return 1;
+    }
+
+    return 0;
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scAppendList.s")
