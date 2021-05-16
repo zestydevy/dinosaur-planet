@@ -70,6 +70,9 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osScAddClient.s")
 #else
+/**
+ * Add a client to the scheduler. Clients receive messages at retrace time.
+ */
 void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4) {
     OSIntMask mask;
 
@@ -147,7 +150,25 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRDP.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskReady.s")
+#else
+/**
+ * Checks to see if the graphics task is able to run based on the current state of the RCP.
+ */
+OSScTask *__scTaskReady(OSScTask *t) {
+    if (t) {
+        // If there is a pending swap bail out til later (next retrace).
+        if (osViGetCurrentFramebuffer() != osViGetNextFramebuffer()) {
+            return NULL;
+        }
+
+        return t;
+    }
+
+    return NULL;
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskComplete.s")
@@ -190,6 +211,9 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scAppendList.s")
 #else
+/**
+ * Place task on either the audio or graphics queue.
+ */
 void __scAppendList(OSSched *s, OSScTask *t) {
     u32 type = t->list.t.type;
 
