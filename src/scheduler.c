@@ -121,20 +121,20 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003BAD0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_printing_compile_info.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_setting_float_timers.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRSP.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003C6FC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRDP.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003C784.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskReady.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003C7DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskComplete.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003C8DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scAppendList.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003C940.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scExec.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003CA10.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scYield.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003CA5C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scSchedule.s")
