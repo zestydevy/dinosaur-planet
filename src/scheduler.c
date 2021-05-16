@@ -72,9 +72,6 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
 void __scYield(OSSched *sc);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osCreateScheduler.s")
-#else
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount) {
     // Initialize scheduler structure
     s->curRSPTask       = NULL;
@@ -109,11 +106,7 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     osCreateThread(&s->thread, OS_SCHEDULER_THREAD_ID, &__scMain, (void*)s, stack, priority);
     osStartThread(&s->thread);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osScAddClient.s")
-#else
 /**
  * Add a client to the scheduler. Clients receive messages at retrace time.
  */
@@ -129,11 +122,7 @@ void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4) {
 
     osSetIntMask(mask);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osScRemoveClient.s")
-#else
 void osScRemoveClient(OSSched *s, OSScClient *c) {
     OSScClient *client = s->clientList;
     OSScClient *prev = NULL;
@@ -158,27 +147,15 @@ void osScRemoveClient(OSSched *s, OSScClient *c) {
 
     osSetIntMask(mask);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osScGetCmdQ.s")
-#else
 OSMesgQueue *osScGetCmdQ(OSSched *s) {
     return &s->cmdQ;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_sched_interrupt_queue.s")
-#else
 OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
     return &s->interruptQ;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_float_timers.s")
-#else
 void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
     f32 temp = D_8009A340;
 
@@ -186,7 +163,6 @@ void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
     *timer1 = floatTimer2 * temp;
     *timer2 = floatTimer3 * temp;
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scMain.s")
@@ -241,9 +217,6 @@ void a__scMain(void *arg) {
 }
 #endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003B9C0.s")
-#else
 void func_8003B9C0(OSSched *sc) {
     s32 state;
     OSScTask *sp = 0, *dp = 0;
@@ -262,11 +235,7 @@ void func_8003B9C0(OSSched *sc) {
         __scExec(sc, sp, dp);
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_task_type_string.s")
-#else
 /**
  * Gets a string for a OSScTask task type.
  */
@@ -284,21 +253,13 @@ char *get_task_type_string(u32 taskType) {
             return gStrUnknownTaskType;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/some_dummied_task_func.s")
-#else
 void some_dummied_task_func(int _) { }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003BAD0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRSP.s")
-#else
 /**
  * __scHandleRSP is called when an RSP task signals that it has 
  * finished or yielded (at the hosts request)
@@ -362,11 +323,7 @@ void __scHandleRSP(OSSched *sc) {
         __scExec(sc, sp, dp);
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRDP.s")
-#else
 /**
  * __scHandleRDP is called when an RDP task signals that it has finished.
  */
@@ -386,11 +343,7 @@ void __scHandleRDP(OSSched *sc) {
         __scExec(sc, sp, dp);
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskReady.s")
-#else
 /**
  * Checks to see if the graphics task is able to run based on the current state of the RCP.
  */
@@ -406,11 +359,7 @@ OSScTask *__scTaskReady(OSScTask *t) {
 
     return NULL;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskComplete.s")
-#else
 // TODO: This matches, but has some illogical oddities
 s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
     if ((t->state & OS_SC_RCP_MASK) == 0) { /* none of the needs bits set */
@@ -444,11 +393,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
 
     return 0;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scAppendList.s")
-#else
 /**
  * Place task on either the audio or graphics queue.
  */
@@ -476,11 +421,7 @@ void __scAppendList(OSSched *s, OSScTask *t) {
     t->next = NULL;
     t->state = t->flags & OS_SC_RCP_MASK;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scExec.s")
-#else
 void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
     if (sp) {
         if (sp->list.t.type == M_AUDTASK) {
@@ -509,11 +450,7 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
         sc->curRDPTask = dp;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scYield.s")
-#else
 void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
@@ -523,7 +460,6 @@ void __scYield(OSSched *sc) {
         osSpTaskYield();
     }
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scSchedule.s")
