@@ -53,6 +53,7 @@ extern f32 floatTimer3;
 
 extern s32 intTimer0;
 
+extern f32 D_8009A340;
 extern f32 D_8009A344;
 
 extern u32 D_800918F4;
@@ -170,7 +171,17 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_float_timers.s")
+#else
+void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
+    f32 temp = D_8009A340;
+
+    *timer0 = floatTimer0 * temp;
+    *timer1 = floatTimer2 * temp;
+    *timer2 = floatTimer3 * temp;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scMain.s")
 
