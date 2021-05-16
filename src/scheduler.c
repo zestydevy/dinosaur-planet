@@ -1,10 +1,23 @@
 #include "common.h"
 #include "scheduler.h"
 
+/*
+ * private typedefs and defines
+ */
 #define VIDEO_MSG       666
 #define RSP_DONE_MSG    667
 #define RDP_DONE_MSG    668
 #define PRE_NMI_MSG     669
+
+/*
+ * OSScTask state
+ */
+#define OS_SC_DP                0x0001  /* set if still needs dp        */
+#define OS_SC_SP                0x0002  /* set if still needs sp        */
+#define OS_SC_YIELD             0x0010  /* set if yield requested       */
+#define OS_SC_YIELDED           0x0020  /* set if yield completed       */
+
+OSTime D_800B4988;
 
 void __scMain(void *arg);
 
@@ -135,6 +148,18 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scExec.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scYield.s")
+#else
+void __scYield(OSSched *s) {
+    if (s->curRSPTask->list.t.type == M_GFXTASK) {
+        s->curRSPTask->state |= OS_SC_YIELD;
+
+        D_800B4988 = osGetTime();
+
+        osSpTaskYield();
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scSchedule.s")
