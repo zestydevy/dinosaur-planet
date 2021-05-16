@@ -17,9 +17,29 @@
 #define OS_SC_YIELD             0x0010  /* set if yield requested       */
 #define OS_SC_YIELDED           0x0020  /* set if yield completed       */
 
+/*
+ * OSScTask->flags type identifier
+ */
+#define OS_SC_XBUS      (OS_SC_SP | OS_SC_DP)
+#define OS_SC_DRAM      (OS_SC_SP | OS_SC_DP | OS_SC_DRAM_DLIST)
+#define OS_SC_DP_XBUS   (OS_SC_SP)
+#define OS_SC_DP_DRAM   (OS_SC_SP | OS_SC_DRAM_DLIST)
+#define OS_SC_SP_XBUS   (OS_SC_DP)
+#define OS_SC_SP_DRAM   (OS_SC_DP | OS_SC_DRAM_DLIST)
+
 OSTime D_800B4988;
 
 extern u32 countRegA;
+extern u32 countRegB;
+
+extern f32 floatTimer0;
+extern f32 floatTimer1;
+extern f32 floatTimer2;
+extern f32 floatTimer3;
+
+extern s32 intTimer0;
+
+extern f32 D_8009A344;
 
 extern u32 D_800918F4;
 extern u32 D_800918F8;
@@ -27,6 +47,9 @@ extern u32 D_800918F8;
 extern void *D_800918D0;
 
 void __scMain(void *arg);
+s32 __scTaskComplete(OSSched *sc, OSScTask *t);
+void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
+s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osCreateScheduler.s")
@@ -146,9 +169,97 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRSP.s")
+#else
+/**
+ * __scHandleRSP is called when an RSP task signals that it has 
+ * finished or yielded (at the hosts request)
+ */
+void __scHandleRSP(OSSched *sc) {
+    OSScTask *t, *sp = 0, *dp = 0;
+    s32 state;
 
+    t = sc->curRSPTask;
+    sc->curRSPTask = 0;
+
+    if (t->list.t.type == M_AUDTASK) {
+        countRegB = osGetCount();
+
+        floatTimer3 = ((countRegB - countRegA) * 60.0f) / D_8009A344;
+        floatTimer1 += floatTimer3;
+
+        if (floatTimer3 > floatTimer0) {
+            floatTimer0 = floatTimer3;
+        }
+
+        if ((intTimer0 % 1000 == 1) || (intTimer0 % 1000 == 2)) {
+            floatTimer2 = floatTimer1 / 500.0f;
+            floatTimer1 = 0.0f;
+            floatTimer0 = 0.0f;
+        }
+    }
+
+    if (t->state & OS_SC_YIELD) {
+        if (osSpTaskYielded(&t->list)) {
+            t->state |= OS_SC_YIELDED;
+
+            if ((t->flags & OS_SC_TYPE_MASK) == OS_SC_XBUS) {
+                // push the task back on the list
+                t->next = sc->gfxListHead;
+                sc->gfxListHead = t;
+
+                if (sc->gfxListTail == 0) {
+                    sc->gfxListTail = t;
+                }
+
+                if (t->unk0x60 != 0) { } // ??
+            }
+        } else {
+            t->state &= ~OS_SC_NEEDS_RSP;
+
+            // NOTE: added by permuter, doesn't match without it.
+            //       maybe this and the other empty ifs are some kind of asserts
+            //       that didn't get fully compiled out?
+            if (!sc) { }
+        }
+
+        if ((t->flags & OS_SC_TYPE_MASK) != OS_SC_XBUS) { } // ??
+    } else {
+        t->state &= ~OS_SC_NEEDS_RSP;
+        __scTaskComplete(sc, t);
+    }
+
+    state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
+    if ((__scSchedule(sc, &sp, &dp, state)) != state) {
+        __scExec(sc, sp, dp);
+    }
+}
+#endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRDP.s")
+#else
+/**
+ * __scHandleRDP is called when an RDP task signals that it has finished.
+ */
+void __scHandleRDP(OSSched *sc) {
+    OSScTask *t, *sp = 0, *dp = 0;
+    s32 state;
+
+    t = sc->curRDPTask;
+    sc->curRDPTask = 0;
+
+    t->state &= ~OS_SC_NEEDS_RDP;
+
+    __scTaskComplete(sc, t);
+
+    state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
+    if ((__scSchedule(sc, &sp, &dp, state)) != state) {
+        __scExec(sc, sp, dp);
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scTaskReady.s")
@@ -179,11 +290,11 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
         if (t->msgQ) {
             if (t->flags & OS_SC_LAST_TASK) {
                 if ((u32)sc->doAudio < 2u) {
-                    sc->frameCount = (u32)t;
+                    sc->frameCount = (u32)t; // ??
                     return 1;
                 }
 
-                if (t[1].next || t->msg) {
+                if (t->unk0x68 || t->msg) {
                     osSendMesg(t->msgQ, t->msg, 1);
                 } else {
                     osSendMesg(t->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
@@ -193,7 +304,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                 return 1;
             }
 
-            if (t[1].next || t->msg) {
+            if (t->unk0x68 || t->msg) {
                 osSendMesg(t->msgQ, t->msg, 1);
                 return 1;
             }
