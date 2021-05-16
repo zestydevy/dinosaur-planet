@@ -27,6 +27,20 @@
 #define OS_SC_SP_XBUS   (OS_SC_DP)
 #define OS_SC_SP_DRAM   (OS_SC_DP | OS_SC_DRAM_DLIST)
 
+/*
+ * OSScTask taskType
+ */
+#define OS_SC_TASK_AUDIO 1
+#define OS_SC_TASK_GAME 2
+#define OS_SC_TASK_DI 3
+#define OS_SC_TASK_DI_BENCHMARK_TEST 4
+
+extern char gStrAudioTask[];        // "(Audio task)"
+extern char gStrGameTask[];         // "(Game task)"
+extern char gStrDITask[];           // "(DI task)\n"
+extern char gStrDIBenchmarkTest[];  // "(DI benchmark test)\n"
+extern char gStrUnknownTaskType[];  // "(Unknown task type)\n"
+
 OSTime D_800B4988;
 
 extern u32 countRegA;
@@ -161,7 +175,27 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003B9C0.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_task_type_string.s")
+#else
+/**
+ * Gets a string for a OSScTask task type.
+ */
+char *get_task_type_string(u32 taskType) {
+    switch (taskType) {
+        case OS_SC_TASK_AUDIO:
+            return gStrAudioTask;
+        case OS_SC_TASK_GAME:
+            return gStrGameTask;
+        case OS_SC_TASK_DI:
+            return gStrDITask;
+        case OS_SC_TASK_DI_BENCHMARK_TEST:
+            return gStrDIBenchmarkTest;
+        default:
+            return gStrUnknownTaskType;
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/some_dummied_task_func.s")

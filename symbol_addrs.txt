@@ -1152,6 +1152,11 @@ get_joystick_y = 0x8001107C; // type:func
 gCrashMesgQueueBuffer = 0x800B3754; // type:data size:0x4
 stop_active_app_threads_2 = 0x80037610; // type:func
 
+gStrAudioTask = 0x8009a020; // type:data
+gStrGameTask = 0x8009a030; // type:data
+gStrDITask = 0x8009a03c; // type:data
+gStrDIBenchmarkTest = 0x8009a048; // type:data
+gStrUnknownTaskType = 0x8009a060; // type:data
 osScAddClient = 0x8003B6E0; // type:func
 osScRemoveClient = 0x8003B73C; // type:func
 __scHandleRDP = 0x8003C6FC; // type:func
