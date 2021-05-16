@@ -62,7 +62,12 @@ extern u32 D_800918F8;
 extern void *D_800918D0;
 
 void __scMain(void *arg);
+void func_8003B9C0(OSSched *sc);
+void __scHandleRetrace(OSSched *sc);
+void __scHandleRSP(OSSched *sc);
+void __scHandleRDP(OSSched *sc);
 s32 __scTaskComplete(OSSched *sc, OSScTask *t);
+void __scAppendList(OSSched *s, OSScTask *t);
 void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
 void __scYield(OSSched *s);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
@@ -183,7 +188,58 @@ void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scMain.s")
+#else
+// Very close
+void a__scMain(void *arg) {
+    OSMesg msg;
+    OSSched *sc = (OSSched*)arg;
+    OSScClient *client;
+    s32 state;
+    OSScTask *sp = 0, *dp = 0;
+    OSScTask *t = 0;
+
+    while (TRUE) {
+        osRecvMesg(&sc->interruptQ, &msg, OS_MESG_BLOCK);
+
+        switch ((int)msg) {
+            case 0x63:
+                func_8003B9C0(sc);
+                break;
+            
+            case VIDEO_MSG:
+                __scHandleRetrace(sc);
+                break;
+            
+            case RSP_DONE_MSG:
+                __scHandleRSP(sc);
+                break;
+            
+            case RDP_DONE_MSG:
+                __scHandleRDP(sc);
+                break;
+            
+            case PRE_NMI_MSG:
+                // notify audio and graphics threads to fade out
+                for (client = sc->clientList; client != 0; client = client->next) {
+                    osSendMesg(client->msgQ, &sc->prenmiMsg, OS_MESG_NOBLOCK);
+                }
+                break;
+            
+            default:
+                t = (OSScTask *)msg;
+                __scAppendList(sc, t);
+
+                state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
+                if ((__scSchedule(sc, &sp, &dp, state)) != state) {
+                    __scExec(sc, sp, dp);
+                }
+                break;
+        }
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003B9C0.s")
