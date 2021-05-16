@@ -19,6 +19,11 @@
 
 OSTime D_800B4988;
 
+extern u32 countRegA;
+
+extern u32 D_800918F4;
+extern u32 D_800918F8;
+
 void __scMain(void *arg);
 
 #if 0
@@ -173,7 +178,38 @@ void __scAppendList(OSSched *s, OSScTask *t) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scExec.s")
+#else
+void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
+    if (sp) {
+        if (sp->list.t.type == M_AUDTASK) {
+            osWritebackDCacheAll(); // flush the cache
+            countRegA = osGetCount();
+        }
+
+        sp->state &= ~(OS_SC_YIELD | OS_SC_YIELDED);
+
+        osSpTaskLoad(&sp->list);
+        osSpTaskStartGo(&sp->list);
+
+        D_800918F4 = 0;
+        D_800918F8 = 0;
+
+        sc->curRSPTask = sp;
+
+        if (sp == dp) {
+            sc->curRDPTask = dp;
+        }
+    }
+
+    if (dp && (dp != sp)) {
+        osDpSetNextBuffer(dp->list.t.output_buff, *dp->list.t.output_buff_size);
+
+        sc->curRDPTask = dp;
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scYield.s")
