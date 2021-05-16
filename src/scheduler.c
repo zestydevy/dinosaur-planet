@@ -63,6 +63,7 @@ extern void *D_800918D0;
 void __scMain(void *arg);
 s32 __scTaskComplete(OSSched *sc, OSScTask *t);
 void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
+void __scYield(OSSched *s);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 
 #if 0
@@ -173,7 +174,28 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scMain.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003B9C0.s")
+#else
+void func_8003B9C0(OSSched *sc) {
+    s32 state;
+    OSScTask *sp = 0, *dp = 0;
+
+    if (sc->audioListHead) {
+        sc->unk0x304 = 1;
+    }
+
+    if (sc->unk0x304 != 0 && sc->curRSPTask) {
+        __scYield(sc);
+        return;
+    }
+
+    state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
+    if ((__scSchedule(sc, &sp, &dp, state)) != state) {
+        __scExec(sc, sp, dp);
+    }
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_task_type_string.s")

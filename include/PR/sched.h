@@ -110,6 +110,7 @@ typedef struct {
     OSScTask    *curRDPTask;
     u32         frameCount;
     s32         doAudio;
+    u32         unk0x304; /* NOTE: Not from the original sched.h! */
 } OSSched;
 
 void            osCreateScheduler(OSSched *s, void *stack, OSPri priority,
