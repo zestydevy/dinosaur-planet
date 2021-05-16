@@ -13,17 +13,17 @@ void __scMain(void *arg);
 #else
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount) {
     // Initialize scheduler structure
-    s->curRSPTask = 0;
-    s->curRDPTask = 0;
-    s->clientList = 0;
-    s->audioListHead = 0;
-    s->gfxListHead = 0;
-    s->audioListTail = 0;
-    s->gfxListTail = 0;
-    s->doAudio = 0;
-    s->frameCount = 0;
-    s->retraceMsg.type = OS_SC_RETRACE_MSG;
-    s->prenmiMsg.type = OS_SC_PRE_NMI_MSG;
+    s->curRSPTask       = NULL;
+    s->curRDPTask       = NULL;
+    s->clientList       = NULL;
+    s->audioListHead    = NULL;
+    s->gfxListHead      = NULL;
+    s->audioListTail    = NULL;
+    s->gfxListTail      = NULL;
+    s->doAudio          = 0;
+    s->frameCount       = 0;
+    s->retraceMsg.type  = OS_SC_RETRACE_MSG;
+    s->prenmiMsg.type   = OS_SC_PRE_NMI_MSG;
 
     // Set up video manager
     osCreateViManager(OS_PRIORITY_VIMGR);
@@ -64,11 +64,50 @@ void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003B73C.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osScRemoveClient.s")
+#else
+void osScRemoveClient(OSSched *s, OSScClient *c) {
+    OSScClient *client = s->clientList;
+    OSScClient *prev = NULL;
+    OSIntMask mask;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_sched_commandQueue.s")
+    mask = osSetIntMask(OS_IM_NONE);
 
+    while (client != NULL) {
+        if (client == c) {
+            if (prev) {
+                prev->next = c->next;
+            } else {
+                s->clientList = c->next;
+            }
+
+            break;
+        }
+
+        prev = client;
+        client = client->next;
+    }
+
+    osSetIntMask(mask);
+}
+#endif
+
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/osScGetCmdQ.s")
+#else
+OSMesgQueue *osScGetCmdQ(OSSched *s) {
+    return &s->cmdQ;
+}
+#endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_sched_interrupt_queue.s")
+#else
+OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
+    return &s->interruptQ;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/get_float_timers.s")
 

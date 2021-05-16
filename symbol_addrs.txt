@@ -191,7 +191,7 @@ start_crash_thread = 0x80037420; // type:func
 create_3_megs_quues = 0x80037f1c; // type:func
 three_more_mallocs = 0x8003a3b0; // type:func
 osCreateScheduler = 0x8003b5b0; // type:func
-get_sched_commandQueue = 0x8003b7c8; // type:func
+osScGetCmdQ = 0x8003b7c8; // type:func
 get_sched_interrupt_queue = 0x8003b7d4; // type:func
 get_task_type_string = 0x8003ba60; // type:func
 some_dummied_task_func = 0x8003bac4; // type:func
@@ -1152,3 +1152,4 @@ gCrashMesgQueueBuffer = 0x800B3754; // type:data size:0x4
 stop_active_app_threads_2 = 0x80037610; // type:func
 
 osScAddClient = 0x8003B6E0; // type:func
+osScRemoveClient = 0x8003B73C; // type:func

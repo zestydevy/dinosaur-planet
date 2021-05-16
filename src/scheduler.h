@@ -5,4 +5,6 @@
 
 #define OS_SCHEDULER_THREAD_ID 5
 
+OSMesgQueue *get_sched_interrupt_queue(OSSched *s);
+
 #endif
