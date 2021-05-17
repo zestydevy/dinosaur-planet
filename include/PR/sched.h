@@ -56,6 +56,11 @@ typedef struct OSScTask_s {
     OSTask              list;
     OSMesgQueue         *msgQ;
     OSMesg              msg;
+    u8                  unk0x58[8]; /* NOTE: Not from the original sched.h! */
+    u32                 unk0x60;    /* NOTE: Not from the original sched.h! */
+    u8                  unk0x64[4]; /* NOTE: Not from the original sched.h! */
+    u32                 unk0x68;    /* NOTE: Not from the original sched.h! */
+    u32                 taskType;   /* NOTE: Not from the original sched.h! 0x6c */
 #ifndef _FINALROM                       /* all #ifdef items should    */
     OSTime              startTime;      /* remain at the end!!, or    */
     OSTime              totalTime;      /* possible conflict if       */
@@ -82,6 +87,7 @@ typedef struct OSScTask_s {
  *
  */
 typedef struct SCClient_s {
+    u8                  unk0x0; /* NOTE: Not from the original sched.h! */
     struct SCClient_s   *next;  /* next client in the list      */
     OSMesgQueue         *msgQ;  /* where to send the frame msg  */
 } OSScClient;
@@ -94,6 +100,7 @@ typedef struct {
     OSMesgQueue cmdQ;
     OSMesg      cmdMsgBuf[OS_SC_MAX_MESGS];
     OSThread    thread;
+    u8          unk0x25c[128]; /* NOTE: Not from the original sched.h! */
     OSScClient  *clientList;
     OSScTask    *audioListHead;
     OSScTask    *gfxListHead;
@@ -103,11 +110,13 @@ typedef struct {
     OSScTask    *curRDPTask;
     u32         frameCount;
     s32         doAudio;
+    u32         unk0x304; /* NOTE: Not from the original sched.h! */
 } OSSched;
 
 void            osCreateScheduler(OSSched *s, void *stack, OSPri priority,
                                   u8 mode, u8 numFields);
-void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ);
+/* NOTE: param4 is not from the original sched.h! */
+void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4);
 void            osScRemoveClient(OSSched *s, OSScClient *c);
 OSMesgQueue     *osScGetCmdQ(OSSched *s);
 

@@ -226,7 +226,7 @@ extern s8 gMenuJoyYSign[MAXCONTROLLERS];
 extern OSThread gControllerThread;
 extern u8 gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE];
 
-extern int D_800A8608;
+extern OSScClient gContSchedulerClient;
 /**
  * The address of this message is sent to gContThreadMesgQueue.
  * 
@@ -245,8 +245,6 @@ extern s16 gContQueue2Message;
  * Defaults to 5.
  */ 
 extern s8 gMenuJoystickDelay;
-
-void func_8003B6E0(OSSched *scheduler, int*, OSMesgQueue*, int);
 
 void controller_thread_entry(void *arg);
 s8 handle_joystick_deadzone(s8 stick);
@@ -341,7 +339,7 @@ void start_controller_thread(OSSched *scheduler) {
         /*count*/   CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH
     );
 
-    func_8003B6E0(scheduler, &D_800A8608, &gContThreadMesgQueue, 2);
+    osScAddClient(scheduler, &gContSchedulerClient, &gContThreadMesgQueue, 2);
 
     osCreateMesgQueue(
         /*mq*/      &gContThreadInputsAppliedQueue, 

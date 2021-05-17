@@ -28,7 +28,6 @@ extern OSMesgQueue gCrashMesgQueue;
 extern s16 D_800B3770;
 
 OSSched *get_ossched(void);
-void func_8003B6E0(OSSched *scheduler, int*, OSMesgQueue*, int);
 
 void crash_thread_entry(void *arg);
 void stop_active_app_threads_2();
@@ -80,7 +79,7 @@ void crash_thread_entry(void *_) {
         CRASH_MESG_QUEUE_BUFFER_LENGTH
     );
 
-    func_8003B6E0(scheduler, &D_800B3748, &gCrashMesgQueue, 3);
+    osScAddClient(scheduler, &D_800B3748, &gCrashMesgQueue, 3);
 
     if (osResetType == 1 && D_80091770->unk0x8 == 1) {
         D_800B3770 = 5;
