@@ -25,7 +25,7 @@ At a high level, the process goes like this:
     - How splat splits code into different files also affects this part. You'll notice that for each folder under `asm/nonmatchings/` there is a counterpart C source file.
 3. Replace each `#pragma GLOBAL_ASM(...)` by decompiling the included assembly code into a C function.
 4. Recompile the ROM using IDO 5.3. If the recompiled ROM matches the original ROM, the function decompiled in step 3 is correct!
-    - Note: IDO (IRIS Development Option) is a set of compiler tools developed for the IRIX operating system and does not run natively on x86. This project uses a [recompiled version of each program](https://github.com/Emill/ido-static-recomp), which you can find under `tools/ido_recomp/`.
+    - Note: IDO (IRIS Development Option) is a set of compiler tools developed for the IRIX operating system and do not run natively on x86. This project uses a [recompiled version of each program](https://github.com/Emill/ido-static-recomp), which you can find under `tools/ido_recomp/`.
 
 
 ## Things to know before contributing
@@ -40,6 +40,17 @@ It's perfectly okay if you don't know all of this right away, but you will need 
 Some documents to help:
 - [MIPS IV Instruction Set](http://math-atlas.sourceforge.net/devel/assembly/mips-iv.pdf) 
 - [C89 Draft](https://port70.net/~nsz/c/c89/c89-draft.html)
+
+
+### Compiler requirements
+
+
+#### Line endings
+If you plan on building the ROM on your machine, it's very important that the repository is cloned with Unix line endings as the compiler will not recognize Windows line endings.
+
+
+#### Compiling on Windows
+The compiler will not run natively on Windows and will need to be ran using something like [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
 
 ## How can I contribute?
@@ -103,6 +114,7 @@ Before opening a pull request, you should make sure that:
 
 1. Any code additions/changes follow the project's [style guide](#style-guide).
 2. The ROM builds and matches the original ROM (only for non-draft pull requests).
+    - If you have a decompiled function that doesn't match but is worth committing, make sure to use an `#if` macro to let the compiler ignore the decompiled implementation and include the original assembly instead.
 
 
 ## Style guide
@@ -110,7 +122,7 @@ The Dinosaur Planet Decompilation follows the same [style guide as the SM64 Deco
 
 In addition:
 - Use Unix line endings (`\n`).
-- Ensure files end in a newline.
+- Ensure files end with a newline.
 - Strip trailing whitespace.
 
 
