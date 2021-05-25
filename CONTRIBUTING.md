@@ -4,14 +4,20 @@ Welcome to the Dinosaur Planet Decompilation and thanks for taking the time to c
 Please read on to learn about what the decompilation involves and how you can help.
 
 
+### Discord
+https://discord.gg/H6WGkznZBc
+
+If you're interested in contributing, please consider joining us on Discord over at the [Dinosaur Planet Community server](https://discord.gg/H6WGkznZBc) in the `#decompilation` channel! The Discord server is the best place to get your questions answered and is where a lot of the project's discussions take place.
+
+
 ## Table of Contents
 - [How does decompilation work](#how-does-decompilation-work)
 - [Things to know before contributing](#things-to-know-before-contributing)
 - [How can I contribute?](#how-can-i-contribute)
     - [Documenting code](#documenting-code)
     - [Decompiling functions](#decompiling-functions)
-- [Opening a pull request](#opening-a-pull-request)
 - [Style guide](#style-guide)
+- [Opening a pull request](#opening-a-pull-request)
 - [Resources](#resources)
 
 
@@ -109,14 +115,6 @@ Decompiling MIPS assembly into C code is where most of the project's development
 4. Make sure the code adheres to the project's [style guide](#style-guide).
 
 
-## Opening a pull request
-Before opening a pull request, you should make sure that:
-
-1. Any code additions/changes follow the project's [style guide](#style-guide).
-2. The ROM builds and matches the original ROM (only for non-draft pull requests).
-    - If you have a decompiled function that doesn't match but is worth committing, make sure to use an `#if` macro to let the compiler ignore the decompiled implementation and include the original assembly instead.
-
-
 ## Style guide
 The Dinosaur Planet Decompilation follows the same [style guide as the SM64 Decompilation](https://docs.google.com/document/d/1T_6dUj32QOscrMOMDsr7bY0esohswEAstKCO4gFn6t0).
 
@@ -124,6 +122,14 @@ In addition:
 - Use Unix line endings (`\n`).
 - Ensure files end with a newline.
 - Strip trailing whitespace.
+
+
+## Opening a pull request
+Before opening a pull request, you should make sure that:
+
+1. Any code additions/changes follow the project's [style guide](#style-guide).
+2. The ROM builds and matches the original ROM (only for non-draft pull requests).
+    - If you have a decompiled function that doesn't match but is worth committing, make sure to use an `#if` macro to let the compiler ignore the decompiled implementation and include the original assembly instead.
 
 
 ## Resources
