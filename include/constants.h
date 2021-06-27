@@ -3,6 +3,9 @@
 
 #include "ultra64.h"
 
+#define THREAD_ID_IDLE 1
+#define THREAD_ID_MAIN 3
+
 #define HW_REG2(reg, type) *(volatile type *)(u32)(reg | 0xa0000000)
 #define ACCESS_1 *(s16 *)(u32)(0x1C000000 | 0xa0000000)
 #define ACCESS_2 *(s16 *)(u32)(0x1C000002 | 0xa0000000)

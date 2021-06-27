@@ -47,7 +47,7 @@ struct OSThread {
     /* 0x1B8 */ void* stackInfo;
 };
 
-typedef struct UnkStruct80014614 {
+typedef struct DllInstance {
     /* 0x00 */ u32 unk0;
     union {
     /* 0x04 */ void (*asVoid)(void);
@@ -59,7 +59,7 @@ typedef struct UnkStruct80014614 {
     } unk4;
     /* 0x08 */ char unk_00 [0x80];
     /* 0x88 */ s32 (*unk_88)(void);
-} UnkStruct80014614;
+} DllInstance;
 
 struct UnkStruct_800175D4 {
     s32 a;
