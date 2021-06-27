@@ -6,7 +6,7 @@ void clear_PlayerPosBuffer(void);
 void func_800483BC(f32, f32, s32);
 void game_init(void);
 void init_bittable(void);
-struct UnkStruct80014614 **dll_load_deferred(s32, s32);
+struct DllInstance **dll_load_deferred(s32, s32);
 
 const char gameVer[] = "1.3623";
 const char curentTime[] = "01/12/00 09:19";
@@ -39,9 +39,9 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
 
 void game_init(void)
 {
-    struct UnkStruct80014614 *temp_AMSEQ_DLL;
+    struct DllInstance *temp_AMSEQ_DLL;
     s32 tvMode;
-    struct UnkStruct80014614 **tmp3;
+    struct DllInstance **tmp3;
 
     init_memory();
     three_more_mallocs();
@@ -56,7 +56,7 @@ void game_init(void)
         tvMode = OS_VI_NTSC_LAN1;
     }
 
-    osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, tvMode, 1);
+    osCreateScheduler(&osscheduler_, &osscheduler_stack, 0xD, tvMode, 1);
     PiManager_thread_func();
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
@@ -239,14 +239,14 @@ void func_800142A0(f32 arg0, f32 arg1, s32 arg2) {
     func_8001440C(0);
     func_800483BC(arg0, arg1, arg2);
     clear_PlayerPosBuffer();
-    ossceduler_stack = 1;
+    osscheduler_stack = 1;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800142F0.s")
 
 void func_800143A4(void) {
     func_80048034();
-    ossceduler_stack = 1;
+    osscheduler_stack = 1;
 }
 
 s32 func_800143D0(s32 *arg0) {

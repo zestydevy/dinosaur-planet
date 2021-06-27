@@ -12,13 +12,15 @@ void n_alSeqpDelete(void *arg0) { //TODO: what is this really? looks like an inc
 
 void bootproc(void) {
     osInitialize();
-    osCreateThread(&gIdleThread, 1, &idle, NULL, &gIdleThreadStack[IDLE_THREAD_SIZE], OS_PRIORITY_IDLE);
+    osCreateThread(&gIdleThread, THREAD_ID_IDLE, &idle, NULL, 
+        &gIdleThreadStack[IDLE_THREAD_SIZE], OS_PRIORITY_IDLE);
     osStartThread(&gIdleThread);
 }
 
 void idle(void * arg)
 {
-    osCreateThread(&gMainThread, 3, &mainproc, NULL, &gMainThreadStack[MAIN_THREAD_SIZE], 0xA);
+    osCreateThread(&gMainThread, THREAD_ID_MAIN, &mainproc, NULL, 
+        &gMainThreadStack[MAIN_THREAD_SIZE], 10);
 
     gMainThreadStack[1024] = 0;
     gMainThreadStack[0] = 0;
