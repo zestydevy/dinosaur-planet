@@ -57,8 +57,8 @@ void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s
 #endif
 
 void queue_alloc_load_file(void **dest, s32 fileId) {
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType     = ASSET_TYPE_FILE;
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_FILE;
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
@@ -66,8 +66,8 @@ void queue_alloc_load_file(void **dest, s32 fileId) {
 }
 
 void queue_load_file_to_ptr(void **dest, s32 fileId) {
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType     = ASSET_TYPE_ALLOCATED_FILE;
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_ALLOCATED_FILE;
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
@@ -75,8 +75,8 @@ void queue_load_file_to_ptr(void **dest, s32 fileId) {
 }
 
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset) {
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType     = ASSET_TYPE_FILE_REGION;
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_FILE_REGION;
     assetLoadMsg.p.file.offset  = offset;
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
@@ -87,8 +87,8 @@ void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offs
 
 void queue_load_map_object(void **dest, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
     //XXX dest type
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = ASSET_TYPE_OBJECT;
+    assetLoadMsg.loadCategory  = 1;
+    assetLoadMsg.loadType      = ASSET_TYPE_OBJECT;
     assetLoadMsg.p.object.arg3 = arg3;
     assetLoadMsg.p.object.arg1 = arg1;
     assetLoadMsg.p.object.arg2 = arg2;
@@ -102,8 +102,8 @@ void queue_load_map_object(void **dest, s32 arg1, s32 arg2, s32 arg3, s32 arg4, 
 
 void queue_load_texture(void **dest, s32 id) {
     //XXX verify types
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType     = ASSET_TYPE_TEXTURE;
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_TEXTURE;
     assetLoadMsg.p.texture.id   = id;
     assetLoadMsg.p.texture.dest = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
@@ -112,8 +112,8 @@ void queue_load_texture(void **dest, s32 id) {
 
 void queue_load_dll(void **dest, s32 id, s32 param) {
     //XXX verify types
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType     = ASSET_TYPE_DLL;
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_DLL;
     assetLoadMsg.p.dll.id       = id;
     assetLoadMsg.p.dll.dest     = dest;
     assetLoadMsg.p.dll.param    = param;
@@ -123,8 +123,8 @@ void queue_load_dll(void **dest, s32 id, s32 param) {
 
 void queue_load_model(void **dest, s32 id, s32 arg2) {
     //XXX verify types
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType     = ASSET_TYPE_MODEL;
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_MODEL;
     assetLoadMsg.p.model.id     = id;
     assetLoadMsg.p.model.dest   = dest;
     assetLoadMsg.p.model.unkC   = arg2;
@@ -136,8 +136,8 @@ const char load_error[] = "UNKNOWN load request\n";
 
 void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4) {
     //XXX dest type
-    assetLoadMsg.loadCategory   = 1;
-    assetLoadMsg.loadType       = ASSET_TYPE_ANIMATION;
+    assetLoadMsg.loadCategory     = 1;
+    assetLoadMsg.loadType         = ASSET_TYPE_ANIMATION;
     assetLoadMsg.p.animation.arg3 = arg3;
     assetLoadMsg.p.animation.id   = id;
     assetLoadMsg.p.animation.dest = dest;
@@ -372,7 +372,8 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             read_file(load->p.file.id, load->p.file.dest);
             break;
         case ASSET_TYPE_FILE_REGION:
-            read_file_region(load->p.file.id, load->p.file.dest, load->p.file.length, load->p.file.offset);
+            read_file_region(load->p.file.id, load->p.file.dest, 
+                load->p.file.length, load->p.file.offset);
             break;
         case ASSET_TYPE_OBJECT:
             *load->p.object.dest = objSetupObjectActual(load->p.object.arg1, 
@@ -386,11 +387,12 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             *load->p.dll.dest = dll_load((u16)load->p.dll.id, (u16)load->p.dll.param, 0);
             break;
         case ASSET_TYPE_MODEL:
-            *load->p.model.dest = model_load_create_instance(load->p.model.id, load->p.model.unkC);
+            *load->p.model.dest = model_load_create_instance(load->p.model.id, 
+                load->p.model.unkC);
             break;
         case ASSET_TYPE_ANIMATION:
-            *load->p.animation.dest = anim_load((s16)load->p.animation.id, (s16)load->p.animation.arg2,
-                load->p.animation.arg3, load->p.animation.arg4);
+            *load->p.animation.dest = anim_load((s16)load->p.animation.id, 
+                (s16)load->p.animation.arg2, load->p.animation.arg3, load->p.animation.arg4);
     }
     osSendMesg(&assetLoadThreadRecvQueue, NULL, 0);
 }
