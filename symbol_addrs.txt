@@ -831,6 +831,28 @@ gDLL_waterfx = 0x8008c9dc; // type:data size:0x4
 gDLL_CURVES = 0x8008c9e4; // type:data size:0x4
 gDLL_gplay = 0x8008c9f4; // type:data size:0x4
 gDLL_savegame = 0x8008ca00; // type:data size:0x4
+gDLL_39 = 0x8008C9AC; // type:data size:0x4
+gDLL_3A = 0x8008C9B0; // type:data size:0x4
+gDLL_08 = 0x8008C984; // type:data size:0x4
+gDLL_Sky = 0x8008C980; // type:data size:0x4
+gDLL_1C = 0x8008C974; // type:data size:0x4
+gDLL_UI = 0x8008C994; // type:data size:0x4
+gDLL_Camera = 0x8008C978; // type:data size:0x4
+gDLL_17 = 0x8008C9D8; // type:data size:0x4
+gDLL_12 = 0x8008C9C8; // type:data size:0x4
+gDLL_19 = 0x8008C9E0; // type:data size:0x4
+gDLL_10 = 0x8008C9C0; // type:data size:0x4
+gDLL_11 = 0x8008C9C4; // type:data size:0x4
+gDLL_Link = 0x8008C9E8; // type:data size:0x4
+gDLL_1B = 0x8008C9F0; // type:data size:0x4
+gDLL_38 = 0x8008C9F8; // type:data size:0x4
+gDLL_1E = 0x8008C9FC; // type:data size:0x4
+gDLL_20 = 0x8008CA08; // type:data size:0x4
+gDLL_21 = 0x8008CA0C; // type:data size:0x4
+gDLL_3B = 0x8008CA10; // type:data size:0x4
+gDLL_36 = 0x8008CA14; // type:data size:0x4
+gDLL_4C = 0x8008CA04; // type:data size:0x4
+gDLL_4B = 0x8008C9EC; // type:data size:0x4
 
 queue_alloc_load_file = 0x80012618; // type:func
 queue_load_anim = 0x80012940; // type:func
@@ -898,3 +920,5 @@ vec3_reflect = 0x80016820; // type:func
 mat4_ident_translate = 0x80015F7C; // type:func
 
 n_alSynSetVol = 0x8006C150; // type:func
+
+get_player = 0x80023914; // type:func
