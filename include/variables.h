@@ -13,6 +13,7 @@ typedef u32 UNK_TYPE_32;
 #include "math.h"
 #include "sys/dlls/dlls.h"
 #include "sys/fs/files.h"
+#include "sys/fs/queue.h"
 #include "sys/memory/heap.h"
 #include "sys/menu/menu.h"
 #include "sys/pad.h"

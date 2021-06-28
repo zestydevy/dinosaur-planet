@@ -1,5 +1,4 @@
 #include "common.h"
-#include "queue.h"
 
 struct UnkStruct8000ADF0 {
     s16 unk0;
@@ -40,7 +39,7 @@ void create_asset_thread(void) {
 void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
     s32 sp18;
     // TODO: is it really?
-    struct UnkMesg800AE270 sp1C;
+    struct AssetLoadThreadMsg sp1C;
 
     sp18 = func_with_status_reg();
     if (func_8000AFDC(D_800ACBC8) == 0) {
@@ -57,90 +56,90 @@ void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s
 }
 #endif
 
-void queue_alloc_load_file(s32 arg0, s32 arg1) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_FILE;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+void queue_alloc_load_file(void *dest, s32 fileId) {
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_FILE;
+    assetLoadMsg.unk4 = fileId;
+    assetLoadMsg.unk8 = dest;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_file_to_ptr(s32 arg0, s32 arg1) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_ALLOCATED_FILE;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+void queue_load_file_to_ptr(void *dest, s32 fileId) {
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_ALLOCATED_FILE;
+    assetLoadMsg.unk4 = fileId;
+    assetLoadMsg.unk8 = dest;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_file_region_to_ptr(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_FILE_REGION;
-    D_800AE270.unkC = arg3;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    D_800AE270.unk10 = arg2;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+void queue_load_file_region_to_ptr(void *dest, s32 arg1, s32 arg2, s32 arg3) {
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_FILE_REGION;
+    assetLoadMsg.unkC = arg3;
+    assetLoadMsg.unk4 = arg1;
+    assetLoadMsg.unk8 = dest;
+    assetLoadMsg.unk10 = arg2;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_map_object(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_OBJECT;
-    D_800AE270.unk24 = arg3;
-    D_800AE270.unk18 = arg1;
-    D_800AE270.unk1C = arg2;
-    D_800AE270.unk20 = arg4;
-    D_800AE270.unk14 = arg5;
-    D_800AE270.unk28 = arg6;
-    D_800AE270.unk8 = arg0;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_OBJECT;
+    assetLoadMsg.unk24 = arg3;
+    assetLoadMsg.unk18 = arg1;
+    assetLoadMsg.unk1C = arg2;
+    assetLoadMsg.unk20 = arg4;
+    assetLoadMsg.unk14 = arg5;
+    assetLoadMsg.unk28 = arg6;
+    assetLoadMsg.unk8 = arg0;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_texture(s32 arg0, s32 arg1) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_TEXTURE;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_TEXTURE;
+    assetLoadMsg.unk4 = arg1;
+    assetLoadMsg.unk8 = arg0;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_dll(s32 arg0, s32 arg1, s32 arg2) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_DLL;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    D_800AE270.unkC = arg2;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_DLL;
+    assetLoadMsg.unk4 = arg1;
+    assetLoadMsg.unk8 = arg0;
+    assetLoadMsg.unkC = arg2;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_model(s32 arg0, s32 arg1, s32 arg2) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_MODEL;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    D_800AE270.unkC = arg2;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_MODEL;
+    assetLoadMsg.unk4 = arg1;
+    assetLoadMsg.unk8 = arg0;
+    assetLoadMsg.unkC = arg2;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 const char load_error[] = "UNKNOWN load request\n";
 
 void queue_load_anim(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4) {
-    D_800AE270.loadCategory = 1;
-    D_800AE270.loadType = QUEUE_ANIMATION;
-    D_800AE270.unk20 = arg3;
-    D_800AE270.unk4 = arg1;
-    D_800AE270.unk8 = arg0;
-    D_800AE270.unkC = arg2;
-    D_800AE270.unk24 = arg4;
-    osSendMesg(&D_800ACB48, &D_800AE270, 0);
-    osRecvMesg(&D_800ACB98, 0, 1);
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType = QUEUE_ANIMATION;
+    assetLoadMsg.unk20 = arg3;
+    assetLoadMsg.unk4 = arg1;
+    assetLoadMsg.unk8 = arg0;
+    assetLoadMsg.unkC = arg2;
+    assetLoadMsg.unk24 = arg4;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 u8 map_get_is_object_streaming_disabled(void) {
@@ -159,9 +158,9 @@ void _func_800129E4(void) {
 
     sp18 = func_with_status_reg();
     func_80012A4C();
-    if ((*D_800ACBC8 != 0) && (D_800ACB48.unk8 == 0)) {
+    if ((*D_800ACBC8 != 0) && (assetLoadThreadSendQueue.unk8 == 0)) {
         D_800AE240 = 0;
-        osSendMesg(&D_800ACB48, &D_800AE240, 0);
+        osSendMesg(&assetLoadThreadSendQueue, &D_800AE240, 0);
     }
     set_status_reg(sp18);
 }
@@ -283,20 +282,20 @@ void _func_80012D04(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
 #else
 extern s32 func_with_status_reg(void);
 void asset_thread_load_single(void);
-void asset_thread_load_asset(struct UnkMesg800AE270 *);
-extern struct UnkMesg800AE270 D_800ACB60, D_800ACB80, D_800ACBB0;
+void asset_thread_load_asset(struct AssetLoadThreadMsg *);
+extern struct AssetLoadThreadMsg D_800ACB60, D_800ACB80, D_800ACBB0;
 
 void _asset_thread_main(s32 arg0) {
-    struct UnkMesg800AE270 *sp34;
+    struct AssetLoadThreadMsg *sp34;
     s32 temp_v0;
 
     D_800AE29D = 0;
     D_800AE29E = 0;
-    osCreateMesgQueue(&D_800ACB48, &D_800ACB60, 1);
+    osCreateMesgQueue(&assetLoadThreadSendQueue, &D_800ACB60, 1);
     osCreateMesgQueue(&D_800ACB68, &D_800ACB80, 5);
-    osCreateMesgQueue(&D_800ACB98, &D_800ACBB0, 1);
+    osCreateMesgQueue(&assetLoadThreadRecvQueue, &D_800ACBB0, 1);
     while (1) {
-        osRecvMesg(&D_800ACB48, &sp34, 1);
+        osRecvMesg(&assetLoadThreadSendQueue, &sp34, 1);
         switch (sp34->loadCategory) {
             case 0:
                 asset_thread_load_single();
@@ -352,7 +351,7 @@ void asset_thread_load_single(void) {
     set_status_reg(sp28);
 } 
 
-void asset_thread_load_asset(struct UnkMesg800AE270 *arg0) {
+void asset_thread_load_asset(struct AssetLoadThreadMsg *arg0) {
     switch (arg0->loadType) {
         case QUEUE_FILE:
             *arg0->unk8 = read_alloc_file(arg0->unk4, 0);
@@ -378,6 +377,6 @@ void asset_thread_load_asset(struct UnkMesg800AE270 *arg0) {
         case QUEUE_ANIMATION:
             *arg0->unk8 = anim_load((s16) arg0->unk4, (s16) arg0->unkC, arg0->unk20, arg0->unk24);
     }
-    osSendMesg(&D_800ACB98, NULL, 0);
+    osSendMesg(&assetLoadThreadRecvQueue, NULL, 0);
 }
 
