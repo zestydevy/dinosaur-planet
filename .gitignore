@@ -77,6 +77,7 @@ tools/asm_processor/__pycache__/asm_processor.cpython-38.pyc
 *~
 .\#*
 .idea
+compile_commands.json
 
 # Ghidra
 *.rep/
