@@ -1,36 +1,11 @@
 #include "common.h"
 
-struct UnkStruct8000ADF0 {
-    s16 unk0;
-};
-extern struct UnkStruct8000ADF0 *D_800ACBC8;
-struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
-
-struct UnkStruct8000B010 {
-    s16 unk0;
-};
-extern struct UnkStruct8000B010 *D_800AE1D0;
-struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
-
-extern u8 gDisableObjectStreamingFlag;
-
-extern u8 D_800AE29D, D_800AE29E;
-
-void asset_thread_main(void);
-
-extern s32 *D_800ACBB8, *D_800ACBD0;
-
-extern s32 *D_800AE1C0, *D_800AE1D8;
-
-extern u64 *D_800AC910; // end of stack
-extern OSThread *D_800AC918;
-
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
     D_800ACBC8 = func_8000ADF0(&D_800ACBB8, &D_800ACBD0, 0x64, 0x1C);
     D_800AE1D0 = func_8000B010(&D_800AE1C0, &D_800AE1D8, 5, 0x14);
-    osCreateThread(&D_800AC918, 0x63, &asset_thread_main, 0, &D_800AC910, 0xB);
-    osStartThread(&D_800AC918);
+    osCreateThread(&assetThread, THREAD_ID_ASSET, asset_thread_main, 0, &assetThreadStackEnd, 0xB);
+    osStartThread(&assetThread);
 }
 
 #if 1
@@ -290,7 +265,7 @@ void asset_thread_load_single(void);
 void asset_thread_load_asset(struct AssetLoadThreadMsg *);
 extern struct AssetLoadThreadMsg D_800ACB60, D_800ACB80, D_800ACBB0;
 
-void _asset_thread_main(s32 arg0) {
+void _asset_thread_main(void *arg0) {
     struct AssetLoadThreadMsg *sp34;
     s32 temp_v0;
 

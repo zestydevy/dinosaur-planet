@@ -935,3 +935,5 @@ assetLoadMsg = 0x800AE270; // type:data size:0x30
 assetLoadThreadSendQueue = 0x800ACB48; // type:data size:0x18
 assetLoadThreadRecvQueue = 0x800ACB98; // type:data size:0x18
 map_set_object_streaming_disabled = 0x800129D4; // type:func
+assetThread = 0x800AC918; // type:data size:0x1A4
+assetThreadStackEnd = 0x800AC910; // type:data size:0x4

@@ -1,5 +1,6 @@
 #define THREAD_ID_IDLE 1
 #define THREAD_ID_MAIN 3
+#define THREAD_ID_ASSET 99
 
 #define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
 #define MAIN_THREAD_SIZE 1024
