@@ -34,7 +34,7 @@ void create_asset_thread(void) {
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012584.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/asset_thread/func_80012584.s")
 #else
 void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
     s32 sp18;
@@ -56,88 +56,93 @@ void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s
 }
 #endif
 
-void queue_alloc_load_file(void *dest, s32 fileId) {
+void queue_alloc_load_file(void **dest, s32 fileId) {
     assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_FILE;
-    assetLoadMsg.unk4 = fileId;
-    assetLoadMsg.unk8 = dest;
+    assetLoadMsg.loadType     = ASSET_TYPE_FILE;
+    assetLoadMsg.file.id      = fileId;
+    assetLoadMsg.file.dest    = dest;
+    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1); //wait for acknowledge
+}
+
+void queue_load_file_to_ptr(void **dest, s32 fileId) {
+    assetLoadMsg.loadCategory = 1;
+    assetLoadMsg.loadType     = ASSET_TYPE_ALLOCATED_FILE;
+    assetLoadMsg.file.id      = fileId;
+    assetLoadMsg.file.dest    = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_file_to_ptr(void *dest, s32 fileId) {
+void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset) {
     assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_ALLOCATED_FILE;
-    assetLoadMsg.unk4 = fileId;
-    assetLoadMsg.unk8 = dest;
+    assetLoadMsg.loadType     = ASSET_TYPE_FILE_REGION;
+    assetLoadMsg.file.offset  = offset;
+    assetLoadMsg.file.id      = fileId;
+    assetLoadMsg.file.dest    = dest;
+    assetLoadMsg.file.length  = length;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_file_region_to_ptr(void *dest, s32 arg1, s32 arg2, s32 arg3) {
+void queue_load_map_object(void **dest, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
+    //XXX dest type
     assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_FILE_REGION;
-    assetLoadMsg.unkC = arg3;
-    assetLoadMsg.unk4 = arg1;
-    assetLoadMsg.unk8 = dest;
-    assetLoadMsg.unk10 = arg2;
+    assetLoadMsg.loadType = ASSET_TYPE_OBJECT;
+    assetLoadMsg.object.arg3 = arg3;
+    assetLoadMsg.object.arg1 = arg1;
+    assetLoadMsg.object.arg2 = arg2;
+    assetLoadMsg.object.arg4 = arg4;
+    assetLoadMsg.object.arg5 = arg5;
+    assetLoadMsg.object.arg6 = arg6;
+    assetLoadMsg.object.dest = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_map_object(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
+void queue_load_texture(void **dest, s32 id) {
+    //XXX verify types
     assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_OBJECT;
-    assetLoadMsg.unk24 = arg3;
-    assetLoadMsg.unk18 = arg1;
-    assetLoadMsg.unk1C = arg2;
-    assetLoadMsg.unk20 = arg4;
-    assetLoadMsg.unk14 = arg5;
-    assetLoadMsg.unk28 = arg6;
-    assetLoadMsg.unk8 = arg0;
+    assetLoadMsg.loadType     = ASSET_TYPE_TEXTURE;
+    assetLoadMsg.texture.id   = id;
+    assetLoadMsg.texture.dest = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_texture(s32 arg0, s32 arg1) {
+void queue_load_dll(void **dest, s32 id, s32 param) {
+    //XXX verify types
     assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_TEXTURE;
-    assetLoadMsg.unk4 = arg1;
-    assetLoadMsg.unk8 = arg0;
+    assetLoadMsg.loadType     = ASSET_TYPE_DLL;
+    assetLoadMsg.dll.id       = id;
+    assetLoadMsg.dll.dest     = dest;
+    assetLoadMsg.dll.param    = param;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_dll(s32 arg0, s32 arg1, s32 arg2) {
+void queue_load_model(void **dest, s32 id, s32 arg2) {
+    //XXX verify types
     assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_DLL;
-    assetLoadMsg.unk4 = arg1;
-    assetLoadMsg.unk8 = arg0;
-    assetLoadMsg.unkC = arg2;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
-}
-
-void queue_load_model(s32 arg0, s32 arg1, s32 arg2) {
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_MODEL;
-    assetLoadMsg.unk4 = arg1;
-    assetLoadMsg.unk8 = arg0;
-    assetLoadMsg.unkC = arg2;
+    assetLoadMsg.loadType     = ASSET_TYPE_MODEL;
+    assetLoadMsg.model.id     = id;
+    assetLoadMsg.model.dest   = dest;
+    assetLoadMsg.model.unkC   = arg2;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
 const char load_error[] = "UNKNOWN load request\n";
 
-void queue_load_anim(s32 arg0, s16 arg1, s16 arg2, s32 arg3, s32 arg4) {
-    assetLoadMsg.loadCategory = 1;
-    assetLoadMsg.loadType = QUEUE_ANIMATION;
-    assetLoadMsg.unk20 = arg3;
-    assetLoadMsg.unk4 = arg1;
-    assetLoadMsg.unk8 = arg0;
-    assetLoadMsg.unkC = arg2;
-    assetLoadMsg.unk24 = arg4;
+void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4) {
+    //XXX dest type
+    assetLoadMsg.loadCategory   = 1;
+    assetLoadMsg.loadType       = ASSET_TYPE_ANIMATION;
+    assetLoadMsg.animation.arg3 = arg3;
+    assetLoadMsg.animation.id   = id;
+    assetLoadMsg.animation.dest = dest;
+    assetLoadMsg.animation.arg2 = arg2;
+    assetLoadMsg.animation.arg4 = arg4;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
@@ -146,12 +151,12 @@ u8 map_get_is_object_streaming_disabled(void) {
     return gDisableObjectStreamingFlag;
 }
 
-void func_800129D4(u32 arg0) {
+void map_set_object_streaming_disabled(u32 arg0) {
     gDisableObjectStreamingFlag = arg0;
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_800129E4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/asset_thread/func_800129E4.s")
 #else
 void _func_800129E4(void) {
     s32 sp18;
@@ -208,7 +213,7 @@ void func_80012A4C(void) {
 
 // TODO: struct
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012B54.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/asset_thread/func_80012B54.s")
 #else
 void _func_80012B54(s32 arg0, s32 arg1) {
     u8 sp3C;
@@ -241,7 +246,7 @@ void _func_80012B54(s32 arg0, s32 arg1) {
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012D04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/asset_thread/func_80012D04.s")
 #else
 void _func_80012D04(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 sp34;
@@ -278,7 +283,7 @@ void _func_80012D04(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/asset_thread_main.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/asset_thread/asset_thread_main.s")
 #else
 extern s32 func_with_status_reg(void);
 void asset_thread_load_single(void);
@@ -324,23 +329,30 @@ void asset_thread_load_single(void) {
         D_800AE29E = sp2C.unk0;
         set_status_reg(sp28);
         switch (sp2C.unk0) {
-            case 5:
-                func_80012D04(5, objSetupObjectActual(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
+            case ASSET_TYPE_DLL:
+                func_80012D04(ASSET_TYPE_DLL, 
+                    objSetupObjectActual(sp2C.unk8, 1, 
+                        sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 
+                    1, 0, 0);
                 break;
-            case 3:
+            case ASSET_TYPE_TEXTURE:
                 tmp = texture_load(sp2C.unk8, 0);
                 if (sp2C.unk4 != 0) {
-                    func_80012D04(3, sp2C.unk4, tmp, 0, 0);
+                    func_80012D04(ASSET_TYPE_TEXTURE, sp2C.unk4, tmp, 0, 0);
                 }
                 break;
-            case 1:
+            case ASSET_TYPE_ALLOCATED_FILE:
                 func_80048724(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
                 break;
-            case 0:
-                func_80012D04(0, sp2C.unk4, func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
+            case ASSET_TYPE_FILE:
+                func_80012D04(ASSET_TYPE_FILE, sp2C.unk4, 
+                    func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 
+                    0, 0);
                 break;
-            case 6:
-                func_80012D04(6, sp2C.unk4, func_80007620(sp2C.unk8, sp2C.unkC), 0, 0);
+            case ASSET_TYPE_MODEL:
+                func_80012D04(ASSET_TYPE_MODEL, sp2C.unk4, 
+                    func_80007620(sp2C.unk8, sp2C.unkC), 
+                    0, 0);
                 break;
             default:
                 break;
@@ -351,32 +363,34 @@ void asset_thread_load_single(void) {
     set_status_reg(sp28);
 } 
 
-void asset_thread_load_asset(struct AssetLoadThreadMsg *arg0) {
-    switch (arg0->loadType) {
-        case QUEUE_FILE:
-            *arg0->unk8 = read_alloc_file(arg0->unk4, 0);
+void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
+    switch (load->loadType) {
+        case ASSET_TYPE_FILE:
+            *load->file.dest = read_alloc_file(load->file.id, 0);
             break;
-        case QUEUE_ALLOCATED_FILE:
-            read_file(arg0->unk4, arg0->unk8);
+        case ASSET_TYPE_ALLOCATED_FILE:
+            read_file(load->file.id, load->file.dest);
             break;
-        case QUEUE_FILE_REGION:
-            read_file_region(arg0->unk4, arg0->unk8, arg0->unk10, arg0->unkC);
+        case ASSET_TYPE_FILE_REGION:
+            read_file_region(load->file.id, load->file.dest, load->file.length, load->file.offset);
             break;
-        case QUEUE_OBJECT:
-            *arg0->unk8 = objSetupObjectActual(arg0->unk18, arg0->unk1C, arg0->unk24, arg0->unk20, arg0->unk14, arg0->unk28);
+        case ASSET_TYPE_OBJECT:
+            *load->object.dest = objSetupObjectActual(load->object.arg1, 
+                load->object.arg2, load->object.arg3, load->object.arg4,
+                load->object.arg5, load->object.arg6);
             break;
-        case QUEUE_TEXTURE:
-            *arg0->unk8 = texture_load(arg0->unk4, 0);
+        case ASSET_TYPE_TEXTURE:
+            *load->texture.dest = texture_load(load->texture.id, 0);
             break;
-        case QUEUE_DLL:
-            *arg0->unk8 = dll_load((u16) arg0->unk4, (u16) arg0->unkC, 0);
+        case ASSET_TYPE_DLL:
+            *load->dll.dest = dll_load((u16) load->dll.id, (u16) load->dll.param, 0);
             break;
-        case QUEUE_MODEL:
-            *arg0->unk8 = model_load_create_instance(arg0->unk4, arg0->unkC);
+        case ASSET_TYPE_MODEL:
+            *load->model.dest = model_load_create_instance(load->model.id, load->model.unkC);
             break;
-        case QUEUE_ANIMATION:
-            *arg0->unk8 = anim_load((s16) arg0->unk4, (s16) arg0->unkC, arg0->unk20, arg0->unk24);
+        case ASSET_TYPE_ANIMATION:
+            *load->animation.dest = anim_load((s16)load->animation.id, (s16)load->animation.arg2,
+                load->animation.arg3, load->animation.arg4);
     }
     osSendMesg(&assetLoadThreadRecvQueue, NULL, 0);
 }
-

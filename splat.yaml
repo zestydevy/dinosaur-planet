@@ -38,7 +38,7 @@ segments:
     - [0x11F70, c]
     - [0x12320, c]
     - [0x13030, c]
-    - [0x130E0, c, queue]
+    - [0x130E0, c, asset_thread]
     - [0x13D70, c, main]
     - [0x15A70, asm, status_register]
     - [0x15AD0, hasm]
@@ -216,7 +216,7 @@ segments:
     # data/rodata for this section
     - [0x8A350, bin]
 
-    - [0x99CA0, .rodata, queue]
+    - [0x99CA0, .rodata, asset_thread]
     - [0x99D10, .rodata, main]
 
     - [0x99DB0, bin]
