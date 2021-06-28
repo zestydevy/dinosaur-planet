@@ -100,9 +100,6 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023894.s")
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/object/get_player.s")
-#else
 TActor *get_player(void) {
     TActor **obj;
     int idx;
@@ -111,7 +108,6 @@ TActor *get_player(void) {
     if(idx) return *obj;
     else return NULL;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002394C.s")
 

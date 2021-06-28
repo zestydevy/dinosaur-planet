@@ -454,7 +454,7 @@ void update_PlayerPosBuffer(void)
     TActor * player;
     struct Vec3_Int * pos;
 
-    player = (TActor *)get_player();
+    player = get_player();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     gFrameCount += delayByte;
 
