@@ -10,7 +10,6 @@ void idle(void * arg);
 void mainproc(void * arg);
 
 void test_write(void);
-void init_memory(void);
 void main_no_expPak(void);
 void main_expPak(void);
 void threadTimerTick(void);
@@ -23,11 +22,6 @@ void * func_80023914(void);
 
 void some_crash_setter(DLLInst arg0[], s32 arg1);
 
-void free(void*);
-DLLFile * dll_load_from_tab(u32, s32 *);
-void dll_relocate(DLLFile* dll);
-
-void *malloc(s32 size, s32 tag, const char *name);
 void _bcopy(const void *src,void *dst,int length);
 
 #endif

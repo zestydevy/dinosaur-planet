@@ -51,6 +51,20 @@ typedef struct
 /*000C*/	u32 * end;
 } DLLInst;
 
+typedef struct DllInstance {
+    /* 0x00 */ u32 unk0;
+    union {
+        /* 0x04 */ void (*asVoid)(void);
+        /* 0x04 */ void (*withOneArg)(s32);
+        /* 0x04 */ void (*withTwoArgs)(s32, s32);
+        /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
+        /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
+        /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
+    } unk4;
+    /* 0x08 */ char unk_00 [0x80];
+    /* 0x88 */ s32 (*unk_88)(void);
+} DllInstance;
+
 typedef void (*DLLFunc)(u32 a);
 
 typedef struct
@@ -111,5 +125,8 @@ extern struct DllInstance
     **gDLL_21,
     **gDLL_3B, 
     **gDLL_36;
+
+DLLFile * dll_load_from_tab(u32, s32 *);
+void dll_relocate(DLLFile* dll);
 
 #endif //_DLLS_H_
