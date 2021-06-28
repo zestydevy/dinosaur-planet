@@ -57,7 +57,7 @@ struct AssetLoadThreadMsg {
             /* 20 */ s32 arg3;
             /* 24 */ s32 arg4;
         } animation;
-    };
+    } p; //give it a name just to shut the compiler up
     //actual size is 0x30 but that includes padding
 };
 
