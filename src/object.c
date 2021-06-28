@@ -100,7 +100,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023894.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023914.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/get_player.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002394C.s")
 

@@ -366,8 +366,8 @@ OSSched *get_ossched(void) {
 
 void init_bittable(void)
 {
-    queue_alloc_load_file(&gFile_BITTABLE, 0x37);
-    gSizeBittable = get_file_size(0x37) >> 1;
+    queue_alloc_load_file(&gFile_BITTABLE, FILE_BITTABLE);
+    gSizeBittable = get_file_size(FILE_BITTABLE) >> 1;
     charStats_pointer = (*gDLL_gplay)->unk_88();
 }
 
@@ -392,18 +392,18 @@ s32 func_800149AC(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014A80.s")
 
 void func_80014B1C(void) {
-    if (D_8008CA04 == 0) {
-        D_8008C9EC = dll_load_deferred(0x4B, 0xA);
-        D_8008CA04 = dll_load_deferred(0x4C, 3);
+    if (gDLL_4C == 0) {
+        gDLL_4B = dll_load_deferred(0x4B, 0xA);
+        gDLL_4C = dll_load_deferred(0x4C, 3);
     }
 }
 
 void func_80014B6C(void) {
-    if (D_8008CA04 != 0) {
-        func_8000C258(D_8008C9EC);
-        D_8008C9EC = 0;
-        func_8000C258(D_8008CA04);
-        D_8008CA04 = 0;
+    if (gDLL_4C != 0) {
+        func_8000C258(gDLL_4B);
+        gDLL_4B = 0;
+        func_8000C258(gDLL_4C);
+        gDLL_4C = 0;
     }
 }
 
@@ -454,7 +454,7 @@ void update_PlayerPosBuffer(void)
     TActor * player;
     struct Vec3_Int * pos;
 
-    player = (TActor *)func_80023914();
+    player = (TActor *)get_player();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     gFrameCount += delayByte;
 

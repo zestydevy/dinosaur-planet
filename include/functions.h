@@ -18,7 +18,7 @@ void check_dongle(void);
 void func_80017254(u32 arg0);
 void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
-void * func_80023914(void);
+void * get_player(void);
 
 void some_crash_setter(DLLInst arg0[], s32 arg1);
 
