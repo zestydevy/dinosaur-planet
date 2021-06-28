@@ -58,8 +58,8 @@ void game_init(void)
     create_3_megs_quues(&osscheduler_);
     four_mallocs();
     if (0);
-    D_800B09C1 = 0;
-    D_800AE680 = D_800AE678[D_800B09C1];
+    gFrameBufIdx = 0;
+    gCurGfx = gMainGfx[gFrameBufIdx];
     some_controller_init_val = init_controller_data();
     controller_thread_func(&osscheduler_);
     crash_thread_func(&osscheduler_);
@@ -132,8 +132,8 @@ void game_init(void)
     start_alSyn_thread();
     func_80012224(0);
     if (0);
-    gDPFullSync(D_800AE680++);
-    gSPEndDisplayList(D_800AE680++);
+    gDPFullSync(gCurGfx++);
+    gSPEndDisplayList(gCurGfx++);
     func_800632B0();
     set_menu_page(2);
     if (osMemSize == EXPANSION_SIZE) {
@@ -157,27 +157,27 @@ void _game_tick(void) {
 
     osSetTime(0);
     func_80063300();
-    func_80037780(D_800AE678[D_800B09C1], D_800AE680, 0);
-    temp_t9 = D_800B09C1 ^ 1;
-    D_800B09C1 = temp_t9;
-    D_800AE680 = D_800AE678[temp_t9];
-    D_800AE690 = D_800AE688[temp_t9];
-    D_800AE6A0 = D_800AE698[temp_t9];
-    D_800AE6B0 = D_800AE6A8[temp_t9]);
-    func_80063330(D_800AE680, 0, &D_80099130, 0x28E);
-    func_8003CC50(&D_800AE680, 0, 0x80000000);
-    func_8003CC50(&D_800AE680, 1, framebufferCurrent);
-    func_8003CC50(&D_800AE680, 2, D_800BCCB4);
-    func_8003E9F0(&D_800AE680, delayByte);
+    func_80037780(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    temp_t9 = gFrameBufIdx ^ 1;
+    gFrameBufIdx = temp_t9;
+    gCurGfx = gMainGfx[temp_t9];
+    gCurMtx = gMainMtx[temp_t9];
+    gCurVtx = gMainVtx[temp_t9];
+    gCurPol = gMainPol[temp_t9];
+    func_80063330(gCurGfx, 0, &gCurPol, 0x28E);
+    func_8003CC50(&gCurGfx, 0, 0x80000000);
+    func_8003CC50(&gCurGfx, 1, framebufferCurrent);
+    func_8003CC50(&gCurGfx, 2, D_800BCCB4);
+    func_8003E9F0(&gCurGfx, delayByte);
     func_80040FD0();
     func_8003DB5C();
     temp_a0 = D_80092A90;
     if (temp_a0->unk28 != 0) {
         temp_a0->unk28 = 0;
-        gDPPipeSync(D_800AE680++);
+        gDPPipeSync(gCurGfx++);
     }
-    gDPSetDepthImage(D_800AE680++, 0x02000000);
-    func_80037EC8(&D_800AE680);
+    gDPSetDepthImage(gCurGfx++, 0x02000000);
+    func_80037EC8(&gCurGfx);
     sp27 = 2;
     if (func_80041D5C() == 0) {
         phi_v1 = 0;
@@ -188,17 +188,17 @@ void _game_tick(void) {
             phi_v1 = 3;
         }
     }
-    func_80037A14(&D_800AE680, &D_800AE690, phi_v1);
+    func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
     func_80007178();
     func_80013D80();
     func_800121DC();
-    (*gDLL_1C)->unk4.withThreeArgs(&D_800AE680, &D_800AE690, &D_800AE6A0);
-    (*gDLL_subtitles)->unk1C(&D_800AE680);
+    (*gDLL_1C)->unk4.withThreeArgs(&gCurGfx, &gCurMtx, &gCurVtx);
+    (*gDLL_subtitles)->unk1C(&gCurGfx);
     func_80003CBC();
     func_800129E4();
-    func_80060B94(&D_800AE680);
-    gDPFullSync(D_800AE680++);
-    gSPEndDisplayList(D_800AE680++);
+    func_80060B94(&gCurGfx);
+    gDPFullSync(gCurGfx++);
+    gSPEndDisplayList(gCurGfx++);
     func_80037924();
     func_80020BB8();
     update_mem_mon_values();
@@ -246,8 +246,8 @@ void func_800143A4(void) {
 }
 
 s32 func_800143D0(s32 *arg0) {
-    *arg0 = D_800AE678[D_800B09C1];
-    return D_800AE680;
+    *arg0 = gMainGfx[gFrameBufIdx];
+    return gCurGfx;
 }
 
 s8 func_800143FC(void) {
@@ -279,17 +279,17 @@ void _four_mallocs(void) {
     s32 tmp2;
 
     temp_v0 = (u8 *) malloc(0x11940, 1, 0);
-    D_800AE678[0] = temp_v0;
-    D_800AE678[1] = temp_v0 + 0x8CA0;
+    gMainGfx[0] = temp_v0;
+    gMainGfx[1] = temp_v0 + 0x8CA0;
     temp_v0 = (u8 *) malloc(0x22600, 1, 0);
-    D_800AE688[0] = temp_v0;
-    D_800AE688[1] = temp_v0 + 0x11300;
+    gMainMtx[0] = temp_v0;
+    gMainMtx[1] = temp_v0 + 0x11300;
     temp_v0 = (u8 *) malloc(0x640, 1, 0);
-    D_800AE6A8[0] = temp_v0;
-    D_800AE6A8[1] = temp_v0 + 0x320;
+    gMainPol[0] = temp_v0;
+    gMainPol[1] = temp_v0 + 0x320;
     temp_v0 = (u8 *) malloc(0x2580, 1, 0);
-    D_800AE698[0] = temp_v0;
-    D_800AE698[1] = temp_v0 + 0x12C0;
+    gMainVtx[0] = temp_v0;
+    gMainVtx[1] = temp_v0 + 0x12C0;
 }
 #endif
 

@@ -8,4 +8,9 @@ extern u32 framebufferChoice;
 extern u32 video_mode;
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 extern s32 gFrameCount;
-extern Gfx *D_800AE680;
+extern u8 gFrameBufIdx;
+//XXX types for these
+extern Gfx *gMainGfx[2], *gCurGfx;
+extern void *gMainMtx[2], *gCurMtx;
+extern void *gMainVtx[2], *gCurVtx;
+extern void *gMainPol[2], *gCurPol;

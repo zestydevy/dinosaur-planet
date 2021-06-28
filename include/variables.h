@@ -32,9 +32,7 @@ struct PointersInts{
 
 extern u8 D_8008C940;
 extern u8 alSynFlag;
-extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
 extern char * D_800991E0;
-extern u8 D_800B09C1;
 extern u8 D_800B09C3;
 extern u8 D_800B09C2;
 extern u8 D_800B09C4;

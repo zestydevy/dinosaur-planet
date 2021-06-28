@@ -922,3 +922,12 @@ mat4_ident_translate = 0x80015F7C; // type:func
 n_alSynSetVol = 0x8006C150; // type:func
 
 get_player = 0x80023914; // type:func
+gFrameBufIdx = 0x800B09C1; // type:data size:0x1
+gMainGfx = 0x800AE678; // type:data size:0x8
+gMainMtx = 0x800AE688; // type:data size:0x8
+gMainVtx = 0x800AE698; // type:data size:0x8
+gMainPol = 0x800AE6A8; // type:data size:0x8
+gCurGfx = 0x800AE680; // type:data size:0x4
+gCurMtx = 0x800AE690; // type:data size:0x4
+gCurVtx = 0x800AE6A0; // type:data size:0x4
+gCurPol = 0x800AE6B0; // type:data size:0x4
