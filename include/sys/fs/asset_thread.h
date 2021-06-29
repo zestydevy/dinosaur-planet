@@ -97,6 +97,7 @@ extern u8 gDisableObjectStreamingFlag;
 
 extern u8 D_800AE29D, D_800AE29E;
 
+void create_asset_thread(void);
 void asset_thread_main(void*);
 
 extern s32 *D_800ACBB8, *D_800ACBD0;

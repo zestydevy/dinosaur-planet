@@ -57,7 +57,7 @@ void game_init(void)
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
     alloc_frame_buffers();
-    if (0);
+    if (0) {};
     gFrameBufIdx = 0;
     gCurGfx = gMainGfx[gFrameBufIdx];
     some_controller_init_val = init_controller_data();
