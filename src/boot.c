@@ -36,7 +36,7 @@ void thread_timer_tick(void) {
     ++gMainThreadStack[0];
 }
 
-void func_80001178(s32 a0, s32 *a1)
+void func_80001178(s32 unused, s32 *a1)
 {
     u8  *ptr1;
     s32 *ptr2;

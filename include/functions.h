@@ -21,7 +21,7 @@ void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
 TActor* get_player(void);
 
-void some_crash_setter(DLLInst arg0[], s32 arg1);
+void replaceLoadedDllList(DLLInst arg0[], s32 arg1);
 
 void _bcopy(const void *src,void *dst,int length);
 

@@ -4,14 +4,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
-void some_crash_setter(DLLInst arg0[], s32 arg1) {
-    gLoadedDLLCount = arg1;
-    gLoadedDLLList = arg0;
+void replaceLoadedDllList(DLLInst list[], s32 count) {
+    gLoadedDLLCount = count;
+    gLoadedDLLList = list;
 }
 
-DLLInst * func_8000BDE8(u32 * arg0);
-DLLInst * func_8000BDE8(u32 * arg0) {
-    *arg0 = gLoadedDLLCount;
+DLLInst * getLoadedDlls(u32 *outCount) {
+    *outCount = gLoadedDLLCount;
     return gLoadedDLLList;
 }
 

@@ -73,32 +73,32 @@ void _set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
 #endif
 
 void *malloc(s32 size, s32 tag, const char *name) {
-    void *v1;
+    void *result;
 
     if (size == 0) {
         get_stack_();
-        v1 = NULL;
-        return v1;
+        result = NULL;
+        return result;
     }
     if ((size >= 0x1194) || (osMemSize != EXPANSION_SIZE)) {
-        v1 = increment_heap_block(0, size, tag, name);
-        if (v1 == NULL) {
+        result = increment_heap_block(0, size, tag, name);
+        if (result == NULL) {
             get_stack_();
-            v1 = increment_heap_block(1, size, tag, name);
+            result = increment_heap_block(1, size, tag, name);
         }
     } else if (size >= 0x400) {
-        v1 = increment_heap_block(1, size, tag, name);
-        if (v1 == NULL) {
+        result = increment_heap_block(1, size, tag, name);
+        if (result == NULL) {
             get_stack_();
-            v1 = increment_heap_block(2, size, tag, name);
+            result = increment_heap_block(2, size, tag, name);
         }
     } else {
-        v1 = increment_heap_block(2, size, tag, name);
+        result = increment_heap_block(2, size, tag, name);
     }
-    if (v1 == NULL) {
+    if (result == NULL) {
         get_stack_();
     }
-    return v1;
+    return result;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/reduce_heap_block.s")
@@ -251,17 +251,17 @@ s32 dbg_heap_print(s32 arg0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
-const char D_80099228[] = "mm:audioheap";
-void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 size) {
+const char s_mm_audioheap[] = "mm:audioheap";
+void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 count, s32 size) {
     void *ptr;
 
-    size = ALIGN16((size * arg3) + 0xF);
+    size = ALIGN16((size * count) + 0xF);
 
     // ??
-    if (size);
-    if (size);
+    if (size) {};
+    if (size) {};
 
-    ptr = malloc(size, 0xB, &D_80099228);
+    ptr = malloc(size, 0xB, s_mm_audioheap);
     bzero(ptr, size);
-    return align_16(ptr);
+    return (void*)align_16((u32)ptr);
 }

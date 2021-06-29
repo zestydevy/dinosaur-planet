@@ -78,7 +78,7 @@ typedef struct
 	u32 * reserved;
 } DLLFile;
 
-extern DLLInst (*gLoadedDLLList)[];
+extern DLLInst *gLoadedDLLList;
 extern s32 gLoadedDLLCount;
 extern DLLTab * gFile_DLLS_TAB;
 
@@ -128,5 +128,6 @@ extern struct DllInstance
 
 DLLFile * dll_load_from_tab(u32, s32 *);
 void dll_relocate(DLLFile* dll);
+DLLInst * getLoadedDlls(u32 *outCount);
 
 #endif //_DLLS_H_

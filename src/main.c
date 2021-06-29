@@ -371,7 +371,7 @@ void check_dongle(void) {
     }
 }
 
-OSSched *get_ossched(void) {
+OSSched **get_ossched(void) {
     return &osscheduler_;
 }
 
