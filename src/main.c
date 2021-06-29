@@ -382,18 +382,17 @@ void init_bittable(void)
     charStats_pointer = (*gDLL_gplay)->unk_88();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014670.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800147EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetBit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014930.s")
 
-s32 func_800149AC(s32 arg0) {
-    s32 temp_v0 = func_800147EC(arg0);
-
-    if (temp_v0 != 0) {
-        func_80014670(arg0, --temp_v0);
-        return temp_v0;
+s32 mainDecrementBit(s32 bit) {
+    s32 val = mainGetBit(bit);
+    if (val != 0) {
+        mainSetBits(bit, --val);
+        return val;
     }
     return 0;
 }

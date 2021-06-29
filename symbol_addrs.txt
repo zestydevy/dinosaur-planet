@@ -939,3 +939,6 @@ assetThread = 0x800AC918; // type:data size:0x1A4
 assetThreadStackEnd = 0x800AC910; // type:data size:0x4
 getLoadedDlls = 0x8000BDE8; // type:func
 s_mm_audioheap = 0x80099228; // type:data size:0xD
+mainSetBits = 0x80014670; // type:func
+mainGetBit = 0x800147EC; // type:func
+mainDecrementBit = 0x800149AC; // type:func
