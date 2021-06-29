@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/dlls/dlls.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/init_objects.s")
 
@@ -56,7 +57,29 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022338.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/copy_obj_position_mirrors.s")
+// #pragma GLOBAL_ASM("asm/nonmatchings/object/copy_obj_position_mirrors.s")
+
+void copy_obj_position_mirrors(TActor *obj)
+{
+    void (**func)(struct TActor *);
+    DllInstance *dll;
+    obj->unk0x44 = obj->ptr0x50[0x2D];
+    dll = obj->ptr0x68;
+    if(1) {
+        if(dll != 0) {
+            func = dll;
+            func = func[1]; //pointless?
+            obj->ptr0x68[0]->unk4.withOneArg(obj);
+        }
+    }
+
+    obj->positionMirror2.x = obj->position.x;
+    obj->positionMirror3.x = obj->position.x;
+    obj->positionMirror2.y = obj->position.y;
+    obj->positionMirror3.y = obj->position.y;
+    obj->positionMirror2.z = obj->position.z;
+    obj->positionMirror3.z = obj->position.z;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/some_object_struct_func.s")
 
