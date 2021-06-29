@@ -470,9 +470,9 @@ void update_PlayerPosBuffer(void)
 
     if (player != NULL)
     {
-        pos->f.x = player->position.x;
-        pos->f.y = player->position.y;
-        pos->f.z = player->position.z;
+        pos->f.x = player->pos.position.x;
+        pos->f.y = player->pos.position.y;
+        pos->f.z = player->pos.position.z;
         pos->i = gFrameCount;
 
         if (++PlayerPosBuffer_index >= PLAYER_POSBUF_SIZE) {

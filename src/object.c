@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/dlls/dlls.h"
+#include "variables.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/init_objects.s")
 
@@ -68,12 +69,12 @@ void copy_obj_position_mirrors(TActor *obj)
         }
     }
 
-    obj->positionMirror2.x = obj->position.x;
-    obj->positionMirror3.x = obj->position.x;
-    obj->positionMirror2.y = obj->position.y;
-    obj->positionMirror3.y = obj->position.y;
-    obj->positionMirror2.z = obj->position.z;
-    obj->positionMirror3.z = obj->position.z;
+    obj->positionMirror2.x = obj->pos.position.x;
+    obj->positionMirror3.x = obj->pos.position.x;
+    obj->positionMirror2.y = obj->pos.position.y;
+    obj->positionMirror3.y = obj->pos.position.y;
+    obj->positionMirror2.z = obj->pos.position.z;
+    obj->positionMirror3.z = obj->pos.position.z;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/some_object_struct_func.s")

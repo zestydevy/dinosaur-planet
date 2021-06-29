@@ -1,11 +1,28 @@
-//prelimnary, lots of unknowns
-//contains pointer-to-own-type fields, so `typedef struct _TActor {`
-//must be used instead of `typedef struct {`
-typedef struct TActor {
+typedef struct ObjDef {
+	/*00*/ s16 objType; //ObjDefEnum
+	/*02*/ u8 allocatedSize; //size of this entry in words
+	/*03*/ u8 mapStates1; //whether to NOT load in states 1-8
+	/*04*/ u8 loadFlags; //RomListObjLoadFlags
+	/*05*/ u8 mapStates2; //whether to NOT load in states 15-9 (low bit unused?)
+	/*06*/ u8 bound; //load if in range (bound<<3) of player
+	/*07*/ u8 unk7;
+	/*08*/ Vec3f pos;
+	/*14*/ int id; //unique ID
+} ObjDef;
+
+//used on its own sometimes
+typedef struct ObjPos {
 /*0000*/  Vec3s rotation;
 /*0006*/  s16 unk0x6;
 /*0008*/  float scale;
 /*000C*/  Vec3f position; //note: >300 unit drop causes fall damage.
+} ObjPos;
+
+//prelimnary, lots of unknowns
+//contains pointer-to-own-type fields, so `typedef struct _TActor {`
+//must be used instead of `typedef struct {`
+typedef struct TActor {
+/*0000*/  ObjPos pos;
 /*0018*/  Vec3f positionMirror; //local vs global?
 /*0024*/  Vec3f speed;
 /*0030*/  void* ptr0x30;
@@ -41,7 +58,7 @@ typedef struct TActor {
 /*00AF*/  u8 unk0xaf;
 /*00B0*/  s16 unk0xb0;
 /*00B2*/  u8 unk0xb2[6];
-/*00B8*/  void* CharData; //0x8c1+ struct, has various player data.
+/*00B8*/  void* state; //type depends on object
 /*00BC*/  UNK_TYPE_32 unk0xbc;
 /*00C0*/  UNK_TYPE_32 unk0xc0;
 /*00C4*/  UNK_TYPE_32 unk0xc4;
