@@ -57,19 +57,14 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022338.s")
 
-// #pragma GLOBAL_ASM("asm/nonmatchings/object/copy_obj_position_mirrors.s")
-
 void copy_obj_position_mirrors(TActor *obj)
 {
-    void (**func)(struct TActor *);
-    DllInstance *dll;
+    DllInstance **dll;
     obj->unk0x44 = obj->ptr0x50[0x2D];
-    dll = obj->ptr0x68;
+    dll = obj->dll;
     if(1) {
-        if(dll != 0) {
-            func = dll;
-            func = func[1]; //pointless?
-            obj->ptr0x68[0]->unk4.withOneArg(obj);
+        if(dll != NULL) {
+            obj->dll[0]->unk4.withOneArg((s32)obj);
         }
     }
 

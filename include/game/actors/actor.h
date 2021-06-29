@@ -23,7 +23,7 @@ typedef struct TActor {
 /*005C*/  void* ptr0x5c;
 /*0060*/  void* ptr0x60;
 /*0064*/  void* ptr0x64;
-/*0068*/  DllInstance **ptr0x68;
+/*0068*/  DllInstance **dll;
 /*006C*/  void* ptr0x6c;
 /*0070*/  void* ptr0x70;
 /*0074*/  UNK_TYPE_32 unk0x74;
