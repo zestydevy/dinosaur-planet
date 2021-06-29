@@ -35,7 +35,7 @@ void mainproc(void * arg)
     }
 }
 
-void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
+void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount);
 
 void game_init(void)
 {
@@ -62,7 +62,7 @@ void game_init(void)
     gCurGfx = gMainGfx[gFrameBufIdx];
     some_controller_init_val = init_controller_data();
     controller_thread_func(&osscheduler_);
-    crash_thread_func(&osscheduler_);
+    create_crash_thread(&osscheduler_);
     init_textures();
     init_maps();
     func_8001CD00();
