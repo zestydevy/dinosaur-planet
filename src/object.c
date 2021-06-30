@@ -183,11 +183,12 @@ TActor *get_player(void) {
 void func_80025540(TActor *obj, s32 a1, s32 a2)
 {
     Model *model = obj->models[obj->curModel];
-    void **anims;
+    void **anims; //this is a struct of some sort.
     if(model->unk66) {
         anims = model->animations;
         if (!anims) { }
         func_800255F8(obj, model, anims, a1, (short) a2); //probably ObjSetBlendMove
+        //not certain about the order/count of params here.
     }
 }
 #endif
