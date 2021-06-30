@@ -146,7 +146,8 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045D58.s")
+extern s32 D_80092A94;
+s32 func_80045D58(void) { return D_80092A94; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_find_streammap_index.s")
 
@@ -156,7 +157,7 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045FC4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800462B0.s")
+void doNothing_800462B0(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_convert_objpositions_to_ws.s")
 
@@ -164,7 +165,7 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046688.s")
+void doNothing_80046688(s32 arg0, s32 arg1) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046698.s")
 
@@ -234,7 +235,7 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049870.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499B4.s")
+void doNothing_800499B4(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499BC.s")
 
@@ -322,9 +323,10 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D984.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D99C.s")
+extern u8 D_80092BF8;
+void func_8004D99C(u32 arg) { D_80092BF8 = arg; }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D9AC.s")
+void doNothing_8004D9AC(s32 arg) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D9B8.s")
 
@@ -342,9 +344,9 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004F378.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA3C.s")
+s32 ret0_8004FA3C(s32 arg) { return 0; }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA4C.s")
+s32 ret0_8004FA4C(void) { return 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA58.s")
 

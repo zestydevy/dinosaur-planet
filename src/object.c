@@ -16,7 +16,8 @@ void doNothing_80020A40(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020D34.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020D90.s")
+extern s16 D_800B18E0;
+void func_80020D90(void) { D_800B18E0 = 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020DA0.s")
 
@@ -30,9 +31,10 @@ void doNothing_80020A40(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800211B4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800212D8.s")
+extern s32 D_800B1924;
+s32 func_800212D8(void) { return D_800B1924; }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800212E8.s")
+s32 ret0_800212E8(void) { return 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800212F4.s")
 
@@ -99,9 +101,10 @@ void copy_obj_position_mirrors(TActor *obj)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022D00.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022DD8.s")
+void doNothing_80022DD8(s32 a0, s32 a1, s32 a2) { }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022DEC.s")
+extern s32 D_800B190C;
+s32 func_80022DEC(void) { return D_800B190C; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022DFC.s")
 
@@ -130,7 +133,7 @@ TActor *get_player(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002394C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023984.s")
+void func_80023984(s8 *arg) { arg[0xAC] = -1; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023994.s")
 
