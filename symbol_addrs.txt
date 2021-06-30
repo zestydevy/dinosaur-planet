@@ -942,3 +942,4 @@ s_mm_audioheap = 0x80099228; // type:data size:0xD
 mainSetBits = 0x80014670; // type:func
 mainGetBit = 0x800147EC; // type:func
 mainDecrementBit = 0x800149AC; // type:func
+doNothing_80020A40 = 0x80020A40; // type:func

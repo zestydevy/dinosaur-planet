@@ -6,7 +6,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020778.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A40.s")
+void doNothing_80020A40(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A48.s")
 
