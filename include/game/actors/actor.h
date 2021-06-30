@@ -45,7 +45,7 @@ typedef struct TActor {
 /*0070*/  void* ptr0x70;
 /*0074*/  UNK_TYPE_32 unk0x74;
 /*0078*/  UNK_TYPE_32 unk0x78;
-/*007C*/  UNK_TYPE_32 unk0x7C;
+/*007C*/  Model **models;
 /*0080*/  Vec3f positionMirror2; //gets copied twice.
 /*008C*/  Vec3f positionMirror3; //not sure why.
 /*0098*/  float unk98;
@@ -53,7 +53,7 @@ typedef struct TActor {
 /*009D*/  u8 unk0x9d[3]; //aligning?
 /*00A0*/  s16 unk0xa0;
 /*00A2*/  u8 unk0xa2[11];
-/*00AD*/  u8 unk0xad;
+/*00AD*/  s8 curModel;
 /*00AE*/  u8 unk0xae;
 /*00AF*/  u8 unk0xaf;
 /*00B0*/  s16 unk0xb0;
@@ -66,19 +66,5 @@ typedef struct TActor {
 /*00CC*/  void* ptr0xcc;
 } TActor; //may be bigger, will know when constructor is understood.
 
-//pointer at 0x34c of "CharData" struct
-struct CharacterStats{
-	u8 unk0x0;
-	s8 HPCurr;
-	s8 HPMax; //only shows up to 104, code caps it at 80.
-	u8 unk0x3; //aligning?
-	s16 ManaCurr; //only mods when byte at "CharData"0x8bb is set.
-	s16 ManaMax; //capped at 100.
-	s16 Scarabs; //capped at 999.
-	u8 unk0xa;
-	u8 unk0xb;
-};//seemingly consistent addrs: Fox/Sabre at 0x805c3964, Krystal 0x805c3970.
-
-extern struct CharacterStats * charStats_pointer;
 extern struct TActor * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;

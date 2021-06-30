@@ -174,7 +174,23 @@ TActor *get_player(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80025140.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80025540.s")
+#else
+//in retail SFA 1.0 I believe this is at 8002ed18
+//but it's different because SFA doesn't use Model Instances
+//or, this might be a completely different function...
+void func_80025540(TActor *obj, s32 a1, s32 a2)
+{
+    Model *model = obj->models[obj->curModel];
+    void **anims;
+    if(model->unk66) {
+        anims = model->animations;
+        if (!anims) { }
+        func_800255F8(obj, model, anims, a1, (short) a2); //probably ObjSetBlendMove
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002559C.s")
 

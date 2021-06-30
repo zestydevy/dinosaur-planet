@@ -20,9 +20,11 @@ typedef u32 UNK_TYPE_32;
 #include "sys/thread.h"
 #include "sys/video/video.h"
 #include "sys/fault.h"
+#include "game/models/model.h"
 #include "game/actors/actor.h"
 #include "game/actors/player/player.h"
 #include "game/state/gamebits.h"
+#include "game/map/map.h"
 
 //unknown What this is for.
 struct PointersInts{

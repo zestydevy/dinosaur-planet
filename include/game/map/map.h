@@ -1,0 +1,1 @@
+#define MAP_CELL_SCALE 640.0f

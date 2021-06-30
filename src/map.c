@@ -102,8 +102,8 @@ s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
     s32 temp_a1;
     s32 temp_v1;
 
-    temp_a1 = floor_f(arg0 / 640.0f) - gMapCurrentStreamCoords;
-    temp_v1 = floor_f(arg1 / 640.0f) - D_80092A6C;
+    temp_a1 = floor_f(arg0 / MAP_CELL_SCALE) - gMapCurrentStreamCoords;
+    temp_v1 = floor_f(arg1 / MAP_CELL_SCALE) - D_80092A6C;
     if ((temp_a1 < 0) || (temp_a1 >= 0x10)) {
         return -1;
     }
