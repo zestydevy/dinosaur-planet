@@ -63,7 +63,7 @@ s32 ret0_800212E8(void) { return 0; }
 void copy_obj_position_mirrors(TActor *obj)
 {
     DllInstance **dll;
-    obj->unk0x44 = obj->ptr0x50[0x2D];
+    obj->objId = obj->ptr0x50[0x2D];
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
