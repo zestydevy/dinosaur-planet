@@ -10,7 +10,16 @@ void doNothing_80020A40(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A48.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020BB8.s")
+extern int *D_800B1910;
+extern int D_800B1914;
+void func_80020BB8() {
+    int i;
+    for(i = 0; i < D_800B1914; i++) {
+        func_80022F94(D_800B1910[i], 0); //possibly some type of free?
+        D_800B1910[i] = 0;
+    }
+    D_800B1914 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020C48.s")
 
