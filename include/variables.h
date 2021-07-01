@@ -7,6 +7,7 @@
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
 typedef u32 UNK_TYPE_32;
+typedef void UNK_PTR;
 
 #include "constants.h"
 #include "common_structs.h"
@@ -21,6 +22,7 @@ typedef u32 UNK_TYPE_32;
 #include "sys/video/video.h"
 #include "sys/fault.h"
 #include "game/models/model.h"
+#include "game/actors/objdata.h"
 #include "game/actors/actor.h"
 #include "game/actors/player/player.h"
 #include "game/state/gamebits.h"

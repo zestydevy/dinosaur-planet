@@ -1,12 +1,13 @@
+//Entry in a romlist, defining one instance of an object.
 typedef struct ObjDef {
-	/*00*/ s16 objType; //ObjDefEnum
+	/*00*/ s16 objType; //ObjDefEnum (which object is this?)
 	/*02*/ u8 allocatedSize; //size of this entry in words
 	/*03*/ u8 mapStates1; //whether to NOT load in states 1-8
 	/*04*/ u8 loadFlags; //RomListObjLoadFlags
 	/*05*/ u8 mapStates2; //whether to NOT load in states 15-9 (low bit unused?)
 	/*06*/ u8 bound; //load if in range (bound<<3) of player
 	/*07*/ u8 unk7;
-	/*08*/ Vec3f pos;
+	/*08*/ Vec3f pos; //global position
 	/*14*/ int id; //unique ID
 } ObjDef;
 
@@ -34,7 +35,7 @@ typedef struct TActor {
 /*0046*/  UNK_TYPE_16 defNo; //guessed from SFA
 /*0048*/  void* ptr0x48;
 /*004C*/  UNK_TYPE_32 unk0x4c; //ObjDef*?
-/*0050*/  s16* ptr0x50; //ObjData*?
+/*0050*/  ObjData* data;
 /*0054*/  void* ptr0x54; //HitState*?
 /*0058*/  UNK_TYPE_32 unk0x58; //HitboxMtx*?
 /*005C*/  void* ptr0x5c;
