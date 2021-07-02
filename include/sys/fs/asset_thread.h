@@ -74,39 +74,29 @@ struct UnkStructAssetThreadSingle {
     u32 unk18;
 };
 
-extern struct AssetLoadThreadMsg assetLoadMsg;
-extern OSMesgQueue assetLoadThreadSendQueue, //send load requests to asset thread
-    D_800ACB68, 
-    assetLoadThreadRecvQueue; //receive acknowledgement from asset thread
-
-extern u8 D_800AE29D, D_800AE29E;
+struct UnkStruct8000B010 {
+    s16 unk0;
+};
 
 struct UnkStruct8000ADF0 {
     s16 unk0;
 };
-extern struct UnkStruct8000ADF0 *D_800ACBC8;
-struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
 
-struct UnkStruct8000B010 {
-    s16 unk0;
-};
-extern struct UnkStruct8000B010 *D_800AE1D0;
-struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
-
-extern u8 gDisableObjectStreamingFlag;
-
+extern struct AssetLoadThreadMsg assetLoadMsg;
+extern OSMesgQueue assetLoadThreadSendQueue, //send load requests to asset thread
+    D_800ACB68, 
+    assetLoadThreadRecvQueue; //receive acknowledgement from asset thread
 extern u8 D_800AE29D, D_800AE29E;
-
-void create_asset_thread(void);
-void asset_thread_main(void*);
-
+extern struct UnkStruct8000ADF0 *D_800ACBC8;
+extern struct UnkStruct8000B010 *D_800AE1D0;
+extern u8 gDisableObjectStreamingFlag;
+extern u8 D_800AE29D, D_800AE29E;
 extern s32 *D_800ACBB8, *D_800ACBD0;
-
 extern s32 *D_800AE1C0, *D_800AE1D8;
-
 extern u64 *assetThreadStackEnd; // end of stack
 extern OSThread assetThread;
 
-void queue_alloc_load_file(void **dest, s32 fileId);
-void queue_load_file_to_ptr(void **dest, s32 fileId);
-void queue_load_file_region_to_ptr(void **dest, s32 arg1, s32 arg2, s32 arg3);
+struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
+struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
+void create_asset_thread(void);
+void asset_thread_main(void*);

@@ -68,3 +68,15 @@ typedef struct TActor {
 
 extern struct TActor * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
+extern void *gObjList; //global object list
+extern void **gLoadedObjDefs;
+extern ObjData *gLoadedObjData;
+extern int gObjIndexCount; //count of OBJINDEX.BIN entries
+extern int gNumObjectsTabEntries;
+extern int gNumTablesTabEntries;
+extern u8 *gObjRefCount; //pObjectRefCount
+extern void *D_800B1918;
+extern void *D_800B18E4;
+
+void seven_mallocs_and_float(void); //related to objects
+void func_80020D34(void);

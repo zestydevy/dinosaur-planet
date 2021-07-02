@@ -2,23 +2,6 @@
 #include "sys/dlls/dlls.h"
 #include "variables.h"
 
-extern void *gFile_TABLES_BIN;
-extern s32 *gFile_TABLES_TAB;
-extern s16 *gFile_OBJINDEX;
-extern void **gLoadedObjDefs; //loadedObjectDefs
-extern void *D_800B1918;
-extern void *D_800B18E4;
-extern int gObjIndexCount; //objIndexCount
-extern s32 *gFile_OBJECTS_TAB; //PTR_OBJECTS_tab_803dcbbc
-extern int gNumObjectsTabEntries; //maxObjId;
-extern ObjData *gLoadedObjData; //pLoadedObjectFiles
-extern u8 *gObjRefCount; //pObjectRefCount
-extern int gNumTablesTabEntries; //nTablesTab
-extern void *gObjList;
-s32 get_file_size(s32 file);
-void seven_mallocs_and_float(void);
-void func_80020D34(void);
-
 void init_objects(void) {
     int i;
 
@@ -41,17 +24,13 @@ void init_objects(void) {
     //init ref count and pointers
     gLoadedObjData = malloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
     gObjRefCount   = malloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
-    for(i = 0; i < gNumObjectsTabEntries; i++) { //why not memset?
-        gObjRefCount[i] = 0;
-    }
+    for(i = 0; i < gNumObjectsTabEntries; i++) gObjRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
     queue_alloc_load_file((void **) (&gFile_TABLES_BIN), FILE_TABLES_BIN);
     queue_alloc_load_file((void **) (&gFile_TABLES_TAB), FILE_TABLES_TAB);
     gNumTablesTabEntries = 0;
-    while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) {
-        gNumTablesTabEntries++;
-    }
+    while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
     gObjList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
