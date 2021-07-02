@@ -34,7 +34,7 @@ void init_objects(void) {
 
     //allocate global object list and some other buffers
     gObjList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
-    seven_mallocs_and_float();
+    alloc_some_object_arrays();
     func_80020D34();
 }
 

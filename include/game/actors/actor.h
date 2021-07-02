@@ -78,5 +78,5 @@ extern u8 *gObjRefCount; //pObjectRefCount
 extern void *D_800B1918;
 extern void *D_800B18E4;
 
-void seven_mallocs_and_float(void); //related to objects
+void alloc_some_object_arrays(void); //related to objects
 void func_80020D34(void);
