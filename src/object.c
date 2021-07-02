@@ -2,7 +2,62 @@
 #include "sys/dlls/dlls.h"
 #include "variables.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/init_objects.s")
+extern void *gFile_TABLES_BIN;
+extern s32 *gFile_TABLES_TAB;
+extern s16 *gFile_OBJINDEX;
+extern void **gLoadedObjDefs; //loadedObjectDefs
+extern void *D_800B1918;
+extern void *D_800B18E4;
+extern int gObjIndexCount; //objIndexCount
+extern s32 *gFile_OBJECTS_TAB; //PTR_OBJECTS_tab_803dcbbc
+extern int gNumObjectsTabEntries; //maxObjId;
+extern ObjData *gLoadedObjData; //pLoadedObjectFiles
+extern u8 *gObjRefCount; //pObjectRefCount
+extern int gNumTablesTabEntries; //nTablesTab
+extern void *gObjList;
+s32 get_file_size(s32 file);
+void seven_mallocs_and_float(void);
+void func_80020D34(void);
+
+void init_objects(void) {
+    int i;
+
+    //allocate some buffers
+    gLoadedObjDefs = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B1918     = malloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
+    D_800B18E4     = malloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
+
+    //load OBJINDEX.BIN and count number of entries
+    queue_alloc_load_file((void **) (&gFile_OBJINDEX), FILE_OBJINDEX_BIN);
+    gObjIndexCount = (get_file_size(FILE_OBJINDEX_BIN) >> 1) - 1;
+    while(!gFile_OBJINDEX[gObjIndexCount]) gObjIndexCount--;
+
+    //load OBJECTS.TAB and count number of entries
+    queue_alloc_load_file((void **)&gFile_OBJECTS_TAB, FILE_OBJECTS_TAB);
+    gNumObjectsTabEntries = 0;
+    while(gFile_OBJECTS_TAB[gNumObjectsTabEntries] != -1) gNumObjectsTabEntries++;
+    gNumObjectsTabEntries--;
+
+    //init ref count and pointers
+    gLoadedObjData = malloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjRefCount   = malloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
+    for(i = 0; i < gNumObjectsTabEntries; i++) { //why not memset?
+        gObjRefCount[i] = 0;
+    }
+
+    //load TABLES.BIN and TABLES.TAB and count number of entries
+    queue_alloc_load_file((void **) (&gFile_TABLES_BIN), FILE_TABLES_BIN);
+    queue_alloc_load_file((void **) (&gFile_TABLES_TAB), FILE_TABLES_TAB);
+    gNumTablesTabEntries = 0;
+    while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) {
+        gNumTablesTabEntries++;
+    }
+
+    //allocate global object list and some other buffers
+    gObjList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    seven_mallocs_and_float();
+    func_80020D34();
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020778.s")
 
@@ -10,13 +65,12 @@ void doNothing_80020A40(void) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A48.s")
 
-extern int *D_800B1910;
 extern int D_800B1914;
 void func_80020BB8() {
     int i;
     for(i = 0; i < D_800B1914; i++) {
-        func_80022F94(D_800B1910[i], 0); //possibly some type of free?
-        D_800B1910[i] = 0;
+        func_80022F94(gLoadedObjDefs[i], 0); //possibly some type of free?
+        gLoadedObjDefs[i] = 0;
     }
     D_800B1914 = 0;
 }
@@ -112,8 +166,7 @@ void copy_obj_position_mirrors(TActor *obj)
 
 void doNothing_80022DD8(s32 a0, s32 a1, s32 a2) { }
 
-extern s32 D_800B190C;
-s32 func_80022DEC(void) { return D_800B190C; }
+s32 func_80022DEC(void) { return gObjIndexCount; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022DFC.s")
 

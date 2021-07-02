@@ -1,3 +1,7 @@
 enum FILE_ID {
-    FILE_BITTABLE = 0x37
+    FILE_TABLES_BIN   = 0x16,
+    FILE_TABLES_TAB   = 0x17,
+    FILE_BITTABLE     = 0x37,
+    FILE_OBJECTS_TAB  = 0x41,
+    FILE_OBJINDEX_BIN = 0x43
 };

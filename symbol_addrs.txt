@@ -951,3 +951,7 @@ doNothing_80046688 = 0x80046688; // type:func
 ret0_8004FA3C = 0x8004FA3C; // type:func
 ret0_800212E8 = 0x800212E8; // type:func
 doNothing_80022DD8 = 0x80022DD8; // type:func
+gLoadedObjDefs = 0x800B1910; // type:data size:0x4
+gObjIndexCount = 0x800B190C; // type:data size:0x4
+gLoadedObjData = 0x800B1900; // type:data size:0x4
+gObjRefCount = 0x800B1904; // type:data size:0x4
