@@ -38,10 +38,12 @@ void init_objects(void) {
     func_80020D34();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020778.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/update_objects.s")
 #if 0
+extern char D_800994E0;
+
 //this is update_objects()
-void func_80020778(void) {
+void func_update_objects(void) {
     s16 size;
     TActor *obj2;
     void *temp_s0_2;
@@ -51,7 +53,7 @@ void func_80020778(void) {
     void *temp_s0_6;
     TActor *child;
     void *temp_t4;
-    void *hitState;
+    HitState *hitState;
     TActor *player;
     void *temp_v0_3;
     TActor *phi_s0;
@@ -80,10 +82,10 @@ void func_80020778(void) {
     func_80025E58();
 
     while(obj) {
-        hitState = obj->ptr0x54;
+        hitState = obj->hitState;
         if(hitState != 0) {
-            i((hitState->unk5A != 8) //don't update
-            || ((hitState->unk58 & 1) == 0)) { //disabled
+            if ((hitState->flags_0x5A != HITSTATE_FLAGS62_DontUpdate)
+            || ((hitState->flags_0x58 & HITSTATE_FLAG60_Disabled) == 0)) { //disabled
                 update_object(obj);
             }
         } else {
@@ -117,21 +119,21 @@ void func_80020778(void) {
         }
     }
 
-    (*gDLL_waterfx)->unk4(delayByte);
-    (*gDLL_projgfx)->unkC(delayByte, 0);
-    (*gDLL_modgfx)->unkC(0, 0, 0);
-    (*gDLL_expgfx)->unkC(0, delayByte, 0, 0);
+    (*gDLL_waterfx)->func[0].withOneArg(delayByte);
+    (*gDLL_projgfx)->func[2].withTwoArgs(delayByte, 0);
+    (*gDLL_modgfx)->func[2].withThreeArgs(0, 0, 0);
+    (*gDLL_expgfx)->func[2].withFourArgs(0, delayByte, 0, 0);
     func_8002B6EC();
-    (*gDLL_ANIM)->unk28();
-    (*gDLL_ANIM)->unk18();
-    (*gDLL_Camera)->unk8(delayByte);
+    (*gDLL_ANIM)->func[9].asVoid();
+    (*gDLL_ANIM)->func[5].asVoid();
+    (*gDLL_Camera)->func[1].withOneArg(delayByte);
     write_cFile_label_pointers(&D_800994E0, 0x169);
 }
 #endif
 
 void doNothing_80020A40(void) {}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020A48.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/update_obj_models.s")
 
 extern int D_800B1914;
 void func_80020BB8() {

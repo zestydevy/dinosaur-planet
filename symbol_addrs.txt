@@ -957,3 +957,6 @@ gLoadedObjData = 0x800B1900; // type:data size:0x4
 gObjRefCount = 0x800B1904; // type:data size:0x4
 gNumObjs = 0x800B1924; // type:data size:0x4
 obj_do_hit_detection = 0x800271FC; // type:func
+update_objects = 0x80020778; // type:func
+update_obj_models = 0x80020A48; // type:func
+update_obj_hitboxes = 0x80026C14; // type:func

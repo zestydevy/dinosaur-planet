@@ -38,7 +38,7 @@ typedef struct TActor {
 /*0048*/  void* ptr0x48;
 /*004C*/  UNK_TYPE_32 unk0x4c; //ObjDef*?
 /*0050*/  ObjData* data;
-/*0054*/  void* ptr0x54; //HitState*?
+/*0054*/  HitState *hitState;
 /*0058*/  UNK_TYPE_32 unk0x58; //HitboxMtx*?
 /*005C*/  void* ptr0x5c;
 /*0060*/  void* ptr0x60; //pEventName?

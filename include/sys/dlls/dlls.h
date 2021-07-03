@@ -65,7 +65,7 @@ typedef union {
 
 typedef struct DllInstance {
     /* 0x00 */ u32 unk0;
-    /* 0x04 */ DllFunc func[];
+    /* 0x04 */ DllFunc func[1]; //set to 1 to shut compiler up
 } DllInstance;
 
 typedef void (*DLLFunc)(u32 a);

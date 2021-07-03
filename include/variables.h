@@ -22,6 +22,7 @@ typedef void UNK_PTR;
 #include "sys/video/video.h"
 #include "sys/fault.h"
 #include "game/models/model.h"
+#include "game/actors/hitstate.h"
 #include "game/actors/objdata.h"
 #include "game/actors/actor.h"
 #include "game/actors/player/player.h"
