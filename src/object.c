@@ -39,6 +39,95 @@ void init_objects(void) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020778.s")
+#if 0
+//this is update_objects()
+void func_80020778(void) {
+    s16 size;
+    TActor *obj2;
+    void *temp_s0_2;
+    void *temp_s0_3;
+    void *temp_s0_4;
+    void *temp_s0_5;
+    void *temp_s0_6;
+    TActor *child;
+    void *temp_t4;
+    void *hitState;
+    TActor *player;
+    void *temp_v0_3;
+    TActor *phi_s0;
+    TActor *obj3;
+    void *phi_s0_3;
+    TActor *obj;
+    void *phi_s0_4;
+    void *phi_s0_5;
+    void *phi_s0_6;
+
+    size = gObjList->size;
+    func_80058FE8();
+    update_obj_models();
+    update_obj_hitboxes(gNumObjs);
+
+    obj = gObjList->obj;
+    while(obj != NULL && obj->priority == 0x64) {
+        update_object(obj);
+        obj = obj + size;
+    }
+    while(obj != NULL && obj->data->flags & OBJDATA_FLAG44_HasChildren) {
+        update_object(obj);
+        obj->mtxIdx = func_80004258(obj);
+        obj = obj + size;
+    }
+    func_80025E58();
+
+    while(obj) {
+        hitState = obj->ptr0x54;
+        if(hitState != 0) {
+            i((hitState->unk5A != 8) //don't update
+            || ((hitState->unk58 & 1) == 0)) { //disabled
+                update_object(obj);
+            }
+        } else {
+            update_object(obj);
+        }
+        obj = obj + size;
+    }
+    
+    player = get_player();
+    if(player) {
+        child = player->children[0];
+        if(child != 0) {
+            update_object(player->children[0]);
+        }
+    }
+
+    obj_do_hit_detection(gNumObjs);
+
+    obj = gObjList->obj;
+    while(obj) {
+        func_8002272C(phi_s0_6);
+        obj = obj + size;
+    }
+
+    player = get_player();
+    if (player != 0) {
+        child = player->children;
+        if (child != 0) {
+            child->ptr0x30 = player->ptr0x30;
+            func_8002272C(player->children);
+        }
+    }
+
+    (*gDLL_waterfx)->unk4(delayByte);
+    (*gDLL_projgfx)->unkC(delayByte, 0);
+    (*gDLL_modgfx)->unkC(0, 0, 0);
+    (*gDLL_expgfx)->unkC(0, delayByte, 0, 0);
+    func_8002B6EC();
+    (*gDLL_ANIM)->unk28();
+    (*gDLL_ANIM)->unk18();
+    (*gDLL_Camera)->unk8(delayByte);
+    write_cFile_label_pointers(&D_800994E0, 0x169);
+}
+#endif
 
 void doNothing_80020A40(void) {}
 
@@ -73,8 +162,8 @@ void func_80020D90(void) { D_800B18E0 = 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800211B4.s")
 
-extern s32 D_800B1924;
-s32 func_800212D8(void) { return D_800B1924; }
+extern s32 gNumObjs;
+s32 func_800212D8(void) { return gNumObjs; }
 
 s32 ret0_800212E8(void) { return 0; }
 
@@ -109,7 +198,7 @@ void copy_obj_position_mirrors(TActor *obj)
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll[0]->unk4.withOneArg((s32)obj);
+            obj->dll[0]->func[0].withOneArg((s32)obj);
         }
     }
 
@@ -121,7 +210,7 @@ void copy_obj_position_mirrors(TActor *obj)
     obj->positionMirror3.z = obj->pos.position.z;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/some_object_struct_func.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/update_object.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002272C.s")
 

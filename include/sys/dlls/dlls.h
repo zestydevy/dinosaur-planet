@@ -51,18 +51,21 @@ typedef struct
 /*000C*/	u32 * end;
 } DLLInst;
 
+typedef union {
+    /* 0x04 */ void (*asVoid)(void);
+    /* 0x04 */ s32 (*asVoidS32)(void); //HACK
+    /* 0x04 */ void (*withOneArg)(s32);
+    /* 0x04 */ void (*withTwoArgs)(s32, s32);
+    /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
+    /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
+    /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
+} DllFunc;
+//ideally instead of the hack above, each DLL should be its own class
+//which has the appropriate function table instead of an array.
+
 typedef struct DllInstance {
     /* 0x00 */ u32 unk0;
-    union {
-        /* 0x04 */ void (*asVoid)(void);
-        /* 0x04 */ void (*withOneArg)(s32);
-        /* 0x04 */ void (*withTwoArgs)(s32, s32);
-        /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
-        /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
-        /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
-    } unk4;
-    /* 0x08 */ char unk_00 [0x80];
-    /* 0x88 */ s32 (*unk_88)(void);
+    /* 0x04 */ DllFunc func[];
 } DllInstance;
 
 typedef void (*DLLFunc)(u32 a);

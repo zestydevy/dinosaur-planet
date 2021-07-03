@@ -56,7 +56,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80026DF4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_800271FC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/obj_do_hit_detection.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027934.s")
 

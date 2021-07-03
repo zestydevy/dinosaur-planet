@@ -41,19 +41,19 @@ s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3)
 	{
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4))
 		{
-            (*gDLL_newclouds)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
+            (*gDLL_newclouds)->func[0].withFourArgs(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 3) 
 		{
-            (*gDLL_08)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
+            (*gDLL_08)->func[0].withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         }
 		else if (tmp->unk5C == 5)
 		{
-            (*gDLL_Sky)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
+            (*gDLL_Sky)->func[0].withFourArgs(arg0, arg1, tmp, arg3);
 		}
 		else if (tmp->unk5C == 6)
 		{
-            (*gDLL_minic)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
+            (*gDLL_minic)->func[0].withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);
@@ -71,20 +71,20 @@ s32 func_800009C8(s32 arg0, s32 arg1, u16 arg2, s32 arg3)
 	{
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4))
 		{
-            (*gDLL_newclouds)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
+            (*gDLL_newclouds)->func[0].withFourArgs(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 3)
 		{
             tmp->unk2A = 0;
-            (*gDLL_08)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
+            (*gDLL_08)->func[0].withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         }
 		else if (tmp->unk5C == 5)
 		{
-            (*gDLL_Sky)->unk4.withFourArgs(arg0, arg1, tmp, arg3);
+            (*gDLL_Sky)->func[0].withFourArgs(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 6)
 		{
-            (*gDLL_minic)->unk4.withFiveArgs(arg0, arg1, tmp, arg3, arg2);
+            (*gDLL_minic)->func[0].withFiveArgs(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);

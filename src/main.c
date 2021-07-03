@@ -125,7 +125,7 @@ void game_init(void)
         gDLL_36        = dll_load_deferred(0x36, 0xC); //0x2F in SFA
         gDLL_39        = dll_load_deferred(0x39, 4);
         gDLL_3A        = dll_load_deferred(0x3A, 2);
-        (*gDLL_1E)->unk4.asVoid();
+        (*gDLL_1E)->func[0].asVoid();
     }
     init_bittable();
     alSynFlag = 1;
@@ -192,7 +192,7 @@ void _game_tick(void) {
     func_80007178();
     func_80013D80();
     func_800121DC();
-    (*gDLL_1C)->unk4.withThreeArgs(&gCurGfx, &gCurMtx, &gCurVtx);
+    (*gDLL_1C)->func[0].withThreeArgs(&gCurGfx, &gCurMtx, &gCurVtx);
     (*gDLL_subtitles)->unk1C(&gCurGfx);
     func_80003CBC();
     func_800129E4();
@@ -379,7 +379,7 @@ void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, FILE_BITTABLE);
     gSizeBittable = get_file_size(FILE_BITTABLE) >> 1;
-    charStats_pointer = (*gDLL_gplay)->unk_88();
+    charStats_pointer = (*gDLL_gplay)->func[0x21].asVoidS32();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")

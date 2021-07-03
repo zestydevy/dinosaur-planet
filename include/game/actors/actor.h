@@ -27,7 +27,9 @@ typedef struct TActor {
 /*0018*/  Vec3f positionMirror; //local vs global?
 /*0024*/  Vec3f speed;
 /*0030*/  void* ptr0x30;
-/*0034*/  UNK_TYPE_32 unk0x34;
+/*0034*/  UNK_TYPE_8 unk0x34;
+/*0035*/  u8 mtxIdx;
+/*0036*/  u16 unk36;
 /*0038*/  struct TActor* linkedActor;
 /*003C*/  u8 unk0x3c[3]; //float loadDistance?
 /*0040*/  UNK_TYPE_32 unk0x40; //float related to camera?
@@ -66,9 +68,16 @@ typedef struct TActor {
 /*00C8*/  struct TActor *children[3]; //guessed from SFA
 } TActor; //may be bigger, will know when constructor is understood.
 
+typedef struct ObjListItem {
+	s16 count;
+	s16 size;
+	TActor *obj;
+} ObjListItem;
+
 extern struct TActor * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
-extern void *gObjList; //global object list
+extern s32 gNumObjs;
+extern ObjListItem *gObjList; //global object list
 extern void **gLoadedObjDefs;
 extern ObjData *gLoadedObjData;
 extern int gObjIndexCount; //count of OBJINDEX.BIN entries
