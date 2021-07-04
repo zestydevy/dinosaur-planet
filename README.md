@@ -27,3 +27,5 @@ Windows 10 (WSL)
 
 # Contributing:
 PRs are welcome. Please make sure that the ROM builds and matches successfully before submitting a non-draft PR; the CI system will also verify this.
+
+Also please see our [contribution guide](./CONTRIBUTING.md) for more information on how this project works and the ways to contribute.
