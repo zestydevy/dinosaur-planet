@@ -221,7 +221,13 @@ u32 _func_8000C258(u32 arg0)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_throw_fault.s")
+s32 dll_throw_fault(void)
+{
+    u8 * nullPtr = NULL;
+    *nullPtr = 0;
+
+    return 0;
+}
 
 // close
 #if 1

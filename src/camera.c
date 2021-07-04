@@ -84,13 +84,13 @@ void vec3_transform_no_translate(MtxF *mf, Vec3f *v, Vec3f *ov);
 void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
 void matrix_perspective(MtxF *mf, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001220.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001220.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800013BC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800013BC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800013D0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800013D0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/MusPtrBankGetCurrent.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/MusPtrBankGetCurrent.s")
 
 f32 get_fov_y()
 {
@@ -135,7 +135,7 @@ void set_near_plane(f32 near)
     gProjectionMtx.m[0][3] *= 0.5f;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001660.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001660.s")
 
 f32 get_far_plane()
 {
@@ -147,7 +147,7 @@ void func_800016B8()
     set_near_plane(4.0f);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800016E0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800016E0.s")
 
 void func_80001708()
 {
@@ -155,20 +155,20 @@ void func_80001708()
     matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/__CallBackDmaNew.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/__CallBackDmaNew.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001788.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001788.s")
 
 u32 get_camera_selector()
 {
     return gCameraSelector;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800017A8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800017A8.s")
 
 // close
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001884.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001884.s")
 #else
 f32 _sqrtf(f32 x);
 f32 _func_80001884(f32 x, f32 y, f32 z)
@@ -234,7 +234,7 @@ void func_80001A3C()
     gTriggerUseAlternateCamera = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001A5C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001A5C.s")
 
 void set_camera_selector(s32 selector)
 {
@@ -245,7 +245,7 @@ void set_camera_selector(s32 selector)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001B40.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001B40.s")
 
 void func_80001CE0(s32 selector, u32 param_2)
 {
@@ -272,9 +272,9 @@ u32 func_80001DD4(s32 selector)
     return gViewports[selector].flags & 0x1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001E04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001E04.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80001F70.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001F70.s")
 
 u32 func_8000206C(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 {
@@ -290,7 +290,7 @@ u32 func_8000206C(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800020E4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800020E4.s")
 
 extern s16 SHORT_8008c524;
 void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
@@ -306,7 +306,7 @@ void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800021A0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
 #else
 extern u32 UINT_800a66f8;
 void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY);
@@ -402,7 +402,7 @@ void _func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80002490.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002490.s")
 #else
 extern u32 UINT_800a66f8;
 extern s16 SHORT_8008c524;
@@ -492,7 +492,7 @@ void _func_80002490(Gfx **gdl)
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/setup_rsp_camera_matrices.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/setup_rsp_camera_matrices.s")
 #else
 extern u32 UINT_800a6a54;
 extern u32 UINT_ARRAY_800a7bb0[28];
@@ -570,15 +570,15 @@ void _setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800029C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029C4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800029D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029D4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80002B2C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002B2C.s")
 
 // extremely close
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80002C0C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002C0C.s")
 #else
 void _func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
 {
@@ -624,7 +624,7 @@ void func_80002DE4(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
 
 // close
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80002E94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002E94.s")
 #else
 void func_80002E94(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz)
 {
@@ -642,7 +642,7 @@ void func_80002E94(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80002F88.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002F88.s")
 #else
 void func_80002F88(s32 x, s32 y, s32 z, f32 *ox, f32 *oy, f32 *oz)
 {
@@ -709,7 +709,7 @@ void func_800032AC(u32 a0, u32 a1, u32 a2, u32 a4)
 {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800032C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800032C4.s")
 
 s32 func_8004454C(f32 x, f32 y, f32 z);
 void func_800034CC(f32 x, f32 y, f32 z)
@@ -722,7 +722,7 @@ void func_800034CC(f32 x, f32 y, f32 z)
 
 // extremely close
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_8000356C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8000356C.s")
 #else
 f32 fcos16_precise(s16 theta);
 f32 fsin16_precise(s16 theta);
@@ -739,7 +739,7 @@ void _func_8000356C(f32 a, f32 b)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/get_vec3_to_camera_normalized.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/get_vec3_to_camera_normalized.s")
 #else
 f32 _sqrtf(f32 x);
 void _get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
@@ -819,7 +819,7 @@ MtxF *func_800038CC()
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800038DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800038DC.s")
 #else
 u32 _func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 {
@@ -854,7 +854,7 @@ u32 _func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003A60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003A60.s")
 
 f32 _sqrtf(f32 x);
 void func_80003AA0(f32 x, f32 y, f32 z, f32 distance, f32 param_5)
@@ -900,9 +900,9 @@ void func_80003bb0(f32 param_1, f32 param_2, f32 param_3)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003C48.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003C48.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80003C68.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003C68.s")
 
 void add_matrix_to_pool(MtxF *mf, s32 count)
 {
@@ -911,7 +911,7 @@ void add_matrix_to_pool(MtxF *mf, s32 count)
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/tick_cameras.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/tick_cameras.s")
 #else
 extern s8 gMatrixIndex;
 extern f32 gFarPlane;
@@ -985,7 +985,7 @@ f32 fexp(f32 x, u32 iterations)
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/setup_rsp_matrices_for_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/setup_rsp_matrices_for_actor.s")
 #else
 extern Mtx *gRSPMatrices[2]; // TODO: how many matrices are there?
 extern f32 gWorldX;
@@ -1050,7 +1050,7 @@ void func_80004224(Gfx **gdl)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004258.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004258.s")
 #else
 extern s8 gMatrixIndex;
 void func_800042C8(TActor *actor, s32 matrixIdx);
@@ -1069,7 +1069,7 @@ void func_800042A8(TActor *actor)
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_800042C8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800042C8.s")
 #else
 extern MtxF gAuxMtx2;
 void _func_800042C8(TActor *actor, int matrixIdx)
@@ -1124,7 +1124,7 @@ void _func_800042C8(TActor *actor, int matrixIdx)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/get_actor_child_position.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/get_actor_child_position.s")
 #else
 void _get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz)
 {
@@ -1144,7 +1144,7 @@ void _get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_actor.s")
 #else
 void _transform_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
 {
@@ -1162,7 +1162,7 @@ void _transform_point_by_actor(float x, float y, float z, float *ox, float *oy, 
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_transform_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_transform_point_by_actor.s")
 #else
 void _inverse_transform_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
 {
@@ -1180,7 +1180,7 @@ void _inverse_transform_point_by_actor(float x, float y, float z, float *ox, flo
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/inverse_rotate_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_rotate_point_by_actor.s")
 #else
 void _inverse_rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, float * oz, TActor *actor)
 {
@@ -1198,7 +1198,7 @@ void _inverse_rotate_point_by_actor(float x, float y, float z, float *ox, float 
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/rotate_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/rotate_point_by_actor.s")
 #else
 void _rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
 {
@@ -1216,7 +1216,7 @@ void _rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, flo
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_srt_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_srt_by_actor.s")
 #else
 void _transform_srt_by_actor(SRT *srt, SRT *out, TActor *actor)
 {
@@ -1270,11 +1270,11 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
     out->roll = a->roll;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/update_camera_for_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/update_camera_for_actor.s")
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/transform_point_by_actor_matrix.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_actor_matrix.s")
 #else
 void _transform_point_by_actor_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 {
@@ -1291,8 +1291,8 @@ void _transform_point_by_actor_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004A30.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004A30.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/fbSetBg.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/fbSetBg.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1E20/func_80004A4C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004A4C.s")

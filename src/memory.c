@@ -4,7 +4,7 @@
 
 s32  increment_heap_block(s32, s32, s32, s32);
 s32  find_heap_block(void *ptr);
-void set_heap_block(struct HeapBlock *heap, s32 size, s32 max);
+void set_heap_block(Heap * heap, s32 size, s32 max);
 
 void init_memory(void)
 {
@@ -37,36 +37,73 @@ void init_memory(void)
 //      HeapBlock struct, among several other s16 fields,
 //      while find_heap_block deconfirms them.
 #if 0
-void _set_heap_block(struct HeapBlock *heap, s32 size, s32 max) {
-    struct HeapBlock *temp_a0;
-    struct HeapBlock *temp_t0;
-    struct HeapBlock *temp_a3;
-    s32  phi_t1;
-    struct HeapBlock *phi_t0;
+void _set_heap_block(Heap * heap, s32 size, s32 max)
+{
+    s32 i;
+    struct HeapBlock * block = &gHeapBlkList[gHeapBlkListSize++];
 
-    temp_a3 = &gHeapBlkList[gHeapBlkListSize++];
-    temp_a3->maxItems = max;
-    temp_a3->itemCount = 0;
-    temp_a3->ptr = heap;
-    temp_a3->memAllocated = size;
-    temp_a3->memUsed = 0;
+    block->maxItems = max;
+    block->itemCount = 0;
+    block->ptr = heap;
+    block->memAllocated = size;
+    block->memUsed = 0;
+    
     if (max > 0) {
-        for (phi_t1 = 0; phi_t1 < temp_a3->maxItems; phi_t1++) {
-            heap[phi_t1].index = phi_t1;
+        heap->index = i;
+        for (i = 0; i < block->maxItems; ++i) {
+            heap[i].index = i;
         }
     }
-    temp_t0 = temp_a3->ptr;
-    temp_a0 = &heap[max];
-    if (((u32)temp_a0 & 0xF) != 0) {
-        temp_t0->maxItems = ALIGN16(temp_a0);
+
+    /* 17648 80016A48 00CB0019 */  multu      $a2, $t3
+    max * 0x14
+    /* 1764C 80016A4C 8CE80008 */  lw         $t0, 8($a3)
+    t0 = gHeapBlkList[gHeapBlkListSize].ptr
+    /* 17650 80016A50 2401FFF0 */  addiu      $at, $zero, -0x10
+    at = -0x10
+    /* 17654 80016A54 00001812 */  mflo       $v1
+    v1 = max * 0x14
+    /* 17658 80016A58 00832021 */  addu       $a0, $a0, $v1
+    a0 = heap + (max * 0x14)
+    /* 1765C 80016A5C 308C000F */  andi       $t4, $a0, 0xf
+    t4 = (heap + (max * 0x14)) & 0xF
+    /* 17664 80016A64 00A37823 */   subu      $t7, $a1, $v1
+    t7 = size - (max * 0x14)
+    /* 17660 80016A60 11800005 */  beqz       $t4, .L80016A78
+    if (((heap + (max * 0x14)) & 0xF) != 0) {
+        /* 17668 80016A68 00816824 */  and        $t5, $a0, $at
+        t5 = (heap + (max * 0x14)) & -0x10
+        /* 1766C 80016A6C 25AE0010 */  addiu      $t6, $t5, 0x10
+        t6 = ((heap + (max * 0x14)) & -0x10) + 0x10
+        /* 17674 80016A74 AD0E0000 */   sw        $t6, ($t0)
+        gHeapBlkList[gHeapBlkListSize].ptr->tail = ((heap + (max * 0x14)) & -0x10) + 0x10
+        /* 17670 80016A70 10000002 */  b          .L80016A7C
+
+        .L80016A78:
     } else {
-        temp_t0->maxItems = temp_a0;
+        /* 17678 80016A78 AD040000 */  sw         $a0, ($t0)
+        gHeapBlkList[gHeapBlkListSize].ptr->tail = heap + (max * 0x14)
     }
-    temp_t0->itemCount = size - (max * 0x14);
-    temp_t0->ptr = NULL;
-    temp_t0->index = -1;
-    temp_t0->memAllocated = -1;
-    temp_a3->itemCount++;
+    .L80016A7C:
+    /* 1767C 80016A7C 2404FFFF */  addiu      $a0, $zero, -1
+    a0 = -1
+    /* 17680 80016A80 AD0F0004 */  sw         $t7, 4($t0)
+    HeapBlkList[gHeapBlkListSize].ptr->maxSize = size - (max * 0x14)
+    /* 17684 80016A84 A5000008 */  sh         $zero, 8($t0)
+    HeapBlkList[gHeapBlkListSize].ptr->m0008 = 0
+    /* 17688 80016A88 A504000A */  sh         $a0, 0xa($t0)
+    HeapBlkList[gHeapBlkListSize].ptr->m000A = -1
+    /* 1768C 80016A8C A504000C */  sh         $a0, 0xc($t0)
+    HeapBlkList[gHeapBlkListSize].ptr->m000C = -1
+    /* 17690 80016A90 8CF80004 */  lw         $t8, 4($a3)
+    t8 = gHeapBlkList[gHeapBlkListSize].itemCount
+    /* 17694 80016A94 8CE20008 */  lw         $v0, 8($a3)
+    v0 = gHeapBlkList[gHeapBlkListSize].ptr
+    /* 17698 80016A98 27190001 */  addiu      $t9, $t8, 1
+    /* 1769C 80016A9C ACF90004 */  sw         $t9, 4($a3)
+    ++gHeapBlkList[gHeapBlkListSize].itemCount
+    /* 176A0 80016AA0 03E00008 */  jr         $ra
+    /* 176A4 80016AA4 00000000 */   nop
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")

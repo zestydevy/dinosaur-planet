@@ -268,13 +268,21 @@ struct CharacterStats{
 	u8 unk0xb;
 };//seemingly consistent addrs: Fox/Sabre at 0x805c3964, Krystal 0x805c3970.
 
+typedef struct {
+/*0000*/    u32 * tail;
+/*0004*/    s32 maxSize;
+/*0008*/    s16 m0008;
+/*000C*/    s16 m000C;
+/*000E*/    s16 index;
+/*0010*/    s32 m0010;
+} Heap;
+
 struct HeapBlock {
-    s32 maxItems;
-    s32 itemCount;
-    struct HeapBlock *ptr;
-    s32 memAllocated;
-    // s16 index;
-    s32 memUsed;
+/*0000*/    s32 maxItems;
+/*0004*/    s32 itemCount;
+/*0008*/    Heap * ptr;
+/*000C*/    s32 memAllocated;
+/*0010*/    s32 memUsed;
 };
 
 //unknown What this is for.

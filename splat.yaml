@@ -21,11 +21,12 @@ segments:
     subalign: 8
     subsections:
     
-    - [0x1000, c]
+    - [0x1000, asm, entrypoint]
+    - [0x1050, c]
     - [0x13D0, c]
     - [0x1460, c]
     - [0x1740, c, boot]
-    - [0x1E20, c]
+    - [0x1E20, c, camera]
     - [0x5660, c]
     - [0x7B50, c]
     - [0xBC10, c]
@@ -58,7 +59,7 @@ segments:
     - [0x37C90, c, filesystem]
     - [0x38020, c, crash]
     - [0x38380, c]
-    - [0x3B750, c]
+    - [0x3B750, asm, gzip]
     - [0x3C1B0, c, scheduler]
     - [0x3D850, c]
     - [0x3D890, c, texture]
