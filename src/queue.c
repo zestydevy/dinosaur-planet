@@ -148,7 +148,7 @@ u8 map_get_is_object_streaming_disabled(void) {
     return gDisableObjectStreamingFlag;
 }
 
-void func_800129D4(u32 arg0) {
+void map_set_object_streaming_disabled(u32 arg0) {
     gDisableObjectStreamingFlag = arg0;
 }
 

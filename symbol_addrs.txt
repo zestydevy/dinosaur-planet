@@ -1212,3 +1212,4 @@ gMainPol = 0x800AE6A8; // type:data
 gCurMtx = 0x800AE690; // type:data
 gCurVtx = 0x800AE6A0; // type:data
 gCurPol = 0x800AE6B0; // type:data
+map_set_object_streaming_disabled = 0x800129D4; // type:func
