@@ -667,7 +667,7 @@ extern OSSched *osscheduler_;
 extern struct CharacterStats * charStats_pointer;
 extern s32 gFile_BITTABLE;
 extern s16 gSizeBittable;
-extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
+extern s32 gMainGfx[], gMainMtx[], gMainVtx[], gMainPol[]; //likely pointers
 extern Gfx *gCurGfx;
 
 extern s32 D_800AE674;
@@ -680,7 +680,7 @@ extern s32 memMonVal0;
 extern s32 memMonVal1;
 extern s32 memMonVal2;
 extern s8 ossceduler_stack;
-extern u8 D_800B09C1;
+extern u8 gFrameBufIdx;
 extern u8 D_800B09C3;
 extern u8 D_800B09C2;
 extern u8 D_800B09C4;

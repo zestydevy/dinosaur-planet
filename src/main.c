@@ -64,8 +64,8 @@ void game_init(void)
     create_3_megs_quues(&osscheduler_);
     alloc_frame_buffers();
     if (0);
-    D_800B09C1 = 0;
-    gCurGfx = D_800AE678[D_800B09C1];
+    gFrameBufIdx = 0;
+    gCurGfx = gMainGfx[gFrameBufIdx];
     gLastInsertedControllerIndex = init_controller_data();
     start_controller_thread(&osscheduler_);
     start_crash_thread(&osscheduler_);
@@ -163,13 +163,13 @@ void _game_tick(void) {
 
     osSetTime(0);
     func_80063300();
-    func_80037780(D_800AE678[D_800B09C1], gCurGfx, 0);
-    temp_t9 = D_800B09C1 ^ 1;
-    D_800B09C1 = temp_t9;
-    gCurGfx = D_800AE678[temp_t9];
-    D_800AE690 = D_800AE688[temp_t9];
-    D_800AE6A0 = D_800AE698[temp_t9];
-    D_800AE6B0 = D_800AE6A8[temp_t9]);
+    func_80037780(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    temp_t9 = gFrameBufIdx ^ 1;
+    gFrameBufIdx = temp_t9;
+    gCurGfx = gMainGfx[temp_t9];
+    gCurMtx = gMainMtx[temp_t9];
+    gCurVtx = gMainVtx[temp_t9];
+    gCurPol = gMainPol[temp_t9]);
     dl_add_debug_info(gCurGfx, 0, &D_80099130, 0x28E);
     func_8003CC50(&gCurGfx, 0, 0x80000000);
     func_8003CC50(&gCurGfx, 1, gFramebufferCurrent);
@@ -194,11 +194,11 @@ void _game_tick(void) {
             phi_v1 = 3;
         }
     }
-    func_80037A14(&gCurGfx, &D_800AE690, phi_v1);
+    func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
     func_80007178();
     func_80013D80();
     func_800121DC();
-    (*D_8008C974)->unk4.withThreeArgs(&gCurGfx, &D_800AE690, &D_800AE6A0);
+    (*D_8008C974)->unk4.withThreeArgs(&gCurGfx, &gCurMtx, &gCurVtx);
     (*gDLL_subtitles)->unk1C(&gCurGfx);
     func_80003CBC();
     func_800129E4();
@@ -252,7 +252,7 @@ void func_800143A4(void) {
 }
 
 s32 func_800143D0(s32 *arg0) {
-    *arg0 = D_800AE678[D_800B09C1];
+    *arg0 = gMainGfx[gFrameBufIdx];
     return gCurGfx;
 }
 
@@ -285,17 +285,17 @@ void _alloc_frame_buffers(void) {
     s32 tmp2;
 
     temp_v0 = (u8 *) malloc(0x11940, 1, 0);
-    D_800AE678[0] = temp_v0;
-    D_800AE678[1] = temp_v0 + 0x8CA0;
+    gMainGfx[0] = temp_v0;
+    gMainGfx[1] = temp_v0 + 0x8CA0;
     temp_v0 = (u8 *) malloc(0x22600, 1, 0);
-    D_800AE688[0] = temp_v0;
-    D_800AE688[1] = temp_v0 + 0x11300;
+    gMainMtx[0] = temp_v0;
+    gMainMtx[1] = temp_v0 + 0x11300;
     temp_v0 = (u8 *) malloc(0x640, 1, 0);
-    D_800AE6A8[0] = temp_v0;
-    D_800AE6A8[1] = temp_v0 + 0x320;
+    gMainPol[0] = temp_v0;
+    gMainPol[1] = temp_v0 + 0x320;
     temp_v0 = (u8 *) malloc(0x2580, 1, 0);
-    D_800AE698[0] = temp_v0;
-    D_800AE698[1] = temp_v0 + 0x12C0;
+    gMainVtx[0] = temp_v0;
+    gMainVtx[1] = temp_v0 + 0x12C0;
 }
 #endif
 
