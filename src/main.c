@@ -8,7 +8,7 @@ void clear_PlayerPosBuffer(void);
 void func_800483BC(f32, f32, s32);
 void game_init(void);
 void init_bittable(void);
-struct UnkStruct80014614 **dll_load_deferred(s32, s32);
+struct DLLInstance **dll_load_deferred(s32, s32);
 
 const char gameVer[] = "1.3623";
 const char curentTime[] = "01/12/00 09:19";
@@ -41,9 +41,9 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
 
 void game_init(void) 
 {
-    struct UnkStruct80014614 *temp_AMSEQ_DLL;
+    struct DLLInstance **temp_AMSEQ_DLL;
     s32 tvMode;
-    struct UnkStruct80014614 **tmp3;
+    struct DLLInstance **tmp3;
 
     init_memory();
     three_more_mallocs();
@@ -83,55 +83,55 @@ void game_init(void)
     init_menu_related_globals();
     init_audio(&osscheduler_, 0xE);
     init_global_map();
-    if (osMemSize != 0x800000) {
-        temp_AMSEQ_DLL = dll_load_deferred(5, 0x24);
-        gDLL_AMSEQ2 = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX = dll_load_deferred(6, 0x12);
-        gDLL_text = dll_load_deferred(0x15, 5);
-        gDLL_gplay = dll_load_deferred(0x1D, 0x2F);
-        gDLL_savegame = dll_load_deferred(0x1F, 2);
-        D_8008C974 = dll_load_deferred(0x1C, 4);
+    if (osMemSize != EXPANSION_SIZE) {
+        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
+        gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
+        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 0x12);
+        gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 0x2F);
+        gDLL_savegame  = dll_load_deferred(DLL_SAVEGAME, 2);
+        gDLL_1C        = dll_load_deferred(0x1C, 4);
     } else {
-        D_8008C994 = dll_load_deferred(1, 0xF);
-        D_8008C978 = dll_load_deferred(2, 0x17);
-        D_8008C9D8 = dll_load_deferred(0x17, 8);
-        D_8008C9C8 = dll_load_deferred(0x12, 0x16);
-        gDLL_ANIM = dll_load_deferred(3, 0x1D);
-        D_8008C974 = dll_load_deferred(0x1C, 4);
-        D_8008C9E0 = dll_load_deferred(0x19, 0xE);
-        D_8008C980 = dll_load_deferred(7, 0xF);
-        D_8008C984 = dll_load_deferred(8, 0xC);
-        gDLL_newclouds = dll_load_deferred(9, 8);
-        gDLL_newstars = dll_load_deferred(0xA, 3);
-        gDLL_minic = dll_load_deferred(0xC, 0xA);
-        gDLL_Race = dll_load_deferred(4, 0xD);
-        temp_AMSEQ_DLL = dll_load_deferred(5, 0x24);
-        gDLL_AMSEQ2 = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX = dll_load_deferred(6, 0x12);
-        gDLL_newlfx = dll_load_deferred(0xB, 7);
-        gDLL_expgfx = dll_load_deferred(0xD, 0xA);
-        gDLL_modgfx = dll_load_deferred(0xE, 0xC);
-        gDLL_projgfx = dll_load_deferred(0xF, 8);
-        D_8008C9C0 = dll_load_deferred(0x10, 3);
-        D_8008C9C4 = dll_load_deferred(0x11, 2);
-        gDLL_SCREENS = dll_load_deferred(0x14, 3);
-        gDLL_text = dll_load_deferred(0x15, 5);
-        gDLL_subtitles = dll_load_deferred(0x16, 7);
-        gDLL_waterfx = dll_load_deferred(0x18, 7);
-        gDLL_CURVES = dll_load_deferred(0x1A, 0x26);
-        D_8008C9E8 = dll_load_deferred(0x4A, 7);
-        D_8008C9F0 = dll_load_deferred(0x1B, 9);
-        gDLL_gplay = dll_load_deferred(0x1D, 0x24);
-        D_8008C9F8 = dll_load_deferred(0x38, 0xA);
-        D_8008C9FC = dll_load_deferred(0x1E, 6);
-        gDLL_savegame = dll_load_deferred(0x1F, 2);
-        D_8008CA08 = dll_load_deferred(0x20, 6);
-        D_8008CA0C = dll_load_deferred(0x21, 0x16);
-        D_8008CA10 = dll_load_deferred(0x3B, 2);
-        D_8008CA14 = dll_load_deferred(0x36, 0xC);
-        gDLL_57 = dll_load_deferred(0x39, 4);
-        D_8008C9B0 = dll_load_deferred(0x3A, 2);
-        (*D_8008C9FC)->unk4.asVoid();
+        gDLL_UI        = dll_load_deferred(DLL_UI, 0xF);
+        gDLL_Camera    = dll_load_deferred(DLL_CAMERA, 0x17);
+        gDLL_17        = dll_load_deferred(0x17, 8); //0x12 in SFA
+        gDLL_12        = dll_load_deferred(0x12, 0x16); //0x0F in SFA
+        gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 0x1D);
+        gDLL_1C        = dll_load_deferred(0x1C, 4); //0x16 in SFA
+        gDLL_19        = dll_load_deferred(0x19, 0xE); //not present in SFA
+        gDLL_Sky       = dll_load_deferred(DLL_SKY, 0xF);
+        gDLL_08        = dll_load_deferred(8, 0xC); //0x06 in SFA
+        gDLL_newclouds = dll_load_deferred(DLL_NEWCLOUDS, 8);
+        gDLL_newstars  = dll_load_deferred(DLL_NEWSTARS, 3);
+        gDLL_minic     = dll_load_deferred(DLL_MINIC, 0xA);
+        gDLL_Race      = dll_load_deferred(DLL_RACE, 0xD);
+        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
+        gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
+        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 0x12);
+        gDLL_newlfx    = dll_load_deferred(DLL_NEWLFX, 7);
+        gDLL_expgfx    = dll_load_deferred(DLL_EXPGFX, 0xA);
+        gDLL_modgfx    = dll_load_deferred(DLL_MODGFX, 0xC);
+        gDLL_projgfx   = dll_load_deferred(DLL_PROJGFX, 8);
+        gDLL_10        = dll_load_deferred(0x10, 3);
+        gDLL_11        = dll_load_deferred(0x11, 2); //probably particle FX
+        gDLL_SCREENS   = dll_load_deferred(DLL_SCREENS, 3);
+        gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
+        gDLL_waterfx   = dll_load_deferred(DLL_WATERFX, 7);
+        gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 0x26);
+        gDLL_Link      = dll_load_deferred(DLL_LINK, 7);
+        gDLL_1B        = dll_load_deferred(0x1B, 9); //0x15 in SFA
+        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 0x24);
+        gDLL_38        = dll_load_deferred(0x38, 0xA); //not present in SFA
+        gDLL_1E        = dll_load_deferred(0x1E, 6);
+        gDLL_savegame  = dll_load_deferred(DLL_SAVEGAME, 2); //param is 0x24 in SFA
+        gDLL_20        = dll_load_deferred(0x20, 6); //0x18 in SFA
+        gDLL_21        = dll_load_deferred(0x21, 0x16); //0x19 in SFA
+        gDLL_3B        = dll_load_deferred(DLL_MINIMAP, 2);
+        gDLL_36        = dll_load_deferred(0x36, 0xC); //0x2F in SFA
+        gDLL_39        = dll_load_deferred(0x39, 4);
+        gDLL_3A        = dll_load_deferred(0x3A, 2);
+        (*gDLL_1E)->func[0].asVoid();
     }
     init_bittable();
     alSynFlag = 1;
@@ -380,7 +380,7 @@ void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
-    charStats_pointer = (*gDLL_gplay)->unk_88();
+    charStats_pointer = (*gDLL_gplay)->func[0x21].asVoidS32();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014670.s")
@@ -404,18 +404,18 @@ s32 func_800149AC(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014A80.s")
 
 void func_80014B1C(void) {
-    if (D_8008CA04 == 0) {
-        D_8008C9EC = dll_load_deferred(0x4B, 0xA);
-        D_8008CA04 = dll_load_deferred(0x4C, 3);
+    if (gDLL_4C == 0) {
+        gDLL_4B = dll_load_deferred(0x4B, 0xA);
+        gDLL_4C = dll_load_deferred(0x4C, 3);
     }
 }
 
 void func_80014B6C(void) {
-    if (D_8008CA04 != 0) {
-        func_8000C258(D_8008C9EC);
-        D_8008C9EC = 0;
-        func_8000C258(D_8008CA04);
-        D_8008CA04 = 0;
+    if (gDLL_4C != 0) {
+        func_8000C258(gDLL_4B);
+        gDLL_4B = 0;
+        func_8000C258(gDLL_4C);
+        gDLL_4C = 0;
     }
 }
 
@@ -466,7 +466,7 @@ void update_PlayerPosBuffer(void)
     TActor * player;
     struct Vec3_Int * pos;
 
-    player = (TActor *)func_80023914();
+    player = (TActor *)get_player();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     D_800AE674 += delayByte;
 

@@ -10,10 +10,12 @@
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;
 typedef u32 UNK_TYPE_32;
+typedef void UNK_PTR;
 
 typedef float Vec2[2];
 typedef float Vec3[3];
 typedef float Vec4[4];
+typedef short Vec3s[3];
 
 // Scale, rotation, translation. Rotations are applied in the order: Yaw -> Pitch -> Roll. (TODO: verify)
 typedef struct
@@ -195,6 +197,165 @@ typedef struct {
 /*009F*/    s8 unk_0x9f;
 } ActorObjhitInfo;
 
+//I'm copying most of these from SFA and default.dol.
+//A lot of fields will need some tweaking to be correct for this version.
+//default.dol should be much closer.
+
+//A point on a model where something like a weapon can be attached.
+typedef struct AttachPoint {
+/*00*/ Vec3f pos; //offset from bone
+/*0C*/ Vec3s rot; //offset from bone
+/*12*/ s8 bone; //bone idx to use
+/*13*/ s8 unk13; //always same as bone?
+/*14*/ s8 unk14; //always same as bone?
+/*15*/ u8 unk15; //always 0xCD?
+/*16*/ u8 unk16; //always 0xCD?
+/*17*/ u8 unk17; //always 0xCD?
+} AttachPoint;
+
+typedef struct AButtonInteraction {
+/*00*/ s16 unk00;
+/*02*/ s16 unk02;
+/*04*/ s16 unk04;
+/*06*/ UNK_TYPE_8 unk06;
+/*07*/ UNK_TYPE_8 unk07;
+/*08*/ UNK_TYPE_8 unk08;
+/*09*/ UNK_TYPE_8 unk09;
+/*0a*/ UNK_TYPE_8 unk0a;
+/*0b*/ UNK_TYPE_8 unk0b;
+/*0c*/ UNK_TYPE_8 unk0c;
+/*0d*/ UNK_TYPE_8 unk0d;
+/*0e*/ UNK_TYPE_8 unk0e;
+/*0f*/ UNK_TYPE_8 unk0f;
+/*10*/ u8 unk10;
+/*11*/ UNK_TYPE_8 unk11;
+/*12*/ UNK_TYPE_8 unk12;
+/*13*/ UNK_TYPE_8 unk13;
+/*14*/ UNK_TYPE_8 unk14;
+/*15*/ UNK_TYPE_8 unk15;
+/*16*/ UNK_TYPE_8 unk16;
+/*17*/ UNK_TYPE_8 unk17;
+} AButtonInteraction;
+
+enum ObjDataFlags44 {
+    OBJDATA_FLAG44_HaveModels               = 0x00000001,
+    OBJDATA_FLAG44_DifferentLightColor      = 0x00000010,
+    OBJDATA_FLAG44_ModelRelated             = 0x00000020,
+    OBJDATA_FLAG44_HasChildren              = 0x00000040,
+    OBJDATA_FLAG44_EnableCulling            = 0x00000400,
+    OBJDATA_FLAG44_UseDifferentModelLoading = 0x00000800,
+    OBJDATA_FLAG44_DifferentCulling         = 0x00080000,
+    OBJDATA_FLAG44_KeepHitboxWhenInvisible  = 0x00200000,
+    OBJDATA_FLAG44_HasEvent                 = 0x00400000,
+    OBJDATA_FLAG44_DidLoadModels            = 0x00800000
+};
+
+enum ObjShadowType {
+    OBJ_SHADOW_NONE = 0x0,
+    OBJ_SHADOW_BOX = 0x1,
+    OBJ_SHADOW_GEOM = 0x2,
+    OBJ_SHADOW_UNK03 = 0x3,
+    OBJ_SHADOW_BLUE_GLOWING_RECT = 0x4
+};
+
+enum HitboxFlags60 {
+    HITBOX_DISABLED        = 0x0001,
+    HITBOX_NEED_POS_UPDATE = 0x0040,
+    HITBOX_LOCK_ROT_Y      = 0x0800,
+    HITBOX_LOCK_ROT_Z      = 0x1000
+};
+
+enum HitboxFlags62 {
+    HITBOX_SCALE_BY_SIZE      = 0x01,
+    HITBOX_SIZE_FLAG_02       = 0x02,
+    HITBOX_DONT_UPDATE        = 0x08,
+    HITBOX_USE_MODEL_FIELD_14 = 0x20
+};
+
+enum ObjDataFlags5F {
+    OBJDATA_FLAG5F_CrazyTranslucentEffect   = 0x01, //for HagabonMk2?
+    OBJDATA_FLAG5F_ShadowUsesNoTexture      = 0x02,
+    OBJDATA_FLAG5F_ShadowUsesDepthTest      = 0x04,
+    OBJDATA_FLAG5F_DontFollowParentRotation = 0x08,
+    OBJDATA_FLAG5F_NoShadow                 = 0x10, //force depth test if 0x01 also set
+    OBJDATA_FLAG5F_Visible                  = 0x20,
+    OBJDATA_FLAG5F_DifferentTextures        = 0x80  //Super dark
+};
+
+//Entry in OBJECTS.BIN, aka ObjectFileStruct (made-up name)
+//debug messages imply ObjData is the correct name or close to it
+typedef struct ObjData {
+/*00*/ float unk00; //copied to shadow field 0
+/*04*/ float scale;
+/*08*/ u32 *pModelList; //-> list of model IDs
+/*0c*/ UNK_PTR *textures;
+/*10*/ UNK_PTR *unk10;
+/*14*/ UNK_PTR *unk14;
+/*18*/ u32 *offset_0x18; //[OPTIONAL] a file containing functions
+/*1c*/ u16 *pSeq; //[OPTIONAL] -> seq IDs
+/*20*/ UNK_TYPE_8 *pEvent; //[OPTIONAL] offset into the file. changed to pointer on load
+/*24*/ UNK_TYPE_8 *pHits; //[OPTIONAL]
+/*28*/ UNK_TYPE_8 *pWeaponDa; //[OPTIONAL] 
+/*2c*/ AttachPoint *pAttachPoints;
+/*30*/ s16 *pModLines; //ignored in file (zeroed on load)
+/*34*/ UNK_PTR *pIntersectPoints; //ignored in file (zeroed on load) (wObjList?)
+/*38*/ UNK_PTR *nextIntersectPoint; 
+/*3c*/ UNK_PTR *nextIntersectLine; 
+/*40*/ AButtonInteraction *aButtonInteraction;
+/*44*/ u32 flags; //ObjDataFlags44
+/*48*/ s16 shadowType; //ObjShadowType
+/*4a*/ s16 shadowTexture;
+/*4c*/ UNK_TYPE_8 unk4C;
+/*4d*/ UNK_TYPE_8 unk4D;
+/*4e*/ u16 hitbox_flags60; //HitboxFlags60
+/*50*/ s16 dllNo; //if not -1, load this DLL; func 0 is a model callback
+/*52*/ UNK_TYPE_8 unk52;
+/*53*/ UNK_TYPE_8 unk53;
+/*54*/ UNK_TYPE_8 unk54;
+/*55*/ u8 nModels;
+/*56*/ u8 numPlayerObjs; //if > 0, objAddObjectType(obj, 8)
+/*57*/ u8 unk57; //never read?
+/*58*/ u8 nAttachPoints;
+/*59*/ u8 nTextures; //-> 0x10 bytes
+/*5a*/ s16 objId;
+/*5c*/ s8 modLinesSize; //ignored in file
+/*5d*/ s8 modLinesIdx;
+/*5e*/ u8 numSeqs;
+/*5f*/ u8 flags_0x5f; //ObjDataFlags5F
+/*60*/ u8 hitbox_fieldB0;
+/*61*/ u8 hasHitbox; //or # hitboxes, but should only be 1
+/*62*/ u8 hitboxSizeXY;
+/*63*/ u8 hitbox_field6A;
+/*64*/ u8 hitbox_field6B;
+/*65*/ u8 hitbox_flags62;
+/*66*/ u8 unk66;
+/*67*/ u8 hitbox_fieldB5;
+/*68*/ s16 hitboxSizeX1;
+/*6a*/ s16 hitboxSizeY1; // > 0x169 = no shadow; also hitbox related
+/*6c*/ s16 hitboxSizeZ1; 
+/*6e*/ s16 hitboxSizeZ2; 
+/*70*/ u8 hitbox_fieldB4; //related to hitbox (height?)
+/*71*/ u8 flags_0x71; //related to hitbox
+/*72*/ u8 numAButtonInteractions;
+/*73*/ u8 stateVar73; //1=translucent; 3=invincible - not flags
+/*74*/ u8 unk74;
+/*75*/ u8 unk75;
+/*76*/ s16 modLineCount;
+/*78*/ s16 modLineNo;
+/*7a*/ u8 unk7A; 
+/*7b*/ u8 unk7B; 
+/*7c*/ s16 helpTexts[4]; //one per model (GameTextId)
+/*84*/ s16 unk84;
+/*86*/ s16 unk86; 
+/*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads?
+/*8c*/ u8 nLights; 
+/*8d*/ u8 lightIdx; 
+/*8e*/ u8 colorIdx; //related to textures; 1=dark, 2=default, 3+=corrupt, 77=crash, 0=normal
+/*8f*/ u8 unk8F; //related to hitbox
+/*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62)
+/*91*/ char name[11];
+} ObjData;
+
 //prelimnary, lots of unknowns
 //contains pointer-to-own-type fields, so `typedef struct _TActor {`
 //must be used instead of `typedef struct {`
@@ -209,29 +370,27 @@ typedef struct TActor {
 /*0037*/    u8 unk_0x37;
 /*0038*/    u32 unk_0x38;
 /*003C*/    u8 unk0x3c[0x44 - 0x3c];
-/*0044*/    UNK_TYPE_16 unk0x44;
+/*0044*/    UNK_TYPE_16 objId; //guessed from SFA
 /*0046*/    s16 unk0x46;
 /*0048*/    void* ptr0x48;
 /*004C*/    UNK_TYPE_32 unk0x4c;
-/*0050*/    ActorUnk0x50* ptr0x50;
+/*0050*/    ObjData* data;
 /*0054*/    ActorObjhitInfo* objhitInfo;
 /*0058*/    UNK_TYPE_32 unk0x58;
 /*005C*/    void* ptr0x5c;
 /*0060*/    void* ptr0x60;
 /*0064*/    ActorUnk0x64* ptr0x64;
-/*0068*/    void **dll;
+/*0068*/    DLLInstance **dll; //same in SFA
 /*006C*/    u16 *ptr0x6c;
 /*0070*/    void* ptr0x70;
 /*0074*/    u32 unk0x74;
 /*0078*/    u32 unk_0x78;
 /*007C*/    ModelInstance **modelInsts;
-/*0080*/    u32 unk_0x80;
-/*0084*/    Vec3f positionMirror3; //not sure why.
-/*0090*/    u32 unk_0x90;
-/*0094*/    u32 unk_0x94;
-/*0098*/	f32 unk0x98;
+/*0080*/    Vec3f positionMirror2; //gets copied twice.
+/*008C*/    Vec3f positionMirror3; //not sure why.
+/*0098*/    float animTimer; //guessed from SFA
 /*009C*/    f32 unk0x9c;
-/*00A0*/    s16 unk0xa0;
+/*00A0*/    s16 curAnimId;
 /*00A2*/	s16 unk_0xa2;
 /*00A4*/    u8 unk0xa4[0xad - 0xa4];
 /*00AD*/    s8 modelInstIdx;
@@ -247,6 +406,12 @@ typedef struct TActor {
 /*00CC*/    void* ptr0xcc;
 /*00D0*/    u8 unk_0xd0[0xe4 - 0xd0];
 } TActor; // size is 0xe4; other actor-related data is placed in the following memory
+
+typedef struct ObjListItem {
+	s16 count;
+	s16 size;
+	TActor *obj;
+} ObjListItem;
 
 //found a 3-array of these, not sure what they're for.
 struct Vec3_Int{
@@ -417,6 +582,32 @@ typedef enum
 /*4A*/    NUM_FILES
 } EFile;
 
+enum DLL_ID {
+    DLL_UI        = 0x01,
+    DLL_CAMERA    = 0x02,
+    DLL_ANIM      = 0x03,
+    DLL_RACE      = 0x04,
+    DLL_AMSEQ     = 0x05,
+    DLL_AMSFX     = 0x06,
+    DLL_SKY       = 0x07,
+    DLL_NEWCLOUDS = 0x09,
+    DLL_NEWSTARS  = 0x0A,
+    DLL_NEWLFX    = 0x0B,
+    DLL_MINIC     = 0x0C,
+    DLL_EXPGFX    = 0x0D,
+    DLL_MODGFX    = 0x0E,
+    DLL_PROJGFX   = 0x0F,
+    DLL_SCREENS   = 0x14,
+    DLL_TEXT      = 0x15,
+    DLL_SUBTITLES = 0x16,
+    DLL_WATERFX   = 0x18,
+    DLL_CURVES    = 0x1A,
+    DLL_GPLAY     = 0x1D,
+    DLL_SAVEGAME  = 0x1F,
+    DLL_MINIMAP   = 0x3B,
+    DLL_LINK      = 0x4A
+};
+
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
 // this needs double checking. its address is within gMainThreadStack....
@@ -427,18 +618,49 @@ extern u64 gMainThreadStack[];        // some sort of data
 
 extern u8 D_8008C940;
 extern void ***gDLL_57;
-extern struct UnkStruct80014614
-            **D_8008C970, **D_8008C974, **D_8008C978, **gDLL_ANIM,
-            **D_8008C980, **D_8008C984, **gDLL_newclouds, **gDLL_newstars,
-            **gDLL_minic, **D_8008C994, **gDLL_Race, **gDLL_AMSEQ,
-            **gDLL_AMSEQ2, **gDLL_AMSFX, **gDLL_newlfx,
-            **D_8008C9B0, **gDLL_expgfx, **gDLL_modgfx, **gDLL_projgfx,
-            **D_8008C9C0, **D_8008C9C4, **D_8008C9C8, **gDLL_SCREENS,
-            **gDLL_text, **gDLL_subtitles, **D_8008C9D8, **gDLL_waterfx,
-            **D_8008C9E0, **gDLL_CURVES, **D_8008C9E8, **D_8008C9EC,
-            **D_8008C9F0, **gDLL_gplay, **D_8008C9F8, **D_8008C9FC,
-            **gDLL_savegame, **D_8008CA04, **D_8008CA08, **D_8008CA0C,
-            **D_8008CA10, **D_8008CA14;
+extern struct DLLInstance
+    **D_8008C970, 
+    **gDLL_1C, 
+    **gDLL_Camera, 
+    **gDLL_ANIM,
+    **gDLL_Sky, 
+    **gDLL_08, 
+    **gDLL_newclouds, 
+    **gDLL_newstars,
+    **gDLL_minic, 
+    **gDLL_UI, 
+    **gDLL_Race, 
+    **gDLL_AMSEQ,
+    **gDLL_AMSEQ2, 
+    **gDLL_AMSFX, 
+    **gDLL_newlfx, 
+    **gDLL_39,
+    **gDLL_3A, 
+    **gDLL_expgfx, 
+    **gDLL_modgfx, 
+    **gDLL_projgfx,
+    **gDLL_10, 
+    **gDLL_11, 
+    **gDLL_12, 
+    **gDLL_SCREENS,
+    **gDLL_text, 
+    **gDLL_subtitles, 
+    **gDLL_17, 
+    **gDLL_waterfx,
+    **gDLL_19, 
+    **gDLL_CURVES, 
+    **gDLL_Link, 
+    **gDLL_4B,
+    **gDLL_1B, 
+    **gDLL_gplay, 
+    **gDLL_38, 
+    **gDLL_1E,
+    **gDLL_savegame, 
+    **gDLL_4C, 
+    **gDLL_20, 
+    **gDLL_21,
+    **gDLL_3B, 
+    **gDLL_36;
 extern u8 alSynFlag;
 
 extern OSSched *osscheduler_;

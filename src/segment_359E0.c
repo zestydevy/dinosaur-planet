@@ -301,7 +301,7 @@ void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 par
     if (param_6) {
         otherIdx = 0;
     } else {
-        otherIdx = actor->ptr0x50->unk_0x5d - 1;
+        otherIdx = actor->data->modLinesIdx - 1;
     }
 
     modelInst = actor->modelInsts[mainIdx];

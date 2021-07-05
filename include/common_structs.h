@@ -53,19 +53,20 @@ struct OSThread {
     /* 0x1B8 */ void* stackInfo;
 };
 
-typedef struct UnkStruct80014614 {
-    /* 0x00 */ u32 unk0;
-    union {
+typedef union {
     /* 0x04 */ void (*asVoid)(void);
+    /* 0x04 */ s32 (*asVoidS32)(void); //HACK
     /* 0x04 */ void (*withOneArg)(s32);
     /* 0x04 */ void (*withTwoArgs)(s32, s32);
     /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
     /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
     /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
-    } unk4;
-    /* 0x08 */ char unk_00 [0x80];
-    /* 0x88 */ s32 (*unk_88)(void);
-} UnkStruct80014614;
+} DLLFuncs;
+
+typedef struct DLLInstance {
+    /* 0x00 */ u32 unk0;
+    /* 0x04 */ DLLFuncs func[1]; //set to 1 to shut compiler up
+} DLLInstance;
 
 struct UnkStruct_800175D4 {
     s32 a;

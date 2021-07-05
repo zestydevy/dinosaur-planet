@@ -1,6 +1,6 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/seven_mallocs_and_float.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/alloc_some_object_arrays.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80025DD4.s")
 
