@@ -9,6 +9,7 @@ bin
 build
 expected
 __pycache__
+.cache
 
 # context file from m2ctx.py
 ctx.c
