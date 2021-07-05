@@ -33,7 +33,7 @@ void _init_dll_system()
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
-void some_crash_setter(DLLInst arg0[], s32 arg1) {
+void replace_loaded_dll_list(DLLInst arg0[], s32 arg1) {
     gLoadedDLLCount = arg1;
     gLoadedDLLList = arg0;
 }
