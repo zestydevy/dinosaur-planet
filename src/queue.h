@@ -1,6 +1,9 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
+#define ASSET_THREAD_ID 99
+#define ASSET_THREAD_PRIORITY 11
+
 struct UnkMesg800AE270 {
     u8 loadCategory; // loading single or asset?
     u8 loadType;

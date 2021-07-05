@@ -23,15 +23,16 @@ extern s32 *D_800ACBB8, *D_800ACBD0;
 
 extern s32 *D_800AE1C0, *D_800AE1D8;
 
-extern u64 *D_800AC910; // end of stack
-extern OSThread *D_800AC918;
+extern u64 *assetThreadStackEnd; // end of stack
+extern OSThread *assetThread;
 
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
     D_800ACBC8 = func_8000ADF0(&D_800ACBB8, &D_800ACBD0, 0x64, 0x1C);
     D_800AE1D0 = func_8000B010(&D_800AE1C0, &D_800AE1D8, 5, 0x14);
-    osCreateThread(&D_800AC918, 0x63, &asset_thread_main, 0, &D_800AC910, 0xB);
-    osStartThread(&D_800AC918);
+    osCreateThread(&assetThread, ASSET_THREAD_ID, &asset_thread_main, 0,
+        &assetThreadStackEnd, ASSET_THREAD_PRIORITY);
+    osStartThread(&assetThread);
 }
 
 #if 1

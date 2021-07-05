@@ -1200,3 +1200,6 @@ __scAppendList = 0x8003C8DC; // type:func
 __scExec = 0x8003C940; // type:func
 __scYield = 0x8003CA10; // type:func
 __scSchedule = 0x8003CA5C; // type:func
+
+assetThread = 0x800AC918; // type:data
+assetThreadStackEnd = 0x800AC910; // type:data
