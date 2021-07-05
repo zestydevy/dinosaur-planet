@@ -63,7 +63,7 @@ void game_init(void)
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
     alloc_frame_buffers();
-    if (0);
+    if (0) {};
     gFrameBufIdx = 0;
     gCurGfx = gMainGfx[gFrameBufIdx];
     gLastInsertedControllerIndex = init_controller_data();
@@ -137,7 +137,7 @@ void game_init(void)
     alSynFlag = 1;
     start_alSyn_thread();
     func_80012224(0);
-    if (0);
+    if (0) {};
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
     dl_init_debug_infos();
