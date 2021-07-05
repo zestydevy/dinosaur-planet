@@ -398,7 +398,7 @@ typedef struct TActor {
 /*00AF*/    u8 unk0xaf;
 /*00B0*/    u16 unk0xb0;
 	u8 unk0xb2[6];
-	void* CharData; //0x8c1+ struct, has various player data.
+	void* state; //type depends on object
 	UNK_TYPE_32 unk0xbc;
 	UNK_TYPE_32 unk0xc0;
 	UNK_TYPE_32 unk0xc4;
@@ -420,13 +420,13 @@ struct Vec3_Int{
 };//used for camera?
 
 
-//pointer at 0x34c of "CharData" struct
+//pointer at 0x34c of "state" struct
 struct CharacterStats{
 	u8 unk0x0;
 	s8 HPCurr;
 	s8 HPMax; //only shows up to 104, code caps it at 80.
 	u8 unk0x3; //aligning?
-	s16 ManaCurr; //only mods when byte at "CharData"0x8bb is set.
+	s16 ManaCurr; //only mods when byte at "state"0x8bb is set.
 	s16 ManaMax; //capped at 100.
 	s16 Scarabs; //capped at 999.
 	u8 unk0xa;
@@ -667,8 +667,8 @@ extern OSSched *osscheduler_;
 extern struct CharacterStats * charStats_pointer;
 extern s32 gFile_BITTABLE;
 extern s16 gSizeBittable;
-extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
-extern Gfx *D_800AE680;
+extern s32 gMainGfx[], gMainMtx[], gMainVtx[], gMainPol[]; //likely pointers
+extern Gfx *gCurGfx;
 
 extern s32 D_800AE674;
 
@@ -680,7 +680,7 @@ extern s32 memMonVal0;
 extern s32 memMonVal1;
 extern s32 memMonVal2;
 extern s8 ossceduler_stack;
-extern u8 D_800B09C1;
+extern u8 gFrameBufIdx;
 extern u8 D_800B09C3;
 extern u8 D_800B09C2;
 extern u8 D_800B09C4;

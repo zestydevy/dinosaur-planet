@@ -105,7 +105,7 @@ void crash_thread_entry(void *_) {
     stop_active_app_threads();
     check_video_mode_crash_and_clear_framebuffer();
 
-    some_crash_setter(D_80091770->loadedDllList, D_80091770->loadedDllCount);
+    replace_loaded_dll_list(D_80091770->loadedDllList, D_80091770->loadedDllCount);
     some_crash_print(&stack0x20[0], 2, 0);
 
     // Halt
