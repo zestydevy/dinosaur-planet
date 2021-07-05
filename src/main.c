@@ -62,7 +62,7 @@ void game_init(void)
     start_pi_manager_thread();
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
-    four_mallocs();
+    alloc_frame_buffers();
     if (0);
     D_800B09C1 = 0;
     D_800AE680 = D_800AE678[D_800B09C1];
@@ -278,9 +278,9 @@ void func_8001443C(s32 arg0) {
 
 // These smell like structs
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/four_mallocs.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/alloc_frame_buffers.s")
 #else
-void _four_mallocs(void) {
+void _alloc_frame_buffers(void) {
     u8 *temp_v0;
     s32 tmp2;
 
