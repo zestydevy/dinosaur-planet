@@ -1203,3 +1203,4 @@ __scSchedule = 0x8003CA5C; // type:func
 
 assetThread = 0x800AC918; // type:data
 assetThreadStackEnd = 0x800AC910; // type:data
+gCurGfx = 0x800AE680; // type:data

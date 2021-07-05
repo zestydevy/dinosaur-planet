@@ -65,7 +65,7 @@ void game_init(void)
     alloc_frame_buffers();
     if (0);
     D_800B09C1 = 0;
-    D_800AE680 = D_800AE678[D_800B09C1];
+    gCurGfx = D_800AE678[D_800B09C1];
     gLastInsertedControllerIndex = init_controller_data();
     start_controller_thread(&osscheduler_);
     start_crash_thread(&osscheduler_);
@@ -138,8 +138,8 @@ void game_init(void)
     start_alSyn_thread();
     func_80012224(0);
     if (0);
-    gDPFullSync(D_800AE680++);
-    gSPEndDisplayList(D_800AE680++);
+    gDPFullSync(gCurGfx++);
+    gSPEndDisplayList(gCurGfx++);
     dl_init_debug_infos();
     set_menu_page(2);
     if (osMemSize == EXPANSION_SIZE) {
@@ -163,27 +163,27 @@ void _game_tick(void) {
 
     osSetTime(0);
     func_80063300();
-    func_80037780(D_800AE678[D_800B09C1], D_800AE680, 0);
+    func_80037780(D_800AE678[D_800B09C1], gCurGfx, 0);
     temp_t9 = D_800B09C1 ^ 1;
     D_800B09C1 = temp_t9;
-    D_800AE680 = D_800AE678[temp_t9];
+    gCurGfx = D_800AE678[temp_t9];
     D_800AE690 = D_800AE688[temp_t9];
     D_800AE6A0 = D_800AE698[temp_t9];
     D_800AE6B0 = D_800AE6A8[temp_t9]);
-    dl_add_debug_info(D_800AE680, 0, &D_80099130, 0x28E);
-    func_8003CC50(&D_800AE680, 0, 0x80000000);
-    func_8003CC50(&D_800AE680, 1, gFramebufferCurrent);
-    func_8003CC50(&D_800AE680, 2, D_800BCCB4);
-    func_8003E9F0(&D_800AE680, delayByte);
+    dl_add_debug_info(gCurGfx, 0, &D_80099130, 0x28E);
+    func_8003CC50(&gCurGfx, 0, 0x80000000);
+    func_8003CC50(&gCurGfx, 1, gFramebufferCurrent);
+    func_8003CC50(&gCurGfx, 2, D_800BCCB4);
+    func_8003E9F0(&gCurGfx, delayByte);
     func_80040FD0();
     func_8003DB5C();
     temp_a0 = D_80092A90;
     if (temp_a0->unk28 != 0) {
         temp_a0->unk28 = 0;
-        gDPPipeSync(D_800AE680++);
+        gDPPipeSync(gCurGfx++);
     }
-    gDPSetDepthImage(D_800AE680++, 0x02000000);
-    func_80037EC8(&D_800AE680);
+    gDPSetDepthImage(gCurGfx++, 0x02000000);
+    func_80037EC8(&gCurGfx);
     sp27 = 2;
     if (func_80041D5C() == 0) {
         phi_v1 = 0;
@@ -194,17 +194,17 @@ void _game_tick(void) {
             phi_v1 = 3;
         }
     }
-    func_80037A14(&D_800AE680, &D_800AE690, phi_v1);
+    func_80037A14(&gCurGfx, &D_800AE690, phi_v1);
     func_80007178();
     func_80013D80();
     func_800121DC();
-    (*D_8008C974)->unk4.withThreeArgs(&D_800AE680, &D_800AE690, &D_800AE6A0);
-    (*gDLL_subtitles)->unk1C(&D_800AE680);
+    (*D_8008C974)->unk4.withThreeArgs(&gCurGfx, &D_800AE690, &D_800AE6A0);
+    (*gDLL_subtitles)->unk1C(&gCurGfx);
     func_80003CBC();
     func_800129E4();
-    func_80060B94(&D_800AE680);
-    gDPFullSync(D_800AE680++);
-    gSPEndDisplayList(D_800AE680++);
+    func_80060B94(&gCurGfx);
+    gDPFullSync(gCurGfx++);
+    gSPEndDisplayList(gCurGfx++);
     func_80037924();
     func_80020BB8();
     update_mem_mon_values();
@@ -253,7 +253,7 @@ void func_800143A4(void) {
 
 s32 func_800143D0(s32 *arg0) {
     *arg0 = D_800AE678[D_800B09C1];
-    return D_800AE680;
+    return gCurGfx;
 }
 
 s8 func_800143FC(void) {

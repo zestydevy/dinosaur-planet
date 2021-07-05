@@ -668,7 +668,7 @@ extern struct CharacterStats * charStats_pointer;
 extern s32 gFile_BITTABLE;
 extern s16 gSizeBittable;
 extern s32 D_800AE678[], D_800AE688[], D_800AE698[], D_800AE6A8[]; //likely pointers
-extern Gfx *D_800AE680;
+extern Gfx *gCurGfx;
 
 extern s32 D_800AE674;
 
