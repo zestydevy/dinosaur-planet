@@ -13,7 +13,12 @@
 #define HEAP_AREA_01 0x80245000
 
 #define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
+#define IDLE_THREAD_ID 1
+#define IDLE_THREAD_PRIORITY OS_PRIORITY_IDLE
+
 #define MAIN_THREAD_SIZE 1024
+#define MAIN_THREAD_ID 3
+#define MAIN_THREAD_PRIORITY 10
 
 #define DEBUG_LOOP1 do {/* omitted debug code */} while(0)
 
