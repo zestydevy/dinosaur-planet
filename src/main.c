@@ -280,22 +280,33 @@ void func_8001443C(s32 arg0) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/alloc_frame_buffers.s")
 #else
-void _alloc_frame_buffers(void) {
-    u8 *temp_v0;
-    s32 tmp2;
+void alloc_frame_buffers(void) {
+    //almost matching, probably just needs correct type
+    Gfx *gfx;
+    Mtx *mtx;
+    void **pol;
+    Vtx *vtx;
 
-    temp_v0 = (u8 *) malloc(0x11940, 1, 0);
-    gMainGfx[0] = temp_v0;
-    gMainGfx[1] = temp_v0 + 0x8CA0;
-    temp_v0 = (u8 *) malloc(0x22600, 1, 0);
-    gMainMtx[0] = temp_v0;
-    gMainMtx[1] = temp_v0 + 0x11300;
-    temp_v0 = (u8 *) malloc(0x640, 1, 0);
-    gMainPol[0] = temp_v0;
-    gMainPol[1] = temp_v0 + 0x320;
-    temp_v0 = (u8 *) malloc(0x2580, 1, 0);
-    gMainVtx[0] = temp_v0;
-    gMainVtx[1] = temp_v0 + 0x12C0;
+    //in default.dol these have names as well.
+    //alloc graphic display list command buffers. ("main:gfx" in default.dol)
+    gfx = (Gfx *) malloc(MAIN_GFX_BUF_SIZE * 2 * sizeof(Gfx), ALLOC_TAG_LISTS_COL, NULL);
+    gMainGfx[0] = gfx;
+    gMainGfx[1] = gfx + MAIN_GFX_BUF_SIZE;
+
+    //matrix buffers ("main:mtx")
+    mtx = (Mtx *) malloc(MAIN_MTX_BUF_SIZE * 2 * sizeof(Mtx), ALLOC_TAG_LISTS_COL, NULL);
+    gMainMtx[0] = mtx;
+    gMainMtx[1] = mtx + MAIN_MTX_BUF_SIZE;
+
+    //polygon buffers? ("main:pol")
+    pol = (void **) malloc(0x640, ALLOC_TAG_LISTS_COL, NULL); //XXX type
+    gMainPol[0] = pol;
+    gMainPol[1] = pol + 200;
+
+    //vertex buffers ("main:vtx")
+    vtx = (Vtx *) malloc(MAIN_VTX_BUF_SIZE * 2 * sizeof(Vtx), ALLOC_TAG_LISTS_COL, NULL);
+    gMainVtx[0] = vtx;
+    gMainVtx[1] = vtx + MAIN_VTX_BUF_SIZE;
 }
 #endif
 
