@@ -467,7 +467,7 @@ u8 func_80014C60(void)
 
 void clear_PlayerPosBuffer(void)
 {
-    bzero(&PlayerPosBuffer, 0x3C0);
+    bzero(&PlayerPosBuffer, PLAYER_POSBUF_SIZE * sizeof(struct Vec3_Int));
     PlayerPosBuffer_index = 0;
 }
 
@@ -487,7 +487,7 @@ void update_PlayerPosBuffer(void)
         pos->f.z = player->srt.transl.z;
         pos->i = D_800AE674;
         
-        if (++PlayerPosBuffer_index >= 0x3C) {
+        if (++PlayerPosBuffer_index >= PLAYER_POSBUF_SIZE) {
             PlayerPosBuffer_index = 0;
         }
     }
