@@ -38,8 +38,8 @@ void replace_loaded_dll_list(DLLInst arg0[], s32 arg1) {
     gLoadedDLLList = arg0;
 }
 
-DLLInst * func_8000BDE8(u32 * arg0);
-DLLInst * func_8000BDE8(u32 * arg0) {
+DLLInst * get_loaded_dlls(u32 * arg0);
+DLLInst * get_loaded_dlls(u32 * arg0) {
     *arg0 = gLoadedDLLCount;
     return gLoadedDLLList;
 }

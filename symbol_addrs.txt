@@ -1217,3 +1217,7 @@ map_set_object_streaming_disabled = 0x800129D4; // type:func
 assetLoadThreadSendQueue = 0x800ACB48; // type:data
 assetLoadThreadRecvQueue = 0x800ACB98; // type:data
 assetLoadMsg = 0x800AE270; // type:data
+get_loaded_dlls = 0x8000BDE8; // type:func
+mainSetBits = 0x80014670; // type:func
+mainGetBit = 0x800147EC; // type:func
+mainDecrementBit = 0x800149AC; // type:func
