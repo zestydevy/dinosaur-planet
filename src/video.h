@@ -1,11 +1,7 @@
 #ifndef _VIDEO_H_
 #define _VIDEO_H_
 
-#include "ultra64.h"
-
-#include "constants.h"
-#include "common_structs.h"
-#include "variables.h"
+#include "common.h"
 
 /**
  * Holds the horizontal and vertical resolution for video related functions.
@@ -120,7 +116,7 @@ extern u32 gCurrentResolutionV[2];
 
 /**
  * Pointers to each of the 2 framebuffers.
- * 
+ *
  * {FBaddr,FBaddr*H*V*2} // TODO: <- what does that mean?
  */
 extern u16 *gFramebufferPointers[2];
@@ -133,10 +129,10 @@ extern u32 *gFramebufferEnd;
 
 /**
  * A framebuffer index into gFramebufferPointers.
- * 
+ *
  * TODO: figure out more of what this var is used for
  */
-extern u32 gFramebufferChoice; 
+extern u32 gFramebufferChoice;
 extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[];
@@ -177,7 +173,7 @@ s32 get_video_mode();
 
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
- * 
+ *
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
 u32 get_some_resolution_encoded();

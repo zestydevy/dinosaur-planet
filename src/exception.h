@@ -1,11 +1,7 @@
 #ifndef _EXCEPTION_H_
 #define _EXCEPTION_H_
 
-#include "ultra64.h"
-
-#include "constants.h"
-#include "common_structs.h"
-#include "variables.h"
+#include "common.h"
 
 extern int gSomeCrashVideoFlag;
 extern s32 D_800937F0;

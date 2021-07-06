@@ -1,20 +1,18 @@
-#ifndef _COMMON_STRUCTS_H
-#define _COMMON_STRUCTS_H
+/** OS threads
+ */
 
 #include "ultra64.h"
+#include <PR/sched.h>
 
-// typedef f32 MtxF[4][4];
-// For clarity:
-typedef struct {
-    f32 m[4][4];
-} MtxF;
+#define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
+#define IDLE_THREAD_ID 1
+#define IDLE_THREAD_PRIORITY OS_PRIORITY_IDLE
 
-typedef f32 quartic[5];
+#define MAIN_THREAD_SIZE 1024
+#define MAIN_THREAD_ID 3
+#define MAIN_THREAD_PRIORITY 10
 
-typedef struct {
-    f32 x, y, z;
-} Vec3f;
-
+//why are these not part of libultra?
 typedef struct {
     /* 0x000 */ s32 regs[50];
     /* 0x0C8 */ char unk_0C8[4];
@@ -53,24 +51,12 @@ struct OSThread {
     /* 0x1B8 */ void* stackInfo;
 };
 
-typedef union {
-    /* 0x04 */ void (*asVoid)(void);
-    /* 0x04 */ s32 (*asVoidS32)(void); //HACK
-    /* 0x04 */ void (*withOneArg)(s32);
-    /* 0x04 */ void (*withTwoArgs)(s32, s32);
-    /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
-    /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
-    /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
-} DLLFuncs;
-
-typedef struct DLLInstance {
-    /* 0x00 */ u32 unk0;
-    /* 0x04 */ DLLFuncs func[1]; //set to 1 to shut compiler up
-} DLLInstance;
-
-struct UnkStruct_800175D4 {
-    s32 a;
-    u8  b[4];
-};
-
-#endif
+extern OSThread* __osRunningThread;
+extern OSThread* __osRunQueue;
+// this needs double checking. its address is within gMainThreadStack....
+extern u8 gIdleThreadStack[IDLE_THREAD_SIZE];
+extern OSThread gIdleThread;
+extern OSThread gMainThread;
+extern u64 gMainThreadStack[];        // some sort of data
+extern OSSched *osscheduler_;
+extern s8 ossceduler_stack;
