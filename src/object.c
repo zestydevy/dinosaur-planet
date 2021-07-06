@@ -73,8 +73,7 @@ void init_objects(void) {
 #if 0
 extern char D_800994E0;
 
-//this is update_objects()
-void func_update_objects(void) {
+void update_objects(void) {
     s16 size;
     TActor *obj2;
     void *temp_s0_2;
@@ -196,7 +195,7 @@ void func_80020D90(void) { D_800B18E0 = 0; }
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800211B4.s")
 
 extern s32 gNumObjs;
-s32 func_800212D8(void) { return gNumObjs; }
+s32 get_num_objects(void) { return gNumObjs; }
 
 s32 ret0_800212E8(void) { return 0; }
 

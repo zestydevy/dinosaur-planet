@@ -52,11 +52,11 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80026BD8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80026C14.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/update_obj_hitboxes.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80026DF4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_800271FC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/obj_do_hit_detection.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027934.s")
 

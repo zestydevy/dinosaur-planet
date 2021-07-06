@@ -1223,3 +1223,6 @@ mainGetBit = 0x800147EC; // type:func
 mainDecrementBit = 0x800149AC; // type:func
 s_mm_audioheap = 0x80099228; // type:data
 doNothing_8001B4E4 = 0x8001B4E4; // type:func
+get_num_objects = 0x800212D8; // type:func
+update_obj_hitboxes = 0x80026C14; // type:func
+obj_do_hit_detection = 0x800271FC; // type:func
