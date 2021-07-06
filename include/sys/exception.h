@@ -1,7 +1,8 @@
 #ifndef _SYS_EXCEPTION_H_
 #define _SYS_EXCEPTION_H_
 
-#include "common.h"
+#include "PR/os.h"
+#include "PR/ultratypes.h"
 
 extern int gSomeCrashVideoFlag;
 extern s32 D_800937F0;
