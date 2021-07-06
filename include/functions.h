@@ -29,7 +29,7 @@ void free(void* p);
 DLLFile * dll_load_from_tab(u16, u32 *);
 void dll_relocate(DLLFile* dll);
 
-void *malloc(s32 arg0, s32 arg1, s32 arg2);
+void *malloc(s32 size, s32 tag, const char *name);
 void _bcopy(const void *src,void *dst,int length);
 
 void matrix_from_srt(MtxF *mf, SRT *srt);

@@ -1221,3 +1221,4 @@ get_loaded_dlls = 0x8000BDE8; // type:func
 mainSetBits = 0x80014670; // type:func
 mainGetBit = 0x800147EC; // type:func
 mainDecrementBit = 0x800149AC; // type:func
+s_mm_audioheap = 0x80099228; // type:data
