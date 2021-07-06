@@ -73,7 +73,7 @@ void init_objects(void) {
 #if 0
 extern char D_800994E0;
 
-void update_objects(void) {
+void func_update_objects(void) {
     s16 size;
     TActor *obj2;
     void *temp_s0_2;
