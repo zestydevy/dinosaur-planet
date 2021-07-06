@@ -18,13 +18,13 @@ void init_memory(void)
 
     if (osMemSize != EXPANSION_SIZE)
     {
-        set_heap_block((void *)addr, 0x802D4000 - addr, 1200);
+        set_heap_block((void *)addr, HEAP_AREA_NO_EXPANSION - addr, 1200);
     }
     else
     {
-        set_heap_block((void *)0x8042C000, 0x3D4000, 400);
-        set_heap_block((void *)0x80245000, 0x1E7000, 800);
-        set_heap_block((void *)addr, 0x80119000 - addr, 1200);
+        set_heap_block((void *)HEAP_AREA_00, RAM_END - HEAP_AREA_00, 400);
+        set_heap_block((void *)HEAP_AREA_01, HEAP_AREA_00 - HEAP_AREA_01, 800);
+        set_heap_block((void *)addr, HEAP_AREA_02 - addr, 1200);
     }
 
     func_80017254(2);
