@@ -298,7 +298,7 @@ void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 count, s32 size) {
     if (size);
     if (size);
 
-    ptr = malloc(size, 0xB, s_mm_audioheap);
+    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, s_mm_audioheap);
     bzero(ptr, size);
     return align_16(ptr);
 }
