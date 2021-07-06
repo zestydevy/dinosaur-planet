@@ -23,4 +23,4 @@ s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 DLLFile * dll_load_from_tab(u16, u32 *);
 void dll_relocate(DLLFile* dll);
 
-#endif
+#endif //_FUNCTIONS_H

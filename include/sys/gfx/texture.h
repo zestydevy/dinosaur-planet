@@ -1,5 +1,7 @@
 /** Texture system
  */
+#ifndef _SYS_GFX_TEXTURE_H
+#define _SYS_GFX_TEXTURE_H
 
 typedef struct Texture
 {
@@ -23,3 +25,5 @@ typedef struct Texture
 /*001E*/	u8 cmt;
 /*001F*/	u8 maskt;
 } Texture; // Size: 0x20, followed by texture data
+
+#endif //_SYS_GFX_TEXTURE_H

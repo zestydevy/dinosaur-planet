@@ -1,5 +1,7 @@
 /** DLL system
  */
+#ifndef _SYS_DLL_H
+#define _SYS_DLL_H
 
 enum DLL_ID {
     DLL_UI        = 0x01,
@@ -82,49 +84,51 @@ typedef struct
 
 extern void ***gDLL_57;
 extern struct DLLInstance
-    **D_8008C970, 
-    **gDLL_1C, 
-    **gDLL_Camera, 
+    **D_8008C970,
+    **gDLL_1C,
+    **gDLL_Camera,
     **gDLL_ANIM,
-    **gDLL_Sky, 
-    **gDLL_08, 
-    **gDLL_newclouds, 
+    **gDLL_Sky,
+    **gDLL_08,
+    **gDLL_newclouds,
     **gDLL_newstars,
-    **gDLL_minic, 
-    **gDLL_UI, 
-    **gDLL_Race, 
+    **gDLL_minic,
+    **gDLL_UI,
+    **gDLL_Race,
     **gDLL_AMSEQ,
-    **gDLL_AMSEQ2, 
-    **gDLL_AMSFX, 
-    **gDLL_newlfx, 
+    **gDLL_AMSEQ2,
+    **gDLL_AMSFX,
+    **gDLL_newlfx,
     **gDLL_39,
-    **gDLL_3A, 
-    **gDLL_expgfx, 
-    **gDLL_modgfx, 
+    **gDLL_3A,
+    **gDLL_expgfx,
+    **gDLL_modgfx,
     **gDLL_projgfx,
-    **gDLL_10, 
-    **gDLL_11, 
-    **gDLL_12, 
+    **gDLL_10,
+    **gDLL_11,
+    **gDLL_12,
     **gDLL_SCREENS,
-    **gDLL_text, 
-    **gDLL_subtitles, 
-    **gDLL_17, 
+    **gDLL_text,
+    **gDLL_subtitles,
+    **gDLL_17,
     **gDLL_waterfx,
-    **gDLL_19, 
-    **gDLL_CURVES, 
-    **gDLL_Link, 
+    **gDLL_19,
+    **gDLL_CURVES,
+    **gDLL_Link,
     **gDLL_4B,
-    **gDLL_1B, 
-    **gDLL_gplay, 
-    **gDLL_38, 
+    **gDLL_1B,
+    **gDLL_gplay,
+    **gDLL_38,
     **gDLL_1E,
-    **gDLL_savegame, 
-    **gDLL_4C, 
-    **gDLL_20, 
+    **gDLL_savegame,
+    **gDLL_4C,
+    **gDLL_20,
     **gDLL_21,
-    **gDLL_3B, 
+    **gDLL_3B,
     **gDLL_36;
 
 extern DLLInst* gLoadedDLLList;
 extern s32 gLoadedDLLCount;
 extern DLLTab * gFile_DLLS_TAB;
+
+#endif //_SYS_DLL_H

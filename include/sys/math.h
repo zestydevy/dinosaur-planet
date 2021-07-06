@@ -1,5 +1,7 @@
 /** Math and trigonometry
  */
+#ifndef _SYS_MATH_H
+#define _SYS_MATH_H
 
 // typedef f32 MtxF[4][4];
 // For clarity:
@@ -46,3 +48,5 @@ s32 cos16(s16 theta);
 // theta: [-32768..32768) => [-pi..pi)
 // returns: [-65536..65536] => [-1..1]
 s32 sin16(s16 theta);
+
+#endif //_SYS_MATH_H

@@ -1,5 +1,8 @@
 /** Memory management
  */
+#ifndef _SYS_MEMORY_H
+#define _SYS_MEMORY_H
+
 #define EXPANSION_RAM_START 0x80400000
 #define EXPANSION_SIZE 0x00800000
 #define RAM_END (0x80000000 + EXPANSION_SIZE)
@@ -86,3 +89,5 @@ void init_memory(void);
 void *malloc(s32 size, s32 tag, const char *name);
 void free(void* p);
 void _bcopy(const void *src,void *dst,int length);
+
+#endif //_SYS_MEMORY_H

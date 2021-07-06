@@ -30,4 +30,4 @@ typedef void UNK_PTR;
 #include "variables.h"
 #include "functions.h"
 
-#endif
+#endif //_COMMON_H

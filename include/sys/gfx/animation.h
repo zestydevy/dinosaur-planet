@@ -1,5 +1,7 @@
 /** Animation system
  */
+#ifndef _SYS_GFX_ANIMATION_H
+#define _SYS_GFX_ANIMATION_H
 
 typedef struct
 {
@@ -31,3 +33,5 @@ typedef struct
 /*0062*/    u8 unk_0x62;
 /*0063*/    s8 unk_0x63;
 } AnimState;
+
+#endif //_SYS_GFX_ANIMATION_H

@@ -1,5 +1,7 @@
 /** OS threads
  */
+#ifndef _SYS_THREAD_H
+#define _SYS_THREAD_H
 
 #include "ultra64.h"
 #include <PR/sched.h>
@@ -60,3 +62,5 @@ extern OSThread gMainThread;
 extern u64 gMainThreadStack[];        // some sort of data
 extern OSSched *osscheduler_;
 extern s8 ossceduler_stack;
+
+#endif //_SYS_THREAD_H

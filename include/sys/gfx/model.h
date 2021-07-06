@@ -1,6 +1,9 @@
 /** Model system
  */
 
+#ifndef _SYS_GFX_MODEL_H
+#define _SYS_GFX_MODEL_H
+
 typedef struct
 {
 /*0000*/    Texture *texture;
@@ -87,3 +90,5 @@ typedef struct
 /*0030*/    u32 unk_0x30;
 /*0034*/    u16 unk_0x34;
 } ModelInstance;
+
+#endif //_SYS_GFX_MODEL_H

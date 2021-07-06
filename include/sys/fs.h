@@ -1,5 +1,7 @@
 /** Filesystem and ROM access
  */
+#ifndef _SYS_FS_H
+#define _SYS_FS_H
 
 typedef enum
 {
@@ -77,8 +79,8 @@ typedef enum
 /*47*/    DLLS_TAB,
 /*48*/    DLLSIMPORTTAB_BIN,
 /*49*/    ENVFXACT_BIN,
-    
+
 /*4A*/    NUM_FILES
 } EFile;
 
-
+#endif //_SYS_FS_H
