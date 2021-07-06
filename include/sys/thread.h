@@ -14,6 +14,12 @@
 #define MAIN_THREAD_ID 3
 #define MAIN_THREAD_PRIORITY 10
 
+#define OS_SCHEDULER_THREAD_ID 5
+#define CONTROLLER_THREAD_ID 98
+
+#define CRASH_THREAD_ID 100
+#define CRASH_THREAD_PRIORITY 0x80
+
 //why are these not part of libultra?
 typedef struct {
     /* 0x000 */ s32 regs[50];
@@ -62,5 +68,10 @@ extern OSThread gMainThread;
 extern u64 gMainThreadStack[];        // some sort of data
 extern OSSched *osscheduler_;
 extern s8 ossceduler_stack;
+
+/**
+ * @returns The address of s->interruptQ.
+ */
+OSMesgQueue *get_sched_interrupt_queue(OSSched *s);
 
 #endif //_SYS_THREAD_H

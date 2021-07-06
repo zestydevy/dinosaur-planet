@@ -1,30 +1,4 @@
 #include "common.h"
-#include "queue.h"
-
-struct UnkStruct8000ADF0 {
-    s16 unk0;
-};
-extern struct UnkStruct8000ADF0 *D_800ACBC8;
-struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
-
-struct UnkStruct8000B010 {
-    s16 unk0;
-};
-extern struct UnkStruct8000B010 *D_800AE1D0;
-struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
-
-extern u8 gDisableObjectStreamingFlag;
-
-extern u8 D_800AE29D, D_800AE29E;
-
-void asset_thread_main(void);
-
-extern s32 *D_800ACBB8, *D_800ACBD0;
-
-extern s32 *D_800AE1C0, *D_800AE1D8;
-
-extern u64 *assetThreadStackEnd; // end of stack
-extern OSThread *assetThread;
 
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
@@ -357,7 +331,7 @@ void asset_thread_load_single(void) {
         return;
     }
     set_status_reg(sp28);
-} 
+}
 
 void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
     switch (load->loadType) {
@@ -368,11 +342,11 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             read_file(load->p.file.id, load->p.file.dest);
             break;
         case ASSET_TYPE_FILE_REGION:
-            read_file_region(load->p.file.id, load->p.file.dest, 
+            read_file_region(load->p.file.id, load->p.file.dest,
                 load->p.file.length, load->p.file.offset);
             break;
         case ASSET_TYPE_OBJECT:
-            *load->p.object.dest = objSetupObjectActual(load->p.object.arg1, 
+            *load->p.object.dest = objSetupObjectActual(load->p.object.arg1,
                 load->p.object.arg2, load->p.object.arg3, load->p.object.arg4,
                 load->p.object.arg5, load->p.object.arg6);
             break;
@@ -383,11 +357,11 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             *load->p.dll.dest = dll_load((u16)load->p.dll.id, (u16)load->p.dll.param, 0);
             break;
         case ASSET_TYPE_MODEL:
-            *load->p.model.dest = model_load_create_instance(load->p.model.id, 
+            *load->p.model.dest = model_load_create_instance(load->p.model.id,
                 load->p.model.unkC);
             break;
         case ASSET_TYPE_ANIMATION:
-            *load->p.animation.dest = anim_load((s16)load->p.animation.id, 
+            *load->p.animation.dest = anim_load((s16)load->p.animation.id,
                 (s16)load->p.animation.arg2, load->p.animation.arg3, load->p.animation.arg4);
     }
     osSendMesg(&assetLoadThreadRecvQueue, NULL, 0);

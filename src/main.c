@@ -1,7 +1,5 @@
 #include "common.h"
 #include <PR/sched.h>
-#include "crash.h"
-#include "input.h"
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
@@ -26,7 +24,7 @@ void mainproc(void * arg)
 
     while(TRUE) {
         check_dongle();  // copy protection check
-        
+
         if (osMemSize != EXPANSION_SIZE) {
             game_tick_no_expansion();
         } else {
@@ -39,7 +37,7 @@ void mainproc(void * arg)
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
 
-void game_init(void) 
+void game_init(void)
 {
     struct DLLInstance **temp_AMSEQ_DLL;
     s32 tvMode;
@@ -340,8 +338,8 @@ void func_initing_rumblepak(void) {
     func_800683E0(0);
 }
 
-/* 
- * 
+/*
+ *
 */
 void test_write(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
@@ -355,12 +353,12 @@ void check_dongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
-    
+
     // append the other part.
     head <<= 16;
     head |= ACCESS_2;
 
-    /* 
+    /*
      * Perform the check against the 2 known codes:
      *
      * 'LSFS' (0x4C534653)
@@ -387,7 +385,7 @@ OSSched *get_ossched(void) {
     return &osscheduler_;
 }
 
-void init_bittable(void) 
+void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
@@ -486,7 +484,7 @@ void update_PlayerPosBuffer(void)
         pos->f.y = player->srt.transl.y;
         pos->f.z = player->srt.transl.z;
         pos->i = D_800AE674;
-        
+
         if (++PlayerPosBuffer_index >= PLAYER_POSBUF_SIZE) {
             PlayerPosBuffer_index = 0;
         }

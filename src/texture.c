@@ -1,6 +1,4 @@
 #include "common.h"
-#include "queue.h"
-#include "video.h"
 
 // Definitely something like rand_i2
 int func_800155C4(int min, int max);
@@ -17,7 +15,7 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 #else
 /**
  * Calls queue_load_texture with [param] as the second argument.
- * 
+ *
  * Returns the result of queue_load_texture.
  */
 s32 queue_load_texture_proxy(s32 param) {
@@ -197,7 +195,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
                 }
 
                 mygdl += 8;
-                
+
                 mygdl2[0].words.w1 &= ~0xc0000;
                 mygdl2[0].words.w1 |= (texture->cmt & 0x3) << 18;
                 mygdl2[0].words.w1 &= ~0x300;
@@ -287,7 +285,7 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
         if (levelCount > 1 && levelIdx < levelCount)
         {
             s32 i;
-            
+
             for (i = 0; i < levelIdx && tex1_ != NULL; i++) {
                 tex1_ = tex1_->next;
             }
@@ -471,7 +469,7 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 #else
 /**
  * Does some sort of copy line-by-line from gFramebufferNext to gFramebufferCurrent.
- * 
+ *
  * Also see weird_resize_copy(), which this function uses to copy data.
  */
 void func_8003EBD4(s32 hOffset) {
@@ -489,9 +487,9 @@ void func_8003EBD4(s32 hOffset) {
 
     while (vIndex--) {
         weird_resize_copy(
-            next + hOffset, 
-            hRes - (hOffset << 1), 
-            hRes, 
+            next + hOffset,
+            hRes - (hOffset << 1),
+            hRes,
             cur
         );
 
@@ -515,13 +513,13 @@ void func_8003EBD4(s32 hOffset) {
 /**
  * Copies data from src to dest+destWidth taking into account differences in width
  * (e.g. if destWidth is half srcWidth, every other value will be copied from src).
- * 
+ *
  * Additionally, values copied to dest have the following applied first:
  *   (value & -0x843) >> 1
- * 
+ *
  * destWidth must be less than 644.
- * 
- * NOTE: Please see the note in the implementation, this function also reads 
+ *
+ * NOTE: Please see the note in the implementation, this function also reads
  * undefined stack memory, which affects the copied values.
  */
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
@@ -670,7 +668,7 @@ void _func_80040A94(u16 *tex, int width, int height, int count) {
  * |          |
  * *----------*
  * X           X
- * 
+ *
  * Alternatively:
  * X----------*
  * X          |
@@ -710,7 +708,7 @@ void _func_80040EFC(u16 *fb1, u16 *fb2, s32 width, s32 height) {
 
     if (fbLength > 0) {
         if (temp2 != 0) {
-            // This loop should not unroll and shouldn't be duplicated, 
+            // This loop should not unroll and shouldn't be duplicated,
             // but currently does get duplicated?
             while (i++ != temp2) {
                 fb1[i] |= 1;

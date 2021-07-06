@@ -11,4 +11,6 @@ struct ErrString{
 	char* text;
 };
 
+void start_crash_thread(OSSched* scheduler);
+
 #endif //_SYS_CRASH_H
