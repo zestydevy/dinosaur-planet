@@ -2,6 +2,8 @@
  */
 #ifndef _SYS_GFX_TEXTURE_H
 #define _SYS_GFX_TEXTURE_H
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
 
 typedef struct Texture
 {

@@ -2,6 +2,7 @@
  */
 #ifndef _SYS_CRASH_H
 #define _SYS_CRASH_H
+#include "PR/ultratypes.h"
 
 //use for crash screens
 struct ErrString{

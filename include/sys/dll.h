@@ -3,6 +3,7 @@
 #ifndef _SYS_DLL_H
 #define _SYS_DLL_H
 
+#include "PR/ultratypes.h"
 enum DLL_ID {
     DLL_UI        = 0x01,
     DLL_CAMERA    = 0x02,

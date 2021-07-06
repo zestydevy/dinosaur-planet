@@ -3,6 +3,9 @@
 
 #ifndef _SYS_GFX_MODEL_H
 #define _SYS_GFX_MODEL_H
+#include "texture.h"
+#include "animation.h"
+#include "sys/math.h"
 
 typedef struct
 {

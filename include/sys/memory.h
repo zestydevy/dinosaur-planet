@@ -3,6 +3,7 @@
 #ifndef _SYS_MEMORY_H
 #define _SYS_MEMORY_H
 
+#include "PR/ultratypes.h"
 #define EXPANSION_RAM_START 0x80400000
 #define EXPANSION_SIZE 0x00800000
 #define RAM_END (0x80000000 + EXPANSION_SIZE)
