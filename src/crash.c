@@ -51,7 +51,7 @@ void start_crash_thread(OSSched* scheduler) {
         /*entry*/   &crash_thread_entry, 
         /*arg*/     NULL, 
         /*sp*/      &gCrashThreadStack[OS_MIN_STACKSIZE], 
-        /*pri*/     0x80
+        /*pri*/     CRASH_THREAD_PRIORITY
     );
 
     osStartThread(&gCrashThread);
