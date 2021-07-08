@@ -515,13 +515,15 @@ if (sp0034 != 0) {
 
 void bootproc(void) {
     osInitialize();
-    osCreateThread(&gIdleThread, 1, &idle, NULL, &gIdleThreadStack[IDLE_THREAD_SIZE], OS_PRIORITY_IDLE);
+    osCreateThread(&gIdleThread, IDLE_THREAD_ID, &idle, NULL, 
+        &gIdleThreadStack[IDLE_THREAD_SIZE], IDLE_THREAD_PRIORITY);
     osStartThread(&gIdleThread);
 }
 
 void idle(void * arg)
 {
-    osCreateThread(&gMainThread, 3, &mainproc, NULL, &gMainThreadStack[MAIN_THREAD_SIZE], 0xA);
+    osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainproc, NULL, 
+        &gMainThreadStack[MAIN_THREAD_SIZE], MAIN_THREAD_PRIORITY);
 
     gMainThreadStack[1024] = 0;
     gMainThreadStack[0] = 0;

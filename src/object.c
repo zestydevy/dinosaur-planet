@@ -3,50 +3,6 @@
 #include "common.h"
 #include "variables.h"
 
-//Allocations are given a color tag.
-//names extracted from default.dol
-enum AllocTag {
-    ALLOC_TAG_0,
-    ALLOC_TAG_LISTS_COL,
-    ALLOC_TAG_SCREEN_COL,
-    ALLOC_TAG_CODE_COL,
-    ALLOC_TAG_DLL_COL,
-    ALLOC_TAG_TRACK_COL,
-    ALLOC_TAG_TEX_COL,
-    ALLOC_TAG_TRACKTEX_COL,
-    ALLOC_TAG_SPRITETEX_COL,
-    ALLOC_TAG_MODELS_COL,
-    ALLOC_TAG_ANIMS_COL,
-    ALLOC_TAG_AUDIO_COL,
-    ALLOC_TAG_SEQ_COL,
-    ALLOC_TAG_SFX_COL,
-    ALLOC_TAG_OBJECTS_COL,
-    ALLOC_TAG_CAM_COL,
-    ALLOC_TAG_VOX_COL,
-    ALLOC_TAG_ANIMSEQ_COL,
-    ALLOC_TAG_LFX_COL,
-    ALLOC_TAG_GFX_COL,
-    ALLOC_TAG_EXPGFX_COL,
-    ALLOC_TAG_MODGFX_COL,
-    ALLOC_TAG_PROJGFX_COL,
-    ALLOC_TAG_SKY_COL,
-    ALLOC_TAG_SHAD_COL,
-    ALLOC_TAG_GAME_COL,
-    ALLOC_TAG_TEST_COL,
-    ALLOC_TAG_BLACK,
-    ALLOC_TAG_RED,
-    ALLOC_TAG_GREEN,
-    ALLOC_TAG_BLUE,
-    ALLOC_TAG_CYAN,
-    ALLOC_TAG_MAGENTA,
-    ALLOC_TAG_YELLOW,
-    ALLOC_TAG_WHITE,
-    ALLOC_TAG_GREY,
-    ALLOC_TAG_ORANGE
-};
-
-
-
 extern void **gLoadedObjDefs;
 extern void *D_800B1918;
 extern void *D_800B18E4;
@@ -117,7 +73,6 @@ void init_objects(void) {
 #if 0
 extern char D_800994E0;
 
-//this is update_objects()
 void func_update_objects(void) {
     s16 size;
     TActor *obj2;
@@ -240,7 +195,7 @@ void func_80020D90(void) { D_800B18E0 = 0; }
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800211B4.s")
 
 extern s32 gNumObjs;
-s32 func_800212D8(void) { return gNumObjs; }
+s32 get_num_objects(void) { return gNumObjs; }
 
 s32 ret0_800212E8(void) { return 0; }
 

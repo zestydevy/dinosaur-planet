@@ -1,7 +1,5 @@
 #include "common.h"
 #include <PR/sched.h>
-#include "crash.h"
-#include "input.h"
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
@@ -26,7 +24,7 @@ void mainproc(void * arg)
 
     while(TRUE) {
         check_dongle();  // copy protection check
-        
+
         if (osMemSize != EXPANSION_SIZE) {
             game_tick_no_expansion();
         } else {
@@ -39,7 +37,7 @@ void mainproc(void * arg)
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
 
-void game_init(void) 
+void game_init(void)
 {
     struct DLLInstance **temp_AMSEQ_DLL;
     s32 tvMode;
@@ -280,22 +278,33 @@ void func_8001443C(s32 arg0) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/alloc_frame_buffers.s")
 #else
-void _alloc_frame_buffers(void) {
-    u8 *temp_v0;
-    s32 tmp2;
+void alloc_frame_buffers(void) {
+    //almost matching, probably just needs correct type
+    Gfx *gfx;
+    Mtx *mtx;
+    void **pol;
+    Vtx *vtx;
 
-    temp_v0 = (u8 *) malloc(0x11940, 1, 0);
-    gMainGfx[0] = temp_v0;
-    gMainGfx[1] = temp_v0 + 0x8CA0;
-    temp_v0 = (u8 *) malloc(0x22600, 1, 0);
-    gMainMtx[0] = temp_v0;
-    gMainMtx[1] = temp_v0 + 0x11300;
-    temp_v0 = (u8 *) malloc(0x640, 1, 0);
-    gMainPol[0] = temp_v0;
-    gMainPol[1] = temp_v0 + 0x320;
-    temp_v0 = (u8 *) malloc(0x2580, 1, 0);
-    gMainVtx[0] = temp_v0;
-    gMainVtx[1] = temp_v0 + 0x12C0;
+    //in default.dol these have names as well.
+    //alloc graphic display list command buffers. ("main:gfx" in default.dol)
+    gfx = (Gfx *) malloc(MAIN_GFX_BUF_SIZE * 2 * sizeof(Gfx), ALLOC_TAG_LISTS_COL, NULL);
+    gMainGfx[0] = gfx;
+    gMainGfx[1] = gfx + MAIN_GFX_BUF_SIZE;
+
+    //matrix buffers ("main:mtx")
+    mtx = (Mtx *) malloc(MAIN_MTX_BUF_SIZE * 2 * sizeof(Mtx), ALLOC_TAG_LISTS_COL, NULL);
+    gMainMtx[0] = mtx;
+    gMainMtx[1] = mtx + MAIN_MTX_BUF_SIZE;
+
+    //polygon buffers? ("main:pol")
+    pol = (void **) malloc(0x640, ALLOC_TAG_LISTS_COL, NULL); //XXX type
+    gMainPol[0] = pol;
+    gMainPol[1] = pol + 200;
+
+    //vertex buffers ("main:vtx")
+    vtx = (Vtx *) malloc(MAIN_VTX_BUF_SIZE * 2 * sizeof(Vtx), ALLOC_TAG_LISTS_COL, NULL);
+    gMainVtx[0] = vtx;
+    gMainVtx[1] = vtx + MAIN_VTX_BUF_SIZE;
 }
 #endif
 
@@ -329,8 +338,8 @@ void func_initing_rumblepak(void) {
     func_800683E0(0);
 }
 
-/* 
- * 
+/*
+ *
 */
 void test_write(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
@@ -344,12 +353,12 @@ void check_dongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
-    
+
     // append the other part.
     head <<= 16;
     head |= ACCESS_2;
 
-    /* 
+    /*
      * Perform the check against the 2 known codes:
      *
      * 'LSFS' (0x4C534653)
@@ -376,25 +385,24 @@ OSSched *get_ossched(void) {
     return &osscheduler_;
 }
 
-void init_bittable(void) 
+void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
     charStats_pointer = (*gDLL_gplay)->func[0x21].asVoidS32();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014670.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800147EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetBit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014930.s")
 
-s32 func_800149AC(s32 arg0) {
-    s32 temp_v0 = func_800147EC(arg0);
-
-    if (temp_v0 != 0) {
-        func_80014670(arg0, --temp_v0);
-        return temp_v0;
+s32 mainDecrementBit(s32 bit) {
+    s32 val = mainGetBit(bit);
+    if (val != 0) {
+        mainSetBits(bit, --val);
+        return val;
     }
     return 0;
 }
@@ -457,7 +465,7 @@ u8 func_80014C60(void)
 
 void clear_PlayerPosBuffer(void)
 {
-    bzero(&PlayerPosBuffer, 0x3C0);
+    bzero(&PlayerPosBuffer, PLAYER_POSBUF_SIZE * sizeof(struct Vec3_Int));
     PlayerPosBuffer_index = 0;
 }
 
@@ -476,8 +484,8 @@ void update_PlayerPosBuffer(void)
         pos->f.y = player->srt.transl.y;
         pos->f.z = player->srt.transl.z;
         pos->i = D_800AE674;
-        
-        if (++PlayerPosBuffer_index >= 0x3C) {
+
+        if (++PlayerPosBuffer_index >= PLAYER_POSBUF_SIZE) {
             PlayerPosBuffer_index = 0;
         }
     }

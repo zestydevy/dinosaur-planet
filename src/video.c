@@ -1,10 +1,9 @@
 #include "common.h"
-#include "video.h"
 
 // func_8005BC38 is from segment_5C470
 /**
  * If param1 isn't null, sets it to gPossiblyScreenWidthOrHeight.
- * 
+ *
  * Returns gSomeVideoFlag.
  */
 int func_8005BC38(u32*);
@@ -88,7 +87,7 @@ void _func_8005C998() {
 
     do {
         vidStruct->ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
-        vidStruct->ptrToUnknown2 = NULL; 
+        vidStruct->ptrToUnknown2 = NULL;
         goto label_1; label_1: // TODO: This probably shouldn't be necessary
         vidStruct->viMode = NULL;
         vidStruct->unk0x88 = 0;
@@ -211,7 +210,7 @@ void func_8005CDFC(int _) {
 
         vidStruct->unk0x78 = vidStruct->unk0x78 + var1;
         vidStruct->unk0x7c = vidStruct->unk0x7c + var2;
-        
+
         vidStruct->unk0x18 = vidStruct->unk0x18 - var1;
         vidStruct->unk0x1c = vidStruct->unk0x1c - var2;
         vidStruct->unk0x28 = vidStruct->unk0x28 - var1;
@@ -283,7 +282,7 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
 #else
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
- * 
+ *
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
 u32 get_some_resolution_encoded() {
@@ -293,7 +292,7 @@ u32 get_some_resolution_encoded() {
     flag = func_8005BC38(&var1);
 
     if (flag == FALSE) {
-        return (gCurrentResolutionV[gFramebufferChoice] << 0x10) | 
+        return (gCurrentResolutionV[gFramebufferChoice] << 0x10) |
                 gCurrentResolutionH[gFramebufferChoice];
     } else {
         // Turns 0x0000_XXXX into 0xXXXX_XXXX
@@ -310,11 +309,11 @@ u32 get_some_resolution_encoded() {
 #else
 /**
  * Returns the resolution of the framebuffer not currently in use encoded as 0xVVVV_HHHH.
- * 
+ *
  * Note: The resolution is found by gCurrentResolution*[gFramebufferChoice < 1]
  */
 u32 get_other_resolution_encoded() {
-    return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) | 
+    return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) |
             gCurrentResolutionH[gFramebufferChoice < 1];
 }
 #endif
@@ -328,7 +327,7 @@ void set_custom_vi_mode() {
 
     // Determine VI LPN from TV type
     viLpn = OS_VI_NTSC_LPN1;
-    
+
     if (osTvType == OS_TV_PAL) {
         viLpn = OS_VI_PAL_LPN1;
     } else if (osTvType == OS_TV_MPAL) {
@@ -401,7 +400,7 @@ void _set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
     gCurrentResolutionH[1] = hRes;
     gCurrentResolutionV[0] = vRes;
     gCurrentResolutionV[1] = vRes;
-    
+
     if (osMemSize != 0x800000)
     {
         gFramebufferPointers[0] = 0x802d4000;
@@ -440,7 +439,7 @@ void func_8005D9D8() {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DA00.s")
 #else
 void func_8005DA00(u32 param1) {
-    D_800bce34 = param1;   
+    D_800bce34 = param1;
 }
 #endif
 
@@ -471,16 +470,16 @@ s32 func_8005DC7C() {
 #else
 /**
  * Swaps gFramebufferCurrent and gFramebufferNext.
- * 
+ *
  * Uses gFramebufferChoice to keep track of the index for the next framebuffer to swap to.
  */
 void swap_framebuffer_pointers() {
     // Set the current framebuffer to the one last chosen for framebufferNext (see below)
     gFramebufferCurrent = gFramebufferPointers[gFramebufferChoice];
-    
+
     // TODO: what is this doing?
     D_800bccb4 = gFramebufferStart; // D_800bccb4 = &framebufferCurrent+8
-    
+
     // Swap choice to the other framebuffer index
     //
     // Assuming there are 2 framebuffers, this will flip between 0 and 1:
@@ -525,13 +524,13 @@ u32 *get_framebuffer_end() {
 #else
 /**
  * Returns whether the given width and height is smaller than the current framebuffer's resolution.
- * 
+ *
  * Note: Both width AND height must be smaller for this to return true.
  */
 int is_size_smaller_than_resolution(s32 width, s32 height) {
-    return width >= 0 
+    return width >= 0
         && (u32)width < gCurrentResolutionH[gFramebufferChoice]
-        && height >= 0 
+        && height >= 0
         && (u32)height < gCurrentResolutionV[gFramebufferChoice];
 }
 #endif
@@ -629,8 +628,8 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
 
     // Set gOSViModeCustom to the chosen VI mode
     _bcopy(
-        viMode, 
-        &gOSViModeCustom, 
+        viMode,
+        &gOSViModeCustom,
         0x50 // OSViMode size = 0x50 (80 bytes)
     );
 

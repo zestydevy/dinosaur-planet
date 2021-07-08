@@ -1024,7 +1024,7 @@ void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4E4.s")
+void doNothing_8001B4E4(s32 arg) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4F0.s")
 

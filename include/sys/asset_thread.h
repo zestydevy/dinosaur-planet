@@ -1,5 +1,5 @@
-#ifndef QUEUE_H
-#define QUEUE_H
+#ifndef _SYS_ASSET_THREAD_H
+#define _SYS_ASSET_THREAD_H
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
@@ -82,18 +82,30 @@ struct UnkStructAssetThreadSingle {
 extern struct AssetLoadThreadMsg assetLoadMsg;
 
 extern OSMesgQueue assetLoadThreadSendQueue, //send load requests to asset thread
-    D_800ACB68, 
+    D_800ACB68,
     assetLoadThreadRecvQueue; //receive acknowledgement from asset thread
 
-#define QUEUE_FILE 0
-#define QUEUE_ALLOCATED_FILE 1
-#define QUEUE_FILE_REGION 2
-#define QUEUE_TEXTURE 3
-#define QUEUE_OBJECT 4
-#define QUEUE_DLL 5
-#define QUEUE_MODEL 6
-#define QUEUE_ANIMATION 7
+struct UnkStruct8000ADF0 {
+    s16 unk0;
+};
+extern struct UnkStruct8000ADF0 *D_800ACBC8;
+struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
 
+struct UnkStruct8000B010 {
+    s16 unk0;
+};
+extern struct UnkStruct8000B010 *D_800AE1D0;
+struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
+
+extern u8 gDisableObjectStreamingFlag;
+extern u8 D_800AE29D, D_800AE29E;
+extern s32 *D_800ACBB8, *D_800ACBD0;
+extern s32 *D_800AE1C0, *D_800AE1D8;
+extern u64 *assetThreadStackEnd; // end of stack
+extern OSThread *assetThread;
+
+void create_asset_thread(void);
+void asset_thread_main(void);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset);
@@ -103,4 +115,4 @@ void queue_load_dll(void **dest, s32 id, s32 param);
 void queue_load_model(void **dest, s32 id, s32 arg2);
 void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4);
 
-#endif
+#endif //_SYS_ASSET_THREAD_H

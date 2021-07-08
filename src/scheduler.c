@@ -2,7 +2,6 @@
 // See https://github.com/n64decomp/libreultra/blob/master/src/sched/sched.c
 
 #include "common.h"
-#include "scheduler.h"
 
 #define VIDEO_MSG       666
 #define RSP_DONE_MSG    667
@@ -183,26 +182,26 @@ void a__scMain(void *arg) {
             case 0x63:
                 func_8003B9C0(sc);
                 break;
-            
+
             case VIDEO_MSG:
                 __scHandleRetrace(sc);
                 break;
-            
+
             case RSP_DONE_MSG:
                 __scHandleRSP(sc);
                 break;
-            
+
             case RDP_DONE_MSG:
                 __scHandleRDP(sc);
                 break;
-            
+
             case PRE_NMI_MSG:
                 // notify audio and graphics threads to fade out
                 for (client = sc->clientList; client != 0; client = client->next) {
                     osSendMesg(client->msgQ, &sc->prenmiMsg, OS_MESG_NOBLOCK);
                 }
                 break;
-            
+
             default:
                 t = (OSScTask *)msg;
                 __scAppendList(sc, t);
@@ -261,7 +260,7 @@ void some_dummied_task_func(int _) { }
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
 
 /**
- * __scHandleRSP is called when an RSP task signals that it has 
+ * __scHandleRSP is called when an RSP task signals that it has
  * finished or yielded (at the hosts request)
  */
 void __scHandleRSP(OSSched *sc) {
@@ -472,7 +471,7 @@ void __scYield(OSSched *sc) {
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
     s32 avail = availRCP;
     OSScTask *gfx = sc->gfxListHead;
-    OSScTask *audio = sc->audioListHead; 
+    OSScTask *audio = sc->audioListHead;
 
     if (sc->unk0x304 && (avail & OS_SC_SP)) {
         if (gfx && (gfx->flags & OS_SC_PARALLEL_TASK)) {
@@ -487,19 +486,19 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
             if (sc->audioListHead == NULL) {
                 sc->audioListTail = NULL;
             }
-        }        
-    } else {                 
-        if (__scTaskReady(gfx)) {                
+        }
+    } else {
+        if (__scTaskReady(gfx)) {
             switch (gfx->flags & OS_SC_TYPE_MASK) {
                 case (OS_SC_XBUS):
-                    if (gfx->state & OS_SC_YIELDED) {                  
+                    if (gfx->state & OS_SC_YIELDED) {
                         /* can hit this if RDP finishes at yield req */
                         /* assert(gfx->state & OS_SC_DP); */
 
-                        if (avail & OS_SC_SP) {   /* if SP is available */                  
+                        if (avail & OS_SC_SP) {   /* if SP is available */
                             *sp = gfx;
                             avail &= ~OS_SC_SP;
-                        
+
                             if (gfx->state & OS_SC_DP) {  /* if it needs DP */
                                 *dp = gfx;
                                 avail &= ~OS_SC_DP;
@@ -511,7 +510,7 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
                             if (sc->gfxListHead == NULL) {
                                 sc->gfxListTail = NULL;
                             }
-                        }                  
+                        }
                     } else {
                         if (avail == (OS_SC_SP | OS_SC_DP)) {
                             *sp = *dp = gfx;
@@ -523,9 +522,9 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
                             }
                         }
                     }
-                        
+
                     break;
-          
+
                 case (OS_SC_DRAM):
                 case (OS_SC_DP_DRAM):
                 case (OS_SC_DP_XBUS):
@@ -534,8 +533,8 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
                             *sp = gfx;
                             avail &= ~OS_SC_SP;
                         }
-                    } 
-                    
+                    }
+
                     if (gfx->state & OS_SC_DP) {   /* if needs DP */
                         if (avail & OS_SC_DP) {        /* if DP available */
                             *dp = gfx;
