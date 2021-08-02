@@ -9,7 +9,7 @@
 int func_8005BC38(u32*);
 void func_8005D9D8();
 void set_video_mode(s32 mode);
-void set_framebuffer_pointers(u32, u32, u32);
+void initialize_framebuffers(int someBool, s32 width, s32 height);
 void swap_framebuffer_pointers();
 void set_custom_vi_mode();
 
@@ -302,7 +302,7 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
         height = 480;
     }
 
-    set_framebuffer_pointers(someBool, width, height);
+    initialize_framebuffers(someBool, width, height);
 
     gFramebufferChoice = 1;
 
@@ -475,52 +475,48 @@ void set_custom_vi_mode() {
 }
 #endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/video/set_framebuffer_pointers.s")
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/initialize_framebuffers.s")
 #else
-#define framebufferAddress_NoExpPak_addr 0x802d4000
-#define framebufferAddress_ExpPak_addr 0x80119000
-
-// initialize_framebuffers?
-// Just regalloc differences
-void _set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
+void initialize_framebuffers(int someBool, s32 width, s32 height) {
+    VideoResolution *resPtr;
     u32 hRes;
     u32 vRes;
-    VideoResolution *resPtr;
-    u32 temp;
-
-    vRes = gVideoMode & 0x7;
-    resPtr = &gResolutionArray[vRes];
-
+    
+    // Get resolution by current video mode
+    resPtr = &gResolutionArray[gVideoMode & 0x7];
     hRes = resPtr->h;
     vRes = resPtr->v;
 
+    // Set current resolution
     gCurrentResolutionH[0] = hRes;
     gCurrentResolutionH[1] = hRes;
     gCurrentResolutionV[0] = vRes;
     gCurrentResolutionV[1] = vRes;
 
-    if (osMemSize != 0x800000)
-    {
-        gFramebufferPointers[0] = 0x802d4000;
-        gFramebufferPointers[1] = 0x802d4000 + ((param2 * param3) * 2);
-        gFramebufferStart = 0x802d4000;
+    if (osMemSize != 0x800000) {
+        // No expansion pack detected
+        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_NO_EXP_PAK;
+        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_NO_EXP_PAK + ((width * height) * 2);
+        
+        gFramebufferStart = FRAMEBUFFER_ADDRESS_NO_EXP_PAK;
         return;
     }
-
-    if (param3 == 0x1e0)
-    {
-        gFramebufferPointers[0] = 0x80119000;
-        gFramebufferPointers[1] = 0x80119000 + ((param2 * param3) * 2);
-        gFramebufferStart = 0x80119000;
-        return;
+    
+    if (height == 480) {
+        // PAL framebuffer height
+        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_EXP_PAK;
+        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2);
+        
+        gFramebufferStart = FRAMEBUFFER_ADDRESS_EXP_PAK;
+    } else {
+        // NTSC/M-PAL framebuffer height
+        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_EXP_PAK;
+        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2);
+        
+        gFramebufferEnd = ((int) (FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2);
+        gFramebufferStart = 0x80200000;
     }
-
-    temp = (param2 * param3) * 2;
-    gFramebufferPointers[0] = 0x80119000;
-    gFramebufferPointers[1] = 0x80119000 + temp;
-    gFramebufferEnd = ((int) (temp + 0x80119000)) + temp;
-    gFramebufferStart = 0x80200000;
 }
 #endif
 
@@ -674,7 +670,7 @@ void func_8005DEE8() {
 void some_video_setup(int param1) {
     if (param1) {
         set_video_mode(7);
-        set_framebuffer_pointers(1, gResolutionArray[7].h, gResolutionArray[7].v);
+        initialize_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
 
         set_custom_vi_mode();
         D_800bce14 = 0xc;
@@ -683,7 +679,7 @@ void some_video_setup(int param1) {
         D_800bce2c = 0x5;
     } else {
         set_video_mode(1);
-        set_framebuffer_pointers(1, gResolutionArray[0].h, gResolutionArray[0].v);
+        initialize_framebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
 
         set_custom_vi_mode();
         D_800bce14 = 0xc;

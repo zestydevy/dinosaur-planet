@@ -1,5 +1,3 @@
-framebufferAddress_ExpPak = 0x80119000;
-framebufferAddress_NoExpPak = 0x802d4000;
 D_800bccb4 = 0x800bccb4;
 D_800bccb0 = 0x800bccb0;
 D_800bcc78 = 0x800bcc78;

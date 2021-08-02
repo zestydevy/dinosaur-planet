@@ -4,6 +4,15 @@
 #define _SYS_GFX_GX_H
 
 /**
+ * Memory address of the framebuffers when an N64 Expansion Pak IS NOT detected.
+ */
+#define FRAMEBUFFER_ADDRESS_NO_EXP_PAK 0x802d4000
+/**
+ * Memory address of the framebuffers when an N64 Expansion Pak IS detected.
+ */
+#define FRAMEBUFFER_ADDRESS_EXP_PAK 0x80119000
+
+/**
  * Holds the horizontal and vertical resolution for video related functions.
  */
 typedef struct VideoResolution {
@@ -139,9 +148,6 @@ extern u32 gCurrentResolutionV[2];
  * {FBaddr,FBaddr*H*V*2} // TODO: <- what does that mean?
  */
 extern u16 *gFramebufferPointers[2];
-
-extern u32 framebufferAddress_ExpPak;
-extern u32 framebufferAddress_NoExpPak;
 
 extern u16 *gFramebufferStart;
 extern u32 *gFramebufferEnd;
