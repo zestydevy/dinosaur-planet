@@ -1143,6 +1143,12 @@ gPossiblyScreenWidthOrHeight = 0x80092e98; // type:data size:0x4
 gSomeVideoFlag = 0x80092ea0; // type:data size:0x4
 gUnknownVideoStructs = 0x800bb590; // type:data size:0x1680
 OSMesgQueue_800bcce0 = 0x800bcce0;
+gDisplayHertz = 0x800bce28; // type:data size:0x4
+D_800bccc0 = 0x800bccc0; // type:data
+D_800bce60 = 0x800bce60; // type:data
+gPalAspectRatio = 0x8009AD64; // type:data size:0x4
+gMPalAspectRatio = 0x8009AD6C; // type:data size:0x4
+gNtscAspectRatio = 0x8009AD70; // type:data size:0x4
 
 weird_resize_copy = 0x8003F1EC; // type:func
 queue_load_texture_proxy = 0x8003CD7C; // type:func
