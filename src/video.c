@@ -449,7 +449,7 @@ void set_custom_vi_mode() {
     _bcopy(
         viMode,
         &gOSViModeCustom,
-        0x50 // OSViMode size = 0x50 (80 bytes)
+        sizeof(OSViMode)
     );
 
     // Make PAL-specific vStart adjustments
@@ -674,7 +674,7 @@ void some_video_setup(int param1) {
 
         set_custom_vi_mode();
         D_800bce14 = 0xc;
-        osViBlack(1);
+        osViBlack(TRUE);
         D_800bce58 = 0;
         D_800bce2c = 0x5;
     } else {
@@ -683,7 +683,7 @@ void some_video_setup(int param1) {
 
         set_custom_vi_mode();
         D_800bce14 = 0xc;
-        osViBlack(1);
+        osViBlack(TRUE);
         D_800bce58 = 0;
         D_800bce2c = 0x5;
     }
@@ -725,7 +725,7 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
     _bcopy(
         viMode,
         &gOSViModeCustom,
-        0x50 // OSViMode size = 0x50 (80 bytes)
+        sizeof(OSViMode)
     );
 
     // Make PAL-specific vStart adjustments
