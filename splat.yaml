@@ -223,6 +223,10 @@ segments:
 
     - [0x99DB0, bin]
 
+    - [0x9B8C0, .rodata, video]
+
+    - [0x9B8D8, bin]
+
     - [0xA4550, bin, ucode]
 
   - type: code

@@ -87,6 +87,20 @@ typedef struct _UnkVidStruct3 {
 // Length of gUnknownVideoStructs
 #define UNKNOWN_VIDEO_STRUCTS_COUNT 40
 
+extern f32 D_80092A70;
+extern f32 D_80092A74;
+
+extern void *D_80092EC4;
+extern void *D_80092F0C;
+extern void *D_80092F54;
+extern void *D_80092F9C;
+extern void *D_80092FE4;
+
+extern s32 D_80092FF8;
+
+extern s8 D_80093060;
+extern UnkVidStruct3 *D_80093068;
+
 extern UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
 extern UnkHeapVidStruct *D_800bcc10;
 extern UnkVidStruct2 D_800bcc18[4]; // size:0x50
@@ -101,9 +115,6 @@ extern u16 *gFramebufferNext;
 extern u16 *gFramebufferCurrent;
 extern u16 *D_800bccb4;
 extern u16 *D_800bccb0;
-
-extern f32 D_80092A70;
-extern f32 D_80092A74;
 
 /**
  * Holds the horizontal resolution of each framebuffer.
@@ -155,10 +166,7 @@ extern s32 D_800bce28;
 
 extern u32 D_800bce14;
 extern u8 D_800bce2c;
-extern s32 D_80092FF8;
 
-extern s8 D_80093060;
-extern UnkVidStruct3 *D_80093068;
 
 extern s32 **D_800BCE18;
 extern u8 D_800BCE20; // index of D_800BCE22?

@@ -226,7 +226,28 @@ void func_8005CDFC(int _) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CF4C.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D3A4.s")
+#else
+// Note: Return type is void* because the real type is unclear
+void *func_8005D3A4(int param) {
+    switch (param) {
+        case 1:
+            return &D_80092EC4;
+        case 2:
+            return &D_80092F0C;
+        case 3:
+            return &D_80092F54;
+        case 4:
+            return &D_80092F9C;
+        case 5:
+            return &D_80092FE4;  
+        case 0:
+        default:
+            return &D_80092F54;
+    } 
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D410.s")
 
