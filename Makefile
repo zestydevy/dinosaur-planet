@@ -73,10 +73,6 @@ submodules:
 split:
 	rm -rf $(DATA_DIRS) $(ASM_DIRS)
 	python3 ./tools/splat/split.py --rom baserom.z64 --outdir . splat.yaml
-	rm -rf bin/header.bin
-	cp headerasmtemp/header.s asm/header.s
-	rm -rf headerasmtemp/
-# delete header.bin as an ASM replacement has been written; TODO: someone find a better way to use header.s instead of the splat bin
 
 setup: baseverify clean submodules split
 	
