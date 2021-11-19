@@ -1,8 +1,11 @@
-#ifndef _SYS_EXCEPTION_H_
-#define _SYS_EXCEPTION_H_
+#ifndef _EXCEPTION_H_
+#define _EXCEPTION_H_
 
-#include "PR/os.h"
-#include "PR/ultratypes.h"
+#include "ultra64.h"
+
+#include "constants.h"
+#include "common_structs.h"
+#include "variables.h"
 
 extern int gSomeCrashVideoFlag;
 extern s32 D_800937F0;
@@ -53,9 +56,4 @@ void some_crash_print(OSThread**, int, int);
  */
 void check_video_mode_crash_and_clear_framebuffer();
 
-void clear_framebuffer_current();
-void pi_manager_entry(void *arg);
-void crash_controller_getter();
-void check_video_mode_crash_and_clear_framebuffer();
-
-#endif //_SYS_EXCEPTION_H_
+#endif

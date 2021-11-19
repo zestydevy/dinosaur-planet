@@ -1,5 +1,8 @@
-#include "common.h"
 #include <PR/os_internal.h>
+#include "common.h"
+#include "crash.h"
+#include "exception.h"
+#include "video.h"
 
 // Length of gCrashMesgQueueBuffer
 #define CRASH_MESG_QUEUE_BUFFER_LENGTH 1
@@ -33,7 +36,7 @@ void func_80037678();
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/crash/start_crash_thread.s")
 #else
-void start_crash_thread(OSSched* scheduler) {
+void start_crash_thread(OSSched* scheduler) { 
     s32 videoMode = 0xe;
 
     if (osResetType == 1 && D_80091770->unk0x8 == 1) {
@@ -43,12 +46,12 @@ void start_crash_thread(OSSched* scheduler) {
     func_8005D410(videoMode, scheduler, TRUE);
 
     osCreateThread(
-        /*t*/       &gCrashThread,
-        /*id*/      CRASH_THREAD_ID,
-        /*entry*/   &crash_thread_entry,
-        /*arg*/     NULL,
-        /*sp*/      &gCrashThreadStack[OS_MIN_STACKSIZE],
-        /*pri*/     CRASH_THREAD_PRIORITY
+        /*t*/       &gCrashThread, 
+        /*id*/      CRASH_THREAD_ID, 
+        /*entry*/   &crash_thread_entry, 
+        /*arg*/     NULL, 
+        /*sp*/      &gCrashThreadStack[OS_MIN_STACKSIZE], 
+        /*pri*/     0x80
     );
 
     osStartThread(&gCrashThread);
@@ -71,8 +74,8 @@ void crash_thread_entry(void *_) {
     stack0x20[1] = D_80091774[1];
 
     osCreateMesgQueue(
-        &gCrashMesgQueue,
-        &gCrashMesgQueueBuffer[0],
+        &gCrashMesgQueue, 
+        &gCrashMesgQueueBuffer[0], 
         CRASH_MESG_QUEUE_BUFFER_LENGTH
     );
 
@@ -115,14 +118,14 @@ void crash_thread_entry(void *_) {
 #else
 /**
  * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
- *
+ * 
  * Identical to stop_active_app_threads.
  */
 void stop_active_app_threads_2() {
     OSThread *thread = __osGetActiveQueue();
 
     while (thread->priority != -1) {
-        if (thread->priority > OS_PRIORITY_IDLE &&
+        if (thread->priority > OS_PRIORITY_IDLE && 
             thread->priority <= OS_PRIORITY_APPMAX) {
             osStopThread(thread);
         }

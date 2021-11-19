@@ -1,4 +1,5 @@
 #include "common.h"
+#include "video.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5C470/func_8005B870.s")
 
@@ -9,7 +10,7 @@
 #else
 /**
  * If param1 isn't null, sets it to gPossiblyScreenWidthOrHeight.
- *
+ * 
  * Returns gSomeVideoFlag.
  */
 int func_8005BC38(u32 *param1) {

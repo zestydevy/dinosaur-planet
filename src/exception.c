@@ -1,5 +1,13 @@
 #include <PR/os_internal.h>
 #include "common.h"
+#include "exception.h"
+#include "video.h"
+
+void clear_framebuffer_current();
+void pi_manager_entry(void *arg);
+void crash_controller_getter();
+void check_video_mode_crash_and_clear_framebuffer();
+void some_crash_print(OSThread**, int, int);
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
@@ -22,10 +30,10 @@ void start_pi_manager_thread() {
     int i;
 
     osCreateThread(
-        /*t*/       &gPiManagerThread,
-        /*id*/      -1,
-        /*entry*/   &pi_manager_entry,
-        /*arg*/     NULL,
+        /*t*/       &gPiManagerThread, 
+        /*id*/      -1, 
+        /*entry*/   &pi_manager_entry, 
+        /*arg*/     NULL, 
         /*sp*/      &gPiManagerThreadStack[OS_PIM_STACKSIZE],
         /*pri*/     OS_PRIORITY_MAX
     );
@@ -52,8 +60,8 @@ void pi_manager_entry(void *arg) {
 
     // Listen for OS_EVENT_FAULT and OS_EVENT_CPU_BREAK
     osCreateMesgQueue(
-        /*mq*/      &gPiManagerEventQueue,
-        /*msg*/     &gPiManagerEventQueueBuffer[0],
+        /*mq*/      &gPiManagerEventQueue, 
+        /*msg*/     &gPiManagerEventQueueBuffer[0], 
         /*count*/   PI_MANAGER_EVENT_QUEUE_LENGTH
     );
 
@@ -62,9 +70,9 @@ void pi_manager_entry(void *arg) {
 
     // Start system PI manager thread
     osCreatePiManager(
-        /*pri*/         OS_PRIORITY_PIMGR,
-        /*cmdQ*/        &gPiManagerCmdQueue,
-        /*cmdBuf*/      &gPiManagerCmdQueueBuffer[0],
+        /*pri*/         OS_PRIORITY_PIMGR, 
+        /*cmdQ*/        &gPiManagerCmdQueue, 
+        /*cmdBuf*/      &gPiManagerCmdQueueBuffer[0], 
         /*cmdMsgCnt*/   PI_MANAGER_CMD_QUEUE_LENGTH
     );
 
@@ -76,7 +84,7 @@ void pi_manager_entry(void *arg) {
 
         // If a CPU break or CPU fault occurred...
         if ((evtFlags & PI_OS_EVENT_FAULT) || (evtFlags & PI_OS_EVENT_CPU_BREAK)) {
-            // Only handle a fault once per message, but if a break is received, this should run
+            // Only handle a fault once per message, but if a break is received, this should run 
             // every time a fault or break is received again regardless of which
             evtFlags &= ~PI_OS_EVENT_FAULT;
 
@@ -98,7 +106,7 @@ void stop_active_app_threads() {
     thread = __osGetActiveQueue();
 
     while (thread->priority != -1) {
-        if (thread->priority > OS_PRIORITY_IDLE &&
+        if (thread->priority > OS_PRIORITY_IDLE && 
             thread->priority <= OS_PRIORITY_APPMAX) {
             osStopThread(thread);
         }
@@ -116,7 +124,7 @@ void crash_controller_getter() {
     OSThread *thread = __osGetActiveQueue();
 
     while (thread->priority != -1) {
-        if (thread->priority > OS_PRIORITY_IDLE &&
+        if (thread->priority > OS_PRIORITY_IDLE && 
             ((thread->flags & OS_FLAG_FAULT) || (thread->flags & OS_FLAG_CPU_BREAK))) {
             break;
         }
@@ -132,8 +140,8 @@ void crash_controller_getter() {
 
     // Copy gCrashContPadArray1 -> gCrashContPadArray2
     _bcopy(
-        &gCrashContPadArray1[0],
-        &gCrashContPadArray2[0],
+        &gCrashContPadArray1[0], 
+        &gCrashContPadArray2[0], 
         sizeof(OSContPad) * MAXCONTROLLERS
     );
 
@@ -160,13 +168,13 @@ void _crash_copy_control_inputs() {
 
     // TODO: This loop unrolls differently than it should
     for (i = 0; i < MAXCONTROLLERS; ++i) {
-        gCrashButtons[i] = gCrashContPadArray1[i].button &
+        gCrashButtons[i] = gCrashContPadArray1[i].button & 
             (u16)(gCrashContPadArray1[i].button ^ gCrashContPadArray2[i].button);
     }
 
     _bcopy(
-        &gCrashContPadArray1[0],
-        &gCrashContPadArray2[0],
+        &gCrashContPadArray1[0], 
+        &gCrashContPadArray2[0], 
         sizeof(OSContPad) * MAXCONTROLLERS
     );
 }

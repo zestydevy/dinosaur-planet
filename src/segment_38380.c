@@ -90,6 +90,7 @@ u32 read_le32(u8 *b)
 }
 
 extern u32 * D_800918B4;
+void queue_load_file_region_to_ptr(u32,s32,s32,s32);
 void func_8003A418(s32);
 u32 read_file_8bytes(s32 arg0, s32 arg1, s32 arg2) {
     if (arg2 != 0) {

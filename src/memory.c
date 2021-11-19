@@ -2,7 +2,7 @@
 
 #define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 
-s32  increment_heap_block(s32 heap, s32 size, s32 tag, const char *name);
+s32  increment_heap_block(s32, s32, s32, s32);
 s32  find_heap_block(void *ptr);
 void set_heap_block(Heap * heap, s32 size, s32 max);
 
@@ -18,13 +18,13 @@ void init_memory(void)
 
     if (osMemSize != EXPANSION_SIZE)
     {
-        set_heap_block((void *)addr, HEAP_AREA_NO_EXPANSION - addr, 1200);
+        set_heap_block((void *)addr, 0x802D4000 - addr, 1200);
     }
     else
     {
-        set_heap_block((void *)HEAP_AREA_00, RAM_END - HEAP_AREA_00, 400);
-        set_heap_block((void *)HEAP_AREA_01, HEAP_AREA_00 - HEAP_AREA_01, 800);
-        set_heap_block((void *)addr, HEAP_AREA_02 - addr, 1200);
+        set_heap_block((void *)0x8042C000, 0x3D4000, 400);
+        set_heap_block((void *)0x80245000, 0x1E7000, 800);
+        set_heap_block((void *)addr, 0x80119000 - addr, 1200);
     }
 
     func_80017254(2);
@@ -109,28 +109,28 @@ void _set_heap_block(Heap * heap, s32 size, s32 max)
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
 #endif
 
-void *malloc(s32 size, s32 tag, const char *name) {
+void *malloc(s32 arg0, s32 arg1, s32 arg2) {
     void *v1;
 
-    if (size == 0) {
+    if (arg0 == 0) {
         get_stack_();
         v1 = NULL;
         return v1;
     }
-    if ((size >= 0x1194) || (osMemSize != 0x800000)) {
-        v1 = increment_heap_block(0, size, tag, name);
+    if ((arg0 >= 0x1194) || (osMemSize != 0x800000)) {
+        v1 = increment_heap_block(0, arg0, arg1, arg2);
         if (v1 == NULL) {
             get_stack_();
-            v1 = increment_heap_block(1, size, tag, name);
+            v1 = increment_heap_block(1, arg0, arg1, arg2);
         }
-    } else if (size >= 0x400) {
-        v1 = increment_heap_block(1, size, tag, name);
+    } else if (arg0 >= 0x400) {
+        v1 = increment_heap_block(1, arg0, arg1, arg2);
         if (v1 == NULL) {
             get_stack_();
-            v1 = increment_heap_block(2, size, tag, name);
+            v1 = increment_heap_block(2, arg0, arg1, arg2);
         }
     } else {
-        v1 = increment_heap_block(2, size, tag, name);
+        v1 = increment_heap_block(2, arg0, arg1, arg2);
     }
     if (v1 == NULL) {
         get_stack_();
@@ -288,18 +288,18 @@ s32 dbg_heap_print(s32 arg0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
-const char s_mm_audioheap[] = "mm:audioheap";
-void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 count, s32 size) {
+extern u32 D_80099228;
+void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     void *ptr;
 
-    size = ALIGN16((size * count) + 0xF);
+    arg4 = ALIGN16((arg4 * arg3) + 0xF);
 
     // ??
-    if (size);
-    if (size);
+    if (arg4);
+    if (arg4);
 
-    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, s_mm_audioheap);
-    bzero(ptr, size);
+    ptr = malloc(arg4, 0xB, &D_80099228);
+    bzero(ptr, arg4);
     return align_16(ptr);
 }
 

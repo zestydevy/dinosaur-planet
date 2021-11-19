@@ -1,7 +1,11 @@
-/** Graphics backend (RSP/RDP, etc)
- */
-#ifndef _SYS_GFX_GX_H
-#define _SYS_GFX_GX_H
+#ifndef _VIDEO_H_
+#define _VIDEO_H_
+
+#include "ultra64.h"
+
+#include "constants.h"
+#include "common_structs.h"
+#include "variables.h"
 
 /**
  * Holds the horizontal and vertical resolution for video related functions.
@@ -116,7 +120,7 @@ extern u32 gCurrentResolutionV[2];
 
 /**
  * Pointers to each of the 2 framebuffers.
- *
+ * 
  * {FBaddr,FBaddr*H*V*2} // TODO: <- what does that mean?
  */
 extern u16 *gFramebufferPointers[2];
@@ -129,10 +133,10 @@ extern u32 *gFramebufferEnd;
 
 /**
  * A framebuffer index into gFramebufferPointers.
- *
+ * 
  * TODO: figure out more of what this var is used for
  */
-extern u32 gFramebufferChoice;
+extern u32 gFramebufferChoice; 
 extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[];
@@ -164,11 +168,6 @@ extern s32 **D_800BCE18;
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 *D_800BCE22;
 
-extern s32 gMainGfx[], gMainMtx[], gMainVtx[], gMainPol[]; //likely pointers
-extern Gfx *gCurGfx;
-extern u8 gFrameBufIdx;
-extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
-
 void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool);
 
 /**
@@ -178,9 +177,9 @@ s32 get_video_mode();
 
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
- *
+ * 
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
 u32 get_some_resolution_encoded();
 
-#endif //_SYS_GFX_GX_H
+#endif
