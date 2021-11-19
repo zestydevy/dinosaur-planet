@@ -12,7 +12,9 @@ options:
   symbol_addrs_path: ./symbol_addrs.txt
 
 segments:
-  - [0x000000, bin, header]
+  - name:  header
+    type:  header
+    start: 0x00000000
   - [0x000040, bin, boot]
   - name: segment
     type: code
