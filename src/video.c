@@ -7,6 +7,11 @@
  * Returns gSomeVideoFlag.
  */
 int func_8005BC38(u32*);
+void func_8005D9D8();
+void set_video_mode(s32 mode);
+void initialize_framebuffers(int someBool, s32 width, s32 height);
+void swap_framebuffer_pointers();
+void set_custom_vi_mode();
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
@@ -226,9 +231,104 @@ void func_8005CDFC(int _) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CF4C.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D3A4.s")
+#else
+// Note: Return type is void* because the real type is unclear
+void *func_8005D3A4(int param) {
+    switch (param) {
+        case 1:
+            return &D_80092EC4;
+        case 2:
+            return &D_80092F0C;
+        case 3:
+            return &D_80092F54;
+        case 4:
+            return &D_80092F9C;
+        case 5:
+            return &D_80092FE4;  
+        case 0:
+        default:
+            return &D_80092F54;
+    } 
+}
+#endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D410.s")
+#else
+void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
+    int i;
+    u32 width;
+    u32 height;
+    
+    if (osTvType == OS_TV_PAL) {
+        gDisplayHertz = 50;
+        aspectRatioFloat = gPalAspectRatio;
+        D_800BCCB8 = D_8009AD68;
+    } else if (osTvType == OS_TV_MPAL) {
+        gDisplayHertz = 60;
+        aspectRatioFloat = gMPalAspectRatio;
+        D_800BCCB8 = 1.0f;
+    } else {
+        gDisplayHertz = 60;
+        aspectRatioFloat = gNtscAspectRatio;
+        D_800BCCB8 = 1.0f;
+    }
+
+    if (someBool && osTvType == OS_TV_PAL) {
+        for (i = 0; i < VIDEO_RESOLUTIONS_COUNT; i++) {
+            gResolutionArray[i].v += 20;
+        }
+    }
+
+    func_8005D9D8();
+
+    set_video_mode(videoMode);
+
+    gFramebufferPointers[0] = NULL;
+    gFramebufferPointers[1] = NULL;
+
+    if (someBool) {
+        osCreateMesgQueue(&OSMesgQueue_800bcce0, &D_800bccc0[0], 8);
+        osScAddClient(scheduler, &D_800bce60, &OSMesgQueue_800bcce0, 2);
+    }
+
+    width = 320;
+    height = 260;
+
+    if (videoMode == OS_VI_PAL_LPN1) {
+        width = 640;
+        height = 480;
+    }
+
+    initialize_framebuffers(someBool, width, height);
+
+    gFramebufferChoice = 1;
+
+    swap_framebuffer_pointers();
+    set_custom_vi_mode();
+
+    D_800bce14 = 0xc;
+
+    osViBlack(TRUE);
+
+    D_800bce58 = 0;
+    D_800bce2c = 5;
+
+    if (someBool) {
+        D_800BCE18[0] = malloc(960, 2, NULL);
+        D_800BCE18[1] = &D_800BCE18[0][480];
+    }
+
+    bzero(D_800BCE18[0], 960);
+
+    D_800BCE20 = 0;
+    D_800BCE22[0] = 0;
+    D_800BCE22[1] = 0;
+    D_800bce34 = 1;
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/set_video_mode.s")
@@ -349,7 +449,7 @@ void set_custom_vi_mode() {
     _bcopy(
         viMode,
         &gOSViModeCustom,
-        0x50 // OSViMode size = 0x50 (80 bytes)
+        sizeof(OSViMode)
     );
 
     // Make PAL-specific vStart adjustments
@@ -375,53 +475,48 @@ void set_custom_vi_mode() {
 }
 #endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/video/set_framebuffer_pointers.s")
-void set_framebuffer_pointers(u32, u32, u32);
+#if 0
+#pragma GLOBAL_ASM("asm/nonmatchings/video/initialize_framebuffers.s")
 #else
-#define framebufferAddress_NoExpPak_addr 0x802d4000
-#define framebufferAddress_ExpPak_addr 0x80119000
-
-// initialize_framebuffers?
-// Just regalloc differences
-void _set_framebuffer_pointers(u32 param1, u32 param2, u32 param3) {
+void initialize_framebuffers(int someBool, s32 width, s32 height) {
+    VideoResolution *resPtr;
     u32 hRes;
     u32 vRes;
-    VideoResolution *resPtr;
-    u32 temp;
-
-    vRes = gVideoMode & 0x7;
-    resPtr = &gResolutionArray[vRes];
-
+    
+    // Get resolution by current video mode
+    resPtr = &gResolutionArray[gVideoMode & 0x7];
     hRes = resPtr->h;
     vRes = resPtr->v;
 
+    // Set current resolution
     gCurrentResolutionH[0] = hRes;
     gCurrentResolutionH[1] = hRes;
     gCurrentResolutionV[0] = vRes;
     gCurrentResolutionV[1] = vRes;
 
-    if (osMemSize != 0x800000)
-    {
-        gFramebufferPointers[0] = 0x802d4000;
-        gFramebufferPointers[1] = 0x802d4000 + ((param2 * param3) * 2);
-        gFramebufferStart = 0x802d4000;
+    if (osMemSize != 0x800000) {
+        // No expansion pack detected
+        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_NO_EXP_PAK;
+        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_NO_EXP_PAK + ((width * height) * 2);
+        
+        gFramebufferStart = FRAMEBUFFER_ADDRESS_NO_EXP_PAK;
         return;
     }
-
-    if (param3 == 0x1e0)
-    {
-        gFramebufferPointers[0] = 0x80119000;
-        gFramebufferPointers[1] = 0x80119000 + ((param2 * param3) * 2);
-        gFramebufferStart = 0x80119000;
-        return;
+    
+    if (height == 480) {
+        // PAL framebuffer height
+        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_EXP_PAK;
+        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2);
+        
+        gFramebufferStart = FRAMEBUFFER_ADDRESS_EXP_PAK;
+    } else {
+        // NTSC/M-PAL framebuffer height
+        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_EXP_PAK;
+        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2);
+        
+        gFramebufferEnd = ((int) (FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2);
+        gFramebufferStart = 0x80200000;
     }
-
-    temp = (param2 * param3) * 2;
-    gFramebufferPointers[0] = 0x80119000;
-    gFramebufferPointers[1] = 0x80119000 + temp;
-    gFramebufferEnd = ((int) (temp + 0x80119000)) + temp;
-    gFramebufferStart = 0x80200000;
 }
 #endif
 
@@ -461,7 +556,7 @@ void func_8005DC70(int _) {}
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
 #else
 s32 func_8005DC7C() {
-    return (s32)((f32)D_800bce28 / (f32)D_800bce59);
+    return (s32)((f32)gDisplayHertz / (f32)D_800bce59);
 }
 #endif
 
@@ -575,20 +670,20 @@ void func_8005DEE8() {
 void some_video_setup(int param1) {
     if (param1) {
         set_video_mode(7);
-        set_framebuffer_pointers(1, gResolutionArray[7].h, gResolutionArray[7].v);
+        initialize_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
 
         set_custom_vi_mode();
         D_800bce14 = 0xc;
-        osViBlack(1);
+        osViBlack(TRUE);
         D_800bce58 = 0;
         D_800bce2c = 0x5;
     } else {
         set_video_mode(1);
-        set_framebuffer_pointers(1, gResolutionArray[0].h, gResolutionArray[0].v);
+        initialize_framebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
 
         set_custom_vi_mode();
         D_800bce14 = 0xc;
-        osViBlack(1);
+        osViBlack(TRUE);
         D_800bce58 = 0;
         D_800bce2c = 0x5;
     }
@@ -630,7 +725,7 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
     _bcopy(
         viMode,
         &gOSViModeCustom,
-        0x50 // OSViMode size = 0x50 (80 bytes)
+        sizeof(OSViMode)
     );
 
     // Make PAL-specific vStart adjustments
