@@ -2,7 +2,7 @@
 
 
 // regalloc
-#if NON_MATCHING
+#ifdef NONMATCHING
 TMap *_func_8000B8B0(TMap *map, s32 arg1, s32 arg2, s32 arg3) {
 
     s32 temp_t6 = arg2 >> 3;

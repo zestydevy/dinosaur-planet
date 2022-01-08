@@ -233,7 +233,47 @@ void _game_tick(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014074.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800141A4.s")
+typedef struct
+{
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s8 unkC;
+    s8 unkD;
+} GPlay00;
+
+void func_80048054(s32, s32, GPlay00 *, s32 *, s32 *, s8 *);  /* extern */
+extern s32 D_8008C968;
+
+void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    GPlay00 * sp24;
+    s32 * temp_t4;
+    s8 * temp_t5;
+    GPlay00 * temp_v0;
+
+    func_8001440C(0);
+
+    if (arg2 < 0) {
+        arg2 = 0;
+    }
+
+    clear_PlayerPosBuffer();
+
+    (*gDLL_1E)->func[0].asVoid();
+    (*gDLL_gplay)->func[29].withOneArg((u8)arg2);
+
+    temp_v0 = (*gDLL_gplay)->func[35].asVoidS32();
+    temp_t4 = &temp_v0->unk8;
+    temp_t5 = &temp_v0->unkD;
+    sp24 = temp_v0;
+
+    func_80048054(arg0, arg1, temp_v0, &temp_v0->unk4, temp_t4, temp_t5);
+    (*gDLL_gplay)->func[6].withFourArgs(sp24, 0, 0, sp24->unkD);
+
+    ossceduler_stack = 1;
+    D_8008C968 = arg3;
+}
 
 void func_800142A0(f32 arg0, f32 arg1, s32 arg2) {
     func_8001440C(0);
@@ -242,7 +282,20 @@ void func_800142A0(f32 arg0, f32 arg1, s32 arg2) {
     ossceduler_stack = 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800142F0.s")
+void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
+{
+    Vec3f pos;
+    pos.x = x;
+    pos.y = y;
+    pos.z = z;
+
+    func_8001440C(0);
+
+    (*gDLL_gplay)->func[1].withTwoArgs(-1, 0);
+    (*gDLL_gplay)->func[29].withOneArg((u8)arg3);
+    (*gDLL_gplay)->func[6].withFourArgs(&pos, 0, 0, 0);
+    (*gDLL_gplay)->func[7].asVoid();
+}
 
 void func_800143A4(void) {
     func_80048034();
@@ -432,17 +485,18 @@ void func_80014BBC(void) {
     D_800B09C4 = 0;
 }
 
-void func_800142F0(s32, s32, s32);
+//void func_800142F0(f32 x, f32 y, f32 z, s32 arg3);
 
-void func_80014BD4(s32 arg0, s32 arg1, s32 arg2) {
+void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3)
+{
     D_800B09C3++;
 
     if (D_800B09C3 >= 5) {
         D_800B09C3 = 0;
         D_800B09C4 = 1;
     }
-    func_800142F0(arg0, arg1, arg2);
-    if (arg2) {}; // fake match
+
+    func_800142F0(arg0, arg1, arg2, arg3);
 }
 
 s32 func_80014C28(void)
