@@ -1,12 +1,9 @@
-framebufferAddress_ExpPak = 0x80119000;
-framebufferAddress_NoExpPak = 0x802d4000;
 D_800bccb4 = 0x800bccb4;
 D_800bccb0 = 0x800bccb0;
 D_800bcc78 = 0x800bcc78;
 D_800bce34 = 0x800bce34;
 D_800bce58 = 0x800bce58;
 D_800bce59 = 0x800bce59;
-D_800bce28 = 0x800bce28;
 D_800bce14 = 0x800bce14;
 D_800bce2c = 0x800bce2c;
 D_800bcc18 = 0x800bcc18;
