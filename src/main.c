@@ -17,6 +17,7 @@ const char fileName2[] = "main/main.c";
 const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
 const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 
+void game_tick_no_expansion(void);
 void game_tick(void);
 
 void mainproc(void * arg)
@@ -195,7 +196,6 @@ void game_tick(void)
     u8 phi_v1;
     u32 delayAmount;
     Gfx *tmp_s0;
-    f32 *new_var;
 
     osSetTime(0);
     dl_next_debug_info_set();
@@ -268,19 +268,69 @@ void game_tick(void)
     inverseDelay = 1.0f / delayFloat;
     delayByteMirror = (s8) delayAmount;
     delayFloatMirror = delayFloat;
-
-    inverseDelayMirror = 1.0f / (*(new_var = &delayFloatMirror));
+    inverseDelayMirror = 1.0f / delayFloatMirror;
 
     func_80014074();
     write_c_file_label_pointers(&D_8009913C, 0x37C);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick_no_expansion.s")
+s32 func_8000F574();                                /* extern */
+void func_8000F604(s32 *, s32*, s32*, s32*);                     /* extern */
+void game_tick_no_expansion(void)
+{
+    u32 delayAmount;
+    Gfx * tmp_s0;
+
+    tmp_s0 = &gCurGfx;
+    
+    func_80037780(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    
+    gFrameBufIdx ^= 1;
+    gCurGfx = gMainGfx[gFrameBufIdx];
+    gCurMtx = gMainMtx[gFrameBufIdx];
+    gCurVtx = gMainVtx[gFrameBufIdx];
+    gCurPol = gMainPol[gFrameBufIdx];
+    
+    dl_segment(&gCurGfx, 0, 0x80000000);
+    dl_segment(&gCurGfx, 1, gFramebufferCurrent);
+    dl_segment(&gCurGfx, 2, D_800BCCB4);
+    dl_set_all_dirty();
+    func_8003DB5C();
+
+    if (gDLBuilder->unk28 != 0) {
+        gDLBuilder->unk28 = 0U;
+        gDPPipeSync(gCurGfx++);
+    }
+
+    gDPSetDepthImage(gCurGfx++, 0x02000000);
+
+    func_80037EC8(&gCurGfx);
+    func_8000F574(); // ignored return value
+    func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+    func_800129E4();
+    (*gDLL_1C)->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
+
+    gDPFullSync(gCurGfx++);
+    gSPEndDisplayList(gCurGfx++);
+
+    func_80037924();
+    update_mem_mon_values();
+
+    delayByte = video_func_returning_delay(0);
+    delayAmount = (u8)delayByte;
+    if ((s32)delayAmount >= 7) {
+        delayByte = 6;
+        delayAmount = (u8)delayByte;
+    }
+    delayFloat = (f32) delayAmount;
+    inverseDelay = 1.0f / delayFloat;
+    delayByteMirror = delayAmount;
+    delayFloatMirror = delayFloat;
+    inverseDelayMirror = 1.0f / delayFloatMirror;
+}
 
 s32 func_80001A2C();                                /* extern */
-s32 func_8000F574();                                /* extern */
 void func_8000F5C4();                                  /* extern */
-void func_8000F604(s32 *, s32*, s32*, s32*);                     /* extern */
 s8 func_800143FC();                                /* extern */
 void func_800210DC();                                  /* extern */
 void func_80038DC0(Gfx**);                             /* extern */
