@@ -17,6 +17,8 @@ const char fileName2[] = "main/main.c";
 const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
 const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 
+void game_tick(void);
+
 void mainproc(void * arg)
 {
     test_write(); // ROM write check
@@ -37,6 +39,10 @@ void mainproc(void * arg)
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
 
+void func_80041C6C(s32);                                 /* extern */
+void func_80014074(void);
+void func_80041D20(s32);                                 /* extern */
+void set_menu_page(s32);                               /* extern */
 void game_init(void)
 {
     struct DLLInstance **temp_AMSEQ_DLL;
@@ -147,91 +153,274 @@ void game_init(void)
     func_80041C6C(0);
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick.s")
-#else
-extern u32 *D_8009913C;
-void _game_tick(void) {
-    u8 sp27;
-    f32 temp_f0;
-    u8 temp_t9;
-    u8 temp_v0_5;
-    void *temp_a0;
+typedef struct
+{
+    u8 unk[0x28];
+    u8 unk28;
+} DLBuilder;
+
+void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4);
+void dl_next_debug_info_set();                         /* extern */
+void dl_segment(Gfx **gdl, u32 segment, void *base);
+void dl_set_all_dirty();                               /* extern */
+void func_80001A3C();                                  /* extern */
+void func_80007178();                                  /* extern */
+void func_800121DC();                                  /* extern */
+void func_800129E4();                                  /* extern */
+void func_80013D80();                                  /* extern */
+void func_80020BB8();                                  /* extern */
+s32 func_80037780(Gfx*, Gfx*, s32);                     /* extern */
+void func_80037924();                                  /* extern */
+void func_80037A14(Gfx**, s32**, s32);                   /* extern */
+void func_80037EC8(Gfx**);                             /* extern */
+void func_8003DB5C();                                  /* extern */
+void func_8003E9F0(Gfx**, u8);                         /* extern */
+s32 func_80041D5C();                                /* extern */
+s32 func_80041D74();                                /* extern */
+void func_80060B94(Gfx**);                             /* extern */
+void tick_cameras();                                   /* extern */
+void update_mem_mon_values();                          /* extern */
+u8 video_func_returning_delay(s32);                   /* extern */
+void write_c_file_label_pointers(char *cFileLabel, s32 a1);
+extern s32 D_80099130;
+extern s32 D_8009913C;
+extern s32 D_800BCCB4;
+extern s32* gCurMtx;
+extern s32* gCurPol;
+extern s32* gCurVtx;
+extern DLBuilder * gDLBuilder;
+
+void game_tick(void)
+{
     u8 phi_v1;
+    u32 delayAmount;
+    Gfx *tmp_s0;
+    f32 *new_var;
 
     osSetTime(0);
-    func_80063300();
+    dl_next_debug_info_set();
+
+    tmp_s0 = &gCurGfx;
+
+    // unused return type
     func_80037780(gMainGfx[gFrameBufIdx], gCurGfx, 0);
-    temp_t9 = gFrameBufIdx ^ 1;
-    gFrameBufIdx = temp_t9;
-    gCurGfx = gMainGfx[temp_t9];
-    gCurMtx = gMainMtx[temp_t9];
-    gCurVtx = gMainVtx[temp_t9];
-    gCurPol = gMainPol[temp_t9]);
+
+    gFrameBufIdx ^= 1;
+    gCurGfx = gMainGfx[gFrameBufIdx];
+    gCurMtx = gMainMtx[gFrameBufIdx];
+    gCurVtx = gMainVtx[gFrameBufIdx];
+    gCurPol = gMainPol[gFrameBufIdx];
+
     dl_add_debug_info(gCurGfx, 0, &D_80099130, 0x28E);
-    func_8003CC50(&gCurGfx, 0, 0x80000000);
-    func_8003CC50(&gCurGfx, 1, gFramebufferCurrent);
-    func_8003CC50(&gCurGfx, 2, D_800BCCB4);
+    dl_segment(&gCurGfx, 0, 0x80000000);
+    dl_segment(&gCurGfx, 1, gFramebufferCurrent);
+    dl_segment(&gCurGfx, 2, D_800BCCB4);
     func_8003E9F0(&gCurGfx, delayByte);
-    func_80040FD0();
+    dl_set_all_dirty();
     func_8003DB5C();
-    temp_a0 = D_80092A90;
-    if (temp_a0->unk28 != 0) {
-        temp_a0->unk28 = 0;
+
+    if (gDLBuilder->unk28 != 0) {
+        gDLBuilder->unk28 = 0U;
         gDPPipeSync(gCurGfx++);
     }
+
     gDPSetDepthImage(gCurGfx++, 0x02000000);
+
     func_80037EC8(&gCurGfx);
-    sp27 = 2;
-    if (func_80041D5C() == 0) {
-        phi_v1 = 0;
-    } else {
-        sp27 = 2;
-        phi_v1 = 2;
-        if (func_80041D74() == 0) {
-            phi_v1 = 3;
-        }
-    }
+    phi_v1 = 2U;
+
+    if (func_80041D5C() == 0)
+        phi_v1 = 0U;
+    else if (func_80041D74() == 0)
+        phi_v1 = 3U;
+
     func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
     func_80007178();
     func_80013D80();
     func_800121DC();
-    (*D_8008C974)->unk4.withThreeArgs(&gCurGfx, &gCurMtx, &gCurVtx);
-    (*gDLL_subtitles)->unk1C(&gCurGfx);
-    func_80003CBC();
+    (*gDLL_1C)->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
+    (*gDLL_subtitles)->func[6].withOneArg(tmp_s0);
+    tick_cameras();
     func_800129E4();
-    func_80060B94(&gCurGfx);
+    func_80060B94(tmp_s0); 
+
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
+
     func_80037924();
     func_80020BB8();
     update_mem_mon_values();
+    
     if (D_800B09C2 == 0) {
         func_80001A3C();
     }
-    temp_v0_5 = video_func_returning_delay(0);
-    delayByte = temp_v0_5;
-    if (temp_v0_5 >= 7) {
+
+    delayByte = video_func_returning_delay(0);
+    
+    if (0);
+
+    delayAmount = (u32) delayByte;
+    if (delayByte >= 7) {
         delayByte = 6;
+        delayAmount = delayByte;
     }
-    delayFloat = delayByte;
-    temp_f0 = delayFloat;
-    inverseDelay = 1.0f / temp_f0;
-    delayByteMirror = delayByte;
-    delayFloatMirror = temp_f0;
-    inverseDelayMirror = 1.0f / delayFloatMirror;
-    func_80014074(&delayFloatMirror);
+    delayFloat = (f32) delayAmount;
+    inverseDelay = 1.0f / delayFloat;
+    delayByteMirror = (s8) delayAmount;
+    delayFloatMirror = delayFloat;
+
+    inverseDelayMirror = 1.0f / (*(new_var = &delayFloatMirror));
+
+    func_80014074();
     write_c_file_label_pointers(&D_8009913C, 0x37C);
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/game_tick_no_expansion.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80013D80.s")
+s32 func_80001A2C();                                /* extern */
+s32 func_8000F574();                                /* extern */
+void func_8000F5C4();                                  /* extern */
+void func_8000F604(s32 *, s32*, s32*, s32*);                     /* extern */
+s8 func_800143FC();                                /* extern */
+void func_800210DC();                                  /* extern */
+void func_80038DC0(Gfx**);                             /* extern */
+void func_80042174(s32);                                 /* extern */
+void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);         /* extern */
+void func_8004A67C();                                  /* extern */
+void func_800591EC();                                  /* extern */
+u16 get_masked_button_presses(int port);                   /* extern */
+s32 mainGetBit(s32);                                  /* extern */
+void map_update_streaming();                           /* extern */
+void set_button_mask(int port, u16 mask);                            /* extern */
+void update_PlayerPosBuffer();                         /* extern */
+void update_obj_models();                              /* extern */
+void update_objects();                                 /* extern */
+extern s32 D_800AE680;
+extern s32 * gCurMtx;
+extern s32 * gCurPol;
+extern s32 * gCurVtx;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80013FB4.s")
+void func_80013D80(void)
+{
+    s32 button;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014074.s")
+    set_button_mask(0, 0x900);
+    (*gDLL_Camera)->func[19].asVoid();
+    (*gDLL_subtitles)->func[5].asVoid();
+
+    if (func_8000F574() == 0)
+    {
+        button = get_masked_button_presses(0);
+
+        if (D_800B09C2 != 0) {
+            func_80038DC0(&gCurGfx);
+        }
+
+        if (D_800B09C2 == 0)
+        {
+            update_objects();
+            func_80042174(0);
+
+            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & 0x1000) != 0) && (mainGetBit(0x44F) == 0))
+            {
+                D_800B09C2 = 1;
+                set_button_mask(0, 0x1000);
+                set_menu_page(8);
+            }
+            
+            (*gDLL_gplay)->func[27].asVoid();
+        
+        } else {
+            update_obj_models();
+        }
+        
+        if (D_800B09C2 == 0) {
+            update_PlayerPosBuffer();
+        }
+
+        func_8000F5C4();
+        func_800591EC();
+        func_8004A67C();
+        map_update_streaming();
+        func_800210DC();
+
+        (*gDLL_Race)->func[14].asVoid();
+
+        if (D_800B09C2 == 0) {
+            func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
+        }
+
+        (*gDLL_SCREENS)->func[2].withOneArg(&gCurGfx);
+        func_8000F604(&D_800AE680, &gCurMtx, &gCurVtx, &gCurPol);
+
+        D_8008C94C -= delayByte;
+
+        if ((s32) D_8008C94C < 0) {
+            D_8008C94C = 0;
+        }
+    }
+}
+
+void func_800141A4(s32, s32, s32, s32);                        /* extern */
+void func_8001442C();                                  /* extern */
+
+void func_80013FB4(void) {
+    func_8005D410(OS_VI_PAL_LPN1, NULL, FALSE);
+    func_80041D20(0);
+    func_80041C6C(0);
+    (*gDLL_AMSEQ)->func[6].withOneArg(3);
+    (*gDLL_AMSEQ)->func[6].withOneArg(0);
+    (*gDLL_AMSEQ)->func[6].withOneArg(1);
+    (*gDLL_subtitles)->func[4].asVoid();
+    func_8001442C();
+    func_800141A4(1, 0, 1, -1);
+}
+
+extern s32 D_8008C968;
+extern u8 D_8008CA30;
+void func_80001220();                                  /* extern */
+void func_80017254(s32);                                 /* extern */
+void func_8003798C(s32, s32, s32);                           /* extern */
+void func_8004773C();                                  /* extern */
+void func_800484A8();                                  /* extern */
+void func_800668A4();                                  /* extern */
+
+void func_80014074(void)
+{
+    if (ossceduler_stack != 0)
+    {
+        func_80017254(0);
+        if (D_8008CA30 != 0)
+        {
+            func_8003798C(0, 0, 0);
+            func_800668A4();
+            func_800484A8();
+
+            gCurGfx = gMainGfx[gFrameBufIdx];
+            gDPFullSync(gCurGfx++);
+            gSPEndDisplayList(gCurGfx++);
+        }
+        
+        ossceduler_stack = 0;
+        
+        func_80017254(0);
+        func_80001220();
+
+        if (D_8008C968 >= 0) {
+            set_menu_page(D_8008C968);
+            D_8008C968 = -1;
+        }
+        
+        func_8004773C();
+        
+        if (gDLL_17 != NULL) {
+            (*gDLL_17)->func[2].withOneArg(1);
+        }
+        
+        func_80017254(2);
+        D_8008CA30 = 1;
+    }
+}
 
 typedef struct
 {
@@ -243,7 +432,6 @@ typedef struct
 } GPlay00;
 
 void func_80048054(s32, s32, GPlay00 *, s32 *, s32 *, s8 *);  /* extern */
-extern s32 D_8008C968;
 
 void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {

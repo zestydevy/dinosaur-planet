@@ -3103,7 +3103,7 @@ typedef union {
 									\
 	_g->words.w0 = _SHIFTL(cmd, 24, 8) | _SHIFTL(fmt, 21, 3) |	\
 		       _SHIFTL(siz, 19, 2) | _SHIFTL((width)-1, 0, 12);	\
-	_g->words.w1 = (uintptr_t)(i);				\
+	_g->words.w1 = (u32)(i);				\
 }
 
 #define	gsSetImage(cmd, fmt, siz, width, i)				\

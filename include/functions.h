@@ -11,7 +11,7 @@ void main_expPak(void);
 void threadTimerTick(void);
 void check_dongle(void);
 
-void func_80017254(u32 arg0);
+void func_80017254(s32);
 void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
 TActor * get_player(void);
