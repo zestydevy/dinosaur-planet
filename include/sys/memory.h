@@ -62,31 +62,33 @@ enum AllocTag {
 //XXX add defines for those colors if this ROM is passing them as tags.
 
 typedef struct {
-/*0000*/    u32 * tail;
+/*0000*/    u8 * data;
 /*0004*/    s32 maxSize;
-/*0008*/    s16 m0008;
-/*000C*/    s16 m000C;
+/*0008*/    s16 flags;
+/*000A*/    s16 prevIdx;
+/*000C*/    s16 nextIdx;
 /*000E*/    s16 index;
-/*0010*/    s32 m0010;
-} Heap;
+/*0010*/    s32 tag;
+} HeapBlock;
 
-struct HeapBlock {
-/*0000*/    s32 maxItems;
-/*0004*/    s32 itemCount;
-/*0008*/    Heap * ptr;
+typedef struct {
+/*0000*/    s32 maxBlocks;
+/*0004*/    s32 blockCount;
+/*0008*/    HeapBlock * blocks;
 /*000C*/    s32 memAllocated;
 /*0010*/    s32 memUsed;
-};
+} Heap;
 
 extern u32 * bss_end;
-extern u8 gHeapBlkListSize;
-extern struct HeapBlock gHeapBlkList[];
+extern u8 gHeapListSize;
+extern Heap gHeapList[];
 extern char * D_800991E0;
 extern s32 memMonVal0;
 extern s32 memMonVal1;
 extern s32 memMonVal2;
 
 void init_memory(void);
+HeapBlock * set_heap_block(HeapBlock * blocks, s32 size, s32 maxBlocks);
 void *malloc(s32 size, s32 tag, const char *name);
 void free(void* p);
 void _bcopy(const void *src,void *dst,int length);

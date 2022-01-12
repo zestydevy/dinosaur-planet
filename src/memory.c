@@ -4,7 +4,6 @@
 
 s32  increment_heap_block(s32 heap, s32 size, s32 tag, const char *name);
 s32  find_heap_block(void *ptr);
-void set_heap_block(Heap * heap, s32 size, s32 max);
 
 void init_memory(void)
 {
@@ -14,7 +13,7 @@ void init_memory(void)
     while ((u32)mem < osMemSize)
         *mem++ = -1;
 
-    gHeapBlkListSize = 0;
+    gHeapListSize = 0;
 
     if (osMemSize != EXPANSION_SIZE)
     {
@@ -32,82 +31,47 @@ void init_memory(void)
     pointerIntArrayCounter = 0;
 }
 
-// - Needs to use a multiplication to address the heapblock array
-// - This function implies the existence of an `index` field in the 
-//      HeapBlock struct, among several other s16 fields,
-//      while find_heap_block deconfirms them.
-#if 0
-void _set_heap_block(Heap * heap, s32 size, s32 max)
+HeapBlock * set_heap_block(HeapBlock * blocks, s32 size, s32 maxBlocks)
 {
+    HeapBlock* entryBlock;
+    Heap * heap;
     s32 i;
-    struct HeapBlock * block = &gHeapBlkList[gHeapBlkListSize++];
+    s32 len = gHeapListSize++;
 
-    block->maxItems = max;
-    block->itemCount = 0;
-    block->ptr = heap;
-    block->memAllocated = size;
-    block->memUsed = 0;
+
+    heap = &gHeapList[len];
+    len = maxBlocks * sizeof(HeapBlock);
+
+    heap->maxBlocks = maxBlocks;
+    heap->blockCount = 0;
+    heap->blocks = blocks;
+    heap->memAllocated = size;
+    heap->memUsed = 0;
     
-    if (max > 0) {
-        heap->index = i;
-        for (i = 0; i < block->maxItems; ++i) {
-            heap[i].index = i;
-        }
+    entryBlock = blocks;
+    
+    for (i = 0; i < heap->maxBlocks; i++) {
+        entryBlock->index = i;
+        entryBlock++;
     }
 
-    /* 17648 80016A48 00CB0019 */  multu      $a2, $t3
-    max * 0x14
-    /* 1764C 80016A4C 8CE80008 */  lw         $t0, 8($a3)
-    t0 = gHeapBlkList[gHeapBlkListSize].ptr
-    /* 17650 80016A50 2401FFF0 */  addiu      $at, $zero, -0x10
-    at = -0x10
-    /* 17654 80016A54 00001812 */  mflo       $v1
-    v1 = max * 0x14
-    /* 17658 80016A58 00832021 */  addu       $a0, $a0, $v1
-    a0 = heap + (max * 0x14)
-    /* 1765C 80016A5C 308C000F */  andi       $t4, $a0, 0xf
-    t4 = (heap + (max * 0x14)) & 0xF
-    /* 17664 80016A64 00A37823 */   subu      $t7, $a1, $v1
-    t7 = size - (max * 0x14)
-    /* 17660 80016A60 11800005 */  beqz       $t4, .L80016A78
-    if (((heap + (max * 0x14)) & 0xF) != 0) {
-        /* 17668 80016A68 00816824 */  and        $t5, $a0, $at
-        t5 = (heap + (max * 0x14)) & -0x10
-        /* 1766C 80016A6C 25AE0010 */  addiu      $t6, $t5, 0x10
-        t6 = ((heap + (max * 0x14)) & -0x10) + 0x10
-        /* 17674 80016A74 AD0E0000 */   sw        $t6, ($t0)
-        gHeapBlkList[gHeapBlkListSize].ptr->tail = ((heap + (max * 0x14)) & -0x10) + 0x10
-        /* 17670 80016A70 10000002 */  b          .L80016A7C
-
-        .L80016A78:
+    entryBlock = &heap->blocks[0];
+    blocks += maxBlocks;
+    if (((s32) blocks & 0xF) != 0) {
+        entryBlock->data = ALIGN16(blocks);
     } else {
-        /* 17678 80016A78 AD040000 */  sw         $a0, ($t0)
-        gHeapBlkList[gHeapBlkListSize].ptr->tail = heap + (max * 0x14)
+        entryBlock->data = blocks;
     }
-    .L80016A7C:
-    /* 1767C 80016A7C 2404FFFF */  addiu      $a0, $zero, -1
-    a0 = -1
-    /* 17680 80016A80 AD0F0004 */  sw         $t7, 4($t0)
-    HeapBlkList[gHeapBlkListSize].ptr->maxSize = size - (max * 0x14)
-    /* 17684 80016A84 A5000008 */  sh         $zero, 8($t0)
-    HeapBlkList[gHeapBlkListSize].ptr->m0008 = 0
-    /* 17688 80016A88 A504000A */  sh         $a0, 0xa($t0)
-    HeapBlkList[gHeapBlkListSize].ptr->m000A = -1
-    /* 1768C 80016A8C A504000C */  sh         $a0, 0xc($t0)
-    HeapBlkList[gHeapBlkListSize].ptr->m000C = -1
-    /* 17690 80016A90 8CF80004 */  lw         $t8, 4($a3)
-    t8 = gHeapBlkList[gHeapBlkListSize].itemCount
-    /* 17694 80016A94 8CE20008 */  lw         $v0, 8($a3)
-    v0 = gHeapBlkList[gHeapBlkListSize].ptr
-    /* 17698 80016A98 27190001 */  addiu      $t9, $t8, 1
-    /* 1769C 80016A9C ACF90004 */  sw         $t9, 4($a3)
-    ++gHeapBlkList[gHeapBlkListSize].itemCount
-    /* 176A0 80016AA0 03E00008 */  jr         $ra
-    /* 176A4 80016AA4 00000000 */   nop
+
+    entryBlock->maxSize = size - len;
+    entryBlock->flags = 0;
+    entryBlock->prevIdx = -1;
+    entryBlock->nextIdx = -1;
+
+    ++heap->blockCount;
+    
+    return heap->blocks;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/set_heap_block.s")
-#endif
 
 void *malloc(s32 size, s32 tag, const char *name) {
     void *v1;
@@ -150,7 +114,7 @@ int func_80016E68(void *a0)
     tmp = find_heap_block(a0);
 
     i = 0;
-    tmp = (u32)gHeapBlkList[tmp].ptr;
+    tmp = (u32)gHeapList[tmp].blocks;
 
     while (i != -1)
     {
@@ -199,10 +163,10 @@ s32 find_heap_block(void *ptr)
 {
     s32 i;
 
-    for (i = 0; i < gHeapBlkListSize; i++)
+    for (i = 0; i < gHeapListSize; i++)
     {
-        if (((u32)ptr > (u32)gHeapBlkList[i].ptr))
-            if ((u32)ptr < ((u32)gHeapBlkList[i].ptr + gHeapBlkList[i].memAllocated))
+        if (((u32)ptr > (u32)gHeapList[i].blocks))
+            if ((u32)ptr < ((u32)gHeapList[i].blocks + gHeapList[i].memAllocated))
                 return i;
     }
 
@@ -213,7 +177,7 @@ s32 find_heap_block(void *ptr)
 
 struct HeapBlock *func_80017790(s32 a0, s32 a1)
 {
-    return gHeapBlkList[a0].ptr;
+    return gHeapList[a0].blocks;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_800177B4.s")
@@ -269,17 +233,17 @@ s32 dbg_heap_print(s32 arg0)
     dummied_print_func(
         &D_800991E0, 
         memMonVal0 / 0x400,
-        gHeapBlkList[0].memAllocated / 0x400, 
+        gHeapList[0].memAllocated / 0x400, 
         memMonVal1 / 0x400, 
-        gHeapBlkList[1].memAllocated / 0x400, 
+        gHeapList[1].memAllocated / 0x400, 
         memMonVal2 / 0x400, 
-        gHeapBlkList[2].memAllocated / 0x400, 
-        gHeapBlkList[0].itemCount, 
-        gHeapBlkList[0].maxItems, 
-        gHeapBlkList[1].itemCount, 
-        gHeapBlkList[1].maxItems, 
-        gHeapBlkList[2].itemCount, 
-        gHeapBlkList[2].maxItems
+        gHeapList[2].memAllocated / 0x400, 
+        gHeapList[0].blockCount, 
+        gHeapList[0].maxBlocks, 
+        gHeapList[1].blockCount, 
+        gHeapList[1].maxBlocks, 
+        gHeapList[2].blockCount, 
+        gHeapList[2].maxBlocks
     );
 
     return memMonVal0 + memMonVal1 + memMonVal2;
