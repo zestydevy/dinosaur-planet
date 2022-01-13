@@ -20,6 +20,7 @@ typedef void UNK_PTR;
 #include "sys/gfx/texture.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
+#include "sys/gfx/map.h"
 #include "sys/audio/audio.h"
 #include "sys/exception.h"
 #include "sys/crash.h"
