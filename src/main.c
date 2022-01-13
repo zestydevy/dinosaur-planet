@@ -44,6 +44,7 @@ void func_80041C6C(s32);                                 /* extern */
 void func_80014074(void);
 void func_80041D20(s32);                                 /* extern */
 void set_menu_page(s32);                               /* extern */
+void alloc_frame_buffers(void);
 void game_init(void)
 {
     struct DLLInstance **temp_AMSEQ_DLL;
@@ -154,12 +155,6 @@ void game_init(void)
     func_80041C6C(0);
 }
 
-typedef struct
-{
-    u8 unk[0x28];
-    u8 unk28;
-} DLBuilder;
-
 void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4);
 void dl_next_debug_info_set();                         /* extern */
 void dl_segment(Gfx **gdl, u32 segment, void *base);
@@ -189,7 +184,6 @@ extern s32 D_800BCCB4;
 extern s32* gCurMtx;
 extern s32* gCurPol;
 extern s32* gCurVtx;
-extern DLBuilder * gDLBuilder;
 
 void game_tick(void)
 {
@@ -219,8 +213,8 @@ void game_tick(void)
     dl_set_all_dirty();
     func_8003DB5C();
 
-    if (gDLBuilder->unk28 != 0) {
-        gDLBuilder->unk28 = 0U;
+    if (gDLBuilder->needsPipeSync != 0) {
+        gDLBuilder->needsPipeSync = 0U;
         gDPPipeSync(gCurGfx++);
     }
 
@@ -297,8 +291,8 @@ void game_tick_no_expansion(void)
     dl_set_all_dirty();
     func_8003DB5C();
 
-    if (gDLBuilder->unk28 != 0) {
-        gDLBuilder->unk28 = 0U;
+    if (gDLBuilder->needsPipeSync != 0) {
+        gDLBuilder->needsPipeSync = 0U;
         gDPPipeSync(gCurGfx++);
     }
 
@@ -565,40 +559,29 @@ void func_8001443C(s32 arg0) {
     D_800B09C2 = arg0;
 }
 
-// These smell like structs
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/alloc_frame_buffers.s")
-#else
-void alloc_frame_buffers(void) {
-    //almost matching, probably just needs correct type
-    Gfx *gfx;
-    Mtx *mtx;
-    void **pol;
-    Vtx *vtx;
+#define MAIN_GFX_BUF_SIZE 0x8CA0
+#define MAIN_MTX_BUF_SIZE 0x11300
+#define MAIN_VTX_BUF_SIZE 0x12C0
 
-    //in default.dol these have names as well.
-    //alloc graphic display list command buffers. ("main:gfx" in default.dol)
-    gfx = (Gfx *) malloc(MAIN_GFX_BUF_SIZE * 2 * sizeof(Gfx), ALLOC_TAG_LISTS_COL, NULL);
-    gMainGfx[0] = gfx;
-    gMainGfx[1] = gfx + MAIN_GFX_BUF_SIZE;
+void alloc_frame_buffers(void)
+{   
+    // in default.dol these have names as well.
+    // alloc graphic display list command buffers. ("main:gfx" in default.dol)
+    gMainGfx[0] = malloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainGfx[1] = gMainGfx[0] + MAIN_GFX_BUF_SIZE;
 
-    //matrix buffers ("main:mtx")
-    mtx = (Mtx *) malloc(MAIN_MTX_BUF_SIZE * 2 * sizeof(Mtx), ALLOC_TAG_LISTS_COL, NULL);
-    gMainMtx[0] = mtx;
-    gMainMtx[1] = mtx + MAIN_MTX_BUF_SIZE;
+    // matrix buffers ("main:mtx")
+    gMainMtx[0] = malloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainMtx[1] = gMainMtx[0] + MAIN_MTX_BUF_SIZE;
 
-    //polygon buffers? ("main:pol")
-    pol = (void **) malloc(0x640, ALLOC_TAG_LISTS_COL, NULL); //XXX type
-    gMainPol[0] = pol;
-    gMainPol[1] = pol + 200;
+    // polygon buffers? ("main:pol")
+    gMainPol[0] = malloc(0x640, ALLOC_TAG_LISTS_COL, NULL);
+    gMainPol[1] = gMainPol[0] + 0x320;
 
-    //vertex buffers ("main:vtx")
-    vtx = (Vtx *) malloc(MAIN_VTX_BUF_SIZE * 2 * sizeof(Vtx), ALLOC_TAG_LISTS_COL, NULL);
-    gMainVtx[0] = vtx;
-    gMainVtx[1] = vtx + MAIN_VTX_BUF_SIZE;
+    // vertex buffers ("main:vtx")
+    gMainVtx[0] = malloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainVtx[1] = gMainVtx[0] + MAIN_VTX_BUF_SIZE;
 }
-#endif
-
 
 void func_80014508(s8 arg0) {
     D_8008C94C = arg0;
