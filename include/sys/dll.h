@@ -55,12 +55,20 @@ typedef struct
 
 typedef struct
 {
+///*0000*/	s32 bank0;
+///*0004*/	s32 bank1;
+///*0008*/	s32 reserved;
+///*000C*/	s32 bank2;
+/*0010*/	DLLTabEntry entries[1];
+} DLLTab;
+
+typedef struct
+{
 /*0000*/	s32 bank0;
 /*0004*/	s32 bank1;
 /*0008*/	s32 reserved;
 /*000C*/	s32 bank2;
-/*0010*/	DLLTabEntry entries[1];
-} DLLTab;
+} DLLTabHeader;
 
 typedef struct
 {

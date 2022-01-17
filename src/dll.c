@@ -3,33 +3,25 @@
 #define MAX_LOADED_DLLS 128
 
 extern u32* gFile_DLLSIMPORTTAB;
+extern s32 gDLLCount;
 
-// close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/init_dll_system.s")
-#else
-extern u32 gDLLCount;
-void queue_alloc_load_file(s32 arg0, u32 id);
-void _init_dll_system()
+void init_dll_system(void)
 {
-    queue_alloc_load_file(&gFile_DLLS_TAB, DLLS_TAB);
-    queue_alloc_load_file(&gFile_DLLSIMPORTTAB, DLLSIMPORTTAB_BIN);
+    s32 noId = -1;
 
-    // Count DLLs
-    gDLLCount = 2;
-    while (gFile_DLLS_TAB->entries[gDLLCount].offset != -1)
-    {
-        gDLLCount++;
-    }
+    queue_alloc_load_file(&gFile_DLLS_TAB, 0x47);
+    queue_alloc_load_file(&gFile_DLLSIMPORTTAB, 0x48);
 
-    gLoadedDLLList = malloc(MAX_LOADED_DLLS * sizeof(DLLInst), 4, 0);
-    for (gLoadedDLLCount = MAX_LOADED_DLLS; gLoadedDLLCount != 0;)
+    for (gDLLCount = 2; ((DLLTabEntry*)((u8*)gFile_DLLS_TAB->entries + gDLLCount * 2 * 4u))->offset != -1; ++gDLLCount);
+    gLoadedDLLList = malloc(0x800, 4, 0);
+
+    gLoadedDLLCount = 128;
+    while (gLoadedDLLCount != 0)
     {
-        gLoadedDLLCount--;
-        gLoadedDLLList[gLoadedDLLCount].id = 0xFFFFFFFF;
+        --gLoadedDLLCount;
+        gLoadedDLLList[gLoadedDLLCount].id = noId;
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
 
@@ -56,13 +48,16 @@ u32* dll_load(u16 id, u16 exportCount, s32 arg2)
 
     if (id >= 0x8000) {
         id -= 0x8000;
-        id += gFile_DLLS_TAB->bank2;
+        // bank2
+        id += gFile_DLLS_TAB->entries[1].bssSize;
     } else if (id >= 0x2000) {
         id -= 0x2000;
-        id += gFile_DLLS_TAB->bank1 + 1;
+        // bank1
+        id += gFile_DLLS_TAB->entries[0].bssSize + 1;
     } else if (id >= 0x1000) {
         id -= 0x1000;
-        id += gFile_DLLS_TAB->bank0 + 1;
+        // bank0
+        id += gFile_DLLS_TAB->entries[0].offset + 1;
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
@@ -229,49 +224,37 @@ s32 dll_throw_fault(void)
     return 0;
 }
 
-// close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_from_tab.s")
-#else
-// regalloc/stack
-DLLFile * _dll_load_from_tab(u16 idx, u32 *totalSize)
+DLLFile * dll_load_from_tab(u16 id, s32 * sizeOut)
 {
-    DLLTabEntry* entry;
-
+    DLLFile * dll;
     s32 offset;
+    s32 dllSize; // t0
     s32 bssSize;
-    u32 dataSize;
 
-    DLLFile *dll;
+    id++;
+    offset = ((DLLTab*)((u8*)gFile_DLLS_TAB + id * 2 * 4u))->entries[0].offset;
+    dllSize = ((DLLTab*)((u8*)gFile_DLLS_TAB + id * 2 * 4u))->entries[1].offset - offset;
+    bssSize = ((DLLTab*)((u8*)gFile_DLLS_TAB + id * 2 * 4u))->entries[0].bssSize;
 
-    idx++;
-    entry = &gFile_DLLS_TAB->entries[idx] - 2;
-
-    offset = entry->offset;
-    bssSize = entry->bssSize;
-    dataSize = entry[1].offset - offset;
-
-    dll = malloc(dataSize + bssSize, 4, 0);
-
-    if (dll)
-        read_file_region(0x46, dll, offset, dataSize);
-
-    if (dll)
-    {
-        if (bssSize)
-            bzero((u8*)dll + dataSize, bssSize);
-
-        dll_relocate(dll);
-
-        osInvalICache(dll, 0x4000);
-        osInvalDCache(dll, 0x4000);
-        
-        *totalSize = dataSize + bssSize;
+    dll = malloc((u32)(dllSize + bssSize), ALLOC_TAG_DLL_COL, NULL);
+    if (dll != NULL) {
+        read_file_region(DLLS_BIN, dll, offset, dllSize);
     }
 
+    if (dll != NULL)
+    {
+        if (bssSize != 0) {
+            bzero((u32)dll + dllSize, bssSize);
+        }
+
+        dll_relocate(dll);
+        osInvalICache(dll, 0x4000);
+        osInvalDCache(dll, 0x4000);
+
+        *sizeOut = dllSize + bssSize;
+    }
     return dll;
 }
-#endif
 
 void dll_relocate(DLLFile* dll);
 void dll_relocate(DLLFile* dll)

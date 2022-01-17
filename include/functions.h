@@ -20,7 +20,7 @@ void replace_loaded_dll_list(DLLInst arg0[], s32 arg1);
 
 s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 
-DLLFile * dll_load_from_tab(u16, u32 *);
+DLLFile * dll_load_from_tab(u16 id, s32 * sizeOut);
 void dll_relocate(DLLFile* dll);
 
 #endif //_FUNCTIONS_H

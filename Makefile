@@ -2,9 +2,12 @@
 BUILD_DIR = build
 ASM_DIRS := asm asm/os asm/libultra/os
 DATA_DIRS := bin bin/mp3 bin/assets
-SRC_DIRS := $(shell find src -type d)
+SRC_DIRS := $(shell find src/libultra -type d)
+DLL_C_DIRS := $(shell find src/dlls -type d)
 
 C_FILES := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
+C_FILES += $(wildcard src/*.c)
+DLL_C_FILES := $(foreach dir,$(DLL_C_DIRS),$(wildcard $(dir)/*.c))
 S_FILES := $(foreach dir,$(ASM_DIRS),$(wildcard $(dir)/*.s))
 DATA_FILES := $(foreach dir,$(DATA_DIRS),$(wildcard $(dir)/*.bin))
 
@@ -12,6 +15,9 @@ DATA_FILES := $(foreach dir,$(DATA_DIRS),$(wildcard $(dir)/*.bin))
 O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
            $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
            $(foreach file,$(DATA_FILES),$(BUILD_DIR)/$(file:.bin=.o)) \
+
+# Object files
+DLL_O_FILES := $(foreach file,$(DLL_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
 
 ##################### Compiler Options #######################
 ifeq ($(shell type mips-n64-ld >/dev/null 2>/dev/null; echo $$?), 0)
@@ -51,10 +57,11 @@ CC_CHECK = gcc -fsyntax-only -fno-builtin -nostdinc -fsigned-char -m32 $(GCC_CFL
 
 ######################## Targets #############################
 
-$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(DATA_DIRS) $(COMPRESSED_DIRS) $(MAP_DIRS) $(BGM_DIRS),$(shell mkdir -p build/$(dir)))
+$(foreach dir,$(SRC_DIRS) $(DLL_C_DIRS) $(ASM_DIRS) $(DATA_DIRS) $(COMPRESSED_DIRS) $(MAP_DIRS) $(BGM_DIRS),$(shell mkdir -p build/$(dir)))
 
 build/src/os/O1/%.o: OPTFLAGS := -O1
 build/src/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
+build/src/dlls/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
 build/asm/%.o: ASFLAGS += -mips3 -mabi=32
 
 default: all
@@ -62,7 +69,7 @@ default: all
 TARGET = dino
 LD_SCRIPT = $(TARGET).ld
 
-all: $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
+all: builds_dlls $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -72,7 +79,9 @@ submodules:
 
 split:
 	rm -rf $(DATA_DIRS) $(ASM_DIRS)
+	mkdir -p bin/assets/dll
 	python3 ./tools/splat/split.py --rom baserom.z64 --outdir . splat.yaml
+	python3 ./tools/dino_dll.py unpack bin/assets/dll bin/assets/DLLS.bin bin/assets/DLLS_tab.bin 
 
 setup: baseverify clean submodules split
 	
@@ -86,6 +95,10 @@ $(BUILD_DIR)/$(LD_SCRIPT): $(LD_SCRIPT)
 
 $(BUILD_DIR)/$(TARGET).elf: $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 	$(LD) $(LDFLAGS) -o $@
+
+$(BUILD_DIR)/%.o: %.c
+	@$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $^
 
 $(BUILD_DIR)/%.o: %.c
 	@$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
@@ -109,5 +122,8 @@ baseverify:
 
 verify: $(BUILD_DIR)/$(TARGET).z64
 	md5sum -c checksum.md5
+
+builds_dlls:
+	python3 ./tools/dino_dll.py pack bin/assets/dll bin/assets/DLLS.bin bin/assets/DLLS_tab.bin 
 
 .PHONY: all clean default split setup
