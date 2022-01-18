@@ -8,3 +8,5 @@ python-Levenshtein
 python-ranges
 textwrap3
 watchdog
+GitPython
+colour
