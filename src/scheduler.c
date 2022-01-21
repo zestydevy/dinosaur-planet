@@ -163,25 +163,17 @@ void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
     *timer2 = floatTimer3 * temp;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scMain.s")
-#else
-// Very close
-void a__scMain(void *arg) {
-    OSMesg msg;
+void __scMain(void *arg) {
+    OSMesg msg = 0;
+    s32 state;
     OSSched *sc = (OSSched*)arg;
     OSScClient *client;
-    s32 state;
     OSScTask *sp = 0, *dp = 0;
-    OSScTask *t = 0;
 
     while (TRUE) {
         osRecvMesg(&sc->interruptQ, &msg, OS_MESG_BLOCK);
 
         switch ((int)msg) {
-            case 0x63:
-                func_8003B9C0(sc);
-                break;
 
             case VIDEO_MSG:
                 __scHandleRetrace(sc);
@@ -195,6 +187,10 @@ void a__scMain(void *arg) {
                 __scHandleRDP(sc);
                 break;
 
+            case 0x63:
+                func_8003B9C0(sc);
+                break;
+
             case PRE_NMI_MSG:
                 // notify audio and graphics threads to fade out
                 for (client = sc->clientList; client != 0; client = client->next) {
@@ -203,8 +199,7 @@ void a__scMain(void *arg) {
                 break;
 
             default:
-                t = (OSScTask *)msg;
-                __scAppendList(sc, t);
+                __scAppendList(sc, (OSScTask *)msg);
 
                 state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
                 if ((__scSchedule(sc, &sp, &dp, state)) != state) {
@@ -214,7 +209,6 @@ void a__scMain(void *arg) {
         }
     }
 }
-#endif
 
 void func_8003B9C0(OSSched *sc) {
     s32 state;
