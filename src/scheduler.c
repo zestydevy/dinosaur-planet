@@ -460,11 +460,6 @@ void __scYield(OSSched *sc) {
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scSchedule.s")
-#else
-// So close to matching that it's not even regalloc, something to do with one of
-// the switch case addresses...?
 /*
  * Schedules the tasks to be run on the RCP.
  */
@@ -562,4 +557,3 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
 
     return avail;
 }
-#endif
