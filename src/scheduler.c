@@ -2,6 +2,7 @@
 // See https://github.com/n64decomp/libreultra/blob/master/src/sched/sched.c
 
 #include "common.h"
+#include "PR/os_internal.h"
 
 #define VIDEO_MSG       666
 #define RSP_DONE_MSG    667
@@ -249,7 +250,172 @@ char *get_task_type_string(u32 taskType) {
 
 void some_dummied_task_func(int _) { }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003BAD0.s")
+#else
+// Very close, just stack vars being off a little and regalloc
+Gfx* _func_8003BAD0(OSSched *sc, 
+    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
+    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
+
+    // Stack vars
+    OSMesg queueBuffer[8];
+    OSMesg queueMsg = 0;
+    OSMesgQueue queue;
+    Gfx tempGfx[2];
+    // Note: these hold values from a DLDebugInfo
+    s32 dldi_unk0x10_2;
+    s32 dldi_unk0x10;
+    char *dldi_file_2;
+    char *dldi_file;
+    int isCmdIndexLt2 = FALSE;
+    u32 dldi_unk0xc_2;
+    u32 dldi_unk0xc;
+    u32 dldi_unk0x4_2;
+    u32 dldi_unk0x4;
+
+    // Temp vars
+    OSTask *task;
+    Gfx *displayListPtr;
+    int gotRdpDone;
+    int numRetraces;
+    s32 cmdIndex;
+    u32 t1, t2;
+
+    stop_alSyn_thread();
+
+    task = &sc->curRSPTask->list;
+    cmdIndex = task->t.data_size / 2;
+    displayListPtr = (Gfx*)&task->t.data_ptr[cmdIndex];
+
+    osCreateMesgQueue(&queue, queueBuffer, 8);
+    osSetEventMesg(OS_EVENT_SP, &queue, (OSMesg)RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &queue, (OSMesg)RDP_DONE_MSG);
+    osViSetEvent(&queue, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+    do {
+        __osSpSetStatus(
+            SP_SET_HALT | 
+            SP_CLR_INTR_BREAK | 
+            SP_CLR_SIG0 | 
+            SP_CLR_SIG1 | 
+            SP_CLR_SIG2 | 
+            SP_CLR_SIG3 | 
+            SP_CLR_SIG4 | 
+            SP_CLR_SIG5 | 
+            SP_CLR_SIG6 | 
+            SP_CLR_SIG7);
+        
+        gotRdpDone = FALSE;
+        numRetraces = 0;
+        
+        osDpSetStatus(
+            DPC_SET_XBUS_DMEM_DMA | 
+            DPC_CLR_FREEZE | 
+            DPC_CLR_FLUSH | 
+            DPC_CLR_TMEM_CTR | 
+            DPC_CLR_PIPE_CTR | 
+            DPC_CLR_CMD_CTR);
+
+        t1 = displayListPtr[0].words.w0;
+        t2 = displayListPtr[0].words.w1;
+
+        tempGfx[1].words.w0 = t1;
+        tempGfx[1].words.w1 = t2;
+
+        t2 = displayListPtr[1].words.w1;
+        t1 = displayListPtr[1].words.w0;
+
+        tempGfx[0].words.w0 = t1;
+        tempGfx[0].words.w1 = t2;
+
+        gDPFullSync(&displayListPtr[0]);
+        gSPEndDisplayList(&displayListPtr[1]);
+
+        // Equivalent of the above 2 macros:
+        // displayListPtr[0].words.w0 = 0xe9000000;
+        // displayListPtr[0].words.w1 = 0;
+        // displayListPtr[1].words.w0 = 0xdf000000;
+        // displayListPtr[1].words.w1 = 0;
+
+        osWritebackDCacheAll();
+
+        osSpTaskLoad(&sc->curRSPTask->list);
+        osSpTaskStartGo(&sc->curRSPTask->list);
+
+        do {
+            osRecvMesg(&queue, &queueMsg, OS_MESG_BLOCK);
+
+            switch ((int)queueMsg) {
+                case VIDEO_MSG:
+                    numRetraces++;
+                    break;
+                case RDP_DONE_MSG:
+                    gotRdpDone = TRUE;
+                    break;
+                case RSP_DONE_MSG:
+                    break;
+            }
+        } while (numRetraces < 10 && !gotRdpDone);
+
+        t1 = tempGfx[0].words.w0;
+        t2 = tempGfx[0].words.w1;
+
+        displayListPtr[0].words.w0 = t1;
+        displayListPtr[0].words.w1 = t2;
+
+        t2 = tempGfx[1].words.w1;
+        t1 = tempGfx[1].words.w0;
+
+        displayListPtr[1].words.w0 = t1;
+        displayListPtr[1].words.w1 = t2;
+
+        if (cmdIndex < 2) {
+            isCmdIndexLt2 = TRUE;
+        }
+
+        if ((cmdIndex & 1) != 0) {
+            cmdIndex = (cmdIndex / 2) + 1;
+        } else {
+            cmdIndex = cmdIndex / 2;
+        }
+
+        if (gotRdpDone) {
+            displayListPtr += cmdIndex;
+        } else {
+            displayListPtr -= cmdIndex;
+        }
+    } while (!isCmdIndexLt2);
+
+    osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)RDP_DONE_MSG);
+    osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+    if (gotRdpDone) {
+        *retFile_2 = NULL;
+        *retFile = NULL;
+
+        dl_get_debug_info2(displayListPtr,
+            &dldi_unk0x4, &dldi_file, &dldi_unk0xc, &dldi_unk0x10,
+            &dldi_unk0x4_2, &dldi_file_2, &dldi_unk0xc_2, &dldi_unk0x10_2);
+        
+        if (dldi_file_2 != NULL || dldi_file != NULL) {
+            if (dldi_file != NULL) {
+                *retFile = dldi_file;
+                *retUnk0xc = dldi_unk0xc;
+                *retUnk0x10 = dldi_unk0x10;
+            }
+            if (dldi_file_2 != NULL) {
+                *retFile_2 = dldi_file_2;
+                *retUnk0xc_2 = dldi_unk0xc_2;
+                *retUnk0x10_2 = dldi_unk0x10_2;
+            }
+        }
+    }
+
+    return displayListPtr;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
 
