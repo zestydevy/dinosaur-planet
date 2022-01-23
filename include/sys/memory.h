@@ -13,6 +13,11 @@
 #define HEAP_AREA_02 0x80119000
 #define HEAP_AREA_NO_EXPANSION 0x802D4000
 
+enum AllocTagOld
+{
+    ALLOC_TAG_FS_COL = 0x7F7F7FFF
+};
+
 //Allocations are given a color tag.
 //names extracted from default.dol
 enum AllocTag {

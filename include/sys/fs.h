@@ -83,4 +83,11 @@ typedef enum
 /*4A*/    NUM_FILES
 } EFile;
 
+typedef struct
+{ 
+    s32 fileCount;
+    u32 offsets[NUM_FILES];
+} Fs;
+
+
 #endif //_SYS_FS_H

@@ -32,3 +32,6 @@ gStrGameTask = 0x8009a030;
 gStrDITask = 0x8009a03c;
 gStrDIBenchmarkTest = 0x8009a048;
 gStrUnknownTaskType = 0x8009a060;
+
+__fstAddress = 0xA4970;
+__file1Address = 0xA4AA0;

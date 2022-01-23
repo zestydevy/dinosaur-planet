@@ -14,9 +14,9 @@ void func_80030EC0()
     gActorCount = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_31AC0/add_object_to_array.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objlib/add_object_to_array.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_31AC0/func_80031080.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_80031080.s")
 
 TActor **TActor_getter(s32 idx, s32 *count)
 {
@@ -31,7 +31,7 @@ TActor **TActor_getter(s32 idx, s32 *count)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_31AC0/func_80031238.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_80031238.s")
 #else
 #define F32_MAX_FINITE (*(f32*)0x80099c3c)
 float _sqrtf(float x);
@@ -78,7 +78,7 @@ TActor *_func_80031238(s32 idx, TActor *actor, float *distance)
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_31AC0/func_80031350.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_80031350.s")
 #else
 #define F32_MAX_FINITE (*(f32*)0x80099c40)
 float _sqrtf(float x);
@@ -126,6 +126,6 @@ TActor *_func_80031350(s32 idx, TActor *actor, float *distance)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_31AC0/func_80031470.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_80031470.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_31AC0/func_8003159C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_8003159C.s")

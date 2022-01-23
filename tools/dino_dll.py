@@ -65,6 +65,13 @@ class dino_dll():
 
             data = bin[offset:next]
             open(name, "wb").write(data)
+            codeStart = struct.unpack_from(">3I", bin, offset)[0]
+            codeEnd = struct.unpack_from(">3I", bin, offset)[2]
+            codeLen = codeEnd - codeStart
+            mainOffset = 58922956 + offset
+            #print("    - [" + str(hex(mainOffset + codeStart)) + ", c, dlls2/dll" + str(i) + "]")
+            #if codeEnd != 0xFFFFFFFF:
+            #    print("    - [" + str(hex(mainOffset + codeEnd)) + ", bin, dll" + str(i) + "_data]")
             i += 1
 
 def main():
