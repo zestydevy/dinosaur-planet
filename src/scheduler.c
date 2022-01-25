@@ -81,8 +81,8 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     s->gfxListHead      = NULL;
     s->audioListTail    = NULL;
     s->gfxListTail      = NULL;
-    s->doAudio          = 0;
     s->frameCount       = 0;
+    s->unkTask          = NULL;
     s->retraceMsg.type  = OS_SC_RETRACE_MSG;
     s->prenmiMsg.type   = OS_SC_PRE_NMI_MSG;
 
@@ -216,10 +216,10 @@ void func_8003B9C0(OSSched *sc) {
     OSScTask *sp = 0, *dp = 0;
 
     if (sc->audioListHead) {
-        sc->unk0x304 = 1;
+        sc->doAudio = 1;
     }
 
-    if (sc->unk0x304 != 0 && sc->curRSPTask) {
+    if (sc->doAudio != 0 && sc->curRSPTask) {
         __scYield(sc);
         return;
     }
@@ -489,28 +489,27 @@ OSScTask *__scTaskReady(OSScTask *t) {
     return NULL;
 }
 
-// TODO: This matches, but has some illogical oddities
 s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
     if ((t->state & OS_SC_RCP_MASK) == 0) { /* none of the needs bits set */
         if (t->msgQ) {
             if (t->flags & OS_SC_LAST_TASK) {
-                if ((u32)sc->doAudio < 2u) {
-                    sc->frameCount = (u32)t; // ??
+                if ((u32)sc->frameCount < 2u) {
+                    sc->unkTask = t;
                     return 1;
                 }
 
                 if (t->unk0x68 || t->msg) {
-                    osSendMesg(t->msgQ, t->msg, 1);
+                    osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 } else {
                     osSendMesg(t->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
                 }
 
-                sc->doAudio = 0;
+                sc->frameCount = 0;
                 return 1;
             }
 
             if (t->unk0x68 || t->msg) {
-                osSendMesg(t->msgQ, t->msg, 1);
+                osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 return 1;
             }
 
@@ -598,14 +597,14 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
     OSScTask *gfx = sc->gfxListHead;
     OSScTask *audio = sc->audioListHead;
 
-    if (sc->unk0x304 && (avail & OS_SC_SP)) {
+    if (sc->doAudio && (avail & OS_SC_SP)) {
         if (gfx && (gfx->flags & OS_SC_PARALLEL_TASK)) {
             *sp = gfx;
             avail &= ~OS_SC_SP;
         } else {
             *sp = audio;
             avail &= ~OS_SC_SP;
-            sc->unk0x304 = 0;
+            sc->doAudio = 0;
             sc->audioListHead = sc->audioListHead->next;
 
             if (sc->audioListHead == NULL) {
