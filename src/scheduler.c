@@ -250,37 +250,32 @@ char *get_task_type_string(u32 taskType) {
 
 void some_dummied_task_func(int _) { }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003BAD0.s")
-#else
-// Very close, just stack vars being off a little and regalloc
-Gfx* _func_8003BAD0(OSSched *sc, 
+Gfx* func_8003BAD0(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
 
-    // Stack vars
     OSMesg queueBuffer[8];
-    OSMesg queueMsg = 0;
+    OSMesg queueMsg;
     OSMesgQueue queue;
-    Gfx tempGfx[2];
+    s64 tempCmds[2];
     // Note: these hold values from a DLDebugInfo
+    Gfx *displayListPtr;
+    OSTask *task;
     s32 dldi_unk0x10_2;
     s32 dldi_unk0x10;
     char *dldi_file_2;
     char *dldi_file;
-    int isCmdIndexLt2 = FALSE;
+    s32 isCmdIndexLt2;
+    s32 numRetraces;
+    s32 gotRdpDone;
+    s32 cmdIndex;
     u32 dldi_unk0xc_2;
     u32 dldi_unk0xc;
     u32 dldi_unk0x4_2;
     u32 dldi_unk0x4;
 
-    // Temp vars
-    OSTask *task;
-    Gfx *displayListPtr;
-    int gotRdpDone;
-    int numRetraces;
-    s32 cmdIndex;
-    u32 t1, t2;
+    queueMsg = 0;
+    isCmdIndexLt2 = FALSE;
 
     stop_alSyn_thread();
 
@@ -317,26 +312,11 @@ Gfx* _func_8003BAD0(OSSched *sc,
             DPC_CLR_PIPE_CTR | 
             DPC_CLR_CMD_CTR);
 
-        t1 = displayListPtr[0].words.w0;
-        t2 = displayListPtr[0].words.w1;
-
-        tempGfx[1].words.w0 = t1;
-        tempGfx[1].words.w1 = t2;
-
-        t2 = displayListPtr[1].words.w1;
-        t1 = displayListPtr[1].words.w0;
-
-        tempGfx[0].words.w0 = t1;
-        tempGfx[0].words.w1 = t2;
+        tempCmds[1] = ((s64*)displayListPtr)[0];
+        tempCmds[0] = ((s64*)displayListPtr)[1];
 
         gDPFullSync(&displayListPtr[0]);
         gSPEndDisplayList(&displayListPtr[1]);
-
-        // Equivalent of the above 2 macros:
-        // displayListPtr[0].words.w0 = 0xe9000000;
-        // displayListPtr[0].words.w1 = 0;
-        // displayListPtr[1].words.w0 = 0xdf000000;
-        // displayListPtr[1].words.w1 = 0;
 
         osWritebackDCacheAll();
 
@@ -358,17 +338,8 @@ Gfx* _func_8003BAD0(OSSched *sc,
             }
         } while (numRetraces < 10 && !gotRdpDone);
 
-        t1 = tempGfx[0].words.w0;
-        t2 = tempGfx[0].words.w1;
-
-        displayListPtr[0].words.w0 = t1;
-        displayListPtr[0].words.w1 = t2;
-
-        t2 = tempGfx[1].words.w1;
-        t1 = tempGfx[1].words.w0;
-
-        displayListPtr[1].words.w0 = t1;
-        displayListPtr[1].words.w1 = t2;
+        ((s64*)displayListPtr)[0] = tempCmds[1];
+        ((s64*)displayListPtr)[1] = tempCmds[0];
 
         if (cmdIndex < 2) {
             isCmdIndexLt2 = TRUE;
@@ -415,7 +386,6 @@ Gfx* _func_8003BAD0(OSSched *sc,
 
     return displayListPtr;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
 
