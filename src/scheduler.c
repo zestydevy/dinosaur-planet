@@ -250,7 +250,7 @@ char *get_task_type_string(u32 taskType) {
 
 void some_dummied_task_func(int _) { }
 
-Gfx* func_8003BAD0(OSSched *sc, 
+Gfx *func_8003BAD0(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
 
@@ -258,14 +258,13 @@ Gfx* func_8003BAD0(OSSched *sc,
     OSMesg queueMsg;
     OSMesgQueue queue;
     s64 tempCmds[2];
-    // Note: these hold values from a DLDebugInfo
     Gfx *displayListPtr;
     OSTask *task;
     s32 dldi_unk0x10_2;
     s32 dldi_unk0x10;
     char *dldi_file_2;
     char *dldi_file;
-    s32 isCmdIndexLt2;
+    s32 done;
     s32 numRetraces;
     s32 gotRdpDone;
     s32 cmdIndex;
@@ -275,20 +274,23 @@ Gfx* func_8003BAD0(OSSched *sc,
     u32 dldi_unk0x4;
 
     queueMsg = 0;
-    isCmdIndexLt2 = FALSE;
+    done = FALSE;
 
+    // Stop audio syn thread
     stop_alSyn_thread();
 
     task = &sc->curRSPTask->list;
     cmdIndex = task->t.data_size / 2;
     displayListPtr = (Gfx*)&task->t.data_ptr[cmdIndex];
 
+    // Temporarily steal events for SP completion, DP fullsync, and vertical retraces
     osCreateMesgQueue(&queue, queueBuffer, 8);
     osSetEventMesg(OS_EVENT_SP, &queue, (OSMesg)RSP_DONE_MSG);
     osSetEventMesg(OS_EVENT_DP, &queue, (OSMesg)RDP_DONE_MSG);
     osViSetEvent(&queue, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
 
     do {
+        // Halt the SP, disable interrupt on break, and clear all signals
         __osSpSetStatus(
             SP_SET_HALT | 
             SP_CLR_INTR_BREAK | 
@@ -304,6 +306,7 @@ Gfx* func_8003BAD0(OSSched *sc,
         gotRdpDone = FALSE;
         numRetraces = 0;
         
+        // Reset DP?
         osDpSetStatus(
             DPC_SET_XBUS_DMEM_DMA | 
             DPC_CLR_FREEZE | 
@@ -312,17 +315,21 @@ Gfx* func_8003BAD0(OSSched *sc,
             DPC_CLR_PIPE_CTR | 
             DPC_CLR_CMD_CTR);
 
+        // Temporarily patch an early end command into the display list
         tempCmds[1] = ((s64*)displayListPtr)[0];
         tempCmds[0] = ((s64*)displayListPtr)[1];
 
         gDPFullSync(&displayListPtr[0]);
         gSPEndDisplayList(&displayListPtr[1]);
 
+        // Flush CPU cache
         osWritebackDCacheAll();
 
+        // Run the task
         osSpTaskLoad(&sc->curRSPTask->list);
         osSpTaskStartGo(&sc->curRSPTask->list);
 
+        // Wait until 10 vertical retraces occur or we receive RDP done
         do {
             osRecvMesg(&queue, &queueMsg, OS_MESG_BLOCK);
 
@@ -338,14 +345,15 @@ Gfx* func_8003BAD0(OSSched *sc,
             }
         } while (numRetraces < 10 && !gotRdpDone);
 
+        // Restore the original display list commands
         ((s64*)displayListPtr)[0] = tempCmds[1];
         ((s64*)displayListPtr)[1] = tempCmds[0];
 
         if (cmdIndex < 2) {
-            isCmdIndexLt2 = TRUE;
+            done = TRUE;
         }
 
-        if ((cmdIndex & 1) != 0) {
+        if ((cmdIndex % 2) != 0) {
             cmdIndex = (cmdIndex / 2) + 1;
         } else {
             cmdIndex = cmdIndex / 2;
@@ -356,8 +364,9 @@ Gfx* func_8003BAD0(OSSched *sc,
         } else {
             displayListPtr -= cmdIndex;
         }
-    } while (!isCmdIndexLt2);
+    } while (!done);
 
+    // Restore SP, DP, and vertical retrace event handling to the scheduler
     osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)RSP_DONE_MSG);
     osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)RDP_DONE_MSG);
     osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
