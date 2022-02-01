@@ -173,7 +173,6 @@ void func_8003DB5C();                                  /* extern */
 void func_8003E9F0(Gfx**, u8);                         /* extern */
 s32 func_80041D5C();                                /* extern */
 s32 func_80041D74();                                /* extern */
-void func_80060B94(Gfx**);                             /* extern */
 void tick_cameras();                                   /* extern */
 void update_mem_mon_values();                          /* extern */
 u8 video_func_returning_delay(s32);                   /* extern */

@@ -48,18 +48,36 @@ extern f32 floatTimer1;
 extern f32 floatTimer2;
 extern f32 floatTimer3;
 
-extern s32 intTimer0;
+extern OSMesg D_800918D8;
 
-extern u32 D_800918F4;
-extern u32 D_800918F8;
+extern s32 intTimer0;
+extern s32 D_800918F4;
+extern s32 D_800918F8;
+extern u64 intTimer1;
 
 extern f32 D_8009A340;
 extern f32 D_8009A344;
+
+extern s32 D_800B4980;
+extern s32 D_800B4984;
 
 OSTime D_800B4988;
 
 extern u32 countRegA;
 extern u32 countRegB;
+
+extern char D_8009A280[]; // "SP CRASHED, gfx=%x\n"
+extern char D_8009A294[]; // "TRACE:  %s:%d    gfx=%x\n"
+extern char D_8009A2B0[]; // "TRACE:  %s:%d    gfx=%x\n"
+extern char D_8009A2CC[]; // "DP CRASHED, gfx=%x\n"
+extern char D_8009A2E0[]; // "TRACE:  %s:%5d    gfx=%x\n"
+extern char D_8009A2FC[]; // "TRACE:  %s:%5d    gfx=%x\n"
+extern char D_8009A318[]; // "CODE: Version %s  %s  %s\n" TODO: add symbol
+extern char **D_8008C8F0; // ptr to "1.3623"
+extern char **D_8008C8F4; // ptr to "01/12/00 09:19"
+extern char **D_8008C8F8; // ptr to "dragon1"
+extern char D_8009A334[]; // "DB:   %s\n"
+extern char D_8008C8FC[]; // "Version 2.8 14/12/98 15.30 L.Schuneman"
 
 void __scMain(void *arg);
 void func_8003B9C0(OSSched *sc);
@@ -71,6 +89,9 @@ void __scAppendList(OSSched *s, OSScTask *t);
 void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
 void __scYield(OSSched *sc);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
+
+void func_80060EB8(u8, u8, u8, u8);
+void func_80060FD0(u32, u32);
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount) {
     // Initialize scheduler structure
@@ -396,7 +417,228 @@ Gfx *func_8003BAD0(OSSched *sc,
     return displayListPtr;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
+#else
+// A single %hi isn't being reused, everything else matches, even regalloc
+void a__scHandleRetrace(OSSched *sc) {
+    OSScTask *rspTask = NULL;   // sp+0xd4
+    OSScClient *client;
+    s32 state;
+    OSScTask *sp = 0;       // sp+0xc8
+    OSScTask *dp = 0;       // sp+0xc4
+    u8 set_curRSPTask_NULL = FALSE; // sp+0xc2
+    u8 set_curRDPTask_NULL = FALSE;
+    Gfx *displayListPtr1;   // sp+0xbc
+    Gfx *displayListPtr2;   // sp+0xb8
+    s32 sp_dldi_unk0x10;    // sp+0xb4
+    s32 sp_dldi_unk0x10_2;  // sp+0xb0
+    s32 dp_dldi_unk0x10;    // sp+0xac
+    s32 dp_dldi_unk0x10_2;  // sp+0xa8
+    char *sp_dldi_file;     // sp+0xa4
+    char *sp_dldi_file_2;   // sp+0xa0 
+    char *dp_dldi_file;     // sp+0x9c 
+    char *dp_dldi_file_2;   // sp+0x98
+    u32 sp_dldi_unk0xc;     // sp+0x94
+    u32 sp_dldi_unk0xc_2;   // sp+0x90
+    u32 dp_dldi_unk0xc;     // sp+0x8c
+    u32 dp_dldi_unk0xc_2;   // sp+0x88
+    OSMesg queueBuffer[8];  // sp+0x68
+    OSMesgQueue queue;      // sp+0x50
+    OSScTask *unkTask2;     // sp+0x4c
+    u64 *taskDataPtr;       // sp+0x48
+    OSScTask *unkTask;
+
+    if (sc->curRSPTask) {
+        D_800918F4++; // gCurRSPTaskCounter
+    }
+
+    if (sc->curRDPTask) {
+        D_800918F8++; // gCurRDPTaskCounter
+    }
+
+    displayListPtr1 = NULL;
+    displayListPtr2 = NULL;
+
+    if ((D_800918F4 > 10) && (sc->curRSPTask)) {
+        if (D_800B4980) {
+            get_task_type_string(sc->curRSPTask->taskType);
+            some_dummied_task_func(sc->curRSPTask);
+
+            if (sc->curRSPTask->list.t.type == OS_SC_TASK_AUDIO) {
+                displayListPtr1 = func_8003BAD0(sc, 
+                    &sp_dldi_file, &sp_dldi_unk0xc, &sp_dldi_unk0x10, 
+                    &sp_dldi_file_2, &sp_dldi_unk0xc_2, &sp_dldi_unk0x10_2);
+            }
+
+            D_800B4980 = 0;
+        }
+
+        D_800918F4 = 0;
+        set_curRSPTask_NULL = TRUE;
+
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+    } else if (sc->curRSPTask) {
+        D_800B4980 = TRUE; // gCurRSPTaskIsSet
+    }
+
+    if ((D_800918F8 > 10) && (sc->curRDPTask)) {
+        if (sc->curRDPTask->unk0x68 == 0) {
+            osSendMesg(sc->curRDPTask->msgQ, &D_800918D8, OS_MESG_BLOCK);
+        }
+
+        if (D_800B4984) {
+            get_task_type_string(sc->curRDPTask->taskType);
+            some_dummied_task_func(sc->curRDPTask);
+
+            if (sc->curRDPTask->list.t.type == OS_SC_TASK_AUDIO) {
+                displayListPtr2 = func_8003BAD0(sc, 
+                    &dp_dldi_file, &dp_dldi_unk0xc, &dp_dldi_unk0x10, 
+                    &dp_dldi_file_2, &dp_dldi_unk0xc_2, &dp_dldi_unk0x10_2);
+            }
+
+            D_800B4984 = FALSE;
+        }
+
+        set_curRDPTask_NULL = TRUE;
+        sc->frameCount = 0;
+        D_800918F8 = 0;
+
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH |
+            DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+    } else if (sc->curRDPTask) {
+        D_800B4984 = TRUE; // gCurRDPTaskIsSet 
+    }
+
+    if (displayListPtr1 != NULL || displayListPtr2 != NULL) {
+        osCreateMesgQueue(&queue, queueBuffer, 8);
+        
+        osSetEventMesg(OS_EVENT_SP, &queue, (OSMesg)RSP_DONE_MSG);
+        osSetEventMesg(OS_EVENT_DP, &queue, (OSMesg)RDP_DONE_MSG);
+        osViSetEvent(&queue, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+        unkTask2 = sc->curRSPTask != NULL ? sc->curRSPTask : sc->curRDPTask;
+        taskDataPtr = unkTask2->list.t.data_ptr;
+
+        dl_segment((Gfx**)&taskDataPtr, 0, NULL);
+        dl_segment((Gfx**)&taskDataPtr, 1, gFramebufferCurrent);
+        dl_segment((Gfx**)&taskDataPtr, 2, D_800bccb4);
+        dl_segment((Gfx**)&taskDataPtr, 4, gFramebufferNext - 0x280);
+
+        func_80060EB8(0, 0, 0, 0x80);
+
+        if (displayListPtr1 != NULL) {
+            func_80060FD0(0x1e, 0x1e);
+            dummied_print_func(&D_8009A280, displayListPtr1);
+
+            if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
+                if (sp_dldi_file != NULL) {
+                    func_80060FD0(0x1e, 0x28);
+                    dummied_print_func(D_8009A294, sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                }
+
+                if (sp_dldi_file_2 != NULL) {
+                    func_80060FD0(0x1e, 0x32);
+                    dummied_print_func(D_8009A2B0, sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                }
+            }
+        }
+
+        if (displayListPtr2 != NULL) {
+            func_80060FD0(0x1e, 0x46);
+            dummied_print_func(&D_8009A2CC, displayListPtr2);
+
+            if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
+                if (sp_dldi_file != NULL) {
+                    func_80060FD0(0x1e, 0x50);
+                    dummied_print_func(D_8009A2E0, sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                }
+
+                if (sp_dldi_file_2 != NULL) {
+                    func_80060FD0(0x1e, 0x5a);
+                    dummied_print_func(D_8009A2FC, sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                }
+            }
+        }
+
+        displayListPtr1 = NULL;
+        displayListPtr2 = NULL;
+
+        func_80060FD0(0x1e, 0x6e);
+        dummied_print_func(&D_8009A318, D_8008C8F0, D_8008C8F4, D_8008C8F8);
+
+        func_80060FD0(0x1e, 0x78);
+        dummied_print_func(&D_8009A334, &D_8008C8FC);
+
+        func_80060B94((Gfx**)&taskDataPtr);
+
+        __osSpSetStatus(0xaaaa82);
+        osDpSetStatus(0x1d6);
+
+        gDPFullSync(taskDataPtr++);
+        gSPEndDisplayList(taskDataPtr++);
+
+        osWritebackDCacheAll();
+
+        osSpTaskLoad(&unkTask2->list);
+        osSpTaskStartGo(&unkTask2->list);
+
+        while (TRUE) {}
+    }
+
+    if (set_curRSPTask_NULL) {
+        sc->curRSPTask = NULL;
+    }
+
+    if (set_curRDPTask_NULL) {
+        sc->curRDPTask = NULL;
+    }
+
+    while (osRecvMesg(&sc->cmdQ, (OSMesg *)&rspTask, OS_MESG_NOBLOCK) != -1)
+        __scAppendList(sc, rspTask);
+
+    state = ((sc->curRSPTask == NULL) << 1) | (sc->curRDPTask == NULL);
+    if (__scSchedule(sc, &sp, &dp, state) != state)
+        __scExec(sc, sp, dp);
+
+    intTimer1++;
+    intTimer0++;
+    sc->frameCount++;
+
+    if ((sc->unkTask) && (sc->frameCount >= 2)) {
+        unkTask = sc->unkTask;
+        if (unkTask->msgQ) {
+            if ((unkTask->unk0x68) || (unkTask->msg)) {
+                osSendMesg(unkTask->msgQ, unkTask->msg, OS_MESG_BLOCK);
+            } else {
+                osSendMesg(unkTask->msgQ, &D_800918D0, OS_MESG_BLOCK);
+            }
+        }
+        sc->frameCount = 0;
+        sc->unkTask = 0;
+    }
+
+    for (client = sc->clientList; client != 0; client = client->next) {
+        if (client->unk0x0 == 1) {
+            //Only run this on even calls to this function
+            if (intTimer1 % 2 == 0) {
+                osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
+                if (sc->audioListHead) {
+                    func_8003B9C0(sc);
+                }
+            }
+        } else if (client->unk0x0 == 2) {
+            osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
+        }
+    }
+}
+#endif
 
 /**
  * __scHandleRSP is called when an RSP task signals that it has
