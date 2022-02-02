@@ -16,6 +16,7 @@ typedef void UNK_PTR;
 #include "sys/dll.h"
 #include "sys/debug.h"
 #include "sys/controller.h"
+#include "sys/scheduler.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
 #include "sys/gfx/animation.h"
