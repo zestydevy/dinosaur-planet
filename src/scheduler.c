@@ -2,7 +2,7 @@
 #include "PR/os_internal.h"
 
 u64 gRetraceCounter64;
-OSTime D_800B4988;
+OSTime gLastGfxYield;
 
 void func_80060EB8(u8, u8, u8, u8);
 void func_80060FD0(u32, u32);
@@ -18,7 +18,7 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     s->gfxListTail      = NULL;
     s->frameCount       = 0;
     s->unkTask          = NULL;
-    s->retraceMsg.type  = OS_SC_RETRACE_MSG;
+    s->retraceMsg.type  = OS_SC_RETRACE_MSG; // sent to apps
     s->prenmiMsg.type   = OS_SC_PRE_NMI_MSG;
 
     // Set up video manager
@@ -508,6 +508,7 @@ void __scHandleRetrace(OSSched *sc) {
         sc->curRDPTask = NULL;
     }
 
+    // Read the task command queue and schedule tasks
     while (osRecvMesg(&sc->cmdQ, (OSMesg *)&rspTask, OS_MESG_NOBLOCK) != -1)
         __scAppendList(sc, rspTask);
 
@@ -728,7 +729,7 @@ void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
 
-        D_800B4988 = osGetTime();
+        gLastGfxYield = osGetTime();
 
         osSpTaskYield();
     }

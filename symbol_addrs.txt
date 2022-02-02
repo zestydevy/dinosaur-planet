@@ -1208,6 +1208,7 @@ gCurRSPTaskCounter = 0x800918F4; // type:data
 gCurRDPTaskCounter = 0x800918F8; // type:data
 gCurRSPTaskIsSet = 0x800B4980; // type:data
 gCurRDPTaskIsSet = 0x800B4984; // type:data
+gLastGfxYield = 0x800B4988; // type:data
 
 assetThread = 0x800AC918; // type:data
 assetThreadStackEnd = 0x800AC910; // type:data

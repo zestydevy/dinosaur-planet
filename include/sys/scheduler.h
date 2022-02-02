@@ -34,24 +34,37 @@
 #define OS_SC_TASK_DI 3
 #define OS_SC_TASK_DI_BENCHMARK_TEST 4
 
-extern char gStrAudioTask[];        // "(Audio task)"
-extern char gStrGameTask[];         // "(Game task)"
-extern char gStrDITask[];           // "(DI task)\n"
-extern char gStrDIBenchmarkTest[];  // "(DI benchmark test)\n"
-extern char gStrUnknownTaskType[];  // "(Unknown task type)\n"
+extern char **D_8008C8F0; // ptr to "1.3623"
+extern char **D_8008C8F4; // ptr to "01/12/00 09:19"
+extern char **D_8008C8F8; // ptr to "dragon1"
+extern char D_8008C8FC[]; // "Version 2.8 14/12/98 15.30 L.Schuneman"
 
 extern void *D_800918D0;
+extern void *D_800918D8;
 
 extern f32 floatTimer0;
 extern f32 floatTimer1;
 extern f32 floatTimer2;
 extern f32 floatTimer3;
 
-extern OSMesg D_800918D8;
-
 extern s32 gRetraceCounter32;
 extern s32 gCurRSPTaskCounter;
 extern s32 gCurRDPTaskCounter;
+
+extern char gStrAudioTask[];        // "(Audio task)"
+extern char gStrGameTask[];         // "(Game task)"
+extern char gStrDITask[];           // "(DI task)\n"
+extern char gStrDIBenchmarkTest[];  // "(DI benchmark test)\n"
+extern char gStrUnknownTaskType[];  // "(Unknown task type)\n"
+
+extern char D_8009A280[]; // "SP CRASHED, gfx=%x\n"
+extern char D_8009A294[]; // "TRACE:  %s:%d    gfx=%x\n"
+extern char D_8009A2B0[]; // "TRACE:  %s:%d    gfx=%x\n"
+extern char D_8009A2CC[]; // "DP CRASHED, gfx=%x\n"
+extern char D_8009A2E0[]; // "TRACE:  %s:%5d    gfx=%x\n"
+extern char D_8009A2FC[]; // "TRACE:  %s:%5d    gfx=%x\n"
+extern char D_8009A318[]; // "CODE: Version %s  %s  %s\n"
+extern char D_8009A334[]; // "DB:   %s\n"
 
 extern f32 D_8009A340;
 extern f32 D_8009A344;
@@ -61,19 +74,6 @@ extern s32 gCurRDPTaskIsSet;
 
 extern u32 countRegA;
 extern u32 countRegB;
-
-extern char D_8009A280[]; // "SP CRASHED, gfx=%x\n"
-extern char D_8009A294[]; // "TRACE:  %s:%d    gfx=%x\n"
-extern char D_8009A2B0[]; // "TRACE:  %s:%d    gfx=%x\n"
-extern char D_8009A2CC[]; // "DP CRASHED, gfx=%x\n"
-extern char D_8009A2E0[]; // "TRACE:  %s:%5d    gfx=%x\n"
-extern char D_8009A2FC[]; // "TRACE:  %s:%5d    gfx=%x\n"
-extern char D_8009A318[]; // "CODE: Version %s  %s  %s\n" TODO: add symbol
-extern char **D_8008C8F0; // ptr to "1.3623"
-extern char **D_8008C8F4; // ptr to "01/12/00 09:19"
-extern char **D_8008C8F8; // ptr to "dragon1"
-extern char D_8009A334[]; // "DB:   %s\n"
-extern char D_8008C8FC[]; // "Version 2.8 14/12/98 15.30 L.Schuneman"
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount);
 
