@@ -1,75 +1,11 @@
-// Thanks to the libreultra project for most of the matching code here.
-// See https://github.com/n64decomp/libreultra/blob/master/src/sched/sched.c
-
 #include "common.h"
+#include "PR/os_internal.h"
 
-#define VIDEO_MSG       666
-#define RSP_DONE_MSG    667
-#define RDP_DONE_MSG    668
-#define PRE_NMI_MSG     669
+u64 gRetraceCounter64;
+OSTime gLastGfxYield;
 
-/*
- * OSScTask state
- */
-#define OS_SC_DP                0x0001  /* set if still needs dp        */
-#define OS_SC_SP                0x0002  /* set if still needs sp        */
-#define OS_SC_YIELD             0x0010  /* set if yield requested       */
-#define OS_SC_YIELDED           0x0020  /* set if yield completed       */
-
-/*
- * OSScTask->flags type identifier
- */
-#define OS_SC_XBUS      (OS_SC_SP | OS_SC_DP)
-#define OS_SC_DRAM      (OS_SC_SP | OS_SC_DP | OS_SC_DRAM_DLIST)
-#define OS_SC_DP_XBUS   (OS_SC_SP)
-#define OS_SC_DP_DRAM   (OS_SC_SP | OS_SC_DRAM_DLIST)
-#define OS_SC_SP_XBUS   (OS_SC_DP)
-#define OS_SC_SP_DRAM   (OS_SC_DP | OS_SC_DRAM_DLIST)
-
-/*
- * OSScTask taskType
- */
-#define OS_SC_TASK_AUDIO 1
-#define OS_SC_TASK_GAME 2
-#define OS_SC_TASK_DI 3
-#define OS_SC_TASK_DI_BENCHMARK_TEST 4
-
-extern char gStrAudioTask[];        // "(Audio task)"
-extern char gStrGameTask[];         // "(Game task)"
-extern char gStrDITask[];           // "(DI task)\n"
-extern char gStrDIBenchmarkTest[];  // "(DI benchmark test)\n"
-extern char gStrUnknownTaskType[];  // "(Unknown task type)\n"
-
-extern void *D_800918D0;
-
-extern f32 floatTimer0;
-extern f32 floatTimer1;
-extern f32 floatTimer2;
-extern f32 floatTimer3;
-
-extern s32 intTimer0;
-
-extern u32 D_800918F4;
-extern u32 D_800918F8;
-
-extern f32 D_8009A340;
-extern f32 D_8009A344;
-
-OSTime D_800B4988;
-
-extern u32 countRegA;
-extern u32 countRegB;
-
-void __scMain(void *arg);
-void func_8003B9C0(OSSched *sc);
-void __scHandleRetrace(OSSched *sc);
-void __scHandleRSP(OSSched *sc);
-void __scHandleRDP(OSSched *sc);
-s32 __scTaskComplete(OSSched *sc, OSScTask *t);
-void __scAppendList(OSSched *s, OSScTask *t);
-void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
-void __scYield(OSSched *sc);
-s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
+void func_80060EB8(u8, u8, u8, u8);
+void func_80060FD0(u32, u32);
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount) {
     // Initialize scheduler structure
@@ -80,9 +16,9 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     s->gfxListHead      = NULL;
     s->audioListTail    = NULL;
     s->gfxListTail      = NULL;
-    s->doAudio          = 0;
     s->frameCount       = 0;
-    s->retraceMsg.type  = OS_SC_RETRACE_MSG;
+    s->unkTask          = NULL;
+    s->retraceMsg.type  = OS_SC_RETRACE_MSG; // sent to apps
     s->prenmiMsg.type   = OS_SC_PRE_NMI_MSG;
 
     // Set up video manager
@@ -106,9 +42,6 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     osStartThread(&s->thread);
 }
 
-/**
- * Add a client to the scheduler. Clients receive messages at retrace time.
- */
 void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4) {
     OSIntMask mask;
 
@@ -163,25 +96,17 @@ void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
     *timer2 = floatTimer3 * temp;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scMain.s")
-#else
-// Very close
-void a__scMain(void *arg) {
-    OSMesg msg;
+void __scMain(void *arg) {
+    OSMesg msg = 0;
+    s32 state;
     OSSched *sc = (OSSched*)arg;
     OSScClient *client;
-    s32 state;
     OSScTask *sp = 0, *dp = 0;
-    OSScTask *t = 0;
 
     while (TRUE) {
         osRecvMesg(&sc->interruptQ, &msg, OS_MESG_BLOCK);
 
         switch ((int)msg) {
-            case 0x63:
-                func_8003B9C0(sc);
-                break;
 
             case VIDEO_MSG:
                 __scHandleRetrace(sc);
@@ -195,6 +120,10 @@ void a__scMain(void *arg) {
                 __scHandleRDP(sc);
                 break;
 
+            case 0x63:
+                func_8003B9C0(sc);
+                break;
+
             case PRE_NMI_MSG:
                 // notify audio and graphics threads to fade out
                 for (client = sc->clientList; client != 0; client = client->next) {
@@ -203,8 +132,7 @@ void a__scMain(void *arg) {
                 break;
 
             default:
-                t = (OSScTask *)msg;
-                __scAppendList(sc, t);
+                __scAppendList(sc, (OSScTask *)msg);
 
                 state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
                 if ((__scSchedule(sc, &sp, &dp, state)) != state) {
@@ -214,17 +142,16 @@ void a__scMain(void *arg) {
         }
     }
 }
-#endif
 
 void func_8003B9C0(OSSched *sc) {
     s32 state;
     OSScTask *sp = 0, *dp = 0;
 
     if (sc->audioListHead) {
-        sc->unk0x304 = 1;
+        sc->doAudio = 1;
     }
 
-    if (sc->unk0x304 != 0 && sc->curRSPTask) {
+    if (sc->doAudio != 0 && sc->curRSPTask) {
         __scYield(sc);
         return;
     }
@@ -235,9 +162,6 @@ void func_8003B9C0(OSSched *sc) {
     }
 }
 
-/**
- * Gets a string for a OSScTask task type.
- */
 char *get_task_type_string(u32 taskType) {
     switch (taskType) {
         case OS_SC_TASK_AUDIO:
@@ -253,16 +177,377 @@ char *get_task_type_string(u32 taskType) {
     }
 }
 
-void some_dummied_task_func(int _) { }
+void some_dummied_task_func(OSScTask *task) { }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/func_8003BAD0.s")
+Gfx *func_8003BAD0(OSSched *sc, 
+    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
+    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
 
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scHandleRetrace.s")
+    OSMesg queueBuffer[8];
+    OSMesg queueMsg;
+    OSMesgQueue queue;
+    s64 tempCmds[2];
+    Gfx *displayListPtr;
+    OSTask *task;
+    s32 dldi_unk0x10_2;
+    s32 dldi_unk0x10;
+    char *dldi_file_2;
+    char *dldi_file;
+    s32 done;
+    s32 numRetraces;
+    s32 gotRdpDone;
+    s32 cmdIndex;
+    u32 dldi_unk0xc_2;
+    u32 dldi_unk0xc;
+    u32 dldi_unk0x4_2;
+    u32 dldi_unk0x4;
 
-/**
- * __scHandleRSP is called when an RSP task signals that it has
- * finished or yielded (at the hosts request)
- */
+    queueMsg = 0;
+    done = FALSE;
+
+    // Stop audio syn thread
+    stop_alSyn_thread();
+
+    task = &sc->curRSPTask->list;
+    cmdIndex = task->t.data_size / 2;
+    displayListPtr = (Gfx*)&task->t.data_ptr[cmdIndex];
+
+    // Temporarily steal events for SP completion, DP fullsync, and vertical retraces
+    osCreateMesgQueue(&queue, queueBuffer, 8);
+    osSetEventMesg(OS_EVENT_SP, &queue, (OSMesg)RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &queue, (OSMesg)RDP_DONE_MSG);
+    osViSetEvent(&queue, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+    do {
+        // Halt the SP, disable interrupt on break, and clear all signals
+        __osSpSetStatus(
+            SP_SET_HALT | 
+            SP_CLR_INTR_BREAK | 
+            SP_CLR_SIG0 | 
+            SP_CLR_SIG1 | 
+            SP_CLR_SIG2 | 
+            SP_CLR_SIG3 | 
+            SP_CLR_SIG4 | 
+            SP_CLR_SIG5 | 
+            SP_CLR_SIG6 | 
+            SP_CLR_SIG7);
+        
+        gotRdpDone = FALSE;
+        numRetraces = 0;
+        
+        // Reset DP?
+        osDpSetStatus(
+            DPC_SET_XBUS_DMEM_DMA | 
+            DPC_CLR_FREEZE | 
+            DPC_CLR_FLUSH | 
+            DPC_CLR_TMEM_CTR | 
+            DPC_CLR_PIPE_CTR | 
+            DPC_CLR_CMD_CTR);
+
+        // Temporarily patch an early end command into the display list
+        tempCmds[1] = ((s64*)displayListPtr)[0];
+        tempCmds[0] = ((s64*)displayListPtr)[1];
+
+        gDPFullSync(&displayListPtr[0]);
+        gSPEndDisplayList(&displayListPtr[1]);
+
+        // Flush CPU cache
+        osWritebackDCacheAll();
+
+        // Run the task
+        osSpTaskLoad(&sc->curRSPTask->list);
+        osSpTaskStartGo(&sc->curRSPTask->list);
+
+        // Wait until 10 vertical retraces occur or we receive RDP done
+        do {
+            osRecvMesg(&queue, &queueMsg, OS_MESG_BLOCK);
+
+            switch ((int)queueMsg) {
+                case VIDEO_MSG:
+                    numRetraces++;
+                    break;
+                case RDP_DONE_MSG:
+                    gotRdpDone = TRUE;
+                    break;
+                case RSP_DONE_MSG:
+                    break;
+            }
+        } while (numRetraces < 10 && !gotRdpDone);
+
+        // Restore the original display list commands
+        ((s64*)displayListPtr)[0] = tempCmds[1];
+        ((s64*)displayListPtr)[1] = tempCmds[0];
+
+        if (cmdIndex < 2) {
+            done = TRUE;
+        }
+
+        if ((cmdIndex % 2) != 0) {
+            cmdIndex = (cmdIndex / 2) + 1;
+        } else {
+            cmdIndex = cmdIndex / 2;
+        }
+
+        if (gotRdpDone) {
+            displayListPtr += cmdIndex;
+        } else {
+            displayListPtr -= cmdIndex;
+        }
+    } while (!done);
+
+    // Restore SP, DP, and vertical retrace event handling to the scheduler
+    osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)RDP_DONE_MSG);
+    osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+    if (gotRdpDone) {
+        *retFile_2 = NULL;
+        *retFile = NULL;
+
+        dl_get_debug_info2(displayListPtr,
+            &dldi_unk0x4, &dldi_file, &dldi_unk0xc, &dldi_unk0x10,
+            &dldi_unk0x4_2, &dldi_file_2, &dldi_unk0xc_2, &dldi_unk0x10_2);
+        
+        if (dldi_file_2 != NULL || dldi_file != NULL) {
+            if (dldi_file != NULL) {
+                *retFile = dldi_file;
+                *retUnk0xc = dldi_unk0xc;
+                *retUnk0x10 = dldi_unk0x10;
+            }
+            if (dldi_file_2 != NULL) {
+                *retFile_2 = dldi_file_2;
+                *retUnk0xc_2 = dldi_unk0xc_2;
+                *retUnk0x10_2 = dldi_unk0x10_2;
+            }
+        }
+    }
+
+    return displayListPtr;
+}
+
+void __scHandleRetrace(OSSched *sc) {
+    OSScTask *rspTask = NULL;
+    OSScClient *client;
+    s32 state;
+    OSScTask *sp = NULL;
+    OSScTask *dp = NULL;
+    u8 setRSPTaskToNull = FALSE;
+    u8 setRDPTaskToNull = FALSE;
+    Gfx *displayListPtr1;
+    Gfx *displayListPtr2;
+    s32 sp_dldi_unk0x10;
+    s32 sp_dldi_unk0x10_2;
+    s32 dp_dldi_unk0x10;
+    s32 dp_dldi_unk0x10_2;
+    char *sp_dldi_file;
+    char *sp_dldi_file_2;
+    char *dp_dldi_file;
+    char *dp_dldi_file_2;
+    u32 sp_dldi_unk0xc;
+    u32 sp_dldi_unk0xc_2;
+    u32 dp_dldi_unk0xc;
+    u32 dp_dldi_unk0xc_2;
+    OSMesg queueBuffer[8];
+    OSMesgQueue queue;
+    OSScTask *unkTask2;
+    u64 *taskDataPtr;
+    OSScTask *unkTask;
+
+    if (sc->curRSPTask) {
+        gCurRSPTaskCounter++;
+    }
+
+    if (sc->curRDPTask) {
+        gCurRDPTaskCounter++;
+    }
+
+    displayListPtr1 = NULL;
+    displayListPtr2 = NULL;
+
+    if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
+        if (gCurRSPTaskIsSet) {
+            get_task_type_string(sc->curRSPTask->taskType);
+            some_dummied_task_func(sc->curRSPTask);
+
+            if (sc->curRSPTask->list.t.type == OS_SC_TASK_AUDIO) {
+                displayListPtr1 = func_8003BAD0(sc, 
+                    &sp_dldi_file, &sp_dldi_unk0xc, &sp_dldi_unk0x10, 
+                    &sp_dldi_file_2, &sp_dldi_unk0xc_2, &sp_dldi_unk0x10_2);
+            }
+
+            gCurRSPTaskIsSet = 0;
+        }
+
+        gCurRSPTaskCounter = 0;
+        setRSPTaskToNull = TRUE;
+
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+    } else if (sc->curRSPTask) {
+        gCurRSPTaskIsSet = TRUE;
+    }
+
+    if ((gCurRDPTaskCounter > 10) && (sc->curRDPTask)) {
+        if (sc->curRDPTask->unk0x68 == 0) {
+            osSendMesg(sc->curRDPTask->msgQ, &D_800918D8, OS_MESG_BLOCK);
+        }
+
+        if (gCurRDPTaskIsSet) {
+            get_task_type_string(sc->curRDPTask->taskType);
+            some_dummied_task_func(sc->curRDPTask);
+
+            if (sc->curRDPTask->list.t.type == OS_SC_TASK_AUDIO) {
+                displayListPtr2 = func_8003BAD0(sc, 
+                    &dp_dldi_file, &dp_dldi_unk0xc, &dp_dldi_unk0x10, 
+                    &dp_dldi_file_2, &dp_dldi_unk0xc_2, &dp_dldi_unk0x10_2);
+            }
+
+            gCurRDPTaskIsSet = FALSE;
+        }
+
+        setRDPTaskToNull = TRUE;
+        sc->frameCount = 0;
+        gCurRDPTaskCounter = 0;
+
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH |
+            DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+    } else if (sc->curRDPTask) {
+        gCurRDPTaskIsSet = TRUE;
+    }
+
+    if (displayListPtr1 != NULL || displayListPtr2 != NULL) {
+        osCreateMesgQueue(&queue, queueBuffer, 8);
+        
+        osSetEventMesg(OS_EVENT_SP, &queue, (OSMesg)RSP_DONE_MSG);
+        osSetEventMesg(OS_EVENT_DP, &queue, (OSMesg)RDP_DONE_MSG);
+        osViSetEvent(&queue, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+        unkTask2 = sc->curRSPTask != NULL ? sc->curRSPTask : sc->curRDPTask;
+        taskDataPtr = unkTask2->list.t.data_ptr;
+
+        dl_segment((Gfx**)&taskDataPtr, 0, NULL);
+        dl_segment((Gfx**)&taskDataPtr, 1, gFramebufferCurrent);
+        dl_segment((Gfx**)&taskDataPtr, 2, D_800bccb4);
+        dl_segment((Gfx**)&taskDataPtr, 4, gFramebufferNext - 0x280);
+
+        func_80060EB8(0, 0, 0, 0x80);
+
+        if (displayListPtr1 != NULL) {
+            func_80060FD0(0x1e, 0x1e);
+            dummied_print_func(&D_8009A280, displayListPtr1);
+
+            if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
+                if (sp_dldi_file != NULL) {
+                    func_80060FD0(0x1e, 0x28);
+                    dummied_print_func(D_8009A294, sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                }
+
+                if (sp_dldi_file_2 != NULL) {
+                    func_80060FD0(0x1e, 0x32);
+                    dummied_print_func(D_8009A2B0, sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                }
+            }
+        }
+
+        if (displayListPtr2 != NULL) {
+            func_80060FD0(0x1e, 0x46);
+            dummied_print_func(&D_8009A2CC, displayListPtr2);
+
+            if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
+                if (sp_dldi_file != NULL) {
+                    func_80060FD0(0x1e, 0x50);
+                    dummied_print_func(D_8009A2E0, sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                }
+
+                if (sp_dldi_file_2 != NULL) {
+                    func_80060FD0(0x1e, 0x5a);
+                    dummied_print_func(D_8009A2FC, sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                }
+            }
+        }
+
+        displayListPtr1 = NULL;
+        displayListPtr2 = NULL;
+
+        func_80060FD0(0x1e, 0x6e);
+        dummied_print_func(&D_8009A318, D_8008C8F0, D_8008C8F4, D_8008C8F8);
+
+        func_80060FD0(0x1e, 0x78);
+        dummied_print_func(&D_8009A334, &D_8008C8FC);
+
+        func_80060B94((Gfx**)&taskDataPtr);
+
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | 
+            SP_CLR_SIG0 | SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 |
+            SP_CLR_SIG4 |  SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | 
+            DPC_CLR_FREEZE |  DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | 
+            DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+
+        gDPFullSync(taskDataPtr++);
+        gSPEndDisplayList(taskDataPtr++);
+
+        osWritebackDCacheAll();
+
+        osSpTaskLoad(&unkTask2->list);
+        osSpTaskStartGo(&unkTask2->list);
+
+        while (TRUE) {}
+    }
+
+    if (setRSPTaskToNull) {
+        sc->curRSPTask = NULL;
+    }
+
+    if (setRDPTaskToNull) {
+        sc->curRDPTask = NULL;
+    }
+
+    // Read the task command queue and schedule tasks
+    while (osRecvMesg(&sc->cmdQ, (OSMesg *)&rspTask, OS_MESG_NOBLOCK) != -1)
+        __scAppendList(sc, rspTask);
+
+    state = ((sc->curRSPTask == NULL) << 1) | (sc->curRDPTask == NULL);
+    if (__scSchedule(sc, &sp, &dp, state) != state)
+        __scExec(sc, sp, dp);
+
+    gRetraceCounter64++;
+    gRetraceCounter32++;
+    sc->frameCount++;
+
+    if ((sc->unkTask) && (sc->frameCount >= 2)) {
+        unkTask = sc->unkTask;
+        if (unkTask->msgQ) {
+            if ((unkTask->unk0x68) || (unkTask->msg)) {
+                osSendMesg(unkTask->msgQ, unkTask->msg, OS_MESG_BLOCK);
+            } else {
+                osSendMesg(unkTask->msgQ, &D_800918D0, OS_MESG_BLOCK);
+            }
+        }
+        sc->frameCount = 0;
+        sc->unkTask = NULL;
+    }
+
+    for (client = sc->clientList; client != NULL; client = client->next) {
+        if (client->unk0x0 == 1) {
+            // Only run this on even calls to this function
+            if (gRetraceCounter64 % 2 == 0) {
+                osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
+                if (sc->audioListHead) {
+                    func_8003B9C0(sc);
+                }
+            }
+        } else if (client->unk0x0 == 2) {
+            osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
+        }
+    }
+}
+
 void __scHandleRSP(OSSched *sc) {
     OSScTask *t, *sp = 0, *dp = 0;
     s32 state;
@@ -280,7 +565,7 @@ void __scHandleRSP(OSSched *sc) {
             floatTimer0 = floatTimer3;
         }
 
-        if ((intTimer0 % 1000 == 1) || (intTimer0 % 1000 == 2)) {
+        if ((gRetraceCounter32 % 1000 == 1) || (gRetraceCounter32 % 1000 == 2)) {
             floatTimer2 = floatTimer1 / 500.0f;
             floatTimer1 = 0.0f;
             floatTimer0 = 0.0f;
@@ -323,9 +608,6 @@ void __scHandleRSP(OSSched *sc) {
     }
 }
 
-/**
- * __scHandleRDP is called when an RDP task signals that it has finished.
- */
 void __scHandleRDP(OSSched *sc) {
     OSScTask *t, *sp = 0, *dp = 0;
     s32 state;
@@ -343,9 +625,6 @@ void __scHandleRDP(OSSched *sc) {
     }
 }
 
-/**
- * Checks to see if the graphics task is able to run based on the current state of the RCP.
- */
 OSScTask *__scTaskReady(OSScTask *t) {
     if (t) {
         // If there is a pending swap bail out til later (next retrace).
@@ -359,28 +638,27 @@ OSScTask *__scTaskReady(OSScTask *t) {
     return NULL;
 }
 
-// TODO: This matches, but has some illogical oddities
 s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
     if ((t->state & OS_SC_RCP_MASK) == 0) { /* none of the needs bits set */
         if (t->msgQ) {
             if (t->flags & OS_SC_LAST_TASK) {
-                if ((u32)sc->doAudio < 2u) {
-                    sc->frameCount = (u32)t; // ??
+                if ((u32)sc->frameCount < 2u) {
+                    sc->unkTask = t;
                     return 1;
                 }
 
                 if (t->unk0x68 || t->msg) {
-                    osSendMesg(t->msgQ, t->msg, 1);
+                    osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 } else {
                     osSendMesg(t->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
                 }
 
-                sc->doAudio = 0;
+                sc->frameCount = 0;
                 return 1;
             }
 
             if (t->unk0x68 || t->msg) {
-                osSendMesg(t->msgQ, t->msg, 1);
+                osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 return 1;
             }
 
@@ -393,9 +671,6 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
     return 0;
 }
 
-/**
- * Place task on either the audio or graphics queue.
- */
 void __scAppendList(OSSched *s, OSScTask *t) {
     u32 type = t->list.t.type;
 
@@ -433,8 +708,8 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
         osSpTaskLoad(&sp->list);
         osSpTaskStartGo(&sp->list);
 
-        D_800918F4 = 0;
-        D_800918F8 = 0;
+        gCurRSPTaskCounter = 0;
+        gCurRDPTaskCounter = 0;
 
         sc->curRSPTask = sp;
 
@@ -454,33 +729,25 @@ void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
 
-        D_800B4988 = osGetTime();
+        gLastGfxYield = osGetTime();
 
         osSpTaskYield();
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/scheduler/__scSchedule.s")
-#else
-// So close to matching that it's not even regalloc, something to do with one of
-// the switch case addresses...?
-/*
- * Schedules the tasks to be run on the RCP.
- */
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
     s32 avail = availRCP;
     OSScTask *gfx = sc->gfxListHead;
     OSScTask *audio = sc->audioListHead;
 
-    if (sc->unk0x304 && (avail & OS_SC_SP)) {
+    if (sc->doAudio && (avail & OS_SC_SP)) {
         if (gfx && (gfx->flags & OS_SC_PARALLEL_TASK)) {
             *sp = gfx;
             avail &= ~OS_SC_SP;
         } else {
             *sp = audio;
             avail &= ~OS_SC_SP;
-            sc->unk0x304 = 0;
+            sc->doAudio = 0;
             sc->audioListHead = sc->audioListHead->next;
 
             if (sc->audioListHead == NULL) {
@@ -562,4 +829,3 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
 
     return avail;
 }
-#endif

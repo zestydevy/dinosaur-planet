@@ -23,4 +23,11 @@ s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 DLLFile * dll_load_from_tab(u16 id, s32 * sizeOut);
 void dll_relocate(DLLFile* dll);
 
+void dl_get_debug_info2(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
+void dl_segment(Gfx **gdl, u32 segment, void *base);
+
+void stop_alSyn_thread();
+
+void func_80060B94(Gfx**);
+
 #endif //_FUNCTIONS_H
