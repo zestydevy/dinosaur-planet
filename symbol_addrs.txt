@@ -885,6 +885,7 @@ set_menu_page = 0x8000f404; // type:func
 do_set_menu_page = 0x8000f47c; // type:func
 gActiveMenuDLL = 0x800a7d54; // type:data size:0x4
 
+find_executing_dll = 0x8000BD1C; // type:func
 dll_load_deferred = 0x8000be04; // type:func
 dll_load = 0x8000be78; // type:func
 dll_load_from_tab = 0x8000c3cc; // type:func
