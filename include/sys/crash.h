@@ -9,7 +9,7 @@
 struct ErrString {
 	u32 code1;
 	u32 code2;
-	char* text;
+	char *text;
 };
 
 // Length of gCrashMesgQueueBuffer
@@ -20,7 +20,7 @@ struct ErrString {
 #define CRASH_DLL_LIST_COPY ((CrashedDlls *)0x807FF460)
 
 typedef struct {
-    /*0x0*/  DLLInst* loadedDllList;
+    /*0x0*/  DLLInst *loadedDllList;
     /*0x4*/  s32 loadedDllCount;
     /*0x8*/  u8 loaded; // Whether any DLLs are actually stored here.
 } CrashedDlls;
@@ -50,7 +50,7 @@ extern OSMesgQueue gCrashMesgQueue;
 
 extern OSScMsg gCrashScMsg;
 
-void start_crash_thread(OSSched* scheduler);
+void start_crash_thread(OSSched *scheduler);
 
 void crash_thread_entry(void *arg);
 

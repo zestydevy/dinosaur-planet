@@ -1,7 +1,7 @@
 #include "common.h"
 #include <PR/os_internal.h>
 
-void start_crash_thread(OSSched* scheduler) {
+void start_crash_thread(OSSched *scheduler) {
     s32 videoMode = OS_VI_PAL_LPN1;
 
     if (osResetType == 1 && gCrashDllListCopy->loaded == TRUE) {
