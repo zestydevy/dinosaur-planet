@@ -132,7 +132,7 @@ segments:
     - [0x7E470, c, libultra/os/contstartreaddata]
     - [0x7E650, c, libultra/os/siacs]
     - [0x7E710, c, libultra/os/sirawdma]
-    - [0x7E7C0, c, libultra/os/O1/contgetquery]
+    - [0x7E7C0, c, libultra/os/O1/contquery]
     - [0x7E870, c, libultra/os/aisetfrequency]
     - [0x7E9C0, c, libultra/os/stopthread]
     - [0x7EB00, c, libultra/os/O1/aisetnextbuffer]
