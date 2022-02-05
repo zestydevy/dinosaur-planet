@@ -1,44 +1,10 @@
 #include "common.h"
 #include <PR/os_internal.h>
 
-// Length of gCrashMesgQueueBuffer
-#define CRASH_MESG_QUEUE_BUFFER_LENGTH 1
-
-#define CRASH_ASSET_THREAD_COPY ((OSThread *)0x807FF000)
-#define CRASH_MAIN_THREAD_COPY ((OSThread *)0x807FF230)
-
-typedef struct _UnkCrashStruct {
-    /*0x0*/  DLLInst* loadedDllList;
-    /*0x4*/  s32 loadedDllCount;
-    /*0x8*/  u8 unk0x8;
-} UnkCrashStruct;
-
-typedef struct {
-    /*0x0*/  OSThread *threads[2];
-} UnkCrashStruct2;
-
-UnkCrashStruct *D_80091770 = (UnkCrashStruct *)0x807FF460;
-UnkCrashStruct2 D_80091774 = { { CRASH_MAIN_THREAD_COPY, CRASH_ASSET_THREAD_COPY } };
-
-// Note: Unsure of actual stack size
-extern u8 gCrashThreadStack[OS_MIN_STACKSIZE];
-extern OSThread gCrashThread;
-
-extern OSScClient D_800B3748;
-
-extern OSMesg gCrashMesgQueueBuffer[1];
-extern OSMesgQueue gCrashMesgQueue;
-
-extern s16 D_800B3770;
-
-void crash_thread_entry(void *arg);
-void stop_active_app_threads_2();
-u32 func_80037678();
-
 void start_crash_thread(OSSched* scheduler) {
-    s32 videoMode = 0xe;
+    s32 videoMode = OS_VI_PAL_LPN1;
 
-    if (osResetType == 1 && D_80091770->unk0x8 == 1) {
+    if (osResetType == 1 && gCrashDllListCopy->loaded == TRUE) {
         videoMode = 1;
     }
 
@@ -56,59 +22,66 @@ void start_crash_thread(OSSched* scheduler) {
     osStartThread(&gCrashThread);
 }
 
-void crash_thread_entry(void *_) {
+void crash_thread_entry(void *arg) {
     OSScMsg *queueMesg = NULL;
     OSSched *scheduler;
-    UnkCrashStruct2 threads;
+    CrashThreadCopies threads;
 
+    // Get the OS scheduler
     scheduler = get_ossched();
 
-    threads = D_80091774;
+    // Get pointers to copies of the main thread and asset thread
+    // from before the last NMI reset
+    threads = gCrashThreadCopies;
 
+    // Register our client with the scheduler
     osCreateMesgQueue(
-        &gCrashMesgQueue,
-        &gCrashMesgQueueBuffer[0],
-        CRASH_MESG_QUEUE_BUFFER_LENGTH
+        /*mq*/      &gCrashMesgQueue,
+        /*msg*/     gCrashMesgQueueBuffer,
+        /*count*/   CRASH_MESG_QUEUE_BUFFER_LENGTH
     );
 
-    osScAddClient(scheduler, &D_800B3748, &gCrashMesgQueue, 3);
+    osScAddClient(scheduler, &gCrashScClient, &gCrashMesgQueue, 3);
 
-    if (osResetType == 1 && D_80091770->unk0x8 == 1) {
-        D_800B3770 = 5;
-
-        osSendMesg(&gCrashMesgQueue, &D_800B3770, OS_MESG_NOBLOCK);
+    if (osResetType == 1 && gCrashDllListCopy->loaded == TRUE) {
+        // System was previously reset via NMI and we have a copy of state from then
+        
+        // Send our own queue a message indicating this
+        gCrashScMsg.type = 5;
+        osSendMesg(&gCrashMesgQueue, &gCrashScMsg, OS_MESG_NOBLOCK);
     }
 
-    D_80091770->unk0x8 = 0;
+    // Reset loaded flag of captured pre NMI state (lets next reset continue as normal)
+    gCrashDllListCopy->loaded = FALSE;
 
+    // Await a scheduler message
     osRecvMesg(&gCrashMesgQueue, (OSMesg)&queueMesg, OS_MESG_BLOCK);
 
     if (queueMesg->type == OS_SC_PRE_NMI_MSG) {
+        // Pre-NMI, stop all threads and enter the handler
         stop_active_app_threads_2();
-        func_80037678();
+        crash_nmi_handler();
 
         // Halt
         while (TRUE) { }
     }
 
+    // Show screen
     osViBlack(FALSE);
     osViSwapBuffer(gFramebufferCurrent);
 
+    // Stop all threads and do video crash handling stuff
     stop_active_app_threads();
     check_video_mode_crash_and_clear_framebuffer();
 
-    replace_loaded_dll_list(D_80091770->loadedDllList, D_80091770->loadedDllCount);
+    // Display state from before the last NMI reset
+    replace_loaded_dll_list(gCrashDllListCopy->loadedDllList, gCrashDllListCopy->loadedDllCount);
     some_crash_print(threads.threads, 2, 0);
 
     // Halt
     while (TRUE) { }
 }
 
-/**
- * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
- *
- * Identical to stop_active_app_threads.
- */
 void stop_active_app_threads_2() {
     OSThread *thread = __osGetActiveQueue();
 
@@ -122,7 +95,7 @@ void stop_active_app_threads_2() {
     }
 }
 
-u32 func_80037678() {
+u32 crash_nmi_handler() {
     OSThread *thread;
     u32 *dllStart;
     u32 *dllEnd;
@@ -141,8 +114,8 @@ u32 func_80037678() {
     }
 
     // Get current list of loaded DLLs
-    D_80091770->loadedDllList = get_loaded_dlls(&D_80091770->loadedDllCount);
-    D_80091770->unk0x8 = 1;
+    gCrashDllListCopy->loadedDllList = get_loaded_dlls(&gCrashDllListCopy->loadedDllCount);
+    gCrashDllListCopy->loaded = TRUE;
 
     // Return ID of the DLL that the main thread was executing (if any)
     return find_executing_dll(CRASH_MAIN_THREAD_COPY->context.pc, &dllStart, &dllEnd);

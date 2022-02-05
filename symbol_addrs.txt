@@ -1188,8 +1188,13 @@ handle_joystick_deadzone = 0x800111BC; // type:func
 get_joystick_x = 0x80010F78; // type:func
 get_joystick_y = 0x8001107C; // type:func
 
+gCrashDllListCopy = 0x80091770; // type:data
+gCrashThreadCopies = 0x80091774; // type:data
 gCrashMesgQueueBuffer = 0x800B3754; // type:data size:0x4
+gCrashScClient = 0x800B3748; // type:data
+gCrashScMsg = 0x800B3770; // type:data
 stop_active_app_threads_2 = 0x80037610; // type:func
+crash_nmi_handler = 0x80037678; // type:func
 
 gStrAudioTask = 0x8009a020; // type:data
 gStrGameTask = 0x8009a030; // type:data
