@@ -29,16 +29,6 @@ typedef struct {
     /*0x0*/  OSThread *threads[2];
 } CrashThreadCopies;
 
-/**
- * Holds a list of DLLs that were previously running before the last NMI reset.
- */
-CrashedDlls *gCrashDllListCopy = CRASH_DLL_LIST_COPY;
-/**
- * Holds copies of the main thread and asset thread respectively from before
- * the last NMI reset.
- */
-CrashThreadCopies gCrashThreadCopies = { { CRASH_MAIN_THREAD_COPY, CRASH_ASSET_THREAD_COPY } };
-
 // Note: Unsure of actual stack size
 extern u8 gCrashThreadStack[OS_MIN_STACKSIZE];
 extern OSThread gCrashThread;

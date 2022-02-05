@@ -1,6 +1,16 @@
 #include "common.h"
 #include <PR/os_internal.h>
 
+/**
+ * Holds a list of DLLs that were previously running before the last NMI reset.
+ */
+CrashedDlls *gCrashDllListCopy = CRASH_DLL_LIST_COPY;
+/**
+ * Holds copies of the main thread and asset thread respectively from before
+ * the last NMI reset.
+ */
+CrashThreadCopies gCrashThreadCopies = { { CRASH_MAIN_THREAD_COPY, CRASH_ASSET_THREAD_COPY } };
+
 void start_crash_thread(OSSched *scheduler) {
     s32 videoMode = OS_VI_PAL_LPN1;
 

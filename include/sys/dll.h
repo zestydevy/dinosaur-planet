@@ -148,6 +148,6 @@ extern DLLTab * gFile_DLLS_TAB;
  * of the DLL's body respectively.
  */
 u32 find_executing_dll(u32 pc, u32 **start, u32 **end);
-DLLInst * get_loaded_dlls(u32 * arg0);
+DLLInst *get_loaded_dlls(u32 *arg0);
 
 #endif //_SYS_DLL_H
