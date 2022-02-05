@@ -5,4 +5,6 @@
 
 extern s32 osViClock;
 
+extern s32 __osAiDeviceBusy(void);
+
 #endif //_LIBULTRA_OS_OS_INT_H

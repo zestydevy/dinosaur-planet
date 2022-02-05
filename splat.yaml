@@ -135,7 +135,7 @@ segments:
     - [0x7E7C0, c, libultra/os/contgetquery]
     - [0x7E870, c, libultra/os/aisetfrequency]
     - [0x7E9C0, c, libultra/os/stopthread]
-    - [0x7EB00, c, libultra/os/aisetnextbuffer]
+    - [0x7EB00, c, libultra/os/O1/aisetnextbuffer]
     - [0x7EBB0, c, libultra/os/writebackdcacheall]
     - [0x7EBE0, c, libultra/os/pistartdma]
     - [0x7ECF0, c, libultra/os/settime]
@@ -222,6 +222,10 @@ segments:
 
     - [0x92380, bin]
 
+    - [0x97890, .data, libultra/os/O1/aisetnextbuffer]
+
+    - [0x97898, bin]
+    
     - [0x99CA0, .rodata, queue]
     - [0x99D10, .rodata, main]
 
