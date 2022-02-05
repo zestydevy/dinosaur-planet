@@ -4,35 +4,37 @@
 // Length of gCrashMesgQueueBuffer
 #define CRASH_MESG_QUEUE_BUFFER_LENGTH 1
 
+#define CRASH_ASSET_THREAD_COPY ((OSThread *)0x807FF000)
+#define CRASH_MAIN_THREAD_COPY ((OSThread *)0x807FF230)
+
 typedef struct _UnkCrashStruct {
     /*0x0*/  DLLInst* loadedDllList;
     /*0x4*/  s32 loadedDllCount;
     /*0x8*/  u8 unk0x8;
 } UnkCrashStruct;
 
-extern UnkCrashStruct *D_80091770;
-extern OSThread *D_80091774[2];
+typedef struct {
+    /*0x0*/  OSThread *threads[2];
+} UnkCrashStruct2;
+
+UnkCrashStruct *D_80091770 = (UnkCrashStruct *)0x807FF460;
+UnkCrashStruct2 D_80091774 = { { CRASH_MAIN_THREAD_COPY, CRASH_ASSET_THREAD_COPY } };
 
 // Note: Unsure of actual stack size
 extern u8 gCrashThreadStack[OS_MIN_STACKSIZE];
 extern OSThread gCrashThread;
 
-extern int D_800B3748;
+extern OSScClient D_800B3748;
 
 extern OSMesg gCrashMesgQueueBuffer[1];
 extern OSMesgQueue gCrashMesgQueue;
 
 extern s16 D_800B3770;
 
-OSSched *get_ossched(void);
-
 void crash_thread_entry(void *arg);
 void stop_active_app_threads_2();
-void func_80037678();
+u32 func_80037678();
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/crash/start_crash_thread.s")
-#else
 void start_crash_thread(OSSched* scheduler) {
     s32 videoMode = 0xe;
 
@@ -53,22 +55,15 @@ void start_crash_thread(OSSched* scheduler) {
 
     osStartThread(&gCrashThread);
 }
-#endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/crash/crash_thread_entry.s")
-#else
-// Functionally equivalent, mainly regalloc
 void crash_thread_entry(void *_) {
-    s16 *queueMesg;
+    OSScMsg *queueMesg = NULL;
     OSSched *scheduler;
-    OSThread *stack0x20[2];
+    UnkCrashStruct2 threads;
 
     scheduler = get_ossched();
-    queueMesg = NULL;
 
-    stack0x20[0] = D_80091774[0];
-    stack0x20[1] = D_80091774[1];
+    threads = D_80091774;
 
     osCreateMesgQueue(
         &gCrashMesgQueue,
@@ -88,7 +83,7 @@ void crash_thread_entry(void *_) {
 
     osRecvMesg(&gCrashMesgQueue, (OSMesg)&queueMesg, OS_MESG_BLOCK);
 
-    if (*queueMesg == 4) {
+    if (queueMesg->type == OS_SC_PRE_NMI_MSG) {
         stop_active_app_threads_2();
         func_80037678();
 
@@ -103,16 +98,12 @@ void crash_thread_entry(void *_) {
     check_video_mode_crash_and_clear_framebuffer();
 
     replace_loaded_dll_list(D_80091770->loadedDllList, D_80091770->loadedDllCount);
-    some_crash_print(&stack0x20[0], 2, 0);
+    some_crash_print(threads.threads, 2, 0);
 
     // Halt
     while (TRUE) { }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/crash/stop_active_app_threads_2.s")
-#else
 /**
  * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
  *
@@ -130,6 +121,29 @@ void stop_active_app_threads_2() {
         thread = thread->tlnext;
     }
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/crash/func_80037678.s")
+u32 func_80037678() {
+    OSThread *thread;
+    u32 *dllStart;
+    u32 *dllEnd;
+
+    // Clone asset thread and main thread
+    thread = __osGetActiveQueue();
+
+    while (thread->priority != -1) {
+        if (thread->id == ASSET_THREAD_ID) {
+            _bcopy(thread, CRASH_ASSET_THREAD_COPY, sizeof(OSThread));
+        } else if (thread->id == MAIN_THREAD_ID) {
+            _bcopy(thread, CRASH_MAIN_THREAD_COPY, sizeof(OSThread));
+        }
+
+        thread = thread->tlnext;
+    }
+
+    // Get current list of loaded DLLs
+    D_80091770->loadedDllList = get_loaded_dlls(&D_80091770->loadedDllCount);
+    D_80091770->unk0x8 = 1;
+
+    // Return ID of the DLL that the main thread was executing (if any)
+    return find_executing_dll(CRASH_MAIN_THREAD_COPY->context.pc, &dllStart, &dllEnd);
+}

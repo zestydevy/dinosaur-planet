@@ -100,7 +100,6 @@ typedef struct {
     OSMesgQueue cmdQ;
     OSMesg      cmdMsgBuf[OS_SC_MAX_MESGS];
     OSThread    thread;
-    u8          unk0x25c[128]; /* NOTE: Not from the original sched.h! */
     OSScClient  *clientList;
     OSScTask    *audioListHead;
     OSScTask    *gfxListHead;

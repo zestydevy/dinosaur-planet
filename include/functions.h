@@ -30,4 +30,6 @@ void stop_alSyn_thread();
 
 void func_80060B94(Gfx**);
 
+OSSched *get_ossched(void);
+
 #endif //_FUNCTIONS_H
