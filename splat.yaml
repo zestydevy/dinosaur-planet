@@ -155,7 +155,7 @@ segments:
     - [0x7FEB0, c, libultra/os/visetspecialfeatures]
     - [0x80010, c, libultra/os/timerintr]
     - [0x804E0, c, libultra/os/vi]
-    - [0x80620, c, libultra/os/getthreadpri]
+    - [0x80620, c, libultra/os/O1/getthreadpri]
     - [0x80640, asm, libultra/os/interrupt]
     - [0x806D0, c, libultra/os/vigetcurrcontext]
     - [0x806E0, c, libultra/os/viswapcontext]
