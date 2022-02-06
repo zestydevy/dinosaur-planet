@@ -1,5 +1,5 @@
-#include "common.h"
 #include <PR/os_internal.h>
+#include <PR/R4300.h>
 
 void __osCleanupThread_80080df0(void);
 extern OSThread *__osActiveQueue;
@@ -16,7 +16,7 @@ void osCreateThread(OSThread *t, OSId id, void (*entry)(void *), void *arg, void
     t->context.sp = (u64)sp - 16;
     t->context.ra = (u64)__osCleanupThread_80080df0;
     mask = OS_IM_ALL;
-    t->context.sr = SR_FR | SR_IMASK | SR_EXL | SR_IE;
+    t->context.sr = SR_FR | SR_IMASK | SR_EXL | SR_IE; // original: SR_IMASK | SR_EXL | SR_IE;
     t->context.rcp = (mask & RCP_IMASK) >> RCP_IMASKSHIFT;
     t->context.fpcsr = (u32)(FPCSR_FS | FPCSR_EV);
     t->fp = 0;
