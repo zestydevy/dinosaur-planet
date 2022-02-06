@@ -160,7 +160,9 @@ segments:
     - [0x806D0, c, libultra/os/vigetcurrcontext]
     - [0x806E0, c, libultra/os/viswapcontext]
     - [0x809E0, c, libultra/gu/mtxutil]
-    - [0x80C50, c, libultra/os/epilinkhandle]
+    - [0x80C50, c, libultra/os/O1/thread]
+    - [0x80C90, c, libultra/os/exceptasm]
+    - [0x81A00, c, libultra/os/O1/epilinkhandle]
     - [0x81A50, c, libultra/os/epiwriteio]
     - [0x81AA0, c, libultra/os/epireadio]
     - [0x81AF0, c, libultra/os/writebackdcache]
@@ -229,6 +231,10 @@ segments:
     - [0x97890, .data, libultra/os/O1/aisetnextbuffer]
 
     - [0x97898, bin]
+
+    - [0x98AD0, .data, libultra/os/O1/thread]
+
+    - [0x98AE8, bin]
     
     - [0x99CA0, .rodata, queue]
     - [0x99D10, .rodata, main]
