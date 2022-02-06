@@ -218,6 +218,10 @@ segments:
     # data/rodata for this section
     - [0x8A350, bin]
 
+    - [0x92370, .data, crash]
+
+    - [0x92380, bin]
+
     - [0x99CA0, .rodata, queue]
     - [0x99D10, .rodata, main]
 

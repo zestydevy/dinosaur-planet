@@ -140,4 +140,14 @@ extern DLLInst* gLoadedDLLList;
 extern s32 gLoadedDLLCount;
 extern DLLTab * gFile_DLLS_TAB;
 
+/**
+ * Returns the ID of the DLL that the given program counter is executing within, 
+ * or -1 if the PC is not within a DLL.
+ * 
+ * start and end will also be set to pointers to the start and end 
+ * of the DLL's body respectively.
+ */
+u32 find_executing_dll(u32 pc, u32 **start, u32 **end);
+DLLInst *get_loaded_dlls(u32 *arg0);
+
 #endif //_SYS_DLL_H

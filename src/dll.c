@@ -23,14 +23,41 @@ void init_dll_system(void)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000BD1C.s")
+u32 find_executing_dll(u32 pc, u32 **start, u32 **end) {
+    s32 i;
+
+    for (i = 0; i < gLoadedDLLCount; i++) {
+        if (gLoadedDLLList[i].id == -1) {
+            continue;
+        }
+        
+        // Get start and end of the full DLL
+        *start = gLoadedDLLList[i].exports - 6;
+        *end = gLoadedDLLList[i].end;
+
+        if ((s32)*start > (s32)pc || (s32)pc > (s32)*end) {
+            // PC is not within the DLL
+        } else {
+            // PC is within the DLL
+
+            // Set start to the beginning of executable DLL code
+            // *start = headerSize + startOfFullDLL
+            *start = **start + (u32)*start;
+
+            // Return ID of found DLL
+            return gLoadedDLLList[i].id;
+        }
+    }
+
+    // PC is not executing within any loaded DLL
+    return -1;
+}
 
 void replace_loaded_dll_list(DLLInst arg0[], s32 arg1) {
     gLoadedDLLCount = arg1;
     gLoadedDLLList = arg0;
 }
 
-DLLInst * get_loaded_dlls(u32 * arg0);
 DLLInst * get_loaded_dlls(u32 * arg0) {
     *arg0 = gLoadedDLLCount;
     return gLoadedDLLList;

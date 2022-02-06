@@ -44,7 +44,7 @@ extern s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
  */
 void stop_active_app_threads();
 
-void some_crash_print(OSThread**, int, int);
+void some_crash_print(OSThread **threads, s32 count, s32 offset);
 
 /**
  * - Sets D_800937F0 to 0
