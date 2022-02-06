@@ -126,7 +126,7 @@ segments:
     - [0x7DD00, c, libultra/os/invaldcache]
     - [0x7DDB0, c, libultra/os/sendmesg]
     - [0x7DF00, c, libultra/os/recvmesg]
-    - [0x7E040, c, libultra/os/createmesgqueue]
+    - [0x7E040, c, libultra/os/O1/createmesgqueue]
     - [0x7E070, c, libultra/os/seteventmesg]
     - [0x7E130, c, libultra/os/O1/controller]
     - [0x7E470, c, libultra/os/g0/contreaddata]
