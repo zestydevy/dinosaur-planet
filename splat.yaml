@@ -184,6 +184,8 @@ segments:
     - [0x82910, c]
     - [0x82B40, c]
     - [0x82CD0, c, libultra/os/epirawstartdma]
+    - [0x82EB0, c, libultra/os/g0/devmgr]
+    - [0x832C0, c, libultra/os/rdbsend]
     - [0x83580, c]
     - [0x835C0, c]
     - [0x83650, c]
@@ -248,6 +250,10 @@ segments:
     - [0x9B8C0, .rodata, video]
 
     - [0x9B8D8, bin]
+
+    - [0xA3450, .rodata, libultra/os/g0/devmgr]
+
+    - [0xA3470, bin]
 
     - [0xA4550, bin, ucode]
 
