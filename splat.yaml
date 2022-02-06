@@ -174,7 +174,7 @@ segments:
     - [0x82270, c, libultra/os/sprawread]
     - [0x822C0, c, libultra/os/sprawwrite]
     - [0x82310, c, libultra/os/unmaptlball]
-    - [0x82360, c, libultra/os/maptlbrdb]
+    - [0x82360, asm, libultra/os/maptlbrdb]
     - [0x823C0, asm, libultra/os/getcause]
     - [0x823D0, c, libultra/os/settimer]
     - [0x824B0, asm, libultra/os/probetlb]
