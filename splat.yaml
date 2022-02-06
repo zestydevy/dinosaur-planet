@@ -150,7 +150,7 @@ segments:
     - [0x7F8F0, c, libultra/libc/ll]
     - [0x7FBB0, asm, libultra/os/getcount]
     - [0x7FBC0, c, libultra/os/sptaskyielded]
-    - [0x7FD70, c, libultra/os/gettime]
+    - [0x7FD70, c, libultra/os/O1/gettime]
     - [0x7FE00, c, libultra/os/sptaskyield]
     - [0x7FEB0, c, libultra/os/visetspecialfeatures]
     - [0x80010, c, libultra/os/timerintr]
