@@ -6,4 +6,4 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_82B40/__osPiRelAccess.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_82B40/__osPiRawStartDma.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_82B40/osPiRawStartDma.s")
