@@ -446,7 +446,7 @@ void set_custom_vi_mode() {
     }
 
     // Set gOSViModeCustom to the chosen VI mode
-    _bcopy(
+    bcopy(
         viMode,
         &gOSViModeCustom,
         sizeof(OSViMode)
@@ -722,7 +722,7 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
     }
 
     // Set gOSViModeCustom to the chosen VI mode
-    _bcopy(
+    bcopy(
         viMode,
         &gOSViModeCustom,
         sizeof(OSViMode)

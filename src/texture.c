@@ -179,7 +179,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
         {
             if ((texture->format & 0xf) == 0)
             {
-                _bcopy(Gfx_ARRAY_80092a00, mygdl, 8 * sizeof(Gfx));
+                bcopy(Gfx_ARRAY_80092a00, mygdl, 8 * sizeof(Gfx));
                 mygdl += 8;
             }
             else
@@ -187,11 +187,11 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
                 Gfx *mygdl2 = mygdl;
 
                 if ((texture->cmt & 0x2) != 0 && (texture->cms & 0x2) == 0) {
-                    _bcopy(Gfx_ARRAY_800928c0, mygdl2, 8 * sizeof(Gfx));
+                    bcopy(Gfx_ARRAY_800928c0, mygdl2, 8 * sizeof(Gfx));
                 } else if ((texture->cmt & 0x2) == 0 && (texture->cms & 0x2) != 0) {
-                    _bcopy(Gfx_ARRAY_80092900, mygdl2, 8 * sizeof(Gfx));
+                    bcopy(Gfx_ARRAY_80092900, mygdl2, 8 * sizeof(Gfx));
                 } else {
-                    _bcopy(Gfx_ARRAY_80092880, mygdl2, 8 * sizeof(Gfx));
+                    _(Gfx_ARRAY_80092880, mygdl2, 8 * sizeof(Gfx));
                 }
 
                 mygdl += 8;
@@ -548,7 +548,7 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
         } while (i != destWidth);
     }
 
-    _bcopy(&buffer[0], destWidth + dest, destWidth << 1);
+    bcopy(&buffer[0], destWidth + dest, destWidth << 1);
 }
 #endif
 

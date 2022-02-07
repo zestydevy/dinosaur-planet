@@ -1,6 +1,6 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7D100/_bcopy.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_7D100/bcopy.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_7D100/osInitialize.s")
 

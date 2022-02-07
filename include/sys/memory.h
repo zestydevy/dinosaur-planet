@@ -96,6 +96,5 @@ void init_memory(void);
 HeapBlock * set_heap_block(HeapBlock * blocks, s32 size, s32 maxBlocks);
 void *malloc(s32 size, s32 tag, const char *name);
 void free(void* p);
-void _bcopy(const void *src,void *dst,int length);
 
 #endif //_SYS_MEMORY_H

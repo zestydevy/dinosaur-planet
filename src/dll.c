@@ -147,7 +147,7 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
             return;
 
     dll = (DLLFile *)malloc(arg2 + arg3, 4, 0);
-    _bcopy((void *)arg1, (void *)dll, arg2);
+    bcopy((void *)arg1, (void *)dll, arg2);
 
     if (arg3)
         bzero((void *)((u32)dll + arg2), arg3);
