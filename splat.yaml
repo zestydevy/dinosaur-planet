@@ -147,7 +147,7 @@ segments:
     - [0x7F540, asm, libultra/os/setintmask]
     - [0x7F5E0, c, libultra/os/O1/spsetstat]
     - [0x7F5F0, c, libultra/os/O1/dpsetstat]
-    - [0x7F600, c, libultra/os/sptaskload]
+    - [0x7F600, c, libultra/os/O1/sptask]
     - [0x7F8F0, c, libultra/libc/ll]
     - [0x7FBB0, asm, libultra/os/getcount]
     - [0x7FBC0, c, libultra/os/sptaskyielded]
