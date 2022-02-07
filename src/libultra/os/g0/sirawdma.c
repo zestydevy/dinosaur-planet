@@ -1,10 +1,11 @@
 #include <PR/os_internal.h>
 #include "libultra/io/siint.h"
 
+#define _osSiDeviceBusy() IO_READ(SI_STATUS_REG) & (SI_STATUS_DMA_BUSY | SI_STATUS_RD_BUSY)
+
 s32 __osSiRawStartDma(s32 direction, void *dramAddr)
 {
-    // this is just if (__osSiDeviceBusy())
-    if (IO_READ(SI_STATUS_REG) & (SI_STATUS_DMA_BUSY | SI_STATUS_RD_BUSY))
+    if (_osSiDeviceBusy())
         return -1;
 
     if (direction == OS_WRITE)
