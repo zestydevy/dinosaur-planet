@@ -142,9 +142,11 @@ segments:
     - [0x7ECF0, c, libultra/os/O1/settime]
     - [0x7ED20, c, libultra/os/motor]
     - [0x7F0F0, c, libultra/os/pimgr]
-    - [0x7F390, c, libultra/os/viblack]
-    - [0x7F460, c, libultra/os/visetmode]
-    - [0x7F4D0, c, libultra/os/visetevent]
+    - [0x7F390, c, libultra/os/O1/viblack]
+    - [0x7F400, c, libultra/os/O1/viswapbuf]
+    - [0x7F450, c, libultra/os/getactivequeue]
+    - [0x7F460, c, libultra/os/O1/visetmode]
+    - [0x7F4D0, c, libultra/os/O1/visetevent]
     - [0x7F540, asm, libultra/os/setintmask]
     - [0x7F5E0, c, libultra/os/O1/spsetstat]
     - [0x7F5F0, c, libultra/os/O1/dpsetstat]
@@ -158,7 +160,7 @@ segments:
     - [0x7FE20, c, libultra/gu/normalize]
     - [0x7FEB0, c, libultra/os/visetspecialfeatures]
     - [0x80010, c, libultra/os/O1/timerintr]
-    - [0x804E0, c, libultra/os/vi]
+    - [0x804E0, c, libultra/os/O1/vi]
     - [0x80620, c, libultra/os/O1/getthreadpri]
     - [0x80640, asm, libultra/os/interrupt]
     - [0x806D0, c, libultra/os/vigetcurrcontext]
@@ -251,6 +253,10 @@ segments:
     - [0x98A50, .data, libultra/os/O1/timerintr]
 
     - [0x98A58, bin]
+
+    - [0x98A60, .data, libultra/os/O1/vi]
+
+    - [0x98AC8, bin]
 
     - [0x98AD0, .data, libultra/os/O1/thread]
 

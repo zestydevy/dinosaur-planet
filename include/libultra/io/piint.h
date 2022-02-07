@@ -1,5 +1,5 @@
-#ifndef _LIBULTRA_OS_PIINT_H
-#define _LIBULTRA_OS_PIINT_H
+#ifndef _LIBULTRA_IO_PIINT_H
+#define _LIBULTRA_IO_PIINT_H
 
 #include <PR/os_internal.h>
 #include <PR/rcp.h>
@@ -143,4 +143,4 @@ OSMesgQueue *osPiGetCmdQueue(void);
         __osCurrentHandle[domain] = pihandle;             \
     }
 
-#endif // _LIBULTRA_OS_PIINT_H
+#endif // _LIBULTRA_IO_PIINT_H
