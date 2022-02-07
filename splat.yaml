@@ -175,7 +175,7 @@ segments:
     - [0x82240, asm, libultra/os/setsr]
     - [0x82250, asm, libultra/os/getsr]
     - [0x82260, asm, libultra/os/getfpccsr]
-    - [0x82270, c, libultra/os/sprawread]
+    - [0x82270, c, libultra/os/g0/sprawread]
     - [0x822C0, c, libultra/os/sprawwrite]
     - [0x82310, c, libultra/os/unmaptlball]
     - [0x82360, asm, libultra/os/maptlbrdb]
