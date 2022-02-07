@@ -15,7 +15,7 @@ void osSetEventMesg(OSEvent event, OSMesgQueue *mq, OSMesg msg)
 	es->messageQueue = mq;
 	es->message = msg;
 
-	// RARE start
+	// Rare start
 	if (event == OS_EVENT_PRENMI) {
 		if (__osShutdown && !__osPreNMI) {
 			osSendMesg(mq, msg, OS_MESG_NOBLOCK);
@@ -23,7 +23,7 @@ void osSetEventMesg(OSEvent event, OSMesgQueue *mq, OSMesg msg)
 
 		__osPreNMI = TRUE;
 	}
-	// RARE end
+	// Rare end
 
 	__osRestoreInt(saveMask);
 }
