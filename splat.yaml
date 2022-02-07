@@ -180,7 +180,7 @@ segments:
     - [0x82310, c, libultra/os/unmaptlball]
     - [0x82360, asm, libultra/os/maptlbrdb]
     - [0x823C0, asm, libultra/os/getcause]
-    - [0x823D0, c, libultra/os/settimer]
+    - [0x823D0, c, libultra/os/O1/settimer]
     - [0x824B0, asm, libultra/os/probetlb]
     - [0x82570, c, libultra/os/O1/ai]
     - [0x825A0, c, libultra/os/O1/jammesg]
