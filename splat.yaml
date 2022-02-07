@@ -138,7 +138,7 @@ segments:
     - [0x7EB00, c, libultra/os/O1/aisetnextbuffer]
     - [0x7EBB0, c, libultra/os/writebackdcacheall]
     - [0x7EBE0, c, libultra/os/O1/pidma]
-    - [0x7ECF0, c, libultra/os/settime]
+    - [0x7ECF0, c, libultra/os/O1/settime]
     - [0x7ED20, c, libultra/os/motor]
     - [0x7F0F0, c, libultra/os/pimgr]
     - [0x7F390, c, libultra/os/viblack]
