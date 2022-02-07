@@ -145,7 +145,7 @@ segments:
     - [0x7F460, c, libultra/os/visetmode]
     - [0x7F4D0, c, libultra/os/visetevent]
     - [0x7F540, asm, libultra/os/setintmask]
-    - [0x7F5E0, c, libultra/os/spsetstat]
+    - [0x7F5E0, c, libultra/os/O1/spsetstat]
     - [0x7F5F0, c, libultra/os/O1/dpsetstat]
     - [0x7F600, c, libultra/os/sptaskload]
     - [0x7F8F0, c, libultra/libc/ll]
