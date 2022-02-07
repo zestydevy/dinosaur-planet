@@ -1,10 +1,10 @@
 #include <PR/os_internal.h>
 #include <PR/rcp.h>
-#include "libultra/os/os_int.h"
+#include "libultra/io/siint.h"
 
-s32 __osSpRawReadIo(u32 devAddr, u32 *data)
+s32 __osSiRawReadIo(u32 devAddr, u32 *data)
 {
-    if (__osSpDeviceBusy())
+    if (__osSiDeviceBusy())
         return -1;
     *data = IO_READ(devAddr);
     return 0;
