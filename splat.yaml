@@ -130,7 +130,7 @@ segments:
     - [0x7E070, c, libultra/os/O1/seteventmesg]
     - [0x7E130, c, libultra/os/O1/controller]
     - [0x7E470, c, libultra/os/g0/contreaddata]
-    - [0x7E650, c, libultra/os/siacs]
+    - [0x7E650, c, libultra/os/O1/siacs]
     - [0x7E710, c, libultra/os/sirawdma]
     - [0x7E7C0, c, libultra/os/O1/contquery]
     - [0x7E870, c, libultra/os/aisetfrequency]
@@ -236,6 +236,10 @@ segments:
     - [0x97870, .data, libultra/os/O1/controller]
 
     - [0x97878, bin]
+
+    - [0x97880, .data, libultra/os/O1/siacs]
+
+    - [0x97888, bin]
 
     - [0x97890, .data, libultra/os/O1/aisetnextbuffer]
 
