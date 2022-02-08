@@ -571,6 +571,7 @@ readhost_bss_0018 = 0x800cef28; // type:data
 __osRdb_Read_Data_Buf = 0x800cef2c; // type:data size:0x4
 __osRdb_Read_Data_Ct = 0x800cef30; // type:data size:0x4
 __osPiAccessQueue = 0x800cef48; // type:data size:0x18
+piAccessBuf = 0x800cef40; // type:data
 kdebugserver_bss_01B0 = 0x800cf110; // type:data
 rmonsio_bss_0000 = 0x800cf120; // type:data
 rmonsio_bss_0018 = 0x800cf138; // type:data

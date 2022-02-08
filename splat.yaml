@@ -199,7 +199,8 @@ segments:
     - [0x82720, c, libultra/io/crc]
     - [0x82890, c]
     - [0x82910, c]
-    - [0x82B40, c]
+    - [0x82B40, c, libultra/io/O1/piacs]
+    - [0x82C00, c, libultra/io/g0/pirawdma]
     - [0x82CD0, c, libultra/io/epirawdma]
     - [0x82EB0, c, libultra/io/g0/devmgr]
     - [0x832C0, c, libultra/os/rdbsend]
@@ -267,6 +268,10 @@ segments:
     - [0x98AD0, .data, libultra/os/O1/thread]
 
     - [0x98AE8, bin]
+
+    - [0x98B70, .data, libultra/io/O1/piacs]
+
+    - [0x98B78, bin]
     
     - [0x99CA0, .rodata, queue]
     - [0x99D10, .rodata, main]
