@@ -1,7 +1,5 @@
 #include "common.h"
 
-f32 _sqrtf(f32 f);
-
 /**
  * Returns the dot product of v1 and v2.
  */
@@ -13,7 +11,7 @@ f32 vec3_dot_product(Vec3f *v1, Vec3f *v2) {
  * Returns the length of v.
  */
 f32 vec3_length(Vec3f *v) {
-    return _sqrtf(v->z * v->z + (v->x * v->x + v->y * v->y));
+    return sqrtf(v->z * v->z + (v->x * v->x + v->y * v->y));
 }
 
 /**
@@ -48,7 +46,7 @@ f32 vec3_normalize(Vec3f *v) {
     f32 length;
     f32 lengthInv;
 
-    length = _sqrtf(v->z * v->z + (v->x * v->x + v->y * v->y));
+    length = sqrtf(v->z * v->z + (v->x * v->x + v->y * v->y));
 
     if (length != 0.0f) {
         lengthInv = 1.0f / length;

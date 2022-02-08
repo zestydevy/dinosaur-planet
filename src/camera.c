@@ -170,7 +170,6 @@ u32 get_camera_selector()
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001884.s")
 #else
-f32 _sqrtf(f32 x);
 f32 _func_80001884(f32 x, f32 y, f32 z)
 {
     s32 cameraSel = gCameraSelector;
@@ -185,7 +184,7 @@ f32 _func_80001884(f32 x, f32 y, f32 z)
     dz = z - gCameras[cameraSel].srt.transl.z;
     dx = x - gCameras[cameraSel].srt.transl.x;
     dy = y - gCameras[cameraSel].srt.transl.y;
-    return _sqrtf(dx * dx + dy * dy + dz * dz);
+    return sqrtf(dx * dx + dy * dy + dz * dz);
 }
 #endif
 
@@ -741,7 +740,6 @@ void _func_8000356C(f32 a, f32 b)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/get_vec3_to_camera_normalized.s")
 #else
-f32 _sqrtf(f32 x);
 void _get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
 {
     f32 nrm;
@@ -751,7 +749,7 @@ void _get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *
     *oy = gCameras[cameraSel].srt.translation.y - y;
     *oz = gCameras[cameraSel].srt.translation.z - z;
 
-    nrm = _sqrtf(*ox * *ox + *oy * *oy + *oz * *oz);
+    nrm = sqrtf(*ox * *ox + *oy * *oy + *oz * *oz);
     if (nrm != 0.0f)
     {
         nrm = 1.0f / nrm;
@@ -856,7 +854,6 @@ u32 _func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003A60.s")
 
-f32 _sqrtf(f32 x);
 void func_80003AA0(f32 x, f32 y, f32 z, f32 distance, f32 param_5)
 {
     s32 i;
@@ -866,7 +863,7 @@ void func_80003AA0(f32 x, f32 y, f32 z, f32 distance, f32 param_5)
         f32 dx = x - gCameras[i].srt.transl.x;
         f32 dy = y - gCameras[i].srt.transl.y;
         f32 dz = z - gCameras[i].srt.transl.z;
-        f32 d = _sqrtf(dx * dx + dy * dy + dz * dz);
+        f32 d = sqrtf(dx * dx + dy * dy + dz * dz);
         if (d < distance) {
             gCameras[i].unk_0x5d = 0;
             gCameras[i].dty = (distance - d) * param_5 / distance;

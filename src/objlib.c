@@ -34,7 +34,6 @@ TActor **TActor_getter(s32 idx, s32 *count)
 #pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_80031238.s")
 #else
 #define F32_MAX_FINITE (*(f32*)0x80099c3c)
-float _sqrtf(float x);
 float vec3_distance_squared(Vec3f *v0, Vec3f *v1);
 TActor *_func_80031238(s32 idx, TActor *actor, float *distance)
 {
@@ -69,7 +68,7 @@ TActor *_func_80031238(s32 idx, TActor *actor, float *distance)
     }
 
     if (result != NULL && distance != NULL) {
-        *distance = _sqrtf(minDistSquared);
+        *distance = sqrtf(minDistSquared);
     }
 
     return result;
@@ -81,7 +80,6 @@ TActor *_func_80031238(s32 idx, TActor *actor, float *distance)
 #pragma GLOBAL_ASM("asm/nonmatchings/objlib/func_80031350.s")
 #else
 #define F32_MAX_FINITE (*(f32*)0x80099c40)
-float _sqrtf(float x);
 float vec3_distance_squared(Vec3f *v0, Vec3f *v1);
 TActor *_func_80031350(s32 idx, TActor *actor, float *distance)
 {
@@ -119,7 +117,7 @@ TActor *_func_80031350(s32 idx, TActor *actor, float *distance)
     }
 
     if (result != NULL && distance != NULL) {
-        *distance = _sqrtf(minDistSquared);
+        *distance = sqrtf(minDistSquared);
     }
 
     return result;
