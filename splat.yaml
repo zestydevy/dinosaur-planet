@@ -225,7 +225,7 @@ segments:
     - [0x85550, c]
     - [0x855A0, c, libultra/os/O1/yieldthread]
     - [0x855F0, c]
-    - [0x85690, c]
+    - [0x85690, c, libultra/libc/xlitob]
     - [0x85930, c]
     - [0x863F0, c]
     - [0x86F70, c]
