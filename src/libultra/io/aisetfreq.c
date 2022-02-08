@@ -1,5 +1,5 @@
 #include <PR/rcp.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 s32 osAiSetFrequency(u32 frequency)
 {

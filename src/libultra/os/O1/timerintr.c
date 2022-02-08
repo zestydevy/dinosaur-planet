@@ -1,5 +1,5 @@
 #include <PR/os_internal.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 OSTimer *__osTimerList = &__osBaseTimer;
 OSTimer __osBaseTimer;

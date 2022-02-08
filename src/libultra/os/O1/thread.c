@@ -1,5 +1,5 @@
 #include <PR/os_internal.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 struct __osThreadTail __osThreadTail = {0, -1};
 

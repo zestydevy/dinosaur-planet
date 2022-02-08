@@ -1,6 +1,6 @@
 #include <PR/os_internal.h>
 #include <PR/R4300.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 u32 osVirtualToPhysical(void *addr)
 {

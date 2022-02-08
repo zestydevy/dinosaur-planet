@@ -4,7 +4,7 @@
 #include <PR/os_internal.h>
 #include <PR/sptask.h>
 #include <PR/rcp.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 #define _osVirtualToPhysical(ptr)               \
 	if (ptr != NULL)                            \

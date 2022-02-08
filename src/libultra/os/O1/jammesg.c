@@ -1,5 +1,5 @@
 #include <PR/os_internal.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 s32 osJamMesg(OSMesgQueue *mq, OSMesg msg, s32 flag)
 {

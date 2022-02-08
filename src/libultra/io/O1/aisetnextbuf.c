@@ -1,6 +1,6 @@
 #include <PR/os.h>
 #include <PR/rcp.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 s32 osAiSetNextBuffer(void *bufPtr, u32 size)
 {

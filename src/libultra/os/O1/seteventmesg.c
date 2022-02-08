@@ -1,5 +1,5 @@
 #include <PR/os_internal.h>
-#include "libultra/os/os_int.h"
+#include "libultra/os/osint.h"
 
 extern s32 __osShutdown;
 extern s32 __osPreNMI;
