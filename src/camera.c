@@ -82,7 +82,6 @@ extern u16 gPerspNorm;
 
 void vec3_transform_no_translate(MtxF *mf, Vec3f *v, Vec3f *ov);
 void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
-void matrix_perspective(MtxF *mf, u16 *perspNorm, f32 fovy, f32 aspect, f32 near, f32 far, f32 scale);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001220.s")
 
@@ -107,7 +106,7 @@ void set_fov_y(f32 fovY)
 
     gFovY = fovY;
 
-    matrix_perspective(&gProjectionMtx, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
+    guPerspectiveF(&gProjectionMtx, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
     matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
     FLOAT_8008c52c = gProjectionMtx.m[0][0];
 }
@@ -120,7 +119,7 @@ void set_ortho_projection_matrix(f32 l, f32 r, f32 b, f32 t)
 void set_aspect(f32 aspect)
 {
     gAspect = aspect;
-    matrix_perspective(&gProjectionMtx, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
+    guPerspectiveF(&gProjectionMtx, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
     matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
     FLOAT_8008c52c = gProjectionMtx.m[0][0];
     gProjectionMtx.m[0][3] *= 0.5f;
@@ -129,7 +128,7 @@ void set_aspect(f32 aspect)
 void set_near_plane(f32 near)
 {
     gNearPlane = near;
-    matrix_perspective(&gProjectionMtx, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
+    guPerspectiveF(&gProjectionMtx, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
     matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
     FLOAT_8008c52c = gProjectionMtx.m[0][0];
     gProjectionMtx.m[0][3] *= 0.5f;
@@ -151,7 +150,7 @@ void func_800016B8()
 
 void func_80001708()
 {
-    matrix_perspective(&gProjectionMtx, &gPerspNorm, 60.0f, 4.0f / 3.0f, gNearPlane, gFarPlane, 1.0f);
+    guPerspectiveF(&gProjectionMtx, &gPerspNorm, 60.0f, 4.0f / 3.0f, gNearPlane, gFarPlane, 1.0f);
     matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
 }
 

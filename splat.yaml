@@ -68,6 +68,7 @@ segments:
     - [0x53F00, c]
     - [0x5C470, c]
     - [0x5D380, c, video]
+    - [0x5F150, c, libultra/gu/perspective]
     - [0x5F3D0, c, libultra/gu/ortho]
     - [0x5F590, c, libultra/os/createthread]
     - [0x5F660, c]
