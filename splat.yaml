@@ -75,7 +75,7 @@ segments:
     - [0x5FFE0, c]
     - [0x62B30, c]
     - [0x62BA0, c, exception]
-    - [0x63EA0, c]
+    - [0x63EA0, asm, get_stack_]
     - [0x63EB0, c]
     - [0x64320, c]
     - [0x645A0, c]
