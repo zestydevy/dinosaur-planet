@@ -159,7 +159,7 @@ segments:
     - [0x7FCC0, c, libultra/io/O1/dpsetnextbuf]
     - [0x7FD70, c, libultra/os/O1/gettime]
     - [0x7FE00, c, libultra/io/O1/sptaskyield]
-    - [0x7FE20, c, libultra/gu/normalize]
+    - [0x7FE20, c, libultra/gu/g0/normalize]
     - [0x7FEB0, c, libultra/io/g0/visetspecialfeatures]
     - [0x80010, c, libultra/os/O1/timerintr]
     - [0x804E0, c, libultra/io/O1/vi]

@@ -210,6 +210,7 @@ some_video_setup = 0x8005dfbc; // type:func
 osCreateViManager = 0x8005e200; // type:func
 matrix_perspective = 0x8005e550; // type:func
 guOrthoF = 0x8005e7d0; // type:func
+guOrtho = 0x8005e924; // type:func
 osEPi_WriteRead = 0x8005ec3c; // type:func
 some_dma_func = 0x8005ed08; // type:func
 func_printing_null_nil = 0x8005f70c; // type:func
