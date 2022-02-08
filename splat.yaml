@@ -167,7 +167,7 @@ segments:
     - [0x80640, asm, libultra/os/interrupt]
     - [0x806D0, c, libultra/io/O1/vigetcurrcontext]
     - [0x806E0, c, libultra/io/g0/viswapcontext]
-    - [0x809E0, c, libultra/gu/mtxutil]
+    - [0x809E0, c, libultra/gu/g0/mtxutil]
     - [0x80C50, c, libultra/os/O1/thread]
     - [0x80C90, asm, libultra/os/exceptasm]
     - [0x81A00, c, libultra/io/O1/epilinkhandle]
