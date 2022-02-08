@@ -209,7 +209,7 @@ segments:
     - [0x83650, c]
     - [0x83680, c]
     - [0x83690, c]
-    - [0x836C0, c]
+    - [0x836C0, asm, libultra/os/setcompare]
     - [0x836D0, c]
     - [0x839E0, c]
     - [0x83BE0, c, libultra/os/initrdb]
