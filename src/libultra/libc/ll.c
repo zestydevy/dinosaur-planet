@@ -6,9 +6,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/libc/ll/__ull_div.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/libc/ll/func_8007ED94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/libc/ll/__ll_lshift.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/libc/ll/func_8007EDC0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/libc/ll/__ll_rem.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/libc/ll/__ll_div.s")
 
