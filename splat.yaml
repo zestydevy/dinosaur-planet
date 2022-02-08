@@ -121,6 +121,9 @@ segments:
     - [0x7CEF0, c]
     - [0x7D100, asm, libc/bcopy]
     - [0x7D410, c]
+    - [0x7D940, c, libultra/os/O1/startthread]
+    - [0x7DA90, c, libultra/os/O1/setthreadpri]
+    - [0x7DB70, bin] # bunch of nops
     - [0x7DBD0, asm, libultra/gu/sqrtf]
     - [0x7DBE0, asm, libc/bzero]
     - [0x7DC80, asm, libultra/os/invalicache]
