@@ -746,8 +746,3 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
     D_80093060 = 3;
 }
 #endif
-
-#pragma GLOBAL_ASM("asm/nonmatchings/video/osCreateViManager.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/video/viMgrMain.s")
-

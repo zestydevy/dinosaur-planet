@@ -68,6 +68,7 @@ segments:
     - [0x53F00, c]
     - [0x5C470, c]
     - [0x5D380, c, video]
+    - [0x5EE00, c, libultra/io/vimgr]
     - [0x5F150, c, libultra/gu/perspective]
     - [0x5F3D0, c, libultra/gu/ortho]
     - [0x5F590, c, libultra/os/createthread]
@@ -245,6 +246,10 @@ segments:
     - [0x92370, .data, crash]
 
     - [0x92380, bin]
+
+    - [0x93CB4, .data, libultra/io/vimgr]
+
+    - [0x93CD0, bin]
     
     - [0x97870, .data, libultra/io/O1/controller]
 
