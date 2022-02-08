@@ -1,6 +1,6 @@
 
 BUILD_DIR = build
-ASM_DIRS := asm asm/os asm/libultra/os
+ASM_DIRS := asm asm/libc asm/libultra/gu asm/libultra/os
 DATA_DIRS := bin bin/mp3 bin/assets
 SRC_DIRS := $(shell find src/libultra -type d)
 DLL_C_DIRS := $(shell find src/dlls -type d)
