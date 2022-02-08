@@ -16,8 +16,11 @@ O_FILES := $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file:.c=.o)) \
            $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file:.s=.o)) \
            $(foreach file,$(DATA_FILES),$(BUILD_DIR)/$(file:.bin=.o)) \
 
-# Object files
 DLL_O_FILES := $(foreach file,$(DLL_C_FILES),$(BUILD_DIR)/$(file:.c=.o))
+
+# Files with different optimization/debug options
+O1_FILES := $(foreach file,$(O_FILES),$(addsuffix $(notdir $(file)),$(filter %/O1/,$(dir $(file)))))
+G0_FILES := $(foreach file,$(O_FILES),$(addsuffix $(notdir $(file)),$(filter %/g0/,$(dir $(file)))))
 
 ##################### Compiler Options #######################
 ifeq ($(shell type mips-n64-ld >/dev/null 2>/dev/null; echo $$?), 0)
@@ -59,9 +62,8 @@ CC_CHECK = gcc -fsyntax-only -fno-builtin -nostdinc -fsigned-char -m32 $(GCC_CFL
 
 $(foreach dir,$(SRC_DIRS) $(DLL_C_DIRS) $(ASM_DIRS) $(DATA_DIRS) $(COMPRESSED_DIRS) $(MAP_DIRS) $(BGM_DIRS),$(shell mkdir -p build/$(dir)))
 
-build/src/libultra/os/O1/%.o: OPTFLAGS := -O1
-build/src/libultra/os/g0/%.o: OPTFLAGS := -O2 -g0
-build/src/os/O1/%.o: OPTFLAGS := -O1
+$(O1_FILES): OPTFLAGS := -O1
+$(G0_FILES): OPTFLAGS := -O2 -g0
 build/src/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
 build/src/dlls/%.o: CC := python3 tools/asm_processor/build.py $(CC) -- $(AS) $(ASFLAGS) --
 build/asm/%.o: ASFLAGS += -mips3 -mabi=32
