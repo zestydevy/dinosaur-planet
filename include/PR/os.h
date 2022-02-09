@@ -973,7 +973,7 @@ extern void		osAckRamromWrite(void);
 
 /* byte string operations */
 
-extern void     bcopy(const void *, void *, int);
+extern void     bcopy(const void *src, void *dst, int length);
 extern int      bcmp(const void *, const void *, int);
 extern void     bzero(void *, int);
 

@@ -2,6 +2,7 @@
 #define _COMMON_H
 
 #include "ultra64.h"
+#include "libc/string.h"
 
 typedef u8 UNK_TYPE_8;
 typedef u16 UNK_TYPE_16;

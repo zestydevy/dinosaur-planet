@@ -210,7 +210,7 @@ void _func_80012B54(s32 arg0, s32 arg1) {
     D_800ACBC8->unk8 = D_800AD6C8;
     D_800ACBC8->unkA = D_800AD6CA;
     D_800ACBC8->unk6 = D_800AD6C6;
-    _bcopy(*0x800AD6CC, D_800ACBC8->unkC, *0x800AD6C2 * 0x1C);
+    bcopy(*0x800AD6CC, D_800ACBC8->unkC, *0x800AD6C2 * 0x1C);
     if ((D_800AE29D != 0) && (arg0 == D_800AE29E)) {
         set_status_reg(sp38);
         osRecvMesg(&D_800ACB68, 0, 1);

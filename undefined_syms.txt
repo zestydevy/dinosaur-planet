@@ -25,6 +25,7 @@ D_800AE680 = 0x800AE680;
 D_8009A318 = 0x8009A318;
 gControllerThreadStack = 0x800a8180;
 gPiManagerThreadStack = 0x800beb10;
+viThreadStack = 0x800bd0a8;
 gLastJoyY = 0x800a7fb8;
 gLastJoyX = 0x800a7fb4;
 gCrashThreadStack = 0x800B34C8;
@@ -33,6 +34,7 @@ gStrGameTask = 0x8009a030;
 gStrDITask = 0x8009a03c;
 gStrDIBenchmarkTest = 0x8009a048;
 gStrUnknownTaskType = 0x8009a060;
+__osBaseTimer = 0x800cee90;
 
 __fstAddress = 0xA4970;
 __file1Address = 0xA4AA0;

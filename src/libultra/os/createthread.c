@@ -1,25 +1,29 @@
-#include "common.h"
+#include <PR/os_internal.h>
+#include <PR/R4300.h>
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/modify_osPIhandle.s")
+void __osCleanupThread_80080df0(void);
+extern OSThread *__osActiveQueue;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/NOOP_8005ead8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/NOOP_8005eae0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/set_osPIHandle_Addr_to_0xa800000.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/osEPi_WriteRead.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/some_dma_func.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/func_8005EE20.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/func_8005EE8C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/func_8005EFA8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/func_8005F0D4.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/func_8005F1A0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/createthread/func_8005F2A4.s")
+void osCreateThread(OSThread *t, OSId id, void (*entry)(void *), void *arg, void *sp, OSPri p) {
+    register u32 saveMask;
+    OSIntMask mask;
+    t->id = id;
+    t->priority = p;
+    t->next = NULL;
+    t->queue = NULL;
+    t->context.pc = (u32)entry;
+    t->context.a0 = (u64)arg;
+    t->context.sp = (u64)sp - 16;
+    t->context.ra = (u64)__osCleanupThread_80080df0;
+    mask = OS_IM_ALL;
+    t->context.sr = SR_FR | SR_IMASK | SR_EXL | SR_IE; // original: SR_IMASK | SR_EXL | SR_IE;
+    t->context.rcp = (mask & RCP_IMASK) >> RCP_IMASKSHIFT;
+    t->context.fpcsr = (u32)(FPCSR_FS | FPCSR_EV);
+    t->fp = 0;
+    t->state = OS_STATE_STOPPED;
+    t->flags = 0;
+    saveMask = __osDisableInt();
+    t->tlnext = __osActiveQueue;
+    __osActiveQueue = t;
+    __osRestoreInt(saveMask);
+}

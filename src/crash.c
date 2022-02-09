@@ -115,9 +115,9 @@ u32 crash_nmi_handler() {
 
     while (thread->priority != -1) {
         if (thread->id == ASSET_THREAD_ID) {
-            _bcopy(thread, CRASH_ASSET_THREAD_COPY, sizeof(OSThread));
+            bcopy(thread, CRASH_ASSET_THREAD_COPY, sizeof(OSThread));
         } else if (thread->id == MAIN_THREAD_ID) {
-            _bcopy(thread, CRASH_MAIN_THREAD_COPY, sizeof(OSThread));
+            bcopy(thread, CRASH_MAIN_THREAD_COPY, sizeof(OSThread));
         }
 
         thread = thread->tlnext;

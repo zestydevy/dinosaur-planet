@@ -173,7 +173,7 @@ void controller_thread_entry(void *_) {
                     osContStartReadData(&gContInterruptQueue);
                 } else {
                     // Queue empty
-                    _bcopy(curSnap, nextSnap, sizeof(ControllersSnapshot));
+                    bcopy(curSnap, nextSnap, sizeof(ControllersSnapshot));
                 }
 
                 for (i = 0; i != MAXCONTROLLERS; ++i) {

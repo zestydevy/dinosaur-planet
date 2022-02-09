@@ -131,7 +131,7 @@ void crash_controller_getter() {
     osContStartReadData(&gCrashControllerMesgQueue);
 
     // Copy gCrashContPadArray1 -> gCrashContPadArray2
-    _bcopy(
+    bcopy(
         &gCrashContPadArray1[0],
         &gCrashContPadArray2[0],
         sizeof(OSContPad) * MAXCONTROLLERS
@@ -164,7 +164,7 @@ void _crash_copy_control_inputs() {
             (u16)(gCrashContPadArray1[i].button ^ gCrashContPadArray2[i].button);
     }
 
-    _bcopy(
+    bcopy(
         &gCrashContPadArray1[0],
         &gCrashContPadArray2[0],
         sizeof(OSContPad) * MAXCONTROLLERS

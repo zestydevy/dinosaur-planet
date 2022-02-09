@@ -568,7 +568,7 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
                     dl_apply_other_mode(&gMainDL);
                 }
 
-                _bcopy(mygdl, gMainDL, gfxCount * sizeof(Gfx));
+                bcopy(mygdl, gMainDL, gfxCount * sizeof(Gfx));
                 gMainDL += gfxCount;
 
                 gDLBuilder->needsPipeSync = TRUE;
@@ -881,7 +881,7 @@ void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
             }
         }
 
-        _bcopy(block->vertices2[0], block->vertices2[1], block->vtxCount * sizeof(Vtx_t));
+        bcopy(block->vertices2[0], block->vertices2[1], block->vtxCount * sizeof(Vtx_t));
     }
     else
     {
@@ -1047,7 +1047,6 @@ void _block_setup_gdl_groups(Block *block)
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_vertices.s")
 #else
 extern f32 FLOAT_8009a9c4; // 8191.0f
-f32 _sqrtf(f32 x);
 void _block_setup_vertices(Block *block)
 {
     s32 i;
@@ -1092,7 +1091,7 @@ void _block_setup_vertices(Block *block)
             nx = (vz[0] - vz[1]) * vy[2] + vy[0] * (vz[1] - vz[2]) + vy[1] * (vz[2] - vz[0]);
             ny = (vx[0] - vx[1]) * vz[2] + vz[0] * (vx[1] - vx[2]) + vz[1] * (vx[2] - vx[0]);
             nz = (vy[0] - vy[1]) * vx[2] + vx[0] * (vy[1] - vy[2]) + vx[1] * (vy[2] - vy[0]);
-            mag = _sqrtf(nx * nx + ny * ny + nz * nz);
+            mag = sqrtf(nx * nx + ny * ny + nz * nz);
             if (mag > 0.0f)
             {
                 nx /= mag;
@@ -1271,14 +1270,14 @@ void _func_8004E64C(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 pa
     {
         if (unk->flags & 0x20)
         {
-            _bcopy(&actor->srt.transl, &v0, sizeof(Vec3f));
-            _bcopy(&actor->positionMirror, &v1, sizeof(Vec3f));
-            _bcopy(&unk->tr, &actor->srt.transl, sizeof(Vec3f));
+            bcopy(&actor->srt.transl, &v0, sizeof(Vec3f));
+            bcopy(&actor->positionMirror, &v1, sizeof(Vec3f));
+            bcopy(&unk->tr, &actor->srt.transl, sizeof(Vec3f));
 
             if (actor->linkedActor != NULL) {
                 transform_point_by_actor(unk->tr.x, unk->tr.y, unk->tr.z, &unk->tr.x, &unk->tr.y, &unk->tr.z, actor->linkedActor);
             } else {
-                _bcopy(&unk->tr, &actor->positionMirror, sizeof(Vec3f));
+                bcopy(&unk->tr, &actor->positionMirror, sizeof(Vec3f));
             }
         }
 
@@ -1288,8 +1287,8 @@ void _func_8004E64C(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 pa
         }
 
         if (unk->flags & 0x20) {
-            _bcopy(&v0, &actor->srt.transl, sizeof(Vec3f));
-            _bcopy(&v1, &actor->positionMirror, sizeof(Vec3f));
+            bcopy(&v0, &actor->srt.transl, sizeof(Vec3f));
+            bcopy(&v1, &actor->positionMirror, sizeof(Vec3f));
         }
     }
 }

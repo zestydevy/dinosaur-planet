@@ -185,7 +185,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
                 if (*(MtxF**)0x800b2e1c == NULL) {
                     func_8001943C(actor, mf, yPrescale);
                 } else {
-                    _bcopy(*PTR_DAT_800b2e1c, mf, sizeof(MtxF));
+                    bcopy(*PTR_DAT_800b2e1c, mf, sizeof(MtxF));
                 }
 
                 pointerIntArray2_func(mf, 1);
