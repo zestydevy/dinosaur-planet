@@ -235,7 +235,7 @@ segments:
     - [0x88480, c]
     - [0x89080, c]
     - [0x89B60, c]
-    - [0x89F60, c]
+    - [0x89F60, c, libultra/libc/g0/ldiv]
     - [0x8A0F0, asm, libc/bcmp]
     - [0x8A210, c, libultra/io/g0/sprawwrite]
     - [0x8A260, c, libultra/io/g0/sprawread]
