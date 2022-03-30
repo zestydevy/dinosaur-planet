@@ -73,7 +73,7 @@ default: all
 TARGET = dino
 LD_SCRIPT = $(TARGET).ld
 
-all: builds_dlls $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
+all: $(BUILD_DIR) $(BUILD_DIR)/$(TARGET).z64 verify
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -111,7 +111,7 @@ $(BUILD_DIR)/%.o: %.c
 $(BUILD_DIR)/%.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-$(BUILD_DIR)/%.o: %.bin
+$(BUILD_DIR)/%.o: %.bin bin/assets/DLLS.bin
 	$(LD) -r -b binary -o $@ $<
 
 $(BUILD_DIR)/$(TARGET).bin: $(BUILD_DIR)/$(TARGET).elf
@@ -127,7 +127,7 @@ baseverify:
 verify: $(BUILD_DIR)/$(TARGET).z64
 	md5sum -c checksum.md5
 
-builds_dlls:
+bin/assets/DLLS.bin: $(DLL_C_FILES)
 	python3 ./tools/dino_dll.py pack bin/assets/dll bin/assets/DLLS.bin bin/assets/DLLS_tab.bin 
 
 .PHONY: all clean default split setup
