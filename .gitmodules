@@ -6,3 +6,7 @@
 	path = tools/asm_processor
 	url = https://github.com/simonlindholm/asm-processor.git
 	branch = main
+[submodule "tools/asm_differ"]
+	path = tools/asm_differ
+	url = https://github.com/simonlindholm/asm-differ.git
+	branch = main
