@@ -71,7 +71,6 @@ dino.ld
 .splat_cache
 undefined_syms_auto.txt
 undefined_funcs_auto.txt
-tools/asm_processor/__pycache__/asm_processor.cpython-38.pyc
 
 # Editor
 .vscode/
