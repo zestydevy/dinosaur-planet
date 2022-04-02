@@ -2,3 +2,7 @@
 	path = tools/splat
 	url = https://github.com/ethteck/splat.git
 	branch = master
+[submodule "tools/asm_processor"]
+	path = tools/asm_processor
+	url = https://github.com/simonlindholm/asm-processor.git
+	branch = main
