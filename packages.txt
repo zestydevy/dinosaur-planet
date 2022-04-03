@@ -1,0 +1,6 @@
+binutils-mips-linux-gnu
+build-essential
+cmake
+git
+python3
+python3-pip

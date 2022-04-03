@@ -17,8 +17,13 @@ Linux (Debian / Ubuntu)</br>
 Windows 10 (WSL)
 
 # Install prerequisites:
-`sudo apt install -y build-essential git binutils-mips-linux-gnu python3`</br>
-`pip3 install -r requirements.txt`
+```bash
+# APT packages
+sudo apt install -y $(cat packages.txt)
+
+# Python packages
+pip3 install -r requirements.txt
+```
 
 # To use:
 1. Place an unmodified Dinosaur Planet ROM into the root of the repository as `baserom.z64` (MD5: `49f7bb346ade39d1915c22e090ffd748`)
