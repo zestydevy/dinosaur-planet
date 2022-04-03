@@ -14,7 +14,7 @@ options:
   # Use .o instead of .bin.o suffix in linker script
   # TODO: probably should remove this
   o_as_suffix: True
-  # TODO: figure out how to remove the need this
+  # TODO: figure out how to remove the need for this
   enable_ld_alignment_hack: True
 
 segments:
