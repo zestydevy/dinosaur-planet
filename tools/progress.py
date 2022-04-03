@@ -10,7 +10,7 @@ from colour import Color
 def set_version(version):
     global script_dir, root_dir, asm_dir, build_dir, elf_path
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    root_dir = os.path.join(script_dir, "", "")
+    root_dir = os.path.join(script_dir, "..")
     asm_dir = os.path.join(root_dir, "asm", "nonmatchings")
     build_dir = os.path.join(root_dir, "build")
     elf_path = os.path.join(build_dir, "dino.elf")

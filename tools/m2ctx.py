@@ -7,8 +7,7 @@ import subprocess
 import tempfile
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-#root_dir = os.path.abspath(os.path.join(script_dir, ".."))
-root_dir = os.path.realpath(os.path.curdir)
+root_dir = os.path.abspath(os.path.join(script_dir, ".."))
 
 # Project-specific
 CPP_FLAGS = [
