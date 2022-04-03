@@ -84,7 +84,7 @@ submodules:
 split:
 	rm -rf $(DATA_DIRS) $(ASM_DIRS)
 	mkdir -p bin/assets/dll
-	python3 ./tools/splat/split.py --rom baserom.z64 --outdir . splat.yaml
+	python3 ./tools/splat/split.py --target baserom.z64 --basedir . splat.yaml
 	python3 ./tools/dino_dll.py unpack bin/assets/dll bin/assets/DLLS.bin bin/assets/DLLS_tab.bin 
 
 setup: baseverify clean submodules split
