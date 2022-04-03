@@ -7,27 +7,29 @@ import subprocess
 import tempfile
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-root_dir = os.path.abspath(os.path.join(script_dir, ".."))
-src_dir = root_dir + "src/"
+#root_dir = os.path.abspath(os.path.join(script_dir, ".."))
+root_dir = os.path.realpath(os.path.curdir)
 
 # Project-specific
 CPP_FLAGS = [
-    "-I include",
-    "-I src",
-    "-Iver/current/build/include",
+    "-Iinclude",
     "-D_LANGUAGE_C",
+    "-D_FINALROM",
     "-DF3DEX_GBI_2",
     "-D_MIPS_SZLONG=32",
     "-DSCRIPT(...)={}"
     "-D__attribute__(...)=",
     "-D__asm__(...)=",
-    "-ffreestanding",
+    #"-ffreestanding",
     "-DM2CTX",
     "-DPERMUTER",
 ]
 
 def import_c_file(in_file) -> str:
     in_file = os.path.relpath(in_file, root_dir)
+    # -E = preprocess only
+    # -P = dont generate #line directives
+    # -dM = dump only #define directives
     cpp_command = ["gcc", "-E", "-P", "-dM", *CPP_FLAGS, in_file]
     cpp_command2 = ["gcc", "-E", "-P", *CPP_FLAGS, in_file]
 
@@ -50,6 +52,7 @@ def import_c_file(in_file) -> str:
         print("Output is empty - aborting")
         sys.exit(1)
 
+    # strip out stock macros
     for line in stock_macros.strip().splitlines():
         out_text = out_text.replace(line + "\n", "")
     return out_text
