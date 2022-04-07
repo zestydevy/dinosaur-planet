@@ -84,3 +84,6 @@ compile_commands.json
 *.gpr
 *.lock*
 
+# Ninja
+build.ninja
+.ninja_log

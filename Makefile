@@ -50,7 +50,7 @@ CC_OLD = tools/ido_recomp/linux/7.1/cc
 DEFINE_CFLAGS = -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI_2 -D_MIPS_SZLONG=32
 INCLUDE_CFLAGS = -I . -I include
 ASFLAGS = -EB -mtune=vr4300 -march=vr4300 -Iinclude -modd-spreg
-CFLAGS  = -G 0 -mips2 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul $(DEFINE_FLAGS) $(INCLUDE_CFLAGS) -DF3DEX_GBI_2
+CFLAGS  = -G 0 -mips2 -non_shared -Xfullwarn -Xcpluscomm -Wab,-r4300_mul $(DEFINE_CFLAGS) $(INCLUDE_CFLAGS) -DF3DEX_GBI_2
 LDFLAGS = -T undefined_syms.txt -T undefined_funcs.txt -T undefined_syms_auto.txt -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(BUILD_DIR)/dino.map --no-check-sections
 
 OPTFLAGS := -O2 -g3
@@ -85,7 +85,7 @@ split:
 	rm -rf $(DATA_DIRS) $(ASM_DIRS)
 	mkdir -p bin/assets/dll
 	python3 ./tools/splat/split.py --target baserom.z64 --basedir . splat.yaml
-	python3 ./tools/dino_dll.py unpack bin/assets/dll bin/assets/DLLS.bin bin/assets/DLLS_tab.bin 
+	python3 ./tools/dino_dll.py unpack bin/assets/dlls bin/assets/DLLS.bin bin/assets/DLLS_tab.bin 
 
 setup: baseverify clean submodules split
 	
