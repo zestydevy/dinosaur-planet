@@ -5,7 +5,7 @@ import os, sys
 import struct
 
 class dino_dll():
-    def pack(self, bin, tab, dir):
+    def pack(self, bin, tab, tab_out, dir):
         names = os.listdir(dir)
         names = sorted(names, key=lambda x: int(x.split('.')[0]))
 
@@ -37,7 +37,7 @@ class dino_dll():
         offset = (index * 8) + (4 * 4)
         struct.pack_into(">2I", ftab, offset, pos, bss)
 
-        open(tab, "wb").write(ftab)
+        open(tab_out, "wb").write(ftab)
         fbin.close()
 
     def unpack(self, bin, tab, dir):
@@ -82,6 +82,7 @@ def main():
     parser.add_argument("dir", type=str, help="DLL directory")
     parser.add_argument("bin", type=str, help="DLLS.bin")
     parser.add_argument("tab", type=str, help="DLLS.tab")
+    parser.add_argument("--tab_out", type=str, help="DLLS.tab output (packing, defaults to tab)", required=False)
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -91,7 +92,10 @@ def main():
     dll = dino_dll()
 
     if args.mode == "pack":
-        dll.pack(args.bin, args.tab, args.dir)
+        tab_out = args.tab_out
+        if tab_out == None:
+            tab_out = args.tab
+        dll.pack(args.bin, args.tab, tab_out, args.dir)
         print("DLL packing complete.");
     if args.mode == "unpack":
         dll.unpack(args.bin, args.tab, args.dir)
