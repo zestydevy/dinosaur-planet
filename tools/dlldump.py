@@ -1,0 +1,310 @@
+#!/usr/bin/env python3
+
+import argparse
+from io import BufferedReader
+import struct
+from capstone import CS_ARCH_MIPS, CS_MODE_BIG_ENDIAN, CS_MODE_MIPS64, Cs, CsInsn
+
+class DLLHeader:
+    def __init__(self, 
+                 header_size: int,
+                 data_offset: int,
+                 rodata_offset: int,
+                 export_count: int,
+                 ctor_offset: int,
+                 dtor_offset: int,
+                 export_offsets: "list[int]") -> None:
+        self.header_size = header_size
+        self.data_offset = data_offset
+        self.rodata_offset = rodata_offset
+        self.export_count = export_count
+        self.ctor_offset = ctor_offset
+        self.dtor_offset = dtor_offset
+        self.export_offsets = export_offsets
+    
+    @staticmethod
+    def parse(data: bytearray) -> "DLLHeader":
+        header_size = struct.unpack_from(">I", data, offset=0x0)[0]
+        data_offsets = struct.unpack_from(">II", data, offset=0x4)
+        export_count = struct.unpack_from(">H", data, offset=0xC)[0]
+        ctor_dtor = struct.unpack_from(">II", data, offset=0x10)
+        export_offsets = struct.unpack_from(">" + ("I" * export_count), data, offset=0x1C)
+        
+        return DLLHeader(
+            header_size=header_size,
+            data_offset=data_offsets[0],
+            rodata_offset=data_offsets[1],
+            export_count=export_count,
+            ctor_offset=ctor_dtor[0],
+            dtor_offset=ctor_dtor[1],
+            export_offsets=list(export_offsets)
+        )
+
+class DLLRelocationTable:
+    def __init__(self,
+                 global_offset_table: "list[int]",
+                 gp_relocations: "list[int]",
+                 data_relocations: "list[int]") -> None:
+        self.global_offset_table = global_offset_table
+        self.gp_relocations = gp_relocations
+        self.data_relocations = data_relocations
+
+    @staticmethod
+    def parse(data: bytearray, header: DLLHeader) -> "DLLRelocationTable":
+        if header.rodata_offset == 0xFFFF_FFFF:
+            # No relocation table
+            return DLLRelocationTable([], [], [])
+        
+        offset = header.rodata_offset
+        global_offset_table: "list[int]" = []
+        while (value := struct.unpack_from(">I", data, offset)[0]) != 0xFFFF_FFFE:
+            global_offset_table.append(value)
+            offset += 0x4
+        
+        offset += 0x4
+        gp_relocations: "list[int]" = []
+        while (value := struct.unpack_from(">I", data, offset)[0]) != 0xFFFF_FFFD:
+            gp_relocations.append(value)
+            offset += 0x4
+        
+        offset += 0x4
+        data_relocations: "list[int]" = []
+        while (value := struct.unpack_from(">I", data, offset)[0]) != 0xFFFF_FFFF:
+            data_relocations.append(value)
+            offset += 0x4
+        
+        return DLLRelocationTable(global_offset_table, gp_relocations, data_relocations)
+
+class DLLInst:
+    def __init__(self,
+                 original: CsInsn,
+                 address: int,
+                 mnemonic: str,
+                 op_str: str,
+                 is_branch_delay_slot: bool,
+                 label: "str | None") -> None:
+        self.original = original
+        self.address = address
+        self.mnemonic = mnemonic
+        self.op_str = op_str
+        self.is_branch_delay_slot = is_branch_delay_slot
+        self.label = label
+
+class DLLFunction:
+    def __init__(self,
+                 insts: "list[DLLInst]",
+                 symbol: str,
+                 is_static: bool) -> None:
+        self.insts = insts
+        self.symbol = symbol
+        self.is_static = is_static
+
+def mnemonic_has_delay_slot(mnemonic: str) -> bool:
+    return (mnemonic.startswith("b") or mnemonic.startswith("j")) and mnemonic != "break"
+
+def mnemonic_is_branch(mnemonic: str) -> bool:
+    return (mnemonic.startswith("b") or mnemonic == "j") and mnemonic != "break"
+
+def parse_functions(data: bytearray, header: DLLHeader) -> "list[DLLFunction]":
+    # Convert exported function addresses to VRAM
+    ctor_vram = header.ctor_offset + 0x8000_0000
+    dtor_vram = header.dtor_offset + 0x8000_0000
+    exports_vram = [ctor_vram, dtor_vram]
+    exports_vram.extend([o + 0x8000_0000 for o in header.export_offsets])
+
+    # Determine where in the file the .text section ends
+    text_end = min(header.rodata_offset, header.data_offset)
+
+    # Vars
+    new_func = True
+    last_mnemonic: "str | None" = None
+
+    # Disassemble
+    md = Cs(CS_ARCH_MIPS, CS_MODE_MIPS64 + CS_MODE_BIG_ENDIAN)
+    insts = [i for i in md.disasm(data[header.header_size:text_end], 0x8000_0000)]
+
+    # Extract all branches
+    branches: "list[tuple[int, int]]" = []
+    for i in insts:
+        if mnemonic_is_branch(i.mnemonic):
+            branch_target = int(i.op_str.split(" ")[-1], 0)
+            branches.append((i.address, branch_target))
+
+    # Extract functions
+    funcs: "list[DLLFunction]" = []
+    cur_func_insts: "list[DLLInst]" = []
+    cur_func_name = ""
+    cur_func_is_static = False
+    for i in insts:
+        # Check if this instruction is a branch delay slot of the previous instruction
+        is_delay_slot = last_mnemonic != None and mnemonic_has_delay_slot(last_mnemonic)
+        
+        if new_func and i.mnemonic != "nop" and not is_delay_slot:
+            # Add previous function
+            if cur_func_name != "":
+                funcs.append(DLLFunction(
+                    insts=cur_func_insts,
+                    symbol=cur_func_name,
+                    is_static=cur_func_is_static
+                ))
+            
+            # New function, determine name and type
+            if i.address == ctor_vram:
+                cur_func_name = "ctor"
+            elif i.address == dtor_vram:
+                cur_func_name = "dtor"
+            else:
+                cur_func_name = ("func_%x" %(i.address))
+                cur_func_is_static = not i.address in exports_vram
+            
+            cur_func_insts = []
+            new_func = False
+        
+        # Pre-process operand string
+        op_str = i.op_str
+
+        if mnemonic_is_branch(i.mnemonic):
+            op_str_split = op_str.split(" ")
+            branch_target = int(op_str_split[-1], 0)
+            op_label = (".L%x" %(branch_target))
+            op_str = " ".join(op_str_split[:-1] + [op_label])
+
+        # Determine whether this instruction address is branched to
+        label: "str | None" = None
+        for branch in branches:
+            if branch[1] == i.address:
+                label = (".L%x" %(i.address))
+                break
+
+        # Add instruction
+        cur_func_insts.append(DLLInst(
+            original=i,
+            address=i.address,
+            mnemonic=i.mnemonic,
+            op_str=op_str,
+            is_branch_delay_slot=is_delay_slot,
+            label=label
+        ))
+
+        # Check for function end
+        if i.mnemonic == "jr" and i.op_str == "$ra":
+            new_func = True
+            for branch in branches:
+                if (branch[0] > i.address and branch[1] <= i.address) or (branch[0] <= i.address and branch[1] > i.address):
+                    # jr falls within a known branch, so there's more to this function
+                    new_func = False
+                    break
+
+        # Track last instruction
+        last_mnemonic = i.mnemonic
+    
+    # Add final function
+    if cur_func_name != "":
+        funcs.append(DLLFunction(
+            insts=cur_func_insts,
+            symbol=cur_func_name,
+            is_static=cur_func_is_static
+        ))
+
+    return funcs
+
+def dump_header(header: DLLHeader):
+    print("HEADER")
+    print("===================")
+    print(f"Header size:        {hex(header.header_size)} ({header.header_size} bytes)")
+    print(f"DATA offset:        {hex(header.data_offset)}{' (not present)' if header.data_offset == 0xFFFF_FFFF else ''}")
+    print(f"RODATA offset:      {hex(header.rodata_offset)}{' (not present)' if header.rodata_offset == 0xFFFF_FFFF else ''}")
+    print(f"Export count:       {hex(header.export_count)} ({header.export_count})")
+    print(f"Constructor offset: {hex(header.ctor_offset)}")
+    print(f"Destructor offset:  {hex(header.dtor_offset)}")
+    print("Export offsets:")
+    for offset in header.export_offsets:
+        print(f"  {hex(offset)}")
+
+def dump_relocation_table(table: DLLRelocationTable):
+    print("RELOCATION TABLE")
+    print("===================")
+    
+    print("Global offset table:")
+    for offset in table.global_offset_table:
+        print(f"  {hex(offset)}")
+    
+    if len(table.global_offset_table) == 0:
+        print("  (none)")
+    
+    print("$gp relocations:")
+    for offset in table.gp_relocations:
+        print(f"  {hex(offset)}")
+
+    if len(table.gp_relocations) == 0:
+        print("  (none)")
+    
+    print("DATA relocations:")
+    for offset in table.data_relocations:
+        print(f"  {hex(offset)}")
+
+    if len(table.data_relocations) == 0:
+        print("  (none)")
+
+def dump_text_disassembly(data: bytearray, header: DLLHeader, only_symbols: "list[str] | None"):
+    funcs = parse_functions(data, header)
+    
+    print(".text")
+    print("===================")
+
+    first = True
+
+    for func in funcs:
+        if only_symbols != None and not func.symbol in only_symbols:
+            continue
+
+        if not first:
+            print()
+        else:
+            first = False
+        
+        print("glabel %s%s" %(func.symbol, ' # (static)' if func.is_static else ''))
+
+        for i in func.insts:
+            if i.label != None:
+                print("%s:" %(i.label))
+            print("0x%x:\t%s%s%s" %(i.address, ' ' if i.is_branch_delay_slot else '', i.mnemonic.ljust(11), i.op_str))
+    
+    if only_symbols != None and first:
+        print("(no matching symbols found)")
+
+def main():
+    parser = argparse.ArgumentParser(description="Display information from Dinosuar Planet DLLs.")
+    parser.add_argument("file", type=argparse.FileType("rb"), help="The Dinosuar Planet .dll file to read.")
+    parser.add_argument("-x", "--header", action="store_true", help="Display the contents of the header.")
+    parser.add_argument("-r", "--reloc", action="store_true", help="Display the contents of the relocation table.")
+    parser.add_argument("-d", "--disassemble", action="store_true", help="Display assembler contents of the executable section.")
+    parser.add_argument("--symbols", action="extend", nargs="+", type=str, help="When disassembling, only show these symbols.")
+
+    args = parser.parse_args()
+
+    if not args.header and not args.reloc and not args.disassemble:
+        print("At least one display option must be provided.")
+        parser.print_help()
+        return 
+
+    with args.file as file:
+        file: BufferedReader
+        data = bytearray(file.read())
+        header = DLLHeader.parse(data)
+        relocation_table = DLLRelocationTable.parse(data, header)
+
+        if args.header:
+            dump_header(header)
+            print()
+        
+        if args.reloc:
+            dump_relocation_table(relocation_table)
+            print()
+        
+        if args.disassemble:
+            dump_text_disassembly(data, header, args.symbols)
+            print()
+
+if __name__ == "__main__":
+    main()
