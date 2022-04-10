@@ -42,7 +42,7 @@ def import_c_file(in_file) -> str:
     except subprocess.CalledProcessError:
         print(
             "Failed to preprocess input file, when running command:\n"
-            + cpp_command,
+            + str(cpp_command),
             file=sys.stderr,
             )
         sys.exit(1)

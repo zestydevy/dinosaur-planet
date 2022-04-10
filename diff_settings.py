@@ -5,3 +5,4 @@ def apply(config, args):
     config['myimg'] = 'build/dino.z64'
     config['mapfile'] = 'build/dino.map'
     config['source_directories'] = ['.']
+    config['make_command'] = ['ninja']

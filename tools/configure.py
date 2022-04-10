@@ -224,7 +224,7 @@ class BuildNinjaWriter:
         #       want to write through the link to the original DLL
         self.writer.rule("elf2dll", "rm -f $out && $ELF2DLL $in $out", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
-        self.writer.rule("sym_link", "ln -s -r $in $out", "Symbolic linking $in to $out...")
+        self.writer.rule("sym_link", "ln -s -f -r $in $out", "Symbolic linking $in to $out...")
 
         self.writer.newline()
 
