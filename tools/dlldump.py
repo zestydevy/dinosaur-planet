@@ -2,12 +2,15 @@
 
 import argparse
 from io import BufferedReader
+from pathlib import Path
 
-from dino.dll import DLLHeader, DLLRelocationTable, parse_functions
+from dino.dll import DLL, DLLHeader, DLLRelocationTable
 
-def dump_header(header: DLLHeader):
+def dump_header(dll: DLL):
     print("HEADER")
     print("===================")
+
+    header = dll.header
     print(f"Header size:        {hex(header.header_size)} ({header.header_size} bytes)")
     print(f"DATA offset:        {hex(header.data_offset)}{' (not present)' if header.data_offset == 0xFFFF_FFFF else ''}")
     print(f"RODATA offset:      {hex(header.rodata_offset)}{' (not present)' if header.rodata_offset == 0xFFFF_FFFF else ''}")
@@ -18,11 +21,12 @@ def dump_header(header: DLLHeader):
     for offset in header.export_offsets:
         print(f"  {hex(offset)}")
 
-def dump_relocation_table(table: DLLRelocationTable):
+def dump_relocation_table(dll: DLL):
     print("RELOCATION TABLE")
     print("===================")
     
     print("Global offset table:")
+    table = dll.reloc_table
     got_i = 0
     for offset in table.global_offset_table:
         if got_i == 0:
@@ -54,12 +58,14 @@ def dump_relocation_table(table: DLLRelocationTable):
     if len(table.data_relocations) == 0:
         print("  (none)")
 
-def dump_text_disassembly(data: bytearray, header: DLLHeader, only_symbols: "list[str] | None"):
-    funcs = parse_functions(data, header)
-    
+def dump_text_disassembly(dll: DLL,
+                          only_symbols: "list[str] | None",
+                          orig_operands: bool):
     print(".text")
     print("===================")
-
+    
+    assert dll.functions != None
+    funcs = dll.functions
     first = True
 
     for func in funcs:
@@ -76,7 +82,22 @@ def dump_text_disassembly(data: bytearray, header: DLLHeader, only_symbols: "lis
         for i in func.insts:
             if i.label != None:
                 print("%s:" %(i.label))
-            print("0x%x:\t%s%s%s" %(i.address, ' ' if i.is_branch_delay_slot else '', i.mnemonic.ljust(11), i.op_str))
+            
+            if orig_operands and i.is_op_modified():
+                print(
+                    "0x%x:\t%s%s%s%s" %(
+                        i.address, 
+                        ' ' if i.is_branch_delay_slot else '',
+                        i.mnemonic.ljust(10 if i.is_branch_delay_slot else 11), 
+                        i.op_str.ljust(24),
+                        f' # (original: {i.original.op_str})'))
+            else:
+                print(
+                    "0x%x:\t%s%s%s" %(
+                        i.address, 
+                        ' ' if i.is_branch_delay_slot else '',
+                        i.mnemonic.ljust(10 if i.is_branch_delay_slot else 11), 
+                        i.op_str))
     
     if only_symbols != None and first:
         print("(no matching symbols found)")
@@ -88,6 +109,7 @@ def main():
     parser.add_argument("-r", "--reloc", action="store_true", help="Display the contents of the relocation table.")
     parser.add_argument("-d", "--disassemble", action="store_true", help="Display assembler contents of the executable section.")
     parser.add_argument("--symbols", action="extend", nargs="+", type=str, help="When disassembling, only show these symbols.")
+    parser.add_argument("--orig", action="store_true", help="Also show unmodified instruction operands.")
 
     args = parser.parse_args()
 
@@ -96,22 +118,22 @@ def main():
         parser.print_help()
         return 
 
-    with args.dll as dll:
-        dll: BufferedReader
-        data = bytearray(dll.read())
-        header = DLLHeader.parse(data)
+    with args.dll as dll_file:
+        dll_file: BufferedReader
+        number = Path(dll_file.name).name.split(".")[0]
+        data = bytearray(dll_file.read())
+        dll = DLL.parse(data, number=number, include_funcs=args.disassemble)
 
         if args.header:
-            dump_header(header)
+            dump_header(dll)
             print()
         
         if args.reloc:
-            relocation_table = DLLRelocationTable.parse(data, header)
-            dump_relocation_table(relocation_table)
+            dump_relocation_table(dll)
             print()
         
         if args.disassemble:
-            dump_text_disassembly(data, header, args.symbols)
+            dump_text_disassembly(dll, args.symbols, args.orig or False)
             print()
 
 if __name__ == "__main__":

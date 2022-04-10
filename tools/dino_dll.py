@@ -82,7 +82,8 @@ def main():
     parser.add_argument("dir", type=str, help="DLL directory")
     parser.add_argument("bin", type=str, help="DLLS.bin")
     parser.add_argument("tab", type=str, help="DLLS.tab")
-    parser.add_argument("--tab_out", type=str, help="DLLS.tab output (packing, defaults to tab)", required=False)
+    parser.add_argument("--tab_out", type=str, help="DLLS.tab output (packing, defaults to tab)")
+    parser.add_argument("-q", "--quiet", help="Pass to suppress logging.", action="store_true")
 
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -96,10 +97,12 @@ def main():
         if tab_out == None:
             tab_out = args.tab
         dll.pack(args.bin, args.tab, tab_out, args.dir)
-        print("DLL packing complete.");
+        if not args.quiet:
+            print("DLL packing complete.")
     if args.mode == "unpack":
         dll.unpack(args.bin, args.tab, args.dir)
-        print("DLL unpacking complete.");
+        if not args.quiet:
+            print("DLL unpacking complete.")
 
 if __name__ == "__main__":
     main()

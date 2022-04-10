@@ -217,8 +217,10 @@ class BuildNinjaWriter:
         self.writer.rule("ld_bin", "$LD -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
-        self.writer.rule("elf2dll", "$ELF2DLL $in $out", "Converting $in to DP DLL $out...")
-        self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
+        # Note: for elf2dll, remove output file first since it might be a symlink and we don't
+        #       want to write through the link to the original DLL
+        self.writer.rule("elf2dll", "rm -f $out && $ELF2DLL $in $out", "Converting $in to DP DLL $out...")
+        self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
         self.writer.rule("sym_link", "ln -s -r $in $out", "Symbolic linking $in to $out...")
 
         self.writer.newline()
