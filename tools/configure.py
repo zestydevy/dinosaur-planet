@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
+import argparse
 from enum import Enum
 from genericpath import isdir
 import glob
+import os
 from pathlib import Path
+from shutil import which
+import sys
 from ninja import ninja_syntax
 
 class BuildFileType(Enum):
@@ -37,17 +41,15 @@ class BuildFiles:
 
 class BuildConfig:
     def __init__(self,
+                 target: str,
                  build_dir="build",
-                 proj_root=".",
-                 target="dino",
-                 link_script="dino.ld",
+                 link_script: "str | None"=None,
                  link_script_dll="src/dlls/dll.ld",
                  skip_dlls=False,
                  default_opt_flags=OptimizationFlags.O2g3):
-        self.build_dir = build_dir
-        self.proj_root = proj_root
         self.target = target
-        self.link_script = link_script
+        self.build_dir = build_dir
+        self.link_script = link_script or f"{target}.ld"
         self.link_script_dll = link_script_dll
         self.skip_dlls = skip_dlls
         self.default_opt_flags = default_opt_flags
@@ -127,6 +129,8 @@ class BuildNinjaWriter:
             "-mtune=vr4300",
             "-march=vr4300",
             "-modd-spreg",
+            "-mips3",
+            "-mabi=32",
         ]))
 
         self.writer.variable("GCC_FLAGS", " ".join([
@@ -184,8 +188,7 @@ class BuildNinjaWriter:
         self.writer.newline()
 
         # Write tools
-        # TODO: autodetect cross
-        cross = "mips-linux-gnu-"
+        cross = self.__detect_cross()
 
         self.writer.comment("Tools")
         self.writer.variable("AS", f"{cross}as")
@@ -232,7 +235,7 @@ class BuildNinjaWriter:
             # Determine variables
             variables: dict[str, str] = {}
             opt = file.opt
-            if opt != None and opt != self.config.default_opt_flags:
+            if opt is not None and opt != self.config.default_opt_flags:
                 variables["OPT_FLAGS"] = opt.value
 
             # Determine command
@@ -282,9 +285,8 @@ class BuildNinjaWriter:
             elf_path = f"{obj_dir}/{dll.number}.elf"
             self.writer.build(elf_path, "ld_dll", dll_link_deps, implicit="$LINK_SCRIPT_DLL")
 
-            # TODO: remove?
-            # Copy .elf to .bin
-            self.writer.build(f"{obj_dir}/{dll.number}.bin", "to_bin", elf_path)
+            # Convert .elf to .bin
+            #self.writer.build(f"{obj_dir}/{dll.number}.bin", "to_bin", elf_path)
 
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
@@ -342,13 +344,23 @@ class BuildNinjaWriter:
         self.link_deps.append("$BUILD_DIR/$TARGET.ld")
         self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", self.link_deps)
 
-        # TODO: whats with the copies?
-        # Copy .elf to .bin
+        # Convert .elf to .bin
         self.writer.build("$BUILD_DIR/$TARGET.bin", "to_bin", "$BUILD_DIR/$TARGET.elf")
 
         # Copy .bin to .z64
+        # TODO: change to rename?
         self.writer.build("$BUILD_DIR/$TARGET.z64", "file_copy", "$BUILD_DIR/$TARGET.bin")
         
+    def __detect_cross(self) -> str:
+        if which("mips-n64-ld") is not None:
+            return "mips-n64-" # N64 dev tools
+        elif which("mips64-linux-gnu-ld") is not None:
+            return "mips64-linux-gnu-"
+        elif which("mips64-elf-ld") is not None:
+            return "mips64-elf-"
+        else:
+            return "mips-linux-gnu-"
+
 class InputScanner:
     def __init__(self, config: BuildConfig):
         self.config = config
@@ -367,7 +379,6 @@ class InputScanner:
 
         return BuildFiles(self.files, self.dlls, self.leftover_dlls)
         
-
     def __scan_c_files(self):
         # Exclude DLLs here, that's done separately
         paths = [Path(path) for path in glob.glob("src/**/*.c", recursive=True) if not path.startswith("src/dlls")]
@@ -437,15 +448,34 @@ class InputScanner:
         return self.config.default_opt_flags
     
 def main():
-    # Create ninja build file
-    ninja_file = open("build.ninja", "w")
+    parser = argparse.ArgumentParser(description="Creates the Ninja build script for the Dinosaur Planet decompilation project.")
+    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project (default=..).", default="..")
+    parser.add_argument("--target", type=str, help="The filename of the ROM to create (excluding extension suffix, default=dino).", default="dino")
+    parser.add_argument("--skip-dlls", dest="skip_dlls", action="store_true", help="Don't recompile DLLs (use original).")
+    
+    args = parser.parse_args()
 
     # Create config
-    config = BuildConfig()
+    config = BuildConfig(
+        target=args.target,
+        skip_dlls=args.skip_dlls or False
+    )
+
+    # Do all path lookups from the base directory
+    os.chdir(Path(args.base_dir).resolve())
+
+    # Verify this is the correct directory
+    expected_link_script_path = Path.cwd().joinpath(config.link_script).absolute()
+    if not expected_link_script_path.exists():
+        print(f"Could not find linker script at {expected_link_script_path}. Is the base directory '{args.base_dir}' correct?")
+        sys.exit(1)
 
     # Gather input files
     scanner = InputScanner(config)
     input = scanner.scan()
+
+    # Create ninja build file
+    ninja_file = open("build.ninja", "w")
 
     # Write
     writer = BuildNinjaWriter(ninja_syntax.Writer(ninja_file), input, config)
