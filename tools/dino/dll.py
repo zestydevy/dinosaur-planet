@@ -193,7 +193,7 @@ def parse_functions(data: bytearray,
     cur_func_inst_index = 0
     for i in insts:
         # Check if this instruction is a branch delay slot of the previous instruction
-        is_delay_slot = last_mnemonic != None and __mnemonic_has_delay_slot(last_mnemonic)
+        is_delay_slot = last_mnemonic is not None and __mnemonic_has_delay_slot(last_mnemonic)
         
         if new_func and i.mnemonic != "nop" and not is_delay_slot:
             # Add previous function

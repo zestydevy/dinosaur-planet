@@ -64,12 +64,12 @@ def dump_text_disassembly(dll: DLL,
     print(".text")
     print("===================")
     
-    assert dll.functions != None
+    assert dll.functions is not None
     funcs = dll.functions
     first = True
 
     for func in funcs:
-        if only_symbols != None and not func.symbol in only_symbols:
+        if only_symbols is not None and not func.symbol in only_symbols:
             continue
 
         if not first:
@@ -80,7 +80,7 @@ def dump_text_disassembly(dll: DLL,
         print("glabel %s%s" %(func.symbol, ' # (static)' if func.is_static else ''))
 
         for i in func.insts:
-            if i.label != None:
+            if i.label is not None:
                 print("%s:" %(i.label))
             
             if orig_operands and i.is_op_modified():
@@ -99,7 +99,7 @@ def dump_text_disassembly(dll: DLL,
                         i.mnemonic.ljust(10 if i.is_branch_delay_slot else 11), 
                         i.op_str))
     
-    if only_symbols != None and first:
+    if only_symbols is not None and first:
         print("(no matching symbols found)")
 
 def main():

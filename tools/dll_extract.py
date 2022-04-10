@@ -27,7 +27,7 @@ def create_c_stub(c_path: Path, asm_path: Path, functions: "list[DLLFunction]"):
             c_file.write(f'#pragma GLOBAL_ASM("{asm_path}/{func.symbol}.s")\n')
 
 def create_syms_txt(syms_path: Path, dll: DLL):
-    assert dll.functions != None
+    assert dll.functions is not None
 
     with open(syms_path, "w", encoding="utf-8") as syms_file:
         syms_added = 0
@@ -39,7 +39,7 @@ def create_syms_txt(syms_path: Path, dll: DLL):
         assert syms_added == len(dll.reloc_table.global_offset_table) - 4
 
 def extract_asm(dir: Path, dll: DLL):
-    assert dll.functions != None
+    assert dll.functions is not None
     functions = dll.functions
 
     for func in functions:
@@ -48,7 +48,7 @@ def extract_asm(dir: Path, dll: DLL):
             s_file.write("glabel %s\n" %(func.symbol))
 
             for i in func.insts:
-                if i.label != None:
+                if i.label is not None:
                     s_file.write("%s:\n" %(i.label))
                 s_file.write(
                     "/* %04X %X %s */ %s%s%s\n" 
@@ -91,7 +91,7 @@ def extract_data(dir: Path, dll: DLL, data: bytearray):
         bss_file.write(data[bss_start:bss_end])
 
 def extract(dll: DLL, data: bytearray, src_path: Path, asm_path: Path):
-    assert dll.functions != None
+    assert dll.functions is not None
 
     # Create directories if they don't exist
     os.makedirs(src_path, exist_ok=True)
