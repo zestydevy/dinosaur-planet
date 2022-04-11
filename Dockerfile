@@ -1,25 +1,21 @@
 FROM ubuntu:20.04
 
-RUN apt-get -qq update \
-    && apt-get -y install \
-    binutils-mips-linux-gnu \
-    build-essential \
-    git \
-    locales \
-    python3 \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/* \
-    # Set timezone to UTC by default
-    && ln -sf /usr/share/zoneinfo/Etc/UTC /etc/localtime \
-    # Use unicode
-    && locale-gen C.UTF-8 || true
+# Create directory for mount
+RUN mkdir /dino
+WORKDIR /dino
 
-COPY ./requirements.txt requirements.txt
-COPY ./entrypoint.sh entrypoint.sh
-RUN adduser sabre --system \
-    && chmod +x entrypoint.sh
-USER sabre
-RUN pip3 install -r requirements.txt --user --no-warn-script-location
+# Install required packages
+ENV DEBIAN_FRONTEND=noninteractive
 
-ENV PATH="/home/sabre/.local/bin:${PATH}"
+COPY packages.txt ./
+RUN apt-get update && apt-get install -y $(cat packages.txt) && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt ./
+RUN pip3 install -r requirements.txt
+
+# Symlink dino.py
+RUN ln -s /dino/dino.py /usr/local/bin/dino
+
+# Set entrypoint
+RUN echo "#! /bin/bash\nexec \"\$@\"" > /entrypoint.sh && chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

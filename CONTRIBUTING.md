@@ -111,7 +111,7 @@ Decompiling MIPS assembly into C code is where most of the project's development
     - For an in depth decompilation guide, please see [-O2 decompilation (for IDO 5.3 and 7.1)](https://hackmd.io/vPmcgdaFSlq4R2mfkq4bJg).
     - There's many tools that can assist in this process like a decompiler such as [mips2c](https://simonsoftware.se/other/mips_to_c.py) or [Ghidra](https://ghidra-sre.org/) (Ghidra needs a [custom loader for the ROM](https://github.com/HugoPeters/N64LoaderWV-DinoPlanet)). However, a decompiler isn't required. If preferred, you could decompile functions by hand. Decompilers usually don't result in matching code and will require additional work. Sometimes decompiling by hand can be easier.
 3. Tweak the C implementation until it produces a matching ROM or is at least functionally equivalent (ideally with minimal differences).
-    - Use `./diff.py` to compare the recompiled ROM to the original and see which instructions are different.
+    - Use `./dino.py diff` to compare the recompiled ROM to the original and see which instructions are different.
 4. Make sure the code adheres to the project's [style guide](#style-guide).
 
 

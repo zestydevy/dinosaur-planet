@@ -1,9 +1,12 @@
-[submodule "sm64tools"]
-	path = sm64tools
-	url = https://github.com/queueRAM/sm64tools
 [submodule "tools/splat"]
 	path = tools/splat
-	url = https://github.com/ethteck/splat
-[submodule "tools/asm-processor"]
-	path = tools/asm-processor
+	url = https://github.com/ethteck/splat.git
+	branch = master
+[submodule "tools/asm_processor"]
+	path = tools/asm_processor
 	url = https://github.com/simonlindholm/asm-processor.git
+	branch = main
+[submodule "tools/asm_differ"]
+	path = tools/asm_differ
+	url = https://github.com/simonlindholm/asm-differ.git
+	branch = main

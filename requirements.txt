@@ -1,12 +1,14 @@
-PyYAML
 ansiwrap
 capstone
 colorama>=0.4.4,<0.5
+colour
 cxxfilt
+GitPython
+ninja
+pylibyaml
 pypng==0.0.20
 python-Levenshtein
 python-ranges
+PyYAML
 textwrap3
 watchdog
-GitPython
-colour
