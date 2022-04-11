@@ -133,7 +133,9 @@ Before opening a pull request, you should make sure that:
 
 
 ## Resources
+The following is a list of external resources that may be helpful:
 - Tools
+    - [decomp.me](https://decomp.me/) - Online space for decompiling individual functions.
     - [mips2c (online)](https://simonsoftware.se/other/mips_to_c.py) - Online MIPS to C decompiler.
     - [mips2c (offline)](https://github.com/matt-kempster/mips_to_c) - Source of mips2c.
     - [Ghidra](https://ghidra-sre.org/) - Reverse engineering suite (including a decompiler).
