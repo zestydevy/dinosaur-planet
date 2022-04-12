@@ -15,12 +15,12 @@ Decompiled C and assembly code (finished and unfinished) can be found under the 
 The `src` directory contains all of the decompiled C implementation files (`.c` files). Each file (excluding DLL code) is mapped from a specific address range in the base ROM via splat. These files are generally stubbed out by splat when a new address range is marked as C code and contain `GLOBAL_ASM` pragmas that include the original assembly code (in order) for each function in the file. When a function is fully decompiled and matching, the `GLOBAL_ASM` pragma is removed.
 
 #### DLLs
-The `src/dlls` directory is special, Dinosaur Planet uses a unique DLL system. Each directory under `dlls` is named after the DLL number it is for. Inside each DLL directory is a single C file for the full implementation of that DLL and an `exports.s` file which defines the exports table for that DLL ([see the full DLL documentation for more information](./DLLs.md)).
+The `src/dlls` directory is special. Dinosaur Planet uses a unique DLL system. Each directory under `dlls` is named after the DLL number it is for. Inside each DLL directory is a single C file for the full implementation of that DLL and an `exports.s` file which defines the exports table for that DLL ([see the full DLL documentation for more information](./DLLs.md)).
 
 Additionally, the `dlls` directory currently contains a special linker script for just DLL code.
 
 ### include
-The `include` directory contains all of the C header files (`.h`) for the project as well as shared assembly files that are meant to be included in a `.s` file.
+The `include` directory contains all of the C header files (`.h`) for the project as well as shared assembly files (`.inc`) that are meant to be included in a `.s` file.
 
 #### libultra
 Headers related to libultra are currently split into three directories: `PR`, `libultra`, and `libc`.
@@ -55,7 +55,7 @@ The root of the repository contains various files that define symbol addresses, 
 - `splat.yaml` - The project configuration for splat. Here is where ROM segments are marked for extraction.
 - `symbol_addrs.txt` - Defines addresses for known symbols (only those are referenced directly in assembly code).
 - `undefined_funcs.txt` - Defines addresses for functions that are known but aren't referenced directly in assembly code.
-- `undefined_syms.txt` - Defines addresses for symbols  that are known but are not referenced directly in assembly code.
+- `undefined_syms.txt` - Defines addresses for symbols  that are known but aren't referenced directly in assembly code.
 - `undefined_funcs_auto.txt` - Addresses of functions that splat found automatically. This file should not be modified directly.
 - `undefined_syms_auto.txt` - Addresses of symbols that splat found automatically. This file should not be modified directly.
 
