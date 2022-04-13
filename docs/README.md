@@ -1,5 +1,5 @@
 # Dinosaur Planet Decompilation Documentation
-Welcome to the documentation for the project! 
+Welcome to the project documentation! 
 
 
 ## Contents

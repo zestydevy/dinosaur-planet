@@ -14,7 +14,7 @@ A high level overview of the extraction and build process is as follows:
 1. "Split" out readable assembly code and binary data from the original ROM using tools such as [splat](https://github.com/ethteck/splat).
 2. Generate a linker script capable of stitching all code and assets back together into a new ROM at the exact same addresses they were extracted from.
 3. Reverse extracted assembly code into C.
-4. Recompile C code using IDO (IRIS Development Option, the original compiler used for the game), reassemble leftover assembly, and convert binary data all into individual object files.
+4. Recompile C code using IDO 5.3 (IRIS Development Option, the original compiler used for the game), reassemble leftover assembly, and convert binary data all into individual object files.
 5. Link all resulting object files into a new ROM.
 
 Through this process, code can be incrementally decompiled into C and then constantly recompiled into a full ROM to be compared against the original ROM. If everything was decompiled accurately, the ROMs will be byte-for-byte identical.
