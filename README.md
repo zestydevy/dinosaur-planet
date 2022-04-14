@@ -1,5 +1,7 @@
 ![Dinosaur Planet Decompilation](docs/banner.png)
 
+[![](https://img.shields.io/badge/Discord-Dinosaur%20Planet%20Community-5865F2?logo=discord)](https://discord.gg/H6WGkznZBc)
+
 A WIP decompilation of Dinosaur Planet for the Nintendo 64, as released by Forest of Illusion on Feb. 20, 2021.
 
 **Note**: To use this repository, you must already have a ROM for the game.
@@ -44,6 +46,13 @@ builds is not 'shiftable', so cannot be used yet as a source code base for gener
 2. Rebuild the ROM:
     - `./dino.py build`
 
+### Documentation
+Please see the [docs](./docs) directory for project documentation such as:
+- [an overview of the project](./docs/Overview.md)
+- [a break-down of the ROM extraction and build system](./docs/Recompilation.md)
+- [an introductory guide to decomp](./docs/Guide.md)
+- and more!
+
 ### Tools
 The repository comes with a bunch of tools for decompilation and managing the repository:
 - `dino.py` - An all in one script for working with the repository. Some of the common commands:
@@ -73,6 +82,6 @@ docker run --rm -it -v $(pwd):/dino dpdecomp dino build
 ```
 
 ## Contributing
-PRs are welcome. Please make sure that the ROM builds and matches successfully before submitting a non-draft PR; the CI system will also verify this.
+Pull requests are welcome! Please see our [contribution guide](./CONTRIBUTING.md) for more information on how this project works and how to contribute.
 
-Also please see our [contribution guide](./CONTRIBUTING.md) for more information on how this project works and the ways to contribute.
+If you're interested in contributing, please also consider joining us on Discord over at the [Dinosaur Planet Community server](https://discord.gg/H6WGkznZBc) in the `#decompilation` channel!

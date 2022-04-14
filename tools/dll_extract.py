@@ -120,8 +120,8 @@ def extract(dll: DLL, data: bytearray, src_path: Path, asm_path: Path):
         create_c_stub(c_file_path, asm_path, dll.functions)
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract assembly from a Dinosuar Planet DLL and set up a directory for it that is ready for recompilation.")
-    parser.add_argument("dll", type=argparse.FileType("rb"), help="The Dinosuar Planet .dll file to read.")
+    parser = argparse.ArgumentParser(description="Extract assembly from a Dinosaur Planet DLL and set up a directory for it that is ready for recompilation.")
+    parser.add_argument("dll", type=argparse.FileType("rb"), help="The Dinosaur Planet .dll file to read.")
     parser.add_argument("--src", type=str, help="A directory to create source file stubs in (e.g. ./src/dlls/12).", required=True)
     parser.add_argument("--asm", type=str, help="A directory extract assembly code into (e.g. ./asm/nonmatchings/dlls/12).", required=True)
 
