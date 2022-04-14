@@ -192,7 +192,7 @@ class DinoCommandRunner:
         subprocess.check_call(args)
 
 def main():
-    parser = argparse.ArgumentParser(description="Quick commands for working on the Dinosuar Planet decompilation.")
+    parser = argparse.ArgumentParser(description="Quick commands for working on the Dinosaur Planet decompilation.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Show actual commands being ran.", default=False)
 
     subparsers = parser.add_subparsers(dest="command", required=True)

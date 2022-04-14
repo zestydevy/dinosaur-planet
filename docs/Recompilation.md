@@ -1,3 +1,5 @@
+[[← back]](README.md)
+
 # Recompilation
 The goal of this document is the explain the full process of extracting code and data from the original ROM and then recompiling it back into a new ROM.
 

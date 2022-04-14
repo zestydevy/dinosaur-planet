@@ -1,3 +1,5 @@
+[[← back]](README.md)
+
 # Overview
 The following is a general overview of the project's structure.
 
@@ -71,7 +73,7 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `tools/splat` - Extracts assembly and data from the base ROM and generates the linker script for the re-built ROM.
 - `tools/configure.py` - Configures the Ninja build script file (`build.ninja`) for the project.
 - `tools/dino_dll.py` - Packs and unpacks the `DLLS.bin` and `DLLS_tab.bin` files.
-- `tools/dlldump.py` - Displays the header, relocation tables, and executable assembly for a given Dinosuar Planet `.dll` file.
+- `tools/dlldump.py` - Displays the header, relocation tables, and executable assembly for a given Dinosaur Planet `.dll` file.
 - `tools/elf2dll` - Converts a standard ELF file to the unique Dinosaur Planet DLL format.
 - `tools/first-diff.py` - Find the first N differences between the base and re-built ROM.
 - `tools/first_bin_diff.py` - Find the first N differences between two binary files.

@@ -1,3 +1,5 @@
+[[← back]](README.md)
+
 # Decompilation Guide
 This document is intended to be an introductory guide to decomp (tailored specifically for Dinosaur Planet). If this is your first time with decomp then please read on! If you're already familiar with decomp then you may still find some useful information here, as this document is a little specific to Dinosaur Planet.
 
@@ -40,12 +42,12 @@ The final step is to temporarily include the original assembly of each function 
 #pragma GLOBAL_ASM("asm/nonmatchings/vec3/vec3_normalize.s")
 ```
 
-Splat extracts each function it finds into the `asm/nonmatchings` directory as individual `.s` files grouped by the name of the mapped file they are a part of. The `GLOBAL_ASM` pragma is used by another tool [asm-processor](https://github.com/simonlindholm/asm-processor), which is responsible for actually including the referenced `.s` file at that position in the C source.
+Splat extracts each function it finds into the `asm/nonmatchings` directory as individual `.s` files grouped by the name of the mapped file they are a part of. The `GLOBAL_ASM` pragma is used by another tool, [asm-processor](https://github.com/simonlindholm/asm-processor), which is responsible for actually including the referenced `.s` file at that position in the C source.
 
-Great! Now, we can actually decompile this function.
+Great! Now, we can start to decompile this function.
 
 ### 2b. Reversing
-Firstly, let's create some space to start decompiling and reversing `vec3_normalize`. We'll use an `#if` directive to temporarily replace the `GLOBAL_ASM` pragma with an actual C function:
+First, let's create some space to start decompiling and reversing `vec3_normalize`. We'll use an `#if` directive to temporarily replace the `GLOBAL_ASM` pragma with an actual C function:
 ```c
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/vec3/vec3_normalize.s")
@@ -58,7 +60,7 @@ void vec3_normalize() {
 #endif
 ```
 
-Next, let's look at the actual assembly code for the function:
+Next, let's look at the full assembly code of the function:
 ```
 glabel vec3_normalize
 addiu      $sp, $sp, -0x18
@@ -242,7 +244,7 @@ f32 vec3_normalize(Vec3f *a0) {
 }
 ```
 
-This looks significantly better already (and compiles)! Let's check our progress so far by diffing our implementation against the original ROM. We can do this by building the ROM `./dino.py build` and then running diff on the function's symbol `./dino.py diff vec3_normalize`. Looks like everything matches except for one instruction: `lui at,0x3f80`, which from our implementation is currently `lui at,0x4e7e`. If we trace this instruction back to the C code it's currently the line `f18 = 0x3f800000;` Let's fix that.
+This looks significantly better already (and compiles)! Let's check our progress so far by diffing our implementation against the original ROM. We can do this by building the ROM (`./dino.py build`) and then running diff on the function's symbol (`./dino.py diff vec3_normalize`). Looks like everything matches except for one instruction: `lui at,0x3f80`, which from our implementation is currently `lui at,0x4e7e`. If we trace this instruction back to the C code, we can see it's from the line `f18 = 0x3f800000;` Let's fix it.
 
 Looking back at the assembly, we can see these two instructions:
 ```
@@ -250,7 +252,7 @@ lui     at,0x3f80
 mtc1    at,$f18
 ```
 
-These two instructions are actually 'bitwise' casting the integer `0x3f800000` into a float, rather than simply assigning 1,065,353,216 to `f18`. Let's use [a floating point converter](https://www.h-schmidt.net/FloatConverter/IEEE754.html) to see what `0x3f800000` is bit-for-bit as a float. Turns out it's actually `1.0`! If we replace the statement with `f18 = 1.0f`, re-build, and re-run the diff, we can now see that the function matches!
+These two instructions are actually 'bitwise' casting the integer `0x3f800000` into a float, rather than simply assigning the float 1,065,353,216.0 to `f18`. Let's use [a floating point converter](https://www.h-schmidt.net/FloatConverter/IEEE754.html) to see what `0x3f800000` is bit-for-bit as a float. Turns out it's actually `1.0`! If we replace the statement with `f18 = 1.0f;`, re-build, and re-run the diff, we can now see that the function matches!
 
 Before we call this function done however, let's clean it up by getting rid of the `goto` and using better variable names based on what we know about vector normalization:
 > Note: Most functions will not use `goto` at all and usually won't match with them still in place. Instead, branches should be translated into `if` and sometimes simple `switch` statements.
@@ -296,6 +298,8 @@ The `size` attribute is optional.
 
 Sometimes, there will be an address that should have a symbol that splat was unable to detect. This usually happens when the address is not explicitly referenced in the final assembly code. In this case, the symbol cannot be added to `symbol_addrs.txt` and instead must be added to `undefined_funcs.txt` or `undefined_syms.txt` for functions and variables respectively (found in the repository root). These files are fed directly into the linker and as such should not contain the `type` or `size` attributes (just the format `<name> = <VRAM address in hex>;`).
 
+> Note: When modifying `symbol_addrs.txt`, you will need to re-run `./dino.py extract` to re-generate the linker the script with the new symbols. If you just modify `undefined_funcs.txt` or `undefined_syms.txt`, then this is not required.
+
 
 ## 4. Data Sections
 Each compilation unit (`.c` files, `.s`, etc.) contributes code and data to various sections of its resulting object file (and ultimately the final linked ELF file). The common sections are:
@@ -312,6 +316,8 @@ The `.data`, `.rodata`, and `.bss` sections are known as data sections (or data 
 ```
 
 The preceding example will tell splat to generate the linker script such that the `.data` section of `crash.c`'s object file (`build/src/crash.o`) will be inserted at the address `0x92370` in the final ROM.
+
+> Note: Modifying anything in `splat.yaml` will require you to re-run `./dino.py extract` to re-extract code/data and, more importantly, to re-generate the linker script.
 
 ### Example: A `switch` jump table
 As an example, let's take a look at the function `func_8005D3A4`, which happens to be the first function in `video.c` with a `switch` statement that compiles into a jump table.
@@ -342,7 +348,7 @@ Just about all game code in Dinosaur Planet was originally compiled with the sam
 - `-O[0-3]` - Defines the optimization level to compile with (`-O0` is off and `-O3` is all optimizations).
 - `-g[0-3]` - Defines the symbol tables to be generated for debugging (`-g0` is off and `-g3` is for full debugging).
 
-The current flag combinations known for the decomp are:
+The flag combinations currently known for the decomp are:
 - `-O2 -g3` - The default. Used for almost everything.
 - `-O2 -g0` - Used for compiling *modified* libultra code.
 - `-O1 -g0` - Used for compiling *unmodified* libultra code.
@@ -358,12 +364,12 @@ There are many tools out there to assist with decomp. You can find [a full list 
 Here are some recommended tools:
 
 ### decomp.me
-The [decomp.me](https://decomp.me/) site is an online collaborative space for decomp. Here, you can create a 'scratch' for a function and get a live diff of your current C implementation and the expected assembly code. The site has a preset for the Dinosaur Planet decomp that will automatically setup the correct compiler version and default flags.
+[decomp.me](https://decomp.me/) is an online collaborative space for decomp. Here, you can create a 'scratch' for a function and get a live diff of your current C implementation and the expected assembly code. You can also share a link to your function for others to play around with. The site has a preset for the Dinosaur Planet decomp that will automatically set up the correct compiler version and default flags.
 
-> Note: To use decomp.me, you'll need a 'context' file for the function you're working on. This is essentially just a C header file that contains all of the declarations of types, functions, and macros that are used by your function. You can create generate this file by running `./dino.py context <path to your file.c>` (you may need to remove function implementations at the bottom of the generated file).
+> Note: To use decomp.me, you'll need a 'context' file for the function you're working on. This is essentially just a C header file that contains all of the declarations of types, functions, and macros that are used by your function. You can generate this file by running `./dino.py context <path to your file.c>` (you may need to remove function implementations at the bottom of the generated file).
 
 ### mips2c
-mips2c can be used to automatically decompile a function in assembly into C. There is an [online](https://simonsoftware.se/other/mips_to_c.py) and [offline](https://github.com/matt-kempster/mips_to_c) version of the tool. This tool can save a lot of time by producing an initial C implementation to work with, that you can then tweak until the function matches.
+mips2c can be used to automatically decompile a function from assembly into C. There is an [online](https://simonsoftware.se/other/mips_to_c.py) and [offline](https://github.com/matt-kempster/mips_to_c) version of the tool. This tool can save a lot of time by producing an initial C implementation to work with that you can then tweak until the function matches.
 
 ### Ghidra
 [Ghidra](https://ghidra-sre.org/) is a full reverse engineering tool suite. It can be used for many things such as exploring the full assembly of the ROM, getting instant C decompilations of each function, tracing references between addresses, and testing function and structure definitions. Ghidra can be a bit overwhelming at first, but once learned it can be extremely valuable for analyzing and understanding functions and data structures.

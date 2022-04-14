@@ -103,8 +103,8 @@ def dump_text_disassembly(dll: DLL,
         print("(no matching symbols found)")
 
 def main():
-    parser = argparse.ArgumentParser(description="Display information from Dinosuar Planet DLLs.")
-    parser.add_argument("dll", type=argparse.FileType("rb"), help="The Dinosuar Planet .dll file to read.")
+    parser = argparse.ArgumentParser(description="Display information from Dinosaur Planet DLLs.")
+    parser.add_argument("dll", type=argparse.FileType("rb"), help="The Dinosaur Planet .dll file to read.")
     parser.add_argument("-x", "--header", action="store_true", help="Display the contents of the header.")
     parser.add_argument("-r", "--reloc", action="store_true", help="Display the contents of the relocation table.")
     parser.add_argument("-d", "--disassemble", action="store_true", help="Display assembler contents of the executable section.")
