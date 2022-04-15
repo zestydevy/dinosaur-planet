@@ -3,14 +3,16 @@ crc1: D0F6A741
 crc2: 7D57761E
 options:
   basename: dino
-  find_file_boundaries: yes
   compiler: IDO
-  mnemonic_ljust: 11
   platform: n64
-  base_path: ./
+  find_file_boundaries: yes
   target_path: baserom.z64
+  base_path: ./
   asset_path: bin
+  asm_path: asm
+  src_path: src
   symbol_addrs_path: ./symbol_addrs.txt
+  mnemonic_ljust: 11
   # Use .o instead of .bin.o suffix in linker script
   # TODO: probably should remove this
   o_as_suffix: True
