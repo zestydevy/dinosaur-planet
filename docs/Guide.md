@@ -246,6 +246,8 @@ f32 vec3_normalize(Vec3f *a0) {
 
 This looks significantly better already (and compiles)! Let's check our progress so far by diffing our implementation against the original ROM. We can do this by building the ROM (`./dino.py build`) and then running diff on the function's symbol (`./dino.py diff vec3_normalize`). Looks like everything matches except for one instruction: `lui at,0x3f80`, which from our implementation is currently `lui at,0x4e7e`. If we trace this instruction back to the C code, we can see it's from the line `f18 = 0x3f800000;` Let's fix it.
 
+> Tip: When running `diff` consider passing the flags `-m -o -w` (or just `-mow`). This will tell diff to run build first, compare object files (to display symbol names), and watch the source file for changes and auto re-build, respectively.
+
 Looking back at the assembly, we can see these two instructions:
 ```
 lui     at,0x3f80

@@ -71,8 +71,8 @@ If you prefer to develop inside of a Docker container instead of installing ever
 
 Example usage:
 ```bash
-# Create container
-docker build -t dpdecomp .
+# Create image
+docker build -t dpdecomp --build-arg login=$USER --build-arg uid=$UID .
 
 # Enter a bash prompt
 docker run --rm -it -v $(pwd):/dino dpdecomp bash

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import glob
 import os
 from pathlib import Path
 import shutil
@@ -13,6 +14,7 @@ SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = SCRIPT_DIR.joinpath("asm/")
 BIN_PATH = SCRIPT_DIR.joinpath("bin/")
 BUILD_PATH = SCRIPT_DIR.joinpath("build/")
+EXPECTED_PATH = SCRIPT_DIR.joinpath("expected/")
 TOOLS_PATH = SCRIPT_DIR.joinpath("tools/")
 
 BUILD_SCRIPT_PATH = SCRIPT_DIR.joinpath("build.ninja")
@@ -23,7 +25,9 @@ CLEAN_PATHS = [
     BIN_PATH,
     BUILD_PATH,
     BUILD_SCRIPT_PATH,
+    EXPECTED_PATH,
     SCRIPT_DIR.joinpath(".ninja_log"),
+    SCRIPT_DIR.joinpath(".splat_cache"),
     SCRIPT_DIR.joinpath(f"{TARGET}.ld"),
     SCRIPT_DIR.joinpath("undefined_funcs_auto.txt"),
     SCRIPT_DIR.joinpath("undefined_syms_auto.txt"),
@@ -51,7 +55,8 @@ class DinoCommandRunner:
                 continue
             
             if self.verbose:
-                print(f"  Removing {path.relative_to(SCRIPT_DIR)}...")
+                print(f"  rm {path.relative_to(SCRIPT_DIR)}")
+            
             if path.is_dir():
                 shutil.rmtree(path)
             else:
@@ -61,21 +66,35 @@ class DinoCommandRunner:
         print("Updating Git submodules...")
         self.__run_cmd(["git", "submodule", "update", "--init", "--recursive"])
 
-    def extract(self):
+    def extract(self, use_cache: bool):
         print("Extracting...")
 
-        if ASM_PATH.exists():
-            shutil.rmtree(ASM_PATH)
-        if BIN_PATH.exists():
-            shutil.rmtree(BIN_PATH)
-        
-        self.__run_cmd([
+        if not use_cache:
+            if ASM_PATH.exists():
+                if self.verbose:
+                    print(f"rm {ASM_PATH}")
+                shutil.rmtree(ASM_PATH)
+            if BIN_PATH.exists():
+                if self.verbose:
+                    print(f"rm {BIN_PATH}")
+                shutil.rmtree(BIN_PATH)
+
+        args = [
             "python3", str(SPLIT_PY), 
             "--target", "baserom.z64", 
-            "--basedir", str(SCRIPT_DIR), 
-            "splat.yaml"
-        ])
+            "--basedir", str(SCRIPT_DIR),
+        ]
+
+        if self.verbose:
+            args.append("--verbose")
+        if use_cache:
+            args.append("--use-cache")
         
+        args.append("splat.yaml")
+        self.__run_cmd(args)
+        
+        print()
+        print("Unpacking DLLs...")
         self.__run_cmd([
             "python3", str(DINO_DLL_PY), 
             "unpack",
@@ -83,6 +102,9 @@ class DinoCommandRunner:
             str(BIN_PATH.joinpath("assets/DLLS.bin")),
             str(BIN_PATH.joinpath("assets/DLLS_tab.bin"))
         ])
+
+        print()
+        self.configure(skip_dlls=False)
 
     def configure(self, skip_dlls: bool):
         print("Configuring build script...")
@@ -99,22 +121,27 @@ class DinoCommandRunner:
 
         self.__run_cmd(args)
 
-    def build(self, configure: bool, force: bool):
+    def build(self, configure: bool, force: bool, skip_expected: bool):
+        # Configure build script if it's missing
         if configure or not BUILD_SCRIPT_PATH.exists():
-            # TODO: build --configure doesn't respect --skip-dlls
             self.configure(skip_dlls=False)
             print()
         
+        # If force is given, delete build artifacts first
         if force:
             for path in BUILD_ARTIFACTS:
                 if not path.exists():
                     continue
+
+                if self.verbose:
+                    print(f"rm {path}")
                 
                 if path.is_dir():
                     shutil.rmtree(path)
                 else:
                     path.unlink()
 
+        # Build
         print("Building ROM...")
         
         args = ["ninja"]
@@ -125,8 +152,64 @@ class DinoCommandRunner:
         
         self.__run_cmd(args)
 
+        # Verify
         print()
         self.verify()
+
+        if not skip_expected:
+            # If matching, update the 'expected' directory for diff
+            self.create_expected_dir(already_verified=True, quiet=True)
+
+    def create_expected_dir(self, already_verified=False, force=False, quiet=False):
+        # Ensure the build matches
+        if not already_verified:
+            try:
+                self.verify()
+
+                if not quiet:
+                    print()
+            except subprocess.CalledProcessError:
+                print()
+                print("The 'expected' output directory can only be created from a matching build!")
+                return
+        
+        # If force is given, remove any existing files
+        if force:
+            if self.verbose:
+                print(f"rm {EXPECTED_PATH}")
+            shutil.rmtree(EXPECTED_PATH)
+
+        # Determine which files need to be copied
+        base_path = BUILD_PATH.relative_to(SCRIPT_DIR)
+        obj_paths = [Path(p) for p in glob.glob(f"{base_path}/**/*.o", recursive=True)]
+
+        to_create: "list[tuple[Path, Path]]" = []
+        for in_path in obj_paths:
+            out_path = EXPECTED_PATH.joinpath(in_path)
+            if not os.path.exists(out_path):
+                to_create.append((in_path, out_path))
+
+        if len(to_create) == 0:
+            # Nothing to do
+            if not quiet:
+                print("The 'expected' output directory is already up to date.")
+            return
+        
+        # Update directory
+        if not quiet:
+            print("Updating 'expected' output directory for diff...")
+
+        dirs = {str(pair[1].parent) for pair in to_create}
+
+        for dir in dirs:
+            if self.verbose:
+                print(f"mkdir {Path(dir).relative_to(SCRIPT_DIR)}")
+            os.makedirs(dir, exist_ok=True)
+
+        for pair in to_create:
+            if self.verbose:
+                print(f"cp {pair[0]} {Path(pair[1]).relative_to(SCRIPT_DIR)}")
+            shutil.copyfile(pair[0], pair[1])
 
     def baseverify(self):
         print("Verifying base ROM...")
@@ -155,7 +238,7 @@ class DinoCommandRunner:
         print()
         self.baseverify()
         print()
-        self.extract()
+        self.extract(use_cache=False)
         print()
         invoked_as = sys.argv[0]
         if not invoked_as.endswith(".py"):
@@ -164,14 +247,11 @@ class DinoCommandRunner:
             invoked_as = Path(invoked_as).name
         print(f"Done! Run '{invoked_as} build' to build the ROM.")
     
-    def diff(self, show_help: bool, args: "list[str]"):
+    def diff(self, args: "list[str]"):
         self.__assert_project_built()
 
         # Need to run diff from the project root where diff_settings.py is
         os.chdir(SCRIPT_DIR)
-
-        if show_help:
-            args.append("-h")
 
         args.insert(0, str(DIFF_PY))
         self.__run_cmd(args)
@@ -193,27 +273,29 @@ class DinoCommandRunner:
 
 def main():
     parser = argparse.ArgumentParser(description="Quick commands for working on the Dinosaur Planet decompilation.")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Show actual commands being ran.", default=False)
+    parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.", default=False)
 
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("setup", help="Initialize/update Git submodules, verify the base ROM, and extract the ROM.")
-    subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
+    extract_cmd = subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
+    extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
     build_cmd = subparsers.add_parser("build", help="Build ROM and verify that it matches.")
     build_cmd.add_argument("-c", "--configure", action="store_true", help="Re-configure the build script before building.", default=False)
     build_cmd.add_argument("-f", "--force", action="store_true", help="Force a full rebuild.", default=False)
+    build_cmd.add_argument("--no-expected", dest="skip_expected", action="store_true", help="Don't update the 'expected' directory after a matching build.", default=False)
     configure_cmd = subparsers.add_parser("configure", help="Re-configure the build script.")
     configure_cmd.add_argument("--skip-dlls", dest="skip_dlls", action="store_true", help="Don't recopile DLLs (use original)", default=False)
     subparsers.add_parser("verify", help="Verify that the re-built ROM matches the base ROM.")
     subparsers.add_parser("baseverify", help="Verify that the base ROM is correct.")
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
-    diff_cmd = subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", conflict_handler="resolve")
-    diff_cmd.add_argument("-h", "--help", action="store_true", default=False)
-    diff_cmd.add_argument("args", nargs=argparse.REMAINDER)
+    subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
     ctx_cmd = subparsers.add_parser("context", help="Create a context file that can be used for mips2c/decomp.me.")
     ctx_cmd.add_argument("file", help="The C file to create context for.")
+    build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
+    build_exp_cmd.add_argument("-f", "--force", action="store_true", help="Fully recreate the directory instead of updating it.", default=False)
 
-    args, unk_args = parser.parse_known_args()
+    args, _ = parser.parse_known_args()
     cmd = args.command
 
     try:
@@ -221,9 +303,9 @@ def main():
         if cmd == "setup":
             runner.setup()
         elif cmd == "extract":
-            runner.extract()
+            runner.extract(use_cache=args.use_cache)
         elif cmd == "build":
-            runner.build(configure=args.configure, force=args.force)
+            runner.build(configure=args.configure, force=args.force, skip_expected=args.skip_expected)
         elif cmd == "configure":
             runner.configure(skip_dlls=args.skip_dlls)
         elif cmd == "verify":
@@ -235,11 +317,13 @@ def main():
         elif cmd == "submodules":
             runner.update_submodules()
         elif cmd == "diff":
-            full_args = args.args
-            full_args.extend(unk_args)
-            runner.diff(show_help=args.help, args=full_args)
+            diff_index = sys.argv.index("diff")
+            full_args = sys.argv[diff_index + 1:]
+            runner.diff(args=full_args)
         elif cmd =="context":
             runner.make_context(args.file)
+        elif cmd == "build-expected":
+            runner.create_expected_dir(force=args.force)
     except subprocess.CalledProcessError:
         pass
 
