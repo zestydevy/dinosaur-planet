@@ -133,6 +133,15 @@ class BuildNinjaWriter:
             "-mabi=32",
         ]))
 
+        self.writer.variable("AS_FLAGS_DLL", " ".join([
+            "$INCLUDES",
+            "-EB",
+            "-mtune=vr4300",
+            "-march=vr4300",
+            "-modd-spreg",
+            "-KPIC",
+        ]))
+
         self.writer.variable("GCC_FLAGS", " ".join([
             "$CC_DEFINES",
             "$INCLUDES",
@@ -179,6 +188,7 @@ class BuildNinjaWriter:
 
         self.writer.variable("LD_FLAGS_DLL", " ".join([
             "-T $LINK_SCRIPT_DLL",
+            "-T src/dlls/syms.txt",
             "-nostartfiles",
             "-nodefaultlibs",
             "-r",
@@ -197,6 +207,7 @@ class BuildNinjaWriter:
         self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
         self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
+        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL --")
         self.writer.variable("GCC", "gcc")
         self.writer.variable("ELF2DLL", "tools/elf2dll")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
@@ -210,10 +221,11 @@ class BuildNinjaWriter:
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$GCC -MM -MF $out.d -MT $out $GCC_FLAGS_DLL $in && $CC_PREPROCESSED -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
+            "$GCC -MM -MF $out.d -MT $out $GCC_FLAGS_DLL $in && $CC_PREPROCESSED_DLL -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
+        self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("preprocess_linker_script", "cpp -P -DBUILD_DIR=$BUILD_DIR -o $out $in", "Pre-processing linker script...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
         self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL $in -o $out", "Linking...")
@@ -271,7 +283,7 @@ class BuildNinjaWriter:
                 if file.type == BuildFileType.C:
                     command = "cc_dll"
                 elif file.type == BuildFileType.ASM:
-                    command = "as"
+                    command = "as_dll"
                 elif file.type == BuildFileType.BIN:
                     command = "ld_bin"
                 else:
@@ -283,7 +295,7 @@ class BuildNinjaWriter:
             
             # Link
             elf_path = f"{obj_dir}/{dll.number}.elf"
-            self.writer.build(elf_path, "ld_dll", dll_link_deps, implicit="$LINK_SCRIPT_DLL")
+            self.writer.build(elf_path, "ld_dll", dll_link_deps, implicit=["$LINK_SCRIPT_DLL", "src/dlls/syms.txt"])
 
             # Convert .elf to .bin
             #self.writer.build(f"{obj_dir}/{dll.number}.bin", "to_bin", elf_path)

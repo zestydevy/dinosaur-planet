@@ -1,0 +1,8 @@
+.option pic2
+.section ".exports"
+.global _exports
+_exports:
+
+.dword ctor
+.dword dtor
+.dword func_80000018

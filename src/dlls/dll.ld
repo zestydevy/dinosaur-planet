@@ -7,8 +7,6 @@ PHDRS
 
 SECTIONS
 {
-    draw_actor = 0x80000046;
-    
     . = 0x0;
     .text : {
 		*(.text)
@@ -18,16 +16,19 @@ SECTIONS
     .rodata : {
 		*(.rodata)
 		*(.rodata.*)
+        /* src/dlls/121/121.rodata.o(.data) */
     } : rodata
 
     .data : {
 		*(.data)
 		*(.data.*)
+        /* src/dlls/121/121.data.o(.data) */
     } : data
 
     .bss : {
 		*(.bss)
 		*(.bss.*)
+        /* src/dlls/121/121.bss.o(.data) */
     } : data
 
     /DISCARD/ : {
