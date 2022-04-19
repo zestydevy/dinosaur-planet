@@ -76,15 +76,15 @@ u32* dll_load(u16 id, u16 exportCount, s32 arg2)
     if (id >= 0x8000) {
         id -= 0x8000;
         // bank2
-        id += gFile_DLLS_TAB->entries[1].bssSize;
+        id += gFile_DLLS_TAB->entries[1].bssSize;       // bank 2 end
     } else if (id >= 0x2000) {
         id -= 0x2000;
         // bank1
-        id += gFile_DLLS_TAB->entries[0].bssSize + 1;
+        id += gFile_DLLS_TAB->entries[0].bssSize + 1;   // bank 1 end + 1
     } else if (id >= 0x1000) {
         id -= 0x1000;
         // bank0
-        id += gFile_DLLS_TAB->entries[0].offset + 1;
+        id += gFile_DLLS_TAB->entries[0].offset + 1;    // bank 0 end + 1
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
@@ -282,9 +282,11 @@ void dll_relocate(DLLFile* dll)
 
     target = (u32*)((u8*)dll + dll->code);
 
+    // Relocate constructor and destructor to absolute addresses
     *(u32*)&dll->ctor += (u32)target;
     *(u32*)&dll->dtor += (u32)target;
 
+    // Relocate exports to absolute addresses
     exports = (u32*)((u8*)dll + sizeof(DLLFile));
     for (exportCount = dll->exportCount; exportCount != 0; exportCount--)
     {
@@ -293,6 +295,7 @@ void dll_relocate(DLLFile* dll)
 
     if (dll->rodata != -1)
     {
+        // Relocate global offset table (GOT)
         relocations = (s32*)((u8*)dll + dll->rodata);
         currRelocation = relocations;
 
@@ -311,6 +314,7 @@ void dll_relocate(DLLFile* dll)
 
         currRelocation++;
 
+        // Relocate $gp initializer
         while (*currRelocation != -3)
         {
             u32* fn = ((u32)*currRelocation / 4) + (tmp_target = target);
@@ -322,6 +326,7 @@ void dll_relocate(DLLFile* dll)
 
         currRelocation++;
 
+        // Relocate .data
         exports = &((u8 *) dll)[dll->data];
         target = (u32 *) exports;
         

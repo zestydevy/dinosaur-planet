@@ -13,6 +13,7 @@ TARGET = "dino"
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = SCRIPT_DIR.joinpath("asm/")
 BIN_PATH = SCRIPT_DIR.joinpath("bin/")
+SRC_PATH = SCRIPT_DIR.joinpath("src/")
 BUILD_PATH = SCRIPT_DIR.joinpath("build/")
 EXPECTED_PATH = SCRIPT_DIR.joinpath("expected/")
 TOOLS_PATH = SCRIPT_DIR.joinpath("tools/")
@@ -40,6 +41,7 @@ BUILD_ARTIFACTS = [
 
 SPLIT_PY = TOOLS_PATH.joinpath("splat/split.py")
 DINO_DLL_PY = TOOLS_PATH.joinpath("dino_dll.py")
+DLL_SPLIT_PY = TOOLS_PATH.joinpath("dll_split.py")
 CONFIGURE_PY = TOOLS_PATH.joinpath("configure.py")
 DIFF_PY = TOOLS_PATH.joinpath("asm_differ/diff.py")
 M2CTX_PY = TOOLS_PATH.joinpath("m2ctx.py")
@@ -69,6 +71,7 @@ class DinoCommandRunner:
     def extract(self, use_cache: bool):
         print("Extracting...")
 
+        # If not using cache, clear existing extracted content
         if not use_cache:
             if ASM_PATH.exists():
                 if self.verbose:
@@ -79,6 +82,7 @@ class DinoCommandRunner:
                     print(f"rm {BIN_PATH}")
                 shutil.rmtree(BIN_PATH)
 
+        # Run splat
         args = [
             "python3", str(SPLIT_PY), 
             "--target", "baserom.z64", 
@@ -93,6 +97,7 @@ class DinoCommandRunner:
         args.append("splat.yaml")
         self.__run_cmd(args)
         
+        # Unpack DLLs
         print()
         print("Unpacking DLLs...")
         self.__run_cmd([
@@ -103,28 +108,29 @@ class DinoCommandRunner:
             str(BIN_PATH.joinpath("assets/DLLS_tab.bin"))
         ])
 
+        # Extract DLLs
         print()
-        self.configure(skip_dlls=False)
+        print("Extracting DLLs...")
+        self.__extract_dlls()
 
-    def configure(self, skip_dlls: bool):
+        print()
+        self.configure()
+
+    def configure(self):
         print("Configuring build script...")
 
         self.__assert_project_built()
-        
-        args = [
+
+        self.__run_cmd([
             "python3", str(CONFIGURE_PY), 
             "--base-dir", str(SCRIPT_DIR),
             "--target", TARGET
-        ]
-        if skip_dlls:
-            args.append("--skip-dlls")
+        ])
 
-        self.__run_cmd(args)
-
-    def build(self, configure: bool, force: bool, skip_expected: bool):
+    def build(self, configure: bool, force: bool, skip_expected: bool, target: "str | None"):
         # Configure build script if it's missing
         if configure or not BUILD_SCRIPT_PATH.exists():
-            self.configure(skip_dlls=False)
+            self.configure()
             print()
         
         # If force is given, delete build artifacts first
@@ -142,7 +148,10 @@ class DinoCommandRunner:
                     path.unlink()
 
         # Build
-        print("Building ROM...")
+        if target is None:
+            print("Building ROM...")
+        else:
+            print(f"Building {target}...")
         
         args = ["ninja"]
         if SCRIPT_DIR != Path.cwd():
@@ -150,8 +159,15 @@ class DinoCommandRunner:
         if self.verbose:
             args.append("-v")
         
+        if target is not None:
+            args.append(target)
+        
         self.__run_cmd(args)
 
+        # Stop here if the full ROM isn't being built
+        if target is not None and target != str(BUILD_PATH.joinpath(f"{TARGET}.z64").relative_to(SCRIPT_DIR)):
+            return
+        
         # Verify
         print()
         self.verify()
@@ -247,6 +263,36 @@ class DinoCommandRunner:
             invoked_as = Path(invoked_as).name
         print(f"Done! Run '{invoked_as} build' to build the ROM.")
     
+    def setup_dll(self, number: int):
+        src_dir = SRC_PATH.joinpath(f"dlls/{number}")
+        if src_dir.exists():
+            print(f"An environment already exists at {src_dir.relative_to(SCRIPT_DIR)}!")
+            return
+
+        print(f"Creating environment for DLL {number}...")
+        
+        # Create directory
+        os.makedirs(src_dir)
+
+        # Create DLL config
+        dll_config_path = src_dir.joinpath(f"{number}.yaml")
+        with open(dll_config_path, "w", encoding="utf-8") as dll_config_file:
+            dll_config_file.write("compile: yes\n")
+            dll_config_file.write("link_original_rodata: yes\n")
+            dll_config_file.write("link_original_data: yes\n")
+            dll_config_file.write("link_original_bss: yes\n")
+        
+        # Extract DLL
+        print("Extracting DLL...")
+        self.__extract_dlls([number])
+
+        # Re-configure build script
+        self.configure()
+
+        # Done
+        print()
+        print(f"Done! Environment created at {src_dir.relative_to(SCRIPT_DIR)}.")
+
     def diff(self, args: "list[str]"):
         self.__assert_project_built()
 
@@ -271,29 +317,49 @@ class DinoCommandRunner:
             print(">", " ".join(args))
         subprocess.check_call(args)
 
+    def __extract_dlls(self, dlls: "list[str | int]" = []):
+        args = [
+            "python3", str(DLL_SPLIT_PY),
+            "--base-dir", str(SCRIPT_DIR),
+        ]
+
+        args.extend([str(dll) for dll in dlls])
+
+        self.__run_cmd(args)
+
 def main():
     parser = argparse.ArgumentParser(description="Quick commands for working on the Dinosaur Planet decompilation.")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.", default=False)
 
     subparsers = parser.add_subparsers(dest="command", required=True)
+
     subparsers.add_parser("setup", help="Initialize/update Git submodules, verify the base ROM, and extract the ROM.")
+
+    setup_dll_cmd = subparsers.add_parser("setup-dll", help="Set up a new environment for decomping a DLL.")
+    setup_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
+    
     extract_cmd = subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
     extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
+
+    subparsers.add_parser("configure", help="Re-configure the build script.")
+    
     build_cmd = subparsers.add_parser("build", help="Build ROM and verify that it matches.")
     build_cmd.add_argument("-c", "--configure", action="store_true", help="Re-configure the build script before building.", default=False)
     build_cmd.add_argument("-f", "--force", action="store_true", help="Force a full rebuild.", default=False)
     build_cmd.add_argument("--no-expected", dest="skip_expected", action="store_true", help="Don't update the 'expected' directory after a matching build.", default=False)
-    configure_cmd = subparsers.add_parser("configure", help="Re-configure the build script.")
-    configure_cmd.add_argument("--skip-dlls", dest="skip_dlls", action="store_true", help="Don't recopile DLLs (use original)", default=False)
+    build_cmd.add_argument("target", nargs="?", help="The target to build. Don\'t specify to build the full ROM.")
+
+    build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
+    build_exp_cmd.add_argument("-f", "--force", action="store_true", help="Fully recreate the directory instead of updating it.", default=False)
+    
     subparsers.add_parser("verify", help="Verify that the re-built ROM matches the base ROM.")
     subparsers.add_parser("baseverify", help="Verify that the base ROM is correct.")
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
     subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
+    
     ctx_cmd = subparsers.add_parser("context", help="Create a context file that can be used for mips2c/decomp.me.")
     ctx_cmd.add_argument("file", help="The C file to create context for.")
-    build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
-    build_exp_cmd.add_argument("-f", "--force", action="store_true", help="Fully recreate the directory instead of updating it.", default=False)
 
     args, _ = parser.parse_known_args()
     cmd = args.command
@@ -302,12 +368,21 @@ def main():
         runner = DinoCommandRunner(args.verbose)
         if cmd == "setup":
             runner.setup()
+        elif cmd == "setup-dll":
+            runner.setup_dll(number=args.number)
         elif cmd == "extract":
             runner.extract(use_cache=args.use_cache)
         elif cmd == "build":
-            runner.build(configure=args.configure, force=args.force, skip_expected=args.skip_expected)
+            runner.build(
+                configure=args.configure, 
+                force=args.force, 
+                skip_expected=args.skip_expected,
+                target=args.target
+            )
+        elif cmd == "build-expected":
+            runner.create_expected_dir(force=args.force)
         elif cmd == "configure":
-            runner.configure(skip_dlls=args.skip_dlls)
+            runner.configure()
         elif cmd == "verify":
             runner.verify()
         elif cmd == "baseverify":
@@ -322,8 +397,6 @@ def main():
             runner.diff(args=full_args)
         elif cmd =="context":
             runner.make_context(args.file)
-        elif cmd == "build-expected":
-            runner.create_expected_dir(force=args.force)
     except subprocess.CalledProcessError:
         pass
 

@@ -14,6 +14,50 @@ class DLL:
         self.reloc_table = reloc_table
         self.functions = functions
 
+    def has_data(self) -> bool:
+        """Returns whether the DLL has a .data section."""
+        return self.header.data_offset != 0xFFFF_FFFF
+    
+    def has_rodata(self) -> bool:
+        """Returns whether the DLL has a .rodata section."""
+        return self.header.rodata_offset != 0xFFFF_FFFF
+
+    def get_data_size(self) -> int:
+        """Calculates the size (in bytes) of the DLLs .data section."""
+        if not self.has_data():
+            return 0
+        
+        start = self.reloc_table.global_offset_table[2]
+        end = self.get_size()
+
+        return end - start
+    
+    def get_rodata_size(self) -> int:
+        """Calculates the size (in bytes) of the DLLs .rodata section."""
+        if not self.has_rodata():
+            return 0
+        
+        start = self.reloc_table.global_offset_table[1]
+        if self.has_data():
+            end = self.reloc_table.global_offset_table[2]
+        else:
+            end = self.get_size()
+
+        return end - start
+    
+    def get_rodata_size_without_reloc_table(self) -> int:
+        """Calculates the size (in bytes) of the DLLs .rodata section, excluding relocation tables."""
+        return self.get_rodata_size() - self.reloc_table.get_size()
+        
+    def get_size(self) -> int:
+        """Returns the size (in bytes) of the DLL."""
+        # Note: This is kind of cheating... the GOT .bss offset is
+        # always equal to the unaligned size of the DLL. There isn't
+        # really any other way to get the original DLL size since DLLs
+        # are 16-byte aligned in DLLS.bin. Even DLLS.tab refers to
+        # their aligned size.
+        return self.reloc_table.global_offset_table[3]
+
     @staticmethod
     def parse(data: bytearray, 
               number: str, 
@@ -31,14 +75,14 @@ class DLL:
 class DLLHeader:
     """The header section (including exports)"""
     def __init__(self, 
-                 header_size: int,
+                 size: int,
                  data_offset: int,
                  rodata_offset: int,
                  export_count: int,
                  ctor_offset: int,
                  dtor_offset: int,
                  export_offsets: "list[int]") -> None:
-        self.header_size = header_size
+        self.size = size
         """Header size in bytes"""
         self.data_offset = data_offset
         """DATA offset (relative to start of header or 0xFFFFFFFF if section is not present)"""
@@ -52,7 +96,7 @@ class DLLHeader:
         """Destructor offset (relative to end of header)"""
         self.export_offsets = export_offsets
         """List of exports (the offsets they specify)"""
-    
+
     @staticmethod
     def parse(data: bytearray) -> "DLLHeader":
         """Given a DLL file, parses and returns the header"""
@@ -63,7 +107,7 @@ class DLLHeader:
         export_offsets = struct.unpack_from(">" + ("I" * export_count), data, offset=0x1C)
         
         return DLLHeader(
-            header_size=header_size,
+            size=header_size,
             data_offset=data_offsets[0],
             rodata_offset=data_offsets[1],
             export_count=export_count,
@@ -82,7 +126,7 @@ class DLLRelocationTable:
         self.gp_relocations = gp_relocations
         self.data_relocations = data_relocations
 
-    def size(self) -> int:
+    def get_size(self) -> int:
         """Calculates the size of the relocation table in bytes"""
         # +4 to include table section end markers
         return len(self.global_offset_table) * 4 + 4 \
@@ -175,7 +219,7 @@ def parse_functions(data: bytearray,
 
     # Disassemble
     md = Cs(CS_ARCH_MIPS, CS_MODE_MIPS64 + CS_MODE_BIG_ENDIAN)
-    insts = [i for i in md.disasm(data[header.header_size:text_end], vram)]
+    insts = [i for i in md.disasm(data[header.size:text_end], vram)]
 
     # Extract all branches
     branches: "list[tuple[int, int]]" = []
@@ -238,13 +282,15 @@ def parse_functions(data: bytearray,
                 assert num_operands == 3
                 op_str = ", ".join(operands[:-1] + [r"%lo(_gp_disp)"])
         elif num_operands > 0 and operands[-1].endswith("($gp)"):
-            # Replace $gp references with %got (if not referencing a section)
+            # Replace offset($gp) with %got(symbol)($gp)
+            # This will generate a relocation entry for the instruction and a symbol for the offset
             gp_mem_op = operands[-1]
             offset = 0 if gp_mem_op == "($gp)" else int(gp_mem_op[:-5], 0)
+            # Exclude the first four GOT entries (which are just sections)
             if offset >= 16:
                 symbol_addr = reloc_table.global_offset_table[offset // 4]
                 symbol = ("D_%X" %(symbol_addr))
-                op_str = ", ".join(operands[:-1] + [rf"%got({symbol})"])
+                op_str = ", ".join(operands[:-1] + [rf"%got({symbol})($gp)"])
                 cur_func_auto_syms[symbol] = symbol_addr
 
         # Determine whether this instruction address is branched to

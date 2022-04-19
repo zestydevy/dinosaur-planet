@@ -21,11 +21,11 @@ class dino_dll():
 
             with open(name, "rb") as file:
                 data = bytearray(file.read())
-                bss = struct.unpack_from(">I", data, 0x18)[0]
+                bss = struct.unpack_from(">I", data, 0x18)[0] # HACK: uses unused field to get BSS size from elf2dll
                 struct.pack_into(">I", data, 0x18, 0)
                 fbin.write(data)
 
-            offset = (index * 8) + (4 * 4)
+            offset = (index * 8) + (4 * 4) # (index * entry_size) + tab_header_size
             if bss == 0: bss = struct.unpack_from(">2I", ftab, offset)[1]
             if bss == 0xFFFFFFFF: bss = 0
 
@@ -34,8 +34,9 @@ class dino_dll():
 
             index += 1
 
+        # Write "fake" final entry
         offset = (index * 8) + (4 * 4)
-        struct.pack_into(">2I", ftab, offset, pos, bss)
+        struct.pack_into(">2I", ftab, offset, pos, 0x0)
 
         open(tab_out, "wb").write(ftab)
         fbin.close()
@@ -58,6 +59,7 @@ class dino_dll():
             next = data[2]
             size = next - offset
 
+            # Note: final entry before 0xFFFFFFFF is not an actual DLL
             if next == 0xFFFFFFFF: break
 
             name = "%d.dll" % i

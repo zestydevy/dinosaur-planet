@@ -11,7 +11,9 @@ def dump_header(dll: DLL):
     print("===================")
 
     header = dll.header
-    print(f"Header size:        {hex(header.header_size)} ({header.header_size} bytes)")
+
+    print(f"Header size:        {hex(header.size)} ({header.size} bytes)")
+    print(f"TEXT offset:        {hex(header.size)}")
     print(f"DATA offset:        {hex(header.data_offset)}{' (not present)' if header.data_offset == 0xFFFF_FFFF else ''}")
     print(f"RODATA offset:      {hex(header.rodata_offset)}{' (not present)' if header.rodata_offset == 0xFFFF_FFFF else ''}")
     print(f"Export count:       {hex(header.export_count)} ({header.export_count})")

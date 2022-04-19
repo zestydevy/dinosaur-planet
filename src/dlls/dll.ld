@@ -3,37 +3,35 @@ PHDRS
     text   PT_LOAD FLAGS(5);
     rodata PT_LOAD FLAGS(4);
     data   PT_LOAD FLAGS(6);
+    bss    PT_LOAD FLAGS(6);
 }
 
 SECTIONS
 {
     . = 0x0;
     .text : {
-		*(.text)
-		*(.text.*)
+        *(.text)
+        *(.text.*)
     } : text
 
     .rodata : {
-		*(.rodata)
-		*(.rodata.*)
-        /* src/dlls/121/121.rodata.o(.data) */
+        *(.rodata)
+        *(.rodata.*)
     } : rodata
 
     .data : {
-		*(.data)
-		*(.data.*)
-        /* src/dlls/121/121.data.o(.data) */
+        *(.data)
+        *(.data.*)
     } : data
 
     .bss : {
-		*(.bss)
-		*(.bss.*)
-        /* src/dlls/121/121.bss.o(.data) */
-    } : data
+        *(.bss)
+        *(.bss.*)
+    } : bss
 
     /DISCARD/ : {
-		*(.reginfo)
-		*(.MIPS.abiflags)
+        *(.reginfo)
+        *(.MIPS.abiflags)
     }
 
     /*========================================= */
