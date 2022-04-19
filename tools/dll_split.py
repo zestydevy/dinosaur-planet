@@ -112,14 +112,17 @@ def extract_bss_asm(dir: Path, dll: DLL, bss_size: int):
         # Write .bss size
         bss_file.write(".ds.s 0x{:X}, 0\n".format(bss_size))
 
-def get_functions_to_extract(path: Path) -> "list[str]":
+def get_functions_to_extract(path: Path, dll_number: str) -> "list[str]":
+    if not path.exists():
+        return []
+    
     emit_funcs: "list[str]" = []
-    global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/121\/(.+)\.s\"\)")
+    global_asm_pattern = re.compile(rf"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/{dll_number}\/(.+)\.s\"\)")
     with open(path, "r", encoding="utf-8") as c_file:
         for line in c_file.readlines():
-            pairs = global_asm_pattern.findall(line.strip())
-            for pair in pairs:
-                emit_funcs.append(pairs[0])
+            symbols = global_asm_pattern.findall(line.strip())
+            for symbol in symbols:
+                emit_funcs.append(symbol)
     
     return emit_funcs
 
@@ -139,7 +142,7 @@ def extract_dll(dll: DLL,
 
     # Determine what needs to be extracted
     c_file_path = src_path.joinpath(f"{dll.number}.c")
-    emit_funcs = get_functions_to_extract(c_file_path)
+    emit_funcs = get_functions_to_extract(c_file_path, dll.number)
 
     rodata_size = dll.get_rodata_size_without_reloc_table()
     data_size = dll.get_data_size()

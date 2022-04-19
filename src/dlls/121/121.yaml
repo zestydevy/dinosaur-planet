@@ -1,4 +1,0 @@
-compile: yes
-link_original_rodata: yes
-link_original_data: yes
-link_original_bss: yes
