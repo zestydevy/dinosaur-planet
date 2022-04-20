@@ -284,7 +284,7 @@ class DinoCommandRunner:
         
         # Extract DLL
         print("Extracting DLL...")
-        self.__extract_dlls([number])
+        self.__extract_dlls([number], quiet=True)
 
         # Re-configure build script
         self.configure()
@@ -317,11 +317,16 @@ class DinoCommandRunner:
             print(">", " ".join(args))
         subprocess.check_call(args)
 
-    def __extract_dlls(self, dlls: "list[str | int]" = []):
+    def __extract_dlls(self, dlls: "list[str | int]"=[], quiet: bool=False):
         args = [
             "python3", str(DLL_SPLIT_PY),
             "--base-dir", str(SCRIPT_DIR),
         ]
+
+        if self.verbose:
+            args.append("--verbose")
+        if not self.verbose and quiet:
+            args.append("--quiet")
 
         args.extend([str(dll) for dll in dlls])
 
