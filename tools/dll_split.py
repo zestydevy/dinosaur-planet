@@ -52,14 +52,14 @@ def create_syms_txt(syms_path: Path, dll: DLL):
                 syms_file.write("{} = 0x{:X};\n".format(name, value))
                 syms_added += 1
         
-        assert syms_added == len(dll.reloc_table.global_offset_table) - 4
+        assert syms_added == max(0, len(dll.reloc_table.global_offset_table) - 4)
 
-def extract_text_asm(dir: Path, dll: DLL, funcs: "list[str]"):
+def extract_text_asm(dir: Path, dll: DLL, funcs: "list[str] | None"):
     assert dll.functions is not None
     functions = dll.functions
 
     for func in functions:
-        if not func.symbol in funcs:
+        if funcs is not None and not func.symbol in funcs:
             continue
 
         s_path = dir.joinpath(f"{func.symbol}.s")
@@ -112,9 +112,10 @@ def extract_bss_asm(dir: Path, dll: DLL, bss_size: int):
         # Write .bss size
         bss_file.write(".ds.s 0x{:X}, 0\n".format(bss_size))
 
-def get_functions_to_extract(path: Path, dll_number: str) -> "list[str]":
+def get_functions_to_extract(path: Path, dll_number: str) -> "list[str] | None":
+    """Returns None if all functions should be extracted (i.e. there is no .c file to derive the list from)"""
     if not path.exists():
-        return []
+        return None
     
     emit_funcs: "list[str]" = []
     global_asm_pattern = re.compile(rf"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/{dll_number}\/(.+)\.s\"\)")
@@ -144,7 +145,7 @@ def extract_dll(dll: DLL,
     c_file_path = src_path.joinpath(f"{dll.number}.c")
     emit_funcs = get_functions_to_extract(c_file_path, dll.number)
 
-    rodata_size = dll.get_rodata_size_without_reloc_table()
+    rodata_size = dll.get_rodata_size()
     data_size = dll.get_data_size()
 
     emit_rodata = not skip_rodata and dll.has_rodata() and rodata_size > 0
@@ -152,13 +153,13 @@ def extract_dll(dll: DLL,
     emit_bss = not skip_bss and bss_size > 0
 
     # Create directories if necessary
-    if len(emit_funcs) > 0:
+    if emit_funcs is None or len(emit_funcs) > 0:
         os.makedirs(asm_path, exist_ok=True)
     if emit_rodata or emit_data or emit_bss:
         os.makedirs(asm_data_path, exist_ok=True)
 
     # Extract .text
-    if len(emit_funcs) > 0:
+    if emit_funcs is None or len(emit_funcs) > 0:
         extract_text_asm(asm_path, dll, emit_funcs)
 
     # Extract .rodata

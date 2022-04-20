@@ -6,57 +6,76 @@ class DLL:
     """A Dinosaur Planet DLL"""
     def __init__(self,
                  number: str,
+                 size_aligned: int,
                  header: "DLLHeader",
                  reloc_table: "DLLRelocationTable",
                  functions: "list[DLLFunction] | None") -> None:
         self.number = number
+        self.size_aligned = size_aligned
+        """The total size of this DLL (in bytes), 16-byte aligned"""
         self.header = header
         self.reloc_table = reloc_table
         self.functions = functions
 
     def has_data(self) -> bool:
-        """Returns whether the DLL has a .data section."""
+        """Returns whether this DLL has a .data section"""
         return self.header.data_offset != 0xFFFF_FFFF
     
     def has_rodata(self) -> bool:
-        """Returns whether the DLL has a .rodata section."""
+        """Returns whether this DLL has a .rodata section"""
         return self.header.rodata_offset != 0xFFFF_FFFF
 
-    def get_data_size(self) -> int:
-        """Calculates the size (in bytes) of the DLLs .data section."""
-        if not self.has_data():
-            return 0
-        
-        start = self.reloc_table.global_offset_table[2]
-        end = self.get_size()
+    def get_text_size(self) -> int:
+        """Calculates the size (in bytes) of this DLL's .text section"""
+        start = self.header.size
 
+        if self.has_rodata():
+            end = self.header.rodata_offset
+        elif self.has_data():
+            end = self.header.data_offset
+        else:
+            return ((self.size_aligned - start) // 16) * 16
+        
         return end - start
     
     def get_rodata_size(self) -> int:
-        """Calculates the size (in bytes) of the DLLs .rodata section."""
+        """Calculates the size (in bytes) of this DLL's .rodata section, 
+        excluding the GOT and relocation tables"""
         if not self.has_rodata():
             return 0
-        
-        start = self.reloc_table.global_offset_table[1]
-        if self.has_data():
-            end = self.reloc_table.global_offset_table[2]
-        else:
-            end = self.get_size()
 
-        return end - start
+        start = self.header.rodata_offset
+
+        if self.has_data():
+            end = self.header.data_offset
+        else:
+            return ((self.size_aligned - start) // 16) * 16 - self.reloc_table.get_size()
+
+        return (end - start) - self.reloc_table.get_size()
     
-    def get_rodata_size_without_reloc_table(self) -> int:
-        """Calculates the size (in bytes) of the DLLs .rodata section, excluding relocation tables."""
-        return self.get_rodata_size() - self.reloc_table.get_size()
+    def get_data_size(self) -> int:
+        """Calculates the size (in bytes) of this DLL's .data section"""
+        if not self.has_data():
+            return 0
         
-    def get_size(self) -> int:
-        """Returns the size (in bytes) of the DLL."""
-        # Note: This is kind of cheating... the GOT .bss offset is
-        # always equal to the unaligned size of the DLL. There isn't
-        # really any other way to get the original DLL size since DLLs
-        # are 16-byte aligned in DLLS.bin. Even DLLS.tab refers to
-        # their aligned size.
-        return self.reloc_table.global_offset_table[3]
+        start = self.header.data_offset
+        end = self.size_aligned
+
+        return ((end - start) // 16) * 16
+    
+    def get_rom_size(self) -> int:
+        """Calculates the total ROM size (in bytes, unaligned) of this DLL"""
+        return self.header.size + \
+            self.get_text_size() + \
+            self.get_rodata_size() + \
+            self.reloc_table.get_size() + \
+            self.get_data_size()
+
+    def get_ram_size(self) -> int:
+        """Calculates the total size (in bytes) of this DLL when loaded into RAM (**excluding BSS!**)"""
+        return self.get_text_size() + \
+            self.get_rodata_size() + \
+            self.get_data_size()
 
     @staticmethod
     def parse(data: bytearray, 
@@ -70,7 +89,7 @@ class DLL:
         else:
             functions = None
 
-        return DLL(number, header, reloc_table, functions)
+        return DLL(number, len(data), header, reloc_table, functions)
 
 class DLLHeader:
     """The header section (including exports)"""
@@ -119,15 +138,20 @@ class DLLHeader:
 class DLLRelocationTable:
     """The relocation table (including global offset table)"""
     def __init__(self,
+                 exists: bool,
                  global_offset_table: "list[int]",
                  gp_relocations: "list[int]",
                  data_relocations: "list[int]") -> None:
+        self.exists = exists
         self.global_offset_table = global_offset_table
         self.gp_relocations = gp_relocations
         self.data_relocations = data_relocations
 
     def get_size(self) -> int:
         """Calculates the size of the relocation table in bytes"""
+        if not self.exists:
+            return 0
+        
         # +4 to include table section end markers
         return len(self.global_offset_table) * 4 + 4 \
             + len(self.gp_relocations) * 4 + 4 \
@@ -138,7 +162,7 @@ class DLLRelocationTable:
         """Given a DLL file, parses and returns the relocation section"""
         if header.rodata_offset == 0xFFFF_FFFF:
             # No relocation table
-            return DLLRelocationTable([], [], [])
+            return DLLRelocationTable(False, [], [], [])
         
         offset = header.rodata_offset
         global_offset_table: "list[int]" = []
@@ -158,7 +182,7 @@ class DLLRelocationTable:
             data_relocations.append(value)
             offset += 0x4
         
-        return DLLRelocationTable(global_offset_table, gp_relocations, data_relocations)
+        return DLLRelocationTable(True, global_offset_table, gp_relocations, data_relocations)
 
 class DLLInst:
     def __init__(self,
