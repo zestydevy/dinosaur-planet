@@ -8,7 +8,6 @@
 import argparse
 from genericpath import isdir
 import glob
-from io import BufferedReader
 import os
 from pathlib import Path
 import re
@@ -23,7 +22,13 @@ ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
 SRC_PATH = Path("src")
 
-def create_exports_s(path: Path, functions: "list[DLLFunction]"):
+def create_exports_s(path: Path, dll: DLL):
+    assert dll.functions is not None
+
+    funcs_by_address: "dict[int, str]" = {}
+    for func in dll.functions:
+        funcs_by_address[func.address] = func.symbol
+
     with open(path, "w", encoding="utf-8") as exports_s:
         exports_s.write(".option pic2\n")
         exports_s.write(".section \".exports\"\n")
@@ -31,8 +36,13 @@ def create_exports_s(path: Path, functions: "list[DLLFunction]"):
         exports_s.write("_exports:\n")
         exports_s.write("\n")
 
-        for func in functions:
-            exports_s.write(f".dword {func.symbol}\n")
+        exports_s.write(f".dword ctor\n")
+        exports_s.write(f".dword dtor\n")
+        exports_s.write("\n")
+
+        for offset in dll.header.export_offsets:
+            func_symbol = funcs_by_address[offset]
+            exports_s.write(f".dword {func_symbol}\n")
 
 def create_c_stub(c_path: Path, asm_path: Path, functions: "list[DLLFunction]"):
     with open(c_path, "w", encoding="utf-8") as c_file:
@@ -46,11 +56,14 @@ def create_syms_txt(syms_path: Path, dll: DLL):
     assert dll.functions is not None
 
     with open(syms_path, "w", encoding="utf-8") as syms_file:
+        addrs_found: "set[int]" = set()
         syms_added = 0
         for func in dll.functions:
             for name, value in func.auto_symbols.items():
-                syms_file.write("{} = 0x{:X};\n".format(name, value))
-                syms_added += 1
+                if not value in addrs_found:
+                    addrs_found.add(value)
+                    syms_file.write("{} = 0x{:X};\n".format(name, value))
+                    syms_added += 1
         
         assert syms_added == max(0, len(dll.reloc_table.global_offset_table) - 4)
 
@@ -69,15 +82,14 @@ def extract_text_asm(dir: Path, dll: DLL, funcs: "list[str] | None"):
             for i in func.insts:
                 if i.label is not None:
                     s_file.write(f"{i.label}:\n")
-                s_file.write(
-                    "/* %04X %X %s */ %s%s%s\n" 
-                    %(
-                        (i.address + dll.header.size) - 0x8000_0000,
-                        i.address, 
-                        i.original.bytes.hex().upper(), 
-                        ' ' if i.is_branch_delay_slot else '', 
-                        i.mnemonic.ljust(10 if i.is_branch_delay_slot else 11), 
-                        i.op_str))
+
+                rom_addr = i.address + dll.header.size
+                ram_addr = i.address
+                inst_bytes = i.original.bytes.hex().upper()
+                mnemonic = (' ' + i.mnemonic) if i.is_branch_delay_slot else i.mnemonic
+                
+                s_file.write("/* {:0>4X} {:0>6X} {} */ {:<11}{}\n"
+                    .format(rom_addr, ram_addr, inst_bytes, mnemonic, i.op_str))
 
 def extract_rodata_asm(dir: Path, dll: DLL, data: bytearray):
     rodata_path = dir.joinpath(f"{dll.number}.rodata.s")
@@ -85,9 +97,16 @@ def extract_rodata_asm(dir: Path, dll: DLL, data: bytearray):
         # Set .rodata section
         rodata_file.write(".section .rodata, \"a\"\n")
         # Write data
+        rodata_rom_offset = dll.header.rodata_offset + dll.reloc_table.get_size()
+        rodata_ram_offset = dll.header.rodata_offset - dll.header.size
         for i in range(0, len(data), 4):
             word = struct.unpack_from(">I", data, offset=i)[0]
-            rodata_file.write(".4byte 0x{:X}\n".format(word))
+
+            rom_addr = rodata_rom_offset + i
+            ram_addr = rodata_ram_offset + i
+            
+            rodata_file.write("/* {:0>4X} {:0>6X} */ .4byte 0x{:X}\n"
+                .format(rom_addr, ram_addr, word))
 
 def extract_data_asm(dir: Path, dll: DLL, data: bytearray):
     data_path = dir.joinpath(f"{dll.number}.data.s")
@@ -98,9 +117,16 @@ def extract_data_asm(dir: Path, dll: DLL, data: bytearray):
         for offset in dll.reloc_table.data_relocations:
             data_file.write(".reloc 0x{:X}, \"R_MIPS_32\", .data\n".format(offset))
         # Write data
+        data_rom_offset = dll.header.data_offset
+        data_ram_offset = dll.header.data_offset - dll.header.size - dll.reloc_table.get_size()
         for i in range(0, len(data), 4):
             word = struct.unpack_from(">I", data, offset=i)[0]
-            data_file.write(".4byte 0x{:X}\n".format(word))
+
+            rom_addr = data_rom_offset + i
+            ram_addr = data_ram_offset + i
+            
+            data_file.write("/* {:0>4X} {:0>6X} */ .4byte 0x{:X}\n"
+                .format(rom_addr, ram_addr, word))
 
 def extract_bss_asm(dir: Path, dll: DLL, bss_size: int):
     assert bss_size > 0
@@ -164,7 +190,7 @@ def extract_dll(dll: DLL,
 
     # Extract .rodata
     if emit_rodata:
-        rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation table
+        rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
         rodata_end = rodata_start + rodata_size
         extract_rodata_asm(asm_data_path, dll, data[rodata_start:rodata_end])
     
@@ -181,7 +207,7 @@ def extract_dll(dll: DLL,
     # Create exports.s if it doesn't exist
     exports_s_path = src_path.joinpath("exports.s")
     if not exports_s_path.exists():
-        create_exports_s(exports_s_path, dll.functions)
+        create_exports_s(exports_s_path, dll)
 
     # Create syms.txt if it doens't exist
     syms_txt_path = src_path.joinpath("syms.txt")

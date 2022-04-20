@@ -26,10 +26,11 @@ def dump_bank(tab: DLLTab, index: int):
         dump_entry(entry, num=i + start + 1)
 
 def write_entry_table_header():
-    print("DLL   START      END        BSS SIZE")
+    print("DLL   START      END        SIZE     BSS SIZE")
 
 def dump_entry(entry: DLLTabEntry, num: int):
-    print("{:<6d}0x{:<9X}0x{:<9X}0x{:X}".format(num, entry.start_offset, entry.end_offset, entry.bss_size))
+    print("{:<6d}0x{:<9X}0x{:<9X}0x{:<7X}0x{:X}"
+        .format(num, entry.start_offset, entry.end_offset, entry.size, entry.bss_size))
 
 def main():
     parser = argparse.ArgumentParser(description="Display information from the Dinosaur Planet DLLS.tab file.")

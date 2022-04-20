@@ -57,4 +57,5 @@ class DLLTabEntry:
                  bss_size: int) -> None:
         self.start_offset = start_offset
         self.end_offset = end_offset
+        self.size = end_offset - start_offset
         self.bss_size = bss_size
