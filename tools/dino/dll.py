@@ -243,10 +243,12 @@ def parse_functions(data: bytearray,
 
     # Extract all branches
     branches: "list[tuple[int, int]]" = []
+    branch_dests: "set[int]" = set()
     for i in insts:
         if __mnemonic_is_branch(i.mnemonic):
             branch_target = int(i.op_str.split(" ")[-1], 0)
             branches.append((i.address, branch_target))
+            branch_dests.add(branch_target)
 
     # Extract functions
     funcs: "list[DLLFunction]" = []
@@ -318,10 +320,8 @@ def parse_functions(data: bytearray,
 
         # Determine whether this instruction address is branched to
         label: "str | None" = None
-        for branch in branches:
-            if branch[1] == i.address:
-                label = (".L%x" %(i.address))
-                break
+        if i.address in branch_dests:
+            label = (".L%x" %(i.address))
 
         # Add instruction
         cur_func_insts.append(DLLInst(
