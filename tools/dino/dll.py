@@ -190,18 +190,29 @@ class DLLInst:
                  mnemonic: str,
                  op_str: str,
                  is_branch_delay_slot: bool,
-                 label: "str | None") -> None:
+                 has_relocation: bool,
+                 label: "str | None",
+                 ref: "str | None") -> None:
         self.original = original
         self.address = address
         self.mnemonic = mnemonic
         self.op_str = op_str
         self.is_branch_delay_slot = is_branch_delay_slot
+        self.has_relocation = has_relocation
         self.label = label
+        self.ref = ref
 
     def is_op_modified(self):
         """Whether the operand string was modified during parsing.
         Use original.op_str to get the real value."""
         return self.op_str != self.original.op_str
+
+class DLLRelocation:
+    def __init__(self, offset: int, type: str, expression: str, got_index: int) -> None:
+        self.offset = offset
+        self.type = type
+        self.expression = expression
+        self.got_index = got_index
 
 class DLLFunction:
     def __init__(self,
@@ -209,7 +220,8 @@ class DLLFunction:
                  address: int,
                  symbol: str,
                  is_static: bool,
-                 auto_symbols: "OrderedDict[str, int]") -> None:
+                 auto_symbols: "OrderedDict[str, int]",
+                 relocations: "list[DLLRelocation]") -> None:
         self.insts = insts
         self.address = address
         self.symbol = symbol
@@ -217,6 +229,8 @@ class DLLFunction:
         self.auto_symbols = auto_symbols
         """A map of symbols (to their address) automatically generated 
         while parsing the function."""
+        self.relocations = relocations
+        """All instruction relocations in the function, sorted by their position in the original DLL's GOT."""
 
 def __mnemonic_has_delay_slot(mnemonic: str) -> bool:
     return (mnemonic.startswith("b") or mnemonic.startswith("j")) and mnemonic != "break"
@@ -257,6 +271,7 @@ def parse_functions(data: bytearray,
     cur_func_addr = 0
     cur_func_is_static = False
     cur_func_auto_syms: "OrderedDict[str, int]" = OrderedDict()
+    cur_func_relocs: "list[DLLRelocation]" = []
     cur_func_inst_index = 0
     for i in insts:
         # Check if this instruction is a branch delay slot of the previous instruction
@@ -265,12 +280,14 @@ def parse_functions(data: bytearray,
         if new_func and i.mnemonic != "nop" and not is_delay_slot:
             # Add previous function
             if cur_func_name != "":
+                cur_func_relocs.sort(key=lambda r: r.got_index)
                 funcs.append(DLLFunction(
                     insts=cur_func_insts,
                     address=cur_func_addr,
                     symbol=cur_func_name,
                     is_static=cur_func_is_static,
-                    auto_symbols=cur_func_auto_syms
+                    auto_symbols=cur_func_auto_syms,
+                    relocations=cur_func_relocs
                 ))
             
             # New function, determine name and type
@@ -279,24 +296,28 @@ def parse_functions(data: bytearray,
             elif i.address == header.dtor_offset:
                 cur_func_name = "dtor"
             else:
-                cur_func_name = ("func_%x" %(i.address))
+                cur_func_name = "func_{:X}".format(i.address)
                 cur_func_is_static = not i.address in header.export_offsets
             
             cur_func_addr = i.address
             cur_func_insts = []
             cur_func_auto_syms = OrderedDict()
+            cur_func_relocs = []
             new_func = False
             cur_func_inst_index = 0
         
-        # Pre-process operand string
+        # Pre-process instruction
+        mnemonic = i.mnemonic
         op_str: str = i.op_str
         operands = [op.strip() for op in op_str.split(",")]
         num_operands = len(operands)
+        ref: "str | None" = None
+        has_relocation = False
 
-        if __mnemonic_is_branch(i.mnemonic):
+        if __mnemonic_is_branch(mnemonic):
             # Replace branch address with label
             branch_target = int(operands[-1], 0)
-            op_label = (".L%x" %(branch_target))
+            op_label = ".L{:X}".format(branch_target)
             op_str = ", ".join(operands[:-1] + [op_label])
         elif cur_func_inst_index < 2 and num_operands > 0 and operands[0] == "$gp":
             # Add _gp_disp to $gp initializer stub
@@ -308,33 +329,66 @@ def parse_functions(data: bytearray,
                 op_str = ", ".join(operands[:-1] + [r"%lo(_gp_disp)"])
         elif num_operands > 0 and operands[-1].endswith("($gp)"):
             # Replace offset($gp) with %got(symbol)($gp)
-            # This will generate a relocation entry for the instruction and a symbol for the offset
             gp_mem_op = operands[-1]
             offset = 0 if gp_mem_op == "($gp)" else int(gp_mem_op[:-5], 0)
+            # TODO: can we include section symbols?
             # Exclude the first four GOT entries (which are just sections)
             if offset >= 16:
-                symbol_addr = reloc_table.global_offset_table[offset // 4]
-                symbol = ("D_%X" %(symbol_addr))
-                op_str = ", ".join(operands[:-1] + [rf"%got({symbol})($gp)"])
+                # Make symbol
+                got_index = offset // 4
+                symbol_addr = reloc_table.global_offset_table[got_index]
+                symbol = "D_{:X}".format(symbol_addr)
                 cur_func_auto_syms[symbol] = symbol_addr
+                ref = symbol
+                # Modify operand
+                op_str = ", ".join(operands[:-1] + [rf"%got({symbol})($gp)"])
+                # Add relocation entry
+                has_relocation = True
+                cur_func_relocs.append(DLLRelocation(
+                    offset=i.address,
+                    type="R_MIPS_GOT16",
+                    expression=symbol,
+                    got_index=got_index
+                ))
+        elif mnemonic == "move":
+            # Replace with the actual instruction
+            # TODO: make constants for some of these
+            opcode = i.bytes[3] & 0b00111111
+            op_str += ", $zero"
+
+            if opcode == 37:
+                mnemonic = "or"
+            elif opcode == 45:
+                mnemonic = "daddu"
+            elif opcode == 33:
+                mnemonic = "addu"
+            else:
+                raise NotImplementedError(f"INVALID INSTRUCTION {i} {opcode}")
+        elif mnemonic in ["mtc0", "mfc0", "mtc2", "mfc2"]:
+            # TODO: what is this doing?
+            rd = (i.bytes[2] & 0xF8) >> 3
+            op_str = op_str.split(" ")[0] + " $" + str(rd)
 
         # Determine whether this instruction address is branched to
         label: "str | None" = None
         if i.address in branch_dests:
-            label = (".L%x" %(i.address))
+            label = ".L{:X}".format(i.address)
 
         # Add instruction
         cur_func_insts.append(DLLInst(
             original=i,
             address=i.address,
-            mnemonic=i.mnemonic,
+            mnemonic=mnemonic,
             op_str=op_str,
             is_branch_delay_slot=is_delay_slot,
-            label=label
+            label=label,
+            ref=ref,
+            has_relocation=has_relocation
         ))
 
         # Check for function end
-        if i.mnemonic == "jr" and i.op_str == "$ra":
+        # TODO: this is very slow for large functions
+        if mnemonic == "jr" and i.op_str == "$ra":
             new_func = True
             for branch in branches:
                 if (branch[0] > i.address and branch[1] <= i.address) or (branch[0] <= i.address and branch[1] > i.address):
@@ -343,17 +397,19 @@ def parse_functions(data: bytearray,
                     break
 
         # Track last instruction
-        last_mnemonic = i.mnemonic
+        last_mnemonic = mnemonic
         cur_func_inst_index += 1
     
     # Add final function
     if cur_func_name != "":
+        cur_func_relocs.sort(key=lambda r: r.got_index)
         funcs.append(DLLFunction(
             insts=cur_func_insts,
             address=cur_func_addr,
             symbol=cur_func_name,
             is_static=cur_func_is_static,
-            auto_symbols=cur_func_auto_syms
+            auto_symbols=cur_func_auto_syms,
+            relocations=cur_func_relocs
         ))
 
     return funcs

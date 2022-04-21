@@ -15,7 +15,7 @@ import struct
 from timeit import default_timer as timer
 import yaml
 
-from dino.dll import DLL, DLLHeader, DLLRelocationTable, DLLFunction
+from dino.dll import DLL, DLLHeader, DLLRelocation, DLLRelocationTable, DLLFunction
 from dino.dll_tab import DLLTab
 
 ASM_PATH = Path("asm")
@@ -211,6 +211,14 @@ class DLLSplitter:
 
             s_path = dir.joinpath(f"{func.symbol}.s")
             with open(s_path, "w", encoding="utf-8") as s_file:
+                # Write relocations
+                for reloc in func.relocations:
+                   s_file.write(".reloc {}+0x{:X}, {}, {}-0x{:X}\n"
+                       .format(func.symbol, reloc.offset - func.address, reloc.type, reloc.expression, reloc.got_index * 4))
+                if len(func.relocations) > 0:
+                    s_file.write("\n")
+
+                # Write instructions
                 s_file.write(f"glabel {func.symbol}\n")
 
                 for i in func.insts:
@@ -221,9 +229,14 @@ class DLLSplitter:
                     ram_addr = i.address
                     inst_bytes = i.original.bytes.hex().upper()
                     mnemonic = (' ' + i.mnemonic) if i.is_branch_delay_slot else i.mnemonic
+                    # Note: Use original operand string if the instruction has a relocation since we're
+                    # specifying relocations with separate directives (need to emit the original $gp addend
+                    # rather than something like %got to avoid duplicate relocation entries)
+                    op_str = i.original.op_str if i.has_relocation else i.op_str
+                    ref = (f' /* ref: {i.ref} */') if i.ref is not None else ''
                     
-                    s_file.write("/* {:0>4X} {:0>6X} {} */ {:<11}{}\n"
-                        .format(rom_addr, ram_addr, inst_bytes, mnemonic, i.op_str))
+                    s_file.write("/* {:0>4X} {:0>6X} {} */ {:<11}{}{}\n"
+                        .format(rom_addr, ram_addr, inst_bytes, mnemonic, op_str, ref))
 
     def __extract_rodata_asm(self, dir: Path, dll: DLL, data: bytearray):
         rodata_path = dir.joinpath(f"{dll.number}.rodata.s")

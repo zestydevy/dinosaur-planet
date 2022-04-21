@@ -98,27 +98,19 @@ def dump_text_disassembly(dll: DLL,
         else:
             first = False
         
-        print("glabel %s%s" %(func.symbol, ' # (static)' if func.is_static else ''))
+        print("glabel {}{}".format(func.symbol, " (static)" if func.is_static else ""))
 
         for i in func.insts:
             if i.label is not None:
-                print("%s:" %(i.label))
+                print(f"{i.label}:")
             
+            mnemonic = (' ' + i.mnemonic) if i.is_branch_delay_slot else i.mnemonic
+
             if orig_operands and i.is_op_modified():
-                print(
-                    "0x%x:\t%s%s%s%s" %(
-                        i.address, 
-                        ' ' if i.is_branch_delay_slot else '',
-                        i.mnemonic.ljust(10 if i.is_branch_delay_slot else 11), 
-                        i.op_str.ljust(24),
-                        f' # (original: {i.original.op_str})'))
+                print("0x{:x}:\t{:<11}{:<24} # (original: {})"
+                    .format(i.address, mnemonic, i.op_str, i.original.op_str))
             else:
-                print(
-                    "0x%x:\t%s%s%s" %(
-                        i.address, 
-                        ' ' if i.is_branch_delay_slot else '',
-                        i.mnemonic.ljust(10 if i.is_branch_delay_slot else 11), 
-                        i.op_str))
+                print("0x{:x}:\t{:<11}{:<24}".format(i.address, mnemonic, i.op_str))
     
     if only_symbols is not None and first:
         print("(no matching symbols found)")
