@@ -187,7 +187,7 @@ class DinoCommandRunner:
             except subprocess.CalledProcessError:
                 print()
                 print("The 'expected' output directory can only be created from a matching build!")
-                return
+                sys.exit(1)
         
         # If force is given, remove any existing files
         if force:
@@ -267,7 +267,7 @@ class DinoCommandRunner:
         src_dir = SRC_PATH.joinpath(f"dlls/{number}")
         if src_dir.exists():
             print(f"An environment already exists at {src_dir.relative_to(SCRIPT_DIR)}!")
-            return
+            sys.exit(1)
 
         print(f"Creating environment for DLL {number}...")
         
@@ -403,7 +403,7 @@ def main():
         elif cmd =="context":
             runner.make_context(args.file)
     except subprocess.CalledProcessError:
-        pass
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()

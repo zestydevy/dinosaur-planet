@@ -129,7 +129,7 @@ def main():
     parser.add_argument("-x", "--header", action="store_true", help="Display the contents of the header.")
     parser.add_argument("-r", "--reloc", action="store_true", help="Display the contents of the relocation table.")
     parser.add_argument("-d", "--disassemble", action="store_true", help="Display assembler contents of the executable section.")
-    parser.add_argument("--symbols", action="extend", nargs="+", type=str, help="When disassembling, only show these symbols.")
+    parser.add_argument("--symbols", action="append", type=str, help="When disassembling, only show these symbols.")
     parser.add_argument("--orig", action="store_true", help="Also show unmodified instruction operands.")
 
     args = parser.parse_args()

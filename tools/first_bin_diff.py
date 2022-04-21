@@ -36,7 +36,7 @@ def main():
                 k += 1
                 
             if diff:
-                print("Difference at: 0x%X" %(i))
+                print("Difference at: 0x{:X}".format(i))
                 diffs += 1
                 if max_diffs > 0 and diffs >= max_diffs:
                     break
