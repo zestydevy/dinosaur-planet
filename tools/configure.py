@@ -369,7 +369,7 @@ class BuildNinjaWriter:
 
         # Link
         self.link_deps.append("$BUILD_DIR/$TARGET.ld")
-        self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", self.link_deps)
+        self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", [], implicit=self.link_deps)
 
         # Convert .elf to .bin
         self.writer.build("$BUILD_DIR/$TARGET.bin", "to_bin", "$BUILD_DIR/$TARGET.elf")
