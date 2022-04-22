@@ -272,6 +272,7 @@ def parse_functions(data: bytearray,
     cur_func_name = ""
     cur_func_addr = 0
     cur_func_is_static = False
+    cur_func_has_gp_init = False
     cur_func_auto_syms: "OrderedDict[str, int]" = OrderedDict()
     cur_func_relocs: "list[DLLRelocation]" = []
     cur_func_inst_index = 0
@@ -303,6 +304,7 @@ def parse_functions(data: bytearray,
             
             cur_func_addr = i.address
             cur_func_insts = []
+            cur_func_has_gp_init = False
             cur_func_auto_syms = OrderedDict()
             cur_func_relocs = []
             new_func = False
@@ -323,12 +325,23 @@ def parse_functions(data: bytearray,
             op_str = ", ".join(operands[:-1] + [op_label])
         elif cur_func_inst_index < 2 and num_operands > 0 and operands[0] == "$gp":
             # Add _gp_disp to $gp initializer stub
+            # Note: The $gp initializer stub gets modified when compiled,
+            # we need to convert it back to the original code
+            cur_func_has_gp_init = True
             if cur_func_inst_index == 0:
                 assert num_operands == 2
                 op_str = ", ".join(operands[:-1] + [r"%hi(_gp_disp)"])
             elif cur_func_inst_index == 1:
                 assert num_operands == 3
                 op_str = ", ".join(operands[:-1] + [r"%lo(_gp_disp)"])
+                # Additionally, change the %lo mnemonic from ori to addiu
+                assert mnemonic == "ori"
+                mnemonic = "addiu"
+        elif cur_func_inst_index == 2 and cur_func_has_gp_init:
+            # Change $gp initializer nop to 'addu gp,gp,t9'
+            assert mnemonic == "nop"
+            mnemonic = "addu"
+            op_str = "$gp, $gp, $t9" 
         elif num_operands > 0 and operands[-1].endswith("($gp)"):
             # Replace offset($gp) with %got(symbol)($gp)
             gp_mem_op = operands[-1]
