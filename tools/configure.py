@@ -207,7 +207,7 @@ class BuildNinjaWriter:
         self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
         self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
-        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL --")
+        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR --sort-text-relocs $CC -- $AS $AS_FLAGS_DLL --")
         self.writer.variable("GCC", "gcc")
         self.writer.variable("ELF2DLL", "tools/elf2dll")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
