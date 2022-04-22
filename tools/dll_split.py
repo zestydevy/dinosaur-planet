@@ -198,15 +198,20 @@ class DLLSplitter:
 
         with open(syms_path, "w", encoding="utf-8") as syms_file:
             addrs_found: "set[int]" = set()
-            syms_added = 0
+            var_syms_added = 0
+            # Write function symbols
+            for func in dll.functions:
+                syms_file.write("{} = 0x{:X};\n".format(func.symbol, func.address))
+
+            # Write global variable symbols
             for func in dll.functions:
                 for name, value in func.auto_symbols.items():
                     if not value in addrs_found:
                         addrs_found.add(value)
                         syms_file.write("{} = 0x{:X};\n".format(name, value))
-                        syms_added += 1
+                        var_syms_added += 1
             
-            assert syms_added == max(0, len(dll.reloc_table.global_offset_table) - 4)
+            assert var_syms_added == max(0, len(dll.reloc_table.global_offset_table) - 4)
 
     def __extract_text_asm(self, dir: Path, dll: DLL, funcs: "list[str] | None"):
         assert dll.functions is not None
