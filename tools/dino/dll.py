@@ -295,11 +295,11 @@ def parse_functions(data: bytearray,
             
             # New function, determine name and type
             if i.address == header.ctor_offset:
-                cur_func_name = "ctor"
+                cur_func_name = known_symbols.get(i.address, "dll_{}_ctor".format(dll.number))
             elif i.address == header.dtor_offset:
-                cur_func_name = "dtor"
+                cur_func_name = known_symbols.get(i.address, "dll_{}_dtor".format(dll.number))
             else:
-                cur_func_name = known_symbols.get(i.address, "func_{:X}".format(i.address))
+                cur_func_name = known_symbols.get(i.address, "dll_{}_func_{:X}".format(dll.number, i.address))
                 cur_func_is_static = not i.address in header.export_offsets
             
             cur_func_addr = i.address
@@ -352,7 +352,7 @@ def parse_functions(data: bytearray,
                 # Make symbol
                 got_index = offset // 4
                 symbol_addr = reloc_table.global_offset_table[got_index]
-                symbol = known_symbols.get(symbol_addr, "D_{:X}".format(symbol_addr))
+                symbol = known_symbols.get(symbol_addr, "GOT_{:X}".format(symbol_addr))
                 cur_func_auto_syms[symbol] = symbol_addr
                 ref = symbol
                 # Modify operand
