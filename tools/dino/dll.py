@@ -80,13 +80,14 @@ class DLL:
     @staticmethod
     def parse(data: bytearray, 
               number: str, 
-              include_funcs=True):
+              include_funcs=True,
+              known_symbols: "dict[int, str]"={}):
         header = DLLHeader.parse(data)
         reloc_table = DLLRelocationTable.parse(data, header)
         dll = DLL(number, len(data), header, reloc_table)
         
         if include_funcs:
-            dll.functions = parse_functions(data, dll, reloc_table)
+            dll.functions = parse_functions(data, dll, reloc_table, known_symbols)
 
         return dll
 
@@ -240,7 +241,8 @@ def __mnemonic_is_branch(mnemonic: str) -> bool:
 
 def parse_functions(data: bytearray, 
                     dll: DLL,
-                    reloc_table: DLLRelocationTable) -> "list[DLLFunction]":
+                    reloc_table: DLLRelocationTable,
+                    known_symbols: "dict[int, str]"={}) -> "list[DLLFunction]":
     """Parses and returns all functions in the given Dinosaur Planet DLL."""
     header = dll.header
 
@@ -296,7 +298,7 @@ def parse_functions(data: bytearray,
             elif i.address == header.dtor_offset:
                 cur_func_name = "dtor"
             else:
-                cur_func_name = "func_{:X}".format(i.address)
+                cur_func_name = known_symbols.get(i.address, "func_{:X}".format(i.address))
                 cur_func_is_static = not i.address in header.export_offsets
             
             cur_func_addr = i.address
@@ -337,7 +339,7 @@ def parse_functions(data: bytearray,
                 # Make symbol
                 got_index = offset // 4
                 symbol_addr = reloc_table.global_offset_table[got_index]
-                symbol = "D_{:X}".format(symbol_addr)
+                symbol = known_symbols.get(symbol_addr, "D_{:X}".format(symbol_addr))
                 cur_func_auto_syms[symbol] = symbol_addr
                 ref = symbol
                 # Modify operand

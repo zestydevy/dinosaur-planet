@@ -22,6 +22,9 @@ ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
 SRC_PATH = Path("src")
 
+global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/[0-9]+\/(.+)\.s\"\)")
+symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
+
 class DLLSplitter:
     def __init__(self, verbose: bool) -> None:
         self.verbose = verbose
@@ -57,6 +60,10 @@ class DLLSplitter:
             link_original_data = "link_original_data" in dll_config and dll_config["link_original_data"] or False
             link_original_bss = "link_original_bss" in dll_config and dll_config["link_original_bss"] or False
 
+            # Load known symbols for DLL
+            syms_txt_path = SRC_PATH.joinpath(f"dlls/{number}/syms.txt")
+            known_symbols = self.__get_existing_symbols(syms_txt_path)
+
             # Load DLL
             dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
             if not dll_path.exists():
@@ -69,7 +76,7 @@ class DLLSplitter:
                 start = timer()
                 
                 data = bytearray(dll_file.read())
-                dll = DLL.parse(data, number)
+                dll = DLL.parse(data, number, known_symbols=known_symbols)
                 bss_size = tab.entries[int(number) - 1].bss_size
                 
                 end = timer()
@@ -291,7 +298,6 @@ class DLLSplitter:
             return None
         
         emit_funcs: "list[str]" = []
-        global_asm_pattern = re.compile(rf"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/{dll_number}\/(.+)\.s\"\)")
         with open(path, "r", encoding="utf-8") as c_file:
             for line in c_file.readlines():
                 symbols = global_asm_pattern.findall(line.strip())
@@ -299,6 +305,26 @@ class DLLSplitter:
                     emit_funcs.append(symbol)
         
         return emit_funcs
+
+    def __get_existing_symbols(self, path: Path) -> "dict[int, str]":
+        if not path.exists():
+            return {}
+        
+        symbols: "dict[int, str]" = {}
+
+        with open(path, "r", encoding="utf-8") as syms_file:
+            for line in syms_file.readlines():
+                pairs = symbol_pattern.findall(line.strip())
+                for pair in pairs:
+                    addr_str: str = pair[1]
+                    if addr_str.lower().startswith("0x"):
+                        addr = int(addr_str, base=16)
+                    else:
+                        addr = int(addr_str)
+                    
+                    symbols[addr] = pair[0]
+
+        return symbols
 
 def main():
     parser = argparse.ArgumentParser(description="Extract assembly and data from Dinosaur Planet DLLs and stub out an environment for recompiling each.")
