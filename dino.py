@@ -202,7 +202,7 @@ class DinoCommandRunner:
         to_create: "list[tuple[Path, Path]]" = []
         for in_path in obj_paths:
             out_path = EXPECTED_PATH.joinpath(in_path)
-            if not os.path.exists(out_path):
+            if not os.path.exists(out_path) or os.path.getmtime(in_path) > os.path.getmtime(out_path):
                 to_create.append((in_path, out_path))
 
         if len(to_create) == 0:
