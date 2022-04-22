@@ -2,23 +2,8 @@
 
 import argparse
 from io import BufferedReader
-import struct
 
-class DLLImportsTab:
-    def __init__(self, imports: "list[int]") -> None:
-        self.imports = imports
-        """A mapping of import index to base executable pointer. Each pointer
-        refers to non-DLL VRAM (e.g. >=0x80000000)"""
-
-    @staticmethod
-    def parse(data: bytearray) -> "DLLImportsTab":
-        imports: "list[int]" = []
-
-        for i in range(0, len(data), 4):
-            ptr = struct.unpack_from(">I", data, offset=i)[0]
-            imports.append(ptr)
-
-        return DLLImportsTab(imports)
+from dino.dll_imports_tab import DLLImportsTab
 
 def dump_all(imports: DLLImportsTab):
     for i, ptr in enumerate(imports.imports):
@@ -26,17 +11,17 @@ def dump_all(imports: DLLImportsTab):
 
 def lookup_pointer(imports: DLLImportsTab, index: int):
     if index > 0x8000_0000:
-        index = index & 0x7999_9999
+        index = index & 0x7FFF_FFFF
     
-    if index < 0 or index >= len(imports.imports):
-        print(f"Index {index} out of range [0, {len(imports.imports) - 1}]")
+    if index < 1 or index >= len(imports.imports):
+        print(f"Index {index} out of range [1, {len(imports.imports)}]")
     else:
-        ptr = imports.imports[index]
+        ptr = imports.imports[index - 1]
         print("{}: 0x{:X}".format(index, ptr))
 
 def lookup_index(imports: DLLImportsTab, pointer: int):
     try:
-        index = imports.imports.index(pointer)
+        index = imports.imports.index(pointer) + 1
         print("{}: 0x{:X}".format(index, pointer))
     except ValueError:
         print("Pointer not found: 0x{:X}".format(pointer))
