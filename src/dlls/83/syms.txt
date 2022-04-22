@@ -1,0 +1,5 @@
+ctor = 0x0;
+dtor = 0xC;
+func_18 = 0x18;
+func_A4 = 0xA4;
+mainSetBits = 0x8000005C;
