@@ -1,3 +1,9 @@
+#ifndef _SYS_GAME_ACTOR_OBJDATA_H
+#define _SYS_GAME_ACTOR_OBJDATA_H
+
+#include "sys/math.h"
+#include "unktypes.h"
+
 /** Object (actor) data in OBJECTS.BIN.
  */
 
@@ -155,3 +161,5 @@ typedef struct ObjData { //copied from SFA; may be incorrect
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62)
 /*91*/ char name[11];
 } ObjData;
+
+#endif //_SYS_GAME_ACTOR_OBJDATA_H

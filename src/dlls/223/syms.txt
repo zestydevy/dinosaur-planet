@@ -1,0 +1,20 @@
+dll_cannon_claw_ctor = 0x0;
+dll_cannon_claw_dtor = 0xC;
+dll_cannon_claw_func_18 = 0x18;
+dll_cannon_claw_func_4C = 0x4C;
+dll_cannon_claw_func_1B4 = 0x1B4;
+dll_cannon_claw_func_200 = 0x200;
+dll_cannon_claw_func_20C = 0x20C;
+dll_cannon_claw_func_26C = 0x26C;
+dll_cannon_claw_func_27C = 0x27C;
+dll_cannon_claw_func_28C = 0x28C;
+
+func_8002394C = 0x80000004;
+func_80023D30 = 0x80000050;
+func_80024108 = 0x8000004B;
+delayFloat = 0x80000028;
+func_80025F40 = 0x8000014D;
+mainSetBits = 0x8000005C;
+mainGetBit = 0x80000025;
+func_800267A4 = 0x80000109;
+draw_actor = 0x80000046;

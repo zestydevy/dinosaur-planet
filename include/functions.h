@@ -1,6 +1,8 @@
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
 
+#include "game/actor/actor.h"
+
 void bootproc(void);
 void idle(void * arg);
 void mainproc(void * arg);
