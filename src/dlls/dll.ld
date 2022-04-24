@@ -1,38 +1,46 @@
-PHDRS
-{
-    text   PT_LOAD FLAGS(5);
-    rodata PT_LOAD FLAGS(4);
-    data   PT_LOAD FLAGS(6);
-}
+/** 
+ * Base linker script for DLLs.
+ * 
+ * The specifics of this script aren't important since the resulting
+ * ELF is converted to a Dinosaur Planet .dll with elf2dll. What matters
+ * is that the following sections are present (if not empty, in any order):
+ * - .text
+ * - .rodata
+ * - .data
+ * - .bss
+ * - .exports
+ * - .rel.text
+ * - .rel.rodata
+ * - .rel.data
+ * - .rel.exports
+ */
 
 SECTIONS
 {
-    draw_actor = 0x80000046;
-    
     . = 0x0;
     .text : {
-		*(.text)
-		*(.text.*)
-    } : text
+        *(.text)
+        *(.text.*)
+    }
 
     .rodata : {
-		*(.rodata)
-		*(.rodata.*)
-    } : rodata
+        *(.rodata)
+        *(.rodata.*)
+    }
 
     .data : {
-		*(.data)
-		*(.data.*)
-    } : data
+        *(.data)
+        *(.data.*)
+    }
 
     .bss : {
-		*(.bss)
-		*(.bss.*)
-    } : data
+        *(.bss)
+        *(.bss.*)
+    }
 
     /DISCARD/ : {
-		*(.reginfo)
-		*(.MIPS.abiflags)
+        *(.reginfo)
+        *(.MIPS.abiflags)
     }
 
     /*========================================= */

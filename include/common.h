@@ -4,10 +4,7 @@
 #include "ultra64.h"
 #include "libc/string.h"
 
-typedef u8 UNK_TYPE_8;
-typedef u16 UNK_TYPE_16;
-typedef u32 UNK_TYPE_32;
-typedef void UNK_PTR;
+#include "unktypes.h"
 
 #include "constants.h"
 #include "sys/fs.h"

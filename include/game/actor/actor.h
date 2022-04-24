@@ -1,3 +1,14 @@
+#ifndef _SYS_GAME_ACTOR_ACTOR_H
+#define _SYS_GAME_ACTOR_ACTOR_H
+
+#include <PR/gbi.h>
+#include "sys/gfx/model.h"
+#include "sys/dll.h"
+#include "sys/math.h"
+#include "objdata.h"
+#include "hitbox.h"
+#include "unktypes.h"
+
 /** Actor/Game Object system
  */
 
@@ -6,6 +17,11 @@ struct Vec3_Int{
 	Vec3f f;
 	u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
 };
+
+typedef struct {
+/*0000*/	u8 unk_0x0[0x1a - 0x0];
+/*001A*/	s16 unk0x1a;
+} ActorUnk0x1a;
 
 typedef struct {
 /*0000*/    u8 unk_0x0[0x10 - 0x0];
@@ -45,7 +61,7 @@ typedef struct TActor {
 /*0044*/    UNK_TYPE_16 objId; //guessed from SFA
 /*0046*/    s16 unk0x46;
 /*0048*/    void* ptr0x48;
-/*004C*/    UNK_TYPE_32 unk0x4c;
+/*004C*/    ActorUnk0x1a *unk0x4c;
 /*0050*/    ObjData* data;
 /*0054*/    ActorObjhitInfo* objhitInfo;
 /*0058*/    UNK_TYPE_32 unk0x58;
@@ -76,7 +92,9 @@ typedef struct TActor {
 	UNK_TYPE_32 unk0xc4;
 /*00C8*/    struct TActor *linkedActor2;
 /*00CC*/    void* ptr0xcc;
-/*00D0*/    u8 unk_0xd0[0xe4 - 0xd0];
+/*00D0*/    u8 unk_0xd0[0xdc - 0xd0];
+/*00DC*/    s32 unk0xdc;
+/*00E0*/    u8 unk_0xe0[4];
 } TActor; // size is 0xe4; other actor-related data is placed in the following memory
 
 typedef struct ObjListItem {
@@ -96,3 +114,5 @@ extern float inverseDelayMirror; // why the mirrors, if they aren't used?
 extern struct TActor * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
 extern struct Vec3_Int Vec3_Int_array[];
+
+#endif //_SYS_GAME_ACTOR_ACTOR_H

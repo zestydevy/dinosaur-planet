@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Builds the build.ninja script for the Dinosaur Planet decomp
 
 import argparse
 from enum import Enum
@@ -9,6 +10,7 @@ from pathlib import Path
 from shutil import which
 import sys
 from ninja import ninja_syntax
+import yaml
 
 class BuildFileType(Enum):
     C = 1
@@ -133,6 +135,15 @@ class BuildNinjaWriter:
             "-mabi=32",
         ]))
 
+        self.writer.variable("AS_FLAGS_DLL", " ".join([
+            "$INCLUDES",
+            "-EB",
+            "-mtune=vr4300",
+            "-march=vr4300",
+            "-modd-spreg",
+            "-KPIC",
+        ]))
+
         self.writer.variable("GCC_FLAGS", " ".join([
             "$CC_DEFINES",
             "$INCLUDES",
@@ -178,7 +189,6 @@ class BuildNinjaWriter:
         ]))
 
         self.writer.variable("LD_FLAGS_DLL", " ".join([
-            "-T $LINK_SCRIPT_DLL",
             "-nostartfiles",
             "-nodefaultlibs",
             "-r",
@@ -197,6 +207,7 @@ class BuildNinjaWriter:
         self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
         self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
+        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR --sort-text-relocs $CC -- $AS $AS_FLAGS_DLL --")
         self.writer.variable("GCC", "gcc")
         self.writer.variable("ELF2DLL", "tools/elf2dll")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
@@ -210,13 +221,14 @@ class BuildNinjaWriter:
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$GCC -MM -MF $out.d -MT $out $GCC_FLAGS_DLL $in && $CC_PREPROCESSED -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
+            "$GCC -MM -MF $out.d -MT $out $GCC_FLAGS_DLL $in && $CC_PREPROCESSED_DLL -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
+        self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("preprocess_linker_script", "cpp -P -DBUILD_DIR=$BUILD_DIR -o $out $in", "Pre-processing linker script...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
-        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL $in -o $out", "Linking...")
+        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_TXT -T $LINK_SCRIPT_DLL $in -o $out", "Linking...")
         self.writer.rule("ld_bin", "$LD -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
@@ -271,7 +283,7 @@ class BuildNinjaWriter:
                 if file.type == BuildFileType.C:
                     command = "cc_dll"
                 elif file.type == BuildFileType.ASM:
-                    command = "as"
+                    command = "as_dll"
                 elif file.type == BuildFileType.BIN:
                     command = "ld_bin"
                 else:
@@ -283,10 +295,25 @@ class BuildNinjaWriter:
             
             # Link
             elf_path = f"{obj_dir}/{dll.number}.elf"
-            self.writer.build(elf_path, "ld_dll", dll_link_deps, implicit="$LINK_SCRIPT_DLL")
+            syms_txt_path = f"{dll.dir}/syms.txt"
+            custom_link_script = Path(f"{dll.dir}/{dll.number}.ld")
 
-            # Convert .elf to .bin
-            #self.writer.build(f"{obj_dir}/{dll.number}.bin", "to_bin", elf_path)
+            if custom_link_script.exists():
+                # Use DLL's custom link script
+                # Note: Assume custom script lists all inputs
+                implicit_deps = [str(custom_link_script), syms_txt_path]
+                implicit_deps.extend(dll_link_deps)
+                self.writer.build(elf_path, "ld_dll", [], 
+                    implicit=implicit_deps,
+                    variables={
+                        "SYMS_TXT": syms_txt_path,
+                        "LINK_SCRIPT_DLL": str(custom_link_script)
+                    })
+            else:
+                # Use default DLL link script
+                self.writer.build(elf_path, "ld_dll", dll_link_deps, 
+                    implicit=["$LINK_SCRIPT_DLL", syms_txt_path],
+                    variables={"SYMS_TXT": syms_txt_path})
 
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
@@ -342,7 +369,7 @@ class BuildNinjaWriter:
 
         # Link
         self.link_deps.append("$BUILD_DIR/$TARGET.ld")
-        self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", self.link_deps)
+        self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", [], implicit=self.link_deps)
 
         # Convert .elf to .bin
         self.writer.build("$BUILD_DIR/$TARGET.bin", "to_bin", "$BUILD_DIR/$TARGET.elf")
@@ -408,8 +435,14 @@ class InputScanner:
         for dir in dll_dirs:
             dir_parts = dir.split("/")
             number = dir_parts[-1]
+
+            # Skip if this DLL is configured to use the original DLL instead of recompiling
+            if not self.__should_compile_dll(Path(dir), number):
+                continue
+
             c_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.c", recursive=True)]
             asm_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.s", recursive=True)]
+            asm_paths.extend([Path(path) for path in glob.glob(f"asm/nonmatchings/dlls/{number}/data/*.s")])
             files: "list[BuildFile]" = []
 
             for src_path in c_paths:
@@ -446,6 +479,19 @@ class InputScanner:
                 return OptimizationFlags.O2g0
         
         return self.config.default_opt_flags
+    
+    def __should_compile_dll(self, dll_dir: Path, number: str) -> bool:
+        yaml_path = dll_dir.joinpath(f"{number}.yaml")
+        if not yaml_path.exists():
+            print(f"WARN: Missing {yaml_path}!")
+            return True
+        
+        dll_config = self.__parse_dll_yaml(yaml_path)
+        return "compile" in dll_config and dll_config["compile"]
+    
+    def __parse_dll_yaml(self, path: Path):
+        with open(path, "r") as file:
+            return yaml.safe_load(file)
     
 def main():
     parser = argparse.ArgumentParser(description="Creates the Ninja build script for the Dinosaur Planet decompilation project.")
