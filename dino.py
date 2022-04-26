@@ -17,6 +17,7 @@ SRC_PATH = SCRIPT_DIR.joinpath("src/")
 BUILD_PATH = SCRIPT_DIR.joinpath("build/")
 EXPECTED_PATH = SCRIPT_DIR.joinpath("expected/")
 TOOLS_PATH = SCRIPT_DIR.joinpath("tools/")
+PERMUTER_ARTIFACT_PATH = SCRIPT_DIR.joinpath("nonmatchings/")
 
 BUILD_SCRIPT_PATH = SCRIPT_DIR.joinpath("build.ninja")
 
@@ -27,6 +28,7 @@ CLEAN_PATHS = [
     BUILD_PATH,
     BUILD_SCRIPT_PATH,
     EXPECTED_PATH,
+    PERMUTER_ARTIFACT_PATH,
     SCRIPT_DIR.joinpath(".ninja_log"),
     SCRIPT_DIR.joinpath(".splat_cache"),
     SCRIPT_DIR.joinpath(f"{TARGET}.ld"),
@@ -45,6 +47,8 @@ DLL_SPLIT_PY = TOOLS_PATH.joinpath("dll_split.py")
 CONFIGURE_PY = TOOLS_PATH.joinpath("configure.py")
 DIFF_PY = TOOLS_PATH.joinpath("asm_differ/diff.py")
 M2CTX_PY = TOOLS_PATH.joinpath("m2ctx.py")
+PERMUTER_IMPORT_PY = TOOLS_PATH.joinpath("decomp_permuter/import.py")
+PERMUTER_PERMUTER_PY = TOOLS_PATH.joinpath("decomp_permuter/permuter.py")
 
 class DinoCommandRunner:
     def __init__(self, verbose: bool) -> None:
@@ -306,6 +310,14 @@ class DinoCommandRunner:
         self.__run_cmd([str(M2CTX_PY), file])
         print(f"Created context file at {SCRIPT_DIR.joinpath('ctx.c')}")
     
+    def permuter_import(self, args: "list[str]"):
+        args.insert(0, str(PERMUTER_IMPORT_PY))
+        self.__run_cmd(args)
+    
+    def permuter(self, args: "list[str]"):
+        args.insert(0, str(PERMUTER_PERMUTER_PY))
+        self.__run_cmd(args)
+    
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")
         if not linker_script_path.exists():
@@ -362,6 +374,8 @@ def main():
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
     subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
+    subparsers.add_parser("permuter", help="Randomly permute a C file to better match a target binary (redirects to decomp-permuter permuter.py).", add_help=False)
+    subparsers.add_parser("permuter-import", help="Import a function for permuter (redirects to decomp-permuter import.py).", add_help=False)
     
     ctx_cmd = subparsers.add_parser("context", help="Create a context file that can be used for mips2c/decomp.me.")
     ctx_cmd.add_argument("file", help="The C file to create context for.")
@@ -402,6 +416,14 @@ def main():
             runner.diff(args=full_args)
         elif cmd =="context":
             runner.make_context(args.file)
+        elif cmd == "permuter":
+            permuter_index = sys.argv.index("permuter")
+            full_args = sys.argv[permuter_index + 1:]
+            runner.permuter(args=full_args)
+        elif cmd == "permuter-import":
+            permuter_index = sys.argv.index("permuter-import")
+            full_args = sys.argv[permuter_index + 1:]
+            runner.permuter_import(args=full_args)
     except subprocess.CalledProcessError:
         sys.exit(1)
 

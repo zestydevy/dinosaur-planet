@@ -1,18 +1,24 @@
-# base rom
+# Base rom
 *.z64
 *.n64
 *.ndd
 *.bin
 
+# Extract/build directories
 asm
 bin
 build
 expected
+
+# Cache
 __pycache__
 .cache
 
-# context file from m2ctx.py
+# Context file from m2ctx.py
 ctx.c
+
+# Permuter artifacts
+nonmatchings
 
 # Prerequisites
 *.d
