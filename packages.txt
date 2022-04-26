@@ -1,6 +1,8 @@
 binutils-mips-linux-gnu
-build-essential
+gcc
 git
+libc-dev
+libc6-dev
 ninja-build
 python3
 python3-pip
