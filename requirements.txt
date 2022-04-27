@@ -5,6 +5,7 @@ colour
 cxxfilt
 GitPython
 ninja
+pycparser>=2.21
 pylibyaml
 pypng==0.0.20
 python-Levenshtein

@@ -144,41 +144,6 @@ class BuildNinjaWriter:
             "-KPIC",
         ]))
 
-        self.writer.variable("GCC_FLAGS", " ".join([
-            "$CC_DEFINES",
-            "$INCLUDES",
-            "-m32", 
-            "-nostdinc", 
-            "-std=gnu90",
-            "-fsyntax-only", 
-            "-fno-builtin", 
-            "-fsigned-char", 
-            "-fno-PIC",
-            "-fno-zero-initialized-in-bss",
-            "-fno-toplevel-reorder",
-            "-Wall",
-            "-Wextra",
-            "-Wno-missing-braces",
-            "-Wno-unknown-pragmas"
-            "-Wno-format-security",
-            "-Wno-main",
-        ]))
-
-        self.writer.variable("GCC_FLAGS_DLL", " ".join([
-            "$CC_DEFINES",
-            "$INCLUDES",
-            "-nostdinc",
-            "-std=gnu90",
-            #"-march=vr4300", # TODO: these were in the original Makefile but aren't real args for GCC
-            #"-mtune=vr4300",
-            #"-mfix4300",
-            "-fPIC",
-            "-fno-stack-protector",
-            "-fno-builtin",
-            "-fno-common",
-            "-fsigned-char",
-        ]))
-
         self.writer.variable("LD_FLAGS", " ".join([
             "-T undefined_syms.txt", 
             "-T undefined_funcs.txt", 
@@ -206,9 +171,9 @@ class BuildNinjaWriter:
         self.writer.variable("OBJCOPY", f"{cross}objcopy")
         self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
+        self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
         self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
         self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR --sort-text-relocs $CC -- $AS $AS_FLAGS_DLL --")
-        self.writer.variable("GCC", "gcc")
         self.writer.variable("ELF2DLL", "tools/elf2dll")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
         
@@ -217,11 +182,11 @@ class BuildNinjaWriter:
         # Write rules
         self.writer.comment("Rules")
         self.writer.rule("cc", 
-            "$GCC -MM -MF $out.d -MT $out $GCC_FLAGS $in && $CC_PREPROCESSED -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $CC_PREPROCESSED -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$GCC -MM -MF $out.d -MT $out $GCC_FLAGS_DLL $in && $CC_PREPROCESSED_DLL -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $CC_PREPROCESSED_DLL -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")

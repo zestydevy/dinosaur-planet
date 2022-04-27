@@ -228,8 +228,7 @@ class DLLFunction:
         self.symbol = symbol
         self.is_static = is_static
         self.auto_symbols = auto_symbols
-        """A map of symbols (to their address) automatically generated 
-        while parsing the function."""
+        """A map of symbols (to their address) automatically generated while parsing the function."""
         self.relocations = relocations
         """All instruction relocations in the function, sorted by their position in the original DLL's GOT."""
 
@@ -276,7 +275,7 @@ def parse_functions(data: bytearray,
     cur_func_auto_syms: "OrderedDict[str, int]" = OrderedDict()
     cur_func_relocs: "list[DLLRelocation]" = []
     cur_func_inst_index = 0
-    for i in insts:
+    for idx, i in enumerate(insts):
         # Check if this instruction is a branch delay slot of the previous instruction
         is_delay_slot = last_mnemonic is not None and __mnemonic_has_delay_slot(last_mnemonic)
         
@@ -343,28 +342,47 @@ def parse_functions(data: bytearray,
             mnemonic = "addu"
             op_str = "$gp, $gp, $t9" 
         elif num_operands > 0 and operands[-1].endswith("($gp)"):
-            # Replace offset($gp) with %got(symbol)($gp)
+            # Replace offset($gp) with %got/call16(symbol)($gp) and add relocation entry
+            # Lookup GOT symbol value referenced from the $gp addend
             gp_mem_op = operands[-1]
             offset = 0 if gp_mem_op == "($gp)" else int(gp_mem_op[:-5], 0)
-            # TODO: can we include section symbols?
-            # Exclude the first four GOT entries (which are just sections)
-            if offset >= 16:
-                # Make symbol
-                got_index = offset // 4
-                symbol_addr = reloc_table.global_offset_table[got_index]
-                symbol = known_symbols.get(symbol_addr, "GOT_{:X}".format(symbol_addr))
+            got_index = offset // 4
+            symbol_addr = reloc_table.global_offset_table[got_index]
+            # Determine if this is a CALL16 or GOT16 relocation
+            is_call16 = is_reloc_call16(idx, insts)
+            # Make symbol
+            if got_index == 0:
+                symbol = ".text"
+            elif got_index == 1:
+                symbol = ".rodata"
+            elif got_index == 2:
+                symbol = ".data"
+            elif got_index == 3:
+                symbol = ".bss"
+            else:
+                if is_call16:
+                    symbol = known_symbols.get(symbol_addr, "CALL_{:X}".format(symbol_addr))
+                else:
+                    symbol = known_symbols.get(symbol_addr, "GOT_{:X}".format(symbol_addr))
+            if got_index >= 4:
+                # Don't emit a symbol mapping for sections, they are implied
                 cur_func_auto_syms[symbol] = symbol_addr
-                ref = symbol
-                # Modify operand
-                op_str = ", ".join(operands[:-1] + [rf"%got({symbol})($gp)"])
-                # Add relocation entry
-                has_relocation = True
+            ref = symbol
+            # Modify operand
+            if is_call16:
+                op_str = ", ".join(operands[:-1]) + rf", %call16({symbol})($gp)"
+            else:
+                op_str = ", ".join(operands[:-1]) + rf", %got({symbol})($gp)"
+            # Add relocation entry (unless the symbol is a section)
+            # TODO: it would be nice to have actual entries for sections, but it's very tricky
+            if got_index >= 4:
                 cur_func_relocs.append(DLLRelocation(
                     offset=i.address,
-                    type="R_MIPS_GOT16",
+                    type="R_MIPS_CALL16" if is_call16 else "R_MIPS_GOT16",
                     expression=symbol,
                     got_index=got_index
                 ))
+            has_relocation = True
         elif mnemonic == "move":
             # Replace with the actual instruction
             # TODO: make constants for some of these
@@ -428,3 +446,20 @@ def parse_functions(data: bytearray,
         ))
 
     return funcs
+
+def is_reloc_call16(idx: int, insts: "list[CsInsn]") -> bool:
+    # GOT value must be stored in $t9
+    if not insts[idx].op_str.startswith("$t9"):
+        return False
+    # Check if one of the next few instructions is jalr $t9
+    for k in range(1, 10):
+        if idx + k >= len(insts):
+            break
+        inst = insts[idx + k]
+        if inst.op_str.startswith("$t9") and inst.op_str.endswith("($gp)"):
+            # $t9 was changed, must not have been a call
+            break
+        if inst.mnemonic == "jalr" and inst.op_str == "$t9":
+            return True
+        
+    return False

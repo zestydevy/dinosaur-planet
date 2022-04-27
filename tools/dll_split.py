@@ -225,8 +225,8 @@ class DLLSplitter:
             with open(s_path, "w", encoding="utf-8") as s_file:
                 # Write relocations
                 for reloc in func.relocations:
-                   s_file.write(".reloc {}+0x{:X}, {}, {}-0x{:X}\n"
-                       .format(func.symbol, reloc.offset - func.address, reloc.type, reloc.expression, reloc.got_index * 4))
+                    s_file.write(".reloc {}+0x{:X}, {}, {}-0x{:X}\n"
+                        .format(func.symbol, reloc.offset - func.address, reloc.type, reloc.expression, reloc.got_index * 4))
                 if len(func.relocations) > 0:
                     s_file.write("\n")
 
