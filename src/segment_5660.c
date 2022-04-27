@@ -1,10 +1,15 @@
+// curves.c?
+
 #include "common.h"
 
-extern f32 D_800984FC;
-extern f32 D_80098500;
+extern f32 D_800984FC; // 1.0f / 60.0f
+extern f32 D_80098500; // 1.0f / 60.0f
+extern f32 D_80098504; // 1.0f / 60.0f
 
 void func_80004CE8(Vec4f *in, Vec4f *out);
 void func_80004DFC(Vec4f *in, Vec4f *out);
+
+// // // bezier?
 
 f32 func_80004A60(Vec4f *a0, f32 a1, f32 *a2) {
     Vec4f v;
@@ -23,7 +28,24 @@ f32 func_80004A60(Vec4f *a0, f32 a1, f32 *a2) {
     return ((v.w * 1.0f) + ((((v.x * a1) + v.y) * a1) + v.z) * a1) * D_80098500;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80004B78.s")
+#else
+// Functionally equivalent
+void func_80004B78(Vec4f *a0, Vec4f *a1) {
+    f32 temp = D_80098504;
+
+    a1->x = a0->w + (((3.0f * a0->y) - a0->x) + (-3.0f * a0->z));
+    a1->y = (3.0f * a0->z) + ((3.0f * a0->x) + (-6.0f * a0->y));
+    a1->z = (3.0f * a0->z) + (-3.0f * a0->x);
+    a1->w = a0->z + (a0->x + (4.0f * a0->y));
+    
+    a1->x *= temp;
+    a1->y *= temp;
+    a1->z *= temp;
+    a1->w *= temp;
+}
+#endif
 
 f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2) {
     Vec4f v;
@@ -38,11 +60,13 @@ f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2) {
 }
 
 void func_80004CE8(Vec4f *in, Vec4f *out) {
-    out->x = in->w + ((in->x + in->x) + (-2.0f *in->y) + in->z);
+    out->x = in->w + ((in->x + in->x) + (-2.0f * in->y) + in->z);
     out->y = -in->w + ((-3.0f * in->x) + (3.0f * in->y) + (-2.0f * in->z));
     out->z = in->z;
     out->w = in->x;
 }
+
+// // // hermite?
 
 f32 func_80004D70(Vec4f *a0, f32 a1, f32 *a2) {
     Vec4f v;
@@ -96,9 +120,15 @@ void func_80004F90(Vec4f *a0, Vec4f *a1) {
     a1->w *= 0.5f;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80005060.s")
+// // //
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80005084.s")
+f32 linear_interp(f32 values[2], f32 time, void *a2) {
+    return values[0] + (values[1] - values[0]) * time;
+}
+
+void func_80005084(void *a0, void *a1) {
+
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80005094.s")
 
