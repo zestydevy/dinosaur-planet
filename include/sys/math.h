@@ -15,6 +15,10 @@ typedef struct {
     f32 x, y, z;
 } Vec3f;
 
+typedef struct {
+    f32 x, y, z, w;
+} Vec4f;
+
 typedef float Vec2[2];
 typedef float Vec3[3];
 typedef float Vec4[4];
