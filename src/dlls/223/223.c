@@ -48,7 +48,7 @@ void dll_cannon_claw_func_18(UnkDll223Struct1 *a0, UnkDll223Struct1 *a1, void *a
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/223/dll_cannon_claw_func_4C.s")
 #else
-// Realloc
+// Regalloc
 void dll_cannon_claw_func_4C(TActor *s0) {
     UnkDllInst *dll_inst;
     TActor *func_8002394C_ret = func_8002394C();

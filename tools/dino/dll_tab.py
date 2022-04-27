@@ -32,7 +32,7 @@ class DLLTab:
             # for the second to last entry.
             start_offset, bss_size, end_offset = struct.unpack_from(">III", data, offset)
 
-            # DLLS.tab ends with 16 bytes of 0xF
+            # DLLS.tab ends with 8 bytes of 0xFF
             if end_offset == 0xFFFF_FFFF:
                 break
 

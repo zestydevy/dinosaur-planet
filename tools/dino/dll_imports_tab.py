@@ -5,7 +5,7 @@ class DLLImportsTab:
     def __init__(self, imports: "list[int]") -> None:
         self.imports = imports
         """A mapping of import index to base executable pointer. Each pointer
-        refers to non-DLL VRAM (e.g. >=0x80000000)"""
+        refers to non-DLL VRAM (i.e. >=0x80000000)"""
 
     @staticmethod
     def parse(data: bytearray) -> "DLLImportsTab":
