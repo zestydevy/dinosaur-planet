@@ -16,10 +16,10 @@ RUN pip3 install -r requirements.txt
 # Symlink dino.py
 RUN ln -s /dino/dino.py /usr/local/bin/dino
 
-# Set up user
+# Set up user (if they don't exist)
 ARG login=sabre
 ARG uid=1000
-RUN adduser --system --uid $uid --group $login
+RUN id -u $uid &>/dev/null || adduser --system --uid $uid --group $login
 
 # Set entrypoint
 RUN echo "#!/bin/bash\nexec \"\$@\"" > /entrypoint.sh && chmod +x /entrypoint.sh
