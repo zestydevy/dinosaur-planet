@@ -1,7 +1,9 @@
 ![Dinosaur Planet Decompilation](docs/banner.png)
 
-[![](https://img.shields.io/badge/Discord-Dinosaur%20Planet%20Community-5865F2?logo=discord)](https://discord.gg/H6WGkznZBc)
-![](https://img.shields.io/endpoint?label=Progress&url=https%3A%2F%2Fraw.githubusercontent.com%2FFrancessco121%2Fdino-status%2Fgh-pages%2Fprogress-shield.json)
+[![](https://img.shields.io/badge/Discord-Dinosaur%20Planet%20Community-5865F2?logo=discord)](https://discord.gg/H6WGkznZBc) 
+![](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrancessco121%2Fdino-status%2Fgh-pages%2Ftotal.shield.json) 
+![](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrancessco121%2Fdino-status%2Fgh-pages%2Fcore.shield.json)
+![](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrancessco121%2Fdino-status%2Fgh-pages%2Fdlls.shield.json)
 
 A WIP decompilation of Dinosaur Planet for the Nintendo 64, as released by Forest of Illusion on Feb. 20, 2021.
 
