@@ -1,7 +1,6 @@
 ansiwrap
 capstone
 colorama>=0.4.4,<0.5
-colour
 cxxfilt
 GitPython
 ninja
