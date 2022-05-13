@@ -130,7 +130,7 @@ segments:
     - [0x7CED0, c, segment_7CED0]
     - [0x7CEF0, c, segment_7CEF0]
     - [0x7D100, asm, libc/bcopy]
-    - [0x7D410, c, libultra/os/initialize]
+    - [0x7D410, c, libultra/os/O1/initialize]
     - [0x7D940, c, libultra/os/O1/startthread]
     - [0x7DA90, c, libultra/os/O1/setthreadpri]
     - [0x7DB70, bin] # bunch of nops
@@ -255,6 +255,8 @@ segments:
     - [0x92380, bin]
     - [0x93CB8, .data, libultra/io/vimgr]
     - [0x93CD0, bin]
+    - [0x97840, .data, libultra/os/O1/initialize]
+    - [0x97858, bin]
     - [0x97870, .data, libultra/io/O1/controller]
     - [0x97878, bin]
     - [0x97880, .data, libultra/io/O1/siacs]
