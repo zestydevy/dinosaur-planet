@@ -248,61 +248,37 @@ segments:
     - [0x8A210, c, libultra/io/g0/sprawwrite]
     - [0x8A260, c, libultra/io/g0/sprawread]
     - [0x8A2B0, c, segment_8A2B0]
-    # data/rodata for this section
-    - [0x8A350, bin]
-
-    - [0x92370, .data, crash]
-
-    - [0x92380, bin]
-
-    - [0x93CB8, .data, libultra/io/vimgr]
-
-    - [0x93CD0, bin]
     
+    # data
+    - [0x8A350, bin]
+    - [0x92370, .data, crash]
+    - [0x92380, bin]
+    - [0x93CB8, .data, libultra/io/vimgr]
+    - [0x93CD0, bin]
     - [0x97870, .data, libultra/io/O1/controller]
-
     - [0x97878, bin]
-
     - [0x97880, .data, libultra/io/O1/siacs]
-
     - [0x97888, bin]
-
     - [0x97890, .data, libultra/io/O1/aisetnextbuf]
-
     - [0x97898, bin]
-
     - [0x98A50, .data, libultra/os/O1/timerintr]
-
     - [0x98A58, bin]
-
     - [0x98A60, .data, libultra/io/O1/vi]
-
     - [0x98AC8, bin]
-
     - [0x98AD0, .data, libultra/os/O1/thread]
-
     - [0x98AE8, bin]
-
     - [0x98B70, .data, libultra/io/O1/piacs]
-
     - [0x98B78, bin]
     
+    # rodata
     - [0x99CA0, .rodata, queue]
-    
     - [0x99D10, .rodata, main]
-
     - [0x99DB0, bin]
-
     - [0x9AF48, .rodata, scheduler]
-
     - [0x9AF68, bin]
-
     - [0x9B8C0, .rodata, video]
-
     - [0x9B8D8, bin]
-
     - [0xA3450, .rodata, libultra/io/g0/devmgr]
-
     - [0xA3470, bin]
 
     - [0xA4550, bin, ucode]
