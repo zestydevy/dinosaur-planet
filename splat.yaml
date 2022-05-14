@@ -211,7 +211,7 @@ segments:
     - [0x82910, c, libultra/io/g0/contramread]
     - [0x82B40, c, libultra/io/O1/piacs]
     - [0x82C00, c, libultra/io/g0/pirawdma]
-    - [0x82CD0, c, libultra/io/epirawdma]
+    - [0x82CD0, c, libultra/io/g0/epirawdma]
     - [0x82EB0, c, libultra/io/g0/devmgr]
     - [0x832C0, c, libultra/os/rdbsend]
     - [0x83580, c, libultra/io/O1/spsetpc]
