@@ -118,31 +118,34 @@ OSMesgQueue *osPiGetCmdQueue(void);
     if (cHandle->var != pihandle->var) \
         IO_WRITE(reg, pihandle->var);
 
-// TODO: is this different in DP? haven't been able to use it in the expected spots yet
-// see osEPiRawReadIo, osEPiRawWriteIo, and osEPiRawStartDma
-#define EPI_SYNC(pihandle, stat, domain)                  \
-                                                          \
-    WAIT_ON_IOBUSY(stat)                                  \
-                                                          \
-    domain = pihandle->domain;                            \
-    if (__osCurrentHandle[domain] != pihandle)            \
-    {                                                     \
-        OSPiHandle *cHandle = __osCurrentHandle[domain];  \
-        if (domain == PI_DOMAIN1)                         \
-        {                                                 \
-            UPDATE_REG(PI_BSD_DOM1_LAT_REG, latency);     \
-            UPDATE_REG(PI_BSD_DOM1_PGS_REG, pageSize);    \
-            UPDATE_REG(PI_BSD_DOM1_RLS_REG, relDuration); \
-            UPDATE_REG(PI_BSD_DOM1_PWD_REG, pulse);       \
-        }                                                 \
-        else                                              \
-        {                                                 \
-            UPDATE_REG(PI_BSD_DOM2_LAT_REG, latency);     \
-            UPDATE_REG(PI_BSD_DOM2_PGS_REG, pageSize);    \
-            UPDATE_REG(PI_BSD_DOM2_RLS_REG, relDuration); \
-            UPDATE_REG(PI_BSD_DOM2_PWD_REG, pulse);       \
-        }                                                 \
-        __osCurrentHandle[domain] = pihandle;             \
+#define EPI_SYNC(pihandle, stat, domain)                   \
+                                                           \
+    WAIT_ON_IOBUSY(stat)                                   \
+                                                           \
+    domain = pihandle->domain;                             \
+    if (__osCurrentHandle[domain]->type != pihandle->type) \
+    {                                                      \
+        OSPiHandle *cHandle = __osCurrentHandle[domain];   \
+        if (domain == PI_DOMAIN1)                          \
+        {                                                  \
+            UPDATE_REG(PI_BSD_DOM1_LAT_REG, latency)       \
+            UPDATE_REG(PI_BSD_DOM1_PGS_REG, pageSize)      \
+            UPDATE_REG(PI_BSD_DOM1_RLS_REG, relDuration)   \
+            UPDATE_REG(PI_BSD_DOM1_PWD_REG, pulse)         \
+        }                                                  \
+        else                                               \
+        {                                                  \
+            UPDATE_REG(PI_BSD_DOM2_LAT_REG, latency)       \
+            UPDATE_REG(PI_BSD_DOM2_PGS_REG, pageSize)      \
+            UPDATE_REG(PI_BSD_DOM2_RLS_REG, relDuration)   \
+            UPDATE_REG(PI_BSD_DOM2_PWD_REG, pulse)         \
+        }                                                  \
+                                                           \
+        cHandle->type = pihandle->type;                    \
+        cHandle->latency = pihandle->latency;              \
+        cHandle->pageSize = pihandle->pageSize;            \
+        cHandle->relDuration = pihandle->relDuration;      \
+        cHandle->pulse = pihandle->pulse;                  \
     }
 
 #endif // _LIBULTRA_IO_PIINT_H
