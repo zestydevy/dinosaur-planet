@@ -2,6 +2,7 @@
 #include <PR/os_internal.h>
 #include <PR/R4300.h>
 #include <PR/rcp.h>
+#include <libultra/io/piint.h>
 
 #define PIF_COMMAND_BYTE (PIF_RAM_START+0x3c)
 
@@ -22,7 +23,7 @@ OSTime osClockRate = OS_CLOCK_RATE;
 s32 osViClock = VI_NTSC_CLOCK;
 u32 __osShutdown = 0;
 u32 __OSGlobalIntMask = OS_IM_ALL;
-s32 __kmc_pt_mode;
+s32 gP64Enabled;
 
 void __createSpeedParam();
 
@@ -60,7 +61,7 @@ void osInitialize() {
     osWritebackDCache((void *)UT_VEC, E_VEC - UT_VEC + sizeof(__osExceptionVector));
     osInvalICache((void *)UT_VEC, E_VEC - UT_VEC + sizeof(__osExceptionVector));
 
-    // TODO:
+    // create speed structures for EPI
     __createSpeedParam();
 
     // map TLB for remote debug port
@@ -97,7 +98,7 @@ void osInitialize() {
 
     // partner-64 stuff
     // note: not 100% sure what the below is doing, some comments may be wrong
-    if (__kmc_pt_mode == 0) {
+    if (gP64Enabled == 0) {
         p64Status = (u32 *)0xBFF08004;
         p64Struct = (u32 *)0xBFF00000;
         
@@ -124,7 +125,7 @@ void osInitialize() {
         osInvalICache((void *)E_VEC, 0x24);
 
         // mark partner mode as enabled
-        __kmc_pt_mode = 1;
+        gP64Enabled = 1;
 
         // check some status bit
         if ((*p64Status & 0x10) == 0) {
@@ -151,4 +152,20 @@ void osInitialize() {
 
 void func_8007CC9C() {}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/os/O1/initialize/__createSpeedParam.s")
+/**
+ * Sets up PI handles for EPI
+ * @see __osCurrentHandle
+ */
+void __createSpeedParam() {
+    __CartRomHandle.type = DEVICE_TYPE_INIT;
+    __CartRomHandle.latency = (u8)IO_READ(PI_BSD_DOM1_LAT_REG);
+    __CartRomHandle.pulse = (u8)IO_READ(PI_BSD_DOM1_PWD_REG);
+    __CartRomHandle.pageSize = (u8)IO_READ(PI_BSD_DOM1_PGS_REG);
+    __CartRomHandle.relDuration = (u8)IO_READ(PI_BSD_DOM1_RLS_REG);
+
+    __LeoDiskHandle.type = DEVICE_TYPE_INIT;
+    __LeoDiskHandle.latency = (u8)IO_READ(PI_BSD_DOM2_LAT_REG);
+    __LeoDiskHandle.pulse = (u8)IO_READ(PI_BSD_DOM2_PWD_REG);
+    __LeoDiskHandle.pageSize = (u8)IO_READ(PI_BSD_DOM2_PGS_REG);
+    __LeoDiskHandle.relDuration = (u8)IO_READ(PI_BSD_DOM2_RLS_REG);
+}

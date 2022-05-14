@@ -95,8 +95,8 @@
 
 extern OSDevMgr __osPiDevMgr;
 extern OSPiHandle *__osCurrentHandle[2];
-extern OSPiHandle CartRomHandle;
-extern OSPiHandle LeoDiskHandle;
+extern OSPiHandle __CartRomHandle;
+extern OSPiHandle __LeoDiskHandle;
 extern OSMesgQueue __osPiAccessQueue;
 extern u32 __osPiAccessQueueEnabled;
 
