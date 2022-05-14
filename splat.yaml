@@ -208,7 +208,7 @@ segments:
     - [0x826F0, c, libultra/io/O1/pigetcmdq]
     - [0x82720, c, libultra/io/crc]
     - [0x82890, c, libultra/io/pfsselectbank]
-    - [0x82910, c, libultra/io/contramread]
+    - [0x82910, c, libultra/io/g0/contramread]
     - [0x82B40, c, libultra/io/O1/piacs]
     - [0x82C00, c, libultra/io/g0/pirawdma]
     - [0x82CD0, c, libultra/io/epirawdma]
@@ -269,6 +269,8 @@ segments:
     - [0x98AC8, bin]
     - [0x98AD0, .data, libultra/os/O1/thread]
     - [0x98AE8, bin]
+    - [0x98B60, .data, libultra/io/g0/contramread]
+    - [0x98B68, bin]
     - [0x98B70, .data, libultra/io/O1/piacs]
     - [0x98B78, bin]
     

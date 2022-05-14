@@ -8,6 +8,24 @@
 #define ARRLEN(x) ((s32)(sizeof(x) / sizeof(x[0])))
 #define CHNL_ERR(format) ((format.rxsize & CHNL_ERR_MASK) >> 4)
 
+#define CONT_REQUEST 0
+#define CONT_READ 1
+#define CONT_RAM_READ 2
+#define CONT_RAM_WRITE 3
+#define CONT_EEPROM_READ 4
+#define CONT_EEPROM_WRITE 5
+#define CONT_SETCH 254
+#define CONT_RESET 255
+#define	CONT_ETC CONT_SETCH
+
+#define CON_ERR_MASK 0xc0
+
+#ifndef _HW_VERSION_1
+#define CONT_FORMAT 1	
+#define CHANNEL_RESET 0xfd	 
+#define FORMAT_END 0xfe	 
+#endif
+
 typedef struct
 {
     /* 0x0 */ u32 ramarray[15];
@@ -53,7 +71,8 @@ typedef struct
     /* 0x1 */ u8 txsize;
     /* 0x2 */ u8 rxsize;
     /* 0x3 */ u8 cmd;
-    /* 0x4 */ u16 address;
+    /* 0x4 */ u8 address_hi;
+    /* 0x5 */ u8 address_lo;
     /* 0x6 */ u8 data[BLOCKSIZE];
     /* 0x26 */ u8 datacrc;
 } __OSContRamReadFormat;
