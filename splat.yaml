@@ -207,7 +207,7 @@ segments:
     - [0x825A0, c, libultra/os/O1/jammesg]
     - [0x826F0, c, libultra/io/O1/pigetcmdq]
     - [0x82720, c, libultra/io/g0/crc]
-    - [0x82890, c, libultra/io/pfsselectbank]
+    - [0x82890, c, libultra/io/g0/pfsselectbank]
     - [0x82910, c, libultra/io/g0/contramread]
     - [0x82B40, c, libultra/io/O1/piacs]
     - [0x82C00, c, libultra/io/g0/pirawdma]
