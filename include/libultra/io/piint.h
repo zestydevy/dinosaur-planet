@@ -118,6 +118,8 @@ OSMesgQueue *osPiGetCmdQueue(void);
     if (cHandle->var != pihandle->var) \
         IO_WRITE(reg, pihandle->var);
 
+// TODO: is this different in DP? haven't been able to use it in the expected spots yet
+// see osEPiRawReadIo, osEPiRawWriteIo, and osEPiRawStartDma
 #define EPI_SYNC(pihandle, stat, domain)                  \
                                                           \
     WAIT_ON_IOBUSY(stat)                                  \
