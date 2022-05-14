@@ -154,7 +154,7 @@ segments:
     - [0x7EBB0, asm, libultra/os/writebackdcacheall]
     - [0x7EBE0, c, libultra/io/O1/pidma]
     - [0x7ECF0, c, libultra/os/O1/settime]
-    - [0x7ED20, c, libultra/io/motor]
+    - [0x7ED20, c, libultra/io/g0/motor]
     - [0x7F0F0, c, libultra/io/pimgr]
     - [0x7F390, c, libultra/io/O1/viblack]
     - [0x7F400, c, libultra/io/O1/viswapbuf]
