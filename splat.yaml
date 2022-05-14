@@ -280,6 +280,8 @@ segments:
     - [0x9AF68, bin]
     - [0x9B8C0, .rodata, video]
     - [0x9B8D8, bin]
+    - [0x9B980, .rodata, libultra/gu/perspective]
+    - [0x9B988, bin]
     - [0xA3450, .rodata, libultra/io/g0/devmgr]
     - [0xA3470, bin]
 
