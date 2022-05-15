@@ -213,7 +213,7 @@ segments:
     - [0x82C00, c, libultra/io/g0/pirawdma]
     - [0x82CD0, c, libultra/io/g0/epirawdma]
     - [0x82EB0, c, libultra/io/g0/devmgr]
-    - [0x832C0, c, libultra/os/rdbsend]
+    - [0x832C0, c, libultra/os/O1/rdbsend]
     - [0x83580, c, libultra/io/O1/spsetpc]
     - [0x835C0, c, libultra/io/g0/sprawdma]
     - [0x83650, c, libultra/io/O1/sp]
@@ -222,7 +222,7 @@ segments:
     - [0x836C0, asm, libultra/os/setcompare]
     - [0x836D0, c, segment_836D0]
     - [0x839E0, c, segment_839E0]
-    - [0x83BE0, c, libultra/os/initrdb]
+    - [0x83BE0, c, libultra/os/O1/initrdb]
     - [0x83C70, c, libultra/os/O1/destroythread]
     - [0x83D80, c, libultra/io/g0/epirawwrite]
     - [0x83EE0, c, libultra/io/g0/epirawread]
@@ -275,6 +275,8 @@ segments:
     - [0x98B68, bin]
     - [0x98B70, .data, libultra/io/O1/piacs]
     - [0x98B78, bin]
+    - [0x98B80, .data, libultra/os/O1/rdbsend]
+    - [0x98B88, bin]
     
     # rodata
     - [0x99CA0, .rodata, queue]
