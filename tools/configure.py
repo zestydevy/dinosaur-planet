@@ -93,7 +93,7 @@ class BuildNinjaWriter:
 
         self.writer.variable("CC_DEFINES", " ".join([
             "-D_LANGUAGE_C", 
-            "-D_FINALROM", 
+            #"-D_FINALROM", 
             "-D_MIPS_SZLONG=32",
             "-DF3DEX_GBI_2", 
         ]))

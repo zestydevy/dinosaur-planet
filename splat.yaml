@@ -130,7 +130,7 @@ segments:
     - [0x7CED0, c, segment_7CED0]
     - [0x7CEF0, c, segment_7CEF0]
     - [0x7D100, asm, libc/bcopy]
-    - [0x7D410, c, libultra/os/initialize]
+    - [0x7D410, c, libultra/os/O1/initialize]
     - [0x7D940, c, libultra/os/O1/startthread]
     - [0x7DA90, c, libultra/os/O1/setthreadpri]
     - [0x7DB70, bin] # bunch of nops
@@ -154,8 +154,8 @@ segments:
     - [0x7EBB0, asm, libultra/os/writebackdcacheall]
     - [0x7EBE0, c, libultra/io/O1/pidma]
     - [0x7ECF0, c, libultra/os/O1/settime]
-    - [0x7ED20, c, libultra/io/motor]
-    - [0x7F0F0, c, libultra/io/pimgr]
+    - [0x7ED20, c, libultra/io/g0/motor]
+    - [0x7F0F0, c, libultra/io/g0/pimgr]
     - [0x7F390, c, libultra/io/O1/viblack]
     - [0x7F400, c, libultra/io/O1/viswapbuf]
     - [0x7F450, c, libultra/os/O1/getactivequeue]
@@ -185,13 +185,13 @@ segments:
     - [0x80C50, c, libultra/os/O1/thread]
     - [0x80C90, asm, libultra/os/exceptasm]
     - [0x81A00, c, libultra/io/O1/epilinkhandle]
-    - [0x81A50, c, libultra/io/epiwrite]
-    - [0x81AA0, c, libultra/io/epiread]
+    - [0x81A50, c, libultra/io/g0/epiwrite]
+    - [0x81AA0, c, libultra/io/g0/epiread]
     - [0x81AF0, asm, libultra/os/writebackdcache]
     - [0x81B70, c, libultra/io/O1/epidma]
     - [0x81C50, c, libultra/libc/g0/string]
-    - [0x81CF0, c, libultra/os/writehost]
-    - [0x81EA0, c, libultra/os/readhost]
+    - [0x81CF0, c, libultra/os/O1/writehost]
+    - [0x81EA0, c, libultra/os/O1/readhost]
     - [0x81F70, c, libultra/libc/syncprintf]
     - [0x82240, asm, libultra/os/setsr]
     - [0x82250, asm, libultra/os/getsr]
@@ -206,14 +206,14 @@ segments:
     - [0x82570, c, libultra/io/O1/ai]
     - [0x825A0, c, libultra/os/O1/jammesg]
     - [0x826F0, c, libultra/io/O1/pigetcmdq]
-    - [0x82720, c, libultra/io/crc]
-    - [0x82890, c, libultra/io/pfsselectbank]
-    - [0x82910, c, libultra/io/contramread]
+    - [0x82720, c, libultra/io/g0/crc]
+    - [0x82890, c, libultra/io/g0/pfsselectbank]
+    - [0x82910, c, libultra/io/g0/contramread]
     - [0x82B40, c, libultra/io/O1/piacs]
     - [0x82C00, c, libultra/io/g0/pirawdma]
-    - [0x82CD0, c, libultra/io/epirawdma]
+    - [0x82CD0, c, libultra/io/g0/epirawdma]
     - [0x82EB0, c, libultra/io/g0/devmgr]
-    - [0x832C0, c, libultra/os/rdbsend]
+    - [0x832C0, c, libultra/os/O1/rdbsend]
     - [0x83580, c, libultra/io/O1/spsetpc]
     - [0x835C0, c, libultra/io/g0/sprawdma]
     - [0x83650, c, libultra/io/O1/sp]
@@ -222,13 +222,13 @@ segments:
     - [0x836C0, asm, libultra/os/setcompare]
     - [0x836D0, c, segment_836D0]
     - [0x839E0, c, segment_839E0]
-    - [0x83BE0, c, libultra/os/initrdb]
+    - [0x83BE0, c, libultra/os/O1/initrdb]
     - [0x83C70, c, libultra/os/O1/destroythread]
-    - [0x83D80, c, libultra/io/epirawwrite]
-    - [0x83EE0, c, libultra/io/epirawread]
+    - [0x83D80, c, libultra/io/g0/epirawwrite]
+    - [0x83EE0, c, libultra/io/g0/epirawread]
     - [0x84040, c, libultra/libc/xprintf]
     - [0x84D00, c, libultra/io/O1/si]
-    - [0x84D30, c, libultra/io/contramwrite]
+    - [0x84D30, c, libultra/io/g0/contramwrite]
     - [0x84F80, c, libultra/io/O1/pfsisplug]
     - [0x852C0, c, libultra/io/g0/pfsgetstatus]
     - [0x854F0, c, libultra/os/O1/resetglobalintmask]
@@ -248,61 +248,50 @@ segments:
     - [0x8A210, c, libultra/io/g0/sprawwrite]
     - [0x8A260, c, libultra/io/g0/sprawread]
     - [0x8A2B0, c, segment_8A2B0]
-    # data/rodata for this section
+    
+    # data
     - [0x8A350, bin]
-
     - [0x92370, .data, crash]
-
     - [0x92380, bin]
-
     - [0x93CB8, .data, libultra/io/vimgr]
-
     - [0x93CD0, bin]
-    
+    - [0x97840, .data, libultra/os/O1/initialize]
+    - [0x97858, bin]
     - [0x97870, .data, libultra/io/O1/controller]
-
     - [0x97878, bin]
-
     - [0x97880, .data, libultra/io/O1/siacs]
-
     - [0x97888, bin]
-
     - [0x97890, .data, libultra/io/O1/aisetnextbuf]
-
     - [0x97898, bin]
-
+    - [0x978A0, .data, libultra/io/g0/pimgr]
+    - [0x978C8, bin]
     - [0x98A50, .data, libultra/os/O1/timerintr]
-
     - [0x98A58, bin]
-
     - [0x98A60, .data, libultra/io/O1/vi]
-
     - [0x98AC8, bin]
-
     - [0x98AD0, .data, libultra/os/O1/thread]
-
     - [0x98AE8, bin]
-
+    - [0x98B38, .data, libultra/os/O1/writehost]
+    - [0x98B40, .data, libultra/os/O1/readhost]
+    - [0x98B48, bin]
+    - [0x98B60, .data, libultra/io/g0/contramread]
+    - [0x98B68, bin]
     - [0x98B70, .data, libultra/io/O1/piacs]
-
     - [0x98B78, bin]
+    - [0x98B80, .data, libultra/os/O1/rdbsend]
+    - [0x98B88, bin]
     
+    # rodata
     - [0x99CA0, .rodata, queue]
-    
     - [0x99D10, .rodata, main]
-
     - [0x99DB0, bin]
-
     - [0x9AF48, .rodata, scheduler]
-
     - [0x9AF68, bin]
-
     - [0x9B8C0, .rodata, video]
-
     - [0x9B8D8, bin]
-
+    - [0x9B980, .rodata, libultra/gu/perspective]
+    - [0x9B988, bin]
     - [0xA3450, .rodata, libultra/io/g0/devmgr]
-
     - [0xA3470, bin]
 
     - [0xA4550, bin, ucode]
