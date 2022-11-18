@@ -157,8 +157,6 @@ class BuildNinjaWriter:
         ]))
 
         self.writer.variable("LD_FLAGS_DLL", " ".join([
-            "-nostartfiles",
-            "-nodefaultlibs",
             "-r",
             "--emit-relocs",
             "-m $LD_EMULATION",
