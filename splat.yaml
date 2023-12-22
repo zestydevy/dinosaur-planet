@@ -241,7 +241,7 @@ segments:
     - [0x86F70, c, segment_86F70]
     - [0x87880, c, segment_87880]
     - [0x88480, c, segment_88480]
-    - [0x89080, c, test/O1/test]
+    - [0x89080, c, segment_89080/O1/segment_89080]
     - [0x89B60, c, segment_89B60]
     - [0x89F60, c, libultra/libc/g0/ldiv]
     - [0x8A0F0, asm, libc/bcmp]
