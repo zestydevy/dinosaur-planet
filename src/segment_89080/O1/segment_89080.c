@@ -52,10 +52,11 @@
 }
 #endif
 
-/* NEED __rmonRcpAtBreak */
-#if 1
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonHitSpBreak.s")
 #else
+extern s8 __rmonRcpAtBreak;
 void __rmonHitSpBreak(void) {
     /* Only thing that's wrong is the stack frame size and __rmonRcpAtBreak*/
     s32 unused[18]; /* This is to get the stack frame size to match*/

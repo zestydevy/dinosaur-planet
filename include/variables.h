@@ -62,7 +62,7 @@ struct UnkStruct_n_syn {
     s32 padding[7];
     s32 unk1C;
 
-    struct UnkStruct_80064514* unk2C
+    struct UnkStruct_80064514* unk2C;
 };
 extern struct UnkStruct_n_syn* n_syn;
 
