@@ -58,7 +58,7 @@ struct UnkStruct_80064514 {
 
 
 struct UnkStruct_n_syn {
-    /* Padding memory address, aas these are currently unknown*/
+    /* Padding memory address, as these are currently unknown*/
     s32 padding[7];
     s32 unk1C;
 
@@ -80,5 +80,40 @@ struct UnkStruct_8006C220_arg0_unk8 {
     s32 padding[34];
     s32 unk88;
 };
+
+
+typedef struct UnkStruct_rmonGetThreadStatus_arg2 {
+    /* Padding memory address, as these are currently unknown*/
+    s32 padding0;
+    s32 padding4;
+    s32 padding8;
+    s32 varC;
+    s16 var10;
+    s16 var12;
+    s32 var14;
+    s32 var18;
+    s32 var1C;
+    s32 var20;
+    s16 var24;
+    s16 var26;
+    s32 var28;
+    s32 var2C; /* some struct probably*/
+    s32 var30;
+    
+}UnkStruct_rmonGetThreadStatus_arg2;
+
+// struct UnkStruct_rmonGetThreadStatus {
+//     /* Padding memory address, as these are currently unknown*/
+//     s32 padding0;
+//     s32 var4;
+//     s32 padding8;
+//     s32 varC;
+//     u16 var10;
+//     u16 var12;
+//     s32 var14;
+//     s32 padding[65];
+//     s32* var11C;
+    
+// };
 
 #endif //_VARIABLES_H_

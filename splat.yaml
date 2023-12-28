@@ -239,7 +239,7 @@ segments:
     - [0x85930, c, segment_85930]
     - [0x863F0, c, segment_863F0]
     - [0x86F70, c, segment_86F70]
-    - [0x87880, c, segment_87880]
+    - [0x87880, c, segment_87880/O1/segment_87880]
     - [0x88480, c, segment_88480]
     - [0x89080, c, segment_89080/O1/segment_89080]
     - [0x89B60, c, segment_89B60]
