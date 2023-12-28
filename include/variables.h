@@ -38,11 +38,12 @@ extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
-/* No idea where to put these*/
+
+
 struct UnkStruct_80064514 {
     s32 unk0;
     s32 unk4;
-    s32 unk8;
+    s16 unk8;
     s16 unkA;
     f32 unkC;
     s16 unk10;
@@ -57,23 +58,27 @@ struct UnkStruct_80064514 {
 
 
 struct UnkStruct_n_syn {
-    /* These are all copied from another struct, so are likely wrong*/
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s16 unkA;
-    f32 unkC;
-    s16 unk10;
-    u8 unk12;
-    u8 unk13;
-    u8 unk14;
-    u8 unk15;
-    f32 unk18;
+    /* Padding memory address, aas these are currently unknown*/
+    s32 padding[7];
     s32 unk1C;
-    s32 unk20;
-    s32 unk28;
-    /*This seems to be right*/
-    struct UnkStruct_80064514* unk2C;
+
+    struct UnkStruct_80064514* unk2C
+};
+extern struct UnkStruct_n_syn* n_syn;
+
+typedef struct UnkStruct_8006C220 {
+    s32 padding0[2]; /*Placeholder*/
+    struct UnkStruct_8006C220_arg0_unk8* unk8; /*This seems to be an address to another struct, that has variable unk88*/
+    s32 padding2[3]; /*Placeholder*/
+    s16 padding; /*Placeholder*/
+    s16 unk1A;
+
+}UnkStruct_8006C220;
+
+struct UnkStruct_8006C220_arg0_unk8 {
+    /*Currently, only unk88 is known to be used, so this array will pad out memory addresses until more is known*/
+    s32 padding[34];
+    s32 unk88;
 };
 
 #endif //_VARIABLES_H_
