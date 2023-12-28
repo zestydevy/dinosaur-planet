@@ -38,4 +38,42 @@ extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
+/* No idea where to put these*/
+struct UnkStruct_80064514 {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s16 unkA;
+    f32 unkC;
+    s16 unk10;
+    u8 unk12;
+    u8 unk13;
+    u8 unk14;
+    u8 unk15;
+    f32 unk18;
+    s32 unk1C;
+    s32 unk20;
+};
+
+
+struct UnkStruct_n_syn {
+    /* These are all copied from another struct, so are likely wrong*/
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s16 unkA;
+    f32 unkC;
+    s16 unk10;
+    u8 unk12;
+    u8 unk13;
+    u8 unk14;
+    u8 unk15;
+    f32 unk18;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk28;
+    /*This seems to be right*/
+    struct UnkStruct_80064514* unk2C;
+};
+
 #endif //_VARIABLES_H_

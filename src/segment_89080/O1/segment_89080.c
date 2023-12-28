@@ -1,18 +1,18 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_80088480.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088480.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_8008852C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_8008852C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonSetBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonSetBreak.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_800887D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_800887D4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonClearBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonClearBreak.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonGetBranchTarget.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonGetBranchTarget.s")
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_80088B64.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088B64.s")
 #else
     /* uses O1 */
     int func_80088B64(u32 arg0) {
@@ -36,14 +36,14 @@
 
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonSetSingleStep.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonSetSingleStep.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonGetExceptionStatus.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonGetExceptionStatus.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_80088CFC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088CFC.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonHitBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonHitBreak.s")
 #else
     void __rmonHitBreak(void) {
     func_8008852C();
@@ -54,11 +54,14 @@
 
 /* NEED __rmonRcpAtBreak */
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/__rmonHitSpBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonHitSpBreak.s")
 #else
-    void __rmonHitSpBreak(void) {
+void __rmonHitSpBreak(void) {
+    /* Only thing that's wrong is the stack frame size and __rmonRcpAtBreak*/
+    s32 unused[18]; /* This is to get the stack frame size to match*/
+    
     s32 sp24;
-
+    
     __rmonWriteWordTo(0x04080000, __rmonReadWordAt(0x04080000) - 4);
     __rmonGetThreadStatus(1, 0x3E8, &sp24);
     __rmonGetExceptionStatus(&sp24);
@@ -68,7 +71,7 @@
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_80088E50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088E50.s")
 #else
     void func_80088E50(void) {
         __rmonMaskIdleThreadInts();
@@ -77,4 +80,4 @@
     }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/test/O1/test/func_80088E80.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088E80.s")

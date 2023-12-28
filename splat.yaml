@@ -91,7 +91,7 @@ segments:
     - [0x645A0, c, segment_645A0]
     - [0x64660, c, segment_64660]
     - [0x646E0, c, segment_646E0]
-    - [0x648F0, c, segment_648F0]
+    - [0x648F0, c, segment_648F0/O1/segment_648F0]
     - [0x67660, c, segment_67660]
     - [0x67AC0, c, segment_67AC0]
     - [0x67AF0, c, segment_67AF0]
