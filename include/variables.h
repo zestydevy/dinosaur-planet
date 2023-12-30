@@ -102,18 +102,24 @@ typedef struct UnkStruct_rmonGetThreadStatus_arg2 {
     
 }UnkStruct_rmonGetThreadStatus_arg2;
 
-// struct UnkStruct_rmonGetThreadStatus {
-//     /* Padding memory address, as these are currently unknown*/
-//     s32 padding0;
-//     s32 var4;
-//     s32 padding8;
-//     s32 varC;
-//     u16 var10;
-//     u16 var12;
-//     s32 var14;
-//     s32 padding[65];
-//     s32* var11C;
+typedef struct UnkStruct_rmonGetExceptionStatus {
+    s32 var0;
+    s8 var4;
+    s16 var6;
+    s32 padding8;
+    s32 varC;
+    s16 var10;
+    s16 var12;
+    s32 padding14;
+    s32 padding18;
+    s32 padding1C;
+    s32 padding20;
+    s16 var24;
+    s16 var26;
+    s32 padding28;
+    s32 padding2C;
+    s32 var30;
     
-// };
+}UnkStruct_rmonGetExceptionStatus;
 
 #endif //_VARIABLES_H_

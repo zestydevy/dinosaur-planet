@@ -38,8 +38,23 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonSetSingleStep.s")
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonGetExceptionStatus.s")
+#else
 
+void __rmonGetExceptionStatus(UnkStruct_rmonGetExceptionStatus* arg0) {
+    arg0->varC = 1;
+    arg0->var10 = 2;
+    arg0->var12 = 0;
+    arg0->var30 = 0;
+    arg0->var24 = 2;
+    arg0->var26 = 4;
+    arg0->var4 = 4;
+    arg0->var6 = 0;
+    arg0->var0 = 0x4C;
+}
+
+#endif
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088CFC.s")
 
 #if 0
@@ -61,11 +76,11 @@ void __rmonHitSpBreak(void) {
     /* Only thing that's wrong is the stack frame size and __rmonRcpAtBreak*/
     s32 unused[18]; /* This is to get the stack frame size to match*/
     
-    s32 sp24;
+    s32 sp24; /* this has got to be an address to struct*/
     
     __rmonWriteWordTo(0x04080000, __rmonReadWordAt(0x04080000) - 4);
     __rmonGetThreadStatus(1, 0x3E8, &sp24);
-    __rmonGetExceptionStatus(&sp24);
+    __rmonGetExceptionStatus(&sp24); /* this function uses a struct im sure*/
     __rmonSendReply(&sp24, 0x4C, 2);
     __rmonRcpAtBreak = 1;
 }
