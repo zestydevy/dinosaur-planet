@@ -14,7 +14,7 @@
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088B64.s")
 #else
-    /* uses O1 */
+    
     int func_80088B64(u32 arg0) {
     
     switch ((arg0 >> 0x1A) & 0x3F) {                              /* irregular */
@@ -55,7 +55,54 @@ void __rmonGetExceptionStatus(UnkStruct_rmonGetExceptionStatus* arg0) {
 }
 
 #endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088CFC.s")
+#else
+void func_80088CFC(s32* arg0, s32 arg1) {
+   
+    /*Unused varibles to padd out stakc frame, feels a bit hackey as for some reason
+    the stack frame size doesnt always change when a new variable is added*/
+    s32 unused68;
+    s32 unused64;
+    s32 unused60;
+    s32 unused5C;
+    s32 unused5A;
+    s32 unused58;
+    s32 unused54;
+    s32 unused50;
+    s32 unused4C;
+    s16 sp4A;
+    s16 sp48;
+    s32 unused44;
+    s32 sp40;
+    s32 unused3C;
+    s32 unused38;
+    s32 unused34;
+    s32 unused30;
+    s32 unused2c;
+    s32 unused28;
+    s32 sp24; /* assuming variable type, it's an address anyway */
+    
+    
+    /* Hey future me, the inline conditional expression was how you solved the saved register problem*/
+    __rmonGetThreadStatus(0, (arg0 ? arg0 : 0x3EB), &sp24);
+    __rmonGetExceptionStatus(&sp24);
+    if (arg1 == 0xF) {
+        sp48 = 1;
+        sp4A = 2;
+    }
+    if (arg1 < 0x10) {
+        arg1 = 0;
+    } else {
+        arg1 -= 0x10;
+    }
+    if (arg1 != 0) {
+        sp40 = 0xD;
+    }
+    __rmonSendReply(&sp24, 0x4C, 2);
+}
+#endif
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonHitBreak.s")
