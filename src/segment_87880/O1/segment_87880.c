@@ -11,7 +11,7 @@
 /* Uses g0*/
 /* gets loads of warnings about pointers and integers, but it matches so it should be fine*/
 /* one error as OSThread->OSThreadContext.pc is a void pointer, so we've gotta figure that out*/
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/O1/segment_87880/__rmonGetThreadStatus.s")
 #else
 

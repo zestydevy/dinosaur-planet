@@ -122,4 +122,24 @@ typedef struct UnkStruct_rmonGetExceptionStatus {
     
 }UnkStruct_rmonGetExceptionStatus;
 
+typedef struct UnkStruct_n_alEnvmixerParam {
+    s32 padding[18];
+    s32 var48;
+    f32 var4C;
+    s32 var50;
+    s32 padding54;
+    s16 padding58;
+    s16 var5A;
+    s32 padding5C;
+    s32 padding60;
+    s32 padding64;
+    s32 padding68;
+    s32 padding6C;
+    s32 padding70;
+    s32 var74;
+    s32 var78;
+    s32 var7C;
+    s32* var80;
+    s32 var84;
+}UnkStruct_n_alEnvmixerParam;
 #endif //_VARIABLES_H_

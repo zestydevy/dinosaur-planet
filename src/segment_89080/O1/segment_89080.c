@@ -107,7 +107,7 @@ void func_80088CFC(s32* arg0, s32 arg1) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonHitBreak.s")
 #else
-    void __rmonHitBreak(void) {
+void __rmonHitBreak(void) {
     func_8008852C();
     __rmonStopUserThreads(0);
     func_80088E80();
@@ -143,4 +143,8 @@ void __rmonHitSpBreak(void) {
     }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088E80.s")
+#else
+
+#endif
