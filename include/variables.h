@@ -142,4 +142,17 @@ typedef struct UnkStruct_n_alEnvmixerParam {
     s32* var80;
     s32 var84;
 }UnkStruct_n_alEnvmixerParam;
+
+typedef struct UnkStruct_80065D7C {
+    s32 padding[17];
+    u8 var44;
+
+}UnkStruct_80065D7C;
+
+struct UnkStruct_80065E6C {
+    u16 var0;
+    s16 padding2;
+    s32 var4;
+};
+
 #endif //_VARIABLES_H_
