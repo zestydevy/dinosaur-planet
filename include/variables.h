@@ -64,7 +64,7 @@ struct UnkStruct_n_syn {
 
     struct UnkStruct_80064514* unk2C;
 };
-extern struct UnkStruct_n_syn* n_syn;
+//extern struct UnkStruct_n_syn* n_syn;
 
 typedef struct UnkStruct_8006C220 {
     s32 padding0[2]; /*Placeholder*/
