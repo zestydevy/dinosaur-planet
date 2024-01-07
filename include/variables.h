@@ -41,28 +41,28 @@ extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
 
 struct UnkStruct_80064514 {
-    s32 unk0;
-    s32 unk4;
-    s16 unk8;
-    s16 unkA;
-    f32 unkC;
-    s16 unk10;
-    u8 unk12;
-    u8 unk13;
-    u8 unk14;
-    u8 unk15;
-    f32 unk18;
-    s32 unk1C;
-    s32 unk20;
+    s32 var0;
+    s32 var4;
+    s16 var8;
+    s16 varA;
+    f32 varC;
+    s16 var10;
+    u8 var12;
+    u8 var13;
+    u8 var14;
+    u8 var15;
+    f32 var18;
+    s32 var1C;
+    s32 var20;
 };
 
 
 struct UnkStruct_n_syn {
     /* Padding memory address, as these are currently unknown*/
     s32 padding[7];
-    s32 unk1C;
-
-    struct UnkStruct_80064514* unk2C;
+    s32 var1C;
+    s32 padding2[3];
+    struct UnkStruct_80064514* var2C;
 };
 //extern struct UnkStruct_n_syn* n_syn;
 
@@ -176,5 +176,10 @@ typedef struct  UnkStruct_80065DEC_VAR8_VAR5 {
     s8 padding4;
     s8 var5;
 } UnkStruct_80065DEC_VAR8_VAR5;
+
+typedef struct UnkStruct_800663B8 {
+    s32 padding[16];
+    s8 var40;
+}UnkStruct_800663B8;
 
 #endif //_VARIABLES_H_

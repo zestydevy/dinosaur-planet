@@ -17,10 +17,10 @@ struct UnkStruct_80064514* func_80064514(void) {
         struct UnkStruct_80064514* sp4;
 
         sp4 = NULL;
-        if (n_syn->unk2C != NULL) {
-            sp4 = n_syn->unk2C;
-            n_syn->unk2C = (struct UnkStruct_80064514* ) n_syn->unk2C->unk0; /*This seems kinda scuffed*/
-            sp4->unk0 = NULL;
+        if (n_syn->var2C != NULL) {
+            sp4 = n_syn->var2C;
+            n_syn->var2C = (struct UnkStruct_80064514* ) n_syn->var2C->var0; /*This seems kinda scuffed*/
+            sp4->var0 = NULL;
         }
         return sp4;
 }
@@ -36,7 +36,14 @@ struct UnkStruct_80064514* func_80064514(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80064644.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800646A8.s")
+#else
+/*needs ido 6.0*/
+s32 func_800646A8(s32 arg0) {
+    return func_80064644(arg0) & ~0xF;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800646E0.s")
 
@@ -118,9 +125,25 @@ void func_80065E6C(ALLink* arg0, s32 arg1, u16 arg2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066294.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800663B8.s")
+#else
+/* needs -g3*/
+void func_800663B8(UnkStruct_800663B8* arg0, u8 arg1) {
+    if (arg0 != NULL) {
+        //arg0->var40 = (s8) (arg1 & 0xFF);
+        arg0->var40 = ((arg1 << 0x10) >> 0x10);
+    }
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800663D8.s")
+#else
+void func_800663D8(void) {
+
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800663E0.s")
 
@@ -134,9 +157,21 @@ void func_80065E6C(ALLink* arg0, s32 arg1, u16 arg2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066854.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_8006687C.s")
+#else
+void func_8006687C(void) {
+    func_80066794(0x11);
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800668A4.s")
+#else
+void func_800668A4(void) {
+    func_80066794(3);
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/modify_sound_func.s")
 
