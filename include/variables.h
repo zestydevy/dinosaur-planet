@@ -155,4 +155,26 @@ struct UnkStruct_80065E6C {
     s32 var4;
 };
 
+/* struct for arg0*/
+typedef struct UnkStruct_80065DEC {
+    s32 padding[2];
+    struct UnkStruct_80065DEC_VAR8* var8;
+    s32 padding2[8];
+    f32 var2C;
+
+}UnkStruct_80065DEC;
+
+/* struct for arg0->var8*/
+typedef struct  UnkStruct_80065DEC_VAR8 {
+    s32 padding0;
+    struct UnkStruct_80065DEC_VAR8_VAR5* var4;
+} UnkStruct_80065DEC_VAR8;
+
+/* struct for arg0->var8->var5*/
+typedef struct  UnkStruct_80065DEC_VAR8_VAR5 {
+    s32 padding0;
+    s8 padding4;
+    s8 var5;
+} UnkStruct_80065DEC_VAR8_VAR5;
+
 #endif //_VARIABLES_H_

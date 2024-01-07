@@ -59,7 +59,25 @@ void func_80065D7C(UnkStruct_80065D7C* arg0) {
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80065DEC.s")
+#else
+void func_80065DEC(UnkStruct_80065DEC* arg0) {
+    s32 unused2C; /*to get stack frame to match*/
+    u32 sp28;
+    UnkStruct_80065DEC* sp24;
+    s16 unused22; /*to get stack frame to match*/
+    s16 sp20;
+    f32 sp1C;
+    
+    
+    sp1C = (func_8006C6E0(arg0->var8->var4->var5) * arg0->var2C);
+    sp20 = 0x10;
+    sp24 = arg0;
+    sp28 = *(u32*)(&sp1C); /*this is crazy*/
+    alEvtPostEvent(AlSndPlayer_pointer + 0x14, &sp20, 0x8235, 0);
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80065E6C.s")
