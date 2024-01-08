@@ -1,5 +1,9 @@
 #include "common.h"
 
+/* Problem with this file is that it seems some funcitons need -g1 or -g2, but it adds extra jr ra nop assembly code to some functions.
+Could probably split this file into multiple files, no idea how that's work.
+Might just be the case that -g1/-g2 shouldn't be used, I dont know.*/
+
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/n_alSynNew.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800642F4.s")
@@ -28,13 +32,37 @@ struct UnkStruct_80064514* func_80064514(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80064574.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80064598.s")
+#else
+/* Funtions like this DONT match with -g1/-g2 flags*/
+void func_80064598(void) {
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800645A0.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80064604.s")
+#else
+void func_80064604(ALLink* arg0) {
+    alUnlink(arg0);
+    alLink(arg0, (u32)n_syn + 0x14);
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80064644.s")
+#else
+extern f32 D_8009B820;
+extern struct UnkStruct_n_syn* n_syn;
+
+s32 func_80064644(s32 arg0) {
+    f32 sp4;
+    sp4 = (((f32) arg0 * (f32) n_syn->var40) / D_8009B820) + 0.5f;
+    return (s32) sp4;
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800646A8.s")
@@ -147,15 +175,58 @@ void func_800663D8(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_800663E0.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066408.s")
+#else
+void func_80066408(void) {
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/some_sound_func.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/stop_sound_func.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066794.s")
+#else
+extern s32 AlSndPlayer_pointer;
+extern struct UnkStruct_D_800938C0* D_800938C0;
 
+void func_80066794(u8 arg0) {
+
+    u32 sp2C;
+    s32 unused28;
+    s32 unused24;
+    struct UnkStruct_D_800938C0* sp20;
+    s8 unused1E;
+    s16 sp1C;
+    struct UnkStruct_D_800938C0* sp18;
+    
+    
+    sp2C = osSetIntMask(1U);
+    sp18 = D_800938C0;
+    if (sp18 != NULL) {
+        do {
+            sp1C = 0x400;
+            sp20 = sp18;
+            if ((sp18->var44 & arg0) == arg0) {
+                sp20->var44 = (u8) (sp20->var44 & ~0x10);
+                alEvtPostEvent(AlSndPlayer_pointer + 0x14, &sp1C, 0, 0);
+            }
+            sp18 = sp18->var0;
+        } while (sp18 != NULL);
+    }
+    osSetIntMask(sp2C);
+}
+#endif
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066854.s")
+#else
+void func_80066854(void) {
+    func_80066794(1);
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_8006687C.s")
@@ -177,8 +248,17 @@ void func_800668A4(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_8006694C.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066968.s")
+#else
+void func_80066968(void) {
+}
+#endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066970.s")
-
+#else
+void func_80066970(void) {
+}
+#endif
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/func_80066978.s")

@@ -59,10 +59,12 @@ struct UnkStruct_80064514 {
 
 struct UnkStruct_n_syn {
     /* Padding memory address, as these are currently unknown*/
-    s32 padding[7];
+    s32 padding0[7];
     s32 var1C;
-    s32 padding2[3];
+    s32 padding1[3];
     struct UnkStruct_80064514* var2C;
+    s32 padding2[4];
+    s32 var40;
 };
 //extern struct UnkStruct_n_syn* n_syn;
 
@@ -181,5 +183,13 @@ typedef struct UnkStruct_800663B8 {
     s32 padding[16];
     s8 var40;
 }UnkStruct_800663B8;
+
+/* i think this is a linked list*/
+struct UnkStruct_D_800938C0 {
+    struct UnkStruct_D_800938C0* var0; /* must be address of next in linked list */
+    /* Padding memory address, as these are currently unknown*/
+    s32 padding0[16];
+    u8 var44;
+};
 
 #endif //_VARIABLES_H_
