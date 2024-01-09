@@ -192,4 +192,16 @@ struct UnkStruct_D_800938C0 {
     u8 var44;
 };
 
+typedef struct UnkStruct__rmonSetBreak{
+    s32 padding0;
+    u8 var4;
+    u8 padding5;
+    u8 padding6;
+    u8 padding7;
+    u8 padding8;
+    u8 var9;
+    s32 varC;
+    s32* var10; /*not sure if pointer or not*/
+}UnkStruct__rmonSetBreak;
+
 #endif //_VARIABLES_H_

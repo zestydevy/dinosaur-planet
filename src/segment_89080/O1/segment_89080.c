@@ -3,13 +3,14 @@
 /* Declaring func_80088E80 up here, as other funcs use it before its implementation which causes redeclaration compile errors*/
 void func_80088E80();
 
+extern s32* rmonbrk_bss_0000[32]; /* size may be wrong, element 32 referenced in __rmonSetBreak */
+extern s32* rmonbrk_bss_0088[32]; /* size may be wrong, element 32 referenced in __rmonSetBreak */
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088480.s")
 #else
 extern s32* D_800D3E60;
 extern s32 D_800D3E64;
-extern s32* rmonbrk_bss_0000[4]; /* size may be wrong */
 
 void func_80088480(s32* arg0, s32* arg1) {
     rmonbrk_bss_0000[1] = (s32) *arg0;
@@ -32,7 +33,6 @@ void func_80088480(s32* arg0, s32* arg1) {
 #else
 extern s32* D_800D3E60;
 extern s32 D_800D3E64;
-extern s32* rmonbrk_bss_0000[4]; /* size may be wrong */
 
 void func_8008852C(void) {
     s32 sp1C;
@@ -58,10 +58,72 @@ void func_8008852C(void) {
 }
 #endif
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonSetBreak.s")
 #else
+int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
+    register UnkStruct__rmonSetBreak* copy_arg0 = arg0;
+    //dont know if using register keywokrd is right here
+    register s32 var_s1; //assumed, but need to remove anyway, seems to be a refernece to either array
+    register s32** var_s2; //maybe reference to element one or 2
+    register s32** var_s3; //maybe reference to the last element, or size
+    /*none of these are used until the bottom*/
+    s32 sp3C;
+    s32 sp38;
+    s32 sp34;
+    s32 unused30;
+    s16 sp2E;
+    u8 unused2D;
+    u8 sp2C;
+    s32 sp28; //assumed
+    
 
+//some sort of nest functionality going on here that choses one of the two arrays
+    if (arg0->var9 == 1) {
+        var_s1 = &rmonbrk_bss_0088;
+        var_s2 = &rmonbrk_bss_0088[2];
+        var_s3 = &rmonbrk_bss_0088[32];
+    } else {
+        var_s1 = &rmonbrk_bss_0000;
+        var_s2 = &rmonbrk_bss_0000[2];
+        var_s3 = &rmonbrk_bss_0000[32];
+    }
+
+    //my gut tells me this is a for loop, could use on of the five seemingly unused stack variables, the loop looks for the array element that is  equal to 0 and equal to arg0->var10
+    while ((u32) var_s2 < (u32) var_s3) {//would make sense if this means if current element is not the last, or within size
+        // if ((*var_s2 != 0) && (*(u32*)var_s2 != copy_arg0->var10)) { // if var10 non pointer
+        if ((*var_s2 == 0) || (*var_s2 == copy_arg0->var10)) { //if var10 pointer, also changed the ands to ors and fliped equals
+            break;
+        }
+        var_s2 += 2;
+    }
+    
+    if (var_s2 == var_s3) {
+        return -0xA;
+    }
+    
+    if (*var_s2 == NULL) {
+        if (arg0->var9 == 1) {
+            var_s2[1] = __rmonReadWordAt(copy_arg0->var10);
+            __rmonWriteWordTo(copy_arg0->var10, (((((s32) ((u32)var_s2 - (u32)var_s1) >> 3) + 0x10) & 0xFFFFF) << 6) | 0xD);
+        } else {
+            var_s2[1] = *(copy_arg0->var10);
+            *copy_arg0->var10 = ((((((s32) ((u32)var_s2 - (u32)var_s1) >> 3) + 0x10) & 0xFFFFF) << 6) | 0xD);
+            
+            osWritebackDCache(copy_arg0->var10, 4);
+            osInvalICache(copy_arg0->var10, 4);
+        }
+        var_s2[0] = copy_arg0->var10;
+    }
+    
+    sp2C = copy_arg0->var4;
+    sp2E = 0;
+    sp34 = copy_arg0->varC;
+    sp38 = (s32)((u32)var_s2 - (u32)var_s1) >> 0x3;
+    sp3C = var_s2[1];
+    __rmonSendReply(&sp28, 0x18, 1);
+    return 0;
+}
 #endif
 
 #if 0
@@ -73,9 +135,67 @@ int func_800887D4(s32 arg0) {
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonClearBreak.s")
+#else
+int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
+    register UnkStruct__rmonSetBreak* copy_arg0;
+    register s32** var_s1; /*could be something other than double pointer, array doesnt seem to work*/
+    s32 unused3C;
+    s32 sp38;
+    s32 sp34;
+    s32 unused30;
+    s16 sp2E;
+    u8 unused2D;
+    u8 sp2C;
+    s32 sp28;
+    s32 sp24;
+    
+    
+    
+    copy_arg0 = arg0; /* no idea why this was done*/
+
+    if ((s32)copy_arg0->var10 >= 16) {
+        return -2;
+    }
+    if (arg0->var9 == 1) {
+        var_s1 = ((s32)copy_arg0->var10 * 8) + (u32)rmonbrk_bss_0088;
+
+        if (*var_s1 == NULL) {
+            return -2;
+        }
+        sp24 = __rmonReadWordAt(*var_s1);
+        if ((sp24 & 0xFC00003F) == 0xD) {
+            __rmonWriteWordTo(*var_s1, var_s1[1]);
+        }
+
+    }else{
+        var_s1 = ((s32)copy_arg0->var10 * 8) + (u32)rmonbrk_bss_0000;
+        if (*var_s1 == NULL) {
+            return -2;
+        }
+    
+        if (((sp24 = **var_s1) & 0xFC00003F) == 0xD) { /* huh */
+            **var_s1 = var_s1[1];
+            osWritebackDCache(*var_s1, 4);
+            osInvalICache(*var_s1, 4);
+        }
+    }
+    
+
+    *var_s1 = NULL;
+    
+    sp2C = copy_arg0->var4;
+    sp2E = 0;
+    sp34 = copy_arg0->varC;
+    sp38 = copy_arg0->var10;
+    __rmonSendReply(&sp28, 0x18, 1);
+    return 0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonGetBranchTarget.s")
+
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088B64.s")
 #else
