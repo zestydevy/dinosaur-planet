@@ -56,6 +56,10 @@ struct UnkStruct_80064514 {
     s32 var20;
 };
 
+struct UnkStruct_n_sym_var34{
+    s32 padding[9];
+    s32 var24;
+};
 
 struct UnkStruct_n_syn {
     /* Padding memory address, as these are currently unknown*/
@@ -63,7 +67,8 @@ struct UnkStruct_n_syn {
     s32 var1C;
     s32 padding1[3];
     struct UnkStruct_80064514* var2C;
-    s32 padding2[4];
+    s32 padding30;
+    struct UnkStruct_n_sym_var34* var34;
     s32 var40;
 };
 //extern struct UnkStruct_n_syn* n_syn;
