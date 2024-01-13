@@ -209,4 +209,32 @@ typedef struct UnkStruct__rmonSetBreak{
     s32* var10; /*not sure if pointer or not*/
 }UnkStruct__rmonSetBreak;
 
+
+/* segment_BED0*/
+
+typedef struct UnkStruct_8000B2D0 {
+    s16 var0;
+    s16 var2;
+    s16 var4;
+    //s16 padding6;
+    s8* var8;
+    s32 varC;
+}UnkStruct_8000B2D0;
+
+typedef struct UnkStruct_8000B3E4 {
+    s16 var0;
+    s16 var2;
+    s16 var4;
+    //s16 padding6;
+    //struct UnkStruct_test* var8[1];
+    s32 var8;
+    s32 varC;
+}UnkStruct_8000B3E4;
+
+typedef struct UnkStruct_8000B6A4{
+    s16 var0;
+    s16 var2;
+}UnkStruct_8000B6A4;
+
+
 #endif //_VARIABLES_H_
