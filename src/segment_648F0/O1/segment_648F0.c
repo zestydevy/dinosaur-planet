@@ -1,7 +1,7 @@
 #include "common.h"
 
 /* Problem with this file is that it seems some funcitons need -g1 or -g2, but it adds extra jr ra nop assembly code to some functions.
-Could probably split this file into multiple files, no idea how that's work.
+Could probably split this file into multiple files, no idea how that would work.
 Might just be the case that -g1/-g2 shouldn't be used, I dont know.*/
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_648F0/O1/segment_648F0/n_alSynNew.s")

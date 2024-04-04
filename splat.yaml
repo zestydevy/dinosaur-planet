@@ -104,7 +104,7 @@ segments:
     - [0x67F20, c, segment_67F20]
     - [0x68FE0, c, segment_68FE0]
     - [0x6A0C0, c, segment_6A0C0]
-    - [0x6A0E0, c, segment_6A0E0]
+    - [0x6A0E0, c, segment_6A0E0/O1/segment_6A0E0]
     - [0x6A170, c, segment_6A170]
     - [0x6C490, c, segment_6C490]
     - [0x6C530, c, segment_6C530]

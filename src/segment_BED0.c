@@ -38,12 +38,12 @@ void func_8000B3C4(void* arg0) {
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_BED0/func_8000B3E4.s")
 #else
-/* might use arrays, but matches as is*/
+/* Might use arrays, but matches as is*/
 void func_8000B3E4(struct UnkStruct_8000B3E4* arg0, u8 arg1, void* arg2) {
     s32 var_v0;
     s32 sp18;
     
-    // probably a for loop
+    // Probably a for loop, couldn't get it to match
     var_v0 = 0;
     if (arg0->var2 > 0) {
         do {
@@ -58,6 +58,8 @@ void func_8000B3E4(struct UnkStruct_8000B3E4* arg0, u8 arg1, void* arg2) {
 
     bcopy(arg2, arg0->varC + (sp18 * arg0->var4), (s32) arg0->var4);
     
+    /* I think i kept this commented code because the way to get it to mathc was equally as scuffed*/
+
     // temp_v1_2 = arg0->var8 + (sp18 * 2);
     // *temp_v1_2 |= 0x80;
     *(u8*)(arg0->var8 + (sp18 * 2)) |= 0x80;
@@ -108,6 +110,5 @@ s32 func_8000B6BC(s16* arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_BED0/func_8000B89C.s")
 #else
 void func_8000B89C(s32 arg0) {
-
 }
 #endif

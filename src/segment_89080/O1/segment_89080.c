@@ -63,10 +63,10 @@ void func_8008852C(void) {
 #else
 int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
     register UnkStruct__rmonSetBreak* copy_arg0 = arg0;
-    //dont know if using register keywokrd is right here
-    register s32 var_s1; //assumed, but need to remove anyway, seems to be a refernece to either array
-    register s32** var_s2; //maybe reference to element one or 2
-    register s32** var_s3; //maybe reference to the last element, or size
+    // Dont know if using register keyword is right here, but it matches
+    register s32 var_s1; // Seems to be a refernece to array address
+    register s32** var_s2; // Maybe reference to element one or 2
+    register s32** var_s3; // Maybe reference to the last element, or size
     /*none of these are used until the bottom*/
     s32 sp3C;
     s32 sp38;
@@ -75,10 +75,8 @@ int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
     s16 sp2E;
     u8 unused2D;
     u8 sp2C;
-    s32 sp28; //assumed
+    s32 sp28; // Assumed type
     
-
-//some sort of nest functionality going on here that choses one of the two arrays
     if (arg0->var9 == 1) {
         var_s1 = &rmonbrk_bss_0088;
         var_s2 = &rmonbrk_bss_0088[2];
@@ -89,10 +87,15 @@ int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
         var_s3 = &rmonbrk_bss_0000[32];
     }
 
-    //my gut tells me this is a for loop, could use on of the five seemingly unused stack variables, the loop looks for the array element that is  equal to 0 and equal to arg0->var10
-    while ((u32) var_s2 < (u32) var_s3) {//would make sense if this means if current element is not the last, or within size
-        // if ((*var_s2 != 0) && (*(u32*)var_s2 != copy_arg0->var10)) { // if var10 non pointer
-        if ((*var_s2 == 0) || (*var_s2 == copy_arg0->var10)) { //if var10 pointer, also changed the ands to ors and fliped equals
+    // My gut tells me this is a for loop, but cant get it to match as a for loop. 
+    // Maybe uses one of the five seemingly unused stack variables
+    // The loop looks for the array element that is equal to 0 and equal to arg0->var10
+    while ((u32) var_s2 < (u32) var_s3) {// Would make sense if this means: if current element is not the last, or within bounds of array
+        // Use commented code below if var10 is a non pointer
+        // if ((*var_s2 != 0) && (*(u32*)var_s2 != copy_arg0->var10)) {
+
+        // Use code below if var10 is a pointer
+        if ((*var_s2 == 0) || (*var_s2 == copy_arg0->var10)) { 
             break;
         }
         var_s2 += 2;
@@ -140,7 +143,7 @@ int func_800887D4(s32 arg0) {
 #else
 int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
     register UnkStruct__rmonSetBreak* copy_arg0;
-    register s32** var_s1; /*could be something other than double pointer, array doesnt seem to work*/
+    register s32** var_s1; /* Could be something other than double pointer, array doesnt seem to work*/
     s32 unused3C;
     s32 sp38;
     s32 sp34;
@@ -153,7 +156,7 @@ int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
     
     
     
-    copy_arg0 = arg0; /* no idea why this was done*/
+    copy_arg0 = arg0; /* No idea why this was done*/
 
     if ((s32)copy_arg0->var10 >= 16) {
         return -2;
@@ -229,13 +232,13 @@ int __rmonSetSingleStep(s32 arg0, s32* arg1) {
 
     sp1C = __rmonGetBranchTarget(0, arg0, arg1);
     if (sp1C & 3) {
-        /* changed the + 4 to + 1, compiler seems to convert appropratly (pretty sure it means 1 word or byte) */
+        /* Changed the + 4 that was originally here to + 1, compiler seems to convert appropratly (pretty sure it means 1 word or byte) */
         func_80088480((s32) (arg1 + 1), NULL);
         
     }else if ((arg1+0) == (void*)sp1C) { /* had to add the + 0 to arg1 to get function to match */
         return 0;
     }
-    /* changed the + 8 to + 2, compiler seems to convert appropratly (pretty sure it means 2 words or bytes) */
+    /* Changed the + 8 to + 2, compiler seems to convert appropratly (pretty sure it means 2 words or bytes) */
     else if ((func_80088B64(*arg1) != 0) || ((arg1 + 2) == (void*)sp1C)) { 
         func_80088480(sp1C, NULL);
     } else {
@@ -271,7 +274,7 @@ void __rmonGetExceptionStatus(UnkStruct_rmonGetExceptionStatus* arg0) {
 #else
 void func_80088CFC(s32* arg0, s32 arg1) {
    
-    /*Unused varibles to padd out stakc frame, feels a bit hackey as for some reason
+    /*Unused varibles to pad out stack frame, feels a bit hackey as for some reason
     the stack frame size doesnt always change when a new variable is added*/
     s32 unused68;
     s32 unused64;
@@ -292,10 +295,10 @@ void func_80088CFC(s32* arg0, s32 arg1) {
     s32 unused30;
     s32 unused2c;
     s32 unused28;
-    s32 sp24; /* assuming variable type, it's an address anyway */
+    s32 sp24; /* Assuming variable type, it's an address anyway */
     
     
-    /* Hey future me, the inline conditional expression was how you solved the saved register problem*/
+    /* Hey future me, the inline conditional expression (ternary operator) was how you solved this problem with saved registers*/
     __rmonGetThreadStatus(0, (arg0 ? arg0 : 0x3EB), &sp24);
     __rmonGetExceptionStatus(&sp24);
     if (arg1 == 0xF) {
@@ -334,14 +337,13 @@ void __rmonHitBreak(void) {
 #else
 extern s8 __rmonRcpAtBreak;
 void __rmonHitSpBreak(void) {
-    /* Only thing that's wrong is the stack frame size and __rmonRcpAtBreak*/
+
     s32 unused[18]; /* This is to get the stack frame size to match*/
-    
     s32 sp24; /* this has got to be an address to struct*/
     
     __rmonWriteWordTo(0x04080000, __rmonReadWordAt(0x04080000) - 4);
     __rmonGetThreadStatus(1, 0x3E8, &sp24);
-    __rmonGetExceptionStatus(&sp24); /* this function uses a struct im sure*/
+    __rmonGetExceptionStatus(&sp24); /* This function uses a struct im sure*/
     __rmonSendReply(&sp24, 0x4C, 2);
     __rmonRcpAtBreak = 1;
 }
@@ -382,7 +384,7 @@ void func_80088E80() {
                 func_80088CFC(var_s0->id, 0xF);
             }
         }
-        var_s0 = var_s0->tlnext;/*gives warning but should be fine*/
+        var_s0 = var_s0->tlnext; /*Gives warning but should be fine*/
     } 
     
 }

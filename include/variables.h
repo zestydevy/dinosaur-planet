@@ -71,7 +71,6 @@ struct UnkStruct_n_syn {
     struct UnkStruct_n_sym_var34* var34;
     s32 var40;
 };
-//extern struct UnkStruct_n_syn* n_syn;
 
 typedef struct UnkStruct_8006C220 {
     s32 padding0[2]; /*Placeholder*/
@@ -162,7 +161,7 @@ struct UnkStruct_80065E6C {
     s32 var4;
 };
 
-/* struct for arg0*/
+/* struct for arg0 for func_80065DEC*/
 typedef struct UnkStruct_80065DEC {
     s32 padding[2];
     struct UnkStruct_80065DEC_VAR8* var8;
@@ -171,13 +170,13 @@ typedef struct UnkStruct_80065DEC {
 
 }UnkStruct_80065DEC;
 
-/* struct for arg0->var8*/
+/* struct for arg0->var8 in func_80065DEC*/
 typedef struct  UnkStruct_80065DEC_VAR8 {
     s32 padding0;
     struct UnkStruct_80065DEC_VAR8_VAR5* var4;
 } UnkStruct_80065DEC_VAR8;
 
-/* struct for arg0->var8->var5*/
+/* struct for arg0->var8->var5 in func_80065DEC*/
 typedef struct  UnkStruct_80065DEC_VAR8_VAR5 {
     s32 padding0;
     s8 padding4;
@@ -189,7 +188,7 @@ typedef struct UnkStruct_800663B8 {
     s8 var40;
 }UnkStruct_800663B8;
 
-/* i think this is a linked list*/
+/* I think this is a linked list*/
 struct UnkStruct_D_800938C0 {
     struct UnkStruct_D_800938C0* var0; /* must be address of next in linked list */
     /* Padding memory address, as these are currently unknown*/
@@ -216,7 +215,7 @@ typedef struct UnkStruct_8000B2D0 {
     s16 var0;
     s16 var2;
     s16 var4;
-    //s16 padding6;
+    //s16 padding6; /* cant remembr if this was needed at some point or not*/
     s8* var8;
     s32 varC;
 }UnkStruct_8000B2D0;
@@ -225,8 +224,8 @@ typedef struct UnkStruct_8000B3E4 {
     s16 var0;
     s16 var2;
     s16 var4;
-    //s16 padding6;
-    //struct UnkStruct_test* var8[1];
+    //s16 padding6;                     /* cant remembr if this was needed at some point or not*/
+    //struct UnkStruct_test* var8[1];   /* cant remembr if this was needed at some point or not*/
     s32 var8;
     s32 varC;
 }UnkStruct_8000B3E4;
