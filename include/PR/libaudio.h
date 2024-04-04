@@ -113,7 +113,9 @@ typedef u8      ALPan;
 typedef struct ALLink_s {
     struct ALLink_s      *next;
     struct ALLink_s      *prev;
+    s32 var8; /* could be an address*/
 } ALLink;
+
 
 void    alUnlink(ALLink *element);
 void    alLink(ALLink *element, ALLink *after);

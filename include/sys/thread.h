@@ -37,7 +37,7 @@ typedef struct {
     /* 0x0F4 */ s32 hi_up;
     /* 0x0F8 */ u32 hi;
     /* 0x0FC */ u32 sr;
-    /* 0x100 */ void* pc;
+    /* 0x100 */ s32* pc; /*was void pointer, s32 pointer seems to work so far*/
     /* 0x104 */ u32 cause;
     /* 0x108 */ u32 badvaddr;
     /* 0x10C */ u32 rcp;
