@@ -293,7 +293,20 @@ TActor *get_player(void) {
     else return NULL;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002394C.s")
+TActor *func_8002394C() {
+    TActor **actorList;
+    s32 count;
+
+    actorList = TActor_getter(1, &count);
+
+    if (count) {}
+
+    if (count != 0) {
+        return actorList[0];
+    } else {
+        return NULL;
+    }
+}
 
 void func_80023984(s8 *arg) { arg[0xAC] = -1; }
 
