@@ -34,4 +34,6 @@ void func_80060B94(Gfx**);
 
 OSSched *get_ossched(void);
 
+TActor **TActor_getter(s32 idx, s32 *count);
+
 #endif //_FUNCTIONS_H
