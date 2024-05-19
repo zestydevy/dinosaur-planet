@@ -60,7 +60,6 @@ def main():
             syms_toml.write("\n")
             
             dll_rom += entry.size
-            #dll_vram += math.ceil(entry.size / 32) * 32
             number += 1
 
 if __name__ == "__main__":
