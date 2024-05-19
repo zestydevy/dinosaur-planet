@@ -5,6 +5,7 @@ cxxfilt
 GitPython
 ninja
 pycparser>=2.21
+pyelftools
 pylibyaml
 pypng==0.0.20
 python-Levenshtein
