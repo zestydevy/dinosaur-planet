@@ -1,4 +1,5 @@
 import argparse
+import math
 import os
 from pathlib import Path
 
@@ -37,9 +38,10 @@ def main():
 
             syms_toml.write("[[section]]\n")
             syms_toml.write(f"name = \".dll{number}\"\n")
-            syms_toml.write("rom = 0x{:X}\n".format(dll_rom))
-            syms_toml.write("vram = 0x{:X}\n".format(dll_vram))
+            syms_toml.write("rom = 0x{:X}\n".format(dll_rom + dll.header.size))
+            syms_toml.write("vram = 0x{:X}\n".format(dll_vram + dll.header.size))
             syms_toml.write("size = 0x{:X}\n".format(entry.size))
+            syms_toml.write("gp = 0x{:X}\n".format(dll_vram + dll.header.rodata_offset))
             syms_toml.write("\n")
 
             syms_toml.write("relocs = [\n")
@@ -60,6 +62,7 @@ def main():
             syms_toml.write("\n")
             
             dll_rom += entry.size
+            dll_vram += math.ceil((entry.size + entry.bss_size) / 4096) * 4096
             number += 1
 
 if __name__ == "__main__":
