@@ -70,7 +70,7 @@ def gen_core_syms(syms_toml: TextIO):
         i += 1
     syms_toml.write("]\n")
 
-def gen_dll_syms(syms_toml: TextIO):
+def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
     with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:
         tab = DLLTab.parse(bytearray(tab_file.read()))
 
@@ -89,6 +89,8 @@ def gen_dll_syms(syms_toml: TextIO):
         assert len(dll_data) == entry.size
 
         dll = DLL.parse(dll_data, str(number), include_funcs=True)
+
+        dlls_txt.write(f".dll{number}\n")
 
         syms_toml.write("\n")
         syms_toml.write("[[section]]\n")
@@ -124,18 +126,20 @@ def main():
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project (default=..).", default="..")
     args = parser.parse_args()
 
-    out_path = Path("dino.syms.toml").absolute()
+    out_syms_path = Path("dino.syms.toml").absolute()
+    out_dlls_txt_path = Path("dino.dlls.txt").absolute()
 
     # Do all path lookups from the base directory
     os.chdir(Path(args.base_dir).resolve())
 
     # Gen syms
-    with open(out_path, "w", encoding="utf-8") as syms_toml:
+    with open(out_syms_path, "w", encoding="utf-8") as syms_toml:
         print("Generating core symbols...")
         gen_core_syms(syms_toml)
         print("Generating DLL symbols...")
-        gen_dll_syms(syms_toml)
-    print("Done. Wrote symbols to {}".format(out_path))
+        with open(out_dlls_txt_path, "w", encoding="utf-8") as dlls_txt:
+            gen_dll_syms(syms_toml, dlls_txt)
+    print("Done. Wrote symbols to {}".format(out_syms_path))
 
 if __name__ == "__main__":
     main()
