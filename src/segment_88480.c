@@ -1,12 +1,12 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/func_80087880.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/LoadStoreSU.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/func_80087904.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/LoadStoreVU.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/func_80087998.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/SetUpForRCPop.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/func_80087A40.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/CleanupFromRCPop.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/__rmonGetGRegisters.s")
 
@@ -16,7 +16,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/__rmonSetFRegisters.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/func_80087F00.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/rmonGetRcpRegister.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_88480/__rmonGetSRegs.s")
 

@@ -1,18 +1,18 @@
 #include "common.h"
 
-/* Declaring func_80088E80 up here, as other funcs use it before its implementation which causes redeclaration compile errors*/
-void func_80088E80();
+/* Declaring rmonFindFaultedThreads up here, as other funcs use it before its implementation which causes redeclaration compile errors*/
+void rmonFindFaultedThreads();
 
 extern s32* rmonbrk_bss_0000[32]; /* size may be wrong, element 32 referenced in __rmonSetBreak */
 extern s32* rmonbrk_bss_0088[32]; /* size may be wrong, element 32 referenced in __rmonSetBreak */
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088480.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/SetTempBreakpoint.s")
 #else
 extern s32* D_800D3E60;
 extern s32 D_800D3E64;
 
-void func_80088480(s32* arg0, s32* arg1) {
+void SetTempBreakpoint(s32* arg0, s32* arg1) {
     rmonbrk_bss_0000[1] = (s32) *arg0;
     *arg0 = 0x40D;
     osWritebackDCache(arg0, 4);
@@ -29,12 +29,12 @@ void func_80088480(s32* arg0, s32* arg1) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_8008852C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/ClearTempBreakpoint.s")
 #else
 extern s32* D_800D3E60;
 extern s32 D_800D3E64;
 
-void func_8008852C(void) {
+void ClearTempBreakpoint(void) {
     s32 sp1C;
 
     if (rmonbrk_bss_0000[0] != NULL) {
@@ -130,10 +130,10 @@ int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_800887D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonListBreak.s")
 #else
 /* Must be unused*/
-int func_800887D4(s32 arg0) {
+int __rmonListBreak(s32 arg0) {
     return -1;
 }
 #endif
@@ -200,10 +200,10 @@ int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonGetBranchTarget.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088B64.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/IsJump.s")
 #else
     
-    int func_80088B64(u32 arg0) {
+    int IsJump(u32 arg0) {
     
     switch ((arg0 >> 0x1A) & 0x3F) {                              /* irregular */
         case 0:
@@ -233,17 +233,17 @@ int __rmonSetSingleStep(s32 arg0, s32* arg1) {
     sp1C = __rmonGetBranchTarget(0, arg0, arg1);
     if (sp1C & 3) {
         /* Changed the + 4 that was originally here to + 1, compiler seems to convert appropratly (pretty sure it means 1 word or byte) */
-        func_80088480((s32) (arg1 + 1), NULL);
+        SetTempBreakpoint((s32) (arg1 + 1), NULL);
         
     }else if ((arg1+0) == (void*)sp1C) { /* had to add the + 0 to arg1 to get function to match */
         return 0;
     }
     /* Changed the + 8 to + 2, compiler seems to convert appropratly (pretty sure it means 2 words or bytes) */
-    else if ((func_80088B64(*arg1) != 0) || ((arg1 + 2) == (void*)sp1C)) { 
-        func_80088480(sp1C, NULL);
+    else if ((IsJump(*arg1) != 0) || ((arg1 + 2) == (void*)sp1C)) { 
+        SetTempBreakpoint(sp1C, NULL);
     } else {
         /* Same here*/
-        func_80088480(sp1C, arg1 + 2);
+        SetTempBreakpoint(sp1C, arg1 + 2);
     }
     
     
@@ -270,9 +270,9 @@ void __rmonGetExceptionStatus(UnkStruct_rmonGetExceptionStatus* arg0) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088CFC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/rmonSendBreakMessage.s")
 #else
-void func_80088CFC(s32* arg0, s32 arg1) {
+void rmonSendBreakMessage(s32* arg0, s32 arg1) {
    
     /*Unused varibles to pad out stack frame, feels a bit hackey as for some reason
     the stack frame size doesnt always change when a new variable is added*/
@@ -325,9 +325,9 @@ void func_80088CFC(s32* arg0, s32 arg1) {
 #else
 
 void __rmonHitBreak(void) {
-    func_8008852C();
+    ClearTempBreakpoint();
     __rmonStopUserThreads(0);
-    func_80088E80();
+    rmonFindFaultedThreads();
 }
 #endif
 
@@ -350,19 +350,19 @@ void __rmonHitSpBreak(void) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088E50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/__rmonHitCpuFault.s")
 #else
-void func_80088E50(void) {
+void __rmonHitCpuFault(void) {
         __rmonMaskIdleThreadInts();
         __rmonStopUserThreads(0);
-        func_80088E80();
+        rmonFindFaultedThreads();
     }
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/func_80088E80.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/O1/segment_89080/rmonFindFaultedThreads.s")
 #else
-void func_80088E80() {
+void rmonFindFaultedThreads() {
 
     /*Seems right to use register keyword, got compiler to use 'save' register*/
     register struct OSThread * var_s0 = __osGetActiveQueue();
@@ -374,14 +374,14 @@ void func_80088E80() {
             if (var_s0->flags & 1) {
                 sp20 = *(var_s0->context.pc);
                 if ((sp20 & 0xFC00003F) == 0xD) {
-                    func_80088CFC(var_s0->id, sp20 >> 6);
+                    rmonSendBreakMessage(var_s0->id, sp20 >> 6);
                 } else {
-                    func_80088CFC(var_s0->id, 0);
+                    rmonSendBreakMessage(var_s0->id, 0);
                 }
             }
             if (var_s0->flags & 2) {
                 __rmonSendFault(var_s0);
-                func_80088CFC(var_s0->id, 0xF);
+                rmonSendBreakMessage(var_s0->id, 0xF);
             }
         }
         var_s0 = var_s0->tlnext; /*Gives warning but should be fine*/
