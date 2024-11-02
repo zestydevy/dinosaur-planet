@@ -34,6 +34,8 @@ def write_model_asm_hack(syms_toml: TextIO):
 def gen_core_syms(syms_toml: TextIO):
     textStart = 0x80000400
     textSize = 0x89350
+    segmentStart = textStart
+    segmentSize = 0xA3AA0
     textEnd = textStart + textSize
 
     funcs = []
@@ -72,8 +74,8 @@ def gen_core_syms(syms_toml: TextIO):
     syms_toml.write("[[section]]\n")
     syms_toml.write("name = \".segment\"\n")
     syms_toml.write("rom = 0x00001000\n")
-    syms_toml.write("vram = 0x{:X}\n".format(textStart))
-    syms_toml.write("size = 0x{:X}\n".format(textSize))
+    syms_toml.write("vram = 0x{:X}\n".format(segmentStart))
+    syms_toml.write("size = 0x{:X}\n".format(segmentSize))
     syms_toml.write("\n")
 
     syms_toml.write("functions = [\n")
@@ -134,9 +136,9 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
 
         syms_toml.write("relocs = [\n")
         for reloc in dll.reloc_table.gp_relocations:
-            syms_toml.write("    {{ type = \"R_MIPS_HI16\", vram = 0x{:X}, target_vram = 0x{:X} }},\n"
+            syms_toml.write("    {{ type = \"R_MIPS_HI16\", vram = 0x{:X}, target_vram = 0x{:X}, unaligned = true }},\n"
                 .format(dll_vram + dll.header.size + reloc, dll_vram + dll.header.rodata_offset))
-            syms_toml.write("    {{ type = \"R_MIPS_LO16\", vram = 0x{:X}, target_vram = 0x{:X} }},\n"
+            syms_toml.write("    {{ type = \"R_MIPS_LO16\", vram = 0x{:X}, target_vram = 0x{:X}, unaligned = true }},\n"
                 .format(dll_vram + dll.header.size + reloc + 4, dll_vram + dll.header.rodata_offset))
         syms_toml.write("]\n")
         syms_toml.write("\n")
