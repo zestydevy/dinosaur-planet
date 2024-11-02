@@ -1025,17 +1025,3 @@ void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
 
 void doNothing_8001B4E4(s32 arg) {}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4F0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B6F0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BC00.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BCF0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BF70.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/convert_mtxf_to_mtx_in_pool.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001CAA4.s")

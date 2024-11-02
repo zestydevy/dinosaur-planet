@@ -55,6 +55,7 @@ segments:
     - [0x17180, c, vec3]
     - [0x17500, c, memory]
     - [0x18820, c, model]
+    - [0x1C0F0, asm, model_asm]
     - [0x1D900, c, segment_1D900]
     - [0x20490, c, segment_20490]
     - [0x21150, c, object]
