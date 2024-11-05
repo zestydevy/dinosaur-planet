@@ -63,7 +63,32 @@ DLLInst * get_loaded_dlls(u32 * arg0) {
     return gLoadedDLLList;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/dll_load_deferred.s")
+#else
+void *dll_load_deferred(u32 id, u16 param) {
+    DLLFile *dll;
+    DLLInst *dllInst;
+    u32 *dllExports;
+
+    dllExports = 0;
+    
+    if (((u16)id) == 0) {
+        return NULL;
+    }
+
+    queue_load_dll((void**)&dllExports, (u16)id, param);
+
+    dllInst = (DLLInst *)(dllExports - 2);
+
+    if (dllInst->refCount == 1) {
+        dll = (DLLFile*)(*dllExports - 0x18);
+        dll->ctor((u32)dll);
+    }
+
+    return dllExports;
+}
+#endif
 
 // Returns pointer to DLLInst exports field
 u32* dll_load(u16 id, u16 exportCount, s32 arg2)
@@ -180,53 +205,55 @@ void func_8000C0B8(u16 id, s32 arg1, s32 arg2, s32 arg3)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dll/func_8000C258.s")
 #else
-u32 _func_8000C258(u32 arg0);
-u32 _func_8000C258(u32 arg0)
-{
-    u16 v1;
-    u16 t8;
-    DLLFile * sp0034;
+u32 func_8000C258(DLLInst *param1) {
+    DLLFile *dll;
+    u16 idx;
+    u16 addr;
+    u32 *dllTextEnd;
+    u32 *dllTextAddr;
 
-    v1 = ((arg0 - (u32)gLoadedDLLList) - 8);
+    addr = (((u8*)param1 - (u8*)gLoadedDLLList) - 8);
 
-    if ((v1 & 0xF) != 0) {
+    if ((addr & 0xF) != 0) {
         return 0;
     }
 
-    t8 = (v1 >> 4);
+    idx = ((u32)addr >> 4);
 
-    if (t8 >= gLoadedDLLCount) {
+    if (idx >= gLoadedDLLCount) {
         return 0;
     }
 
-    --gLoadedDLLList[t8].refCount;
+    gLoadedDLLList[idx].refCount--;
 
-    if (gLoadedDLLList[t8].refCount < 0) {
-        return 0;
-    }
+    if (gLoadedDLLList[idx].refCount == 0) {
+        dll = (DLLFile*)(gLoadedDLLList[idx].exports - (0x18 / 4));
+        
+        dll->dtor((u32)dll);
 
-    sp0034 = (DLLFile *)((u32)(gLoadedDLLList[t8].exports) - 0x18);
+        dllTextAddr = gLoadedDLLList[idx].exports;
+        dllTextEnd = gLoadedDLLList[idx].end;
 
-    sp0034->dtor((s32)sp0034);
-
-    if (gLoadedDLLList[t8].exports < gLoadedDLLList[t8].end) {
-        u32 * exports = gLoadedDLLList[t8].exports;
-        while (exports < gLoadedDLLList[t8].end) {
-            exports += 4;
-            *(exports - 0x4) = (u32)0x7000D;
+        while (dllTextAddr < dllTextEnd) {
+            *(dllTextAddr++) = 0x7000D;
         }
-    }
 
-    free(sp0034);
+        free(dll);
 
-    while (gLoadedDLLCount != 0) {
-        if (-1 == gLoadedDLLList[gLoadedDLLCount-1].id) {
-            return 1;
+        gLoadedDLLList[idx].id = 0xFFFFFFFF;
+
+        while (gLoadedDLLCount != 0) {
+            if (gLoadedDLLList[gLoadedDLLCount - 1].id != 0xFFFFFFFF) {
+                break;
+            }
+
+            gLoadedDLLCount--;
         }
-        --gLoadedDLLCount;
+
+        return 1;
     }
 
-    return gLoadedDLLCount;
+    return 0;
 }
 #endif
 
