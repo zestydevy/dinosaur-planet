@@ -81,6 +81,16 @@ typedef struct
 
 typedef struct
 {
+/*0000*/    f32 unk0x0;
+/*0004*/    f32 unk0x4;
+/*0008*/    f32 unk0x8;
+/*000C*/    s8 unk0xC;
+/*000D*/    s8 unk0xD;
+/*000E*/    u8 unk0xE;
+} ModelInstance_0x30;
+
+typedef struct
+{
     // TODO
 /*0000*/    Model *model;
 /*0004*/    void *unk_0x4[2];
@@ -90,8 +100,11 @@ typedef struct
 /*001C*/    u8 unk_0x1c[0x28 - 0x1c];
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
-/*0030*/    u32 unk_0x30;
+/*0030*/    ModelInstance_0x30 *unk_0x30;
 /*0034*/    u16 unk_0x34;
 } ModelInstance;
+
+void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
+void func_8001B084(ModelInstance *modelInst, f32 param2);
 
 #endif //_SYS_GFX_MODEL_H

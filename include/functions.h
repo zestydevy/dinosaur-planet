@@ -36,4 +36,12 @@ OSSched *get_ossched(void);
 
 TActor **TActor_getter(s32 idx, s32 *count);
 
+void transform_point_by_actor(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, TActor *actor);
+
+void update_pi_manager_array(s32 index, s32 value);
+
+void add_object_to_array(TActor *actor, s32 param2);
+
+void write_c_file_label_pointers(char *cFileLabel, s32 a1);
+
 #endif //_FUNCTIONS_H
