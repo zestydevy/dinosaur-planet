@@ -12,20 +12,20 @@ GenericStack *generic_stack_init(GenericStack *stack, void *data, s32 capacity, 
 }
 
 GenericStack *generic_stack_new(s32 capacity, s32 elementSize) {
-    GenericStack *buf;
+    GenericStack *stack;
 
-    buf = malloc(
+    stack = malloc(
         /*elementSize*/(elementSize * capacity) + (sizeof(GenericStack)),
         /*tag*/ALLOC_TAG_TEST_COL,
         /*name*/NULL);
     
-    buf->data = buf + 1;
-    buf->count = 0;
-    buf->capacity = capacity;
-    buf->elementSize = elementSize;
-    buf->top = 0;
+    stack->data = stack + 1;
+    stack->count = 0;
+    stack->capacity = capacity;
+    stack->elementSize = elementSize;
+    stack->top = 0;
 
-    return buf;
+    return stack;
 }
 
 void generic_stack_free(GenericStack *stack) {

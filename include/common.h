@@ -25,6 +25,7 @@
 #include "sys/crash.h"
 #include "sys/asset_thread.h"
 #include "sys/generic_stack.h"
+#include "sys/generic_queue.h"
 #include "game/gamebits.h"
 #include "game/actor/objdata.h"
 #include "game/actor/hitbox.h"

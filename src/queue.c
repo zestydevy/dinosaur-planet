@@ -1,13 +1,25 @@
 #include "common.h"
 
-extern GenericStack D_800AE1C0;
-extern UnkStructFunc80012A4C D_800AE1D8[5];
+extern GenericStack gAssetThreadStackInternal;
+extern UnkStructFunc80012A4C gAssetThreadStackData[5];
+
+extern GenericQueue *gAssetThreadQueueInternal;
+extern UnkStructAssetThreadSingle gAssetThreadQueueData[100];
 
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
 
-    D_800ACBC8 = func_8000ADF0(&D_800ACBB8, &D_800ACBD0, 0x64, 0x1C);
-    D_800AE1D0 = generic_stack_init(&D_800AE1C0, (void*)&D_800AE1D8, 5, sizeof(UnkStructFunc80012A4C));
+    gAssetThreadQueue = generic_queue_init(
+        &gAssetThreadQueueInternal, 
+        (void*)&gAssetThreadQueueData, 
+        100, 
+        sizeof(UnkStructAssetThreadSingle));
+    
+    gAssetThreadStack = generic_stack_init(
+        &gAssetThreadStackInternal, 
+        (void*)&gAssetThreadStackData, 
+        5, 
+        sizeof(UnkStructFunc80012A4C));
     
     osCreateThread(&assetThread, ASSET_THREAD_ID, &asset_thread_main, 0,
         &assetThreadStackEnd, ASSET_THREAD_PRIORITY);
@@ -23,7 +35,7 @@ void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s
     struct AssetLoadThreadMsg sp1C;
 
     sp18 = func_with_status_reg();
-    if (func_8000AFDC(D_800ACBC8) == 0) {
+    if (generic_queue_is_full(gAssetThreadQueue) == 0) {
         sp1C.loadCategory = arg1;
         sp1C.unk4 = arg2;
         sp1C.unk8 = arg3;
@@ -31,7 +43,7 @@ void _func_80012584(s32 arg0, u8 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s
         sp1C.unk10 = arg5;
         sp1C.unk14 = arg6;
         sp1C.unk18 = arg7;
-        func_8000AE98(D_800ACBC8, &sp1C);
+        generic_queue_enqueue(gAssetThreadQueue, &sp1C);
     }
     set_status_reg(sp18);
 }
@@ -144,7 +156,7 @@ void _func_800129E4(void) {
 
     sp18 = func_with_status_reg();
     func_80012A4C();
-    if ((*D_800ACBC8 != 0) && (D_800ACB48.unk8 == 0)) {
+    if ((*gAssetThreadQueue != 0) && (D_800ACB48.unk8 == 0)) {
         D_800AE240 = 0;
         osSendMesg(&D_800ACB48, &D_800AE240, 0);
     }
@@ -157,8 +169,8 @@ void func_80012A4C(void) {
 
     while (osRecvMesg(&D_800ACB68, NULL, 0) != -1);
 
-    while (D_800AE1D0->count != 0) {
-        generic_stack_pop(D_800AE1D0, &sp24);
+    while (gAssetThreadStack->count != 0) {
+        generic_stack_pop(gAssetThreadStack, &sp24);
 
         switch (sp24.unk0) {
             case 5:
@@ -195,20 +207,20 @@ void _func_80012B54(s32 arg0, s32 arg1) {
 
     sp38 = func_with_status_reg();
     func_80012A4C();
-    func_8000ADF0(&D_800AD6C0, &D_800AD6D0, 0x64, 0x1C);
-    while (func_8000AFF8(D_800ACBC8) == 0) {
-        func_8000AF0C(D_800ACBC8, &sp3C);
+    generic_queue_init(&D_800AD6C0, &D_800AD6D0, 0x64, 0x1C);
+    while (generic_queue_is_empty(gAssetThreadQueue) == 0) {
+        generic_queue_dequeue(gAssetThreadQueue, &sp3C);
         if (arg0 != sp3C) {
-            func_8000AE98(&D_800AD6C0, &sp3C);
+            generic_queue_enqueue(&D_800AD6C0, &sp3C);
         } else if ((arg0 == 4) && (arg1 != sp44->unk14)) {
-            func_8000AE98(&D_800AD6C0, &sp3C);
+            generic_queue_enqueue(&D_800AD6C0, &sp3C);
         }
     }
-    D_800ACBC8->unk0 = D_800AD6C0;
-    D_800ACBC8->unk8 = D_800AD6C8;
-    D_800ACBC8->unkA = D_800AD6CA;
-    D_800ACBC8->unk6 = D_800AD6C6;
-    bcopy(*0x800AD6CC, D_800ACBC8->unkC, *0x800AD6C2 * 0x1C);
+    gAssetThreadQueue->unk0 = D_800AD6C0;
+    gAssetThreadQueue->unk8 = D_800AD6C8;
+    gAssetThreadQueue->unkA = D_800AD6CA;
+    gAssetThreadQueue->unk6 = D_800AD6C6;
+    bcopy(*0x800AD6CC, gAssetThreadQueue->unkC, *0x800AD6C2 * 0x1C);
     if ((D_800AE29D != 0) && (arg0 == D_800AE29E)) {
         set_status_reg(sp38);
         osRecvMesg(&D_800ACB68, 0, 1);
@@ -237,7 +249,7 @@ void _queue_block_emplace(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 phi_a2;
 
     temp_v0 = func_with_status_reg();
-    temp_a0 = D_800AE1D0;
+    temp_a0 = gAssetThreadStack;
     temp_a2 = temp_v0;
     temp_a1 = &sp20;
     phi_a2 = temp_a2;
@@ -293,13 +305,13 @@ void _asset_thread_main(s32 arg0) {
 #endif
 
 void asset_thread_load_single(void) {
-    struct UnkStructAssetThreadSingle sp2C;
+    UnkStructAssetThreadSingle sp2C;
     s32 sp28;
     s32 tmp;
 
     sp28 = func_with_status_reg();
-    if (func_8000AFF8(D_800ACBC8) == 0) {
-        func_8000AF0C(D_800ACBC8, &sp2C);
+    if (generic_queue_is_empty(gAssetThreadQueue) == 0) {
+        generic_queue_dequeue(gAssetThreadQueue, &sp2C);
         D_800AE29D = 1;
         D_800AE29E = sp2C.unk0;
         set_status_reg(sp28);
