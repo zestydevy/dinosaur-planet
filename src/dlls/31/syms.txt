@@ -1,0 +1,26 @@
+dll_31_ctor = 0x0;
+dll_31_dtor = 0x60;
+dll_31_func_6C = 0x6C;
+dll_31_func_224 = 0x224;
+dll_31_func_404 = 0x404;
+dll_31_osFlashInit = 0x4DC;
+dll_31_func_638 = 0x638;
+dll_31_osFlashReadStatus = 0x640;
+dll_31_osFlashReadId = 0x70C;
+dll_31_osFlashClearStatus = 0x820;
+dll_31_osFlashSectorErase = 0x88C;
+dll_31_osFlashWriteBuffer = 0x9A4;
+dll_31_osFlashWriteArray = 0xA50;
+dll_31_osFlashReadArray = 0xB48;
+osCreateMesgQueue = 0x800000F9;
+osInvalDCache = 0x800000FA;
+osRecvMesg = 0x800000FB;
+osWritebackDCache = 0x800000FC;
+malloc = 0x8000002D;
+bzero = 0x8000002C;
+osEPiLinkHandle = 0x800000FD;
+osEPiWriteIo = 0x800000FE;
+osEPiReadIo = 0x800000FF;
+osEPiStartDma = 0x80000100;
+
+OSPiHandle_81083fb8 = 0xFB8;
