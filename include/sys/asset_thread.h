@@ -3,6 +3,8 @@
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
+#include "sys/generic_stack.h"
+
 #define ASSET_THREAD_ID 99
 #define ASSET_THREAD_PRIORITY 11
 
@@ -85,22 +87,25 @@ extern OSMesgQueue assetLoadThreadSendQueue, //send load requests to asset threa
     D_800ACB68,
     assetLoadThreadRecvQueue; //receive acknowledgement from asset thread
 
+typedef struct {
+    u8 unk0;
+    u32 *unk4;
+    u32 unk8;
+    u32 unkC;
+    u32 unk10;
+} UnkStructFunc80012A4C;
+
 struct UnkStruct8000ADF0 {
     s16 unk0;
 };
 extern struct UnkStruct8000ADF0 *D_800ACBC8;
 struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
 
-struct UnkStruct8000B010 {
-    s16 unk0;
-};
-extern struct UnkStruct8000B010 *D_800AE1D0;
-struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
+extern GenericStack *D_800AE1D0;
 
 extern u8 gDisableObjectStreamingFlag;
 extern u8 D_800AE29D, D_800AE29E;
 extern s32 *D_800ACBB8, *D_800ACBD0;
-extern s32 *D_800AE1C0, *D_800AE1D8;
 extern u64 *assetThreadStackEnd; // end of stack
 extern OSThread *assetThread;
 

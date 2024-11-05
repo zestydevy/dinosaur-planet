@@ -1,9 +1,14 @@
 #include "common.h"
 
+extern GenericStack D_800AE1C0;
+extern UnkStructFunc80012A4C D_800AE1D8[5];
+
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
+
     D_800ACBC8 = func_8000ADF0(&D_800ACBB8, &D_800ACBD0, 0x64, 0x1C);
-    D_800AE1D0 = func_8000B010(&D_800AE1C0, &D_800AE1D8, 5, 0x14);
+    D_800AE1D0 = generic_stack_init(&D_800AE1C0, (void*)&D_800AE1D8, 5, sizeof(UnkStructFunc80012A4C));
+    
     osCreateThread(&assetThread, ASSET_THREAD_ID, &asset_thread_main, 0,
         &assetThreadStackEnd, ASSET_THREAD_PRIORITY);
     osStartThread(&assetThread);
@@ -147,20 +152,13 @@ void _func_800129E4(void) {
 }
 #endif
 
-struct UnkStructFunc80012A4C {
-    u8 unk0;
-    u32 *unk4;
-    u32 unk8;
-    u32 unkC;
-    u32 unk10;
-};
 void func_80012A4C(void) {
-    struct UnkStructFunc80012A4C sp24;
+    UnkStructFunc80012A4C sp24;
 
     while (osRecvMesg(&D_800ACB68, NULL, 0) != -1);
 
-    while (D_800AE1D0->unk0 != 0) {
-        func_8000B124(D_800AE1D0, &sp24);
+    while (D_800AE1D0->count != 0) {
+        generic_stack_pop(D_800AE1D0, &sp24);
 
         switch (sp24.unk0) {
             case 5:
@@ -250,7 +248,7 @@ void _queue_block_emplace(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
         sp28 = arg2;
         sp2C = arg3;
         sp30 = arg4;
-        func_8000B0B0(temp_a0, temp_a1, temp_a2);
+        generic_stack_push(temp_a0, temp_a1, temp_a2);
         phi_a2 = sp34;
     }
     set_status_reg(phi_a2);

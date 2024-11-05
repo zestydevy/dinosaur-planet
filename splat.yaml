@@ -37,7 +37,7 @@ segments:
     - [0x1E20, c, camera]
     - [0x5660, c, segment_5660]
     - [0x7B50, c, segment_7B50]
-    - [0xBC10, c, segment_BC10]
+    - [0xBC10, c, generic_stack]
     - [0xBED0, c, segment_BED0]
     - [0xC4B0, c, bitstream]
     - [0xC660, c, C660]

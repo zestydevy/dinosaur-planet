@@ -1271,3 +1271,15 @@ doNothing_8001B4E4 = 0x8001B4E4; // type:func
 get_num_objects = 0x800212D8; // type:func
 update_obj_hitboxes = 0x80026C14; // type:func
 obj_do_hit_detection = 0x800271FC; // type:func
+
+generic_stack_init = 0x8000B010; // type:func
+generic_stack_new = 0x8000B030; // type:func
+generic_stack_free = 0x8000B090; // type:func
+generic_stack_push = 0x8000B0B0; // type:func
+generic_stack_pop = 0x8000B124; // type:func
+generic_stack_delete_element = 0x8000B194; // type:func
+generic_stack_func_8000B23C = 0x8000B23C; // type:func
+generic_stack_func_8000B248 = 0x8000B248; // type:func
+generic_stack_func_8000B260 = 0x8000B260; // type:func
+generic_stack_is_full = 0x8000B29C; // type:func
+generic_stack_is_empty = 0x8000B2B8; // type:func
