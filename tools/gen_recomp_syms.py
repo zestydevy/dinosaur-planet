@@ -12,24 +12,31 @@ from dino.dll_tab import DLLTab
 BIN_PATH = Path("bin")
 BUILD_PATH = Path("build")
 
-def write_model_asm_hack(syms_toml: TextIO):
+# vram -> function def
+FUNCTION_DEF_HACKS = {
+    # These functions are supposed to fallthrough to the next function
+    0x80016178: { "name": "cos16_precise", "size": 0x60 },
+    0x800161d8: { "name": "cos16", "size": 0x44 },
+    0x800162f4: { "name": "fcos16", "size": 0x54 },
+
     # 0x8001B4F0-0x8001C8D4 is handwritten assembly that trips up recomp, split it into a bunch of
     # functions that don't technically exist to get recomp working. This will basically make problematic
     # conditional branches turn into condotional tail calls into these fake functions
-    syms_toml.write("    { name = \"func_8001B4F0\", vram = 0x8001B4F0, size = 0x200 },\n")
-    syms_toml.write("    { name = \"func_8001B6F0\", vram = 0x8001B6F0, size = 0x510 },\n")
-    syms_toml.write("    { name = \"func_8001BC00\", vram = 0x8001BC00, size = 0xF0 },\n")
-    syms_toml.write("    { name = \"func_8001BCF0\", vram = 0x8001BCF0, size = 0x280 },\n")
-    syms_toml.write("    { name = \"func_8001BF70\", vram = 0x8001BF70, size = 0x268 },\n")
-    syms_toml.write("    { name = \"func_8001C1D8\", vram = 0x8001C1D8, size = 0x3C8 },\n")
-    syms_toml.write("    { name = \"func_8001C5A0\", vram = 0x8001C5A0, size = 0x78 },\n")
-    syms_toml.write("    { name = \"func_8001C618\", vram = 0x8001C618, size = 0x48 },\n")
-    syms_toml.write("    { name = \"func_8001C660\", vram = 0x8001C660, size = 0x34 },\n")
-    syms_toml.write("    { name = \"func_8001C694\", vram = 0x8001C694, size = 0x34 },\n")
-    syms_toml.write("    { name = \"func_8001C6C8\", vram = 0x8001C6C8, size = 0x16C },\n")
-    syms_toml.write("    { name = \"func_8001C834\", vram = 0x8001C834, size = 0x8 },\n")
-    syms_toml.write("    { name = \"func_8001C83C\", vram = 0x8001C83C, size = 0x64 },\n")
-    syms_toml.write("    { name = \"func_8001C8A0\", vram = 0x8001C8A0, size = 0x34 },\n")
+    0x8001B4F0: { "name": "func_8001B4F0", "size": 0x200 },
+    0x8001B6F0: { "name": "func_8001B6F0", "size": 0x510 },
+    0x8001BC00: { "name": "func_8001BC00", "size": 0xF0 },
+    0x8001BCF0: { "name": "func_8001BCF0", "size": 0x280 },
+    0x8001BF70: { "name": "func_8001BF70", "size": 0x268 },
+    0x8001C1D8: { "name": "func_8001C1D8", "size": 0x3C8 },
+    0x8001C5A0: { "name": "func_8001C5A0", "size": 0x78 },
+    0x8001C618: { "name": "func_8001C618", "size": 0x48 },
+    0x8001C660: { "name": "func_8001C660", "size": 0x34 },
+    0x8001C694: { "name": "func_8001C694", "size": 0x34 },
+    0x8001C6C8: { "name": "func_8001C6C8", "size": 0x16C },
+    0x8001C834: { "name": "func_8001C834", "size": 0x8 },
+    0x8001C83C: { "name": "func_8001C83C", "size": 0x64 },
+    0x8001C8A0: { "name": "func_8001C8A0", "size": 0x34 },
+}
 
 def gen_core_syms(syms_toml: TextIO):
     textStart = 0x80000400
@@ -40,10 +47,6 @@ def gen_core_syms(syms_toml: TextIO):
 
     funcs = []
     vrams: dict[int, int] = {}
-
-    model_asm_hack_start = 0x8001B4F0
-    model_asm_hack_end = 0x8001C8D4
-    wrote_model_asm_hack = False
 
     with open(BUILD_PATH.joinpath("dino.elf"), "rb") as file:
         elf = ELFFile(file)
@@ -59,6 +62,12 @@ def gen_core_syms(syms_toml: TextIO):
 
             if sym.name.startswith("L8"):
                 continue
+
+            def_hack = FUNCTION_DEF_HACKS.get(value)
+            if def_hack != None:
+                assert def_hack["name"] == sym.name
+                size = def_hack["size"]
+                print("Overriding function {} definition to 0x{:X}".format(sym.name, size))
         
             func = { "name": sym.name, "vram": value, "size": size if size != 0 else None }
 
@@ -68,6 +77,12 @@ def gen_core_syms(syms_toml: TextIO):
                 funcs.append(func)
             elif funcs[idx]["name"].startswith("func_") or funcs[idx]["name"] == "":
                 funcs[idx] = func
+    
+    for (vram, hack) in FUNCTION_DEF_HACKS.items():
+        if vrams.get(vram) == None:
+            func = { "name": hack["name"], "vram": vram, "size": hack["size"] }
+            funcs.append(func)
+            print("Adding manual function definition {} @ 0x{:X} with size 0x{:X}".format(hack["name"], vram, hack["size"]))
     
     funcs.sort(key=lambda f : f["vram"])
     
@@ -84,21 +99,16 @@ def gen_core_syms(syms_toml: TextIO):
         name = func["name"]
         vram = func["vram"]
         size = func["size"]
+
+        if size == None:
+            print(f"Inferring size for {name}")
+            if i < len(funcs) - 1:
+                size = funcs[i + 1]["vram"] - vram
+            else:
+                size = textEnd - vram
         
-        if vram >= model_asm_hack_start and vram < model_asm_hack_end:
-            if not wrote_model_asm_hack:
-                write_model_asm_hack(syms_toml)
-                wrote_model_asm_hack = True
-        else:
-            if size == None:
-                print(f"Inferring size for {name}")
-                if i < len(funcs) - 1:
-                    size = funcs[i + 1]["vram"] - vram
-                else:
-                    size = textEnd - vram
-            
-            syms_toml.write("    {{ name = \"{}\", vram = 0x{:X}, size = 0x{:X} }},\n"
-                .format(name, vram, size))
+        syms_toml.write("    {{ name = \"{}\", vram = 0x{:X}, size = 0x{:X} }},\n"
+            .format(name, vram, size))
 
         i += 1
     syms_toml.write("]\n")
