@@ -1304,3 +1304,5 @@ generic_stack_is_full = 0x8000B29C; // type:func
 generic_stack_is_empty = 0x8000B2B8; // type:func
 
 fit_aabb_around_cubes = 0x80053438; // type:func
+
+linear_interp = 0x80005060; // type:func
