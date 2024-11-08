@@ -299,9 +299,9 @@ segments:
     - [0xA4550, bin, ucode]
 
   - type: code
-    start: 0xA4AA0
+    start: 0xA4970
     subsegments:
-    
+    - [0xA4970, bin, assets/FS_tab]
 
     - [0xA4AA0, bin, assets/AUDIO_tab]
     - [0xA4B0C, bin, assets/AUDIO]

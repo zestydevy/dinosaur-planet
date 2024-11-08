@@ -1,18 +1,8 @@
 #include <PR/ultratypes.h>
-#include "game/actor/actor.h"
 
-extern f32 delayFloat;
+#include "common.h"
 
-extern void func_800267A4();
-extern void draw_actor(TActor*,s32,s32,s32,s32,float);
-extern TActor *func_8002394C();
-extern s32 func_80023D30(TActor*,s32,f32,s32);
-extern s32 func_80024108(TActor*,f32,f32,s32);
-extern s32 func_80025F40(TActor*,s32,s32,s32);
-s32 mainGetBit(s32);
-void mainSetBits(s32, s32);
-
-void dll_cannon_claw_func_1B4(TActor *a0);
+static void dll_cannon_claw_func_1B4(TActor *a0);
 
 void dll_cannon_claw_ctor(void *arg) {
 
@@ -65,7 +55,7 @@ void dll_cannon_claw_func_4C(TActor *s0) {
 static void dll_cannon_claw_func_1B4(TActor *a0) {
     a0->unk0xdc = 1;
     a0->unk0xaf = a0->unk0xaf | 8;    
-    func_800267A4();   
+    func_800267A4(a0);
 }
 
 void dll_cannon_claw_func_200(void *a0) {

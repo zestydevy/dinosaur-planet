@@ -8,7 +8,95 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005341C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053438.s")
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/fit_aabb_around_cubes.s")
+#else
+// close
+void _fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, float *cubeRadiusArray, int arrayLength) {
+    aabb->min.x = 1000000;
+    aabb->max.x = -1000000;
+    aabb->min.y = 1000000;
+    aabb->max.y = -1000000;
+    aabb->min.z = 1000000;
+    aabb->max.z = -1000000;
+
+    while (arrayLength-- != 0) {
+        float left;
+        float right;
+        float bottom;
+        float top;
+        float back;
+        float front;
+
+        // vec1
+        left = posArray1->x - *cubeRadiusArray;
+        if (left < aabb->min.x) {
+            aabb->min.x = left;
+        }
+
+        right = posArray1->x + *cubeRadiusArray;
+        if (right > aabb->max.x) {
+            aabb->max.x = right;
+        }
+
+        bottom = posArray1->y - *cubeRadiusArray;
+        if (bottom < aabb->min.y) {
+            aabb->min.y = bottom;
+        }
+
+        top = posArray1->y + *cubeRadiusArray;
+        if (top > aabb->max.y) {
+            aabb->max.y = top;
+        }
+
+        back = posArray1->z - *cubeRadiusArray;
+        if (back < aabb->min.z) {
+            aabb->min.z = back;
+        }
+
+        front = posArray1->z + *cubeRadiusArray;
+        if (front > aabb->max.z) {
+            aabb->max.z = front;
+        }
+
+        // vec2
+        left = posArray2->x - *cubeRadiusArray;
+        if (left < aabb->min.x) {
+            aabb->min.x = left;
+        }
+
+        right = posArray2->x + *cubeRadiusArray;
+        if (right > aabb->max.x) {
+            aabb->max.x = right;
+        }
+
+        bottom = posArray2->y - *cubeRadiusArray;
+        if (bottom < aabb->min.y) {
+            aabb->min.y = bottom;
+        }
+
+        top = posArray2->y + *cubeRadiusArray;
+        if (top > aabb->max.y) {
+            aabb->max.y = top;
+        }
+
+        back = posArray2->z - *cubeRadiusArray;
+        if (back < aabb->min.z) {
+            aabb->min.z = back;
+        }
+
+        front = posArray2->z + *cubeRadiusArray;
+        if (front > aabb->max.z) {
+            aabb->max.z = front;
+        }
+
+        posArray1++;
+        posArray2++;
+        
+        cubeRadiusArray++;
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053750.s")
 

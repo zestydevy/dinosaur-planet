@@ -72,10 +72,16 @@ struct AssetLoadThreadMsg {
     //actual size is 0x30 but that includes padding
 };
 
+// unsure of length
+typedef struct {
+    u8 unk0x0_pad[0x14 - 0x0];
+    s32 unk0x14;
+} UnkStructAssetThreadSingle_0x8;
+
 typedef struct {
     u8 unk0;
     u32 *unk4;
-    u32 unk8;
+    UnkStructAssetThreadSingle_0x8 *unk8;
     u32 unkC;
     u32 unk10;
     u32 unk14;
@@ -94,7 +100,7 @@ typedef struct {
     u32 unk8;
     u32 unkC;
     u32 unk10;
-} UnkStructFunc80012A4C;
+} AssetThreadStackElement;
 
 extern GenericQueue *gAssetThreadQueue;
 extern GenericStack *gAssetThreadStack;
@@ -103,10 +109,10 @@ extern u8 gDisableObjectStreamingFlag;
 extern u8 D_800AE29D, D_800AE29E;
 
 extern u64 *assetThreadStackEnd; // end of stack
-extern OSThread *assetThread;
+extern OSThread assetThread;
 
 void create_asset_thread(void);
-void asset_thread_main(void);
+void asset_thread_main(void *arg);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset);

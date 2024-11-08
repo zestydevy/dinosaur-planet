@@ -24,6 +24,7 @@ void init_filesystem(void)
 
     osCreatePiManager(0x96, &D_800B2EA8, &D_800B2E68, 0x10);
 
+    // A4AA0 - A4970
     size = (s32)&__file1Address - (s32)&__fstAddress;
 
     gFST = (Fs *)malloc(size, 0x7F7F7FFF, NULL);

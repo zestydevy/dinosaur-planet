@@ -1302,3 +1302,5 @@ generic_stack_func_8000B248 = 0x8000B248; // type:func
 generic_stack_func_8000B260 = 0x8000B260; // type:func
 generic_stack_is_full = 0x8000B29C; // type:func
 generic_stack_is_empty = 0x8000B2B8; // type:func
+
+fit_aabb_around_cubes = 0x80053438; // type:func

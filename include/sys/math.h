@@ -15,10 +15,19 @@ typedef struct {
     f32 x, y, z;
 } Vec3f;
 
-typedef float Vec2[2];
-typedef float Vec3[3];
-typedef float Vec4[4];
-typedef short Vec3s[3];
+typedef struct {
+    s32 x, y, z;
+} Vec3s32;
+
+typedef f32 Vec2[2];
+typedef f32 Vec3[3];
+typedef f32 Vec4[4];
+typedef s16 Vec3s16[3];
+
+typedef struct {
+    Vec3s32 min;
+    Vec3s32 max;
+} AABBs32;
 
 // Scale, rotation, translation. Rotations are applied in the order: Yaw -> Pitch -> Roll. (TODO: verify)
 typedef struct

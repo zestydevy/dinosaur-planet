@@ -4,6 +4,7 @@
 #define _SYS_DLL_H
 
 #include "PR/ultratypes.h"
+
 enum DLL_ID {
     DLL_UI        = 0x01,
     DLL_CAMERA    = 0x02,
@@ -55,20 +56,17 @@ typedef struct
 
 typedef struct
 {
-///*0000*/	s32 bank0;
-///*0004*/	s32 bank1;
-///*0008*/	s32 reserved;
-///*000C*/	s32 bank2;
-/*0010*/	DLLTabEntry entries[1];
-} DLLTab;
-
-typedef struct
-{
 /*0000*/	s32 bank0;
 /*0004*/	s32 bank1;
 /*0008*/	s32 reserved;
 /*000C*/	s32 bank2;
 } DLLTabHeader;
+
+typedef struct
+{
+/*0000*/	DLLTabHeader header;
+/*0010*/	DLLTabEntry entries[1];
+} DLLTab;
 
 typedef struct
 {
@@ -78,7 +76,9 @@ typedef struct
 /*000C*/	u32 * end;
 } DLLInst;
 
-typedef void (*DLLFunc)(u32 a);
+struct DLLFile;
+
+typedef void (*DLLFunc)(struct DLLFile* self);
 
 typedef struct
 {
@@ -136,9 +136,8 @@ extern struct DLLInstance
     **gDLL_3B,
     **gDLL_36;
 
-extern DLLInst* gLoadedDLLList;
+extern DLLInst *gLoadedDLLList;
 extern s32 gLoadedDLLCount;
-extern DLLTab * gFile_DLLS_TAB;
 
 /**
  * Returns the ID of the DLL that the given program counter is executing within, 
