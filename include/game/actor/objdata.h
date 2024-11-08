@@ -55,7 +55,7 @@ enum ObjDataFlags5F { //copied from SFA; may be incorrect
 //A point on a model where something like a weapon can be attached.
 typedef struct AttachPoint { //copied from SFA; may be incorrect
 /*00*/ Vec3f pos; //offset from bone
-/*0C*/ Vec3s rot; //offset from bone
+/*0C*/ Vec3s16 rot; //offset from bone
 /*12*/ s8 bone; //bone idx to use
 /*13*/ s8 unk13; //always same as bone?
 /*14*/ s8 unk14; //always same as bone?
@@ -126,7 +126,7 @@ typedef struct ObjData { //copied from SFA; may be incorrect
 /*5a*/ s16 objId;
 /*5c*/ s8 modLinesSize; //ignored in file
 /*5d*/ s8 modLinesIdx;
-/*5e*/ u8 numSeqs;
+/*5e*/ s8 numSeqs;
 /*5f*/ u8 flags_0x5f; //ObjDataFlags5F
 /*60*/ u8 hitbox_fieldB0;
 /*61*/ u8 hasHitbox; //or # hitboxes, but should only be 1
@@ -160,6 +160,8 @@ typedef struct ObjData { //copied from SFA; may be incorrect
 /*8f*/ u8 unk8F; //related to hitbox
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62)
 /*91*/ char name[11];
+/*9c*/ u8 unk9c[4];
+/*a0*/ s16 unka0;
 } ObjData;
 
 #endif //_SYS_GAME_ACTOR_OBJDATA_H

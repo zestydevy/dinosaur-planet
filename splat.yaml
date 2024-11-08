@@ -37,7 +37,8 @@ segments:
     - [0x1E20, c, camera]
     - [0x5660, c, segment_5660]
     - [0x7B50, c, segment_7B50]
-    - [0xBC10, c, segment_BC10]
+    - [0xB9F0, c, generic_queue]
+    - [0xBC10, c, generic_stack]
     - [0xBED0, c, segment_BED0]
     - [0xC4B0, c, bitstream]
     - [0xC660, c, C660]
@@ -298,9 +299,9 @@ segments:
     - [0xA4550, bin, ucode]
 
   - type: code
-    start: 0xA4AA0
+    start: 0xA4970
     subsegments:
-    
+    - [0xA4970, bin, assets/FS_tab]
 
     - [0xA4AA0, bin, assets/AUDIO_tab]
     - [0xA4B0C, bin, assets/AUDIO]

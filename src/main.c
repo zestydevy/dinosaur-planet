@@ -176,7 +176,6 @@ s32 func_80041D74();                                /* extern */
 void tick_cameras();                                   /* extern */
 void update_mem_mon_values();                          /* extern */
 u8 video_func_returning_delay(s32);                   /* extern */
-void write_c_file_label_pointers(char *cFileLabel, s32 a1);
 extern s32 D_80099130;
 extern s32 D_8009913C;
 extern s32 D_800BCCB4;

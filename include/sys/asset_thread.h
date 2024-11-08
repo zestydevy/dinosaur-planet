@@ -3,6 +3,9 @@
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
+#include "sys/generic_stack.h"
+#include "sys/generic_queue.h"
+
 #define ASSET_THREAD_ID 99
 #define ASSET_THREAD_PRIORITY 11
 
@@ -69,15 +72,21 @@ struct AssetLoadThreadMsg {
     //actual size is 0x30 but that includes padding
 };
 
-struct UnkStructAssetThreadSingle {
+// unsure of length
+typedef struct {
+    u8 unk0x0_pad[0x14 - 0x0];
+    s32 unk0x14;
+} UnkStructAssetThreadSingle_0x8;
+
+typedef struct {
     u8 unk0;
     u32 *unk4;
-    u32 unk8;
+    UnkStructAssetThreadSingle_0x8 *unk8;
     u32 unkC;
     u32 unk10;
     u32 unk14;
     u32 unk18;
-};
+} UnkStructAssetThreadSingle;
 
 extern struct AssetLoadThreadMsg assetLoadMsg;
 
@@ -85,27 +94,25 @@ extern OSMesgQueue assetLoadThreadSendQueue, //send load requests to asset threa
     D_800ACB68,
     assetLoadThreadRecvQueue; //receive acknowledgement from asset thread
 
-struct UnkStruct8000ADF0 {
-    s16 unk0;
-};
-extern struct UnkStruct8000ADF0 *D_800ACBC8;
-struct UnkStruct8000ADF0 *func_8000ADF0(s32 *, s32 *, s32, s32);
+typedef struct {
+    u8 unk0;
+    u32 *unk4;
+    u32 unk8;
+    u32 unkC;
+    u32 unk10;
+} AssetThreadStackElement;
 
-struct UnkStruct8000B010 {
-    s16 unk0;
-};
-extern struct UnkStruct8000B010 *D_800AE1D0;
-struct UnkStruct8000B010 *func_8000B010(s32 *, s32 *, s32, s32);
+extern GenericQueue *gAssetThreadQueue;
+extern GenericStack *gAssetThreadStack;
 
 extern u8 gDisableObjectStreamingFlag;
 extern u8 D_800AE29D, D_800AE29E;
-extern s32 *D_800ACBB8, *D_800ACBD0;
-extern s32 *D_800AE1C0, *D_800AE1D8;
+
 extern u64 *assetThreadStackEnd; // end of stack
-extern OSThread *assetThread;
+extern OSThread assetThread;
 
 void create_asset_thread(void);
-void asset_thread_main(void);
+void asset_thread_main(void *arg);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset);

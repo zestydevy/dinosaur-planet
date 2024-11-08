@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "variables.h"
+#include "sys/gfx/model.h"
 
 extern void **gLoadedObjDefs;
 extern void *D_800B1918;
@@ -11,7 +12,7 @@ extern int gNumObjectsTabEntries;
 extern ObjData *gLoadedObjData;
 extern u8 *gObjRefCount; //pObjectRefCount
 extern int gNumTablesTabEntries;
-extern ObjListItem *gObjList; //global object list
+extern TActor **gObjList; //global object list
 
 enum FILE_ID {
     FILE_TABLES_BIN   = 0x16,
@@ -32,6 +33,15 @@ void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 arg1, s32 arg2, s32 arg3);
 void alloc_some_object_arrays(void); //related to objects
 void func_80020D34(void);
+
+void copy_obj_position_mirrors(TActor *obj, ActorUnk0x1a *param2, s32 param3);
+
+void func_80046320(s16 param1, TActor *actor);
+void func_80023A00(TActor *actor, s8 param2); // sets actor->unk0xae = param2
+void func_800222AC(TActor *actor);
+
+extern char D_80099600[]; // "objects/objects.c"
+extern s32 gNumObjs;
 
 void init_objects(void) {
     int i;
@@ -163,7 +173,44 @@ void func_update_objects(void) {
 
 void doNothing_80020A40(void) {}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/update_obj_models.s")
+void update_obj_models() {
+    int i;
+    int j;
+    int k;
+    TActor *actor;
+    ModelInstance *modelInst;
+    ActorUnk0xc0_0xb8 *unk1;
+
+    for (i = 0; i < gNumObjs; i++) {
+        actor = gObjList[i];
+
+        for (j = 0; j < 2; j++) {
+            if (j != 0) {
+                actor = actor->linkedActor2;
+            }
+
+            if (actor == NULL) {
+                continue;
+            }
+
+            for (k = 0; k < actor->data->modLinesIdx; k++) {
+                modelInst = actor->modelInsts[k];
+
+                if (modelInst != NULL) {
+                    modelInst->unk_0x34 &= ~0x8;
+
+                    if (modelInst->model->unk_0x1c != NULL) {
+                        unk1 = actor->unk0xc0 != NULL ? actor->unk0xc0->unk_0xb8 : NULL;
+
+                        if (actor->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
+                            func_8001B084(modelInst, delayFloat);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 extern int D_800B1914;
 void func_80020BB8() {
@@ -194,7 +241,6 @@ void func_80020D90(void) { D_800B18E0 = 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_800211B4.s")
 
-extern s32 gNumObjs;
 s32 get_num_objects(void) { return gNumObjs; }
 
 s32 ret0_800212E8(void) { return 0; }
@@ -207,7 +253,79 @@ s32 ret0_800212E8(void) { return 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/objSetupObjectActual.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021A84.s")
+void func_80021A84(TActor *actor, u32 someFlags) {
+    if (actor->linkedActor != NULL) {
+        transform_point_by_actor(
+            actor->srt.transl.x, actor->srt.transl.y, actor->srt.transl.z,
+            &actor->positionMirror.x, &actor->positionMirror.y, &actor->positionMirror.z,
+            actor->linkedActor
+        );
+    } else {
+        actor->positionMirror.x = actor->srt.transl.x;
+        actor->positionMirror.y = actor->srt.transl.y;
+        actor->positionMirror.z = actor->srt.transl.z;
+    }
+
+    actor->positionMirror2.x = actor->srt.transl.x;
+    actor->positionMirror2.y = actor->srt.transl.y;
+    actor->positionMirror2.z = actor->srt.transl.z;
+
+    actor->positionMirror3.x = actor->positionMirror.x;
+    actor->positionMirror3.y = actor->positionMirror.y;
+    actor->positionMirror3.z = actor->positionMirror.z;
+
+    copy_obj_position_mirrors(actor, actor->unk0x4c, 0);
+
+    if (actor->objhitInfo != NULL) {
+        actor->objhitInfo->unk_0x10.x = actor->srt.transl.x;
+        actor->objhitInfo->unk_0x10.y = actor->srt.transl.y;
+        actor->objhitInfo->unk_0x10.z = actor->srt.transl.z;
+
+        actor->objhitInfo->unk_0x20.x = actor->srt.transl.x;
+        actor->objhitInfo->unk_0x20.y = actor->srt.transl.y;
+        actor->objhitInfo->unk_0x20.z = actor->srt.transl.z;
+    }
+
+    if (actor->data->unka0 > -1) {
+        func_80046320(actor->data->unka0, actor);
+    }
+
+    update_pi_manager_array(0, -1);
+
+    if (actor->data->flags & OBJDATA_FLAG44_HasChildren) {
+        add_object_to_array(actor, 7);
+
+        if (actor->unk0xae != 90) {
+            func_80023A00(actor, 90);
+        }
+    } else {
+        if (actor->unk0xae == 0) {
+            func_80023A00(actor, 80);
+        }
+    }
+
+    if (someFlags & 1) {
+        actor->unk0xb0 |= 0x10;
+        gObjList[gNumObjs] = actor; // TODO: gObjList is typed wrong?
+        gNumObjs += 1;
+
+        func_800222AC(actor);
+    }
+
+    if (actor->data->numSeqs >= 1) {
+        add_object_to_array(actor, 9);
+    }
+
+    if (actor->data->flags & OBJDATA_FLAG44_HaveModels) {
+        func_80020D90();
+    }
+
+    if (actor->data->flags & OBJDATA_FLAG44_DifferentLightColor) {
+        add_object_to_array(actor, 56);
+    }
+
+    write_c_file_label_pointers(D_80099600, 0x477);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021CC0.s")
 
@@ -223,14 +341,14 @@ s32 ret0_800212E8(void) { return 0; }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022338.s")
 
-void copy_obj_position_mirrors(TActor *obj)
+void copy_obj_position_mirrors(TActor *obj, ActorUnk0x1a *param2, s32 param3)
 {
     DLLInstance **dll;
     obj->objId = obj->data->objId;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll[0]->func[0].withOneArg((s32)obj);
+            obj->dll[0]->func[0].withThreeArgs((s32)obj, (s32)param2, param3);
         }
     }
 
@@ -286,7 +404,7 @@ s32 func_80022DEC(void) { return gObjIndexCount; }
 
 TActor *get_player(void) {
     TActor **obj;
-    int idx;
+    s32 idx;
     obj = TActor_getter(0, &idx);
     if(idx) {} else {}; //wat
     if(idx) return *obj;

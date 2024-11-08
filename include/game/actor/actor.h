@@ -44,6 +44,22 @@ typedef struct {
 /*0030*/    u32 flags;
 } ActorUnk0x64;
 
+typedef struct {
+/*0000*/    u8 unk_0x0[0x62 - 0x0];
+/*0062*/    s8 unk_0x62;
+} ActorUnk0xc0_0xb8;
+
+typedef struct {
+/*0000*/    u8 unk_0x0[0xb8 - 0x0];
+/*00b8*/    ActorUnk0xc0_0xb8 *unk_0xb8;
+} ActorUnk0xc0;
+
+struct TActor;
+
+// arg3 and arg4 are unknown types
+// always called by DLL 3 "ANIM" during cutscenes?
+typedef s32 (*TActorCallback)(struct TActor *, struct TActor *, void *, void *);
+
 //prelimnary, lots of unknowns
 //contains pointer-to-own-type fields, so `typedef struct _TActor {`
 //must be used instead of `typedef struct {`
@@ -82,14 +98,14 @@ typedef struct TActor {
 /*00A2*/	s16 unk_0xa2;
 /*00A4*/    u8 unk0xa4[0xad - 0xa4];
 /*00AD*/    s8 modelInstIdx;
-/*00AE*/    u8 unk0xae;
+/*00AE*/    s8 unk0xae;
 /*00AF*/    u8 unk0xaf;
 /*00B0*/    u16 unk0xb0;
-	u8 unk0xb2[6];
-	void* state; //type depends on object
-	UNK_TYPE_32 unk0xbc;
-	UNK_TYPE_32 unk0xc0;
-	UNK_TYPE_32 unk0xc4;
+/*00B2*/	u8 unk0xb2[6];
+/*00B8*/	void* state; //type depends on object
+/*00BC*/	TActorCallback unk0xbc; // some kind of cutscene anim callback?
+/*00C0*/	ActorUnk0xc0 *unk0xc0;
+/*00C4*/	UNK_TYPE_32 unk0xc4;
 /*00C8*/    struct TActor *linkedActor2;
 /*00CC*/    void* ptr0xcc;
 /*00D0*/    u8 unk_0xd0[0xdc - 0xd0];

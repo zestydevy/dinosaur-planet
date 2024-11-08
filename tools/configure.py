@@ -122,7 +122,7 @@ class BuildNinjaWriter:
             "$INCLUDES",
             "-mips2",
             "-KPIC",
-            "-w",
+            "-Xfullwarn",
             "-Xcpluscomm",
             "-Wab,-r4300_mul",
         ]))

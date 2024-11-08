@@ -1,7 +1,5 @@
 #include <PR/ultratypes.h>
 
-void mainSetBits(s32, s32);
-
 void ctor(void *arg) {
 
 }

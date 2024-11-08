@@ -59,7 +59,7 @@ void __osDevMgrMain(void *args)
 
           blockInfo->errStatus = LEO_ERROR_4;
           IO_WRITE(PI_STATUS_REG, PI_CLR_INTR);
-          __osSetGlobalIntMask(OS_IM_PI | SR_IBIT4);
+          __osSetGlobalIntMask(OS_IM_PI | OS_IM_CART);
         }
         osSendMesg(mb->hdr.retQueue, mb, OS_MESG_NOBLOCK);
 
