@@ -3,6 +3,7 @@
 #include "common.h"
 
 typedef f32 (*unk_curve_func)(Vec4f*, f32, f32*); // TODO: first arg is actually f32[4]
+typedef void (*unk_curve_func_2)(f32*, f32*);
 
 typedef struct {
     /* 0000 */ f32 unk0x0;
@@ -28,9 +29,14 @@ typedef struct {
     /* 0098 */ s32 unk0x98;
 } UnkCurvesStruct;
 
+extern s32 D_8008C7D0;
+
 extern f32 D_800984FC; // 1.0f / 60.0f
 extern f32 D_80098500; // 1.0f / 60.0f
 extern f32 D_80098504; // 1.0f / 60.0f
+
+extern f32 D_800A7C30[4];
+extern f32 D_800A7C40;
 
 void func_80004B78(Vec4f *a0, Vec4f *a1);
 void func_80004CE8(Vec4f *in, Vec4f *out);
@@ -224,7 +230,7 @@ void func_8000523C(UnkCurvesStruct *arg0) {
     while (arg0->unk0x10 < (arg0->unk0x90 - 3)) {
         func_800065C0(arg0, 5);
 
-        arg0->unk0xC = arg0->unk0xC + arg0->unk0x14;
+        arg0->unk0xC += arg0->unk0x14;
 
         if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
             arg0->unk0x10 += 4;
@@ -272,12 +278,12 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     f32 *phi_s4;
     f32 *phi_s5;
     f32 *phi_s6;
-    f32 sp120[21];
-    f32 spCC[21];
-    f32 sp78[21];
-    f32 x;
-    f32 y;
-    f32 z;
+    f32 xCoords[21];
+    f32 yCoords[21];
+    f32 zCoords[21];
+    f32 xDist;
+    f32 yDist;
+    f32 zDist;
     s32 i;
 
     phi_s4 = 0;
@@ -295,7 +301,7 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     }
 
     if (arg0->unk0x98 != 0) {
-        func_8000598C(phi_s4, phi_s5, phi_s6, &sp120, &spCC, &sp78, arg1, arg0->unk0x98);
+        func_8000598C(phi_s4, phi_s5, phi_s6, &xCoords, &yCoords, &zCoords, arg1, arg0->unk0x98);
     } else {
         
     }
@@ -303,25 +309,28 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     arg0->unk0x14 = 0.0f;
 
     for (i = 0; i < arg1; ++i) {
+        // Find distance between current and next coord
         if (phi_s4 != 0) {
-            x = sp120[i + 1] - sp120[i];
+            xDist = xCoords[i + 1] - xCoords[i];
         } else {
-            x = 0.0f;
+            xDist = 0.0f;
         }
 
         if (phi_s5 != 0) {
-            y = spCC[i + 1] - spCC[i];
+            yDist = yCoords[i + 1] - yCoords[i];
         } else {
-            y = 0.0f;
+            yDist = 0.0f;
         }
 
         if (phi_s6 != 0) {
-            z = sp78[i + 1] - sp78[i];
+            zDist = zCoords[i + 1] - zCoords[i];
         } else {
-            z = 0.0f;
+            zDist = 0.0f;
         }
 
-        arg0->unk0x18[i] = sqrtf((x * x) + (y * y) + (z * z));
+        // Compute distance between current and next coord
+        arg0->unk0x18[i] = sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
+        // Sum distances
         arg0->unk0x14 += arg0->unk0x18[i];
     }
 }
@@ -330,7 +339,73 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006908.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006B28.s")
+#else
+typedef struct {
+    /* 0x0  */ Vec4f unk0x0;
+    /* 0x10 */ Vec4f unk0x10;
+    /* 0x20 */ f32 unk0x20;
+} UnkCurveStruct1;
+
+typedef struct {
+    /* 0x0 */ f32 unk0x0;
+    /* 0x4 */ f32 unk0x4;
+} UnkCurveStruct2;
+
+void func_80006B28(UnkCurveStruct2 *arg0, s32 arg1, UnkCurveStruct1 *arg2) {
+    Vec4f sp88;
+    Vec4f sp78;
+    Vec4f sp68;
+    UnkCurveStruct2 *phi_v0;
+    f32 *phi_a0;
+    f32 *phi_v1;
+    s32 i;
+    s32 end;
+
+    end = arg1 - 1;
+    i = 0;
+    if (end > 0) {
+        phi_v0 = arg0[i - 1];
+        phi_a0 = &sp88;
+        phi_v1 = &sp78;
+
+        do {
+            if ((i - 1) < 0) {
+                *phi_a0 = (phi_v0->unk8 - phi_v0->unk10) + phi_v0->unk8; // v[i].z - v[i+1].x + v[i].z
+                *phi_v1 = (phi_v0->unkC - phi_v0->unk14) + phi_v0->unkC; // v[i].w - v[i+1].y + v[i].z
+            } else if ((i - 1) >= arg1) {
+                *phi_a0 = (phi_v0->unk-8 - phi_v0->unk-10) + phi_v0->unk-8; // v[i-1].z - v[i-1].x + v[i-1].z
+                *phi_v1 = (phi_v0->unk-4 - phi_v0->unk-C) + phi_v0->unk-4;  // v[i-1].w - v[i-1].y + v[i-1].w
+            } else {
+                *phi_a0 = phi_v0->unk0; // v[i].x
+                *phi_v1 = phi_v0->unk4; // v[i].y
+            }
+            phi_a0 += 4;
+            phi_v1 = phi_v1 + 4;
+            if (phi_v1 != &sp88) {
+                continue;
+            }
+            
+            func_80004B78(&sp88, &sp68);
+            arg2[i].unk0x0.x = sp68.x;
+            arg2[i].unk0x0.y = sp68.y;
+            arg2[i].unk0x0.z = sp68.z;
+            arg2[i].unk0x0.w = sp68.w;
+            func_80004B78(&sp78, &sp68);
+            arg2[i].unk0x10.x = sp68.x;
+            arg2[i].unk0x10.y = sp68.y;
+            arg2[i].unk0x10.z = sp68.z;
+            arg2[i].unk0x10.w = sp68.w;
+            arg2[i].unk0x20 = func_80004A60(&sp78, 0, 0);
+            
+            i = i + 1;
+        } while (i != end);
+    }
+    arg2[0].unk0x20 = 0.0f;
+    arg2[arg1 - 1].unk0x20 = 1.0f;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006CFC.s")
 
