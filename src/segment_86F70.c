@@ -8,7 +8,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/__rmonCopyWords.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/func_80086474.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/strcpy.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/__rmonReadMem.s")
 
@@ -16,7 +16,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/__rmonListProcesses.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/__rmonListBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/__rmonLoadProgram.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_86F70/__rmonGetExeName.s")
 

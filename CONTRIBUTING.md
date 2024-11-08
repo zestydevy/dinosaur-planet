@@ -87,5 +87,5 @@ The following is a list of external resources that may be helpful:
     - [MIPSpro™ Assembly Language Programmer's Guide](https://techpubs.jurassic.nl/library/manuals/2000/007-2418-001/pdf/007-2418-001.pdf) - IRIX Manual for writing MIPS assembly code.
     - [MIPS Compiling and Performance Tuning Guide](https://techpubs.jurassic.nl/library/manuals/2000/007-2479-001/pdf/007-2479-001.pdf) - IRIX manual for understanding things like assembler flags and internals.
 - Other
-    - [libreultra](https://github.com/n64decomp/libreultra/) - A matching decompilation of libultra.
+    - [libreultra](https://github.com/n64decomp/libreultra/) - A matching decompilation of libultra. 
     - [N64 development tools](https://github.com/glankk/n64) - Collection of tools including a F3DEX2 display list disassembler/decompiler.

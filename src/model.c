@@ -32,6 +32,8 @@ typedef struct
 
 extern s16 *SHORT_ARRAY_800b17d0;
 
+void func_8001AF04(ModelInstance *modelInst, s8 param2, s8 param3, f32 param4, s32 param5, u8 param6);
+
 #pragma GLOBAL_ASM("asm/nonmatchings/model/init_models.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_80017D2C.s")
@@ -1010,32 +1012,66 @@ void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AC44.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AE74.s")
+void func_8001AE74(ModelInstance *modelInst) {
+    if (modelInst->model->unk_0x1c != NULL) {
+        func_8001AF04(modelInst, -1, -1, 0, 0, 7);
+        func_8001AF04(modelInst, -1, -1, 0, 1, 7);
+        func_8001AF04(modelInst, -1, -1, 0, 2, 7);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AF04.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AFCC.s")
+void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3) {
+    ModelInstance_0x30 *var1;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B010.s")
+    if (param2 < 3 && modelInst->model->unk_0x1c != NULL) {
+        var1 = &modelInst->unk_0x30[param2];
+        var1->unk0x0 = param3;
+        var1->unk0xE |= 4;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B084.s")
+s32 func_8001B010(ModelInstance *modelInst) {
+    int i;
+    ModelInstance_0x30 *var1;
+    
+    if (modelInst->model->unk_0x1c == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < 3; i++) {
+        var1 = &modelInst->unk_0x30[i];
+
+        if (var1->unk0x0 != var1->unk0x4 || (var1->unk0xE & 0xE) != 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void func_8001B084(ModelInstance *modelInst, f32 param2) {
+    int i;
+    ModelInstance_0x30 *var1;
+    
+    if (modelInst->model->unk_0x1c == NULL) {
+        return;
+    }
+
+    for (i = 0; i < 3; i++) {
+        var1 = &modelInst->unk_0x30[i];
+
+        if (var1->unk0xC != -1 || var1->unk0xD != -1) {
+            if ((var1->unk0xE & 1) == 0) {
+                var1->unk0x0 += var1->unk0x8 * param2;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B100.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
 
 void doNothing_8001B4E4(s32 arg) {}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B4F0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B6F0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BC00.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BCF0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001BF70.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/convert_mtxf_to_mtx_in_pool.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001CAA4.s")

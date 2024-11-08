@@ -85,23 +85,3 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AB84.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000ACD4.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000ADF0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AE14.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AE78.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AE98.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AF0C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AF78.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AF88.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AFA0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AFDC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_7B50/func_8000AFF8.s")

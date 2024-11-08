@@ -1257,7 +1257,6 @@ BlockTexture *func_8004A2CC(s32 idx)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E64C.s")
 #else
-void transform_point_by_actor(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, TActor *actor);
 void func_8005BCE0(TActor *actor, u32 param_2, Gfx **gdl, Mtx **rspMtxs, u32 param_5, u32 param_6, u32 param_7, f32 y, u32 idx);
 void _func_8004E64C(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5)
 {

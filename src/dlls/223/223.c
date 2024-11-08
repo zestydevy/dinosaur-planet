@@ -1,36 +1,8 @@
 #include <PR/ultratypes.h>
-#include "game/actor/actor.h"
 
-typedef struct {
-    /* 0x0 */  s16 unk0x0;
-    /* 0x4 */  s32 unk0x4;
-    /* 0x8 */  s32 unk0x8;
-    /* 0xC */  f32 unk0xC;
-    /* 0x10 */ f32 unk0x10;
-} UnkDll223Struct1;
+#include "common.h"
 
-typedef union {
-    void (*func_58)(TActor*,s32,s32);
-} UnkDllFuncs1;
-
-typedef struct {
-    UnkDllFuncs1 *func;
-} UnkDllInst;
-
-typedef void (*self_func_1B4)(TActor *a0);
-
-extern f32 delayFloat;
-
-extern void func_800267A4();
-extern void draw_actor(TActor*,s32,s32,s32,s32,float);
-extern TActor *func_8002394C();
-extern s32 func_80023D30(TActor*,s32,f32,s32);
-extern s32 func_80024108(TActor*,f32,f32,s32);
-extern s32 func_80025F40(TActor*,s32,s32,s32);
-s32 mainGetBit(s32);
-void mainSetBits(s32, s32);
-
-void dll_cannon_claw_func_1B4(TActor *a0);
+static void dll_cannon_claw_func_1B4(TActor *a0);
 
 void dll_cannon_claw_ctor(void *arg) {
 
@@ -40,18 +12,16 @@ void dll_cannon_claw_dtor(void *arg) {
     
 }
 
-void dll_cannon_claw_func_18(UnkDll223Struct1 *a0, UnkDll223Struct1 *a1, void *a2) {
-    a0->unk0x0 = -0x8000;
-    a0->unk0x10 = a1->unk0xC + 2.0f;  
+void dll_cannon_claw_func_18(TActor *a0, TActor *a1, void *a2) {
+    a0->srt.yaw = -32768;
+    a0->srt.transl.y = a1->srt.transl.x + 2.0f;  
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/223/dll_cannon_claw_func_4C.s")
-#else
-// Regalloc
 void dll_cannon_claw_func_4C(TActor *s0) {
-    UnkDllInst *dll_inst;
-    TActor *func_8002394C_ret = func_8002394C();
+    s32 temp;
+    TActor *func_8002394C_ret;
+
+    func_8002394C_ret = func_8002394C();
     
     if (s0->unk0xdc != 0) {
         return;
@@ -62,26 +32,30 @@ void dll_cannon_claw_func_4C(TActor *s0) {
     }
 
     func_80024108(s0, 0.0049999998f, delayFloat, 0);
+    temp = func_80025F40(s0, 0, 0, 0);
     
-    if (func_80025F40(s0, 0, 0, 0) != 0) {
+    if (temp != 0) {
         if (s0->linkedActor != 0) {
-            mainSetBits(s0->linkedActor->unk0x4c->unk0x1a, 1);
-            dll_inst = ((UnkDllInst*)func_8002394C_ret->dll);
-            dll_inst->func[0x16].func_58(func_8002394C_ret, 0, 0);
+            ActorUnk0x1a *unk4C = s0->linkedActor->unk0x4c;
+            mainSetBits(unk4C->unk0x1a, 1);
+            func_8002394C_ret->dll[0]->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
         }
         
-        // TODO: this matches but is awful
-        ((self_func_1B4)(((int)&dll_cannon_claw_ctor) + 0x1b4))(s0);
-    } else if (s0->linkedActor != 0 && mainGetBit(s0->linkedActor->unk0x4c->unk0x1a) != 0) {
-        ((self_func_1B4)(((int)&dll_cannon_claw_ctor) + 0x1b4))(s0);
+        dll_cannon_claw_func_1B4(s0);
+    } else {
+        if (s0->linkedActor != 0) {
+            ActorUnk0x1a *unk4C = s0->linkedActor->unk0x4c;
+            if (mainGetBit(unk4C->unk0x1a) != 0) {
+                dll_cannon_claw_func_1B4(s0);
+            }
+        }
     }
 }
-#endif
 
-void dll_cannon_claw_func_1B4(TActor *a0) {
+static void dll_cannon_claw_func_1B4(TActor *a0) {
     a0->unk0xdc = 1;
     a0->unk0xaf = a0->unk0xaf | 8;    
-    func_800267A4();   
+    func_800267A4(a0);
 }
 
 void dll_cannon_claw_func_200(void *a0) {

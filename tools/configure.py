@@ -91,9 +91,11 @@ class BuildNinjaWriter:
         self.writer.variable("LINK_SCRIPT", self.config.link_script)
         self.writer.variable("LINK_SCRIPT_DLL", self.config.link_script_dll)
 
+        self.writer.variable("LD_EMULATION", "elf32btsmip")
+
         self.writer.variable("CC_DEFINES", " ".join([
             "-D_LANGUAGE_C", 
-            "-D_FINALROM", 
+            #"-D_FINALROM", 
             "-D_MIPS_SZLONG=32",
             "-DF3DEX_GBI_2", 
         ]))
@@ -120,7 +122,7 @@ class BuildNinjaWriter:
             "$INCLUDES",
             "-mips2",
             "-KPIC",
-            "-w",
+            "-Xfullwarn",
             "-Xcpluscomm",
             "-Wab,-r4300_mul",
         ]))
@@ -151,13 +153,13 @@ class BuildNinjaWriter:
             "-T $BUILD_DIR/$TARGET.ld", # pre-processed linker script
             "-Map $BUILD_DIR/$TARGET.map",
             "--no-check-sections",
+            "-m $LD_EMULATION",
         ]))
 
         self.writer.variable("LD_FLAGS_DLL", " ".join([
-            "-nostartfiles",
-            "-nodefaultlibs",
             "-r",
             "--emit-relocs",
+            "-m $LD_EMULATION",
         ]))
 
         self.writer.newline()
@@ -193,8 +195,8 @@ class BuildNinjaWriter:
         self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("preprocess_linker_script", "cpp -P -DBUILD_DIR=$BUILD_DIR -o $out $in", "Pre-processing linker script...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
-        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_TXT -T $LINK_SCRIPT_DLL $in -o $out", "Linking...")
-        self.writer.rule("ld_bin", "$LD -r -b binary -o $out $in", "Linking binary $in...")
+        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_TXT -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
+        self.writer.rule("ld_bin", "$LD -m $LD_EMULATION -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
         # Note: for elf2dll, remove output file first since it might be a symlink and we don't
