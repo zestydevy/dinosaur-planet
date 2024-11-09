@@ -17,7 +17,7 @@ class DLLTab:
         self.entries = entries
 
     @staticmethod
-    def parse(data: bytearray):
+    def parse(data: bytes):
         # Read header
         header = struct.unpack_from(">IIII", data, offset=0)
         

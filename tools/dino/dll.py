@@ -78,7 +78,7 @@ class DLL:
             self.get_data_size()
 
     @staticmethod
-    def parse(data: bytearray, 
+    def parse(data: bytes, 
               number: str, 
               include_funcs=True,
               known_symbols: "dict[int, str]"={}):
@@ -117,7 +117,7 @@ class DLLHeader:
         """List of exports (the offsets they specify)"""
 
     @staticmethod
-    def parse(data: bytearray) -> "DLLHeader":
+    def parse(data: bytes) -> "DLLHeader":
         """Given a DLL file, parses and returns the header"""
         header_size = struct.unpack_from(">I", data, offset=0x0)[0]
         data_offsets = struct.unpack_from(">II", data, offset=0x4)
@@ -158,7 +158,7 @@ class DLLRelocationTable:
             + len(self.data_relocations) * 4 + 4
 
     @staticmethod
-    def parse(data: bytearray, header: DLLHeader) -> "DLLRelocationTable":
+    def parse(data: bytes, header: DLLHeader) -> "DLLRelocationTable":
         """Given a DLL file, parses and returns the relocation section"""
         if header.rodata_offset == 0xFFFF_FFFF:
             # No relocation table
@@ -232,7 +232,7 @@ class DLLFunction:
         self.relocations = relocations
         """All instruction relocations in the function, sorted by their position in the original DLL's GOT."""
 
-def parse_functions(data: bytearray, 
+def parse_functions(data: bytes, 
                     dll: DLL,
                     reloc_table: DLLRelocationTable,
                     known_symbols: "dict[int, str]"={}) -> "list[DLLFunction]":

@@ -36,7 +36,7 @@ class DLLSplitter:
         
         tab_path = BIN_PATH.joinpath("assets/DLLS_tab.bin")
         with open(tab_path, "rb") as tab_file:
-            tab = DLLTab.parse(bytearray(tab_file.read()))
+            tab = DLLTab.parse(tab_file.read())
         
         # Extract each DLL that has a src directory
         dll_dirs = [Path(dir) for dir in glob.glob(f"{SRC_PATH}/dlls/*") if isdir(dir)]
