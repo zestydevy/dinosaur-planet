@@ -252,7 +252,9 @@ segments:
     - [0x8A2B0, c, segment_8A2B0]
     
     # data
-    - [0x8A350, bin]
+    - [0x8A350, bin, ucode_aspMainText]
+    - [0x8BC90, bin, ucode_rspbootText]
+    - [0x8BD60, bin, ucode_gspF3DEX2_xbusText]
     - [0x92370, .data, crash]
     - [0x92380, bin]
     - [0x93CB8, .data, libultra/io/vimgr]
@@ -295,8 +297,8 @@ segments:
     - [0x9B988, bin]
     - [0xA3450, .rodata, libultra/io/g0/devmgr]
     - [0xA3470, bin]
-
-    - [0xA4550, bin, ucode]
+    - [0xA3A00, bin, ucode_aspMainData]
+    - [0xA4550, bin, ucode_gspF3DEX2_xbusData]
 
   - type: code
     start: 0xA4970

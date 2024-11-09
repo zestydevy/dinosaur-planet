@@ -500,7 +500,6 @@ __ptExceptionPreamble = 0x800800a0; // type:func size:0x20
 __ptException = 0x800800c0; // type:func
 __osException = 0x80080164; // type:func
 spin = 0x80087818; // type:data
-gspF3DEX2_xbusTextStart = 0x8008b160; // type:data
 SHORT_8008c524 = 0x8008c524; // type:data size:0x2
 FB_BGCOLOR = 0x8008c528; // type:data size:0x2
 FLOAT_8008c52c = 0x8008c52c; // type:data size:0x4
@@ -1277,8 +1276,8 @@ gAssetThreadQueue = 0x800acbc8; // type:data
 gAssetThreadQueueData = 0x800acbd0; // type:data
 
 gAssetThreadStackInternal = 0x800ae1c0; // type:data
-gAssetThreadStack = 0x800ae1d0; /// type:data
-gAssetThreadStackData = 0x800ae1d8; /// type:data
+gAssetThreadStack = 0x800ae1d0; // type:data
+gAssetThreadStackData = 0x800ae1d8; // type:data
 
 generic_queue_init = 0x8000adf0; // type:func
 generic_queue_new = 0x8000ae14; // type:func
@@ -1306,3 +1305,9 @@ generic_stack_is_empty = 0x8000B2B8; // type:func
 fit_aabb_around_cubes = 0x80053438; // type:func
 
 linear_interp = 0x80005060; // type:func
+
+aspMainTextStart = 0x80089750; // type:data
+rspbootTextStart = 0x8008b090; // type:data size:0xd0
+gspF3DEX2_xbusTextStart = 0x8008b160; // type:data
+aspMainDataStart = 0x800a2e00; // type:data
+gspF3DEX2_xbusDataStart = 0x800a3950; // type:data
