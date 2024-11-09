@@ -1,6 +1,6 @@
 import argparse
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import SymbolTableSection
+from elftools.elf.sections import SymbolTableSection, Section
 from typing import TextIO
 import math
 import os
@@ -40,15 +40,16 @@ FUNCTION_DEF_HACKS = {
 }
 
 def gen_core_syms(syms_toml: TextIO):
-    textStart = 0x80000400
-    textSize = 0x89350
-    segmentStart = textStart
-    segmentSize = 0xA3AA0
-    textEnd = textStart + textSize
+    text_start = 0x80000400
+    text_size = 0x89350
+    text_end = text_start + text_size
+    segment_start = text_start
+    segment_size = 0xA3AA0
 
     funcs = []
     vrams: dict[int, int] = {}
 
+    # Grab functions from ROM .elf
     with open(BUILD_PATH.joinpath("dino.elf"), "rb") as file:
         elf = ELFFile(file)
         syms = elf.get_section_by_name(".symtab")
@@ -58,12 +59,13 @@ def gen_core_syms(syms_toml: TextIO):
             value = sym.entry["st_value"]
             size = sym.entry["st_size"]
 
-            if value < textStart or value >= textEnd:
+            if value < text_start or value >= text_end:
                 continue
 
             if sym.name.startswith("L8"):
                 continue
 
+            # Apply override hacks
             def_hack = FUNCTION_DEF_HACKS.get(value)
             if def_hack != None:
                 assert def_hack["name"] == sym.name
@@ -79,6 +81,7 @@ def gen_core_syms(syms_toml: TextIO):
             elif funcs[idx]["name"].startswith("func_") or funcs[idx]["name"] == "":
                 funcs[idx] = func
     
+    # Add any functions defined in the hacks table that wasn't found in the .elf
     for (vram, hack) in FUNCTION_DEF_HACKS.items():
         if vrams.get(vram) == None:
             func = { "name": hack["name"], "vram": vram, "size": hack["size"] }
@@ -90,8 +93,8 @@ def gen_core_syms(syms_toml: TextIO):
     syms_toml.write("[[section]]\n")
     syms_toml.write("name = \".segment\"\n")
     syms_toml.write("rom = 0x00001000\n")
-    syms_toml.write("vram = 0x{:X}\n".format(segmentStart))
-    syms_toml.write("size = 0x{:X}\n".format(segmentSize))
+    syms_toml.write("vram = 0x{:X}\n".format(segment_start))
+    syms_toml.write("size = 0x{:X}\n".format(segment_size))
     syms_toml.write("\n")
 
     syms_toml.write("functions = [\n")
@@ -106,7 +109,7 @@ def gen_core_syms(syms_toml: TextIO):
             if i < len(funcs) - 1:
                 size = funcs[i + 1]["vram"] - vram
             else:
-                size = textEnd - vram
+                size = text_end - vram
         
         syms_toml.write("    {{ name = \"{}\", vram = 0x{:X}, size = 0x{:X} }},\n"
             .format(name, vram, size))
@@ -132,7 +135,66 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
         dll_data = dlls_data[entry.start_offset:entry.end_offset]
         assert len(dll_data) == entry.size
 
+        funcs = []
+        vrams_to_funcs: dict[int, dict] = {}
+
+        text_start = 0
+        text_end = 0
+        
+        # Grab functions by parsing the DLL contents
         dll = DLL.parse(dll_data, str(number), include_funcs=True)
+        assert dll.functions is not None
+        for func in dll.functions:
+            func_info = { 
+                "name": "dll_{}_func_{:X}".format(number, func.address), 
+                "vram": dll_vram + dll.header.size + func.address, 
+                "size": len(func.insts) * 4
+            }
+            funcs.append(func_info)
+            vrams_to_funcs[func_info["vram"]] = func_info
+
+        # Get custom function names from the DLL .elf if we have decomp set up for this DLL
+        dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{number}/{number}.elf")
+        if os.path.exists(dll_elf_path):
+            with open(dll_elf_path, "rb") as file:
+                elf = ELFFile(file)
+                text = elf.get_section_by_name(".text")
+                syms = elf.get_section_by_name(".symtab")
+                assert isinstance(text, Section)
+                assert isinstance(syms, SymbolTableSection)
+
+                text_start = text.header["sh_addr"]
+                text_end = text_start + text.header["sh_size"]
+
+                func_name_prefix = f"dll_{number}_"
+
+                for sym in syms.iter_symbols():
+                    value = sym.entry["st_value"]
+                    st_shndx = sym.entry["st_shndx"]
+                    st_info_type = sym.entry["st_info"]["type"]
+
+                    # non-static = STT_FUNC, static = STT_NOTYPE
+                    if st_shndx != "SHN_ABS" or (st_info_type != "STT_FUNC" and st_info_type != "STT_NOTYPE"):
+                        continue
+                    if value < text_start or value >= text_end:
+                        continue
+
+                    vram = dll_vram + dll.header.size + value
+
+                    func_info = vrams_to_funcs.get(vram)
+                    if func_info == None:
+                        print("Failed to find DLL {} func {} at {:0X} ({:0X})"
+                            .format(number, sym.name, vram, value))
+                    else:
+                        # Make sure the name is globally unique
+                        # This isn't required in the decomp since DLLs are not linked with each other,
+                        # but this is the case for recomp.
+                        new_name = sym.name
+                        if not new_name.startswith(func_name_prefix):
+                            new_name = func_name_prefix + new_name
+                        func_info["name"] = new_name
+        
+        funcs.sort(key=lambda f : f["vram"])
 
         dlls_txt.write(f".dll{number}\n")
 
@@ -155,10 +217,23 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
         syms_toml.write("\n")
 
         syms_toml.write("functions = [\n")
-        assert dll.functions is not None
-        for func in dll.functions:
-            syms_toml.write("    {{ name = \"dll_{}_func_{:X}\", vram = 0x{:X}, size = 0x{:X} }},\n"
-                .format(number, func.address, dll_vram + dll.header.size + func.address, len(func.insts) * 4))
+        i = 0
+        for func in funcs:
+            name = func["name"]
+            vram = func["vram"]
+            size = func["size"]
+
+            if size == None:
+                print(f"Inferring size for {name}")
+                if i < len(funcs) - 1:
+                    size = funcs[i + 1]["vram"] - vram
+                else:
+                    assert(text_end != 0)
+                    size = text_end - vram
+
+            syms_toml.write("    {{ name = \"{}\", vram = 0x{:X}, size = 0x{:X} }},\n"
+                .format(name, vram, size))
+            i += 1
         syms_toml.write("]\n")
         
         dll_rom += entry.size
