@@ -38,9 +38,9 @@
 
 /**************************************************************************
  *
- *  $Revision: 1.14 $
- *  $Date: 1997/02/11 08:22:47 $
- *  $Source: /disk6/Master/cvsmdev2/PR/include/gt.h,v $
+ *  $Revision: 1.16 $
+ *  $Date: 1998/05/28 00:14:50 $
+ *  $Source: /exdisk2/cvs/N64OS/Master/cvsmdev2/PR/include/gt.h,v $
  *
  **************************************************************************/
 
@@ -54,6 +54,8 @@
 #ifdef	_LANGUAGE_C_PLUS_PLUS
 extern "C" {
 #endif	/* _LANGUAGE_C_PLUS_PLUS */
+
+#include <PR/ultratypes.h>
 
 /* the following #defines seem out of order, but we need them
  * for the microcode.

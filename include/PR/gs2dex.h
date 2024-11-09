@@ -6,7 +6,7 @@
 	Modified by	
 	Comments	Header file for S2DEX ucode.
 	
-	$Id: gs2dex.h,v 1.15 1997/10/17 08:19:07 yasu Exp $
+	$Id: gs2dex.h,v 1.21 1998/05/28 00:14:49 has Exp $
   ---------------------------------------------------------------------*/
 
 #ifndef	_GS2DEX_H_
@@ -15,6 +15,8 @@
 #ifdef _LANGUAGE_C_PLUS_PLUS
 extern "C" {
 #endif
+
+#include <PR/ultratypes.h>
 
 /*===========================================================================*
  *	Macro
@@ -38,66 +40,65 @@ extern "C" {
 
 /* Non scalable background plane */
 typedef	struct	{
-  u16   imageX;		/* The x-coordinate of the upper-left position of the texture.  (u11.5)*/ 
-  u16	imageW;		/* The width of the texture.                                    (u10.2)*/
-  s16	frameX;		/* The upper-left position of the transferred frame.            (s10.2)*/
-  u16	frameW;		/* The width of the transferred frame.                          (u10.2)*/
+  u16   imageX;		/* x-coordinate of upper-left position of texture (u10.5) */ 
+  u16	imageW;		/* width of the texture (u10.2) */
+  s16	frameX;		/* upper-left position of transferred frame (s10.2) */
+  u16	frameW;		/* width of transferred frame (u10.2) */
 
-  u16   imageY; 	/* The y-coordinate of the upper-left position of the texture.  (u11.5)*/ 
-  u16	imageH;		/* The height of the texture.                                   (u10.2)*/
-  s16	frameY;		/* The upper-left position of the transferred frame.            (s10.2)*/
-  u16	frameH;		/* The height of the transferred frame.                         (u10.2)*/
+  u16   imageY; 	/* y-coordinate of upper-left position of texture (u10.5) */ 
+  u16	imageH;		/* height of the texture (u10.2) */
+  s16	frameY;		/* upper-left position of transferred frame (s10.2) */
+  u16	frameH;		/* height of transferred frame (u10.2) */
 
-  u64  *imagePtr;	/* The texture source address on DRAM.           */
-  u16	imageLoad;	/* Which to use,  LoadBlock or  LoadTile?        */
-  u8	imageFmt;	/* The format of the texel.  G_IM_FMT_*          */
-  u8	imageSiz;	/* The size of the texel        G_IM_SIZ_*       */
-  u16   imagePal; 	/* The pallet number.                            */
-  u16	imageFlip;	/* The right & left inversion of the image. Inverted by G_BG_FLAG_FLIPS*/
+  u64  *imagePtr;	/* texture source address on DRAM */
+  u16	imageLoad;	/* which to use, LoadBlock or  LoadTile */
+  u8	imageFmt;	/* format of texel - G_IM_FMT_*  */
+  u8	imageSiz;	/* size of texel - G_IM_SIZ_*   */
+  u16   imagePal; 	/* pallet number  */
+  u16	imageFlip;	/* right & left image inversion (Inverted by G_BG_FLAG_FLIPS) */
 
-  /* Because the following are set in the initialization routine guS2DInitBg(), the user doesn't 
-     have to set it.*/
-  u16	tmemW;		/* The TMEM width and Work size of the frame 1 line. 
+  /* The following is set in the initialization routine guS2DInitBg(). There is no need for the user to set it. */
+  u16	tmemW;		/* TMEM width and Word size of frame 1 line. 
                            At LoadBlock, GS_PIX2TMEM(imageW/4,imageSiz)
-                           At LoadTile  GS_PIX2TMEM(frameW/4,imageSiz)+1  */
-  u16	tmemH;		/* The height of TMEM loadable at a time.  (s13.2) The 4 times value.
-			   When the normal texture,   512/tmemW*4
-			   When the CI texture,    256/tmemW*4       */
-  u16	tmemLoadSH;	/* The SH value
-			   At LoadBlock,  tmemSize/2-1
-			   At LoadTile,  tmemW*16-1                  */
-  u16	tmemLoadTH;	/* The TH value or the Stride value 
-			   At LoadBlock,  GS_CALC_DXT(tmemW)
-			   At LoadTile,  tmemH-1                     */
-  u16	tmemSizeW;	/* The skip value of imagePtr for image 1-line.  
+                           At LoadTile  GS_PIX2TMEM(frameW/4,imageSiz)+1 */
+  u16	tmemH;		/* height of TMEM loadable at a time (s13.2) 4 times value
+			   When the normal texture, 512/tmemW*4
+			   When the CI texture, 256/tmemW*4 */
+  u16	tmemLoadSH;	/* SH value
+			   At LoadBlock, tmemSize/2-1
+			   At LoadTile, tmemW*16-1 */
+  u16	tmemLoadTH;	/* TH value or Stride value 
+			   At LoadBlock, GS_CALC_DXT(tmemW)
+			   At LoadTile, tmemH-1 */
+  u16	tmemSizeW;	/* skip value of imagePtr for image 1-line 
 			   At LoadBlock, tmemW*2
-                           At LoadTile,  GS_PIX2TMEM(imageW/4,imageSiz)*2 */
-  u16	tmemSize;	/* The skip value of  imagePtr for 1-loading.  
-			   = tmemSizeW*tmemH                         */
+                           At LoadTile, GS_PIX2TMEM(imageW/4,imageSiz)*2 */
+  u16	tmemSize;	/* skip value of imagePtr for 1-loading  
+			   = tmemSizeW*tmemH                          */
 } uObjBg_t;		/* 40 bytes */
 
 /* Scalable background plane */
 typedef	struct	{
-  u16   imageX;		/* The x-coordinate of the upper-left position of the texture.  (u11.5)*/ 
-  u16	imageW;		/* The width of the texture.                                    (u10.2)*/
-  s16	frameX;		/* The upper-left position of the transferred frame.            (s10.2)*/
-  u16	frameW;		/* The width of the transferred frame.                          (u10.2)*/
+  u16   imageX;		/* x-coordinate of upper-left position of texture (u10.5) */ 
+  u16	imageW;		/* width of texture (u10.2) */
+  s16	frameX;		/* upper-left position of transferred frame (s10.2) */
+  u16	frameW;		/* width of transferred frame (u10.2) */
 
-  u16   imageY; 	/* The y-coordinate of the upper-left position of the texture.  (u11.5)*/ 
-  u16	imageH;		/* The height of the texture.                                   (u10.2)*/
-  s16	frameY;		/* The upper-left position of the transferred frame.            (s10.2)*/
-  u16	frameH;		/* The height of the transferred frame.                         (u10.2)*/
+  u16   imageY; 	/* y-coordinate of upper-left position of texture (u10.5) */ 
+  u16	imageH;		/* height of texture (u10.2) */
+  s16	frameY;		/* upper-left position of transferred frame (s10.2) */
+  u16	frameH;		/* height of transferred frame (u10.2) */
 
-  u64  *imagePtr;	/* The texture source address on DRAM.       */
-  u16	imageLoad;	/* Which to use,  LoadBlock or  LoadTile?    */
-  u8	imageFmt;	/* The format of the texel.   G_IM_FMT_*     */
-  u8	imageSiz;	/* The size of the texel      G_IM_SIZ_*     */
-  u16   imagePal; 	/* The pallet number.                        */
-  u16	imageFlip;	/* The right & left inversion of the image. Inverted by G_BG_FLAG_FLIPS*/
+  u64  *imagePtr;	/* texture source address on DRAM */
+  u16	imageLoad;	/* Which to use, LoadBlock or LoadTile? */
+  u8	imageFmt;	/* format of texel - G_IM_FMT_*  */
+  u8	imageSiz;	/* size of texel - G_IM_SIZ_*  */
+  u16   imagePal; 	/* pallet number */
+  u16	imageFlip;	/* right & left image inversion (Inverted by G_BG_FLAG_FLIPS) */
 
-  u16	scaleW;		/* The scale value of the X-direction.           (u5.10)*/
-  u16	scaleH;		/* The scale value of the Y-direction.           (u5.10)*/
-  s32	imageYorig;	/* The start point of drawing on the image.      (s20.5)*/
+  u16	scaleW;		/* scale value of X-direction (u5.10) */
+  u16	scaleH;		/* scale value of Y-direction (u5.10) */
+  s32	imageYorig;	/* start point of drawing on image (s20.5) */
   
   u8	padding[4];
   
@@ -112,24 +113,24 @@ typedef union {
 /*---------------------------------------------------------------------------*
  *	2D Objects
  *---------------------------------------------------------------------------*/
-#define	G_OBJ_FLAG_FLIPS	1<<0		/* The inversion to the S-direction.  */
-#define	G_OBJ_FLAG_FLIPT	1<<4		/* The inversion to the T-direction.  */
+#define	G_OBJ_FLAG_FLIPS	1<<0		/* inversion to S-direction */
+#define	G_OBJ_FLAG_FLIPT	1<<4		/* nversion to T-direction */
 
 typedef struct {
-  s16  objX;		/* The x-coordinate of the upper-left end. s10.2 OBJ                */
-  u16  scaleW;		/* Scaling of the u5.10 width direction.                            */
-  u16  imageW;		/* The width of the u10.5 texture. (The length of the S-direction.) */
-  u16  paddingX;	/* Unused.  Always 0.                                               */
-  s16  objY;		/* The y-coordinate of the s10.2 OBJ upper-left end.                */
-  u16  scaleH;		/* Scaling of the u5.10 height direction.                           */
-  u16  imageH;		/* The height of the u10.5 texture. (The length of the T-direction.)*/
-  u16  paddingY;	/* Unused.  Always 0.                                               */
-  u16  imageStride;	/* The folding width of the texel.        (In units of 64bit word.) */
-  u16  imageAdrs;	/* The texture header position in  TMEM.  (In units of 64bit word.) */  
-  u8   imageFmt;	/* The format of the texel.   G_IM_FMT_*       */
-  u8   imageSiz;	/* The size of the texel.         G_IM_SIZ_*       */
-  u8   imagePal;	/*The pallet number.  0-7                        */
-  u8   imageFlags;	/* The display flag.    G_OBJ_FLAG_FLIP*            */
+  s16  objX;		/* s10.2 OBJ x-coordinate of upper-left end */
+  u16  scaleW;		/* u5.10 Scaling of u5.10 width direction   */
+  u16  imageW;		/* u10.5 width of u10.5 texture (length of S-direction) */
+  u16  paddingX;	/* Unused - Always 0 */
+  s16  objY;		/* s10.2 OBJ y-coordinate of s10.2 OBJ upper-left end */
+  u16  scaleH;		/* u5.10 Scaling of u5.10 height direction */
+  u16  imageH;		/* u10.5 height of u10.5 texture (length of T-direction) */
+  u16  paddingY;	/* Unused - Always 0 */
+  u16  imageStride;	/* folding width of texel (In units of 64bit word) */
+  u16  imageAdrs;	/* texture header position in TMEM (In units of 64bit word) */  
+  u8   imageFmt;	/* format of texel - G_IM_FMT_* */
+  u8   imageSiz;	/* size of texel - G_IM_SIZ_* */
+  u8   imagePal;	/* pallet number (0-7) */
+  u8   imageFlags;	/* The display flag - G_OBJ_FLAG_FLIP* */
 } uObjSprite_t;		/* 24 bytes */
 
 typedef union {
@@ -174,12 +175,12 @@ typedef union {
 #define	GS_TB_TLINE(pix,siz)	(GS_CALC_DXT(GS_PIX2TMEM((pix),(siz))))
 
 typedef	struct	{
-  u32	type;		/* G_OBJLT_TXTRBLOCK divided into types.                                */
-  u64	*image;		/* The texture source address on DRAM.                                  */
-  u16	tmem;		/* The  transferred TMEM word address.   (8byteWORD)                    */
-  u16	tsize;		/* The Texture size.  Specified by the macro  GS_TB_TSIZE().            */
-  u16	tline;		/* The width of the Texture 1-line. Specified by the macro GS_TB_TLINE()*/
-  u16	sid;		/* STATE ID Multipled by 4.  Either one of  0,4,8 and 12.               */
+  u32	type;		/* G_OBJLT_TXTRBLOCK divided into types */
+  u64	*image;		/* texture source address on DRAM */
+  u16	tmem;		/* loaded TMEM word address (8byteWORD) */
+  u16	tsize;		/* Texture size, Specified by macro GS_TB_TSIZE() */
+  u16	tline;		/* width of Texture 1-line, Specified by macro GS_TB_TLINE() */
+  u16	sid;		/* STATE ID Multipled by 4 (Either one of  0, 4, 8 and 12) */
   u32	flag;		/* STATE flag  */
   u32	mask;		/* STATE mask  */
 } uObjTxtrBlock_t;		/* 24 bytes */
@@ -188,12 +189,12 @@ typedef	struct	{
 #define	GS_TT_THEIGHT(pix,siz)	(((pix)<<2)-1)
 
 typedef	struct	{
-  u32	type;		/* G_OBJLT_TXTRTILE divided into types.                             */
-  u64	*image;		/* The texture source address on DRAM.                              */
-  u16	tmem;		/* The loaded texture source address on DRAM.  (8byteWORD)          */
-  u16	twidth;		/* The width of the Texture. Specified by the macro GS_TT_TWIDTH()  */
-  u16	theight;	/* The height of the Texture. Specified by the macro GS_TT_THEIGHT()*/
-  u16	sid;		/* STATE ID  Multiplied by 4.  Either one of 0,4,8 and 12.          */
+  u32	type;		/* G_OBJLT_TXTRTILE divided into types */
+  u64	*image;		/* texture source address on DRAM */
+  u16	tmem;		/* loaded TMEM word address (8byteWORD)*/
+  u16	twidth;		/* width of Texture (Specified by macro GS_TT_TWIDTH()) */
+  u16	theight;	/* height of Texture (Specified by macro GS_TT_THEIGHT()) */
+  u16	sid;		/* STATE ID Multipled by 4 (Either one of  0, 4, 8 and 12) */
   u32	flag;		/* STATE flag  */
   u32	mask;		/* STATE mask  */
 } uObjTxtrTile_t;		/* 24 bytes */
@@ -202,12 +203,12 @@ typedef	struct	{
 #define	GS_PAL_NUM(num)		((num)-1)
 
 typedef	struct	{
-  u32	type;		/* G_OBJLT_TLUT divided into types.                            */
-  u64	*image;		/* the texture source address on DRAM.                         */
-  u16	phead;		/* The pallet number of the load header.  Between 256 and 511. */
-  u16	pnum;		/* The loading pallet number -1.                               */
-  u16   zero;		/* Assign 0 all the time.                                      */
-  u16	sid;		/* STATE ID  Multiplied by 4.  Either one of 0,4,8 and 12.     */
+  u32	type;		/* G_OBJLT_TLUT divided into types */
+  u64	*image;		/* texture source address on DRAM */
+  u16	phead;		/* pallet number of load header (Between 256 and 511) */
+  u16	pnum;		/* loading pallet number -1 */
+  u16   zero;		/* Assign 0 all the time */
+  u16	sid;		/* STATE ID Multipled by 4 (Either one of  0, 4, 8 and 12)*/
   u32	flag;		/* STATE flag  */
   u32	mask;		/* STATE mask  */
 } uObjTxtrTLUT_t;		/* 24 bytes */
@@ -231,6 +232,21 @@ typedef	struct	{
  *	GBI Commands for S2DEX microcode
  *===========================================================================*/
 /* GBI Header */
+#ifdef	F3DEX_GBI_2
+#define	G_OBJ_RECTANGLE_R	0xda
+#define	G_OBJ_MOVEMEM		0xdc
+#define	G_RDPHALF_0		0xe4
+#define	G_OBJ_RECTANGLE		0x01
+#define	G_OBJ_SPRITE		0x02
+#define	G_SELECT_DL		0x04
+#define	G_OBJ_LOADTXTR		0x05
+#define	G_OBJ_LDTX_SPRITE	0x06
+#define	G_OBJ_LDTX_RECT		0x07
+#define	G_OBJ_LDTX_RECT_R	0x08
+#define	G_BG_1CYC		0x09
+#define	G_BG_COPY		0x0a
+#define	G_OBJ_RENDERMODE	0x0b
+#else
 #define	G_BG_1CYC		0x01
 #define	G_BG_COPY		0x02
 #define	G_OBJ_RECTANGLE		0x03
@@ -244,7 +260,7 @@ typedef	struct	{
 #define	G_OBJ_LDTX_RECT		0xc3
 #define	G_OBJ_LDTX_RECT_R	0xc4
 #define	G_RDPHALF_0		0xe4
-
+#endif
 
 /*---------------------------------------------------------------------------*
  *	Background wrapped screen
@@ -305,7 +321,7 @@ typedef	struct	{
 /*---------------------------------------------------------------------------*
  *	Set general status
  *---------------------------------------------------------------------------*/
-#define	G_MW_GENSTAT	0x08	/* Note that it is the same value of G_MW_FOG.  */
+#define	G_MW_GENSTAT	0x08	/* Note that it is the same value of G_MW_FOG */
 
 #define	gSPSetStatus(pkt, sid, val)	\
 	gMoveWd((pkt), G_MW_GENSTAT, (sid), (val))
@@ -352,9 +368,21 @@ extern	u64	gspS2DEX_fifoTextStart[], gspS2DEX_fifoTextEnd[];
 extern	u64	gspS2DEX_fifoDataStart[], gspS2DEX_fifoDataEnd[];
 extern	u64	gspS2DEX_fifo_dTextStart[], gspS2DEX_fifo_dTextEnd[];
 extern	u64	gspS2DEX_fifo_dDataStart[], gspS2DEX_fifo_dDataEnd[];
+extern	u64	gspS2DEX2_fifoTextStart[], gspS2DEX2_fifoTextEnd[];
+extern	u64	gspS2DEX2_fifoDataStart[], gspS2DEX2_fifoDataEnd[];
+extern	u64	gspS2DEX2_xbusTextStart[], gspS2DEX2_xbusTextEnd[];
+extern	u64	gspS2DEX2_xbusDataStart[], gspS2DEX2_xbusDataEnd[];
 extern	void	guS2DInitBg(uObjBg *);
-extern	void	guS2DEmuSetScissor(u32, u32, u32, u32, u8);
-extern	void	guS2DEmuBgRect1Cyc(Gfx **, uObjBg *);
+
+#ifdef	F3DEX_GBI_2
+# define guS2DEmuBgRect1Cyc	guS2D2EmuBgRect1Cyc	/*Wrapper*/
+# define guS2DEmuSetScissor	guS2D2EmuSetScissor	/*Wrapper*/
+  extern void	guS2D2EmuSetScissor(u32, u32, u32, u32, u8);
+  extern void	guS2D2EmuBgRect1Cyc(Gfx **, uObjBg *);
+#else
+  extern void	guS2DEmuSetScissor(u32, u32, u32, u32, u8);
+  extern void	guS2DEmuBgRect1Cyc(Gfx **, uObjBg *);
+#endif
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
 }

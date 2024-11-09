@@ -12,9 +12,9 @@
 
 /**************************************************************************
  *
- *  $Revision: 1.13 $
- *  $Date: 1997/11/07 04:55:12 $
- *  $Source: /disk6/Master/cvsmdev2/PR/include/ucode.h,v $
+ *  $Revision: 1.15 $
+ *  $Date: 1998/03/31 07:58:57 $
+ *  $Source: /exdisk2/cvs/N64OS/Master/cvsmdev2/PR/include/ucode.h,v $
  *
  **************************************************************************/
 
@@ -153,23 +153,29 @@ extern long long int  gspL3DEX_fifoTextStart[],     gspL3DEX_fifoTextEnd[];
 extern long long int  gspL3DEX_fifoDataStart[],     gspL3DEX_fifoDataEnd[];
 
 /*========== F3DEX2/F3DLX2/F3DLP2/L3DEX2 ==========*/
-/* FIFO version only */
+/* FIFO version */
 extern long long int gspF3DEX2_fifoTextStart[],    gspF3DEX2_fifoTextEnd[];
 extern long long int gspF3DEX2_fifoDataStart[],    gspF3DEX2_fifoDataEnd[];
 extern long long int gspF3DEX2_NoN_fifoTextStart[],gspF3DEX2_NoN_fifoTextEnd[];
 extern long long int gspF3DEX2_NoN_fifoDataStart[],gspF3DEX2_NoN_fifoDataEnd[];
-
-extern long long int gspF3DLX2_fifoTextStart[],    gspF3DLX2_fifoTextEnd[];
-extern long long int gspF3DLX2_fifoDataStart[],    gspF3DLX2_fifoDataEnd[];
-extern long long int gspF3DLX2_NoN_fifoTextStart[],gspF3DLX2_NoN_fifoTextEnd[];
-extern long long int gspF3DLX2_NoN_fifoDataStart[],gspF3DLX2_NoN_fifoDataEnd[];
+extern long long int gspF3DEX2_Rej_fifoTextStart[],gspF3DEX2_Rej_fifoTextEnd[];
+extern long long int gspF3DEX2_Rej_fifoDataStart[],gspF3DEX2_Rej_fifoDataEnd[];
 extern long long int gspF3DLX2_Rej_fifoTextStart[],gspF3DLX2_Rej_fifoTextEnd[];
 extern long long int gspF3DLX2_Rej_fifoDataStart[],gspF3DLX2_Rej_fifoDataEnd[];
-
-extern long long int gspF3DLP2_Rej_fifoTextStart[],gspF3DLP2_Rej_fifoTextEnd[];
-extern long long int gspF3DLP2_Rej_fifoDataStart[],gspF3DLP2_Rej_fifoDataEnd[];
 extern long long int gspL3DEX2_fifoTextStart[],    gspL3DEX2_fifoTextEnd[];
 extern long long int gspL3DEX2_fifoDataStart[],    gspL3DEX2_fifoDataEnd[];
+
+/* XBUS version */
+extern long long int gspF3DEX2_xbusTextStart[],    gspF3DEX2_xbusTextEnd[];
+extern long long int gspF3DEX2_xbusDataStart[],    gspF3DEX2_xbusDataEnd[];
+extern long long int gspF3DEX2_NoN_xbusTextStart[],gspF3DEX2_NoN_xbusTextEnd[];
+extern long long int gspF3DEX2_NoN_xbusDataStart[],gspF3DEX2_NoN_xbusDataEnd[];
+extern long long int gspF3DEX2_Rej_xbusTextStart[],gspF3DEX2_Rej_xbusTextEnd[];
+extern long long int gspF3DEX2_Rej_xbusDataStart[],gspF3DEX2_Rej_xbusDataEnd[];
+extern long long int gspF3DLX2_Rej_xbusTextStart[],gspF3DLX2_Rej_xbusTextEnd[];
+extern long long int gspF3DLX2_Rej_xbusDataStart[],gspF3DLX2_Rej_xbusDataEnd[];
+extern long long int gspL3DEX2_xbusTextStart[],    gspL3DEX2_xbusTextEnd[];
+extern long long int gspL3DEX2_xbusDataStart[],    gspL3DEX2_xbusDataEnd[];
 
 /**************************************************************************
  *

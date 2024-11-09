@@ -12,9 +12,9 @@
 
 /**************************************************************************
  *
- *  $Revision: 1.8 $
- *  $Date: 1997/11/10 10:48:35 $
- *  $Source: /disk6/Master/cvsmdev2/PR/include/sptask.h,v $
+ *  $Revision: 1.9 $
+ *  $Date: 1998/03/05 06:40:29 $
+ *  $Source: /exdisk2/cvs/N64OS/Master/cvsmdev2/PR/include/sptask.h,v $
  *
  **************************************************************************/
 
@@ -137,7 +137,7 @@ typedef u32 OSYieldResult;
  * boundary.  The taskHdrPtr->t.yield_data_ptr must be set to point to the
  * buffer BEFORE the task is started.
  */
-#if	(defined(F3DEX_GBI)||defined(F3DLP_GBI))
+#if	(defined(F3DEX_GBI)||defined(F3DLP_GBI)||defined(F3DEX_GBI_2))
 #define	OS_YIELD_DATA_SIZE		0xc00
 #else
 #define OS_YIELD_DATA_SIZE		0x900

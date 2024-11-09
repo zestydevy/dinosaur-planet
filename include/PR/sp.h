@@ -14,9 +14,9 @@
  *
  * Sprite library include file
  *
- *  $Revision: 1.15 $
- *  $Date: 1997/02/11 08:33:02 $
- *  $Source: /disk6/Master/cvsmdev2/PR/include/sp.h,v $
+ *  $Revision: 1.16 $
+ *  $Date: 1998/04/17 05:03:46 $
+ *  $Source: /exdisk2/cvs/N64OS/Master/cvsmdev2/PR/include/sp.h,v $
  *
  **************************************************************************/
 
@@ -154,6 +154,25 @@ typedef struct sprite Sprite;
 #define SP_FRACPOS		0x00000100
 #define SP_TEXSHUF		0x00000200
 #define SP_EXTERN		0x00000400
+
+/*
+ * Function wrapper
+ */
+#if	defined(F3DEX_GBI_2)
+#define	spMove			spX2Move
+#define	spSetZ			spX2SetZ
+#define	spScissor		spX2Scissor
+#define	spDraw			spX2Draw
+#define	spInit			spX2Init
+#define	spFinish		spX2Finish
+#elif	defined(F3DEX_GBI)
+#define	spMove			spXMove
+#define	spSetZ			spXSetZ
+#define	spScissor		spXScissor
+#define	spDraw			spXDraw
+#define	spInit			spXInit
+#define	spFinish		spXFinish
+#endif
 
 /*
  * Function prototypes
