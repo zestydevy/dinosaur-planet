@@ -39,7 +39,7 @@ FUNCTION_DEF_HACKS = {
     0x8001C8A0: { "name": "func_8001C8A0", "size": 0x34 }, # synthetic
 }
 
-def gen_core_syms(syms_toml: TextIO):
+def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     text_start = 0x80000400
     text_size = 0x89350
     text_end = text_start + text_size
@@ -48,8 +48,9 @@ def gen_core_syms(syms_toml: TextIO):
 
     funcs = []
     vrams: dict[int, int] = {}
+    data_globals = []
 
-    # Grab functions from ROM .elf
+    # Grab functions/data from ROM .elf
     with open(BUILD_PATH.joinpath("dino.elf"), "rb") as file:
         elf = ELFFile(file)
         syms = elf.get_section_by_name(".symtab")
@@ -58,28 +59,37 @@ def gen_core_syms(syms_toml: TextIO):
         for sym in syms.iter_symbols():
             value = sym.entry["st_value"]
             size = sym.entry["st_size"]
-
-            if value < text_start or value >= text_end:
-                continue
+            st_shndx = sym.entry["st_shndx"]
 
             if sym.name.startswith("L8"):
                 continue
 
-            # Apply override hacks
-            def_hack = FUNCTION_DEF_HACKS.get(value)
-            if def_hack != None:
-                assert def_hack["name"] == sym.name
-                size = def_hack["size"]
-                print("Overriding function {} definition to 0x{:X}".format(sym.name, size))
-        
-            func = { "name": sym.name, "vram": value, "size": size if size != 0 else None }
+            if value >= text_start and value < text_end:
+                # Function
 
-            idx = vrams.get(value)
-            if idx == None:
-                vrams[value] = len(funcs)
-                funcs.append(func)
-            elif funcs[idx]["name"].startswith("func_") or funcs[idx]["name"] == "":
-                funcs[idx] = func
+                # Apply override hacks
+                def_hack = FUNCTION_DEF_HACKS.get(value)
+                if def_hack != None:
+                    assert def_hack["name"] == sym.name
+                    size = def_hack["size"]
+                    print("Overriding function {} definition to 0x{:X}".format(sym.name, size))
+            
+                func = { "name": sym.name, "vram": value, "size": size if size != 0 else None }
+
+                idx = vrams.get(value)
+                if idx == None:
+                    vrams[value] = len(funcs)
+                    funcs.append(func)
+                elif funcs[idx]["name"].startswith("func_") or funcs[idx]["name"] == "":
+                    funcs[idx] = func
+                pass
+            elif value >= text_end:
+                # Data
+                if st_shndx != "SHN_ABS":
+                    continue
+
+                data_global = { "name": sym.name, "vram": value }
+                data_globals.append(data_global)
     
     # Add any functions defined in the hacks table that wasn't found in the .elf
     for (vram, hack) in FUNCTION_DEF_HACKS.items():
@@ -90,6 +100,7 @@ def gen_core_syms(syms_toml: TextIO):
     
     funcs.sort(key=lambda f : f["vram"])
     
+    # Write function symbols
     syms_toml.write("[[section]]\n")
     syms_toml.write("name = \".segment\"\n")
     syms_toml.write("rom = 0x00001000\n")
@@ -117,7 +128,25 @@ def gen_core_syms(syms_toml: TextIO):
         i += 1
     syms_toml.write("]\n")
 
-def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
+    # Write data symbols
+    datasyms_toml.write("[[section]]\n")
+    datasyms_toml.write("name = \".segment\"\n")
+    datasyms_toml.write("rom = 0x00001000\n")
+    datasyms_toml.write("vram = 0x{:X}\n".format(segment_start))
+    datasyms_toml.write("size = 0x{:X}\n".format(segment_size))
+    datasyms_toml.write("\n")
+
+    datasyms_toml.write("symbols = [\n")
+    for data_global in data_globals:
+        name = data_global["name"]
+        vram = data_global["vram"]
+        
+        datasyms_toml.write("    {{ name = \"{}\", vram = 0x{:X} }},\n"
+            .format(name, vram))
+    
+    datasyms_toml.write("]\n")
+
+def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
     with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:
         tab = DLLTab.parse(tab_file.read())
 
@@ -137,6 +166,7 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
 
         funcs = []
         vrams_to_funcs: dict[int, dict] = {}
+        data_globals = []
 
         text_start = 0
         text_end = 0
@@ -154,6 +184,7 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
             vrams_to_funcs[func_info["vram"]] = func_info
 
         # Get custom function names from the DLL .elf if we have decomp set up for this DLL
+        # Also get data globals
         dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{number}/{number}.elf")
         if os.path.exists(dll_elf_path):
             with open(dll_elf_path, "rb") as file:
@@ -173,38 +204,49 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
                     st_shndx = sym.entry["st_shndx"]
                     st_info_type = sym.entry["st_info"]["type"]
 
-                    # non-static = STT_FUNC, static = STT_NOTYPE
-                    if st_shndx != "SHN_ABS" or (st_info_type != "STT_FUNC" and st_info_type != "STT_NOTYPE"):
-                        continue
-                    if value < text_start or value >= text_end:
-                        continue
+                    if value >= text_start and value < text_end:
+                        # non-static = STT_FUNC, static = STT_NOTYPE
+                        if st_shndx != "SHN_ABS" or (st_info_type != "STT_FUNC" and st_info_type != "STT_NOTYPE"):
+                            continue
 
-                    vram = dll_vram + dll.header.size + value
+                        vram = dll_vram + dll.header.size + value
 
-                    func_info = vrams_to_funcs.get(vram)
-                    if func_info == None:
-                        print("Failed to find DLL {} func {} at {:0X} ({:0X})"
-                            .format(number, sym.name, vram, value))
-                    else:
-                        # Make sure the name is globally unique
-                        # This isn't required in the decomp since DLLs are not linked with each other,
-                        # but this is the case for recomp.
-                        new_name = sym.name
-                        if not new_name.startswith(func_name_prefix):
-                            new_name = func_name_prefix + new_name
-                        func_info["name"] = new_name
+                        func_info = vrams_to_funcs.get(vram)
+                        if func_info == None:
+                            print("Failed to find DLL {} func {} at {:0X} ({:0X})"
+                                .format(number, sym.name, vram, value))
+                        else:
+                            # Make sure the name is globally unique
+                            # This isn't required in the decomp since DLLs are not linked with each other,
+                            # but this is the case for recomp.
+                            new_name = sym.name
+                            if not new_name.startswith(func_name_prefix):
+                                new_name = func_name_prefix + new_name
+                            func_info["name"] = new_name
+                    elif value >= text_end:
+                        # Data
+                        if st_shndx != "SHN_ABS":
+                            continue
+                        if value & 0x80000000:
+                            # External symbol reference, already covered by core syms
+                            continue
+
+                        data_global = { "name": sym.name, "vram": dll_vram + value }
+                        data_globals.append(data_global)
         
         funcs.sort(key=lambda f : f["vram"])
 
+        # Write dll.txt entry
         dlls_txt.write(f".dll{number}\n")
 
+        # Write functions
         syms_toml.write("\n")
         syms_toml.write("[[section]]\n")
         syms_toml.write(f"name = \".dll{number}\"\n")
         syms_toml.write("rom = 0x{:X}\n".format(dll_rom + dll.header.size))
         syms_toml.write("vram = 0x{:X}\n".format(dll_vram + dll.header.size))
         syms_toml.write("size = 0x{:X}\n".format(entry.size))
-        syms_toml.write("gp = 0x{:X}\n".format(dll_vram + dll.header.rodata_offset))
+        syms_toml.write("got_address = 0x{:X}\n".format(dll_vram + dll.header.rodata_offset))
         syms_toml.write("\n")
 
         syms_toml.write("relocs = [\n")
@@ -235,6 +277,25 @@ def gen_dll_syms(syms_toml: TextIO, dlls_txt: TextIO):
                 .format(name, vram, size))
             i += 1
         syms_toml.write("]\n")
+
+        # Write data symbols
+        datasyms_toml.write("\n")
+        datasyms_toml.write("[[section]]\n")
+        datasyms_toml.write(f"name = \".dll{number}\"\n")
+        datasyms_toml.write("rom = 0x{:X}\n".format(dll_rom + dll.header.size))
+        datasyms_toml.write("vram = 0x{:X}\n".format(dll_vram + dll.header.size))
+        datasyms_toml.write("size = 0x{:X}\n".format(entry.size))
+        datasyms_toml.write("\n")
+
+        datasyms_toml.write("symbols = [\n")
+        for data_global in data_globals:
+            name = data_global["name"]
+            vram = data_global["vram"]
+        
+            datasyms_toml.write("    {{ name = \"{}\", vram = 0x{:X} }},\n"
+                .format(name, vram))
+    
+        datasyms_toml.write("]\n")
         
         dll_rom += entry.size
         dll_vram += math.ceil((entry.size + entry.bss_size) / 4096) * 4096
@@ -246,18 +307,20 @@ def main():
     args = parser.parse_args()
 
     out_syms_path = Path("dino.syms.toml").absolute()
+    out_datasyms_path = Path("dino.datasyms.toml").absolute()
     out_dlls_txt_path = Path("dino.dlls.txt").absolute()
 
     # Do all path lookups from the base directory
     os.chdir(Path(args.base_dir).resolve())
 
     # Gen syms
-    with open(out_syms_path, "w", encoding="utf-8") as syms_toml:
+    with open(out_syms_path, "w", encoding="utf-8") as syms_toml, \
+         open(out_datasyms_path, "w", encoding="utf-8") as datasyms_toml, \
+         open(out_dlls_txt_path, "w", encoding="utf-8") as dlls_txt:
         print("Generating core symbols...")
-        gen_core_syms(syms_toml)
+        gen_core_syms(syms_toml, datasyms_toml)
         print("Generating DLL symbols...")
-        with open(out_dlls_txt_path, "w", encoding="utf-8") as dlls_txt:
-            gen_dll_syms(syms_toml, dlls_txt)
+        gen_dll_syms(syms_toml, datasyms_toml, dlls_txt)
     print("Done. Wrote symbols to {}".format(out_syms_path))
 
 if __name__ == "__main__":
