@@ -72,15 +72,15 @@ typedef struct
 {
 /*0000*/	u32 id;
 /*0004*/	s32 refCount;
-/*0008*/	u32 * exports;
-/*000C*/	u32 * end;
+/*0008*/	u32 *exports;
+/*000C*/	void *end;
 } DLLInst;
 
 struct DLLFile;
 
-typedef void (*DLLFunc)(struct DLLFile* self);
+typedef void (*DLLFunc)(struct DLLFile *self);
 
-typedef struct
+typedef struct DLLFile
 {
 	u32 code;
 	u32 data;
@@ -88,7 +88,7 @@ typedef struct
 	u16 exportCount;
 	DLLFunc ctor;
 	DLLFunc dtor;
-	u32 exports[1]; // Exports table begins here
+	// Exports table begins here
 } DLLFile;
 
 extern void ***gDLL_57;
@@ -146,7 +146,7 @@ extern s32 gLoadedDLLCount;
  * start and end will also be set to pointers to the start and end 
  * of the DLL's body respectively.
  */
-u32 find_executing_dll(u32 pc, u32 **start, u32 **end);
-DLLInst *get_loaded_dlls(u32 *arg0);
+u32 find_executing_dll(u32 pc, void **start, void **end);
+DLLInst *get_loaded_dlls(u32 *outLoadedDLLCount);
 
 #endif //_SYS_DLL_H

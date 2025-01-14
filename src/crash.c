@@ -107,8 +107,8 @@ void stop_active_app_threads_2() {
 
 u32 crash_nmi_handler() {
     OSThread *thread;
-    u32 *dllStart;
-    u32 *dllEnd;
+    void *dllStart;
+    void *dllEnd;
 
     // Clone asset thread and main thread
     thread = __osGetActiveQueue();

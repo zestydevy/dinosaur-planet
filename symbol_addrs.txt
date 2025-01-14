@@ -917,6 +917,7 @@ gActiveMenuDLL = 0x800a7d54; // type:data size:0x4
 find_executing_dll = 0x8000BD1C; // type:func
 dll_load_deferred = 0x8000be04; // type:func
 dll_load = 0x8000be78; // type:func
+dll_unload = 0x8000C258; // type:func
 dll_load_from_tab = 0x8000c3cc; // type:func
 dll_relocate = 0x8000c4a8; // type:func
 dll_throw_fault = 0x8000C3BC; // type:func

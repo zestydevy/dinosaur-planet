@@ -692,9 +692,9 @@ void func_80014B1C(void) {
 
 void func_80014B6C(void) {
     if (gDLL_4C != 0) {
-        func_8000C258(gDLL_4B);
+        dll_unload(gDLL_4B);
         gDLL_4B = 0;
-        func_8000C258(gDLL_4C);
+        dll_unload(gDLL_4C);
         gDLL_4C = 0;
     }
 }
