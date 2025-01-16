@@ -18,8 +18,6 @@ void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
 TActor * get_player(void);
 
-void replace_loaded_dll_list(DLLInst arg0[], s32 arg1);
-
 s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 
 void dl_get_debug_info2(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
@@ -54,5 +52,7 @@ s32 mainGetBit(s32);
 void mainSetBits(s32, s32);
 
 void draw_actor(TActor*,s32,s32,s32,s32,float);
+
+void dl_apply_geometry_mode(Gfx **gdl);
 
 #endif //_FUNCTIONS_H

@@ -6,7 +6,6 @@ void clear_PlayerPosBuffer(void);
 void func_800483BC(f32, f32, s32);
 void game_init(void);
 void init_bittable(void);
-struct DLLInstance **dll_load_deferred(s32, s32);
 
 const char gameVer[] = "1.3623";
 const char curentTime[] = "01/12/00 09:19";

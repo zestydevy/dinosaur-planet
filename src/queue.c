@@ -395,7 +395,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             *load->p.texture.dest = texture_load(load->p.texture.id, 0);
             break;
         case ASSET_TYPE_DLL:
-            *load->p.dll.dest = dll_load((u16)load->p.dll.id, (u16)load->p.dll.exportCount, FALSE);
+            *load->p.dll.dest = dll_load(load->p.dll.id, load->p.dll.exportCount, FALSE);
             break;
         case ASSET_TYPE_MODEL:
             *load->p.model.dest = model_load_create_instance(load->p.model.id,

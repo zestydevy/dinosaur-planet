@@ -1,17 +1,5 @@
 #include "common.h"
-
-#define MAX_LOADED_DLLS 128
-#define DLL_NONE -1
-
-#define DLL_FILE_EXPORTS(dllFile) ((u32*)((u32)dllFile + sizeof(DLLFile)))
-#define DLL_EXPORTS_TO_FILE(exports) ((DLLFile*)((u32)exports - sizeof(DLLFile)))
-
-#define DLL_INST_EXPORTS_FIELD_OFFSET 0x8
-#define DLL_INST_EXPORTS_TO_INST(instExports) ((DLLInst*)((u32)instExports - DLL_INST_EXPORTS_FIELD_OFFSET))
-
-extern u32 *gFile_DLLSIMPORTTAB;
-extern DLLTab *gFile_DLLS_TAB;
-extern s32 gDLLCount;
+#include "sys/dll.h"
 
 void dll_relocate(DLLFile *dll);
 DLLFile *dll_load_from_tab(u16 id, s32 *sizeOut);
@@ -27,11 +15,10 @@ void init_dll_system() {
         ++gDLLCount;
     }
 
-    gLoadedDLLList = (DLLInst*)malloc(0x800, 4, NULL);
+    gLoadedDLLList = (DLLInst*)malloc(sizeof(DLLInst) * MAX_LOADED_DLLS, 4, NULL);
 
     gLoadedDLLCount = MAX_LOADED_DLLS;
-    while (gLoadedDLLCount != 0)
-    {
+    while (gLoadedDLLCount != 0) {
         --gLoadedDLLCount;
         gLoadedDLLList[gLoadedDLLCount].id = noId;
     }
@@ -66,9 +53,9 @@ u32 find_executing_dll(u32 pc, void **start, void **end) {
     return DLL_NONE;
 }
 
-void replace_loaded_dll_list(DLLInst arg0[], s32 arg1) {
-    gLoadedDLLCount = arg1;
-    gLoadedDLLList = arg0;
+void replace_loaded_dll_list(DLLInst list[], s32 count) {
+    gLoadedDLLCount = count;
+    gLoadedDLLList = list;
 }
 
 DLLInst *get_loaded_dlls(u32 *outLoadedDLLCount) {

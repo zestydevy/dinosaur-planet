@@ -5,6 +5,9 @@
 
 #include "PR/ultratypes.h"
 
+#define MAX_LOADED_DLLS 128
+#define DLL_NONE -1
+
 enum DLL_ID {
     DLL_UI        = 0x01,
     DLL_CAMERA    = 0x02,
@@ -91,6 +94,13 @@ typedef struct DLLFile
 	// Exports table begins here
 } DLLFile;
 
+#define DLL_FILE_EXPORTS(dllFile) ((u32*)((u32)dllFile + sizeof(DLLFile)))
+#define DLL_EXPORTS_TO_FILE(exports) ((DLLFile*)((u32)exports - sizeof(DLLFile)))
+
+#define DLL_INST_EXPORTS_FIELD_OFFSET 0x8
+#define DLL_INST_EXPORTS_TO_INST(instExports) ((DLLInst*)((u32)instExports - DLL_INST_EXPORTS_FIELD_OFFSET))
+
+
 extern void ***gDLL_57;
 extern struct DLLInstance
     **D_8008C970,
@@ -139,6 +149,11 @@ extern struct DLLInstance
 extern DLLInst *gLoadedDLLList;
 extern s32 gLoadedDLLCount;
 
+extern u32 *gFile_DLLSIMPORTTAB;
+extern DLLTab *gFile_DLLS_TAB;
+extern s32 gDLLCount;
+
+void init_dll_system();
 /**
  * Returns the ID of the DLL that the given program counter is executing within, 
  * or -1 if the PC is not within a DLL.
@@ -147,6 +162,12 @@ extern s32 gLoadedDLLCount;
  * of the DLL's body respectively.
  */
 u32 find_executing_dll(u32 pc, void **start, void **end);
+void replace_loaded_dll_list(DLLInst list[], s32 count);
 DLLInst *get_loaded_dlls(u32 *outLoadedDLLCount);
+u32 **dll_load_deferred(u16 id, u16 exportCount);
+u32 **dll_load(u16 id, u16 exportCount, s32 runConstructor);
+void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize);
+u32 dll_unload(u32 **dllInstExports);
+s32 dll_throw_fault();
 
 #endif //_SYS_DLL_H
