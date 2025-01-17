@@ -1,4 +1,4 @@
 compile: yes
-link_original_rodata: yes
-link_original_data: yes
-link_original_bss: yes
+link_original_rodata: no
+link_original_data: no
+link_original_bss: no

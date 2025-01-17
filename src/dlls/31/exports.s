@@ -6,5 +6,5 @@ _exports:
 .dword dll_31_ctor
 .dword dll_31_dtor
 
-.dword dll_31_func_6C
-.dword dll_31_func_224
+.dword dll_31_flashLoadGame
+.dword dll_31_flashSaveGame

@@ -1,8 +1,8 @@
 dll_31_ctor = 0x0;
 dll_31_dtor = 0x60;
-dll_31_func_6C = 0x6C;
-dll_31_func_224 = 0x224;
-dll_31_func_404 = 0x404;
+dll_31_flashLoadGame = 0x6C;
+dll_31_flashSaveGame = 0x224;
+dll_31_flashComputeSaveChecksum = 0x404;
 dll_31_osFlashInit = 0x4DC;
 dll_31_func_638 = 0x638;
 dll_31_osFlashReadStatus = 0x640;
@@ -12,6 +12,7 @@ dll_31_osFlashSectorErase = 0x88C;
 dll_31_osFlashWriteBuffer = 0x9A4;
 dll_31_osFlashWriteArray = 0xA50;
 dll_31_osFlashReadArray = 0xB48;
+
 osCreateMesgQueue = 0x800000F9;
 osInvalDCache = 0x800000FA;
 osRecvMesg = 0x800000FB;
@@ -23,4 +24,12 @@ osEPiWriteIo = 0x800000FE;
 osEPiReadIo = 0x800000FF;
 osEPiStartDma = 0x80000100;
 
-OSPiHandle_81083fb8 = 0xFB8;
+sFlashDmaMqBuffer = 0xF48;
+sFlashDmaMq = 0xF50;
+sFlashIoMesg = 0xF68;
+sFlashId = 0xF80;
+sFlashReadIoMesg = 0xF88;
+sFlashReadIdQueue = 0xFA0;
+sFlashEPiHandle = 0xFB8;
+sFlashReadIdQueueBuffer = 0x102C;
+DAT_81084030 = 0x1030;
