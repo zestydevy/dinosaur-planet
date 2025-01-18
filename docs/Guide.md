@@ -12,7 +12,8 @@ This document is intended to be an introductory guide to decomp (tailored specif
 - [3. Symbols](#3-symbols)
 - [4. Data Sections](#4-data-sections)
 - [5. Optimization Levels and Debug Symbols](#5-optimization-levels-and-debug-symbols)
-- [6. Decompilation Tools](#6-decompilation-tools)
+- [6. DLL Decompilation](#6-dll-decompilation)
+- [7. Decompilation Tools](#7-decompilation-tools)
 
 
 ## 1. Introduction
@@ -360,7 +361,24 @@ Sometimes, to get a function to match you will need to change the optimization a
 > Note: The build script must be re-configured for the new optimization flags to take effect (`./dino.py configure`).
 
 
-## 6. Decompilation Tools
+## 6. DLL Decompilation
+Dinosaur Planet DLLs goes through a separate extraction and compilation process to the core code. Instead of using `splat`, the `tools/dll_split.py` script is used to extract assembly/data, stub C code, and automatically discover symbols. This script does not need to be used directly. If a DLL's directory under `src/dlls` doesn't exist yet, you can use `./dino.py setup-dll` to create it. Once created, running the usual `./dino.py extract` command will re-extract the DLL as necessary.
+
+For the C source of the DLL, the same decompilation process is used as described in the above sections.
+
+### DLL Exports
+An important part of DLL recompilation is the `exports.s` file that you will find in each DLL's `src` directory. This defines both the names of the DLL's constructor and destructor as well as each entry of the DLL's export table. The `setup-dll` command will set this file up for you, but the function names in this file will need to be updated if they are changed.
+
+### DLL Symbols
+Just like the core code uses files like `symbol_addrs.txt` to define symbols, each DLL has their own `syms.txt` file instead. This file follows the same syntax as described before.
+
+When adding entries for symbols that are defined in the core code, the absolute address of that symbol is not used. Instead, the "address" will be the 1-based index of the real address found in DLLSIMPORT.tab additionally with the 32nd bit set (0x80000000). The `setup-dll` command will typically resolve these symbols for you but if the corresponding symbol in the core code is renamed then it will also need to be renamed here.
+
+### DLL Build Configuration
+Each DLL comes with a `<dll number>.yaml` file that defines how the DLL should be compiled/linked. The most notable feature being whether to link the original `.data` and `.rodata` sections as binary files. Once those sections are decompiled into the source code, those settings should be turned off.
+
+
+## 7. Decompilation Tools
 There are many tools out there to assist with decomp. You can find [a full list of tools and other resources in the contribution guide](../CONTRIBUTING.md#resources).
 
 Here are some recommended tools:

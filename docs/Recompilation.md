@@ -36,10 +36,14 @@ Please see [splat's full documentation for more information](https://github.com/
 ### DLLs
 Dinosaur Planet DLLs are in a special format that splat isn't able to simply extract. Instead, splat is configured (by `splat.yaml`) to extract all DLLs to a single `DLLS.bin` file (found under `bin/assets`). This file is then unpacked by the tool `dino_dll.py` (found under `tools`). Each unpacked DLL can be found under `bin/assets/dlls`.
 
+While splat is used to extract the DLL binaries, it does not extract assembly and data from them. Instead, this is done with the `tools/dll_split.py` script which provides somewhat similar functionality. For each DLL directory under `src/dlls` there is a `<dll number>.yaml` file that allows extraction to be configured.
+
 ### Linker Script
 In addition to extracting code and data, splat is also responsible for generating a linker script that is capable of re-linking all extracted files back into a ROM in the exact same order as the original. After running `./dino.py extract`, this can be found at `dino.ld` in the repository root.
 
 The linker script is vital for creating matching ROMs because it places data from each object file (`.o`) at its original address in the new ROM.
+
+As DLLs are linked separately, they use a different linker script found at `src/dlls/dll.ld`. Some DLLs override this with their own linker script found in their `src` directory.
 
 ### Symbols
 While extracting assembly code, splat will also generate files containing symbols for global variables and functions that it comes across. These symbols will initially have auto-generated names like `func_<address>` and `D_<address>`. Automatically detected variables are placed in `undefined_syms_auto.txt` and functions in `undefined_funcs_auto.txt` (found in the repository root after splat is ran).
@@ -47,6 +51,8 @@ While extracting assembly code, splat will also generate files containing symbol
 To give these symbols actual names, the file `symbol_addrs.txt` is used. Splat reads this file while extracting and will use the names given here for addresses it thinks are variables or functions.
 
 Sometimes, splat won't be able to detect an address as a proper symbol. This usually happens when the address isn't referenced explicitly in assembly. For addresses that should have a symbol, the `undefined_syms.txt` and `undefined_funcs.txt` files can be used to define things like variables and functions respectively.
+
+DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their `src/dlls/<dll number>` directory. This file follows the same syntax as the above symbol files. These DLL symbol files will often contain entries for functions/globals actually defined in the core code. In those cases, the address in the DLL symbols file will not be the absolute address of that symbol, and instead will be a 1-based index into the DLLSIMPORT.tab file. The index will also have the 32nd bit set (0x80000000).
 
 
 ## Building
@@ -74,6 +80,9 @@ DLLs are a special exception. Instead of being linked directly into the final RO
 4. Finally, after all decompiled DLLs have been recompiled, repack all DLLs into a new `DLLS.bin` file using `dino_dll.py` (found at `tools/dino_dll.py`).
 
 After all that, `DLLS.bin` is linked into the file ROM like a normal binary file.
+
+#### DLL Exports
+Despite the name, the `exports.s` file actually contains both the DLL's export table **and** the names of the DLL's constructor and destructor. The order of entries in this file must be: the constructor, the destructor, and then each export table entry in the same order as in the original DLL file.
 
 ### Assembly Files
 All remaining assembly files (`.s`, those not found under `asm/nonmatchings`) are simply assembled using a modern assembler into individual object files.

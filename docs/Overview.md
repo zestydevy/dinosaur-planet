@@ -17,7 +17,11 @@ Decompiled C and assembly code (finished and unfinished) can be found under the 
 The `src` directory contains all of the decompiled C implementation files (`.c` files). Each file (excluding DLL code) is mapped from a specific address range in the base ROM via splat. These files are generally stubbed out by splat when a new address range is marked as C code and contain `GLOBAL_ASM` pragmas that include the original assembly code (in order) for each function in the file. When a function is fully decompiled and matching, the `GLOBAL_ASM` pragma is removed.
 
 #### DLLs
-The `src/dlls` directory is special. Dinosaur Planet uses a unique DLL system. Each directory under `dlls` is named after the DLL number it is for. Inside each DLL directory is a single C file for the full implementation of that DLL and an `exports.s` file which defines the exports table for that DLL ([see the full DLL documentation for more information](./DLLs.md)).
+The `src/dlls` directory is special. Dinosaur Planet uses a unique DLL system. Each directory under `dlls` is named after the DLL number it is for. Inside each DLL directory is:
+- A single C file for the full implementation of that DLL.
+- An `exports.s` file which defines the DLL's export table.
+- A `.yaml` file that configures how the DLL should be extracted and recompiled.
+- A `syms.txt` file that defines addresses for known symbols for that specific DLL.
 
 Additionally, the `dlls` directory currently contains a special linker script for just DLL code.
 
@@ -73,7 +77,10 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `tools/splat` - Extracts assembly and data from the base ROM and generates the linker script for the re-built ROM.
 - `tools/configure.py` - Configures the Ninja build script file (`build.ninja`) for the project.
 - `tools/dino_dll.py` - Packs and unpacks the `DLLS.bin` and `DLLS_tab.bin` files.
+- `tools/dll_split.py` - Like splat, but for Dinosaur Planet DLLs. Extracts assembly and data from each unpacked DLL and sets up a directory under `src/dlls` containing a C stub, the DLL's export table, and automatically discovered symbols. 
 - `tools/dlldump.py` - Displays the header, relocation tables, and executable assembly for a given Dinosaur Planet `.dll` file.
+- `tools/dllimports.py` - Displays and provides address/index lookup for DLLSIMPORT.tab entries.
+- `tools/dlltab.py` - Displays information from the DLLS.tab file.
 - `tools/elf2dll` - Converts a standard ELF file to the unique Dinosaur Planet DLL format.
 - `tools/first-diff.py` - Find the first N differences between the base and re-built ROM.
 - `tools/first_bin_diff.py` - Find the first N differences between two binary files.
