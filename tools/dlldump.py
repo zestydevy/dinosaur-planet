@@ -4,7 +4,7 @@ import argparse
 from io import BufferedReader
 from pathlib import Path
 
-from dino.dll import DLL, DLLHeader, DLLRelocationTable
+from dino.dll import DLL, DLLHeader, DLLRelocationTable, DLLFunction, parse_dll_functions
 
 def dump_header(dll: DLL):
     print("HEADER")
@@ -79,17 +79,15 @@ def dump_relocation_table(dll: DLL):
     else:
         print("No GOT or relocation tables present.")
 
-def dump_text_disassembly(dll: DLL,
+def dump_text_disassembly(dll_functions: "list[DLLFunction]",
                           only_symbols: "list[str] | None",
                           orig_operands: bool):
     print(".text")
     print("===================")
     
-    assert dll.functions is not None
-    funcs = dll.functions
     first = True
 
-    for func in funcs:
+    for func in dll_functions:
         if only_symbols is not None and not func.symbol in only_symbols:
             continue
 
@@ -135,7 +133,7 @@ def main():
         dll_file: BufferedReader
         number = Path(dll_file.name).name.split(".")[0]
         data = bytearray(dll_file.read())
-        dll = DLL.parse(data, number=number, include_funcs=args.disassemble)
+        dll = DLL.parse(data, number=number)
 
         if args.header:
             dump_header(dll)
@@ -146,7 +144,8 @@ def main():
             print()
         
         if args.disassemble:
-            dump_text_disassembly(dll, args.symbols, args.orig or False)
+            dll_functions = parse_dll_functions(data, dll)
+            dump_text_disassembly(dll_functions, args.symbols, args.orig or False)
             print()
 
 if __name__ == "__main__":

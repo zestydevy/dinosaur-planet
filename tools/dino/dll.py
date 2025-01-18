@@ -3,8 +3,6 @@ import struct
 from capstone import CS_ARCH_MIPS, CS_MODE_BIG_ENDIAN, CS_MODE_MIPS64, Cs, CsInsn
 
 class DLL:
-    functions: "list[DLLFunction] | None"
-
     """A Dinosaur Planet DLL"""
     def __init__(self,
                  number: str,
@@ -78,16 +76,10 @@ class DLL:
             self.get_data_size()
 
     @staticmethod
-    def parse(data: bytes, 
-              number: str, 
-              include_funcs=True,
-              known_symbols: "dict[int, str]"={}):
+    def parse(data: bytes, number: str):
         header = DLLHeader.parse(data)
         reloc_table = DLLRelocationTable.parse(data, header)
         dll = DLL(number, len(data), header, reloc_table)
-        
-        if include_funcs:
-            dll.functions = parse_functions(data, dll, reloc_table, known_symbols)
 
         return dll
 
@@ -232,12 +224,12 @@ class DLLFunction:
         self.relocations = relocations
         """All instruction relocations in the function, sorted by their position in the original DLL's GOT."""
 
-def parse_functions(data: bytes, 
-                    dll: DLL,
-                    reloc_table: DLLRelocationTable,
-                    known_symbols: "dict[int, str]"={}) -> "list[DLLFunction]":
+def parse_dll_functions(data: bytes, 
+                        dll: DLL,
+                        known_symbols: "dict[int, str]"={}) -> "list[DLLFunction]":
     """Parses and returns all functions in the given Dinosaur Planet DLL."""
     header = dll.header
+    reloc_table = dll.reloc_table
 
     # Determine where in the file the .text section ends
     text_end = header.size + dll.get_text_size()
@@ -386,7 +378,10 @@ def parse_functions(data: bytes,
                 symbol = ".bss"
             else:
                 if is_call16:
-                    symbol = known_symbols.get(symbol_addr, "CALL_{:X}".format(symbol_addr))
+                    if symbol_addr < text_end:
+                        symbol = known_symbols.get(symbol_addr, "dll_{}_func_{:X}".format(dll.number, symbol_addr))
+                    else:
+                        symbol = known_symbols.get(symbol_addr, "CALL_{:X}".format(symbol_addr))
                 else:
                     symbol = known_symbols.get(symbol_addr, "GOT_{:X}".format(symbol_addr))
             if got_index >= 4:

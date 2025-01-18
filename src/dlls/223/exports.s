@@ -3,9 +3,11 @@
 .global _exports
 _exports:
 
+# ctor/dtor
 .dword dll_cannon_claw_ctor
 .dword dll_cannon_claw_dtor
 
+# export table
 .dword dll_cannon_claw_func_18
 .dword dll_cannon_claw_func_4C
 .dword dll_cannon_claw_func_200

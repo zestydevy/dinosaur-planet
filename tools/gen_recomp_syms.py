@@ -6,7 +6,7 @@ import math
 import os
 from pathlib import Path
 
-from dino.dll import DLL
+from dino.dll import DLL, parse_dll_functions
 from dino.dll_tab import DLLTab
 
 BIN_PATH = Path("bin")
@@ -51,8 +51,8 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     data_globals = []
 
     # Grab functions/data from ROM .elf
-    with open(BUILD_PATH.joinpath("dino.elf"), "rb") as file:
-        elf = ELFFile(file)
+    with open(BUILD_PATH.joinpath("dino.elf"), "rb") as file, \
+         ELFFile(file) as elf:
         syms = elf.get_section_by_name(".symtab")
         assert isinstance(syms, SymbolTableSection)
 
@@ -172,9 +172,9 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
         text_end = 0
         
         # Grab functions by parsing the DLL contents
-        dll = DLL.parse(dll_data, str(number), include_funcs=True)
-        assert dll.functions is not None
-        for func in dll.functions:
+        dll = DLL.parse(dll_data, str(number))
+        dll_functions = parse_dll_functions(dll_data, dll)
+        for func in dll_functions:
             func_info = { 
                 "name": "dll_{}_func_{:X}".format(number, func.address), 
                 "vram": dll_vram + dll.header.size + func.address, 

@@ -101,7 +101,7 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/31/dll_31_flashSaveGame.s")
 #else
-/*export*/ s16 dll_31_flashSaveGame(SaveStruct *param1, u8 param2, s32 param3, s32 param4) {
+/*export*/ s16 _dll_31_flashSaveGame(SaveStruct *param1, u8 param2, s32 param3, s32 param4) {
     u32 *buf;
     s16 i;
     s16 page;

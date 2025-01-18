@@ -8,7 +8,7 @@ class DLLImportsTab:
         refers to non-DLL VRAM (i.e. >=0x80000000)"""
 
     @staticmethod
-    def parse(data: bytearray) -> "DLLImportsTab":
+    def parse(data: bytes) -> "DLLImportsTab":
         imports: "list[int]" = []
 
         for i in range(0, len(data), 4):

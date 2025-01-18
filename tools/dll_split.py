@@ -13,10 +13,12 @@ from pathlib import Path
 import re
 import struct
 from timeit import default_timer as timer
+from typing import TextIO
 import yaml
 
-from dino.dll import DLL, DLLHeader, DLLRelocation, DLLRelocationTable, DLLFunction
+from dino.dll import DLL, DLLHeader, DLLRelocation, DLLRelocationTable, DLLFunction, parse_dll_functions
 from dino.dll_tab import DLLTab
+from dino.dll_imports_tab import DLLImportsTab
 
 ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
@@ -37,6 +39,20 @@ class DLLSplitter:
         tab_path = BIN_PATH.joinpath("assets/DLLS_tab.bin")
         with open(tab_path, "rb") as tab_file:
             tab = DLLTab.parse(tab_file.read())
+
+        # Load DLLSIMPORT.tab
+        if self.verbose:
+            print("Loading DLLSIMPORT.tab...")
+        
+        import_tab_path = BIN_PATH.joinpath("assets/DLLSIMPORTTAB.bin")
+        with open(import_tab_path, "rb") as import_tab_file:
+            import_tab = DLLImportsTab.parse(import_tab_file.read())
+
+        # Load core syms
+        if self.verbose:
+            print("Loading core syms...")
+        
+        core_syms = self.__get_core_symbols()
         
         # Extract each DLL that has a src directory
         dll_dirs = [Path(dir) for dir in glob.glob(f"{SRC_PATH}/dlls/*") if isdir(dir)]
@@ -75,8 +91,23 @@ class DLLSplitter:
                     print("[{}] Parsing...".format(number))
                 start = timer()
                 
+                # Parse DLL header
                 data = bytearray(dll_file.read())
-                dll = DLL.parse(data, number, known_symbols=known_symbols)
+                dll = DLL.parse(data, number)
+
+                # Load extern GOT symbols via DLLIMPORTS.tab
+                for got_entry in dll.reloc_table.global_offset_table:
+                    if (got_entry & 0x80000000) != 0:
+                        index = (got_entry & 0x7FFFFFFF) - 1
+                        if index >= 0 and index < len(import_tab.imports):
+                            real_addr = import_tab.imports[index]
+                            if real_addr in core_syms:
+                                known_symbols[got_entry] = core_syms[real_addr]
+                
+                # Parse functions
+                dll_functions = parse_dll_functions(data, dll, known_symbols=known_symbols)
+
+                # Get DLL .bss size
                 bss_size = tab.entries[int(number) - 1].bss_size
                 
                 end = timer()
@@ -88,7 +119,7 @@ class DLLSplitter:
                     print("[{}] Extracting...".format(number))
                 start = timer()
 
-                self.extract_dll(dll, data, 
+                self.extract_dll(dll, dll_functions, data, 
                     bss_size=bss_size,
                     skip_rodata=not link_original_rodata,
                     skip_data=not link_original_data,
@@ -99,14 +130,14 @@ class DLLSplitter:
                 if self.verbose:
                     print("[{}] Extracting complete (took {:.3} seconds).".format(number, end - start))
 
-    def extract_dll(self, dll: DLL, 
+    def extract_dll(self, 
+                    dll: DLL, 
+                    dll_functions: "list[DLLFunction]",
                     data: bytearray, 
                     bss_size: int,
                     skip_data: bool,
                     skip_rodata: bool,
                     skip_bss: bool):
-        assert dll.functions is not None
-
         # Determine paths
         src_path = SRC_PATH.joinpath(f"dlls/{dll.number}")
         asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll.number}")
@@ -131,7 +162,7 @@ class DLLSplitter:
 
         # Extract .text
         if emit_funcs is None or len(emit_funcs) > 0:
-            self.__extract_text_asm(asm_path, dll, emit_funcs)
+            self.__extract_text_asm(asm_path, dll, dll_functions, emit_funcs)
 
         # Extract .rodata
         if emit_rodata:
@@ -152,22 +183,20 @@ class DLLSplitter:
         # Create exports.s if it doesn't exist
         exports_s_path = src_path.joinpath("exports.s")
         if not exports_s_path.exists():
-            self.__create_exports_s(exports_s_path, dll)
+            self.__create_exports_s(exports_s_path, dll, dll_functions)
 
         # Create syms.txt if it doens't exist
         syms_txt_path = src_path.joinpath("syms.txt")
         if not syms_txt_path.exists():
-            self.__create_syms_txt(syms_txt_path, dll)
+            self.__create_syms_txt(syms_txt_path, dll, dll_functions)
 
         # Create <dll>.c stub if it doesn't exist
         if not c_file_path.exists():
-            self.__create_c_stub(c_file_path, asm_path, dll.functions)
+            self.__create_c_stub(c_file_path, asm_path, dll_functions)
 
-    def __create_exports_s(self, path: Path, dll: DLL):
-        assert dll.functions is not None
-
+    def __create_exports_s(self, path: Path, dll: DLL, dll_functions: "list[DLLFunction]"):
         funcs_by_address: "dict[int, str]" = {}
-        for func in dll.functions:
+        for func in dll_functions:
             funcs_by_address[func.address] = func.symbol
 
         with open(path, "w", encoding="utf-8") as exports_s:
@@ -177,10 +206,12 @@ class DLLSplitter:
             exports_s.write("_exports:\n")
             exports_s.write("\n")
 
-            exports_s.write(f".dword ctor\n")
-            exports_s.write(f".dword dtor\n")
+            exports_s.write(f"# ctor/dtor\n")
+            exports_s.write(f".dword {funcs_by_address[dll.header.ctor_offset]}\n")
+            exports_s.write(f".dword {funcs_by_address[dll.header.dtor_offset]}\n")
             exports_s.write("\n")
 
+            exports_s.write(f"# export table\n")
             for offset in dll.header.export_offsets:
                 func_symbol = funcs_by_address[offset]
                 exports_s.write(f".dword {func_symbol}\n")
@@ -193,31 +224,59 @@ class DLLSplitter:
                 c_file.write("\n")
                 c_file.write(f'#pragma GLOBAL_ASM("{asm_path}/{func.symbol}.s")\n')
 
-    def __create_syms_txt(self, syms_path: Path, dll: DLL):
-        assert dll.functions is not None
-
+    def __create_syms_txt(self, 
+                          syms_path: Path, 
+                          dll: DLL, 
+                          dll_functions: "list[DLLFunction]"):
         with open(syms_path, "w", encoding="utf-8") as syms_file:
             addrs_found: "set[int]" = set()
-            var_syms_added = 0
+            func_addrs: "set[int]" = set()
+            got_syms_found = 0
             # Write function symbols
-            for func in dll.functions:
+            for func in dll_functions:
                 syms_file.write("{} = 0x{:X};\n".format(func.symbol, func.address))
+                func_addrs.add(func.address)
 
-            # Write global variable symbols
-            for func in dll.functions:
+            # Group external and local symbols that were found
+            extern_symbols: "list[tuple[str, int]]" = []
+            local_symbols: "list[tuple[str, int]]" = []
+            for func in dll_functions:
                 for name, value in func.auto_symbols.items():
-                    if not value in addrs_found:
-                        addrs_found.add(value)
-                        syms_file.write("{} = 0x{:X};\n".format(name, value))
-                        var_syms_added += 1
+                    if value in addrs_found:
+                        continue
+                    got_syms_found += 1
+                    addrs_found.add(value)
+                    if value in func_addrs:
+                        # Already have a symbol entry for local functions
+                        continue
+                    if (value & 0x80000000) != 0:
+                        extern_symbols.append((name, value))
+                    else:
+                        local_symbols.append((name, value))
             
-            assert var_syms_added == max(0, len(dll.reloc_table.global_offset_table) - 4)
+            extern_symbols.sort(key=lambda p: p[1])
+            local_symbols.sort(key=lambda p: p[1])
 
-    def __extract_text_asm(self, dir: Path, dll: DLL, funcs: "list[str] | None"):
-        assert dll.functions is not None
-        functions = dll.functions
+            # Write external symbols
+            if len(extern_symbols) > 0:
+                syms_file.write("\n")
+                for (name, value) in extern_symbols:
+                    syms_file.write("{} = 0x{:X};\n".format(name, value))
+            
+            # Write local symbols
+            if len(local_symbols) > 0:
+                syms_file.write("\n")
+                for (name, value) in local_symbols:
+                    syms_file.write("{} = 0x{:X};\n".format(name, value))
+            
+            assert got_syms_found == max(0, len(dll.reloc_table.global_offset_table) - 4)
 
-        for func in functions:
+    def __extract_text_asm(self, 
+                           dir: Path, 
+                           dll: DLL, 
+                           dll_functions: "list[DLLFunction]",
+                           funcs: "list[str] | None"):
+        for func in dll_functions:
             if funcs is not None and not func.symbol in funcs:
                 continue
 
@@ -318,6 +377,7 @@ class DLLSplitter:
         symbols: "dict[int, str]" = {}
 
         with open(path, "r", encoding="utf-8") as syms_file:
+            line_number = 1
             for line in syms_file.readlines():
                 pairs = symbol_pattern.findall(line.strip())
                 for pair in pairs:
@@ -326,10 +386,41 @@ class DLLSplitter:
                         addr = int(addr_str, base=16)
                     else:
                         addr = int(addr_str)
+
+                    if addr in symbols:
+                        print(f"WARN: Duplicate symbol addr {hex(addr)} in {path} line {line_number}!")
                     
                     symbols[addr] = pair[0]
+                line_number += 1
 
         return symbols
+
+    def __get_core_symbols(self) -> "dict[int, str]":
+        map: "dict[int, str]" = {}
+
+        def read_syms(file: TextIO):
+            for line in file.readlines():
+                pairs = symbol_pattern.findall(line.strip())
+                for pair in pairs:
+                    addr_str: str = pair[1]
+                    if addr_str.lower().startswith("0x"):
+                        addr = int(addr_str, base=16)
+                    else:
+                        addr = int(addr_str)
+                    map[addr] = pair[0]
+
+        with open("symbol_addrs.txt", "r", encoding="utf-8") as syms_file:
+            read_syms(syms_file)
+        with open("undefined_funcs.txt", "r", encoding="utf-8") as syms_file:
+            read_syms(syms_file)
+        with open("undefined_funcs_auto.txt", "r", encoding="utf-8") as syms_file:
+            read_syms(syms_file)
+        with open("undefined_syms.txt", "r", encoding="utf-8") as syms_file:
+            read_syms(syms_file)
+        with open("undefined_syms_auto.txt", "r", encoding="utf-8") as syms_file:
+            read_syms(syms_file)
+
+        return map
 
 def main():
     parser = argparse.ArgumentParser(description="Extract assembly and data from Dinosaur Planet DLLs and stub out an environment for recompiling each.")
