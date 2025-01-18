@@ -45,8 +45,7 @@ def patch(patched_file: BufferedRandom):
         dlls.append((
             DLL.parse(
                 patched_file.read(entry.size),
-                str(number),
-                include_funcs=False
+                str(number)
             ),
             entry.start_offset
         ))
