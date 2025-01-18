@@ -355,9 +355,9 @@ The flag combinations currently known for the decomp are:
 - `-O2 -g0` - Used for compiling *modified* libultra code.
 - `-O1 -g0` - Used for compiling *unmodified* libultra code.
 
-Sometimes, to get a function to match you will need to change the optimization and debugging levels that the containing file is compiled with. This can be done currently by placing the file under a directory named `O1` (for `-O1 -g0`) or `g0` (for `-O2 -g0`).
+Sometimes, to get a function to match you will need to change the optimization and debugging levels that the containing file is compiled with. This can be done by adding the comment `// @DECOMP_OPT_FLAGS=<opt flags>` to the top of the file. For example, `// @DECOMP_OPT_FLAGS=-O1` would compile the file with the optimization flag `-O1` instead of the default.
 
-> Note: The direct parent directory must be `O1` or `g0` for the flags to be changed. For example, `src/O1/stuff/file.c` will **not** work, but `src/stuff/O1/file.c` will.
+> Note: The build script must be re-configured for the new optimization flags to take effect (`./dino.py configure`).
 
 
 ## 6. Decompilation Tools

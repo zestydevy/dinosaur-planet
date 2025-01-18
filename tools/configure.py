@@ -7,23 +7,21 @@ from genericpath import isdir
 import glob
 import os
 from pathlib import Path
+import re
 from shutil import which
 import sys
 from ninja import ninja_syntax
 import yaml
+
+opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(\S*)")
 
 class BuildFileType(Enum):
     C = 1
     ASM = 2
     BIN = 3
 
-class OptimizationFlags(Enum):
-    O2g3 = "-O2 -g3"
-    O2g0 = "-O2 -g0"
-    O1 = "-O1" 
-
 class BuildFile:
-    def __init__(self, src_path: str, obj_path: str, type: BuildFileType, opt: "OptimizationFlags | None"=None):
+    def __init__(self, src_path: str, obj_path: str, type: BuildFileType, opt: "str | None"=None):
         self.src_path = src_path
         self.obj_path = obj_path
         self.type = type
@@ -48,7 +46,7 @@ class BuildConfig:
                  link_script: "str | None"=None,
                  link_script_dll="src/dlls/dll.ld",
                  skip_dlls=False,
-                 default_opt_flags=OptimizationFlags.O2g3):
+                 default_opt_flags="-O2 -g3"):
         self.target = target
         self.build_dir = build_dir
         self.link_script = link_script or f"{target}.ld"
@@ -104,7 +102,7 @@ class BuildNinjaWriter:
             "-I include",
         ]))
 
-        self.writer.variable("OPT_FLAGS", self.config.default_opt_flags.value)
+        self.writer.variable("OPT_FLAGS", self.config.default_opt_flags)
         
         self.writer.variable("CC_FLAGS", " ".join([
             "$CC_DEFINES",
@@ -215,7 +213,7 @@ class BuildNinjaWriter:
             variables: dict[str, str] = {}
             opt = file.opt
             if opt is not None and opt != self.config.default_opt_flags:
-                variables["OPT_FLAGS"] = opt.value
+                variables["OPT_FLAGS"] = opt
 
             # Determine command
             command: str
@@ -437,13 +435,17 @@ class InputScanner:
     def __make_obj_path(self, path: Path) -> str:
         return f"$BUILD_DIR/{path.with_suffix('.o')}"
     
-    def __get_optimization_level(self, path: Path) -> OptimizationFlags:
-        if len(path.parts) >= 2:
-            direct_parent = path.parts[-2]
-            if direct_parent == "O1":
-                return OptimizationFlags.O1
-            elif direct_parent == "g0":
-                return OptimizationFlags.O2g0
+
+    def __get_optimization_level(self, path: Path) -> str:
+        with open(path, "r", encoding="utf-8") as file:
+            while True:
+                line = file.readline().strip()
+                if len(line) == 0:
+                    break
+                if line.startswith("//"):
+                    opt_match = opt_flags_pattern.search(line)
+                    if opt_match != None:
+                        return opt_match.group(1)
         
         return self.config.default_opt_flags
     
