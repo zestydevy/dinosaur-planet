@@ -1312,3 +1312,5 @@ rspbootTextStart = 0x8008b090; // type:data size:0xd0
 gspF3DEX2_xbusTextStart = 0x8008b160; // type:data
 aspMainDataStart = 0x800a2e00; // type:data
 gspF3DEX2_xbusDataStart = 0x800a3950; // type:data
+
+warpPlayer = 0x8004d1d4;

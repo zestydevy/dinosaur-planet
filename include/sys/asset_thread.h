@@ -27,8 +27,8 @@ struct AssetLoadThreadMsg {
         struct {
             /* 04 */ s32 id; //XXX type (can it be an enum?)
             /* 08 */ void **dest; //should be actually void**, unlike the others
-            /* 0C */ s32 offset; //for ASSET_TYPE_FILE_REGION
-            /* 10 */ s32 length; //for ASSET_TYPE_FILE_REGION
+            /* 0C */ s32 length; //for ASSET_TYPE_FILE_REGION
+            /* 10 */ s32 offset; //for ASSET_TYPE_FILE_REGION
         } file;
         struct {
             /* 04 */ s32 id;

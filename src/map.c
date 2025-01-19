@@ -1224,7 +1224,7 @@ BlockTexture *func_8004A2CC(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D1D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/warpPlayer.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D328.s")
 

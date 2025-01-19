@@ -77,13 +77,13 @@ void queue_load_file_to_ptr(void **dest, s32 fileId) {
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset) {
+void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length) {
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_FILE_REGION;
-    assetLoadMsg.p.file.offset  = offset;
+    assetLoadMsg.p.file.length  = length;
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
-    assetLoadMsg.p.file.length  = length;
+    assetLoadMsg.p.file.offset  = offset;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
@@ -384,7 +384,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             break;
         case ASSET_TYPE_FILE_REGION:
             read_file_region(load->p.file.id, load->p.file.dest,
-                load->p.file.length, load->p.file.offset);
+                load->p.file.offset, load->p.file.length);
             break;
         case ASSET_TYPE_OBJECT:
             *load->p.object.dest = objSetupObjectActual(load->p.object.arg1,
