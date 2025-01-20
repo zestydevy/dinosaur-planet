@@ -93,3 +93,7 @@ compile_commands.json
 # Ninja
 build.ninja
 .ninja_log
+
+# Include some Windows binaries
+!tools/elf2dll.exe
+!tools/ido_recomp/windows/5.3/*

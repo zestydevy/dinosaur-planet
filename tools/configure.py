@@ -164,17 +164,21 @@ class BuildNinjaWriter:
 
         # Write tools
         cross = self.__detect_cross()
+        exe_suffix = ".exe" if sys.platform == "win32" else ""
 
         self.writer.comment("Tools")
-        self.writer.variable("AS", f"{cross}as")
-        self.writer.variable("LD", f"{cross}ld")
-        self.writer.variable("OBJCOPY", f"{cross}objcopy")
-        self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
+        self.writer.variable("AS", f"{cross}as{exe_suffix}")
+        self.writer.variable("LD", f"{cross}ld{exe_suffix}")
+        self.writer.variable("OBJCOPY", f"{cross}objcopy{exe_suffix}")
+        if sys.platform == "win32":
+            self.writer.variable("CC", "tools/ido_recomp/windows/5.3/cc.exe")
+        else:
+            self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
         self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
         self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
-        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR --sort-text-relocs $CC -- $AS $AS_FLAGS_DLL --")
-        self.writer.variable("ELF2DLL", "tools/elf2dll")
+        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL --")
+        self.writer.variable("ELF2DLL", f"tools/elf2dll{exe_suffix}")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
         
         self.writer.newline()
@@ -197,11 +201,15 @@ class BuildNinjaWriter:
         self.writer.rule("ld_bin", "$LD -m $LD_EMULATION -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
-        # Note: for elf2dll, remove output file first since it might be a symlink and we don't
-        #       want to write through the link to the original DLL
-        self.writer.rule("elf2dll", "rm -f $out && $ELF2DLL $in $out", "Converting $in to DP DLL $out...")
+        if sys.platform == "win32":
+            self.writer.rule("elf2dll", "$ELF2DLL $in $out", "Converting $in to DP DLL $out...")
+        else:
+            # Note: for elf2dll, remove output file first since it might be a symlink and we don't want 
+            # to write through the link to the original DLL (not relevant on Windows, we don't symlink there)
+            self.writer.rule("elf2dll", f"rm -f $out && $ELF2DLL $in $out", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
-        self.writer.rule("sym_link", "ln -s -f -r $in $out", "Symbolic linking $in to $out...")
+        if sys.platform != "win32":
+            self.writer.rule("sym_link", f"ln -s -f -r $in $out", "Symbolic linking $in to $out...")
 
         self.writer.newline()
 
@@ -227,7 +235,7 @@ class BuildNinjaWriter:
                 raise NotImplementedError()
             
             # Write command
-            self.writer.build(file.obj_path, command, file.src_path, variables=variables)
+            self.writer.build(Path(file.obj_path).as_posix(), command, Path(file.src_path).as_posix(), variables=variables)
             self.link_deps.append(file.obj_path)
 
         self.writer.newline()
@@ -255,7 +263,7 @@ class BuildNinjaWriter:
                     raise NotImplementedError()
                 
                 # Write command
-                self.writer.build(file.obj_path, command, file.src_path)
+                self.writer.build(Path(file.obj_path).as_posix(), command, Path(file.src_path).as_posix())
                 dll_link_deps.append(file.obj_path)
             
             # Link
@@ -291,7 +299,8 @@ class BuildNinjaWriter:
         if any_dlls:
             self.writer.comment("Leftover DLLs that haven't been decompiled yet")
             for dll in self.input.leftover_dlls:
-                self.writer.build(dll.obj_path, "sym_link", dll.src_path)
+                # Note: Don't do sym linking on Windows
+                self.writer.build(dll.obj_path, "file_copy" if sys.platform == "win32" else "sym_link", dll.src_path)
                 pack_deps.append(dll.obj_path)
 
         self.writer.newline()
@@ -373,7 +382,7 @@ class InputScanner:
         
     def __scan_c_files(self):
         # Exclude DLLs here, that's done separately
-        paths = [Path(path) for path in glob.glob("src/**/*.c", recursive=True) if not path.startswith("src/dlls")]
+        paths = [Path(path) for path in glob.glob("src/**/*.c", recursive=True) if not Path(path).is_relative_to(Path("src/dlls"))]
         for src_path in paths:
             obj_path = self.__make_obj_path(src_path)
             opt = self.__get_optimization_level(src_path)
@@ -381,15 +390,17 @@ class InputScanner:
 
     def __scan_asm_files(self):
         # Exclude splat nonmatchings, those are compiled in with their respective C file
-        paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True) if not path.startswith("asm/nonmatchings")]
+        paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("asm/nonmatchings"))]
         for src_path in paths:
             obj_path = self.__make_obj_path(src_path)
             self.files.append(BuildFile(str(src_path), obj_path, BuildFileType.ASM))
 
     def __scan_bin_files(self):
         # Exclude DLLS.bin and DLLS_tab.bin, we will be handling those uniquely
-        paths = [Path(path) for path in glob.glob("bin/**/*.bin", recursive=True) if not path.endswith("DLLS.bin") and not path.endswith("DLLS_tab.bin")]
+        paths = [Path(path) for path in glob.glob("bin/**/*.bin", recursive=True)]
         for src_path in paths:
+            if src_path.name == "DLLS.bin" or src_path.name == "DLLS_tab.bin":
+                continue
             obj_path = self.__make_obj_path(src_path)
             self.files.append(BuildFile(str(src_path), obj_path, BuildFileType.BIN))
 
@@ -398,8 +409,7 @@ class InputScanner:
         dll_dirs = [dir for dir in glob.glob("src/dlls/*") if isdir(dir)]
         to_compile: "set[str]" = set()
         for dir in dll_dirs:
-            dir_parts = dir.split("/")
-            number = dir_parts[-1]
+            number = Path(dir).name
 
             # Skip if this DLL is configured to use the original DLL instead of recompiling
             if not self.__should_compile_dll(Path(dir), number):
