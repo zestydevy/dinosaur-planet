@@ -37,19 +37,11 @@ When pulling updates, you can update all submodules with `git submodule update -
     - [ninja-build](https://ninja-build.org/)
     - python3
 
-##### Windows 10+ (MSYS2)
-1. Install [MSYS2](https://www.msys2.org/).
-2. In an MSYS2 terminal inside of the MSYS2 drive:
-    1. Run `pacman -Syu` then `pacman -S base-devel gcc`.
-    2. Download and extract the latest version of [GNU binutils](https://www.gnu.org/software/binutils/).
-    3. `cd` into the extracted binutils directory.
-    4. Run `./configure --target mips-linux-gnu --disable-multilib`.
-    5. Run `make -j16` (set `-j` to the number of logical processors your CPU has).
-    6. Run `make install` (`mips-linux-gnu` binutils will now be available in your MSYS2 `/usr/bin` directory).
-3. Add the MSYS2 `/usr/bin` directory to your Windows path (e.g. `C:\msys64\usr\bin`).
-4. Install remaining dependencies:
-    - Python 12+ (Microsoft Store version recommended)
-    - [Ninja](https://ninja-build.org/) (also available as [an MSYS2 package](https://packages.msys2.org/base/ninja))
+##### Windows 10+ (not recommended)
+- [MSYS2](https://www.msys2.org/) with GNU GCC, GNU Binutils (MIPS target), and `base-devel`.
+    - Please see the [MSYS2 for Decomp Setup Guide](./docs/MSYS2Guide.md) for instructions.
+- Python 3.12+ (Microsoft Store version recommended)
+- [Ninja](https://ninja-build.org/) (also available as [an MSYS2 package](https://packages.msys2.org/base/ninja))
 
 #### Python 3 packages
 `pip3 install -r requirements.txt`
