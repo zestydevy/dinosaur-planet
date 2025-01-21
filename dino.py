@@ -305,6 +305,11 @@ class DinoCommandRunner:
 
         self.__run_cmd(["python3", str(DIFF_PY)] + args)
     
+    def objdiff(self, args: "list[str]"):
+        self.__assert_project_built()
+
+        self.__run_cmd(["objdiff-cli", "diff", "-p", SCRIPT_DIR] + args)
+    
     def make_context(self, file: str):
         self.__run_cmd(["python3", str(M2CTX_PY), file])
         print(f"Created context file at {SCRIPT_DIR.joinpath('ctx.c')}")
@@ -371,6 +376,7 @@ def main():
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
     subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
+    subparsers.add_parser("objdiff", help="Diff the re-rebuilt ROM with the original (redirects to objdiff-cli).", add_help=False)
     subparsers.add_parser("permuter", help="Randomly permute a C file to better match a target binary (redirects to decomp-permuter permuter.py).", add_help=False)
     subparsers.add_parser("permuter-import", help="Import a function for permuter (redirects to decomp-permuter import.py).", add_help=False)
     
@@ -411,6 +417,10 @@ def main():
             diff_index = sys.argv.index("diff")
             full_args = sys.argv[diff_index + 1:]
             runner.diff(args=full_args)
+        elif cmd == "objdiff":
+            diff_index = sys.argv.index("objdiff")
+            full_args = sys.argv[diff_index + 1:]
+            runner.objdiff(args=full_args)
         elif cmd =="context":
             runner.make_context(args.file)
         elif cmd == "permuter":

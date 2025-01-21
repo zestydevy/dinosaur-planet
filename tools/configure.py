@@ -5,11 +5,13 @@ import argparse
 from enum import Enum
 from genericpath import isdir
 import glob
+import json
 import os
 from pathlib import Path
 import re
 from shutil import which
 import sys
+from typing import TextIO
 from ninja import ninja_syntax
 import yaml
 
@@ -43,12 +45,14 @@ class BuildConfig:
     def __init__(self,
                  target: str,
                  build_dir="build",
+                 expected_build_dir="expected/build",
                  link_script: "str | None"=None,
                  link_script_dll="src/dlls/dll.ld",
                  skip_dlls=False,
                  default_opt_flags="-O2 -g3"):
         self.target = target
         self.build_dir = build_dir
+        self.expected_build_dir = expected_build_dir
         self.link_script = link_script or f"{target}.ld"
         self.link_script_dll = link_script_dll
         self.skip_dlls = skip_dlls
@@ -235,8 +239,10 @@ class BuildNinjaWriter:
                 raise NotImplementedError()
             
             # Write command
-            self.writer.build(Path(file.obj_path).as_posix(), command, Path(file.src_path).as_posix(), variables=variables)
-            self.link_deps.append(file.obj_path)
+            obj_build_path = f"$BUILD_DIR/{Path(file.obj_path).as_posix()}"
+            src_build_path = Path(file.src_path).as_posix()
+            self.writer.build(obj_build_path, command, src_build_path, variables=variables)
+            self.link_deps.append(obj_build_path)
 
         self.writer.newline()
     
@@ -263,8 +269,10 @@ class BuildNinjaWriter:
                     raise NotImplementedError()
                 
                 # Write command
-                self.writer.build(Path(file.obj_path).as_posix(), command, Path(file.src_path).as_posix())
-                dll_link_deps.append(file.obj_path)
+                obj_build_path = f"$BUILD_DIR/{Path(file.obj_path).as_posix()}"
+                src_build_path = Path(file.src_path).as_posix()
+                self.writer.build(obj_build_path, command, src_build_path)
+                dll_link_deps.append(obj_build_path)
             
             # Link
             elf_path = f"{obj_dir}/{dll.number}.elf"
@@ -300,8 +308,9 @@ class BuildNinjaWriter:
             self.writer.comment("Leftover DLLs that haven't been decompiled yet")
             for dll in self.input.leftover_dlls:
                 # Note: Don't do sym linking on Windows
-                self.writer.build(dll.obj_path, "file_copy" if sys.platform == "win32" else "sym_link", dll.src_path)
-                pack_deps.append(dll.obj_path)
+                dll_obj_build_path = f"$BUILD_DIR/{dll.obj_path}"
+                self.writer.build(dll_obj_build_path, "file_copy" if sys.platform == "win32" else "sym_link", dll.src_path)
+                pack_deps.append(dll_obj_build_path)
 
         self.writer.newline()
         self.writer.comment("DLL packing")
@@ -362,6 +371,53 @@ class BuildNinjaWriter:
         else:
             return "mips-linux-gnu-"
 
+class ObjDiffConfigWriter:
+    def __init__(self, output_file: TextIO, input: BuildFiles, config: BuildConfig):
+        self.output_file = output_file
+        self.input = input
+        self.config = config
+    
+    def write(self):
+        config = {}
+
+        config["custom_make"] = "ninja"
+        config["build_target"] = False # We don't have build commands for the expected directory
+        config["build_base"] = True
+        config["progress_categories"] = [
+            { "id": "core", "name": "Core Code" },
+            { "id": "dll", "name": "DLL Code" },
+        ]
+
+        units = []
+        config["units"] = units
+
+        for file in self.input.files:
+            if file.type == BuildFileType.C:
+                units.append({
+                    "name": file.obj_path,
+                    "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
+                    "base_path": f"{self.config.build_dir}/{file.obj_path}",
+                    "metadata": {
+                        "source_path": file.src_path,
+                        "progress_categories": ["core"]
+                    }
+                })
+        
+        for dll in self.input.dlls:
+            for file in dll.files:
+                if file.type == BuildFileType.C:
+                    units.append({
+                        "name": file.obj_path,
+                        "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
+                        "base_path": f"{self.config.build_dir}/{file.obj_path}",
+                        "metadata": {
+                            "source_path": file.src_path,
+                            "progress_categories": ["dll"]
+                        }
+                    })
+        
+        json.dump(config, self.output_file, indent=2)
+
 class InputScanner:
     def __init__(self, config: BuildConfig):
         self.config = config
@@ -386,14 +442,14 @@ class InputScanner:
         for src_path in paths:
             obj_path = self.__make_obj_path(src_path)
             opt = self.__get_optimization_level(src_path)
-            self.files.append(BuildFile(str(src_path), obj_path, BuildFileType.C, opt))
+            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, opt))
 
     def __scan_asm_files(self):
         # Exclude splat nonmatchings, those are compiled in with their respective C file
         paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("asm/nonmatchings"))]
         for src_path in paths:
             obj_path = self.__make_obj_path(src_path)
-            self.files.append(BuildFile(str(src_path), obj_path, BuildFileType.ASM))
+            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
 
     def __scan_bin_files(self):
         # Exclude DLLS.bin and DLLS_tab.bin, we will be handling those uniquely
@@ -402,7 +458,7 @@ class InputScanner:
             if src_path.name == "DLLS.bin" or src_path.name == "DLLS_tab.bin":
                 continue
             obj_path = self.__make_obj_path(src_path)
-            self.files.append(BuildFile(str(src_path), obj_path, BuildFileType.BIN))
+            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.BIN))
 
     def __scan_dlls(self):
         # Scan DLLs separately since we need to build them as their own thing
@@ -423,11 +479,11 @@ class InputScanner:
             for src_path in c_paths:
                 obj_path = self.__make_obj_path(src_path)
                 opt = self.__get_optimization_level(src_path)
-                files.append(BuildFile(str(src_path), obj_path, BuildFileType.C, opt))
+                files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, opt))
             
             for src_path in asm_paths:
                 obj_path = self.__make_obj_path(src_path)
-                files.append(BuildFile(str(src_path), obj_path, BuildFileType.ASM))
+                files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
             
             self.dlls.append(DLL(number, dir, files))
             to_compile.add(number)
@@ -439,11 +495,11 @@ class InputScanner:
             if number in to_compile:
                 continue
 
-            obj_path = f"$BUILD_DIR/{src_path.with_suffix('.dll')}"
-            self.leftover_dlls.append(BuildFile(str(src_path), obj_path, BuildFileType.BIN))
+            obj_path = src_path.with_suffix('.dll')
+            self.leftover_dlls.append(BuildFile(str(src_path), str(obj_path), BuildFileType.BIN))
 
     def __make_obj_path(self, path: Path) -> str:
-        return f"$BUILD_DIR/{path.with_suffix('.o')}"
+        return path.with_suffix('.o')
     
 
     def __get_optimization_level(self, path: Path) -> str:
@@ -506,6 +562,11 @@ def main():
     writer = BuildNinjaWriter(ninja_syntax.Writer(ninja_file), input, config)
     writer.write()
     writer.close()
+
+    # Write config for objdiff
+    with open("objdiff.json", "w") as objdiff_config_file:
+        objdiff_config_writer = ObjDiffConfigWriter(objdiff_config_file, input, config)
+        objdiff_config_writer.write()
 
 if __name__ == "__main__":
     main()

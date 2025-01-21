@@ -94,6 +94,9 @@ compile_commands.json
 build.ninja
 .ninja_log
 
+# objdiff
+objdiff.json
+
 # Include some Windows binaries
 !tools/elf2dll.exe
 !tools/ido_recomp/windows/5.3/*
