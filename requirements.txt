@@ -1,4 +1,5 @@
 ansiwrap
+argcomplete
 capstone
 colorama>=0.4.4,<0.5
 cxxfilt
@@ -12,4 +13,5 @@ python-Levenshtein
 python-ranges
 PyYAML
 textwrap3
+toml
 watchdog

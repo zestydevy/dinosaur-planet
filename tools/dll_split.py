@@ -222,7 +222,7 @@ class DLLSplitter:
             
             for func in functions:
                 c_file.write("\n")
-                c_file.write(f'#pragma GLOBAL_ASM("{asm_path}/{func.symbol}.s")\n')
+                c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.symbol}.s")\n')
 
     def __create_syms_txt(self, 
                           syms_path: Path, 

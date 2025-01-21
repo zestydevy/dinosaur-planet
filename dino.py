@@ -313,7 +313,7 @@ class DinoCommandRunner:
         self.__run_cmd(["python3", str(PERMUTER_IMPORT_PY)] + args)
     
     def permuter(self, args: "list[str]"):
-        self.__run_cmd(["python3", str(PERMUTER_IMPORT_PY)] + args)
+        self.__run_cmd(["python3", str(PERMUTER_PERMUTER_PY)] + args)
     
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")

@@ -23,7 +23,7 @@ This repository uses Git submodules. Make sure to either clone the repository wi
 
 When pulling updates, you can update all submodules with `git submodule update --recursive` or `./dino.py submodules`.
 
-> Note: If you intend on developing inside of the Windows Subsystem for Linux (WSL), consider placing the repository on the WSL Linux partition. Builds are considerably slower when done on the Windows partition.
+> Note: If you intend on developing inside of the Windows Subsystem for Linux (WSL), consider placing the repository on the WSL Linux partition. Builds are considerably slower when done on the Windows partition through WSL.
 
 ### Prerequisites
 
@@ -31,7 +31,7 @@ When pulling updates, you can update all submodules with `git submodule update -
 
 ##### Linux / Windows Subsystem for Linux
 - **Ubuntu**: `sudo apt install -y $(cat packages.txt)`
-- **Other**: Other distributions will likely work. See your distro's package repositories for the following dependencies:
+- **Other**: Other distributions will likely work. See your distro's package repositories for the following:
     - binutils-mips-linux-gnu
     - gcc
     - [ninja-build](https://ninja-build.org/)
@@ -40,8 +40,8 @@ When pulling updates, you can update all submodules with `git submodule update -
 ##### Windows 10+ (MSYS2)
 1. Install [MSYS2](https://www.msys2.org/).
 2. In an MSYS2 terminal inside of the MSYS2 drive:
-    1. Download and extract the latest version of [GNU binutils](https://www.gnu.org/software/binutils/).
-    2. Run `pacman -Syu` then `pacman -S base-devel gcc`.
+    1. Run `pacman -Syu` then `pacman -S base-devel gcc`.
+    2. Download and extract the latest version of [GNU binutils](https://www.gnu.org/software/binutils/).
     3. `cd` into the extracted binutils directory.
     4. Run `./configure --target mips-linux-gnu --disable-multilib`.
     5. Run `make -j16` (set `-j` to the number of logical processors your CPU has).
