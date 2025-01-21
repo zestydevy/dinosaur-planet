@@ -303,20 +303,17 @@ class DinoCommandRunner:
         # Need to run diff from the project root where diff_settings.py is
         os.chdir(SCRIPT_DIR)
 
-        args.insert(0, str(DIFF_PY))
-        self.__run_cmd(args)
+        self.__run_cmd(["python3", str(DIFF_PY)] + args)
     
     def make_context(self, file: str):
-        self.__run_cmd([str(M2CTX_PY), file])
+        self.__run_cmd(["python3", str(M2CTX_PY), file])
         print(f"Created context file at {SCRIPT_DIR.joinpath('ctx.c')}")
     
     def permuter_import(self, args: "list[str]"):
-        args.insert(0, str(PERMUTER_IMPORT_PY))
-        self.__run_cmd(args)
+        self.__run_cmd(["python3", str(PERMUTER_IMPORT_PY)] + args)
     
     def permuter(self, args: "list[str]"):
-        args.insert(0, str(PERMUTER_PERMUTER_PY))
-        self.__run_cmd(args)
+        self.__run_cmd(["python3", str(PERMUTER_PERMUTER_PY)] + args)
     
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")

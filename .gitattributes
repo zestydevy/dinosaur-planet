@@ -1,0 +1,4 @@
+# IDO requires Unix line endings for source files
+*.c text eol=lf
+*.h text eol=lf
+*.cc text eol=lf

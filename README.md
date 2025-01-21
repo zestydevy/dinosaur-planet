@@ -18,21 +18,33 @@ builds is not 'shiftable', so cannot be used yet as a source code base for gener
 
 ## Development
 
+### Git
+This repository uses Git submodules. Make sure to either clone the repository with the `--recurse-submodules` flag or to run `git submodule update --init --recursive` after the initial clone.
+
+When pulling updates, you can update all submodules with `git submodule update --recursive` or `./dino.py submodules`.
+
+> Note: If you intend on developing inside of the Windows Subsystem for Linux (WSL), consider placing the repository on the WSL Linux partition. Builds are considerably slower when done on the Windows partition through WSL.
+
 ### Prerequisites
-**Operating system**
-- Linux (Debian / Ubuntu)
-- Windows 10/11 WSL (Ubuntu)
-    - **Note**: The repository must be cloned with Unix line endings!
-    - It is highly recommended to clone this repository to the WSL Linux partition. Builds are considerably slower when done on a Windows partition.
-- Other systems may work, see `packages.txt` for the list of required APT packages
 
-**APT packages**<br/>
-`sudo apt install -y $(cat packages.txt)`
+#### System packages
 
-**Python 3 packages**<br/>
+##### Linux / Windows Subsystem for Linux
+- **Ubuntu**: `sudo apt install -y $(cat packages.txt)`
+- **Other**: Other distributions will likely work. See your distro's package repositories for the following:
+    - binutils-mips-linux-gnu
+    - gcc
+    - [ninja-build](https://ninja-build.org/)
+    - python3
+
+##### Windows 10+ (not recommended)
+- [MSYS2](https://www.msys2.org/) with GNU GCC, GNU Binutils (MIPS target), and `base-devel`.
+    - Please see the [MSYS2 for Decomp Setup Guide](./docs/MSYS2Guide.md) for instructions.
+- Python 3.12+ (Microsoft Store version recommended)
+- [Ninja](https://ninja-build.org/) (also available as [an MSYS2 package](https://packages.msys2.org/base/ninja))
+
+#### Python 3 packages
 `pip3 install -r requirements.txt`
-
-> Note: This repository uses Git submodules. Don't forget to update them with `./dino.py submodules` or `git submodule update --recursive` after pulling changes to a submodule ref.
 
 ### Setup
 1. Place an unmodified Dinosaur Planet ROM into the root of the repository as `baserom.z64` (MD5: `49f7bb346ade39d1915c22e090ffd748`).
