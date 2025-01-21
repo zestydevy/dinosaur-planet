@@ -1,1 +1,2 @@
 build_system = "ninja"
+compiler_type = "ido"
