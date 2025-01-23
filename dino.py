@@ -290,14 +290,6 @@ class DinoCommandRunner:
         
         # Create directory
         os.makedirs(src_dir)
-
-        # Create DLL config
-        dll_config_path = src_dir.joinpath(f"{number}.yaml")
-        with open(dll_config_path, "w", encoding="utf-8") as dll_config_file:
-            dll_config_file.write("compile: yes\n")
-            dll_config_file.write("link_original_rodata: yes\n")
-            dll_config_file.write("link_original_data: yes\n")
-            dll_config_file.write("link_original_bss: yes\n")
         
         # Extract DLL
         print("Extracting DLL...")

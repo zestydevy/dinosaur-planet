@@ -13,17 +13,6 @@ dll_31_osFlashWriteBuffer = 0x9A4;
 dll_31_osFlashWriteArray = 0xA50;
 dll_31_osFlashReadArray = 0xB48;
 
-osCreateMesgQueue = 0x800000F9;
-osInvalDCache = 0x800000FA;
-osRecvMesg = 0x800000FB;
-osWritebackDCache = 0x800000FC;
-malloc = 0x8000002D;
-bzero = 0x8000002C;
-osEPiLinkHandle = 0x800000FD;
-osEPiWriteIo = 0x800000FE;
-osEPiReadIo = 0x800000FF;
-osEPiStartDma = 0x80000100;
-
 sFlashDmaMqBuffer = 0xF48;
 sFlashDmaMq = 0xF50;
 sFlashIoMesg = 0xF68;

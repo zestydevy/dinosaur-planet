@@ -15,6 +15,8 @@ from typing import Any, TextIO
 from ninja import ninja_syntax
 import yaml
 
+from dino.dll_build_config import DLLBuildConfig
+
 opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(\S*)")
 
 class BuildFileType(Enum):
@@ -163,6 +165,7 @@ class BuildNinjaWriter:
         ]))
 
         self.writer.variable("LD_FLAGS_DLL", " ".join([
+            "-T export_symbol_addrs.txt", 
             "-r",
             "--emit-relocs",
             "-m $LD_EMULATION",
@@ -297,7 +300,7 @@ class BuildNinjaWriter:
             else:
                 # Use default DLL link script
                 self.writer.build(elf_path, "ld_dll", dll_link_deps, 
-                    implicit=["$LINK_SCRIPT_DLL", syms_txt_path],
+                    implicit=["$LINK_SCRIPT_DLL", syms_txt_path, "export_symbol_addrs.txt"],
                     variables={"SYMS_TXT": syms_txt_path})
 
             # Convert ELF to Dinosaur Planet DLL
@@ -428,14 +431,6 @@ class ObjDiffConfigWriter:
         
         json.dump(config, self.output_file, indent=2)
 
-class DLLConfig:
-    def __init__(self, yaml: Any | None):
-        if yaml != None:
-            self.compile = yaml.get("compile", True)
-            self.link_original_rodata = yaml.get("link_original_rodata", True)
-            self.link_original_data = yaml.get("link_original_data", True)
-            self.link_original_bss = yaml.get("link_original_bss", True)
-
 class InputScanner:
     def __init__(self, config: BuildConfig):
         self.config = config
@@ -486,6 +481,8 @@ class InputScanner:
             number = Path(dir).name
 
             dll_config = self.__get_dll_config(Path(dir), number)
+            if dll_config == None:
+                continue
 
             # Skip if this DLL is configured to use the original DLL instead of recompiling
             if not dll_config.compile:
@@ -542,17 +539,14 @@ class InputScanner:
         
         return self.config.default_opt_flags
     
-    def __get_dll_config(self, dll_dir: Path, number: str) -> DLLConfig:
+    def __get_dll_config(self, dll_dir: Path, number: str) -> DLLBuildConfig | None:
         yaml_path = dll_dir.joinpath(f"{number}.yaml")
         if not yaml_path.exists():
-            print(f"WARN: Missing {yaml_path}!")
-            return DLLConfig(None)
+            print(f"WARN: Missing {yaml_path}, skipping DLL {number}!")
+            return None
         
-        return DLLConfig(self.__parse_dll_yaml(yaml_path))
-    
-    def __parse_dll_yaml(self, path: Path):
-        with open(path, "r") as file:
-            return yaml.safe_load(file)
+        with open(yaml_path, "r") as file:
+            return DLLBuildConfig.parse(file)
     
 def main():
     parser = argparse.ArgumentParser(description="Creates the Ninja build script for the Dinosaur Planet decompilation project.")

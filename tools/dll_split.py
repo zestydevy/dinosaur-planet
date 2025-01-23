@@ -13,12 +13,11 @@ from pathlib import Path
 import re
 import struct
 from timeit import default_timer as timer
-from typing import TextIO
 import yaml
 
-from dino.dll import DLL, DLLHeader, DLLRelocation, DLLRelocationTable, DLLFunction, parse_dll_functions
+from dino.dll import DLL, DLLFunction, parse_dll_functions
 from dino.dll_tab import DLLTab
-from dino.dll_imports_tab import DLLImportsTab
+from dino.dll_build_config import DLLBuildConfig
 
 ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
@@ -40,19 +39,11 @@ class DLLSplitter:
         with open(tab_path, "rb") as tab_file:
             tab = DLLTab.parse(tab_file.read())
 
-        # Load DLLSIMPORT.tab
+        # Load core export syms
         if self.verbose:
-            print("Loading DLLSIMPORT.tab...")
+            print("Loading core export syms...")
         
-        import_tab_path = BIN_PATH.joinpath("assets/DLLSIMPORTTAB.bin")
-        with open(import_tab_path, "rb") as import_tab_file:
-            import_tab = DLLImportsTab.parse(import_tab_file.read())
-
-        # Load core syms
-        if self.verbose:
-            print("Loading core syms...")
-        
-        core_syms = self.__get_core_symbols()
+        core_export_syms = self.__get_core_export_symbols()
         
         # Extract each DLL that has a src directory
         dll_dirs = [Path(dir) for dir in glob.glob(f"{SRC_PATH}/dlls/*") if isdir(dir)]
@@ -63,29 +54,18 @@ class DLLSplitter:
             if len(only_dlls) > 0 and not number in only_dlls:
                 continue
 
-            # Load DLL config
-            dll_config_path = dir.joinpath(f"{number}.yaml")
-            if not dll_config_path.exists():
-                print(f"WARN: Missing {dll_config_path}!")
-                continue
-            
-            with open(dll_config_path, "r") as file:
-                dll_config = yaml.safe_load(file)
-
-            link_original_rodata = "link_original_rodata" in dll_config and dll_config["link_original_rodata"] or False
-            link_original_data = "link_original_data" in dll_config and dll_config["link_original_data"] or False
-            link_original_bss = "link_original_bss" in dll_config and dll_config["link_original_bss"] or False
-
-            # Load known symbols for DLL
-            syms_txt_path = SRC_PATH.joinpath(f"dlls/{number}/syms.txt")
-            known_symbols = self.__get_existing_symbols(syms_txt_path)
-
-            # Load DLL
+            # Check DLL path
             dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
             if not dll_path.exists():
                 print(f"WARN: No such DLL {dll_path}!")
                 continue
 
+            # Load known symbols for DLL
+            known_symbols = core_export_syms.copy()
+            syms_txt_path = SRC_PATH.joinpath(f"dlls/{number}/syms.txt")
+            known_symbols.update(self.__get_existing_symbols(syms_txt_path))
+
+            # Load DLL
             with open(dll_path, "rb") as dll_file:
                 if self.verbose:
                     print("[{}] Parsing...".format(number))
@@ -94,15 +74,6 @@ class DLLSplitter:
                 # Parse DLL header
                 data = bytearray(dll_file.read())
                 dll = DLL.parse(data, number)
-
-                # Load extern GOT symbols via DLLIMPORTS.tab
-                for got_entry in dll.reloc_table.global_offset_table:
-                    if (got_entry & 0x80000000) != 0:
-                        index = (got_entry & 0x7FFFFFFF) - 1
-                        if index >= 0 and index < len(import_tab.imports):
-                            real_addr = import_tab.imports[index]
-                            if real_addr in core_syms:
-                                known_symbols[got_entry] = core_syms[real_addr]
                 
                 # Parse functions
                 dll_functions = parse_dll_functions(data, dll, known_symbols=known_symbols)
@@ -114,6 +85,21 @@ class DLLSplitter:
                 if self.verbose:
                     print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
             
+                # Load or create DLL config
+                dll_config_path = dir.joinpath(f"{number}.yaml")
+                if dll_config_path.exists():
+                    with open(dll_config_path, "r") as file:
+                        dll_config = DLLBuildConfig.parse(file)
+                else:
+                    dll_config = DLLBuildConfig(
+                        compile=True,
+                        link_original_rodata=dll.has_rodata() and dll.get_rodata_size() > 0,
+                        link_original_data=dll.has_data() and dll.get_data_size() > 0,
+                        link_original_bss=bss_size > 0
+                    )
+                    with open(dll_config_path, "w") as file:
+                        dll_config.save(file)
+
                 # Extract DLL
                 if self.verbose:
                     print("[{}] Extracting...".format(number))
@@ -121,9 +107,9 @@ class DLLSplitter:
 
                 self.extract_dll(dll, dll_functions, data, 
                     bss_size=bss_size,
-                    skip_rodata=not link_original_rodata,
-                    skip_data=not link_original_data,
-                    skip_bss=not link_original_bss,
+                    skip_rodata=not dll_config.link_original_rodata,
+                    skip_data=not dll_config.link_original_data,
+                    skip_bss=not dll_config.link_original_bss,
                 )
 
                 end = timer()
@@ -237,9 +223,8 @@ class DLLSplitter:
                 syms_file.write("{} = 0x{:X};\n".format(func.symbol, func.address))
                 func_addrs.add(func.address)
 
-            # Group external and local symbols that were found
-            extern_symbols: "list[tuple[str, int]]" = []
-            local_symbols: "list[tuple[str, int]]" = []
+            # Write local symbols
+            first_local = True
             for func in dll_functions:
                 for name, value in func.auto_symbols.items():
                     if value in addrs_found:
@@ -250,23 +235,13 @@ class DLLSplitter:
                         # Already have a symbol entry for local functions
                         continue
                     if (value & 0x80000000) != 0:
-                        extern_symbols.append((name, value))
-                    else:
-                        local_symbols.append((name, value))
-            
-            extern_symbols.sort(key=lambda p: p[1])
-            local_symbols.sort(key=lambda p: p[1])
+                        # Skip imports (already covered by export_symbol_addrs.txt)
+                        continue
 
-            # Write external symbols
-            if len(extern_symbols) > 0:
-                syms_file.write("\n")
-                for (name, value) in extern_symbols:
-                    syms_file.write("{} = 0x{:X};\n".format(name, value))
-            
-            # Write local symbols
-            if len(local_symbols) > 0:
-                syms_file.write("\n")
-                for (name, value) in local_symbols:
+                    if first_local:
+                        first_local = False
+                        syms_file.write("\n")
+                        
                     syms_file.write("{} = 0x{:X};\n".format(name, value))
             
             assert got_syms_found == max(0, len(dll.reloc_table.global_offset_table) - 4)
@@ -395,11 +370,11 @@ class DLLSplitter:
 
         return symbols
 
-    def __get_core_symbols(self) -> "dict[int, str]":
+    def __get_core_export_symbols(self) -> "dict[int, str]":
         map: "dict[int, str]" = {}
 
-        def read_syms(file: TextIO):
-            for line in file.readlines():
+        with open("export_symbol_addrs.txt", "r", encoding="utf-8") as syms_file:
+            for line in syms_file.readlines():
                 pairs = symbol_pattern.findall(line.strip())
                 for pair in pairs:
                     addr_str: str = pair[1]
@@ -408,17 +383,6 @@ class DLLSplitter:
                     else:
                         addr = int(addr_str)
                     map[addr] = pair[0]
-
-        with open("symbol_addrs.txt", "r", encoding="utf-8") as syms_file:
-            read_syms(syms_file)
-        with open("undefined_funcs.txt", "r", encoding="utf-8") as syms_file:
-            read_syms(syms_file)
-        with open("undefined_funcs_auto.txt", "r", encoding="utf-8") as syms_file:
-            read_syms(syms_file)
-        with open("undefined_syms.txt", "r", encoding="utf-8") as syms_file:
-            read_syms(syms_file)
-        with open("undefined_syms_auto.txt", "r", encoding="utf-8") as syms_file:
-            read_syms(syms_file)
 
         return map
 
