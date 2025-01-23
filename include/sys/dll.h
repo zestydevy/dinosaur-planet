@@ -101,7 +101,6 @@ typedef struct DLLFile
 #define DLL_INST_EXPORTS_TO_INST(instExports) ((DLLInst*)((u32)instExports - DLL_INST_EXPORTS_FIELD_OFFSET))
 
 
-extern void ***gDLL_57;
 extern struct DLLInstance
     **D_8008C970,
     **gDLL_1C,

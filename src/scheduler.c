@@ -432,7 +432,7 @@ void __scHandleRetrace(OSSched *sc) {
 
         dl_segment((Gfx**)&taskDataPtr, 0, NULL);
         dl_segment((Gfx**)&taskDataPtr, 1, gFramebufferCurrent);
-        dl_segment((Gfx**)&taskDataPtr, 2, D_800bccb4);
+        dl_segment((Gfx**)&taskDataPtr, 2, D_800BCCB4);
         dl_segment((Gfx**)&taskDataPtr, 4, gFramebufferNext - 0x280);
 
         func_80060EB8(0, 0, 0, 0x80);

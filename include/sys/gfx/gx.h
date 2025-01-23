@@ -99,8 +99,8 @@ typedef struct _UnkVidStruct3 {
 // Length of gResolutionArray
 #define VIDEO_RESOLUTIONS_COUNT 8
 
-extern f32 D_80092A70;
-extern f32 D_80092A74;
+extern f32 gWorldX;
+extern f32 gWorldZ;
 
 extern void *D_80092EC4;
 extern void *D_80092F0C;
@@ -119,19 +119,19 @@ extern f32 gMPalAspectRatio; // 1.333333_ (4/3)
 extern f32 gNtscAspectRatio; // 1.333333_ (4/3)
 
 extern UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
-extern UnkHeapVidStruct *D_800bcc10;
-extern UnkVidStruct2 D_800bcc18[4]; // size:0x50
-extern s32 D_800bcc68;
-extern s32 D_800bcc6c;
-extern u32 D_800bcc70;
-extern u8 D_800bcc78;
+extern UnkHeapVidStruct *D_800BCC10;
+extern UnkVidStruct2 D_800BCC18[4]; // size:0x50
+extern s32 D_800BCC68;
+extern s32 D_800BCC6C;
+extern u32 D_800BCC70;
+extern u8 D_800BCC78;
 
 extern OSViMode gOSViModeCustom;
 
 extern u16 *gFramebufferNext;
 extern u16 *gFramebufferCurrent;
-extern u16 *D_800bccb4;
-extern u16 *D_800bccb0;
+extern u16 *D_800BCCB4;
+extern u16 *D_800BCCB0;
 
 /**
  * Holds the horizontal resolution of each framebuffer.
@@ -176,13 +176,13 @@ extern s8 gHStartMod;
 extern OSMesg D_800bccc0[8];
 extern OSMesgQueue OSMesgQueue_800bcce0;
 
-extern u32 D_800bce14;
+extern u32 D_800BCE14;
 extern s32 gDisplayHertz;
-extern u8 D_800bce2c;
+extern u8 D_800BCE2C;
 
-extern u8 D_800bce34;
-extern u8 D_800bce58;
-extern u8 D_800bce59;
+extern u8 D_800BCE34;
+extern u8 D_800BCE58;
+extern u8 D_800BCE59;
 
 extern u8 *D_800BCE18[];
 extern u8 D_800BCE20; // index of D_800BCE22?

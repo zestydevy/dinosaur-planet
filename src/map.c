@@ -369,7 +369,7 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
     u32 unk0, unk1, unk2;
     s8 matrixStatus;
 
-    ((DLL57Func)(*gDLL_57)[3])(&r, &g, &b, &unk0, &unk1, &unk2);
+    ((DLL57Func)(*gDLL_39)[3])(&r, &g, &b, &unk0, &unk1, &unk2);
 
     for (i = 1; i < gRenderListLength; i++)
     {

@@ -177,7 +177,6 @@ void update_mem_mon_values();                          /* extern */
 u8 video_func_returning_delay(s32);                   /* extern */
 extern s32 D_80099130;
 extern s32 D_8009913C;
-extern s32 D_800BCCB4;
 extern s32* gCurMtx;
 extern s32* gCurPol;
 extern s32* gCurVtx;
@@ -336,7 +335,6 @@ void set_button_mask(int port, u16 mask);                            /* extern *
 void update_PlayerPosBuffer();                         /* extern */
 void update_obj_models();                              /* extern */
 void update_objects();                                 /* extern */
-extern s32 D_800AE680;
 extern s32 * gCurMtx;
 extern s32 * gCurPol;
 extern s32 * gCurVtx;
@@ -392,7 +390,7 @@ void func_80013D80(void)
         }
 
         (*gDLL_SCREENS)->func[2].withOneArg(&gCurGfx);
-        func_8000F604(&D_800AE680, &gCurMtx, &gCurVtx, &gCurPol);
+        func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= delayByte;
 

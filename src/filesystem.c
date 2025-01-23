@@ -5,7 +5,7 @@ extern u32 gLastFSTIndex;
 extern s32 __fstAddress;
 extern s32 __file1Address;
 
-void possible_romcopy(u32 romAddr, u8* dst, s32 size);
+void read_from_rom(u32 romAddr, u8* dst, s32 size);
 
 
 extern void * romcopy_dat;
@@ -28,7 +28,7 @@ void init_filesystem(void)
     size = (s32)&__file1Address - (s32)&__fstAddress;
 
     gFST = (Fs *)malloc(size, 0x7F7F7FFF, NULL);
-    possible_romcopy(&__fstAddress, (u8 *)gFST, size);
+    read_from_rom(&__fstAddress, (u8 *)gFST, size);
 }
 
 void * read_alloc_file(u32 id, u32 a1)
@@ -51,7 +51,7 @@ void * read_alloc_file(u32 id, u32 a1)
     if (data == NULL)
         return NULL;
 
-    possible_romcopy((u32)&__file1Address + offset, data, size);
+    read_from_rom((u32)&__file1Address + offset, data, size);
 
     return data;
 }
@@ -71,7 +71,7 @@ s32 read_file(u32 id, void * dest)
     offset = fstEntry[0];
     size = fstEntry[1] - offset;
 
-    possible_romcopy((u32)&__file1Address + offset, dest, size);
+    read_from_rom((u32)&__file1Address + offset, dest, size);
 
     return size;
 }
@@ -89,7 +89,7 @@ s32 read_file_region(u32 id, void * dst, u32 offset, s32 size)
 
   gLastFSTIndex = id;
 
-  possible_romcopy(fileAddr + (s32)&__file1Address, dst, size);
+  read_from_rom(fileAddr + (s32)&__file1Address, dst, size);
 
   return size;
 }
@@ -128,7 +128,7 @@ s32 get_file_size(u32 id)
     return size;
 }
 
-void possible_romcopy(u32 romAddr, u8* dst, s32 size)
+void read_from_rom(u32 romAddr, u8* dst, s32 size)
 {
     OSMesg mesg;
     OSMesg mesg2;

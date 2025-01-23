@@ -23,13 +23,13 @@ void func_8005C780() {
     UnkHeapVidStruct *vidHeapStruct;
     s32 i;
 
-    vidHeapStruct = D_800bcc10;
+    vidHeapStruct = D_800BCC10;
 
     if (vidHeapStruct != NULL) {
         free(vidHeapStruct);
     }
 
-    D_800bcc10 = malloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
+    D_800BCC10 = malloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++)
     {
@@ -41,43 +41,43 @@ void func_8005C780() {
 
     for (i = 0; i < 4; i++)
     {
-        D_800bcc18[i].unk0x10 = NULL;
-        D_800bcc18[i].unk0x0 = 0.0f;
-        D_800bcc18[i].unk0x4 = 0.0f;
-        D_800bcc18[i].unk0xc = 0;
-        D_800bcc18[i].unk0x8 = 0.0f;
+        D_800BCC18[i].unk0x10 = NULL;
+        D_800BCC18[i].unk0x0 = 0.0f;
+        D_800BCC18[i].unk0x4 = 0.0f;
+        D_800BCC18[i].unk0xc = 0;
+        D_800BCC18[i].unk0x8 = 0.0f;
     }
 
-    D_800bcc10->unk0x0 = -3.0f;
-    D_800bcc10->unk0x4 = 0.0f;
-    D_800bcc10->unk0x8 = -3.0f;
-    D_800bcc10->unk0xc = -3.0f;
-    D_800bcc10->unk0x10 = 0.0f;
-    D_800bcc10->unk0x14 = 3.0f;
-    D_800bcc10->unk0x18 = 3.0f;
-    D_800bcc10->unk0x1c = 0.0f;
-    D_800bcc10->unk0x20 = 3.0f;
-    D_800bcc10->unk0x24 = 3.0f;
-    D_800bcc10->unk0x28 = 0.0f;
-    D_800bcc10->unk0x2c = -3.0f;
-    D_800bcc10->unk0x30 = -3.0f;
-    D_800bcc10->unk0x34 = 0.0f;
-    D_800bcc10->unk0x38 = -3.0f;
-    D_800bcc10->unk0x3c = -3.0f;
-    D_800bcc10->unk0x40 = 0.0f;
-    D_800bcc10->unk0x44 = 3.0f;
-    D_800bcc10->unk0x48 = 3.0f;
-    D_800bcc10->unk0x4c = 0.0f;
-    D_800bcc10->unk0x50 = 3.0f;
-    D_800bcc10->unk0x54 = 3.0f;
-    D_800bcc10->unk0x58 = 0.0f;
-    D_800bcc10->unk0x5c = -3.0f;
+    D_800BCC10->unk0x0 = -3.0f;
+    D_800BCC10->unk0x4 = 0.0f;
+    D_800BCC10->unk0x8 = -3.0f;
+    D_800BCC10->unk0xc = -3.0f;
+    D_800BCC10->unk0x10 = 0.0f;
+    D_800BCC10->unk0x14 = 3.0f;
+    D_800BCC10->unk0x18 = 3.0f;
+    D_800BCC10->unk0x1c = 0.0f;
+    D_800BCC10->unk0x20 = 3.0f;
+    D_800BCC10->unk0x24 = 3.0f;
+    D_800BCC10->unk0x28 = 0.0f;
+    D_800BCC10->unk0x2c = -3.0f;
+    D_800BCC10->unk0x30 = -3.0f;
+    D_800BCC10->unk0x34 = 0.0f;
+    D_800BCC10->unk0x38 = -3.0f;
+    D_800BCC10->unk0x3c = -3.0f;
+    D_800BCC10->unk0x40 = 0.0f;
+    D_800BCC10->unk0x44 = 3.0f;
+    D_800BCC10->unk0x48 = 3.0f;
+    D_800BCC10->unk0x4c = 0.0f;
+    D_800BCC10->unk0x50 = 3.0f;
+    D_800BCC10->unk0x54 = 3.0f;
+    D_800BCC10->unk0x58 = 0.0f;
+    D_800BCC10->unk0x5c = -3.0f;
 
-    D_800bcc68 = func_8003cd7c(0x18);
-    D_800bcc6c = func_8003cd7c(0x19);
-    D_800bcc70 = func_8003cd7c(0x1a);
+    D_800BCC68 = queue_load_texture_proxy(0x18);
+    D_800BCC6C = queue_load_texture_proxy(0x19);
+    D_800BCC70 = queue_load_texture_proxy(0x1a);
 
-    D_800bcc78 = (u8)0;
+    D_800BCC78 = (u8)0;
 }
 #endif
 
@@ -99,7 +99,7 @@ void _func_8005C998() {
     } while (++vidStruct < &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
 
     // TODO: Figure out how to get this to match in a way that it weaves in `lui   at,0x800c`
-    vidStruct2 = &D_800bcc18[0];
+    vidStruct2 = &D_800BCC18[0];
     vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
     vidStruct2->unk0x0 = 0.0f;
@@ -108,7 +108,7 @@ void _func_8005C998() {
     vidStruct2->unk0xc = (u8)0;
     vidStruct2->unk0x8 = 0.0f;
     // lui   at,0x800c
-    vidStruct2 = &D_800bcc18[1];
+    vidStruct2 = &D_800BCC18[1];
     vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
     vidStruct2->unk0x0 = 0.0f;
@@ -118,7 +118,7 @@ void _func_8005C998() {
     // lui   at,0x800c
     vidStruct2->unk0xc = (u8)0;
     // lui   at,0x800c
-    vidStruct2 = &D_800bcc18[2];
+    vidStruct2 = &D_800BCC18[2];
     vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
     vidStruct2->unk0x0 = 0.0f;
@@ -127,7 +127,7 @@ void _func_8005C998() {
     vidStruct2->unk0xc = (u8)0;
     vidStruct2->unk0x8 = 0.0f;
     // lui   at,0x800c
-    vidStruct2 = &D_800bcc18[3];
+    vidStruct2 = &D_800BCC18[3];
     vidStruct2->unk0x10 = 0;
     // lui   at,0x800c
     vidStruct2->unk0x0 = 0.0f;
@@ -143,7 +143,7 @@ void _func_8005C998() {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA5C.s")
 #else
 void func_8005CA5C(u32 param1) {
-    D_800bcc78 = param1;
+    D_800BCC78 = param1;
 
     if (param1 == 0) {
         func_8005C998();
@@ -160,19 +160,19 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
     s32 temp1;
     s32 temp2;
 
-    if (D_800bcc78 != 0)
+    if (D_800BCC78 != 0)
     {
         temp1 = D_80092FF8;
 
-        D_800bcc18[temp1].unk0x10 = a0;
-        D_800bcc18[temp1].unk0x0 = a1[0];
+        D_800BCC18[temp1].unk0x10 = a0;
+        D_800BCC18[temp1].unk0x0 = a1[0];
 
         temp2 = temp1 + 1;
         if (1); // TODO: skeptical about this
 
-        D_800bcc18[temp1].unk0x4 = a0[4] + a1[1];
-        D_800bcc18[temp1].unk0x8 = a1[2];
-        D_800bcc18[temp1].unk0xc = a2;
+        D_800BCC18[temp1].unk0x4 = a0[4] + a1[1];
+        D_800BCC18[temp1].unk0x8 = a1[2];
+        D_800BCC18[temp1].unk0xc = a2;
 
         D_80092FF8 = temp2;
 
@@ -208,8 +208,8 @@ void func_8005CDFC(int _) {
         }
 
         // TODO: The order of loads and stores here are slightly out of order
-        var1 = D_80092A70 - vidStruct->unk0x78;
-        var2 = D_80092A74 - vidStruct->unk0x7c;
+        var1 = gWorldX - vidStruct->unk0x78;
+        var2 = gWorldZ - vidStruct->unk0x7c;
 
         var3 = &vidStruct->unk0x48[0];
 
@@ -309,12 +309,12 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     swap_framebuffer_pointers();
     set_custom_vi_mode();
 
-    D_800bce14 = 0xc;
+    D_800BCE14 = 0xc;
 
     osViBlack(TRUE);
 
-    D_800bce58 = 0;
-    D_800bce2c = 5;
+    D_800BCE58 = 0;
+    D_800BCE2C = 5;
 
     if (someBool) {
         D_800BCE18[0] = malloc(960, 2, NULL);
@@ -326,7 +326,7 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE20 = 0;
     D_800BCE22[0] = 0;
     D_800BCE22[1] = 0;
-    D_800bce34 = 1;
+    D_800BCE34 = 1;
 }
 #endif
 
@@ -524,9 +524,9 @@ void initialize_framebuffers(int someBool, s32 width, s32 height) {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D9D8.s")
 #else
 void func_8005D9D8() {
-    D_800bce58 = 0;
-    D_800bce59 = 2;
-    D_800bce34 = 1;
+    D_800BCE58 = 0;
+    D_800BCE59 = 2;
+    D_800BCE34 = 1;
 }
 #endif
 
@@ -534,7 +534,7 @@ void func_8005D9D8() {
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DA00.s")
 #else
 void func_8005DA00(u32 param1) {
-    D_800bce34 = param1;
+    D_800BCE34 = param1;
 }
 #endif
 
@@ -556,7 +556,7 @@ void func_8005DC70(int _) {}
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
 #else
 s32 func_8005DC7C() {
-    return (s32)((f32)gDisplayHertz / (f32)D_800bce59);
+    return (s32)((f32)gDisplayHertz / (f32)D_800BCE59);
 }
 #endif
 
@@ -573,7 +573,7 @@ void swap_framebuffer_pointers() {
     gFramebufferCurrent = gFramebufferPointers[gFramebufferChoice];
 
     // TODO: what is this doing?
-    D_800bccb4 = gFramebufferStart; // D_800bccb4 = &framebufferCurrent+8
+    D_800BCCB4 = gFramebufferStart; // D_800BCCB4 = &framebufferCurrent+8
 
     // Swap choice to the other framebuffer index
     //
@@ -586,7 +586,7 @@ void swap_framebuffer_pointers() {
     gFramebufferNext = gFramebufferPointers[gFramebufferChoice];
 
     // TODO: what is this doing?
-    D_800bccb0 = gFramebufferStart; // D_800bccb0 = &framebufferCurrent+4
+    D_800BCCB0 = gFramebufferStart; // D_800BCCB0 = &framebufferCurrent+4
 }
 #endif
 
@@ -673,19 +673,19 @@ void some_video_setup(int param1) {
         initialize_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
 
         set_custom_vi_mode();
-        D_800bce14 = 0xc;
+        D_800BCE14 = 0xc;
         osViBlack(TRUE);
-        D_800bce58 = 0;
-        D_800bce2c = 0x5;
+        D_800BCE58 = 0;
+        D_800BCE2C = 0x5;
     } else {
         set_video_mode(1);
         initialize_framebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
 
         set_custom_vi_mode();
-        D_800bce14 = 0xc;
+        D_800BCE14 = 0xc;
         osViBlack(TRUE);
-        D_800bce58 = 0;
-        D_800bce2c = 0x5;
+        D_800BCE58 = 0;
+        D_800BCE2C = 0x5;
     }
 }
 #endif
