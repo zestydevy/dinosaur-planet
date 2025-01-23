@@ -120,6 +120,19 @@ class DinoCommandRunner:
         print()
         self.configure()
 
+    def extract_dll(self, number: int):
+        print(f"Extracting DLL {number}...")
+
+        # Clear extracted asm for DLL
+        dll_asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{number}")
+        if dll_asm_path.exists():
+            if self.verbose:
+                print(f"rm {dll_asm_path}")
+            shutil.rmtree(dll_asm_path)
+        
+        # Extract DLL
+        self.__extract_dlls([number])
+
     def configure(self):
         print("Configuring build script...")
 
@@ -360,6 +373,9 @@ def main():
     extract_cmd = subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
     extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
 
+    extract_dll_cmd = subparsers.add_parser("extract-dll", help="Split and extract DLL.")
+    extract_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
+
     subparsers.add_parser("configure", help="Re-configure the build script.")
     
     build_cmd = subparsers.add_parser("build", help="Build ROM and verify that it matches.")
@@ -394,6 +410,8 @@ def main():
             runner.setup_dll(number=args.number)
         elif cmd == "extract":
             runner.extract(use_cache=args.use_cache)
+        elif cmd == "extract-dll":
+            runner.extract_dll(number=args.number)
         elif cmd == "build":
             runner.build(
                 configure=args.configure, 

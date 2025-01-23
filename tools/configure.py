@@ -186,7 +186,7 @@ class BuildNinjaWriter:
         self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
         self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
         self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL --")
-        self.writer.variable("ELF2DLL", f"tools/elf2dll{exe_suffix}")
+        self.writer.variable("ELF2DLL", "python3 tools/elf2dll.py")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
         
         self.writer.newline()
@@ -210,11 +210,11 @@ class BuildNinjaWriter:
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
         if sys.platform == "win32":
-            self.writer.rule("elf2dll", "$ELF2DLL $in $out", "Converting $in to DP DLL $out...")
+            self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         else:
             # Note: for elf2dll, remove output file first since it might be a symlink and we don't want 
             # to write through the link to the original DLL (not relevant on Windows, we don't symlink there)
-            self.writer.rule("elf2dll", f"rm -f $out && $ELF2DLL $in $out", "Converting $in to DP DLL $out...")
+            self.writer.rule("elf2dll", f"rm -f $out && $ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
         if sys.platform != "win32":
             self.writer.rule("sym_link", f"ln -s -f -r $in $out", "Symbolic linking $in to $out...")
@@ -302,8 +302,14 @@ class BuildNinjaWriter:
 
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
-            self.writer.build(dll_asset_path, "elf2dll", elf_path)
+            dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
+            self.writer.build(dll_asset_path, "elf2dll", elf_path,
+                variables={
+                    "DLL_BSS_TXT": dll_bss_asset_path
+                },
+                implicit_outputs=[dll_bss_asset_path])
             pack_deps.append(dll_asset_path)
+            pack_deps.append(dll_bss_asset_path)
         
         any_dlls = len(pack_deps) > 0
 

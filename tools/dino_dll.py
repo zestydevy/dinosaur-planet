@@ -1,13 +1,15 @@
 # Dinosaur Planet DLL packer
 # by nuggs#1832 / nuggslet
 
+import glob
+from pathlib import Path
 import os, sys
 import struct
 
 class dino_dll():
     def pack(self, bin, tab, tab_out, dir):
-        names = os.listdir(dir)
-        names = sorted(names, key=lambda x: int(x.split('.')[0]))
+        paths = [Path(path) for path in glob.glob(f"{Path(dir)}/*.dll")]
+        paths = sorted(paths, key=lambda x: int(x.name.split('.')[0]))
 
         ftab = bytearray(open(tab, "rb").read())
         fbin = open(bin, "wb")
@@ -15,19 +17,21 @@ class dino_dll():
         pos = 0
         index = 0
 
-        for name in names:
-            name = os.path.join(dir, name)
-            size = os.path.getsize(name)
+        for path in paths:
+            size = os.path.getsize(path)
 
-            with open(name, "rb") as file:
-                data = bytearray(file.read())
-                bss = struct.unpack_from(">I", data, 0x18)[0] # HACK: uses unused field to get BSS size from elf2dll
-                struct.pack_into(">I", data, 0x18, 0)
-                fbin.write(data)
+            with open(path, "rb") as file:
+                fbin.write(file.read())
 
             offset = (index * 8) + (4 * 4) # (index * entry_size) + tab_header_size
-            if bss == 0: bss = struct.unpack_from(">2I", ftab, offset)[1]
-            if bss == 0xFFFFFFFF: bss = 0
+
+            # Use .bss size from elf2dll if available
+            bss_path = path.with_name(f"{path.name}.bss.txt")
+            if bss_path.exists():
+                with open(bss_path, "r", encoding="utf-8") as bss_file:
+                    bss = int(bss_file.read(), base=0)
+            else:
+                bss = struct.unpack_from(">2I", ftab, offset)[1]
 
             struct.pack_into(">2I", ftab, offset, pos, bss)
             pos += size
