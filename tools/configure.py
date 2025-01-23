@@ -63,7 +63,11 @@ class BuildNinjaWriter:
         self.writer = writer
         self.input = input
         self.config = config
-        self.link_deps: "list[str]" = []
+        self.link_deps: "list[str]" = [
+            "undefined_syms.txt", 
+            "undefined_funcs.txt", 
+            "undefined_syms_auto.txt", 
+        ]
 
     def write(self):
         # Write prelude (variables, rules)
