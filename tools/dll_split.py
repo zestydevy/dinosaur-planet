@@ -329,7 +329,7 @@ class DLLSplitter:
             # Set .bss section
             bss_file.write(".bss\n")
             # Write .bss size
-            bss_file.write(".ds.s 0x{:X}, 0\n".format(bss_size))
+            bss_file.write(".space 0x{:X}\n".format(bss_size))
 
     def __get_functions_to_extract(self, path: Path, dll_number: str) -> "list[str] | None":
         """Returns None if all functions should be extracted (i.e. there is no .c file to derive the list from)"""
