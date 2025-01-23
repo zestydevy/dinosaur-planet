@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 from shutil import which
 import sys
-from typing import TextIO
+from typing import Any, TextIO
 from ninja import ninja_syntax
 import yaml
 
@@ -422,6 +422,14 @@ class ObjDiffConfigWriter:
         
         json.dump(config, self.output_file, indent=2)
 
+class DLLConfig:
+    def __init__(self, yaml: Any | None):
+        if yaml != None:
+            self.compile = yaml.get("compile", True)
+            self.link_original_rodata = yaml.get("link_original_rodata", True)
+            self.link_original_data = yaml.get("link_original_data", True)
+            self.link_original_bss = yaml.get("link_original_bss", True)
+
 class InputScanner:
     def __init__(self, config: BuildConfig):
         self.config = config
@@ -471,13 +479,23 @@ class InputScanner:
         for dir in dll_dirs:
             number = Path(dir).name
 
+            dll_config = self.__get_dll_config(Path(dir), number)
+
             # Skip if this DLL is configured to use the original DLL instead of recompiling
-            if not self.__should_compile_dll(Path(dir), number):
+            if not dll_config.compile:
                 continue
 
             c_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.c", recursive=True)]
             asm_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.s", recursive=True)]
-            asm_paths.extend([Path(path) for path in glob.glob(f"asm/nonmatchings/dlls/{number}/data/*.s")])
+
+            asm_data_path = Path(f"asm/nonmatchings/dlls/{number}/data")
+            if dll_config.link_original_rodata:
+                asm_paths.append(asm_data_path.joinpath(f"{number}.rodata.s"))
+            if dll_config.link_original_data:
+                asm_paths.append(asm_data_path.joinpath(f"{number}.data.s"))
+            if dll_config.link_original_bss:
+                asm_paths.append(asm_data_path.joinpath(f"{number}.bss.s"))
+
             files: "list[BuildFile]" = []
 
             for src_path in c_paths:
@@ -505,7 +523,6 @@ class InputScanner:
     def __make_obj_path(self, path: Path) -> str:
         return path.with_suffix('.o')
     
-
     def __get_optimization_level(self, path: Path) -> str:
         with open(path, "r", encoding="utf-8") as file:
             while True:
@@ -519,14 +536,13 @@ class InputScanner:
         
         return self.config.default_opt_flags
     
-    def __should_compile_dll(self, dll_dir: Path, number: str) -> bool:
+    def __get_dll_config(self, dll_dir: Path, number: str) -> DLLConfig:
         yaml_path = dll_dir.joinpath(f"{number}.yaml")
         if not yaml_path.exists():
             print(f"WARN: Missing {yaml_path}!")
-            return True
+            return DLLConfig(None)
         
-        dll_config = self.__parse_dll_yaml(yaml_path)
-        return "compile" in dll_config and dll_config["compile"]
+        return DLLConfig(self.__parse_dll_yaml(yaml_path))
     
     def __parse_dll_yaml(self, path: Path):
         with open(path, "r") as file:
