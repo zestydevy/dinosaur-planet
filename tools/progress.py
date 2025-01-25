@@ -12,7 +12,8 @@ import re
 import subprocess
 import sys
 
-from dino.dll import DLL, parse_dll_functions
+from dino.dll import DLL
+from dino.dll_analysis import get_all_dll_functions
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ROOT_DIR = Path(os.path.abspath(os.path.join(SCRIPT_DIR, "..")))
@@ -184,7 +185,7 @@ def get_dll_progress(dll_path: Path, number: str) -> DLLProgress:
     with open(dll_path, "rb") as dll_file:
         dll_data = bytearray(dll_file.read())
         dll = DLL.parse(dll_data, number)
-        dll_functions = parse_dll_functions(dll_data, dll, known_symbols=known_symbols)
+        dll_functions = get_all_dll_functions(dll_data, dll, known_symbols=known_symbols)
     
     func_sizes: "dict[str, int]" = {}
     total_bytes = 0

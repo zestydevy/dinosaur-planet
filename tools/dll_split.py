@@ -13,11 +13,13 @@ from pathlib import Path
 import re
 import struct
 from timeit import default_timer as timer
-import yaml
+from typing import TextIO
 
-from dino.dll import DLL, DLLFunction, parse_dll_functions
-from dino.dll_tab import DLLTab
+from dino.dll import DLL
+from dino.dll_analysis import DLLFunction, get_all_dll_functions
 from dino.dll_build_config import DLLBuildConfig
+from dino.dll_code_printer import stringify_instruction
+from dino.dll_tab import DLLTab
 
 ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
@@ -76,7 +78,7 @@ class DLLSplitter:
                 dll = DLL.parse(data, number)
                 
                 # Parse functions
-                dll_functions = parse_dll_functions(data, dll, known_symbols=known_symbols)
+                dll_functions = get_all_dll_functions(data, dll, known_symbols=known_symbols, analyze=True)
 
                 # Get DLL .bss size
                 bss_size = tab.entries[int(number) - 1].bss_size
@@ -91,12 +93,7 @@ class DLLSplitter:
                     with open(dll_config_path, "r") as file:
                         dll_config = DLLBuildConfig.parse(file)
                 else:
-                    dll_config = DLLBuildConfig(
-                        compile=True,
-                        link_original_rodata=dll.has_rodata() and dll.get_rodata_size() > 0,
-                        link_original_data=dll.has_data() and dll.get_data_size() > 0,
-                        link_original_bss=bss_size > 0
-                    )
+                    dll_config = DLLBuildConfig(compile=True)
                     with open(dll_config_path, "w") as file:
                         dll_config.save(file)
 
@@ -105,12 +102,7 @@ class DLLSplitter:
                     print("[{}] Extracting...".format(number))
                 start = timer()
 
-                self.extract_dll(dll, dll_functions, data, 
-                    bss_size=bss_size,
-                    skip_rodata=not dll_config.link_original_rodata,
-                    skip_data=not dll_config.link_original_data,
-                    skip_bss=not dll_config.link_original_bss,
-                )
+                self.extract_dll(dll, dll_functions, data, bss_size=bss_size)
 
                 end = timer()
                 if self.verbose:
@@ -120,51 +112,22 @@ class DLLSplitter:
                     dll: DLL, 
                     dll_functions: "list[DLLFunction]",
                     data: bytearray, 
-                    bss_size: int,
-                    skip_data: bool,
-                    skip_rodata: bool,
-                    skip_bss: bool):
+                    bss_size: int):
         # Determine paths
         src_path = SRC_PATH.joinpath(f"dlls/{dll.number}")
         asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll.number}")
-        asm_data_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll.number}/data")
 
         # Determine what needs to be extracted
         c_file_path = src_path.joinpath(f"{dll.number}.c")
         emit_funcs = self.__get_functions_to_extract(c_file_path, dll.number)
 
-        rodata_size = dll.get_rodata_size()
-        data_size = dll.get_data_size()
-
-        emit_rodata = not skip_rodata and dll.has_rodata() and rodata_size > 0
-        emit_data = not skip_data and dll.has_data() and data_size > 0
-        emit_bss = not skip_bss and bss_size > 0
-
         # Create directories if necessary
         if emit_funcs is None or len(emit_funcs) > 0:
             os.makedirs(asm_path, exist_ok=True)
-        if emit_rodata or emit_data or emit_bss:
-            os.makedirs(asm_data_path, exist_ok=True)
 
         # Extract .text
         if emit_funcs is None or len(emit_funcs) > 0:
             self.__extract_text_asm(asm_path, dll, dll_functions, emit_funcs)
-
-        # Extract .rodata
-        if emit_rodata:
-            rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
-            rodata_end = rodata_start + rodata_size
-            self.__extract_rodata_asm(asm_data_path, dll, data[rodata_start:rodata_end])
-        
-        # Extract .data
-        if emit_data:
-            data_start = dll.header.data_offset
-            data_end = data_start + data_size
-            self.__extract_data_asm(asm_data_path, dll, data[data_start:data_end])
-        
-        # Extract .bss
-        if emit_bss:
-            self.__extract_bss_asm(asm_data_path, dll, bss_size)
 
         # Create exports.s if it doesn't exist
         exports_s_path = src_path.joinpath("exports.s")
@@ -178,7 +141,7 @@ class DLLSplitter:
 
         # Create <dll>.c stub if it doesn't exist
         if not c_file_path.exists():
-            self.__create_c_stub(c_file_path, asm_path, dll_functions)
+            self.__create_c_stub(c_file_path, asm_path, dll, dll_functions, data, bss_size)
 
     def __create_exports_s(self, path: Path, dll: DLL, dll_functions: "list[DLLFunction]"):
         funcs_by_address: "dict[int, str]" = {}
@@ -202,49 +165,173 @@ class DLLSplitter:
                 func_symbol = funcs_by_address[offset]
                 exports_s.write(f".dword {func_symbol}\n")
 
-    def __create_c_stub(self, c_path: Path, asm_path: Path, functions: "list[DLLFunction]"):
+    def __create_c_stub(self, c_path: Path, asm_path: Path, dll: DLL, functions: "list[DLLFunction]", dll_data: bytearray, bss_size: int):
+        # Collect local refs
+        rodata_refs: "set[int] | list[int]" = set()
+        data_refs: "set[int] | list[int]" = set()
+        bss_refs: "set[int] | list[int]" = set()
+        jtbl_refs: "set[int] | list[int]" = set()
+
+        extern_offsets = dll.reloc_table.global_offset_table[4:]
+
+        for func in functions:
+            if func.local_rodata_refs != None:
+                for ref in func.local_rodata_refs:
+                    rodata_refs.add(ref)
+            if func.local_data_refs != None:
+                for ref in func.local_data_refs:
+                    data_refs.add(ref)
+            if func.local_bss_refs != None:
+                for ref in func.local_bss_refs:
+                    bss_refs.add(ref)
+            if func.jump_table_refs != None:
+                for ref in func.jump_table_refs:
+                    rodata_refs.add(ref)
+                    jtbl_refs.add(ref)
+        
+        # Write
         with open(c_path, "w", encoding="utf-8") as c_file:
+            # Includes
             c_file.write("#include <PR/ultratypes.h>\n")
+
+            # .rodata stubs
+            if dll.has_rodata():
+                rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
+                rodata_end = rodata_start + dll.get_rodata_size()
+                rodata = dll_data[rodata_start:rodata_end]
+
+                rodata_refs.add(0)
+                rodata_refs.add(len(rodata))
+                rodata_refs = list(rodata_refs)
+                rodata_refs.sort()
+
+                c_file.write("\n")
+                for i in range(len(rodata_refs) - 1):
+                    offset = rodata_refs[i]
+                    size = rodata_refs[i + 1] - offset
+                    self.__write_c_stub_data(
+                        c_file, 
+                        rodata[offset:offset+size], 
+                        "_rodata{}_{:X}".format("" if not offset in jtbl_refs else "_jtbl", offset), 
+                        const=True,
+                        static=not (rodata_start + offset) in extern_offsets)
             
+            # .data stubs
+            if dll.has_data():
+                data_start = dll.header.data_offset
+                data_end = data_start + dll.get_data_size()
+                data = dll_data[data_start:data_end]
+
+                data_refs.add(0)
+                data_refs.add(len(data))
+                data_refs = list(data_refs)
+                data_refs.sort()
+
+                c_file.write("\n")
+                for i in range(len(data_refs) - 1):
+                    offset = data_refs[i]
+                    size = data_refs[i + 1] - offset
+                    self.__write_c_stub_data(
+                        c_file, 
+                        data[offset:offset+size], 
+                        "_data_{:X}".format(offset), 
+                        const=False,
+                        static=not (data_start + offset) in extern_offsets)
+            
+            # .bss stubs
+            if bss_size > 0:
+                bss_refs.add(0)
+                bss_refs.add(bss_size)
+                bss_refs = list(bss_refs)
+                bss_refs.sort()
+
+                bss_start = dll.get_ram_size()
+
+                c_file.write("\n")
+                for i in range(len(bss_refs) - 1):
+                    offset = bss_refs[i]
+                    size = bss_refs[i + 1] - offset
+                    static = not (bss_start + offset) in extern_offsets
+                    c_file.write("{}u8 _bss_{:#x}[{:#x}];\n"
+                        .format("static " if static else "", offset, size))
+            
+            # function stubs
             for func in functions:
                 c_file.write("\n")
                 c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.symbol}.s")\n')
 
+    def __write_c_stub_data(self, c_file: TextIO, data: bytearray, name: str, const: bool, static: bool):
+        data_len = len(data)
+
+        data_type = "u8"
+        if (data_len % 4) == 0:
+            data_type = "u32"
+        elif (data_len % 2) == 0:
+            data_type = "u16"
+
+        c_file.write("{}{}{} {}[] = {{\n".format(
+            "static " if static else "", 
+            "const " if const else "", 
+            data_type, 
+            name))
+
+        if (data_len % 4) == 0:
+            for i in range(0, len(data), 4):
+                word = struct.unpack_from(">I", data, offset=i)[0]
+                if i > 0:
+                    c_file.write(", ")
+                    if (i % (4 * 8)) == 0:
+                        c_file.write("\n    ")
+                else:
+                    c_file.write("    ")
+                c_file.write("{:0=#10x}".format(word))
+        elif (data_len % 2) == 0:
+            for i in range(0, len(data), 2):
+                half = struct.unpack_from(">H", data, offset=i)[0]
+                if i > 0:
+                    c_file.write(", ")
+                    if (i % (2 * 12)) == 0:
+                        c_file.write("\n    ")
+                else:
+                    c_file.write("    ")
+                c_file.write("{:0=#6x}".format(half))
+        else:
+            for i in range(0, len(data)):
+                byte = data[i]
+                if i > 0:
+                    c_file.write(", ")
+                    if (i % (20)) == 0:
+                        c_file.write("\n    ")
+                else:
+                    c_file.write("    ")
+                c_file.write("{:0=#4x}".format(byte))
+        
+        c_file.write("\n};\n")
+
     def __create_syms_txt(self, 
                           syms_path: Path, 
-                          dll: DLL, 
+                          dll: DLL,
                           dll_functions: "list[DLLFunction]"):
+        text_size = dll.get_text_size()
+        
         with open(syms_path, "w", encoding="utf-8") as syms_file:
-            addrs_found: "set[int]" = set()
-            func_addrs: "set[int]" = set()
-            got_syms_found = 0
             # Write function symbols
+            syms_file.write("# functions\n")
             for func in dll_functions:
                 syms_file.write("{} = 0x{:X};\n".format(func.symbol, func.address))
-                func_addrs.add(func.address)
-
-            # Write local symbols
-            first_local = True
-            for func in dll_functions:
-                for name, value in func.auto_symbols.items():
-                    if value in addrs_found:
-                        continue
-                    got_syms_found += 1
-                    addrs_found.add(value)
-                    if value in func_addrs:
-                        # Already have a symbol entry for local functions
-                        continue
-                    if (value & 0x80000000) != 0:
-                        # Skip imports (already covered by export_symbol_addrs.txt)
-                        continue
-
-                    if first_local:
-                        first_local = False
-                        syms_file.write("\n")
-                        
-                    syms_file.write("{} = 0x{:X};\n".format(name, value))
             
-            assert got_syms_found == max(0, len(dll.reloc_table.global_offset_table) - 4)
+            # Write extern symbols
+            externs: "list[int]" = []
+            # Skip section entries
+            for got_entry in dll.reloc_table.global_offset_table[4:]:
+                # Skip imports (already covered by export_symbol_addrs.txt)
+                # Skip functions, already covered by above
+                if (got_entry & 0x80000000) == 0 and got_entry >= text_size:
+                    externs.append(got_entry)
+            if len(externs) > 0:
+                syms_file.write("\n# external symbols\n")
+                for got_entry in externs:
+                    syms_file.write("D_{0:X} = {0:#x};\n".format(got_entry))
 
     def __extract_text_asm(self, 
                            dir: Path, 
@@ -257,79 +344,19 @@ class DLLSplitter:
 
             s_path = dir.joinpath(f"{func.symbol}.s")
             with open(s_path, "w", encoding="utf-8") as s_file:
-                # Write relocations
-                for reloc in func.relocations:
-                    s_file.write(".reloc {}+0x{:X}, {}, {}-0x{:X}\n"
-                        .format(func.symbol, reloc.offset - func.address, reloc.type, reloc.expression, reloc.got_index * 4))
-                if len(func.relocations) > 0:
-                    s_file.write("\n")
-
-                # Write instructions
                 s_file.write(f"glabel {func.symbol}\n")
 
-                for i in func.insts:
-                    if i.label is not None:
-                        s_file.write(f"{i.label}:\n")
-
-                    rom_addr = i.address + dll.header.size
-                    ram_addr = i.address
-                    inst_bytes = i.original.bytes.hex().upper()
-                    mnemonic = (' ' + i.mnemonic) if i.is_branch_delay_slot else i.mnemonic
-                    # Note: Use original operand string if the instruction has a relocation since we're
-                    # specifying relocations with separate directives (need to emit the original $gp addend
-                    # rather than something like %got to avoid duplicate relocation entries)
-                    op_str = i.original.op_str if i.has_relocation else i.op_str
-                    ref = (f' /* ref: {i.ref} */') if i.ref is not None else ''
+                for idx, i in enumerate(func.insts):
+                    inst_str, label = stringify_instruction(idx, i, func)
+                    if label != None:
+                        s_file.write(f"{label}\n")
                     
-                    s_file.write("/* {:0>4X} {:0>6X} {} */ {:<11}{}{}\n"
-                        .format(rom_addr, ram_addr, inst_bytes, mnemonic, op_str, ref))
+                    rom_addr = i.i.address + dll.header.size
+                    ram_addr = i.i.address
+                    inst_bytes = i.i.bytes.hex().upper()
 
-    def __extract_rodata_asm(self, dir: Path, dll: DLL, data: bytearray):
-        rodata_path = dir.joinpath(f"{dll.number}.rodata.s")
-        with open(rodata_path, "w", encoding="utf-8") as rodata_file:
-            # Set .rodata section
-            rodata_file.write(".section .rodata, \"a\"\n")
-            # Write data
-            rodata_rom_offset = dll.header.rodata_offset + dll.reloc_table.get_size()
-            rodata_ram_offset = dll.header.rodata_offset - dll.header.size
-            for i in range(0, len(data), 4):
-                word = struct.unpack_from(">I", data, offset=i)[0]
-
-                rom_addr = rodata_rom_offset + i
-                ram_addr = rodata_ram_offset + i
-                
-                rodata_file.write("/* {:0>4X} {:0>6X} */ .4byte 0x{:X}\n"
-                    .format(rom_addr, ram_addr, word))
-
-    def __extract_data_asm(self, dir: Path, dll: DLL, data: bytearray):
-        data_path = dir.joinpath(f"{dll.number}.data.s")
-        with open(data_path, "w", encoding="utf-8") as data_file:
-            # Set .data section
-            data_file.write(".data\n")
-            # Write relocations
-            for offset in dll.reloc_table.data_relocations:
-                data_file.write(".reloc 0x{:X}, \"R_MIPS_32\", .data\n".format(offset))
-            # Write data
-            data_rom_offset = dll.header.data_offset
-            data_ram_offset = dll.header.data_offset - dll.header.size - dll.reloc_table.get_size()
-            for i in range(0, len(data), 4):
-                word = struct.unpack_from(">I", data, offset=i)[0]
-
-                rom_addr = data_rom_offset + i
-                ram_addr = data_ram_offset + i
-                
-                data_file.write("/* {:0>4X} {:0>6X} */ .4byte 0x{:X}\n"
-                    .format(rom_addr, ram_addr, word))
-
-    def __extract_bss_asm(self, dir: Path, dll: DLL, bss_size: int):
-        assert bss_size > 0
-
-        bss_path = dir.joinpath(f"{dll.number}.bss.s")
-        with open(bss_path, "w", encoding="utf-8") as bss_file:
-            # Set .bss section
-            bss_file.write(".bss\n")
-            # Write .bss size
-            bss_file.write(".space 0x{:X}\n".format(bss_size))
+                    s_file.write("/* {:0>4X} {:0>6X} {} */ {}\n"
+                        .format(rom_addr, ram_addr, inst_bytes, inst_str))
 
     def __get_functions_to_extract(self, path: Path, dll_number: str) -> "list[str] | None":
         """Returns None if all functions should be extracted (i.e. there is no .c file to derive the list from)"""

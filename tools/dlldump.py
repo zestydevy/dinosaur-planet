@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 
 import argparse
+import re
 from io import BufferedReader
 from pathlib import Path
 
-from dino.dll import DLL, DLLHeader, DLLRelocationTable, DLLFunction, parse_dll_functions
+from dino.dll import DLL
+from dino.dll_analysis import DLLFunction, get_all_dll_functions
+from dino.dll_code_printer import stringify_instruction
+
+symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
 
 def dump_header(dll: DLL):
     print("HEADER")
@@ -80,38 +85,48 @@ def dump_relocation_table(dll: DLL):
         print("No GOT or relocation tables present.")
 
 def dump_text_disassembly(dll_functions: "list[DLLFunction]",
-                          only_symbols: "list[str] | None",
-                          orig_operands: bool):
+                          only_funcs: "list[str] | None"):
     print(".text")
     print("===================")
     
     first = True
 
     for func in dll_functions:
-        if only_symbols is not None and not func.symbol in only_symbols:
+        if only_funcs is not None and not func.symbol in only_funcs:
             continue
 
         if not first:
             print()
         else:
             first = False
-        
-        print("glabel {}{}".format(func.symbol, " (static)" if func.is_static else ""))
 
-        for i in func.insts:
-            if i.label is not None:
-                print(f"{i.label}:")
-            
-            mnemonic = (' ' + i.mnemonic) if i.is_branch_delay_slot else i.mnemonic
+        print("glabel {} ({})".format(func.symbol, func.type.name.lower()))
 
-            if orig_operands and i.is_op_modified():
-                print("0x{:x}:\t{:<11}{:<24} # (original: {})"
-                    .format(i.address, mnemonic, i.op_str, i.original.op_str))
-            else:
-                print("0x{:x}:\t{:<11}{:<24}".format(i.address, mnemonic, i.op_str))
+        for idx, i in enumerate(func.insts):
+            inst_str, label = stringify_instruction(idx, i, func)
+            if label != None:
+                print(label)
+            print("{:#x}:\t{}".format(i.i.address, inst_str))
     
-    if only_symbols is not None and first:
-        print("(no matching symbols found)")
+    if only_funcs is not None and first:
+        print("(function(s) not found)")
+
+def read_syms(sym_files: list[str] | None):
+    map: "dict[int, str]" = {}
+
+    for path in sym_files:
+        with open(path, "r", encoding="utf-8") as syms_file:
+            for line in syms_file.readlines():
+                pairs = symbol_pattern.findall(line.strip())
+                for pair in pairs:
+                    addr_str: str = pair[1]
+                    if addr_str.lower().startswith("0x"):
+                        addr = int(addr_str, base=16)
+                    else:
+                        addr = int(addr_str)
+                    map[addr] = pair[0]
+    
+    return map
 
 def main():
     parser = argparse.ArgumentParser(description="Display information from Dinosaur Planet DLLs.")
@@ -119,8 +134,9 @@ def main():
     parser.add_argument("-x", "--header", action="store_true", help="Display the contents of the header.")
     parser.add_argument("-r", "--reloc", action="store_true", help="Display the contents of the relocation table.")
     parser.add_argument("-d", "--disassemble", action="store_true", help="Display assembler contents of the executable section.")
-    parser.add_argument("--symbols", action="append", type=str, help="When disassembling, only show these symbols.")
-    parser.add_argument("--orig", action="store_true", help="Also show unmodified instruction operands.")
+    parser.add_argument("-f", "--funcs", action="append", type=str, help="When disassembling, only show these functions.")
+    parser.add_argument("-s", "--syms", action="append", type=str, help="Read known symbols from these files.")
+    parser.add_argument("--orig", action="store_true", help="Show original unanalyzed assembly.")
 
     args = parser.parse_args()
 
@@ -144,8 +160,12 @@ def main():
             print()
         
         if args.disassemble:
-            dll_functions = parse_dll_functions(data, dll)
-            dump_text_disassembly(dll_functions, args.symbols, args.orig or False)
+            known_symbols = read_syms(args.syms)
+
+            dll_functions = get_all_dll_functions(data, dll, 
+                                                  known_symbols=known_symbols, 
+                                                  analyze=not args.orig)
+            dump_text_disassembly(dll_functions, args.funcs)
             print()
 
 if __name__ == "__main__":

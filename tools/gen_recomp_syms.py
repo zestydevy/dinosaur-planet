@@ -6,7 +6,8 @@ import math
 import os
 from pathlib import Path
 
-from dino.dll import DLL, parse_dll_functions
+from dino.dll import DLL
+from dino.dll_analysis import get_all_dll_functions
 from dino.dll_tab import DLLTab
 
 BIN_PATH = Path("bin")
@@ -173,7 +174,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
         
         # Grab functions by parsing the DLL contents
         dll = DLL.parse(dll_data, str(number))
-        dll_functions = parse_dll_functions(dll_data, dll)
+        dll_functions = get_all_dll_functions(dll_data, dll)
         for func in dll_functions:
             func_info = { 
                 "name": "dll_{}_func_{:X}".format(number, func.address), 

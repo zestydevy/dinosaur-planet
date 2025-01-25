@@ -491,14 +491,6 @@ class InputScanner:
             c_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.c", recursive=True)]
             asm_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.s", recursive=True)]
 
-            asm_data_path = Path(f"asm/nonmatchings/dlls/{number}/data")
-            if dll_config.link_original_rodata:
-                asm_paths.append(asm_data_path.joinpath(f"{number}.rodata.s"))
-            if dll_config.link_original_data:
-                asm_paths.append(asm_data_path.joinpath(f"{number}.data.s"))
-            if dll_config.link_original_bss:
-                asm_paths.append(asm_data_path.joinpath(f"{number}.bss.s"))
-
             files: "list[BuildFile]" = []
 
             for src_path in c_paths:

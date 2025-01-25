@@ -12,13 +12,3 @@ dll_31_osFlashSectorErase = 0x88C;
 dll_31_osFlashWriteBuffer = 0x9A4;
 dll_31_osFlashWriteArray = 0xA50;
 dll_31_osFlashReadArray = 0xB48;
-
-sFlashDmaMqBuffer = 0xF48;
-sFlashDmaMq = 0xF50;
-sFlashIoMesg = 0xF68;
-sFlashId = 0xF80;
-sFlashReadIoMesg = 0xF88;
-sFlashReadIdQueue = 0xFA0;
-sFlashEPiHandle = 0xFB8;
-sFlashReadIdQueueBuffer = 0x102C;
-DAT_81084030 = 0x1030;
