@@ -18,7 +18,7 @@ RUN ln -s /dino/dino.py /usr/local/bin/dino
 
 # Set up user (if they don't exist)
 ARG login=sabre
-ARG uid=1000
+ARG uid=1001
 RUN id -u $uid &>/dev/null || adduser --system --uid $uid --group $login
 
 # Set entrypoint
