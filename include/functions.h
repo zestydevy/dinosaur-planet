@@ -55,4 +55,6 @@ void draw_actor(TActor*,s32,s32,s32,s32,float);
 
 void dl_apply_geometry_mode(Gfx **gdl);
 
+u8 func_8001EBE0();
+
 #endif //_FUNCTIONS_H
