@@ -10,6 +10,7 @@ from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
 from dino.dll_tab import DLLTab
 
+SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_PATH = Path("bin")
 BUILD_PATH = Path("build")
 
@@ -304,7 +305,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project (default=..).", default="..")
+    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     args = parser.parse_args()
 
     out_syms_path = Path("dino.syms.toml").absolute()

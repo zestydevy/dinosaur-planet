@@ -11,11 +11,12 @@ from pathlib import Path
 import re
 from shutil import which
 import sys
-from typing import Any, TextIO
+from typing import TextIO
 from ninja import ninja_syntax
-import yaml
 
 from dino.dll_build_config import DLLBuildConfig
+
+SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
 opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(\S*)")
 
@@ -542,7 +543,7 @@ class InputScanner:
     
 def main():
     parser = argparse.ArgumentParser(description="Creates the Ninja build script for the Dinosaur Planet decompilation project.")
-    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project (default=..).", default="..")
+    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     parser.add_argument("--target", type=str, help="The filename of the ROM to create (excluding extension suffix, default=dino).", default="dino")
     parser.add_argument("--skip-dlls", dest="skip_dlls", action="store_true", help="Don't recompile DLLs (use original).")
     

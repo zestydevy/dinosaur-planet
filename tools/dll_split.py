@@ -21,6 +21,7 @@ from dino.dll_build_config import DLLBuildConfig
 from dino.dll_code_printer import stringify_instruction
 from dino.dll_tab import DLLTab
 
+SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
 SRC_PATH = Path("src")
@@ -415,7 +416,7 @@ class DLLSplitter:
 
 def main():
     parser = argparse.ArgumentParser(description="Extract assembly and data from Dinosaur Planet DLLs and stub out an environment for recompiling each.")
-    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project (default=..).", default="..")
+    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.", default=False)
     parser.add_argument("-q", "--quiet", action="store_true", help="Don't display informational messages.", default=False)
     parser.add_argument("dlls", nargs="*", action="extend", help="The numbers of each DLL to extract. Don't specify any to extract all that have src directories.")
