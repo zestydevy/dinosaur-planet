@@ -7,7 +7,7 @@ on:
 jobs:
   build_pr:
     if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: ghcr.io/francessco121/dpdecomp:latest
     steps:

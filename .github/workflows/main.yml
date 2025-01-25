@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push' }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: ghcr.io/francessco121/dpdecomp:latest
     steps:
