@@ -85,5 +85,6 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `tools/elf2dll.py` - Converts a standard ELF file to the unique Dinosaur Planet DLL format.
 - `tools/first-diff.py` - Find the first N differences between the base and re-built ROM.
 - `tools/first_bin_diff.py` - Find the first N differences between two binary files.
+- `tools/dlldiff.py` - Finds differences between the base and re-built DLLs.
 - `tools/m2ctx.py` - Creates a context file for mips2c/decomp.me.
 - `tools/progress.py` - Calculates the current progress of the decomp. 

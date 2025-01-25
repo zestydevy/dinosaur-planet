@@ -80,6 +80,7 @@ The repository comes with a bunch of tools for decompilation and managing the re
 - `tools/first-diff.py` - Find the first N differences between the base and re-built ROM.
 - `tools/first_bin_diff.py` - Find the first N differences between two binary files.
 - `tools/dlldump.py` - Dump headers, relocation tables, and assembly from a Dinosaur Planet DLL.
+- `tools/dlldiff.py` - Finds differences between the base and re-built DLLs.
 
 ### Docker
 If you prefer to develop inside of a Docker container instead of installing everything in your local environment, use the provided Dockerfile in the root of the repository.

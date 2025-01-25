@@ -112,6 +112,9 @@ def dump_text_disassembly(dll_functions: "list[DLLFunction]",
         print("(function(s) not found)")
 
 def read_syms(sym_files: list[str] | None):
+    if sym_files == None:
+        return {}
+    
     map: "dict[int, str]" = {}
 
     for path in sym_files:
