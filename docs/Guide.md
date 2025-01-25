@@ -362,17 +362,24 @@ Sometimes, to get a function to match you will need to change the optimization a
 
 
 ## 6. DLL Decompilation
-Dinosaur Planet DLLs goes through a separate extraction and compilation process to the core code. Instead of using `splat`, the `tools/dll_split.py` script is used to extract assembly/data, stub C code, and automatically discover symbols. This script does not need to be used directly. If a DLL's directory under `src/dlls` doesn't exist yet, you can use `./dino.py setup-dll` to create it. Once created, running the usual `./dino.py extract` command will re-extract the DLL as necessary.
+Dinosaur Planet DLLs goes through a separate extraction and compilation process to the core code. Instead of using `splat`, the `tools/dll_split.py` script is used to extract assembly/data, stub C code, and automatically discover symbols. This script does not need to be used directly. If a DLL's directory under `src/dlls` doesn't exist yet, you can use `./dino.py setup-dll` to create it. Once created, running the usual `./dino.py extract` command or `./dino.py extract-dll <dll number>` will re-extract the DLL as necessary.
 
 For the C source of the DLL, the same decompilation process is used as described in the above sections.
 
 ### DLL Exports
-An important part of DLL recompilation is the `exports.s` file that you will find in each DLL's `src` directory. This defines both the names of the DLL's constructor and destructor as well as each entry of the DLL's export table. The `setup-dll` command will set this file up for you, but the function names in this file will need to be updated if they are changed.
+An important part of DLL recompilation is the `exports.s` file that you will find in each DLL's `src` directory. This defines both the names of the DLL's constructor and destructor as well as each entry of the DLL's export table. The `./dino.py setup-dll` command will set this file up for you, but the function names in this file will need to be updated if they are changed.
 
 ### DLL Symbols
 Just like the core code uses files like `symbol_addrs.txt` to define symbols, each DLL has their own `syms.txt` file instead. This file follows the same syntax as described before.
 
-When adding entries for symbols that are defined in the core code, the absolute address of that symbol is not used. Instead, the "address" will be the 1-based index of the real address found in DLLSIMPORT.tab additionally with the 32nd bit set (0x80000000). The `setup-dll` command will typically resolve these symbols for you but if the corresponding symbol in the core code is renamed then it will also need to be renamed here.
+DLLs work with three types of symbols:
+- External symbols (non-static, defined in the DLL)
+- Local symbols (static, defined in the DLL)
+- Import symbols (defined in the core code)
+
+The `syms.txt` file *can* contain all of these but in practice only needs to contain symbols for a DLL's own functions and other external symbols. Local symbols are not needed for DLL extraction or linking and can be omitted for simplicity.
+
+Import symbols are special and are the same for all DLLs. These symbols don't define actual addresses and instead are indexes into the DLLSIMPORT.tab file, which contains the real address. The indexes also have their 32nd bit set (0x80000000). For simplicity, all import symbols are defined in the `export_symbol_addrs.txt` file found in the repository root and are linked with every DLL.
 
 ### DLL Build Configuration
 Each DLL comes with a `<dll number>.yaml` file that defines how the DLL should be compiled/linked. The most notable feature being whether to link the original `.data` and `.rodata` sections as binary files. Once those sections are decompiled into the source code, those settings should be turned off.

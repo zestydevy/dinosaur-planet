@@ -64,6 +64,7 @@ The root of the repository contains various files that define symbol addresses, 
 - `undefined_syms.txt` - Defines addresses for symbols  that are known but aren't referenced directly in assembly code.
 - `undefined_funcs_auto.txt` - Addresses of functions that splat found automatically. This file should not be modified directly.
 - `undefined_syms_auto.txt` - Addresses of symbols that splat found automatically. This file should not be modified directly.
+- `export_symbol_addrs.txt` - Defines symbol names for each DLLSIMPORT.tab entry. These symbols will also be found in the other symbol files and names should be kept in sync.
 
 
 ## Tools
@@ -81,7 +82,7 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `tools/dlldump.py` - Displays the header, relocation tables, and executable assembly for a given Dinosaur Planet `.dll` file.
 - `tools/dllimports.py` - Displays and provides address/index lookup for DLLSIMPORT.tab entries.
 - `tools/dlltab.py` - Displays information from the DLLS.tab file.
-- `tools/elf2dll` - Converts a standard ELF file to the unique Dinosaur Planet DLL format.
+- `tools/elf2dll.py` - Converts a standard ELF file to the unique Dinosaur Planet DLL format.
 - `tools/first-diff.py` - Find the first N differences between the base and re-built ROM.
 - `tools/first_bin_diff.py` - Find the first N differences between two binary files.
 - `tools/m2ctx.py` - Creates a context file for mips2c/decomp.me.

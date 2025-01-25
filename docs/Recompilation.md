@@ -52,8 +52,7 @@ To give these symbols actual names, the file `symbol_addrs.txt` is used. Splat r
 
 Sometimes, splat won't be able to detect an address as a proper symbol. This usually happens when the address isn't referenced explicitly in assembly. For addresses that should have a symbol, the `undefined_syms.txt` and `undefined_funcs.txt` files can be used to define things like variables and functions respectively.
 
-DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their `src/dlls/<dll number>` directory. This file follows the same syntax as the above symbol files. These DLL symbol files will often contain entries for functions/globals actually defined in the core code. In those cases, the address in the DLL symbols file will not be the absolute address of that symbol, and instead will be a 1-based index into the DLLSIMPORT.tab file. The index will also have the 32nd bit set (0x80000000).
-
+DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their `src/dlls/<dll number>` directory. This file follows the same syntax as the above symbol files. Additionally, all DLLs are linked with the `export_symbol_addrs.txt` file, which define names for DLL import symbols.
 
 ## Building
 Rebuilding all of the extracted and decompiled code/data back into a ROM is done generally in two steps:
@@ -76,7 +75,7 @@ DLLs are a special exception. Instead of being linked directly into the final RO
 
 1. Compile the C source and `exports.s` file into object files.
 2. Using a special linker script (found at `src/dlls/dll.ld`), link each object file into an ELF file.
-3. Using `elf2dll` (found at `tools/elf2dll`), convert the ELF file to Dinosaur Planet's DLL format (`.dll`).
+3. Using `elf2dll` (found at `tools/elf2dll.py`), convert the ELF file to Dinosaur Planet's DLL format (`.dll`).
 4. Finally, after all decompiled DLLs have been recompiled, repack all DLLs into a new `DLLS.bin` file using `dino_dll.py` (found at `tools/dino_dll.py`).
 
 After all that, `DLLS.bin` is linked into the file ROM like a normal binary file.
