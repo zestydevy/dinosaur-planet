@@ -20,7 +20,7 @@ struct ErrString {
 #define CRASH_DLL_LIST_COPY ((CrashedDlls *)0x807FF460)
 
 typedef struct {
-    /*0x0*/  DLLInst *loadedDllList;
+    /*0x0*/  DLLState *loadedDllList;
     /*0x4*/  s32 loadedDllCount;
     /*0x8*/  u8 loaded; // Whether any DLLs are actually stored here.
 } CrashedDlls;

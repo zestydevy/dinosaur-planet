@@ -33,5 +33,6 @@
 #include "game/actor/player/player.h"
 #include "variables.h"
 #include "functions.h"
+#include "dll.h"
 
 #endif //_COMMON_H

@@ -343,12 +343,12 @@ void func_80021A84(TActor *actor, u32 someFlags) {
 
 void copy_obj_position_mirrors(TActor *obj, ActorUnk0x1a *param2, s32 param3)
 {
-    DLLInstance **dll;
+    DLLInst_Unknown *dll;
     obj->objId = obj->data->objId;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll[0]->func[0].withThreeArgs((s32)obj, (s32)param2, param3);
+            obj->dll->exports->func[0].withThreeArgs((s32)obj, (s32)param2, param3);
         }
     }
 

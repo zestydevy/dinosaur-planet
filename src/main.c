@@ -89,54 +89,54 @@ void game_init(void)
     init_audio(&osscheduler_, 0xE);
     init_global_map();
     if (osMemSize != EXPANSION_SIZE) {
-        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
+        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 36);
         gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 0x12);
+        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 18);
         gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
-        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 0x2F);
+        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 47);
         gDLL_savegame  = dll_load_deferred(DLL_SAVEGAME, 2);
-        gDLL_1C        = dll_load_deferred(0x1C, 4);
+        gDLL_28        = dll_load_deferred(28, 4);
     } else {
-        gDLL_UI        = dll_load_deferred(DLL_UI, 0xF);
-        gDLL_Camera    = dll_load_deferred(DLL_CAMERA, 0x17);
-        gDLL_17        = dll_load_deferred(0x17, 8); //0x12 in SFA
-        gDLL_12        = dll_load_deferred(0x12, 0x16); //0x0F in SFA
-        gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 0x1D);
-        gDLL_1C        = dll_load_deferred(0x1C, 4); //0x16 in SFA
-        gDLL_19        = dll_load_deferred(0x19, 0xE); //not present in SFA
-        gDLL_Sky       = dll_load_deferred(DLL_SKY, 0xF);
-        gDLL_08        = dll_load_deferred(8, 0xC); //0x06 in SFA
+        gDLL_UI        = dll_load_deferred(DLL_UI, 15);
+        gDLL_Camera    = dll_load_deferred(DLL_CAMERA, 23);
+        gDLL_23        = dll_load_deferred(23, 8); //0x12 in SFA
+        gDLL_18        = dll_load_deferred(18, 0x16); //0x0F in SFA
+        gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 29);
+        gDLL_28        = dll_load_deferred(28, 4); //0x16 in SFA
+        gDLL_25        = dll_load_deferred(25, 0xE); //not present in SFA
+        gDLL_Sky       = dll_load_deferred(DLL_SKY, 15);
+        gDLL_8        = dll_load_deferred(8, 12); //0x06 in SFA
         gDLL_newclouds = dll_load_deferred(DLL_NEWCLOUDS, 8);
         gDLL_newstars  = dll_load_deferred(DLL_NEWSTARS, 3);
-        gDLL_minic     = dll_load_deferred(DLL_MINIC, 0xA);
-        gDLL_Race      = dll_load_deferred(DLL_RACE, 0xD);
-        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 0x24);
+        gDLL_minic     = dll_load_deferred(DLL_MINIC, 10);
+        gDLL_Race      = dll_load_deferred(DLL_RACE, 13);
+        temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 36);
         gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 0x12);
+        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 18);
         gDLL_newlfx    = dll_load_deferred(DLL_NEWLFX, 7);
-        gDLL_expgfx    = dll_load_deferred(DLL_EXPGFX, 0xA);
-        gDLL_modgfx    = dll_load_deferred(DLL_MODGFX, 0xC);
+        gDLL_expgfx    = dll_load_deferred(DLL_EXPGFX, 10);
+        gDLL_modgfx    = dll_load_deferred(DLL_MODGFX, 12);
         gDLL_projgfx   = dll_load_deferred(DLL_PROJGFX, 8);
-        gDLL_10        = dll_load_deferred(0x10, 3);
-        gDLL_11        = dll_load_deferred(0x11, 2); //probably particle FX
+        gDLL_16        = dll_load_deferred(16, 3);
+        gDLL_17        = dll_load_deferred(17, 2); //probably particle FX
         gDLL_SCREENS   = dll_load_deferred(DLL_SCREENS, 3);
         gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
         gDLL_subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
         gDLL_waterfx   = dll_load_deferred(DLL_WATERFX, 7);
-        gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 0x26);
+        gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 38);
         gDLL_Link      = dll_load_deferred(DLL_LINK, 7);
-        gDLL_1B        = dll_load_deferred(0x1B, 9); //0x15 in SFA
-        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 0x24);
-        gDLL_38        = dll_load_deferred(0x38, 0xA); //not present in SFA
-        gDLL_1E        = dll_load_deferred(0x1E, 6);
+        gDLL_27        = dll_load_deferred(27, 9); //0x15 in SFA
+        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 36);
+        gDLL_56        = dll_load_deferred(56, 10); //not present in SFA
+        gDLL_30        = dll_load_deferred(30, 6);
         gDLL_savegame  = dll_load_deferred(DLL_SAVEGAME, 2); //param is 0x24 in SFA
-        gDLL_20        = dll_load_deferred(0x20, 6); //0x18 in SFA
-        gDLL_21        = dll_load_deferred(0x21, 0x16); //0x19 in SFA
-        gDLL_3B        = dll_load_deferred(DLL_MINIMAP, 2);
-        gDLL_36        = dll_load_deferred(0x36, 0xC); //0x2F in SFA
-        gDLL_39        = dll_load_deferred(0x39, 4);
-        gDLL_3A        = dll_load_deferred(0x3A, 2);
-        (*gDLL_1E)->func[0].asVoid();
+        gDLL_32        = dll_load_deferred(32, 6); //0x18 in SFA
+        gDLL_33        = dll_load_deferred(33, 22); //0x19 in SFA
+        gDLL_minimap   = dll_load_deferred(DLL_MINIMAP, 2);
+        gDLL_54        = dll_load_deferred(54, 12); //0x2F in SFA
+        gDLL_57        = dll_load_deferred(57, 4);
+        gDLL_58        = dll_load_deferred(58, 2);
+        gDLL_30->exports->func[0].asVoid();
     }
     init_bittable();
     alSynFlag = 1;
@@ -228,8 +228,8 @@ void game_tick(void)
     func_80007178();
     func_80013D80();
     func_800121DC();
-    (*gDLL_1C)->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
-    (*gDLL_subtitles)->func[6].withOneArg(tmp_s0);
+    gDLL_28->exports->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
+    gDLL_subtitles->exports->func[6].withOneArg(tmp_s0);
     tick_cameras();
     func_800129E4();
     func_80060B94(tmp_s0); 
@@ -298,7 +298,7 @@ void game_tick_no_expansion(void)
     func_8000F574(); // ignored return value
     func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     func_800129E4();
-    (*gDLL_1C)->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
+    gDLL_28->exports->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
@@ -344,8 +344,8 @@ void func_80013D80(void)
     s32 button;
 
     set_button_mask(0, 0x900);
-    (*gDLL_Camera)->func[19].asVoid();
-    (*gDLL_subtitles)->func[5].asVoid();
+    gDLL_Camera->exports->func[19].asVoid();
+    gDLL_subtitles->exports->func[5].asVoid();
 
     if (func_8000F574() == 0)
     {
@@ -367,7 +367,7 @@ void func_80013D80(void)
                 set_menu_page(8);
             }
             
-            (*gDLL_gplay)->func[27].asVoid();
+            gDLL_gplay->exports->func[27].asVoid();
         
         } else {
             update_obj_models();
@@ -383,13 +383,13 @@ void func_80013D80(void)
         map_update_streaming();
         func_800210DC();
 
-        (*gDLL_Race)->func[14].asVoid();
+        gDLL_Race->exports->func[14].asVoid();
 
         if (D_800B09C2 == 0) {
             func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
-        (*gDLL_SCREENS)->func[2].withOneArg(&gCurGfx);
+        gDLL_SCREENS->exports->func[2].withOneArg(&gCurGfx);
         func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= delayByte;
@@ -407,10 +407,10 @@ void func_80013FB4(void) {
     func_8005D410(OS_VI_PAL_LPN1, NULL, FALSE);
     func_80041D20(0);
     func_80041C6C(0);
-    (*gDLL_AMSEQ)->func[6].withOneArg(3);
-    (*gDLL_AMSEQ)->func[6].withOneArg(0);
-    (*gDLL_AMSEQ)->func[6].withOneArg(1);
-    (*gDLL_subtitles)->func[4].asVoid();
+    gDLL_AMSEQ->exports->func[6].withOneArg(3);
+    gDLL_AMSEQ->exports->func[6].withOneArg(0);
+    gDLL_AMSEQ->exports->func[6].withOneArg(1);
+    gDLL_subtitles->exports->func[4].asVoid();
     func_8001442C();
     func_800141A4(1, 0, 1, -1);
 }
@@ -452,8 +452,8 @@ void func_80014074(void)
         
         func_8004773C();
         
-        if (gDLL_17 != NULL) {
-            (*gDLL_17)->func[2].withOneArg(1);
+        if (gDLL_23 != NULL) {
+            gDLL_23->exports->func[2].withOneArg(1);
         }
         
         func_80017254(2);
@@ -487,16 +487,16 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
     clear_PlayerPosBuffer();
 
-    (*gDLL_1E)->func[0].asVoid();
-    (*gDLL_gplay)->func[29].withOneArg((u8)arg2);
+    gDLL_30->exports->func[0].asVoid();
+    gDLL_gplay->exports->func[29].withOneArg((u8)arg2);
 
-    temp_v0 = (*gDLL_gplay)->func[35].asVoidS32();
+    temp_v0 = gDLL_gplay->exports->func[35].asVoidS32();
     temp_t4 = &temp_v0->unk8;
     temp_t5 = &temp_v0->unkD;
     sp24 = temp_v0;
 
     func_80048054(arg0, arg1, temp_v0, &temp_v0->unk4, temp_t4, temp_t5);
-    (*gDLL_gplay)->func[6].withFourArgs(sp24, 0, 0, sp24->unkD);
+    gDLL_gplay->exports->func[6].withFourArgs(sp24, 0, 0, sp24->unkD);
 
     ossceduler_stack = 1;
     D_8008C968 = arg3;
@@ -518,10 +518,10 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
 
     func_8001440C(0);
 
-    (*gDLL_gplay)->func[1].withTwoArgs(-1, 0);
-    (*gDLL_gplay)->func[29].withOneArg((u8)arg3);
-    (*gDLL_gplay)->func[6].withFourArgs(&pos, 0, 0, 0);
-    (*gDLL_gplay)->func[7].asVoid();
+    gDLL_gplay->exports->func[1].withTwoArgs(-1, 0);
+    gDLL_gplay->exports->func[29].withOneArg((u8)arg3);
+    gDLL_gplay->exports->func[6].withFourArgs(&pos, 0, 0, 0);
+    gDLL_gplay->exports->func[7].asVoid();
 }
 
 void func_800143A4(void) {
@@ -658,7 +658,7 @@ void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
-    charStats_pointer = (*gDLL_gplay)->func[0x21].asVoidS32();
+    charStats_pointer = gDLL_gplay->exports->func[0x21].asVoidS32();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")
@@ -681,18 +681,18 @@ s32 mainDecrementBit(s32 bit) {
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014A80.s")
 
 void func_80014B1C(void) {
-    if (gDLL_4C == 0) {
-        gDLL_4B = dll_load_deferred(0x4B, 0xA);
-        gDLL_4C = dll_load_deferred(0x4C, 3);
+    if (gDLL_76 == 0) {
+        gDLL_75 = dll_load_deferred(75, 10);
+        gDLL_76 = dll_load_deferred(76, 3);
     }
 }
 
 void func_80014B6C(void) {
-    if (gDLL_4C != 0) {
-        dll_unload(gDLL_4B);
-        gDLL_4B = 0;
-        dll_unload(gDLL_4C);
-        gDLL_4C = 0;
+    if (gDLL_76 != 0) {
+        dll_unload(gDLL_75);
+        gDLL_75 = 0;
+        dll_unload(gDLL_76);
+        gDLL_76 = 0;
     }
 }
 

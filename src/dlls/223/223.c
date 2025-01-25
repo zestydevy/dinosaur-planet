@@ -38,7 +38,7 @@ void dll_cannon_claw_func_4C(TActor *s0) {
         if (s0->linkedActor != 0) {
             ActorUnk0x1a *unk4C = s0->linkedActor->unk0x4c;
             mainSetBits(unk4C->unk0x1a, 1);
-            func_8002394C_ret->dll[0]->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
+            func_8002394C_ret->dll->exports->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
         }
         
         dll_cannon_claw_func_1B4(s0);

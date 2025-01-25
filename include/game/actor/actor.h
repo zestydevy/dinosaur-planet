@@ -3,8 +3,8 @@
 
 #include <PR/gbi.h>
 #include "sys/gfx/model.h"
-#include "sys/dll.h"
 #include "sys/math.h"
+#include "dll.h"
 #include "objdata.h"
 #include "hitbox.h"
 #include "unktypes.h"
@@ -84,7 +84,7 @@ typedef struct TActor {
 /*005C*/    void* ptr0x5c;
 /*0060*/    void* ptr0x60;
 /*0064*/    ActorUnk0x64* ptr0x64;
-/*0068*/    DLLInstance **dll; //same in SFA
+/*0068*/    DLLInst_Unknown *dll; //same in SFA
 /*006C*/    u16 *ptr0x6c;
 /*0070*/    void* ptr0x70;
 /*0074*/    u32 unk0x74;

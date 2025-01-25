@@ -8,49 +8,6 @@
 #define MAX_LOADED_DLLS 128
 #define DLL_NONE -1
 
-enum DLL_ID {
-    DLL_UI        = 0x01,
-    DLL_CAMERA    = 0x02,
-    DLL_ANIM      = 0x03,
-    DLL_RACE      = 0x04,
-    DLL_AMSEQ     = 0x05,
-    DLL_AMSFX     = 0x06,
-    DLL_SKY       = 0x07,
-    DLL_NEWCLOUDS = 0x09,
-    DLL_NEWSTARS  = 0x0A,
-    DLL_NEWLFX    = 0x0B,
-    DLL_MINIC     = 0x0C,
-    DLL_EXPGFX    = 0x0D,
-    DLL_MODGFX    = 0x0E,
-    DLL_PROJGFX   = 0x0F,
-    DLL_SCREENS   = 0x14,
-    DLL_TEXT      = 0x15,
-    DLL_SUBTITLES = 0x16,
-    DLL_WATERFX   = 0x18,
-    DLL_CURVES    = 0x1A,
-    DLL_GPLAY     = 0x1D,
-    DLL_SAVEGAME  = 0x1F,
-    DLL_MINIMAP   = 0x3B,
-    DLL_LINK      = 0x4A
-};
-
-typedef union {
-    /* 0x04 */ void (*asVoid)(void);
-    /* 0x04 */ s32 (*asVoidS32)(void); //HACK
-    /* 0x04 */ void (*withOneArg)(s32);
-    /* 0x04 */ void (*withTwoArgs)(s32, s32);
-    /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
-    /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
-    /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
-} DLLFuncs;
-//eventually each DLL should be its own class with the appropriate signatures.
-//for now, this works to match DLL calls.
-
-typedef struct DLLInstance {
-    /* 0x00 */ u32 unk0;
-    /* 0x04 */ DLLFuncs func[1]; //set to 1 to shut compiler up
-} DLLInstance;
-
 typedef struct
 {
 	s32 offset;
@@ -59,10 +16,10 @@ typedef struct
 
 typedef struct
 {
-/*0000*/	s32 bank0;
-/*0004*/	s32 bank1;
+/*0000*/	s32 bank1;
+/*0004*/	s32 bank2;
 /*0008*/	s32 reserved;
-/*000C*/	s32 bank2;
+/*000C*/	s32 bank3;
 } DLLTabHeader;
 
 typedef struct
@@ -77,7 +34,7 @@ typedef struct
 /*0004*/	s32 refCount;
 /*0008*/	u32 *exports;
 /*000C*/	void *end;
-} DLLInst;
+} DLLState;
 
 struct DLLFile;
 
@@ -97,55 +54,11 @@ typedef struct DLLFile
 #define DLL_FILE_EXPORTS(dllFile) ((u32*)((u32)dllFile + sizeof(DLLFile)))
 #define DLL_EXPORTS_TO_FILE(exports) ((DLLFile*)((u32)exports - sizeof(DLLFile)))
 
-#define DLL_INST_EXPORTS_FIELD_OFFSET 0x8
-#define DLL_INST_EXPORTS_TO_INST(instExports) ((DLLInst*)((u32)instExports - DLL_INST_EXPORTS_FIELD_OFFSET))
+// Note: A DLL instance IS a pointer to a DLL state exports field
+#define DLL_STATE_EXPORTS_FIELD_OFFSET 0x8
+#define DLL_STATE_EXPORTS_TO_STATE(stateExports) ((DLLState*)((u32)stateExports - DLL_STATE_EXPORTS_FIELD_OFFSET))
 
-
-extern struct DLLInstance
-    **D_8008C970,
-    **gDLL_1C,
-    **gDLL_Camera,
-    **gDLL_ANIM,
-    **gDLL_Sky,
-    **gDLL_08,
-    **gDLL_newclouds,
-    **gDLL_newstars,
-    **gDLL_minic,
-    **gDLL_UI,
-    **gDLL_Race,
-    **gDLL_AMSEQ,
-    **gDLL_AMSEQ2,
-    **gDLL_AMSFX,
-    **gDLL_newlfx,
-    **gDLL_39,
-    **gDLL_3A,
-    **gDLL_expgfx,
-    **gDLL_modgfx,
-    **gDLL_projgfx,
-    **gDLL_10,
-    **gDLL_11,
-    **gDLL_12,
-    **gDLL_SCREENS,
-    **gDLL_text,
-    **gDLL_subtitles,
-    **gDLL_17,
-    **gDLL_waterfx,
-    **gDLL_19,
-    **gDLL_CURVES,
-    **gDLL_Link,
-    **gDLL_4B,
-    **gDLL_1B,
-    **gDLL_gplay,
-    **gDLL_38,
-    **gDLL_1E,
-    **gDLL_savegame,
-    **gDLL_4C,
-    **gDLL_20,
-    **gDLL_21,
-    **gDLL_3B,
-    **gDLL_36;
-
-extern DLLInst *gLoadedDLLList;
+extern DLLState *gLoadedDLLList;
 extern s32 gLoadedDLLCount;
 
 extern u32 *gFile_DLLSIMPORTTAB;
@@ -161,12 +74,12 @@ void init_dll_system();
  * of the DLL's body respectively.
  */
 u32 find_executing_dll(u32 pc, void **start, void **end);
-void replace_loaded_dll_list(DLLInst list[], s32 count);
-DLLInst *get_loaded_dlls(u32 *outLoadedDLLCount);
-u32 **dll_load_deferred(u16 id, u16 exportCount);
-u32 **dll_load(u16 id, u16 exportCount, s32 runConstructor);
+void replace_loaded_dll_list(DLLState list[], s32 count);
+DLLState *get_loaded_dlls(u32 *outLoadedDLLCount);
+void *dll_load_deferred(u16 id, u16 exportCount);
+void *dll_load(u16 id, u16 exportCount, s32 runConstructor);
 void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize);
-u32 dll_unload(u32 **dllInstExports);
+u32 dll_unload(void *dllInst);
 s32 dll_throw_fault();
 
 #endif //_SYS_DLL_H

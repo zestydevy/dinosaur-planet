@@ -15,7 +15,7 @@ void init_dll_system() {
         ++gDLLCount;
     }
 
-    gLoadedDLLList = (DLLInst*)malloc(sizeof(DLLInst) * MAX_LOADED_DLLS, 4, NULL);
+    gLoadedDLLList = (DLLState*)malloc(sizeof(DLLState) * MAX_LOADED_DLLS, 4, NULL);
 
     gLoadedDLLCount = MAX_LOADED_DLLS;
     while (gLoadedDLLCount != 0) {
@@ -42,7 +42,7 @@ u32 find_executing_dll(u32 pc, void **start, void **end) {
             // PC is within the DLL
 
             // Set start to the beginning of executable DLL code
-            *start = ((DLLFile*)*start)->code + (u32)*start;
+            *start = (void*)(((DLLFile*)*start)->code + (u32)*start);
 
             // Return ID of found DLL
             return gLoadedDLLList[i].id;
@@ -53,59 +53,60 @@ u32 find_executing_dll(u32 pc, void **start, void **end) {
     return DLL_NONE;
 }
 
-void replace_loaded_dll_list(DLLInst list[], s32 count) {
+void replace_loaded_dll_list(DLLState list[], s32 count) {
     gLoadedDLLCount = count;
     gLoadedDLLList = list;
 }
 
-DLLInst *get_loaded_dlls(u32 *outLoadedDLLCount) {
+DLLState *get_loaded_dlls(u32 *outLoadedDLLCount) {
     *outLoadedDLLCount = gLoadedDLLCount;
     return gLoadedDLLList;
 }
 
-u32 **dll_load_deferred(u16 id, u16 exportCount) {
+void *dll_load_deferred(u16 id, u16 exportCount) {
     DLLFile *dll;
-    DLLInst *dllInst;
-    u32 **dllInstExports;
+    DLLState *state;
+    void *dllInst;
 
-    dllInstExports = NULL;
+    dllInst = NULL;
     
     if (!id) {
         return NULL;
     }
 
-    queue_load_dll(&dllInstExports, id, exportCount);
+    queue_load_dll(&dllInst, id, exportCount);
 
-    dllInst = DLL_INST_EXPORTS_TO_INST(dllInstExports);
+    state = DLL_STATE_EXPORTS_TO_STATE(dllInst);
 
-    if (dllInst->refCount == 1) {
-        // convert addr of dll exports array to addr of dll start
-        dll = DLL_EXPORTS_TO_FILE(*dllInstExports);
+    if (state->refCount == 1) {
+        // A DLL instance is a pointer to a DLL state exports field.
+        // Dereferencing the state exports field gives us a pointer to the DLL file exports array.
+        // Using the file exports array address, we can get the DLL file instance.
+        dll = DLL_EXPORTS_TO_FILE(*(void**)dllInst);
         dll->ctor(dll);
     }
 
-    return dllInstExports;
+    return dllInst;
 }
 
-// Returns pointer to DLLInst exports field
-u32 **dll_load(u16 id, u16 exportCount, s32 runConstructor) {
+void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     DLLFile *dll;
     u32 i;
-    u32 totalSize;
+    s32 totalSize;
     u32 **result;
 
     if (id >= 0x8000) {
         id -= 0x8000;
-        // bank2
-        id += gFile_DLLS_TAB->header.bank2;
+        // bank3
+        id += gFile_DLLS_TAB->header.bank3;
     } else if (id >= 0x2000) {
         id -= 0x2000;
-        // bank1
-        id += gFile_DLLS_TAB->header.bank1 + 1;
+        // bank2
+        id += gFile_DLLS_TAB->header.bank2 + 1;
     } else if (id >= 0x1000) {
         id -= 0x1000;
-        // bank0
-        id += gFile_DLLS_TAB->header.bank0 + 1;
+        // bank1
+        id += gFile_DLLS_TAB->header.bank1 + 1;
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
@@ -153,7 +154,7 @@ u32 **dll_load(u16 id, u16 exportCount, s32 runConstructor) {
         dll->ctor(dll);
     }
 
-    return result;
+    return (void*)result;
 }
 
 // unused
@@ -200,13 +201,13 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
     dll->ctor(dll);
 }
 
-u32 dll_unload(u32 **dllInstExports) {
+u32 dll_unload(void *dllInst) {
     DLLFile *dll;
     u16 idx;
     u32 *dllClearAddr;
     u32 *dllTextEnd;
 
-    idx = (u32)DLL_INST_EXPORTS_TO_INST(dllInstExports) - (u32)gLoadedDLLList;
+    idx = (u32)DLL_STATE_EXPORTS_TO_STATE(dllInst) - (u32)gLoadedDLLList;
 
     if ((idx % 16) != 0) {
         return FALSE;
@@ -276,7 +277,7 @@ DLLFile *dll_load_from_tab(u16 id, s32 *sizeOut) {
 
     if (dll != NULL) {
         if (bssSize != 0) {
-            bzero((u32)dll + dllSize, bssSize);
+            bzero((void*)((u32)dll + dllSize), bssSize);
         }
 
         dll_relocate(dll);
@@ -337,11 +338,11 @@ void dll_relocate(DLLFile *dll) {
         currRelocation++;
 
         // Relocate .data
-        exports = &((u8 *) dll)[dll->data];
-        target = (u32 *) exports;
+        exports = (u32 *)&((u8 *) dll)[dll->data];
+        target = exports;
         
         while (*currRelocation != -1) {
-            exports = &((u8 *) dll)[dll->data];
+            exports = (u32 *)&((u8 *) dll)[dll->data]; // fake match
             target[(u32)*currRelocation / 4] += (u32)target;
             currRelocation++;
         }
@@ -353,9 +354,9 @@ void dll_unused_8000C648() {
     s32 count = gLoadedDLLCount;
 
     if (count > 0) {
-        DLLInst *dll = gLoadedDLLList;
+        DLLState *dll = gLoadedDLLList;
         do {
-            v0 += sizeof(DLLInst);
+            v0 += sizeof(DLLState);
             if (dll++)
                 ;
 

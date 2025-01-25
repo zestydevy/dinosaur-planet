@@ -113,7 +113,7 @@ void queue_load_texture(void **dest, s32 id) {
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_dll(u32 ***dest, s32 id, s32 exportCount) {
+void queue_load_dll(void **dest, s32 id, s32 exportCount) {
     //XXX verify types
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_DLL;
