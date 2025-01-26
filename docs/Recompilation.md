@@ -36,7 +36,7 @@ Please see [splat's full documentation for more information](https://github.com/
 ### DLLs
 Dinosaur Planet DLLs are in a special format that splat isn't able to simply extract. Instead, splat is configured (by `splat.yaml`) to extract all DLLs to a single `DLLS.bin` file (found under `bin/assets`). This file is then unpacked by the tool `dino_dll.py` (found under `tools`). Each unpacked DLL can be found under `bin/assets/dlls`.
 
-While splat is used to extract the DLL binaries, it does not extract assembly and data from them. Instead, this is done with the `tools/dll_split.py` script which provides somewhat similar functionality. For each DLL directory under `src/dlls` there is a `<dll number>.yaml` file that allows extraction to be configured.
+While splat is used to extract the DLL binaries, it does not extract assembly and data from them. Instead, this is done with the `tools/dll_split.py` script which provides somewhat similar functionality.
 
 ### Linker Script
 In addition to extracting code and data, splat is also responsible for generating a linker script that is capable of re-linking all extracted files back into a ROM in the exact same order as the original. After running `./dino.py extract`, this can be found at `dino.ld` in the repository root.
@@ -52,7 +52,7 @@ To give these symbols actual names, the file `symbol_addrs.txt` is used. Splat r
 
 Sometimes, splat won't be able to detect an address as a proper symbol. This usually happens when the address isn't referenced explicitly in assembly. For addresses that should have a symbol, the `undefined_syms.txt` and `undefined_funcs.txt` files can be used to define things like variables and functions respectively.
 
-DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their `src/dlls/<dll number>` directory. This file follows the same syntax as the above symbol files. Additionally, all DLLs are linked with the `export_symbol_addrs.txt` file, which define names for DLL import symbols.
+DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their directory under `src/dlls`. This file follows the same syntax as the above symbol files. Additionally, all DLLs are linked with the `export_symbol_addrs.txt` file, which define names for DLL import symbols.
 
 ## Building
 Rebuilding all of the extracted and decompiled code/data back into a ROM is done generally in two steps:

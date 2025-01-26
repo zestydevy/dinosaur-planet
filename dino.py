@@ -8,6 +8,8 @@ import shutil
 import subprocess
 import sys
 
+from tools.dino.dlls_txt import DLLsTxt 
+
 TARGET = "dino"
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -123,15 +125,26 @@ class DinoCommandRunner:
     def extract_dll(self, number: int):
         print(f"Extracting DLL {number}...")
 
+        dlls_txt_path = SRC_PATH.joinpath("dlls/dlls.txt")
+        assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+        
+        with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+            dlls_txt = DLLsTxt.parse(dlls_txt_file)
+
         # Clear extracted asm for DLL
-        dll_asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{number}")
-        if dll_asm_path.exists():
-            if self.verbose:
-                print(f"rm {dll_asm_path}")
-            shutil.rmtree(dll_asm_path)
+        dll_dir = dlls_txt.path_map.get(number, None)
+        if dll_dir != None:
+            asm_dir = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
+            if asm_dir.exists():
+                if self.verbose:
+                    print(f"rm {asm_dir}")
+                shutil.rmtree(asm_dir)
         
         # Extract DLL
         self.__extract_dlls([number])
+
+        print()
+        self.configure()
 
     def configure(self):
         print("Configuring build script...")
@@ -273,20 +286,34 @@ class DinoCommandRunner:
         print()
         self.extract(use_cache=False)
         print()
-        invoked_as = sys.argv[0]
-        if not invoked_as.endswith(".py"):
-            # Assume the script was invoked via something like a path symlink,
-            # just print the name instead of the potentially full path
-            invoked_as = Path(invoked_as).name
-        print(f"Done! Run '{invoked_as} build' to build the ROM.")
-    
-    def setup_dll(self, number: int):
-        src_dir = SRC_PATH.joinpath(f"dlls/{number}")
-        if src_dir.exists():
-            print(f"An environment already exists at {src_dir.relative_to(SCRIPT_DIR)}!")
-            sys.exit(1)
+        print(f"Done! Run '{self.__get_invoked_as()} build' to build the ROM.")
 
+    def setup_dll(self, number: int, dll_dir: str):
+        dlls_txt_path = SRC_PATH.joinpath("dlls/dlls.txt")
+        assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+        
+        with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+            dlls_txt = DLLsTxt.parse(dlls_txt_file)
+
+        # Ensure the DLL isn't already set up
+        existing_dll_dir = dlls_txt.path_map.get(number, None)
+        src_dir = SRC_PATH.joinpath(f"dlls/{dll_dir}")
+
+        if existing_dll_dir == None and src_dir.exists():
+            existing_dll_dir = dll_dir
+
+        if existing_dll_dir != None:
+            print(f"An environment already exists at {SRC_PATH.joinpath(f"dlls/{existing_dll_dir}").relative_to(SCRIPT_DIR)}! " +
+                  f"Try '{self.__get_invoked_as()} extract-dll {number}' instead to re-extract.")
+            sys.exit(1)
+        
         print(f"Creating environment for DLL {number}...")
+
+        # Add dlls.txt entry
+        with open(dlls_txt_path, "w", encoding="utf-8") as dlls_txt_file:
+            dlls_txt.set(number, dll_dir)
+            dlls_txt.save(dlls_txt_file)
+            dlls_txt_file.flush()
         
         # Create directory
         os.makedirs(src_dir)
@@ -350,6 +377,14 @@ class DinoCommandRunner:
         args.extend([str(dll) for dll in dlls])
 
         self.__run_cmd(args)
+    
+    def __get_invoked_as(self):
+        invoked_as = sys.argv[0]
+        if not invoked_as.endswith(".py"):
+            # Assume the script was invoked via something like a path symlink,
+            # just print the name instead of the potentially full path
+            invoked_as = Path(invoked_as).name
+        return invoked_as
 
 def main():
     parser = argparse.ArgumentParser(description="Quick commands for working on the Dinosaur Planet decompilation.")
@@ -361,6 +396,7 @@ def main():
 
     setup_dll_cmd = subparsers.add_parser("setup-dll", help="Set up a new environment for decomping a DLL.")
     setup_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
+    setup_dll_cmd.add_argument("dir", type=str, help="Directory name to set up the DLL under.")
     
     extract_cmd = subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
     extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
@@ -399,7 +435,7 @@ def main():
         if cmd == "setup":
             runner.setup()
         elif cmd == "setup-dll":
-            runner.setup_dll(number=args.number)
+            runner.setup_dll(number=args.number, dll_dir=args.dir)
         elif cmd == "extract":
             runner.extract(use_cache=args.use_cache)
         elif cmd == "extract-dll":

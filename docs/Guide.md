@@ -382,7 +382,7 @@ The `syms.txt` file *can* contain all of these but in practice only needs to con
 Import symbols are special and are the same for all DLLs. These symbols don't define actual addresses and instead are indexes into the DLLSIMPORT.tab file, which contains the real address. The indexes also have their 32nd bit set (0x80000000). For simplicity, all import symbols are defined in the `export_symbol_addrs.txt` file found in the repository root and are linked with every DLL.
 
 ### DLL Build Configuration
-Each DLL comes with a `<dll number>.yaml` file that defines how the DLL should be compiled/linked. The most notable feature being whether to link the original `.data` and `.rodata` sections as binary files. Once those sections are decompiled into the source code, those settings should be turned off.
+Each DLL comes with a `dll.yaml` file that defines whether the DLL should be compiled and linked.
 
 
 ## 7. Decompilation Tools

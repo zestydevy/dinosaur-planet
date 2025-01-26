@@ -957,8 +957,8 @@ gDLL_text = 0x8008c9d0; // type:data size:0x4
 gDLL_subtitles = 0x8008c9d4; // type:data size:0x4
 gDLL_waterfx = 0x8008c9dc; // type:data size:0x4
 gDLL_CURVES = 0x8008c9e4; // type:data size:0x4
-gDLL_gplay = 0x8008c9f4; // type:data size:0x4
-gDLL_savegame = 0x8008ca00; // type:data size:0x4
+gDLL_29_gplay = 0x8008c9f4; // type:data size:0x4
+gDLL_31_flash = 0x8008ca00; // type:data size:0x4
 
 queue_alloc_load_file = 0x80012618; // type:func
 queue_load_anim = 0x80012940; // type:func

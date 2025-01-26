@@ -15,6 +15,7 @@ from typing import TextIO
 from ninja import ninja_syntax
 
 from dino.dll_build_config import DLLBuildConfig
+from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
@@ -285,7 +286,7 @@ class BuildNinjaWriter:
             # Link
             elf_path = f"{obj_dir}/{dll.number}.elf"
             syms_txt_path = f"{dll.dir}/syms.txt"
-            custom_link_script = Path(f"{dll.dir}/{dll.number}.ld")
+            custom_link_script = Path(f"{dll.dir}/dll.ld")
 
             if custom_link_script.exists():
                 # Use DLL's custom link script
@@ -476,12 +477,19 @@ class InputScanner:
 
     def __scan_dlls(self):
         # Scan DLLs separately since we need to build them as their own thing
-        dll_dirs = [dir for dir in glob.glob("src/dlls/*") if isdir(dir)]
-        to_compile: "set[str]" = set()
-        for dir in dll_dirs:
-            number = Path(dir).name
+        src_dlls_path = Path("src/dlls")
 
-            dll_config = self.__get_dll_config(Path(dir), number)
+        dlls_txt_path = src_dlls_path.joinpath("dlls.txt")
+        assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+        
+        with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+            dlls_txt = DLLsTxt.parse(dlls_txt_file)
+        
+        dll_dirs = [(n, src_dlls_path.joinpath(path)) for (n, path) in dlls_txt.path_map.items()]
+
+        to_compile: "set[str]" = set()
+        for (number, dir) in dll_dirs:
+            dll_config = self.__get_dll_config(dir, number)
             if dll_config == None:
                 continue
 
@@ -503,8 +511,8 @@ class InputScanner:
                 obj_path = self.__make_obj_path(src_path)
                 files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
             
-            self.dlls.append(DLL(number, dir, files))
-            to_compile.add(number)
+            self.dlls.append(DLL(str(number), dir, files))
+            to_compile.add(str(number))
         
         # Scan for leftover DLLs that haven't been decompiled yet
         paths = [Path(path) for path in glob.glob("bin/assets/dlls/*.dll", recursive=True)]
@@ -532,8 +540,8 @@ class InputScanner:
         
         return self.config.default_opt_flags
     
-    def __get_dll_config(self, dll_dir: Path, number: str) -> DLLBuildConfig | None:
-        yaml_path = dll_dir.joinpath(f"{number}.yaml")
+    def __get_dll_config(self, dll_dir: Path, number: int) -> DLLBuildConfig | None:
+        yaml_path = dll_dir.joinpath("dll.yaml")
         if not yaml_path.exists():
             print(f"WARN: Missing {yaml_path}, skipping DLL {number}!")
             return None

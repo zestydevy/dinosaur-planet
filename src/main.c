@@ -93,8 +93,8 @@ void game_init(void)
         gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
         gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 18);
         gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
-        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 47);
-        gDLL_savegame  = dll_load_deferred(DLL_SAVEGAME, 2);
+        gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 47);
+        gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2);
         gDLL_28        = dll_load_deferred(28, 4);
     } else {
         gDLL_UI        = dll_load_deferred(DLL_UI, 15);
@@ -126,10 +126,10 @@ void game_init(void)
         gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 38);
         gDLL_Link      = dll_load_deferred(DLL_LINK, 7);
         gDLL_27        = dll_load_deferred(27, 9); //0x15 in SFA
-        gDLL_gplay     = dll_load_deferred(DLL_GPLAY, 36);
+        gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 36);
         gDLL_56        = dll_load_deferred(56, 10); //not present in SFA
         gDLL_30        = dll_load_deferred(30, 6);
-        gDLL_savegame  = dll_load_deferred(DLL_SAVEGAME, 2); //param is 0x24 in SFA
+        gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2); //param is 0x24 in SFA
         gDLL_32        = dll_load_deferred(32, 6); //0x18 in SFA
         gDLL_33        = dll_load_deferred(33, 22); //0x19 in SFA
         gDLL_minimap   = dll_load_deferred(DLL_MINIMAP, 2);
@@ -367,7 +367,7 @@ void func_80013D80(void)
                 set_menu_page(8);
             }
             
-            gDLL_gplay->exports->func[27].asVoid();
+            gDLL_29_gplay->exports->func[27].asVoid();
         
         } else {
             update_obj_models();
@@ -488,15 +488,15 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     clear_PlayerPosBuffer();
 
     gDLL_30->exports->func[0].asVoid();
-    gDLL_gplay->exports->func[29].withOneArg((u8)arg2);
+    gDLL_29_gplay->exports->func[29].withOneArg((u8)arg2);
 
-    temp_v0 = gDLL_gplay->exports->func[35].asVoidS32();
+    temp_v0 = gDLL_29_gplay->exports->func[35].asVoidS32();
     temp_t4 = &temp_v0->unk8;
     temp_t5 = &temp_v0->unkD;
     sp24 = temp_v0;
 
     func_80048054(arg0, arg1, temp_v0, &temp_v0->unk4, temp_t4, temp_t5);
-    gDLL_gplay->exports->func[6].withFourArgs(sp24, 0, 0, sp24->unkD);
+    gDLL_29_gplay->exports->func[6].withFourArgs(sp24, 0, 0, sp24->unkD);
 
     ossceduler_stack = 1;
     D_8008C968 = arg3;
@@ -518,10 +518,10 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
 
     func_8001440C(0);
 
-    gDLL_gplay->exports->func[1].withTwoArgs(-1, 0);
-    gDLL_gplay->exports->func[29].withOneArg((u8)arg3);
-    gDLL_gplay->exports->func[6].withFourArgs(&pos, 0, 0, 0);
-    gDLL_gplay->exports->func[7].asVoid();
+    gDLL_29_gplay->exports->func[1].withTwoArgs(-1, 0);
+    gDLL_29_gplay->exports->func[29].withOneArg((u8)arg3);
+    gDLL_29_gplay->exports->func[6].withFourArgs(&pos, 0, 0, 0);
+    gDLL_29_gplay->exports->func[7].asVoid();
 }
 
 void func_800143A4(void) {
@@ -658,7 +658,7 @@ void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
-    charStats_pointer = gDLL_gplay->exports->func[0x21].asVoidS32();
+    charStats_pointer = gDLL_29_gplay->exports->func[0x21].asVoidS32();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")

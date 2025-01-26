@@ -1,2 +1,0 @@
-# Note: This file doesn't do anything right now, it's just for record-keeping
-223 = cannon_claw

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from dino.dll import DLL
 from dino.dll_tab import DLLTab
+from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_ASSETS_DIR = Path("bin/assets")
@@ -77,10 +78,10 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
     if base_bss_size != targ_bss_size:
         yield ".bss size mismatch: expected {:#x}, found {:#x}".format(targ_bss_size, base_bss_size)
 
-def diff(base_tab: DLLTab, targ_tab: DLLTab, dll: str, quiet_match: bool):
+def diff(base_tab: DLLTab, targ_tab: DLLTab, number: str, quiet_match: bool):
     # Load DLLs
-    target_dll_path = BIN_ASSETS_DIR.joinpath(f"dlls/{dll}.dll")
-    base_dll_path = BUILD_ASSETS_DIR.joinpath(f"dlls/{dll}.dll")
+    target_dll_path = BIN_ASSETS_DIR.joinpath(f"dlls/{number}.dll")
+    base_dll_path = BUILD_ASSETS_DIR.joinpath(f"dlls/{number}.dll")
 
     if not target_dll_path.exists():
         print(f"ERR: DLL not found @ {target_dll_path.absolute()}")
@@ -90,22 +91,22 @@ def diff(base_tab: DLLTab, targ_tab: DLLTab, dll: str, quiet_match: bool):
         exit(1)
     
     # Load DLL .bss sizes
-    dll_int = int(dll)
-    base_bss_size = base_tab.entries[dll_int - 1].bss_size
-    targ_bss_size = targ_tab.entries[dll_int - 1].bss_size
+    number_int = int(number)
+    base_bss_size = base_tab.entries[number_int - 1].bss_size
+    targ_bss_size = targ_tab.entries[number_int - 1].bss_size
     
     # Diff
     with open(target_dll_path, "rb") as target_file, \
          open(base_dll_path, "rb") as base_file:
         targ_data = target_file.read()
         base_data = base_file.read()
-        target = DLL.parse(targ_data, dll)
-        base = DLL.parse(base_data, dll)
+        target = DLL.parse(targ_data, str(number))
+        base = DLL.parse(base_data, str(number))
         
         found_diff = False
         for diff in iter_diffs(base, base_data, base_bss_size, target, targ_data, targ_bss_size):
             if not found_diff:
-                print(f"DLL {dll}:")
+                print(f"DLL {number}:")
             print(diff)
             found_diff = True
         
@@ -115,9 +116,9 @@ def diff(base_tab: DLLTab, targ_tab: DLLTab, dll: str, quiet_match: bool):
 
             if base_md5 == targ_md5:
                 if not quiet_match:
-                    print(f"DLL {dll}: OK.")
+                    print(f"DLL {number}: OK.")
             else:
-                print(f"DLL {dll}:")
+                print(f"DLL {number}:")
                 print("MD5 mismatch: expected {}, found {}".format(targ_md5, base_md5))
 
 def main():
@@ -134,8 +135,16 @@ def main():
     quiet_match = len(dlls) == 0
     # Check all DLLs with a src directory if none were given
     if len(dlls) == 0:
-        for src_dll in [Path(dir) for dir in glob.glob(f"{SRC_DLLS_DIR}/*") if isdir(dir)]:
-            dlls.append(src_dll.name)
+        dlls_txt_path = SRC_DLLS_DIR.joinpath("dlls.txt")
+        assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+        
+        with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+            dlls_txt = DLLsTxt.parse(dlls_txt_file)
+        
+        for number, dll_dir in dlls_txt.path_map.items():
+            src_dir = SRC_DLLS_DIR.joinpath(dll_dir)
+            if src_dir.exists():
+                dlls.append(str(number))
 
     # Load DLLS.tabs
     targ_dllstab_path = BIN_ASSETS_DIR.joinpath("DLLS_tab.bin")

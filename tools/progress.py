@@ -14,6 +14,7 @@ import sys
 
 from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
+from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ROOT_DIR = Path(os.path.abspath(os.path.join(SCRIPT_DIR, "..")))
@@ -22,6 +23,7 @@ ASM_PATH = ROOT_DIR.joinpath("asm")
 BIN_PATH = ROOT_DIR.joinpath("bin")
 BUILD_PATH = ROOT_DIR.joinpath("build")
 SRC_PATH = ROOT_DIR.joinpath("src")
+SRC_DLLS_PATH = ROOT_DIR.joinpath("src/dlls")
 
 symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
 
@@ -162,24 +164,25 @@ def read_dll_symbols_txt(path: Path) -> "dict[int, str]":
 
     return symbols
 
-def get_dll_progress(dll_path: Path, number: str) -> DLLProgress:
+def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLProgress:
     known_symbols: "dict[int, str]" = {}
     nonmatching_funcs: "set[str]" = set()
     has_src = False
 
     # To determine progress we need to check if the DLL has a src directory
     # If it does, we need its syms.txt and we need to check the respective asm/nonmatchings directory
-    syms_path = SRC_PATH.joinpath(f"dlls/{number}/syms.txt")
-    if syms_path.exists():
-        has_src = True
-        # Get a list of known symbols for the DLL (we need the function symbols)
-        known_symbols = read_dll_symbols_txt(syms_path)
-        # Get list of functions that aren't matching
-        nonmatchings_dir = ASM_PATH.joinpath(f"nonmatchings/dlls/{number}")
-        if nonmatchings_dir.exists():
-            for asm_file in nonmatchings_dir.iterdir():
-                if asm_file.name.endswith(".s"):
-                    nonmatching_funcs.add(asm_file.name[:-2])
+    if dll_dir != None:
+        syms_path = SRC_PATH.joinpath(f"dlls/{dll_dir}/syms.txt")
+        if syms_path.exists():
+            has_src = True
+            # Get a list of known symbols for the DLL (we need the function symbols)
+            known_symbols = read_dll_symbols_txt(syms_path)
+            # Get list of functions that aren't matching
+            nonmatchings_dir = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
+            if nonmatchings_dir.exists():
+                for asm_file in nonmatchings_dir.iterdir():
+                    if asm_file.name.endswith(".s"):
+                        nonmatching_funcs.add(asm_file.name[:-2])
     
     # Get all DLL functions and their sizes
     with open(dll_path, "rb") as dll_file:
@@ -217,10 +220,18 @@ def get_all_dll_progress() -> "list[DLLProgress]":
     dlls_dir = BIN_PATH.joinpath("assets/dlls")
     progress: "list[DLLProgress]" = []
 
+    # Get custom src dir for each DLL
+    dlls_txt_path = SRC_DLLS_PATH.joinpath("dlls.txt")
+    assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+    
+    with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+        dlls_txt = DLLsTxt.parse(dlls_txt_file)
+
     # Get progress of each .dll asset
     for dll_path in [Path(p) for p in glob(f"{dlls_dir}/*.dll")]:
         number = dll_path.name.split(".")[0]
-        progress.append(get_dll_progress(dll_path, number))
+        dir_name = dlls_txt.path_map.get(int(number), None)
+        progress.append(get_dll_progress(dll_path, number, dir_name))
     
     return progress
 

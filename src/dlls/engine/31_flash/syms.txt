@@ -1,0 +1,14 @@
+flash_ctor = 0x0;
+flash_dtor = 0x60;
+flash_load_game = 0x6C;
+flash_save_game = 0x224;
+flash_compute_checksum = 0x404;
+osFlashInit = 0x4DC;
+flash_compute_checksum_func_638 = 0x638;
+osFlashReadStatus = 0x640;
+osFlashReadId = 0x70C;
+osFlashClearStatus = 0x820;
+osFlashSectorErase = 0x88C;
+osFlashWriteBuffer = 0x9A4;
+osFlashWriteArray = 0xA50;
+osFlashReadArray = 0xB48;

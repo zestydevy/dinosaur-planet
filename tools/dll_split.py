@@ -20,13 +20,14 @@ from dino.dll_analysis import DLLFunction, get_all_dll_functions
 from dino.dll_build_config import DLLBuildConfig
 from dino.dll_code_printer import stringify_instruction
 from dino.dll_tab import DLLTab
+from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = Path("asm")
 BIN_PATH = Path("bin")
 SRC_PATH = Path("src")
 
-global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/[0-9]+\/(.+)\.s\"\)")
+global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/\S+\/(.+)\.s\"\)")
 symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
 
 class DLLSplitter:
@@ -49,12 +50,22 @@ class DLLSplitter:
         core_export_syms = self.__get_core_export_symbols()
         
         # Extract each DLL that has a src directory
-        dll_dirs = [Path(dir) for dir in glob.glob(f"{SRC_PATH}/dlls/*") if isdir(dir)]
-        for dir in dll_dirs:
-            number = dir.name
+        dlls_src_path = SRC_PATH.joinpath("dlls")
+        dlls_txt_path = dlls_src_path.joinpath("dlls.txt")
+        assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+        
+        with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+            dlls_txt = DLLsTxt.parse(dlls_txt_file)
+
+        for (number, dll_dir) in dlls_txt.path_map.items():
+            dir = dlls_src_path.joinpath(dll_dir)
+
+            if not dir.exists():
+                print(f"WARN: No such DLL src directory {dir}!")
+                continue
 
             # Skip DLL if not in list
-            if len(only_dlls) > 0 and not number in only_dlls:
+            if len(only_dlls) > 0 and not str(number) in only_dlls:
                 continue
 
             # Check DLL path
@@ -65,7 +76,7 @@ class DLLSplitter:
 
             # Load known symbols for DLL
             known_symbols = core_export_syms.copy()
-            syms_txt_path = SRC_PATH.joinpath(f"dlls/{number}/syms.txt")
+            syms_txt_path = dir.joinpath("syms.txt")
             known_symbols.update(self.__get_existing_symbols(syms_txt_path))
 
             # Load DLL
@@ -76,20 +87,20 @@ class DLLSplitter:
                 
                 # Parse DLL header
                 data = bytearray(dll_file.read())
-                dll = DLL.parse(data, number)
+                dll = DLL.parse(data, str(number))
                 
                 # Parse functions
                 dll_functions = get_all_dll_functions(data, dll, known_symbols=known_symbols, analyze=True)
 
                 # Get DLL .bss size
-                bss_size = tab.entries[int(number) - 1].bss_size
+                bss_size = tab.entries[number - 1].bss_size
                 
                 end = timer()
                 if self.verbose:
                     print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
             
                 # Load or create DLL config
-                dll_config_path = dir.joinpath(f"{number}.yaml")
+                dll_config_path = dir.joinpath("dll.yaml")
                 if dll_config_path.exists():
                     with open(dll_config_path, "r") as file:
                         dll_config = DLLBuildConfig.parse(file)
@@ -103,7 +114,7 @@ class DLLSplitter:
                     print("[{}] Extracting...".format(number))
                 start = timer()
 
-                self.extract_dll(dll, dll_functions, data, bss_size=bss_size)
+                self.extract_dll(dll, dll_functions, data, bss_size=bss_size, dll_dir=dll_dir)
 
                 end = timer()
                 if self.verbose:
@@ -113,21 +124,27 @@ class DLLSplitter:
                     dll: DLL, 
                     dll_functions: "list[DLLFunction]",
                     data: bytearray, 
-                    bss_size: int):
+                    bss_size: int,
+                    dll_dir: str):
         # Determine paths
-        src_path = SRC_PATH.joinpath(f"dlls/{dll.number}")
-        asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll.number}")
+        src_path = SRC_PATH.joinpath(f"dlls/{dll_dir}")
+        asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
 
         # Determine what needs to be extracted
-        c_file_path = src_path.joinpath(f"{dll.number}.c")
-        emit_funcs = self.__get_functions_to_extract(c_file_path, dll.number)
+        has_c_files = False
+        emit_funcs: "list[str] | None" = None
+        for c_file_path in [Path(path) for path in glob.glob(f"{src_path}/*.c", recursive=True)]:
+            if not has_c_files:
+                has_c_files = True
+                emit_funcs = []
+            emit_funcs.extend(self.__get_functions_to_extract(c_file_path))
 
         # Create directories if necessary
-        if emit_funcs is None or len(emit_funcs) > 0:
+        if not has_c_files or len(emit_funcs) > 0:
             os.makedirs(asm_path, exist_ok=True)
 
         # Extract .text
-        if emit_funcs is None or len(emit_funcs) > 0:
+        if not has_c_files or len(emit_funcs) > 0:
             self.__extract_text_asm(asm_path, dll, dll_functions, emit_funcs)
 
         # Create exports.s if it doesn't exist
@@ -140,8 +157,9 @@ class DLLSplitter:
         if not syms_txt_path.exists():
             self.__create_syms_txt(syms_txt_path, dll, dll_functions)
 
-        # Create <dll>.c stub if it doesn't exist
-        if not c_file_path.exists():
+        # Create <dll>.c stub if no .c files exist
+        if not has_c_files:
+            c_file_path = src_path.joinpath(f"{dll.number}.c")
             self.__create_c_stub(c_file_path, asm_path, dll, dll_functions, data, bss_size)
 
     def __create_exports_s(self, path: Path, dll: DLL, dll_functions: "list[DLLFunction]"):
@@ -359,10 +377,10 @@ class DLLSplitter:
                     s_file.write("/* {:0>4X} {:0>6X} {} */ {}\n"
                         .format(rom_addr, ram_addr, inst_bytes, inst_str))
 
-    def __get_functions_to_extract(self, path: Path, dll_number: str) -> "list[str] | None":
+    def __get_functions_to_extract(self, path: Path) -> "list[str]":
         """Returns None if all functions should be extracted (i.e. there is no .c file to derive the list from)"""
         if not path.exists():
-            return None
+            return []
         
         emit_funcs: "list[str]" = []
         with open(path, "r", encoding="utf-8") as c_file:

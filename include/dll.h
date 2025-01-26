@@ -1,7 +1,8 @@
 #ifndef _DLL_H
 #define _DLL_H
 
-#include "dlls/31.h"
+#include "dlls/29_gplay.h"
+#include "dlls/31_flash.h"
 
 #include "dll_def.h"
 
@@ -40,7 +41,7 @@ enum DLL_ID {
     DLL_WATERFX   = 24,
     DLL_CURVES    = 26,
     DLL_GPLAY     = 29,
-    DLL_SAVEGAME  = 31,
+    DLL_FLASH     = 31,
     DLL_MINIMAP   = 59,
     DLL_LINK      = 74,
     DLL_CANNON_CLAW = 223
@@ -51,7 +52,8 @@ enum DLL_ID {
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.
 
-extern DLLInst_31_Save *gDLL_savegame;
+extern DLLInst_29_gplay *gDLL_29_gplay;
+extern DLLInst_31_flash *gDLL_31_flash;
 extern DLLInst_Unknown
     *gDLL_28,
     *gDLL_Camera,
@@ -85,7 +87,6 @@ extern DLLInst_Unknown
     *gDLL_Link,
     *gDLL_75,
     *gDLL_27,
-    *gDLL_gplay,
     *gDLL_56,
     *gDLL_30,
     *gDLL_76,

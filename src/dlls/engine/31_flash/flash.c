@@ -1,6 +1,6 @@
 #include <PR/ultratypes.h>
 #include <PR/os.h>
-#include "dlls/31.h"
+#include "dlls/31_flash.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
 #include "prevent_bss_reordering.h"
@@ -45,25 +45,25 @@ static OSPiHandle sFlashEPiHandle;
 static OSMesg sFlashReadIdQueueBuffer[1];
 static u32 DAT_81084030;
 
-static void dll_31_flashComputeSaveChecksum(SaveStruct *param);
-static OSPiHandle *dll_31_osFlashInit();
-static void dll_31_osFlashReadId(u32 *flash_type, u32 *flash_maker);
-/*static*/ s32 dll_31_osFlashSectorErase(u32 page_num);
-/*static*/ s32 dll_31_osFlashWriteBuffer(OSIoMesg *mb, s32 priority, void *dramAddr, OSMesgQueue *mq);
-/*static*/ s32 dll_31_osFlashWriteArray(u32 page_num);
-static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dramAddr, 
+static void flash_compute_checksum(FlashStruct *param);
+static OSPiHandle *osFlashInit();
+static void osFlashReadId(u32 *flash_type, u32 *flash_maker);
+/*static*/ s32 osFlashSectorErase(u32 page_num);
+/*static*/ s32 osFlashWriteBuffer(OSIoMesg *mb, s32 priority, void *dramAddr, OSMesgQueue *mq);
+/*static*/ s32 osFlashWriteArray(u32 page_num);
+static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dramAddr, 
     u32 n_pages, OSMesgQueue *mq);
 
-/*export*/ void dll_31_ctor(DLLFile *self) {
-    dll_31_osFlashInit();
+/*export*/ void flash_ctor(DLLFile *self) {
+    osFlashInit();
     osCreateMesgQueue(&sFlashDmaMq, &sFlashDmaMqBuffer[0], 1);
 }
 
-/*export*/ void dll_31_dtor(DLLFile *self)  {
+/*export*/ void flash_dtor(DLLFile *self)  {
 
 }
 
-/*export*/ s32 dll_31_flashLoadGame(SaveStruct *param1, u8 param2, s32 param3, s32 param4) {
+/*export*/ s32 flash_load_game(FlashStruct *param1, u8 param2, s32 param3, s32 param4) {
     s16 i;
     s16 result;
     u64 xor;
@@ -72,7 +72,7 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
     for (i = 0; i < 3; i++) {
         osInvalDCache((void*)param1, param3);
 
-        result = dll_31_osFlashReadArray(&sFlashIoMesg, OS_MESG_PRI_NORMAL, 
+        result = osFlashReadArray(&sFlashIoMesg, OS_MESG_PRI_NORMAL, 
             param2 * 128, (void*)param1, param3 / 128, &sFlashDmaMq);
         
         if (result == -1) {
@@ -85,7 +85,7 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
             xor = param1->xor;
             sum = param1->sum;
     
-            dll_31_flashComputeSaveChecksum(param1);
+            flash_compute_checksum(param1);
     
             if (xor == param1->xor && sum == param1->sum) {
                 return TRUE;
@@ -99,9 +99,9 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/31/dll_31_flashSaveGame.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/31_flash/flash_save_game.s")
 #else
-/*export*/ s16 _dll_31_flashSaveGame(SaveStruct *param1, u8 param2, s32 param3, s32 param4) {
+/*export*/ s16 _flash_save_game(FlashStruct *param1, u8 param2, s32 param3, s32 param4) {
     u32 *buf;
     s16 i;
     s16 page;
@@ -112,11 +112,11 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
     buf = ((u32*)param1);
 
     if (param4 != 0) {
-        dll_31_flashComputeSaveChecksum(param1);
+        flash_compute_checksum(param1);
     }
 
     for (i = 0; i < 3; i++) {
-        if (dll_31_osFlashSectorErase(param2 * 128) == -1) {
+        if (osFlashSectorErase(param2 * 128) == -1) {
             ret = 0;
             break;
         }
@@ -124,7 +124,7 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
         for (page = 0; page < (param3 / 128); page++) {
             osWritebackDCache(&buf[page * 32], 128);
 
-            if ((s16)dll_31_osFlashWriteBuffer(&sFlashIoMesg, OS_MESG_PRI_NORMAL, 
+            if ((s16)osFlashWriteBuffer(&sFlashIoMesg, OS_MESG_PRI_NORMAL, 
                     &buf[page * 32], &sFlashDmaMq) == -1) {
                 ret = 0;
                 break;
@@ -132,7 +132,7 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
 
             osRecvMesg(&sFlashDmaMq, NULL, OS_MESG_BLOCK);
 
-            if ((s16)dll_31_osFlashWriteArray(param2 * 128 + page) == -1) {
+            if ((s16)osFlashWriteArray(param2 * 128 + page) == -1) {
                 ret = 0;
                 break;
             }
@@ -143,7 +143,7 @@ static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, voi
 }
 #endif
 
-static void dll_31_flashComputeSaveChecksum(SaveStruct *param) {
+static void flash_compute_checksum(FlashStruct *param) {
     u16 i;
     u64 *valPtr;
 
@@ -165,7 +165,7 @@ static void dll_31_flashComputeSaveChecksum(SaveStruct *param) {
     }
 }
 
-static OSPiHandle *dll_31_osFlashInit() {
+static OSPiHandle *osFlashInit() {
     u32 flashType;
     u32 flashMaker;
 
@@ -189,7 +189,7 @@ static OSPiHandle *dll_31_osFlashInit() {
 
     osEPiLinkHandle(&sFlashEPiHandle);
 
-    dll_31_osFlashReadId(&flashType, &flashMaker);
+    osFlashReadId(&flashType, &flashMaker);
 
     if (flashMaker == 0xc2001e || flashMaker == 0xc20001 || flashMaker == 0xc20000) {
         DAT_81084030 = 0x40;
@@ -200,9 +200,9 @@ static OSPiHandle *dll_31_osFlashInit() {
     return &sFlashEPiHandle;
 }
 
-static void dll_31_func_638() { }
+static void flash_func_638() { }
 
-static void dll_31_osFlashReadStatus(u8 *flash_status) {
+static void osFlashReadStatus(u8 *flash_status) {
     u32 data;
 
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress | 0x10000, 0xd2000000);
@@ -214,10 +214,10 @@ static void dll_31_osFlashReadStatus(u8 *flash_status) {
     *flash_status = data & 0xFF;
 }
 
-static void dll_31_osFlashReadId(u32 *flash_type, u32 *flash_maker) {
+static void osFlashReadId(u32 *flash_type, u32 *flash_maker) {
     u8 flash_status;
 
-    dll_31_osFlashReadStatus(&flash_status);
+    osFlashReadStatus(&flash_status);
 
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress | 0x10000, 0xe1000000);
 
@@ -236,12 +236,12 @@ static void dll_31_osFlashReadId(u32 *flash_type, u32 *flash_maker) {
     *flash_maker = sFlashId->flashMaker;
 }
 
-static void dll_31_osFlashClearStatus() {
+static void osFlashClearStatus() {
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress | 0x10000, 0xd2000000);
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress, 0);
 }
 
-/*static*/ s32 dll_31_osFlashSectorErase(u32 page_num) {
+/*static*/ s32 osFlashSectorErase(u32 page_num) {
     u32 data;
 
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress | 0x10000, page_num | 0x4b000000);
@@ -253,7 +253,7 @@ static void dll_31_osFlashClearStatus() {
 
     osEPiReadIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress, &data);
 
-    dll_31_osFlashClearStatus();
+    osFlashClearStatus();
 
     if ((data & 0xff) == 8 || (data & 0xff) == 0x48 || (data & 0x8) == 8) {
         return 0;
@@ -262,7 +262,7 @@ static void dll_31_osFlashClearStatus() {
     }
 }
 
-/*static*/ s32 dll_31_osFlashWriteBuffer(OSIoMesg *mb, s32 priority, void *dramAddr, OSMesgQueue *mq) {
+/*static*/ s32 osFlashWriteBuffer(OSIoMesg *mb, s32 priority, void *dramAddr, OSMesgQueue *mq) {
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress | 0x10000, 0xb4000000);
 
     mb->hdr.pri = priority;
@@ -274,7 +274,7 @@ static void dll_31_osFlashClearStatus() {
     osEPiStartDma(&sFlashEPiHandle, mb, OS_WRITE);
 }
 
-/*static*/ s32 dll_31_osFlashWriteArray(u32 page_num) {
+/*static*/ s32 osFlashWriteArray(u32 page_num) {
     u32 data;
 
     osEPiWriteIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress | 0x10000, page_num | 0xa5000000);
@@ -285,7 +285,7 @@ static void dll_31_osFlashClearStatus() {
 
     osEPiReadIo(&sFlashEPiHandle, sFlashEPiHandle.baseAddress, &data);
 
-    dll_31_osFlashClearStatus();
+    osFlashClearStatus();
 
     if ((data & 0xff) == 4 || (data & 0xff) == 0x44 || (data & 0x4) == 4) {
         return 0;
@@ -294,7 +294,7 @@ static void dll_31_osFlashClearStatus() {
     }
 }
 
-static s32 dll_31_osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dramAddr, 
+static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dramAddr, 
         u32 n_pages, OSMesgQueue *mq) {
     u32 unused;
     u32 data;

@@ -17,11 +17,13 @@ Decompiled C and assembly code (finished and unfinished) can be found under the 
 The `src` directory contains all of the decompiled C implementation files (`.c` files). Each file (excluding DLL code) is mapped from a specific address range in the base ROM via splat. These files are generally stubbed out by splat when a new address range is marked as C code and contain `GLOBAL_ASM` pragmas that include the original assembly code (in order) for each function in the file. When a function is fully decompiled and matching, the `GLOBAL_ASM` pragma is removed.
 
 #### DLLs
-The `src/dlls` directory is special. Dinosaur Planet uses a unique DLL system. Each directory under `dlls` is named after the DLL number it is for. Inside each DLL directory is:
+The `src/dlls` directory is special. Dinosaur Planet uses a unique DLL system. Each DLL has its own directory under `src/dlls` containing:
 - A single C file for the full implementation of that DLL.
 - An `exports.s` file which defines the DLL's export table.
-- A `.yaml` file that configures how the DLL should be extracted and recompiled.
+- A `dll.yaml` file that configures how the DLL should be extracted and recompiled.
 - A `syms.txt` file that defines addresses for known symbols for that specific DLL.
+
+In the `src/dlls/dlls.txt` file, DLL numbers are mapped to their subdirectory.
 
 Additionally, the `dlls` directory currently contains a special linker script for just DLL code.
 
