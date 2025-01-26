@@ -98,20 +98,20 @@ static s8 DAT_81081cac;
 static u8 _bss_0x1a48[0x4];
 static s32 DAT_81081cb4;
 
-void dll_29_func_3E4(s8,s8);
-void dll_29_func_6AC();
-static void dll_29_func_1314();
+void gplay_func_3E4(s8,s8);
+void gplay_func_6AC();
+static void gplay_func_1314();
 
-/*export*/ void dll_29_ctor(DLLFile *self)  {
+/*export*/ void gplay_ctor(DLLFile *self)  {
     DAT_81080264 = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
-    dll_29_func_1314();
+    gplay_func_1314();
     DAT_81080268 = NULL;
     DAT_8108026C = (GplayStruct4*)malloc(128, 0xFFFF00FF, NULL);
     DAT_81081cac = -1;
     DAT_81081cb4 = -1;
 }
 
-/*export*/ void dll_29_dtor(DLLFile *self)  {
+/*export*/ void gplay_dtor(DLLFile *self)  {
     free(DAT_81080264);
     if (DAT_81080268 != NULL) {
         free(DAT_81080268);
@@ -119,27 +119,27 @@ static void dll_29_func_1314();
     free(DAT_8108026C);
 }
 
-void dll_29_func_110(s8 param1) {
-    dll_29_func_1314();
+void gplay_func_110(s8 param1) {
+    gplay_func_1314();
     DAT_81081aa0 = param1;
     DAT_81080274.unk0x2f6 = 1;
     DAT_81080274.unk0x2fc = -1.0f;
-    dll_29_func_6AC();
-    dll_29_func_6AC();
+    gplay_func_6AC();
+    gplay_func_6AC();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_198.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_198.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_3E4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_3E4.s")
 
-void dll_29_func_638(s8 param1, s8 param2) {
-    dll_29_func_3E4(param1, 0);
+void gplay_func_638(s8 param1, s8 param2) {
+    gplay_func_3E4(param1, 0);
     DAT_81081aa0 = param2;
-    dll_29_func_6AC();
-    dll_29_func_6AC();
+    gplay_func_6AC();
+    gplay_func_6AC();
 }
 
-void dll_29_func_6AC() {
+void gplay_func_6AC() {
     if (DAT_81081aa0 != -1) {
         DAT_81080274.unk0x2f8 += 1;
 
@@ -157,7 +157,7 @@ void dll_29_func_6AC() {
     }
 }
 
-u32 dll_29_func_79C() {
+u32 gplay_func_79C() {
     u32 var;
     s32 ret;
     
@@ -192,23 +192,23 @@ u32 dll_29_func_79C() {
     return var;
 }
 
-void dll_29_func_8D8() {
+void gplay_func_8D8() {
     gDLL_31_flash->exports->save_game(
         DAT_8108026C, 3, 0x80, 0);
 }
 
-GplayStruct4 *dll_29_func_930() {
+GplayStruct4 *gplay_func_930() {
     return DAT_8108026C;
 }
 
-void dll_29_func_94C(s32 param1) {
+void gplay_func_94C(s32 param1) {
 
 }
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_958.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_958.s")
 #else
-void dll_29_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
+void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
     if ((param3 & 1) != 0) {
         bcopy(&DAT_81080274, DAT_81080264, 0x15d4);
     } else {
@@ -233,88 +233,88 @@ void dll_29_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_AE0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_AE0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_B3C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_B3C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_CBC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_CBC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_D20.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_D20.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_D70.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_D70.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_D94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_D94.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_E74.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_E74.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_E90.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_E90.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_EAC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_EAC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_ED4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_ED4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_F04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_F04.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_F30.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_F30.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_F60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_F60.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_FA8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_FA8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_FE8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_FE8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1014.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1014.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_109C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_109C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_10F4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_10F4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_115C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_115C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_121C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_121C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1238.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1238.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1254.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1254.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1270.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1270.s")
 
-static void dll_29_func_1314() {
+static void gplay_func_1314() {
     DAT_81081aa0 = -1;
     bzero(&DAT_81080274, 0x182c);
     bzero(DAT_81080264, 0x1800);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1378.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1378.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_139C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_139C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_143C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_143C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_14F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_14F0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1590.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1590.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_15B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_15B8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_163C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_163C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1680.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1680.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_16C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_16C4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1974.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1974.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_19B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_19B8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_19FC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_19FC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1A48.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1A48.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1A90.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1A90.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1AF8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1AF8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1B78.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1B78.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29/dll_29_func_1BC4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1BC4.s")

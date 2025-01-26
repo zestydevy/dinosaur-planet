@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_cannon_claw_ctor
-.dword dll_cannon_claw_dtor
+.dword cannon_claw_ctor
+.dword cannon_claw_dtor
 
 # export table
-.dword dll_cannon_claw_func_18
-.dword dll_cannon_claw_func_4C
-.dword dll_cannon_claw_func_200
-.dword dll_cannon_claw_func_20C
-.dword dll_cannon_claw_func_26C
-.dword dll_cannon_claw_func_27C
-.dword dll_cannon_claw_func_28C
+.dword cannon_claw_func_18
+.dword cannon_claw_func_4C
+.dword cannon_claw_func_200
+.dword cannon_claw_func_20C
+.dword cannon_claw_func_26C
+.dword cannon_claw_func_27C
+.dword cannon_claw_func_28C

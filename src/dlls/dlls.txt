@@ -1,6 +1,6 @@
 # engine
 16 = engine/16
-29 = engine/29
+29 = engine/29_gplay
 31 = engine/31_flash
 82 = engine/82
 83 = engine/83

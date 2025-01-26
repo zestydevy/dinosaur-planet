@@ -1,6 +1,6 @@
 #include <PR/ultratypes.h>
 #include <PR/os.h>
-#include "dlls/31_flash.h"
+#include "dlls/engine/31_flash.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
 #include "prevent_bss_reordering.h"

@@ -1,8 +1,8 @@
 #ifndef _DLL_H
 #define _DLL_H
 
-#include "dlls/29_gplay.h"
-#include "dlls/31_flash.h"
+#include "dlls/engine/29_gplay.h"
+#include "dlls/engine/31_flash.h"
 
 #include "dll_def.h"
 
