@@ -19,7 +19,7 @@ from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
-opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(\S*)")
+opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(.*)\s*")
 
 class BuildFileType(Enum):
     C = 1
@@ -266,6 +266,12 @@ class BuildNinjaWriter:
             # Compile DLL sources
             dll_link_deps: "list[str]" = []
             for file in dll.files:
+                # Determine variables
+                variables: dict[str, str] = {}
+                opt = file.opt
+                if opt is not None and opt != self.config.default_opt_flags:
+                    variables["OPT_FLAGS"] = opt
+
                 # Determine command
                 command: str
                 if file.type == BuildFileType.C:
@@ -280,7 +286,7 @@ class BuildNinjaWriter:
                 # Write command
                 obj_build_path = f"$BUILD_DIR/{Path(file.obj_path).as_posix()}"
                 src_build_path = Path(file.src_path).as_posix()
-                self.writer.build(obj_build_path, command, src_build_path)
+                self.writer.build(obj_build_path, command, src_build_path, variables=variables)
                 dll_link_deps.append(obj_build_path)
             
             # Link
