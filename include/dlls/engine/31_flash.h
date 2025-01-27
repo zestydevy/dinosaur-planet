@@ -3,12 +3,12 @@
 
 #include <PR/ultratypes.h>
 #include "dll_def.h"
+#include "dlls/engine/29_gplay.h"
 
+// size: 0x1800
 typedef struct {
-    /*0x0*/   u8 unk0x0[0x2f8];
-    /*0x2f8*/ u8 unk0x2f8;
-    /*0x2f9*/ u8 unk0x2f9[0x14A7];
-    /*0x17a0*/u8 unk0x17a0[0x50];
+    /*0x0*/   GplayStruct3 gplay;
+    /*0x17ac*/u8 _unk0x0x17ac[0x44];
     /*0x17f0*/u64 xor;
     /*0x17f8*/u64 sum;
 } FlashStruct;

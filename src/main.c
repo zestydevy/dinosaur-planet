@@ -3,7 +3,7 @@
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
-void func_800483BC(f32, f32, s32);
+void func_800483BC(f32, f32, f32);
 void game_init(void);
 void init_bittable(void);
 
@@ -42,7 +42,6 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
 void func_80041C6C(s32);                                 /* extern */
 void func_80014074(void);
 void func_80041D20(s32);                                 /* extern */
-void set_menu_page(s32);                               /* extern */
 void alloc_frame_buffers(void);
 void game_init(void)
 {
@@ -401,7 +400,6 @@ void func_80013D80(void)
 }
 
 void func_800141A4(s32, s32, s32, s32);                        /* extern */
-void func_8001442C();                                  /* extern */
 
 void func_80013FB4(void) {
     func_8005D410(OS_VI_PAL_LPN1, NULL, FALSE);
@@ -502,7 +500,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     D_8008C968 = arg3;
 }
 
-void func_800142A0(f32 arg0, f32 arg1, s32 arg2) {
+void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     func_8001440C(0);
     func_800483BC(arg0, arg1, arg2);
     clear_PlayerPosBuffer();

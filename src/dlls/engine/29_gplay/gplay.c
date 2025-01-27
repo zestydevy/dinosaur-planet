@@ -1,46 +1,6 @@
 #include <PR/ultratypes.h>
 #include "common.h"
 
-typedef struct {
-    u8 unk0x0[0x14];
-} huh2;
-
-typedef struct {
-    u8 unk0x0[0x10];
-} huh3;
-
-typedef struct {
-    u8 unk0x0[0x16d4];
-    f32 unk0x16d4;
-    f32 unk0x16d8;
-    f32 unk0x16dc;
-    u8 unk0x16E0;
-    u8 unk0x16E1;
-    u8 unk0x016e[0x22];
-    s16 unk0x1704;
-} huh;
-
-// size: 0x182c
-typedef struct {
-    u8 unk0x0[0x2f6];
-    u8 unk0x2f6;
-    u8 unk0x2f7;
-    u8 unk0x2f8;
-    f32 unk0x2fc;
-    u8 unk0x300[0x152C];
-} GplayStruct3;
-
-typedef struct {
-    u8 unk0x0;
-    u8 unk0x1;
-    u8 unk0x2[6];
-    u8 unk0x8;
-    u8 unk0x9;
-    u8 unk0xa;
-    s8 unk0xb;
-    s8 unk0xc;
-} GplayStruct4;
-
 static const char str1[] = "gplayLoadGame error: savegame and backup failed to load.\n";
 static const char str2[] = "gplayLoadOptions error: saveoptions failed to load.\n";
 static const char str3[] = " WARNING : Not Enough Memort for Restart Point ";
@@ -56,103 +16,237 @@ static const char str12[] = "CHEAT OUT OF RANGE\n";
 static const char str13[] = "CINEMA OUT OF RANGE\n";
 static const char str14[] = "CINEMA OUT OF RANGE\n";
 
-// 43000.0f
-static const u32 _rodata_230[] = {
-    0x4727f800, 0x00000000, 0x00000000, 0x00000000
-};
+static const Vec3f rodata_230 = { 43000.0f, 0.0f, 0.0f };
 
-static u32 _data_0[] = {
-    0x00000000, 0x076e08ec, 0x04fe00df, 0x00e000e1, 0x00e100e2, 0x00e300e4, 0x00e500e6, 0x00e700e8, 
-    0x00e900ea, 0x00eb0492, 0x000005d0, 0x000000ed, 0x00ed00ed, 0x00f00000, 0x022900ee, 0x000000ef, 
-    0x00000000, 0x000003ee, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x03490000, 0x04920492, 
-    0x05470000, 0x05d00000, 0x076f0000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+static u16 data_0[120] = {
+    0x0000, 0x0000, 0x076e, 0x08ec, 0x04fe, 0x00df, 0x00e0, 0x00e1, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 
+    0x00e9, 0x00ea, 0x00eb, 0x0492, 0x0000, 0x05d0, 0x0000, 0x00ed, 0x00ed, 0x00ed, 0x00f0, 0x0000, 0x0229, 0x00ee, 0x0000, 0x00ef, 
+    0x0000, 0x0000, 0x0000, 0x03ee, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0349, 0x0000, 0x0492, 0x0492, 
+    0x0547, 0x0000, 0x05d0, 0x0000, 0x076f, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
-static u32 _data_F0[] = {
-    0x03e003e0, 0x05db08ed, 0x050007ce, 0x04800452, 0x0452047b, 0x04ae0405, 0x0458036a, 0x04a6045a, 
-    0x047c0000, 0x042e0493, 0x000005d1, 0x000003ad, 0x03ad03ad, 0x05170373, 0x044303b7, 0x04210000, 
-    0x00000000, 0x00000397, 0x00000000, 0x00000473, 0x00000000, 0x000004a3, 0x00000000, 0x04930493, 
-    0x05480000, 0x05d10601, 0x05dc0000, 0x00000000, 0x00000000, 0x00000000, 0x03e00000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+static u16 data_F0[120] = {
+    0x03e0, 0x03e0, 0x05db, 0x08ed, 0x0500, 0x07ce, 0x0480, 0x0452, 0x0452, 0x047b, 0x04ae, 0x0405, 0x0458, 0x036a, 0x04a6, 0x045a, 
+    0x047c, 0x0000, 0x042e, 0x0493, 0x0000, 0x05d1, 0x0000, 0x03ad, 0x03ad, 0x03ad, 0x0517, 0x0373, 0x0443, 0x03b7, 0x0421, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0397, 0x0000, 0x0000, 0x0000, 0x0473, 0x0000, 0x0000, 0x0000, 0x04a3, 0x0000, 0x0000, 0x0493, 0x0493, 
+    0x0548, 0x0000, 0x05d1, 0x0601, 0x05dc, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x03e0, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
-static u32 _data_1E0[] = {
-    0xc65d1568, 0xc2a40000, 0xc67344b6, 0x00000000
-};
+static Vec3f data_1E0 = { -14149.352f, -82.0f, -15569.178f };
 
-// .bss
+/*0x0*/    static FlashStruct *bss_0;
+/*0x4*/    static GplayStruct3 *bss_4;
+/*0x8*/    static GplayStruct4 *bss_8;
+/*0x10*/   static GplayStruct7 bss_10;
+/*0x183C*/ static s8 bss_183C;
+/*0x1840*/ static u8 bss_1840[40];
+/*0x1868*/ static u32 bss_1868[120];
+/*0x1A48*/ static s8 bss_1A48[2];
+/*0x1A4A*/ static u8 _bss_0x1a4a[0x4];
+/*0x1A50*/ static s32 bss_1A50[2];
 
-static FlashStruct *DAT_81080264;
-static void *DAT_81080268;
-static GplayStruct4 *DAT_8108026C;
-static GplayStruct3 DAT_81080274;
-static s8 DAT_81081aa0;
-static u8 _bss_0x1840[0x28];
-static u8 _bss_0x1868[0x1e0];
-static s8 DAT_81081cac;
-static u8 _bss_0x1a48[0x4];
-static s32 DAT_81081cb4;
-
-void gplay_func_3E4(s8,s8);
+s32 gplay_func_3E4(s8,u8);
 void gplay_func_6AC();
+void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4);
+void gplay_func_AE0();
+static void gplay_func_D94();
 static void gplay_func_1314();
+void gplay_func_139C(s32 param1, s32 param2);
+void gplay_func_15B8(s32 param1);
 
 /*export*/ void gplay_ctor(DLLFile *self)  {
-    DAT_81080264 = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
+    bss_0 = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
     gplay_func_1314();
-    DAT_81080268 = NULL;
-    DAT_8108026C = (GplayStruct4*)malloc(128, 0xFFFF00FF, NULL);
-    DAT_81081cac = -1;
-    DAT_81081cb4 = -1;
+    bss_4 = NULL;
+    bss_8 = (GplayStruct4*)malloc(128, 0xFFFF00FF, NULL);
+    bss_1A48[0] = -1;
+    bss_1A50[0] = -1;
 }
 
 /*export*/ void gplay_dtor(DLLFile *self)  {
-    free(DAT_81080264);
-    if (DAT_81080268 != NULL) {
-        free(DAT_81080268);
+    free(bss_0);
+    if (bss_4 != NULL) {
+        free(bss_4);
     }
-    free(DAT_8108026C);
+    free(bss_8);
 }
 
 void gplay_func_110(s8 param1) {
     gplay_func_1314();
-    DAT_81081aa0 = param1;
-    DAT_81080274.unk0x2f6 = 1;
-    DAT_81080274.unk0x2fc = -1.0f;
+    bss_183C = param1;
+    bss_10.unk0.unk0.unk0.unk0x2f6 = 1;
+    bss_10.unk0.unk0.unk0.unk0x2fc = -1.0f;
     gplay_func_6AC();
     gplay_func_6AC();
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_198.s")
+#else
+void gplay_func_198(s8 param1, u8 *param2) {
+    Vec3f vec;
+    s32 i;
+    u8 *dst;
+    u8 var;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_3E4.s")
+    vec = data_1E0;
+
+    gplay_func_1314();
+
+    bss_183C = param1;
+    bss_10.unk0.unk0.unk0.character = 1;
+
+    for (i = 0; i < 2; i++) {
+        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x1 = 12;
+        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x2 = 12;
+        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x6 = 25;
+        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x4 = 0;
+
+        bss_10.unk0.unk0.unk0.unk0x18[i].unk0x0 = 4;
+        bss_10.unk0.unk0.unk0.unk0x18[i].unk0x1 = 5;
+
+        bss_10.unk0.unk0x16F4[i].unk0x0 = -1;
+        bss_10.unk0.unk0x16F4[i].unk0x2 = -1;
+        bss_10.unk0.unk0x16F4[i].unk0x4 = -1;
+        bss_10.unk0.unk0x16F4[i].unk0x6 = -1;
+        bss_10.unk0.unk0x16F4[i].unk0x8 = -1;
+        bss_10.unk0.unk0x16F4[i].unk0xa = -1;
+        bss_10.unk0.unk0x16F4[i].unk0xc = -1;
+        bss_10.unk0.unk0x16F4[i].unk0xe = -1;
+        bss_10.unk0.unk0x16F4[i].unk0x12 = -1;
+
+        //bss_10.unk0.unk0x171C[i].unk0x0 = 43000.0F;
+        bss_10.unk0.unk0x171C[i].unk0x0 = rodata_230.x;
+        bss_10.unk0.unk0x171C[i].unk0x4 = -1;
+        bss_10.unk0.unk0x171C[i].unk0x6 = -1;
+        bss_10.unk0.unk0x171C[i].unk0x8 = -1;
+        bss_10.unk0.unk0x171C[i].unk0xa = -1;
+        bss_10.unk0.unk0x171C[i].unk0xc = -1;
+        bss_10.unk0.unk0x171C[i].unk0xe = -1;
+        bss_10.unk0.unk0x171C[i].unk0x3d = -1;
+        bss_10.unk0.unk0x171C[i].unk0x3e = -1;
+        bss_10.unk0.unk0x171C[i].unk0x3f = -1;
+        bss_10.unk0.unk0x171C[i].unk0x3c = 1;
+
+        bss_10.unk0.unk0x179c[i].unk0x6 = -1;
+        bss_10.unk0.unk0x179c[i].unk0x4 = -1;
+        bss_10.unk0.unk0x179c[i].unk0x2 = -1;
+        bss_10.unk0.unk0x179c[i].unk0x0 = -1;
+    }
+
+    for (i = 0; i < 120; i++) {
+        if (data_0[i] != 0) {
+            gDLL_29_gplay->exports->func[16].withTwoArgs(i, 1);
+        }
+    }
+
+    mainSetBits(0x4e5, 1);
+
+    if (param2 != NULL) {
+        dst = &bss_10.unk0.unk0.unk0.unk0x2F0[0];
+
+        var = *param2;
+        *dst = var;
+        dst++;
+        param2++;
+
+        while (var != NULL) {
+            var = *param2;
+            *dst = var;
+            dst++;
+            param2++;
+        }
+    }
+
+    gplay_func_958(&vec, 0, 0, 0);
+    gplay_func_6AC();
+    gplay_func_6AC();
+}
+#endif
+
+s32 gplay_func_3E4(s8 param1, u8 param2) {
+    u8 var1;
+    u8 var2;
+    FlashStruct *flashPtr;
+    s32 ret;
+
+    if (param1 != bss_183C) {
+        if (param1 < 4) {
+            bss_183C = param1;
+
+            flashPtr = (FlashStruct*)malloc(0x1800, 0xFFFF00FF, NULL);
+
+            var1 = gDLL_31_flash->exports->load_game(bss_0, param1, 0x1800, 1);
+            var2 = gDLL_31_flash->exports->load_game(flashPtr, param1 + 4, 0x1800, 1);
+
+            if (var1 == 0) {
+                if (var2 == 0) {
+                    free(flashPtr);
+                    ret = 0;
+                } else {
+                    free(bss_0);
+                    ret = 2;
+                    bss_0 = flashPtr;
+                }
+            } else if (var2 == 0) {
+                free(flashPtr);
+                ret = 2;
+            } else if (flashPtr->gplay.unk0.unk0.unk0x2fc < bss_0->gplay.unk0.unk0.unk0x2fc) {
+                free(flashPtr);
+                ret = 1;
+            } else {
+                free(bss_0);
+                ret = 2;
+                bss_0 = flashPtr;
+            }
+        } else {
+            queue_load_file_region_to_ptr(
+                bss_0,
+                0x3d,
+                param1 * 0x1800 - 0x6000,
+                0x1800);
+            ret = 1;
+        }
+    } else {
+        ret = 1;
+    }
+
+    if (param2 != 0) {
+        gplay_func_AE0();
+    } else {
+        bcopy(bss_0, &bss_10.unk0, 0x17ac);
+    }
+
+    return ret;
+}
 
 void gplay_func_638(s8 param1, s8 param2) {
     gplay_func_3E4(param1, 0);
-    DAT_81081aa0 = param2;
+    bss_183C = param2;
     gplay_func_6AC();
     gplay_func_6AC();
 }
 
 void gplay_func_6AC() {
-    if (DAT_81081aa0 != -1) {
-        DAT_81080274.unk0x2f8 += 1;
+    if (bss_183C != -1) {
+        bss_10.unk0.unk0.unk0.unk0x2f8 += 1;
 
-        bcopy(&DAT_81080274, DAT_81080264, 0x13d4);
+        bcopy(&bss_10, bss_0, 0x13d4);
 
         gDLL_31_flash->exports->save_game(
-            DAT_81080264, 
-            DAT_81081aa0 + (DAT_81080264->unk0x2f8 % 2) * 4, 
+            bss_0, 
+            bss_183C + (bss_0->gplay.unk0.unk0.unk0x2f8 % 2) * 4, 
             0x1800, 
             1);
         
-        if (DAT_81080268 != NULL) {
-            bcopy(&DAT_81080274, DAT_81080268, 0x15d4);
+        if (bss_4 != NULL) {
+            bcopy(&bss_10.unk0.unk0, &bss_4->unk0, 0x15d4);
         }
     }
 }
@@ -164,29 +258,29 @@ u32 gplay_func_79C() {
     var = 1;
 
     ret = gDLL_31_flash->exports->load_game(
-        DAT_8108026C, 3, 0x80, 0);
+        bss_8, 3, 0x80, 0);
     
     if (ret == 0) {
-        bzero(DAT_8108026C, 0x80);
+        bzero(bss_8, 0x80);
         var = 0;
-        DAT_8108026C->unk0x8 = 0x7f;
-        DAT_8108026C->unk0x9 = 0x7f;
-        DAT_8108026C->unk0xa = 0x7f;
+        bss_8->unk0x8 = 0x7f;
+        bss_8->unk0x9 = 0x7f;
+        bss_8->unk0xa = 0x7f;
     }
 
-    DAT_8108026C->unk0x0 = 0;
+    bss_8->unk0x0 = 0;
     
-    if (DAT_8108026C->unk0xb < -7) {
-        DAT_8108026C->unk0xb = -7;
+    if (bss_8->unk0xb < -7) {
+        bss_8->unk0xb = -7;
     }
-    if (DAT_8108026C->unk0xb > 7) {
-        DAT_8108026C->unk0xb = 7;
+    if (bss_8->unk0xb > 7) {
+        bss_8->unk0xb = 7;
     }
-    if (DAT_8108026C->unk0xc < -7) {
-        DAT_8108026C->unk0xc = -7;
+    if (bss_8->unk0xc < -7) {
+        bss_8->unk0xc = -7;
     }
-    if (DAT_8108026C->unk0xc > 7) {
-        DAT_8108026C->unk0xc = 7;
+    if (bss_8->unk0xc > 7) {
+        bss_8->unk0xc = 7;
     }
 
     return var;
@@ -194,127 +288,425 @@ u32 gplay_func_79C() {
 
 void gplay_func_8D8() {
     gDLL_31_flash->exports->save_game(
-        DAT_8108026C, 3, 0x80, 0);
+        bss_8, 3, 0x80, 0);
 }
 
 GplayStruct4 *gplay_func_930() {
-    return DAT_8108026C;
+    return bss_8;
 }
 
 void gplay_func_94C(s32 param1) {
 
 }
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_958.s")
-#else
 void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
     if ((param3 & 1) != 0) {
-        bcopy(&DAT_81080274, DAT_81080264, 0x15d4);
+        bcopy(&bss_10.unk0, bss_0, 0x15d4);
     } else {
         if (func_8001EBE0() != 0) {
-            ((huh*)&((huh2*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x1704 |= 1;
+            bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 |= 1;
         } else {
-            ((huh*)&((huh2*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x1704 &= ~1;
+            bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 &= ~1;
         }
 
-        ((huh*)&((huh3*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x16d4 = param1->x;
-        ((huh*)&((huh3*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x16d8 = param1->y;
-        ((huh*)&((huh3*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x16dc = param1->z;
-        ((huh*)&((huh3*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x16E0 = (u8)(param2 >> 8);
-        ((huh*)&((huh3*)&DAT_81080274)[DAT_81080274.unk0x2f7])->unk0x16E1 = param4;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].x = param1->x;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].y = param1->y;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].z = param1->z;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xC = (u8)(param2 >> 8);
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param4;
 
-        bcopy(&DAT_81080274, DAT_81080264, 0x17ac);
+        bcopy(&bss_10, bss_0, 0x17ac);
     }
 
-    if (DAT_81080268 != NULL) {
-        bcopy(&DAT_81080274, DAT_81080268, 0x15d4);
+    if (bss_4 != NULL) {
+        bcopy(&bss_10.unk0.unk0, &bss_4->unk0, 0x15d4);
     }
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_AE0.s")
+void gplay_func_AE0() {
+    bcopy(bss_0, &bss_10, 0x17ac);
+    gplay_func_D94();
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_B3C.s")
+void gplay_func_B3C(Vec3f *param1, s16 param2, s32 param3) {
+    if (bss_4 == NULL) {
+        bss_4 = (GplayStruct3*)malloc(0x17ac, 0xFFFF00FF, NULL);
+        if (bss_4 == NULL) {
+            return;
+        }
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_CBC.s")
+    bcopy(&bss_10.unk0, bss_4, 0x17ac);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_D20.s")
+    if (func_8001EBE0() != 0) {
+        bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 |= 1;
+    } else {
+        bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 &= ~1;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_D70.s")
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].x = param1->x;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].y = param1->y;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].z = param1->z;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].unk0xC = (u8)(param2 >> 8);
+    bss_4->unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param3;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_D94.s")
+void gplay_func_CBC() {
+    if (bss_4 != NULL) {
+        bcopy(bss_4, &bss_10, 0x17ac);
+        gplay_func_D94();
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_E74.s")
+void gplay_func_D20() {
+    if (bss_4 != NULL) {
+        free(bss_4);
+        bss_4 = NULL;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_E90.s")
+s32 gplay_func_D70() {
+    return bss_4 != NULL;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_EAC.s")
+static void gplay_func_D94() {
+    bss_1A48[0] = -1;
+    bss_1A50[0] = -1;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_ED4.s")
+    bzero(&bss_10.unk0x17ac, 128);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_F04.s")
+    func_8001442C();
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_F30.s")
+    func_800142A0(
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].x,
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].y,
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].z);
+    
+    if (func_8000F44C() != 4) {
+        set_menu_page(1);
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_F60.s")
+    gDLL_28->exports->func[2].withTwoArgs(0x28, 1);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_FA8.s")
+GplayStruct7 *gplay_func_E74() {
+    return &bss_10;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_FE8.s")
+u8 gplay_func_E90() {
+    return bss_10.unk0.unk0.unk0.character;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1014.s")
+void gplay_func_EAC(u8 character) {
+    bss_10.unk0.unk0.unk0.character = character;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_109C.s")
+GplayStruct10 *gplay_func_ED4() {
+    return &bss_10.unk0.unk0.unk0.unk0x0[bss_10.unk0.unk0.unk0.character];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_10F4.s")
+GplayStruct5 *gplay_func_F04() {
+    return &bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_115C.s")
+GplayStruct11 *gplay_func_F30() {
+    return &bss_10.unk0.unk0.unk0.unk0x18[bss_10.unk0.unk0.unk0.character];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_121C.s")
+GplayStruct6 *gplay_func_F60() {
+    if (bss_10.unk0.unk0.unk0.character > 1) {
+        return &bss_10.unk0.unk0x16F4[0];
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1238.s")
+    return &bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1254.s")
+GplayStruct12 *gplay_func_FA8() {
+    if (bss_10.unk0.unk0.unk0.character > 1) {
+        return &bss_10.unk0.unk0x171C[0];
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1270.s")
+    return &bss_10.unk0.unk0x171C[bss_10.unk0.unk0.unk0.character];
+}
+
+GplayStruct13 *gplay_func_FE8() {
+    return &bss_10.unk0.unk0x179c[bss_10.unk0.unk0.unk0.character];
+}
+
+void gplay_func_1014(u32 param1, f32 param2) {
+    s32 i;
+
+    if (bss_10.unk0.unk0.unk0.unk0x302 == 256) {
+        return;
+    }
+
+    param2 *= 20.0f;
+    param2 += bss_10.unk0.unk0.unk0.unk0x2fc;
+
+    for (i = 0; i < bss_10.unk0.unk0.unk0.unk0x302; i++) {
+        if (param1 == bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0) {
+            break;
+        }
+    }
+
+    if (i == bss_10.unk0.unk0.unk0.unk0x302) {
+        bss_10.unk0.unk0.unk0.unk0x302 += 1;
+    }
+
+    bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0 = param1;
+    bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x4 = param2;      
+}
+
+s32 gplay_func_109C(u32 param1) {
+    s32 i;
+
+    for (i = 0; i < bss_10.unk0.unk0.unk0.unk0x302; i++) {
+        if (param1 == bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+f32 gplay_func_10F4(u32 param1) {
+    s32 i;
+
+    for (i = 0; i < bss_10.unk0.unk0.unk0.unk0x302; i++) {
+        if (param1 == bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0) {
+            return bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x4 - bss_10.unk0.unk0.unk0.unk0x2fc;
+        }
+    }
+
+    return 0.0f;
+}
+
+void gplay_func_115C() {
+    s32 var1;
+
+    bss_10.unk0.unk0.unk0.unk0x2fc += delayFloat;
+
+    var1 = 0;
+
+    while (bss_10.unk0.unk0.unk0.unk0x302 > var1) {
+        if (bss_10.unk0.unk0.unk0.unk0xad4[var1].unk0x4 < bss_10.unk0.unk0.unk0.unk0x2fc) {
+            bss_10.unk0.unk0.unk0.unk0x302 = bss_10.unk0.unk0.unk0.unk0x302 - 1;
+
+            bss_10.unk0.unk0.unk0.unk0xad4[var1].unk0x0 = bss_10.unk0.unk0.unk0.unk0xad4[bss_10.unk0.unk0.unk0.unk0x302].unk0x0;
+            bss_10.unk0.unk0.unk0.unk0xad4[var1].unk0x4 = bss_10.unk0.unk0.unk0.unk0xad4[bss_10.unk0.unk0.unk0.unk0x302].unk0x4;
+        } else {
+            var1++;
+        }
+    }
+}
+
+s16 gplay_func_121C() {
+    return bss_10.unk0.unk0.unk0.unk0x300;
+}
+
+void gplay_func_1238(s32 param1) {
+    bss_10.unk0.unk0.unk0.unk0x300 = param1;
+}
+
+void *gplay_func_1254() {
+    return &bss_10.unk0.unk0.unk0.unk0x304;
+}
+
+u32 gplay_func_1270() {
+    return (u32)bss_10.unk0.unk0.unk0.unk0x2fc;
+}
 
 static void gplay_func_1314() {
-    DAT_81081aa0 = -1;
-    bzero(&DAT_81080274, 0x182c);
-    bzero(DAT_81080264, 0x1800);
+    bss_183C = -1;
+    bzero(&bss_10, 0x182c);
+    bzero(bss_0, 0x1800);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1378.s")
+void gplay_func_1378(s32 param1, s32 param2) {
+    bss_1840[param2 - 80] = param1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_139C.s")
+void gplay_func_139C(s32 param1, s32 param2) {
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_143C.s")
+    mainSetBits(data_0[param1], param2);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_14F0.s")
+    bss_1A48[0] = param1;
+    bss_1A48[1] = param2;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1590.s")
+    gplay_func_15B8(param1);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_15B8.s")
+u8 gplay_func_143C(s32 param1) {
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_163C.s")
+    if (param1 != bss_1A48[0]) {
+        bss_1A48[0] = param1;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1680.s")
+        if (param1 < 0 || param1 >= 120 || !data_0[param1]) {
+            bss_1A48[1] = 0;
+        } else {
+            bss_1A48[1] = mainGetBit(data_0[param1]);
+        }
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_16C4.s")
+    return bss_1A48[1];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1974.s")
+u8 gplay_func_14F0(s32 param1, s32 param2) {
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_19B8.s")
+    if (param1 != bss_1A50[0]) {
+        bss_1A50[0] = param1;
+        bss_1A50[1] = mainGetBit(data_F0[param1]);
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_19FC.s")
+    return (bss_1A50[1] >> param2) & 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1A48.s")
+u16 gplay_func_1590(s32 param1) {
+    return data_F0[param1];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1A90.s")
+void gplay_func_15B8(s32 param1) {
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1AF8.s")
+    bss_1868[param1] = mainGetBit(data_F0[param1]);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1B78.s")
+u32 gplay_func_163C(s32 param1) {
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
+    
+    return bss_1868[param1];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_1BC4.s")
+void gplay_func_1680(s32 param1) {
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
+    
+    bss_1868[param1] = 0;
+}
+
+void gplay_func_16C4(s32 param1, s32 param2, s32 param3) {
+    s32 var2;
+    s32 bit;
+    s32 i;
+
+    if (param1 >= 80) {
+        param1 = bss_1840[param1 - 80];
+    }
+
+    if ((param1 < 120 && data_F0[param1] != 0) || (param3 >= 0 && 0)) {
+        if (param3 == -1) {
+            param3 = 1;
+        }
+
+        if (param3 == -2) {
+            param3 = 0;
+        }
+
+        bit = mainGetBit(data_F0[param1]);
+
+        var2 = bit;
+        if (param3 != 0) {
+            var2 |= (1 << param2);
+        } else {
+            var2 &= ~(1 << param2);
+        }
+
+        mainSetBits(data_F0[param1], var2);
+
+        bss_1A50[0] = param1;
+        bss_1A50[1] = var2;
+
+        if (param3 != 0) {
+            if (((1 << param2) & bit) == 0) {
+                for (i = 0; i < 120; i++) {
+                    if (data_F0[i] == data_F0[param1]) {
+                        bss_1868[i] = bss_1868[i] | (1 << param2);
+                    }
+                }
+            }
+        } else {
+            for (i = 0; i < 120; i++) {
+                if (data_F0[i] == data_F0[param1]) {
+                    bss_1868[i] = bss_1868[i] & ~(1 << param2);
+                }
+            }
+        }
+    }
+}
+
+GplayStruct14 *gplay_func_1974() {
+    return &bss_10.unk0.unk0.unk0.unk0x20[bss_10.unk0.unk0.unk0.character];
+}
+
+GplayStruct14 *gplay_func_19B8() {
+    return &bss_10.unk0.unk0.unk0.unk0x188[bss_10.unk0.unk0.unk0.character];
+}
+
+u32 gplay_func_19FC(u8 param1) {
+    if (param1 >= 32) {
+        return 0;
+    }
+
+    return bss_8->unk0x10 & (1 << param1);
+}
+
+void gplay_func_1A48(u8 param1) {
+    if (param1 < 32) {
+        bss_8->unk0x10 |= (1 << param1);
+    }
+}
+
+s32 gplay_func_1A90(u8 param1) {
+    s32 ret;
+
+    ret = 0;
+
+    if (param1 >= 32) {
+        return 0;
+    } 
+
+    ret = (bss_8->unk0x10 & (1 << param1)) != 0;
+    if (ret) {
+        return (bss_8->unk0x14 & (1 << param1)) != 0;
+    }
+
+    // hmm...
+}
+
+void gplay_func_1AF8(u8 param1, u8 param2) {
+    if (param1 < 32 && (bss_8->unk0x10 & (1 << param1)) != 0) {
+        if (param2 != 0) {
+            bss_8->unk0x14 |= (1 << param1);
+        } else {
+            bss_8->unk0x14 &= ~(1 << param1);
+        }
+    }
+}
+
+u32 gplay_func_1B78(u8 param1) {
+    if (param1 >= 32) {
+        return 0;
+    }
+
+    return bss_8->unk0x18 & (1 << param1);
+}
+
+void gplay_func_1BC4(u8 param1) {
+    if (param1 < 32) {
+        bss_8->unk0x18 |= (1 << param1);
+    }
+}
