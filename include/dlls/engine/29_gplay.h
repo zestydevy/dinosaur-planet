@@ -2,16 +2,15 @@
 #define _DLLS_29_H
 
 #include <PR/ultratypes.h>
+#include "sys/math.h"
 #include "dll_def.h"
 
 // size: 0x10
 typedef struct {
-    f32 x;
-    f32 y;
-    f32 z;
-    u8 unk0xC;
-    u8 unk0xD;
-    u8 unk0xE[2];
+    /*0x0*/ Vec3f vec;
+    /*0xC*/ u8 unk0xC;
+    /*0xD*/ s8 unk0xD;
+    /*0xE*/ u8 unk0xE[2];
 } GplayStruct5;
 
 // size: 0x14
@@ -139,10 +138,56 @@ typedef struct {
     GplayStruct4 unk0x17ac;
 } GplayStruct7;
 
-// DLL_INTERFACE_BEGIN(29_gplay)
-    
-// DLL_INTERFACE_END()
-
-typedef struct DLLInst_Unknown DLLInst_29_gplay;
+DLL_INTERFACE_BEGIN(29_gplay)
+    /*0*/ void (*func_110)(s8 param1);
+    /*1*/ void (*func_198)(s8 param1, u8 *param2);
+    /*2*/ s32 (*func_3E4)(s8 param1, u8 param2);
+    /*3*/ void (*func_638)(s8 param1, s8 param2);
+    /*4*/ void (*func_6AC)();
+    /*5*/ void (*func_94C)(s32 param1);
+    /*6*/ void (*func_958)(Vec3f *param1, s16 param2, s32 param3, s32 param4);
+    /*7*/ void (*func_AE0)();
+    /*8*/ void (*func_B3C)(Vec3f *param1, s16 param2, s32 param3);
+    /*9*/ void (*func_CBC)();
+    /*10*/ void (*func_D20)();
+    /*11*/ s32 (*func_D70)();
+    /*12*/ void (*func_8D8)();
+    /*13*/ u32 (*func_79C)();
+    /*14*/ GplayStruct4 *(*func_930)();
+    /*15*/ u8 (*func_143C)(s32 param1);
+    /*16*/ void (*func_139C)(s32 param1, s32 param2);
+    /*17*/ void (*func_1378)(s32 param1, s32 param2);
+    /*18*/ u8 (*func_14F0)(s32 param1, s32 param2);
+    /*19*/ void (*func_16C4)(s32 param1, s32 param2, s32 param3);
+    /*20*/ u16 (*func_1590)(s32 param1);
+    /*21*/ void (*func_15B8)(s32 param1);
+    /*22*/ u32 (*func_163C)(s32 param1);
+    /*23*/ void (*func_1680)(s32 param1);
+    /*24*/ void (*func_1014)(u32 param1, f32 param2);
+    /*25*/ s32 (*func_109C)(u32 param1);
+    /*26*/ f32 (*func_10F4)(u32 param1);
+    /*27*/ void (*func_115C)();
+    /*28*/ u8 (*func_E90)();
+    /*29*/ void (*func_EAC)(u8 character);
+    /*30*/ void *(*func_1254)();
+    /*31*/ s16 (*func_121C)();
+    /*32*/ void (*func_1238)(s32 param1);
+    /*33*/ GplayStruct7 *(*func_E74)();
+    /*34*/ GplayStruct10 *(*func_ED4)();
+    /*35*/ GplayStruct5 *(*func_F04)();
+    /*36*/ GplayStruct11 *(*func_F30)();
+    /*37*/ GplayStruct6 *(*func_F60)();
+    /*38*/ GplayStruct12 *(*func_FA8)();
+    /*39*/ GplayStruct13 *(*func_FE8)();
+    /*40*/ GplayStruct14 *(*func_1974)();
+    /*41*/ GplayStruct14 *(*func_19B8)();
+    /*42*/ u32 (*func_1270)();
+    /*43*/ u32 (*func_19FC)(u8 param1);
+    /*44*/ void (*func_1A48)(u8 param1);
+    /*45*/ s32 (*func_1A90)(u8 param1);
+    /*46*/ void (*func_1AF8)(u8 param1, u8 param2);
+    /*47*/ u32 (*func_1B78)(u8 param1);
+    /*48*/ void (*func_1BC4)(u8 param1);
+DLL_INTERFACE_END()
 
 #endif //_DLLS_29_H

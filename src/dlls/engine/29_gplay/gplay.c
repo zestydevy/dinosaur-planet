@@ -142,7 +142,7 @@ void gplay_func_198(s8 param1, u8 *param2) {
 
     for (i = 0; i < 120; i++) {
         if (data_0[i] != 0) {
-            gDLL_29_gplay->exports->func[16].withTwoArgs(i, 1);
+            gDLL_29_gplay->exports->func_139C(i, 1);
         }
     }
 
@@ -309,9 +309,9 @@ void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
             bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 &= ~1;
         }
 
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].x = param1->x;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].y = param1->y;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].z = param1->z;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x = param1->x;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y = param1->y;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z = param1->z;
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xC = (u8)(param2 >> 8);
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param4;
 
@@ -344,9 +344,9 @@ void gplay_func_B3C(Vec3f *param1, s16 param2, s32 param3) {
         bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 &= ~1;
     }
 
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].x = param1->x;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].y = param1->y;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].z = param1->z;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.x = param1->x;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.y = param1->y;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.z = param1->z;
     bss_4->unk0x16d4[bss_4->unk0.unk0.character].unk0xC = (u8)(param2 >> 8);
     bss_4->unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param3;
 }
@@ -378,9 +378,9 @@ static void gplay_func_D94() {
     func_8001442C();
 
     func_800142A0(
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].x,
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].y,
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].z);
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x,
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y,
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z);
     
     if (func_8000F44C() != 4) {
         set_menu_page(1);

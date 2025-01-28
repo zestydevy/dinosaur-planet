@@ -366,7 +366,7 @@ void func_80013D80(void)
                 set_menu_page(8);
             }
             
-            gDLL_29_gplay->exports->func[27].asVoid();
+            gDLL_29_gplay->exports->func_115C();
         
         } else {
             update_obj_models();
@@ -459,23 +459,11 @@ void func_80014074(void)
     }
 }
 
-typedef struct
-{
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s8 unkC;
-    s8 unkD;
-} GPlay00;
-
-void func_80048054(s32, s32, GPlay00 *, s32 *, s32 *, s8 *);  /* extern */
+void func_80048054(s32, s32, f32 *, f32 *, f32 *, s8 *);  /* extern */
 
 void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    GPlay00 * sp24;
-    s32 * temp_t4;
-    s8 * temp_t5;
-    GPlay00 * temp_v0;
+    GplayStruct5 *temp_v0;
 
     func_8001440C(0);
 
@@ -486,15 +474,12 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     clear_PlayerPosBuffer();
 
     gDLL_30->exports->func[0].asVoid();
-    gDLL_29_gplay->exports->func[29].withOneArg((u8)arg2);
+    gDLL_29_gplay->exports->func_EAC(arg2);
 
-    temp_v0 = gDLL_29_gplay->exports->func[35].asVoidS32();
-    temp_t4 = &temp_v0->unk8;
-    temp_t5 = &temp_v0->unkD;
-    sp24 = temp_v0;
+    temp_v0 = gDLL_29_gplay->exports->func_F04();
 
-    func_80048054(arg0, arg1, temp_v0, &temp_v0->unk4, temp_t4, temp_t5);
-    gDLL_29_gplay->exports->func[6].withFourArgs(sp24, 0, 0, sp24->unkD);
+    func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->unk0xD);
+    gDLL_29_gplay->exports->func_958(&temp_v0->vec, 0, 0, temp_v0->unk0xD);
 
     ossceduler_stack = 1;
     D_8008C968 = arg3;
@@ -516,10 +501,10 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
 
     func_8001440C(0);
 
-    gDLL_29_gplay->exports->func[1].withTwoArgs(-1, 0);
-    gDLL_29_gplay->exports->func[29].withOneArg((u8)arg3);
-    gDLL_29_gplay->exports->func[6].withFourArgs(&pos, 0, 0, 0);
-    gDLL_29_gplay->exports->func[7].asVoid();
+    gDLL_29_gplay->exports->func_198(-1, 0);
+    gDLL_29_gplay->exports->func_EAC(arg3);
+    gDLL_29_gplay->exports->func_958(&pos, 0, 0, 0);
+    gDLL_29_gplay->exports->func_AE0();
 }
 
 void func_800143A4(void) {
@@ -656,7 +641,7 @@ void init_bittable(void)
 {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
-    charStats_pointer = gDLL_29_gplay->exports->func[0x21].asVoidS32();
+    charStats_pointer = gDLL_29_gplay->exports->func_E74();
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")
