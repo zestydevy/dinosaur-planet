@@ -1,18 +1,22 @@
 import argparse
+import shutil
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import SymbolTableSection, Section
+from elftools.elf.sections import SymbolTableSection
 from typing import TextIO
 import math
 import os
 from pathlib import Path
+from pycparser import c_ast, parse_file, c_generator
 
 from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
 from dino.dll_tab import DLLTab
+from dino.dlls_txt import DLLsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_PATH = Path("bin")
 BUILD_PATH = Path("build")
+SRC_DLLS_PATH = Path("src/dlls")
 
 # vram -> function def
 FUNCTION_DEF_HACKS = {
@@ -148,12 +152,165 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     
     datasyms_toml.write("]\n")
 
-def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
+PYCPARSER_CPP_ARGS = [
+    '-D_LANGUAGE_C',
+    '-D_MIPS_SZLONG=32',
+    '-DF3DEX_GBI_2',
+    '-Iinclude'
+]
+
+def gen_dll_recomp_header(header: TextIO,
+                          c_source_paths: list[Path],
+                          symbol_renames: "dict[str, str]"):
+    # Parse C source
+    includes: list[str] = []
+    declarations: list[tuple[str, str]] = []
+
+    c_gen = c_generator.CGenerator()
+
+    for c_source_path in c_source_paths:
+        # Get includes
+        with open(c_source_path, "r", encoding="utf-8") as c_source:
+            for line in c_source.readlines():
+                line = line.strip()
+                if line.startswith("#include"):
+                    includes.append(line[line.index(" ") + 1:])
+
+        # Get declarations
+        ast: c_ast.FileAST = parse_file(str(c_source_path), use_cpp=True,
+            cpp_args=PYCPARSER_CPP_ARGS)
+
+        for child in ast:
+            if isinstance(child, c_ast.Decl):
+                original = child.name
+                rename = symbol_renames.get(original)
+                if rename != None:
+                    # Turn data decl into an extern
+                    type = child.type
+                    if isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl):
+                        type = type.type
+                    if not isinstance(type, c_ast.TypeDecl):
+                        continue
+                    child.name = rename
+                    type.declname = child.name
+
+                    child.storage = ["extern"]
+                    child.init = None
+
+                    decl = "{};".format(c_gen.visit(child))
+                    alias = "#define {} {}".format(original, rename)
+
+                    declarations.append((decl, alias))
+            elif isinstance(child, c_ast.FuncDef):
+                original = child.decl.name
+                rename = symbol_renames.get(original)
+                if rename != None:
+                    # Turn func def into an extern decl
+                    type = child.decl.type.type
+                    if isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl):
+                        type = type.type
+                    type.declname = rename
+
+                    child.decl.storage = ["extern"]
+
+                    decl = "{};".format(c_gen.visit(child.decl))
+                    alias = "#define {} {}".format(original, rename)
+
+                    declarations.append((decl, alias))
+
+    # Write
+    header.write("#ifndef _DLL_29_INTERNAL_H\n")
+    header.write("#define _DLL_29_INTERNAL_H\n\n")
+
+    for include in includes:
+        header.write(f"#include {include}\n")
+
+    for decl, alias in declarations:
+        header.write(f"\n{decl}\n")
+        header.write(f"{alias}\n")
+
+    header.write("\n#endif //_DLL_29_INTERNAL_H\n")
+
+def scan_dll_elf(
+        elf: ELFFile, 
+        dll: DLL, 
+        dll_vram: int,
+        vrams_to_funcs: "dict[int, dict]",
+        data_globals: list,
+        symbol_renames: "dict[str, str]",
+        dll_prefix: str):
+    syms = elf.get_section_by_name(".symtab")
+    assert isinstance(syms, SymbolTableSection)
+
+    for sym in syms.iter_symbols():
+        value = sym.entry["st_value"]
+        size = sym.entry["st_size"]
+        st_shndx = sym.entry["st_shndx"]
+        st_info_type = sym.entry["st_info"]["type"]
+        st_info_bind = sym.entry["st_info"]["bind"]
+
+        if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT":
+            continue
+        if st_shndx == "SHN_UNDEF":
+            continue
+        if st_info_bind != "STB_LOCAL" and size == 0:
+            continue
+        if value & 0x80000000:
+            # External symbol reference, already covered by core syms
+            continue
+
+        if st_shndx == "SHN_ABS":
+            sec_offset = dll.header.size
+        else:
+            section = elf.get_section(st_shndx).name
+            if section == ".text":
+                sec_offset = dll.header.size
+            elif section == ".rodata":
+                sec_offset = dll.header.rodata_offset
+            elif section == ".data":
+                sec_offset = dll.header.data_offset
+            elif section == ".bss":
+                sec_offset = dll.get_bss_offset()
+            else:
+                continue
+
+        vram = dll_vram + sec_offset + value
+
+        if st_info_type == "STT_FUNC":
+            # Function
+
+            func_info = vrams_to_funcs.get(vram)
+            if func_info == None:
+                print("Failed to find DLL {} func {} at {:0X} ({:0X})"
+                    .format(dll.number, sym.name, vram, value))
+            else:
+                rename = dll_prefix + sym.name
+                func_info["name"] = rename
+                func_info["symbol"] = sym.name
+                symbol_renames[sym.name] = rename
+        elif st_info_type == "STT_OBJECT":
+            # Data
+            rename = dll_prefix + sym.name
+            data_global = { 
+                "name": rename, 
+                "symbol": sym.name,
+                "vram": vram
+            }
+            data_globals.append(data_global)
+            symbol_renames[sym.name] = rename
+
+def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO, include_dir: Path):
     with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:
         tab = DLLTab.parse(tab_file.read())
 
     with open(BIN_PATH.joinpath("assets/DLLS.bin"), "rb") as dlls_file:
         dlls_data = bytearray(dlls_file.read())
+
+    dlls_txt_path = SRC_DLLS_PATH.joinpath("dlls.txt")
+    assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
+    
+    with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
+        dlls_txt = DLLsTxt.parse(dlls_txt_file)
 
     dlls_rom_base = 0x38317CC
     dlls_vram_base = 0x81000000
@@ -163,83 +320,70 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
     dll_vram = dlls_vram_base
 
     for entry in tab.entries:
+        print(f"Generating DLL {number} symbols...")
+
         dll_data = dlls_data[entry.start_offset:entry.end_offset]
         assert len(dll_data) == entry.size
 
         funcs = []
         vrams_to_funcs: dict[int, dict] = {}
         data_globals = []
+        symbol_renames: "dict[str, str]" = {}
 
-        text_start = 0
-        text_end = 0
+        # Make sure the symbol names are globally unique
+        # This isn't required in the decomp since DLLs are not linked with each other,
+        # but this is the case for recomp.
+        dll_prefix = f"__dll{number}_"
         
         # Grab functions by parsing the DLL contents
         dll = DLL.parse(dll_data, str(number))
         dll_functions = get_all_dll_functions(dll_data, dll)
         for func in dll_functions:
             func_info = { 
-                "name": "dll_{}_func_{:X}".format(number, func.address), 
+                "name": "{}func_{:X}".format(dll_prefix, func.address), 
+                "symbol": None,
                 "vram": dll_vram + dll.header.size + func.address, 
                 "size": len(func.insts) * 4
             }
             funcs.append(func_info)
             vrams_to_funcs[func_info["vram"]] = func_info
 
-        # Get custom function names from the DLL .elf if we have decomp set up for this DLL
-        # Also get data globals
-        dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{number}/{number}.elf")
-        if os.path.exists(dll_elf_path):
-            with open(dll_elf_path, "rb") as file:
-                elf = ELFFile(file)
-                text = elf.get_section_by_name(".text")
-                syms = elf.get_section_by_name(".symtab")
-                assert isinstance(text, Section)
-                assert isinstance(syms, SymbolTableSection)
+        # If we have decomp set up for this DLL, grab function and data symbols from the .elf
+        dll_dir = dlls_txt.path_map.get(number, None)
+        if dll_dir != None:
+            dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{dll_dir}/{number}.elf")
+            if dll_elf_path.exists():
+                with open(dll_elf_path, "rb") as file:
+                    elf = ELFFile(file)
+                    scan_dll_elf(
+                        elf,
+                        dll,
+                        dll_vram,
+                        vrams_to_funcs,
+                        data_globals,
+                        symbol_renames,
+                        dll_prefix
+                    )
+                
+                # Emit recomp header for DLL internals
+                dll_src_path = SRC_DLLS_PATH.joinpath(dll_dir)
+                c_source_paths = [p for p in dll_src_path.rglob("*.c")]
+                if len(c_source_paths) > 0:
+                    header_path = include_dir.joinpath(f"dlls/{dll_dir}_internal.h")
+                    header_path.parent.mkdir(parents=True, exist_ok=True)
+                    with open(header_path, "w", encoding="utf-8") as header:
+                        gen_dll_recomp_header(
+                            header,
+                            c_source_paths,
+                            symbol_renames
+                        )
 
-                text_start = text.header["sh_addr"]
-                text_end = text_start + text.header["sh_size"]
-
-                func_name_prefix = f"dll_{number}_"
-
-                for sym in syms.iter_symbols():
-                    value = sym.entry["st_value"]
-                    st_shndx = sym.entry["st_shndx"]
-                    st_info_type = sym.entry["st_info"]["type"]
-
-                    if value >= text_start and value < text_end:
-                        # non-static = STT_FUNC, static = STT_NOTYPE
-                        if st_shndx != "SHN_ABS" or (st_info_type != "STT_FUNC" and st_info_type != "STT_NOTYPE"):
-                            continue
-
-                        vram = dll_vram + dll.header.size + value
-
-                        func_info = vrams_to_funcs.get(vram)
-                        if func_info == None:
-                            print("Failed to find DLL {} func {} at {:0X} ({:0X})"
-                                .format(number, sym.name, vram, value))
-                        else:
-                            # Make sure the name is globally unique
-                            # This isn't required in the decomp since DLLs are not linked with each other,
-                            # but this is the case for recomp.
-                            new_name = sym.name
-                            if not new_name.startswith(func_name_prefix):
-                                new_name = func_name_prefix + new_name
-                            func_info["name"] = new_name
-                    elif value >= text_end:
-                        # Data
-                        if st_shndx != "SHN_ABS":
-                            continue
-                        if value & 0x80000000:
-                            # External symbol reference, already covered by core syms
-                            continue
-
-                        data_global = { "name": sym.name, "vram": dll_vram + value }
-                        data_globals.append(data_global)
         
         funcs.sort(key=lambda f : f["vram"])
+        data_globals.sort(key=lambda f : f["vram"])
 
-        # Write dll.txt entry
-        dlls_txt.write(f".dll{number}\n")
+        # Write dll .txt entry
+        dino_dlls_txt.write(f".dll{number}\n")
 
         # Write functions
         syms_toml.write("\n")
@@ -266,14 +410,6 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
             name = func["name"]
             vram = func["vram"]
             size = func["size"]
-
-            if size == None:
-                print(f"Inferring size for {name}")
-                if i < len(funcs) - 1:
-                    size = funcs[i + 1]["vram"] - vram
-                else:
-                    assert(text_end != 0)
-                    size = text_end - vram
 
             syms_toml.write("    {{ name = \"{}\", vram = 0x{:X}, size = 0x{:X} }},\n"
                 .format(name, vram, size))
@@ -306,11 +442,18 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dlls_txt: TextIO):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
+    parser.add_argument("-o", "--output", type=str, help="Directory to output the symbol and header files.", default=".")
     args = parser.parse_args()
 
-    out_syms_path = Path("dino.syms.toml").absolute()
-    out_datasyms_path = Path("dino.datasyms.toml").absolute()
-    out_dlls_txt_path = Path("dino.dlls.txt").absolute()
+    out_path = Path(args.output)
+
+    out_syms_path = out_path.joinpath("dino.syms.toml").absolute()
+    out_datasyms_path = out_path.joinpath("dino.datasyms.toml").absolute()
+    out_dlls_txt_path = out_path.joinpath("dino.dlls.txt").absolute()
+    out_include_path = out_path.joinpath("include/recomp").absolute()
+
+    if out_include_path.exists():
+        shutil.rmtree(out_include_path)
 
     # Do all path lookups from the base directory
     os.chdir(Path(args.base_dir).resolve())
@@ -322,7 +465,7 @@ def main():
         print("Generating core symbols...")
         gen_core_syms(syms_toml, datasyms_toml)
         print("Generating DLL symbols...")
-        gen_dll_syms(syms_toml, datasyms_toml, dlls_txt)
+        gen_dll_syms(syms_toml, datasyms_toml, dlls_txt, out_include_path)
     print("Done. Wrote symbols to {}".format(out_syms_path))
 
 if __name__ == "__main__":
