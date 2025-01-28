@@ -264,7 +264,7 @@ class DLLSplitter:
                 bss_refs = list(bss_refs)
                 bss_refs.sort()
 
-                bss_start = dll.get_ram_size()
+                bss_start = dll.get_bss_offset()
 
                 c_file.write("\n")
                 for i in range(len(bss_refs) - 1):

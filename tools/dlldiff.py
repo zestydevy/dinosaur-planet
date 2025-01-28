@@ -23,8 +23,8 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
     if base.header.data_offset != targ.header.data_offset:
         yield ".data offset mismatch: expected {:#x}, found {:#x}".format(targ.header.data_offset, base.header.data_offset)
     
-    base_bss_offset = base.get_ram_size()
-    targ_bss_offset = targ.get_ram_size()
+    base_bss_offset = base.get_bss_offset()
+    targ_bss_offset = targ.get_bss_offset()
     if base_bss_offset != targ_bss_offset:
         yield ".bss offset mismatch: expected {:#x}, found {:#x}".format(targ_bss_offset, base_bss_offset)
 

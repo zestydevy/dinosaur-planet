@@ -59,19 +59,17 @@ class DLL:
 
         return ((end - start) // 16) * 16
     
-    def get_rom_size(self) -> int:
-        """Calculates the total ROM size (in bytes, unaligned) of this DLL"""
+    def get_size(self) -> int:
+        """Calculates the total size (in bytes, unaligned) of this DLL"""
         return self.header.size + \
             self.get_text_size() + \
             self.get_rodata_size() + \
             self.reloc_table.get_size() + \
             self.get_data_size()
 
-    def get_ram_size(self) -> int:
-        """Calculates the total size (in bytes) of this DLL when loaded into RAM (**excluding BSS!**)"""
-        return self.get_text_size() + \
-            self.get_rodata_size() + \
-            self.get_data_size()
+    def get_bss_offset(self) -> int:
+        """Calculates the BSS offset (relative to start of header)"""
+        return self.get_size()
 
     @staticmethod
     def parse(data: bytes, number: str):
