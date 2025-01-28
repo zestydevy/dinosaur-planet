@@ -1,12 +1,9 @@
 #include <PR/ultratypes.h>
 
-#include "common.h"
-
-typedef struct
-{
-	u8 mPad[0x62];
-	s8 m0062;
-} TStruct365Func0006;
+#include "game/actor/actor.h"
+#include "variables.h"
+#include "functions.h"
+#include "dlls/objects/365.h"
 
 static s32 func_0007(TActor *arg0, TActor *arg1, TStruct365Func0006 *arg2, s32 arg3);
 

@@ -1,5 +1,11 @@
 #include <PR/ultratypes.h>
-#include "common.h"
+
+#include "game/actor/actor.h"
+#include "sys/dll.h"
+#include "sys/math.h"
+#include "variables.h"
+#include "functions.h"
+#include "dll.h"
 
 static const char str1[] = "gplayLoadGame error: savegame and backup failed to load.\n";
 static const char str2[] = "gplayLoadOptions error: saveoptions failed to load.\n";
@@ -87,6 +93,7 @@ void gplay_func_110(s8 param1) {
 }
 
 #if 1
+void gplay_func_198(s8 param1, u8 *param2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_198.s")
 #else
 void gplay_func_198(s8 param1, u8 *param2) {

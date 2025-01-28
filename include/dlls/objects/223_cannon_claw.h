@@ -1,7 +1,8 @@
 #ifndef _DLLS_223_H
 #define _DLLS_223_H
 
-#include "common.h"
+#include <PR/ultratypes.h>
+#include "game/actor/actor.h"
 #include "dll_def.h"
 
 DLL_INTERFACE_BEGIN(223_cannon_claw)

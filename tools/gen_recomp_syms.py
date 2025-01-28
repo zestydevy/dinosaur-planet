@@ -1,12 +1,13 @@
 import argparse
 import shutil
+from subprocess import check_output
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import SymbolTableSection
 from typing import TextIO
 import math
 import os
 from pathlib import Path
-from pycparser import c_ast, parse_file, c_generator
+from pycparser import c_ast, c_generator, CParser
 
 from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
@@ -27,7 +28,7 @@ FUNCTION_DEF_HACKS = {
 
     # 0x8001B4F0-0x8001C8D4 is handwritten assembly that trips up recomp, split it into a bunch of
     # functions that don't technically exist to get recomp working. This will basically make problematic
-    # conditional branches turn into condotional tail calls into these fake functions
+    # conditional branches turn into conditional tail calls into these fake functions
     # Note: Some of the fake functions must overlap fake functions below them
     0x8001B4F0: { "name": "func_8001B4F0", "size": 0x200 },
     0x8001B6F0: { "name": "func_8001B6F0", "size": 0x510 },
@@ -152,12 +153,18 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     
     datasyms_toml.write("]\n")
 
-PYCPARSER_CPP_ARGS = [
-    '-D_LANGUAGE_C',
-    '-D_MIPS_SZLONG=32',
-    '-DF3DEX_GBI_2',
-    '-Iinclude'
+GCC_PREPROCESS_CMD = [
+    "gcc",
+    "-nostdinc",
+    "-E",
+    "-D_LANGUAGE_C",
+    "-D_MIPS_SZLONG=32",
+    "-DF3DEX_GBI_2",
+    "-Iinclude"
 ]
+
+c_gen = c_generator.CGenerator()
+c_parser = CParser()
 
 def gen_dll_recomp_header(header: TextIO,
                           c_source_paths: list[Path],
@@ -165,8 +172,7 @@ def gen_dll_recomp_header(header: TextIO,
     # Parse C source
     includes: list[str] = []
     declarations: list[tuple[str, str]] = []
-
-    c_gen = c_generator.CGenerator()
+    found_symbols: "set[str]" = set()
 
     for c_source_path in c_source_paths:
         # Get includes
@@ -177,17 +183,19 @@ def gen_dll_recomp_header(header: TextIO,
                     includes.append(line[line.index(" ") + 1:])
 
         # Get declarations
-        ast: c_ast.FileAST = parse_file(str(c_source_path), use_cpp=True,
-            cpp_args=PYCPARSER_CPP_ARGS)
+        preprocessed_text = check_output(GCC_PREPROCESS_CMD + [str(c_source_path)], universal_newlines=True)
+        ast: c_ast.FileAST = c_parser.parse(preprocessed_text)
 
         for child in ast:
             if isinstance(child, c_ast.Decl):
                 original = child.name
+                if original in found_symbols:
+                    continue
                 rename = symbol_renames.get(original)
                 if rename != None:
                     # Turn data decl into an extern
                     type = child.type
-                    if isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl):
+                    if isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl) or isinstance(type, c_ast.FuncDecl):
                         type = type.type
                     if not isinstance(type, c_ast.TypeDecl):
                         continue
@@ -201,8 +209,11 @@ def gen_dll_recomp_header(header: TextIO,
                     alias = "#define {} {}".format(original, rename)
 
                     declarations.append((decl, alias))
+                    found_symbols.add(original)
             elif isinstance(child, c_ast.FuncDef):
                 original = child.decl.name
+                if original in found_symbols:
+                    continue
                 rename = symbol_renames.get(original)
                 if rename != None:
                     # Turn func def into an extern decl
@@ -217,6 +228,7 @@ def gen_dll_recomp_header(header: TextIO,
                     alias = "#define {} {}".format(original, rename)
 
                     declarations.append((decl, alias))
+                    found_symbols.add(original)
 
     # Write
     header.write("#ifndef _DLL_29_INTERNAL_H\n")
@@ -249,11 +261,13 @@ def scan_dll_elf(
         st_info_type = sym.entry["st_info"]["type"]
         st_info_bind = sym.entry["st_info"]["bind"]
 
-        if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT":
+        maybe_unref_static_func = st_info_type == "STT_NOTYPE" and st_shndx == "SHN_ABS"
+
+        if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT" and not maybe_unref_static_func:
             continue
         if st_shndx == "SHN_UNDEF":
             continue
-        if st_info_bind != "STB_LOCAL" and size == 0:
+        if st_info_bind != "STB_LOCAL" and size == 0 and not maybe_unref_static_func:
             continue
         if value & 0x80000000:
             # External symbol reference, already covered by core syms
@@ -276,9 +290,8 @@ def scan_dll_elf(
 
         vram = dll_vram + sec_offset + value
 
-        if st_info_type == "STT_FUNC":
+        if st_info_type == "STT_FUNC" or maybe_unref_static_func:
             # Function
-
             func_info = vrams_to_funcs.get(vram)
             if func_info == None:
                 print("Failed to find DLL {} func {} at {:0X} ({:0X})"

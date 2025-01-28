@@ -1,6 +1,8 @@
 #include <PR/ultratypes.h>
 
-#include "common.h"
+#include "game/actor/actor.h"
+#include "variables.h"
+#include "functions.h"
 
 static void cannon_claw_func_1B4(TActor *a0);
 
