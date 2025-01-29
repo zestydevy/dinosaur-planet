@@ -892,40 +892,25 @@ void update_PlayerPosBuffer(void)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")
-#else
-void func_80014D34(f32 param1, s32 param2, f32 *param3, f32 *param4, f32 *param5) {
-    f32 var1;
-    u32 var2;
+void func_80014D34(f32 param1, f32 *outX, f32 *outY, f32 *outZ) {
     struct Vec3_Int *pos;
+    u32 var;
     s32 i;
 
-    if (PlayerPosBuffer) {} // hmm...
+    var = D_800AE674 - (param1 * 60.0f);
 
-    var1 = D_800AE674;
-
-    if (D_800AE674 < 0) {
-        var1 += 4294967296.0f; // hmm...
-    }
-
-    var1 -= param1 * 60.0f;
-
-    var2 = var1;
-
-    i = 60;
+    i = PLAYER_POSBUF_SIZE;
     pos = &PlayerPosBuffer[PlayerPosBuffer_index];
 
     do {
         pos--;
-        if ((u32)pos < (u32)&PlayerPosBuffer[0]) {
-            pos = &PlayerPosBuffer[0];
+        if (pos < &PlayerPosBuffer[0]) {
+            pos = &PlayerPosBuffer[PLAYER_POSBUF_SIZE - 1];
         }
 
-    } while (i-- && pos->i != 0 && pos->i > var2);
+    } while (i-- && pos->i != 0 && pos->i > var);
 
-    *param3 = pos->f.x;
-    *param4 = pos->f.y;
-    *param5 = pos->f.z;
+    *outX = pos->f.x;
+    *outY = pos->f.y;
+    *outZ = pos->f.z;
 }
-#endif
