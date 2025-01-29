@@ -5,6 +5,9 @@
 #include "sys/math.h"
 #include "dll_def.h"
 
+#define CHARACTER_SABRE 0
+#define CHARACTER_KRYSTAL 1
+
 // size: 0x10
 typedef struct {
     /*0x0*/ Vec3f vec;
@@ -47,13 +50,14 @@ typedef struct {
 
 // size: 0xc
 typedef struct {
-    u8 unk0x0;
-    u8 unk0x1;
-    u8 unk0x2;
-    u8 _unk0x3[1];
-    s16 unk0x4;
-    s16 unk0x6;
-    u8 _unk0x8[4];
+    /*0x0*/u8 unk0x0;
+    /*0x1*/u8 hp;
+    /*0x2*/u8 hpMax; //only shows up to 104, code caps it at 80.
+    /*0x3*/u8 _unk0x3[1];
+    /*0x4*/s16 mana; //only mods when byte at "state"0x8bb is set.
+    /*0x6*/s16 manaMax; //capped at 100.
+    /*0x8*/s16 scarabs; //capped at 999.
+    /*0xA*/u8 _unk0xA[2];
 } GplayStruct10;
 
 // size: 0x13d4
@@ -73,13 +77,13 @@ typedef struct {
     u8 unk0x304;
     u8 _unk0x305[0x7CF];
     GplayStruct17 unk0xad4[256]; // unconfirmed length, but probably
-    u8 _unk0x12D4[0x100];
+    /*0x12D4*/u8 bitString[256];
 } GplayStruct8;
 
 // size: 0x15d4
 typedef struct {
     GplayStruct8 unk0;
-    u8 unk0x13d4[0x200];
+    /*0x13d4*/u8 bitString[512];
 } GplayStruct9;
 
 // size: 0x40
@@ -109,7 +113,7 @@ typedef struct {
 // size: 0x17ac
 typedef struct {
     GplayStruct9 unk0;
-    u8 unk0x15d4[0x100];
+    /*0x15d4*/u8 bitString[256];
     GplayStruct5 unk0x16d4[2];
     GplayStruct6 unk0x16F4[2];
     GplayStruct12 unk0x171C[2];
@@ -135,7 +139,7 @@ typedef struct {
 // size: 0x182c
 typedef struct {
     GplayStruct3 unk0;
-    GplayStruct4 unk0x17ac;
+    /*0x17a*/u8 bitString[128];
 } GplayStruct7;
 
 DLL_INTERFACE_BEGIN(29_gplay)

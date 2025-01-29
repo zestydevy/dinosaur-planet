@@ -16,6 +16,9 @@ const char fileName2[] = "main/main.c";
 const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
 const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 
+s32 gTempDLLIds[3] = { -1, 35, 37 };
+void *gTempDLLInsts[3] = { NULL, NULL, NULL };
+
 void game_tick_no_expansion(void);
 void game_tick(void);
 
@@ -328,7 +331,6 @@ void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);         /* extern */
 void func_8004A67C();                                  /* extern */
 void func_800591EC();                                  /* extern */
 u16 get_masked_button_presses(int port);                   /* extern */
-s32 mainGetBit(s32);                                  /* extern */
 void map_update_streaming();                           /* extern */
 void set_button_mask(int port, u16 mask);                            /* extern */
 void update_PlayerPosBuffer();                         /* extern */
@@ -359,7 +361,7 @@ void func_80013D80(void)
             update_objects();
             func_80042174(0);
 
-            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & 0x1000) != 0) && (mainGetBit(0x44F) == 0))
+            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & 0x1000) != 0) && (get_gplay_bitstring(1103) == 0))
             {
                 D_800B09C2 = 1;
                 set_button_mask(0, 0x1000);
@@ -637,31 +639,177 @@ OSSched *get_ossched(void) {
     return &osscheduler_;
 }
 
-void init_bittable(void)
-{
+void init_bittable(void) {
     queue_alloc_load_file(&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
-    charStats_pointer = gDLL_29_gplay->exports->func_E74();
+    gGplayState = gDLL_29_gplay->exports->func_E74();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetBits.s")
+void set_gplay_bitstring(s32 entry, s32 value) {
+    u8 *bitString;
+    u8 _pad[12]; // fake match
+    s32 idx;
+    s32 mask;
+    s32 endBit;
+    s32 startBit;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetBit.s")
+    if (entry != 149 && entry != 150 && entry != -1) {
+        switch (gFile_BITTABLE[entry].field_0x2 >> 6) {
+            case 0:
+                bitString = &gGplayState->bitString[0];
+                break;
+            case 1:
+                bitString = &gGplayState->unk0.unk0.bitString[0];
+                break;
+            case 2:
+                bitString = &gGplayState->unk0.unk0.unk0.bitString[0];
+                break;
+            case 3:
+                bitString = &gGplayState->unk0.bitString[0];
+                break;
+        }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014930.s")
+        if (gFile_BITTABLE[entry].field_0x2 & 0x20) {
+            gDLL_30->exports->func[1].withOneArg(gFile_BITTABLE[entry].field_0x3);
+        }
 
-s32 mainDecrementBit(s32 bit) {
-    s32 val = mainGetBit(bit);
+        startBit = gFile_BITTABLE[entry].start;
+        endBit = (gFile_BITTABLE[entry].field_0x2 & 0x1f) + 1;
+        mask = 1;
+
+        for (idx = startBit; idx < (startBit + endBit); idx++) {
+            if (mask & value) {
+                *(u8*)((u32)bitString + (idx >> 3)) |= (1 << (idx & 7));
+            } else {
+                *(u8*)((u32)bitString + (idx >> 3)) &= ~(1 << (idx & 7));
+            }
+
+            mask = mask << 1;
+        }
+    }
+}
+
+s32 get_gplay_bitstring(s32 entry) {
+    u8 *bitString;
+    s32 value;
+    s32 idx;
+    s32 mask;
+    s32 endBit;
+    s32 startBit;
+
+    if (entry == 149) {
+        return 1;
+    } else if (entry == 150) {
+        return 0;
+    } else if (entry == -1) {
+        return 0;
+    } else if (entry < 0 || entry >= gSizeBittable) {
+        return 0;
+    } else {
+        switch (gFile_BITTABLE[entry].field_0x2 >> 6) {
+            case 0:
+                bitString = &gGplayState->bitString[0];
+                break;
+            case 1:
+                bitString = &gGplayState->unk0.unk0.bitString[0];
+                break;
+            case 2:
+                bitString = &gGplayState->unk0.unk0.unk0.bitString[0];
+                break;
+            case 3:
+                bitString = &gGplayState->unk0.bitString[0];
+                break;
+        }
+
+        startBit = gFile_BITTABLE[entry].start;
+        endBit = (gFile_BITTABLE[entry].field_0x2 & 0x1f) + 1;
+        value = 0;
+        mask = 1;
+
+        for (idx = startBit; idx < (startBit + endBit); idx++) {
+            // A clever way to read from bitString bit by bit 
+            if ((*(u8*)((u32)bitString + (idx >> 3)) & (1 << (idx & 7))) != 0) {
+                value = value | mask;
+            }
+
+            mask = mask << 1;
+        }
+    }
+
+    return value;
+}
+
+s32 increment_gplay_bitstring(s32 entry) {
+    s32 val;
+    s32 maxVal;
+
+    val = get_gplay_bitstring(entry) + 1;
+
+    maxVal = 1 << ((gFile_BITTABLE[entry].field_0x2 & 0x1f) + 1);
+
+    if (val < maxVal) {
+        set_gplay_bitstring(entry, val);
+    } else {
+        val -= 1;
+    }
+
+    return val;
+}
+
+s32 decrement_gplay_bitstring(s32 entry) {
+    s32 val = get_gplay_bitstring(entry);
     if (val != 0) {
-        mainSetBits(bit, --val);
+        set_gplay_bitstring(entry, --val);
         return val;
     }
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800149F0.s")
+s32 create_temp_dll(s32 id) {
+    u32 idx;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014A80.s")
+    idx = 0;
+
+    while (idx < 3 && id != gTempDLLIds[idx]) {
+        idx++;
+    }
+
+    if (idx == 3) {
+        return 0;
+    }
+
+    if (gTempDLLInsts[idx] != NULL) {
+
+    }
+
+    gTempDLLInsts[idx] = dll_load_deferred(id, 1);
+
+    return 1;
+}
+
+s32 remove_temp_dll(s32 id) {
+    u32 idx;
+
+    idx = 0;
+
+    while (idx < 3 && id != gTempDLLIds[idx]) {
+        idx++;
+    }
+
+    if (idx == 3) {
+        return 0;
+    }
+
+    if (gTempDLLInsts[idx] == NULL) {
+        return 0;
+    }
+
+    if (dll_unload(gTempDLLInsts[idx])) {
+        gTempDLLInsts[idx] = NULL;
+    }
+
+    return 1;
+}
 
 void func_80014B1C(void) {
     if (gDLL_76 == 0) {
@@ -744,5 +892,40 @@ void update_PlayerPosBuffer(void)
     }
 }
 
-
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80014D34.s")
+#else
+void func_80014D34(f32 param1, s32 param2, f32 *param3, f32 *param4, f32 *param5) {
+    f32 var1;
+    u32 var2;
+    struct Vec3_Int *pos;
+    s32 i;
+
+    if (PlayerPosBuffer) {} // hmm...
+
+    var1 = D_800AE674;
+
+    if (D_800AE674 < 0) {
+        var1 += 4294967296.0f; // hmm...
+    }
+
+    var1 -= param1 * 60.0f;
+
+    var2 = var1;
+
+    i = 60;
+    pos = &PlayerPosBuffer[PlayerPosBuffer_index];
+
+    do {
+        pos--;
+        if ((u32)pos < (u32)&PlayerPosBuffer[0]) {
+            pos = &PlayerPosBuffer[0];
+        }
+
+    } while (i-- && pos->i != 0 && pos->i > var2);
+
+    *param3 = pos->f.x;
+    *param4 = pos->f.y;
+    *param5 = pos->f.z;
+}
+#endif

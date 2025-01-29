@@ -92,6 +92,7 @@ void gplay_func_110(s8 param1) {
     gplay_func_6AC();
 }
 
+// regalloc
 #if 1
 void gplay_func_198(s8 param1, u8 *param2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_198.s")
@@ -110,10 +111,10 @@ void gplay_func_198(s8 param1, u8 *param2) {
     bss_10.unk0.unk0.unk0.character = 1;
 
     for (i = 0; i < 2; i++) {
-        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x1 = 12;
-        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x2 = 12;
-        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x6 = 25;
-        bss_10.unk0.unk0.unk0.unk0x0[i].unk0x4 = 0;
+        bss_10.unk0.unk0.unk0.unk0x0[i].hp = 12;
+        bss_10.unk0.unk0.unk0.unk0x0[i].hpMax = 12;
+        bss_10.unk0.unk0.unk0.unk0x0[i].manaMax = 25;
+        bss_10.unk0.unk0.unk0.unk0x0[i].mana = 0;
 
         bss_10.unk0.unk0.unk0.unk0x18[i].unk0x0 = 4;
         bss_10.unk0.unk0.unk0.unk0x18[i].unk0x1 = 5;
@@ -153,7 +154,7 @@ void gplay_func_198(s8 param1, u8 *param2) {
         }
     }
 
-    mainSetBits(0x4e5, 1);
+    set_gplay_bitstring(1253, 1);
 
     if (param2 != NULL) {
         dst = &bss_10.unk0.unk0.unk0.unk0x2F0[0];
@@ -380,7 +381,7 @@ static void gplay_func_D94() {
     bss_1A48[0] = -1;
     bss_1A50[0] = -1;
 
-    bzero(&bss_10.unk0x17ac, 128);
+    bzero(&bss_10.bitString, 128);
 
     func_8001442C();
 
@@ -538,7 +539,7 @@ void gplay_func_139C(s32 param1, s32 param2) {
         param1 = bss_1840[param1 - 80];
     }
 
-    mainSetBits(data_0[param1], param2);
+    set_gplay_bitstring(data_0[param1], param2);
 
     bss_1A48[0] = param1;
     bss_1A48[1] = param2;
@@ -557,7 +558,7 @@ u8 gplay_func_143C(s32 param1) {
         if (param1 < 0 || param1 >= 120 || !data_0[param1]) {
             bss_1A48[1] = 0;
         } else {
-            bss_1A48[1] = mainGetBit(data_0[param1]);
+            bss_1A48[1] = get_gplay_bitstring(data_0[param1]);
         }
     }
 
@@ -571,7 +572,7 @@ u8 gplay_func_14F0(s32 param1, s32 param2) {
 
     if (param1 != bss_1A50[0]) {
         bss_1A50[0] = param1;
-        bss_1A50[1] = mainGetBit(data_F0[param1]);
+        bss_1A50[1] = get_gplay_bitstring(data_F0[param1]);
     }
 
     return (bss_1A50[1] >> param2) & 1;
@@ -586,7 +587,7 @@ void gplay_func_15B8(s32 param1) {
         param1 = bss_1840[param1 - 80];
     }
 
-    bss_1868[param1] = mainGetBit(data_F0[param1]);
+    bss_1868[param1] = get_gplay_bitstring(data_F0[param1]);
 }
 
 u32 gplay_func_163C(s32 param1) {
@@ -623,7 +624,7 @@ void gplay_func_16C4(s32 param1, s32 param2, s32 param3) {
             param3 = 0;
         }
 
-        bit = mainGetBit(data_F0[param1]);
+        bit = get_gplay_bitstring(data_F0[param1]);
 
         var2 = bit;
         if (param3 != 0) {
@@ -632,7 +633,7 @@ void gplay_func_16C4(s32 param1, s32 param2, s32 param3) {
             var2 &= ~(1 << param2);
         }
 
-        mainSetBits(data_F0[param1], var2);
+        set_gplay_bitstring(data_F0[param1], var2);
 
         bss_1A50[0] = param1;
         bss_1A50[1] = var2;

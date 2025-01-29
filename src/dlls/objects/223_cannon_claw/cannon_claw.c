@@ -39,7 +39,7 @@ void cannon_claw_func_4C(TActor *s0) {
     if (temp != 0) {
         if (s0->linkedActor != 0) {
             ActorUnk0x1a *unk4C = s0->linkedActor->unk0x4c;
-            mainSetBits(unk4C->unk0x1a, 1);
+            set_gplay_bitstring(unk4C->unk0x1a, 1);
             func_8002394C_ret->dll->exports->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
         }
         
@@ -47,7 +47,7 @@ void cannon_claw_func_4C(TActor *s0) {
     } else {
         if (s0->linkedActor != 0) {
             ActorUnk0x1a *unk4C = s0->linkedActor->unk0x4c;
-            if (mainGetBit(unk4C->unk0x1a) != 0) {
+            if (get_gplay_bitstring(unk4C->unk0x1a) != 0) {
                 cannon_claw_func_1B4(s0);
             }
         }

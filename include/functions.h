@@ -48,8 +48,8 @@ s32 func_80023D30(TActor*,s32,f32,s32);
 s32 func_80024108(TActor*,f32,f32,s32);
 s32 func_80025F40(TActor*,s32,s32,s32);
 
-s32 mainGetBit(s32);
-void mainSetBits(s32, s32);
+s32 get_gplay_bitstring(s32 entry);
+void set_gplay_bitstring(s32 entry, s32 value);
 
 void draw_actor(TActor*,s32,s32,s32,s32,float);
 
