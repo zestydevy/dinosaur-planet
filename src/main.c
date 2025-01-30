@@ -130,7 +130,7 @@ void game_init(void)
         gDLL_27        = dll_load_deferred(27, 9); //0x15 in SFA
         gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 36);
         gDLL_56        = dll_load_deferred(56, 10); //not present in SFA
-        gDLL_30        = dll_load_deferred(30, 6);
+        gDLL_30_tasktext = dll_load_deferred(30, 6);
         gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2); //param is 0x24 in SFA
         gDLL_32        = dll_load_deferred(32, 6); //0x18 in SFA
         gDLL_33        = dll_load_deferred(33, 22); //0x19 in SFA
@@ -138,7 +138,7 @@ void game_init(void)
         gDLL_54        = dll_load_deferred(54, 12); //0x2F in SFA
         gDLL_57        = dll_load_deferred(57, 4);
         gDLL_58        = dll_load_deferred(58, 2);
-        gDLL_30->exports->func[0].asVoid();
+        gDLL_30_tasktext->exports->func_18();
     }
     init_bittable();
     alSynFlag = 1;
@@ -475,7 +475,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
     clear_PlayerPosBuffer();
 
-    gDLL_30->exports->func[0].asVoid();
+    gDLL_30_tasktext->exports->func_18();
     gDLL_29_gplay->exports->func_EAC(arg2);
 
     temp_v0 = gDLL_29_gplay->exports->func_F04();
@@ -670,7 +670,7 @@ void set_gplay_bitstring(s32 entry, s32 value) {
         }
 
         if (gFile_BITTABLE[entry].field_0x2 & 0x20) {
-            gDLL_30->exports->func[1].withOneArg(gFile_BITTABLE[entry].field_0x3);
+            gDLL_30_tasktext->exports->func_DC(gFile_BITTABLE[entry].field_0x3);
         }
 
         startBit = gFile_BITTABLE[entry].start;

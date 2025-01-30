@@ -1,0 +1,9 @@
+# functions
+dll_30_ctor = 0x0;
+dll_30_dtor = 0xC;
+dll_30_func_18 = 0x18;
+dll_30_func_DC = 0xDC;
+dll_30_func_368 = 0x368;
+dll_30_func_390 = 0x390;
+dll_30_func_3F8 = 0x3F8;
+dll_30_func_454 = 0x454;
