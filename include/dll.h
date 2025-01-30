@@ -2,7 +2,7 @@
 #define _DLL_H
 
 #include "dlls/engine/29_gplay.h"
-#include "dlls/engine/30_tasktext.h"
+#include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
 
 #include "dll_def.h"
@@ -42,6 +42,7 @@ enum DLL_ID {
     DLL_WATERFX   = 24,
     DLL_CURVES    = 26,
     DLL_GPLAY     = 29,
+    DLL_TASK      = 30,
     DLL_FLASH     = 31,
     DLL_MINIMAP   = 59,
     DLL_LINK      = 74,
@@ -54,7 +55,7 @@ enum DLL_ID {
 // their global variable instead of from loading the DLL.
 
 extern DLLInst_29_gplay *gDLL_29_gplay;
-extern DLLInst_30_tasktext *gDLL_30_tasktext;
+extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
 extern DLLInst_Unknown
     *gDLL_28,

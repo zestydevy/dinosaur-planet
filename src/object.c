@@ -30,7 +30,6 @@ extern s16  *gFile_OBJINDEX;
 int get_file_size(int file);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
-void queue_load_file_region_to_ptr(void **dest, s32 arg1, s32 arg2, s32 arg3);
 void alloc_some_object_arrays(void); //related to objects
 void func_80020D34(void);
 

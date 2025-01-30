@@ -19,6 +19,7 @@ void update_PlayerPosBuffer(void);
 TActor * get_player(void);
 
 s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
+void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
 
 void dl_get_debug_info2(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
 void dl_segment(Gfx **gdl, u32 segment, void *base);
@@ -48,8 +49,8 @@ s32 func_80023D30(TActor*,s32,f32,s32);
 s32 func_80024108(TActor*,f32,f32,s32);
 s32 func_80025F40(TActor*,s32,s32,s32);
 
-s32 get_gplay_bitstring(s32 entry);
-void set_gplay_bitstring(s32 entry, s32 value);
+u32 get_gplay_bitstring(s32 entry);
+void set_gplay_bitstring(s32 entry, u32 value);
 
 void draw_actor(TActor*,s32,s32,s32,s32,float);
 

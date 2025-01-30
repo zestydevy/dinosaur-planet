@@ -3,6 +3,7 @@
 #include "game/actor/actor.h"
 #include "sys/dll.h"
 #include "sys/math.h"
+#include "sys/fs.h"
 #include "variables.h"
 #include "functions.h"
 #include "dll.h"
@@ -66,7 +67,7 @@ static void gplay_func_1314();
 void gplay_func_139C(s32 param1, s32 param2);
 void gplay_func_15B8(s32 param1);
 
-/*export*/ void gplay_ctor(DLLFile *self)  {
+void gplay_ctor(DLLFile *self)  {
     bss_0 = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
     gplay_func_1314();
     bss_4 = NULL;
@@ -75,7 +76,7 @@ void gplay_func_15B8(s32 param1);
     bss_1A50[0] = -1;
 }
 
-/*export*/ void gplay_dtor(DLLFile *self)  {
+void gplay_dtor(DLLFile *self)  {
     free(bss_0);
     if (bss_4 != NULL) {
         free(bss_4);
@@ -188,10 +189,10 @@ s32 gplay_func_3E4(s8 param1, u8 param2) {
         if (param1 < 4) {
             bss_183C = param1;
 
-            flashPtr = (FlashStruct*)malloc(0x1800, 0xFFFF00FF, NULL);
+            flashPtr = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
 
-            var1 = gDLL_31_flash->exports->load_game(bss_0, param1, 0x1800, 1);
-            var2 = gDLL_31_flash->exports->load_game(flashPtr, param1 + 4, 0x1800, 1);
+            var1 = gDLL_31_flash->exports->load_game(bss_0, param1, sizeof(FlashStruct), 1);
+            var2 = gDLL_31_flash->exports->load_game(flashPtr, param1 + 4, sizeof(FlashStruct), 1);
 
             if (var1 == 0) {
                 if (var2 == 0) {
@@ -216,9 +217,9 @@ s32 gplay_func_3E4(s8 param1, u8 param2) {
         } else {
             queue_load_file_region_to_ptr(
                 bss_0,
-                0x3d,
-                param1 * 0x1800 - 0x6000,
-                0x1800);
+                SAVEGAME_BIN,
+                param1 * sizeof(FlashStruct) - 0x6000,
+                sizeof(FlashStruct));
             ret = 1;
         }
     } else {
@@ -245,16 +246,16 @@ void gplay_func_6AC() {
     if (bss_183C != -1) {
         bss_10.unk0.unk0.unk0.unk0x2f8 += 1;
 
-        bcopy(&bss_10, bss_0, 0x13d4);
+        bcopy(&bss_10.unk0.unk0.unk0, &bss_0->gplay.unk0.unk0, sizeof(GplayStruct8));
 
         gDLL_31_flash->exports->save_game(
             bss_0, 
             bss_183C + (bss_0->gplay.unk0.unk0.unk0x2f8 % 2) * 4, 
-            0x1800, 
+            sizeof(FlashStruct), 
             1);
         
         if (bss_4 != NULL) {
-            bcopy(&bss_10.unk0.unk0, &bss_4->unk0, 0x15d4);
+            bcopy(&bss_10.unk0.unk0, &bss_4->unk0, sizeof(GplayStruct9));
         }
     }
 }
@@ -266,10 +267,10 @@ u32 gplay_func_79C() {
     var = 1;
 
     ret = gDLL_31_flash->exports->load_game(
-        bss_8, 3, 0x80, 0);
+        bss_8, 3, sizeof(GplayStruct4), 0);
     
     if (ret == 0) {
-        bzero(bss_8, 0x80);
+        bzero(bss_8, sizeof(GplayStruct4));
         var = 0;
         bss_8->unk0x8 = 0x7f;
         bss_8->unk0x9 = 0x7f;
@@ -296,7 +297,7 @@ u32 gplay_func_79C() {
 
 void gplay_func_8D8() {
     gDLL_31_flash->exports->save_game(
-        bss_8, 3, 0x80, 0);
+        bss_8, 3, sizeof(GplayStruct4), 0);
 }
 
 GplayStruct4 *gplay_func_930() {
@@ -309,7 +310,7 @@ void gplay_func_94C(s32 param1) {
 
 void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
     if ((param3 & 1) != 0) {
-        bcopy(&bss_10.unk0, bss_0, 0x15d4);
+        bcopy(&bss_10.unk0.unk0, &bss_0->gplay.unk0, sizeof(GplayStruct9));
     } else {
         if (func_8001EBE0() != 0) {
             bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 |= 1;
@@ -320,31 +321,31 @@ void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x = param1->x;
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y = param1->y;
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z = param1->z;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xC = (u8)(param2 >> 8);
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xC = param2 >> 8;
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param4;
 
-        bcopy(&bss_10, bss_0, 0x17ac);
+        bcopy(&bss_10.unk0, &bss_0->gplay, sizeof(GplayStruct3));
     }
 
     if (bss_4 != NULL) {
-        bcopy(&bss_10.unk0.unk0, &bss_4->unk0, 0x15d4);
+        bcopy(&bss_10.unk0.unk0, &bss_4->unk0, sizeof(GplayStruct9));
     }
 }
 
 void gplay_func_AE0() {
-    bcopy(bss_0, &bss_10, 0x17ac);
+    bcopy(&bss_0->gplay, &bss_10.unk0, sizeof(GplayStruct3));
     gplay_func_D94();
 }
 
 void gplay_func_B3C(Vec3f *param1, s16 param2, s32 param3) {
     if (bss_4 == NULL) {
-        bss_4 = (GplayStruct3*)malloc(0x17ac, 0xFFFF00FF, NULL);
+        bss_4 = (GplayStruct3*)malloc(sizeof(GplayStruct3), 0xFFFF00FF, NULL);
         if (bss_4 == NULL) {
             return;
         }
     }
 
-    bcopy(&bss_10.unk0, bss_4, 0x17ac);
+    bcopy(&bss_10.unk0, bss_4, sizeof(GplayStruct3));
 
     if (func_8001EBE0() != 0) {
         bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 |= 1;
@@ -361,7 +362,7 @@ void gplay_func_B3C(Vec3f *param1, s16 param2, s32 param3) {
 
 void gplay_func_CBC() {
     if (bss_4 != NULL) {
-        bcopy(bss_4, &bss_10, 0x17ac);
+        bcopy(bss_4, &bss_10.unk0, sizeof(GplayStruct3));
         gplay_func_D94();
     }
 }
@@ -526,8 +527,8 @@ u32 gplay_func_1270() {
 
 static void gplay_func_1314() {
     bss_183C = -1;
-    bzero(&bss_10, 0x182c);
-    bzero(bss_0, 0x1800);
+    bzero(&bss_10, sizeof(GplayStruct7));
+    bzero(bss_0, sizeof(FlashStruct));
 }
 
 void gplay_func_1378(s32 param1, s32 param2) {

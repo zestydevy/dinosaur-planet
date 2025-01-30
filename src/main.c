@@ -130,7 +130,7 @@ void game_init(void)
         gDLL_27        = dll_load_deferred(27, 9); //0x15 in SFA
         gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 36);
         gDLL_56        = dll_load_deferred(56, 10); //not present in SFA
-        gDLL_30_tasktext = dll_load_deferred(30, 6);
+        gDLL_30_task   = dll_load_deferred(DLL_TASK, 6);
         gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2); //param is 0x24 in SFA
         gDLL_32        = dll_load_deferred(32, 6); //0x18 in SFA
         gDLL_33        = dll_load_deferred(33, 22); //0x19 in SFA
@@ -138,7 +138,7 @@ void game_init(void)
         gDLL_54        = dll_load_deferred(54, 12); //0x2F in SFA
         gDLL_57        = dll_load_deferred(57, 4);
         gDLL_58        = dll_load_deferred(58, 2);
-        gDLL_30_tasktext->exports->func_18();
+        gDLL_30_task->exports->load_recently_completed();
     }
     init_bittable();
     alSynFlag = 1;
@@ -475,7 +475,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
     clear_PlayerPosBuffer();
 
-    gDLL_30_tasktext->exports->func_18();
+    gDLL_30_task->exports->load_recently_completed();
     gDLL_29_gplay->exports->func_EAC(arg2);
 
     temp_v0 = gDLL_29_gplay->exports->func_F04();
@@ -645,7 +645,7 @@ void init_bittable(void) {
     gGplayState = gDLL_29_gplay->exports->func_E74();
 }
 
-void set_gplay_bitstring(s32 entry, s32 value) {
+void set_gplay_bitstring(s32 entry, u32 value) {
     u8 *bitString;
     u8 _pad[12]; // fake match
     s32 idx;
@@ -669,8 +669,8 @@ void set_gplay_bitstring(s32 entry, s32 value) {
                 break;
         }
 
-        if (gFile_BITTABLE[entry].field_0x2 & 0x20) {
-            gDLL_30_tasktext->exports->func_DC(gFile_BITTABLE[entry].field_0x3);
+        if (gFile_BITTABLE[entry].field_0x2 & (1 << 5)) {
+            gDLL_30_task->exports->mark_task_completed(gFile_BITTABLE[entry].task);
         }
 
         startBit = gFile_BITTABLE[entry].start;
@@ -689,9 +689,9 @@ void set_gplay_bitstring(s32 entry, s32 value) {
     }
 }
 
-s32 get_gplay_bitstring(s32 entry) {
+u32 get_gplay_bitstring(s32 entry) {
     u8 *bitString;
-    s32 value;
+    u32 value;
     s32 idx;
     s32 mask;
     s32 endBit;
@@ -729,7 +729,7 @@ s32 get_gplay_bitstring(s32 entry) {
         for (idx = startBit; idx < (startBit + endBit); idx++) {
             // A clever way to read from bitString bit by bit 
             if ((*(u8*)((u32)bitString + (idx >> 3)) & (1 << (idx & 7))) != 0) {
-                value = value | mask;
+                value |= mask;
             }
 
             mask = mask << 1;
