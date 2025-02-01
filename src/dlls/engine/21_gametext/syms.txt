@@ -1,0 +1,9 @@
+# functions
+gametext_ctor = 0x0;
+gametext_dtor = 0x120;
+gametext_bank_count = 0x160;
+gametext_chunk_count = 0x17C;
+gametext_set_bank = 0x198;
+gametext_curr_bank = 0x224;
+gametext_get_chunk = 0x240;
+gametext_get_text = 0x420;

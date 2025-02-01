@@ -1,6 +1,7 @@
 #ifndef _DLL_H
 #define _DLL_H
 
+#include "dlls/engine/21_gametext.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
@@ -54,6 +55,7 @@ enum DLL_ID {
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.
 
+extern DLLInst_21_gametext *gDLL_21_gametext;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
@@ -81,7 +83,6 @@ extern DLLInst_Unknown
     *gDLL_17,
     *gDLL_18,
     *gDLL_SCREENS,
-    *gDLL_text,
     *gDLL_subtitles,
     *gDLL_23,
     *gDLL_waterfx,

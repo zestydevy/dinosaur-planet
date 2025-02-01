@@ -94,7 +94,7 @@ void game_init(void)
         temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 36);
         gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
         gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 18);
-        gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_21_gametext = dll_load_deferred(DLL_TEXT, 5);
         gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 47);
         gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2);
         gDLL_28        = dll_load_deferred(28, 4);
@@ -122,7 +122,7 @@ void game_init(void)
         gDLL_16        = dll_load_deferred(16, 3);
         gDLL_17        = dll_load_deferred(17, 2); //probably particle FX
         gDLL_SCREENS   = dll_load_deferred(DLL_SCREENS, 3);
-        gDLL_text      = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_21_gametext = dll_load_deferred(DLL_TEXT, 5);
         gDLL_subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
         gDLL_waterfx   = dll_load_deferred(DLL_WATERFX, 7);
         gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 38);

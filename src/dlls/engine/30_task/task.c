@@ -109,14 +109,12 @@ u8 task_get_num_recently_completed() {
     return sRecentlyCompletedNextIdx + 1;
 }
 
-// TODO: this returns something
-void task_func_390(u8 param1) {
-    gDLL_text->exports->func[5].withTwoArgs((u16)(sRecentlyCompleted[param1] + 244), 0);
+char *task_get_recently_completed_task_text(u8 idx) {
+    return gDLL_21_gametext->exports->get_text(sRecentlyCompleted[idx] + 244, 0);
 }
 
-// TODO: this returns something
-void task_func_3F8() {
-    gDLL_text->exports->func[5].withTwoArgs((u16)(sCompletionIdx + 244), 1);
+char *task_get_completion_task_text() {
+    return gDLL_21_gametext->exports->get_text(sCompletionIdx + 244, 1);
 }
 
 s16 task_get_completion_percentage() {

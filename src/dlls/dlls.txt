@@ -1,5 +1,6 @@
 # engine
 16 = engine/16
+21 = engine/21_gametext
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash

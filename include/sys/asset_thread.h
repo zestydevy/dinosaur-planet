@@ -114,7 +114,7 @@ void create_asset_thread(void);
 void asset_thread_main(void *arg);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
-void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 length, s32 offset);
+void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
 void queue_load_map_object(void **dest, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 void queue_load_texture(void **dest, s32 id);
 void queue_load_dll(void **dest, s32 id, s32 exportCount);

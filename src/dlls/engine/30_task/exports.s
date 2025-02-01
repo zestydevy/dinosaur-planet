@@ -11,6 +11,6 @@ _exports:
 .dword task_load_recently_completed
 .dword task_mark_task_completed
 .dword task_get_num_recently_completed
-.dword task_func_390
-.dword task_func_3F8
+.dword task_get_recently_completed_task_text
+.dword task_get_completion_task_text
 .dword task_get_completion_percentage
