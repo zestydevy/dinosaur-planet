@@ -1313,3 +1313,9 @@ gTempDLLIds = 0x8008CA18; // type:data size:0xc
 gTempDLLInsts = 0x8008CA24; // type:data size:0xc
 create_temp_dll = 0x800149F0; // type:func
 remove_temp_dll = 0x80014A80; // type:func
+
+strcpy_2 = 0x8005F3E0; // type:func
+strcat = 0x8005F418; // type:func
+strcasecmp = 0x8005F46C; // type:func
+strncasecmp = 0x8005F518; // type:func
+memset = 0x8005F5D4; // type:func

@@ -1,16 +1,126 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F3E0.s")
+char *strcpy_2(char *dest, char *src) {
+    char *start = dest;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F418.s")
+    while ((*(dest++) = *(src++)) != '\0') { }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F46C.s")
+    return start;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F518.s")
+char *strcat(char *dest, const char *src) {
+    char *start = dest;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F5D4.s")
+    while (*dest != '\0') {
+        dest++;
+    }
 
+    while ((*(dest++) = *(src++)) != '\0') { }
+
+    return start;
+}
+
+/**
+ * Case insensitive strcmp.
+ */
+int strcasecmp(const char *lhs, const char *rhs) {
+    char c1, c2;
+    
+    while (*lhs != '\0' || *rhs != '\0') {
+        // To uppercase
+        c1 = *lhs;
+        if (c1 >= 'a' && c1 <= 'z') {
+            c1 -= 32;
+        }
+
+        c2 = *rhs;
+        if (c2 >= 'a' && c2 <= 'z') {
+            c2 -= 32;
+        }
+
+        if (c1 < c2) {
+            return -1;
+        }
+        if (c1 > c2) {
+            return 1;
+        }
+
+        lhs++;
+        rhs++;
+    }
+
+    return 0;
+}
+
+/**
+ * Case insensitive strncmp.
+ */
+int strncasecmp(const char *lhs, const char *rhs, size_t count) {
+    char c1, c2;
+    
+    while ((*lhs != '\0' || *rhs != '\0') && count != 0) {
+        // To uppercase
+        c1 = *lhs;
+        if (c1 >= 'a' && c1 <= 'z') {
+            c1 -= 32;
+        }
+
+        c2 = *rhs;
+        if (c2 >= 'a' && c2 <= 'z') {
+            c2 -= 32;
+        }
+
+        if (c1 < c2) {
+            return -1;
+        }
+        if (c1 > c2) {
+            return 1;
+        }
+
+        lhs++;
+        rhs++;
+        count--;
+    }
+
+    return 0;
+}
+
+void *memset(void *dest, int ch, size_t count) {
+    unsigned char *ptr = dest;
+
+    while (count-- > 0) {
+        *(ptr++) = (unsigned char)ch;
+    }
+
+    return dest;
+}
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F60C.s")
+#else
+extern char D_8009ADF0[];
+extern char D_8009AE18[]; 
+
+char *func_8005F60C(u64 param1, char *param3, u32 param4, s32 bUppercase) {
+    char *chars;
+
+    if (bUppercase) {
+        chars = D_8009AE18;
+    } else {
+        chars = D_8009ADF0;
+    }
+
+    if (param1 != 0) {
+        do {
+            param3--;
+
+            *param3 = chars[param1 % param4];
+        } while ((param1 / param4) != 0);
+    }
+
+    return param3;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F6CC.s")
 
