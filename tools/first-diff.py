@@ -126,8 +126,9 @@ def search_map(rom_addr):
                 if "noload" in line or "noload" in prev_line:
                     ram_offset = None
                     continue
-                ram = int(line[16 : 16 + 18], 0)
-                rom = int(line[59 : 59 + 18], 0)
+                parts = line.split()
+                ram = int(parts[1].strip(), 0)
+                rom = int(parts[2].strip(), 0)
                 ram_offset = ram - rom
                 continue
             prev_line = line
@@ -139,7 +140,11 @@ def search_map(rom_addr):
                 or " 0x" not in line
             ):
                 continue
-            ram = int(line[16 : 16 + 18], 0)
+            parts = line.split()
+            if len(parts) == 2:
+                ram = int(parts[0].strip(), 0)
+            else:
+                ram = int(parts[1].strip(), 0)
             rom = ram - ram_offset
             fn = line.split()[-1]
             if "0x" in fn:

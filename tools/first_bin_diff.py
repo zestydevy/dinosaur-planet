@@ -25,6 +25,10 @@ def main():
         b_len = len(b)
         min_len = min(a_len, b_len)
 
+        if a_len != b_len:
+            print("Difference in length. Expected 0x{:X}, found 0x{:X}."
+                .format(a_len, b_len))
+
         i = 0
         while i < min_len:
             k = i
@@ -36,7 +40,8 @@ def main():
                 k += 1
                 
             if diff:
-                print("Difference at: 0x{:X}".format(i))
+                print("Difference at: 0x{:X}. Expected 0x{:X}, found 0x{:X}."
+                    .format(i, a[k], b[k]))
                 diffs += 1
                 if max_diffs > 0 and diffs >= max_diffs:
                     break
