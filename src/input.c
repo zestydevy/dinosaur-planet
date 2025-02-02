@@ -308,6 +308,7 @@ void controller_thread_entry(void *_) {
 #pragma GLOBAL_ASM("asm/nonmatchings/input/init_virtual_cont_port_map.s")
 #else
 // Functionally equivalent
+// Making gVirtualContPortMap static fixes it
 void _init_virtual_cont_port_map() {
     int i;
 

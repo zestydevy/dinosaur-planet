@@ -257,6 +257,8 @@ segments:
     - [0x8BD60, bin, ucode_gspF3DEX2_xbusText]
     - [0x92370, .data, crash]
     - [0x92380, bin]
+    - [0x93BF8, .data, video]
+    - [0x93C08, bin]
     - [0x93CB8, .data, libultra/io/vimgr]
     - [0x93CD0, bin]
     - [0x97840, .data, libultra/os/initialize]
@@ -299,6 +301,10 @@ segments:
     - [0xA3470, bin]
     - [0xA3A00, bin, ucode_aspMainData]
     - [0xA4550, bin, ucode_gspF3DEX2_xbusData]
+    - [0xA4970, bin]
+    
+    - [0xA69B8]
+    - [auto, all_bss]
 
   - type: code
     start: 0xA4970

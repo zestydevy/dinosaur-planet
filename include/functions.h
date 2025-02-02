@@ -62,5 +62,6 @@ s32 func_8000F44C();
 void set_menu_page(s32);
 void func_8001442C();
 s8 func_80048498();
+void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
 
 #endif //_FUNCTIONS_H

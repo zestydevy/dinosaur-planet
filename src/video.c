@@ -1,5 +1,8 @@
 #include "common.h"
 
+UnkHeapVidStruct *D_800BCC10;
+UnkVidStruct2 D_800BCC18[4]; // size:0x50
+
 // func_8005BC38 is from segment_5C470
 /**
  * If param1 isn't null, sets it to gPossiblyScreenWidthOrHeight.
@@ -13,28 +16,21 @@ void initialize_framebuffers(int someBool, s32 width, s32 height);
 void swap_framebuffer_pointers();
 void set_custom_vi_mode();
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
 #else
-// Functionally equivalent, see TODOs
 void func_8005C780() {
-    UnkVidStruct2 *vidStruct2;
-    UnkVidStruct *vidStruct;
-    UnkHeapVidStruct *vidHeapStruct;
     s32 i;
 
-    vidHeapStruct = D_800BCC10;
-
-    if (vidHeapStruct != NULL) {
-        free(vidHeapStruct);
+    if (D_800BCC10 != NULL) {
+        free(D_800BCC10);
     }
 
     D_800BCC10 = malloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++)
     {
-        gUnknownVideoStructs[i].ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
-        gUnknownVideoStructs[i].ptrToUnknown2 = NULL;
+        gSPEndDisplayList(&gUnknownVideoStructs[i].dl);
         gUnknownVideoStructs[i].viMode = NULL;
         gUnknownVideoStructs[i].unk0x88 = 0;
     }
@@ -42,10 +38,10 @@ void func_8005C780() {
     for (i = 0; i < 4; i++)
     {
         D_800BCC18[i].unk0x10 = NULL;
-        D_800BCC18[i].unk0x0 = 0.0f;
-        D_800BCC18[i].unk0x4 = 0.0f;
+        D_800BCC18[i].unk0x0 = 0;
+        D_800BCC18[i].unk0x4 = 0;
+        D_800BCC18[i].unk0x8 = 0;
         D_800BCC18[i].unk0xc = 0;
-        D_800BCC18[i].unk0x8 = 0.0f;
     }
 
     D_800BCC10->unk0x0 = -3.0f;
@@ -54,18 +50,21 @@ void func_8005C780() {
     D_800BCC10->unk0xc = -3.0f;
     D_800BCC10->unk0x10 = 0.0f;
     D_800BCC10->unk0x14 = 3.0f;
+    
     D_800BCC10->unk0x18 = 3.0f;
     D_800BCC10->unk0x1c = 0.0f;
     D_800BCC10->unk0x20 = 3.0f;
     D_800BCC10->unk0x24 = 3.0f;
     D_800BCC10->unk0x28 = 0.0f;
     D_800BCC10->unk0x2c = -3.0f;
+    
     D_800BCC10->unk0x30 = -3.0f;
     D_800BCC10->unk0x34 = 0.0f;
     D_800BCC10->unk0x38 = -3.0f;
     D_800BCC10->unk0x3c = -3.0f;
     D_800BCC10->unk0x40 = 0.0f;
     D_800BCC10->unk0x44 = 3.0f;
+    
     D_800BCC10->unk0x48 = 3.0f;
     D_800BCC10->unk0x4c = 0.0f;
     D_800BCC10->unk0x50 = 3.0f;
@@ -81,61 +80,26 @@ void func_8005C780() {
 }
 #endif
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C998.s")
 void func_8005C998();
 #else
-// Functionally equivalent, see TODOs
-void _func_8005C998() {
-    UnkVidStruct2 *vidStruct2;
-    UnkVidStruct *vidStruct = &gUnknownVideoStructs[0];
+void func_8005C998() {
+    s32 i;
 
-    do {
-        vidStruct->ptrToUnknown1 = (UnkHeapVidStruct*)0xdf000000;
-        vidStruct->ptrToUnknown2 = NULL;
-        goto label_1; label_1: // TODO: This probably shouldn't be necessary
-        vidStruct->viMode = NULL;
-        vidStruct->unk0x88 = 0;
-    } while (++vidStruct < &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
+    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
+        gSPEndDisplayList(&gUnknownVideoStructs[i].dl);
+        gUnknownVideoStructs[i].viMode = NULL;
+        gUnknownVideoStructs[i].unk0x88 = 0;
+    }
 
-    // TODO: Figure out how to get this to match in a way that it weaves in `lui   at,0x800c`
-    vidStruct2 = &D_800BCC18[0];
-    vidStruct2->unk0x10 = 0;
-    // lui   at,0x800c
-    vidStruct2->unk0x0 = 0.0f;
-    vidStruct2->unk0x4 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2->unk0xc = (u8)0;
-    vidStruct2->unk0x8 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2 = &D_800BCC18[1];
-    vidStruct2->unk0x10 = 0;
-    // lui   at,0x800c
-    vidStruct2->unk0x0 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2->unk0x4 = 0.0f;
-    vidStruct2->unk0x8 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2->unk0xc = (u8)0;
-    // lui   at,0x800c
-    vidStruct2 = &D_800BCC18[2];
-    vidStruct2->unk0x10 = 0;
-    // lui   at,0x800c
-    vidStruct2->unk0x0 = 0.0f;
-    vidStruct2->unk0x4 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2->unk0xc = (u8)0;
-    vidStruct2->unk0x8 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2 = &D_800BCC18[3];
-    vidStruct2->unk0x10 = 0;
-    // lui   at,0x800c
-    vidStruct2->unk0x0 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2->unk0x4 = 0.0f;
-    vidStruct2->unk0x8 = 0.0f;
-    // lui   at,0x800c
-    vidStruct2->unk0xc = (u8)0;
+    for (i = 0; i < 4; i++) {
+        D_800BCC18[i].unk0x10 = 0;
+        D_800BCC18[i].unk0x0 = 0.0f;
+        D_800BCC18[i].unk0x4 = 0.0f;
+        D_800BCC18[i].unk0x8 = 0.0f;
+        D_800BCC18[i].unk0xc = 0;
+    }
 }
 #endif
 
@@ -151,41 +115,62 @@ void func_8005CA5C(u32 param1) {
 }
 #endif
 
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA88.s")
 #else
-// Functionally equivalent, not quite regalloc only but extremely close
-void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
-{
-    s32 temp1;
-    s32 temp2;
+void func_8005CA88(f32 *a0, f32 *a1, u8 a2) {
+    static s32 D_80092FF8 = 0;
 
-    if (D_800BCC78 != 0)
-    {
-        temp1 = D_80092FF8;
+    if (D_800BCC78 != 0) {
+        D_800BCC18[D_80092FF8].unk0x10 = a0;
+        D_800BCC18[D_80092FF8].unk0x0 = a1[0];
+        D_800BCC18[D_80092FF8].unk0x4 = a0[4] + a1[1];
+        D_800BCC18[D_80092FF8].unk0x8 = a1[2];
+        D_800BCC18[D_80092FF8].unk0xc = a2;
 
-        D_800BCC18[temp1].unk0x10 = a0;
-        D_800BCC18[temp1].unk0x0 = a1[0];
+        D_80092FF8 = D_80092FF8 + 1;
 
-        temp2 = temp1 + 1;
-        if (1); // TODO: skeptical about this
-
-        D_800BCC18[temp1].unk0x4 = a0[4] + a1[1];
-        D_800BCC18[temp1].unk0x8 = a1[2];
-        D_800BCC18[temp1].unk0xc = a2;
-
-        D_80092FF8 = temp2;
-
-        if (D_80092FF8 == 4)
-        {
+        if (D_80092FF8 == 4) {
             D_80092FF8 = 0;
         }
     }
 }
 #endif
 
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CB10.s")
+#else
+void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
+    s32 i;
+    Texture *tex;
 
+    switch (param2->unk0x46) {
+        case 0:
+            tex = D_800BCC68;
+            break;
+        case 0x1f:
+            tex = D_800BCC6C;
+            break;
+        default:
+            tex = D_800BCC68;
+            break;
+    }
+
+    set_textures_on_gdl(gdl, tex, NULL, 0x1a, 0, 0, 1);
+
+    i = 0;
+
+    while (i < UNKNOWN_VIDEO_STRUCTS_COUNT) {
+        if (param2 == gUnknownVideoStructs[i].unk0x80) {
+            gSPDisplayList((*gdl)++, &gUnknownVideoStructs[i].dl);
+        }
+
+        i++;
+    }
+}
+#endif
+
+static s32 D_80092FFC = 1;
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
@@ -195,37 +180,35 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2)
 #else
 // Functionally equivalent, mainly regalloc, see TODO
 void func_8005CDFC(int _) {
-    UnkVidStruct *vidStruct;
     float var1;
     float var2;
     s16 *var3;
+    s32 i;
 
-    vidStruct = &gUnknownVideoStructs[0];
-
-    do {
-        if (vidStruct->viMode == NULL) {
+    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
+        if (gUnknownVideoStructs[i].viMode == NULL) {
             continue;
         }
 
         // TODO: The order of loads and stores here are slightly out of order
-        var1 = gWorldX - vidStruct->unk0x78;
-        var2 = gWorldZ - vidStruct->unk0x7c;
+        var1 = gWorldX - gUnknownVideoStructs[i].unk0x78;
+        var2 = gWorldZ - gUnknownVideoStructs[i].unk0x7c;
 
-        var3 = &vidStruct->unk0x48[0];
+        var3 = &gUnknownVideoStructs[i].unk0x48[0];
 
-        vidStruct->unk0x78 = vidStruct->unk0x78 + var1;
-        vidStruct->unk0x7c = vidStruct->unk0x7c + var2;
-
-        vidStruct->unk0x18 = vidStruct->unk0x18 - var1;
-        vidStruct->unk0x1c = vidStruct->unk0x1c - var2;
-        vidStruct->unk0x28 = vidStruct->unk0x28 - var1;
-        vidStruct->unk0x2c = vidStruct->unk0x2c - var2;
-        vidStruct->unk0x38 = vidStruct->unk0x38 - var1;
-        vidStruct->unk0x3c = vidStruct->unk0x3c - var2;
+        gUnknownVideoStructs[i].unk0x78 += var1;
+        gUnknownVideoStructs[i].unk0x7c += var2;
+        
+        gUnknownVideoStructs[i].unk0x18 -= var1;
+        gUnknownVideoStructs[i].unk0x1c -= var2;
+        gUnknownVideoStructs[i].unk0x28 -= var1;
+        gUnknownVideoStructs[i].unk0x2c -= var2;
+        gUnknownVideoStructs[i].unk0x38 -= var1;
+        gUnknownVideoStructs[i].unk0x3c -= var2;
 
         var3[2] = var3[2] - var2;
         var3[0] = var3[0] - var1;
-    } while (++vidStruct != &gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT]);
+    }
 }
 #endif
 
