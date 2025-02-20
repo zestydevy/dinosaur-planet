@@ -20,6 +20,17 @@ from dino.dlls_txt import DLLsTxt
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
 opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(.*)\s*")
+ido_version_pattern = re.compile(r"@DECOMP_IDO_VERSION\s*=\s*(.*)\s*")
+
+IDO_VAR_MAP = {
+    "5.3": "$IDO_53",
+    "7.1": "$IDO_71"
+}
+
+class BuildFileConfig:
+    def __init__(self, opt: "str | None", ido_version: "str | None"):
+        self.opt = opt
+        self.ido_version = ido_version
 
 class BuildFileType(Enum):
     C = 1
@@ -27,11 +38,11 @@ class BuildFileType(Enum):
     BIN = 3
 
 class BuildFile:
-    def __init__(self, src_path: str, obj_path: str, type: BuildFileType, opt: "str | None"=None):
+    def __init__(self, src_path: str, obj_path: str, type: BuildFileType, config: BuildFileConfig | None=None):
         self.src_path = src_path
         self.obj_path = obj_path
         self.type = type
-        self.opt = opt
+        self.config = config
 
 class DLL:
     def __init__(self, number: str, dir: str, files: "list[BuildFile]"):
@@ -178,19 +189,17 @@ class BuildNinjaWriter:
         # Write tools
         cross = self.__detect_cross()
         exe_suffix = ".exe" if sys.platform == "win32" else ""
+        ido_recomp_platform = "windows" if sys.platform == "win32" else "linux"
 
         self.writer.comment("Tools")
         self.writer.variable("AS", f"{cross}as{exe_suffix}")
         self.writer.variable("LD", f"{cross}ld{exe_suffix}")
         self.writer.variable("OBJCOPY", f"{cross}objcopy{exe_suffix}")
-        if sys.platform == "win32":
-            self.writer.variable("CC", "tools/ido_recomp/windows/5.3/cc.exe")
-        else:
-            self.writer.variable("CC", "tools/ido_recomp/linux/5.3/cc")
+        self.writer.variable("IDO_53", f"tools/ido_recomp/{ido_recomp_platform}/5.3/cc{exe_suffix}")
+        self.writer.variable("IDO_71", f"tools/ido_recomp/{ido_recomp_platform}/7.1/cc{exe_suffix}")
+        self.writer.variable("CC", "$IDO_53")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
         self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
-        self.writer.variable("CC_PREPROCESSED", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS --")
-        self.writer.variable("CC_PREPROCESSED_DLL", "$ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL --")
         self.writer.variable("ELF2DLL", "python3 tools/elf2dll.py")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
         
@@ -199,11 +208,11 @@ class BuildNinjaWriter:
         # Write rules
         self.writer.comment("Rules")
         self.writer.rule("cc", 
-            "$HEADER_DEPS $CC_PREPROCESSED -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$HEADER_DEPS $CC_PREPROCESSED_DLL -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
@@ -231,10 +240,7 @@ class BuildNinjaWriter:
 
         for file in self.input.files:
             # Determine variables
-            variables: dict[str, str] = {}
-            opt = file.opt
-            if opt is not None and opt != self.config.default_opt_flags:
-                variables["OPT_FLAGS"] = opt
+            variables: dict[str, str] = self.__file_config_to_variables(file.config)
 
             # Determine command
             command: str
@@ -267,10 +273,7 @@ class BuildNinjaWriter:
             dll_link_deps: "list[str]" = []
             for file in dll.files:
                 # Determine variables
-                variables: dict[str, str] = {}
-                opt = file.opt
-                if opt is not None and opt != self.config.default_opt_flags:
-                    variables["OPT_FLAGS"] = opt
+                variables: dict[str, str] = self.__file_config_to_variables(file.config)
 
                 # Determine command
                 command: str
@@ -392,6 +395,17 @@ class BuildNinjaWriter:
         else:
             return "mips-linux-gnu-"
 
+    def __file_config_to_variables(self, file_config: BuildFileConfig | None):
+        variables: dict[str, str] = {}
+        
+        if file_config != None:
+            if file_config.opt != None:
+                variables["OPT_FLAGS"] = file_config.opt
+            if file_config.ido_version != None:
+                variables["CC"] = IDO_VAR_MAP[file_config.ido_version]
+        
+        return variables
+
 class ObjDiffConfigWriter:
     def __init__(self, output_file: TextIO, input: BuildFiles, config: BuildConfig):
         self.output_file = output_file
@@ -462,8 +476,8 @@ class InputScanner:
         paths = [Path(path) for path in glob.glob("src/**/*.c", recursive=True) if not Path(path).is_relative_to(Path("src/dlls"))]
         for src_path in paths:
             obj_path = self.__make_obj_path(src_path)
-            opt = self.__get_optimization_level(src_path)
-            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, opt))
+            file_config = self.__get_file_config(src_path)
+            self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
 
     def __scan_asm_files(self):
         # Exclude splat nonmatchings, those are compiled in with their respective C file
@@ -510,8 +524,8 @@ class InputScanner:
 
             for src_path in c_paths:
                 obj_path = self.__make_obj_path(src_path)
-                opt = self.__get_optimization_level(src_path)
-                files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, opt))
+                file_config = self.__get_file_config(src_path)
+                files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
             
             for src_path in asm_paths:
                 obj_path = self.__make_obj_path(src_path)
@@ -533,18 +547,35 @@ class InputScanner:
     def __make_obj_path(self, path: Path) -> str:
         return path.with_suffix('.o')
     
-    def __get_optimization_level(self, path: Path) -> str:
+    def __get_file_config(self, path: Path) -> BuildFileConfig:
+        opt_flags: "str | None" = None
+        ido_version: "str | None" = None
+
         with open(path, "r", encoding="utf-8") as file:
+            found_comments = False
             while True:
                 line = file.readline().strip()
-                if len(line) == 0:
+                if len(line) == 0 and found_comments:
+                    # End on empty line after comment block
                     break
                 if line.startswith("//"):
+                    found_comments = True
+
                     opt_match = opt_flags_pattern.search(line)
                     if opt_match != None:
-                        return opt_match.group(1)
+                        opt_flags = opt_match.group(1)
+                        continue
+                    ido_match = ido_version_pattern.search(line)
+                    if ido_match != None:
+                        ido_version = ido_match.group(1)
+                        continue
+                else:
+                    # End on non-empty non-comment line
+                    break
         
-        return self.config.default_opt_flags
+        return BuildFileConfig(
+            opt=opt_flags, 
+            ido_version=ido_version)
     
     def __get_dll_config(self, dll_dir: Path, number: int) -> DLLBuildConfig | None:
         yaml_path = dll_dir.joinpath("dll.yaml")

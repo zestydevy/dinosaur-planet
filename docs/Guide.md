@@ -355,10 +355,13 @@ The flag combinations currently known for the decomp are:
 - `-O2 -g3` - The default. Used for almost everything.
 - `-O2 -g0` - Used for compiling *modified* libultra code.
 - `-O1 -g0` - Used for compiling *unmodified* libultra code.
+- `-O1 -g2` - Used for libnaudio code.
 
 Sometimes, to get a function to match you will need to change the optimization and debugging levels that the containing file is compiled with. This can be done by adding the comment `// @DECOMP_OPT_FLAGS=<opt flags>` to the top of the file. For example, `// @DECOMP_OPT_FLAGS=-O1` would compile the file with the optimization flag `-O1` instead of the default.
 
-> Note: The build script must be re-configured for the new optimization flags to take effect (`./dino.py configure`).
+Additionally, you may need a different version of IDO. This can be set by adding the comment `// @DECOMP_IDO_VERSION=<version>` to the top of the file. Only versions `5.3` (default) and `7.1` are available currently.
+
+> Note: The build script must be re-configured for the new optimization flags/compiler to take effect (`./dino.py configure`).
 
 
 ## 6. DLL Decompilation
