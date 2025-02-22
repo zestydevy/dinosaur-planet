@@ -70,8 +70,8 @@ typedef struct TActor {
 /*0030*/    struct TActor *linkedActor; //only used by update_objects?
 /*0034*/    u8 unk_0x34;
 /*0035*/    s8 matrixIdx;
-/*0036*/    u8 unk_0x36;
-/*0037*/    u8 unk_0x37;
+/*0036*/    u8 unk_0x36; // transparency
+/*0037*/    u8 unk_0x37; // also transparency? (set to unk_0x36)
 /*0038*/    u32 unk_0x38;
 /*003C*/    u8 unk0x3c[0x44 - 0x3c];
 /*0044*/    UNK_TYPE_16 objId; //guessed from SFA

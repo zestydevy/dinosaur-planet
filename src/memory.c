@@ -253,10 +253,10 @@ s32 dbg_heap_print(s32 arg0)
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
 
 const char s_mm_audioheap[] = "mm:audioheap";
-void *_alHeapAlloc(s32 arg0, s32 arg1, s32 arg2, s32 count, s32 size) {
+void *alHeapDBAlloc(u8 *file, s32 line, ALHeap *hp, s32 num, s32 size) {
     void *ptr;
 
-    size = ALIGN16((size * count) + 0xF);
+    size = ALIGN16((size * num) + 0xF);
 
     // ??
     if (size);

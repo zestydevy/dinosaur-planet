@@ -1,0 +1,117 @@
+// @DECOMP_OPT_FLAGS=-O1 -g2
+// @DECOMP_IDO_VERSION=7.1
+#include <PR/ultratypes.h>
+
+u16 D_80096B30[] = {
+    0x8000,  0x7EBA,  0x7D74,  0x7C2D,
+    0x7AE7,  0x79A0,  0x7859,  0x7711,
+    0x75C9,  0x7480,  0x7337,  0x71EC,
+    0x70A1,  0x6F55,  0x6E07,  0x6CB8,
+    0x6B68,  0x6A17,  0x68C4,  0x6770,
+    0x661A,  0x64C1,  0x6367,  0x620B,
+    0x60AD,  0x5F4C,  0x5DE9,  0x5C83,
+    0x5B1A,  0x59AE,  0x583E,  0x56CB,
+    0x5555,  0x53DB,  0x525C,  0x50D9,
+    0x4F51,  0x4DC5,  0x4C32,  0x4A9A,
+    0x48FC,  0x4757,  0x45AB,  0x43F7,
+    0x423A,  0x4075,  0x3EA5,  0x3CCB,
+    0x3AE5,  0x38F1,  0x36EF,  0x34DC,
+    0x32B7,  0x307D,  0x2E2B,  0x2BBD,
+    0x292E,  0x2678,  0x2391,  0x206C,
+    0x1CF6
+};
+
+u16 D_80096BAC[] = {
+    0x1CF6,  0x1CBB,  0x1C80,  0x1C45,
+    0x1C08,  0x1BCC,  0x1B8F,  0x1B51,
+    0x1B13,  0x1AD4,  0x1A95,  0x1A55,
+    0x1A14,  0x19D3,  0x1992,  0x194F,
+    0x190C,  0x18C9,  0x1884,  0x183F,
+    0x17F9,  0x17B3,  0x176B,  0x1723,
+    0x16DA,  0x1690,  0x1645,  0x15F9,
+    0x15AC,  0x155E,  0x150F,  0x14BE,
+    0x146D,  0x141A,  0x13C6,  0x1370,
+    0x1319,  0x12C1,  0x1267,  0x120B,
+    0x11AD,  0x114E,  0x10EC,  0x1088,
+    0x1022,  0xFB9,   0xF4D,   0xEDE,
+    0xE6C,   0xDF7,   0xD7D,   0xD00,
+    0xC7D,   0xBF4,   0xB66,   0xAD0,
+    0xA31,   0x989,   0x8D3,   0x80E,
+    0x734,   0x63D,   0x518,   0x39A
+};
+
+u16 D_80096C2C[] = {
+    0x39A, 0x31E, 0x28C, 0x1CD
+};
+
+s32 func_8007C2F0(s32 param1) {
+    s32 var3;
+    s32 var4;
+    s32 idx;
+    s32 var1;
+    s32 var2;
+    u16 *ptr;
+    
+    if (param1 >= 32736) {
+        var1 = 7;
+        var2 = 3;
+        ptr = &D_80096C2C[0];
+        param1 -= 32736;
+    } else if (param1 >= 30720) {
+        var1 = 31;
+        var2 = 5;
+        ptr = &D_80096BAC[0];
+        param1 -= 30720;
+    } else {
+        var1 = 511;
+        var2 = 9;
+        ptr = &D_80096B30[0];
+    }
+
+    idx = param1 >> var2;
+
+    var3 = ptr[idx];
+    var4 = ptr[idx + 1];
+
+    var3 -= ((var3 - var4) * (param1 & var1)) >> var2;
+
+    return var3;
+}
+
+u16 acos(s16 param1) {
+    s32 var1;
+
+    if (param1 >= 0) {
+        var1 = param1;
+    } else {
+        var1 = -param1;
+    }
+
+    var1 = func_8007C2F0(var1);
+
+    if (param1 < 0) {
+        var1 = 65535 - var1;
+    }
+
+    return var1;
+}
+
+s16 asin(s16 param1) {
+    s32 var1;
+
+    if (param1 >= 0) {
+        var1 = param1;
+    } else {
+        var1 = -param1;
+    }
+
+    var1 = func_8007C2F0(var1);
+
+    if (param1 >= 0) {
+        var1 = 32767 - var1;
+    } else {
+        var1 = var1 - 32768;
+    }
+
+    return var1;
+}

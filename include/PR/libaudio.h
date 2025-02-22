@@ -73,7 +73,8 @@ typedef u8      ALPan;
 #define AL_PAN_CENTER   64
 #define AL_PAN_LEFT     0
 #define AL_PAN_RIGHT    127
-#define AL_VOL_FULL     127
+#define _AL_VOL_FULL     127    /* SDK/internal value */
+#define AL_VOL_FULL      0x7fff /* But the game uses this mostly */
 #define AL_KEY_MIN      0
 #define AL_KEY_MAX      127
 #define AL_DEFAULT_FXMIX	0
@@ -113,7 +114,6 @@ typedef u8      ALPan;
 typedef struct ALLink_s {
     struct ALLink_s      *next;
     struct ALLink_s      *prev;
-    s32 var8; /* could be an address*/
 } ALLink;
 
 
@@ -413,30 +413,33 @@ Acmd    *alAudioFrame(Acmd *cmdList, s32 *cmdLen, s16 *outBuf, s32 outLen);
  * Audio Library event type definitions
  */
 enum ALMsg {
-    AL_SEQ_REF_EVT,	/* Reference to a pending event in the sequence. */
-    AL_SEQ_MIDI_EVT,
-    AL_SEQP_MIDI_EVT,
-    AL_TEMPO_EVT,
-    AL_SEQ_END_EVT,
-    AL_NOTE_END_EVT,
-    AL_SEQP_ENV_EVT,
-    AL_SEQP_META_EVT,
-    AL_SEQP_PROG_EVT,
-    AL_SEQP_API_EVT,
-    AL_SEQP_VOL_EVT,
-    AL_SEQP_LOOP_EVT,
-    AL_SEQP_PRIORITY_EVT,
-    AL_SEQP_SEQ_EVT,
-    AL_SEQP_BANK_EVT,
-    AL_SEQP_PLAY_EVT,
-    AL_SEQP_STOP_EVT,
-    AL_SEQP_STOPPING_EVT,
-    AL_TRACK_END,
-    AL_CSP_LOOPSTART,
-    AL_CSP_LOOPEND,
-    AL_CSP_NOTEOFF_EVT,
-    AL_TREM_OSC_EVT,
-    AL_VIB_OSC_EVT
+    /*0x00*/ AL_SEQ_REF_EVT,	/* Reference to a pending event in the sequence. */
+    /*0x01*/ AL_SEQ_MIDI_EVT,
+    /*0x02*/ AL_SEQP_MIDI_EVT,
+    /*0x03*/ AL_TEMPO_EVT,
+    /*0x04*/ AL_SEQ_END_EVT,
+    /*0x05*/ AL_NOTE_END_EVT,
+    /*0x06*/ AL_SEQP_ENV_EVT,
+    /*0x07*/ AL_SEQP_META_EVT,
+    /*0x08*/ AL_SEQP_PROG_EVT,
+    /*0x09*/ AL_SEQP_API_EVT,
+    /*0x0A*/ AL_SEQP_VOL_EVT,
+    /*0x0B*/ AL_SEQP_LOOP_EVT,
+    /*0x0C*/ AL_SEQP_PRIORITY_EVT,
+    /*0x0D*/ AL_SEQP_SEQ_EVT,
+    /*0x0E*/ AL_SEQP_BANK_EVT,
+    /*0x0F*/ AL_SEQP_PLAY_EVT,
+    /*0x10*/ AL_SEQP_STOP_EVT,
+    /*0x11*/ AL_SEQP_STOPPING_EVT,
+    /*0x12*/ AL_TRACK_END,
+    /*0x13*/ AL_CSP_LOOPSTART,
+    /*0x14*/ AL_CSP_LOOPEND,
+    /*0x15*/ AL_CSP_NOTEOFF_EVT,
+    /*0x16*/ AL_TREM_OSC_EVT,
+    /*0x17*/ AL_VIB_OSC_EVT,
+    /*0x18*/ AL_18_EVT,
+    /*0x19*/ AL_19_EVT,
+    /*0x1A*/ AL_1A_EVT
 };
 
 /*
@@ -661,9 +664,42 @@ typedef struct {
     u8                  priority;       /* priority for this chan           */
     u8                  vol;            /* current volume for this chan     */
     u8                  fxmix;          /* current fx mix for this chan     */
+    u8                  unk0b;
     u8                  sustain;        /* current sustain pedal state      */
-    f32                 pitchBend;      /* current pitch bend val in cents  */
+    u8 unk0d;
+    u8 unk0e;
+    u8 unk0f;
+    f32 unk10;
+    u8 unk14;
+    u8 unk15;
+    u8 unk16;
+    u8 unk17;
+    f32 pitchBend;      /* current pitch bend val in cents  */
+    ALMicroTime attackTime;
+    ALMicroTime decayTime;
+    ALMicroTime releaseTime;
+    u8 unk28;
+    u8 attackVolume;
+    u8 decayVolume;
+    s8 unk2b;
+    u8 tremType;
+    u8 tremRate;
+    u8 tremDepth;
+    u8 tremDelay;
+    u8 vibType;
+    u8 vibRate;
+    u8 vibDepth;
+    u8 vibDelay;
+    u8 unk34;
+    u8 unk35;
+    u8 unk36;
+    u8 unk37;
+    u8 unk38;
+    u8 unk39;
+    u8 unk3a;
+    u8 unk3b;
 } ALChanState;
+
 
 typedef struct ALSeq_s {
     u8          *base;                  /* ptr to start of sequence file   */
@@ -724,7 +760,7 @@ typedef struct {
 } ALSeqpConfig;
 
 typedef ALMicroTime   (*ALOscInit)(void **oscState,f32 *initVal, u8 oscType,
-                                   u8 oscRate, u8 oscDepth, u8 oscDelay);
+                                   u8 oscRate, u8 oscDepth, u8 oscDelay, u8 unk07);
 typedef ALMicroTime   (*ALOscUpdate)(void *oscState, f32 *updateVal);
 typedef void          (*ALOscStop)(void *oscState);
 

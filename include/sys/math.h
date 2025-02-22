@@ -3,6 +3,9 @@
 #ifndef _SYS_MATH_H
 #define _SYS_MATH_H
 
+#define M_PI_F    3.141592741f
+#define DEG_TO_RAD(deg)  ((deg) * M_PI_F / 180.0f)
+
 // typedef f32 MtxF[4][4];
 // For clarity:
 typedef struct {
@@ -61,5 +64,15 @@ s32 cos16(s16 theta);
 // theta: [-32768..32768) => [-pi..pi)
 // returns: [-65536..65536] => [-1..1]
 s32 sin16(s16 theta);
+
+f32 acosf(f32);
+f32 asinf(f32);
+
+f32 atan2f(f32 x, f32 z);
+
+u16 acos(s16);
+s16 asin(s16);
+
+f32 sinf(f32);
 
 #endif //_SYS_MATH_H

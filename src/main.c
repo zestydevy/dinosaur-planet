@@ -589,7 +589,7 @@ void func_initing_rumblepak(void) {
     osContStartQuery(0);
     osContGetQuery(0);
     osMotorInit(0, 0, 0);
-    func_800683E0(0);
+    _depth2Cents(0);
 }
 
 /*
