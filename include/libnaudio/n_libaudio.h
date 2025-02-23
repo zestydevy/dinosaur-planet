@@ -29,19 +29,6 @@ extern "C" {
 #include <PR/ultratypes.h>
 #include <PR/mbi.h>
 
-struct var8009c340 {
-	u8 surround;
-	u8 mono;
-	u8 headphone;
-	u8 unk03;
-};
-
-extern struct var8009c340 D_800BFE82;
-
-extern u8 D_800BFE86[2];
-extern u8 D_800BFE88[2];
-
-
 /*
  * Synthesis driver stuff
  */
@@ -164,6 +151,17 @@ typedef struct {
 } N_AL19Event;
 
 typedef struct {
+    u8 unk00;
+    f32 unk01;
+} N_AL1AEvent;
+
+typedef struct {
+    struct sndstate *sndstate;
+    s32 data;
+    ALBank *data2;
+} N_ALGenericEvent;
+
+typedef struct {
     s16                 	type;
     union {
         ALMIDIEvent     	midi;
@@ -179,6 +177,8 @@ typedef struct {
         N_ALOscEvent      	osc;
         N_AL18Event      	evt18;
 		N_AL19Event      	evt19;
+        N_AL1AEvent         evt1a;
+        N_ALGenericEvent    generic;
     } msg;
 } N_ALEvent;
 
@@ -335,13 +335,13 @@ void    n_alSeqpLoop(N_ALSeqPlayer *seqp, ALSeqMarker *start, ALSeqMarker *end, 
  */
 void    n_alCSPNew(N_ALCSPlayer *seqp, ALSeqpConfig *config);
 void    n_alCSPDelete(N_ALCSPlayer *seqp);
-u8	n_alCSPGetChlVol(N_ALCSPlayer *seqp, u8 chan);
+u8	    n_alCSPGetChlVol(N_ALCSPlayer *seqp, u8 chan);
 u8      n_alCSPGetChlFXMix(N_ALCSPlayer *seqp, u8 chan);
 ALPan   n_alCSPGetChlPan(N_ALCSPlayer *seqp, u8 chan);
 u8      n_alCSPGetChlPriority(N_ALCSPlayer *seqp, u8 chan);
 s32     n_alCSPGetChlProgram(N_ALCSPlayer *seqp, u8 chan);
-ALCSeq *n_alCSPGetSeq(N_ALCSPlayer *seqp);
-s32	n_alCSPGetState(N_ALCSPlayer *seqp);
+ALCSeq  *n_alCSPGetSeq(N_ALCSPlayer *seqp);
+s32	    n_alCSPGetState(N_ALCSPlayer *seqp);
 s32     n_alCSPGetTempo(N_ALCSPlayer *seqp);
 s16     n_alCSPGetVol(N_ALCSPlayer *seqp);
 void    n_alCSPPlay(N_ALCSPlayer *seqp);
@@ -356,6 +356,7 @@ void    n_alCSPSetSeq(N_ALCSPlayer *seqp, ALCSeq *seq);
 void    n_alCSPSetTempo(N_ALCSPlayer *seqp, s32 tempo);
 void    n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol);
 void    n_alCSPStop(N_ALCSPlayer *seqp);
+void    func_8006721C(N_ALCSPlayer *seqp, u8 arg1, f32 arg2);
 
 
 /*
@@ -374,7 +375,7 @@ typedef struct {
     ALMicroTime         curTime;
 } N_ALSndPlayer;
 
-void     n_alSndpNew(N_ALSndPlayer *sndp, ALSndpConfig *c);
+void     n_alSndpNew(ALSndpConfig *c);
 void     n_alSndpDelete(void);
 ALSndId  n_alSndpAllocate(ALSound *sound);
 void     n_alSndpDeallocate(ALSndId id);

@@ -1,9 +1,8 @@
-#include "common.h"
+// @DECOMP_OPT_FLAGS=-O1 -g2
+// @DECOMP_IDO_VERSION=7.1
+#include <PR/ultratypes.h>
+#include "libnaudio/n_synthInternals.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/n_cspgetchlvol/n_alCSPGetChlVol.s")
-
-void func_800672A0(void) {
-}
-
-void func_800672A8(void) {
+u8 n_alCSPGetChlVol(N_ALCSPlayer *seqp, u8 chan) {
+    return seqp->chanState[chan].vol;
 }

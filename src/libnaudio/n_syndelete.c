@@ -1,5 +1,8 @@
-#include "common.h"
+// @DECOMP_OPT_FLAGS=-O1 -g2
+// @DECOMP_IDO_VERSION=7.1
+#include <PR/ultratypes.h>
+#include "libnaudio/n_synthInternals.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/n_syndelete/n_alSynDelete.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/n_syndelete/noop_800694d4.s")
+void n_alSynDelete(void) {
+	n_syn->head = NULL;
+}

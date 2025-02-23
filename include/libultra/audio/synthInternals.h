@@ -105,6 +105,8 @@ typedef struct ALParam_s {
         f32             f;
         s32             i;
     } yetstillmoredata;
+    s32 unk1c;
+	s32 unk20;
 } ALParam;
 
 typedef struct {
@@ -177,7 +179,7 @@ s32     alLoadParam(void *filter, s32 paramID, void *param);
 
 typedef struct ALResampler_s {
     ALFilter            filter;
-    RESAMPLE_STATE      *state;
+    RESAMPLE_STATE      *state[2];
     f32                 ratio;
     s32			upitch;
     f32		        delta;
@@ -190,12 +192,13 @@ typedef struct ALResampler_s {
 typedef struct {
     s16		        fc;
     s16		        fgain;
+    s32             unk04;
     union {
         s16		fccoef[16];
         s64             force_aligned;
     } fcvec;
-    POLEF_STATE		*fstate;
     s32			first;
+    POLEF_STATE		*fstate[2];
 } ALLowPass;
 
 typedef struct {
@@ -214,13 +217,12 @@ typedef struct {
 
 typedef s32   (*ALSetFXParam)(void *, s32, void *);
 typedef struct {
-    struct ALFilter_s   filter;
-    s16			*base;
-    s16			*input;
     u32			length;
     ALDelay		*delay;
     u8			section_count;
-    ALSetFXParam        paramHdl;
+    struct ALFilter_s   filter;
+    s16			*base[2];
+    s16			*input[2];
 } ALFx;
 
 void    alFxNew(ALFx *r, ALSynConfig *c, ALHeap *hp);

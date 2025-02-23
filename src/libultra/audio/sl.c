@@ -1,9 +1,25 @@
-#include "common.h"
+// @DECOMP_OPT_FLAGS=-O1 -g2
+// @DECOMP_IDO_VERSION=7.1
+#include <PR/ultratypes.h>
+#include <PR/libaudio.h>
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/audio/sl/alLink.s")
+void alLink(ALLink *ln, ALLink *to) {
+	ln->next = to->next;
+	ln->prev = to;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/audio/sl/noop_80063a8c.s")
+	if (to->next) {
+		to->next->prev = ln;
+	}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/audio/sl/alUnlink.s")
+	to->next = ln;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/audio/sl/func_80063ACC.s")
+void alUnlink(ALLink *ln) {
+	if (ln->next) {
+		ln->next->prev = ln->prev;
+	}
+
+	if (ln->prev) {
+		ln->prev->next = ln->next;
+	}
+}

@@ -3,6 +3,7 @@
 #include <PR/ultratypes.h>
 #include <PR/os.h>
 #include "libnaudio/n_synthInternals.h"
+#include "sys/audio/speaker.h"
 
 #define N_EQPOWER_LENGTH 128
 

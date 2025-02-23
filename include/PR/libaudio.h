@@ -301,8 +301,8 @@ typedef struct {
     void                *dmaproc;
     ALHeap              *heap;
     s32                 outputRate;     /* output sample rate */
-    ALFxId              fxType;
-    s32                 *params;
+    ALFxId              fxTypes[4];
+    s32                 *params[2];
 } ALSynConfig;
 
 typedef struct ALPlayer_s {
@@ -404,6 +404,10 @@ Acmd    *alAudioFrame(Acmd *cmdList, s32 *cmdLen, s16 *outBuf, s32 outLen);
 #define AL_STOPPED      0
 #define AL_PLAYING      1
 #define AL_STOPPING     2
+#define AL_STATE3   3
+#define AL_STATE4   4
+#define AL_STATE5   5
+#define AL_STARTING 6
 
 #define AL_DEFAULT_PRIORITY     5
 #define AL_DEFAULT_VOICE        0
@@ -931,9 +935,11 @@ void    alCSPSendMidi(ALCSPlayer *seqp, s32 ticks, u8 status,
  ***********************************************************************/
 
 typedef struct {
-    s32         maxSounds;
+    s32         maxStates;
     s32         maxEvents;
+    s32         maxSounds;
     ALHeap      *heap;
+    u16         unk10;
 } ALSndpConfig;
 
 typedef struct {
