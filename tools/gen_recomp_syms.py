@@ -67,6 +67,7 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             value = sym.entry["st_value"]
             size = sym.entry["st_size"]
             st_shndx = sym.entry["st_shndx"]
+            st_info_type = sym.entry["st_info"]["type"]
 
             if sym.name.startswith("L8"):
                 continue
@@ -92,11 +93,9 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
                 pass
             elif value >= text_end:
                 # Data
-                if st_shndx != "SHN_ABS":
-                    continue
-
-                data_global = { "name": sym.name, "vram": value }
-                data_globals.append(data_global)
+                if (st_info_type == "STT_NOTYPE" and st_shndx == "SHN_ABS") or (st_info_type == "STT_OBJECT"):
+                    data_global = { "name": sym.name, "vram": value }
+                    data_globals.append(data_global)
     
     # Add any functions defined in the hacks table that wasn't found in the .elf
     for (vram, hack) in FUNCTION_DEF_HACKS.items():
@@ -105,7 +104,9 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             funcs.append(func)
             print("Adding manual function definition {} @ 0x{:X} with size 0x{:X}".format(hack["name"], vram, hack["size"]))
     
+    # Sort
     funcs.sort(key=lambda f : f["vram"])
+    data_globals.sort(key=lambda f : f["vram"])
     
     # Write function symbols
     syms_toml.write("[[section]]\n")
