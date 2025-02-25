@@ -68,6 +68,8 @@ Please see the [docs](./docs) directory for project documentation such as:
 - [an introductory guide to decomp](./docs/Guide.md)
 - and more!
 
+Also check out the [Dinosaur Planet directory on wiki.decomp.dev](https://wiki.decomp.dev/en/projects/nintendo-64/dinosaur-planet) for technical documentation about the game itself.
+
 ### Tools
 The repository comes with a bunch of tools for decompilation and managing the repository:
 - `dino.py` - An all in one script for working with the repository. Some of the common commands:
