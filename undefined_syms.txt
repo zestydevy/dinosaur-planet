@@ -29,6 +29,7 @@ gStrUnknownTaskType = 0x8009a060;
 __osBaseTimer = 0x800cee90;
 piThreadStack = 0x800CD840;
 piRamRomThreadStack = 0x800CE9F0;
+gMapStreamMapIDTable = 0x800b972c;
 
 __fstAddress = 0xA4970;
 __file1Address = 0xA4AA0;

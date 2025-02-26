@@ -15,9 +15,10 @@ options:
   mnemonic_ljust: 11
   # Use .o instead of .bin.o suffix in linker script
   o_as_suffix: True
+  mips_abi_float_regs: o32
 
 segments:
-  - [0x000000, bin, header]
+  - [0x000000, header]
   - [0x000040, bin, boot]
   - name: segment
     type: code
@@ -348,7 +349,7 @@ segments:
     - [0xA4550, bin, ucode_gspF3DEX2_xbusData]
     - [0xA4970, bin]
     
-    - [0xA69B8] # bss vram start: 0x800A5DB8
+    - [0xA69B8] # bss vram start: 0x800A5DB8 ?
     - [auto, all_bss]
 
   - type: code
