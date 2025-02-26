@@ -1,23 +1,21 @@
-ansiwrap
-argcomplete
+# dinosaur-planet
 capstone
-colorama
-cxxfilt
 GitPython
-intervaltree
-n64img>=0.1.2
 ninja
 pycparser>=2.21
 pyelftools
-pygfxd
 pylibyaml
-pypng
-python-Levenshtein
-python-ranges
 PyYAML
-rabbitizer
-spimdisasm>=1.2.1
-textwrap3
-tqdm
-toml
+
+# asm-differ
+argcomplete
+colorama
 watchdog
+python-Levenshtein
+
+# decomp_permuter
+pycparser
+toml
+
+# splat
+-r tools/splat/requirements.txt
