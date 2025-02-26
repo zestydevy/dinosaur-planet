@@ -10,8 +10,9 @@ PyYAML
 # asm-differ
 argcomplete
 colorama
+cxxfilt
 watchdog
-python-Levenshtein
+levenshtein
 
 # decomp_permuter
 pycparser
