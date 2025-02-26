@@ -24,6 +24,7 @@ segments:
     type: code
     start: 0x1000
     vram: 0x80000400
+    bss_size: 0x30600
     subalign: 16
     subsegments:
     
@@ -349,8 +350,7 @@ segments:
     - [0xA4550, bin, ucode_gspF3DEX2_xbusData]
 
     # bss
-    - [0xA4970]
-    - [auto, all_bss] # bss vram start: 0x800A3D70 ?
+    # vram start: 0x800a3d70
 
   - type: code
     start: 0xA4970

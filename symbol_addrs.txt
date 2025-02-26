@@ -1326,7 +1326,7 @@ clear_framebuffer_current = 0x800630D4; // type:func
 gPiManagerEventQueue = 0x800bfd58; // type:data size:0x18
 gPiManagerEventQueueBuffer = 0x800bfd70; // type:data size:0x20
 gPiManagerCmdQueueBuffer = 0x800bfd90; // type:data size:0x18
-gPiManagerCmdQueue = 0x800bfdb0; // type:data size:0x20
+gPiManagerCmdQueue = 0x800bfdb0; // type:data size:0x18
 
 gIgnoreJoystick = 0x8008C8B0; // type:data size:0x1
 gApplyContInputs = 0x800A7DB1; // type:data size:0x1
