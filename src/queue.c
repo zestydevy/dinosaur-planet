@@ -8,7 +8,16 @@ extern UnkStructAssetThreadSingle gAssetThreadQueueData[100];
 
 extern u8 D_800AE240;
 
+extern struct AssetLoadThreadMsg D_800ACB60[1];
+extern struct AssetLoadThreadMsg D_800ACB80[5];
+extern struct AssetLoadThreadMsg D_800ACBB0[1];
+
+// pad to 0x800ad6c0
+static u8 _bss_pad[0x7908]; // TODO: remove bss padding
+
 void func_80012A4C();
+void asset_thread_load_single(void);
+void asset_thread_load_asset(struct AssetLoadThreadMsg *load);
 
 void create_asset_thread(void) {
     gDisableObjectStreamingFlag = 0;
@@ -209,20 +218,14 @@ void func_80012A4C(void) {
     }
 }
 
-// TODO: struct
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012B54.s")
-#else
-// these two are probably static to func_80012B54
-extern UnkStructAssetThreadSingle D_800AD6D0[100];
-extern GenericQueue D_800AD6C0;
+void func_80012B54(s32 param1, s32 param2) {
+    static GenericQueue D_800AD6C0;
+    static UnkStructAssetThreadSingle D_800AD6D0[100];
 
-void _func_80012B54(s32 param1, s32 param2) {
     UnkStructAssetThreadSingle elementTemp;
     s32 statusReg;
-    GenericQueue* test;
-    
-    test = &D_800AD6C0;
+    UnkStructAssetThreadSingle *ptr;
+    UnkStructAssetThreadSingle_0x8 *ptr_unk8;
     
     statusReg = func_with_status_reg();
 
@@ -232,26 +235,25 @@ void _func_80012B54(s32 param1, s32 param2) {
     generic_queue_init(&D_800AD6C0, (void*)&D_800AD6D0, 100, sizeof(UnkStructAssetThreadSingle));
 
     while (!generic_queue_is_empty(gAssetThreadQueue)) {
-        generic_queue_dequeue(gAssetThreadQueue, &elementTemp);
+        ptr = &elementTemp;
+        generic_queue_dequeue(gAssetThreadQueue, ptr);
         
-        if (param1 != elementTemp.unk0) {
-            generic_queue_enqueue(&D_800AD6C0, &elementTemp);
-        } else if (param1 == 4) {
-            // helps with regalloc
-            if (elementTemp.unk8->unk0x14) { }
-           
-            if (param2 != elementTemp.unk8->unk0x14) {
-                generic_queue_enqueue(&D_800AD6C0, &elementTemp);
+        if (param1 != ptr->unk0) {
+            generic_queue_enqueue(&D_800AD6C0, ptr);
+        } else {
+            ptr_unk8 = ptr->unk8;
+            if (param1 == 4 && ptr_unk8->unk0x14 != param2) {
+                generic_queue_enqueue(&D_800AD6C0, ptr);
             }
         }
     }
 
-    gAssetThreadQueue->count = test->count;
-    gAssetThreadQueue->top = test->top;
-    gAssetThreadQueue->bottom = test->bottom;
-    gAssetThreadQueue->unk0x6 = test->unk0x6;
+    gAssetThreadQueue->count = D_800AD6C0.count;
+    gAssetThreadQueue->top = D_800AD6C0.top;
+    gAssetThreadQueue->bottom = D_800AD6C0.bottom;
+    gAssetThreadQueue->unk0x6 = D_800AD6C0.unk0x6;
 
-    bcopy(test->data, gAssetThreadQueue->data, test->capacity * sizeof(UnkStructAssetThreadSingle));
+    bcopy(D_800AD6C0.data, gAssetThreadQueue->data, D_800AD6C0.capacity * sizeof(UnkStructAssetThreadSingle));
 
     if (D_800AE29D != 0 && param1 == D_800AE29E) {
         set_status_reg(statusReg);
@@ -265,7 +267,6 @@ void _func_80012B54(s32 param1, s32 param2) {
 
     set_status_reg(statusReg);
 }
-#endif
 
 // FIXME: should be a different name?
 void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5) {
@@ -288,26 +289,13 @@ void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 pa
     set_status_reg(statusReg);
 }
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/asset_thread_main.s")
-#else
-extern struct AssetLoadThreadMsg D_800ACB60[1];
-extern struct AssetLoadThreadMsg D_800ACB80[5];
-extern struct AssetLoadThreadMsg D_800ACBB0[1];
-
-void asset_thread_load_single(void);
-void asset_thread_load_asset(struct AssetLoadThreadMsg *load);
-
 void asset_thread_main(void *arg) {
-    struct AssetLoadThreadMsg *msg;
+    OSMesg *msg;
     s32 statusReg;
-    u8 one;
+    struct AssetLoadThreadMsg *msg2;
 
     D_800AE29D = 0;
     D_800AE29E = 0;
-
-    one = 1;
 
     osCreateMesgQueue(&assetLoadThreadSendQueue, &D_800ACB60, 1);
     osCreateMesgQueue(&D_800ACB68, &D_800ACB80, 5);
@@ -316,10 +304,16 @@ void asset_thread_main(void *arg) {
     while (1) {
         osRecvMesg(&assetLoadThreadSendQueue, &msg, OS_MESG_BLOCK);
 
-        if (msg->loadCategory == 0 || (one != msg->loadCategory && 0)) {
-            asset_thread_load_single();
-        } else {
-            asset_thread_load_asset(msg);
+        msg2 = (struct AssetLoadThreadMsg *)msg;
+
+        switch (msg2->loadCategory) {
+            case 0:
+                asset_thread_load_single();
+                break;
+            case 1:
+            default:
+                asset_thread_load_asset(msg2);
+                break;
         }
 
         statusReg = func_with_status_reg();
@@ -327,7 +321,6 @@ void asset_thread_main(void *arg) {
         set_status_reg(statusReg);
     }
 }
-#endif
 
 void asset_thread_load_single(void) {
     UnkStructAssetThreadSingle sp2C;

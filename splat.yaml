@@ -358,7 +358,7 @@ segments:
     - [0xA4550, bin, ucode_gspF3DEX2_xbusData]
     - [0xA4970, bin]
     
-    - [0xA69B8]
+    - [0xA69B8] # bss vram start: 0x800A5DB8
     - [auto, all_bss]
 
   - type: code
