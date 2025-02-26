@@ -414,8 +414,8 @@ segments:
     - [0x1FD9B24, bin, assets/ANIMCURV_tab]
     - [0x1FE8EFC, bin, assets/OBJSEQ2C_tab]
     - [0x1FE9EFE, bin, assets/FONTS]
-    - [0x1FED382, bin, assets/CACHEFON]
-    - [0x1FED382, bin, assets/CACHEFON2]
+    # - [0x1FED382, bin, assets/CACHEFON] # TODO: zero size?
+    # - [0x1FED382, bin, assets/CACHEFON2] # TODO: zero size?
     - [0x1FED382, bin, assets/GAMETEXT]
     - [0x1FFE340, bin, assets/GAMETEXT_tab]
     - [0x2002AD8, bin, assets/globalma]
@@ -455,7 +455,7 @@ segments:
     - [0x37DE966, bin, assets/BITTABLE]
     - [0x37E0DE6, bin, assets/WEAPONDATA]
     - [0x37E3C1E, bin, assets/VOXOBJ_tab]
-    - [0x37E3C26, bin, assets/VOXOBJ]
+    # - [0x37E3C26, bin, assets/VOXOBJ] # TODO: zero size?
     - [0x37E3C26, bin, assets/MODLINES]
     - [0x37E5586, bin, assets/MODLINES_tab]
     - [0x37E6E2E, bin, assets/SAVEGAME_tab]
