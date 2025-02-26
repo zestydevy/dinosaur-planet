@@ -11,6 +11,7 @@ COPY packages.txt ./
 RUN apt-get update && apt-get install -y $(cat packages.txt) && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
+COPY tools/splat/requirements.txt tools/splat/
 RUN pip3 install -r requirements.txt --break-system-packages
 
 # Symlink dino.py
