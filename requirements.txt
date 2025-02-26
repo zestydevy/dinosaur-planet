@@ -5,6 +5,7 @@ colorama
 cxxfilt
 GitPython
 intervaltree
+n64img>=0.1.2
 ninja
 pycparser>=2.21
 pyelftools

@@ -90,9 +90,7 @@ class DinoCommandRunner:
 
         # Run splat
         args = [
-            "python3", str(SPLIT_PY), 
-            "--target", "baserom.z64", 
-            "--basedir", str(SCRIPT_DIR),
+            "python3", str(SPLIT_PY)
         ]
 
         if self.verbose:
