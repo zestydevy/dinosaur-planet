@@ -13,7 +13,7 @@ extern struct AssetLoadThreadMsg D_800ACB80[5];
 extern struct AssetLoadThreadMsg D_800ACBB0[1];
 
 // pad to 0x800ad6c0
-static u8 _bss_pad[0x7900]; // TODO: remove bss padding
+static u8 _bss_pad[0x9950]; // TODO: remove bss padding
 
 void func_80012A4C();
 void asset_thread_load_single(void);
