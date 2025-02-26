@@ -16,6 +16,7 @@ options:
   # Use .o instead of .bin.o suffix in linker script
   o_as_suffix: True
   mips_abi_float_regs: o32
+  detect_redundant_function_end: False
 
 segments:
   - [0x000000, header]
