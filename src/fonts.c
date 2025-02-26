@@ -2,7 +2,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fonts/init_fonts.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fonts/func_8000CAF0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fonts/MusFxBankSetCurrent.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fonts/func_8000CB00.s")
 

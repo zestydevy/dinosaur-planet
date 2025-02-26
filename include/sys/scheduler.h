@@ -66,9 +66,6 @@ extern char D_8009A2FC[]; // "TRACE:  %s:%5d    gfx=%x\n"
 extern char D_8009A318[]; // "CODE: Version %s  %s  %s\n"
 extern char D_8009A334[]; // "DB:   %s\n"
 
-extern f32 D_8009A340;
-extern f32 D_8009A344;
-
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 

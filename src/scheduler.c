@@ -89,7 +89,7 @@ OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
 }
 
 void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
-    f32 temp = D_8009A340;
+    f32 temp = 1.15f;
 
     *timer0 = floatTimer0 * temp;
     *timer1 = floatTimer2 * temp;
@@ -558,7 +558,7 @@ void __scHandleRSP(OSSched *sc) {
     if (t->list.t.type == M_AUDTASK) {
         countRegB = osGetCount();
 
-        floatTimer3 = ((countRegB - countRegA) * 60.0f) / D_8009A344;
+        floatTimer3 = ((countRegB - countRegA) * 60.0f) / 468750.0f;
         floatTimer1 += floatTimer3;
 
         if (floatTimer3 > floatTimer0) {

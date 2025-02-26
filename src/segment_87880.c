@@ -118,6 +118,6 @@ int __rmonGetThreadStatus(s32 arg0, s32 arg1, UnkStruct_rmonGetThreadStatus_arg2
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/func_80087818.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/spin.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonSetComm.s")

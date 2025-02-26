@@ -3,9 +3,10 @@
 #include "libultra/io/viint.h"
 #include "libultra/os/osint.h"
 
-extern s32 __additional_scanline;
-
+s32 D_800930B0 = 0;
 OSDevMgr __osViDevMgr = {0};
+s32 __additional_scanline = 0;
+
 // all these were static
 OSThread viThread;
 unsigned char viThreadStack[OS_VIM_STACKSIZE];

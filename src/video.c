@@ -1,5 +1,9 @@
 #include "common.h"
 
+// TODO: This is part of a larger data structure and is only here to allow the current .data section
+// for this file to be aligned correctly!
+u8 D_80092ff0[] = { 0x07, 0xb1, 0x04, 0x03, 0x07, 0xb1, 0x00, 0x00 };
+
 UnkHeapVidStruct *D_800BCC10;
 UnkVidStruct2 D_800BCC18[4]; // size:0x50
 
@@ -171,6 +175,7 @@ void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
 #endif
 
 static s32 D_80092FFC = 1;
+static s32 D_80093000 = 0;
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
