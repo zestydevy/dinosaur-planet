@@ -1,4 +1,5 @@
 from typing import Any, TextIO
+import pylibyaml
 import yaml
 
 class DLLBuildConfig:
