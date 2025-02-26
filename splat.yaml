@@ -1,6 +1,5 @@
 name: Dinosaur Planet
-crc1: D0F6A741
-crc2: 7D57761E
+sha1: cb9760b49198f7b754593a01c8ed642211caacde
 options:
   basename: dino
   compiler: IDO
