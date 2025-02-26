@@ -356,7 +356,7 @@ segments:
 
   - type: code
     start: 0xA4970
-    subalign: 0
+    subalign: null
     subsegments:
     - [0xA4970, bin, assets/FS_tab]
 
