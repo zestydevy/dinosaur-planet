@@ -17,6 +17,8 @@ options:
   o_as_suffix: True
   mips_abi_float_regs: o32
   detect_redundant_function_end: False
+  # TODO: remove need for
+  ld_legacy_generation: True
 
 segments:
   - [0x000000, header]
