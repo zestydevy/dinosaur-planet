@@ -137,6 +137,7 @@ def search_map(rom_addr):
                 ram_offset is None
                 or "=" in line
                 or "*fill*" in line
+                or "FILL" in line
                 or " 0x" not in line
             ):
                 continue
