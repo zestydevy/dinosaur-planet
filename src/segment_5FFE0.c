@@ -1,6 +1,6 @@
 #include "common.h"
 
-char *strcpy_2(char *dest, char *src) {
+char *strcpy(char *dest, char *src) {
     char *start = dest;
 
     while ((*(dest++) = *(src++)) != '\0') { }

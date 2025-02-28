@@ -1,19 +1,19 @@
 // @DECOMP_OPT_FLAGS=-O1
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonMaskIdleThreadInts.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonMaskIdleThreadInts.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonGetTCB.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonGetTCB.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonStopUserThreads.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonStopUserThreads.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonListThreads.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonListThreads.s")
 
 /* Uses g0*/
 /* gets loads of warnings about pointers and integers, but it matches so it should be fine*/
 /* one error is OSThread->OSThreadContext.pc is a void pointer, so we've gotta figure that out*/
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonGetThreadStatus.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonGetThreadStatus.s")
 #else
 
 extern u8 __rmonRcpAtBreak;
@@ -108,16 +108,8 @@ int __rmonGetThreadStatus(s32 arg0, s32 arg1, UnkStruct_rmonGetThreadStatus_arg2
 
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonThreadStatus.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonThreadStatus.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonStopThread.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonStopThread.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonRunThread.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonSetFault.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonInit.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/spin.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_87880/__rmonSetComm.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmontask/__rmonRunThread.s")

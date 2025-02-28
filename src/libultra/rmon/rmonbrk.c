@@ -8,7 +8,7 @@ extern s32* rmonbrk_bss_0000[32]; /* size may be wrong, element 32 referenced in
 extern s32* rmonbrk_bss_0088[32]; /* size may be wrong, element 32 referenced in __rmonSetBreak */
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/SetTempBreakpoint.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/SetTempBreakpoint.s")
 #else
 extern s32* D_800D3E60;
 extern s32 D_800D3E64;
@@ -30,7 +30,7 @@ void SetTempBreakpoint(s32* arg0, s32* arg1) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/ClearTempBreakpoint.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/ClearTempBreakpoint.s")
 #else
 extern s32* D_800D3E60;
 extern s32 D_800D3E64;
@@ -60,7 +60,7 @@ void ClearTempBreakpoint(void) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonSetBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonSetBreak.s")
 #else
 int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
     register UnkStruct__rmonSetBreak* copy_arg0 = arg0;
@@ -131,7 +131,7 @@ int __rmonSetBreak(UnkStruct__rmonSetBreak* arg0) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonListBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonListBreak.s")
 #else
 /* Must be unused*/
 int __rmonListBreak(s32 arg0) {
@@ -140,7 +140,7 @@ int __rmonListBreak(s32 arg0) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonClearBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonClearBreak.s")
 #else
 int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
     register UnkStruct__rmonSetBreak* copy_arg0;
@@ -198,10 +198,10 @@ int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonGetBranchTarget.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonGetBranchTarget.s")
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/IsJump.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/IsJump.s")
 #else
     
     int IsJump(u32 arg0) {
@@ -226,7 +226,7 @@ int __rmonClearBreak(UnkStruct__rmonSetBreak* arg0) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonSetSingleStep.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonSetSingleStep.s")
 #else
 int __rmonSetSingleStep(s32 arg0, s32* arg1) {
     s32 sp1C;
@@ -253,7 +253,7 @@ int __rmonSetSingleStep(s32 arg0, s32* arg1) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonGetExceptionStatus.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonGetExceptionStatus.s")
 #else
 
 void __rmonGetExceptionStatus(UnkStruct_rmonGetExceptionStatus* arg0) {
@@ -271,7 +271,7 @@ void __rmonGetExceptionStatus(UnkStruct_rmonGetExceptionStatus* arg0) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/rmonSendBreakMessage.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/rmonSendBreakMessage.s")
 #else
 void rmonSendBreakMessage(s32* arg0, s32 arg1) {
    
@@ -322,7 +322,7 @@ void rmonSendBreakMessage(s32* arg0, s32 arg1) {
 
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonHitBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonHitBreak.s")
 #else
 
 void __rmonHitBreak(void) {
@@ -334,7 +334,7 @@ void __rmonHitBreak(void) {
 
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonHitSpBreak.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonHitSpBreak.s")
 #else
 extern s8 __rmonRcpAtBreak;
 void __rmonHitSpBreak(void) {
@@ -351,7 +351,7 @@ void __rmonHitSpBreak(void) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/__rmonHitCpuFault.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/__rmonHitCpuFault.s")
 #else
 void __rmonHitCpuFault(void) {
         __rmonMaskIdleThreadInts();
@@ -361,7 +361,7 @@ void __rmonHitCpuFault(void) {
 #endif
 
 #if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_89080/rmonFindFaultedThreads.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/rmon/rmonbrk/rmonFindFaultedThreads.s")
 #else
 void rmonFindFaultedThreads() {
 
