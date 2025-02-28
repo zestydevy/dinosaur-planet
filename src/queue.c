@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/interrupt_util.h"
 
 extern GenericStack gAssetThreadStackInternal;
 extern AssetThreadStackElement gAssetThreadStackData[5];
@@ -49,9 +50,9 @@ void func_80012584(
         s32 param7,
         s32 param8) {
     UnkStructAssetThreadSingle element;
-    s32 statusReg;
+    s32 prevIE;
 
-    statusReg = func_with_status_reg();
+    prevIE = interrupts_disable();
 
     if (!generic_queue_is_full(gAssetThreadQueue)) {
         element.unk0 = param2;
@@ -65,7 +66,7 @@ void func_80012584(
         generic_queue_enqueue(gAssetThreadQueue, &element);
     }
 
-    set_status_reg(statusReg);
+    interrupts_enable(prevIE);
 }
 
 void queue_alloc_load_file(void **dest, s32 fileId) {
@@ -169,9 +170,9 @@ void map_set_object_streaming_disabled(u32 arg0) {
 
 void func_800129E4() {
     s32 temp;
-    s32 statusReg;
+    s32 prevIE;
 
-    statusReg = func_with_status_reg();
+    prevIE = interrupts_disable();
 
     func_80012A4C();
 
@@ -182,7 +183,7 @@ void func_800129E4() {
         osSendMesg(&assetLoadThreadSendQueue, &D_800AE240, OS_MESG_NOBLOCK);
     }
 
-    set_status_reg(statusReg);
+    interrupts_enable(prevIE);
 }
 
 void func_80012A4C(void) {
@@ -223,11 +224,11 @@ void func_80012B54(s32 param1, s32 param2) {
     static UnkStructAssetThreadSingle D_800AD6D0[100];
 
     UnkStructAssetThreadSingle elementTemp;
-    s32 statusReg;
+    s32 prevIE;
     UnkStructAssetThreadSingle *ptr;
     UnkStructAssetThreadSingle_0x8 *ptr_unk8;
     
-    statusReg = func_with_status_reg();
+    prevIE = interrupts_disable();
 
     func_80012A4C();
 
@@ -256,24 +257,24 @@ void func_80012B54(s32 param1, s32 param2) {
     bcopy(D_800AD6C0.data, gAssetThreadQueue->data, D_800AD6C0.capacity * sizeof(UnkStructAssetThreadSingle));
 
     if (D_800AE29D != 0 && param1 == D_800AE29E) {
-        set_status_reg(statusReg);
+        interrupts_enable(prevIE);
 
         osRecvMesg(&D_800ACB68, NULL, OS_MESG_BLOCK);
 
-        statusReg = func_with_status_reg();
+        prevIE = interrupts_disable();
 
         func_80012A4C();
     }
 
-    set_status_reg(statusReg);
+    interrupts_enable(prevIE);
 }
 
 // FIXME: should be a different name?
 void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5) {
-    s32 statusReg;
+    s32 prevIE;
     AssetThreadStackElement element;
 
-    statusReg = func_with_status_reg();
+    prevIE = interrupts_disable();
 
     if ((gAssetThreadStack->count + 1) != gAssetThreadStack->capacity) { // !is_stack_empty
         element.unk0 = (u8)param1;
@@ -286,12 +287,12 @@ void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 pa
         generic_stack_push(gAssetThreadStack, &element);
     }
 
-    set_status_reg(statusReg);
+    interrupts_enable(prevIE);
 }
 
 void asset_thread_main(void *arg) {
     OSMesg *msg;
-    s32 statusReg;
+    s32 prevIE;
     struct AssetLoadThreadMsg *msg2;
 
     D_800AE29D = 0;
@@ -316,18 +317,18 @@ void asset_thread_main(void *arg) {
                 break;
         }
 
-        statusReg = func_with_status_reg();
+        prevIE = interrupts_disable();
         D_800AE29D = 0;
-        set_status_reg(statusReg);
+        interrupts_enable(prevIE);
     }
 }
 
 void asset_thread_load_single(void) {
     UnkStructAssetThreadSingle sp2C;
-    s32 statusReg;
+    s32 prevIE;
     s32 tmp;
 
-    statusReg = func_with_status_reg();
+    prevIE = interrupts_disable();
 
     if (!generic_queue_is_empty(gAssetThreadQueue)) {
         generic_queue_dequeue(gAssetThreadQueue, &sp2C);
@@ -335,7 +336,7 @@ void asset_thread_load_single(void) {
         D_800AE29D = 1;
         D_800AE29E = sp2C.unk0;
 
-        set_status_reg(statusReg);
+        interrupts_enable(prevIE);
 
         switch (sp2C.unk0) {
             case 5:
@@ -364,7 +365,7 @@ void asset_thread_load_single(void) {
         return;
     }
 
-    set_status_reg(statusReg);
+    interrupts_enable(prevIE);
 }
 
 void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {

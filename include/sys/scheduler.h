@@ -51,21 +51,6 @@ extern s32 gRetraceCounter32;
 extern s32 gCurRSPTaskCounter;
 extern s32 gCurRDPTaskCounter;
 
-extern char gStrAudioTask[];        // "(Audio task)"
-extern char gStrGameTask[];         // "(Game task)"
-extern char gStrDITask[];           // "(DI task)\n"
-extern char gStrDIBenchmarkTest[];  // "(DI benchmark test)\n"
-extern char gStrUnknownTaskType[];  // "(Unknown task type)\n"
-
-extern char D_8009A280[]; // "SP CRASHED, gfx=%x\n"
-extern char D_8009A294[]; // "TRACE:  %s:%d    gfx=%x\n"
-extern char D_8009A2B0[]; // "TRACE:  %s:%d    gfx=%x\n"
-extern char D_8009A2CC[]; // "DP CRASHED, gfx=%x\n"
-extern char D_8009A2E0[]; // "TRACE:  %s:%5d    gfx=%x\n"
-extern char D_8009A2FC[]; // "TRACE:  %s:%5d    gfx=%x\n"
-extern char D_8009A318[]; // "CODE: Version %s  %s  %s\n"
-extern char D_8009A334[]; // "DB:   %s\n"
-
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 

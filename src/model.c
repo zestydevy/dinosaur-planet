@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/rarezip.h"
 
 #define ALIGN8(a) (((u32) (a) & ~0x7) + 0x8)
 #define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
@@ -50,7 +51,6 @@ extern s32 gNumFreeModelSlots;
 extern s32 *gFreeModelSlots;
 extern ModelSlot *gLoadedModels;
 void model_destroy(Model *model);
-u32 read_le32(u32 *p);
 s32 model_load_anim_remap_table(s32 id, s32 param_2, s32 param_3);
 ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
 u32 modanim_load(Model *model, u32 id, void *modanim);
@@ -58,7 +58,6 @@ Texture *texture_load(s32 id);
 void func_800186CC(Model *model);
 void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
 u32 align_8(u32 a0);
-void inflate(void *src, void *dest);
 ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 {
     s32 slot;
@@ -135,7 +134,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     unk_0x4 = header->unk_0x4;
     unk_0x2_aligned = align_8(header->unk_0x2);
     unk_0x68 = unk_0x2_aligned + 0x90;
-    uncompressedSize = read_le32(&header->uncompressedSize);
+    uncompressedSize = rarezip_uncompress_size(&header->uncompressedSize);
     modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
     modelSize += uncompressedSize + 500;
 
@@ -154,7 +153,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 
     // In order to save memory, load compressed data into the latter portion of the output buffer,
     // then decompress it in-place.
-    // We must pray that inflate does not overrun its input stream.
+    // We must pray that rarezip_uncompress does not overrun its input stream.
     compressedData = (u8*)model + modelSize - loadSize - 0x10;
     if ((s32)compressedData < 0) {
         // Align to 16 bytes
@@ -166,7 +165,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     }
 
     read_file_region(MODELS_BIN, compressedData, offset, loadSize);
-    inflate(compressedData + 8, model);
+    rarezip_uncompress(compressedData + 8, model);
 
     // Convert offsets to pointers
     model->textures = (ModelTexture*)((u32)model->textures + (u32)model);
@@ -514,8 +513,6 @@ void _model_destroy(Model *model)
 #else
 extern f32 gWorldX;
 extern f32 gWorldZ;
-void matrix_prescale_y(MtxF *mf, f32 scale);
-void func_80015BB8(s16 theta, MtxF *mf);
 typedef s16 (*ActorDLLFunc0x20)(TActor *actor);
 void _func_8001943C(TActor *actor, MtxF *mf, f32 yPrescale)
 {
@@ -545,7 +542,7 @@ void _func_8001943C(TActor *actor, MtxF *mf, f32 yPrescale)
         if (actor->unk0x46 == 0x427) {
             ActorDLLFunc0x20 func = *(ActorDLLFunc0x20*)((u8*)*actor->dll + 0x20);
             s16 theta = func(actor);
-            func_80015BB8(theta, mf);
+            matrix_from_yaw(theta, mf);
         }
 
         if (yPrescale != 1.0f) {

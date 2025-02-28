@@ -1,7 +1,5 @@
 #include "common.h"
 
-// Definitely something like rand_i2
-int func_800155C4(int min, int max);
 void func_8005324C(u16 *fb1, u16 *fb2, s32);
 
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
@@ -605,8 +603,8 @@ void _func_80040920(u16 *tex, s32 width, s32 height, int count) {
 
     if (count > 0) {
         do {
-            offset1 = func_800155C4(0, width);
-            offset2 = func_800155C4(0, height);
+            offset1 = rand_next(0, width);
+            offset2 = rand_next(0, height);
             // Sets alpha to 0
             tex[offset2 * width + offset1] &= 0xFFFFFFFE;
         } while (++i != count);
@@ -633,7 +631,7 @@ void _func_80040A04(u16 *tex, s32 width, s32 height, int count) {
 
     if (count > 0) {
         do {
-            offset = func_800155C4(0, height) * width;
+            offset = rand_next(0, height) * width;
             // Sets alpha to 0
             tex[offset] &= 0xFFFFFFFE;
         } while (++i != count);
@@ -651,7 +649,7 @@ void _func_80040A94(u16 *tex, int width, int height, int count) {
     if (count > 0) {
         do {
             // Sets alpha to 0
-            tex[width + (func_800155C4(0, height) * width)] &= 0xFFFFFFFE;
+            tex[width + (rand_next(0, height) * width)] &= 0xFFFFFFFE;
         } while (++i != count);
     }
 }

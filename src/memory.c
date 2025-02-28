@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/interrupt_util.h"
 
 #define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 
@@ -138,13 +139,13 @@ int func_80016E68(void *a0)
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017254.s")
 
 void free(void* p) {
-    s32 sp1C = func_with_status_reg();
+    s32 prevIE = interrupts_disable();
     if (D_800B179C == 0) {
         func_8001753C(p);
     } else {
         func_800175D4(p);
     }
-    set_status_reg(sp1C);
+    interrupts_enable(prevIE);
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/update_mem_mon_values.s")

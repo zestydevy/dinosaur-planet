@@ -80,9 +80,6 @@ extern MtxF gProjectionMtx;
 extern Mtx gRSPProjectionMtx;
 extern u16 gPerspNorm;
 
-void vec3_transform_no_translate(MtxF *mf, Vec3f *v, Vec3f *ov);
-void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
-
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001220.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800013BC.s")
@@ -598,7 +595,7 @@ void _func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
 void func_80002D14(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
 {
     f32 nrm = x * gViewProjMtx.m[0][3] + y * gViewProjMtx.m[1][3] + z * gViewProjMtx.m[2][3] + gViewProjMtx.m[3][3];
-    guMtxXFMF(&gViewProjMtx, x, y, z, ox, oy, oz);
+    vec3_transform(&gViewProjMtx, x, y, z, ox, oy, oz);
     if (nrm != 0.0f)
     {
         nrm = 1.0f / nrm;
@@ -617,7 +614,7 @@ void func_80002DE4(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
         y *= dot;
         z *= dot;
     }
-    guMtxXFMF(&gViewMtx2, x, y, z, ox, oy, oz);
+    vec3_transform(&gViewMtx2, x, y, z, ox, oy, oz);
 }
 
 // close
@@ -678,8 +675,6 @@ void func_8000302C(Gfx **gdl)
 }
 
 extern MtxF MtxF_800a6a60;
-void matrix_scaling(MtxF *mf, f32 sx, f32 sy, f32 sz);
-void matrix_translation(MtxF *mf, f32 x, f32 y, f32 z);
 void func_80003168(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale)
 {
     MtxF mf;
@@ -722,8 +717,6 @@ void func_800034CC(f32 x, f32 y, f32 z)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8000356C.s")
 #else
-f32 fcos16_precise(s16 theta);
-f32 fsin16_precise(s16 theta);
 // Pushes the camera in a given direction on the XZ plane?
 void _func_8000356C(f32 a, f32 b)
 {
@@ -825,7 +818,7 @@ u32 _func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
     f32 vz;
 
     if (param_6) {
-        guMtxXFMF(gViewMtx.m, x, y, z, &vx, &vy, &vz);
+        vec3_transform(gViewMtx, x, y, z, &vx, &vy, &vz);
     }
 
     vx = gProjectionMtx.m[0][0] * vx;
@@ -912,7 +905,6 @@ void add_matrix_to_pool(MtxF *mf, s32 count)
 extern s8 gMatrixIndex;
 extern f32 gFarPlane;
 f32 fexp(f32 x, u32 iterations);
-f32 fcos16_precise(s16 theta);
 void _tick_cameras()
 {
     *(s16*)0x8008c524 = *(s16*)0x8008c528;
@@ -1132,7 +1124,7 @@ void _get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz)
     }
     else
     {
-        guMtxXFMF(&gActorMatrices[actor->linkedActor->matrixIdx],
+        vec3_transform(&gActorMatrices[actor->linkedActor->matrixIdx],
             actor->srt.tx, actor->srt.ty, actor->srt.tz, ox, oy, oz);
     }
 }
@@ -1146,7 +1138,7 @@ void _transform_point_by_actor(float x, float y, float z, float *ox, float *oy, 
 {
     if (actor != NULL)
     {
-        guMtxXFMF(&gActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
+        vec3_transform(&gActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1164,7 +1156,7 @@ void _inverse_transform_point_by_actor(float x, float y, float z, float *ox, flo
 {
     if (actor != NULL)
     {
-        guMtxXFMF(&gInverseActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
+        vec3_transform(&gInverseActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1227,7 +1219,7 @@ void _transform_srt_by_actor(SRT *srt, SRT *out, TActor *actor)
     }
     else
     {
-        guMtxXFMF(&gActorMatrices[actor->matrixIdx], srt->tx, srt->ty, srt->tz, &out->tx, &out->ty, &out->tz);
+        vec3_transform(&gActorMatrices[actor->matrixIdx], srt->tx, srt->ty, srt->tz, &out->tx, &out->ty, &out->tz);
         out->yaw = actor->srt.yaw + srt->yaw;
         out->pitch = srt->pitch;
         out->roll = srt->roll;
@@ -1251,7 +1243,7 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
 
     matrix_from_srt_reversed(&mf, &tempsrt);
 
-    guMtxXFMF(&mf, a->transl.x, a->transl.y, a->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
+    vec3_transform(&mf, a->transl.x, a->transl.y, a->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
 
     yaw = a->yaw - b->yaw;
     if (yaw > 0x8000) {
@@ -1282,7 +1274,7 @@ void _transform_point_by_actor_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
     }
     else
     {
-        guMtxXFMF(gActorMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
+        vec3_transform(gActorMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
     }
 }
 #endif

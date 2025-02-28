@@ -1,8 +1,6 @@
 #include <PR/ultratypes.h>
 #include "libultra/gu/guint.h"
-
-f32 fcos16_precise(s16 theta);
-f32 fsin16_precise(s16 theta);
+#include "sys/math.h"
 
 void guPerspectiveF(float mf[4][4], u16 *perspNorm, float fovy, float aspect, float near, float far, float scale)
 {

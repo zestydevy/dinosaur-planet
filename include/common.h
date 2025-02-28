@@ -11,6 +11,7 @@
 #include "sys/memory.h"
 #include "sys/thread.h"
 #include "sys/math.h"
+#include "sys/rand.h"
 #include "sys/dll.h"
 #include "sys/debug.h"
 #include "sys/controller.h"

@@ -1,5 +1,6 @@
 #include "common.h"
 #include <PR/sched.h>
+#include "sys/rarezip.h"
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
@@ -53,7 +54,7 @@ void game_init(void)
     struct DLLInstance **tmp3;
 
     init_memory();
-    three_more_mallocs();
+    rarezip_init();
     create_asset_thread();
 
     if (0) {

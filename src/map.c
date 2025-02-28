@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/rarezip.h"
 
 extern f32 gWorldX;
 extern f32 gWorldZ;
@@ -587,8 +588,6 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_add_to_render_list.s")
 #else
 extern Mtx *gWorldRSPMatrices;
-void matrix_scaling(MtxF *mf, f32 sx, f32 sy, f32 sz);
-void matrix_translation(MtxF *mf, f32 x, f32 y, f32 z);
 void _block_add_to_render_list(Block *block, f32 x, f32 z)
 {
     s32 oldRenderListLength = gRenderListLength;
@@ -646,7 +645,6 @@ void _block_add_to_render_list(Block *block, f32 x, f32 z)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_get_map_id_from_xz_ws.s")
 #else
-s32 floor_f(f32);
 extern s32 gMapCurrentStreamCoords;
 extern s32 D_80092A6C;
 extern u32 *gDecodedGlobalMap;
@@ -819,7 +817,7 @@ void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
     }
 
     read_file_region(BLOCKS_BIN, compressedData, offset, compressedSize);
-    inflate(compressedData + 4, block);
+    rarezip_uncompress(compressedData + 4, block);
 
     // Convert offsets to pointers
     block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);

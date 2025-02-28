@@ -40,9 +40,6 @@ void add_object_to_array(TActor *actor, s32 param2);
 
 void write_c_file_label_pointers(char *cFileLabel, s32 a1);
 
-s32 func_with_status_reg();
-void set_status_reg(s32);
-
 void func_800267A4(TActor *actor);
 TActor *func_8002394C();
 s32 func_80023D30(TActor*,s32,f32,s32);

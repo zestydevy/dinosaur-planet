@@ -165,17 +165,41 @@ void func_8003B9C0(OSSched *sc) {
 char *get_task_type_string(u32 taskType) {
     switch (taskType) {
         case OS_SC_TASK_AUDIO:
-            return gStrAudioTask;
+            return "(Audio task)";
         case OS_SC_TASK_GAME:
-            return gStrGameTask;
+            return "(Game task)";
         case OS_SC_TASK_DI:
-            return gStrDITask;
+            return "(DI task)\n";
         case OS_SC_TASK_DI_BENCHMARK_TEST:
-            return gStrDIBenchmarkTest;
+            return "(DI benchmark test)\n";
         default:
-            return gStrUnknownTaskType;
+            return "(Unknown task type)\n";
     }
 }
+
+// the following are probably part of some_dummied_task_func
+static const char str_8009a078[] = "\nRCP TASK INFO\n";
+static const char str_8009a088[] = "-------------\n";
+static const char str_8009a098[] = "\ttype\t\t= %u\n";
+static const char str_8009a0a8[] = "\tflags\t\t= %u\n";
+static const char str_8009a0b8[] = "\tucode_boot\t\t= %p\n";
+static const char str_8009a0cc[] = "\tucode_boot_size\t\t= %u\n";
+static const char str_8009a0e4[] = "\tucode\t\t= %p\n";
+static const char str_8009a0f4[] = "\tucode_size\t\t= %u\n";
+static const char str_8009a108[] = "\tucode_data\t\t= %p\n";
+static const char str_8009a11c[] = "\tucode_data_size\t\t= %u\n";
+static const char str_8009a134[] = "\toutput_buff\t\t= %p\n";
+static const char str_8009a148[] = "\toutput_buff_size\t\t= %u\n";
+static const char str_8009a164[] = "\tdata_ptr\t\t= %p\n";
+static const char str_8009a178[] = "\tdata_size\t\t= %u\n";
+static const char str_8009a18c[] = "running task: %08x %08x\n";
+static const char str_8009a1a8[] = "Crash gfx ptr = %x\n";
+static const char str_8009a1bc[] = "Surrounding traces:\n";
+static const char str_8009a1d4[] = "Previous:\t%s:%5d [%d] gfx=%x\n";
+static const char str_8009a1f4[] = "Next:\t\t%s:%5d [%d] gfx=%x\n";
+static const char str_8009a210[] = "No traces available\n";
+static const char str_8009a228[] = "scheduler: Looks like the SP has crashed %s";
+static const char str_8009a254[] = "scheduler: Looks like the DP has crashed %s";
 
 void some_dummied_task_func(OSScTask *task) { }
 
@@ -439,34 +463,34 @@ void __scHandleRetrace(OSSched *sc) {
 
         if (displayListPtr1 != NULL) {
             func_80060FD0(0x1e, 0x1e);
-            dummied_print_func(&D_8009A280, displayListPtr1);
+            dummied_print_func("SP CRASHED, gfx=%x\n", displayListPtr1);
 
             if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
                 if (sp_dldi_file != NULL) {
                     func_80060FD0(0x1e, 0x28);
-                    dummied_print_func(D_8009A294, sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                    dummied_print_func("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
                 }
 
                 if (sp_dldi_file_2 != NULL) {
                     func_80060FD0(0x1e, 0x32);
-                    dummied_print_func(D_8009A2B0, sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                    dummied_print_func("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
                 }
             }
         }
 
         if (displayListPtr2 != NULL) {
             func_80060FD0(0x1e, 0x46);
-            dummied_print_func(&D_8009A2CC, displayListPtr2);
+            dummied_print_func("DP CRASHED, gfx=%x\n", displayListPtr2);
 
             if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
                 if (sp_dldi_file != NULL) {
                     func_80060FD0(0x1e, 0x50);
-                    dummied_print_func(D_8009A2E0, sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                    dummied_print_func("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
                 }
 
                 if (sp_dldi_file_2 != NULL) {
                     func_80060FD0(0x1e, 0x5a);
-                    dummied_print_func(D_8009A2FC, sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                    dummied_print_func("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
                 }
             }
         }
@@ -475,10 +499,10 @@ void __scHandleRetrace(OSSched *sc) {
         displayListPtr2 = NULL;
 
         func_80060FD0(0x1e, 0x6e);
-        dummied_print_func(&D_8009A318, D_8008C8F0, D_8008C8F4, D_8008C8F8);
+        dummied_print_func("CODE: Version %s  %s  %s\n", D_8008C8F0, D_8008C8F4, D_8008C8F8);
 
         func_80060FD0(0x1e, 0x78);
-        dummied_print_func(&D_8009A334, &D_8008C8FC);
+        dummied_print_func("DB:   %s\n", &D_8008C8FC);
 
         func_80060B94((Gfx**)&taskDataPtr);
 
