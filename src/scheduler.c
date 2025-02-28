@@ -1,7 +1,22 @@
 #include "common.h"
 #include "PR/os_internal.h"
 
-u64 gRetraceCounter64;
+struct UnkSchedStruct {
+    s32 _unk0;
+    s32 _unk4;
+};
+
+struct UnkSchedStruct D_800918D0 = {0, 0};
+struct UnkSchedStruct D_800918D8 = {0, 8};
+f32 floatTimer0 = 0.0f;
+f32 floatTimer1 = 0.0f;
+f32 floatTimer2 = 0.0f;
+f32 floatTimer3 = 0.0f;
+s32 gRetraceCounter32 = 0;
+s32 gCurRSPTaskCounter = 0;
+s32 gCurRDPTaskCounter = 0;
+u64 gRetraceCounter64 = 0;
+
 OSTime gLastGfxYield;
 
 void func_80060EB8(u8, u8, u8, u8);
@@ -414,7 +429,7 @@ void __scHandleRetrace(OSSched *sc) {
 
     if ((gCurRDPTaskCounter > 10) && (sc->curRDPTask)) {
         if (sc->curRDPTask->unk0x68 == 0) {
-            osSendMesg(sc->curRDPTask->msgQ, &D_800918D8, OS_MESG_BLOCK);
+            osSendMesg(sc->curRDPTask->msgQ, (OSMesg)&D_800918D8, OS_MESG_BLOCK);
         }
 
         if (gCurRDPTaskIsSet) {
@@ -550,7 +565,7 @@ void __scHandleRetrace(OSSched *sc) {
             if ((unkTask->unk0x68) || (unkTask->msg)) {
                 osSendMesg(unkTask->msgQ, unkTask->msg, OS_MESG_BLOCK);
             } else {
-                osSendMesg(unkTask->msgQ, &D_800918D0, OS_MESG_BLOCK);
+                osSendMesg(unkTask->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
             }
         }
         sc->frameCount = 0;

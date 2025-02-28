@@ -39,18 +39,6 @@ extern char **D_8008C8F4; // ptr to "01/12/00 09:19"
 extern char **D_8008C8F8; // ptr to "dragon1"
 extern char D_8008C8FC[]; // "Version 2.8 14/12/98 15.30 L.Schuneman"
 
-extern void *D_800918D0;
-extern void *D_800918D8;
-
-extern f32 floatTimer0;
-extern f32 floatTimer1;
-extern f32 floatTimer2;
-extern f32 floatTimer3;
-
-extern s32 gRetraceCounter32;
-extern s32 gCurRSPTaskCounter;
-extern s32 gCurRDPTaskCounter;
-
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 
