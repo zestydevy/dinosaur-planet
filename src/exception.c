@@ -291,6 +291,7 @@ void write_c_file_label_pointers(char *cFileLabel, s32 a1) {
 }
 #endif
 
+// diRcpTrace?
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_800631E0.s")
 #else
