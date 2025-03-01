@@ -87,47 +87,6 @@ struct UnkStruct_8006C220_arg0_unk8 {
     s32 unk88;
 };
 
-
-typedef struct UnkStruct_rmonGetThreadStatus_arg2 {
-    /* Padding memory address, as these are currently unknown*/
-    s32 padding0;
-    s32 padding4;
-    s32 padding8;
-    s32 varC;
-    s16 var10;
-    s16 var12;
-    s32 var14;
-    s32 var18;
-    s32 var1C;
-    s32 var20;
-    s16 var24;
-    s16 var26;
-    s32 var28;
-    s32 var2C; /* some struct probably*/
-    s32 var30;
-    
-}UnkStruct_rmonGetThreadStatus_arg2;
-
-typedef struct UnkStruct_rmonGetExceptionStatus {
-    s32 var0;
-    s8 var4;
-    s16 var6;
-    s32 padding8;
-    s32 varC;
-    s16 var10;
-    s16 var12;
-    s32 padding14;
-    s32 padding18;
-    s32 padding1C;
-    s32 padding20;
-    s16 var24;
-    s16 var26;
-    s32 padding28;
-    s32 padding2C;
-    s32 var30;
-    
-}UnkStruct_rmonGetExceptionStatus;
-
 typedef struct UnkStruct_n_alEnvmixerParam {
     s32 padding[18];
     s32 var48;
@@ -195,18 +154,6 @@ struct UnkStruct_D_800938C0 {
     s32 padding0[16];
     u8 var44;
 };
-
-typedef struct UnkStruct__rmonSetBreak{
-    s32 padding0;
-    u8 var4;
-    u8 padding5;
-    u8 padding6;
-    u8 padding7;
-    u8 padding8;
-    u8 var9;
-    s32 varC;
-    s32* var10; /*not sure if pointer or not*/
-}UnkStruct__rmonSetBreak;
 
 
 /* segment_BED0*/

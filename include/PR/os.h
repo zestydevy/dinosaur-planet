@@ -62,16 +62,16 @@ typedef struct {
 } __OSThreadContext;
 
 typedef struct OSThread_s {
-	struct OSThread_s	*next;		/* run/mesg queue link */
-	OSPri			priority;	/* run/mesg queue priority */
-	struct OSThread_s	**queue;	/* queue thread is on */
-	struct OSThread_s	*tlnext;	/* all threads queue link */
-	u16			state;		/* OS_STATE_* */
-	u16			flags;		/* flags for rmon */
-	OSId			id;		/* id for debugging */
-	int			fp;		/* thread has used fp unit */
-	__OSThreadContext	context;	/* register/interrupt mask */
-	u8			unk0x1b0[128]; /* NOTE: Not from the original os.h! */
+	/* 0x000 */ struct OSThread_s	*next;		/* run/mesg queue link */
+	/* 0x004 */ OSPri			priority;	/* run/mesg queue priority */
+	/* 0x008 */ struct OSThread_s	**queue;	/* queue thread is on */
+	/* 0x00C */ struct OSThread_s	*tlnext;	/* all threads queue link */
+	/* 0x010 */ u16			state;		/* OS_STATE_* */
+	/* 0x012 */ u16			flags;		/* flags for rmon */
+	/* 0x014 */ OSId			id;		/* id for debugging */
+	/* 0x018 */ int			fp;		/* thread has used fp unit */
+	/* 0x01C */ __OSThreadContext	context;	/* register/interrupt mask */
+	/* 0x1B0 */ u8			unk0x1b0[128]; /* NOTE: Not from the original os.h! */
 } OSThread;
 
 typedef u32 OSEvent;
