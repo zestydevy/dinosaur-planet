@@ -1,7 +1,11 @@
 // @DECOMP_OPT_FLAGS=-O1
+#include "libultra/rmon/dbgproto.h"
 #include "libultra/rmon/rmonint.h"
+#include "PRinternal/macros.h"
 
-int NotImplemented(KKHeader *a0);
+static int NotImplemented(KKHeader* dummy UNUSED) {
+    return TV_ERROR_ILLEGAL_CALL;
+}
 
 static FUNPTR dispatchTable[] = {
 	__rmonLoadProgram,
@@ -60,26 +64,19 @@ static FUNPTR dispatchTable[] = {
 	NotImplemented
 };
 
-int NotImplemented(KKHeader *a0) {
-    return -1;
-}
-
 int __rmonExecute(KKHeader* request) {
     int retval;
-    KKHeader event;
-    
-    if (request->code > 0x34) {
-	    return -1;
+    KKHeader reply;
+
+    if (request->code >= ARRLEN(dispatchTable) - 1) {
+        return TV_ERROR_ILLEGAL_CALL;
     }
 
-    retval = (*dispatchTable[request->code])(request);
-
-    if (retval < 0){
-        event.code = request->code;
-        event.error = retval;
-
-        __rmonSendReply((KKHeader *const)&event, 0xc, 1);
+    retval = dispatchTable[(int)request->code](request);
+    if (retval < TV_ERROR_NO_ERROR) {
+        reply.code = request->code;
+        reply.error = retval;
+        __rmonSendReply(&reply, sizeof(reply), KK_TYPE_REPLY);
     }
-
     return retval;
 }

@@ -1,66 +1,81 @@
 // @DECOMP_OPT_FLAGS=-O1
+#include "libultra/rmon/dbgproto.h"
 #include "libultra/rmon/rmonint.h"
+#include "PR/os_internal.h"
+#include "PR/ramrom.h"
+#include "PR/sptask.h"
+#include "PR/rdb.h"
+#include "PR/rmon.h"
+#include "PRinternal/macros.h"
+#include "bss.h"
 
-OSMesgQueue rmonsio_bss_0000;
-OSMesg rmonsio_bss_0018[1];
+typedef struct OSThread_Original_s {
+	struct OSThread_s	*next;		/* run/mesg queue link */
+	OSPri			priority;	/* run/mesg queue priority */
+	struct OSThread_s	**queue;	/* queue thread is on */
+	struct OSThread_s	*tlnext;	/* all threads queue link */
+	u16			state;		/* OS_STATE_* */
+	u16			flags;		/* flags for rmon */
+	OSId			id;		/* id for debugging */
+	int			fp;		/* thread has used fp unit */
+	__OSThreadContext	context;	/* register/interrupt mask */
+} OSThread_Original;
+
+BSS_STATIC OSMesgQueue IOmq;
+BSS_STATIC OSMesg IOmsgs[1];
+
+BSS_GLOBAL void* __osRdb_DbgRead_Buf;
+BSS_GLOBAL u8 rmonRdbReadBuf[RMON_DBG_BUF_SIZE] ALIGNED(0x10);
 
 void __rmonSendFault(OSThread* thread) {
-    volatile float var1;
-    u8 *threadPtr;
-    u32 var3;
+    volatile float f UNUSED;
+    u8* tPtr;
+    u32 sent = 0;
 
-    var3 = 0;
-    var1 = 0.0f;
-    threadPtr = (u8*)thread;
+    /* touch fpu to ensure registers are saved to the context structure */
+    f = 0.0f;
 
-    // bug? 0x1b0 is the size of the original OSThread size. it doesn't include the added data in dino planet
-    while (var3 < 0x1b0) {
-	    var3 += __osRdbSend(&threadPtr[var3], 0x1b0 - var3, 2);
+    tPtr = (u8*)thread;
+    while (sent < sizeof(OSThread_Original)) {
+        sent += __osRdbSend(tPtr + sent, sizeof(OSThread_Original) - sent, RDB_TYPE_GtoH_FAULT);
     }
 }
 
 void __rmonIOflush(void) {
-    s32 var1;
-    u8 var2[4];
+    int sent = 0;
+    char tstr[4];
 
-    var1 = 0;
-
-    while (var1 < 1) {
-	    var1 += __osRdbSend(&var2[0], 1, 0xa);
+    while (sent <= 0) {
+        sent += __osRdbSend(tstr, 1, RDB_TYPE_GtoH_DEBUG_DONE);
     }
 }
 
 void __rmonIOputw(u32 word) {
-    s32 var1;
-    u8* var2;
+    int sent = 0;
+    char* cPtr = (char*)&word;
 
-    var1 = 0;
-    var2 = (u8*)&word;
-
-    while (var1 < 4) {
-	    var1 += __osRdbSend(&var2[var1], 4 - var1, 8);
+    while (sent < 4) {
+        sent += __osRdbSend(cPtr + sent, sizeof(word) - sent, RDB_TYPE_GtoH_DEBUG);
     }
 }
 
 void __rmonIOhandler(void) {
-    s32 var1;
-    u8 var2[4];
+    int sent;
+    char tstr[4];
 
-    osCreateMesgQueue(&rmonsio_bss_0000, &rmonsio_bss_0018[0], 1);
-    osSetEventMesg(OS_EVENT_RDB_DBG_DONE, &rmonsio_bss_0000, 0);
-    
+    osCreateMesgQueue(&IOmq, &IOmsgs[0], 1);
+    osSetEventMesg(OS_EVENT_RDB_DBG_DONE, &IOmq, NULL);
     __osRdb_DbgRead_Buf = rmonRdbReadBuf;
-	
-    while (1) {
-        osRecvMesg(&rmonsio_bss_0000, NULL, OS_MESG_BLOCK);
 
-        __rmonExecute((KKHeader*)rmonRdbReadBuf);
-        
+    while (TRUE) {
+        osRecvMesg(&IOmq, NULL, OS_MESG_BLOCK);
+
+        __rmonExecute((KKHeader*)&rmonRdbReadBuf);
         __osRdb_DbgRead_Buf = rmonRdbReadBuf;
-        
-        var1 = 0;
-        while (var1 < 1) {
-            var1 += __osRdbSend(&var2[0], 1, 0xb);
+
+        sent = 0;
+        while (sent <= 0) {
+            sent += __osRdbSend(tstr, 1, RDB_TYPE_GtoH_DEBUG_READY);
         }
     }
 }

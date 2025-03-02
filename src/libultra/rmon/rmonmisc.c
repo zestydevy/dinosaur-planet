@@ -1,5 +1,24 @@
 // @DECOMP_OPT_FLAGS=-O1
+#include "libultra/rmon/dbgproto.h"
 #include "libultra/rmon/rmonint.h"
+#include "PR/os_internal.h"
+#include "PR/sptask.h"
+#include "PRinternal/macros.h"
+#include "bss.h"
+
+int __rmonSetFault(KKHeader* req) {
+    KKFaultRequest* request = (KKFaultRequest*)req;
+    KKObjectEvent reply;
+
+    STUBBED_PRINTF(("SetFault\n"));
+
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    reply.object = request->tid;
+
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
+}
 
 typedef struct OSThread_Original_s {
 	struct OSThread_s	*next;		/* run/mesg queue link */
@@ -13,53 +32,45 @@ typedef struct OSThread_Original_s {
 	__OSThreadContext	context;	/* register/interrupt mask */
 } OSThread_Original;
 
+BSS_GLOBAL OSMesgQueue __rmonMQ ALIGNED(0x8);
 // bug? It appears that OSThread has an extra 128 bytes in the rest of the codebase but here it seems
 // like rmon was compiled before this change... doesn't seem like it will necessarily break anything tho
-extern OSThread_Original rmonmisc_bss_0018;
-extern OSMesg rmonmisc_bss_01C8[8];
-extern u8 rmonmisc_bss_01E8[0x4000];
-extern OSMesg rmonmisc_bss_41E8[8];
-extern OSMesgQueue rmonmisc_bss_4208;
+BSS_STATIC OSThread_Original rmonIOThread ALIGNED(0x8);
+BSS_STATIC OSMesg rmonMsgs[8] ALIGNED(0x8);
+BSS_STATIC STACK(rmonIOStack, 0x4000) ALIGNED(0x10);
+BSS_STATIC OSMesg rmonPiMsgs[8] ALIGNED(0x8);
+BSS_STATIC OSMesgQueue rmonPiMQ ALIGNED(0x8);
 
-static const char str_800a2b40[] = "SetFault\n";
-static const char str_800a2b4c[] = "PANIC!!\n";
-static const char str_800a2b58[] = "SetComm\n";
-
-int __rmonSetFault(KKHeader* req) {
-    KKFaultRequest *request = (KKFaultRequest*)req;
-    KKObjectEvent event;
-
-    event.header.code = request->header.code;
-    event.header.error = 0;
-    event.object = request->tid;
-    __rmonSendReply((KKHeader *const)&event, 0x10, 1);
-
-    return 0;
-}
-
-void __rmonInit() {
-    osCreateMesgQueue(&__rmonMQ, &rmonmisc_bss_01C8[0], 8);
+void __rmonInit(void) {
+    osCreateMesgQueue(&__rmonMQ, rmonMsgs, ARRLEN(rmonMsgs));
     osSetEventMesg(OS_EVENT_CPU_BREAK, &__rmonMQ, (OSMesg)RMON_MESG_CPU_BREAK);
     osSetEventMesg(OS_EVENT_SP_BREAK, &__rmonMQ, (OSMesg)RMON_MESG_SP_BREAK);
     osSetEventMesg(OS_EVENT_FAULT, &__rmonMQ, (OSMesg)RMON_MESG_FAULT);
-    osSetEventMesg(OS_EVENT_THREADSTATUS, &__rmonMQ, (OSMesg)NULL);
-    osCreateThread((OSThread*)&rmonmisc_bss_0018, 0, (void (*)(void *))__rmonIOhandler, NULL, &rmonmisc_bss_01E8[0x4000], OS_PRIORITY_MAX);
-    osCreatePiManager(OS_PRIORITY_PIMGR, &rmonmisc_bss_4208, &rmonmisc_bss_41E8[0], 8);
-    osStartThread((OSThread*)&rmonmisc_bss_0018);
+    osSetEventMesg(OS_EVENT_THREADSTATUS, &__rmonMQ, NULL);
+    osCreateThread((OSThread*)&rmonIOThread, 0, (void (*)(void*))__rmonIOhandler, NULL, STACK_START(rmonIOStack),
+                   OS_PRIORITY_MAX);
+    osCreatePiManager(OS_PRIORITY_PIMGR, &rmonPiMQ, rmonPiMsgs, ARRLEN(rmonPiMsgs));
+    osStartThread((OSThread*)&rmonIOThread);
 }
 
-void __rmonPanic() {
-    while (1) { }
+void __rmonPanic(void) {
+    STUBBED_PRINTF(("PANIC!!\n"));
+
+    for (;;) {
+        ;
+    }
 }
 
 int __rmonSetComm(KKHeader* req) {
-    KKObjectEvent event;
+    KKObjectEvent reply;
 
-    event.header.code = req->code;
-    event.object = 0;
-    event.header.error = 0;
+    STUBBED_PRINTF(("SetComm\n"));
 
-    __rmonSendReply((KKHeader *const)&event, 0x10, 1);
+    reply.header.code = req->code;
+    reply.object = 0;
+    reply.header.error = TV_ERROR_NO_ERROR;
 
-    return 0;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+
+    return TV_ERROR_NO_ERROR;
 }

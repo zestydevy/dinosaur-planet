@@ -1,390 +1,391 @@
 // @DECOMP_OPT_FLAGS=-O1
+#include "libultra/rmon/dbgproto.h"
 #include "libultra/rmon/rmonint.h"
+#include "PR/os_internal.h"
+#include "PR/rcp.h"
+#include "PR/sptask.h"
+#include "PR/rdb.h"
+#include "PRinternal/macros.h"
+#include "bss.h"
 
-extern u32 D_800D3DC0;
-extern u32 D_800D3DC4;
-extern u32 D_800D3DC8[4];
+BSS_STATIC u32 RCPpc;
+BSS_STATIC u32 oldIMEMvalue;
+BSS_STATIC u32 DMEMbuffer[4] ALIGNED(0x8);
 
-static const char str_800a2b70[] = "GetGRegisters\n";
-static const char str_800a2b80[] = "SetGRegisters\n";
-static const char str_800a2b90[] = "GetFRegisters\n";
-static const char str_800a2ba0[] = "SetFRegisters\n";
-static const char str_800a2bb0[] = "GetSRegisters\n";
-static const char str_800a2bc0[] = "SetSRegisters\n";
-static const char str_800a2bd0[] = "GetVRegisters\n";
-static const char str_800a2be0[] = "SetVRegs\n";
-
-union LoadStoreSUStruct {
-    u32 as_u32;
+typedef union {
+    u32 everything;
     struct {
-        s32 unk0 : 6;
-        s32 unk6 : 5;
-        s32 unkB : 5;
-    } bits;
-};
+        int opcode : 6;
+        int base : 5;
+        int rt : 5;
+        int offset : 16;
+    } scalarop;
+    struct {
+        int opcode : 6;
+        int base : 5;
+        int rt : 5;
+        int size : 5;
+        int element : 4;
+        int offset : 7;
+    } vectorop;
+} INSTRUCTION;
 
-void LoadStoreSU(s32 a0, s32 a1) {
-    union LoadStoreSUStruct data;
-    data.as_u32 = 0;
-    data.bits.unk0 = a0;
-    data.bits.unkB = a1;
+static void LoadStoreSU(int opcode, int regno) {
+    INSTRUCTION inst;
 
-    __rmonWriteWordTo((u32*)0x4001000, data.as_u32);
-    __rmonWriteWordTo((u32*)0x4080000, 0);
+    /* Prepare a scalar load or store instruction at DMEM address 0 */
+    inst.everything = 0;
+    inst.scalarop.opcode = opcode;
+    inst.scalarop.rt = regno;
+    __rmonWriteWordTo((u32*)SP_IMEM_START, inst.everything);
+    __rmonWriteWordTo((u32*)SP_PC_REG, 0);
 }
 
-union LoadStoreVUStruct {
-    u32 as_u32;
-    struct {
-        s32 unk0 : 6;
-        s32 unk6 : 5;
-        s32 unkB : 5;
-        s32 unk10 : 5;
-    } bits;
-};
+static void LoadStoreVU(int opcode, int regno) {
+    INSTRUCTION inst;
 
-void LoadStoreVU(s32 a0, s32 a1) {
-    union LoadStoreVUStruct data;
-    data.as_u32 = 0;
-    data.bits.unk0 = a0;
-    data.bits.unkB = a1;
-    data.bits.unk10 = 4;
-
-    __rmonWriteWordTo((u32*)0x4001000, data.as_u32);
-    __rmonWriteWordTo((u32*)0x4080000, 0);
-    
+    /* Prepare a vector 128-bit load or store instruction at DMEM address 0 */
+    inst.everything = 0;
+    inst.vectorop.opcode = opcode;
+    inst.vectorop.rt = regno;
+    inst.vectorop.size = 4; /* LQV / SQV */
+    __rmonWriteWordTo((u32*)SP_IMEM_START, inst.everything);
+    __rmonWriteWordTo((u32*)SP_PC_REG, 0);
 }
 
-void SetUpForRCPop(s32 a0) {
-    D_800D3DC0 = __rmonReadWordAt((u32*)0x4080000);
-    D_800D3DC4 = __rmonReadWordAt((u32*)0x4001000);
-
-    D_800D3DC8[0] = __rmonReadWordAt((u32*)0x4000000);
-
-    if (a0 != 0) {
-        D_800D3DC8[1] = __rmonReadWordAt((u32*)0x4000004);
-        D_800D3DC8[2] = __rmonReadWordAt((u32*)0x4000008);
-        D_800D3DC8[3] = __rmonReadWordAt((u32*)0x400000c);
+static void SetUpForRCPop(int isVector) {
+    /* Save RSP data that would be overwritten when reading or writing registers */
+    RCPpc = __rmonReadWordAt((u32*)SP_PC_REG);
+    oldIMEMvalue = __rmonReadWordAt((u32*)SP_IMEM_START);
+    DMEMbuffer[0] = __rmonReadWordAt((u32*)SP_DMEM_START);
+    if (isVector) {
+        DMEMbuffer[1] = __rmonReadWordAt((u32*)(SP_DMEM_START + 0x4));
+        DMEMbuffer[2] = __rmonReadWordAt((u32*)(SP_DMEM_START + 0x8));
+        DMEMbuffer[3] = __rmonReadWordAt((u32*)(SP_DMEM_START + 0xC));
     }
 }
 
-void CleanupFromRCPop(s32 a0) {
-    __rmonWriteWordTo((u32*)0x4000000, D_800D3DC8[0]);
-
-    if (a0 != 0) {
-        __rmonWriteWordTo((u32*)0x4000004, D_800D3DC8[1]);
-        __rmonWriteWordTo((u32*)0x4000008, D_800D3DC8[2]);
-        __rmonWriteWordTo((u32*)0x400000c, D_800D3DC8[2]); // bug? shouldn't this be [3] to be consistent with SetUpForRCPop?
+static void CleanupFromRCPop(int isVector) {
+    /* Restore RSP data that was saved to read or write registers */
+    __rmonWriteWordTo((u32*)SP_DMEM_START, DMEMbuffer[0]);
+    if (isVector) {
+        __rmonWriteWordTo((u32*)(SP_DMEM_START + 0x4), DMEMbuffer[1]);
+        __rmonWriteWordTo((u32*)(SP_DMEM_START + 0x8), DMEMbuffer[2]);
+        /* BUG: the last word is not restored properly */
+        __rmonWriteWordTo((u32*)(SP_DMEM_START + 0xC), DMEMbuffer[2]);
     }
-
-    __rmonWriteWordTo((u32*)0x4001000, D_800D3DC4);
-    __rmonWriteWordTo((u32*)0x4080000, D_800D3DC0);
+    __rmonWriteWordTo((u32*)SP_IMEM_START, oldIMEMvalue);
+    __rmonWriteWordTo((u32*)SP_PC_REG, RCPpc);
 }
 
 int __rmonGetGRegisters(KKHeader* req) {
-    register KKObjectRequest *request = (KKObjectRequest*)req;
-    KKGregEvent event;
-    OSThread *thread;
-    u64 *var;
-    register s32 i;
+    register KKObjectRequest* request = (KKObjectRequest*)req;
+    KKGregEvent reply;
 
-    event.tid = request->object;
-    event.header.code = request->header.code;
-    event.header.error = 0;
+    STUBBED_PRINTF(("GetGRegisters\n"));
 
-    if (request->header.method == 0) {
-        thread = __rmonGetTCB(request->object);
-        if (thread == NULL) {
-            return -2;
+    reply.tid = request->object;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+
+    if (request->header.method == RMON_CPU) {
+        OSThread* tptr = __rmonGetTCB(request->object);
+        u64* tcbregptr;
+        register s32 i;
+
+        if (tptr == NULL) {
+            return TV_ERROR_INVALID_ID;
         }
 
-        for (i = 1, var = &thread->context.at; i < 26; i++, var++) {
-            event.registers.gregs[i] = (u32)*var;
+        for (i = GREG_IDX_AT, tcbregptr = &tptr->context.at; i < GREG_IDX_K0; i++, tcbregptr++) {
+            reply.registers.gregs[i] = *tcbregptr;
         }
-        for (i = 28, var = &thread->context.gp; i < 34; i++, var++) {
-            event.registers.gregs[i] = (u32)*var;
+        for (i = GREG_IDX_GP, tcbregptr = &tptr->context.gp; i < GREG_IDX_CAUSE; i++, tcbregptr++) {
+            reply.registers.gregs[i] = *tcbregptr;
         }
 
-        event.registers.gregs[34] = thread->context.cause;
-        event.registers.gregs[35] = thread->context.pc;
-        event.registers.gregs[36] = thread->context.sr;
-        event.registers.gregs[0] = 0;
+        reply.registers.gregs[GREG_IDX_CAUSE] = tptr->context.cause;
+        reply.registers.gregs[GREG_IDX_PC] = tptr->context.pc;
+        reply.registers.gregs[GREG_IDX_SR] = tptr->context.sr;
+        reply.registers.gregs[GREG_IDX_ZERO] = 0;
     } else {
-        return -2;
+        return TV_ERROR_INVALID_ID;
     }
 
-    __rmonSendReply((KKHeader *const)&event, 0xa4, 1);
-
-    return 0;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
 int __rmonSetGRegisters(KKHeader* req) {
-    register KKGRegsetRequest *request = (KKGRegsetRequest*)req;
-    KKObjectEvent event;
-    OSThread *thread;
-    u64 *var;
-    register s32 i;
+    register KKGRegsetRequest* request = (KKGRegsetRequest*)req;
+    KKObjectEvent reply;
 
-    if (request->header.method == 0) {
-        thread = __rmonGetTCB(request->tid);
-        if (thread == NULL) {
-            return -2;
+    STUBBED_PRINTF(("SetGRegisters\n"));
+
+    if (request->header.method == RMON_CPU) {
+        OSThread* tptr = __rmonGetTCB(request->tid);
+        u64* tcbregptr;
+        register int i;
+
+        if (tptr == NULL) {
+            return TV_ERROR_INVALID_ID;
         }
 
-        for (i = 1, var = &thread->context.at; i < 26; i++, var++) {
-            *var = (u64)(s32)request->registers.gregs[i];
-        }
-        for (i = 28, var = &thread->context.gp; i < 34; i++, var++) {
-            *var = (u64)(s32)request->registers.gregs[i];
+        for (i = GREG_IDX_AT, tcbregptr = &tptr->context.at; i < GREG_IDX_K0; i++, tcbregptr++) {
+            *tcbregptr = (s32)request->registers.gregs[i];
         }
 
-        thread->context.cause = request->registers.gregs[34];
-        thread->context.pc = request->registers.gregs[35];
-        thread->context.sr = request->registers.gregs[36];
+        for (i = GREG_IDX_GP, tcbregptr = &tptr->context.gp; i < GREG_IDX_CAUSE; i++, tcbregptr++) {
+            *tcbregptr = (s32)request->registers.gregs[i];
+        }
+
+        tptr->context.cause = request->registers.gregs[GREG_IDX_CAUSE];
+        tptr->context.pc = request->registers.gregs[GREG_IDX_PC];
+        tptr->context.sr = request->registers.gregs[GREG_IDX_SR];
     } else {
-        return -2;
+        return TV_ERROR_INVALID_ID;
     }
 
-    event.object = request->tid;
-    event.header.code = request->header.code;
-    event.header.error = 0;
-    __rmonSendReply((KKHeader *const)&event, 0x10, 1);
-
-    return 0;
+    reply.object = request->tid;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
 int __rmonGetFRegisters(KKHeader* req) {
-    register KKObjectRequest *request = (KKObjectRequest*)req;
-    KKFPregEvent event;
-    OSThread *thread;
-    volatile f32 var;
+    register KKObjectRequest* request = (KKObjectRequest*)req;
+    KKFPregEvent reply;
+    OSThread* tptr;
+    volatile float f UNUSED;
 
-    if (req->method != 0) {
-        return -2;
+    STUBBED_PRINTF(("GetFRegisters\n"));
+
+    if (req->method != RMON_CPU) {
+        return TV_ERROR_INVALID_ID;
     }
 
-    var = 0.0f;
+    /* touch fpu to ensure registers are saved to the context structure */
+    f = 0.0f;
 
-    thread = __rmonGetTCB(request->object);
-    if (thread == NULL) {
-        return -2;
+    tptr = __rmonGetTCB(request->object);
+    if (tptr == NULL) {
+        return TV_ERROR_INVALID_ID;
     }
 
-    __rmonCopyWords((u32*)&event.registers, (u32*)&thread->context.fp0, 32);
+    __rmonCopyWords((u32*)reply.registers.fpregs.regs, (u32*)&tptr->context.fp0, ARRLEN(reply.registers.fpregs.regs));
 
-    event.registers.fpcsr = thread->context.fpcsr;
-    event.header.code = request->header.code;
-    event.header.error = 0;
-    event.tid = request->object;
-    __rmonSendReply((KKHeader *const)&event, 0x98, 1);
+    reply.registers.fpcsr = tptr->context.fpcsr;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    reply.tid = request->object;
 
-    return 0;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
 int __rmonSetFRegisters(KKHeader* req) {
-    register KKFPRegsetRequest *request = (KKFPRegsetRequest*)req;
-    KKObjectEvent event;
-    OSThread *thread;
-    volatile f32 var;
+    register KKFPRegsetRequest* request = (KKFPRegsetRequest*)req;
+    KKObjectEvent reply;
+    OSThread* tptr;
+    volatile float f UNUSED;
 
-    if (req->method != 0) {
-        return -2;
+    STUBBED_PRINTF(("SetFRegisters\n"));
+
+    if (req->method != RMON_CPU) {
+        return TV_ERROR_INVALID_ID;
     }
 
-    var = 0.0f;
+    /* touch fpu to ensure registers are saved to the context structure */
+    f = 0.0f;
 
-    thread = __rmonGetTCB(request->tid);
-    if (thread == NULL) {
-        return -2;
+    tptr = __rmonGetTCB(request->tid);
+    if (tptr == NULL) {
+        return TV_ERROR_INVALID_ID;
     }
 
-    __rmonCopyWords((u32*)&thread->context.fp0, (u32*)request->registers.fpregs.fregs, 32);
+    __rmonCopyWords((u32*)&tptr->context.fp0, (u32*)request->registers.fpregs.regs,
+                    ARRLEN(request->registers.fpregs.regs));
+    tptr->context.fpcsr = request->registers.fpcsr;
 
-    thread->context.fpcsr = request->registers.fpcsr;
-
-    event.object = request->tid;
-    event.header.code = request->header.code;
-    event.header.error = 0;
-    __rmonSendReply((KKHeader *const)&event, 0x10, 1);
-
-    return 0;
+    reply.object = request->tid;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
-u32 rmonGetRcpRegister(int regNumber) {
-    u32 word;
+static u32 rmonGetRcpRegister(int regNumber) {
+    u32 contents;
 
     if (__rmonRCPrunning()) {
         return 0;
     }
 
-    SetUpForRCPop(0);
-    LoadStoreSU(0x2b, regNumber);
+    SetUpForRCPop(FALSE);
+    LoadStoreSU(MIPS_SW_OPCODE, regNumber);
     __rmonStepRCP();
-    word = __rmonReadWordAt((u32*)0x4000000);
-    CleanupFromRCPop(0);
+    contents = __rmonReadWordAt((u32*)SP_DMEM_START);
+    CleanupFromRCPop(FALSE);
 
-    return word;
+    return contents;
 }
 
 int __rmonGetSRegs(KKHeader* req) {
-    register KKObjectRequest *request = (KKObjectRequest*)req;
-    KKCpSregEvent event;
-    register s32 i;
+    register KKObjectRequest* request = (KKObjectRequest*)req;
+    KKCpSregEvent reply;
+    register int i;
+
+    STUBBED_PRINTF(("GetSRegisters\n"));
 
     if (__rmonRCPrunning()) {
-        return -4;
+        return TV_ERROR_OPERATIONS_PROTECTED;
     }
 
-    event.tid = request->object;
-    event.header.code = request->header.code;
-    event.header.error = 0;
+    reply.tid = request->object;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
 
-    SetUpForRCPop(0);
-
-    for (i = 0; i < 32; i++) {
-        LoadStoreSU(0x2b, i);
+    SetUpForRCPop(FALSE);
+    for (i = SREG_IDX_ZERO; i <= SREG_IDX_RA; i++) {
+        LoadStoreSU(MIPS_SW_OPCODE, i);
         __rmonStepRCP();
-        event.registers.sregs[i] = __rmonReadWordAt((u32*)0x4000000);
+        reply.registers.sregs[i] = __rmonReadWordAt((u32*)SP_DMEM_START);
     }
+    CleanupFromRCPop(FALSE);
 
-    CleanupFromRCPop(0);
+    reply.registers.sregs[SREG_IDX_DRAM_ADDR] = __rmonReadWordAt((u32*)SP_DRAM_ADDR_REG);
+    reply.registers.sregs[SREG_IDX_MEM_ADDR] = __rmonReadWordAt((u32*)SP_MEM_ADDR_REG);
+    reply.registers.sregs[SREG_IDX_RD_LEN] = __rmonReadWordAt((u32*)SP_RD_LEN_REG);
+    reply.registers.sregs[SREG_IDX_PC] = __rmonReadWordAt((u32*)SP_PC_REG) + SP_IMEM_START;
+    reply.registers.sregs[SREG_IDX_WR_LEN] = __rmonReadWordAt((u32*)SP_WR_LEN_REG);
+    reply.registers.sregs[SREG_IDX_STATUS] = __rmonReadWordAt((u32*)SP_STATUS_REG);
+    reply.registers.sregs[SREG_IDX_DMA_FULL] = __rmonReadWordAt((u32*)SP_DMA_FULL_REG);
+    reply.registers.sregs[SREG_IDX_DMA_BUSY] = __rmonReadWordAt((u32*)SP_DMA_BUSY_REG);
 
-    event.registers.sregs[32] = __rmonReadWordAt((u32*)0x4040004);
-    event.registers.sregs[33] = __rmonReadWordAt((u32*)0x4040000);
-    event.registers.sregs[34] = __rmonReadWordAt((u32*)0x4040008);
-    event.registers.sregs[35] = __rmonReadWordAt((u32*)0x4080000) + 0x4001000;
-    event.registers.sregs[36] = __rmonReadWordAt((u32*)0x404000c);
-    event.registers.sregs[37] = __rmonReadWordAt((u32*)0x4040010);
-    event.registers.sregs[38] = __rmonReadWordAt((u32*)0x4040014);
-    event.registers.sregs[39] = __rmonReadWordAt((u32*)0x4040018);
-
-    __rmonSendReply((KKHeader *const)&event, 0xb0, 1);
-
-    return 0;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
 int __rmonSetSRegs(KKHeader* req) {
-    register KKCpScalarRegsetRequest *request = (KKCpScalarRegsetRequest*)req;
-    KKObjectEvent event;
-    register s32 i;
+    register KKCpScalarRegsetRequest* request = (KKCpScalarRegsetRequest*)req;
+    KKObjectEvent reply;
+    register int i;
+
+    STUBBED_PRINTF(("SetSRegisters\n"));
 
     if (__rmonRCPrunning()) {
-        return -4;
+        return TV_ERROR_OPERATIONS_PROTECTED;
     }
 
-    SetUpForRCPop(0);
-
-    for (i = 0; i < 32; i++) {
-        __rmonWriteWordTo((u32*)0x4000000, request->registers.sregs[i]);
-        LoadStoreSU(0x23, i);
+    SetUpForRCPop(FALSE);
+    for (i = SREG_IDX_ZERO; i <= SREG_IDX_RA; i++) {
+        __rmonWriteWordTo((u32*)SP_DMEM_START, request->registers.sregs[i]);
+        LoadStoreSU(MIPS_LW_OPCODE, i);
         __rmonStepRCP();
     }
+    CleanupFromRCPop(FALSE);
 
-    CleanupFromRCPop(0);
+    __rmonWriteWordTo((u32*)SP_DRAM_ADDR_REG, request->registers.sregs[SREG_IDX_DRAM_ADDR]);
+    __rmonWriteWordTo((u32*)SP_MEM_ADDR_REG, request->registers.sregs[SREG_IDX_MEM_ADDR]);
+    __rmonWriteWordTo((u32*)SP_PC_REG, request->registers.sregs[SREG_IDX_PC] & 0xFFF);
+    __rmonWriteWordTo((u32*)SP_WR_LEN_REG, request->registers.sregs[SREG_IDX_WR_LEN]);
+    __rmonWriteWordTo((u32*)SP_STATUS_REG, request->registers.sregs[SREG_IDX_STATUS]);
 
-    __rmonWriteWordTo((u32*)0x4040004, request->registers.sregs[32]);
-    __rmonWriteWordTo((u32*)0x4040000, request->registers.sregs[33]);
-    __rmonWriteWordTo((u32*)0x4080000, request->registers.sregs[35] & 0xfff);
-    __rmonWriteWordTo((u32*)0x404000c, request->registers.sregs[36]);
-    __rmonWriteWordTo((u32*)0x4040010, request->registers.sregs[37]);
-
-    event.object = request->tid;
-    event.header.code = request->header.code;
-    event.header.error = 0;
-    __rmonSendReply((KKHeader *const)&event, 0x10, 1);
-
-    return 0;
+    reply.object = request->tid;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
 int __rmonGetVRegs(KKHeader* req) {
-    u8 *local_4;
-    s32 local_8;
-    s32 local_c;
-    register KKObjectRequest *request = (KKObjectRequest*)req;
-    KKCpVregEvent event;
-    register s32 i;
+    char* cPtr;
+    int sent;
+    int dataSize;
+    register KKObjectRequest* request = (KKObjectRequest*)req;
+    KKCpVregEvent reply;
+    register int i;
+
+    STUBBED_PRINTF(("GetVRegisters\n"));
 
     if (__rmonRCPrunning()) {
-        return -4;
-    } else {
-        event.tid = request->object;
-        event.header.code = request->header.code;
-        event.header.error = 0;
-        event.header.length = 0x210;
-
-        local_c = 0x210;
-        local_4 = (u8*)&local_c;
-
-        local_8 = 0;
-        while (local_8 < 4) {
-            local_8 += __osRdbSend(&local_4[local_8], 4 - local_8, 8);
-        }
-
-        __rmonSendHeader((KKHeader *const)&event, 0x10, 1);
-
-        SetUpForRCPop(1);
-
-        for (i = 0; i < 32; i++) {
-            LoadStoreVU(0x3a, i);
-            __rmonStepRCP();
-            __rmonSendData((char * const)0x4000000, 0x10);
-        }
-
-        CleanupFromRCPop(1);
-
-        return 0;
+        return TV_ERROR_OPERATIONS_PROTECTED;
     }
+
+    reply.tid = request->object;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    reply.header.length = sizeof(reply);
+
+    dataSize = sizeof(reply);
+    cPtr = (char*)&dataSize;
+    sent = 0;
+    while (sent < (signed)sizeof(dataSize)) {
+        sent += __osRdbSend(cPtr + sent, sizeof(dataSize) - sent, RDB_TYPE_GtoH_DEBUG);
+    }
+
+    __rmonSendHeader(&reply.header, VREG_SIZE, KK_TYPE_REPLY);
+
+    SetUpForRCPop(TRUE);
+    for (i = 0; i < VREG_NUM; i++) {
+        LoadStoreVU(MIPS_SWC2_OPCODE, i);
+        __rmonStepRCP();
+        __rmonSendData((void*)SP_DMEM_START, VREG_SIZE);
+    }
+    CleanupFromRCPop(TRUE);
+
+    return TV_ERROR_NO_ERROR;
 }
 
 int __rmonSetVRegs(KKHeader* req) {
-    register KKCpVectorRegsetRequest *request = (KKCpVectorRegsetRequest*)req;
-    KKObjectEvent event;
-    register s32 i;
+    register KKCpVectorRegsetRequest* request = (KKCpVectorRegsetRequest*)req;
+    KKObjectEvent reply;
+    register int i;
 
-    if (__rmonRCPrunning() != 0) {
-        return -4;
-    } else {
-        SetUpForRCPop(1);
+    STUBBED_PRINTF(("SetVRegs\n"));
 
-        for (i = 0; i < 32; i++) {
-            __rmonCopyWords((u32*)0x4000000, (u32*)&request->registers.vregs[i], 4);
-            LoadStoreVU(50, i);
-            __rmonStepRCP();
-        }
-
-        CleanupFromRCPop(1);
-        
-        event.object = request->tid;
-        event.header.code = request->header.code;
-        event.header.error = 0;
-        __rmonSendReply((KKHeader *const)&event, sizeof(KKObjectEvent), 1);
-
-        return 0;
+    if (__rmonRCPrunning()) {
+        return TV_ERROR_OPERATIONS_PROTECTED;
     }
+
+    SetUpForRCPop(TRUE);
+    for (i = 0; i < VREG_NUM; i++) {
+        __rmonCopyWords((u32*)SP_DMEM_START, (u32*)&request->registers.vregs[i], VREG_SIZE / sizeof(u32));
+        LoadStoreVU(MIPS_LWC2_OPCODE, i);
+        __rmonStepRCP();
+    }
+    CleanupFromRCPop(TRUE);
+
+    reply.object = request->tid;
+    reply.header.code = request->header.code;
+    reply.header.error = TV_ERROR_NO_ERROR;
+    __rmonSendReply(&reply.header, sizeof(reply), KK_TYPE_REPLY);
+    return TV_ERROR_NO_ERROR;
 }
 
 u32 __rmonGetRegisterContents(int method, int threadNumber, int regNumber) {
-    u32 *regPtr;
-    OSThread *thread;
+    if (method == RMON_CPU) {
+        /* CPU register */
+        u32* regPointer;
+        OSThread* tptr;
 
-    if (method == 0) {
-        if (regNumber >= 1 && regNumber <= 25) {
-            regNumber -= 1;
-        } else if (regNumber >= 28 && regNumber <= 31) {
-            regNumber -= 3;
+        if (regNumber >= GREG_IDX_AT && regNumber < GREG_IDX_K0) {
+            regNumber -= GREG_IDX_AT - GREG_IDX_ZERO;
+        } else if (regNumber >= GREG_IDX_GP && regNumber < GREG_IDX_LO) {
+            regNumber -= GREG_IDX_GP - GREG_IDX_T9;
         } else {
             return 0;
         }
-
-        thread = __rmonGetTCB(threadNumber);
-        if (thread == NULL) {
+        tptr = __rmonGetTCB(threadNumber);
+        if (tptr == NULL) {
             return 0;
-        } else {
-            regPtr = (u32*)&thread->context;
-            regPtr += regNumber;
-            return *regPtr;
         }
+        regPointer = (u32*)&tptr->context;
+        regPointer += regNumber;
+        return *regPointer;
     } else {
+        /* RSP register */
         return rmonGetRcpRegister(regNumber);
     }
 }

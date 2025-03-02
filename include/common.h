@@ -35,5 +35,6 @@
 #include "variables.h"
 #include "functions.h"
 #include "dll.h"
+#include "bss.h"
 
 #endif //_COMMON_H

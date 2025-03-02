@@ -1,4 +1,3 @@
-
 #ifndef _INTRINSICS_H
 #define _INTRINSICS_H
 

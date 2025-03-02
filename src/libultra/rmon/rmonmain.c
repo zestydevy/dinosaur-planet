@@ -1,123 +1,121 @@
 // @DECOMP_OPT_FLAGS=-O1
+#include "libultra/rmon/dbgproto.h"
 #include "libultra/rmon/rmonint.h"
+#include "PR/os_internal.h"
+#include "PR/rcp.h"
+#include "PR/sptask.h"
+#include "PR/rdb.h"
+#include "PRinternal/macros.h"
+#include "bss.h"
 
 int __rmonActive = 0;
 
-extern volatile u32 D_800D3EF0;
-extern s32 rmonmain_bss_0008[280];
-extern u8 rmonmain_bss_0468;
-extern u8 rmonmain_bss_0469;
-extern s32 rmonmain_bss_046C;
-extern s32 *rmonmain_bss_0470;
-
-const char str_800a2dc0[] = "rmon: Thread %d created\n";
-const char str_800a2ddc[] = "rmon: Thread %d destroyed\n";
+BSS_STATIC volatile u32 somethingToDo;
+BSS_STATIC s32 inbuffer[280] ALIGNED(0x10);
+BSS_STATIC u8 cmdinptr;
+BSS_STATIC u8 cmdoutptr;
+BSS_STATIC int state;
+BSS_STATIC char *inPointer;
 
 void __rmonSendHeader(KKHeader* const block, u32 blockSize, u32 type) {
-    u32 local_4;
-    u8 *blockPtr;
-    
-    blockPtr = (u8*)block;
+    int sent;
+    char* cPtr = (char*)block;
 
-    block->rev = 2;
-    block->type = (char)type;
+    block->rev = KK_REV;
+    block->type = type;
 
-
-    local_4 = 0;
-    while (local_4 < blockSize) {
-        local_4 += __osRdbSend(&blockPtr[local_4], blockSize - local_4, 8);
+    sent = 0;
+    while (sent < blockSize) {
+        sent += __osRdbSend(cPtr + sent, blockSize - sent, RDB_TYPE_GtoH_DEBUG);
     }
 }
 
 void __rmonSendReply(KKHeader* const block, u32 blockSize, u32 replyType) {
-    u8 *blockSizeAddr;
-    s32 local_8;
-
-    local_8 = 0;
+    char* cPtr;
+    int sent = 0;
 
     block->length = blockSize;
-    blockSizeAddr = (u8*)&blockSize;
+    cPtr = (char*)&blockSize;
 
-    while (local_8 < 4) {
-        local_8 += __osRdbSend(&blockSizeAddr[local_8], 4 - local_8, 8);
+    /* send size */
+    while (sent < (signed)sizeof(blockSize)) {
+        sent += __osRdbSend(cPtr + sent, sizeof(blockSize) - sent, RDB_TYPE_GtoH_DEBUG);
     }
 
+    /* send data */
     __rmonSendHeader(block, blockSize, replyType);
     __rmonIOflush();
 }
 
 void __rmonSendData(char* const block, unsigned int blockSize) {
-    u32 *blockPtr;
-    u32 local_8;
-    u32 local_c;
-    u32 local_10;
-
-    blockPtr = (u32*)block;
-    local_8 = blockSize + 3 >> 2;
+    int* blockPointer = (int*)block;
+    unsigned int wordCount = (u32)(blockSize + 3) / 4;
+    u32 data;
+    union {
+        char bufBytes[4];
+        u32 bufWord;
+    } buffer;
 
     if (((u32)block & 3) == 0) {
-        while (local_8--) {
-            if ((u32)blockPtr >= 0x4000000 && (u32)blockPtr <= 0x4ffffff) {
-                __osSpRawReadIo((u32)blockPtr++, &local_c);
-                __rmonIOputw(local_c);
+        while (wordCount--) {
+            if ((u32)blockPointer >= SP_DMEM_START && (u32)blockPointer < 0x05000000) {
+                __osSpRawReadIo((u32)blockPointer++, &data);
+                __rmonIOputw(data);
             } else {
-                __rmonIOputw(*blockPtr++);
+                __rmonIOputw(*(blockPointer++));
             }
         }
-    } else {
-        while (local_8--) {
-            __rmonMemcpy((u8*)&local_10, (u8*)blockPtr, 4);
-            __rmonIOputw(local_10);
-            blockPtr += 1;
+    } else
+        while (wordCount--) {
+            __rmonMemcpy((u8*)buffer.bufBytes, (u8*)blockPointer, sizeof(buffer));
+            __rmonIOputw(buffer.bufWord);
+            blockPointer++;
         }
-    }
-
     __rmonIOflush();
 }
 
 // This is declared differently than in rmon.h...
-void rmonMain() {
-    register s32 s0;
-    OSMesg local_8;
+void rmonMain(void) {
+    register int newChars UNUSED;
 
-    D_800D3EF0 = 0;
-    rmonmain_bss_0469 = 0;
-    rmonmain_bss_0468 = 0;
+    STUBBED_PRINTF(("rmon: Thread %d created\n"));
+    STUBBED_PRINTF(("rmon: Thread %d destroyed\n"));
+
+    somethingToDo = 0;
+    cmdoutptr = 0;
+    cmdinptr = 0;
 
     __rmonInit();
-    __rmonActive = 1;
+    __rmonActive = TRUE;
 
-    rmonmain_bss_046C = 0;
-    rmonmain_bss_0470 = rmonmain_bss_0008;
-    s0 = 0;
 
-    while (1) {
-        osRecvMesg(&__rmonMQ, &local_8, OS_MESG_BLOCK);
-        D_800D3EF0 |= (u32)local_8;
+    state = 0, newChars = 0, inPointer = (void*)&inbuffer;
+    for (;;) {
+        OSMesg work;
 
-        if (D_800D3EF0 & 2) {
-            D_800D3EF0 &= ~2;
+        osRecvMesg(&__rmonMQ, &work, OS_MESG_BLOCK);
+
+        somethingToDo |= (u32)work;
+
+        if (somethingToDo & RMON_MESG_CPU_BREAK) {
+            somethingToDo &= ~RMON_MESG_CPU_BREAK;
             __rmonHitBreak();
         }
-
-        if (D_800D3EF0 & 4) {
-            D_800D3EF0 &= ~4;
+        if (somethingToDo & RMON_MESG_SP_BREAK) {
+            somethingToDo &= ~RMON_MESG_SP_BREAK;
             __rmonHitSpBreak();
         }
-
-        if (D_800D3EF0 & 8) {
-            D_800D3EF0 &= ~8;
+        if (somethingToDo & RMON_MESG_FAULT) {
+            somethingToDo &= ~RMON_MESG_FAULT;
             __rmonHitCpuFault();
         }
-
-        if (D_800D3EF0 & 0x10) {
-	        (D_800D3EF0);
-            D_800D3EF0 &= 0xef;
+        if (somethingToDo & 0x10) {
+            somethingToDo;
+            somethingToDo &= (u8)~0x10;
         }
-
-        if (D_800D3EF0 & 0x20) {
-            (D_800D3EF0);
-            D_800D3EF0 &= 0xdf;
+        if (somethingToDo & 0x20) {
+            somethingToDo;
+            somethingToDo &= (u8)~0x20;
         }
     }
 }
