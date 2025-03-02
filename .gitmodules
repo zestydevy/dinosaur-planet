@@ -13,3 +13,6 @@
 [submodule "tools/decomp_permuter"]
 	path = tools/decomp_permuter
 	url = https://github.com/simonlindholm/decomp-permuter.git
+[submodule "tools/ido_static_recomp"]
+	path = tools/ido_static_recomp
+	url = https://github.com/decompals/ido-static-recomp.git

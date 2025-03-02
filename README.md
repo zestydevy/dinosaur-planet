@@ -74,6 +74,7 @@ Also check out the [Dinosaur Planet directory on wiki.decomp.dev](https://wiki.d
 The repository comes with a bunch of tools for decompilation and managing the repository:
 - `dino.py` - An all in one script for working with the repository. Some of the common commands:
     - `build` - Builds the ROM and verifies that it matches.
+    - `build-tools` - Runs a build for tools such as IDO static recomp.
     - `configure` - Re-configures the build script.
     - `extract` - Splits the ROM and unpacks DLLs.
     - `clean` - Removes all extracted files, build artifacts, and build scripts for a fresh state.

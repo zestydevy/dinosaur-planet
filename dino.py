@@ -69,6 +69,12 @@ class DinoCommandRunner:
                 shutil.rmtree(path)
             else:
                 path.unlink()
+    
+    def clean_tools(self):
+        print("Cleaning IDO static recomp build...")
+        tool_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
+        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "clean", "VERSION=5.3"])
+        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "clean", "VERSION=7.1"])
 
     def update_submodules(self):
         print("Updating Git submodules...")
@@ -204,6 +210,17 @@ class DinoCommandRunner:
             # If matching, update the 'expected' directory for diff
             self.create_expected_dir(already_verified=True, quiet=True)
 
+    def build_tools(self):
+        print("Building IDO static recomp...")
+        self.build_tool_ido()
+
+    def build_tool_ido(self):
+        tool_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
+        j = str(os.cpu_count())
+        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "setup"])
+        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "-j", j, "VERSION=5.3", "RELEASE=1"])
+        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "-j", j, "VERSION=7.1", "RELEASE=1"])
+
     def create_expected_dir(self, already_verified=False, force=False, quiet=False):
         # Ensure the build matches
         if not already_verified:
@@ -281,6 +298,8 @@ class DinoCommandRunner:
         self.update_submodules()
         print()
         self.baseverify()
+        print()
+        self.build_tools()
         print()
         self.extract(use_cache=False)
         print()
@@ -413,9 +432,13 @@ def main():
     build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
     build_exp_cmd.add_argument("-f", "--force", action="store_true", help="Fully recreate the directory instead of updating it.", default=False)
     
+    subparsers.add_parser("build-tools", help="Build all tools.")
+    subparsers.add_parser("build-tool-ido", help="Build ido-static-recomp.")
+
     subparsers.add_parser("verify", help="Verify that the re-built ROM matches the base ROM.")
     subparsers.add_parser("baseverify", help="Verify that the base ROM is correct.")
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
+    subparsers.add_parser("clean-tools", help="Remove build artifacts for tools.")
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
     subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
     subparsers.add_parser("objdiff", help="Diff the re-rebuilt ROM with the original (redirects to objdiff-cli).", add_help=False)
@@ -447,6 +470,10 @@ def main():
             )
         elif cmd == "build-expected":
             runner.create_expected_dir(force=args.force)
+        elif cmd == "build-tools":
+            runner.build_tools()
+        elif cmd == "build-tool-ido":
+            runner.build_tool_ido()
         elif cmd == "configure":
             runner.configure()
         elif cmd == "verify":
@@ -455,6 +482,8 @@ def main():
             runner.baseverify()
         elif cmd == "clean":
             runner.clean()
+        elif cmd == "clean-tools":
+            runner.clean_tools()
         elif cmd == "submodules":
             runner.update_submodules()
         elif cmd == "diff":

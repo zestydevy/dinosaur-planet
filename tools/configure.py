@@ -189,14 +189,13 @@ class BuildNinjaWriter:
         # Write tools
         cross = self.__detect_cross()
         exe_suffix = ".exe" if sys.platform == "win32" else ""
-        ido_recomp_platform = "windows" if sys.platform == "win32" else "linux"
 
         self.writer.comment("Tools")
         self.writer.variable("AS", f"{cross}as{exe_suffix}")
         self.writer.variable("LD", f"{cross}ld{exe_suffix}")
         self.writer.variable("OBJCOPY", f"{cross}objcopy{exe_suffix}")
-        self.writer.variable("IDO_53", f"tools/ido_recomp/{ido_recomp_platform}/5.3/cc{exe_suffix}")
-        self.writer.variable("IDO_71", f"tools/ido_recomp/{ido_recomp_platform}/7.1/cc{exe_suffix}")
+        self.writer.variable("IDO_53", f"tools/ido_static_recomp/build/5.3/out/cc{exe_suffix}")
+        self.writer.variable("IDO_71", f"tools/ido_static_recomp/build/7.1/out/cc{exe_suffix}")
         self.writer.variable("CC", "$IDO_53")
         self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
         self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
