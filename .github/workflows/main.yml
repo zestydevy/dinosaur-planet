@@ -17,6 +17,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: recursive
+    - name: Symlink IDO binaries
+      run: ln -s /dino/tools/ido_static_recomp/build ./tools/ido_static_recomp/build
     - name: Checkout baserom
       uses: actions/checkout@v2
       with:
