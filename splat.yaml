@@ -312,7 +312,7 @@ segments:
     - [0x973A0, .data, libnaudio/n_csplayer]
     - [0x97730, .data, math/acos_asin]
     - [0x97840, .data, libultra/os/initialize]
-    - [0x97860, data, libultra/os/seteventmesg]
+    - [0x97860, .data, libultra/os/seteventmesg]
     - [0x97870, .data, libultra/io/controller]
     - [0x97880, .data, libultra/io/siacs]
     - [0x97890, .data, libultra/io/aisetnextbuf]

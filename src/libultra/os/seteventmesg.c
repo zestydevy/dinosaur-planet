@@ -3,7 +3,7 @@
 #include "libultra/os/osint.h"
 
 extern s32 __osShutdown;
-extern s32 __osPreNMI;
+s32 __osPreNMI = FALSE;
 
 __OSEventState __osEventStateTab[OS_NUM_EVENTS];
 
