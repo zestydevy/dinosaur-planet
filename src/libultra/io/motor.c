@@ -4,28 +4,29 @@
 
 OSPifRam gMotorData[MAXCONTROLLERS];
 
-s32 __osMotorAccess(OSPfs *pfs, s32 param2) {
+#define READFORMAT(ptr) ((__OSContRamReadFormat*)(ptr))
+
+s32 __osMotorAccess(OSPfs *pfs, s32 flag) {
     s32 i;
     s32 ret;
-    __OSContRamReadFormat *ptr;
+    u8 *ptr;
 
-    ptr = (__OSContRamReadFormat *)&gMotorData[pfs->channel];
+    ptr = (u8 *)&gMotorData[pfs->channel];
 
-    if ((pfs->status & 8) == 0) {
-        return PFS_ERR_INVALID;
+    if (!(pfs->status & PFS_MOTOR_INITIALIZED)) {
+        return 5;
     }
 
     __osSiGetAccess();
 
-    gMotorData[pfs->channel].pifstatus = CONT_FORMAT;
-    
-    ptr = (__OSContRamReadFormat *)((u8 *)ptr + pfs->channel);
+    gMotorData[pfs->channel].pifstatus = CONT_CMD_EXE;
+    ptr += pfs->channel;
 
     for (i = 0; i < BLOCKSIZE; i++) {
-        ptr->data[i] = (u8)param2;
+        READFORMAT(ptr)->data[i] = flag;
     }
     
-    __osContLastCmd = CONT_ETC;
+    __osContLastCmd = CONT_CMD_END;
     
     __osSiRawStartDma(OS_WRITE, &gMotorData[pfs->channel]);
     osRecvMesg(pfs->queue, (OSMesg *)NULL, OS_MESG_BLOCK);
@@ -33,14 +34,14 @@ s32 __osMotorAccess(OSPfs *pfs, s32 param2) {
     __osSiRawStartDma(OS_READ, &gMotorData[pfs->channel]);
     osRecvMesg(pfs->queue, (OSMesg *)NULL, OS_MESG_BLOCK);
     
-    ret = (s32)(ptr->rxsize & CON_ERR_MASK);
+    ret = READFORMAT(ptr)->rxsize & CHNL_ERR_MASK;
     
     if (ret == 0) {
-        if (param2 == 0) {
-            if (ptr->datacrc != 0) {
+        if (flag == 0) {
+            if (READFORMAT(ptr)->datacrc != 0) {
                 ret = PFS_ERR_CONTRFAIL;
             }
-        } else if (ptr->datacrc != 0xEB) {
+        } else if (READFORMAT(ptr)->datacrc != 0xEB) {
             ret = PFS_ERR_CONTRFAIL;
         }
     }
@@ -58,21 +59,21 @@ void __osMakeMotorData(s32 channel, OSPifRam *mdata) {
     ptr = (u8 *)mdata->ramarray;
     
     ramreadformat.dummy = CONT_CMD_NOP;
-    ramreadformat.txsize = CONT_CMD_WRITE_MEMPACK_TX;
-    ramreadformat.rxsize = CONT_CMD_WRITE_MEMPACK_RX;
-    ramreadformat.cmd = CONT_CMD_WRITE_MEMPACK;
-    ramreadformat.address_hi = 0xC0;
-    ramreadformat.address_lo = 0xC000 | __osContAddressCrc(0x600);
+    ramreadformat.txsize = CONT_CMD_WRITE_PAK_TX;
+    ramreadformat.rxsize = CONT_CMD_WRITE_PAK_RX;
+    ramreadformat.cmd = CONT_CMD_WRITE_PAK;
+    ramreadformat.addrh = CONT_BLOCK_RUMBLE >> 3;
+    ramreadformat.addrl = (u8)(__osContAddressCrc(CONT_BLOCK_RUMBLE) | (CONT_BLOCK_RUMBLE << 5));
 
     if (channel != 0)
     {
         for (i = 0; i < channel; i++)
         {
-            *ptr++ = 0;
+            *ptr++ = CONT_CMD_REQUEST_STATUS;
         }
     }
 
-    *(__OSContRamReadFormat *)ptr = ramreadformat;
+    *READFORMAT(ptr) = ramreadformat;
     
     ptr += sizeof(__OSContRamReadFormat);
     ptr[0] = CONT_CMD_END;

@@ -333,7 +333,7 @@ segments:
     - [0x98C90, .data, libultra/libc/xprintf]
     - [0x98CE0, .data, libultra/rmon/rmoncmds]
     - [0x98DC0, .data, libultra/libc/xlitob]
-    - [0x98DF0, data, libultra/io/contpfs]
+    - [0x98DF0, .data, libultra/io/contpfs]
     - [0x98E00, .data, libultra/rmon/rmonmain]
     
     # rodata
