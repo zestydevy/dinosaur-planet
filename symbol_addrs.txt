@@ -832,6 +832,7 @@ NOOP_8005eae0 = 0x8005eae0; // type:func
 NOOP_8005ead8 = 0x8005ead8; // type:func
 modify_osPIhandle = 0x8005ea60; // type:func
 handle_CpU = 0x80080ae8; // type:func
+gNewViMode = 0x800930B0;
 __osViDevMgr = 0x800930b4; // size:0x1c
 viRetraceMsg = 0x800be0d8; // size:0x18
 viCounterMsg = 0x800be0f0; // size:0x18

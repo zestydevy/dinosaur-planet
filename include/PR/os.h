@@ -410,6 +410,7 @@ typedef struct {
 #define OS_MESG_TYPE_COUNTER	(OS_MESG_TYPE_BASE+4)
 #define OS_MESG_TYPE_EDMAREAD	(OS_MESG_TYPE_BASE+5)
 #define OS_MESG_TYPE_EDMAWRITE	(OS_MESG_TYPE_BASE+6)
+#define OS_MESG_TYPE_SET_VI_MODE (OS_MESG_TYPE_BASE+7) // Added by RARE
 
 /*
  * I/O message priority

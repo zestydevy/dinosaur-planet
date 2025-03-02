@@ -2,18 +2,18 @@
 #include <PR/rcp.h>
 #include "libultra/io/viint.h"
 #include "libultra/os/osint.h"
+#include "bss.h"
 
-s32 D_800930B0 = 0;
+OSViMode *gNewViMode = NULL;
 OSDevMgr __osViDevMgr = {0};
 s32 __additional_scanline = 0;
 
-// all these were static
-OSThread viThread;
-unsigned char viThreadStack[OS_VIM_STACKSIZE];
-OSMesgQueue viEventQueue;
-OSMesg viEventBuf[5];
-OSIoMesg viRetraceMsg;
-OSIoMesg viCounterMsg;
+BSS_STATIC OSThread viThread;
+BSS_STATIC unsigned char viThreadStack[OS_VIM_STACKSIZE];
+BSS_STATIC OSMesgQueue viEventQueue;
+BSS_STATIC OSMesg viEventBuf[5];
+BSS_STATIC OSIoMesg viRetraceMsg;
+BSS_STATIC OSIoMesg viCounterMsg;
 
 void viMgrMain(void *arg);
 
@@ -61,5 +61,67 @@ void osCreateViManager(OSPri pri)
 	}
 }
 
+// pad to 0x800bce70
+static u8 _bss_pad[0xEC40]; // TODO: remove bss padding
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/io/vimgr/viMgrMain.s")
+void viMgrMain(void* arg) {
+    __OSViContext* vc;
+    OSDevMgr* dm;
+    OSIoMesg* mb;
+    static u16 retrace;
+    s32 first;
+    u32 count;
+
+    mb = NULL;
+    first = 0;
+    vc = __osViGetCurrentContext();
+    retrace = vc->retraceCount;
+    if (retrace == 0) {
+        retrace = 1;
+    }
+    dm = (OSDevMgr*)arg;
+
+	while (TRUE) {
+		osRecvMesg(dm->evtQueue, (OSMesg)&mb, OS_MESG_BLOCK);
+		switch (mb->hdr.type) {
+			case OS_MESG_TYPE_VRETRACE:
+				if (gNewViMode != NULL) {
+					__osViNext->modep = gNewViMode;
+					gNewViMode = NULL;
+				}
+		
+				__osViSwapContext();
+				retrace--;
+		
+				if (retrace == 0) {
+					vc = __osViGetCurrentContext();
+					if (vc->msgq != NULL) {
+						osSendMesg(vc->msgq, vc->msg, OS_MESG_NOBLOCK);
+					}
+					retrace = vc->retraceCount;
+				}
+		
+				__osViIntrCount++;
+		
+				if (first) {
+					count = osGetCount();
+					__osCurrentTime = count;
+					first = 0;
+				}
+		
+				count = __osBaseCounter;
+				__osBaseCounter = osGetCount();
+				count = __osBaseCounter - count;
+				__osCurrentTime = __osCurrentTime + count;
+				break;
+			case OS_MESG_TYPE_COUNTER:
+				__osTimerInterrupt();
+				break;
+			case OS_MESG_TYPE_SET_VI_MODE:
+				// RARE smuggles a VI mode pointer in the retQueue field for this message type.
+				// Could make it a union field, but the way this is passed is hacky to begin with...
+				gNewViMode = (OSViMode*)mb->hdr.retQueue;
+				break;
+		}
+	}
+}
