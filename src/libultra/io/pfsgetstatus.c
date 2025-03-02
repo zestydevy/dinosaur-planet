@@ -5,7 +5,7 @@
 
 extern u8 __osPfsInodeCacheBank;
 
-void __osPfsRequestOneChannel(int channel, u8 cmd); // cmd added by Rare
+void __osPfsRequestOneChannel(int channel, u8 cmd);
 void __osPfsGetOneChannelData(int channel, OSContStatus *data);
 
 s32 __osPfsGetStatus(OSMesgQueue *queue, int channel)
@@ -13,7 +13,7 @@ s32 __osPfsGetStatus(OSMesgQueue *queue, int channel)
     s32 ret;
     OSMesg dummy;
     OSContStatus data;
-    __osPfsInodeCacheBank = 0xfa; // Rare addition
+    __osPfsInodeCacheBank = 0xfa;
     ret = 0;
     __osPfsRequestOneChannel(channel, 0);
     ret = __osSiRawStartDma(OS_WRITE, &__osPfsPifRam);
@@ -36,7 +36,7 @@ void __osPfsRequestOneChannel(int channel, u8 cmd)
     __OSContRequesFormatShort requestformat;
     int i;
 
-    __osContLastCmd = CONT_CMD_END; // changed from CONT_CMD_REQUEST_STATUS by Rare?
+    __osContLastCmd = CONT_CMD_END;
     __osPfsPifRam.pifstatus = CONT_CMD_EXE;
     ptr = (u8 *)&__osPfsPifRam;
 
