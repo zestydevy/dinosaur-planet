@@ -324,7 +324,7 @@ segments:
     - [0x98AF0, data, libultra/os/exceptasm]
     - [0x98B30, .data, libultra/os/writehost]
     - [0x98B40, .data, libultra/os/readhost]
-    - [0x98B50, data, libultra/libc/syncprintf]
+    - [0x98B50, .data, libultra/libc/syncprintf]
     - [0x98B60, .data, libultra/io/contramread]
     - [0x98B70, .data, libultra/io/piacs]
     - [0x98B80, .data, libultra/os/rdbsend]

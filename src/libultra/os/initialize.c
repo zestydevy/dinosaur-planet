@@ -24,7 +24,7 @@ OSTime osClockRate = OS_CLOCK_RATE;
 s32 osViClock = VI_NTSC_CLOCK;
 u32 __osShutdown = 0;
 u32 __OSGlobalIntMask = OS_IM_ALL;
-s32 gP64Enabled;
+s32 __kmc_pt_mode;
 
 void __createSpeedParam();
 
@@ -99,7 +99,7 @@ void osInitialize() {
 
     // partner-64 stuff
     // note: not 100% sure what the below is doing, some comments may be wrong
-    if (gP64Enabled == 0) {
+    if (__kmc_pt_mode == 0) {
         p64Status = (u32 *)0xBFF08004;
         p64Struct = (u32 *)0xBFF00000;
         
@@ -126,7 +126,7 @@ void osInitialize() {
         osInvalICache((void *)E_VEC, 0x24);
 
         // mark partner mode as enabled
-        gP64Enabled = 1;
+        __kmc_pt_mode = 1;
 
         // check some status bit
         if ((*p64Status & 0x10) == 0) {
