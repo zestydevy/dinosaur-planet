@@ -495,6 +495,21 @@ typedef struct {
 #define OS_VI_MPAL_HPN2		40
 #define OS_VI_MPAL_HPF2		41
 
+#define OS_VI_FPAL_LPN1         42      /* FPAL - Full screen PAL */
+#define OS_VI_FPAL_LPF1         43
+#define OS_VI_FPAL_LAN1         44
+#define OS_VI_FPAL_LAF1         45
+#define OS_VI_FPAL_LPN2         46
+#define OS_VI_FPAL_LPF2         47
+#define OS_VI_FPAL_LAN2         48
+#define OS_VI_FPAL_LAF2         49
+#define OS_VI_FPAL_HPN1         50
+#define OS_VI_FPAL_HPF1         51
+#define OS_VI_FPAL_HAN1         52
+#define OS_VI_FPAL_HAF1         53
+#define OS_VI_FPAL_HPN2         54
+#define OS_VI_FPAL_HPF2         55
+
 /*
  * Video Interface (VI) special features
  */
