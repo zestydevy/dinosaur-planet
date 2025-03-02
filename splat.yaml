@@ -329,7 +329,7 @@ segments:
     - [0x98B70, .data, libultra/io/piacs]
     - [0x98B80, .data, libultra/os/rdbsend]
     - [0x98B90, data, libultra/vi/vimodes]
-    - [0x98C80, data, libultra/debug/kdebugserver]
+    - [0x98C80, .data, libultra/debug/kdebugserver]
     - [0x98C90, .data, libultra/libc/xprintf]
     - [0x98CE0, .data, libultra/rmon/rmoncmds]
     - [0x98DC0, .data, libultra/libc/xlitob]

@@ -678,7 +678,6 @@ __osRdb_IP6_Empty = 0x80097f80; // size:0x4
 osViModePalLan1 = 0x80097f90; // size:0x50
 osViModeMpalLan1 = 0x80097fe0; // size:0x50
 osViModeNtscLan1 = 0x80098030; // size:0x50
-kdebugserver_data_0000 = 0x80098080; // size:0x4
 xprintf_data_0000 = 0x80098090;
 xprintf_data_0024 = 0x800980b4;
 dispatchTable = 0x800980e0; // size:0xe0
