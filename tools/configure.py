@@ -210,6 +210,10 @@ class BuildNinjaWriter:
             "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
+        self.writer.rule("cc_noasmproc", 
+            "$HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
+            "Compiling $in...",
+            depfile="$out.d")
         self.writer.rule("cc_dll", 
             "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
             "Compiling $in...",
@@ -244,7 +248,11 @@ class BuildNinjaWriter:
             # Determine command
             command: str
             if file.type == BuildFileType.C:
-                command = "cc"
+                if file.config != None and file.config.opt != None and "-O3" in file.config.opt:
+                    # Can't run asm processor with -O3 compilation
+                    command = "cc_noasmproc"
+                else:
+                    command = "cc"
             elif file.type == BuildFileType.ASM:
                 command = "as"
             elif file.type == BuildFileType.BIN:
