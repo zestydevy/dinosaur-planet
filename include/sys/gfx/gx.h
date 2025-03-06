@@ -49,8 +49,7 @@ typedef struct _UnkHeapVidStruct {
     f32 unk0x5c;
 } UnkHeapVidStruct;
 
-#define UNKNOWN_VIDEO_STRUCT_2_SIZE 0x14
-
+// size: 0x14
 typedef struct _UnkVidStruct2 {
 /*0000*/    f32 unk0x0;
 /*0004*/    f32 unk0x4;
@@ -60,28 +59,33 @@ typedef struct _UnkVidStruct2 {
 /*0010*/    f32 *unk0x10;
 } UnkVidStruct2;
 
-#define UNKNOWN_VIDEO_STRUCT_SIZE 0x90
+typedef struct {
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 unk6;
+    s16 unk8;
+    s16 unka;
+    s8 unkc;
+    s8 unkd;
+    s8 unke;
+    s8 unkf;
+} UnkVidStruct_0x18;
 
+typedef struct {
+    u8 _unk0x0[0x46];
+    s16 unk0x46;
+} UnkVidStruct4;
+
+// size: 0x90
 typedef struct _UnkVidStruct {
     Gfx dl;
     u8 unk0x8_pad[16];
-    s16 unk0x18;
-    s16 unk0x1a;
-    s16 unk0x1c;
-    u8 unk0x1e_pad[10];
-    s16 unk0x28;
-    s16 unk0x2a;
-    s16 unk0x2c;
-    u8 unk0x2e_pad[10];
-    s16 unk0x38;
-    s16 unk0x3a;
-    s16 unk0x3c;
-    u8 unk0x3e_pad[10];
-    s16 unk0x48[4];
-    u8 unk0x4c_pad[40];
+    UnkVidStruct_0x18 unk0x18[4];
+    u8 unk0x58_pad[0x20];
     f32 unk0x78;
     f32 unk0x7c;
-    void *unk0x80;
+    UnkVidStruct4 *unk0x80;
     OSViMode *viMode;
     s16 unk0x88;
     u8 unk0x8a_padd[6];
@@ -91,11 +95,6 @@ typedef struct _UnkVidStruct3 {
     s32 unk0x0;
     s32 unk0x4;
 } UnkVidStruct3;
-
-typedef struct {
-    u8 _unk0x0[0x46];
-    s16 unk0x46;
-} UnkVidStruct4;
 
 // Length of gUnknownVideoStructs
 #define UNKNOWN_VIDEO_STRUCTS_COUNT 40
@@ -125,6 +124,8 @@ extern s32 D_800BCC68;
 extern s32 D_800BCC6C;
 extern u32 D_800BCC70;
 extern u8 D_800BCC78;
+extern f32 D_800BCC80;
+extern f32 D_800BCC84;
 
 extern OSViMode gOSViModeCustom;
 

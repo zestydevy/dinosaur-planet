@@ -177,42 +177,61 @@ void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
 static s32 D_80092FFC = 1;
 static s32 D_80093000 = 0;
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
-
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
+#else
+void func_8005CD80() {
+    s32 i;
+    s32 k;
+    UnkVidStruct_0x18 *ptr;
 
-#if 1
+    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
+        ptr = &gUnknownVideoStructs[i].unk0x18[0];
+        
+        if (gUnknownVideoStructs[i].viMode != NULL) {
+            gUnknownVideoStructs[i].unk0x88 -= 5;
+
+            if (gUnknownVideoStructs[i].unk0x88 < 0) {
+                gUnknownVideoStructs[i].unk0x88 = 0;
+            }
+
+            for (k = 0; k < 4; k++) {
+                (ptr++)->unkf = gUnknownVideoStructs[i].unk0x88;
+            }
+        }
+    }
+}
+#endif
+
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CDFC.s")
 #else
-// Functionally equivalent, mainly regalloc, see TODO
 void func_8005CDFC(int _) {
     float var1;
     float var2;
-    s16 *var3;
     s32 i;
+    s32 k;
+    UnkVidStruct_0x18 *ptr;
+
+    var1 = 0;
+    var2 = 0;
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
-        if (gUnknownVideoStructs[i].viMode == NULL) {
-            continue;
+        if (gUnknownVideoStructs[i].viMode != NULL) {
+            ptr = &gUnknownVideoStructs[i].unk0x18[0];
+            
+            var1 = gWorldX - gUnknownVideoStructs[i].unk0x78;
+            var2 = gWorldZ - gUnknownVideoStructs[i].unk0x7c;
+
+            gUnknownVideoStructs[i].unk0x78 += var1;
+            gUnknownVideoStructs[i].unk0x7c += var2;
+
+            for (k = 0; k < 4; k++) {
+                ptr->x -= var1;
+                ptr->z -= var2;
+                ptr++;
+            }
         }
-
-        // TODO: The order of loads and stores here are slightly out of order
-        var1 = gWorldX - gUnknownVideoStructs[i].unk0x78;
-        var2 = gWorldZ - gUnknownVideoStructs[i].unk0x7c;
-
-        var3 = &gUnknownVideoStructs[i].unk0x48[0];
-
-        gUnknownVideoStructs[i].unk0x78 += var1;
-        gUnknownVideoStructs[i].unk0x7c += var2;
-        
-        gUnknownVideoStructs[i].unk0x18 -= var1;
-        gUnknownVideoStructs[i].unk0x1c -= var2;
-        gUnknownVideoStructs[i].unk0x28 -= var1;
-        gUnknownVideoStructs[i].unk0x2c -= var2;
-        gUnknownVideoStructs[i].unk0x38 -= var1;
-        gUnknownVideoStructs[i].unk0x3c -= var2;
-
-        var3[2] = var3[2] - var2;
-        var3[0] = var3[0] - var1;
     }
 }
 #endif
