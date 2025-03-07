@@ -42,7 +42,7 @@ segments:
     - [0xBC10, c, generic_stack]
     - [0xBED0, c, segment_BED0]
     - [0xC4B0, c, bitstream]
-    - [0xC660, c, C660]
+    - [0xC660, c, linked_list]
     - [0xC840, c, dll]
     - [0xD280, c, fonts]
     - [0x10DF0, c, input]
