@@ -1,13 +1,9 @@
 #include "common.h"
 #include "PR/os_internal.h"
+#include "sys/scheduler.h"
 
-struct UnkSchedStruct {
-    s32 _unk0;
-    s32 _unk4;
-};
-
-struct UnkSchedStruct D_800918D0 = {0, 0};
-struct UnkSchedStruct D_800918D8 = {0, 8};
+UnkSchedStruct D_800918D0 = {0, 0};
+UnkSchedStruct D_800918D8 = {0, 8};
 f32 floatTimer0 = 0.0f;
 f32 floatTimer1 = 0.0f;
 f32 floatTimer2 = 0.0f;

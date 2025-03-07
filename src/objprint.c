@@ -1,11 +1,11 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/objprint_func.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80034FF0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80034FF0.s")
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/draw_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/draw_actor.s")
 #else
 extern f32 gWorldX;
 extern f32 gWorldZ;
@@ -282,7 +282,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_800357B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_800357B4.s")
 
 void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
 {
@@ -319,20 +319,20 @@ void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 par
     *rspMtxs = outRspMtxs;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80035AF4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80035AF4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036058.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036058.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036438.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036438.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036890.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036890.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036B78.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036B78.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036E5C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036E5C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036F6C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036F6C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80036FBC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036FBC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_359E0/func_80037020.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80037020.s")

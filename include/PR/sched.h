@@ -56,14 +56,15 @@ typedef struct OSScTask_s {
     OSTask              list;
     OSMesgQueue         *msgQ;
     OSMesg              msg;
-    u8                  unk0x58[8]; /* NOTE: Not from the original sched.h! */
+    u32                 unk0x58;    /* NOTE: Not from the original sched.h! */
+    u32                 unk0x5c;    /* NOTE: Not from the original sched.h! */
     u32                 unk0x60;    /* NOTE: Not from the original sched.h! */
-    u8                  unk0x64[4]; /* NOTE: Not from the original sched.h! */
+    u32                 unk0x64;    /* NOTE: Not from the original sched.h! */
     u32                 unk0x68;    /* NOTE: Not from the original sched.h! */
     u32                 taskType;   /* NOTE: Not from the original sched.h! 0x6c */
 #ifndef _FINALROM                       /* all #ifdef items should    */
-    OSTime              startTime;      /* remain at the end!!, or    */
-    OSTime              totalTime;      /* possible conflict if       */
+   // OSTime              startTime;      /* remain at the end!!, or    */
+    //OSTime              totalTime;      /* possible conflict if       */
 #endif                                  /* FINALROM library used with */
 } OSScTask;                             /* non FINALROM code          */
 

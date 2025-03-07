@@ -210,4 +210,7 @@ s32 get_video_mode();
  */
 u32 get_some_resolution_encoded();
 
+#define RESOLUTION_WIDTH(encoded) (encoded & 0xFFFF)
+#define RESOLUTION_HEIGHT(encoded) (encoded >> 16)
+
 #endif //_SYS_GFX_GX_H

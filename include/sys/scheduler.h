@@ -34,6 +34,11 @@
 #define OS_SC_TASK_DI 3
 #define OS_SC_TASK_DI_BENCHMARK_TEST 4
 
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+} UnkSchedStruct;
+
 extern char **D_8008C8F0; // ptr to "1.3623"
 extern char **D_8008C8F4; // ptr to "01/12/00 09:19"
 extern char **D_8008C8F8; // ptr to "dragon1"

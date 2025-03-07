@@ -167,7 +167,7 @@ void func_800121DC();                                  /* extern */
 void func_800129E4();                                  /* extern */
 void func_80013D80();                                  /* extern */
 void func_80020BB8();                                  /* extern */
-s32 func_80037780(Gfx*, Gfx*, s32);                     /* extern */
+s32 schedule_gfx_task(Gfx*, Gfx*, s32);                     /* extern */
 void func_80037924();                                  /* extern */
 void func_80037A14(Gfx**, s32**, s32);                   /* extern */
 void func_80037EC8(Gfx**);                             /* extern */
@@ -196,7 +196,7 @@ void game_tick(void)
     tmp_s0 = &gCurGfx;
 
     // unused return type
-    func_80037780(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    schedule_gfx_task(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -276,7 +276,7 @@ void game_tick_no_expansion(void)
 
     tmp_s0 = &gCurGfx;
     
-    func_80037780(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    schedule_gfx_task(gMainGfx[gFrameBufIdx], gCurGfx, 0);
     
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
