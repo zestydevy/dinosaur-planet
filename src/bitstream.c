@@ -1,11 +1,89 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "sys/bitstream.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/bitstream/func_8000B8B0.s")
+BitStream *bitstream_init(BitStream *stream, u8 *data, s32 bitLength, s32 capacity) {
+    stream->byteLength = bitLength >> 3;
+    if (bitLength & 7) {
+        // need one extra byte to hold bits
+        stream->byteLength += 1;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/bitstream/func_8000B8E4.s")
+    stream->bitLength = bitLength;
+    stream->capacity = capacity;
+    stream->data = data;
+    stream->bitPos = 0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/bitstream/func_8000B970.s")
+    return stream;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/bitstream/func_8000BA20.s")
+u32 bitstream_read(BitStream *stream, u8 n) {
+    u32 data;
+    s32 i;
+    s32 byteIdx;
+    s32 bitIdx;
+    u8 bit;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/bitstream/func_8000BA50.s")
+    data = 0;
+    i = 0;
+
+    if (stream->bitPos < stream->bitLength) {}
+
+    while (n != 0 && stream->bitPos < stream->bitLength) {
+        byteIdx = stream->bitPos >> 3;
+        bitIdx = stream->bitPos & 7;
+
+        bit = (stream->data[byteIdx] >> bitIdx) & 1;
+        data |= bit << i;
+
+        i++;
+        stream->bitPos++;
+        n--;
+    }
+
+    return data;
+}
+
+void bitstream_write(BitStream *stream, u32 data, u8 n) {
+    s32 i;
+    s32 byteIdx;
+    s32 bitIdx;
+    s32 bitPos;
+    s32 capacity;
+    u8 bit;
+
+    if (stream->capacity) {}
+    if (stream->bitPos) {}
+
+    i = 0;
+
+    while (n != 0 && stream->bitPos < stream->capacity) {
+        byteIdx = stream->bitPos >> 3;
+        bitIdx = stream->bitPos & 7;
+
+        bit = (data >> i) & 1;
+        stream->data[byteIdx] |= bit << bitIdx;
+
+        i++;
+        
+        stream->bitPos++;
+        if (stream->bitLength < stream->bitPos) {
+            stream->bitLength += 1;
+        }
+
+        n--;
+    }
+}
+
+void bitstream_append(BitStream *stream, u32 data, u8 n) {
+    s32 len;
+
+    len = stream->bitLength;
+
+    stream->bitPos = len;
+
+    bitstream_write(stream, data, n);
+}
+
+void bitstream_set_pos(BitStream *stream, s32 bitPos) {
+    stream->bitPos = bitPos;
+}
