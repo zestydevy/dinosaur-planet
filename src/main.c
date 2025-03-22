@@ -166,7 +166,6 @@ void func_80007178();                                  /* extern */
 void func_800121DC();                                  /* extern */
 void func_800129E4();                                  /* extern */
 void func_80013D80();                                  /* extern */
-void func_80020BB8();                                  /* extern */
 s32 schedule_gfx_task(Gfx*, Gfx*, s32);                     /* extern */
 void func_80037924();                                  /* extern */
 void func_80037A14(Gfx**, s32**, s32);                   /* extern */
@@ -241,7 +240,7 @@ void game_tick(void)
     gSPEndDisplayList(gCurGfx++);
 
     func_80037924();
-    func_80020BB8();
+    obj_do_deferred_free();
     update_mem_mon_values();
     
     if (D_800B09C2 == 0) {

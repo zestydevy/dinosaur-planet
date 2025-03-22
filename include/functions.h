@@ -16,7 +16,6 @@ void check_dongle(void);
 void func_80017254(s32);
 void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
-Object *get_player(void);
 
 s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
@@ -41,7 +40,6 @@ void add_object_to_array(Object *obj, s32 param2);
 void write_c_file_label_pointers(char *cFileLabel, s32 a1);
 
 void func_800267A4(Object *obj);
-Object *func_8002394C();
 s32 func_80023D30(Object*,s32,f32,s32);
 s32 func_80024108(Object*,f32,f32,s32);
 s32 func_80025F40(Object*,s32,s32,s32);

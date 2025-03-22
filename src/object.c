@@ -4,8 +4,10 @@
 #include "variables.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
+#include "sys/objects.h"
 
 extern void **gDeferredObjDefFreeList;
+extern s32 gDeferredObjDefFreeListCount;
 extern void *D_800B1918;
 extern void *D_800B18E4;
 extern int gObjIndexCount; //count of OBJINDEX.BIN entries
@@ -33,13 +35,11 @@ int get_file_size(int file);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void alloc_some_object_arrays(void); //related to objects
-void func_80020D34(void);
+void obj_clear_all(void);
 
 void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3);
 
 void func_80046320(s16 param1, Object *object);
-void func_80023A00(Object *object, s8 param2); // sets object->updatePriority = param2
-void func_800222AC(Object *object);
 
 extern char D_80099600[]; // "objects/objects.c"
 extern s32 gNumObjs;
@@ -53,8 +53,6 @@ extern void func_8002B6EC();
 
 extern char D_800994E0[]; // "objects/objects.c"
 
-extern s32 D_800B1914;
-
 void update_obj_models();
 void update_object(Object *obj);
 void func_8002272C(Object *obj);
@@ -62,29 +60,23 @@ void func_8002272C(Object *obj);
 extern s32 D_80091660;
 extern s32 D_800B191C;
 
-void func_80022338(Object *);
-
 extern s16 D_800B18E0;
 extern s32 D_800B1988;
 
 extern void func_80025DF0();
 
-void func_80021A84(Object *object, u32 someFlags);
-
-void func_800228D0(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad);
-
-ModLine *func_80022D00(s32 modLineNo, s16 *modLineCount);
+ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount);
 
 extern void func_800596BC(ObjDef*);
 
-ObjDef *func_80022AA4(s32 tabIdx);
+ObjDef *obj_load_objdef(s32 tabIdx);
 u32 func_80022828(Object *obj);
-u32 func_80021CC0(Object *obj, ObjDef *def, u32 flags);
-void func_80022C68(s32 tabIdx);
+u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags);
+void obj_free_objdef(s32 tabIdx);
 
 void func_80021E74(f32, ModelInstance*);
 void func_80022200(Object *obj, s32 param2, s32 param3);
-u32 func_800227AC(Object *obj, u32 addr);
+u32 obj_alloc_object_state(Object *obj, u32 addr);
 u32 func_80022868(s32 param1, Object *obj, u32 addr);
 u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
 
@@ -123,7 +115,7 @@ void init_objects(void) {
     //allocate global object list and some other buffers
     gObjList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
     alloc_some_object_arrays();
-    func_80020D34();
+    obj_clear_all();
 }
 
 void update_objects() {
@@ -246,46 +238,46 @@ void update_obj_models() {
     }
 }
 
-void func_80020BB8() {
+void obj_do_deferred_free() {
     int i;
-    for(i = 0; i < D_800B1914; i++) {
-        func_80022F94(gDeferredObjDefFreeList[i], 0); //possibly some type of free?
+    for(i = 0; i < gDeferredObjDefFreeListCount; i++) {
+        obj_free_object(gDeferredObjDefFreeList[i], 0);
         gDeferredObjDefFreeList[i] = 0;
     }
-    D_800B1914 = 0;
+    gDeferredObjDefFreeListCount = 0;
 }
 
-void func_80020C48() {
+void obj_free_all() {
     s32 i;
     
-    func_80020BB8();
+    obj_do_deferred_free();
     D_80091660 = 0;
 
     i = 0;
     while (gNumObjs != 0) {
-        func_80022338(gObjList[i]);
+        obj_destroy_object(gObjList[i]);
         i++;
         if (i >= gNumObjs) {
             i = 0;
         }
     }
 
-    func_80020BB8();
+    obj_do_deferred_free();
     D_80091660 = 2;
 
-    D_800B1914 = 0;
+    gDeferredObjDefFreeListCount = 0;
     D_800B191C = 0;
     gNumObjs = 0;
 
     linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
 
-    func_80020D34();
+    obj_clear_all();
 
     gDLL_Camera->exports->func[9].withTwoArgs(0, 0);
 }
 
-void func_80020D34() {
-    D_800B1914 = 0;
+void obj_clear_all() {
+    gDeferredObjDefFreeListCount = 0;
     D_800B191C = 0;
     D_800B1988 = 0;
     gNumObjs = 0;
@@ -319,6 +311,7 @@ s32 func_80020DA0(s32 *numObjs) {
     idx2 = gNumObjs - 1;
     objsEnd = idx2;
 
+    // some kind of sort?
     while (idx1 <= idx2) {
         endLoop = 0;
         while (idx1 <= objsEnd && !endLoop) {
@@ -389,7 +382,7 @@ Object **get_world_objects(s32 *param1, s32 *numObjs) {
     return gObjList;
 }
 
-Object *func_80021178(s32 idx) {
+Object *get_world_object(s32 idx) {
     if (idx < 0 || idx >= gNumObjs) {
         return NULL;
     }
@@ -423,7 +416,7 @@ s32 get_num_objects(void) {
 
 s32 ret0_800212E8(void) { return 0; }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800212F4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_get_seq.s")
 
 void *func_800213A0(s32 idx) {
     if (idx < 0 || idx >= gNumTablesTabEntries) {
@@ -433,17 +426,17 @@ void *func_800213A0(s32 idx) {
     return (void*)((u32)gFile_TABLES_BIN + gFile_TABLES_TAB[idx] * 4);
 }
 
-Object *func_800213EC(s32 param1, s32 param2, s32 param3, s32 param4, s32 param5) {
+Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 param4, Object *parent) {
     Object *obj;
 
     obj = NULL;
-    queue_load_map_object((void**)&obj, param1, param2, param3, param4, param5, 0);
-    func_80021A84(obj, param2);
+    queue_load_map_object((void**)&obj, createInfo, createFlags, mapID, param4, parent, 0);
+    obj_add_object(obj, createFlags);
 
     return obj;
 }
 
-Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *param5) {
+Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *parent) {
     ObjDef *def;
     s32 modelCount;
     s32 var;
@@ -474,7 +467,7 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
 
     bzero(&objHeader, sizeof(Object));
 
-    objHeader.def = func_80022AA4(tabIdx);
+    objHeader.def = obj_load_objdef(tabIdx);
     def = objHeader.def;
 
     if (def == NULL || (u32)def == 0xFFFFFFFF) {
@@ -534,12 +527,12 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         flags |= 0x200;
     }
 
-    var = func_80021CC0(&objHeader, def, flags);
+    var = obj_calc_mem_size(&objHeader, def, flags);
 
     obj = (Object*)malloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
 
     if (obj == NULL) {
-        func_80022C68(tabIdx);
+        obj_free_objdef(tabIdx);
         return NULL;
     }
 
@@ -584,11 +577,11 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
     modelLoadFailedLabel:
     if (modelLoadFailed) {
         func_80022200(obj, modelCount, objId);
-        func_80022C68(tabIdx);
+        obj_free_objdef(tabIdx);
         return NULL;
     }
      
-    addr = func_800227AC(obj, (u32)&obj->modelInsts[def->numModels]);
+    addr = obj_alloc_object_state(obj, (u32)&obj->modelInsts[def->numModels]);
 
     if (flags & 0x40) {
         addr = func_80022868(obj->id, obj, addr);
@@ -644,13 +637,12 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         }
     }
 
-    obj->parent = param5;
+    obj->parent = parent;
     
     return obj;
 }
 
-// add_object
-void func_80021A84(Object *obj, u32 someFlags) {
+void obj_add_object(Object *obj, u32 someFlags) {
     if (obj->parent != NULL) {
         transform_point_by_object(
             obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
@@ -693,11 +685,11 @@ void func_80021A84(Object *obj, u32 someFlags) {
         add_object_to_array(obj, 7);
 
         if (obj->updatePriority != 90) {
-            func_80023A00(obj, 90);
+            obj_set_update_priority(obj, 90);
         }
     } else {
         if (obj->updatePriority == 0) {
-            func_80023A00(obj, 80);
+            obj_set_update_priority(obj, 80);
         }
     }
 
@@ -706,7 +698,7 @@ void func_80021A84(Object *obj, u32 someFlags) {
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
 
-        func_800222AC(obj);
+        obj_add_tick(obj);
     }
 
     if (obj->def->unk5e >= 1) {
@@ -724,7 +716,7 @@ void func_80021A84(Object *obj, u32 someFlags) {
     write_c_file_label_pointers(D_80099600, 0x477);
 }
 
-u32 func_80021CC0(Object *obj, ObjDef *def, u32 flags) {
+u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
     u32 size;
 
     size = sizeof(Object);
@@ -804,14 +796,14 @@ void func_80022200(Object *obj, s32 param2, s32 param3) {
     }
 }
 
-// objFreeTick?
-void func_80022274(Object *obj) {
+// name guessed from leftover strings
+void obj_free_tick(Object *obj) {
     if (obj->unk0xb0 & 0x10) {
         linked_list_remove(&gObjUpdateList, obj);
     }
 }
 
-void func_800222AC(Object *obj) {
+void obj_add_tick(Object *obj) {
     void *insertAfter;
     void *node;
     Object *objNode;
@@ -833,8 +825,7 @@ void func_800222AC(Object *obj) {
     }
 }
 
-// objFreeObject?
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022338.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_destroy_object.s")
 
 void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3) {
     DLLInst_Object *dll;
@@ -923,7 +914,7 @@ void func_8002272C(Object *obj) {
     update_pi_manager_array(3, -1);
 }
 
-u32 func_800227AC(Object *obj, u32 addr) {
+u32 obj_alloc_object_state(Object *obj, u32 addr) {
     u32 stateSize = 0;
     
     addr = align_4(addr);
@@ -958,12 +949,12 @@ u32 func_80022868(s32 objId, Object *obj, u32 addr) {
 
     addr += 80;
 
-    func_800228D0(obj, objId, obj->ptr0x60, 0, 1);
+    obj_load_event(obj, objId, obj->ptr0x60, 0, 1);
 
     return addr;
 }
 
-void func_800228D0(Object *obj, s32 objId, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
+void obj_load_event(Object *obj, s32 objId, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
     
@@ -1013,7 +1004,7 @@ u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     }
 }
 
-void func_800229E8(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
+void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
     ObjDefWeaponData *weaponDataList;
     ObjDefWeaponData *weaponData;
     
@@ -1050,7 +1041,7 @@ void func_800229E8(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 
     }
 }
 
-ObjDef *func_80022AA4(s32 tabIdx) {
+ObjDef *obj_load_objdef(s32 tabIdx) {
     ObjDef *def;
     s32 fileOffset;
     s32 fileSize;
@@ -1107,7 +1098,7 @@ ObjDef *func_80022AA4(s32 tabIdx) {
         def->pIntersectPoints = NULL;
 
         if (def->modLineNo > -1) {
-            def->pModLines = func_80022D00(def->modLineNo, &def->modLineCount);
+            def->pModLines = obj_load_objdef_modlines(def->modLineNo, &def->modLineCount);
             func_800596BC(def);
         }
 
@@ -1121,8 +1112,7 @@ ObjDef *func_80022AA4(s32 tabIdx) {
     return def;
 }
 
-// objFreeObjdef?
-void func_80022C68(s32 tabIdx) {
+void obj_free_objdef(s32 tabIdx) {
     if (gObjDefRefCount[tabIdx] != 0) {
         gObjDefRefCount[tabIdx]--;
 
@@ -1144,7 +1134,7 @@ void func_80022C68(s32 tabIdx) {
     }
 }
 
-ModLine *func_80022D00(s32 modLineNo, s16 *modLineCount) {
+ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount) {
     ModLine *modLines;
     s32 fileSize;
     s32 totalEntries;
@@ -1197,10 +1187,9 @@ s32 func_80022DFC(s32 idx) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022EC0.s")
 
-// free_object
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022F94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_free_object.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800233F4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_alloc_create_info.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023464.s")
 
@@ -1217,8 +1206,7 @@ Object *get_player(void) {
     else return NULL;
 }
 
-// get_sidekick?
-Object *func_8002394C() {
+Object *get_sidekick() {
     Object **objectList;
     s32 count;
 
@@ -1233,16 +1221,15 @@ Object *func_8002394C() {
     }
 }
 
-void func_80023984(Object *obj) {
+void obj_clear_map_id(Object *obj) {
     obj->mapID = -1;
 }
 
-void func_80023994(Object *obj) {
+void obj_infer_map_id(Object *obj) {
     obj->mapID = map_get_map_id_from_xz_ws(obj->srt.transl.x, obj->srt.transl.z);
 }
 
-// obj_integrate_speed
-s32 func_800239C0(Object *obj, f32 dx, f32 dy, f32 dz) {
+s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz) {
     obj->srt.transl.x += dx;
     obj->srt.transl.y += dy;
     obj->srt.transl.z += dz;
@@ -1250,8 +1237,7 @@ s32 func_800239C0(Object *obj, f32 dx, f32 dy, f32 dz) {
     return 0;
 }
 
-// obj_set_update_priority
-void func_80023A00(Object *obj, s8 priority) {
+void obj_set_update_priority(Object *obj, s8 priority) {
     obj->updatePriority = priority;
 }
 
@@ -1302,35 +1288,33 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     obj->unk0xb0 &= 0xF0FF;
 }
 
-extern s8 D_800B1930;
-extern Object *D_800B1938[20];
+extern s8 gEffectBoxCount;
+extern Object *gEffectBoxes[20];
 
-// objAddEffectBox?
-void func_80023B34(Object *obj) {
-    D_800B1938[D_800B1930] = obj;
-    D_800B1930 += 1;
+void obj_add_effect_box(Object *obj) {
+    gEffectBoxes[gEffectBoxCount] = obj;
+    gEffectBoxCount += 1;
 }
 
-// objFreeEffectBox?
-void func_80023B60(Object *obj) {
+void obj_free_effect_box(Object *obj) {
     s32 i;
     s32 newCount;
 
     i = 0;
 
-    while (i < D_800B1930 && obj != D_800B1938[i]) {
+    while (i < gEffectBoxCount && obj != gEffectBoxes[i]) {
         i++;
     }
 
-    newCount = D_800B1930 - 1;
+    newCount = gEffectBoxCount - 1;
     
-    if (i != D_800B1930) {
+    if (i != gEffectBoxCount) {
         while (i < newCount) {
-            D_800B1938[i] = D_800B1938[i + 1];
+            gEffectBoxes[i] = gEffectBoxes[i + 1];
             i++;
         }
 
-        D_800B1930 = newCount;
+        gEffectBoxCount = newCount;
     }
 }
 

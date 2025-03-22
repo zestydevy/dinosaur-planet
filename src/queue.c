@@ -196,7 +196,7 @@ void func_80012A4C(void) {
 
         switch (sp24.unk0) {
             case 5:
-                func_80021A84(sp24.unk4, sp24.unk8);
+                obj_add_object(sp24.unk4, sp24.unk8);
                 break;
             case 3:
                 if (sp24.unk4 != NULL) {
@@ -340,7 +340,7 @@ void asset_thread_load_single(void) {
 
         switch (sp2C.unk0) {
             case 5:
-                queue_block_emplace(5, objSetupObject(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
+                queue_block_emplace(5, obj_setup_object(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
                 break;
             case 3:
                 tmp = texture_load(sp2C.unk8, 0);
@@ -381,7 +381,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
                 load->p.file.offset, load->p.file.length);
             break;
         case ASSET_TYPE_OBJECT:
-            *load->p.object.dest = objSetupObject(load->p.object.arg1,
+            *load->p.object.dest = obj_setup_object(load->p.object.arg1,
                 load->p.object.arg2, load->p.object.arg3, load->p.object.arg4,
                 load->p.object.arg5, load->p.object.arg6);
             break;

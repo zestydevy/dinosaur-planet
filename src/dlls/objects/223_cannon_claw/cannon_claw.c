@@ -22,9 +22,9 @@ void cannon_claw_func_18(Object *a0, Object *a1, void *a2) {
 
 void cannon_claw_func_4C(Object *s0) {
     s32 temp;
-    Object *func_8002394C_ret;
+    Object *sidekick; // TODO: is this really?
 
-    func_8002394C_ret = func_8002394C();
+    sidekick = get_sidekick();
     
     if (s0->unk0xdc != 0) {
         return;
@@ -41,7 +41,7 @@ void cannon_claw_func_4C(Object *s0) {
         if (s0->parent != NULL) {
             CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)s0->parent->createInfo;
             set_gplay_bitstring(createInfo->bitstringEntry, 1);
-            ((DLLInst_Unknown*)func_8002394C_ret->dll)->exports->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
+            ((DLLInst_Unknown*)sidekick->dll)->exports->func[21].withThreeArgs(sidekick, 0, 0);
         }
         
         cannon_claw_func_1B4(s0);
