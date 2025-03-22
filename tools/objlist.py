@@ -17,6 +17,23 @@ class Obj(TypedDict):
     group: int
     name: str
 
+def emit_header(objects: list[Obj]):
+    dir = SCRIPT_DIR.joinpath("objh")
+    dir.mkdir(exist_ok=True)
+
+    objects.sort(key=lambda o: o["id"])
+    with open(dir.joinpath("object_id.h"), "w", encoding="utf-8") as objects_md:
+        objects_md.write("#ifndef _OBJECT_IDS_H\n")
+        objects_md.write("#define _OBJECT_IDS_H\n")
+        objects_md.write("\n")
+        objects_md.write("enum ObjID {\n")
+        for obj in objects:
+            objects_md.write("    OBJ_{} = {},\n".format(
+                obj["name"], obj["id"]))
+        objects_md.write("};\n")
+        objects_md.write("\n")
+        objects_md.write("#endif\n")
+
 def emit_markdown(objects: list[Obj]):
     dir = SCRIPT_DIR.joinpath("objmd")
     dir.mkdir(exist_ok=True)
@@ -161,6 +178,7 @@ def main():
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     parser.add_argument("--by", type=str, choices=["dll", "group", "tabidx"], help="Group/sort by.")
     parser.add_argument("--markdown", action="store_true", default=False, help="Generate Markdown tables.")
+    parser.add_argument("--header", action="store_true", default=False, help="Generate C header files.")
 
     args = parser.parse_args()
 
@@ -174,6 +192,10 @@ def main():
     
     if args.markdown:
         emit_markdown(objects)
+        return
+
+    if args.header:
+        emit_header(objects)
         return
 
     if args.by == "dll":

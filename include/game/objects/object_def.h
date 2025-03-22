@@ -158,7 +158,7 @@ typedef struct {
 /*5c*/ s8 modLinesSize; //ignored in file // TODO: confirm
 /*5d*/ s8 numModels; // number of pModelList
 /*5e*/ s8 unk5e;
-/*5f*/ char name[16];
+/*5f*/ char name[16]; // not always the full name, cutoff after 15 characters (16 including null terminator)
 /*6f*/ u8 unk6f;
 /*70*/ u8 numAttachPoints;
 /*71*/ u8 numTextures; // guess

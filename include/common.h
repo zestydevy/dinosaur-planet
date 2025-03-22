@@ -29,6 +29,7 @@
 #include "sys/generic_queue.h"
 #include "game/gamebits.h"
 #include "game/objects/object_def.h"
+#include "game/objects/object_id.h"
 #include "game/objects/hitbox.h"
 #include "game/objects/object.h"
 #include "game/objects/player/player.h"
