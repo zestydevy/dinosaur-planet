@@ -1,5 +1,5 @@
-#ifndef _SYS_GAME_OBJECTS_OBJECTS_H
-#define _SYS_GAME_OBJECTS_OBJECTS_H
+#ifndef _SYS_GAME_OBJECTS_OBJECT_H
+#define _SYS_GAME_OBJECTS_OBJECT_H
 
 #include <PR/gbi.h>
 #include "sys/gfx/model.h"

@@ -1,7 +1,7 @@
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
 
-#include "game/objects/objects.h"
+#include "game/objects/object.h"
 
 void bootproc(void);
 void idle(void * arg);

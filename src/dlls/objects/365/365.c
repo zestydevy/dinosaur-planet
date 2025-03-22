@@ -1,6 +1,6 @@
 #include <PR/ultratypes.h>
 
-#include "game/objects/objects.h"
+#include "game/objects/object.h"
 #include "variables.h"
 #include "functions.h"
 #include "dlls/objects/365.h"

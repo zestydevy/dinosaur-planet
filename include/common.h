@@ -30,7 +30,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object_def.h"
 #include "game/objects/hitbox.h"
-#include "game/objects/objects.h"
+#include "game/objects/object.h"
 #include "game/objects/player/player.h"
 #include "variables.h"
 #include "functions.h"
