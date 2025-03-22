@@ -81,6 +81,6 @@ u32 func_8004D8A4(Object *obj, u32 addr, s32);
 u32 func_8002667C(Object *obj, u32 addr);
 u32 func_80026BD8(Object *obj, u32 addr);
 
-u32 func_80026A20(s16, ModelInstance*, ObjectHitInfo*, u32, Object*);
+u32 func_80026A20(s16 objId, ModelInstance*, ObjectHitInfo*, u32, Object*);
 
 #endif //_FUNCTIONS_H

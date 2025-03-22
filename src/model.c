@@ -539,7 +539,7 @@ void _func_8001943C(Object *object, MtxF *mf, f32 yPrescale)
     {
         matrix_from_srt(mf, &object->srt);
 
-        if (object->unk0x46 == 0x427) {
+        if (object->id == 0x427) { // if == OBJ_ScorpionRobot
             ObjectDLLFunc0x20 func = *(ObjectDLLFunc0x20*)((u8*)*object->dll + 0x20);
             s16 theta = func(object);
             matrix_from_yaw(theta, mf);

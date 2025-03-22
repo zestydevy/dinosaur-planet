@@ -499,8 +499,8 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
     objHeader.srt.transl.y = createInfo->y;
     objHeader.srt.transl.z = createInfo->z;
     objHeader.createInfo = createInfo;
-    objHeader.unk0x48 = tabIdx;
-    objHeader.unk0x46 = objId;
+    objHeader.tabIdx = tabIdx;
+    objHeader.id = objId;
     objHeader.unk0xb2 = param4;
     objHeader.mapID = mapID;
     objHeader.unk_0xa2 = -1;
@@ -591,11 +591,11 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
     addr = func_800227AC(obj, (u32)&obj->modelInsts[def->numModels]);
 
     if (flags & 0x40) {
-        addr = func_80022868(obj->unk0x46, obj, addr);
+        addr = func_80022868(obj->id, obj, addr);
     }
 
     if (flags & 0x100) {
-        addr = func_8002298C(obj->unk0x46, obj->modelInsts[0], obj, addr);
+        addr = func_8002298C(obj->id, obj->modelInsts[0], obj, addr);
     }
 
     if ((flags & 0x2) && (def->shadowType != 0)) {
@@ -629,7 +629,7 @@ Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
 
     if (def->unk8F != 0 && def->unk74 != 0) {
         addr = align_4(addr);
-        addr = func_80026A20(obj->unk0x46, obj->modelInsts[0], obj->objhitInfo, addr, obj);
+        addr = func_80026A20(obj->id, obj->modelInsts[0], obj->objhitInfo, addr, obj);
     }
 
     if (def->unk9b != 0) {
@@ -870,7 +870,7 @@ void update_object(Object *obj) {
             obj->objhitInfo->unk_0x62 = 0;
         }
     } else {
-        update_pi_manager_array(1, obj->unk0x46);
+        update_pi_manager_array(1, obj->id);
 
         if (!(obj->srt.flags & 8)) {
             obj->positionMirror2.x = obj->srt.transl.x;
@@ -911,7 +911,7 @@ void update_object(Object *obj) {
 }
 
 void func_8002272C(Object *obj) {
-    update_pi_manager_array(3, obj->unk0x46);
+    update_pi_manager_array(3, obj->id);
 
     if (obj->dll != NULL && !(obj->unk0xb0 & 0x2000)) {
         obj->dll->exports->func3(obj);
@@ -950,7 +950,7 @@ u32 func_80022828(Object *obj) {
     }
 }
 
-u32 func_80022868(s32 param1, Object *obj, u32 addr) {
+u32 func_80022868(s32 objId, Object *obj, u32 addr) {
     obj->ptr0x60 = (ObjectStruct60*)align_4(addr);
 
     addr = align_8((u32)obj->ptr0x60 + sizeof(ObjectStruct60));
@@ -958,12 +958,12 @@ u32 func_80022868(s32 param1, Object *obj, u32 addr) {
 
     addr += 80;
 
-    func_800228D0(obj, param1, obj->ptr0x60, 0, 1);
+    func_800228D0(obj, objId, obj->ptr0x60, 0, 1);
 
     return addr;
 }
 
-void func_800228D0(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
+void func_800228D0(Object *obj, s32 objId, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
     
@@ -1000,7 +1000,7 @@ void func_800228D0(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8
     }
 }
 
-u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr) {
+u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
     } else {

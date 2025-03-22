@@ -1,5 +1,6 @@
 #include <PR/ultratypes.h>
 
+#include "dlls/objects/223_cannon_claw.h"
 #include "game/objects/object.h"
 #include "variables.h"
 #include "functions.h"
@@ -38,16 +39,16 @@ void cannon_claw_func_4C(Object *s0) {
     
     if (temp != 0) {
         if (s0->parent != NULL) {
-            ObjCreateInfo *createInfo = s0->parent->createInfo;
-            set_gplay_bitstring(createInfo->unk1a, 1);
+            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)s0->parent->createInfo;
+            set_gplay_bitstring(createInfo->bitstringEntry, 1);
             ((DLLInst_Unknown*)func_8002394C_ret->dll)->exports->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
         }
         
         cannon_claw_func_1B4(s0);
     } else {
         if (s0->parent != NULL) {
-            ObjCreateInfo *createInfo = s0->parent->createInfo;
-            if (get_gplay_bitstring(createInfo->unk1a) != 0) {
+            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)s0->parent->createInfo;
+            if (get_gplay_bitstring(createInfo->bitstringEntry) != 0) {
                 cannon_claw_func_1B4(s0);
             }
         }

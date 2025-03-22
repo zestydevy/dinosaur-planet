@@ -19,6 +19,7 @@ struct Vec3_Int{
 	u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
 };
 
+// Base struct, objects "inherit" from this and add their own creation related info
 typedef struct {
 	s16 unk0;
 	u8 _unk2[4];
@@ -28,8 +29,6 @@ typedef struct {
 	f32 y;
 	f32 z;
 	s32 unk14;
-	u8 _un18[2];
-	s16 unk1a;
 } ObjCreateInfo;
 
 typedef struct {
@@ -132,25 +131,25 @@ typedef struct Object {
 /*0035*/    s8 matrixIdx;
 /*0036*/    u8 unk_0x36; // transparency
 /*0037*/    u8 unk_0x37; // also transparency? (set to unk_0x36)
-/*0038*/    struct Object *next;
+/*0038*/    struct Object *next; // the object after this in a linked list
 /*003C*/    f32 unk0x3c;
 /*0040*/    f32 unk0x40;
 /*0044*/    s16 group; // complete guess at a name, needs more investigation
-/*0046*/    s16 unk0x46;
-/*0048*/    s16 unk0x48;
+/*0046*/    s16 id;
+/*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
 /*004A*/    u8 unk0x4a[0x4c - 0x4a];
-/*004C*/    ObjCreateInfo *createInfo;
+/*004C*/    ObjCreateInfo *createInfo; // exact type depends on object
 /*0050*/    ObjDef* def;
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectStruct58 *unk0x58;
 /*005C*/    ObjectStruct5C *ptr0x5c;
 /*0060*/    ObjectStruct60 *ptr0x60;
 /*0064*/    ObjectStruct64* ptr0x64;
-/*0068*/    DLLInst_Object *dll; //same in SFA
+/*0068*/    DLLInst_Object *dll;
 /*006C*/    u16 *ptr0x6c;
 /*0070*/    void* ptr0x70;
 /*0074*/    u32 unk0x74;
-/*0078*/    ObjectStruct78 *unk_0x78;
+/*0078*/    ObjectStruct78 *unk_0x78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts;
 /*0080*/    Vec3f positionMirror2; //gets copied twice.
 /*008C*/    Vec3f positionMirror3; //not sure why.
@@ -175,7 +174,7 @@ typedef struct Object {
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    void* ptr0xcc;
 /*00D0*/    u8 unk_0xd0[0xd4 - 0xd0];
-/*00D4*/    u8 unk_0xd4;
+/*00D4*/    u8 unk_0xd4; // index into ObjDef.unk40
 /*00D5*/    u8 unk_0xd5[0xd8 - 0xd5];
 /*00D8*/    u8 unk_0xd8;
 /*00D9*/    u8 unk_0xd9[0xda - 0xd9];

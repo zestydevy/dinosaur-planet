@@ -5,6 +5,12 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 
+typedef struct {
+/*00*/ ObjCreateInfo base;
+/*18*/ u8 _unk18[0x1a - 0x18];
+/*1A*/ s16 bitstringEntry;
+} CannonClawCreateInfo;
+
 DLL_INTERFACE_BEGIN(223_cannon_claw)
     void (*func_18)(Object *a0, Object *a1, void *a2);
     void (*func_4C)(Object *s0);
