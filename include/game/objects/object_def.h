@@ -185,6 +185,7 @@ typedef struct {
 /*9b*/ u8 unk9b; // length of unk40
 /*9c*/ u8 unk9c[4];
 /*a0*/ s16 unka0;
+/*a2*/ u8 _unka2[10];
 } ObjDef;
 
 #endif
