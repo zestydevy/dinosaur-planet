@@ -13,6 +13,8 @@ typedef struct {
 #define LINKED_LIST_NEXT_FIELD(list, node) ((void**)((u32)node + list->nextFieldOffset))
 // Same as LINKED_LIST_NEXT_FIELD but the add operands are reversed... just exists for matching code 
 #define LINKED_LIST_NEXT_FIELD2(list, node) ((void**)(list->nextFieldOffset + (u32)node))
+// Also same as above but list is not a pointer
+#define LINKED_LIST_NEXT_FIELD3(list, node) ((void**)((u32)node + list.nextFieldOffset))
 
 LinkedList *linked_list_init(LinkedList *list, s16 nextFieldOffset);
 void linked_list_prepend(LinkedList *list, void *node);

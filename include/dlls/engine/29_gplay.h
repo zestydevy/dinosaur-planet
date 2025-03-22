@@ -4,6 +4,7 @@
 #include <PR/ultratypes.h>
 #include "sys/math.h"
 #include "dll_def.h"
+#include "unktypes.h"
 
 #define CHARACTER_SABRE 0
 #define CHARACTER_KRYSTAL 1
@@ -57,7 +58,8 @@ typedef struct {
     /*0x4*/s16 mana; //only mods when byte at "state"0x8bb is set.
     /*0x6*/s16 manaMax; //capped at 100.
     /*0x8*/s16 scarabs; //capped at 999.
-    /*0xA*/u8 _unk0xA[2];
+    /*0xA*/UNK_TYPE_8 unk0xA;
+    /*0xB*/s8 dusters;
 } GplayStruct10;
 
 // size: 0x13d4

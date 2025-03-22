@@ -1013,6 +1013,7 @@ gObjIndexCount = 0x800B190C; // size:0x4
 gLoadedObjData = 0x800B1900; // size:0x4
 gObjRefCount = 0x800B1904; // size:0x4
 gNumObjs = 0x800B1924; // size:0x4
+gObjUpdateList = 0x800B1928;
 update_objects = 0x80020778; // type:func
 update_object = 0x800225b4; // type:func
 alloc_some_object_arrays = 0x80025d00; // type:func
@@ -1283,7 +1284,7 @@ model_setup_anim_playback = 0x80018f80; // type:func
 
 get_world_actors = 0x80021150; // type:func
 get_player = 0x80023914; // type:func
-objSetupObjectActual = 0x80021450; // type:func
+objSetupObject = 0x80021450; // type:func
 createModelInstance = 0x80018314; // type:func
 
 gSineTable = 0x8008ca8c; // size:0x802

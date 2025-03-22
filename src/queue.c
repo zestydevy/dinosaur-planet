@@ -340,7 +340,7 @@ void asset_thread_load_single(void) {
 
         switch (sp2C.unk0) {
             case 5:
-                queue_block_emplace(5, objSetupObjectActual(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
+                queue_block_emplace(5, objSetupObject(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
                 break;
             case 3:
                 tmp = texture_load(sp2C.unk8, 0);
@@ -381,7 +381,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
                 load->p.file.offset, load->p.file.length);
             break;
         case ASSET_TYPE_OBJECT:
-            *load->p.object.dest = objSetupObjectActual(load->p.object.arg1,
+            *load->p.object.dest = objSetupObject(load->p.object.arg1,
                 load->p.object.arg2, load->p.object.arg3, load->p.object.arg4,
                 load->p.object.arg5, load->p.object.arg6);
             break;

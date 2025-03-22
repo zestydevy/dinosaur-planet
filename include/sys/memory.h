@@ -97,4 +97,9 @@ HeapBlock * set_heap_block(HeapBlock * blocks, s32 size, s32 maxBlocks);
 void *malloc(s32 size, s32 tag, const char *name);
 void free(void* p);
 
+u32 align_16(u32);
+u32 align_8(u32);
+u32 align_4(u32);
+u32 align_2(u32);
+
 #endif //_SYS_MEMORY_H

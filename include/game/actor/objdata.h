@@ -74,10 +74,10 @@ typedef struct AButtonInteraction { //copied from SFA; may be incorrect
 /*09*/ UNK_TYPE_8 unk09;
 /*0a*/ UNK_TYPE_8 unk0a;
 /*0b*/ UNK_TYPE_8 unk0b;
-/*0c*/ UNK_TYPE_8 unk0c;
-/*0d*/ UNK_TYPE_8 unk0d;
-/*0e*/ UNK_TYPE_8 unk0e;
-/*0f*/ UNK_TYPE_8 unk0f;
+/*0c*/ u8 unk0c;
+/*0d*/ u8 unk0d;
+/*0e*/ u8 unk0e;
+/*0f*/ u8 unk0f;
 /*10*/ u8 unk10;
 /*11*/ UNK_TYPE_8 unk11;
 /*12*/ UNK_TYPE_8 unk12;
@@ -87,6 +87,32 @@ typedef struct AButtonInteraction { //copied from SFA; may be incorrect
 /*16*/ UNK_TYPE_8 unk16;
 /*17*/ UNK_TYPE_8 unk17;
 } AButtonInteraction;
+
+typedef struct {
+    s16 id;
+    s16 fileOffsetInBytes;
+    s16 fileSizeInBytes;
+} ObjDataEvent;
+
+typedef struct {
+    s16 id;
+    s16 fileOffsetInBytes;
+    s16 fileSizeInBytes;
+} ObjDataWeaponData;
+
+// size: 0x14
+typedef struct {
+/*0000*/    s16 unk0;
+/*0002*/    u8 unk2[0x4 - 0x2];
+/*0004*/    s16 unk4;
+/*0006*/    u8 unk6[0xC - 0x6];
+/*000C*/    u8 unkC;
+/*000D*/    u8 unkD;
+/*000E*/    u8 unkE;
+/*000F*/    u8 unkF;
+/*0010*/    s16 unk10;
+/*0012*/    u8 unk12[0x14 - 0x12];
+} ModLine;
 
 //Entry in OBJECTS.BIN, aka ObjectFileStruct (made-up name)
 //debug messages imply ObjData is the correct name or close to it
@@ -99,11 +125,11 @@ typedef struct ObjData { //copied from SFA; may be incorrect
 /*14*/ UNK_PTR *unk14;
 /*18*/ u32 *offset_0x18; //[OPTIONAL] a file containing functions
 /*1c*/ u16 *pSeq; //[OPTIONAL] -> seq IDs
-/*20*/ UNK_TYPE_8 *pEvent; //[OPTIONAL] offset into the file. changed to pointer on load
+/*20*/ ObjDataEvent *pEvent; //[OPTIONAL] offset into the file. changed to pointer on load
 /*24*/ UNK_TYPE_8 *pHits; //[OPTIONAL]
-/*28*/ UNK_TYPE_8 *pWeaponDa; //[OPTIONAL]
+/*28*/ ObjDataWeaponData *pWeaponDa; //[OPTIONAL]
 /*2c*/ AttachPoint *pAttachPoints;
-/*30*/ s16 *pModLines; //ignored in file (zeroed on load)
+/*30*/ ModLine *pModLines; //ignored in file (zeroed on load)
 /*34*/ UNK_PTR *pIntersectPoints; //ignored in file (zeroed on load) (wObjList?)
 /*38*/ UNK_PTR *nextIntersectPoint;
 /*3c*/ UNK_PTR *nextIntersectLine;
@@ -114,16 +140,15 @@ typedef struct ObjData { //copied from SFA; may be incorrect
 /*4c*/ UNK_TYPE_8 unk4C;
 /*4d*/ UNK_TYPE_8 unk4D;
 /*4e*/ u16 hitbox_flags60; //HitboxFlags60
-/*50*/ s16 dllNo; //if not -1, load this DLL; func 0 is a model callback
+/*50*/ UNK_TYPE_16 unk50;
 /*52*/ UNK_TYPE_8 unk52;
 /*53*/ UNK_TYPE_8 unk53;
 /*54*/ UNK_TYPE_8 unk54;
 /*55*/ u8 nModels;
 /*56*/ u8 numPlayerObjs; //if > 0, objAddObjectType(obj, 8)
 /*57*/ u8 unk57; //never read?
-/*58*/ u8 nAttachPoints;
-/*59*/ u8 nTextures; //-> 0x10 bytes
-/*5a*/ s16 objId;
+/*58*/ u16 dllID; //if not -1, load this DLL; func 0 is a model callback
+/*5a*/ s16 objGroup; // complete guess at a name, needs more investigation
 /*5c*/ s8 modLinesSize; //ignored in file
 /*5d*/ s8 modLinesIdx;
 /*5e*/ s8 numSeqs;
@@ -159,7 +184,10 @@ typedef struct ObjData { //copied from SFA; may be incorrect
 /*8e*/ u8 colorIdx; //related to textures; 1=dark, 2=default, 3+=corrupt, 77=crash, 0=normal
 /*8f*/ u8 unk8F; //related to hitbox
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62)
-/*91*/ char name[11];
+/*91*/ u8 _unk91[2];
+/*93*/ s8 unk93;
+/*94*/ u8 _unk94[7];
+/*9b*/ u8 unk9b;
 /*9c*/ u8 unk9c[4];
 /*a0*/ s16 unka0;
 } ObjData;

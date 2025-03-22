@@ -68,4 +68,19 @@ void dl_set_fill_color(Gfx **gdl, u32 color);
 void func_80002490(Gfx **gdl);
 void dl_apply_other_mode(Gfx **gdl);
 
+void func_80030EC0();
+
+void get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz);
+
+s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
+
+ModelInstance *model_load_create_instance(s32 id, u32 flags);
+void destroy_model_instance(ModelInstance *modelInst);
+u32 func_8004D8A4(TActor *obj, u32 addr, s32);
+
+u32 func_8002667C(TActor *obj, u32 addr);
+u32 func_80026BD8(TActor *obj, u32 addr);
+
+u32 func_80026A20(s16, ModelInstance*, ActorObjhitInfo*, u32, TActor*);
+
 #endif //_FUNCTIONS_H
