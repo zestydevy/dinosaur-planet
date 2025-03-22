@@ -1,6 +1,6 @@
 #include <PR/ultratypes.h>
 
-#include "game/actor/actor.h"
+#include "game/objects/objects.h"
 #include "sys/dll.h"
 #include "sys/math.h"
 #include "sys/fs.h"

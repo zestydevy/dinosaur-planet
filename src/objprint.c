@@ -5,7 +5,7 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80034FF0.s")
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/draw_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/draw_object.s")
 #else
 extern f32 gWorldX;
 extern f32 gWorldZ;
@@ -24,18 +24,18 @@ extern u8 BYTE_800b2e22;
 #define BYTE_800b2e23 (*(u8*)0x800b2e23)
 void func_8001F81C(u8*, u8*, u8*);
 void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 param_4, u32 param_5, Mtx **overrideMtx);
-void func_8001943C(TActor *actor, MtxF *mf, f32 yPrescale);
-void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *param_5, f32 yPrescale)
+void func_8001943C(Object *obj, MtxF *mf, f32 yPrescale);
+void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *param_5, f32 yPrescale)
 {
     ModelInstance *modelInst;
     Model *model;
-    ActorUnk0x50 *unk0x50;
+    ObjectStruct50 *unk0x50;
     u8 r = 0xff, g = 0xff, b = 0xff, a, r_, g_, b_;
     Gfx *mygdl;
     Mtx *myrspMtxs;
     f32 tx, ty, tz;
     s16 yaw;
-    ActorUnk0x64* unk0x64;
+    ObjectStruct64* unk0x64;
     SRT srt;
     MtxF mtxf;
     u32 out_param_4;
@@ -47,14 +47,14 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
     mygdl = *gdl;
     myrspMtxs = *rspMtxs;
 
-    modelInst = actor->modelInsts[actor->modelInstIdx];
+    modelInst = obj->modelInsts[obj->modelInstIdx];
     if (modelInst == NULL) {
         return;
     }
 
     model = modelInst->model;
-    unk0x50 = actor->ptr0x50;
-    a = actor->unk_0x37;
+    unk0x50 = obj->ptr0x50;
+    a = obj->unk_0x37;
 
     // A piece of very strange code occurs here:
     //
@@ -81,7 +81,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
     }
 
     if (unk0x50->unk_0x71 != 0) {
-        func_80036890(actor);
+        func_80036890(obj);
     }
 
     if (BYTE_80091754)
@@ -117,16 +117,16 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
         BYTE_800b2e23 = 0;
     }
 
-    if (actor->linkedActor != NULL)
+    if (obj->parent != NULL)
     {
-        setup_rsp_matrices_for_actor(&mygdl, &myrspMtxs, actor->linkedActor);
-        tx = actor->srt.tx;
-        ty = actor->srt.ty;
-        tz = actor->srt.tz;
-        yaw = actor->srt.yaw;
+        setup_rsp_matrices_for_object(&mygdl, &myrspMtxs, obj->parent);
+        tx = obj->srt.tx;
+        ty = obj->srt.ty;
+        tz = obj->srt.tz;
+        yaw = obj->srt.yaw;
     }
 
-    unk0x64 = actor->ptr0x64;
+    unk0x64 = obj->ptr0x64;
     if (unk0x64 != NULL)
     {
         if (unk0x64->gdl != NULL)
@@ -139,9 +139,9 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
             }
             else
             {
-                srt.tx = actor->srt.tx;
-                srt.ty = actor->srt.ty;
-                srt.tz = actor->srt.tz;
+                srt.tx = obj->srt.tx;
+                srt.ty = obj->srt.ty;
+                srt.tz = obj->srt.tz;
             }
 
             srt.yaw = 0;
@@ -149,7 +149,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
             srt.pitch = 0;
             srt.scale = *(f32*)0x80099d78; // 0.05f
 
-            if (actor->linkedActor != NULL && model->animCount != 0)
+            if (obj->parent != NULL && model->animCount != 0)
             {
                 srt.tx += gWorldX;
                 srt.tz += gWorldZ;
@@ -157,23 +157,23 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
 
             func_800032C4(&mygdl, &myrspMtxs, &srt, 1.0f, 0, NULL);
 
-            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(actor->ptr0x64->gdl));
+            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(obj->ptr0x64->gdl));
             dl_set_all_dirty();
             func_8003DB5C();
         }
     }
 
-    if (!(actor->srt.flags & 0x1000))
+    if (!(obj->srt.flags & 0x1000))
     {
         if (!(modelInst->unk_0x34 & 0x8))
         {
             if (model->animCount != 0 && !(model->unk_0x71 & 0x2))
             {
                 if (*(MtxF**)0x800b2e1c == NULL) {
-                    func_8001943C(actor, &mtxf, yPrescale);
-                    func_80019730(modelInst, model, actor, &mtxf);
+                    func_8001943C(obj, &mtxf, yPrescale);
+                    func_80019730(modelInst, model, obj, &mtxf);
                 } else {
-                    func_80019730(modelInst, model, actor, *PTR_DAT_800b2e1c);
+                    func_80019730(modelInst, model, obj, *PTR_DAT_800b2e1c);
                 }
             }
             else
@@ -183,7 +183,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
                 modelInst->unk_0x34 ^= 0x1;
                 mf = modelInst->unk_0x4.matrices[modelInst->unk_0x34 & 0x1];
                 if (*(MtxF**)0x800b2e1c == NULL) {
-                    func_8001943C(actor, mf, yPrescale);
+                    func_8001943C(obj, mf, yPrescale);
                 } else {
                     bcopy(*PTR_DAT_800b2e1c, mf, sizeof(MtxF));
                 }
@@ -193,34 +193,34 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
 
             modelInst->unk_0x34 ^= 0x2;
 
-            unk0x50 = actor->ptr0x50;
+            unk0x50 = obj->ptr0x50;
             if ((unk0x50->unk_0x44 & 0x10) || model->unk_0x1c != NULL)
             {
                 if (model->unk_0x1c != NULL) {
                     func_8001B100(modelInst);
                 }
                 if (unk0x50->unk_0x44 & 0x10) {
-                    func_8001DF60(actor, modelInst);
+                    func_8001DF60(obj, modelInst);
                 }
             }
 
             if (unk0x50->unk_0x71) {
-                func_8001E818(actor, model, modelInst);
+                func_8001E818(obj, model, modelInst);
             }
 
             if (model->unk_0x74) {
                 func_8001F094(modelInst);
             }
 
-            if (actor->unk0x74) {
-                func_80036438(actor);
+            if (obj->unk0x74) {
+                func_80036438(obj);
             }
 
             if (model->unk_0x6e != 0) {
-                func_8001A8EC(modelInst, model, actor, NULL, actor);
+                func_8001A8EC(modelInst, model, obj, NULL, obj);
             } else {
-                if (actor->objhitInfo != NULL && (actor->objhitInfo->unk_0x5a & 0x20) && actor->objhitInfo->unk_0x9f != 0) {
-                    actor->objhitInfo->unk_0x9f--;
+                if (obj->objhitInfo != NULL && (obj->objhitInfo->unk_0x5a & 0x20) && obj->objhitInfo->unk_0x9f != 0) {
+                    obj->objhitInfo->unk_0x9f--;
                 }
             }
         }
@@ -231,7 +231,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
     }
     dl_set_prim_color(&mygdl, r, g, b, a);
 
-    if (!(actor->srt.flags & 0x200))
+    if (!(obj->srt.flags & 0x200))
     {
         gMoveWd(mygdl++, 0x0c, 0x06, modelInst->unk_0x4.matrices[modelInst->unk_0x34 & 0x1]);
         gMoveWd(mygdl++, 0x14, 0x6, modelInst->unk_0x4.unk_0x0[(modelInst->unk_0x34 >> 1) & 0x1]);
@@ -256,22 +256,22 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
         func_8003DB5C();
     }
 
-    if (actor->linkedActor2 != NULL) {
-        func_80035AF4(&mygdl, &myrspMtxs, &out_param_4, &out_param_5, actor, modelInst, &mtxf, 0, actor->linkedActor2, actor->unk0xb0 & 0x3, a);
+    if (obj->linkedObject != NULL) {
+        func_80035AF4(&mygdl, &myrspMtxs, &out_param_4, &out_param_5, obj, modelInst, &mtxf, 0, obj->linkedObject, obj->unk0xb0 & 0x3, a);
     }
 
-    if (actor->objhitInfo != NULL && (actor->objhitInfo->unk_0x5a & 0x20) && modelInst->unk_0x14) {
-        func_800357B4(actor, modelInst, modelInst->model);
+    if (obj->objhitInfo != NULL && (obj->objhitInfo->unk_0x5a & 0x20) && modelInst->unk_0x14) {
+        func_800357B4(obj, modelInst, modelInst->model);
     }
 
     modelInst->unk_0x34 |= 0x8;
 
-    if (actor->linkedActor != NULL)
+    if (obj->parent != NULL)
     {
-        actor->srt.tx = tx;
-        actor->srt.ty = ty;
-        actor->srt.tz = tz;
-        actor->srt.yaw = yaw;
+        obj->srt.tx = tx;
+        obj->srt.ty = ty;
+        obj->srt.tz = tz;
+        obj->srt.yaw = yaw;
         func_80004224(&mygdl);
     }
 
@@ -284,7 +284,7 @@ void _draw_actor(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *par
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_800357B4.s")
 
-void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
+void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
 {
     Gfx *mygdl;
     Mtx *outRspMtxs;
@@ -297,15 +297,15 @@ void func_800359D0(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 par
     mygdl = *gdl;
     outRspMtxs = *rspMtxs;
 
-    mainIdx = actor->modelInstIdx;
+    mainIdx = obj->modelInstIdx;
     if (param_6) {
         otherIdx = 0;
     } else {
-        otherIdx = actor->def->numModels - 1;
+        otherIdx = obj->def->numModels - 1;
     }
 
-    modelInst = actor->modelInsts[mainIdx];
-    modelInst2 = actor->modelInsts[otherIdx];
+    modelInst = obj->modelInsts[mainIdx];
+    modelInst2 = obj->modelInsts[otherIdx];
 
     d = modelInst->matrices[modelInst->unk_0x34 & 1];
     gSPSegment(mygdl++, 3, d);

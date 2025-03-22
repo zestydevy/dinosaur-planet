@@ -1,5 +1,5 @@
-#ifndef _SYS_GAME_ACTOR_OBJECT_DEF_H
-#define _SYS_GAME_ACTOR_OBJECT_DEF_H
+#ifndef _SYS_GAME_OBJECTS_OBJECT_DEF_H
+#define _SYS_GAME_OBJECTS_OBJECT_DEF_H
 
 #include "sys/math.h"
 #include "unktypes.h"

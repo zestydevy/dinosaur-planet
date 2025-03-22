@@ -13,7 +13,7 @@ extern int gNumObjectsTabEntries;
 extern ObjDef **gLoadedObjDefs;
 extern u8 *gObjDefRefCount;
 extern int gNumTablesTabEntries;
-extern TActor **gObjList; //global object list
+extern Object **gObjList; //global object list
 extern LinkedList gObjUpdateList;
 
 enum FILE_ID {
@@ -35,18 +35,18 @@ void queue_load_file_to_ptr(void **dest, s32 fileId);
 void alloc_some_object_arrays(void); //related to objects
 void func_80020D34(void);
 
-void copy_obj_position_mirrors(TActor *obj, ObjCreateInfo *param2, s32 param3);
+void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3);
 
-void func_80046320(s16 param1, TActor *actor);
-void func_80023A00(TActor *actor, s8 param2); // sets actor->updatePriority = param2
-void func_800222AC(TActor *actor);
+void func_80046320(s16 param1, Object *object);
+void func_80023A00(Object *object, s8 param2); // sets object->updatePriority = param2
+void func_800222AC(Object *object);
 
 extern char D_80099600[]; // "objects/objects.c"
 extern s32 gNumObjs;
 
 extern void func_80058FE8();
 extern void update_obj_hitboxes(s32);
-extern s32 func_80004258(TActor *actor);
+extern s32 func_80004258(Object *object);
 extern void func_80025E58();
 extern void obj_do_hit_detection(s32);
 extern void func_8002B6EC();
@@ -56,39 +56,39 @@ extern char D_800994E0[]; // "objects/objects.c"
 extern s32 D_800B1914;
 
 void update_obj_models();
-void update_object(TActor *obj);
-void func_8002272C(TActor *obj);
+void update_object(Object *obj);
+void func_8002272C(Object *obj);
 
 extern s32 D_80091660;
 extern s32 D_800B191C;
 
-void func_80022338(TActor *);
+void func_80022338(Object *);
 
 extern s16 D_800B18E0;
 extern s32 D_800B1988;
 
 extern void func_80025DF0();
 
-void func_80021A84(TActor *actor, u32 someFlags);
+void func_80021A84(Object *object, u32 someFlags);
 
-void func_800228D0(TActor *obj, s32 param2, Actor60 *outParam, s32 id, u8 dontQueueLoad);
+void func_800228D0(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad);
 
 ModLine *func_80022D00(s32 modLineNo, s16 *modLineCount);
 
 extern void func_800596BC(ObjDef*);
 
 ObjDef *func_80022AA4(s32 tabIdx);
-u32 func_80022828(TActor *obj);
-u32 func_80021CC0(TActor *obj, ObjDef *def, u32 flags);
+u32 func_80022828(Object *obj);
+u32 func_80021CC0(Object *obj, ObjDef *def, u32 flags);
 void func_80022C68(s32 tabIdx);
 
 void func_80021E74(f32, ModelInstance*);
-void func_80022200(TActor *obj, s32 param2, s32 param3);
-u32 func_800227AC(TActor *obj, u32 addr);
-u32 func_80022868(s32 param1, TActor *obj, u32 addr);
-u32 func_8002298C(s32 param1, ModelInstance *param2, TActor *obj, u32 addr);
+void func_80022200(Object *obj, s32 param2, s32 param3);
+u32 func_800227AC(Object *obj, u32 addr);
+u32 func_80022868(s32 param1, Object *obj, u32 addr);
+u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
 
-f32 func_80022150(TActor *obj);
+f32 func_80022150(Object *obj);
 
 void init_objects(void) {
     int i;
@@ -128,8 +128,8 @@ void init_objects(void) {
 
 void update_objects() {
     void *node;
-    TActor *obj;
-    TActor *player;
+    Object *obj;
+    Object *player;
     s32 nextFieldOffset;
 
     nextFieldOffset = gObjUpdateList.nextFieldOffset; // == 0x38, &obj->next
@@ -141,14 +141,14 @@ void update_objects() {
 
     node = gObjUpdateList.head;
 
-    for (obj = (TActor*)node; node != NULL && obj->updatePriority == 100; obj = (TActor*)node) {
+    for (obj = (Object*)node; node != NULL && obj->updatePriority == 100; obj = (Object*)node) {
         update_object(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
 
         if (obj->objhitInfo->unk_0x58){} // fake match
     }
 
-    for (obj = (TActor*)node; node != NULL && obj->def->flags & 0x40; obj = (TActor*)node) {
+    for (obj = (Object*)node; node != NULL && obj->def->flags & 0x40; obj = (Object*)node) {
         update_object(obj);
         obj->matrixIdx = func_80004258(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
@@ -157,7 +157,7 @@ void update_objects() {
     func_80025E58();
 
     while (node != NULL) {
-        obj = (TActor*)node;
+        obj = (Object*)node;
 
         if (obj->objhitInfo != NULL) {
             if (obj->objhitInfo->unk_0x5a != 8 || (obj->objhitInfo->unk_0x58 & 1) == 0) {
@@ -171,24 +171,24 @@ void update_objects() {
     }
 
     player = get_player();
-    if (player != NULL && player->linkedActor2 != NULL) {
-        player->linkedActor2->linkedActor = player->linkedActor;
-        update_object(player->linkedActor2);
+    if (player != NULL && player->linkedObject != NULL) {
+        player->linkedObject->parent = player->parent;
+        update_object(player->linkedObject);
     }
 
     obj_do_hit_detection(gNumObjs);
 
     node = gObjUpdateList.head;
     while (node != NULL) {
-        obj = (TActor*)node;
+        obj = (Object*)node;
         func_8002272C(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
     }
 
     player = get_player();
-    if (player != NULL && player->linkedActor2 != NULL) {
-        player->linkedActor2->linkedActor = player->linkedActor;
-        func_8002272C(player->linkedActor2);
+    if (player != NULL && player->linkedObject != NULL) {
+        player->linkedObject->parent = player->parent;
+        func_8002272C(player->linkedObject);
     }
 
     gDLL_waterfx->exports->func[0].withOneArg(delayByte);
@@ -211,32 +211,32 @@ void update_obj_models() {
     int i;
     int j;
     int k;
-    TActor *actor;
+    Object *object;
     ModelInstance *modelInst;
-    ActorUnk0xc0_0xb8 *unk1;
+    ObjectStructC0_B8 *unk1;
 
     for (i = 0; i < gNumObjs; i++) {
-        actor = gObjList[i];
+        object = gObjList[i];
 
         for (j = 0; j < 2; j++) {
             if (j != 0) {
-                actor = actor->linkedActor2;
+                object = object->linkedObject;
             }
 
-            if (actor == NULL) {
+            if (object == NULL) {
                 continue;
             }
 
-            for (k = 0; k < actor->def->numModels; k++) {
-                modelInst = actor->modelInsts[k];
+            for (k = 0; k < object->def->numModels; k++) {
+                modelInst = object->modelInsts[k];
 
                 if (modelInst != NULL) {
                     modelInst->unk_0x34 &= ~0x8;
 
                     if (modelInst->model->unk_0x1c != NULL) {
-                        unk1 = actor->unk0xc0 != NULL ? actor->unk0xc0->unk_0xb8 : NULL;
+                        unk1 = object->unk0xc0 != NULL ? object->unk0xc0->unk_0xb8 : NULL;
 
-                        if (actor->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
+                        if (object->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
                             func_8001B084(modelInst, delayFloat);
                         }
                     }
@@ -277,7 +277,7 @@ void func_80020C48() {
     D_800B191C = 0;
     gNumObjs = 0;
 
-    linked_list_init(&gObjUpdateList, OFFSETOF(TActor, next));
+    linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
 
     func_80020D34();
 
@@ -290,7 +290,7 @@ void func_80020D34() {
     D_800B1988 = 0;
     gNumObjs = 0;
 
-    linked_list_init(&gObjUpdateList, OFFSETOF(TActor, next));
+    linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
 
     D_800B18E0 = 0;
     func_80030EC0();
@@ -339,7 +339,7 @@ s32 func_80020DA0(s32 *numObjs) {
         }
 
         if (idx1 < idx2) {
-            TActor *temp;
+            Object *temp;
 
             temp = gObjList[idx1];
             gObjList[idx1] = gObjList[idx2];
@@ -358,8 +358,8 @@ s32 func_80020DA0(s32 *numObjs) {
 
 void func_800210DC() {
     s32 i;
-    TActor *obj;
-    ActorUnk0xc0 *var;
+    Object *obj;
+    ObjectStructC0 *var;
 
     for (i = 0; i < gNumObjs; i++) {
         obj = gObjList[i];
@@ -367,9 +367,9 @@ void func_800210DC() {
         if (obj->unk0xc0 != NULL) {
             var = obj->unk0xc0;
 
-            if (obj->linkedActor == NULL) {
+            if (obj->parent == NULL) {
                 if (var->unk_0x30 != NULL) {
-                    obj->linkedActor = var->unk_0x30;
+                    obj->parent = var->unk_0x30;
                 }
             }
             
@@ -378,7 +378,7 @@ void func_800210DC() {
     }
 }
 
-TActor **get_world_actors(s32 *param1, s32 *numObjs) {
+Object **get_world_objects(s32 *param1, s32 *numObjs) {
     if (param1 != NULL) {
         *param1 = 0;
     }
@@ -389,7 +389,7 @@ TActor **get_world_actors(s32 *param1, s32 *numObjs) {
     return gObjList;
 }
 
-TActor *func_80021178(s32 idx) {
+Object *func_80021178(s32 idx) {
     if (idx < 0 || idx >= gNumObjs) {
         return NULL;
     }
@@ -397,10 +397,10 @@ TActor *func_80021178(s32 idx) {
     return gObjList[idx];
 }
 
-TActor *func_800211B4(s32 param1) {
+Object *func_800211B4(s32 param1) {
     s32 i;
     s32 len;
-    TActor *obj;
+    Object *obj;
 
     i = 0;
     len = gNumObjs;
@@ -433,8 +433,8 @@ void *func_800213A0(s32 idx) {
     return (void*)((u32)gFile_TABLES_BIN + gFile_TABLES_TAB[idx] * 4);
 }
 
-TActor *func_800213EC(s32 param1, s32 param2, s32 param3, s32 param4, s32 param5) {
-    TActor *obj;
+Object *func_800213EC(s32 param1, s32 param2, s32 param3, s32 param4, s32 param5) {
+    Object *obj;
 
     obj = NULL;
     queue_load_map_object((void**)&obj, param1, param2, param3, param4, param5, 0);
@@ -443,17 +443,17 @@ TActor *func_800213EC(s32 param1, s32 param2, s32 param3, s32 param4, s32 param5
     return obj;
 }
 
-TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, TActor *param5) {
+Object *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *param5) {
     ObjDef *def;
     s32 modelCount;
     s32 var;
     s32 flags;
     ModelInstance *tempModel;
-    TActor *obj;
+    Object *obj;
     s32 tabIdx;
     s32 objId;
     s32 j;
-    TActor objHeader;
+    Object objHeader;
     s32 addr;
     s8 modelLoadFailed;
 
@@ -472,7 +472,7 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         tabIdx = gFile_OBJINDEX[objId];
     }
 
-    bzero(&objHeader, sizeof(TActor));
+    bzero(&objHeader, sizeof(Object));
 
     objHeader.def = func_80022AA4(tabIdx);
     def = objHeader.def;
@@ -536,19 +536,19 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
 
     var = func_80021CC0(&objHeader, def, flags);
 
-    obj = (TActor*)malloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
+    obj = (Object*)malloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
 
     if (obj == NULL) {
         func_80022C68(tabIdx);
         return NULL;
     }
 
-    bcopy(&objHeader, obj, sizeof(TActor));
-    bzero((void*)((u32)obj + sizeof(TActor)), var - sizeof(TActor));
+    bcopy(&objHeader, obj, sizeof(Object));
+    bzero((void*)((u32)obj + sizeof(Object)), var - sizeof(Object));
 
     modelCount = def->numModels;
 
-    obj->modelInsts = (ModelInstance**)((u32)obj + sizeof(TActor));
+    obj->modelInsts = (ModelInstance**)((u32)obj + sizeof(Object));
 
     modelLoadFailed = FALSE;
     var = 0;
@@ -633,7 +633,7 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
     }
 
     if (def->unk9b != 0) {
-        obj->unk_0x78 = (Actor78*)align_4(addr);
+        obj->unk_0x78 = (ObjectStruct78*)align_4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
             obj->unk_0x78[j].unk4 = def->unk40[j].unk10;
@@ -644,90 +644,90 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         }
     }
 
-    obj->linkedActor = param5;
+    obj->parent = param5;
     
     return obj;
 }
 
-// add_actor
-void func_80021A84(TActor *actor, u32 someFlags) {
-    if (actor->linkedActor != NULL) {
-        transform_point_by_actor(
-            actor->srt.transl.x, actor->srt.transl.y, actor->srt.transl.z,
-            &actor->positionMirror.x, &actor->positionMirror.y, &actor->positionMirror.z,
-            actor->linkedActor
+// add_object
+void func_80021A84(Object *obj, u32 someFlags) {
+    if (obj->parent != NULL) {
+        transform_point_by_object(
+            obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
+            &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z,
+            obj->parent
         );
     } else {
-        actor->positionMirror.x = actor->srt.transl.x;
-        actor->positionMirror.y = actor->srt.transl.y;
-        actor->positionMirror.z = actor->srt.transl.z;
+        obj->positionMirror.x = obj->srt.transl.x;
+        obj->positionMirror.y = obj->srt.transl.y;
+        obj->positionMirror.z = obj->srt.transl.z;
     }
 
-    actor->positionMirror2.x = actor->srt.transl.x;
-    actor->positionMirror2.y = actor->srt.transl.y;
-    actor->positionMirror2.z = actor->srt.transl.z;
+    obj->positionMirror2.x = obj->srt.transl.x;
+    obj->positionMirror2.y = obj->srt.transl.y;
+    obj->positionMirror2.z = obj->srt.transl.z;
 
-    actor->positionMirror3.x = actor->positionMirror.x;
-    actor->positionMirror3.y = actor->positionMirror.y;
-    actor->positionMirror3.z = actor->positionMirror.z;
+    obj->positionMirror3.x = obj->positionMirror.x;
+    obj->positionMirror3.y = obj->positionMirror.y;
+    obj->positionMirror3.z = obj->positionMirror.z;
 
-    copy_obj_position_mirrors(actor, actor->createInfo, 0);
+    copy_obj_position_mirrors(obj, obj->createInfo, 0);
 
-    if (actor->objhitInfo != NULL) {
-        actor->objhitInfo->unk_0x10.x = actor->srt.transl.x;
-        actor->objhitInfo->unk_0x10.y = actor->srt.transl.y;
-        actor->objhitInfo->unk_0x10.z = actor->srt.transl.z;
+    if (obj->objhitInfo != NULL) {
+        obj->objhitInfo->unk_0x10.x = obj->srt.transl.x;
+        obj->objhitInfo->unk_0x10.y = obj->srt.transl.y;
+        obj->objhitInfo->unk_0x10.z = obj->srt.transl.z;
 
-        actor->objhitInfo->unk_0x20.x = actor->srt.transl.x;
-        actor->objhitInfo->unk_0x20.y = actor->srt.transl.y;
-        actor->objhitInfo->unk_0x20.z = actor->srt.transl.z;
+        obj->objhitInfo->unk_0x20.x = obj->srt.transl.x;
+        obj->objhitInfo->unk_0x20.y = obj->srt.transl.y;
+        obj->objhitInfo->unk_0x20.z = obj->srt.transl.z;
     }
 
-    if (actor->def->unka0 > -1) {
-        func_80046320(actor->def->unka0, actor);
+    if (obj->def->unka0 > -1) {
+        func_80046320(obj->def->unka0, obj);
     }
 
     update_pi_manager_array(0, -1);
 
-    if (actor->def->flags & OBJDATA_FLAG44_HasChildren) {
-        add_object_to_array(actor, 7);
+    if (obj->def->flags & OBJDATA_FLAG44_HasChildren) {
+        add_object_to_array(obj, 7);
 
-        if (actor->updatePriority != 90) {
-            func_80023A00(actor, 90);
+        if (obj->updatePriority != 90) {
+            func_80023A00(obj, 90);
         }
     } else {
-        if (actor->updatePriority == 0) {
-            func_80023A00(actor, 80);
+        if (obj->updatePriority == 0) {
+            func_80023A00(obj, 80);
         }
     }
 
     if (someFlags & 1) {
-        actor->unk0xb0 |= 0x10;
-        gObjList[gNumObjs] = actor;
+        obj->unk0xb0 |= 0x10;
+        gObjList[gNumObjs] = obj;
         gNumObjs += 1;
 
-        func_800222AC(actor);
+        func_800222AC(obj);
     }
 
-    if (actor->def->unk5e >= 1) {
-        add_object_to_array(actor, 9);
+    if (obj->def->unk5e >= 1) {
+        add_object_to_array(obj, 9);
     }
 
-    if (actor->def->flags & OBJDATA_FLAG44_HaveModels) {
+    if (obj->def->flags & OBJDATA_FLAG44_HaveModels) {
         func_80020D90();
     }
 
-    if (actor->def->flags & OBJDATA_FLAG44_DifferentLightColor) {
-        add_object_to_array(actor, 56);
+    if (obj->def->flags & OBJDATA_FLAG44_DifferentLightColor) {
+        add_object_to_array(obj, 56);
     }
 
     write_c_file_label_pointers(D_80099600, 0x477);
 }
 
-u32 func_80021CC0(TActor *obj, ObjDef *def, u32 flags) {
+u32 func_80021CC0(Object *obj, ObjDef *def, u32 flags) {
     u32 size;
 
-    size = sizeof(TActor);
+    size = sizeof(Object);
 
     size += def->numModels * sizeof(u32);
 
@@ -793,7 +793,7 @@ u32 func_80021CC0(TActor *obj, ObjDef *def, u32 flags) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022150.s")
 
-void func_80022200(TActor *obj, s32 param2, s32 param3) {
+void func_80022200(Object *obj, s32 param2, s32 param3) {
     s32 i;
 
     for (i = 0; i < param2; i++) {
@@ -805,16 +805,16 @@ void func_80022200(TActor *obj, s32 param2, s32 param3) {
 }
 
 // objFreeTick?
-void func_80022274(TActor *obj) {
+void func_80022274(Object *obj) {
     if (obj->unk0xb0 & 0x10) {
         linked_list_remove(&gObjUpdateList, obj);
     }
 }
 
-void func_800222AC(TActor *obj) {
+void func_800222AC(Object *obj) {
     void *insertAfter;
     void *node;
-    TActor *objNode;
+    Object *objNode;
     s32 nextFieldOffset;
     
     if (obj->unk0xb0 & 0x10) {
@@ -824,7 +824,7 @@ void func_800222AC(TActor *obj) {
         node = gObjUpdateList.head;
 
         // Insert maintaining sort by update priority
-        for (objNode = (TActor*)node; node != NULL && obj->updatePriority < ((TActor*)node)->updatePriority; objNode = (TActor*)node) {
+        for (objNode = (Object*)node; node != NULL && obj->updatePriority < ((Object*)node)->updatePriority; objNode = (Object*)node) {
             insertAfter = objNode;
             node = *((void**)(nextFieldOffset + (u32)node));
         }
@@ -836,7 +836,7 @@ void func_800222AC(TActor *obj) {
 // objFreeObject?
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022338.s")
 
-void copy_obj_position_mirrors(TActor *obj, ObjCreateInfo *param2, s32 param3) {
+void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3) {
     DLLInst_Object *dll;
     obj->group = obj->def->group;
     dll = obj->dll;
@@ -854,15 +854,15 @@ void copy_obj_position_mirrors(TActor *obj, ObjCreateInfo *param2, s32 param3) {
     obj->positionMirror3.z = obj->srt.transl.z;
 }
 
-void update_object(TActor *obj) {
+void update_object(Object *obj) {
     if (obj->unk0xb0 & 0x40) {
         return;
     }
 
     if (obj->unk0xc0 != NULL) {
-        if (obj->linkedActor2 != NULL) {
-            obj->linkedActor2->objhitInfo->unk_0x48 = 0;
-            obj->linkedActor2->objhitInfo->unk_0x62 = 0;
+        if (obj->linkedObject != NULL) {
+            obj->linkedObject->objhitInfo->unk_0x48 = 0;
+            obj->linkedObject->objhitInfo->unk_0x62 = 0;
         }
 
         if (obj->objhitInfo != NULL) {
@@ -885,14 +885,14 @@ void update_object(TActor *obj) {
         if (obj->dll != NULL && !(obj->unk0xb0 & 0x8000)) {
             obj->dll->exports->update(obj);
 
-            get_actor_child_position(obj,
+            get_object_child_position(obj,
                 &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
         }
 
         if (obj->objhitInfo != NULL) {
-            if (obj->linkedActor2 != NULL) {
-                obj->linkedActor2->objhitInfo->unk_0x48 = 0;
-                obj->linkedActor2->objhitInfo->unk_0x62 = 0;
+            if (obj->linkedObject != NULL) {
+                obj->linkedObject->objhitInfo->unk_0x48 = 0;
+                obj->linkedObject->objhitInfo->unk_0x62 = 0;
             }
 
             obj->objhitInfo->unk_0x4c = 0;
@@ -910,20 +910,20 @@ void update_object(TActor *obj) {
     }
 }
 
-void func_8002272C(TActor *obj) {
+void func_8002272C(Object *obj) {
     update_pi_manager_array(3, obj->unk0x46);
 
     if (obj->dll != NULL && !(obj->unk0xb0 & 0x2000)) {
         obj->dll->exports->func3(obj);
 
-        get_actor_child_position(obj,
+        get_object_child_position(obj,
             &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
     }
 
     update_pi_manager_array(3, -1);
 }
 
-u32 func_800227AC(TActor *obj, u32 addr) {
+u32 func_800227AC(Object *obj, u32 addr) {
     u32 stateSize = 0;
     
     addr = align_4(addr);
@@ -942,7 +942,7 @@ u32 func_800227AC(TActor *obj, u32 addr) {
     return addr;
 }
 
-u32 func_80022828(TActor *obj) {
+u32 func_80022828(Object *obj) {
     if (obj->dll != NULL) {
         return obj->dll->exports->func6(obj);
     } else {
@@ -950,10 +950,10 @@ u32 func_80022828(TActor *obj) {
     }
 }
 
-u32 func_80022868(s32 param1, TActor *obj, u32 addr) {
-    obj->ptr0x60 = (Actor60*)align_4(addr);
+u32 func_80022868(s32 param1, Object *obj, u32 addr) {
+    obj->ptr0x60 = (ObjectStruct60*)align_4(addr);
 
-    addr = align_8((u32)obj->ptr0x60 + sizeof(Actor60));
+    addr = align_8((u32)obj->ptr0x60 + sizeof(ObjectStruct60));
     obj->ptr0x60->unk4 = (UNK_PTR*)addr;
 
     addr += 80;
@@ -963,7 +963,7 @@ u32 func_80022868(s32 param1, TActor *obj, u32 addr) {
     return addr;
 }
 
-void func_800228D0(TActor *obj, s32 param2, Actor60 *outParam, s32 id, u8 dontQueueLoad) {
+void func_800228D0(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
     
@@ -1000,20 +1000,20 @@ void func_800228D0(TActor *obj, s32 param2, Actor60 *outParam, s32 id, u8 dontQu
     }
 }
 
-u32 func_8002298C(s32 param1, ModelInstance *param2, TActor *obj, u32 addr) {
+u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
     } else {
-        obj->ptr0x5c = (Actor5c*)align_4(addr);
+        obj->ptr0x5c = (ObjectStruct5C*)align_4(addr);
 
-        addr = align_8((u32)obj->ptr0x5c + sizeof(Actor5c));
+        addr = align_8((u32)obj->ptr0x5c + sizeof(ObjectStruct5C));
         obj->ptr0x5c->unk4 = (UNK_PTR*)addr;
 
         return addr + 1024;
     }
 }
 
-void func_800229E8(TActor *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
+void func_800229E8(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
     ObjDefWeaponData *weaponDataList;
     ObjDefWeaponData *weaponData;
     
@@ -1208,41 +1208,41 @@ s32 func_80022DFC(s32 idx) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023894.s")
 
-TActor *get_player(void) {
-    TActor **obj;
+Object *get_player(void) {
+    Object **obj;
     s32 idx;
-    obj = TActor_getter(0, &idx);
+    obj = object_getter(0, &idx);
     if(idx) {} else {}; //wat
     if(idx) return *obj;
     else return NULL;
 }
 
 // get_sidekick?
-TActor *func_8002394C() {
-    TActor **actorList;
+Object *func_8002394C() {
+    Object **objectList;
     s32 count;
 
-    actorList = TActor_getter(1, &count);
+    objectList = object_getter(1, &count);
 
     if (count) {}
 
     if (count != 0) {
-        return actorList[0];
+        return objectList[0];
     } else {
         return NULL;
     }
 }
 
-void func_80023984(TActor *obj) {
+void func_80023984(Object *obj) {
     obj->mapID = -1;
 }
 
-void func_80023994(TActor *obj) {
+void func_80023994(Object *obj) {
     obj->mapID = map_get_map_id_from_xz_ws(obj->srt.transl.x, obj->srt.transl.z);
 }
 
 // obj_integrate_speed
-s32 func_800239C0(TActor *obj, f32 dx, f32 dy, f32 dz) {
+s32 func_800239C0(Object *obj, f32 dx, f32 dy, f32 dz) {
     obj->srt.transl.x += dx;
     obj->srt.transl.y += dy;
     obj->srt.transl.z += dz;
@@ -1251,11 +1251,11 @@ s32 func_800239C0(TActor *obj, f32 dx, f32 dy, f32 dz) {
 }
 
 // obj_set_update_priority
-void func_80023A00(TActor *obj, s8 priority) {
+void func_80023A00(Object *obj, s8 priority) {
     obj->updatePriority = priority;
 }
 
-void func_80023A18(TActor *obj, s32 param2) {
+void func_80023A18(Object *obj, s32 param2) {
     obj->unk0xb0 &= 0xF0FF;
 
     if (param2 == obj->modelInstIdx) {
@@ -1272,7 +1272,7 @@ void func_80023A18(TActor *obj, s32 param2) {
     obj->unk0xb0 |= (param2 << 8) & 0x700;
 }
 
-void func_80023A78(TActor *obj, ModelInstance *modelInst, Model *model) {
+void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     s32 modelInstIdx;
     ModelInstance *modelInst2;
     s32 prevAnimId;
@@ -1303,16 +1303,16 @@ void func_80023A78(TActor *obj, ModelInstance *modelInst, Model *model) {
 }
 
 extern s8 D_800B1930;
-extern TActor *D_800B1938[20];
+extern Object *D_800B1938[20];
 
 // objAddEffectBox?
-void func_80023B34(TActor *obj) {
+void func_80023B34(Object *obj) {
     D_800B1938[D_800B1930] = obj;
     D_800B1930 += 1;
 }
 
 // objFreeEffectBox?
-void func_80023B60(TActor *obj) {
+void func_80023B60(Object *obj) {
     s32 i;
     s32 newCount;
 
@@ -1334,8 +1334,8 @@ void func_80023B60(TActor *obj) {
     }
 }
 
-void func_80023BF8(TActor *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6) {
-    Actor78 *dst;
+void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6) {
+    ObjectStruct78 *dst;
 
     if (obj != NULL) {
         dst = obj->unk_0x78;
@@ -1366,9 +1366,9 @@ void func_80023BF8(TActor *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
     }
 }
 
-void func_80023C6C(TActor *obj) {
+void func_80023C6C(Object *obj) {
     ObjDefStruct40 *src;
-    Actor78 *dst;
+    ObjectStruct78 *dst;
 
     if (obj != NULL) {
         dst = obj->unk_0x78;
@@ -1386,7 +1386,7 @@ void func_80023C6C(TActor *obj) {
     }
 }
 
-void func_80023CD8(TActor *obj, u16 param2) {
+void func_80023CD8(Object *obj, u16 param2) {
     if (param2 > obj->def->unk9b) {
         param2 = 0;
     }
@@ -1394,7 +1394,7 @@ void func_80023CD8(TActor *obj, u16 param2) {
     obj->unk_0xd4 = param2;
 }
 
-void func_80023D08(TActor *obj, u16 param2) {
+void func_80023D08(Object *obj, u16 param2) {
     if (param2 > 4) {
         param2 = 0;
     }
@@ -1429,7 +1429,7 @@ void func_80023D08(TActor *obj, u16 param2) {
 //in retail SFA 1.0 I believe this is at 8002ed18
 //but it's different because SFA doesn't use Model Instances
 //or, this might be a completely different function...
-void func_80025540(TActor *obj, s32 a1, s32 a2)
+void func_80025540(Object *obj, s32 a1, s32 a2)
 {
     Model *model = obj->models[obj->curModel];
     void **anims; //this is a struct of some sort.

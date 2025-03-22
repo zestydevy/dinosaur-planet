@@ -364,7 +364,7 @@ typedef void (*DLL57Func)(u32*, u32*, u32*, u32*, u32*, u32*);
 void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 {
     u32 oldBlockIdx = (u32)-1;
-    TActor **actors = get_world_actors(NULL, NULL);
+    Object **objects = get_world_objects(NULL, NULL);
     s32 i;
     u32 r, g, b;
     u32 unk0, unk1, unk2;
@@ -379,8 +379,8 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 
         if (renderItem & 0x40)
         {
-            // Draw actor
-            func_800436DC(actors[index], visibilities[index]);
+            // Draw object
+            func_800436DC(objects[index], visibilities[index]);
         }
         else
         {
@@ -1255,37 +1255,37 @@ BlockTexture *func_8004A2CC(s32 idx)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E64C.s")
 #else
-void func_8005BCE0(TActor *actor, u32 param_2, Gfx **gdl, Mtx **rspMtxs, u32 param_5, u32 param_6, u32 param_7, f32 y, u32 idx);
-void _func_8004E64C(TActor *actor, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5)
+void func_8005BCE0(Object *object, u32 param_2, Gfx **gdl, Mtx **rspMtxs, u32 param_5, u32 param_6, u32 param_7, f32 y, u32 idx);
+void _func_8004E64C(Object *object, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5)
 {
-    ActorUnk0x64 *unk;
+    ObjectStruct64 *unk;
     Vec3f v0;
     Vec3f v1;
 
-    unk = actor->ptr0x64;
+    unk = object->ptr0x64;
     if (unk->gdl != NULL)
     {
         if (unk->flags & 0x20)
         {
-            bcopy(&actor->srt.transl, &v0, sizeof(Vec3f));
-            bcopy(&actor->positionMirror, &v1, sizeof(Vec3f));
-            bcopy(&unk->tr, &actor->srt.transl, sizeof(Vec3f));
+            bcopy(&object->srt.transl, &v0, sizeof(Vec3f));
+            bcopy(&object->positionMirror, &v1, sizeof(Vec3f));
+            bcopy(&unk->tr, &object->srt.transl, sizeof(Vec3f));
 
-            if (actor->linkedActor != NULL) {
-                transform_point_by_actor(unk->tr.x, unk->tr.y, unk->tr.z, &unk->tr.x, &unk->tr.y, &unk->tr.z, actor->linkedActor);
+            if (object->parent != NULL) {
+                transform_point_by_object(unk->tr.x, unk->tr.y, unk->tr.z, &unk->tr.x, &unk->tr.y, &unk->tr.z, object->parent);
             } else {
-                bcopy(&unk->tr, &actor->positionMirror, sizeof(Vec3f));
+                bcopy(&unk->tr, &object->positionMirror, sizeof(Vec3f));
             }
         }
 
         if (unk->flags & 0x8) {
             // This function seems to be responsible for drawing shadows.
-            func_8005BCE0(actor, *(s16*)0x80092c18, gdl, rspMtxs, param_4, param_5, *(s8*)0x800bb170, *(f32*)0x800bb18c, unk->flags & 0x3);
+            func_8005BCE0(object, *(s16*)0x80092c18, gdl, rspMtxs, param_4, param_5, *(s8*)0x800bb170, *(f32*)0x800bb18c, unk->flags & 0x3);
         }
 
         if (unk->flags & 0x20) {
-            bcopy(&v0, &actor->srt.transl, sizeof(Vec3f));
-            bcopy(&v1, &actor->positionMirror, sizeof(Vec3f));
+            bcopy(&v0, &object->srt.transl, sizeof(Vec3f));
+            bcopy(&v1, &object->positionMirror, sizeof(Vec3f));
         }
     }
 }

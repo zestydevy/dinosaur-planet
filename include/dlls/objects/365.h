@@ -2,7 +2,7 @@
 #define _DLLS_365_H
 
 #include <PR/ultratypes.h>
-#include "game/actor/actor.h"
+#include "game/objects/objects.h"
 #include "dll_def.h"
 
 typedef struct

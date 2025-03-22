@@ -1,7 +1,7 @@
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
 
-#include "game/actor/actor.h"
+#include "game/objects/objects.h"
 
 void bootproc(void);
 void idle(void * arg);
@@ -16,7 +16,7 @@ void check_dongle(void);
 void func_80017254(s32);
 void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
-TActor * get_player(void);
+Object *get_player(void);
 
 s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
@@ -30,26 +30,26 @@ void func_80060B94(Gfx**);
 
 OSSched *get_ossched(void);
 
-TActor **TActor_getter(s32 idx, s32 *count);
+Object **object_getter(s32 idx, s32 *count);
 
-void transform_point_by_actor(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, TActor *actor);
+void transform_point_by_object(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, Object *obj);
 
 void update_pi_manager_array(s32 index, s32 value);
 
-void add_object_to_array(TActor *actor, s32 param2);
+void add_object_to_array(Object *obj, s32 param2);
 
 void write_c_file_label_pointers(char *cFileLabel, s32 a1);
 
-void func_800267A4(TActor *actor);
-TActor *func_8002394C();
-s32 func_80023D30(TActor*,s32,f32,s32);
-s32 func_80024108(TActor*,f32,f32,s32);
-s32 func_80025F40(TActor*,s32,s32,s32);
+void func_800267A4(Object *obj);
+Object *func_8002394C();
+s32 func_80023D30(Object*,s32,f32,s32);
+s32 func_80024108(Object*,f32,f32,s32);
+s32 func_80025F40(Object*,s32,s32,s32);
 
 u32 get_gplay_bitstring(s32 entry);
 void set_gplay_bitstring(s32 entry, u32 value);
 
-void draw_actor(TActor*,s32,s32,s32,s32,float);
+void draw_object(Object*,s32,s32,s32,s32,float);
 
 void dl_apply_geometry_mode(Gfx **gdl);
 
@@ -70,17 +70,17 @@ void dl_apply_other_mode(Gfx **gdl);
 
 void func_80030EC0();
 
-void get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz);
+void get_object_child_position(Object *obj, float *ox, float *oy, float *oz);
 
 s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
 
 ModelInstance *model_load_create_instance(s32 id, u32 flags);
 void destroy_model_instance(ModelInstance *modelInst);
-u32 func_8004D8A4(TActor *obj, u32 addr, s32);
+u32 func_8004D8A4(Object *obj, u32 addr, s32);
 
-u32 func_8002667C(TActor *obj, u32 addr);
-u32 func_80026BD8(TActor *obj, u32 addr);
+u32 func_8002667C(Object *obj, u32 addr);
+u32 func_80026BD8(Object *obj, u32 addr);
 
-u32 func_80026A20(s16, ModelInstance*, ActorObjhitInfo*, u32, TActor*);
+u32 func_80026A20(s16, ModelInstance*, ObjectHitInfo*, u32, Object*);
 
 #endif //_FUNCTIONS_H

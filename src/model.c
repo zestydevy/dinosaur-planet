@@ -513,16 +513,16 @@ void _model_destroy(Model *model)
 #else
 extern f32 gWorldX;
 extern f32 gWorldZ;
-typedef s16 (*ActorDLLFunc0x20)(TActor *actor);
-void _func_8001943C(TActor *actor, MtxF *mf, f32 yPrescale)
+typedef s16 (*ObjectDLLFunc0x20)(Object *object);
+void _func_8001943C(Object *object, MtxF *mf, f32 yPrescale)
 {
-    if (actor->linkedActor == NULL) {
-        actor->srt.tx -= gWorldX;
-        actor->srt.tz -= gWorldZ;
+    if (object->parent == NULL) {
+        object->srt.tx -= gWorldX;
+        object->srt.tz -= gWorldZ;
     }
 
-    if (actor->srt.tx > *(f32*)0x800994c0 /* 32767.0f */ || actor->srt.tx < *(f32*)0x800994c4 /* -32767.0f */ ||
-        actor->srt.tz > *(f32*)0x800994c0 /* 32767.0f */ || actor->srt.tz < *(f32*)0x800994c4 /* -32767.0f */)
+    if (object->srt.tx > *(f32*)0x800994c0 /* 32767.0f */ || object->srt.tx < *(f32*)0x800994c4 /* -32767.0f */ ||
+        object->srt.tz > *(f32*)0x800994c0 /* 32767.0f */ || object->srt.tz < *(f32*)0x800994c4 /* -32767.0f */)
     {
         bzero(mf, sizeof(MtxF));
         mf->m[0][0] = 1.0f;
@@ -530,18 +530,18 @@ void _func_8001943C(TActor *actor, MtxF *mf, f32 yPrescale)
         mf->m[2][2] = 1.0f;
         mf->m[3][3] = 1.0f;
 
-        if (actor->linkedActor == NULL) {
-            actor->srt.tx += gWorldX;
-            actor->srt.tz += gWorldZ;
+        if (object->parent == NULL) {
+            object->srt.tx += gWorldX;
+            object->srt.tz += gWorldZ;
         }
     }
     else
     {
-        matrix_from_srt(mf, &actor->srt);
+        matrix_from_srt(mf, &object->srt);
 
-        if (actor->unk0x46 == 0x427) {
-            ActorDLLFunc0x20 func = *(ActorDLLFunc0x20*)((u8*)*actor->dll + 0x20);
-            s16 theta = func(actor);
+        if (object->unk0x46 == 0x427) {
+            ObjectDLLFunc0x20 func = *(ObjectDLLFunc0x20*)((u8*)*object->dll + 0x20);
+            s16 theta = func(object);
             matrix_from_yaw(theta, mf);
         }
 
@@ -549,9 +549,9 @@ void _func_8001943C(TActor *actor, MtxF *mf, f32 yPrescale)
             matrix_prescale_y(mf, yPrescale);
         }
 
-        if (actor->linkedActor == NULL) {
-            actor->srt.tx += gWorldX;
-            actor->srt.tz += gWorldZ;
+        if (object->parent == NULL) {
+            object->srt.tx += gWorldX;
+            object->srt.tz += gWorldZ;
         }
     }
 }
@@ -566,12 +566,12 @@ void func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animState
 void func_80019FC0(MtxF *param_1, ModelInstance *modelInst, AnimState *animState, f32 param_4, u32 param_5, u8 animIdx0, u8 param_7, u8 animIdx1, u32 flags, u16 param_10);
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, s16 *param_7);
 void func_8001CAA4(AnimState *animState, s16 *out0, s16 *out1);
-void _func_80019730(ModelInstance *modelInst, Model *model, TActor *actor, MtxF *param_4)
+void _func_80019730(ModelInstance *modelInst, Model *model, Object *object, MtxF *param_4)
 {
     s32 mtxSelector;
     AnimState *animState0;
 
-    func_8001A640(actor, modelInst, model);
+    func_8001A640(object, modelInst, model);
 
     modelInst->unk_0x34 ^= 0x1;
     mtxSelector = modelInst->unk_0x34 & 0x1;
@@ -582,7 +582,7 @@ void _func_80019730(ModelInstance *modelInst, Model *model, TActor *actor, MtxF 
     {
         short xyz[3];
         Vec3f v;
-        func_8001A3FC(modelInst, 0, 0, actor->unk0x98, actor->srt.scale, &v, xyz);
+        func_8001A3FC(modelInst, 0, 0, object->unk0x98, object->srt.scale, &v, xyz);
         *(s16*)0x800903dc = xyz[0];
         *(s16*)0x800903de = xyz[1];
         *(s16*)0x800903e0 = xyz[2];
@@ -590,7 +590,7 @@ void _func_80019730(ModelInstance *modelInst, Model *model, TActor *actor, MtxF 
 
     if (modelInst->model->unk_0x71 & 0x8)
     {
-        func_800199A8(param_4, modelInst, animState0, actor->unk0x98, 0x7f);
+        func_800199A8(param_4, modelInst, animState0, object->unk0x98, 0x7f);
     }
     else
     {
@@ -598,16 +598,16 @@ void _func_80019730(ModelInstance *modelInst, Model *model, TActor *actor, MtxF 
         {
             AnimState *animState1 = modelInst->animState1;
 
-            func_80019FC0(param_4, modelInst, animState0, actor->unk0x98, 0x7f, 0, 0, 2, 0x14, animState0->unk_0x5a);
-            func_80019FC0(param_4, modelInst, animState1, actor->unk0x9c, 0x7f, 0, 0, 2, 0x18, animState0->unk_0x5a);
-            func_80019FC0(param_4, modelInst, animState0, actor->unk0x98, 0x7f, 0, 0, 0, 7, animState1->unk_0x58);
-            func_80019FC0(param_4, modelInst, animState0, actor->unk0x98, 0x7f, 0, 1, 1, 1, animState0->unk_0x58);
+            func_80019FC0(param_4, modelInst, animState0, object->unk0x98, 0x7f, 0, 0, 2, 0x14, animState0->unk_0x5a);
+            func_80019FC0(param_4, modelInst, animState1, object->unk0x9c, 0x7f, 0, 0, 2, 0x18, animState0->unk_0x5a);
+            func_80019FC0(param_4, modelInst, animState0, object->unk0x98, 0x7f, 0, 0, 0, 7, animState1->unk_0x58);
+            func_80019FC0(param_4, modelInst, animState0, object->unk0x98, 0x7f, 0, 1, 1, 1, animState0->unk_0x58);
         }
         else
         {
-            func_800199A8(param_4, modelInst, animState0, actor->unk0x98, 0x7f);
-            if (modelInst->animState1 != NULL && actor->unk_0xa2 >= 0) {
-                func_800199A8(param_4, modelInst, modelInst->animState1, actor->unk0x9c, -1);
+            func_800199A8(param_4, modelInst, animState0, object->unk0x98, 0x7f);
+            if (modelInst->animState1 != NULL && object->unk_0xa2 >= 0) {
+                func_800199A8(param_4, modelInst, modelInst->animState1, object->unk0x9c, -1);
             }
         }
     }
@@ -959,7 +959,7 @@ void _func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A640.s")
 #else
-void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
+void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
 {
     s32 i;
     s32 j;
@@ -976,12 +976,12 @@ void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
 
     j = 0;
     m = 0;
-    for (i = 0; i < actor->ptr0x50->unk_0x72; i++)
+    for (i = 0; i < object->ptr0x50->unk_0x72; i++)
     {
-        if (actor->ptr0x50->unk_0x10[actor->modelInstIdx + j + 1] != 0xff)
+        if (object->ptr0x50->unk_0x10[object->modelInstIdx + j + 1] != 0xff)
         {
-            s16 *src = &actor->ptr0x6c[i * 9];
-            u32 code = amap[actor->ptr0x50->unk_0x10[actor->modelInstIdx + j + 1]] << 6;
+            s16 *src = &object->ptr0x6c[i * 9];
+            u32 code = amap[object->ptr0x50->unk_0x10[object->modelInstIdx + j + 1]] << 6;
 
             for (k = 0; k < 3; k++)
             {
@@ -1000,7 +1000,7 @@ void _func_8001A640(TActor *actor, ModelInstance *modelInst, Model *model)
             }
         }
 
-        j += actor->ptr0x50->unk_0x5d + 1;
+        j += object->ptr0x50->unk_0x5d + 1;
     }
 }
 #endif

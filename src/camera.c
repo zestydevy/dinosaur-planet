@@ -15,7 +15,7 @@ typedef struct
 /*0034*/    f32 unk_0x34;
 /*0038*/    f32 unk_0x38;
 /*003C*/    f32 unk_0x3c;
-/*0040*/    TActor *actor;
+/*0040*/    Object *object;
 /*0044*/    f32 tx;
 /*0048*/    f32 ty;
 /*004C*/    f32 tz;
@@ -69,8 +69,8 @@ extern Camera gCameras[CAMERA_COUNT];
 extern s8 gTriggerUseAlternateCamera;
 extern s8 gUseAlternateCamera;
 extern s32 gCameraSelector;
-extern MtxF gActorMatrices[2]; // FIXME: how many items are there?
-extern MtxF gInverseActorMatrices[2]; // FIXME: how many items are there?
+extern MtxF gObjectMatrices[2]; // FIXME: how many items are there?
+extern MtxF gInverseObjectMatrices[2]; // FIXME: how many items are there?
 extern f32 FLOAT_8008c52c;
 extern f32 gFovY;
 extern f32 gAspect;
@@ -197,7 +197,7 @@ void func_80001914(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw)
     gCameras[gCameraSelector].unk_0x24 = 0.0f;
     gCameras[gCameraSelector].unk_0x28 = 0.0f;
     gCameras[gCameraSelector].dty = 0.0f;
-    gCameras[gCameraSelector].actor = NULL;
+    gCameras[gCameraSelector].object = NULL;
     gCameras[gCameraSelector].dpitch = 0;
 }
 
@@ -511,7 +511,7 @@ void _setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs)
     }
     camera = &gCameras[cameraSel];
 
-    update_camera_for_actor(camera);
+    update_camera_for_object(camera);
 
     if (gCameraSelector == 4) {
         func_80046B58(camera->tx, camera->ty, camera->tz);
@@ -973,16 +973,16 @@ f32 fexp(f32 x, u32 iterations)
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/setup_rsp_matrices_for_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/setup_rsp_matrices_for_object.s")
 #else
 extern Mtx *gRSPMatrices[2]; // TODO: how many matrices are there?
 extern f32 gWorldX;
 extern f32 gWorldZ;
 extern MtxF MtxF_800a6a60;
 extern MtxF gAuxMtx2;
-void _setup_rsp_matrices_for_actor(Gfx **gdl, Mtx **rspMtxs, TActor *actor)
+void _setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
 {
-    TActor *link = actor;
+    Object *link = object;
     MtxF mtxf;
     u8 isChild;
     f32 oldScale;
@@ -993,7 +993,7 @@ void _setup_rsp_matrices_for_actor(Gfx **gdl, Mtx **rspMtxs, TActor *actor)
 
         while (link != NULL)
         {
-            if (link->linkedActor == NULL) {
+            if (link->parent == NULL) {
                 link->srt.transl.x -= gWorldX;
                 link->srt.transl.z -= gWorldZ;
             }
@@ -1012,22 +1012,22 @@ void _setup_rsp_matrices_for_actor(Gfx **gdl, Mtx **rspMtxs, TActor *actor)
 
             link->srt.scale = oldScale;
 
-            if (link->linkedActor == NULL) {
+            if (link->parent == NULL) {
                 link->srt.transl.x += gWorldX;
                 link->srt.transl.z += gWorldZ;
             }
 
-            link = link->linkedActor;
+            link = link->parent;
             isChild = TRUE;
         }
 
         matrix_concat(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
         matrix_f2l(&gAuxMtx2, *rspMtxs);
-        gRSPMatrices[actor->matrixIdx] = *rspMtxs;
+        gRSPMatrices[object->matrixIdx] = *rspMtxs;
         (*rspMtxs)++;
     }
 
-    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMatrices[actor->matrixIdx]), G_MTX_PROJECTION | G_MTX_LOAD);
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMatrices[object->matrixIdx]), G_MTX_PROJECTION | G_MTX_LOAD);
 }
 #endif
 
@@ -1041,104 +1041,104 @@ void func_80004224(Gfx **gdl)
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004258.s")
 #else
 extern s8 gMatrixIndex;
-void func_800042C8(TActor *actor, s32 matrixIdx);
-s32 _func_80004258(TActor *actor)
+void func_800042C8(Object *object, s32 matrixIdx);
+s32 _func_80004258(Object *object)
 {
-    func_800042C8(actor, gMatrixIndex);
+    func_800042C8(object, gMatrixIndex);
     gRSPMatrices[gMatrixIndex] = NULL;
     gMatrixIndex++;
     return gMatrixIndex - 1;
 }
 #endif
 
-void func_800042A8(TActor *actor)
+void func_800042A8(Object *object)
 {
-    func_800042C8(actor, actor->matrixIdx);
+    func_800042C8(object, object->matrixIdx);
 }
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800042C8.s")
 #else
 extern MtxF gAuxMtx2;
-void _func_800042C8(TActor *actor, int matrixIdx)
+void _func_800042C8(Object *object, int matrixIdx)
 {
     u8 isChild = FALSE;
     f32 oldScale;
-    TActor* actorList[2]; // FIXME: really? only two?
-    s32 actorCount = 0;
+    Object* objectList[2]; // FIXME: really? only two?
+    s32 objectCount = 0;
     s32 i;
     MtxF* pmtx;
 
-    while (actor != NULL)
+    while (object != NULL)
     {
-        actorList[actorCount++] = actor;
-        actorCount = (s8)actorCount;
+        objectList[objectCount++] = object;
+        objectCount = (s8)objectCount;
 
-        pmtx = &gActorMatrices[matrixIdx];
+        pmtx = &gObjectMatrices[matrixIdx];
 
-        oldScale = actor->srt.scale;
-        actor->srt.scale = 1.0f;
+        oldScale = object->srt.scale;
+        object->srt.scale = 1.0f;
 
         if (!isChild) {
-            matrix_from_srt(pmtx, &actor->srt);
+            matrix_from_srt(pmtx, &object->srt);
         } else {
-            matrix_from_srt(&gAuxMtx2, &actor->srt);
+            matrix_from_srt(&gAuxMtx2, &object->srt);
             matrix_concat(pmtx, &gAuxMtx2, pmtx);
         }
 
-        actor->srt.scale = oldScale;
+        object->srt.scale = oldScale;
 
-        actor = actor->linkedActor;
+        object = object->parent;
 
         isChild = TRUE;
     }
 
-    while (actorCount > 0)
+    while (objectCount > 0)
     {
-        TActor *pactor = actorList[(s8)--actorCount];
+        Object *pObj = objectList[(s8)--objectCount];
         SRT invsrt;
 
-        invsrt.tx = -pactor->srt.tx;
-        invsrt.ty = -pactor->srt.ty;
-        invsrt.tz = -pactor->srt.tz;
+        invsrt.tx = -pObj->srt.tx;
+        invsrt.ty = -pObj->srt.ty;
+        invsrt.tz = -pObj->srt.tz;
         invsrt.scale = 1.0f;
-        invsrt.yaw = -pactor->srt.yaw;
-        invsrt.pitch = -pactor->srt.pitch;
-        invsrt.roll = -pactor->srt.roll;
-        matrix_from_srt_reversed(&gInverseActorMatrices[matrixIdx], &invsrt);
+        invsrt.yaw = -pObj->srt.yaw;
+        invsrt.pitch = -pObj->srt.pitch;
+        invsrt.roll = -pObj->srt.roll;
+        matrix_from_srt_reversed(&gInverseObjectMatrices[matrixIdx], &invsrt);
     }
 }
 #endif
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/get_actor_child_position.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/get_object_child_position.s")
 #else
-void _get_actor_child_position(TActor *actor, float *ox, float *oy, float *oz)
+void _get_object_child_position(Object *object, float *ox, float *oy, float *oz)
 {
-    if (actor->linkedActor == NULL)
+    if (object->parent == NULL)
     {
-        *ox = actor->srt.tx;
-        *oy = actor->srt.ty;
-        *oz = actor->srt.tz;
+        *ox = object->srt.tx;
+        *oy = object->srt.ty;
+        *oz = object->srt.tz;
     }
     else
     {
-        vec3_transform(&gActorMatrices[actor->linkedActor->matrixIdx],
-            actor->srt.tx, actor->srt.ty, actor->srt.tz, ox, oy, oz);
+        vec3_transform(&gObjectMatrices[object->parent->matrixIdx],
+            object->srt.tx, object->srt.ty, object->srt.tz, ox, oy, oz);
     }
 }
 #endif
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_object.s")
 #else
-void _transform_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
+void _transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
-    if (actor != NULL)
+    if (object != NULL)
     {
-        vec3_transform(&gActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
+        vec3_transform(&gObjectMatrices[object->matrixIdx], x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1150,13 +1150,13 @@ void _transform_point_by_actor(float x, float y, float z, float *ox, float *oy, 
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_transform_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_transform_point_by_object.s")
 #else
-void _inverse_transform_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
+void _inverse_transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
-    if (actor != NULL)
+    if (object != NULL)
     {
-        vec3_transform(&gInverseActorMatrices[actor->matrixIdx], x, y, z, ox, oy, oz);
+        vec3_transform(&gInverseObjectMatrices[object->matrixIdx], x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1168,16 +1168,16 @@ void _inverse_transform_point_by_actor(float x, float y, float z, float *ox, flo
 #endif
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_rotate_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_rotate_point_by_object.s")
 #else
-void _inverse_rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, float * oz, TActor *actor)
+void _inverse_rotate_point_by_object(float x, float y, float z, float *ox, float *oy, float * oz, Object *object)
 {
     Vec3f v;
 
     v.x = x;
     v.y = y;
     v.z = z;
-    vec3_transform_no_translate(&gInverseActorMatrices[actor->matrixIdx], &v, &v);
+    vec3_transform_no_translate(&gInverseObjectMatrices[object->matrixIdx], &v, &v);
     *ox = v.x;
     *oy = v.y;
     *oz = v.y;
@@ -1186,16 +1186,16 @@ void _inverse_rotate_point_by_actor(float x, float y, float z, float *ox, float 
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/rotate_point_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/rotate_point_by_object.s")
 #else
-void _rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, float *oz, TActor *actor)
+void _rotate_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
     Vec3f v;
 
     v.x = x;
     v.y = y;
     v.z = z;
-    vec3_transform_no_translate(&gActorMatrices[actor->matrixIdx], &v, &v);
+    vec3_transform_no_translate(&gObjectMatrices[object->matrixIdx], &v, &v);
     *ox = v.x;
     *oy = v.y;
     *oz = v.z;
@@ -1204,11 +1204,11 @@ void _rotate_point_by_actor(float x, float y, float z, float *ox, float *oy, flo
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_srt_by_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_srt_by_object.s")
 #else
-void _transform_srt_by_actor(SRT *srt, SRT *out, TActor *actor)
+void _transform_srt_by_object(SRT *srt, SRT *out, Object *object)
 {
-    if (actor == NULL)
+    if (object == NULL)
     {
         out->tx = srt->tx;
         out->ty = srt->ty;
@@ -1219,8 +1219,8 @@ void _transform_srt_by_actor(SRT *srt, SRT *out, TActor *actor)
     }
     else
     {
-        vec3_transform(&gActorMatrices[actor->matrixIdx], srt->tx, srt->ty, srt->tz, &out->tx, &out->ty, &out->tz);
-        out->yaw = actor->srt.yaw + srt->yaw;
+        vec3_transform(&gObjectMatrices[object->matrixIdx], srt->tx, srt->ty, srt->tz, &out->tx, &out->ty, &out->tz);
+        out->yaw = object->srt.yaw + srt->yaw;
         out->pitch = srt->pitch;
         out->roll = srt->roll;
     }
@@ -1258,13 +1258,13 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
     out->roll = a->roll;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/update_camera_for_actor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/update_camera_for_object.s")
 
 // regalloc
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_actor_matrix.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_object_matrix.s")
 #else
-void _transform_point_by_actor_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
+void _transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 {
     if (matrixIdx < 0)
     {
@@ -1274,7 +1274,7 @@ void _transform_point_by_actor_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
     }
     else
     {
-        vec3_transform(gActorMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
+        vec3_transform(gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
     }
 }
 #endif

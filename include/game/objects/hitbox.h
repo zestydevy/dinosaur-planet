@@ -1,9 +1,9 @@
-#ifndef _SYS_GAME_ACTOR_HITBOX_H
-#define _SYS_GAME_ACTOR_HITBOX_H
+#ifndef _SYS_GAME_OBJECTS_HITBOX_H
+#define _SYS_GAME_OBJECTS_HITBOX_H
 
 #include "sys/math.h"
 
-/** Actor hit detection system
+/** Object hit detection system
  */
 
 typedef struct {
@@ -31,6 +31,6 @@ typedef struct {
 /*0063*/    u8 unk_0x63[0x9e - 0x63];
 /*009E*/    s8 unk_0x9e;
 /*009F*/    s8 unk_0x9f;
-} ActorObjhitInfo;
+} ObjectHitInfo;
 
-#endif //_SYS_GAME_ACTOR_HITBOX_H
+#endif

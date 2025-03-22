@@ -873,10 +873,10 @@ void clear_PlayerPosBuffer(void)
 
 void update_PlayerPosBuffer(void)
 {
-    TActor * player;
+    Object *player;
     struct Vec3_Int * pos;
 
-    player = (TActor *)get_player();
+    player = get_player();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     D_800AE674 += delayByte;
 

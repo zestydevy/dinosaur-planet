@@ -1,10 +1,10 @@
 #include <PR/ultratypes.h>
 
-#include "game/actor/actor.h"
+#include "game/objects/objects.h"
 #include "variables.h"
 #include "functions.h"
 
-static void cannon_claw_func_1B4(TActor *a0);
+static void cannon_claw_func_1B4(Object *a0);
 
 void cannon_claw_ctor(void *arg) {
 
@@ -14,14 +14,14 @@ void cannon_claw_dtor(void *arg) {
     
 }
 
-void cannon_claw_func_18(TActor *a0, TActor *a1, void *a2) {
+void cannon_claw_func_18(Object *a0, Object *a1, void *a2) {
     a0->srt.yaw = -32768;
     a0->srt.transl.y = a1->srt.transl.x + 2.0f;  
 }
 
-void cannon_claw_func_4C(TActor *s0) {
+void cannon_claw_func_4C(Object *s0) {
     s32 temp;
-    TActor *func_8002394C_ret;
+    Object *func_8002394C_ret;
 
     func_8002394C_ret = func_8002394C();
     
@@ -37,16 +37,16 @@ void cannon_claw_func_4C(TActor *s0) {
     temp = func_80025F40(s0, 0, 0, 0);
     
     if (temp != 0) {
-        if (s0->linkedActor != 0) {
-            ObjCreateInfo *createInfo = s0->linkedActor->createInfo;
+        if (s0->parent != NULL) {
+            ObjCreateInfo *createInfo = s0->parent->createInfo;
             set_gplay_bitstring(createInfo->unk1a, 1);
             ((DLLInst_Unknown*)func_8002394C_ret->dll)->exports->func[21].withThreeArgs(func_8002394C_ret, 0, 0);
         }
         
         cannon_claw_func_1B4(s0);
     } else {
-        if (s0->linkedActor != 0) {
-            ObjCreateInfo *createInfo = s0->linkedActor->createInfo;
+        if (s0->parent != NULL) {
+            ObjCreateInfo *createInfo = s0->parent->createInfo;
             if (get_gplay_bitstring(createInfo->unk1a) != 0) {
                 cannon_claw_func_1B4(s0);
             }
@@ -54,7 +54,7 @@ void cannon_claw_func_4C(TActor *s0) {
     }
 }
 
-static void cannon_claw_func_1B4(TActor *a0) {
+static void cannon_claw_func_1B4(Object *a0) {
     a0->unk0xdc = 1;
     a0->unk0xaf = a0->unk0xaf | 8;    
     func_800267A4(a0);
@@ -64,9 +64,9 @@ void cannon_claw_func_200(void *a0) {
 
 }
 
-void cannon_claw_func_20C(TActor *a0, s32 a1, s32 a2, s32 a3, s32 a4, s8 a5) {
+void cannon_claw_func_20C(Object *a0, s32 a1, s32 a2, s32 a3, s32 a4, s8 a5) {
     if (a5 != 0 && a0->unk0xdc == 0) {
-		draw_actor(a0, a1, a2, a3, a4, 1.0f);
+		draw_object(a0, a1, a2, a3, a4, 1.0f);
 	}
 }
 
