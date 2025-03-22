@@ -5,13 +5,13 @@
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
 
-extern void **gLoadedObjDefs;
+extern void **gDeferredObjDefFreeList;
 extern void *D_800B1918;
 extern void *D_800B18E4;
 extern int gObjIndexCount; //count of OBJINDEX.BIN entries
 extern int gNumObjectsTabEntries;
-extern ObjData **gLoadedObjData;
-extern u8 *gObjRefCount; //pObjectRefCount
+extern ObjDef **gLoadedObjDefs;
+extern u8 *gObjDefRefCount;
 extern int gNumTablesTabEntries;
 extern TActor **gObjList; //global object list
 extern LinkedList gObjUpdateList;
@@ -75,11 +75,11 @@ void func_800228D0(TActor *obj, s32 param2, Actor60 *outParam, s32 id, u8 dontQu
 
 ModLine *func_80022D00(s32 modLineNo, s16 *modLineCount);
 
-extern void func_800596BC(ObjData*);
+extern void func_800596BC(ObjDef*);
 
-ObjData *func_80022AA4(s32 tabIdx);
+ObjDef *func_80022AA4(s32 tabIdx);
 u32 func_80022828(TActor *obj);
-u32 func_80021CC0(TActor *obj, ObjData *def, u32 flags);
+u32 func_80021CC0(TActor *obj, ObjDef *def, u32 flags);
 void func_80022C68(s32 tabIdx);
 
 void func_80021E74(f32, ModelInstance*);
@@ -94,7 +94,7 @@ void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gLoadedObjDefs = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    gDeferredObjDefFreeList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
     D_800B1918     = malloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
     D_800B18E4     = malloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
 
@@ -110,9 +110,9 @@ void init_objects(void) {
     gNumObjectsTabEntries--;
 
     //init ref count and pointers
-    gLoadedObjData = malloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
-    gObjRefCount   = malloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
-    for(i = 0; i < gNumObjectsTabEntries; i++) gObjRefCount[i] = 0; //why not memset?
+    gLoadedObjDefs = malloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjDefRefCount   = malloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
+    for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
     queue_alloc_load_file((void **) (&gFile_TABLES_BIN), FILE_TABLES_BIN);
@@ -148,7 +148,7 @@ void update_objects() {
         if (obj->objhitInfo->unk_0x58){} // fake match
     }
 
-    for (obj = (TActor*)node; node != NULL && obj->data->flags & 0x40; obj = (TActor*)node) {
+    for (obj = (TActor*)node; node != NULL && obj->def->flags & 0x40; obj = (TActor*)node) {
         update_object(obj);
         obj->matrixIdx = func_80004258(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
@@ -227,7 +227,7 @@ void update_obj_models() {
                 continue;
             }
 
-            for (k = 0; k < actor->data->modLinesIdx; k++) {
+            for (k = 0; k < actor->def->numModels; k++) {
                 modelInst = actor->modelInsts[k];
 
                 if (modelInst != NULL) {
@@ -249,8 +249,8 @@ void update_obj_models() {
 void func_80020BB8() {
     int i;
     for(i = 0; i < D_800B1914; i++) {
-        func_80022F94(gLoadedObjDefs[i], 0); //possibly some type of free?
-        gLoadedObjDefs[i] = 0;
+        func_80022F94(gDeferredObjDefFreeList[i], 0); //possibly some type of free?
+        gDeferredObjDefFreeList[i] = 0;
     }
     D_800B1914 = 0;
 }
@@ -322,7 +322,7 @@ s32 func_80020DA0(s32 *numObjs) {
     while (idx1 <= idx2) {
         endLoop = 0;
         while (idx1 <= objsEnd && !endLoop) {
-            if ((gObjList[idx1]->data->flags & 1) != 0) {
+            if ((gObjList[idx1]->def->flags & 1) != 0) {
                 idx1++;
             } else {
                 endLoop = -1;
@@ -331,7 +331,7 @@ s32 func_80020DA0(s32 *numObjs) {
 
         endLoop = 0;
         while (idx2 >= 0 && !endLoop) {
-            if ((gObjList[idx2]->data->flags & 1) == 0) {
+            if ((gObjList[idx2]->def->flags & 1) == 0) {
                 idx2--;
             } else {
                 endLoop = -1;
@@ -444,7 +444,7 @@ TActor *func_800213EC(s32 param1, s32 param2, s32 param3, s32 param4, s32 param5
 }
 
 TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, TActor *param5) {
-    ObjData *def;
+    ObjDef *def;
     s32 modelCount;
     s32 var;
     s32 flags;
@@ -474,8 +474,8 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
 
     bzero(&objHeader, sizeof(TActor));
 
-    objHeader.data = func_80022AA4(tabIdx);
-    def = objHeader.data;
+    objHeader.def = func_80022AA4(tabIdx);
+    def = objHeader.def;
 
     if (def == NULL || (u32)def == 0xFFFFFFFF) {
         return NULL;
@@ -546,7 +546,7 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
     bcopy(&objHeader, obj, sizeof(TActor));
     bzero((void*)((u32)obj + sizeof(TActor)), var - sizeof(TActor));
 
-    modelCount = def->modLinesIdx;
+    modelCount = def->numModels;
 
     obj->modelInsts = (ModelInstance**)((u32)obj + sizeof(TActor));
 
@@ -588,7 +588,7 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         return NULL;
     }
      
-    addr = func_800227AC(obj, (u32)&obj->modelInsts[def->modLinesIdx]);
+    addr = func_800227AC(obj, (u32)&obj->modelInsts[def->numModels]);
 
     if (flags & 0x40) {
         addr = func_80022868(obj->unk0x46, obj, addr);
@@ -612,14 +612,14 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         }
     }
 
-    if (def->numAButtonInteractions != 0) {
+    if (def->unk72 != 0) {
         obj->ptr0x6c = (u16*)align_4(addr);
-        addr = (u32)obj->ptr0x6c + (def->numAButtonInteractions * 0x12);
+        addr = (u32)obj->ptr0x6c + (def->unk72 * 0x12);
     }
 
-    if (def->flags_0x71 != 0) {
+    if (def->numTextures != 0) {
         obj->ptr0x70 = (void*)align_4(addr);
-        addr = (u32)obj->ptr0x70 + (def->flags_0x71 * 0x10);
+        addr = (u32)obj->ptr0x70 + (def->numTextures * 0x10);
     }
 
     if (def->unk9b != 0) {
@@ -636,11 +636,11 @@ TActor *objSetupObject(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 par
         obj->unk_0x78 = (Actor78*)align_4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
-            obj->unk_0x78[j].unk4 = def->aButtonInteraction[j].unk10;
-            obj->unk_0x78[j].unk0 = def->aButtonInteraction[j].unk0c;
-            obj->unk_0x78[j].unk3 = def->aButtonInteraction[j].unk0f;
-            obj->unk_0x78[j].unk1 = def->aButtonInteraction[j].unk0d;
-            obj->unk_0x78[j].unk2 = def->aButtonInteraction[j].unk0e;
+            obj->unk_0x78[j].unk4 = def->unk40[j].unk10;
+            obj->unk_0x78[j].unk0 = def->unk40[j].unk0c;
+            obj->unk_0x78[j].unk3 = def->unk40[j].unk0f;
+            obj->unk_0x78[j].unk1 = def->unk40[j].unk0d;
+            obj->unk_0x78[j].unk2 = def->unk40[j].unk0e;
         }
     }
 
@@ -683,13 +683,13 @@ void func_80021A84(TActor *actor, u32 someFlags) {
         actor->objhitInfo->unk_0x20.z = actor->srt.transl.z;
     }
 
-    if (actor->data->unka0 > -1) {
-        func_80046320(actor->data->unka0, actor);
+    if (actor->def->unka0 > -1) {
+        func_80046320(actor->def->unka0, actor);
     }
 
     update_pi_manager_array(0, -1);
 
-    if (actor->data->flags & OBJDATA_FLAG44_HasChildren) {
+    if (actor->def->flags & OBJDATA_FLAG44_HasChildren) {
         add_object_to_array(actor, 7);
 
         if (actor->updatePriority != 90) {
@@ -709,27 +709,27 @@ void func_80021A84(TActor *actor, u32 someFlags) {
         func_800222AC(actor);
     }
 
-    if (actor->data->numSeqs >= 1) {
+    if (actor->def->unk5e >= 1) {
         add_object_to_array(actor, 9);
     }
 
-    if (actor->data->flags & OBJDATA_FLAG44_HaveModels) {
+    if (actor->def->flags & OBJDATA_FLAG44_HaveModels) {
         func_80020D90();
     }
 
-    if (actor->data->flags & OBJDATA_FLAG44_DifferentLightColor) {
+    if (actor->def->flags & OBJDATA_FLAG44_DifferentLightColor) {
         add_object_to_array(actor, 56);
     }
 
     write_c_file_label_pointers(D_80099600, 0x477);
 }
 
-u32 func_80021CC0(TActor *obj, ObjData *def, u32 flags) {
+u32 func_80021CC0(TActor *obj, ObjDef *def, u32 flags) {
     u32 size;
 
     size = sizeof(TActor);
 
-    size += def->modLinesIdx * 4;
+    size += def->numModels * sizeof(u32);
 
     if (obj->dll != NULL) {
         size += obj->dll->exports->get_state_size(obj, size);
@@ -761,14 +761,14 @@ u32 func_80021CC0(TActor *obj, ObjData *def, u32 flags) {
         }
     }
 
-    if (def->numAButtonInteractions != 0) {
+    if (def->unk72 != 0) {
         size = align_4(size);
-        size += def->numAButtonInteractions * 0x12;
+        size += def->unk72 * 0x12;
     }
 
-    if (def->flags_0x71 != 0) {
+    if (def->numTextures != 0) {
         size = align_4(size);
-        size += def->flags_0x71 * 0x10;
+        size += def->numTextures * 0x10;
     }
 
     if (def->unk9b != 0) {
@@ -838,7 +838,7 @@ void func_800222AC(TActor *obj) {
 
 void copy_obj_position_mirrors(TActor *obj, ObjCreateInfo *param2, s32 param3) {
     DLLInst_Object *dll;
-    obj->objGroup = obj->data->objGroup;
+    obj->group = obj->def->group;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
@@ -964,10 +964,10 @@ u32 func_80022868(s32 param1, TActor *obj, u32 addr) {
 }
 
 void func_800228D0(TActor *obj, s32 param2, Actor60 *outParam, s32 id, u8 dontQueueLoad) {
-    ObjDataEvent *eventList;
-    ObjDataEvent *event;
+    ObjDefEvent *eventList;
+    ObjDefEvent *event;
     
-    eventList = obj->data->pEvent;
+    eventList = obj->def->pEvent;
 
     outParam->unk0 = 0;
     
@@ -1014,10 +1014,10 @@ u32 func_8002298C(s32 param1, ModelInstance *param2, TActor *obj, u32 addr) {
 }
 
 void func_800229E8(TActor *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
-    ObjDataWeaponData *weaponDataList;
-    ObjDataWeaponData *weaponData;
+    ObjDefWeaponData *weaponDataList;
+    ObjDefWeaponData *weaponData;
     
-    weaponDataList = obj->data->pWeaponDa;
+    weaponDataList = obj->def->pWeaponData;
 
     outParam->sizeInBytes = 0;
     
@@ -1050,8 +1050,8 @@ void func_800229E8(TActor *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 
     }
 }
 
-ObjData *func_80022AA4(s32 tabIdx) {
-    ObjData *data;
+ObjDef *func_80022AA4(s32 tabIdx) {
+    ObjDef *def;
     s32 fileOffset;
     s32 fileSize;
 
@@ -1059,87 +1059,87 @@ ObjData *func_80022AA4(s32 tabIdx) {
         return NULL;
     }
     
-    if (gObjRefCount[tabIdx] != 0) {
-        gObjRefCount[tabIdx]++;
-        data = gLoadedObjData[tabIdx];
-        return data;
+    if (gObjDefRefCount[tabIdx] != 0) {
+        gObjDefRefCount[tabIdx]++;
+        def = gLoadedObjDefs[tabIdx];
+        return def;
     }
     
     fileOffset = gFile_OBJECTS_TAB[tabIdx];
     fileSize = gFile_OBJECTS_TAB[tabIdx + 1] - fileOffset;
 
-    data = (ObjData*)malloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
-    if (data != NULL) {
-        read_file_region(OBJECTS_BIN, (void*)data, fileOffset, fileSize);
+    def = (ObjDef*)malloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
+    if (def != NULL) {
+        read_file_region(OBJECTS_BIN, (void*)def, fileOffset, fileSize);
 
-        if (data->pEvent != 0) {
-            data->pEvent = (ObjDataEvent*)((u32)data + (u32)data->pEvent);
+        if (def->pEvent != 0) {
+            def->pEvent = (ObjDefEvent*)((u32)def + (u32)def->pEvent);
         }
 
-        if (data->pHits != 0) {
-            data->pHits = (UNK_TYPE_8*)((u32)data + (u32)data->pHits);
+        if (def->pHits != 0) {
+            def->pHits = (ObjDefHit*)((u32)def + (u32)def->pHits);
         }
 
-        if (data->pWeaponDa != 0) {
-            data->pWeaponDa = (ObjDataWeaponData*)((u32)data + (u32)data->pWeaponDa);
+        if (def->pWeaponData != 0) {
+            def->pWeaponData = (ObjDefWeaponData*)((u32)def + (u32)def->pWeaponData);
         }
 
-        data->pModelList = (u32*)((u32)data + (u32)data->pModelList);
-        data->textures = (UNK_PTR*)((u32)data + (u32)data->textures);
-        data->unk10 = (UNK_PTR*)((u32)data + (u32)data->unk10);
+        def->pModelList = (u32*)((u32)def + (u32)def->pModelList);
+        def->pTextures = (UNK_PTR*)((u32)def + (u32)def->pTextures);
+        def->unk10 = (UNK_PTR*)((u32)def + (u32)def->unk10);
 
-        if (data->offset_0x18 != 0) {
-            data->offset_0x18 = (u32*)((u32)data + (u32)data->offset_0x18);
+        if (def->unk18 != 0) {
+            def->unk18 = (u32*)((u32)def + (u32)def->unk18);
         }
 
-        if (data->aButtonInteraction != 0) {
-            data->aButtonInteraction = (AButtonInteraction*)((u32)data + (u32)data->aButtonInteraction);
+        if (def->unk40 != 0) {
+            def->unk40 = (ObjDefStruct40*)((u32)def + (u32)def->unk40);
         }
 
-        if (data->pSeq != 0) {
-            data->pSeq = (u16*)((u32)data + (u32)data->pSeq);
+        if (def->pSeq != 0) {
+            def->pSeq = (u16*)((u32)def + (u32)def->pSeq);
         }
 
-        data->pModLines = NULL;
+        def->pModLines = NULL;
 
-        data->pAttachPoints = (AttachPoint*)((u32)data + (u32)data->pAttachPoints);
+        def->pAttachPoints = (AttachPoint*)((u32)def + (u32)def->pAttachPoints);
 
-        data->pIntersectPoints = NULL;
+        def->pIntersectPoints = NULL;
 
-        if (data->modLineNo > -1) {
-            data->pModLines = func_80022D00(data->modLineNo, &data->modLineCount);
-            func_800596BC(data);
+        if (def->modLineNo > -1) {
+            def->pModLines = func_80022D00(def->modLineNo, &def->modLineCount);
+            func_800596BC(def);
         }
 
-        gLoadedObjData[tabIdx] = data;
-        gObjRefCount[tabIdx] = 1;
+        gLoadedObjDefs[tabIdx] = def;
+        gObjDefRefCount[tabIdx] = 1;
 
     } else {
         return NULL;
     }
 
-    return data;
+    return def;
 }
 
 // objFreeObjdef?
 void func_80022C68(s32 tabIdx) {
-    if (gObjRefCount[tabIdx] != 0) {
-        gObjRefCount[tabIdx]--;
+    if (gObjDefRefCount[tabIdx] != 0) {
+        gObjDefRefCount[tabIdx]--;
 
-        if (gObjRefCount[tabIdx] == 0) {
-            ObjData *data;
+        if (gObjDefRefCount[tabIdx] == 0) {
+            ObjDef *def;
 
-            data = gLoadedObjData[tabIdx];
+            def = gLoadedObjDefs[tabIdx];
             
-            if (data->pModLines != NULL) {
-                free(data->pModLines);
+            if (def->pModLines != NULL) {
+                free(def->pModLines);
             }
 
-            if (data->pIntersectPoints != NULL) {
-                free(data->pIntersectPoints);
+            if (def->pIntersectPoints != NULL) {
+                free(def->pIntersectPoints);
             }
 
-            free(data);
+            free(def);
         }
     }
 }
@@ -1264,8 +1264,8 @@ void func_80023A18(TActor *obj, s32 param2) {
 
     if (param2 < 0) {
         param2 = 0;
-    } else if (param2 >= obj->data->modLinesIdx) {
-        param2 = obj->data->modLinesIdx - 1;
+    } else if (param2 >= obj->def->numModels) {
+        param2 = obj->def->numModels - 1;
     }
 
     obj->unk0xb0 |= 0x800;
@@ -1367,14 +1367,14 @@ void func_80023BF8(TActor *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
 }
 
 void func_80023C6C(TActor *obj) {
-    AButtonInteraction *src;
+    ObjDefStruct40 *src;
     Actor78 *dst;
 
     if (obj != NULL) {
         dst = obj->unk_0x78;
 
         if (dst != NULL) {
-            src = &obj->data->aButtonInteraction[obj->unk_0xd4];
+            src = &obj->def->unk40[obj->unk_0xd4];
             dst += obj->unk_0xd4;
 
             dst->unk0 = src->unk0c;
@@ -1387,7 +1387,7 @@ void func_80023C6C(TActor *obj) {
 }
 
 void func_80023CD8(TActor *obj, u16 param2) {
-    if (param2 > obj->data->unk9b) {
+    if (param2 > obj->def->unk9b) {
         param2 = 0;
     }
 

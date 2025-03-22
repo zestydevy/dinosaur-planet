@@ -28,7 +28,7 @@
 #include "sys/generic_stack.h"
 #include "sys/generic_queue.h"
 #include "game/gamebits.h"
-#include "game/actor/objdata.h"
+#include "game/actor/object_def.h"
 #include "game/actor/hitbox.h"
 #include "game/actor/actor.h"
 #include "game/actor/player/player.h"

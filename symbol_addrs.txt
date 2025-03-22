@@ -1008,10 +1008,10 @@ init_global_map = 0x8004676c; // type:func
 init_maps = 0x80041e84; // type:func
 init_bittable = 0x80014614; // type:func
 
-gLoadedObjDefs = 0x800B1910; // size:0x4
+gDeferredObjDefFreeList = 0x800B1910; // size:0x4
 gObjIndexCount = 0x800B190C; // size:0x4
-gLoadedObjData = 0x800B1900; // size:0x4
-gObjRefCount = 0x800B1904; // size:0x4
+gLoadedObjDefs = 0x800B1900; // size:0x4
+gObjDefRefCount = 0x800B1904; // size:0x4
 gNumObjs = 0x800B1924; // size:0x4
 gObjUpdateList = 0x800B1928;
 update_objects = 0x80020778; // type:func

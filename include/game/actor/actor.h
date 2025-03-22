@@ -6,7 +6,7 @@
 #include "sys/math.h"
 #include "dll.h"
 #include "dll_def.h"
-#include "objdata.h"
+#include "object_def.h"
 #include "hitbox.h"
 #include "unktypes.h"
 
@@ -133,12 +133,12 @@ typedef struct TActor {
 /*0038*/    struct TActor *next;
 /*003C*/    f32 unk0x3c;
 /*0040*/    f32 unk0x40;
-/*0044*/    s16 objGroup; // complete guess at a name, needs more investigation
+/*0044*/    s16 group; // complete guess at a name, needs more investigation
 /*0046*/    s16 unk0x46;
 /*0048*/    s16 unk0x48;
 /*004A*/    u8 unk0x4a[0x4c - 0x4a];
 /*004C*/    ObjCreateInfo *createInfo;
-/*0050*/    ObjData* data;
+/*0050*/    ObjDef* def;
 /*0054*/    ActorObjhitInfo* objhitInfo;
 /*0058*/    Actor58 *unk0x58;
 /*005C*/    Actor5c *ptr0x5c;
