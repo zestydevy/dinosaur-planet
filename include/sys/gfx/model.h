@@ -62,7 +62,7 @@ typedef struct
 /*0054*/    void *unk_0x54;
 /*0058*/    u32 unk_0x58;
 /*005C*/    u32 unk_0x5c;
-/*0060*/    u16 unk_0x60;
+/*0060*/    s16 unk_0x60;
 /*0062*/    s16 unk_0x62;
 /*0064*/    u16 unk_0x64;
 /*0066*/    s16 animCount;

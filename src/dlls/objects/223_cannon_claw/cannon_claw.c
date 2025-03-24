@@ -4,6 +4,7 @@
 #include "game/objects/object.h"
 #include "variables.h"
 #include "functions.h"
+#include "types.h"
 
 static void cannon_claw_func_1B4(Object *a0);
 

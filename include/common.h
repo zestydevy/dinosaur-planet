@@ -35,6 +35,7 @@
 #include "game/objects/player/player.h"
 #include "variables.h"
 #include "functions.h"
+#include "types.h"
 #include "macros.h"
 #include "dll.h"
 #include "bss.h"

@@ -1,26 +1,14 @@
 #ifndef _DLL_H
 #define _DLL_H
 
+#include "dlls/engine/2_camera.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
 
 #include "dll_def.h"
-
-// "Unknown" DLL interface to help match code calling DLLs where the exact
-// DLL being called has not been determined 
-DLL_INTERFACE_BEGIN(Unknown)
-    union {
-        /* 0x04 */ void (*asVoid)(void);
-        /* 0x04 */ s32 (*asVoidS32)(void);
-        /* 0x04 */ void (*withOneArg)(s32);
-        /* 0x04 */ void (*withTwoArgs)(s32, s32);
-        /* 0x04 */ void (*withThreeArgs)(s32, s32, s32);
-        /* 0x04 */ void (*withFourArgs)(s32, s32, s32, s32);
-        /* 0x04 */ void (*withFiveArgs)(s32, s32, s32, s32, u16);
-    } func[1];
-DLL_INTERFACE_END()
+#include "types.h"
 
 enum DLL_ID {
     DLL_UI        = 1,
@@ -55,13 +43,13 @@ enum DLL_ID {
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.
 
+extern DLLInst_2_Camera *gDLL_Camera;
 extern DLLInst_21_gametext *gDLL_21_gametext;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
 extern DLLInst_Unknown
     *gDLL_28,
-    *gDLL_Camera,
     *gDLL_ANIM,
     *gDLL_Sky,
     *gDLL_8,

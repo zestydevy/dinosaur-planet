@@ -130,7 +130,7 @@ typedef struct {
 /*10*/ UNK_PTR *unk10;          // ? (offset in file, pointer after load)
 /*14*/ UNK_PTR *unk14;
 /*18*/ u32 *unk18;              // [optional] pickup obj related? (offset in file, pointer after load)
-/*1c*/ u16 *pSeq;               // [optional] seq IDs (offset in file, pointer after load)
+/*1c*/ s16 *pSeq;               // [optional] seq IDs? (offset in file, pointer after load)
 /*20*/ ObjDefEvent *pEvent;     // [optional] table of OBJEVENT offsets (offset in file, pointer after load)
 /*24*/ ObjDefHit *pHits;       // [optional] table of OBJHITS offsets (offset in file, pointer after load)
 /*28*/ ObjDefWeaponData *pWeaponData;   // [optional] table of WEAPONDATA offsets (offset in file, pointer after load)
@@ -168,11 +168,11 @@ typedef struct {
 /*75*/ u8 unk75;
 /*76*/ s16 modLineCount;
 /*78*/ s16 modLineNo;
-/*7a*/ u8 unk7A;
-/*7b*/ u8 unk7B;
+/*7a*/ s16 unk7A;
 /*7c*/ s16 helpTexts[4]; //one per model (GameTextId) // TODO: confirm
 /*84*/ s16 unk84;
-/*86*/ s16 unk86;
+/*86*/ u8 unk86;
+/*86*/ u8 unk87;
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm
 /*8c*/ u8 nLights; // TODO: confirm
 /*8d*/ u8 lightIdx; // TODO: confirm
@@ -183,7 +183,9 @@ typedef struct {
 /*93*/ s8 unk93;
 /*94*/ u8 _unk94[7];
 /*9b*/ u8 unk9b; // length of unk40
-/*9c*/ u8 unk9c[4];
+/*9c*/ u8 unk9c;
+/*9d*/ u8 unk9d;
+/*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
 /*a2*/ u8 _unka2[10];
 } ObjDef;

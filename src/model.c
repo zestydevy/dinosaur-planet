@@ -472,7 +472,6 @@ void _destroy_model_instance(ModelInstance *modelInst)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_destroy.s")
 #else
-void texture_destroy(Texture *texture);
 void anim_destroy(Animation *anim);
 void _model_destroy(Model *model)
 {

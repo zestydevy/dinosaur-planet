@@ -6,9 +6,10 @@
 #include "sys/linked_list.h"
 #include "sys/objects.h"
 
-extern void **gDeferredObjDefFreeList;
-extern s32 gDeferredObjDefFreeListCount;
-extern void *D_800B1918;
+extern Object **gObjDeferredFreeList;
+extern s32 gObjDeferredFreeListCount;
+extern Object **D_800B1918;
+extern s32 D_800B191C;
 extern void *D_800B18E4;
 extern int gObjIndexCount; //count of OBJINDEX.BIN entries
 extern int gNumObjectsTabEntries;
@@ -17,6 +18,7 @@ extern u8 *gObjDefRefCount;
 extern int gNumTablesTabEntries;
 extern Object **gObjList; //global object list
 extern LinkedList gObjUpdateList;
+extern s16 D_80091664[2]; // gCharacterObjIds
 
 enum FILE_ID {
     FILE_TABLES_BIN   = 0x16,
@@ -58,7 +60,6 @@ void update_object(Object *obj);
 void func_8002272C(Object *obj);
 
 extern s32 D_80091660;
-extern s32 D_800B191C;
 
 extern s16 D_800B18E0;
 extern s32 D_800B1988;
@@ -82,11 +83,23 @@ u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
 
 f32 func_80022150(Object *obj);
 
+void obj_free_object(Object *obj, s32 param2);
+
+typedef struct {
+/*00*/  u8 _unk0[0x8 - 0x0];
+/*08*/  f32 unk8;
+/*0C*/  f32 unkC;
+/*10*/  f32 unk10;
+/*14*/  u8 _unk14[0x20 - 0x14];
+} UnkStruct_80091668;
+
+extern UnkStruct_80091668 D_80091668;
+
 void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gDeferredObjDefFreeList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjDeferredFreeList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
     D_800B1918     = malloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
     D_800B18E4     = malloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
 
@@ -192,7 +205,7 @@ void update_objects() {
 
     gDLL_ANIM->exports->func[9].asVoid();
     gDLL_ANIM->exports->func[5].asVoid();
-    gDLL_Camera->exports->func[1].withOneArg(delayByte);
+    gDLL_Camera->exports->func1.withOneArg(delayByte);
 
     write_c_file_label_pointers(D_800994E0, 0x169);
 }
@@ -205,7 +218,7 @@ void update_obj_models() {
     int k;
     Object *object;
     ModelInstance *modelInst;
-    ObjectStructC0_B8 *unk1;
+    ObjectC0State *unk1;
 
     for (i = 0; i < gNumObjs; i++) {
         object = gObjList[i];
@@ -226,7 +239,7 @@ void update_obj_models() {
                     modelInst->unk_0x34 &= ~0x8;
 
                     if (modelInst->model->unk_0x1c != NULL) {
-                        unk1 = object->unk0xc0 != NULL ? object->unk0xc0->unk_0xb8 : NULL;
+                        unk1 = object->unk0xc0 != NULL ? (ObjectC0State*)object->unk0xc0->state : NULL;
 
                         if (object->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
                             func_8001B084(modelInst, delayFloat);
@@ -240,11 +253,11 @@ void update_obj_models() {
 
 void obj_do_deferred_free() {
     int i;
-    for(i = 0; i < gDeferredObjDefFreeListCount; i++) {
-        obj_free_object(gDeferredObjDefFreeList[i], 0);
-        gDeferredObjDefFreeList[i] = 0;
+    for(i = 0; i < gObjDeferredFreeListCount; i++) {
+        obj_free_object(gObjDeferredFreeList[i], 0);
+        gObjDeferredFreeList[i] = 0;
     }
-    gDeferredObjDefFreeListCount = 0;
+    gObjDeferredFreeListCount = 0;
 }
 
 void obj_free_all() {
@@ -265,7 +278,7 @@ void obj_free_all() {
     obj_do_deferred_free();
     D_80091660 = 2;
 
-    gDeferredObjDefFreeListCount = 0;
+    gObjDeferredFreeListCount = 0;
     D_800B191C = 0;
     gNumObjs = 0;
 
@@ -273,11 +286,11 @@ void obj_free_all() {
 
     obj_clear_all();
 
-    gDLL_Camera->exports->func[9].withTwoArgs(0, 0);
+    gDLL_Camera->exports->func9.withTwoArgs(0, 0);
 }
 
 void obj_clear_all() {
-    gDeferredObjDefFreeListCount = 0;
+    gObjDeferredFreeListCount = 0;
     D_800B191C = 0;
     D_800B1988 = 0;
     gNumObjs = 0;
@@ -347,12 +360,42 @@ s32 func_80020DA0(s32 *numObjs) {
     return idx1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80020EE4.s")
+void func_80020EE4(s32 param1, s32 param2) {
+    s32 i;
+    Object *obj;
+    s32 endLoop;
+
+    if (param1 <= param2) {
+        for (i = param1; i <= param2; i++) {
+            obj = gObjList[i];
+
+            if (obj->def->flags & 0x80000) {
+                obj->unk_0xa4 = obj->def->unk9d * 1000;
+            } else {
+                obj->unk_0xa4 = -func_80003A60(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+            }
+        }
+
+        do {
+            endLoop = TRUE;
+
+            for (i = param1; i < param2; i++) {
+                if (gObjList[i]->unk_0xa4 < gObjList[i + 1]->unk_0xa4) {
+                    obj = gObjList[i];
+                    gObjList[i] = gObjList[i + 1];
+                    gObjList[i + 1] = obj;
+                    
+                    endLoop = FALSE;
+                }
+            }
+        } while (!endLoop);
+    }
+}
 
 void func_800210DC() {
     s32 i;
     Object *obj;
-    ObjectStructC0 *var;
+    Object *var;
 
     for (i = 0; i < gNumObjs; i++) {
         obj = gObjList[i];
@@ -361,8 +404,8 @@ void func_800210DC() {
             var = obj->unk0xc0;
 
             if (obj->parent == NULL) {
-                if (var->unk_0x30 != NULL) {
-                    obj->parent = var->unk_0x30;
+                if (var->parent != NULL) {
+                    obj->parent = var->parent;
                 }
             }
             
@@ -416,7 +459,31 @@ s32 get_num_objects(void) {
 
 s32 ret0_800212E8(void) { return 0; }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_get_seq.s")
+s32 obj_get_seq(s32 objId, s32 idx) {
+    ObjDef *objDef;
+    s32 seq;
+    
+    seq = -1;
+
+    if (objId > gObjIndexCount) {
+        return -1;
+    } else {
+        objId = gFile_OBJINDEX[objId]; // turns objId into tabIdx
+        objDef = obj_load_objdef(objId);
+
+        if (objDef != NULL) {
+            seq = -1;
+
+            if (objDef->pSeq != NULL && idx >= 0 && idx < objDef->unk7A) {
+                seq = objDef->pSeq[idx];
+            }
+
+            obj_free_objdef(objId);
+        }
+    }
+
+    return seq;
+}
 
 void *func_800213A0(s32 idx) {
     if (idx < 0 || idx >= gNumTablesTabEntries) {
@@ -450,7 +517,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     s32 addr;
     s8 modelLoadFailed;
 
-    objId = createInfo->unk0;
+    objId = createInfo->objId;
 
     update_pi_manager_array(0, objId);
 
@@ -783,7 +850,28 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021E74.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022150.s")
+f32 func_80022150(Object *obj) {
+    s32 i;
+    f32 largestSomething;
+
+    largestSomething = 10.0f;
+
+    for (i = 0; i < obj->def->numModels; i++) {
+        if (obj->modelInsts[i] != NULL) {
+            f32 var = obj->modelInsts[i]->model->unk_0x60;
+
+            if (var > largestSomething) {
+                largestSomething = var;
+            }
+        }
+    }
+
+    if (largestSomething < obj->def->unk9c) {
+        largestSomething = obj->def->unk9c * 16.0f;
+    }
+
+    return largestSomething;
+}
 
 void func_80022200(Object *obj, s32 param2, s32 param3) {
     s32 i;
@@ -825,7 +913,78 @@ void obj_add_tick(Object *obj) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_destroy_object.s")
+void obj_destroy_object(Object *obj) {
+    s32 i;
+    s32 k;
+
+    if (obj == NULL) {
+        *((volatile s8*)NULL) = 0;
+        return;
+    }
+
+    if (!(obj->unk0xb0 & 0x40)) {
+        if (obj->unk_0xd9 != 0) {
+            func_8003273C(obj);
+        }
+
+        if (obj->unk0xb0 & 0x10) {
+            for (i = 0; i < gNumObjs; i++) {
+                if (obj == gObjList[i]) {
+                    break;
+                }
+            }
+
+            if (i < gNumObjs) {
+                gNumObjs--;
+
+                for (k = i; k < gNumObjs; k++) {
+                    gObjList[k] = gObjList[k + 1];
+                }
+            }
+
+            obj_free_tick(obj);
+            func_80020D90();
+        }
+
+        obj->unk0xb0 |= 0x40;
+
+        if (obj->unk_0xda != 0) {
+            for (i = 0; i < D_800B191C; i++) {
+                if (obj == D_800B1918[i]) {
+                    break;
+                }
+            }
+
+            if (i == D_800B191C) {
+                D_800B1918[D_800B191C] = obj;
+                D_800B191C += 1;
+            } else {
+                
+            }
+        } else if (D_80091660 == 2) {
+            i = gObjDeferredFreeListCount;
+
+            if (gObjDeferredFreeListCount != 0) {
+                for (i = 0; i < gObjDeferredFreeListCount; i++) {
+                    if (obj == gObjDeferredFreeList[i]) {
+                        break;
+                    }
+                }
+            }
+
+            if (i == gObjDeferredFreeListCount) {
+                gObjDeferredFreeList[gObjDeferredFreeListCount] = obj;
+                gObjDeferredFreeListCount++;
+                
+                if (gObjDeferredFreeListCount == 180) {
+                    gObjDeferredFreeListCount--;
+                }
+            }
+        } else {
+            obj_free_object(obj, D_80091660 == 0);
+        }
+    }
+}
 
 void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3) {
     DLLInst_Object *dll;
@@ -1088,7 +1247,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
         }
 
         if (def->pSeq != 0) {
-            def->pSeq = (u16*)((u32)def + (u32)def->pSeq);
+            def->pSeq = (s16*)((u32)def + (u32)def->pSeq);
         }
 
         def->pModLines = NULL;
@@ -1183,17 +1342,281 @@ s32 func_80022DFC(s32 idx) {
     return gFile_OBJINDEX[idx] != -1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022E3C.s")
+extern u32 D_800B18E8;
+
+// unused
+s16 func_80022E3C(s32 param1) {
+    ObjDef *def;
+
+    if (param1 > gObjIndexCount) {
+        return 0;
+    }
+
+    param1 = gFile_OBJINDEX[param1];
+
+    if (param1 == -1) {
+        return 0;
+    }
+
+    def = (ObjDef*)(gFile_OBJECTS_TAB[param1] + D_800B18E8); // ???
+
+    if (def->flags & 0x40) {
+        return def->unka0;
+    }
+
+    return -1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022EC0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_free_object.s")
+void obj_free_object(Object *obj, s32 param2) {
+    Object *obj2;
+    ObjectAnimState *animState;
+    /*sp+0xE4*/ NewLfxStruct newLfxStruct;
+    ModelInstance *modelInst;
+    /*sp+0x40*/ Object *stackObjs[40];
+    /*sp+0x3c*/ s32 k;
+    /*sp+0x38*/ s32 numModels;
+    /*sp+0x34*/ s32 i;
+    /*sp+0x30*/ s32 numStackObjs;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/obj_alloc_create_info.s")
+    if (obj->dll != NULL) {
+        update_pi_manager_array(4, obj->id);
+        obj->dll->exports->func5(obj, param2);
+        update_pi_manager_array(4, -1);
+        dll_unload(obj->dll);
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023464.s")
+    gDLL_AMSFX->exports->func[16].withOneArg((s32)obj);
+    gDLL_AMSEQ->exports->func[17].withOneArg((s32)obj);
+    gDLL_expgfx->exports->func[9].withOneArg((s32)obj);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023628.s")
+    if (obj->def != NULL && obj->def->flags & 0x10) {
+        func_80031080(obj, 56);
+    }
+
+    if (obj->def->flags & 0x40) {
+        func_80031080(obj, 7);
+
+        if (!param2) {
+            numStackObjs = 0;
+
+            for (i = 0; i < gNumObjs; i++) {
+                obj2 = gObjList[i];
+
+                if (obj == obj2->parent) {
+                    obj2->parent = NULL;
+
+                    if (obj2->createInfo != NULL) {
+                        stackObjs[numStackObjs] = obj2;
+                        numStackObjs++;
+                    }
+                }
+            }
+
+            for (i = 0; i < numStackObjs; i++) {
+                obj_destroy_object(stackObjs[i]);
+            }
+
+            func_80045F48(obj->unk_0x34);
+        }
+    }
+
+    if (!param2 && obj->group == 16) {
+        for (i = 0; i < gNumObjs; i++) {
+            obj2 = gObjList[i];
+            if (obj == obj2->unk0xc0) {
+                obj2->unk0xc0 = NULL;
+            }
+        }
+    }
+
+    for (k = 0; k < gNumObjs; k++) {
+        obj2 = gObjList[k];
+        if (obj2->group == 16) {
+            animState = (ObjectAnimState*)obj2->state;
+            if (obj == animState->unk0) {
+                animState->unk0 = NULL;
+                animState->unk9C = 1;
+            }
+        }
+    }
+    
+
+    if (obj->def->unk5e >= 1) {
+        func_80031080(obj, 9);
+    }
+
+    if (obj->def->unk87 & 0x10) {
+        newLfxStruct.unk12.asByte = 2;
+        newLfxStruct.unke = 0;
+        newLfxStruct.unk10 = obj->unk_0xd6;
+        newLfxStruct.unk1b = 0;
+
+        gDLL_newlfx->exports->func[0].withSixArgs((s32)obj, (s32)obj, (s32)&newLfxStruct, 0, 0, 0);
+    }
+
+    if (obj->ptr0x64 != NULL) {
+        if (obj->def->shadowType == 1) {
+            func_8004D974(1);
+        }
+
+        if (obj->ptr0x64->unk_0x4 != NULL) {
+            texture_destroy(obj->ptr0x64->unk_0x4);
+        }
+
+        if (obj->ptr0x64->unk_0x8 != NULL) {
+            texture_destroy(obj->ptr0x64->unk_0x8);
+        }
+    }
+
+    if (obj->ptr0xcc != NULL) {
+        free(obj->ptr0xcc);
+        obj->ptr0xcc = NULL;
+    }
+
+    numModels = obj->def->numModels;
+    for (k = 0; k < numModels; k++) {
+        if (obj->modelInsts[k] != NULL) {
+            modelInst = obj->modelInsts[k];
+            destroy_model_instance(modelInst);
+        }
+    }
+
+    obj_free_objdef(obj->tabIdx);
+
+    if (obj->unk0xb4 >= 0) {
+        if (!param2) {
+            gDLL_ANIM->exports->func[18].withOneArg((s32)obj->unk0xb4);
+            obj->unk0xb4 = -1;
+        }
+    }
+
+    if (obj->srt.flags & 0x2000 && obj->createInfo != NULL) {
+        free(obj->createInfo);
+    }
+
+    free(obj);
+}
+
+void *obj_alloc_create_info(s32 size, s32 objId) {
+    ObjCreateInfo *createInfo;
+
+    createInfo = (ObjCreateInfo*)malloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
+    bzero(createInfo, size);
+
+    createInfo->unk14 = -1;
+    createInfo->unk6 = 100;
+    createInfo->unk7 = 50;
+    createInfo->unk4 = 8;
+    createInfo->unk5 = 4;
+    createInfo->objId = objId;
+
+    return (void*)createInfo;
+}
+
+void func_80023464(s32 character) {
+    Object *player;
+    s32 activeCharacter;
+    ObjCreateInfo createInfo;
+    f32 x, y, z;
+    Object *newPlayer;
+
+    player = get_player();
+    activeCharacter = gDLL_29_gplay->exports->func_E90();
+
+    if (character != activeCharacter) {
+        gDLL_29_gplay->exports->func_EAC(character);
+
+        if (player != NULL) {
+            obj_destroy_object(player);
+            x = player->srt.transl.x;
+            y = player->srt.transl.y;
+            z = player->srt.transl.z;
+        } else {
+            x = 0.0f;
+            y = 0.0f;
+            z = 0.0f;
+        }
+
+        newPlayer = NULL;
+
+        if (character > -1) {
+            bzero(&createInfo, sizeof(createInfo));
+            createInfo.unk14 = -1;
+            createInfo.unk3 = 0;
+            createInfo.unk4 = 1;
+            createInfo.unk5 = 4;
+            createInfo.unk6 = -1;
+            createInfo.unk7 = 100;
+            createInfo.objId = D_80091664[character];
+            createInfo.unk2 = 24;
+            createInfo.x = x;
+            createInfo.y = y;
+            createInfo.z = z;
+
+            newPlayer = obj_create(&createInfo, 1, -1, -1, NULL);
+        }
+
+        gDLL_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
+        gDLL_AMSFX->exports->func[1].withOneArg(newPlayer);
+        gDLL_AMSEQ->exports->func[3].withOneArg(newPlayer);
+    }
+}
+
+void func_80023628() {
+    Object *player;
+    s32 var;
+    ObjCreateInfo createInfo;
+    GplayStruct5 *gplayStruct;
+    f32 x, y, z;
+    s32 activeCharacter;
+
+    var = func_80048024();
+    if (var == 2 || var == 3) {
+        obj_free_all();
+        return;
+    }
+
+    activeCharacter = gDLL_29_gplay->exports->func_E90();
+    gplayStruct = gDLL_29_gplay->exports->func_F04();
+
+    x = gplayStruct->vec.x;
+    y = gplayStruct->vec.y;
+    z = gplayStruct->vec.z;
+
+    player = NULL;
+
+    if (activeCharacter > -1) {
+        bzero(&createInfo, sizeof(createInfo));
+        createInfo.unk14 = -1;
+        createInfo.unk3 = 0;
+        createInfo.unk4 = 1;
+        createInfo.unk5 = 4;
+        createInfo.unk6 = -1;
+        createInfo.unk7 = 100;
+        createInfo.objId = D_80091664[activeCharacter];
+        createInfo.unk2 = 24;
+        createInfo.x = x;
+        createInfo.y = y;
+        createInfo.z = z;
+
+        player = obj_create(&createInfo, 1, -1, -1, NULL);
+    }
+
+    D_80091668.unk8 = fsin16_precise(gplayStruct->unk0xC << 8) * 60.0f + x;
+    D_80091668.unkC = y + 40.0f;
+    D_80091668.unk10 = fcos16_precise(gplayStruct->unk0xC << 8) * 60.0f + z;
+
+    gDLL_Camera->exports->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
+    gDLL_Camera->exports->func6.withSevenArgs(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
+    gDLL_Camera->exports->func1.withOneArg(1);
+    gDLL_AMSFX->exports->func[1].withOneArg(player);
+    gDLL_AMSEQ->exports->func[3].withOneArg(player);
+
+    D_800B1988 = 0;
+    func_8004A67C();
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023894.s")
 

@@ -3,8 +3,8 @@
 
 #include <PR/gbi.h>
 #include "sys/gfx/model.h"
+#include "sys/gfx/texture.h"
 #include "sys/math.h"
-#include "dll.h"
 #include "dll_def.h"
 #include "object_def.h"
 #include "hitbox.h"
@@ -13,16 +13,34 @@
 /** Game Object system
  */
 
+struct Object;
+
 //used for PlayerPosBuffer and something else
 struct Vec3_Int{
 	Vec3f f;
 	u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
 };
 
+// base state of objects in group 16?
+typedef struct {
+/*0000*/ struct Object *unk0;
+/*0004*/ u8 unk_0x4[0x9C - 0x4];
+/*009C*/ u8 unk9C;
+} ObjectAnimState;
+
+// state of object in Object::unkC0
+typedef struct {
+/*0000*/    u8 unk_0x0[0x62 - 0x0];
+/*0062*/    s8 unk_0x62;
+} ObjectC0State;
+
 // Base struct, objects "inherit" from this and add their own creation related info
 typedef struct {
-	s16 unk0;
-	u8 _unk2[4];
+	s16 objId;
+	u8 unk2;
+	u8 unk3;
+	u8 unk4;
+	u8 unk5;
 	u8 unk6;
 	u8 unk7;
 	f32 x;
@@ -44,27 +62,15 @@ typedef struct {
 } ObjectStruct50;
 
 typedef struct {
-/*0000*/    u8 unk_0x0[0xc - 0x0];
+/*0000*/    u8 unk_0x0[0x4 - 0x0];
+/*0004*/    Texture *unk_0x4;
+/*0008*/    Texture *unk_0x8;
 /*000C*/    Gfx *gdl;
 /*0010*/    u8 unk_0x10[0x20 - 0x10];
 /*0020*/    Vec3f tr;
 /*002C*/    u32 unk_0x2c;
 /*0030*/    u32 flags;
 } ObjectStruct64;
-
-typedef struct {
-/*0000*/    u8 unk_0x0[0x62 - 0x0];
-/*0062*/    s8 unk_0x62;
-} ObjectStructC0_B8;
-
-struct Object;
-
-typedef struct {
-/*0000*/    u8 unk_0x0[0x30 - 0x0];
-/*0030*/    struct Object *unk_0x30;
-/*0034*/    u8 unk_0x34[0xb8 - 0x34];
-/*00b8*/    ObjectStructC0_B8 *unk_0xb8;
-} ObjectStructC0;
 
 typedef struct {
 	s32 unk0;
@@ -108,7 +114,7 @@ DLL_INTERFACE_BEGIN(Object)
     /*1*/ void (*update)(struct Object *obj);
     /*2*/ void (*func3)(struct Object *obj); // unknown args
     /*3*/ void (*func4)(); // unknown args
-    /*4*/ void (*func5)(); // unknown args
+    /*4*/ void (*func5)(struct Object *obj, s32);
     /*5*/ u32 (*func6)(struct Object *obj);
     /*6*/ u32 (*get_state_size)(struct Object *obj, u32);
 DLL_INTERFACE_END()
@@ -118,7 +124,7 @@ DLL_INTERFACE_END()
 typedef s32 (*ObjectCallback)(struct Object *, struct Object *, void *, void *);
 
 /**
- * Object instance.
+ * Game object instance.
  * 
  * Size: 0xe4, other object-related data is placed in the following memory
  */
@@ -169,15 +175,17 @@ typedef struct Object {
 /*00B6*/	u8 unk0xb6[2];
 /*00B8*/	void* state; //type depends on object
 /*00BC*/	ObjectCallback unk0xbc; // some kind of cutscene anim callback?
-/*00C0*/	ObjectStructC0 *unk0xc0;
+/*00C0*/	struct Object *unk0xc0; // related to group 16 objects?
 /*00C4*/	UNK_TYPE_32 unk0xc4;
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    void* ptr0xcc;
 /*00D0*/    u8 unk_0xd0[0xd4 - 0xd0];
 /*00D4*/    u8 unk_0xd4; // index into ObjDef.unk40
-/*00D5*/    u8 unk_0xd5[0xd8 - 0xd5];
+/*00D5*/    u8 unk_0xd5[0xd6 - 0xd5];
+/*00D6*/    u8 unk_0xd6;
+/*00D5*/    u8 unk_0xd7[0xd8 - 0xd7];
 /*00D8*/    u8 unk_0xd8;
-/*00D9*/    u8 unk_0xd9[0xda - 0xd9];
+/*00D9*/    u8 unk_0xd9;
 /*00DA*/    u8 unk_0xda;
 /*00DB*/    u8 unk_0xdb[0xdc - 0xdb];
 /*00DC*/    s32 unk0xdc;

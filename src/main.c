@@ -328,7 +328,6 @@ void func_800210DC();                                  /* extern */
 void func_80038DC0(Gfx**);                             /* extern */
 void func_80042174(s32);                                 /* extern */
 void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);         /* extern */
-void func_8004A67C();                                  /* extern */
 void func_800591EC();                                  /* extern */
 u16 get_masked_button_presses(int port);                   /* extern */
 void map_update_streaming();                           /* extern */
@@ -345,7 +344,7 @@ void func_80013D80(void)
     s32 button;
 
     set_button_mask(0, 0x900);
-    gDLL_Camera->exports->func[19].asVoid();
+    gDLL_Camera->exports->func19.asVoid();
     gDLL_subtitles->exports->func[5].asVoid();
 
     if (func_8000F574() == 0)

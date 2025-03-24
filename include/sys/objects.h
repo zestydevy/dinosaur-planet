@@ -17,7 +17,7 @@ void obj_destroy_object(Object *obj);
 void obj_load_event(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad);
 void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad);
 
-Object *get_player(void);
+Object *get_player();
 Object *get_sidekick();
 
 void obj_clear_map_id(Object *obj);
@@ -26,5 +26,7 @@ void obj_set_update_priority(Object *object, s8 param2);
 
 void obj_add_effect_box(Object *obj);
 void obj_free_effect_box(Object *obj);
+
+void *obj_alloc_create_info(s32 size, s32 objId);
 
 #endif

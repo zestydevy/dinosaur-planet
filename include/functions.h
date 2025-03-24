@@ -81,4 +81,16 @@ u32 func_80026BD8(Object *obj, u32 addr);
 
 u32 func_80026A20(s16 objId, ModelInstance*, ObjectHitInfo*, u32, Object*);
 
+f32 func_80003A60(f32, f32, f32);
+
+void func_80031080(Object *obj, s32 listIdx);
+
+void func_80045F48(s32);
+void func_8004D974(s32);
+void texture_destroy(Texture *texture);
+
+void func_8003273C(Object *obj);
+s32 func_80048024();
+void func_8004A67C();
+
 #endif //_FUNCTIONS_H
