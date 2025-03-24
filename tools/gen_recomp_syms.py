@@ -20,7 +20,10 @@ BUILD_PATH = Path("build")
 SRC_DLLS_PATH = Path("src/dlls")
 
 # vram -> function def
-FUNCTION_DEF_HACKS = {
+MANUAL_FUNCTION_DEFS = {
+    # Static functions
+    0x800813BC: { "name": "proutSyncPrintf", "size": 0x64 },
+
     # These functions are supposed to fallthrough to the next function
     0x80016178: { "name": "cos16_precise", "size": 0x60 },
     0x800161d8: { "name": "cos16", "size": 0x44 },
@@ -75,11 +78,11 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             if value >= text_start and value < text_end:
                 # Function
 
-                # Apply override hacks
-                def_hack = FUNCTION_DEF_HACKS.get(value)
-                if def_hack != None:
-                    assert def_hack["name"] == sym.name
-                    size = def_hack["size"]
+                # Apply size overrides
+                manual_def = MANUAL_FUNCTION_DEFS.get(value)
+                if manual_def != None:
+                    assert manual_def["name"] == sym.name
+                    size = manual_def["size"]
                     print("Overriding function {} definition to 0x{:X}".format(sym.name, size))
             
                 func = { "name": sym.name, "vram": value, "size": size if size != 0 else None }
@@ -97,12 +100,12 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
                     data_global = { "name": sym.name, "vram": value }
                     data_globals.append(data_global)
     
-    # Add any functions defined in the hacks table that wasn't found in the .elf
-    for (vram, hack) in FUNCTION_DEF_HACKS.items():
+    # Add any functions defined in the manual funcs table that weren't found in the .elf
+    for (vram, mdef) in MANUAL_FUNCTION_DEFS.items():
         if vrams.get(vram) == None:
-            func = { "name": hack["name"], "vram": vram, "size": hack["size"] }
+            func = { "name": mdef["name"], "vram": vram, "size": mdef["size"] }
             funcs.append(func)
-            print("Adding manual function definition {} @ 0x{:X} with size 0x{:X}".format(hack["name"], vram, hack["size"]))
+            print("Adding manual function definition {} @ 0x{:X} with size 0x{:X}".format(mdef["name"], vram, mdef["size"]))
     
     # Sort
     funcs.sort(key=lambda f : f["vram"])
