@@ -64,6 +64,8 @@ class BuildConfig:
                  link_script: "str | None"=None,
                  link_script_dll="src/dlls/dll.ld",
                  skip_dlls=False,
+                 non_matching=False,
+                 non_equivalent=False,
                  default_opt_flags="-O2 -g3"):
         self.target = target
         self.build_dir = build_dir
@@ -71,6 +73,8 @@ class BuildConfig:
         self.link_script = link_script or f"{target}.ld"
         self.link_script_dll = link_script_dll
         self.skip_dlls = skip_dlls
+        self.non_matching = non_matching
+        self.non_equivalent = non_equivalent
         self.default_opt_flags = default_opt_flags
 
 class BuildNinjaWriter:
@@ -114,12 +118,19 @@ class BuildNinjaWriter:
 
         self.writer.variable("LD_EMULATION", "elf32btsmip")
 
-        self.writer.variable("CC_DEFINES", " ".join([
+        cc_defines = [
             "-D_LANGUAGE_C", 
             #"-D_FINALROM", 
             "-D_MIPS_SZLONG=32",
             "-DF3DEX_GBI_2", 
-        ]))
+        ]
+
+        if self.config.non_matching:
+            cc_defines.append("-DNON_MATCHING")
+        if self.config.non_equivalent:
+            cc_defines.append("-DNON_EQUIVALENT")
+
+        self.writer.variable("CC_DEFINES", " ".join(cc_defines))
 
         self.writer.variable("INCLUDES", " ".join([
             "-I include",
@@ -494,7 +505,7 @@ class InputScanner:
 
     def __scan_asm_files(self):
         # Exclude splat nonmatchings, those are compiled in with their respective C file
-        paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("asm/nonmatchings"))]
+        paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("asm/nonmatchings")) and not Path(path).is_relative_to(Path("asm/matchings"))]
         for src_path in paths:
             obj_path = self.__make_obj_path(src_path)
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
@@ -604,13 +615,17 @@ def main():
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     parser.add_argument("--target", type=str, help="The filename of the ROM to create (excluding extension suffix, default=dino).", default="dino")
     parser.add_argument("--skip-dlls", dest="skip_dlls", action="store_true", help="Don't recompile DLLs (use original).")
+    parser.add_argument("--non-matching", dest="non_matching", action="store_true", help="Define NON_MATCHING.")
+    parser.add_argument("--non-equivalent", dest="non_equivalent", action="store_true", help="Define NON_EQUIVALENT.")
     
     args = parser.parse_args()
 
     # Create config
     config = BuildConfig(
         target=args.target,
-        skip_dlls=args.skip_dlls or False
+        skip_dlls=args.skip_dlls or False,
+        non_matching=args.non_matching or False,
+        non_equivalent=args.non_equivalent or False
     )
 
     # Do all path lookups from the base directory

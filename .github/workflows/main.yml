@@ -29,5 +29,11 @@ jobs:
       run: echo ${{ secrets.DINOSAUR_PLANET_BASEROM }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in baserom/baserom.z64.aes -out baserom.z64
     - name: Extract ROM
       run: python3 ./dino.py extract
-    - name: Build
-      run: python3 ./dino.py build
+    - name: Build (matching)
+      run: |
+        python3 ./dino.py configure
+        python3 ./dino.py build
+    - name: Build (non-matching, non-equivalent)
+      run: |
+        python3 ./dino.py configure --non-matching --non-equivalent
+        python3 ./dino.py build --no-verify

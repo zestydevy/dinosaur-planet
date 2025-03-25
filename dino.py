@@ -150,18 +150,30 @@ class DinoCommandRunner:
         print()
         self.configure()
 
-    def configure(self):
+    def configure(self, non_matching: bool, non_equivalent: bool):
         print("Configuring build script...")
 
         self.__assert_project_built()
 
-        self.__run_cmd([
+        cmd = [
             "python3", str(CONFIGURE_PY), 
             "--base-dir", str(SCRIPT_DIR),
             "--target", TARGET
-        ])
+        ]
 
-    def build(self, configure: bool, force: bool, skip_expected: bool, target: "str | None"):
+        if non_matching:
+            cmd.append("--non-matching")
+        if non_equivalent:
+            cmd.append("--non-equivalent")
+
+        self.__run_cmd(cmd)
+
+    def build(self, 
+              configure: bool, 
+              force: bool, 
+              skip_expected: bool, 
+              no_verify: bool,
+              target: "str | None"):
         # Configure build script if it's missing
         if configure or not BUILD_SCRIPT_PATH.exists():
             self.configure()
@@ -203,10 +215,14 @@ class DinoCommandRunner:
             return
         
         # Verify
-        print()
-        self.verify()
+        if no_verify:
+            print()
+            print("Build successful.")
+        else:
+            print()
+            self.verify()
 
-        if not skip_expected:
+        if not skip_expected and not no_verify:
             # If matching, update the 'expected' directory for diff
             self.create_expected_dir(already_verified=True, quiet=True)
 
@@ -421,12 +437,15 @@ def main():
     extract_dll_cmd = subparsers.add_parser("extract-dll", help="Split and extract DLL.")
     extract_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
 
-    subparsers.add_parser("configure", help="Re-configure the build script.")
-    
+    configure_cmd = subparsers.add_parser("configure", help="Re-configure the build script.")
+    configure_cmd.add_argument("--non-matching", dest="non_matching", action="store_true", help="Define NON_MATCHING.", default=False)
+    configure_cmd.add_argument("--non-equivalent", dest="non_equivalent", action="store_true", help="Define NON_EQUIVALENT.", default=False)
+
     build_cmd = subparsers.add_parser("build", help="Build ROM and verify that it matches.")
     build_cmd.add_argument("-c", "--configure", action="store_true", help="Re-configure the build script before building.", default=False)
     build_cmd.add_argument("-f", "--force", action="store_true", help="Force a full rebuild.", default=False)
     build_cmd.add_argument("--no-expected", dest="skip_expected", action="store_true", help="Don't update the 'expected' directory after a matching build.", default=False)
+    build_cmd.add_argument("--no-verify", dest="no_verify", action="store_true", help="Don't verify the build ROM.", default=False)
     build_cmd.add_argument("target", nargs="?", help="The target to build. Don\'t specify to build the full ROM.")
 
     build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
@@ -466,6 +485,7 @@ def main():
                 configure=args.configure, 
                 force=args.force, 
                 skip_expected=args.skip_expected,
+                no_verify=args.no_verify,
                 target=args.target
             )
         elif cmd == "build-expected":
@@ -475,7 +495,10 @@ def main():
         elif cmd == "build-tool-ido":
             runner.build_tool_ido()
         elif cmd == "configure":
-            runner.configure()
+            runner.configure(
+                non_matching=args.non_matching,
+                non_equivalent=args.non_equivalent
+            )
         elif cmd == "verify":
             runner.verify()
         elif cmd == "baseverify":

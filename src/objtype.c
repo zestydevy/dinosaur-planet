@@ -25,7 +25,7 @@ void obj_object_type_init() {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/objtype/obj_add_object_type.s")
 #else
-void _obj_add_object_type(Object *obj, s32 type) {
+void obj_add_object_type(Object *obj, s32 type) {
     s32 listStart;
     s32 listEnd;
     s32 i;

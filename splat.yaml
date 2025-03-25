@@ -18,6 +18,7 @@ options:
   detect_redundant_function_end: False
   section_order: [".text", ".data", ".rodata", ".bss"]
   auto_link_sections: [".bss"]
+  disassemble_all: False
 
 segments:
   - [0x000000, header]
