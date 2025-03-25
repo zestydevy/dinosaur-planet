@@ -9,4 +9,6 @@
 
 #define PLAYER_POSBUF_SIZE 60
 
+#define F32_MAX 3.4028235E+38
+
 #endif //_CONSTANTS_H

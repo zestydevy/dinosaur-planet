@@ -2,6 +2,7 @@
 #define _FUNCTIONS_H
 
 #include "game/objects/object.h"
+#include "sys/scheduler.h"
 
 void bootproc(void);
 void idle(void * arg);
@@ -29,13 +30,9 @@ void func_80060B94(Gfx**);
 
 OSSched *get_ossched(void);
 
-Object **object_getter(s32 idx, s32 *count);
-
 void transform_point_by_object(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, Object *obj);
 
 void update_pi_manager_array(s32 index, s32 value);
-
-void add_object_to_array(Object *obj, s32 param2);
 
 void write_c_file_label_pointers(char *cFileLabel, s32 a1);
 
@@ -66,8 +63,6 @@ void dl_set_fill_color(Gfx **gdl, u32 color);
 void func_80002490(Gfx **gdl);
 void dl_apply_other_mode(Gfx **gdl);
 
-void func_80030EC0();
-
 void get_object_child_position(Object *obj, float *ox, float *oy, float *oz);
 
 s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
@@ -83,7 +78,6 @@ u32 func_80026A20(s16 objId, ModelInstance*, ObjectHitInfo*, u32, Object*);
 
 f32 func_80003A60(f32, f32, f32);
 
-void func_80031080(Object *obj, s32 listIdx);
 
 void func_80045F48(s32);
 void func_8004D974(s32);

@@ -5,6 +5,7 @@
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
 #include "sys/objects.h"
+#include "sys/objtype.h"
 
 extern Object **gObjDeferredFreeList;
 extern s32 gObjDeferredFreeListCount;
@@ -298,7 +299,7 @@ void obj_clear_all() {
     linked_list_init(&gObjUpdateList, OFFSETOF(Object, next));
 
     D_800B18E0 = 0;
-    func_80030EC0();
+    obj_object_type_init();
     func_80025DF0();
 }
 
@@ -749,7 +750,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
     update_pi_manager_array(0, -1);
 
     if (obj->def->flags & OBJDATA_FLAG44_HasChildren) {
-        add_object_to_array(obj, 7);
+        obj_add_object_type(obj, 7);
 
         if (obj->updatePriority != 90) {
             obj_set_update_priority(obj, 90);
@@ -769,7 +770,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
     }
 
     if (obj->def->unk5e >= 1) {
-        add_object_to_array(obj, 9);
+        obj_add_object_type(obj, 9);
     }
 
     if (obj->def->flags & OBJDATA_FLAG44_HaveModels) {
@@ -777,7 +778,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
     }
 
     if (obj->def->flags & OBJDATA_FLAG44_DifferentLightColor) {
-        add_object_to_array(obj, 56);
+        obj_add_object_type(obj, 56);
     }
 
     write_c_file_label_pointers(D_80099600, 0x477);
@@ -1392,11 +1393,11 @@ void obj_free_object(Object *obj, s32 param2) {
     gDLL_expgfx->exports->func[9].withOneArg((s32)obj);
 
     if (obj->def != NULL && obj->def->flags & 0x10) {
-        func_80031080(obj, 56);
+        obj_free_object_type(obj, 56);
     }
 
     if (obj->def->flags & 0x40) {
-        func_80031080(obj, 7);
+        obj_free_object_type(obj, 7);
 
         if (!param2) {
             numStackObjs = 0;
@@ -1444,7 +1445,7 @@ void obj_free_object(Object *obj, s32 param2) {
     
 
     if (obj->def->unk5e >= 1) {
-        func_80031080(obj, 9);
+        obj_free_object_type(obj, 9);
     }
 
     if (obj->def->unk87 & 0x10) {
@@ -1623,7 +1624,7 @@ void func_80023628() {
 Object *get_player(void) {
     Object **obj;
     s32 idx;
-    obj = object_getter(0, &idx);
+    obj = obj_get_all_of_type(0, &idx);
     if(idx) {} else {}; //wat
     if(idx) return *obj;
     else return NULL;
@@ -1633,7 +1634,7 @@ Object *get_sidekick() {
     Object **objectList;
     s32 count;
 
-    objectList = object_getter(1, &count);
+    objectList = obj_get_all_of_type(1, &count);
 
     if (count) {}
 
