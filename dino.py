@@ -150,7 +150,7 @@ class DinoCommandRunner:
         print()
         self.configure()
 
-    def configure(self, non_matching: bool, non_equivalent: bool):
+    def configure(self, non_matching: bool = False, non_equivalent: bool = False):
         print("Configuring build script...")
 
         self.__assert_project_built()
