@@ -393,14 +393,20 @@ class BuildNinjaWriter:
         self.writer.build("$BUILD_DIR/$TARGET.z64", "file_copy", "$BUILD_DIR/$TARGET.bin")
         
     def __detect_cross(self) -> str:
-        if which("mips-n64-ld") is not None:
-            return "mips-n64-" # N64 dev tools
-        elif which("mips64-linux-gnu-ld") is not None:
-            return "mips64-linux-gnu-"
-        elif which("mips64-elf-ld") is not None:
-            return "mips64-elf-"
-        else:
-            return "mips-linux-gnu-"
+        # Ordered by preference
+        prefixes = [
+            "mips-linux-gnu-",
+            "mips64-linux-gnu-",
+            "mips64-elf-"
+        ]
+
+        for prefix in prefixes:
+            if which(f"{prefix}ld") is not None:
+                return prefix
+  
+        tried = [f"{prefix}ld" for prefix in prefixes]
+        print(f"Could not find MIPS binutils. Please make sure you have an appropriate version installed. Searched for: {", ".join(tried)}")
+        sys.exit(1)
 
     def __file_config_to_variables(self, file_config: BuildFileConfig | None):
         variables: dict[str, str] = {}
