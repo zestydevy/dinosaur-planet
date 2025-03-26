@@ -19,6 +19,8 @@ options:
   section_order: [".text", ".data", ".rodata", ".bss"]
   auto_link_sections: [".bss"]
   disassemble_all: False
+  # Allow use of 64-bit floating point registers
+  generated_s_preamble: .set fp=64
 
 segments:
   - [0x000000, header]
