@@ -220,7 +220,7 @@ if (mem != NULL) {
 }
 #endif
 
-void n_alSeqpDelete(s32 arg0) { //TODO: what is this really? looks like an incorrectly named func
+void func_80000D30(void *arg0) {
     free(arg0);
 }
 

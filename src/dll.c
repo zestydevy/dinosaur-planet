@@ -58,7 +58,7 @@ void replace_loaded_dll_list(DLLState list[], s32 count) {
     gLoadedDLLList = list;
 }
 
-DLLState *get_loaded_dlls(u32 *outLoadedDLLCount) {
+DLLState *get_loaded_dlls(s32 *outLoadedDLLCount) {
     *outLoadedDLLCount = gLoadedDLLCount;
     return gLoadedDLLList;
 }

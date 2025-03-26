@@ -3,6 +3,8 @@
 #ifndef _SYS_GFX_GX_H
 #define _SYS_GFX_GX_H
 
+#include "sys/gfx/texture.h"
+
 /**
  * Memory address of the framebuffers when an N64 Expansion Pak IS NOT detected.
  */
@@ -120,9 +122,9 @@ extern f32 gMPalAspectRatio; // 1.333333_ (4/3)
 extern f32 gNtscAspectRatio; // 1.333333_ (4/3)
 
 extern UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
-extern s32 D_800BCC68;
-extern s32 D_800BCC6C;
-extern u32 D_800BCC70;
+extern Texture *D_800BCC68;
+extern Texture *D_800BCC6C;
+extern Texture *D_800BCC70;
 extern u8 D_800BCC78;
 extern f32 D_800BCC80;
 extern f32 D_800BCC84;
@@ -151,7 +153,7 @@ extern u32 gCurrentResolutionV[2];
 extern u16 *gFramebufferPointers[2];
 
 extern u16 *gFramebufferStart;
-extern u32 *gFramebufferEnd;
+extern u16 *gFramebufferEnd;
 
 /**
  * A framebuffer index into gFramebufferPointers.

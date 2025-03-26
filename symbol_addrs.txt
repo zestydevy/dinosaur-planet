@@ -543,7 +543,6 @@ _Ldtob = 0x800852a0; // type:func
 __rmonGetRegisterContents = 0x800883b0; // type:func
 SetTempBreakpoint = 0x80088480; // type:func
 ClearTempBreakpoint = 0x8008852c; // type:func
-n_alSeqpDelete = 0x80000d30; // type:func
 idle = 0x80001098; // type:func
 controller_thread_entry = 0x80010510; // type:func
 controller_querey = 0x80011370; // type:func

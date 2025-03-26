@@ -83,7 +83,7 @@ void kdebugserver(rdbPacket packet) {
         send((char*)&__osRunningThread->context, sizeof(__OSThreadContext));
         numChars = 0;
     } else if (numChars >= 9 && kdebugserver_buffer[0] == 1) {
-        addr = string_to_u32(&kdebugserver_buffer[1]);
+        addr = (u8*)string_to_u32(&kdebugserver_buffer[1]);
         length = string_to_u32(&kdebugserver_buffer[5]);
         send(addr, length);
         numChars = 0;

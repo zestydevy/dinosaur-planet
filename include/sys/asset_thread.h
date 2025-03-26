@@ -32,19 +32,19 @@ struct AssetLoadThreadMsg {
         } file;
         struct {
             /* 04 */ s32 id;
-            /* 08 */ void **dest; //XXX type
+            /* 08 */ Object **dest;
             /* 0C */ s32 unused0C; //debug?
             /* 10 */ s32 unused10;
-            /* 14 */ s32 arg5;
-            /* 18 */ s32 arg1;
-            /* 1C */ s32 arg2;
+            /* 14 */ Object *parent;
+            /* 18 */ ObjCreateInfo *createInfo;
+            /* 1C */ u32 arg2;
             /* 20 */ s32 arg4;
-            /* 24 */ s32 arg3;
+            /* 24 */ s32 mapID;
             /* 28 */ s32 arg6;
         } object;
         struct {
             /* 04 */ s32 id;
-            /* 08 */ void **dest;
+            /* 08 */ Texture **dest;
         } texture;
         struct {
             /* 04 */ s32 id;
@@ -115,8 +115,8 @@ void asset_thread_main(void *arg);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
-void queue_load_map_object(void **dest, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
-void queue_load_texture(void **dest, s32 id);
+void queue_load_map_object(Object **dest, ObjCreateInfo *createInfo, u32 arg2, s32 mapID, s32 arg4, Object *parent, s32 arg6);
+void queue_load_texture(Texture **dest, s32 id);
 void queue_load_dll(void **dest, s32 id, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);
 void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4);

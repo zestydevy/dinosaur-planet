@@ -34,7 +34,6 @@ extern s32  *gFile_TABLES_TAB;
 extern s32  *gFile_OBJECTS_TAB;
 extern s16  *gFile_OBJINDEX;
 
-int get_file_size(int file);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void alloc_some_object_arrays(void); //related to objects
@@ -498,13 +497,13 @@ Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 pa
     Object *obj;
 
     obj = NULL;
-    queue_load_map_object((void**)&obj, createInfo, createFlags, mapID, param4, parent, 0);
+    queue_load_map_object(&obj, createInfo, createFlags, mapID, param4, parent, 0);
     obj_add_object(obj, createFlags);
 
     return obj;
 }
 
-Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *parent) {
+Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *parent, s32 param6) {
     ObjDef *def;
     s32 modelCount;
     s32 var;

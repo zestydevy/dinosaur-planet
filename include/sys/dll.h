@@ -75,7 +75,7 @@ void init_dll_system();
  */
 u32 find_executing_dll(u32 pc, void **start, void **end);
 void replace_loaded_dll_list(DLLState list[], s32 count);
-DLLState *get_loaded_dlls(u32 *outLoadedDLLCount);
+DLLState *get_loaded_dlls(s32 *outLoadedDLLCount);
 void *dll_load_deferred(u16 id, u16 exportCount);
 void *dll_load(u16 id, u16 exportCount, s32 runConstructor);
 void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize);

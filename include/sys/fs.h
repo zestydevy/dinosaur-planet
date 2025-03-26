@@ -89,5 +89,11 @@ typedef struct
     u32 offsets[NUM_FILES];
 } Fs;
 
+void init_filesystem(void);
+void *read_alloc_file(u32 id, u32 a1);
+s32 read_file(u32 id, void *dest);
+s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
+s32 func_800372C8(u32 id, s32 offset);
+s32 get_file_size(u32 id);
 
 #endif //_SYS_FS_H

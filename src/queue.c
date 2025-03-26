@@ -9,9 +9,9 @@ extern UnkStructAssetThreadSingle gAssetThreadQueueData[100];
 
 extern u8 D_800AE240;
 
-extern struct AssetLoadThreadMsg D_800ACB60[1];
-extern struct AssetLoadThreadMsg D_800ACB80[5];
-extern struct AssetLoadThreadMsg D_800ACBB0[1];
+extern OSMesg D_800ACB60[1];
+extern OSMesg D_800ACB80[5];
+extern OSMesg D_800ACBB0[1];
 
 // pad to 0x800ad6c0
 static u8 _bss_pad[0x9950]; // TODO: remove bss padding
@@ -98,22 +98,21 @@ void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 leng
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_map_object(void **dest, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
-    //XXX dest type
+void queue_load_map_object(Object **dest, ObjCreateInfo *createInfo, u32 arg2, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
     assetLoadMsg.loadCategory  = 1;
     assetLoadMsg.loadType      = ASSET_TYPE_OBJECT;
-    assetLoadMsg.p.object.arg3 = arg3;
-    assetLoadMsg.p.object.arg1 = arg1;
+    assetLoadMsg.p.object.mapID = mapID;
+    assetLoadMsg.p.object.createInfo = createInfo;
     assetLoadMsg.p.object.arg2 = arg2;
     assetLoadMsg.p.object.arg4 = arg4;
-    assetLoadMsg.p.object.arg5 = arg5;
+    assetLoadMsg.p.object.parent = parent;
     assetLoadMsg.p.object.arg6 = arg6;
     assetLoadMsg.p.object.dest = dest;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_texture(void **dest, s32 id) {
+void queue_load_texture(Texture **dest, s32 id) {
     //XXX verify types
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_TEXTURE;
@@ -291,16 +290,16 @@ void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 pa
 }
 
 void asset_thread_main(void *arg) {
-    OSMesg *msg;
+    OSMesg msg;
     s32 prevIE;
     struct AssetLoadThreadMsg *msg2;
 
     D_800AE29D = 0;
     D_800AE29E = 0;
 
-    osCreateMesgQueue(&assetLoadThreadSendQueue, &D_800ACB60, 1);
-    osCreateMesgQueue(&D_800ACB68, &D_800ACB80, 5);
-    osCreateMesgQueue(&assetLoadThreadRecvQueue, &D_800ACBB0, 1);
+    osCreateMesgQueue(&assetLoadThreadSendQueue, D_800ACB60, ARRAYCOUNT(D_800ACB60));
+    osCreateMesgQueue(&D_800ACB68, D_800ACB80, ARRAYCOUNT(D_800ACB80));
+    osCreateMesgQueue(&assetLoadThreadRecvQueue, D_800ACBB0, ARRAYCOUNT(D_800ACBB0));
 
     while (1) {
         osRecvMesg(&assetLoadThreadSendQueue, &msg, OS_MESG_BLOCK);
@@ -326,7 +325,7 @@ void asset_thread_main(void *arg) {
 void asset_thread_load_single(void) {
     UnkStructAssetThreadSingle sp2C;
     s32 prevIE;
-    s32 tmp;
+    Texture *tmp;
 
     prevIE = interrupts_disable();
 
@@ -381,9 +380,9 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
                 load->p.file.offset, load->p.file.length);
             break;
         case ASSET_TYPE_OBJECT:
-            *load->p.object.dest = obj_setup_object(load->p.object.arg1,
-                load->p.object.arg2, load->p.object.arg3, load->p.object.arg4,
-                load->p.object.arg5, load->p.object.arg6);
+            *load->p.object.dest = obj_setup_object(load->p.object.createInfo,
+                load->p.object.arg2, load->p.object.mapID, load->p.object.arg4,
+                load->p.object.parent, load->p.object.arg6);
             break;
         case ASSET_TYPE_TEXTURE:
             *load->p.texture.dest = texture_load(load->p.texture.id, 0);

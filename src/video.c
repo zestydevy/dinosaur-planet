@@ -503,26 +503,26 @@ void initialize_framebuffers(int someBool, s32 width, s32 height) {
 
     if (osMemSize != 0x800000) {
         // No expansion pack detected
-        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_NO_EXP_PAK;
-        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_NO_EXP_PAK + ((width * height) * 2);
+        gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
+        gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK + ((width * height) * 2));
         
-        gFramebufferStart = FRAMEBUFFER_ADDRESS_NO_EXP_PAK;
+        gFramebufferStart = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
         return;
     }
     
     if (height == 480) {
         // PAL framebuffer height
-        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_EXP_PAK;
-        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2);
+        gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
+        gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2));
         
-        gFramebufferStart = FRAMEBUFFER_ADDRESS_EXP_PAK;
+        gFramebufferStart = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
     } else {
         // NTSC/M-PAL framebuffer height
-        gFramebufferPointers[0] = FRAMEBUFFER_ADDRESS_EXP_PAK;
-        gFramebufferPointers[1] = FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2);
+        gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
+        gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2));
         
-        gFramebufferEnd = ((int) (FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2);
-        gFramebufferStart = 0x80200000;
+        gFramebufferEnd = (u16*)(((int) (FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2));
+        gFramebufferStart = (u16*)0x80200000;
     }
 }
 #endif
@@ -614,7 +614,7 @@ u16 *get_framebuffer_start() {
 /**
  * Returns gFramebufferEnd.
  */
-u32 *get_framebuffer_end() {
+u16 *get_framebuffer_end() {
     return gFramebufferEnd;
 }
 #endif

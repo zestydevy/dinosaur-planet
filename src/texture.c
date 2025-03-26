@@ -11,16 +11,11 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/queue_load_texture_proxy.s")
 #else
-/**
- * Calls queue_load_texture with [param] as the second argument.
- *
- * Returns the result of queue_load_texture.
- */
-s32 queue_load_texture_proxy(s32 param) {
-    s32 var1 = 0;
-    queue_load_texture(&var1, param);
+Texture *queue_load_texture_proxy(s32 id) {
+    Texture *texture = NULL;
+    queue_load_texture(&texture, id);
 
-    return var1;
+    return texture;
 }
 #endif
 

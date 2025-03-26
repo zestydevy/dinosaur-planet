@@ -28,4 +28,10 @@ typedef struct Texture
 /*001F*/	u8 maskt;
 } Texture; // Size: 0x20, followed by texture data
 
+/**
+ * Loads a texture via queue_load_texture.
+ */
+Texture *queue_load_texture_proxy(s32 id);
+Texture *texture_load(s32 id, s32 param2);
+
 #endif //_SYS_GFX_TEXTURE_H

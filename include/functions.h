@@ -18,7 +18,6 @@ void func_80017254(s32);
 void func_800175D4(s32 a0);
 void update_PlayerPosBuffer(void);
 
-s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
 
 void dl_get_debug_info2(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);

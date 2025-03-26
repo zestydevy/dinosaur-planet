@@ -28,12 +28,12 @@ void init_filesystem(void)
     size = (s32)&__file1Address - (s32)&__fstAddress;
 
     gFST = (Fs *)malloc(size, 0x7F7F7FFF, NULL);
-    read_from_rom(&__fstAddress, (u8 *)gFST, size);
+    read_from_rom((u32)&__fstAddress, (u8 *)gFST, size);
 }
 
-void * read_alloc_file(u32 id, u32 a1)
+void *read_alloc_file(u32 id, u32 a1)
 {
-    s32 * fstEntry;
+    u32 * fstEntry;
     void * data;
     s32 size;
     u32 offset;
@@ -56,9 +56,9 @@ void * read_alloc_file(u32 id, u32 a1)
     return data;
 }
 
-s32 read_file(u32 id, void * dest)
+s32 read_file(u32 id, void *dest)
 {
-    s32 * fstEntry;
+    u32 * fstEntry;
     s32 size;
     u32 offset;
 
@@ -76,10 +76,10 @@ s32 read_file(u32 id, void * dest)
     return size;
 }
 
-s32 read_file_region(u32 id, void * dst, u32 offset, s32 size)
+s32 read_file_region(u32 id, void *dst, u32 offset, s32 size)
 {
   s32 fileAddr;
-  s32 * tmp;
+  u32 * tmp;
 
   if (size == 0 || id > gFST->fileCount)
     return 0;
@@ -96,7 +96,7 @@ s32 read_file_region(u32 id, void * dst, u32 offset, s32 size)
 
 s32 func_800372C8(u32 id, s32 offset)
 {
-    s32 * fstEntry;
+    u32 * fstEntry;
     s32 offs;
 
     if (gFST->fileCount < id) {
@@ -114,7 +114,7 @@ s32 func_800372C8(u32 id, s32 offset)
 
 s32 get_file_size(u32 id)
 {
-    s32 * fstEntry;
+    u32 * fstEntry;
     s32 size;
 
     if (id > gFST->fileCount)

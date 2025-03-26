@@ -54,7 +54,6 @@ void model_destroy(Model *model);
 s32 model_load_anim_remap_table(s32 id, s32 param_2, s32 param_3);
 ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
 u32 modanim_load(Model *model, u32 id, void *modanim);
-Texture *texture_load(s32 id);
 void func_800186CC(Model *model);
 void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
 u32 align_8(u32 a0);
