@@ -30,7 +30,7 @@ At a high level, the process goes like this:
 
 
 ## Things to know before contributing
-Before working on the decompilation, you should (ideally):
+Before working on the decompilation it helps if you:
 - Have a decent understanding of the C89 programming language.
 - Be at least a little familiar with the MIPS instruction set and/or assembly programming in general.
 - Understand the basics of compilers and assemblers.
@@ -59,8 +59,12 @@ In addition:
 Before opening a pull request, you should make sure that:
 
 1. Any code additions/changes follow the project's [style guide](#style-guide).
-2. The ROM builds and matches the original ROM (only for non-draft pull requests).
-    - If you have a decompiled function that doesn't match but is worth committing, make sure to use an `#if` macro to let the compiler ignore the decompiled implementation and include the original assembly instead.
+    - Not a strict requirement but it helps!
+2. The ROM builds successfully in both matching and non-matching configurations.
+    - CI will test against:
+        - `./dino.py configure && ./dino.py build`
+        - `./dino.py configure --non-matching --non-equivalent && ./dino.py build --no-verify`
+    - Non-matching (but equivalent) code should be `#ifdef`'d with `NON_MATCHING` and non-equivalent WIP code with `NON_EQUIVALENT`. When those defines are not set, the original assembly code of the function should be included via `#pragma GLOBAL_ASM`.
 
 
 ## Resources

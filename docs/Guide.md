@@ -32,7 +32,7 @@ Before we can begin decompiling a function, we need to extract its assembly code
 
 Splat works by mapping an address range of the ROM to individual files. For example, `vec3_normalize` is currently part of the `vec3.c` file. You can see this mapping in `splat.yaml`:
 ```yaml
-# From 0x17180 until the next entry is mapped to src/vec3.c
+# From ROM 0x17180 until the next entry is mapped to src/vec3.c
 - [0x17180, c, vec3]
 ```
 
@@ -114,11 +114,11 @@ void vec3_normalize(f32 *a0) {
     
     //                              ; First is some float value loads from $a0,
     // lwc1       $f2, ($a0)        ; the first parameter of the function
-    f32 f2 = *a0;
+    f32 f2 = *(a0+0);
     // lwc1       $f14, 4($a0)
-    f32 f14 = *(a0+4)
+    f32 f14 = *(a0+1)
     // lwc1       $f0, 8($a0)
-    f32 f0 = *(a0+8)
+    f32 f0 = *(a0+2)
     // mul.s      $f4, $f2, $f2     ; Next, is some arithmetic
     f32 f4 = f2 * f2;
     // sw         $a0, 0x18($sp)    ; There's an upcoming function call that
@@ -136,11 +136,13 @@ void vec3_normalize(f32 *a0) {
     //                              ; executed first in this case.
     f32 f12 = f10 + f8;
     //                              ; Note: Normally, function calls will use
-    //                              ; the a0-a3 registers but sqrtf is
-    //                              ; implemented in assembly. Looking at its
-    //                              ; code shows it takes $f12 as its input
-    //                              ; and outputs to $f0
-    f32 f0 = sqrtf(f12);                     
+    //                              ; the $a0-$a3 registers for arguments and
+    //                              ; $v0 for returns but sqrtf takes and
+    //                              ; returns a floating point value so,
+    //                              ; according to the MIPS O32 ABI, it uses
+    //                              ; $f12 for the argument and $f0 as the
+    //                              ; return value.
+    f32 f0 = sqrtf(f12);
     // mtc1       $zero, $f16
     f32 f16 = 0;
     // lw         $a0, 0x18($sp)    ; $a0 is restored from the stack
@@ -159,13 +161,13 @@ void vec3_normalize(f32 *a0) {
     // mtc1       $at, $f18         ; More arithmetic
     f32 f18 = at;
     // lwc1       $f4, ($a0)
-    f32 f4 = *a0;
+    f32 f4 = *(a0+0);
     // lwc1       $f10, 4($a0)
-    f32 f10 = *(a0+4);
+    f32 f10 = *(a0+1);
     // div.s      $f2, $f18, $f0
     f32 f2 = f18 / f0;
     // lwc1       $f16, 8($a0)
-    f32 f16 = *(a0+8);
+    f32 f16 = *(a0+2);
     // mul.s      $f6, $f4, $f2
     f32 f6 = f4 * f2;
     // nop
@@ -175,11 +177,11 @@ void vec3_normalize(f32 *a0) {
     // mul.s      $f18, $f16, $f2
     f32 f18 = f16 * f2;
     // swc1       $f6, ($a0)
-    *a0 = f6;
+    *(a0+0) = f6;
     // swc1       $f8, 4($a0)
-    *(a0+4) = f8;
+    *(a0+1) = f8;
     // swc1       $f18, 8($a0)
-    *(a0+8) = f18;
+    *(a0+2) = f18;
     // mov.s      $f0, $f12
     f32 f0 = f12;
     L8001678C:
@@ -190,13 +192,13 @@ void vec3_normalize(f32 *a0) {
     //                              ; register instead of $v0 like normal.
     //                              ; We can infer that a float is returned
     //                              ; since $f0 is set at the end of the
-    //                              ; function and not used.
+    //                              ; function and not used after.
     return f0;
     //  nop
 }
 ```
 
-> Whew! That was a bit of code to go through and annotate. It's worth mentioning at this point that auto-decompilers can be used instead of manually translating each instruction, such as [mips2c](https://simonsoftware.se/other/mips_to_c.py) and [Ghidra](https://ghidra-sre.org/).
+> Whew! That was a bit of code to go through and annotate. It's worth mentioning at this point that auto-decompilers can be used instead of manually translating each instruction, such as [decomp.me](https://decomp.me/) and [mips2c](https://simonsoftware.se/other/mips_to_c.py).
 >
 > It's unlikely that a tool will decompile assembly into a perfectly matching function, but it can still save a lot of time.
 
@@ -204,13 +206,13 @@ Now that we have each instruction translated, we can start analyzing the functio
 
 The first interesting code we can see is the use of `$a0`:
 ```c
-f32 f2 = *a0;
-f32 f14 = *(a0+4);
-f32 f0 = *(a0+8);
+f32 f2 = *(a0+0);
+f32 f14 = *(a0+1);
+f32 f0 = *(a0+2);
 // ...
-*a0 = f6;
-*(a0+4) = f8;
-*(a0+8) = f18;
+*(a0+0) = f6;
+*(a0+1) = f8;
+*(a0+2) = f18;
 ```
 
 This looks a lot like the access of struct fields. From this, we could assume that `$a0` holds a pointer to a structure with three four-byte wide fields. Since this function is known to be working with three-dimensional vectors, let's use the following definition:
@@ -288,16 +290,16 @@ Part of splat's job is to automatically generate symbols for addresses that it s
 
 The format of each line in `symbol_addrs.txt` is as follows:
 ```
-<symbol name> = <VRAM address in hex>; // type:<data or func> size:<byte size in hex>
+<symbol name> = <VRAM address in hex>; // <attributes...>
 ```
 
 For example:
 ```
-gActorCount = 0x800b2934; // type:data size:0x2
+gObjectCount = 0x800b2934; // size:0x2
 texture_load = 0x8003cda8; // type:func
 ```
 
-The `size` attribute is optional.
+Attributes are separated by spaces and are optional unless splat is incorrectly detecting the symbol type. Although optional, the size attribute is useful for data symbols as it allows splat to provide additional analysis such as warnings about symbol overlaps.
 
 Sometimes, there will be an address that should have a symbol that splat was unable to detect. This usually happens when the address is not explicitly referenced in the final assembly code. In this case, the symbol cannot be added to `symbol_addrs.txt` and instead must be added to `undefined_funcs.txt` or `undefined_syms.txt` for functions and variables respectively (found in the repository root). These files are fed directly into the linker and as such should not contain the `type` or `size` attributes (just the format `<name> = <VRAM address in hex>;`).
 
