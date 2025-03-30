@@ -1,5 +1,3 @@
-// curves.c?
-
 #include "common.h"
 
 typedef f32 (*unk_curve_func)(Vec4f*, f32, f32*); // TODO: first arg is actually f32[4]
@@ -31,12 +29,15 @@ typedef struct {
 
 extern s32 D_8008C7D0;
 
-extern f32 D_800984FC; // 1.0f / 60.0f
-extern f32 D_80098500; // 1.0f / 60.0f
-extern f32 D_80098504; // 1.0f / 60.0f
+#define ONE_OVER_SIX (1.0f / 6.0f)
 
 extern f32 D_800A7C30[4];
 extern f32 D_800A7C40;
+
+static const char str_800983b0[] = "curvesMove: There must be at least four control points\n";
+static const char str_800983e8[] = "curvesMove: There must be a multiple of four control points for bezier or hermite curves\n";
+static const char str_80098444[] = "curvesSetupMoveNetworkCurve: There must be at least four control points\n";
+static const char str_80098490[] = "curvesSetupMoveNetworkCurve: There must be a multiple of four control points for bezier or hermite curves\n";
 
 void func_80004B78(Vec4f *a0, Vec4f *a1);
 void func_80004CE8(Vec4f *in, Vec4f *out);
@@ -56,30 +57,23 @@ f32 func_80004A60(Vec4f *a0, f32 a1, f32 *a2) {
     v = v; // from permuter
     
     if (a2 != NULL) {
-        *a2 = ((v.z * 1.0f) + ((((3.0f * v.x) * a1) + (v.y + v.y)) * a1)) * D_800984FC;
+        *a2 = ((v.z * 1.0f) + ((((3.0f * v.x) * a1) + (v.y + v.y)) * a1)) * ONE_OVER_SIX;
     }
 
-    return ((v.w * 1.0f) + ((((v.x * a1) + v.y) * a1) + v.z) * a1) * D_80098500;
+    return ((v.w * 1.0f) + ((((v.x * a1) + v.y) * a1) + v.z) * a1) * ONE_OVER_SIX;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80004B78.s")
-#else
-// Functionally equivalent
 void func_80004B78(Vec4f *a0, Vec4f *a1) {
-    f32 temp = D_80098504;
-
     a1->x = a0->w + (((3.0f * a0->y) - a0->x) + (-3.0f * a0->z));
     a1->y = (3.0f * a0->z) + ((3.0f * a0->x) + (-6.0f * a0->y));
     a1->z = (3.0f * a0->z) + (-3.0f * a0->x);
     a1->w = a0->z + (a0->x + (4.0f * a0->y));
     
-    a1->x *= temp;
-    a1->y *= temp;
-    a1->z *= temp;
-    a1->w *= temp;
+    a1->x *= ONE_OVER_SIX;
+    a1->y *= ONE_OVER_SIX;
+    a1->z *= ONE_OVER_SIX;
+    a1->w *= ONE_OVER_SIX;
 }
-#endif
 
 f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2) {
     Vec4f v;
@@ -268,11 +262,11 @@ void func_8000535C(UnkCurvesStruct *arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_800053B0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_800053B0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_8000598C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_8000598C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80005E60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80005E60.s")
 
 void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     f32 *phi_s4;
@@ -335,12 +329,14 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006784.s")
+static const f32 f32_80098508 = 0.000099999997f; // TODO: make literal in func_80006784
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80006784.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006908.s")
+static const f32 f32_8009850c = 0.000099999997f; // TODO: make literal in func_80006908
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80006908.s")
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006B28.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80006B28.s")
 #else
 typedef struct {
     /* 0x0  */ Vec4f unk0x0;
@@ -407,8 +403,8 @@ void func_80006B28(UnkCurveStruct2 *arg0, s32 arg1, UnkCurveStruct1 *arg2) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006CFC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80006CFC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006E04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80006E04.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5660/func_80006E58.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80006E58.s")

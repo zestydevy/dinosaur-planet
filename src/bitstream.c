@@ -1,6 +1,10 @@
 #include "PR/ultratypes.h"
 #include "sys/bitstream.h"
 
+static const char str_800986d0[] = "BITSTREAM: failed read\n";
+static const char str_800986e8[] = "BIT STREAM: write overflow\n";
+static const char str_80098704[] = "BIT STREAM: append overflow\n";
+
 BitStream *bitstream_init(BitStream *stream, u8 *data, s32 bitLength, s32 capacity) {
     stream->byteLength = bitLength >> 3;
     if (bitLength & 7) {

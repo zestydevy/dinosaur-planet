@@ -1,6 +1,15 @@
 #include "common.h"
 #include "sys/dll.h"
 
+static const char str_80098730[] = "DLLS: warning DLL entrypoint mismatch, dll %d (%d/%d).\n";
+static const char str_80098768[] = "DLLS: Maximum DLL's loaded, %d.\n";
+static const char str_8009878c[] = "DLLS: Load failed, DLL %d currently executing.\n";
+static const char str_800987bc[] = "DLLS: Maximum DLL's loaded, %d.\n";
+static const char str_800987e0[] = "DLLS: free fail, DLL not loaded.\n";
+static const char str_80098804[] = "DLLS: free fail, DLL not loaded.\n";
+static const char str_80098828[] = "warning: using default DLL entry point.\n";
+static const char str_80098854[] = "DLL %d usage %d %08x:%08x\n";
+
 void dll_relocate(DLLFile *dll);
 DLLFile *dll_load_from_tab(u16 id, s32 *sizeOut);
 

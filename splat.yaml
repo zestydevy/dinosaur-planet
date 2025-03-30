@@ -39,7 +39,7 @@ segments:
     - [0x1460, c, segment_1460]
     - [0x1740, c, boot]
     - [0x1E20, c, camera]
-    - [0x5660, c, segment_5660]
+    - [0x5660, c, curves]
     - [0x7B50, c, segment_7B50]
     - [0xB9F0, c, generic_queue]
     - [0xBC10, c, generic_stack]
@@ -342,6 +342,11 @@ segments:
     
     # rodata
     - [0x98E10, rodatabin]
+    - [0x98FB0, .rodata, curves]
+    - [0x99110, rodatabin]
+    - [0x992D0, .rodata, bitstream]
+    - [0x99330, .rodata, dll]
+    - [0x99470, rodatabin]
     - [0x99CA0, .rodata, queue]
     - [0x99D10, .rodata, main]
     - [0x99DB0, rodatabin]
