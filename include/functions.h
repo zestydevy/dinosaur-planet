@@ -56,7 +56,7 @@ s8 func_80048498();
 void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
 
 void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry);
-s32 func_80004A4C();
+s16 func_80004A4C();
 void dl_apply_combine(Gfx **gdl);
 void dl_set_fill_color(Gfx **gdl, u32 color);
 void func_80002490(Gfx **gdl);

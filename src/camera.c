@@ -1,4 +1,5 @@
 #include "common.h"
+#include "libultra/io/piint.h"
 
 #define CAMERA_COUNT 12
 
@@ -79,20 +80,89 @@ extern f32 gFarPlane;
 extern MtxF gProjectionMtx;
 extern Mtx gRSPProjectionMtx;
 extern u16 gPerspNorm;
+extern u32 UINT_800a66f8;
+extern u32 UINT_800a6a54;
+extern s8 gMatrixIndex;
+extern s16 D_8008C518;
+extern s16 D_8008C51C;
+extern s8 D_8008C520; // gAntiPiracyViewport?
+extern u32 D_B0000578;
+extern s16 SHORT_8008c524;
+extern s16 FB_BGCOLOR;
+extern f32 D_800A6270;
+extern f32 D_800A6274;
+extern MtxF gAuxMtx2;
+extern s32 D_800A6700;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001220.s")
+// .rodata
+extern f32 D_8009837C; // 10000.0
+extern f32 D_80098380; // 1.3333334
+extern f32 D_80098384; // 10000.0
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800013BC.s")
+void func_80001914(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw);
+s32 func_80001A5C(s32);
+void set_camera_selector(s32 selector);
+void func_800021A0(Gfx **gdl, Mtx **rspMtxs);
+Camera *get_camera();
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800013D0.s")
+// camera_init
+void func_80001220() {
+    s32 i;
+    u32 stat;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/MusPtrBankGetCurrent.s")
+    for (i = 0; i < 12; i++) {
+        gCameraSelector = i;
+        func_80001914(200, 200, 200, 0, 0, 180);
+    }
 
+    gTriggerUseAlternateCamera = 0;
+    gUseAlternateCamera = 0;
+    gCameraSelector = 0;
+    UINT_800a66f8 = 0;
+    UINT_800a6a54 = 0;
+    gMatrixCount = 0;
+    gMatrixIndex = 0;
+    gFarPlane = D_8009837C;
+    D_8008C518 = 0;
+    D_8008C520 = 0;
+
+    WAIT_ON_IOBUSY(stat);
+
+    // 0xB0000578 is a direct read from the ROM as opposed to RAM
+    if (((D_B0000578 & 0xFFFF) & 0xFFFF) != 0x8965) {
+        D_8008C520 = TRUE;
+    }
+
+    gAspect = D_80098380;
+    gFovY = 60.0f;
+
+    guPerspectiveF(&gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
+    matrix_f2l(&gProjectionMtx.m, &gRSPProjectionMtx);
+
+    FLOAT_8008c52c = gProjectionMtx.m[0][0];
+    SHORT_8008c524 = 0;
+    FB_BGCOLOR = 0;
+}
+
+void func_800013BC() {
+    UINT_800a6a54 = 1;
+}
+
+void func_800013D0() {
+    UINT_800a6a54 = 0;
+}
+
+u32 MusPtrBankGetCurrent() {
+    return UINT_800a6a54;
+}
+
+// camera_get_fov
 f32 get_fov_y()
 {
     return gFovY;
 }
 
+// camera_set_fov
 void set_fov_y(f32 fovY)
 {
     if (fovY > 90.0f) {
@@ -131,7 +201,16 @@ void set_near_plane(f32 near)
     gProjectionMtx.m[0][3] *= 0.5f;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001660.s")
+void func_80001660(f32 farPlane, s32 param2) {
+    if (param2 != 0) {
+        D_8008C51C = param2;
+        D_8008C518 = D_8008C51C;
+        D_800A6270 = gFarPlane;
+        D_800A6274 = farPlane;
+    } else {
+        gFarPlane = farPlane;
+    }
+}
 
 f32 get_far_plane()
 {
@@ -143,7 +222,9 @@ void func_800016B8()
     set_near_plane(4.0f);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800016E0.s")
+void func_800016E0() {
+    func_80001660(D_80098384, 60);
+}
 
 void func_80001708()
 {
@@ -151,39 +232,81 @@ void func_80001708()
     matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/__CallBackDmaNew.s")
+MtxF *camera_get_aux_mtx() {
+    return &gAuxMtx2;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001788.s")
+u32 func_800017889() {
+    return UINT_800a66f8;
+}
 
 u32 get_camera_selector()
 {
     return gCameraSelector;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800017A8.s")
+void func_800017A8(Gfx **gdl, Mtx **rspMtxs) {
+    Camera *camera;
+    s16 yaw;
+    s16 pitch;
+    s16 roll;
+    s16 dpitch;
+    f32 posX;
+    f32 posY;
+    f32 posZ;
 
-// close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001884.s")
-#else
-f32 _func_80001884(f32 x, f32 y, f32 z)
+    func_80001A5C(0);
+    set_camera_selector(0);
+
+    camera = get_camera();
+    yaw = camera->srt.yaw;
+    pitch = camera->srt.pitch;
+    roll = camera->srt.roll;
+    posX = camera->srt.transl.x;
+    posY = camera->srt.transl.y;
+    posZ = camera->srt.transl.z;
+    dpitch = camera->dpitch;
+
+    camera->srt.roll = 0;
+    camera->srt.pitch = 0;
+    camera->srt.yaw = -0x8000;
+    camera->dpitch = 0;
+    camera->srt.transl.x = 0.0f;
+    camera->srt.transl.y = 0.0f;
+    camera->srt.transl.z = 0.0f;
+
+    func_800021A0(gdl, rspMtxs);
+
+    camera->dpitch = dpitch;
+    camera->srt.yaw = yaw;
+    camera->srt.pitch = pitch;
+    camera->srt.roll = roll;
+    camera->srt.transl.x = posX;
+    camera->srt.transl.y = posY;
+    camera->srt.transl.z = posZ;
+}
+
+f32 func_80001884(f32 x, f32 y, f32 z)
 {
-    s32 cameraSel = gCameraSelector;
+    s32 cameraSel;
     f32 dz;
     f32 dx;
     f32 dy;
+
+    cameraSel = gCameraSelector;
 
     if (gUseAlternateCamera) {
         cameraSel += 4;
     }
 
-    dz = z - gCameras[cameraSel].srt.transl.z;
-    dx = x - gCameras[cameraSel].srt.transl.x;
-    dy = y - gCameras[cameraSel].srt.transl.y;
-    return sqrtf(dx * dx + dy * dy + dz * dz);
+    dz = (z - gCameras[cameraSel].srt.transl.z);\
+    dy = (x - gCameras[cameraSel].srt.transl.x);\
+    dx = (y - gCameras[cameraSel].srt.transl.y);
+    
+    return sqrtf((dz * dz) + ((dy * dy) + (dx * dx)));
 }
-#endif
 
+// camera_reset
 void func_80001914(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw)
 {
     gCameras[gCameraSelector].srt.transl.x = tx;
@@ -229,7 +352,35 @@ void func_80001A3C()
     gTriggerUseAlternateCamera = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001A5C.s")
+// set_active_viewports_and_max?
+s32 func_80001A5C(s32 num) {
+    if (num >= 0 && num < 4) {
+        UINT_800a66f8 = num;
+    } else {
+        UINT_800a66f8 = 0;
+    }
+
+    switch (UINT_800a66f8) {
+        case 0:
+            D_800A6700 = 1;
+            break;
+        case 1:
+            D_800A6700 = 2;
+            break;
+        case 2:
+            D_800A6700 = 3;
+            break;
+        case 3:
+            D_800A6700 = 4;
+            break;
+    }
+
+    if (D_800A6700 <= gCameraSelector) {
+        gCameraSelector = 0;
+    }
+
+    return D_800A6700;
+}
 
 void set_camera_selector(s32 selector)
 {
@@ -287,7 +438,6 @@ u32 func_8000206C(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800020E4.s")
 
-extern s16 SHORT_8008c524;
 void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 {
     u32 wh = get_some_resolution_encoded();
@@ -303,7 +453,6 @@ void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
 #else
-extern u32 UINT_800a66f8;
 void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY);
 void _func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 {
@@ -489,7 +638,6 @@ void _func_80002490(Gfx **gdl)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/setup_rsp_camera_matrices.s")
 #else
-extern u32 UINT_800a6a54;
 extern u32 UINT_ARRAY_800a7bb0[28];
 extern f32 FLOAT_80098388;
 extern f32 FLOAT_8009838c;
@@ -571,12 +719,10 @@ void _setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002B2C.s")
 
-// extremely close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002C0C.s")
-#else
-void _func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
+void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
 {
+    if (0) {} // fakematch
+
     if (!(gViewports[gCameraSelector].flags & 0x1))
     {
         gRSPViewports[gCameraSelector].vp.vtrans[0] = transX << 2;
@@ -590,7 +736,6 @@ void _func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
         gSPViewport((*gdl)++, OS_K0_TO_PHYSICAL(&gRSPViewports[gCameraSelector + 5 * gCameraGroupSelector + 10]));
     }
 }
-#endif
 
 void func_80002D14(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
 {
@@ -617,36 +762,37 @@ void func_80002DE4(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
     vec3_transform(&gViewMtx2, x, y, z, ox, oy, oz);
 }
 
-// close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002E94.s")
-#else
 void func_80002E94(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz)
 {
     if (ox != NULL) {
-        *ox = x * (gRSPViewports[0].vp.vscale[0] >> 2) + (gRSPViewports[0].vp.vtrans[0] >> 2);
+        x *= (gRSPViewports[0].vp.vscale[0] >> 2);
+        x += (gRSPViewports[0].vp.vtrans[0] >> 2);
+        *ox = x;
     }
     if (oy != NULL) {
-        *oy = 240 - (int)((y * (gRSPViewports[0].vp.vscale[1] >> 2) + (gRSPViewports[0].vp.vtrans[1] >> 2)));
+        y *= (gRSPViewports[0].vp.vscale[1] >> 2);
+        y += (gRSPViewports[0].vp.vtrans[1] >> 2);
+        *oy = 240 - (s32)(y);
     }
     if (oz != NULL) {
-        *oz = z * (gRSPViewports[0].vp.vscale[2] << 5) + (gRSPViewports[0].vp.vtrans[2] << 5);
+        z *= (gRSPViewports[0].vp.vscale[2] << 5);
+        z += (gRSPViewports[0].vp.vtrans[2] << 5);
+        *oz = z;
     }
 }
-#endif
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002F88.s")
-#else
 void func_80002F88(s32 x, s32 y, s32 z, f32 *ox, f32 *oy, f32 *oz)
 {
+    x -= (gRSPViewports[0].vp.vtrans[0] >> 2);
+    *ox = (f32)(x) / (gRSPViewports[0].vp.vscale[0] >> 2);
+
     y = 240 - y;
-    *ox = (f32)(x - (gRSPViewports[0].vp.vtrans[0] >> 2)) / (gRSPViewports[0].vp.vscale[0] >> 2);
-    *oy = (f32)(y - (gRSPViewports[0].vp.vtrans[1] >> 2)) / (gRSPViewports[0].vp.vscale[1] >> 2);
-    *oz = (f32)(z - (gRSPViewports[0].vp.vtrans[2] << 5)) / (gRSPViewports[0].vp.vscale[2] << 5);
+    y -= (gRSPViewports[0].vp.vtrans[1] >> 2);
+    *oy = (f32)(y) / (gRSPViewports[0].vp.vscale[1] >> 2);
+
+    z -= (gRSPViewports[0].vp.vtrans[2] << 5);
+    *oz = (f32)(z) / (gRSPViewports[0].vp.vscale[2] << 5);
 }
-#endif
 
 void func_8000302C(Gfx **gdl)
 {
@@ -710,36 +856,32 @@ void func_800034CC(f32 x, f32 y, f32 z)
     gCameras[gCameraSelector].srt.transl.x += x;
     gCameras[gCameraSelector].srt.transl.y += y;
     gCameras[gCameraSelector].srt.transl.z += z;
-    gCameras[gCameraSelector].unk_0x56 = func_8004454C(gCameras[gCameraSelector].srt.transl.x, gCameras[gCameraSelector].srt.transl.y, gCameras[gCameraSelector].srt.transl.z);
+    gCameras[gCameraSelector].unk_0x56 = func_8004454C(
+        gCameras[gCameraSelector].srt.transl.x, 
+        gCameras[gCameraSelector].srt.transl.y, 
+        gCameras[gCameraSelector].srt.transl.z);
 }
 
-// extremely close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8000356C.s")
-#else
-// Pushes the camera in a given direction on the XZ plane?
-void _func_8000356C(f32 a, f32 b)
+void func_8000356C(f32 a, f32 b, f32 c)
 {
     gCameras[gCameraSelector].srt.transl.x -= a * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
     gCameras[gCameraSelector].srt.transl.z -= a * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.x -= b * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.z += b * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].unk_0x56 = func_8004454C(gCameras[gCameraSelector].srt.transl.x, gCameras[gCameraSelector].srt.transl.y, gCameras[gCameraSelector].srt.transl.z);
+    gCameras[gCameraSelector].srt.transl.x -= c * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.z += c * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].unk_0x56 = func_8004454C(
+        gCameras[gCameraSelector].srt.transl.x, 
+        gCameras[gCameraSelector].srt.transl.y, 
+        gCameras[gCameraSelector].srt.transl.z);
 }
-#endif
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/get_vec3_to_camera_normalized.s")
-#else
-void _get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
+void get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz)
 {
     f32 nrm;
-    u32 cameraSel = gCameraSelector;
+    Camera *camera = &gCameras[gCameraSelector];
 
-    *ox = gCameras[cameraSel].srt.translation.x - x;
-    *oy = gCameras[cameraSel].srt.translation.y - y;
-    *oz = gCameras[cameraSel].srt.translation.z - z;
+    *ox = camera->srt.transl.x - x;
+    *oy = camera->srt.transl.y - y;
+    *oz = camera->srt.transl.z - z;
 
     nrm = sqrtf(*ox * *ox + *oy * *oy + *oz * *oz);
     if (nrm != 0.0f)
@@ -750,7 +892,6 @@ void _get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *
         *oz *= nrm;
     }
 }
-#endif
 
 // Unused
 void rotate_camera(s32 yaw, s32 pitch, s32 roll)
@@ -844,6 +985,8 @@ u32 _func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 }
 #endif
 
+// get_distance_to_camera?
+// https://github.com/DavidSM64/Diddy-Kong-Racing/blob/master/src/camera.c#L1564
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003A60.s")
 
 void func_80003AA0(f32 x, f32 y, f32 z, f32 distance, f32 param_5)
@@ -902,7 +1045,6 @@ void add_matrix_to_pool(MtxF *mf, s32 count)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/tick_cameras.s")
 #else
-extern s8 gMatrixIndex;
 extern f32 gFarPlane;
 f32 fexp(f32 x, u32 iterations);
 void _tick_cameras()
@@ -979,7 +1121,6 @@ extern Mtx *gRSPMatrices[2]; // TODO: how many matrices are there?
 extern f32 gWorldX;
 extern f32 gWorldZ;
 extern MtxF MtxF_800a6a60;
-extern MtxF gAuxMtx2;
 void _setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
 {
     Object *link = object;
@@ -1040,7 +1181,6 @@ void func_80004224(Gfx **gdl)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004258.s")
 #else
-extern s8 gMatrixIndex;
 void func_800042C8(Object *object, s32 matrixIdx);
 s32 _func_80004258(Object *object)
 {
@@ -1111,30 +1251,31 @@ void _func_800042C8(Object *object, int matrixIdx)
 #endif
 
 // regalloc
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/get_object_child_position.s")
 #else
-void _get_object_child_position(Object *object, float *ox, float *oy, float *oz)
+void get_object_child_position(Object *object, float *ox, float *oy, float *oz)
 {
     if (object->parent == NULL)
     {
-        *ox = object->srt.tx;
-        *oy = object->srt.ty;
-        *oz = object->srt.tz;
+        *ox = object->srt.transl.x;
+        *oy = object->srt.transl.y;
+        *oz = object->srt.transl.z;
     }
     else
     {
         vec3_transform(&gObjectMatrices[object->parent->matrixIdx],
-            object->srt.tx, object->srt.ty, object->srt.tz, ox, oy, oz);
+            object->srt.transl.x, object->srt.transl.y, object->srt.transl.z, 
+            ox, oy, oz);
     }
 }
 #endif
 
 // regalloc
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_object.s")
 #else
-void _transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
+void transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
     if (object != NULL)
     {
@@ -1279,8 +1420,10 @@ void _transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004A30.s")
+void func_80004A309(s16 param1) {
+    FB_BGCOLOR = param1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/fbSetBg.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004A4C.s")
+s16 func_80004A4C() {
+    return FB_BGCOLOR;
+}
