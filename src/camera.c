@@ -44,7 +44,14 @@ typedef struct
 
 typedef struct
 {
-/*0000*/    s32 unk_0x0[8];
+/*0000*/    s32 x1;
+/*0004*/    s32 y1;
+/*0008*/    s32 x2;
+/*000C*/    s32 y2;
+/*0010*/    s32 posX;
+/*0014*/    s32 posY;
+/*0018*/    s32 width;
+/*001C*/    s32 height;
 /*0020*/    s32 ulx;
 /*0024*/    s32 uly;
 /*0028*/    s32 lrx;
@@ -93,6 +100,7 @@ extern f32 D_800A6270;
 extern f32 D_800A6274;
 extern MtxF gAuxMtx2;
 extern s32 D_800A6700;
+extern MtxF D_8008C788;
 
 // .rodata
 extern f32 D_8009837C; // 10000.0
@@ -391,7 +399,67 @@ void set_camera_selector(s32 selector)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001B40.s")
+void func_80001B40() {
+    s32 width;
+    s32 height;
+    s32 port;
+    s32 yPos;
+    s32 xPos;
+    s32 i;
+    
+    gCameraGroupSelector = 1 - gCameraGroupSelector;
+
+    for (i = 0; i < 4; i++) {
+        if (gViewports[i].flags & 0x4) {
+            gViewports[i].flags &= ~1;
+        } else if (gViewports[i].flags & 0x2) {
+            gViewports[i].flags |= 1;
+        }
+
+        gViewports[i].flags &= ~(2 | 4);
+
+        if (gViewports[i].flags & 1) {
+            if (!(gViewports[i].flags & 8)) {
+                xPos = (((gViewports[i].x2 - gViewports[i].x1) + 1) << 1) + (gViewports[i].x1 * 4);
+            } else {
+                xPos = gViewports[i].posX;
+                xPos *= 4;
+            }
+
+            if (!(gViewports[i].flags & 16)) {
+                yPos = (((gViewports[i].y2 - gViewports[i].y1) + 1) << 1) + (gViewports[i].y1 * 4);
+            } else {
+                yPos = gViewports[i].posY;
+                yPos *= 4;
+            }
+
+            if (!(gViewports[i].flags & 32)) {
+                width = gViewports[i].x2 - gViewports[i].x1;
+                width += 1;
+                width *= 2;
+            } else {
+                width = gViewports[i].width;
+                width *= 2;
+            }
+
+            if (!(gViewports[i].flags & 64)) {
+                height = gViewports[i].y2 - gViewports[i].y1;
+                height += 1;
+                height *= 2;
+            } else {
+                height = gViewports[i].height;
+                height *= 2;
+            }
+
+            port = i + (gCameraGroupSelector * 5) + 10;
+
+            gRSPViewports[port].vp.vtrans[0] = xPos;
+            gRSPViewports[port].vp.vtrans[1] = yPos;
+            gRSPViewports[port].vp.vscale[0] = width;
+            gRSPViewports[port].vp.vscale[1] = height;
+        }
+    }
+}
 
 void func_80001CE0(s32 selector, u32 param_2)
 {
@@ -418,9 +486,95 @@ u32 func_80001DD4(s32 selector)
     return gViewports[selector].flags & 0x1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001E04.s")
+void func_80001E04(s32 viewPortIndex, s32 x1, s32 y1, s32 x2, s32 y2) {
+    s32 resolution;
+    s32 width;
+    s32 height;
+    s32 temp;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80001F70.s")
+    resolution = get_some_resolution_encoded();
+    height = RESOLUTION_HEIGHT(resolution) & 0xFFFF;
+    width = RESOLUTION_WIDTH(resolution);
+
+    if (x2 < x1) {
+        temp = x1;
+        x1 = x2;
+        x2 = temp;
+    }
+
+    if (y2 < y1) {
+        temp = y1;
+        y1 = y2;
+        y2 = temp;
+    }
+
+    if (x1 >= width || x2 < 0 || y1 >= height || y2 < 0) {
+        gViewports[viewPortIndex].ulx = 0;
+        gViewports[viewPortIndex].uly = 0;
+        gViewports[viewPortIndex].lrx = 0;
+        gViewports[viewPortIndex].lry = 0;
+    } else {
+        if (x1 < 0) {
+            gViewports[viewPortIndex].ulx = 0;
+        } else {
+            gViewports[viewPortIndex].ulx = x1;
+        }
+
+        if (y1 < 0) {
+            gViewports[viewPortIndex].uly = 0;
+        } else {
+            gViewports[viewPortIndex].uly = y1;
+        }
+
+        if (x2 >= width) {
+            gViewports[viewPortIndex].lrx = width - 1;
+        } else {
+            gViewports[viewPortIndex].lrx = x2;
+        }
+
+        if (y2 >= height) {
+            gViewports[viewPortIndex].lry = height - 1;
+        } else {
+            gViewports[viewPortIndex].lry = y2;
+        }
+    }
+
+    gViewports[viewPortIndex].x1 = x1;
+    gViewports[viewPortIndex].x2 = x2;
+    gViewports[viewPortIndex].y1 = y1;
+    gViewports[viewPortIndex].y2 = y2;
+}
+
+void func_80001F70(s32 viewPortIndex, s32 posX, s32 posY, s32 width, s32 height) {
+    if (posX != 0x8000) {
+        gViewports[viewPortIndex].posX = posX;
+        gViewports[viewPortIndex].flags |= 8;
+    } else {
+        gViewports[viewPortIndex].flags &= ~8;
+    }
+
+    if (posY != 0x8000) {
+        //!@bug Viewport Y writes to the X value. Luckily, this function is unused.
+        gViewports[viewPortIndex].posX = posY;
+        gViewports[viewPortIndex].flags |= 16;
+    } else {
+        gViewports[viewPortIndex].flags &= ~16;
+    }
+
+    if (width != 0x8000) {
+        gViewports[viewPortIndex].width = width;
+        gViewports[viewPortIndex].flags |= 32;
+    } else {
+        gViewports[viewPortIndex].flags &= ~32;
+    }
+
+    if (height != 0x8000) {
+        gViewports[viewPortIndex].height = height;
+        gViewports[viewPortIndex].flags |= 64;
+    } else {
+        gViewports[viewPortIndex].flags &= ~64;
+    }
+}
 
 u32 func_8000206C(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 {
@@ -436,7 +590,12 @@ u32 func_8000206C(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800020E4.s")
+void func_800020E4(s32 selector, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
+    *x1 = gViewports[selector].x1;
+    *y1 = gViewports[selector].y1;
+    *x2 = gViewports[selector].x2;
+    *y2 = gViewports[selector].y2;
+}
 
 void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 {
@@ -450,17 +609,26 @@ void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
     *lry = height - SHORT_8008c524 - 6;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
-#else
+#ifdef NON_EQUIVALENT
 void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY);
-void _func_800021A0(Gfx **gdl, Mtx **rspMtxs)
+void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 {
-    s32 cameraSelPre = gCameraSelector;
-    u32 wh = get_some_resolution_encoded();
-    s32 cameraSelPost = gCameraSelector;
-    u32 width = wh & 0xffff;
-    u32 height = wh >> 16;
+    s32 cameraSelPre;
+    u32 wh;
+    s32 cameraSelPost;
+    u32 width;
+    u32 height;
+    s32 scaleX;
+    s32 scaleY;
+    s32 transX;
+    s32 transY;
+    u32 mode;
+
+    cameraSelPre = gCameraSelector;
+    wh = get_some_resolution_encoded();
+    cameraSelPost = gCameraSelector;
+    width = wh & 0xffff;
+    height = wh >> 16;
 
     if (gViewports[cameraSelPre].flags & 0x1)
     {
@@ -471,78 +639,76 @@ void _func_800021A0(Gfx **gdl, Mtx **rspMtxs)
             gCameraSelector = cameraSelPost;
             setup_rsp_camera_matrices(gdl, rspMtxs);
         }
+        gCameraSelector = cameraSelPost;
+        return;
     }
-    else
+
+    mode = UINT_800a66f8;
+    if (mode == 2) {
+        mode = 3;
+    }
+
+    scaleY = height / 2;
+    if (osTvType == OS_TV_PAL) {
+        scaleY = 145;
+    }
+
+    switch (mode)
     {
-        s32 scaleX;
-        s32 scaleY;
-        s32 transX;
-        s32 transY;
-        u32 mode = UINT_800a66f8;
-        if (mode == 2) {
-            mode = 3;
-        }
-
-        scaleY = height / 2;
+    case 0:
+        transX = scaleX;
+        transY = scaleY;
         if (osTvType == OS_TV_PAL) {
-            scaleY = 145;
+            transY = scaleY - 18;
         }
-
-        switch (mode)
-        {
-        case 0:
+        break;
+    case 1:
+        if (gCameraSelector == 0) {
+            transY = height / 4;
             transX = scaleX;
-            transY = scaleY;
             if (osTvType == OS_TV_PAL) {
-                transY = scaleY - 18;
+                transY -= 12;
             }
-            break;
-        case 1:
-            if (gCameraSelector == 0) {
-                transY = height / 4;
-                transX = scaleX;
-                if (osTvType == OS_TV_PAL) {
-                    transY -= 12;
-                }
-            } else {
-                transY = height / 2 + height / 4;
-                transX = scaleX;
-            }
-            break;
-        case 2:
-            transX = scaleX + width / 4;
-            transY = scaleY;
-            if (gCameraSelector == 0) {
-                transX = width / 4;
-            }
-            break;
-        case 3:
-            scaleX = width / 4;
+        } else {
+            transY = height / 2 + height / 4;
             transX = scaleX;
-            scaleY = scaleY / 2;
-            transY = height / 2;
-            if (osTvType == OS_TV_PAL) {
-                transY = scaleY - 6;
-                if (gCameraSelector < 2) {
-                    transY = scaleY - 20;
-                }
-            }
-            break;
         }
-
+        break;
+    case 2:
+        transX = scaleX + width / 4;
+        transY = scaleY;
+        if (gCameraSelector == 0) {
+            transX = width / 4;
+        }
+        break;
+    case 3:
+        scaleX = width / 4;
+        transX = scaleX;
+        scaleY = scaleY / 2;
+        transY = height / 2;
         if (osTvType == OS_TV_PAL) {
-            transX -= 4;
+            transY = scaleY - 6;
+            if (gCameraSelector < 2) {
+                transY = scaleY - 20;
+            }
         }
-
-        func_80002C0C(gdl, scaleX, scaleY, transX, transY);
-        if (rspMtxs != NULL) {
-            setup_rsp_camera_matrices(gdl, rspMtxs);
-        }
-        func_80002490(gdl);
+        break;
     }
+
+    if (osTvType == OS_TV_PAL) {
+        transX -= 4;
+    }
+
+    func_80002C0C(gdl, scaleX, scaleY, transX, transY);
+    if (rspMtxs != NULL) {
+        setup_rsp_camera_matrices(gdl, rspMtxs);
+    }
+    func_80002490(gdl);
 
     gCameraSelector = cameraSelPre;
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
 #endif
 
 #if 1
@@ -713,7 +879,9 @@ void _setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029C4.s")
+void func_800029C4(f32 param1) {
+    D_8008C788.m[1][1] = param1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029D4.s")
 
