@@ -1,4 +1,5 @@
 #include "common.h"
+#include "libc/stdarg.h"
 
 char *strcpy(char *dest, char *src) {
     char *start = dest;
@@ -124,7 +125,16 @@ char *func_8005F60C(u64 param1, char *param3, u32 param4, s32 bUppercase) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F6CC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_8005F6DC.s")
+void func_8005F6DC(char *str, char *fmt, ...) {
+    va_list ap;
+    int ret;
+
+    va_start(ap, fmt);
+    
+    func_printing_null_nil(str, fmt, ap);
+
+    va_end(ap);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5FFE0/func_printing_null_nil.s")
 

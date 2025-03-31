@@ -1,9 +1,12 @@
 #include <PR/os_internal.h>
 #include "common.h"
+#include "sys/crash.h"
+#include "libc/stdarg.h"
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/update_pi_manager_array.s")
-#else
+void get_err_string(s32 x, s32 y, u32 param3, ErrString *param4);
+void crash_copy_control_inputs();
+void crash_print_line(s32 x, s32 y, char *fmt, ...);
+
 /**
  * Sets `gPiManagerArray[index] = value`, unless index is out of range
  * in which case this function does nothing.
@@ -13,11 +16,7 @@ void update_pi_manager_array(s32 index, s32 value) {
         gPiManagerArray[index] = value;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/start_pi_manager_thread.s")
-#else
 void start_pi_manager_thread() {
     int i;
 
@@ -36,11 +35,7 @@ void start_pi_manager_thread() {
         gPiManagerArray[i] = -1;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/pi_manager_entry.s")
-#else
 #define PI_OS_EVENT_FAULT 8
 #define PI_OS_EVENT_CPU_BREAK 2
 
@@ -87,11 +82,7 @@ void pi_manager_entry(void *arg) {
         }
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/stop_active_app_threads.s")
-#else
 void stop_active_app_threads() {
     OSThread *thread;
 
@@ -106,11 +97,7 @@ void stop_active_app_threads() {
         thread = thread->tlnext;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_controller_getter.s")
-#else
 void crash_controller_getter() {
     // Find first faulted/broke active thread
     OSThread *thread = __osGetActiveQueue();
@@ -140,13 +127,50 @@ void crash_controller_getter() {
     // Print some crash info
     some_crash_print(&thread, 1, 0);
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/some_crash_print.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/print_stack_trace.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/other_crash_print.s")
+extern char D_8009B5D4[]; // "FPU INFO"
+extern char D_8009B5E0[]; // "Fault in thread %d"
+extern char D_8009B5F4[]; // "fpcsr : %08x"
+extern char D_8009B604[]; // "FPU Register dump diabled"
+extern char D_8009B620[]; // "press button for CPU registers"
+
+void other_crash_print(OSThread **threads, s32 count, s32 threadIdx) {
+    OSThread *thread;
+    __OSThreadContext *context;
+
+    thread = threads[threadIdx];
+    context = &thread->context;
+
+    clear_framebuffer_current();
+
+    D_800937F0 = 6;
+    crash_print_line(244, 214, D_8009B5D4);
+
+    D_800937F0 = 0;
+    crash_print_line(16, 24, D_8009B5E0, thread->id);
+
+    D_800937F0 = 3;
+    crash_print_line(16, 34, D_8009B5F4, context->fpcsr);
+    get_err_string(16, 40, context->fpcsr, &errStringArray_cause[59]);
+
+    D_800937F0 = 2;
+    crash_print_line(16, 50, D_8009B604);
+
+    D_800937F0 = 0;
+    crash_print_line(80, 220, D_8009B620);
+
+    while (1) {
+        do {
+            crash_copy_control_inputs();
+        } while (gCrashButtons[0] == 0);
+
+        some_crash_print(threads, count, threadIdx);
+    }
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_copy_control_inputs.s")
@@ -172,9 +196,6 @@ void _crash_copy_control_inputs() {
 }
 #endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/check_video_mode_crash_and_clear_framebuffer.s")
-#else
 void check_video_mode_crash_and_clear_framebuffer() {
     int i;
 
@@ -192,23 +213,30 @@ void check_video_mode_crash_and_clear_framebuffer() {
         clear_framebuffer_current();
     }
 }
-#endif
 
+void func_80062D38(s32 col, s32 row, char *param3);
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062D38.s")
 #else
 // Super super close, pretty sure is functionally equiv
-void _func_80062D38(s32 col, s32 row, u8 *param3) {
+void func_80062D38(s32 col, s32 row, char *param3) {
     int k;
     u16 *fbTemp;
-    u32 res = get_some_resolution_encoded();
-    s32 resWidth = res & 0xffff;
-    int i = 4;
-    u16 *fb = &gFramebufferCurrent[(row * resWidth) + col];
-    u16 *someArray = &D_800933C4[D_800937F0 << 2];
-    u8 temp;
+    u32 res;
+    s32 resWidth;
+    int i;
+    u16 *fb;
+    u16 *someArray;
+    char temp;
     u16 *pixelPtr;
+    char c;
 
+    res = get_some_resolution_encoded();
+    resWidth = res & 0xffff;
+    fb = &gFramebufferCurrent[(row * resWidth) + col];
+    someArray = &D_800933C4[D_800937F0 << 2];
+
+    i = 4;
     do {
         k = 1;
         //v0 = k;
@@ -218,19 +246,19 @@ void _func_80062D38(s32 col, s32 row, u8 *param3) {
         }
 
         while (k--) {
-            temp = *param3;
-
             fbTemp = fb;
-            fb = fb + resWidth;
-
+            temp = *param3;
             while (temp != 0) {
-                pixelPtr = &someArray[temp & 3];
-                temp >>= 2;
+                //pixelPtr = &someArray[temp & 3];
+                //temp >>= 2;
 
-                fbTemp[0] = *pixelPtr;
-                fbTemp[1] = *pixelPtr;
-                fbTemp = fbTemp + 2;
+                *fbTemp++ = someArray[temp & 3];
+                *fbTemp++ = someArray[temp & 3];
+
+                temp >>= 2;
             }
+            
+            fb += resWidth;
 
             //v0 = k;
         }
@@ -241,15 +269,94 @@ void _func_80062D38(s32 col, s32 row, u8 *param3) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062E38.s")
+extern char D_80093200[]; // TODO: is this really the start of the array?
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_print_line.s")
+void func_80062E38(s32 x, s32 y, char *str) {
+    char c;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/get_err_string.s")
+    while (*str != '\0') {
+        c = *str++;
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/clear_framebuffer_current.s")
-#else
+        if (c == '\n') {
+            y += 6;
+            x = 32;
+        } else if (c == '\t') {
+            x = (x - (x & 0xf)) + 16;
+        } else if (c <= ' ') {
+            x += 4;
+        } else if (c > ' ' && c <= 'z') {
+            func_80062D38(x, y, &D_80093200[c * 5 - 165]);
+            x += 8;
+        }
+    }
+
+    osWritebackDCacheAll();
+}
+
+void crash_print_line(s32 x, s32 y, char *fmt, ...) {
+    s32 var;
+    va_list ap;
+    char str[252]; // exact length could vary between 249-252
+
+    va_start(ap, fmt);
+    
+    func_printing_null_nil(str, fmt, ap);
+
+    va_end(ap);
+
+    if (gSomeCrashVideoFlag) {
+        if (gSomeCrashVideoFlag == 1) {
+            y -= 8;
+        } else {
+            y -= 104;
+        }
+
+        if (y < 0 || y > 115) {
+            return;
+        }
+
+        y *= 2;
+    }
+
+    func_80062E38(x, y, str);
+}
+
+extern char D_8009B640[]; // "("
+extern char D_8009B644[]; // ","
+extern char D_8009B648[]; // "%s"
+extern char D_8009B64C[]; // ")"
+
+void get_err_string(s32 x, s32 y, u32 param3, ErrString *param4) {
+    s32 bvar;
+    char str[260]; // length is anywhere between 253-260
+    s32 len;
+
+    bvar = 1;
+
+    func_8005F6DC(str, D_8009B640);
+    len = strlen(str);
+
+    while (param4->code1 != 0) {
+        if ((param4->code1 & param3) == param4->code2) {
+            if (bvar) {
+                bvar = 0;
+            } else {
+                func_8005F6DC(str + len, D_8009B644);
+            }
+
+            len = strlen(str);
+            func_8005F6DC(str + len, D_8009B648, param4->text);
+            len = strlen(str);
+        }
+
+        param4++;
+    }
+
+    func_8005F6DC(str + len, D_8009B64C);
+    len = strlen(str);
+    crash_print_line(x, y, str);
+}
+
 /**
  * Sets all values of gFramebufferCurrent to 0.
  */
@@ -263,11 +370,7 @@ void clear_framebuffer_current() {
         ++framebufferPtr;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/write_c_file_label_pointers.s")
-#else
 void write_c_file_label_pointers(char *cFileLabel, s32 a1) {
     // If gCFileLabelFlag is zero, then zero out gCFileLabels and gSomeCFileInts
     if (gCFileLabelFlag == 0) {
@@ -289,7 +392,6 @@ void write_c_file_label_pointers(char *cFileLabel, s32 a1) {
     gCFileLabels[gCFileLabelIndex] = cFileLabel;
     gSomeCFileInts[gCFileLabelIndex] = a1;
 }
-#endif
 
 // diRcpTrace?
 #if 1

@@ -6,11 +6,11 @@
 #include "PR/ultratypes.h"
 
 // used for crash screens
-struct ErrString {
+typedef struct ErrString {
 	u32 code1;
 	u32 code2;
 	char *text;
-};
+} ErrString;
 
 // Length of gCrashMesgQueueBuffer
 #define CRASH_MESG_QUEUE_BUFFER_LENGTH 1

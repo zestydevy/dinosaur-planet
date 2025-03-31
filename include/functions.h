@@ -3,6 +3,7 @@
 
 #include "game/objects/object.h"
 #include "sys/scheduler.h"
+#include "libc/stdarg.h"
 
 void bootproc(void);
 void idle(void * arg);
@@ -85,5 +86,8 @@ void texture_destroy(Texture *texture);
 void func_8003273C(Object *obj);
 s32 func_80048024();
 void func_8004A67C();
+
+int func_printing_null_nil ( char * str, const char * format, va_list args);
+void func_8005F6DC(char *str, char *fmt, ...);
 
 #endif //_FUNCTIONS_H
