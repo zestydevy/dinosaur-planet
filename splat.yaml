@@ -52,7 +52,7 @@ segments:
     - [0x11EF0, c, segment_11EF0]
     - [0x11F70, c, segment_11F70]
     - [0x12320, c, segment_12320]
-    - [0x13030, c, segment_13030]
+    - [0x13030, c, mpeg_fs]
     - [0x130E0, c, queue]
     - [0x13D70, c, main]
     - [0x15A70, asm, interrupt_util]

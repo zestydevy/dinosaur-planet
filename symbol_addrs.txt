@@ -1019,6 +1019,8 @@ init_audio = 0x80011720; // type:func
 init_global_map = 0x8004676c; // type:func
 init_maps = 0x80041e84; // type:func
 init_bittable = 0x80014614; // type:func
+mpeg_fs_init = 0x80012430; // type:func
+mpeg_fs_play = 0x80012464; // type:func
 
 gObjDeferredFreeList = 0x800B1910; // size:0x4
 gObjDeferredFreeListCount = 0x800B1914;
@@ -1173,6 +1175,7 @@ draw_object = 0x80035000; // type:func
 gCurrTex0 = 0x800b49c4; // size:0x4
 gCurrTex1 = 0x800b49c8; // size:0x4
 
+file_get_romaddr = 0x800372c8; // type:func
 get_file_size = 0x80037310; // type:func
 read_alloc_file = 0x80037140; // type:func
 read_file = 0x800371dc; // type:func

@@ -67,7 +67,7 @@ struct auxbus44 *func_8007A8B8(s16 bus);
 void func_8007A974(struct fx *fx, s16 arg1, void *param);
 void func_800794B0(N_ALCSPlayer *seqp);
 
-void func_80012464(u8 arg0);
+void mpeg_fs_play(u8 arg0);
 
 void func_80073518(N_ALCSPlayer *seqp, u8 channel);
 void func_8007346C(N_ALCSPlayer *seqp, u8 channel);
@@ -1010,7 +1010,7 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event) {
 			}
 			break;
 		case (AL_MIDI_FX_CTRL_6):
-            func_80012464(byte2); //snd_start_mp3_by_filenum
+			mpeg_fs_play(byte2); //snd_start_mp3_by_filenum
 			break;
 		case (0x20):
 			seqp->chanState[chan].unk36 = byte2;

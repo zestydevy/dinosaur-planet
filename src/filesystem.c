@@ -94,7 +94,7 @@ s32 read_file_region(u32 id, void *dst, u32 offset, s32 size)
   return size;
 }
 
-s32 func_800372C8(u32 id, s32 offset)
+s32 file_get_romaddr(u32 id, s32 offset)
 {
     u32 * fstEntry;
     s32 offs;
