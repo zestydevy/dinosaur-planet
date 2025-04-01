@@ -90,4 +90,6 @@ void func_8004A67C();
 int func_printing_null_nil ( char * str, const char * format, va_list args);
 void func_8005F6DC(char *str, char *fmt, ...);
 
+void func_80061F30(s32);
+
 #endif //_FUNCTIONS_H
