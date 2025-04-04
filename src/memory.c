@@ -231,7 +231,7 @@ u32 align_2(u32 a0) {
 
 s32 dbg_heap_print(s32 arg0)
 {
-    dummied_print_func(
+    diPrintf(
         &D_800991E0, 
         memMonVal0 / 0x400,
         gHeapList[0].memAllocated / 0x400, 

@@ -16,6 +16,7 @@ D_80093000 = 0x80093000;
 D_80093A6E = 0x80093A6E;
 D_800917D0 = 0x800917D0;
 D_80093200 = 0x80093200;
+D_800BEAE2 = 0x800BEAE2;
 gControllerThreadStack = 0x800a8180;
 gPiManagerThreadStack = 0x800beb10;
 viThreadStack = 0x800bd0a8;

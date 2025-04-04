@@ -26,8 +26,6 @@ void dl_segment(Gfx **gdl, u32 segment, void *base);
 
 void stop_alSyn_thread();
 
-void func_80060B94(Gfx**);
-
 OSSched *get_ossched(void);
 
 void transform_point_by_object(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz, Object *obj);
@@ -87,9 +85,9 @@ void func_8003273C(Object *obj);
 s32 func_80048024();
 void func_8004A67C();
 
-int func_printing_null_nil ( char * str, const char * format, va_list args);
-void func_8005F6DC(char *str, char *fmt, ...);
-
 void func_80061F30(s32);
+
+void dl_set_all_dirty();
+void func_8003DB5C();
 
 #endif //_FUNCTIONS_H

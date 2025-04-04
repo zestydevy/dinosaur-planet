@@ -83,7 +83,7 @@ void game_init(void)
     init_models();
     init_dll_system();
     init_objects();
-    func_80060A80();
+    diPrintfInit();
     func_80053300();
     func_8004D470();
     func_8005C780();
@@ -160,7 +160,6 @@ void game_init(void)
 void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4);
 void dl_next_debug_info_set();                         /* extern */
 void dl_segment(Gfx **gdl, u32 segment, void *base);
-void dl_set_all_dirty();                               /* extern */
 void func_80001A3C();                                  /* extern */
 void func_80007178();                                  /* extern */
 void func_800121DC();                                  /* extern */
@@ -170,7 +169,6 @@ s32 schedule_gfx_task(Gfx*, Gfx*, s32);                     /* extern */
 void func_80037924();                                  /* extern */
 void func_80037A14(Gfx**, s32**, s32);                   /* extern */
 void func_80037EC8(Gfx**);                             /* extern */
-void func_8003DB5C();                                  /* extern */
 void func_8003E9F0(Gfx**, u8);                         /* extern */
 s32 func_80041D5C();                                /* extern */
 s32 func_80041D74();                                /* extern */
@@ -234,7 +232,7 @@ void game_tick(void)
     gDLL_subtitles->exports->func[6].withOneArg(tmp_s0);
     tick_cameras();
     func_800129E4();
-    func_80060B94(tmp_s0); 
+    diPrintfAll(tmp_s0); 
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);

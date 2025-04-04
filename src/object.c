@@ -503,6 +503,7 @@ Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 pa
     return obj;
 }
 
+// actual name: objSetupObjectActual ?
 Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *parent, s32 param6) {
     ObjDef *def;
     s32 modelCount;

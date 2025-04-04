@@ -15,9 +15,6 @@ u64 gRetraceCounter64 = 0;
 
 OSTime gLastGfxYield;
 
-void func_80060EB8(u8, u8, u8, u8);
-void func_80060FD0(u32, u32);
-
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount) {
     // Initialize scheduler structure
     s->curRSPTask       = NULL;
@@ -470,38 +467,38 @@ void __scHandleRetrace(OSSched *sc) {
         dl_segment((Gfx**)&taskDataPtr, 2, D_800BCCB4);
         dl_segment((Gfx**)&taskDataPtr, 4, gFramebufferNext - 0x280);
 
-        func_80060EB8(0, 0, 0, 0x80);
+        diPrintfSetBG(0, 0, 0, 128);
 
         if (displayListPtr1 != NULL) {
-            func_80060FD0(0x1e, 0x1e);
-            dummied_print_func("SP CRASHED, gfx=%x\n", displayListPtr1);
+            diPrintfSetXY(30, 30);
+            diPrintf("SP CRASHED, gfx=%x\n", displayListPtr1);
 
             if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
                 if (sp_dldi_file != NULL) {
-                    func_80060FD0(0x1e, 0x28);
-                    dummied_print_func("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                    diPrintfSetXY(30, 40);
+                    diPrintf("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
                 }
 
                 if (sp_dldi_file_2 != NULL) {
-                    func_80060FD0(0x1e, 0x32);
-                    dummied_print_func("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                    diPrintfSetXY(30, 50);
+                    diPrintf("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
                 }
             }
         }
 
         if (displayListPtr2 != NULL) {
-            func_80060FD0(0x1e, 0x46);
-            dummied_print_func("DP CRASHED, gfx=%x\n", displayListPtr2);
+            diPrintfSetXY(30, 70);
+            diPrintf("DP CRASHED, gfx=%x\n", displayListPtr2);
 
             if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
                 if (sp_dldi_file != NULL) {
-                    func_80060FD0(0x1e, 0x50);
-                    dummied_print_func("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                    diPrintfSetXY(30, 80);
+                    diPrintf("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
                 }
 
                 if (sp_dldi_file_2 != NULL) {
-                    func_80060FD0(0x1e, 0x5a);
-                    dummied_print_func("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                    diPrintfSetXY(30, 90);
+                    diPrintf("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
                 }
             }
         }
@@ -509,13 +506,13 @@ void __scHandleRetrace(OSSched *sc) {
         displayListPtr1 = NULL;
         displayListPtr2 = NULL;
 
-        func_80060FD0(0x1e, 0x6e);
-        dummied_print_func("CODE: Version %s  %s  %s\n", D_8008C8F0, D_8008C8F4, D_8008C8F8);
+        diPrintfSetXY(30, 110);
+        diPrintf("CODE: Version %s  %s  %s\n", D_8008C8F0, D_8008C8F4, D_8008C8F8);
 
-        func_80060FD0(0x1e, 0x78);
-        dummied_print_func("DB:   %s\n", &D_8008C8FC);
+        diPrintfSetXY(30, 120);
+        diPrintf("DB:   %s\n", &D_8008C8FC);
 
-        func_80060B94((Gfx**)&taskDataPtr);
+        diPrintfAll((Gfx**)&taskDataPtr);
 
         __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | 
             SP_CLR_SIG0 | SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 |

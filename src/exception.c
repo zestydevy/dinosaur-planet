@@ -300,7 +300,7 @@ void crash_print_line(s32 x, s32 y, char *fmt, ...) {
 
     va_start(ap, fmt);
     
-    func_printing_null_nil(str, fmt, ap);
+    vsprintf(str, fmt, ap);
 
     va_end(ap);
 
@@ -333,7 +333,7 @@ void get_err_string(s32 x, s32 y, u32 param3, ErrString *param4) {
 
     bvar = 1;
 
-    func_8005F6DC(str, D_8009B640);
+    sprintf(str, D_8009B640);
     len = strlen(str);
 
     while (param4->code1 != 0) {
@@ -341,18 +341,18 @@ void get_err_string(s32 x, s32 y, u32 param3, ErrString *param4) {
             if (bvar) {
                 bvar = 0;
             } else {
-                func_8005F6DC(str + len, D_8009B644);
+                sprintf(str + len, D_8009B644);
             }
 
             len = strlen(str);
-            func_8005F6DC(str + len, D_8009B648, param4->text);
+            sprintf(str + len, D_8009B648, param4->text);
             len = strlen(str);
         }
 
         param4++;
     }
 
-    func_8005F6DC(str + len, D_8009B64C);
+    sprintf(str + len, D_8009B64C);
     len = strlen(str);
     crash_print_line(x, y, str);
 }

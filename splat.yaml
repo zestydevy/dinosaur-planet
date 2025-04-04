@@ -90,7 +90,7 @@ segments:
     - [0x5F590, c, libultra/os/createthread]
     - [0x5F660, c, segment_5F660]
     - [0x5FFB0, c, segment_5FFB0]
-    - [0x5FFE0, c, segment_5FFE0]
+    - [0x5FFE0, c, print]
     - [0x62B30, c, segment_62B30]
     - [0x62BA0, c, exception]
     - [0x63EA0, asm, get_stack_]
@@ -302,7 +302,7 @@ segments:
     - [0x93BF0, .data, video]
     - [0x93C10, databin] # part of video
     - [0x93CB0, .data, libultra/io/vimgr]
-    - [0x93CE0, data, segment_5FFE0]
+    - [0x93CE0, .data, print]
     - [0x93DF0, data, segment_62B30]
     - [0x93E00, data, exception]
     - [0x94410, data, segment_63EB0]
@@ -359,7 +359,10 @@ segments:
     - [0x9B8C0, .rodata, video]
     - [0x9B8E0, rodatabin]
     - [0x9B980, .rodata, libultra/gu/perspective]
-    - [0x9B990, rodatabin, exception_rodata] # might be a split at 0x8009b670
+    - [0x9B990, rodatabin]
+    - [0x9B9F0, .rodata, print]
+    - [0x9BC70, rodatabin, segment_62B30_rodata]
+    - [0x9BC90, rodatabin, exception_rodata]  # might be a split at 0x8009b670
     - [0x9C2A0, rodata, developer_names]
     - [0x9C320, .rodata, di_comm]
     - [0x9C420, .rodata, libnaudio/n_synthesizer]
