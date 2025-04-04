@@ -89,7 +89,7 @@ segments:
     - [0x5F3D0, c, libultra/gu/ortho]
     - [0x5F590, c, libultra/os/createthread]
     - [0x5F660, c, segment_5F660]
-    - [0x5FFB0, c, segment_5FFB0]
+    - [0x5FFB0, c, assert]
     - [0x5FFE0, c, print]
     - [0x62B30, c, debug]
     - [0x62BA0, c, exception]
@@ -359,7 +359,7 @@ segments:
     - [0x9B8C0, .rodata, video]
     - [0x9B8E0, rodatabin]
     - [0x9B980, .rodata, libultra/gu/perspective]
-    - [0x9B990, rodatabin]
+    - [0x9B990, .rodata, assert]
     - [0x9B9F0, .rodata, print]
     - [0x9BC70, .rodata, debug]
     - [0x9BC90, rodatabin, exception_rodata]  # might be a split at 0x8009b670
