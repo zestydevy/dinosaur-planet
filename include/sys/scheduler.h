@@ -1,7 +1,9 @@
 #ifndef _SYS_SCHEDULER_H
 #define _SYS_SCHEDULER_H
 
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/sched.h"
+#include "PR/os.h"
 
 #define VIDEO_MSG       666
 #define RSP_DONE_MSG    667

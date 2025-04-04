@@ -1,7 +1,9 @@
 #ifndef _SYS_GFX_MAP_H
 #define _SYS_GFX_MAP_H
 
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "sys/gfx/texture.h"
 
 #define RGBA8(r, g, b, a) (((u32)(r) << 24) | ((u32)(g) << 16) | ((u32)(b) << 8) | (u32)(a))
 
