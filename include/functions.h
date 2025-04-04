@@ -85,8 +85,6 @@ void func_8003273C(Object *obj);
 s32 func_80048024();
 void func_8004A67C();
 
-void func_80061F30(s32);
-
 void dl_set_all_dirty();
 void func_8003DB5C();
 

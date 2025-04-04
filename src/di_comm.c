@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/debug.h"
 
 static s32 D_80093890[6] = {0, -1, -1, -1, -1, -1};
 static u8 D_800938A8 = 0;
@@ -94,7 +95,7 @@ void diCommDebugTick() {
         case 4:
             break;
         case 5:
-            func_80061F30(0);
+            debug_toggle(0);
             break;
     }
 
