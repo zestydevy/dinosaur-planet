@@ -21,6 +21,7 @@ SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
 opt_flags_pattern = re.compile(r"@DECOMP_OPT_FLAGS\s*=\s*(.*)\s*")
 ido_version_pattern = re.compile(r"@DECOMP_IDO_VERSION\s*=\s*(.*)\s*")
+mips_iset_pattern = re.compile(r"@DECOMP_MIPS_ISET\s*=\s*(.*)\s*")
 
 IDO_VAR_MAP = {
     "5.3": "$IDO_53",
@@ -28,9 +29,10 @@ IDO_VAR_MAP = {
 }
 
 class BuildFileConfig:
-    def __init__(self, opt: "str | None", ido_version: "str | None"):
+    def __init__(self, opt: "str | None", ido_version: "str | None", mips_iset: "str | None"):
         self.opt = opt
         self.ido_version = ido_version
+        self.mips_iset = mips_iset
 
 class BuildFileType(Enum):
     C = 1
@@ -137,12 +139,12 @@ class BuildNinjaWriter:
         ]))
 
         self.writer.variable("OPT_FLAGS", self.config.default_opt_flags)
+        self.writer.variable("MIPS_ISET", "-mips2")
         
         self.writer.variable("CC_FLAGS", " ".join([
             "$CC_DEFINES",
             "$INCLUDES",
             "-G 0",
-            "-mips2",
             "-non_shared",
             "-Xfullwarn",
             "-Xcpluscomm",
@@ -152,7 +154,6 @@ class BuildNinjaWriter:
         self.writer.variable("CC_FLAGS_DLL", " ".join([
             "$CC_DEFINES",
             "$INCLUDES",
-            "-mips2",
             "-KPIC",
             "-Xfullwarn",
             "-Xcpluscomm",
@@ -218,15 +219,15 @@ class BuildNinjaWriter:
         # Write rules
         self.writer.comment("Rules")
         self.writer.rule("cc", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS -- -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_noasmproc", 
-            "$HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $CC -c $CC_FLAGS $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS -o $out $in", 
+            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
@@ -259,11 +260,20 @@ class BuildNinjaWriter:
             # Determine command
             command: str
             if file.type == BuildFileType.C:
-                if file.config != None and file.config.opt != None and "-O3" in file.config.opt:
-                    # Can't run asm processor with -O3 compilation
-                    command = "cc_noasmproc"
-                else:
+                with_asmproc = True
+                if file.config != None:
+                    if file.config.opt != None and "-O3" in file.config.opt:
+                        # Can't run asm processor with -O3 compilation
+                        with_asmproc = False
+                    elif file.config.opt != None and file.config.mips_iset != None and \
+                         "-O0" in file.config.opt and "-mips1" in file.config.mips_iset:
+                        # Can't run asm processor with -O0 -mips1
+                        with_asmproc = False
+
+                if with_asmproc:
                     command = "cc"
+                else:
+                    command = "cc_noasmproc"
             elif file.type == BuildFileType.ASM:
                 command = "as"
             elif file.type == BuildFileType.BIN:
@@ -427,6 +437,8 @@ class BuildNinjaWriter:
                 variables["OPT_FLAGS"] = file_config.opt
             if file_config.ido_version != None:
                 variables["CC"] = IDO_VAR_MAP[file_config.ido_version]
+            if file_config.mips_iset != None:
+                variables["MIPS_ISET"] = file_config.mips_iset
         
         return variables
 
@@ -574,6 +586,7 @@ class InputScanner:
     def __get_file_config(self, path: Path) -> BuildFileConfig:
         opt_flags: "str | None" = None
         ido_version: "str | None" = None
+        mips_iset: "str | None" = None
 
         with open(path, "r", encoding="utf-8") as file:
             found_comments = False
@@ -593,13 +606,18 @@ class InputScanner:
                     if ido_match != None:
                         ido_version = ido_match.group(1)
                         continue
+                    mips_iset_match = mips_iset_pattern.search(line)
+                    if mips_iset_match != None:
+                        mips_iset = mips_iset_match.group(1)
+                        continue
                 else:
                     # End on non-empty non-comment line
                     break
         
         return BuildFileConfig(
             opt=opt_flags, 
-            ido_version=ido_version)
+            ido_version=ido_version,
+            mips_iset=mips_iset)
     
     def __get_dll_config(self, dll_dir: Path, number: int) -> DLLBuildConfig | None:
         yaml_path = dll_dir.joinpath("dll.yaml")
