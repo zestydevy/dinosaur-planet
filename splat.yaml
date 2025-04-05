@@ -94,7 +94,7 @@ segments:
     - [0x62B30, c, debug]
     - [0x62BA0, c, exception]
     - [0x63EA0, asm, get_stack_]
-    - [0x63EB0, c, segment_63EB0]
+    - [0x63EB0, c, dl_debug]
     - [0x64320, c, di_comm]
     - [0x645A0, c, libnaudio/n_sl]
     - [0x64660, c, libultra/audio/sl]

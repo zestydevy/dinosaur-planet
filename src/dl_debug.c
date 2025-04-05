@@ -41,38 +41,40 @@ void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4)
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_63EB0/dl_get_debug_info_for_gdl.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dl_debug/dl_get_debug_info_for_gdl.s")
 #else
-void _dl_get_debug_info_for_gdl(Gfx *gdl, char **file, u32 *param_3, u32 *param_4)
+void dl_get_debug_info_for_gdl(Gfx *gdl, char **file, u32 *param_3, u32 *param_4)
 {
     s32 i;
+    DLDebugInfo *curr;
+    DLDebugInfo *prev;
 
     *file = NULL;
 
     for (i = 0; i < gDLDebugInfoLengths[gDLDebugInfoIdx]; i++)
     {
-        DLDebugInfo *curr = gDLDebugInfos[gDLDebugInfoIdx];
-        DLDebugInfo *prev = gDLDebugInfos[1 - gDLDebugInfoIdx];
+        curr = &gDLDebugInfos[gDLDebugInfoIdx][i];
+        prev = &gDLDebugInfos[1 - gDLDebugInfoIdx][i];
 
-        if (gdl == curr[i].gdl) {
-            *file = curr[i].file;
+        if (gdl == curr->gdl) {
+            *file = curr->file;
             *param_3 = gDLDebugInfos[gDLDebugInfoIdx][i].unk_0xc;
             *param_4 = gDLDebugInfos[gDLDebugInfoIdx][i].unk_0x4;
             return;
         }
 
-        if (gdl == prev[i].gdl) {
-            *file = prev[i].file;
+        if (gdl == prev->gdl) {
+            *file = prev->file;
             *param_3 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].unk_0xc;
             *param_4 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].unk_0x4;
             return;
         }
 
-        if (gdl < curr[i].gdl && gdl < prev[i].gdl) {
+        if (gdl < curr->gdl && gdl < prev->gdl) {
             return;
         }
     }
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_63EB0/dl_get_debug_info2.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dl_debug/dl_get_debug_info2.s")
