@@ -88,7 +88,7 @@ segments:
     - [0x5F150, c, libultra/gu/perspective]
     - [0x5F3D0, c, libultra/gu/ortho]
     - [0x5F590, c, libultra/os/createthread]
-    - [0x5F660, c, segment_5F660]
+    - [0x5F660, c, libultra/flash]
     - [0x5FFB0, c, assert]
     - [0x5FFE0, c, print]
     - [0x62B30, c, debug]
