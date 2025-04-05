@@ -4,7 +4,15 @@
 #include "PR/R4300.h"
 #include "PR/os_flash.h"
 #include "PR/os_internal_flash.h"
-#include "macros.h"
+#include "PRinternal/macros.h"
+#include "bss.h"
+
+BSS_GLOBAL u32 __osFlashID[4] ALIGNED(0x8);
+BSS_GLOBAL OSIoMesg __osFlashMsg ALIGNED(0x8);
+BSS_GLOBAL OSMesgQueue __osFlashMessageQ ALIGNED(0x8);
+BSS_GLOBAL OSPiHandle __osFlashHandler ALIGNED(0x8);
+BSS_GLOBAL OSMesg __osFlashMsgBuf[1];
+BSS_GLOBAL u32 __osFlashVersion;
 
 OSPiHandle *osFlashReInit(u8 latency, u8 pulse, u8 page_size, u8 rel_duration, u32 start) {
     __osFlashHandler.baseAddress = PHYS_TO_K1(start);
@@ -22,7 +30,7 @@ OSPiHandle *osFlashInit() {
     u32 flash_type;
     u32 flash_maker;
 
-    osCreateMesgQueue(&__osFlashMessageQ, __osFlashMsgBuf, ARRAYCOUNT(__osFlashMsgBuf));
+    osCreateMesgQueue(&__osFlashMessageQ, __osFlashMsgBuf, ARRLEN(__osFlashMsgBuf));
 
     if (__osFlashHandler.baseAddress == PHYS_TO_K1(FLASH_START_ADDR)) {
         return &__osFlashHandler;
