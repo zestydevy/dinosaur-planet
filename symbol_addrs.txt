@@ -1124,6 +1124,7 @@ gFile_TABLES_BIN = 0x800b18f4; // size 0x4
 gFile_TABLES_TAB = 0x800b18f8; // size 0x4
 gFile_FONTS_BIN = 0x800a7d34; // size 0x4
 gFile_BITTABLE = 0x800ae2a4; // size 0x4
+gFile_MPEG_TAB = 0x8008c8e0; // size 0x4
 
 gNumTotalBlocks = 0x800b96cc; // size:0x4
 gNumTRKBLKEntries = 0x800b96c0; // size:0x4
