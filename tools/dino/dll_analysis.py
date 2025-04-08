@@ -386,7 +386,7 @@ def analyze_dll_function(func: DLLFunction,
         elif clear_loads_next_inst:
             # Any loads after a branch are either unresolved or valid extern %got loads 
             clear_loads_next_inst = False
-            for dst_reg in reg_to_got_loads.keys():
+            for dst_reg in list(reg_to_got_loads.keys()):
                 if dst_reg >= MIPS_REG_S0 and dst_reg <= MIPS_REG_S7:
                     # GOT loads into saved registers are an exception here as they stay valid across
                     # basic blocks. Our analysis isn't fancy so just let leave these alone. This should
