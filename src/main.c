@@ -1,5 +1,6 @@
 #include "common.h"
 #include <PR/sched.h>
+#include "dll.h"
 #include "sys/rarezip.h"
 
 void func_8001440C(s32 arg0);
@@ -98,14 +99,14 @@ void game_init(void)
         gDLL_21_gametext = dll_load_deferred(DLL_TEXT, 5);
         gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 47);
         gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2);
-        gDLL_28        = dll_load_deferred(28, 4);
+        gDLL_28_screen_fade = dll_load_deferred(DLL_SCREEN_FADE, 4);
     } else {
         gDLL_UI        = dll_load_deferred(DLL_UI, 15);
         gDLL_Camera    = dll_load_deferred(DLL_CAMERA, 23);
         gDLL_23        = dll_load_deferred(23, 8); //0x12 in SFA
         gDLL_18        = dll_load_deferred(18, 0x16); //0x0F in SFA
         gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 29);
-        gDLL_28        = dll_load_deferred(28, 4); //0x16 in SFA
+        gDLL_28_screen_fade = dll_load_deferred(DLL_SCREEN_FADE, 4); //0x16 in SFA
         gDLL_25        = dll_load_deferred(25, 0xE); //not present in SFA
         gDLL_Sky       = dll_load_deferred(DLL_SKY, 15);
         gDLL_8        = dll_load_deferred(8, 12); //0x06 in SFA
@@ -228,7 +229,7 @@ void game_tick(void)
     func_80007178();
     func_80013D80();
     func_800121DC();
-    gDLL_28->exports->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
+    gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
     gDLL_subtitles->exports->func[6].withOneArg(tmp_s0);
     tick_cameras();
     func_800129E4();
@@ -298,7 +299,7 @@ void game_tick_no_expansion(void)
     func_8000F574(); // ignored return value
     func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     func_800129E4();
-    gDLL_28->exports->func[0].withThreeArgs(tmp_s0, &gCurMtx, &gCurVtx);
+    gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);

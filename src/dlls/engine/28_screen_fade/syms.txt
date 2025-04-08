@@ -1,0 +1,12 @@
+# functions
+screen_fade_ctor = 0x0;
+screen_fade_dtor = 0x4C;
+screen_fade_draw = 0x58;
+screen_fade_fade = 0x294;
+screen_fade_fade_reversed = 0x320;
+screen_fade_func_3AC = 0x3AC;
+screen_fade_get_progress = 0x41C;
+screen_fade_is_complete = 0x438;
+screen_fade_draw_simple_black = 0x454;
+screen_fade_draw_simple = 0x6DC;
+screen_fade_draw_radial = 0x968;

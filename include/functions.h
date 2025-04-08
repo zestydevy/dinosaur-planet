@@ -58,6 +58,7 @@ void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry);
 s16 func_80004A4C();
 void dl_apply_combine(Gfx **gdl);
 void dl_set_fill_color(Gfx **gdl, u32 color);
+void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void func_80002490(Gfx **gdl);
 void dl_apply_other_mode(Gfx **gdl);
 

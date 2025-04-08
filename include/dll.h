@@ -3,6 +3,7 @@
 
 #include "dlls/engine/2_camera.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/engine/28_screen_fade.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
@@ -30,6 +31,7 @@ enum DLL_ID {
     DLL_SUBTITLES = 22,
     DLL_WATERFX   = 24,
     DLL_CURVES    = 26,
+    DLL_SCREEN_FADE = 28,
     DLL_GPLAY     = 29,
     DLL_TASK      = 30,
     DLL_FLASH     = 31,
@@ -45,11 +47,11 @@ enum DLL_ID {
 
 extern DLLInst_2_Camera *gDLL_Camera;
 extern DLLInst_21_gametext *gDLL_21_gametext;
+extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
 extern DLLInst_Unknown
-    *gDLL_28,
     *gDLL_ANIM,
     *gDLL_Sky,
     *gDLL_8,
