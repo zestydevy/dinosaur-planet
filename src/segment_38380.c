@@ -1,4 +1,7 @@
+#include "PR/gbi.h"
 #include "common.h"
+#include "functions.h"
+#include "sys/gfx/map.h"
 
 extern u8 D_800917A0;
 extern u8 D_800917A4;
@@ -237,7 +240,73 @@ void func_80037F8C(s32 param1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_8003833C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_80038DC0.s")
+void draw_pause_screen_freeze_frame(Gfx** gdl) {
+    u16* fbPtr;
+    s32 remainingY;
+    s32 yPos;
+    s32 height;
+    s32 chunkSize;
+    s32 width;
+
+    width = 320;
+    height = 240;
+    
+    fbPtr = get_framebuffer_end();
+    
+    chunkSize = 6;
+    
+    gSPClearGeometryMode(*gdl, 0xFFFFFF);
+    dl_apply_geometry_mode(gdl);
+    
+    gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
+    dl_apply_combine(gdl);
+   
+    gDPSetOtherMode(*gdl, 
+        G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | 
+            G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
+    dl_apply_other_mode(gdl);
+    
+    yPos = 0;
+
+    while (yPos < height) {
+        remainingY = height - yPos;
+
+        if (remainingY < chunkSize) {
+            chunkSize = remainingY;
+        }
+
+        gDPLoadTextureBlock((*gdl)++,
+            /*timg*/    OS_PHYSICAL_TO_K0(fbPtr),
+            /*fmt*/     G_IM_FMT_RGBA,
+            /*siz*/     G_IM_SIZ_16b,
+            /*width*/   width,
+            /*height*/  chunkSize,
+            /*pal*/     0,
+            /*cms*/     G_TX_CLAMP,
+            /*cmt*/     G_TX_CLAMP,
+            /*masks*/   G_TX_NOMASK,
+            /*maskt*/   G_TX_NOMASK,
+            /*shifts*/  G_TX_NOLOD,
+            /*shiftt*/  G_TX_NOLOD);
+
+        gSPTextureRectangle((*gdl)++,
+            /*ulx*/ 0,
+            /*uly*/ yPos << 2,
+            /*lrx*/ (0 + width) << 2,
+            /*lry*/ ((yPos + chunkSize) - 1) << 2,
+            /*tile*/G_TX_RENDERTILE,
+            /*s*/   0,
+            /*t*/   0,
+            /*dsdx*/1 << 12,
+            /*dtdy*/1 << 10);
+
+        gDLBuilder->needsPipeSync = 1;
+        
+        fbPtr += chunkSize * width;
+        yPos += chunkSize;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_800390A4.s")
 

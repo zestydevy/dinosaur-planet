@@ -244,7 +244,7 @@ MtxF *camera_get_aux_mtx() {
     return &gAuxMtx2;
 }
 
-u32 func_800017889() {
+u32 func_80001788() {
     return UINT_800a66f8;
 }
 
@@ -1588,7 +1588,7 @@ void _transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 }
 #endif
 
-void func_80004A309(s16 param1) {
+void func_80004A30(s16 param1) {
     FB_BGCOLOR = param1;
 }
 

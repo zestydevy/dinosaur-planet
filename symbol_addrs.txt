@@ -195,6 +195,7 @@ objprint_func = 0x80034de0; // type:func
 start_crash_thread = 0x80037420; // type:func
 schedule_gfx_task = 0x80037780; // type:func
 create_3_megs_quues = 0x80037f1c; // type:func
+draw_pause_screen_freeze_frame = 0x80038DC0; // type:func
 rarezip_init = 0x8003a3b0; // type:func
 osCreateScheduler = 0x8003b5b0; // type:func
 osScGetCmdQ = 0x8003b7c8; // type:func

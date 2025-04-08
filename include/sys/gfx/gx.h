@@ -3,6 +3,8 @@
 #ifndef _SYS_GFX_GX_H
 #define _SYS_GFX_GX_H
 
+#include "PR/os.h"
+#include "PR/sched.h"
 #include "sys/gfx/texture.h"
 
 /**
@@ -211,6 +213,8 @@ s32 get_video_mode();
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
 u32 get_some_resolution_encoded();
+
+u16 *get_framebuffer_end();
 
 #define RESOLUTION_WIDTH(encoded) (encoded & 0xFFFF)
 #define RESOLUTION_HEIGHT(encoded) (encoded >> 16)

@@ -88,4 +88,6 @@ void func_8004A67C();
 void dl_set_all_dirty();
 void func_8003DB5C();
 
+void draw_pause_screen_freeze_frame(Gfx** gdl);
+
 #endif //_FUNCTIONS_H

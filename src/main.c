@@ -323,7 +323,6 @@ s32 func_80001A2C();                                /* extern */
 void func_8000F5C4();                                  /* extern */
 s8 func_800143FC();                                /* extern */
 void func_800210DC();                                  /* extern */
-void func_80038DC0(Gfx**);                             /* extern */
 void func_80042174(s32);                                 /* extern */
 void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);         /* extern */
 void func_800591EC();                                  /* extern */
@@ -350,7 +349,7 @@ void func_80013D80(void)
         button = get_masked_button_presses(0);
 
         if (D_800B09C2 != 0) {
-            func_80038DC0(&gCurGfx);
+            draw_pause_screen_freeze_frame(&gCurGfx);
         }
 
         if (D_800B09C2 == 0)
