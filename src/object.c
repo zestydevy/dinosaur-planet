@@ -1388,7 +1388,7 @@ void obj_free_object(Object *obj, s32 param2) {
         dll_unload(obj->dll);
     }
 
-    gDLL_AMSFX->exports->func[16].withOneArg((s32)obj);
+    gDLL_AMSFX->exports->func16(obj);
     gDLL_AMSEQ->exports->func[17].withOneArg((s32)obj);
     gDLL_expgfx->exports->func[9].withOneArg((s32)obj);
 
@@ -1560,7 +1560,7 @@ void func_80023464(s32 character) {
         }
 
         gDLL_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
-        gDLL_AMSFX->exports->func[1].withOneArg(newPlayer);
+        gDLL_AMSFX->exports->func1(newPlayer);
         gDLL_AMSEQ->exports->func[3].withOneArg(newPlayer);
     }
 }
@@ -1612,7 +1612,7 @@ void func_80023628() {
     gDLL_Camera->exports->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
     gDLL_Camera->exports->func6.withSevenArgs(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
     gDLL_Camera->exports->func1.withOneArg(1);
-    gDLL_AMSFX->exports->func[1].withOneArg(player);
+    gDLL_AMSFX->exports->func1(player);
     gDLL_AMSEQ->exports->func[3].withOneArg(player);
 
     D_800B1988 = 0;

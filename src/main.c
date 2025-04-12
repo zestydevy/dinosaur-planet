@@ -2,6 +2,7 @@
 #include <PR/sched.h>
 #include "dll.h"
 #include "sys/rarezip.h"
+#include "sys/menu.h"
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
@@ -89,7 +90,7 @@ void game_init(void)
     func_8004D470();
     func_8005C780();
     init_fonts();
-    init_menu_related_globals();
+    menu_init();
     init_audio(&osscheduler_, 0xE);
     init_global_map();
     if (osMemSize != EXPANSION_SIZE) {
@@ -150,7 +151,7 @@ void game_init(void)
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
     dl_init_debug_infos();
-    set_menu_page(2);
+    menu_set(MENU_2);
     if (osMemSize == EXPANSION_SIZE) {
         func_80014074();
     }
@@ -265,8 +266,6 @@ void game_tick(void)
     write_c_file_label_pointers(&D_8009913C, 0x37C);
 }
 
-s32 func_8000F574();                                /* extern */
-void func_8000F604(s32 *, s32*, s32*, s32*);                     /* extern */
 void game_tick_no_expansion(void)
 {
     u32 delayAmount;
@@ -296,8 +295,8 @@ void game_tick_no_expansion(void)
     gDPSetDepthImage(gCurGfx++, 0x02000000);
 
     func_80037EC8(&gCurGfx);
-    func_8000F574(); // ignored return value
-    func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+    menu_update1(); // ignored return value
+    menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     func_800129E4();
     gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
 
@@ -321,7 +320,6 @@ void game_tick_no_expansion(void)
 }
 
 s32 func_80001A2C();                                /* extern */
-void func_8000F5C4();                                  /* extern */
 s8 func_800143FC();                                /* extern */
 void func_800210DC();                                  /* extern */
 void func_80042174(s32);                                 /* extern */
@@ -345,7 +343,7 @@ void func_80013D80(void)
     gDLL_Camera->exports->func19.asVoid();
     gDLL_subtitles->exports->func[5].asVoid();
 
-    if (func_8000F574() == 0)
+    if (menu_update1() == 0)
     {
         button = get_masked_button_presses(0);
 
@@ -362,7 +360,7 @@ void func_80013D80(void)
             {
                 D_800B09C2 = 1;
                 set_button_mask(0, 0x1000);
-                set_menu_page(8);
+                menu_set(MENU_8);
             }
             
             gDLL_29_gplay->exports->func_115C();
@@ -375,7 +373,7 @@ void func_80013D80(void)
             update_PlayerPosBuffer();
         }
 
-        func_8000F5C4();
+        menu_update2();
         func_800591EC();
         func_8004A67C();
         map_update_streaming();
@@ -388,7 +386,7 @@ void func_80013D80(void)
         }
 
         gDLL_SCREENS->exports->func[2].withOneArg(&gCurGfx);
-        func_8000F604(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+        menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= delayByte;
 
@@ -443,7 +441,7 @@ void func_80014074(void)
         func_80001220();
 
         if (D_8008C968 >= 0) {
-            set_menu_page(D_8008C968);
+            menu_set(D_8008C968);
             D_8008C968 = -1;
         }
         
