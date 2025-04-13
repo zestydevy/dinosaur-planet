@@ -171,6 +171,7 @@ c_gen = c_generator.CGenerator()
 c_parser = CParser()
 
 def gen_dll_recomp_header(header: TextIO,
+                          dll_number: int,
                           c_source_paths: list[Path],
                           symbol_renames: "dict[str, str]"):
     # Parse C source
@@ -235,8 +236,8 @@ def gen_dll_recomp_header(header: TextIO,
                     found_symbols.add(original)
 
     # Write
-    header.write("#ifndef _DLL_29_INTERNAL_H\n")
-    header.write("#define _DLL_29_INTERNAL_H\n\n")
+    header.write("#ifndef _DLL_{}_INTERNAL_H\n".format(dll_number))
+    header.write("#define _DLL_{}_INTERNAL_H\n\n".format(dll_number))
 
     for include in includes:
         header.write(f"#include {include}\n")
@@ -245,7 +246,7 @@ def gen_dll_recomp_header(header: TextIO,
         header.write(f"\n{decl}\n")
         header.write(f"{alias}\n")
 
-    header.write("\n#endif //_DLL_29_INTERNAL_H\n")
+    header.write("\n#endif //_DLL_{}_INTERNAL_H\n".format(dll_number))
 
 def scan_dll_elf(
         elf: ELFFile, 
@@ -424,6 +425,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
                     with open(header_path, "w", encoding="utf-8") as header:
                         gen_dll_recomp_header(
                             header,
+                            number,
                             c_source_paths,
                             symbol_renames
                         )
