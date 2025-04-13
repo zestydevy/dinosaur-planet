@@ -169,7 +169,6 @@ void func_800129E4();                                  /* extern */
 void func_80013D80();                                  /* extern */
 s32 schedule_gfx_task(Gfx*, Gfx*, s32);                     /* extern */
 void func_80037924();                                  /* extern */
-void func_80037A14(Gfx**, s32**, s32);                   /* extern */
 void func_80037EC8(Gfx**);                             /* extern */
 void func_8003E9F0(Gfx**, u8);                         /* extern */
 s32 func_80041D5C();                                /* extern */
@@ -395,8 +394,6 @@ void func_80013D80(void)
         }
     }
 }
-
-void func_800141A4(s32, s32, s32, s32);                        /* extern */
 
 void func_80013FB4(void) {
     func_8005D410(OS_VI_PAL_LPN1, NULL, FALSE);

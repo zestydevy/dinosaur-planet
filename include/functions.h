@@ -99,4 +99,17 @@ void func_8000DB50(UNK_TYPE_32, UNK_TYPE_32);
 void func_8000E49C(UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, char *, UNK_TYPE_32, UNK_TYPE_32);
 void func_8000EF18(Gfx **gdl, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32);
 
+void func_8000CB00(UNK_TYPE_32);
+
+void func_80014B1C(void);
+void func_80014B6C(void);
+void func_800141A4(s32, s32, s32, s32);
+
+void func_80037A14(Gfx**, UNK_PTR **, s32);
+
+UNK_TYPE_32 func_8000E9D8(UNK_TYPE_32);
+void func_8000DC54(UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32);
+void func_8003825C(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
+void func_8000EA04(UNK_TYPE_32);
+
 #endif //_FUNCTIONS_H

@@ -5,6 +5,7 @@
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash
+60 = engine/60
 82 = engine/82
 83 = engine/83
 

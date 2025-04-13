@@ -8,6 +8,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
+#include "dlls/engine/76.h"
 
 #include "dll_def.h"
 #include "types.h"
@@ -83,10 +84,14 @@ extern DLLInst_Unknown
     *gDLL_75,
     *gDLL_27,
     *gDLL_56,
-    *gDLL_76,
     *gDLL_32,
     *gDLL_33,
     *gDLL_minimap,
     *gDLL_54;
+
+    
+// Other common DLLs that aren't always loaded but are accessed globally
+
+extern DLLInst_76 *gDLL_76;
 
 #endif //_DLL_H

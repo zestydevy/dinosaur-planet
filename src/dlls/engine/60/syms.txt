@@ -1,0 +1,7 @@
+# functions
+dll_60_ctor = 0x0;
+dll_60_dtor = 0x234;
+dll_60_update1 = 0x2F0;
+dll_60_update2 = 0x4FC;
+dll_60_draw = 0x504;
+dll_60_func_D0C = 0xD0C;

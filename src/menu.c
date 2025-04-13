@@ -109,7 +109,7 @@ void menu_do_menu_swap() {
             D_800A7D50 = 0;
         }
 
-        if (gCurrentMenuID == 0) {
+        if (gCurrentMenuID == MENU_NONE) {
             func_8000E7D8(1);
         }
 
@@ -156,7 +156,7 @@ void menu_update2() {
     menu_do_menu_swap();
 }
 
-void menu_draw(Gfx **gdl, s32 **mtxs, s32 **vtxs, s32 **pols) {
+void menu_draw(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs, UNK_PTR **pols) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->exports->draw(gdl, mtxs, vtxs);
     }
