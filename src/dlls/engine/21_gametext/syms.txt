@@ -7,3 +7,14 @@ gametext_set_bank = 0x198;
 gametext_curr_bank = 0x224;
 gametext_get_chunk = 0x240;
 gametext_get_text = 0x420;
+
+# variables
+sCurrentBankIndex = 0x5F4;
+sBankCount = 0x604;
+sBankEntryCount = 0x606;
+sBankSize = 0x608;
+sCurrentBank = 0x60C;
+sCurrentBank_GlobalOffset = 0x610;
+sCurrentBank_StrCounts = 0x614;
+sCurrentBank_Sizes = 0x618;
+sCurrentBank_Offsets = 0x61C;

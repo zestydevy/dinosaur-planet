@@ -7,3 +7,8 @@ task_get_num_recently_completed = 0x368;
 task_get_recently_completed_task_text = 0x390;
 task_get_completion_task_text = 0x3F8;
 task_get_completion_percentage = 0x454;
+
+# variables
+sRecentlyCompleted = 0x508;
+sCompletionIdx = 0x50D;
+sRecentlyCompletedNextIdx = 0x50E;

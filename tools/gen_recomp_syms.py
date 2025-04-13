@@ -2,7 +2,7 @@ import argparse
 import shutil
 from subprocess import check_output
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import SymbolTableSection
+from elftools.elf.sections import SymbolTableSection, Symbol
 from typing import TextIO
 import math
 import os
@@ -258,6 +258,11 @@ def scan_dll_elf(
     syms = elf.get_section_by_name(".symtab")
     assert isinstance(syms, SymbolTableSection)
 
+    text_end = dll.get_text_size()
+
+    data_syms: list[Symbol] = []
+    data_sym_map: dict[str, int] = {}
+
     for sym in syms.iter_symbols():
         value = sym.entry["st_value"]
         size = sym.entry["st_size"]
@@ -265,14 +270,24 @@ def scan_dll_elf(
         st_info_type = sym.entry["st_info"]["type"]
         st_info_bind = sym.entry["st_info"]["bind"]
 
-        maybe_unref_static_func = st_info_type == "STT_NOTYPE" and st_shndx == "SHN_ABS"
-
-        if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT" and not maybe_unref_static_func:
-            continue
         if st_shndx == "SHN_UNDEF":
             continue
-        if st_info_bind != "STB_LOCAL" and size == 0 and not maybe_unref_static_func:
-            continue
+
+        static_sym = False
+        static_sym_is_data = False
+
+        if st_info_type == "STT_NOTYPE" and st_shndx == "SHN_ABS":
+            # Probably either a static that IDO decided to not generate a symbol for (sometimes it does)
+            # and that existed in syms.txt or a static that it did generate a symbol for but decided
+            # to mark as ABS and not set the correct type...
+            static_sym = True
+            static_sym_is_data = value >= text_end
+        else:
+            if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT":
+                continue
+            if st_info_bind != "STB_LOCAL" and size == 0:
+                continue
+        
         if value & 0x80000000:
             # External symbol reference, already covered by core syms
             continue
@@ -294,7 +309,7 @@ def scan_dll_elf(
 
         vram = dll_vram + sec_offset + value
 
-        if st_info_type == "STT_FUNC" or maybe_unref_static_func:
+        if st_info_type == "STT_FUNC" or (static_sym and not static_sym_is_data):
             # Function
             func_info = vrams_to_funcs.get(vram)
             if func_info == None:
@@ -305,7 +320,7 @@ def scan_dll_elf(
                 func_info["name"] = rename
                 func_info["symbol"] = sym.name
                 symbol_renames[sym.name] = rename
-        elif st_info_type == "STT_OBJECT":
+        elif st_info_type == "STT_OBJECT" or (static_sym and static_sym_is_data):
             # Data
             rename = dll_prefix + sym.name
             data_global = { 
@@ -313,8 +328,26 @@ def scan_dll_elf(
                 "symbol": sym.name,
                 "vram": vram
             }
-            data_globals.append(data_global)
-            symbol_renames[sym.name] = rename
+
+            existing_idx = data_sym_map.get(sym.name, None)
+            if existing_idx != None:
+                existing = data_syms[existing_idx]
+                existing_st_info_type = existing.entry["st_info"]["type"]
+                if existing_st_info_type == "STT_NOTYPE" and st_info_type != "STT_NOTYPE":
+                    # Prefer the duplicate with a defined symbol type
+                    data_syms[existing_idx] = sym
+                    data_globals[existing_idx] = data_global
+                    symbol_renames[sym.name] = rename
+                elif existing_st_info_type != "STT_NOTYPE" and st_info_type == "STT_NOTYPE":
+                    # Don't downgrade to a notype sym
+                    pass
+                else:
+                    print("WARN: Duplicate symbol {} in DLL {} .elf file. Taking only the first copy.".format(sym.name, dll.number))
+            else:
+                data_sym_map[sym.name] = len(data_globals)
+                data_syms.append(sym)
+                data_globals.append(data_global)
+                symbol_renames[sym.name] = rename
 
 def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO, include_dir: Path):
     with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:

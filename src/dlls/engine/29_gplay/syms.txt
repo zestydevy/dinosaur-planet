@@ -52,3 +52,18 @@ gplay_func_1A90 = 0x1A90;
 gplay_func_1AF8 = 0x1AF8;
 gplay_func_1B78 = 0x1B78;
 gplay_func_1BC4 = 0x1BC4;
+
+# variables
+rodata_230 = 0x1F80;
+data_0 = 0x1F90;
+data_F0 = 0x2080;
+data_1E0 = 0x2170;
+bss_0 = 0x2180;
+bss_4 = 0x2184;
+bss_8 = 0x2188;
+bss_10 = 0x2190;
+bss_183C = 0x39BC;
+bss_1840 = 0x39C0;
+bss_1868 = 0x39E8;
+bss_1A48 = 0x3BC8;
+bss_1A50 = 0x3BD0;

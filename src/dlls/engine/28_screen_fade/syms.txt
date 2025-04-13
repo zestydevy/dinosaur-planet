@@ -10,3 +10,11 @@ screen_fade_is_complete = 0x438;
 screen_fade_draw_simple_black = 0x454;
 screen_fade_draw_simple = 0x6DC;
 screen_fade_draw_radial = 0x968;
+
+# variables
+sFadeAlpha = 0x1718;
+sFadeSpeed = 0x171C;
+sAutoReverseTimer = 0x1720;
+sFadeType = 0x1724;
+sIsComplete = 0x1725;
+sDelayTimer = 0x1726;

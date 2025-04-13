@@ -382,8 +382,6 @@ DLLs work with three types of symbols:
 - Local symbols (static, defined in the DLL)
 - Import symbols (defined in the core code)
 
-The `syms.txt` file *can* contain all of these but in practice only needs to contain symbols for a DLL's own functions and other external symbols. Local symbols are not needed for DLL extraction or linking and can be omitted for simplicity.
-
 Import symbols are special and are the same for all DLLs. These symbols don't define actual addresses and instead are indexes into the DLLSIMPORT.tab file, which contains the real address. The indexes also have their 32nd bit set (0x80000000). For simplicity, all import symbols are defined in the `export_symbol_addrs.txt` file found in the repository root and are linked with every DLL.
 
 ### DLL Build Configuration

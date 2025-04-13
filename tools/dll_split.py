@@ -155,7 +155,7 @@ class DLLSplitter:
         # Create syms.txt if it doens't exist
         syms_txt_path = src_path.joinpath("syms.txt")
         if not syms_txt_path.exists():
-            self.__create_syms_txt(syms_txt_path, dll, dll_functions)
+            self.__create_syms_txt(syms_txt_path, dll, dll_functions, bss_size)
 
         # Create <dll>.c stub if no .c files exist
         if not has_c_files:
@@ -330,8 +330,10 @@ class DLLSplitter:
     def __create_syms_txt(self, 
                           syms_path: Path, 
                           dll: DLL,
-                          dll_functions: "list[DLLFunction]"):
+                          dll_functions: "list[DLLFunction]",
+                          bss_size: int):
         text_size = dll.get_text_size()
+        text_start = dll.header.size
         
         with open(syms_path, "w", encoding="utf-8") as syms_file:
             # Write function symbols
@@ -350,7 +352,57 @@ class DLLSplitter:
             if len(externs) > 0:
                 syms_file.write("\n# external symbols\n")
                 for got_entry in externs:
-                    syms_file.write("D_{0:X} = {0:#x};\n".format(got_entry))
+                    syms_file.write("D_{0:X} = 0x{0:X};\n".format(got_entry))
+            
+            # Write discovered .rodata, .data, and .bss variables (if any)
+            rodata_refs: "set[int] | list[int]" = set()
+            data_refs: "set[int] | list[int]" = set()
+            bss_refs: "set[int] | list[int]" = set()
+
+            for func in dll_functions:
+                if func.local_rodata_refs != None:
+                    for ref in func.local_rodata_refs:
+                        rodata_refs.add(ref)
+                if func.local_data_refs != None:
+                    for ref in func.local_data_refs:
+                        data_refs.add(ref)
+                if func.local_bss_refs != None:
+                    for ref in func.local_bss_refs:
+                        bss_refs.add(ref)
+
+            # Note: Variable syms need to be relative to start of .text
+            if len(rodata_refs) > 0 or len(data_refs) > 0 or len(bss_refs) > 0:
+                syms_file.write("\n# variables\n")
+
+                if dll.has_rodata() and len(rodata_refs) > 0:
+                    rodata_refs.add(0)
+                    rodata_refs = list(rodata_refs)
+                    rodata_refs.sort()
+
+                    rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
+
+                    for ref in rodata_refs:
+                        syms_file.write("_rodata_{:X} = 0x{:X};\n".format(ref, rodata_start + ref - text_start))
+                
+                if dll.has_data():
+                    data_refs.add(0)
+                    data_refs = list(data_refs)
+                    data_refs.sort()
+
+                    data_start = dll.header.data_offset
+
+                    for ref in data_refs:
+                        syms_file.write("_data_{:X} = 0x{:X};\n".format(ref, data_start + ref - text_start))
+                
+                if bss_size > 0:
+                    bss_refs.add(0)
+                    bss_refs = list(bss_refs)
+                    bss_refs.sort()
+                    
+                    bss_start = dll.get_bss_offset()
+
+                    for ref in bss_refs:
+                        syms_file.write("_bss_{:X} = 0x{:X};\n".format(ref, bss_start + ref - text_start))
 
     def __extract_text_asm(self, 
                            dir: Path, 
