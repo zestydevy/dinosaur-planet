@@ -1,0 +1,20 @@
+# functions
+dll_61_ctor = 0x0;
+dll_61_dtor = 0xE8;
+dll_61_update1 = 0x164;
+dll_61_update2 = 0x2D0;
+dll_61_draw = 0x2D8;
+
+# variables
+data_0 = 0x6FC;
+data_4 = 0x700;
+data_8 = 0x704;
+bss_0 = 0x70C;
+bss_1 = 0x70D;
+bss_2 = 0x70E;
+bss_4 = 0x710;
+bss_8 = 0x714;
+bss_C = 0x718;
+bss_10 = 0x71C;
+bss_14 = 0x720;
+bss_18 = 0x724;

@@ -112,4 +112,6 @@ void func_8000DC54(UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_
 void func_8003825C(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
 void func_8000EA04(UNK_TYPE_32);
 
+void func_800379D0(u32 red, u32 green, s32 blue);
+
 #endif //_FUNCTIONS_H

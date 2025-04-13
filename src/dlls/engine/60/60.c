@@ -77,10 +77,10 @@ s32 dll_60_update1() {
         bss_0 += delayFloat;
 
         if (bss_6 == 0 && bss_0 > 205.0f) {
-            gDLL_28_screen_fade->exports->fade(30, 1);
+            gDLL_28_screen_fade->exports->fade(30, SCREEN_FADE_BLACK);
             bss_6 = 1;
         } else if (bss_6 == 1 && bss_0 > 245.0f) {
-            gDLL_28_screen_fade->exports->fade_reversed(30, 1);
+            gDLL_28_screen_fade->exports->fade_reversed(30, SCREEN_FADE_BLACK);
             bss_6 = 2;
         }
 
