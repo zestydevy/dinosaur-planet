@@ -211,7 +211,7 @@ class DLLSplitter:
         # Write
         with open(c_path, "w", encoding="utf-8") as c_file:
             # Includes
-            c_file.write("#include <PR/ultratypes.h>\n")
+            c_file.write("#include \"PR/ultratypes.h\"\n")
 
             # .rodata stubs
             if dll.has_rodata():
@@ -271,7 +271,7 @@ class DLLSplitter:
                     offset = bss_refs[i]
                     size = bss_refs[i + 1] - offset
                     static = not (bss_start + offset) in extern_offsets
-                    c_file.write("{}u8 _bss_{:#x}[{:#x}];\n"
+                    c_file.write("{}u8 _bss_{:X}[{:#x}];\n"
                         .format("static " if static else "", offset, size))
             
             # function stubs
