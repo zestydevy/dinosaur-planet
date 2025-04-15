@@ -1228,110 +1228,114 @@ f32 fexp(f32 x, u32 iterations)
     return y;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/setup_rsp_matrices_for_object.s")
-#else
-void _setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
+// compute viewProjection matrix for object's matrix idx
+void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
 {
-    Object *link = object;
-    MtxF mtxf;
     u8 isChild;
+    MtxF mtxf;
+    Object *origObject;
     f32 oldScale;
 
-    if (gRSPMatrices[link->matrixIdx] == NULL)
+    origObject = object;
+
+    if (gRSPMatrices[object->matrixIdx] == NULL)
     {
         isChild = FALSE;
 
-        while (link != NULL)
+        while (object != NULL)
         {
-            if (link->parent == NULL) {
-                link->srt.transl.x -= gWorldX;
-                link->srt.transl.z -= gWorldZ;
+            if (object->parent == NULL) {
+                object->srt.transl.x -= gWorldX;
+                object->srt.transl.z -= gWorldZ;
             }
 
-            oldScale = link->srt.scale;
-            if (!(link->unk0xb0 & 0x8)) {
-                link->srt.scale = 1.0f;
+            oldScale = object->srt.scale;
+            if (!(object->unk0xb0 & 0x8)) {
+                object->srt.scale = 1.0f;
             }
 
             if (!isChild) {
-                matrix_from_srt(&MtxF_800a6a60, &link->srt);
+                matrix_from_srt(&MtxF_800a6a60, &object->srt);
             } else {
-                matrix_from_srt(&mtxf, &link->srt);
+                matrix_from_srt(&mtxf, &object->srt);
                 matrix_concat_4x3(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
             }
 
-            link->srt.scale = oldScale;
+            object->srt.scale = oldScale;
 
-            if (link->parent == NULL) {
-                link->srt.transl.x += gWorldX;
-                link->srt.transl.z += gWorldZ;
+            if (object->parent == NULL) {
+                object->srt.transl.x += gWorldX;
+                object->srt.transl.z += gWorldZ;
             }
 
-            link = link->parent;
+            object = object->parent;
             isChild = TRUE;
         }
 
         matrix_concat(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
         matrix_f2l(&gAuxMtx2, *rspMtxs);
-        gRSPMatrices[object->matrixIdx] = *rspMtxs;
+        gRSPMatrices[origObject->matrixIdx] = *rspMtxs;
         (*rspMtxs)++;
     }
 
-    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMatrices[object->matrixIdx]), G_MTX_PROJECTION | G_MTX_LOAD);
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMatrices[origObject->matrixIdx]), G_MTX_PROJECTION | G_MTX_LOAD);
 }
-#endif
 
+// load parent projection matrix
 void func_80004224(Gfx **gdl)
 {
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMtxList), G_MTX_PROJECTION | G_MTX_LOAD);
 }
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80004258.s")
-#else
-s32 _func_80004258(Object *object)
+s32 func_80004258(Object *object)
 {
     func_800042C8(object, gMatrixIndex);
     gRSPMatrices[gMatrixIndex] = NULL;
     gMatrixIndex++;
+
+    if (gMatrixIndex) {}
+
     return gMatrixIndex - 1;
 }
-#endif
 
 void func_800042A8(Object *object)
 {
     func_800042C8(object, object->matrixIdx);
 }
 
-#if 1
+// regalloc
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800042C8.s")
 #else
-void _func_800042C8(Object *object, int matrixIdx)
+void func_800042C8(Object *object, int matrixIdx)
 {
-    u8 isChild = FALSE;
+    s32 isChild;
     f32 oldScale;
-    Object* objectList[2]; // FIXME: really? only two?
-    s32 objectCount = 0;
-    s32 i;
-    MtxF* pmtx;
+    //MtxF* pmtx;
+    s8 objectCount;
+    SRT invsrt;
+    Object* objectList[5]; // how many?
+
+    isChild = FALSE;
+    objectCount = 0;
 
     while (object != NULL)
     {
-        objectList[objectCount++] = object;
-        objectCount = (s8)objectCount;
+        objectList[objectCount] = object;
+        objectCount++;
 
-        pmtx = &gObjectMatrices[matrixIdx];
+        if (0) {} // HACK: helps regalloc
+
+        //pmtx = &gObjectMatrices[matrixIdx];
 
         oldScale = object->srt.scale;
         object->srt.scale = 1.0f;
 
         if (!isChild) {
-            matrix_from_srt(pmtx, &object->srt);
+            matrix_from_srt(&gObjectMatrices[matrixIdx], &object->srt);
         } else {
             matrix_from_srt(&gAuxMtx2, &object->srt);
-            matrix_concat(pmtx, &gAuxMtx2, pmtx);
+            matrix_concat(&gObjectMatrices[matrixIdx], &gAuxMtx2, &gObjectMatrices[matrixIdx]);
         }
 
         object->srt.scale = oldScale;
@@ -1343,16 +1347,16 @@ void _func_800042C8(Object *object, int matrixIdx)
 
     while (objectCount > 0)
     {
-        Object *pObj = objectList[(s8)--objectCount];
-        SRT invsrt;
+        objectCount--;
+        object = objectList[objectCount];
 
-        invsrt.tx = -pObj->srt.tx;
-        invsrt.ty = -pObj->srt.ty;
-        invsrt.tz = -pObj->srt.tz;
+        invsrt.transl.x = -object->srt.transl.x;
+        invsrt.transl.y = -object->srt.transl.y;
+        invsrt.transl.z = -object->srt.transl.z;
         invsrt.scale = 1.0f;
-        invsrt.yaw = -pObj->srt.yaw;
-        invsrt.pitch = -pObj->srt.pitch;
-        invsrt.roll = -pObj->srt.roll;
+        invsrt.yaw = -object->srt.yaw;
+        invsrt.pitch = -object->srt.pitch;
+        invsrt.roll = -object->srt.roll;
         matrix_from_srt_reversed(&gInverseObjectMatrices[matrixIdx], &invsrt);
     }
 }
