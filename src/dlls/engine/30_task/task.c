@@ -2,7 +2,6 @@
 #include "dll.h"
 #include "variables.h"
 #include "functions.h"
-#include "prevent_bss_reordering.h"
 
 static u8 sRecentlyCompleted[5];
 static u8 sCompletionIdx;

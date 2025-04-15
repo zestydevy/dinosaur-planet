@@ -11,6 +11,16 @@ extern s16 gRenderListLength;
 extern Block *gBlocksToDraw[MAX_BLOCKS];
 extern s16 gBlocksToDrawIdx;
 extern BlockTexture *gBlockTextures;
+extern u32 *gFile_HITS_TAB;
+
+u32 hits_get_size(s32 id);
+void block_setup_vertices(Block *block);
+void block_setup_gdl_groups(Block *block);
+void func_80048B14(Block *block);
+void *block_setup_textures(Block *block);
+void block_setup_xz_bitmap(Block *block);
+void block_load_hits(Block *block, s32, s32, void*);
+void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
@@ -783,7 +793,7 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 #else
 extern u32 *gFile_BLOCKS_TAB;
 extern u8 *gMapReadBuffer;
-void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 {
     u32 allocSize;
     u32 offset;
@@ -793,7 +803,7 @@ void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
     Block *block;
     u8 *p;
     s32 n;
-    u32 i;
+    s32 i;
 
     offset = gFile_BLOCKS_TAB[id];
     compressedSize = gFile_BLOCKS_TAB[id + 1] - offset;
@@ -807,17 +817,18 @@ void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
     }
 
     compressedData = (u8*)block + allocSize - compressedSize - 0x10;
-    if ((s32)compressedData < 0) {
-        // Align to 16 bytes
-        u32 align = (u32)compressedData & 0xf;
-        if (align != 0) {
-            align -= 16;
-        }
-        compressedData -= align;
-    }
+    compressedData = (u8*)((s32)compressedData - ((s32)compressedData % 16));
+    // if ((s32)compressedData < 0) {
+    //     // Align to 16 bytes
+    //     u32 align = (u32)compressedData & 0xf;
+    //     if (align != 0) {
+    //         align -= 16;
+    //     }
+    //     compressedData -= align;
+    // }
 
     read_file_region(BLOCKS_BIN, compressedData, offset, compressedSize);
-    rarezip_uncompress(compressedData + 4, block);
+    rarezip_uncompress(compressedData + 4, (u8*)block, allocSize);
 
     // Convert offsets to pointers
     block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);
@@ -829,7 +840,7 @@ void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
     func_8003CD6C(7);
 
     for (i = 0; i < block->textureCount; i++) {
-        block->tiles[i].texture = texture_load(-((s32)block->tiles[i].texture | 0x8000));
+        block->tiles[i].texture = texture_load(-((s32)block->tiles[i].texture | 0x8000), queue);
     }
 
     func_8003CD6C(6);
@@ -900,7 +911,7 @@ void _block_load(s32 id, s32 param_2, s32 globalMapIdx, s8 queue)
     block_load_hits(block, id, queue, p);
 
     if (queue) {
-        queue_block_emplace(1, block, id, param_2);
+        queue_block_emplace(1, block, id, param_2, globalMapIdx);
     } else {
         block_emplace(block, id, param_2, globalMapIdx);
     }
@@ -1116,16 +1127,10 @@ void _block_setup_vertices(Block *block)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800496E4.s")
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/hits_get_size.s")
-#else
-extern u32 *gFile_HITS_TAB;
-u32 _hits_get_size(s32 id)
-{
-    return gFile_HITS_TAB[id + 1] - gFile_HITS_TAB[id];
+u32 hits_get_size(s32 id) {
+    u32 size = gFile_HITS_TAB[id + 1] - gFile_HITS_TAB[id];
+    return size;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_load_hits.s")
 

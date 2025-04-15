@@ -2,8 +2,9 @@
 #define _VARIABLES_H_
 
 #include "ultra64.h"
-#include <PR/sched.h>
+#include "PR/sched.h"
 #include "constants.h"
+#include "sys/crash.h"
 
 //unknown What this is for.
 struct PointersInts{
@@ -36,7 +37,8 @@ extern struct PointersInts pointersIntsArray[];
 extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
 extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
-
+extern f32 gWorldX;
+extern f32 gWorldZ;
 
 struct UnkStruct_80064514 {
     s32 var0;

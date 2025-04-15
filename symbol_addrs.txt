@@ -1303,8 +1303,7 @@ gAuxMtx = 0x800a6c28; // size:0x40
 gAuxMtx2 = 0x800a6c68; // size:0x40
 gObjectMatrices = 0x800a6ca8;
 gInverseObjectMatrices = 0x800a7428;
-gRSPMatrices = 0x800a7ba8;
-UINT_ARRAY_800a7bb0 = 0x800a7bb0; // size:0x70
+gRSPMatrices = 0x800a7ba8; // size:0x78
 
 gFrustumPlanes = 0x800b4a78; // size:0x64
 

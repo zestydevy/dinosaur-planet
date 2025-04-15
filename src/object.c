@@ -48,7 +48,6 @@ extern s32 gNumObjs;
 
 extern void func_80058FE8();
 extern void update_obj_hitboxes(s32);
-extern s32 func_80004258(Object *object);
 extern void func_80025E58();
 extern void obj_do_hit_detection(s32);
 extern void func_8002B6EC();

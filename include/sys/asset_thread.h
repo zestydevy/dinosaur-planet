@@ -120,5 +120,6 @@ void queue_load_texture(Texture **dest, s32 id);
 void queue_load_dll(void **dest, s32 id, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);
 void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4);
+void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5);
 
 #endif //_SYS_ASSET_THREAD_H

@@ -4,6 +4,9 @@
 #define _SYS_CRASH_H
 
 #include "PR/ultratypes.h"
+#include "PR/os.h"
+#include "PR/sched.h"
+#include "sys/dll.h"
 
 // used for crash screens
 typedef struct ErrString {

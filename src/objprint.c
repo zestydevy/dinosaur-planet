@@ -23,7 +23,6 @@ extern u8 BYTE_800b2e22;
 //extern u8 BYTE_800b2e23;
 #define BYTE_800b2e23 (*(u8*)0x800b2e23)
 void func_8001F81C(u8*, u8*, u8*);
-void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 param_4, u32 param_5, Mtx **overrideMtx);
 void func_8001943C(Object *obj, MtxF *mf, f32 yPrescale);
 void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *param_5, f32 yPrescale)
 {

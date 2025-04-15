@@ -1,5 +1,6 @@
 #include <PR/ultratypes.h>
 #include "dlls/engine/28_screen_fade.h"
+#include "sys/camera.h"
 #include "sys/gfx/map.h"
 #include "sys/objects.h"
 #include "dll.h"

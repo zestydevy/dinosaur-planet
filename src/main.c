@@ -162,7 +162,6 @@ void game_init(void)
 void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4);
 void dl_next_debug_info_set();                         /* extern */
 void dl_segment(Gfx **gdl, u32 segment, void *base);
-void func_80001A3C();                                  /* extern */
 void func_80007178();                                  /* extern */
 void func_800121DC();                                  /* extern */
 void func_800129E4();                                  /* extern */
@@ -173,7 +172,6 @@ void func_80037EC8(Gfx**);                             /* extern */
 void func_8003E9F0(Gfx**, u8);                         /* extern */
 s32 func_80041D5C();                                /* extern */
 s32 func_80041D74();                                /* extern */
-void tick_cameras();                                   /* extern */
 void update_mem_mon_values();                          /* extern */
 u8 video_func_returning_delay(s32);                   /* extern */
 extern s32 D_80099130;
@@ -318,7 +316,6 @@ void game_tick_no_expansion(void)
     inverseDelayMirror = 1.0f / delayFloatMirror;
 }
 
-s32 func_80001A2C();                                /* extern */
 s8 func_800143FC();                                /* extern */
 void func_800210DC();                                  /* extern */
 void func_80042174(s32);                                 /* extern */
@@ -409,7 +406,6 @@ void func_80013FB4(void) {
 
 extern s32 D_8008C968;
 extern u8 D_8008CA30;
-void func_80001220();                                  /* extern */
 void func_80017254(s32);                                 /* extern */
 void func_8003798C(s32, s32, s32);                           /* extern */
 void func_8004773C();                                  /* extern */

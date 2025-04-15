@@ -346,6 +346,7 @@ segments:
     
     # rodata
     - [0x98E10, rodatabin]
+    - [0x98E90, .rodata, camera]
     - [0x98FB0, .rodata, curves]
     - [0x99110, rodatabin]
     - [0x992D0, .rodata, bitstream]
