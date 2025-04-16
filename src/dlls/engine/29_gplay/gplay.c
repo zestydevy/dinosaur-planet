@@ -387,7 +387,7 @@ static void gplay_func_D94() {
 
     bzero(&bss_10.bitString, 128);
 
-    func_8001442C();
+    unpause();
 
     func_800142A0(
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x,

@@ -1,5 +1,6 @@
 #include "common.h"
-#include <PR/sched.h>
+#include "PR/os.h"
+#include "PR/sched.h"
 #include "dll.h"
 #include "sys/rarezip.h"
 #include "sys/menu.h"
@@ -240,7 +241,7 @@ void game_tick(void)
     obj_do_deferred_free();
     update_mem_mon_values();
     
-    if (D_800B09C2 == 0) {
+    if (gPauseState == 0) {
         func_80001A3C();
     }
 
@@ -335,7 +336,7 @@ void func_80013D80(void)
 {
     s32 button;
 
-    set_button_mask(0, 0x900);
+    set_button_mask(0, U_JPAD | R_JPAD);
     gDLL_Camera->exports->func19.asVoid();
     gDLL_subtitles->exports->func[5].asVoid();
 
@@ -343,19 +344,19 @@ void func_80013D80(void)
     {
         button = get_masked_button_presses(0);
 
-        if (D_800B09C2 != 0) {
+        if (gPauseState != 0) {
             draw_pause_screen_freeze_frame(&gCurGfx);
         }
 
-        if (D_800B09C2 == 0)
+        if (gPauseState == 0)
         {
             update_objects();
             func_80042174(0);
 
-            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & 0x1000) != 0) && (get_gplay_bitstring(1103) == 0))
+            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (get_gplay_bitstring(1103) == 0))
             {
-                D_800B09C2 = 1;
-                set_button_mask(0, 0x1000);
+                gPauseState = 1;
+                set_button_mask(0, START_BUTTON);
                 menu_set(MENU_8);
             }
             
@@ -365,7 +366,7 @@ void func_80013D80(void)
             update_obj_models();
         }
         
-        if (D_800B09C2 == 0) {
+        if (gPauseState == 0) {
             update_PlayerPosBuffer();
         }
 
@@ -377,7 +378,7 @@ void func_80013D80(void)
 
         gDLL_Race->exports->func[14].asVoid();
 
-        if (D_800B09C2 == 0) {
+        if (gPauseState == 0) {
             func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
@@ -400,7 +401,7 @@ void func_80013FB4(void) {
     gDLL_AMSEQ->exports->func[6].withOneArg(0);
     gDLL_AMSEQ->exports->func[6].withOneArg(1);
     gDLL_subtitles->exports->func[4].asVoid();
-    func_8001442C();
+    unpause();
     func_800141A4(1, 0, 1, -1);
 }
 
@@ -515,16 +516,16 @@ void func_8001440C(s32 arg0) {
     D_8008C940 = arg0;
 }
 
-s8 func_8001441C(void) {
-    return D_800B09C2;
+s8 get_pause_state(void) {
+    return gPauseState;
 }
 
-void func_8001442C(void) {
-    D_800B09C2 = 0;
+void unpause(void) {
+    gPauseState = 0;
 }
 
-void func_8001443C(s32 arg0) {
-    D_800B09C2 = arg0;
+void set_pause_state(s32 state) {
+    gPauseState = state;
 }
 
 #define MAIN_GFX_BUF_SIZE 0x8CA0

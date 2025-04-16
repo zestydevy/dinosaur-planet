@@ -1,4 +1,6 @@
 #include "common.h"
+#include "sys/controller.h"
+#include "sys/gfx/gx.h"
 
 // TODO: This is part of a larger data structure and is only here to allow the current .data section
 // for this file to be aligned correctly!
@@ -6,6 +8,10 @@ u8 D_80092ff0[] = { 0x07, 0xb1, 0x04, 0x03, 0x07, 0xb1, 0x00, 0x00 };
 
 UnkHeapVidStruct *D_800BCC10;
 UnkVidStruct2 D_800BCC18[4]; // size:0x50
+
+extern OSIoMesg D_800BCC90;
+extern OSDevMgr __osViDevMgr;
+extern s8 D_80093064;
 
 // func_8005BC38 is from segment_5C470
 /**
@@ -19,10 +25,8 @@ void set_video_mode(s32 mode);
 void initialize_framebuffers(int someBool, s32 width, s32 height);
 void swap_framebuffer_pointers();
 void set_custom_vi_mode();
+void func_8005DEE8();
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C780.s")
-#else
 void func_8005C780() {
     s32 i;
 
@@ -82,12 +86,7 @@ void func_8005C780() {
 
     D_800BCC78 = (u8)0;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005C998.s")
-void func_8005C998();
-#else
 void func_8005C998() {
     s32 i;
 
@@ -105,11 +104,7 @@ void func_8005C998() {
         D_800BCC18[i].unk0xc = 0;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA5C.s")
-#else
 void func_8005CA5C(u32 param1) {
     D_800BCC78 = param1;
 
@@ -117,11 +112,7 @@ void func_8005CA5C(u32 param1) {
         func_8005C998();
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CA88.s")
-#else
 void func_8005CA88(f32 *a0, f32 *a1, u8 a2) {
     static s32 D_80092FF8 = 0;
 
@@ -139,11 +130,7 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2) {
         }
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CB10.s")
-#else
 void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
     s32 i;
     Texture *tex;
@@ -172,14 +159,12 @@ void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
         i++;
     }
 }
-#endif
 
 static s32 D_80092FFC = 1;
 static s32 D_80093000 = 0;
+
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CD80.s")
-#else
+
 void func_8005CD80() {
     s32 i;
     s32 k;
@@ -201,11 +186,7 @@ void func_8005CD80() {
         }
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CDFC.s")
-#else
 void func_8005CDFC(int _) {
     float var1;
     float var2;
@@ -234,13 +215,9 @@ void func_8005CDFC(int _) {
         }
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CF4C.s")
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D3A4.s")
-#else
 // Note: Return type is void* because the real type is unclear
 void *func_8005D3A4(int param) {
     switch (param) {
@@ -259,11 +236,7 @@ void *func_8005D3A4(int param) {
             return &D_80092F54;
     } 
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D410.s")
-#else
 void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     int i;
     u32 width;
@@ -335,41 +308,25 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE22[1] = 0;
     D_800BCE34 = 1;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/set_video_mode.s")
-#else
 /**
  * Sets gVideoMode.
  */
 void set_video_mode(s32 mode) {
     gVideoMode = mode;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_video_mode.s")
-#else
 /**
  * Returns gVideoMode.
  */
 s32 get_video_mode() {
     return gVideoMode;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_addr_of_OSMesgQueue_8005D670.s")
-#else
 OSMesgQueue *get_addr_of_OSMesgQueue_8005D670() {
     return &OSMesgQueue_800bcce0;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/set_current_resolution_from_video_mode.s")
-#else
 /**
  * Sets gCurrentResolution*[framebufferIndex] to the resolution
  * specified by gVideoMode from gResolutionArray.
@@ -382,11 +339,7 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
     gCurrentResolutionH[framebufferIndex] = gResolutionArray[gVideoMode & 7].h;
     gCurrentResolutionV[framebufferIndex] = gResolutionArray[gVideoMode & 7].v;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_some_resolution_encoded.s")
-#else
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  *
@@ -409,11 +362,7 @@ u32 get_some_resolution_encoded() {
         return (var1 << 0x10) | var1;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_other_resolution_encoded.s")
-#else
 /**
  * Returns the resolution of the framebuffer not currently in use encoded as 0xVVVV_HHHH.
  *
@@ -423,11 +372,7 @@ u32 get_other_resolution_encoded() {
     return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) |
             gCurrentResolutionH[gFramebufferChoice < 1];
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/set_custom_vi_mode.s")
-#else
 void set_custom_vi_mode() {
     u8 viLpn;
     OSViMode *viMode;
@@ -480,11 +425,7 @@ void set_custom_vi_mode() {
     osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
     osViSetSpecialFeatures(OS_VI_GAMMA_OFF);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/initialize_framebuffers.s")
-#else
 void initialize_framebuffers(int someBool, s32 width, s32 height) {
     VideoResolution *resPtr;
     u32 hRes;
@@ -525,51 +466,94 @@ void initialize_framebuffers(int someBool, s32 width, s32 height) {
         gFramebufferStart = (u16*)0x80200000;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005D9D8.s")
-#else
 void func_8005D9D8() {
     D_800BCE58 = 0;
     D_800BCE59 = 2;
     D_800BCE34 = 1;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DA00.s")
-#else
 void func_8005DA00(u32 param1) {
     D_800BCE34 = param1;
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/video_func_returning_delay.s")
+s32 video_func_returning_delay(s32 param1) {
+    s32 ret;
+    s32 vidMode;
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC68.s")
-#else
+    ret = 1;
+
+    if (D_800BCE14 != 0) {
+        D_800BCE14 -= 1;
+
+        if (D_800BCE14 == 0) {
+            osViBlack(FALSE);
+        }
+    }
+
+    if (param1 != 8) {
+        swap_framebuffer_pointers();
+    }
+
+    while (osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_NOBLOCK) != -1) {
+        ret += 1;
+    }
+
+    D_800BCE59 = ret;
+
+    if (D_800BCE59 < D_800BCE34) {
+        D_800BCE59 = D_800BCE34;
+    }
+
+    while (ret < D_800BCE59) {
+        osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_BLOCK);
+        ret++;
+    }
+
+    if (D_80093060 != 0) {
+        vidMode = get_video_mode();
+
+        if (D_80093060 == 3) {
+            set_video_mode(vidMode);
+            set_current_resolution_from_video_mode(gFramebufferChoice);
+            osViSwapBuffer(gFramebufferCurrent);
+        } else if (D_80093060 == 2) {
+            set_current_resolution_from_video_mode(gFramebufferChoice);
+            osViSwapBuffer(gFramebufferCurrent);
+        } else {
+            D_800BCC90.hdr.type = 0x11;
+            D_800BCC90.hdr.retQueue = (OSMesgQueue*)&gOSViModeCustom;
+            osSendMesg(__osViDevMgr.evtQueue, &D_800BCC90, OS_MESG_BLOCK);
+            osViSwapBuffer(gFramebufferCurrent);
+            D_80093064 ^= 1;
+        }
+
+        D_80093060 -= 1;
+    } else {
+        if (get_pause_state() == 1) {
+            // Create pause screen screenshot
+            set_pause_state(2);
+            bcopy(gFramebufferNext, gFramebufferEnd, 0x25800);
+        } else {
+            osViSwapBuffer(gFramebufferCurrent);
+        }
+    }
+
+    signal_apply_controller_inputs();
+    func_8005DEE8();
+    osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_BLOCK);
+
+    return ret;
+}
+
 void func_8005DC68() {}
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC70.s")
-#else
 void func_8005DC70(int _) {}
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DC7C.s")
-#else
 s32 func_8005DC7C() {
     return (s32)((f32)gDisplayHertz / (f32)D_800BCE59);
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/swap_framebuffer_pointers.s")
-#else
 /**
  * Swaps gFramebufferCurrent and gFramebufferNext.
  *
@@ -595,35 +579,23 @@ void swap_framebuffer_pointers() {
     // TODO: what is this doing?
     D_800BCCB0 = gFramebufferStart; // D_800BCCB0 = &framebufferCurrent+4
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_framebuffer_start.s")
-#else
 /**
  * Returns gFramebufferStart.
  */
 u16 *get_framebuffer_start() {
     return gFramebufferStart;
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/get_framebuffer_end.s")
-#else
 /**
  * Returns gFramebufferEnd.
  */
 u16 *get_framebuffer_end() {
     return gFramebufferEnd;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD4C.s")
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/is_size_smaller_than_resolution.s")
-#else
 /**
  * Returns whether the given width and height is smaller than the current framebuffer's resolution.
  *
@@ -635,7 +607,6 @@ int is_size_smaller_than_resolution(s32 width, s32 height) {
         && height >= 0
         && (u32)height < gCurrentResolutionV[gFramebufferChoice];
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DEE8.s")
@@ -668,9 +639,6 @@ void func_8005DEE8() {
 }
 #endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/some_video_setup.s")
-#else
 /**
  * Note: param1 is most likely a boolean
  */
@@ -695,11 +663,7 @@ void some_video_setup(int param1) {
         D_800BCE2C = 0x5;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/video/modify_vi_mode.s")
-#else
 void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
     u8 viLpn;
     OSViMode *viMode;
@@ -752,4 +716,3 @@ void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
 
     D_80093060 = 3;
 }
-#endif

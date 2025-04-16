@@ -21,7 +21,7 @@ struct UnkStruct_800175D4 {
 extern u8 D_8008C940;
 extern u32 D_800AE674;
 extern u8 D_800B09C3;
-extern s8 D_800B09C2;
+extern s8 gPauseState;
 extern s8 D_800B09C4;
 extern s8 D_8008C94C;
 extern s32 D_800B179C;
