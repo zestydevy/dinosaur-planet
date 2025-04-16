@@ -80,7 +80,7 @@ s16 D_8008C518 = 0;
 s16 D_8008C51C = 0;
 s8 D_8008C520 = 0; // gAntiPiracyViewport?
 s16 SHORT_8008c524 = 0;
-s16 FB_BGCOLOR = 0; // FIXME: wrong name
+s16 SHORT_8008c528 = 0;
 f32 FLOAT_8008c52c = 1.0f;
 Viewport gViewports[4] = {
     { DEFAULT_VIEWPORT },
@@ -126,8 +126,7 @@ extern u32 D_B0000578;
 
 f32 fexp(f32 x, u32 iterations);
 
-// camera_init
-void func_80001220() {
+void camera_init() {
     s32 i;
     u32 stat;
 
@@ -162,7 +161,7 @@ void func_80001220() {
 
     FLOAT_8008c52c = gProjectionMtx.m[0][0];
     SHORT_8008c524 = 0;
-    FB_BGCOLOR = 0;
+    SHORT_8008c528 = 0;
 }
 
 void func_800013BC() {
@@ -173,18 +172,16 @@ void func_800013D0() {
     UINT_800a6a54 = 0;
 }
 
-u32 MusPtrBankGetCurrent() {
+u32 func_800013E0() {
     return UINT_800a6a54;
 }
 
-// camera_get_fov
-f32 get_fov_y()
+f32 camera_get_fov()
 {
     return gFovY;
 }
 
-// camera_set_fov
-void set_fov_y(f32 fovY)
+void camera_set_fov(f32 fovY)
 {
     if (fovY > 90.0f) {
         fovY = 90.0f;
@@ -199,12 +196,12 @@ void set_fov_y(f32 fovY)
     FLOAT_8008c52c = gProjectionMtx.m[0][0];
 }
 
-void set_ortho_projection_matrix(f32 l, f32 r, f32 b, f32 t)
+void camera_set_ortho_projection_matrix(f32 l, f32 r, f32 b, f32 t)
 {
     guOrthoF(gProjectionMtx.m, l, r, b, t, 0.0f, 400.0f, 20.0f);
 }
 
-void set_aspect(f32 aspect)
+void camera_set_aspect(f32 aspect)
 {
     gAspect = aspect;
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
@@ -213,7 +210,7 @@ void set_aspect(f32 aspect)
     gProjectionMtx.m[0][3] *= 0.5f;
 }
 
-void set_near_plane(f32 near)
+void camera_set_near_plane(f32 near)
 {
     gNearPlane = near;
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
@@ -233,14 +230,14 @@ void func_80001660(f32 farPlane, s32 param2) {
     }
 }
 
-f32 get_far_plane()
+f32 camera_get_far_plane()
 {
     return gFarPlane;
 }
 
 void func_800016B8()
 {
-    set_near_plane(4.0f);
+    camera_set_near_plane(4.0f);
 }
 
 void func_800016E0() {
@@ -1127,27 +1124,27 @@ Camera *get_camera_array()
     return gCameras;
 }
 
-MtxF *func_8000388c()
+MtxF *camera_get_view_mtx2()
 {
     return &gViewMtx2;
 }
 
-MtxF *func_8000389c()
+MtxF *camera_get_viewproj_mtx()
 {
     return &gViewProjMtx;
 }
 
-MtxF *func_800038AC()
+MtxF *camera_get_projection_mtx()
 {
     return &gProjectionMtx;
 }
 
-Mtx *func_800038BC()
+Mtx *camera_get_rsp_projection_mtx()
 {
     return &gRSPProjectionMtx;
 }
 
-MtxF *func_800038CC()
+MtxF *camera_get_view_mtx()
 {
     return &gViewMtx;
 }
@@ -1196,7 +1193,7 @@ u32 func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 #endif
 
 // gets angle to camera z-vector
-f32 func_80003A60(f32 x, f32 y, f32 z) {
+f32 camera_get_angle_to_point(f32 x, f32 y, f32 z) {
     return 
         x * gViewMtx.m[0][2] +
         y * gViewMtx.m[1][2] +
@@ -1271,14 +1268,14 @@ void add_matrix_to_pool(MtxF *mf, s32 count)
 
 // regalloc
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/tick_cameras.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/camera_tick.s")
 #else
-void tick_cameras() {
+void camera_tick() {
     Camera *camera;
     f32 var4;
     f32 var5;
 
-    SHORT_8008c524 = FB_BGCOLOR;
+    SHORT_8008c524 = SHORT_8008c528;
 
     if (D_8008C518 != 0) {
         D_8008C518 -= delayByte;
@@ -1692,9 +1689,9 @@ void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 #endif
 
 void func_80004A30(s16 param1) {
-    FB_BGCOLOR = param1;
+    SHORT_8008c528 = param1;
 }
 
 s16 func_80004A4C() {
-    return FB_BGCOLOR;
+    return SHORT_8008c528;
 }

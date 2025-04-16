@@ -229,7 +229,7 @@ void game_tick(void)
     func_800121DC();
     gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
     gDLL_subtitles->exports->func[6].withOneArg(tmp_s0);
-    tick_cameras();
+    camera_tick();
     func_800129E4();
     diPrintfAll(tmp_s0); 
 
@@ -431,7 +431,7 @@ void func_80014074(void)
         ossceduler_stack = 0;
         
         func_80017254(0);
-        func_80001220();
+        camera_init();
 
         if (D_8008C968 >= 0) {
             menu_set(D_8008C968);

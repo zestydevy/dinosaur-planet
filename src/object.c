@@ -371,7 +371,7 @@ void func_80020EE4(s32 param1, s32 param2) {
             if (obj->def->flags & 0x80000) {
                 obj->unk_0xa4 = obj->def->unk9d * 1000;
             } else {
-                obj->unk_0xa4 = -func_80003A60(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+                obj->unk_0xa4 = -camera_get_angle_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
             }
         }
 
