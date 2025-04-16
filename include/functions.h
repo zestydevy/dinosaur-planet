@@ -2,6 +2,7 @@
 #define _FUNCTIONS_H
 
 #include "game/objects/object.h"
+#include "sys/camera.h"
 #include "sys/scheduler.h"
 #include "libc/stdarg.h"
 #include "unktypes.h"
@@ -109,5 +110,7 @@ void func_8003CD6C(s32);
 
 void func_80046B58(f32 x, f32 y, f32 z);
 s32 func_8004454C(f32 x, f32 y, f32 z);
+
+void convert_mtxf_to_mtx_in_pool(MatrixSlot *);
 
 #endif //_FUNCTIONS_H

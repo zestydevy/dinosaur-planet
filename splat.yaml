@@ -292,6 +292,8 @@ segments:
     - [0x8BC90, databin, ucode_rspbootText]
     - [0x8BD60, databin, ucode_gspF3DEX2_xbusText]
     - [0x8D100, databin]
+    - [0x8D110, .data, camera]
+    - [0x8D3D0, databin]
     - [0x8D440, .data, menu]
     - [0x8D4A0, databin]
     - [0x8D640, data, math_util]

@@ -44,6 +44,7 @@ typedef struct
 {
 /*0000*/    Mtx_MtxF *mtx;
 /*0004*/    s16 count;
+/*0006*/    u8 _pad[2];
 } MatrixSlot;
 
 typedef struct

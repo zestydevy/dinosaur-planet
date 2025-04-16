@@ -1,7 +1,13 @@
 #include "sys/camera.h"
 
-#include "common.h"
+#include "PR/gbi.h"
 #include "libultra/io/piint.h"
+#include "game/objects/object.h"
+#include "sys/gfx/gx.h"
+#include "sys/math.h"
+#include "functions.h"
+
+#include "prevent_bss_reordering.h"
 
 static const char str_80098290[] = "Camera Error: Illegal mode!\n";
 static const char str_800982b0[] = "Camera Error: Illegal player no!\n";
@@ -33,7 +39,7 @@ extern f32 gFovY;
 extern f32 gAspect;
 extern s8 gTriggerUseAlternateCamera;
 extern s8 gUseAlternateCamera;
-extern MatrixSlot gMatrixPool[2]; // FIXME: how many?
+extern MatrixSlot gMatrixPool[100];
 extern u32 gMatrixCount;
 extern u32 UINT_800a6a54;
 extern u16 gPerspNorm;
@@ -55,24 +61,70 @@ extern s8 gMatrixIndex;
 
 // .data
 
-extern f32 gNearPlane; // = 4.0f;
-extern f32 gFarPlane; // = 10000.0f;
-extern s16 D_8008C518; // = 0;
-extern s16 D_8008C51C; // = 0;
-extern s8 D_8008C520; // = 0; // gAntiPiracyViewport?
-extern s16 SHORT_8008c524; // = 0;
-extern s16 FB_BGCOLOR; // = 0; // FIXME: wrong name
-extern f32 FLOAT_8008c52c; // = 1.0f;
-extern Viewport gViewports[4];
-extern u32 gCameraGroupSelector; // = 0;
-// 0x8008c604: { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff }
-extern Vp gRSPViewports[20];
-extern SRT D_8008C758[2];
-extern MtxF D_8008C788;
+// The viewport z-range below is half of the max (511)
+#define G_HALFZ (G_MAXZ / 2) /* 9 bits of integer screen-Z precision */
 
+// x1, y1, x2, y2
+// posX, posY, width, height
+// scissorX1, scissorY1, scissorX2, scissorY2
+// flags
+#define DEFAULT_VIEWPORT                                                                                         \
+    0, 0, 320, 240, \
+    160, 120, 320, 240, \
+    0, 0, 320 - 1, 240 - 1, \
+    0
 
-// special ROM address
+f32 gNearPlane = 4.0f;
+f32 gFarPlane = 10000.0f;
+s16 D_8008C518 = 0;
+s16 D_8008C51C = 0;
+s8 D_8008C520 = 0; // gAntiPiracyViewport?
+s16 SHORT_8008c524 = 0;
+s16 FB_BGCOLOR = 0; // FIXME: wrong name
+f32 FLOAT_8008c52c = 1.0f;
+Viewport gViewports[4] = {
+    { DEFAULT_VIEWPORT },
+    { DEFAULT_VIEWPORT },
+    { DEFAULT_VIEWPORT },
+    { DEFAULT_VIEWPORT },
+};
+u32 gCameraGroupSelector = 0;
+u8 data_8008c604[] = { 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0xff, 0xff, 
+    0xff, 0xff
+};
+Vp gRSPViewports[20] = {
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+    { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } }, { { { 0, 0, G_HALFZ, 0 }, { 0, 0, G_HALFZ, 0 } } },
+};
+SRT D_8008C758[2] = {
+    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, -281.0f }},
+    { 0, 0, 0, 0, 1.0f, { 0.0f, 0.0f, 0.0f }}
+};
+MtxF D_8008C788 = {
+    {
+    { 1.0f, 0.0f, 0.0f, 0.0f },
+    { 0.0f, 1.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f, 0.0f },
+    { 0.0f, 0.0f, 0.0f, 160.0f },
+    }
+};
+
+// ROM address
 extern u32 D_B0000578;
+
+f32 fexp(f32 x, u32 iterations);
 
 // camera_init
 void func_80001220() {
@@ -833,8 +885,10 @@ void func_800029C4(f32 param1) {
     D_8008C788.m[1][1] = param1;
 }
 
+// unused
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029D4.s")
 
+// unused
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002B2C.s")
 
 void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
@@ -965,7 +1019,40 @@ void func_800032AC(u32 a0, u32 a1, u32 a2, u32 a4)
 {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800032C4.s")
+void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, s32 param5, MtxF *param6) {
+    MtxF *mtx;
+    Mtx *mtx2;
+
+    mtx = param6 == NULL ? &MtxF_800a6a60 : param6;
+
+    param3->transl.x -= gWorldX;
+    param3->transl.z -= gWorldZ;
+
+    if (param3->transl.x > 32767.0f || -32767.0f > param3->transl.x || param3->transl.z > 32767.0f || -32767.0f > param3->transl.z) {
+        mtx2 = get_some_model_view_mtx();
+        gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(mtx2), G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        param3->transl.x += gWorldX;
+        param3->transl.z += gWorldZ;
+    } else {
+        matrix_from_srt(mtx, param3);
+        if (param4 != 1.0f) {
+            matrix_prescale_y(mtx, param4);
+        }
+
+        if (param6 == NULL) {
+            matrix_f2l_4x3(mtx, *rspMtxs);
+            gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_LOAD | G_MTX_MODELVIEW);
+        } else {
+            // @bug: param6 is a float matrix? shouldn't this be converted to a long matrix?
+            gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(param6), G_MTX_LOAD | G_MTX_MODELVIEW);
+            add_matrix_to_pool(param6, 1);
+        }
+
+        param3->transl.x += gWorldX;
+        param3->transl.z += gWorldZ;
+    }
+}
 
 void func_800034CC(f32 x, f32 y, f32 z)
 {
@@ -1065,45 +1152,57 @@ MtxF *func_800038CC()
     return &gViewMtx;
 }
 
-#if 1
+// more than regalloc, but equivalent
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800038DC.s")
 #else
-u32 _func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
+u32 func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 {
+    u32 ret;
+    Vp *rspvp;
     f32 vx;
     f32 vy;
     f32 vz;
+    
+    ret = 0;
 
     if (param_6) {
-        vec3_transform(gViewMtx, x, y, z, &vx, &vy, &vz);
+        vec3_transform(&gViewMtx, x, y, z, &x, &y, &z);
     }
 
-    vx = gProjectionMtx.m[0][0] * vx;
-    vy = gProjectionMtx.m[1][1] * vy;
-    vz = -gProjectionMtx.m[2][3] * vz;
+    vx = gProjectionMtx.m[0][0] * x;
+    vy = gProjectionMtx.m[1][1] * y;
+    vz = gProjectionMtx.m[2][3] * z;
+    vz = -vz;
 
     if (vz < -2.0f)
     {
-        Vp *rspvp;
-
         rspvp = &gRSPViewports[gCameraSelector];
         if (gViewports[gCameraSelector].flags & 0x1) {
             rspvp += gCameraGroupSelector * 5 + 10;
         }
 
-        *ox = (rspvp->vp.vtrans[0] >> 2) - (vx * (rspvp->vp.vscale[0] >> 2)) / vz;
-        *oy = (rspvp->vp.vtrans[1] >> 2) + (vy * (rspvp->vp.vscale[1] >> 2)) / vz;
+        vx = (vx * (rspvp->vp.vscale[0] >> 2)) / vz;
+        vy = (vy * (rspvp->vp.vscale[1] >> 2)) / vz;
 
-        return 1;
+        *ox = (rspvp->vp.vtrans[0] >> 2) - vx;
+        *oy = (rspvp->vp.vtrans[1] >> 2) + vy;
+
+        ret = 1;
     }
 
-    return 0;
+    return ret;
 }
 #endif
 
-// get_distance_to_camera?
-// https://github.com/DavidSM64/Diddy-Kong-Racing/blob/master/src/camera.c#L1564
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003A60.s")
+// gets angle to camera z-vector
+f32 func_80003A60(f32 x, f32 y, f32 z) {
+    return 
+        x * gViewMtx.m[0][2] +
+        y * gViewMtx.m[1][2] +
+        z * gViewMtx.m[2][2] +
+        gViewMtx.m[3][2];
+}
 
 void func_80003AA0(f32 x, f32 y, f32 z, f32 distance, f32 param_5)
 {
@@ -1148,9 +1247,21 @@ void func_80003bb0(f32 param_1, f32 param_2, f32 param_3)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003C48.s")
+// unused
+void func_80003C48(s32 a0) {
+    s32 i = 0;
+    while (i < 16) {
+        i++;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80003C68.s")
+// unused
+void func_80003C68(s32 a0) {
+    s32 i = 0;
+    while (i < 16) {
+        i++;
+    }
+}
 
 void add_matrix_to_pool(MtxF *mf, s32 count)
 {
@@ -1158,53 +1269,61 @@ void add_matrix_to_pool(MtxF *mf, s32 count)
     gMatrixPool[gMatrixCount++].count = count;
 }
 
-#if 1
+// regalloc
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/tick_cameras.s")
 #else
-void _tick_cameras()
-{
-    *(s16*)0x8008c524 = *(s16*)0x8008c528;
-    if (*(s16*)0x8008c518 != 0)
-    {
-        *(s16*)0x8008c518 -= *(u8*)0x8008c950;
-        if (*(s16*)0x8008c518 < 0) {
-            *(s16*)0x8008c518 = 0;
+void tick_cameras() {
+    Camera *camera;
+    f32 var4;
+    f32 var5;
+
+    SHORT_8008c524 = FB_BGCOLOR;
+
+    if (D_8008C518 != 0) {
+        D_8008C518 -= delayByte;
+
+        if (D_8008C518 < 0) {
+            D_8008C518 = 0;
         }
 
-        gFarPlane = (*(f32*)0x800a6270 - *(f32*)0x800a6274) * ((f32)*(s16*)0x8008c518 / *(s16*)0x8008c51c) + *(f32*)0x800a6274;
+        gFarPlane = (D_800A6270 - D_800A6274) * ((f32)D_8008C518 / (f32)D_8008C51C) + D_800A6274;
     }
 
     gMatrixPool[gMatrixCount].count = -1;
+
     convert_mtxf_to_mtx_in_pool(gMatrixPool);
+
     gMatrixCount = 0;
     gMatrixIndex = 0;
 
     if (gUseAlternateCamera) {
         gCameraSelector += 4;
     }
+    
+    camera = &gCameras[gCameraSelector];
 
-    if (gCameras[gCameraSelector].unk_0x5d == 0)
-    {
-        gCameras[gCameraSelector].unk_0x5c--;
-        while (gCameras[gCameraSelector].unk_0x5c < 0) {
-            gCameras[gCameraSelector].unk_0x5c++;
-            gCameras[gCameraSelector].dty = -gCameras[gCameraSelector].dty * *(f32*)0x80098398 /* 0.09f */;
+    if (camera->unk_0x5d == 0) {
+        camera->unk_0x5c += -1;
+
+        while (camera->unk_0x5c < 0) {
+            camera->dty = -camera->dty * 0.89999998f;
+
+            camera->unk_0x5c++;
         }
-    }
-    else
-    {
-        if (gCameras[gCameraSelector].unk_0x5d == 1)
-        {
-            f32 exp = fexp(-gCameras[gCameraSelector].unk_0x3c * gCameras[gCameraSelector].unk_0x38, 20);
-            f32 c = fcos16_precise(gCameras[gCameraSelector].unk_0x34 * *(f32*)0x8009839c /* 65535.0f */ * gCameras[gCameraSelector].unk_0x38)
-                    * gCameras[gCameraSelector].unk_0x30 * exp;
-            gCameras[gCameraSelector].dty = c;
-            if (c < *(f32*)0x800983a0 /* 0.1f */ && c > *(f32*)0x800983a4 /* -0.1f */) {
-                gCameras[gCameraSelector].unk_0x5d = -1;
-                gCameras[gCameraSelector].dty = 0.0f;
-            }
-            gCameras[gCameraSelector].unk_0x38 += *(f32*)0x8008c958 /* 1.0f */ / 60.0f;
+    } else if (camera->unk_0x5d == 1) {
+        var4 = fexp(-camera->unk_0x3c * camera->unk_0x38, 20);
+        var5 = fcos16_precise(camera->unk_0x34 * 65535.0f * camera->unk_0x38);
+        var5 *= camera->unk_0x30 * var4;
+
+        camera->dty = var5;
+
+        if (camera->dty < 0.1f && -0.1f < camera->dty) {
+            camera->unk_0x5d = -1;
+            camera->dty = 0.0f;
         }
+
+        camera->unk_0x38 += delayFloat / 60.0f;
     }
 }
 #endif
@@ -1383,15 +1502,14 @@ void get_object_child_position(Object *object, float *ox, float *oy, float *oz)
 }
 #endif
 
-// regalloc
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_object.s")
-#else
 void transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
+    s8 *matrixIdxField = &object->matrixIdx;
+    if ((!object->matrixIdx) && (!object->matrixIdx)) {} // bad fakematch
+
     if (object != NULL)
     {
-        vec3_transform(&gObjectMatrices[object->matrixIdx], x, y, z, ox, oy, oz);
+        vec3_transform(&gObjectMatrices[*matrixIdxField], x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1400,16 +1518,15 @@ void transform_point_by_object(float x, float y, float z, float *ox, float *oy, 
         *oz = z;
     }
 }
-#endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_transform_point_by_object.s")
-#else
-void _inverse_transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
+void inverse_transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
+    s8 *matrixIdxField = &object->matrixIdx;
+    if ((!object->matrixIdx) && (!object->matrixIdx)) {} // bad fakematch
+
     if (object != NULL)
     {
-        vec3_transform(&gInverseObjectMatrices[object->matrixIdx], x, y, z, ox, oy, oz);
+        vec3_transform(&gInverseObjectMatrices[*matrixIdxField], x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1418,12 +1535,12 @@ void _inverse_transform_point_by_object(float x, float y, float z, float *ox, fl
         *oz = z;
     }
 }
-#endif
 
-#if 1
+// regalloc
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/inverse_rotate_point_by_object.s")
 #else
-void _inverse_rotate_point_by_object(float x, float y, float z, float *ox, float *oy, float * oz, Object *object)
+void inverse_rotate_point_by_object(float x, float y, float z, float *ox, float *oy, float * oz, Object *object)
 {
     Vec3f v;
 
@@ -1433,15 +1550,15 @@ void _inverse_rotate_point_by_object(float x, float y, float z, float *ox, float
     vec3_transform_no_translate(&gInverseObjectMatrices[object->matrixIdx], &v, &v);
     *ox = v.x;
     *oy = v.y;
-    *oz = v.y;
+    *oz = v.z;
 }
 #endif
 
 // regalloc
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/rotate_point_by_object.s")
 #else
-void _rotate_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
+void rotate_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {
     Vec3f v;
 
@@ -1456,23 +1573,26 @@ void _rotate_point_by_object(float x, float y, float z, float *ox, float *oy, fl
 #endif
 
 // regalloc
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_srt_by_object.s")
 #else
-void _transform_srt_by_object(SRT *srt, SRT *out, Object *object)
+void transform_srt_by_object(SRT *srt, SRT *out, Object *object)
 {
     if (object == NULL)
     {
-        out->tx = srt->tx;
-        out->ty = srt->ty;
-        out->tz = srt->tz;
+        out->transl.x = srt->transl.x;
+        out->transl.y = srt->transl.y;
+        out->transl.z = srt->transl.z;
         out->yaw = srt->yaw;
         out->pitch = srt->pitch;
         out->roll = srt->roll;
     }
     else
     {
-        vec3_transform(&gObjectMatrices[object->matrixIdx], srt->tx, srt->ty, srt->tz, &out->tx, &out->ty, &out->tz);
+        vec3_transform(&gObjectMatrices[object->matrixIdx], 
+            srt->transl.x, srt->transl.y, srt->transl.z, 
+            &out->transl.x, &out->transl.y, &out->transl.z);
+        
         out->yaw = object->srt.yaw + srt->yaw;
         out->pitch = srt->pitch;
         out->roll = srt->roll;
@@ -1496,7 +1616,9 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
 
     matrix_from_srt_reversed(&mf, &tempsrt);
 
-    vec3_transform(&mf, a->transl.x, a->transl.y, a->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
+    vec3_transform(&mf, 
+        a->transl.x, a->transl.y, a->transl.z, 
+        &out->transl.x, &out->transl.y, &out->transl.z);
 
     yaw = a->yaw - b->yaw;
     if (yaw > 0x8000) {
@@ -1511,13 +1633,48 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
     out->roll = a->roll;
 }
 
+// regalloc
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/update_camera_for_object.s")
+#else
+void update_camera_for_object(Camera *camera)
+{
+    Object *obj;
+    f32 x,y,z;
+
+    obj = camera->object;
+    
+    if (obj == NULL)
+    {
+        camera->tx = camera->srt.transl.x;
+        camera->ty = camera->srt.transl.y;
+        camera->tz = camera->srt.transl.z;
+        camera->yaw = camera->srt.yaw;
+        camera->pitch = camera->srt.pitch;
+        camera->roll = camera->srt.roll;
+    }
+    else
+    {
+        x = camera->srt.transl.x;
+        y = camera->srt.transl.y;
+        z = camera->srt.transl.z;
+
+        vec3_transform(&gObjectMatrices[obj->matrixIdx], 
+            x,y,z, 
+            &camera->tx, &camera->ty, &camera->tz);
+        
+        camera->yaw = camera->srt.yaw - obj->srt.yaw;
+        camera->pitch = camera->srt.pitch;
+        camera->roll = camera->srt.roll;
+    }
+}
+#endif
 
 // regalloc
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/transform_point_by_object_matrix.s")
 #else
-void _transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
+void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
 {
     if (matrixIdx < 0)
     {
@@ -1527,7 +1684,9 @@ void _transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
     }
     else
     {
-        vec3_transform(gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
+        vec3_transform(&gObjectMatrices[matrixIdx], 
+            v->x, v->y, v->z, 
+            &ov->x, &ov->y, &ov->z);
     }
 }
 #endif
