@@ -75,7 +75,6 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `dino.py` - A general script for common tasks such as extracting and building the ROM as well as diffing.
 - `tools/asm_differ` - Diffs assembly between the base and re-built ROM. The project configuration for asm differ can be found in `diff_settings.py` in the repository root.
 - `tools/asm_processor` - Processes `GLOBAL_ASM` pragmas when compiling C code by patching in the included assembly into the resulting object file.
-- `tools/build_clang_commands` - Generates a `compile_commands.json` file for `clangd`.
 - `tools/ido_recomp` - Contains recompiled IDO executables to run on a modern system.
 - `tools/splat` - Extracts assembly and data from the base ROM and generates the linker script for the re-built ROM.
 - `tools/configure.py` - Configures the Ninja build script file (`build.ninja`) for the project.
