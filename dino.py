@@ -336,7 +336,8 @@ class DinoCommandRunner:
             existing_dll_dir = dll_dir
 
         if existing_dll_dir != None:
-            print(f"An environment already exists at {SRC_PATH.joinpath(f"dlls/{existing_dll_dir}").relative_to(SCRIPT_DIR)}! " +
+            existing_path_absolute = SRC_PATH.joinpath(f"dlls/{existing_dll_dir}").relative_to(SCRIPT_DIR)
+            print(f"An environment already exists at {existing_path_absolute}! " +
                   f"Try '{self.__get_invoked_as()} extract-dll {number}' instead to re-extract.")
             sys.exit(1)
         

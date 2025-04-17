@@ -425,8 +425,8 @@ class BuildNinjaWriter:
             if which(f"{prefix}ld") is not None:
                 return prefix
   
-        tried = [f"{prefix}ld" for prefix in prefixes]
-        print(f"Could not find MIPS binutils. Please make sure you have an appropriate version installed. Searched for: {", ".join(tried)}")
+        tried = ", ".join([f"{prefix}ld" for prefix in prefixes])
+        print(f"Could not find MIPS binutils. Please make sure you have an appropriate version installed. Searched for: {tried}")
         sys.exit(1)
 
     def __file_config_to_variables(self, file_config: BuildFileConfig | None):
