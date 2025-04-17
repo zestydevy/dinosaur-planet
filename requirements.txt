@@ -1,22 +1,22 @@
 # dinosaur-planet
-capstone
-GitPython
-ninja
-pycparser>=2.21
-pyelftools
-pylibyaml
-PyYAML
+capstone>=5.0.3
+GitPython>=3.1.43
+ninja>=1.11.1.1
+pycparser>=2.22
+pyelftools>=0.32
+pylibyaml>=0.1.0
+PyYAML>=6.0.2
 
 # asm-differ
-argcomplete
-colorama
-cxxfilt
-watchdog
-levenshtein
+argcomplete>=3.5.3
+colorama>=0.4.6
+cxxfilt>=0.3.0
+watchdog>=5.0.3
+levenshtein>=0.26.0
 
 # decomp_permuter
-pycparser
-toml
+pycparser>=2.22
+toml>=0.10.2
 
 # splat
 -r tools/splat/requirements.txt
