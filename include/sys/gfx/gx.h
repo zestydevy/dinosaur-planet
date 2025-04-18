@@ -167,7 +167,7 @@ extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT];
 
-extern u32 gPossiblyScreenWidthOrHeight;
+extern s32 gPossiblyScreenWidthOrHeight;
 /**
  * Some boolean.
  */
