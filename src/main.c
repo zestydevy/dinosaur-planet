@@ -125,7 +125,7 @@ void game_init(void)
         gDLL_projgfx   = dll_load_deferred(DLL_PROJGFX, 8);
         gDLL_16        = dll_load_deferred(16, 3);
         gDLL_17        = dll_load_deferred(17, 2); //probably particle FX
-        gDLL_SCREENS   = dll_load_deferred(DLL_SCREENS, 3);
+        gDLL_20_screens = dll_load_deferred(DLL_SCREENS, 3);
         gDLL_21_gametext = dll_load_deferred(DLL_TEXT, 5);
         gDLL_subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
         gDLL_waterfx   = dll_load_deferred(DLL_WATERFX, 7);
@@ -382,7 +382,7 @@ void func_80013D80(void)
             func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
-        gDLL_SCREENS->exports->func[2].withOneArg(&gCurGfx);
+        gDLL_20_screens->exports->draw(&gCurGfx);
         menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= delayByte;

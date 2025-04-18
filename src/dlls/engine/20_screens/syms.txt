@@ -1,0 +1,12 @@
+# functions
+screens_ctor = 0x0;
+screens_dtor = 0x3C;
+screens_show_screen = 0x48;
+screens_hide_screen = 0x1B0;
+screens_draw = 0x21C;
+
+# variables
+sLoadedScreenNo = 0x598;
+sRenderScreen = 0x59C;
+sLoadedScreenByteLength = 0x5A0;
+sLoadedScreen = 0x5A4;
