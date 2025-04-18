@@ -13,13 +13,6 @@ extern OSIoMesg D_800BCC90;
 extern OSDevMgr __osViDevMgr;
 extern s8 D_80093064;
 
-// func_8005BC38 is from segment_5C470
-/**
- * If param1 isn't null, sets it to gPossiblyScreenWidthOrHeight.
- *
- * Returns gSomeVideoFlag.
- */
-int func_8005BC38(u32*);
 void func_8005D9D8();
 void set_video_mode(s32 mode);
 void initialize_framebuffers(int someBool, s32 width, s32 height);
@@ -346,7 +339,7 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
 u32 get_some_resolution_encoded() {
-    u32 var1;
+    s32 var1;
     int flag;
 
     flag = func_8005BC38(&var1);
