@@ -115,4 +115,8 @@ s32 func_8004454C(f32 x, f32 y, f32 z);
 
 void convert_mtxf_to_mtx_in_pool(MatrixSlot *);
 
+void func_8005BBF0(u32 arg0);
+void func_80052DC0(u32* arg0, u32 arg1, u32 arg2, s32 arg3);
+void func_800529C0(u32* arg0, u32 arg1);
+
 #endif //_FUNCTIONS_H

@@ -70,6 +70,11 @@ typedef struct {
 /*0020*/    Vec3f tr;
 /*002C*/    u32 unk_0x2c;
 /*0030*/    u32 flags;
+/*0034*/    u32 unk_0x34;
+/*0038*/    u32 unk_0x38;
+/*003c*/    u32 unk_0x3c;
+/*0040*/    u8 unk_0x40;
+/*0041*/    s8 unk_0x41; //shadows toggle this each frame
 } ObjectStruct64;
 
 typedef struct {
@@ -150,7 +155,7 @@ typedef struct Object {
 /*0058*/    ObjectStruct58 *unk0x58;
 /*005C*/    ObjectStruct5C *ptr0x5c;
 /*0060*/    ObjectStruct60 *ptr0x60;
-/*0064*/    ObjectStruct64* ptr0x64;
+/*0064*/    ObjectStruct64* ptr0x64; //ShadowData?
 /*0068*/    DLLInst_Object *dll;
 /*006C*/    u16 *ptr0x6c;
 /*0070*/    void* ptr0x70;
