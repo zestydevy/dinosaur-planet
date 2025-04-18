@@ -22,27 +22,22 @@ void func_8005B870(void) {
     D_800BB540[2] = (u32)(D_800BB540[2]) + 0x3f & ~0x3f;
     D_800BB540[3] = malloc(gPossiblyScreenWidthOrHeight * D_80092E9C * 2 + 0x30, 0x18, 0);
     D_800BB540[3] = (u32)(D_800BB540[3]) + 0x3f & ~0x3f;
-
     D_800BB560[0] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1, 0x18, 0);
     D_800BB560[1] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1, 0x18, 0);
     D_800BB560[2] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1, 0x18, 0);
     D_800BB560[3] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1, 0x18, 0);
-
     D_800BB578[0] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1, 0x18, 0);
     D_800BB578[1] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1, 0x18, 0);
     D_800BB578[2] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1, 0x18, 0);
     D_800BB578[3] = malloc((s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1, 0x18, 0);
-
     bzero(D_800BB560[0], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1);
     bzero(D_800BB560[1], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1);
     bzero(D_800BB560[2], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1);
     bzero(D_800BB560[3], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) << 1);
-
     bzero(D_800BB578[0], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1);
     bzero(D_800BB578[1], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1);
     bzero(D_800BB578[2], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1);
     bzero(D_800BB578[3], (s32)(gPossiblyScreenWidthOrHeight * D_80092E9C) >> 1);
-
     func_8005BBF0(0);
     func_8005BBF0(1);
 }
