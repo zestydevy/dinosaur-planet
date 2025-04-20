@@ -231,9 +231,10 @@ class DLLSplitter:
                     self.__write_c_stub_data(
                         c_file, 
                         rodata[offset:offset+size], 
-                        "_rodata{}_{:X}".format("" if not offset in jtbl_refs else "_jtbl", offset), 
+                        "_rodata{}_".format("" if not offset in jtbl_refs else "_jtbl"), 
                         const=True,
-                        static=not (rodata_start + offset) in extern_offsets)
+                        static=not (rodata_start + offset) in extern_offsets,
+                        field_offset=offset)
             
             # .data stubs
             if dll.has_data():
@@ -243,6 +244,14 @@ class DLLSplitter:
 
                 data_refs.add(0)
                 data_refs.add(len(data))
+
+                # Break up data refs by relocated pointer destinations
+                # These aren't necessarily the starts of individual variables but we need them to be
+                # individual to generate the initial stubs correctly
+                for data_reloc in dll.reloc_table.data_relocations:
+                    word = struct.unpack_from(">I", data, offset=data_reloc)[0]
+                    data_refs.add(word)
+
                 data_refs = list(data_refs)
                 data_refs.sort()
 
@@ -253,9 +262,11 @@ class DLLSplitter:
                     self.__write_c_stub_data(
                         c_file, 
                         data[offset:offset+size], 
-                        "_data_{:X}".format(offset), 
+                        "_data_", 
                         const=False,
-                        static=not (data_start + offset) in extern_offsets)
+                        static=not (data_start + offset) in extern_offsets,
+                        field_offset=offset,
+                        relocs=dll.reloc_table.data_relocations)
             
             # .bss stubs
             if bss_size > 0:
@@ -279,14 +290,24 @@ class DLLSplitter:
                 c_file.write("\n")
                 c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.symbol}.s")\n')
 
-    def __write_c_stub_data(self, c_file: TextIO, data: bytearray, name: str, const: bool, static: bool):
+    def __write_c_stub_data(self, c_file: TextIO, data: bytearray, prefix: str, const: bool, static: bool, field_offset: int, relocs: set[int] | None=None):
         data_len = len(data)
 
+        # Note: Force writing u32s if this data contains a reloc. We need 4 bytes for the pointer
+        has_reloc = False
+        if relocs != None:
+            for i in range(0, len(data), 4):
+                if (field_offset + i) in relocs:
+                    has_reloc = True
+                    break
+
         data_type = "u8"
-        if (data_len % 4) == 0:
+        if (data_len % 4) == 0 or has_reloc:
             data_type = "u32"
         elif (data_len % 2) == 0:
             data_type = "u16"
+
+        name = "{}{:X}".format(prefix, field_offset)
 
         c_file.write("{}{}{} {}[] = {{\n".format(
             "static " if static else "", 
@@ -303,7 +324,11 @@ class DLLSplitter:
                         c_file.write("\n    ")
                 else:
                     c_file.write("    ")
-                c_file.write("{:0=#10x}".format(word))
+                if relocs != None and (field_offset + i) in relocs:
+                    # Assumes reloc'd pointers always point to the same section
+                    c_file.write("(u32)&{}{:X}".format(prefix, word))
+                else:
+                    c_file.write("{:0=#10x}".format(word))
         elif (data_len % 2) == 0:
             for i in range(0, len(data), 2):
                 half = struct.unpack_from(">H", data, offset=i)[0]
@@ -326,6 +351,25 @@ class DLLSplitter:
                 c_file.write("{:0=#4x}".format(byte))
         
         c_file.write("\n};\n")
+
+        # We might have leftovers if the existence of relocs forced us into writing u32s
+        if has_reloc and (data_len % 4) != 0:
+            leftover = data_len % 4
+            c_file.write("{}{}{} {}_extra[] = {{\n".format(
+                "static " if static else "", 
+                "const " if const else "", 
+                data_type, 
+                name))
+            for i in range(leftover, len(data)):
+                byte = data[i]
+                if i > 0:
+                    c_file.write(", ")
+                    if (i % (20)) == 0:
+                        c_file.write("\n    ")
+                else:
+                    c_file.write("    ")
+                c_file.write("{:0=#4x}".format(byte))
+            c_file.write("\n};\n")
 
     def __create_syms_txt(self, 
                           syms_path: Path, 
