@@ -91,7 +91,7 @@ void game_init(void)
     func_80053300();
     func_8004D470();
     func_8005C780();
-    init_fonts();
+    fonts_init();
     menu_init();
     init_audio(&osscheduler_, 0xE);
     init_global_map();
