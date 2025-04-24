@@ -1,2 +1,14 @@
 build_system = "ninja"
 compiler_type = "ido"
+
+[preserve_macros]
+"NULL" = "unsigned int"
+"TRUE" = "unsigned int"
+"FALSE" = "unsigned int"
+"g[DS]P.*" = "void"
+"gs[DS]P.*" = "void"
+"gDma.*" = "void"
+"G_IM.*" = "unsigned int"
+"G_TX_.*" = "unsigned int"
+"G_CC.*" = "unsigned int"
+"G_AC.*" = "unsigned int"
