@@ -353,7 +353,7 @@ segments:
     - [0x99110, rodatabin]
     - [0x992D0, .rodata, bitstream]
     - [0x99330, .rodata, dll]
-    - [0x99470, rodatabin]
+    - [0x99470, .rodata, fonts]
     - [0x99C30, .rodata, menu]
     - [0x99C60, rodatabin]
     - [0x99CA0, .rodata, queue]

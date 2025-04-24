@@ -3,6 +3,7 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "sys/dll.h"
+#include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "dll.h"
 #include "dll_def.h"
@@ -309,7 +310,7 @@ void func_8000FB2C(Gfx **gdl) {
         func_8000E49C(2, 0x14, 10, D_800A7D98, 1, 1);
         sprintf(D_800A7DA0, ".%02d", (int)D_800A7D70 % 60);
         func_8000E49C(2, 0x2d, 10, D_800A7DA0, 1, 1);
-        func_8000EF18(gdl, 0, 0, 2);
+        func_8000EF18(gdl, NULL, NULL, 2);
     }
 }
 

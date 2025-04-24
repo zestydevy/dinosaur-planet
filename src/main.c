@@ -4,6 +4,7 @@
 #include "dll.h"
 #include "sys/rarezip.h"
 #include "sys/menu.h"
+#include "sys/fonts.h"
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
