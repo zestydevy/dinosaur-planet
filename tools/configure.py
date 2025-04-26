@@ -141,6 +141,11 @@ class BuildNinjaWriter:
         self.writer.variable("OPT_FLAGS", self.config.default_opt_flags)
         self.writer.variable("MIPS_ISET", "-mips2")
         
+        cc_ignore_warnings = [
+            "838", # Microsoft extension
+            "649", # Missing member name in structure / union
+        ]
+        
         self.writer.variable("CC_FLAGS", " ".join([
             "$CC_DEFINES",
             "$INCLUDES",
@@ -149,6 +154,7 @@ class BuildNinjaWriter:
             "-Xfullwarn",
             "-Xcpluscomm",
             "-Wab,-r4300_mul",
+            "-woff", ",".join(cc_ignore_warnings),
         ]))
 
         self.writer.variable("CC_FLAGS_DLL", " ".join([
@@ -158,6 +164,7 @@ class BuildNinjaWriter:
             "-Xfullwarn",
             "-Xcpluscomm",
             "-Wab,-r4300_mul",
+            "-woff", ",".join(cc_ignore_warnings),
         ]))
 
         self.writer.variable("AS_FLAGS", " ".join([
