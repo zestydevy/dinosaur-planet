@@ -1,6 +1,7 @@
 #include "common.h"
 #include "sys/controller.h"
 #include "sys/gfx/gx.h"
+#include "sys/main.h"
 
 // TODO: This is part of a larger data structure and is only here to allow the current .data section
 // for this file to be aligned correctly!

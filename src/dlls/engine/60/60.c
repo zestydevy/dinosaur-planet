@@ -4,6 +4,7 @@
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
+#include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
 #include "dll.h"

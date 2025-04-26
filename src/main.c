@@ -1,33 +1,147 @@
-#include "common.h"
+#include "sys/main.h"
+
 #include "PR/os.h"
 #include "PR/sched.h"
-#include "dll.h"
+#include "libnaudio/n_unkfuncs.h"
+#include "sys/asset_thread.h"
+#include "sys/controller.h"
+#include "sys/crash.h"
+#include "sys/exception.h"
+#include "sys/fs.h"
+#include "sys/gfx/map.h"
+#include "sys/memory.h"
+#include "sys/objects.h"
+#include "sys/print.h"
 #include "sys/rarezip.h"
 #include "sys/menu.h"
 #include "sys/fonts.h"
+#include "sys/boot.h"
+#include "sys/dl_debug.h"
+#include "dll.h"
+#include "constants.h"
+#include "functions.h"
+#include "bss.h"
 
-void func_8001440C(s32 arg0);
-void clear_PlayerPosBuffer(void);
-void func_800483BC(f32, f32, f32);
-void game_init(void);
-void init_bittable(void);
+typedef struct {
+    // Start bit index
+    u16 start;
+    // bits 0-4: length in bits (minus 1)
+    // bit 5: has task
+    // bits 6-7: which bitstring
+    u8 field_0x2;
+    u8 task;
+} BitTableEntry;
 
+// .rodata
 const char gameVer[] = "1.3623";
 const char curentTime[] = "01/12/00 09:19";
 const char gameName[] = "dragon1";
 const char fileName[] = "main/main.c";
 const char fileName2[] = "main/main.c";
 
-const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
-const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
+static const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
+static const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 
+// .data
+extern u8 D_8008C940; // = 0;
+extern u8 D_8008C944; // = 0xFF;
+/**
+ * The index of the last inserted controller.
+ *
+ * For example, if one controller is inserted then this will be 0.
+ * If no controllers are inserted, this will be -1.
+ */
+extern s8 gLastInsertedControllerIndex; // = 0;
+extern s8 D_8008C94C; // = 0;
+extern u8 delayByte; // = 1;
+extern u8 delayByteMirror; // = 1;
+extern f32 delayFloat; // = 1.0f
+extern f32 delayFloatMirror; // = 1.0f
+extern f32 inverseDelay; // = 1.0f
+extern f32 inverseDelayMirror; // = 1.0f;
+extern s32 D_8008C968; // = -1;
+extern u8 alSynFlag; // = 0;
+// extern gDLL_28_screen_fade; // = NULL;
+// extern gDLL_Camera; // = NULL;
+// extern gDLL_ANIM; // = NULL;
+// extern gDLL_Sky; // = NULL;
+// extern gDLL_8; // = NULL;
+// extern gDLL_newclouds; // = NULL;
+// extern gDLL_newstars; // = NULL;
+// extern gDLL_minic; // = NULL;
+// extern gDLL_UI; // = NULL;
+// extern gDLL_Race; // = NULL;
+// extern gDLL_AMSEQ; // = NULL;
+// extern gDLL_AMSEQ2; // = NULL;
+// extern gDLL_AMSFX; // = NULL;
+// extern gDLL_newlfx; // = NULL;
+// extern gDLL_57; // = NULL;
+// extern gDLL_58; // = NULL;
+// extern gDLL_expgfx; // = NULL;
+// extern gDLL_modgfx; // = NULL;
+// extern gDLL_projgfx; // = NULL;
+// extern gDLL_16; // = NULL;
+// extern gDLL_17; // = NULL;
+// extern gDLL_18; // = NULL;
+// extern gDLL_20_screens; // = NULL;
+// extern gDLL_21_gametext; // = NULL;
+// extern gDLL_subtitles; // = NULL;
+// extern gDLL_23; // = NULL;
+// extern gDLL_waterfx; // = NULL;
+// extern gDLL_25; // = NULL;
+// extern gDLL_CURVES; // = NULL;
+// extern gDLL_Link; // = NULL;
+// extern gDLL_75; // = NULL;
+// extern gDLL_27; // = NULL;
+// extern gDLL_29_gplay; // = NULL;
+// extern gDLL_56; // = NULL;
+// extern gDLL_30_task; // = NULL;
+// extern gDLL_31_flash; // = NULL;
+// extern gDLL_76; // = NULL;
+// extern gDLL_32; // = NULL;
+// extern gDLL_33; // = NULL;
+// extern gDLL_minimap; // = NULL;
+// extern gDLL_54; // = NULL;
 s32 gTempDLLIds[3] = { -1, 35, 37 };
 void *gTempDLLInsts[3] = { NULL, NULL, NULL };
+extern u8 D_8008CA30; // = 0;
 
+// .bss (800ae2a0)
+BSS_GLOBAL GplayStruct7 *gGplayState;
+BSS_GLOBAL BitTableEntry *gFile_BITTABLE;
+BSS_GLOBAL s16 gSizeBittable;
+BSS_GLOBAL struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with "timestamp"
+BSS_GLOBAL s32 PlayerPosBuffer_index;
+BSS_GLOBAL u32 D_800AE674;
+BSS_GLOBAL Gfx *gMainGfx[2];
+BSS_GLOBAL Gfx *gCurGfx;
+BSS_GLOBAL s32 gMainMtx[2];
+BSS_GLOBAL s32* gCurMtx;
+BSS_GLOBAL s32 gMainVtx[2];
+BSS_GLOBAL s32* gCurVtx;
+BSS_GLOBAL s32 gMainPol[];
+BSS_GLOBAL s32* gCurPol;
+BSS_GLOBAL OSSched osscheduler_;
+BSS_GLOBAL u8 ossceduler_stack[OS_SC_STACKSIZE];
+BSS_GLOBAL s8 D_800B09C0;
+BSS_GLOBAL u8 gFrameBufIdx;
+BSS_GLOBAL s8 gPauseState;
+BSS_GLOBAL u8 D_800B09C3;
+BSS_GLOBAL s8 D_800B09C4;
+
+void func_8001440C(s32 arg0);
+void clear_PlayerPosBuffer(void);
+void game_init(void);
+void init_bittable(void);
 void game_tick_no_expansion(void);
 void game_tick(void);
+void func_80014074(void);
+void alloc_frame_buffers(void);
+void func_80013D80();
+s8 func_800143FC();
+void update_PlayerPosBuffer();
 
-void mainproc(void * arg)
+void mainproc(void *arg)
 {
     test_write(); // ROM write check
     game_init();
@@ -45,17 +159,11 @@ void mainproc(void * arg)
     }
 }
 
-void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retreceCount);
-
-void func_80041C6C(s32);                                 /* extern */
-void func_80014074(void);
-void func_80041D20(s32);                                 /* extern */
-void alloc_frame_buffers(void);
 void game_init(void)
 {
-    struct DLLInstance **temp_AMSEQ_DLL;
+    DLLInst_Unknown *temp_AMSEQ_DLL;
     s32 tvMode;
-    struct DLLInstance **tmp3;
+    DLLInst_Unknown *tmp3;
 
     init_memory();
     rarezip_init();
@@ -70,7 +178,7 @@ void game_init(void)
         tvMode = OS_VI_NTSC_LAN1;
     }
 
-    osCreateScheduler(&osscheduler_, &ossceduler_stack, 0xD, tvMode, 1);
+    osCreateScheduler(&osscheduler_, &ossceduler_stack[OS_SC_STACKSIZE], 0xD, tvMode, 1);
     start_pi_manager_thread();
     init_filesystem();
     create_3_megs_quues(&osscheduler_);
@@ -161,32 +269,11 @@ void game_init(void)
     func_80041C6C(0);
 }
 
-void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4);
-void dl_next_debug_info_set();                         /* extern */
-void dl_segment(Gfx **gdl, u32 segment, void *base);
-void func_80007178();                                  /* extern */
-void func_800121DC();                                  /* extern */
-void func_800129E4();                                  /* extern */
-void func_80013D80();                                  /* extern */
-s32 schedule_gfx_task(Gfx*, Gfx*, s32);                     /* extern */
-void func_80037924();                                  /* extern */
-void func_80037EC8(Gfx**);                             /* extern */
-void func_8003E9F0(Gfx**, u8);                         /* extern */
-s32 func_80041D5C();                                /* extern */
-s32 func_80041D74();                                /* extern */
-void update_mem_mon_values();                          /* extern */
-u8 video_func_returning_delay(s32);                   /* extern */
-extern s32 D_80099130;
-extern s32 D_8009913C;
-extern s32* gCurMtx;
-extern s32* gCurPol;
-extern s32* gCurVtx;
-
 void game_tick(void)
 {
     u8 phi_v1;
     u32 delayAmount;
-    Gfx *tmp_s0;
+    Gfx **tmp_s0;
 
     osSetTime(0);
     dl_next_debug_info_set();
@@ -202,8 +289,8 @@ void game_tick(void)
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    dl_add_debug_info(gCurGfx, 0, &D_80099130, 0x28E);
-    dl_segment(&gCurGfx, 0, 0x80000000);
+    dl_add_debug_info(gCurGfx, 0, fileName, 0x28E);
+    dl_segment(&gCurGfx, 0, (void*)0x80000000);
     dl_segment(&gCurGfx, 1, gFramebufferCurrent);
     dl_segment(&gCurGfx, 2, D_800BCCB4);
     func_8003E9F0(&gCurGfx, delayByte);
@@ -230,7 +317,7 @@ void game_tick(void)
     func_80013D80();
     func_800121DC();
     gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
-    gDLL_subtitles->exports->func[6].withOneArg(tmp_s0);
+    gDLL_subtitles->exports->func[6].withOneArg((s32)tmp_s0);
     camera_tick();
     func_800129E4();
     diPrintfAll(tmp_s0); 
@@ -248,7 +335,7 @@ void game_tick(void)
 
     delayByte = video_func_returning_delay(0);
     
-    if (0);
+    if (0) {}
 
     delayAmount = (u32) delayByte;
     if (delayByte >= 7) {
@@ -262,13 +349,13 @@ void game_tick(void)
     inverseDelayMirror = 1.0f / delayFloatMirror;
 
     func_80014074();
-    write_c_file_label_pointers(&D_8009913C, 0x37C);
+    write_c_file_label_pointers(fileName2, 0x37C);
 }
 
 void game_tick_no_expansion(void)
 {
     u32 delayAmount;
-    Gfx * tmp_s0;
+    Gfx **tmp_s0;
 
     tmp_s0 = &gCurGfx;
     
@@ -280,7 +367,7 @@ void game_tick_no_expansion(void)
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
     
-    dl_segment(&gCurGfx, 0, 0x80000000);
+    dl_segment(&gCurGfx, 0, (void*)0x80000000);
     dl_segment(&gCurGfx, 1, gFramebufferCurrent);
     dl_segment(&gCurGfx, 2, D_800BCCB4);
     dl_set_all_dirty();
@@ -317,21 +404,6 @@ void game_tick_no_expansion(void)
     delayFloatMirror = delayFloat;
     inverseDelayMirror = 1.0f / delayFloatMirror;
 }
-
-s8 func_800143FC();                                /* extern */
-void func_800210DC();                                  /* extern */
-void func_80042174(s32);                                 /* extern */
-void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);         /* extern */
-void func_800591EC();                                  /* extern */
-u16 get_masked_button_presses(int port);                   /* extern */
-void map_update_streaming();                           /* extern */
-void set_button_mask(int port, u16 mask);                            /* extern */
-void update_PlayerPosBuffer();                         /* extern */
-void update_obj_models();                              /* extern */
-void update_objects();                                 /* extern */
-extern s32 * gCurMtx;
-extern s32 * gCurPol;
-extern s32 * gCurVtx;
 
 void func_80013D80(void)
 {
@@ -406,17 +478,9 @@ void func_80013FB4(void) {
     func_800141A4(1, 0, 1, -1);
 }
 
-extern s32 D_8008C968;
-extern u8 D_8008CA30;
-void func_80017254(s32);                                 /* extern */
-void func_8003798C(s32, s32, s32);                           /* extern */
-void func_8004773C();                                  /* extern */
-void func_800484A8();                                  /* extern */
-void func_800668A4();                                  /* extern */
-
 void func_80014074(void)
 {
-    if (ossceduler_stack != 0)
+    if (D_800B09C0 != 0)
     {
         func_80017254(0);
         if (D_8008CA30 != 0)
@@ -430,7 +494,7 @@ void func_80014074(void)
             gSPEndDisplayList(gCurGfx++);
         }
         
-        ossceduler_stack = 0;
+        D_800B09C0 = 0;
         
         func_80017254(0);
         camera_init();
@@ -450,8 +514,6 @@ void func_80014074(void)
         D_8008CA30 = 1;
     }
 }
-
-void func_80048054(s32, s32, f32 *, f32 *, f32 *, s8 *);  /* extern */
 
 void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
@@ -473,7 +535,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->unk0xD);
     gDLL_29_gplay->exports->func_958(&temp_v0->vec, 0, 0, temp_v0->unk0xD);
 
-    ossceduler_stack = 1;
+    D_800B09C0 = 1;
     D_8008C968 = arg3;
 }
 
@@ -481,7 +543,7 @@ void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     func_8001440C(0);
     func_800483BC(arg0, arg1, arg2);
     clear_PlayerPosBuffer();
-    ossceduler_stack = 1;
+    D_800B09C0 = 1;
 }
 
 void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
@@ -501,10 +563,10 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
 
 void func_800143A4(void) {
     func_80048034();
-    ossceduler_stack = 1;
+    D_800B09C0 = 1;
 }
 
-s32 func_800143D0(s32 *arg0) {
+Gfx* func_800143D0(Gfx **arg0) {
     *arg0 = gMainGfx[gFrameBufIdx];
     return gCurGfx;
 }
@@ -529,6 +591,7 @@ void set_pause_state(s32 state) {
     gPauseState = state;
 }
 
+// TODO: move to header
 #define MAIN_GFX_BUF_SIZE 0x8CA0
 #define MAIN_MTX_BUF_SIZE 0x11300
 #define MAIN_VTX_BUF_SIZE 0x12C0
@@ -538,7 +601,7 @@ void alloc_frame_buffers(void)
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
     gMainGfx[0] = malloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainGfx[1] = gMainGfx[0] + MAIN_GFX_BUF_SIZE;
+    gMainGfx[1] = (Gfx*)((u32)gMainGfx[0] + MAIN_GFX_BUF_SIZE);
 
     // matrix buffers ("main:mtx")
     gMainMtx[0] = malloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
@@ -630,7 +693,7 @@ OSSched *get_ossched(void) {
 }
 
 void init_bittable(void) {
-    queue_alloc_load_file(&gFile_BITTABLE, 0x37);
+    queue_alloc_load_file((void**)&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
     gGplayState = gDLL_29_gplay->exports->func_E74();
 }
@@ -821,8 +884,6 @@ void func_80014BBC(void) {
     D_800B09C3 = 0;
     D_800B09C4 = 0;
 }
-
-//void func_800142F0(f32 x, f32 y, f32 z, s32 arg3);
 
 void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3)
 {

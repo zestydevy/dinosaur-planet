@@ -2,6 +2,8 @@
 
 #include "dlls/objects/223_cannon_claw.h"
 #include "game/objects/object.h"
+#include "sys/main.h"
+#include "sys/objects.h"
 #include "variables.h"
 #include "functions.h"
 #include "types.h"

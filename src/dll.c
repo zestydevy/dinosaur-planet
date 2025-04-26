@@ -33,7 +33,7 @@ void init_dll_system() {
     }
 }
 
-u32 find_executing_dll(u32 pc, void **start, void **end) {
+s32 find_executing_dll(u32 pc, void **start, void **end) {
     s32 i;
 
     for (i = 0; i < gLoadedDLLCount; i++) {
@@ -119,7 +119,7 @@ void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     }
 
     // Check if DLL is already loaded, and if so, increment the reference count
-    for (i = 0; i < gLoadedDLLCount; i++) {
+    for (i = 0; i < (u32)gLoadedDLLCount; i++) {
         if (id == gLoadedDLLList[i].id) {
             ++gLoadedDLLList[i].refCount;
             return &gLoadedDLLList[i].exports;
@@ -137,14 +137,14 @@ void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     }
 
     // Find an open slot in the DLL list
-    for (i = 0; i < gLoadedDLLCount; i++) {
+    for (i = 0; i < (u32)gLoadedDLLCount; i++) {
         if (gLoadedDLLList[i].id == DLL_NONE) {
             break;
         }
     }
     
     // If no open slots were available, try to add a new slot
-    if (i == gLoadedDLLCount) {
+    if (i == (u32)gLoadedDLLCount) {
         if (gLoadedDLLCount == MAX_LOADED_DLLS) {
             free(dll);
             return NULL;
@@ -171,7 +171,7 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
     DLLFile *dll;
     u32 i;
 
-    for (i = 0; i < gLoadedDLLCount; i++) {
+    for (i = 0; i < (u32)gLoadedDLLCount; i++) {
         if (gLoadedDLLList[i].id == id) {
             return;
         }
@@ -188,13 +188,13 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
     osInvalICache(dll, 0x4000);
     osInvalDCache(dll, 0x4000);
 
-    for (i = 0; i < gLoadedDLLCount; i++) {
+    for (i = 0; i < (u32)gLoadedDLLCount; i++) {
         if (gLoadedDLLList[i].id == DLL_NONE) {
             break;
         }
     }
 
-    if (gLoadedDLLCount == i) {
+    if ((u32)gLoadedDLLCount == i) {
         if (gLoadedDLLCount == MAX_LOADED_DLLS) {
             return;
         }
@@ -210,7 +210,7 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
     dll->ctor(dll);
 }
 
-u32 dll_unload(void *dllInst) {
+s32 dll_unload(void *dllInst) {
     DLLFile *dll;
     u16 idx;
     u32 *dllClearAddr;

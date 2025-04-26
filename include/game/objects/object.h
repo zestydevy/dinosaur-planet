@@ -203,14 +203,6 @@ typedef struct ObjListItem {
 	Object *obj;
 } ObjListItem;
 
-
-extern u8 delayByte; //60/int(x) FPS x<=6
-extern u8 delayByteMirror;
-extern float delayFloat;
-extern float delayFloatMirror;
-extern float inverseDelay; // 1/delayByte
-extern float inverseDelayMirror; // why the mirrors, if they aren't used?
-
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
 extern struct Vec3_Int Vec3_Int_array[];

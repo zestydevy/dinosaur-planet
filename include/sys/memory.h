@@ -102,4 +102,7 @@ u32 align_8(u32);
 u32 align_4(u32);
 u32 align_2(u32);
 
+void func_80017254(s32);
+void update_mem_mon_values();
+
 #endif //_SYS_MEMORY_H

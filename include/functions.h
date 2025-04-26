@@ -28,8 +28,6 @@ void dl_segment(Gfx **gdl, u32 segment, void *base);
 
 void stop_alSyn_thread();
 
-OSSched *get_ossched(void);
-
 void update_pi_manager_array(s32 index, s32 value);
 
 void write_c_file_label_pointers(char *cFileLabel, s32 a1);
@@ -39,15 +37,12 @@ s32 func_80023D30(Object*,s32,f32,s32);
 s32 func_80024108(Object*,f32,f32,s32);
 s32 func_80025F40(Object*,s32,s32,s32);
 
-u32 get_gplay_bitstring(s32 entry);
-void set_gplay_bitstring(s32 entry, u32 value);
-
 void draw_object(Object*,s32,s32,s32,s32,float);
 
 void dl_apply_geometry_mode(Gfx **gdl);
 
 u8 func_8001EBE0();
-void func_800142A0(f32 arg0, f32 arg1, f32 arg2);
+
 s8 func_80048498();
 void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
 
@@ -82,14 +77,6 @@ void func_8003DB5C();
 
 void draw_pause_screen_freeze_frame(Gfx** gdl);
 
-s8 get_pause_state(void);
-void unpause();
-void set_pause_state(s32 state);
-
-void func_80014B1C(void);
-void func_80014B6C(void);
-void func_800141A4(s32, s32, s32, s32);
-
 void func_80037A14(Gfx**, UNK_PTR **, s32);
 
 void func_8003825C(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
@@ -113,5 +100,47 @@ void func_800529C0(u32* arg0, u32 arg1);
  * Returns gSomeVideoFlag.
  */
 int func_8005BC38(s32*);
+
+void func_80048054(s32, s32, f32 *, f32 *, f32 *, s8 *);
+void func_800484A8();
+void func_8004773C();
+
+void func_8003798C(u8, u8, u8);
+void func_80041C6C(s32);
+void func_80041D20(s32);
+
+void create_3_megs_quues(OSSched *sched);
+
+void init_textures();
+void init_maps();
+void func_8001CD00();
+void init_models();
+void func_80053300();
+void func_8004D470();
+void func_8005C780();
+
+void init_audio(OSSched *sched, s32);
+
+void init_global_map();
+void start_alSyn_thread();
+
+void func_80012224(s32);
+
+void func_80007178();
+void func_800121DC();
+s32 schedule_gfx_task(Gfx*, Gfx*, s32);
+s32 func_80037924();
+void func_80037EC8(Gfx**);
+void func_8003E9F0(Gfx**, u8);
+s32 func_80041D5C();
+u32 func_80041D74();
+void func_80042174(s32);
+void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);
+void func_800591EC();
+void map_update_streaming();
+void func_80048034();
+void func_800483BC(f32, f32, f32);
+
+f32 _depth2Cents(u8 arg0);
 
 #endif //_FUNCTIONS_H

@@ -1,4 +1,5 @@
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
+#include "sys/main.h"
 
 void ctor(void *arg) {
 

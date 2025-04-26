@@ -1,5 +1,6 @@
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "dll.h"
+#include "sys/main.h"
 #include "variables.h"
 #include "functions.h"
 

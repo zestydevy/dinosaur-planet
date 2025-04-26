@@ -39,6 +39,8 @@ extern char *gCFileLabels[C_FILE_LABELS_LENGTH];
 extern u8 gCFileLabelFlag;
 extern s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
 
+void start_pi_manager_thread();
+
 /**
  * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
  */

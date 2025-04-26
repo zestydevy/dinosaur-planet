@@ -193,9 +193,6 @@ extern u8 *D_800BCE18[];
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 D_800BCE22[2];
 
-extern s32 gMainGfx[], gMainMtx[], gMainVtx[], gMainPol[]; //likely pointers
-extern Gfx *gCurGfx;
-extern u8 gFrameBufIdx;
 extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
 extern OSScClient D_800bce60;
@@ -215,6 +212,8 @@ s32 get_video_mode();
 u32 get_some_resolution_encoded();
 
 u16 *get_framebuffer_end();
+
+s32 video_func_returning_delay(s32);
 
 #define RESOLUTION_WIDTH(encoded) (encoded & 0xFFFF)
 #define RESOLUTION_HEIGHT(encoded) (encoded >> 16)

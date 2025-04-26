@@ -1,5 +1,6 @@
 #include "common.h"
-#include <PR/os_internal.h>
+#include "PR/os_internal.h"
+#include "sys/main.h"
 
 /**
  * Holds a list of DLLs that were previously running before the last NMI reset.
@@ -105,7 +106,7 @@ void stop_active_app_threads_2() {
     }
 }
 
-u32 crash_nmi_handler() {
+s32 crash_nmi_handler() {
     OSThread *thread;
     void *dllStart;
     void *dllEnd;

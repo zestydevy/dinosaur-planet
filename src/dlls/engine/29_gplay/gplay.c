@@ -3,6 +3,7 @@
 #include "dlls/engine/28_screen_fade.h"
 #include "game/objects/object.h"
 #include "sys/dll.h"
+#include "sys/main.h"
 #include "sys/math.h"
 #include "sys/fs.h"
 #include "sys/menu.h"

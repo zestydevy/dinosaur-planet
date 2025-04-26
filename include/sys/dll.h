@@ -30,7 +30,7 @@ typedef struct
 
 typedef struct
 {
-/*0000*/	u32 id;
+/*0000*/	s32 id;
 /*0004*/	s32 refCount;
 /*0008*/	u32 *exports;
 /*000C*/	void *end;
@@ -73,13 +73,13 @@ void init_dll_system();
  * start and end will also be set to pointers to the start and end 
  * of the DLL's body respectively.
  */
-u32 find_executing_dll(u32 pc, void **start, void **end);
+s32 find_executing_dll(u32 pc, void **start, void **end);
 void replace_loaded_dll_list(DLLState list[], s32 count);
 DLLState *get_loaded_dlls(s32 *outLoadedDLLCount);
 void *dll_load_deferred(u16 id, u16 exportCount);
 void *dll_load(u16 id, u16 exportCount, s32 runConstructor);
 void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize);
-u32 dll_unload(void *dllInst);
+s32 dll_unload(void *dllInst);
 s32 dll_throw_fault();
 
 #endif //_SYS_DLL_H

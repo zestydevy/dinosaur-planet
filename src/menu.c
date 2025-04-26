@@ -5,6 +5,7 @@
 #include "sys/dll.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
+#include "sys/main.h"
 #include "dll.h"
 #include "dll_def.h"
 #include "functions.h"

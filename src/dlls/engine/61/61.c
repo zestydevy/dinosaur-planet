@@ -2,6 +2,7 @@
 #include "dlls/engine/28_screen_fade.h"
 #include "game/objects/object.h"
 #include "sys/gfx/texture.h"
+#include "sys/main.h"
 #include "sys/menu.h"
 #include "functions.h"
 #include "dll.h"
