@@ -143,4 +143,7 @@ void func_800483BC(f32, f32, f32);
 
 f32 _depth2Cents(u8 arg0);
 
+void mp3_init(s32 arg0);
+void mp3_play_file(s32 romAddr, s32 size);
+
 #endif //_FUNCTIONS_H

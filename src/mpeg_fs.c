@@ -1,7 +1,9 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "sys/asset_thread.h"
+#include "sys/fs.h"
+#include "functions.h"
 
-extern s32* gFile_MPEG_TAB;
-void mp3_init(s32 arg0);
+s32 *gFile_MPEG_TAB = NULL;
 
 void mpeg_fs_init(s32 arg0) {
 	queue_alloc_load_file((void**) (&gFile_MPEG_TAB), MPEG_TAB);
