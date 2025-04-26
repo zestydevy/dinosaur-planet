@@ -3,6 +3,10 @@
 #ifndef _SYS_CONTROLLER_H
 #define _SYS_CONTROLLER_H
 
+#include "PR/ultratypes.h"
+#include "PR/os.h"
+#include "PR/sched.h"
+
 // NOTE: This size is NOT CONFIRMED YET
 #define CONTROLLER_THREAD_STACKSIZE 1152
 

@@ -1,4 +1,4 @@
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 #include "game/objects/object.h"
 #include "variables.h"
@@ -11,7 +11,7 @@ void init(void* arg)
 {
 }
 
-int fini(void* arg)
+void fini(void* arg)
 {
 }
 

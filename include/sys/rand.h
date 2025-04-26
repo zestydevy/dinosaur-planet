@@ -1,7 +1,7 @@
 #ifndef _SYS_RAND_H
 #define _SYS_RAND_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 void rand_set_seed(s32 seed);
 void rand_save_seed();

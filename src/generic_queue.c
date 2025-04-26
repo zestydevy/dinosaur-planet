@@ -1,3 +1,4 @@
+#include "PR/os.h"
 #include "sys/generic_queue.h"
 #include "sys/memory.h"
 

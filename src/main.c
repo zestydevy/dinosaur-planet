@@ -131,6 +131,8 @@ void alloc_frame_buffers(void);
 void func_80013D80();
 s8 func_800143FC();
 void update_PlayerPosBuffer();
+void test_write(void);
+void check_dongle(void);
 
 void mainproc(void *arg)
 {

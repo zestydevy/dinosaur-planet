@@ -1602,7 +1602,6 @@ set_gplay_bitstring = 0x80014670; // type:func
 get_gplay_bitstring = 0x800147EC; // type:func
 increment_gplay_bitstring = 0x80014930; // type:func
 decrement_gplay_bitstring = 0x800149AC; // type:func
-s_mm_audioheap = 0x80099228;
 doNothing_8001B4E4 = 0x8001B4E4; // type:func
 func_8001B4F0 = 0x8001B4F0; // type:func
 .L8001BB50 = 0x8001BB50; // type:label

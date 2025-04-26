@@ -4,7 +4,7 @@
 #define _SYS_THREAD_H
 
 #include "ultra64.h"
-#include <PR/sched.h>
+#include "PR/sched.h"
 
 #define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
 #define IDLE_THREAD_ID 1

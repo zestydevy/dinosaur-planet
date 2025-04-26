@@ -39,6 +39,8 @@ extern const char *gCFileLabels[C_FILE_LABELS_LENGTH];
 extern u8 gCFileLabelFlag;
 extern s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
 
+void update_pi_manager_array(s32 index, s32 value);
+
 void start_pi_manager_thread();
 
 /**

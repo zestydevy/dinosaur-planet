@@ -3,7 +3,7 @@
 #ifndef _SYS_MATH_H
 #define _SYS_MATH_H
 
-#include <PR/gbi.h>
+#include "PR/gbi.h"
 
 #define M_PI_F    3.141592741f
 #define DEG_TO_RAD(deg)  ((deg) * M_PI_F / 180.0f)

@@ -1,4 +1,4 @@
-#include <PR/os_internal.h>
+#include "PR/os_internal.h"
 #include "common.h"
 #include "sys/crash.h"
 #include "libc/stdarg.h"

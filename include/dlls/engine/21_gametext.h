@@ -1,7 +1,7 @@
 #ifndef _DLLS_21_H
 #define _DLLS_21_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "dll_def.h"
 
 typedef struct {

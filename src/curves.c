@@ -264,6 +264,7 @@ void func_8000535C(UnkCurvesStruct *arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/curves/func_800053B0.s")
 
+void func_8000598C(f32*,f32*,f32*,f32*,f32*,f32*,s32,s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/curves/func_8000598C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80005E60.s")
@@ -295,7 +296,7 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     }
 
     if (arg0->unk0x98 != 0) {
-        func_8000598C(phi_s4, phi_s5, phi_s6, &xCoords, &yCoords, &zCoords, arg1, arg0->unk0x98);
+        func_8000598C(phi_s4, phi_s5, phi_s6, xCoords, yCoords, zCoords, arg1, arg0->unk0x98);
     } else {
         
     }

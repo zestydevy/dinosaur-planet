@@ -1,7 +1,7 @@
 #ifndef _SYS_GAME_OBJECTS_OBJECT_H
 #define _SYS_GAME_OBJECTS_OBJECT_H
 
-#include <PR/gbi.h>
+#include "PR/gbi.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/texture.h"
 #include "sys/math.h"

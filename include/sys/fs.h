@@ -3,6 +3,8 @@
 #ifndef _SYS_FS_H
 #define _SYS_FS_H
 
+#include "PR/ultratypes.h"
+
 typedef enum
 {
 /*00*/    AUDIO_TAB,

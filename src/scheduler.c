@@ -1,5 +1,6 @@
 #include "common.h"
 #include "PR/os_internal.h"
+#include "sys/dl_debug.h"
 #include "sys/scheduler.h"
 
 UnkSchedStruct D_800918D0 = {0, 0};

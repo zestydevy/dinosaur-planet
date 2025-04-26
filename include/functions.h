@@ -9,28 +9,9 @@
 #include "types.h"
 #include "unktypes.h"
 
-void bootproc(void);
-void idle(void * arg);
-void mainproc(void * arg);
-
-void test_write(void);
-void main_no_expPak(void);
-void main_expPak(void);
-void threadTimerTick(void);
-void check_dongle(void);
-
-void func_80017254(s32);
-void func_800175D4(s32 a0);
-void update_PlayerPosBuffer(void);
-
-void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
-
-void dl_get_debug_info2(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
 void dl_segment(Gfx **gdl, u32 segment, void *base);
 
 void stop_alSyn_thread();
-
-void update_pi_manager_array(s32 index, s32 value);
 
 void func_800267A4(Object *obj);
 s32 func_80023D30(Object*,s32,f32,s32);

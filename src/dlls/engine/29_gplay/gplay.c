@@ -1,4 +1,4 @@
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 #include "dlls/engine/28_screen_fade.h"
 #include "game/objects/object.h"
@@ -7,6 +7,7 @@
 #include "sys/math.h"
 #include "sys/fs.h"
 #include "sys/menu.h"
+#include "sys/memory.h"
 #include "variables.h"
 #include "functions.h"
 #include "dll.h"
@@ -220,7 +221,7 @@ s32 gplay_func_3E4(s8 param1, u8 param2) {
             }
         } else {
             queue_load_file_region_to_ptr(
-                bss_0,
+                (void**)bss_0,
                 SAVEGAME_BIN,
                 param1 * sizeof(FlashStruct) - 0x6000,
                 sizeof(FlashStruct));

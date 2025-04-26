@@ -1,5 +1,7 @@
+#include "sys/fs.h"
 #include "sys/memory.h"
 #include "sys/rarezip.h"
+#include "sys/asset_thread.h"
 
 huft *gHuftTable = NULL;
 u8 *gPackedHeader = NULL;
@@ -31,7 +33,7 @@ s32 rarezip_uncompress_size_rom(s32 arg0, s32 arg1, s32 arg2) {
     if (arg2 != 0) {
         read_file_region(arg0, gPackedHeader, arg1, 8);
     } else {
-        queue_load_file_region_to_ptr(gPackedHeader, arg0, arg1, 8);
+        queue_load_file_region_to_ptr((void**)gPackedHeader, arg0, arg1, 8);
     }
     
     return rarezip_uncompress_size(gPackedHeader);

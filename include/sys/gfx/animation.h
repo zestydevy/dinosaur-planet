@@ -3,6 +3,8 @@
 #ifndef _SYS_GFX_ANIMATION_H
 #define _SYS_GFX_ANIMATION_H
 
+#include "PR/ultratypes.h"
+
 typedef struct
 {
 /*0000*/    u8 unk_0x0;

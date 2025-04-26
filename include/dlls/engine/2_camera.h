@@ -1,7 +1,7 @@
 #ifndef _DLLS_2_H
 #define _DLLS_2_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "dll_def.h"
 #include "types.h"
 

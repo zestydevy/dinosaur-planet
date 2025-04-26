@@ -1,5 +1,7 @@
 #include "common.h"
 
+void idle(void * arg);
+
 void bootproc(void) {
     osInitialize();
     osCreateThread(&gIdleThread, IDLE_THREAD_ID, &idle, NULL, 

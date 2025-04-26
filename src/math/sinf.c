@@ -1,6 +1,6 @@
 // @DECOMP_OPT_FLAGS=-O1 -g2
 // @DECOMP_IDO_VERSION=7.1
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 f32 sinf(f32 arg0) {
     f32 sp1C;

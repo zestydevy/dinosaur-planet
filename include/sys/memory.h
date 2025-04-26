@@ -87,7 +87,6 @@ typedef struct {
 extern u32 * bss_end;
 extern u8 gHeapListSize;
 extern Heap gHeapList[];
-extern char * D_800991E0;
 extern s32 memMonVal0;
 extern s32 memMonVal1;
 extern s32 memMonVal2;
@@ -103,6 +102,7 @@ u32 align_4(u32);
 u32 align_2(u32);
 
 void func_80017254(s32);
+void func_800175D4(s32 a0);
 void update_mem_mon_values();
 
 #endif //_SYS_MEMORY_H
