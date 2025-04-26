@@ -4,6 +4,21 @@
 #include "PR/ultratypes.h"
 #include "PR/sched.h"
 
+typedef struct {
+    // Start bit index
+    u16 start;
+    // bits 0-4: length in bits (minus 1)
+    // bit 5: has task
+    // bits 6-7: which bitstring
+    u8 field_0x2;
+    u8 task;
+} BitTableEntry;
+
+extern const char *gGameBuildVersion;
+extern const char *gGameBuildDateTime;
+extern const char *gGameBuildName;
+extern char gDBVersion[];
+
 extern u8 delayByte; //60/int(x) FPS x<=6
 extern u8 delayByteMirror;
 extern f32 delayFloat;

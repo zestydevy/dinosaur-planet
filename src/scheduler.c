@@ -507,10 +507,11 @@ void __scHandleRetrace(OSSched *sc) {
         displayListPtr2 = NULL;
 
         diPrintfSetXY(30, 110);
-        diPrintf("CODE: Version %s  %s  %s\n", D_8008C8F0, D_8008C8F4, D_8008C8F8);
+        diPrintf("CODE: Version %s  %s  %s\n", 
+            gGameBuildVersion, gGameBuildDateTime, gGameBuildName);
 
         diPrintfSetXY(30, 120);
-        diPrintf("DB:   %s\n", &D_8008C8FC);
+        diPrintf("DB:   %s\n", gDBVersion);
 
         diPrintfAll((Gfx**)&taskDataPtr);
 

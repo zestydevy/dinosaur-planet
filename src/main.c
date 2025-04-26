@@ -22,27 +22,17 @@
 #include "functions.h"
 #include "bss.h"
 
-typedef struct {
-    // Start bit index
-    u16 start;
-    // bits 0-4: length in bits (minus 1)
-    // bit 5: has task
-    // bits 6-7: which bitstring
-    u8 field_0x2;
-    u8 task;
-} BitTableEntry;
-
-// .rodata
-const char gameVer[] = "1.3623";
-const char curentTime[] = "01/12/00 09:19";
-const char gameName[] = "dragon1";
-const char fileName[] = "main/main.c";
-const char fileName2[] = "main/main.c";
-
-static const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
-static const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
-
 // .data
+const char *gGameBuildVersion = "1.3623";
+const char *gGameBuildDateTime = "01/12/00 09:19";
+const char *gGameBuildName = "dragon1";
+char gDBVersion[] = "Version 2.8 14/12/98 15.30 L.Schuneman";
+static u8 _unkBytes[] = { 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x01
+};
 u8 D_8008C940 = 0;
 u8 D_8008C944 = 0xFF;
 /**
@@ -290,7 +280,7 @@ void game_tick(void)
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    dl_add_debug_info(gCurGfx, 0, fileName, 0x28E);
+    dl_add_debug_info(gCurGfx, 0, "main/main.c", 0x28E);
     dl_segment(&gCurGfx, 0, (void*)0x80000000);
     dl_segment(&gCurGfx, 1, gFramebufferCurrent);
     dl_segment(&gCurGfx, 2, D_800BCCB4);
@@ -350,7 +340,7 @@ void game_tick(void)
     inverseDelayMirror = 1.0f / delayFloatMirror;
 
     func_80014074();
-    write_c_file_label_pointers(fileName2, 0x37C);
+    write_c_file_label_pointers("main/main.c", 0x37C);
 }
 
 void game_tick_no_expansion(void)
@@ -821,6 +811,7 @@ s32 decrement_gplay_bitstring(s32 entry) {
     return 0;
 }
 
+static const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
 s32 create_temp_dll(s32 id) {
     u32 idx;
 
@@ -843,6 +834,7 @@ s32 create_temp_dll(s32 id) {
     return 1;
 }
 
+static const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 s32 remove_temp_dll(s32 id) {
     u32 idx;
 
