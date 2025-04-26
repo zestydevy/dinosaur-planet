@@ -43,68 +43,69 @@ static const char warning1[] = " WARNING : temp dll no %i is alreadly created \n
 static const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 
 // .data
-extern u8 D_8008C940; // = 0;
-extern u8 D_8008C944; // = 0xFF;
+u8 D_8008C940 = 0;
+u8 D_8008C944 = 0xFF;
 /**
  * The index of the last inserted controller.
  *
  * For example, if one controller is inserted then this will be 0.
  * If no controllers are inserted, this will be -1.
  */
-extern s8 gLastInsertedControllerIndex; // = 0;
-extern s8 D_8008C94C; // = 0;
-extern u8 delayByte; // = 1;
-extern u8 delayByteMirror; // = 1;
-extern f32 delayFloat; // = 1.0f
-extern f32 delayFloatMirror; // = 1.0f
-extern f32 inverseDelay; // = 1.0f
-extern f32 inverseDelayMirror; // = 1.0f;
-extern s32 D_8008C968; // = -1;
-extern u8 alSynFlag; // = 0;
-// extern gDLL_28_screen_fade; // = NULL;
-// extern gDLL_Camera; // = NULL;
-// extern gDLL_ANIM; // = NULL;
-// extern gDLL_Sky; // = NULL;
-// extern gDLL_8; // = NULL;
-// extern gDLL_newclouds; // = NULL;
-// extern gDLL_newstars; // = NULL;
-// extern gDLL_minic; // = NULL;
-// extern gDLL_UI; // = NULL;
-// extern gDLL_Race; // = NULL;
-// extern gDLL_AMSEQ; // = NULL;
-// extern gDLL_AMSEQ2; // = NULL;
-// extern gDLL_AMSFX; // = NULL;
-// extern gDLL_newlfx; // = NULL;
-// extern gDLL_57; // = NULL;
-// extern gDLL_58; // = NULL;
-// extern gDLL_expgfx; // = NULL;
-// extern gDLL_modgfx; // = NULL;
-// extern gDLL_projgfx; // = NULL;
-// extern gDLL_16; // = NULL;
-// extern gDLL_17; // = NULL;
-// extern gDLL_18; // = NULL;
-// extern gDLL_20_screens; // = NULL;
-// extern gDLL_21_gametext; // = NULL;
-// extern gDLL_subtitles; // = NULL;
-// extern gDLL_23; // = NULL;
-// extern gDLL_waterfx; // = NULL;
-// extern gDLL_25; // = NULL;
-// extern gDLL_CURVES; // = NULL;
-// extern gDLL_Link; // = NULL;
-// extern gDLL_75; // = NULL;
-// extern gDLL_27; // = NULL;
-// extern gDLL_29_gplay; // = NULL;
-// extern gDLL_56; // = NULL;
-// extern gDLL_30_task; // = NULL;
-// extern gDLL_31_flash; // = NULL;
-// extern gDLL_76; // = NULL;
-// extern gDLL_32; // = NULL;
-// extern gDLL_33; // = NULL;
-// extern gDLL_minimap; // = NULL;
-// extern gDLL_54; // = NULL;
-s32 gTempDLLIds[3] = { -1, 35, 37 };
+s8 gLastInsertedControllerIndex = 0;
+s8 D_8008C94C = 0;
+u8 delayByte = 1;
+u8 delayByteMirror = 1;
+f32 delayFloat = 1.0f;
+f32 delayFloatMirror = 1.0f;
+f32 inverseDelay = 1.0f;
+f32 inverseDelayMirror = 1.0f;
+s32 D_8008C968 = -1;
+u8 alSynFlag = 0;
+s32 D_8008C970 = 0;
+DLLInst_28_screen_fade *gDLL_28_screen_fade = NULL;
+DLLInst_2_Camera *gDLL_Camera = NULL;
+DLLInst_Unknown *gDLL_ANIM = NULL;
+DLLInst_Unknown *gDLL_Sky = NULL;
+DLLInst_Unknown *gDLL_8 = NULL;
+DLLInst_Unknown *gDLL_newclouds = NULL;
+DLLInst_Unknown *gDLL_newstars = NULL;
+DLLInst_Unknown *gDLL_minic = NULL;
+DLLInst_Unknown *gDLL_UI = NULL;
+DLLInst_Unknown *gDLL_Race = NULL;
+DLLInst_Unknown *gDLL_AMSEQ = NULL;
+DLLInst_Unknown *gDLL_AMSEQ2 = NULL;
+DLLInst_6_AMSFX *gDLL_AMSFX = NULL;
+DLLInst_Unknown *gDLL_newlfx = NULL;
+DLLInst_Unknown *gDLL_57 = NULL;
+DLLInst_Unknown *gDLL_58 = NULL;
+DLLInst_Unknown *gDLL_expgfx = NULL;
+DLLInst_Unknown *gDLL_modgfx = NULL;
+DLLInst_Unknown *gDLL_projgfx = NULL;
+DLLInst_Unknown *gDLL_16 = NULL;
+DLLInst_Unknown *gDLL_17 = NULL;
+DLLInst_Unknown *gDLL_18 = NULL;
+DLLInst_20_screens *gDLL_20_screens = NULL;
+DLLInst_21_gametext *gDLL_21_gametext = NULL;
+DLLInst_Unknown *gDLL_subtitles = NULL;
+DLLInst_Unknown *gDLL_23 = NULL;
+DLLInst_Unknown *gDLL_waterfx = NULL;
+DLLInst_Unknown *gDLL_25 = NULL;
+DLLInst_Unknown *gDLL_CURVES = NULL;
+DLLInst_Unknown *gDLL_Link = NULL;
+DLLInst_Unknown *gDLL_75 = NULL;
+DLLInst_Unknown *gDLL_27 = NULL;
+DLLInst_29_gplay *gDLL_29_gplay = NULL;
+DLLInst_Unknown *gDLL_56 = NULL;
+DLLInst_30_task *gDLL_30_task = NULL;
+DLLInst_31_flash *gDLL_31_flash = NULL;
+DLLInst_76 *gDLL_76 = NULL;
+DLLInst_Unknown *gDLL_32 = NULL;
+DLLInst_Unknown *gDLL_33 = NULL;
+DLLInst_Unknown *gDLL_minimap = NULL;
+DLLInst_Unknown *gDLL_54 = NULL;
+s32 gTempDLLIds[3] = { -1, 53, 55 };
 void *gTempDLLInsts[3] = { NULL, NULL, NULL };
-extern u8 D_8008CA30; // = 0;
+u8 D_8008CA30 = 0;
 
 // .bss (800ae2a0)
 BSS_GLOBAL GplayStruct7 *gGplayState;
@@ -115,12 +116,12 @@ BSS_GLOBAL s32 PlayerPosBuffer_index;
 BSS_GLOBAL u32 D_800AE674;
 BSS_GLOBAL Gfx *gMainGfx[2];
 BSS_GLOBAL Gfx *gCurGfx;
-BSS_GLOBAL s32 gMainMtx[2];
-BSS_GLOBAL s32* gCurMtx;
-BSS_GLOBAL s32 gMainVtx[2];
-BSS_GLOBAL s32* gCurVtx;
-BSS_GLOBAL s32 gMainPol[];
-BSS_GLOBAL s32* gCurPol;
+BSS_GLOBAL Mtx *gMainMtx[2];
+BSS_GLOBAL Mtx *gCurMtx;
+BSS_GLOBAL Vertex *gMainVtx[2];
+BSS_GLOBAL Vertex *gCurVtx;
+BSS_GLOBAL Triangle *gMainPol[2];
+BSS_GLOBAL Triangle *gCurPol;
 BSS_GLOBAL OSSched osscheduler_;
 BSS_GLOBAL u8 ossceduler_stack[OS_SC_STACKSIZE];
 BSS_GLOBAL s8 D_800B09C0;
@@ -591,13 +592,13 @@ void set_pause_state(s32 state) {
     gPauseState = state;
 }
 
-// TODO: move to header
-#define MAIN_GFX_BUF_SIZE 0x8CA0
-#define MAIN_MTX_BUF_SIZE 0x11300
-#define MAIN_VTX_BUF_SIZE 0x12C0
+#define MAIN_GFX_BUF_SIZE (sizeof(Gfx) * 4500)
+#define MAIN_MTX_BUF_SIZE (sizeof(Mtx) * 1100)
+#define MAIN_POL_BUF_SIZE (sizeof(Triangle) * 50)
+#define MAIN_VTX_BUF_SIZE (sizeof(Vertex) * 480)
 
 void alloc_frame_buffers(void)
-{   
+{
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
     gMainGfx[0] = malloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
@@ -605,15 +606,15 @@ void alloc_frame_buffers(void)
 
     // matrix buffers ("main:mtx")
     gMainMtx[0] = malloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainMtx[1] = gMainMtx[0] + MAIN_MTX_BUF_SIZE;
+    gMainMtx[1] = (Mtx*)((u32)gMainMtx[0] + MAIN_MTX_BUF_SIZE);
 
     // polygon buffers? ("main:pol")
-    gMainPol[0] = malloc(0x640, ALLOC_TAG_LISTS_COL, NULL);
-    gMainPol[1] = gMainPol[0] + 0x320;
+    gMainPol[0] = malloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainPol[1] = (Triangle*)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
 
     // vertex buffers ("main:vtx")
     gMainVtx[0] = malloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainVtx[1] = gMainVtx[0] + MAIN_VTX_BUF_SIZE;
+    gMainVtx[1] = (Vertex*)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 
 void func_80014508(s8 arg0) {
@@ -698,6 +699,7 @@ void init_bittable(void) {
     gGplayState = gDLL_29_gplay->exports->func_E74();
 }
 
+// offical name: mainSet ?
 void set_gplay_bitstring(s32 entry, u32 value) {
     u8 *bitString;
     u8 _pad[12]; // fake match
@@ -742,6 +744,7 @@ void set_gplay_bitstring(s32 entry, u32 value) {
     }
 }
 
+// offical name: mainGet ?
 u32 get_gplay_bitstring(s32 entry) {
     u8 *bitString;
     u32 value;

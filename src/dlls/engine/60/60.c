@@ -1,3 +1,4 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "PR/os.h"
 #include "game/objects/object.h"
@@ -9,6 +10,7 @@
 #include "sys/menu.h"
 #include "dll.h"
 #include "functions.h"
+#include "types.h"
 
 static u8 data_0 = 0;
 static u8 data_4 = 0;
@@ -112,7 +114,7 @@ s32 dll_60_update1() {
 
 void dll_60_update2() { }
 
-void dll_60_draw(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs) {
+void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     u32 local4;
     u8 _stackPad[4];
     f32 var5;

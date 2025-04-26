@@ -1,10 +1,12 @@
 #ifndef _FUNCTIONS_H
 #define _FUNCTIONS_H
 
+#include "PR/gbi.h"
 #include "game/objects/object.h"
 #include "sys/camera.h"
 #include "sys/scheduler.h"
 #include "libc/stdarg.h"
+#include "types.h"
 #include "unktypes.h"
 
 void bootproc(void);
@@ -29,8 +31,6 @@ void dl_segment(Gfx **gdl, u32 segment, void *base);
 void stop_alSyn_thread();
 
 void update_pi_manager_array(s32 index, s32 value);
-
-void write_c_file_label_pointers(char *cFileLabel, s32 a1);
 
 void func_800267A4(Object *obj);
 s32 func_80023D30(Object*,s32,f32,s32);
@@ -77,7 +77,7 @@ void func_8003DB5C();
 
 void draw_pause_screen_freeze_frame(Gfx** gdl);
 
-void func_80037A14(Gfx**, UNK_PTR **, s32);
+void func_80037A14(Gfx**, Mtx **, s32);
 
 void func_8003825C(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
 
@@ -135,7 +135,7 @@ void func_8003E9F0(Gfx**, u8);
 s32 func_80041D5C();
 u32 func_80041D74();
 void func_80042174(s32);
-void func_8004225C(Gfx**, s32*, s32*, s32*, s32*, s32*);
+void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
 void func_800591EC();
 void map_update_streaming();
 void func_80048034();

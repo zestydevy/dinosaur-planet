@@ -6,7 +6,7 @@ typedef struct
 {
 /*0000*/    Gfx *gdl;
 /*0004*/    u32 unk_0x4;
-/*0008*/    char *file;
+/*0008*/    const char *file;
 /*000C*/    u32 unk_0xc;
 /*0010*/    s32 unk_0x10;
 } DLDebugInfo;
@@ -27,7 +27,7 @@ void dl_next_debug_info_set()
     gDLDebugInfoLengths[gDLDebugInfoIdx] = 0;
 }
 
-void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4)
+void dl_add_debug_info(Gfx *gdl, u32 param_2, const char *file, u32 param_4)
 {
     if (gDLDebugInfos[gDLDebugInfoIdx] != NULL && gDLDebugInfoLengths[gDLDebugInfoIdx] < MAX_DL_DEBUG_INFO_LENGTH)
     {

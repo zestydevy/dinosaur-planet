@@ -4,6 +4,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll_def.h"
+#include "types.h"
 
 enum ScreenFadeType {
     SCREEN_FADE_BLACK = 1,
@@ -13,7 +14,7 @@ enum ScreenFadeType {
 };
 
 DLL_INTERFACE_BEGIN(28_screen_fade)
-    /*0*/ void (*draw)(Gfx **gdl, s32 *mtxs, s32 *vtxs);
+    /*0*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
     /*1*/ void (*fade)(s32 duration, s32 type);
     /*2*/ void (*fade_reversed)(s32 duration, s32 type);
     /*3*/ void (*func3)(s32 param1, s32 type, f32 param3);

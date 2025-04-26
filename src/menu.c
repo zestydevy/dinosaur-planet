@@ -158,7 +158,7 @@ void menu_update2() {
     menu_do_menu_swap();
 }
 
-void menu_draw(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs, UNK_PTR **pols) {
+void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->exports->draw(gdl, mtxs, vtxs);
     }

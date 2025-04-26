@@ -44,6 +44,8 @@ enum DLL_ID {
 };
 
 
+// TODO: the below should be moved to main.h
+
 // "Static" DLLs
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.

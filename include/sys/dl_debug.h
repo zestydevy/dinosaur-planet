@@ -6,6 +6,6 @@
 
 void dl_init_debug_infos();
 void dl_next_debug_info_set();
-void dl_add_debug_info(Gfx *gdl, u32 param_2, char *file, u32 param_4);
+void dl_add_debug_info(Gfx *gdl, u32 param_2, const char *file, u32 param_4);
 
 #endif

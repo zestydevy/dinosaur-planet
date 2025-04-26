@@ -298,6 +298,7 @@ segments:
     - [0x8D3E0, .data, fonts]
     - [0x8D440, .data, menu]
     - [0x8D4A0, databin]
+    - [0x8D540, .data, main]
     - [0x8D640, data, math_util]
     - [0x8F6A0, databin]
     - [0x92370, .data, crash]
