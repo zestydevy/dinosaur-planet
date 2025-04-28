@@ -104,13 +104,21 @@ BSS_GLOBAL s16 gSizeBittable;
 BSS_GLOBAL struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with "timestamp"
 BSS_GLOBAL s32 PlayerPosBuffer_index;
 BSS_GLOBAL u32 D_800AE674;
+// official name: gfxBase
 BSS_GLOBAL Gfx *gMainGfx[2];
+// official name: gfx
 BSS_GLOBAL Gfx *gCurGfx;
+// official name: mtxBase
 BSS_GLOBAL Mtx *gMainMtx[2];
+// official name: mtx
 BSS_GLOBAL Mtx *gCurMtx;
+// official name: vtxBase
 BSS_GLOBAL Vertex *gMainVtx[2];
+// official name: vtx
 BSS_GLOBAL Vertex *gCurVtx;
+// official name: polBase
 BSS_GLOBAL Triangle *gMainPol[2];
+// official name: pol
 BSS_GLOBAL Triangle *gCurPol;
 BSS_GLOBAL OSSched osscheduler_;
 BSS_GLOBAL u8 ossceduler_stack[OS_SC_STACKSIZE];

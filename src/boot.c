@@ -2,6 +2,7 @@
 
 void idle(void * arg);
 
+// official name: boot
 void bootproc(void) {
     osInitialize();
     osCreateThread(&gIdleThread, IDLE_THREAD_ID, &idle, NULL, 
@@ -23,6 +24,7 @@ void idle(void * arg)
     while (TRUE) {}
 }
 
+// official name: bootCheckStack
 void thread_timer_tick(void) {
     ++gMainThreadStack[1024];
     ++gMainThreadStack[0];

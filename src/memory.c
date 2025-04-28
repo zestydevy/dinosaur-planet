@@ -254,9 +254,17 @@ s32 dbg_heap_print(s32 arg0)
     return memMonVal0 + memMonVal1 + memMonVal2;
 }
 
+// maybe this is alHeapAlloc and below is alHeapDBAlloc? could have swapped the macro
+// for a function when they changed this to use the normal heap stuff. this one is unused
+void *alHeapDBAlloc2(ALHeap *hp, s32 num, s32 size) {
+    void *ptr;
 
-//static const char s_mm_audioheap[] = "mm:audioheap";
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
+    size = ALIGN16((size * num) + 0xF);
+
+    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
+    bzero(ptr, size);
+    return (void*)align_16((u32)ptr);
+}
 
 void *alHeapDBAlloc(u8 *file, s32 line, ALHeap *hp, s32 num, s32 size) {
     void *ptr;
