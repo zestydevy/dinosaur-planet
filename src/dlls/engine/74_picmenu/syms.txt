@@ -1,0 +1,38 @@
+# functions
+picmenu_ctor = 0x0;
+picmenu_dtor = 0x74;
+picmenu_set_items = 0xD8;
+picmenu_clear_items = 0x354;
+picmenu_update = 0x3E0;
+picmenu_draw = 0xACC;
+picmenu_get_selected_item = 0x10A4;
+picmenu_set_selected_item = 0x10C0;
+picmenu_set_opacity = 0x10DC;
+picmenu_get_item_override = 0x1104;
+picmenu_set_item_override = 0x1134;
+picmenu_update_text = 0x1164;
+picmenu_get_highlight_alpha = 0x11C0;
+picmenu_update_flags = 0x11DC;
+picmenu_redraw_all = 0x1230;
+picmenu_calculate_redraw_area = 0x127C;
+picmenu_calculate_items_to_redraw = 0x13E0;
+picmenu_calculate_auto_width = 0x15E0;
+picmenu_generate_item_background = 0x1660;
+
+# variables
+sDefaultSounds = 0x18DC;
+sTextures = 0x18E8;
+sItems = 0x191C;
+sAllowButtons = 0x227C;
+sSelectedItem = 0x227D;
+sItemCount = 0x227E;
+sHighlightReverse = 0x227F;
+sHighlightAlpha = 0x2280;
+sOpacity = 0x2282;
+sSounds = 0x2284;
+sTextColorR = 0x2288;
+sTextColorG = 0x228A;
+sTextColorB = 0x228C;
+sTextHighlightR = 0x228E;
+sTextHighlightG = 0x2290;
+sTextHighlightB = 0x2292;

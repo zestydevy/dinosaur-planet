@@ -8,6 +8,7 @@
 31 = engine/31_flash
 60 = engine/60
 61 = engine/61
+74 = engine/74_picmenu
 82 = engine/82
 83 = engine/83
 

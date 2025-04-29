@@ -481,13 +481,13 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
 #pragma GLOBAL_ASM("asm/nonmatchings/fonts/font_render_text.s")
 #endif
 
-s32 font_get_text_width(s32 windowID, char *text, s32 x, s32 fontID) {
+s32 font_get_text_width(s32 windowID, const char *text, s32 x, s32 fontID) {
     gFontWindows[windowID].extraCharacterSpacing = 0.0f;
 
     return font_get_text_width_internal(&gFontWindows[windowID], text, x, fontID);
 }
 
-s32 font_get_text_width_internal(FontWindow *window, char *text, s32 x, s32 fontID) {
+s32 font_get_text_width_internal(FontWindow *window, const char *text, s32 x, s32 fontID) {
     s32 diffX;
     s32 thisDiffX;
     FontData *fontData;

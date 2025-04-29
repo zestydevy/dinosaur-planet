@@ -9,6 +9,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
+#include "dlls/engine/74_picmenu.h"
 #include "dlls/engine/76.h"
 
 #include "dll_def.h"
@@ -39,7 +40,7 @@ enum DLL_ID {
     DLL_TASK      = 30,
     DLL_FLASH     = 31,
     DLL_MINIMAP   = 59,
-    DLL_LINK      = 74,
+    DLL_PICMENU   = 74,
     DLL_CANNON_CLAW = 223
 };
 
@@ -58,6 +59,7 @@ extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
+extern DLLInst_74_picmenu *gDLL_picmenu;
 extern DLLInst_Unknown
     *gDLL_ANIM,
     *gDLL_Sky,
@@ -83,7 +85,6 @@ extern DLLInst_Unknown
     *gDLL_waterfx,
     *gDLL_25,
     *gDLL_CURVES,
-    *gDLL_Link,
     *gDLL_75,
     *gDLL_27,
     *gDLL_56,
