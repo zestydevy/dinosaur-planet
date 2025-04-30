@@ -96,7 +96,7 @@ static PicMenuItem sCopyDstSelectMenuItems[] = {
         /*upLink*/ 0, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
-static s8 sCopyDstSeleectMenuText[] = { -1, -2 };
+static s8 sCopyDstSelectMenuText[] = { -1, -2 };
 
 static PicMenuItem sCopyConfirmMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
@@ -187,17 +187,17 @@ static PicMenuItem sGameRecapMenuItems[] = {
         /*overrideWith*/ -1
     )
 };
-static s8 sGameRecepMenuText[] = { 14 };
+static s8 sGameRecapMenuText[] = { 14 };
 
 static GameSelectSubmenu sSubmenus[] = {
     /*0*/{ sGameSelectMenuItems,    sGameSelectMenuText,     /*count*/5, /*title*/3,  /*button legend*/0,  2 },
     /*1*/{ sGameConfirmMenuItems,   sGameConfirmMenuText,    /*count*/2, /*title*/7,  /*button legend*/0,  2 },
     /*2*/{ sCopySrcSelectMenuItems, sCopySrcSelectMenuText,  /*count*/3, /*title*/8,  /*button legend*/0,  2 },
-    /*3*/{ sCopyDstSelectMenuItems, sCopyDstSeleectMenuText, /*count*/2, /*title*/9,  /*button legend*/0,  2 },
+    /*3*/{ sCopyDstSelectMenuItems, sCopyDstSelectMenuText, /*count*/2, /*title*/9,  /*button legend*/0,  2 },
     /*4*/{ sCopyConfirmMenuItems,   sCopyConfirmMenuText,    /*count*/2, /*title*/10, /*button legend*/0,  2 },
     /*5*/{ sEraseSelectMenuItems,   sEraseSelectMenuText,    /*count*/3, /*title*/11, /*button legend*/0,  2 },
     /*6*/{ sEraseConfirmMenuItems,  sEraseConfirmMenuText,   /*count*/2, /*title*/12, /*button legend*/0,  2 },
-    /*7*/{ sGameRecapMenuItems,     sGameRecepMenuText,      /*count*/1, /*title*/13, /*button legend*/-1, 2 }
+    /*7*/{ sGameRecapMenuItems,     sGameRecapMenuText,      /*count*/1, /*title*/13, /*button legend*/-1, 2 }
 };
 
 static PicMenuSounds sGameRecapMenuSounds = {
