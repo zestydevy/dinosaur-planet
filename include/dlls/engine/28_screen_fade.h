@@ -18,8 +18,8 @@ DLL_INTERFACE_BEGIN(28_screen_fade)
     /*1*/ void (*fade)(s32 duration, s32 type);
     /*2*/ void (*fade_reversed)(s32 duration, s32 type);
     /*3*/ void (*func3)(s32 param1, s32 type, f32 param3);
-    /*4*/ f32 (*get_progress)();
-    /*5*/ s32 (*is_complete)();
+    /*4*/ s32 (*is_complete)();
+    /*5*/ f32 (*get_progress)();
 DLL_INTERFACE_END()
 
 #endif //_DLLS_28_H

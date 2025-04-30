@@ -63,6 +63,9 @@ typedef struct {
 /*38*/ s8 redrawFrames; // Frames remaining where this item will be redrawn
 } PicMenuItem;
 
+#define NEW_PICMENU_ITEM(textX, textY, innerWidth, itemX, itemY, textureID, outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith) \
+    { NULL, textX, textY, innerWidth, itemX, itemY, ((void*)textureID), outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith, {0}, 0 }
+
 typedef struct {
     s32 moveSoundID;
     s32 selectSoundID;

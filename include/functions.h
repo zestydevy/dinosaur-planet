@@ -61,6 +61,7 @@ void draw_pause_screen_freeze_frame(Gfx** gdl);
 void func_80037A14(Gfx**, Mtx **, s32);
 
 void func_8003825C(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
+void func_800382AC(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
 
 void func_800379D0(u32 red, u32 green, s32 blue);
 

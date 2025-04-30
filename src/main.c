@@ -55,7 +55,7 @@ s32 D_8008C970 = 0;
 DLLInst_28_screen_fade *gDLL_28_screen_fade = NULL;
 DLLInst_2_Camera *gDLL_Camera = NULL;
 DLLInst_Unknown *gDLL_ANIM = NULL;
-DLLInst_Unknown *gDLL_Sky = NULL;
+DLLInst_7_newday *gDLL_7_newday = NULL;
 DLLInst_Unknown *gDLL_8 = NULL;
 DLLInst_Unknown *gDLL_newclouds = NULL;
 DLLInst_Unknown *gDLL_newstars = NULL;
@@ -220,7 +220,7 @@ void game_init(void)
         gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 29);
         gDLL_28_screen_fade = dll_load_deferred(DLL_SCREEN_FADE, 4); //0x16 in SFA
         gDLL_25        = dll_load_deferred(25, 0xE); //not present in SFA
-        gDLL_Sky       = dll_load_deferred(DLL_SKY, 15);
+        gDLL_7_newday  = dll_load_deferred(DLL_NEWDAY, 15);
         gDLL_8        = dll_load_deferred(8, 12); //0x06 in SFA
         gDLL_newclouds = dll_load_deferred(DLL_NEWCLOUDS, 8);
         gDLL_newstars  = dll_load_deferred(DLL_NEWSTARS, 3);
