@@ -18,6 +18,11 @@ class Exports(TypedDict):
     dtor: int
     exports: "list[int]"
 
+class ReadRelocations(TypedDict):
+    got_and_relocs: "GOTAndRelocations | None"
+    rodata_relocs: "list[Word32Reloc]"
+    ri_gp_value: int | None
+
 class GOTAndRelocations(TypedDict):
     got: "list[GOTEntry]"
     text_relocs: "list[Rel16Reloc]"
@@ -35,6 +40,10 @@ class Rel16Reloc(TypedDict):
 class Word32Reloc(TypedDict):
     reloc_offset: int
     word: int
+
+class GPRel32Reloc(TypedDict):
+    reloc_offset: int
+    sa: int # S + A
 
 def read_elf_exports(elf: ELFFile) -> Exports:
     syms = elf.get_section_by_name(".symtab")
@@ -65,7 +74,7 @@ def read_elf_exports(elf: ELFFile) -> Exports:
         
         return exports
 
-def read_elf_relocations(elf: ELFFile) -> GOTAndRelocations | None:
+def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
     syms = elf.get_section_by_name(".symtab")
     assert isinstance(syms, SymbolTableSection)
 
@@ -73,6 +82,8 @@ def read_elf_relocations(elf: ELFFile) -> GOTAndRelocations | None:
     text_relocs: "list[Rel16Reloc]" = []
     gp_relocs: "list[int]" = []
     data_relocs: "list[Word32Reloc]" = []
+    rodata_relocs: "list[GPRel32Reloc]" = []
+    ri_gp_value: int | None = None
 
     # First four GOT entries are always the sections (in this order)
     got.append({ "value": 0, "section": ".text" })
@@ -140,7 +151,7 @@ def read_elf_relocations(elf: ELFFile) -> GOTAndRelocations | None:
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
                 pass
             else:
-                raise Exception(f"Unsupported reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise Exception(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
     
     rel_data = elf.get_section_by_name(".rel.data")
     if rel_data != None:
@@ -162,18 +173,57 @@ def read_elf_relocations(elf: ELFFile) -> GOTAndRelocations | None:
 
                 data_relocs.append({ "reloc_offset": reloc_offset, "word": s + a })
             else:
-                raise Exception(f"Unsupported reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise Exception(f"Unsupported .data reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
 
+    rel_rodata = elf.get_section_by_name(".rel.rodata")
+    if rel_rodata != None:
+        assert isinstance(rel_rodata, RelocationSection)
+
+        rodata_data = elf.get_section_by_name(".rodata").data()
+        text_shndx = elf.get_section_index(".text")
+
+        for reloc in rel_rodata.iter_relocations():
+            reloc_offset = reloc["r_offset"]
+            reloc_type = reloc["r_info_type"]
+
+            sym_idx = reloc["r_info_sym"]
+            sym = syms.get_symbol(sym_idx)
+
+            assert(sym.entry["st_shndx"] == text_shndx)
+
+            if reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_GPREL32"]:
+                # rodata reloc
+                s = sym.entry["st_value"]
+                a = struct.unpack_from(">i", rodata_data, reloc_offset)[0]
+
+                rodata_relocs.append({ "reloc_offset": reloc_offset, "sa": s + a })
+            else:
+                raise Exception(f"Unsupported .rodata reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+
+    reginfo = elf.get_section_by_name(".reginfo")
+    if reginfo != None:
+        assert isinstance(reginfo, Section)
+
+        # Unpack from ELF_RegInfo
+        ri_gp_value = struct.unpack_from(">i", reginfo.data(), 0x14)[0]
+
+    got_and_relocs: GOTAndRelocations | None
     if len(text_relocs) == 0 and len(gp_relocs) == 0 and len(data_relocs) == 0:
         # Don't emit GOT and reloc tables if no relocations are present
-        return None
+        got_and_relocs = None
     else:
-        return { 
+        got_and_relocs = { 
             "got": got, 
             "text_relocs": text_relocs, 
             "gp_relocs": gp_relocs,
             "data_relocs": data_relocs
         }
+    
+    return {
+        "got_and_relocs": got_and_relocs,
+        "rodata_relocs": rodata_relocs,
+        "ri_gp_value": ri_gp_value
+    }
 
 def iter_text_relocations_sorted(rel_text: RelocationSection, syms: SymbolTableSection):
     # asm_processor appends relocations contributed by GLOBAL_ASM blocks, which breaks the order
@@ -223,6 +273,14 @@ def link_data_relocs(writer: BufferedWriter, data_pos: int, data_relocs: "list[W
         writer.seek(data_pos + reloc["reloc_offset"], os.SEEK_SET)
         writer.write(struct.pack(">I", reloc["word"]))
 
+def link_rodata_relocs(writer: BufferedWriter, shifted_rodata_pos: int, rodata_relocs: "list[GPRel32Reloc]", gp0: int, gp: int):
+    for reloc in rodata_relocs:
+        # A + S + GP0 – GP
+        word = reloc["sa"] + gp0 - gp
+        
+        writer.seek(shifted_rodata_pos + reloc["reloc_offset"], os.SEEK_SET)
+        writer.write(struct.pack(">i", word))
+
 def calc_exports_size(exports: Exports) -> int:
     # +8 for the blank entries before and after the export list
     return len(exports["exports"]) * 4 + 8
@@ -243,7 +301,8 @@ def convert(elf: ELFFile, writer: BufferedWriter, bss_writer: TextIO):
     exports = read_elf_exports(elf)
     exports_size = calc_exports_size(exports)
 
-    got_and_relocs = read_elf_relocations(elf)
+    read_relocations = read_elf_relocations(elf)
+    got_and_relocs = read_relocations["got_and_relocs"]
     got_and_relocs_size = 0
     if got_and_relocs != None:
         got_and_relocs_size = calc_got_and_relocs_size(got_and_relocs)
@@ -350,6 +409,20 @@ def convert(elf: ELFFile, writer: BufferedWriter, bss_writer: TextIO):
         # Fixup .data relocs
         link_data_relocs(writer, data_pos, got_and_relocs["data_relocs"])
     
+    ri_gp_value = read_relocations["ri_gp_value"]
+    if ri_gp_value != None:
+        # Apply .rodata relocs
+        #
+        # These don't get added to the special .rodata relocs section but do need to be linked ahead of time.
+        # .rodata relocations are relative to .rodata's actual data, after the GOT and relocs.
+        shifted_rodata_pos = rodata_pos + got_and_relocs_size
+        
+        link_rodata_relocs(writer, shifted_rodata_pos, read_relocations["rodata_relocs"], 
+                           gp0=ri_gp_value, 
+                           gp=rodata_pos - text_pos)
+    else:
+        assert(len(read_relocations["rodata_relocs"]) == 0)
+
     # Write .bss size to text file
     bss_writer.write(hex(bss_size))
 
