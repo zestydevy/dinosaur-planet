@@ -559,7 +559,7 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
     gDLL_29_gplay->exports->func_198(-1, 0);
     gDLL_29_gplay->exports->func_EAC(arg3);
     gDLL_29_gplay->exports->func_958(&pos, 0, 0, 0);
-    gDLL_29_gplay->exports->func_AE0();
+    gDLL_29_gplay->exports->start_game();
 }
 
 void func_800143A4(void) {

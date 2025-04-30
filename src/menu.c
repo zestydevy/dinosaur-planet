@@ -42,7 +42,7 @@ BSS_GLOBAL s32 D_800A7D58;
 BSS_GLOBAL s32 D_800A7D5C;
 BSS_GLOBAL s32 D_800A7D60;
 BSS_GLOBAL s32 D_800A7D64;
-BSS_GLOBAL u8 __osBbCardChange;
+BSS_GLOBAL u8 gSaveGameIdx;
 BSS_GLOBAL u8 D_800A7D69;
 BSS_GLOBAL s32 D_800A7D6C;
 BSS_GLOBAL f32 D_800A7D70;
@@ -339,12 +339,12 @@ void func_80010058(s32 param1) {
     D_8008C890 = param1;
 }
 
-void func_80010068(s32 param1) {
-    __osBbCardChange = param1;
+void set_save_game_idx(s32 idx) {
+    gSaveGameIdx = idx;
 }
 
-s32  osBbCardChange() {
-    return __osBbCardChange;
+s32 get_save_game_idx() {
+    return gSaveGameIdx;
 }
 
 void func_80010088() {

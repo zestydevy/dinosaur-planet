@@ -8,14 +8,14 @@ _exports:
 .dword gplay_dtor
 
 # export table
-.dword gplay_func_110
+.dword gplay_erase_save
 .dword gplay_func_198
-.dword gplay_func_3E4
-.dword gplay_func_638
+.dword gplay_load_save
+.dword gplay_copy_save
 .dword gplay_func_6AC
 .dword gplay_func_94C
 .dword gplay_func_958
-.dword gplay_func_AE0
+.dword gplay_start_game
 .dword gplay_func_B3C
 .dword gplay_func_CBC
 .dword gplay_func_D20

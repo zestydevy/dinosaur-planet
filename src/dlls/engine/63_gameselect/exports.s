@@ -8,6 +8,6 @@ _exports:
 .dword dll_63_dtor
 
 # export table
-.dword dll_63_func_220
-.dword dll_63_func_5A0
-.dword dll_63_func_5A8
+.dword dll_63_update1
+.dword dll_63_update2
+.dword dll_63_draw

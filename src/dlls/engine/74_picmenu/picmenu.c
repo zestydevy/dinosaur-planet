@@ -162,7 +162,7 @@ void picmenu_clear_items() {
 // just needs picmenu_calculate_items_to_redraw and picmenu_calculate_redraw_area to be static
 #ifdef NON_MATCHING
 // export 2
-PicMenuUpdateResult picmenu_update() {
+PicMenuAction picmenu_update() {
     s32 buttons;
     s32 ret;
     s8 joyXSign;
@@ -172,10 +172,10 @@ PicMenuUpdateResult picmenu_update() {
     item = &sItems[sSelectedItem];
 
     if (sItemCount == 0) {
-        return PICMENU_UPDATE_NONE;
+        return PICMENU_ACTION_NONE;
     }
 
-    ret = PICMENU_UPDATE_NONE;
+    ret = PICMENU_ACTION_NONE;
 
     get_joystick_menu_xy_sign(0, &joyXSign, &joyYSign);
     if (joyYSign != 0) {
@@ -253,7 +253,7 @@ PicMenuUpdateResult picmenu_update() {
                     gDLL_AMSFX->exports->func2(0, sSounds->selectSoundID, 0x7F, 0, 0, 0, 0);
                 }
 
-                ret = PICMENU_UPDATE_SELECTED;
+                ret = PICMENU_ACTION_SELECT;
             }            
         } else if (buttons & B_BUTTON) {
             if (sSounds->backSoundID > -1) {
@@ -262,7 +262,7 @@ PicMenuUpdateResult picmenu_update() {
 
             set_button_mask(0, B_BUTTON);
 
-            ret = PICMENU_UPDATE_BACK;
+            ret = PICMENU_ACTION_BACK;
         }
     }
 
