@@ -146,7 +146,7 @@ typedef struct {
 
 DLL_INTERFACE_BEGIN(29_gplay)
     /*0*/ void (*erase_save)(s8 idx);
-    /*1*/ void (*func_198)(s8 param1, u8 *param2);
+    /*1*/ void (*init_save)(s8 idx, char *filename);
     /*2*/ s32 (*load_save)(s8 idx, u8 startGame);
     /*3*/ void (*copy_save)(s8 srcIdx, s8 dstIdx);
     /*4*/ void (*func_6AC)();

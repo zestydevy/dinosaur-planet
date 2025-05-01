@@ -2,7 +2,7 @@
 gplay_ctor = 0x0;
 gplay_dtor = 0x9C;
 gplay_erase_save = 0x110;
-gplay_func_198 = 0x198;
+gplay_init_save = 0x198;
 gplay_load_save = 0x3E4;
 gplay_copy_save = 0x638;
 gplay_func_6AC = 0x6AC;

@@ -99,11 +99,11 @@ void gplay_erase_save(s8 idx) {
 }
 
 // regalloc
-#if 1
-void gplay_func_198(s8 param1, u8 *param2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_func_198.s")
+#ifndef NON_MATCHING
+void gplay_init_save(s8 idx, char *filename);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_init_save.s")
 #else
-void gplay_func_198(s8 param1, u8 *param2) {
+void gplay_init_save(s8 idx, char *filename) {
     Vec3f vec;
     s32 i;
     u8 *dst;
@@ -113,7 +113,7 @@ void gplay_func_198(s8 param1, u8 *param2) {
 
     gplay_func_1314();
 
-    bss_183C = param1;
+    bss_183C = idx;
     bss_10.unk0.unk0.unk0.character = 1;
 
     for (i = 0; i < 2; i++) {
@@ -160,21 +160,21 @@ void gplay_func_198(s8 param1, u8 *param2) {
         }
     }
 
-    set_gplay_bitstring(1253, 1);
+    set_gplay_bitstring(0x4E5, 1);
 
-    if (param2 != NULL) {
+    if (filename != NULL) {
         dst = &bss_10.unk0.unk0.unk0.saveFilename[0];
 
-        var = *param2;
+        var = *filename;
         *dst = var;
         dst++;
-        param2++;
+        filename++;
 
         while (var != NULL) {
-            var = *param2;
+            var = *filename;
             *dst = var;
             dst++;
-            param2++;
+            filename++;
         }
     }
 

@@ -9,7 +9,7 @@ _exports:
 
 # export table
 .dword gplay_erase_save
-.dword gplay_func_198
+.dword gplay_init_save
 .dword gplay_load_save
 .dword gplay_copy_save
 .dword gplay_func_6AC
