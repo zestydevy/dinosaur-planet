@@ -494,7 +494,37 @@ void _model_destroy(Model *model)
 }
 #endif
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_anim_remap_table.s")
+#else
+extern u32 *D_800B17BC;
+s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
+    s32 *temp_v0;
+    s32 var_v1_2;
+    s32 var_v1;
+    s32 amap_size;
+    var_v1 = animCount;
+    if (arg1 != 0){
+        var_v1 = (var_v1 << 1) + 8;
+        
+        while (var_v1 & 7){
+            var_v1 += 1;
+        }
+    } else {
+        var_v1 = var_v1 << 2;
+        while (var_v1 & 7){
+            var_v1 += 1;
+        }
+
+        read_file_region(AMAP_TAB, D_800B17BC, (modelID & ~3) << 2, 0x20);
+        if (!D_800B17BC){}; //Maybe there was a print around here?
+        temp_v0 = &D_800B17BC[(modelID & 3) & 0xFF];
+        amap_size = temp_v0[1] - temp_v0[0];
+        var_v1 += amap_size;
+    }
+    return var_v1;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/modanim_load.s")
 

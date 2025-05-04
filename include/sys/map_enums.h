@@ -1,0 +1,116 @@
+#ifndef _SYS_MAP_ENUMS_H
+#define _SYS_MAP_ENUMS_H
+
+/** 
+  * MapIDs from MAPINFO.BIN
+  */
+typedef enum {
+    MAP_FRONT_END = 0,
+    MAP_FRONT_END2 = 1, //Unused?
+    MAP_DRAGON_ROCK_TOP = 2,
+    MAP_KRAZOA_PALACE = 3,
+    MAP_VOLCANO_FORCE_POINT_TEMPLE = 4,
+    MAP_ROLLING_DEMO = 5,
+    MAP_DISCOVERY_FALLS = 6,
+    MAP_SWAPSTONE_HOLLOW = 7,
+    MAP_SWAPSTONE_HOLLOW_2 = 8, //Tree hollow well
+    MAP_GOLDEN_PLAINS = 9,
+    MAP_SNOWHORN_WASTES = 10, //Has older name of "Northern Wastes" internally
+    MAP_WARLOCK_MOUNTAIN = 11,
+    MAP_CLOUDRUNNER_FORTRESS = 12,
+    MAP_WALLED_CITY = 13,
+    MAP_SWAPSTONE_CIRCLE = 14,
+    MAP_CLOUDRUNNER_TREASURE = 15,
+    MAP_CLOUDRUNNER_DUNGEON = 16,
+    MAP_CLOUDRUNNER_TRAPROOMS = 17, //Scrapped area replaced with the racetrack
+    MAP_MOON_MOUNTAIN_PASS = 18,
+    MAP_DARK_ICE_MINES_1 = 19, //Surface area
+    MAP_KRAZOA_SHRINE = 20, //Unused Shrine test map with a slightly different design
+    MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM = 21,
+    MAP_KRAZOA_CHAMBER = 22, //Another unused Shrine test map, with the same slightly different design
+    MAP_ICE_MOUNTAIN_1 = 23,
+    MAP_ICE_MOUNTAIN_2 = 24,
+    MAP_ICE_MOUNTAIN_3 = 25,
+    MAP_ANIMTEST = 26, //Test map
+    MAP_DARK_ICE_MINES_2 = 27, //Main underground portion of mine
+    MAP_BOSS_GALADON = 28,
+    MAP_CAPE_CLAW = 29,
+    MAP_INSIDE_GALLEON = 30,
+    MAP_SHRINE_DISCOVERY_FALLS = 31, //Test of Combat
+    MAP_SHRINE_MOON_MOUNTAIN_PASS = 32, //Test of Fear
+    MAP_SHRINE_WALLED_CITY = 33, //Test of Skill
+    MAP_SHRINE_GOLDEN_PLAINS = 34, //Test of Knowledge
+    MAP_DIAMOND_BAY = 35,
+    MAP_EARTHWALKER_TEMPLE = 36, //Scrapped, merged with revised Walled City
+    MAP_WILLOW_GROVE = 37,
+    MAP_BLACKWATER_CANYON = 38,
+    MAP_SHRINE_DIAMOND_BAY = 39, //Test of Strength
+    MAP_SHRINE_SNOWHORN_WASTES = 40, //Test of Sacrifice
+    MAP_SHRINE_CAPE_CLAW = 41, //Test of Character
+    MAP_SHRINE_WILLOW_GROVE = 42, //Test of Magic
+    MAP_CLOUDRUNNER_RACETRACK = 43,
+    MAP_BOSS_DRAKOR = 44,
+    MAP_WARLOCK_MOUNTAIN_INSERT = 45, //Unused, strange small map of Tricky training area - name implies altering WM's layout?
+    MAP_DARK_ICE_MINES_CAVES = 46, //Inside of SnowHorn houses, etc.
+    MAP_DARK_ICE_MINES_LAVA = 47, //Lava along path to DarkIce Mines, split onto a separate layer
+    MAP_BOSS_KLANADACK = 48,
+    MAP_MIKES_LAVA = 49, //Unused lava test by Michael Cawood
+    MAP_DESERT_FORCE_POINT_TEMPLE_TOP = 50,
+    MAP_SWAPSTONE_STORE = 51,
+    MAP_DRAGON_ROCK_BOTTOM = 52,
+    MAP_BOSS_KAMERIAN_DRAGON = 53,
+    MAP_MAGIC_CAVE_SMALL = 54
+} MapIDs;
+
+/** 
+  * Special "mobile" maps that're attached to certain objects, 
+  * functioning as an inertial frame-of-reference for other objects. 
+  * IDs listed at the end of MAPINFO.BIN 
+  */
+typedef enum {
+    MOBILE_MAP_DFPODIUM = 55,
+    MOBILE_MAP_DFCRADLE = 56,
+    MOBILE_MAP_DFCAVEHATCH1 = 57,
+    MOBILE_MAP_DFCAVEHATCH2 = 58,
+    MOBILE_MAP_SCSTATUE = 59,
+    MOBILE_MAP_GALLEONSHIP = 60,
+    MOBILE_MAP_CFGALLEON = 61,
+    MOBILE_MAP_CFGANGPLANK = 62,
+    MOBILE_MAP_NWTREEBRIDGE = 63,
+    MOBILE_MAP_CFDUNGEONBLOCK = 64,
+    MOBILE_MAP_CLOUDRUNNERMAP = 65,
+    MOBILE_MAP_CFLEDGE = 66,
+    MOBILE_MAP_CFCOLUMN = 67,
+    MOBILE_MAP_NWBOULDER = 68,
+    MOBILE_MAP_CFPRISONDOOR = 69,
+    MOBILE_MAP_CFPRISONCAGE = 70,
+    MOBILE_MAP_NWTREEBRIDGE2 = 71,
+    MOBILE_MAP_DIMCANNON = 72,
+    MOBILE_MAP_DIMPUSHBLOCK = 73,
+    MOBILE_MAP_DIMCANNONBASE = 74,
+    MOBILE_MAP_DIMHORNPLINTH = 75,
+    MOBILE_MAP_NWSHCOLPUSH = 76,
+    MOBILE_MAP_DIM2LIFT = 77,
+    MOBILE_MAP_DIM2ICEFLOE = 78,
+    MOBILE_MAP_DIM2ICEFLOE1 = 79,
+    MOBILE_MAP_DIM2ICEFLOE2 = 80,
+    MOBILE_MAP_CFLIFTPLAT = 81,
+    MOBILE_MAP_IMSPACECRAFT = 82,
+    MOBILE_MAP_DIMBOSSGUT = 83,
+    MOBILE_MAP_SHLILY = 84,
+    MOBILE_MAP_VFPSLIDE1 = 85,
+    MOBILE_MAP_VFPSLIDE2 = 86,
+    MOBILE_MAP_DRPUSHCART = 87,
+    MOBILE_MAP_DRLIFTPLAT = 88,
+    MOBILE_MAP_DRHIGHPLAT = 89,
+    MOBILE_MAP_DIM2STONEPILLAR = 90,
+    MOBILE_MAP_BOSSDRAKORROCK = 91,
+    MOBILE_MAP_WCBOUNCYCRATE = 92,
+    MOBILE_MAP_WCPUSHBLOCK = 93,
+    MOBILE_MAP_WCTEMPLELIFT = 94,
+    MOBILE_MAP_KAMERIANCOLUMN = 95,
+    MOBILE_MAP_DBSTEPSTONE = 96,
+    MOBILE_MAP_VFPPUSHBLOCK = 97
+} MobileMapIDs;
+
+#endif
