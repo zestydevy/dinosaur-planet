@@ -1,41 +1,16 @@
 #include "common.h"
-#include "sys/rarezip.h"
-
-extern f32 gWorldX;
-extern f32 gWorldZ;
-extern Plane gFrustumPlanes[5];
-#define MAX_RENDER_LIST_LENGTH 400
-extern u32 gRenderList[MAX_RENDER_LIST_LENGTH];
-extern s16 gRenderListLength;
-#define MAX_BLOCKS 40
-extern Block *gBlocksToDraw[MAX_BLOCKS];
-extern s16 gBlocksToDrawIdx;
-extern BlockTexture *gBlockTextures;
-extern u32 *gFile_HITS_TAB;
-
-u32 hits_get_size(s32 id);
-void block_setup_vertices(Block *block);
-void block_setup_gdl_groups(Block *block);
-void func_80048B14(Block *block);
-void *block_setup_textures(Block *block);
-void block_setup_xz_bitmap(Block *block);
-void block_load_hits(Block *block, s32, s32, void*);
-void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx);
+#include "sys/map.h"
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
     gDLBuilder->needsPipeSync = 1;
 }
 
-extern DLBuilder D_800B4A20;
-
 void func_80040FF8(void) {
     gDLBuilder = &D_800B4A20;
     gDLBuilder->dirtyFlags = 0xFF;
     gDLBuilder->needsPipeSync = 1;
 }
-
-extern DLBuilder D_800B49F0;
 
 void func_80041028(void) {
     gDLBuilder = &D_800B49F0;
@@ -316,23 +291,57 @@ void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041C30.s")
+//These all seem to get/set render-related bits!
+void func_80041C30(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 |= 0x1000;
+    } else {
+        UINT_80092a98 &= ~0x1000;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041C6C.s")
+void func_80041C6C(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 |= 0x10;
+    } else {
+        UINT_80092a98 &= ~0x10;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041CA8.s")
+void func_80041CA8(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 |= 0x20;
+        return;
+    }
+    UINT_80092a98 &= ~0x20;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041CE4.s")
+void func_80041CE4(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 |= 0x40;
+        return;
+    }
+    UINT_80092a98 &= ~0x40;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041D20.s")
+void func_80041D20(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 &= ~0x2000;
+        return;
+    }
+    UINT_80092a98 |= 0x2000;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041D5C.s")
+s32 func_80041D5C(void) {
+    return (UINT_80092a98 & 0x2000) == 0;
+}
 
 u32 func_80041D74()
 {
     return UINT_80092a98 & 0x10;
 }
 
+// Get widescreen-related bit?
 u32 func_80041D8C()
 {
     return UINT_80092a98 & 0x100;
@@ -343,17 +352,38 @@ u32 func_80041DA4()
     return UINT_80092a98 & 0x80;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041DBC.s")
+s32 func_80041DBC(void) {
+    return UINT_80092a98 & 8;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041DD4.s")
+s32 func_80041DD4(void) {
+    return UINT_80092a98 & 0x1000;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041DEC.s")
+void func_80041DEC(void) {
+    UINT_80092a98 |= 0x800;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041E08.s")
+/* 
+ * Get a different widescreen-related bit? It can stack with the other one!
+ * Maybe related to the unimplemented cinematic aspect vs. widescreen option
+ * in the video settings, like in GE/PD?
+ */
+s32 func_80041E08(void) {
+    return UINT_80092a98 & 0x10000;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041E24.s")
+void func_80041E24(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 |= 0x20000;
+        return;
+    }
+    UINT_80092a98 &= 0xFFFDFFFF;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80041E68.s")
+s32 func_80041E68(void) {
+    return UINT_80092a98 & 0x20000;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/init_maps.s")
 
@@ -643,56 +673,344 @@ void _block_add_to_render_list(Block *block, f32 x, f32 z)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800441F4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044320.s")
+/** are_worldCoords_in_current_map */
+s32 func_80044320(f32 worldX, f32 worldZ) {
+    s32 localGridX;
+    s32 localGridZ;
+    s32 temp;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044448.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004454C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004478C.s")
-
+    temp = floor_f((worldX - gWorldX) / BLOCKS_GRID_UNIT);
+    localGridX = temp + gMapCurrentStreamCoords + gMapActiveStreamMap->originOffsetX - floor_f(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
+    temp = floor_f((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
+    localGridZ = temp + D_80092A6C + gMapActiveStreamMap->originOffsetZ - floor_f(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
+    
+    
+    if (localGridX < 0 || localGridZ < 0 || localGridX >= gMapActiveStreamMap->gridSizeX || localGridZ >= gMapActiveStreamMap->gridSizeZ) {
+        return 0;
+    }
+    return 1;
+}
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_get_map_id_from_xz_ws.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044448.s")
 #else
-extern s32 gMapCurrentStreamCoords;
-extern s32 D_80092A6C;
-extern u32 *gDecodedGlobalMap;
-s16 _map_get_map_id_from_xz_ws(f32 arg0, f32 arg1) {
-    s32 temp_a1;
-    s32 temp_v1;
+extern u32 D_800B5468; //?
 
-    temp_a1 = floor_f(arg0 / 640.0f) - gMapCurrentStreamCoords;
-    temp_v1 = floor_f(arg1 / 640.0f) - D_80092A6C;
-    if ((temp_a1 < 0) || (temp_a1 >= 0x10)) {
-        return -1;
+/** Search all loaded maps for object with uID? */
+ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4) {
+    MAPSHeader **map_ptr;
+    s32 mapID;
+    MAPSHeader *map;
+    s32 object_offset;
+    s32 object_indexInMap;
+    ObjCreateInfo *obj;
+    
+    for (mapID = 0; mapID < 0x78; mapID++){
+        map_ptr = &gLoadedMapsDataTable[mapID];
+        map = gLoadedMapsDataTable[mapID];
+        if (!map)
+            continue;
+    
+        gMapActiveStreamMap = map;
+        obj = (ObjCreateInfo*)map->objectInstanceFile_ptr;
+        
+        for (object_indexInMap = 0, object_offset = 0; object_offset < map->objectInstancesFileLength; object_indexInMap++){
+            if (match_uID == obj->unk14){
+                if (match_indexInMap){
+                    *match_indexInMap = object_indexInMap;
+                }
+
+                if (match_mapID){
+                    *match_mapID = mapID;
+                }
+
+                if (arg3){
+                    *arg3 = gMapActiveStreamMap->unk19;
+                }
+                if (arg4){
+                    if ((u32) map_ptr >= (u32)&D_800B5468){ //If beyond mapID 80??
+                        *arg4 = 1;
+                        return obj;
+                    }
+                    *arg4 = 0;
+                }
+                
+                return obj;
+            }
+
+            object_offset += obj->unk2 << 2;
+            obj = (ObjCreateInfo *) (map->objectInstanceFile_ptr + object_offset);
+        }
     }
-    if ((temp_v1 < 0) || (temp_v1 >= 0x10)) {
-        return -1;
-    }
-    return *(gDecodedGlobalMap + (temp_v1 * 0x30 * 4) + (temp_a1 * 0xC));
+    return 0;
 }
 #endif
 
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004454C.s")
+#else
+
+extern u32 D_800B96E4; //gBlockIndices_layerArrayEnd?
+
+#define BLOCKS_TOLERANCE_Y 50
+
+s32 func_8004454C(f32 x, f32 y, f32 z) {
+    s32 blockIndex;
+    s8 loadedBlockIndex1;
+    s8 loadedBlockIndex2;
+    s8 loadedBlockIndex3;
+    BlocksModel *block1;
+    BlocksModel *block2;
+    BlocksModel *block3;
+    s32 gridX;
+    s32 gridZ;
+    s8 *nextLayer;
+    s8 *blocksLayerIndices;
+    s8 *temp_v1_4;
+    s8 **layerB;
+    
+    gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoords;
+    gridZ = floor_f(z / BLOCKS_GRID_UNIT) - D_80092A6C;
+    
+    if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN){
+        return -1;
+    }
+    if (gridZ < 0 || gridZ >= BLOCKS_GRID_SPAN){
+        return -1;
+    }
+    
+    blocksLayerIndices = gBlockIndices[0];    
+    if (blocksLayerIndices[(gridZ * 16) + gridX] >= 0){
+        loadedBlockIndex1 = blocksLayerIndices[blockIndex];
+        block1 = gLoadedBlocks[loadedBlockIndex1];
+        
+        //Check if within bounds of block (along Y axis)
+        if ((f32) (block1->minY - BLOCKS_TOLERANCE_Y) < y && y < (f32) (block1->maxY + BLOCKS_TOLERANCE_Y)) {
+            return (s32) loadedBlockIndex1;
+        }
+    }
+    
+    layerB = &gBlockIndices[1]; //layer1?
+    
+    while (1){
+        temp_v1_4 = *layerB;
+        if (temp_v1_4[(gridZ * 16) + gridX] >= 0){
+            loadedBlockIndex3 = temp_v1_4[blockIndex];
+            block3 = gLoadedBlocks[loadedBlockIndex3];
+            
+            //Check if within bounds of block (along Y axis)
+            if ((f32) (block3->minY - BLOCKS_TOLERANCE_Y) < y && y < (f32) (block3->maxY + BLOCKS_TOLERANCE_Y)) {
+                return (s32) loadedBlockIndex3;
+            }
+        }
+        
+        *nextLayer = layerB + 4;
+        layerB += 8;
+        loadedBlockIndex2 = *(nextLayer + blockIndex);
+        if (loadedBlockIndex2 >= 0){
+            block2 = gLoadedBlocks[loadedBlockIndex2];
+            
+            //Check if within bounds of block (along Y axis)
+            if ((f32) (block2->minY - BLOCKS_TOLERANCE_Y) < y && y < (f32) (block2->maxY + BLOCKS_TOLERANCE_Y)){
+                return (s32) loadedBlockIndex2;
+            }
+        }
+        
+        if ((void *)layerB == &D_800B96E4){
+            return -1;
+        }
+    }
+}
+
+#endif
+
+/** get_block_world_space_origin? */
+void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ) {
+    s32 worldGridX;
+    s32 worldGridZ;
+
+    worldGridX = floor_f(worldX / BLOCKS_GRID_UNIT);
+    worldGridZ = floor_f(worldZ / BLOCKS_GRID_UNIT);
+    
+    *blockWorldOriginX = (f32) worldGridX * BLOCKS_GRID_UNIT;
+    *blockWorldOriginZ = (f32) worldGridZ * BLOCKS_GRID_UNIT;
+}
+
+s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
+    s32 gridX;
+    s32 gridZ;
+    GlobalMapCell *layer;
+
+    gridX = floor_f(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoords;
+    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT) - D_80092A6C;
+    
+    if (gridX < 0 || gridX >= 0x10){
+        return -1;
+    }
+    if (gridZ < 0 || gridZ >= 0x10){
+        return -1;
+    }
+
+    layer = gDecodedGlobalMap[0];
+    return layer[gridZ*16 + gridX].mapID;
+}
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800448D0.s")
+#else
+s16 func_800448D0(s32 arg0) {
+    s16 mapID;
+    s16 var_v0;
+    s16* var_a0;
+    GlobalMapCell *cellInfo;
+    s16* var_t2;
+    GlobalMapCell *layer;
+    s32 cellIndex;
+    s32 cellIndex_2;
+    s32 var_a2;
+    s32 mapID_wasFound;
+    s32 var_t1;
+    u32 objects_data_end;
+    u8 *object_ptr;
+    ObjCreateInfo *obj;
+    MAPSHeader* temp_v1;
+    
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044A10.s")
+    var_v0 = 0;
+    layer = gDecodedGlobalMap[0];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044A20.s")
+    for (cellIndex = 0; cellIndex < BLOCKS_GRID_TOTAL_CELLS; cellIndex++){
+        var_a2 = 0;
+        cellInfo = &(layer[cellIndex]);
+        while (var_a2 != 6){
+            mapID = cellInfo->mapID;
+            var_a2 += 2;
+            if (mapID >= 0 && mapID < MAP_ID_MAX) {
+                mapID_wasFound = 0;
+                if (&gLoadedMapsDataTable[mapID] != 0) {
+                    var_t1 = 0;
+                    if (var_v0 > 0) {
+                        // var_t2 = &sp20[0];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044A7C.s")
+                        while(var_t1 != var_v0){
+                            var_t1 += 1;
+                            if (*var_t2 == mapID) {
+                                mapID_wasFound = 1;
+                                break;
+                            }
+                            var_t2 += 2;
+                        }
+                        
+                    }
+                    if (mapID_wasFound == 0) {
+                        //(&sp20[0])[var_v0] = mapID;
+                        var_v0 += 1;
+                    }
+                }
+            }
+            cellInfo += 2;
+        }
+    }
+    
+    cellIndex_2 = 0;
+    if (var_v0 > 0) {
+        //var_a0 = &sp20[0];
+        while (cellIndex_2 != var_v0){
+            mapID = *var_a0;
+            cellIndex_2 += 1;
+            temp_v1 = gLoadedMapsDataTable[mapID];
+            if (temp_v1 != NULL) {
+                object_ptr = (u8*)temp_v1->objectInstanceFile_ptr;
+                objects_data_end = (u32)(temp_v1->objectInstancesFileLength + object_ptr);
+    
+                while (*object_ptr < objects_data_end){ //iterate through objects list
+                    obj = (ObjCreateInfo*)object_ptr;
+                    if (*object_ptr == arg0) //checking for particular object/offset in the object instance file?
+                        return mapID;
+                    object_ptr += obj->unk2 << 2; //move to next object in list
+                }
+                
+            }
+            var_a0 += 2;
+        }
+    }
+    return -1;
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044B18.s")
+MapHeader* func_80044A10(void) {
+    return (MapHeader*)gLoadedMapsDataTable;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044B98.s")
+/** Assign object instance file length and get object instance file from map */
+s32 func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength) {
+    s32 mapID;
+    MapHeader *map;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BB0.s")
+    mapID = map_get_map_id_from_xz_ws(worldX, worldZ);
+    if (mapID != -1){
+      *objectsFileLength = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
+      return (s32)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
+    }
+    return 0;
+}
 
+/** Assign blockIndex from worldX/Z */
+s32 func_80044A7C(s32 worldX, s32 worldZ, s32* blockIndex) {
+    s8 *blocksLayer;
+    s32 *new_var2;
+      
+    blocksLayer = gBlockIndices[0];
+      
+    worldX = floor_f((f32) worldX / BLOCKS_GRID_UNIT);
+    worldZ = floor_f((f32) worldZ / BLOCKS_GRID_UNIT);
+  
+    new_var2 = &gMapCurrentStreamCoords;
+      
+    *blockIndex = blocksLayer[(worldZ - D_80092A6C) * 16 + (worldX - *new_var2)];
+    return 1;
+}
+
+/** Get Block from visGrid cell */
+BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
+    s8 *blocksLayer;
+    s8 blockIndex;
+
+    blocksLayer = gBlockIndices[mapLayer];
+    
+    if (visGridX < 0 || visGridZ < 0 || visGridX >= 0x10 || visGridZ >= 0x10){
+        return 0;
+    }
+
+    blockIndex = blocksLayer[visGridZ*16 + visGridX];
+    
+    if (blockIndex < 0 || blockIndex >= gLoadedBlockCount)
+        return 0;
+    return (BlocksModel*)gLoadedBlocks[blockIndex];
+}
+
+/** Get visGrid layer */
+s8* func_80044B98(s32 arg0) {
+    return gBlockIndices[arg0];
+}
+
+/** Get Block from blockIndex */
+BlocksModel* func_80044BB0(s32 blockIndex) {
+    if (blockIndex < 0 || blockIndex >= gLoadedBlockCount) {
+        return 0;
+    }
+    return gLoadedBlocks[blockIndex];
+}
+
+//Camera and frustum related?
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BEC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800451A0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004530C.s")
+void func_8004530C(void) {
+    D_800B979E = 0;
+    D_800B9794 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/some_cell_func.s")
 
@@ -720,69 +1038,306 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
     return TRUE;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap.s")
+#else
+void func_8004BD40(MAPSHeader*, s32, s32, s32); //Unsure of argument types, especially last one
+extern s32 *gFile_MAPS_TAB;
+extern MAPSHeader *gMapActiveStreamMap;
+
+typedef struct {
+/*00*/ u32 header;
+/*04*/ u32 blockIDs;
+/*08*/ u32 gridA1;
+/*0c*/ u32 gridA2;
+/*10*/ u32 objCreateInfo;
+/*14*/ u32 gridB1;
+/*18*/ u32 gridB2;
+/*1c*/ u32 end;
+} MapTab;
+
+/* 
+    arg1 = 0 when I was testing!
+*/
+MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
+    s32 new_var;
+    s32 map_size;
+    s32 temp_a0;
+    s32 map_start;
+    s32 objectsCount_oneEighth;
+    s32 temp_t4;
+    s32 temp_t6;
+    s32 gridB_size;
+    int objectsMallocSize;
+    s32 var_v0;
+    MapTab *mapTab;
+    s8 *temp_t7_2;
+    u8 *map;
+    void *temp_t3;
+
+
+    
+    mapTab = (MapTab *)(&gFile_MAPS_TAB + (mapID * 7));
+    
+    map_start = mapTab->header;
+    map_size = mapTab->end - map_start;
+    queue_load_file_region_to_ptr((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MAPSHeader));
+    gMapActiveStreamMap = (MAPSHeader *) gMapReadBuffer;
+    
+    gridB_size = gMapActiveStreamMap->gridB_sixteenthSize * 16;
+    objectsCount_oneEighth = gMapActiveStreamMap->objectInstanceCount >> 3;
+    objectsMallocSize = objectsCount_oneEighth + 1;
+    map = malloc(((gridB_size << 1) + map_size) + objectsMallocSize, 5, 0);
+    
+    gMapActiveStreamMap = (MAPSHeader *) map;
+    queue_load_file_region_to_ptr((void *) map, MAPS_BIN, map_start, map_size);
+    
+    temp_a0 = objectsCount_oneEighth + 1;
+    temp_t4 = objectsMallocSize & 3;
+
+    //Setting up pointers to the 7 MAPS files (excluding the header) (and EOF)
+    gMapActiveStreamMap->blockIDs_ptr = (u32 *) gMapActiveStreamMap + mapTab->blockIDs;
+    gMapActiveStreamMap->grid_A1_ptr = (s8 *) gMapActiveStreamMap + mapTab->gridA1;
+    gMapActiveStreamMap->grid_A2_ptr = (s8 *) gMapActiveStreamMap + mapTab->gridA2;
+    gMapActiveStreamMap->objectInstanceFile_ptr = (s32 *) gMapActiveStreamMap + mapTab->objCreateInfo;
+    new_var = temp_t4;
+    gMapActiveStreamMap->grid_B1_ptr = (s8 *) gMapActiveStreamMap + mapTab->gridB1;
+    gMapActiveStreamMap->grid_B2_ptr = (s8*)(gMapActiveStreamMap->grid_B1_ptr + gridB_size);    
+    gMapActiveStreamMap->end_ptr = (s8*)(gMapActiveStreamMap->grid_B2_ptr + gridB_size);
+
+    //Ack, this section needs reworking
+    for (var_v0 = 0; var_v0 != temp_a0; var_v0++){
+        gMapActiveStreamMap->end_ptr[var_v0] = 0;
+    }
+    
+    gMapActiveStreamMap->originWorldX = 0.0f;
+    gMapActiveStreamMap->originWorldZ = 0.0f;
+    gMapActiveStreamMap->unk18 = 0;
+    gMapActiveStreamMap->unk19 = 0;
+    //It ignores the asset's stored length and calculates it instead
+    gMapActiveStreamMap->objectInstancesFileLength = (u32)gMapActiveStreamMap->grid_B2_ptr - (u32)gMapActiveStreamMap->objectInstanceFile_ptr;
+    gLoadedMapsDataTable[mapID] = gMapActiveStreamMap;
+    
+    if (arg1 == 0){
+        func_80045FC4(gMapActiveStreamMap, (mapID * 0x8C) + (&D_800B5508), mapID, 0);
+        gDLL_29_gplay->exports->func_15B8(mapID);
+    }
+    else{
+        func_8004BD40(gMapActiveStreamMap, mapID, mapID, 0);
+    }
+    return gMapActiveStreamMap;
+}
+
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045D58.s")
+/** Returns one of the loaded maps' mapID (as defined in MAPINFO.bin) */
+s32 func_80045D58(void) {
+    return D_80092A94;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_find_streammap_index.s")
+s32 map_find_streammap_index(s32 mapID_to_find) {
+    s32 index;
+    
+    for (index = 0; index < gMapNumStreamMaps; index++){
+        if ((gMapStreamMapTable[index].header != NULL) && (mapID_to_find == gMapStreamMapTable[index].mapID)) {
+            return index;
+        }
+    }
+
+    return -1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045DC0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045F48.s")
+/** free_mapID? */
+void func_80045F48(s32 mapID) {
+    if (gLoadedMapsDataTable[mapID]){
+        func_80045FC4(gLoadedMapsDataTable[mapID], (mapID * 0x8C) + (&D_800B5508), mapID, 1);
+        free(gLoadedMapsDataTable[mapID]);
+        gLoadedMapsDataTable[mapID] = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045FC4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800462B0.s")
+void func_800462B0(){
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_convert_objpositions_to_ws.s")
+/** Iterates over all the ObjCreateInfo in a map's object instance file, transforming the objects' coordinates from local coordinates to world-space coordinates */
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
+    u8 *ptr;
+    s32 offset;
+    ObjCreateInfo *obj;
+
+    if (!map){
+        return;
+    }
+    
+    ptr = (u8*)map->objectInstanceFile_ptr;
+    offset = 0; // current offset in MAPS object instance file data
+    
+    while (offset < map->objectInstancesFileLength){
+        obj = (ObjCreateInfo*)ptr;
+        obj->x += X;
+        obj->z += Z;
+
+        offset += obj->quarterSize << 2;
+        ptr += obj->quarterSize << 2;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046320.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046688.s")
+void func_80046688(s32 arg0, s32 arg1) {
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046698.s")
+GlobalMapCell* func_80046698(s32 gridX, s32 gridZ) {
+    GlobalMapCell *layer;    
+    s32 cellIndex;
+    
+    layer = (GlobalMapCell *)&gDecodedGlobalMap[0];
+    cellIndex = (gridZ * 16) + gridX;
+    
+    return &layer[cellIndex];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800466C0.s")
+MapHeader* func_800466C0() {
+    MapHeader* map;
+    GlobalMapCell *layer;
+    s32 mapID;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046718.s")
+    layer = gDecodedGlobalMap[0];
+    mapID = layer[119].mapID; //There should be 16*16 cells, so why this one specifically... centre cell?
+    if (mapID < 0) {
+        mapID = D_80092BBC;
+    }
+    if (mapID < 0) {
+        return NULL;
+    }
+    
+    map = gLoadedMapsDataTable[mapID];
+    if (map != NULL) {
+        D_80092BBC = (s32) mapID;
+        gMapActiveStreamMap = map;
+    }
+    return map;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046728.s")
+extern s16 gNumTRKBLKEntries;
+s16 func_80046718() {
+    return gNumTRKBLKEntries;
+}
+
+/** map_get_mapID_blocks_count? (Calculated by quickly comparing base blockID for this map and next map) */
+s32 func_80046728(s32 mapID) {
+    if (mapID < 0 || mapID >= gNumTRKBLKEntries)
+        return 0;
+    return gFile_TRKBLK[mapID + 1] - gFile_TRKBLK[mapID];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/init_global_map.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_read_layout.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046B58.s")
+void map_update_streaming();
+
+void func_80046B58(f32 x, f32 y, f32 z) {
+    u32 temp_t8;
+    
+    temp_t8 = UINT_80092a98;
+    if (!(temp_t8 & 2) || temp_t8 & 0x800){
+        D_800B97AC = x;
+        D_800B97B0 = y;
+        D_800B97B4 = z;
+        UINT_80092a98 = temp_t8 | 2;
+        if (UINT_80092a98 & 0x800){
+            map_update_streaming();
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_streaming.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80047374.s")
+/** Increment something */
+void func_80047374(void) {
+    D_80092A8C += 1;
+    if (D_80092A8C >= 3) {
+        D_80092A8C = 2;
+    }
+    UINT_80092a98 |= 0x4000;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800473BC.s")
+/** Decrement something */
+void func_800473BC(void) {
+    D_80092A8C -= 1;
+    if (D_80092A8C < -2) {
+        D_80092A8C = -2;
+    }
+    UINT_80092a98 |= 0x4000;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80047404.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80047710.s")
+void func_80047710(s32 arg0, s32 arg1, s32 arg2) {
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80047724.s")
+void func_80047724(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004773C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048024.s")
+s32 func_80048024() {
+    return D_800B96A8;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048034.s")
+void func_80048034(void) {
+    D_800B96A8 = 0;
+    D_800B4A70 = 0;
+    D_800B4A72 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048054.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800483BC.s")
+/** read_mapinfo_of_map_at_xz */
+void func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
+    s32 mapID;
+    s32 mapInfoCount;
+    MapInfo* mapInfo;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048478.s")
+    mapID = map_get_map_id_from_xz_ws(worldX, worldZ);
+    mapInfoCount = get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048498.s")
+    if (mapID < 0 || !(mapID < mapInfoCount)) {
+        D_800B96A8 = 0;
+    } else {
+        mapInfo = (MapInfo *)gMapReadBuffer;
+        queue_load_file_region_to_ptr((void *) mapInfo, MAPINFO_BIN, mapID * (sizeof(MapInfo)), sizeof(MapInfo));
+        D_800B96A8 = mapInfo->type;
+    } 
+    
+    D_800B4A72 = 0;
+    
+    //Set values if it's a "mobile map" (the Galleon, "wctemplelift", etc)
+    if (D_800B96A8 == 1) {
+        D_800B4A70 = mapID;
+        D_800B4A72 = mapInfo->mobileMapUnknown;
+    }
+}
+
+s16 func_80048478(s32* arg0) {
+    if (arg0) {
+        *arg0 = (s32) D_800B4A70;
+    }
+    return D_800B4A72;
+}
+
+s8 func_80048498(void) {
+    return D_80092A8C;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800484A8.s")
 
@@ -928,18 +1483,10 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048F58.s")
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_emplace.s")
-#else
-extern u8 gLoadedBlockCount;
-extern s16 *gLoadedBlockIds;
-extern s8 *gBlockIndices[2]; // FIXME: how many?
-extern u8 *gBlockRefCounts;
-extern Block **gLoadedBlocks;
-void _block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
+void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
 {
     s32 slot;
+    s8 *ptr;
 
     for (slot = 0; slot < gLoadedBlockCount; slot++) {
         if (gLoadedBlockIds[slot] == -1) {
@@ -947,22 +1494,24 @@ void _block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx)
         }
     }
 
+
     if (slot == gLoadedBlockCount) {
         gLoadedBlockCount++;
     }
 
-    gBlockIndices[globalMapIdx][param_3] = slot;
+    ptr = gBlockIndices[globalMapIdx];
+    ptr[param_3] = slot;
+    
     gLoadedBlocks[slot] = block;
     gLoadedBlockIds[slot] = id;
     gBlockRefCounts[slot] = 1;
 
-    if (block->unk_0x3e != 0) {
+    if (block->unk_3e != 0) {
         block_compute_vertex_colors(block, 0, 0, 1);
     }
 
     func_80058F3C();
 }
-#endif
 
 // close
 #if 1
@@ -1125,34 +1674,125 @@ void _block_setup_vertices(Block *block)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800496E4.s")
+
+
+/*
+ * blocks_free?
+ */
+void func_800496E4(s32 blockIndex) {
+    BlocksModel *block;
+    s32 i;
+    u8 runtimeValue;
+    s32* temp_a0_2;
+
+    if (blockIndex < 0) {
+        return;
+    }
+    
+    gBlockRefCounts[blockIndex] -= 1;
+    if (gBlockRefCounts[blockIndex] == 0) {
+        block = gLoadedBlocks[blockIndex];
+        func_80048C24(block);
+        gLoadedBlockIds[blockIndex] = -1;
+        gLoadedBlocks[blockIndex] = NULL;
+        if (block->unk_48 != 0) {
+            func_80049FA8(block);
+        }
+
+        //Loop over facebatches and free them
+        for (i = 0; i < block->faceBatch_count; i++){
+            runtimeValue = (&block->ptr_faceBatches[i])->runtimeValue;
+            if (runtimeValue != 0xFF) {
+                func_80049D38(runtimeValue);
+            }
+        }
+
+        //Loop over materials and free their textures
+        for (i = 0; i < block->material_count; i++){
+            texture_destroy((&block->ptr_materials[i])->textureID);
+        }
+        
+        if ((u32*)block->unk_1c != NULL) {
+            free((u32*)block->unk_1c);
+        }
+        
+        func_80058F3C();
+        free(block);
+    }
+}
 
 u32 hits_get_size(s32 id) {
     u32 size = gFile_HITS_TAB[id + 1] - gFile_HITS_TAB[id];
     return size;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_load_hits.s")
+void* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine* hits_ptr) {
+    s32 hits_start;
+    s32 hits_size;
+    s32 lineIndex;
+    HitsLine *line;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499B4.s")
+    hits_start = gFile_HITS_TAB[blockID];
+    hits_size = gFile_HITS_TAB[blockID + 1] - hits_start;
+    
+    if (hits_size > 0) {
+        block->ptr_hits_lines = hits_ptr;
+        read_file_region(HITS_BIN, hits_ptr, hits_start, hits_size);        
+        hits_ptr = (HitsLine*)((u8*)hits_ptr + hits_size);
+    }
+    block->hits_line_count = hits_size / sizeof(HitsLine);
+
+    //This loops over the lines, checking whether their points' X/Z coordinates are in-bounds of their parent BLOCK
+    //Potential optimisation: skip this by pre-processing the HITS.bin folder & ensuring all points are inbounds? (They are in Dec 2000's files, I think!)
+    for (lineIndex = 0; lineIndex < block->hits_line_count; lineIndex++){
+        line = &block->ptr_hits_lines[lineIndex];
+
+        if (line->Ax < 0 || line->Bx < 0 || line->Ax > BLOCKS_GRID_UNIT || line->Bx > BLOCKS_GRID_UNIT) {
+            line->settingsB = 0x40;
+            line = &block->ptr_hits_lines[lineIndex];
+        } 
+        if (line->Az < 0 || line->Bz < 0 || line->Az > BLOCKS_GRID_UNIT || line->Bz > BLOCKS_GRID_UNIT) {
+            line->settingsB = 0x40;
+        }
+    }
+                
+    block->unk_1c = 0;
+    block->unk_3c = 0;
+    block->flags &= 0xFFBF;
+    
+    return hits_ptr;
+}
+
+void func_800499B4(){
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499BC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049B84.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049CE4.s")
+void func_80049CE4(u32 a0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8){
+    UnkTextureStruct *temp_v0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D38.s")
-
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D68.s")
-#else
-Struct0x22 *_func_80049D68(s32 idx)
-{
-    return &(*(Struct0x22**)0x800b97a8)[idx];
+    temp_v0 = &D_800B97A8[a0];
+    temp_v0->unk4 = arg1;
+    temp_v0->unk6 = arg2;
+    temp_v0->unkC = arg3;
+    temp_v0->unkE = (s16) arg4; 
+    temp_v0->unk14 = (s16) arg5; 
+    temp_v0->unk16 = (s16) arg6; 
+    temp_v0->unk1C = (s16) arg7; 
+    temp_v0->unk1E = (s16) arg8; 
 }
-#endif
+
+void func_80049D38(u32 arg0) {
+    if ((s32) D_800B97A8[arg0].unk20 > 0) {
+        D_800B97A8[arg0].unk20 -= 1;
+    }
+}
+
+s32 func_80049D68(s32 arg0) {
+    return (s32)&D_800B97A8[arg0];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D88.s")
 
@@ -1162,9 +1802,37 @@ Struct0x22 *_func_80049D68(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A058.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A164.s")
+void func_8004A164(Texture *matchTexture, s32 matchParam) {
+    s32 index;
+    for (index = 0; index < 0x14; index++){
+        if (matchTexture == gBlockTextures[index].texture && matchParam == gBlockTextures[index].unk_0x14){
+            if (gBlockTextures[index].refCount > 0){
+                gBlockTextures[index].refCount--;
+            }
+        }
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A1E8.s")
+/** blocks_get_texture_by_some_value? */
+Texture* func_8004A1E8(s32 match_value) {
+    s32 blockIndex;
+    BlocksModel *block;
+    s32 textureIndex;
+    
+    for (blockIndex = 0; blockIndex < gLoadedBlockCount; blockIndex++){
+        block = gLoadedBlocks[blockIndex];
+        
+        if (block){
+            for (textureIndex = 0; textureIndex < block->unk_48; textureIndex++){
+                if (match_value == (&block->unk_28[textureIndex])->unk02){
+                    textureIndex = (&block->unk_28[textureIndex])->textureIndex;
+                    return gBlockTextures[textureIndex].texture;
+                }
+            }
+        }
+    }
+    return NULL;
+}
 
 Block_0x28Struct *func_8004A284(Block *block, u32 param_2)
 {
@@ -1195,27 +1863,157 @@ BlockTexture *func_8004A2CC(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_objects_streaming.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004AEFC.s")
+s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
+    s16 searchIndex;
+
+    for (searchIndex = 0; searchIndex < searchLimit; searchIndex++){
+        if (mapID == *(arg1 + searchIndex)){
+            return 1;
+        }
+    }
+    
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_should_stream_load_object.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B190.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B4A0.s")
+/** map_should_object_load? */
+s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
+    u8 gplayValue;
+
+    gplayValue = gDLL_29_gplay->exports->func_143C(arg1);
+    if (gplayValue == -1) {
+        return 0;
+    }
+    if (gplayValue != 0) {
+        if (gplayValue < 9) {
+            if ((obj->setup >> (gplayValue + 0x1F)) & 1) { //bitshift by 0x1f?? But setup is a byte value... hmm.
+                return 0;
+            }
+        }
+        else if ((obj->loadParamB >> (0x10 - gplayValue)) & 1) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B548.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B710.s")
+/**
+ * Seems to be called when camera moves between grid cells?
+ */
+ void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
+    s32 cell_offset;
+    s32 bit_at_index;
+    MapHeader *map;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_check_some_mapobj_flag.s")
+    if (cellIndex_plusBitToCheck < 0) {
+        return;
+    }
+    
+    map = gLoadedMapsDataTable[mapIndex];
+    
+    cell_offset = cellIndex_plusBitToCheck >> 3; //upper part of arg0 used to choose cell within grid?
+    bit_at_index = 1 << (cellIndex_plusBitToCheck & 7); //lower part of arg0 used to choose a bit from 0-7
+    map->end_ptr[cell_offset] &= ~bit_at_index; //masks something to do with the grid cell?
+    
+    if (arg2 != 0) {
+        map->end_ptr[cell_offset] |= bit_at_index; //sets a bit to do with the grid cell?
+    }
+}
 
+s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
+    MapHeader *map;
+    s32 bit_at_index;
+    u32 cell_offset;
+    
+    if (cellIndex_plusBitToCheck < 0){
+        return 0;
+    }
+    
+    map = gLoadedMapsDataTable[mapIndex];
+    cell_offset = cellIndex_plusBitToCheck >> 3;
+    bit_at_index = 1 << (cellIndex_plusBitToCheck & 7);
+    if (map->end_ptr[cell_offset] & bit_at_index){
+        return 1;
+    }
+    if (cell_offset){
+        //Could be related to "trackSetLoaded bit" print strings in RODATA?
+    }
+    return 0;
+}
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B7D0.s")
+#else
+/** Find curve by uID 
+    arg1 unused?
+*/
+ObjCreateInfo *func_8004B7D0(s32 match_uID, u32 arg1){
+    MAPSHeader **maps;
+    MAPSHeader *map;
+    s32 index;
+    s32 length;
+    u8 *ptr;
+    ObjCreateInfo *obj;
+    
+    maps = gLoadedMapsDataTable;
+    index = 0;    
+
+    do {
+        s32 offset; //Very odd, but it improves things when here! Could this have been a separate function that was inlined?
+        
+        map = maps[index];
+        
+        if (map != NULL){
+            length = map->objectInstancesFileLength;
+            ptr = (u8 *)map->objectInstanceFile_ptr;
+            offset = 0;
+            while (offset < length){
+                obj = (ObjCreateInfo *) ptr;
+
+                if (obj->objId == OBJ_curve && match_uID == obj->unk14){
+                    return obj;
+                }
+                if (!obj->objId){
+                }
+                
+                obj = (ObjCreateInfo *) ptr; //Strange to set this again here, but it seems to improve the match?
+                offset += obj->unk2 << 2; 
+                ptr += obj->unk2 << 2; 
+            } 
+        } 
+        
+        index++;
+    } while ((u32)map != (u32)&D_800B5508);
+    
+    return 0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B85C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B914.s")
+void func_8004B914(s32 mapID) {
+    MapHeader *map;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B948.s")
+    if ((mapID >= 0) && (mapID < 0x78)) {
+        map = gLoadedMapsDataTable[mapID];
+        if (map != NULL) {
+            map->unk18 = 1;
+        }
+    }
+}
+
+void func_8004B948(s32 arg0) {
+    if (arg0 != 0) {
+        UINT_80092a98 |= 0x200;
+        return;
+    }
+    UINT_80092a98 &= ~0x200;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B984.s")
 
@@ -1227,9 +2025,78 @@ BlockTexture *func_8004A2CC(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/warpPlayer.s")
+/** 
+  * Warps the player to coordinates stored in WARPTAB.bin 
+  */
+void warpPlayer(s32 warpID, s8 fadeToBlack) {
+    Warp *warp;
+    Warp *mostRecentWarp;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D328.s")
+    warp = (Warp*)gMapReadBuffer;
+    queue_load_file_region_to_ptr((void*)warp, WARPTAB_BIN, warpID << 4, sizeof(Warp));
+    mostRecentWarp = (Warp*)&D_800B4A60;
+  
+    mostRecentWarp->coord.x = warp->coord.x;
+    mostRecentWarp->coord.y = warp->coord.y;
+    mostRecentWarp->coord.z = warp->coord.z;
+    mostRecentWarp->layer = warp->layer;
+    
+    D_800B4A5C = (s16) warpID;
+    D_800B4A58 = 1;
+    D_800B4A59 = fadeToBlack;
+    
+    if (D_800B4A59 != 0) {
+        gDLL_28_screen_fade->exports->fade(0x28, SCREEN_FADE_BLACK);
+    }
+    gDLL_minic->exports->func[4].asVoid();
+    gDLL_minic->exports->func[1].asVoid();
+    gDLL_8->exports->func[1].asVoid();
+    gDLL_Sky->exports->func[1].asVoid();
+    gDLL_newclouds->exports->func[1].asVoid();
+    gDLL_newstars->exports->func[0].asVoid();
+}
+
+/** 
+    Called every frame!
+    Seems to start a fade-out followed by a warp
+*/
+void func_8004D328() {
+    SimilarToWarp* var_a2;
+    Warp* var_v0;
+    u8 temp2;
+    u8 temp1;
+
+    var_a2 = (SimilarToWarp*)gDLL_29_gplay->exports->func_F04();
+    
+    //Start fade?
+    if (D_800B4A5E != -1) { //timer started?
+        
+        D_80092A78 -= 1; //Decrement timer
+        if (D_80092A78 < 0) { //When timer less than zero, fade to black
+            if ((D_800B4A5E >= 0) && (D_800B4A59 != 0)) {
+                gDLL_28_screen_fade->exports->fade_reversed(0x1E, 1);
+            }
+            D_800B4A5E = -1; //stop timer?
+        }
+    }
+    
+    //Warp after fade?
+    if (D_800B4A58 == 0)
+        return;
+        
+    if (gDLL_28_screen_fade->exports->is_complete() || D_800B4A59 == 0){
+        var_v0 = (Warp*)&D_800B4A60;
+        D_800B4A58 = 0;
+        var_a2->coord.x = var_v0->coord.x;
+        var_a2->coord.y = var_v0->coord.y;
+        var_a2->coord.z = var_v0->coord.z;
+        var_a2->layer[1] = (s8)var_v0->layer;
+        func_800143A4();
+        D_800B4A5E = D_800B4A5C;
+        D_800B4A5C = -1;
+        D_80092A78 = 8;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D470.s")
 
@@ -1237,17 +2104,30 @@ BlockTexture *func_8004A2CC(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D844.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D880.s")
+void func_8004D880(Object *arg0) {
+    ObjectStruct64* temp_v0;
+
+    if (arg0->ptr0x64 != NULL) {
+        arg0->ptr0x64->flags &= ~0x20;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D8A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D974.s")
+void func_8004D974(s32 arg0) {
+    D_80092BE8 = (s8) arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D984.s")
+void func_8004D984(s32 arg0) {
+    D_80092BE8 = 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D99C.s")
+void func_8004D99C(s32 arg0) {
+    D_80092BF8 = arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D9AC.s")
+void func_8004D9AC(s32 arg0) {
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D9B8.s")
 
@@ -1302,9 +2182,13 @@ void _func_8004E64C(Object *object, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 p
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004F378.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA3C.s")
+s32 func_8004FA3C(s32 arg0) {
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA4C.s")
+s32 func_8004FA4C(void) {
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA58.s")
 
@@ -1318,9 +2202,54 @@ void _func_8004E64C(Object *object, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 p
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051944.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051C54.s")
+#else
+void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
+    f32 sp8;
+    f32 sp4;
+    f32 sp0;
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_ft0;
+    f32 temp_ft4;
+    f32 temp_ft5;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    
+    temp_fv0 = C->x - A->x;
+    temp_fa0 = C->y - A->y;
+    temp_ft4 = C->z - A->z;
+    sp0 = B->x - A->x;
+    sp4 = B->y - A->y;
+    sp8 = B->z - A->z;
+    
+    D->x = (sp4 * temp_ft4) - (sp8 * temp_fa0);
+    D->y = -((sp0 * temp_ft4) - (sp8 * temp_fv0));
+    D->z = (sp0 * temp_fa0) - (sp4 * temp_fv0);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051CFC.s")
+    // D->x = (((B->y - A->y) * (C->z - A->z)) - ((B->z - A->z) * (C->y - A->y)));
+    // D->y = -(((B->x - A->x) * (C->z - A->z)) - ((B->z - A->z) * (C->x - A->x)));
+    // D->z = (((B->x - A->x) * (C->y - A->y)) - ((B->y - A->y) * (C->x - A->x)));
+}
+#endif
+
+s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
+    s32 var_v1;
+    float product;
+
+    var_v1 = 1;
+    if (D_80092BFC != 0) {
+        return 1;
+    }
+    
+    //Check for negative dot product?
+    product = (arg0->x * arg1->x) + (arg0->y * arg1->y) + (arg0->z * arg1->z);
+    if (product < 0.0f) {
+        var_v1 = -1;
+    }
+    return var_v1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051D68.s")
 
@@ -1328,7 +2257,33 @@ void _func_8004E64C(Object *object, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 p
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052148.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052230.s")
+/** 
+  * Seems to have something to do with getting the dot product of two vectors?
+  */
+void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
+{
+    f32 AdotB;
+    f32 AdotA;
+    f32 BdotB;
+    f32 product;
+    Vec3f *Acopy;
+    
+    Acopy = A;
+    AdotB = ((A->x * B->x) + (A->y * B->y)) + (A->z * B->z);
+    product = (A->x * Acopy->x) + (A->y * A->y) + (A->z * A->z);
+    AdotA = product;
+    BdotB = ((B->x * B->x) + (B->y * B->y)) + (B->z * B->z);
+    product = AdotA * BdotB;
+    
+    if (product){
+        BdotB = sqrtf(product);
+    }
+    if (BdotB != 0){
+        *arg2 = AdotB / BdotB;
+        return;
+    }
+    *arg2 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052300.s")
 

@@ -442,7 +442,7 @@ Object *func_800211B4(s32 param1) {
 
     while (i < len) {
         obj = gObjList[i];
-        if (obj->createInfo != NULL && obj->createInfo->unk14 == param1) {
+        if (obj->createInfo != NULL && obj->createInfo->uID == param1) {
             return obj;
         }
 
@@ -568,8 +568,8 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     objHeader.srt.scale = def->scale;
     objHeader.unk_0x36 = 0xFF;
     objHeader.ptr0xcc = NULL;
-    objHeader.unk0x3c = createInfo->unk6 << 3;
-    objHeader.unk0x40 = createInfo->unk7 << 3;
+    objHeader.unk0x3c = createInfo->loadDistance << 3;
+    objHeader.unk0x40 = createInfo->fadeDistance << 3;
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
@@ -1505,11 +1505,11 @@ void *obj_alloc_create_info(s32 size, s32 objId) {
     createInfo = (ObjCreateInfo*)malloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
     bzero(createInfo, size);
 
-    createInfo->unk14 = -1;
-    createInfo->unk6 = 100;
-    createInfo->unk7 = 50;
-    createInfo->unk4 = 8;
-    createInfo->unk5 = 4;
+    createInfo->uID = -1;
+    createInfo->loadDistance = 100;
+    createInfo->fadeDistance = 50;
+    createInfo->loadParamA = 8;
+    createInfo->loadParamB = 4;
     createInfo->objId = objId;
 
     return (void*)createInfo;
@@ -1543,14 +1543,14 @@ void func_80023464(s32 character) {
 
         if (character > -1) {
             bzero(&createInfo, sizeof(createInfo));
-            createInfo.unk14 = -1;
-            createInfo.unk3 = 0;
-            createInfo.unk4 = 1;
-            createInfo.unk5 = 4;
-            createInfo.unk6 = -1;
-            createInfo.unk7 = 100;
+            createInfo.uID = -1;
+            createInfo.setup = 0;
+            createInfo.loadParamA = 1;
+            createInfo.loadParamB = 4;
+            createInfo.loadDistance = -1;
+            createInfo.fadeDistance = 100;
             createInfo.objId = D_80091664[character];
-            createInfo.unk2 = 24;
+            createInfo.quarterSize = 24;
             createInfo.x = x;
             createInfo.y = y;
             createInfo.z = z;
@@ -1589,14 +1589,14 @@ void func_80023628() {
 
     if (activeCharacter > -1) {
         bzero(&createInfo, sizeof(createInfo));
-        createInfo.unk14 = -1;
-        createInfo.unk3 = 0;
-        createInfo.unk4 = 1;
-        createInfo.unk5 = 4;
-        createInfo.unk6 = -1;
-        createInfo.unk7 = 100;
+        createInfo.uID = -1;
+        createInfo.setup = 0;
+        createInfo.loadParamA = 1;
+        createInfo.loadParamB = 4;
+        createInfo.loadDistance = -1;
+        createInfo.fadeDistance = 100;
         createInfo.objId = D_80091664[activeCharacter];
-        createInfo.unk2 = 24;
+        createInfo.quarterSize = 24;
         createInfo.x = x;
         createInfo.y = y;
         createInfo.z = z;

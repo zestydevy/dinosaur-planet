@@ -35,18 +35,19 @@ typedef struct {
 } ObjectC0State;
 
 // Base struct, objects "inherit" from this and add their own creation related info
+// Curve objects use some of these parameters differently
 typedef struct {
-	s16 objId;
-	u8 unk2;
-	u8 unk3;
-	u8 unk4;
-	u8 unk5;
-	u8 unk6;
-	u8 unk7;
-	f32 x;
-	f32 y;
-	f32 z;
-	s32 unk14;
+/*00*/	s16 objId;
+/*02*/	u8 quarterSize;
+/*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
+/*04*/	u8 loadParamA;
+/*05*/	u8 loadParamB;
+/*06*/	u8 loadDistance;
+/*07*/	u8 fadeDistance;
+/*08*/	f32 x;
+/*0c*/	f32 y;
+/*10*/	f32 z;
+/*14*/	s32 uID;
 } ObjCreateInfo;
 
 typedef struct {
