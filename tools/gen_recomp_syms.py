@@ -200,7 +200,7 @@ def gen_dll_recomp_header(header: TextIO,
                 if rename != None:
                     # Turn data decl into an extern
                     type = child.type
-                    if isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl) or isinstance(type, c_ast.FuncDecl):
+                    while isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl) or isinstance(type, c_ast.FuncDecl):
                         type = type.type
                     if not isinstance(type, c_ast.TypeDecl):
                         continue

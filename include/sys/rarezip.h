@@ -1,7 +1,7 @@
 #ifndef _SYS_RAREZIP_H
 #define _SYS_RAREZIP_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 typedef struct huft {
     u8 e;                /* number of extra bits or operation */

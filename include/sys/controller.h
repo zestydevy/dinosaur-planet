@@ -3,6 +3,10 @@
 #ifndef _SYS_CONTROLLER_H
 #define _SYS_CONTROLLER_H
 
+#include "PR/ultratypes.h"
+#include "PR/os.h"
+#include "PR/sched.h"
+
 // NOTE: This size is NOT CONFIRMED YET
 #define CONTROLLER_THREAD_STACKSIZE 1152
 
@@ -247,14 +251,6 @@ extern s16 gContQueue2Message;
  * Defaults to 5.
  */
 extern s8 gMenuJoystickDelay;
-
-/**
- * The index of the last inserted controller.
- *
- * For example, if one controller is inserted then this will be 0.
- * If no controllers are inserted, this will be -1.
- */
-extern s8 gLastInsertedControllerIndex;
 
 /**
  * Signals the controller thread to apply controller inputs to input related globals

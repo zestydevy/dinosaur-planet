@@ -1,7 +1,7 @@
 #ifndef _SYS_GENERIC_STACK_H
 #define _SYS_GENERIC_STACK_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 typedef struct {
     /*00*/ s16 count;

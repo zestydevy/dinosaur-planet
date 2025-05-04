@@ -1,7 +1,9 @@
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "sys/camera.h"
 #include "sys/gfx/map.h"
+#include "sys/main.h"
 #include "sys/objects.h"
 #include "dll.h"
 #include "functions.h"
@@ -15,9 +17,9 @@ static u8 sIsComplete;
 static u8 sDelayTimer;
 
 void screen_fade_fade_reversed(s32, s32);
-/*static*/ void screen_fade_draw_simple_black(Gfx **gdl, s32 *mtxs, s32 *vtxs);
-/*static*/ void screen_fade_draw_simple(Gfx **gdl, s32 *mtxs, s32 *vtxs, s32 red, s32 green, s32 blue);
-/*static*/ void screen_fade_draw_radial(Gfx **gdl, s32 *mtxs, s32 *vtxs, s32 red, s32 green, s32 blue);
+/*static*/ void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
+/*static*/ void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue);
+/*static*/ void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue);
 
 void screen_fade_ctor(void *self) {
     sFadeAlpha = 0;
@@ -36,7 +38,7 @@ void screen_fade_dtor(void *self) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/28_screen_fade/screen_fade_draw.s")
 #else
-void screen_fade_draw(Gfx **gdl, s32 *mtxs, s32 *vtxs) {
+void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     Object *player;
     
     if (sDelayTimer != 0) {
@@ -122,7 +124,7 @@ s32 screen_fade_is_complete() {
     return sIsComplete;
 }
 
-/*static */void screen_fade_draw_simple_black(Gfx **gdl, s32 *mtxs, s32 *vtxs) {
+/*static */void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 ulx;
     s32 uly;
     s32 lrx;
@@ -149,7 +151,7 @@ s32 screen_fade_is_complete() {
     func_80002490(gdl);
 }
 
-/*static */void screen_fade_draw_simple(Gfx **gdl, s32 *mtxs, s32 *vtxs, s32 red, s32 green, s32 blue) {
+/*static */void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue) {
     s32 ulx;
     s32 uly;
     s32 lrx;

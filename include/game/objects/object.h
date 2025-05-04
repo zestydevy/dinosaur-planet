@@ -1,7 +1,7 @@
 #ifndef _SYS_GAME_OBJECTS_OBJECT_H
 #define _SYS_GAME_OBJECTS_OBJECT_H
 
-#include <PR/gbi.h>
+#include "PR/gbi.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/texture.h"
 #include "sys/math.h"
@@ -203,14 +203,6 @@ typedef struct ObjListItem {
 	s16 size;
 	Object *obj;
 } ObjListItem;
-
-
-extern u8 delayByte; //60/int(x) FPS x<=6
-extern u8 delayByteMirror;
-extern float delayFloat;
-extern float delayFloatMirror;
-extern float inverseDelay; // 1/delayByte
-extern float inverseDelayMirror; // why the mirrors, if they aren't used?
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;

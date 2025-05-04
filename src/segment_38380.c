@@ -116,7 +116,7 @@ void func_800379D0(u32 red, u32 green, s32 blue) {
     D_800917AC |= (D_800917AC << 16);
 }
 
-void func_80037A14(Gfx **gdl, UNK_PTR **mtx, s32 param3) {
+void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
     s32 resolution;
     s32 resWidth, resHeight;
     s32 ulx, uly, lrx, lry;

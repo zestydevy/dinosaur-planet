@@ -1,4 +1,4 @@
-#include <PR/os_internal.h>
+#include "PR/os_internal.h"
 #include "common.h"
 #include "sys/crash.h"
 #include "libc/stdarg.h"
@@ -371,7 +371,7 @@ void clear_framebuffer_current() {
     }
 }
 
-void write_c_file_label_pointers(char *cFileLabel, s32 a1) {
+void write_c_file_label_pointers(const char *cFileLabel, s32 a1) {
     // If gCFileLabelFlag is zero, then zero out gCFileLabels and gSomeCFileInts
     if (gCFileLabelFlag == 0) {
         for (gCFileLabelFlag = 0; gCFileLabelFlag < C_FILE_LABELS_LENGTH; ++gCFileLabelFlag) {

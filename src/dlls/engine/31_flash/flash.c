@@ -1,5 +1,5 @@
-#include <PR/ultratypes.h>
-#include <PR/os.h>
+#include "PR/ultratypes.h"
+#include "PR/os.h"
 #include "dlls/engine/31_flash.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
@@ -272,7 +272,7 @@ static void osFlashClearStatus() {
     mb->devAddr = 0;
     mb->size = 0x80;
 
-    osEPiStartDma(&sFlashEPiHandle, mb, OS_WRITE);
+    return osEPiStartDma(&sFlashEPiHandle, mb, OS_WRITE);
 }
 
 /*static*/ s32 osFlashWriteArray(u32 page_num) {
@@ -309,5 +309,5 @@ static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dram
     mb->devAddr = page_num * DAT_81084030;
     mb->size = n_pages * 128;
 
-    osEPiStartDma(&sFlashEPiHandle, mb, OS_READ);
+    return osEPiStartDma(&sFlashEPiHandle, mb, OS_READ);
 }

@@ -1,14 +1,14 @@
 #ifndef _DLLS_6_H
 #define _DLLS_6_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "dll_def.h"
 #include "types.h"
 
 DLL_INTERFACE_BEGIN(6_AMSFX)
     /*0*/ UnknownDLLFunc func0;
     /*1*/ void (*func1)(Object *obj);
-    /*2*/ s32 (*func2)(s32, s32, s32, s32, s32, s32, s32);
+    /*2*/ s32 (*func2)(s32, u16, s32, s32, s32, s32, s32);
     /*3*/ UnknownDLLFunc func3;
     /*4*/ void (*func4)(s32, u8);
     /*5*/ void (*func5)(s32, f32);

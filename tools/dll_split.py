@@ -358,7 +358,7 @@ class DLLSplitter:
             c_file.write("{}{}{} {}_extra[] = {{\n".format(
                 "static " if static else "", 
                 "const " if const else "", 
-                data_type, 
+                "u8", 
                 name))
             for i in range(leftover, len(data)):
                 byte = data[i]

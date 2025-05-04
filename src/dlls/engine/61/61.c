@@ -1,10 +1,13 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "game/objects/object.h"
 #include "sys/gfx/texture.h"
+#include "sys/main.h"
 #include "sys/menu.h"
 #include "functions.h"
 #include "dll.h"
+#include "types.h"
 
 static s32 data_0 = 0;
 static s8 data_4 = 0;
@@ -84,7 +87,7 @@ s32 dll_61_update1() {
 
 void dll_61_update2() { }
 
-void dll_61_draw(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs) {
+void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     f32 var1;
     u8 _stackPad[4];
 

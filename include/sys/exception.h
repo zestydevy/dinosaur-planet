@@ -35,9 +35,13 @@ extern u16 gCrashButtons[MAXCONTROLLERS];
 #define C_FILE_LABELS_LENGTH 10
 
 extern u8 gCFileLabelIndex;
-extern char *gCFileLabels[C_FILE_LABELS_LENGTH];
+extern const char *gCFileLabels[C_FILE_LABELS_LENGTH];
 extern u8 gCFileLabelFlag;
 extern s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
+
+void update_pi_manager_array(s32 index, s32 value);
+
+void start_pi_manager_thread();
 
 /**
  * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
@@ -57,5 +61,7 @@ void clear_framebuffer_current();
 void pi_manager_entry(void *arg);
 void crash_controller_getter();
 void check_video_mode_crash_and_clear_framebuffer();
+
+void write_c_file_label_pointers(const char *cFileLabel, s32 a1);
 
 #endif //_SYS_EXCEPTION_H_

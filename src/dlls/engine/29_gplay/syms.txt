@@ -1,17 +1,17 @@
 # functions
 gplay_ctor = 0x0;
 gplay_dtor = 0x9C;
-gplay_func_110 = 0x110;
-gplay_func_198 = 0x198;
-gplay_func_3E4 = 0x3E4;
-gplay_func_638 = 0x638;
+gplay_erase_save = 0x110;
+gplay_init_save = 0x198;
+gplay_load_save = 0x3E4;
+gplay_copy_save = 0x638;
 gplay_func_6AC = 0x6AC;
 gplay_func_79C = 0x79C;
 gplay_func_8D8 = 0x8D8;
 gplay_func_930 = 0x930;
 gplay_func_94C = 0x94C;
 gplay_func_958 = 0x958;
-gplay_func_AE0 = 0xAE0;
+gplay_start_game = 0xAE0;
 gplay_func_B3C = 0xB3C;
 gplay_func_CBC = 0xCBC;
 gplay_func_D20 = 0xD20;

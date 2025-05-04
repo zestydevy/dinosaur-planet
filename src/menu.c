@@ -3,31 +3,33 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "sys/dll.h"
+#include "sys/fonts.h"
 #include "sys/gfx/gx.h"
+#include "sys/main.h"
 #include "dll.h"
 #include "dll_def.h"
 #include "functions.h"
 #include "bss.h"
 
 s32 gMenuDLLIDs[] = {
-    -1,
-    19,
-    60,
-    61,
-    62,
-    63,
-    64,
-    65,
-    66,
-    67,
-    71,
-    68,
-    69,
-    70,
-    77,
-    78,
-    79,
-    80
+    /*0*/  -1,
+    /*1*/  19,
+    /*2*/  60,
+    /*3*/  61,
+    /*4*/  62,
+    /*5*/  63,
+    /*6*/  64,
+    /*7*/  65,
+    /*8*/  66,
+    /*9*/  67,
+    /*10*/ 71,
+    /*11*/ 68,
+    /*12*/ 69,
+    /*13*/ 70,
+    /*14*/ 77,
+    /*15*/ 78,
+    /*16*/ 79,
+    /*17*/ 80
 };
 
 s32 D_8008C888 = -1;
@@ -40,7 +42,7 @@ BSS_GLOBAL s32 D_800A7D58;
 BSS_GLOBAL s32 D_800A7D5C;
 BSS_GLOBAL s32 D_800A7D60;
 BSS_GLOBAL s32 D_800A7D64;
-BSS_GLOBAL u8 __osBbCardChange;
+BSS_GLOBAL u8 gSaveGameIdx;
 BSS_GLOBAL u8 D_800A7D69;
 BSS_GLOBAL s32 D_800A7D6C;
 BSS_GLOBAL f32 D_800A7D70;
@@ -110,7 +112,7 @@ void menu_do_menu_swap() {
         }
 
         if (gCurrentMenuID == MENU_NONE) {
-            func_8000E7D8(1);
+            font_window_flush_strings(1);
         }
 
         gPreviousMenuID = gCurrentMenuID;
@@ -156,7 +158,7 @@ void menu_update2() {
     menu_do_menu_swap();
 }
 
-void menu_draw(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs, UNK_PTR **pols) {
+void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->exports->draw(gdl, mtxs, vtxs);
     }
@@ -301,15 +303,15 @@ void func_8000FB2C(Gfx **gdl) {
     }
 
     if (D_800A7D79 & 0x10) {
-        func_8000DAA4(2, 0x82, 0x19, 0xbe, 0x32);
-        func_8000DB50(2, 1);
-        func_8000DC0C(2, 0, 0, 0, 0x80);
-        func_8000E7D8(2);
+        font_window_set_coords(2, 130, 25, 190, 50);
+        font_window_use_font(2, FONT_DINO_SUBTITLE_FONT_1);
+        font_window_set_bg_colour(2, 0, 0, 0, 128);
+        font_window_flush_strings(2);
         sprintf(D_800A7D98, "%d", (int)D_800A7D70 / 60);
-        func_8000E49C(2, 0x14, 10, D_800A7D98, 1, 1);
+        font_window_add_string_xy(2, 20, 10, D_800A7D98, 1, ALIGN_TOP_RIGHT);
         sprintf(D_800A7DA0, ".%02d", (int)D_800A7D70 % 60);
-        func_8000E49C(2, 0x2d, 10, D_800A7DA0, 1, 1);
-        func_8000EF18(gdl, 0, 0, 2);
+        font_window_add_string_xy(2, 45, 10, D_800A7DA0, 1, ALIGN_TOP_RIGHT);
+        font_window_draw(gdl, NULL, NULL, 2);
     }
 }
 
@@ -337,12 +339,12 @@ void func_80010058(s32 param1) {
     D_8008C890 = param1;
 }
 
-void func_80010068(s32 param1) {
-    __osBbCardChange = param1;
+void set_save_game_idx(s32 idx) {
+    gSaveGameIdx = idx;
 }
 
-s32  osBbCardChange() {
-    return __osBbCardChange;
+s32 get_save_game_idx() {
+    return gSaveGameIdx;
 }
 
 void func_80010088() {

@@ -39,7 +39,6 @@ SECTIONS
     }
 
     /DISCARD/ : {
-        *(.reginfo)
         *(.MIPS.abiflags)
     }
 

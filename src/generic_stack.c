@@ -1,3 +1,4 @@
+#include "PR/os.h"
 #include "sys/generic_stack.h"
 #include "sys/memory.h"
 

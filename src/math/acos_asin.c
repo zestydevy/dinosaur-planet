@@ -1,6 +1,6 @@
 // @DECOMP_OPT_FLAGS=-O1 -g2
 // @DECOMP_IDO_VERSION=7.1
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 u16 D_80096B30[] = {
     0x8000,  0x7EBA,  0x7D74,  0x7C2D,

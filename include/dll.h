@@ -3,12 +3,14 @@
 
 #include "dlls/engine/2_camera.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/engine/7_newday.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
+#include "dlls/engine/74_picmenu.h"
 #include "dlls/engine/76.h"
 
 #include "dll_def.h"
@@ -21,7 +23,7 @@ enum DLL_ID {
     DLL_RACE      = 4,
     DLL_AMSEQ     = 5,
     DLL_AMSFX     = 6,
-    DLL_SKY       = 7,
+    DLL_NEWDAY    = 7,
     DLL_NEWCLOUDS = 9,
     DLL_NEWSTARS  = 10,
     DLL_NEWLFX    = 11,
@@ -39,10 +41,12 @@ enum DLL_ID {
     DLL_TASK      = 30,
     DLL_FLASH     = 31,
     DLL_MINIMAP   = 59,
-    DLL_LINK      = 74,
+    DLL_PICMENU   = 74,
     DLL_CANNON_CLAW = 223
 };
 
+
+// TODO: the below should be moved to main.h
 
 // "Static" DLLs
 // These are loaded on game init, are never unloaded, and are referenced by
@@ -50,15 +54,16 @@ enum DLL_ID {
 
 extern DLLInst_2_Camera *gDLL_Camera;
 extern DLLInst_6_AMSFX *gDLL_AMSFX;
+extern DLLInst_7_newday *gDLL_7_newday;
 extern DLLInst_20_screens *gDLL_20_screens;
 extern DLLInst_21_gametext *gDLL_21_gametext;
 extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
+extern DLLInst_74_picmenu *gDLL_picmenu;
 extern DLLInst_Unknown
     *gDLL_ANIM,
-    *gDLL_Sky,
     *gDLL_8,
     *gDLL_newclouds,
     *gDLL_newstars,
@@ -81,7 +86,6 @@ extern DLLInst_Unknown
     *gDLL_waterfx,
     *gDLL_25,
     *gDLL_CURVES,
-    *gDLL_Link,
     *gDLL_75,
     *gDLL_27,
     *gDLL_56,

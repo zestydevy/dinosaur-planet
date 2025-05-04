@@ -4,6 +4,7 @@
 #include "libultra/io/piint.h"
 #include "game/objects/object.h"
 #include "sys/gfx/gx.h"
+#include "sys/main.h"
 #include "sys/math.h"
 #include "functions.h"
 

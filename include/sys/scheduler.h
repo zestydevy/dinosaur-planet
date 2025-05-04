@@ -41,11 +41,6 @@ typedef struct {
     s32 unk4;
 } UnkSchedStruct;
 
-extern char **D_8008C8F0; // ptr to "1.3623"
-extern char **D_8008C8F4; // ptr to "01/12/00 09:19"
-extern char **D_8008C8F8; // ptr to "dragon1"
-extern char D_8008C8FC[]; // "Version 2.8 14/12/98 15.30 L.Schuneman"
-
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 

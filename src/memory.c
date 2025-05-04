@@ -3,6 +3,8 @@
 
 #define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 
+extern s32 get_stack_();
+
 s32  increment_heap_block(s32 heap, s32 size, s32 tag, const char *name);
 s32  find_heap_block(void *ptr);
 
@@ -59,9 +61,9 @@ HeapBlock * set_heap_block(HeapBlock * blocks, s32 size, s32 maxBlocks)
     entryBlock = &heap->blocks[0];
     blocks += maxBlocks;
     if (((s32) blocks & 0xF) != 0) {
-        entryBlock->data = ALIGN16(blocks);
+        entryBlock->data = (u8*)ALIGN16(blocks);
     } else {
-        entryBlock->data = blocks;
+        entryBlock->data = (u8*)blocks;
     }
 
     entryBlock->maxSize = size - len;
@@ -83,19 +85,19 @@ void *malloc(s32 size, s32 tag, const char *name) {
         return v1;
     }
     if ((size >= 0x1194) || (osMemSize != 0x800000)) {
-        v1 = increment_heap_block(0, size, tag, name);
+        v1 = (void*)increment_heap_block(0, size, tag, name);
         if (v1 == NULL) {
             get_stack_();
-            v1 = increment_heap_block(1, size, tag, name);
+            v1 = (void*)increment_heap_block(1, size, tag, name);
         }
     } else if (size >= 0x400) {
-        v1 = increment_heap_block(1, size, tag, name);
+        v1 = (void*)increment_heap_block(1, size, tag, name);
         if (v1 == NULL) {
             get_stack_();
-            v1 = increment_heap_block(2, size, tag, name);
+            v1 = (void*)increment_heap_block(2, size, tag, name);
         }
     } else {
-        v1 = increment_heap_block(2, size, tag, name);
+        v1 = (void*)increment_heap_block(2, size, tag, name);
     }
     if (v1 == NULL) {
         get_stack_();
@@ -138,12 +140,14 @@ int func_80016E68(void *a0)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017254.s")
 
+void func_8001753C(void*);
+
 void free(void* p) {
     s32 prevIE = interrupts_disable();
     if (D_800B179C == 0) {
         func_8001753C(p);
     } else {
-        func_800175D4(p);
+        func_800175D4((s32)p);
     }
     interrupts_enable(prevIE);
 }
@@ -232,7 +236,7 @@ u32 align_2(u32 a0) {
 s32 dbg_heap_print(s32 arg0)
 {
     diPrintf(
-        &D_800991E0, 
+        "mem %dk/%dk %dk/%dk %dk/%dk\n\tslot %d/%d %d/%d %d/%d\t",
         memMonVal0 / 0x400,
         gHeapList[0].memAllocated / 0x400, 
         memMonVal1 / 0x400, 
@@ -250,21 +254,29 @@ s32 dbg_heap_print(s32 arg0)
     return memMonVal0 + memMonVal1 + memMonVal2;
 }
 
+// maybe this is alHeapAlloc and below is alHeapDBAlloc? could have swapped the macro
+// for a function when they changed this to use the normal heap stuff. this one is unused
+void *alHeapDBAlloc2(ALHeap *hp, s32 num, s32 size) {
+    void *ptr;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_80017B3C.s")
+    size = ALIGN16((size * num) + 0xF);
 
-const char s_mm_audioheap[] = "mm:audioheap";
+    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
+    bzero(ptr, size);
+    return (void*)align_16((u32)ptr);
+}
+
 void *alHeapDBAlloc(u8 *file, s32 line, ALHeap *hp, s32 num, s32 size) {
     void *ptr;
 
     size = ALIGN16((size * num) + 0xF);
 
     // ??
-    if (size);
-    if (size);
+    if (size) {}
+    if (size) {}
 
-    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, s_mm_audioheap);
+    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
     bzero(ptr, size);
-    return align_16(ptr);
+    return (void*)align_16((u32)ptr);
 }
 

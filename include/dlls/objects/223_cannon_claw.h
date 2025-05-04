@@ -1,7 +1,7 @@
 #ifndef _DLLS_223_H
 #define _DLLS_223_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
 

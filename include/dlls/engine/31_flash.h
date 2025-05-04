@@ -1,7 +1,7 @@
 #ifndef _DLLS_31_H
 #define _DLLS_31_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "dll_def.h"
 #include "dlls/engine/29_gplay.h"
 

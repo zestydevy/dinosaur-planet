@@ -142,7 +142,7 @@ void n_alFxNew(ALFx **fx_ar, ALSynConfig *c, s16 bus, ALHeap *hp) {
 	*fx_ar = r = (ALFx *)alHeapAlloc(hp, 1, sizeof(ALFx));
 
 	switch (c->fxTypes[bus]) {
-	case 6:
+	case AL_FX_CUSTOM:
 		param = c->params[bus];
 		break;
 	default:

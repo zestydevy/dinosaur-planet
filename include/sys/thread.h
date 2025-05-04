@@ -4,7 +4,7 @@
 #define _SYS_THREAD_H
 
 #include "ultra64.h"
-#include <PR/sched.h>
+#include "PR/sched.h"
 
 #define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
 #define IDLE_THREAD_ID 1
@@ -27,8 +27,6 @@ extern u8 gIdleThreadStack[IDLE_THREAD_SIZE];
 extern OSThread gIdleThread;
 extern OSThread gMainThread;
 extern u64 gMainThreadStack[];        // some sort of data
-extern OSSched *osscheduler_;
-extern s8 ossceduler_stack;
 
 /**
  * @returns The address of s->interruptQ.

@@ -4,12 +4,12 @@
 #include "PR/ultratypes.h"
 #include "sys/gfx/gx.h"
 #include "dll_def.h"
-#include "unktypes.h"
+#include "types.h"
 
 DLL_INTERFACE_BEGIN(Menu)
     /*0*/ s32 (*update1)();
     /*1*/ void (*update2)();
-    /*2*/ void (*draw)(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs);
+    /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 DLL_INTERFACE_END()
 
 // indices into gMenuDLLIDs
@@ -42,7 +42,7 @@ s32 menu_get_previous();
 void menu_do_menu_swap();
 s32 menu_update1();
 void menu_update2();
-void menu_draw(Gfx **gdl, UNK_PTR **mtxs, UNK_PTR **vtxs, UNK_PTR **pols);
+void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
 void func_8000F64C(s8 param1, s32 param2);
 void func_8000F6CC();
 void func_8000F9DC();
@@ -56,8 +56,8 @@ s32 func_80010028();
 void func_80010038(s32 param1);
 s32 func_80010048();
 void func_80010058(s32 param1);
-void func_80010068(s32 param1);
-s32  osBbCardChange();
+void set_save_game_idx(s32 index);
+s32  get_save_game_idx();
 void func_80010088();
 void func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4);
 void func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4);

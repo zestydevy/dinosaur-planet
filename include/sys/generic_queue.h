@@ -1,7 +1,7 @@
 #ifndef _SYS_GENERIC_QUEUE_H
 #define _SYS_GENERIC_QUEUE_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 typedef struct {
     /*00*/ s16 count;

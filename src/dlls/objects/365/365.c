@@ -1,4 +1,4 @@
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 #include "game/objects/object.h"
 #include "variables.h"
@@ -11,14 +11,14 @@ void init(void* arg)
 {
 }
 
-int fini(void* arg)
+void fini(void* arg)
 {
 }
 
 void func_0000(Object *obj, s32 arg1, s32 arg2)
 {
 	obj->srt.yaw = 0;
-	obj->unk0xbc = (ObjectCallback *)func_0007;
+	obj->unk0xbc = (ObjectCallback)func_0007;
 }
 
 void func_0001(void* arg)

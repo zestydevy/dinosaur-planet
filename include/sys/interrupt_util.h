@@ -1,7 +1,7 @@
 #ifndef _SYS_INTERRUPT_UTIL_H
 #define _SYS_INTERRUPT_UTIL_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 /**
  * Whether interrupts_disable/interrupts_enable should have any effect.

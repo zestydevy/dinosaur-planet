@@ -5,6 +5,10 @@
 #include "game/objects/object.h"
 #include "game/objects/object_def.h"
 
+void init_objects(void);
+void update_obj_models();
+void update_objects(); 
+
 void obj_do_deferred_free();
 void obj_free_all();
 Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 param4, Object *parent);
@@ -28,5 +32,7 @@ void obj_add_effect_box(Object *obj);
 void obj_free_effect_box(Object *obj);
 
 void *obj_alloc_create_info(s32 size, s32 objId);
+
+void func_800210DC();
 
 #endif

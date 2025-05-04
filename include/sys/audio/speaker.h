@@ -1,7 +1,7 @@
 #ifndef _SYS_AUDIO_SPEAKER_H
 #define _SYS_AUDIO_SPEAKER_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 
 #define SPEAKERMODE_MONO      1
 #define SPEAKERMODE_STEREO    2

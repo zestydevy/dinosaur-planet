@@ -6,6 +6,7 @@
 #include "sys/memory.h"
 #include "functions.h"
 #include "macros.h"
+#include "prevent_bss_reordering.h"
 
 static s32 sLoadedScreenNo;
 static s32 sRenderScreen;

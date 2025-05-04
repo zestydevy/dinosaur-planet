@@ -49,7 +49,7 @@ s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3)
         }
 		else if (tmp->unk5C == 5)
 		{
-            gDLL_Sky->exports->func[0].withFourArgs(arg0, arg1, tmp, arg3);
+            gDLL_7_newday->exports->func0.withFourArgs(arg0, arg1, tmp, arg3);
 		}
 		else if (tmp->unk5C == 6)
 		{
@@ -80,7 +80,7 @@ s32 func_800009C8(s32 arg0, s32 arg1, u16 arg2, s32 arg3)
         }
 		else if (tmp->unk5C == 5)
 		{
-            gDLL_Sky->exports->func[0].withFourArgs(arg0, arg1, tmp, arg3);
+            gDLL_7_newday->exports->func0.withFourArgs(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 6)
 		{

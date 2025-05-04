@@ -62,6 +62,6 @@ void stop_active_app_threads_2();
  * - Returns the ID of the DLL currently being executed by the main thread,
  *   or -1 if the main thread is not executing a DLL.
  */
-u32 crash_nmi_handler();
+s32 crash_nmi_handler();
 
 #endif //_SYS_CRASH_H

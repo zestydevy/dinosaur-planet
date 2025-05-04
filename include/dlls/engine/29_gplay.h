@@ -1,7 +1,7 @@
 #ifndef _DLLS_29_H
 #define _DLLS_29_H
 
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "sys/math.h"
 #include "dll_def.h"
 #include "unktypes.h"
@@ -69,11 +69,11 @@ typedef struct {
     u8 _unk0x1E[0x2];
     GplayStruct14 unk0x20[2];
     GplayStruct14 unk0x188[2];
-    u8 unk0x2F0[6];
+    /*0x2F0*/char saveFilename[6];
     u8 unk0x2f6;
     /*0x2f7*/u8 character;
     u8 unk0x2f8;
-    f32 unk0x2fc;
+    f32 unk0x2fc; // this is game time played, but what unit of measure?
     s16 unk0x300;
     s16 unk0x302;
     u8 unk0x304;
@@ -145,14 +145,14 @@ typedef struct {
 } GplayStruct7;
 
 DLL_INTERFACE_BEGIN(29_gplay)
-    /*0*/ void (*func_110)(s8 param1);
-    /*1*/ void (*func_198)(s8 param1, u8 *param2);
-    /*2*/ s32 (*func_3E4)(s8 param1, u8 param2);
-    /*3*/ void (*func_638)(s8 param1, s8 param2);
+    /*0*/ void (*erase_save)(s8 idx);
+    /*1*/ void (*init_save)(s8 idx, char *filename);
+    /*2*/ s32 (*load_save)(s8 idx, u8 startGame);
+    /*3*/ void (*copy_save)(s8 srcIdx, s8 dstIdx);
     /*4*/ void (*func_6AC)();
     /*5*/ void (*func_94C)(s32 param1);
     /*6*/ void (*func_958)(Vec3f *param1, s16 param2, s32 param3, s32 param4);
-    /*7*/ void (*func_AE0)();
+    /*7*/ void (*start_game)();
     /*8*/ void (*func_B3C)(Vec3f *param1, s16 param2, s32 param3);
     /*9*/ void (*func_CBC)();
     /*10*/ void (*func_D20)();

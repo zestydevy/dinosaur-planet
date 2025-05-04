@@ -1,0 +1,18 @@
+# functions
+dll_64_ctor = 0x0;
+dll_64_dtor = 0x1E4;
+dll_64_update1 = 0x224;
+dll_64_update2 = 0x42C;
+dll_64_draw = 0x434;
+dll_64_clean_up = 0x85C;
+dll_64_draw_letters = 0x8DC;
+
+# variables
+sMenuItems = 0xAC0;
+sGameTextChunk = 0x11C8;
+sLetterBgBoxTexture = 0x11D0;
+sNumNameLetters = 0x11D4;
+sNameLetters = 0x11D8;
+sMainRedrawFrames = 0x11E2;
+sNameLettersRedrawFrames = 0x11E3;
+sBackgroundTexture = 0x11E4;
