@@ -680,9 +680,9 @@ s32 func_80044320(f32 worldX, f32 worldZ) {
     s32 temp;
 
     temp = floor_f((worldX - gWorldX) / BLOCKS_GRID_UNIT);
-    localGridX = temp + gMapCurrentStreamCoords + gMapActiveStreamMap->originOffsetX - floor_f(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
+    localGridX = temp + gMapCurrentStreamCoordsX + gMapActiveStreamMap->originOffsetX - floor_f(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
     temp = floor_f((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
-    localGridZ = temp + D_80092A6C + gMapActiveStreamMap->originOffsetZ - floor_f(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
+    localGridZ = temp + gMapCurrentStreamCoordsZ + gMapActiveStreamMap->originOffsetZ - floor_f(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
     
     
     if (localGridX < 0 || localGridZ < 0 || localGridX >= gMapActiveStreamMap->gridSizeX || localGridZ >= gMapActiveStreamMap->gridSizeZ) {
@@ -769,8 +769,8 @@ s32 func_8004454C(f32 x, f32 y, f32 z) {
     s8 *temp_v1_4;
     s8 **layerB;
     
-    gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoords;
-    gridZ = floor_f(z / BLOCKS_GRID_UNIT) - D_80092A6C;
+    gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
+    gridZ = floor_f(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
     if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN){
         return -1;
@@ -841,8 +841,8 @@ s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
     s32 gridZ;
     GlobalMapCell *layer;
 
-    gridX = floor_f(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoords;
-    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT) - D_80092A6C;
+    gridX = floor_f(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
+    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
     if (gridX < 0 || gridX >= 0x10){
         return -1;
@@ -965,9 +965,9 @@ s32 func_80044A7C(s32 worldX, s32 worldZ, s32* blockIndex) {
     worldX = floor_f((f32) worldX / BLOCKS_GRID_UNIT);
     worldZ = floor_f((f32) worldZ / BLOCKS_GRID_UNIT);
   
-    new_var2 = &gMapCurrentStreamCoords;
+    new_var2 = &gMapCurrentStreamCoordsX;
       
-    *blockIndex = blocksLayer[(worldZ - D_80092A6C) * 16 + (worldX - *new_var2)];
+    *blockIndex = blocksLayer[(worldZ - gMapCurrentStreamCoordsZ) * 16 + (worldX - *new_var2)];
     return 1;
 }
 
@@ -2051,7 +2051,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     gDLL_minic->exports->func[4].asVoid();
     gDLL_minic->exports->func[1].asVoid();
     gDLL_8->exports->func[1].asVoid();
-    gDLL_Sky->exports->func[1].asVoid();
+    gDLL_7_newday->exports->func1.asVoid();
     gDLL_newclouds->exports->func[1].asVoid();
     gDLL_newstars->exports->func[0].asVoid();
 }

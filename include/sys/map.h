@@ -4,6 +4,7 @@
 #include "PR/ultratypes.h"
 #include "ultra64.h"
 
+#include "sys/math.h"
 #include "sys/rarezip.h"
 #include "sys/gfx/map.h"
 
@@ -226,12 +227,8 @@ extern u8 *gBlockRefCounts;
 extern u16 *gFile_TRKBLK;
 extern s16 gNumTRKBLKEntries;
 
-/* 
-TODO: rename gMapCurrentStreamCoords to gMapCurrentStreamCoordsX
-rename D_80092A6C to gMapCurrentStreamCoordsZ
-*/
-extern s32 gMapCurrentStreamCoords; //maybe rename to gMapCurrentStreamCoordsX?
-extern s32 D_80092A6C; //maybe rename to gMapCurrentStreamCoordsZ?
+extern s32 gMapCurrentStreamCoordsX;
+extern s32 gMapCurrentStreamCoordsZ;
 
 extern GlobalMapCell (*gDecodedGlobalMap)[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
 
