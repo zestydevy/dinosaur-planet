@@ -754,6 +754,7 @@ extern u32 D_800B96E4; //gBlockIndices_layerArrayEnd?
 
 #define BLOCKS_TOLERANCE_Y 50
 
+//map_get_blockIndex_at_worldCoords?
 s32 func_8004454C(f32 x, f32 y, f32 z) {
     s32 blockIndex;
     s8 loadedBlockIndex1;
@@ -1991,7 +1992,32 @@ BlockTexture *func_8004A2CC(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_xz_bitmap.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A528.s")
+/**
+  * block_get_animator_vertex_count?
+  *
+  * (uses the animator object's world position to find the relevant block)
+  */
+s32 func_8004A528(Object* obj, u8 animatorID) {
+    s32 index;
+    s32 anim_vertex_count;
+    BlocksModel *block;
+    FaceBatch *facebatches;
+
+    block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    if (!block || !(block->flags & 8)){
+        return 0;
+    }
+    
+    anim_vertex_count = 0;
+    facebatches = block->ptr_faceBatches;
+    for (index = 0; index < block->faceBatch_count; index++){
+        if (animatorID == (facebatches[index]).animatorID){
+            anim_vertex_count += facebatches[index + 1].baseVertexID - facebatches[index].baseVertexID;
+        }
+    }
+    
+    return anim_vertex_count;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A5D8.s")
 
@@ -2152,41 +2178,37 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
 /** Find curve by uID 
     arg1 unused?
 */
-ObjCreateInfo *func_8004B7D0(s32 match_uID, u32 arg1){
-    MAPSHeader **maps;
-    MAPSHeader *map;
+ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
+    MapHeader **maps;
+    MapHeader *map;
     s32 index;
-    s32 length;
+    
     u8 *ptr;
+    s32 offset;
+    s16 objID;
+    
     ObjCreateInfo *obj;
     
     maps = gLoadedMapsDataTable;
-    index = 0;    
-
+    index = 0;
     do {
-        s32 offset; //Very odd, but it improves things when here! Could this have been a separate function that was inlined?
-        
+        s32 offset;
         map = maps[index];
         
         if (map != NULL){
-            length = map->objectInstancesFileLength;
-            ptr = (u8 *)map->objectInstanceFile_ptr;
+            ptr = (u8*)map->objectInstanceFile_ptr;
             offset = 0;
-            while (offset < length){
-                obj = (ObjCreateInfo *) ptr;
-
-                if (obj->objId == OBJ_curve && match_uID == obj->unk14){
-                    return obj;
+            
+            while (offset < map->objectInstancesFileLength){       
+                objID = ((ObjCreateInfo*)ptr)->objId;
+                if (objID == OBJ_curve && ((ObjCreateInfo*)ptr)->uID == search_uID){
+                    return ((ObjCreateInfo*)ptr);
                 }
-                if (!obj->objId){
-                }
-                
-                obj = (ObjCreateInfo *) ptr; //Strange to set this again here, but it seems to improve the match?
-                offset += obj->unk2 << 2; 
-                ptr += obj->unk2 << 2; 
-            } 
-        } 
         
+                offset += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+                ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+            }
+        } 
         index++;
     } while ((u32)map != (u32)&D_800B5508);
     
@@ -2194,7 +2216,51 @@ ObjCreateInfo *func_8004B7D0(s32 match_uID, u32 arg1){
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B85C.s")
+/** map_find_checkpoint4_by_uID? 
+  * "search_mapID == -1" searches through all maps instead of a specific mapID!
+  */
+ObjCreateInfo* func_8004B85C(s32 search_uID, s32 search_mapID) {
+    MapHeader* map;
+    s32 search_endID;
+
+    u8 *ptr;
+    s32 offset;
+    
+    s16 objID;
+    
+    if (search_mapID == -1) {
+        search_mapID = 0;
+        search_endID = 0x78;
+    } else {
+        search_endID = search_mapID + 1;
+    }
+    
+    //Iterating over maps
+    while (search_mapID < search_endID) {
+        map = gLoadedMapsDataTable[search_mapID];
+
+        //Iterating over map objects
+        if (map) {
+            
+            ptr = (u8*)map->objectInstanceFile_ptr;
+            offset = 0;
+            
+            while (offset < map->objectInstancesFileLength){       
+                objID = ((ObjCreateInfo*)ptr)->objId;
+                if (objID == OBJ_checkpoint4 && ((ObjCreateInfo*)ptr)->uID == search_uID){
+                    return ((ObjCreateInfo*)ptr);
+                }
+        
+                offset += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+                ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+            }
+        }
+
+        search_mapID++;
+    }
+
+    return NULL;
+}
 
 void func_8004B914(s32 mapID) {
     MapHeader *map;
