@@ -1,5 +1,7 @@
-#include "PR/ultratypes.h"
+//"NWmammoth.c" seems to have been Rare's name!
 
+#include "PR/ultratypes.h"
+#include "dll.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -85,8 +87,8 @@ static s8 _data_274[] = {0,0,0,0, 0,0,0,0};
 static u32 _data_27C[] = {
     0x00000003
 };
-static u32 _data_280[] = {
-    0x3ba3d70a, 0x00000000
+static f32 _data_280[] = {
+    0.005, 0.0
 };
 static u32 _data_288[] = {
     0x00230023, 0x00230023, 0x00290000, 0x00000000
@@ -119,7 +121,7 @@ static u32 _data_2DC[] = {
 static u32 _data_2E0[] = {
     0x00000008, 0x00000009
 };
-static u32 _data_2E8[] = {
+static s32 _data_2E8[] = {
     0x00000009, 0x0000000b, 0x0000000c, 0x0000000d, 0x0000000e, 0x0000000f
 };
 static u32 _data_300[] = {
@@ -155,7 +157,45 @@ typedef struct {
 /*044*/ u32* unk44;
 /*048*/ f32* unk48;
 /*04c*/ s32 unk4C;
-/*050*/ s8 unk50[0x390];
+/*050*/ s32 unk50;
+/*054*/ s32 unk54;
+/*058*/ f32 unk58;
+/*05C*/ s32 unk5C;
+/*060*/ s32 unk60;
+/*064*/ s32 unk64;
+/*068*/ s32 unk68;
+/*06C*/ s32 unk6C;
+/*070*/ s32 unk70;
+/*074*/ s32 unk74;
+/*078*/ s32 unk78;
+/*07C*/ s32 unk7C;
+/*080*/ s32 unk80;
+/*084*/ s32 unk84;
+/*088*/ s32 unk88;
+/*08C*/ s32 unk8C;
+/*090*/ s32 unk90;
+/*094*/ s32 unk94;
+/*098*/ s32 unk98;
+/*09C*/ s32 unk9C;
+/*0A0*/ s32 unkA0;
+/*0A4*/ s32 unkA4;
+/*0A8*/ s32 unkA8;
+/*0AC*/ s32 unkAC;
+/*0B0*/ s32 unkB0;
+/*0B4*/ s32 unkB4;
+/*0B8*/ s32 unkB8;
+/*0BC*/ s32 unkBC;
+/*0C0*/ s32 unkC0;
+/*0C4*/ s32 unkC4;
+
+/*0C8*/ f32 unkC8; //x
+/*0CC*/ f32 unkCC; //y
+/*0D0*/ f32 unkD0; //z
+
+/*0D4*/ s32 unkD4;
+/*0D8*/ s32 unkD8;
+/*0DC*/ s32 unkDC;
+/*0E0*/ s8 unkE0[0x300];
 
 /*3e0*/ u32 unk3e0;
 /*3e4*/ u32 unk3e4;
@@ -248,7 +288,7 @@ s32 dll_496_func_838(s32 arg0, s32 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496/dll_496_func_980.s")
 
-/** Updates the SnowHorn's player position reference (for the look-at behaviour) when nearby */
+/** Updates the SnowHorn's player position reference when nearby (for the look-at behaviour) */
 void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     SnowHornState *state;
     Object *player;
@@ -282,17 +322,98 @@ void dll_496_func_11C4(s32 arg0, SnowHornState* arg1, s32 arg2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496/dll_496_func_11E0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496/dll_496_func_174C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496/dll_496_func_1980.s")
-
 enum GameBits {
     FLAG_Always_1 = 0x95,
     FLAG_Always_0 = 0x96,
     FLAG_Garunda_Te_Quest_Progress = 0x115,
     FLAG_Garunda_Te_NumFrostWeedsEaten = 0x48B,
+    FLAG_SnowHorn_Unknown = 0x5A0, //Maybe intended to hide SnowHorn Wastes' minimap until SnowHorn gifts it?
+    FLAG_DarkIce_Mines_Leap_of_Faith_Completed = 0x22B,
+    FLAG_Tricky_Distract_Learned = 0x9E,
     FLAG_SpellStone_1_Activated = 0x123
 };
+
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496/dll_496_func_174C.s")
+#else
+typedef struct {
+/*0x00*/ s32 unk0;
+/*0x04*/ s32 unk4;
+/*0x08*/ s32 unk8;
+/*0x0C*/ s32 unkC;
+/*0x10*/ s32 unk10;
+/*0x14*/ s32 unk14;
+/*0x18*/ s32 unk18;
+/*0x1C*/ s8 unk1C;
+/*0x1D*/ s8 unk1D;
+} UnknownSnowHornStruct; //Possibly to do with talking to them, or controller inputs? TO-DO: figure out what this is!
+
+extern DLLInst_26_curves *gDLL_CURVES;
+
+/** Need to figure out the struct for arg2! */
+void dll_496_func_174C(Object* snowHorn, SnowHornState* state, UnknownSnowHornStruct* arg2) {
+    s32 sp2C;
+    s32 curves_result;
+
+    sp2C = 0x19;
+    state->unk424 = (u8) (state->unk424 | 0x45);
+    state->unk44 = _data_27C;
+    state->unk48 = _data_280;
+
+    curves_result = gDLL_CURVES->exports->curves_func_4288(&state->unk60, snowHorn, 1000.0f, &sp2C, -1);
+    
+    if (curves_result == 0) {
+        snowHorn->srt.transl.x = state->unkC8;
+        snowHorn->srt.transl.z = state->unkD0;
+        state->unkC = 1;
+        state->unk58 = 0.5f;
+    } else {
+        state->unkC = 0;
+    }
+    
+    if (arg2->unk1D == 1) {
+        if (get_gplay_bitstring(FLAG_DarkIce_Mines_Leap_of_Faith_Completed)){
+            state->unk426 = 2;
+            state->unk4C = (s32)_data_2E8;
+            return;
+        }
+        if (get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
+            state->unk426 = 1;
+            state->unk4C = (s32)_data_2DC;
+            return;
+        }
+        if (get_gplay_bitstring(FLAG_Tricky_Distract_Learned)){
+            state->unk426 = 1;
+            state->unk4C = (s32)_data_2D4;
+            return;
+        }
+        state->unk426 = 2;
+        state->unk4C = (s32)_data_2C8;
+        return;
+    }
+    
+    if (get_gplay_bitstring(FLAG_DarkIce_Mines_Leap_of_Faith_Completed)){
+        state->unk426 = 2;
+        state->unk4C = (s32)_data_2E0;
+        return;
+    }
+    if (get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
+        state->unk426 = 1;
+        state->unk4C = (s32)_data_2D8;
+        return;
+    }
+    if (get_gplay_bitstring(FLAG_Tricky_Distract_Learned)){
+        state->unk426 = 1;
+        state->unk4C = (s32)_data_2D0;
+        return;
+    }
+    state->unk426 = 2;
+    state->unk4C = (s32)_data_2C0;
+}
+#endif
+
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496/dll_496_func_1980.s")
+
 
 /** snowHorn_handleGarundaTeFlags? */
 void dll_496_func_1CA0(s32 arg0, SnowHornState* state, SnowHornCreateInfo* arg2) {
