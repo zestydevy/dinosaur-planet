@@ -7,31 +7,7 @@
 #include "types.h"
 
 typedef struct {
-/*0000*/    SRT srt;
-/*0018*/    f32 unk_0x18;
-/*001C*/    u32 unk_0x1c;
-/*0020*/    f32 unk_0x20;
-/*0024*/    f32 unk_0x24;
-/*0028*/    f32 unk_0x28;
-/*002C*/    f32 dty;
-/*0030*/    f32 unk_0x30;
-/*0034*/    f32 unk_0x34;
-/*0038*/    f32 unk_0x38;
-/*003C*/    f32 unk_0x3c;
-/*0040*/    Object *object;
-/*0044*/    f32 tx;
-/*0048*/    f32 ty;
-/*004C*/    f32 tz;
-/*0050*/    s16 yaw;
-/*0052*/    s16 pitch;
-/*0054*/    s16 roll;
-/*0056*/    u16 unk_0x56;
-/*0058*/    u16 unk_0x58;
-/*005A*/    s16 dpitch;
-/*005C*/    s8 unk_0x5c;
-/*005D*/    s8 unk_0x5d;
-/*005E*/    s8 unk_0x5e;
-/*005F*/    s8 unk_0x5f;
+/*0000*/    Camera camera;
 /*0060*/    s32 unk60;
 /*0064*/    s32 unk64;
 /*0068*/    s32 unk68;
@@ -63,12 +39,12 @@ void dll_94_dtor(s32 arg0) {
 
 void dll_94_func_18(TalkCamera* camA, s32 unused, TalkCamera* camB) {
     if (camB != NULL) {
-        camA->srt.transl.x = camB->srt.transl.x;
-        camA->srt.transl.y = camB->srt.transl.y;
-        camA->srt.transl.z = camB->srt.transl.z;
-        camA->srt.yaw = camB->srt.yaw;
-        camA->srt.pitch = camB->srt.pitch;
-        camA->srt.roll = camB->srt.roll;
+        camA->camera.srt.transl.x = camB->camera.srt.transl.x;
+        camA->camera.srt.transl.y = camB->camera.srt.transl.y;
+        camA->camera.srt.transl.z = camB->camera.srt.transl.z;
+        camA->camera.srt.yaw = camB->camera.srt.yaw;
+        camA->camera.srt.pitch = camB->camera.srt.pitch;
+        camA->camera.srt.roll = camB->camera.srt.roll;
         camA->fov = camB->fov;
     }
 }
