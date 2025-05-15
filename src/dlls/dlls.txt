@@ -22,5 +22,6 @@
 
 # objects
 223 = objects/223_cannon_claw
+270 = objects/270_sidesetup
 365 = objects/365
 496 = objects/496
