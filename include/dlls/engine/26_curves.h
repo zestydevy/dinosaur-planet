@@ -5,6 +5,41 @@
 #include "dll_def.h"
 #include "types.h"
 
+typedef struct {
+/*060*/ s32 unk00; //SEEMS TO BE THE START OF SOME NESTED STRUCT HERE! (Curves-related?)
+/*064*/ f32 curveProgress; //(lerp t-value from 0 to 100?)
+/*068*/ s32 unk08;
+/*06C*/ s32 unk0C;
+/*070*/ s32 unk10;
+/*074*/ s32 unk14;
+/*078*/ s32 unk18;
+/*07C*/ s32 unk1C;
+/*080*/ s32 unk20;
+/*084*/ s32 unk24;
+/*088*/ s32 unk28;
+/*08C*/ s32 unk2C;
+/*090*/ s32 unk30;
+/*094*/ s32 unk34;
+/*098*/ s32 unk38;
+/*09C*/ s32 unk3C;
+/*0A0*/ s32 unk40;
+/*0A4*/ s32 unk44;
+/*0A8*/ s32 unk48;
+/*0AC*/ s32 unk4C;
+/*0B0*/ s32 unk50;
+/*0B4*/ s32 unk54;
+/*0B8*/ s32 unk58;
+/*0BC*/ s32 unk5C;
+/*0C0*/ s32 unk60;
+/*0C4*/ s32 unk64;
+/*0C8*/ f32 unk68; //lerp_result_x?
+/*0CC*/ f32 unk6C; //lerp_result_y?
+/*0D0*/ f32 unk70; //lerp_result_z?
+/*0D4*/ f32 unk74; //some x component
+/*0D8*/ f32 unk78; //some y component
+/*0DC*/ f32 unk7C; //some z component
+} UnkCurvesStruct60;
+
 DLL_INTERFACE_BEGIN(26_curves)
     /*0*/ UnknownDLLFunc curves_func_18;
     /*1*/ UnknownDLLFunc curves_func_34;
@@ -40,8 +75,8 @@ DLL_INTERFACE_BEGIN(26_curves)
     /*31*/ UnknownDLLFunc curves_func_3018;
     /*32*/ UnknownDLLFunc curves_func_31e0;
     /*33*/ UnknownDLLFunc curves_func_32d8;
-    /*34*/ s32 (*curves_func_4288)(s32*, Object*, f32, s32*, s16);
-    /*35*/ UnknownDLLFunc curves_func_4704;
+    /*34*/ s32 (*curves_func_4288)(UnkCurvesStruct60*, Object*, f32, s32*, s16);
+    /*35*/ s32 (*curves_func_4704)(UnkCurvesStruct60*);
     /*36*/ UnknownDLLFunc curves_func_4cb4;
     /*37*/ UnknownDLLFunc curves_func_4fa8;
     /*38*/ UnknownDLLFunc curves_func_50e4;
