@@ -66,7 +66,8 @@ static u32 _data_230[] = {
 static u32 _data_260[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
-static u8 _data_270 = 0;
+/** Boolean - decides whether all SnowHorn should go to sleep */
+static u8 _data_270_SnowHornBedtime = 0;
 static u8 _data_274[] = {0,0,0,0, 0,0,0,0};
 static u32 _data_27C[] = {
     0x00000003
@@ -118,7 +119,7 @@ typedef struct {
 /*004*/ s16 unk4;
 /*006*/ s16 unk6;
 /*008*/ s16 unk8;
-/*00A*/ s16 unkA; //randomly-assigned value?
+/*00A*/ s16 sleepTimer; //randomly-assigned value?
 /*00c*/ union {
     u16 GarundaTeQuestProgress; //only on Garunda Te
     u16 isWalking; //only on walking SnowHorn
@@ -344,7 +345,109 @@ s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3) {
 
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_980.s")
+typedef struct {
+  f32 unk0[3];
+  s16 unkc[3];
+  u8 unk12;
+  s8 unk13[8];
+  s8 unk1B; // current length of unk13
+} UnkFunc_80024108Struct;
+
+s32* func_800348A0(Object*, s32, s32);
+s16 rand_next(s32, s32);
+extern DLLInst_6_AMSFX* gDLL_AMSFX;
+
+enum SoundIDs {
+    SFX_SNOWHORN_YAWN1 = 0x129,
+    SFX_SNOWHORN_SNOREHORN = 0x12A,
+    SFX_SNOWHORN_YAWN2 = 0x12B,
+};
+
+enum SnowHornAnims {
+    MODANIM_SnowHorn_Idle = 0,
+    MODANIM_SnowHorn_Talk = 2,
+    MODANIM_SnowHorn_Walk = 3,
+    MODANIM_SnowHorn_Sleep_Intro = 4,
+    MODANIM_SnowHorn_Sleep = 5,
+    MODANIM_SnowHorn_Wake_Up = 6,
+    MODANIM_SnowHorn_Hit_React = 47
+};
+
+/** SnowHorn sleep state machine: handles anims and sounds */
+s32 dll_496_func_980(Object* snowhorn) {
+    UnkFunc_80024108Struct sp4c;
+    SnowHornState* state;
+    s32* temp1;
+    s32* temp2;
+    s32 animIsFinished;
+    s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
+
+    state = (SnowHornState*)snowhorn->state;
+    animIsFinished = func_80024108(snowhorn, 0.006f, delayFloat, (s32)&sp4c);
+    
+    if (sp4c.unk1B != 0) {
+        playSound = sp4c.unk13[0] == 0;
+    } else {
+        playSound = 0;
+    }
+    
+    temp1 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep, 0);
+    temp2 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
+    snowhorn->unk0xaf |= 8;    
+    
+    switch (snowhorn->curAnimId) {
+        //new_var = temp1;
+        case MODANIM_SnowHorn_Sleep_Intro:
+            if (playSound) {
+                gDLL_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
+            }
+            if (animIsFinished) {
+                func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
+                if (temp1 != NULL) {
+                    *temp1 = 0x200;
+                }
+                if (temp2 != NULL) {
+                    *temp2 = 0x200;
+                }
+                state->sleepTimer = rand_next(0, 300);
+            }
+            break;
+        case MODANIM_SnowHorn_Sleep:
+            if (playSound) {
+                gDLL_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_SNOREHORN, 0x7F, 0, 0, 0, 0);
+            }
+            state->sleepTimer-= delayByte;
+            if ((_data_270_SnowHornBedtime == 0) && state->sleepTimer <= 0) {  //if daytime rolls around
+                func_80023D30(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
+                if (temp1 != NULL) {
+                    *temp1 = 0;
+                }
+                if (temp2 != NULL) {
+                    *temp2 = 0;
+                }
+            }
+            break;
+        case MODANIM_SnowHorn_Wake_Up:
+            if (playSound) {
+                gDLL_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_YAWN2, 0x7F, 0, 0, 0, 0);
+            }
+            if (animIsFinished) {
+                func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
+                state->isWalking &= 0x7FFF;
+                snowhorn->unk0xaf &= 0xFFF7;
+                return 0;
+            }
+            break;
+        default:
+            state->sleepTimer -= delayByte;
+            if (state->sleepTimer <= 0) { //Go back to sleep if interrupted (by flinch anim etc.)
+                func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
+                state->walkSpeed = 0.0f;
+            }
+            break;
+    }
+    return 1;
+}
 
 /** Updates the SnowHorn's player position reference when nearby (for the look-at behaviour) */
 void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
@@ -449,10 +552,6 @@ void dll_496_func_174C(Object *snowHorn, SnowHornState *state, UnknownSnowHornSt
 }
 #endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_1980.s")
-#else
-
 s32 func_800053B0(void*, f32);
 s32 func_8002493C(void*, f32, void*);
 s32 func_80031BBC(f32, f32, f32);
@@ -469,14 +568,14 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, s32 arg2) {
     f32 speed;
     UnkCurvesStruct60* curveStruct;
 
-    if (_data_270 != 0) {
+    if (_data_270_SnowHornBedtime) {
         temp_walkSpeed = state->walkSpeed;
         if (state->walkSpeed > 0.0f) {
             state->walkSpeed = temp_walkSpeed - _rodata_94[0];
         } else {
             state->isWalking |= 0x8000;
             state->walkSpeed = 0.0f;
-            state->unkA = rand_next(0, 300);
+            state->sleepTimer = rand_next(0, 300);
             return;
         }
     } else if (snowhorn->unk0xaf & 4 || state->distanceFromPlayer < 80.0f) {
@@ -528,8 +627,6 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, s32 arg2) {
         }
     }
 }
-#endif
-
 
 /** snowHorn_handleGarundaTeFlags? */
 void dll_496_func_1CA0(s32 arg0, SnowHornState* state, SnowHornCreateInfo* arg2) {

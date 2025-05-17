@@ -8,7 +8,8 @@
 DLL_INTERFACE_BEGIN(6_AMSFX)
     /*0*/ UnknownDLLFunc func0;
     /*1*/ void (*func1)(Object *obj);
-    /*2*/ s32 (*func2)(s32, u16, s32, s32, s32, s32, s32);
+    /** 2 - Play sound using source object for panning and distance falloff */
+    s32 (*func2)(Object* obj, u16, s32, s32, s32, s32, s32);
     /*3*/ UnknownDLLFunc func3;
     /*4*/ void (*func4)(s32, u8);
     /*5*/ void (*func5)(s32, f32);
