@@ -299,6 +299,7 @@ class DLLSplitter:
                 bss_refs.add(bss_size)
                 bss_refs = list(bss_refs)
                 bss_refs.sort()
+                self.__adjust_refs_for_c_stub(bss_refs)
 
                 bss_start = dll.get_bss_offset()
 
@@ -314,6 +315,35 @@ class DLLSplitter:
             for func in functions:
                 c_file.write("\n")
                 c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.symbol}.s")\n')
+
+    def __adjust_refs_for_c_stub(self, refs: list[int]):
+        i = 0
+        while i < len(refs) - 1:
+            offset = refs[i]
+            size = refs[i + 1] - offset
+
+            offset_alignment = self.__determine_alignment(offset)
+            if offset_alignment < 16:
+                # If the size we're trying to stub is bigger than the ref's alignment, IDO will
+                # add padding before the stubbed variable and mess everything up. So we need
+                # to split up these into additional "fake refs".
+                max_size = offset_alignment
+                if max_size < size:
+                    refs.insert(i + 1, offset + max_size)
+
+            i += 1
+
+    def __determine_alignment(self, offset: int) -> int:
+        if (offset % 16) == 0:
+            return 16
+        elif (offset % 8) == 0:
+            return 8
+        elif (offset % 4) == 0:
+            return 4
+        elif (offset % 2) == 0:
+            return 2
+        else:
+            return 1
 
     def __write_c_stub_data(self, 
                             c_file: TextIO, 

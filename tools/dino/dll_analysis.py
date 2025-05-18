@@ -391,17 +391,26 @@ def analyze_dll_function(func: DLLFunction,
                             else:
                                 assert(False)
                             # Add local ref if possible
+                            sym_offset = addend
+                            misalignment = 0
                             if got_idx == 1:
                                 local_rodata_refs.add(addend)
                                 __infer_ref_info(local_rodata_ref_info, addend, i)
                             elif got_idx == 2:
-                                local_data_refs.add(addend)
-                                __infer_ref_info(local_data_ref_info, addend, i)
+                                # .data symbols will always be 4-byte aligned
+                                if addend % 4 == 0:
+                                    local_data_refs.add(addend)
+                                    __infer_ref_info(local_data_ref_info, addend, i)
+                                else:
+                                    misalignment = addend % 4
+                                    sym_offset = addend - misalignment
+                                    local_data_refs.add(sym_offset)
+                                    __default_ref_info(local_data_ref_info, sym_offset)
                             elif got_idx == 3:
                                 local_bss_refs.add(addend)
                                 __infer_ref_info(local_bss_ref_info, addend, i)
                             # Add relocations
-                            (sym_name, offset) = symbols.get_local_or_encapsulating(got_idx, addend)
+                            (sym_name, offset) = symbols.get_local_or_encapsulating(got_idx, sym_offset)
                             base_inst.relocation = DLLInstRelocation(
                                 type=DLLInstRelocationType.GOT16,
                                 symbol=sym_name,
@@ -411,7 +420,7 @@ def analyze_dll_function(func: DLLFunction,
                             inst.relocation = DLLInstRelocation(
                                 type=DLLInstRelocationType.LO16,
                                 symbol=sym_name,
-                                offset=offset,
+                                offset=offset + misalignment,
                                 # The addend to add a reloc to should always be the last operand
                                 op_idx=len(i.operands) - 1
                             )
@@ -541,6 +550,10 @@ def __analyze_dll_function_jump_tables(func: DLLFunction,
 
     func.jump_tables = jump_tables
     func.jump_table_targets = targets
+
+def __default_ref_info(local_ref_info: dict[int, DLLLocalRefInfo], ref: int) -> DLLLocalRefInfo:
+    if not ref in local_ref_info:
+        local_ref_info[ref] = DLLLocalRefInfo(load_type=DLLLocalRefLoadType.UNKNOWN)
 
 def __infer_ref_info(local_ref_info: dict[int, DLLLocalRefInfo], ref: int, i: CsInsn) -> DLLLocalRefInfo:
     ref_info = local_ref_info.get(ref, None)

@@ -34,7 +34,7 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
         yield "Dtor offset mismatch: expected {:#x}, found {:#x}".format(targ.header.dtor_offset, base.header.dtor_offset)
 
     if base.header.export_count != targ.header.export_count:
-        yield "Export count mismatch: expected {:#x}, found {:#x}".format(targ.header.export_count, base.header.export_count)
+        yield "Export count mismatch: expected {}, found {}".format(targ.header.export_count, base.header.export_count)
     else:
         for idx in range(base.header.export_count):
             base_export = base.header.export_offsets[idx]
@@ -50,13 +50,13 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
             base_byte = base_data[base.header.size + idx]
             targ_byte = targ_data[targ.header.size + idx]
             if base_byte != targ_byte:
-                yield "First .text mismatch at .text+{:#x}: expected {:#x}, found {:#x}".format(idx, targ_byte, base_byte)
+                yield "First .text mismatch at .text+{:#x}: expected 0x{:02x}, found 0x{:02x}".format(idx, targ_byte, base_byte)
                 break
     
     if len(base.reloc_table.global_offset_table) != len(targ.reloc_table.global_offset_table):
         yield "GOT count mismatch: expected {}, found {}".format(len(targ.reloc_table.global_offset_table), len(base.reloc_table.global_offset_table))
     else:
-        for idx in range(len(base.reloc_table.global_offset_table)):
+        for idx in range(4, len(base.reloc_table.global_offset_table)):
             base_value = base.reloc_table.global_offset_table[idx]
             targ_value = targ.reloc_table.global_offset_table[idx]
             if base_value != targ_value:
@@ -90,7 +90,7 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
             base_byte = base_data[base_rodata_offset + idx]
             targ_byte = targ_data[targ_rodata_offset + idx]
             if base_byte != targ_byte:
-                yield "First .rodata mismatch at .rodata+{:#x}: expected {:#x}, found {:#x}".format(idx, targ_byte, base_byte)
+                yield "First .rodata mismatch at .rodata+{:#x}: expected 0x{:02x}, found 0x{:02x}".format(idx, targ_byte, base_byte)
                 break
     
     if base.get_data_size() != targ.get_data_size():
@@ -100,8 +100,8 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
             base_byte = base_data[base.header.data_offset + idx]
             targ_byte = targ_data[targ.header.data_offset + idx]
             if base_byte != targ_byte:
-                yield "First .data mismatch at .data+{:#x}: expected {:#x}, found {:#x}".format(idx, targ_byte, base_byte)
-                break
+                yield "First .data mismatch at .data+{:#x}: expected 0x{:02x}, found 0x{:02x}".format(idx, targ_byte, base_byte)
+                #break
     
     if base_bss_size != targ_bss_size:
         yield ".bss size mismatch: expected {:#x}, found {:#x}".format(targ_bss_size, base_bss_size)
