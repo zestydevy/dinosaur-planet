@@ -2,6 +2,7 @@
 #include "libc/string.h"
 #include "sys/fs.h"
 #include "sys/memory.h"
+#include "sys/asset_thread.h"
 #include "dlls/engine/21_gametext.h"
 #include "variables.h"
 #include "functions.h"

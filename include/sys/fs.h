@@ -87,7 +87,7 @@ typedef enum
 
 typedef struct
 { 
-    s32 fileCount;
+    u32 fileCount;
     u32 offsets[NUM_FILES];
 } Fs;
 
