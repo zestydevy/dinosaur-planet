@@ -437,7 +437,8 @@ def analyze_dll_function(func: DLLFunction,
                         break
             
             # Invalidate loads if register is overwritten
-            if len(i.operands) > 0:
+            # Note: Register is only overwritten if that instruction loads to operand 0
+            if len(i.operands) > 0 and i.id != MIPS_INS_SW:
                 got_load = reg_to_got_loads.pop(i.operands[0].reg, None)
                 if got_load != None:
                     print("WARN: Unresolved GOT load @ {:#x}. Register overwritten @ {:#x}"
