@@ -425,14 +425,34 @@ def analyze_dll_function(func: DLLFunction,
                                 op_idx=len(i.operands) - 1
                             )
                         else:
-                            # Extern symbol lookup, %got
                             got_entry = dll.reloc_table.global_offset_table[got_idx]
-                            base_inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.GOT16,
-                                symbol=symbols.get_global_name_or_default(got_entry),
-                                offset=0,
-                                op_idx=1
-                            )
+                            if (got_entry & 0x8000_0000) == 0 and got_entry >= 0x1_0000 and (got_entry & 0xFFFF) == 0 \
+                                    and i.id == MIPS_INS_ADDIU:
+                                # Local symbol offset was too big and got split across the hi/lo pair
+                                addend = i.operands[-1].imm
+                                sym_addr = got_entry + addend
+                                symbol = symbols.get_local_name_or_default_absolute(sym_addr)
+                                base_inst.relocation = DLLInstRelocation(
+                                    type=DLLInstRelocationType.GOT16,
+                                    symbol=symbol,
+                                    offset=0,
+                                    op_idx=1
+                                )
+                                inst.relocation = DLLInstRelocation(
+                                    type=DLLInstRelocationType.LO16,
+                                    symbol=symbol,
+                                    offset=0,
+                                    # The addend to add a reloc to should always be the last operand
+                                    op_idx=len(i.operands) - 1
+                                )
+                            else:
+                                # Extern symbol lookup, %got
+                                base_inst.relocation = DLLInstRelocation(
+                                    type=DLLInstRelocationType.GOT16,
+                                    symbol=symbols.get_global_name_or_default(got_entry),
+                                    offset=0,
+                                    op_idx=1
+                                )
 
                         break
             

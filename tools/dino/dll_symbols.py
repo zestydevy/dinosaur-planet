@@ -43,9 +43,9 @@ class DLLSymbols:
         local_syms_sorted[2] = [] # .data
         local_syms_sorted[3] = [] # .bss
 
-        rodata_voffset = dll.header.rodata_offset + dll.reloc_table.get_size() - dll.header.size
-        data_voffset = dll.header.data_offset - dll.header.size
-        bss_voffset = dll.get_bss_offset() - dll.header.size
+        self.rodata_voffset = dll.header.rodata_offset + dll.reloc_table.get_size() - dll.header.size
+        self.data_voffset = dll.header.data_offset - dll.header.size
+        self.bss_voffset = dll.get_bss_offset() - dll.header.size
 
         exports = set(dll.header.export_offsets)
 
@@ -56,15 +56,15 @@ class DLLSymbols:
             if address & 0x80000000 or address in exports:
                 global_syms[address] = DLLGlobalSymbol(address, name)
             else:
-                if address >= bss_voffset:
+                if address >= self.bss_voffset:
                     section = 3
-                    offset = address - bss_voffset
-                elif address >= data_voffset:
+                    offset = address - self.bss_voffset
+                elif address >= self.data_voffset:
                     section = 2
-                    offset = address - data_voffset
-                elif address >= rodata_voffset:
+                    offset = address - self.data_voffset
+                elif address >= self.rodata_voffset:
                     section = 1
-                    offset = address - rodata_voffset
+                    offset = address - self.rodata_voffset
                 else:
                     section = 0
                     offset = address
@@ -90,6 +90,22 @@ class DLLSymbols:
             name = self.__make_func_name(offset)
         
         return name
+
+    def get_local_name_or_default_absolute(self, address: int, default: str | None=None):
+        if address >= self.bss_voffset:
+            section = 3
+            offset = address - self.bss_voffset
+        elif address >= self.data_voffset:
+            section = 2
+            offset = address - self.data_voffset
+        elif address >= self.rodata_voffset:
+            section = 1
+            offset = address - self.rodata_voffset
+        else:
+            section = 0
+            offset = address
+
+        return self.get_local_name_or_default(section, offset, default)
 
     def get_local_name_or_default(self, section: int, offset: int, default: str | None=None):
         sym = self.local_syms[section].get(offset, None)
@@ -146,7 +162,10 @@ class DLLSymbols:
             return sym.name
         
         if default == None:
-            default = "IMPORT_{:X}".format(address)
+            if address in self.dll.header.export_offsets:
+                default = self.__make_func_name(address)
+            else:
+                default = "IMPORT_{:X}".format(address)
         
         return default
     
