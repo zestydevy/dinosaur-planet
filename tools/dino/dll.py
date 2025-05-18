@@ -1,13 +1,13 @@
 import struct
+import os
+from typing import BinaryIO
 
 class DLL:
     """A Dinosaur Planet DLL"""
     def __init__(self,
-                 number: str,
                  size_aligned: int,
                  header: "DLLHeader",
                  reloc_table: "DLLRelocationTable") -> None:
-        self.number = number
         self.size_aligned = size_aligned
         """The total size of this DLL (in bytes), 16-byte aligned"""
         self.header = header
@@ -72,10 +72,10 @@ class DLL:
         return self.get_size()
 
     @staticmethod
-    def parse(data: bytes, number: str):
+    def parse(data: bytes):
         header = DLLHeader.parse(data)
         reloc_table = DLLRelocationTable.parse(data, header)
-        dll = DLL(number, len(data), header, reloc_table)
+        dll = DLL(len(data), header, reloc_table)
 
         return dll
 

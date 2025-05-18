@@ -8,6 +8,7 @@ from pathlib import Path
 from dino.dll import DLL
 from dino.dll_analysis import DLLFunction, get_all_dll_functions
 from dino.dll_code_printer import stringify_instruction
+from dino.dll_symbols import DLLSymbols
 
 symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
 
@@ -154,7 +155,7 @@ def main():
         dll_file: BufferedReader
         number = Path(dll_file.name).name.split(".")[0]
         data = bytearray(dll_file.read())
-        dll = DLL.parse(data, number=number)
+        dll = DLL.parse(data)
 
         if args.header:
             dump_header(dll)
@@ -166,9 +167,9 @@ def main():
         
         if args.disassemble:
             known_symbols = read_syms(args.syms)
+            dll_symbols = DLLSymbols(dll, number, known_symbols)
 
-            dll_functions = get_all_dll_functions(data, dll, 
-                                                  known_symbols=known_symbols, 
+            dll_functions = get_all_dll_functions(data, dll, dll_symbols, 
                                                   analyze=not args.orig)
             dump_text_disassembly(dll_functions, args.funcs)
             print()

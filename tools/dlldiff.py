@@ -53,6 +53,34 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
                 yield "First .text mismatch at .text+{:#x}: expected {:#x}, found {:#x}".format(idx, targ_byte, base_byte)
                 break
     
+    if len(base.reloc_table.global_offset_table) != len(targ.reloc_table.global_offset_table):
+        yield "GOT count mismatch: expected {}, found {}".format(len(targ.reloc_table.global_offset_table), len(base.reloc_table.global_offset_table))
+    else:
+        for idx in range(len(base.reloc_table.global_offset_table)):
+            base_value = base.reloc_table.global_offset_table[idx]
+            targ_value = targ.reloc_table.global_offset_table[idx]
+            if base_value != targ_value:
+                yield "First GOT mismatch at GOT[{}]: expected {:#x}, found {:#x}".format(idx, targ_value, base_value)
+                break
+    if len(base.reloc_table.data_relocations) != len(targ.reloc_table.data_relocations):
+        yield "Data relocation count mismatch: expected {}, found {}".format(len(targ.reloc_table.data_relocations), len(base.reloc_table.data_relocations))
+    else:
+        for idx in range(len(base.reloc_table.data_relocations)):
+            base_value = base.reloc_table.data_relocations[idx]
+            targ_value = targ.reloc_table.data_relocations[idx]
+            if base_value != targ_value:
+                yield "First data relocation mismatch at GOT[{}]: expected {:#x}, found {:#x}".format(idx, targ_value, base_value)
+                break
+    if len(base.reloc_table.gp_relocations) != len(targ.reloc_table.gp_relocations):
+        yield "$gp relocation count mismatch: expected {}, found {}".format(len(targ.reloc_table.gp_relocations), len(base.reloc_table.gp_relocations))
+    else:
+        for idx in range(len(base.reloc_table.gp_relocations)):
+            base_value = base.reloc_table.gp_relocations[idx]
+            targ_value = targ.reloc_table.gp_relocations[idx]
+            if base_value != targ_value:
+                yield "First $gp relocation mismatch at GOT[{}]: expected {:#x}, found {:#x}".format(idx, targ_value, base_value)
+                break
+
     if base.get_rodata_size() != targ.get_rodata_size():
         yield ".rodata size mismatch: expected {:#x}, found {:#x}".format(targ.get_rodata_size(), base.get_rodata_size())
     else:
@@ -100,8 +128,8 @@ def diff(base_tab: DLLTab, targ_tab: DLLTab, number: str, quiet_match: bool):
          open(base_dll_path, "rb") as base_file:
         targ_data = target_file.read()
         base_data = base_file.read()
-        target = DLL.parse(targ_data, str(number))
-        base = DLL.parse(base_data, str(number))
+        target = DLL.parse(targ_data)
+        base = DLL.parse(base_data)
         
         found_diff = False
         for diff in iter_diffs(base, base_data, base_bss_size, target, targ_data, targ_bss_size):

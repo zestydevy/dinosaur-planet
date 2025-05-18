@@ -15,6 +15,7 @@ import sys
 from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
 from dino.dlls_txt import DLLsTxt
+from dino.dll_symbols import DLLSymbols
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ROOT_DIR = Path(os.path.abspath(os.path.join(SCRIPT_DIR, "..")))
@@ -187,8 +188,9 @@ def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLPro
     # Get all DLL functions and their sizes
     with open(dll_path, "rb") as dll_file:
         dll_data = bytearray(dll_file.read())
-        dll = DLL.parse(dll_data, number)
-        dll_functions = get_all_dll_functions(dll_data, dll, known_symbols=known_symbols)
+        dll = DLL.parse(dll_data)
+        dll_symbols = DLLSymbols(dll, number, known_symbols)
+        dll_functions = get_all_dll_functions(dll_data, dll, dll_symbols)
     
     func_sizes: "dict[str, int]" = {}
     total_bytes = 0

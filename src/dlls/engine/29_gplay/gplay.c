@@ -28,8 +28,6 @@ static const char str12[] = "CHEAT OUT OF RANGE\n";
 static const char str13[] = "CINEMA OUT OF RANGE\n";
 static const char str14[] = "CINEMA OUT OF RANGE\n";
 
-static const Vec3f rodata_230 = { 43000.0f, 0.0f, 0.0f };
-
 static u16 data_0[120] = {
     0x0000, 0x0000, 0x076e, 0x08ec, 0x04fe, 0x00df, 0x00e0, 0x00e1, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 
     0x00e9, 0x00ea, 0x00eb, 0x0492, 0x0000, 0x05d0, 0x0000, 0x00ed, 0x00ed, 0x00ed, 0x00f0, 0x0000, 0x0229, 0x00ee, 0x0000, 0x00ef, 
@@ -103,6 +101,7 @@ void gplay_erase_save(s8 idx) {
 void gplay_init_save(s8 idx, char *filename);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_init_save.s")
 #else
+static const Vec3f rodata_230 = { 43000.0f, 0.0f, 0.0f };
 void gplay_init_save(s8 idx, char *filename) {
     Vec3f vec;
     s32 i;

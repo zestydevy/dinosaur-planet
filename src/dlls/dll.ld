@@ -13,6 +13,7 @@
  * - .rel.rodata
  * - .rel.data
  * - .rel.exports
+ * - .reginfo
  */
 
 SECTIONS

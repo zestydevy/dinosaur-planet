@@ -16,11 +16,12 @@ from timeit import default_timer as timer
 from typing import TextIO
 
 from dino.dll import DLL
-from dino.dll_analysis import DLLFunction, get_all_dll_functions
+from dino.dll_analysis import DLLFunction, DLLLocalRefInfo, DLLLocalRefLoadType, get_all_dll_functions
 from dino.dll_build_config import DLLBuildConfig
 from dino.dll_code_printer import stringify_instruction
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt
+from dino.dll_symbols import DLLSymbols
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = Path("asm")
@@ -29,6 +30,15 @@ SRC_PATH = Path("src")
 
 global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/\S+\/(.+)\.s\"\)")
 symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
+
+class DLLFunctionWithLateRodata:
+    def __init__(self, 
+                 func: DLLFunction, 
+                 late_rodata_start: int,
+                 late_rodata_end: int) -> None:
+        self.func = func
+        self.late_rodata_start = late_rodata_start
+        self.late_rodata_end = late_rodata_end
 
 class DLLSplitter:
     def __init__(self, verbose: bool) -> None:
@@ -87,10 +97,11 @@ class DLLSplitter:
                 
                 # Parse DLL header
                 data = bytearray(dll_file.read())
-                dll = DLL.parse(data, str(number))
+                dll = DLL.parse(data)
                 
                 # Parse functions
-                dll_functions = get_all_dll_functions(data, dll, known_symbols=known_symbols, analyze=True)
+                dll_symbols = DLLSymbols(dll, number, known_symbols)
+                dll_functions = get_all_dll_functions(data, dll, dll_symbols, analyze=True)
 
                 # Get DLL .bss size
                 bss_size = tab.entries[number - 1].bss_size
@@ -114,7 +125,7 @@ class DLLSplitter:
                     print("[{}] Extracting...".format(number))
                 start = timer()
 
-                self.extract_dll(dll, dll_functions, data, bss_size=bss_size, dll_dir=dll_dir)
+                self.extract_dll(dll, number, dll_functions, dll_symbols, data, bss_size=bss_size, dll_dir=dll_dir)
 
                 end = timer()
                 if self.verbose:
@@ -122,7 +133,9 @@ class DLLSplitter:
 
     def extract_dll(self, 
                     dll: DLL, 
+                    dll_number: int,
                     dll_functions: "list[DLLFunction]",
+                    dll_symbols: DLLSymbols,
                     data: bytearray, 
                     bss_size: int,
                     dll_dir: str):
@@ -143,9 +156,12 @@ class DLLSplitter:
         if not has_c_files or len(emit_funcs) > 0:
             os.makedirs(asm_path, exist_ok=True)
 
+        # Migrate .late_rodata
+        (funcs_with_late_rodata, late_rodata_start) = self.__migrate_late_rodata(dll_functions, dll.get_rodata_size())
+
         # Extract .text
         if not has_c_files or len(emit_funcs) > 0:
-            self.__extract_text_asm(asm_path, dll, dll_functions, emit_funcs)
+            self.__extract_text_asm(asm_path, dll, funcs_with_late_rodata, dll_symbols, data, emit_funcs)
 
         # Create exports.s if it doesn't exist
         exports_s_path = src_path.joinpath("exports.s")
@@ -159,8 +175,8 @@ class DLLSplitter:
 
         # Create <dll>.c stub if no .c files exist
         if not has_c_files:
-            c_file_path = src_path.joinpath(f"{dll.number}.c")
-            self.__create_c_stub(c_file_path, asm_path, dll, dll_functions, data, bss_size)
+            c_file_path = src_path.joinpath(f"{dll_number}.c")
+            self.__create_c_stub(c_file_path, asm_path, dll, dll_functions, data, bss_size, late_rodata_start)
 
     def __create_exports_s(self, path: Path, dll: DLL, dll_functions: "list[DLLFunction]"):
         funcs_by_address: "dict[int, str]" = {}
@@ -184,7 +200,14 @@ class DLLSplitter:
                 func_symbol = funcs_by_address[offset]
                 exports_s.write(f".dword {func_symbol}\n")
 
-    def __create_c_stub(self, c_path: Path, asm_path: Path, dll: DLL, functions: "list[DLLFunction]", dll_data: bytearray, bss_size: int):
+    def __create_c_stub(self, 
+                        c_path: Path, 
+                        asm_path: Path, 
+                        dll: DLL, 
+                        functions: "list[DLLFunction]", 
+                        dll_data: bytearray, 
+                        bss_size: int,
+                        late_rodata_start: int):
         # Collect local refs
         rodata_refs: "set[int] | list[int]" = set()
         data_refs: "set[int] | list[int]" = set()
@@ -228,6 +251,8 @@ class DLLSplitter:
                 for i in range(len(rodata_refs) - 1):
                     offset = rodata_refs[i]
                     size = rodata_refs[i + 1] - offset
+                    if offset >= late_rodata_start:
+                        break
                     self.__write_c_stub_data(
                         c_file, 
                         rodata[offset:offset+size], 
@@ -290,7 +315,14 @@ class DLLSplitter:
                 c_file.write("\n")
                 c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.symbol}.s")\n')
 
-    def __write_c_stub_data(self, c_file: TextIO, data: bytearray, prefix: str, const: bool, static: bool, field_offset: int, relocs: set[int] | None=None):
+    def __write_c_stub_data(self, 
+                            c_file: TextIO, 
+                            data: bytearray, 
+                            prefix: str, 
+                            const: bool, 
+                            static: bool, 
+                            field_offset: int, 
+                            relocs: set[int] | None=None):
         data_len = len(data)
 
         # Note: Force writing u32s if this data contains a reloc. We need 4 bytes for the pointer
@@ -451,14 +483,95 @@ class DLLSplitter:
     def __extract_text_asm(self, 
                            dir: Path, 
                            dll: DLL, 
-                           dll_functions: "list[DLLFunction]",
+                           dll_functions: "list[DLLFunctionWithLateRodata]",
+                           dll_symbols: DLLSymbols,
+                           dll_data: bytearray,
                            funcs: "list[str] | None"):
-        for func in dll_functions:
+        rodata: bytearray | None = None
+        rodata_start: int | None = None
+        
+        for func_with_late_rodata in dll_functions:
+            func = func_with_late_rodata.func
+            late_rodata_start = func_with_late_rodata.late_rodata_start
+            late_rodata_end = func_with_late_rodata.late_rodata_end
+
+            # Filter
             if funcs is not None and not func.symbol in funcs:
                 continue
 
             s_path = dir.joinpath(f"{func.symbol}.s")
             with open(s_path, "w", encoding="utf-8") as s_file:
+                s_file.write("/* Generated by dll_split.py */\n\n")
+
+                # Emit .late_rodata
+                has_late_rodata = late_rodata_start != 0 or late_rodata_end != 0
+                if has_late_rodata:
+                    s_file.write(".section .late_rodata\n")
+
+                    if rodata == None:
+                        rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
+                        rodata_end = rodata_start + dll.get_rodata_size()
+                        rodata = dll_data[rodata_start:rodata_end]
+
+                    rodata_refs: set[int] | list[int] = set()
+                    for ref in func.local_rodata_refs:
+                        if ref >= late_rodata_start and ref < late_rodata_end:
+                            rodata_refs.add(ref)
+                    for ref in func.jump_table_refs:
+                        if ref >= late_rodata_start and ref < late_rodata_end:
+                            rodata_refs.add(ref)
+                    rodata_refs.add(late_rodata_start)
+                    rodata_refs.add(late_rodata_end)
+                    rodata_refs = list(rodata_refs)
+                    rodata_refs.sort()
+
+                    for i in range(len(rodata_refs) - 1):
+                        offset = rodata_refs[i]
+                        size = rodata_refs[i + 1] - offset
+                        if offset in func.jump_table_refs:
+                            # Emit jump table
+                            jump_table = func.jump_tables[offset]
+
+                            sym_name = dll_symbols.get_jtable_name_or_default(jump_table.offset)
+                            s_file.write("dlabel {}\n".format(sym_name))
+
+                            rom_addr = jump_table.address + dll.header.size
+                            ram_addr = jump_table.address
+                            for entry in jump_table.entries:
+                                value_bytes = struct.pack(">i", entry.value).hex().upper()
+                                value_str = ".gpword .L{:X}".format(entry.target)
+
+                                s_file.write("/* {:0>4X} {:0>6X} {} */ {}\n"
+                                    .format(rom_addr, ram_addr, value_bytes, value_str))
+                                
+                                rom_addr += 4
+                                ram_addr += 4
+                            
+                            jump_table_size = len(jump_table.entries) * 4
+                            leftovers = size - jump_table_size
+                            if leftovers > 0:
+                                self.__write_asm_data_definitions(s_file, rodata, 
+                                                                  data_rom_start=rodata_start,
+                                                                  data_vram_start=rodata_start - dll.header.size,
+                                                                  start=offset + jump_table_size,
+                                                                  end=offset + size)
+                            s_file.write(".size {}, . - {}\n".format(sym_name, sym_name))
+                        else:
+                            # Emit other rodata
+                            sym_name = dll_symbols.get_local_name_or_default(1, offset)
+                            s_file.write("dlabel {}\n".format(sym_name))
+                            self.__write_asm_data_definitions(s_file, rodata, 
+                                                              data_rom_start=rodata_start,
+                                                              data_vram_start=rodata_start - dll.header.size,
+                                                              start=offset,
+                                                              end=offset + size,
+                                                              type_hint=func.local_rodata_ref_info[offset].load_type)
+                            s_file.write(".size {}, . - {}\n".format(sym_name, sym_name))
+                        s_file.write("\n")
+
+                # Emit .text
+                if has_late_rodata:
+                    s_file.write("\n.section .text\n")
                 s_file.write(f"glabel {func.symbol}\n")
 
                 for idx, i in enumerate(func.insts):
@@ -472,6 +585,134 @@ class DLLSplitter:
 
                     s_file.write("/* {:0>4X} {:0>6X} {} */ {}\n"
                         .format(rom_addr, ram_addr, inst_bytes, inst_str))
+                
+                s_file.write(".size {}, . - {}\n".format(func.symbol, func.symbol))
+
+    def __write_asm_data_definitions(self, 
+                                     output: TextIO, 
+                                     data: bytes, 
+                                     data_rom_start: int, 
+                                     data_vram_start: int, 
+                                     start: int, 
+                                     end: int,
+                                     type_hint: DLLLocalRefLoadType | None=None):
+        left = end - start
+        rom_addr = data_rom_start + start
+        ram_addr = data_vram_start + start
+        offset = start
+
+        if type_hint == DLLLocalRefLoadType.LWC1 and left >= 4:
+            value = struct.unpack_from(">f", data, offset)[0]
+            value_bytes = data[offset:offset+4].hex().upper()
+
+            output.write("/* {:0>4X} {:0>6X} {} */ .float {}\n"
+                         .format(rom_addr, ram_addr, value_bytes, value))
+            left -= 4
+            offset += 4
+            rom_addr += 4
+            ram_addr += 4
+        elif type_hint == DLLLocalRefLoadType.LDC1 and left >= 8:
+            value = struct.unpack_from(">d", data, offset)[0]
+            value_bytes = data[offset:offset+8].hex().upper()
+
+            output.write("/* {:0>4X} {:0>6X} {} */ .double {}\n"
+                         .format(rom_addr, ram_addr, value_bytes, value))
+            left -= 8
+            offset += 8
+            rom_addr += 8
+            ram_addr += 8
+
+        while left > 0 and (left % 4) == 0:
+            value = struct.unpack_from(">I", data, offset)[0]
+            value_bytes = struct.pack(">I", value).hex().upper()
+
+            output.write("/* {:0>4X} {:0>6X} {} */ .word 0x{:X}\n"
+                         .format(rom_addr, ram_addr, value_bytes, value))
+
+            left -= 4
+            offset += 4
+            rom_addr += 4
+            ram_addr += 4
+        
+        while left > 0:
+            value = struct.unpack_from(">B", data, offset)[0]
+            value_bytes = struct.pack(">B", value).hex().upper()
+
+            output.write("/* {:0>4X} {:0>6X} {} */ .byte 0x{:X}\n"
+                         .format(rom_addr, ram_addr, value_bytes, value))
+
+            left -= 1
+            offset += 1
+            rom_addr += 1
+            ram_addr += 1
+
+    def __migrate_late_rodata(self, funcs: list[DLLFunction], rodata_size: int) -> tuple[list[DLLFunctionWithLateRodata], int]:
+        with_rodata = [DLLFunctionWithLateRodata(func, 0, 0) for func in funcs]
+        late_rodata_start = rodata_size
+
+        referenced_offsets: dict[int, set[int]] = {}
+        combined_ref_info: dict[int, DLLLocalRefInfo] = {}
+        for i in range(len(funcs)):
+            func = funcs[i]
+            assert(func.local_rodata_refs != None)
+            assert(func.jump_table_refs != None)
+
+            for ref in func.local_rodata_refs:
+                if not ref in referenced_offsets:
+                    referenced_offsets[ref] = set()
+                referenced_offsets[ref].add(i)
+            for ref in func.jump_table_refs:
+                if not ref in referenced_offsets:
+                    referenced_offsets[ref] = set()
+                referenced_offsets[ref].add(i)
+            for (ref, info) in func.local_rodata_ref_info.items():
+                combined_ref_info[ref] = info
+        
+        if len(referenced_offsets) == 0:
+            # Nothing to migrate
+            return (with_rodata, late_rodata_start)
+        
+        referenced_offsets_sorted: list[tuple[int, set[int]]] = []
+        for (offset, func_refs) in referenced_offsets.items():
+            referenced_offsets_sorted.append((offset, func_refs))
+        
+        referenced_offsets_sorted.sort(key=lambda t: t[0])
+
+        last_offset = rodata_size
+        last_func = len(funcs)
+
+        # starting from the end of rodata, iterate references backwards  <-
+        #   stop if the next offset is ref'd by a function after the one we're on
+        #   stop if the next offset has multiple func references
+        #   stop if the next offset has no refs
+        i = len(referenced_offsets_sorted) - 1
+        while i >= 0:
+            (offset, func_refs) = referenced_offsets_sorted[i]
+
+            ref_info = combined_ref_info[offset]
+            if ref_info.load_type == DLLLocalRefLoadType.UNKNOWN:
+                break
+
+            if len(func_refs) != 1:
+                break
+
+            func_ref = func_refs.pop()
+            if func_ref > last_func:
+                break
+
+            if func_ref == last_func:
+                with_rodata[last_func].late_rodata_start = offset
+            else:
+                last_func = func_ref
+                with_rodata[last_func].late_rodata_start = offset
+                with_rodata[last_func].late_rodata_end = last_offset
+                
+            last_offset = offset
+            i -= 1
+        
+        late_rodata_start = last_offset
+
+        return (with_rodata, late_rodata_start)
 
     def __get_functions_to_extract(self, path: Path) -> "list[str]":
         """Returns None if all functions should be extracted (i.e. there is no .c file to derive the list from)"""

@@ -220,6 +220,7 @@ class BuildNinjaWriter:
         self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
         self.writer.variable("ELF2DLL", "python3 tools/elf2dll.py")
         self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
+        self.writer.variable("DLL_ASMPROC_FIXUP", "python3 tools/dll_asmproc_fixup.py")
         
         self.writer.newline()
 
@@ -234,7 +235,7 @@ class BuildNinjaWriter:
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "$HEADER_DEPS $DLL_ASMPROC_FIXUP $EXPORTS_S $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
@@ -314,6 +315,7 @@ class BuildNinjaWriter:
                 command: str
                 if file.type == BuildFileType.C:
                     command = "cc_dll"
+                    variables["EXPORTS_S"] = f"{dll.dir}/exports.s" # for dll_asmproc_fixup.py
                 elif file.type == BuildFileType.ASM:
                     command = "as_dll"
                 elif file.type == BuildFileType.BIN:

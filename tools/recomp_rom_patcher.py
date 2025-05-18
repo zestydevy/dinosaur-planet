@@ -39,17 +39,12 @@ def patch(patched_file: BufferedRandom):
 
     patched_file.seek(DLLS_TAB_ROM_OFFSET, os.SEEK_SET)
     dlls_tab = DLLTab.parse(patched_file.read(DLLS_TAB_ROM_SIZE))
-    number = 1
     for entry in dlls_tab.entries:
         patched_file.seek(DLLS_ROM_OFFSET + entry.start_offset, os.SEEK_SET)
         dlls.append((
-            DLL.parse(
-                patched_file.read(entry.size),
-                str(number)
-            ),
+            DLL.parse(patched_file.read(entry.size)),
             entry.start_offset
         ))
-        number += 1
     
     # Patch DLL $gp initializers
     print("Patching $gp initializers...")

@@ -13,6 +13,7 @@ from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt
+from dino.dll_symbols import DLLSymbols
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_PATH = Path("bin")
@@ -251,6 +252,7 @@ def gen_dll_recomp_header(header: TextIO,
 def scan_dll_elf(
         elf: ELFFile, 
         dll: DLL, 
+        dll_number: int,
         dll_vram: int,
         vrams_to_funcs: "dict[int, dict]",
         data_globals: list,
@@ -315,7 +317,7 @@ def scan_dll_elf(
             func_info = vrams_to_funcs.get(vram)
             if func_info == None:
                 print("Failed to find DLL {} func {} at {:0X} ({:0X})"
-                    .format(dll.number, sym.name, vram, value))
+                    .format(dll_number, sym.name, vram, value))
             else:
                 rename = dll_prefix + sym.name
                 func_info["name"] = rename
@@ -343,7 +345,7 @@ def scan_dll_elf(
                     # Don't downgrade to a notype sym
                     pass
                 else:
-                    print("WARN: Duplicate symbol {} in DLL {} .elf file. Taking only the first copy.".format(sym.name, dll.number))
+                    print("WARN: Duplicate symbol {} in DLL {} .elf file. Taking only the first copy.".format(sym.name, dll_number))
             else:
                 data_sym_map[sym.name] = len(data_globals)
                 data_syms.append(sym)
@@ -387,8 +389,9 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         dll_prefix = f"__dll{number}_"
         
         # Grab functions by parsing the DLL contents
-        dll = DLL.parse(dll_data, str(number))
-        dll_functions = get_all_dll_functions(dll_data, dll)
+        dll = DLL.parse(dll_data)
+        dll_symbols = DLLSymbols(dll, number)
+        dll_functions = get_all_dll_functions(dll_data, dll, dll_symbols)
         for func in dll_functions:
             func_info = { 
                 "name": "{}func_{:X}".format(dll_prefix, func.address), 
@@ -409,6 +412,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
                     scan_dll_elf(
                         elf,
                         dll,
+                        number,
                         dll_vram,
                         vrams_to_funcs,
                         data_globals,

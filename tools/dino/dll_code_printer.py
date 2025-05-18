@@ -12,7 +12,7 @@ def stringify_instruction(idx: int, i: DLLInst, function: DLLFunction) -> "tuple
             return "{:<11}{}".format("addu", r"$gp, $gp, $t9"), None
 
     label: str | None = None
-    if i.is_branch_target:
+    if i.is_branch_target or (function.jump_table_targets != None and i.i.address in function.jump_table_targets):
         label = ".L{:X}:".format(i.i.address)
 
     mnemonic = i.i.mnemonic
@@ -25,7 +25,7 @@ def stringify_instruction(idx: int, i: DLLInst, function: DLLFunction) -> "tuple
         if op.type == MIPS_OP_IMM:
             # imm
             if reloc != None and op_idx == reloc.op_idx:
-                operands.append(__reloc_to_syntax(reloc, op.imm))
+                operands.append(__reloc_to_syntax(reloc))
             elif i.is_branch and op_idx == (op_count - 1):
                 operands.append(".L{:X}".format(op.imm))
             else:
@@ -42,7 +42,7 @@ def stringify_instruction(idx: int, i: DLLInst, function: DLLFunction) -> "tuple
             # mem
             if reloc != None and op_idx == reloc.op_idx:
                 operands.append("{}(${})"
-                    .format(__reloc_to_syntax(reloc, op.mem.disp), i.i.reg_name(op.mem.base)))
+                    .format(__reloc_to_syntax(reloc), i.i.reg_name(op.mem.base)))
             else:
                 operands.append("{:#x}(${})".format(op.mem.disp, i.i.reg_name(op.mem.base)))
         else:
@@ -75,7 +75,7 @@ def stringify_instruction(idx: int, i: DLLInst, function: DLLFunction) -> "tuple
 
     return "{:<11}{}".format(mnemonic, op_str), label
 
-def __reloc_to_syntax(reloc: DLLInstRelocation, addend: int):
+def __reloc_to_syntax(reloc: DLLInstRelocation):
     match reloc.type:
         case DLLInstRelocationType.GOT16:
             directive = r"%got"
@@ -86,7 +86,7 @@ def __reloc_to_syntax(reloc: DLLInstRelocation, addend: int):
         case _:
             raise NotImplementedError()
 
-    if reloc.type == DLLInstRelocationType.LO16:
-        return "{}({}+{:#x})".format(directive, reloc.symbol, addend)
+    if reloc.offset != 0:
+        return "{}({}+{:#x})".format(directive, reloc.symbol, reloc.offset)
     else:
         return "{}({})".format(directive, reloc.symbol)

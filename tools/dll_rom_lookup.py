@@ -6,20 +6,21 @@ from pathlib import Path
 from dino.dll import DLL
 from dino.dll_tab import DLLTab
 from dino.dll_analysis import get_all_dll_functions
+from dino.dll_symbols import DLLSymbols
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_ASSETS_DIR = Path("bin/assets")
 SRC_DLLS_DIR = Path("src/dlls")
 
-def narrow_down(dll: DLL, dll_data: bytes, relative_addr: int):
-    print("DLL {}".format(dll.number))
+def narrow_down(dll: DLL, dll_number: int, dll_data: bytes, relative_addr: int):
+    print("DLL {}".format(dll_number))
 
     if dll.has_data() and relative_addr >= dll.header.data_offset:
         print(".data+0x{:X}".format(relative_addr - dll.header.data_offset))
     elif dll.has_rodata() and relative_addr >= dll.header.rodata_offset:
         print(".rodata+0x{:X}".format(relative_addr - dll.header.rodata_offset))
     elif relative_addr >= dll.header.size and relative_addr < (dll.header.size + dll.get_text_size()):
-        funcs = get_all_dll_functions(dll_data, dll)
+        funcs = get_all_dll_functions(dll_data, dll, DLLSymbols(dll, dll_number))
         funcs.sort(key=lambda f: f.address, reverse=True)
         for func in funcs:
             func_romaddr = dll.header.size + func.address
@@ -64,16 +65,16 @@ def main():
          open(dllsbin_path, "rb") as bin_file:
         tab = DLLTab.parse(tab_file.read())
 
-        dllNumber = 1
+        dll_number = 1
         for entry in tab.entries:
             if romaddr >= entry.start_offset and romaddr < entry.end_offset:
                 bin_file.seek(entry.start_offset)
                 data = bytearray(bin_file.read(entry.size))
-                dll = DLL.parse(data, number=dllNumber)
-                narrow_down(dll, data, romaddr - entry.start_offset)
+                dll = DLL.parse(data)
+                narrow_down(dll, dll_number, data, romaddr - entry.start_offset)
                 found = True
                 break
-            dllNumber += 1
+            dll_number += 1
 
     if not found:
         print("Not a DLL ROM address.")

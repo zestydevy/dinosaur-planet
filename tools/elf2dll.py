@@ -115,6 +115,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
                 # GOT reloc
                 sym_shndx = sym.entry["st_shndx"]
                 sym_type = sym.entry["st_info"]["type"]
+                st_info_bind = sym.entry["st_info"]["bind"]
 
                 got_idx: int | None = None
                 if sym_type == "STT_SECTION":
@@ -124,7 +125,9 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
                     if got_idx == None:
                         raise Exception(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
                 else:
-                    # For normal symbols, create a GOT entry if one doesn't already exist
+                    assert st_info_bind != "STB_LOCAL"
+
+                    # For normal global symbols, create a GOT entry if one doesn't already exist
                     got_idx = syms_to_got.get(sym_idx)
                     if got_idx == None:
                         got_idx = len(got)

@@ -3,8 +3,37 @@ from capstone import CS_ARCH_MIPS, CS_MODE_BIG_ENDIAN, CS_MODE_MIPS64, Cs, CsIns
 from capstone.mips import *
 from capstone.mips_const import *
 from enum import Enum
+import struct
 
 from .dll import DLL
+from .dll_symbols import DLLSymbols
+
+class DLLJumpTableEntry:
+    def __init__(self,
+                 value: int,
+                 target: int):
+        self.value = value
+        self.target = target
+
+class DLLJumpTable:
+    def __init__(self,
+                 address: int,
+                 offset: int,
+                 entries: list[DLLJumpTableEntry]):
+        self.address = address
+        self.offset = offset
+        self.entries = entries
+
+class DLLLocalRefLoadType(Enum):
+    UNKNOWN = 0,
+    LW = 1
+    LWC1 = 2 # float
+    LDC1 = 3 # double
+
+class DLLLocalRefInfo:
+    def __init__(self,
+                 load_type: DLLLocalRefLoadType):
+        self.load_type = load_type
 
 class DLLInstAlias(Enum):
     # move reg, $zero -> or reg, $zero, $zero
@@ -23,9 +52,11 @@ class DLLInstRelocation:
     def __init__(self,
                  type: DLLInstRelocationType,
                  symbol: str,
+                 offset: int,
                  op_idx: int):
         self.type = type
         self.symbol = symbol
+        self.offset = offset
         self.op_idx = op_idx
 
 class DLLInst:
@@ -51,9 +82,14 @@ class DLLFunctionType(Enum):
 class DLLFunction:
     has_gp_prologue: bool | None = None
     local_rodata_refs: "set[int] | None" = None
+    local_rodata_ref_info: "dict[int, DLLLocalRefInfo] | None" = None
     local_data_refs: "set[int] | None" = None
+    local_data_ref_info: "dict[int, DLLLocalRefInfo] | None" = None
     local_bss_refs: "set[int] | None" = None
+    local_bss_ref_info: "dict[int, DLLLocalRefInfo] | None" = None
     jump_table_refs: "set[int] | None" = None
+    jump_tables: "dict[int, DLLJumpTable] | None" = None
+    jump_table_targets: "set[int] | None" = None
 
     def __init__(self,
                  insts: "list[DLLInst]",
@@ -67,7 +103,7 @@ class DLLFunction:
 
 def get_all_dll_functions(dll_data: bytes, 
                           dll: DLL,
-                          known_symbols: "dict[int, str]"={},
+                          symbols: DLLSymbols,
                           analyze: bool = False):
     """Locates all functions in the DLL."""
     header = dll.header
@@ -136,14 +172,12 @@ def get_all_dll_functions(dll_data: bytes,
             
             # New function, determine name and type
             text_offset = i.address
+            cur_func_name = symbols.get_func_name_or_default(i.address)
             if text_offset == header.ctor_offset:
-                cur_func_name = known_symbols.get(i.address, "dll_{}_ctor".format(dll.number))
                 cur_func_type = DLLFunctionType.Ctor
             elif text_offset == header.dtor_offset:
-                cur_func_name = known_symbols.get(i.address, "dll_{}_dtor".format(dll.number))
                 cur_func_type = DLLFunctionType.Dtor
             else:
-                cur_func_name = known_symbols.get(i.address, "dll_{}_func_{:X}".format(dll.number, i.address))
                 cur_func_type = DLLFunctionType.Export if text_offset in header.export_offsets else DLLFunctionType.Local
             
             cur_func_addr = i.address
@@ -201,7 +235,7 @@ def get_all_dll_functions(dll_data: bytes,
     # Run full analysis for each function if requested
     if analyze:
         for func in funcs:
-            analyze_dll_function(func, dll, known_symbols)
+            analyze_dll_function(func, dll, dll_data, symbols)
 
     return funcs
 
@@ -216,12 +250,11 @@ class _PossibleJumpTable(TypedDict):
     rodata_offset: int | None
 
 def analyze_dll_function(func: DLLFunction,
-                          dll: DLL,
-                          known_symbols: "dict[int, str]"={}):
+                         dll: DLL,
+                         dll_data: bytes,
+                         symbols: DLLSymbols):
     """Fully analyzes an individual DLL function."""
     insts = func.insts
-
-    text_size = dll.get_text_size()
 
     start_idx = 0
 
@@ -248,6 +281,9 @@ def analyze_dll_function(func: DLLFunction,
     local_data_refs: "set[int]" = set()
     local_bss_refs: "set[int]" = set()
     jump_table_refs: "set[int]" = set()
+    local_rodata_ref_info: "dict[int, DLLLocalRefInfo]" = {}
+    local_data_ref_info: "dict[int, DLLLocalRefInfo]" = {}
+    local_bss_ref_info: "dict[int, DLLLocalRefInfo]" = {}
 
     for idx, inst in enumerate(insts[start_idx:], start_idx):
         i = inst.i
@@ -269,7 +305,8 @@ def analyze_dll_function(func: DLLFunction,
                     got_entry = dll.reloc_table.global_offset_table[got_load["got_idx"]]
                     base_inst.relocation = DLLInstRelocation(
                         type=DLLInstRelocationType.CALL16,
-                        symbol=known_symbols.get(got_entry, __make_auto_sym(got_entry, dll.number, text_size)),
+                        symbol=symbols.get_global_name_or_default(got_entry),
+                        offset=0,
                         op_idx=1
                     )
             elif i.id == MIPS_INS_JR:
@@ -277,19 +314,27 @@ def analyze_dll_function(func: DLLFunction,
                 if possible_jtbl != None:
                     if possible_jtbl["rodata_lw_inst_idx"] != None and possible_jtbl["addu_gp"]:
                         # Found jr to jump table
+                        jtbl_rodata_offset = possible_jtbl["rodata_offset"]
+                        sym = symbols.get_jtable_name_or_default(jtbl_rodata_offset)
+
                         hi_inst = insts[possible_jtbl["gp_lw_inst_idx"]]
                         lo_inst = insts[possible_jtbl["rodata_lw_inst_idx"]]
                         hi_inst.relocation = DLLInstRelocation(
                             type=DLLInstRelocationType.GOT16,
-                            symbol=".rodata",
+                            symbol=sym,
+                            offset=0,
                             op_idx=1
                         )
                         lo_inst.relocation = DLLInstRelocation(
                             type=DLLInstRelocationType.LO16,
-                            symbol=".rodata",
+                            symbol=sym,
+                            offset=0,
                             op_idx=1
                         )
-                        jump_table_refs.add(possible_jtbl["rodata_offset"])
+                        jump_table_refs.add(jtbl_rodata_offset)
+                        local_rodata_ref_info[jtbl_rodata_offset] = DLLLocalRefInfo(
+                            load_type=DLLLocalRefLoadType.LW
+                        )
                     else:
                         print("WARN: Unresolved possible jump table load @ {:#x}. Invalidated @ {:#x}"
                             .format(insts[possible_jtbl["gp_lw_inst_idx"]].i.address, i.address))
@@ -336,38 +381,47 @@ def analyze_dll_function(func: DLLFunction,
                             }
                         elif got_idx <= 3:
                             # Local symbol lookup, %got with %lo pair
-                            section_name = __got_section_idx_name(got_idx)
-                            base_inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.GOT16,
-                                symbol=section_name,
-                                op_idx=1
-                            )
-                            inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.LO16,
-                                symbol=section_name,
-                                # The addend to add a reloc to should always be the last operand
-                                op_idx=len(i.operands) - 1
-                            )
-                            # Add local ref if possible
+                            # Extract addend
                             last_op = i.operands[-1]
                             addend: int | None = None
                             if last_op.type == MIPS_OP_IMM:
                                 addend = last_op.imm
                             elif last_op.type == MIPS_OP_MEM:
                                 addend = last_op.mem.disp
-                            if addend != None:
-                                if got_idx == 1:
-                                    local_rodata_refs.add(addend)
-                                elif got_idx == 2:
-                                    local_data_refs.add(addend)
-                                elif got_idx == 3:
-                                    local_bss_refs.add(addend)
+                            else:
+                                assert(False)
+                            # Add local ref if possible
+                            if got_idx == 1:
+                                local_rodata_refs.add(addend)
+                                __infer_ref_info(local_rodata_ref_info, addend, i)
+                            elif got_idx == 2:
+                                local_data_refs.add(addend)
+                                __infer_ref_info(local_data_ref_info, addend, i)
+                            elif got_idx == 3:
+                                local_bss_refs.add(addend)
+                                __infer_ref_info(local_bss_ref_info, addend, i)
+                            # Add relocations
+                            (sym_name, offset) = symbols.get_local_or_encapsulating(got_idx, addend)
+                            base_inst.relocation = DLLInstRelocation(
+                                type=DLLInstRelocationType.GOT16,
+                                symbol=sym_name,
+                                offset=0,
+                                op_idx=1
+                            )
+                            inst.relocation = DLLInstRelocation(
+                                type=DLLInstRelocationType.LO16,
+                                symbol=sym_name,
+                                offset=offset,
+                                # The addend to add a reloc to should always be the last operand
+                                op_idx=len(i.operands) - 1
+                            )
                         else:
                             # Extern symbol lookup, %got
                             got_entry = dll.reloc_table.global_offset_table[got_idx]
                             base_inst.relocation = DLLInstRelocation(
                                 type=DLLInstRelocationType.GOT16,
-                                symbol=known_symbols.get(got_entry, __make_auto_sym(got_entry, dll.number, text_size)),
+                                symbol=symbols.get_global_name_or_default(got_entry),
+                                offset=0,
                                 op_idx=1
                             )
 
@@ -405,7 +459,8 @@ def analyze_dll_function(func: DLLFunction,
                     got_entry = dll.reloc_table.global_offset_table[got_idx]
                     base_inst.relocation = DLLInstRelocation(
                         type=DLLInstRelocationType.GOT16,
-                        symbol=known_symbols.get(got_entry, __make_auto_sym(got_entry, dll.number, text_size)),
+                        symbol=symbols.get_global_name_or_default(got_entry),
+                        offset=0,
                         op_idx=1
                     )
             while len(reg_to_possible_jtable) > 0:
@@ -428,7 +483,8 @@ def analyze_dll_function(func: DLLFunction,
             got_entry = dll.reloc_table.global_offset_table[got_idx]
             base_inst.relocation = DLLInstRelocation(
                 type=DLLInstRelocationType.GOT16,
-                symbol=known_symbols.get(got_entry, __make_auto_sym(got_entry, dll.number, text_size)),
+                symbol=symbols.get_global_name_or_default(got_entry),
+                offset=0,
                 op_idx=1
             )
     while len(reg_to_possible_jtable) > 0:
@@ -439,27 +495,62 @@ def analyze_dll_function(func: DLLFunction,
     
     # Attach found local syms
     func.local_rodata_refs = local_rodata_refs
+    func.local_rodata_ref_info = local_rodata_ref_info
     func.local_data_refs = local_data_refs
+    func.local_data_ref_info = local_data_ref_info
     func.local_bss_refs = local_bss_refs
+    func.local_bss_ref_info = local_bss_ref_info
     func.jump_table_refs = jump_table_refs
 
-def __make_auto_sym(got_entry: int, dll_number: str, text_size: int):
-    if (got_entry & 0x80000000) != 0:
-        return "IMPORT_{:X}".format(got_entry & ~0x80000000)
-    elif got_entry < text_size:
-        return "dll_{}_func_{:X}".format(dll_number, got_entry)
-    else:
-        return "D_{:X}".format(got_entry & ~0x80000000)
-                
-def __got_section_idx_name(idx: int) -> str:
-    match idx:
-        case 0:
-            return ".text"
-        case 1:
-            return ".rodata"
-        case 2:
-            return ".data"
-        case 3:
-            return ".bss"
-        case _:
-            raise ValueError(f"Invalid GOT section idx: {idx}")
+    # Analyze jump tables
+    __analyze_dll_function_jump_tables(func, dll, dll_data)
+
+def __analyze_dll_function_jump_tables(func: DLLFunction,
+                                       dll: DLL,
+                                       dll_data: bytes):
+    assert(func.jump_table_refs != None)
+    if not dll.has_rodata():
+        return
+    
+    jump_tables: dict[int, DLLJumpTable] = {}
+    targets: set[int] = set()
+
+    func_start = func.address
+    func_end = func.address + len(func.insts) * 4
+
+    rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
+    rodata_end = rodata_start + dll.get_rodata_size()
+    rodata = dll_data[rodata_start:rodata_end]
+    rodata_size = rodata_end - rodata_start
+
+    for ref in func.jump_table_refs:
+        entries: list[DLLJumpTableEntry] = []
+        offset = ref
+        while offset < rodata_size and \
+              (offset == ref or not offset in func.jump_table_refs) and \
+              not offset in func.local_rodata_refs:
+            value = struct.unpack_from(">i", rodata, offset)[0]
+            target = dll.header.rodata_offset - dll.header.size + value
+            if target < func_start or target >= func_end:
+                break
+            entries.append(DLLJumpTableEntry(value, target))
+            targets.add(target)
+            offset += 4
+        
+        jump_tables[ref] = DLLJumpTable(rodata_start - dll.header.size + ref, ref, entries)
+
+    func.jump_tables = jump_tables
+    func.jump_table_targets = targets
+
+def __infer_ref_info(local_ref_info: dict[int, DLLLocalRefInfo], ref: int, i: CsInsn) -> DLLLocalRefInfo:
+    ref_info = local_ref_info.get(ref, None)
+    if ref_info == None:
+        ref_info = DLLLocalRefInfo(load_type=DLLLocalRefLoadType.UNKNOWN)
+        local_ref_info[ref] = ref_info
+    
+    if i.id == MIPS_INS_LW:
+        ref_info.load_type = DLLLocalRefLoadType.LW
+    elif i.id == MIPS_INS_LWC1:
+        ref_info.load_type = DLLLocalRefLoadType.LWC1
+    elif i.id == MIPS_INS_LDC1:
+        ref_info.load_type = DLLLocalRefLoadType.LDC1
