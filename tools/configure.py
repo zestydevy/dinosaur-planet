@@ -190,7 +190,7 @@ class BuildNinjaWriter:
             "-T undefined_syms.txt", 
             "-T undefined_funcs.txt", 
             "-T undefined_syms_auto.txt", 
-            "-T $BUILD_DIR/$TARGET.ld", # pre-processed linker script
+            "-T $LINK_SCRIPT",
             "-Map $BUILD_DIR/$TARGET.map",
             "--no-check-sections",
             "-m $LD_EMULATION",
@@ -240,7 +240,6 @@ class BuildNinjaWriter:
             depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
         self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
-        self.writer.rule("preprocess_linker_script", "cpp -P -DBUILD_DIR=$BUILD_DIR -o $out $in", "Pre-processing linker script...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
         self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_TXT -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
         self.writer.rule("ld_bin", "$LD -m $LD_EMULATION -r -b binary -o $out $in", "Linking binary $in...")
@@ -407,20 +406,12 @@ class BuildNinjaWriter:
     def __write_linking(self):
         self.writer.comment("Linking")
 
-        # Preprocess linker script
-        # TODO: it looks like splat's linker script output doesn't need preprocessing anymore
-        self.writer.build("$BUILD_DIR/$TARGET.ld", "preprocess_linker_script", "$LINK_SCRIPT")
-
         # Link
-        self.link_deps.append("$BUILD_DIR/$TARGET.ld")
+        self.link_deps.append("$LINK_SCRIPT")
         self.writer.build("$BUILD_DIR/$TARGET.elf", "ld", [], implicit=self.link_deps)
 
-        # Convert .elf to .bin
-        self.writer.build("$BUILD_DIR/$TARGET.bin", "to_bin", "$BUILD_DIR/$TARGET.elf")
-
-        # Copy .bin to .z64
-        # TODO: change to rename?
-        self.writer.build("$BUILD_DIR/$TARGET.z64", "file_copy", "$BUILD_DIR/$TARGET.bin")
+        # Convert .elf to .z64
+        self.writer.build("$BUILD_DIR/$TARGET.z64", "to_bin", "$BUILD_DIR/$TARGET.elf")
         
     def __detect_cross(self) -> str:
         # Ordered by preference
