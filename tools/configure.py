@@ -29,10 +29,11 @@ IDO_VAR_MAP = {
 }
 
 class BuildFileConfig:
-    def __init__(self, opt: "str | None", ido_version: "str | None", mips_iset: "str | None"):
+    def __init__(self, opt: "str | None", ido_version: "str | None", mips_iset: "str | None", has_global_asm: bool):
         self.opt = opt
         self.ido_version = ido_version
         self.mips_iset = mips_iset
+        self.has_global_asm = has_global_asm
 
 class BuildFileType(Enum):
     C = 1
@@ -238,6 +239,10 @@ class BuildNinjaWriter:
             "$HEADER_DEPS $DLL_ASMPROC_FIXUP $EXPORTS_S $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
             "Compiling $in...",
             depfile="$out.d")
+        self.writer.rule("cc_dll_noasmproc", 
+            "$HEADER_DEPS $CC -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "Compiling $in...",
+            depfile="$out.d")
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
         self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
@@ -267,15 +272,17 @@ class BuildNinjaWriter:
             # Determine command
             command: str
             if file.type == BuildFileType.C:
-                with_asmproc = True
-                if file.config != None:
+                with_asmproc = file.config.has_global_asm
+                if with_asmproc and file.config != None:
                     if file.config.opt != None and "-O3" in file.config.opt:
                         # Can't run asm processor with -O3 compilation
                         with_asmproc = False
+                        print(f"WARN: File {file.src_path} has GLOBAL_ASM but cannot be ran through asm-processor because this file is compiled with -O3!")
                     elif file.config.opt != None and file.config.mips_iset != None and \
                          "-O0" in file.config.opt and "-mips1" in file.config.mips_iset:
                         # Can't run asm processor with -O0 -mips1
                         with_asmproc = False
+                        print(f"WARN: File {file.src_path} has GLOBAL_ASM but cannot be ran through asm-processor because this file is compiled with -O0 -mips1!")
 
                 if with_asmproc:
                     command = "cc"
@@ -313,8 +320,11 @@ class BuildNinjaWriter:
                 # Determine command
                 command: str
                 if file.type == BuildFileType.C:
-                    command = "cc_dll"
-                    variables["EXPORTS_S"] = f"{dll.dir}/exports.s" # for dll_asmproc_fixup.py
+                    if file.config.has_global_asm:
+                        command = "cc_dll"
+                        variables["EXPORTS_S"] = f"{dll.dir}/exports.s" # for dll_asmproc_fixup.py
+                    else:
+                        command = "cc_dll_noasmproc"
                 elif file.type == BuildFileType.ASM:
                     command = "as_dll"
                 elif file.type == BuildFileType.BIN:
@@ -587,17 +597,15 @@ class InputScanner:
         opt_flags: "str | None" = None
         ido_version: "str | None" = None
         mips_iset: "str | None" = None
+        has_global_asm: bool = False
 
         with open(path, "r", encoding="utf-8") as file:
-            found_comments = False
             while True:
-                line = file.readline().strip()
-                if len(line) == 0 and found_comments:
-                    # End on empty line after comment block
-                    break
+                line = file.readline()
+                if line == "":
+                    break # EOF
+                line = line.strip()
                 if line.startswith("//"):
-                    found_comments = True
-
                     opt_match = opt_flags_pattern.search(line)
                     if opt_match != None:
                         opt_flags = opt_match.group(1)
@@ -610,14 +618,14 @@ class InputScanner:
                     if mips_iset_match != None:
                         mips_iset = mips_iset_match.group(1)
                         continue
-                else:
-                    # End on non-empty non-comment line
-                    break
+                elif line.startswith("#pragma GLOBAL_ASM"):
+                    has_global_asm = True
         
         return BuildFileConfig(
             opt=opt_flags, 
             ido_version=ido_version,
-            mips_iset=mips_iset)
+            mips_iset=mips_iset,
+            has_global_asm=has_global_asm)
     
     def __get_dll_config(self, dll_dir: Path, number: int) -> DLLBuildConfig | None:
         yaml_path = dll_dir.joinpath("dll.yaml")
