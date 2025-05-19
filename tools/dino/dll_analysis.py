@@ -379,69 +379,58 @@ def analyze_dll_function(func: DLLFunction,
                                 "rodata_lw_inst_idx": None,
                                 "addu_gp": False
                             }
-                        elif got_idx <= 3:
-                            # Local symbol lookup, %got with %lo pair
-                            # Extract addend
-                            last_op = i.operands[-1]
-                            addend: int | None = None
-                            if last_op.type == MIPS_OP_IMM:
-                                addend = last_op.imm
-                            elif last_op.type == MIPS_OP_MEM:
-                                addend = last_op.mem.disp
-                            else:
-                                assert(False)
-                            # Add local ref if possible
-                            sym_offset = addend
-                            misalignment = 0
-                            if got_idx == 1:
-                                local_rodata_refs.add(addend)
-                                __infer_ref_info(local_rodata_ref_info, addend, i)
-                            elif got_idx == 2:
-                                # .data symbols will always be 4-byte aligned
-                                if addend % 4 == 0:
-                                    local_data_refs.add(addend)
-                                    __infer_ref_info(local_data_ref_info, addend, i)
-                                else:
-                                    misalignment = addend % 4
-                                    sym_offset = addend - misalignment
-                                    local_data_refs.add(sym_offset)
-                                    __default_ref_info(local_data_ref_info, sym_offset)
-                            elif got_idx == 3:
-                                local_bss_refs.add(addend)
-                                __infer_ref_info(local_bss_ref_info, addend, i)
-                            # Add relocations
-                            (sym_name, offset) = symbols.get_local_or_encapsulating(got_idx, sym_offset)
-                            base_inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.GOT16,
-                                symbol=sym_name,
-                                offset=0,
-                                op_idx=1
-                            )
-                            inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.LO16,
-                                symbol=sym_name,
-                                offset=offset + misalignment,
-                                # The addend to add a reloc to should always be the last operand
-                                op_idx=len(i.operands) - 1
-                            )
                         else:
                             got_entry = dll.reloc_table.global_offset_table[got_idx]
-                            if (got_entry & 0x8000_0000) == 0 and got_entry >= 0x1_0000 and (got_entry & 0xFFFF) == 0 \
-                                    and i.id == MIPS_INS_ADDIU:
-                                # Local symbol offset was too big and got split across the hi/lo pair
-                                addend = i.operands[-1].imm
-                                sym_addr = got_entry + addend
-                                symbol = symbols.get_local_name_or_default_absolute(sym_addr)
+                            # Check if local symbol offset was too big and got split across the hi/lo pair
+                            split_local = (got_entry & 0x8000_0000) == 0 and got_entry >= 0x1_0000 and (got_entry & 0xFFFF) == 0 \
+                                    and i.id == MIPS_INS_ADDIU and i.operands[0].reg == i.operands[1].reg
+                            if got_idx <= 3 or split_local:
+                                # Local symbol lookup, %got with %lo pair
+                                # Extract addend
+                                last_op = i.operands[-1]
+                                addend: int | None = None
+                                if last_op.type == MIPS_OP_IMM:
+                                    addend = last_op.imm
+                                elif last_op.type == MIPS_OP_MEM:
+                                    addend = last_op.mem.disp
+                                else:
+                                    assert(False)
+                                # Determine section and symbol offset
+                                if split_local:
+                                    (section, sym_offset) = symbols.convert_absolute_to_relative_address(got_entry + addend)
+                                else:
+                                    section = got_idx
+                                    sym_offset = addend
+                                # Add local ref if possible
+                                misalignment = 0
+                                if section == 1:
+                                    local_rodata_refs.add(sym_offset)
+                                    __infer_ref_info(local_rodata_ref_info, sym_offset, i)
+                                elif section == 2:
+                                    # .data symbols will always be 4-byte aligned
+                                    if sym_offset % 4 == 0:
+                                        local_data_refs.add(sym_offset)
+                                        __infer_ref_info(local_data_ref_info, sym_offset, i)
+                                    else:
+                                        misalignment = sym_offset % 4
+                                        sym_offset -= misalignment
+                                        local_data_refs.add(sym_offset)
+                                        __default_ref_info(local_data_ref_info, sym_offset)
+                                elif section == 3:
+                                    local_bss_refs.add(sym_offset)
+                                    __infer_ref_info(local_bss_ref_info, sym_offset, i)
+                                # Add relocations
+                                (sym_name, offset) = symbols.get_local_or_encapsulating(section, sym_offset)
                                 base_inst.relocation = DLLInstRelocation(
                                     type=DLLInstRelocationType.GOT16,
-                                    symbol=symbol,
+                                    symbol=sym_name,
                                     offset=0,
                                     op_idx=1
                                 )
                                 inst.relocation = DLLInstRelocation(
                                     type=DLLInstRelocationType.LO16,
-                                    symbol=symbol,
-                                    offset=0,
+                                    symbol=sym_name,
+                                    offset=offset + misalignment,
                                     # The addend to add a reloc to should always be the last operand
                                     op_idx=len(i.operands) - 1
                                 )

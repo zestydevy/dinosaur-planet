@@ -1,6 +1,6 @@
 # Fixes up object files produced by asm-processor to:
-# - Patch GOT16/LO16 relocs that should have been for local symbols but couldn't due to 
-#   that code coming from single-function asm.
+# - Convert symbols to local bind that should have been local but aren't due to 
+#   limitations with how asm-processor works.
 
 from io import FileIO
 from pathlib import Path
@@ -8,113 +8,100 @@ import re
 import subprocess
 import sys
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import Section, SymbolTableSection
-from elftools.elf.relocation import RelocationSection
+from elftools.elf.sections import Section, SymbolTableSection, Symbol
+from elftools.elf.relocation import RelocationSection, Relocation
 from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import os
 from typing import TextIO
 import shutil
-import struct
 
 EXPORT_PATTERN = re.compile(r"\s*\.dword\s*(\S+)")
 VERBOSE = False
 
+def fix_local_syms(syms: list[Symbol], rel_text_relocations: list[Relocation], exports: set[str]):
+    # Find GOT16/LO16 relocations referencing defined symbols that we know should be local symbols.
+    # These will only show up from GLOBAL_ASM.
+    for reloc in rel_text_relocations:
+        reloc_type = reloc["r_info_type"]
+        
+        if reloc_type != ENUM_RELOC_TYPE_MIPS["R_MIPS_GOT16"] and reloc_type != ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
+            continue
+            
+        sym_idx = reloc["r_info_sym"]
+        sym = syms[sym_idx]
+        assert isinstance(sym, Symbol)
+
+        sym_shndx = sym.entry["st_shndx"]
+        if sym_shndx == "SHN_UNDEF" or sym_shndx == "SHN_ABS":
+            continue
+
+        sym_type = sym.entry["st_info"]["type"]
+        if sym_type == "STT_SECTION":
+            continue
+
+        # Assume any defined symbol that isn't a DLL export is local
+        is_local_sym = not sym.name in exports
+        if not is_local_sym:
+            continue
+
+        # Convert to local symbol
+        sym.entry["st_info"]["bind"] = "STB_LOCAL"
+        if sym_type == "STT_NOTYPE":
+            sym.entry["st_info"]["type"] = "STT_OBJECT"
+
 def fix_up(obj: ELFFile, out_obj: FileIO, exports: set[str]):
-    syms = obj.get_section_by_name(".symtab")
-    assert isinstance(syms, SymbolTableSection)
+    # Load symbols
+    symtab_idx = obj.get_section_index(".symtab")
+    symtab = obj.get_section(symtab_idx)
+    assert isinstance(symtab, SymbolTableSection)
+    syms: list[Symbol] = [sym for sym in symtab.iter_symbols()]
 
-    # Note: Ideally, for correctness, we convert symbols that should be local bind but aren't to local,
-    # but this is very non-trivial. We'd have to re-sort symbols (local binds must come first) and then
-    # update all other parts of the ELF with the updated symbol indexes... Luckily, we don't need these
-    # binds to be correct for decomp purposes. After this script runs, no relocs will be referencing
-    # these incorrectly bound symbols so they're harmless to leave as is.
+    # Load relocation sections
+    rel_sections: "dict[str, tuple[RelocationSection, list[Relocation]]]" = {}
+    for section in obj.iter_sections():
+        if isinstance(section, RelocationSection):
+            rel_sections[section.name] = (section, [rel for rel in section.iter_relocations()])
 
-    # Map section indexes to their symbol indexes
-    section_sym_idxs: dict[int, int] = {}
-    i = 0
-    found_section_syms = 0
-    for sym in syms.iter_symbols():
-        if sym.name == ".text":
-            section_sym_idxs[obj.get_section_index(".text")] = i
-            found_section_syms += 1
-        elif sym.name == ".rodata":
-            section_sym_idxs[obj.get_section_index(".rodata")] = i
-            found_section_syms += 1
-        elif sym.name == ".data":
-            section_sym_idxs[obj.get_section_index(".data")] = i
-            found_section_syms += 1
-        elif sym.name == ".bss":
-            section_sym_idxs[obj.get_section_index(".bss")] = i
-            found_section_syms += 1
-        if found_section_syms == 4:
-            # Usually the first few symbols are the sections, we can take advantage of that
-            # and bail out early to avoid parsing other symbols we don't need to look at
-            break
-        i += 1
+    # Fix local symbols
+    rel_text_tuple = rel_sections.get(".rel.text")
+    if rel_text_tuple != None:
+        (_, rel_text_relocations) = rel_text_tuple
+        fix_local_syms(syms, rel_text_relocations, exports)
+    
+    # Re-sort symbols
+    new_syms = syms.copy()
+    new_syms.sort(key=lambda s: 0 if s.entry["st_info"]["bind"] == "STB_LOCAL" else 1)
 
-    text = obj.get_section_by_name(".text")
-    assert isinstance(text, Section)
+    sym_to_new_idx: dict[Symbol, int] = {}
+    last_local_sym = 0
+    for i, sym in enumerate(new_syms):
+        sym_to_new_idx[sym] = i
+        if sym.entry["st_info"]["bind"] == "STB_LOCAL":
+            last_local_sym = i
 
-    rel_text = obj.get_section_by_name(".rel.text")
-    if rel_text != None:
-        assert isinstance(rel_text, RelocationSection)
-        for i in range(rel_text.num_relocations()):
-            reloc = rel_text.get_relocation(i)
-            reloc_offset = reloc["r_offset"]
-            reloc_type = reloc["r_info_type"]
+    # sh_info of .symtab is one plus the index of the last local symbol
+    symtab.header["sh_info"] = last_local_sym + 1
+    
+    # Re-map symbol references
+    for (section, relocations) in rel_sections.values():
+        for reloc in relocations:
+            sym = syms[reloc["r_info_sym"]]
+            reloc.entry["r_info_sym"] = sym_to_new_idx[sym]
 
-            # Find GOT16/LO16 relocations referencing defined symbols that we know should be local symbols.
-            # These will only show up from GLOBAL_ASM.
-            if reloc_type != ENUM_RELOC_TYPE_MIPS["R_MIPS_GOT16"] and reloc_type != ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
-                continue
-                
-            sym_idx = reloc["r_info_sym"]
-            sym = syms.get_symbol(sym_idx)
-
-            sym_shndx = sym.entry["st_shndx"]
-            if sym_shndx == "SHN_UNDEF" or sym_shndx == "SHN_ABS":
-                continue
-
-            sym_type = sym.entry["st_info"]["type"]
-            if sym_type == "STT_SECTION":
-                continue
-
-            # Assume any defined symbol that isn't a DLL export is local
-            is_local_sym = not sym.name in exports
-            if not is_local_sym:
-                continue
-
-            sym_value = sym.entry["st_value"]
-
-            section_sym_idx = section_sym_idxs.get(sym_shndx, None)
-            assert(section_sym_idx != None)
-
-            if reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_GOT16"]:
-                reloc.entry["r_info_sym"] = section_sym_idx
-
-                # Note: No need to patch instruction here, elf2dll will take care of that.
-
-                if VERBOSE:
-                    print("Patched GOT16 {} @ {:#x} to {}".format(i, reloc_offset, sym.name))
-            elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
-                reloc.entry["r_info_sym"] = section_sym_idx
-                
-                # Patch LO16 addend to what it should have been
-                out_obj.seek(text['sh_offset'] + reloc_offset + 2, os.SEEK_SET)
-                existing_addend = struct.unpack(">H", out_obj.read(2))[0]
-                out_obj.seek(-2, os.SEEK_CUR)
-                out_obj.write(struct.pack(">H", sym_value + existing_addend))
-
-                if VERBOSE:
-                    print("Patched LO16 {} @ {:#x} to {}({:#x})+{:#x}".format(i, reloc_offset, sym.name, sym_value, existing_addend))
-            else:
-                raise NotImplementedError()
-
-            # Patch reloc in new obj file
+    # Write new relocations
+    for (section, relocations) in rel_sections.values():
+        out_obj.seek(section["sh_offset"], os.SEEK_SET)
+        for reloc in relocations:
             reloc.entry["r_info"] = ((reloc.entry["r_info_sym"] & 0xFFFFFF) << 8) | (reloc.entry["r_info_type"] & 0xFF)
-            out_obj.seek(rel_text['sh_offset'] + i * rel_text.entry_size, os.SEEK_SET)
-            rel_text.entry_struct.build_stream(reloc.entry, out_obj)
-    pass
+            section.entry_struct.build_stream(reloc.entry, out_obj)
+    
+    # Write new symtab
+    out_obj.seek(obj["e_shoff"] + symtab_idx * obj["e_shentsize"], os.SEEK_SET)
+    obj.structs.Elf_Shdr.build_stream(symtab.header, out_obj)
+
+    out_obj.seek(symtab["sh_offset"], os.SEEK_SET)
+    for sym in new_syms:
+        obj.structs.Elf_Sym.build_stream(sym.entry, out_obj)
 
 def read_exports_s(exports_s: TextIO) -> "set[str]":
     exports: "set[str]" = set()

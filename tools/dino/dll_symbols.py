@@ -82,6 +82,16 @@ class DLLSymbols:
         self.local_syms = local_syms
         self.local_syms_sorted = local_syms_sorted
     
+    def convert_absolute_to_relative_address(self, address: int) -> tuple[int, int]:
+        if address >= self.bss_voffset:
+            return (3, address - self.bss_voffset)
+        elif address >= self.data_voffset:
+            return (2, address - self.data_voffset)
+        elif address >= self.rodata_voffset:
+            return (1, address - self.rodata_voffset)
+        else:
+            return (0, address)
+
     def get_func_name_or_default(self, offset: int, default: str | None=None):
         # Note: We dont know if the func is local or global, but since .text is always the
         # first section, we can cheat and just use the known symbols map to find the name
@@ -90,22 +100,6 @@ class DLLSymbols:
             name = self.__make_func_name(offset)
         
         return name
-
-    def get_local_name_or_default_absolute(self, address: int, default: str | None=None):
-        if address >= self.bss_voffset:
-            section = 3
-            offset = address - self.bss_voffset
-        elif address >= self.data_voffset:
-            section = 2
-            offset = address - self.data_voffset
-        elif address >= self.rodata_voffset:
-            section = 1
-            offset = address - self.rodata_voffset
-        else:
-            section = 0
-            offset = address
-
-        return self.get_local_name_or_default(section, offset, default)
 
     def get_local_name_or_default(self, section: int, offset: int, default: str | None=None):
         sym = self.local_syms[section].get(offset, None)

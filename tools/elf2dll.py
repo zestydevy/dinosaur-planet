@@ -25,7 +25,7 @@ class ReadRelocations(TypedDict):
 
 class GOTAndRelocations(TypedDict):
     got: "list[GOTEntry]"
-    text_relocs: "list[Rel16Reloc]"
+    text_relocs: "list[TextReloc]"
     gp_relocs: "list[int]"
     data_relocs: "list[Word32Reloc]"
 
@@ -33,9 +33,10 @@ class GOTEntry(TypedDict):
     value: int
     section: str | None
 
-class Rel16Reloc(TypedDict):
+# rel16 or lo16
+class TextReloc(TypedDict):
     reloc_offset: int
-    got_index: int
+    half: int
 
 class Word32Reloc(TypedDict):
     reloc_offset: int
@@ -79,7 +80,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
     assert isinstance(syms, SymbolTableSection)
 
     got: "list[GOTEntry]" = []
-    text_relocs: "list[Rel16Reloc]" = []
+    text_relocs: "list[TextReloc]" = []
     gp_relocs: "list[int]" = []
     data_relocs: "list[Word32Reloc]" = []
     rodata_relocs: "list[GPRel32Reloc]" = []
@@ -98,10 +99,13 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
         ".data": 2,
         ".bss": 3
     }
+    his_to_got: "dict[int, int]" = {}
 
     rel_text = elf.get_section_by_name(".rel.text")
     if rel_text != None:
         assert isinstance(rel_text, RelocationSection)
+
+        text_data = elf.get_section_by_name(".text").data()
 
         for reloc in iter_text_relocations_sorted(rel_text, syms):
             reloc_offset = reloc["r_offset"]
@@ -110,31 +114,55 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
             sym_idx = reloc["r_info_sym"]
             sym = syms.get_symbol(sym_idx)
 
+            sym_value = sym.entry["st_value"]
+            sym_shndx = sym.entry["st_shndx"]
+            sym_type = sym.entry["st_info"]["type"]
+            st_info_bind = sym.entry["st_info"]["bind"]
+
             if reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_GOT16"] or \
                     reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_CALL16"]:
                 # GOT reloc
-                sym_shndx = sym.entry["st_shndx"]
-                sym_type = sym.entry["st_info"]["type"]
-                st_info_bind = sym.entry["st_info"]["bind"]
-
                 got_idx: int | None = None
-                if sym_type == "STT_SECTION":
-                    # For section symbols, use the existing GOT entry of one of the four supported sections
-                    sym_sec_name = elf.get_section(sym_shndx).name
-                    got_idx = secs_to_got.get(sym_sec_name)
-                    if got_idx == None:
-                        raise Exception(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
-                else:
-                    assert st_info_bind != "STB_LOCAL"
 
-                    # For normal global symbols, create a GOT entry if one doesn't already exist
+                if st_info_bind == "STB_LOCAL":
+                    if sym_type == "STT_SECTION":
+                        # For section symbols, use the existing GOT entry of one of the four supported sections
+                        sym_sec_name = elf.get_section(sym_shndx).name
+                        got_idx = secs_to_got.get(sym_sec_name)
+                        if got_idx == None:
+                            raise Exception(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
+                    else:
+                        if sym_value >= 0x8000:
+                            # For local symbols that are too big, we need to generate a GOT entry for the hi bits (sorta)
+                            # Not sure if this logic is specific to Dinosaur Planet DLLs
+                            assert(elf.get_section(sym_shndx).name == ".text") # Not sure this logic works anywhere else at the moment
+
+                            remainder = sym_value % 0x1_0000
+                            if remainder < (0x1_0000 // 2):
+                                hi_got_value = sym_value - remainder
+                            else:
+                                hi_got_value = sym_value + (0x1_0000 - remainder)
+                            
+                            got_idx = his_to_got.get(hi_got_value)
+                            if got_idx == None:
+                                got_idx = len(got)
+                                his_to_got[hi_got_value] = got_idx
+                                
+                                got.append({ "value": hi_got_value, "section": None })
+                        else:
+                            # For local symbols, use the existing GOT entry of the section the symbol is relative to
+                            sym_sec_name = elf.get_section(sym_shndx).name
+                            got_idx = secs_to_got.get(sym_sec_name)
+                            if got_idx == None:
+                                raise Exception(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
+                else:
+                    assert st_info_bind == "STB_GLOBAL"
+
+                    # For global symbols, create a GOT entry if one doesn't already exist
                     got_idx = syms_to_got.get(sym_idx)
                     if got_idx == None:
                         got_idx = len(got)
                         syms_to_got[sym_idx] = got_idx
-
-                        sym_value = sym.entry["st_value"]
-                        sym_shndx = sym.entry["st_shndx"]
                         
                         section: str | None = None
                         if sym_shndx == "SHN_UNDEF":
@@ -147,12 +175,17 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
                 assert got_idx != None
 
                 # Record reloc location for later fixup
-                text_relocs.append({ "reloc_offset": reloc_offset, "got_index": got_idx })
+                text_relocs.append({ "reloc_offset": reloc_offset, "half": got_idx * 4 })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_HI16"] and sym.name == "_gp_disp":
                 # $gp prologue reloc
                 gp_relocs.append(reloc_offset)
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
-                pass
+                # Global syms won't have a lo16 pair (except _gp_disp but that's taken care of elsewhere)
+                # Section sym lo16 pairs will already have the correct value from the linker so we can leave them alone
+                if st_info_bind == "STB_LOCAL" and sym_type != "STT_SECTION":
+                    # AHL + S
+                    ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
+                    text_relocs.append({ "reloc_offset": reloc_offset, "half": (ahl + sym_value) & 0xFFFF })
             else:
                 raise Exception(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
     
@@ -228,6 +261,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
         "ri_gp_value": ri_gp_value
     }
 
+# TODO: move to dll_asmproc_fixup
 def iter_text_relocations_sorted(rel_text: RelocationSection, syms: SymbolTableSection):
     # asm_processor appends relocations contributed by GLOBAL_ASM blocks, which breaks the order
     # that GOT entries are detected and thus results in a non-matching GOT.
@@ -266,10 +300,10 @@ def replace_gp_prologue_with_dino_version(writer: BufferedWriter, text_pos: int,
         writer.seek(text_pos + reloc_offset, os.SEEK_SET)
         writer.write(dino_gp_prologue)
 
-def link_text_relocs(writer: BufferedWriter, text_pos: int, text_relocs: "list[Rel16Reloc]"):
+def link_text_relocs(writer: BufferedWriter, text_pos: int, text_relocs: "list[TextReloc]"):
     for reloc in text_relocs:
         writer.seek(text_pos + reloc["reloc_offset"] + 2, os.SEEK_SET)
-        writer.write(struct.pack(">H", reloc["got_index"] * 4))
+        writer.write(struct.pack(">H", reloc["half"]))
 
 def link_data_relocs(writer: BufferedWriter, data_pos: int, data_relocs: "list[Word32Reloc]"):
     for reloc in data_relocs:
