@@ -584,7 +584,8 @@ class DLLSplitter:
                                                                   data_rom_start=rodata_start,
                                                                   data_vram_start=rodata_start - dll.header.size,
                                                                   start=offset + jump_table_size,
-                                                                  end=offset + size)
+                                                                  end=offset + size,
+                                                                  is_leftovers=True)
                             s_file.write(".size {}, . - {}\n".format(sym_name, sym_name))
                         else:
                             # Emit other rodata
@@ -595,6 +596,7 @@ class DLLSplitter:
                                                               data_vram_start=rodata_start - dll.header.size,
                                                               start=offset,
                                                               end=offset + size,
+                                                              is_leftovers=False,
                                                               type_hint=func.local_rodata_ref_info[offset].load_type)
                             s_file.write(".size {}, . - {}\n".format(sym_name, sym_name))
                         s_file.write("\n")
@@ -625,6 +627,7 @@ class DLLSplitter:
                                      data_vram_start: int, 
                                      start: int, 
                                      end: int,
+                                     is_leftovers: bool,
                                      type_hint: DLLLocalRefLoadType | None=None):
         left = end - start
         rom_addr = data_rom_start + start
@@ -641,6 +644,7 @@ class DLLSplitter:
             offset += 4
             rom_addr += 4
             ram_addr += 4
+            is_leftovers = True
         elif type_hint == DLLLocalRefLoadType.LDC1 and left >= 8:
             value = struct.unpack_from(">d", data, offset)[0]
             value_bytes = data[offset:offset+8].hex().upper()
@@ -651,6 +655,19 @@ class DLLSplitter:
             offset += 8
             rom_addr += 8
             ram_addr += 8
+            is_leftovers = True
+        
+        if is_leftovers and end == len(data) and left <= 8:
+            # If the end of rodata is all zeroes, it's probably just padding from section alignment.
+            # Skip it since including these zeroes can cause matching issues.
+            all_zero = True
+            for i in range(left):
+                if data[offset + i] != 0x00:
+                    all_zero = False
+                    break
+            
+            if all_zero:
+                return
 
         while left > 0 and (left % 4) == 0:
             value = struct.unpack_from(">I", data, offset)[0]
