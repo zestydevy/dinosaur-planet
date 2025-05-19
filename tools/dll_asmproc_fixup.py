@@ -1,7 +1,10 @@
 # Fixes up object files produced by asm-processor to:
 # - Convert symbols to local bind that should have been local but aren't due to 
 #   limitations with how asm-processor works.
+# - Sort .rel.text relocations by function because asm-processor appended them
+#   to the object file produced by the .c file (which breaks GOT order).
 
+import bisect
 from io import FileIO
 from pathlib import Path
 import re
@@ -17,6 +20,34 @@ import shutil
 
 EXPORT_PATTERN = re.compile(r"\s*\.dword\s*(\S+)")
 VERBOSE = False
+
+def fix_rel_text_order(syms: list[Symbol], rel_text_relocations: list[Relocation]):
+    # asm-processor appends relocations contributed by GLOBAL_ASM blocks, which breaks the order
+    # that GOT entries are detected and thus results in a non-matching GOT.
+    #
+    # Group relocs by function (preserving reloc order within a function) and then sort the groups
+    funcs: "list[int]" = []
+    for sym in syms:
+        sym_value = sym.entry["st_value"]
+        sym_type = sym.entry["st_info"]["type"]
+
+        if sym_type != "STT_FUNC" or (sym_value & 0x80000000) != 0:
+            # Skip non-functions and imported functions
+            continue
+
+        bisect.insort(funcs, sym_value)
+    
+    relocs_by_func: "list[list[Relocation]]" = [[] for _ in range(len(funcs))]
+    for reloc in rel_text_relocations:
+        reloc_offset = reloc["r_offset"]
+        func = bisect.bisect(funcs, reloc_offset) - 1
+        relocs_by_func[func].append(reloc)
+    
+    i = 0
+    for group in relocs_by_func:
+        for reloc in group:
+            rel_text_relocations[i] = reloc
+            i += 1
 
 def fix_local_syms(syms: list[Symbol], rel_text_relocations: list[Relocation], exports: set[str]):
     # Find GOT16/LO16 relocations referencing defined symbols that we know should be local symbols.
@@ -62,13 +93,16 @@ def fix_up(obj: ELFFile, out_obj: FileIO, exports: set[str]):
         if isinstance(section, RelocationSection):
             rel_sections[section.name] = (section, [rel for rel in section.iter_relocations()])
 
-    # Fix local symbols
+    # Apply fixes
     rel_text_tuple = rel_sections.get(".rel.text")
     if rel_text_tuple != None:
         (_, rel_text_relocations) = rel_text_tuple
+        # Convert syms to local that should have already been local
         fix_local_syms(syms, rel_text_relocations, exports)
+        # Fix .rel.text relocation order due to asm-processor appending relocations
+        fix_rel_text_order(syms, rel_text_relocations)
     
-    # Re-sort symbols
+    # Re-sort symbols (local symbols must always be first and we modified symbol binds)
     new_syms = syms.copy()
     new_syms.sort(key=lambda s: 0 if s.entry["st_info"]["bind"] == "STB_LOCAL" else 1)
 

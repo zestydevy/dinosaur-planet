@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import argparse
-import bisect
 from io import BufferedWriter
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import Section, SymbolTableSection
-from elftools.elf.relocation import RelocationSection, Relocation
+from elftools.elf.relocation import RelocationSection
 from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import math
 import os
@@ -107,7 +106,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
 
         text_data = elf.get_section_by_name(".text").data()
 
-        for reloc in iter_text_relocations_sorted(rel_text, syms):
+        for reloc in rel_text.iter_relocations():
             reloc_offset = reloc["r_offset"]
             reloc_type = reloc["r_info_type"]
 
@@ -260,33 +259,6 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
         "rodata_relocs": rodata_relocs,
         "ri_gp_value": ri_gp_value
     }
-
-# TODO: move to dll_asmproc_fixup
-def iter_text_relocations_sorted(rel_text: RelocationSection, syms: SymbolTableSection):
-    # asm_processor appends relocations contributed by GLOBAL_ASM blocks, which breaks the order
-    # that GOT entries are detected and thus results in a non-matching GOT.
-    #
-    # Group relocs by function (preserving reloc order within a function) and then sort the groups
-    funcs: "list[int]" = []
-    for sym in syms.iter_symbols():
-        sym_value = sym.entry["st_value"]
-        sym_type = sym.entry["st_info"]["type"]
-
-        if sym_type != "STT_FUNC" or (sym_value & 0x80000000) != 0:
-            # Skip non-functions and imported functions
-            continue
-
-        bisect.insort(funcs, sym_value)
-    
-    relocs_by_func: "list[list[Relocation]]" = [[] for _ in range(len(funcs))]
-    for reloc in rel_text.iter_relocations():
-        reloc_offset = reloc["r_offset"]
-        func = bisect.bisect(funcs, reloc_offset) - 1
-        relocs_by_func[func].append(reloc)
-    
-    for group in relocs_by_func:
-        for reloc in group:
-            yield reloc
 
 def replace_gp_prologue_with_dino_version(writer: BufferedWriter, text_pos: int, gp_relocs: "list[int]"):
     # Change addiu to ori and nop out 'addu $gp, $gp, $t9'
