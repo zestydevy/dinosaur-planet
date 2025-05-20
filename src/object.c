@@ -473,7 +473,7 @@ s32 obj_get_seq(s32 objId, s32 idx) {
         if (objDef != NULL) {
             seq = -1;
 
-            if (objDef->pSeq != NULL && idx >= 0 && idx < objDef->unk7A) {
+            if (objDef->pSeq != NULL && idx >= 0 && idx < objDef->numSequences) {
                 seq = objDef->pSeq[idx];
             }
 
@@ -672,14 +672,14 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
         }
     }
 
-    if (def->unk72 != 0) {
+    if (def->numSequenceBones != 0) {
         obj->ptr0x6c = (u16*)align_4(addr);
-        addr = (u32)obj->ptr0x6c + (def->unk72 * 0x12);
+        addr = (u32)obj->ptr0x6c + (def->numSequenceBones * 0x12);
     }
 
-    if (def->numTextures != 0) {
+    if (def->numAnimatedFrames != 0) {
         obj->ptr0x70 = (void*)align_4(addr);
-        addr = (u32)obj->ptr0x70 + (def->numTextures * 0x10);
+        addr = (u32)obj->ptr0x70 + (def->numAnimatedFrames * 0x10);
     }
 
     if (def->unk9b != 0) {
@@ -820,14 +820,14 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
         }
     }
 
-    if (def->unk72 != 0) {
+    if (def->numSequenceBones != 0) {
         size = align_4(size);
-        size += def->unk72 * 0x12;
+        size += def->numSequenceBones * 0x12;
     }
 
-    if (def->numTextures != 0) {
+    if (def->numAnimatedFrames != 0) {
         size = align_4(size);
-        size += def->numTextures * 0x10;
+        size += def->numAnimatedFrames * 0x10;
     }
 
     if (def->unk9b != 0) {
@@ -1236,7 +1236,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
 
         def->pModelList = (u32*)((u32)def + (u32)def->pModelList);
         def->pTextures = (UNK_PTR*)((u32)def + (u32)def->pTextures);
-        def->unk10 = (UNK_PTR*)((u32)def + (u32)def->unk10);
+        def->pSequenceBones = (UNK_PTR*)((u32)def + (u32)def->pSequenceBones);
 
         if (def->unk18 != 0) {
             def->unk18 = (u32*)((u32)def + (u32)def->unk18);

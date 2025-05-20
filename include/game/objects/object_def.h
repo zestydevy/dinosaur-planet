@@ -123,14 +123,14 @@ typedef struct {
  * Size: 0xAC. In OBJECTS.BIN, this is followed by variable size data related to the definition.
  */
 typedef struct {
-/*00*/ float unk00; //copied to shadow field 0 // TODO: confirm
+/*00*/ float unk00; //copied to shadow field 0 // TODO: confirm (shadow texture dimensions?)
 /*04*/ float scale;
 /*08*/ u32 *pModelList;         // list of model IDs (offset in file, pointer after load)
 /*0c*/ UNK_PTR *pTextures;      // list of texture IDs? (offset in file, pointer after load)
-/*10*/ UNK_PTR *unk10;          // ? (offset in file, pointer after load)
+/*10*/ u8 *pSequenceBones; // list of sequenceBoneID + jointIDs (one for each modelIndex) that ANIMCURVES use to apply additive head/jaw animation
 /*14*/ UNK_PTR *unk14;
 /*18*/ u32 *unk18;              // [optional] pickup obj related? (offset in file, pointer after load)
-/*1c*/ s16 *pSeq;               // [optional] seq IDs? (offset in file, pointer after load)
+/*1c*/ s16 *pSeq;               // [optional] sequenceIDs (offset in file, pointer after load)
 /*20*/ ObjDefEvent *pEvent;     // [optional] table of OBJEVENT offsets (offset in file, pointer after load)
 /*24*/ ObjDefHit *pHits;       // [optional] table of OBJHITS offsets (offset in file, pointer after load)
 /*28*/ ObjDefWeaponData *pWeaponData;   // [optional] table of WEAPONDATA offsets (offset in file, pointer after load)
@@ -139,7 +139,7 @@ typedef struct {
 /*34*/ UNK_PTR *pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
 /*38*/ UNK_PTR *nextIntersectPoint; // TODO: confirm
 /*3c*/ UNK_PTR *nextIntersectLine; // TODO: confirm
-/*40*/ ObjDefStruct40 *unk40;
+/*40*/ ObjDefStruct40 *unk40; //z-targetting data
 /*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm
 /*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
 /*4a*/ s16 shadowTexture; // TODO: confirm
@@ -161,14 +161,14 @@ typedef struct {
 /*5f*/ char name[16]; // not always the full name, cutoff after 15 characters (16 including null terminator)
 /*6f*/ u8 unk6f;
 /*70*/ u8 numAttachPoints;
-/*71*/ u8 numTextures; // guess
-/*72*/ u8 unk72; // count of something
+/*71*/ u8 numAnimatedFrames;
+/*72*/ u8 numSequenceBones;
 /*73*/ u8 stateVar73; //1=translucent; 3=invincible - not flags // TODO: confirm
 /*74*/ u8 unk74;
 /*75*/ u8 unk75;
 /*76*/ s16 modLineCount;
 /*78*/ s16 modLineNo;
-/*7a*/ s16 unk7A;
+/*7a*/ s16 numSequences;
 /*7c*/ s16 helpTexts[4]; //one per model (GameTextId) // TODO: confirm
 /*84*/ s16 unk84;
 /*86*/ u8 unk86;
@@ -180,9 +180,9 @@ typedef struct {
 /*8f*/ u8 unk8F; //related to hitbox // TODO: confirm
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62) // TODO: confirm
 /*91*/ u8 _unk91[2];
-/*93*/ s8 unk93;
+/*93*/ s8 unk93; //render settings (can switch off vertex shading)
 /*94*/ u8 _unk94[7];
-/*9b*/ u8 unk9b; // length of unk40
+/*9b*/ u8 unk9b; // length of unk40 (z-targetting data)
 /*9c*/ u8 unk9c;
 /*9d*/ u8 unk9d;
 /*9e*/ u8 _unk9e[2];

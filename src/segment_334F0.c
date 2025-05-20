@@ -42,7 +42,29 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_80034678.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_80034804.s")
+/** object_find_seq_bone_data_by_bone_id? */
+u16* func_80034804(Object* obj, s32 sequenceBoneID) {
+    ObjDef* romdef;
+    u8* seqBones;
+    s32 index;
+    s32 listPosition;
+    u32 jointID;
+    u16* sequenceBoneData;
+
+    romdef = obj->def;
+    sequenceBoneData = NULL;
+    if (romdef) {
+        listPosition = 0;
+        for (index = 0; index < romdef->numSequenceBones; index++){
+            jointID = romdef->pSequenceBones[(listPosition + 1) + obj->modelInstIdx];
+            if (jointID != 0xFF && sequenceBoneID == romdef->pSequenceBones[listPosition])
+                sequenceBoneData = obj->ptr0x6c[index];
+
+            listPosition += 1 + romdef->numModels;
+        }
+    }
+    return sequenceBoneData;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_800348A0.s")
 
