@@ -160,7 +160,7 @@ DLL_INTERFACE_BEGIN(29_gplay)
     /*12*/ void (*func_8D8)();
     /*13*/ u32 (*func_79C)();
     /*14*/ GplayStruct4 *(*func_930)();
-    /*15*/ u8 (*func_143C)(s32 param1);
+    /*15*/ u8 (*func_143C)(s32 param1); //arg0 is mapID?
     /*16*/ void (*func_139C)(s32 param1, s32 param2);
     /*17*/ void (*func_1378)(s32 param1, s32 param2);
     /*18*/ u8 (*func_14F0)(s32 param1, s32 param2);
