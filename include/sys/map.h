@@ -37,13 +37,13 @@ typedef struct {
 /*0f*/    s8 Zmax; //Divided by 4
 /*10*/    s8 unk_10;
 /*11*/    s8 unk_11;
-/*12*/    s8 materialID;
+/*12*/    u8 materialID;
 /*13*/    s8 envColourMode;     //00 = use ambient envFX colour
                                 //FE = ignore ambient envFX colour
                                 //FF = use flickering vertices' colour
                                 //    (used very rarely, in blocks 327 & 0843)
-/*14*/    s8 animatorID;        //Used to mark facebatches that can be removed/animated
-/*15*/    s8 blendMaterialID;   //Used for multitextured water
+/*14*/    u8 animatorID;        //Used to mark facebatches that can be removed/animated
+/*15*/    u8 blendMaterialID;   //Used for multitextured water
 /*16*/    s8 runtimeValue;      //0 in ROM, but -1 gets written here at runtime
 /*17*/    s8 unk_cull;          //The function responsible for face culling reads this
 } FaceBatch; //NOTE: this is describing the same thing as the "BlockShape" struct (TODO: consolidate!)
@@ -121,7 +121,7 @@ typedef struct {
 /*10*/  s8 *end_ptr;
 /*14*/  s8 *grid_A1_ptr;
 /*18*/  s8 unk18;
-/*19*/  s8 unk19;
+/*19*/  s8 unk19; //matrixIdx maybe?
 /*1a*/  s8 unk1a;
 /*1b*/  s8 unk1b;
 /*1c*/  s16 objectInstanceCount; //malloc-related

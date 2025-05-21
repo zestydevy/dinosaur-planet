@@ -1,3 +1,5 @@
+#include "prevent_bss_reordering.h"
+
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "PR/os.h"

@@ -166,7 +166,53 @@ Object *obj_get_nearest_type_to_excluding_self(s32 type, Object *object, float *
     return result;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/objtype/obj_get_nearest_type.s")
+#else
+Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
+    Object *result;
+    s32 i;
+    s32 iend;
+    Vec3f position;
+    f32 minDistSquared;
+    f32 distSquared;
+
+    result = NULL;
+
+    minDistSquared = (*distance) * (*distance);
+    
+    if (type < 0 || type >= OBJECT_MAX_TYPES) {
+        return NULL;
+    }
+    
+    i = gObjectTypeIndices[type];
+    iend = gObjectTypeIndices[type + 1];
+
+    while (i < iend)
+    {
+        if (gObjectTypeList[i] != NULL){
+            f32 dx = location->x - gObjectTypeList[i]->positionMirror.x;
+            f32 dy = location->y - gObjectTypeList[i]->positionMirror.y;
+            f32 dz = location->z - gObjectTypeList[i]->positionMirror.z;
+            
+            distSquared = dx*dx + dy*dy + dz*dz;
+            
+            if (distSquared < minDistSquared) {
+                minDistSquared = distSquared;
+                result = gObjectTypeList[i];
+            }
+        }
+        i++;
+    }
+
+    if (result != NULL) {
+        *distance = sqrtf(minDistSquared);
+    }
+    
+    return result;
+}
+#endif
+
 
 s32 obj_is_object_type(Object *obj, s32 type) {
     s32 i;
