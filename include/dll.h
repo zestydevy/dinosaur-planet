@@ -7,6 +7,7 @@
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/26_curves.h"
+#include "dlls/engine/27_head_turn.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
@@ -59,6 +60,7 @@ extern DLLInst_7_newday *gDLL_7_newday;
 extern DLLInst_20_screens *gDLL_20_screens;
 extern DLLInst_21_gametext *gDLL_21_gametext;
 extern DLLInst_26_curves *gDLL_CURVES;
+extern DLLInst_27_head_turn *gDLL_27_head_turn;
 extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
@@ -88,7 +90,6 @@ extern DLLInst_Unknown
     *gDLL_waterfx,
     *gDLL_25,
     *gDLL_75,
-    *gDLL_27,
     *gDLL_56,
     *gDLL_32,
     *gDLL_33,

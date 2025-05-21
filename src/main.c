@@ -83,7 +83,7 @@ DLLInst_Unknown *gDLL_25 = NULL;
 DLLInst_26_curves *gDLL_CURVES = NULL;
 DLLInst_74_picmenu *gDLL_picmenu = NULL;
 DLLInst_Unknown *gDLL_75 = NULL;
-DLLInst_Unknown *gDLL_27 = NULL;
+DLLInst_27_head_turn *gDLL_27_head_turn = NULL;
 DLLInst_29_gplay *gDLL_29_gplay = NULL;
 DLLInst_Unknown *gDLL_56 = NULL;
 DLLInst_30_task *gDLL_30_task = NULL;
@@ -241,7 +241,7 @@ void game_init(void)
         gDLL_waterfx   = dll_load_deferred(DLL_WATERFX, 7);
         gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 38);
         gDLL_picmenu   = dll_load_deferred(DLL_PICMENU, 7);
-        gDLL_27        = dll_load_deferred(27, 9); //0x15 in SFA
+        gDLL_27_head_turn = dll_load_deferred(27, 9); //0x15 in SFA
         gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 36);
         gDLL_56        = dll_load_deferred(56, 10); //not present in SFA
         gDLL_30_task   = dll_load_deferred(DLL_TASK, 6);
