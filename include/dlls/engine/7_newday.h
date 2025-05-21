@@ -14,7 +14,7 @@ DLL_INTERFACE_BEGIN(7_newday)
     /*5*/ UnknownDLLFunc func5;
     /*6*/ UnknownDLLFunc func6;
     /*7*/ UnknownDLLFunc func7;
-    /*8*/ UnknownDLLFunc func8;
+    /*8*/ s32 (*func8)(s32); //check if night-time?
     /*9*/ UnknownDLLFunc func9;
     /*10*/ UnknownDLLFunc func10;
     /*11*/ void (*func11)(f32, s16*, s16*, s16*);
