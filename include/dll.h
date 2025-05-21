@@ -1,6 +1,7 @@
 #ifndef _DLL_H
 #define _DLL_H
 
+#include "dlls/engine/1_ui.h"
 #include "dlls/engine/2_camera.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/7_newday.h"
@@ -54,6 +55,7 @@ enum DLL_ID {
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.
 
+extern DLLInst_1_UI *gDLL_UI;
 extern DLLInst_2_Camera *gDLL_Camera;
 extern DLLInst_6_AMSFX *gDLL_AMSFX;
 extern DLLInst_7_newday *gDLL_7_newday;
@@ -72,7 +74,6 @@ extern DLLInst_Unknown
     *gDLL_newclouds,
     *gDLL_newstars,
     *gDLL_minic,
-    *gDLL_UI,
     *gDLL_Race,
     *gDLL_AMSEQ,
     *gDLL_AMSEQ2,
