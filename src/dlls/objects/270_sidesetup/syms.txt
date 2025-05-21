@@ -1,0 +1,10 @@
+# functions
+dll_270_ctor = 0x0;
+dll_270_dtor = 0xC;
+dll_270_func_18 = 0x18;
+dll_270_func_3C = 0x3C;
+dll_270_func_48 = 0x48;
+dll_270_func_54 = 0x54;
+dll_270_func_6C = 0x6C;
+dll_270_func_7C = 0x7C;
+dll_270_func_8C = 0x8C;
