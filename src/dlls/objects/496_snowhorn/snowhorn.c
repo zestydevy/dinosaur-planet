@@ -260,7 +260,7 @@ extern DLLInst_27_head_turn *gDLL_27; //"lookAt" DLL? (seems to have functions f
 
 void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
     SnowHornState* state;
-    void* temp_a0;
+    u8* temp_a0;
     s32 sp34;
 
     state = snowhorn->state;
@@ -297,9 +297,9 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
         //to do with setting up look-at behaviour?
         if (state->unk424 & 1) {
             temp_a0 = (u8*)state + 0x170;
-            gDLL_27->exports->head_turn_func_18((s32)temp_a0, 0x06000000, 0, 1);
-            gDLL_27->exports->head_turn_func_c0((s32)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
-            gDLL_27->exports->head_turn_func_fb8((s32)snowhorn, (s32)temp_a0);
+            gDLL_27->exports->head_turn_func_18((Vec3f*)temp_a0, 0x06000000, 0, 1);
+            gDLL_27->exports->head_turn_func_c0((Vec3f*)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
+            gDLL_27->exports->head_turn_func_fb8(snowhorn, (Vec3f*)temp_a0);
         }
         snowhorn->ptr0x64->flags |= 0xA10;
     }
