@@ -237,7 +237,7 @@ void update_obj_models() {
                 if (modelInst != NULL) {
                     modelInst->unk_0x34 &= ~0x8;
 
-                    if (modelInst->model->unk_0x1c != NULL) {
+                    if (modelInst->model->blendshapes != NULL) {
                         unk1 = object->unk0xc0 != NULL ? (ObjectC0State*)object->unk0xc0->state : NULL;
 
                         if (object->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
@@ -858,7 +858,7 @@ f32 func_80022150(Object *obj) {
 
     for (i = 0; i < obj->def->numModels; i++) {
         if (obj->modelInsts[i] != NULL) {
-            f32 var = obj->modelInsts[i]->model->unk_0x60;
+            f32 var = obj->modelInsts[i]->model->maxAnimatedVertDistance;
 
             if (var > largestSomething) {
                 largestSomething = var;
@@ -1560,7 +1560,7 @@ void func_80023464(s32 character) {
 
         gDLL_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
         gDLL_AMSFX->exports->func1(newPlayer);
-        gDLL_AMSEQ->exports->func[3].withOneArg(newPlayer);
+        gDLL_AMSEQ->exports->func[3].withOneArg((s32)newPlayer);
     }
 }
 
@@ -1609,10 +1609,10 @@ void func_80023628() {
     D_80091668.unk10 = fcos16_precise(gplayStruct->unk0xC << 8) * 60.0f + z;
 
     gDLL_Camera->exports->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
-    gDLL_Camera->exports->func6.withSevenArgs(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
+    gDLL_Camera->exports->func6.withSevenArgs(0x54, 0, 0, 0x20, (s32)&D_80091668, 0, 0xFF);
     gDLL_Camera->exports->func1.withOneArg(1);
     gDLL_AMSFX->exports->func1(player);
-    gDLL_AMSEQ->exports->func[3].withOneArg(player);
+    gDLL_AMSEQ->exports->func[3].withOneArg((s32)player);
 
     D_800B1988 = 0;
     func_8004A67C();
