@@ -3,6 +3,7 @@
 
 #define ALIGN8(a) (((u32) (a) & ~0x7) + 0x8)
 #define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
+#define PAD16(a) while (a & 7){a++;}
 
 typedef struct
 {
@@ -10,16 +11,14 @@ typedef struct
 /*0004*/    Model *model;
 } ModelSlot;
 
-typedef struct
-{
-    // TODO
-/*0000*/    u32 unk_0x0;
-/*0004*/    u32 unk_0x4;
-/*0008*/    u32 unk_0x8;
-/*000C*/    u32 unk_0xc;
-/*0010*/    u32 unk_0x10;
-/*0014*/    u32 unk_0x14;
-/*0018*/    u32 unk_0x18;
+typedef struct{
+/*0000*/    s32 vertexMalloc;
+/*0004*/    s32 hitSphereMalloc;
+/*0008*/    s32 unk8;
+/*000C*/    s32 unkC;
+/*0010*/    s32 blendShapeMalloc;
+/*0014*/    s32 unk14;
+/*0018*/    s32 jointsMalloc;
 } ModelStats;
 
 typedef struct
@@ -31,13 +30,61 @@ typedef struct
 /*0008*/    u32 uncompressedSize; // CAUTION: little-endian
 } ModelHeader;
 
+typedef struct{
+    s32 referenceCount; //unsure, maybe animID? This could be like ModelSlot!
+    Animation* animation;
+} AnimData;
+
+
 extern s16 *SHORT_ARRAY_800b17d0;
 
 void func_8001AF04(ModelInstance *modelInst, s8 param2, s8 param3, f32 param4, s32 param5, u8 param6);
+void anim_destroy(Animation*);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/init_models.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80017D2C.s")
+extern u32* D_800B17BC;
+extern AnimData** D_800B17C0;
+extern void* D_800B17C4;
+extern s32 D_800B17C8;
+extern void* gAuxBuffer;
+extern s32* gFile_MODELS_TAB;
+extern void* gFreeModelSlots;
+extern ModelSlot* gLoadedModels;
+extern s32 gNumFreeModelSlots;
+extern s32 gNumLoadedModels;
+extern s32 gNumModelsTabEntries;
+
+void init_models() {
+    u32* temp_v0;    
+
+    gLoadedModels = malloc(0x230, 9, NULL);
+    gFreeModelSlots = malloc(0x190, 9, NULL);
+    gNumLoadedModels = 0;
+    gNumFreeModelSlots = 0;
+
+    queue_alloc_load_file((void*)&gFile_MODELS_TAB, 0x2E);
+    
+    gNumModelsTabEntries = 0;
+    while (gFile_MODELS_TAB[gNumModelsTabEntries] != -1){
+        gNumModelsTabEntries++;
+    }
+    gNumModelsTabEntries--;
+    
+    temp_v0 = malloc(0x830, 0xA, NULL);
+    gAuxBuffer = temp_v0;
+    D_800B17BC = temp_v0 + 0x200;
+    D_800B17C4 = temp_v0 + 0x204;
+    D_800B17C0 = malloc(0x400, 0xA, NULL);
+    D_800B17C8 = 0;
+}
+
+Model* func_80017D2C(s32 arg0, s32 arg1) {
+    Model* model;
+
+    queue_load_model((void*)&model, arg0, arg1);
+    return model;
+}
+
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_create_instance.s")
@@ -286,13 +333,66 @@ bail:
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/patch_model_display_list_for_textures.s")
 #else
-void _patch_model_display_list_for_textures(Model *model)
-{
+// void patch_model_display_list_for_textures(Model* model) {
+//     u8 commandID;
+//     s32 var_a1;
+//     s32 var_a1_2;
+//     s32 materialIndex;
+//     s32 materialIndex_2;
+//     u32 *var_t0;
+//     s32 index;
+//     u32* var_t0_2;
+//     ModelTexture* material;
+//     void* temp_a3_2;
+//     Gfx* gfx;
+
+//     gfx = model->displayList;
+//     index = 0;
+//     while (index < model->displayListLength){        
+//         commandID = gfx->words.w0 >> 24;
+        
+//         if (commandID != G_NOOP) {
+//             if (commandID == G_DL) { //Texture load commands!
+//                 materialIndex = gfx->words.w1;
+//                 var_a1 = 0;
+//                 if (gfx->words.w1 & 0x80000000) {
+//                     materialIndex = gfx->words.w1 & 0x7FFFFFFF;
+//                     var_a1 = 1;
+//                 }
+//                 material = &model->materials[materialIndex];
+//                 var_t0 = material->unk8;
+//                 if (var_a1 != 0) {
+//                     var_t0 += material->unk12 << 1;
+//                 }
+//                 gfx->words.w1 = (s32)(0x80000000 + (u32)var_t0);
+//                 gfx->words.w0 = 0xDE000000;
+//             }
+//         } else {
+//             materialIndex = gfx->words.w1;
+//             var_a1 = 0;
+//             if (materialIndex & 0x80000000) {
+//                 materialIndex &= 0x7FFFFFFF;
+//                 var_a1 = 1;
+//             }
+//             material = &model->materials[materialIndex];
+//             var_t0 = material->unk8;
+//             if (var_a1 != 0) {
+//                 var_t0 += material->unk12 << 1;
+//             }
+//             gfx->words.w1 = (s32)(0x80000020 + (u32)var_t0);
+//             gfx->words.w0 = *var_t0;
+//         }
+
+//         gfx++;
+//         index++;        
+//     }
+// }
+
+void patch_model_display_list_for_textures(Model* model) {
     Gfx *gfx;
     s32 i;
 
-    for (gfx = model->displayList, i = 0; i < model->displayListLength; i++, gfx++)
-    {
+    for (gfx = model->displayList, i = 0; i < model->displayListLength; i++, gfx++){
         u8 cmd = gfx->words.w0 >> 24;
 
         if (cmd != G_NOOP)
@@ -308,16 +408,14 @@ void _patch_model_display_list_for_textures(Model *model)
                     isRelative = 1;
                 }
 
-                texGdl = model->textures[idx].texture->gdl;
+                texGdl = model->materials[idx].texture->gdl;
                 if (isRelative) {
-                    texGdl += model->textures[idx].texture->gdlIdx;
+                    texGdl += model->materials[idx].texture->gdlIdx;
                 }
 
                 gSPDisplayList(gfx, OS_K0_TO_PHYSICAL(texGdl));
             }
-        }
-        else
-        {
+        } else {
             u32 idx = gfx->words.w1;
             Texture *tex;
             Gfx *texGdl;
@@ -328,7 +426,7 @@ void _patch_model_display_list_for_textures(Model *model)
                 isRelative = 1;
             }
 
-            tex = model->textures[idx].texture;
+            tex = model->materials[idx].texture;
             texGdl = tex->gdl;
             if (isRelative) {
                 texGdl += tex->gdlIdx;
@@ -341,68 +439,63 @@ void _patch_model_display_list_for_textures(Model *model)
 }
 #endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/model_get_stats.s")
-#else
-// Write information about model in stats argument, then return total size of ModelInstance
-u32 _model_get_stats(Model *model, u32 flags, ModelStats *stats, u32 param_4)
-{
-    u32 totalSize;
-
-    stats->unk_0x18 = (model->unk_0x66 != 0) ? (model->unk_0x6f * 0x80) : 0x80;
-
-    stats->unk_0x0 = model->unk_0x62 * 0x20;
-    stats->unk_0x4 = model->unk_0x6e * 0x20;
-    stats->unk_0xc = 0;
-
-    if (model->unk_0x71 & 0x40)
-    {
-        stats->unk_0x14 = model->unk_0x68;
-        while (stats->unk_0x14 & 0x7) {
-            stats->unk_0x14++;
-        }
-
-        stats->unk_0xc = stats->unk_0x14 * 4;
-    }
-
-    stats->unk_0x10 = 0x68;
-
-    if (flags & 0x80)
-    {
-        stats->unk_0x10 = 0xd0;
-        stats->unk_0xc *= 2;
-    }
-
-    if ((flags & 0x1) || model->unk_0x1c != 0 || param_4 != 0) {
-        totalSize = stats->unk_0xc + stats->unk_0x0 + stats->unk_0x10 + stats->unk_0x18 + 0x30 + stats->unk_0x4;
-        stats->unk_0x10 += 0x30;
+/** 
+  * Calculates various model malloc categories and returns the total size allocated to the model 
+  */
+u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting) {
+    s32 joints_calc;
+    s32 total;
+    
+    if (model->animCount) {
+        stats->jointsMalloc = model->jointCount * 0x80;
     } else {
-        totalSize = stats->unk_0x10 + stats->unk_0xc + stats->unk_0x18 + stats->unk_0x4;
+        stats->jointsMalloc = 0x80;
     }
+    
+    stats->vertexMalloc = (model->vertexCount << 2) << 3;
+    stats->hitSphereMalloc = (model->hitSphereCount << 2) << 3;
+    stats->unkC = 0;
 
-    totalSize += 0x40;
-
-    if (model->unk_0x20 != 0 && model->unk_0x6f != 0)
-    {
-        if (model->unk_0x50 != 0) {
-            totalSize += model->unk_0x6f * 0x1c + model->unk_0x6f * 2 + 0x1c;
+    if (model->unk_0x71 & 0x40){
+        stats->unk14 = model->unk_0x68;
+        while (stats->unk14 & 7) {
+            stats->unk14++;
         }
-
-        totalSize += 0x2f;
-    }
-    else
-    {
-        totalSize += 0x6f;
+        stats->unkC = stats->unk14 * 4;
     }
 
-    return ALIGN16(totalSize);
+    stats->blendShapeMalloc = 0x68;
+    if (settingsBitfield & 0x80) {
+        stats->blendShapeMalloc *= 2;
+        stats->unkC *= 2;
+    }
+
+    if (settingsBitfield & 1 || model->blendshapes || blendshapeSetting) {
+        stats->blendShapeMalloc += 0x30;
+        total = stats->unkC + stats->vertexMalloc + stats->blendShapeMalloc + 0x38;
+        total += (stats->jointsMalloc + stats->hitSphereMalloc) + 8;
+    } else {
+        total = stats->blendShapeMalloc + 0x38;
+        total += stats->unkC + stats->jointsMalloc + stats->hitSphereMalloc + 8;
+    }    
+    
+    if (model->joints != 0 && model->jointCount && model->collisionA) {
+        joints_calc = model->jointCount;
+        joints_calc *= 7;
+        joints_calc <<= 2;
+        total += joints_calc + (model->jointCount << 1) + 0x1c;
+    }
+    total += 0x2F;
+
+    //NOTE: this 64-bit cast may be a fakematch!
+    return (u64)ALIGN16(total);
 }
-#endif
 
+//Draw mode when opaque?
 void load_model_display_list(Model *model, ModelInstance *modelInst)
 {
-    ModelDLInfo *dlInfo = model->dlInfos;
-    ModelDLInfo *dlInfoEnd = dlInfo + model->dlInfoCount;
+    ModelDLInfo *dlInfo = model->drawModes;
+    ModelDLInfo *dlInfoEnd = dlInfo + model->drawModesCount;
 
     for (; dlInfo < dlInfoEnd; dlInfo++)
     {
@@ -410,10 +503,11 @@ void load_model_display_list(Model *model, ModelInstance *modelInst)
     }
 }
 
+//Draw mode when at semi-transparent opacity?
 void load_model_display_list2(Model *model, ModelInstance *modelInst)
 {
-    ModelDLInfo *dlInfo = model->dlInfos;
-    ModelDLInfo *dlInfoEnd = dlInfo + model->dlInfoCount;
+    ModelDLInfo *dlInfo = model->drawModes;
+    ModelDLInfo *dlInfoEnd = dlInfo + model->drawModesCount;
 
     for (; dlInfo < dlInfoEnd; dlInfo++)
     {
@@ -467,74 +561,107 @@ void _destroy_model_instance(ModelInstance *modelInst)
 }
 #endif
 
-// very close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/model_destroy.s")
-#else
-void anim_destroy(Animation *anim);
-void _model_destroy(Model *model)
-{
+void model_destroy(Model* model) {
     s32 i;
 
     for (i = 0; i < model->textureCount; i++)
     {
-        if (model->textures[i].texture != NULL) {
-            texture_destroy(model->textures[i].texture);
+        if ((&model->materials[i])->texture) {
+            texture_destroy((&model->materials[i])->texture);
         }
     }
 
-    if (model->anims != NULL)
-    {
-        for (i = 0; i < model->animCount; i++) {
-            anim_destroy(model->anims[i]);
+    if (model->anims != 0) {
+        i = 0;
+        if (model->animCount != 0) {
+            do {
+                anim_destroy(model->anims[i]);
+                i++;
+            } while (i < model->animCount);
         }
     }
 
     free(model);
 }
-#endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_anim_remap_table.s")
-#else
-extern u32 *D_800B17BC;
 s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
-    s32 *temp_v0;
-    s32 var_v1_2;
-    s32 var_v1;
+    s32 *offset;
     s32 amap_size;
-    var_v1 = animCount;
+    s32 total_size;
+    s32 index;
+    
+    total_size = animCount;
     if (arg1 != 0){
-        var_v1 = (var_v1 << 1) + 8;
-        
-        while (var_v1 & 7){
-            var_v1 += 1;
-        }
+        total_size = (total_size << 1) + 8;
+        PAD16(total_size);
     } else {
-        var_v1 = var_v1 << 2;
-        while (var_v1 & 7){
-            var_v1 += 1;
-        }
-
+        total_size = total_size << 2;
+        PAD16(total_size);
+       
+        index = modelID & 3;
         read_file_region(AMAP_TAB, D_800B17BC, (modelID & ~3) << 2, 0x20);
-        if (!D_800B17BC){}; //Maybe there was a print around here?
-        temp_v0 = &D_800B17BC[(modelID & 3) & 0xFF];
-        amap_size = temp_v0[1] - temp_v0[0];
-        var_v1 += amap_size;
+
+        amap_size = D_800B17BC[index+1] - D_800B17BC[index];
+        
+        total_size += amap_size;
     }
-    return var_v1;
+    return total_size;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/modanim_load.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/model_setup_anim_playback.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80019118.s")
+/** 
+    a0 amap-related?
+    a1 animID?
+    a2 ?
+    a3 ?
+*/
+Animation* func_80019118(s16 arg0, s16 animID, s32 arg2, s32 arg3) {
+    Animation* anim;
+
+    anim = NULL;
+    queue_load_anim((void*)&anim, arg0, animID, arg2, arg3);
+    return anim;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
 
+
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_destroy.s")
+#else
+
+extern AnimData** D_800B17C0;
+extern s32 D_800B17C8;
+
+void anim_destroy(Animation* anim) {
+    AnimData* data;
+    s32 matchIndex;
+    s32 index;
+
+    if (anim) {
+        anim->referenceCount--;
+        if (anim->referenceCount <= 0) {
+            
+            for (matchIndex = -1, index = 0; index < D_800B17C8; index++){
+                if (anim == D_800B17C0[index]->animation) {
+                    matchIndex = index;
+                }
+            }           
+            
+            if (matchIndex != -1) {
+                data = D_800B17C0[matchIndex];
+                data->referenceCount = -1;
+                data->animation = (Animation*)matchIndex;
+                free(anim);
+            }
+            
+        }
+    }
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001943C.s")
@@ -1038,7 +1165,7 @@ void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AC44.s")
 
 void func_8001AE74(ModelInstance *modelInst) {
-    if (modelInst->model->unk_0x1c != NULL) {
+    if (modelInst->model->blendshapes != NULL) {
         func_8001AF04(modelInst, -1, -1, 0, 0, 7);
         func_8001AF04(modelInst, -1, -1, 0, 1, 7);
         func_8001AF04(modelInst, -1, -1, 0, 2, 7);
@@ -1050,7 +1177,7 @@ void func_8001AE74(ModelInstance *modelInst) {
 void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3) {
     ModelInstance_0x30 *var1;
 
-    if (param2 < 3 && modelInst->model->unk_0x1c != NULL) {
+    if (param2 < 3 && modelInst->model->blendshapes != NULL) {
         var1 = &modelInst->unk_0x30[param2];
         var1->unk0x0 = param3;
         var1->unk0xE |= 4;
@@ -1061,7 +1188,7 @@ s32 func_8001B010(ModelInstance *modelInst) {
     int i;
     ModelInstance_0x30 *var1;
     
-    if (modelInst->model->unk_0x1c == NULL) {
+    if (modelInst->model->blendshapes == NULL) {
         return 0;
     }
 
@@ -1080,7 +1207,7 @@ void func_8001B084(ModelInstance *modelInst, f32 param2) {
     int i;
     ModelInstance_0x30 *var1;
     
-    if (modelInst->model->unk_0x1c == NULL) {
+    if (modelInst->model->blendshapes == NULL) {
         return;
     }
 
@@ -1097,6 +1224,28 @@ void func_8001B084(ModelInstance *modelInst, f32 param2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B100.s")
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
+#else
+extern s32 gNumLoadedModels;
+
+void func_8001B49C(void) {
+    ModelSlot* modelSlot;
+    s32 index;
+    s32 modelID;
+
+    for (index = 0; index < gNumLoadedModels; index++){
+        modelSlot = &gLoadedModels[index];
+        modelID = modelSlot->id;
+
+        if (modelID < 0){
+            continue;
+        }
+        if (index && modelSlot && modelID)
+        {
+        }
+    }
+}
+#endif
 
 void doNothing_8001B4E4(s32 arg) {}

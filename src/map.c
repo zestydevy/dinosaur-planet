@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/map.h"
+#include "sys/map.h"
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
@@ -754,6 +755,7 @@ extern u32 D_800B96E4; //gBlockIndices_layerArrayEnd?
 
 #define BLOCKS_TOLERANCE_Y 50
 
+//map_get_blockIndex_at_worldCoords?
 s32 func_8004454C(f32 x, f32 y, f32 z) {
     s32 blockIndex;
     s8 loadedBlockIndex1;
@@ -1014,7 +1016,37 @@ void func_8004530C(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/some_cell_func.s")
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045600.s")
+#else
+typedef struct {
+    /*0x0*/  u8 *data;
+    /*0x4*/  s32 byteLength;
+    /*0x8*/  s32 bitLength;
+    /*0xC*/  s32 capacity;
+    /*0x10*/ s32 bitPos;
+} BitStream;
+
+s32 bitstream_read(s32, u8);
+void bitstream_set_pos(s32, s32, s16, s16);
+extern char D_8009A614;
+extern s8 *D_800B9700;
+extern s16 *D_800B97A0;
+
+s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
+    s8 bitPosIndex;
+
+    
+    bitPosIndex = *(arg2 + (arg3 * 0x10) + &D_800B9700[arg4]);
+    
+    if (bitPosIndex >= 0) {
+        bitstream_set_pos((s32)stream, D_800B97A0[bitPosIndex] + arg0, arg2, arg3);
+        return bitstream_read((s32)stream, 1);
+    }
+    diPrintf(&D_8009A614, arg2, arg3);
+    return 0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800456AC.s")
 
@@ -1477,7 +1509,37 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048C24.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048D58.s")
+typedef struct {
+/*00*/ u8 unk0;
+/*01*/ u8 unk1;
+/*02*/ u8 unk2;
+/*03*/ u8 unk3;
+/*04*/ u8 unk4;
+/*05*/ u8 unk5;
+/*06*/ u8 unk6;
+/*07*/ u8 unk7;
+/*08*/ u8 unk8;
+/*09*/ u8 unk9;
+} MapsUnk_800B97C0;
+
+extern MapsUnk_800B97C0 *D_800B97C0;
+extern s16 D_800B97C4;
+
+s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
+    MapsUnk_800B97C0 *temp;
+    s32 index;
+    
+    for (index = 0; index < D_800B97C4; index++){
+        if ((arg0 == D_800B97C0[index].unk0) && 
+            (arg1 == D_800B97C0[index].unk1) && 
+            (arg2 == D_800B97C0[index].unk2) && 
+            (arg3 == D_800B97C0[index].unk6)){
+            return index;
+        }
+    }
+    
+    return -1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048E04.s")
 
@@ -1726,7 +1788,7 @@ u32 hits_get_size(s32 id) {
     return size;
 }
 
-void* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine* hits_ptr) {
+HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
@@ -1794,13 +1856,89 @@ s32 func_80049D68(s32 arg0) {
     return (s32)&D_800B97A8[arg0];
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D88.s")
+#else
+void func_8003E648(Texture*, u32, u32);
+
+void func_80049D88() {
+    s32 index;
+    Texture *tex;
+    BlockTexture *blockTex;
+    
+    for (index = 0; index < 0x100; index++){
+
+        if ((&gBlockTextures[index])->refCount == 0){
+            continue;
+        }
+        
+        tex = (&gBlockTextures[index])->texture;
+        if (tex && tex->levels != 0x14 && tex->unk_0xe != 0){
+            blockTex = &gBlockTextures[index];
+            func_8003E648(tex, blockTex->flags, blockTex->unk_0x4);
+        }
+    }
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049FA8.s")
+void func_8004A164(Texture*, s32);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A058.s")
+void func_80049FA8(BlocksModel* block) {
+    s32 index;
+    u8 animatorID;
+    FaceBatch* facebatch;
+
+    for (index = 0; index < block->faceBatch_count; index++){
+        facebatch = &block->ptr_faceBatches[index];
+        if (facebatch->renderSettingBitfield & 0x10000) {
+            animatorID = facebatch->animatorID;
+            if (animatorID){
+                func_8004A164(block->ptr_materials[facebatch->materialID].textureID, animatorID);
+            }
+        }
+    }
+}
+
+s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
+    s32 index;
+    s32 indexOfUnref;
+    
+    indexOfUnref = -1;
+    for (index = 0; index < 0x14; index++){
+        if ((&gBlockTextures[index])->refCount != 0 && 
+            tex == (&gBlockTextures[index])->texture && 
+            arg2 == (&gBlockTextures[index])->unk_0x14){
+            
+            indexOfUnref = index;
+            break;
+        }
+    }
+    
+    if (indexOfUnref != -1){
+        (&gBlockTextures[indexOfUnref])->refCount += 1;
+        return indexOfUnref;
+    }
+    
+    indexOfUnref = -1;
+    for (index = 0; index < 0x14; index++){
+        if ((&gBlockTextures[index])->refCount == 0){
+            indexOfUnref = index;
+            break;
+        }
+    }
+    
+    if (indexOfUnref != -1){
+        gBlockTextures[indexOfUnref].refCount = 1;
+        gBlockTextures[indexOfUnref].unk_0x4 = 0;
+        gBlockTextures[indexOfUnref].flags = flags;
+        gBlockTextures[indexOfUnref].texture = tex;
+        gBlockTextures[indexOfUnref].unk_0x14 = arg2;
+        return indexOfUnref;
+    }
+    return 0;
+}
 
 void func_8004A164(Texture *matchTexture, s32 matchParam) {
     s32 index;
@@ -1855,7 +1993,32 @@ BlockTexture *func_8004A2CC(s32 idx)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_xz_bitmap.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A528.s")
+/**
+  * block_get_animator_vertex_count?
+  *
+  * (uses the animator object's world position to find the relevant block)
+  */
+s32 func_8004A528(Object* obj, u8 animatorID) {
+    s32 index;
+    s32 anim_vertex_count;
+    BlocksModel *block;
+    FaceBatch *facebatches;
+
+    block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    if (!block || !(block->flags & 8)){
+        return 0;
+    }
+    
+    anim_vertex_count = 0;
+    facebatches = block->ptr_faceBatches;
+    for (index = 0; index < block->faceBatch_count; index++){
+        if (animatorID == (facebatches[index]).animatorID){
+            anim_vertex_count += facebatches[index + 1].baseVertexID - facebatches[index].baseVertexID;
+        }
+    }
+    
+    return anim_vertex_count;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A5D8.s")
 
@@ -1884,7 +2047,7 @@ s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
     u8 gplayValue;
 
     gplayValue = gDLL_29_gplay->exports->func_143C(arg1);
-    if (gplayValue == -1) {
+    if (gplayValue == -1) {// NOLINT
         return 0;
     }
     if (gplayValue != 0) {
@@ -1900,7 +2063,71 @@ s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
     return 1;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B548.s")
+#else
+void func_80012584(s32, u8, u32, ObjCreateInfo*, s32, s32, Object*, s32);
+s32 func_8004B4A0(ObjCreateInfo*, s32);
+void func_8004B710(s32, u32, u32);
+s32 map_get_is_object_streaming_disabled();         /* extern */
+s32 map_check_some_mapobj_flag(s32, u32);
+
+void func_8004B548(MapHeader* map, s32 mapID, s32 arg2, Object* arg3) {
+    u32 new_var;
+    s32 objects_filesize;
+    s32 object_count;
+    s32 var_v1;
+    s8 var_s6;
+    u32 objects_offset;
+    u32 objects_end;
+    ObjCreateInfo *obj;
+    u32 *temp_t1;
+    
+    temp_t1 = (u32 *) ((mapID * 0x8C) + (&D_800B5508));
+    objects_filesize = temp_t1[arg2];
+    
+    if (objects_filesize != -1){
+        if (arg3 != NULL){
+            var_s6 = arg3->matrixIdx + 1;
+        } else {
+            var_s6 = map->unk19;
+        }
+        
+        objects_offset = map->objectInstanceFile_ptr;
+        objects_end = objects_filesize + objects_offset;
+        obj = objects_offset;
+        object_count = 0;
+
+        while ((u32)&obj < objects_end){
+            object_count ++;
+            obj += obj->quarterSize * 4;
+        }
+
+        var_v1 = arg2 + 1;
+        while (var_v1 < 0x21){
+            if (temp_t1[var_v1] != -1){
+                break;
+            }
+            var_v1++;
+        }
+        
+        obj = objects_end;
+        objects_end = temp_t1[var_v1] + objects_offset;
+        while (new_var < objects_end){
+            if ((map_check_some_mapobj_flag(object_count, mapID) == 0) && (func_8004B4A0((ObjCreateInfo *) obj, mapID) != 0)){
+                func_8004B710(object_count, mapID, 1);
+                if (map_get_is_object_streaming_disabled() != 0){
+                    func_80012584(0x3E, 4, 0, (ObjCreateInfo *) obj, mapID, object_count, arg3, (s32) var_s6);
+                } else {
+                    obj_create((ObjCreateInfo *) obj, 1U, mapID, object_count, arg3);
+                }
+            }
+            object_count++;
+            obj += obj->quarterSize * 4;
+        }
+    }
+}
+#endif
 
 /**
  * Seems to be called when camera moves between grid cells?
@@ -1952,41 +2179,37 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
 /** Find curve by uID 
     arg1 unused?
 */
-ObjCreateInfo *func_8004B7D0(s32 match_uID, u32 arg1){
-    MAPSHeader **maps;
-    MAPSHeader *map;
+ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
+    MapHeader **maps;
+    MapHeader *map;
     s32 index;
-    s32 length;
+    
     u8 *ptr;
+    s32 offset;
+    s16 objID;
+    
     ObjCreateInfo *obj;
     
     maps = gLoadedMapsDataTable;
-    index = 0;    
-
+    index = 0;
     do {
-        s32 offset; //Very odd, but it improves things when here! Could this have been a separate function that was inlined?
-        
+        s32 offset;
         map = maps[index];
         
         if (map != NULL){
-            length = map->objectInstancesFileLength;
-            ptr = (u8 *)map->objectInstanceFile_ptr;
+            ptr = (u8*)map->objectInstanceFile_ptr;
             offset = 0;
-            while (offset < length){
-                obj = (ObjCreateInfo *) ptr;
-
-                if (obj->objId == OBJ_curve && match_uID == obj->unk14){
-                    return obj;
+            
+            while (offset < map->objectInstancesFileLength){       
+                objID = ((ObjCreateInfo*)ptr)->objId;
+                if (objID == OBJ_curve && ((ObjCreateInfo*)ptr)->uID == search_uID){
+                    return ((ObjCreateInfo*)ptr);
                 }
-                if (!obj->objId){
-                }
-                
-                obj = (ObjCreateInfo *) ptr; //Strange to set this again here, but it seems to improve the match?
-                offset += obj->unk2 << 2; 
-                ptr += obj->unk2 << 2; 
-            } 
-        } 
         
+                offset += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+                ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+            }
+        } 
         index++;
     } while ((u32)map != (u32)&D_800B5508);
     
@@ -1994,7 +2217,51 @@ ObjCreateInfo *func_8004B7D0(s32 match_uID, u32 arg1){
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B85C.s")
+/** map_find_checkpoint4_by_uID? 
+  * "search_mapID == -1" searches through all maps instead of a specific mapID!
+  */
+ObjCreateInfo* func_8004B85C(s32 search_uID, s32 search_mapID) {
+    MapHeader* map;
+    s32 search_endID;
+
+    u8 *ptr;
+    s32 offset;
+    
+    s16 objID;
+    
+    if (search_mapID == -1) {
+        search_mapID = 0;
+        search_endID = 0x78;
+    } else {
+        search_endID = search_mapID + 1;
+    }
+    
+    //Iterating over maps
+    while (search_mapID < search_endID) {
+        map = gLoadedMapsDataTable[search_mapID];
+
+        //Iterating over map objects
+        if (map) {
+            
+            ptr = (u8*)map->objectInstanceFile_ptr;
+            offset = 0;
+            
+            while (offset < map->objectInstancesFileLength){       
+                objID = ((ObjCreateInfo*)ptr)->objId;
+                if (objID == OBJ_checkpoint4 && ((ObjCreateInfo*)ptr)->uID == search_uID){
+                    return ((ObjCreateInfo*)ptr);
+                }
+        
+                offset += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+                ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+            }
+        }
+
+        search_mapID++;
+    }
+
+    return NULL;
+}
 
 void func_8004B914(s32 mapID) {
     MapHeader *map;
