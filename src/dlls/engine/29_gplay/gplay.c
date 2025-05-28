@@ -446,6 +446,7 @@ GplayStruct13 *gplay_func_FE8() {
     return &bss_10.unk0.unk0x179c[bss_10.unk0.unk0.unk0.character];
 }
 
+// gplayAddTime(uid, time)
 void gplay_func_1014(u32 param1, f32 param2) {
     s32 i;
 

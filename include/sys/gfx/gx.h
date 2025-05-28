@@ -218,4 +218,6 @@ s32 video_func_returning_delay(s32);
 #define RESOLUTION_WIDTH(encoded) (encoded & 0xFFFF)
 #define RESOLUTION_HEIGHT(encoded) (encoded >> 16)
 
+void func_8005CA5C(u32 param1);
+
 #endif //_SYS_GFX_GX_H

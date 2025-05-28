@@ -3,7 +3,6 @@
 
 #include "ultra64.h"
 #include "dll_def.h"
-#include "game/objects/object.h"
 
 typedef union {
     void (*asVoid)(void);

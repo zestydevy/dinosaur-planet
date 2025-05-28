@@ -68,9 +68,9 @@ void cannon_claw_func_200(void *a0) {
 
 }
 
-void cannon_claw_func_20C(Object *a0, s32 a1, s32 a2, s32 a3, s32 a4, s8 a5) {
-    if (a5 != 0 && a0->unk0xdc == 0) {
-		draw_object(a0, a1, a2, a3, a4, 1.0f);
+void cannon_claw_func_20C(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+    if (visibility != 0 && self->unk0xdc == 0) {
+		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 

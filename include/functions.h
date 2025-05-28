@@ -18,7 +18,8 @@ s32 func_80023D30(Object*,s32,f32,s32);
 s32 func_80024108(Object*,f32,f32,s32);
 s32 func_80025F40(Object*,s32,s32,s32);
 
-void draw_object(Object*,s32,s32,s32,s32,float);
+void draw_object(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, f32 yPrescale);
+void func_80036FBC(u8,u8,u8,u8);
 
 void dl_apply_geometry_mode(Gfx **gdl);
 
@@ -127,5 +128,18 @@ f32 _depth2Cents(u8 arg0);
 
 void mp3_init(s32 arg0);
 void mp3_play_file(s32 romAddr, s32 size);
+
+ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
+Texture *func_8003E960(s32);
+
+void func_8001EBD0(s32);
+void func_80031864(s32, f32, s16, Object*, s32, s32);
+void func_80041CA8(s32 arg0);
+void func_80041CE4(s32 arg0);
+void func_80041E24(s32 arg0);
+void func_80047374(void);
+void func_800473BC(void);
+s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
+s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
 
 #endif //_FUNCTIONS_H

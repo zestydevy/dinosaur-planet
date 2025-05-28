@@ -2315,8 +2315,8 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     if (D_800B4A59 != 0) {
         gDLL_28_screen_fade->exports->fade(0x28, SCREEN_FADE_BLACK);
     }
-    gDLL_minic->exports->func[4].asVoid();
-    gDLL_minic->exports->func[1].asVoid();
+    gDLL_minic->exports->func4();
+    gDLL_minic->exports->func1();
     gDLL_8->exports->func[1].asVoid();
     gDLL_7_newday->exports->func1.asVoid();
     gDLL_newclouds->exports->func[1].asVoid();

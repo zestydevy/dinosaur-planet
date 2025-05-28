@@ -62,7 +62,7 @@ typedef struct
 typedef struct{
     // TODO
 /*0000*/    ModelTexture *materials; //materials
-/*0004*/    void *vertices; //vertexData
+/*0004*/    Vtx *vertices; //vertexData
 /*0008*/    ModelFacebatch *faces; //faces datablock (materialID ref, joint assignments, f3dex command index, base faceID)
 /*000C*/    Gfx *displayList; //f3dex2 block
 /*0010*/    Animation **anims;

@@ -6,7 +6,8 @@
 
 enum ObjType {
     OBJTYPE_PLAYER = 0,
-    OBJTYPE_SIDEKICK = 1
+    OBJTYPE_SIDEKICK = 1,
+    OBJTYPE_2 = 2
 };
 
 void obj_object_type_init();

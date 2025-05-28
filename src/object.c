@@ -202,8 +202,8 @@ void update_objects() {
 
     func_8002B6EC();
 
-    gDLL_ANIM->exports->func[9].asVoid();
-    gDLL_ANIM->exports->func[5].asVoid();
+    gDLL_ANIM->exports->func9();
+    gDLL_ANIM->exports->func5();
     gDLL_Camera->exports->func1.withOneArg(delayByte);
 
     write_c_file_label_pointers(D_800994E0, 0x169);
@@ -992,7 +992,7 @@ void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3) {
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll->exports->func1(obj, param2, param3);
+            obj->dll->exports->create(obj, param2, param3);
         }
     }
 
@@ -1382,13 +1382,13 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->dll != NULL) {
         update_pi_manager_array(4, obj->id);
-        obj->dll->exports->func5(obj, param2);
+        obj->dll->exports->destroy(obj, param2);
         update_pi_manager_array(4, -1);
         dll_unload(obj->dll);
     }
 
     gDLL_AMSFX->exports->func16(obj);
-    gDLL_AMSEQ->exports->func[17].withOneArg((s32)obj);
+    gDLL_AMSEQ->exports->func17(obj);
     gDLL_expgfx->exports->func[9].withOneArg((s32)obj);
 
     if (obj->def != NULL && obj->def->flags & 0x10) {
@@ -1487,7 +1487,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->unk0xb4 >= 0) {
         if (!param2) {
-            gDLL_ANIM->exports->func[18].withOneArg((s32)obj->unk0xb4);
+            gDLL_ANIM->exports->func18((s32)obj->unk0xb4);
             obj->unk0xb4 = -1;
         }
     }
@@ -1560,7 +1560,7 @@ void func_80023464(s32 character) {
 
         gDLL_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
         gDLL_AMSFX->exports->func1(newPlayer);
-        gDLL_AMSEQ->exports->func[3].withOneArg((s32)newPlayer);
+        gDLL_AMSEQ->exports->func3(newPlayer);
     }
 }
 
@@ -1612,7 +1612,7 @@ void func_80023628() {
     gDLL_Camera->exports->func6.withSevenArgs(0x54, 0, 0, 0x20, (s32)&D_80091668, 0, 0xFF);
     gDLL_Camera->exports->func1.withOneArg(1);
     gDLL_AMSFX->exports->func1(player);
-    gDLL_AMSEQ->exports->func[3].withOneArg((s32)player);
+    gDLL_AMSEQ->exports->func3(player);
 
     D_800B1988 = 0;
     func_8004A67C();

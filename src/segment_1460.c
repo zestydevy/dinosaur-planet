@@ -30,7 +30,7 @@ typedef struct {
 // } UnknownStruct004;
 
 
-s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3) 
+s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3) 
 {
     UnknownStruct000 *tmp;
 
@@ -53,14 +53,14 @@ s32 func_80000860(s32 arg0, s32 arg1, u16 arg2, s32 arg3)
 		}
 		else if (tmp->unk5C == 6)
 		{
-            gDLL_minic->exports->func[0].withFiveArgs(arg0, arg1, tmp, arg3, arg2);
+            gDLL_minic->exports->func0(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);
     return 0;
 }
 
-s32 func_800009C8(s32 arg0, s32 arg1, u16 arg2, s32 arg3) 
+s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3) 
 {
     UnknownStruct000 *tmp;
 
@@ -84,7 +84,7 @@ s32 func_800009C8(s32 arg0, s32 arg1, u16 arg2, s32 arg3)
         }
 		else if (tmp->unk5C == 6)
 		{
-            gDLL_minic->exports->func[0].withFiveArgs(arg0, arg1, tmp, arg3, arg2);
+            gDLL_minic->exports->func0(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);

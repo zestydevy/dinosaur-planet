@@ -3,8 +3,12 @@
 
 #include "dlls/engine/1_ui.h"
 #include "dlls/engine/2_camera.h"
+#include "dlls/engine/3_anim.h"
+#include "dlls/engine/5_amseq.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/7_newday.h"
+#include "dlls/engine/12_minic.h"
+#include "dlls/engine/16.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/26_curves.h"
@@ -57,33 +61,33 @@ enum DLL_ID {
 
 extern DLLInst_1_UI *gDLL_UI;
 extern DLLInst_2_Camera *gDLL_Camera;
+extern DLLInst_3_ANIM *gDLL_ANIM;
+extern DLLInst_5_AMSEQ *gDLL_AMSEQ;
+extern DLLInst_5_AMSEQ *gDLL_AMSEQ2;
 extern DLLInst_6_AMSFX *gDLL_AMSFX;
 extern DLLInst_7_newday *gDLL_7_newday;
+extern DLLInst_12_minic *gDLL_minic;
+extern DLLInst_16 *gDLL_16;
 extern DLLInst_20_screens *gDLL_20_screens;
 extern DLLInst_21_gametext *gDLL_21_gametext;
 extern DLLInst_26_curves *gDLL_CURVES;
-extern DLLInst_27_head_turn *gDLL_27_head_turn;
+extern DLLInst_27_head_turn *gDLL_27_head_turn;  //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
 extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
 extern DLLInst_29_gplay *gDLL_29_gplay;
 extern DLLInst_30_task *gDLL_30_task;
 extern DLLInst_31_flash *gDLL_31_flash;
 extern DLLInst_74_picmenu *gDLL_picmenu;
 extern DLLInst_Unknown
-    *gDLL_ANIM,
     *gDLL_8,
     *gDLL_newclouds,
     *gDLL_newstars,
-    *gDLL_minic,
     *gDLL_Race,
-    *gDLL_AMSEQ,
-    *gDLL_AMSEQ2,
     *gDLL_newlfx,
     *gDLL_57,
     *gDLL_58,
     *gDLL_expgfx,
     *gDLL_modgfx,
     *gDLL_projgfx,
-    *gDLL_16,
     *gDLL_17,
     *gDLL_18,
     *gDLL_subtitles,

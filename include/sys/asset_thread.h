@@ -113,6 +113,7 @@ extern OSThread assetThread;
 
 void create_asset_thread(void);
 void asset_thread_main(void *arg);
+void func_80012584(s32 param1, u8 param2, u32 *param3, UnkStructAssetThreadSingle_0x8 *param4, s32 param5, s32 param6, s32 param7, s32 param8);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);

@@ -2,6 +2,7 @@
 #define _DLLS_26_H
 
 #include "PR/ultratypes.h"
+#include "game/objects/object.h"
 #include "dll_def.h"
 #include "types.h"
 
@@ -45,10 +46,10 @@ DLL_INTERFACE_BEGIN(26_curves)
     /*1*/ UnknownDLLFunc curves_func_34;
     /*2*/ UnknownDLLFunc curves_func_10c;
     /*3*/ UnknownDLLFunc curves_func_1bc;
-    /*4*/ UnknownDLLFunc curves_func_1e4;
+    /*4*/ s32 (*curves_func_1e4)(f32, f32, f32, s32*, s32, s32);
     /*5*/ UnknownDLLFunc curves_func_3f00;
     /*6*/ UnknownDLLFunc curves_func_39c;
-    /*7*/ UnknownDLLFunc curves_func_14f4;
+    /*7*/ f32 (*curves_func_14f4)(s32, s32, f32, f32, f32, f32*, f32*, f32*);
     /*8*/ UnknownDLLFunc curves_func_174c;
     /*9*/ UnknownDLLFunc curves_func_17f4;
     /*10*/ UnknownDLLFunc curves_func_14c8;
@@ -59,7 +60,7 @@ DLL_INTERFACE_BEGIN(26_curves)
     /*15*/ UnknownDLLFunc curves_func_218c;
     /*16*/ UnknownDLLFunc curves_func_21fc;
     /*17*/ UnknownDLLFunc curves_func_277c;
-    /*18*/ UnknownDLLFunc curves_func_291c;
+    /*18*/ s32 (*curves_func_291c)(s32, f32, f32, f32, f32*);
     /*19*/ UnknownDLLFunc curves_func_35ac;
     /*20*/ UnknownDLLFunc curves_func_438;
     /*21*/ UnknownDLLFunc curves_func_4f0;

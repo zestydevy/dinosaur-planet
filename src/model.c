@@ -78,8 +78,8 @@ void init_models() {
     D_800B17C8 = 0;
 }
 
-Model* func_80017D2C(s32 arg0, s32 arg1) {
-    Model* model;
+ModelInstance* func_80017D2C(s32 arg0, s32 arg1) {
+    ModelInstance* model;
 
     queue_load_model((void*)&model, arg0, arg1);
     return model;

@@ -583,7 +583,7 @@ static void dll_63_load_save_game_info() {
 
                 filenamePtr = sSaveGameInfo[i].filename;
 
-                gDLL_7_newday->exports->func11(
+                gDLL_7_newday->exports->convert_ticks_to_real_time(
                     saveFile->unk0x2fc,
                     &sSaveGameInfo[i].timeHours, &sSaveGameInfo[i].timeMinutes, &sSaveGameInfo[i].timeSeconds);
 
@@ -874,10 +874,10 @@ static void dll_63_act_game_confirm(PicMenuAction action, s32 selected) {
         } else {
             sExitToGame = TRUE;
             gDLL_28_screen_fade->exports->fade(20, SCREEN_FADE_BLACK);
-            gDLL_AMSEQ->exports->func[6].withOneArg(0);
-            gDLL_AMSEQ->exports->func[6].withOneArg(1);
-            gDLL_AMSEQ->exports->func[6].withOneArg(2);
-            gDLL_AMSEQ->exports->func[6].withOneArg(3);
+            gDLL_AMSEQ->exports->func6(0);
+            gDLL_AMSEQ->exports->func6(1);
+            gDLL_AMSEQ->exports->func6(2);
+            gDLL_AMSEQ->exports->func6(3);
             sExitTransitionTimer = 35;
         }
     }
@@ -893,10 +893,10 @@ static void dll_63_act_game_recap(PicMenuAction action, s32 selected) {
     } else if (action == PICMENU_ACTION_SELECT) {
         sExitToGame = TRUE;
         gDLL_28_screen_fade->exports->fade(20, SCREEN_FADE_BLACK);
-        gDLL_AMSEQ->exports->func[6].withOneArg(0);
-        gDLL_AMSEQ->exports->func[6].withOneArg(1);
-        gDLL_AMSEQ->exports->func[6].withOneArg(2);
-        gDLL_AMSEQ->exports->func[6].withOneArg(3);
+        gDLL_AMSEQ->exports->func6(0);
+        gDLL_AMSEQ->exports->func6(1);
+        gDLL_AMSEQ->exports->func6(2);
+        gDLL_AMSEQ->exports->func6(3);
         sExitTransitionTimer = 35;
     }
 }

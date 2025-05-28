@@ -1,0 +1,35 @@
+# functions
+trigger_ctor = 0x0;
+trigger_dtor = 0xC;
+trigger_create = 0x18;
+trigger_update = 0x288;
+trigger_func_7D4 = 0x7D4;
+trigger_draw = 0x7E0;
+trigger_destroy = 0x7F8;
+trigger_func_990 = 0x990;
+trigger_get_state_size = 0x9A0;
+trigger_update_effects = 0x9B4;
+trigger_func_1754 = 0x1754;
+trigger_func_1764 = 0x1764;
+trigger_func_17FC = 0x17FC;
+trigger_func_1868 = 0x1868;
+trigger_func_1920 = 0x1920;
+trigger_point_setup = 0x19C0;
+trigger_test_point = 0x1AFC;
+trigger_cylinder_setup = 0x1CE8;
+trigger_test_cylinder = 0x1D18;
+trigger_plane_setup = 0x1EE0;
+trigger_test_plane = 0x23A8;
+trigger_area_setup = 0x260C;
+trigger_test_area = 0x2630;
+trigger_func_273C = 0x273C;
+trigger_func_2884 = 0x2884;
+trigger_func_29C0 = 0x29C0;
+trigger_curve_setup = 0x2B10;
+trigger_test_curve = 0x2B20;
+
+# variables
+sPointModel = 0x35F4;
+sPlaneModel = 0x35F8;
+sPointModelRefCount = 0x3604;
+sPlaneModelRefCount = 0x3606;

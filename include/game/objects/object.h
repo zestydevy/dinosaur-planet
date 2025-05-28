@@ -8,6 +8,7 @@
 #include "dll_def.h"
 #include "object_def.h"
 #include "hitbox.h"
+#include "types.h"
 #include "unktypes.h"
 
 /** Game Object system
@@ -36,7 +37,7 @@ typedef struct {
 
 // Base struct, objects "inherit" from this and add their own creation related info
 // Curve objects use some of these parameters differently
-typedef struct {
+typedef struct ObjCreateInfo {
 /*00*/	s16 objId;
 /*02*/	u8 quarterSize;
 /*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
@@ -63,13 +64,13 @@ typedef struct {
 } ObjectStruct50;
 
 typedef struct {
-/*0000*/    u8 unk_0x0[0x4 - 0x0];
+/*0000*/    f32 unk_0x0;
 /*0004*/    Texture *unk_0x4;
 /*0008*/    Texture *unk_0x8;
 /*000C*/    Gfx *gdl;
 /*0010*/    u8 unk_0x10[0x20 - 0x10];
 /*0020*/    Vec3f tr;
-/*002C*/    u32 unk_0x2c;
+/*002C*/    f32 unk_0x2c;
 /*0030*/    u32 flags;
 /*0034*/    u32 unk_0x34;
 /*0038*/    u32 unk_0x38;
@@ -116,11 +117,11 @@ typedef struct {
 
 // Base interface for object DLLs
 DLL_INTERFACE_BEGIN(Object)
-    /*0*/ void (*func1)(struct Object *obj, ObjCreateInfo *createInfo, s32);
+    /*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
     /*1*/ void (*update)(struct Object *obj);
-    /*2*/ void (*func3)(struct Object *obj); // unknown args
-    /*3*/ void (*func4)(); // unknown args
-    /*4*/ void (*func5)(struct Object *obj, s32);
+    /*2*/ void (*func3)(struct Object *obj); // update_child?
+    /*3*/ void (*draw)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+    /*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
     /*5*/ u32 (*func6)(struct Object *obj);
     /*6*/ u32 (*get_state_size)(struct Object *obj, u32);
 DLL_INTERFACE_END()
@@ -137,7 +138,7 @@ typedef s32 (*ObjectCallback)(struct Object *, struct Object *, void *, void *);
 typedef struct Object {
 /*0000*/    SRT srt;
 /*0018*/    Vec3f positionMirror; //local vs global?
-/*0024*/    Vec3f speed;
+/*0024*/    Vec3f speed; // rename to velocity?
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
 /*0034*/    u8 unk_0x34;
 /*0035*/    s8 matrixIdx;
@@ -195,7 +196,7 @@ typedef struct Object {
 /*00DA*/    u8 unk_0xda;
 /*00DB*/    u8 unk_0xdb[0xdc - 0xdb];
 /*00DC*/    s32 unk0xdc;
-/*00E0*/    u8 unk_0xe0[4];
+/*00E0*/    s32 unk_0xe0; // lifetime?
 } Object;
 
 typedef struct ObjListItem {

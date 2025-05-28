@@ -7,6 +7,8 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objtype.h"
+#include "sys/rand.h"
 #include "variables.h"
 #include "functions.h"
 #include "types.h"
@@ -255,9 +257,6 @@ void dll_496_func_174C(Object *snowHorn, SnowHornState *state, SnowHornCreateInf
 void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 
-extern void obj_add_object_type(Object *obj, s32 type);
-extern DLLInst_27_head_turn *gDLL_27; //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
-
 void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
     SnowHornState* state;
     u8* temp_a0;
@@ -297,9 +296,9 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
         //to do with setting up look-at behaviour?
         if (state->unk424 & 1) {
             temp_a0 = (u8*)state + 0x170;
-            gDLL_27->exports->head_turn_func_18((Vec3f*)temp_a0, 0x06000000, 0, 1);
-            gDLL_27->exports->head_turn_func_c0((Vec3f*)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
-            gDLL_27->exports->head_turn_func_fb8(snowhorn, (Vec3f*)temp_a0);
+            gDLL_27_head_turn->exports->head_turn_func_18((Vec3f*)temp_a0, 0x06000000, 0, 1);
+            gDLL_27_head_turn->exports->head_turn_func_c0((Vec3f*)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
+            gDLL_27_head_turn->exports->head_turn_func_fb8(snowhorn, (Vec3f*)temp_a0);
         }
         snowhorn->ptr0x64->flags |= 0xA10;
     }
@@ -317,10 +316,6 @@ void func_80032A08(Object*, void*);
     
 s16 rand_next(s32, s32);
 void set_button_mask(int port, u16 mask);
-    
-extern DLLInst_29_gplay* gDLL_29_gplay;
-extern DLLInst_7_newday* gDLL_7_newday;
-extern DLLInst_Unknown* gDLL_ANIM;
 
 void dll_496_func_11E0(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
@@ -455,7 +450,7 @@ void dll_496_func_770(u32 a0){
 
 s32 func_80031F6C(void*, s32, f32*, f32*, f32*, s32);
 
-void dll_496_func_77C(Object* snowHorn, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s8 doDraw) {
+void dll_496_func_77C(Object* snowHorn, Gfx **arg1, Mtx **arg2, Vertex **arg3, Triangle **arg4, s8 doDraw) {
     SnowHornState* state;
     u32 addr;
 
@@ -497,9 +492,6 @@ enum GameBits {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_84C.s")
 #else
-
-extern DLLInst_Unknown *gDLL_27;
-
 s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3) {
     SnowHornState* state;
     UnkStruct2* var_s0;
@@ -513,7 +505,7 @@ s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3) {
     }
     if (state->unk424 & 1) {
         //lookAt behaviour! This DLL must have reusable functions for it throughout the objects
-        gDLL_27->exports->func[7].withTwoArgs((s32)snowHorn, (s32)state + 0x170);
+        gDLL_27_head_turn->exports->func[7].withTwoArgs((s32)snowHorn, (s32)state + 0x170);
     }
     snowHorn->unk0xaf |= 8;
     temp = arg2->unk98;
@@ -539,8 +531,6 @@ typedef struct {
 } UnkFunc_80024108Struct;
 
 s32* func_800348A0(Object*, s32, s32);
-s16 rand_next(s32, s32);
-extern DLLInst_6_AMSFX* gDLL_AMSFX;
 
 enum SoundIDs {
     SFX_SNOWHORN_YAWN1 = 0x129,
@@ -660,7 +650,6 @@ void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo
 }
 
 void set_button_mask(int port, u16 mask);
-extern DLLInst_1_UI* gDLL_UI;
 
 enum SnowHornTutorialSequences {
     SEQ_0157_SnowHorn_Chat_BeforeDefeatingSharpClaw = 0, //Hmph, shouldn't you help your friend?
@@ -698,7 +687,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     if ((f32)state->unkRadius*state->unkRadius < vec3_distance_squared(&snowhorn->positionMirror, &player->positionMirror)) {
         state->sleepTimer += delayByte;
         if (state->sleepTimer > 900) {
-            gDLL_ANIM->exports->func[17].withThreeArgs(7, (s32)snowhorn, -1); //play seq 7?
+            gDLL_ANIM->exports->func17(7, snowhorn, -1); //play seq 7?
             state->sleepTimer = (s16) -rand_next(0, 50);
         }
         return;
@@ -736,7 +725,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
             if ((snowhorn->unk0xaf & 4) && gDLL_UI->exports->ui_func_df4(INVENTORY_Alpine_Root)) {
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 1);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
-                gDLL_ANIM->exports->func[17].withThreeArgs(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, (s32)snowhorn, -1);
+                gDLL_ANIM->exports->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 state->quest = 4;
                 return;
             }
@@ -745,7 +734,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
             if ((snowhorn->unk0xaf & 4) && gDLL_UI->exports->ui_func_df4(INVENTORY_Alpine_Root)) {
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 2);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
-                gDLL_ANIM->exports->func[17].withThreeArgs(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, (s32)snowhorn, -1);
+                gDLL_ANIM->exports->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 state->quest = 6;
                 return;
             }
@@ -758,7 +747,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     if (snowhorn->unk0xaf & 1) {
         snowhorn->unk0xaf &= 0xFFFE;
         if (state->quest < 7) {
-            gDLL_ANIM->exports->func[17].withThreeArgs(state->quest, (s32)snowhorn, -1);  
+            gDLL_ANIM->exports->func17(state->quest, snowhorn, -1);  
             set_button_mask(0, 0x8000);
         }
     }
@@ -785,8 +774,6 @@ typedef struct {
 /*0x1C*/ s8 unk1C;
 /*0x1D*/ s8 unk1D;
 } UnknownSnowHornStruct; //Possibly to do with talking to them, or controller inputs? TO-DO: figure out what this is!
-
-extern DLLInst_26_curves *gDLL_CURVES;
 
 /** Need to figure out the struct for arg2! */
 void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj){
@@ -843,11 +830,6 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
 s32 func_800053B0(void*, f32);
 s32 func_8002493C(void*, f32, void*);
 s32 func_80031BBC(f32, f32, f32);
-s16 rand_next(s32, s32); 
-extern u8 __data0;
-// extern f32 __rodata0;
-extern DLLInst_Unknown* gDLL_ANIM;
-extern DLLInst_26_curves* gDLL_CURVES;
 
 void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* arg2) {
     f32 temp_walkSpeed;
@@ -880,7 +862,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
     
     if (_data_274[0] != 0 && 
         func_80031BBC(snowhorn->positionMirror.x, snowhorn->positionMirror.y, snowhorn->positionMirror.z) == 0xA){
-        gDLL_ANIM->exports->func[17].withThreeArgs(0x10, (s32)snowhorn, -1); //setAnimation?
+        gDLL_ANIM->exports->func17(0x10, snowhorn, -1); //setAnimation?
         return;
     }
     snowhorn->unk0xaf &= 0xFFF7;

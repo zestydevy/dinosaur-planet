@@ -2,6 +2,7 @@
 #define _DLLS_74_H
 
 #include "PR/ultratypes.h"
+#include "sys/gfx/texture.h"
 #include "dll_def.h"
 #include "types.h"
 

@@ -2,6 +2,7 @@
 #define _DLLS_6_H
 
 #include "PR/ultratypes.h"
+#include "game/objects/object.h"
 #include "dll_def.h"
 #include "types.h"
 
@@ -21,12 +22,12 @@ DLL_INTERFACE_BEGIN(6_AMSFX)
     /*11*/ UnknownDLLFunc func11;
     /*12*/ UnknownDLLFunc func12;
     /*13*/ UnknownDLLFunc func13;
-    /*14*/ UnknownDLLFunc func14;
+    /*14*/ void (*func14)(Object* obj, u16 soundID, s32*);
     /*15*/ UnknownDLLFunc func15;
     /*16*/ void (*func16)(Object *obj);
     /*17*/ UnknownDLLFunc func17;
     /*18*/ UnknownDLLFunc func18;
-    /*19*/ UnknownDLLFunc func19;
+    /*19*/ void (*func19)(u8);
     /*20*/ UnknownDLLFunc func20;
 DLL_INTERFACE_END()
 

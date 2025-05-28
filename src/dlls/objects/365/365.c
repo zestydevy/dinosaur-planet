@@ -29,10 +29,10 @@ void func_0002(void* arg)
 {
 }
 
-void func_0003(Object *obj, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s8 arg5)
+void func_0003(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility)
 {
-	if (arg5 != 0) {
-		draw_object(obj, arg1, arg2, arg3, arg4, 1.0f);
+	if (visibility != 0) {
+		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 

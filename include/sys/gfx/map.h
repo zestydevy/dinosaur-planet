@@ -111,6 +111,13 @@ typedef struct
 /*0004*/    u8 unk_0x4[0x10 - 0x4];
 } DLTri;
 
+/** Flags
+ * 0x10 - Whether the sky renders
+ * 0x80 - Whether shadows render
+ * 0x2000 - Freaks out depth testing?
+ * 0x10000 - Runs initialize_framebuffers then toggles off, i guess
+ * 0x20000 - Spawns an FXEmit object and turns the fog a tan-ish color, renders a different sun??
+ */
 extern u32 UINT_80092a98;
 extern DLBuilder *gDLBuilder;
 

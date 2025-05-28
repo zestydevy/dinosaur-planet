@@ -48,7 +48,7 @@ void dll_60_ctor(void *self) {
         func_80014B1C();
         data_4 = 0;
         func_800141A4(1, 0, -1, -1);
-        gDLL_AMSEQ->exports->func[0].withFiveArgs(0, 0x20, 0, 0x2f, 0);
+        gDLL_AMSEQ->exports->func0(NULL, 0x20, 0, 0x2f, 0);
         set_gplay_bitstring(0x44f, 1);
         gDLL_Camera->exports->func21.withTwoArgs(30, 1);
         data_8 = queue_load_texture_proxy(0x2d2);
