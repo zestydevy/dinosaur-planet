@@ -40,8 +40,8 @@ def dump_header(dll: DLL):
     print(f"Destructor offset:  {hex(header.dtor_offset)}")
     print()
     print("Export offsets:")
-    for offset in header.export_offsets:
-        print(f"  {hex(offset)}")
+    for i, offset in enumerate(header.export_offsets):
+        print(f"{str(i)+":":<3} {hex(offset)}")
 
 def dump_relocation_table(dll: DLL):
     print("RELOCATIONS")

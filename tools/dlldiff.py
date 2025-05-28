@@ -101,7 +101,7 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
             targ_byte = targ_data[targ.header.data_offset + idx]
             if base_byte != targ_byte:
                 yield "First .data mismatch at .data+{:#x}: expected 0x{:02x}, found 0x{:02x}".format(idx, targ_byte, base_byte)
-                #break
+                break
     
     if base_bss_size != targ_bss_size:
         yield ".bss size mismatch: expected {:#x}, found {:#x}".format(targ_bss_size, base_bss_size)
