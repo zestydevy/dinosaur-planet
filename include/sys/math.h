@@ -49,26 +49,26 @@ typedef struct
 /*000C*/	Vec3f transl;
 } SRT;
 
-void vec3_transform(MtxF *mtx, float x, float y, float z, float *ox, float *oy, float *oz);
-void vec3_transform_no_translate(MtxF *mf, Vec3f *v, Vec3f *ov);
-void matrix_concat(MtxF *m1, MtxF *m2, MtxF *output);
-void matrix_concat_4x3(MtxF *m1, MtxF *m2, MtxF *output);
-void matrix_concat_3x3(MtxF *m1, MtxF *m2, MtxF *output);
-void matrix_f2l(MtxF *mf, Mtx *ml);
-void matrix_f2l_4x3(MtxF *mf, Mtx *ml);
-void matrix_f2l_translate_only(MtxF *mf, Mtx *ml);
+void vec3_transform(const MtxF *mtx, float x, float y, float z, float *ox, float *oy, float *oz);
+void vec3_transform_no_translate(const MtxF *mf, const Vec3f *v, Vec3f *ov);
+void matrix_concat(const MtxF *m1, const MtxF *m2, MtxF *output);
+void matrix_concat_4x3(const MtxF *m1, const MtxF *m2, MtxF *output);
+void matrix_concat_3x3(const MtxF *m1, const MtxF *m2, MtxF *output);
+void matrix_f2l(const MtxF *mf, Mtx *ml);
+void matrix_f2l_4x3(const MtxF *mf, Mtx *ml);
+void matrix_f2l_translate_only(const MtxF *mf, Mtx *ml);
 
-void s16_matrix_rotate(Mtx *m, s16 *);
-void matrix_from_srt(MtxF *mf, SRT *srt);
+void s16_matrix_rotate(Mtx *m, const s16 *);
+void matrix_from_srt(MtxF *mf, const SRT *srt);
 void matrix_prescale_y(MtxF *mf, f32 scale);
 void matrix_trans_y(MtxF *mf, f32 scale);
-void matrix_from_srt_reversed(MtxF *mf, SRT *srt);
-void matrix_from_srt_rotation(MtxF *mf, SRT *srt);
+void matrix_from_srt_reversed(MtxF *mf, const SRT *srt);
+void matrix_from_srt_rotation(MtxF *mf, const SRT *srt);
 void matrix_from_yaw(s16 theta, MtxF *mf);
-void s16_vec3_apply_srt_rotation(SRT *srt, s16 *vec);
-void rotate_vec3(SRT *srt, Vec3f *vec);
-void rotate_vec_inv(SRT *srt, Vec3f *vec);
-void vec_from_rotation(SRT *srt, Vec3f *vec);
+void s16_vec3_apply_srt_rotation(const SRT *srt, s16 *vec);
+void rotate_vec3(const SRT *srt, Vec3f *vec);
+void rotate_vec_inv(const SRT *srt, Vec3f *vec);
+void vec_from_rotation(const SRT *srt, Vec3f *vec);
 void matrix_translation(MtxF *mf, f32 x, f32 y, f32 z);
 Mtx *get_some_model_view_mtx();
 void matrix_scaling(MtxF *mf, f32 sx, f32 sy, f32 sz);
@@ -112,19 +112,19 @@ s16 asin(s16);
 s32 floor_f(f32);
 s32 ceil_f(f32);
 
-f32 vec3_distance(Vec3f *v1, Vec3f *v2);
-f32 vec3_distance_squared(Vec3f *v1, Vec3f *v2);
-f32 vec3_distance_xz(Vec3f *v1, Vec3f *v2);
-f32 vec3_distance_xz_squared(Vec3f *v1, Vec3f *v2);
+f32 vec3_distance(const Vec3f *v1, const Vec3f *v2);
+f32 vec3_distance_squared(const Vec3f *v1, const Vec3f *v2);
+f32 vec3_distance_xz(const Vec3f *v1, const Vec3f *v2);
+f32 vec3_distance_xz_squared(const Vec3f *v1, const Vec3f *v2);
 
-f32 vec3_dot_product(Vec3f *v1, Vec3f *v2);
-f32 vec3_length(Vec3f *v);
-f32 vec3_length_squared(Vec3f *v);
-void vec3_cross_product(Vec3f *v1, Vec3f *v2, Vec3f *result);
-void vec3_cross_product_2(Vec3f *v1, Vec3f *v2, Vec3f *result);
+f32 vec3_dot_product(const Vec3f *v1, const Vec3f *v2);
+f32 vec3_length(const Vec3f *v);
+f32 vec3_length_squared(const Vec3f *v);
+void vec3_cross_product(const Vec3f *v1, const Vec3f *v2, Vec3f *result);
+void vec3_cross_product_2(const Vec3f *v1, const Vec3f *v2, Vec3f *result);
 f32 vec3_normalize(Vec3f *v);
-void vec3_sub(Vec3f *v1, Vec3f *v2, Vec3f *result);
-void vec3_add_with_scale(Vec3f *v1, Vec3f *v2, f32 scale, Vec3f *result);
-void vec3_reflect(Vec3f *v1, Vec3f *v2, Vec3f *result);
+void vec3_sub(const Vec3f *v1, const Vec3f *v2, Vec3f *result);
+void vec3_add_with_scale(const Vec3f *v1, const Vec3f *v2, f32 scale, Vec3f *result);
+void vec3_reflect(const Vec3f *v1, const Vec3f *v2, Vec3f *result);
 
 #endif //_SYS_MATH_H
