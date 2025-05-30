@@ -2,7 +2,6 @@
 capstone>=5.0.3
 GitPython>=3.1.43
 ninja>=1.11.1.1
-pycparser>=2.22
 pyelftools>=0.32
 pylibyaml>=0.1.0
 PyYAML>=6.0.2

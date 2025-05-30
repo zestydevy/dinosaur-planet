@@ -1,13 +1,11 @@
 import argparse
 import shutil
-from subprocess import check_output
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import SymbolTableSection, Symbol
 from typing import TextIO
 import math
 import os
 from pathlib import Path
-from pycparser import c_ast, c_generator, CParser
 
 from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
@@ -158,97 +156,6 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     
     datasyms_toml.write("]\n")
 
-GCC_PREPROCESS_CMD = [
-    "gcc",
-    "-nostdinc",
-    "-E",
-    "-D_LANGUAGE_C",
-    "-D_MIPS_SZLONG=32",
-    "-DF3DEX_GBI_2",
-    "-Iinclude"
-]
-
-c_gen = c_generator.CGenerator()
-c_parser = CParser()
-
-def gen_dll_recomp_header(header: TextIO,
-                          dll_number: int,
-                          c_source_paths: list[Path],
-                          symbol_renames: "dict[str, str]"):
-    # Parse C source
-    includes: list[str] = []
-    declarations: list[tuple[str, str]] = []
-    found_symbols: "set[str]" = set()
-
-    for c_source_path in c_source_paths:
-        # Get includes
-        with open(c_source_path, "r", encoding="utf-8") as c_source:
-            for line in c_source.readlines():
-                line = line.strip()
-                if line.startswith("#include"):
-                    includes.append(line[line.index(" ") + 1:])
-
-        # Get declarations
-        preprocessed_text = check_output(GCC_PREPROCESS_CMD + [str(c_source_path)], universal_newlines=True)
-        ast: c_ast.FileAST = c_parser.parse(preprocessed_text)
-
-        for child in ast:
-            if isinstance(child, c_ast.Decl):
-                original = child.name
-                if original in found_symbols:
-                    continue
-                rename = symbol_renames.get(original)
-                if rename != None:
-                    # Turn data decl into an extern
-                    type = child.type
-                    while isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl) or isinstance(type, c_ast.FuncDecl):
-                        type = type.type
-                    if not isinstance(type, c_ast.TypeDecl):
-                        continue
-                    child.name = rename
-                    type.declname = child.name
-
-                    child.storage = ["extern"]
-                    child.init = None
-
-                    decl = "{};".format(c_gen.visit(child))
-                    alias = "#define {} {}".format(original, rename)
-
-                    declarations.append((decl, alias))
-                    found_symbols.add(original)
-            elif isinstance(child, c_ast.FuncDef):
-                original = child.decl.name
-                if original in found_symbols:
-                    continue
-                rename = symbol_renames.get(original)
-                if rename != None:
-                    # Turn func def into an extern decl
-                    type = child.decl.type.type
-                    if isinstance(type, c_ast.ArrayDecl) or isinstance(type, c_ast.PtrDecl):
-                        type = type.type
-                    type.declname = rename
-
-                    child.decl.storage = ["extern"]
-
-                    decl = "{};".format(c_gen.visit(child.decl))
-                    alias = "#define {} {}".format(original, rename)
-
-                    declarations.append((decl, alias))
-                    found_symbols.add(original)
-
-    # Write
-    header.write("#ifndef _DLL_{}_INTERNAL_H\n".format(dll_number))
-    header.write("#define _DLL_{}_INTERNAL_H\n\n".format(dll_number))
-
-    for include in includes:
-        header.write(f"#include {include}\n")
-
-    for decl, alias in declarations:
-        header.write(f"\n{decl}\n")
-        header.write(f"{alias}\n")
-
-    header.write("\n#endif //_DLL_{}_INTERNAL_H\n".format(dll_number))
-
 def scan_dll_elf(
         elf: ELFFile, 
         dll: DLL, 
@@ -325,6 +232,8 @@ def scan_dll_elf(
                 symbol_renames[sym.name] = rename
         elif st_info_type == "STT_OBJECT" or (static_sym and static_sym_is_data):
             # Data
+            if sym.name.startswith("jtbl_"):
+                continue
             rename = dll_prefix + sym.name
             data_global = { 
                 "name": rename, 
@@ -420,19 +329,18 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
                         dll_prefix
                     )
                 
-                # Emit recomp header for DLL internals
-                dll_src_path = SRC_DLLS_PATH.joinpath(dll_dir)
-                c_source_paths = [p for p in dll_src_path.rglob("*.c")]
-                if len(c_source_paths) > 0:
-                    header_path = include_dir.joinpath(f"dlls/{dll_dir}_internal.h")
-                    header_path.parent.mkdir(parents=True, exist_ok=True)
-                    with open(header_path, "w", encoding="utf-8") as header:
-                        gen_dll_recomp_header(
-                            header,
-                            number,
-                            c_source_paths,
-                            symbol_renames
-                        )
+                # Emit recomp header for DLL symbol renames
+                header_path = include_dir.joinpath(f"dlls/{dll_dir}_recomp.h")
+                header_path.parent.mkdir(parents=True, exist_ok=True)
+                with open(header_path, "w", encoding="utf-8") as header:
+                    header.write("// AUTOGENERATED FILE - PLEASE DO NOT MODIFY\n\n")
+                    header.write("#ifndef _DLL_{}_RECOMP_H\n".format(number))
+                    header.write("#define _DLL_{}_RECOMP_H\n\n".format(number))
+
+                    for (sym, rename) in symbol_renames.items():
+                        header.write("#define {} {}\n".format(sym, rename))
+
+                    header.write("\n#endif //_DLL_{}_RECOMP_H\n".format(number))
 
         
         funcs.sort(key=lambda f : f["vram"])
