@@ -12,8 +12,8 @@
 // size: 0x10
 typedef struct {
     /*0x0*/ Vec3f vec;
-    /*0xC*/ s8 unk0xC;
-    /*0xD*/ s8 unk0xD;
+    /*0xC*/ s8 rotationY;
+    /*0xD*/ s8 mapLayer;
     /*0xE*/ u8 unk0xE[2];
 } GplayStruct5;
 
@@ -151,11 +151,11 @@ DLL_INTERFACE_BEGIN(29_gplay)
     /*3*/ void (*copy_save)(s8 srcIdx, s8 dstIdx);
     /*4*/ void (*func_6AC)();
     /*5*/ void (*func_94C)(s32 param1);
-    /*6*/ void (*func_958)(Vec3f *param1, s16 param2, s32 param3, s32 param4);
+    /*6*/ void (*func_958)(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
     /*7*/ void (*start_game)();
-    /*8*/ void (*func_B3C)(Vec3f *param1, s16 param2, s32 param3);
-    /*9*/ void (*func_CBC)();
-    /*10*/ void (*func_D20)();
+    /*8*/ void (*restart_set)(Vec3f *position, s16 yaw, s32 mapLayer);
+    /*9*/ void (*restart_goto)();
+    /*10*/ void (*restart_clear)();
     /*11*/ s32 (*func_D70)();
     /*12*/ void (*func_8D8)();
     /*13*/ u32 (*func_79C)();

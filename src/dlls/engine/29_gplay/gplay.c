@@ -312,7 +312,7 @@ void gplay_func_94C(s32 param1) {
 
 }
 
-void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
+void gplay_func_958(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
     if ((param3 & 1) != 0) {
         bcopy(&bss_10.unk0.unk0, &bss_0->gplay.unk0, sizeof(GplayStruct9));
     } else {
@@ -322,11 +322,11 @@ void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4) {
             bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 &= ~1;
         }
 
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x = param1->x;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y = param1->y;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z = param1->z;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xC = param2 >> 8;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param4;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x = position->x;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y = position->y;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z = position->z;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].rotationY = yaw >> 8;
+        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].mapLayer = mapLayer;
 
         bcopy(&bss_10.unk0, &bss_0->gplay, sizeof(GplayStruct3));
     }
@@ -341,7 +341,7 @@ void gplay_start_game() {
     gplay_func_D94();
 }
 
-void gplay_func_B3C(Vec3f *param1, s16 param2, s32 param3) {
+void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     if (bss_4 == NULL) {
         bss_4 = (GplayStruct3*)malloc(sizeof(GplayStruct3), 0xFFFF00FF, NULL);
         if (bss_4 == NULL) {
@@ -357,21 +357,21 @@ void gplay_func_B3C(Vec3f *param1, s16 param2, s32 param3) {
         bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 &= ~1;
     }
 
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.x = param1->x;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.y = param1->y;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.z = param1->z;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].unk0xC = (u8)(param2 >> 8);
-    bss_4->unk0x16d4[bss_10.unk0.unk0.unk0.character].unk0xD = param3;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.x = position->x;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.y = position->y;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.z = position->z;
+    bss_4->unk0x16d4[bss_4->unk0.unk0.character].rotationY = (u8)(yaw >> 8);
+    bss_4->unk0x16d4[bss_10.unk0.unk0.unk0.character].mapLayer = mapLayer;
 }
 
-void gplay_func_CBC() {
+void gplay_restart_goto() {
     if (bss_4 != NULL) {
         bcopy(bss_4, &bss_10.unk0, sizeof(GplayStruct3));
         gplay_func_D94();
     }
 }
 
-void gplay_func_D20() {
+void gplay_restart_clear() {
     if (bss_4 != NULL) {
         free(bss_4);
         bss_4 = NULL;
@@ -540,31 +540,31 @@ void gplay_func_1378(s32 param1, s32 param2) {
     bss_1840[param2 - 80] = param1;
 }
 
-void gplay_func_139C(s32 param1, s32 param2) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+void gplay_func_139C(s32 mapID, s32 setupID) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
 
-    set_gplay_bitstring(data_0[param1], param2);
+    set_gplay_bitstring(data_0[mapID], setupID);
 
-    bss_1A48[0] = param1;
-    bss_1A48[1] = param2;
+    bss_1A48[0] = mapID;
+    bss_1A48[1] = setupID;
 
-    gplay_func_15B8(param1);
+    gplay_func_15B8(mapID);
 }
 
-u8 gplay_func_143C(s32 param1) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+u8 gplay_func_143C(s32 mapID) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
 
-    if (param1 != bss_1A48[0]) {
-        bss_1A48[0] = param1;
+    if (mapID != bss_1A48[0]) {
+        bss_1A48[0] = mapID;
 
-        if (param1 < 0 || param1 >= 120 || !data_0[param1]) {
+        if (mapID < 0 || mapID >= 120 || !data_0[mapID]) {
             bss_1A48[1] = 0;
         } else {
-            bss_1A48[1] = get_gplay_bitstring(data_0[param1]);
+            bss_1A48[1] = get_gplay_bitstring(data_0[mapID]);
         }
     }
 
@@ -612,16 +612,16 @@ void gplay_func_1680(s32 param1) {
     bss_1868[param1] = 0;
 }
 
-void gplay_func_16C4(s32 param1, s32 param2, s32 param3) {
+void gplay_func_16C4(s32 mapID, s32 param2, s32 param3) {
     s32 var2;
     s32 bit;
     s32 i;
 
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
 
-    if ((param1 < 120 && data_F0[param1] != 0) || (param3 >= 0 && 0)) {
+    if ((mapID < 120 && data_F0[mapID] != 0) || (param3 >= 0 && 0)) {
         if (param3 == -1) {
             param3 = 1;
         }
@@ -630,7 +630,7 @@ void gplay_func_16C4(s32 param1, s32 param2, s32 param3) {
             param3 = 0;
         }
 
-        bit = get_gplay_bitstring(data_F0[param1]);
+        bit = get_gplay_bitstring(data_F0[mapID]);
 
         var2 = bit;
         if (param3 != 0) {
@@ -639,22 +639,22 @@ void gplay_func_16C4(s32 param1, s32 param2, s32 param3) {
             var2 &= ~(1 << param2);
         }
 
-        set_gplay_bitstring(data_F0[param1], var2);
+        set_gplay_bitstring(data_F0[mapID], var2);
 
-        bss_1A50[0] = param1;
+        bss_1A50[0] = mapID;
         bss_1A50[1] = var2;
 
         if (param3 != 0) {
             if (((1 << param2) & bit) == 0) {
                 for (i = 0; i < 120; i++) {
-                    if (data_F0[i] == data_F0[param1]) {
+                    if (data_F0[i] == data_F0[mapID]) {
                         bss_1868[i] = bss_1868[i] | (1 << param2);
                     }
                 }
             }
         } else {
             for (i = 0; i < 120; i++) {
-                if (data_F0[i] == data_F0[param1]) {
+                if (data_F0[i] == data_F0[mapID]) {
                     bss_1868[i] = bss_1868[i] & ~(1 << param2);
                 }
             }

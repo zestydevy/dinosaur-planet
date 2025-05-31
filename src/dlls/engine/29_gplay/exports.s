@@ -16,9 +16,9 @@ _exports:
 .dword gplay_func_94C
 .dword gplay_func_958
 .dword gplay_start_game
-.dword gplay_func_B3C
-.dword gplay_func_CBC
-.dword gplay_func_D20
+.dword gplay_restart_set
+.dword gplay_restart_goto
+.dword gplay_restart_clear
 .dword gplay_func_D70
 .dword gplay_func_8D8
 .dword gplay_func_79C

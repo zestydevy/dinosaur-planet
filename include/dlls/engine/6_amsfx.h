@@ -27,7 +27,7 @@ DLL_INTERFACE_BEGIN(6_AMSFX)
     /*16*/ void (*func16)(Object *obj);
     /*17*/ UnknownDLLFunc func17;
     /*18*/ UnknownDLLFunc func18;
-    /*19*/ void (*func19)(u8);
+    /*19*/ void (*water_falls_set_flags)(u8);
     /*20*/ UnknownDLLFunc func20;
 DLL_INTERFACE_END()
 

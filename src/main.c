@@ -533,8 +533,8 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
     temp_v0 = gDLL_29_gplay->exports->func_F04();
 
-    func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->unk0xD);
-    gDLL_29_gplay->exports->func_958(&temp_v0->vec, 0, 0, temp_v0->unk0xD);
+    func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
+    gDLL_29_gplay->exports->func_958(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
 
     D_800B09C0 = 1;
     D_8008C968 = arg3;
