@@ -1,0 +1,70 @@
+# .text | offset: 0x0
+dll_6_ctor = 0x0;
+dll_6_dtor = 0x22C;
+dll_6_func_338 = 0x338;
+dll_6_func_480 = 0x480;
+dll_6_func_48C = 0x48C;
+dll_6_func_7E4 = 0x7E4;
+dll_6_func_860 = 0x860;
+dll_6_func_954 = 0x954;
+dll_6_func_A1C = 0xA1C;
+dll_6_func_A6C = 0xA6C;
+dll_6_func_B48 = 0xB48;
+dll_6_func_BBC = 0xBBC;
+dll_6_func_DCC = 0xDCC;
+dll_6_func_DE8 = 0xDE8;
+dll_6_func_EE4 = 0xEE4;
+dll_6_func_F2C = 0xF2C;
+dll_6_func_10D0 = 0x10D0;
+dll_6_func_1174 = 0x1174;
+dll_6_func_1218 = 0x1218;
+dll_6_func_1320 = 0x1320;
+dll_6_func_1504 = 0x1504;
+dll_6_func_16E0 = 0x16E0;
+dll_6_func_1C10 = 0x1C10;
+dll_6_func_1C38 = 0x1C38;
+dll_6_func_1D58 = 0x1D58;
+dll_6_func_1E64 = 0x1E64;
+dll_6_func_1F78 = 0x1F78;
+dll_6_func_2240 = 0x2240;
+dll_6_func_22FC = 0x22FC;
+dll_6_func_2438 = 0x2438;
+
+# .rodata | offset: 0x2630
+_rodata_0 = 0x2760; # offset: 0x0
+_rodata_224 = 0x2984; # offset: 0x224
+_rodata_234 = 0x2994; # offset: 0x234
+_rodata_238 = 0x2998; # offset: 0x238
+_rodata_248 = 0x29A8; # offset: 0x248
+_rodata_24C = 0x29AC; # offset: 0x24C
+_rodata_25C = 0x29BC; # offset: 0x25C
+_rodata_260 = 0x29C0; # offset: 0x260
+_rodata_270 = 0x29D0; # offset: 0x270
+_rodata_33C = 0x2A9C; # offset: 0x33C
+_rodata_34C = 0x2AAC; # offset: 0x34C
+_rodata_3B8 = 0x2B18; # offset: 0x3B8
+_rodata_3C8 = 0x2B28; # offset: 0x3C8
+_rodata_3CC = 0x2B2C; # offset: 0x3CC
+_rodata_3DC = 0x2B3C; # offset: 0x3DC
+_rodata_4C0 = 0x2C20; # offset: 0x4C0
+_rodata_4C4 = 0x2C24; # offset: 0x4C4
+_rodata_4C8 = 0x2C28; # offset: 0x4C8
+
+# .data | offset: 0x2C30
+_data_0 = 0x2C30; # offset: 0x0
+
+# .bss | offset: 0x2C40
+_bss_0 = 0x2C40; # offset: 0x0
+_bss_4 = 0x2C44; # offset: 0x4
+_bss_8 = 0x2C48; # offset: 0x8
+_bss_C = 0x2C4C; # offset: 0xC
+_bss_10 = 0x2C50; # offset: 0x10
+_bss_14 = 0x2C54; # offset: 0x14
+_bss_18 = 0x2C58; # offset: 0x18
+_bss_1C = 0x2C5C; # offset: 0x1C
+_bss_1D = 0x2C5D; # offset: 0x1D
+_bss_1E = 0x2C5E; # offset: 0x1E
+_bss_1F = 0x2C5F; # offset: 0x1F
+_bss_20 = 0x2C60; # offset: 0x20
+_bss_28 = 0x2C68; # offset: 0x28
+_bss_128 = 0x2D68; # offset: 0x128

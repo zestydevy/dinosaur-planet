@@ -142,4 +142,6 @@ void func_800473BC(void);
 s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
 s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
 
+void *func_80000B40(u8 arg0, u8 arg1, s32 arg2, u8 arg3, s32 arg4);
+
 #endif //_FUNCTIONS_H
