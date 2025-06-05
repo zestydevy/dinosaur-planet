@@ -64,7 +64,7 @@ def stringify_instruction(idx: int, i: DLLInst, function: DLLFunction) -> "tuple
         # register with its numeric name and not $ra (which is what Capstone gives us)
         assert operands[-1] == "$ra"
         operands[-1] = "$31"
-    elif i.i.id == MIPS_INS_DIV and op_count < 3:
+    elif (i.i.id == MIPS_INS_DIV or i.i.id == MIPS_INS_DIVU) and op_count < 3:
         # Capstone omits the first $zero operand sometimes, we need it back for the assembler
         operands.insert(0, "$zero") 
     
