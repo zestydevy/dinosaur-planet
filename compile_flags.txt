@@ -10,6 +10,7 @@ mips
 -ffast-math
 -fno-unsafe-math-optimizations
 -fno-builtin-memset
+-fms-extensions
 -Wall
 -Wextra
 -Wno-incompatible-library-redeclaration
