@@ -8,10 +8,10 @@ _exports:
 .dword cannon_claw_dtor
 
 # export table
-.dword cannon_claw_func_18
-.dword cannon_claw_func_4C
+.dword cannon_claw_create
+.dword cannon_claw_update
 .dword cannon_claw_func_200
-.dword cannon_claw_func_20C
-.dword cannon_claw_func_26C
+.dword cannon_claw_draw
+.dword cannon_claw_destroy
 .dword cannon_claw_func_27C
-.dword cannon_claw_func_28C
+.dword cannon_claw_get_state_size

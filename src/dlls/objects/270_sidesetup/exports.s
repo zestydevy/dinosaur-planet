@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_270_ctor
-.dword dll_270_dtor
+.dword sidesetup_ctor
+.dword sidesetup_dtor
 
 # export table
-.dword dll_270_func_18
-.dword dll_270_func_3C
-.dword dll_270_func_48
-.dword dll_270_func_54
-.dword dll_270_func_6C
-.dword dll_270_func_7C
-.dword dll_270_func_8C
+.dword sidesetup_create
+.dword sidesetup_update
+.dword sidesetup_func_48
+.dword sidesetup_draw
+.dword sidesetup_destroy
+.dword sidesetup_func_7C
+.dword sidesetup_get_state_size

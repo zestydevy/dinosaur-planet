@@ -8,80 +8,72 @@
 #include "functions.h"
 #include "types.h"
 
-static void cannon_claw_func_1B4(Object *a0);
+static void cannon_claw_func_1B4(Object *self);
 
-void cannon_claw_ctor(void *arg) {
+void cannon_claw_ctor(void *dll) { }
 
+void cannon_claw_dtor(void *dll) { }
+
+void cannon_claw_create(Object *self, ObjCreateInfo *createInfo, s32 a2) {
+    self->srt.yaw = -32768;
+    self->srt.transl.y = createInfo->y + 2.0f;  
 }
 
-void cannon_claw_dtor(void *arg) {
-    
-}
-
-void cannon_claw_func_18(Object *a0, Object *a1, void *a2) {
-    a0->srt.yaw = -32768;
-    a0->srt.transl.y = a1->srt.transl.x + 2.0f;  
-}
-
-void cannon_claw_func_4C(Object *s0) {
+void cannon_claw_update(Object *self) {
     s32 temp;
-    Object *sidekick; // TODO: is this really?
+    Object *sidekick;
 
     sidekick = get_sidekick();
     
-    if (s0->unk0xdc != 0) {
+    if (self->unk0xdc != 0) {
         return;
     }
 
-    if (s0->curAnimId != 0x208) {
-        func_80023D30(s0, 0x208, 0, 0);
+    if (self->curAnimId != 0x208) {
+        func_80023D30(self, 0x208, 0, 0);
     }
 
-    func_80024108(s0, 0.0049999998f, delayFloat, 0);
-    temp = func_80025F40(s0, 0, 0, 0);
+    func_80024108(self, 0.0049999998f, delayFloat, 0);
+    temp = func_80025F40(self, 0, 0, 0);
     
     if (temp != 0) {
-        if (s0->parent != NULL) {
-            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)s0->parent->createInfo;
+        if (self->parent != NULL) {
+            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
             set_gplay_bitstring(createInfo->bitstringEntry, 1);
             ((DLLInst_Unknown*)sidekick->dll)->exports->func[21].withThreeArgs(sidekick, 0, 0);
         }
         
-        cannon_claw_func_1B4(s0);
+        cannon_claw_func_1B4(self);
     } else {
-        if (s0->parent != NULL) {
-            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)s0->parent->createInfo;
+        if (self->parent != NULL) {
+            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
             if (get_gplay_bitstring(createInfo->bitstringEntry) != 0) {
-                cannon_claw_func_1B4(s0);
+                cannon_claw_func_1B4(self);
             }
         }
     }
 }
 
-static void cannon_claw_func_1B4(Object *a0) {
-    a0->unk0xdc = 1;
-    a0->unk0xaf = a0->unk0xaf | 8;    
-    func_800267A4(a0);
+static void cannon_claw_func_1B4(Object *self) {
+    self->unk0xdc = 1;
+    self->unk0xaf = self->unk0xaf | 8;    
+    func_800267A4(self);
 }
 
-void cannon_claw_func_200(void *a0) {
+void cannon_claw_func_200(Object *self) { }
 
-}
-
-void cannon_claw_func_20C(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void cannon_claw_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0 && self->unk0xdc == 0) {
 		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 
-void cannon_claw_func_26C(void *a0, void *a1) {
+void cannon_claw_destroy(Object *self, s32 a1) { }
 
-}
-
-s32 cannon_claw_func_27C(void *a0) {
+u32 cannon_claw_func_27C(Object *self) {
     return 0;
 }
 
-s32 cannon_claw_func_28C(void *a0, void *a1) {
+u32 cannon_claw_get_state_size(Object *self, u32 a1) {
     return 0;
 }
