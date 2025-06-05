@@ -102,18 +102,11 @@
 /*0x128*/ static void *_bss_128;
 
 // offset: 0x0 | ctor
-// TODO: this dll is currently not being compiled due to this function. asm-processor fails on its asm
-//       and it's not matching. solving either issue would let compilation be re-enabled
-// https://decomp.me/scratch/MtgTF
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_ctor.s")
-#else
 void dll_6_ctor(s32 arg0) {
     u32* sp4C;
     s32 temp_v0;
     s32 temp_a3;
     ALSndpConfig sp30;
-
 
     _bss_14 = 0;
     _bss_18 = 0;
@@ -139,8 +132,7 @@ void dll_6_ctor(s32 arg0) {
     queue_alloc_load_file((void*)&sp4C, 0);
     _bss_C = sp4C[0];
     _bss_10 = sp4C[1] - _bss_C;
-    _bss_10 = _bss_10 / 14U;
-    //_bss_10 = temp_t8 / 14U;
+    _bss_10 = _bss_10 / 14;
     free(sp4C);
 
     _bss_8 = 0x41;
@@ -149,7 +141,6 @@ void dll_6_ctor(s32 arg0) {
     bzero(_bss_4, temp_a3);
     _bss_8 = 0;
 }
-#endif
 
 // offset: 0x22C | dtor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_dtor.s")
