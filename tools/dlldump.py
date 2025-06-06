@@ -105,11 +105,11 @@ def dump_text_disassembly(dll_functions: "list[DLLFunction]",
 
         print("glabel {} ({})".format(func.symbol, func.type.name.lower()))
 
-        for idx, i in enumerate(func.insts):
-            inst_str, label = stringify_instruction(idx, i, func)
+        for i in func.insts:
+            inst_str, label = stringify_instruction(i, func)
             if label != None:
                 print(label)
-            print("{:#x}:\t{}".format(i.i.address, inst_str))
+            print("{:#x}:\t{}".format(i.i.vram, inst_str))
     
     if only_funcs is not None and first:
         print("(function(s) not found)")
