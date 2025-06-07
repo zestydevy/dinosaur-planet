@@ -115,6 +115,18 @@ typedef struct {
 /*0004*/    u8 unk4;
 } ObjectStruct78;
 
+typedef struct {
+/*0000*/	u32 id;
+/*0004*/	struct Object *sender;
+/*0008*/	void *arg;
+} ObjMesgQueueMessage;
+
+typedef struct {
+/*0000*/    u32 count; // current number of messages in queue
+/*0004*/    u32 capacity; // max number of messages
+/*0008*/    ObjMesgQueueMessage queue[1]; // variable length
+} ObjectMesgQueue;
+
 // Base interface for object DLLs
 DLL_INTERFACE_BEGIN(Object)
     /*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
@@ -185,7 +197,7 @@ typedef struct Object {
 /*00C0*/	struct Object *unk0xc0; // related to group 16 objects?
 /*00C4*/	UNK_TYPE_32 unk0xc4;
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
-/*00CC*/    void* ptr0xcc;
+/*00CC*/    ObjectMesgQueue *mesgQueue;
 /*00D0*/    u8 unk_0xd0[0xd4 - 0xd0];
 /*00D4*/    u8 unk_0xd4; // index into ObjDef.unk40
 /*00D5*/    u8 unk_0xd5[0xd6 - 0xd5];

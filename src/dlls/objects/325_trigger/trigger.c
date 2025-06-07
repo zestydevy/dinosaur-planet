@@ -12,6 +12,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objmsg.h"
 #include "sys/gfx/gx.h"
 #include "dll.h"
 #include "dll_def.h"
@@ -616,14 +617,14 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             case 6:                         /* switch 2 */
                 break;
             case 7: {                         /* switch 2 */
-                    s32 var_v0; // sp+50
+                    s32 mesgID; // sp+50
                     if (dir == 1) {
-                        var_v0 = 0x80;
+                        mesgID = 0x80;
                     } else {
-                        var_v0 = 0x81;
+                        mesgID = 0x81;
                     }
-                    func_80031864(OBJ_Swoop,           6000.0f, 0, self, var_v0, 0);
-                    func_80031864(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, var_v0, 0);
+                    obj_send_mesg_many_nearby(OBJ_Swoop,           6000.0f, 0, self, mesgID, 0);
+                    obj_send_mesg_many_nearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);
                 }
                 break;
             case 8: {                        /* switch 2 */

@@ -133,7 +133,6 @@ ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
 Texture *func_8003E960(s32);
 
 void func_8001EBD0(s32);
-void func_80031864(s32, f32, s16, Object*, s32, s32);
 void func_80041CA8(s32 arg0);
 void func_80041CE4(s32 arg0);
 void func_80041E24(s32 arg0);

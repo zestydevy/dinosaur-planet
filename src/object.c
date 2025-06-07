@@ -567,7 +567,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     objHeader.unk0xb4 = -1;
     objHeader.srt.scale = def->scale;
     objHeader.unk_0x36 = 0xFF;
-    objHeader.ptr0xcc = NULL;
+    objHeader.mesgQueue = NULL;
     objHeader.unk0x3c = createInfo->loadDistance << 3;
     objHeader.unk0x40 = createInfo->fadeDistance << 3;
     objHeader.dll = NULL;
@@ -1470,9 +1470,9 @@ void obj_free_object(Object *obj, s32 param2) {
         }
     }
 
-    if (obj->ptr0xcc != NULL) {
-        free(obj->ptr0xcc);
-        obj->ptr0xcc = NULL;
+    if (obj->mesgQueue != NULL) {
+        free(obj->mesgQueue);
+        obj->mesgQueue = NULL;
     }
 
     numModels = obj->def->numModels;
