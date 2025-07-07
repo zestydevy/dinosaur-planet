@@ -217,11 +217,11 @@ class BuildNinjaWriter:
         self.writer.variable("IDO_53", f"tools/ido_static_recomp/build/5.3/out/cc{exe_suffix}")
         self.writer.variable("IDO_71", f"tools/ido_static_recomp/build/7.1/out/cc{exe_suffix}")
         self.writer.variable("CC", "$IDO_53")
-        self.writer.variable("ASM_PROCESSOR", "python3 tools/asm_processor/build.py")
-        self.writer.variable("HEADER_DEPS", "python3 tools/header_deps.py")
-        self.writer.variable("ELF2DLL", "python3 tools/elf2dll.py")
-        self.writer.variable("DINODLL", "python3 tools/dino_dll.py")
-        self.writer.variable("DLL_ASMPROC_FIXUP", "python3 tools/dll_asmproc_fixup.py")
+        self.writer.variable("ASM_PROCESSOR", f"{sys.executable} tools/asm_processor/build.py")
+        self.writer.variable("HEADER_DEPS", f"{sys.executable} tools/header_deps.py")
+        self.writer.variable("ELF2DLL", f"{sys.executable} tools/elf2dll.py")
+        self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
+        self.writer.variable("DLL_ASMPROC_FIXUP", f"{sys.executable} tools/dll_asmproc_fixup.py")
         
         self.writer.newline()
 
