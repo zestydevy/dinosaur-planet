@@ -17,9 +17,9 @@
 /*0x04*/ static s32 *_bss_4;
 /*0x08*/ static StructBss8 *_bss_8;
 /*0x0C*/ static s32 _bss_C;
-/*0x10*/ static StructBss10 *_bss_10;
+/*0x10*/ static StructBss8 *_bss_10;
 /*0x14*/ static s32 _bss_14;
-/*0x18*/ static s32 _bss_18;
+/*0x18*/ static StructBss8 *_bss_18;
 /*0x1C*/ static s32 _bss_1C;
 /*0x20*/ static s32 _bss_20; // some sort of counter
 /*0x24*/ static StructBss24 *_bss_24;
@@ -329,7 +329,7 @@ void dll_24_func_6E8(void)
     s32 temp_ft4_2;
     s32 j;
     StructBss8 *temp_a1;
-    StructBss10 *temp_a1_2;
+    StructBss8 *temp_a1_2;
     StructBss2C *temp_t0;
     StructBss24 *temp_v0;
     StructBss34 *temp_v0_2;
@@ -667,7 +667,7 @@ void dll_24_func_C7C(Gfx **arg0, Mtx **arg1)
 #endif
 
 // offset: 0x135C | func: 4
-s32 dll_24_func_135C(s32 arg0, s32 arg1)
+/* static */ s32 dll_24_func_135C(s32 arg0, s32 arg1)
 {
     StructBss3C *temp_s1;
     f32 pad;
@@ -679,7 +679,7 @@ s32 dll_24_func_135C(s32 arg0, s32 arg1)
     f32 temp_fv0;
     s32 var_fp;
     s32 var_s0;
-    StructBss10 *temp_v1;
+    StructBss8 *temp_v1;
     s32 sp70[1]; // this needs to be an array for some reason
     s16 var_s5;
     s16 temp_ft1;
@@ -765,10 +765,196 @@ s32 dll_24_func_135C(s32 arg0, s32 arg1)
 }
 
 // offset: 0x174C | func: 5 | export: 3
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_174C.s")
+#else
+// somewhat close
+void dll_24_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3)
+{
+    StructBss2C *temp_fp;
+    f32 temp_fs1;
+    f32 temp_ft4;
+    f32 temp_fv0;
+    f32 temp_fv0_2;
+    f32 *var_s1; // this might be incorrect
+    s16 var_s2;
+    s16 var_s4;
+    s32 var_s3;
+    s32 var_s5;
+    StructBss8 *var_s0;
+
+    if (arg3 == 0.0f)
+    {
+        arg3 = 4.0f;
+    }
+    var_s5 = 0;
+    var_s4 = 0x2AAA;
+    var_s2 = 0;
+    var_s3 = 4;
+    for (; var_s5 < 0xA && (u8)_bss_2C[var_s5].unk58 != 0; var_s5++)
+    {
+    }
+    if (var_s5 >= 0xA)
+    {
+        return;
+    }
+
+    temp_fp = &_bss_2C[var_s5];
+    var_s0 = &_bss_8[var_s5 * 0xE];
+    temp_fs1 = arg3 * 100.0f;
+    arg3 = 4.0f;
+    var_s0->unk0 = temp_fs1;
+
+    var_s0->unk2 = 0;
+    var_s0->unk4 = 0;
+    var_s0->unkC = 0xFF;
+    var_s0->unkD = 0;
+    var_s0->unkE = 0;
+    var_s0->unkF = 0xFF;
+    var_s0->unk8 = 0;
+    var_s0->unkA = 0;
+    temp_ft4 = 2.0f * (arg3 * arg3);
+    var_s0++;
+    var_s0->unk0 = temp_fs1;
+    var_s0->unk2 = 0;
+    var_s0->unk4 = 0;
+    var_s0->unkC = 0xFF;
+    var_s0->unkD = 0;
+    var_s0->unkE = 0;
+    var_s0->unkF = 0xFF;
+    var_s0->unk8 = 0;
+    var_s0->unkA = 0x3A0;
+    var_s0++;
+    temp_fp->unkC = arg3;
+    temp_fp->unk24 = arg3;
+    temp_fp->unk3C = 0.0f;
+    if (temp_ft4 > 0.0f)
+    {
+        // @fake
+        if (1)
+        {
+        }
+        temp_ft4 = 1.0f / temp_ft4;
+        temp_fp->unkC *= temp_ft4;
+        temp_fp->unk24 *= temp_ft4;
+    }
+    var_s1 = &temp_fp->unk4;
+    do
+    {
+        temp_fv0 = fcos16_precise(var_s4);
+        temp_fv0_2 = fsin16_precise(var_s4);
+        ((StructBss2C *)var_s1)->unkC = arg3 * temp_fv0;
+        ((StructBss2C *)var_s1)->unk24 = arg3;
+        ((StructBss2C *)var_s1)->unk3C = arg3 * temp_fv0_2;
+        temp_ft4 = (((StructBss2C *)var_s1)->unk3C * ((StructBss2C *)var_s1)->unk3C) + ((((StructBss2C *)var_s1)->unkC * ((StructBss2C *)var_s1)->unkC) + (((StructBss2C *)var_s1)->unk24 * ((StructBss2C *)var_s1)->unk24));
+        if (temp_ft4 > 0.0f)
+        {
+            temp_ft4 = 1.0f / temp_ft4;
+            ((StructBss2C *)var_s1)->unkC *= temp_ft4;
+            ((StructBss2C *)var_s1)->unk24 *= temp_ft4;
+            ((StructBss2C *)var_s1)->unk3C *= temp_ft4;
+        }
+        var_s0->unk2 = 0;
+        var_s0->unkF = 0xFF;
+        var_s2 += 0xC00;
+        var_s0->unk8 = var_s2;
+        var_s0->unkA = 0;
+        var_s0[1].unk2 = 0;
+        var_s0[1].unkF = 0xFF;
+        var_s0[1].unk8 = var_s2;
+        var_s0[1].unkA = 0x3A0;
+        var_s0->unk0 = temp_fs1 * temp_fv0;
+        var_s0->unk4 = temp_fs1 * temp_fv0_2;
+        var_s0[1].unk0 = var_s0->unk0;
+        var_s0[1].unk4 = var_s0->unk4;
+        var_s4 += 0x2AAA;
+        var_s0 += 2;
+        var_s1++;
+        var_s3 += 4;
+    } while (var_s3 != 0x18);
+    var_s2 += 0xC00;
+    var_s0->unk0 = temp_fs1;
+    var_s0->unk4 = 0;
+    var_s0->unk2 = 0;
+    var_s0->unkF = 0xFF;
+    var_s0->unkE = 0;
+    var_s0->unkD = 0;
+    var_s0->unkC = 0xFF;
+    var_s0->unk8 = var_s2;
+    var_s0->unkA = 0;
+    var_s0++;
+    var_s0->unk0 = temp_fs1;
+    var_s0->unk4 = 0;
+    var_s0->unk2 = 0;
+    var_s0->unkF = 0xFF;
+    var_s0->unkE = 0;
+    var_s0->unkD = 0;
+    var_s0->unkC = 0xFF;
+    var_s0->unk8 = var_s2;
+    var_s0->unkA = 0x3A0;
+    temp_fp->unk54 = 0xFF;
+    temp_fp->unk0 = arg0;
+    temp_fp->unk4 = arg1;
+    temp_fp->unk8 = arg2;
+    _bss_28 += 1;
+    temp_fp->unk58 = dll_24_func_135C(&_bss_2C[var_s5], var_s5);
+}
+#endif
 
 // offset: 0x1B28 | func: 6 | export: 5
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_1B28.s")
+void dll_24_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4)
+{
+    StructBss34 *temp_v0;
+    s32 var_v0;
+    StructBss8 *temp_a0;
+
+    for (var_v0 = 0; var_v0 < 0x1E && _bss_34[var_v0].unk14 != 0; var_v0++)
+    {
+    }
+    if (var_v0 >= 0x1E)
+    {
+        return;
+    }
+
+    temp_a0 = &_bss_18[var_v0 * 4];
+    temp_a0->unk0 = -200;
+    temp_a0->unk2 = 0;
+    temp_a0->unk4 = 400;
+    temp_a0->unkF = -1;
+    temp_a0->unk8 = 0;
+    temp_a0->unkA = 0;
+    temp_a0++;
+    temp_a0->unk0 = -200;
+    temp_a0->unk2 = 0;
+    temp_a0->unk4 = -200;
+    temp_a0->unkF = -1;
+    temp_a0->unk8 = 0;
+    temp_a0->unkA = 992;
+    temp_a0++;
+    temp_a0->unk0 = 200;
+    temp_a0->unk2 = 0;
+    temp_a0->unk4 = -200;
+    temp_a0->unkF = -1;
+    temp_a0->unk8 = 2016;
+    temp_a0->unkA = 992;
+    temp_a0++;
+    temp_a0->unk0 = 200;
+    temp_a0->unk2 = 0;
+    temp_a0->unk4 = 400;
+    temp_a0->unkF = -1;
+    temp_a0->unk8 = 2016;
+    temp_a0->unkA = 0;
+    temp_v0 = &_bss_34[var_v0];
+    temp_v0->unk0 = arg0;
+    temp_v0->unk4 = arg1;
+    temp_v0->unk8 = arg2;
+    temp_v0->unkC = arg4;
+    temp_v0->unk10 = 0.01f;
+    temp_v0->unk14 = 128;
+    temp_v0->unk16 = arg3;
+    temp_v0->unk18 = 0;
+    _bss_30 += 1;
+}
 
 // offset: 0x1C88 | func: 7 | export: 7
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_1C88.s")
