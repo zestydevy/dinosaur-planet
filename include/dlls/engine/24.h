@@ -1,7 +1,15 @@
 #ifndef _DLLS_24_H
 #define _DLLS_24_H
 
-// size 0x20 or 0x10
+#include "PR/ultratypes.h"
+#include "sys/gfx/texture.h"
+#include "sys/memory.h"
+#include "sys/math.h"
+#include "sys/rand.h"
+#include "prevent_bss_reordering.h"
+#include "functions.h"
+
+// size: 0x20
 typedef struct StructBss4
 {
     u8 pad0;
@@ -20,6 +28,7 @@ typedef struct StructBss4
     s32 pad1C;
 } StructBss4;
 
+// size: 0x10
 typedef struct StructBss8
 {
     s16 unk0;
@@ -29,17 +38,7 @@ typedef struct StructBss8
     s8 unkF;
 } StructBss8;
 
-typedef struct StructBss10
-{
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    s16 pad6;
-    s32 pad8;
-    s32 padC;
-} StructBss10;
-
-// size 0x10
+// size: 0x10
 typedef struct StructBssC
 {
     s8 unk0;
@@ -51,7 +50,21 @@ typedef struct StructBssC
     s32 padC;
 } StructBssC;
 
-// size 0x1C
+// size: 0x10
+typedef struct StructBss10
+{
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 pad6;
+    s16 unk8;
+    s16 unkA;
+    s16 padC;
+    s8 padE;
+    u8 unkF;
+} StructBss10;
+
+// size 0x1A (0x1C?)
 typedef struct StructBss24
 {
     f32 unk0;
@@ -64,6 +77,7 @@ typedef struct StructBss24
     s16 unk18;
 } StructBss24;
 
+// size: 0x5C
 typedef struct StructBss2C
 {
     f32 unk0;
@@ -80,7 +94,7 @@ typedef struct StructBss2C
     s8 unk58;
 } StructBss2C;
 
-// size 0x1C
+// size: 0x1C
 typedef struct StructBss34
 {
     f32 unk0;
@@ -93,6 +107,7 @@ typedef struct StructBss34
     s8 unk18;
 } StructBss34;
 
+// size: 0x14
 typedef struct StructBss3C
 {
     f32 unk0;
@@ -117,7 +132,6 @@ typedef struct Func564Arg3 {
     u8 pad0[0x1B0];
     f32 unk1B0;
 } Func564Arg3;
-
 
 void dll_24_ctor(s32 arg0);
 void dll_24_dtor(s32 arg0);
