@@ -34,8 +34,13 @@ typedef struct StructBss8
     s16 unk0;
     s16 unk2;
     s16 unk4;
-    u8 pad6[0xF - 0x6];
-    s8 unkF;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+    u8 unkF;
 } StructBss8;
 
 // size: 0x10
@@ -49,20 +54,6 @@ typedef struct StructBssC
     s32 pad8;
     s32 padC;
 } StructBssC;
-
-// size: 0x10
-typedef struct StructBss10
-{
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    s16 pad6;
-    s16 unk8;
-    s16 unkA;
-    s16 padC;
-    s8 padE;
-    u8 unkF;
-} StructBss10;
 
 // size 0x1A (0x1C?)
 typedef struct StructBss24
@@ -125,7 +116,7 @@ typedef struct Func564Arg0 {
     s32 pad8;
     f32 unkC;
     f32 unk10;
-    s32 unk14;
+    f32 unk14;
 } Func564Arg0;
 
 typedef struct Func564Arg3 {
@@ -139,7 +130,7 @@ void dll_24_func_24C(void);
 void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
 void dll_24_func_6E8(void);
 void dll_24_func_174C(f32, f32, f32, f32);
-void dll_24_func_1B28(f32, f32, s32, s16, f32);
+void dll_24_func_1B28(f32, f32, f32, s16, f32);
 void dll_24_func_1CC8(f32, f32, f32, s16, f32, s32);
 
 #endif //_DLLS_24_H
