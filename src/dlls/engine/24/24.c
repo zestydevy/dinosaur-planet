@@ -1,9 +1,3 @@
-#include "PR/ultratypes.h"
-#include "sys/gfx/texture.h"
-#include "sys/memory.h"
-#include "sys/math.h"
-#include "prevent_bss_reordering.h"
-#include "functions.h"
 #include "dlls/engine/24.h"
 
 /*0x0*/ static const u32 _rodata_0[] = {
@@ -17,8 +11,7 @@
     0x72207761,
     0x74657266,
     0x7820646c,
-    0x6c0a0000
-};
+    0x6c0a0000};
 
 /*0x00*/ static s32 _bss_0;
 /*0x04*/ static s32 *_bss_4;
@@ -469,10 +462,307 @@ void dll_24_func_6E8(void)
 #endif
 
 // offset: 0xC7C | func: 3 | export: 2
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_C7C.s")
+#else
+typedef struct
+{
+    /*0000*/ u8 unk_0x0;
+    /*0001*/ u8 v0;
+    /*0002*/ u8 v1;
+    /*0003*/ u8 v2;
+    /*0004*/ u8 unk_0x4[0x10 - 0x4];
+} DLTri;
+
+void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+
+void dll_24_func_C7C(Gfx **arg0, Mtx **arg1)
+{
+    f32 spC0;
+    f32 spBC;
+    f32 spB8;
+    f32 spB4;
+    s16 spB0;
+    s16 spAE;
+    s16 spAC;
+    Gfx *temp_v0;
+    Gfx *temp_v0_11;
+    Gfx *temp_v0_12;
+    Gfx *temp_v0_13;
+    Gfx *temp_v0_2;
+    Gfx *temp_v0_3;
+    Gfx *temp_v0_4;
+    Gfx *temp_v0_5;
+    Gfx *temp_v0_6;
+    Gfx *temp_v0_7;
+    Gfx *temp_v0_8;
+    s32 var_s0;
+    s32 var_s1;
+    s32 var_s1_2;
+    s32 var_s1_3;
+    s32 var_s1_4;
+    s32 var_s2;
+    s32 var_s2_2;
+    s32 var_s2_3;
+    StructBss24 *temp_s0;
+    StructBss2C *temp_s0_2;
+    StructBss34 *temp_s0_3;
+    StructBss3C *temp_v0_10;
+    StructBss3C *temp_v0_9;
+    StructBss34 *temp_v1;
+
+    if ((_bss_20 != 0) || (_bss_30 != 0) || (_bss_28 != 0) || (_bss_38 != 0))
+    {
+        temp_v0 = *arg0;
+        temp_v0->words.w1 = 0x200005;
+        temp_v0->words.w0 = 0xD9000000;
+        dl_apply_geometry_mode(arg0);
+        temp_v0_2 = *arg0;
+        temp_v0_2->words.w0 = 0xFCFF97FF;
+        temp_v0_2->words.w1 = 0xFF10FE3F;
+        dl_apply_combine(arg0);
+        temp_v0_3 = *arg0;
+        temp_v0_3->words.w0 = 0xEF182C00;
+        temp_v0_3->words.w1 = 0x104B50;
+        dl_apply_other_mode(arg0);
+        var_s1 = 0;
+        var_s2 = 0;
+        if (_bss_20 != 0)
+        {
+            temp_v0_4 = *arg0;
+            *arg0 = temp_v0_4 + 8;
+            temp_v0_4->words.w0 = 0xDE000000;
+            temp_v0_4->words.w1 = (u32)(_bss_40->gdl + 0x80000000);
+        }
+        do
+        {
+            temp_s0 = var_s2 + _bss_24;
+            if ((_bss_24 + var_s2)->unk16 != 0)
+            {
+                dl_set_prim_color(arg0, 0xFFU, 0xFFU, 0xFFU, (u8)(s32)temp_s0->unk16);
+                spB8 = temp_s0->unk0;
+                spBC = temp_s0->unk4;
+                spC0 = temp_s0->unk8;
+                spB4 = temp_s0->unk10;
+                spB0 = 0;
+                spAE = 0;
+                spAC = temp_s0->unk14;
+                func_800032C4(arg0, arg1, (SRT *)&spAC, 1.0f, 0, NULL);
+                temp_v0_5 = *arg0;
+                *arg0 = temp_v0_5 + 8;
+                temp_v0_5->words.w0 = 0x01004008;
+                temp_v0_5->words.w1 = (var_s1 << 6) + _bss_0 + 0x80000000;
+                dl_triangles(arg0, (var_s1 << 5) + _bss_4, 2);
+            }
+            var_s1 += 1;
+            var_s2 += 0x1C;
+        } while (var_s1 < 0x1E);
+        var_s1_2 = 0;
+        if (_bss_28 != 0)
+        {
+            temp_v0_6 = *arg0;
+            *arg0 = temp_v0_6 + 8;
+            temp_v0_6->words.w0 = 0xDE000000;
+            temp_v0_6->words.w1 = (u32)(_bss_44->gdl + 0x80000000);
+        }
+        var_s2_2 = 0;
+        do
+        {
+            temp_s0_2 = var_s2_2 + _bss_2C;
+            if ((_bss_2C + var_s2_2)->unk54 != 0)
+            {
+                dl_set_prim_color(arg0, 0xFFU, 0xFFU, 0xFFU, (u8)(s32)temp_s0_2->unk54);
+                spB8 = temp_s0_2->unk0;
+                spBC = temp_s0_2->unk4;
+                spB4 = 0.01f;
+                spAC = 0;
+                spB0 = 0;
+                spAE = 0;
+                spC0 = temp_s0_2->unk8;
+                func_800032C4(arg0, arg1, (SRT *)&spAC, 1.0f, 0, NULL);
+                temp_v0_7 = *arg0;
+                *arg0 = temp_v0_7 + 8;
+                temp_v0_7->words.w0 = 0x0100E01C;
+                temp_v0_7->words.w1 = (u32)(&_bss_8[var_s1_2 * 0xE] + 0x80000000);
+                dl_triangles(arg0, (var_s1_2 * 0xC * 0x10) + _bss_C, 0xC);
+            }
+            var_s1_2 += 1;
+            var_s2_2 += 0x5C;
+        } while (var_s1_2 < 0xA);
+        if (_bss_38 != 0)
+        {
+            temp_v0_8 = *arg0;
+            *arg0 = temp_v0_8 + 8;
+            temp_v0_8->words.w0 = 0xDE000000;
+            temp_v0_8->words.w1 = (u32)(_bss_48->gdl + 0x80000000);
+            dl_set_prim_color(arg0, 0xFFU, 0xFFU, 0xFFU, 0xB4U);
+        }
+        var_s1_3 = 0;
+        var_s0 = 0;
+        do
+        {
+            temp_v0_9 = _bss_3C + var_s0;
+            if (temp_v0_9->unk12 != -1)
+            {
+                temp_v0_10 = var_s0 + _bss_3C;
+                if (temp_v0_9->unk10 != 0)
+                {
+                    spB8 = _bss_2C[temp_v0_10->unk12].unk0;
+                    spBC = _bss_2C[temp_v0_10->unk12].unk4;
+                    spB4 = 0.01f;
+                    spAC = 0;
+                    spB0 = 0;
+                    spAE = 0;
+                    spC0 = _bss_2C[temp_v0_10->unk12].unk8;
+                    func_800032C4(arg0, arg1, (SRT *)&spAC, 1.0f, 0, NULL);
+                    temp_v0_11 = *arg0;
+                    *arg0 = temp_v0_11 + 8;
+                    temp_v0_11->words.w0 = 0x01004008;
+                    temp_v0_11->words.w1 = (u32)((var_s1_3 << 6) + _bss_10 + 0x80000000);
+                    dl_triangles(arg0, (var_s1_3 << 5) + _bss_14, 2);
+                }
+            }
+            var_s1_3 += 1;
+            var_s0 += 0x14;
+        } while (var_s1_3 < 0x1E);
+        var_s1_4 = 0;
+        var_s2_3 = 0;
+        if (_bss_30 != 0)
+        {
+            temp_v0_12 = *arg0;
+            *arg0 = temp_v0_12 + 8;
+            temp_v0_12->words.w0 = 0xDE000000;
+            temp_v0_12->words.w1 = (u32)(_bss_4C->gdl + 0x80000000);
+        }
+        do
+        {
+            temp_v1 = _bss_34 + var_s2_3;
+            if (temp_v1->unk14 != 0)
+            {
+                temp_s0_3 = var_s2_3 + _bss_34;
+                if (temp_v1->unk18 == 0)
+                {
+                    dl_set_prim_color(arg0, 0xFFU, 0xFFU, 0xFFU, (u8)(s32)temp_s0_3->unk14);
+                    spB8 = temp_s0_3->unk0;
+                    spBC = temp_s0_3->unk4;
+                    spC0 = temp_s0_3->unk8;
+                    spB4 = temp_s0_3->unk10;
+                    spB0 = 0;
+                    spAE = 0;
+                    spAC = temp_s0_3->unk16;
+                    func_800032C4(arg0, arg1, (SRT *)&spAC, 1.0f, 0, NULL);
+                    temp_v0_13 = *arg0;
+                    *arg0 = temp_v0_13 + 8;
+                    temp_v0_13->words.w0 = 0x01004008;
+                    temp_v0_13->words.w1 = (var_s1_4 << 6) + _bss_18 + 0x80000000;
+                    dl_triangles(arg0, (var_s1_4 << 5) + _bss_1C, 2);
+                }
+            }
+            var_s1_4 += 1;
+            var_s2_3 += 0x1C;
+        } while (var_s1_4 != 0x1E);
+        func_8003DB5C();
+    }
+}
+#endif
 
 // offset: 0x135C | func: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_135C.s")
+s32 dll_24_func_135C(s32 arg0, s32 arg1)
+{
+    StructBss3C *temp_s1;
+    f32 pad;
+    s32 temp_v0;
+    f32 temp_fs0;
+    f32 temp_fs0_2;
+    f32 temp_fs1;
+    f32 temp_ft4;
+    f32 temp_fv0;
+    s32 var_fp;
+    s32 var_s0;
+    StructBss10 *temp_v1;
+    s32 sp70[1]; // this needs to be an array for some reason
+    s16 var_s5;
+    s16 temp_ft1;
+
+    temp_v0 = rand_next(2, 4);
+    if ((temp_v0 + _bss_38) >= 0x1F)
+    {
+        temp_v0 = 0x1E - _bss_38;
+    }
+    var_s5 = 0;
+    if (temp_v0 != 0)
+    {
+        var_fp = 0;
+        if (temp_v0 > 0)
+        {
+            do
+            {
+                for (var_s0 = 0; var_s0 < 0x1E && _bss_3C[var_s0].unk12 != -1; var_s0++)
+                {
+                }
+
+                if (var_s0 < 0x1E)
+                {
+                    temp_s1 = &_bss_3C[var_s0];
+                    sp70[0] = (s16)(0xFFFF / temp_v0);
+                    temp_ft1 = rand_next(-0x7D0, 0x7D0);
+                    temp_fs0 = fsin16_precise(var_s5 + temp_ft1);
+                    temp_fv0 = fcos16_precise(var_s5 + temp_ft1);
+                    temp_s1->unk0 = 4.0f * temp_fv0;
+                    temp_s1->unk4 = 4.0f * temp_fs0;
+                    temp_ft4 = (temp_s1->unk0 * temp_s1->unk0) + (temp_s1->unk4 * temp_s1->unk4);
+                    if (temp_ft4 > 0.0f)
+                    {
+                        temp_ft4 = 1.0f / temp_ft4;
+                        temp_s1->unk0 *= temp_ft4;
+                        temp_s1->unk4 *= temp_ft4;
+                    }
+                    temp_s1->unk8 = rand_next(0x258, 0x320) * 0.001f;
+                    temp_s1->unkC = rand_next(0x1F4, 0x258) * 0.001f;
+                    temp_s1->unk10 = 0;
+                    temp_s1->unk12 = arg1;
+
+                    temp_fs0 *= 100.0f;
+                    temp_fv0 *= 100.0f;
+
+                    temp_v1 = &_bss_10[var_s0 * 4];
+                    temp_v1->unk2 = -300;
+                    temp_v1->unkF = -1;
+                    temp_v1->unk8 = 992;
+                    temp_v1->unkA = 992;
+                    temp_v1->unk0 = -2.0f * temp_fv0;
+                    temp_v1->unk4 = -2.0f * temp_fs0;
+
+                    temp_v1[1].unk2 = 300;
+                    temp_v1[1].unkF = -1;
+                    temp_v1[1].unk8 = 992;
+                    temp_v1[1].unkA = 0;
+                    temp_v1[1].unk0 = temp_v1->unk0;
+                    temp_v1[1].unk4 = temp_v1->unk4;
+                    temp_v1 += 3;
+
+                    temp_v1[-1].unk2 = -300;
+                    temp_v1[-1].unkF = -1;
+                    temp_v1[-1].unk8 = 0;
+                    temp_v1[-1].unkA = 992;
+                    temp_v1[-1].unk0 = 4 * temp_fv0;
+                    temp_v1[-1].unk4 = 4 * temp_fs0;
+
+                    temp_v1[0].unk2 = 300;
+                    temp_v1[0].unk8 = 0;
+                    temp_v1[0].unkA = 0;
+                    temp_v1[0].unkF = -1;
+                    temp_v1[0].unk0 = temp_v1[-1].unk0;
+                    temp_v1[0].unk4 = temp_v1[-1].unk4;
+                    _bss_38 += 1;
+                    var_s5 += sp70[0];
+                }
+                var_fp += 1;
+            } while (var_fp != temp_v0);
+        }
+    }
+    return temp_v0;
+}
 
 // offset: 0x174C | func: 5 | export: 3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_174C.s")
