@@ -2,31 +2,14 @@
 #define _DLLS_24_H
 
 #include "PR/ultratypes.h"
+#include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "sys/memory.h"
 #include "sys/math.h"
 #include "sys/rand.h"
+#include "sys/main.h"
 #include "prevent_bss_reordering.h"
 #include "functions.h"
-
-// size: 0x20
-typedef struct StructBss4
-{
-    u8 pad0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s32 pad4;
-    s32 pad8;
-    s32 padC;
-    u8 pad10;
-    s8 unk11;
-    s8 unk12;
-    s8 unk13;
-    s32 pad14;
-    s32 pad18;
-    s32 pad1C;
-} StructBss4;
 
 // size: 0x10
 typedef struct StructBss8
@@ -42,18 +25,6 @@ typedef struct StructBss8
     u8 unkE;
     u8 unkF;
 } StructBss8;
-
-// size: 0x10
-typedef struct StructBssC
-{
-    s8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s32 pad4;
-    s32 pad8;
-    s32 padC;
-} StructBssC;
 
 // size 0x1A (0x1C?)
 typedef struct StructBss24
@@ -124,6 +95,29 @@ typedef struct Func564Arg3 {
     f32 unk1B0;
 } Func564Arg3;
 
+typedef struct Dll24State {
+/*0x00*/ StructBss8 *_bss_0; // 120 items
+/*0x04*/ DLTri *_bss_4;
+/*0x08*/ StructBss8 *_bss_8; // 10? 150? items
+/*0x0C*/ DLTri *_bss_C;
+/*0x10*/ StructBss8 *_bss_10; // 120 items
+/*0x14*/ DLTri *_bss_14;
+/*0x18*/ StructBss8 *_bss_18; // 120 items
+/*0x1C*/ DLTri *_bss_1C;
+/*0x20*/ s32 _bss_20; // some sort of counter
+/*0x24*/ StructBss24 *_bss_24; // 30 items
+/*0x28*/ s32 _bss_28; // counter or state?
+/*0x2C*/ StructBss2C *_bss_2C; // 10 items
+/*0x30*/ s32 _bss_30; // counter or state?
+/*0x34*/ StructBss34 *_bss_34; // 30 items
+/*0x38*/ s32 _bss_38; // some sort of counter
+/*0x3C*/ StructBss3C *_bss_3C; // 30 items
+/*0x40*/ Texture *_bss_40;
+/*0x44*/ Texture *_bss_44;
+/*0x48*/ Texture *_bss_48;
+/*0x4C*/ Texture *_bss_4C;
+/*0x50*/ f32 _bss_50;
+} Dll24State;
 void dll_24_ctor(s32 arg0);
 void dll_24_dtor(s32 arg0);
 void dll_24_func_24C(void);
