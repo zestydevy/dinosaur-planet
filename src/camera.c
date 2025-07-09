@@ -1017,7 +1017,7 @@ void func_800032AC(u32 a0, u32 a1, u32 a2, u32 a4)
 {
 }
 
-void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, s32 param5, MtxF *param6) {
+void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, f32 param5, MtxF *param6) {
     MtxF *mtx;
     Mtx *mtx2;
 
