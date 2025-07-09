@@ -21,8 +21,6 @@ options:
   disassemble_all: False
   # Allow use of 64-bit floating point registers
   generated_s_preamble: .set fp=64
-  matchings_path: matchings/
-  disassemble_all : true
 
 segments:
   - [0x000000, header]
