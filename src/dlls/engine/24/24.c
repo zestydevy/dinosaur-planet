@@ -29,9 +29,9 @@ static s32 _bss_30; // some sort of counter related to _bss_34 and _bss_18
 static StructBss34 *_bss_34; // 30 items
 static s32 _bss_38; // some sort of counter related to _bss_2C and _bss_10
 static StructBss3C *_bss_3C; // 30 items
-static Texture *_bss_40; // texture if _bss_20 OR _bss_38 is not null
+static Texture *_bss_40; // texture if _bss_20 is not null
 static Texture *_bss_44; // texture if _bss_28 is not null
-static Texture *_bss_48; // unused texture?
+static Texture *_bss_48; // texture if _bss_38 is not null
 static Texture *_bss_4C; // texture if _bss_30 is not null
 static f32 _bss_50;
 
@@ -352,10 +352,6 @@ void dll_24_func_6E8(void) {
 
 
 // offset: 0xC7C | func: 3 | export: 2
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_C7C.s")
-#else
-// This *does* match but bss memes prevent it from doing so
 void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
     s32 i;
     SRT spAC;
@@ -435,7 +431,7 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
             }
         }
         if (_bss_38 != 0) {
-            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_40->gdl));
+            gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(_bss_48->gdl));
             dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0xB4U);
         }
         for (i = 0; i < 30; i++) {
@@ -485,7 +481,6 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
         func_8003DB5C();
     }
 }
-#endif
 
 // offset: 0x135C | func: 4
 /* static */ s32 dll_24_func_135C(s32 arg0, s32 arg1)
