@@ -147,6 +147,6 @@ void func_800047C8(SRT *a, SRT *b, SRT *out);
 void update_camera_for_object(Camera *camera);
 void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx);
 void func_80004A30(s16 param1);
-s16 func_80004A4C();
+s16 func_80004A4C(void);
 
 #endif

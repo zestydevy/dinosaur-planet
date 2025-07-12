@@ -343,7 +343,7 @@ void diPrintfAll(Gfx **gdl) {
     D_800BEB02 = RESOLUTION_HEIGHT(fbRes);
     D_800BEB00 = RESOLUTION_WIDTH(fbRes);
 
-    gDPSetScissor((*gdl)++, 0, 0, 0, D_800BEB00, D_800BEB02);
+    gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, D_800BEB00, D_800BEB02);
 
     diPrintfUpdateBounds();
 
