@@ -643,7 +643,7 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
     if (gViewports[cameraSelPre].flags & 0x1)
     {
         gCameraSelector = cameraSelPre;
-        gDPSetScissor((*gdl)++, 0, gViewports[gCameraSelector].ulx, gViewports[gCameraSelector].uly, gViewports[gCameraSelector].lrx, gViewports[gCameraSelector].lry);
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, gViewports[gCameraSelector].ulx, gViewports[gCameraSelector].uly, gViewports[gCameraSelector].lrx, gViewports[gCameraSelector].lry);
         func_80002C0C(gdl, 0, 0, 0, 0);
         if (rspMtxs != NULL) {
             gCameraSelector = cameraSelPost;
@@ -805,7 +805,7 @@ void _func_80002490(Gfx **gdl)
         uly = SHORT_8008c524 + 6;
     }
 
-    gDPSetScissor((*gdl)++, 0, ulx, uly, lrx, lry);
+    gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
 }
 #endif
 
@@ -978,7 +978,7 @@ void func_8000302C(Gfx **gdl)
 
     if (!(gViewports[gCameraSelector].flags & 0x1))
     {
-        gDPSetScissor((*gdl)++, 0, 0, 0, width - 1, height - 1);
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, width - 1, height - 1);
         func_80002C0C(gdl, width / 2, height / 2, width / 2, height / 2);
     }
     else

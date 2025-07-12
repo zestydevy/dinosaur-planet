@@ -256,7 +256,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
     if (window != &gFontWindows[0]) {
         scisOffset = ((f32)((window->y2 - window->y1) + 1) / 2) * scisScale;
         scisPos = (window->y1 + window->y2) >> 1;
-        gDPSetScissor((*gdl)++, 0, window->x1, scisPos - scisOffset, window->x2, scisPos + scisOffset);
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, window->x1, scisPos - scisOffset, window->x2, scisPos + scisOffset);
     }
     if (alignmentFlags & HORZ_ALIGN_CENTER) {
         xAlignmentDiff = font_get_text_width_internal(window, text, xpos, window->font);
@@ -694,7 +694,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     if (window != gFontWindows) {
         scisPos = (s32) (window->y2 + window->y1) >> 1;
         scisOffset = (s32) (((f32) ((window->y2 - window->y1) + 1) / 2) * scisScale);
-        gDPSetScissor((*gdl)++, 0, window->x1, scisPos - scisOffset, window->x2, scisPos + scisOffset);
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, window->x1, scisPos - scisOffset, window->x2, scisPos + scisOffset);
     }
     
     dl_set_prim_color(gdl, 255, 255, 255, window->opacity);

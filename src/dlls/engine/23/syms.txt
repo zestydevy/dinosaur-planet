@@ -1,0 +1,14 @@
+# .text | offset: 0x0
+dll_23_ctor = 0x0;
+dll_23_dtor = 0xC;
+dll_23_func_18 = 0x18;
+dll_23_func_24 = 0x24;
+dll_23_func_30 = 0x30;
+dll_23_func_3C = 0x3C;
+dll_23_func_4C = 0x4C;
+dll_23_func_60 = 0x60;
+dll_23_func_6C = 0x6C;
+dll_23_func_8C = 0x8C;
+
+# .bss | offset: 0xC0
+_bss_0 = 0xC0; # offset: 0x0
