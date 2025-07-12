@@ -28,50 +28,47 @@ void obj_object_type_init() {
 void obj_add_object_type(Object *obj, s32 type) {
     s32 listStart;
     s32 listEnd;
+    s32 listEnd2;
     s32 i;
-    s32 k;
-    s32 var;
-    s32 objCount;
     s32 b;
 
     if (type < 0 || type >= 65) {
         return;
     }
 
-    objCount = gObjectTypeListCount;
-
-    if (objCount >= 256) {
+    if (gObjectTypeListCount >= 256) {
         return;
     }
 
     listStart = gObjectTypeIndices[type];
     listEnd = gObjectTypeIndices[type + 1];
+    listEnd2 = listEnd;
 
-    for (i = listStart; i < listEnd; i++) {
+    for (i = listStart; i < listEnd2; i++) {
         if (gObjectTypeList[i] == obj) {
             return;
         }
     }
 
-    objCount = objCount + 1;
-
-    if (gObjectTypeIndices[type + 1] == listStart) {
+    if (listEnd == listStart) {
         i = listStart;
     } else {
-        i = gObjectTypeIndices[type + 1] - 1;
+        i = listEnd - 1;
     }
 
-    gObjectTypeListCount = objCount;
+    gObjectTypeListCount++;
 
-    listEnd = gObjectTypeListCount - 1;
-    for (b = listEnd; b > i; b--) {
+    listEnd2 = gObjectTypeListCount - 1;
+    for (b = listEnd2; b > i; b--) {
         gObjectTypeList[b] = gObjectTypeList[b - 1];
     }
 
     gObjectTypeList[i] = obj;
 
-    var = type + 1;
-    for (k = var; k < 66; k++) { gObjectTypeIndices[k]++; }
+    i = type + 1;
+    for (b = i; b < 66; b++) {
+        gObjectTypeIndices[b] += 1;
+    }
 }
 #endif
 
