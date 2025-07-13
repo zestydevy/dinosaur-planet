@@ -526,7 +526,7 @@ void dll_22_func_2000(u8 *arg0, s32 arg1) {
     }
     for (var_s0 = 2; var_s0 >= 0; var_s0--) {
         arg1 >>= 2;
-        arg0[var_s0] = dll_22_func_20CC((u8) arg1 & 3);
+        arg0[var_s0] = dll_22_func_20CC(arg1 & 3);
     }
 }
 #endif
