@@ -11,21 +11,39 @@
 #include "prevent_bss_reordering.h"
 #include "dll_def.h"
 
+// Size: 0x28
 typedef struct StructBss10 {
     Texture *unk0;
     s32 pad4;
-    s32 pad8;
+    s16 unk8;
+    s16 unkA;
     Texture *unkC;
-    u8 pad10[0x28 - 0x10];
+    s32 unk10;
+    s16 unk14;
+    s16 unk16;
+    s32 unk18;
+    u8 pad1C[0x28 - 0x1C];
 } StructBss10;
 
+// Size: 0x18
+typedef struct InnerBss38 {
+    Texture *unk0;
+    s32 pad4;
+    s16 unk8;
+    s16 unkA;
+    s32 unkC;
+    s32 pad10;
+    s32 pad14;
+} InnerBss38;
+
+// Size: 0x270
 typedef struct StructBss38 {
     u8 *unk0;
     u8 pad4[0x20 - 0x4];
     s32 unk20;
     u8 pad24[0xC8 - 0x24];
-    Texture *unkC8[8 * 6];
-    Texture *unk188[8 * 6];
+    InnerBss38 unkC8[8];
+    InnerBss38 unk188[8];
     u8 pad248[0x268 - 0x248];
     u16 unk268;
     u16 unk26C;
@@ -43,6 +61,7 @@ DLL_INTERFACE_END()
 void dll_22_func_448(void);
 f32 dll_22_func_16A0(void);
 void dll_22_func_8F4();
+void dll_22_func_32C(u8 arg0, u8 arg1);
 
 // TODO: Find a better place for StructBss10 (and func_80037F9C)
 void func_80037F9C(Gfx**, StructBss10*, s32, s32, s32, s32, s32, s32);

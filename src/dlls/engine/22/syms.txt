@@ -26,7 +26,8 @@ dll_22_func_21C0 = 0x21C0;
 dll_22_func_2248 = 0x2248;
 
 # .rodata | offset: 0x2280
-_rodata_0 = 0x2354; # offset: 0x0
+subtitlesDelayError = 0x2354; # offset: 0x0
+subtitlesNewLineCountError = 0x238C; #offset 0x38
 _rodata_90 = 0x23E4; # offset: 0x90
 _rodata_94 = 0x23E8; # offset: 0x94
 

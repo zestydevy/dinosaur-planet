@@ -1,12 +1,7 @@
 #include "dlls/engine/22.h"
 
-/*0x0*/ static const u32 _rodata_0[] = {
-    0x73756274, 0x69746c65, 0x73206572, 0x726f723a, 0x2073656e, 0x74656e63, 0x65206861, 0x73206120, 
-    0x64656c61, 0x79206c65, 0x73732074, 0x68616e20, 0x2564206d, 0x730a0000, 0x43616e27, 0x74206861, 
-    0x7665206d, 0x6f726520, 0x7468616e, 0x206f6e65, 0x206e6577, 0x206c696e, 0x6520696e, 0x20612073, 
-    0x75627469, 0x746c6520, 0x73656e74, 0x656e6365, 0x2c206e6f, 0x7420656e, 0x6f756768, 0x20737061, 
-    0x6365206f, 0x6e207363, 0x7265656e, 0x0a000000
-};
+/*0x0*/ static const char subtitlesDelayError[] = "subtitles error: sentence has a delay less than %d ms\n";
+/*0x38*/ static const char subtitlesNewLineCountError[] = "Can't have more than one new line in a subtitle sentence, not enough space on screen\n";
 
 /*0x0*/ static u32 _data_0[] = {
     0xfefe0274, 0xfefd0275, 0xfefc0276, 0xfefb0277, 0xfefa0278, 0xfef90279, 0xffffffff
@@ -56,7 +51,49 @@
 /*0x7B8*/ static u8 _bss_7B8[0x8];
 
 // offset: 0x0 | ctor
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_ctor.s")
+void dll_22_ctor(s32 arg0) {
+    StructBss38* var_a1;
+    StructBss38* var_v0;
+    Texture* temp_v0;
+    s32 var_v1;
+    s32 i;
+    s32 j;
+
+    sFontID = 1;
+    sWindowID = 6;
+    font_load(1);
+    _bss_780[0] = &_bss_38[0];
+    _bss_780[1] = &_bss_38[1];
+    _bss_780[2] = &_bss_38[2];
+    _data_38 = 1;
+    dll_22_func_32C(12, 28);
+    _data_40 = 0;
+    var_a1 = _bss_38;
+    var_v1 = 0;
+    for (i = 0; i < 3; i++) {
+        var_v0 = &_bss_38[i];
+        for (j = 0; j < 8; j += 1) {
+            var_v0->unkC8[j].unk0 = NULL;
+            var_v0->unk188[j].unk0 = NULL;
+            var_v0->unkC8[j].unkC = NULL;
+            var_v0->unk188[j].unkC = NULL;
+            var_v0->unkC8[j].unk8 = NULL;
+            var_v0->unk188[j].unk8 = NULL;
+            var_v0->unkC8[j].unkA = NULL;
+            var_v0->unk188[j].unkA = NULL;
+        }
+    }
+    _bss_10.unk0 = queue_load_texture_proxy(0x27B);
+    _bss_10.unkC = queue_load_texture_proxy(0x27C);
+    _bss_10.unk18 = 0;
+    _bss_10.unk8 = 0;
+    _bss_10.unk14 = _bss_10.unk0->width;
+    _bss_7A3 = _bss_10.unkC->width + _bss_10.unk0->width;
+    _bss_10.unkA = -2;
+    _bss_10.unk16 = -2;
+    _bss_10.pad4 = 0;
+    _bss_10.unk10 = 0;
+}
 
 // offset: 0x1D4 | dtor
 void dll_22_dtor(s32 arg0) {
@@ -69,11 +106,11 @@ void dll_22_dtor(s32 arg0) {
     for (j = 0; j < 3; j++) {
         temp = &_bss_38[j];
         for (i = 0; i < 8; i ++) {
-            temp_a0 = temp->unkC8[i * 6];
+            temp_a0 = temp->unkC8[i].unk0;
             if (temp_a0 != 0) {
                 texture_destroy(temp_a0);
             }
-            temp_a0 = temp->unk188[i * 6];
+            temp_a0 = temp->unk188[i].unk0;
             if (temp_a0 != 0) {
                 texture_destroy(temp_a0);
             }
@@ -94,12 +131,12 @@ u32 dll_22_func_2D0(u32 arg0) {
 
 
 // offset: 0x2F4 | func: 1 | export: 1
-#if 1
+#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_2F4.s")
 #else
 // Regswap
-s32 dll_22_func_2F4(void) {
-    return *_data_34 != 0 && *_data_40 != 0;
+int dll_22_func_2F4(void) {
+    return _data_34 != 0 && _data_40 != 0;
 }
 #endif
 
