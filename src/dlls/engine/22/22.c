@@ -131,14 +131,9 @@ u32 dll_22_func_2D0(u32 arg0) {
 
 
 // offset: 0x2F4 | func: 1 | export: 1
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_2F4.s")
-#else
-// Regswap
 int dll_22_func_2F4(void) {
     return _data_34 != 0 && _data_40 != 0;
 }
-#endif
 
 // offset: 0x32C | func: 2 | export: 2
 void dll_22_func_32C(u8 arg0, u8 arg1) {
