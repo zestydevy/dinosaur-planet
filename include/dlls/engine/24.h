@@ -2,6 +2,7 @@
 #define _DLLS_24_H
 
 #include "PR/ultratypes.h"
+#include "macros.h"
 #include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "sys/memory.h"
@@ -10,14 +11,15 @@
 #include "sys/main.h"
 #include "prevent_bss_reordering.h"
 #include "functions.h"
+#include "dll_def.h"
 
 // size: 0x10
 typedef struct StructBss8
 {
-    s16 unk0;
+    s16 unk0; // unk0 - unk4 xyz?
     s16 unk2;
     s16 unk4;
-    s16 unk6;
+    s16 unk6; // unk6 - unkA pitch/yaw/roll?
     s16 unk8;
     s16 unkA;
     u8 unkC;
@@ -26,7 +28,7 @@ typedef struct StructBss8
     u8 unkF;
 } StructBss8;
 
-// size 0x1A (0x1C?)
+// size 0x1C
 typedef struct StructBss24
 {
     f32 unk0;
@@ -80,6 +82,7 @@ typedef struct StructBss3C
     s8 unk12;
 } StructBss3C;
 
+// size: 0x18
 typedef struct Func564Arg0 {
     s16 unk0;
     s16 pad2;
@@ -90,41 +93,20 @@ typedef struct Func564Arg0 {
     f32 unk14;
 } Func564Arg0;
 
+// size: 0x1B4
 typedef struct Func564Arg3 {
     u8 pad0[0x1B0];
     f32 unk1B0;
 } Func564Arg3;
 
-typedef struct Dll24State {
-/*0x00*/ StructBss8 *_bss_0; // 120 items
-/*0x04*/ DLTri *_bss_4;
-/*0x08*/ StructBss8 *_bss_8; // 10? 150? items
-/*0x0C*/ DLTri *_bss_C;
-/*0x10*/ StructBss8 *_bss_10; // 120 items
-/*0x14*/ DLTri *_bss_14;
-/*0x18*/ StructBss8 *_bss_18; // 120 items
-/*0x1C*/ DLTri *_bss_1C;
-/*0x20*/ s32 _bss_20; // some sort of counter
-/*0x24*/ StructBss24 *_bss_24; // 30 items
-/*0x28*/ s32 _bss_28; // counter or state?
-/*0x2C*/ StructBss2C *_bss_2C; // 10 items
-/*0x30*/ s32 _bss_30; // counter or state?
-/*0x34*/ StructBss34 *_bss_34; // 30 items
-/*0x38*/ s32 _bss_38; // some sort of counter
-/*0x3C*/ StructBss3C *_bss_3C; // 30 items
-/*0x40*/ Texture *_bss_40;
-/*0x44*/ Texture *_bss_44;
-/*0x48*/ Texture *_bss_48;
-/*0x4C*/ Texture *_bss_4C;
-/*0x50*/ f32 _bss_50;
-} Dll24State;
-void dll_24_ctor(s32 arg0);
-void dll_24_dtor(s32 arg0);
-void dll_24_func_24C(void);
-void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
-void dll_24_func_6E8(void);
-void dll_24_func_174C(f32, f32, f32, f32);
-void dll_24_func_1B28(f32, f32, f32, s16, f32);
-void dll_24_func_1CC8(f32, f32, f32, s16, f32, s32);
-
+DLL_INTERFACE_BEGIN(24)
+/* 0 */ void (*dll_24_func_6E8)(void);
+/* 1 */ void (*dll_24_func_564)(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
+/* 2 */ void (*dll_24_func_C7C)(Gfx** gdl, Mtx** arg1);
+/* 3 */ void (*dll_24_func_174C)(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+/* 4 */ void (*dll_24_func_1CC8)(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5);
+/* 5 */ void (*dll_24_func_1B28)(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4);
+/* 6 */ void (*dll_24_func_24C)(void);
+/* 7 */ void (*dll_24_func_1C88)(s32 arg0, f32 arg1);
+DLL_INTERFACE_END()
 #endif //_DLLS_24_H

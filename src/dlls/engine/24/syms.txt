@@ -12,16 +12,7 @@ dll_24_func_1C88 = 0x1C88;
 dll_24_func_1CC8 = 0x1CC8;
 
 # .rodata | offset: 0x1E90
-_rodata_0 = 0x1F28; # offset: 0x0
-_rodata_2C = 0x1F54; # offset: 0x2C
-_rodata_30 = 0x1F58; # offset: 0x30
-_rodata_34 = 0x1F5C; # offset: 0x34
-_rodata_38 = 0x1F60; # offset: 0x38
-_rodata_3C = 0x1F64; # offset: 0x3C
-_rodata_40 = 0x1F68; # offset: 0x40
-_rodata_44 = 0x1F6C; # offset: 0x44
-_rodata_48 = 0x1F70; # offset: 0x48
-_rodata_4C = 0x1F74; # offset: 0x4C
+allocateMemoryError = 0x1F28; # offset: 0x0
 
 # .bss | offset: 0x1F78
 _bss_0 = 0x1F78; # offset: 0x0

@@ -1,17 +1,15 @@
 #include "dlls/engine/24.h"
 
-/*0x0*/ static const u32 _rodata_0[] = {
-    0x436f756c,
-    0x64206e6f,
-    0x7420616c,
-    0x6c6f6361,
-    0x7465206d,
-    0x656d6f72,
-    0x7920666f,
-    0x72207761,
-    0x74657266,
-    0x7820646c,
-    0x6c0a0000};
+static const u8 allocateMemoryError[] = "Could not allocate memory for waterfx dll\n";
+
+void dll_24_ctor(s32 arg0);
+void dll_24_dtor(s32 arg0);
+void dll_24_func_24C(void);
+void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
+void dll_24_func_6E8(void);
+void dll_24_func_174C(f32, f32, f32, f32);
+void dll_24_func_1B28(f32, f32, f32, s16, f32);
+void dll_24_func_1CC8(f32, f32, f32, s16, f32, s32);
 
 static StructBss8 *_bss_0; // 120 items
 static DLTri *_bss_4; // 60 items
@@ -42,6 +40,7 @@ void dll_24_ctor(s32 arg0)
 
     state = malloc(0x3E80, 0x13, NULL);
     if (state == NULL) {
+        STUBBED_PRINTF(allocateMemoryError); // Not sure this was actually printed but it would make the most sense
         return;
     }
 
