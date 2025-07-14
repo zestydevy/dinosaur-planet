@@ -50,6 +50,12 @@
 /*0x7B4*/ static s32 _bss_7B4;
 /*0x7B8*/ static u8 _bss_7B8[0x8];
 
+void dll_22_func_448(void);
+f32 dll_22_func_16A0(void);
+void dll_22_func_8F4();
+void dll_22_func_32C(u8 arg0, u8 arg1);
+static u8 dll_22_func_20CC(u8 arg0);
+
 // offset: 0x0 | ctor
 void dll_22_ctor(s32 arg0) {
     StructBss38* var_a1;
@@ -187,7 +193,7 @@ void dll_22_func_4C0(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_578.s")
 #else
 // Requires dll_22_func_2118 to be static to match
-void dll_22_func_578(Gfx **arg0) {
+void dll_22_func_578(Gfx **gdl) {
     f32 temp;
     s32 temp_fv1;
     s32 temp_ft5;
@@ -246,7 +252,7 @@ void dll_22_func_578(Gfx **arg0) {
         dll_22_func_AA8();
     }
     dll_22_func_C64();
-    dll_22_func_D9C(arg0);
+    dll_22_func_D9C(gdl);
 }
 #endif
 
@@ -498,10 +504,6 @@ void dll_22_func_1F44(StructBss38 *arg0, const char *text, s32 arg2, u8 arg3, u8
 #endif
 
 // offset: 0x2000 | func: 17
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_2000.s")
-#else
-// Requires dll_22_func_20CC to be static to match
 void dll_22_func_2000(u8 *arg0, s32 arg1) {
     s32 var_s0;
 
@@ -529,10 +531,9 @@ void dll_22_func_2000(u8 *arg0, s32 arg1) {
         arg0[var_s0] = dll_22_func_20CC(arg1 & 3);
     }
 }
-#endif
 
 // offset: 0x20CC | func: 18
-u8 dll_22_func_20CC(u8 arg0) {
+static u8 dll_22_func_20CC(u8 arg0) {
     switch (arg0) {
     case 0:
         return 0;

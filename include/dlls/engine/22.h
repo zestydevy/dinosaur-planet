@@ -55,13 +55,17 @@ typedef struct StructData1C {
 } StructData1C;
 
 DLL_INTERFACE_BEGIN(22)
-/* 0*/ u32 (*dll_22_func_2D0)(u32 arg0);
+/* 0 */ u32 (*dll_22_func_2D0)(u32 arg0);
+/* 1 */ void (*dll_22_func_2F4)(void);
+/* 2 */ void (*dll_22_func_32C)(u8 arg0, u8 arg1);
+/* 3 */ void (*dll_22_func_368)(u16 arg0);
+/* 4 */ void (*dll_22_func_448)(u16 arg0);
+/* 5 */ void (*dll_22_func_4C0)(void);
+/* 6 */ void (*dll_22_func_578)(Gfx **gdl);
+/* 7 */ s16 (*dll_22_func_214C)(s32 arg0);
+/* 8 */ s32 (*dll_22_func_21C0)(s32 arg0, s16 arg1);
+/* 9 */ s32 (*dll_22_func_2248)(u8 arg0);
 DLL_INTERFACE_END()
-
-void dll_22_func_448(void);
-f32 dll_22_func_16A0(void);
-void dll_22_func_8F4();
-void dll_22_func_32C(u8 arg0, u8 arg1);
 
 // TODO: Find a better place for StructBss10 (and func_80037F9C)
 void func_80037F9C(Gfx**, StructBss10*, s32, s32, s32, s32, s32, s32);
