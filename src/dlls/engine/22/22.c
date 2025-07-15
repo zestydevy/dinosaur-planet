@@ -54,6 +54,7 @@ void dll_22_func_448(void);
 f32 dll_22_func_16A0(void);
 void dll_22_func_8F4();
 void dll_22_func_32C(u8 arg0, u8 arg1);
+static void dll_22_func_2000(u8 *arg0, s32 arg1);
 static u8 dll_22_func_20CC(u8 arg0);
 
 // offset: 0x0 | ctor
@@ -477,10 +478,152 @@ f32 dll_22_func_16A0(void)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_1798.s")
 #else
+#define SPACE_CHAR 0x20
+static void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4);
+static void dll_22_func_2000(u8 *arg0, s32 arg1);
+void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
+    s16 var_s0_2;
+    u8 sp5D;
+    s16 var_s1;
+    s16 var_t0; // sp58
+    Texture* tex;
+    s16 var_v1;
+    u8 var_s0;
+    u8 var_s4;
+    s32* var_v0;
+    u16 temp_v1_3;
+    StructData0 *temp_v0_2;
+    s16 var_a2;
+    StructBss38 *var_a1;
+    StructBss38 *sp4C;
+    StructBss38 *sp48;
+    
+
+    sp5D = 1;
+    var_s4 = 0;
+    for (var_s1 = 0; var_s1 < 8; var_s1++) {
+        // bad C code, fix later
+        ((s32 *)&arg0->unk0[0])[var_s1] = 0;
+        ((s32 *)&arg0->unk0[1])[var_s1] = 0;
+        arg0->unk80[0].unk0[var_s1] = 0;
+        arg0->unk80[1].unk0[var_s1] = 0;
+        tex = arg0->unkC8[var_s1].unk0;
+        if (tex != NULL) {
+            texture_destroy(tex);
+            arg0->unkC8[var_s1].unk0 = NULL;
+        }
+        tex = arg0->unk188[var_s1].unk0;
+        if (tex != NULL) {
+            texture_destroy(tex);
+            arg0->unk188[var_s1].unk0 = NULL;
+        }
+    }
+    arg0->unkC0[0] = 0;
+    arg0->unkC0[1] = 0;
+    arg0->unkC4[0] = 0;
+    arg0->unkC4[1] = 0;
+    if (_bss_7AC->count == *arg1) {
+        arg0->unk268 = 0;
+        arg0->unk26A = 0;
+        return;
+    }
+    arg0->unk268 = _bss_7AC->unk4[*arg1];
+    if (*arg1 == 0) {
+        arg0->unk26A = 1;
+    } else {
+        arg0->unk26A = 0;
+    }
+    dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, 0, 0);
+    var_s0 = 1;
+    while ((_bss_7AC->unk4[*arg1] <= 0) && (_bss_7AC->count != *arg1)) {
+        if (_bss_7AC->unk4[*arg1] == 0) {
+            var_s0 = 1;
+            var_s4++;
+            dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, 0);
+        } else if (_bss_7AC->unk4[*arg1] >= -255) {
+            dll_22_func_1F44(arg0, _bss_7AC->strings[*arg1], _bss_7AC->unk4[(*arg1)++], var_s4, var_s0++);
+        } else if (_bss_7AC->unk4[*arg1] == -256) {
+            // ??????????????
+            sp48 = (StructBss38 *) ((s16 *)arg0 + var_s4);
+            dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
+            sp48->unkC4[0] = 6;
+        } else if (_bss_7AC->unk4[*arg1] == -257) {
+            sp5D = 0;
+            dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
+        } else {
+            arg0->unk80[var_s4].unk0[var_s0] = 0x18;
+            var_s1 = 0;
+            do {
+                temp_v0_2 = &_data_0[var_s1++];
+            } while (temp_v0_2->unk0 != (_bss_7AC->unk4[*arg1]));
+            tex = queue_load_texture_proxy(temp_v0_2->unk2);
+            arg0->unkC8[var_s0].unk0 = tex;
+            dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
+        }
+    }
+    if (var_s4 == 0) {
+        var_t0 = 0;
+        for (var_s1 = 0; var_s1 < 8; ) {
+            if (arg0->chars[var_s1] == NULL) {
+                var_s1--;
+                break;
+            } else {
+                // removing the else might cause s register swap
+                var_t0 += arg0->unk80[0].unk0[var_s1];
+                var_s1++;
+            }
+        }
+        if (_bss_79C < var_t0) {
+            var_s0_2 = strlen(arg0->chars[var_s1]) + 1;
+            while (arg0->chars[var_s1][var_s0_2] != SPACE_CHAR) {
+                var_s0_2--;
+            }
+            arg0->chars[var_s1][var_s0_2] = 0;
+            var_v1 = arg0->unk80[var_s1].unk0[0] - font_get_text_width(0, arg0->chars[var_s1], 0, sFontID);
+            while (_bss_79C < (var_t0 - var_v1)) {
+                arg0->chars[var_s1][var_s0_2] = SPACE_CHAR;
+
+                var_s0_2 -= 1;
+                while (arg0->chars[var_s1][var_s0_2] != SPACE_CHAR) {
+                    var_s0_2--;
+                }
+                arg0->chars[var_s1][var_s0_2] = 0;
+
+                var_v1 = arg0->unk80[var_s1].unk0[0] - font_get_text_width(0, arg0->chars[var_s1], 0, sFontID);
+            }
+            arg0->unk80[var_s1].unk0[0] -= var_v1;
+            arg0->unk0[1].unk0 = arg0->chars[var_s1] + var_s0_2 + 1;
+            arg0->unk80[1].unk0[0] = var_v1;
+            dll_22_func_2000(arg0->unk60, _bss_7A8);
+        }
+    }
+    for (var_s4 = 0; var_s4 < 2; var_s4++) {
+        var_t0 = 0;
+        var_s0 = 0;
+        if (sp5D != 0) {
+            for (; var_s0 < 8; var_s0++) {
+                var_t0 += arg0->unk80[var_s4].unk0[var_s0];
+            }
+            arg0->unkC0[var_s4] = (_bss_79C - var_t0) / 2;
+        }
+        arg0->unkA0[var_s4].unk0[0] = 0;
+        for (var_s0 = 1; var_s0 < 8; var_s0++) {
+            // @diff, this should load from arg0?
+            arg0->unkA0[var_s4].unk0[var_s0] = arg0->unk80[var_s0].unk0[-1] + arg0->unk80[var_s0].unk0[15];
+        }
+        var_a1 = (StructBss38 *) (((s32 *) arg0) + (var_s4 * 0x30));
+        for (var_s0 = 0; var_s0 < 8; var_s0++) {
+            if (var_a1->unkC8[var_s0].unk0 != 0) {
+                temp_v1_3 = arg0->unkA0[var_s4].unk0[var_s0];
+                arg0->unkA0[var_s4].unk0[var_s0] += 0x18;
+                arg0->unk248 = temp_v1_3;
+            }
+        }
+    }
+}
 #endif
 
 // offset: 0x1F44 | func: 16
-static void dll_22_func_2000(u8 *arg0, s32 arg1);
 void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4) {
     // No idea why this requires 2*0 to match, it should just be 0
     arg0->unk0[arg3 + 2 * 0].unk0[arg4] = text;

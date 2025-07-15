@@ -28,7 +28,7 @@ typedef struct StructBss10 {
 // Size: 0x18
 typedef struct InnerBss38 {
     Texture *unk0;
-    s32 pad4;
+    s32 unk4;
     s16 unk8;
     s16 unkA;
     s32 unkC;
@@ -36,17 +36,30 @@ typedef struct InnerBss38 {
     s32 pad14;
 } InnerBss38;
 
-// Size: 0x270
+// Size: 0x20
+typedef struct Bss38Unk0 {
+    s32 unk0[8];
+}Bss38Unk0;
+
+// Size: 0x10
+typedef struct Bss38Unk80 {
+    u16 unk0[8];
+}Bss38Unk80;
+
+// Size: 0x26C
 typedef struct StructBss38 {
-    u8 *unk0;
-    u8 pad4[0x20 - 0x4];
-    s32 unk20;
-    u8 pad24[0xC8 - 0x24];
+    Bss38Unk0 unk0[3];
+    u8 pad60[0x7E - 0x60];
+    u16 unk7E;
+    Bss38Unk80 unk80[2];
+    Bss38Unk80 unkA0[2];
+    s16 unkC0[4];
     InnerBss38 unkC8[8];
     InnerBss38 unk188[8];
-    u8 pad248[0x268 - 0x248];
-    u16 unk268;
-    u16 unk26C;
+    u16 unk248;
+    u8 pad24C[0x268 - 0x24A];
+    s16 unk268;
+    s16 pad26A;
 } StructBss38;
 
 typedef struct StructData1C {
