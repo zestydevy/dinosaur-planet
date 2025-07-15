@@ -96,7 +96,7 @@ class DinoCommandRunner:
 
         # Run splat
         args = [
-            "python3", str(SPLIT_PY)
+            sys.executable, str(SPLIT_PY)
         ]
 
         if self.verbose:
