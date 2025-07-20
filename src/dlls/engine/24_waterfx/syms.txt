@@ -1,15 +1,15 @@
 # .text | offset: 0x0
-dll_24_ctor = 0x0;
-dll_24_dtor = 0x160;
-dll_24_func_24C = 0x24C;
-dll_24_func_564 = 0x564;
-dll_24_func_6E8 = 0x6E8;
-dll_24_func_C7C = 0xC7C;
-dll_24_func_135C = 0x135C;
-dll_24_func_174C = 0x174C;
-dll_24_func_1B28 = 0x1B28;
-dll_24_func_1C88 = 0x1C88;
-dll_24_func_1CC8 = 0x1CC8;
+waterfx_ctor = 0x0;
+waterfx_dtor = 0x160;
+waterfx_func_24C = 0x24C;
+waterfx_func_564 = 0x564;
+waterfx_func_6E8 = 0x6E8;
+waterfx_func_C7C = 0xC7C;
+waterfx_func_135C = 0x135C;
+waterfx_func_174C = 0x174C;
+waterfx_func_1B28 = 0x1B28;
+waterfx_func_1C88 = 0x1C88;
+waterfx_func_1CC8 = 0x1CC8;
 
 # .rodata | offset: 0x1E90
 allocateMemoryError = 0x1F28; # offset: 0x0

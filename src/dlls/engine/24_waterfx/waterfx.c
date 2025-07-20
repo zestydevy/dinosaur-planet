@@ -1,15 +1,91 @@
-#include "dlls/engine/24.h"
+#include "dlls/engine/24_waterfx.h"
+
+#include "macros.h"
+#include "sys/gfx/map.h"
+#include "sys/gfx/texture.h"
+#include "sys/memory.h"
+#include "sys/rand.h"
+#include "sys/main.h"
+#include "sys/map.h"
+#include "functions.h"
+#include "prevent_bss_reordering.h"
+
+// size: 0x10
+typedef struct StructBss8
+{
+    s16 unk0; // unk0 - unk4 xyz?
+    s16 unk2;
+    s16 unk4;
+    s16 unk6; // unk6 - unkA pitch/yaw/roll?
+    s16 unk8;
+    s16 unkA;
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+    u8 unkF;
+} StructBss8;
+
+// size 0x1C
+typedef struct StructBss24
+{
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    s16 unk14;
+    s16 unk16;
+    s16 unk18;
+} StructBss24;
+
+// size: 0x5C
+typedef struct StructBss2C
+{
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    u8 pad10[0x24 - 0x10];
+    f32 unk24;
+    u8 pad28[0x3C - 0x28];
+    f32 unk3C;
+    u8 pad40[0x54 - 0x40];
+    s16 unk54;
+    s16 pad56;
+    s8 unk58;
+} StructBss2C;
+
+// size: 0x1C
+typedef struct StructBss34
+{
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    s16 unk14;
+    s16 unk16;
+    s8 unk18;
+} StructBss34;
+
+// size: 0x14
+typedef struct StructBss3C
+{
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    s16 unk10;
+    s8 unk12;
+} StructBss3C;
 
 static const u8 allocateMemoryError[] = "Could not allocate memory for waterfx dll\n";
 
-void dll_24_ctor(s32 arg0);
-void dll_24_dtor(s32 arg0);
-void dll_24_func_24C(void);
-void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
-void dll_24_func_6E8(void);
-void dll_24_func_174C(f32, f32, f32, f32);
-void dll_24_func_1B28(f32, f32, f32, s16, f32);
-void dll_24_func_1CC8(f32, f32, f32, s16, f32, s32);
+void waterfx_func_24C(void);
+void waterfx_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
+void waterfx_func_174C(f32, f32, f32, f32);
+void waterfx_func_1B28(f32, f32, f32, s16, f32);
+void waterfx_func_1CC8(f32, f32, f32, s16, f32, s32);
 
 static StructBss8 *_bss_0; // 120 items
 static DLTri *_bss_4; // 60 items
@@ -34,7 +110,7 @@ static Texture *_bss_4C; // texture if _bss_30 is not null
 static f32 _bss_50;
 
 // offset: 0x0 | ctor
-void dll_24_ctor(s32 arg0)
+void waterfx_ctor(s32 arg0)
 {
     s32 *state;
 
@@ -68,11 +144,11 @@ void dll_24_ctor(s32 arg0)
     _bss_44 = queue_load_texture_proxy(0x59);
     _bss_48 = queue_load_texture_proxy(0x22);
     _bss_4C = queue_load_texture_proxy(0x57);
-    dll_24_func_24C();
+    waterfx_func_24C();
 }
 
 // offset: 0x160 | dtor
-void dll_24_dtor(s32 arg0)
+void waterfx_dtor(s32 arg0)
 {
     if (_bss_4 != NULL)
     {
@@ -101,7 +177,7 @@ void dll_24_dtor(s32 arg0)
 }
 
 // offset: 0x24C | func: 0 | export: 6
-void dll_24_func_24C(void) {
+void waterfx_func_24C(void) {
     DLTri *tempTri;
     StructBss3C *temp_a3_2;
     DLTri *tri;
@@ -202,7 +278,7 @@ void dll_24_func_24C(void) {
 }
 
 // offset: 0x564 | func: 1 | export: 1
-void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4)
+void waterfx_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4)
 {
     f32 temp_fs1;
     f32 temp_fs2;
@@ -219,9 +295,9 @@ void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3
                 temp_fs2 = arg2[i].z;
                 if (arg3->unk1B0 < 10.0f)
                 {
-                    dll_24_func_174C(temp_fs1, arg0->unk10 + arg3->unk1B0, temp_fs2, 0.0f);
+                    waterfx_func_174C(temp_fs1, arg0->unk10 + arg3->unk1B0, temp_fs2, 0.0f);
                 }
-                dll_24_func_1CC8(temp_fs1, arg0->unk10 + arg3->unk1B0, temp_fs2, arg0->unk0, 0.0f, 3);
+                waterfx_func_1CC8(temp_fs1, arg0->unk10 + arg3->unk1B0, temp_fs2, arg0->unk0, 0.0f, 3);
             }
             arg1 >>= 1;
             i += 1;
@@ -229,12 +305,12 @@ void dll_24_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3
     }
     if (arg4 > 0.01f)
     {
-        dll_24_func_1B28(arg0->unkC, arg0->unk10 + arg3->unk1B0, arg0->unk14, arg0->unk0, 0.0f);
+        waterfx_func_1B28(arg0->unkC, arg0->unk10 + arg3->unk1B0, arg0->unk14, arg0->unk0, 0.0f);
     }
 }
 
 // offset: 0x6E8 | func: 2 | export: 0
-void dll_24_func_6E8(void) {
+void waterfx_func_6E8() {
     s32 i;
     f32 temp_fv1;
     f32 var_fv0;
@@ -339,7 +415,7 @@ void dll_24_func_6E8(void) {
                     temp_v0_3->unk12 = -1;
                     _bss_38 -= 1;
                     temp_t0->unk58 =  ((u8)temp_t0->unk58 - 1);
-                    dll_24_func_1CC8((temp_a1->unk0 / 100.0f) + temp_t0->unk0, temp_t0->unk4, (temp_a1->unk4 / 100.0f) + temp_t0->unk8, 0, 0.0f, 4);
+                    waterfx_func_1CC8((temp_a1->unk0 / 100.0f) + temp_t0->unk0, temp_t0->unk4, (temp_a1->unk4 / 100.0f) + temp_t0->unk8, 0, 0.0f, 4);
                 }
             } else {
                 temp_a1_2 = &_bss_8[temp_v0_3->unk12 * 0xE];
@@ -351,7 +427,7 @@ void dll_24_func_6E8(void) {
 
 
 // offset: 0xC7C | func: 3 | export: 2
-void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
+void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
     s32 i;
     SRT spAC;
     StructBss24* temp_s0;
@@ -400,7 +476,7 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
                     _g->words.w0 = 0x01004008; 
-                    _g->words.w1 = OS_PHYSICAL_TO_K0(&_bss_0[i << 2]); 
+                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_0[i << 2]); 
                 }
                 dl_triangles(gdl, &_bss_4[i << 1], 2);
             }
@@ -424,7 +500,7 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
                     _g->words.w0 = 0x0100E01C;
-                    _g->words.w1 = OS_PHYSICAL_TO_K0(&_bss_8[i * 0xE]);
+                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_8[i * 0xE]);
                 }
                 dl_triangles(gdl, &_bss_C[i * 0xC], 0xC);
             }
@@ -448,7 +524,7 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
                     _g->words.w0 = 0x01004008;
-                    _g->words.w1 = OS_PHYSICAL_TO_K0(&_bss_10[i << 2]);
+                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_10[i << 2]);
                 }
                 dl_triangles(gdl, &_bss_14[i << 1], 2);
             }
@@ -472,7 +548,7 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
                     // TODO: Find correct macro
                     Gfx *_g = (Gfx *)((*gdl)++);
                     _g->words.w0 = 0x01004008;
-                    _g->words.w1 = OS_PHYSICAL_TO_K0(&_bss_18[i << 2]);
+                    _g->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(&_bss_18[i << 2]);
                 }
                 dl_triangles(gdl, &_bss_1C[i << 1], 2);
             }
@@ -482,7 +558,7 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
 }
 
 // offset: 0x135C | func: 4
-/* static */ s32 dll_24_func_135C(s32 arg0, s32 arg1)
+/* static */ s32 waterfx_func_135C(StructBss2C *arg0, s32 arg1)
 {
     StructBss3C *temp_s1;
     f32 pad;
@@ -580,11 +656,11 @@ void dll_24_func_C7C(Gfx** gdl, Mtx** arg1) {
 }
 
 // offset: 0x174C | func: 5 | export: 3
-// Single sp offset problem, non matching, requires dll_24_func_135C to be static
+// Single sp offset problem, non matching, requires waterfx_func_135C to be static
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24/dll_24_func_174C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/24_waterfx/waterfx_func_174C.s")
 #else
-void dll_24_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
+void waterfx_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     StructBss2C* temp_fp;
     f32 temp_fs1;
     f32 temp_ft4;
@@ -702,12 +778,12 @@ void dll_24_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3) {
     temp_fp->unk4 = arg1;
     temp_fp->unk8 = arg2;
     _bss_28 += 1;
-    temp_fp->unk58 = dll_24_func_135C(&_bss_2C[var_s5], var_s5);
+    temp_fp->unk58 = waterfx_func_135C(&_bss_2C[var_s5], var_s5);
 }
 #endif
 
 // offset: 0x1B28 | func: 6 | export: 5
-void dll_24_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4)
+void waterfx_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4)
 {
     StructBss34 *temp_v0;
     s32 var_v0;
@@ -763,7 +839,7 @@ void dll_24_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4)
 
 // offset: 0x1C88 | func: 7 | export: 7
 // Some sort of setter. Sets _bss_50 to arg1 if first argument is not zero
-void dll_24_func_1C88(s32 arg0, f32 arg1) {
+void waterfx_func_1C88(s32 arg0, f32 arg1) {
     if (arg0 != 0) {
         _bss_50 = 0.01f;
         return;
@@ -772,7 +848,7 @@ void dll_24_func_1C88(s32 arg0, f32 arg1) {
 }
 
 // offset: 0x1CC8 | func: 8 | export: 4
-void dll_24_func_1CC8(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5) {
+void waterfx_func_1CC8(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5) {
     s32 var_v0;
     s32 i;
     StructBss8* temp_a1;

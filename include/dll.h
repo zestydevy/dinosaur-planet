@@ -11,6 +11,7 @@
 #include "dlls/engine/16.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/engine/24_waterfx.h"
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/27_head_turn.h"
 #include "dlls/engine/28_screen_fade.h"
@@ -70,6 +71,7 @@ extern DLLInst_12_minic *gDLL_minic;
 extern DLLInst_16 *gDLL_16;
 extern DLLInst_20_screens *gDLL_20_screens;
 extern DLLInst_21_gametext *gDLL_21_gametext;
+extern DLLInst_24_waterfx *gDLL_waterfx;
 extern DLLInst_26_curves *gDLL_CURVES;
 extern DLLInst_27_head_turn *gDLL_27_head_turn;  //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
 extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
@@ -92,7 +94,6 @@ extern DLLInst_Unknown
     *gDLL_18,
     *gDLL_subtitles,
     *gDLL_23,
-    *gDLL_waterfx,
     *gDLL_25,
     *gDLL_75,
     *gDLL_56,
