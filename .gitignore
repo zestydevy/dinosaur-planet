@@ -17,6 +17,9 @@ __pycache__
 # Context file from m2ctx.py
 ctx.c
 
+# Virtual Env for newer python versions
+.venv
+
 # Permuter artifacts
 nonmatchings
 
