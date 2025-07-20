@@ -1,5 +1,7 @@
 #include "dlls/engine/25.h"
 
+#include "libc/string.h"
+#include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
 
@@ -514,7 +516,7 @@ CurvesFunc1BCReturnInner* dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_1D30.s")
 #else
-s32 dll_25_func_1D30(UnkCurvesStruct* arg0, CurvesFunc1BCReturnInner* arg1, CurvesFunc1BCReturnInner* arg2, s32 arg3) {
+s32 dll_25_func_1D30(UnkCurvesStruct* arg0, CurvesFunc1BCReturnInner* arg1, CurvesFunc1BCReturnInner* arg2, UnkInnerCurvesStruct *arg3) {
     if (arg0->unk0x80 != 0) {
         arg0->unk0xA0 = arg1;
         arg0->unk0xA4 = arg2;
@@ -546,7 +548,7 @@ s32 dll_25_func_1D30(UnkCurvesStruct* arg0, CurvesFunc1BCReturnInner* arg1, Curv
         arg0->unk0xF8[2] = 2.0f * (fcos16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
     }
-    if (gDLL_25->exports->func[9].withTwoArgsS32(arg0, arg3) != 0) {
+    if (gDLL_25->exports->dll_25_func_21F4(arg0, arg3) != 0) {
         return 1;
     }
     arg0->unk0x84 = arg0->unk0xA8;
