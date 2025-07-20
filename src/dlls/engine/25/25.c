@@ -1,5 +1,8 @@
 #include "dlls/engine/25.h"
 
+#include "sys/memory.h"
+#include "dll.h"
+
 /* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";
 
 /* 0x00 */ static u8 _bss_0[0xdc];

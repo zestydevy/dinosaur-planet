@@ -1,3 +1,4 @@
+#include "PR/gu.h"
 #include "sys/curves.h"
 
 extern s32 D_8008C7D0;

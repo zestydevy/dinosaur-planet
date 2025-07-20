@@ -1,7 +1,7 @@
 #ifndef _SYS_CURVES_H__
 #define _SYS_CURVES_H__
 
-#include "common.h"
+#include "sys/math.h"
 
 typedef f32 (*unk_curve_func)(Vec4f*, f32, f32*); // TODO: first arg is actually f32[4]
 typedef void (*unk_curve_func_2)(f32*, f32*);

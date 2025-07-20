@@ -15,7 +15,6 @@
 #include "types.h"
 #include "functions.h"
 #include "macros.h"
-#include "prevent_bss_reordering.h"
 
 static PicMenuItem sGameSelectMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(

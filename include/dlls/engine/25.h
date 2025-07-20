@@ -2,10 +2,10 @@
 #define _DLLS_25_H
 
 #include "PR/ultratypes.h"
-#include "PR/gbi.h"
 #include "dll_def.h"
 #include "dlls/engine/26_curves.h"
 #include "sys/curves.h"
+#include "sys/math.h"
 
 typedef struct Dll25BssDC {
     s8 unk0[8];

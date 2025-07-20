@@ -1,6 +1,5 @@
 #include "common.h"
 #include "sys/interrupt_util.h"
-#include "prevent_bss_reordering.h"
 
 extern GenericStack gAssetThreadStackInternal;
 extern AssetThreadStackElement gAssetThreadStackData[5];
