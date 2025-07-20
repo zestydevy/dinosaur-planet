@@ -1,4 +1,44 @@
-#include "dlls/engine/22.h"
+#include "dlls/engine/22_subtitles.h"
+
+#include "libc/string.h"
+#include "sys/gfx/gx.h"
+#include "sys/controller.h"
+#include "sys/fonts.h"
+#include "sys/main.h"
+#include "sys/memory.h"
+#include "sys/rand.h"
+#include "dll.h"
+#include "functions.h"
+
+// Size: 0x18
+typedef struct InnerBss38 {
+    Texture *unk0;
+    s32 unk4;
+    s16 unk8;
+    s16 unkA;
+    s32 unkC;
+    s32 pad10;
+    s32 pad14;
+} InnerBss38;
+
+// Size: 0x26C
+typedef struct StructBss38 {
+/*0x00*/ char *unk0[2][8];
+/*0x40*/ s32 unk40[2][8];
+/*0x80*/ u16 unk80[2][8];
+/*0xA0*/ u16 unkA0[2][8];
+/*0xC0*/ s16 unkC0[4];
+/*0xC8*/ InnerBss38 unkC8[2][8];
+/*0x248*/ u16 unk248;
+/*0x24C*/ u8 pad24C[0x268 - 0x24A];
+/*0x268*/ u16 unk268;
+/*0x26A*/ u16 unk26A;
+} StructBss38;
+
+typedef struct StructData1C {
+    s32 unk0;
+    s16 unk4;
+} StructData1C;
 
 /*0x0*/ static const char subtitlesDelayError[] = "subtitles error: sentence has a delay less than %d ms\n";
 /*0x38*/ static const char subtitlesNewLineCountError[] = "Can't have more than one new line in a subtitle sentence, not enough space on screen\n";
@@ -30,7 +70,7 @@
 /*0x4*/ static s32 sWindowID;
 /*0x8*/ static s32 _bss_8;
 /*0xC*/ static s32 _bss_C;
-/*0x10*/ static StructBss10 _bss_10;
+/*0x10*/ static Func_80037F9C_Struct _bss_10;
 /*0x38*/ static StructBss38 _bss_38[3];
 /*0x77C*/ static u8 _bss_77C[0x4];
 /*0x780*/ static StructBss38 *_bss_780[3];
@@ -54,8 +94,16 @@ void dll_22_func_448(void);
 f32 dll_22_func_16A0(void);
 void dll_22_func_8F4();
 void dll_22_func_32C(u8 arg0, u8 arg1);
+void dll_22_func_94C(void);
+void dll_22_func_AA8(void);
+void dll_22_func_C64(void);
+void dll_22_func_D9C(Gfx** gdl);
+void dll_22_func_10C8(s32 *arg0, u8 arg1, Gfx **arg2);
+s32 dll_22_func_1164(s32, u8, s32, Gfx **gdl);
+void dll_22_func_1798(StructBss38* arg0, s32* arg1);
 static void dll_22_func_2000(u8 *arg0, s32 arg1);
 static u8 dll_22_func_20CC(u8 arg0);
+f32 dll_22_func_2118(void);
 
 // offset: 0x0 | ctor
 void dll_22_ctor(s32 arg0) {
@@ -80,14 +128,14 @@ void dll_22_ctor(s32 arg0) {
     for (i = 0; i < 3; i++) {
         var_v0 = &_bss_38[i];
         for (j = 0; j < 8; j += 1) {
-            var_v0->unkC8[j].unk0 = NULL;
-            var_v0->unk188[j].unk0 = NULL;
-            var_v0->unkC8[j].unkC = NULL;
-            var_v0->unk188[j].unkC = NULL;
-            var_v0->unkC8[j].unk8 = NULL;
-            var_v0->unk188[j].unk8 = NULL;
-            var_v0->unkC8[j].unkA = NULL;
-            var_v0->unk188[j].unkA = NULL;
+            var_v0->unkC8[0][j].unk0 = NULL;
+            var_v0->unkC8[1][j].unk0 = NULL;
+            var_v0->unkC8[0][j].unkC = NULL;
+            var_v0->unkC8[1][j].unkC = NULL;
+            var_v0->unkC8[0][j].unk8 = NULL;
+            var_v0->unkC8[1][j].unk8 = NULL;
+            var_v0->unkC8[0][j].unkA = NULL;
+            var_v0->unkC8[1][j].unkA = NULL;
         }
     }
     _bss_10.unk0 = queue_load_texture_proxy(0x27B);
@@ -113,11 +161,11 @@ void dll_22_dtor(s32 arg0) {
     for (j = 0; j < 3; j++) {
         temp = &_bss_38[j];
         for (i = 0; i < 8; i ++) {
-            temp_a0 = temp->unkC8[i].unk0;
+            temp_a0 = temp->unkC8[0][i].unk0;
             if (temp_a0 != 0) {
                 texture_destroy(temp_a0);
             }
-            temp_a0 = temp->unk188[i].unk0;
+            temp_a0 = temp->unkC8[1][i].unk0;
             if (temp_a0 != 0) {
                 texture_destroy(temp_a0);
             }
@@ -152,7 +200,7 @@ void dll_22_func_32C(u8 arg0, u8 arg1) {
 void dll_22_func_368(u16 arg0) {
     if (_data_34 != 0) {
         if (arg0 == _bss_7B0) {
-            _data_48 = (u16)_bss_780[0]->unk268;
+            _data_48 = _bss_780[0]->unk268;
             return;
         }
         dll_22_func_448();
@@ -173,7 +221,7 @@ void dll_22_func_448(void) {
         free(_bss_7AC);
         _bss_7AC = 0;
     }
-    _bss_780[0]->unk0->unk0[0] = 0;
+    _bss_780[0]->unk0[0][0] = 0;
 }
 
 // offset: 0x4C0 | func: 5 | export: 5
@@ -190,8 +238,8 @@ void dll_22_func_4C0(void) {
 }
 
 // offset: 0x578 | func: 6 | export: 6
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_578.s")
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_578.s")
 #else
 // Requires dll_22_func_2118 to be static to match
 void dll_22_func_578(Gfx **gdl) {
@@ -231,7 +279,7 @@ void dll_22_func_578(Gfx **gdl) {
 
         temp_fv1 -= 600.0f;
         _data_4C += 600.0f;
-        if (_bss_780[0]->unk26C & 1) {
+        if (_bss_780[0]->unk26A & 1) {
             _data_44 = 0x258;
             temp_fv1 -= 600.0f;
         }
@@ -288,7 +336,7 @@ void dll_22_func_578(Gfx **gdl) {
 
     _data_3C = 0;
     if (_data_4C > 0.0f) {
-        if (_bss_780[1]->unk0->unk0[0] == 0) {
+        if (_bss_780[1]->unk0[0][0] == 0) {
             _bss_78C[0] = (s32) ((255.0f * _data_4C) / 600.0f);
             _bss_7A4 = (s32) ((199.0f * _data_4C) / 600.0f);
             return;
@@ -309,7 +357,7 @@ void dll_22_func_578(Gfx **gdl) {
         return;
     }
     _bss_78C[0] = 0;
-    if (_bss_780[1]->unk0->unk0[0] == 0) {
+    if (_bss_780[1]->unk0[0][0] == 0) {
         _bss_7A4 = 0;
         return;
     }
@@ -320,7 +368,7 @@ void dll_22_func_578(Gfx **gdl) {
 
 // offset: 0xC64 | func: 10
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_C64.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_C64.s")
 #else
 // WIP
 /* static */ void dll_22_func_C64(void) {
@@ -359,7 +407,7 @@ void dll_22_func_578(Gfx **gdl) {
     for (i = 0; i < 3; i++) {
         temp = &_bss_38[i];
         for (j = 0; j < 8; j += 1) {
-            temp->unkC8[j].unk4 = temp_t2;
+            temp->unkC8[0][j].unk4 = temp_t2;
         }
     }
 }
@@ -367,8 +415,8 @@ void dll_22_func_578(Gfx **gdl) {
 
 // offset: 0xD9C | func: 11
 // Needs to be static for matching
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_D9C.s")
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_D9C.s")
 #else
 // Requires dll_22_func_10C8 to be static to match
 void dll_22_func_D9C(Gfx** gdl) {
@@ -390,10 +438,10 @@ void dll_22_func_D9C(Gfx** gdl) {
     var_v1 = _bss_780;
     do {
         temp_v0 = *var_v1;
-        if (temp_v0->unk0 != 0) {
+        if (temp_v0->unk0[0][0] != 0) {
             _bss_C += 0xC;
         }
-        if (temp_v0->unk20 != 0) {
+        if (temp_v0->unk0[1][0] != 0) {
             _bss_C += 0xC;
         }
         var_v1 += 1;
@@ -419,8 +467,8 @@ void dll_22_func_D9C(Gfx** gdl) {
 
 // offset: 0x10C8 | func: 12
 // Needs to be static for matching
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_10C8.s")
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_10C8.s")
 #else
 // Requires dll_22_func_1164 to be static to match
 void dll_22_func_10C8(s32 *arg0, u8 arg1, Gfx **arg2) {
@@ -438,14 +486,14 @@ void dll_22_func_10C8(s32 *arg0, u8 arg1, Gfx **arg2) {
 // offset: 0x1164 | func: 13
 // Needs to be static for matching
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_1164.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_1164.s")
 #else
 #endif
 
 // offset: 0x16A0 | func: 14
 // Needs to be static for matching
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_16A0.s")
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_16A0.s")
 #else
 // Requires dll_22_func_1798 to be static to match
 f32 dll_22_func_16A0(void)
@@ -453,7 +501,7 @@ f32 dll_22_func_16A0(void)
   StructBss38 *temp_a2;
   int new_var;
   new_var = 0;
-  if (_bss_780[0]->unk0 == 0)
+  if (_bss_780[0]->unk0[0][0] == 0)
   {
     _bss_7B4 = new_var;
     dll_22_func_1798(_bss_780[0], &_bss_7B4);
@@ -474,9 +522,9 @@ f32 dll_22_func_16A0(void)
 #endif
 
 // offset: 0x1798 | func: 15
-// Needs to be static for matching
+// Needs to be static for matching + more
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22/dll_22_func_1798.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_1798.s")
 #else
 #define SPACE_CHAR 0x20
 static void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4);
@@ -520,8 +568,8 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
     }
     arg0->unkC0[0] = 0;
     arg0->unkC0[1] = 0;
-    arg0->unkC4[0] = 0;
-    arg0->unkC4[1] = 0;
+    arg0->unkC0[2] = 0;
+    arg0->unkC0[3] = 0;
     if (_bss_7AC->count == *arg1) {
         arg0->unk268 = 0;
         arg0->unk26A = 0;
@@ -546,18 +594,18 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
             // ??????????????
             sp48 = (StructBss38 *) ((s16 *)arg0 + var_s4);
             dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
-            sp48->unkC4[0] = 6;
+            sp48->unkC0[2] = 6;
         } else if (_bss_7AC->unk4[*arg1] == -257) {
             sp5D = 0;
             dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
         } else {
-            arg0->unk80[var_s4].unk0[var_s0] = 0x18;
+            arg0->unk80[var_s4][var_s0] = 0x18;
             var_s1 = 0;
             do {
                 temp_v0_2 = &_data_0[var_s1++];
             } while (temp_v0_2->unk0 != (_bss_7AC->unk4[*arg1]));
             tex = queue_load_texture_proxy(temp_v0_2->unk2);
-            arg0->unkC8[var_s0].unk0 = tex;
+            arg0->unkC8[var_s0][0].unk0 = tex;
             dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
         }
     }
@@ -593,7 +641,7 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
             }
             arg0->unk80[var_s1].unk0[0] -= var_v1;
             arg0->unk0[1].unk0 = arg0->chars[var_s1] + var_s0_2 + 1;
-            arg0->unk80[1].unk0[0] = var_v1;
+            arg0->unk80[1][0] = var_v1;
             dll_22_func_2000(arg0->unk60, _bss_7A8);
         }
     }
@@ -625,10 +673,9 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
 
 // offset: 0x1F44 | func: 16
 void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4) {
-    // No idea why this requires 2*0 to match, it should just be 0
-    arg0->unk0[arg3 + 2 * 0].unk0[arg4] = text;
-    arg0->unk80[arg3].unk0[arg4] += font_get_text_width(0, text, 0, sFontID);
-    dll_22_func_2000(&arg0->unk0[arg3 + 2].unk0[arg4], arg2);
+    arg0->unk0[arg3][arg4] = text;
+    arg0->unk80[arg3][arg4] += font_get_text_width(0, text, 0, sFontID);
+    dll_22_func_2000((u8*)&arg0->unk40[arg3][arg4], arg2);
 }
 
 // offset: 0x2000 | func: 17
@@ -649,10 +696,7 @@ static void dll_22_func_2000(u8 *arg0, s32 arg1) {
         arg0[3] = 0xBF;
         break;
     default:
-        // @fake
-        if (1) {}
         arg0[3] = 0xFF;
-        break;
     }
     for (var_s0 = 2; var_s0 >= 0; var_s0--) {
         arg1 >>= 2;

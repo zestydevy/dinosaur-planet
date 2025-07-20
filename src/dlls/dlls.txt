@@ -4,7 +4,7 @@
 16 = engine/16
 20 = engine/20_screens
 21 = engine/21_gametext
-22 = engine/22
+22 = engine/22_subtitles
 23 = engine/23
 24 = engine/24_waterfx
 28 = engine/28_screen_fade
