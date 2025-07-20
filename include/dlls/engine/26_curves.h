@@ -41,14 +41,71 @@ typedef struct {
 /*0DC*/ f32 unk7C; //some z component
 } UnkCurvesStruct60;
 
+typedef struct CurvesFunc1BCReturnInner {
+    s8 unk0;
+    u8 pad1[2];
+    u8 unk3;
+    union {
+        struct {
+            s8 unk4;
+            s8 unk5;
+            s8 unk6;
+            s8 unk7;
+        } bytes;
+        struct {
+            u16 unk4;
+            s16 unk6;
+        } words;
+    } unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    s32 unk14;
+    s8 unk18;
+    s8 unk19;
+    union {
+        struct {
+            s8 unk1A;
+            s8 unk1B;
+        } bytes;
+        s16 word;
+    } unk1A;
+    s32 unk1C[4];
+    u8 pad2C[0x2F - 0x2C];
+    s8 unk2F;
+    union {
+        struct {
+            s8 unk30;
+            s8 unk31;
+            s8 unk32;
+            s8 unk33;
+        } bytes;
+        struct {
+            s16 unk30;
+            s16 unk32;
+        } words;
+    } unk30;
+    s8 unk34;
+    s8 unk35;
+    s8 unk36;
+    s8 unk37;
+} CurvesFunc1BCReturnInner;
+
+typedef struct CurvesFunc1BCReturn {
+    s32 pad0;
+    CurvesFunc1BCReturnInner *unk4;
+} CurvesFunc1BCReturn;
+
+
+
 DLL_INTERFACE_BEGIN(26_curves)
     /*0*/ UnknownDLLFunc curves_func_18;
     /*1*/ UnknownDLLFunc curves_func_34;
     /*2*/ UnknownDLLFunc curves_func_10c;
-    /*3*/ UnknownDLLFunc curves_func_1bc;
+    /*3*/ CurvesFunc1BCReturn *(*curves_func_1bc)(s32 *);
     /*4*/ s32 (*curves_func_1e4)(f32, f32, f32, s32*, s32, s32);
     /*5*/ UnknownDLLFunc curves_func_3f00;
-    /*6*/ UnknownDLLFunc curves_func_39c;
+    /*6*/ CurvesFunc1BCReturnInner *(*curves_func_39c)(s32);
     /*7*/ f32 (*curves_func_14f4)(s32, s32, f32, f32, f32, f32*, f32*, f32*);
     /*8*/ UnknownDLLFunc curves_func_174c;
     /*9*/ UnknownDLLFunc curves_func_17f4;

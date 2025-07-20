@@ -4,6 +4,7 @@
 16 = engine/16
 20 = engine/20_screens
 21 = engine/21_gametext
+25 = engine/25
 28 = engine/28_screen_fade
 29 = engine/29_gplay
 30 = engine/30_task

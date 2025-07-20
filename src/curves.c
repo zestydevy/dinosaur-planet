@@ -1,36 +1,6 @@
-#include "common.h"
-
-typedef f32 (*unk_curve_func)(Vec4f*, f32, f32*); // TODO: first arg is actually f32[4]
-typedef void (*unk_curve_func_2)(f32*, f32*);
-
-typedef struct {
-    /* 0000 */ f32 unk0x0;
-    /* 0004 */ f32 unk0x4;
-    /* 0008 */ f32 unk0x8;
-    /* 000C */ f32 unk0xC;
-    /* 0010 */ s32 unk0x10;
-    /* 0014 */ f32 unk0x14;
-    /* 0018 */ f32 unk0x18[19]; // unsure of length
-    /* 0064 */ f32 unk0x64;
-    /* 0068 */ f32 unk0x68;
-    /* 006C */ f32 unk0x6C;
-    /* 0070 */ f32 unk0x70;
-    /* 0074 */ f32 unk0x74;
-    /* 0078 */ f32 unk0x78;
-    /* 007C */ f32 unk0x7C;
-    /* 0080 */ s32 unk0x80;
-    /* 0084 */ f32 *unk0x84;
-    /* 0088 */ f32 *unk0x88;
-    /* 008C */ f32 *unk0x8C;
-    /* 0090 */ s32 unk0x90;
-    /* 0094 */ unk_curve_func unk0x94;
-    /* 0098 */ s32 unk0x98;
-} UnkCurvesStruct;
+#include "sys/curves.h"
 
 extern s32 D_8008C7D0;
-
-#define ONE_OVER_SIX (1.0f / 6.0f)
-
 extern f32 D_800A7C30[4];
 extern f32 D_800A7C40;
 
@@ -39,8 +9,10 @@ static const char str_800983e8[] = "curvesMove: There must be a multiple of four
 static const char str_80098444[] = "curvesSetupMoveNetworkCurve: There must be at least four control points\n";
 static const char str_80098490[] = "curvesSetupMoveNetworkCurve: There must be a multiple of four control points for bezier or hermite curves\n";
 
+#define ONE_OVER_SIX (1.0f / 6.0f)
+
 void func_80004B78(Vec4f *a0, Vec4f *a1);
-void func_80004CE8(Vec4f *in, Vec4f *out);
+
 void func_80004DFC(Vec4f *in, Vec4f *out);
 void func_800065C0(UnkCurvesStruct *, s32);
 

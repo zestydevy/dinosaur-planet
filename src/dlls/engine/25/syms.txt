@@ -1,0 +1,44 @@
+# .text | offset: 0x0
+curves_ctor = 0x0;
+curves_dtor = 0x84;
+curves_func_D8 = 0xD8;
+dll_25_func_D00 = 0xD00;
+dll_25_func_DF8 = 0xDF8;
+dll_25_func_EAC = 0xEAC;
+dll_25_func_1158 = 0x1158;
+dll_25_func_12FC = 0x12FC;
+dll_25_func_1474 = 0x1474;
+dll_25_func_15B0 = 0x15B0;
+dll_25_func_16D4 = 0x16D4;
+dll_25_func_1864 = 0x1864;
+dll_25_func_1A2C = 0x1A2C;
+dll_25_func_1D30 = 0x1D30;
+dll_25_func_21F4 = 0x21F4;
+dll_25_func_27A8 = 0x27A8;
+dll_25_func_29FC = 0x29FC;
+dll_25_func_2A50 = 0x2A50;
+dll_25_func_2BC4 = 0x2BC4;
+dll_25_func_2CF8 = 0x2CF8;
+
+# .rodata | offset: 0x2E60
+errorMsg = 0x2F08; # offset: 0x0
+_rodata_24 = 0x2F2C; # offset: 0x24
+_rodata_28 = 0x2F30; # offset: 0x28
+_rodata_2C = 0x2F34; # offset: 0x2C
+_rodata_30 = 0x2F38; # offset: 0x30
+_rodata_34 = 0x2F3C; # offset: 0x34
+_rodata_38 = 0x2F40; # offset: 0x38
+_rodata_3C = 0x2F44; # offset: 0x3C
+_rodata_40 = 0x2F48; # offset: 0x40
+_rodata_44 = 0x2F4C; # offset: 0x44
+_rodata_48 = 0x2F50; # offset: 0x48
+
+# .data | offset: 0x2F58
+_data_0 = 0x2F58; # offset: 0x0
+_data_400 = 0x3358; # offset: 0x400
+
+# .bss | offset: 0x3368
+_bss_0 = 0x3368; # offset: 0x0
+_bss_DC = 0x3444; # offset: 0xDC
+_bss_E0 = 0x3448; # offset: 0xE0
+_bss_E4 = 0x344C; # offset: 0xE4
