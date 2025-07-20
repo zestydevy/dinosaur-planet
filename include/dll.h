@@ -14,6 +14,7 @@
 #include "dlls/engine/22_subtitles.h"
 #include "dlls/engine/23.h"
 #include "dlls/engine/24_waterfx.h"
+#include "dlls/engine/25.h"
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/27_head_turn.h"
 #include "dlls/engine/28_screen_fade.h"
@@ -77,6 +78,7 @@ extern DLLInst_21_gametext *gDLL_21_gametext;
 extern DLLInst_22_subtitles *gDLL_subtitles;
 extern DLLInst_23 *gDLL_23;
 extern DLLInst_24_waterfx *gDLL_waterfx;
+extern DLLInst_25 *gDLL_25;
 extern DLLInst_26_curves *gDLL_CURVES;
 extern DLLInst_27_head_turn *gDLL_27_head_turn;  //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
 extern DLLInst_28_screen_fade *gDLL_28_screen_fade;
@@ -97,7 +99,6 @@ extern DLLInst_Unknown
     *gDLL_projgfx,
     *gDLL_17,
     *gDLL_18,
-    *gDLL_25,
     *gDLL_75,
     *gDLL_56,
     *gDLL_32,
