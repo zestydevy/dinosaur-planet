@@ -71,7 +71,9 @@ typedef struct CurvesFunc1BCReturnInner {
         s16 word;
     } unk1A;
     s32 unk1C[4];
-    u8 pad2C[0x2F - 0x2C];
+    s8 unk2C;
+    s8 unk2D;
+    s8 unk2E;
     s8 unk2F;
     union {
         struct {

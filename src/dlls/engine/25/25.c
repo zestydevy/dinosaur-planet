@@ -220,7 +220,7 @@ static s32 dll_25_func_EAC(f32* arg0) {
     s16 var_s0;
     s16 var_s1;
     u32 v1;
-    BssDC* temp_a0;
+    Dll25BssDC* temp_a0;
 
     v1 = _data_400[0];
     var_s1 = v1;
@@ -277,7 +277,7 @@ s32 dll_25_func_1158(f32* arg0, Dll25BssDC* arg1) {
     u8 var_t0;
     u8 temp_a1;
     u8 var_v0;
-    BssE0* temp_v1;
+    Dll25BssE0* temp_v1;
 
     temp_v0 = dll_25_func_EAC(arg0);
     if (arg1 != NULL && temp_v0 != 0) {
@@ -311,7 +311,7 @@ s32 dll_25_func_1158(f32* arg0, Dll25BssDC* arg1) {
 #else
 // Matching if dll_25_func_EAC is static
 s32 dll_25_func_12FC(Vec3 arg0) {
-    BssE0* temp_a1;
+    Dll25BssE0 *temp_a1;
     s16 var_a0;
     s32 temp;
     s16 var_a2;
@@ -514,7 +514,7 @@ CurvesFunc1BCReturnInner* dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_1D30.s")
 #else
-s32 dll_25_func_1D30(UnkCurvesStruct* arg0, UnkArg12* arg1, UnkArg12* arg2, s32 arg3) {
+s32 dll_25_func_1D30(UnkCurvesStruct* arg0, CurvesFunc1BCReturnInner* arg1, CurvesFunc1BCReturnInner* arg2, s32 arg3) {
     if (arg0->unk0x80 != 0) {
         arg0->unk0xA0 = arg1;
         arg0->unk0xA4 = arg2;
@@ -656,7 +656,7 @@ void dll_25_func_29FC(UnkCurvesStruct* arg0) {
     
     arg0->pad0x9C ^= (s32)arg0->unk0xA4;\
     arg0->pad0x9C ^= (temp_t9 = (s32)arg0->unk0xA4 ^ arg0->pad0x9C);
-    arg0->unk0xA4 = (UnkArg12* ) temp_t9;
+    arg0->unk0xA4 = (CurvesFunc1BCReturnInner* ) temp_t9;
     if (arg0->unk0x0 >= 1.0f) {
         arg0->unk0x0 = 0.99f;
     }
