@@ -1,0 +1,37 @@
+name: build_pr
+
+on:
+  pull_request_target:
+    branches: [ master ]
+
+jobs:
+  build_pr:
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    runs-on: ubuntu-24.04
+    container:
+      image: ghcr.io/francessco121/dpdecomp:latest
+    steps:
+    - name: Checkout this repo
+      uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Symlink IDO binaries
+      run: ln -s /dino/tools/ido_static_recomp/build ./tools/ido_static_recomp/build
+    - name: Checkout baserom
+      uses: actions/checkout@v2
+      with:
+        repository: zestydevy/dinosaur-planet-private
+        token: ${{ secrets.PRIVATE_REPO_ACCESS }}
+        path: baserom
+    - name: Decrypt baserom
+      run: echo ${{ secrets.DINOSAUR_PLANET_BASEROM }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in baserom/baserom.z64.aes -out baserom.z64
+    - name: Extract ROM
+      run: python3 ./dino.py extract
+    - name: Build (matching)
+      run: |
+        python3 ./dino.py configure
+        python3 ./dino.py build
+    - name: Build (non-matching, non-equivalent)
+      run: |
+        python3 ./dino.py configure --non-matching --non-equivalent
+        python3 ./dino.py build --no-verify
