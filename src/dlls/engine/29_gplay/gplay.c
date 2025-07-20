@@ -102,6 +102,10 @@ void gplay_init_save(s8 idx, char *filename);
 #else
 static const Vec3f rodata_230 = { 43000.0f, 0.0f, 0.0f };
 void gplay_init_save(s8 idx, char *filename) {
+    GplayStruct6 *struct6;
+    GplayStruct12 *struct12;
+    GplayStruct13 *struct13;
+    GplayStruct11 *struct11;
     Vec3f vec;
     s32 i;
     u8 *dst;
@@ -115,6 +119,7 @@ void gplay_init_save(s8 idx, char *filename) {
     bss_10.unk0.unk0.unk0.character = 1;
 
     for (i = 0; i < 2; i++) {
+
         bss_10.unk0.unk0.unk0.unk0x0[i].hp = 12;
         bss_10.unk0.unk0.unk0.unk0x0[i].hpMax = 12;
         bss_10.unk0.unk0.unk0.unk0x0[i].manaMax = 25;
@@ -123,33 +128,36 @@ void gplay_init_save(s8 idx, char *filename) {
         bss_10.unk0.unk0.unk0.unk0x18[i].unk0x0 = 4;
         bss_10.unk0.unk0.unk0.unk0x18[i].unk0x1 = 5;
 
-        bss_10.unk0.unk0x16F4[i].unk0x0 = -1;
-        bss_10.unk0.unk0x16F4[i].unk0x2 = -1;
-        bss_10.unk0.unk0x16F4[i].unk0x4 = -1;
-        bss_10.unk0.unk0x16F4[i].unk0x6 = -1;
-        bss_10.unk0.unk0x16F4[i].unk0x8 = -1;
-        bss_10.unk0.unk0x16F4[i].unk0xa = -1;
-        bss_10.unk0.unk0x16F4[i].unk0xc = -1;
-        bss_10.unk0.unk0x16F4[i].unk0xe = -1;
-        bss_10.unk0.unk0x16F4[i].unk0x12 = -1;
+        struct6 = &bss_10.unk0.unk0x16F4[i]; // a1
+        struct12 = &bss_10.unk0.unk0x171C[i]; // a0
+        struct6->unk0x0 = -1;
+        struct6->unk0x2 = -1;
+        struct6->unk0x4 = -1;
+        struct6->unk0x6 = -1;
+        struct6->unk0x8 = -1;
+        struct6->unk0xa = -1;
+        struct6->unk0xc = -1;
+        struct6->unk0xe = -1;
+        struct6->unk0x12 = -1;
 
         //bss_10.unk0.unk0x171C[i].unk0x0 = 43000.0F;
-        bss_10.unk0.unk0x171C[i].unk0x0 = rodata_230.x;
-        bss_10.unk0.unk0x171C[i].unk0x4 = -1;
-        bss_10.unk0.unk0x171C[i].unk0x6 = -1;
-        bss_10.unk0.unk0x171C[i].unk0x8 = -1;
-        bss_10.unk0.unk0x171C[i].unk0xa = -1;
-        bss_10.unk0.unk0x171C[i].unk0xc = -1;
-        bss_10.unk0.unk0x171C[i].unk0xe = -1;
-        bss_10.unk0.unk0x171C[i].unk0x3d = -1;
-        bss_10.unk0.unk0x171C[i].unk0x3e = -1;
-        bss_10.unk0.unk0x171C[i].unk0x3f = -1;
-        bss_10.unk0.unk0x171C[i].unk0x3c = 1;
+        struct12->unk0x0 = rodata_230.x;
+        struct12->unk0x4 = -1;
+        struct12->unk0x6 = -1;
+        struct12->unk0x8 = -1;
+        struct12->unk0xa = -1;
+        struct12->unk0xc = -1;
+        struct12->unk0xe = -1;
+        struct12->unk0x3d = -1;
+        struct12->unk0x3e = -1;
+        struct12->unk0x3f = -1;
+        struct12->unk0x3c = 1;
 
-        bss_10.unk0.unk0x179c[i].unk0x6 = -1;
-        bss_10.unk0.unk0x179c[i].unk0x4 = -1;
-        bss_10.unk0.unk0x179c[i].unk0x2 = -1;
-        bss_10.unk0.unk0x179c[i].unk0x0 = -1;
+        struct13 = &bss_10.unk0.unk0x179c[i]; // v1
+        struct13->unk0x6 = -1;
+        struct13->unk0x4 = -1;
+        struct13->unk0x2 = -1;
+        struct13->unk0x0 = -1;
     }
 
     for (i = 0; i < 120; i++) {

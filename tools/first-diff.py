@@ -2,6 +2,7 @@
 import os.path
 import argparse
 from subprocess import check_call
+import sys
 
 # TODO: -S argument for shifted ROMs
 
@@ -315,7 +316,7 @@ if args.diff:
 
     check_call(
         [
-            "python3",
+            sys.executable,
             "diff.py",
             f"-{version[0]}",
             diff_args,

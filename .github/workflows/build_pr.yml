@@ -14,6 +14,8 @@ jobs:
     - name: Checkout this repo
       uses: actions/checkout@v2
       with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
         submodules: recursive
     - name: Symlink IDO binaries
       run: ln -s /dino/tools/ido_static_recomp/build ./tools/ido_static_recomp/build

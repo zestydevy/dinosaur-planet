@@ -1034,7 +1034,7 @@ void func_800032AC(u32 a0, u32 a1, u32 a2, u32 a4)
 {
 }
 
-void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, s32 param5, MtxF *param6) {
+void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, f32 param5, MtxF *param6) {
     MtxF *mtx;
     Mtx *mtx2;
 
@@ -1167,10 +1167,6 @@ MtxF *camera_get_view_mtx()
     return &gViewMtx;
 }
 
-// more than regalloc, but equivalent
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800038DC.s")
-#else
 u32 func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 {
     u32 ret;
@@ -1178,6 +1174,8 @@ u32 func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
     f32 vx;
     f32 vy;
     f32 vz;
+    f32 x1;
+    f32 y1;
     
     ret = 0;
 
@@ -1192,23 +1190,23 @@ u32 func_800038DC(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 param_6)
 
     if (vz < -2.0f)
     {
+
         rspvp = &gRSPViewports[gCameraSelector];
         if (gViewports[gCameraSelector].flags & 0x1) {
             rspvp += gCameraGroupSelector * 5 + 10;
         }
 
-        vx = (vx * (rspvp->vp.vscale[0] >> 2)) / vz;
-        vy = (vy * (rspvp->vp.vscale[1] >> 2)) / vz;
+        x1 = rspvp->vp.vscale[0] >> 2;
+        y1 = rspvp->vp.vscale[1] >> 2;
 
-        *ox = (rspvp->vp.vtrans[0] >> 2) - vx;
-        *oy = (rspvp->vp.vtrans[1] >> 2) + vy;
+        *ox = (rspvp->vp.vtrans[0] >> 2) - ((vx * x1) / vz);
+        *oy = (rspvp->vp.vtrans[1] >> 2) + ((vy * y1) / vz);
 
         ret = 1;
     }
 
     return ret;
 }
-#endif
 
 // gets angle to camera z-vector
 f32 camera_get_angle_to_point(f32 x, f32 y, f32 z) {
@@ -1284,14 +1282,11 @@ void add_matrix_to_pool(MtxF *mf, s32 count)
     gMatrixPool[gMatrixCount++].count = count;
 }
 
-// regalloc
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camera_tick.s")
-#else
 void camera_tick() {
+    s32 pad;
+    f32 var5;
     Camera *camera;
     f32 var4;
-    f32 var5;
 
     SHORT_8008c524 = SHORT_8008c528;
 
@@ -1302,7 +1297,8 @@ void camera_tick() {
             D_8008C518 = 0;
         }
 
-        gFarPlane = (D_800A6270 - D_800A6274) * ((f32)D_8008C518 / (f32)D_8008C51C) + D_800A6274;
+        var5 = ((f32)D_8008C518 / (f32)D_8008C51C);
+        gFarPlane = (D_800A6270 - D_800A6274) * var5 + D_800A6274;
     }
 
     gMatrixPool[gMatrixCount].count = -1;
@@ -1319,7 +1315,7 @@ void camera_tick() {
     camera = &gCameras[gCameraSelector];
 
     if (camera->unk_0x5d == 0) {
-        camera->unk_0x5c += -1;
+        camera->unk_0x5c--;
 
         while (camera->unk_0x5c < 0) {
             camera->dty = -camera->dty * 0.89999998f;
@@ -1341,7 +1337,6 @@ void camera_tick() {
         camera->unk_0x38 += delayFloat / 60.0f;
     }
 }
-#endif
 
 // Computes e to the power of x
 f32 fexp(f32 x, u32 iterations)
@@ -1496,26 +1491,23 @@ void func_800042C8(Object *object, int matrixIdx)
 }
 #endif
 
-// regalloc
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/get_object_child_position.s")
-#else
 void get_object_child_position(Object *object, float *ox, float *oy, float *oz)
 {
+    s32 fake;
     if (object->parent == NULL)
     {
         *ox = object->srt.transl.x;
         *oy = object->srt.transl.y;
         *oz = object->srt.transl.z;
+        return;
     }
-    else
-    {
-        vec3_transform(&gObjectMatrices[object->parent->matrixIdx],
-            object->srt.transl.x, object->srt.transl.y, object->srt.transl.z, 
-            ox, oy, oz);
-    }
+
+    fake = (oy && oy) && oy;
+    if (fake) {}
+    vec3_transform(&gObjectMatrices[object->parent->matrixIdx],
+        object->srt.transl.x, object->srt.transl.y, object->srt.transl.z,
+        ox, oy, oz);
 }
-#endif
 
 void transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object)
 {

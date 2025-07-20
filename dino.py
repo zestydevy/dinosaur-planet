@@ -111,7 +111,7 @@ class DinoCommandRunner:
         print()
         print("Unpacking DLLs...")
         self.__run_cmd([
-            "python3", str(DINO_DLL_PY), 
+            sys.executable, str(DINO_DLL_PY),
             "unpack",
             str(BIN_PATH.joinpath("assets/dlls")),
             str(BIN_PATH.joinpath("assets/DLLS.bin")),
@@ -156,7 +156,7 @@ class DinoCommandRunner:
         self.__assert_project_built()
 
         cmd = [
-            "python3", str(CONFIGURE_PY), 
+            sys.executable, str(CONFIGURE_PY),
             "--base-dir", str(SCRIPT_DIR),
             "--target", TARGET
         ]
@@ -369,7 +369,7 @@ class DinoCommandRunner:
         # Need to run diff from the project root where diff_settings.py is
         os.chdir(SCRIPT_DIR)
 
-        self.__run_cmd(["python3", str(DIFF_PY)] + args)
+        self.__run_cmd([sys.executable, str(DIFF_PY)] + args)
     
     def objdiff(self, args: "list[str]"):
         self.__assert_project_built()
@@ -377,14 +377,14 @@ class DinoCommandRunner:
         self.__run_cmd(["objdiff-cli", "diff", "-p", SCRIPT_DIR] + args)
     
     def make_context(self, file: str):
-        self.__run_cmd(["python3", str(M2CTX_PY), file])
+        self.__run_cmd([sys.executable, str(M2CTX_PY), file])
         print(f"Created context file at {SCRIPT_DIR.joinpath('ctx.c')}")
     
     def permuter_import(self, args: "list[str]"):
-        self.__run_cmd(["python3", str(PERMUTER_IMPORT_PY)] + args)
+        self.__run_cmd([sys.executable, str(PERMUTER_IMPORT_PY)] + args)
     
     def permuter(self, args: "list[str]"):
-        self.__run_cmd(["python3", str(PERMUTER_PERMUTER_PY)] + args)
+        self.__run_cmd([sys.executable, str(PERMUTER_PERMUTER_PY)] + args)
     
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")
@@ -399,7 +399,7 @@ class DinoCommandRunner:
 
     def __extract_dlls(self, dlls: "list[str | int]"=[], quiet: bool=False):
         args = [
-            "python3", str(DLL_SPLIT_PY),
+            sys.executable, str(DLL_SPLIT_PY),
             "--base-dir", str(SCRIPT_DIR),
         ]
 

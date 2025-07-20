@@ -6,6 +6,7 @@
 21 = engine/21_gametext
 22 = engine/22
 23 = engine/23
+24 = engine/24_waterfx
 28 = engine/28_screen_fade
 29 = engine/29_gplay
 30 = engine/30_task
