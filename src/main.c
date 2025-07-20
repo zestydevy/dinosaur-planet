@@ -76,8 +76,8 @@ DLLInst_Unknown *gDLL_17 = NULL;
 DLLInst_Unknown *gDLL_18 = NULL;
 DLLInst_20_screens *gDLL_20_screens = NULL;
 DLLInst_21_gametext *gDLL_21_gametext = NULL;
-DLLInst_Unknown *gDLL_subtitles = NULL;
-DLLInst_Unknown *gDLL_23 = NULL;
+DLLInst_22_subtitles *gDLL_subtitles = NULL;
+DLLInst_23 *gDLL_23 = NULL;
 DLLInst_24_waterfx *gDLL_waterfx = NULL;
 DLLInst_Unknown *gDLL_25 = NULL;
 DLLInst_26_curves *gDLL_CURVES = NULL;
@@ -215,7 +215,7 @@ void game_init(void)
     } else {
         gDLL_UI        = dll_load_deferred(DLL_UI, 15);
         gDLL_Camera    = dll_load_deferred(DLL_CAMERA, 23);
-        gDLL_23        = dll_load_deferred(23, 8); //0x12 in SFA
+        gDLL_23        = dll_load_deferred(DLL_23, 8); //0x12 in SFA
         gDLL_18        = dll_load_deferred(18, 0x16); //0x0F in SFA
         gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 29);
         gDLL_28_screen_fade = dll_load_deferred(DLL_SCREEN_FADE, 4); //0x16 in SFA
@@ -318,7 +318,7 @@ void game_tick(void)
     func_80013D80();
     func_800121DC();
     gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
-    gDLL_subtitles->exports->func[6].withOneArg((s32)tmp_s0);
+    gDLL_subtitles->exports->func_578(tmp_s0);
     camera_tick();
     func_800129E4();
     diPrintfAll(tmp_s0); 
@@ -412,7 +412,7 @@ void func_80013D80(void)
 
     set_button_mask(0, U_JPAD | R_JPAD);
     gDLL_Camera->exports->func19.asVoid();
-    gDLL_subtitles->exports->func[5].asVoid();
+    gDLL_subtitles->exports->func_4C0();
 
     if (menu_update1() == 0)
     {
@@ -474,7 +474,7 @@ void func_80013FB4(void) {
     gDLL_AMSEQ->exports->func6(3);
     gDLL_AMSEQ->exports->func6(0);
     gDLL_AMSEQ->exports->func6(1);
-    gDLL_subtitles->exports->func[4].asVoid();
+    gDLL_subtitles->exports->func_448();
     unpause();
     func_800141A4(1, 0, 1, -1);
 }
@@ -508,7 +508,7 @@ void func_80014074(void)
         func_8004773C();
         
         if (gDLL_23 != NULL) {
-            gDLL_23->exports->func[2].withOneArg(1);
+            gDLL_23->exports->func_18(1);
         }
         
         func_80017254(2);

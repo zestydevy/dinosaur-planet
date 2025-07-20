@@ -3,6 +3,7 @@
 
 #include "ultra64.h"
 #include "dll_def.h"
+#include "sys/gfx/texture.h"
 
 typedef union {
     void (*asVoid)(void);
@@ -94,5 +95,19 @@ typedef struct Triangle {
 /* 0x08 */ TexCoords uv1;   // Texture coordinates for the second vertex
 /* 0x0C */ TexCoords uv2;   // Texture coordinates for the third vertex
 } Triangle;
+
+// Size: 0x28
+typedef struct Func_80037F9C_Struct {
+    Texture *unk0;
+    s32 pad4;
+    s16 unk8;
+    s16 unkA;
+    Texture *unkC;
+    s32 unk10;
+    s16 unk14;
+    s16 unk16;
+    s32 unk18;
+    u8 pad1C[0x28 - 0x1C];
+} Func_80037F9C_Struct;
 
 #endif

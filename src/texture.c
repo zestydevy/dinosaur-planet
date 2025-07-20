@@ -8,16 +8,12 @@ void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD6C.s")
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/queue_load_texture_proxy.s")
-#else
 Texture *queue_load_texture_proxy(s32 id) {
     Texture *texture = NULL;
     queue_load_texture(&texture, id);
 
     return texture;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_load.s")
 

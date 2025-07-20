@@ -1,0 +1,72 @@
+# .text | offset: 0x0
+dll_22_ctor = 0x0;
+dll_22_dtor = 0x1D4;
+dll_22_func_2D0 = 0x2D0;
+dll_22_func_2F4 = 0x2F4;
+dll_22_func_32C = 0x32C;
+dll_22_func_368 = 0x368;
+dll_22_func_448 = 0x448;
+dll_22_func_4C0 = 0x4C0;
+dll_22_func_578 = 0x578;
+dll_22_func_8F4 = 0x8F4;
+dll_22_func_94C = 0x94C;
+dll_22_func_AA8 = 0xAA8;
+dll_22_func_C64 = 0xC64;
+dll_22_func_D9C = 0xD9C;
+dll_22_func_10C8 = 0x10C8;
+dll_22_func_1164 = 0x1164;
+dll_22_func_16A0 = 0x16A0;
+dll_22_func_1798 = 0x1798;
+dll_22_func_1F44 = 0x1F44;
+dll_22_func_2000 = 0x2000;
+dll_22_func_20CC = 0x20CC;
+dll_22_func_2118 = 0x2118;
+dll_22_func_214C = 0x214C;
+dll_22_func_21C0 = 0x21C0;
+dll_22_func_2248 = 0x2248;
+
+# .rodata | offset: 0x2280
+subtitlesDelayError = 0x2354; # offset: 0x0
+subtitlesNewLineCountError = 0x238C; #offset 0x38
+_rodata_90 = 0x23E4; # offset: 0x90
+_rodata_94 = 0x23E8; # offset: 0x94
+
+# .data | offset: 0x23F4
+_data_0 = 0x23F4; # offset: 0x0
+_data_1C = 0x2410; # offset: 0x1C
+_data_34 = 0x2428; # offset: 0x34
+_data_38 = 0x242C; # offset: 0x38
+_data_3C = 0x2430; # offset: 0x3C
+_data_40 = 0x2434; # offset: 0x40
+_data_44 = 0x2438; # offset: 0x44
+_data_48 = 0x243C; # offset: 0x48
+_data_4C = 0x2440; # offset: 0x4C
+_data_50 = 0x2444; # offset: 0x50
+_data_54 = 0x2448; # offset: 0x54
+_data_58 = 0x244C; # offset: 0x58
+_data_5C = 0x2450; # offset: 0x5C
+_data_60 = 0x2454; # offset: 0x60
+
+# .bss | offset: 0x2464
+sFontID = 0x2464; # offset: 0x0
+sWindowID = 0x2468; # offset: 0x4
+_bss_8 = 0x246C; # offset: 0x8
+_bss_C = 0x2470; # offset: 0xC
+_bss_10 = 0x2474; # offset: 0x10
+_bss_38 = 0x249C; # offset: 0x38
+_bss_77C = 0x2BE0; # offset: 0x77C
+_bss_780 = 0x2BE4; # offset: 0x780
+_bss_78C = 0x2BF0; # offset: 0x78C
+_bss_790 = 0x2BF4; # offset: 0x790
+_bss_794 = 0x2BF8; # offset: 0x794
+_bss_798 = 0x2BFC; # offset: 0x798
+_bss_79C = 0x2C00; # offset: 0x79C
+_bss_7A0 = 0x2C04; # offset: 0x7A0
+_bss_7A2 = 0x2C06; # offset: 0x7A2
+_bss_7A3 = 0x2C07; # offset: 0x7A3
+_bss_7A4 = 0x2C08; # offset: 0x7A4
+_bss_7A8 = 0x2C0C; # offset: 0x7A8
+_bss_7AC = 0x2C10; # offset: 0x7AC
+_bss_7B0 = 0x2C14; # offset: 0x7B0
+_bss_7B2 = 0x2C16; # offset: 0x7B2
+_bss_7B4 = 0x2C18; # offset: 0x7B4
