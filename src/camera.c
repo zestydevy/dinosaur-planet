@@ -643,7 +643,7 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
     if (gViewports[cameraSelPre].flags & 0x1)
     {
         gCameraSelector = cameraSelPre;
-        gDPSetScissor((*gdl)++, 0, gViewports[gCameraSelector].ulx, gViewports[gCameraSelector].uly, gViewports[gCameraSelector].lrx, gViewports[gCameraSelector].lry);
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, gViewports[gCameraSelector].ulx, gViewports[gCameraSelector].uly, gViewports[gCameraSelector].lrx, gViewports[gCameraSelector].lry);
         func_80002C0C(gdl, 0, 0, 0, 0);
         if (rspMtxs != NULL) {
             gCameraSelector = cameraSelPost;
@@ -721,32 +721,45 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
 #endif
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002490.s")
 #else
-void _func_80002490(Gfx **gdl)
+/**
+ * The video width is the lower 16 bits of the returned 32 bit value
+ */
+#define GET_VIDEO_WIDTH(width_and_height) (width_and_height & 0xFFFF)
+/**
+ * The video width is the higher 16 bits of the returned 32 bit value
+ */
+#define GET_VIDEO_HEIGHT(width_and_height) ((width_and_height >> 16) & 0xFFFF)
+
+void func_80002490(Gfx **gdl)
 {
     s32 ulx, uly, lrx, lry;
-    s32 wh = get_some_resolution_encoded();
-    s32 width = wh & 0xffff;
-    s32 height = wh >> 16;
-
-    if (UINT_800a66f8 != 0)
+    s32 wh;
+    s32 centerX;
+    s32 centerY;
+    s32 width;
+    s32 height;
+    s32 padX;
+    s32 padY;
+    s32 mode;
+    
+    wh = get_some_resolution_encoded();
+    
+    mode = UINT_800a66f8;
+    
+    if (mode != 0)
     {
-        s32 centerX;
-        s32 centerY;
-        s32 padX;
-        s32 padY;
-
-        u32 mode = UINT_800a66f8;
         if (mode == 2) {
             mode = 3;
         }
 
         ulx = 0;
         uly = 0;
-        lrx = width;
-        lry = height;
+        width = lrx = GET_VIDEO_WIDTH(wh);\
+        height = lry = GET_VIDEO_HEIGHT(wh);
+
         centerX = width >> 1;
         centerY = height >> 1;
         padX = width >> 8;
@@ -755,43 +768,44 @@ void _func_80002490(Gfx **gdl)
         switch (mode)
         {
         case 1:
-            lry -= padY;
             if (gCameraSelector == 0) {
                 lry = centerY - padY;
             } else {
+                lry = height - padY;
                 uly = centerY + padY;
             }
             break;
         case 2:
-            lrx -= padX;
             if (gCameraSelector == 0) {
                 lrx = centerX - padX;
+                ulx = 0;
             } else {
-                lrx = centerX + padX;
+                lrx = width - padX;
+                ulx = centerX + padX;
             }
             break;
         case 3:
             switch (gCameraSelector)
             {
             case 0:
-                lry = centerY - padY;
                 lrx = centerX - padX;
+                lry = centerY - padY;
                 break;
             case 1:
                 ulx = centerX + padX;
-                lrx -= padX;
+                lrx = width - padX;
                 lry = centerY - padY;
                 break;
             case 2:
                 uly = centerY + padY;
                 lrx = centerX - padX;
-                lry -= padY;
+                lry = height - padY;
                 break;
             case 3:
-                uly = centerY + padY;
                 ulx = centerX + padX;
-                lry -= padY;
-                lrx -= padX;
+                uly = centerY + padY;
+                lry = height - padY;
+                lrx = width - padX;
                 break;
             }
             break;
@@ -800,9 +814,12 @@ void _func_80002490(Gfx **gdl)
     else
     {
         ulx = 0;
-        lrx = width;
-        lry = height - SHORT_8008c524 - 6;
-        uly = SHORT_8008c524 + 6;
+        uly = 0;
+        lrx = GET_VIDEO_WIDTH(wh);\
+        lry = GET_VIDEO_HEIGHT(wh);
+
+        uly += SHORT_8008c524 + 6;
+        lry -= SHORT_8008c524 + 6;
     }
 
     gDPSetScissor((*gdl)++, 0, ulx, uly, lrx, lry);
@@ -978,7 +995,7 @@ void func_8000302C(Gfx **gdl)
 
     if (!(gViewports[gCameraSelector].flags & 0x1))
     {
-        gDPSetScissor((*gdl)++, 0, 0, 0, width - 1, height - 1);
+        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, width - 1, height - 1);
         func_80002C0C(gdl, width / 2, height / 2, width / 2, height / 2);
     }
     else
@@ -1017,7 +1034,7 @@ void func_800032AC(u32 a0, u32 a1, u32 a2, u32 a4)
 {
 }
 
-void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, s32 param5, MtxF *param6) {
+void func_800032C4(Gfx **gdl, Mtx **rspMtxs, SRT *param3, f32 param4, f32 param5, MtxF *param6) {
     MtxF *mtx;
     Mtx *mtx2;
 

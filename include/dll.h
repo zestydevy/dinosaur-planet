@@ -11,6 +11,9 @@
 #include "dlls/engine/16.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/engine/22_subtitles.h"
+#include "dlls/engine/23.h"
+#include "dlls/engine/24_waterfx.h"
 #include "dlls/engine/25.h"
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/27_head_turn.h"
@@ -42,6 +45,7 @@ enum DLL_ID {
     DLL_SCREENS   = 20,
     DLL_TEXT      = 21,
     DLL_SUBTITLES = 22,
+    DLL_23 = 23,
     DLL_WATERFX   = 24,
     DLL_CURVES    = 26,
     DLL_SCREEN_FADE = 28,
@@ -70,6 +74,9 @@ extern DLLInst_12_minic *gDLL_minic;
 extern DLLInst_16 *gDLL_16;
 extern DLLInst_20_screens *gDLL_20_screens;
 extern DLLInst_21_gametext *gDLL_21_gametext;
+extern DLLInst_22_subtitles *gDLL_subtitles;
+extern DLLInst_23 *gDLL_23;
+extern DLLInst_24_waterfx *gDLL_waterfx;
 extern DLLInst_25 *gDLL_25;
 extern DLLInst_26_curves *gDLL_CURVES;
 extern DLLInst_27_head_turn *gDLL_27_head_turn;  //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
@@ -91,9 +98,6 @@ extern DLLInst_Unknown
     *gDLL_projgfx,
     *gDLL_17,
     *gDLL_18,
-    *gDLL_subtitles,
-    *gDLL_23,
-    *gDLL_waterfx,
     *gDLL_75,
     *gDLL_56,
     *gDLL_32,
