@@ -195,7 +195,7 @@ void update_objects() {
         func_8002272C(player->linkedObject);
     }
 
-    gDLL_waterfx->exports->func[0].withOneArg(delayByte);
+    gDLL_waterfx->exports->func_6E8(delayByte);
     gDLL_projgfx->exports->func[2].withTwoArgs(delayByte, 0);
     gDLL_modgfx->exports->func[2].withThreeArgs(0, 0, 0);
     gDLL_expgfx->exports->func[2].withFourArgs(0, delayByte, 0, 0);
