@@ -284,6 +284,10 @@ void func_80058F3C();
 
 void func_800143A4();
 
+void func_8001EB80(void);
+void func_800499BC(void);
+void func_80049D88(void);
+
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
 #endif

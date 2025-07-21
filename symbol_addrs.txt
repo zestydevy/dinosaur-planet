@@ -1337,7 +1337,7 @@ gLoadedBlockCount = 0x800b96b8; // size:0x1
 gLoadedBlockIds = 0x800b96bc; // size:0x4
 gBlockRefCounts = 0x800b96c4; // size:0x4
 // FIXME: how large?
-gBlockIndices = 0x800b96d0; // size:0x8
+gBlockIndices = 0x800b96d0; // size:0x14
 
 map_get_is_object_streaming_disabled = 0x800129c4; // type:func
 map_get_map_id_from_xz_ws = 0x80044810; // type:func

@@ -1,6 +1,7 @@
 #include "common.h"
 #include "sys/map.h"
-#include "sys/map.h"
+
+static void func_8004D328();
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
@@ -269,10 +270,14 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_triangles.s")
-#else
-void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
+// for some reason this function requires an extra or'ing of _SHIFTL(G_TRI2, 24, 8) in w1
+#define gSP2Triangles(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
+{ \
+	Gfx *_g = (Gfx *)(pkt); \
+	_g->words.w0 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v00, v01, v02, flag0)); \
+    _g->words.w1 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v10, v11, v12, flag1)); \
+}
+void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 {
     s32 n;
     DLTri *tri;
@@ -290,7 +295,6 @@ void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 
     gDLBuilder->needsPipeSync = TRUE;
 }
-#endif
 
 //These all seem to get/set render-related bits!
 void func_80041C30(s32 arg0) {
@@ -386,9 +390,87 @@ s32 func_80041E68(void) {
     return UINT_80092a98 & 0x20000;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/init_maps.s")
+#else
+// This does technically match, however D_800B96EC is actually gDecodedGlobalMap but I can't figure out how to match
+// while using it
+typedef struct UnkStruct1 {
+    s8 pad[0x100];
+} UnkStruct1;
+typedef struct UnkStruct2 {
+    s8 pad[0xC00];
+} UnkStruct2;
+extern void* D_800B96B0;
+extern UnkStruct2 *D_800B96EC[5]; // ??
+extern void* D_800B9700;
+extern UnkStruct1 *D_800B9704[5]; // ??
+extern s32* gFile_BLOCKS_TAB;
+extern void* gFile_MAPS_TAB;
+extern s32 gNumTotalBlocks;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80042174.s")
+void init_maps(void) {
+    s32 i;
+
+    UINT_80092a98 = 0;
+    D_800B97C0 = malloc(0x9F6, 5, NULL);
+    gLoadedBlocks = malloc(0xA0, 5, NULL);
+    gLoadedBlockIds = malloc(0x50, 5, NULL);
+    gBlockRefCounts = malloc(0x28, 5, NULL);
+    gMapReadBuffer = malloc(0x2BC, 5, NULL);
+    *gBlockIndices = malloc(0x500, 5, NULL);
+    gDecodedGlobalMap = malloc(0x3C00, 5, NULL);
+    D_800B9700 = malloc(0x500, 5, NULL);
+    for (i = 1; i < 5; i++) {
+        D_800B9704[i] = D_800B9704[i - 1] + 1;
+        D_800B96EC[i] = D_800B96EC[i - 1] + 1;
+        gBlockIndices[i] = gBlockIndices[i - 1] + 1;
+    }
+    queue_alloc_load_file(&gFile_MAPS_TAB, 0x20);
+    queue_alloc_load_file((void** ) &gFile_HITS_TAB, 0x2D);
+    for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
+    queue_alloc_load_file((void** ) &gFile_TRKBLK, 0x2B);
+    gNumTRKBLKEntries = 0;
+    while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
+        gNumTRKBLKEntries += 1;
+    }
+    gNumTRKBLKEntries -= 1;
+    queue_alloc_load_file(&gFile_BLOCKS_TAB, 0x2A);
+    gNumTotalBlocks = 0;
+    while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
+        gNumTotalBlocks++;
+    }
+    gNumTotalBlocks--;
+    D_800B96B0 = malloc(0x7D0, 5, NULL);
+    D_800B4A5C = -1;
+    D_800B4A5E = -2;
+    gBlockTextures = malloc(0x140, 5, NULL);
+    bzero(gBlockTextures, 0x140);
+    D_800B97A8 = malloc(0x7B4, 5, NULL);
+    bzero(D_800B97A8, 0x7B4);
+    bzero(gRenderList, 0x640);
+    *gRenderList = -0x4000U;
+}
+#endif
+
+void func_80042174(s32 arg0) {
+    if (arg0 == 0) {
+        if (UINT_80092a98 & 0x10) {
+            gDLL_minic->exports->func2.asVoid();
+        }
+        gDLL_8->exports->func[2].asVoid();
+        gDLL_7_newday->exports->func2.asVoid();
+        gDLL_newclouds->exports->func[3].asVoid();
+        func_80049D88();
+        func_800499BC();
+        func_8004D328();
+        if (gDLL_76 != NULL) {
+            gDLL_76->exports->func1.asVoid();
+        }
+        gDLL_minimap->exports->func[0].asVoid();
+    }
+    func_8001EB80();
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004225C.s")
 
@@ -2327,7 +2409,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-void func_8004D328() {
+static void func_8004D328() {
     SimilarToWarp* var_a2;
     Warp* var_v0;
     u8 temp2;
