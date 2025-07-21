@@ -3,6 +3,13 @@
 
 static void func_8004D328();
 
+// Can't be defined in .h file or else things unmatch
+extern Camera* D_800B51E4;
+extern Gfx* gMainDL;
+extern Mtx* gWorldRSPMatrices;
+extern Vertex* D_800B51D4;
+extern Triangle* D_800B51D8;
+
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
     gDLBuilder->needsPipeSync = 1;

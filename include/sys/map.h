@@ -3,8 +3,11 @@
 
 #include "PR/ultratypes.h"
 #include "ultra64.h"
+#include "PR/gbi.h"
 
+#include "types.h"
 #include "sys/math.h"
+#include "sys/camera.h"
 #include "sys/rarezip.h"
 #include "sys/gfx/map.h"
 
@@ -268,11 +271,6 @@ extern f32 D_8009A950;
 extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
-extern Vertex* D_800B51D4;
-extern Triangle* D_800B51D8;
-extern Camera* D_800B51E4;
-extern Gfx* gMainDL;
-extern Mtx* gWorldRSPMatrices;
 
 void func_80045FC4(void*, void*, s32, s32);
 
