@@ -303,5 +303,6 @@ void some_video_setup(s32 param1);
 void track_c_func(void);
 
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32); /* extern */
 
 #endif

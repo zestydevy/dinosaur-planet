@@ -549,6 +549,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     if (1) { } if (1) { } if (1) { } if (1) { }
 }
 
+// https://decomp.me/scratch/9mgpH
 #pragma GLOBAL_ASM("asm/nonmatchings/map/track_c_func.s")
 
 #if 1
@@ -777,7 +778,43 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800436DC.s")
+void func_800436DC(Object* arg0, s32 arg1) {
+    s8 sp37;
+    u8 someBool;
+
+    someBool = TRUE;
+    if ((arg0->id == 0x72) || (arg0->id == 0x38C)) {
+        someBool = TRUE;
+        if (arg0->dll->exports->func13(arg0) != 0) {
+            someBool = FALSE;
+        }
+    }
+    if (someBool != FALSE) {
+        sp37 = gDLL_expgfx->exports->func10(arg0);
+    }
+    gDLL_modgfx->exports->func[6].custom(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, arg0);
+    if (sp37 >= 2) {
+        if ((arg0->id != 0x72) && (arg0->id != 0x38C)) {
+            gDLL_expgfx->exports->func6(arg0, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
+        }
+    }
+    objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, arg0, arg1);
+    if (sp37 != 0) {
+        if ((arg0->id != 0x72) && (arg0->id != 0x38C)) {
+            gDLL_expgfx->exports->func6(arg0, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
+        }
+    }
+    if ((arg0->linkedObject != NULL) && (arg1 != 0)) {
+        sp37 = gDLL_expgfx->exports->func10(arg0->linkedObject);
+        if (sp37 >= 2) {
+            gDLL_expgfx->exports->func6(arg0->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
+        }
+        if (sp37 != 0) {
+            gDLL_expgfx->exports->func6(arg0->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
+        }
+    }
+}
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
 
