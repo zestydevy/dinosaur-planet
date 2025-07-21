@@ -472,7 +472,75 @@ void func_80042174(s32 arg0) {
     func_8001EB80();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004225C.s")
+void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
+    Mtx* temp_v0;
+
+    gMainDL = *gdl;
+    gWorldRSPMatrices = *mtxs;
+    D_800B51D4 = *vtxs;
+    D_800B51D8 = *pols;
+    UINT_80092a98 |= 0x21;
+    if ((D_800B96A8 == 1) || (D_800B96A8 == 3)) {
+        UINT_80092a98 &= ~1;
+    }
+    gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
+    temp_v0 = get_some_model_view_mtx();
+    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(temp_v0), G_MTX_LOAD);
+    func_800021A0(&gMainDL, 0);
+    func_80044BEC();
+    if (func_80010048() != 0) {
+        if (!(UINT_80092a98 & 8)) {
+            UINT_80092a98 |= 8;
+        }
+        camera_set_aspect(D_8009A950);
+    } else if (UINT_80092a98 & 8) {
+        UINT_80092a98 &= ~8;
+        camera_set_aspect(D_8009A954);
+    }
+    if (UINT_80092a98 & 0x10000) {
+        if (UINT_80092a98 & 8) {
+            camera_set_aspect(D_8009A958);
+        } else {
+            camera_set_aspect(D_8009A95C);
+        }
+        func_80001D58(get_camera_selector(), 0U);
+        some_video_setup(0);
+        UINT_80092a98 &= 0xFFFEFFFF;
+    }
+    if (UINT_80092a98 & 0x10) {
+        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+        gDLL_7_newday->exports->func13(&gMainDL, &gWorldRSPMatrices);
+
+        if (UINT_80092a98 & 0x40) {
+            gDLL_newstars->exports->func[1].withOnePointerArg(&gMainDL);
+        }
+        gDLL_7_newday->exports->func3(&gMainDL, &gWorldRSPMatrices, UINT_80092a98 & 0x40);
+    } else {
+        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+    }
+    gDLL_newlfx->exports->func[2].asVoid();
+    gDLL_57->exports->func[3].asVoid();
+    gDLL_58->exports->func[2].asVoid();
+    if (UINT_80092a98 & 0x20000) {
+        if (gDLL_7_newday->exports->func23(&gMainDL) == 0) {
+            gDLL_8->exports->func[3].withOnePointerArg(&gMainDL);
+        }
+    } else {
+        gDLL_8->exports->func[3].withOnePointerArg(&gMainDL);
+    }
+    D_800B51E4 = get_camera();
+    func_80048F58();
+    track_c_func();
+    gDLL_newclouds->exports->func[4].withOnePointerArg(&gMainDL);
+    func_8000302C(&gMainDL);
+    *gdl = gMainDL;
+    *mtxs = gWorldRSPMatrices;
+    *vtxs = D_800B51D4;
+    *pols = D_800B51D8;
+    UINT_80092a98 &= ~2;
+    // @fake
+    if (1) { } if (1) { } if (1) { } if (1) { }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/track_c_func.s")
 

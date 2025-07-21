@@ -264,6 +264,16 @@ extern s8 D_80092BE8;
 extern s8 D_80092BF8;
 extern s8 D_80092BFC;
 
+extern f32 D_8009A950;
+extern f32 D_8009A954;
+extern f32 D_8009A958;
+extern f32 D_8009A95C;
+extern Vertex* D_800B51D4;
+extern Triangle* D_800B51D8;
+extern Camera* D_800B51E4;
+extern Gfx* gMainDL;
+extern Mtx* gWorldRSPMatrices;
+
 void func_80045FC4(void*, void*, s32, s32);
 
 u32 hits_get_size(s32 id);
@@ -287,6 +297,12 @@ void func_800143A4();
 void func_8001EB80(void);
 void func_800499BC(void);
 void func_80049D88(void);
+
+s32 func_80010048(void);
+void func_80044BEC(void);
+void func_80048F58(void);
+void some_video_setup(s32 param1);
+void track_c_func(void);
 
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 

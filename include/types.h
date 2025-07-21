@@ -9,6 +9,7 @@ typedef union {
     void (*asVoid)(void);
     s32 (*asVoidS32)(void);
     void (*withOneArg)(s32);
+    void (*withOnePointerArg)(void*);
     void (*withTwoArgs)(s32, s32);
     s32 (*withTwoArgsS32)(s32, s32);
     void (*withThreeArgs)(s32, s32, s32);
