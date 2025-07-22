@@ -1577,39 +1577,79 @@ void some_cell_func(BitStream* stream) {
     bitstream_init(stream, (var_v1 * temp) + D_800B9798, D_800B979E, D_800B979E);
 }
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045600.s")
 #else
-typedef struct {
-    /*0x0*/  u8 *data;
-    /*0x4*/  s32 byteLength;
-    /*0x8*/  s32 bitLength;
-    /*0xC*/  s32 capacity;
-    /*0x10*/ s32 bitPos;
-} BitStream;
-
-s32 bitstream_read(s32, u8);
-void bitstream_set_pos(s32, s32, s16, s16);
 extern char D_8009A614;
 extern s8 *D_800B9700;
 extern s16 *D_800B97A0;
 
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     s8 bitPosIndex;
+    s8 *new_var;
 
+    new_var = D_800B9700;
+    new_var += arg4 * 4;
+    bitPosIndex = new_var[arg2 + arg3 * 16];
     
-    bitPosIndex = *(arg2 + (arg3 * 0x10) + &D_800B9700[arg4]);
-    
-    if (bitPosIndex >= 0) {
-        bitstream_set_pos((s32)stream, D_800B97A0[bitPosIndex] + arg0, arg2, arg3);
-        return bitstream_read((s32)stream, 1);
+    if (bitPosIndex >= 0){
+        bitstream_set_pos(stream, D_800B97A0[bitPosIndex] + arg0);
+        return bitstream_read(stream, 1);
     }
-    diPrintf(&D_8009A614, arg2, arg3);
+    diPrintf(&D_8009A614);
     return 0;
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800456AC.s")
+u8 func_800456AC(Object* obj) {
+    f32 temp_ft4;
+    Object* playerObj;
+    f32 var_fv0;
+    f32 temp_fv1;
+    f32 temp;
+    s32 var_v0;
+
+    if (obj->unk_0x36 == 0) {
+        obj->unk_0x37 = 0;
+        return 0;
+    }
+    if ((obj->createInfo != NULL) && (obj->createInfo->loadParamB & 1)) {
+        obj->unk_0x37 = ((obj->unk_0x36 * 0xFF) + 0xFF) >> 8;
+        // Ugly goto but too lazy to fix
+        goto block_17;
+    }
+    temp_ft4 = obj->unk0x40;
+    if (temp_ft4 < 40.0f) {
+        obj->unk_0x37 = 0;
+        return 0;
+    }
+    if ((obj->createInfo != NULL) && (obj->createInfo->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
+        var_fv0 = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
+    } else {
+        var_fv0 = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+    }
+    if (temp_ft4 < var_fv0) {
+        obj->unk_0x37 = 0;
+        return 0;
+    }
+    var_v0 = 0xFF;
+    temp_fv1 = temp_ft4 - 40.0f;
+    if (temp_fv1 < var_fv0) {
+        temp_ft4 -= temp_fv1;
+        var_fv0 = var_fv0 - temp_fv1;
+        temp = 1.0f - ((var_fv0) / temp_ft4);
+        var_v0 = 255.0f * temp;
+    }
+    obj->unk_0x37 = (u8) ((s32) ((obj->unk_0x36 + 1) * var_v0) >> 8);
+block_17:
+    if (obj->unk_0x37 == 0) {
+        return 0;
+    }
+    if (obj->id == 0xD4) {
+        return 1;
+    }
+    return is_sphere_in_frustum(&obj->positionMirror, obj->unk_0xa8);
+}
 
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 {

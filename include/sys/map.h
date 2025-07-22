@@ -301,6 +301,8 @@ void func_80049D88(void);
 void func_80044BEC(void);
 void func_80048F58(void);
 void track_c_func(void);
+u8 func_800456AC(Object* obj);
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 
 // other funcs that are used
 void func_80058F3C(void);
