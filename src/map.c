@@ -866,39 +866,43 @@ extern u8 D_800B979C;
 extern f32 D_800B97B8;
 extern f32 D_800B97BC;
 void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
-    Arg0Unk8* temp_t5;
+    s32 i;
     Arg0Unk8* temp_v0;
     Arg0Unk8* var_a1;
     Arg0UnkC* var_s0;
     Plane* var_v0;
-    f32 temp_fs5;
+    Arg0Unk4* unk4;
     f32 var_fa0;
     f32 var_fs1;
     f32 var_fs2;
     f32 var_fs3;
     f32 var_fs4;
     f32 var_fv1;
-    s32 temp_s2;
+    f32 var_f0;
     Arg0UnkC *sp98[1];
     Arg0Unk4* temp_v0_2;
     f32 sp90;
     f32 sp8C;
     f32 sp88;
-    s32 temp_s3;
+    f32 sp84;
     f32 sp80;
     f32 sp7C;
-    s32 pad[7];
-    s32 temp_s4;
     s32 var_s1;
-    f32 var_f0;
-    s32 i;
+    s32 pad[4];
+    s32 temp_s2;
+    s32 temp_s3;
+    s32 temp_s4;
 
     temp_s2 = D_800B51E4->tx - gWorldX - D_800B97B8;
     temp_s3 = D_800B51E4->ty;
     temp_s4 = D_800B51E4->tz - gWorldZ - D_800B97BC;
-    sp98[0] = &arg0->unkC[arg0->unk36];
     var_s0 = &arg0->unkC[0];
-    while ((u32)var_s0 < (u32)sp98[0]) {
+    if ((u32)var_s0 >= (u32)&arg0->unkC[arg0->unk36]) {
+        return;
+    }
+
+    sp98[0] = &arg0->unkC[arg0->unk36];
+    do {
         if (var_s0->unk0 & 0x200000) {
             var_s0->unk0 &= 0xEFFFFFFF;
             var_s0++;
@@ -908,7 +912,7 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
             ((u8) D_800B9794 != 0) &&
             ((D_800B979C & 1) || !(var_s0->unk0 & 0x2404)) &&
             // var_s0 - arg0->unkC is just current "index"
-            (func_80045600((var_s0 - arg0->unkC) / 24, &D_800B9780, arg1, arg2, (s32) arg3) == 0)
+            (func_80045600((var_s0 - arg0->unkC) / 24, &D_800B9780, arg1, arg2, arg3) == 0)
         ) {
             var_s0->unk0 &= 0xEFFFFFFF;
             var_s0++;
@@ -916,20 +920,20 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
         } 
 
         var_s1 = 1;
+        sp84 = ((var_s0->unkD * 4) | ((var_s0->unk17 >> 4) & 3)) + D_800B97B8;
+        sp90 = ((var_s0->unkC * 4) | (var_s0->unk17 & 3)) + D_800B97B8;
         sp8C = var_s0->unk8;
         sp80 = var_s0->unkA;
-        temp_fs5 = ((var_s0->unkD * 4) | ((var_s0->unk17 >> 4) & 3)) + D_800B97B8;
-        sp90 = ((var_s0->unkC * 4) | (var_s0->unk17 & 3)) + D_800B97B8;
         sp7C = ((var_s0->unkF * 4) | ((var_s0->unk17 >> 6) & 3)) + D_800B97BC;
         sp88 = ((var_s0->unkE * 4) | ((var_s0->unk17 >> 2) & 3)) + D_800B97BC;
         for (i = 0; i < 5; i++) {
             var_v0 = &gFrustumPlanes[i];
             if (var_v0->unk_0x14[0] & 1) {
-                var_fs1 = temp_fs5;
+                var_fs1 = sp84;
                 var_fs4 = sp90;
             } else {
                 var_fs1 = sp90;
-                var_fs4 = temp_fs5;
+                var_fs4 = sp84;
             }
             if (var_v0->unk_0x14[0] & 2) {
                 var_fs2 = sp80;
@@ -961,17 +965,24 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
         } 
         if (!(var_s0->unk0 & 0x80000000)) {
             var_s1 = 0;
+            unk4 = &arg0->unk4[var_s0->unk4];
             var_a1 = &arg0->unk8[var_s0->unk6];
-            temp_t5 = &arg0->unk8[var_s0[1].unk6];
-            while ((u32) var_a1 < (u32) temp_t5) {
-                temp_v0_2 = &arg0->unk4[var_s0->unk4 + ((var_a1->unk0 >> 0xD) & 0x1F)];
-                if ((((temp_v0_2->unk0 - temp_s2) * (var_a1->unk0 >> 0x12)) + ((temp_v0_2->unk2 - temp_s3) * ((s32) (var_a1->unk4 << 0xE) >> 0x12)) + ((temp_v0_2->unk4 - temp_s4) * (var_a1->unk4 >> 0x12))) < 0) {
+            temp_v0 = arg0->unk8;
+            temp_v0 += var_s0[1].unk6;
+            while ((u32) var_a1 < (u32)temp_v0) {
+                temp_v0_2 = &unk4[((var_a1->unk0 >> 0xD) & 0x1F)];
+                if (
+                    (
+                        ((temp_v0_2->unk0 - temp_s2) * (var_a1->unk0 >> 0x12)) +
+                        ((temp_v0_2->unk2 - temp_s3) * ((var_a1->unk4 << 0xE) >> 0x12)) +
+                        ((temp_v0_2->unk4 - temp_s4) * (var_a1->unk4 >> 0x12))
+                    ) < 0) {
                     var_a1->unk4 |=1;
                     var_s1 = 1;
                 } else {
                     var_a1->unk4 &= ~1;
                 }
-                var_a1 += 1;
+                var_a1++;
             }
             if (var_s1 == 0) {
                 var_s0->unk0 &= 0xEFFFFFFF;
@@ -981,7 +992,7 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
         }
         var_s0->unk0 |= 0x10000000;
         var_s0++;
-    }
+    } while ((u32)var_s0 < (u32)sp98[0]);
 }
 #endif
 
@@ -1445,14 +1456,126 @@ BlocksModel* func_80044BB0(s32 blockIndex) {
 //Camera and frustum related?
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BEC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800451A0.s")
+s32 func_800451A0(s32 xPos, s32 zPos, BlocksModel* blocks) {
+    Plane* currentPlane;
+    f32 scaledXPos;
+    f32 scaledZPos;
+    f32 planeZ;
+    f32 planeX;
+    f32 planeY;
+    f32 planeD;
+    f32 var_fs2;
+    f32 minY;
+    f32 maxY;
+    s32 stop;
+    s32 i;
+    s32 j;
+
+    if (blocks != NULL) {
+        minY = blocks->minY;
+        maxY = blocks->maxY;
+    } else {
+        minY = D_8009A9B8;
+        maxY = D_8009A9BC;
+    }
+
+    for (i = 0; i < 5; i++) {
+        currentPlane = &gFrustumPlanes[i];
+
+        scaledXPos = xPos * 640.0f;
+        scaledZPos = zPos * 640.0f;
+        planeX = currentPlane->x;
+        planeY = currentPlane->y;
+        planeZ = currentPlane->z;
+        planeD = currentPlane->d;
+        for (j = 0, stop = FALSE; j < 8 && stop == FALSE; j++) {
+            if (j & 1) {
+                var_fs2 = (xPos * 640.0f) * planeX;
+            } else {
+                var_fs2 = ((xPos * 640.0f) + 640.0f) * planeX;
+            }
+            if (j & 2) {
+                var_fs2 += (scaledZPos * planeZ);
+            } else {
+                var_fs2 += ((scaledZPos + 640.0f) * planeZ);
+            }
+            if (j & 4) {
+                var_fs2 += (minY * planeY);
+            } else {
+                var_fs2 += (maxY * planeY);
+            }
+            var_fs2 += planeD;
+            if (var_fs2 > 0.0f) {
+                stop = TRUE;
+            }
+        }
+        if ((j == 8) && (stop == 0)) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 void func_8004530C(void) {
     D_800B979E = 0;
     D_800B9794 = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/some_cell_func.s")
+void some_cell_func(BitStream* stream) {
+    f32 var_fv1;
+    s32 var_v0;
+    s32 temp_t3;
+    s32 var_t0;
+    s32 var_v1;
+    s32 temp_t2;
+    s32 sp3C;
+    s32 sp20;
+    s32 sp1C;
+    s32 temp;
+    s32 sp18;
+    BlocksModel* sp28;
+
+    if ((u8) D_800B9794 == 0) {
+        return;
+    }
+
+    sp3C = floor_f((D_800B51E4->srt.transl.x - gWorldX) / 640.0f);
+    sp28 = func_80044B18(sp3C, floor_f((D_800B51E4->srt.transl.z - gWorldZ) / 640.0f), 0);
+
+    sp3C = floor_f(D_800B51E4->srt.transl.x / 640.0f) * 0x280;
+    temp= (floor_f(D_800B51E4->srt.transl.z / 640.0f) * 0x280);
+    temp_t2 = (D_800B51E4->srt.transl.x - sp3C);
+    temp_t3 = (D_800B51E4->srt.transl.z - temp);
+    if (sp28 == NULL) {
+        return;
+    }
+
+    var_v0 = sp28->minY;
+    if (sp28->minY & 1) {
+        var_v0 -= 1;
+    }
+    if (sp28->maxY < D_800B51E4->srt.transl.y) {
+        var_fv1 = sp28->maxY - 1;
+    } else {
+        var_fv1 = D_800B51E4->srt.transl.y;
+    }
+    var_v0 = ((s32)var_fv1 - var_v0);
+    if (((sp28->maxY - sp28->minY) / 80) < 8) {
+        var_t0 = (sp28->maxY - sp28->minY) / 8;
+    } else {
+        var_t0 = 0x50;
+    }
+    sp20 = var_v0 / var_t0;;
+    sp1C = temp_t2 / 80;
+    sp18 = temp_t3 / 80;
+    diPrintf(&D_8009A5C0, sp1C, sp20, sp18);
+    var_v1 = D_800B979E >> 3;
+    if (D_800B979E & 7) {
+        var_v1 += 1;
+    }
+    temp = ((sp20 << 6) + (sp18 * 8) + sp1C);
+    bitstream_init(stream, (var_v1 * temp) + D_800B9798, D_800B979E, D_800B979E);
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045600.s")

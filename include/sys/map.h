@@ -10,6 +10,7 @@
 #include "sys/camera.h"
 #include "sys/rarezip.h"
 #include "sys/gfx/map.h"
+#include "sys/bitstream.h"
 
 #include "sys/map_enums.h"
 
@@ -271,6 +272,12 @@ extern f32 D_8009A950;
 extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
+
+extern f32 D_8009A9B8; // used for minY in func_800451A0
+extern f32 D_8009A9BC; // used for maxY in func_800451A0
+
+extern u8 D_8009A5C0;
+extern s32 D_800B9798;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
