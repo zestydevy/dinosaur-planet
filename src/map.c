@@ -1033,7 +1033,51 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043FD8.s")
+void func_80043FD8(s8* arg0) {
+    Object* object;
+    Object** objects;
+    s32 sp5C;
+    s32 sp58;
+    s32 i;
+    s32 var_v0;
+    s8* var_s2;
+
+    objects = get_world_objects(0, 0);
+    sp58 = func_80020DA0(&sp5C);
+    if (sp5C >= 0xB5) {
+        sp5C = 0xB4;
+    }
+    func_80020EE4(sp58, sp5C - 1);
+    for (i = 0; i < sp5C; i++) {
+        object = objects[i];
+        var_s2 = &arg0[i];
+        if (i < sp58) {
+            var_s2[0] = 0;
+        } else {
+            var_s2[0] = func_800456AC(object);
+            if ((var_s2[0] != 0) && (object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
+                func_8004DBAC(object, 0, 0, delayByte);
+            }
+            if ((object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
+                func_8004E7A8(object);
+            }
+            if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
+                if (object->def->flags & 0x100000) {
+                    var_v0 = 0x249F0 - i;
+                } else if ((object->unk_0x37 == 0xFF) && !(object->srt.flags & 0x80)) {
+                    var_v0 = 0x249F0 - i;
+                } else {
+                    var_v0 = i + 0xC350;
+                }
+                gRenderList[gRenderListLength] = (var_v0 << 14) | (i << 7) | 0x40;
+                gRenderListLength += 1;
+            }
+        }
+    }
+    if (gRenderListLength >= 2) {
+        func_800441F4(gRenderList, gRenderListLength);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800441F4.s")
 
