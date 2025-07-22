@@ -272,37 +272,36 @@ extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
 
-void func_80045FC4(void*, void*, s32, s32);
+// Used in other .c files
+void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
+// defined in map.c but used before declared
+void func_80045FC4(void*, void*, s32, s32);
+void func_800441F4(u32* arg0, s32 arg1);
+void func_80048B14(Block *block);
+void func_80048C24(BlocksModel*);
 u32 hits_get_size(s32 id);
 void block_setup_vertices(Block *block);
 void block_setup_gdl_groups(Block *block);
-void func_80048B14(Block *block);
 void *block_setup_textures(Block *block);
 void block_setup_xz_bitmap(Block *block);
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
-
 void block_compute_vertex_colors(BlocksModel*,s32,s32,s32);
-void func_80058F3C();
-
-void func_80048C24(BlocksModel*);
 void func_80049D38(u32 arg0);
 void func_80049FA8(BlocksModel*);
-void func_80058F3C();
-
-void func_800143A4();
-
-void func_8001EB80(void);
 void func_800499BC(void);
 void func_80049D88(void);
-
-s32 func_80010048(void);
 void func_80044BEC(void);
 void func_80048F58(void);
-void some_video_setup(s32 param1);
 void track_c_func(void);
 
-void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+// other funcs that are used
+void func_80058F3C(void);
+void func_800143A4(void);
+void func_8001EB80(void);
+s32 func_80010048(void);
+void some_video_setup(s32 param1);
+
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32); /* extern */
 
 #endif

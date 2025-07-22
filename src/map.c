@@ -1079,7 +1079,38 @@ void func_80043FD8(s8* arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800441F4.s")
+void func_800441F4(u32* arg0, s32 arg1) {
+    u32 temp_a0;
+    s32 var_t0;
+    s32 var_v0;
+    s32 var_v1;
+
+    for (var_v0 = 1; (arg1 - 1) / 9 >= var_v0; var_v0++) {
+        var_v0 *= 3;
+        // @fake
+        var_v1 = var_v0 + 1;
+    }
+
+    while (var_v0 > 0) {
+        var_v1 = var_v0 + 1;
+        while (var_v1 < arg1) {
+            temp_a0 = arg0[var_v1];
+            var_t0 = var_v1;
+            if (var_v0 < var_t0) {
+                while (arg0[var_t0 - var_v0] < temp_a0) {
+                    arg0[var_t0] = arg0[var_t0 - var_v0];
+                    var_t0 -= var_v0;
+                    if (var_v0 >= var_t0) {
+                        break;
+                    }
+                }
+            }
+            var_v1++;
+            arg0[var_t0] = temp_a0;
+        }
+        var_v0 /= 3;
+    }
+}
 
 /** are_worldCoords_in_current_map */
 s32 func_80044320(f32 worldX, f32 worldZ) {
