@@ -1763,7 +1763,47 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
 
 #endif
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
+#else
+typedef struct Unk800B9768_Unk4 {
+    s16 unk0;
+    s16 pad2;
+    s16 unk4;
+    u8 pad6[4];
+} Unk800B9768_Unk4;
+typedef struct Unk800B9768{
+    s32 pad0;
+    Unk800B9768_Unk4 *unk4;
+    s32 pad8;
+    s8 *unkC;
+}Unk800B9768;
+void func_8004BD40(MapHeader*, s32);                   /* extern */
+MapHeader* map_load_streammap(s32, s32, s8*);         /* extern */
+extern Unk800B9768 D_800B9768;
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
+s32 map_load_streammap_add_to_table(s32 arg0) {
+    s32 sp2C;
+    Unk800B9768_Unk4* temp_a3;
+
+    sp2C = 0;
+    for (sp2C = 0; sp2C < gMapNumStreamMaps && gMapStreamMapTable[sp2C].header != NULL; sp2C++) {}
+    if (sp2C == gMapNumStreamMaps) {
+        gMapNumStreamMaps += 1;
+    }
+    gMapActiveStreamMap = map_load_streammap(arg0, 0, &gMapNumStreamMaps);
+    gMapStreamMapTable[sp2C].header = gMapActiveStreamMap;
+    gMapStreamMapTable[sp2C].mapID = arg0;
+    temp_a3 = &D_800B9768.unk4[arg0];
+    gMapStreamMapTable[sp2C].header->unk19 = D_800B9768.unkC[arg0];
+    gMapActiveStreamMap->originWorldX = (temp_a3->unk0 + gMapActiveStreamMap->originOffsetX) * 640.0f;
+    gMapActiveStreamMap->originWorldZ = (temp_a3->unk4 + gMapActiveStreamMap->originOffsetZ) * 640.0f;
+    map_convert_objpositions_to_ws(gMapActiveStreamMap, gMapActiveStreamMap->originWorldX, gMapActiveStreamMap->originWorldZ);
+    func_8004BD40(gMapActiveStreamMap, arg0);
+    D_80092A94 = arg0;
+    return sp2C;
+}
+#endif
 
 /** Returns one of the loaded maps' mapID (as defined in MAPINFO.bin) */
 s32 func_80045D58(void) {
@@ -1793,7 +1833,76 @@ void func_80045F48(s32 mapID) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045FC4.s")
+void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
+    s32 pad;
+    s32 sp48;
+    s32 var_a0;
+    s8 sp42[4];
+    s32 var_s3;
+    s32 var_s4;
+    UnkObjectInstanceFileStruct* var_s0;
+    s32 i;
+
+    sp42[3] = FALSE;
+    var_s4 = 0;
+    var_s0 = (UnkObjectInstanceFileStruct *) arg0->objectInstanceFile_ptr;
+    sp48 = arg0->objectInstancesFileLength;
+    if (sp48 == 0) {
+        return;
+    }
+    var_s3 = 0;
+
+    if (arg3 == 0) {
+        arg1[33] = -1;
+        for (i = 0; i < 32; i++) { arg1[i] = -1; }
+    }
+    while (var_s3 < sp48) {
+        if (arg3 != 0) {
+            if (var_s0->unk0 == 0x6E) {
+                gDLL_CURVES->exports->curves_func_10c.withOneArg(var_s0);
+            }
+            if (var_s0->unk0 == 5) {
+                gDLL_Race->exports->func[2].withOneArg(var_s0);
+            }
+        } else {
+            if ((0x6E == var_s0->unk0) || (5 == var_s0->unk0)) {
+                if (0x6E == var_s0->unk0) {
+                    gDLL_CURVES->exports->curves_func_34.withOneArg(var_s0);
+                } else {
+                    gDLL_Race->exports->func[1].withOneArg(var_s0);
+                }
+                if ((u8)sp42[3] == FALSE) {
+                    arg1[33] = ((u32)var_s0 - (u32)arg0->objectInstanceFile_ptr);
+                    sp42[3] = TRUE;
+                }
+            } else if (var_s0->unk4 & 0x10) {
+                if (!((1 << var_s0->unk6) & var_s4)) {
+                    arg1[var_s0->unk6] = (u32)var_s0 - (u32)arg0->objectInstanceFile_ptr;
+                    var_s4 |= 1 << var_s0->unk6;
+                }
+            }
+        }
+        var_s3 += var_s0->unk2 * 4;
+        var_s0 = (UnkObjectInstanceFileStruct *) &((s8 *)var_s0)[var_s0->unk2 * 4];
+    }
+    if (arg3 == 0) {
+        var_a0 = sp48;
+        if ((arg1[33] != -1) && (arg1[33] < sp48)) {
+            var_a0 = arg1[33];
+        }
+        for (i = 0; i < 32; i++) {
+            if ((arg1[i] != -1) && (arg1[i] < var_a0)) {
+                var_a0 = arg1[i];
+            }
+        }
+        arg1[34] = var_a0;
+        if (arg1[33] != -1) {
+            arg1[32] = arg1[33];
+            return;
+        }
+        arg1[32] = sp48;
+    }
+}
 
 void func_800462B0(){
 }

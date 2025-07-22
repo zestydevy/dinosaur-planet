@@ -194,6 +194,16 @@ typedef struct {
 /*21*/ u8 unk21;
 } UnkTextureStruct;
 
+// struct only relevant for func_80045FC4?
+typedef struct UnkObjectInstanceFileStruct {
+    s16 unk0;
+    u8 unk2;
+    s8 unk3;
+    u8 unk4;
+    u8 pad5;
+    u8 unk6;
+} UnkObjectInstanceFileStruct;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -283,7 +293,6 @@ extern s32 D_800B9798;
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
 // defined in map.c but used before declared
-void func_80045FC4(void*, void*, s32, s32);
 void func_800441F4(u32* arg0, s32 arg1);
 void func_80048B14(Block *block);
 void func_80048C24(BlocksModel*);
@@ -303,6 +312,8 @@ void func_80048F58(void);
 void track_c_func(void);
 u8 func_800456AC(Object* obj);
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
+void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3);
 
 // other funcs that are used
 void func_80058F3C(void);
