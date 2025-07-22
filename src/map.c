@@ -816,26 +816,192 @@ void func_800436DC(Object* arg0, s32 arg1) {
 }
 
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
-
-// very close
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_add_to_render_list.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
 #else
-extern Mtx *gWorldRSPMatrices;
-void _block_add_to_render_list(Block *block, f32 x, f32 z)
-{
-    s32 oldRenderListLength = gRenderListLength;
-    s32 i;
-    MtxF mf, mf2;
+typedef struct {
+    /*0x0*/  u8 *data;
+    /*0x4*/  s32 byteLength;
+    /*0x8*/  s32 bitLength;
+    /*0xC*/  s32 capacity;
+    /*0x10*/ s32 bitPos;
+} BitStream;
+typedef struct Arg0Unk4 {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    u8 pad6[0xF - 0x6];
+} Arg0Unk4;
+typedef struct Arg0Unk8 {
+    s32 unk0;
+    s32 unk4;
+} Arg0Unk8;
+typedef struct Arg0UnkC {
+    s32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+    u8 unkF;
+    u8 pad10[0x17 - 0x10];
+    u8 unk17;
+} Arg0UnkC;
 
-    for (i = 0; i < block->shapeCount; i++)
-    {
-        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH)
-        {
-            s32 param;
+typedef struct UnkArg0 {
+    s32 pad0;
+    Arg0Unk4 *unk4;
+    Arg0Unk8 *unk8;
+    Arg0UnkC *unkC;
+    u8 pad10[0x36 - 0x10];
+    s16 unk36;
+} UnkArg0;
+void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3);
+s32 func_80045600(s32, BitStream*, s16, s16, s32);          /* extern */
+extern Plane D_800B4ADC; // ????? unsure about the type of this
+extern BitStream D_800B9780;
+extern u8 D_800B979C;
+extern f32 D_800B97B8;
+extern f32 D_800B97BC;
+void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
+    Arg0Unk8* temp_t5;
+    Arg0Unk8* temp_v0;
+    Arg0Unk8* var_a1;
+    Arg0UnkC* var_s0;
+    Plane* var_v0;
+    f32 temp_fs5;
+    f32 var_fa0;
+    f32 var_fs1;
+    f32 var_fs2;
+    f32 var_fs3;
+    f32 var_fs4;
+    f32 var_fv1;
+    s32 temp_s2;
+    Arg0UnkC *sp98[1];
+    Arg0Unk4* temp_v0_2;
+    f32 sp90;
+    f32 sp8C;
+    f32 sp88;
+    s32 temp_s3;
+    f32 sp80;
+    f32 sp7C;
+    s32 pad[7];
+    s32 temp_s4;
+    s32 var_s1;
+    f32 var_f0;
+    s32 i;
+
+    temp_s2 = D_800B51E4->tx - gWorldX - D_800B97B8;
+    temp_s3 = D_800B51E4->ty;
+    temp_s4 = D_800B51E4->tz - gWorldZ - D_800B97BC;
+    sp98[0] = &arg0->unkC[arg0->unk36];
+    var_s0 = &arg0->unkC[0];
+    while ((u32)var_s0 < (u32)sp98[0]) {
+        if (var_s0->unk0 & 0x200000) {
+            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0++;
+            continue;
+        }
+        if (
+            ((u8) D_800B9794 != 0) &&
+            ((D_800B979C & 1) || !(var_s0->unk0 & 0x2404)) &&
+            // var_s0 - arg0->unkC is just current "index"
+            (func_80045600((var_s0 - arg0->unkC) / 24, &D_800B9780, arg1, arg2, (s32) arg3) == 0)
+        ) {
+            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0++;
+            continue;
+        } 
+
+        var_s1 = 1;
+        sp8C = var_s0->unk8;
+        sp80 = var_s0->unkA;
+        temp_fs5 = ((var_s0->unkD * 4) | ((var_s0->unk17 >> 4) & 3)) + D_800B97B8;
+        sp90 = ((var_s0->unkC * 4) | (var_s0->unk17 & 3)) + D_800B97B8;
+        sp7C = ((var_s0->unkF * 4) | ((var_s0->unk17 >> 6) & 3)) + D_800B97BC;
+        sp88 = ((var_s0->unkE * 4) | ((var_s0->unk17 >> 2) & 3)) + D_800B97BC;
+        for (i = 0; i < 5; i++) {
+            var_v0 = &gFrustumPlanes[i];
+            if (var_v0->unk_0x14[0] & 1) {
+                var_fs1 = temp_fs5;
+                var_fs4 = sp90;
+            } else {
+                var_fs1 = sp90;
+                var_fs4 = temp_fs5;
+            }
+            if (var_v0->unk_0x14[0] & 2) {
+                var_fs2 = sp80;
+                var_fs3 = sp8C;
+            } else {
+                var_fs2 = sp8C;
+                var_fs3 = sp80;
+            }
+            if (var_v0->unk_0x14[0] & 4) {
+                var_fv1 = sp7C;
+                var_fa0 = sp88;
+            } else {
+                var_fv1 = sp88;
+                var_fa0 = sp7C;
+            }
+            var_f0 = (var_v0->d + ((var_fs1 * var_v0->x) + (var_fs2 * var_v0->y) + (var_fv1 * var_v0->z)));
+            if (var_f0 < 0.0f) {
+                var_f0 = (var_v0->d + ((var_fs4 * var_v0->x) + (var_fs3 * var_v0->y) + (var_fa0 * var_v0->z)));
+                if (var_f0 < 0.0f) {
+                    var_s1 = 0;
+                    break;
+                }
+            }
+        }
+        if (var_s1 == 0) {
+            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0++;
+            continue;
+        } 
+        if (!(var_s0->unk0 & 0x80000000)) {
+            var_s1 = 0;
+            var_a1 = &arg0->unk8[var_s0->unk6];
+            temp_t5 = &arg0->unk8[var_s0[1].unk6];
+            while ((u32) var_a1 < (u32) temp_t5) {
+                temp_v0_2 = &arg0->unk4[var_s0->unk4 + ((var_a1->unk0 >> 0xD) & 0x1F)];
+                if ((((temp_v0_2->unk0 - temp_s2) * (var_a1->unk0 >> 0x12)) + ((temp_v0_2->unk2 - temp_s3) * ((s32) (var_a1->unk4 << 0xE) >> 0x12)) + ((temp_v0_2->unk4 - temp_s4) * (var_a1->unk4 >> 0x12))) < 0) {
+                    var_a1->unk4 |=1;
+                    var_s1 = 1;
+                } else {
+                    var_a1->unk4 &= ~1;
+                }
+                var_a1 += 1;
+            }
+            if (var_s1 == 0) {
+                var_s0->unk0 &= 0xEFFFFFFF;
+                var_s0++;
+                continue;
+            } 
+        }
+        var_s0->unk0 |= 0x10000000;
+        var_s0++;
+    }
+}
+#endif
+
+void block_add_to_render_list(Block *block, f32 x, f32 z)
+{
+    s32 unused;
+    s32 oldRenderListLength;
+    s32 i;
+    s32 param;
+    s32 pad;
+    MtxF mf;
+    MtxF mf2;
+    
+    oldRenderListLength = gRenderListLength;
+
+    for (i = 0; i < block->shapeCount; i++) {
+        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
             if (block->shapes[i].flags & 0x4) {
                 param = 100000 - gBlocksToDrawIdx * 400 - i;
+
                 if (block->shapes[i].flags & 0x2000) {
                     param -= 200;
                 }
@@ -848,21 +1014,24 @@ void _block_add_to_render_list(Block *block, f32 x, f32 z)
         }
     }
 
-    if (oldRenderListLength != gRenderListLength && gBlocksToDrawIdx < MAX_BLOCKS)
-    {
+    if (((oldRenderListLength & 0xFFFFFFFFu) != gRenderListLength) && gBlocksToDrawIdx < MAX_BLOCKS) {
         gBlocksToDraw[gBlocksToDrawIdx] = block;
         gBlocksToDrawIdx++;
+
         matrix_translation(&mf, x, 0.0f, z);
         matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+
         gWorldRSPMatrices++;
+
         mf.m[3][1] = block->elevation;
+
         matrix_scaling(&mf2, 1.0f, 0.05f, 1.0f);
         matrix_concat(&mf2, &mf, &mf);
         matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+
         gWorldRSPMatrices++;
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043FD8.s")
 

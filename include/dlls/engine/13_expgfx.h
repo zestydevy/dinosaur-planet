@@ -14,7 +14,7 @@ DLL_INTERFACE_BEGIN(13_expgfx)
     /*3*/ UnknownDLLFunc func3;
     /*4*/ UnknownDLLFunc func4;
     /*5*/ UnknownDLLFunc func5;
-    /*6*/ void (*func6)(s32 *arg0, Gfx **gdl, Mtx **mtxs, Vertex **vertices, s32 arg4, s32 arg5, s32 arg6);
+    /*6*/ void (*func6)(Object *arg0, Gfx **gdl, Mtx **mtxs, Vertex **vertices, s32 arg4, s32 arg5, s32 arg6);
     /*7*/ UnknownDLLFunc func7;
     /*8*/ UnknownDLLFunc func8;
     /*9*/ void (*func9)(s32 arg0);
