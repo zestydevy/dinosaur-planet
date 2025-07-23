@@ -301,6 +301,19 @@ typedef struct MapLayoutArg0 {
 /*09*/ s8  unk9;
 } MapLayoutArg0;
 
+typedef struct {
+       u8 unk0;
+       u8 unk1;
+       u8 unk2;
+       u8 unk3;
+       u8 unk4;
+       u8 unk5;
+       u8 unk6;
+       u8 unk7;
+       u8 unk8;
+       u8 unk9;
+} MapsUnk_800B97C0;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -342,6 +355,12 @@ extern s32 gMapCurrentStreamCoordsX;
 extern s32 gMapCurrentStreamCoordsZ;
 
 extern GlobalMapCell *gDecodedGlobalMap[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
+extern s8 *D_800B9700[5];
+extern s32 gNumTotalBlocks;
+extern s32* D_800B96B0;
+extern s32* gFile_BLOCKS_TAB; // unknown pointer type
+extern s32* gFile_MAPS_TAB; // unknown pointer type
+extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 D_80092A8C;
 extern s8 D_800B5508;
@@ -385,6 +404,7 @@ extern f32 D_8009A9BC; // used for maxY in func_800451A0
 
 extern u8 D_8009A5C0;
 extern s32 D_800B9798;
+extern s16 D_800B97C4;
 
 extern Struct_D_800B9768 D_800B9768;
 
