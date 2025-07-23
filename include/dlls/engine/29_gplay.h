@@ -97,7 +97,16 @@ typedef struct {
     s16 unk0xa;
     s16 unk0xc;
     s16 unk0xe;
-    u8 _unk0x10[0x2c];
+    /*0x10*/ s32 unk10;
+    /*0x14*/ s32 unk14;
+    /*0x18*/ s32 unk18;
+    /*0x1C*/ s32 unk1C;
+    /*0x20*/ s32 unk20;
+    /*0x24*/ s32 unk24;
+    /*0x28*/ s32 unk28;
+    /*0x2C*/ s32 unk2C;
+    /*0x30*/ s32 unk30;
+    u8 _unk0x34[8];
     u8 unk0x3c;
     s8 unk0x3d;
     s8 unk0x3e;

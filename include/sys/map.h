@@ -243,6 +243,64 @@ typedef struct StructBuf {
     s16 unkA;
 } StructBuf;
 
+// size: 0x1C
+typedef struct {
+/*00*/ s32 unk0;
+/*04*/ s32 unk4;
+/*08*/ s32 unk8;
+/*0C*/ s32 unkC;
+/*10*/ s32 unk10;
+/*14*/ s32 unk14;
+/*18*/ s32 _pad18;
+} MapsTabStruct;
+
+typedef struct MapsBinUnk20 {
+    s16   unk0;
+    u8    unk2;
+    s32   _unk4;
+    f32   unk8;
+    f32   unkC;
+    f32   unk10;
+    s32   _unk14;
+    u8    unk18;
+    u8    unk19;
+    u32   unk1C;
+} MapsBinUnk20;
+
+// size: 0x38
+typedef struct MapsBinStruct {
+    /*0x00*/ s16 unk0;
+    /*0x02*/ s16 unk2;
+    /*0x04*/ s16 unk4;
+    /*0x06*/ s16 unk6; // new
+    /*0x08*/ s16 unk8;
+    /*0x0A*/ s16 _padA;
+    /*0x0C*/ s32 *unkC;
+    /*0x10*/ s32 unk10;
+    /*0x14*/ s32 unk14;
+    /*0x18*/ s8  unk18;
+    /*0x19*/ s8  unk19;
+    /*0x1A*/ s16 _pad1A;
+    /*0x1C*/ s16 unk1C;
+    /*0x1E*/ s16 unk1E;
+    /*0x20*/ MapsBinUnk20 *unk20;
+    /*0x24*/ f32 unk24;
+    /*0x28*/ f32 unk28;
+    /*0x2C*/ s32 unk2C;
+    /*0x30*/ s32 unk30;
+    /*0x34*/ s32 unk34;
+} MapsBinStruct;
+
+// size: 0xA
+typedef struct MapLayoutArg0 {
+/*00*/ s16 unk0;
+/*02*/ s16 unk2;
+/*04*/ s16 unk4;
+/*06*/ s16 unk6;
+/*08*/ s8  unk8;
+/*09*/ s8  unk9;
+} MapLayoutArg0;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -283,7 +341,7 @@ extern s16 gNumTRKBLKEntries;
 extern s32 gMapCurrentStreamCoordsX;
 extern s32 gMapCurrentStreamCoordsZ;
 
-extern GlobalMapCell (*gDecodedGlobalMap)[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
+extern GlobalMapCell *gDecodedGlobalMap[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
 
 extern s8 D_80092A8C;
 extern s8 D_800B5508;
@@ -356,8 +414,13 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3);
 MapHeader *map_load_streammap(s32, s32);
-s32 map_read_layout(s32, s32, s16, s16, s32);
+void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void func_80048034(void);
+void map_update_objects_streaming(s32);
+s32 func_800485FC(s32, s32, s32, s32, s32);
+void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
+void func_800496E4(s32 blockIndex);
+void map_update_streaming(void);
 
 // other funcs that are used
 void func_80058F3C(void);
@@ -365,7 +428,12 @@ void func_800143A4(void);
 void func_8001EB80(void);
 s32 func_80010048(void);
 void some_video_setup(s32 param1);
+void func_80012B54(s32 param1, s32 param2);
+void func_800307C4(f32, f32);
+void func_80000608(Object*, Object*, u16, s32, s32, s32);
+void func_800009C8(Object*, Object*, u16, s32);
+void func_80023628(void);
 
-void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32); /* extern */
+void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
 
 #endif

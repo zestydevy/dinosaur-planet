@@ -8,7 +8,7 @@
 #include "types.h"
 
 DLL_INTERFACE_BEGIN(13_expgfx)
-    /*0*/ UnknownDLLFunc func0;
+    /*0*/ void (*func0)(void);
     /*1*/ UnknownDLLFunc func1;
     /*2*/ void (*func2)(s32 arg0, u8 arg1, s32 arg2, s32 arg3);
     /*3*/ UnknownDLLFunc func3;

@@ -15,7 +15,7 @@ DLL_INTERFACE_BEGIN(7_newday)
     /*6*/ UnknownDLLFunc func6;
     /*7*/ UnknownDLLFunc func7;
     /*8*/ s32 (*func8)(s32); //check if night-time?
-    /*9*/ UnknownDLLFunc func9;
+    /*9*/ void (*func9)(f32);
     /*10*/ UnknownDLLFunc func10;
     /*11*/ void (*convert_ticks_to_real_time)(f32 ticks, s16 *hours, s16 *minutes, s16 *seconds);
     /*12*/ UnknownDLLFunc func12;
