@@ -1779,7 +1779,7 @@ typedef struct Unk800B9768{
     s8 *unkC;
 }Unk800B9768;
 void func_8004BD40(MapHeader*, s32);                   /* extern */
-MapHeader* map_load_streammap(s32, s32, s8*);         /* extern */
+MapHeader* map_load_streammap(s32, s32);         /* extern */
 extern Unk800B9768 D_800B9768;
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 s32 map_load_streammap_add_to_table(s32 arg0) {
@@ -1791,7 +1791,7 @@ s32 map_load_streammap_add_to_table(s32 arg0) {
     if (sp2C == gMapNumStreamMaps) {
         gMapNumStreamMaps += 1;
     }
-    gMapActiveStreamMap = map_load_streammap(arg0, 0, &gMapNumStreamMaps);
+    gMapActiveStreamMap = map_load_streammap(arg0, 0);
     gMapStreamMapTable[sp2C].header = gMapActiveStreamMap;
     gMapStreamMapTable[sp2C].mapID = arg0;
     temp_a3 = &D_800B9768.unk4[arg0];
@@ -1930,7 +1930,45 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046320.s")
+#else
+extern s32 D_800B4A50;
+extern s32 D_800B5468;
+
+void func_80046320(s32 arg0, Object *obj) {
+    s32 sp24;
+    s8 var_t0;
+    s32 var_a2;
+    MapHeader *sp18;
+    s32* var_v1;
+
+    sp24 = D_800B4A50;
+    sp18 = map_load_streammap(arg0, 1);
+    gLoadedMapsDataTable[arg0] = 0;
+
+    var_t0 = FALSE;
+    var_v1 = &D_800B5468;
+    var_a2 = 0x50;
+    while (var_a2 < 0x78){
+        if (*var_v1 == 0) {
+            var_t0 = TRUE;
+            *var_v1 = sp18;
+            break;
+        } 
+        
+        var_a2++;
+        var_v1++;
+    }
+
+    func_80045FC4(sp18, (var_a2 * 0x8C) + (u32)&D_800B5508, var_a2, 0);
+    gDLL_29_gplay->exports->func_15B8(var_a2);
+    obj->unk_0x34 = var_a2;
+    gDLL_29_gplay->exports->func_1378(arg0, var_a2);
+    D_800B4A50 = sp24;
+}
+
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 
@@ -1981,7 +2019,62 @@ s32 func_80046728(s32 mapID) {
     return gFile_TRKBLK[mapID + 1] - gFile_TRKBLK[mapID];
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/init_global_map.s")
+
+void init_global_map(void)
+{
+    #define SOME_LENGTH     64
+    s32 i;
+    s32 size;
+    StructBuf *buf = NULL;
+    Struct_D_800B9768_unk4 *thisunk4;
+
+    size = get_file_size(GLOBALMAP_BIN);
+
+    queue_alloc_load_file((void**)&buf, GLOBALMAP_BIN);
+
+    size /= sizeof(StructBuf);
+
+    D_800B9768.unk0  = -1;
+    D_800B9768.unk4  = malloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk8  = malloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unkC  = malloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk10 = malloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+
+    bzero(D_800B9768.unk10, sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH);
+
+    // loop 64 times and set all fields of unk4, unk8 and unkC
+    for (i = 0; i < SOME_LENGTH; i++) {
+        thisunk4 = D_800B9768.unk4 + i;
+        D_800B9768.unkC[i].unk0 = 0x80;
+        thisunk4->unk0 = 0x8000;
+        thisunk4->unk2 = 0x8000;
+        thisunk4->unk4 = 0x8000;
+        thisunk4->unk6 = 0x8000;
+        thisunk4->unk8 = 0x80;
+        thisunk4->unk9 = 0x80;
+
+        D_800B9768.unk8[(i << 1) + 0] = -1;
+        D_800B9768.unk8[(i << 1) + 1] = -1;
+    }
+    for (i = 0; i < size && (buf[i].unk6 >= 0); i++) {
+        D_800B9768.unkC[buf[i].unk6].unk0 = buf[i].unk4;
+
+        map_read_layout(
+            &D_800B9768.unk4[buf[i].unk6],
+            &D_800B9768.unk10[buf[i].unk6],
+            buf[i].unk0,
+            buf[i].unk2,
+            buf[i].unk6
+        );
+
+        D_800B9768.unk8[(buf[i].unk6 << 1) + 0] = buf[i].unk8;
+        D_800B9768.unk8[(buf[i].unk6 << 1) + 1] = buf[i].unkA;
+    }
+
+    func_80048034();
+
+    free(buf);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_read_layout.s")
 

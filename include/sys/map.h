@@ -204,6 +204,45 @@ typedef struct UnkObjectInstanceFileStruct {
     u8 unk6;
 } UnkObjectInstanceFileStruct;
 
+// size: 0xA
+typedef struct Struct_D_800B9768_unk4 {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s8  unk8;
+    s8  unk9;
+} Struct_D_800B9768_unk4;
+
+// size: 0x1
+typedef struct Struct_D_800B9768_unkC {
+    s8 unk0;
+} Struct_D_800B9768_unkC;
+
+// guessed size: 0x20
+typedef struct Struct_D_800B9768_unk10 {
+    s32 unk0;
+    u8  _unk4[0x20 - 0x4];
+} Struct_D_800B9768_unk10;
+
+typedef struct Struct_D_800B9768 {
+    s32                      unk0;
+    Struct_D_800B9768_unk4  *unk4;
+    s16  *unk8;
+    Struct_D_800B9768_unkC  *unkC;
+    Struct_D_800B9768_unk10 *unk10;
+} Struct_D_800B9768;
+
+// size: 0xC?
+typedef struct StructBuf {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+} StructBuf;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -289,6 +328,8 @@ extern f32 D_8009A9BC; // used for maxY in func_800451A0
 extern u8 D_8009A5C0;
 extern s32 D_800B9798;
 
+extern Struct_D_800B9768 D_800B9768;
+
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
@@ -314,6 +355,9 @@ u8 func_800456AC(Object* obj);
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3);
+MapHeader *map_load_streammap(s32, s32);
+s32 map_read_layout(s32, s32, s16, s16, s32);
+void func_80048034(void);
 
 // other funcs that are used
 void func_80058F3C(void);
