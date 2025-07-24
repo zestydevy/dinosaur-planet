@@ -453,6 +453,7 @@ void func_800307C4(f32, f32);
 void func_80000608(Object*, Object*, u16, s32, s32, s32);
 void func_800009C8(Object*, Object*, u16, s32);
 void func_80023628(void);
+s32 func_80048E04(u8, u8, u8, u8);
 
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
 

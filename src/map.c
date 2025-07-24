@@ -2893,7 +2893,33 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048B14.s")
+void func_80048B14(Block* block) {
+    s32 targetVertexIndex;
+    s32 vertexIndex;
+    s32 result;
+    s32 i;
+    BlockShape* currentShape;
+
+    for (i = 0; i < block->shapeCount; i++) {
+        currentShape = &block->shapes[i];
+        if (currentShape->flags & 0x47C02120) {
+            vertexIndex = currentShape->vtxBase;
+            targetVertexIndex = currentShape[1].vtxBase;
+            while (vertexIndex < targetVertexIndex) {
+                result = func_80048E04(
+                    block->vertices[vertexIndex].cn[0],
+                    block->vertices[vertexIndex].cn[1],
+                    block->vertices[vertexIndex].cn[2],
+                    block->shapes[i].alpha
+                );
+                if (result != -1) {
+                    block->vertices[vertexIndex].flag =  ((s16)block->vertices[vertexIndex].flag | ((result & 0xFF) * 4));
+                }
+                vertexIndex++;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048C24.s")
 
