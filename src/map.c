@@ -3002,7 +3002,21 @@ s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3)
     return i;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048F58.s")
+void func_80048F58(void)
+{
+    s32 i;
+    u8 r, g, b;
+
+    func_8001F81C(&r, &g, &b);
+
+    for (i = 0; i < D_800B97C4; i++) {
+        if (D_800B97C0[i].unk6 != 0xFE) {
+            D_800B97C0[i].unk3 = (D_800B97C0[i].unk0 * r) >> 8;
+            D_800B97C0[i].unk4 = (D_800B97C0[i].unk1 * g) >> 8;
+            D_800B97C0[i].unk5 = (D_800B97C0[i].unk2 * b) >> 8;
+        }
+    }
+}
 
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
 {
