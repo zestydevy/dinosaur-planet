@@ -3225,7 +3225,7 @@ void func_800496E4(s32 blockIndex) {
     gBlockRefCounts[blockIndex] -= 1;
     if (gBlockRefCounts[blockIndex] == 0) {
         block = gLoadedBlocks[blockIndex];
-        func_80048C24(block);
+        func_80048C24((Block *) block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
         if (block->unk_48 != 0) {
@@ -3435,30 +3435,23 @@ s32 func_80049D68(s32 arg0) {
     return (s32)&D_800B97A8[arg0];
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D88.s")
-#else
-void func_8003E648(Texture*, u32, u32);
+void func_80049D88(void)
+{
+    s32 i;
+    Texture *texture;
 
-void func_80049D88() {
-    s32 index;
-    Texture *tex;
-    BlockTexture *blockTex;
-    
-    for (index = 0; index < 0x100; index++){
+    for (i = 0; i != 20; i++) {
+        if (gBlockTextures[i].refCount != 0) {
+            texture = gBlockTextures[i].texture;
 
-        if ((&gBlockTextures[index])->refCount == 0){
-            continue;
-        }
-        
-        tex = (&gBlockTextures[index])->texture;
-        if (tex && tex->levels != 0x14 && tex->unk_0xe != 0){
-            blockTex = &gBlockTextures[index];
-            func_8003E648(tex, blockTex->flags, blockTex->unk_0x4);
+            if ((texture != NULL) && (texture->levels != 0x100)) {
+                if (texture->unk_0xe != 0) {
+                    func_8003E648(texture, &gBlockTextures[i].flags, &gBlockTextures[i].unk_0x4);
+                }
+            }
         }
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
 
