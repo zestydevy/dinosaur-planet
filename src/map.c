@@ -2964,7 +2964,43 @@ s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     return -1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048E04.s")
+s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3)
+{
+    s32 i;
+
+    // try to get the index from another function
+    i = func_80048D58(arg0, arg1, arg2, arg3);
+
+    // if we got something valid use it to increment unk8
+    // then return
+    if (i != -1) {
+        D_800B97C0[i].unk8++;
+    } else {
+        // otherwise loop through SomeArray until
+        // we find the first unk8 that is zero, or the final index
+        for (i = 0; i < D_800B97C4; i++) {
+            if (D_800B97C0[i].unk8 == 0) {
+                break;
+            }
+        }
+
+        D_800B97C0[i].unk3 = arg0;
+        D_800B97C0[i].unk0 = D_800B97C0[i].unk3;
+        D_800B97C0[i].unk4 = arg1;
+        D_800B97C0[i].unk1 = D_800B97C0[i].unk4;
+        D_800B97C0[i].unk5 = arg2;
+        D_800B97C0[i].unk2 = D_800B97C0[i].unk5;
+
+        D_800B97C0[i].unk6 = arg3;
+        D_800B97C0[i].unk8 = 1;
+
+        if (i == D_800B97C4) {
+            D_800B97C4++;
+        }
+    }
+
+    return i;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048F58.s")
 
