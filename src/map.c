@@ -3209,8 +3209,6 @@ void _block_setup_vertices(Block *block)
 }
 #endif
 
-
-
 /*
  * blocks_free?
  */
@@ -3301,9 +3299,117 @@ HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine*
 void func_800499B4(){
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499BC.s")
+#else
+void func_800499BC(void) {
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_a3;
+    s32 var_t1;
+    s32 i;
+    UnkTextureStruct *temp_a0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049B84.s")
+    for (i = 0; i < 58; i++){
+        temp_a0 = &D_800B97A8[i];
+        if (temp_a0->unk20 != 0) {
+            var_a1 = temp_a0->unk8;
+            var_a3 = temp_a0->unk4 * delayByte;
+            var_t1 = temp_a0->unk6 * delayByte;
+            temp_a0->unk8 = (var_a1 + var_a3) & 3;
+            temp_a0->unk0 += (var_a1 + var_a3) >> 2;
+            var_a2 = temp_a0->unkA;
+            temp_a0->unkA = (var_a2 + var_t1) & 3;
+            temp_a0->unk2 += (var_a2 + var_t1) >> 2;
+            if (temp_a0->unkC < temp_a0->unk0) {
+                temp_a0->unk0 -= temp_a0->unkC;
+            } else if (temp_a0->unk0 < -temp_a0->unkC) {
+                temp_a0->unk0 += temp_a0->unkC;
+            }
+            if (temp_a0->unkE < temp_a0->unk2) {
+                temp_a0->unk2 -= temp_a0->unkE;
+            } else if (temp_a0->unk2 < -temp_a0->unkE) {
+                temp_a0->unk2 += temp_a0->unkE;
+            }
+            var_a1 = temp_a0->unk18;
+            var_a3 = temp_a0->unk14 * delayByte;
+            var_t1 = temp_a0->unk16 * delayByte;
+            temp_a0->unk18 = (var_a1 + var_a3) & 3;
+            temp_a0->unk10 += (var_a1 + var_a3) >> 2;
+            var_a2 = temp_a0->unk1A;
+            temp_a0->unk1A = (var_a2 + var_t1) & 3;
+            temp_a0->unk12 += (var_a2 + var_t1) >> 2;
+            if (temp_a0->unk1C < temp_a0->unk10) {
+                temp_a0->unk10 -= temp_a0->unk1C;
+            } else if (temp_a0->unk10 < -temp_a0->unk1C) {
+                temp_a0->unk10 += temp_a0->unk1C;
+            }
+            if (temp_a0->unk1E < temp_a0->unk12) {
+                temp_a0->unk12 -= temp_a0->unk1E;
+            } else if (temp_a0->unk12 < -temp_a0->unk1E) {
+                temp_a0->unk12 += temp_a0->unk1E;
+            }
+        }
+    }
+}
+#endif
+
+// unused?
+s32 func_80049B84(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
+    UnkTextureStruct* temp;
+    s32 index;
+    s32 i;
+
+    i = 0;
+    while (1) {
+        temp = &D_800B97A8[i];
+        if (
+            (arg0 == temp->unk4) &&
+            (arg1 == temp->unk6) &&
+            (arg2 == temp->unkC) &&
+            (arg3 == temp->unkE) &&
+            (arg4 == temp->unk14) &&
+            (arg5 == temp->unk16) &&
+            (arg6 == temp->unk1C) &&
+            (arg7 == temp->unk1E)
+        ) {
+            temp->unk20++;
+            return i;
+        }
+        i++;
+        if (i >= 0x3A) {
+            index = -1;
+            for (i = 0; i < 0x3A; i++) {
+                if (D_800B97A8[i].unk20 == 0) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) {
+                return -1;
+            }
+            temp = &D_800B97A8[index];
+            temp->unk4 = arg0;
+            temp->unk6 = arg1;
+            temp->unkC = arg2;
+            temp->unkE = arg3;
+            temp->unk0 = 0;
+            temp->unk2 = 0;
+            temp->unk8 = 0;
+            temp->unkA = 0;
+            temp->unk14 = arg4;
+            temp->unk16 = arg5;
+            temp->unk1C = arg6;
+            temp->unk1E = arg7;
+            temp->unk10 = 0;
+            temp->unk12 = 0;
+            temp->unk18 = 0;
+            temp->unk1A = 0;
+            temp->unk20 += 1;
+            return index;
+        }
+    }
+}
 
 void func_80049CE4(u32 a0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8){
     UnkTextureStruct *temp_v0;
