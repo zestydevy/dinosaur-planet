@@ -1180,7 +1180,7 @@ ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_ma
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004454C.s")
 #else
 
-extern u32 D_800B96E4; //gBlockIndices_layerArrayEnd?
+extern u32 D_800B96E4; // end of gBlockIndices which should be iterated over in a for (i = 0; i < 5; i++) loop
 
 #define BLOCKS_TOLERANCE_Y 50
 
@@ -2544,7 +2544,124 @@ void func_80048034(void) {
     D_800B4A72 = 0;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048054.s")
+#else
+
+typedef struct Unk800B9768_Unk4 {
+    s16 unk0;
+    s16 pad2;
+    s16 unk4;
+    u8 pad6[4];
+} Unk800B9768_Unk4;
+typedef struct Unk800B9768{
+    s32 pad0;
+    Unk800B9768_Unk4 *unk4;
+    s32 pad8;
+    s8 *unkC;
+    u8 *unk10;
+}Unk800B9768;
+extern Unk800B9768 D_800B9768;
+
+typedef struct UnkV0 {
+
+    s32 pad0;
+    s16 unk4;
+    s16 unk6;
+    s32 unk8;
+    u8 pad[0x20 - 0xC];
+    s32 unk20;
+    f32 unk24;
+    f32 unk28;
+} UnkV0;
+
+typedef struct UnkS1 {
+    s16 unk0;
+    u8 unk2;
+    s32 pad4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    s32 pad14;
+    u8 unk18;
+    u8 unk19;
+    s16 pad1A;
+    u32 unk1C;
+} UnkS1;
+void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
+    MapsTabStruct* temp_v0;
+    s32 temp_s1;
+    s32 temp_s4;
+    s32 temp_t8;
+    s32 var_s0;
+    s32 var_s0_2;
+    s8 var_v0;
+    u16 temp_v1;
+    s32 temp_t1;
+    u8* var_s0_3;
+    UnkS1* var_s1;
+    UnkV0 *temp_v0_2;
+
+    var_v0 = D_800B9768.unkC[arg0];
+    var_s0 = 0;
+    if (var_v0 == -0x80) {
+        map_read_layout((MapLayoutArg0* ) &D_800B9768.unk4[arg0], &D_800B9768.unk10[arg0], 0, 0, arg0);
+        D_800B9768.unkC[arg0] = 0;
+        var_v0 = D_800B9768.unkC[arg0];
+    }
+    *arg5 = var_v0;
+    if (arg0 == 1) {
+        *arg2 = 0.0f;
+        *arg3 = 0.0f;
+        *arg4 = 0.0f;
+    } else {
+        temp_v0 = &gFile_MAPS_TAB[arg0];
+        temp_s4 = temp_v0->unk0;
+        temp_s1 = temp_v0[1].unk0 - temp_s4;
+        temp_v0_2 = malloc(temp_s1, 5, NULL);
+        queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
+        temp_v0_2->unk20 = temp_v0->unk10 + temp_v0_2 - temp_s4;
+        temp_v1 = temp_v0_2->unk8;
+        var_s1 = temp_v0_2->unk20;
+        temp_v0_2->unk24 = (D_800B9768.unk4[arg0].unk0 + temp_v0_2->unk4) * 640.0f;
+        temp_v0_2->unk28 = (D_800B9768.unk4[arg0].unk4 + temp_v0_2->unk6) * 640.0f;
+        while (var_s0 < temp_v1) {
+            if ((var_s1->unk0 == 0xD) && (arg1 == var_s1->unk19)) {
+                *arg2 = var_s1->unk8 + temp_v0_2->unk24;
+                *arg3 = var_s1->unkC;
+                *arg4 = var_s1->unk10 + temp_v0_2->unk28;
+                gDLL_29_gplay->exports->func_139C(arg0, (s32) var_s1->unk18);
+                for (var_s0 = 0; var_s0 < 32; var_s0++) {
+                    if ((var_s1->unk1C >> var_s0_2) & 1) {
+                        gDLL_29_gplay->exports->func_16C4(arg0, var_s0_2, -1);
+                    } else {
+                        gDLL_29_gplay->exports->func_16C4(arg0, var_s0_2, -2);
+                    }
+                }
+                break;
+            }
+            temp_t8 = var_s1->unk2 * 4;
+            var_s0 += temp_t8;
+            var_s1 = (s8*)var_s1 + temp_t8;
+        }
+        free(temp_v0_2);
+    }
+    temp_t1 = (u32)get_file_size(0x21U) >> 5;
+    if ((arg0 < 0) || (arg0 >= temp_t1)) {
+        D_800B96A8 = 0;
+        // var_s0_3 = sp64;
+    } else {
+        var_s0_3 = gMapReadBuffer;
+        queue_load_file_region_to_ptr((void** ) var_s0_3, 0x21, arg0 << 5, 0x20);
+        D_800B96A8 = ((s8*)var_s0_3)[0x1C];
+    }
+    D_800B4A72 = 0;
+    if (D_800B96A8 == 1) {
+        D_800B4A70 = (s16) arg0;
+        D_800B4A72 = ((s16*)var_s0_3)[0xF];
+    }
+}
+#endif
 
 /** read_mapinfo_of_map_at_xz */
 void func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
@@ -2583,7 +2700,36 @@ s8 func_80048498(void) {
     return D_80092A8C;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800484A8.s")
+void func_800484A8(void) {
+    s32 i;
+    s32 j;
+    s8* var_s1;
+
+    func_80017254(0);
+    func_80012B54(1, 0);
+    for (i = 0; i < 5; i++) {
+        var_s1 = gBlockIndices[i];
+        for (j = 0; j < 256; j++) {
+            func_800496E4(var_s1[j]);
+        }
+    }
+    gLoadedBlockCount = 0;
+    obj_free_all();
+    for (j = 0; j < 120; j++) {
+        if (gLoadedMapsDataTable[j] != NULL) {
+            free(gLoadedMapsDataTable[j]);
+            gLoadedMapsDataTable[j] = NULL;
+        }
+    }
+    gDLL_Race->exports->func[0].asVoid();
+    gDLL_CURVES->exports->curves_func_18.asVoid();
+    gMapNumStreamMaps = 0;
+    gWorldX = 0.0f;
+    gWorldZ = 0.0f;
+    gDLL_newclouds->exports->func[2].withTwoArgs(-1, 0);
+    gDLL_minic->exports->func4();
+    func_80017254(2);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800485FC.s")
 

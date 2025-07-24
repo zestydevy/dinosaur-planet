@@ -1184,7 +1184,7 @@ gFile_MPEG_TAB = 0x8008c8e0; // size 0x4
 gNumTotalBlocks = 0x800b96cc; // size:0x4
 gNumTRKBLKEntries = 0x800b96c0; // size:0x4
 gDecodedGlobalMap = 0x800b96e8; // size:0x4
-gLoadedMapsDataTable = 0x800b5328; // size 0x4 
+gLoadedMapsDataTable = 0x800b5328; // size 0x1E0
 gMapReadBuffer = 0x800b9724; // size 0x4
 gLoadedModels = 0x800b17a4; // size 0x4
 gFreeModelSlots = 0x800b17a8; // size 0x4
@@ -1336,7 +1336,6 @@ gLoadedBlocks = 0x800b96b4; // size:0x4
 gLoadedBlockCount = 0x800b96b8; // size:0x1
 gLoadedBlockIds = 0x800b96bc; // size:0x4
 gBlockRefCounts = 0x800b96c4; // size:0x4
-// FIXME: how large?
 gBlockIndices = 0x800b96d0; // size:0x14
 
 map_get_is_object_streaming_disabled = 0x800129c4; // type:func

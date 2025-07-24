@@ -337,7 +337,7 @@ extern u8 *gMapReadBuffer;
 extern s8 gMapNumStreamMaps;
 extern StreamMap gMapStreamMapTable[];
 extern MapHeader* gMapActiveStreamMap;
-extern MapHeader* gLoadedMapsDataTable[];
+extern MapHeader* gLoadedMapsDataTable[120];
 
 extern UnkTextureStruct *D_800B97A8;
 
