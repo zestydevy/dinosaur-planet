@@ -2731,7 +2731,37 @@ void func_800484A8(void) {
     func_80017254(2);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800485FC.s")
+s32 func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+    GlobalMapCell* currentMap;
+    s16 blockID;
+    s32 fieldIndex;
+    s32 i;
+    s8* currentBlockIndices;
+
+    fieldIndex = (arg1 * 0x10) + arg0;
+    currentBlockIndices = gBlockIndices[arg4];
+    currentMap = gDecodedGlobalMap[arg4];
+    currentMap += fieldIndex;
+    func_80046428(arg2, arg3, currentMap, arg4);
+    blockID = currentMap->blockID;
+    if (blockID < 0) {
+        blockID = -1;
+    }
+    if (blockID < 0) {
+        currentBlockIndices[fieldIndex] = blockID;
+        return 0;
+    }
+    currentBlockIndices[fieldIndex] = -1;
+    for (i = 0; i < gLoadedBlockCount; i++) {
+        if (blockID == gLoadedBlockIds[i]) {
+            gBlockRefCounts[i] += 1;
+            currentBlockIndices[fieldIndex] = i;
+            return 1;
+        }
+    }
+    block_load(blockID, fieldIndex, arg4, 0);
+    return 1;
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_load.s")
