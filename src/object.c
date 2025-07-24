@@ -198,7 +198,7 @@ void update_objects() {
     gDLL_waterfx->exports->func_6E8(delayByte);
     gDLL_projgfx->exports->func[2].withTwoArgs(delayByte, 0);
     gDLL_modgfx->exports->func[2].withThreeArgs(0, 0, 0);
-    gDLL_expgfx->exports->func[2].withFourArgs(0, delayByte, 0, 0);
+    gDLL_expgfx->exports->func2(0, delayByte, 0, 0);
 
     func_8002B6EC();
 
@@ -1389,7 +1389,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     gDLL_AMSFX->exports->func16(obj);
     gDLL_AMSEQ->exports->func17(obj);
-    gDLL_expgfx->exports->func[9].withOneArg((s32)obj);
+    gDLL_expgfx->exports->func9((s32)obj);
 
     if (obj->def != NULL && obj->def->flags & 0x10) {
         obj_free_object_type(obj, 56);

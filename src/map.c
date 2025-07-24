@@ -1,6 +1,14 @@
 #include "common.h"
 #include "sys/map.h"
-#include "sys/map.h"
+
+static void func_8004D328();
+
+// Can't be defined in .h file or else things unmatch
+extern Camera* D_800B51E4;
+extern Gfx* gMainDL;
+extern Mtx* gWorldRSPMatrices;
+extern Vertex* D_800B51D4;
+extern Triangle* D_800B51D8;
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
@@ -269,10 +277,14 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_triangles.s")
-#else
-void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
+// for some reason this function requires an extra or'ing of _SHIFTL(G_TRI2, 24, 8) in w1
+#define gSP2Triangles(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
+{ \
+	Gfx *_g = (Gfx *)(pkt); \
+	_g->words.w0 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v00, v01, v02, flag0)); \
+    _g->words.w1 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v10, v11, v12, flag1)); \
+}
+void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 {
     s32 n;
     DLTri *tri;
@@ -290,7 +302,6 @@ void _dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
 
     gDLBuilder->needsPipeSync = TRUE;
 }
-#endif
 
 //These all seem to get/set render-related bits!
 void func_80041C30(s32 arg0) {
@@ -386,12 +397,139 @@ s32 func_80041E68(void) {
     return UINT_80092a98 & 0x20000;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/init_maps.s")
+void init_maps(void) {
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80042174.s")
+    UINT_80092a98 = 0;
+    D_800B97C0 = malloc(0x9F6, 5, NULL);
+    gLoadedBlocks = malloc(0xA0, 5, NULL);
+    gLoadedBlockIds = malloc(0x50, 5, NULL);
+    gBlockRefCounts = malloc(0x28, 5, NULL);
+    gMapReadBuffer = malloc(0x2BC, 5, NULL);
+    *gBlockIndices = malloc(0x500, 5, NULL);
+    *gDecodedGlobalMap = malloc(0x3C00, 5, NULL);
+    *D_800B9700 = malloc(0x500, 5, NULL);
+    for (i = 1; i < 5; i++) {
+        gBlockIndices[i] = gBlockIndices[i - 1] + 256;
+        gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + 256;
+        D_800B9700[i] = D_800B9700[i - 1] + 256;
+    }
+    queue_alloc_load_file((void **) &gFile_MAPS_TAB, 0x20);
+    queue_alloc_load_file((void** ) &gFile_HITS_TAB, 0x2D);
+    for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
+    queue_alloc_load_file((void** ) &gFile_TRKBLK, 0x2B);
+    gNumTRKBLKEntries = 0;
+    while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
+        gNumTRKBLKEntries += 1;
+    }
+    gNumTRKBLKEntries -= 1;
+    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, 0x2A);
+    gNumTotalBlocks = 0;
+    while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
+        gNumTotalBlocks++;
+    }
+    gNumTotalBlocks--;
+    D_800B96B0 = malloc(0x7D0, 5, NULL);
+    D_800B4A5C = -1;
+    D_800B4A5E = -2;
+    gBlockTextures = malloc(0x140, 5, NULL);
+    bzero(gBlockTextures, 0x140);
+    D_800B97A8 = malloc(0x7B4, 5, NULL);
+    bzero(D_800B97A8, 0x7B4);
+    bzero(gRenderList, 0x640);
+    *gRenderList = -0x4000U;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004225C.s")
+void func_80042174(s32 arg0) {
+    if (arg0 == 0) {
+        if (UINT_80092a98 & 0x10) {
+            gDLL_minic->exports->func2.asVoid();
+        }
+        gDLL_8->exports->func[2].asVoid();
+        gDLL_7_newday->exports->func2.asVoid();
+        gDLL_newclouds->exports->func[3].asVoid();
+        func_80049D88();
+        func_800499BC();
+        func_8004D328();
+        if (gDLL_76 != NULL) {
+            gDLL_76->exports->func1.asVoid();
+        }
+        gDLL_minimap->exports->func[0].asVoid();
+    }
+    func_8001EB80();
+}
 
+void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
+    Mtx* temp_v0;
+
+    gMainDL = *gdl;
+    gWorldRSPMatrices = *mtxs;
+    D_800B51D4 = *vtxs;
+    D_800B51D8 = *pols;
+    UINT_80092a98 |= 0x21;
+    if ((D_800B96A8 == 1) || (D_800B96A8 == 3)) {
+        UINT_80092a98 &= ~1;
+    }
+    gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
+    temp_v0 = get_some_model_view_mtx();
+    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(temp_v0), G_MTX_LOAD);
+    func_800021A0(&gMainDL, 0);
+    func_80044BEC();
+    if (func_80010048() != 0) {
+        if (!(UINT_80092a98 & 8)) {
+            UINT_80092a98 |= 8;
+        }
+        camera_set_aspect(D_8009A950);
+    } else if (UINT_80092a98 & 8) {
+        UINT_80092a98 &= ~8;
+        camera_set_aspect(D_8009A954);
+    }
+    if (UINT_80092a98 & 0x10000) {
+        if (UINT_80092a98 & 8) {
+            camera_set_aspect(D_8009A958);
+        } else {
+            camera_set_aspect(D_8009A95C);
+        }
+        func_80001D58(get_camera_selector(), 0U);
+        some_video_setup(0);
+        UINT_80092a98 &= 0xFFFEFFFF;
+    }
+    if (UINT_80092a98 & 0x10) {
+        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+        gDLL_7_newday->exports->func13(&gMainDL, &gWorldRSPMatrices);
+
+        if (UINT_80092a98 & 0x40) {
+            gDLL_newstars->exports->func[1].withOnePointerArg(&gMainDL);
+        }
+        gDLL_7_newday->exports->func3(&gMainDL, &gWorldRSPMatrices, UINT_80092a98 & 0x40);
+    } else {
+        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+    }
+    gDLL_newlfx->exports->func[2].asVoid();
+    gDLL_57->exports->func[3].asVoid();
+    gDLL_58->exports->func[2].asVoid();
+    if (UINT_80092a98 & 0x20000) {
+        if (gDLL_7_newday->exports->func23(&gMainDL) == 0) {
+            gDLL_8->exports->func[3].withOnePointerArg(&gMainDL);
+        }
+    } else {
+        gDLL_8->exports->func[3].withOnePointerArg(&gMainDL);
+    }
+    D_800B51E4 = get_camera();
+    func_80048F58();
+    track_c_func();
+    gDLL_newclouds->exports->func[4].withOnePointerArg(&gMainDL);
+    func_8000302C(&gMainDL);
+    *gdl = gMainDL;
+    *mtxs = gWorldRSPMatrices;
+    *vtxs = D_800B51D4;
+    *pols = D_800B51D8;
+    UINT_80092a98 &= ~2;
+    // @fake
+    if (1) { } if (1) { } if (1) { } if (1) { }
+}
+
+// https://decomp.me/scratch/9mgpH
 #pragma GLOBAL_ASM("asm/nonmatchings/map/track_c_func.s")
 
 #if 1
@@ -620,28 +758,241 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800436DC.s")
+void func_800436DC(Object* arg0, s32 arg1) {
+    s8 sp37;
+    u8 someBool;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
+    someBool = TRUE;
+    if ((arg0->id == 0x72) || (arg0->id == 0x38C)) {
+        someBool = TRUE;
+        if (arg0->dll->exports->func13(arg0) != 0) {
+            someBool = FALSE;
+        }
+    }
+    if (someBool != FALSE) {
+        sp37 = gDLL_expgfx->exports->func10(arg0);
+    }
+    gDLL_modgfx->exports->func[6].custom(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, arg0);
+    if (sp37 >= 2) {
+        if ((arg0->id != 0x72) && (arg0->id != 0x38C)) {
+            gDLL_expgfx->exports->func6(arg0, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
+        }
+    }
+    objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, arg0, arg1);
+    if (sp37 != 0) {
+        if ((arg0->id != 0x72) && (arg0->id != 0x38C)) {
+            gDLL_expgfx->exports->func6(arg0, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
+        }
+    }
+    if ((arg0->linkedObject != NULL) && (arg1 != 0)) {
+        sp37 = gDLL_expgfx->exports->func10(arg0->linkedObject);
+        if (sp37 >= 2) {
+            gDLL_expgfx->exports->func6(arg0->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
+        }
+        if (sp37 != 0) {
+            gDLL_expgfx->exports->func6(arg0->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
+        }
+    }
+}
 
-// very close
+
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_add_to_render_list.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043950.s")
 #else
-extern Mtx *gWorldRSPMatrices;
-void _block_add_to_render_list(Block *block, f32 x, f32 z)
-{
-    s32 oldRenderListLength = gRenderListLength;
-    s32 i;
-    MtxF mf, mf2;
+typedef struct {
+    /*0x0*/  u8 *data;
+    /*0x4*/  s32 byteLength;
+    /*0x8*/  s32 bitLength;
+    /*0xC*/  s32 capacity;
+    /*0x10*/ s32 bitPos;
+} BitStream;
+typedef struct Arg0Unk4 {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    u8 pad6[0xF - 0x6];
+} Arg0Unk4;
+typedef struct Arg0Unk8 {
+    s32 unk0;
+    s32 unk4;
+} Arg0Unk8;
+typedef struct Arg0UnkC {
+    s32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+    u8 unkF;
+    u8 pad10[0x17 - 0x10];
+    u8 unk17;
+} Arg0UnkC;
 
-    for (i = 0; i < block->shapeCount; i++)
-    {
-        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH)
-        {
-            s32 param;
+typedef struct UnkArg0 {
+    s32 pad0;
+    Arg0Unk4 *unk4;
+    Arg0Unk8 *unk8;
+    Arg0UnkC *unkC;
+    u8 pad10[0x36 - 0x10];
+    s16 unk36;
+} UnkArg0;
+void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3);
+s32 func_80045600(s32, BitStream*, s16, s16, s32);          /* extern */
+extern Plane D_800B4ADC; // ????? unsure about the type of this
+extern BitStream D_800B9780;
+extern u8 D_800B979C;
+extern f32 D_800B97B8;
+extern f32 D_800B97BC;
+void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
+    s32 i;
+    Arg0Unk8* temp_v0;
+    Arg0Unk8* var_a1;
+    Arg0UnkC* var_s0;
+    Plane* var_v0;
+    Arg0Unk4* unk4;
+    f32 var_fa0;
+    f32 var_fs1;
+    f32 var_fs2;
+    f32 var_fs3;
+    f32 var_fs4;
+    f32 var_fv1;
+    f32 var_f0;
+    Arg0UnkC *sp98[1];
+    Arg0Unk4* temp_v0_2;
+    f32 sp90;
+    f32 sp8C;
+    f32 sp88;
+    f32 sp84;
+    f32 sp80;
+    f32 sp7C;
+    s32 var_s1;
+    s32 pad[4];
+    s32 temp_s2;
+    s32 temp_s3;
+    s32 temp_s4;
+
+    temp_s2 = D_800B51E4->tx - gWorldX - D_800B97B8;
+    temp_s3 = D_800B51E4->ty;
+    temp_s4 = D_800B51E4->tz - gWorldZ - D_800B97BC;
+    var_s0 = &arg0->unkC[0];
+    if ((u32)var_s0 >= (u32)&arg0->unkC[arg0->unk36]) {
+        return;
+    }
+
+    sp98[0] = &arg0->unkC[arg0->unk36];
+    do {
+        if (var_s0->unk0 & 0x200000) {
+            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0++;
+            continue;
+        }
+        if (
+            ((u8) D_800B9794 != 0) &&
+            ((D_800B979C & 1) || !(var_s0->unk0 & 0x2404)) &&
+            // var_s0 - arg0->unkC is just current "index"
+            (func_80045600((var_s0 - arg0->unkC) / 24, &D_800B9780, arg1, arg2, arg3) == 0)
+        ) {
+            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0++;
+            continue;
+        } 
+
+        var_s1 = 1;
+        sp84 = ((var_s0->unkD * 4) | ((var_s0->unk17 >> 4) & 3)) + D_800B97B8;
+        sp90 = ((var_s0->unkC * 4) | (var_s0->unk17 & 3)) + D_800B97B8;
+        sp8C = var_s0->unk8;
+        sp80 = var_s0->unkA;
+        sp7C = ((var_s0->unkF * 4) | ((var_s0->unk17 >> 6) & 3)) + D_800B97BC;
+        sp88 = ((var_s0->unkE * 4) | ((var_s0->unk17 >> 2) & 3)) + D_800B97BC;
+        for (i = 0; i < 5; i++) {
+            var_v0 = &gFrustumPlanes[i];
+            if (var_v0->unk_0x14[0] & 1) {
+                var_fs1 = sp84;
+                var_fs4 = sp90;
+            } else {
+                var_fs1 = sp90;
+                var_fs4 = sp84;
+            }
+            if (var_v0->unk_0x14[0] & 2) {
+                var_fs2 = sp80;
+                var_fs3 = sp8C;
+            } else {
+                var_fs2 = sp8C;
+                var_fs3 = sp80;
+            }
+            if (var_v0->unk_0x14[0] & 4) {
+                var_fv1 = sp7C;
+                var_fa0 = sp88;
+            } else {
+                var_fv1 = sp88;
+                var_fa0 = sp7C;
+            }
+            var_f0 = (var_v0->d + ((var_fs1 * var_v0->x) + (var_fs2 * var_v0->y) + (var_fv1 * var_v0->z)));
+            if (var_f0 < 0.0f) {
+                var_f0 = (var_v0->d + ((var_fs4 * var_v0->x) + (var_fs3 * var_v0->y) + (var_fa0 * var_v0->z)));
+                if (var_f0 < 0.0f) {
+                    var_s1 = 0;
+                    break;
+                }
+            }
+        }
+        if (var_s1 == 0) {
+            var_s0->unk0 &= 0xEFFFFFFF;
+            var_s0++;
+            continue;
+        } 
+        if (!(var_s0->unk0 & 0x80000000)) {
+            var_s1 = 0;
+            unk4 = &arg0->unk4[var_s0->unk4];
+            var_a1 = &arg0->unk8[var_s0->unk6];
+            temp_v0 = arg0->unk8;
+            temp_v0 += var_s0[1].unk6;
+            while ((u32) var_a1 < (u32)temp_v0) {
+                temp_v0_2 = &unk4[((var_a1->unk0 >> 0xD) & 0x1F)];
+                if (
+                    (
+                        ((temp_v0_2->unk0 - temp_s2) * (var_a1->unk0 >> 0x12)) +
+                        ((temp_v0_2->unk2 - temp_s3) * ((var_a1->unk4 << 0xE) >> 0x12)) +
+                        ((temp_v0_2->unk4 - temp_s4) * (var_a1->unk4 >> 0x12))
+                    ) < 0) {
+                    var_a1->unk4 |=1;
+                    var_s1 = 1;
+                } else {
+                    var_a1->unk4 &= ~1;
+                }
+                var_a1++;
+            }
+            if (var_s1 == 0) {
+                var_s0->unk0 &= 0xEFFFFFFF;
+                var_s0++;
+                continue;
+            } 
+        }
+        var_s0->unk0 |= 0x10000000;
+        var_s0++;
+    } while ((u32)var_s0 < (u32)sp98[0]);
+}
+#endif
+
+void block_add_to_render_list(Block *block, f32 x, f32 z)
+{
+    s32 unused;
+    s32 oldRenderListLength;
+    s32 i;
+    s32 param;
+    s32 pad;
+    MtxF mf;
+    MtxF mf2;
+    
+    oldRenderListLength = gRenderListLength;
+
+    for (i = 0; i < block->shapeCount; i++) {
+        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
             if (block->shapes[i].flags & 0x4) {
                 param = 100000 - gBlocksToDrawIdx * 400 - i;
+
                 if (block->shapes[i].flags & 0x2000) {
                     param -= 200;
                 }
@@ -654,25 +1005,103 @@ void _block_add_to_render_list(Block *block, f32 x, f32 z)
         }
     }
 
-    if (oldRenderListLength != gRenderListLength && gBlocksToDrawIdx < MAX_BLOCKS)
-    {
+    if (((oldRenderListLength & 0xFFFFFFFFu) != gRenderListLength) && gBlocksToDrawIdx < MAX_BLOCKS) {
         gBlocksToDraw[gBlocksToDrawIdx] = block;
         gBlocksToDrawIdx++;
+
         matrix_translation(&mf, x, 0.0f, z);
         matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+
         gWorldRSPMatrices++;
+
         mf.m[3][1] = block->elevation;
+
         matrix_scaling(&mf2, 1.0f, 0.05f, 1.0f);
         matrix_concat(&mf2, &mf, &mf);
         matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+
         gWorldRSPMatrices++;
     }
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80043FD8.s")
+void func_80043FD8(s8* arg0) {
+    Object* object;
+    Object** objects;
+    s32 sp5C;
+    s32 sp58;
+    s32 i;
+    s32 var_v0;
+    s8* var_s2;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800441F4.s")
+    objects = get_world_objects(0, 0);
+    sp58 = func_80020DA0(&sp5C);
+    if (sp5C >= 0xB5) {
+        sp5C = 0xB4;
+    }
+    func_80020EE4(sp58, sp5C - 1);
+    for (i = 0; i < sp5C; i++) {
+        object = objects[i];
+        var_s2 = &arg0[i];
+        if (i < sp58) {
+            var_s2[0] = 0;
+        } else {
+            var_s2[0] = func_800456AC(object);
+            if ((var_s2[0] != 0) && (object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
+                func_8004DBAC(object, 0, 0, delayByte);
+            }
+            if ((object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
+                func_8004E7A8(object);
+            }
+            if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
+                if (object->def->flags & 0x100000) {
+                    var_v0 = 0x249F0 - i;
+                } else if ((object->unk_0x37 == 0xFF) && !(object->srt.flags & 0x80)) {
+                    var_v0 = 0x249F0 - i;
+                } else {
+                    var_v0 = i + 0xC350;
+                }
+                gRenderList[gRenderListLength] = (var_v0 << 14) | (i << 7) | 0x40;
+                gRenderListLength += 1;
+            }
+        }
+    }
+    if (gRenderListLength >= 2) {
+        func_800441F4(gRenderList, gRenderListLength);
+    }
+}
+
+void func_800441F4(u32* arg0, s32 arg1) {
+    u32 temp_a0;
+    s32 var_t0;
+    s32 var_v0;
+    s32 var_v1;
+
+    for (var_v0 = 1; (arg1 - 1) / 9 >= var_v0; var_v0++) {
+        var_v0 *= 3;
+        // @fake
+        var_v1 = var_v0 + 1;
+    }
+
+    while (var_v0 > 0) {
+        var_v1 = var_v0 + 1;
+        while (var_v1 < arg1) {
+            temp_a0 = arg0[var_v1];
+            var_t0 = var_v1;
+            if (var_v0 < var_t0) {
+                while (arg0[var_t0 - var_v0] < temp_a0) {
+                    arg0[var_t0] = arg0[var_t0 - var_v0];
+                    var_t0 -= var_v0;
+                    if (var_v0 >= var_t0) {
+                        break;
+                    }
+                }
+            }
+            var_v1++;
+            arg0[var_t0] = temp_a0;
+        }
+        var_v0 /= 3;
+    }
+}
 
 /** are_worldCoords_in_current_map */
 s32 func_80044320(f32 worldX, f32 worldZ) {
@@ -751,7 +1180,7 @@ ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_ma
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004454C.s")
 #else
 
-extern u32 D_800B96E4; //gBlockIndices_layerArrayEnd?
+extern u32 D_800B96E4; // end of gBlockIndices which should be iterated over in a for (i = 0; i < 5; i++) loop
 
 #define BLOCKS_TOLERANCE_Y 50
 
@@ -1007,48 +1436,200 @@ BlocksModel* func_80044BB0(s32 blockIndex) {
 //Camera and frustum related?
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BEC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800451A0.s")
+s32 func_800451A0(s32 xPos, s32 zPos, BlocksModel* blocks) {
+    Plane* currentPlane;
+    f32 scaledXPos;
+    f32 scaledZPos;
+    f32 planeZ;
+    f32 planeX;
+    f32 planeY;
+    f32 planeD;
+    f32 var_fs2;
+    f32 minY;
+    f32 maxY;
+    s32 stop;
+    s32 i;
+    s32 j;
+
+    if (blocks != NULL) {
+        minY = blocks->minY;
+        maxY = blocks->maxY;
+    } else {
+        minY = D_8009A9B8;
+        maxY = D_8009A9BC;
+    }
+
+    for (i = 0; i < 5; i++) {
+        currentPlane = &gFrustumPlanes[i];
+
+        scaledXPos = xPos * 640.0f;
+        scaledZPos = zPos * 640.0f;
+        planeX = currentPlane->x;
+        planeY = currentPlane->y;
+        planeZ = currentPlane->z;
+        planeD = currentPlane->d;
+        for (j = 0, stop = FALSE; j < 8 && stop == FALSE; j++) {
+            if (j & 1) {
+                var_fs2 = (xPos * 640.0f) * planeX;
+            } else {
+                var_fs2 = ((xPos * 640.0f) + 640.0f) * planeX;
+            }
+            if (j & 2) {
+                var_fs2 += (scaledZPos * planeZ);
+            } else {
+                var_fs2 += ((scaledZPos + 640.0f) * planeZ);
+            }
+            if (j & 4) {
+                var_fs2 += (minY * planeY);
+            } else {
+                var_fs2 += (maxY * planeY);
+            }
+            var_fs2 += planeD;
+            if (var_fs2 > 0.0f) {
+                stop = TRUE;
+            }
+        }
+        if ((j == 8) && (stop == 0)) {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 void func_8004530C(void) {
     D_800B979E = 0;
     D_800B9794 = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/some_cell_func.s")
+void some_cell_func(BitStream* stream) {
+    f32 var_fv1;
+    s32 var_v0;
+    s32 temp_t3;
+    s32 var_t0;
+    s32 var_v1;
+    s32 temp_t2;
+    s32 sp3C;
+    s32 sp20;
+    s32 sp1C;
+    s32 temp;
+    s32 sp18;
+    BlocksModel* sp28;
 
-#if 1
+    if ((u8) D_800B9794 == 0) {
+        return;
+    }
+
+    sp3C = floor_f((D_800B51E4->srt.transl.x - gWorldX) / 640.0f);
+    sp28 = func_80044B18(sp3C, floor_f((D_800B51E4->srt.transl.z - gWorldZ) / 640.0f), 0);
+
+    sp3C = floor_f(D_800B51E4->srt.transl.x / 640.0f) * 0x280;
+    temp= (floor_f(D_800B51E4->srt.transl.z / 640.0f) * 0x280);
+    temp_t2 = (D_800B51E4->srt.transl.x - sp3C);
+    temp_t3 = (D_800B51E4->srt.transl.z - temp);
+    if (sp28 == NULL) {
+        return;
+    }
+
+    var_v0 = sp28->minY;
+    if (sp28->minY & 1) {
+        var_v0 -= 1;
+    }
+    if (sp28->maxY < D_800B51E4->srt.transl.y) {
+        var_fv1 = sp28->maxY - 1;
+    } else {
+        var_fv1 = D_800B51E4->srt.transl.y;
+    }
+    var_v0 = ((s32)var_fv1 - var_v0);
+    if (((sp28->maxY - sp28->minY) / 80) < 8) {
+        var_t0 = (sp28->maxY - sp28->minY) / 8;
+    } else {
+        var_t0 = 0x50;
+    }
+    sp20 = var_v0 / var_t0;;
+    sp1C = temp_t2 / 80;
+    sp18 = temp_t3 / 80;
+    diPrintf(&D_8009A5C0, sp1C, sp20, sp18);
+    var_v1 = D_800B979E >> 3;
+    if (D_800B979E & 7) {
+        var_v1 += 1;
+    }
+    temp = ((sp20 << 6) + (sp18 * 8) + sp1C);
+    bitstream_init(stream, (var_v1 * temp) + D_800B9798, D_800B979E, D_800B979E);
+}
+
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045600.s")
 #else
-typedef struct {
-    /*0x0*/  u8 *data;
-    /*0x4*/  s32 byteLength;
-    /*0x8*/  s32 bitLength;
-    /*0xC*/  s32 capacity;
-    /*0x10*/ s32 bitPos;
-} BitStream;
-
-s32 bitstream_read(s32, u8);
-void bitstream_set_pos(s32, s32, s16, s16);
 extern char D_8009A614;
-extern s8 *D_800B9700;
+extern s32 *D_800B9700;
 extern s16 *D_800B97A0;
 
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     s8 bitPosIndex;
+    s8 *new_var;
 
+    new_var = D_800B9700;
+    new_var += arg4 * 4;
+    bitPosIndex = new_var[arg2 + arg3 * 16];
     
-    bitPosIndex = *(arg2 + (arg3 * 0x10) + &D_800B9700[arg4]);
-    
-    if (bitPosIndex >= 0) {
-        bitstream_set_pos((s32)stream, D_800B97A0[bitPosIndex] + arg0, arg2, arg3);
-        return bitstream_read((s32)stream, 1);
+    if (bitPosIndex >= 0){
+        bitstream_set_pos(stream, D_800B97A0[bitPosIndex] + arg0);
+        return bitstream_read(stream, 1);
     }
-    diPrintf(&D_8009A614, arg2, arg3);
+    diPrintf(&D_8009A614);
     return 0;
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800456AC.s")
+u8 func_800456AC(Object* obj) {
+    f32 temp_ft4;
+    Object* playerObj;
+    f32 var_fv0;
+    f32 temp_fv1;
+    f32 temp;
+    s32 var_v0;
+
+    if (obj->unk_0x36 == 0) {
+        obj->unk_0x37 = 0;
+        return 0;
+    }
+    if ((obj->createInfo != NULL) && (obj->createInfo->loadParamB & 1)) {
+        obj->unk_0x37 = ((obj->unk_0x36 * 0xFF) + 0xFF) >> 8;
+        // Ugly goto but too lazy to fix
+        goto block_17;
+    }
+    temp_ft4 = obj->unk0x40;
+    if (temp_ft4 < 40.0f) {
+        obj->unk_0x37 = 0;
+        return 0;
+    }
+    if ((obj->createInfo != NULL) && (obj->createInfo->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
+        var_fv0 = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
+    } else {
+        var_fv0 = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+    }
+    if (temp_ft4 < var_fv0) {
+        obj->unk_0x37 = 0;
+        return 0;
+    }
+    var_v0 = 0xFF;
+    temp_fv1 = temp_ft4 - 40.0f;
+    if (temp_fv1 < var_fv0) {
+        temp_ft4 -= temp_fv1;
+        var_fv0 = var_fv0 - temp_fv1;
+        temp = 1.0f - ((var_fv0) / temp_ft4);
+        var_v0 = 255.0f * temp;
+    }
+    obj->unk_0x37 = (u8) ((s32) ((obj->unk_0x36 + 1) * var_v0) >> 8);
+block_17:
+    if (obj->unk_0x37 == 0) {
+        return 0;
+    }
+    if (obj->id == 0xD4) {
+        return 1;
+    }
+    return is_sphere_in_frustum(&obj->positionMirror, obj->unk_0xa8);
+}
 
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 {
@@ -1162,7 +1743,48 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
 
 #endif
 
+#ifndef NON_MATCHING
+s32 map_load_streammap_add_to_table(s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
+#else
+typedef struct Unk800B9768_Unk4 {
+    s16 unk0;
+    s16 pad2;
+    s16 unk4;
+    u8 pad6[4];
+} Unk800B9768_Unk4;
+typedef struct Unk800B9768{
+    s32 pad0;
+    Unk800B9768_Unk4 *unk4;
+    s32 pad8;
+    s8 *unkC;
+}Unk800B9768;
+void func_8004BD40(MapHeader*, s32);                   /* extern */
+MapHeader* map_load_streammap(s32, s32);         /* extern */
+extern Unk800B9768 D_800B9768;
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
+s32 map_load_streammap_add_to_table(s32 arg0) {
+    s32 sp2C;
+    Unk800B9768_Unk4* temp_a3;
+
+    sp2C = 0;
+    for (sp2C = 0; sp2C < gMapNumStreamMaps && gMapStreamMapTable[sp2C].header != NULL; sp2C++) {}
+    if (sp2C == gMapNumStreamMaps) {
+        gMapNumStreamMaps += 1;
+    }
+    gMapActiveStreamMap = map_load_streammap(arg0, 0);
+    gMapStreamMapTable[sp2C].header = gMapActiveStreamMap;
+    gMapStreamMapTable[sp2C].mapID = arg0;
+    temp_a3 = &D_800B9768.unk4[arg0];
+    gMapStreamMapTable[sp2C].header->unk19 = D_800B9768.unkC[arg0];
+    gMapActiveStreamMap->originWorldX = (temp_a3->unk0 + gMapActiveStreamMap->originOffsetX) * 640.0f;
+    gMapActiveStreamMap->originWorldZ = (temp_a3->unk4 + gMapActiveStreamMap->originOffsetZ) * 640.0f;
+    map_convert_objpositions_to_ws(gMapActiveStreamMap, gMapActiveStreamMap->originWorldX, gMapActiveStreamMap->originWorldZ);
+    func_8004BD40(gMapActiveStreamMap, arg0);
+    D_80092A94 = arg0;
+    return sp2C;
+}
+#endif
 
 /** Returns one of the loaded maps' mapID (as defined in MAPINFO.bin) */
 s32 func_80045D58(void) {
@@ -1181,6 +1803,7 @@ s32 map_find_streammap_index(s32 mapID_to_find) {
     return -1;
 }
 
+s32 func_80045DC0(s32, s32, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045DC0.s")
 
 /** free_mapID? */
@@ -1192,7 +1815,76 @@ void func_80045F48(s32 mapID) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045FC4.s")
+void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
+    s32 pad;
+    s32 sp48;
+    s32 var_a0;
+    s8 sp42[4];
+    s32 var_s3;
+    s32 var_s4;
+    UnkObjectInstanceFileStruct* var_s0;
+    s32 i;
+
+    sp42[3] = FALSE;
+    var_s4 = 0;
+    var_s0 = (UnkObjectInstanceFileStruct *) arg0->objectInstanceFile_ptr;
+    sp48 = arg0->objectInstancesFileLength;
+    if (sp48 == 0) {
+        return;
+    }
+    var_s3 = 0;
+
+    if (arg3 == 0) {
+        arg1[33] = -1;
+        for (i = 0; i < 32; i++) { arg1[i] = -1; }
+    }
+    while (var_s3 < sp48) {
+        if (arg3 != 0) {
+            if (var_s0->unk0 == 0x6E) {
+                gDLL_CURVES->exports->curves_func_10c.withOneArg(var_s0);
+            }
+            if (var_s0->unk0 == 5) {
+                gDLL_Race->exports->func[2].withOneArg(var_s0);
+            }
+        } else {
+            if ((0x6E == var_s0->unk0) || (5 == var_s0->unk0)) {
+                if (0x6E == var_s0->unk0) {
+                    gDLL_CURVES->exports->curves_func_34.withOneArg(var_s0);
+                } else {
+                    gDLL_Race->exports->func[1].withOneArg(var_s0);
+                }
+                if ((u8)sp42[3] == FALSE) {
+                    arg1[33] = ((u32)var_s0 - (u32)arg0->objectInstanceFile_ptr);
+                    sp42[3] = TRUE;
+                }
+            } else if (var_s0->unk4 & 0x10) {
+                if (!((1 << var_s0->unk6) & var_s4)) {
+                    arg1[var_s0->unk6] = (u32)var_s0 - (u32)arg0->objectInstanceFile_ptr;
+                    var_s4 |= 1 << var_s0->unk6;
+                }
+            }
+        }
+        var_s3 += var_s0->unk2 * 4;
+        var_s0 = (UnkObjectInstanceFileStruct *) &((s8 *)var_s0)[var_s0->unk2 * 4];
+    }
+    if (arg3 == 0) {
+        var_a0 = sp48;
+        if ((arg1[33] != -1) && (arg1[33] < sp48)) {
+            var_a0 = arg1[33];
+        }
+        for (i = 0; i < 32; i++) {
+            if ((arg1[i] != -1) && (arg1[i] < var_a0)) {
+                var_a0 = arg1[i];
+            }
+        }
+        arg1[34] = var_a0;
+        if (arg1[33] != -1) {
+            arg1[32] = arg1[33];
+            return;
+        }
+        arg1[32] = sp48;
+    }
+}
 
 void func_800462B0(){
 }
@@ -1220,7 +1912,45 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046320.s")
+#else
+extern s32 D_800B4A50;
+extern s32 D_800B5468;
+
+void func_80046320(s32 arg0, Object *obj) {
+    s32 sp24;
+    s8 var_t0;
+    s32 var_a2;
+    MapHeader *sp18;
+    s32* var_v1;
+
+    sp24 = D_800B4A50;
+    sp18 = map_load_streammap(arg0, 1);
+    gLoadedMapsDataTable[arg0] = 0;
+
+    var_t0 = FALSE;
+    var_v1 = &D_800B5468;
+    var_a2 = 0x50;
+    while (var_a2 < 0x78){
+        if (*var_v1 == 0) {
+            var_t0 = TRUE;
+            *var_v1 = sp18;
+            break;
+        } 
+        
+        var_a2++;
+        var_v1++;
+    }
+
+    func_80045FC4(sp18, (var_a2 * 0x8C) + (u32)&D_800B5508, var_a2, 0);
+    gDLL_29_gplay->exports->func_15B8(var_a2);
+    obj->unk_0x34 = var_a2;
+    gDLL_29_gplay->exports->func_1378(arg0, var_a2);
+    D_800B4A50 = sp24;
+}
+
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
 
@@ -1231,7 +1961,7 @@ GlobalMapCell* func_80046698(s32 gridX, s32 gridZ) {
     GlobalMapCell *layer;    
     s32 cellIndex;
     
-    layer = (GlobalMapCell *)&gDecodedGlobalMap[0];
+    layer = gDecodedGlobalMap[0];
     cellIndex = (gridZ * 16) + gridX;
     
     return &layer[cellIndex];
@@ -1271,11 +2001,107 @@ s32 func_80046728(s32 mapID) {
     return gFile_TRKBLK[mapID + 1] - gFile_TRKBLK[mapID];
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/init_global_map.s")
 
+void init_global_map(void)
+{
+    #define SOME_LENGTH     64
+    s32 i;
+    s32 size;
+    StructBuf *buf = NULL;
+    Struct_D_800B9768_unk4 *thisunk4;
+
+    size = get_file_size(GLOBALMAP_BIN);
+
+    queue_alloc_load_file((void**)&buf, GLOBALMAP_BIN);
+
+    size /= sizeof(StructBuf);
+
+    D_800B9768.unk0  = -1;
+    D_800B9768.unk4  = malloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk8  = malloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unkC  = malloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk10 = malloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+
+    bzero(D_800B9768.unk10, sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH);
+
+    // loop 64 times and set all fields of unk4, unk8 and unkC
+    for (i = 0; i < SOME_LENGTH; i++) {
+        thisunk4 = D_800B9768.unk4 + i;
+        D_800B9768.unkC[i].unk0 = 0x80;
+        thisunk4->unk0 = 0x8000;
+        thisunk4->unk2 = 0x8000;
+        thisunk4->unk4 = 0x8000;
+        thisunk4->unk6 = 0x8000;
+        thisunk4->unk8 = 0x80;
+        thisunk4->unk9 = 0x80;
+
+        D_800B9768.unk8[(i << 1) + 0] = -1;
+        D_800B9768.unk8[(i << 1) + 1] = -1;
+    }
+    for (i = 0; i < size && (buf[i].unk6 >= 0); i++) {
+        D_800B9768.unkC[buf[i].unk6].unk0 = buf[i].unk4;
+
+        map_read_layout(
+            &D_800B9768.unk4[buf[i].unk6],
+            &D_800B9768.unk10[buf[i].unk6],
+            buf[i].unk0,
+            buf[i].unk2,
+            buf[i].unk6
+        );
+
+        D_800B9768.unk8[(buf[i].unk6 << 1) + 0] = buf[i].unk8;
+        D_800B9768.unk8[(buf[i].unk6 << 1) + 1] = buf[i].unkA;
+    }
+
+    func_80048034();
+
+    free(buf);
+}
+
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_read_layout.s")
+#else
 
-void map_update_streaming();
+// regalloc
+extern MapsTabStruct  *gFile_MAPS_TAB;
+void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex)
+{
+    s32 temp_v1;
+    MapsTabStruct* maptabstruct;
+    MapsTabStruct* maptabstructagain;
+    MapsBinStruct* mapbinstruct;
+    s32 var_v0;
+
+    maptabstruct = &gFile_MAPS_TAB[maptabindex];
+    
+    mapbinstruct = (MapsBinStruct*)gMapReadBuffer;
+    
+    queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, maptabstruct->unk0, maptabstruct->unk8 - maptabstruct->unk0);
+    
+    maptabstructagain = &gFile_MAPS_TAB[maptabindex];
+    mapbinstruct->unkC = (s32 *) (((s8 *)mapbinstruct + maptabstructagain->unk4) - maptabstructagain->unk0);
+
+    arg0->unk0 = arg2 - mapbinstruct->unk4;
+    arg0->unk4 = arg3 - mapbinstruct->unk6;
+
+    arg0->unk2 = (arg0->unk0 + mapbinstruct->unk0) - 1;
+    arg0->unk6 = (arg0->unk4 + mapbinstruct->unk2) - 1;
+    arg0->unk8 = mapbinstruct->unk4;
+    arg0->unk9 = mapbinstruct->unk6;
+
+    for (arg3 = 0; arg3 < mapbinstruct->unk2; arg3++) {
+        for (arg2 = 0; arg2 < mapbinstruct->unk0; arg2++) {
+            temp_v1 = arg2 + (arg3 * mapbinstruct->unk0);
+            var_v0 = mapbinstruct->unkC[temp_v1];
+            if (((var_v0 >> 0x17) & 0x3F) != 0x3F) {
+                arg1[(temp_v1 >> 3)] |= 1 << (temp_v1 & 7);
+            }
+        }
+    }
+}
+#endif
+
+
 
 void func_80046B58(f32 x, f32 y, f32 z) {
     u32 temp_t8;
@@ -1292,7 +2118,220 @@ void func_80046B58(f32 x, f32 y, f32 z) {
     }
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_streaming.s")
+#else
+extern s32 D_80092A60;
+extern s32 D_80092A64;
+extern s32 D_800B4A50;
+extern s32 D_800B4A54;
+extern s32 *D_800B9700;
+extern s8 *D_800B9714;
+typedef struct UnkStruct {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+} UnkStruct;
+
+// Size TBD
+extern UnkObjectInstanceFileStruct gMapStreamMapIDTable[16];
+void map_update_streaming(void) {
+    GlobalMapCell **var_a1;
+    f32 sp308;
+    GlobalMapCell *var_v1;
+    StreamMap* var_s0_2;
+    f32 tempX;
+    f32 tempZ;
+    s32 sp2F4;
+    s32 sp2F0;
+    s32 temp_s1;
+    s32 var_s7;
+    s32 var_s3;
+    s32 var_s5;
+    s8* temp_a3;
+    s8* var_s1;
+    s32 sp2C8[4];
+    s32 sp2B8[4];
+    s32 sp2A8[4];
+    s32 sp298[4];
+    s32 sp294;
+    s32 var_fp;
+    s32 var_s0;
+    s32 var_s2;
+    s32 sp284;
+    UnkStruct sp84[64]; // Unknown size, although 64 sounds reasonable
+    f32 f0;
+    f32 f2;
+    f32 f14;
+    s32 pad;
+    s8 **sp70;
+    s32 **sp6C;
+
+    if (!(UINT_80092a98 & 2)) {
+        return;
+    }
+
+    UINT_80092a98 &= ~2;
+    f0 = D_800B97AC;
+    f2 = D_800B97B4;
+    f14 = f0 - gWorldX;
+    sp308 = f2 - gWorldZ;
+    sp2F4 = floor_f(f14 / 640.0f);
+    sp2F0 = floor_f(sp308 / 640.0f);
+    sp294 = UINT_80092a98 & 0x800;
+    UINT_80092a98 &= ~0x800;
+    if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (UINT_80092a98 & 0x4000)) {
+        func_8004D974(1);
+        func_80012B54(1, 0);
+        var_fp = 0;
+        var_a1 = (GlobalMapCell **) &gDecodedGlobalMap;
+        sp70 = gBlockIndices;\
+        sp6C = &D_800B9700;\
+        for (var_s7 = 0; var_s7 < 5; ) {
+            var_s1 = *sp70;
+            D_800B9714 = (s8 *) *sp6C;
+            var_v1 = &*var_a1[var_s7];
+            var_s3 = 0;
+            for (var_s2 = 0; var_s2 < 16; var_s2++) {
+                for (var_s0 = 0; var_s0 != 16; var_s0++) {
+                    if (var_s1[0] >= 0) {
+                        sp84[var_fp].unk6 = var_s7;
+                        sp84[var_fp].unk0 = gMapCurrentStreamCoordsX + var_s0;
+                        sp84[var_fp].unk2 = gMapCurrentStreamCoordsZ + var_s2;
+                        sp84[var_fp].unk4 = var_s1[0];
+                        var_fp++;
+                    }
+                    var_s1[0] = -2;
+                    D_800B9714[var_s3] = -1;
+                    var_v1[var_s3].blockID = -3;
+                    var_v1[var_s3].mapID = -1;
+                    var_v1[var_s3].unk2 = -1;
+                    var_v1[var_s3].unk4 = -1;
+                    var_s3++;
+                    var_s1++;
+                }
+            }
+            sp70++;\
+            sp6C++;
+            var_s7++;
+        }
+        tempX = gWorldX;
+        tempZ = gWorldZ;
+        gMapCurrentStreamCoordsX = (gMapCurrentStreamCoordsX + sp2F4) - 7;
+        gMapCurrentStreamCoordsZ = (gMapCurrentStreamCoordsZ + sp2F0) - 7;
+        gWorldX = gMapCurrentStreamCoordsX * 640.0f;
+        gWorldZ = gMapCurrentStreamCoordsZ * 640.0f;
+        D_80092A60 = gWorldX;
+        D_80092A64 = gWorldZ;
+        func_800307C4(tempX - gWorldX, tempZ - gWorldZ);
+        for (var_s0 = 0; var_s0 < gMapNumStreamMaps; var_s0++) {
+            gMapStreamMapTable[var_s0].unk06 = 0;
+        }
+        D_800B4A50 = func_80045DC0(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 0);
+        D_800B4A54 = -1;
+        if (D_800B4A50 != -1) {
+            sp284 = map_find_streammap_index(D_800B4A50);
+            if (sp284 == -1) {
+                sp284 = map_load_streammap_add_to_table(D_800B4A50);
+            }
+            gMapStreamMapIDTable[sp284].unk2 = 1;
+            D_800B4A54 = sp284;
+            sp70 = gBlockIndices;\
+            sp6C = &D_800B9700;
+            for (var_s7 = 0; var_s7 < 5; ) {
+                func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
+                temp_a3 = *sp70;
+                var_s2 = sp2C8[2];
+                D_800B9714 = (s8 *) *sp6C;
+                while (sp2C8[3] >= var_s2) {
+                    var_s0 = sp2C8[0];
+                    while (sp2C8[1] >= var_s0) {
+                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
+                        var_s0++;
+                    }
+                    var_s2++;
+                }
+                var_s2 = sp2B8[2];
+                var_s1 = temp_a3;
+                while (sp2B8[3] >= var_s2) {
+                    var_s0 = sp2B8[0];
+                    while (sp2B8[1] >= var_s0) {
+                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
+                        var_s0++;
+                    }
+                    var_s2++;
+                }
+                var_s2 = sp2A8[2];
+                while (sp2A8[3] >= var_s2) {
+                    var_s0 = sp2A8[0];
+                    while (sp2A8[1] >= var_s0) {
+                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
+                        var_s0++;
+                    }
+                    var_s2++;
+                }
+                var_s2 = sp298[2];
+                while (sp298[3] >= var_s2) {
+                    var_s0 = sp298[0];
+                    while (sp298[1] >= var_s0) {
+                        (&temp_a3[var_s0 + (((var_s2 + 7) << 4))])[7] = -3;
+                        var_s0++;
+                    }
+                    var_s2++;
+                }
+                var_s3 = 0;
+                var_s5 = 0;
+                for (var_s2 = 0; var_s2 < 16; var_s2++) {
+                    for (var_s0 = 0; var_s0 != 16; ) {
+                        if (var_s1[0] == -3) {
+                            if (func_800485FC(var_s0, var_s2, gMapCurrentStreamCoordsX + var_s0, gMapCurrentStreamCoordsZ + var_s2, var_s7) == 0) {
+                                var_s1[0] = -2;
+                            } else {
+                                D_800B9714[var_s3] = var_s5;
+                                var_s5++;
+                            }
+                        }
+                        var_s3++;
+                        var_s1++;
+                        var_s0++;
+                    }
+                }
+                sp70++;\
+                var_s7++;\
+                sp6C++;
+            }
+        }
+        var_s2 = TRUE;
+        for (var_s3 = gMapNumStreamMaps - 1; var_s3 >= 0; var_s3--) {
+            var_s0_2 = &gMapStreamMapTable[var_s3];
+            if ((s8) var_s0_2->unk06 == 0) {
+                if (var_s0_2->header != NULL) {
+                    temp_s1 = var_s0_2->mapID;
+                    func_80045FC4(var_s0_2->header, &D_800B5508 + (temp_s1 * 0x8C), temp_s1, 1);
+                    free(var_s0_2->header);
+                    gLoadedMapsDataTable[temp_s1] = NULL;
+                }
+                var_s0_2->header = NULL;
+                var_s0_2->mapID = -1;
+            }
+            if (var_s2 != FALSE) {
+                if (var_s0_2->header == NULL) {
+                    gMapNumStreamMaps -= 1;
+                } else {
+                    var_s2 = FALSE;
+                }
+            }
+        }
+        for (var_s3 = 0; var_s3 < var_fp; var_s3++) {
+            func_800496E4(sp84[var_s3].unk4);
+        }
+        func_8004530C();
+    }
+    map_update_objects_streaming(sp294);
+    UINT_80092a98 &= ~0x4000;
+}
+#endif
 
 /** Increment something */
 void func_80047374(void) {
@@ -1320,7 +2359,180 @@ void func_80047710(s32 arg0, s32 arg1, s32 arg2) {
 void func_80047724(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004773C.s")
+extern s32 D_80092A60;
+extern s32 D_80092A64;
+extern f32 D_8009A9C0;
+extern s32 D_800B4A50;
+extern s32 D_800B4A54;
+extern s16 D_800B97C4;
+
+void func_8004773C(void) {
+    s32 i;
+    s32 j;
+    s32 sp13C;
+    GplayStruct5* sp138;
+    Camera* camera;
+    Object* sp130;
+    Object sp4C;
+    GlobalMapCell *currentCell;
+    s8 *currentT1;
+    GplayStruct6* sp40;
+    GplayStruct12* sp3C;
+    s16* sp38;
+
+    if (D_800B4A5E == -1) {
+        D_800B4A5E = -2;
+        D_80092A78 = 8;
+    }
+    gDLL_ANIM->exports->func0.asVoid();
+    func_80001A3C();
+    func_80001A3C();
+    func_80053300();
+
+    for (i = 0; i < 5; i++) {
+        currentT1 = gBlockIndices[i];
+        currentCell = gDecodedGlobalMap[i];
+        for (j = 0; j < 256; j++) {
+            currentT1[j] = -1;
+            currentCell[j].trkBlkIndex = -1;
+        }
+    }
+
+    for (i = 0; i < 40; i++) {
+        gLoadedBlockIds[i] = -1;
+        gLoadedBlocks[i] = 0;
+    }
+
+    gLoadedBlockCount = 0;
+    gMapNumStreamMaps = 0;
+    D_800B97C4 = 0;
+    sp13C = gDLL_29_gplay->exports->func_E90(&gLoadedBlockIds, &gLoadedBlocks);
+    sp138 = gDLL_29_gplay->exports->func_F04();
+    gMapCurrentStreamCoordsX = floor_f(sp138->vec.x / 640.0f);
+    gMapCurrentStreamCoordsZ = floor_f(sp138->vec.z / 640.0f);
+    Vec3_Int_array->f.x = sp138->vec.x;
+    Vec3_Int_array->f.y = sp138->vec.y;
+    Vec3_Int_array->f.z = sp138->vec.z;
+    Vec3_Int_array->i = 1;
+    D_80092A60 = gMapCurrentStreamCoordsX * 0x280;
+    D_80092A64 = gMapCurrentStreamCoordsZ * 0x280;
+    gWorldX = D_80092A60;
+    // @fake
+    if (0) { }
+    gWorldZ = D_80092A64;
+    D_800B4A50 = -1;
+    D_800B4A54 = -1;
+    D_80092A8C = sp138->mapLayer;
+    gDLL_waterfx->exports->func_24C();
+    gDLL_newlfx->exports->func[1].asVoid();
+    gDLL_57->exports->func[0].asVoid();
+    gDLL_58->exports->func[0].asVoid();
+    gDLL_projgfx->exports->func[0].asVoid();
+    gDLL_modgfx->exports->func[0].asVoid();
+    gDLL_expgfx->exports->func0();
+    gDLL_17->exports->func[0].asVoid();
+    gDLL_minic->exports->func4();
+    gDLL_minic->exports->func1();
+    gDLL_8->exports->func[1].asVoid();
+    gDLL_7_newday->exports->func1.asVoid();
+    gDLL_newclouds->exports->func[1].asVoid();
+    gDLL_newstars->exports->func[0].asVoid();
+    func_8005C780();
+    UINT_80092a98 &= 0x2010;
+    UINT_80092a98 |= 0x81E0;
+    UINT_80092a98 |= 0x804;
+    func_80046B58(sp138->vec.x, sp138->vec.y, sp138->vec.z);
+    UINT_80092a98 &= ~4;
+    func_800591EC();
+    func_80023628();
+    D_800B4A58 = 0;
+
+    camera = get_main_camera();
+    camera->srt.transl.x = sp138->vec.x;
+    camera->srt.transl.y = sp138->vec.y;
+    camera->srt.transl.z = sp138->vec.z;
+
+    sp130 = get_player();
+    if ((D_800B4A5E == -2) && (sp130 != NULL) && ((sp13C == 0) || (sp13C == 1))) {
+        sp40 = gDLL_29_gplay->exports->func_F60();
+        sp3C = gDLL_29_gplay->exports->func_FA8();
+        sp38 = (s16 *) gDLL_29_gplay->exports->func_FE8();
+        if (D_800B4A5E == -2) {
+            if (sp40->unk0x0 != -1) {
+                func_80000608(sp130, sp130, sp40->unk0x0, 0, 0, 0);
+            }
+            if (sp40->unk0x2 != -1) {
+                func_80000608(sp130, sp130, sp40->unk0x2, 0, 0, 0);
+            }
+            if (sp40->unk0x4 != -1) {
+                func_80000608(sp130, sp130, sp40->unk0x4, 0, 0, 0);
+            }
+            if (sp40->unk0x6 != -1) {
+                func_80000608(sp130, sp130, sp40->unk0x6, 0, 0, 0);
+            }
+            if (sp40->unk0x8 != -1) {
+                func_80000608(sp130, sp130, sp40->unk0x8, 0, 0, 0);
+            }
+            if (sp40->unk0xa != -1) {
+                func_80000608(sp130, sp130, sp40->unk0xa, 0, 0, 0);
+            }
+            if (sp40->unk0xc != -1) {
+                func_80000608(sp130, sp130, sp40->unk0xc, 0, 0, 0);
+            }
+            if (sp40->unk0xe != -1) {
+                func_80000608(sp130, sp130, sp40->unk0xe, 0, 0, 0);
+            }
+            func_8001EBD0(sp40->unk0x10 & 1);
+            if (sp3C->unk0x4 != -1) {
+                func_800009C8(sp130, sp130, sp3C->unk0x4, 0);
+            }
+            if (sp3C->unk0x6 != -1) {
+                func_800009C8(sp130, sp130, sp3C->unk0x6, 0);
+            }
+            if (sp3C->unk0x8 != -1) {
+                func_800009C8(sp130, sp130, sp3C->unk0x8, 0);
+            }
+            gDLL_minic->exports->func6(sp3C->unk0x3c & 1);
+            for (i = 0; i < 4; i++) {
+                if (sp38[i] != -1) {
+                    gDLL_AMSEQ2->exports->func0(NULL, sp38[i], 0, 0, 0);
+                }
+            }
+            if (sp40->unk0x12 != -1) {
+                gDLL_Camera->exports->func8(0, sp40->unk0x12);
+            }
+            sp4C.parent = NULL;
+            sp4C.srt.transl.x = 0.0f;
+            sp4C.srt.transl.y = 0.0f;
+            sp4C.srt.transl.z = 0.0f;
+            sp4C.positionMirror.x = 0.0f;
+            sp4C.positionMirror.y = 0.0f;
+            sp4C.positionMirror.z = 0.0f;
+            if (sp3C->unk0xa != -1) {
+                sp4C.srt.transl.x = sp3C->unk10;
+                sp4C.srt.transl.y = sp3C->unk14;
+                sp4C.srt.transl.z = sp3C->unk18;
+                func_80000860(&sp4C, sp130, sp3C->unk0xa, 0);
+            }
+            if (sp3C->unk0xc != -1) {
+                sp4C.srt.transl.x = sp3C->unk1C;
+                sp4C.srt.transl.y = sp3C->unk20;
+                sp4C.srt.transl.z = sp3C->unk24;
+                func_80000860(&sp4C, sp130, sp3C->unk0xc, 0);
+            }
+            if (sp3C->unk0xe != -1) {
+                sp4C.srt.transl.x = sp3C->unk28;
+                sp4C.srt.transl.y = sp3C->unk2C;
+                sp4C.srt.transl.z = sp3C->unk30;
+                func_80000860(&sp4C, sp130, sp3C->unk0xe, 0);
+            }
+            gDLL_7_newday->exports->func9(sp3C->unk0x0);
+        }
+    } else {
+        gDLL_7_newday->exports->func9(D_8009A9C0);
+        gDLL_minic->exports->func6(1);
+    }
+}
 
 s32 func_80048024() {
     return D_800B96A8;
@@ -1332,7 +2544,124 @@ void func_80048034(void) {
     D_800B4A72 = 0;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048054.s")
+#else
+
+typedef struct Unk800B9768_Unk4 {
+    s16 unk0;
+    s16 pad2;
+    s16 unk4;
+    u8 pad6[4];
+} Unk800B9768_Unk4;
+typedef struct Unk800B9768{
+    s32 pad0;
+    Unk800B9768_Unk4 *unk4;
+    s32 pad8;
+    s8 *unkC;
+    u8 *unk10;
+}Unk800B9768;
+extern Unk800B9768 D_800B9768;
+
+typedef struct UnkV0 {
+
+    s32 pad0;
+    s16 unk4;
+    s16 unk6;
+    s32 unk8;
+    u8 pad[0x20 - 0xC];
+    s32 unk20;
+    f32 unk24;
+    f32 unk28;
+} UnkV0;
+
+typedef struct UnkS1 {
+    s16 unk0;
+    u8 unk2;
+    s32 pad4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    s32 pad14;
+    u8 unk18;
+    u8 unk19;
+    s16 pad1A;
+    u32 unk1C;
+} UnkS1;
+void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
+    MapsTabStruct* temp_v0;
+    s32 temp_s1;
+    s32 temp_s4;
+    s32 temp_t8;
+    s32 var_s0;
+    s32 var_s0_2;
+    s8 var_v0;
+    u16 temp_v1;
+    s32 temp_t1;
+    u8* var_s0_3;
+    UnkS1* var_s1;
+    UnkV0 *temp_v0_2;
+
+    var_v0 = D_800B9768.unkC[arg0];
+    var_s0 = 0;
+    if (var_v0 == -0x80) {
+        map_read_layout((MapLayoutArg0* ) &D_800B9768.unk4[arg0], &D_800B9768.unk10[arg0], 0, 0, arg0);
+        D_800B9768.unkC[arg0] = 0;
+        var_v0 = D_800B9768.unkC[arg0];
+    }
+    *arg5 = var_v0;
+    if (arg0 == 1) {
+        *arg2 = 0.0f;
+        *arg3 = 0.0f;
+        *arg4 = 0.0f;
+    } else {
+        temp_v0 = &gFile_MAPS_TAB[arg0];
+        temp_s4 = temp_v0->unk0;
+        temp_s1 = temp_v0[1].unk0 - temp_s4;
+        temp_v0_2 = malloc(temp_s1, 5, NULL);
+        queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
+        temp_v0_2->unk20 = temp_v0->unk10 + temp_v0_2 - temp_s4;
+        temp_v1 = temp_v0_2->unk8;
+        var_s1 = temp_v0_2->unk20;
+        temp_v0_2->unk24 = (D_800B9768.unk4[arg0].unk0 + temp_v0_2->unk4) * 640.0f;
+        temp_v0_2->unk28 = (D_800B9768.unk4[arg0].unk4 + temp_v0_2->unk6) * 640.0f;
+        while (var_s0 < temp_v1) {
+            if ((var_s1->unk0 == 0xD) && (arg1 == var_s1->unk19)) {
+                *arg2 = var_s1->unk8 + temp_v0_2->unk24;
+                *arg3 = var_s1->unkC;
+                *arg4 = var_s1->unk10 + temp_v0_2->unk28;
+                gDLL_29_gplay->exports->func_139C(arg0, (s32) var_s1->unk18);
+                for (var_s0 = 0; var_s0 < 32; var_s0++) {
+                    if ((var_s1->unk1C >> var_s0_2) & 1) {
+                        gDLL_29_gplay->exports->func_16C4(arg0, var_s0_2, -1);
+                    } else {
+                        gDLL_29_gplay->exports->func_16C4(arg0, var_s0_2, -2);
+                    }
+                }
+                break;
+            }
+            temp_t8 = var_s1->unk2 * 4;
+            var_s0 += temp_t8;
+            var_s1 = (s8*)var_s1 + temp_t8;
+        }
+        free(temp_v0_2);
+    }
+    temp_t1 = (u32)get_file_size(0x21U) >> 5;
+    if ((arg0 < 0) || (arg0 >= temp_t1)) {
+        D_800B96A8 = 0;
+        // var_s0_3 = sp64;
+    } else {
+        var_s0_3 = gMapReadBuffer;
+        queue_load_file_region_to_ptr((void** ) var_s0_3, 0x21, arg0 << 5, 0x20);
+        D_800B96A8 = ((s8*)var_s0_3)[0x1C];
+    }
+    D_800B4A72 = 0;
+    if (D_800B96A8 == 1) {
+        D_800B4A70 = (s16) arg0;
+        D_800B4A72 = ((s16*)var_s0_3)[0xF];
+    }
+}
+#endif
 
 /** read_mapinfo_of_map_at_xz */
 void func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
@@ -1371,9 +2700,68 @@ s8 func_80048498(void) {
     return D_80092A8C;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800484A8.s")
+void func_800484A8(void) {
+    s32 i;
+    s32 j;
+    s8* var_s1;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800485FC.s")
+    func_80017254(0);
+    func_80012B54(1, 0);
+    for (i = 0; i < 5; i++) {
+        var_s1 = gBlockIndices[i];
+        for (j = 0; j < 256; j++) {
+            func_800496E4(var_s1[j]);
+        }
+    }
+    gLoadedBlockCount = 0;
+    obj_free_all();
+    for (j = 0; j < 120; j++) {
+        if (gLoadedMapsDataTable[j] != NULL) {
+            free(gLoadedMapsDataTable[j]);
+            gLoadedMapsDataTable[j] = NULL;
+        }
+    }
+    gDLL_Race->exports->func[0].asVoid();
+    gDLL_CURVES->exports->curves_func_18.asVoid();
+    gMapNumStreamMaps = 0;
+    gWorldX = 0.0f;
+    gWorldZ = 0.0f;
+    gDLL_newclouds->exports->func[2].withTwoArgs(-1, 0);
+    gDLL_minic->exports->func4();
+    func_80017254(2);
+}
+
+s32 func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+    GlobalMapCell* currentMap;
+    s16 blockID;
+    s32 fieldIndex;
+    s32 i;
+    s8* currentBlockIndices;
+
+    fieldIndex = (arg1 * 0x10) + arg0;
+    currentBlockIndices = gBlockIndices[arg4];
+    currentMap = gDecodedGlobalMap[arg4];
+    currentMap += fieldIndex;
+    func_80046428(arg2, arg3, currentMap, arg4);
+    blockID = currentMap->blockID;
+    if (blockID < 0) {
+        blockID = -1;
+    }
+    if (blockID < 0) {
+        currentBlockIndices[fieldIndex] = blockID;
+        return 0;
+    }
+    currentBlockIndices[fieldIndex] = -1;
+    for (i = 0; i < gLoadedBlockCount; i++) {
+        if (blockID == gLoadedBlockIds[i]) {
+            gBlockRefCounts[i] += 1;
+            currentBlockIndices[fieldIndex] = i;
+            return 1;
+        }
+    }
+    block_load(blockID, fieldIndex, arg4, 0);
+    return 1;
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_load.s")
@@ -1505,25 +2893,60 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048B14.s")
+void func_80048B14(Block* block) {
+    s32 targetVertexIndex;
+    s32 vertexIndex;
+    s32 result;
+    s32 i;
+    BlockShape* currentShape;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048C24.s")
+    for (i = 0; i < block->shapeCount; i++) {
+        currentShape = &block->shapes[i];
+        if (currentShape->flags & 0x47C02120) {
+            vertexIndex = currentShape->vtxBase;
+            targetVertexIndex = currentShape[1].vtxBase;
+            while (vertexIndex < targetVertexIndex) {
+                result = func_80048E04(
+                    block->vertices[vertexIndex].cn[0],
+                    block->vertices[vertexIndex].cn[1],
+                    block->vertices[vertexIndex].cn[2],
+                    block->shapes[i].alpha
+                );
+                if (result != -1) {
+                    block->vertices[vertexIndex].flag =  ((s16)block->vertices[vertexIndex].flag | ((result & 0xFF) * 4));
+                }
+                vertexIndex++;
+            }
+        }
+    }
+}
 
-typedef struct {
-/*00*/ u8 unk0;
-/*01*/ u8 unk1;
-/*02*/ u8 unk2;
-/*03*/ u8 unk3;
-/*04*/ u8 unk4;
-/*05*/ u8 unk5;
-/*06*/ u8 unk6;
-/*07*/ u8 unk7;
-/*08*/ u8 unk8;
-/*09*/ u8 unk9;
-} MapsUnk_800B97C0;
+void func_80048C24(Block* block) {
+    s32 index;
+    s32 i;
+    s32 targetVertexIndex;
+    s32 vertexIndex;
 
-extern MapsUnk_800B97C0 *D_800B97C0;
-extern s16 D_800B97C4;
+    for (i = 0; i < block->shapeCount; i++) {
+        if (block->shapes[i].flags & 0x47C02120) {
+            vertexIndex = block->shapes[i].vtxBase;
+            targetVertexIndex = block->shapes[i + 1].vtxBase;
+            while (vertexIndex < targetVertexIndex) {
+                index = ((s16)block->vertices[vertexIndex].flag >> 2) & 0xFF;
+                if (D_800B97C0[index].unk8 != 0) {
+                    D_800B97C0[index].unk8--;
+                    if (D_800B97C0[index].unk8 == 0 && (index + 1) == D_800B97C4) {
+                        while (D_800B97C0[index].unk8 == 0 && index >= 0) {
+                            D_800B97C4 -= 1;
+                            index--;
+                        }
+                    }
+                }
+                vertexIndex++;
+            }
+        }
+    }
+}
 
 s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     MapsUnk_800B97C0 *temp;
@@ -1541,9 +2964,59 @@ s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     return -1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048E04.s")
+s32 func_80048E04(u8 arg0, u8 arg1, u8 arg2, u8 arg3)
+{
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048F58.s")
+    // try to get the index from another function
+    i = func_80048D58(arg0, arg1, arg2, arg3);
+
+    // if we got something valid use it to increment unk8
+    // then return
+    if (i != -1) {
+        D_800B97C0[i].unk8++;
+    } else {
+        // otherwise loop through SomeArray until
+        // we find the first unk8 that is zero, or the final index
+        for (i = 0; i < D_800B97C4; i++) {
+            if (D_800B97C0[i].unk8 == 0) {
+                break;
+            }
+        }
+
+        D_800B97C0[i].unk3 = arg0;
+        D_800B97C0[i].unk0 = D_800B97C0[i].unk3;
+        D_800B97C0[i].unk4 = arg1;
+        D_800B97C0[i].unk1 = D_800B97C0[i].unk4;
+        D_800B97C0[i].unk5 = arg2;
+        D_800B97C0[i].unk2 = D_800B97C0[i].unk5;
+
+        D_800B97C0[i].unk6 = arg3;
+        D_800B97C0[i].unk8 = 1;
+
+        if (i == D_800B97C4) {
+            D_800B97C4++;
+        }
+    }
+
+    return i;
+}
+
+void func_80048F58(void)
+{
+    s32 i;
+    u8 r, g, b;
+
+    func_8001F81C(&r, &g, &b);
+
+    for (i = 0; i < D_800B97C4; i++) {
+        if (D_800B97C0[i].unk6 != 0xFE) {
+            D_800B97C0[i].unk3 = (D_800B97C0[i].unk0 * r) >> 8;
+            D_800B97C0[i].unk4 = (D_800B97C0[i].unk1 * g) >> 8;
+            D_800B97C0[i].unk5 = (D_800B97C0[i].unk2 * b) >> 8;
+        }
+    }
+}
 
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
 {
@@ -1736,8 +3209,6 @@ void _block_setup_vertices(Block *block)
 }
 #endif
 
-
-
 /*
  * blocks_free?
  */
@@ -1754,7 +3225,7 @@ void func_800496E4(s32 blockIndex) {
     gBlockRefCounts[blockIndex] -= 1;
     if (gBlockRefCounts[blockIndex] == 0) {
         block = gLoadedBlocks[blockIndex];
-        func_80048C24(block);
+        func_80048C24((Block *) block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
         if (block->unk_48 != 0) {
@@ -1828,9 +3299,117 @@ HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine*
 void func_800499B4(){
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499BC.s")
+#else
+void func_800499BC(void) {
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_a3;
+    s32 var_t1;
+    s32 i;
+    UnkTextureStruct *temp_a0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049B84.s")
+    for (i = 0; i < 58; i++){
+        temp_a0 = &D_800B97A8[i];
+        if (temp_a0->unk20 != 0) {
+            var_a1 = temp_a0->unk8;
+            var_a3 = temp_a0->unk4 * delayByte;
+            var_t1 = temp_a0->unk6 * delayByte;
+            temp_a0->unk8 = (var_a1 + var_a3) & 3;
+            temp_a0->unk0 += (var_a1 + var_a3) >> 2;
+            var_a2 = temp_a0->unkA;
+            temp_a0->unkA = (var_a2 + var_t1) & 3;
+            temp_a0->unk2 += (var_a2 + var_t1) >> 2;
+            if (temp_a0->unkC < temp_a0->unk0) {
+                temp_a0->unk0 -= temp_a0->unkC;
+            } else if (temp_a0->unk0 < -temp_a0->unkC) {
+                temp_a0->unk0 += temp_a0->unkC;
+            }
+            if (temp_a0->unkE < temp_a0->unk2) {
+                temp_a0->unk2 -= temp_a0->unkE;
+            } else if (temp_a0->unk2 < -temp_a0->unkE) {
+                temp_a0->unk2 += temp_a0->unkE;
+            }
+            var_a1 = temp_a0->unk18;
+            var_a3 = temp_a0->unk14 * delayByte;
+            var_t1 = temp_a0->unk16 * delayByte;
+            temp_a0->unk18 = (var_a1 + var_a3) & 3;
+            temp_a0->unk10 += (var_a1 + var_a3) >> 2;
+            var_a2 = temp_a0->unk1A;
+            temp_a0->unk1A = (var_a2 + var_t1) & 3;
+            temp_a0->unk12 += (var_a2 + var_t1) >> 2;
+            if (temp_a0->unk1C < temp_a0->unk10) {
+                temp_a0->unk10 -= temp_a0->unk1C;
+            } else if (temp_a0->unk10 < -temp_a0->unk1C) {
+                temp_a0->unk10 += temp_a0->unk1C;
+            }
+            if (temp_a0->unk1E < temp_a0->unk12) {
+                temp_a0->unk12 -= temp_a0->unk1E;
+            } else if (temp_a0->unk12 < -temp_a0->unk1E) {
+                temp_a0->unk12 += temp_a0->unk1E;
+            }
+        }
+    }
+}
+#endif
+
+// unused?
+s32 func_80049B84(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
+    UnkTextureStruct* temp;
+    s32 index;
+    s32 i;
+
+    i = 0;
+    while (1) {
+        temp = &D_800B97A8[i];
+        if (
+            (arg0 == temp->unk4) &&
+            (arg1 == temp->unk6) &&
+            (arg2 == temp->unkC) &&
+            (arg3 == temp->unkE) &&
+            (arg4 == temp->unk14) &&
+            (arg5 == temp->unk16) &&
+            (arg6 == temp->unk1C) &&
+            (arg7 == temp->unk1E)
+        ) {
+            temp->unk20++;
+            return i;
+        }
+        i++;
+        if (i >= 0x3A) {
+            index = -1;
+            for (i = 0; i < 0x3A; i++) {
+                if (D_800B97A8[i].unk20 == 0) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1) {
+                return -1;
+            }
+            temp = &D_800B97A8[index];
+            temp->unk4 = arg0;
+            temp->unk6 = arg1;
+            temp->unkC = arg2;
+            temp->unkE = arg3;
+            temp->unk0 = 0;
+            temp->unk2 = 0;
+            temp->unk8 = 0;
+            temp->unkA = 0;
+            temp->unk14 = arg4;
+            temp->unk16 = arg5;
+            temp->unk1C = arg6;
+            temp->unk1E = arg7;
+            temp->unk10 = 0;
+            temp->unk12 = 0;
+            temp->unk18 = 0;
+            temp->unk1A = 0;
+            temp->unk20 += 1;
+            return index;
+        }
+    }
+}
 
 void func_80049CE4(u32 a0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8){
     UnkTextureStruct *temp_v0;
@@ -1856,30 +3435,23 @@ s32 func_80049D68(s32 arg0) {
     return (s32)&D_800B97A8[arg0];
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80049D88.s")
-#else
-void func_8003E648(Texture*, u32, u32);
+void func_80049D88(void)
+{
+    s32 i;
+    Texture *texture;
 
-void func_80049D88() {
-    s32 index;
-    Texture *tex;
-    BlockTexture *blockTex;
-    
-    for (index = 0; index < 0x100; index++){
+    for (i = 0; i != 20; i++) {
+        if (gBlockTextures[i].refCount != 0) {
+            texture = gBlockTextures[i].texture;
 
-        if ((&gBlockTextures[index])->refCount == 0){
-            continue;
-        }
-        
-        tex = (&gBlockTextures[index])->texture;
-        if (tex && tex->levels != 0x14 && tex->unk_0xe != 0){
-            blockTex = &gBlockTextures[index];
-            func_8003E648(tex, blockTex->flags, blockTex->unk_0x4);
+            if ((texture != NULL) && (texture->levels != 0x100)) {
+                if (texture->unk_0xe != 0) {
+                    func_8003E648(texture, &gBlockTextures[i].flags, &gBlockTextures[i].unk_0x4);
+                }
+            }
         }
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
 
@@ -2327,7 +3899,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-void func_8004D328() {
+static void func_8004D328() {
     SimilarToWarp* var_a2;
     Warp* var_v0;
     u8 temp2;

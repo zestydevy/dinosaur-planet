@@ -1,7 +1,7 @@
 # .text | offset: 0x0
-curves_ctor = 0x0;
-curves_dtor = 0x84;
-curves_func_D8 = 0xD8;
+dll_25_ctor = 0x0;
+dll_25_dtor = 0x84;
+dll_25_func_D8 = 0xD8;
 dll_25_func_D00 = 0xD00;
 dll_25_func_DF8 = 0xDF8;
 dll_25_func_EAC = 0xEAC;
