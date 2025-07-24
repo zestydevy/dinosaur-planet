@@ -2921,8 +2921,32 @@ void func_80048B14(Block* block) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048C24.s")
+void func_80048C24(Block* block) {
+    s32 index;
+    s32 i;
+    s32 targetVertexIndex;
+    s32 vertexIndex;
 
+    for (i = 0; i < block->shapeCount; i++) {
+        if (block->shapes[i].flags & 0x47C02120) {
+            vertexIndex = block->shapes[i].vtxBase;
+            targetVertexIndex = block->shapes[i + 1].vtxBase;
+            while (vertexIndex < targetVertexIndex) {
+                index = ((s16)block->vertices[vertexIndex].flag >> 2) & 0xFF;
+                if (D_800B97C0[index].unk8 != 0) {
+                    D_800B97C0[index].unk8--;
+                    if (D_800B97C0[index].unk8 == 0 && (index + 1) == D_800B97C4) {
+                        while (D_800B97C0[index].unk8 == 0 && index >= 0) {
+                            D_800B97C4 -= 1;
+                            index--;
+                        }
+                    }
+                }
+                vertexIndex++;
+            }
+        }
+    }
+}
 
 s32 func_80048D58(u8 arg0, u8 arg1, u8 arg2, u8 arg3) {
     MapsUnk_800B97C0 *temp;

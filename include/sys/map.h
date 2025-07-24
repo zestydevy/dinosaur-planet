@@ -310,8 +310,7 @@ typedef struct {
        u8 unk5;
        u8 unk6;
        u8 unk7;
-       u8 unk8;
-       u8 unk9;
+       s16 unk8;
 } MapsUnk_800B97C0;
 
 #define MAX_RENDER_LIST_LENGTH 400
@@ -414,7 +413,7 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 // defined in map.c but used before declared
 void func_800441F4(u32* arg0, s32 arg1);
 void func_80048B14(Block *block);
-void func_80048C24(BlocksModel*);
+void func_80048C24(Block *block);
 u32 hits_get_size(s32 id);
 void block_setup_vertices(Block *block);
 void block_setup_gdl_groups(Block *block);
