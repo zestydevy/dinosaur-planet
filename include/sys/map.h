@@ -455,6 +455,7 @@ void func_800009C8(Object*, Object*, u16, s32);
 void func_80023628(void);
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8003E648(Texture*, s32, s32);
+Object **obj_get_all_of_type(s32 idx, s32 *count);
 
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
 

@@ -3726,7 +3726,62 @@ s32 func_8004A5D8(Object* obj, u8 arg1) {
     return out;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A67C.s")
+void func_8004A67C(void) {
+    s32 pad;
+    s32 i;
+    s32 id;
+    s32 count;
+    f32 xx;
+    f32 yy;
+    f32 zz;
+    Camera* camera;
+    Object* obj;
+    Object** actors;
+
+    actors = obj_get_all_of_type(7, &count);
+    camera = get_camera();
+    update_camera_for_object(camera);
+
+    for (i = 0; i < 20;) {
+        Vec3_Int_array[i++].i = 0;
+    }
+
+    // set first element
+    Vec3_Int_array->f.x = camera->tx;
+    Vec3_Int_array->f.y = camera->ty;
+    Vec3_Int_array->f.z = camera->tz;
+    Vec3_Int_array->i = 1;
+
+    // loop through the rest
+    for (i = 0; i < count; i++) {
+        obj = actors[i];
+
+        id = obj->matrixIdx + 1;
+
+        // if actor 7 is the camera actor
+        // use camera x/y/z
+        if (obj == camera->object) {
+            Vec3_Int_array[id].f.x = camera->srt.transl.x;
+            Vec3_Int_array[id].f.y = camera->srt.transl.y;
+            Vec3_Int_array[id].f.z = camera->srt.transl.z;
+        } else {
+            inverse_transform_point_by_object(
+                camera->tx,
+                camera->ty,
+                camera->tz,
+                &xx,
+                &yy,
+                &zz,
+                obj
+            );
+
+            Vec3_Int_array[id].f.x = xx;
+            Vec3_Int_array[id].f.y = yy;
+            Vec3_Int_array[id].f.z = zz;
+        }
+        Vec3_Int_array[id].i = 1;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_objects_streaming.s")
 

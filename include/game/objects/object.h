@@ -226,6 +226,6 @@ typedef struct ObjListItem {
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
-extern struct Vec3_Int Vec3_Int_array[];
+extern struct Vec3_Int Vec3_Int_array[20];
 
 #endif
