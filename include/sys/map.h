@@ -440,6 +440,7 @@ s32 func_800485FC(s32, s32, s32, s32, s32);
 void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
 void func_800496E4(s32 blockIndex);
 void map_update_streaming(void);
+s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
 
 // other funcs that are used
 void func_80058F3C(void);

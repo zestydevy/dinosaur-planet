@@ -3453,7 +3453,51 @@ void func_80049D88(void)
     }
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
+#else
+void* block_setup_textures(Block* block) {
+    s32 var_a1;
+    s32 var_s1;
+    s32 i;
+    s32 j;
+    u32 var_t0;
+    s32 var_s6;
+    s32 var_a2;
+    BlockShape* temp_a3;
+
+    var_s1 = 0;
+    var_s6 = 0;
+    for (i = 0; i < block->shapeCount; i++) {
+        temp_a3 = &block->shapes[i];
+        if (temp_a3->flags & 0x4000) {
+            var_s6++;
+        }
+        if (temp_a3->flags & 0x10000 && temp_a3->unk_0x14 != 0) {
+            var_a1 = FALSE;
+            for (j = 0; j < var_s1; j++) {
+                if (block->unk_0x28[j].unk_0x2 == temp_a3->unk_0x14) {
+                    var_a1 = TRUE;
+                    break;
+                }
+            }
+            var_a2 = temp_a3->unk_0x14;
+            if (var_a1 == FALSE) {
+                var_a1 = temp_a3->flags;
+                block->unk_0x28[var_s1].texIdx = func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
+                block->unk_0x28[var_s1].unk_0x2 = block->shapes[i].unk_0x14;
+                var_s1++;
+            } else {
+                var_a1 = temp_a3->flags;
+                func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
+            }
+        }
+    }
+    block->unk_0x49 = var_s6;
+    block->unk_0x48 = var_s1;
+    return var_s1 * 4;
+}
+#endif
 
 void func_8004A164(Texture*, s32);
 
@@ -3563,7 +3607,78 @@ BlockTexture *func_8004A2CC(s32 idx)
     return &gBlockTextures[idx];
 }
 
+// https://decomp.me/scratch/cLba8
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_xz_bitmap.s")
+#else
+void block_setup_xz_bitmap(Block* block) {
+    Vtx_t** temp_s3;
+    s32 triIndex;
+    s32 temp_a2;
+    s32 nextTriIndex;
+    s16 temp_s4;
+    s16 var_s0;
+    s16 var_s1;
+    s16 var_s2;
+    s16 var_s5;
+    s16 var_t3;
+    s16 var_t4;
+    s16 var_t5;
+    s32 var_t2;
+    BlockShape* blockShape;
+    s32 var_v1;
+    s32 i;
+    Vtx_t *sp38[3];
+
+    for (var_t2 = 0; var_t2 < block->shapeCount; var_t2++) {
+        blockShape = &block->shapes[var_t2];
+        triIndex = blockShape->triBase;
+        nextTriIndex = blockShape[1].triBase;
+        temp_a2 = blockShape->vtxBase;
+        while (triIndex < nextTriIndex) {
+            var_t3 = -0x7D00;
+            var_t4 = 0x7D00;
+            var_t5 = -0x7D00;
+            var_s0 = 0x7D00;
+            sp38[0] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 0xD) & 0x1F) + temp_a2];
+            sp38[1] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 7) & 0x1F) + temp_a2];
+            sp38[2] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 1) & 0x1F) + temp_a2];
+            i = 0;
+            while (i < 3) {
+                var_s1 = (*sp38)[i].ob[0];
+                temp_s4 = (*sp38)[i].ob[2];
+                if (var_t3 < var_s1) {
+                    var_t3 = var_s1;
+                }
+                if (var_s1 < var_t4) {
+                    var_t4 = var_s1;
+                }
+                if (var_t5 < temp_s4) {
+                    var_t5 = temp_s4;
+                }
+                if (temp_s4 < var_s0) {
+                    var_s0 = temp_s4;
+                }
+                i++;
+            }
+            for (var_s5 = 0, var_s1 = 1, var_s2 = 0; var_s2 < 0x280; var_s2 += 0x50) {
+                if (((var_s2 + 0x50) >= var_t4) && (var_t3 >= var_s2)) {
+                    var_s5 |= var_s1;
+                }
+                var_s1 *= 2;
+            }
+            for (var_s2 = 0; var_s2 < 0x280; var_s2 += 0x50) {
+                if (((var_s2 + 0x50) >= var_s0) && (var_t5 >= var_s2)) {
+                    var_s5 |= var_s1;
+                }
+                var_s1 *= 2;
+            }
+            block->xzBitmap[triIndex] = var_s5;
+            triIndex++;
+        }
+    }
+}
+#endif
 
 /**
   * block_get_animator_vertex_count?
@@ -3592,7 +3707,24 @@ s32 func_8004A528(Object* obj, u8 animatorID) {
     return anim_vertex_count;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A5D8.s")
+s32 func_8004A5D8(Object* obj, u8 arg1) {
+    Block* block;
+    s32 out;
+    s32 i;
+    BlockShape *shapes;
+
+    block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    if ((block == NULL) || !(block->vtxFlags & 8)) {
+        return 0;
+    }
+
+    for (i = 0, out = 0, shapes = block->shapes; i < block->shapeCount; i++) {
+        if (arg1 == shapes[i].unk_0x14) {
+            out += 1;
+        }
+    }
+    return out;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004A67C.s")
 
