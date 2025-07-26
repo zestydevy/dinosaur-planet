@@ -18,7 +18,6 @@
 #include "dll_def.h"
 #include "types.h"
 #include "functions.h"
-#include "prevent_bss_reordering.h"
 
 static const char str_1[] = "triggers: unknown trigger object %d.\n";
 static const char str_2[] = "TRIGGER: warning Script overflow\n";

@@ -3,7 +3,6 @@
 #include "dlls/engine/31_flash.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
-#include "prevent_bss_reordering.h"
 
 typedef struct {
     u32 flashType;
