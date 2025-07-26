@@ -5,8 +5,7 @@
 
 #include "PR/ultratypes.h"
 
-typedef enum
-{
+typedef enum {
 /*00*/    AUDIO_TAB,
 /*01*/    AUDIO_BIN,
 /*02*/    SFX_TAB,
@@ -85,8 +84,7 @@ typedef enum
 /*4A*/    NUM_FILES
 } EFile;
 
-typedef struct
-{ 
+typedef struct { 
     u32 fileCount;
     u32 offsets[NUM_FILES];
 } Fs;

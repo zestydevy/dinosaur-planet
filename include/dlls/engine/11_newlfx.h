@@ -15,4 +15,5 @@ DLL_INTERFACE_BEGIN(11_newlfx)
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
 DLL_INTERFACE_END()
+
 #endif // _DLL_11_H

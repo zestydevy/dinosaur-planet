@@ -21,4 +21,5 @@ DLL_INTERFACE_BEGIN(4_race)
 /*12*/ UnknownDLLFunc func13;
 /*13*/ void (*func14)(void);
 DLL_INTERFACE_END()
+
 #endif // _DLL_4_H

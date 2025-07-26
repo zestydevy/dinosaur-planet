@@ -18,4 +18,5 @@ DLL_INTERFACE_BEGIN(13_expgfx)
 /*9*/ void (*func9)(Object *obj);
 /*10*/ UnknownDLLFunc func10;
 DLL_INTERFACE_END()
+
 #endif // _DLL_13_H

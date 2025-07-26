@@ -5,15 +5,13 @@
 
 #include "PR/ultratypes.h"
 
-typedef struct
-{
+typedef struct {
 /*0000*/    u8 unk_0x0;
 /*0001*/	u8 unk_0x1;
 /*0002*/	s16 unk_0x2;
 } Animation;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    u32 unk_0x0;
 /*0004*/    f32 unk_0x4[2];
 /*000C*/    u32 unk_0xc;

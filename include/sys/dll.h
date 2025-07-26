@@ -8,28 +8,24 @@
 #define MAX_LOADED_DLLS 128
 #define DLL_NONE -1
 
-typedef struct
-{
+typedef struct {
 	s32 offset;
 	s32 bssSize;
 } DLLTabEntry;
 
-typedef struct
-{
+typedef struct {
 /*0000*/	s32 bank1;
 /*0004*/	s32 bank2;
 /*0008*/	s32 reserved;
 /*000C*/	s32 bank3;
 } DLLTabHeader;
 
-typedef struct
-{
+typedef struct {
 /*0000*/	DLLTabHeader header;
 /*0010*/	DLLTabEntry entries[1];
 } DLLTab;
 
-typedef struct
-{
+typedef struct {
 /*0000*/	s32 id;
 /*0004*/	s32 refCount;
 /*0008*/	u32 *exports;

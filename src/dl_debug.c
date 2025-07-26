@@ -2,8 +2,7 @@
 
 #define MAX_DL_DEBUG_INFO_LENGTH 128
 
-typedef struct
-{
+typedef struct {
 /*0000*/    Gfx *gdl;
 /*0004*/    u32 unk_0x4;
 /*0008*/    const char *file;

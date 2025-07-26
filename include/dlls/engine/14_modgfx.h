@@ -20,4 +20,5 @@ DLL_INTERFACE_BEGIN(14_modgfx)
 /*11*/ UnknownDLLFunc func11;
 /*12*/ UnknownDLLFunc func12;
 DLL_INTERFACE_END()
+
 #endif // _DLL_14_H

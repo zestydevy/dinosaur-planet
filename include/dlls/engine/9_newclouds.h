@@ -16,4 +16,5 @@ DLL_INTERFACE_BEGIN(9_newclouds)
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;
 DLL_INTERFACE_END()
+
 #endif // _DLL_9_H

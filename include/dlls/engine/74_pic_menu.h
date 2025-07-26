@@ -6,15 +6,13 @@
 #include "dll_def.h"
 #include "types.h"
 
-typedef struct
-{
+typedef struct {
     Texture *texture;
     s16 textureID;
     u8 width;
 } PicMenuTexture;
 
-typedef enum
-{
+typedef enum {
     PICMENU_ALIGN_TEXT_CENTER = 0x2,
     PICMENU_HAS_BACKGROUND = 0x4,
     // Align horizontally after the leftLink item
@@ -35,16 +33,14 @@ typedef enum
     PICMENU_INTANGIBLE = 0x1000
 } PicMenuItemFlags;
 
-typedef enum
-{
+typedef enum {
     PICMENU_ACTION_NONE = -1,
     PICMENU_ACTION_BACK = 0,
     PICMENU_ACTION_SELECT = 1
 } PicMenuAction;
 
 // size: 0x3C
-typedef struct
-{
+typedef struct {
     /*00*/ char *text;
     /*04*/ s16 textX;
     /*06*/ s16 textY;
@@ -72,8 +68,7 @@ typedef struct
 #define NEW_PICMENU_ITEM(textX, textY, innerWidth, itemX, itemY, textureID, outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith) \
     {NULL, textX, textY, innerWidth, itemX, itemY, ((void *)textureID), outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith, {0}, 0}
 
-typedef struct
-{
+typedef struct {
     s32 moveSoundID;
     s32 selectSoundID;
     s32 backSoundID;

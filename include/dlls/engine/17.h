@@ -9,4 +9,5 @@ DLL_INTERFACE_BEGIN(17)
 /*1*/ UnknownDLLFunc func1;
 /*2*/ UnknownDLLFunc func2;
 DLL_INTERFACE_END()
+
 #endif // _DLL_17_H

@@ -27,4 +27,5 @@ DLL_INTERFACE_BEGIN(75)
 /*19*/ UnknownDLLFunc func19;
 /*20*/ UnknownDLLFunc func20;
 DLL_INTERFACE_END()
+
 #endif // _DLL_75_H

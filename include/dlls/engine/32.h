@@ -13,4 +13,5 @@ DLL_INTERFACE_BEGIN(32)
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;
 DLL_INTERFACE_END()
+
 #endif // _DLL_32_H

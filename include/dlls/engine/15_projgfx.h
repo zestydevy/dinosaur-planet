@@ -15,4 +15,5 @@ DLL_INTERFACE_BEGIN(15_projgfx)
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;
 DLL_INTERFACE_END()
+
 #endif // _DLL_15_H

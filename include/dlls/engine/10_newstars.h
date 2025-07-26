@@ -10,4 +10,5 @@ DLL_INTERFACE_BEGIN(10_newstars)
 /*2*/ UnknownDLLFunc func2;
 /*3*/ UnknownDLLFunc func3;
 DLL_INTERFACE_END()
+
 #endif // _DLL_10_H

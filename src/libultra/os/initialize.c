@@ -7,8 +7,7 @@
 
 #define PIF_COMMAND_BYTE (PIF_RAM_START+0x3c)
 
-typedef struct
-{
+typedef struct {
    /* 0x0 */ unsigned int inst1;
    /* 0x4 */ unsigned int inst2;
    /* 0x8 */ unsigned int inst3;

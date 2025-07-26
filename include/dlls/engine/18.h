@@ -29,4 +29,5 @@ DLL_INTERFACE_BEGIN(18)
 /*21*/ UnknownDLLFunc func21;
 /*22*/ UnknownDLLFunc func22;
 DLL_INTERFACE_END()
+
 #endif // _DLL_18_H
