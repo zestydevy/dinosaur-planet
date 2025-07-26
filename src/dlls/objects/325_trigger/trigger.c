@@ -492,7 +492,7 @@ void trigger_destroy(Object *self, s32 param2) {
 
     for (i = 0; i < 8; i++) {
         if (state->soundHandles[i] != 0) {
-            gDLL_AMSFX->exports->func6(state->soundHandles[i]);
+            gDLL_6_AMSFX->exports->func6(state->soundHandles[i]);
         }
         if (state->scripts[i] != NULL) {
             dll_unload(state->scripts[i]);
@@ -651,21 +651,21 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             }
             break;
         case TRG_CMD_MUSIC_ACTION: 
-            if ((dir < 0) && (gDLL_AMSEQ->exports->func2(self, (cmd->param2 | (cmd->param1 << 8))) != 0)) {
+            if ((dir < 0) && (gDLL_5_AMSEQ->exports->func2(self, (cmd->param2 | (cmd->param1 << 8))) != 0)) {
                 // "Trigger [%d], Music Action,       Action Num [%d] Free"
-                gDLL_AMSEQ2->exports->func1(self, (cmd->param2 | (cmd->param1 << 8)), 0, 0, 0);
+                gDLL_5_AMSEQ2->exports->func1(self, (cmd->param2 | (cmd->param1 << 8)), 0, 0, 0);
             } else {
                 // "Trigger [%d], Music Action,       Action Num [%d] Set"
-                gDLL_AMSEQ2->exports->func0(self, (cmd->param2 | (cmd->param1 << 8)), 0, 0, 0);
+                gDLL_5_AMSEQ2->exports->func0(self, (cmd->param2 | (cmd->param1 << 8)), 0, 0, 0);
             }
             break;
         case TRG_CMD_SOUND: 
             // "Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]"
             if (dir >= 0) {
-                gDLL_AMSFX->exports->func14(self, (cmd->param2 | (cmd->param1 << 8)), &state->soundHandles[i]);
+                gDLL_6_AMSFX->exports->func14(self, (cmd->param2 | (cmd->param1 << 8)), &state->soundHandles[i]);
             } else {
                 if (state->soundHandles[i] != 0) {
-                    gDLL_AMSFX->exports->func6(state->soundHandles[i]);
+                    gDLL_6_AMSFX->exports->func6(state->soundHandles[i]);
                     state->soundHandles[i] = 0;
                 }
             }
@@ -765,15 +765,15 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
                 case 0:
                 case 3:
                     // "Trigger [%d], Anim Sequence,      SequenceID [%d], Activate"
-                    gDLL_ANIM->exports->func1(cmd->param2, 0); // should be 3 params?
+                    gDLL_3_Animation->exports->func1(cmd->param2, 0); // should be 3 params?
                     break;
                 case 1:
                     // "Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 1"
-                    gDLL_ANIM->exports->func2(cmd->param2, 1);
+                    gDLL_3_Animation->exports->func2(cmd->param2, 1);
                     break;
                 case 2:
                     // "Trigger [%d], Anim Sequence,      SequenceID [%d], Flag = 0"
-                    gDLL_ANIM->exports->func2(cmd->param2, 0);
+                    gDLL_3_Animation->exports->func2(cmd->param2, 0);
                     break;
             }
             break;
@@ -801,16 +801,16 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             break;
         case TRG_CMD_ENABLE_OBJ_GROUP:
             // "Trigger [%d], Object Load\n"
-            gDLL_29_gplay->exports->func_16C4((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 1);
+            gDLL_29_Gplay->exports->func_16C4((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 1);
             break;
         case TRG_CMD_DISABLE_OBJ_GROUP:
             // "Trigger [%d], Object Free\n"
-            gDLL_29_gplay->exports->func_16C4((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 0);
+            gDLL_29_Gplay->exports->func_16C4((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 0);
             break;
         case TRG_CMD_TOGGLE_OBJ_GROUP:
             // "Trigger [%d], Object Toggle\n"
             temp_a1 = (cmd->param2 | (cmd->param1 << 8));
-            gDLL_29_gplay->exports->func_16C4((s32) self->mapID, temp_a1, gDLL_29_gplay->exports->func_14F0((s32) self->mapID, temp_a1) ^ 1);
+            gDLL_29_Gplay->exports->func_16C4((s32) self->mapID, temp_a1, gDLL_29_Gplay->exports->func_14F0((s32) self->mapID, temp_a1) ^ 1);
             break;
         case TRG_CMD_TEXTURE_LOAD:
             // "Trigger [%d], Tex Load\n"
@@ -821,7 +821,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             trigger_func_1920((cmd->param2 | (cmd->param1 << 8)));
             break;
         case TRG_CMD_SET_MAP_SETUP:
-            gDLL_29_gplay->exports->func_139C((s32) self->mapID, cmd->param2 | (cmd->param1 << 8));
+            gDLL_29_Gplay->exports->func_139C((s32) self->mapID, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SCRIPT:
             // "TRIGGER: warning DLL not loaded\n"
@@ -832,11 +832,11 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             break;
         case TRG_CMD_WORLD_ENABLE_OBJ_GROUP:
             // "Trigger [%d], Object Load\n"
-            gDLL_29_gplay->exports->func_16C4((s32) cmd->param2, (s32) cmd->param1, 1);
+            gDLL_29_Gplay->exports->func_16C4((s32) cmd->param2, (s32) cmd->param1, 1);
             break;
         case TRG_CMD_WORLD_DISABLE_OBJ_GROUP:
             // "Trigger [%d], Object Free\n"
-            gDLL_29_gplay->exports->func_16C4((s32) cmd->param2, (s32) cmd->param1, 0);
+            gDLL_29_Gplay->exports->func_16C4((s32) cmd->param2, (s32) cmd->param1, 0);
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
             set_gplay_bitstring(0x46E, cmd->param2 | (cmd->param1 << 8));
@@ -845,14 +845,14 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             set_gplay_bitstring(0x488, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_MAP_SETUP:
-            gDLL_29_gplay->exports->func_139C((s32) cmd->param2, (s32) cmd->param1);
+            gDLL_29_Gplay->exports->func_139C((s32) cmd->param2, (s32) cmd->param1);
             break;
         case TRG_CMD_11:
             // Tricky related?
             set_gplay_bitstring(0x4E2, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_GAME:
-            gDLL_29_gplay->exports->func_958(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, func_80048498());
+            gDLL_29_Gplay->exports->func_958(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, func_80048498());
             break;
         case TRG_CMD_MAP_LAYER:
             if (cmd->param1 == 0) {
@@ -865,15 +865,15 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             switch (cmd->param1) {            /* switch 4; irregular */
             case 0:                         /* switch 4 */
                 // "Restart Set [%d]\n"
-                gDLL_29_gplay->exports->restart_set(&self->srt.transl, self->srt.yaw, func_80048498());
+                gDLL_29_Gplay->exports->restart_set(&self->srt.transl, self->srt.yaw, func_80048498());
                 break;
             case 1:                         /* switch 4 */
                 // "Restart Clear [%d]\n"
-                gDLL_29_gplay->exports->restart_clear();
+                gDLL_29_Gplay->exports->restart_clear();
                 break;
             case 2:                         /* switch 4 */
                 // "Restart Goto [%d]\n"
-                gDLL_29_gplay->exports->restart_goto();
+                gDLL_29_Gplay->exports->restart_goto();
                 break;
             }
             break;
@@ -882,7 +882,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             if (sidekick != NULL) {
                 switch (cmd->param1) {       /* switch 5; irregular */
                 case 0:                     /* switch 5 */
-                    ((DLLInst_Unknown*)sidekick->dll)->exports->func[23].withOneArg(sidekick);
+                    sidekick->dll->exports->func23(sidekick);
                     break;
                 case 1:                     /* switch 5 */
                     // "killing sidekick\n"
@@ -895,7 +895,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
                         var_v0_2 = obj_get_nearest_type_to(0x33, sidekick, NULL);
                     }
                     if (var_v0_2 != NULL) {
-                        ((DLLInst_Unknown*)sidekick->dll)->exports->func[22].withTwoArgs(sidekick, var_v0_2);
+                        sidekick->dll->exports->func22(sidekick, var_v0_2);
                     }
                     break;
                 }
@@ -904,7 +904,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
         case TRG_CMD_WATER_FALLS_FLAGS:
         case TRG_CMD_WATER_FALLS_FLAGS2:
             // "Trigger [%d], amSfxWaterFallsSetFlags,   Action [%d], PassDir [%d]"
-            gDLL_AMSFX->exports->water_falls_set_flags(cmd->param1);
+            gDLL_6_AMSFX->exports->water_falls_set_flags(cmd->param1);
             break;
         }
     }
@@ -1046,8 +1046,8 @@ void trigger_point_update(Object *self, Object *activator) {
     prevDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
 
     if (createInfo->localID > 0) {
-        currDist = gDLL_CURVES->exports->curves_func_14f4(7, createInfo->localID, 
-            state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, 
+        currDist = gDLL_26_Curves->exports->curves_func_14f4(7, createInfo->localID,
+            state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z,
             &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z);
         
             if (currDist < 0.0f) {
@@ -1458,9 +1458,9 @@ void trigger_curve_update(Object *self, Object *activator) {
     state = (TriggerState*)self->state;
     createInfo = (TriggerCreateInfo*)self->createInfo;
     
-    temp_v0 = gDLL_CURVES->exports->curves_func_1e4(state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &sp34, 1, createInfo->localID);
-    sp3C = gDLL_CURVES->exports->curves_func_291c(temp_v0, state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &dist);
-    temp_v0_2 = gDLL_CURVES->exports->curves_func_291c(temp_v0, state->activatorPrevPos.x, state->activatorPrevPos.y, state->activatorPrevPos.z, &dist);
+    temp_v0 = gDLL_26_Curves->exports->curves_func_1e4(state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &sp34, 1, createInfo->localID);
+    sp3C = gDLL_26_Curves->exports->curves_func_291c(temp_v0, state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &dist);
+    temp_v0_2 = gDLL_26_Curves->exports->curves_func_291c(temp_v0, state->activatorPrevPos.x, state->activatorPrevPos.y, state->activatorPrevPos.z, &dist);
     
     if (sp3C != 0) {
         if (temp_v0_2 == 0) {

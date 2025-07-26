@@ -2,11 +2,12 @@
 #define _DLLS_63_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/74_picmenu.h"
+#include "dlls/engine/74_pic_menu.h"
 #include "sys/menu.h"
 #include "dll_def.h"
 
-typedef struct {
+typedef struct
+{
     /*0*/ u8 isEmpty;
     /*1*/ u8 character;
     /*2*/ u8 spiritBits;
@@ -18,7 +19,8 @@ typedef struct {
     /*C*/ char filename[6];
 } GameSelectSaveInfo;
 
-typedef struct {
+typedef struct
+{
     PicMenuItem *menuItems;
     s8 *textIDs;
     u8 count;
@@ -27,7 +29,8 @@ typedef struct {
     u8 unkB;
 } GameSelectSubmenu;
 
-typedef enum {
+typedef enum
+{
     SUBMENU_GAME_SELECT = 0,
     SUBMENU_GAME_CONFIRM = 1,
     SUBMENU_COPY_SRC_SELECT = 2,

@@ -16,7 +16,7 @@
 61 = engine/61
 63 = engine/63_gameselect
 64 = engine/64_entername
-74 = engine/74_picmenu
+74 = engine/74_pic_menu
 82 = engine/82
 83 = engine/83
 94 = engine/94_camtalk1

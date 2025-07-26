@@ -40,7 +40,7 @@ void cannon_claw_update(Object *self) {
         if (self->parent != NULL) {
             CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
             set_gplay_bitstring(createInfo->bitstringEntry, 1);
-            ((DLLInst_Unknown*)sidekick->dll)->exports->func[21].withThreeArgs(sidekick, 0, 0);
+            sidekick->dll->exports->func21(sidekick, 0, 0);
         }
         
         cannon_claw_func_1B4(self);

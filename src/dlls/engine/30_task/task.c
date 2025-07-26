@@ -9,36 +9,41 @@ static u8 sRecentlyCompleted[5];
 static u8 sCompletionIdx;
 static s8 sRecentlyCompletedNextIdx;
 
-void task_ctor(void *self) {
-
+void task_ctor(void *self)
+{
 }
 
-void task_dtor(void *self) {
-
+void task_dtor(void *self)
+{
 }
 
-void task_load_recently_completed() {
+void task_load_recently_completed()
+{
     s32 i;
     u8 val;
 
-    for (i = 0; i != 5; i++) {
+    for (i = 0; i != 5; i++)
+    {
         val = get_gplay_bitstring(311 + i);
         sRecentlyCompleted[i] = val;
 
-        if (val != 0) {
+        if (val != 0)
+        {
             sRecentlyCompletedNextIdx = i;
         }
     }
 
     val = get_gplay_bitstring(316);
     sCompletionIdx = val;
-    if (val == 0) {
+    if (val == 0)
+    {
         sCompletionIdx = 1;
         sRecentlyCompletedNextIdx = -1;
     }
 }
 
-void task_mark_task_completed(u8 task) {
+void task_mark_task_completed(u8 task)
+{
     s16 i;
     s16 bs_entry;
     s16 bit_idx;
@@ -46,28 +51,35 @@ void task_mark_task_completed(u8 task) {
     s16 bs_entry2;
 
     // Bail if already recently completed
-    for (i = 0; i < 5; i++) {
-        if (task == sRecentlyCompleted[i]) {
+    for (i = 0; i < 5; i++)
+    {
+        if (task == sRecentlyCompleted[i])
+        {
             return;
         }
     }
 
     // Add task to recently completed list
-    if (sRecentlyCompletedNextIdx != 4) {
+    if (sRecentlyCompletedNextIdx != 4)
+    {
         // Append if there's room
         sRecentlyCompletedNextIdx++;
         sRecentlyCompleted[sRecentlyCompletedNextIdx] = task;
 
         set_gplay_bitstring(sRecentlyCompletedNextIdx + 311, task);
-    } else {
+    }
+    else
+    {
         // Otherwise, shift everything down and add to the end
-        for (i = 0; i < 4; i++) {
+        for (i = 0; i < 4; i++)
+        {
             sRecentlyCompleted[i] = sRecentlyCompleted[i + 1];
         }
 
         sRecentlyCompleted[4] = task;
 
-        for (i = 0; i < 5; i++) {
+        for (i = 0; i < 5; i++)
+        {
             set_gplay_bitstring(311 + i, sRecentlyCompleted[i]);
         }
     }
@@ -84,12 +96,15 @@ void task_mark_task_completed(u8 task) {
     set_gplay_bitstring(bs_entry, bs_value);
 
     // Determine new completion index
-    if (sCompletionIdx == task) {
-        do {
+    if (sCompletionIdx == task)
+    {
+        do
+        {
             sCompletionIdx++;
 
             bs_entry2 = (sCompletionIdx / 32) + 303;
-            if (bs_entry2 != bs_entry) {
+            if (bs_entry2 != bs_entry)
+            {
                 bs_entry = bs_entry2;
 
                 bs_value = get_gplay_bitstring(bs_entry2);
@@ -102,24 +117,29 @@ void task_mark_task_completed(u8 task) {
     }
 
     // hmm
-    if (!task) {
-        gDLL_29_gplay->exports->func_958(NULL, 0, 1, func_80048498());
+    if (!task)
+    {
+        gDLL_29_Gplay->exports->func_958(NULL, 0, 1, func_80048498());
     }
 }
 
-u8 task_get_num_recently_completed() {
+u8 task_get_num_recently_completed()
+{
     return sRecentlyCompletedNextIdx + 1;
 }
 
-char *task_get_recently_completed_task_text(u8 idx) {
-    return gDLL_21_gametext->exports->get_text(sRecentlyCompleted[idx] + 244, 0);
+char *task_get_recently_completed_task_text(u8 idx)
+{
+    return gDLL_21_Gametext->exports->get_text(sRecentlyCompleted[idx] + 244, 0);
 }
 
-char *task_get_completion_task_text() {
-    return gDLL_21_gametext->exports->get_text(sCompletionIdx + 244, 1);
+char *task_get_completion_task_text()
+{
+    return gDLL_21_Gametext->exports->get_text(sCompletionIdx + 244, 1);
 }
 
-s16 task_get_completion_percentage() {
+s16 task_get_completion_percentage()
+{
     f32 tmp = sCompletionIdx / 206.0f;
     return tmp * 100.0f;
 }

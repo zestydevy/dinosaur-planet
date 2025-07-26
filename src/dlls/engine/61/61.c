@@ -24,9 +24,10 @@ static Texture *bss_10;
 static Texture *bss_14;
 static Texture *bss_18;
 
-void dll_61_ctor(void *self) {
+void dll_61_ctor(void *self)
+{
     u8 temp[4];
-    *((u32*)temp) = data_8; // wat
+    *((u32 *)temp) = data_8; // wat
 
     func_800379D0(0, 0, 0);
     func_80010018(0);
@@ -41,88 +42,109 @@ void dll_61_ctor(void *self) {
     bss_18 = queue_load_texture_proxy(0x2d5);
 }
 
-void dll_61_dtor(void *self) {
+void dll_61_dtor(void *self)
+{
     texture_destroy(bss_C);
     texture_destroy(bss_10);
     texture_destroy(bss_14);
     texture_destroy(bss_18);
 }
 
-s32 dll_61_update1() {
+s32 dll_61_update1()
+{
     s32 delay;
 
     delay = delayByte;
-    if (delay > 3) {
+    if (delay > 3)
+    {
         delay = 3;
     }
 
-    if (bss_1 > 0) {
+    if (bss_1 > 0)
+    {
         bss_1 -= delay;
     }
 
-    if (bss_2 != 0) {
+    if (bss_2 != 0)
+    {
         set_gplay_bitstring(0x44f, 0);
         menu_set(MENU_5);
     }
 
     data_0 += delayByte;
-    if (data_0 > 620) {
+    if (data_0 > 620)
+    {
         bss_0 = 1;
     }
 
-    if (bss_0 != 0) {
-        gDLL_28_screen_fade->exports->fade(30, SCREEN_FADE_BLACK);
+    if (bss_0 != 0)
+    {
+        gDLL_28_ScreenFade->exports->fade(30, SCREEN_FADE_BLACK);
         bss_1 = 45;
         bss_2 = 1;
     }
 
-    if (data_4 > 0) {
+    if (data_4 > 0)
+    {
         bss_4 -= delayFloat;
     }
-    if (data_4 > 2) {
+    if (data_4 > 2)
+    {
         bss_8 -= delayFloat;
     }
 
     return 0;
 }
 
-void dll_61_update2() { }
+void dll_61_update2() {}
 
-void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs)
+{
     f32 var1;
     u8 _stackPad[4];
 
-    if (bss_2 != 0 && bss_1 < 11) {
+    if (bss_2 != 0 && bss_1 < 11)
+    {
         return;
     }
 
     func_80037A14(gdl, mtxs, 1);
     gDLL_76->exports->func2(gdl, mtxs);
 
-    if (data_0 > 40 && data_4 == 0) {
+    if (data_0 > 40 && data_4 == 0)
+    {
         data_4 = 1;
         bss_4 = 500.0f;
     }
 
-    if (data_0 > 50 && data_4 == 1) {
+    if (data_0 > 50 && data_4 == 1)
+    {
         data_4 = 2;
     }
 
-    if (data_0 > 285 && data_4 == 2) {
+    if (data_0 > 285 && data_4 == 2)
+    {
         data_4 = 3;
         bss_8 = 145.0f;
     }
 
-    if (data_4 > 2) {
-        if (bss_8 <= 72.0f) {
+    if (data_4 > 2)
+    {
+        if (bss_8 <= 72.0f)
+        {
             var1 = 1.0f - ((72.0f - bss_8) / 72.0f);
-        } else {
+        }
+        else
+        {
             var1 = 1.0f - ((bss_8 - 72.0f) / 72.0f);
         }
 
-        if (var1 < 0.0f) {
+        if (var1 < 0.0f)
+        {
             var1 = 0.0f;
-        } else if (var1 > 1.0f) {
+        }
+        else if (var1 > 1.0f)
+        {
             var1 = 1.0f;
         }
 
@@ -130,16 +152,23 @@ void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         func_8003825C(gdl, bss_18, 0x66, 0xfa, 0, 0, (s16)(255.0f * var1), 0);
     }
 
-    if (data_4 >= 1) {
-        if (bss_4 <= 125.0f) {
+    if (data_4 >= 1)
+    {
+        if (bss_4 <= 125.0f)
+        {
             var1 = 1.0f - ((125.0f - bss_4) / 125.0f);
-        } else {
+        }
+        else
+        {
             var1 = 1.0f - ((bss_4 - 375.0f) / 125.0f);
         }
 
-        if (var1 < 0.0f) {
+        if (var1 < 0.0f)
+        {
             var1 = 0.0f;
-        } else if (var1 > 1.0f) {
+        }
+        else if (var1 > 1.0f)
+        {
             var1 = 1.0f;
         }
 
