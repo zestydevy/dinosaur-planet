@@ -33,18 +33,14 @@ static GameTextChunk *bss_14;
 static Texture *bss_18;
 static Texture *bss_1C;
 
-void dll_60_ctor(void *self)
-{
+void dll_60_ctor(void *self) {
     font_load(FONT_FUN_FONT);
 
-    if (osMemSize != 0x800000)
-    {
+    if (osMemSize != 0x800000) {
         data_4 = 1;
         data_10 = queue_load_texture_proxy(0x2da);
         bss_14 = gDLL_21_Gametext->exports->get_chunk(243);
-    }
-    else
-    {
+    } else {
         bss_4 = 0;
         bss_0 = 0.0f;
         font_load(FONT_DINO_MEDIUM_FONT_IN);
@@ -67,14 +63,10 @@ void dll_60_ctor(void *self)
     bss_5 = 2;
 }
 
-void dll_60_dtor(void *self)
-{
-    if (data_4 == 1)
-    {
+void dll_60_dtor(void *self) {
+    if (data_4 == 1) {
         texture_destroy(data_10);
-    }
-    else
-    {
+    } else {
         texture_destroy(data_8);
         texture_destroy(data_C);
         texture_destroy(bss_18);
@@ -84,60 +76,47 @@ void dll_60_dtor(void *self)
     free(bss_14);
 }
 
-s32 dll_60_update1()
-{
-    if (data_4 == 1)
-    {
+s32 dll_60_update1() {
+    if (data_4 == 1) {
         return 0;
-    }
-    else
-    {
+    } else {
         bss_0 += delayFloat;
 
-        if (bss_6 == 0 && bss_0 > 205.0f)
-        {
+        if (bss_6 == 0 && bss_0 > 205.0f) {
             gDLL_28_ScreenFade->exports->fade(30, SCREEN_FADE_BLACK);
             bss_6 = 1;
-        }
-        else if (bss_6 == 1 && bss_0 > 245.0f)
-        {
+        } else if (bss_6 == 1 && bss_0 > 245.0f) {
             gDLL_28_ScreenFade->exports->fade_reversed(30, SCREEN_FADE_BLACK);
             bss_6 = 2;
         }
 
-        if (data_0 > 1)
-        {
+        if (data_0 > 1) {
             bss_8 -= delayFloat;
         }
-        if (data_0 > 2)
-        {
+        if (data_0 > 2) {
             bss_C -= delayFloat;
         }
-        if (data_0 > 3)
-        {
+        if (data_0 > 3) {
             bss_10 -= delayFloat;
         }
 
-        if (bss_0 > 720.0f)
-        {
+        if (bss_0 > 720.0f) {
             bss_4 = 1;
         }
 
-        if (bss_4 != 0)
-        {
+        if (bss_4 != 0) {
             bss_4 = 0;
             bss_0 = 0.0f;
             menu_set(MENU_3);
         }
 
         return 0;
-    }
+    } 
 }
 
-void dll_60_update2() {}
+void dll_60_update2() { }
 
-void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs)
-{
+void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     u32 local4;
     u8 _stackPad[4];
     f32 var5;
@@ -145,35 +124,31 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs)
 
     local4 = data_18;
 
-    font_window_set_coords(2, 0, 0,
-                           (RESOLUTION_WIDTH(get_some_resolution_encoded())) - 50,
-                           (RESOLUTION_HEIGHT(get_some_resolution_encoded())));
-
+    font_window_set_coords(2, 0, 0, 
+        (RESOLUTION_WIDTH(get_some_resolution_encoded())) - 50,
+        (RESOLUTION_HEIGHT(get_some_resolution_encoded())));
+    
     font_window_flush_strings(2);
     font_window_use_font(2, FONT_FUN_FONT);
     func_80037A14(gdl, mtxs, 1);
 
-    if (data_4 == 1)
-    {
+    if (data_4 == 1) {
         fontYSpacing = font_get_y_spacing(FONT_FUN_FONT);
 
         font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-        font_window_add_string_xy(2, 320, 198, bss_14->strings[0], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 272, bss_14->strings[1], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, 198,                bss_14->strings[0], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, 272,                bss_14->strings[1], 1, ALIGN_TOP_CENTER);
         font_window_add_string_xy(2, 320, fontYSpacing + 272, bss_14->strings[2], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 356, bss_14->strings[3], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, 356,                bss_14->strings[3], 1, ALIGN_TOP_CENTER);
         font_window_add_string_xy(2, 320, fontYSpacing + 356, bss_14->strings[4], 1, ALIGN_TOP_CENTER);
         func_8003825C(gdl, data_10, 0xfd, 0x42, 0, 0, 0xff, 0);
-    }
-    else
-    {
+    } else {
         gDLL_76->exports->func2(gdl, mtxs);
 
-        if (bss_0 < 240.0f)
-        {
+        if (bss_0 < 240.0f) {
             font_window_enable_wordwrap(2);
             font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-            font_window_add_string_xy(2, 57, 54, bss_14->strings[0], 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(2, 57, 54,  bss_14->strings[0], 1, ALIGN_TOP_LEFT);
             font_window_add_string_xy(2, 179, 88, bss_14->strings[1], 1, ALIGN_TOP_LEFT);
             font_window_add_string_xy(2, 57, 172, bss_14->strings[2], 1, ALIGN_TOP_LEFT);
             font_window_add_string_xy(2, 57, 222, bss_14->strings[3], 1, ALIGN_TOP_LEFT);
@@ -182,64 +157,47 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs)
             func_8003825C(gdl, bss_1C, 0x16d, 0x68, 0, 0, 0xff, 0);
         }
 
-        if (bss_0 > 240.0f && data_0 == 0)
-        {
+        if (bss_0 > 240.0f && data_0 == 0) {
             data_0 = 1;
             gDLL_76->exports->func0(0x41a, 0x2c9, 0xf, -470, 0xffffffee, 1.0f, &local4, 0xe002, 5, 1, 0, 0);
         }
 
-        if (bss_0 > 280.0f && data_0 == 1)
-        {
+        if (bss_0 > 280.0f && data_0 == 1) {
             data_0 = 3;
             bss_8 = 425.0f;
         }
-
-        if (bss_0 > 450.0f && data_0 == 3)
-        {
+        
+        if (bss_0 > 450.0f && data_0 == 3) {
             data_0 = 4;
             bss_10 = 200.0f;
         }
-
-        if (data_0 > 3)
-        {
-            if (bss_10 <= 100.0f)
-            {
+        
+        if (data_0 > 3) {
+            if (bss_10 <= 100.0f) {
                 var5 = 1.0f - ((100.0f - bss_10) / 100.0f);
-            }
-            else
-            {
+            } else {
                 var5 = 1.0f - ((bss_10 - 100.0f) / 100.0f);
             }
 
-            if (var5 < 0.0f)
-            {
+            if (var5 < 0.0f) {
                 var5 = 0.0f;
-            }
-            else if (var5 > 1.0f)
-            {
+            } else if (var5 > 1.0f) {
                 var5 = 1.0f;
             }
-
+            
             func_8003825C(gdl, data_C, 0x5d, 0xc6, 0, 0, (s16)(255.0f * var5), 0);
         }
 
-        if (data_0 >= 2)
-        {
-            if (bss_8 <= 106.0f)
-            {
+        if (data_0 >= 2) {
+            if (bss_8 <= 106.0f) {
                 var5 = 1.0f - ((106.0f - bss_8) / 106.0f);
-            }
-            else
-            {
+            } else {
                 var5 = 1.0f - ((bss_8 - 319.0f) / 106.0f);
             }
 
-            if (var5 < 0.0f)
-            {
+            if (var5 < 0.0f) {
                 var5 = 0.0f;
-            }
-            else if (var5 > 1.0f)
-            {
+            } else if (var5 > 1.0f) {
                 var5 = 1.0f;
             }
 
@@ -249,10 +207,9 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs)
 
     font_window_draw(gdl, NULL, NULL, 2);
     bss_5 -= 1;
-    if (bss_5 < 0)
-    {
+    if (bss_5 < 0) {
         bss_5 = 0;
     }
 }
 
-void dll_60_func_D0C() {}
+void dll_60_func_D0C() { }

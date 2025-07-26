@@ -363,7 +363,7 @@ void trigger_update(Object* self) {
                 }
                 break;
             case 2:
-                activatorObj = gDLL_Camera->exports->func2();
+                activatorObj = gDLL_2_Camera->exports->func2();
                 break;
             }
         }
@@ -672,7 +672,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             break;
         case TRG_CMD_CAMERA_ACTION: 
             // "Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]"
-            gDLL_Camera->exports->func8(cmd->param1, cmd->param2);
+            gDLL_2_Camera->exports->func8(cmd->param1, cmd->param2);
             break;
         case TRG_CMD_TRACK: 
             // "Trigger [%d], Track Sky On"
@@ -717,7 +717,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                gDLL_minic->exports->func6(cmd->param2);
+                gDLL_12_Minic->exports->func6(cmd->param2);
                 if (cmd->param2 != 0) {
 
                 }
