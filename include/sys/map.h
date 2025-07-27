@@ -448,6 +448,7 @@ s32 map_should_stream_load_object(ObjCreateInfo*, s8, s32);
 s32 map_check_some_mapobj_flag(s32, u32);
 void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
+s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
 
 // other funcs that are used
 void func_80058F3C(void);

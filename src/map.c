@@ -3967,7 +3967,88 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_should_stream_load_object.s")
+s32 map_should_stream_load_object(ObjCreateInfo* arg0, s8 arg1, s32 arg2) {
+    s32 scaledX;
+    Object* player;
+    s32 scaledZOrFlag;
+    f32 zDiff;
+    f32 xDiff;
+    f32 scaledLoadDistance;
+    f32 yDiff;
+    f32 sp20;
+    f32 sp1C;
+    f32 sp18;
+    s8 stop;
+    s8 i;
+    s8 *currentBlockIndices;
+
+    if (func_8004B4A0(arg0, arg2) == 0) {
+        return 0;
+    }
+
+    if (arg0->loadParamA & 1) {
+        return 1;
+    }
+
+    if (arg0->loadParamA & 2) {
+        return 0;
+    }
+
+    if (arg1 == 0) {
+        scaledX = floor_f((arg0->x - gWorldX) / 640.0f);
+        scaledZOrFlag = floor_f((arg0->z - gWorldZ) / 640.0f);
+        if (scaledX < 0 || scaledZOrFlag < 0 || scaledX >= 0x10 || scaledZOrFlag >= 0x10) {
+            return 0;
+        }
+
+        stop = 0;
+        scaledX = (scaledZOrFlag * 0x10) + scaledX;
+        for (i = 0; i < 5; i++) {
+            currentBlockIndices = gBlockIndices[i];
+            if (currentBlockIndices[scaledX] >= 0) {
+                stop = 1;
+            }
+        }
+        if (stop == 0) {
+            return 0;
+        }
+    }
+
+    if (arg0->loadParamA & 0x20) {
+        return 1;
+    }
+
+    scaledZOrFlag = 0;
+    if ((arg0->loadParamA & 4) && (arg1 == 0)) {
+        player = get_player();
+        if (player != NULL) {
+            sp20 = player->positionMirror.x;
+            sp1C = player->positionMirror.y;
+            sp18 = player->positionMirror.z;
+        } else {
+            scaledZOrFlag = 1;
+        }
+    } else {
+        scaledZOrFlag = 1;
+    }
+
+    if (scaledZOrFlag != 0) {
+        sp20 = Vec3_Int_array[arg1].f.x;
+        sp1C = Vec3_Int_array[arg1].f.y;
+        sp18 = Vec3_Int_array[arg1].f.z;
+    }
+
+    scaledLoadDistance = arg0->loadDistance * 8;
+    xDiff = sp20 - arg0->x;
+    yDiff = sp1C - arg0->y;
+    zDiff = sp18 - arg0->z;
+    xDiff = ((xDiff * xDiff) + (yDiff * yDiff) + (zDiff * zDiff));
+    if (xDiff < (scaledLoadDistance * scaledLoadDistance)) {
+        return 1;
+    }
+
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B190.s")
 
