@@ -327,6 +327,45 @@ typedef struct Unk800B96B0 {
     f32 unk10;
 } Unk800B96B0;
 
+typedef struct UnkSp8C {
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+} UnkSp8C;
+
+typedef struct Unk80092BC0 {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+} Unk80092BC0;
+
+typedef struct Unk800B98A0 {
+    u8 unk0[4000];
+} Unk800B98A0;
+typedef struct Unk800B98A8 {
+    u8 unk0[8000];
+} Unk800B98A8;
+typedef struct Unk800B98B0 {
+    u8 unk0[6400];
+} Unk800B98B0;
+
+typedef struct Unk800BB158 {
+    u8 unk0[4800];
+} Unk800BB158;
+
+typedef struct Unk800BB160 {
+    u8 unk0[9600];
+} Unk800BB160;
+
+typedef struct Unk800BB168 {
+    u8 unk0[11200];
+} Unk800BB168;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -423,6 +462,20 @@ extern s32 D_800B9798;
 extern s16 D_800B97C4;
 
 extern Struct_D_800B9768 D_800B9768;
+extern Unk80092BC0 D_80092BC0;
+extern u8 D_800B1847;
+
+void func_8005B870(void);
+extern f32 D_800B97E0[24];
+extern f32 D_800B9840[24];
+
+extern Unk800B98A0 *D_800B98A0[2];
+extern Unk800B98A8 *D_800B98A8[2];
+extern Unk800B98B0 *D_800B98B0[2];
+extern Unk800BB158 *D_800BB158[2];
+extern Unk800BB160 *D_800BB160[2];
+extern Unk800BB168 *D_800BB168[2];
+extern Texture* D_800BB190;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -437,7 +490,7 @@ void block_setup_gdl_groups(Block *block);
 void *block_setup_textures(Block *block);
 void block_setup_xz_bitmap(Block *block);
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
-void block_compute_vertex_colors(BlocksModel*,s32,s32,s32);
+void block_compute_vertex_colors(Block*,s32,s32,s32);
 void func_80049D38(u32 arg0);
 void func_80049FA8(BlocksModel*);
 void func_800499BC(void);
@@ -482,5 +535,6 @@ void func_8003E648(Texture*, s32, s32);
 Object **obj_get_all_of_type(s32 idx, s32 *count);
 u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
+void func_8001F81C(u8*, u8*, u8*);
 
 #endif

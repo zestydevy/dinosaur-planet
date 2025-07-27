@@ -3042,7 +3042,7 @@ void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
     gBlockRefCounts[slot] = 1;
 
     if (block->unk_3e != 0) {
-        block_compute_vertex_colors(block, 0, 0, 1);
+        block_compute_vertex_colors((Block *) block, 0, 0, 1);
     }
 
     func_80058F3C();
@@ -4518,7 +4518,448 @@ void func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
     }
 }
 
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
+#else
+// https://decomp.me/scratch/FLOC0
+void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
+    UnkSp8C* var_v0;
+    MapsUnk_800B97C0* temp_v0_7;
+    s32 var_a0;
+    s32 var_a3;
+    Unk80092BC0 sp160;
+    s32 sp15C[1]; // has to be an array of size 1 and not a pointer
+    s32 sp158[1]; // has to be an array of size 1 and not a pointer
+    s32 sp154[1]; // has to be an array of size 1 and not a pointer
+    s32 sp150[1]; // has to be an array of size 1 and not a pointer
+    s32 sp14C[1]; // has to be an array of size 1 and not a pointer
+    s32 sp148[1]; // has to be an array of size 1 and not a pointer
+    Vtx_t* var_s1;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 var_fv1;
+    s32 temp_t0;
+    s16 var_s3;
+    s16 var_a0_2;
+    s32 temp_v1;
+    s32 var_a1;
+    Vtx_t *sp124;
+    s8 pad_sp123;
+    s8 pad_sp122;
+    u8 var_a1_2;
+    u8 sp120;
+    UnkSp8C* var_s0; // sp11C
+    f32 sp110[3];
+    s32 var_a2;
+    UnkSp8C sp8C[4];
+    f32 sp7C[4];
+    u8 sp7B;
+    u8 sp7A;
+    u8 sp79;
+    u8 sp78;
+    u8 sp77;
+    u8 sp76;
+    u8 sp75;
+    s32 i; // sp64?
+    s32 var_t1;
+    s32 var_t2;
+    s32 var_t3;
+    BlockShape* blockShape;
+
+    sp160 = D_80092BC0;
+    sp78 = 0;
+    func_8001F81C(&sp7B, &sp7A, &sp79);
+    sp77 = sp7B;
+    sp76 = sp7A;
+    sp75 = sp79;
+    arg1 *= 640;
+    arg2 *= 640;
+    var_s0 = gDLL_newlfx->exports->func[3].withTwoArgsS32(0, (s32)&sp78);
+    gDLL_57->exports->func[2].withSixArgs((s32)sp158, (s32)sp150, (s32)sp148, (s32)sp15C, (s32)sp154, (s32)sp14C);
+    if (var_s0 != NULL) {
+        for (i = 0; i < sp78; i++) {
+            var_v0 = &sp8C[i];
+            var_v0->unk0 = var_s0->unk0;
+            var_v0->unk4 = var_s0->unk4;
+            var_v0->unk8 = var_s0->unk8;
+            var_v0->unkC = var_s0->unkC;
+            var_v0->unk10 = var_s0->unk10;
+            var_v0->unk14 = var_s0->unk14;
+            var_v0->unk18 = var_s0->unk18;
+            var_v0->unk1C = var_s0->unk1C;
+            var_v0->unk0 -= arg1;
+            var_v0->unk8 -= arg2;
+            temp_fv0 = var_v0->unk18;
+            temp_fv1 = var_v0->unk1C;
+            if (temp_fv0 != temp_fv1) {
+                sp7C[i] = 255.0f / (temp_fv1 - temp_fv0);
+            } else {
+                sp7C[i] = 255.0f;
+            }
+            var_s0++;
+        }
+    }
+    for (i = 0; i < arg0->shapeCount; i++) {
+        var_a1_2 = 0;
+        blockShape = &arg0->shapes[i];
+        temp_v1 = blockShape->flags;
+        if (arg0->tiles[blockShape->tileIdx0].texture == NULL) {
+            continue;
+        }
+        sp120 = 0;
+        if (((temp_v1 & 0x120) || (arg0->tiles[blockShape->tileIdx0].texture->flags & 0xC000)) && !(temp_v1 & 0x46C00000)) {
+            var_a1_2 = 1;
+        } else if (temp_v1 & 0x46400000) {
+            var_a1_2 = 2;
+        } else if (temp_v1 & 0x01000000) {
+            var_a1_2 = 3;
+        } else if (temp_v1 & 0x800000) {
+            var_a1_2 = 4;
+        }
+
+        if (!(temp_v1 & 0x10000000)) {
+            if ((var_a1_2 != 0) && (var_a1_2 != 3)) {
+            }
+            continue;
+        }
+
+        if (blockShape->alpha == 0xFF) {
+            if (temp_v1 & 0x400000) {
+                sp7B = sp158[0];
+                sp7A = sp150[0];
+                sp79 = sp148[0];
+            } else if (temp_v1 & 0x40000000) {
+                sp7B = sp15C[0];
+                sp7A = sp154[0];
+                sp79 = sp14C[0];
+            }
+        } else if (blockShape->alpha == 0xFE) {
+            sp7B = 0xFF;
+            sp7A = 0xFF;
+            sp79 = 0xFF;
+        } else {
+            sp7B = sp77;
+            sp7A = sp76;
+            sp79 = sp75;
+        }
+
+        if (var_a1_2 != 0) {
+            var_a0 = var_a1_2;
+            var_s1 = arg0->vertices2[(arg0->vtxFlags & 1) ^ 1];
+            blockShape = &arg0->shapes[i];
+            sp124 = &var_s1[blockShape[1].vtxBase];
+            var_s1 += blockShape->vtxBase;
+            if ((var_a1_2 == 3) && (D_800B1847 != 0)) {
+                while ((u32) var_s1 < (u32) sp124) {
+                    var_s1->cn[0] = sp7B;
+                    var_s1->cn[1] = sp7A;
+                    var_s1->cn[2] = sp79;
+                    var_s1++;
+                }
+            } else if (var_a0 == 1) {
+                while ((u32) var_s1 < (u32) sp124) {
+                    var_s1->cn[0] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk3;
+                    var_s1->cn[1] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk4;
+                    var_s1->cn[2] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk5;
+                    var_s1++;
+                }
+            } else if (var_a0 == 4) {
+                while ((u32) var_s1 < (u32) sp124) {
+                    if (!((s16)var_s1->flag & 3)) {
+                        var_s1->cn[0] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk3;
+                        var_s1->cn[1] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk4;
+                        var_s1->cn[2] = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk5;
+                    }
+                    var_s1++;
+                }
+            } else {
+                if (var_a0 == 2) {
+                    sp160.unk0 = 0;
+                    sp160.unk2 = 0;
+                    sp160.unk4 = 0;
+                    for (var_s3 = 0; var_s3 < sp78; var_s3++) {
+                        var_s1 = arg0->vertices2[(arg0->vtxFlags & 1) ^ 1];
+                        blockShape = &arg0->shapes[i];
+                        sp124 = &var_s1[blockShape[1].vtxBase];
+                        var_s1 = &var_s1[blockShape->vtxBase];
+                        if (var_s0 != NULL) {
+                            var_v0 = &sp8C[var_s3];
+                            if (
+                                ((blockShape->unk_0x8[4] - 0x32) << 2) < var_v0->unk0 &&
+                                var_v0->unk0 < ((blockShape->unk_0x8[5] + 0x32) << 2) &&
+                                ((blockShape->unk_0x8[6] - 0x32) << 2) < var_v0->unk8 &&
+                                var_v0->unk8 < ((blockShape->unk_0x8[7] + 0x32) << 2)
+                            ) {
+                                sp120 = 1;
+                            }
+                        }
+                        while ((u32) var_s1 < (u32) sp124) {
+                            if (sp120 != 0) {
+                                var_v0 = &sp8C[var_s3];
+                                sp110[0] = var_s1->ob[0] - var_v0->unk0;
+                                sp110[1] = var_s1->ob[1] - var_v0->unk4;
+                                sp110[2] = var_s1->ob[2] - var_v0->unk8;
+                                temp_fv0 = sqrtf(((sp110[0] * sp110[0]) + (sp110[1] * sp110[1])) + (sp110[2] * sp110[2]));
+                                if (temp_fv0 < var_v0->unk18) {
+                                    var_t1 = var_v0->unkC;
+                                    var_t2 = var_v0->unk10;
+                                    var_t3 = var_v0->unk14;
+                                } else {
+                                    if (var_v0->unk1C < temp_fv0) {
+                                        var_t1 = 0;
+                                        var_t2 = 0;
+                                        var_t3 = 0;
+                                    } else {
+                                        var_fv1 = (temp_fv0 - var_v0->unk18);
+                                        var_fv1 *= sp7C[var_s3];
+                                        if (var_fv1 > 255.0f) {
+                                            var_fv1 = 255.0f;
+                                        }
+                                        var_fv1 = 255.0f - var_fv1;
+                                        var_t1 = ((s16)var_v0->unkC * (s16)var_fv1) >> 8;
+                                        var_t2 = ((s16)var_v0->unk10 * (s16)var_fv1) >> 8;
+                                        var_t3 = ((s16)var_v0->unk14 * (s16)var_fv1) >> 8;
+                                    }
+                                }
+                                if (arg0->shapes[i].flags & 0x40400000) {
+                                    if (arg0->shapes[i].flags & 0x400000) {
+                                        var_a0_2 = 0;
+                                    } else {
+                                        var_a0_2 = 1;
+                                    }
+                                    if (var_s3 == 0) {
+                                        temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                        switch ((s16)var_s1->flag & 3) {
+                                        case 0: /* switch 1 */
+                                            var_a1 = D_800B97C0[temp_t0].unk3;
+                                            var_a2 = D_800B97C0[temp_t0].unk4;
+                                            var_a3 = D_800B97C0[temp_t0].unk5;
+                                            break;
+                                        default: /* switch 1 */
+                                        case 1: /* switch 1 */
+                                            var_a1 = sp158[var_a0_2];
+                                            var_a2 = sp150[var_a0_2];
+                                            var_a3 = sp148[var_a0_2];
+                                            break;
+                                        case 2: /* switch 1 */
+                                            temp_v0_7 = &D_800B97C0[temp_t0];
+                                            var_a1 = (((sp158[var_a0_2] + temp_v0_7->unk0) >> 1) * sp7B) >> 8;
+                                            var_a2 = (((sp150[var_a0_2] + temp_v0_7->unk1) >> 1) * sp7A) >> 8;
+                                            var_a3 = (((sp148[var_a0_2] + temp_v0_7->unk2) >> 1) * sp79) >> 8;
+                                            break;
+                                        }
+                                        var_a1 += var_t1;
+                                        var_a2 += var_t2;
+                                        var_a3 += var_t3;
+                                        if (var_a1 >= 0x100) {
+                                            var_a1 = 0xFF;
+                                        }
+                                        if (var_a2 >= 0x100) {
+                                            var_a2 = 0xFF;
+                                        }
+                                        if (var_a3 >= 0x100) {
+                                            var_a3 = 0xFF;
+                                        }
+                                        var_s1->cn[0] = var_a1;
+                                        var_s1->cn[1] = var_a2;
+                                        var_s1->cn[2] = var_a3;
+                                    } else {
+                                        var_a1 = var_s1->cn[0];
+                                        var_a1 += var_t1;
+                                        var_a2 = var_s1->cn[1];
+                                        var_a2 += var_t2;
+                                        var_a3 = var_s1->cn[2];
+                                        var_a3 += var_t3;
+                                        if (var_a1 >= 0x100) {
+                                            var_a1 = 0xFF;
+                                        }
+                                        if (var_a2 >= 0x100) {
+                                            var_a2 = 0xFF;
+                                        }
+                                        if (var_a3 >= 0x100) {
+                                            var_a3 = 0xFF;
+                                        }
+                                        var_s1->cn[0] = var_a1;
+                                        var_s1->cn[1] = var_a2;
+                                        var_s1->cn[2] = var_a3;
+                                    }
+                                } else if (arg0->shapes[i].flags & 0x02000000) {
+                                    if (var_s3 == 0) {
+                                        var_a1 = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk3;
+                                        var_a1 += var_t1;
+                                        var_a2 = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk4;
+                                        var_a2 += var_t2;
+                                        var_a3 = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk5;
+                                        var_a3 += var_t3;
+                                        if (var_a1 >= 0x100) {
+                                            var_a1 = 0xFF;
+                                        }
+                                        if (var_a2 >= 0x100) {
+                                            var_a2 = 0xFF;
+                                        }
+                                        if (var_a3 >= 0x100) {
+                                            var_a3 = 0xFF;
+                                        }
+                                        var_s1->cn[0] = var_a1;
+                                        var_s1->cn[1] = var_a2;
+                                        var_s1->cn[2] = var_a3;
+                                    } else {
+                                        var_a1 = var_s1->cn[0];
+                                        var_a1 += var_t1;
+                                        var_a2 = var_s1->cn[1];
+                                        var_a2 += var_t2;
+                                        var_a3 = var_s1->cn[2];
+                                        var_a3 += var_t3;
+                                        if (var_a1 >= 0x100) {
+                                            var_a1 = 0xFF;
+                                        }
+                                        if (var_a2 >= 0x100) {
+                                            var_a2 = 0xFF;
+                                        }
+                                        if (var_a3 >= 0x100) {
+                                            var_a3 = 0xFF;
+                                        }
+                                        var_s1->cn[0] = var_a1;
+                                        var_s1->cn[1] = var_a2;
+                                        var_s1->cn[2] = var_a3;
+                                    }
+                                } else if (arg0->shapes[i].flags & 0x04000000) {
+                                    if (var_s3 == 0) {
+                                        var_a1 = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk3;
+                                        var_a2 = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk4;
+                                        var_a3 = D_800B97C0[((s16)var_s1->flag >> 2) & 0xFF].unk5;
+                                        if (((s16)var_s1->flag & 3) == 1) {
+                                            var_a1 += var_t1;
+                                            var_a2 += var_t2;
+                                            var_a3 += var_t3;
+                                        } else if (((s16)var_s1->flag & 3) == 2) {
+                                            var_a1 += var_t1 >> 1;
+                                            var_a2 += var_t2 >> 1;
+                                            var_a3 += var_t3 >> 1;
+                                        }
+                                        if (var_a1 >= 0x100) {
+                                            var_a1 = 0xFF;
+                                        }
+                                        if (var_a2 >= 0x100) {
+                                            var_a2 = 0xFF;
+                                        }
+                                        if (var_a3 >= 0x100) {
+                                            var_a3 = 0xFF;
+                                        }
+                                        var_s1->cn[0] = var_a1;
+                                        var_s1->cn[1] = var_a2;
+                                        var_s1->cn[2] = var_a3;
+                                    } else {
+                                        var_a1 = var_s1->cn[0];
+                                        var_a2 = var_s1->cn[1];
+                                        var_a3 = var_s1->cn[2];
+                                        if (((s16) var_s1->flag & 3) == 1) {
+                                            var_a1 += var_t1;
+                                            var_a2 += var_t2;
+                                            var_a3 += var_t3;
+                                        } else if (((s16) var_s1->flag & 3) == 2) {
+                                            var_a1 += var_t1 >> 1;
+                                            var_a2 += var_t2 >> 1;
+                                            var_a3 += var_t3 >> 1;
+                                        }
+                                        if (var_a1 >= 0x100) {
+                                            var_a1 = 0xFF;
+                                        }
+                                        if (var_a2 >= 0x100) {
+                                            var_a2 = 0xFF;
+                                        }
+                                        if (var_a3 >= 0x100) {
+                                            var_a3 = 0xFF;
+                                        }
+                                        var_s1->cn[0] = var_a1;
+                                        var_s1->cn[1] = var_a2;
+                                        var_s1->cn[2] = var_a3;
+                                    }
+                                }
+                            } else {
+                                if ((var_s3 == 0) && (arg0->shapes[i].flags & 0x40400000)) {
+                                    if (arg0->shapes[i].flags & 0x400000) {
+                                        var_a0_2 = 0;
+                                    } else {
+                                        var_a0_2 = 1;
+                                    }
+                                    temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                    switch ((s16) var_s1->flag & 3) { /* irregular */
+                                    case 0:
+                                        var_s1->cn[0] = D_800B97C0[temp_t0].unk3;
+                                        var_s1->cn[1] = D_800B97C0[temp_t0].unk4;
+                                        var_s1->cn[2] = D_800B97C0[temp_t0].unk5;
+                                        break;
+                                    default:
+                                    case 1:
+                                        var_s1->cn[0] = sp158[var_a0_2];
+                                        var_s1->cn[1] = sp150[var_a0_2];
+                                        var_s1->cn[2] = sp148[var_a0_2];
+                                        break;
+                                    case 2:
+                                        var_s1->cn[0] = (((sp158[var_a0_2] + D_800B97C0[temp_t0].unk0) >> 1) * sp7B) >> 8;
+                                        var_s1->cn[1] = (((sp150[var_a0_2] + D_800B97C0[temp_t0].unk1) >> 1) * sp7A) >> 8;
+                                        var_s1->cn[2] = (((sp148[var_a0_2] + D_800B97C0[temp_t0].unk2) >> 1) * sp79) >> 8;
+                                        break;
+                                    }
+                                } else if (arg0->shapes[i].flags & 0x02000000) {
+                                    var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk3;
+                                    var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk4;
+                                    var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk5;
+                                } else if (arg0->shapes[i].flags & 0x04000000) {
+                                    var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk3;
+                                    var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk4;
+                                    var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk5;
+                                }
+                            }
+                            var_s1++;
+                        }
+                    }
+                    if ((sp78 == 0)) {
+                       while ((u32) var_s1 < (u32) sp124) {
+                            if (arg0->shapes[i].flags & 0x40400000) {
+                                if (arg0->shapes[i].flags & 0x400000) {
+                                    var_a0_2 = 0;
+                                } else {
+                                    var_a0_2 = 1;
+                                }
+                                temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                switch ((s16) var_s1->flag & 3) { /* switch 2; irregular */
+                                case 0:     /* switch 2 */
+                                    var_s1->cn[0] = D_800B97C0[temp_t0].unk3;
+                                    var_s1->cn[1] = D_800B97C0[temp_t0].unk4;
+                                    var_s1->cn[2] = D_800B97C0[temp_t0].unk5;
+                                    break;
+                                default:    /* switch 2 */
+                                case 1:     /* switch 2 */
+                                    var_s1->cn[0] = sp158[var_a0_2];
+                                    var_s1->cn[1] = sp150[var_a0_2];
+                                    var_s1->cn[2] = sp148[var_a0_2];
+                                    break;
+                                case 2:     /* switch 2 */
+                                    var_s1->cn[0] = (((sp158[var_a0_2] + D_800B97C0[temp_t0].unk0) >> 1) * sp7B) >> 8;
+                                    var_s1->cn[1] = (((sp150[var_a0_2] + D_800B97C0[temp_t0].unk1) >> 1) * sp7A) >> 8;
+                                    var_s1->cn[2] = (((sp148[var_a0_2] + D_800B97C0[temp_t0].unk2) >> 1) * sp79) >> 8;
+                                    break;
+                                }
+                            } else if (arg0->shapes[i].flags & 0x02000000) {
+                                var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk3;
+                                var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk4;
+                                var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk5;
+                            } else if (arg0->shapes[i].flags & 0x04000000) {
+                                var_s1->cn[0] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk3;
+                                var_s1->cn[1] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk4;
+                                var_s1->cn[2] = D_800B97C0[((s16) var_s1->flag >> 2) & 0xFF].unk5;
+                            }
+                            var_s1 += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+#endif
 
 /** 
   * Warps the player to coordinates stored in WARPTAB.bin 
@@ -4593,7 +5034,80 @@ static void func_8004D328() {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D470.s")
+void func_8004D470(void) {
+    void *temp_v0;
+
+    D_80092BE8 = 0xA;
+    temp_v0 = (void *) malloc(0x8020, 0x18, NULL);
+    D_800B98A0[0] = (Unk800B98A0 *) temp_v0;
+    D_800B98A0[1] = (Unk800B98A0 *) ((u32)temp_v0 + sizeof(Unk800B98A0));
+    D_800B98A8[0] = (Unk800B98A8 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2);
+    D_800B98A8[1] = (Unk800B98A8 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8));
+    D_800B98B0[0] = (Unk800B98B0 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
+    D_800B98B0[1] = (Unk800B98B0 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
+
+    temp_v0 = (void *) malloc(0xC800, 0x18, NULL);
+    D_800BB158[0] = (Unk800BB158 *) temp_v0;
+    D_800BB158[1] = (Unk800BB158 *) ((u32)temp_v0 + sizeof(Unk800BB158));
+    D_800BB168[0] = (Unk800BB168 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2);
+    D_800BB168[1] = (Unk800BB168 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168));
+    D_800BB160[0] = (Unk800BB160 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2);
+    D_800BB160[1] = (Unk800BB160 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2 + sizeof(Unk800BB160));
+
+    D_800B9840[0] = -8.0f;
+    D_800B9840[1] = 0.0f;
+    D_800B9840[3] = -8.0f;
+    D_800B9840[2] = 0.0f;
+    D_800B9840[4] = 16.0f;
+    D_800B9840[5] = 0.0f;
+    D_800B9840[6] = 8.0f;
+    D_800B9840[7] = 16.0f;
+    D_800B9840[8] = 0.0f;
+    D_800B9840[9] = 8.0f;
+    D_800B9840[10] = 0.0f;
+    D_800B9840[11] = 0.0f;
+
+    D_800B97E0[0] = D_800B9840[0];
+    D_800B97E0[1] = D_800B9840[1];
+    D_800B97E0[2] = D_800B9840[2];
+    D_800B97E0[3] = D_800B9840[3];
+    D_800B97E0[4] = D_800B9840[4];
+    D_800B97E0[5] = D_800B9840[5];
+    D_800B97E0[6] = D_800B9840[6];
+    D_800B97E0[7] = D_800B9840[7];
+    D_800B97E0[8] = D_800B9840[8];
+    D_800B97E0[9] = D_800B9840[9];
+    D_800B97E0[10] = D_800B9840[10];
+    D_800B97E0[11] = D_800B9840[11];
+
+    D_800B97E0[12] = -8.0f;
+    D_800B97E0[13] = 0.0f;
+    D_800B97E0[14] = 100.0f;
+    D_800B97E0[15] = -8.0f;
+    D_800B97E0[16] = 16.0f;
+    D_800B97E0[17] = 100.0f;
+    D_800B97E0[18] = 8.0f;
+    D_800B97E0[19] = 16.0f;
+    D_800B97E0[20] = 100.0f;
+    D_800B97E0[21] = 8.0f;
+    D_800B97E0[22] = 0.0f;
+    D_800B97E0[23] = 100.0f;
+
+    D_800B9840[12] = -6.0f;
+    D_800B9840[13] = 0.0f;
+    D_800B9840[14] = 55.0f;
+    D_800B9840[15] = -6.0f;
+    D_800B9840[16] = 16.0f;
+    D_800B9840[17] = 55.0f;
+    D_800B9840[18] = 6.0f;
+    D_800B9840[19] = 16.0f;
+    D_800B9840[20] = 55.0f;
+    D_800B9840[21] = 6.0f;
+    D_800B9840[22] = 0.0f;
+    D_800B9840[23] = 55.0f;
+    func_8005B870();
+    D_800BB190 = queue_load_texture_proxy(0xD8);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D698.s")
 

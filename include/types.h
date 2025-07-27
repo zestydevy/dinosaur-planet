@@ -15,6 +15,7 @@ typedef union {
     void (*custom)(Gfx **gdl, Mtx **mtxs, struct Vertex **vertices, s32 arg3, s32 arg4);
     void (*custom2)(s32 *arg0, Gfx **gdl, Mtx **mtxs, struct Vertex **vertices, s32 arg4, s32 arg5, s32 arg6);
     void (*withTwoArgs)(s32, s32);
+    s32 (*withTwoArgsS32)(s32, s32);
     void (*withThreeArgs)(s32, s32, s32);
     void (*withFourArgs)(s32, s32, s32, s32);
     void (*withFiveArgs)(s32, s32, s32, s32, u16);
