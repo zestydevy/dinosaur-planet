@@ -4050,7 +4050,99 @@ s32 map_should_stream_load_object(ObjCreateInfo* arg0, s8 arg1, s32 arg2) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B190.s")
+s32 func_8004B190(Object* arg0) {
+    s32 sp54;
+    s32 pad[6];
+    f32 sp38;
+    s32 pad2[6];
+    ObjCreateInfo* sp1C;
+    s32 temp_v0_2;
+    Object* player;
+    f32 temp_fv1;
+    f32 var_fa0;
+    f32 var_fa1;
+    f32 var_ft4;
+    f32 var_ft5;
+    f32 var_fv0;
+    f32 var_fv1;
+    s32 var_a0;
+    s32 var_a1;
+    s8 *currentBlockIndices;
+    s32 i;
+
+    sp1C = arg0->createInfo;
+    if (sp1C == NULL) {
+        return 0;
+    }
+    if (func_8004B4A0(sp1C, arg0->mapID) == 0) {
+        return 1;
+    }
+    if (sp1C->loadParamA & 1) {
+        return 0;
+    }
+    if (sp1C->loadParamA & 0x10) {
+        if (gDLL_29_gplay->exports->func_14F0(arg0->mapID, sp1C->loadDistance) != 0) {
+            return 0;
+        }
+        return 1;
+    }
+    if (sp1C->loadParamA & 2) {
+        return 0;
+    }
+    if ((arg0->unk0xc0 != NULL) && (arg0->unk0xb4 < 0)) {
+        return 0;
+    }
+    if (arg0->parent == NULL) {
+        sp54 = floor_f((arg0->srt.transl.x - gWorldX) / 640.0f);
+        temp_v0_2 = floor_f((arg0->srt.transl.z - gWorldZ) / 640.0f);
+        if ((sp54 < 0) || (temp_v0_2 < 0) || (sp54 >= 0x10) || (temp_v0_2 >= 0x10)) {
+            return 1;
+        }
+        sp54 = (temp_v0_2 * 0x10) + sp54;
+        for (var_a1 = FALSE, i = 0; i < 5; i++) {
+            currentBlockIndices = gBlockIndices[i];
+            if (currentBlockIndices[sp54] >= 0) {
+                var_a1 = TRUE;
+            }
+        }
+        if (var_a1 == FALSE) {
+            return 1;
+        }
+    }
+    if (sp1C->loadParamA & 0x20) {
+        return 0;
+    }
+    if ((sp1C->loadParamA & 4) && (player = get_player(), (player != NULL)) && arg0->parent == NULL) {
+        var_fv1 = player->positionMirror.x;
+        var_fa0 = player->positionMirror.y;
+        var_fa1 = player->positionMirror.z;
+    } else {
+        if (arg0->parent != NULL) {
+            var_a0 = arg0->parent->matrixIdx + 1;
+        } else {
+            var_a0 = 0;
+        }
+        var_fv1 = Vec3_Int_array[var_a0].f.x;
+        var_fa0 = Vec3_Int_array[var_a0].f.y;
+        var_fa1 = Vec3_Int_array[var_a0].f.z;
+    }
+    sp38 = arg0->unk0x3c;
+    if (arg0->parent != NULL) {
+        var_fv0 = var_fv1 - arg0->srt.transl.x;
+        var_ft4 = var_fa0 - arg0->srt.transl.y;
+        var_ft5 = var_fa1 - arg0->srt.transl.z;
+    } else {
+        var_fv0 = var_fv1 - arg0->positionMirror.x;
+        var_ft4 = var_fa0 - arg0->positionMirror.y;
+        var_ft5 = var_fa1 - arg0->positionMirror.z;
+    }
+    temp_fv1 = sp38 + 40.0f;
+    var_fv0 = ((var_fv0 * var_fv0) + (var_ft4 * var_ft4) + (var_ft5 * var_ft5));
+    if (var_fv0 < (temp_fv1 * temp_fv1)) {
+        return 0;
+    }
+    return 1;
+}
 
 /** map_should_object_load? */
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
