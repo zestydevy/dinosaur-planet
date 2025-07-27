@@ -474,17 +474,23 @@ extern f32 D_800B9840[24];
 extern Unk800B98A0 *D_800B98A0[2];
 extern Unk800B98A8 *D_800B98A8[2];
 extern Unk800B98B0 *D_800B98B0[2];
-extern Unk800BB158 *D_800BB158[2];
-extern Unk800BB160 *D_800BB160[2];
-extern Unk800BB168 *D_800BB168[2];
 
 extern s8 D_80092BF4;
+
+// Some sort of toggle list
 extern s8 D_80092C00;
 extern s8 D_80092C04;
 extern s8 D_80092C08;
+extern s8 D_80092C0C;
+extern s8 D_80092C10;
+extern s8 D_80092C14;
+
 extern s16 D_80092C24;
+extern s16 D_80092C28;
 extern s16 D_80092C2C;
+extern s16 D_80092C30;
 extern s16 D_80092C34;
+extern s16 D_80092C38;
 
 extern Unk800B98A8 *D_800BB140;
 extern Unk800B98A8 *D_800BB144;
@@ -492,6 +498,15 @@ extern Unk800B98B0 *D_800BB148;
 extern Unk800B98B0 *D_800BB14C;
 extern Unk800B98A0 *D_800BB150;
 extern Unk800B98A0 *D_800BB154;
+extern Unk800BB158 *D_800BB158[2];
+extern Unk800BB160 *D_800BB160[2];
+extern Unk800BB168 *D_800BB168[2];
+extern Unk800BB168* D_800BB174;
+extern Unk800BB168* D_800BB178;
+extern Unk800BB160* D_800BB17C;
+extern Unk800BB160* D_800BB180;
+extern Unk800BB158* D_800BB184;
+extern Unk800BB158* D_800BB188;
 
 extern Texture* D_800BB190;
 

@@ -5244,7 +5244,22 @@ void func_8004D9B8(void) {
     D_80092BF4 = func_8004FA4C();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004DABC.s")
+void func_8004DABC(void) {
+    if (D_80092BE8 != 0) {
+        D_80092C30 = 0;
+        D_80092C38 = 0;
+        D_80092C0C = 1 - D_80092C0C;
+        D_80092C10 = 1 - D_80092C10;
+        D_80092C14 = 1 - D_80092C14;
+        D_800BB184 = D_800BB158[D_80092C0C];
+        D_80092C28 = 0;
+        D_800BB17C = D_800BB160[D_80092C10];
+        D_800BB174 = D_800BB168[D_80092C14];
+        D_800BB188 = D_800BB184;
+        D_800BB178 = D_800BB174;
+        D_800BB180 = D_800BB17C;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004DBAC.s")
 
