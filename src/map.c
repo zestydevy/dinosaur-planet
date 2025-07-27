@@ -4487,7 +4487,36 @@ void func_8004BD40(MapHeader* arg0, s32 arg1) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004C040.s")
+void func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
+    u8* temp;
+
+    if (arg2 == 0) {
+        return;
+    }
+    if (arg2 > 0) {
+        temp = &arg1[arg2];
+        while (arg1 != arg0) {
+            arg1 -= 1;
+            temp -= 1;
+            temp[0] = arg1[0];
+        }
+        while (temp != arg0) {
+            temp -= 1;
+            temp[0] = 0;
+        }
+    } else {
+        temp = &arg0[arg2];
+        while (arg0 != arg1) {
+            temp[0] = (u8) arg0[0];
+            arg0 += 1;
+            temp += 1;
+        }
+        while (temp != arg1) {
+            temp[0] = 0;
+            temp += 1;
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
 
