@@ -5263,7 +5263,23 @@ void func_8004DABC(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004DBAC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E540.s")
+s32 func_8004E540(Unk8004E540* arg0, Unk8004E540* arg1) {
+    s32 sp1C;
+    s32 sp18;
+    f32 var_fv1;
+
+    sp1C = arg1->unk38 * 4;
+    sp18 = arg1->unk39 * 4;
+    var_fv1 = (func_80001884(arg0->x, arg0->y, arg0->z) - sp1C) / (sp18 - sp1C);
+    if (var_fv1 < 0.0f) {
+        var_fv1 = 0.0f;
+    } else if (var_fv1 > 1.0f) {
+        var_fv1 = 1.0f;
+    }
+    sp1C = (arg1->unk3A + ((arg1->unk3B - arg1->unk3A) * var_fv1));
+    sp1C = (arg0->unk37 + 1) * (s32)sp1C;
+    return sp1C >> 8;
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E64C.s")

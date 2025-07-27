@@ -368,6 +368,19 @@ typedef struct Unk800BB168 {
     u8 unk0[11200];
 } Unk800BB168;
 
+typedef struct Unk8004E540 {
+    u8 pad0[0x18];
+    f32 x;
+    f32 y;
+    f32 z;
+    u8 pad24[0x37 - 0x24];
+    u8 unk37;
+    u8 unk38;
+    u8 unk39;
+    u8 unk3A;
+    u8 unk3B;
+} Unk8004E540;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
