@@ -1461,12 +1461,12 @@ void obj_free_object(Object *obj, s32 param2) {
             func_8004D974(1);
         }
 
-        if (obj->ptr0x64->unk_0x4 != NULL) {
-            texture_destroy(obj->ptr0x64->unk_0x4);
+        if (obj->ptr0x64->unk4 != NULL) {
+            texture_destroy(obj->ptr0x64->unk4);
         }
 
-        if (obj->ptr0x64->unk_0x8 != NULL) {
-            texture_destroy(obj->ptr0x64->unk_0x8);
+        if (obj->ptr0x64->unk8 != NULL) {
+            texture_destroy(obj->ptr0x64->unk8);
         }
     }
 

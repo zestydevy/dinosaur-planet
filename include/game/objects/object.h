@@ -64,19 +64,26 @@ typedef struct {
 } ObjectStruct50;
 
 typedef struct {
-/*0000*/    f32 unk_0x0;
-/*0004*/    Texture *unk_0x4;
-/*0008*/    Texture *unk_0x8;
-/*000C*/    Gfx *gdl;
-/*0010*/    u8 unk_0x10[0x20 - 0x10];
-/*0020*/    Vec3f tr;
-/*002C*/    f32 unk_0x2c;
-/*0030*/    u32 flags;
-/*0034*/    u32 unk_0x34;
-/*0038*/    u32 unk_0x38;
-/*003c*/    u32 unk_0x3c;
-/*0040*/    u8 unk_0x40;
-/*0041*/    s8 unk_0x41; //shadows toggle this each frame
+/* 0x0 */ f32 unk0;
+/* 0x4 */ Texture *unk4;
+/* 0x8 */ Texture *unk8;
+/* 0xC */ Gfx *gdl;
+/* 0x10 */ s32 pad10;
+/* 0x14 */ f32 maybeX;
+/* 0x18 */ f32 maybeY;
+/* 0x1C */ f32 maybeZ;
+/* 0x20 */ Vec3f tr;
+/* 0x2C */ f32 unk2c;
+/* 0x30 */ u32 flags;
+/* 0x34 */ u16 unk34;
+/* 0x36 */ u16 unk36;
+/* 0x38 */ u8 unk38;
+/* 0x39 */ u8 unk39;
+/* 0x3A */ u8 unk3A;
+/* 0x3B */ u8 unk3B;
+/* 0x3c */ u32 unk3c;
+/* 0x40 */ u8 unk40;
+/* 0x41 */ s8 unk41; //shadows toggle this each frame
 } ObjectStruct64;
 
 typedef struct {

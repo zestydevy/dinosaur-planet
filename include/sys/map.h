@@ -477,6 +477,11 @@ extern Unk800BB160 *D_800BB160[2];
 extern Unk800BB168 *D_800BB168[2];
 extern Texture* D_800BB190;
 
+// xyz pair
+extern f32 D_80092BD0;
+extern f32 D_80092BD4;
+extern f32 D_80092BD8;
+
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 

@@ -5188,7 +5188,29 @@ void func_8004D880(Object *arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D8A4.s")
+u32 func_8004D8A4(Object* obj, u32 addr, s32 arg2) {
+    ObjectStruct64* obj64;
+
+    obj64 = align_4(addr);
+    obj->ptr0x64 = obj64;
+    addr = obj64 + 1;
+    obj64 = obj64;
+    obj64->unk4 = texture_load((s32) -obj->def->shadowTexture, 0);
+    obj64->unk0 = obj->def->unk00;
+    obj64->unk2c = obj64->unk0;
+    obj64->maybeX = D_80092BD0;
+    obj64->maybeY = D_80092BD4;
+    obj64->maybeZ = D_80092BD8;
+    obj64->unk36 = 0x40;
+    obj64->flags = 4;
+    obj64->unk38 = 0x19;
+    obj64->unk39 = 0x4B;
+    obj64->unk3A = 0x96;
+    obj64->unk3B = 0x64;
+    func_8004D974(1);
+    return addr;
+}
+
 
 void func_8004D974(s32 arg0) {
     D_80092BE8 = (s8) arg0;
