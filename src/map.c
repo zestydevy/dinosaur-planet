@@ -4446,7 +4446,46 @@ void func_8004BC20(Unk800B96B0* arg0, s32 arg1) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004BD40.s")
+void func_8004BD40(MapHeader* arg0, s32 arg1) {
+    s32 var_a3;
+    s32 temp_t0;
+    s32 var_t1;
+    s32 var_t3;
+    Unk800B96B0* var_a1;
+    s32 temp_t4;
+    s16 sp8E;
+    s32 temp_v1_3;
+    s16 sp68[15]; // unknown size however should be the same as sp28
+    Unk800B96B0* temp_v0;
+    s32 sp28[15]; // unknown size however should be the same as sp68
+
+    sp8E = gDLL_29_gplay->exports->func_121C();
+    temp_v0 = gDLL_29_gplay->exports->func_1254();
+    var_t1 = 0;
+    for (var_a3 = 0; var_a3 < sp8E; var_a3++) {
+        if (arg1 == temp_v0[var_a3].unk4) {
+            sp68[var_t1] = var_a3;
+            sp28[var_t1] = temp_v0[var_a3].unk0;
+            var_t1++;
+        }
+    }
+    var_t3 = 0;
+    temp_t4 = arg0->objectInstancesFileLength;
+    var_a1 = (Unk800B96B0 *) arg0->objectInstanceFile_ptr;
+    while (var_t3 < (s32) temp_t4) {
+        temp_t0 = var_a1[1].unk0;
+        for (var_a3 = 0; var_a3 < var_t1; var_a3++) {
+            if (temp_t0 == sp28[var_a3]) {
+                var_a1->unk8 = temp_v0[sp68[var_a3]].unk8;
+                var_a1->unkC = temp_v0[sp68[var_a3]].unkC;
+                var_a1->unk10 = temp_v0[sp68[var_a3]].unk10;
+            }
+        }
+        temp_v1_3 = var_a1->otherUnk0.unk2 * 4;
+        var_t3 += temp_v1_3;
+        var_a1 = &((s8 *)var_a1)[temp_v1_3];
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004C040.s")
 

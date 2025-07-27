@@ -312,7 +312,14 @@ typedef struct {
 } MapsUnk_800B97C0;
 
 typedef struct Unk800B96B0 {
-    s32 unk0;
+    union {
+        s32 unk0;
+        struct {
+            s16 pad0;
+            u8 unk2;
+            u8 pad3;
+        } otherUnk0;
+    };
     s16 unk4;
     s16 unk6;
     f32 unk8;
