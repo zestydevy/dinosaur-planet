@@ -5227,7 +5227,22 @@ void func_8004D99C(s32 arg0) {
 void func_8004D9AC(s32 arg0) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D9B8.s")
+void func_8004D9B8(void) {
+    D_80092C2C = 0;
+    D_80092C34 = 0;
+    D_80092C24 = 0;
+    D_80092C00 = 1 - D_80092C00;
+    D_80092C04 = 1 - D_80092C04;
+    D_80092C08 = 1 - D_80092C08;
+    D_800BB150 = D_800B98A0[D_80092C00];
+    D_800BB140 = D_800B98A8[D_80092C04];
+    D_800BB148 = D_800B98B0[D_80092C08];
+    D_800BB154 = D_800BB150;
+    D_800BB144 = D_800BB140;
+    D_800BB14C = D_800BB148;
+    D_80092BF8 = 0;
+    D_80092BF4 = func_8004FA4C();
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004DABC.s")
 

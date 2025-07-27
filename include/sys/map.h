@@ -347,9 +347,11 @@ typedef struct Unk80092BC0 {
 typedef struct Unk800B98A0 {
     u8 unk0[4000];
 } Unk800B98A0;
+
 typedef struct Unk800B98A8 {
     u8 unk0[8000];
 } Unk800B98A8;
+
 typedef struct Unk800B98B0 {
     u8 unk0[6400];
 } Unk800B98B0;
@@ -475,6 +477,22 @@ extern Unk800B98B0 *D_800B98B0[2];
 extern Unk800BB158 *D_800BB158[2];
 extern Unk800BB160 *D_800BB160[2];
 extern Unk800BB168 *D_800BB168[2];
+
+extern s8 D_80092BF4;
+extern s8 D_80092C00;
+extern s8 D_80092C04;
+extern s8 D_80092C08;
+extern s16 D_80092C24;
+extern s16 D_80092C2C;
+extern s16 D_80092C34;
+
+extern Unk800B98A8 *D_800BB140;
+extern Unk800B98A8 *D_800BB144;
+extern Unk800B98B0 *D_800BB148;
+extern Unk800B98B0 *D_800BB14C;
+extern Unk800B98A0 *D_800BB150;
+extern Unk800B98A0 *D_800BB154;
+
 extern Texture* D_800BB190;
 
 // xyz pair
@@ -524,6 +542,7 @@ void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
 void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
+s32 func_8004FA4C(void);
 
 // other funcs that are used
 void func_80058F3C(void);
