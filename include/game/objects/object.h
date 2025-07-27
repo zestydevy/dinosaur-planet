@@ -196,7 +196,7 @@ typedef struct Object {
 /*00AE*/    s8 updatePriority;
 /*00AF*/    u8 unk0xaf;
 /*00B0*/    u16 unk0xb0;
-/*00B2*/    UNK_TYPE_16 unk0xb2;
+/*00B2*/    s16 unk0xb2;
 /*00B4*/    s16 unk0xb4;
 /*00B6*/	u8 unk0xb6[2];
 /*00B8*/	void* state; //type depends on object

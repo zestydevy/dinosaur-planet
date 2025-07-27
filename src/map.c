@@ -1283,7 +1283,7 @@ s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
     }
 
     layer = gDecodedGlobalMap[0];
-    return layer[gridZ*16 + gridX].mapID;
+    return layer[gridZ*16 + gridX].mapIDs[0];
 }
 
 #if 1
@@ -1314,7 +1314,7 @@ s16 func_800448D0(s32 arg0) {
         var_a2 = 0;
         cellInfo = &(layer[cellIndex]);
         while (var_a2 != 6){
-            mapID = cellInfo->mapID;
+            mapID = cellInfo->mapIDs[0];
             var_a2 += 2;
             if (mapID >= 0 && mapID < MAP_ID_MAX) {
                 mapID_wasFound = 0;
@@ -1973,7 +1973,7 @@ MapHeader* func_800466C0() {
     s32 mapID;
 
     layer = gDecodedGlobalMap[0];
-    mapID = layer[119].mapID; //There should be 16*16 cells, so why this one specifically... centre cell?
+    mapID = layer[119].mapIDs[0]; //There should be 16*16 cells, so why this one specifically... centre cell?
     if (mapID < 0) {
         mapID = D_80092BBC;
     }
@@ -3783,7 +3783,177 @@ void func_8004A67C(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_objects_streaming.s")
+void map_update_objects_streaming(s32 arg0) {
+    GlobalMapCell* var_a3;
+    s32 spB8;
+    MapHeader* temp_s6;
+    ObjCreateInfo* temp_s2;
+    Object* temp_s0;
+    Object* temp_s5;
+    s16 temp_v0_3;
+    s16 var_s4;
+    s32 var_a1;
+    s32 sp9C;
+    s32 var_a2;
+    s32 var_s1;
+    s32 var_s2;
+    s32 var_s3;
+    s32 var_v0;
+    ObjCreateInfo* var_s1_2;
+    s32 temp_s7;
+    s32 temp_s4;
+    u32 var_s0;
+    s16 sp70[3]; // unknown size however 3 feels way to small?
+    void* temp_fp;
+    Object** sp68;
+    s16 mapID;
+
+    var_s4 = 0;
+    for (spB8 = 0; spB8 < 5; spB8++) {
+        var_a2 = 0;
+        var_a3 = gDecodedGlobalMap[spB8] + 119;
+        for (var_a2 = 0; var_a2 < 3; var_a2++) {
+            if (var_a3->mapIDs[var_a2] >= 0 && var_a3->mapIDs[var_a2] < 0x50) {
+                var_a1 = 0;
+                if (gLoadedMapsDataTable[var_a3->mapIDs[var_a2]] != NULL) {
+                    for (var_v0 = 0; var_v0 < var_s4; var_v0++) {
+                        if (sp70[var_v0] == var_a3->mapIDs[var_a2]) {
+                            var_a1 = 1;
+                            break;
+                        }
+                    }
+                    if (var_a1 == 0) {
+                        sp70[var_s4++] = var_a3->mapIDs[var_a2];
+                    }
+                }
+            }
+        }
+    }
+    
+    sp68 = get_world_objects(&spB8, &sp9C);
+    while (spB8 < sp9C) {
+        var_s1 = 0;
+        temp_s0 = sp68[spB8];
+        temp_s2 = temp_s0->createInfo;
+        spB8++;
+        if (temp_s0->mapID >= 0) {
+            if (!(temp_s2->loadParamA & 2)) {
+                if (temp_s2->loadParamA & 0x10) {
+                    if ((temp_s0->group >= 0) && (func_8004B190(temp_s0) != 0)) {
+                        var_s1 = 1;
+                    } else if ((temp_s0->mapID < 0x50) && (gLoadedMapsDataTable[temp_s0->mapID] == NULL)) {
+                        var_s1 = 1;
+                    }
+                } else {
+                    if ((temp_s0->group >= 0) && (func_8004B190(temp_s0) != 0)) {
+                        var_s1 = 1;
+                    } else if ((temp_s0->mapID < 0x50) && (func_8004AEFC(temp_s0->mapID, sp70, var_s4) == 0)) {
+                        var_s1 = 1;
+                    }
+                }
+            }
+        }
+        if (var_s1 != 0) {
+            if (gLoadedMapsDataTable[temp_s0->mapID] != NULL) {
+                if (temp_s0->unk0xb2 >= 0) {
+                    func_8004B710(temp_s0->unk0xb2, temp_s0->mapID, 0U);
+                }
+            }
+            if (temp_s0->id == 0x72) {
+                func_8004AEFC(temp_s0->mapID, sp70, var_s4);
+            }
+            obj_destroy_object(temp_s0);
+            spB8 -= 1;
+            sp9C -= 1;
+        }
+    }
+    for (spB8 = 0; spB8 < 0x50; spB8++) {
+        if (gLoadedMapsDataTable[spB8] != NULL) {
+            var_s0 = gDLL_29_gplay->exports->func_163C(spB8);
+            if (var_s0 != 0) {
+                gDLL_29_gplay->exports->func_1680(spB8);
+                var_s2 = 0;
+                while (var_s0 != 0) {
+                    if (var_s0 & 1) {
+                        func_8004B548(gLoadedMapsDataTable[spB8], spB8, var_s2, NULL);
+                    }
+                    var_s0 >>= 1;
+                    var_s2++;
+                }
+            }
+        }
+    }
+    for (spB8 = 0; spB8 < var_s4; spB8++) {
+        temp_v0_3 = sp70[spB8];
+        temp_s6 = gLoadedMapsDataTable[temp_v0_3];
+        if (temp_s6 != NULL) {
+            var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
+            temp_s7 = temp_s6->unk19;
+            var_s3 = 0;
+            // mmmmmm yummmy casting shenanigans
+            temp_fp = *((s32*)&((s8 *)&D_800B5590)[temp_v0_3 * 0x8C]) + (s32)var_s1_2;
+            while ((u32) var_s1_2 < (u32) temp_fp) {
+                temp_s2 = var_s1_2;
+                if ((var_s1_2->loadParamA & 0x10)) {
+                    break;
+                }
+
+                if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[spB8]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[spB8]) != 0)) {
+                    func_8004B710(var_s3, (u32) sp70[spB8], 1U);
+                    if (arg0 != 0) {
+                        obj_create(var_s1_2, 1U, sp70[spB8], var_s3, NULL);
+                    } else if (map_get_is_object_streaming_disabled() != 0) {
+                        func_80012584(0x3E, 4U, NULL, (UnkStructAssetThreadSingle_0x8* ) var_s1_2, sp70[spB8], var_s3, 0, temp_s7);
+                    } else {
+                        obj_create(var_s1_2, 1U, sp70[spB8], var_s3, NULL);
+                    }
+                }
+                var_s3++;
+                var_s1_2 = (ObjCreateInfo* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
+            }
+        }
+    }
+    sp68 = obj_get_all_of_type(7, &sp9C);
+    for (spB8 = 0; spB8 < sp9C; spB8++) {
+        temp_s5 = sp68[spB8];
+        var_s3 = 0;
+        temp_s4 = temp_s5->unk_0x34;
+        temp_s6 = gLoadedMapsDataTable[temp_s4];
+        if (temp_s6 != NULL) {
+            temp_s7 = temp_s5->matrixIdx + 1;
+            var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
+            // mmmmmm yummmy casting shenanigans
+            temp_fp = *((s32*)&((s8 *)&D_800B5590)[temp_s4 * 0x8C]) + (s32)var_s1_2;
+            var_s0 = gDLL_29_gplay->exports->func_163C((s32) temp_s4);
+            if (var_s0 != 0) {
+                gDLL_29_gplay->exports->func_1680((s32) temp_s4);
+                var_s2 = 0;
+                while (var_s0 != 0) {
+                    if (var_s0 & 1) {
+                        func_8004B548(temp_s6, (s32) temp_s4, var_s2, temp_s5);
+                    }
+                    var_s0 >>=1;
+                    var_s2++;
+                }
+            }
+            while ((u32) var_s1_2 < (u32) temp_fp) {
+                temp_s2 = var_s1_2;
+                if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object((ObjCreateInfo* ) var_s1_2, temp_s7, temp_s4) != 0)) {
+                    func_8004B710(var_s3, temp_s4, 1U);
+                    if (arg0 != 0) {
+                        obj_create((ObjCreateInfo* ) var_s1_2, 1U, temp_s4, var_s3, temp_s5);
+                    } else if (map_get_is_object_streaming_disabled() != 0) {
+                        func_80012584(0x3D, 4U, NULL, (UnkStructAssetThreadSingle_0x8* ) var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
+                    } else {
+                        obj_create((ObjCreateInfo* ) var_s1_2, 1U, temp_s4, var_s3, temp_s5);
+                    }
+                }
+                var_s3++;
+                var_s1_2 = (ObjCreateInfo* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
+            }
+        }
+    }
+}
 
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     s16 searchIndex;
@@ -3827,9 +3997,6 @@ s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
 #else
 void func_80012584(s32, u8, u32, ObjCreateInfo*, s32, s32, Object*, s32);
 s32 func_8004B4A0(ObjCreateInfo*, s32);
-void func_8004B710(s32, u32, u32);
-s32 map_get_is_object_streaming_disabled();         /* extern */
-s32 map_check_some_mapobj_flag(s32, u32);
 
 void func_8004B548(MapHeader* map, s32 mapID, s32 arg2, Object* arg3) {
     u32 new_var;

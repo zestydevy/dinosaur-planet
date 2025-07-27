@@ -153,9 +153,7 @@ typedef struct {
 } MapInfo;
 
 typedef struct {
-/*00*/  s16 mapID;
-/*02*/  s16 unk2;
-/*04*/  s16 unk4;
+/*00*/  s16 mapIDs[3];
 /*06*/  s16 blockID;
 /*08*/  s8 loadedBlockIndex;
 /*09*/  s8 trkBlkIndex; //Used to index into TRKBLK.bin, in order to get the base blockID for the map
@@ -362,7 +360,10 @@ extern s32* gFile_MAPS_TAB; // unknown pointer type
 extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 D_80092A8C;
+// D_800B5508 & D_800B5590 should probably use the same struct since they
+// multiply their index by 0x87C however no idea what the struct looks like
 extern s8 D_800B5508;
+extern s8 D_800B5590;
 
 extern DLBuilder D_800B4A20;
 extern DLBuilder D_800B49F0;
@@ -441,6 +442,12 @@ void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
 void func_800496E4(s32 blockIndex);
 void map_update_streaming(void);
 s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
+s32 func_8004B190(Object*);
+void func_8004B548(MapHeader*, s32, s32, Object*);
+s32 map_should_stream_load_object(ObjCreateInfo*, s8, s32);
+s32 map_check_some_mapobj_flag(s32, u32);
+void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
+s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 
 // other funcs that are used
 void func_80058F3C(void);
@@ -456,7 +463,7 @@ void func_80023628(void);
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8003E648(Texture*, s32, s32);
 Object **obj_get_all_of_type(s32 idx, s32 *count);
-
+u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
 
 #endif
