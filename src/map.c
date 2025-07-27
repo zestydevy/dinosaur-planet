@@ -4425,7 +4425,26 @@ void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004BC20.s")
+void func_8004BC20(Unk800B96B0* arg0, s32 arg1) {
+    s16 temp_s3;
+    s32 i;
+    Unk800B96B0* temp_s4;
+
+    temp_s3 = gDLL_29_gplay->exports->func_121C();
+    temp_s4 = gDLL_29_gplay->exports->func_1254();
+    if (arg1 != -1) {
+        for (i = 0; i < temp_s3; i++) {
+            if (arg1 == temp_s4[i].unk0) {
+                bcopy(&D_800B96B0[i], &temp_s4[i], sizeof(Unk800B96B0));
+                arg0->unk8 = D_800B96B0[i].unk8;
+                arg0->unkC = D_800B96B0[i].unkC;
+                arg0->unk10 = D_800B96B0[i].unk10;
+                // break
+                i = temp_s3;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004BD40.s")
 
