@@ -2,7 +2,7 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/21_gametext.h"
-#include "dlls/engine/74_pic_menu.h"
+#include "dlls/engine/74_picmenu.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"

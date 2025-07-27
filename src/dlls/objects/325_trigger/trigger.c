@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "PR/gu.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/xxx_sidekick.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/asset_thread.h"
@@ -881,7 +882,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             if (sidekick != NULL) {
                 switch (cmd->param1) {       /* switch 5; irregular */
                 case 0:                     /* switch 5 */
-                    sidekick->dll->exports->func23(sidekick);
+                    ((DLLInst_unk_sidekick *)sidekick->dll)->exports->func23(sidekick);
                     break;
                 case 1:                     /* switch 5 */
                     // "killing sidekick\n"
@@ -894,7 +895,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
                         var_v0_2 = obj_get_nearest_type_to(0x33, sidekick, NULL);
                     }
                     if (var_v0_2 != NULL) {
-                        sidekick->dll->exports->func22(sidekick, var_v0_2);
+                        ((DLLInst_unk_sidekick *)sidekick->dll)->exports->func22(sidekick, var_v0_2);
                     }
                     break;
                 }

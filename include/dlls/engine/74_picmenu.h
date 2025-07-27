@@ -6,7 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-typedef struct {
+typedef struct
+{
     Texture *texture;
     s16 textureID;
     u8 width;
@@ -40,7 +41,8 @@ typedef enum {
 } PicMenuAction;
 
 // size: 0x3C
-typedef struct {
+typedef struct
+{
     /*00*/ char *text;
     /*04*/ s16 textX;
     /*06*/ s16 textY;
@@ -68,13 +70,14 @@ typedef struct {
 #define NEW_PICMENU_ITEM(textX, textY, innerWidth, itemX, itemY, textureID, outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith) \
     {NULL, textX, textY, innerWidth, itemX, itemY, ((void *)textureID), outerWidth, flags, fontID, highlightFontID, upLink, downLink, leftLink, rightLink, overrideWith, {0}, 0}
 
-typedef struct {
+typedef struct
+{
     s32 moveSoundID;
     s32 selectSoundID;
     s32 backSoundID;
 } PicMenuSounds;
 
-DLL_INTERFACE_BEGIN(74_pic_menu)
+DLL_INTERFACE_BEGIN(74_picmenu)
 /*0*/ void (*set_items)(PicMenuItem *items, s32 count,
                         s32 defaultItem, PicMenuSounds *sounds, s32 param5, s32 param6,
                         s32 textColorR, s32 textColorG, s32 textColorB,

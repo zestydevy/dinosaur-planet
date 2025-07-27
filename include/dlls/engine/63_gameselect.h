@@ -2,7 +2,7 @@
 #define _DLLS_63_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/74_pic_menu.h"
+#include "dlls/engine/74_picmenu.h"
 #include "sys/menu.h"
 #include "dll_def.h"
 

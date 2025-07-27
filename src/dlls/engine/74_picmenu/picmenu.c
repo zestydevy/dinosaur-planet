@@ -1,4 +1,4 @@
-#include "dlls/engine/74_pic_menu.h"
+#include "dlls/engine/74_picmenu.h"
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
@@ -287,7 +287,7 @@ PicMenuAction picmenu_update() {
     return ret;
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/74_pic_menu/picmenu_update.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/74_picmenu/picmenu_update.s")
 #endif
 
 // export 3
@@ -567,7 +567,7 @@ void picmenu_calculate_items_to_redraw() {
     }
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/74_pic_menu/picmenu_calculate_items_to_redraw.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/74_picmenu/picmenu_calculate_items_to_redraw.s")
 #endif
 
 static u16 picmenu_calculate_auto_width(const char *text, s32 fontID) {
