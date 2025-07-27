@@ -4381,7 +4381,49 @@ void func_8004B948(s32 arg0) {
     UINT_80092a98 &= ~0x200;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B984.s")
+void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
+    s16 temp_s0;
+    s8 var_a1;
+    s32 i;
+    Unk800B96B0* temp_v0;
+
+    temp_s0 = gDLL_29_gplay->exports->func_121C();
+    temp_v0 = gDLL_29_gplay->exports->func_1254();
+    if (arg0[1].unk0 == -1) {
+        return;
+    }
+    for (var_a1 = FALSE, i = 0; i < temp_s0; i++) {
+        if (arg0[1].unk0 == temp_v0[i].unk0) {
+            var_a1 = TRUE;
+            temp_v0[i].unk8 = arg2;
+            temp_v0[i].unkC = arg3;
+            temp_v0[i].unk10 = arg4;
+            arg0->unk8 = arg2;\
+            arg0->unkC = arg3;\
+            arg0->unk10 = arg4;\
+        }
+    }
+    if (var_a1 == FALSE) {
+        D_800B96B0[temp_s0].unk8 = arg0->unk8;\
+        D_800B96B0[temp_s0].unkC = arg0->unkC;\
+        D_800B96B0[temp_s0].unk10 = arg0->unk10;
+        D_800B96B0[temp_s0].unk0 =  arg0[1].unk0;
+        D_800B96B0[temp_s0].unk4 = arg1;
+        i = temp_s0;
+        temp_v0[temp_s0].unk0 = arg0[1].unk0;
+        temp_v0[i].unk4 = arg1;
+        temp_v0[i].unk8 = arg2;
+        temp_v0[i].unkC = arg3;
+        // @fake
+        if ((!temp_v0) && (!temp_v0)) {}
+        temp_v0[i].unk10 = arg4;
+        temp_s0++;
+        arg0->unk8 = arg2;\
+        arg0->unkC = arg3;\
+        arg0->unk10 = arg4;
+        gDLL_29_gplay->exports->func_1238(temp_s0);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004BC20.s")
 

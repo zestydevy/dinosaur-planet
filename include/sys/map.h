@@ -311,6 +311,15 @@ typedef struct {
        s16 unk8;
 } MapsUnk_800B97C0;
 
+typedef struct Unk800B96B0 {
+    s32 unk0;
+    s16 unk4;
+    s16 unk6;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+} Unk800B96B0;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -354,7 +363,7 @@ extern s32 gMapCurrentStreamCoordsZ;
 extern GlobalMapCell *gDecodedGlobalMap[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
 extern s8 *D_800B9700[5];
 extern s32 gNumTotalBlocks;
-extern s32* D_800B96B0;
+extern Unk800B96B0* D_800B96B0;
 extern s32* gFile_BLOCKS_TAB; // unknown pointer type
 extern s32* gFile_MAPS_TAB; // unknown pointer type
 extern MapsUnk_800B97C0 *D_800B97C0; // 255 items

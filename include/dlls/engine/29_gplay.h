@@ -185,7 +185,7 @@ DLL_INTERFACE_BEGIN(29_gplay)
     /*28*/ u8 (*func_E90)();
     /*29*/ void (*func_EAC)(u8 character);
     /*30*/ void *(*func_1254)();
-    /*31*/ s16 (*func_121C)();
+    /*31*/ s16 (*func_121C)(void);
     /*32*/ void (*func_1238)(s32 param1);
     /*33*/ GplayStruct7 *(*func_E74)();
     /*34*/ GplayStruct10 *(*func_ED4)();
