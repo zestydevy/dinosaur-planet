@@ -571,6 +571,7 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
 void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 func_8004FA4C(void);
+f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 
 // other funcs that are used
 void func_80058F3C(void);
@@ -589,5 +590,8 @@ Object **obj_get_all_of_type(s32 idx, s32 *count);
 u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
 void func_8001F81C(u8*, u8*, u8*);
+void func_8005C740(s32, s32*, s32*, s32);
+void func_8003DB7C(void);
+void func_8003DBCC(void);
 
 #endif
