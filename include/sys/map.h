@@ -381,6 +381,23 @@ typedef struct Unk8004E540 {
     u8 unk3B;
 } Unk8004E540;
 
+
+// // // Might be incorrect definition but size should be correct
+typedef struct Unk8004FA58 {
+    Vec4f pos;
+    s32 unk10;
+} Unk8004FA58;
+
+// Might be incorrect definition but size should be correct
+typedef struct Unk8004FA58_Arg5 {
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 pad6;
+    s16 unk8;
+    s16 unkA;
+} Unk8004FA58_Arg5;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -523,6 +540,9 @@ extern Unk800BB158* D_800BB188;
 
 extern Texture* D_800BB190;
 
+extern f32 D_8009AA40;
+extern f32 D_8009AA38;
+
 // xyz pair
 extern f32 D_80092BD0;
 extern f32 D_80092BD4;
@@ -572,6 +592,7 @@ s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
 void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 func_8004FA4C(void);
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
+s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
 
 // other funcs that are used
 void func_80058F3C(void);

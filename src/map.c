@@ -5558,7 +5558,29 @@ s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051F64.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052148.s")
+s32 func_80052148(Vec3f* arg0, Vec3f* arg1) {
+    f32 sp44;
+    s32 pad;
+    f32 sp3C;
+    f32 temp;
+    s32 var_v1;
+
+    var_v1 = 1;
+    if (D_80092BFC != 0) {
+        return 1;
+    }
+    sp44 = (arg0->x * arg1->x) + (arg0->y * arg1->y) + (arg0->z * arg1->z);
+    if (sp44 < 0.0f) {
+        temp = ((arg0->x * arg0->x) + (arg0->y * arg0->y) + (arg0->z * arg0->z));
+        sp3C = (arg1->x * arg1->x) + (arg1->y * arg1->y) + (arg1->z * arg1->z);
+        temp *= sp3C;
+        var_v1 = 1;
+        if ((sp44 / sqrtf(temp)) < D_8009AA38) {
+            var_v1 = -1;
+        }
+    }
+    return var_v1;
+}
 
 /** 
   * Seems to have something to do with getting the dot product of two vectors?
@@ -5590,7 +5612,70 @@ void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052300.s")
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052644.s")
+#else
+// https://decomp.me/scratch/0NfF9
+void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag) {
+    Vec3f* var_s3;
+    f32 temp_fs0;
+    f32 temp_fs1;
+    f32 temp_fv0;
+    f32 var_fv0;
+    s32 var_s7;
+    f32 new_var;
+    Vec3f *sourceAsVec;
+    Vec3f *destAsVec;
+
+    new_var = D_8009AA40;
+    *outCount = 0;
+    if (arg2 != 0) {
+        if (1) {}
+        var_s3 = (Vec3f *)((arg2 - 1) * length + (s8 *)source);
+        var_fv0 = (var_s3->x * arg4->x) + (var_s3->y * arg4->y) + (var_s3->z * arg4->z) + arg4->w;
+        for (var_s7 = 0; var_s7 < arg2; var_s7++) {
+            sourceAsVec = (Vec3f *) source;
+            destAsVec = (Vec3f *) dest;
+            temp_fs0 = (sourceAsVec->x * arg4->x) + (sourceAsVec->y * arg4->y) + (sourceAsVec->z * arg4->z) + arg4->w;
+            if (temp_fs0 < new_var) {
+                if (var_fv0 < new_var) {
+                    bcopy(source, dest, length);
+                    dest += length;
+                    *outCount += 1;
+                } else {
+                    temp_fv0 = func_800528AC(var_s3, sourceAsVec, destAsVec, arg4);
+                    if (arg6 != NULL) {
+                        arg6(var_s3, sourceAsVec, destAsVec, temp_fv0);
+                    }
+                    dest += length;
+                    bcopy(source, dest, length);
+                    dest += length;
+                    *outCount += 2;
+                }
+            } else if (var_fv0 < new_var) {
+                temp_fv0 = func_800528AC(sourceAsVec, var_s3, destAsVec, arg4);
+                if (arg6 != NULL) {
+                    arg6(sourceAsVec, var_s3, destAsVec, temp_fv0);
+                }
+                dest += length;
+                *outCount += 1;
+                if (someFlag) {
+                    bcopy(source, dest, length);
+                    dest += length;
+                    *outCount += 1;
+                }
+            } else if (someFlag) {
+                bcopy(source, dest, length);
+                dest += length;
+                *outCount += 1;
+            }
+            var_fv0 = temp_fs0;
+            var_s3 = sourceAsVec;
+            source += length;
+        }
+    }
+}
+#endif
 
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3) {
     f32 zDiff;

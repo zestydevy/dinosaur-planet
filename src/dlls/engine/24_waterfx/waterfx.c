@@ -8,6 +8,7 @@
 #include "sys/main.h"
 #include "sys/map.h"
 #include "functions.h"
+#include "prevent_bss_reordering.h"
 
 // size: 0x10
 typedef struct StructBss8
