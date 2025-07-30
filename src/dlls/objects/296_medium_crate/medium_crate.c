@@ -122,7 +122,7 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
 
     if (self->ptr0x64 != NULL) {
         self->ptr0x64->flags |= 0x8000;
-        self->ptr0x64->unk_0x2c = self->ptr0x64->unk_0x0 + self->ptr0x64->unk_0x0;
+        self->ptr0x64->unk2c = self->ptr0x64->unk0 + self->ptr0x64->unk0;
     }
 }
 

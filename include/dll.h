@@ -8,6 +8,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/7_newday.h"
 #include "dlls/engine/12_minic.h"
+#include "dlls/engine/13_expgfx.h"
 #include "dlls/engine/16.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
@@ -72,6 +73,7 @@ extern DLLInst_5_AMSEQ *gDLL_AMSEQ2;
 extern DLLInst_6_AMSFX *gDLL_AMSFX;
 extern DLLInst_7_newday *gDLL_7_newday;
 extern DLLInst_12_minic *gDLL_minic;
+extern DLLInst_13_expgfx *gDLL_expgfx;
 extern DLLInst_16 *gDLL_16;
 extern DLLInst_20_screens *gDLL_20_screens;
 extern DLLInst_21_gametext *gDLL_21_gametext;
@@ -94,7 +96,6 @@ extern DLLInst_Unknown
     *gDLL_newlfx,
     *gDLL_57,
     *gDLL_58,
-    *gDLL_expgfx,
     *gDLL_modgfx,
     *gDLL_projgfx,
     *gDLL_17,

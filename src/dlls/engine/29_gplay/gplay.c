@@ -521,7 +521,7 @@ void gplay_func_115C() {
     }
 }
 
-s16 gplay_func_121C() {
+s16 gplay_func_121C(void) {
     return bss_10.unk0.unk0.unk0.unk0x300;
 }
 

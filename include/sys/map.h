@@ -3,10 +3,14 @@
 
 #include "PR/ultratypes.h"
 #include "ultra64.h"
+#include "PR/gbi.h"
 
+#include "types.h"
 #include "sys/math.h"
+#include "sys/camera.h"
 #include "sys/rarezip.h"
 #include "sys/gfx/map.h"
+#include "sys/bitstream.h"
 
 #include "sys/map_enums.h"
 
@@ -149,9 +153,7 @@ typedef struct {
 } MapInfo;
 
 typedef struct {
-/*00*/  s16 mapID;
-/*02*/  s16 unk2;
-/*04*/  s16 unk4;
+/*00*/  s16 mapIDs[3];
 /*06*/  s16 blockID;
 /*08*/  s8 loadedBlockIndex;
 /*09*/  s8 trkBlkIndex; //Used to index into TRKBLK.bin, in order to get the base blockID for the map
@@ -190,6 +192,214 @@ typedef struct {
 /*21*/ u8 unk21;
 } UnkTextureStruct;
 
+// struct only relevant for func_80045FC4?
+typedef struct UnkObjectInstanceFileStruct {
+    s16 unk0;
+    u8 unk2;
+    s8 unk3;
+    u8 unk4;
+    u8 pad5;
+    u8 unk6;
+} UnkObjectInstanceFileStruct;
+
+// size: 0xA
+typedef struct Struct_D_800B9768_unk4 {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s8  unk8;
+    s8  unk9;
+} Struct_D_800B9768_unk4;
+
+// size: 0x1
+typedef struct Struct_D_800B9768_unkC {
+    s8 unk0;
+} Struct_D_800B9768_unkC;
+
+// guessed size: 0x20
+typedef struct Struct_D_800B9768_unk10 {
+    s32 unk0;
+    u8  _unk4[0x20 - 0x4];
+} Struct_D_800B9768_unk10;
+
+typedef struct Struct_D_800B9768 {
+    s32                      unk0;
+    Struct_D_800B9768_unk4  *unk4;
+    s16  *unk8;
+    Struct_D_800B9768_unkC  *unkC;
+    Struct_D_800B9768_unk10 *unk10;
+} Struct_D_800B9768;
+
+// size: 0xC?
+typedef struct StructBuf {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+} StructBuf;
+
+// size: 0x1C
+typedef struct {
+/*00*/ s32 unk0;
+/*04*/ s32 unk4;
+/*08*/ s32 unk8;
+/*0C*/ s32 unkC;
+/*10*/ s32 unk10;
+/*14*/ s32 unk14;
+/*18*/ s32 _pad18;
+} MapsTabStruct;
+
+typedef struct MapsBinUnk20 {
+    s16   unk0;
+    u8    unk2;
+    s32   _unk4;
+    f32   unk8;
+    f32   unkC;
+    f32   unk10;
+    s32   _unk14;
+    u8    unk18;
+    u8    unk19;
+    u32   unk1C;
+} MapsBinUnk20;
+
+// size: 0x38
+typedef struct MapsBinStruct {
+    /*0x00*/ s16 unk0;
+    /*0x02*/ s16 unk2;
+    /*0x04*/ s16 unk4;
+    /*0x06*/ s16 unk6; // new
+    /*0x08*/ s16 unk8;
+    /*0x0A*/ s16 _padA;
+    /*0x0C*/ s32 *unkC;
+    /*0x10*/ s32 unk10;
+    /*0x14*/ s32 unk14;
+    /*0x18*/ s8  unk18;
+    /*0x19*/ s8  unk19;
+    /*0x1A*/ s16 _pad1A;
+    /*0x1C*/ s16 unk1C;
+    /*0x1E*/ s16 unk1E;
+    /*0x20*/ MapsBinUnk20 *unk20;
+    /*0x24*/ f32 unk24;
+    /*0x28*/ f32 unk28;
+    /*0x2C*/ s32 unk2C;
+    /*0x30*/ s32 unk30;
+    /*0x34*/ s32 unk34;
+} MapsBinStruct;
+
+// size: 0xA
+typedef struct MapLayoutArg0 {
+/*00*/ s16 unk0;
+/*02*/ s16 unk2;
+/*04*/ s16 unk4;
+/*06*/ s16 unk6;
+/*08*/ s8  unk8;
+/*09*/ s8  unk9;
+} MapLayoutArg0;
+
+typedef struct {
+       u8 unk0;
+       u8 unk1;
+       u8 unk2;
+       u8 unk3;
+       u8 unk4;
+       u8 unk5;
+       u8 unk6;
+       u8 unk7;
+       s16 unk8;
+} MapsUnk_800B97C0;
+
+typedef struct Unk800B96B0 {
+    union {
+        s32 unk0;
+        struct {
+            s16 pad0;
+            u8 unk2;
+            u8 pad3;
+        } otherUnk0;
+    };
+    s16 unk4;
+    s16 unk6;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+} Unk800B96B0;
+
+typedef struct UnkSp8C {
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+} UnkSp8C;
+
+typedef struct Unk80092BC0 {
+    s16 unk0[3];
+} Unk80092BC0;
+
+typedef struct Unk800B98A0 {
+    u8 unk0[4000];
+} Unk800B98A0;
+
+typedef struct Unk800B98A8 {
+    u8 unk0[8000];
+} Unk800B98A8;
+
+typedef struct Unk800B98B0 {
+    u8 unk0[6400];
+} Unk800B98B0;
+
+typedef struct Unk800BB158 {
+    u8 unk0[4800];
+} Unk800BB158;
+
+typedef struct Unk800BB160 {
+    u8 unk0[9600];
+} Unk800BB160;
+
+typedef struct Unk800BB168 {
+    u8 unk0[11200];
+} Unk800BB168;
+
+typedef struct Unk8004E540 {
+    u8 pad0[0x18];
+    f32 x;
+    f32 y;
+    f32 z;
+    u8 pad24[0x37 - 0x24];
+    u8 unk37;
+    u8 unk38;
+    u8 unk39;
+    u8 unk3A;
+    u8 unk3B;
+} Unk8004E540;
+
+
+// // // Might be incorrect definition but size should be correct
+typedef struct Unk8004FA58 {
+    Vec4f pos;
+    s32 unk10;
+} Unk8004FA58;
+
+// Might be incorrect definition but size should be correct
+typedef struct Unk8004FA58_Arg5 {
+    s16 x;
+    s16 y;
+    s16 z;
+    s16 pad6;
+    s16 unk8;
+    s16 unkA;
+    u8 padC;
+    u8 padD;
+    s8 padE;
+    s8 unkF;
+} Unk8004FA58_Arg5;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -213,7 +423,7 @@ extern u8 *gMapReadBuffer;
 extern s8 gMapNumStreamMaps;
 extern StreamMap gMapStreamMapTable[];
 extern MapHeader* gMapActiveStreamMap;
-extern MapHeader* gLoadedMapsDataTable[];
+extern MapHeader* gLoadedMapsDataTable[120];
 
 extern UnkTextureStruct *D_800B97A8;
 
@@ -230,10 +440,19 @@ extern s16 gNumTRKBLKEntries;
 extern s32 gMapCurrentStreamCoordsX;
 extern s32 gMapCurrentStreamCoordsZ;
 
-extern GlobalMapCell (*gDecodedGlobalMap)[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
+extern GlobalMapCell *gDecodedGlobalMap[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
+extern s8 *D_800B9700[5];
+extern s32 gNumTotalBlocks;
+extern Unk800B96B0* D_800B96B0;
+extern s32* gFile_BLOCKS_TAB; // unknown pointer type
+extern s32* gFile_MAPS_TAB; // unknown pointer type
+extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 D_80092A8C;
+// D_800B5508 & D_800B5590 should probably use the same struct since they
+// multiply their index by 0x87C however no idea what the struct looks like
 extern s8 D_800B5508;
+extern s8 D_800B5590;
 
 extern DLBuilder D_800B4A20;
 extern DLBuilder D_800B49F0;
@@ -264,26 +483,156 @@ extern s8 D_80092BE8;
 extern s8 D_80092BF8;
 extern s8 D_80092BFC;
 
-void func_80045FC4(void*, void*, s32, s32);
+extern f32 D_8009A950;
+extern f32 D_8009A954;
+extern f32 D_8009A958;
+extern f32 D_8009A95C;
 
+extern f32 D_8009A9B8; // used for minY in func_800451A0
+extern f32 D_8009A9BC; // used for maxY in func_800451A0
+
+extern u8 D_8009A5C0;
+extern s32 D_800B9798;
+extern s16 D_800B97C4;
+
+extern Struct_D_800B9768 D_800B9768;
+extern Unk80092BC0 D_80092BC0;
+extern u8 D_800B1847;
+
+extern f32 D_8009AA28;
+extern f32 D_8009AA2C;
+extern f32 D_800B97E0[24];
+extern f32 D_800B9840[24];
+
+extern Unk80092BC0 D_80092CA8;
+extern Unk80092BC0 D_80092CB0;
+
+extern Unk800B98A0 *D_800B98A0[2];
+extern Unk800B98A8 *D_800B98A8[2];
+extern Unk800B98B0 *D_800B98B0[2];
+
+extern s8 D_80092BF4;
+
+// Some sort of toggle list
+extern s8 D_80092C00;
+extern s8 D_80092C04;
+extern s8 D_80092C08;
+extern s8 D_80092C0C;
+extern s8 D_80092C10;
+extern s8 D_80092C14;
+
+extern s16 D_80092C24;
+extern s16 D_80092C28;
+extern s16 D_80092C2C;
+extern s16 D_80092C30;
+extern s16 D_80092C34;
+extern s16 D_80092C38;
+
+extern Unk800B98A8 *D_800BB140;
+extern Unk800B98A8 *D_800BB144;
+extern Unk800B98B0 *D_800BB148;
+extern Unk800B98B0 *D_800BB14C;
+extern Unk800B98A0 *D_800BB150;
+extern Unk800B98A0 *D_800BB154;
+extern Unk800BB158 *D_800BB158[2];
+extern Unk800BB160 *D_800BB160[2];
+extern Unk800BB168 *D_800BB168[2];
+extern Unk800BB168* D_800BB174;
+extern Unk800BB168* D_800BB178;
+extern Unk800BB160* D_800BB17C;
+extern Unk800BB160* D_800BB180;
+extern Unk800BB158* D_800BB184;
+extern Unk800BB158* D_800BB188;
+
+extern Texture* D_800BB190;
+
+extern f32 D_8009AA40;
+extern f32 D_8009AA38;
+
+// xyz pair
+extern f32 D_80092BD0;
+extern f32 D_80092BD4;
+extern f32 D_80092BD8;
+
+extern s16 D_80092C20;
+extern s32 D_80092CA0;
+extern f32 D_8009AA20;
+extern s16 D_800B98B8[300];
+extern s16 D_800B9B60[800];
+extern f32 D_80092BE4;
+extern s32 D_80092CA4;
+extern u8 D_800B9B10[80];
+extern f32 D_8009AA24;
+extern s8 D_800BB170;
+
+// Used in other .c files
+void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+
+// defined in map.c but used before declared
+void func_800441F4(u32* arg0, s32 arg1);
+void func_80048B14(Block *block);
+void func_80048C24(Block *block);
 u32 hits_get_size(s32 id);
 void block_setup_vertices(Block *block);
 void block_setup_gdl_groups(Block *block);
-void func_80048B14(Block *block);
 void *block_setup_textures(Block *block);
 void block_setup_xz_bitmap(Block *block);
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
-
-void block_compute_vertex_colors(BlocksModel*,s32,s32,s32);
-void func_80058F3C();
-
-void func_80048C24(BlocksModel*);
+void block_compute_vertex_colors(Block*,s32,s32,s32);
 void func_80049D38(u32 arg0);
 void func_80049FA8(BlocksModel*);
-void func_80058F3C();
+void func_800499BC(void);
+void func_80049D88(void);
+void func_80044BEC(void);
+void func_80048F58(void);
+void track_c_func(void);
+u8 func_800456AC(Object* obj);
+u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
+void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
+void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3);
+MapHeader *map_load_streammap(s32, s32);
+void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
+void func_80048034(void);
+void map_update_objects_streaming(s32);
+s32 func_800485FC(s32, s32, s32, s32, s32);
+void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
+void func_800496E4(s32 blockIndex);
+void map_update_streaming(void);
+s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
+s32 func_8004B190(Object*);
+void func_8004B548(MapHeader*, s32, s32, Object*);
+s32 map_should_stream_load_object(ObjCreateInfo*, s8, s32);
+s32 map_check_some_mapobj_flag(s32, u32);
+void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
+s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
+s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
+void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
+s32 func_8004FA4C(void);
+s32 func_80052148(Vec3f* arg0, Vec3f* arg1);
+void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
+f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
+s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
 
-void func_800143A4();
-
-void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+// other funcs that are used
+void func_80058F3C(void);
+void func_800143A4(void);
+void func_8001EB80(void);
+s32 func_80010048(void);
+void some_video_setup(s32 param1);
+void func_80012B54(s32 param1, s32 param2);
+void func_800307C4(f32, f32);
+void func_80000608(Object*, Object*, u16, s32, s32, s32);
+void func_800009C8(Object*, Object*, u16, s32);
+void func_80023628(void);
+s32 func_80048E04(u8, u8, u8, u8);
+void func_8003E648(Texture*, s32, s32);
+Object **obj_get_all_of_type(s32 idx, s32 *count);
+u8 map_get_is_object_streaming_disabled(void);
+void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
+void func_8001F81C(u8*, u8*, u8*);
+void func_8005C740(s32, s32*, s32*, s32);
+void func_8003DB7C(void);
+void func_8003DBCC(void);
+void func_8005B870(void);
 
 #endif
