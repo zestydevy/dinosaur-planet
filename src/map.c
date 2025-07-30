@@ -5198,9 +5198,9 @@ u32 func_8004D8A4(Object* obj, u32 addr, s32 arg2) {
     obj64->unk4 = texture_load((s32) -obj->def->shadowTexture, 0);
     obj64->unk0 = obj->def->unk00;
     obj64->unk2c = obj64->unk0;
-    obj64->maybeX = D_80092BD0;
-    obj64->maybeY = D_80092BD4;
-    obj64->maybeZ = D_80092BD8;
+    obj64->unk14.x = D_80092BD0;
+    obj64->unk14.y = D_80092BD4;
+    obj64->unk14.z = D_80092BD8;
     obj64->unk36 = 0x40;
     obj64->flags = 4;
     obj64->unk38 = 0x19;
@@ -5801,7 +5801,88 @@ void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     }
 }
 
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051944.s")
+#else
+void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
+    f32 temp_fa1;
+    f32 temp_fs1;
+    f32 temp_fs2;
+    f32 temp_fs4;
+    s32 temp_fv0;
+    f32 var_fa0;
+    Vec3f pos; // spAC
+    f32 var_fv1;
+    s32 temp_s5;
+    SRT srt; // sp8C
+    s32 var_v0;
+    s32 temp_s7;
+    s32 var_s1;
+    ObjectStruct64 *obj64;
+    s32 i;
+
+    srt.transl.x = 0.0f;
+    srt.transl.y = 0.0f;
+    srt.transl.z = 0.0f;
+    srt.scale = 1.0f;
+    srt.roll = 0;
+    obj64 = arg1->ptr0x64;
+    temp_fs1 = obj64->unk14.x;
+    temp_fa1 = obj64->unk14.y;
+    temp_fs2 = obj64->unk14.z;
+    temp_s7 = D_800B97E0[4] - D_800B97E0[1];
+    temp_s7 >>= 1;
+    temp_s7 *= arg3;
+    if (temp_fs1 < 0.0f) {
+        var_fv1 = -temp_fs1;
+    } else {
+        var_fv1 = temp_fs1;
+    }
+    if (temp_fs2 < 0.0f) {
+        var_fa0 = -temp_fs2;
+    } else {
+        var_fa0 = temp_fs2;
+    }
+    if (arg1->def->shadowType != 2) {
+        arg4 = -5;
+    }
+    if (var_fa0 < var_fv1) {
+        // signature changed?
+        var_v0 = arctan2s(var_fv1, temp_fa1);
+    } else {
+        var_v0 = arctan2_f(var_fa0, temp_fa1);
+    }
+    if (arg1->ptr0x64->flags & 0x200) {
+        srt.yaw = arg1->srt.yaw;
+    } else {
+        srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
+    }
+    srt.pitch = 0x4000 - var_v0;
+    temp_s5 = srt.pitch;
+    if (srt.pitch < 0x1B58) {
+        srt.pitch = 0x1B58;
+    }
+    temp_fs4 = D_8009AA2C;
+    for (i = 0, var_s1 = 0; var_s1 < 8; var_s1++, i++) {
+        if (arg1->ptr0x64->flags & 0x100) {
+            pos.x = D_800B97E0[i * 3 + 0] * arg3;
+            pos.y = (D_800B97E0[i * 3 + 1] - 8.0f) * arg3;
+            pos.z = D_800B97E0[i * 3 + 2] * 1.5f;
+        } else {
+            pos.x = D_800B97E0[i * 3 + 0] * arg3;
+            temp_fv0 = temp_s7 * (temp_s5 / 16384.0f);
+            pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
+            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->ptr0x64->unk2c * temp_fs4)) - temp_fv0;
+        }
+        rotate_vec3((SRT* ) &srt, (Vec3f* ) &pos);
+        arg2->x = pos.x;
+        arg2->y = pos.y - arg4;
+        arg2->x = pos.z;
+        arg2++;
+    }
+}
+
+#endif
 
 void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
     f32 temp_fa0;
@@ -5843,7 +5924,38 @@ s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051D68.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051F64.s")
+s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3) {
+    s16 temp_t1;
+    s16 temp_t3;
+    s16 temp_t4;
+    s16 temp_v1;
+    Unk80092BC0 sp38;
+    Unk80092BC0 sp30;
+    s16 var_v0;
+
+    sp38 = D_80092CA8;
+    sp30 = D_80092CB0;
+    for (var_v0 = 0; var_v0 < 3; var_v0++) {
+        temp_v1 = arg2[sp30.unk0[var_v0]] - arg2[sp38.unk0[var_v0]];
+        temp_t1 = arg3[sp30.unk0[var_v0]] - arg3[sp38.unk0[var_v0]];
+        temp_t3 = arg0 - arg2[sp38.unk0[var_v0]];
+        temp_t4 = arg1 - arg3[sp38.unk0[var_v0]];
+        if ((temp_t1 * temp_t3) < (temp_v1 * temp_t4)) {
+            return 0;
+        }
+        if ((temp_v1 * temp_t4) >= (temp_t1 * temp_t3)) {
+            if (((temp_v1 * temp_t3) < 0) || ((temp_t1 * temp_t4) < 0)) {
+                return 0;
+            }
+            if (((temp_v1 * temp_v1) + (temp_t1 * temp_t1)) < ((temp_t3 * temp_t3) + (temp_t4 * temp_t4))) {
+                return 0;
+            }
+            return 1;
+        }
+    }
+    return 1;
+}
+
 
 s32 func_80052148(Vec3f* arg0, Vec3f* arg1) {
     f32 sp44;

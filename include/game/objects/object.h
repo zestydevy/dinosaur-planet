@@ -69,9 +69,7 @@ typedef struct {
 /* 0x8 */ Texture *unk8;
 /* 0xC */ Gfx *gdl;
 /* 0x10 */ s32 pad10;
-/* 0x14 */ f32 maybeX;
-/* 0x18 */ f32 maybeY;
-/* 0x1C */ f32 maybeZ;
+/* 0x14 */ Vec3f unk14;
 /* 0x20 */ Vec3f tr;
 /* 0x2C */ f32 unk2c;
 /* 0x30 */ u32 flags;

@@ -339,9 +339,7 @@ typedef struct UnkSp8C {
 } UnkSp8C;
 
 typedef struct Unk80092BC0 {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
+    s16 unk0[3];
 } Unk80092BC0;
 
 typedef struct Unk800B98A0 {
@@ -502,8 +500,12 @@ extern Unk80092BC0 D_80092BC0;
 extern u8 D_800B1847;
 
 extern f32 D_8009AA28;
+extern f32 D_8009AA2C;
 extern f32 D_800B97E0[24];
 extern f32 D_800B9840[24];
+
+extern Unk80092BC0 D_80092CA8;
+extern Unk80092BC0 D_80092CB0;
 
 extern Unk800B98A0 *D_800B98A0[2];
 extern Unk800B98A8 *D_800B98A8[2];
