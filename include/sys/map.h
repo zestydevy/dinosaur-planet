@@ -396,6 +396,10 @@ typedef struct Unk8004FA58_Arg5 {
     s16 pad6;
     s16 unk8;
     s16 unkA;
+    u8 padC;
+    u8 padD;
+    s8 padE;
+    s8 unkF;
 } Unk8004FA58_Arg5;
 
 #define MAX_RENDER_LIST_LENGTH 400
@@ -548,6 +552,17 @@ extern f32 D_80092BD0;
 extern f32 D_80092BD4;
 extern f32 D_80092BD8;
 
+extern s16 D_80092C20;
+extern s32 D_80092CA0;
+extern f32 D_8009AA20;
+extern s16 D_800B98B8[300];
+extern s16 D_800B9B60[800];
+extern f32 D_80092BE4;
+extern s32 D_80092CA4;
+extern u8 D_800B9B10[80];
+extern f32 D_8009AA24;
+extern s8 D_800BB170;
+
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
@@ -591,6 +606,8 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
 void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 func_8004FA4C(void);
+s32 func_80052148(Vec3f* arg0, Vec3f* arg1);
+void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
 
