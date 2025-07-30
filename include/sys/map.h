@@ -501,7 +501,7 @@ extern Struct_D_800B9768 D_800B9768;
 extern Unk80092BC0 D_80092BC0;
 extern u8 D_800B1847;
 
-void func_8005B870(void);
+extern f32 D_8009AA28;
 extern f32 D_800B97E0[24];
 extern f32 D_800B9840[24];
 
@@ -631,5 +631,6 @@ void func_8001F81C(u8*, u8*, u8*);
 void func_8005C740(s32, s32*, s32*, s32);
 void func_8003DB7C(void);
 void func_8003DBCC(void);
+void func_8005B870(void);
 
 #endif

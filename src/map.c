@@ -5772,7 +5772,34 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800511E8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800516BC.s")
+void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
+    f32 temp_fv0;
+    f32 temp_fa1;
+    Camera* camera;
+    f32 sp40[3];
+    f32 sp34[3];
+    f32 sp30;
+    s32 i;
+    s16 sp2A;
+
+    set_camera_selector(0);
+    camera = get_camera();
+    sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) ^ 0;
+    sp30 = fsin16_precise(-sp2A);
+    temp_fv0 = fcos16_precise(-sp2A);
+    temp_fa1 = obj->ptr0x64->unk2c * D_8009AA28;
+    for (i = 0; i < 8; i++) {
+        sp40[0] = D_800B9840[i * 3 + 0] * arg2;
+        sp40[1] = D_800B9840[i * 3 + 1] * arg2;
+        sp40[2] = D_800B9840[i * 3 + 2] * temp_fa1;
+        sp34[0] = (sp40[0] * temp_fv0) - (sp40[2] * sp30);
+        sp34[2] = (sp40[0] * sp30) + (sp40[2] * temp_fv0);
+        arg1->x = sp34[0];
+        arg1->y = sp40[1] - 5.0f;
+        arg1->z = sp34[2];
+        arg1++;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051944.s")
 
