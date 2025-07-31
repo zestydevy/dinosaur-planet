@@ -1353,7 +1353,129 @@ BlocksModel* func_80044BB0(s32 blockIndex) {
 }
 
 //Camera and frustum related?
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BEC.s")
+#else
+extern f32 D_80092AAC[24];
+
+void func_80044BEC(void) {
+    f32 spDC;
+    f32 spD8;
+    f32 spD4;
+    f32 spD0;
+    f32 spCC;
+    f32 spC8;
+    Camera* camera;
+    MtxF sp84;
+    f32 sp80;
+    f32 sp7C;
+    f32 sp78;
+    Plane *plane;
+    f32 var_fv1;
+    s16 sp6E;
+    s16 var_s0;
+    s16 var_v0;
+    s16 sp68;
+    SRT srt;
+
+    camera = get_camera();
+    if ((UINT_80092a98 & 8) || (UINT_80092a98 & 0x10000)) {
+        sp80 = camera_get_fov() / 1.5f;
+    } else {
+        sp80 = camera_get_fov() * 0.5f;
+    }
+    spD0 = camera->tx - gWorldX;
+    spCC = camera->ty;
+    spC8 = camera->tz - gWorldZ;
+    srt.transl.x = 0.0f;
+    srt.transl.y = 0.0f;
+    srt.transl.z = 0.0f;
+    srt.scale = 1.0f;
+    srt.yaw = 0x8000 - camera->yaw;
+    srt.pitch = -camera->pitch;
+    srt.roll = camera->roll;
+    var_s0 = 0;
+    matrix_from_srt(&sp84, &srt);
+    vec3_transform(&sp84, 0.0f, 0.0f, -1.0f, &spDC, &spD8, &spD4);
+    plane = &gFrustumPlanes[var_s0];
+    plane->x = spDC;
+    plane->y = spD8;
+    plane->z = spD4;
+    plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
+    var_s0++;
+    sp78 = fcos16_precise(sp80 * 182.0f);
+    sp6E = arctan2_f(160.0f, 120.0f / (fsin16_precise(sp80 * 182.0f) / sp78));
+    sp7C = fsin16_precise(sp6E);
+    sp78 = fcos16_precise(sp6E);
+    vec3_transform(&sp84, -(-sp78), 0.0f, -sp7C, &spDC, &spD8, &spD4);
+    plane = &gFrustumPlanes[var_s0];
+    plane->x = spDC;
+    plane->y = spD8;
+    plane->z = spD4;
+    plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
+    var_s0++;
+    vec3_transform(&sp84, -sp78, 0.0f, -sp7C, &spDC, &spD8, &spD4);
+    plane = &gFrustumPlanes[var_s0];
+    plane->x = spDC;
+    plane->y = spD8;
+    plane->z = spD4;
+    plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
+    var_s0++;
+    vec3_transform(&sp84, 0.0f, -sp78, -sp7C, &spDC, &spD8, &spD4);
+    plane = &gFrustumPlanes[var_s0];
+    plane->x = spDC;
+    plane->y = spD8;
+    plane->z = spD4;
+    plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
+    var_s0++;
+    vec3_transform(&sp84, 0.0f, -(-sp78), -sp7C, &spDC, &spD8, &spD4);
+    plane = &gFrustumPlanes[var_s0];
+    plane->x = spDC;
+    plane->y = spD8;
+    plane->z = spD4;
+    plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
+    for (var_s0 = 0; var_s0 < 5; var_s0++) {
+        var_fv1 = 0.0f;
+        var_v0 = 0;
+        while (var_v0 < 24) {
+            spDC = gFrustumPlanes[var_s0].x * D_80092AAC[var_v0++];
+            spDC += gFrustumPlanes[var_s0].y * D_80092AAC[var_v0++];
+            spDC += gFrustumPlanes[var_s0].z * D_80092AAC[var_v0++];
+            if (var_fv1 < spDC) {
+                var_fv1 = spDC;
+                sp68 = var_v0 - 3;
+            }
+        }
+        // @bug, sp68 could be unassigned
+        switch (sp68) {
+        case 0:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 0;
+            break;
+        case 3:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 2;
+            break;
+        case 6:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 5;
+            break;
+        case 9:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 7;
+            break;
+        case 12:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 1;
+            break;
+        case 15:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 3;
+            break;
+        case 18:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 4;
+            break;
+        case 21:
+            gFrustumPlanes[var_s0].unk_0x14[0] = 6;
+            break;
+        }
+    }
+}
+#endif
 
 s32 func_800451A0(s32 xPos, s32 zPos, BlocksModel* blocks) {
     Plane* currentPlane;

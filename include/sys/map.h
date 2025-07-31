@@ -451,7 +451,7 @@ extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 D_80092A8C;
 // D_800B5508 & D_800B5590 should probably use the same struct since they
-// multiply their index by 0x87C however no idea what the struct looks like
+// multiply their index by 0x8C however no idea what the struct looks like
 extern s8 D_800B5508;
 extern s8 D_800B5590;
 
@@ -567,6 +567,7 @@ extern f32 D_8009AA24;
 extern s8 D_800BB170;
 extern u8 D_8009A614;
 extern s16 *D_800B97A0;
+extern f32 D_80092AAC[24];
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
