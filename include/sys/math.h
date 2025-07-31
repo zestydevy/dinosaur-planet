@@ -99,7 +99,7 @@ f32 fsin16(s16 theta);
 
 f32 sinf(f32);
 
-s16 arctan2s(s16 x, s16 z);
+s16 arctan2s(s32 x, s32 z);
 s16 arctan2_f(f32 x, f32 z);
 s16 atan2f_to_s(f32 x, f32 z);
 f32 atan2f(f32 x, f32 z);

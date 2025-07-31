@@ -5801,9 +5801,6 @@ void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     }
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051944.s")
-#else
 void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     f32 temp_fa1;
     f32 temp_fs1;
@@ -5812,27 +5809,28 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     s32 temp_fv0;
     f32 var_fa0;
     Vec3f pos; // spAC
-    f32 var_fv1;
-    s32 temp_s5;
-    SRT srt; // sp8C
+    s32 s8;
     s32 var_v0;
+    SRT srt; // sp8C
     s32 temp_s7;
     s32 var_s1;
-    ObjectStruct64 *obj64;
+    f32 var_fv1;
     s32 i;
+
+    temp_s7 = D_800B97E0[4] - D_800B97E0[1];
+    temp_s7 >>= 1;
+    temp_s7 *= arg3;
 
     srt.transl.x = 0.0f;
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
     srt.roll = 0;
-    obj64 = arg1->ptr0x64;
-    temp_fs1 = obj64->unk14.x;
-    temp_fa1 = obj64->unk14.y;
-    temp_fs2 = obj64->unk14.z;
-    temp_s7 = D_800B97E0[4] - D_800B97E0[1];
-    temp_s7 >>= 1;
-    temp_s7 *= arg3;
+
+    temp_fs1 = arg1->ptr0x64->unk14.x;
+    temp_fa1 = arg1->ptr0x64->unk14.y;
+    temp_fs2 = arg1->ptr0x64->unk14.z;
+    s8 = 8;
     if (temp_fs1 < 0.0f) {
         var_fv1 = -temp_fs1;
     } else {
@@ -5847,7 +5845,6 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
         arg4 = -5;
     }
     if (var_fa0 < var_fv1) {
-        // signature changed?
         var_v0 = arctan2s(var_fv1, temp_fa1);
     } else {
         var_v0 = arctan2_f(var_fa0, temp_fa1);
@@ -5857,32 +5854,30 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     } else {
         srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
     }
-    srt.pitch = 0x4000 - var_v0;
-    temp_s5 = srt.pitch;
+    // This needs to be u16???
+    srt.pitch = (0x4000 - var_v0);
     if (srt.pitch < 0x1B58) {
         srt.pitch = 0x1B58;
     }
     temp_fs4 = D_8009AA2C;
-    for (i = 0, var_s1 = 0; var_s1 < 8; var_s1++, i++) {
+    var_s1 = 0;
+    for (i = 0; var_s1 < s8; var_s1++, arg2++, i++) {
         if (arg1->ptr0x64->flags & 0x100) {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
             pos.y = (D_800B97E0[i * 3 + 1] - 8.0f) * arg3;
             pos.z = D_800B97E0[i * 3 + 2] * 1.5f;
         } else {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
-            temp_fv0 = temp_s7 * (temp_s5 / 16384.0f);
+            temp_fv0 = temp_s7 * ((0x4000 - var_v0) / 16384.0f);
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
             pos.z = (D_800B97E0[i * 3 + 2] * (arg1->ptr0x64->unk2c * temp_fs4)) - temp_fv0;
         }
         rotate_vec3((SRT* ) &srt, (Vec3f* ) &pos);
         arg2->x = pos.x;
         arg2->y = pos.y - arg4;
-        arg2->x = pos.z;
-        arg2++;
+        arg2->z = pos.z;
     }
 }
-
-#endif
 
 void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
     f32 temp_fa0;
