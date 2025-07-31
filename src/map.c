@@ -1235,88 +1235,58 @@ s16 map_get_map_id_from_xz_ws(f32 worldX, f32 worldZ){
     return layer[gridZ*16 + gridX].mapIDs[0];
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800448D0.s")
-#else
-s16 func_800448D0(s32 arg0) {
-    s16 mapID;
+s32 func_800448D0(s32 arg0) {
+    GlobalMapCell* var_a3;
+    MapHeader* temp_v1;
     s16 var_v0;
-    s16* var_a0;
-    GlobalMapCell *cellInfo;
-    s16* var_t2;
-    GlobalMapCell *layer;
-    s32 cellIndex;
-    s32 cellIndex_2;
+    s32 var_a1;
     s32 var_a2;
-    s32 mapID_wasFound;
+    s32 var_t0;
     s32 var_t1;
-    u32 objects_data_end;
-    u8 *object_ptr;
-    ObjCreateInfo *obj;
-    MAPSHeader* temp_v1;
-    
+    ObjCreateInfo* obj;
+    s16 sp20[4];
+    ObjCreateInfo* obj2;
+    u32 new_var;
 
     var_v0 = 0;
-    layer = gDecodedGlobalMap[0];
-
-    for (cellIndex = 0; cellIndex < BLOCKS_GRID_TOTAL_CELLS; cellIndex++){
+    var_a3 = *gDecodedGlobalMap;
+    for (var_a1 = 0; var_a1 < BLOCKS_GRID_TOTAL_CELLS; var_a1++, var_a3++) {
         var_a2 = 0;
-        cellInfo = &(layer[cellIndex]);
-        while (var_a2 != 6){
-            mapID = cellInfo->mapIDs[0];
-            var_a2 += 2;
-            if (mapID >= 0 && mapID < MAP_ID_MAX) {
-                mapID_wasFound = 0;
-                if (&gLoadedMapsDataTable[mapID] != 0) {
-                    var_t1 = 0;
-                    if (var_v0 > 0) {
-                        // var_t2 = &sp20[0];
-
-                        while(var_t1 != var_v0){
-                            var_t1 += 1;
-                            if (*var_t2 == mapID) {
-                                mapID_wasFound = 1;
-                                break;
-                            }
-                            var_t2 += 2;
+        for (var_a2 = 0; var_a2 < 3; var_a2++) {
+            if ((var_a3->mapIDs[var_a2] >= 0) && (var_a3->mapIDs[var_a2] < MAP_ID_MAX)) {
+                var_t0 = FALSE;
+                if (gLoadedMapsDataTable[var_a3->mapIDs[var_a2]] != NULL) {
+                    for (var_t1 = 0; var_t1 < var_v0; var_t1++) {
+                        if (sp20[var_t1] == var_a3->mapIDs[var_a2]) {
+                            var_t0 = TRUE;
+                            break;
                         }
-                        
                     }
-                    if (mapID_wasFound == 0) {
-                        //(&sp20[0])[var_v0] = mapID;
-                        var_v0 += 1;
+                    if (var_t0 == FALSE) {
+                        sp20[var_v0++] = var_a3->mapIDs[var_a2];
                     }
                 }
             }
-            cellInfo += 2;
         }
     }
-    
-    cellIndex_2 = 0;
-    if (var_v0 > 0) {
-        //var_a0 = &sp20[0];
-        while (cellIndex_2 != var_v0){
-            mapID = *var_a0;
-            cellIndex_2 += 1;
-            temp_v1 = gLoadedMapsDataTable[mapID];
-            if (temp_v1 != NULL) {
-                object_ptr = (u8*)temp_v1->objectInstanceFile_ptr;
-                objects_data_end = (u32)(temp_v1->objectInstancesFileLength + object_ptr);
-    
-                while (*object_ptr < objects_data_end){ //iterate through objects list
-                    obj = (ObjCreateInfo*)object_ptr;
-                    if (*object_ptr == arg0) //checking for particular object/offset in the object instance file?
-                        return mapID;
-                    object_ptr += obj->unk2 << 2; //move to next object in list
+
+    for (var_a1 = 0; var_a1 < var_v0; var_a1++) {
+        temp_v1 = gLoadedMapsDataTable[sp20[var_a1]];
+        if (temp_v1 != NULL) {
+            obj = (ObjCreateInfo *) temp_v1->objectInstanceFile_ptr;
+            new_var = (temp_v1->objectInstancesFileLength + (s8 *)obj);
+            while ((u32)obj < new_var) {
+                obj2 = obj;
+                if ((s32)obj == arg0) {
+                    return sp20[var_a1];
                 }
-                
+                obj = (ObjCreateInfo*)&((s8 *)obj)[obj2->quarterSize * 4];
             }
-            var_a0 += 2;
         }
     }
+
     return -1;
 }
-#endif
 
 MapHeader* func_80044A10(void) {
     return (MapHeader*)gLoadedMapsDataTable;
