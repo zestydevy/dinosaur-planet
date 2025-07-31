@@ -231,6 +231,9 @@ void *func_8005D3A4(int param) {
     } 
 }
 
+// file split here?
+// look at rodata at 8009ace0
+
 void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     int i;
     u32 width;

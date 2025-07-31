@@ -1,6 +1,8 @@
 #include "common.h"
 #include "sys/map.h"
-#include "sys/map.h"
+
+// .data start: 80092a60 ?
+// .bss start: 800b49f0 ?
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = 0xFF;
@@ -392,7 +394,18 @@ s32 func_80041E68(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004225C.s")
 
+// these are all referenced by track_c_func
+// static const char str_8009a510[] = "track/track.c";
+// static const char str_8009a520[] = "track/track.c";
+// static const char str_8009a530[] = "track/track.c";
+// static const char str_8009a540[] = "track/track.c";
+// static const char str_8009a550[] = "track/track.c";
 #pragma GLOBAL_ASM("asm/nonmatchings/map/track_c_func.s")
+
+// static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
+// static const char str_8009a590[] = "found on map %d\n";
+// static const char str_8009a5a4[] = "mapno not found\n";
+// static const char str_8009a5b8[] = "error\n";
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
@@ -1014,8 +1027,15 @@ void func_8004530C(void) {
     D_800B9794 = 0;
 }
 
+// referenced by some_cell_func
+// static const char str_8009a5c0[] = " cellx %i celly %i cellz %i ";
 #pragma GLOBAL_ASM("asm/nonmatchings/map/some_cell_func.s")
 
+// static const char str_8009a5e0[] = " ERROR: visible index greater than no vis blocks ";
+
+
+// referenced by func_80045600
+// static const char str_8009a614[] = "SW ";
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045600.s")
 #else
@@ -1047,6 +1067,32 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     return 0;
 }
 #endif
+
+// static const char str_8009a618[] = "trackFreeMap: Error no map!!\n";
+// static const char str_8009a638[] = "WORLD MAP LIST OVERFLOW\n";
+// static const char str_8009a654[] = "entry->gamno >= max_gam\n";
+// static const char str_8009a670[] = "entry->block > max gam\n";
+// static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
+// static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
+// static const char str_8009a6e0[] = "trackLoadBlockEnd: track block overrun\n";
+// static const char str_8009a708[] = "TEXSCROLL: table is full\n";
+// static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
+// static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
+// static const char str_8009a770[] = "MISMATCH on global texanim free\n";
+// static const char str_8009a794[] = " Map not Loaded %i ";
+// static const char str_8009a7a8[] = "OBJECT error: obj %d, has no romdef\n";
+// static const char str_8009a7d0[] = "WARNING: trackSetLoaded bit overflow\n";
+// static const char str_8009a7f8[] = "WARNING: trackGetLoaded bit overflow\n";
+// static const char str_8009a820[] = "Cannot move object with an ident of -1!!!\n";
+// static const char str_8009a84c[] = " OVer FLOW FLOW in RD saves for moving romdefs ";
+// static const char str_8009a87c[] = " Error in moving of romdef ";
+// static const char str_8009a898[] = " Saving Romdef for for %i tab no %i \n";
+// static const char str_8009a8c0[] = "Cannot move object with an ident of -1!!!\n";
+// static const char str_8009a8ec[] = " Removed Restored Num %i ";
+// static const char str_8009a908[] = "%i ";
+// static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
+// static const char str_8009a930[] = "######  DOING WARP  ########\n";
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_800456AC.s")
 
@@ -2364,196 +2410,3 @@ void func_8004D328() {
         D_80092A78 = 8;
     }
 }
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D470.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D698.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D844.s")
-
-void func_8004D880(Object *arg0) {
-    ObjectStruct64* temp_v0;
-
-    if (arg0->ptr0x64 != NULL) {
-        arg0->ptr0x64->flags &= ~0x20;
-    }
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D8A4.s")
-
-void func_8004D974(s32 arg0) {
-    D_80092BE8 = (s8) arg0;
-}
-
-void func_8004D984(s32 arg0) {
-    D_80092BE8 = 1;
-}
-
-void func_8004D99C(s32 arg0) {
-    D_80092BF8 = arg0;
-}
-
-void func_8004D9AC(s32 arg0) {
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004D9B8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004DABC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004DBAC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E540.s")
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E64C.s")
-#else
-void func_8005BCE0(Object *object, u32 param_2, Gfx **gdl, Mtx **rspMtxs, u32 param_5, u32 param_6, u32 param_7, f32 y, u32 idx);
-void _func_8004E64C(Object *object, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5)
-{
-    ObjectStruct64 *unk;
-    Vec3f v0;
-    Vec3f v1;
-
-    unk = object->ptr0x64;
-    if (unk->gdl != NULL)
-    {
-        if (unk->flags & 0x20)
-        {
-            bcopy(&object->srt.transl, &v0, sizeof(Vec3f));
-            bcopy(&object->positionMirror, &v1, sizeof(Vec3f));
-            bcopy(&unk->tr, &object->srt.transl, sizeof(Vec3f));
-
-            if (object->parent != NULL) {
-                transform_point_by_object(unk->tr.x, unk->tr.y, unk->tr.z, &unk->tr.x, &unk->tr.y, &unk->tr.z, object->parent);
-            } else {
-                bcopy(&unk->tr, &object->positionMirror, sizeof(Vec3f));
-            }
-        }
-
-        if (unk->flags & 0x8) {
-            // This function seems to be responsible for drawing shadows.
-            func_8005BCE0(object, *(s16*)0x80092c18, gdl, rspMtxs, param_4, param_5, *(s8*)0x800bb170, *(f32*)0x800bb18c, unk->flags & 0x3);
-        }
-
-        if (unk->flags & 0x20) {
-            bcopy(&v0, &object->srt.transl, sizeof(Vec3f));
-            bcopy(&v1, &object->positionMirror, sizeof(Vec3f));
-        }
-    }
-}
-#endif
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E7A8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004EEC0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004F378.s")
-
-s32 func_8004FA3C(s32 arg0) {
-    return 0;
-}
-
-s32 func_8004FA4C(void) {
-    return 0;
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004FA58.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800502AC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80050B88.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800511E8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800516BC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051944.s")
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051C54.s")
-#else
-void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
-    f32 sp8;
-    f32 sp4;
-    f32 sp0;
-    f32 temp_fa0;
-    f32 temp_fa1;
-    f32 temp_ft0;
-    f32 temp_ft4;
-    f32 temp_ft5;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    
-    temp_fv0 = C->x - A->x;
-    temp_fa0 = C->y - A->y;
-    temp_ft4 = C->z - A->z;
-    sp0 = B->x - A->x;
-    sp4 = B->y - A->y;
-    sp8 = B->z - A->z;
-    
-    D->x = (sp4 * temp_ft4) - (sp8 * temp_fa0);
-    D->y = -((sp0 * temp_ft4) - (sp8 * temp_fv0));
-    D->z = (sp0 * temp_fa0) - (sp4 * temp_fv0);
-
-    // D->x = (((B->y - A->y) * (C->z - A->z)) - ((B->z - A->z) * (C->y - A->y)));
-    // D->y = -(((B->x - A->x) * (C->z - A->z)) - ((B->z - A->z) * (C->x - A->x)));
-    // D->z = (((B->x - A->x) * (C->y - A->y)) - ((B->y - A->y) * (C->x - A->x)));
-}
-#endif
-
-s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
-    s32 var_v1;
-    float product;
-
-    var_v1 = 1;
-    if (D_80092BFC != 0) {
-        return 1;
-    }
-    
-    //Check for negative dot product?
-    product = (arg0->x * arg1->x) + (arg0->y * arg1->y) + (arg0->z * arg1->z);
-    if (product < 0.0f) {
-        var_v1 = -1;
-    }
-    return var_v1;
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051D68.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051F64.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052148.s")
-
-/** 
-  * Seems to have something to do with getting the dot product of two vectors?
-  */
-void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
-{
-    f32 AdotB;
-    f32 AdotA;
-    f32 BdotB;
-    f32 product;
-    Vec3f *Acopy;
-    
-    Acopy = A;
-    AdotB = ((A->x * B->x) + (A->y * B->y)) + (A->z * B->z);
-    product = (A->x * Acopy->x) + (A->y * A->y) + (A->z * A->z);
-    AdotA = product;
-    BdotB = ((B->x * B->x) + (B->y * B->y)) + (B->z * B->z);
-    product = AdotA * BdotB;
-    
-    if (product){
-        BdotB = sqrtf(product);
-    }
-    if (BdotB != 0){
-        *arg2 = AdotB / BdotB;
-        return;
-    }
-    *arg2 = 0;
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052300.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052644.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800528AC.s")
