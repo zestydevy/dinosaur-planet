@@ -1476,19 +1476,11 @@ void some_cell_func(BitStream* stream) {
     bitstream_init(stream, (var_v1 * temp) + D_800B9798, D_800B979E, D_800B979E);
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045600.s")
-#else
-extern char D_8009A614;
-extern s32 *D_800B9700;
-extern s16 *D_800B97A0;
-
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     s8 bitPosIndex;
     s8 *new_var;
 
-    new_var = D_800B9700;
-    new_var += arg4 * 4;
+    new_var = D_800B9700[arg4];
     bitPosIndex = new_var[arg2 + arg3 * 16];
     
     if (bitPosIndex >= 0){
@@ -1498,7 +1490,6 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     diPrintf(&D_8009A614);
     return 0;
 }
-#endif
 
 u8 func_800456AC(Object* obj) {
     f32 temp_ft4;

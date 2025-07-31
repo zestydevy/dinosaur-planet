@@ -565,6 +565,8 @@ extern s32 D_80092CA4;
 extern u8 D_800B9B10[80];
 extern f32 D_8009AA24;
 extern s8 D_800BB170;
+extern u8 D_8009A614;
+extern s16 *D_800B97A0;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
