@@ -1121,60 +1121,56 @@ s32 func_80044320(f32 worldX, f32 worldZ) {
     return 1;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044448.s")
-#else
-extern u32 D_800B5468; //?
-
-/** Search all loaded maps for object with uID? */
 ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4) {
-    MAPSHeader **map_ptr;
     s32 mapID;
-    MAPSHeader *map;
     s32 object_offset;
     s32 object_indexInMap;
+    u16 new_var;
     ObjCreateInfo *obj;
     
-    for (mapID = 0; mapID < 0x78; mapID++){
-        map_ptr = &gLoadedMapsDataTable[mapID];
-        map = gLoadedMapsDataTable[mapID];
-        if (!map)
+    for (mapID = 0; mapID < 120; mapID++){
+        // @fake
+        if (!gMapActiveStreamMap) {}
+        if (!gLoadedMapsDataTable[mapID])
             continue;
     
-        gMapActiveStreamMap = map;
-        obj = (ObjCreateInfo*)map->objectInstanceFile_ptr;
-        
-        for (object_indexInMap = 0, object_offset = 0; object_offset < map->objectInstancesFileLength; object_indexInMap++){
-            if (match_uID == obj->unk14){
+        gMapActiveStreamMap = gLoadedMapsDataTable[mapID];
+        obj = (ObjCreateInfo*)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
+        new_var = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
+        for (object_indexInMap = 0, object_offset = 0; object_offset < new_var; object_indexInMap++){
+            if (match_uID == obj->uID){
                 if (match_indexInMap){
-                    *match_indexInMap = object_indexInMap;
+                    match_indexInMap[0] = object_indexInMap;
                 }
 
                 if (match_mapID){
-                    *match_mapID = mapID;
+                    match_mapID[0] = mapID;
                 }
 
-                if (arg3){
-                    *arg3 = gMapActiveStreamMap->unk19;
+                if (arg3 != NULL){
+                    arg3[0] = gMapActiveStreamMap->unk19;
                 }
-                if (arg4){
-                    if ((u32) map_ptr >= (u32)&D_800B5468){ //If beyond mapID 80??
-                        *arg4 = 1;
+
+                if (arg4 != NULL){
+                    if (mapID >= 80){
+                        arg4[0] = 1;
+                        // @fake
+                        if ((!match_uID) && (!match_uID)) {}
                         return obj;
                     }
-                    *arg4 = 0;
+                    arg4[0] = 0;
                 }
                 
                 return obj;
             }
 
-            object_offset += obj->unk2 << 2;
-            obj = (ObjCreateInfo *) (map->objectInstanceFile_ptr + object_offset);
+            object_offset += obj->quarterSize * 4;
+            obj = (ObjCreateInfo*)&((s8 *)obj)[obj->quarterSize * 4];
         }
     }
-    return 0;
+
+    return NULL;
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004454C.s")

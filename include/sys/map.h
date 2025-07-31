@@ -6,6 +6,7 @@
 #include "PR/gbi.h"
 
 #include "types.h"
+#include "sys/dl_debug.h"
 #include "sys/math.h"
 #include "sys/camera.h"
 #include "sys/rarezip.h"
@@ -612,6 +613,8 @@ s32 func_80052148(Vec3f* arg0, Vec3f* arg1);
 void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
+void block_add_to_render_list(Block *block, f32 x, f32 z);
+void func_800436DC(Object* arg0, s32 arg1);
 
 // other funcs that are used
 void func_80058F3C(void);
