@@ -1172,29 +1172,12 @@ ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_ma
     return NULL;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004454C.s")
-#else
-
-extern u32 D_800B96E4; // end of gBlockIndices which should be iterated over in a for (i = 0; i < 5; i++) loop
-
-#define BLOCKS_TOLERANCE_Y 50
-
-//map_get_blockIndex_at_worldCoords?
 s32 func_8004454C(f32 x, f32 y, f32 z) {
-    s32 blockIndex;
-    s8 loadedBlockIndex1;
-    s8 loadedBlockIndex2;
-    s8 loadedBlockIndex3;
-    BlocksModel *block1;
-    BlocksModel *block2;
-    BlocksModel *block3;
     s32 gridX;
     s32 gridZ;
-    s8 *nextLayer;
-    s8 *blocksLayerIndices;
-    s8 *temp_v1_4;
-    s8 **layerB;
+    BlocksModel *currentBlock;
+    s32 i;
+    s8 *temp;
     
     gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
     gridZ = floor_f(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
@@ -1205,51 +1188,21 @@ s32 func_8004454C(f32 x, f32 y, f32 z) {
     if (gridZ < 0 || gridZ >= BLOCKS_GRID_SPAN){
         return -1;
     }
-    
-    blocksLayerIndices = gBlockIndices[0];    
-    if (blocksLayerIndices[(gridZ * 16) + gridX] >= 0){
-        loadedBlockIndex1 = blocksLayerIndices[blockIndex];
-        block1 = gLoadedBlocks[loadedBlockIndex1];
-        
-        //Check if within bounds of block (along Y axis)
-        if ((f32) (block1->minY - BLOCKS_TOLERANCE_Y) < y && y < (f32) (block1->maxY + BLOCKS_TOLERANCE_Y)) {
-            return (s32) loadedBlockIndex1;
-        }
-    }
-    
-    layerB = &gBlockIndices[1]; //layer1?
-    
-    while (1){
-        temp_v1_4 = *layerB;
-        if (temp_v1_4[(gridZ * 16) + gridX] >= 0){
-            loadedBlockIndex3 = temp_v1_4[blockIndex];
-            block3 = gLoadedBlocks[loadedBlockIndex3];
+    gridX = (gridZ * 16) + gridX;
+    for (i = 0; i < 5; i++) {
+        temp = gBlockIndices[i];
+        if (temp[gridX] >= 0){
+            currentBlock = gLoadedBlocks[temp[gridX]];
             
             //Check if within bounds of block (along Y axis)
-            if ((f32) (block3->minY - BLOCKS_TOLERANCE_Y) < y && y < (f32) (block3->maxY + BLOCKS_TOLERANCE_Y)) {
-                return (s32) loadedBlockIndex3;
+            if ((currentBlock->minY - 50) < y && y < (currentBlock->maxY + 50)) {
+                return temp[gridX];
             }
-        }
-        
-        *nextLayer = layerB + 4;
-        layerB += 8;
-        loadedBlockIndex2 = *(nextLayer + blockIndex);
-        if (loadedBlockIndex2 >= 0){
-            block2 = gLoadedBlocks[loadedBlockIndex2];
-            
-            //Check if within bounds of block (along Y axis)
-            if ((f32) (block2->minY - BLOCKS_TOLERANCE_Y) < y && y < (f32) (block2->maxY + BLOCKS_TOLERANCE_Y)){
-                return (s32) loadedBlockIndex2;
-            }
-        }
-        
-        if ((void *)layerB == &D_800B96E4){
-            return -1;
         }
     }
-}
 
-#endif
+    return -1;
+}
 
 /** get_block_world_space_origin? */
 void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ) {
