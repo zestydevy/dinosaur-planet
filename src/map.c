@@ -1776,28 +1776,14 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
 #endif
 
 #ifndef NON_MATCHING
-s32 map_load_streammap_add_to_table(s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
 #else
-typedef struct Unk800B9768_Unk4 {
-    s16 unk0;
-    s16 pad2;
-    s16 unk4;
-    u8 pad6[4];
-} Unk800B9768_Unk4;
-typedef struct Unk800B9768{
-    s32 pad0;
-    Unk800B9768_Unk4 *unk4;
-    s32 pad8;
-    s8 *unkC;
-}Unk800B9768;
 void func_8004BD40(MapHeader*, s32);                   /* extern */
 MapHeader* map_load_streammap(s32, s32);         /* extern */
-extern Unk800B9768 D_800B9768;
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 s32 map_load_streammap_add_to_table(s32 arg0) {
     s32 sp2C;
-    Unk800B9768_Unk4* temp_a3;
+    Struct_D_800B9768_unk4* temp_a3;
 
     sp2C = 0;
     for (sp2C = 0; sp2C < gMapNumStreamMaps && gMapStreamMapTable[sp2C].header != NULL; sp2C++) {}
@@ -1835,7 +1821,6 @@ s32 map_find_streammap_index(s32 mapID_to_find) {
     return -1;
 }
 
-s32 func_80045DC0(s32, s32, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045DC0.s")
 
 /** free_mapID? */
@@ -1984,7 +1969,75 @@ void func_80046320(s32 arg0, Object *obj) {
 
 #endif
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
+#else
+void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
+    s32 pad;
+    s32 sp30;
+    s32 temp_v1_2;
+    s32 mapIndex;
+    MapHeader* sp24;
+    s8 sp20[2];
+
+    sp30 = func_80045DC0(worldGridX, worldGridZ, arg3);
+    if (sp30 != -1) {
+        mapIndex = map_find_streammap_index(sp30);
+        if (mapIndex == -1) {
+            mapIndex = map_load_streammap_add_to_table(sp30);
+        }
+        gMapStreamMapTable[mapIndex].unk06 = 1;
+        sp24 = gMapStreamMapTable[mapIndex].header;
+        sp20[0] = D_800B9770[sp30][0];
+        sp20[1] = D_800B9770[sp30][1];
+        cell->mapIDs[0] = sp30;
+        cell->mapIDs[1] = sp20[0];
+        cell->mapIDs[2] = sp20[1];
+        if (sp20[0] != -1) {
+            mapIndex = map_find_streammap_index(sp20[0]);
+            if (mapIndex == -1) {
+                mapIndex = map_load_streammap_add_to_table(sp20[0]);
+            }
+            ((s8 *)&gMapStreamMapTable[mapIndex])[2] = 1;
+        }
+        if (sp20[1] != -1) {
+            mapIndex = map_find_streammap_index(sp20[1]);
+            if (mapIndex == -1) {
+                mapIndex = map_load_streammap_add_to_table(sp20[1]);
+            }
+            ((s8 *)&gMapStreamMapTable[mapIndex])[2] = 1;
+        }
+
+        worldGridX -= gMapGridTable[sp30][0];
+        worldGridZ -= gMapGridTable[sp30][2];
+        temp_v1_2 = ((s32*) &((s8 *)sp24->blockIDs_ptr)[worldGridX * 4 + ((worldGridZ *  sp24->gridSizeX) * 4)])[0];
+        cell->loadedBlockIndex = (temp_v1_2 >> 0x11) & 0x3F;
+        cell->trkBlkIndex = (temp_v1_2 >> 0x17) & 0x3F;
+        if (cell->trkBlkIndex == 0x3F) {
+            cell->trkBlkIndex = -1;
+        }
+        if (cell->trkBlkIndex == -1) {
+            cell->blockID = -1;
+            return;
+        }
+        if (cell->trkBlkIndex >= gNumTRKBLKEntries) {
+            cell->trkBlkIndex = gNumTRKBLKEntries - 1;
+        }
+        cell->blockID = gFile_TRKBLK[cell->trkBlkIndex] + cell->loadedBlockIndex;
+        if (cell->blockID >= gFile_TRKBLK[gNumTRKBLKEntries]) {
+            cell->blockID = gFile_TRKBLK[gNumTRKBLKEntries] - 1;
+        }
+    } else {
+        cell->mapIDs[0] = -1;
+        cell->mapIDs[1] = -1;
+        cell->mapIDs[2] = -1;
+        cell->blockID = -2;
+        cell->trkBlkIndex = -1;
+        cell->loadedBlockIndex = 0;
+    }
+}
+
+#endif
 
 void func_80046688(s32 arg0, s32 arg1) {
 }
@@ -2059,7 +2112,7 @@ void init_global_map(void)
     // loop 64 times and set all fields of unk4, unk8 and unkC
     for (i = 0; i < SOME_LENGTH; i++) {
         thisunk4 = D_800B9768.unk4 + i;
-        D_800B9768.unkC[i].unk0 = 0x80;
+        D_800B9768.unkC[i] = 0x80;
         thisunk4->unk0 = 0x8000;
         thisunk4->unk2 = 0x8000;
         thisunk4->unk4 = 0x8000;
@@ -2071,7 +2124,7 @@ void init_global_map(void)
         D_800B9768.unk8[(i << 1) + 1] = -1;
     }
     for (i = 0; i < size && (buf[i].unk6 >= 0); i++) {
-        D_800B9768.unkC[buf[i].unk6].unk0 = buf[i].unk4;
+        D_800B9768.unkC[buf[i].unk6] = buf[i].unk4;
 
         map_read_layout(
             &D_800B9768.unk4[buf[i].unk6],
@@ -2093,25 +2146,26 @@ void init_global_map(void)
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_read_layout.s")
 #else
-
 // regalloc
-extern MapsTabStruct  *gFile_MAPS_TAB;
+typedef struct UnkStructUnk4 {
+/*00*/ s16 unk0;
+/*02*/ s16 unk2;
+/*04*/ s16 unk4;
+/*06*/ s16 unk6;
+/*08*/ s8  unk8;
+/*09*/ s8  unk9;
+} UnkStructUnk4;
 void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex)
 {
-    s32 temp_v1;
     MapsTabStruct* maptabstruct;
-    MapsTabStruct* maptabstructagain;
     MapsBinStruct* mapbinstruct;
-    s32 var_v0;
 
     maptabstruct = &gFile_MAPS_TAB[maptabindex];
-    
     mapbinstruct = (MapsBinStruct*)gMapReadBuffer;
     
     queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, maptabstruct->unk0, maptabstruct->unk8 - maptabstruct->unk0);
     
-    maptabstructagain = &gFile_MAPS_TAB[maptabindex];
-    mapbinstruct->unkC = (s32 *) (((s8 *)mapbinstruct + maptabstructagain->unk4) - maptabstructagain->unk0);
+    mapbinstruct->unkC = (s32 *) (((s8 *)mapbinstruct + gFile_MAPS_TAB[maptabindex].unk4) - gFile_MAPS_TAB[maptabindex].unk0);
 
     arg0->unk0 = arg2 - mapbinstruct->unk4;
     arg0->unk4 = arg3 - mapbinstruct->unk6;
@@ -2123,14 +2177,16 @@ void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 mapt
 
     for (arg3 = 0; arg3 < mapbinstruct->unk2; arg3++) {
         for (arg2 = 0; arg2 < mapbinstruct->unk0; arg2++) {
-            temp_v1 = arg2 + (arg3 * mapbinstruct->unk0);
-            var_v0 = mapbinstruct->unkC[temp_v1];
+            s32 temp_v1 = arg2 + (arg3 * mapbinstruct->unk0);
+            s32 var_v0 = mapbinstruct->unkC[temp_v1];
             if (((var_v0 >> 0x17) & 0x3F) != 0x3F) {
-                arg1[(temp_v1 >> 3)] |= 1 << (temp_v1 & 7);
+                s32 temp = 1 << (temp_v1 & 7);
+                arg1[(temp_v1 >> 3)] |= temp;
             }
         }
     }
 }
+
 #endif
 
 
@@ -2383,7 +2439,115 @@ void func_800473BC(void) {
     UINT_80092a98 |= 0x4000;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80047404.s")
+#else
+
+void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 arg6, s32 arg7, s32 arg8) {
+    MapHeader* temp_t1;
+    s32 temp_t2;
+    s32 temp_t6;
+    s32 temp_v1_2;
+    s32 temp;
+    s32* var_t2;
+    s32* var_t3;
+    s32 *var_v0;
+    s16* temp_v1;
+
+    temp_v1 = &gMapGridTable[gMapStreamMapTable[arg8].mapID][0];
+    temp_t1 = gMapStreamMapTable[arg8].header;
+    arg0 -= temp_v1[0];
+    arg1 -= temp_v1[2];
+    if (arg8 == -1) {
+        temp_v1_2 = 1;
+        arg2[1] = temp_v1_2;
+        arg2[3] = temp_v1_2;
+        arg2[2] = -1;
+        arg2[0] = -1;
+        arg3[3] = -1;
+        arg3[2] = 0;
+        arg3[1] = 0;
+        arg3[0] = 0;
+        arg4[3] = -1;
+        arg4[2] = 0;
+        arg4[1] = 0;
+        arg4[0] = 0;
+        arg5[3] = -1;
+        arg5[2] = 0;
+        arg5[1] = 0;
+        arg5[0] = 0;
+        if (arg6 != 0) {
+            arg2[3] = -2;
+        }
+
+        return;
+    }
+
+    if (arg7 != 0) {
+        var_t2 = (s32 *)temp_t1->grid_A2_ptr;
+        var_t3 = (s32 *)temp_t1->grid_B2_ptr;
+    } else {
+        var_t2 = (s32 *)temp_t1->grid_A1_ptr;
+        var_t3 = (s32 *)temp_t1->grid_B1_ptr;
+    }
+    temp_t6 = ((temp_t1->gridSizeX * (arg1)) + (arg0)) * 2;
+    if (arg6 == 0) {
+        var_v0= var_t2;
+        var_v0 += temp_t6;
+        temp_v1_2 = var_v0[0];
+        arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg2[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
+        arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
+        arg2[3] = (temp_v1_2 & 0xF) - 7;
+        temp_v1_2 >>= 0x10;
+        arg3[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg3[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
+        arg3[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
+        arg3[3] = (temp_v1_2 & 0xF) - 7;
+        temp_v1_2 = var_v0[1];
+        arg4[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg4[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
+        arg4[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
+        arg4[3] = (temp_v1_2 & 0xF) - 7;
+        temp_v1_2 >>= 0x10;
+        arg5[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg5[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
+        arg5[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
+        arg5[3] = (temp_v1_2 & 0xF) - 7;
+        return;
+    }
+    arg2[3] = -1;
+    arg2[2] = 0;
+    arg2[1] = -1;
+    arg2[0] = 0;
+    arg3[3] = -1;
+    arg3[2] = 0;
+    arg3[1] = -1;
+    arg3[0] = 0;
+    arg4[3] = -1;
+    arg4[2] = 0;
+    arg4[1] = -1;
+    arg4[0] = 0;
+    arg5[3] = -1;
+    arg5[2] = 0;
+    arg5[1] = -1;
+    arg5[0] = 0;
+    var_v0 = &temp_t1->blockIDs_ptr[temp_t6 >> 1];
+    temp_v1_2 = var_v0[0] & 0x7F;
+    if (temp_v1_2 != 0x7F) {
+        temp_v1_2 = var_t3[((temp_v1_2 << 2) + arg6) - 1];
+        arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg2[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
+        arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
+        arg2[3] = (temp_v1_2 & 0xF) - 7;
+        temp_v1_2 >>= 0x10;
+        arg3[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
+        arg3[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
+        arg3[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
+        arg3[3] = (temp_v1_2 & 0xF) - 7;
+    }
+}
+#endif
 
 void func_80047710(s32 arg0, s32 arg1, s32 arg2) {
 }
@@ -2576,63 +2740,20 @@ void func_80048034(void) {
     D_800B4A72 = 0;
 }
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048054.s")
 #else
-
-typedef struct Unk800B9768_Unk4 {
-    s16 unk0;
-    s16 pad2;
-    s16 unk4;
-    u8 pad6[4];
-} Unk800B9768_Unk4;
-typedef struct Unk800B9768{
-    s32 pad0;
-    Unk800B9768_Unk4 *unk4;
-    s32 pad8;
-    s8 *unkC;
-    u8 *unk10;
-}Unk800B9768;
-extern Unk800B9768 D_800B9768;
-
-typedef struct UnkV0 {
-
-    s32 pad0;
-    s16 unk4;
-    s16 unk6;
-    s32 unk8;
-    u8 pad[0x20 - 0xC];
-    s32 unk20;
-    f32 unk24;
-    f32 unk28;
-} UnkV0;
-
-typedef struct UnkS1 {
-    s16 unk0;
-    u8 unk2;
-    s32 pad4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    s32 pad14;
-    u8 unk18;
-    u8 unk19;
-    s16 pad1A;
-    u32 unk1C;
-} UnkS1;
 void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
-    MapsTabStruct* temp_v0;
+    u8 *sp64;
     s32 temp_s1;
-    s32 temp_s4;
-    s32 temp_t8;
+    u32 temp_s4;
     s32 var_s0;
     s32 var_s0_2;
-    s8 var_v0;
-    u16 temp_v1;
+    s32 var_v0;
+    MapsBinUnk20* var_s1;
+    MapsBinStruct *temp_v0_2;
+    MapsTabStruct *mapsTab;
     s32 temp_t1;
-    u8* var_s0_3;
-    UnkS1* var_s1;
-    UnkV0 *temp_v0_2;
 
     var_v0 = D_800B9768.unkC[arg0];
     var_s0 = 0;
@@ -2645,25 +2766,24 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
     if (arg0 == 1) {
         *arg2 = 0.0f;
         *arg3 = 0.0f;
+        if ((!gDLL_29_gplay->exports) && (!gDLL_29_gplay->exports)) {}
         *arg4 = 0.0f;
     } else {
-        temp_v0 = &gFile_MAPS_TAB[arg0];
-        temp_s4 = temp_v0->unk0;
-        temp_s1 = temp_v0[1].unk0 - temp_s4;
+        temp_s4 = gFile_MAPS_TAB[arg0].unk0;
+        temp_s1 = gFile_MAPS_TAB[arg0 + 1].unk0 - temp_s4;
         temp_v0_2 = malloc(temp_s1, 5, NULL);
         queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
-        temp_v0_2->unk20 = temp_v0->unk10 + temp_v0_2 - temp_s4;
-        temp_v1 = temp_v0_2->unk8;
-        var_s1 = temp_v0_2->unk20;
+        temp_v0_2->unk20 = (MapsBinUnk20 *) (gFile_MAPS_TAB[arg0].unk10 + (s8 *)temp_v0_2 - temp_s4);
         temp_v0_2->unk24 = (D_800B9768.unk4[arg0].unk0 + temp_v0_2->unk4) * 640.0f;
         temp_v0_2->unk28 = (D_800B9768.unk4[arg0].unk4 + temp_v0_2->unk6) * 640.0f;
-        while (var_s0 < temp_v1) {
+        var_s1 = temp_v0_2->unk20;
+        while (var_s0 < temp_v0_2->unk8) {
             if ((var_s1->unk0 == 0xD) && (arg1 == var_s1->unk19)) {
                 *arg2 = var_s1->unk8 + temp_v0_2->unk24;
                 *arg3 = var_s1->unkC;
                 *arg4 = var_s1->unk10 + temp_v0_2->unk28;
                 gDLL_29_gplay->exports->func_139C(arg0, (s32) var_s1->unk18);
-                for (var_s0 = 0; var_s0 < 32; var_s0++) {
+                for (var_s0_2 = 0; var_s0_2 < 32; var_s0_2++) {
                     if ((var_s1->unk1C >> var_s0_2) & 1) {
                         gDLL_29_gplay->exports->func_16C4(arg0, var_s0_2, -1);
                     } else {
@@ -2672,25 +2792,23 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
                 }
                 break;
             }
-            temp_t8 = var_s1->unk2 * 4;
-            var_s0 += temp_t8;
-            var_s1 = (s8*)var_s1 + temp_t8;
+            var_s0 += var_s1->unk2 * 4;
+            var_s1 = (MapsBinUnk20 *) ((s8*)var_s1 + var_s1->unk2 * 4);
         }
         free(temp_v0_2);
     }
     temp_t1 = (u32)get_file_size(0x21U) >> 5;
     if ((arg0 < 0) || (arg0 >= temp_t1)) {
         D_800B96A8 = 0;
-        // var_s0_3 = sp64;
     } else {
-        var_s0_3 = gMapReadBuffer;
-        queue_load_file_region_to_ptr((void** ) var_s0_3, 0x21, arg0 << 5, 0x20);
-        D_800B96A8 = ((s8*)var_s0_3)[0x1C];
+        sp64 = gMapReadBuffer;
+        queue_load_file_region_to_ptr((void** ) sp64, 0x21, arg0 << 5, 0x20);
+        D_800B96A8 = ((s8*)sp64)[0x1C]; // possibly s16/u16
     }
     D_800B4A72 = 0;
     if (D_800B96A8 == 1) {
-        D_800B4A70 = (s16) arg0;
-        D_800B4A72 = ((s16*)var_s0_3)[0xF];
+        D_800B4A70 = arg0;
+        D_800B4A72 = ((s16*)sp64)[0xF]; // possibly s16/u16
     }
 }
 #endif
@@ -3080,11 +3198,8 @@ void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
     func_80058F3C();
 }
 
-// close
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_gdl_groups.s")
-#else
-void _block_setup_gdl_groups(Block *block)
+
+void block_setup_gdl_groups(Block *block)
 {
     s32 i;
 
@@ -3092,14 +3207,16 @@ void _block_setup_gdl_groups(Block *block)
     {
         BlockShape *shape;
         Texture *texture;
-        s16 texFlags = 0;
-        u32 flags;
+        s32 texFlags = 0;
+        s32 flags2;
+        s32 flags;
         Gfx *mygdl;
 
         block->shapes[i].unk_0x16 = 0xff;
         
         shape = &block->shapes[i];
         flags = shape->flags;
+        flags2 = flags & 1;
 
         if (shape->tileIdx0 == 0xff) {
             texture = NULL;
@@ -3110,15 +3227,17 @@ void _block_setup_gdl_groups(Block *block)
             }
         }
 
-        if (!(flags & 0x400) && (flags & 0x1000000)) {
-            flags |= 0x1a;
+        if ((flags & 0x400) == 0) {
+            if ((flags & 0x1000000) != 0) {
+                flags |= 0x1a;
+            }
         }
 
         if (texFlags & 0x80) {
             flags |= 0x2;
         }
 
-        if (flags != 0) {
+        if (flags2 != 0) {
             flags &= ~0x1;
         } else {
             flags |= 0x1;
@@ -3166,7 +3285,6 @@ void _block_setup_gdl_groups(Block *block)
         }
     }
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_vertices.s")

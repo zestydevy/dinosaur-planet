@@ -228,7 +228,7 @@ typedef struct Struct_D_800B9768 {
     s32                      unk0;
     Struct_D_800B9768_unk4  *unk4;
     s16  *unk8;
-    Struct_D_800B9768_unkC  *unkC;
+    s8  *unkC;
     Struct_D_800B9768_unk10 *unk10;
 } Struct_D_800B9768;
 
@@ -446,7 +446,7 @@ extern s8 *D_800B9700[5];
 extern s32 gNumTotalBlocks;
 extern Unk800B96B0* D_800B96B0;
 extern s32* gFile_BLOCKS_TAB; // unknown pointer type
-extern s32* gFile_MAPS_TAB; // unknown pointer type
+extern MapsTabStruct* gFile_MAPS_TAB; // unknown pointer type
 extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 D_80092A8C;
@@ -569,6 +569,11 @@ extern u8 D_8009A614;
 extern s16 *D_800B97A0;
 extern f32 D_80092AAC[24];
 
+extern s16 (*D_800B9770)[2];
+extern u16 *gFile_TRKBLK;
+extern s16 (*gMapGridTable)[5];
+extern s16 gNumTRKBLKEntries;
+
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 
@@ -618,6 +623,9 @@ f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
 void block_add_to_render_list(Block *block, f32 x, f32 z);
 void func_800436DC(Object* arg0, s32 arg1);
+s32 func_80045DC0(s32, s32, s32); //unsure of last arg
+s32 map_find_streammap_index(s32);
+s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
 
 // other funcs that are used
 void func_80058F3C(void);
