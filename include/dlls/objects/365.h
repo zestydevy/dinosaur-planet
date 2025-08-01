@@ -5,8 +5,7 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 
-typedef struct
-{
+typedef struct {
 	u8 mPad[0x62];
 	s8 m0062;
 } TStruct365Func0006;

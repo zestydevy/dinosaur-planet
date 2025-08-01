@@ -128,6 +128,9 @@ typedef struct {
 } ObjectMesgQueue;
 
 // Base interface for object DLLs
+//
+// These initial 7 functions are inherited and implemented by all object DLLs.
+// Any exports referenced with a higher index are specific to an object or subtype.
 DLL_INTERFACE_BEGIN(Object)
     /*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
     /*1*/ void (*update)(struct Object *obj);

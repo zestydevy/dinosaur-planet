@@ -1198,7 +1198,7 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
     
     if (arg1 == 0){
         func_80045FC4(gMapActiveStreamMap, (mapID * 0x8C) + (&D_800B5508), mapID, 0);
-        gDLL_29_gplay->exports->func_15B8(mapID);
+        gDLL_29_Gplay->exports->func_15B8(mapID);
     }
     else{
         func_8004BD40(gMapActiveStreamMap, mapID, mapID, 0);
@@ -2092,7 +2092,7 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
     u8 gplayValue;
 
-    gplayValue = gDLL_29_gplay->exports->func_143C(arg1);
+    gplayValue = gDLL_29_Gplay->exports->func_143C(arg1);
     if (gplayValue == -1) {// NOLINT
         return 0;
     }
@@ -2359,14 +2359,14 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     D_800B4A59 = fadeToBlack;
     
     if (D_800B4A59 != 0) {
-        gDLL_28_screen_fade->exports->fade(0x28, SCREEN_FADE_BLACK);
+        gDLL_28_ScreenFade->exports->fade(0x28, SCREEN_FADE_BLACK);
     }
-    gDLL_minic->exports->func4();
-    gDLL_minic->exports->func1();
-    gDLL_8->exports->func[1].asVoid();
-    gDLL_7_newday->exports->func1.asVoid();
-    gDLL_newclouds->exports->func[1].asVoid();
-    gDLL_newstars->exports->func[0].asVoid();
+    gDLL_12_Minic->exports->func4();
+    gDLL_12_Minic->exports->func1();
+    gDLL_8->exports->func1();
+    gDLL_7_Newday->exports->func1();
+    gDLL_9_Newclouds->exports->func1();
+    gDLL_10_Newstars->exports->func0();
 }
 
 /** 
@@ -2379,7 +2379,7 @@ void func_8004D328() {
     u8 temp2;
     u8 temp1;
 
-    var_a2 = (SimilarToWarp*)gDLL_29_gplay->exports->func_F04();
+    var_a2 = (SimilarToWarp*)gDLL_29_Gplay->exports->func_F04();
     
     //Start fade?
     if (D_800B4A5E != -1) { //timer started?
@@ -2387,7 +2387,7 @@ void func_8004D328() {
         D_80092A78 -= 1; //Decrement timer
         if (D_80092A78 < 0) { //When timer less than zero, fade to black
             if ((D_800B4A5E >= 0) && (D_800B4A59 != 0)) {
-                gDLL_28_screen_fade->exports->fade_reversed(0x1E, 1);
+                gDLL_28_ScreenFade->exports->fade_reversed(0x1E, 1);
             }
             D_800B4A5E = -1; //stop timer?
         }
@@ -2397,7 +2397,7 @@ void func_8004D328() {
     if (D_800B4A58 == 0)
         return;
         
-    if (gDLL_28_screen_fade->exports->is_complete() || D_800B4A59 == 0){
+    if (gDLL_28_ScreenFade->exports->is_complete() || D_800B4A59 == 0){
         var_v0 = (Warp*)&D_800B4A60;
         D_800B4A58 = 0;
         var_a2->coord.x = var_v0->coord.x;

@@ -7,8 +7,7 @@
 
 #define CAMERA_COUNT 12
 
-typedef struct
-{
+typedef struct {
 /*0000*/    SRT srt;
 /*0018*/    f32 unk_0x18;
 /*001C*/    u32 unk_0x1c;
@@ -40,15 +39,13 @@ typedef union
     MtxF mf;
 } Mtx_MtxF;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    Mtx_MtxF *mtx;
 /*0004*/    s16 count;
 /*0006*/    u8 _pad[2];
 } MatrixSlot;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    s32 x1;
 /*0004*/    s32 y1;
 /*0008*/    s32 x2;

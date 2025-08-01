@@ -52,56 +52,57 @@ f32 inverseDelayMirror = 1.0f;
 s32 D_8008C968 = -1;
 u8 alSynFlag = 0;
 s32 D_8008C970 = 0;
-DLLInst_28_screen_fade *gDLL_28_screen_fade = NULL;
-DLLInst_2_Camera *gDLL_Camera = NULL;
-DLLInst_3_ANIM *gDLL_ANIM = NULL;
-DLLInst_7_newday *gDLL_7_newday = NULL;
-DLLInst_Unknown *gDLL_8 = NULL;
-DLLInst_Unknown *gDLL_newclouds = NULL;
-DLLInst_Unknown *gDLL_newstars = NULL;
-DLLInst_12_minic *gDLL_minic = NULL;
-DLLInst_1_UI *gDLL_UI = NULL;
-DLLInst_Unknown *gDLL_Race = NULL;
-DLLInst_5_AMSEQ *gDLL_AMSEQ = NULL;
-DLLInst_5_AMSEQ *gDLL_AMSEQ2 = NULL;
-DLLInst_6_AMSFX *gDLL_AMSFX = NULL;
-DLLInst_Unknown *gDLL_newlfx = NULL;
-DLLInst_Unknown *gDLL_57 = NULL;
-DLLInst_Unknown *gDLL_58 = NULL;
-DLLInst_Unknown *gDLL_expgfx = NULL;
-DLLInst_Unknown *gDLL_modgfx = NULL;
-DLLInst_Unknown *gDLL_projgfx = NULL;
+DLLInst_28_screen_fade *gDLL_28_ScreenFade = NULL;
+DLLInst_2_camera *gDLL_2_Camera = NULL;
+DLLInst_3_animation *gDLL_3_Animation = NULL;
+DLLInst_7_newday *gDLL_7_Newday = NULL;
+DLLInst_8 *gDLL_8 = NULL;
+DLLInst_9_newclouds *gDLL_9_Newclouds = NULL;
+DLLInst_10_newstars *gDLL_10_Newstars = NULL;
+DLLInst_12_minic *gDLL_12_Minic = NULL;
+DLLInst_1_UI *gDLL_1_UI = NULL;
+DLLInst_4_race *gDLL_4_Race = NULL;
+DLLInst_5_AMSEQ *gDLL_5_AMSEQ = NULL;
+DLLInst_5_AMSEQ *gDLL_5_AMSEQ2 = NULL;
+DLLInst_6_AMSFX *gDLL_6_AMSFX = NULL;
+DLLInst_11_newlfx *gDLL_11_Newlfx = NULL;
+DLLInst_57 *gDLL_57 = NULL;
+DLLInst_58 *gDLL_58 = NULL;
+DLLInst_13_expgfx *gDLL_13_Expgfx = NULL;
+DLLInst_14_modgfx *gDLL_14_Modgfx = NULL;
+DLLInst_15_projgfx *gDLL_15_Projgfx = NULL;
 DLLInst_16 *gDLL_16 = NULL;
-DLLInst_Unknown *gDLL_17 = NULL;
-DLLInst_Unknown *gDLL_18 = NULL;
-DLLInst_20_screens *gDLL_20_screens = NULL;
-DLLInst_21_gametext *gDLL_21_gametext = NULL;
-DLLInst_22_subtitles *gDLL_subtitles = NULL;
+DLLInst_17 *gDLL_17 = NULL;
+DLLInst_18 *gDLL_18 = NULL;
+DLLInst_20_screens *gDLL_20_Screens = NULL;
+DLLInst_21_gametext *gDLL_21_Gametext = NULL;
+DLLInst_22_subtitles *gDLL_22_Subtitles = NULL;
 DLLInst_23 *gDLL_23 = NULL;
-DLLInst_24_waterfx *gDLL_waterfx = NULL;
+DLLInst_24_waterfx *gDLL_24_Waterfx = NULL;
 DLLInst_25 *gDLL_25 = NULL;
-DLLInst_26_curves *gDLL_CURVES = NULL;
-DLLInst_74_picmenu *gDLL_picmenu = NULL;
-DLLInst_Unknown *gDLL_75 = NULL;
-DLLInst_27_head_turn *gDLL_27_head_turn = NULL;
-DLLInst_29_gplay *gDLL_29_gplay = NULL;
-DLLInst_Unknown *gDLL_56 = NULL;
-DLLInst_30_task *gDLL_30_task = NULL;
-DLLInst_31_flash *gDLL_31_flash = NULL;
+DLLInst_26_curves *gDLL_26_Curves = NULL;
+DLLInst_74_picmenu *gDLL_74_Picmenu = NULL;
+DLLInst_75 *gDLL_75 = NULL;
+DLLInst_27_head_turn *gDLL_27_HeadTurn = NULL;
+DLLInst_29_gplay *gDLL_29_Gplay = NULL;
+DLLInst_56 *gDLL_56 = NULL;
+DLLInst_30_task *gDLL_30_Task = NULL;
+DLLInst_31_flash *gDLL_31_Flash = NULL;
 DLLInst_76 *gDLL_76 = NULL;
-DLLInst_Unknown *gDLL_32 = NULL;
-DLLInst_Unknown *gDLL_33 = NULL;
-DLLInst_Unknown *gDLL_minimap = NULL;
-DLLInst_Unknown *gDLL_54 = NULL;
-s32 gTempDLLIds[3] = { -1, 53, 55 };
-void *gTempDLLInsts[3] = { NULL, NULL, NULL };
+DLLInst_32 *gDLL_32 = NULL;
+DLLInst_33 *gDLL_33 = NULL;
+DLLInst_59_minimap *gDLL_59_Minimap = NULL;
+DLLInst_54 *gDLL_54 = NULL;
+
+s32 gTempDLLIds[3] = {-1, 53, 55};
+void *gTempDLLInsts[3] = {NULL, NULL, NULL};
 u8 D_8008CA30 = 0;
 
 // .bss (800ae2a0)
 BSS_GLOBAL GplayStruct7 *gGplayState;
 BSS_GLOBAL BitTableEntry *gFile_BITTABLE;
 BSS_GLOBAL s16 gSizeBittable;
-BSS_GLOBAL struct Vec3_Int PlayerPosBuffer[60]; //seems to buffer player coords with "timestamp"
+BSS_GLOBAL struct Vec3_Int PlayerPosBuffer[60]; // seems to buffer player coords with "timestamp"
 BSS_GLOBAL s32 PlayerPosBuffer_index;
 BSS_GLOBAL u32 D_800AE674;
 // official name: gfxBase
@@ -142,8 +143,7 @@ void update_PlayerPosBuffer();
 void test_write(void);
 void check_dongle(void);
 
-void mainproc(void *arg)
-{
+void mainproc(void *arg) {
     test_write(); // ROM write check
     game_init();
 
@@ -160,8 +160,7 @@ void mainproc(void *arg)
     }
 }
 
-void game_init(void)
-{
+void game_init(void) {
     DLLInst_Unknown *temp_AMSEQ_DLL;
     s32 tvMode;
     DLLInst_Unknown *tmp3;
@@ -206,53 +205,53 @@ void game_init(void)
     init_global_map();
     if (osMemSize != EXPANSION_SIZE) {
         temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 36);
-        gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 18);
-        gDLL_21_gametext = dll_load_deferred(DLL_TEXT, 5);
-        gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 47);
-        gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2);
-        gDLL_28_screen_fade = dll_load_deferred(DLL_SCREEN_FADE, 4);
+        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = temp_AMSEQ_DLL;
+        gDLL_6_AMSFX = dll_load_deferred(DLL_AMSFX, 18);
+        gDLL_21_Gametext = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_29_Gplay = dll_load_deferred(DLL_GPLAY, 47);
+        gDLL_31_Flash = dll_load_deferred(DLL_FLASH, 2);
+        gDLL_28_ScreenFade = dll_load_deferred(DLL_SCREEN_FADE, 4);
     } else {
-        gDLL_UI        = dll_load_deferred(DLL_UI, 15);
-        gDLL_Camera    = dll_load_deferred(DLL_CAMERA, 23);
-        gDLL_23        = dll_load_deferred(DLL_23, 8); //0x12 in SFA
-        gDLL_18        = dll_load_deferred(18, 0x16); //0x0F in SFA
-        gDLL_ANIM      = dll_load_deferred(DLL_ANIM, 29);
-        gDLL_28_screen_fade = dll_load_deferred(DLL_SCREEN_FADE, 4); //0x16 in SFA
-        gDLL_25        = dll_load_deferred(25, 0xE); //not present in SFA
-        gDLL_7_newday  = dll_load_deferred(DLL_NEWDAY, 15);
-        gDLL_8        = dll_load_deferred(8, 12); //0x06 in SFA
-        gDLL_newclouds = dll_load_deferred(DLL_NEWCLOUDS, 8);
-        gDLL_newstars  = dll_load_deferred(DLL_NEWSTARS, 3);
-        gDLL_minic     = dll_load_deferred(DLL_MINIC, 10);
-        gDLL_Race      = dll_load_deferred(DLL_RACE, 13);
+        gDLL_1_UI = dll_load_deferred(DLL_UI, 15);
+        gDLL_2_Camera = dll_load_deferred(DLL_CAMERA, 23);
+        gDLL_23 = dll_load_deferred(DLL_23, 8);  // 0x12 in SFA
+        gDLL_18 = dll_load_deferred(DLL_18, 22); // 0x0F in SFA
+        gDLL_3_Animation = dll_load_deferred(DLL_ANIM, 29);
+        gDLL_28_ScreenFade = dll_load_deferred(DLL_SCREEN_FADE, 4); // 0x16 in SFA
+        gDLL_25 = dll_load_deferred(DLL_25, 14);                    // not present in SFA
+        gDLL_7_Newday = dll_load_deferred(DLL_NEWDAY, 15);
+        gDLL_8 = dll_load_deferred(DLL_8, 12); // 0x06 in SFA
+        gDLL_9_Newclouds = dll_load_deferred(DLL_NEWCLOUDS, 8);
+        gDLL_10_Newstars = dll_load_deferred(DLL_NEWSTARS, 3);
+        gDLL_12_Minic = dll_load_deferred(DLL_MINIC, 10);
+        gDLL_4_Race = dll_load_deferred(DLL_RACE, 13);
         temp_AMSEQ_DLL = dll_load_deferred(DLL_AMSEQ, 36);
-        gDLL_AMSEQ2    = gDLL_AMSEQ = temp_AMSEQ_DLL;
-        gDLL_AMSFX     = dll_load_deferred(DLL_AMSFX, 18);
-        gDLL_newlfx    = dll_load_deferred(DLL_NEWLFX, 7);
-        gDLL_expgfx    = dll_load_deferred(DLL_EXPGFX, 10);
-        gDLL_modgfx    = dll_load_deferred(DLL_MODGFX, 12);
-        gDLL_projgfx   = dll_load_deferred(DLL_PROJGFX, 8);
-        gDLL_16        = dll_load_deferred(16, 3);
-        gDLL_17        = dll_load_deferred(17, 2); //probably particle FX
-        gDLL_20_screens = dll_load_deferred(DLL_SCREENS, 3);
-        gDLL_21_gametext = dll_load_deferred(DLL_TEXT, 5);
-        gDLL_subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
-        gDLL_waterfx   = dll_load_deferred(DLL_WATERFX, 7);
-        gDLL_CURVES    = dll_load_deferred(DLL_CURVES, 38);
-        gDLL_picmenu   = dll_load_deferred(DLL_PICMENU, 7);
-        gDLL_27_head_turn = dll_load_deferred(27, 9); //0x15 in SFA
-        gDLL_29_gplay  = dll_load_deferred(DLL_GPLAY, 36);
-        gDLL_56        = dll_load_deferred(56, 10); //not present in SFA
-        gDLL_30_task   = dll_load_deferred(DLL_TASK, 6);
-        gDLL_31_flash  = dll_load_deferred(DLL_FLASH, 2); //param is 0x24 in SFA
-        gDLL_32        = dll_load_deferred(32, 6); //0x18 in SFA
-        gDLL_33        = dll_load_deferred(33, 22); //0x19 in SFA
-        gDLL_minimap   = dll_load_deferred(DLL_MINIMAP, 2);
-        gDLL_54        = dll_load_deferred(54, 12); //0x2F in SFA
-        gDLL_57        = dll_load_deferred(57, 4);
-        gDLL_58        = dll_load_deferred(58, 2);
-        gDLL_30_task->exports->load_recently_completed();
+        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = temp_AMSEQ_DLL;
+        gDLL_6_AMSFX = dll_load_deferred(DLL_AMSFX, 18);
+        gDLL_11_Newlfx = dll_load_deferred(DLL_NEWLFX, 7);
+        gDLL_13_Expgfx = dll_load_deferred(DLL_EXPGFX, 10);
+        gDLL_14_Modgfx = dll_load_deferred(DLL_MODGFX, 12);
+        gDLL_15_Projgfx = dll_load_deferred(DLL_PROJGFX, 8);
+        gDLL_16 = dll_load_deferred(DLL_16, 3);
+        gDLL_17 = dll_load_deferred(DLL_17, 2); // probably particle FX
+        gDLL_20_Screens = dll_load_deferred(DLL_SCREENS, 3);
+        gDLL_21_Gametext = dll_load_deferred(DLL_TEXT, 5);
+        gDLL_22_Subtitles = dll_load_deferred(DLL_SUBTITLES, 7);
+        gDLL_24_Waterfx = dll_load_deferred(DLL_WATERFX, 7);
+        gDLL_26_Curves = dll_load_deferred(DLL_CURVES, 38);
+        gDLL_74_Picmenu = dll_load_deferred(DLL_PICMENU, 7);
+        gDLL_27_HeadTurn = dll_load_deferred(DLL_27, 9); // 0x15 in SFA
+        gDLL_29_Gplay = dll_load_deferred(DLL_GPLAY, 36);
+        gDLL_56 = dll_load_deferred(DLL_56, 10); // not present in SFA
+        gDLL_30_Task = dll_load_deferred(DLL_TASK, 6);
+        gDLL_31_Flash = dll_load_deferred(DLL_FLASH, 2); // param is 0x24 in SFA
+        gDLL_32 = dll_load_deferred(DLL_32, 6);          // 0x18 in SFA
+        gDLL_33 = dll_load_deferred(DLL_33, 22);         // 0x19 in SFA
+        gDLL_59_Minimap = dll_load_deferred(DLL_MINIMAP, 2);
+        gDLL_54 = dll_load_deferred(DLL_54, 12); // 0x2F in SFA
+        gDLL_57 = dll_load_deferred(DLL_57, 4);
+        gDLL_58 = dll_load_deferred(DLL_58, 2);
+        gDLL_30_Task->exports->load_recently_completed();
     }
     init_bittable();
     alSynFlag = 1;
@@ -270,8 +269,7 @@ void game_init(void)
     func_80041C6C(0);
 }
 
-void game_tick(void)
-{
+void game_tick(void) {
     u8 phi_v1;
     u32 delayAmount;
     Gfx **tmp_s0;
@@ -291,7 +289,7 @@ void game_tick(void)
     gCurPol = gMainPol[gFrameBufIdx];
 
     dl_add_debug_info(gCurGfx, 0, "main/main.c", 0x28E);
-    dl_segment(&gCurGfx, 0, (void*)0x80000000);
+    dl_segment(&gCurGfx, 0, (void *)0x80000000);
     dl_segment(&gCurGfx, 1, gFramebufferCurrent);
     dl_segment(&gCurGfx, 2, D_800BCCB4);
     func_8003E9F0(&gCurGfx, delayByte);
@@ -317,11 +315,11 @@ void game_tick(void)
     func_80007178();
     func_80013D80();
     func_800121DC();
-    gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
-    gDLL_subtitles->exports->func_578(tmp_s0);
+    gDLL_28_ScreenFade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
+    gDLL_22_Subtitles->exports->func_578(tmp_s0);
     camera_tick();
     func_800129E4();
-    diPrintfAll(tmp_s0); 
+    diPrintfAll(tmp_s0);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
@@ -329,7 +327,7 @@ void game_tick(void)
     func_80037924();
     obj_do_deferred_free();
     update_mem_mon_values();
-    
+
     if (gPauseState == 0) {
         func_80001A3C();
     }
@@ -353,22 +351,21 @@ void game_tick(void)
     write_c_file_label_pointers("main/main.c", 0x37C);
 }
 
-void game_tick_no_expansion(void)
-{
+void game_tick_no_expansion(void) {
     u32 delayAmount;
     Gfx **tmp_s0;
 
     tmp_s0 = &gCurGfx;
-    
+
     schedule_gfx_task(gMainGfx[gFrameBufIdx], gCurGfx, 0);
-    
+
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
     gCurMtx = gMainMtx[gFrameBufIdx];
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
-    
-    dl_segment(&gCurGfx, 0, (void*)0x80000000);
+
+    dl_segment(&gCurGfx, 0, (void *)0x80000000);
     dl_segment(&gCurGfx, 1, gFramebufferCurrent);
     dl_segment(&gCurGfx, 2, D_800BCCB4);
     dl_set_all_dirty();
@@ -385,7 +382,7 @@ void game_tick_no_expansion(void)
     menu_update1(); // ignored return value
     menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     func_800129E4();
-    gDLL_28_screen_fade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
+    gDLL_28_ScreenFade->exports->draw(tmp_s0, &gCurMtx, &gCurVtx);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
@@ -406,40 +403,35 @@ void game_tick_no_expansion(void)
     inverseDelayMirror = 1.0f / delayFloatMirror;
 }
 
-void func_80013D80(void)
-{
+void func_80013D80(void) {
     s32 button;
 
     set_button_mask(0, U_JPAD | R_JPAD);
-    gDLL_Camera->exports->func19.asVoid();
-    gDLL_subtitles->exports->func_4C0();
+    gDLL_2_Camera->exports->func19();
+    gDLL_22_Subtitles->exports->func_4C0();
 
-    if (menu_update1() == 0)
-    {
+    if (menu_update1() == 0) {
         button = get_masked_button_presses(0);
 
         if (gPauseState != 0) {
             draw_pause_screen_freeze_frame(&gCurGfx);
         }
 
-        if (gPauseState == 0)
-        {
+        if (gPauseState == 0) {
             update_objects();
             func_80042174(0);
 
-            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (get_gplay_bitstring(1103) == 0))
-            {
+            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (get_gplay_bitstring(1103) == 0)) {
                 gPauseState = 1;
                 set_button_mask(0, START_BUTTON);
                 menu_set(MENU_8);
             }
-            
-            gDLL_29_gplay->exports->func_115C();
-        
+
+            gDLL_29_Gplay->exports->func_115C();
         } else {
             update_obj_models();
         }
-        
+
         if (gPauseState == 0) {
             update_PlayerPosBuffer();
         }
@@ -450,18 +442,18 @@ void func_80013D80(void)
         map_update_streaming();
         func_800210DC();
 
-        gDLL_Race->exports->func[14].asVoid();
+        gDLL_4_Race->exports->func14();
 
         if (gPauseState == 0) {
             func_8004225C(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
-        gDLL_20_screens->exports->draw(&gCurGfx);
+        gDLL_20_Screens->exports->draw(&gCurGfx);
         menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= delayByte;
 
-        if ((s32) D_8008C94C < 0) {
+        if ((s32)D_8008C94C < 0) {
             D_8008C94C = 0;
         }
     }
@@ -471,21 +463,18 @@ void func_80013FB4(void) {
     func_8005D410(OS_VI_PAL_LPN1, NULL, FALSE);
     func_80041D20(0);
     func_80041C6C(0);
-    gDLL_AMSEQ->exports->func6(3);
-    gDLL_AMSEQ->exports->func6(0);
-    gDLL_AMSEQ->exports->func6(1);
-    gDLL_subtitles->exports->func_448();
+    gDLL_5_AMSEQ->exports->func6(3);
+    gDLL_5_AMSEQ->exports->func6(0);
+    gDLL_5_AMSEQ->exports->func6(1);
+    gDLL_22_Subtitles->exports->func_448();
     unpause();
     func_800141A4(1, 0, 1, -1);
 }
 
-void func_80014074(void)
-{
-    if (D_800B09C0 != 0)
-    {
+void func_80014074(void) {
+    if (D_800B09C0 != 0) {
         func_80017254(0);
-        if (D_8008CA30 != 0)
-        {
+        if (D_8008CA30 != 0) {
             func_8003798C(0, 0, 0);
             func_800668A4();
             func_800484A8();
@@ -494,9 +483,9 @@ void func_80014074(void)
             gDPFullSync(gCurGfx++);
             gSPEndDisplayList(gCurGfx++);
         }
-        
+
         D_800B09C0 = 0;
-        
+
         func_80017254(0);
         camera_init();
 
@@ -504,20 +493,19 @@ void func_80014074(void)
             menu_set(D_8008C968);
             D_8008C968 = -1;
         }
-        
+
         func_8004773C();
-        
+
         if (gDLL_23 != NULL) {
             gDLL_23->exports->func_18(1);
         }
-        
+
         func_80017254(2);
         D_8008CA30 = 1;
     }
 }
 
-void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
-{
+void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     GplayStruct5 *temp_v0;
 
     func_8001440C(0);
@@ -528,13 +516,13 @@ void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 
     clear_PlayerPosBuffer();
 
-    gDLL_30_task->exports->load_recently_completed();
-    gDLL_29_gplay->exports->func_EAC(arg2);
+    gDLL_30_Task->exports->load_recently_completed();
+    gDLL_29_Gplay->exports->func_EAC(arg2);
 
-    temp_v0 = gDLL_29_gplay->exports->func_F04();
+    temp_v0 = gDLL_29_Gplay->exports->func_F04();
 
     func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
-    gDLL_29_gplay->exports->func_958(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
+    gDLL_29_Gplay->exports->func_958(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
 
     D_800B09C0 = 1;
     D_8008C968 = arg3;
@@ -547,8 +535,7 @@ void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     D_800B09C0 = 1;
 }
 
-void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
-{
+void func_800142F0(f32 x, f32 y, f32 z, s32 arg3) {
     Vec3f pos;
     pos.x = x;
     pos.y = y;
@@ -556,10 +543,10 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3)
 
     func_8001440C(0);
 
-    gDLL_29_gplay->exports->init_save(-1, NULL);
-    gDLL_29_gplay->exports->func_EAC(arg3);
-    gDLL_29_gplay->exports->func_958(&pos, 0, 0, 0);
-    gDLL_29_gplay->exports->start_game();
+    gDLL_29_Gplay->exports->init_save(-1, NULL);
+    gDLL_29_Gplay->exports->func_EAC(arg3);
+    gDLL_29_Gplay->exports->func_958(&pos, 0, 0, 0);
+    gDLL_29_Gplay->exports->start_game();
 }
 
 void func_800143A4(void) {
@@ -567,7 +554,7 @@ void func_800143A4(void) {
     D_800B09C0 = 1;
 }
 
-Gfx* func_800143D0(Gfx **arg0) {
+Gfx *func_800143D0(Gfx **arg0) {
     *arg0 = gMainGfx[gFrameBufIdx];
     return gCurGfx;
 }
@@ -597,24 +584,23 @@ void set_pause_state(s32 state) {
 #define MAIN_POL_BUF_SIZE (sizeof(Triangle) * 50)
 #define MAIN_VTX_BUF_SIZE (sizeof(Vertex) * 480)
 
-void alloc_frame_buffers(void)
-{
+void alloc_frame_buffers(void) {
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
     gMainGfx[0] = malloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainGfx[1] = (Gfx*)((u32)gMainGfx[0] + MAIN_GFX_BUF_SIZE);
+    gMainGfx[1] = (Gfx *)((u32)gMainGfx[0] + MAIN_GFX_BUF_SIZE);
 
     // matrix buffers ("main:mtx")
     gMainMtx[0] = malloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainMtx[1] = (Mtx*)((u32)gMainMtx[0] + MAIN_MTX_BUF_SIZE);
+    gMainMtx[1] = (Mtx *)((u32)gMainMtx[0] + MAIN_MTX_BUF_SIZE);
 
     // polygon buffers? ("main:pol")
     gMainPol[0] = malloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainPol[1] = (Triangle*)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
+    gMainPol[1] = (Triangle *)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
 
     // vertex buffers ("main:vtx")
     gMainVtx[0] = malloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainVtx[1] = (Vertex*)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
+    gMainVtx[1] = (Vertex *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 
 void func_80014508(s8 arg0) {
@@ -646,9 +632,6 @@ void func_initing_rumblepak(void) {
     _depth2Cents(0);
 }
 
-/*
- *
-*/
 void test_write(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
@@ -675,14 +658,13 @@ void check_dongle(void) {
      * It is not known which one the original dongle for this ROM
      * was intended to use.
      */
-    if((head == 'LSFS') || (head == 'MPFS')) {
+    if ((head == 'LSFS') || (head == 'MPFS')) {
         return;
-    }
-    else {
+    } else {
         int *write = (int *)(u32)EXPANSION_RAM_START;
         // copy protection failed. Wipe every 2nd word to prevent RAM analysis.
         // probably hackers trying to view our precious data.
-        while((u32)write != 0x80000000) {
+        while ((u32)write != 0x80000000) {
             *write = 0;
             write -= 2; // hmm...
         }
@@ -694,9 +676,9 @@ OSSched *get_ossched(void) {
 }
 
 void init_bittable(void) {
-    queue_alloc_load_file((void**)&gFile_BITTABLE, 0x37);
+    queue_alloc_load_file((void **)&gFile_BITTABLE, 0x37);
     gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
-    gGplayState = gDLL_29_gplay->exports->func_E74();
+    gGplayState = gDLL_29_Gplay->exports->func_E74();
 }
 
 // offical name: mainSet ?
@@ -725,7 +707,7 @@ void set_gplay_bitstring(s32 entry, u32 value) {
         }
 
         if (gFile_BITTABLE[entry].field_0x2 & (1 << 5)) {
-            gDLL_30_task->exports->mark_task_completed(gFile_BITTABLE[entry].task);
+            gDLL_30_Task->exports->mark_task_completed(gFile_BITTABLE[entry].task);
         }
 
         startBit = gFile_BITTABLE[entry].start;
@@ -734,9 +716,9 @@ void set_gplay_bitstring(s32 entry, u32 value) {
 
         for (idx = startBit; idx < (startBit + endBit); idx++) {
             if (mask & value) {
-                *(u8*)((u32)bitString + (idx >> 3)) |= (1 << (idx & 7));
+                *(u8 *)((u32)bitString + (idx >> 3)) |= (1 << (idx & 7));
             } else {
-                *(u8*)((u32)bitString + (idx >> 3)) &= ~(1 << (idx & 7));
+                *(u8 *)((u32)bitString + (idx >> 3)) &= ~(1 << (idx & 7));
             }
 
             mask = mask << 1;
@@ -783,8 +765,8 @@ u32 get_gplay_bitstring(s32 entry) {
         mask = 1;
 
         for (idx = startBit; idx < (startBit + endBit); idx++) {
-            // A clever way to read from bitString bit by bit 
-            if ((*(u8*)((u32)bitString + (idx >> 3)) & (1 << (idx & 7))) != 0) {
+            // A clever way to read from bitString bit by bit
+            if ((*(u8 *)((u32)bitString + (idx >> 3)) & (1 << (idx & 7))) != 0) {
                 value |= mask;
             }
 
@@ -836,7 +818,6 @@ s32 create_temp_dll(s32 id) {
     }
 
     if (gTempDLLInsts[idx] != NULL) {
-
     }
 
     gTempDLLInsts[idx] = dll_load_deferred(id, 1);
@@ -871,8 +852,8 @@ s32 remove_temp_dll(s32 id) {
 
 void func_80014B1C(void) {
     if (gDLL_76 == 0) {
-        gDLL_75 = dll_load_deferred(75, 10);
-        gDLL_76 = dll_load_deferred(76, 3);
+        gDLL_75 = dll_load_deferred(DLL_75, 10);
+        gDLL_76 = dll_load_deferred(DLL_76, 3);
     }
 }
 
@@ -890,8 +871,7 @@ void func_80014BBC(void) {
     D_800B09C4 = 0;
 }
 
-void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3)
-{
+void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     D_800B09C3++;
 
     if (D_800B09C3 >= 5) {
@@ -902,41 +882,35 @@ void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3)
     func_800142F0(arg0, arg1, arg2, arg3);
 }
 
-s32 func_80014C28(void)
-{
+s32 func_80014C28(void) {
     s32 _v1 = D_800B09C3 + 1;
     if (_v1 >= 5)
         _v1 = 0;
     return _v1;
 }
 
-u8 func_80014C50(void)
-{
+u8 func_80014C50(void) {
     return D_800B09C3;
 }
 
-u8 func_80014C60(void)
-{
+u8 func_80014C60(void) {
     return D_800B09C4;
 }
 
-void clear_PlayerPosBuffer(void)
-{
+void clear_PlayerPosBuffer(void) {
     bzero(&PlayerPosBuffer, PLAYER_POSBUF_SIZE * sizeof(struct Vec3_Int));
     PlayerPosBuffer_index = 0;
 }
 
-void update_PlayerPosBuffer(void)
-{
+void update_PlayerPosBuffer(void) {
     Object *player;
-    struct Vec3_Int * pos;
+    struct Vec3_Int *pos;
 
     player = get_player();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     D_800AE674 += delayByte;
 
-    if (player != NULL)
-    {
+    if (player != NULL) {
         pos->f.x = player->srt.transl.x;
         pos->f.y = player->srt.transl.y;
         pos->f.z = player->srt.transl.z;

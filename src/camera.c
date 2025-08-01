@@ -8,7 +8,6 @@
 #include "sys/math.h"
 #include "functions.h"
 
-
 static const char str_80098290[] = "Camera Error: Illegal mode!\n";
 static const char str_800982b0[] = "Camera Error: Illegal player no!\n";
 static const char str_800982d4[] = "CAMCONTROL!!!\n";

@@ -230,8 +230,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
 extern Texture *gCurrTex0;
 extern Texture *gCurrTex1;
 extern u32 UINT_80092a48;
-typedef struct
-{
+typedef struct {
 /*0000*/    Gfx *combines;
 /*0004*/    Gfx *otherModes;
 /*0008*/    u32 mask;
