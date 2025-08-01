@@ -117,7 +117,7 @@ extern DLLInst_28_screen_fade *gDLL_28_ScreenFade;
 extern DLLInst_29_gplay *gDLL_29_Gplay;
 extern DLLInst_30_task *gDLL_30_Task;
 extern DLLInst_31_flash *gDLL_31_Flash;
-extern DLLInst_74_picmenu *gDLL_74_PicMenu;
+extern DLLInst_74_picmenu *gDLL_74_Picmenu;
 extern DLLInst_8 *gDLL_8;
 extern DLLInst_9_newclouds *gDLL_9_Newclouds;
 extern DLLInst_10_newstars *gDLL_10_Newstars;

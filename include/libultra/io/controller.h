@@ -9,12 +9,14 @@
 
 #define CHNL_ERR(format) (((format).rxsize & CHNL_ERR_MASK) >> 4)
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u32 ramarray[15];
     /* 0x3C */ u32 pifstatus;
 } OSPifRam ALIGNED(0x10);
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u8 dummy;
     /* 0x1 */ u8 txsize;
     /* 0x2 */ u8 rxsize;
@@ -24,7 +26,8 @@ typedef struct {
     /* 0x7 */ s8 stick_y;
 } __OSContReadFormat;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u8 dummy;
     /* 0x1 */ u8 txsize;
     /* 0x2 */ u8 rxsize;
@@ -35,7 +38,8 @@ typedef struct {
     /* 0x7 */ u8 dummy1;
 } __OSContRequesFormat;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u8 txsize;
     /* 0x1 */ u8 rxsize;
     /* 0x2 */ u8 cmd;
@@ -44,7 +48,8 @@ typedef struct {
     /* 0x5 */ u8 status;
 } __OSContRequesFormatShort;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u8 dummy;
     /* 0x1 */ u8 txsize;
     /* 0x2 */ u8 rxsize;
@@ -64,7 +69,8 @@ typedef union {
     /* 0x0 */ u16 ipage;
 } __OSInodeUnit;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u32 game_code;
     /* 0x4 */ u16 company_code;
     /* 0x6 */ __OSInodeUnit start_page;
@@ -75,11 +81,13 @@ typedef struct {
     /* 0x10 */ u8 game_name[PFS_FILE_NAME_LEN];
 } __OSDir;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ __OSInodeUnit inode_page[128];
 } __OSInode;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u32 repaired;
     /* 0x4 */ u32 random;
     /* 0x8 */ u64 serial_mid;
@@ -91,7 +99,8 @@ typedef struct {
     /* 0x1E */ u16 inverted_checksum;
 } __OSPackId;
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ u8 txsize;
     /* 0x1 */ u8 rxsize;
     /* 0x2 */ u8 cmd;
@@ -181,7 +190,8 @@ typedef struct {
 #define GB_POWER_OFF 0xFE
 
 
-typedef struct {
+typedef struct
+{
     /* 0x0 */ __OSInode inode;
     /* 0x100 */ u8 bank;
     /* 0x101 */ u8 map[PFS_INODE_DIST_MAP];

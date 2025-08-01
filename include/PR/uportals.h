@@ -50,7 +50,8 @@ extern "C" {
 #define UP_CELLNL	32		/* max length of cell names 	*/
 #define UP_OBNL		32		/* max length of obejct names 	*/
     
-typedef struct {
+typedef struct
+{
     vec3	min, max;		/* min and max pts of the box	*/
 } upBox;
 
@@ -90,7 +91,8 @@ typedef struct _upObjectData
     char	name[UP_OBNL];		/* name of the object		*/
 } upObjectData;
 
-typedef struct {
+typedef struct
+{
     int 	numcells;		/* how many cells are there?	*/
     upCellData	cells[UP_MAXCELLS];   	/* the actual cells		*/
     Gfx		*rootdlist;		/* display list for all cells	*/

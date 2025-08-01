@@ -128,8 +128,9 @@ typedef struct {
 } ObjectMesgQueue;
 
 // Base interface for object DLLs
-// This only has 6 functions, if an something accesses these functions with a higher function export index it does belong to an object dll
-// The first 7 functions are supposedly inheritted for each object DLL?
+//
+// These initial 7 functions are inherited and implemented by all object DLLs.
+// Any exports referenced with a higher index are specific to an object or subtype.
 DLL_INTERFACE_BEGIN(Object)
     /*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
     /*1*/ void (*update)(struct Object *obj);

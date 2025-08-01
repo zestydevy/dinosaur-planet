@@ -321,7 +321,7 @@ s32 dll_63_update1() {
     }
 
     if (!gDLL_28_ScreenFade->exports->is_complete()) {
-        gDLL_74_PicMenu->exports->redraw_all();
+        gDLL_74_Picmenu->exports->redraw_all();
         sRedrawFrames = 4;
     }
 
@@ -352,9 +352,9 @@ s32 dll_63_update1() {
             return 0;
         }
     } else {
-        action = gDLL_74_PicMenu->exports->update();
+        action = gDLL_74_Picmenu->exports->update();
         if (action != PICMENU_ACTION_NONE) {
-            selected =  gDLL_74_PicMenu->exports->get_selected_item();
+            selected =  gDLL_74_Picmenu->exports->get_selected_item();
 
             switch (sSubmenuIdx) {
                 case SUBMENU_GAME_SELECT:
@@ -482,7 +482,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             func_800382AC(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, 2);
         }
 
-        gDLL_74_PicMenu->exports->draw(gdl);
+        gDLL_74_Picmenu->exports->draw(gdl);
 
         font_window_draw(gdl, NULL, NULL, 1);
         font_window_draw(gdl, NULL, NULL, 3);
@@ -504,7 +504,7 @@ static void dll_63_clean_up(s32 leavingMenus) {
     }
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
         sSubmenuIdx = -1;
     }
 
@@ -539,7 +539,7 @@ static void dll_63_goto_game_select(s32 param1) {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_GAME_SELECT;
@@ -549,7 +549,7 @@ static void dll_63_goto_game_select(s32 param1) {
     dll_63_load_save_game_info();
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -603,14 +603,14 @@ static void dll_63_goto_game_confirm() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_GAME_CONFIRM;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -627,7 +627,7 @@ static void dll_63_goto_copy_src_select() {
     s32 i;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_COPY_SRC_SELECT;
@@ -643,7 +643,7 @@ static void dll_63_goto_copy_src_select() {
     }
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -662,7 +662,7 @@ static void dll_63_goto_copy_dst_select() {
     s32 temp;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_COPY_DST_SELECT;
@@ -684,7 +684,7 @@ static void dll_63_goto_copy_dst_select() {
     }
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -700,14 +700,14 @@ static void dll_63_goto_copy_confirm() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_COPY_CONFIRM;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -724,7 +724,7 @@ static void dll_63_goto_erase_select() {
     s32 i;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_ERASE_SELECT;
@@ -741,7 +741,7 @@ static void dll_63_goto_erase_select() {
         }
     }
 
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -757,14 +757,14 @@ static void dll_63_goto_erase_confirm() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_ERASE_CONFIRM;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 1,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -780,14 +780,14 @@ static void dll_63_goto_game_recap() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_PicMenu->exports->clear_items();
+        gDLL_74_Picmenu->exports->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_GAME_RECAP;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_PicMenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ &sGameRecapMenuSounds,
         /*param5*/ 5,

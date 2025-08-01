@@ -81,7 +81,7 @@ void dll_64_ctor(void *self) {
     }
 
     sLetterBgBoxTexture = queue_load_texture_proxy(0x316);
-    gDLL_74_PicMenu->exports->set_items(sMenuItems, itemCount, 
+    gDLL_74_Picmenu->exports->set_items(sMenuItems, itemCount, 
         /*defaultItem*/0, 
         /*sounds*/NULL, 
         /*param5*/5, 
@@ -102,9 +102,9 @@ s32 dll_64_update1() {
     char name[10];
     s32 i;
 
-    action = gDLL_74_PicMenu->exports->update();
+    action = gDLL_74_Picmenu->exports->update();
     if (action != PICMENU_ACTION_NONE) {
-        selected = gDLL_74_PicMenu->exports->get_selected_item();
+        selected = gDLL_74_Picmenu->exports->get_selected_item();
         if (action == PICMENU_ACTION_SELECT) {
             if (selected < 28 && sNumNameLetters < 5) {
                 bcopy(sMenuItems[selected].text, &sNameLetters[sNumNameLetters << 1], 2);
@@ -171,7 +171,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         func_800382AC(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, 2);
     }
 
-    gDLL_74_PicMenu->exports->draw(gdl);
+    gDLL_74_Picmenu->exports->draw(gdl);
 
     if (sNameLettersRedrawFrames != 0) {
         if (sMainRedrawFrames == 0) {
@@ -197,7 +197,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 }
 
 static void dll_64_clean_up() {
-    gDLL_74_PicMenu->exports->clear_items();
+    gDLL_74_Picmenu->exports->clear_items();
     free(sGameTextChunk);
     texture_destroy(sLetterBgBoxTexture);
     texture_destroy(sBackgroundTexture);
