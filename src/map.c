@@ -3286,43 +3286,47 @@ void block_setup_gdl_groups(Block *block)
     }
 }
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_vertices.s")
 #else
-extern f32 FLOAT_8009a9c4; // 8191.0f
-void _block_setup_vertices(Block *block)
+void block_setup_vertices(Block *block)
 {
     s32 i;
+    BlockShape *shape;
+    s32 v0[3]; // spC4 - spCC
+    Vtx_t *pverts;
+    EncodedTri *ptri;
+    EncodedTri *ptriend;
+    s32 pad;
+    f32 nx, ny, nz;
+    s16 vx[3]; // spA0 - spA6 / spA8
+    s16 vy[3]; // sp98 - sp9C
+    s16 vz[3]; // sp90 - sp96
+    s16 inx, iny, inz;
+    s32 j;
+    Vtx_t *verts[3];
+    f32 mag;
 
     for (i = 0; i < block->shapeCount; i++)
     {
-        BlockShape *shape = &block->shapes[i];
-        EncodedTri *ptri = &block->encodedTris[shape->triBase];
-        EncodedTri *ptriend = &block->encodedTris[shape[1].triBase];
-        Vtx_t *pverts = &block->vertices[shape->vtxBase];
+        shape = &block->shapes[i];
+        pverts = shape->vtxBase + block->vertices;
+        ptri = shape->triBase + block->encodedTris;
+        if (verts) {}
+        ptriend = &block->encodedTris[shape[1].triBase];
 
-        for (; ptri < ptriend; ptri++)
+        while (ptri < ptriend)
         {
-            Vtx_t *verts[3];
-            s16 vx[3];
-            s16 vy[3];
-            s16 vz[3];
-            f32 nx, ny, nz;
-            s32 inx, iny, inz;
-            s32 j;
-            f32 mag;
-            u8 v0, v1, v2;
+            v0[0] = ((u8*)ptri)[1];
+            v0[1] = ((u8*)ptri)[2];
+            v0[2] = ((u8*)ptri)[3];
 
-            v0 = ((u8*)ptri)[1];
-            verts[0] = &pverts[v0];
-            v1 = ((u8*)ptri)[2];
-            verts[1] = &pverts[v1];
-            v2 = ((u8*)ptri)[3];
-            verts[2] = &pverts[v2];
-
-            ptri->d0 = (v2 << 13) | (v1 << 7) | (v0 << 1);
+            ptri->d0 = (v0[0] << 13) | (v0[1] << 7) | (v0[2] << 1);
             ptri->d1 = 0;
 
+            verts[0] = &pverts[v0[0]];
+            verts[1] = &pverts[v0[1]];
+            verts[2] = &pverts[v0[2]];
 
             for (j = 0; j < 3; j++)
             {
@@ -3331,9 +3335,9 @@ void _block_setup_vertices(Block *block)
                 vz[j] = verts[j]->ob[2];
             }
 
-            nx = (vz[0] - vz[1]) * vy[2] + vy[0] * (vz[1] - vz[2]) + vy[1] * (vz[2] - vz[0]);
-            ny = (vx[0] - vx[1]) * vz[2] + vz[0] * (vx[1] - vx[2]) + vz[1] * (vx[2] - vx[0]);
-            nz = (vy[0] - vy[1]) * vx[2] + vx[0] * (vy[1] - vy[2]) + vx[1] * (vy[2] - vy[0]);
+            nx = (vy[0] * (vz[1] - vz[2])) + (vy[1] * (vz[2] - vz[0])) + (vy[2] * (vz[0] - vz[1]));
+            ny = (vz[0] * (vx[1] - vx[2])) + (vz[1] * (vx[2] - vx[0])) + (vz[2] * (vx[0] - vx[1]));
+            nz = (vx[0] * (vy[1] - vy[2])) + (vx[1] * (vy[2] - vy[0])) + (vx[2] * (vy[0] - vy[1]));
             mag = sqrtf(nx * nx + ny * ny + nz * nz);
             if (mag > 0.0f)
             {
@@ -3342,17 +3346,19 @@ void _block_setup_vertices(Block *block)
                 nz /= mag;
             }
 
-            inx = nx * FLOAT_8009a9c4; /* 8191.0f */
-            iny = ny * FLOAT_8009a9c4; /* 8191.0f */
-            inz = nz * FLOAT_8009a9c4; /* 8191.0f */
+            inx = nx * 8191.0f;
+            iny = ny * 8191.0f;
+            inz = nz * 8191.0f;
 
             ptri->d0 |= inx << 18;
             ptri->d1 |= (iny & 0x3fff) << 4;
             ptri->d1 |= inz << 18;
             ptri->d1 |= 0x1;
+            ptri++;
         }
 
-        if (shape->flags & 0x100000) {
+        shape = &block->shapes[i];
+        if (shape->flags & 0x10) {
             shape->flags |= 0x800;
         }
     }
@@ -3757,12 +3763,9 @@ BlockTexture *func_8004A2CC(s32 idx)
     return &gBlockTextures[idx];
 }
 
-// https://decomp.me/scratch/cLba8
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_xz_bitmap.s")
-#else
 void block_setup_xz_bitmap(Block* block) {
-    Vtx_t** temp_s3;
+    s16 tempTriBase;
+    s16 pad;
     s32 triIndex;
     s32 temp_a2;
     s32 nextTriIndex;
@@ -3775,17 +3778,14 @@ void block_setup_xz_bitmap(Block* block) {
     s16 var_t4;
     s16 var_t5;
     s32 var_t2;
-    BlockShape* blockShape;
-    s32 var_v1;
+    s32 pad2;
     s32 i;
     Vtx_t *sp38[3];
 
     for (var_t2 = 0; var_t2 < block->shapeCount; var_t2++) {
-        blockShape = &block->shapes[var_t2];
-        triIndex = blockShape->triBase;
-        nextTriIndex = blockShape[1].triBase;
-        temp_a2 = blockShape->vtxBase;
-        while (triIndex < nextTriIndex) {
+        tempTriBase = block->shapes[var_t2 + 0].triBase;
+        temp_a2 = block->shapes[var_t2 + 0].vtxBase;
+        for (triIndex = tempTriBase, nextTriIndex = block->shapes[var_t2 + 1].triBase; triIndex < nextTriIndex; triIndex++) {
             var_t3 = -0x7D00;
             var_t4 = 0x7D00;
             var_t5 = -0x7D00;
@@ -3793,10 +3793,10 @@ void block_setup_xz_bitmap(Block* block) {
             sp38[0] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 0xD) & 0x1F) + temp_a2];
             sp38[1] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 7) & 0x1F) + temp_a2];
             sp38[2] = &block->vertices[(((s32)block->encodedTris[triIndex].d0 >> 1) & 0x1F) + temp_a2];
-            i = 0;
-            while (i < 3) {
-                var_s1 = (*sp38)[i].ob[0];
-                temp_s4 = (*sp38)[i].ob[2];
+            for (i = 0; i < 3 ; i++) {
+                pad = sp38[i]->ob[0];
+                var_s1 = pad;
+                temp_s4 = sp38[i]->ob[2];
                 if (var_t3 < var_s1) {
                     var_t3 = var_s1;
                 }
@@ -3809,26 +3809,23 @@ void block_setup_xz_bitmap(Block* block) {
                 if (temp_s4 < var_s0) {
                     var_s0 = temp_s4;
                 }
-                i++;
             }
             for (var_s5 = 0, var_s1 = 1, var_s2 = 0; var_s2 < 0x280; var_s2 += 0x50) {
                 if (((var_s2 + 0x50) >= var_t4) && (var_t3 >= var_s2)) {
                     var_s5 |= var_s1;
                 }
-                var_s1 *= 2;
+                var_s1 <<= 1;
             }
             for (var_s2 = 0; var_s2 < 0x280; var_s2 += 0x50) {
                 if (((var_s2 + 0x50) >= var_s0) && (var_t5 >= var_s2)) {
                     var_s5 |= var_s1;
                 }
-                var_s1 *= 2;
+                var_s1 <<= 1;
             }
             block->xzBitmap[triIndex] = var_s5;
-            triIndex++;
         }
     }
 }
-#endif
 
 /**
   * block_get_animator_vertex_count?
