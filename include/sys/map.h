@@ -406,6 +406,16 @@ typedef struct Unk80092C48 {
     u8 pad20[0xC];
 } Unk80092C48;
 
+typedef struct UnkFunc80051D68Arg3 {
+    f32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA[6];
+    s16 unk16[6];
+    u8 pad22[0x34 - 0x22];
+} UnkFunc80051D68Arg3;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -588,6 +598,8 @@ extern Unk80092C48 D_80092C48;
 extern Unk80092C48 D_80092C74;
 extern s16 D_80092C18;
 extern f32 D_800BB18C;
+extern f32 D_8009AA30;
+extern f32 D_8009AA34;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -651,6 +663,7 @@ s16 func_80052300(Object*, s32, Unk8004FA58*, Unk800B98A8*, s32, f32, f32, s32, 
 s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8004E7A8(Object* arg0);
 void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D);
+s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3);
 
 // other funcs that are used
 void func_80058F3C(void);

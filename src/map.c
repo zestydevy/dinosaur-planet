@@ -6739,7 +6739,44 @@ s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
     return var_v1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80051D68.s")
+s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5) {
+    UnkFunc80051D68Arg3* var_s3;
+    s32 i;
+    f32 f0;
+    Vec3f sp70;
+    Vec3f sp64;
+    Vec3f sp58;
+    s32 pad;
+    Vec4f sp44;
+
+    for (i = 0; i < arg4; i++) {
+        var_s3 = &arg3[i];
+        if (func_80051F64(arg1, arg2, var_s3->unkA, var_s3->unk16) == 1) {
+            sp70.x = arg1;
+            sp70.y = arg0->srt.transl.y;
+            sp70.z = arg2;
+            sp64.x = arg1;
+            sp64.y = arg0->srt.transl.y + 100.0f;
+            sp64.z = arg2;
+            if (arg5 != NULL) {
+                f0 = D_8009AA30;
+                arg5->x = var_s3->unk4 * f0;
+                arg5->y = var_s3->unk6 * f0;
+                arg5->z = var_s3->unk8 * f0;
+                arg5->w = var_s3->unk0;
+                return 1;
+            }
+            sp44.x = var_s3->unk4 * D_8009AA34;
+            sp44.y = var_s3->unk6 * D_8009AA34;
+            sp44.z = var_s3->unk8 * D_8009AA34;
+            sp44.w = var_s3->unk0;
+            func_800528AC(&sp70, &sp64, &sp58, &sp44);
+            return sp58.y - sp70.y;
+        }
+    }
+
+    return 0;
+}
 
 s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3) {
     s16 temp_t1;
