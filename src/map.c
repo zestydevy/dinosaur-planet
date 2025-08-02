@@ -4406,33 +4406,18 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     return 0;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B7D0.s")
-#else
-/** Find curve by uID 
-    arg1 unused?
-*/
 ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
-    MapHeader **maps;
     MapHeader *map;
-    s32 index;
-    
     u8 *ptr;
     s32 offset;
     s16 objID;
-    
-    ObjCreateInfo *obj;
-    
-    maps = gLoadedMapsDataTable;
-    index = 0;
-    do {
-        s32 offset;
-        map = maps[index];
-        
+    s32 i;
+
+    for (i = 0; i < 120; i++) {
+        map = gLoadedMapsDataTable[i];
         if (map != NULL){
             ptr = (u8*)map->objectInstanceFile_ptr;
             offset = 0;
-            
             while (offset < map->objectInstancesFileLength){       
                 objID = ((ObjCreateInfo*)ptr)->objId;
                 if (objID == OBJ_curve && ((ObjCreateInfo*)ptr)->uID == search_uID){
@@ -4443,12 +4428,10 @@ ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
                 ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
             }
         } 
-        index++;
-    } while ((u32)map != (u32)&D_800B5508);
+    }
     
     return 0;
 }
-#endif
 
 /** map_find_checkpoint4_by_uID? 
   * "search_mapID == -1" searches through all maps instead of a specific mapID!
