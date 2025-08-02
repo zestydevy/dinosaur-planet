@@ -401,6 +401,11 @@ typedef struct Unk8004FA58_Arg5 {
     s8 unkF;
 } Unk8004FA58_Arg5;
 
+typedef struct Unk80092C48 {
+    f32 unk0[8];
+    u8 pad20[0xC];
+} Unk80092C48;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -510,7 +515,7 @@ extern Unk80092BC0 D_80092CB0;
 
 extern Unk800B98A0 *D_800B98A0[2];
 extern Unk800B98A8 *D_800B98A8[2];
-extern Unk800B98B0 *D_800B98B0[2];
+extern Unk8004FA58_Arg5 *D_800B98B0[2];
 
 extern s8 D_80092BF4;
 
@@ -531,9 +536,9 @@ extern s16 D_80092C38;
 
 extern Unk800B98A8 *D_800BB140;
 extern Unk800B98A8 *D_800BB144;
-extern Unk800B98B0 *D_800BB148;
-extern Unk800B98B0 *D_800BB14C;
-extern Unk800B98A0 *D_800BB150;
+extern Unk8004FA58_Arg5 *D_800BB148;
+extern Unk8004FA58_Arg5 *D_800BB14C;
+extern Gfx *D_800BB150;
 extern Unk800B98A0 *D_800BB154;
 extern Unk800BB158 *D_800BB158[2];
 extern Unk800BB160 *D_800BB160[2];
@@ -573,6 +578,13 @@ extern s16 (*D_800B9770)[2];
 extern u16 *gFile_TRKBLK;
 extern s16 (*gMapGridTable)[5];
 extern s16 gNumTRKBLKEntries;
+
+extern s32 D_80092BDC;
+extern s32 D_80092BE0;
+extern s16 D_80092C1C;
+extern f32 D_8009AA1C;
+extern Unk8004FA58 D_800BA1A0;
+extern Unk80092C48 D_80092C48;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -626,6 +638,14 @@ void func_800436DC(Object* arg0, s32 arg1);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
+void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4);
+void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2);
+s32 func_8004EEC0(Unk800B98B0*, Unk800B98A0*, ObjectStruct64*, Object*, s32, s32*);
+s32 func_8004F378(Unk800B98B0*, Unk800B98A0*, ObjectStruct64*, Object*, s32, s32*);
+s32 func_800502AC(Object*, Vec3f*, Unk8004FA58*, s32, Unk800B98A8*, Unk800B98B0*, Unk8004FA58*, s32);
+void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
+s16 func_80052300(Object*, s32, Unk8004FA58*, Unk800B98A8*, s32, f32, f32, s32, s32);
+s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
 
 // other funcs that are used
 void func_80058F3C(void);
@@ -649,5 +669,9 @@ void func_8003DB7C(void);
 void func_8003DBCC(void);
 void func_8005B870(void);
 u8 map_get_is_object_streaming_disabled(void);
+void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
+void func_800533D8(s32*, s32*);
+void func_80053408(Vec3f *);
+void func_80053750(Object*, Vec3f**, s32);
 
 #endif

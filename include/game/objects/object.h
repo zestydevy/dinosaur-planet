@@ -74,7 +74,7 @@ typedef struct {
 /* 0x2C */ f32 unk2c;
 /* 0x30 */ u32 flags;
 /* 0x34 */ u16 unk34;
-/* 0x36 */ u16 unk36;
+/* 0x36 */ s16 unk36;
 /* 0x38 */ u8 unk38;
 /* 0x39 */ u8 unk39;
 /* 0x3A */ u8 unk3A;
