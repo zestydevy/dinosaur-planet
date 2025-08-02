@@ -585,6 +585,8 @@ extern s16 D_80092C1C;
 extern f32 D_8009AA1C;
 extern Unk8004FA58 D_800BA1A0;
 extern Unk80092C48 D_80092C48;
+extern s16 D_80092C18;
+extern f32 D_800BB18C;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -673,5 +675,6 @@ void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f3
 void func_800533D8(s32*, s32*);
 void func_80053408(Vec3f *);
 void func_80053750(Object*, Vec3f**, s32);
+void func_8005BCE0(Object*, s16, s32, s32, s32, s32, s32, f32, s32);
 
 #endif

@@ -5592,44 +5592,34 @@ s32 func_8004E540(Unk8004E540* arg0, Unk8004E540* arg1) {
     return sp1C >> 8;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E64C.s")
-#else
-void func_8005BCE0(Object *object, u32 param_2, Gfx **gdl, Mtx **rspMtxs, u32 param_5, u32 param_6, u32 param_7, f32 y, u32 idx);
-void _func_8004E64C(Object *object, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5)
-{
-    ObjectStruct64 *unk;
-    Vec3f v0;
-    Vec3f v1;
+void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+    ObjectStruct64* temp_s0;
+    Vec3f sp50;
+    Vec3f sp44;
 
-    unk = object->ptr0x64;
-    if (unk->gdl != NULL)
-    {
-        if (unk->flags & 0x20)
-        {
-            bcopy(&object->srt.transl, &v0, sizeof(Vec3f));
-            bcopy(&object->positionMirror, &v1, sizeof(Vec3f));
-            bcopy(&unk->tr, &object->srt.transl, sizeof(Vec3f));
+    temp_s0 = arg0->ptr0x64;
+    if (temp_s0->gdl == NULL) {
+        return;
+    }
 
-            if (object->parent != NULL) {
-                transform_point_by_object(unk->tr.x, unk->tr.y, unk->tr.z, &unk->tr.x, &unk->tr.y, &unk->tr.z, object->parent);
-            } else {
-                bcopy(&unk->tr, &object->positionMirror, sizeof(Vec3f));
-            }
-        }
-
-        if (unk->flags & 0x8) {
-            // This function seems to be responsible for drawing shadows.
-            func_8005BCE0(object, *(s16*)0x80092c18, gdl, rspMtxs, param_4, param_5, *(s8*)0x800bb170, *(f32*)0x800bb18c, unk->flags & 0x3);
-        }
-
-        if (unk->flags & 0x20) {
-            bcopy(&v0, &object->srt.transl, sizeof(Vec3f));
-            bcopy(&v1, &object->positionMirror, sizeof(Vec3f));
+    if (temp_s0->flags & 0x20) {
+        bcopy(&arg0->srt.transl, &sp44, 0xC);
+        bcopy(&arg0->positionMirror, &sp50, 0xC);
+        bcopy(&temp_s0->tr, &arg0->srt.transl, 0xC);
+        if (arg0->parent != NULL) {
+            transform_point_by_object(temp_s0->tr.x, temp_s0->tr.y, temp_s0->tr.z, &temp_s0->tr.x, &temp_s0->tr.y, &temp_s0->tr.z, arg0->parent);
+        } else {
+            bcopy(&temp_s0->tr, &arg0->positionMirror, 0xC);
         }
     }
+    if (temp_s0->flags & 8) {
+        func_8005BCE0(arg0, D_80092C18, arg1, arg2, arg3, arg4, (s32) D_800BB170, D_800BB18C, temp_s0->flags & 3);
+    }
+    if (temp_s0->flags & 0x20) {
+        bcopy(&sp44, &arg0->srt.transl, 0xC);
+        bcopy(&sp50, &arg0->positionMirror, 0xC);
+    }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E7A8.s")
 
