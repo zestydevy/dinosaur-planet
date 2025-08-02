@@ -407,14 +407,26 @@ typedef struct Unk80092C48 {
 } Unk80092C48;
 
 typedef struct UnkFunc80051D68Arg3 {
-    f32 unk0;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA[6];
-    s16 unk16[6];
-    u8 pad22[0x34 - 0x22];
+        f32 unk0;
+        s16 unk4;
+        s16 unk6;
+        s16 unk8;
+        s16 unkA[6];
+        s16 unk16[6];
+        u8 pad22[0x2F - 0x22];
+        s8 unk30;
+        u8 pad31[3];
 } UnkFunc80051D68Arg3;
+
+typedef struct UnkFunc80052300Arg3 {
+    Vec3f unk0[3];
+} UnkFunc80052300Arg3;
+
+typedef struct Unk8005341C {
+    Object *unk0;
+    s16 unk4;
+    u8 pad8[0x10 - 0x6];
+} Unk8005341C;
 
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
@@ -600,6 +612,7 @@ extern s16 D_80092C18;
 extern f32 D_800BB18C;
 extern f32 D_8009AA30;
 extern f32 D_8009AA34;
+extern f32 D_8009AA3C;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -659,7 +672,7 @@ s32 func_8004EEC0(Unk800B98B0*, Unk800B98A0*, ObjectStruct64*, Object*, s32, s32
 s32 func_8004F378(Unk800B98B0*, Unk800B98A0*, ObjectStruct64*, Object*, s32, s32*);
 s32 func_800502AC(Object*, Vec3f*, Unk8004FA58*, s32, Unk800B98A8*, Unk800B98B0*, Unk8004FA58*, s32);
 void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
-s16 func_80052300(Object*, s32, Unk8004FA58*, Unk800B98A8*, s32, f32, f32, s32, s32);
+s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, UnkFunc80052300Arg3* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
 s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8004E7A8(Object* arg0);
 void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D);
@@ -692,5 +705,6 @@ void func_800533D8(s32*, s32*);
 void func_80053408(Vec3f *);
 void func_80053750(Object*, Vec3f**, s32);
 void func_8005BCE0(Object*, s16, s32, s32, s32, s32, s32, f32, s32);
+Unk8005341C *func_8005341C(s32*);
 
 #endif

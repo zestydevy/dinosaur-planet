@@ -25,41 +25,33 @@ void func_80041028(void) {
     gDLBuilder = &D_800B49F0;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_apply_combine.s")
-#else
-void _dl_apply_combine(Gfx **gdl)
-{
-    Gfx *currGfx = &gDLBuilder->gfx0;
+void dl_apply_combine(Gfx **gdl) {
+    Gfx *currGfx = &gDLBuilder->combine;
     u8 dirty;
 
-    if (gDLBuilder->dirtyFlags & 0x1)
-    {
-        gDLBuilder->dirtyFlags &= ~0x1;
+    if (gDLBuilder->dirtyFlags & 1) {
+        gDLBuilder->dirtyFlags &= ~1;
         dirty = TRUE;
-    }
-    else
-    {
-        dirty = gDLBuilder->gfx0.words.w0 != (**gdl).words.w0 || gDLBuilder->gfx0.words.w1 != (**gdl).words.w1;
+    } else {
+        dirty = currGfx->words.w0 != (*gdl)->words.w0 || currGfx->words.w1 != (*gdl)->words.w1;
     }
 
-    if (dirty)
-    {
-        *currGfx = **gdl;
+    if (dirty) {
+        (currGfx)->words.w0 = (*gdl)->words.w0;
+        (currGfx)->words.w1 = (*gdl)->words.w1;
 
-        if (gDLBuilder->needsPipeSync)
-        {
+        if (gDLBuilder->needsPipeSync) {
             gDLBuilder->needsPipeSync = FALSE;
 
             gDPPipeSync((*gdl)++);
 
-            **gdl = *currGfx;
+            (*gdl)->words.w0 = (currGfx)->words.w0;
+            (*gdl)->words.w1 = (currGfx)->words.w1;
         }
 
         (*gdl)++;
     }
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/dl_apply_other_mode.s")
@@ -6863,7 +6855,71 @@ void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
     *arg2 = 0;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052300.s")
+#else
+s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, UnkFunc80052300Arg3* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8) {
+    s32 sp44;
+    s32 var_a2;
+    Unk8005341C* temp_t2;
+    s8 var_t1;
+    s8 var_v1;
+    f32 sp34;
+    f32 sp30;
+    Unk8005341C* temp_v0;
+    f32 f0;
+
+    sp34 = arg0->srt.transl.x;
+    sp30 = arg0->srt.transl.z;
+    if (arg0->parent == NULL) {
+        sp34 -= arg5;
+        sp30 -= arg6;
+    }
+    temp_v0 = func_8005341C(&sp44);
+    temp_t2 = &temp_v0[sp44];
+    sp44 = 0;
+    var_a2 = 0;
+    if (arg8) {
+        var_t1 = 4;
+    } else {
+        var_t1 = 8;
+    }
+    if (temp_v0 < temp_t2) {
+        f0 = D_8009AA3C;
+        do {
+            if (temp_v0->unk0 == arg0->parent) {
+                sp44 = temp_v0->unk4;
+                while (sp44 < temp_v0[1].unk4) {
+                    var_v1 = TRUE;
+                    if (!(arg1[sp44].unk30 & var_t1)) {
+                        var_v1 = FALSE;
+                    }
+                    if (var_v1 != FALSE) {
+                        arg3->unk0[0].x = arg1[sp44].unkA[0] - sp34;
+                        arg3->unk0[0].y = arg1[sp44].unkA[3] - arg0->srt.transl.y;
+                        arg3->unk0[0].z = arg1[sp44].unk16[0] - sp30;
+                        arg3->unk0[1].x = arg1[sp44].unkA[1] - sp34;
+                        arg3->unk0[1].y = arg1[sp44].unkA[4] - arg0->srt.transl.y;
+                        arg3->unk0[1].z = arg1[sp44].unk16[1] - sp30;
+                        arg3->unk0[2].x = arg1[sp44].unkA[2] - sp34;
+                        arg3->unk0[2].y = arg1[sp44].unkA[5] - arg0->srt.transl.y;
+                        arg3->unk0[2].z = arg1[sp44].unk16[2] - sp30;
+                        arg3 += 1;
+                        arg2[var_a2].pos.x = arg1[sp44].unk4 * f0;
+                        arg2[var_a2].pos.y = arg1[sp44].unk6 * f0;
+                        arg2[var_a2].pos.z = arg1[sp44].unk8 * f0;
+                        arg2[var_a2].unk10 = arg1[sp44].unk30;
+                        var_a2++;
+                    }
+                    sp44++;
+                }
+            }
+            temp_v0++;
+        } while (temp_v0 < temp_t2);
+    }
+    return var_a2;
+}
+#endif
 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80052644.s")
