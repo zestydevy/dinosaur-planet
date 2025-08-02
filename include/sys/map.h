@@ -384,7 +384,7 @@ typedef struct Unk8004E540 {
 // // // Might be incorrect definition but size should be correct
 typedef struct Unk8004FA58 {
     Vec4f pos;
-    s32 unk10;
+    u8 unk10;
 } Unk8004FA58;
 
 // Might be incorrect definition but size should be correct
@@ -650,6 +650,7 @@ void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
 s16 func_80052300(Object*, s32, Unk8004FA58*, Unk800B98A8*, s32, f32, f32, s32, s32);
 s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8004E7A8(Object* arg0);
+void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D);
 
 // other funcs that are used
 void func_80058F3C(void);

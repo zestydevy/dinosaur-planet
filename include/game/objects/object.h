@@ -79,7 +79,10 @@ typedef struct {
 /* 0x39 */ u8 unk39;
 /* 0x3A */ u8 unk3A;
 /* 0x3B */ u8 unk3B;
-/* 0x3c */ u32 unk3c;
+/* 0x3c */ u8 unk3C;
+/* 0x3d */ u8 unk3D;
+/* 0x3e */ u8 unk3E;
+/* 0x3f */ u8 unk3F;
 /* 0x40 */ u8 unk40;
 /* 0x41 */ s8 unk41; //shadows toggle this each frame
 } ObjectStruct64;
