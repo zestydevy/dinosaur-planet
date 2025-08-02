@@ -648,5 +648,6 @@ void func_8005C740(s32, s32*, s32*, s32);
 void func_8003DB7C(void);
 void func_8003DBCC(void);
 void func_8005B870(void);
+u8 map_get_is_object_streaming_disabled(void);
 
 #endif

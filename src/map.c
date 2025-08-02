@@ -4312,68 +4312,55 @@ s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
     return 1;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004B548.s")
-#else
-void func_80012584(s32, u8, u32, ObjCreateInfo*, s32, s32, Object*, s32);
-s32 func_8004B4A0(ObjCreateInfo*, s32);
+void func_8004B548(MapHeader* arg0, s32 arg1, s32 arg2, Object* arg3) {
+    s8 *s4;
+    s8 *s3;
+    s8 *s0;
+    s32 mapID;
+    s32 someIndex;
+    s32 var_s6;
+    s32* temp_t1;
 
-void func_8004B548(MapHeader* map, s32 mapID, s32 arg2, Object* arg3) {
-    u32 new_var;
-    s32 objects_filesize;
-    s32 object_count;
-    s32 var_v1;
-    s8 var_s6;
-    u32 objects_offset;
-    u32 objects_end;
-    ObjCreateInfo *obj;
-    u32 *temp_t1;
-    
-    temp_t1 = (u32 *) ((mapID * 0x8C) + (&D_800B5508));
-    objects_filesize = temp_t1[arg2];
-    
-    if (objects_filesize != -1){
-        if (arg3 != NULL){
-            var_s6 = arg3->matrixIdx + 1;
-        } else {
-            var_s6 = map->unk19;
-        }
-        
-        objects_offset = map->objectInstanceFile_ptr;
-        objects_end = objects_filesize + objects_offset;
-        obj = objects_offset;
-        object_count = 0;
+    temp_t1 = (s32 *) &(&D_800B5508)[(arg1 * 0x8C)];
+    if (temp_t1[arg2] == -1) {
+        return;
+    }
 
-        while ((u32)&obj < objects_end){
-            object_count ++;
-            obj += obj->quarterSize * 4;
-        }
+    if (arg3 != NULL) {
+        var_s6 = arg3->matrixIdx + 1;
+    } else {
+        var_s6 = arg0->unk19;
+    }
+    s0 = (s8 *) arg0->objectInstanceFile_ptr;
+    mapID = 0;
+    s4 =  &((s8*)s0)[temp_t1[arg2]];
+    while ((u32) s0 < (u32) s4) {
+        mapID += 1;
+        s0 += ((ObjCreateInfo *)s0)->quarterSize * 4;
+    }
 
-        var_v1 = arg2 + 1;
-        while (var_v1 < 0x21){
-            if (temp_t1[var_v1] != -1){
-                break;
-            }
-            var_v1++;
-        }
-        
-        obj = objects_end;
-        objects_end = temp_t1[var_v1] + objects_offset;
-        while (new_var < objects_end){
-            if ((map_check_some_mapobj_flag(object_count, mapID) == 0) && (func_8004B4A0((ObjCreateInfo *) obj, mapID) != 0)){
-                func_8004B710(object_count, mapID, 1);
-                if (map_get_is_object_streaming_disabled() != 0){
-                    func_80012584(0x3E, 4, 0, (ObjCreateInfo *) obj, mapID, object_count, arg3, (s32) var_s6);
-                } else {
-                    obj_create((ObjCreateInfo *) obj, 1U, mapID, object_count, arg3);
-                }
-            }
-            object_count++;
-            obj += obj->quarterSize * 4;
+    for (someIndex = arg2 + 1; someIndex < 0x21; someIndex++) {
+        if (temp_t1[someIndex] != -1) {
+            break;
         }
     }
+
+    s0 = s4;
+    s4 = &((s8 *)arg0->objectInstanceFile_ptr)[temp_t1[someIndex]];
+    while ((u32) s0 < (u32) s4) {
+        s3 = s0;
+        if ((map_check_some_mapobj_flag(mapID, arg1) == 0) && (func_8004B4A0((ObjCreateInfo *)s0, arg1) != 0)) {
+            func_8004B710(mapID, arg1, 1U);
+            if (map_get_is_object_streaming_disabled() != 0) {
+                func_80012584(0x3E, 4U, NULL, (UnkStructAssetThreadSingle_0x8* ) s0, arg1, mapID, arg3, var_s6);
+            } else {
+                obj_create((ObjCreateInfo* )s0, 1U, (s32) arg1, mapID, arg3);
+            }
+        }
+        mapID += 1;
+        s0 += ((ObjCreateInfo *)s3)->quarterSize * 4;
+    }
 }
-#endif
 
 /**
  * Seems to be called when camera moves between grid cells?
