@@ -53,39 +53,38 @@ void dl_apply_combine(Gfx **gdl) {
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/dl_apply_other_mode.s")
-#else
-void _dl_apply_other_mode(Gfx **gdl)
-{
-    Gfx *currGfx = &gDLBuilder->gfx1;
+void dl_apply_other_mode(Gfx **gdl) {
+    Gfx *currGfx;
     u8 dirty;
 
     if (UINT_80092a98 & 0x2000) {
-        (**gdl).words.w1 &= ~0x30;
+        (*gdl)->words.w1 &= ~0x30;
     }
 
-    if (gDLBuilder->dirtyFlags & 0x2) {
-        gDLBuilder->dirtyFlags &= ~0x2;
+    currGfx = &gDLBuilder->combine + 1;
+    if (gDLBuilder->dirtyFlags & 2) {
+        gDLBuilder->dirtyFlags &= ~2;
         dirty = TRUE;
     } else {
-        dirty = gDLBuilder->gfx1.words.w0 != (**gdl).words.w0 || gDLBuilder->gfx1.words.w1 != (**gdl).words.w1;
+        dirty = currGfx->words.w0 != (*gdl)->words.w0 || currGfx->words.w1 != (*gdl)->words.w1;
     }
 
-    if (dirty)
-    {
-        *currGfx = **gdl;
+    if (dirty) {
+        (currGfx)->words.w0 = (*gdl)->words.w0;
+        (currGfx)->words.w1 = (*gdl)->words.w1;
 
         if (gDLBuilder->needsPipeSync) {
             gDLBuilder->needsPipeSync = FALSE;
+
             gDPPipeSync((*gdl)++);
-            **gdl = *currGfx;
+
+            (*gdl)->words.w0 = (currGfx)->words.w0;
+            (*gdl)->words.w1 = (currGfx)->words.w1;
         }
 
         (*gdl)++;
     }
 }
-#endif
 
 void dl_apply_geometry_mode(Gfx **gdl)
 {
