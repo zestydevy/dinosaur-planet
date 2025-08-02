@@ -545,9 +545,9 @@ extern Unk800BB160 *D_800BB160[2];
 extern Unk800BB168 *D_800BB168[2];
 extern Unk800BB168* D_800BB174;
 extern Unk800BB168* D_800BB178;
-extern Unk800BB160* D_800BB17C;
-extern Unk800BB160* D_800BB180;
-extern Unk800BB158* D_800BB184;
+extern Unk8004FA58_Arg5* D_800BB17C;
+extern Unk8004FA58_Arg5* D_800BB180;
+extern Gfx* D_800BB184;
 extern Unk800BB158* D_800BB188;
 
 extern Texture* D_800BB190;
@@ -585,6 +585,7 @@ extern s16 D_80092C1C;
 extern f32 D_8009AA1C;
 extern Unk8004FA58 D_800BA1A0;
 extern Unk80092C48 D_80092C48;
+extern Unk80092C48 D_80092C74;
 extern s16 D_80092C18;
 extern f32 D_800BB18C;
 
@@ -648,6 +649,7 @@ s32 func_800502AC(Object*, Vec3f*, Unk8004FA58*, s32, Unk800B98A8*, Unk800B98B0*
 void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
 s16 func_80052300(Object*, s32, Unk8004FA58*, Unk800B98A8*, s32, f32, f32, s32, s32);
 s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_8004E7A8(Object* arg0);
 
 // other funcs that are used
 void func_80058F3C(void);

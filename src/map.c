@@ -5621,7 +5621,123 @@ void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004E7A8.s")
+void func_8004E7A8(Object* arg0) {
+    s32 sp2B4 = 0;
+    s32 sp2B0;
+    s32 sp2AC;
+    Vec3f sp24C[8];
+    Vec3f sp1EC[8];
+    Vec3f sp1E0;
+    Vec3f sp1D4;
+    u8 pad[0x128];
+    s32 pad2[2];
+    s32 *spA0[1];
+    s32 sp9C = 0;
+    ObjectStruct64* temp_s1;
+    s32 alpha;
+    s32 i;
+    s32 j;
+    s32 temp_t0;
+    AABBs32 sp70;
+    f32 sp50[8] = D_80092C74.unk0;
+
+    if (func_80041DA4() == 0) {
+        arg0->ptr0x64->gdl = NULL;
+        return;
+    }
+    D_800BB170 = 0;
+    temp_s1 = arg0->ptr0x64;
+    if (D_80092BE8 != 0) {
+        temp_s1->gdl2 = NULL;
+        D_80092BFC = 1;
+        if (D_80092C28 >= 0x227) {
+            arg0->ptr0x64->gdl = NULL;
+            return;
+        }
+        if (D_80092C30 >= 0x26D) {
+            arg0->ptr0x64->gdl = NULL;
+            return;
+        }
+        if (D_80092C38 >= 0x209) {
+            arg0->ptr0x64->gdl = NULL;
+            return;
+        }
+        D_800BB174 = D_800BB178;
+        D_800BB17C = D_800BB180;
+        if (temp_s1->flags & 0x20) {
+            bcopy(&arg0->srt.transl, &sp1D4, 0xC);
+            bcopy(&arg0->positionMirror, &sp1E0, 0xC);
+            if (arg0->parent != NULL) {
+                transform_point_by_object(
+                    temp_s1->tr.x,
+                    temp_s1->tr.y,
+                    temp_s1->tr.z,
+                    &arg0->positionMirror.x,
+                    &arg0->positionMirror.y,
+                    &arg0->positionMirror.z,
+                    arg0->parent
+                );
+            } else {
+                bcopy(&temp_s1->tr, &arg0->positionMirror, 0xC);
+            }
+            bcopy(&temp_s1->tr, &arg0->srt.transl, 0xC);
+        }
+        temp_s1->gdl = D_800BB184;
+        if (!(temp_s1->flags & 0x10)) {
+            temp_s1->unk14.x = D_80092BD0;
+            temp_s1->unk14.y = D_80092BD4;
+            temp_s1->unk14.z = D_80092BD8;
+        } else if (temp_s1->flags & 0x800) {
+            temp_s1->unk14.x = 0.0f;
+            temp_s1->unk14.z = 0.0f;
+            temp_s1->unk14.y = 1.0f;
+        }
+        func_80051944(0, arg0, sp24C, temp_s1->unk0 * 0.5f, 0);
+        for (i = 0, j = 0; i < 8; i++, j++) {
+            sp1EC[j].x = sp24C[i].x + arg0->positionMirror.x;
+            sp1EC[j].y = sp24C[i].y + arg0->positionMirror.y;
+            sp1EC[j].z = sp24C[i].z + arg0->positionMirror.z;
+        }
+        fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
+        func_80053750(arg0, (Vec3f** ) &sp70, 1);
+        func_80053408((Vec3f *)spA0);
+        func_800533D8(&sp2B4, &sp9C);
+        sp2B4 = func_80052300(arg0, sp9C, &D_800BA1A0, (Unk800B98A8* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
+        D_800BB174 = (s8 *)D_800BB174 + sp2B4 * 0x24;
+        func_800511E8(arg0, 0, sp24C, (Unk8004FA58* ) &spA0[2]);
+        temp_t0 = ((s8 *)D_800BB17C - (s8*)D_800BB160[D_80092C10]) >> 4;
+        if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, (Unk8004FA58_Arg5* ) D_800BB17C, &D_800BA1A0, 0x257 - temp_t0) == 0) {
+            temp_s1->gdl = NULL;
+            D_80092C38 = 0x258;
+            if (temp_s1->flags & 0x20) {
+                bcopy(&sp1D4, &arg0->srt.transl, 0xC);
+                bcopy(&sp1E0, &arg0->positionMirror, 0xC);
+            }
+            return;
+        } else {
+            D_800BB184 += func_8004F378((Unk800B98B0* ) D_800BB17C, (Unk800B98A0* ) D_800BB184, temp_s1, arg0, (s32) D_80092C20, &sp2B0);
+            D_800BB180 += sp2B0;
+            D_800BB178 = D_800BB174;
+            D_80092C28 = (Gfx *) D_800BB184 - (Gfx *)D_800BB158[D_80092C0C];
+            D_80092C30 = ((s8 *) D_800BB174 - (s8 *)D_800BB168[D_80092C14]) / 12;
+            D_80092C38 = ((s8 *) D_800BB17C - (s8 *)D_800BB160[D_80092C10]) >> 4;
+            D_80092BFC = 0;
+            if (temp_s1->flags & 0x20) {
+                bcopy(&sp1D4, &arg0->srt.transl, 0xC);
+                bcopy(&sp1E0, &arg0->positionMirror, 0xC);
+            }
+        }
+    }
+
+    if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
+        if (!(temp_s1->flags & 0x400)) {
+            alpha = func_8004E540((Unk8004E540* ) arg0, (Unk8004E540* ) temp_s1);
+        } else {
+            alpha = temp_s1->unk40;
+        }
+        gDPSetPrimColor(temp_s1->gdl2, 0, 0, 0, 0, 0, alpha);
+    }
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_8004EEC0.s")
