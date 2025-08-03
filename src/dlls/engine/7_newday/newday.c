@@ -135,7 +135,8 @@ static u32 _data_2A8[] = {
     0x00000000, 0x00000000
 };
 
-typedef struct {
+typedef struct
+{
 /*000*/ void *unk0;
 /*004*/ void *unk4;
 /*008*/ Texture *unk8;

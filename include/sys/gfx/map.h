@@ -7,8 +7,7 @@
 
 #define RGBA8(r, g, b, a) (((u32)(r) << 24) | ((u32)(g) << 16) | ((u32)(b) << 8) | (u32)(a))
 
-typedef struct
-{
+typedef struct {
 /*0000*/    s16 uls0;
 /*0002*/    s16 ult0;
 /*0004*/    u8 unk_0x4[0x10 - 0x4];
@@ -17,8 +16,7 @@ typedef struct
 /*0014*/    u8 unk_0x14[0x22 - 0x14];
 } Struct0x22;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    Texture *texture;
 /*0004*/    u32 unk_0x4;
 /*0008*/    u32 flags;
@@ -27,21 +25,18 @@ typedef struct
 /*000F*/    u8 unk_0x15;
 } BlockTexture; // FIXME: better name
 
-typedef struct
-{
+typedef struct {
 /*0000*/    Texture *texture;
 /*0004*/    u8 unk_0x4[0xc - 0x4];
 } Block_0x0Struct;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    s16 texIdx;
 /*0002*/    u8 unk_0x2;
 /*0003*/    u8 unk_0x3;
 } Block_0x28Struct;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    u32 flags;
 /*0004*/    s16 vtxBase;
 /*0006*/    s16 triBase;
@@ -54,14 +49,12 @@ typedef struct
 /*0017*/    u8 unk_0x17;
 } BlockShape;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    u32 d0;
 /*0004*/    u32 d1;
 } EncodedTri;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    Block_0x0Struct *tiles;
 /*0004*/    Vtx_t *vertices;
 /*0008*/    EncodedTri *encodedTris;
@@ -88,8 +81,7 @@ typedef struct
 /*004A*/    u8 textureCount;
 } Block;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    Gfx combine;
 /*0008*/    Gfx otherMode;
 /*0010*/    u32 geometryMode;
@@ -102,8 +94,7 @@ typedef struct
 /*0029*/    u8 dirtyFlags;
 } DLBuilder;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    u8 unk_0x0;
 /*0001*/    u8 v0;
 /*0002*/    u8 v1;
@@ -121,8 +112,7 @@ typedef struct
 extern u32 UINT_80092a98;
 extern DLBuilder *gDLBuilder;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    f32 x;
 /*0004*/    f32 y;
 /*0008*/    f32 z;

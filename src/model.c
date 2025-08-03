@@ -5,8 +5,7 @@
 #define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 #define PAD16(a) while (a & 7){a++;}
 
-typedef struct
-{
+typedef struct {
 /*0000*/    s32 id;
 /*0004*/    Model *model;
 } ModelSlot;
@@ -21,8 +20,7 @@ typedef struct{
 /*0018*/    s32 jointsMalloc;
 } ModelStats;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    s16 animCount;
 /*0002*/    s16 unk_0x2;
 /*0004*/    s16 unk_0x4;

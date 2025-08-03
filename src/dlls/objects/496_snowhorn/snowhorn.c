@@ -93,7 +93,7 @@ static u32 _data_300[] = {
 };
 
 typedef struct {
-/*000*/ s32 unk0;
+/*000*/ s32 *unk0;
 /*004*/ s16 unkRadius;
 /*006*/ s16 unk6;
 /*008*/ s16 unk8;
@@ -296,9 +296,9 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
         //to do with setting up look-at behaviour?
         if (state->unk424 & 1) {
             temp_a0 = (u8*)state + 0x170;
-            gDLL_27_head_turn->exports->head_turn_func_18((Vec3f*)temp_a0, 0x06000000, 0, 1);
-            gDLL_27_head_turn->exports->head_turn_func_c0((Vec3f*)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
-            gDLL_27_head_turn->exports->head_turn_func_fb8(snowhorn, (Vec3f*)temp_a0);
+            gDLL_27_HeadTurn->exports->head_turn_func_18((Vec3f*)temp_a0, 0x06000000, 0, 1);
+            gDLL_27_HeadTurn->exports->head_turn_func_c0((Vec3f*)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
+            gDLL_27_HeadTurn->exports->head_turn_func_fb8(snowhorn, (Vec3f*)temp_a0);
         }
         snowhorn->ptr0x64->flags |= 0xA10;
     }
@@ -375,8 +375,8 @@ void dll_496_func_24C(Object* snowhorn) {
         return;
     }
     state->isWalking &= 0xBFFF;
-    state->unk427 = gDLL_29_gplay->exports->func_143C(snowhorn->mapID);     
-    _data_270 = gDLL_7_newday->exports->func8((s32)&sp68); //check if night?
+    state->unk427 = gDLL_29_Gplay->exports->func_143C(snowhorn->mapID);
+    _data_270 = gDLL_7_Newday->exports->func8((s32)&sp68); //check if night?
 
     var_v0 = state->isWalking & 0x8000;
     if (var_v0 && (dll_496_func_980(snowhorn) != 0)){
@@ -428,7 +428,7 @@ void dll_496_func_24C(Object* snowhorn) {
         }
         func_80025780(snowhorn, delayFloat, &sp44, 0);
     }
-    if ((state->chatSequenceList != 0) && (snowhorn->unk0xaf & 1)) {
+    if ((state->unk0 != 0) && (snowhorn->unk0xaf & 1)) {
         if (state->unk424 & 0x20) {
             seqIndex = rand_next(0, state->unk426 - 1);
         } else {
@@ -438,7 +438,7 @@ void dll_496_func_24C(Object* snowhorn) {
         if (state->unk425 >= state->unk426) {
             state->unk425 = 0;
         }
-        gDLL_ANIM->exports->func[17].withThreeArgs(state->chatSequenceList[seqIndex], (s32)snowhorn, -1);
+        gDLL_3_Animation->exports->func17(state->unk0[seqIndex], snowhorn, -1);
         set_button_mask(0, 0x8000);
     }
 
@@ -505,7 +505,7 @@ s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3) {
     }
     if (state->unk424 & 1) {
         //lookAt behaviour! This DLL must have reusable functions for it throughout the objects
-        gDLL_27_head_turn->exports->func[7].withTwoArgs((s32)snowHorn, (s32)state + 0x170);
+        gDLL_27_HeadTurn->exports->head_turn_func_fb8(snowHorn, state->unk170);
     }
     snowHorn->unk0xaf |= 8;
     temp = arg2->unk98;
@@ -517,7 +517,7 @@ s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3) {
         }   
     }
     
-    state->unk58 = 0.0f;
+    state->walkSpeed = 0.0f;
     return 0;
 }
 #endif
@@ -574,7 +574,7 @@ s32 dll_496_func_980(Object* snowhorn) {
         //new_var = temp1;
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
@@ -589,7 +589,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_SNOREHORN, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_SNOREHORN, 0x7F, 0, 0, 0, 0);
             }
             state->sleepTimer-= delayByte;
             if ((_data_270 == 0) && state->sleepTimer <= 0) {  //if daytime rolls around
@@ -604,7 +604,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_YAWN2, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->exports->func2((void*)snowhorn, SFX_SNOWHORN_YAWN2, 0x7F, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
@@ -687,7 +687,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     if ((f32)state->unkRadius*state->unkRadius < vec3_distance_squared(&snowhorn->positionMirror, &player->positionMirror)) {
         state->sleepTimer += delayByte;
         if (state->sleepTimer > 900) {
-            gDLL_ANIM->exports->func17(7, snowhorn, -1); //play seq 7?
+            gDLL_3_Animation->exports->func17(7, snowhorn, -1); //play seq 7?
             state->sleepTimer = (s16) -rand_next(0, 50);
         }
         return;
@@ -722,19 +722,19 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
             }
             break;
         case 2:
-            if ((snowhorn->unk0xaf & 4) && gDLL_UI->exports->ui_func_df4(INVENTORY_Alpine_Root)) {
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->exports->ui_func_df4(INVENTORY_Alpine_Root)) {
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 1);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
-                gDLL_ANIM->exports->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
+                gDLL_3_Animation->exports->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 state->quest = 4;
                 return;
             }
             break;
         case 4:
-            if ((snowhorn->unk0xaf & 4) && gDLL_UI->exports->ui_func_df4(INVENTORY_Alpine_Root)) {
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->exports->ui_func_df4(INVENTORY_Alpine_Root)) {
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 2);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
-                gDLL_ANIM->exports->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
+                gDLL_3_Animation->exports->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 state->quest = 6;
                 return;
             }
@@ -747,7 +747,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     if (snowhorn->unk0xaf & 1) {
         snowhorn->unk0xaf &= 0xFFFE;
         if (state->quest < 7) {
-            gDLL_ANIM->exports->func17(state->quest, snowhorn, -1);  
+            gDLL_3_Animation->exports->func17(state->quest, snowhorn, -1);
             set_button_mask(0, 0x8000);
         }
     }
@@ -785,7 +785,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     state->unk44 = _data_27C;
     state->unk48 = _data_280;
 
-    if (gDLL_CURVES->exports->curves_func_4288(&state->unk60, snowhorn, 1000.0f, &sp2C, -1) == 0){
+    if (gDLL_26_Curves->exports->curves_func_4288(&state->unk60, snowhorn, 1000.0f, &sp2C, -1) == 0){
         snowhorn->srt.transl.x = state->unk60.unk68;
         snowhorn->srt.transl.z = state->unk60.unk70;
         
@@ -862,7 +862,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
     
     if (_data_274[0] != 0 && 
         func_80031BBC(snowhorn->positionMirror.x, snowhorn->positionMirror.y, snowhorn->positionMirror.z) == 0xA){
-        gDLL_ANIM->exports->func17(0x10, snowhorn, -1); //setAnimation?
+        gDLL_3_Animation->exports->func17(0x10, snowhorn, -1); //setAnimation?
         return;
     }
     snowhorn->unk0xaf &= 0xFFF7;
@@ -874,7 +874,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
             return;
         }
         if ((func_800053B0(curveStruct, state->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
-            gDLL_CURVES->exports->curves_func_4704(curveStruct);
+            gDLL_26_Curves->exports->curves_func_4704(curveStruct);
         }
         dx = curveStruct->unk68 - snowhorn->srt.transl.x;
         dz = curveStruct->unk70 - snowhorn->srt.transl.z;

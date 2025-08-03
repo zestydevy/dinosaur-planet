@@ -1,5 +1,3 @@
-#include "prevent_bss_reordering.h"
-
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "PR/os.h"
@@ -39,7 +37,7 @@ void dll_60_ctor(void *self) {
     if (osMemSize != 0x800000) {
         data_4 = 1;
         data_10 = queue_load_texture_proxy(0x2da);
-        bss_14 = gDLL_21_gametext->exports->get_chunk(243);
+        bss_14 = gDLL_21_Gametext->exports->get_chunk(243);
     } else {
         bss_4 = 0;
         bss_0 = 0.0f;
@@ -48,15 +46,15 @@ void dll_60_ctor(void *self) {
         func_80014B1C();
         data_4 = 0;
         func_800141A4(1, 0, -1, -1);
-        gDLL_AMSEQ->exports->func0(NULL, 0x20, 0, 0x2f, 0);
+        gDLL_5_AMSEQ->exports->func0(NULL, 0x20, 0, 0x2f, 0);
         set_gplay_bitstring(0x44f, 1);
-        gDLL_Camera->exports->func21.withTwoArgs(30, 1);
+        gDLL_2_Camera->exports->func21(30, 1);
         data_8 = queue_load_texture_proxy(0x2d2);
         data_C = queue_load_texture_proxy(0x2d3);
         bss_18 = queue_load_texture_proxy(0x2db);
         bss_1C = queue_load_texture_proxy(0x2dc);
-        bss_14 = gDLL_21_gametext->exports->get_chunk(242);
-        gDLL_29_gplay->exports->func_930(); // ignoring return value
+        bss_14 = gDLL_21_Gametext->exports->get_chunk(242);
+        gDLL_29_Gplay->exports->func_930(); // ignoring return value
     }
 
     bss_6 = 0;
@@ -83,10 +81,10 @@ s32 dll_60_update1() {
         bss_0 += delayFloat;
 
         if (bss_6 == 0 && bss_0 > 205.0f) {
-            gDLL_28_screen_fade->exports->fade(30, SCREEN_FADE_BLACK);
+            gDLL_28_ScreenFade->exports->fade(30, SCREEN_FADE_BLACK);
             bss_6 = 1;
         } else if (bss_6 == 1 && bss_0 > 245.0f) {
-            gDLL_28_screen_fade->exports->fade_reversed(30, SCREEN_FADE_BLACK);
+            gDLL_28_ScreenFade->exports->fade_reversed(30, SCREEN_FADE_BLACK);
             bss_6 = 2;
         }
 

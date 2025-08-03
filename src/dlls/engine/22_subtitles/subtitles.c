@@ -47,10 +47,7 @@ typedef struct StructData1C {
     0xfefe0274, 0xfefd0275, 0xfefc0276, 0xfefb0277, 0xfefa0278, 0xfef90279, 0xffffffff
 };
 
-/*0x1C*/ static StructData1C _data_1C[] = {
-    {0x00000438, 0x00cc},
-    {0x00000416, 0x00ce},
-    {0x00000459, 0x00d1}
+/*0x1C*/ static StructData1C _data_1C[] = { {0x00000438, 0x00cc}, {0x00000416, 0x00ce}, {0x00000459, 0x00d1}
 };
 
 /*0x34*/ static u32 _data_34 = 0;
@@ -97,19 +94,19 @@ void dll_22_func_32C(u8 arg0, u8 arg1);
 void dll_22_func_94C(void);
 void dll_22_func_AA8(void);
 void dll_22_func_C64(void);
-void dll_22_func_D9C(Gfx** gdl);
+void dll_22_func_D9C(Gfx **gdl);
 void dll_22_func_10C8(s32 *arg0, u8 arg1, Gfx **arg2);
 s32 dll_22_func_1164(s32, u8, s32, Gfx **gdl);
-void dll_22_func_1798(StructBss38* arg0, s32* arg1);
+void dll_22_func_1798(StructBss38 *arg0, s32 *arg1);
 static void dll_22_func_2000(u8 *arg0, s32 arg1);
 static u8 dll_22_func_20CC(u8 arg0);
 f32 dll_22_func_2118(void);
 
 // offset: 0x0 | ctor
 void dll_22_ctor(s32 arg0) {
-    StructBss38* var_a1;
-    StructBss38* var_v0;
-    Texture* temp_v0;
+    StructBss38 *var_a1;
+    StructBss38 *var_v0;
+    Texture *temp_v0;
     s32 var_v1;
     s32 i;
     s32 j;
@@ -160,7 +157,7 @@ void dll_22_dtor(s32 arg0) {
     font_unload(1);
     for (j = 0; j < 3; j++) {
         temp = &_bss_38[j];
-        for (i = 0; i < 8; i ++) {
+        for (i = 0; i < 8; i++) {
             temp_a0 = temp->unkC8[0][i].unk0;
             if (temp_a0 != 0) {
                 texture_destroy(temp_a0);
@@ -184,7 +181,6 @@ u32 dll_22_func_2D0(u32 arg0) {
     return temp_v0;
 }
 
-
 // offset: 0x2F4 | func: 1 | export: 1
 int dll_22_func_2F4(void) {
     return _data_34 != 0 && _data_40 != 0;
@@ -207,7 +203,7 @@ void dll_22_func_368(u16 arg0) {
     }
     _data_34 = 1;
     _bss_7A8 = -255;
-    _bss_7AC = gDLL_21_gametext->exports->get_chunk(arg0);
+    _bss_7AC = gDLL_21_Gametext->exports->get_chunk(arg0);
     _bss_7B0 = arg0;
 }
 
@@ -232,7 +228,7 @@ void dll_22_func_4C0(void) {
             _data_54 = 1;
         }
     } else if (!(get_masked_buttons(0) & 0x10)) {
-        dll_22_func_2D0((u32) *_bss_7B2);
+        dll_22_func_2D0((u32)*_bss_7B2);
         _data_54 = 0;
     }
 }
@@ -318,8 +314,8 @@ void dll_22_func_578(Gfx **gdl) {
     _data_3C = 0;
     if (_data_44 > 0.0f) {
         temp_fv1 = 600.0f - _data_44;
-        _bss_78C[0] = (s32) ((255.0f * temp_fv1) / 600.0f);
-        _bss_78C[1] = (s32) ((23.0f * temp_fv1) / 600.0f);
+        _bss_78C[0] = (s32)((255.0f * temp_fv1) / 600.0f);
+        _bss_78C[1] = (s32)((23.0f * temp_fv1) / 600.0f);
         _bss_78C[2] = 0;
         _bss_7A4 = ((199.0f * temp_fv1) / 600.0f);
         return;
@@ -337,19 +333,19 @@ void dll_22_func_578(Gfx **gdl) {
     _data_3C = 0;
     if (_data_4C > 0.0f) {
         if (_bss_780[1]->unk0[0][0] == 0) {
-            _bss_78C[0] = (s32) ((255.0f * _data_4C) / 600.0f);
-            _bss_7A4 = (s32) ((199.0f * _data_4C) / 600.0f);
+            _bss_78C[0] = (s32)((255.0f * _data_4C) / 600.0f);
+            _bss_7A4 = (s32)((199.0f * _data_4C) / 600.0f);
             return;
         }
         temp_fv1 = _data_4C / 600.0f;
-        _bss_78C[2] = 0x17 - (s32) (23.0f * temp_fv1);
+        _bss_78C[2] = 0x17 - (s32)(23.0f * temp_fv1);
         if (temp_fv1 > 0.6f) {
             _bss_78C[1] = 0x17;
         } else {
-            _bss_78C[1] = (s32) ((((0.6f - temp_fv1) * 232.0f) / 0.6f) + 23.0f);
+            _bss_78C[1] = (s32)((((0.6f - temp_fv1) * 232.0f) / 0.6f) + 23.0f);
         }
         if (temp_fv1 > 0.4f) {
-            _bss_78C[0] = (s32) (((temp_fv1 - 0.4f) * 255.0f) / 0.6f);
+            _bss_78C[0] = (s32)(((temp_fv1 - 0.4f) * 255.0f) / 0.6f);
         } else {
             _bss_78C[0] = 0;
         }
@@ -383,7 +379,7 @@ void dll_22_func_578(Gfx **gdl) {
     if (_data_5C != 0) {
         _data_60 = temp_fv0;
         if (temp_fv0 > 10.0f) {
-            temp_t2 = (s8)( _data_58 + 1);
+            temp_t2 = (s8)(_data_58 + 1);
             _data_58 = temp_t2;
             temp_fv0 -= 10.0f;
             _data_60 = temp_fv0;
@@ -419,10 +415,10 @@ void dll_22_func_578(Gfx **gdl) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_D9C.s")
 #else
 // Requires dll_22_func_10C8 to be static to match
-void dll_22_func_D9C(Gfx** gdl) {
+void dll_22_func_D9C(Gfx **gdl) {
     s32 sp6C;
-    StructBss38* temp_v0;
-    StructBss38** var_v1;
+    StructBss38 *temp_v0;
+    StructBss38 **var_v1;
     s32 temp_a2;
     s32 i;
 
@@ -430,7 +426,7 @@ void dll_22_func_D9C(Gfx** gdl) {
     if (_data_40 == 0) {
         return;
     }
-    
+
     font_window_use_font(sWindowID, sFontID);
     temp_a2 = _bss_794 + _data_3C;
     _bss_8 = temp_a2;
@@ -445,7 +441,7 @@ void dll_22_func_D9C(Gfx** gdl) {
             _bss_C += 0xC;
         }
         var_v1 += 1;
-    } while ((u32) var_v1 < (u32) _bss_78C);
+    } while ((u32)var_v1 < (u32)_bss_78C);
     if (temp_a2 < _bss_794) {
         _bss_8 = _bss_794;
     }
@@ -475,7 +471,7 @@ void dll_22_func_10C8(s32 *arg0, u8 arg1, Gfx **arg2) {
     *arg0 = 0;
     if (dll_22_func_1164(0, arg1, 0, arg2) != 0) {
         *arg0 = *arg0 + 1;
-        if (dll_22_func_1164(*arg0,  arg1, 1, arg2) != 0) {
+        if (dll_22_func_1164(*arg0, arg1, 1, arg2) != 0) {
             *arg0 += 1;
         }
     }
@@ -496,27 +492,23 @@ void dll_22_func_10C8(s32 *arg0, u8 arg1, Gfx **arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/22_subtitles/dll_22_func_16A0.s")
 #else
 // Requires dll_22_func_1798 to be static to match
-f32 dll_22_func_16A0(void)
-{
-  StructBss38 *temp_a2;
-  int new_var;
-  new_var = 0;
-  if (_bss_780[0]->unk0[0][0] == 0)
-  {
-    _bss_7B4 = new_var;
-    dll_22_func_1798(_bss_780[0], &_bss_7B4);
-    dll_22_func_1798(_bss_780[1], &_bss_7B4);
-    dll_22_func_1798(_bss_780[2], &_bss_7B4);
-  }
-  else
-  {
-    temp_a2 = _bss_780[0];
-    _bss_780[0] = _bss_780[1];
-    _bss_780[1] = _bss_780[2];
-    _bss_780[2] = temp_a2;
-    dll_22_func_1798(temp_a2, &_bss_7B4);
-  }
-  return _bss_780[0]->unk268;
+f32 dll_22_func_16A0(void) {
+    StructBss38 *temp_a2;
+    int new_var;
+    new_var = 0;
+    if (_bss_780[0]->unk0[0][0] == 0) {
+        _bss_7B4 = new_var;
+        dll_22_func_1798(_bss_780[0], &_bss_7B4);
+        dll_22_func_1798(_bss_780[1], &_bss_7B4);
+        dll_22_func_1798(_bss_780[2], &_bss_7B4);
+    } else {
+        temp_a2 = _bss_780[0];
+        _bss_780[0] = _bss_780[1];
+        _bss_780[1] = _bss_780[2];
+        _bss_780[2] = temp_a2;
+        dll_22_func_1798(temp_a2, &_bss_7B4);
+    }
+    return _bss_780[0]->unk268;
 }
 
 #endif
@@ -529,23 +521,22 @@ f32 dll_22_func_16A0(void)
 #define SPACE_CHAR 0x20
 static void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4);
 static void dll_22_func_2000(u8 *arg0, s32 arg1);
-void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
+void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
     s16 var_s0_2;
     u8 sp5D;
     s16 var_s1;
     s16 var_t0; // sp58
-    Texture* tex;
+    Texture *tex;
     s16 var_v1;
     u8 var_s0;
     u8 var_s4;
-    s32* var_v0;
+    s32 *var_v0;
     u16 temp_v1_3;
     StructData0 *temp_v0_2;
     s16 var_a2;
     StructBss38 *var_a1;
     StructBss38 *sp4C;
     StructBss38 *sp48;
-    
 
     sp5D = 1;
     var_s4 = 0;
@@ -592,7 +583,7 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
             dll_22_func_1F44(arg0, _bss_7AC->strings[*arg1], _bss_7AC->unk4[(*arg1)++], var_s4, var_s0++);
         } else if (_bss_7AC->unk4[*arg1] == -256) {
             // ??????????????
-            sp48 = (StructBss38 *) ((s16 *)arg0 + var_s4);
+            sp48 = (StructBss38 *)((s16 *)arg0 + var_s4);
             dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
             sp48->unkC0[2] = 6;
         } else if (_bss_7AC->unk4[*arg1] == -257) {
@@ -611,11 +602,12 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
     }
     if (var_s4 == 0) {
         var_t0 = 0;
-        for (var_s1 = 0; var_s1 < 8; ) {
+        for (var_s1 = 0; var_s1 < 8;) {
             if (arg0->chars[var_s1] == NULL) {
                 var_s1--;
                 break;
-            } else {
+            }
+            else {
                 // removing the else might cause s register swap
                 var_t0 += arg0->unk80[0].unk0[var_s1];
                 var_s1++;
@@ -632,7 +624,8 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
                 arg0->chars[var_s1][var_s0_2] = SPACE_CHAR;
 
                 var_s0_2 -= 1;
-                while (arg0->chars[var_s1][var_s0_2] != SPACE_CHAR) {
+                while (arg0->chars[var_s1][var_s0_2] != SPACE_CHAR)
+                {
                     var_s0_2--;
                 }
                 arg0->chars[var_s1][var_s0_2] = 0;
@@ -659,7 +652,7 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
             // @diff, this should load from arg0?
             arg0->unkA0[var_s4].unk0[var_s0] = arg0->unk80[var_s0].unk0[-1] + arg0->unk80[var_s0].unk0[15];
         }
-        var_a1 = (StructBss38 *) (((s32 *) arg0) + (var_s4 * 0x30));
+        var_a1 = (StructBss38 *)(((s32 *)arg0) + (var_s4 * 0x30));
         for (var_s0 = 0; var_s0 < 8; var_s0++) {
             if (var_a1->unkC8[var_s0].unk0 != 0) {
                 temp_v1_3 = arg0->unkA0[var_s4].unk0[var_s0];
@@ -675,7 +668,7 @@ void dll_22_func_1798(StructBss38* arg0, s32* arg1) {
 void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4) {
     arg0->unk0[arg3][arg4] = text;
     arg0->unk80[arg3][arg4] += font_get_text_width(0, text, 0, sFontID);
-    dll_22_func_2000((u8*)&arg0->unk40[arg3][arg4], arg2);
+    dll_22_func_2000((u8 *)&arg0->unk40[arg3][arg4], arg2);
 }
 
 // offset: 0x2000 | func: 17
@@ -684,19 +677,19 @@ static void dll_22_func_2000(u8 *arg0, s32 arg1) {
 
     _bss_7A8 = arg1;
     arg1 = -arg1;
-    
+
     switch (arg1 & 3) {
-    case 0:
-        arg0[3] = 0x3F;
-        break;
-    case 1:
-        arg0[3] = 0x7F;
-        break;
-    case 2:
-        arg0[3] = 0xBF;
-        break;
-    default:
-        arg0[3] = 0xFF;
+        case 0:
+            arg0[3] = 0x3F;
+            break;
+        case 1:
+            arg0[3] = 0x7F;
+            break;
+        case 2:
+            arg0[3] = 0xBF;
+            break;
+        default:
+            arg0[3] = 0xFF;
     }
     for (var_s0 = 2; var_s0 >= 0; var_s0--) {
         arg1 >>= 2;
@@ -707,14 +700,14 @@ static void dll_22_func_2000(u8 *arg0, s32 arg1) {
 // offset: 0x20CC | func: 18
 static u8 dll_22_func_20CC(u8 arg0) {
     switch (arg0) {
-    case 0:
-        return 0;
-    case 1:
-        return 0x3F;
-    case 2:
-        return 0x7F;
-    default:
-        return 0xFF;
+        case 0:
+            return 0;
+        case 1:
+            return 0x3F;
+        case 2:
+            return 0x7F;
+        default:
+            return 0xFF;
     }
 }
 

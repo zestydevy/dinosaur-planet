@@ -195,16 +195,16 @@ void update_objects() {
         func_8002272C(player->linkedObject);
     }
 
-    gDLL_waterfx->exports->func_6E8(delayByte);
-    gDLL_projgfx->exports->func[2].withTwoArgs(delayByte, 0);
-    gDLL_modgfx->exports->func[2].withThreeArgs(0, 0, 0);
-    gDLL_expgfx->exports->func2(0, delayByte, 0, 0);
+    gDLL_24_Waterfx->exports->func_6E8(delayByte);
+    gDLL_15_Projgfx->exports->func2(delayByte, 0);
+    gDLL_14_Modgfx->exports->func2(0, 0, 0);
+    gDLL_13_Expgfx->exports->func2(0, delayByte, 0, 0);
 
     func_8002B6EC();
 
-    gDLL_ANIM->exports->func9();
-    gDLL_ANIM->exports->func5();
-    gDLL_Camera->exports->func1.withOneArg(delayByte);
+    gDLL_3_Animation->exports->func9();
+    gDLL_3_Animation->exports->func5();
+    gDLL_2_Camera->exports->func1(delayByte);
 
     write_c_file_label_pointers(D_800994E0, 0x169);
 }
@@ -285,7 +285,7 @@ void obj_free_all() {
 
     obj_clear_all();
 
-    gDLL_Camera->exports->func9.withTwoArgs(0, 0);
+    gDLL_2_Camera->exports->func9(0, 0);
 }
 
 void obj_clear_all() {
@@ -1387,9 +1387,9 @@ void obj_free_object(Object *obj, s32 param2) {
         dll_unload(obj->dll);
     }
 
-    gDLL_AMSFX->exports->func16(obj);
-    gDLL_AMSEQ->exports->func17(obj);
-    gDLL_expgfx->exports->func9((s32)obj);
+    gDLL_6_AMSFX->exports->func16(obj);
+    gDLL_5_AMSEQ->exports->func17(obj);
+    gDLL_13_Expgfx->exports->func9(obj);
 
     if (obj->def != NULL && obj->def->flags & 0x10) {
         obj_free_object_type(obj, 56);
@@ -1453,7 +1453,7 @@ void obj_free_object(Object *obj, s32 param2) {
         newLfxStruct.unk10 = obj->unk_0xd6;
         newLfxStruct.unk1b = 0;
 
-        gDLL_newlfx->exports->func[0].withSixArgs((s32)obj, (s32)obj, (s32)&newLfxStruct, 0, 0, 0);
+        gDLL_11_Newlfx->exports->func0(obj, obj, &newLfxStruct, 0, 0, 0);
     }
 
     if (obj->ptr0x64 != NULL) {
@@ -1487,7 +1487,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->unk0xb4 >= 0) {
         if (!param2) {
-            gDLL_ANIM->exports->func18((s32)obj->unk0xb4);
+            gDLL_3_Animation->exports->func18((s32)obj->unk0xb4);
             obj->unk0xb4 = -1;
         }
     }
@@ -1523,10 +1523,10 @@ void func_80023464(s32 character) {
     Object *newPlayer;
 
     player = get_player();
-    activeCharacter = gDLL_29_gplay->exports->func_E90();
+    activeCharacter = gDLL_29_Gplay->exports->func_E90();
 
     if (character != activeCharacter) {
-        gDLL_29_gplay->exports->func_EAC(character);
+        gDLL_29_Gplay->exports->func_EAC(character);
 
         if (player != NULL) {
             obj_destroy_object(player);
@@ -1558,9 +1558,9 @@ void func_80023464(s32 character) {
             newPlayer = obj_create(&createInfo, 1, -1, -1, NULL);
         }
 
-        gDLL_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
-        gDLL_AMSFX->exports->func1(newPlayer);
-        gDLL_AMSEQ->exports->func3(newPlayer);
+        gDLL_2_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
+        gDLL_6_AMSFX->exports->func1(newPlayer);
+        gDLL_5_AMSEQ->exports->func3(newPlayer);
     }
 }
 
@@ -1578,8 +1578,8 @@ void func_80023628() {
         return;
     }
 
-    activeCharacter = gDLL_29_gplay->exports->func_E90();
-    gplayStruct = gDLL_29_gplay->exports->func_F04();
+    activeCharacter = gDLL_29_Gplay->exports->func_E90();
+    gplayStruct = gDLL_29_Gplay->exports->func_F04();
 
     x = gplayStruct->vec.x;
     y = gplayStruct->vec.y;
@@ -1608,11 +1608,11 @@ void func_80023628() {
     D_80091668.unkC = y + 40.0f;
     D_80091668.unk10 = fcos16_precise(gplayStruct->rotationY << 8) * 60.0f + z;
 
-    gDLL_Camera->exports->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
-    gDLL_Camera->exports->func6.withSevenArgs(0x54, 0, 0, 0x20, (s32)&D_80091668, 0, 0xFF);
-    gDLL_Camera->exports->func1.withOneArg(1);
-    gDLL_AMSFX->exports->func1(player);
-    gDLL_AMSEQ->exports->func3(player);
+    gDLL_2_Camera->exports->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
+    gDLL_2_Camera->exports->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
+    gDLL_2_Camera->exports->func1(1);
+    gDLL_6_AMSFX->exports->func1(player);
+    gDLL_5_AMSEQ->exports->func3(player);
 
     D_800B1988 = 0;
     func_8004A67C();

@@ -18,7 +18,7 @@ typedef union {
     s32 (*withTwoArgsS32)(s32, s32);
     void (*withThreeArgs)(s32, s32, s32);
     void (*withFourArgs)(s32, s32, s32, s32);
-    void (*withFiveArgs)(s32, s32, s32, s32, u16);
+    void (*withFiveArgs)(s32, s32, s32, s32, s32);
     void (*withSixArgs)(s32, s32, s32, s32, s32, s32);
     void (*withSevenArgs)(s32, s32, s32, s32, s32, s32, s32);
 } UnknownDLLFunc;

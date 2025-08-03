@@ -6,7 +6,6 @@
 #include "dlls/engine/21_gametext.h"
 #include "variables.h"
 #include "functions.h"
-#include "prevent_bss_reordering.h"
 
 static s8 sCurrentBankIndex = -1;
 

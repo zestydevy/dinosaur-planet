@@ -8,7 +8,6 @@
 #include "functions.h"
 #include "dll.h"
 #include "types.h"
-#include "prevent_bss_reordering.h"
 
 static s32 data_0 = 0;
 static s8 data_4 = 0;
@@ -71,7 +70,7 @@ s32 dll_61_update1() {
     }
 
     if (bss_0 != 0) {
-        gDLL_28_screen_fade->exports->fade(30, SCREEN_FADE_BLACK);
+        gDLL_28_ScreenFade->exports->fade(30, SCREEN_FADE_BLACK);
         bss_1 = 45;
         bss_2 = 1;
     }

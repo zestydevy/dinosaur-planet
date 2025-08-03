@@ -9,7 +9,7 @@
 
 DLL_INTERFACE_BEGIN(76)
     /*0*/ void (*func0)(s32, s32, s32, s32, s32, f32, u32*, s32, s32, s32, s32, s32);
-    /*1*/ UnknownDLLFunc func1;
+    /*1*/ void (*func1)(void);
     /*2*/ void (*func2)(Gfx **gdl, Mtx **mtxs);
 DLL_INTERFACE_END()
 

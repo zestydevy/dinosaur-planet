@@ -40,8 +40,7 @@ typedef struct {
 /*000e*/    s16 tagE; //Upper 4 bits enable envMap, lower bits are baseFaceID
 } ModelFacebatch;
 
-typedef struct
-{
+typedef struct {
 /*0000*/	s8 parentJointID;
 /*0001*/	s8 jointLayer_plusID; //upper bit determines layering (usually upper torso joints, say for layering weapon stowing anim over walk cycle anim dynamically)
 /*0002*/	s8 jointID_duplicate1;
@@ -51,8 +50,7 @@ typedef struct
 /*000C*/	f32 z;
 } ModelJoint;
 
-typedef struct
-{
+typedef struct {
 /*0000*/	Gfx gfx; //when opaque?
 /*0008*/	Gfx gfx2; //when fading?
 /*0010*/	s16 idx; //commandIndex to swap out with either gfx or gfx2
@@ -106,8 +104,7 @@ typedef struct{
 /*007c*/	u32 unk7c;
 } Model;
 
-typedef struct
-{
+typedef struct {
 /*0000*/    f32 unk0x0;
 /*0004*/    f32 unk0x4;
 /*0008*/    f32 unk0x8;
@@ -116,8 +113,7 @@ typedef struct
 /*000E*/    u8 unk0xE;
 } ModelInstance_0x30;
 
-typedef struct
-{
+typedef struct {
     // TODO
 /*0000*/    Model *model;
 /*0004*/    void *unk_0x4[2];

@@ -224,8 +224,7 @@ void func_80000D30(void *arg0) {
     free(arg0);
 }
 
-typedef struct
-{
+typedef struct {
 /*0000*/ u16 m0000;
 /*0002*/ u8 m0002;
 /*0003*/ u8 m0003;
