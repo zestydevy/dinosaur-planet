@@ -522,7 +522,6 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
 }
 
 // https://decomp.me/scratch/9mgpH
-// these are all referenced by track_c_func
 // static const char str_8009a510[] = "track/track.c";
 // static const char str_8009a520[] = "track/track.c";
 // static const char str_8009a530[] = "track/track.c";
@@ -530,14 +529,14 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
 // static const char str_8009a550[] = "track/track.c";
 #pragma GLOBAL_ASM("asm/nonmatchings/map/track_c_func.s")
 
+#if 1
+#pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
+#else
+
 // static const char str_8009a560[] = "depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n";
 // static const char str_8009a590[] = "found on map %d\n";
 // static const char str_8009a5a4[] = "mapno not found\n";
 // static const char str_8009a5b8[] = "error\n";
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/draw_render_list.s")
-#else
 extern Gfx *gMainDL;
 extern s16 SHORT_800b51dc;
 extern u32 UINT_800b51e0;
@@ -1545,6 +1544,7 @@ void func_8004530C(void) {
     D_800B9794 = 0;
 }
 
+static const char str_8009a5c0[] = " cellx %i celly %i cellz %i ";
 void some_cell_func(BitStream* stream) {
     f32 var_fv1;
     s32 var_v0;
@@ -1601,6 +1601,11 @@ void some_cell_func(BitStream* stream) {
     bitstream_init(stream, (var_v1 * temp) + D_800B9798, D_800B979E, D_800B979E);
 }
 
+// referenced by ???
+static const char str_8009a5e0[] = " ERROR: visible index greater than no vis blocks ";
+
+// referenced by func_80045600
+static const char str_8009a614[] = "SW ";
 s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     s8 bitPosIndex;
     s8 *new_var;
@@ -1616,31 +1621,31 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     return 0;
 }
 
-// static const char str_8009a618[] = "trackFreeMap: Error no map!!\n";
-// static const char str_8009a638[] = "WORLD MAP LIST OVERFLOW\n";
-// static const char str_8009a654[] = "entry->gamno >= max_gam\n";
-// static const char str_8009a670[] = "entry->block > max gam\n";
-// static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
-// static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
-// static const char str_8009a6e0[] = "trackLoadBlockEnd: track block overrun\n";
-// static const char str_8009a708[] = "TEXSCROLL: table is full\n";
-// static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
-// static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
-// static const char str_8009a770[] = "MISMATCH on global texanim free\n";
-// static const char str_8009a794[] = " Map not Loaded %i ";
-// static const char str_8009a7a8[] = "OBJECT error: obj %d, has no romdef\n";
-// static const char str_8009a7d0[] = "WARNING: trackSetLoaded bit overflow\n";
-// static const char str_8009a7f8[] = "WARNING: trackGetLoaded bit overflow\n";
-// static const char str_8009a820[] = "Cannot move object with an ident of -1!!!\n";
-// static const char str_8009a84c[] = " OVer FLOW FLOW in RD saves for moving romdefs ";
-// static const char str_8009a87c[] = " Error in moving of romdef ";
-// static const char str_8009a898[] = " Saving Romdef for for %i tab no %i \n";
-// static const char str_8009a8c0[] = "Cannot move object with an ident of -1!!!\n";
-// static const char str_8009a8ec[] = " Removed Restored Num %i ";
-// static const char str_8009a908[] = "%i ";
-// static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
-// static const char str_8009a930[] = "######  DOING WARP  ########\n";
-
+// referenced by ???
+static const char str_8009a618[] = "trackFreeMap: Error no map!!\n";
+static const char str_8009a638[] = "WORLD MAP LIST OVERFLOW\n";
+static const char str_8009a654[] = "entry->gamno >= max_gam\n";
+static const char str_8009a670[] = "entry->block > max gam\n";
+static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
+static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
+static const char str_8009a6e0[] = "trackLoadBlockEnd: track block overrun\n";
+static const char str_8009a708[] = "TEXSCROLL: table is full\n";
+static const char str_8009a724[] = "MISMATCH on global texscroll free\n";
+static const char str_8009a748[] = "TRACK ERROR: Global texanim overflow\n";
+static const char str_8009a770[] = "MISMATCH on global texanim free\n";
+static const char str_8009a794[] = " Map not Loaded %i ";
+static const char str_8009a7a8[] = "OBJECT error: obj %d, has no romdef\n";
+static const char str_8009a7d0[] = "WARNING: trackSetLoaded bit overflow\n";
+static const char str_8009a7f8[] = "WARNING: trackGetLoaded bit overflow\n";
+static const char str_8009a820[] = "Cannot move object with an ident of -1!!!\n";
+static const char str_8009a84c[] = " OVer FLOW FLOW in RD saves for moving romdefs ";
+static const char str_8009a87c[] = " Error in moving of romdef ";
+static const char str_8009a898[] = " Saving Romdef for for %i tab no %i \n";
+static const char str_8009a8c0[] = "Cannot move object with an ident of -1!!!\n";
+static const char str_8009a8ec[] = " Removed Restored Num %i ";
+static const char str_8009a908[] = "%i ";
+static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
+static const char str_8009a930[] = "######  DOING WARP  ########\n";
 u8 func_800456AC(Object* obj) {
     f32 temp_ft4;
     Object* playerObj;

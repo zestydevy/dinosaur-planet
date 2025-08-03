@@ -1,8 +1,6 @@
 #include "common.h"
 #include "sys/map.h"
 
-extern f32 D_8009AA38;
-
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
 static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
 
