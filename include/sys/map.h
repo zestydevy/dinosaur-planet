@@ -172,6 +172,7 @@ typedef struct {
   s8 layer[2];
 } SimilarToWarp;
 
+// Size: 0x22
 typedef struct {
 /*00*/ s16 unk0;
 /*02*/ s16 unk2;
@@ -192,16 +193,6 @@ typedef struct {
 /*20*/ u8 unk20;
 /*21*/ u8 unk21;
 } UnkTextureStruct;
-
-// struct only relevant for func_80045FC4?
-typedef struct UnkObjectInstanceFileStruct {
-    s16 unk0;
-    u8 unk2;
-    s8 unk3;
-    u8 unk4;
-    u8 pad5;
-    u8 unk6;
-} UnkObjectInstanceFileStruct;
 
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {
@@ -300,15 +291,15 @@ typedef struct MapLayoutArg0 {
 } MapLayoutArg0;
 
 typedef struct {
-       u8 unk0;
-       u8 unk1;
-       u8 unk2;
-       u8 unk3;
-       u8 unk4;
-       u8 unk5;
-       u8 unk6;
-       u8 unk7;
-       s16 unk8;
+/*0x0*/ u8 r;
+/*0x1*/ u8 g;
+/*0x2*/ u8 b;
+/*0x3*/ u8 r2;
+/*0x4*/ u8 g2;
+/*0x5*/ u8 b2;
+/*0x6*/ u8 a;
+/*0x7*/ u8 unk7;
+/*0x8*/ s16 unk8; // some sort of index?
 } MapsUnk_800B97C0;
 
 typedef struct Unk800B96B0 {
@@ -432,13 +423,23 @@ typedef struct Unk8005341C {
 
 /** The X/Z size of the world grid cells, in vertex position units */
 #define BLOCKS_GRID_UNIT 640
+#define BLOCKS_GRID_UNIT_F 640.0f
 #define BLOCKS_GRID_SPAN 16
 #define BLOCKS_GRID_TOTAL_CELLS 256
 #define MAP_ID_MAX 80
+#define SOME_SIZE 5
+
+#define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
+
+extern Camera* D_800B51E4;
+extern Gfx* gMainDL;
+extern Mtx* gWorldRSPMatrices;
+extern Vertex* D_800B51D4;
+extern Triangle* D_800B51D8;
 
 extern f32 gWorldX;
 extern f32 gWorldZ;
-extern Plane gFrustumPlanes[5];
+extern Plane gFrustumPlanes[SOME_SIZE];
 extern u32 gRenderList[MAX_RENDER_LIST_LENGTH];
 extern s16 gRenderListLength;
 extern Block *gBlocksToDraw[MAX_BLOCKS];
@@ -455,7 +456,7 @@ extern MapHeader* gLoadedMapsDataTable[120];
 extern UnkTextureStruct *D_800B97A8;
 
 /** An array of 5 pointers to 16*16 blockIndex arrays, one for each map layer (maybe called visGrids based on print strings?) */
-extern s8 *gBlockIndices[5];
+extern s8 *gBlockIndices[SOME_SIZE];
 extern u8 gLoadedBlockCount;
 extern BlocksModel **gLoadedBlocks;
 extern s16 *gLoadedBlockIds;
@@ -467,8 +468,8 @@ extern s16 gNumTRKBLKEntries;
 extern s32 gMapCurrentStreamCoordsX;
 extern s32 gMapCurrentStreamCoordsZ;
 
-extern GlobalMapCell *gDecodedGlobalMap[5]; //16*16 grid of GlobalMapCell structs, one for each layer!
-extern s8 *D_800B9700[5];
+extern GlobalMapCell *gDecodedGlobalMap[SOME_SIZE]; //16*16 grid of GlobalMapCell structs, one for each layer!
+extern s8 *D_800B9700[SOME_SIZE];
 extern s32 gNumTotalBlocks;
 extern Unk800B96B0* D_800B96B0;
 extern s32* gFile_BLOCKS_TAB; // unknown pointer type
@@ -484,7 +485,7 @@ extern s8 D_800B5590;
 extern DLBuilder D_800B4A20;
 extern DLBuilder D_800B49F0;
 
-extern s8 D_800B9794;
+extern u8 D_800B9794;
 extern s16 D_800B979E;
 
 extern s32 D_80092A94;
@@ -515,10 +516,6 @@ extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
 
-extern f32 D_8009A9B8; // used for minY in func_800451A0
-extern f32 D_8009A9BC; // used for maxY in func_800451A0
-
-extern u8 D_8009A5C0;
 extern s32 D_800B9798;
 extern s16 D_800B97C4;
 
@@ -573,8 +570,7 @@ extern Unk800BB158* D_800BB188;
 
 extern Texture* D_800BB190;
 
-extern f32 D_8009AA40;
-extern f32 D_8009AA38;
+extern f32 D_8009AA38; // = -0.200000003f;
 
 // xyz pair
 extern f32 D_80092BD0;
@@ -596,7 +592,6 @@ extern s16 *D_800B97A0;
 extern f32 D_80092AAC[24];
 
 extern s16 (*D_800B9770)[2];
-extern u16 *gFile_TRKBLK;
 extern s16 (*gMapGridTable)[5];
 extern s16 gNumTRKBLKEntries;
 
@@ -613,6 +608,11 @@ extern f32 D_8009AA30;
 extern f32 D_8009AA34;
 extern f32 D_8009AA3C;
 extern s8 D_80092A9C[8];
+extern s32 D_80092A60;
+extern s32 D_80092A64;
+extern s32 D_800B4A50;
+extern s32 D_800B4A54;
+extern s16 D_800B97C4;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -669,14 +669,16 @@ s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
 void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4);
 void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2);
 s32 func_8004EEC0(Unk800B98B0*, Unk800B98A0*, ObjectStruct64*, Object*, s32, s32*);
-s32 func_8004F378(Unk800B98B0*, Unk800B98A0*, ObjectStruct64*, Object*, s32, s32*);
-s32 func_800502AC(Object*, Vec3f*, Unk8004FA58*, s32, Unk800B98A8*, Unk800B98B0*, Unk8004FA58*, s32);
+s32 func_8004F378(Unk800B98B0* arg0, Gfx* arg1, ObjectStruct64* arg2, Object* arg3, s32 arg4, s32* arg5);
+s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 arg7);
 void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
 s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, UnkFunc80052300Arg3* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
 s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_8004E7A8(Object* arg0);
 void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D);
 s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3);
+s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1);
+void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA);
 
 // other funcs that are used
 void func_80058F3C(void);
@@ -693,7 +695,7 @@ s32 func_80048E04(u8, u8, u8, u8);
 void func_8003E648(Texture*, s32, s32);
 Object **obj_get_all_of_type(s32 idx, s32 *count);
 u8 map_get_is_object_streaming_disabled(void);
-void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, void*, s32);
+void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s32);
 void func_8001F81C(u8*, u8*, u8*);
 void func_8005C740(s32, s32*, s32*, s32);
 void func_8003DB7C(void);

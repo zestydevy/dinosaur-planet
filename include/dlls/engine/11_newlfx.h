@@ -9,7 +9,7 @@ DLL_INTERFACE_BEGIN(11_newlfx)
 /*0*/ void (*func0)(Object *, Object *, NewLfxStruct *, s32, s32, s32);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(void);
-/*3*/ UnknownDLLFunc func3;
+/*3*/ s32 (*func3)(s32, u8*);
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;

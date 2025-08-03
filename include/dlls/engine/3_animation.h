@@ -7,7 +7,7 @@
 #include "types.h"
 
 DLL_INTERFACE_BEGIN(3_animation)
-/*0*/ UnknownDLLFunc func0;
+/*0*/ void (*func0)(void);
 /*1*/ void (*func1)(s32, s32);
 /*2*/ void (*func2)(s32, s32);
 /*3*/ UnknownDLLFunc func3;

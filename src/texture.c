@@ -237,7 +237,7 @@ typedef struct {
 /*000C*/    u32 flags;
 } Foo;
 void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_env_color2(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes)
 {
     Gfx *mygdl;
@@ -342,7 +342,7 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
                 u8 lev = level >> 8;
 
                 gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(tex1_->gdl + tex0_->gdlIdx));
-                dl_set_env_color2(&mygdl, lev, lev, lev, 0);
+                dl_set_env_color_no_sync(&mygdl, lev, lev, lev, 0);
             }
             else if (flags_ & 0x2000)
             {

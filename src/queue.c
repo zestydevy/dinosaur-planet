@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/interrupt_util.h"
+#include "game/objects/object.h"
 #include "prevent_bss_reordering.h"
 
 extern GenericStack gAssetThreadStackInternal;
@@ -45,11 +46,12 @@ void func_80012584(
         s32 param1, 
         u8 param2, 
         u32 *param3, 
-        UnkStructAssetThreadSingle_0x8 *param4, 
+        ObjCreateInfo *param4,
         s32 param5, 
         s32 param6,
         s32 param7,
-        s32 param8) {
+        s32 param8
+) {
     UnkStructAssetThreadSingle element;
     s32 prevIE;
 
@@ -226,7 +228,7 @@ void func_80012B54(s32 param1, s32 param2) {
     UnkStructAssetThreadSingle elementTemp;
     s32 prevIE;
     UnkStructAssetThreadSingle *ptr;
-    UnkStructAssetThreadSingle_0x8 *ptr_unk8;
+    ObjCreateInfo *ptr_unk8;
     
     prevIE = interrupts_disable();
 
@@ -243,7 +245,7 @@ void func_80012B54(s32 param1, s32 param2) {
             generic_queue_enqueue(&D_800AD6C0, ptr);
         } else {
             ptr_unk8 = ptr->unk8;
-            if (param1 == 4 && ptr_unk8->unk0x14 != param2) {
+            if (param1 == 4 && ptr_unk8->uID != param2) {
                 generic_queue_enqueue(&D_800AD6C0, ptr);
             }
         }

@@ -72,16 +72,10 @@ struct AssetLoadThreadMsg {
     //actual size is 0x30 but that includes padding
 };
 
-// unsure of length
-typedef struct {
-    u8 unk0x0_pad[0x14 - 0x0];
-    s32 unk0x14;
-} UnkStructAssetThreadSingle_0x8;
-
 typedef struct {
     u8 unk0;
     u32 *unk4;
-    UnkStructAssetThreadSingle_0x8 *unk8;
+    ObjCreateInfo *unk8;
     u32 unkC;
     u32 unk10;
     u32 unk14;
@@ -113,7 +107,7 @@ extern OSThread assetThread;
 
 void create_asset_thread(void);
 void asset_thread_main(void *arg);
-void func_80012584(s32 param1, u8 param2, u32 *param3, UnkStructAssetThreadSingle_0x8 *param4, s32 param5, s32 param6, s32 param7, s32 param8);
+void func_80012584(s32 param1, u8 param2, u32 *param3, ObjCreateInfo *param4, s32 param5, s32 param6, s32 param7, s32 param8);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);

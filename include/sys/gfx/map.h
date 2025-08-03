@@ -18,11 +18,11 @@ typedef struct {
 
 typedef struct {
 /*0000*/    Texture *texture;
-/*0004*/    u32 unk_0x4;
+/*0004*/    u32 unk4;
 /*0008*/    u32 flags;
 /*000C*/    s16 refCount;
-/*000E*/    u8 unk_0x14;
-/*000F*/    u8 unk_0x15;
+/*000E*/    u8 unkE;
+/*000F*/    u8 unkF;
 } BlockTexture; // FIXME: better name
 
 typedef struct {
@@ -93,6 +93,16 @@ typedef struct {
 /*0028*/    u8 needsPipeSync;
 /*0029*/    u8 dirtyFlags;
 } DLBuilder;
+
+#define DIRTY_FLAGS_COMBINE (1 << 0) // 1
+#define DIRTY_FLAGS_OTHER_MODE (1 << 1) // 2
+#define DIRTY_FLAGS_SET_PRIMARY_COLOR (1 << 2) // 4
+#define DIRTY_FLAGS_SET_ENV_COLOR (1 << 3) // 8
+#define DIRTY_FLAGS_SET_FILL_COLOR (1 << 4) // 0x10
+#define DIRTY_FLAGS_SET_FOG_COLOR (1 << 5) // 0x20
+#define DIRTY_FLAGS_GEOMETRY_MODE (1 << 6) // 0x40
+#define DIRTY_FLAGS_BLEND_MODE (1 << 7) // 0x80
+#define DIRTY_FLAGS_ALL 0xFF
 
 typedef struct {
 /*0000*/    u8 unk_0x0;
