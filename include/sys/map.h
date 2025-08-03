@@ -205,10 +205,10 @@ typedef struct UnkObjectInstanceFileStruct {
 
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    s16 unk6;
+    s16 xMin;
+    s16 xMax;
+    s16 zMin;
+    s16 zMax;
     s8  unk8;
     s8  unk9;
 } Struct_D_800B9768_unk4;
@@ -218,10 +218,9 @@ typedef struct Struct_D_800B9768_unkC {
     s8 unk0;
 } Struct_D_800B9768_unkC;
 
-// guessed size: 0x20
+// size: 0x20
 typedef struct Struct_D_800B9768_unk10 {
-    s32 unk0;
-    u8  _unk4[0x20 - 0x4];
+    u8 unk0[0x20];
 } Struct_D_800B9768_unk10;
 
 typedef struct Struct_D_800B9768 {
@@ -613,6 +612,7 @@ extern f32 D_800BB18C;
 extern f32 D_8009AA30;
 extern f32 D_8009AA34;
 extern f32 D_8009AA3C;
+extern s8 D_80092A9C[8];
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);

@@ -269,7 +269,8 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a)
 }
 
 // for some reason this function requires an extra or'ing of _SHIFTL(G_TRI2, 24, 8) in w1
-#define gSP2Triangles(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
+// Otherwise it's the same as calling gSP2Triangles
+#define gSP2Triangles2(pkt, v00, v01, v02, flag0, v10, v11, v12, flag1)	\
 { \
 	Gfx *_g = (Gfx *)(pkt); \
 	_g->words.w0 = (_SHIFTL(G_TRI2, 24, 8)| __gsSP1Triangle_w1f(v00, v01, v02, flag0)); \
@@ -283,7 +284,7 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount)
     for (n = triCount >> 1; n != 0; n--, tris += 2)
     {
         tri = tris;
-        gSP2Triangles((*gdl)++, tri[0].v0, tri[0].v1, tri[0].v2, 0, tri[1].v0, tri[1].v1, tri[1].v2, 0);
+        gSP2Triangles2((*gdl)++, tri[0].v0, tri[0].v1, tri[0].v2, 0, tri[1].v0, tri[1].v1, tri[1].v2, 0);
     }
 
     if (triCount & 1) {
@@ -1812,7 +1813,33 @@ s32 map_find_streammap_index(s32 mapID_to_find) {
     return -1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80045DC0.s")
+s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
+    Struct_D_800B9768_unk4* var_v0;
+    s32 temp_a2;
+    s32 temp_t3;
+    Struct_D_800B9768_unk10 * var_v1;
+    s32 j;
+
+    var_v0 = &D_800B9768.unk4[0];
+    var_v1 = &D_800B9768.unk10[0];
+    arg2 = D_80092A9C[arg2] + D_80092A8C;
+    for (j = 0; j < 64; j += 1) {
+        if (arg2 == D_800B9768.unkC[j]) {
+            if (arg0 >= var_v0->xMin && var_v0->xMax >= arg0) {
+                if ((arg1 >= var_v0->zMin) && (var_v0->zMax >= arg1)) {
+                    temp_t3 = (arg0 - var_v0->xMin) + ((arg1 - var_v0->zMin) * ((var_v0->xMax - var_v0->xMin) + 1));
+                    if (((temp_t3 >> 3) + var_v1->unk0)[0] & (1 << (temp_t3 & 7))) {
+                        return j;
+                    }
+                }
+            }
+        }
+
+        var_v0++;
+        var_v1++;
+    }
+    return -1;
+}
 
 /** free_mapID? */
 void func_80045F48(s32 mapID) {
@@ -2104,10 +2131,10 @@ void init_global_map(void)
     for (i = 0; i < SOME_LENGTH; i++) {
         thisunk4 = D_800B9768.unk4 + i;
         D_800B9768.unkC[i] = 0x80;
-        thisunk4->unk0 = 0x8000;
-        thisunk4->unk2 = 0x8000;
-        thisunk4->unk4 = 0x8000;
-        thisunk4->unk6 = 0x8000;
+        thisunk4->xMin = 0x8000;
+        thisunk4->xMax = 0x8000;
+        thisunk4->zMin = 0x8000;
+        thisunk4->zMax = 0x8000;
         thisunk4->unk8 = 0x80;
         thisunk4->unk9 = 0x80;
 
