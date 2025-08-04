@@ -1904,17 +1904,17 @@ void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
     while (var_s3 < sp48) {
         if (arg3 != 0) {
             if (obj->objId == 0x6E) {
-                gDLL_26_Curves->exports->curves_func_10c.withOneArg(obj);
+                gDLL_26_Curves->exports->curves_func_10c(obj);
             }
             if (obj->objId == 5) {
-                gDLL_4_Race->exports->func2.withOneArg(obj);
+                gDLL_4_Race->exports->func2(obj);
             }
         } else {
             if ((0x6E == obj->objId) || (5 == obj->objId)) {
                 if (0x6E == obj->objId) {
-                    gDLL_26_Curves->exports->curves_func_34.withOneArg(obj);
+                    gDLL_26_Curves->exports->curves_func_34(obj);
                 } else {
-                    gDLL_4_Race->exports->func1.withOneArg(obj);
+                    gDLL_4_Race->exports->func1(obj);
                 }
                 if ((u8)sp42[3] == FALSE) {
                     arg1[33] = ((u32)obj - (u32)arg0->objectInstanceFile_ptr);
@@ -2903,7 +2903,7 @@ void func_800484A8(void) {
         }
     }
     gDLL_4_Race->exports->func0();
-    gDLL_26_Curves->exports->curves_func_18.asVoid();
+    gDLL_26_Curves->exports->curves_func_18();
     gMapNumStreamMaps = 0;
     gWorldX = 0.0f;
     gWorldZ = 0.0f;
