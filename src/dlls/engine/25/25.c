@@ -740,22 +740,14 @@ s32 dll_25_func_27A8(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
 }
 
 // offset: 0x29FC | func: 14 | export: 11
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_29FC.s")
-#else
-void dll_25_func_29FC(UnkCurvesStruct *arg0)
-{
-    s32 temp_t9;
-
-    arg0->unk0x9C ^= (s32)arg0->unk0xA4;
-    arg0->unk0x9C ^= (temp_t9 = (s32)arg0->unk0xA4 ^ arg0->unk0x9C);
-    arg0->unk0xA4 = (CurvesFunc1BCReturnInner *)temp_t9;
-    if (arg0->unk0x0 >= 1.0f)
-    {
+void dll_25_func_29FC(UnkCurvesStruct* arg0) {
+    arg0->unk0x9C = (UnkInnerCurvesStruct *)((s32)arg0->unk0x9C ^ (s32)arg0->unk0xA4);\
+    arg0->unk0xA4 = (UnkInnerCurvesStruct *)((s32)arg0->unk0xA4 ^ (s32)arg0->unk0x9C);\
+    arg0->unk0x9C = (UnkInnerCurvesStruct *)((s32)arg0->unk0x9C ^ (s32)arg0->unk0xA4);
+    if (arg0->unk0x0 >= 1.0f) {
         arg0->unk0x0 = 0.99f;
     }
 }
-#endif
 
 // offset: 0x2A50 | func: 15 | export: 12
 CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)

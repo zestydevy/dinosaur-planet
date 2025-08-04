@@ -307,6 +307,10 @@ typedef struct Unk8005341C {
     u8 pad8[0x10 - 0x6];
 } Unk8005341C;
 
+typedef struct Unk80092BC0 {
+    s16 unk0[3];
+} Unk80092BC0;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -405,7 +409,7 @@ extern u8 *D_800B9798;
 extern s16 D_800B97C4;
 
 extern Struct_D_800B9768 D_800B9768;
-extern s16 D_80092BC0[3];
+extern Unk80092BC0 D_80092BC0;
 extern u8 D_800B1847;
 
 extern f32 D_8009AA28;

@@ -9,9 +9,9 @@
 #include "game/objects/object.h"
 #include "sys/map.h"
 
-typedef struct Unk80092BC0 {
+typedef struct Unk80092CA8 {
     s16 unk0[3];
-} Unk80092BC0;
+} Unk80092CA8;
 
 typedef struct Unk800B98A0 {
     u8 unk0[4000];
@@ -139,8 +139,8 @@ extern Unk80092C48 D_80092C48;
 extern Unk80092C48 D_80092C74;
 extern s32 D_80092CA0;
 extern s32 D_80092CA4;
-extern Unk80092BC0 D_80092CA8;
-extern Unk80092BC0 D_80092CB0;
+extern Unk80092CA8 D_80092CA8;
+extern Unk80092CA8 D_80092CB0;
 extern Unk8004FA58 D_800BA1A0;
 extern f32 D_800B97E0[24];
 extern f32 D_800B9840[24];
@@ -180,6 +180,7 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
 s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1);
 s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 arg7);
 s32 func_8004EEC0(Unk8004FA58_Arg5 *arg0, Gfx* gdl, ObjectStruct64* arg2, Object *arg3, s32 arg4, s32* arg5);
+s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
 
 // other funcs that are used
 u32 func_80041DA4(void);

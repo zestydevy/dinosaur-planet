@@ -2212,11 +2212,11 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
     
     mapbinstruct->unkC = (s32 *) (((s8 *)mapbinstruct + gFile_MAPS_TAB[maptabindex].unk4) - gFile_MAPS_TAB[maptabindex].unk0);
 
-    arg0->unk0 = arg2 - mapbinstruct->unk4;
-    arg0->unk4 = arg3 - mapbinstruct->unk6;
+    arg0->xMin = arg2 - mapbinstruct->unk4;
+    arg0->zMin = arg3 - mapbinstruct->unk6;
 
-    arg0->unk2 = (arg0->unk0 + mapbinstruct->unk0) - 1;
-    arg0->unk6 = (arg0->unk4 + mapbinstruct->unk2) - 1;
+    arg0->xMax = (arg0->xMin + mapbinstruct->unk0) - 1;
+    arg0->zMax = (arg0->zMin + mapbinstruct->unk2) - 1;
     arg0->unk8 = mapbinstruct->unk4;
     arg0->unk9 = mapbinstruct->unk6;
 
@@ -4691,13 +4691,14 @@ typedef struct UnkSp8C {
     f32 unk18;
     f32 unk1C;
 } UnkSp8C;
+
 // https://decomp.me/scratch/FLOC0
 void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkSp8C* var_v0;
     MapsUnk_800B97C0* temp_v0_7;
     s32 var_a0;
     s32 var_a3;
-    s16 sp160[3];
+    Unk80092BC0 sp160;
     s32 sp15C[1]; // has to be an array of size 1 and not a pointer
     s32 sp158[1]; // has to be an array of size 1 and not a pointer
     s32 sp154[1]; // has to be an array of size 1 and not a pointer
