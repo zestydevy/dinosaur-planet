@@ -40,7 +40,7 @@ typedef struct {
     /* 0090 */ s32 unk0x90;
     /* 0094 */ unk_curve_func unk0x94;
     /* 0098 */ s32 unk0x98;
-    s32 pad0x9C;
+    UnkInnerCurvesStruct *unk0x9C;
     UnkInnerCurvesStruct *unk0xA0;
     UnkInnerCurvesStruct *unk0xA4;
     f32 unk0xA8[4];

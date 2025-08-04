@@ -43,7 +43,7 @@ typedef struct {
 /*0008*/    u8 unk_0x8[0x12 - 0x8];
 /*0012*/    u8 tileIdx0;
 /*0013*/    u8 alpha;
-/*0014*/    u8 unk_0x14;
+/*0014*/    u8 unk_0x14; // animator ID?
 /*0015*/    u8 tileIdx1;
 /*0016*/    u8 unk_0x16;
 /*0017*/    u8 unk_0x17;

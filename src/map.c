@@ -1268,7 +1268,7 @@ s32 func_800448D0(s32 arg0) {
         temp_v1 = gLoadedMapsDataTable[sp20[var_a1]];
         if (temp_v1 != NULL) {
             obj = (ObjCreateInfo *) temp_v1->objectInstanceFile_ptr;
-            new_var = (temp_v1->objectInstancesFileLength + (s8 *)obj);
+            new_var = (u32)(temp_v1->objectInstancesFileLength + (s8 *)obj);
             while ((u32)obj < new_var) {
                 obj2 = obj;
                 if ((s32)obj == arg0) {
@@ -1339,11 +1339,11 @@ s8* func_80044B98(s32 arg0) {
 }
 
 /** Get Block from blockIndex */
-BlocksModel* func_80044BB0(s32 blockIndex) {
+Block* func_80044BB0(s32 blockIndex) {
     if (blockIndex < 0 || blockIndex >= gLoadedBlockCount) {
         return 0;
     }
-    return gLoadedBlocks[blockIndex];
+    return (Block *)gLoadedBlocks[blockIndex];
 }
 
 //Camera and frustum related?
@@ -1589,7 +1589,7 @@ void some_cell_func(BitStream* stream) {
         var_v1 += 1;
     }
     temp = ((cellY << 6) + (cellZ * 8) + cellX);
-    bitstream_init(stream, (var_v1 * temp) + D_800B9798, D_800B979E, D_800B979E);
+    bitstream_init(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
 }
 
 // referenced by some_cell_func
@@ -1872,7 +1872,7 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
 /** free_mapID? */
 void func_80045F48(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
-        func_80045FC4(gLoadedMapsDataTable[mapID], (mapID * 0x8C) + (&D_800B5508), mapID, 1);
+        func_80045FC4(gLoadedMapsDataTable[mapID], (s32*)((mapID * 0x8C) + (&D_800B5508)), mapID, 1);
         free(gLoadedMapsDataTable[mapID]);
         gLoadedMapsDataTable[mapID] = 0;
     }
@@ -2173,7 +2173,7 @@ void init_global_map(void)
 
         map_read_layout(
             &D_800B9768.unk4[buf[i].unk6],
-            &D_800B9768.unk10[buf[i].unk6],
+            (u8 *)&D_800B9768.unk10[buf[i].unk6].unk0,
             buf[i].unk0,
             buf[i].unk2,
             buf[i].unk6
@@ -2200,7 +2200,7 @@ typedef struct UnkStructUnk4 {
 /*08*/ s8  unk8;
 /*09*/ s8  unk9;
 } UnkStructUnk4;
-void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex)
+void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex)
 {
     MapsTabStruct* maptabstruct;
     MapsBinStruct* mapbinstruct;
@@ -2789,7 +2789,7 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
     var_v0 = D_800B9768.unkC[arg0];
     var_s0 = 0;
     if (var_v0 == -0x80) {
-        map_read_layout((MapLayoutArg0* ) &D_800B9768.unk4[arg0], &D_800B9768.unk10[arg0], 0, 0, arg0);
+        map_read_layout((Struct_D_800B9768_unk4* ) &D_800B9768.unk4[arg0], &D_800B9768.unk10[arg0], 0, 0, arg0);
         D_800B9768.unkC[arg0] = 0;
         var_v0 = D_800B9768.unkC[arg0];
     }
@@ -3646,7 +3646,7 @@ void func_80049D88(void)
 
             if ((texture != NULL) && (texture->levels != 0x100)) {
                 if (texture->unk_0xe != 0) {
-                    func_8003E648(texture, &gBlockTextures[i].flags, &gBlockTextures[i].unk4);
+                    func_8003E648(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
                 }
             }
         }
@@ -3879,19 +3879,19 @@ void block_setup_xz_bitmap(Block* block) {
 s32 func_8004A528(Object* obj, u8 animatorID) {
     s32 index;
     s32 anim_vertex_count;
-    BlocksModel *block;
-    FaceBatch *facebatches;
+    Block *block;
+    BlockShape *blockShapes;
 
     block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
-    if (!block || !(block->flags & 8)){
+    if (!block || !(block->vtxFlags & 8)){
         return 0;
     }
     
     anim_vertex_count = 0;
-    facebatches = block->ptr_faceBatches;
-    for (index = 0; index < block->faceBatch_count; index++){
-        if (animatorID == (facebatches[index]).animatorID){
-            anim_vertex_count += facebatches[index + 1].baseVertexID - facebatches[index].baseVertexID;
+    blockShapes = block->shapes;
+    for (index = 0; index < block->shapeCount; index++){
+        if (animatorID == (blockShapes[index]).unk_0x14){
+            anim_vertex_count += blockShapes[index + 1].vtxBase - blockShapes[index].vtxBase;
         }
     }
     
@@ -3995,7 +3995,7 @@ void map_update_objects_streaming(s32 arg0) {
     s32 temp_s4;
     u32 var_s0;
     s16 sp70[3]; // unknown size however 3 feels way to small?
-    void* temp_fp;
+    u32 temp_fp;
     Object** sp68;
     s16 mapID;
 
@@ -4396,7 +4396,7 @@ void func_8004B548(MapHeader* arg0, s32 arg1, s32 arg2, Object* arg3) {
         if ((map_check_some_mapobj_flag(mapID, arg1) == 0) && (func_8004B4A0((ObjCreateInfo *)s0, arg1) != 0)) {
             func_8004B710(mapID, arg1, 1U);
             if (map_get_is_object_streaming_disabled() != 0) {
-                func_80012584(0x3E, 4U, NULL, s0, arg1, mapID, arg3, var_s6);
+                func_80012584(0x3E, 4U, NULL, (ObjCreateInfo *)s0, arg1, mapID, arg3, var_s6);
             } else {
                 obj_create((ObjCreateInfo* )s0, 1U, arg1, mapID, arg3);
             }
@@ -4542,7 +4542,7 @@ void func_8004B948(s32 arg0) {
     UINT_80092a98 &= ~0x200;
 }
 
-void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
+void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 x, f32 y, f32 z) {
     s16 temp_s0;
     s8 var_a1;
     s32 i;
@@ -4556,32 +4556,32 @@ void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     for (var_a1 = FALSE, i = 0; i < temp_s0; i++) {
         if (arg0[1].unk0 == temp_v0[i].unk0) {
             var_a1 = TRUE;
-            temp_v0[i].unk8 = arg2;
-            temp_v0[i].unkC = arg3;
-            temp_v0[i].unk10 = arg4;
-            arg0->unk8 = arg2;\
-            arg0->unkC = arg3;\
-            arg0->unk10 = arg4;\
+            temp_v0[i].x = x;
+            temp_v0[i].y = y;
+            temp_v0[i].z = z;
+            arg0->x = x;\
+            arg0->y = y;\
+            arg0->z = z;\
         }
     }
     if (var_a1 == FALSE) {
-        D_800B96B0[temp_s0].unk8 = arg0->unk8;\
-        D_800B96B0[temp_s0].unkC = arg0->unkC;\
-        D_800B96B0[temp_s0].unk10 = arg0->unk10;
+        D_800B96B0[temp_s0].x = arg0->x;\
+        D_800B96B0[temp_s0].y = arg0->y;\
+        D_800B96B0[temp_s0].z = arg0->z;
         D_800B96B0[temp_s0].unk0 =  arg0[1].unk0;
         D_800B96B0[temp_s0].unk4 = arg1;
         i = temp_s0;
         temp_v0[temp_s0].unk0 = arg0[1].unk0;
         temp_v0[i].unk4 = arg1;
-        temp_v0[i].unk8 = arg2;
-        temp_v0[i].unkC = arg3;
+        temp_v0[i].x = x;
+        temp_v0[i].y = y;
         // @fake
         if ((!temp_v0) && (!temp_v0)) {}
-        temp_v0[i].unk10 = arg4;
+        temp_v0[i].z = z;
         temp_s0++;
-        arg0->unk8 = arg2;\
-        arg0->unkC = arg3;\
-        arg0->unk10 = arg4;
+        arg0->x = x;\
+        arg0->y = y;\
+        arg0->z = z;
         gDLL_29_Gplay->exports->func_1238(temp_s0);
     }
 }
@@ -4597,9 +4597,9 @@ void func_8004BC20(Unk800B96B0* arg0, s32 arg1) {
         for (i = 0; i < temp_s3; i++) {
             if (arg1 == temp_s4[i].unk0) {
                 bcopy(&D_800B96B0[i], &temp_s4[i], sizeof(Unk800B96B0));
-                arg0->unk8 = D_800B96B0[i].unk8;
-                arg0->unkC = D_800B96B0[i].unkC;
-                arg0->unk10 = D_800B96B0[i].unk10;
+                arg0->x = D_800B96B0[i].x;
+                arg0->y = D_800B96B0[i].y;
+                arg0->z = D_800B96B0[i].z;
                 // break
                 i = temp_s3;
             }
@@ -4612,10 +4612,10 @@ void func_8004BD40(MapHeader* arg0, s32 arg1) {
     s32 temp_t0;
     s32 var_t1;
     s32 var_t3;
-    Unk800B96B0* var_a1;
+    ObjCreateInfo* var_a1;
     s32 temp_t4;
     s16 sp8E;
-    s32 temp_v1_3;
+    s32 pad;
     s16 sp68[15]; // unknown size however should be the same as sp28
     Unk800B96B0* temp_v0;
     s32 sp28[15]; // unknown size however should be the same as sp68
@@ -4632,19 +4632,18 @@ void func_8004BD40(MapHeader* arg0, s32 arg1) {
     }
     var_t3 = 0;
     temp_t4 = arg0->objectInstancesFileLength;
-    var_a1 = (Unk800B96B0 *) arg0->objectInstanceFile_ptr;
+    var_a1 = (ObjCreateInfo *) arg0->objectInstanceFile_ptr;
     while (var_t3 < (s32) temp_t4) {
-        temp_t0 = var_a1[1].unk0;
+        temp_t0 = var_a1->uID;
         for (var_a3 = 0; var_a3 < var_t1; var_a3++) {
             if (temp_t0 == sp28[var_a3]) {
-                var_a1->unk8 = temp_v0[sp68[var_a3]].unk8;
-                var_a1->unkC = temp_v0[sp68[var_a3]].unkC;
-                var_a1->unk10 = temp_v0[sp68[var_a3]].unk10;
+                var_a1->x = temp_v0[sp68[var_a3]].x;
+                var_a1->y = temp_v0[sp68[var_a3]].y;
+                var_a1->z = temp_v0[sp68[var_a3]].z;
             }
         }
-        temp_v1_3 = var_a1->otherUnk0.unk2 * 4;
-        var_t3 += temp_v1_3;
-        var_a1 = &((s8 *)var_a1)[temp_v1_3];
+        var_t3 += var_a1->quarterSize * 4;
+        var_a1 = (ObjCreateInfo *) &((s8 *)var_a1)[var_a1->quarterSize * 4];
     }
 }
 

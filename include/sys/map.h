@@ -280,16 +280,6 @@ typedef struct MapsBinStruct {
     /*0x34*/ s32 unk34;
 } MapsBinStruct;
 
-// size: 0xA
-typedef struct MapLayoutArg0 {
-/*00*/ s16 unk0;
-/*02*/ s16 unk2;
-/*04*/ s16 unk4;
-/*06*/ s16 unk6;
-/*08*/ s8  unk8;
-/*09*/ s8  unk9;
-} MapLayoutArg0;
-
 typedef struct {
 /*0x0*/ u8 r;
 /*0x1*/ u8 g;
@@ -303,19 +293,12 @@ typedef struct {
 } MapsUnk_800B97C0;
 
 typedef struct Unk800B96B0 {
-    union {
-        s32 unk0;
-        struct {
-            s16 pad0;
-            u8 unk2;
-            u8 pad3;
-        } otherUnk0;
-    };
+    s32 unk0;
     s16 unk4;
     s16 unk6;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
+    f32 x;
+    f32 y;
+    f32 z;
 } Unk800B96B0;
 
 typedef struct UnkSp8C {
@@ -516,7 +499,7 @@ extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
 
-extern s32 D_800B9798;
+extern u8 *D_800B9798;
 extern s16 D_800B97C4;
 
 extern Struct_D_800B9768 D_800B9768;
@@ -640,7 +623,7 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3);
 MapHeader *map_load_streammap(s32, s32);
-void map_read_layout(MapLayoutArg0 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
+void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void func_80048034(void);
 void map_update_objects_streaming(s32);
 s32 func_800485FC(s32, s32, s32, s32, s32);
@@ -692,7 +675,7 @@ void func_80000608(Object*, Object*, u16, s32, s32, s32);
 void func_800009C8(Object*, Object*, u16, s32);
 void func_80023628(void);
 s32 func_80048E04(u8, u8, u8, u8);
-void func_8003E648(Texture*, s32, s32);
+void func_8003E648(Texture*, s32 *, s32 *);
 Object **obj_get_all_of_type(s32 idx, s32 *count);
 u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s32);

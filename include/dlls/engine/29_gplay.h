@@ -5,6 +5,7 @@
 #include "sys/math.h"
 #include "dll_def.h"
 #include "unktypes.h"
+#include "game/objects/object.h"
 
 #define CHARACTER_SABRE 0
 #define CHARACTER_KRYSTAL 1
@@ -184,7 +185,7 @@ DLL_INTERFACE_BEGIN(29_gplay)
     /*27*/ void (*func_115C)();
     /*28*/ u8 (*func_E90)();
     /*29*/ void (*func_EAC)(u8 character);
-    /*30*/ void *(*func_1254)();
+    /*30*/ void *(*func_1254)(void);
     /*31*/ s16 (*func_121C)(void);
     /*32*/ void (*func_1238)(s32 param1);
     /*33*/ GplayStruct7 *(*func_E74)();

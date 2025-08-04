@@ -49,7 +49,7 @@ void func_80012584(
         ObjCreateInfo *param4,
         s32 param5, 
         s32 param6,
-        s32 param7,
+        Object* param7,
         s32 param8
 ) {
     UnkStructAssetThreadSingle element;

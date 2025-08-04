@@ -4,6 +4,7 @@
 #include "PR/ultratypes.h"
 #include "dll_def.h"
 #include "dlls/engine/26_curves.h"
+#include "game/objects/object.h"
 #include "sys/curves.h"
 #include "sys/math.h"
 
@@ -53,9 +54,9 @@ DLL_INTERFACE_BEGIN(25)
 /* 9 */ s32 (*dll_25_func_21F4)(UnkCurvesStruct* arg0, UnkInnerCurvesStruct* arg1) ;
 /* 10 */ s32 (*dll_25_func_27A8)(UnkCurvesStruct* arg0, UnkInnerCurvesStruct* arg1);
 /* 11 */ void (*dll_25_func_29FC)(UnkCurvesStruct* arg0);
-/* 12 */ CurvesFunc1BCReturnInner* (*dll_25_func_2A50)(s32 arg0, s32 arg1);
-/* 13 */ CurvesFunc1BCReturnInner* (*dll_25_func_2BC4)(s32 arg0, s32 arg1);
-/* 14 */ CurvesFunc1BCReturnInner* (*dll_25_func_2CF8)(s32 arg0, s32 arg1);
+/* 12 */ CurvesFunc1BCReturnInner* (*dll_25_func_2A50)(Object *obj, s32 arg1);
+/* 13 */ CurvesFunc1BCReturnInner* (*dll_25_func_2BC4)(Object *obj, s32 arg1);
+/* 14 */ CurvesFunc1BCReturnInner* (*dll_25_func_2CF8)(Object *obj, s32 arg1);
 DLL_INTERFACE_END()
 
 #endif //_DLLS_25_H

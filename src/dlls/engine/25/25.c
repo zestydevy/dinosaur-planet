@@ -651,12 +651,12 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
 
     if (arg0->unk0x80 != 0)
     {
-        arg0->pad0x9C = arg0->unk0xA0;
+        arg0->unk0x9C = arg0->unk0xA0;
         arg0->unk0xA0 = arg0->unk0xA4;
         arg0->unk0xA4 = arg1;
-        memcpy(arg0->unk0xB8, arg0->unk0xA8, 0x10);
-        memcpy(arg0->unk0xD8, arg0->unk0xC8, 0x10);
-        memcpy(arg0->unk0xF8, arg0->unk0xE8, 0x10);
+        memcpy(arg0->unk0xB8, arg0->unk0xA8, sizeof(arg0->unk0xA8));
+        memcpy(arg0->unk0xD8, arg0->unk0xC8, sizeof(arg0->unk0xC8));
+        memcpy(arg0->unk0xF8, arg0->unk0xE8, sizeof(arg0->unk0xE8));
         arg0->unk0xA8[0] = arg0->unk0xA4->unk8;
         arg0->unk0xA8[1] = arg0->unk0xA0->unk8;
         arg0->unk0xA8[2] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
@@ -680,7 +680,7 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
     }
     else
     {
-        arg0->pad0x9C = arg0->unk0xA0;
+        arg0->unk0x9C = arg0->unk0xA0;
         arg0->unk0xA0 = arg0->unk0xA4;
         arg0->unk0xA4 = arg1;
         memcpy(arg0->unk0xA8, arg0->unk0xB8, 0x10U);
@@ -747,8 +747,8 @@ void dll_25_func_29FC(UnkCurvesStruct *arg0)
 {
     s32 temp_t9;
 
-    arg0->pad0x9C ^= (s32)arg0->unk0xA4;
-    arg0->pad0x9C ^= (temp_t9 = (s32)arg0->unk0xA4 ^ arg0->pad0x9C);
+    arg0->unk0x9C ^= (s32)arg0->unk0xA4;
+    arg0->unk0x9C ^= (temp_t9 = (s32)arg0->unk0xA4 ^ arg0->unk0x9C);
     arg0->unk0xA4 = (CurvesFunc1BCReturnInner *)temp_t9;
     if (arg0->unk0x0 >= 1.0f)
     {
@@ -758,7 +758,7 @@ void dll_25_func_29FC(UnkCurvesStruct *arg0)
 #endif
 
 // offset: 0x2A50 | func: 15 | export: 12
-CurvesFunc1BCReturnInner *dll_25_func_2A50(s32 arg0, s32 arg1)
+CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)
 {
     CurvesFunc1BCReturn *result;
     CurvesFunc1BCReturnInner *temp_s0;
@@ -780,7 +780,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2A50(s32 arg0, s32 arg1)
             ((temp_s0->unk30.words.unk30 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk30) != 0)) &&
             ((temp_s0->unk30.words.unk32 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk32) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(arg0 + 0x18, (Vec3f *)&temp_s0->unk8);
+            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -792,7 +792,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2A50(s32 arg0, s32 arg1)
 }
 
 // offset: 0x2BC4 | func: 16 | export: 13
-CurvesFunc1BCReturnInner *dll_25_func_2BC4(s32 arg0, s32 arg1)
+CurvesFunc1BCReturnInner *dll_25_func_2BC4(Object *obj, s32 arg1)
 {
     CurvesFunc1BCReturn *result;
     CurvesFunc1BCReturnInner *temp_s0;
@@ -813,7 +813,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2BC4(s32 arg0, s32 arg1)
             (temp_s0->unk19 == 0x22) &&
             ((arg1 == temp_s0->unk4.words.unk4) || ((temp_s0->unk1A.bytes.unk1A < 3) && (arg1 == -1))))
         {
-            temp_fv0 = vec3_distance_squared(arg0 + 0x18, (Vec3f *)&temp_s0->unk8);
+            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -825,7 +825,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2BC4(s32 arg0, s32 arg1)
 }
 
 // offset: 0x2CF8 | func: 17 | export: 14
-CurvesFunc1BCReturnInner *dll_25_func_2CF8(s32 arg0, s32 arg1)
+CurvesFunc1BCReturnInner *dll_25_func_2CF8(Object *obj, s32 arg1)
 {
     CurvesFunc1BCReturn *result;
     CurvesFunc1BCReturn *var_s2;
@@ -847,7 +847,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2CF8(s32 arg0, s32 arg1)
             ((temp_s0->unk30.words.unk30 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk30) != 0)) &&
             ((temp_s0->unk30.words.unk32 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk32) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(arg0 + 0x18, (Vec3f *)&temp_s0->unk8);
+            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
