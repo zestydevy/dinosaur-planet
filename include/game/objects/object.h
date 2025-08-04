@@ -147,13 +147,6 @@ DLL_INTERFACE_BEGIN(Object)
 	/*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
 	/*5*/ u32 (*func6)(struct Object *obj);
 	/*6*/ u32 (*get_state_size)(struct Object *obj, u32);
-	/*7*/ UnknownDLLFunc func7;
-	/*8*/ UnknownDLLFunc func8;
-	/*9*/ UnknownDLLFunc func9;
-	/*10*/ UnknownDLLFunc func10;
-	/*11*/ UnknownDLLFunc func11;
-	/*12*/ UnknownDLLFunc func12;
-	/*13*/ s32 (*func13)(struct Object *obj);
 DLL_INTERFACE_END()
 
 // arg3 and arg4 are unknown types

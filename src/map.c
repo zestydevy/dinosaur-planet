@@ -760,7 +760,7 @@ void func_800436DC(Object* obj, s32 arg1) {
     someBool = TRUE;
     if ((obj->id == 0x72) || (obj->id == 0x38C)) {
         someBool = TRUE;
-        if (obj->dll->exports->func13(obj) != 0) {
+        if (((DLLInst_13_expgfx*)obj->dll)->exports->func13(obj) != 0) {
             someBool = FALSE;
         }
     }
