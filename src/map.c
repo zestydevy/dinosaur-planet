@@ -339,12 +339,12 @@ u32 func_80041D74()
 }
 
 // Get widescreen-related bit?
-u32 func_80041D8C()
+u32 func_80041D8C(void)
 {
     return UINT_80092a98 & 0x100;
 }
 
-u32 func_80041DA4()
+u32 func_80041DA4(void)
 {
     return UINT_80092a98 & 0x80;
 }
@@ -4681,13 +4681,23 @@ void func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
 #else
+typedef struct UnkSp8C {
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+} UnkSp8C;
 // https://decomp.me/scratch/FLOC0
 void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkSp8C* var_v0;
     MapsUnk_800B97C0* temp_v0_7;
     s32 var_a0;
     s32 var_a3;
-    Unk80092BC0 sp160;
+    s16 sp160[3];
     s32 sp15C[1]; // has to be an array of size 1 and not a pointer
     s32 sp158[1]; // has to be an array of size 1 and not a pointer
     s32 sp154[1]; // has to be an array of size 1 and not a pointer

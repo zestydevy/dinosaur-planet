@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/map.h"
+#include "sys/newshadows.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
 static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
@@ -9,20 +9,20 @@ void func_8004D470(void) {
 
     D_80092BE8 = 0xA;
     temp_v0 = (void *) malloc(0x8020, 0x18, NULL);
-    D_800B98A0[0] = (Unk800B98A0 *) temp_v0;
-    D_800B98A0[1] = (Unk800B98A0 *) ((u32)temp_v0 + sizeof(Unk800B98A0));
+    D_800B98A0[0] = (Gfx *) temp_v0;
+    D_800B98A0[1] = (Gfx *) ((u32)temp_v0 + sizeof(Unk800B98A0));
     D_800B98A8[0] = (Unk800B98A8 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2);
     D_800B98A8[1] = (Unk800B98A8 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8));
-    D_800B98B0[0] = (Unk800B98B0 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
-    D_800B98B0[1] = (Unk800B98B0 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
+    D_800B98B0[0] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
+    D_800B98B0[1] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
 
     temp_v0 = (void *) malloc(0xC800, 0x18, NULL);
-    D_800BB158[0] = (Unk800BB158 *) temp_v0;
-    D_800BB158[1] = (Unk800BB158 *) ((u32)temp_v0 + sizeof(Unk800BB158));
+    D_800BB158[0] = (Gfx *) temp_v0;
+    D_800BB158[1] = (Gfx *) ((u32)temp_v0 + sizeof(Unk800BB158));
     D_800BB168[0] = (Unk800BB168 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2);
     D_800BB168[1] = (Unk800BB168 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168));
-    D_800BB160[0] = (Unk800BB160 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2);
-    D_800BB160[1] = (Unk800BB160 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2 + sizeof(Unk800BB160));
+    D_800BB160[0] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2);
+    D_800BB160[1] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2 + sizeof(Unk800BB160));
 
     D_800B9840[0] = -8.0f;
     D_800B9840[1] = 0.0f;
@@ -82,8 +82,6 @@ void func_8004D470(void) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004D698.s")
 #else
-extern s32 D_80092C40;
-extern f32 D_80092C44;
 extern Vec3f D_800BB1A8;
 extern f32 D_800BB1B0;
 void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
@@ -153,12 +151,11 @@ void func_8004D880(Object *arg0) {
 }
 
 u32 func_8004D8A4(Object* obj, u32 addr, s32 arg2) {
-    ObjectStruct64* obj64;
+    ObjectStruct64 *obj64;
 
-    obj64 = align_4(addr);
+    obj64 = (ObjectStruct64 *) align_4(addr);
     obj->ptr0x64 = obj64;
-    addr = obj64 + 1;
-    obj64 = obj64;
+    addr = (u32)(obj64 + 1);
     obj64->unk4 = texture_load((s32) -obj->def->shadowTexture, 0);
     obj64->unk0 = obj->def->unk00;
     obj64->unk2c = obj64->unk0;
@@ -365,13 +362,12 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
     func_80053408((Vec3f *)sp8C);
     func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
-    // usage of sp94 is wrong
     sp2B4 = func_80052300(
-        arg0, // a0 OK
-        sp88, // a1 OK
-        &D_800BA1A0, // a2 OK
-        D_800BB140, // a3 OK
-        sp2B4, // sp10 OK
+        arg0,
+        (UnkFunc80051D68Arg3 *) sp88,
+        &D_800BA1A0,
+        (UnkFunc80052300Arg3 *) D_800BB140,
+        sp2B4,
         // This is just wrong but matches?
         sp8C[0][0],
         sp8C[0][2],
@@ -380,11 +376,11 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
     );
     D_80092BDC = sp90;
     D_80092C1C = sp2B4;
-    D_80092BE0 = sp8C[0];
+    D_80092BE0 = (s32)sp8C[0];
     func_800511E8(arg0, 0, sp244, &sp94);
     temp_t0 = ((s8 *)D_800BB148 - (s8 *)D_800B98B0[D_80092C08]) >> 4;
     if (D_800BB170 != 0) {
-        if (func_800502AC(arg0, sp244, &sp94, sp2B4, D_800BB144, (Unk800B98B0 *)D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
+        if (func_800502AC(arg0, sp244, &sp94, sp2B4, (Vec3f *)D_800BB144, D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C34 = 0x190;
             if (temp_s1->flags & 0x20) {
@@ -393,7 +389,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
             }
             return 0;
         }
-        D_800BB150 += func_8004EEC0((Unk800B98B0 *)D_800BB148, (Unk800B98A0*) D_800BB150, temp_s1, arg0, (s32) D_80092C20, &sp2B0);
+        D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, temp_s1, arg0, D_80092C20, &sp2B0);
         goto block_59;
     } else if (func_8004FA58(arg0, (s32) &sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, (Unk8004FA58_Arg5* ) D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
         temp_s1->gdl = NULL;
@@ -406,7 +402,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
         return 0;
     }
 
-    D_800BB150 += func_8004F378((Unk800B98B0 *)D_800BB148, (Unk800B98A0 *)D_800BB150, temp_s1, arg0, (s32) D_80092C20, &sp2B0);
+    D_800BB150 += func_8004F378(D_800BB148, D_800BB150, temp_s1, arg0, D_80092C20, &sp2B0);
 block_59:
     D_800BB14C += sp2B0;
     D_800BB144 = D_800BB140;
@@ -421,21 +417,21 @@ block_59:
 }
 
 
-s32 func_8004E540(Unk8004E540* arg0, Unk8004E540* arg1) {
+s32 func_8004E540(Object* arg0, ObjectStruct64* arg1) {
     s32 sp1C;
     s32 sp18;
     f32 var_fv1;
 
     sp1C = arg1->unk38 * 4;
     sp18 = arg1->unk39 * 4;
-    var_fv1 = (func_80001884(arg0->x, arg0->y, arg0->z) - sp1C) / (sp18 - sp1C);
+    var_fv1 = (func_80001884(arg0->positionMirror.x, arg0->positionMirror.y, arg0->positionMirror.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {
         var_fv1 = 1.0f;
     }
     sp1C = (arg1->unk3A + ((arg1->unk3B - arg1->unk3A) * var_fv1));
-    sp1C = (arg0->unk37 + 1) * (s32)sp1C;
+    sp1C = (arg0->unk_0x37 + 1) * (s32)sp1C;
     return sp1C >> 8;
 }
 
@@ -549,8 +545,8 @@ void func_8004E7A8(Object* arg0) {
         func_80053750(arg0, (Vec3f** ) &sp70, 1);
         func_80053408((Vec3f *)spA0);
         func_800533D8(&sp2B4, &sp9C);
-        sp2B4 = func_80052300(arg0, sp9C, &D_800BA1A0, (Unk800B98A8* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
-        D_800BB174 = (s8 *)D_800BB174 + sp2B4 * 0x24;
+        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, &D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
+        D_800BB174 = (Unk800BB168 *)((s8 *)D_800BB174 + sp2B4 * 0x24);
         func_800511E8(arg0, 0, sp24C, (Unk8004FA58* ) &spA0[2]);
         temp_t0 = ((s8 *)D_800BB17C - (s8*)D_800BB160[D_80092C10]) >> 4;
         if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, (Unk8004FA58_Arg5* ) D_800BB17C, &D_800BA1A0, 0x257 - temp_t0) == 0) {
@@ -562,7 +558,7 @@ void func_8004E7A8(Object* arg0) {
             }
             return;
         } else {
-            D_800BB184 += func_8004F378((Unk800B98B0* ) D_800BB17C, (Unk800B98A0* ) D_800BB184, temp_s1, arg0, (s32) D_80092C20, &sp2B0);
+            D_800BB184 += func_8004F378(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
             D_800BB180 += sp2B0;
             D_800BB178 = D_800BB174;
             D_80092C28 = (Gfx *) D_800BB184 - (Gfx *)D_800BB158[D_80092C0C];
@@ -578,7 +574,7 @@ void func_8004E7A8(Object* arg0) {
 
     if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
         if (!(temp_s1->flags & 0x400)) {
-            alpha = func_8004E540((Unk8004E540* ) arg0, (Unk8004E540* ) temp_s1);
+            alpha = func_8004E540(arg0, temp_s1);
         } else {
             alpha = temp_s1->unk40;
         }
@@ -589,7 +585,7 @@ void func_8004E7A8(Object* arg0) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004EEC0.s")
 #else
-s32 func_8004EEC0(s32 arg0, Gfx* gdl, Unk8004EEC0* arg2, s32 arg3, s32 arg4, s32* arg5) {
+s32 func_8004EEC0(Unk8004FA58_Arg5 *arg0, Gfx* gdl, ObjectStruct64* arg2, Object *arg3, s32 arg4, s32* arg5) {
     DLTri* currentTri;
     s16 temp_v0_2;
     s16* var_s0;
@@ -750,8 +746,7 @@ s32 func_8004EEC0(s32 arg0, Gfx* gdl, Unk8004EEC0* arg2, s32 arg3, s32 arg4, s32
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004F378.s")
 #else
-extern f32 D_80092C3C;
-s32 func_8004F378(Unk800B98B0* arg0, Gfx* arg1, ObjectStruct64* arg2, Object* arg3, s32 arg4, s32* arg5) {
+s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Object* arg3, s32 arg4, s32* arg5) {
     s32 sp1E4;
     s32 var_s0;
     s32 var_s4;
@@ -764,7 +759,7 @@ s32 func_8004F378(Unk800B98B0* arg0, Gfx* arg1, ObjectStruct64* arg2, Object* ar
     f32 sp1C0;
     u8 pad[0xf0];
     DLTri* var_v1;
-    Unk800B98B0* var_s3;
+    Unk8004FA58_Arg5* var_s3;
     f32 var_ft5;
     s16 temp_a1;
     DLTri *spB8[2];
@@ -792,7 +787,7 @@ s32 func_8004F378(Unk800B98B0* arg0, Gfx* arg1, ObjectStruct64* arg2, Object* ar
     }
     if (arg2->flags & 0x40) {
         if ((arg3->def->shadowType == 2) && !(arg2->flags & 0x400)) {
-            var_s0 = func_8004E540((Unk8004E540* ) arg3, (Unk8004E540* ) arg2);
+            var_s0 = func_8004E540( arg3, arg2);
         } else {
             var_s0 = (s32) arg2->unk40;
         }
