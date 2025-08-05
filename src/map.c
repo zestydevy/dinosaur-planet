@@ -1,6 +1,9 @@
 #include "common.h"
 #include "sys/map.h"
 
+// .data start: 80092a60 ?
+// .bss start: 800b49f0 ?
+
 static void func_8004D328();
 
 void dl_set_all_dirty(void) {
@@ -391,10 +394,10 @@ void init_maps(void) {
     gLoadedBlockIds = malloc(sizeof(s16) * MAX_BLOCKS, 5, NULL);
     gBlockRefCounts = malloc(sizeof(u8) * MAX_BLOCKS, 5, NULL);
     gMapReadBuffer = malloc(sizeof(u8) * 700, 5, NULL);
-    *gBlockIndices = malloc(BLOCKS_GRID_TOTAL_CELLS * SOME_SIZE, 5, NULL);
+    *gBlockIndices = malloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
     *gDecodedGlobalMap = malloc(sizeof(GlobalMapCell) * 1280, 5, NULL);
-    *D_800B9700 = malloc(BLOCKS_GRID_TOTAL_CELLS * SOME_SIZE, 5, NULL);
-    for (i = 1; i < SOME_SIZE; i++) {
+    *D_800B9700 = malloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
+    for (i = 1; i < MAP_LAYER_COUNT; i++) {
         gBlockIndices[i] = gBlockIndices[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         D_800B9700[i] = D_800B9700[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
@@ -901,7 +904,7 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
         sp80 = var_s0->unkA;
         sp7C = ((var_s0->unkF * 4) | ((var_s0->unk17 >> 6) & 3)) + D_800B97BC;
         sp88 = ((var_s0->unkE * 4) | ((var_s0->unk17 >> 2) & 3)) + D_800B97BC;
-        for (i = 0; i < SOME_SIZE; i++) {
+        for (i = 0; i < MAP_LAYER_COUNT; i++) {
             var_v0 = &gFrustumPlanes[i];
             if (var_v0->unk_0x14[0] & 1) {
                 var_fs1 = sp84;
@@ -1184,7 +1187,7 @@ s32 func_8004454C(f32 x, f32 y, f32 z) {
         return -1;
     }
     gridX = GRID_INDEX(gridZ, gridX);
-    for (i = 0; i < SOME_SIZE; i++) {
+    for (i = 0; i < MAP_LAYER_COUNT; i++) {
         temp = gBlockIndices[i];
         if (temp[gridX] >= 0){
             currentBlock = gLoadedBlocks[temp[gridX]];
@@ -1428,7 +1431,7 @@ void func_80044BEC(void) {
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
-    for (var_s0 = 0; var_s0 < SOME_SIZE; var_s0++) {
+    for (var_s0 = 0; var_s0 < MAP_LAYER_COUNT; var_s0++) {
         var_fv1 = 0.0f;
         var_v0 = 0;
         while (var_v0 < 24) {
@@ -1494,7 +1497,7 @@ s32 func_800451A0(s32 xPos, s32 zPos, BlocksModel* blocks) {
         maxY = 100000.f;
     }
 
-    for (i = 0; i < SOME_SIZE; i++) {
+    for (i = 0; i < MAP_LAYER_COUNT; i++) {
         currentPlane = &gFrustumPlanes[i];
 
         scaledXPos = xPos * BLOCKS_GRID_UNIT_F;
@@ -1687,7 +1690,7 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 {
     u8 i;
 
-    for (i = 0; i < SOME_SIZE; i++)
+    for (i = 0; i < MAP_LAYER_COUNT; i++)
     {
         if (gFrustumPlanes[i].x * (v->x - gWorldX) +
             gFrustumPlanes[i].y * v->y +
@@ -2314,7 +2317,7 @@ void map_update_streaming(void) {
         var_a1 = (GlobalMapCell **) &gDecodedGlobalMap;
         sp70 = gBlockIndices;\
         sp6C = &D_800B9700;\
-        for (var_s7 = 0; var_s7 < SOME_SIZE; ) {
+        for (var_s7 = 0; var_s7 < MAP_LAYER_COUNT; ) {
             var_s1 = *sp70;
             D_800B9714 = (s8 *) *sp6C;
             var_v1 = &*var_a1[var_s7];
@@ -2365,7 +2368,7 @@ void map_update_streaming(void) {
             D_800B4A54 = sp284;
             sp70 = gBlockIndices;\
             sp6C = &D_800B9700;
-            for (var_s7 = 0; var_s7 < SOME_SIZE; ) {
+            for (var_s7 = 0; var_s7 < MAP_LAYER_COUNT; ) {
                 func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
                 temp_a3 = *sp70;
                 var_s2 = sp2C8[2];
@@ -2616,7 +2619,7 @@ void func_8004773C(void) {
     func_80001A3C();
     func_80053300();
 
-    for (i = 0; i < SOME_SIZE; i++) {
+    for (i = 0; i < MAP_LAYER_COUNT; i++) {
         currentT1 = gBlockIndices[i];
         currentCell = gDecodedGlobalMap[i];
         for (j = 0; j < BLOCKS_GRID_TOTAL_CELLS; j++) {
@@ -2888,7 +2891,7 @@ void func_800484A8(void) {
 
     func_80017254(0);
     func_80012B54(1, 0);
-    for (i = 0; i < SOME_SIZE; i++) {
+    for (i = 0; i < MAP_LAYER_COUNT; i++) {
         var_s1 = gBlockIndices[i];
         for (j = 0; j < 256; j++) {
             func_800496E4(var_s1[j]);
@@ -4000,7 +4003,7 @@ void map_update_objects_streaming(s32 arg0) {
     s16 mapID;
 
     var_s4 = 0;
-    for (spB8 = 0; spB8 < SOME_SIZE; spB8++) {
+    for (spB8 = 0; spB8 < MAP_LAYER_COUNT; spB8++) {
         var_a2 = 0;
         var_a3 = gDecodedGlobalMap[spB8] + 119;
         for (var_a2 = 0; var_a2 < 3; var_a2++) {
@@ -4194,7 +4197,7 @@ s32 map_should_stream_load_object(ObjCreateInfo* arg0, s8 arg1, s32 arg2) {
 
         stop = 0;
         scaledX = GRID_INDEX(scaledZOrFlag, scaledX);
-        for (i = 0; i < SOME_SIZE; i++) {
+        for (i = 0; i < MAP_LAYER_COUNT; i++) {
             currentBlockIndices = gBlockIndices[i];
             if (currentBlockIndices[scaledX] >= 0) {
                 stop = 1;
@@ -4290,7 +4293,7 @@ s32 func_8004B190(Object* arg0) {
             return 1;
         }
         sp54 = GRID_INDEX(temp_v0_2, sp54);
-        for (var_a1 = FALSE, i = 0; i < SOME_SIZE; i++) {
+        for (var_a1 = FALSE, i = 0; i < MAP_LAYER_COUNT; i++) {
             currentBlockIndices = gBlockIndices[i];
             if (currentBlockIndices[sp54] >= 0) {
                 var_a1 = TRUE;

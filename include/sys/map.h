@@ -320,7 +320,8 @@ typedef struct Unk80092BC0 {
 #define BLOCKS_GRID_SPAN 16
 #define BLOCKS_GRID_TOTAL_CELLS 256
 #define MAP_ID_MAX 80
-#define SOME_SIZE 5
+// The map grid always has 5 layers: -2, -1, 0, 1, 2
+#define MAP_LAYER_COUNT 5
 
 #define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
 
@@ -332,7 +333,7 @@ extern Triangle* D_800B51D8;
 
 extern f32 gWorldX;
 extern f32 gWorldZ;
-extern Plane gFrustumPlanes[SOME_SIZE];
+extern Plane gFrustumPlanes[MAP_LAYER_COUNT];
 extern u32 gRenderList[MAX_RENDER_LIST_LENGTH];
 extern s16 gRenderListLength;
 extern Block *gBlocksToDraw[MAX_BLOCKS];
@@ -349,7 +350,7 @@ extern MapHeader* gLoadedMapsDataTable[120];
 extern UnkTextureStruct *D_800B97A8;
 
 /** An array of 5 pointers to 16*16 blockIndex arrays, one for each map layer (maybe called visGrids based on print strings?) */
-extern s8 *gBlockIndices[SOME_SIZE];
+extern s8 *gBlockIndices[MAP_LAYER_COUNT];
 extern u8 gLoadedBlockCount;
 extern BlocksModel **gLoadedBlocks;
 extern s16 *gLoadedBlockIds;
@@ -361,8 +362,8 @@ extern s16 gNumTRKBLKEntries;
 extern s32 gMapCurrentStreamCoordsX;
 extern s32 gMapCurrentStreamCoordsZ;
 
-extern GlobalMapCell *gDecodedGlobalMap[SOME_SIZE]; //16*16 grid of GlobalMapCell structs, one for each layer!
-extern s8 *D_800B9700[SOME_SIZE];
+extern GlobalMapCell *gDecodedGlobalMap[MAP_LAYER_COUNT]; //16*16 grid of GlobalMapCell structs, one for each layer!
+extern s8 *D_800B9700[MAP_LAYER_COUNT];
 extern s32 gNumTotalBlocks;
 extern Unk800B96B0* D_800B96B0;
 extern s32* gFile_BLOCKS_TAB; // unknown pointer type
