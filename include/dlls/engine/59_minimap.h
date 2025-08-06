@@ -5,7 +5,7 @@
 #include "types.h"
 
 DLL_INTERFACE_BEGIN(59_minimap)
-/*0*/ UnknownDLLFunc func0;
+/*0*/ void (*func0)(void);
 /*1*/ UnknownDLLFunc func1;
 /*2*/ UnknownDLLFunc func2;
 DLL_INTERFACE_END()

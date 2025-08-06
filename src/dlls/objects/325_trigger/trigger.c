@@ -965,7 +965,7 @@ void trigger_func_1868(u16 param1) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
             tex = func_8003E960(*ptr2);
             if (tex == NULL) {
-                func_80012584(50, 3, NULL, (UnkStructAssetThreadSingle_0x8*)*ptr2, 0, 0, 0, 0);
+                func_80012584(50, 3, NULL, (ObjCreateInfo*)*ptr2, 0, 0, 0, 0);
             }
         }
     }

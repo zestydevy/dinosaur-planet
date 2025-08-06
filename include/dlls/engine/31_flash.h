@@ -4,6 +4,7 @@
 #include "PR/ultratypes.h"
 #include "dll_def.h"
 #include "dlls/engine/29_gplay.h"
+#include "prevent_bss_reordering.h"
 
 // size: 0x1800
 typedef struct {

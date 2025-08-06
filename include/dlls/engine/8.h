@@ -4,12 +4,13 @@
 #include "dll_def.h"
 #include "types.h"
 #include "game/objects/object.h"
+#include "PR/gbi.h"
 
 DLL_INTERFACE_BEGIN(8)
 /*0*/ void (*func0)(Object *, Object *, void *, s32, u16);
 /*1*/ void (*func1)(void);
-/*2*/ UnknownDLLFunc func2;
-/*3*/ UnknownDLLFunc func3;
+/*2*/ void (*func2)(void);
+/*3*/ void (*func3)(Gfx **);
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;

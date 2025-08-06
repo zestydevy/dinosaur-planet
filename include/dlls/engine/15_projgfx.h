@@ -5,7 +5,7 @@
 #include "types.h"
 
 DLL_INTERFACE_BEGIN(15_projgfx)
-/*0*/ UnknownDLLFunc func0;
+/*0*/ void (*func0)(void);
 /*1*/ UnknownDLLFunc func1;
 /*2*/ void (*func2)(u8, s32);
 /*3*/ UnknownDLLFunc func3;

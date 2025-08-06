@@ -64,19 +64,27 @@ typedef struct {
 } ObjectStruct50;
 
 typedef struct {
-/*0000*/    f32 unk_0x0;
-/*0004*/    Texture *unk_0x4;
-/*0008*/    Texture *unk_0x8;
-/*000C*/    Gfx *gdl;
-/*0010*/    u8 unk_0x10[0x20 - 0x10];
-/*0020*/    Vec3f tr;
-/*002C*/    f32 unk_0x2c;
-/*0030*/    u32 flags;
-/*0034*/    u32 unk_0x34;
-/*0038*/    u32 unk_0x38;
-/*003c*/    u32 unk_0x3c;
-/*0040*/    u8 unk_0x40;
-/*0041*/    s8 unk_0x41; //shadows toggle this each frame
+/* 0x0 */ f32 unk0;
+/* 0x4 */ Texture *unk4;
+/* 0x8 */ Texture *unk8;
+/* 0xC */ Gfx *gdl;
+/* 0x10 */ Gfx *gdl2;
+/* 0x14 */ Vec3f unk14;
+/* 0x20 */ Vec3f tr;
+/* 0x2C */ f32 unk2c;
+/* 0x30 */ u32 flags;
+/* 0x34 */ u16 unk34;
+/* 0x36 */ s16 unk36;
+/* 0x38 */ u8 unk38;
+/* 0x39 */ u8 unk39;
+/* 0x3A */ u8 unk3A;
+/* 0x3B */ u8 unk3B;
+/* 0x3c */ u8 unk3C;
+/* 0x3d */ u8 unk3D;
+/* 0x3e */ u8 unk3E;
+/* 0x3f */ u8 unk3F;
+/* 0x40 */ u8 unk40;
+/* 0x41 */ s8 unk41; //shadows toggle this each frame
 } ObjectStruct64;
 
 typedef struct {
@@ -132,13 +140,13 @@ typedef struct {
 // These initial 7 functions are inherited and implemented by all object DLLs.
 // Any exports referenced with a higher index are specific to an object or subtype.
 DLL_INTERFACE_BEGIN(Object)
-    /*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
-    /*1*/ void (*update)(struct Object *obj);
-    /*2*/ void (*func3)(struct Object *obj); // update_child?
-    /*3*/ void (*draw)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-    /*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
-    /*5*/ u32 (*func6)(struct Object *obj);
-    /*6*/ u32 (*get_state_size)(struct Object *obj, u32);
+	/*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
+	/*1*/ void (*update)(struct Object *obj);
+	/*2*/ void (*func3)(struct Object *obj); // update_child?
+	/*3*/ void (*draw)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+	/*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
+	/*5*/ u32 (*func6)(struct Object *obj);
+	/*6*/ u32 (*get_state_size)(struct Object *obj, u32);
 DLL_INTERFACE_END()
 
 // arg3 and arg4 are unknown types
@@ -192,7 +200,7 @@ typedef struct Object {
 /*00AE*/    s8 updatePriority;
 /*00AF*/    u8 unk0xaf;
 /*00B0*/    u16 unk0xb0;
-/*00B2*/    UNK_TYPE_16 unk0xb2;
+/*00B2*/    s16 unk0xb2;
 /*00B4*/    s16 unk0xb4;
 /*00B6*/	u8 unk0xb6[2];
 /*00B8*/	void* state; //type depends on object
@@ -222,6 +230,6 @@ typedef struct ObjListItem {
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
-extern struct Vec3_Int Vec3_Int_array[];
+extern struct Vec3_Int Vec3_Int_array[20];
 
 #endif

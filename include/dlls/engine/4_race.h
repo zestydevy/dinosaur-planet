@@ -3,11 +3,12 @@
 
 #include "dll_def.h"
 #include "types.h"
+#include "game/objects/object.h"
 
 DLL_INTERFACE_BEGIN(4_race)
-/*0*/ UnknownDLLFunc func0;
-/*1*/ UnknownDLLFunc func1;
-/*2*/ UnknownDLLFunc func2;
+/*0*/ void (*func0)(void);
+/*1*/ void (*func1)(ObjCreateInfo *);
+/*2*/ void (*func2)(ObjCreateInfo *);
 /*3*/ UnknownDLLFunc func3;
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;
