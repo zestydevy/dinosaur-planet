@@ -203,7 +203,7 @@ void dll_22_func_368(u16 arg0) {
     }
     _data_34 = 1;
     _bss_7A8 = -255;
-    _bss_7AC = gDLL_21_Gametext->exports->get_chunk(arg0);
+    _bss_7AC = gDLL_21_Gametext->vtbl->get_chunk(arg0);
     _bss_7B0 = arg0;
 }
 

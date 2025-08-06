@@ -273,7 +273,7 @@ void dll_63_ctor(void *self) {
     sLogoShadowTexture = queue_load_texture_proxy(0x2E1);
 
     if (sGameTextChunk == NULL) {
-        sGameTextChunk = gDLL_21_Gametext->exports->get_chunk(0xEC);
+        sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(0xEC);
     }
 
     for (i = 0; i < 18; i++) {
@@ -285,7 +285,7 @@ void dll_63_ctor(void *self) {
     }
 
     if (menu_get_previous() != MENU_6) {
-        gDLL_28_ScreenFade->exports->fade_reversed(20, SCREEN_FADE_BLACK);
+        gDLL_28_ScreenFade->vtbl->fade_reversed(20, SCREEN_FADE_BLACK);
         dll_63_goto_game_select(1);
     } else {
         sSelectedSaveIdx = get_save_game_idx();
@@ -320,8 +320,8 @@ s32 dll_63_update1() {
         sExitTransitionTimer -= delay;
     }
 
-    if (!gDLL_28_ScreenFade->exports->is_complete()) {
-        gDLL_74_Picmenu->exports->redraw_all();
+    if (!gDLL_28_ScreenFade->vtbl->is_complete()) {
+        gDLL_74_Picmenu->vtbl->redraw_all();
         sRedrawFrames = 4;
     }
 
@@ -337,7 +337,7 @@ s32 dll_63_update1() {
             func_80041C6C(1);
         } else if (sExitTransitionTimer < 1) {
             if (sExitToGame) {
-                gDLL_29_Gplay->exports->start_game();
+                gDLL_29_Gplay->vtbl->start_game();
             } else {
                 // Exit to main menu
                 func_80014BBC();
@@ -352,9 +352,9 @@ s32 dll_63_update1() {
             return 0;
         }
     } else {
-        action = gDLL_74_Picmenu->exports->update();
+        action = gDLL_74_Picmenu->vtbl->update();
         if (action != PICMENU_ACTION_NONE) {
-            selected =  gDLL_74_Picmenu->exports->get_selected_item();
+            selected =  gDLL_74_Picmenu->vtbl->get_selected_item();
 
             switch (sSubmenuIdx) {
                 case SUBMENU_GAME_SELECT:
@@ -422,7 +422,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 func_8003825C(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, 0);
                 func_8003825C(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, 0);
 
-                numRecentTasks = gDLL_30_Task->exports->get_num_recently_completed();
+                numRecentTasks = gDLL_30_Task->vtbl->get_num_recently_completed();
                 if (numRecentTasks > 3) {
                     numRecentTasks = 3;
                 }
@@ -437,7 +437,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 for (i = 0; i < numRecentTasks; i++) {
                     sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
                     font_window_add_string_xy(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                    font_window_add_string_xy(3, 2, y, gDLL_30_Task->exports->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                    font_window_add_string_xy(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
                     y += 40;
                 }
 
@@ -447,7 +447,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 for (i = 0; i < numRecentTasks; i++) {
                     sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
                     font_window_add_string_xy(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                    font_window_add_string_xy(3, 0, y - 2, gDLL_30_Task->exports->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                    font_window_add_string_xy(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
                     y += 40;
                 }
             } else {
@@ -482,7 +482,7 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             func_800382AC(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, 2);
         }
 
-        gDLL_74_Picmenu->exports->draw(gdl);
+        gDLL_74_Picmenu->vtbl->draw(gdl);
 
         font_window_draw(gdl, NULL, NULL, 1);
         font_window_draw(gdl, NULL, NULL, 3);
@@ -504,7 +504,7 @@ static void dll_63_clean_up(s32 leavingMenus) {
     }
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
         sSubmenuIdx = -1;
     }
 
@@ -539,7 +539,7 @@ static void dll_63_goto_game_select(s32 param1) {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_GAME_SELECT;
@@ -549,7 +549,7 @@ static void dll_63_goto_game_select(s32 param1) {
     dll_63_load_save_game_info();
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -567,13 +567,13 @@ static void dll_63_load_save_game_info() {
     char *filenamePtr;
 
     for (i = 0; i < 3; i++) {
-        if ((u8)gDLL_29_Gplay->exports->load_save(i, /*startGame*/FALSE) == 0) {
+        if ((u8)gDLL_29_Gplay->vtbl->load_save(i, /*startGame*/FALSE) == 0) {
             // failed to load save?
-            gDLL_29_Gplay->exports->erase_save(i);
+            gDLL_29_Gplay->vtbl->erase_save(i);
             bzero(&sSaveGameInfo[i], sizeof(GameSelectSaveInfo));
             sSaveGameInfo[i].isEmpty = TRUE;
         } else {
-            saveFile = &gDLL_29_Gplay->exports->func_E74()->unk0.unk0.unk0;
+            saveFile = &gDLL_29_Gplay->vtbl->func_E74()->unk0.unk0.unk0;
 
             if (saveFile->unk0x2f6 == 0) {
                 sSaveGameInfo[i].character = saveFile->character;
@@ -582,7 +582,7 @@ static void dll_63_load_save_game_info() {
 
                 filenamePtr = sSaveGameInfo[i].filename;
 
-                gDLL_7_Newday->exports->convert_ticks_to_real_time(
+                gDLL_7_Newday->vtbl->convert_ticks_to_real_time(
                     saveFile->unk0x2fc,
                     &sSaveGameInfo[i].timeHours, &sSaveGameInfo[i].timeMinutes, &sSaveGameInfo[i].timeSeconds);
 
@@ -603,14 +603,14 @@ static void dll_63_goto_game_confirm() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_GAME_CONFIRM;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -627,7 +627,7 @@ static void dll_63_goto_copy_src_select() {
     s32 i;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_COPY_SRC_SELECT;
@@ -643,7 +643,7 @@ static void dll_63_goto_copy_src_select() {
     }
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -662,7 +662,7 @@ static void dll_63_goto_copy_dst_select() {
     s32 temp;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_COPY_DST_SELECT;
@@ -684,7 +684,7 @@ static void dll_63_goto_copy_dst_select() {
     }
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -700,14 +700,14 @@ static void dll_63_goto_copy_confirm() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_COPY_CONFIRM;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -724,7 +724,7 @@ static void dll_63_goto_erase_select() {
     s32 i;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_ERASE_SELECT;
@@ -741,7 +741,7 @@ static void dll_63_goto_erase_select() {
         }
     }
 
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -757,14 +757,14 @@ static void dll_63_goto_erase_confirm() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_ERASE_CONFIRM;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 1,
         /*sounds*/ NULL,
         /*param5*/ 5,
@@ -780,14 +780,14 @@ static void dll_63_goto_game_recap() {
     GameSelectSubmenu *submenu;
 
     if (sSubmenuIdx != -1) {
-        gDLL_74_Picmenu->exports->clear_items();
+        gDLL_74_Picmenu->vtbl->clear_items();
     }
 
     sSubmenuIdx = SUBMENU_GAME_RECAP;
     submenu = &sSubmenus[sSubmenuIdx];
 
     dll_63_init_submenu(submenu);
-    gDLL_74_Picmenu->exports->set_items(submenu->menuItems, submenu->count,
+    gDLL_74_Picmenu->vtbl->set_items(submenu->menuItems, submenu->count,
         /*defaultItem*/ 0,
         /*sounds*/ &sGameRecapMenuSounds,
         /*param5*/ 5,
@@ -864,19 +864,19 @@ static void dll_63_act_game_confirm(PicMenuAction action, s32 selected) {
     if (action == PICMENU_ACTION_BACK || selected == 1) {
         dll_63_goto_game_select(0);
     } else {
-        gDLL_29_Gplay->exports->load_save(sSelectedSaveIdx, /*startGame*/FALSE);
+        gDLL_29_Gplay->vtbl->load_save(sSelectedSaveIdx, /*startGame*/FALSE);
         
-        gDLL_30_Task->exports->load_recently_completed();
+        gDLL_30_Task->vtbl->load_recently_completed();
 
-        if (gDLL_30_Task->exports->get_num_recently_completed() != 0) {
+        if (gDLL_30_Task->vtbl->get_num_recently_completed() != 0) {
             dll_63_goto_game_recap();
         } else {
             sExitToGame = TRUE;
-            gDLL_28_ScreenFade->exports->fade(20, SCREEN_FADE_BLACK);
-            gDLL_5_AMSEQ->exports->func6(0);
-            gDLL_5_AMSEQ->exports->func6(1);
-            gDLL_5_AMSEQ->exports->func6(2);
-            gDLL_5_AMSEQ->exports->func6(3);
+            gDLL_28_ScreenFade->vtbl->fade(20, SCREEN_FADE_BLACK);
+            gDLL_5_AMSEQ->vtbl->func6(0);
+            gDLL_5_AMSEQ->vtbl->func6(1);
+            gDLL_5_AMSEQ->vtbl->func6(2);
+            gDLL_5_AMSEQ->vtbl->func6(3);
             sExitTransitionTimer = 35;
         }
     }
@@ -891,11 +891,11 @@ static void dll_63_act_game_recap(PicMenuAction action, s32 selected) {
         dll_63_goto_game_confirm();
     } else if (action == PICMENU_ACTION_SELECT) {
         sExitToGame = TRUE;
-        gDLL_28_ScreenFade->exports->fade(20, SCREEN_FADE_BLACK);
-        gDLL_5_AMSEQ->exports->func6(0);
-        gDLL_5_AMSEQ->exports->func6(1);
-        gDLL_5_AMSEQ->exports->func6(2);
-        gDLL_5_AMSEQ->exports->func6(3);
+        gDLL_28_ScreenFade->vtbl->fade(20, SCREEN_FADE_BLACK);
+        gDLL_5_AMSEQ->vtbl->func6(0);
+        gDLL_5_AMSEQ->vtbl->func6(1);
+        gDLL_5_AMSEQ->vtbl->func6(2);
+        gDLL_5_AMSEQ->vtbl->func6(3);
         sExitTransitionTimer = 35;
     }
 }
@@ -927,7 +927,7 @@ static void dll_63_act_copy_confirm(PicMenuAction action, s32 selected) {
     if (action == PICMENU_ACTION_BACK || selected == 1) {
         dll_63_goto_copy_dst_select();
     } else {
-        gDLL_29_Gplay->exports->copy_save(sSelectedSaveIdx, sCopyDstIdx);
+        gDLL_29_Gplay->vtbl->copy_save(sSelectedSaveIdx, sCopyDstIdx);
         dll_63_goto_game_select(0);
     }
 }
@@ -949,7 +949,7 @@ static void dll_63_act_erase_confirm(PicMenuAction action, s32 selected) {
     if (action == PICMENU_ACTION_BACK || selected == 1) {
         dll_63_goto_erase_select();
     } else {
-        gDLL_29_Gplay->exports->erase_save(sSelectedSaveIdx);
+        gDLL_29_Gplay->vtbl->erase_save(sSelectedSaveIdx);
         dll_63_goto_game_select(0);
     }
 }

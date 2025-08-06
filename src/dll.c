@@ -42,7 +42,7 @@ s32 find_executing_dll(u32 pc, void **start, void **end) {
         }
         
         // Get start and end of the full DLL
-        *start = (void*)DLL_EXPORTS_TO_FILE(gLoadedDLLList[i].exports);
+        *start = (void*)DLL_EXPORTS_TO_FILE(gLoadedDLLList[i].vtblPtr);
         *end = gLoadedDLLList[i].end;
 
         if ((s32)*start > (s32)pc || (s32)pc > (s32)*end) {
@@ -75,34 +75,34 @@ DLLState *get_loaded_dlls(s32 *outLoadedDLLCount) {
 void *dll_load_deferred(u16 id, u16 exportCount) {
     DLLFile *dll;
     DLLState *state;
-    void *dllInst;
+    void *dllInterfacePtr;
 
-    dllInst = NULL;
+    dllInterfacePtr = NULL;
     
     if (!id) {
         return NULL;
     }
 
-    queue_load_dll(&dllInst, id, exportCount);
+    queue_load_dll(&dllInterfacePtr, id, exportCount);
 
-    state = DLL_STATE_EXPORTS_TO_STATE(dllInst);
+    state = DLL_INTERFACE_TO_STATE(dllInterfacePtr);
 
     if (state->refCount == 1) {
-        // A DLL instance is a pointer to a DLL state exports field.
+        // A DLL interface is a pointer to a DLL state exports field.
         // Dereferencing the state exports field gives us a pointer to the DLL file exports array.
         // Using the file exports array address, we can get the DLL file instance.
-        dll = DLL_EXPORTS_TO_FILE(*(void**)dllInst);
+        dll = DLL_EXPORTS_TO_FILE(*(void**)dllInterfacePtr);
         dll->ctor(dll);
     }
 
-    return dllInst;
+    return dllInterfacePtr;
 }
 
 void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     DLLFile *dll;
     u32 i;
     s32 totalSize;
-    u32 **result;
+    u32 **interfacePtr;
 
     if (id >= 0x8000) {
         id -= 0x8000;
@@ -122,7 +122,7 @@ void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     for (i = 0; i < (u32)gLoadedDLLCount; i++) {
         if (id == gLoadedDLLList[i].id) {
             ++gLoadedDLLList[i].refCount;
-            return &gLoadedDLLList[i].exports;
+            return &gLoadedDLLList[i].vtblPtr;
         }
     }
 
@@ -154,16 +154,18 @@ void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     }
 
     gLoadedDLLList[i].id = id;
-    gLoadedDLLList[i].exports = DLL_FILE_EXPORTS(dll);
+    // The relocated export table is the vtable of the DLL at runtime
+    gLoadedDLLList[i].vtblPtr = DLL_FILE_TO_EXPORTS(dll);
     gLoadedDLLList[i].end = (void*)((u32)dll + totalSize);
     gLoadedDLLList[i].refCount = 1;
-    result = &gLoadedDLLList[i].exports;
+    // A pointer to the vtable pointer is the interface of the DLL
+    interfacePtr = &gLoadedDLLList[i].vtblPtr;
 
     if (runConstructor) {
         dll->ctor(dll);
     }
 
-    return (void*)result;
+    return (void*)interfacePtr;
 }
 
 // unused
@@ -203,20 +205,20 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
     }
 
     gLoadedDLLList[i].id       = id;
-    gLoadedDLLList[i].exports  = DLL_FILE_EXPORTS(dll);
+    gLoadedDLLList[i].vtblPtr  = DLL_FILE_TO_EXPORTS(dll);
     gLoadedDLLList[i].end      = (void*)(((u32)dll + dllBytesSize) + bssSize);
     gLoadedDLLList[i].refCount = 2;
 
     dll->ctor(dll);
 }
 
-s32 dll_unload(void *dllInst) {
+s32 dll_unload(void *dllInterfacePtr) {
     DLLFile *dll;
     u16 idx;
     u32 *dllClearAddr;
     u32 *dllTextEnd;
 
-    idx = (u32)DLL_STATE_EXPORTS_TO_STATE(dllInst) - (u32)gLoadedDLLList;
+    idx = (u32)DLL_INTERFACE_TO_STATE(dllInterfacePtr) - (u32)gLoadedDLLList;
 
     if ((idx % 16) != 0) {
         return FALSE;
@@ -231,11 +233,11 @@ s32 dll_unload(void *dllInst) {
     gLoadedDLLList[idx].refCount--;
 
     if (gLoadedDLLList[idx].refCount == 0) {
-        dll = DLL_EXPORTS_TO_FILE(gLoadedDLLList[idx].exports);
+        dll = DLL_EXPORTS_TO_FILE(gLoadedDLLList[idx].vtblPtr);
         
         dll->dtor(dll);
 
-        dllClearAddr = gLoadedDLLList[idx].exports;
+        dllClearAddr = gLoadedDLLList[idx].vtblPtr;
         dllTextEnd = gLoadedDLLList[idx].end;
 
         while (dllClearAddr < dllTextEnd) {
@@ -313,8 +315,9 @@ void dll_relocate(DLLFile *dll) {
     *(u32*)&dll->ctor += (u32)target;
     *(u32*)&dll->dtor += (u32)target;
 
-    // Relocate exports to absolute addresses (skip first one)
-    exports = DLL_FILE_EXPORTS(dll) + 1;
+    // Relocate exports to absolute addresses (skip first one, which is always null)
+    // This sets up the DLL's vtable
+    exports = DLL_FILE_TO_EXPORTS(dll) + 1;
     for (exportCount = dll->exportCount; exportCount != 0; exportCount--) {
         *exports++ += (u32)target;
     }

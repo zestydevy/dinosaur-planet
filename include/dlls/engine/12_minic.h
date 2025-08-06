@@ -6,7 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(12_minic)
+DLL_INTERFACE(DLL_12_minic) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(Object*,Object*,void*,s32,u16);
     /*1*/ void (*func1)(void);
     /*2*/ void (*func2)(void);
@@ -17,6 +18,6 @@ DLL_INTERFACE_BEGIN(12_minic)
     /*7*/ UnknownDLLFunc func7;
     /*8*/ UnknownDLLFunc func8;
     /*9*/ UnknownDLLFunc func9;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_12_H

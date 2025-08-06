@@ -162,7 +162,7 @@ void gplay_init_save(s8 idx, char *filename) {
 
     for (i = 0; i < 120; i++) {
         if (data_0[i] != 0) {
-            gDLL_29_Gplay->exports->func_139C(i, 1);
+            gDLL_29_Gplay->vtbl->func_139C(i, 1);
         }
     }
 
@@ -202,8 +202,8 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
 
             flashPtr = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
 
-            var1 = gDLL_31_Flash->exports->load_game(bss_0, idx, sizeof(FlashStruct), 1);
-            var2 = gDLL_31_Flash->exports->load_game(flashPtr, idx + 4, sizeof(FlashStruct), 1);
+            var1 = gDLL_31_Flash->vtbl->load_game(bss_0, idx, sizeof(FlashStruct), 1);
+            var2 = gDLL_31_Flash->vtbl->load_game(flashPtr, idx + 4, sizeof(FlashStruct), 1);
 
             if (var1 == 0) {
                 if (var2 == 0) {
@@ -259,7 +259,7 @@ void gplay_func_6AC() {
 
         bcopy(&bss_10.unk0.unk0.unk0, &bss_0->gplay.unk0.unk0, sizeof(GplayStruct8));
 
-        gDLL_31_Flash->exports->save_game(
+        gDLL_31_Flash->vtbl->save_game(
             bss_0, 
             bss_183C + (bss_0->gplay.unk0.unk0.unk0x2f8 % 2) * 4, 
             sizeof(FlashStruct), 
@@ -277,7 +277,7 @@ u32 gplay_func_79C() {
     
     var = 1;
 
-    ret = gDLL_31_Flash->exports->load_game(
+    ret = gDLL_31_Flash->vtbl->load_game(
         bss_8, 3, sizeof(GplayStruct4), 0);
     
     if (ret == 0) {
@@ -307,7 +307,7 @@ u32 gplay_func_79C() {
 }
 
 void gplay_func_8D8() {
-    gDLL_31_Flash->exports->save_game(bss_8, 3, sizeof(GplayStruct4), 0);
+    gDLL_31_Flash->vtbl->save_game(bss_8, 3, sizeof(GplayStruct4), 0);
 }
 
 GplayStruct4 *gplay_func_930() {
@@ -405,7 +405,7 @@ static void gplay_func_D94() {
         menu_set(MENU_1);
     }
 
-    gDLL_28_ScreenFade->exports->fade_reversed(40, SCREEN_FADE_BLACK);
+    gDLL_28_ScreenFade->vtbl->fade_reversed(40, SCREEN_FADE_BLACK);
 }
 
 GplayStruct7 *gplay_func_E74() {

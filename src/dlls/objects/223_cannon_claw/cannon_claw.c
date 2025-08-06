@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 
 #include "dlls/objects/223_cannon_claw.h"
-#include "dlls/objects/xxx_sidekick.h"
+#include "dlls/objects/common/sidekick.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -41,7 +41,7 @@ void cannon_claw_update(Object *self) {
         if (self->parent != NULL) {
             CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
             set_gplay_bitstring(createInfo->bitstringEntry, 1);
-            ((DLLInst_unk_sidekick*) sidekick->dll)->exports->func21(sidekick, 0, 0);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
         }
         
         cannon_claw_func_1B4(self);

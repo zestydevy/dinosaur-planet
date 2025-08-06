@@ -4,6 +4,7 @@
 #define _SYS_DLL_H
 
 #include "PR/ultratypes.h"
+#include "macros.h"
 
 #define MAX_LOADED_DLLS 128
 #define DLL_NONE -1
@@ -28,7 +29,7 @@ typedef struct {
 typedef struct {
 /*0000*/	s32 id;
 /*0004*/	s32 refCount;
-/*0008*/	u32 *exports;
+/*0008*/	u32 *vtblPtr;
 /*000C*/	void *end;
 } DLLState;
 
@@ -45,14 +46,14 @@ typedef struct DLLFile
 	DLLFunc ctor;
 	DLLFunc dtor;
 	// Exports table begins here
+	// After relocation, the exports table becomes a vtable
 } DLLFile;
 
-#define DLL_FILE_EXPORTS(dllFile) ((u32*)((u32)dllFile + sizeof(DLLFile)))
+#define DLL_FILE_TO_EXPORTS(dllFile) ((u32*)((u32)dllFile + sizeof(DLLFile)))
 #define DLL_EXPORTS_TO_FILE(exports) ((DLLFile*)((u32)exports - sizeof(DLLFile)))
 
-// Note: A DLL instance IS a pointer to a DLL state exports field
-#define DLL_STATE_EXPORTS_FIELD_OFFSET 0x8
-#define DLL_STATE_EXPORTS_TO_STATE(stateExports) ((DLLState*)((u32)stateExports - DLL_STATE_EXPORTS_FIELD_OFFSET))
+// Note: A DLL interface IS a pointer to a DLL state vtblPtr field (DLLState.vtblPtr)
+#define DLL_INTERFACE_TO_STATE(interfacePtr) ((DLLState*)((u32)interfacePtr - OFFSETOF(DLLState, vtblPtr)))
 
 extern DLLState *gLoadedDLLList;
 extern s32 gLoadedDLLCount;
@@ -73,9 +74,12 @@ s32 find_executing_dll(u32 pc, void **start, void **end);
 void replace_loaded_dll_list(DLLState list[], s32 count);
 DLLState *get_loaded_dlls(s32 *outLoadedDLLCount);
 void *dll_load_deferred(u16 id, u16 exportCount);
+/**
+ * Loads a DLL by ID and returns a pointer to its loaded interface.
+ */
 void *dll_load(u16 id, u16 exportCount, s32 runConstructor);
 void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize);
-s32 dll_unload(void *dllInst);
+s32 dll_unload(void *dllInterfacePtr);
 s32 dll_throw_fault();
 
 #endif //_SYS_DLL_H

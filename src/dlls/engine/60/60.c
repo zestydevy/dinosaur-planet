@@ -38,7 +38,7 @@ void dll_60_ctor(void *self) {
     if (osMemSize != 0x800000) {
         data_4 = 1;
         data_10 = queue_load_texture_proxy(0x2da);
-        bss_14 = gDLL_21_Gametext->exports->get_chunk(243);
+        bss_14 = gDLL_21_Gametext->vtbl->get_chunk(243);
     } else {
         bss_4 = 0;
         bss_0 = 0.0f;
@@ -47,15 +47,15 @@ void dll_60_ctor(void *self) {
         func_80014B1C();
         data_4 = 0;
         func_800141A4(1, 0, -1, -1);
-        gDLL_5_AMSEQ->exports->func0(NULL, 0x20, 0, 0x2f, 0);
+        gDLL_5_AMSEQ->vtbl->func0(NULL, 0x20, 0, 0x2f, 0);
         set_gplay_bitstring(0x44f, 1);
-        gDLL_2_Camera->exports->func21(30, 1);
+        gDLL_2_Camera->vtbl->func21(30, 1);
         data_8 = queue_load_texture_proxy(0x2d2);
         data_C = queue_load_texture_proxy(0x2d3);
         bss_18 = queue_load_texture_proxy(0x2db);
         bss_1C = queue_load_texture_proxy(0x2dc);
-        bss_14 = gDLL_21_Gametext->exports->get_chunk(242);
-        gDLL_29_Gplay->exports->func_930(); // ignoring return value
+        bss_14 = gDLL_21_Gametext->vtbl->get_chunk(242);
+        gDLL_29_Gplay->vtbl->func_930(); // ignoring return value
     }
 
     bss_6 = 0;
@@ -82,10 +82,10 @@ s32 dll_60_update1() {
         bss_0 += delayFloat;
 
         if (bss_6 == 0 && bss_0 > 205.0f) {
-            gDLL_28_ScreenFade->exports->fade(30, SCREEN_FADE_BLACK);
+            gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
             bss_6 = 1;
         } else if (bss_6 == 1 && bss_0 > 245.0f) {
-            gDLL_28_ScreenFade->exports->fade_reversed(30, SCREEN_FADE_BLACK);
+            gDLL_28_ScreenFade->vtbl->fade_reversed(30, SCREEN_FADE_BLACK);
             bss_6 = 2;
         }
 
@@ -142,7 +142,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         font_window_add_string_xy(2, 320, fontYSpacing + 356, bss_14->strings[4], 1, ALIGN_TOP_CENTER);
         func_8003825C(gdl, data_10, 0xfd, 0x42, 0, 0, 0xff, 0);
     } else {
-        gDLL_76->exports->func2(gdl, mtxs);
+        gDLL_76->vtbl->func2(gdl, mtxs);
 
         if (bss_0 < 240.0f) {
             font_window_enable_wordwrap(2);
@@ -158,7 +158,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 
         if (bss_0 > 240.0f && data_0 == 0) {
             data_0 = 1;
-            gDLL_76->exports->func0(0x41a, 0x2c9, 0xf, -470, 0xffffffee, 1.0f, &local4, 0xe002, 5, 1, 0, 0);
+            gDLL_76->vtbl->func0(0x41a, 0x2c9, 0xf, -470, 0xffffffee, 1.0f, &local4, 0xe002, 5, 1, 0, 0);
         }
 
         if (bss_0 > 280.0f && data_0 == 1) {

@@ -139,7 +139,8 @@ typedef struct {
 //
 // These initial 7 functions are inherited and implemented by all object DLLs.
 // Any exports referenced with a higher index are specific to an object or subtype.
-DLL_INTERFACE_BEGIN(Object)
+DLL_INTERFACE(DLL_IObject) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
 	/*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
 	/*1*/ void (*update)(struct Object *obj);
 	/*2*/ void (*func3)(struct Object *obj); // update_child?
@@ -147,7 +148,7 @@ DLL_INTERFACE_BEGIN(Object)
 	/*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
 	/*5*/ u32 (*func6)(struct Object *obj);
 	/*6*/ u32 (*get_state_size)(struct Object *obj, u32);
-DLL_INTERFACE_END()
+};
 
 // arg3 and arg4 are unknown types
 // always called by DLL 3 "ANIM" during cutscenes?
@@ -181,7 +182,7 @@ typedef struct Object {
 /*005C*/    ObjectStruct5C *ptr0x5c;
 /*0060*/    ObjectStruct60 *ptr0x60;
 /*0064*/    ObjectStruct64* ptr0x64; //ShadowData?
-/*0068*/    DLLInst_Object *dll;
+/*0068*/    DLL_IObject *dll;
 /*006C*/    u16 (*ptr0x6c)[9];
 /*0070*/    void* ptr0x70;
 /*0074*/    u32 unk0x74;

@@ -5,7 +5,8 @@
 #include "types.h"
 #include "game/objects/object.h"
 
-DLL_INTERFACE_BEGIN(4_race)
+DLL_INTERFACE(DLL_4_race) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
 /*1*/ void (*func1)(ObjCreateInfo *);
 /*2*/ void (*func2)(ObjCreateInfo *);
@@ -21,6 +22,6 @@ DLL_INTERFACE_BEGIN(4_race)
 /*12*/ UnknownDLLFunc func12;
 /*12*/ UnknownDLLFunc func13;
 /*13*/ void (*func14)(void);
-DLL_INTERFACE_END()
+};
 
 #endif // _DLL_4_H

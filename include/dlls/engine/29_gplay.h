@@ -154,7 +154,8 @@ typedef struct {
     /*0x17a*/u8 bitString[128];
 } GplayStruct7;
 
-DLL_INTERFACE_BEGIN(29_gplay)
+DLL_INTERFACE(DLL_29_gplay) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*erase_save)(s8 idx);
     /*1*/ void (*init_save)(s8 idx, char *filename);
     /*2*/ s32 (*load_save)(s8 idx, u8 startGame);
@@ -204,6 +205,6 @@ DLL_INTERFACE_BEGIN(29_gplay)
     /*46*/ void (*func_1AF8)(u8 param1, u8 param2);
     /*47*/ u32 (*func_1B78)(u8 param1);
     /*48*/ void (*func_1BC4)(u8 param1);
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_29_H

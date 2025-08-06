@@ -48,8 +48,8 @@ typedef struct {
     s16 unk0[4];
 } idk2;
 
-static DLLInst_Unknown *_data_0 = NULL; // DAT_8122b7d0
-static DLLInst_Unknown *_data_4 = NULL; // DAT_8122b7d4
+static DLL_Unknown *_data_0 = NULL; // DAT_8122b7d0
+static DLL_Unknown *_data_4 = NULL; // DAT_8122b7d4
 static u32 _data_8[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
@@ -140,7 +140,7 @@ void dll_296_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     state = (MediumCrateState*)self->state;
     createInfo = (MediumCrateCreateInfo*)self->createInfo;
 
-    if (!gDLL_29_Gplay->exports->func_109C(createInfo->base.uID)) {
+    if (!gDLL_29_Gplay->vtbl->func_109C(createInfo->base.uID)) {
         return;
     }
     if (state->unkC != 0 && state->unkC < 51) {
@@ -173,13 +173,13 @@ void dll_296_destroy(Object *self, s32 param2) {
 
     state = (MediumCrateState*)self->state;
 
-    gDLL_14_Modgfx->exports->func5(self);
+    gDLL_14_Modgfx->vtbl->func5(self);
 
     dll_unload(_data_0);
     dll_unload(_data_4);
 
     if (state->unk8 != 0) {
-        gDLL_6_AMSFX->exports->func6(state->unk8);
+        gDLL_6_AMSFX->vtbl->func6(state->unk8);
         state->unk8 = 0;
     }
 }

@@ -77,7 +77,8 @@ typedef struct
     s32 backSoundID;
 } PicMenuSounds;
 
-DLL_INTERFACE_BEGIN(74_picmenu)
+DLL_INTERFACE(DLL_74_picmenu) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*set_items)(PicMenuItem *items, s32 count,
                         s32 defaultItem, PicMenuSounds *sounds, s32 param5, s32 param6,
                         s32 textColorR, s32 textColorG, s32 textColorB,
@@ -94,6 +95,6 @@ DLL_INTERFACE_BEGIN(74_picmenu)
 /*10*/ void (*update_flags)(PicMenuItem *items);
 /*11*/ void (*set_opacity)(u8 opacity);
 /*12*/ void (*redraw_all)();
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_74_H

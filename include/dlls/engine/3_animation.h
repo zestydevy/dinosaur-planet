@@ -6,7 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(3_animation)
+DLL_INTERFACE(DLL_3_animation) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
 /*1*/ void (*func1)(s32, s32);
 /*2*/ void (*func2)(s32, s32);
@@ -40,6 +41,6 @@ DLL_INTERFACE_BEGIN(3_animation)
 /*30*/ UnknownDLLFunc func30;
 /*31*/ UnknownDLLFunc func31;
 /*32*/ UnknownDLLFunc func32;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_3_H

@@ -6,7 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(5_AMSEQ)
+DLL_INTERFACE(DLL_5_AMSEQ) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ s32 (*func0)(Object*,u16,s32,s32,s32);
     /*1*/ void (*func1)(Object*,u16,s32,s32,s32);
     /*2*/ s32 (*func2)(Object*,u16);
@@ -43,6 +44,6 @@ DLL_INTERFACE_BEGIN(5_AMSEQ)
     /*33*/ UnknownDLLFunc func33;
     /*34*/ UnknownDLLFunc func34;
     /*35*/ UnknownDLLFunc func35;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_5_H

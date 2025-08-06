@@ -5,7 +5,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(1_UI) 
+DLL_INTERFACE(DLL_1_UI) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
     /*00*/ UnknownDLLFunc ui_func_308;
     /*01*/ UnknownDLLFunc ui_func_35c;
     /*02*/ UnknownDLLFunc ui_func_bb8;
@@ -30,6 +31,6 @@ DLL_INTERFACE_BEGIN(1_UI)
     /*21*/ UnknownDLLFunc ui_func_7208;
     /*22*/ UnknownDLLFunc ui_func_7550;
     /*23*/ UnknownDLLFunc ui_func_75cc;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_1_H

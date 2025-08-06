@@ -5,7 +5,8 @@
 #include "PR/gbi.h"
 #include "dll_def.h"
 
-DLL_INTERFACE_BEGIN(22_subtitles)
+DLL_INTERFACE(DLL_22_subtitles) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /* 0 */ u32 (*func_2D0)(u32 arg0);
 /* 1 */ void (*func_2F4)(void);
 /* 2 */ void (*func_32C)(u8 arg0, u8 arg1);
@@ -16,6 +17,6 @@ DLL_INTERFACE_BEGIN(22_subtitles)
 /* 7 */ s16 (*func_214C)(s32 arg0);
 /* 8 */ s32 (*func_21C0)(s32 arg0, s16 arg1);
 /* 9 */ s32 (*func_2248)(u8 arg0);
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_22_H

@@ -19,9 +19,10 @@ typedef union {
 
 // "Unknown" DLL interface to help match code calling DLLs where the exact
 // DLL being called has not been determined
-DLL_INTERFACE_BEGIN(Unknown)
-    /* 0x04 */ UnknownDLLFunc func[1];
-DLL_INTERFACE_END()
+DLL_INTERFACE(DLL_Unknown) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
+    /*0*/ UnknownDLLFunc func[1]; // length varies
+};
 
 // TODO: copied from DKR, might be wrong
 /* Size: 10 bytes */

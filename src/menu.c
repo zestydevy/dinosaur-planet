@@ -37,7 +37,7 @@ s8 D_8008C88C = 0;
 s32 D_8008C890 = 0;
 
 BSS_GLOBAL s32 D_800A7D50;
-BSS_GLOBAL DLLInst_Menu *gActiveMenuDLL;
+BSS_GLOBAL DLL_IMenu *gActiveMenuDLL;
 BSS_GLOBAL s32 D_800A7D58;
 BSS_GLOBAL s32 D_800A7D5C;
 BSS_GLOBAL s32 D_800A7D60;
@@ -95,7 +95,7 @@ s32 menu_get_current() {
     return gCurrentMenuID;
 }
 
-DLLInst_Menu *menu_get_active_dll() {
+DLL_IMenu *menu_get_active_dll() {
     return gActiveMenuDLL;
 }
 
@@ -123,7 +123,7 @@ void menu_do_menu_swap() {
         }
 
         if (gMenuDLLIDs[gNextMenuID] != -1) {
-            gActiveMenuDLL = (DLLInst_Menu*)dll_load_deferred(gMenuDLLIDs[gNextMenuID], 1);
+            gActiveMenuDLL = (DLL_IMenu*)dll_load_deferred(gMenuDLLIDs[gNextMenuID], 1);
         } else {
             gActiveMenuDLL = NULL;
             gNextMenuID = 0;
@@ -142,7 +142,7 @@ s32 menu_update1() {
     func_80010088();
 
     if (gActiveMenuDLL != NULL) {
-        ret = gActiveMenuDLL->exports->update1();
+        ret = gActiveMenuDLL->vtbl->update1();
     }
 
     menu_do_menu_swap();
@@ -152,7 +152,7 @@ s32 menu_update1() {
 
 void menu_update2() {
     if (gActiveMenuDLL != NULL) {
-        gActiveMenuDLL->exports->update2();
+        gActiveMenuDLL->vtbl->update2();
     }
 
     menu_do_menu_swap();
@@ -160,7 +160,7 @@ void menu_update2() {
 
 void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (gActiveMenuDLL != NULL) {
-        gActiveMenuDLL->exports->draw(gdl, mtxs, vtxs);
+        gActiveMenuDLL->vtbl->draw(gdl, mtxs, vtxs);
     }
 }
 
@@ -192,20 +192,20 @@ void func_8000F6CC() {
 
     if ((D_800A7D79 & 4)) {
         if (D_800A7D7C != 0) {
-            gDLL_6_AMSFX->exports->func6(D_800A7D7C);
+            gDLL_6_AMSFX->vtbl->func6(D_800A7D7C);
         }
 
-        D_800A7D7C = gDLL_6_AMSFX->exports->func2(0, 0x775, 0x7F, 0, 0, 0, 0);
+        D_800A7D7C = gDLL_6_AMSFX->vtbl->func2(0, 0x775, 0x7F, 0, 0, 0, 0);
     } else {
         D_800A7D7C = 0;
     }
 
     if ((D_800A7D79 & 1)) {
-        gDLL_6_AMSFX->exports->func5(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
-        gDLL_6_AMSFX->exports->func4(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
+        gDLL_6_AMSFX->vtbl->func5(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
+        gDLL_6_AMSFX->vtbl->func4(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
     } else {
-        gDLL_6_AMSFX->exports->func5(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
-        gDLL_6_AMSFX->exports->func4(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
+        gDLL_6_AMSFX->vtbl->func5(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
+        gDLL_6_AMSFX->vtbl->func4(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
     }
 }
 
@@ -213,7 +213,7 @@ void func_8000F9DC() {
     D_800A7D6C = 1;
 
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->exports->func6(D_800A7D7C);
+        gDLL_6_AMSFX->vtbl->func6(D_800A7D7C);
         D_800A7D7C = 0;
     }
 }
@@ -222,11 +222,11 @@ void func_8000FA2C() {
     D_800A7D94 = 0;
 
     if (D_800A7D79 & 8) {
-        gDLL_6_AMSFX->exports->func2(0, 0x242, 0x7f, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->func2(0, 0x242, 0x7f, 0, 0, 0, 0);
     }
 
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->exports->func6(D_800A7D7C);
+        gDLL_6_AMSFX->vtbl->func6(D_800A7D7C);
         D_800A7D7C = 0;
     }
 
@@ -237,7 +237,7 @@ void func_8000FAC8() {
     D_800A7D94 = 0;
     
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->exports->func6(D_800A7D7C);
+        gDLL_6_AMSFX->vtbl->func6(D_800A7D7C);
         D_800A7D7C = 0;
     }
 
@@ -279,11 +279,11 @@ void func_8000FB2C(Gfx **gdl) {
 
     if (bvar) {
         if (D_800A7D79 & 8) {
-            gDLL_6_AMSFX->exports->func2(0, 0x242, 0x7f, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->func2(0, 0x242, 0x7f, 0, 0, 0, 0);
         }
 
         if (D_800A7D7C != 0) {
-            gDLL_6_AMSFX->exports->func6(D_800A7D7C);
+            gDLL_6_AMSFX->vtbl->func6(D_800A7D7C);
             D_800A7D7C = 0;
         }
 
@@ -294,11 +294,11 @@ void func_8000FB2C(Gfx **gdl) {
 
     if (D_800A7D7C != 0) {
         if ((D_800A7D79 & 1)) {
-            gDLL_6_AMSFX->exports->func5(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
-            gDLL_6_AMSFX->exports->func4(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
+            gDLL_6_AMSFX->vtbl->func5(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
+            gDLL_6_AMSFX->vtbl->func4(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
         } else {
-            gDLL_6_AMSFX->exports->func5(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
-            gDLL_6_AMSFX->exports->func4(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
+            gDLL_6_AMSFX->vtbl->func5(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
+            gDLL_6_AMSFX->vtbl->func4(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
         }
     }
 

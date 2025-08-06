@@ -67,7 +67,7 @@ void dll_25_func_D8(void)
     s32 var_v1_2;
     f32 sp70[2];
 
-    curvesResult = gDLL_26_Curves->exports->curves_func_1bc(&curvesCount);
+    curvesResult = gDLL_26_Curves->vtbl->curves_func_1bc(&curvesCount);
     bzero(_bss_0, 0xD9);
     for (sp270 = 0; sp270 < 256; sp270++)
     {
@@ -106,7 +106,7 @@ void dll_25_func_D8(void)
                 var_s7 = (CurvesFunc1BCReturnInner *)&((s8 *)temp_s4)[var_v1_2 * 4];
                 if (var_s7->unk1C[0] >= 0)
                 {
-                    temp_v0_2 = gDLL_26_Curves->exports->curves_func_39c(var_s7->unk1C[0]);
+                    temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_39c(var_s7->unk1C[0]);
                     temp_t1 = temp_s4->unk3 * temp_v0_2->unk3;
                     for (var_s0 = 1; var_s0 < _bss_E4; var_s0++)
                     {
@@ -521,7 +521,7 @@ CurvesFunc1BCReturnInner *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
     CurvesFunc1BCReturn *result;
     CurvesFunc1BCReturnInner *out;
 
-    result = gDLL_26_Curves->exports->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     var_fs0 = MAX_FLOAT;
     for (i = 0; i < count; i++)
@@ -557,7 +557,7 @@ CurvesFunc1BCReturnInner *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
     s32 var_t0;
     s32 var_v1;
 
-    result = gDLL_26_Curves->exports->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     var_v1 = 0;
     var_fs0 = MAX_FLOAT;
@@ -623,7 +623,7 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurvesFunc1BCReturnInner *arg1, Curv
         arg0->unk0xF8[2] = 2.0f * (fcos16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
     }
-    if (gDLL_25->exports->dll_25_func_21F4(arg0, arg3) != 0)
+    if (gDLL_25->vtbl->dll_25_func_21F4(arg0, arg3) != 0)
     {
         return 1;
     }
@@ -760,7 +760,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)
     f32 var_fs0;
     s32 i;
 
-    result = gDLL_26_Curves->exports->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)
@@ -794,7 +794,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2BC4(Object *obj, s32 arg1)
     f32 var_fs0;
     s32 i;
 
-    result = gDLL_26_Curves->exports->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     i = 0;
     var_fs0 = 1e12f;
@@ -828,7 +828,7 @@ CurvesFunc1BCReturnInner *dll_25_func_2CF8(Object *obj, s32 arg1)
     f32 var_fs0;
     s32 i;
 
-    result = gDLL_26_Curves->exports->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)

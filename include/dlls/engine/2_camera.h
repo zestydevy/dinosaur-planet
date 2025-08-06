@@ -6,7 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(2_camera)
+DLL_INTERFACE(DLL_2_camera) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, f32, f32, f32);
 /*1*/ void (*func1)(u8);
 /*2*/ Object *(*func2)();
@@ -34,6 +35,6 @@ DLL_INTERFACE_BEGIN(2_camera)
 /*24*/ UnknownDLLFunc func24;
 /*25*/ UnknownDLLFunc func25;
 /*26*/ UnknownDLLFunc func26;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_2_H

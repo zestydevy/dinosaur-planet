@@ -431,18 +431,18 @@ void init_maps(void) {
 void func_80042174(s32 arg0) {
     if (arg0 == 0) {
         if (UINT_80092a98 & 0x10) {
-            gDLL_12_Minic->exports->func2();
+            gDLL_12_Minic->vtbl->func2();
         }
-        gDLL_8->exports->func2();
-        gDLL_7_Newday->exports->func2();
-        gDLL_9_Newclouds->exports->func3();
+        gDLL_8->vtbl->func2();
+        gDLL_7_Newday->vtbl->func2();
+        gDLL_9_Newclouds->vtbl->func3();
         func_80049D88();
         func_800499BC();
         func_8004D328();
         if (gDLL_76 != NULL) {
-            gDLL_76->exports->func1();
+            gDLL_76->vtbl->func1();
         }
-        gDLL_59_Minimap->exports->func0();
+        gDLL_59_Minimap->vtbl->func0();
     }
     func_8001EB80();
 }
@@ -484,29 +484,29 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     }
     if (UINT_80092a98 & 0x10) {
         setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
-        gDLL_7_Newday->exports->func13(&gMainDL, &gWorldRSPMatrices);
+        gDLL_7_Newday->vtbl->func13(&gMainDL, &gWorldRSPMatrices);
 
         if (UINT_80092a98 & 0x40) {
-            gDLL_10_Newstars->exports->func1(&gMainDL);
+            gDLL_10_Newstars->vtbl->func1(&gMainDL);
         }
-        gDLL_7_Newday->exports->func3(&gMainDL, &gWorldRSPMatrices, UINT_80092a98 & 0x40);
+        gDLL_7_Newday->vtbl->func3(&gMainDL, &gWorldRSPMatrices, UINT_80092a98 & 0x40);
     } else {
         setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
     }
-    gDLL_11_Newlfx->exports->func2();
-    gDLL_57->exports->func3();
-    gDLL_58->exports->func2();
+    gDLL_11_Newlfx->vtbl->func2();
+    gDLL_57->vtbl->func3();
+    gDLL_58->vtbl->func2();
     if (UINT_80092a98 & 0x20000) {
-        if (gDLL_7_Newday->exports->func23(&gMainDL) == 0) {
-            gDLL_8->exports->func3(&gMainDL);
+        if (gDLL_7_Newday->vtbl->func23(&gMainDL) == 0) {
+            gDLL_8->vtbl->func3(&gMainDL);
         }
     } else {
-        gDLL_8->exports->func3(&gMainDL);
+        gDLL_8->vtbl->func3(&gMainDL);
     }
     D_800B51E4 = get_camera();
     func_80048F58();
     track_c_func();
-    gDLL_9_Newclouds->exports->func4(&gMainDL);
+    gDLL_9_Newclouds->vtbl->func4(&gMainDL);
     func_8000302C(&gMainDL);
     *gdl = gMainDL;
     *mtxs = gWorldRSPMatrices;
@@ -763,32 +763,32 @@ void func_800436DC(Object* obj, s32 arg1) {
     someBool = TRUE;
     if ((obj->id == 0x72) || (obj->id == 0x38C)) {
         someBool = TRUE;
-        if (((DLLInst_13_expgfx*)obj->dll)->exports->func13(obj) != 0) {
+        if (((DLL_13_expgfx*)obj->dll)->vtbl->func13(obj) != 0) {
             someBool = FALSE;
         }
     }
     if (someBool != FALSE) {
-        sp37 = gDLL_13_Expgfx->exports->func10(obj);
+        sp37 = gDLL_13_Expgfx->vtbl->func10(obj);
     }
-    gDLL_14_Modgfx->exports->func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, obj);
+    gDLL_14_Modgfx->vtbl->func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, obj);
     if (sp37 >= 2) {
         if ((obj->id != 0x72) && (obj->id != 0x38C)) {
-            gDLL_13_Expgfx->exports->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
+            gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
         }
     }
     objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, arg1);
     if (sp37 != 0) {
         if ((obj->id != 0x72) && (obj->id != 0x38C)) {
-            gDLL_13_Expgfx->exports->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
+            gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
         }
     }
     if ((obj->linkedObject != NULL) && (arg1 != 0)) {
-        sp37 = gDLL_13_Expgfx->exports->func10(obj->linkedObject);
+        sp37 = gDLL_13_Expgfx->vtbl->func10(obj->linkedObject);
         if (sp37 >= 2) {
-            gDLL_13_Expgfx->exports->func6(obj->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
+            gDLL_13_Expgfx->vtbl->func6(obj->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
         }
         if (sp37 != 0) {
-            gDLL_13_Expgfx->exports->func6(obj->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
+            gDLL_13_Expgfx->vtbl->func6(obj->linkedObject, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
         }
     }
 }
@@ -1788,7 +1788,7 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
     
     if (arg1 == 0){
         func_80045FC4(gMapActiveStreamMap, (mapID * 0x8C) + (&D_800B5508), mapID, 0);
-        gDLL_29_Gplay->exports->func_15B8(mapID);
+        gDLL_29_Gplay->vtbl->func_15B8(mapID);
     }
     else{
         func_8004BD40(gMapActiveStreamMap, mapID, mapID, 0);
@@ -1907,17 +1907,17 @@ void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
     while (var_s3 < sp48) {
         if (arg3 != 0) {
             if (obj->objId == 0x6E) {
-                gDLL_26_Curves->exports->curves_func_10c(obj);
+                gDLL_26_Curves->vtbl->curves_func_10c(obj);
             }
             if (obj->objId == 5) {
-                gDLL_4_Race->exports->func2(obj);
+                gDLL_4_Race->vtbl->func2(obj);
             }
         } else {
             if ((0x6E == obj->objId) || (5 == obj->objId)) {
                 if (0x6E == obj->objId) {
-                    gDLL_26_Curves->exports->curves_func_34(obj);
+                    gDLL_26_Curves->vtbl->curves_func_34(obj);
                 } else {
-                    gDLL_4_Race->exports->func1(obj);
+                    gDLL_4_Race->vtbl->func1(obj);
                 }
                 if ((u8)sp42[3] == FALSE) {
                     arg1[33] = ((u32)obj - (u32)arg0->objectInstanceFile_ptr);
@@ -2010,9 +2010,9 @@ void func_80046320(s32 arg0, Object *obj) {
     }
 
     func_80045FC4(sp18, (var_a2 * 0x8C) + (u32)&D_800B5508, var_a2, 0);
-    gDLL_29_Gplay->exports->func_15B8(var_a2);
+    gDLL_29_Gplay->vtbl->func_15B8(var_a2);
     obj->unk_0x34 = var_a2;
-    gDLL_29_Gplay->exports->func_1378(arg0, var_a2);
+    gDLL_29_Gplay->vtbl->func_1378(arg0, var_a2);
     D_800B4A50 = sp24;
 }
 
@@ -2614,7 +2614,7 @@ void func_8004773C(void) {
         D_800B4A5E = -2;
         D_80092A78 = 8;
     }
-    gDLL_3_Animation->exports->func0();
+    gDLL_3_Animation->vtbl->func0();
     func_80001A3C();
     func_80001A3C();
     func_80053300();
@@ -2636,8 +2636,8 @@ void func_8004773C(void) {
     gLoadedBlockCount = 0;
     gMapNumStreamMaps = 0;
     D_800B97C4 = 0;
-    sp13C = gDLL_29_Gplay->exports->func_E90(&gLoadedBlockIds, &gLoadedBlocks);
-    sp138 = gDLL_29_Gplay->exports->func_F04();
+    sp13C = gDLL_29_Gplay->vtbl->func_E90(&gLoadedBlockIds, &gLoadedBlocks);
+    sp138 = gDLL_29_Gplay->vtbl->func_F04();
     gMapCurrentStreamCoordsX = floor_f(sp138->vec.x / BLOCKS_GRID_UNIT_F);
     gMapCurrentStreamCoordsZ = floor_f(sp138->vec.z / BLOCKS_GRID_UNIT_F);
     Vec3_Int_array->f.x = sp138->vec.x;
@@ -2653,20 +2653,20 @@ void func_8004773C(void) {
     D_800B4A50 = -1;
     D_800B4A54 = -1;
     D_80092A8C = sp138->mapLayer;
-    gDLL_24_Waterfx->exports->func_24C();
-    gDLL_11_Newlfx->exports->func1();
-    gDLL_57->exports->func0();
-    gDLL_58->exports->func0();
-    gDLL_15_Projgfx->exports->func0();
-    gDLL_14_Modgfx->exports->func0();
-    gDLL_13_Expgfx->exports->func0();
-    gDLL_17->exports->func0();
-    gDLL_12_Minic->exports->func4();
-    gDLL_12_Minic->exports->func1();
-    gDLL_8->exports->func1();
-    gDLL_7_Newday->exports->func1();
-    gDLL_9_Newclouds->exports->func1();
-    gDLL_10_Newstars->exports->func0();
+    gDLL_24_Waterfx->vtbl->func_24C();
+    gDLL_11_Newlfx->vtbl->func1();
+    gDLL_57->vtbl->func0();
+    gDLL_58->vtbl->func0();
+    gDLL_15_Projgfx->vtbl->func0();
+    gDLL_14_Modgfx->vtbl->func0();
+    gDLL_13_Expgfx->vtbl->func0();
+    gDLL_17->vtbl->func0();
+    gDLL_12_Minic->vtbl->func4();
+    gDLL_12_Minic->vtbl->func1();
+    gDLL_8->vtbl->func1();
+    gDLL_7_Newday->vtbl->func1();
+    gDLL_9_Newclouds->vtbl->func1();
+    gDLL_10_Newstars->vtbl->func0();
     func_8005C780();
     UINT_80092a98 &= 0x2010;
     UINT_80092a98 |= 0x81E0;
@@ -2684,9 +2684,9 @@ void func_8004773C(void) {
 
     sp130 = get_player();
     if ((D_800B4A5E == -2) && (sp130 != NULL) && ((sp13C == 0) || (sp13C == 1))) {
-        sp40 = gDLL_29_Gplay->exports->func_F60();
-        sp3C = gDLL_29_Gplay->exports->func_FA8();
-        sp38 = (s16 *) gDLL_29_Gplay->exports->func_FE8();
+        sp40 = gDLL_29_Gplay->vtbl->func_F60();
+        sp3C = gDLL_29_Gplay->vtbl->func_FA8();
+        sp38 = (s16 *) gDLL_29_Gplay->vtbl->func_FE8();
         if (D_800B4A5E == -2) {
             if (sp40->unk0x0 != -1) {
                 func_80000608(sp130, sp130, sp40->unk0x0, 0, 0, 0);
@@ -2722,14 +2722,14 @@ void func_8004773C(void) {
             if (sp3C->unk0x8 != -1) {
                 func_800009C8(sp130, sp130, sp3C->unk0x8, 0);
             }
-            gDLL_12_Minic->exports->func6(sp3C->unk0x3c & 1);
+            gDLL_12_Minic->vtbl->func6(sp3C->unk0x3c & 1);
             for (i = 0; i < 4; i++) {
                 if (sp38[i] != -1) {
-                    gDLL_5_AMSEQ2->exports->func0(NULL, sp38[i], 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->func0(NULL, sp38[i], 0, 0, 0);
                 }
             }
             if (sp40->unk0x12 != -1) {
-                gDLL_2_Camera->exports->func8(0, sp40->unk0x12);
+                gDLL_2_Camera->vtbl->func8(0, sp40->unk0x12);
             }
             sp4C.parent = NULL;
             sp4C.srt.transl.x = 0.0f;
@@ -2756,11 +2756,11 @@ void func_8004773C(void) {
                 sp4C.srt.transl.z = sp3C->unk30;
                 func_80000860(&sp4C, sp130, sp3C->unk0xe, 0);
             }
-            gDLL_7_Newday->exports->func9(sp3C->unk0x0);
+            gDLL_7_Newday->vtbl->func9(sp3C->unk0x0);
         }
     } else {
-        gDLL_7_Newday->exports->func9(43000.0f);
-        gDLL_12_Minic->exports->func6(1);
+        gDLL_7_Newday->vtbl->func9(43000.0f);
+        gDLL_12_Minic->vtbl->func6(1);
     }
 }
 
@@ -2800,7 +2800,7 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
     if (arg0 == 1) {
         *arg2 = 0.0f;
         *arg3 = 0.0f;
-        if ((!gDLL_29_Gplay->exports) && (!gDLL_29_Gplay->exports)) {}
+        if ((!gDLL_29_Gplay->vtbl) && (!gDLL_29_Gplay->vtbl)) {}
         *arg4 = 0.0f;
     } else {
         temp_s4 = gFile_MAPS_TAB[arg0].unk0;
@@ -2816,12 +2816,12 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
                 *arg2 = var_s1->unk8 + temp_v0_2->unk24;
                 *arg3 = var_s1->unkC;
                 *arg4 = var_s1->unk10 + temp_v0_2->unk28;
-                gDLL_29_Gplay->exports->func_139C(arg0, (s32) var_s1->unk18);
+                gDLL_29_Gplay->vtbl->func_139C(arg0, (s32) var_s1->unk18);
                 for (var_s0_2 = 0; var_s0_2 < 32; var_s0_2++) {
                     if ((var_s1->unk1C >> var_s0_2) & 1) {
-                        gDLL_29_Gplay->exports->func_16C4(arg0, var_s0_2, -1);
+                        gDLL_29_Gplay->vtbl->func_16C4(arg0, var_s0_2, -1);
                     } else {
-                        gDLL_29_Gplay->exports->func_16C4(arg0, var_s0_2, -2);
+                        gDLL_29_Gplay->vtbl->func_16C4(arg0, var_s0_2, -2);
                     }
                 }
                 break;
@@ -2905,13 +2905,13 @@ void func_800484A8(void) {
             gLoadedMapsDataTable[j] = NULL;
         }
     }
-    gDLL_4_Race->exports->func0();
-    gDLL_26_Curves->exports->curves_func_18();
+    gDLL_4_Race->vtbl->func0();
+    gDLL_26_Curves->vtbl->curves_func_18();
     gMapNumStreamMaps = 0;
     gWorldX = 0.0f;
     gWorldZ = 0.0f;
-    gDLL_9_Newclouds->exports->func2(-1, 0);
-    gDLL_12_Minic->exports->func4();
+    gDLL_9_Newclouds->vtbl->func2(-1, 0);
+    gDLL_12_Minic->vtbl->func4();
     func_80017254(2);
 }
 
@@ -4063,9 +4063,9 @@ void map_update_objects_streaming(s32 arg0) {
     }
     for (spB8 = 0; spB8 < MAP_ID_MAX; spB8++) {
         if (gLoadedMapsDataTable[spB8] != NULL) {
-            var_s0 = gDLL_29_Gplay->exports->func_163C(spB8);
+            var_s0 = gDLL_29_Gplay->vtbl->func_163C(spB8);
             if (var_s0 != 0) {
-                gDLL_29_Gplay->exports->func_1680(spB8);
+                gDLL_29_Gplay->vtbl->func_1680(spB8);
                 var_s2 = 0;
                 while (var_s0 != 0) {
                     if (var_s0 & 1) {
@@ -4118,9 +4118,9 @@ void map_update_objects_streaming(s32 arg0) {
             var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
             // mmmmmm yummmy casting shenanigans
             temp_fp = *((s32*)&((s8 *)&D_800B5590)[temp_s4 * 0x8C]) + (s32)var_s1_2;
-            var_s0 = gDLL_29_Gplay->exports->func_163C((s32) temp_s4);
+            var_s0 = gDLL_29_Gplay->vtbl->func_163C((s32) temp_s4);
             if (var_s0 != 0) {
-                gDLL_29_Gplay->exports->func_1680((s32) temp_s4);
+                gDLL_29_Gplay->vtbl->func_1680((s32) temp_s4);
                 var_s2 = 0;
                 while (var_s0 != 0) {
                     if (var_s0 & 1) {
@@ -4275,7 +4275,7 @@ s32 func_8004B190(Object* arg0) {
         return 0;
     }
     if (sp1C->loadParamA & 0x10) {
-        if (gDLL_29_Gplay->exports->func_14F0(arg0->mapID, sp1C->loadDistance) != 0) {
+        if (gDLL_29_Gplay->vtbl->func_14F0(arg0->mapID, sp1C->loadDistance) != 0) {
             return 0;
         }
         return 1;
@@ -4342,7 +4342,7 @@ s32 func_8004B190(Object* arg0) {
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
     u8 gplayValue;
 
-    gplayValue = gDLL_29_Gplay->exports->func_143C(arg1);
+    gplayValue = gDLL_29_Gplay->vtbl->func_143C(arg1);
     if (gplayValue == -1) {// NOLINT
         return 0;
     }
@@ -4551,8 +4551,8 @@ void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 x, f32 y, f32 z) {
     s32 i;
     Unk800B96B0* temp_v0;
 
-    temp_s0 = gDLL_29_Gplay->exports->func_121C();
-    temp_v0 = gDLL_29_Gplay->exports->func_1254();
+    temp_s0 = gDLL_29_Gplay->vtbl->func_121C();
+    temp_v0 = gDLL_29_Gplay->vtbl->func_1254();
     if (arg0[1].unk0 == -1) {
         return;
     }
@@ -4585,7 +4585,7 @@ void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 x, f32 y, f32 z) {
         arg0->x = x;\
         arg0->y = y;\
         arg0->z = z;
-        gDLL_29_Gplay->exports->func_1238(temp_s0);
+        gDLL_29_Gplay->vtbl->func_1238(temp_s0);
     }
 }
 
@@ -4594,8 +4594,8 @@ void func_8004BC20(Unk800B96B0* arg0, s32 arg1) {
     s32 i;
     Unk800B96B0* temp_s4;
 
-    temp_s3 = gDLL_29_Gplay->exports->func_121C();
-    temp_s4 = gDLL_29_Gplay->exports->func_1254();
+    temp_s3 = gDLL_29_Gplay->vtbl->func_121C();
+    temp_s4 = gDLL_29_Gplay->vtbl->func_1254();
     if (arg1 != -1) {
         for (i = 0; i < temp_s3; i++) {
             if (arg1 == temp_s4[i].unk0) {
@@ -4623,8 +4623,8 @@ void func_8004BD40(MapHeader* arg0, s32 arg1) {
     Unk800B96B0* temp_v0;
     s32 sp28[15]; // unknown size however should be the same as sp68
 
-    sp8E = gDLL_29_Gplay->exports->func_121C();
-    temp_v0 = gDLL_29_Gplay->exports->func_1254();
+    sp8E = gDLL_29_Gplay->vtbl->func_121C();
+    temp_v0 = gDLL_29_Gplay->vtbl->func_1254();
     var_t1 = 0;
     for (var_a3 = 0; var_a3 < sp8E; var_a3++) {
         if (arg1 == temp_v0[var_a3].unk4) {
@@ -4748,8 +4748,8 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     sp75 = sp79;
     arg1 *= BLOCKS_GRID_UNIT;
     arg2 *= BLOCKS_GRID_UNIT;
-    var_s0 = gDLL_11_Newlfx->exports->func3(0, &sp78);
-    gDLL_57->exports->func2(sp158, sp150, sp148, sp15C, sp154, sp14C);
+    var_s0 = gDLL_11_Newlfx->vtbl->func3(0, &sp78);
+    gDLL_57->vtbl->func2(sp158, sp150, sp148, sp15C, sp154, sp14C);
     if (var_s0 != NULL) {
         for (i = 0; i < sp78; i++) {
             var_v0 = &sp8C[i];
@@ -5156,14 +5156,14 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     D_800B4A59 = fadeToBlack;
     
     if (D_800B4A59 != 0) {
-        gDLL_28_ScreenFade->exports->fade(0x28, SCREEN_FADE_BLACK);
+        gDLL_28_ScreenFade->vtbl->fade(0x28, SCREEN_FADE_BLACK);
     }
-    gDLL_12_Minic->exports->func4();
-    gDLL_12_Minic->exports->func1();
-    gDLL_8->exports->func1();
-    gDLL_7_Newday->exports->func1();
-    gDLL_9_Newclouds->exports->func1();
-    gDLL_10_Newstars->exports->func0();
+    gDLL_12_Minic->vtbl->func4();
+    gDLL_12_Minic->vtbl->func1();
+    gDLL_8->vtbl->func1();
+    gDLL_7_Newday->vtbl->func1();
+    gDLL_9_Newclouds->vtbl->func1();
+    gDLL_10_Newstars->vtbl->func0();
 }
 
 /** 
@@ -5176,7 +5176,7 @@ static void func_8004D328() {
     u8 temp2;
     u8 temp1;
 
-    var_a2 = (SimilarToWarp*)gDLL_29_Gplay->exports->func_F04();
+    var_a2 = (SimilarToWarp*)gDLL_29_Gplay->vtbl->func_F04();
     
     //Start fade?
     if (D_800B4A5E != -1) { //timer started?
@@ -5184,7 +5184,7 @@ static void func_8004D328() {
         D_80092A78 -= 1; //Decrement timer
         if (D_80092A78 < 0) { //When timer less than zero, fade to black
             if ((D_800B4A5E >= 0) && (D_800B4A59 != 0)) {
-                gDLL_28_ScreenFade->exports->fade_reversed(0x1E, 1);
+                gDLL_28_ScreenFade->vtbl->fade_reversed(0x1E, 1);
             }
             D_800B4A5E = -1; //stop timer?
         }
@@ -5194,7 +5194,7 @@ static void func_8004D328() {
     if (D_800B4A58 == 0)
         return;
         
-    if (gDLL_28_ScreenFade->exports->is_complete() || D_800B4A59 == 0){
+    if (gDLL_28_ScreenFade->vtbl->is_complete() || D_800B4A59 == 0){
         var_v0 = (Warp*)&D_800B4A60;
         D_800B4A58 = 0;
         var_a2->coord.x = var_v0->coord.x;

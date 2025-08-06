@@ -7,16 +7,8 @@
 #include "types.h"
 
 // AKA. krystal
-DLL_INTERFACE_BEGIN(210_Player)
-    // OBJECT START
-    /*0*/ UnknownDLLFunc func0;
-    /*1*/ UnknownDLLFunc func1;
-    /*2*/ UnknownDLLFunc func2;
-    /*3*/ UnknownDLLFunc func3;
-    /*4*/ UnknownDLLFunc func4;
-    /*5*/ UnknownDLLFunc func5;
-    /*6*/ UnknownDLLFunc func6;
-    // OBJECT END
+DLL_INTERFACE(DLL_210_Player) {
+    /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ Object *(*func7)(Object*);
     /*8*/ UnknownDLLFunc func8;
     /*9*/ UnknownDLLFunc func9;
@@ -90,6 +82,6 @@ DLL_INTERFACE_BEGIN(210_Player)
     /*77*/ UnknownDLLFunc func77;
     /*78*/ UnknownDLLFunc func78;
     /*79*/ UnknownDLLFunc func79;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_210_H

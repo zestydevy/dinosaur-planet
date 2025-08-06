@@ -38,6 +38,8 @@ typedef enum {
     SUBMENU_GAME_RECAP = 7
 } GameSelectSubmenuID;
 
-typedef DLLInst_Menu DLLInst_63_gameselect;
+DLL_INTERFACE(DLL_63_gameselect) {
+    DLL_INTERFACE_BASE(DLL_IMenu);
+};
 
 #endif //_DLLS_63_H
