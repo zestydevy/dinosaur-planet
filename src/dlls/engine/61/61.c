@@ -70,7 +70,7 @@ s32 dll_61_update1() {
     }
 
     if (bss_0 != 0) {
-        gDLL_28_ScreenFade->exports->fade(30, SCREEN_FADE_BLACK);
+        gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
         bss_1 = 45;
         bss_2 = 1;
     }
@@ -96,7 +96,7 @@ void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     }
 
     func_80037A14(gdl, mtxs, 1);
-    gDLL_76->exports->func2(gdl, mtxs);
+    gDLL_76->vtbl->func2(gdl, mtxs);
 
     if (data_0 > 40 && data_4 == 0) {
         data_4 = 1;

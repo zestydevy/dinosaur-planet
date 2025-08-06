@@ -6,7 +6,8 @@
 #include "game/objects/object.h"
 #include "PR/gbi.h"
 
-DLL_INTERFACE_BEGIN(8)
+DLL_INTERFACE(DLL_8) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, Object *, void *, s32, u16);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(void);
@@ -20,6 +21,6 @@ DLL_INTERFACE_BEGIN(8)
 /*10*/ UnknownDLLFunc func10;
 /*11*/ UnknownDLLFunc func11;
 /*12*/ UnknownDLLFunc func12;
-DLL_INTERFACE_END()
+};
 
 #endif // _DLL_8_H

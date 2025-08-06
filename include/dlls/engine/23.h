@@ -4,7 +4,8 @@
 #include "PR/ultratypes.h"
 #include "dll_def.h"
 
-DLL_INTERFACE_BEGIN(23)
+DLL_INTERFACE(DLL_23) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /* 0 */ void (*func_24)(s32 arg0);
 /* 1 */ void (*func_30)(s32 arg0);
 /* 2 */ void (*func_18)(s32 arg0);
@@ -13,6 +14,6 @@ DLL_INTERFACE_BEGIN(23)
 /* 5 */ void (*func_60)(s32 arg0);
 /* 6 */ void (*func_6C)(void);
 /* 7 */ void (*func_8C)(s32 arg0);
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_23_H

@@ -41,19 +41,19 @@ s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3)
 	{
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4))
 		{
-            gDLL_9_Newclouds->exports->func0(arg0, arg1, tmp, arg3);
+            gDLL_9_Newclouds->vtbl->func0(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 3) 
 		{
-            gDLL_8->exports->func0(arg0, arg1, tmp, arg3, arg2);
+            gDLL_8->vtbl->func0(arg0, arg1, tmp, arg3, arg2);
         }
 		else if (tmp->unk5C == 5)
 		{
-            gDLL_7_Newday->exports->func0(arg0, arg1, tmp, arg3);
+            gDLL_7_Newday->vtbl->func0(arg0, arg1, tmp, arg3);
 		}
 		else if (tmp->unk5C == 6)
 		{
-            gDLL_12_Minic->exports->func0(arg0, arg1, tmp, arg3, arg2);
+            gDLL_12_Minic->vtbl->func0(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);
@@ -71,20 +71,20 @@ s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3)
 	{
         if ((tmp->unk5C < 3) || (tmp->unk5C == 4))
 		{
-            gDLL_9_Newclouds->exports->func0(arg0, arg1, tmp, arg3);
+            gDLL_9_Newclouds->vtbl->func0(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 3)
 		{
             tmp->unk2A = 0;
-            gDLL_8->exports->func0(arg0, arg1, tmp, arg3, arg2);
+            gDLL_8->vtbl->func0(arg0, arg1, tmp, arg3, arg2);
         }
 		else if (tmp->unk5C == 5)
 		{
-            gDLL_7_Newday->exports->func0(arg0, arg1, tmp, arg3);
+            gDLL_7_Newday->vtbl->func0(arg0, arg1, tmp, arg3);
         }
 		else if (tmp->unk5C == 6)
 		{
-            gDLL_12_Minic->exports->func0(arg0, arg1, tmp, arg3, arg2);
+            gDLL_12_Minic->vtbl->func0(arg0, arg1, tmp, arg3, arg2);
         }
     }
     free(tmp);

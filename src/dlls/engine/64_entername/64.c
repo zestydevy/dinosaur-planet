@@ -72,7 +72,7 @@ void dll_64_ctor(void *self) {
     sBackgroundTexture = queue_load_texture_proxy(0x2DE);
 
     if (sGameTextChunk == NULL) {
-        sGameTextChunk = gDLL_21_Gametext->exports->get_chunk(0xED);
+        sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(0xED);
     }
 
 
@@ -81,7 +81,7 @@ void dll_64_ctor(void *self) {
     }
 
     sLetterBgBoxTexture = queue_load_texture_proxy(0x316);
-    gDLL_74_Picmenu->exports->set_items(sMenuItems, itemCount, 
+    gDLL_74_Picmenu->vtbl->set_items(sMenuItems, itemCount, 
         /*defaultItem*/0, 
         /*sounds*/NULL, 
         /*param5*/5, 
@@ -102,9 +102,9 @@ s32 dll_64_update1() {
     char name[10];
     s32 i;
 
-    action = gDLL_74_Picmenu->exports->update();
+    action = gDLL_74_Picmenu->vtbl->update();
     if (action != PICMENU_ACTION_NONE) {
-        selected = gDLL_74_Picmenu->exports->get_selected_item();
+        selected = gDLL_74_Picmenu->vtbl->get_selected_item();
         if (action == PICMENU_ACTION_SELECT) {
             if (selected < 28 && sNumNameLetters < 5) {
                 bcopy(sMenuItems[selected].text, &sNameLetters[sNumNameLetters << 1], 2);
@@ -120,7 +120,7 @@ s32 dll_64_update1() {
                 }
                 name[sNumNameLetters] = '\0';
 
-                gDLL_29_Gplay->exports->init_save(get_save_game_idx(), name);
+                gDLL_29_Gplay->vtbl->init_save(get_save_game_idx(), name);
                 menu_set(MENU_5);
                 sNameLettersRedrawFrames = 2;
             }
@@ -171,7 +171,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         func_800382AC(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, 2);
     }
 
-    gDLL_74_Picmenu->exports->draw(gdl);
+    gDLL_74_Picmenu->vtbl->draw(gdl);
 
     if (sNameLettersRedrawFrames != 0) {
         if (sMainRedrawFrames == 0) {
@@ -197,7 +197,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 }
 
 static void dll_64_clean_up() {
-    gDLL_74_Picmenu->exports->clear_items();
+    gDLL_74_Picmenu->vtbl->clear_items();
     free(sGameTextChunk);
     texture_destroy(sLetterBgBoxTexture);
     texture_destroy(sBackgroundTexture);

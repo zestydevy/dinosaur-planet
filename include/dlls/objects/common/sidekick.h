@@ -5,14 +5,8 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 
-DLL_INTERFACE_BEGIN(unk_sidekick)
-    /*0*/ UnknownDLLFunc func0;
-    /*1*/ UnknownDLLFunc func1;
-    /*2*/ UnknownDLLFunc func2;
-    /*3*/ UnknownDLLFunc func3;
-    /*4*/ UnknownDLLFunc func4;
-    /*5*/ UnknownDLLFunc func5;
-    /*6*/ UnknownDLLFunc func6;
+DLL_INTERFACE(DLL_ISidekick) {
+	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 	/*7*/ UnknownDLLFunc func7;
 	/*8*/ UnknownDLLFunc func8;
 	/*9*/ UnknownDLLFunc func9;
@@ -30,5 +24,6 @@ DLL_INTERFACE_BEGIN(unk_sidekick)
 	/*21*/ void (*func21)(Object *, s32, s32);
 	/*22*/ void (*func22)(Object *, Object *);
 	/*23*/ void (*func23)(Object *);
-DLL_INTERFACE_END()
+};
+
 #endif //_DLLS_210_H

@@ -45,49 +45,52 @@
 #include "dll_def.h"
 #include "types.h"
 
-enum DLL_ID
-{
-    DLL_UI = 1,
-    DLL_CAMERA,
-    DLL_ANIM,
-    DLL_RACE,
-    DLL_AMSEQ,
-    DLL_AMSFX,
-    DLL_NEWDAY,
-    DLL_8,
-    DLL_NEWCLOUDS,
-    DLL_NEWSTARS,
-    DLL_NEWLFX,
-    DLL_MINIC,
-    DLL_EXPGFX,
-    DLL_MODGFX,
-    DLL_PROJGFX,
-    DLL_16,
-    DLL_17,
-    DLL_18,
-    DLL_SCREENS = 20,
-    DLL_TEXT,
-    DLL_SUBTITLES,
-    DLL_23,
-    DLL_WATERFX,
-    DLL_25,
-    DLL_CURVES,
-    DLL_27,
-    DLL_SCREEN_FADE,
-    DLL_GPLAY,
-    DLL_TASK,
-    DLL_FLASH,
-    DLL_32,
-    DLL_33,
-    DLL_54 = 54,
-    DLL_56 = 56,
-    DLL_57,
-    DLL_58,
-    DLL_MINIMAP,
-    DLL_PICMENU = 74,
-    DLL_75,
-    DLL_76,
-    DLL_CANNON_CLAW = 223
+// Note: These are DLL IDs not indices
+enum DLL_ID {
+    // Engine
+    DLL_ID_UI = 1,
+    DLL_ID_CAMERA = 2,
+    DLL_ID_ANIM = 3,
+    DLL_ID_RACE = 4,
+    DLL_ID_AMSEQ = 5,
+    DLL_ID_AMSFX = 6,
+    DLL_ID_NEWDAY = 7,
+    DLL_ID_8 = 8,
+    DLL_ID_NEWCLOUDS = 9,
+    DLL_ID_NEWSTARS = 10,
+    DLL_ID_NEWLFX = 11,
+    DLL_ID_MINIC = 12,
+    DLL_ID_EXPGFX = 13,
+    DLL_ID_MODGFX = 14,
+    DLL_ID_PROJGFX = 15,
+    DLL_ID_16 = 16,
+    DLL_ID_17 = 17,
+    DLL_ID_18 = 18,
+    DLL_ID_SCREENS = 20,
+    DLL_ID_TEXT = 21,
+    DLL_ID_SUBTITLES = 22,
+    DLL_ID_23 = 23,
+    DLL_ID_WATERFX = 24,
+    DLL_ID_25 = 25,
+    DLL_ID_CURVES = 26,
+    DLL_ID_27 = 27,
+    DLL_ID_SCREEN_FADE = 28,
+    DLL_ID_GPLAY = 29,
+    DLL_ID_TASK = 30,
+    DLL_ID_FLASH = 31,
+    DLL_ID_32 = 32,
+    DLL_ID_33 = 33,
+    DLL_ID_54 = 54,
+    DLL_ID_56 = 56,
+    DLL_ID_57 = 57,
+    DLL_ID_58 = 58,
+    DLL_ID_MINIMAP = 59,
+    DLL_ID_PICMENU = 74,
+    DLL_ID_75 = 75,
+    DLL_ID_76 = 76,
+
+    // Objects
+    DLL_ID_CANNON_CLAW = 0x800E
 };
 
 // TODO: the below should be moved to main.h
@@ -96,49 +99,49 @@ enum DLL_ID
 // These are loaded on game init, are never unloaded, and are referenced by
 // their global variable instead of from loading the DLL.
 
-extern DLLInst_1_UI *gDLL_1_UI;
-extern DLLInst_2_camera *gDLL_2_Camera;
-extern DLLInst_3_animation *gDLL_3_Animation;
-extern DLLInst_5_AMSEQ *gDLL_5_AMSEQ;
-extern DLLInst_5_AMSEQ *gDLL_5_AMSEQ2;
-extern DLLInst_6_AMSFX *gDLL_6_AMSFX;
-extern DLLInst_7_newday *gDLL_7_Newday;
-extern DLLInst_12_minic *gDLL_12_Minic;
-extern DLLInst_16 *gDLL_16;
-extern DLLInst_20_screens *gDLL_20_Screens;
-extern DLLInst_21_gametext *gDLL_21_Gametext;
-extern DLLInst_22_subtitles *gDLL_22_Subtitles;
-extern DLLInst_23 *gDLL_23;
-extern DLLInst_24_waterfx *gDLL_24_Waterfx;
-extern DLLInst_25 *gDLL_25;
-extern DLLInst_26_curves *gDLL_26_Curves;
-extern DLLInst_27_head_turn *gDLL_27_HeadTurn; //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
-extern DLLInst_28_screen_fade *gDLL_28_ScreenFade;
-extern DLLInst_29_gplay *gDLL_29_Gplay;
-extern DLLInst_30_task *gDLL_30_Task;
-extern DLLInst_31_flash *gDLL_31_Flash;
-extern DLLInst_74_picmenu *gDLL_74_Picmenu;
-extern DLLInst_8 *gDLL_8;
-extern DLLInst_9_newclouds *gDLL_9_Newclouds;
-extern DLLInst_10_newstars *gDLL_10_Newstars;
-extern DLLInst_4_race *gDLL_4_Race;
-extern DLLInst_11_newlfx *gDLL_11_Newlfx;
-extern DLLInst_57 *gDLL_57;
-extern DLLInst_58 *gDLL_58;
-extern DLLInst_13_expgfx *gDLL_13_Expgfx;
-extern DLLInst_14_modgfx *gDLL_14_Modgfx;
-extern DLLInst_15_projgfx *gDLL_15_Projgfx;
-extern DLLInst_17 *gDLL_17;
-extern DLLInst_18 *gDLL_18;
-extern DLLInst_75 *gDLL_75;
-extern DLLInst_56 *gDLL_56;
-extern DLLInst_32 *gDLL_32;
-extern DLLInst_33 *gDLL_33;
-extern DLLInst_59_minimap *gDLL_59_Minimap;
-extern DLLInst_54 *gDLL_54;
+extern DLL_1_UI *gDLL_1_UI;
+extern DLL_2_camera *gDLL_2_Camera;
+extern DLL_3_animation *gDLL_3_Animation;
+extern DLL_5_AMSEQ *gDLL_5_AMSEQ;
+extern DLL_5_AMSEQ *gDLL_5_AMSEQ2;
+extern DLL_6_AMSFX *gDLL_6_AMSFX;
+extern DLL_7_newday *gDLL_7_Newday;
+extern DLL_12_minic *gDLL_12_Minic;
+extern DLL_16 *gDLL_16;
+extern DLL_20_screens *gDLL_20_Screens;
+extern DLL_21_gametext *gDLL_21_Gametext;
+extern DLL_22_subtitles *gDLL_22_Subtitles;
+extern DLL_23 *gDLL_23;
+extern DLL_24_waterfx *gDLL_24_Waterfx;
+extern DLL_25 *gDLL_25;
+extern DLL_26_curves *gDLL_26_Curves;
+extern DLL_27_head_turn *gDLL_27_HeadTurn; //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
+extern DLL_28_screen_fade *gDLL_28_ScreenFade;
+extern DLL_29_gplay *gDLL_29_Gplay;
+extern DLL_30_task *gDLL_30_Task;
+extern DLL_31_flash *gDLL_31_Flash;
+extern DLL_74_picmenu *gDLL_74_Picmenu;
+extern DLL_8 *gDLL_8;
+extern DLL_9_newclouds *gDLL_9_Newclouds;
+extern DLL_10_newstars *gDLL_10_Newstars;
+extern DLL_4_race *gDLL_4_Race;
+extern DLL_11_newlfx *gDLL_11_Newlfx;
+extern DLL_57 *gDLL_57;
+extern DLL_58 *gDLL_58;
+extern DLL_13_expgfx *gDLL_13_Expgfx;
+extern DLL_14_modgfx *gDLL_14_Modgfx;
+extern DLL_15_projgfx *gDLL_15_Projgfx;
+extern DLL_17 *gDLL_17;
+extern DLL_18 *gDLL_18;
+extern DLL_75 *gDLL_75;
+extern DLL_56 *gDLL_56;
+extern DLL_32 *gDLL_32;
+extern DLL_33 *gDLL_33;
+extern DLL_59_minimap *gDLL_59_Minimap;
+extern DLL_54 *gDLL_54;
 
 // Other common DLLs that aren't always loaded but are accessed globally
 
-extern DLLInst_76 *gDLL_76;
+extern DLL_76 *gDLL_76;
 
 #endif //_DLL_H

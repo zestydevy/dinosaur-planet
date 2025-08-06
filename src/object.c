@@ -195,16 +195,16 @@ void update_objects() {
         func_8002272C(player->linkedObject);
     }
 
-    gDLL_24_Waterfx->exports->func_6E8(delayByte);
-    gDLL_15_Projgfx->exports->func2(delayByte, 0);
-    gDLL_14_Modgfx->exports->func2(0, 0, 0);
-    gDLL_13_Expgfx->exports->func2(0, delayByte, 0, 0);
+    gDLL_24_Waterfx->vtbl->func_6E8(delayByte);
+    gDLL_15_Projgfx->vtbl->func2(delayByte, 0);
+    gDLL_14_Modgfx->vtbl->func2(0, 0, 0);
+    gDLL_13_Expgfx->vtbl->func2(0, delayByte, 0, 0);
 
     func_8002B6EC();
 
-    gDLL_3_Animation->exports->func9();
-    gDLL_3_Animation->exports->func5();
-    gDLL_2_Camera->exports->func1(delayByte);
+    gDLL_3_Animation->vtbl->func9();
+    gDLL_3_Animation->vtbl->func5();
+    gDLL_2_Camera->vtbl->func1(delayByte);
 
     write_c_file_label_pointers(D_800994E0, 0x169);
 }
@@ -285,7 +285,7 @@ void obj_free_all() {
 
     obj_clear_all();
 
-    gDLL_2_Camera->exports->func9(0, 0);
+    gDLL_2_Camera->vtbl->func9(0, 0);
 }
 
 void obj_clear_all() {
@@ -573,7 +573,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
-        objHeader.dll = (DLLInst_Object*)dll_load(def->dllID, 6, 1);
+        objHeader.dll = (DLL_IObject*)dll_load(def->dllID, 6, 1);
     }
 
     flags = func_80022828(&objHeader);
@@ -791,7 +791,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
     size += def->numModels * sizeof(u32);
 
     if (obj->dll != NULL) {
-        size += obj->dll->exports->get_state_size(obj, size);
+        size += obj->dll->vtbl->get_state_size(obj, size);
     }
 
     if (flags & 0x40) {
@@ -987,12 +987,12 @@ void obj_destroy_object(Object *obj) {
 }
 
 void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3) {
-    DLLInst_Object *dll;
+    DLL_IObject *dll;
     obj->group = obj->def->group;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll->exports->create(obj, param2, param3);
+            obj->dll->vtbl->create(obj, param2, param3);
         }
     }
 
@@ -1033,7 +1033,7 @@ void update_object(Object *obj) {
         }
 
         if (obj->dll != NULL && !(obj->unk0xb0 & 0x8000)) {
-            obj->dll->exports->update(obj);
+            obj->dll->vtbl->update(obj);
 
             get_object_child_position(obj,
                 &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
@@ -1064,7 +1064,7 @@ void func_8002272C(Object *obj) {
     update_pi_manager_array(3, obj->id);
 
     if (obj->dll != NULL && !(obj->unk0xb0 & 0x2000)) {
-        obj->dll->exports->func3(obj);
+        obj->dll->vtbl->func3(obj);
 
         get_object_child_position(obj,
             &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
@@ -1079,7 +1079,7 @@ u32 obj_alloc_object_state(Object *obj, u32 addr) {
     addr = align_4(addr);
 
     if (obj->dll != NULL) {
-        stateSize = obj->dll->exports->get_state_size(obj, addr);
+        stateSize = obj->dll->vtbl->get_state_size(obj, addr);
     }
 
     if (stateSize != 0) {
@@ -1094,7 +1094,7 @@ u32 obj_alloc_object_state(Object *obj, u32 addr) {
 
 u32 func_80022828(Object *obj) {
     if (obj->dll != NULL) {
-        return obj->dll->exports->func6(obj);
+        return obj->dll->vtbl->func6(obj);
     } else {
         return 0;
     }
@@ -1382,14 +1382,14 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->dll != NULL) {
         update_pi_manager_array(4, obj->id);
-        obj->dll->exports->destroy(obj, param2);
+        obj->dll->vtbl->destroy(obj, param2);
         update_pi_manager_array(4, -1);
         dll_unload(obj->dll);
     }
 
-    gDLL_6_AMSFX->exports->func16(obj);
-    gDLL_5_AMSEQ->exports->func17(obj);
-    gDLL_13_Expgfx->exports->func9(obj);
+    gDLL_6_AMSFX->vtbl->func16(obj);
+    gDLL_5_AMSEQ->vtbl->func17(obj);
+    gDLL_13_Expgfx->vtbl->func9(obj);
 
     if (obj->def != NULL && obj->def->flags & 0x10) {
         obj_free_object_type(obj, 56);
@@ -1453,7 +1453,7 @@ void obj_free_object(Object *obj, s32 param2) {
         newLfxStruct.unk10 = obj->unk_0xd6;
         newLfxStruct.unk1b = 0;
 
-        gDLL_11_Newlfx->exports->func0(obj, obj, &newLfxStruct, 0, 0, 0);
+        gDLL_11_Newlfx->vtbl->func0(obj, obj, &newLfxStruct, 0, 0, 0);
     }
 
     if (obj->ptr0x64 != NULL) {
@@ -1487,7 +1487,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->unk0xb4 >= 0) {
         if (!param2) {
-            gDLL_3_Animation->exports->func18((s32)obj->unk0xb4);
+            gDLL_3_Animation->vtbl->func18((s32)obj->unk0xb4);
             obj->unk0xb4 = -1;
         }
     }
@@ -1523,10 +1523,10 @@ void func_80023464(s32 character) {
     Object *newPlayer;
 
     player = get_player();
-    activeCharacter = gDLL_29_Gplay->exports->func_E90();
+    activeCharacter = gDLL_29_Gplay->vtbl->func_E90();
 
     if (character != activeCharacter) {
-        gDLL_29_Gplay->exports->func_EAC(character);
+        gDLL_29_Gplay->vtbl->func_EAC(character);
 
         if (player != NULL) {
             obj_destroy_object(player);
@@ -1558,9 +1558,9 @@ void func_80023464(s32 character) {
             newPlayer = obj_create(&createInfo, 1, -1, -1, NULL);
         }
 
-        gDLL_2_Camera->exports->func0(newPlayer, x - 50.0f, y, z - 50.0f);
-        gDLL_6_AMSFX->exports->func1(newPlayer);
-        gDLL_5_AMSEQ->exports->func3(newPlayer);
+        gDLL_2_Camera->vtbl->func0(newPlayer, x - 50.0f, y, z - 50.0f);
+        gDLL_6_AMSFX->vtbl->func1(newPlayer);
+        gDLL_5_AMSEQ->vtbl->func3(newPlayer);
     }
 }
 
@@ -1578,8 +1578,8 @@ void func_80023628() {
         return;
     }
 
-    activeCharacter = gDLL_29_Gplay->exports->func_E90();
-    gplayStruct = gDLL_29_Gplay->exports->func_F04();
+    activeCharacter = gDLL_29_Gplay->vtbl->func_E90();
+    gplayStruct = gDLL_29_Gplay->vtbl->func_F04();
 
     x = gplayStruct->vec.x;
     y = gplayStruct->vec.y;
@@ -1608,11 +1608,11 @@ void func_80023628() {
     D_80091668.unkC = y + 40.0f;
     D_80091668.unk10 = fcos16_precise(gplayStruct->rotationY << 8) * 60.0f + z;
 
-    gDLL_2_Camera->exports->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
-    gDLL_2_Camera->exports->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
-    gDLL_2_Camera->exports->func1(1);
-    gDLL_6_AMSFX->exports->func1(player);
-    gDLL_5_AMSEQ->exports->func3(player);
+    gDLL_2_Camera->vtbl->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
+    gDLL_2_Camera->vtbl->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
+    gDLL_2_Camera->vtbl->func1(1);
+    gDLL_6_AMSFX->vtbl->func1(player);
+    gDLL_5_AMSEQ->vtbl->func3(player);
 
     D_800B1988 = 0;
     func_8004A67C();

@@ -6,11 +6,13 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(Menu)
+// Common interface of menu DLLs
+DLL_INTERFACE(DLL_IMenu) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ s32 (*update1)();
     /*1*/ void (*update2)();
     /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
-DLL_INTERFACE_END()
+};
 
 // indices into gMenuDLLIDs
 enum MenuID {
@@ -37,7 +39,7 @@ enum MenuID {
 void menu_init();
 void menu_set(s32 id);
 s32 menu_get_current();
-DLLInst_Menu *menu_get_active_dll();
+DLL_IMenu *menu_get_active_dll();
 s32 menu_get_previous();
 void menu_do_menu_swap();
 s32 menu_update1();

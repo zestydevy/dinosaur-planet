@@ -5,7 +5,8 @@
 #include "types.h"
 #include "game/objects/object.h"
 
-DLL_INTERFACE_BEGIN(11_newlfx)
+DLL_INTERFACE(DLL_11_newlfx) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, Object *, NewLfxStruct *, s32, s32, s32);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(void);
@@ -14,6 +15,6 @@ DLL_INTERFACE_BEGIN(11_newlfx)
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
-DLL_INTERFACE_END()
+};
 
 #endif // _DLL_11_H

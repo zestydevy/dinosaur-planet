@@ -22,7 +22,8 @@ typedef struct Func564Arg3 {
     f32 unk1B0;
 } Func564Arg3;
 
-DLL_INTERFACE_BEGIN(24_waterfx)
+DLL_INTERFACE(DLL_24_waterfx) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 // TODO: (bug?) this function signature doesn't match the one in the waterfx source
 /* 0 */ void (*func_6E8)(s32);
 /* 1 */ void (*func_564)(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
@@ -32,6 +33,6 @@ DLL_INTERFACE_BEGIN(24_waterfx)
 /* 5 */ void (*func_1B28)(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4);
 /* 6 */ void (*func_24C)(void);
 /* 7 */ void (*func_1C88)(s32 arg0, f32 arg1);
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_24_H

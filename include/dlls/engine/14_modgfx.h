@@ -6,7 +6,8 @@
 #include "game/objects/object.h"
 #include "PR/gbi.h"
 
-DLL_INTERFACE_BEGIN(14_modgfx)
+DLL_INTERFACE(DLL_14_modgfx) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
 /*1*/ UnknownDLLFunc func1;
 /*2*/ void (*func2)(s32 arg0, s32 arg1, s32 arg2);
@@ -20,6 +21,6 @@ DLL_INTERFACE_BEGIN(14_modgfx)
 /*10*/ UnknownDLLFunc func10;
 /*11*/ UnknownDLLFunc func11;
 /*12*/ UnknownDLLFunc func12;
-DLL_INTERFACE_END()
+};
 
 #endif // _DLL_14_H

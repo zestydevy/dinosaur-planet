@@ -6,7 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-DLL_INTERFACE_BEGIN(6_AMSFX)
+DLL_INTERFACE(DLL_6_AMSFX) {
+    /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ UnknownDLLFunc func0;
     /*1*/ void (*func1)(Object *obj);
     /** 2 - Play sound using source object for panning and distance falloff */
@@ -29,6 +30,6 @@ DLL_INTERFACE_BEGIN(6_AMSFX)
     /*18*/ UnknownDLLFunc func18;
     /*19*/ void (*water_falls_set_flags)(u8);
     /*20*/ UnknownDLLFunc func20;
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_6_H

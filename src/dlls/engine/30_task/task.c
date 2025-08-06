@@ -102,7 +102,7 @@ void task_mark_task_completed(u8 task) {
 
     // hmm
     if (!task) {
-        gDLL_29_Gplay->exports->func_958(NULL, 0, 1, func_80048498());
+        gDLL_29_Gplay->vtbl->func_958(NULL, 0, 1, func_80048498());
     }
 }
 
@@ -111,11 +111,11 @@ u8 task_get_num_recently_completed() {
 }
 
 char *task_get_recently_completed_task_text(u8 idx) {
-    return gDLL_21_Gametext->exports->get_text(sRecentlyCompleted[idx] + 244, 0);
+    return gDLL_21_Gametext->vtbl->get_text(sRecentlyCompleted[idx] + 244, 0);
 }
 
 char *task_get_completion_task_text() {
-    return gDLL_21_Gametext->exports->get_text(sCompletionIdx + 244, 1);
+    return gDLL_21_Gametext->vtbl->get_text(sCompletionIdx + 244, 1);
 }
 
 s16 task_get_completion_percentage() {

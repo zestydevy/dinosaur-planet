@@ -6,7 +6,8 @@
 #include "game/objects/object.h"
 #include "PR/gbi.h"
 
-DLL_INTERFACE_BEGIN(9_newclouds)
+DLL_INTERFACE(DLL_9_newclouds) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, Object *, void *, s32);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(s32, s32);
@@ -16,6 +17,6 @@ DLL_INTERFACE_BEGIN(9_newclouds)
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;
-DLL_INTERFACE_END()
+};
 
 #endif // _DLL_9_H

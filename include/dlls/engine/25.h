@@ -41,7 +41,8 @@ typedef struct Dll25BssE0 {
     u8 pad26[0x28 - 0x26];
 } Dll25BssE0;
 
-DLL_INTERFACE_BEGIN(25)
+DLL_INTERFACE(DLL_25) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /* 0 */ void (*dll_25_func_D8)(void);
 /* 1 */ s32 (*dll_25_func_1158)(f32* arg0, Dll25BssDC* arg1);
 /* 2 */ s32 (*dll_25_func_12FC)(Vec3 arg0);
@@ -57,7 +58,7 @@ DLL_INTERFACE_BEGIN(25)
 /* 12 */ CurvesFunc1BCReturnInner* (*dll_25_func_2A50)(Object *obj, s32 arg1);
 /* 13 */ CurvesFunc1BCReturnInner* (*dll_25_func_2BC4)(Object *obj, s32 arg1);
 /* 14 */ CurvesFunc1BCReturnInner* (*dll_25_func_2CF8)(Object *obj, s32 arg1);
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_25_H
 

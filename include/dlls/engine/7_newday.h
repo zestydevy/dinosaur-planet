@@ -7,7 +7,8 @@
 #include "game/objects/object.h"
 #include "PR/gbi.h"
 
-DLL_INTERFACE_BEGIN(7_newday)
+DLL_INTERFACE(DLL_7_newday) {
+/*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, Object *, void *, s32);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(void);
@@ -32,6 +33,6 @@ DLL_INTERFACE_BEGIN(7_newday)
 /*21*/ UnknownDLLFunc func21;
 /*22*/ UnknownDLLFunc func22;
 /*23*/ s32 (*func23)(Gfx **gdl);
-DLL_INTERFACE_END()
+};
 
 #endif //_DLLS_7_H
