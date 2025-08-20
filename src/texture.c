@@ -11,6 +11,7 @@ extern void *D_800B49C0 ;
 extern s32* gFile_TEX0_TAB[];
 extern void* gFile_TEX1_TAB;
 extern void* gFile_TEXTABLE;
+extern s32 D_80092A40;
 
 void init_textures(void) {
     s32 var_v1;
@@ -30,7 +31,9 @@ void init_textures(void) {
     D_800B49C0 = malloc(0x108, 6, NULL);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD6C.s")
+void func_8003CD6C(s32 arg0) {
+    D_80092A40 = arg0;
+}
 
 Texture *queue_load_texture_proxy(s32 id) {
     Texture *texture = NULL;
