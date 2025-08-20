@@ -17,6 +17,10 @@ typedef struct {
 typedef f32 quartic[5];
 
 typedef struct {
+    f32 x, y;
+} Vec2f;
+
+typedef struct {
     f32 x, y, z;
 } Vec3f;
 

@@ -24,8 +24,7 @@ typedef struct {
     /* 0008 */ f32 unk0x8;
     /* 000C */ f32 unk0xC;
     /* 0010 */ s32 unk0x10;
-    /* 0014 */ f32 unk0x14;
-    /* 0018 */ f32 unk0x18[19]; // unsure of length
+    /* 0014 */ f32 unk0x14[20];
     /* 0064 */ f32 unk0x64;
     /* 0068 */ f32 unk0x68;
     /* 006C */ f32 unk0x6C;
@@ -39,7 +38,7 @@ typedef struct {
     /* 008C */ f32 *unk0x8C;
     /* 0090 */ s32 unk0x90;
     /* 0094 */ unk_curve_func unk0x94;
-    /* 0098 */ s32 unk0x98;
+    /* 0098 */ void (*unk0x98)(f32*, f32*, f32*, f32*);
     UnkInnerCurvesStruct *unk0x9C;
     UnkInnerCurvesStruct *unk0xA0;
     UnkInnerCurvesStruct *unk0xA4;
@@ -51,9 +50,21 @@ typedef struct {
     f32 unk0xF8[4];
 } UnkCurvesStruct;
 
+typedef struct Unk80006784 {
+    f32 unk0[6];
+} Unk80006784;
+
+typedef struct Unk80006908 {
+    Vec4f unk0;
+    Vec4f unk10;
+    f32 unk20;
+} Unk80006908;
+
 void func_80005094(UnkCurvesStruct *arg0);
 f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2);
 void func_80004CE8(Vec4f *in, Vec4f *out);
 void func_8000523C(UnkCurvesStruct *arg0);
+f32 func_80006E04(Unk80006784 *, f32);
+f32 func_80006CFC(Unk80006784 *, f32, f32);
 
 #endif

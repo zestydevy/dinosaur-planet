@@ -8,6 +8,7 @@
 #include "functions.h"
 #include "dll.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 static s32 data_0 = 0;
 static s8 data_4 = 0;
