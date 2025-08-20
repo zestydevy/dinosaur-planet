@@ -24,8 +24,7 @@ typedef struct {
     /* 0008 */ f32 unk0x8;
     /* 000C */ f32 unk0xC;
     /* 0010 */ s32 unk0x10;
-    /* 0014 */ f32 unk0x14;
-    /* 0018 */ f32 unk0x18[19]; // unsure of length
+    /* 0014 */ f32 unk0x14[20];
     /* 0064 */ f32 unk0x64;
     /* 0068 */ f32 unk0x68;
     /* 006C */ f32 unk0x6C;

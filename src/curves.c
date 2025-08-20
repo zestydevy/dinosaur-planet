@@ -1,5 +1,6 @@
 #include "PR/gu.h"
 #include "sys/curves.h"
+#include "sys/main.h"
 
 extern s32 D_8008C7D0;
 extern f32 D_800A7C30[4];
@@ -145,7 +146,7 @@ void func_80005094(UnkCurvesStruct *arg0) {
     while (arg0->unk0x10 < (arg0->unk0x90 - 3)) {
         func_800065C0(arg0, 5);
         
-        arg0->unk0xC += arg0->unk0x14;
+        arg0->unk0xC += arg0->unk0x14[0];
         
         if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
             arg0->unk0x10 += 4;
@@ -197,7 +198,7 @@ void func_8000523C(UnkCurvesStruct *arg0) {
     while (arg0->unk0x10 < (arg0->unk0x90 - 3)) {
         func_800065C0(arg0, 5);
 
-        arg0->unk0xC += arg0->unk0x14;
+        arg0->unk0xC += arg0->unk0x14[0];
 
         if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
             arg0->unk0x10 += 4;
@@ -610,7 +611,7 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
         
     }
 
-    arg0->unk0x14 = 0.0f;
+    arg0->unk0x14[0] = 0.0f;
 
     for (i = 0; i < arg1; ++i) {
         // Find distance between current and next coord
@@ -633,9 +634,9 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
         }
 
         // Compute distance between current and next coord
-        arg0->unk0x18[i] = sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
+        arg0->unk0x14[i + 1] = sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
         // Sum distances
-        arg0->unk0x14 += arg0->unk0x18[i];
+        arg0->unk0x14[0] += arg0->unk0x14[i + 1];
     }
 }
 
