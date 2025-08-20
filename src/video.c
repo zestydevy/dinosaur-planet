@@ -2,6 +2,9 @@
 #include "sys/controller.h"
 #include "sys/gfx/gx.h"
 #include "sys/main.h"
+#include "sys/map.h"
+#include "sys/newshadows.h"
+#include "PR/gbi.h"
 
 // TODO: This is part of a larger data structure and is only here to allow the current .data section
 // for this file to be aligned correctly!
@@ -125,15 +128,15 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2) {
     }
 }
 
-void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
+void func_8005CB10(Gfx **gdl, Object *obj) {
     s32 i;
     Texture *tex;
 
-    switch (param2->unk0x46) {
-        case 0:
+    switch (obj->id) {
+        case OBJ_Sabre:
             tex = D_800BCC68;
             break;
-        case 0x1f:
+        case OBJ_Krystal:
             tex = D_800BCC6C;
             break;
         default:
@@ -146,7 +149,7 @@ void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
     i = 0;
 
     while (i < UNKNOWN_VIDEO_STRUCTS_COUNT) {
-        if (param2 == gUnknownVideoStructs[i].unk0x80) {
+        if (obj == gUnknownVideoStructs[i].obj) {
             gSPDisplayList((*gdl)++, &gUnknownVideoStructs[i].dl);
         }
 
@@ -156,13 +159,39 @@ void func_8005CB10(Gfx **gdl, UnkVidStruct4 *param2) {
 
 static s32 D_80092FFC = 1;
 static s32 D_80093000 = 0;
+void func_8005CF4C(Object *, UnkVidStruct2*);
+void func_8005CDFC(s32 _);
+void func_8005CC74(Gfx **gdl, Object *arg1) {
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CC74.s")
+    if (D_800BCC78 == 0) {
+        return;
+    }
+
+    if (D_80092FFC != 0) {
+        D_800BCC80[0] = 0.0f;
+        D_800BCC80[1] = 0.0f;
+    }
+
+    if ((gWorldX != D_800BCC80[0]) || (gWorldZ != D_800BCC80[1])) {
+        D_800BCC80[0] = gWorldX;
+        D_800BCC80[1] = gWorldZ;
+        func_8005CDFC(0);
+    }
+
+    for (i = 0; i < 4; i++) {
+        if ((D_800BCC18[i].unk0x10 != 0) && (arg1 == D_800BCC18[i].unk0x10)) {
+            func_8005CF4C(arg1, &D_800BCC18[i]);
+        }
+    }
+    func_8005CB10(gdl, arg1);
+    D_80092FFC = 0;
+}
 
 void func_8005CD80() {
     s32 i;
     s32 k;
-    UnkVidStruct_0x18 *ptr;
+    Vtx_t *ptr;
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
         ptr = &gUnknownVideoStructs[i].unk0x18[0];
@@ -175,18 +204,18 @@ void func_8005CD80() {
             }
 
             for (k = 0; k < 4; k++) {
-                (ptr++)->unkf = gUnknownVideoStructs[i].unk0x88;
+                (ptr++)->cn[3] = gUnknownVideoStructs[i].unk0x88;
             }
         }
     }
 }
 
-void func_8005CDFC(int _) {
+void func_8005CDFC(s32 _) {
     float var1;
     float var2;
     s32 i;
     s32 k;
-    UnkVidStruct_0x18 *ptr;
+    Vtx_t *ptr;
 
     var1 = 0;
     var2 = 0;
@@ -202,15 +231,136 @@ void func_8005CDFC(int _) {
             gUnknownVideoStructs[i].unk0x7c += var2;
 
             for (k = 0; k < 4; k++) {
-                ptr->x -= var1;
-                ptr->z -= var2;
+                ptr->ob[0] -= var1;
+                ptr->ob[2] -= var2;
                 ptr++;
             }
         }
     }
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CF4C.s")
+#else
+extern s32 D_80092BDC;
+s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5); /* extern */
+void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
+    s16 var_s2;
+    s16 var_s3;
+    Vtx_t* var_s0;
+    s32 var_s1;
+    UnkVidStruct* temp_v0;
+    Vec3f spAC;
+    SRT sp94;
+    SRT sp7C;
+    DLTri* var_s5;
+    s32 temp_a2;
+    Vec4f sp68;
+    s16 sp66[2];
+
+    sp68.x = 0.0f;
+    sp68.y = 0.0f;
+    sp68.z = 0.0f;
+    var_s2 = 0;
+    var_s3 = 0;
+    arg1->unk0x10 = NULL;
+    sp66[1] = arg0->srt.yaw;
+
+    if (D_80093000 == 0x27) {
+        D_80093000 = 0;
+    }
+    if (func_80051D68(arg0, arg1->unk0x0 - ((Vec3s32 *)D_80092BE0)->x, arg1->unk0x8 - ((Vec3s32 *)D_80092BE0)->z, (UnkFunc80051D68Arg3* ) D_80092BDC, D_80092C1C, &sp68) == 0) {
+        return;
+    }
+
+    if (sp68.y != 0.0f) {
+        if (sp68.x != 0.0f) {
+            var_s2 = arctan2_f(sp68.x, sp68.y);
+        }
+        if (sp68.z != 0.0f) {
+            var_s3 = arctan2_f(sp68.z, sp68.y);
+            if (((!var_s5) && (!var_s5)) && (!var_s5)) {}
+        }
+    }
+
+    gUnknownVideoStructs[D_80093000].obj = arg0;
+    sp94.transl.x = 0.0f;
+    sp94.transl.y = 0.0f;
+    sp94.transl.z = 0.0f;
+    sp94.scale = 1.0f;
+    sp7C.transl.x = 0.0f;
+    sp7C.transl.y = 0.0f;
+    sp7C.transl.z = 0.0f;
+    sp7C.scale = 1.0f;
+    var_s0 = gUnknownVideoStructs[D_80093000].unk0x18;
+    var_s5 = (DLTri *)gUnknownVideoStructs[D_80093000].unk0x58_pad;
+    temp_v0 = &gUnknownVideoStructs[D_80093000];
+    temp_v0->unk0x88 = 0xC8;
+    temp_v0->viMode = 1;
+    sp94.pitch = var_s3;
+    sp94.roll = -var_s2;
+    sp94.yaw = 0;
+    sp7C.roll = 0;
+    sp7C.pitch = 0;
+    temp_v0->unk0x78 = gWorldX;
+    temp_v0->unk0x7c = gWorldZ;
+    sp7C.yaw = sp66[1];
+    for (var_s1 = 0; var_s1 < 4; var_s1++, var_s0++) {
+        spAC.x = D_800BCC10[var_s1].x;
+        spAC.y = D_800BCC10[var_s1].y;
+        spAC.z = D_800BCC10[var_s1].z;
+        rotate_vec3(&sp7C, &spAC);
+        rotate_vec3(&sp94, &spAC);
+        var_s0->ob[0] = spAC.x + arg1->unk0x0 - gWorldX;
+        var_s0->ob[1] = spAC.y + arg1->unk0x4 + 1;
+        var_s0->ob[2] = spAC.z + arg1->unk0x8 - gWorldZ;
+        var_s0->cn[0] = 0xFF;
+        var_s0->cn[1] = 0xE1;
+        var_s0->cn[2] = 0xE1;
+        var_s0->cn[3] = temp_v0->unk0x88;
+    }
+    var_s0 -= 4;
+    var_s0[0].tc[0] = 0;
+    var_s0[0].tc[1] = 0x400;
+    var_s0[1].tc[0] = 0;
+    var_s0[1].tc[1] = 0;
+    var_s0[2].tc[0] = 0x400;
+    var_s0[2].tc[1] = 0;
+    var_s0[3].tc[0] = 0x400;
+    var_s0[3].tc[1] = 0x400;
+    if (arg1->unk0xc == 1) {
+        var_s5->v0 = 0;
+        var_s5->v1 = 1;
+        var_s5->v2 = 2;
+        var_s5 += 1;
+        var_s5->v0 = 0;
+        var_s5->v1 = 2;
+        var_s5->v2 = 3;
+    } else if (arg1->unk0xc == 2) {
+        var_s5->v0 = 0;
+        var_s5->v1 = 1;
+        var_s5->v2 = 2;
+        var_s5 += 1;
+        var_s5->v0 = 0;
+        var_s5->v1 = 2;
+        var_s5->v2 = 3;
+    }
+    var_s5--;
+    gSPVertex(&temp_v0->dl, OS_PHYSICAL_TO_K0(var_s0), 4, 0)
+    dl_triangles(&temp_v0->dl2, var_s5, 2);
+    gSPEndDisplayList(temp_v0->dl2++)
+    temp_a2 = D_80093000 + 1;
+    if (temp_a2 == 39) {
+        D_80093000 = temp_a2;
+        gUnknownVideoStructs->viMode = NULL;
+    } else {
+        gUnknownVideoStructs[temp_a2].viMode = 0;
+        D_80093000 = temp_a2;
+    }
+    func_8005CD80();
+}
+#endif
+
 
 // Note: Return type is void* because the real type is unclear
 void *func_8005D3A4(int param) {
@@ -591,7 +741,40 @@ u16 *get_framebuffer_end() {
     return gFramebufferEnd;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DD4C.s")
+#else
+s32 func_8005DD4C(s32 arg0, s32 arg1, s32 arg2) {
+    s32 sp2C;
+    s32 var_v1;
+    Vec3s32* sp24;
+    s32 temp_t6;
+    u8* sp1C;
+
+    temp_t6 = (D_800BCE20 ^ 1) & 0xFF;
+    sp24 = D_800BCE18[temp_t6];
+    for (sp2C = 0, var_v1 = 0; var_v1 < D_800BCE22[temp_t6]; var_v1++) {
+        if (arg2 == sp24[var_v1].z) {
+            sp2C = sp24[var_v1].x;
+            break;
+        }
+    }
+
+    sp1C = &D_800BCE22[D_800BCE20];
+    sp24 = D_800BCE18[D_800BCE20];
+    sp24[*sp1C].z = arg2;
+    sp24[*sp1C].x = 0;
+    if (is_size_smaller_than_resolution(arg0, arg1) == 0) {
+        temp_t6 = -1;
+    } else {
+        temp_t6 = (gCurrentResolutionH[gFramebufferChoice] * arg1) + arg0;
+    }
+
+    sp24[*sp1C].y = temp_t6;
+    *sp1C += 1;
+    return sp2C;
+}
+#endif
 
 /**
  * Returns whether the given width and height is smaller than the current framebuffer's resolution.
@@ -605,41 +788,41 @@ int is_size_smaller_than_resolution(s32 width, s32 height) {
         && (u32)height < gCurrentResolutionV[gFramebufferChoice];
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005DEE8.s")
-#else
-// Kind of close? Might be worth starting this one over...
-void func_8005DEE8() {
-    u8 i;
-    s32 v0;
-    s32 *v1;
-    u32 t5;
-    UnkVidStruct3 *t4;
+void func_8005DEE8(void) {
+    s32 i;
+    u8 new_var;
+    s32 new_var2;
+    u32 temp_t5;
+    u8 *temp;
+    UnkVidStruct3* temp_a3;
+    Vec3s32 *temp2;
 
-    v1 = D_800BCE18[D_800BCE20];
-
-    for (i = 0; i < D_800BCE22[D_800BCE20]; ++i, v1 += 3) {
-        v0 = v1[1];
-
-        if (v0 >= 0) {
-            t5 = gFramebufferStart[v0] >> 2;
-            t4 = &D_80093068[(t5 >> 0xBu) & 7u];
-
-            v1[0] = (((t5 & 0x7ff) << t4->unk0x0) + t4->unk0x4) >> 3;
+    new_var = D_800BCE20;
+    temp2 = D_800BCE18[new_var];
+    i = 0;
+    temp = &D_800BCE22[D_800BCE20];
+    for (; *temp > i; i++) {
+        new_var2 = temp2[i].y;
+        temp_t5 = new_var2;
+        if (new_var2 >= 0) {
+            temp_t5 = gFramebufferStart[new_var2] >> 2;
+            // temp_t5 >> 0xB loads the first 21 bits
+            temp_a3 = &D_80093068[((temp_t5 >> 0xB) & 7)];
+            // temp_t5 & 0x7FF loads the last 11 bits
+            temp2[i].x = (temp_a3->unk0x4 + ((temp_t5 & 0x7FF) << temp_a3->unk0x0)) >> 3;
         } else {
-            v1[0] = 0;
+            temp2[i].x = 0;
         }
     }
 
-    D_800BCE20 = D_800BCE20 ^ 1;
+    D_800BCE20 ^= 1;
     D_800BCE22[D_800BCE20] = 0;
 }
-#endif
 
 /**
  * Note: param1 is most likely a boolean
  */
-void some_video_setup(int param1) {
+void some_video_setup(s32 param1) {
     if (param1) {
         set_video_mode(7);
         initialize_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
