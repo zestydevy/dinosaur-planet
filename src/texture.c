@@ -4,7 +4,31 @@ void func_8005324C(u16 *fb1, u16 *fb2, s32);
 
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/init_textures.s")
+extern void* D_800B49A8;
+extern s32 D_800B49B0;
+extern s32 D_800B49B8[2];
+extern void *D_800B49C0 ;
+extern s32* gFile_TEX0_TAB[];
+extern void* gFile_TEX1_TAB;
+extern void* gFile_TEXTABLE;
+
+void init_textures(void) {
+    s32 var_v1;
+    s32* temp_a1;
+    s32 i;
+
+    D_800B49A8 = malloc(0x15E0, 6, NULL);
+    D_800B49B0 = 0;
+    queue_alloc_load_file(&gFile_TEX0_TAB, 0x28);
+    queue_alloc_load_file(&gFile_TEX1_TAB, 0x25);
+    queue_alloc_load_file(&gFile_TEXTABLE, 0x26);
+    for (i = 0; i < 2; i++) {
+        temp_a1 = gFile_TEX0_TAB[i];
+        for (var_v1 = 0; temp_a1[var_v1] != -1; var_v1++) {}
+        D_800B49B8[i] = (var_v1 - 1);
+    }
+    D_800B49C0 = malloc(0x108, 6, NULL);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003CD6C.s")
 
