@@ -29,6 +29,10 @@ extern s32 D_800B49D4;
 extern s32 D_800B49D8;
 extern s8 D_800B49DC;
 
+extern s32 D_80092A50;
+extern s32 D_80092A54[3];
+extern s32 D_800B49E0;
+
 void init_textures(void) {
     s32 var_v1;
     s32* temp_a1;
@@ -933,13 +937,56 @@ Texture* func_8003E904(Texture* arg0, s32 arg1) {
     return var_v1;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E960.s")
+#else
+Texture* func_8003E960(s32 arg0) {
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E9B4.s")
+    for (i = 0; i < D_800B49B0; i++) {
+        if (arg0 == ((D_800B49A8 + i)->unk0 & 0xFFFFFFFF)) {
+            return (D_800B49A8 + i)->unk4;
+        }
+    }
+    return NULL;
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E9D0.s")
+void func_8003E9B4(s32 arg0) {
+    UINT_80092a48 |= arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E9F0.s")
+void func_8003E9D0(s32 arg0) {
+    UINT_80092a48 &= ~arg0;
+}
+
+void func_8003E9F0(Gfx** arg0, s32 arg1) {
+    s32 temp_v0;
+    s32 *v0;
+
+    if (D_80092A50 > 0) {
+        // yeah I don't even know what this is
+        if ((D_80092A50 == 0xA) && ((temp_v0 = D_800B49E0) == 0)) {
+            D_800B49E0 = temp_v0 = *D_80092A54;
+        }
+        func_8003FE70(arg0, *D_80092A54, D_80092A50, func_80004A4C());
+        v0 = &D_800B49E0;
+        if (D_80092A50 == 0xA) {
+            temp_v0 = D_800B49E0;
+            temp_v0 -= arg1;
+            *v0 = temp_v0;
+            if (*v0 <= 0) {
+                D_80092A50 = 0;
+                *v0 = 0;
+            }
+        } else {
+            D_80092A50 = 0;
+        }
+        return;
+    } else {
+        D_800B49E0 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EAC0.s")
 
