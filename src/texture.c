@@ -1,10 +1,16 @@
 #include "common.h"
+#include "sys/rarezip.h"
 
 void func_8005324C(u16 *fb1, u16 *fb2, s32);
 
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
+void load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
 
-extern void* D_800B49A8;
+typedef struct Unk800B49A8 {
+    s32 unk0;
+    Texture *unk4;
+} Unk800B49A8;
+extern Unk800B49A8* D_800B49A8;
 extern s32 D_800B49B0;
 extern s32 D_800B49B8[2];
 extern void *D_800B49C0 ;
@@ -12,6 +18,12 @@ extern s32* gFile_TEX0_TAB[];
 extern void* gFile_TEX1_TAB;
 extern void* gFile_TEXTABLE;
 extern s32 D_80092A40;
+extern s32 UINT_80092a48;
+extern s32 gCurrTex0;
+extern s32 gCurrTex1;
+extern s32 D_800B49CC;
+extern s32 D_800B49D0;
+extern s32 D_800B49D4;
 
 void init_textures(void) {
     s32 var_v1;
@@ -42,9 +54,130 @@ Texture *queue_load_texture_proxy(s32 id) {
     return texture;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_load.s")
+#else
+// https://decomp.me/scratch/Uk770
+Texture* texture_load(s32 id, s32 param2) {
+    u32 sp74;
+    s32 sp68;
+    u32 sp58;
+    Texture* sp44;
+    Texture* sp40;
+    Unk800B49A8* temp_v1;
+    s32 temp_s4;
+    s32 temp_s5;
+    s32 temp_s5_2;
+    s32 temp_s7;
+    u8 temp_t0;
+    u16 temp_t4;
+    s32 temp_t7;
+    s32 temp_t8;
+    Texture *temp_v0;
+    s32 temp_v0_4;
+    s32 temp_v1_2;
+    s32 temp_v1_4;
+    s32 var_a0;
+    s32 var_a2;
+    s32 var_s1;
+    s32 var_s6;
+    s32 i;
+    s32 var_v0_3;
+    s32 var_v0_4;
+    Unk800B49A8* temp_v0_2;
+    u32 temp_s0;
+    u8* temp_s3;
+    Texture* temp_v0_3;
+    u8* var_v0;
+    Unk800B49C0* temp_v1_3;
 
-void load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
+    for (i = 0; i < D_800B49B0; i++) {
+        temp_v1 = &D_800B49A8[i];
+        if (id == temp_v1->unk0) {
+            temp_v0 = temp_v1->unk4;
+            ((u8*)temp_v0)[5]++;
+            return temp_v0;
+        }
+    }
+    sp68 = id;
+    if (id < 0) {
+        sp68 = -id;
+    } else {
+        sp68 = gFile_TEXTABLE[id];
+    }
+    temp_t4 = sp68 & 0xFFFF;
+    var_a0 = temp_t4;
+    if (temp_t4 & 0x8000) {
+        var_v0_3 = 1;
+        sp74 = 0x24;
+        var_a0 = temp_t4 & 0x7FFF;
+    } else {
+        var_v0_3 = 0;
+        sp74 = 0x27;
+    }
+    temp_v0_2 = (Unk800B49A8 *)&gFile_TEX0_TAB[var_v0_3][var_a0];
+    temp_v1_2 = temp_v0_2->unk0;
+    temp_t0 = temp_v1_2 >> 0x18;
+    temp_s0 = temp_v1_2 & 0xFFFFFF;
+    temp_s5 = ((u32)temp_v0_2->unk4 & 0xFFFFFF) - temp_s0;
+    if (temp_t0 >= 2) {
+        read_file_region(sp74, D_800B49C0, temp_s0, (temp_t0 + 1) * 8);
+    } else {
+        D_800B49C0->unk0 = 0;
+        D_800B49C0->unk4 = rarezip_uncompress_size_rom(sp74, temp_s0, 1);
+        D_800B49C0->unk8 = temp_s5;
+    }
+    sp44 = NULL;
+    sp40 = NULL;
+    for (var_s1 = 0; var_s1 < temp_t0; var_s1++) {
+        temp_s4 = D_800B49C0[var_s1].unk4;
+        temp_s7 = temp_s4 + 0xE4;
+        temp_s5_2 = (u32)D_800B49C0[var_s1+1].unk0 - (u32)D_800B49C0[var_s1].unk0;
+        sp44 = malloc(temp_s7, D_80092A40, NULL);
+        if (sp44 == NULL) {
+            var_s1++;
+            if ((var_s1) == 1) {
+                return NULL;
+            }
+            var_s1 = temp_t0 + 1;
+            sp44->levels = (temp_t0 << 8);
+        } else {
+            temp_v0_4 = (((u32) &sp44[temp_s4]) - temp_s5_2) + 0xE4;
+            temp_s3 = temp_v0_4 - (temp_v0_4 % 16);
+            read_file_region(sp74, temp_s3, D_800B49C0[var_s1].unk0 + temp_s0, temp_s5_2);
+            rarezip_uncompress(temp_s3, (u8*)sp44, temp_s4);
+            sp44->next = 0;
+            if (sp40 != NULL) {
+                sp40->next = sp44;
+            }
+            sp40 = sp44;
+            if (var_s1 == 0) {
+                sp44->levels = temp_t0 << 8;
+            } else {
+                sp44->levels = 1;
+            }
+            sp44->unk_0x10 = (u32) temp_s7 >> 2;
+            reduce_heap_block(sp44, (load_texture_to_tmem(sp44, align_16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
+        }
+    }
+    for (i = 0; i < D_800B49B0; i++) {
+        temp_v1 = &D_800B49A8[i];
+        if (temp_v1->unk0 == -1) {
+            break;
+        }
+    }
+    if (i == D_800B49B0) {
+        D_800B49B0 += 1;
+    }
+    D_800B49A8[i].unk0 = id;
+    D_800B49A8[i].unk4 = sp44;
+    if (D_800B49B0 >= 0x2BD) {
+        return NULL;
+    }
+    return sp44;
+}
+#endif
+
 Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
 {
     Gfx *mygdl;
@@ -241,13 +374,64 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
 }
 #endif
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_destroy.s")
+#else
+void texture_destroy(Texture* texture) {
+    Texture* temp_s1;
+    Texture* var_s0;
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DB5C.s")
+    if (texture == NULL) {
+        return;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DB7C.s")
+    ((u8*)texture)[5]--;
+    if ((((u8*)texture)[5]) > 0) {
+        return;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DBCC.s")
+    for (i = 0; i < D_800B49B0; i++) {
+        if (texture == (D_800B49A8 + i)->unk4) {
+            var_s0 = texture->next;
+            while (var_s0 != NULL) {
+                if (((u32) var_s0 < 0x80000000U) || ((u32) var_s0 >= 0xA0000000U)) {
+                    var_s0 = NULL;
+                } else {
+                    temp_s1 = var_s0->next;
+                    free(var_s0);
+                    var_s0 = temp_s1;
+                }
+            }
+            free(texture);
+            (D_800B49A8 + i)->unk0 = -1;
+            (D_800B49A8 + i)->unk4 = -1;
+            return;
+        }
+    }
+}
+#endif
+
+void func_8003DB5C(void) {
+    UINT_80092a48 = 0;
+    gCurrTex0 = 0;
+    gCurrTex1 = 0;
+}
+
+void func_8003DB7C(void) {
+    D_800B49D4 = UINT_80092a48;
+    D_800B49CC = gCurrTex0;
+    D_800B49D0 = gCurrTex1;
+    UINT_80092a48 = 0;
+    gCurrTex0 = 0;
+    gCurrTex1 = 0;
+}
+
+void func_8003DBCC(void) {
+    UINT_80092a48 = D_800B49D4;
+    gCurrTex0 = D_800B49CC;
+    gCurrTex1 = D_800B49D0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DC04.s")
 
