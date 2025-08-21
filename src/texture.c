@@ -1,10 +1,12 @@
 #include "common.h"
 #include "sys/rarezip.h"
+#include "PR/gbi.h"
 
 void func_8005324C(u16 *fb1, u16 *fb2, s32);
 
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 void load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
+void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 
 typedef struct Unk800B49A8 {
     s32 unk0;
@@ -19,11 +21,13 @@ extern void* gFile_TEX1_TAB;
 extern void* gFile_TEXTABLE;
 extern s32 D_80092A40;
 extern s32 UINT_80092a48;
-extern s32 gCurrTex0;
-extern s32 gCurrTex1;
+extern Texture *gCurrTex0;
+extern Texture *gCurrTex1;
 extern s32 D_800B49CC;
 extern s32 D_800B49D0;
 extern s32 D_800B49D4;
+extern s32 D_800B49D8;
+extern s8 D_800B49DC;
 
 void init_textures(void) {
     s32 var_v1;
@@ -433,7 +437,185 @@ void func_8003DBCC(void) {
     gCurrTex1 = D_800B49D0;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DC04.s")
+#else
+// https://decomp.me/scratch/fpYm1
+s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
+    s32 pad_sp84;
+    Texture* var_a3;
+    s32 var_a2; // sp7c
+    Texture* var_t0_2;
+    Texture* var_v1;
+    s32 temp_t4_3;
+    s32 var_a1;
+    s32 var_a0;
+    s32 var_v0;
+    s32 pad_sp60;
+    struct PointersInts* var_a3_2;
+    s32 var_v1_3;
+    Gfx* sp54;
+    s16 temp_v1;
+    Gfx *temp_gdl;
+    s32 var_t0; // sp48
+    s32 temp;
+    s32 pad[2];
+
+    sp54 = *arg0;
+    D_800B49D8 = 0;
+    if (arg5 & 2) {
+        D_800B49DC = 0;
+        var_t0 = 0;
+        if (arg1 != NULL) {
+            var_a0 = arg3 >> 0x10;
+            var_a2 = arg1->levels != 0 ? arg1->levels >> 8 : 0;
+            var_a3 = arg1;
+            var_t0_2 = arg1;
+            if (var_a2 >= 2 && var_a0 < var_a2) {
+                for (var_v1 = arg1, var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++) {
+                    var_v1 = var_v1->next;
+                }
+                if (var_v1 != NULL) {
+                    var_a3 = var_v1;
+                }
+                if (arg2 & 0x40) {
+                    if (arg2 & 0x80000) {
+                        var_a0--;
+                        if (var_a0 < 0) {
+                            if (arg2 & 0x40000) {
+                                var_a0 += 2;
+                            } else {
+                                var_a0 = 0;
+                            }
+                        }
+                    } else {
+                        var_a0++;
+                        if (var_a0 >= var_a2) {
+                            if (arg2 & 0x40000) {
+                                var_a0 -= 2;
+                            } else {
+                                var_a0 = var_a2 - 1;
+                            }
+                        }
+                    }
+                    for (var_v1 = arg1, var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++) {
+                        var_v1 = var_v1->next;
+                    }
+                    if (var_v1 != NULL) {
+                        var_t0_2 = var_v1;
+                    }
+                } else {
+                    var_t0_2 = var_a3;
+                }
+            }
+            temp_v1 = (arg1->flags & 0xFEBF);
+            arg2 = temp_v1 | arg2;
+            if ((var_a3 != gCurrTex0) || (var_t0_2 != gCurrTex1) || (arg4 != 0)) {
+                gCurrTex0 = var_a3;
+                gCurrTex1 = var_t0_2;
+                temp_gdl = var_a3->gdl;
+                gSPDisplayList(sp54++, OS_PHYSICAL_TO_K0(temp_gdl));
+                if (arg1->flags & 0x40 && arg2 & 0x40) {
+                    temp_gdl = var_t0_2->gdl;
+                    gSPDisplayList(sp54++, OS_PHYSICAL_TO_K0(temp_gdl));
+                    dl_set_env_color_no_sync(&sp54, (arg3 & 0xFFFF) >> 8, (arg3 & 0xFFFF) >> 8, (arg3 & 0xFFFF) >> 8, 0);
+                }
+                D_800B49DC = 1;
+            }
+            var_t0 = (arg1->format & 0xF) == 7;
+            var_a1 = arg1->flags & 0x100;
+            var_a0 = 1;
+            var_a3_2 = pointersIntsArray;
+        } else {
+            var_a1 = 0;
+            var_a0 = 0;
+            var_a3_2 = pointersIntsArray + 0x260;
+        }
+    } else {
+        var_t0 = 0;
+        var_a1 = 0;
+        var_a0 = 0;
+        if (arg1 != NULL) {
+            temp_v1 = (arg1->flags & 0xFEBF);
+            arg2 = temp_v1 | arg2;
+            var_a0 = 1;
+            var_a3_2 = pointersIntsArray;
+            var_t0 = (arg1->format & 0xF) == 7;
+            var_a1 = arg1->flags & 0x100;
+        } else {
+            var_a3_2 = pointersIntsArray + 0x260;
+        }
+    }
+    if (arg5 & 1) {
+        arg2 &= ~UINT_80092a48;
+        temp = (s32) (arg2 & 0x70) >> 4;
+        if (var_a0 != 0) {
+            if (arg2 & 0x400) {
+                if (var_a1 != 0) {
+                    temp = 0x23;
+                } else {
+                    temp = 0x22;
+                }
+            } else if (arg2 & 0x100000) {
+                temp += 8;
+            } else if (arg2 & 0x80) {
+                temp += 0x10;
+            } else if (arg2 & 0x40000000) {
+                temp = 0x25;
+            } else if (arg2 & 0x200) {
+                if (var_a1 != 0) {
+                    temp = 0x21;
+                } else {
+                    temp += 0x18;
+                }
+            } else if (var_a1 != 0) {
+                temp = 0x20;
+            }
+        }
+        var_a2 = (arg2 & var_a3_2[temp].valA) | var_a3_2[temp].valB;
+        var_v1_3 = 0x200004;
+        if (var_a2 & 2) {
+            var_v1_3 |= 1;
+        }
+        if (var_a2 & 8) {
+            var_v1_3 |= 0x10000;
+        }
+        if (!(arg2 & 0x80000000)) {
+            var_v1_3 |= 0x400;
+        }
+        if (arg5 & 4) {
+            gSPGeometryMode(sp54++, 0xFFFFFF, var_v1_3);
+        } else {
+            gSPGeometryMode(sp54, 0xFFFFFF, var_v1_3);
+            dl_apply_geometry_mode(&sp54);
+        }
+        temp_t4_3 = (var_a2 >> 3);
+        sp54->words.w0 = (((Gfx*)var_a3_2[temp].prts[0])[temp_t4_3]).words.w0;
+        sp54->words.w1 = (((Gfx*)var_a3_2[temp].prts[0])[temp_t4_3]).words.w1;
+        if (!(arg5 & 4)) {
+            dl_apply_combine(&sp54);
+        } else {
+            sp54++;
+        }
+        sp54->words.w0 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w0;
+        sp54->words.w1 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w1;
+        if (var_t0 != 0) {
+            sp54->words.w0 |= 0x8000;
+        }
+        if (!(arg5 & 4)) {
+            dl_apply_other_mode(&sp54);
+        } else {
+            sp54++;
+        }
+        if ((var_a2 & 7) < 4) {
+            var_a2 += 4;
+            D_800B49D8 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w1;
+        }
+    }
+    *arg0 = sp54;
+    return 0;
+}
+#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/set_textures_on_gdl.s")
@@ -448,7 +630,6 @@ typedef struct {
 /*000C*/    u32 flags;
 } Foo;
 void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes)
 {
     Gfx *mygdl;
@@ -649,7 +830,88 @@ void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s3
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E648.s")
+void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
+    s32 temp_a1;
+    s32 temp_t1;
+    s32 temp_t2;
+    s32 var_a0;
+    s32 y;
+
+    temp_t2 = *arg1 & 0x80000;
+    temp_t1 = *arg1 & 0x40000;
+    y = *arg1 & 0x20000;
+
+    if (y) {
+        if (temp_t1 == 0) {
+            if (rand_next(0, 1000) >= 986) {
+                *arg1 &= 0xFFF7FFFF;
+                *arg1 |= 0x40000;
+            }
+            return;
+        }
+
+        if (temp_t2 == 0) {
+            *arg2 +=(arg0->unk_0xe * delayByte);
+            if (*arg2 >= arg0->levels) {
+                *arg2 = ((arg0->levels * 2) - *arg2) - 1;
+                if (*arg2 < 0) {
+                    *arg2 = 0;
+                    *arg1 &= 0xFFF3FFFF;
+                    return;
+                }
+                *arg1 |= 0x80000;
+            }
+            return;
+        }
+
+        *arg2 -= arg0->unk_0xe * delayByte;
+        if (*arg2 < 0) {
+            *arg2 = 0;
+            *arg1 &= 0xFFF3FFFF;
+        }
+        return;
+    }
+
+    if (temp_t1) {
+        if (temp_t2 == 0) {
+            *arg2 += arg0->unk_0xe * delayByte;
+        } else {
+            *arg2 -= arg0->unk_0xe * delayByte;
+        }
+        do {
+            var_a0 = 0;
+            if ((s32) *arg2 < 0) {
+                *arg2 = -*arg2;
+                var_a0 = 1;
+                *arg1 &= 0xFFF7FFFF;
+            }
+            if (arg0->flags & 0x40) {
+                temp_a1 = arg0->levels - 0x100;
+                if (*arg2 >= temp_a1) {
+                    *arg2 = ((temp_a1 * 2) - (s32) *arg2) - 1;
+                    var_a0 = 1;
+                    *arg1 |= 0x80000;
+                }
+            } else if ((s32) *arg2 >= (s32) arg0->levels) {
+                *arg2 = ((arg0->levels * 2) - (s32) *arg2) - 1;
+                var_a0 = 1;
+                *arg1 |= 0x80000;
+            }
+        } while (var_a0 != 0);
+        return;
+    }
+    if (temp_t2 == 0) {
+        *arg2 += arg0->unk_0xe * delayByte;
+        while ((s32) *arg2 >= arg0->levels) {
+            *arg2 -= arg0->levels;
+        }
+    } else {
+        *arg2 -= arg0->unk_0xe * delayByte;
+        while ((s32) *arg2 < 0) {
+            *arg2 += arg0->levels;
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E904.s")
 
