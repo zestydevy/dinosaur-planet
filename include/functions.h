@@ -114,7 +114,7 @@ void func_800121DC();
 s32 schedule_gfx_task(Gfx*, Gfx*, s32);
 s32 func_80037924();
 void func_80037EC8(Gfx**);
-void func_8003E9F0(Gfx**, u8);
+void func_8003E9F0(Gfx**, s32);
 s32 func_80041D5C();
 u32 func_80041D74();
 void func_80042174(s32);
