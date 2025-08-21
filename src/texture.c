@@ -913,7 +913,25 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E904.s")
+Texture* func_8003E904(Texture* arg0, s32 arg1) {
+    Texture* var_v0;
+    Texture* var_v1;
+    s32 i;
+
+    var_v1 = arg0 + 1;
+    if (arg1 > 0) {
+        if (arg1 < arg0->levels) {
+            arg1>>= 8;
+            for (var_v0 = arg0, i = 0; i < arg1 && var_v0 != NULL; i++) {
+                var_v0 = var_v0->next;
+            }
+            if (var_v0 != NULL) {
+                var_v1 = var_v0 + 1;
+            }
+        }
+    }
+    return var_v1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E960.s")
 
