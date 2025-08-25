@@ -10,6 +10,7 @@ void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void func_8003EC8C(u16*, u16 *, s32);
 void func_8003F2C4(u16*, u16, u16, s32);
 u16 func_8003FD48(u16, u16, u16, u16);
+u16 func_8003FB88(u16, u16, u16, u16);
 
 typedef struct Unk800B49A8 {
     s32 unk0;
@@ -1286,9 +1287,111 @@ void func_8003F4C0(s32 arg0) {
     }
 }
 
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F660.s")
+#else
+// https://decomp.me/scratch/4XcTd
+void func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s32 height;
+    s32 width;
+    s32 resolution;
+    s32 j;
+    s32 var_v0;
+    u16 temp_a1;
+    u16 temp_v1;
+    u16 t1;
+    u16 t2;
+    u16* currentFB;
+    u16* currentFB2;
+    u32 a2;
+    s32 a3;
+    s32 v0;
+    s32 temp;
+    s32 s8;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F928.s")
+    resolution = get_some_resolution_encoded();
+    width = RESOLUTION_WIDTH(resolution);
+    height = RESOLUTION_HEIGHT(resolution);
+    if (arg3 != 0) {
+        var_v0 = (height - ((height * 0xB6) / 240)) >> 1;
+        height -= var_v0;
+    } else {
+        var_v0 = 0;
+    }
+    if (arg0 == 0) {
+        s8 = var_v0;
+        currentFB = &(&(&gFramebufferCurrent[width * var_v0])[arg1])[arg2 * width];
+        currentFB[-1] = 0;
+        currentFB2 = &gFramebufferCurrent[width * var_v0];
+        if (s8 < height) {
+            do {
+                j = 0;
+                while (j < width) {
+                    t1 = currentFB[width];
+                    t2 = currentFB[-1];
+                    temp_a1 = *(currentFB - width);
+                    temp_v1 = currentFB[1];
+                    j += 1;
+                    temp = ((u32)((currentFB[width] & 0xF800) + (currentFB[-1] & 0xF800) + (temp_a1 & 0xF800) + (temp_v1 & 0xF800)) >> 2) & 0xF800;
+                    temp += (((currentFB[width] & 0x7C0) + (currentFB[-1] & 0x7C0) + (temp_a1 & 0x7C0) + (temp_v1 & 0x7C0)) >> 2) & 0x7C0;
+                    temp += ((((currentFB[width] & 0x3E) + (currentFB[-1] & 0x3E) + (temp_a1 & 0x3E) + (temp_v1 & 0x3E)) >> 2) & 0x3E);
+                    *currentFB2 = temp;
+                    currentFB2 += 1;
+                    currentFB += 1;
+                }
+                s8 += 1;
+            } while (s8 != height);
+        }
+    } else {
+        s8 = var_v0;
+        currentFB = &(&(&gFramebufferCurrent[width * var_v0])[arg1])[arg2 * width];
+        currentFB[-1] = 0;
+        currentFB2 = &gFramebufferCurrent[width * var_v0];
+        if (s8 < height) {
+            do {
+                j = 0;
+                while (j < width) {
+                    v0 = 0xFFFF >> (0x10 - arg0);
+                    // apparently this is v0 * 0x842
+                    v0 = ~((v0 << 0xB) + (v0 << 6) + (v0 << 1));
+                    temp = (func_8003FB88(currentFB[-1], *(currentFB - width), currentFB[1], currentFB[width]) & v0);
+                    temp >>= arg0;
+                    j += 1;
+                    currentFB2[0] = temp;
+                    currentFB2 += 1;
+                    currentFB += 1;
+                }
+                s8 += 1;
+            } while (s8 != height);
+        }
+    }
+}
+#endif
+
+u16 func_8003F928(u16* arg0, s32 arg1) {
+    u32 temp;
+    u32 temp2;
+    u32 temp3;
+
+    temp = (arg0[0] & 0xF800) + (arg0[1] & 0xF800) + (arg0[2] & 0xF800);
+    temp2 = (arg0[0] & 0x7C0) + (arg0[1] & 0x7C0) + (arg0[2] & 0x7C0);
+    temp3 = (arg0[0] & 0x3E) + (arg0[1] & 0x3E) + (arg0[2] & 0x3E);
+
+    arg0 += arg1;
+    temp += (arg0[0] & 0xF800) + (arg0[1] & 0xF800) + (arg0[2] & 0xF800);
+    temp2 += (arg0[0] & 0x7C0) + (arg0[1] & 0x7C0) + (arg0[2] & 0x7C0);
+    temp3 += (arg0[0] & 0x3E) + (arg0[1] & 0x3E) + (arg0[2] & 0x3E);
+
+    arg0 += arg1;
+    temp += (arg0[0] & 0xF800) + (arg0[1] & 0xF800) + (arg0[2] & 0xF800);
+    temp2 += (arg0[0] & 0x7C0) + (arg0[1] & 0x7C0) + (arg0[2] & 0x7C0);
+    temp3 += (arg0[0] & 0x3E) + (arg0[1] & 0x3E) + (arg0[2] & 0x3E);
+
+    temp /= 9;
+    temp2 /= 9;
+    temp3 /= 9;
+    return (temp & 0xF800) + (temp2 & 0x7C0) + (temp3 & 0x3E);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003FA88.s")
 
