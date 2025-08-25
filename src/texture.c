@@ -1009,40 +1009,25 @@ void func_8003EAC0(u16 *arg0, s32 arg1, s32 arg2, u16* arg3) {
     func_8003F2C4(&arg3[arg1] - arg2, (&arg3[arg1] - arg2)[-2], 0, var_a3);
 }
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EBD4.s")
-#else
-/**
- * Does some sort of copy line-by-line from gFramebufferNext to gFramebufferCurrent.
- *
- * Also see weird_resize_copy(), which this function uses to copy data.
- */
 void func_8003EBD4(s32 hOffset) {
-    s32 resEncoded = get_some_resolution_encoded();
+    s32 height;
+    s32 resolution;
+    s32 width;
+    u16* nextFB;
+    u16* currentFB;
 
-    s32 hRes = resEncoded & 0xffff;
-    s32 vRes = resEncoded >> 0x10;
-
-    u16 *next = gFramebufferNext;
-    u16 *cur = gFramebufferCurrent;
-
-    s32 vIndex = vRes;
-
-    hOffset = hRes - hOffset;
-
-    while (vIndex--) {
-        weird_resize_copy(
-            next + hOffset,
-            hRes - (hOffset << 1),
-            hRes,
-            cur
-        );
-
-        next += hRes;
-        cur += hRes;
+    resolution = get_some_resolution_encoded();
+    width = RESOLUTION_WIDTH(resolution);
+    height = RESOLUTION_HEIGHT(resolution);
+    nextFB = gFramebufferNext;
+    currentFB = gFramebufferCurrent;
+    hOffset = width - hOffset;
+    while (height--) {
+        weird_resize_copy(&nextFB[hOffset], width - (hOffset << 1), width, currentFB);
+        nextFB += width;
+        currentFB += width;
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EC8C.s")
 
