@@ -1165,50 +1165,43 @@ void func_8003F074(u16* arg0, s32 arg1, s32 arg2, u16* arg3) {
     func_8003F2C4(&arg3[arg1] - arg2, (&arg3[arg1] - arg2)[-2], 0, var_a3);
 }
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/weird_resize_copy.s")
-#else
 /**
  * Copies data from src to dest+destWidth taking into account differences in width
  * (e.g. if destWidth is half srcWidth, every other value will be copied from src).
  *
  * Additionally, values copied to dest have the following applied first:
- *   (value & -0x843) >> 1
+ *   (value & ~0x842) >> 1
  *
  * destWidth must be less than 644.
  *
  * NOTE: Please see the note in the implementation, this function also reads
  * undefined stack memory, which affects the copied values.
  */
-void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest) {
-    u16 buffer[644];
+void weird_resize_copy(u16* src, s32 srcWidth, s32 destWidth, u16* dest) {
+    s32 i;
+    u16 buffer[642];
+    s32 var_v0;
+    u16* bufferPtr;
+    u16* srcPtr;
 
-    s32 var1 = 0;
-    u16 *bufferPtr = &buffer[0];
-    u16 *srcPtr = src;
-    s32 i = 0;
-
-    if (destWidth > 0) {
-        do {
-            var1 += srcWidth % destWidth;
-
-            // NOTE: This reads undefined stack memory!
-            *bufferPtr = ((*srcPtr & -0x843) >> 1) + ((*bufferPtr & -0x843) >> 1);
-            bufferPtr = bufferPtr + 1;
-
-            while (destWidth < var1) {
-                var1 = var1 - destWidth;
-                srcPtr = srcPtr + 1;
-            }
-
-            i = i + 1;
-            srcPtr += srcWidth / destWidth;
-        } while (i != destWidth);
+    var_v0 = 0;
+    bufferPtr = buffer;
+    srcPtr = src;
+    i = 0;
+    while (i < destWidth) {
+        var_v0 += srcWidth % destWidth;
+        // NOTE: This reads undefined stack memory!
+        bufferPtr[0] = ((srcPtr[0] & ~0x842) >> 1) + ((bufferPtr[0] & ~0x842) >> 1);
+        bufferPtr += 1;
+        while (destWidth < var_v0) {
+            var_v0 -= destWidth;
+            srcPtr += 1;
+        }
+        i += 1;
+        srcPtr += srcWidth / destWidth;
     }
-
-    bcopy(&buffer[0], destWidth + dest, destWidth << 1);
+    bcopy(buffer, &dest[destWidth], destWidth << 1);
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F2C4.s")
 
