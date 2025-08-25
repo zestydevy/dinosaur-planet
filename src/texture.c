@@ -9,6 +9,7 @@ void load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 
 void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void func_8003EC8C(u16*, u16 *, s32);
 void func_8003F2C4(u16*, u16, u16, s32);
+u16 func_8003FD48(u16, u16, u16, u16);
 
 typedef struct Unk800B49A8 {
     s32 unk0;
@@ -1203,11 +1204,87 @@ void weird_resize_copy(u16* src, s32 srcWidth, s32 destWidth, u16* dest) {
     bcopy(buffer, &dest[destWidth], destWidth << 1);
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F2C4.s")
+#else
+void func_8003F2C4(u16* arg0, u16 arg1, u16 arg2, s32 arg3) {
+    u16* var_s3;
+    s32 var_a3;
+    u16 var_a1;
+    u16 var_t0;
+    u16 var_v1;
+    u16 t1;
+    u16 t2;
+    u16 t3;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/NOTosSetTime.s")
+    if (arg3 == 0) {
+        return;
+    }
+    var_s3 = arg0;
+    var_a3 = arg3 - 1;
+    if (arg3 != 0) {
+        var_v1 = (((arg1 & 0xF800) >> 0xB) << 8);
+        var_a1 = (((arg1 & 0x7C0) >> 6) << 8);
+        var_t0 = (((arg1 & 0x3E) >> 1) << 8);
+        do {
+            t1 = ((((arg2 & 0xF800) >> 0xB) - ((arg1 & 0xF800) >> 0xB)) << 8) / arg3;
+            var_v1 += t1;
+            t2 = ((((arg2 & 0x7C0) >> 6) - ((arg1 & 0x7C0) >> 6)) << 8) / arg3;
+            var_a1 += t2;
+            t3 = ((((arg2 & 0x3E) >> 1) - ((arg1 & 0x3E) >> 1)) << 8) / arg3;
+            var_t0 += t3;
+            *var_s3 = ((var_v1 >> 8) << 0xB) + ((var_a1 >> 8) << 6) + ((var_t0 >> 8) << 1);
+            var_s3 += 1;
+        } while (var_a3--);
+    }
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F4C0.s")
+void NOTosSetTime(s32 arg0, s32 arg1) {
+    D_80092A50 = arg0;
+    D_80092A54[0] = arg1;
+}
+
+void func_8003F4C0(s32 arg0) {
+    s32 width;
+    s32 resolution;
+    s32 height;
+    s32 i;
+    s32 j;
+    u16* nextFB;
+    u16* currentFB;
+    s32 v0;
+
+    resolution = get_some_resolution_encoded();
+    width = RESOLUTION_WIDTH(resolution);
+    height = RESOLUTION_HEIGHT(resolution);
+    if (arg0 == 0) {
+        nextFB = gFramebufferNext;
+        nextFB[-1] = 0;
+        currentFB = gFramebufferCurrent;
+        for (i = 0; i < height - 1; i++) {
+            for (j = 0; j < width; j++) {
+                currentFB[0] = func_8003FD48(currentFB[0], *(nextFB - width), nextFB[0], nextFB[width]);
+                currentFB += 1;
+                nextFB += 1;
+            }
+        }
+    } else {
+        nextFB = gFramebufferNext;
+        nextFB[-1] = 0;
+        currentFB = gFramebufferCurrent;
+        for (i = 0; i < height - 1; i++) {
+            for (j = 0; j < width; j++) {
+                v0 = 0xFFFF >> (0x10 - arg0);
+                // apparently this is v0 * 0x842
+                v0 = ~((v0 << 0xB) + (v0 << 6) + (v0 << 1));
+                currentFB[0] = (func_8003FD48(currentFB[0], *(nextFB - width), *nextFB, nextFB[width]) &  v0) >> arg0;
+                currentFB += 1;
+                nextFB += 1;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F660.s")
 
