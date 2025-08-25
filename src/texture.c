@@ -1410,9 +1410,23 @@ u16 func_8003FA88(u16 arg0, u16 arg1, u16 arg2, u16 arg3, u16 arg4) {
     return (((u16)temp & 0xF800) + ((u16)temp2 & 0x7C0) + ((u16)temp3 & 0x3E));
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003FB88.s")
+#else
+u16 func_8003FB88(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
+    u16 temp;
+    u16 temp2;
+    u16 temp3;
+    temp = (((u32)arg0 & 0xF800) + (arg1 & 0xF800) + (arg2 & 0xF800) + (arg3 & 0xF800) >> 2) & 0xF800;
+    temp2 = ((arg0 & 0x7C0) + (arg1 & 0x7C0) + (arg2 & 0x7C0) + (arg3 & 0x7C0) >> 2) & 0x7C0;
+    temp3 = ((arg0 & 0x3E) + (arg1 & 0x3E) + (arg2 & 0x3E) + (arg3 & 0x3E) >> 2) & 0x3E;
+    return temp + temp2 + temp3;
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003FC3C.s")
+u16 func_8003FC3C(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
+    return (((((arg0 & ~0x842) >> 1) + ((arg1 & ~0x842) >> 1)) & ~0x842) >> 1) + (((((arg2 & ~0x842) >> 1) + ((arg3 & ~0x842) >> 1)) & ~0x842) >> 1);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003FCBC.s")
 
