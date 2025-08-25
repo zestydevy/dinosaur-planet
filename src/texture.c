@@ -1535,17 +1535,25 @@ u16 func_8003FD48(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
     return (var_a1 + var_a3 + var_v1);
 }
 
+// Missing jtbl_8009A4A4
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003FE70.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800402F8.s")
+void func_800402F8(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
+    u16 i;
+    u16 j;
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040378.s")
-#else
+    for (i = 0; i < arg3; i++) {
+        for (j = 0; j < arg2; j++) {
+            arg0[0] = ((arg1[0] & (1 << arg4) | arg0[0] & ~(1 << arg4)));
+            arg0 += 1;
+            arg1 += 1;
+        }
+    }
+}
+
 void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height) {
     func_8005324C(fb1, fb2, width * height >> 2);
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800403AC.s")
 
