@@ -7,7 +7,7 @@ void func_8005324C(u16 *fb1, u16 *fb2, s32);
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 void load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
 void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void func_8003EC8C(u16*, s32, s32);
+void func_8003EC8C(u16*, u16 *, s32);
 void func_8003F2C4(u16*, u16, u16, s32);
 
 typedef struct Unk800B49A8 {
@@ -990,7 +990,6 @@ void func_8003E9F0(Gfx** arg0, s32 arg1) {
     }
 }
 
-// arg0 could also be a s16
 void func_8003EAC0(u16 *arg0, s32 arg1, s32 arg2, u16* arg3) {
     s32 var_a3;
 
@@ -1029,7 +1028,23 @@ void func_8003EBD4(s32 hOffset) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EC8C.s")
+void func_8003EC8C(u16* arg0, u16* arg1, s32 arg2) {
+    if (arg0 < arg1) {
+        while (arg2--) {
+            arg0[0] = arg1[0];
+            arg0++;
+            arg1++;
+        }
+    } else {
+        arg0 += arg2;
+        arg1 += arg2;
+        while (arg2--) {
+            arg0[0] = arg1[0];
+            arg0--;
+            arg1--;
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003ED00.s")
 
