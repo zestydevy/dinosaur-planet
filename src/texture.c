@@ -1090,9 +1090,80 @@ void func_8003ED00(u16* arg0, u16* arg1, s32 arg2) {
     (arg0--)[0] = ((arg1--)[0] & ~0x39CE) >> 3;
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003EF30.s")
+#else
+// https://decomp.me/scratch/KWLGK
+void func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, void (*arg6)(u16*, s32, s32, u16*)) {
+    s32 width;
+    s32 height;
+    s32 temp_s0;
+    s32 resolution;
+    s32 i;
+    u16* currentFB;
+    u16* nextFB;
+    s32 s1;
+    s32 s2;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003F074.s")
+    resolution = get_some_resolution_encoded();
+    width = RESOLUTION_WIDTH(resolution);
+    height = RESOLUTION_HEIGHT(resolution);
+    currentFB = gFramebufferCurrent;
+    nextFB = gFramebufferNext;
+    i = 0;
+    if (height > i) {
+        s1 = arg0;
+        s2 = arg3;
+
+        do {
+            temp_s0 = (sin16(s1) * arg1) / 32768;
+            temp_s0 -= (sin16(s2) * arg4) / 32768;
+            arg6(currentFB, width, temp_s0, nextFB);
+            s1 += arg2;
+            s2 += arg5 ^ 0;
+            i++;
+            currentFB += width;
+            nextFB += width;
+        } while (i < height);
+    }
+}
+#endif
+
+void func_8003F074(u16* arg0, s32 arg1, s32 arg2, u16* arg3) {
+    u16 sp50[644];
+    s32 max;
+    s32 i;
+    s32 var_v0;
+    u16 *v1;
+    u16 *a0;
+    s32 var_a3;
+
+    if (arg2 < 0) {
+        arg2 = -arg2;
+    }
+    var_v0 = 0;
+    a0 = sp50;
+    v1 = arg0;
+    var_a3 = arg1 - (arg2 * 2);
+    max = arg1 - (arg2 * 2);
+    for (i = 0; i < max; i++) {
+        // We *should* re-use max / var_a3 here but that doesn't match
+        var_v0 += arg1 % (arg1 - (arg2 * 2));
+        a0[0] = v1[0];
+        a0++;
+        while (var_a3 < var_v0) {
+            var_v0 -= var_a3;
+            v1 += 1;
+        }
+        v1 += (arg1 / (var_a3));
+    }
+    bcopy(sp50, &arg3[arg2], var_a3 << 1);
+    bzero(arg3, (arg2 - 1) << 1);
+    bzero(&arg3[arg1 - arg2 - 1], arg2 << 1);
+    var_a3 = arg2 >= 0xB ? 0xA : arg2;
+    func_8003F2C4(&arg3[arg2] - var_a3, 0, arg3[arg2 + 1], var_a3);
+    func_8003F2C4(&arg3[arg1] - arg2, (&arg3[arg1] - arg2)[-2], 0, var_a3);
+}
 
 #if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/weird_resize_copy.s")
