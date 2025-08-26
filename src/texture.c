@@ -1699,34 +1699,22 @@ void func_80040870(u16* arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040920.s")
-#else
-// regalloc
-void _func_80040920(u16 *tex, s32 width, s32 height, int count) {
-    int i = 0;
-    s32 offset1;
-    s32 offset2;
+void func_80040920(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s32 temp_s2;
+    s32 i;
+    u16* temp_v1;
 
-    if (count > 0) {
-        do {
-            offset1 = rand_next(0, width);
-            offset2 = rand_next(0, height);
-            // Sets alpha to 0
-            tex[offset2 * width + offset1] &= 0xFFFFFFFE;
-        } while (++i != count);
+    for (i = 0; i < arg3; i++) {
+        temp_s2 = rand_next(0, arg1);
+        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0 + (temp_s2 * 2));
+        temp_v1[0] &= ~1;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_800409D0.s")
-#else
 void func_800409D0(u16 *fb, s32 width, s32 height) {
     // Sets center pixel alpha to 0
     fb[(width >> 1) + (height >> 1) * width] &= 0xFFFE;
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A04.s")
