@@ -625,216 +625,160 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
 }
 #endif
 
-#if 1
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/set_textures_on_gdl.s")
 #else
-extern Texture *gCurrTex0;
-extern Texture *gCurrTex1;
-extern u32 UINT_80092a48;
-typedef struct {
-/*0000*/    Gfx *combines;
-/*0004*/    Gfx *otherModes;
-/*0008*/    u32 mask;
-/*000C*/    u32 flags;
-} Foo;
-void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void _set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes)
-{
-    Gfx *mygdl;
-    Texture *tex0_;
-    Texture *tex1_;
-    s32 flags_;
-    u8 isIndexed;
-    u8 isTextured;
-    Foo *foos;
-    s32 cursor;
-    s32 uVar4 = 0;
-    u32 geomMode;
-    s32 uStack12;
-    Foo *foo;
+// https://decomp.me/scratch/0L3c5
+void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32 level, u32 force, u32 setModes) {
+    Gfx* temp_v0_2;
+    Texture* var_a3;
+    Texture* var_t2;
+    Texture* var_v1;
+    s32 temp_a1;
+    s32 temp_a2;
+    s32 var_a0;
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_t0;
+    s32 var_v0;
+    struct PointersInts* temp_v1;
+    Gfx* sp4C;
+    struct PointersInts* var_a3_2;
+    s32 var_a2_2;
+    s32 pad[2];
 
-    isIndexed = FALSE;
-    mygdl = *gdl;
-
-    if (tex0 != NULL)
-    {
-        s32 levelIdx = level >> 16;
-        s32 levelCount;
-
+    var_t0 = 0;
+    var_a2 = 0;
+    sp4C = *gdl;
+    if (tex0 != NULL) {
+        temp_a1 = level >> 0x10;
         if (tex0->levels != 0) {
-            levelCount = tex0->levels >> 8;
+            var_a2_2 = tex0->levels >> 8;
         } else {
-            levelCount = 0;
+            var_a2_2 = level * 0;
         }
-
-        tex0_ = tex0;
-        tex1_ = tex1;
-
-        if (levelCount > 1 && levelIdx < levelCount)
-        {
-            s32 i;
-
-            for (i = 0; i < levelIdx && tex1_ != NULL; i++) {
-                tex1_ = tex1_->next;
+        
+        var_t2 = tex0;
+        var_a3 = tex0;
+        if (var_a2_2 >= 2 && temp_a1 < var_a2_2) {
+            for (var_v1 = tex0, var_v0 = 0; var_v0 < temp_a1 && var_v1 != NULL; var_v0++) {
+                var_v1 = var_v1->next;
             }
-
-            if (tex1_ != NULL) {
-                tex0_ = tex1_;
+            if (var_v1 != NULL) {
+                var_t2 = var_v1;
             }
-            tex1_ = tex0_;
-
-            if (flags & 0x40)
-            {
-                s32 top;
-
-                if (flags & 0x80000)
-                {
-                    top = levelIdx - 1;
-                    if (top < 0)
-                    {
+            if (flags & 0x40) {
+                if (flags & 0x80000) {
+                    temp_a1 = temp_a1 - 1;
+                    if (temp_a1 < 0) {
                         if (flags & 0x40000) {
-                            top = levelIdx + 1;
+                            temp_a1 += 2;
                         } else {
-                            top = 0;
+                            temp_a1 = 0;
                         }
                     }
-                }
-                else
-                {
-                    top = levelIdx + 1;
-                    if (top >= levelCount)
-                    {
-                        if (flags & 0x40000) {
-                            top = levelCount - 1;
-                        } else {
-                            top = levelIdx - 1;
-                        }
-                    }
-                }
-
-                tex1_ = tex0;
-
-                for (i = 0; i < top && tex1_ != NULL; i++) {
-                    tex1_ = tex1_->next;
-                }
-
-                if (tex1_ == NULL) {
-                    tex1_ = tex0;
-                }
-            }
-        }
-
-        flags_ = flags | (tex0->flags & 0xfebf);
-        if (tex0_ != gCurrTex0 || tex1_ != gCurrTex1 || force)
-        {
-            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(tex0_->gdl));
-
-            gCurrTex0 = tex0_;
-            gCurrTex1 = tex1_;
-
-            if (tex1 != NULL)
-            {
-                gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(tex1_->gdl));
-                dl_set_env_color(&mygdl, 0x7f, 0x7f, 0x7f, 0x7f);
-            }
-            else if ((tex0->flags & 0x40) && (flags & 0x40))
-            {
-                u8 lev = level >> 8;
-
-                gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(tex1_->gdl + tex0_->gdlIdx));
-                dl_set_env_color_no_sync(&mygdl, lev, lev, lev, 0);
-            }
-            else if (flags_ & 0x2000)
-            {
-                dl_set_env_color(&mygdl, 0xa0, 0xa0, 0xa0, 0xa0);
-            }
-        }
-
-        uVar4 = tex0->flags & 0x100;
-        isTextured = TRUE;
-        foos = 0x80092540;
-        isIndexed = (tex0->format & 0xf) == 7;
-        flags = flags_;
-    }
-    else
-    {
-        isTextured = FALSE;
-        foos = 0x800927a0;
-    }
-
-    if (setModes)
-    {
-        flags_ = flags & ~UINT_80092a48;
-        cursor = (flags_ & 0x70) >> 4;
-        if (isTextured)
-        {
-            if (flags_ & 0x400)
-            {
-                if (uVar4 != 0) {
-                    cursor = 0x23;
                 } else {
-                    cursor = 0x22;
-                }
-            }
-            else
-            {
-                if (flags_ & 0x20000)
-                {
-                    cursor += 8;
-                }
-                else
-                {
-                    if (flags_ & 0x80)
-                    {
-                        cursor += 0x10;
-                    }
-                    else if (flags_ & 0x200)
-                    {
-                        if (uVar4 != 0) {
-                            cursor = 0x21;
+                    temp_a1 = temp_a1 + 1;
+                    if (temp_a1 >= var_a2_2) {
+                        if (flags & 0x40000) {
+                            temp_a1 -= 2;
                         } else {
-                            cursor += 0x18;
-                        }
-                    }
-                    else
-                    {
-                        if (uVar4) {
-                            cursor = 0x20;
+                            temp_a1 = var_a2_2 - 1;
                         }
                     }
                 }
+                for (var_v1 = tex0, var_v0 = 0; var_v0 < temp_a1 && var_v1 != NULL; var_v0++) {
+                    var_v1 = var_v1->next;
+                }
+                if (var_v1 != NULL) {
+                    var_a3 = var_v1;
+                }
+            } else {
+                var_a3 = var_t2;
             }
         }
-
-        foo = foos + cursor;
-        uStack12 = foo->flags | (flags_ & foo->mask);
-        geomMode = G_SHADE | G_SHADING_SMOOTH;
-        if (uStack12 & 0x2) {
-            geomMode |= G_ZBUFFER;
+        if (tex1 != NULL) {
+            var_a3 = tex1;
         }
-        if (uStack12 & 0x8) {
-            geomMode |= G_FOG;
+        var_v0 = (s16) (tex0->flags & 0xFEBF);
+        flags |= var_v0;
+        if ((var_t2 != gCurrTex0) || (var_a3 != gCurrTex1) || (force != 0)) {
+            gCurrTex0 = var_t2;
+            gCurrTex1 = var_a3;
+            temp_v0_2 = var_t2->gdl;
+            gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
+            temp_v0_2 = var_a3->gdl;
+            if (tex1 != NULL) {
+                gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
+                dl_set_env_color(&sp4C, 0x7F, 0x7F, 0x7F, 0x7F);
+            } else {
+                if ((tex0->flags & 0x40) && (flags & 0x40)) {
+                    temp_v0_2 += var_t2->gdlIdx;
+                    gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
+                    level >>= 8;
+                    dl_set_env_color_no_sync(&sp4C, level, level, level, 0);
+                } else if (flags & 0x2000) {
+                    dl_set_env_color(&sp4C, 0xA0, 0xA0, 0xA0, 0xA0);
+                }
+            }
         }
-        if (!(flags_ & 0x80000000)) {
-            geomMode |= G_CULL_BACK;
-        }
-
-        gSPLoadGeometryMode(mygdl, geomMode);
-        dl_apply_geometry_mode(&mygdl);
-
-        mygdl->words.w0 = foo->combines[uStack12 >> 3].words.w0;
-        mygdl->words.w1 = foo->combines[uStack12 >> 3].words.w1;
-        dl_apply_combine(&mygdl);
-
-        mygdl->words.w0 = foo->otherModes[uStack12].words.w0;
-        mygdl->words.w1 = foo->otherModes[uStack12].words.w1;
-        if (isIndexed) {
-            mygdl->words.w0 |= G_TT_RGBA16;
-        }
-        dl_apply_other_mode(&mygdl);
+        var_a2 = tex0->flags & 0x100;
+        var_a1 = 1;
+        var_a3_2 = pointersIntsArray;
+        var_t0 = (tex0->format & 0xF) == 7;
+    } else {
+        var_a1 = 0;
+        var_a3_2 = pointersIntsArray + 0x260;
     }
-
-    *gdl = mygdl;
+    if (setModes != 0) {
+        flags &= ~UINT_80092a48;
+        var_a0 = (s32) (flags & 0x70) >> 4;
+        if (var_a1 != 0) {
+            if (flags & 0x400) {
+                if (var_a2 != 0) {
+                    var_a0 = 0x23;
+                } else {
+                    var_a0 = 0x22;
+                }
+            } else if (flags & 0x100000) {
+                var_a0 += 8;
+            } else if (flags & 0x80) {
+                var_a0 += 0x10;
+            } else if (flags & 0x200) {
+                if (var_a2 != 0) {
+                    var_a0 = 0x21;
+                } else {
+                    var_a0 += 0x18;
+                }
+            } else if (var_a2 != 0) {
+                var_a0 = 0x20;
+            }
+        }
+        temp_v1 = &var_a3_2[var_a0];
+        temp_a2 = temp_v1->valB | (flags & temp_v1->valA);
+        var_v0 = 0x200004;
+        if (temp_a2 & 2) {
+            var_v0 = 0x200005;
+        }
+        if (temp_a2 & 8) {
+            var_v0 |= 0x10000;
+        }
+        if (!(flags & 0x80000000)) {
+            var_v0 |= 0x400;
+        }
+        gSPLoadGeometryMode(sp4C, var_v0);
+        dl_apply_geometry_mode(&sp4C);
+        sp4C->words.w0 = (((Gfx **)temp_v1->prts)[0][(temp_a2 >> 3)]).words.w0;
+        sp4C->words.w1 = (((Gfx **)temp_v1->prts)[0][(temp_a2 >> 3)]).words.w1;
+        dl_apply_combine(&sp4C);
+        sp4C->words.w0 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w0;
+        sp4C->words.w1 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w1;
+        if (var_t0 != 0) {
+            sp4C->words.w0 |= 0x8000;
+        }
+        dl_apply_other_mode(&sp4C);
+    }
+    *gdl = sp4C;
 }
 #endif
 
