@@ -1716,43 +1716,26 @@ void func_800409D0(u16 *fb, s32 width, s32 height) {
     fb[(width >> 1) + (height >> 1) * width] &= 0xFFFE;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A04.s")
-#else
-// regalloc
-void _func_80040A04(u16 *tex, s32 width, s32 height, int count) {
-    int i = 0;
-    s32 offset;
+void func_80040A04(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s32 i;
+    u16* temp_v1;
 
-    if (count > 0) {
-        do {
-            offset = rand_next(0, height) * width;
-            // Sets alpha to 0
-            tex[offset] &= 0xFFFFFFFE;
-        } while (++i != count);
+    for (i = 0; i < arg3; i++) {
+        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0);
+        temp_v1[0] &= ~1;
     }
 }
-#endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040A94.s")
-#else
-// regalloc
-void _func_80040A94(u16 *tex, int width, int height, int count) {
-    int i = 0;
+void func_80040A94(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    s32 i;
+    u16* temp_v1;
 
-    if (count > 0) {
-        do {
-            // Sets alpha to 0
-            tex[width + (rand_next(0, height) * width)] &= 0xFFFFFFFE;
-        } while (++i != count);
+    for (i = 0; i < arg3; i++) {
+        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0 + (arg1 * 2));
+        temp_v1[0] &= ~1;
     }
 }
-#endif
 
-#if 0
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/show_framebuffer_corners_kinda.s")
-#else
 /**
  * Sets the alpha channel of the following corners of the given buffer to 0:
  * X----------*X
@@ -1784,7 +1767,6 @@ void show_framebuffer_corners_kinda(u16 *framebuffer, s32 width, s32 height) {
     // Bottom right + 1???
     framebuffer[height * width] &= -2;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040B8C.s")
 
