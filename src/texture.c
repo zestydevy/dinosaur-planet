@@ -1768,7 +1768,19 @@ void show_framebuffer_corners_kinda(u16 *framebuffer, s32 width, s32 height) {
     framebuffer[height * width] &= -2;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040B8C.s")
+void func_80040B8C(u16* arg0, u16* arg1, u16* arg2, s32 arg3, s32 arg4) {
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < arg3; i++) {
+        for (j = 0; j < arg4; j++, arg0++, arg1++, arg2++) {
+            if (~arg2[0] & 1) {
+                *arg0 = arg1[0];
+                *arg0 &= ~1;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040CD0.s")
 
