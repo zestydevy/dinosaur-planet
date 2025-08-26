@@ -1782,7 +1782,52 @@ void func_80040B8C(u16* arg0, u16* arg1, u16* arg2, s32 arg3, s32 arg4) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040CD0.s")
+void func_80040CD0(u16* arg0, u16* arg1, s32 arg2, s32 arg3) {
+    s32 temp_a2_2;
+    s32 j;
+    s32 var_fp;
+    s32 var_s5;
+    s32 i;
+    u16 sp5C[2][0x280];
+    s32 var_s7;
+
+    var_fp = 0;
+    var_s7 = rand_next(0, 3) - 1;
+    if (!var_s7) {
+        var_s7 = 1;
+    }
+    var_s5 = (rand_next(0, 3) - 1) * arg3;
+    for (i = 0; i < arg2; i++) {
+        for (j = 0; j < arg3; j++) {
+            if ((~*(arg0 + var_s7) & 1) + (~*(arg0 + var_s5) & 1) + (~*((arg0 - var_s5) + var_s7) & 1)) {
+                if (~arg1[0] & 1) {
+                    sp5C[var_fp][j] = arg1[0];
+                } else {
+                    sp5C[var_fp][j] = ((arg0[0] & ~0x842) >> 1) + ((arg1[0] & ~0x842) >> 1);
+                    arg1[0] &= ~1;
+                }
+                sp5C[var_fp][j] &= ~1;
+            } else {
+                sp5C[var_fp][j] = arg0[0];
+            }
+            arg0++;
+            arg1++;
+        }
+
+        var_s7 = rand_next(0, 3) - 1;
+        if (!var_s7) {
+            var_s7 = 1;
+        }
+        temp_a2_2 = arg3 << 1;
+        var_s5 = (rand_next(0, 3) - 1) * arg3;
+        var_fp ^= 1;
+        if (i != 0) {
+            bcopy(&sp5C[var_fp], arg0 - temp_a2_2, temp_a2_2);
+        }
+    }
+    var_fp ^= 1;
+    bcopy(&sp5C[var_fp], arg0 - arg3, arg3 << 1);
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040EFC.s")
