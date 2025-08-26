@@ -1683,7 +1683,21 @@ void func_80040754(u16* arg0, s32 arg1, s32 arg2, s32 arg3) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040870.s")
+void func_80040870(u16* arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4) {
+    s32 j;
+    s32 i;
+
+    arg1 += (arg2 - arg4);
+    for (i = 0; i < arg3; i++) {
+        for (j = 0; j < arg4; j++) {
+            arg0[0] = arg1[0];
+            arg0++;
+            arg1++;
+        }
+        arg1 += (arg2 - arg4);
+        arg0 += (arg2 - arg4);
+    }
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040920.s")
