@@ -1829,35 +1829,13 @@ void func_80040CD0(u16* arg0, u16* arg1, s32 arg2, s32 arg3) {
     bcopy(&sp5C[var_fp], arg0 - arg3, arg3 << 1);
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_80040EFC.s")
-#else
-// Should be functionally equivalent, assembly is far off due to a loop being duplicated...
-void _func_80040EFC(u16 *fb1, u16 *fb2, s32 width, s32 height) {
-    s32 i = 0;
-    s32 fbLength = width * height;
-    s32 temp2 = fbLength & 3;
+void func_80040EFC(u16* arg0, u16* arg1, s32 arg2, s32 arg3) {
+    s32 i;
 
-    if (fbLength > 0) {
-        if (temp2 != 0) {
-            // This loop should not unroll and shouldn't be duplicated,
-            // but currently does get duplicated?
-            while (i++ != temp2) {
-                fb1[i] |= 1;
-                fb2[i] |= 1;
-            }
-
-            // This might be part of the next loop
-            if (i == fbLength) {
-                return;
-            }
-        }
-
-        // This loop needs to unroll
-        do {
-            fb1[i] |= 1;
-            fb2[i] |= 1;
-        } while (++i != fbLength);
+    for (i = 0; i < (arg2 * arg3); i++) {
+        arg0[0] |= 1;
+        arg0++;
+        arg1[0] |= 1;
+        arg1++;
     }
 }
-#endif
