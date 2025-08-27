@@ -149,32 +149,4 @@ struct UnkStruct_D_800938C0 {
     u8 var44;
 };
 
-
-/* segment_BED0*/
-
-typedef struct UnkStruct_8000B2D0 {
-    s16 var0;
-    s16 var2;
-    s16 var4;
-    //s16 padding6; /* cant remembr if this was needed at some point or not*/
-    s8* var8;
-    s32 varC;
-}UnkStruct_8000B2D0;
-
-typedef struct UnkStruct_8000B3E4 {
-    s16 var0;
-    s16 var2;
-    s16 var4;
-    //s16 padding6;                     /* cant remembr if this was needed at some point or not*/
-    //struct UnkStruct_test* var8[1];   /* cant remembr if this was needed at some point or not*/
-    s32 var8;
-    s32 varC;
-}UnkStruct_8000B3E4;
-
-typedef struct UnkStruct_8000B6A4{
-    s16 var0;
-    s16 var2;
-}UnkStruct_8000B6A4;
-
-
 #endif //_VARIABLES_H_
