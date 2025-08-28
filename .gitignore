@@ -75,11 +75,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-.splat_cache
-dino.ld
-.splat_cache
-undefined_syms_auto.txt
-undefined_funcs_auto.txt
 
 # Editor
 .vscode/
@@ -103,3 +98,10 @@ objdiff.json
 # Include some Windows binaries
 !tools/elf2dll.exe
 !tools/ido_recomp/windows/5.3/*
+
+# Splat managed files
+include/macro.inc
+dino.ld
+.splat_cache
+undefined_syms_auto.txt
+undefined_funcs_auto.txt

@@ -43,7 +43,6 @@ BUILD_ARTIFACTS = [
     SCRIPT_DIR.joinpath(".ninja_log"),
 ]
 
-SPLIT_PY = TOOLS_PATH.joinpath("splat/split.py")
 DINO_DLL_PY = TOOLS_PATH.joinpath("dino_dll.py")
 DLL_SPLIT_PY = TOOLS_PATH.joinpath("dll_split.py")
 CONFIGURE_PY = TOOLS_PATH.joinpath("configure.py")
@@ -96,7 +95,7 @@ class DinoCommandRunner:
 
         # Run splat
         args = [
-            sys.executable, str(SPLIT_PY)
+            sys.executable, "-m", "splat", "split"
         ]
 
         if self.verbose:

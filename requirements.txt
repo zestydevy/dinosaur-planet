@@ -5,6 +5,8 @@ pyelftools>=0.32
 pylibyaml>=0.1.0
 PyYAML>=6.0.2
 rabbitizer>=1.13.0
+splat64[mips]==0.35.1 # Note: splat and spimdisasm frequently have breaking changes,
+spimdisasm==1.36.0    # keep these pinned to an exact version
 
 # asm-differ
 argcomplete>=3.5.3
@@ -16,6 +18,3 @@ levenshtein>=0.26.0
 # decomp_permuter
 pycparser>=2.22
 toml>=0.10.2
-
-# splat
--r tools/splat/requirements.txt

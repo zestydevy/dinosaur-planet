@@ -8,11 +8,14 @@ WORKDIR /dino
 ENV DEBIAN_FRONTEND=noninteractive
 
 COPY packages.txt ./
-RUN apt-get update && apt-get install -y $(cat packages.txt) && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y $(cat packages.txt | tr '\n' ' ') && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
-COPY tools/splat/requirements.txt tools/splat/
-RUN pip3 install -r requirements.txt --break-system-packages
+RUN python3 -m venv .venv && \
+    . .venv/bin/activate && \
+    pip3 install -r requirements.txt
 
 # Symlink dino.py
 RUN ln -s /dino/dino.py /usr/local/bin/dino
