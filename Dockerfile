@@ -13,9 +13,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
-RUN python3 -m venv .venv && \
-    . .venv/bin/activate && \
-    pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt --break-system-packages
+
 
 # Symlink dino.py
 RUN ln -s /dino/dino.py /usr/local/bin/dino
