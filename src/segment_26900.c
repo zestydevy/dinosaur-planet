@@ -196,7 +196,7 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
     if (arg1 != NULL) {
         objHitInfo2 = arg1->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk_0x48 = arg0;
+            objHitInfo2->unk_0x48 = (s32)arg0;
         }
     }
 
@@ -218,7 +218,7 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
         objHitInfo->unk_0x63[objHitInfo->unk_0x62] = arg4;
         objHitInfo->unk_0x66[objHitInfo->unk_0x62] = arg2;
         objHitInfo->unk_0x69[objHitInfo->unk_0x62] = arg3;
-        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = arg1;
+        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = (s32)arg1;
         objHitInfo->unk_0x78[objHitInfo->unk_0x62] = arg5;
         objHitInfo->unk_0x84[objHitInfo->unk_0x62] = arg6;
         objHitInfo->unk_0x90[objHitInfo->unk_0x62] = arg7;
@@ -267,7 +267,7 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
         objHitInfo->unk_0x63[objHitInfo->unk_0x62] = arg4;
         objHitInfo->unk_0x66[objHitInfo->unk_0x62] = arg2;
         objHitInfo->unk_0x69[objHitInfo->unk_0x62] = arg3;
-        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = arg1;
+        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = (s32)arg1;
         objHitInfo->unk_0x78[objHitInfo->unk_0x62] = arg0->srt.transl.x;
         objHitInfo->unk_0x84[objHitInfo->unk_0x62] = arg0->srt.transl.y;
         objHitInfo->unk_0x90[objHitInfo->unk_0x62] = arg0->srt.transl.z;
@@ -331,21 +331,139 @@ void func_800264D0(Object* arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002667C.s")
+u32 func_8002667C(Object* obj, u32 addr) {
+    ObjectHitInfo* objHitInfo;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_800266E0.s")
+    objHitInfo = (ObjectHitInfo *)align_4(addr);
+    obj->objhitInfo = objHitInfo;
+    addr = (u32)(objHitInfo + 1);
+    func_800264D0(obj);
+    objHitInfo->unk_0x9e = 1;
+    if (objHitInfo->unk_0x5a & 0x30) {
+        objHitInfo->unk_0x9f = 2;
+    }
+    return addr;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80026724.s")
+void func_800266E0(Object* obj) {
+    ObjectHitInfo* objhitInfo;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002674C.s")
+    objhitInfo = obj->objhitInfo;
+    if (objhitInfo != NULL) {
+        objhitInfo->unk_0x10.x = obj->srt.transl.x;
+        objhitInfo->unk_0x10.y = obj->srt.transl.y;
+        objhitInfo->unk_0x10.z = obj->srt.transl.z;
+        objhitInfo->unk_0x20.x = obj->positionMirror.x;
+        objhitInfo->unk_0x20.y = obj->positionMirror.y;
+        objhitInfo->unk_0x20.z = obj->positionMirror.z;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_800267A4.s")
+s32 func_80026724(Object* obj) {
+    ObjectHitInfo* objhitInfo;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_800267C4.s")
+    objhitInfo = obj->objhitInfo;
+    if (objhitInfo != NULL) {
+        return objhitInfo->unk_0x58 & 1;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002681C.s")
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002683C.s")
+void func_8002674C(Object* obj) {
+    ObjectHitInfo* objhitInfo;
+
+    objhitInfo = obj->objhitInfo;
+    if (objhitInfo == NULL) {
+        return;
+    }
+
+    if (!(objhitInfo->unk_0x58 & 1)) {
+        objhitInfo->unk_0x58 |= 1;
+        objhitInfo->unk_0x10.x = obj->srt.transl.x;
+        objhitInfo->unk_0x10.y = obj->srt.transl.y;
+        objhitInfo->unk_0x10.z = obj->srt.transl.z;
+        objhitInfo->unk_0x20.x = obj->positionMirror.x;
+        objhitInfo->unk_0x20.y = obj->positionMirror.y;
+        objhitInfo->unk_0x20.z = obj->positionMirror.z;
+    }
+}
+
+void func_800267A4(Object* obj) {
+    ObjectHitInfo* objhitInfo;
+
+    objhitInfo = obj->objhitInfo;
+    if (objhitInfo != NULL) {
+        objhitInfo->unk_0x58 &= ~1;
+    }
+}
+
+void func_800267C4(Object* obj) {
+    ObjectHitInfo* objhitInfo;
+
+    objhitInfo = obj->objhitInfo;
+    if (objhitInfo == NULL) {
+        return;
+    }
+
+    if (objhitInfo->unk_0x58 & 0x40) {
+        objhitInfo->unk_0x58 &= ~0x40;
+        objhitInfo->unk_0x10.x = obj->srt.transl.x;
+        objhitInfo->unk_0x10.y = obj->srt.transl.y;
+        objhitInfo->unk_0x10.z = obj->srt.transl.z;
+        objhitInfo->unk_0x20.x = obj->positionMirror.x;
+        objhitInfo->unk_0x20.y = obj->positionMirror.y;
+        objhitInfo->unk_0x20.z = obj->positionMirror.z;
+    }
+}
+
+void func_8002681C(Object* obj) {
+    ObjectHitInfo* objhitInfo;
+
+    objhitInfo = obj->objhitInfo;
+    if (objhitInfo != NULL) {
+        objhitInfo->unk_0x58 |= 0x40;
+    }
+}
+
+void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3) {
+    ObjectHitInfo* objhitInfo;
+    f32 var_fv0;
+
+    objhitInfo = arg0->objhitInfo;
+    if (objhitInfo == NULL) {
+        return;
+    }
+    
+    if (!(objhitInfo->unk_0x5a & 2)) {
+        return;
+    }
+
+    objhitInfo->unk_0x52 = arg1;
+    objhitInfo->unk_0x54 = arg2;
+    objhitInfo->unk_0x56 = arg3;
+    var_fv0 = objhitInfo->unk_0x52;
+    objhitInfo->unk_0x50 = 0x400;
+    objhitInfo->unk_0xc = var_fv0 * var_fv0;
+    objhitInfo->unk_0x2c = arg0->unk_0xa8;
+    if (arg2 < 0) {
+        arg2 = -arg2;
+    }
+    if (arg3 < 0) {
+        arg3 = -arg3;
+    }
+    if (arg3 < arg2) {
+        arg3 = arg2;
+    }
+    if (objhitInfo->unk_0x2c < arg3) {
+        objhitInfo->unk_0x2c = arg3;
+    }
+    objhitInfo->unk_0x30 = arg0->unk_0xa8;
+    var_fv0 = objhitInfo->unk_0x52;
+    if (objhitInfo->unk_0x30 < var_fv0) {
+        objhitInfo->unk_0x30 = var_fv0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80026940.s")
 
