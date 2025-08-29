@@ -181,7 +181,9 @@ typedef struct {
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62) // TODO: confirm
 /*91*/ u8 _unk91[2];
 /*93*/ s8 unk93; //render settings (can switch off vertex shading)
-/*94*/ u8 _unk94[7];
+/*94*/ s16 unk94;
+/*96*/ s16 unk96;
+/*98*/ u8 _unk98[3];
 /*9b*/ u8 unk9b; // length of unk40 (z-targetting data)
 /*9c*/ u8 unk9c;
 /*9d*/ u8 unk9d;

@@ -16,7 +16,7 @@ void stop_alSyn_thread();
 void func_800267A4(Object *obj);
 s32 func_80023D30(Object*,s32,f32,s32);
 s32 func_80024108(Object*,f32,f32,s32);
-s32 func_80025F40(Object*,s32,s32,s32);
+s32 func_80025F40(Object*,s32 *,s32 *,s32 *);
 
 void draw_object(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, f32 yPrescale);
 void func_80036FBC(u8,u8,u8,u8);
@@ -61,8 +61,8 @@ void draw_pause_screen_freeze_frame(Gfx** gdl);
 
 void func_80037A14(Gfx**, Mtx **, s32);
 
-void func_8003825C(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
-void func_800382AC(Gfx **gdl, Texture*, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, UNK_TYPE_32, s32, UNK_TYPE_32);
+void func_8003825C(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
+void func_800382AC(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
 
 void func_800379D0(u32 red, u32 green, s32 blue);
 

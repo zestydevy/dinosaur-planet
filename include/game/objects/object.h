@@ -105,12 +105,11 @@ typedef struct {
 typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
 /*0080*/    MtxF unk80[2]; 				// probably length of 2
-/*0100*/    UNK_PTR *unk100;
-/*0104*/    u8 unk104[0x10c - 0x104];
+/*0100*/    s32 unk100[3];
 /*010c*/    u8 unk10c; 					// index into field 0x80?
 /*010d*/    UNK_TYPE_8 unk10d;
 /*010e*/    UNK_TYPE_8 unk10e;
-/*010f*/    UNK_TYPE_8 unk10f;
+/*010f*/    s8 unk10f;
 /*0110*/    u8 unk110[0x146 - 0x110];
 /*0146*/    s16 unk146;
 } ObjectStruct58;

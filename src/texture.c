@@ -212,9 +212,9 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
 
     if ((texture->flags & 0xc000) == 0 && (texture->flags & 0x40) != 0)
     {
-        if ((texture->format & 0xf) == 0) {
+        if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32) {
             load_texture_to_tmem2(&mygdl, texture, 1, (0x1000 - texture->unk_0x18) >> 3, 0);
-        } else if ((texture->format & 0xf) == 7) {
+        } else if (TEX_FORMAT(texture->format) == TEX_FORMAT_CI4) {
             load_texture_to_tmem2(&mygdl, texture, 1, 0x80, 1);
         } else {
             load_texture_to_tmem2(&mygdl, texture, 1, 0x100, 0);
@@ -247,25 +247,25 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
     height = texture->height | (texture->unk_0x1b & 0xf) << 8;
 
     // This implements a dynamic version of gDPLoadTextureBlock
-    switch (texture->format & 0xf)
+    switch (TEX_FORMAT(texture->format))
     {
-    case 0:
+    case TEX_FORMAT_RGBA32:
         siz = G_IM_SIZ_32b;
         siz2 = G_IM_SIZ_32b;
         sizincr = G_IM_SIZ_32b_INCR;
         sizshift = G_IM_SIZ_32b_SHIFT;
         line2 = 2;
         break;
-    case 1:
-    case 4:
+    case TEX_FORMAT_RGBA16:
+    case TEX_FORMAT_IA16:
         siz = G_IM_SIZ_16b;
         siz2 = G_IM_SIZ_16b;
         sizincr = G_IM_SIZ_16b_INCR;
         sizshift = G_IM_SIZ_16b_SHIFT;
         line2 = 2;
         break;
-    case 2:
-    case 5:
+    case TEX_FORMAT_I8:
+    case TEX_FORMAT_IA8:
         siz = G_IM_SIZ_16b;
         siz2 = G_IM_SIZ_8b;
         sizincr = G_IM_SIZ_8b_INCR;
@@ -281,22 +281,22 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
         break;
     }
 
-    switch (texture->format & 0xf)
+    switch (TEX_FORMAT(texture->format))
     {
-    case 0:
-    case 1:
+    case TEX_FORMAT_RGBA32:
+    case TEX_FORMAT_RGBA16:
         fmt = G_IM_FMT_RGBA;
         if ((texture->format >> 4) == 0 || (texture->format >> 4) == 2) {
             texture->flags |= 0x4;
         }
         break;
-    case 4:
-    case 5:
-    case 6:
+    case TEX_FORMAT_I8:
+    case TEX_FORMAT_I4:
+    case TEX_FORMAT_IA16:
         fmt = G_IM_FMT_IA;
         texture->flags |= 0x4;
         break;
-    case 7:
+    case TEX_FORMAT_CI4:
         fmt = G_IM_FMT_CI;
         break;
     default:
@@ -338,7 +338,7 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
 
         if (texture->flags & 0x100)
         {
-            if ((texture->format & 0xf) == 0)
+            if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32)
             {
                 bcopy(Gfx_ARRAY_80092a00, mygdl, 8 * sizeof(Gfx));
                 mygdl += 8;
@@ -530,7 +530,7 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
                 }
                 D_800B49DC = 1;
             }
-            var_t0 = (arg1->format & 0xF) == 7;
+            var_t0 = TEX_FORMAT(arg1->format) == TEX_FORMAT_CI4;
             var_a1 = arg1->flags & 0x100;
             var_a0 = 1;
             var_a3_2 = pointersIntsArray;
@@ -540,7 +540,7 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
             var_a3_2 = pointersIntsArray + 0x260;
         }
     } else {
-        var_t0 = 0;
+        var_t0 = FALSE;
         var_a1 = 0;
         var_a0 = 0;
         if (arg1 != NULL) {
@@ -548,7 +548,7 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
             arg2 = temp_v1 | arg2;
             var_a0 = 1;
             var_a3_2 = pointersIntsArray;
-            var_t0 = (arg1->format & 0xF) == 7;
+            var_t0 = TEX_FORMAT(arg1->format) == TEX_FORMAT_CI4;
             var_a1 = arg1->flags & 0x100;
         } else {
             var_a3_2 = pointersIntsArray + 0x260;
@@ -725,7 +725,7 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
         var_a2 = tex0->flags & 0x100;
         var_a1 = 1;
         var_a3_2 = pointersIntsArray;
-        var_t0 = (tex0->format & 0xF) == 7;
+        var_t0 = TEX_FORMAT(tex0->format) == TEX_FORMAT_CI4;
     } else {
         var_a1 = 0;
         var_a3_2 = pointersIntsArray + 0x260;

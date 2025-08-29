@@ -444,6 +444,8 @@ extern s16 D_800B97C4;
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
+s32 func_80041DBC(void);
+s32 func_80041E08(void);
 
 // defined in map.c but used before declared
 void func_800441F4(u32* arg0, s32 arg1);
