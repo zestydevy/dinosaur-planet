@@ -73,6 +73,9 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
 
             if sym.name.startswith("L8"):
                 continue
+            if sym.name.endswith(".NON_MATCHING"):
+                # Non-matching functions have a duplicate symbol with a .NON_MATCHING suffix, ignore these
+                continue
 
             if value >= text_start and value < text_end:
                 # Function
