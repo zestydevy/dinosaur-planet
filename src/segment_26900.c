@@ -14,6 +14,15 @@ typedef struct Unk80026DF4{
     s32 pad10;
 } Unk80026DF4;
 
+typedef struct Unk80027934 {
+    u8 pad0[64];
+    f32 unk40[4];
+    s8 unk50[4];
+    s8 unk54[4];
+    s32 unk58[4];
+    s16 unk68;
+} Unk80027934;
+
 void func_80028D90(void);
 void func_8002B410(Object *, s32);
 void update_object(Object *);
@@ -21,6 +30,7 @@ void func_8001943C(Object *object, MtxF *mf, f32 yPrescale);
 void func_8001A1D4(Model *model, AnimState *animState, s32 count);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
+u8 func_8005509C(s32 arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 
 extern f32 D_800B1990;
 extern Object **D_800B1994;
@@ -183,20 +193,20 @@ void func_80026160(Object* obj) {
 }
 
 void func_80026184(Object* arg0, s32 arg1) {
-    ObjectStruct58* temp_v0;
+    ObjectStruct58* obj58;
     s32 i;
 
-    temp_v0 = arg0->unk0x58;
-    if (temp_v0->unk10f < 3) {
-        for (i = 0; i < temp_v0->unk10f; i++) {
-            if (arg1 == temp_v0->unk100[i]) {
+    obj58 = arg0->unk0x58;
+    if (obj58->unk10f < 3) {
+        for (i = 0; i < obj58->unk10f; i++) {
+            if (arg1 == obj58->unk100[i]) {
                 return;
             }
         }
         
-        temp_v0->unk100[temp_v0->unk10f] = arg1;
-        temp_v0 = arg0->unk0x58;
-        temp_v0->unk10f += 1;
+        obj58->unk100[obj58->unk10f] = arg1;
+        obj58 = arg0->unk0x58;
+        obj58->unk10f += 1;
     }
 }
 
@@ -696,8 +706,132 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
 void obj_do_hit_detection(s32 arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/obj_do_hit_detection.s")
 
+#if 1
 void func_80027934(Object *obj, Object *otherObj) ;
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027934.s")
+#else
+// https://decomp.me/scratch/R1u2I
+void func_80027934(Object* obj, Object* otherObj) {
+    u32 sp17C;
+    Model* temp_fp;
+    ModelInstance* temp_v0_2;
+    s32 new_var;
+    ObjectHitInfo* objectHitInfo; // sp16C
+    f32 *temp_s2;
+    f32 *temp_s3;
+    u16 temp_t7_2;
+    s32 var_t2;
+    u8 temp_v1_3;
+    Unk80027934 spF0;
+    AABBs32 spD8;
+    f32 spA8[4 * 3];
+    f32 sp78[4 * 3];
+    s32 temp_t8;
+    s32 var_s0;
+    s32 i;
+    HitSphere* temp_v0_3;
+
+    objectHitInfo = obj->objhitInfo;
+    if (otherObj == obj) {
+        sp17C = (u32) objectHitInfo->unk_0x40 >> 4;
+    } else {
+        sp17C = objectHitInfo->unk_0x40 & 0xF;
+    }
+    if (sp17C == 0) {
+        return;
+    }
+    if (objectHitInfo->unk_0x61 != 0) {
+        return;
+    }
+
+    objectHitInfo = otherObj->objhitInfo;
+    if (objectHitInfo->unk_0x5a & 0x10) {
+        var_s0 = 0;
+        temp_v0_2 = otherObj->modelInsts[otherObj->modelInstIdx];
+        temp_fp = temp_v0_2->model;
+        temp_t8 = (temp_v0_2->unk_0x34 >> 2) & 1;
+        temp_s2 = temp_v0_2->unk_0x1c[temp_t8];
+        temp_s3 = temp_v0_2->unk_0x1c[temp_t8 ^ 1];
+        for (i = 0; i < temp_fp->hitSphereCount; i++) {
+            temp_v0_3 = &temp_fp->hitSpheres[i];
+            if ((i == temp_v0_3->unkC) && ((1 << temp_v0_3->unkD) & sp17C)) {
+                if (temp_v0_3->unkA != 0) {
+                    for (var_t2 = temp_v0_3->unkA; (u16)var_t2 != 0; var_t2 <<= 4) {
+                        if (var_s0 < 4) {
+                            new_var = var_s0 * 3;
+                            temp_t7_2 = (((var_t2 & 0xF000) >> 0xC) + i);
+                            spA8[new_var + 0] = temp_s2[temp_t7_2 * 4 + 1] + gWorldX;
+                            spA8[new_var + 1] = temp_s2[temp_t7_2 * 4 + 2];
+                            spA8[new_var + 2] = temp_s2[temp_t7_2 * 4 + 3] + gWorldZ;
+                            sp78[new_var + 0] = temp_s3[temp_t7_2 * 4 + 1] + gWorldX;
+                            sp78[new_var + 1] = temp_s3[temp_t7_2 * 4 + 2];
+                            sp78[new_var + 2] = temp_s3[temp_t7_2 * 4 + 3] + gWorldZ;
+                            spF0.unk40[var_s0] = temp_s2[temp_t7_2 * 4 + 0];
+                            spF0.unk50[var_s0] = -1;
+                            spF0.unk54[var_s0] = 6;
+                            var_s0++;
+                        }
+                    }
+                } else if (var_s0 < 4) {
+                    new_var = var_s0 * 3;
+                    spA8[new_var + 0] = temp_s2[i * 4 + 1] + gWorldX;
+                    spA8[new_var + 1] = temp_s2[i * 4 + 2];
+                    spA8[new_var + 2] = temp_s2[i * 4 + 3] + gWorldZ;
+                    sp78[new_var + 0] = temp_s3[i * 4 + 1] + gWorldX;
+                    sp78[new_var + 1] = temp_s3[i * 4 + 2];
+                    sp78[new_var + 2] = temp_s3[i * 4 + 3] + gWorldZ;
+                    spF0.unk40[var_s0] = temp_s2[i * 4 + 0];
+                    spF0.unk50[var_s0] = -1;
+                    spF0.unk54[var_s0] = 6;
+                    var_s0++;
+                }
+            }
+            
+        }
+    } else {
+        var_s0 = 1;
+        spA8[0] = obj->srt.transl.x;
+        spA8[1] = obj->srt.transl.y;
+        spA8[2] = obj->srt.transl.z;
+        sp78[0] = objectHitInfo->unk_0x10.x;
+        sp78[1] = objectHitInfo->unk_0x10.y;
+        sp78[2] = objectHitInfo->unk_0x10.z;
+        spF0.unk40[0] = (f32) objectHitInfo->unk_0x52;
+        spF0.unk50[0] = -1;
+        spF0.unk54[0] = 6;
+    }
+
+    if (var_s0 == 0) {
+        return;
+    }
+
+    fit_aabb_around_cubes(&spD8, (Vec3f *) sp78, (Vec3f *) spA8, spF0.unk40, var_s0);
+    func_80053750(otherObj, (Vec3f** ) &spD8, objectHitInfo->unk_0xa1);
+    temp_v1_3 = func_8005509C(otherObj, (Vec3f *) sp78, (Vec3f *) spA8, var_s0, &spF0, 0);
+    if (!temp_v1_3) {
+        return;
+    }
+
+    if (temp_v1_3 & 1) {
+        var_s0 = 0;
+    } else if (temp_v1_3 & 2) {
+        var_s0 = 1;
+    } else if (temp_v1_3 & 4) {
+        var_s0 = 2;
+    } else {
+        var_s0 = 3;
+    }
+    objectHitInfo->unk_0x9c = spF0.unk50[var_s0];
+    objectHitInfo->unk_0x34 = spA8[var_s0 * 3 + 0];
+    objectHitInfo->unk_0x38 = spA8[var_s0 * 3 + 1];
+    objectHitInfo->unk_0x3c = spA8[var_s0 * 3 + 2];
+    if (spF0.unk58[var_s0] != 0) {
+        objectHitInfo->unk_0x9d |= 2;
+    } else {
+        objectHitInfo->unk_0x9d |= 1;
+    }
+}
+#endif
 
 void func_80027DAC(Object *obj, Object *obj2, Object *obj3, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6, s32 arg7);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027DAC.s")
