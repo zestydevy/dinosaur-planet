@@ -110,8 +110,6 @@ typedef struct {
 /*010d*/    UNK_TYPE_8 unk10d;
 /*010e*/    UNK_TYPE_8 unk10e;
 /*010f*/    s8 unk10f;
-/*0110*/    u8 unk110[0x146 - 0x110];
-/*0146*/    s16 unk146;
 } ObjectStruct58;
 
 typedef struct {

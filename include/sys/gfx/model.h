@@ -57,6 +57,12 @@ typedef struct {
 /*0012*/	u8 unk_0x12[0x18 - 0x12];
 } ModelDLInfo;
 
+typedef struct {
+/*0000*/    u8 pad0[0xC];
+/*000C*/    s8 unkC;
+/*000D*/    u8 padD;
+} HitSpheres;
+
 typedef struct{
     // TODO
 /*0000*/    ModelTexture *materials; //materials
@@ -69,7 +75,7 @@ typedef struct{
 /*001C*/    void *blendshapes; //blendshapes
 /*0020*/    ModelJoint *joints; //joint_hierarchy
 /*0024*/    u8 *amap;
-/*0028*/    void *hitSpheres; //hitspheres
+/*0028*/    HitSpheres *hitSpheres; //hitspheres
 /*002C*/    void *edgeVectors; //edgevectors (only on mobile map models?)
 /*0030*/    u32 unk_0x30;
 /*0034*/    void *facebatchBounds; //bounding boxes for each facebatch

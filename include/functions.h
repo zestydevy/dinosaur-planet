@@ -43,7 +43,7 @@ u32 func_8004D8A4(Object *obj, u32 addr, s32);
 u32 func_8002667C(Object *obj, u32 addr);
 u32 func_80026BD8(Object *obj, u32 addr);
 
-u32 func_80026A20(s16 objId, ModelInstance*, ObjectHitInfo*, u32, Object*);
+u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHitInfo, u32 arg3, Object* obj);
 
 
 void func_80045F48(s32);
