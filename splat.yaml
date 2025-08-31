@@ -421,7 +421,8 @@ segments:
     # bss
     # vram start: 0x800a3d70
 
-  - type: code
+  - name: assets
+    type: code
     start: 0xA4970
     subalign: null
     subsegments:
@@ -435,71 +436,34 @@ segments:
     - [0x9D65E0, bin, assets/AMBIENT]
     - [0xB033F8, bin, assets/MUSIC_tab]
     - [0xB03408, bin, assets/MUSIC]
-    - [0x10a34f0, bin, mp3/MPEG_tab] # offsets?
-    # mp3s
-    - [0x13a3d54, bin, mp3/0x13a3d54]
-    - [0x13cc7d8, bin, mp3/0x13cc7d8]
-    - [0x13e7ae8, bin, mp3/0x13e7ae8]
-    - [0x13ec8a4, bin, mp3/0x13ec8a4]
-    - [0x13ee828, bin, mp3/0x13ee828]
-    - [0x13efb7c, bin, mp3/0x13efb7c]
-    - [0x13f1b84, bin, mp3/0x13f1b84]
-    - [0x13f5368, bin, mp3/0x13f5368]
-    - [0x13f8638, bin, mp3/0x13f8638]
-    - [0x13fdc94, bin, mp3/0x13fdc94]
-    - [0x1405168, bin, mp3/0x1405168]
-    - [0x140f67c, bin, mp3/0x140f67c]
-    - [0x14141ac, bin, mp3/0x14141ac]
-    - [0x141947c, bin, mp3/0x141947c]
-    - [0x141a6cc, bin, mp3/0x141a6cc]
-    - [0x142264c, bin, mp3/0x142264c]
-    - [0x1426df0, bin, mp3/0x1426df0]
-    - [0x1429eb8, bin, mp3/0x1429eb8]
-    - [0x142b8a8, bin, mp3/0x142b8a8]
-    - [0x142ea74, bin, mp3/0x142ea74]
-    - [0x1431094, bin, mp3/0x1431094]
-    - [0x1435838, bin, mp3/0x1435838]
-    - [0x1437e58, bin, mp3/0x1437e58]
-    - [0x143dc54, bin, mp3/0x143dc54]
-    - [0x143f338, bin, mp3/0x143f338]
-    - [0x1441548, bin, mp3/0x1441548]
-    - [0x1532784, bin, mp3/0x1532784]
-    - [0x15df8c4, bin, mp3/0x15df8c4]
-    - [0x15f7e18, bin, mp3/0x15f7e18]
-    - [0x15fbd18, bin, mp3/0x15fbd18]
-    - [0x1601478, bin, mp3/0x1601478]
-    - [0x161c214, bin, mp3/0x161c214]
-    - [0x1620420, bin, mp3/0x1620420]
-    - [0x1793530, bin, mp3/0x1793530]
-    - [0x1ad53c8, bin, mp3/0x1ad53c8]
-    - [0x1b06020, bin, mp3/0x1b06020]
-
-    - [0x1E6ABDC, bin, assets/MUISCACT]
-    - [0x1E6EBDC, bin, assets/CAMACTIO]
+    - [0x10A34F0, bin, assets/MPEG_tab]
+    - [0x10A4518, bin, assets/MPEG]
+    - [0x1E6ABDC, bin, assets/MUSICACTIONS]
+    - [0x1E6EBDC, bin, assets/CAMACTIONS]
     - [0x1E6F3DC, bin, assets/LACTIONS]
-    - [0x1E793DC, bin, assets/ANIMCURV]
-    - [0x1FD9B24, bin, assets/ANIMCURV_tab]
-    - [0x1FE8EFC, bin, assets/OBJSEQ2C_tab]
+    - [0x1E793DC, bin, assets/ANIMCURVES]
+    - [0x1FD9B24, bin, assets/ANIMCURVES_tab]
+    - [0x1FE8EFC, bin, assets/OBJSEQ2CURVE_tab]
     - [0x1FE9EFE, bin, assets/FONTS]
     # - [0x1FED382, bin, assets/CACHEFON] # TODO: zero size?
     # - [0x1FED382, bin, assets/CACHEFON2] # TODO: zero size?
     - [0x1FED382, bin, assets/GAMETEXT]
     - [0x1FFE340, bin, assets/GAMETEXT_tab]
-    - [0x2002AD8, bin, assets/globalma]
+    - [0x2002AD8, bin, assets/GLOBALMAP]
     - [0x2002D24, bin, assets/TABLES]
     - [0x2003030, bin, assets/TABLES_tab]
     - [0x2003074, bin, assets/SCREENS]
     - [0x204E094, bin, assets/SCREENS_tab]
     - [0x204E0A4, bin, assets/VOXMAP]
     - [0x20501A4, bin, assets/VOXMAP_tab]
-    - [0x20501AA, bin, assets/tab]
-    - [0x20512EA, bin, assets/SOMETEXTURES]
+    - [0x20501AA, bin, assets/TEXPRE_tab]
+    - [0x20512EA, bin, assets/TEXPRE]
     - [0x20E023A, bin, assets/WARPTAB]
     - [0x20E083A, bin, assets/MAPS]
     - [0x2197C2A, bin, assets/MAPS_tab]
     - [0x21986EA, bin, assets/MAPINFO]
-    - [0x219932A, bin, assets/0x219932A]
-    - [0x21993F2, bin, assets/0x21993F2]
+    - [0x219932A, bin, assets/MAPSETUP]
+    - [0x21993F2, bin, assets/MAPSETUP_tab]
     - [0x219A11E, bin, assets/TEX1]
     - [0x297283E, bin, assets/TEX1_tab] # 3654 items
     - [0x2976156, bin, assets/TEXTABLE] # total length 8226592? 2 bytes of padding?
@@ -537,12 +501,17 @@ segments:
     - [0x3B04BDC, bin, assets/DLLS_tab]
     - [0x3B064DC, bin, assets/DLLSIMPORTTAB]
     - [0x3B06CF4, bin, assets/ENVFXACT]
-    # - name: game ??? some code around here
-    #   type: code
-    #   start: 0x3831b60
-    #   vram:  0x15000000
-    #   subsegments:
-    #     - [0x3831b60, c, segment_3831b60]
-    - [0x3b35bd0, bin] # tbd
-    - [0x3b4ffe0, bin, trailer] # 0xFF to end
+  
+  # Leftover older version of the end of the assets segment that wasn't cleared to 0 or 0xFF
+  - name: leftovers
+    type: code
+    start: 0x3B1ECF0
+    subalign: null
+    subsegments:
+    - [0x3B1ECF0, bin, leftovers/DLLS_partial_leftover]
+    - [0x3B35C7C, bin, leftovers/DLLS_tab_leftover]
+    - [0x3B3757C, bin, leftovers/DLLSIMPORTTAB_leftover]
+    - [0x3B37EC0, bin, leftovers/ENVFXACT_leftover]
+  
+  - [0x3B4FFE0, bin, trailer] # 0xFF to end
   - [0x4000000]
