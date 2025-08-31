@@ -58,7 +58,8 @@ typedef struct {
 } ModelDLInfo;
 
 typedef struct {
-/*0000*/    u8 pad0[0xA];
+/*0000*/    s16 jointIndex;
+/*0002*/    u8 pad0[0xA - 0x2];
 /*000A*/    u16 unkA;
 /*000C*/    s8 unkC;
 /*000D*/    s8 unkD;
@@ -127,7 +128,8 @@ typedef struct {
 /*000C*/    MtxF *matrices[2];
 /*0014*/    void *unk_0x14;
 /*0018*/    Gfx *displayList;
-/*001C*/    u8 unk_0x1c[0x28 - 0x1c];
+/*001C*/    s32 unk_0x1c[2];
+/*0024*/    s32 pad_0x24;
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstance_0x30 *unk_0x30;

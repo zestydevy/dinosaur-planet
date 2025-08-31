@@ -26,19 +26,25 @@ typedef struct Unk80027934 {
 void func_80028D90(void);
 void func_8002B410(Object *, s32);
 void update_object(Object *);
-void func_8001943C(Object *object, MtxF *mf, f32 yPrescale);
+void func_8001943C(Object *object, MtxF *mf, f32 yPrescale, f32 arg3);
 void func_8001A1D4(Model *model, AnimState *animState, s32 count);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
 u8 func_8005509C(s32 arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 void func_80032804(Object*);
+u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
+void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 arg5);
+void func_80029AB4(ModelJoint *joints, s32 jointsCount, HitSphere *hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5);
+void func_8001AC44(ModelInstance*, Model*, Object*, MtxF*, MtxF*, u32, f32);
+void func_8001B4F0(MtxF**, MtxF*, AnimState*, ModelJoint*, s32, s16*, s32, s32);
+void func_80029A14(Model *model, AnimState *animState, AnimState *arg2, f32 arg3, u8 arg4);
 
 extern f32 D_800B1990;
 extern Object **D_800B1994;
 extern s32 D_800B1998;
 extern s32* D_800B199C; // size: 0x3C / 60, 15 elements
-extern void* D_800B20A0;
+extern MtxF* D_800B20A0;
 extern void* D_800B20A8;
 extern void* D_800B20AC;
 extern void* D_800B20B0;
@@ -536,8 +542,8 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
     }
 
     objHitInfo->unk_0x6 = 0x12C;
-    objHitInfo->unk_0x8 = align_8(arg3);
-    arg3 = objHitInfo->unk_0x8 + objHitInfo->unk_0x6;
+    objHitInfo->unk_0x8 = (u32 *)align_8(arg3);
+    arg3 = (s32)objHitInfo->unk_0x8 + objHitInfo->unk_0x6;
     objHitInfo->unk_0x9e = 1;
     if (objHitInfo->unk_0x5a & 0x30) {
         objHitInfo->unk_0x9f = 2;
@@ -736,7 +742,7 @@ void func_80027934(Object* obj, Object* otherObj) {
 
     objectHitInfo = obj->objhitInfo;
     if (otherObj == obj) {
-        sp17C = (u32) objectHitInfo->unk_0x40 >> 4;
+        sp17C = objectHitInfo->unk_0x40 >> 4;
     } else {
         sp17C = objectHitInfo->unk_0x40 & 0xF;
     }
@@ -1164,17 +1170,296 @@ void func_80028DC4(void) {
 
 }
 
-void func_80028DCC(Object *obj, Object *obj2, Object *obj3, Object *obj4, f32 arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80028DCC.s")
+void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 arg4) {
+    ObjectHitInfo* sp44;
+    ObjectHitInfo* sp40;
+    ObjectHitInfo* sp3C;
+    ObjectHitInfo* sp38;
+    u32 var_v1;
+    s32 sp30;
+    u8 sp2F;
+    ModelInstance* sp28;
+    u8 temp_v0_4;
 
-void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002949C.s")
+    sp3C = obj->objhitInfo;
+    sp38 = obj2->objhitInfo;
+    if (obj3 != NULL) {
+        sp44 = obj3->objhitInfo;
+    } else {
+        sp44 = NULL;
+    }
+    if (obj4 != NULL) {
+        sp40 = obj4->objhitInfo;
+    } else {
+        sp40 = NULL;
+    }
+    sp2F = 0;
+    var_v1 = sp3C->unk_0x40;
+    if ((var_v1 != 0) && (sp3C->unk_0x61 == 0)) {
+        if (obj->group == 1) {
+            sp28 = obj->modelInsts[obj->modelInstIdx];
+            sp30 = ((s32) sp28->unk_0x34 >> 2) & 1;
+            if (sp3C->unk_0x58 & 0x2000) {
+                bcopy(D_800B20A8, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20AC, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+            } else {
+                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20A8, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20AC, sp28->model->hitSphereCount * 0x10);
+            }
+            sp28 = obj3->modelInsts[obj3->modelInstIdx];
+            sp30 = ((s32) sp28->unk_0x34 >> 2) & 1;
+            if (sp3C->unk_0x58 & 0x2000) {
+                bcopy(D_800B20B0, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20B4, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp3C->unk_0x40;
+            } else {
+                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20B0, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20B4, sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp3C->unk_0x40;
+                sp3C->unk_0x58 |= 0x2000;
+            }
+        }
+        if (var_v1 >> 4) {
+            sp2F = func_80029C04(obj, obj2, obj, 1, 0, var_v1 >> 4, sp3C->unk_0x44 >> 4);
+        }
+        if ((obj3 != NULL) && (sp2F == 0)) {
+            if (sp3C->unk_0x40 & 0xF) {
+                sp2F = func_80029C04(obj3, obj2, obj, 1, 0, sp3C->unk_0x40 & 0xF, sp3C->unk_0x44 & 0xF);
+            }
+        }
+        temp_v0_4 = sp2F;
+        sp2F = 0;
+        if ((((u32)sp2F < temp_v0_4) == 0) && (obj->group == 1)) {
+            func_8002949C(obj, obj2, obj3, sp3C, sp44, arg4);
+        }
+    }
+    if (obj2->def->_unk98[1] & 0x80) {
+        return;
+    }
 
-void func_80029A14(Object *obj, Object *otherObj, f32 arg3, u8 arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80029A14.s")
+    var_v1 = sp38->unk_0x40;
+    if ((var_v1 != 0) && (sp38->unk_0x61 == 0)) {
+        if (obj2->group == 1) {
+            sp28 = obj2->modelInsts[obj2->modelInstIdx];
+            sp30 = (sp28->unk_0x34 >> 2) & 1;
+            if (sp38->unk_0x58 & 0x2000) {
+                bcopy(D_800B20A8, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20AC, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+            } else {
+                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20A8, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20AC, sp28->model->hitSphereCount * 0x10);
+            }
+            sp28 = obj4->modelInsts[obj4->modelInstIdx];
+            sp30 = (sp28->unk_0x34 >> 2) & 1;
+            if (sp38->unk_0x58 & 0x2000) {
+                bcopy(D_800B20B0, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20B4, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp38->unk_0x40;
+            } else {
+                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20B0, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20B4, sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp38->unk_0x40;
+                sp38->unk_0x58 |= 0x2000;
+            }
+        }
+        if (var_v1 >> 4) {
+            sp2F = func_80029C04(obj2, obj, obj2, 1, 0, var_v1 >> 4, sp38->unk_0x44 >> 4);
+        }
+        if ((obj4 != NULL) && (sp2F == 0)) {
+            if (sp38->unk_0x40 & 0xF) {
+                sp2F = func_80029C04(obj4, obj, obj2, 1, 0, sp38->unk_0x40 & 0xF, sp38->unk_0x44 & 0xF);
+            }
+        }
+        if ((sp2F == 0) && (obj2->group == 1)) {
+            func_8002949C(obj2, obj, obj4, sp38, sp40, arg4);
+        }
+    }
+}
 
-void func_80029AB4(void *arg0, s32 arg1, void *arg2, s32 arg3, u32 arg4, s32 arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80029AB4.s")
+void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHitInfo, ObjectHitInfo* objHitInfo2, f32 arg5) {
+    Model* model;
+    f32 sp288;
+    f32 sp284;
+    f32 sp280;
+    f32 temp_fv0;
+    f32 var_fs0;
+    f32 var_fs1;
+    s32 attachPointIdx;
+    s32 sp26C;
+    s32 matrixIdx;
+    s32 sp264;
+    u32 *sp260;
+    u32 pad;
+    s32 sp258;
+    s32 i;
+    s32 var_s4;
+    s32 var_v1;
+    ModelInstance* sp248;
+    ModelInstance* sp244;
+    u32 temp_v0;
+    AnimState animState; // sp1DC
+    s32 stopLoop;
+    Model* model3; // sp1D4
+    MtxF sp194;
+    MtxF* sp190;
+    MtxF sp150;
+    MtxF sp110;
+    MtxF* sp10C;
+    s32 tempJointCount;
+    s16 sp106;
+    SRT spEC;
+    s8 sp80[0xEC - 0x80];
+    s32 pad2;
+
+    sp26C = arg5;
+    sp264 = objHitInfo->unk_0x4 >> 2;
+    if (sp264 > 0) {
+        sp260 = objHitInfo->unk_0x8;
+    } else {
+        sp260 = 0;
+    }
+
+    if (sp260 == 0) {
+        return;
+    }
+
+    sp288 = obj->srt.transl.x - objHitInfo->unk_0x10.x;
+    sp284 = obj->srt.transl.y - objHitInfo->unk_0x10.y;
+    sp280 = obj->srt.transl.z - objHitInfo->unk_0x10.z;
+    temp_fv0 = objHitInfo->unk_0x1c;\
+    var_fs1 = obj->animTimer - temp_fv0;
+    if (var_fs1 < 0.0f) {
+        var_fs1 = 0.0f;
+    }
+    var_fs1 /= arg5;
+    sp248 = obj->modelInsts[obj->modelInstIdx];
+    model = sp248->model;
+    matrixIdx = sp248->unk_0x34 & 1;
+    animState.unk_0x58 = 0;
+    animState.unk_0x5a = 0;
+    animState.unk_0x5c = 0;
+    var_fs0 = temp_fv0 + var_fs1;
+    tempJointCount = model->jointCount;
+    i = 0;
+    if (tempJointCount > 0) {
+        do {
+            sp80[i] = model->joints[i].jointLayer_plusID;
+            i++;
+        } while (i < model->jointCount);
+    }
+    sp10C = sp248->matrices[matrixIdx];
+    sp248->matrices[matrixIdx] = D_800B20A0;
+    func_8001943C(obj, &sp194, 1.0f, 0.0f);
+    sp106 = 0x1000;
+    if (obj3 != NULL) {
+        sp244 = obj3->modelInsts[obj3->modelInstIdx];
+        model3 = sp244->model;
+        attachPointIdx = obj->unk0xb0 & 0xFFFF & 3;
+        sp258 = obj->def->pAttachPoints[attachPointIdx].bones[obj->modelInstIdx];
+        spEC.transl.x = obj->def->pAttachPoints[attachPointIdx].pos.x;
+        spEC.transl.y = obj->def->pAttachPoints[attachPointIdx].pos.y;
+        spEC.transl.z = obj->def->pAttachPoints[attachPointIdx].pos.z;
+        spEC.yaw = obj->def->pAttachPoints[attachPointIdx].rot[0];
+        spEC.pitch = obj->def->pAttachPoints[attachPointIdx].rot[1];
+        spEC.roll = obj->def->pAttachPoints[attachPointIdx].rot[2];
+        spEC.scale = 1.0f;
+        sp190 = (MtxF*)(((f32*)sp248->matrices[matrixIdx]) + (sp258 << 4));
+        matrix_from_srt(&sp150, &spEC);
+    } else {
+        sp258 = -1;
+    }
+    stopLoop = FALSE;
+    for (var_s4 = 1; var_s4 < sp26C; var_s4++) {
+        var_v1 = (s32) (sp264 * var_fs0);
+        if (var_v1 >= sp264) {
+            var_v1 = sp264 - 1;
+        }
+        objHitInfo->unk_0x44 = objHitInfo->unk_0x40;
+        temp_v0 = sp260[var_v1];
+        objHitInfo->unk_0x40 = temp_v0;
+        temp_v0 = objHitInfo->unk_0x40;
+        if (temp_v0) {
+            pad =  temp_v0 >> 4;
+            pad2 = temp_v0 & 0xF;
+            func_80029A14(model, sp248->animState0, &animState, var_fs0, 1);
+            // @fake temp_v0 needs to be set to any value to match
+            temp_v0 = 0;
+            func_80029AB4(model->joints, model->jointCount, model->hitSpheres, model->hitSphereCount, pad, pad2 ? sp258 : -1);
+            temp_fv0 = var_s4 / arg5;
+            sp194.m[3][0] = (objHitInfo->unk_0x10.x - gWorldX) + (temp_fv0 * sp288);
+            sp194.m[3][1] = objHitInfo->unk_0x10.y + (temp_fv0 * sp284);
+            sp194.m[3][2] = (objHitInfo->unk_0x10.z - gWorldZ) + (temp_fv0 * sp280);
+            func_8001B4F0(&sp248->matrices[matrixIdx], &sp194, &animState, model->joints, (s32) model->jointCount, &sp106, -1, 0);
+            if (pad) {
+                func_8001AC44(sp248, model, obj, NULL, sp248->matrices[matrixIdx], pad, obj->srt.scale);
+                stopLoop = func_80029C04(obj, obj2, obj, 1, 0, pad, objHitInfo->unk_0x44 >> 4);
+            }
+            if (stopLoop == 0 && objHitInfo2 != NULL && (pad2)) {
+                matrix_concat_4x3(&sp150, sp190, &sp110);
+                func_8001AC44(sp244, model3, obj3, &sp110, sp248->matrices[matrixIdx], pad2, obj->srt.scale);
+                stopLoop = func_80029C04(obj3, obj2, obj, 1, 0, pad2, objHitInfo->unk_0x44 & 0xF);
+            }
+        }
+        if (stopLoop) {
+            // break
+            var_s4 = sp26C;
+        }
+        var_fs0 += var_fs1;
+    }
+    // @fake
+    if ((!obj->def) && (!obj->def)) {}
+    sp248->matrices[matrixIdx] = sp10C;
+    for (i = 0; i < model->jointCount; i++) {
+        model->joints[i].jointLayer_plusID = sp80[i];
+    }
+}
+
+void func_80029A14(Model* model, AnimState* animState, AnimState* arg2, f32 arg3, u8 arg4) {
+    arg2->anims[0] = animState->anims[0];
+    arg2->anims[1] = animState->anims[1];
+    arg2->anims2[0] = animState->anims2[0];
+    arg2->anims2[1] = animState->anims2[1];
+    arg2->animIndexes[0] = animState->animIndexes[0];
+    arg2->unk_0x60[0] = animState->unk_0x60[0];
+    arg2->unk_0x14[0] = animState->unk_0x14[0];
+    if (arg4 != 0) {
+        arg2->unk_0x4[0] = animState->unk_0x14[0] * arg3;
+    } else {
+        arg2->unk_0x4[0] = animState->unk_0x4[0];
+    }
+    arg2->unk_0x34[0] = animState->unk_0x34[0];
+    func_8001A1D4(model, arg2, 1);
+}
+
+void func_80029AB4(ModelJoint* joints, s32 jointsCount, HitSphere* hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5) {
+    s16 jointIndex;
+    s32 i;
+
+    for (i = 0; i < jointsCount; i++) {
+        joints[i].jointLayer_plusID |= 0x80;
+    }
+
+    if (arg4 != 0) {
+        for (i = 0; i < hitSpheresCount; i++) {
+            if ((1 << hitSpheres[i].unkD) & arg4) {
+                jointIndex = hitSpheres[i].jointIndex;
+                if ((joints[jointIndex].jointLayer_plusID & 0x80)) {
+                    while (jointIndex != -1) {
+                        joints[jointIndex].jointLayer_plusID &= ~0x80;
+                        jointIndex = joints[jointIndex].parentJointID;
+                    }
+                }
+            }
+        }
+    }
+
+    if (arg5 != -1 && (joints[arg5].jointLayer_plusID & 0x80)) {
+        while (arg5 != -1) {
+            joints[arg5].jointLayer_plusID &= ~0x80;
+            arg5 = joints[arg5].parentJointID;
+        }
+    }
+}
 
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80029C04.s")
@@ -1182,8 +1467,23 @@ u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 
 s32 func_8002AD3C(Object *obj, Vec3f *arg1, Vec3f *arg2, Vec3f *arg3, f32 *arg4);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002AD3C.s")
 
-void func_8002B2D0(s32 *arg0, s32 arg1, s32 arg2, s32 arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002B2D0.s")
+void func_8002B2D0(s32* arg0, s32 arg1, s32 arg2, HitSphere *hitSpheres) {
+    s32 sp20[48];
+    s32 count;
+    s32 i;
+
+    count = 0;
+    for (i = 0; i < arg1; i++) {
+        if (hitSpheres[i].unkA == 0) {
+            sp20[count] = i;
+            count += 1;
+        }
+    }
+
+    for (i = 0; i < count; arg0++, i++) {
+        arg0[0] = arg2;
+    }
+}
 
 void func_8002B410(Object *obj, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002B410.s")

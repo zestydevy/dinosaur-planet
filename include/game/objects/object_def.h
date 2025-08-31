@@ -56,12 +56,7 @@ enum ObjDataFlags5F { //copied from SFA; may be incorrect
 typedef struct AttachPoint { //copied from SFA; may be incorrect
 /*00*/ Vec3f pos; //offset from bone
 /*0C*/ Vec3s16 rot; //offset from bone
-/*12*/ s8 bone; //bone idx to use
-/*13*/ s8 unk13; //always same as bone?
-/*14*/ s8 unk14; //always same as bone?
-/*15*/ u8 unk15; //always 0xCD?
-/*16*/ u8 unk16; //always 0xCD?
-/*17*/ u8 unk17; //always 0xCD?
+/*12*/ s8 bones[6]; //bone idx to use
 } AttachPoint;
 
 typedef struct {

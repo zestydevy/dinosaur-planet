@@ -1160,6 +1160,7 @@ void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A8EC.s")
 
+void func_8001AC44(ModelInstance*, Model*, Object*, MtxF*, MtxF*, u32, f32);
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AC44.s")
 
 void func_8001AE74(ModelInstance *modelInst) {
