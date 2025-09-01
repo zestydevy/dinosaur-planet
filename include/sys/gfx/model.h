@@ -129,7 +129,7 @@ typedef struct {
 /*0014*/    void *unk_0x14;
 /*0018*/    Gfx *displayList;
 /*001C*/    s32 unk_0x1c[2];
-/*0024*/    s32 pad_0x24;
+/*0024*/    Vec4f *unk_0x24;
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstance_0x30 *unk_0x30;

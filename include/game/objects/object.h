@@ -107,7 +107,7 @@ typedef struct {
 /*0080*/    MtxF unk80[2]; 				// probably length of 2
 /*0100*/    s32 unk100[3];
 /*010c*/    u8 unk10c; 					// index into field 0x80?
-/*010d*/    UNK_TYPE_8 unk10d;
+/*010d*/    u8 unk10d;
 /*010e*/    UNK_TYPE_8 unk10e;
 /*010f*/    s8 unk10f;
 } ObjectStruct58;
