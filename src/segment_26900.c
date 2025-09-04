@@ -74,6 +74,8 @@ extern s32 *D_800916E0[5];
 extern s32 D_800916F4[4];
 extern f32 D_80099AC8;
 extern f32 D_80099ACC;
+extern f32 D_80099AD4;
+extern f32 D_80099AD8;
 
 void alloc_some_object_arrays(void) {
     D_800B1994 = malloc(0xA0, 0xE, NULL);
@@ -2172,14 +2174,14 @@ void func_8002B5C0(Object* obj) {
     }
 }
 
-Unk800B199C* func_8002B61C(Object* arg0, Object* arg1) {
+Unk800B199C* func_8002B61C(Object* obj, Object* otherObj) {
     Unk800B199C* temp_v1;
     s16 i;
 
     i = 0;
     while(i < 30) {
         temp_v1 = &D_800B199C[i];
-        if ((temp_v1->unk0 != 0) && (arg0 == temp_v1->unk4) && (arg1 == temp_v1->unk8)) {
+        if ((temp_v1->unk0 != 0) && (obj == temp_v1->unk4) && (otherObj == temp_v1->unk8)) {
             temp_v1->unk0 = 0;
             return temp_v1;
         }
@@ -2188,7 +2190,7 @@ Unk800B199C* func_8002B61C(Object* arg0, Object* arg1) {
     return NULL;
 }
 
-Unk800B199C* func_8002B68C(Object* arg0, Object* arg1) {
+Unk800B199C* func_8002B68C(Object* obj, Object* otherObj) {
     Unk800B199C* temp_v1;
     s16 i;
 
@@ -2196,8 +2198,8 @@ Unk800B199C* func_8002B68C(Object* arg0, Object* arg1) {
     while (i < 30) {
         temp_v1 = &D_800B199C[i];
         if (temp_v1->unk0 == 0) {
-            temp_v1->unk4 = arg0;
-            temp_v1->unk8 = arg1;
+            temp_v1->unk4 = obj;
+            temp_v1->unk8 = otherObj;
             temp_v1->unk0 = 2;
             return temp_v1;
         }
@@ -2274,35 +2276,482 @@ void func_8002B7CC(f32** arg0, s32 arg1) {
 }
 #endif
 
-s32 func_8002B910(Object *obj, Vec3f *arg1, s32 *arg2, Vec3f *arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 *argA, f32 *argB, s32 *argC, f32 *argD, Vec3f *argE);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002B910.s")
+s32 func_8002B910(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32* argA, f32* argB, s32* argC, f32* argD, Vec3f* argE) {
+    s32 sp64;
+    Vec3f sp58;
+    Vec3f sp4C;
+    Vec3f sp40;
+    f32 sp3C;
+    f32 temp_fv0_3;
+    f32 temp_fv1_3;
+    f32 sp30;
+    f32 sp2C;
 
-s32 func_8002BD04(Vec3f *arg0, f32 arg1, s32 *arg2, f32 *arg3, s32 *arg4, f32 arg5, f32 arg6, f32 arg7, f32 *arg8, f32 *arg9, f32 *argA);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002BD04.s")
+    *argC = 0;
+    sp2C = arg5 < arg4 ? arg4 : arg5;
+    sp30 = arg7 < arg6 ? arg6 : arg7;
+    sp58.x = arg0->x - arg2->x;
+    sp58.y = arg0->y - arg2->y;
+    sp58.z = arg0->z - arg2->z;
+    vec3_cross_product_2(arg1, arg3, argE);
+    sp3C = sqrtf((argE->z * argE->z) + ((argE->x * argE->x) + (argE->y * argE->y)));
+    if (sp3C == 0.0f) {
+        *argD = (arg3->z * sp58.z) + ((sp58.x * arg3->x) + (sp58.y * arg3->y));
+        sp40.x = (*argD * arg3->x) + sp58.x;
+        sp40.y = (*argD * arg3->y) + sp58.y;
+        sp40.z = (*argD * arg3->z) + sp58.z;
+        *argD = vec3_length(&sp40);
+        *argA = 1.0737418e9f;
+        *argB = 1.0737418e9f;
+        return *argD <= (sp30 + sp2C);
+    }
+    argE->x *= 1.0f / sp3C;
+    argE->y *= 1.0f / sp3C;
+    argE->z *= 1.0f / sp3C;
+    *argD = (argE->z * sp58.z) + ((sp58.x * argE->x) + (sp58.y * argE->y));
+    if (*argD > 0.0f) {
+        *argD = *argD;
+    } else {
+        *argD = -*argD;
+    }
+    sp64 = 0;
+    // @fake
+    if (!arg5) {}
+    if (*argD <= (sp30 + sp2C)) {
+        sp64 = 1;
+    }
+    if (sp64 != 0) {
+        vec3_cross_product(&sp58, arg3, &sp4C);
+        *argA = -((argE->z * sp4C.z) + ((sp4C.x * argE->x) + (sp4C.y * argE->y))) / sp3C;
+        vec3_cross_product(&sp58, arg1, &sp4C);
+        *argB = -((argE->z * sp4C.z) + ((sp4C.x * argE->x) + (sp4C.y * argE->y))) / sp3C;
+        temp_fv0_3 = *argA;
+        if ((temp_fv0_3 >= 0.0f) && (temp_fv0_3 <= arg8)) {
+            temp_fv1_3 = *argB;
+            if ((temp_fv1_3 >= 0.0f) && (temp_fv1_3 <= arg9)) {
+                *argC = *argD <= (((temp_fv1_3 / arg9) * (arg7 - arg6)) + (arg4 + ((arg5 - arg4) * (temp_fv0_3 / arg8)) + arg6));
+            }
+        }
+    }
+    return sp64;
+}
 
-s32 func_8002BF0C(Object *obj, f32 arg1, s32 *arg2, void *arg3, void *arg4, f32 arg5, f32 arg6, f32 arg7, f32 *arg8, f32 *arg9, f32 *argA);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002BF0C.s")
+s32 func_8002BD04(Vec3f* arg0, f32 arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32* arg8, f32* arg9, f32* argA) {
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_fs0;
+    f32 temp_ft4;
+    f32 temp_ft5;
+    f32 temp_fv1;
+    f32 sp14;
 
-s32 func_8002C0C4(s32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, f32 arg3, UNK_TYPE_32 arg4, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 *argD);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C0C4.s")
+    temp_ft4 = arg0->x - arg2->x;
+    temp_ft5 = arg0->y - arg2->y;
+    temp_fs0 = arg0->z - arg2->z;
+    *arg8 = (arg3->z * temp_fs0) + ((temp_ft4 * arg3->x) + (temp_ft5 * arg3->y));
+    if (arg7 < *arg8) {
+        temp_fv1 = arg4->x - arg0->x;
+        temp_fa0 = arg4->y - arg0->y;
+        temp_fa1 = arg4->z - arg0->z;
+        *arg9 = (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0) + (temp_fa1 * temp_fa1);
+        *argA = arg1 + arg6;
+        return *arg9 <= (*argA * *argA);
+    }
+    if (*arg8 < 0.0f) {
+        *arg9 = (temp_ft4 * temp_ft4) + (temp_ft5 * temp_ft5) + (temp_fs0 * temp_fs0);
+        *argA = arg1 + arg5;
+        return *arg9 <= (*argA * *argA);
+    }
+    temp_fv1 = (-*arg8 * arg3->x) + temp_ft4;
+    temp_fa0 = (-*arg8 * arg3->y) + temp_ft5;
+    temp_fa1 = (-*arg8 * arg3->z) + temp_fs0;
+    *arg9 = (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0) + (temp_fa1 * temp_fa1);
+    sp14 = ((*arg8 / arg7) * (arg6 - arg5)) + (arg1 + arg5);
+    *argA = sp14;
+    return *arg9 <= (sp14 * sp14);
+}
 
-s32 func_8002C278(s32 arg0, Vec3f *arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 argE, f32 argF, Object *arg10, f32 arg11, f32 *arg12, f32 *arg13);
+s32 func_8002BF0C(Vec3f* arg0, f32 arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32* arg8, f32* arg9, f32* argA) {
+    f32 sp24;
+    f32 pad_sp20;
+    f32 sp1C;
+    f32 temp_ft5;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 sp4;
+
+    temp_fv0 = arg0->x - arg2->x;
+    temp_fv1 = arg0->z - arg2->z;
+    *arg8 = (arg3->x * temp_fv0) + (temp_fv1 * arg3->z);
+    if (arg7 < *arg8) {
+        *arg9 = ((arg4->x - arg0->x) * (arg4->x - arg0->x)) + ((arg4->z - arg0->z) * (arg4->z - arg0->z));
+        *argA = arg1 + arg6;
+        return *arg9 <= (*argA * *argA);
+    }
+
+    if (*arg8 < 0.0f) {
+        // Not sure why this is required but.. oh well
+        temp_ft5 = temp_fv0;
+        *arg9 = (temp_ft5 * temp_ft5) + (temp_fv1 * temp_fv1);
+        *argA = arg1 + arg5;
+        return *arg9 <= (*argA * *argA);
+    }
+
+    sp1C = (-*arg8 * arg3->x) + temp_fv0;
+    sp24 = (-*arg8 * arg3->z) + temp_fv1;
+    *arg9 = (sp1C * sp1C) + (sp24 * sp24);
+    temp_ft5 = ((*arg8 / arg7) * (arg6 - arg5)) + (arg1 + arg5);
+    *argA = temp_ft5;
+    return *arg9 <= (temp_ft5 * temp_ft5);
+}
+
+s32 func_8002C0C4(Vec3f* arg0, u32 arg1, u32 arg2, f32 arg3, Vec3f* arg4, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 arg12, f32* arg13) {
+    Vec3f sp2C;
+    Vec3f sp20;
+    f32 temp_fv0;
+
+    vec3_sub((Vec3f* ) &arg4, (Vec3f* ) &arg0, &sp20);
+    *arg13 = vec3_dot_product(&sp20, (Vec3f* ) &arg9);
+    if (*arg13 > 0.0f) {
+        temp_fv0 = *arg13;
+        if (temp_fv0 < arg12) {
+            vec3_add_with_scale(&sp20, (Vec3f* ) &arg9, temp_fv0, &sp2C);
+            return ((sp2C.x * sp2C.x) + (sp2C.z * sp2C.z)) <= ((*arg13 * argD) + (arg3 + argC));
+        }
+    }
+    temp_fv0 = *arg13;
+    if (-(arg12 * D_80099AD4) < temp_fv0) {
+        *arg13 = 0.0f;
+        return vec3_length(&sp20) <= argC;
+    }
+    if (temp_fv0 < (arg12 * D_80099AD8)) {
+        *arg13 = arg12;
+        sp20.x += arg9;
+        sp20.y += argA;
+        sp20.z += argB;
+        return vec3_length(&sp20) <= (argC + argD);
+    }
+
+    return 0;
+}
+
+#if 1
+s32 func_8002C278(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 argE, f32 argF, f32 arg10, f32 arg11, f32* arg12, f32* arg13);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C278.s")
+#else
+s32 func_8002C278(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 argE, f32 argF, f32 arg10, f32 arg11, f32* arg12, f32* arg13) {
+    Vec3f sp6C;
+    Vec3f sp60;
+    f32 sp5C;
+    f32 sp58;
+    f32 temp_fv0;
+    s32 sp50;
+    f32 temp_fv1;
 
-void *func_8002C3EC(Object *obj, void *arg1, f32 arg2, f32 arg3, f32 arg4, s32 *arg5, s32 *arg6, f32 *arg7, f32 arg8, f32 arg9, f32 argA, f32 *argB, f32 *argC, Vec3f *argD);
+    sp60.x = arg3 - arg0;
+    sp60.y = arg4 - arg1;
+    sp60.z = arg5 - arg2;
+    sp6C.x = argB - arg8;
+    sp6C.y = argC - arg9;
+    sp6C.z = argD - argA;
+    if (arg10 != 0.0f) {
+        temp_fv0 = 1.0f / arg10;
+        temp_fv1 = 1.0f / arg11;
+        sp60.x *= temp_fv0;
+        sp60.y *= temp_fv0;
+        sp60.z *= temp_fv0;
+        sp6C.x *= temp_fv1;
+        sp6C.y *= temp_fv1;
+        sp6C.z *= temp_fv1;
+    }
+    if (func_8002B910((Vec3f* ) &arg0, (Vec3f* ) &sp60, (Vec3f* ) &arg8, (Vec3f* ) &sp6C, arg6, arg7, argE, argF, arg10, arg11, &sp5C, &sp58, &sp50, arg12, (Vec3f* ) arg13)) {
+        if (sp50) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    return 0;
+}
+#endif
+
+#ifndef NON_MATCHING
+Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) ;
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C3EC.s")
+#else
+Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) {
+    f32 pad_sp6C;
+    f32 sp68;
+    f32 sp64;
+    f32 sp60;
+    f32 var_fv0;
+    f32 var_fv1;
 
-Vec3f *func_8002C658(Vec3f *arg0, f32 arg1, Vec3f *arg2, Vec3f *arg3, f32 arg4, f32 arg5, f32 arg6, Vec3f *arg7);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C658.s")
+    func_8002BD04(arg0, arg2, arg5, arg7, arg6, arg8, arg9, argA, &sp64, &sp68, &sp60);
+    arg3 /= argA;
+    sp64 /= argA;
+    arg4 = sqrtf(arg4);
+    sp68 = sqrtf(sp68) - arg2;
+    arg4 -= arg2;
+    if (arg3 != sp64) {
+        var_fv0 = arg9 - arg8;
+        if (var_fv0 == ((1.0f / (arg3 - sp64)) * (arg4 - sp68))) {
+            if (sp64 > 0.0f) {
+                var_fv1 = 1.0f;
+            } else {
+                var_fv1 = 0.0f;
+            }
+        } else {
+            var_fv1 = (arg8 - (((arg4 - sp68) * (-arg3 / (arg3 - sp64))) + arg4)) / (((1.0f / (arg3 - sp64)) * (arg4 - sp68)) - var_fv0);
+        }
+    } else {
+        var_fv1 = arg3;
+        var_fv0 = arg9 - arg8;
+    }
+    *argB = var_fv1;
+    *argC = (var_fv0 * var_fv1) + arg8 + arg2;
+    if (sp64 != arg3) {
+        var_fv0 = (var_fv1 - arg3) / (sp64 - arg3);
+    } else if (sp68 != arg4) {
+        var_fv0 = (*argC - arg4) / (sp68 - arg4);
+    } else {
+        var_fv0 = 0.0f;
+    }
+    argD->x = arg0->x - arg1->x;
+    argD->y = arg0->y - arg1->y;
+    argD->z = arg0->z - arg1->z;
+    argD->x *= var_fv0;
+    argD->y *= var_fv0;
+    argD->z *= var_fv0;
+    argD->x += arg1->x;
+    argD->y += arg1->y;
+    argD->z += arg1->z;
+    return argD;
+}
+#endif
 
-Vec3f *func_8002C8C0(Vec3f *arg0, f32 arg1, f32 arg2, Vec3f *arg3, Vec3f *arg4, f32 arg5, f32 arg6, f32 arg7, Vec3f *arg8);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C8C0.s")
+Vec3f* func_8002C658(Vec3f* arg0, f32 arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, f32 arg5, f32 arg6, Vec3f* arg7) {
+    f32 temp_fv0;
+    Vec3f sp60;
+    Vec3f sp54;
+    Vec3f sp48;
+    Vec3f sp3C;
+    Vec3f sp30;
 
-Vec3f *func_8002CBD4(Vec3f *arg0, f32 arg1, f32 arg2, Vec3f *arg3, Vec3f *arg4, f32 arg5, f32 arg6, f32 arg7, Vec3f *arg8);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002CBD4.s")
+    if (arg1 <= 0.0f) {
+        arg7->x = arg0->x - arg3->x;
+        arg7->y = arg0->y - arg3->y;
+        arg7->z = arg0->z - arg3->z;
+        vec3_normalize(arg7);
+        return arg7;
+    }
+    if (arg6 <= arg1) {
+        arg7->x = arg0->x - arg3->x;
+        arg7->y = arg0->y - arg3->y;
+        arg7->z = arg0->z - arg3->z;
+        vec3_normalize(arg7);
+        return arg7;
+    }
+    sp60.x = arg3->x - arg2->x;
+    sp60.y = arg3->y - arg2->y;
+    sp60.z = arg3->z - arg2->z;
+    vec3_normalize(&sp60);
+    vec3_add_with_scale(arg2, &sp60, arg1, &sp30);
+    sp54.x = arg0->x - sp30.x;
+    sp54.y = arg0->y - sp30.y;
+    sp54.z = arg0->z - sp30.z;
+    vec3_normalize( &sp54);
+    if (arg5 == arg4) {
+        arg7->x = sp54.x;
+        arg7->y = sp54.y;
+        arg7->z = sp54.z;
+        return arg7;
+    }
+    sp60.x *= arg1;
+    sp60.y *= arg1;
+    sp60.z *= arg1;
+    vec3_add_with_scale(&sp60, &sp54, (arg5 - arg4) * (arg1 / arg6), &sp48);
+    vec3_normalize(&sp48);
+    temp_fv0 = 1.0f / arg1;
+    sp60.x *= temp_fv0;
+    sp60.y *= temp_fv0;
+    sp60.z *= temp_fv0;
+    vec3_cross_product(&sp54, &sp60, &sp3C);
+    vec3_normalize(&sp3C);
+    vec3_cross_product(&sp3C, &sp48, arg7);
+    return arg7;
+}
 
-void func_8002CEC8(Object *obj, f32 arg1, f32 arg2, Vec3f *arg3, Vec3f *arg4, f32 arg7, f32 arg8, f32 arg9, Vec3f *argA);
+Vec3f* func_8002C8C0(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, Vec3f* arg8) {
+    f32 temp_fv0;
+    Vec3f sp38;
+    Vec3f sp2C;
+
+    if (arg2 < 0.0f) {
+        arg8->x = arg0->x - arg3->x;
+        arg8->y = arg0->y - arg3->y;
+        arg8->z = arg0->z - arg3->z;
+        vec3_normalize(arg8);
+        arg1 += arg5;
+        arg8->x *= arg1;
+        arg8->y *= arg1;
+        arg8->z *= arg1;
+        arg8->x += arg3->x;
+        arg8->y += arg3->y;
+        arg8->z += arg3->z;
+        return arg8;
+    }
+
+    if (arg7 < arg2) {
+        arg8->x = arg0->x - arg4->x;
+        arg8->y = arg0->y - arg4->y;
+        arg8->z = arg0->z - arg4->z;
+        vec3_normalize(arg8);
+        arg1 += arg6;
+        arg8->x *= arg1;
+        arg8->y *= arg1;
+        arg8->z *= arg1;
+        arg8->x += arg4->x;
+        arg8->y += arg4->y;
+        arg8->z += arg4->z;
+        return arg8;
+    }
+
+    sp38.x = arg4->x - arg3->x;
+    sp38.y = arg4->y - arg3->y;
+    sp38.z = arg4->z - arg3->z;
+    temp_fv0 = 1.0f / arg7;
+    sp38.x *= temp_fv0;
+    sp38.y *= temp_fv0;
+    sp38.z *= temp_fv0;
+    vec3_add_with_scale(arg3, &sp38, arg2, &sp2C);
+    arg8->x = arg0->x - sp2C.x;
+    arg8->y = arg0->y - sp2C.y;
+    arg8->z = arg0->z - sp2C.z;
+    vec3_normalize(arg8);
+    arg1 = arg5 + arg1 + ((arg6 - arg5) * (arg2 / arg7));
+    arg8->x *= arg1;
+    arg8->y *= arg1;
+    arg8->z *= arg1;
+    arg8->x += sp2C.x;
+    arg8->y += sp2C.y;
+    arg8->z += sp2C.z;
+    return arg8;
+}
+
+Vec3f* func_8002CBD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, Vec3f* arg8) {
+    f32 temp_fv0;
+    Vec3f sp38;
+    Vec3f sp2C;
+
+    if (arg2 < 0.0f) {
+        arg8->x = arg0->x - arg3->x;
+        arg8->y = 0.0f;
+        arg8->z = arg0->z - arg3->z;
+        vec3_normalize(arg8);
+        arg1 += arg5;
+        arg8->x *= arg1;
+        arg8->y *= arg1;
+        arg8->z *= arg1;
+        arg8->x += arg3->x;
+        arg8->y += arg3->y;
+        arg8->z += arg3->z;
+        return arg8;
+    }
+    if (arg7 < arg2) {
+        arg8->x = arg0->x - arg4->x;
+        arg8->y = 0.0f;
+        arg8->z = arg0->z - arg4->z;
+        vec3_normalize(arg8);
+        arg1 += arg6;
+        arg8->x *= arg1;
+        arg8->y *= arg1;
+        arg8->z *= arg1;
+        arg8->x += arg4->x;
+        arg8->y += arg4->y;
+        arg8->z += arg4->z;
+        return arg8;
+    }
+    sp38.x = arg4->x - arg3->x;
+    sp38.y = arg4->y - arg3->y;
+    sp38.z = arg4->z - arg3->z;
+    temp_fv0 = 1.0f / arg7;
+    sp38.x *= temp_fv0;
+    sp38.y *= temp_fv0;
+    sp38.z *= temp_fv0;
+    vec3_add_with_scale(arg3, (Vec3f* ) &sp38, arg2, &sp2C);
+    arg8->x = arg0->x - sp2C.x;
+    arg8->y = 0.0f;
+    arg8->z = arg0->z - sp2C.z;
+    vec3_normalize(arg8);
+    arg1 = arg5 + arg1 + ((arg6 - arg5) * (arg2 / arg7));
+    arg8->x *= arg1;
+    arg8->y *= arg1;
+    arg8->z *= arg1;
+    arg8->x += sp2C.x;
+    arg8->y += sp2C.y;
+    arg8->z += sp2C.z;
+    return arg8;
+}
+
+#ifndef NON_MATCHING
+void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002CEC8.s")
+#else
+void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10) {
+    f32 sp24;
+    f32 sp20;
+    f32 sp1C;
+    f32 sp18;
+    f32 sp14;
+    f32 sp10;
+
+    arg1 = arg8 / (arg9 - arg1);
+    if (arg2 < 0) {
+        arg10->x = arg0->x - arg3->x;
+        arg10->y = 0;
+        arg10->z = arg0->z - arg3->z;
+        arg10->x *= arg1;
+        arg10->y *= arg1;
+        arg10->z *= arg1;
+        arg10->x += arg3->x;
+        arg10->y += arg3->y;
+        arg10->z += arg3->z;
+        return;
+    }
+
+    if (arg7 < arg2) {
+        arg10->x = arg0->x - arg4->x;
+        arg10->y = 0;
+        arg10->z = arg0->z - arg4->z;
+        arg10->x *= arg1;
+        arg10->y *= arg1;
+        arg10->z *= arg1;
+        arg10->x += arg4->x;
+        arg10->y += arg4->y;
+        arg10->z += arg4->z;
+        return;
+    }
+
+    sp1C = arg4->x - arg3->x;
+    sp20 = arg4->y - arg3->y;
+    sp24 = arg4->z - arg3->z;
+    arg2 /= arg7;
+    sp10 = arg3->x + (sp1C * arg2);
+    sp14 = arg3->y + (sp20 * arg2);
+    sp18 = arg3->z + (sp24 * arg2);
+    arg10->x = arg0->x - sp10;
+    arg10->y = 0;
+    arg10->z = arg0->z - sp18;
+    arg10->x *= arg1;
+    arg10->y *= arg1;
+    arg10->z *= arg1;
+    arg10->x += sp10;
+    arg10->y += sp14;
+    arg10->z += sp18;
+}
+#endif
 
 s32 func_8002D0DC(Vec3f *arg0, f32 arg1, Object *obj, Object *otherObj, s32 *arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, Vec3f *arg9);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002D0DC.s")
@@ -2310,7 +2759,7 @@ s32 func_8002D0DC(Vec3f *arg0, f32 arg1, Object *obj, Object *otherObj, s32 *arg
 s32 func_8002D69C(Vec3f *arg0, f32 arg1, Object *obj, Object *otherObj, s32 *arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, Vec3f *arg9);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002D69C.s")
 
-s32 func_8002DC58(Object *obj, Object *arg1, void *arg2, void *arg3);
+s32 func_8002DC58(Vec3f* obj, Vec3f* arg1, ObjDef* arg2, ObjDef* arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002DC58.s")
 
 s32 func_8002DFB8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, void **arg4, void *arg5, Object *arg6, Object *arg7, f32 *arg8);
@@ -2319,11 +2768,28 @@ s32 func_8002DFB8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, void **arg4, void *arg
 s32 func_8002E3D0(s32 arg0, s32 arg1, f32 arg2, f32 arg3, void **arg4, void *arg5, Object *arg6, Object *arg7, f32 arg8, f32 arg9, f32 *argA);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002E3D0.s")
 
-void func_8002E84C(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002E84C.s")
+void func_8002E84C(Object* obj, Object* otherObj) {
+    obj->positionMirror.x = otherObj->positionMirror.x;
+    obj->positionMirror.y = otherObj->positionMirror.y;
+    obj->positionMirror.z = otherObj->positionMirror.z;
+    obj->speed.x = otherObj->speed.x;
+    obj->speed.y = otherObj->speed.y;
+    obj->speed.z = otherObj->speed.z;
+    // ugly hack, this is probably not an object
+    ((s32 *)obj)[0] = 1;
+}
 
-s32 func_8002E88C(Vec3f *arg0, Vec3f *arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002E88C.s")
+s32 func_8002E88C(Vec3f* arg0, Vec3f* arg1) {
+    s32 var_v0;
+
+    var_v0 = arg0->x < arg1->x;
+    if (var_v0 == 0) {
+        var_v0 = arg0->y < arg1->y;
+        if (var_v0 == 0) {
+            return arg0->z < arg1->z;
+        }
+    }
+}
 
 s32 func_8002E904(Object *obj, Object *otherObj);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002E904.s")
