@@ -489,6 +489,7 @@ segments:
     # - [0x37E3C26, bin, assets/VOXOBJ] # TODO: zero size?
     - [0x37E3C26, bin, assets/MODLINES]
     - [0x37E5586, bin, assets/MODLINES_tab]
+    - [0x37E562E, bin, assets/SAVEGAME]
     - [0x37E6E2E, bin, assets/SAVEGAME_tab]
     - [0x37E6E3A, bin, assets/OBJSEQ]
     - [0x37ECEC2, bin, assets/OBJSEQ_tab]
@@ -501,6 +502,9 @@ segments:
     - [0x3B04BDC, bin, assets/DLLS_tab]
     - [0x3B064DC, bin, assets/DLLSIMPORTTAB]
     - [0x3B06CF4, bin, assets/ENVFXACT]
+  
+  # TODO: ENVFXACT actually ends at 0x3B1ECF4 but i can't get splat to stop
+  #       aligning the assets segment wrong when starting leftovers at that address
   
   # Leftover older version of the end of the assets segment that wasn't cleared to 0 or 0xFF
   - name: leftovers
