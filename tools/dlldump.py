@@ -24,7 +24,8 @@ def dump_header(dll: DLL):
     dll_size = dll.get_size()
     bss_offset = dll.get_bss_offset()
 
-    print(f"DLL size:           {hex(dll_size)} ({dll_size} bytes, unaligned)")
+    print(f"DLL size:           {hex(dll_size)} ({dll_size} bytes)")
+    print(f"DLL size (aligned): {hex(dll.size_aligned)} ({dll.size_aligned} bytes)")
     print(f"Header size:        {hex(header.size)} ({header.size} bytes)")
     print(f"TEXT size:          {hex(text_size)} ({text_size} bytes)")
     print(f"DATA size:          {hex(data_size)} ({data_size} bytes)")

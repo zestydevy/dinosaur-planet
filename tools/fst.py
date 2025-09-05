@@ -100,14 +100,15 @@ def read_fst(file: BufferedReader):
 def main():
     parser = argparse.ArgumentParser(description="Queries FS_tab.bin.")
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
+    parser.add_argument("-f", "--file", type=str, dest="file", help=f"The FST_tab.bin file to read, relative to the base directory (or an absolute path).", 
+                        default=str(BIN_ASSETS_DIR.joinpath("FS_tab.bin")))
 
     args = parser.parse_args()
 
     # Do all path lookups from the base directory
     os.chdir(Path(args.base_dir).resolve())
 
-    path = BIN_ASSETS_DIR.joinpath("FS_tab.bin")
-    with open(path, "rb") as file:
+    with open(args.file, "rb") as file:
         read_fst(file)
 
 if __name__ == "__main__":

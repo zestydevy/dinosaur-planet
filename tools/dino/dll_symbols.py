@@ -158,8 +158,10 @@ class DLLSymbols:
         if default == None:
             if address in self.dll.header.export_offsets:
                 default = self.__make_func_name(address)
-            else:
+            elif (address & 0x8000_0000) != 0:
                 default = "IMPORT_{:X}".format(address)
+            else:
+                default = "GLOBAL_{:X}".format(address)
         
         return default
     

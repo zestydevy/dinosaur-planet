@@ -56,7 +56,7 @@ def iter_diffs(base: DLL, base_data: bytes, base_bss_size: int, targ: DLL, targ_
     if len(base.reloc_table.global_offset_table) != len(targ.reloc_table.global_offset_table):
         yield "GOT count mismatch: expected {}, found {}".format(len(targ.reloc_table.global_offset_table), len(base.reloc_table.global_offset_table))
     else:
-        for idx in range(4, len(base.reloc_table.global_offset_table)):
+        for idx in range(len(base.reloc_table.global_offset_table)):
             base_value = base.reloc_table.global_offset_table[idx]
             targ_value = targ.reloc_table.global_offset_table[idx]
             if base_value != targ_value:
