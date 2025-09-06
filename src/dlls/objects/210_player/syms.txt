@@ -226,7 +226,7 @@ local dll_210_func_1DD94 = 0x1DD94;
 local dll_210_func_1DE50 = 0x1DE50;
 local dll_210_func_1DE64 = 0x1DE64;
 
-.rodata = 0x1DE70;
+.rodata = 0x1E318;
 local _rodata_0 = 0x0; # absolute: 0x1E318
 local _rodata_C0 = 0xC0; # absolute: 0x1E3D8
 local _rodata_F0 = 0xF0; # absolute: 0x1E408

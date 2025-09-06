@@ -504,7 +504,8 @@ class DLLSplitter:
 
             # Note: Section syms need to be relative to start of .text
             if dll.has_rodata() and len(rodata_refs) > 0:
-                syms_file.write("\n.rodata = 0x{:X};\n".format(dll.header.rodata_offset - dll.header.size))
+                syms_file.write("\n.rodata = 0x{:X};\n"
+                                .format(dll.header.rodata_offset + dll.reloc_table.get_size() - dll.header.size))
                 rodata_refs.add(0)
                 rodata_refs = list(rodata_refs)
                 rodata_refs.sort()

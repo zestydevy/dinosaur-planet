@@ -26,7 +26,9 @@ class DLLSymsTxt:
         self.sections = sections 
 
     def to_absolute(self) -> "OrderedDict[int, str]":
-        abs = self.absolute.copy()
+        abs: "OrderedDict[int, str]" = OrderedDict()
+        for (sym_addr, sym) in self.absolute.items():
+            abs[sym_addr] = sym.name 
         for section in self.sections.values():
             for (sym_addr, sym) in section.syms.items():
                 abs[section.offset + sym_addr] = sym.name

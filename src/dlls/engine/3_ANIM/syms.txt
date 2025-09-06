@@ -78,7 +78,7 @@ dll_3_func_9E88 = 0x9E88;
 local dll_3_func_9EC8 = 0x9EC8;
 dll_3_func_9F90 = 0x9F90;
 
-.rodata = 0x9FF0;
+.rodata = 0xA23C;
 local _rodata_0 = 0x0; # absolute: 0xA23C
 local _rodata_E0 = 0xE0; # absolute: 0xA31C
 local _rodata_E4 = 0xE4; # absolute: 0xA320
