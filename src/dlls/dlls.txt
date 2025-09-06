@@ -1,4 +1,5 @@
 # engine
+3 = engine/3_ANIM
 6 = engine/6_AMSFX
 7 = engine/7_newday
 16 = engine/16
@@ -28,6 +29,7 @@
 
 
 # objects
+210 = objects/210_player
 223 = objects/223_cannon_claw
 270 = objects/270_sidesetup
 296 = objects/296_medium_crate
