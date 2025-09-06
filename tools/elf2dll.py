@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 import argparse
-from io import BufferedWriter
+from io import BufferedWriter, BytesIO
+import re
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import Section, SymbolTableSection
-from elftools.elf.relocation import RelocationSection
+from elftools.elf.relocation import RelocationSection, Relocation
 from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import math
 import os
-from typing import TextIO, TypedDict
+from typing import Iterable, TextIO, TypedDict
 import struct
 
 HEADER_SIZE = 0x18
+
+class ELF2DLLException(Exception):
+    pass
 
 class Exports(TypedDict):
     ctor: int
@@ -45,6 +49,110 @@ class GPRel32Reloc(TypedDict):
     reloc_offset: int
     sa: int # S + A
 
+class PatchData(TypedDict):
+    bytes: bytes
+    offset: int # Relative to section being patched
+
+class PatchedSection(TypedDict):
+    patches: list[PatchData]
+    relocations: list[Relocation]
+
+class PatchedSections(TypedDict):
+    text: PatchedSection
+    rodata: PatchedSection
+    data: PatchedSection
+
+# .patch:<symbol>:<offset>
+PATCH_SECTION_NAME_REGEX = re.compile(r"\.patch:(\w+):(\w+)")
+VALID_PATCH_SECTION_TARGETS = set([".text", ".rodata", ".data"])
+
+def read_patch_sections(elf: ELFFile) -> PatchedSections:
+    syms = elf.get_section_by_name(".symtab")
+    assert isinstance(syms, SymbolTableSection)
+
+    patch_sections: PatchedSections = {
+        "text": {"patches": [], "relocations": []},
+        "rodata": {"patches": [], "relocations": []},
+        "data": {"patches": [], "relocations": []}
+    }
+
+    for section in elf.iter_sections():
+        assert isinstance(section, Section)
+        match = PATCH_SECTION_NAME_REGEX.match(section.name)
+        if match != None:
+            # Lookup symbol that the patch is relative to
+            symbol_name = match.group(1)
+
+            sym = syms.get_symbol_by_name(symbol_name)
+            if sym == None:
+                raise ELF2DLLException(f"Patch section '{section.name}' references unknown symbol: '{symbol_name}'")
+            sym = sym[0] # If there are duplicates, we expect them to point to the same section *name*
+            
+            # Lookup section the symbol is in
+            sym_shndx = sym.entry["st_shndx"]
+            if sym_shndx == "SHN_UNDEF":
+                raise ELF2DLLException(f"Patch section '{section.name}' references symbol '{symbol_name}' which does not have a section defined.")
+            if sym_shndx == "SHN_ABS":
+                raise ELF2DLLException(
+                    f"Patch section '{section.name}' references an absolute symbol '{symbol_name}', which is not supported. " +
+                    "Please use a symbol with a defined section or make the patch relative to a section instead.")
+            sym_section = elf.get_section(sym_shndx)
+            if sym_section == None:
+                raise ELF2DLLException(f"Patch section '{section.name}' references symbol '{symbol_name}' which does not have a section defined.")
+            assert isinstance(sym_section, Section)
+            patch_section_name = sym_section.name
+            if not patch_section_name in VALID_PATCH_SECTION_TARGETS:
+                raise ELF2DLLException(
+                    f"Patch section '{section.name}' references symbol '{symbol_name}' which is in an invalid section: '{patch_section_name}'")
+            patch_section_name = patch_section_name.lstrip(".")
+
+            # Calculate section relative offset
+            offset = int(match.group(2), base=0)
+            offset += sym.entry["st_value"]
+
+            patch_section: PatchedSection = patch_sections[patch_section_name]
+            patch_section["patches"].append({"bytes": section.data(), "offset": offset})
+
+            patch_section_relocs = patch_section["relocations"]
+            reloc_section = elf.get_section_by_name(f".rel{section.name}")
+            if reloc_section != None:
+                assert isinstance(reloc_section, RelocationSection)
+                for reloc in reloc_section.iter_relocations():
+                    # Relocate reloc to patched location relative to the section being patched
+                    reloc.entry["r_offset"] += offset
+                    patch_section_relocs.append(reloc)
+    
+    return patch_sections
+
+def apply_patches_to_section(section_data: bytes, patches: "list[PatchData]") -> bytes:
+    section_io = BytesIO(section_data)
+    writer = BufferedWriter(section_io)
+
+    for patch in patches:
+        writer.seek(patch["offset"], os.SEEK_SET)
+        writer.write(patch["bytes"])
+    
+    writer.flush()
+    return section_io.getvalue()
+
+def filter_relocs_overwritten_by_patch(relocs: Iterable[Relocation], 
+                                       patches: list[PatchData]) -> list[Relocation]:
+    filtered_relocs: list[Relocation] = []
+    for reloc in relocs:
+        base_offset = reloc["r_offset"]
+        overwritten = False
+        for patch in patches:
+            patch_offset = patch["offset"]
+            patch_size = len(patch["bytes"])
+
+            if base_offset >= patch_offset and base_offset < (patch_offset + patch_size):
+                overwritten = True
+                break
+        if not overwritten:
+            filtered_relocs.append(reloc)
+
+    return filtered_relocs
+
 def read_elf_exports(elf: ELFFile) -> Exports:
     syms = elf.get_section_by_name(".symtab")
     assert isinstance(syms, SymbolTableSection)
@@ -74,7 +182,11 @@ def read_elf_exports(elf: ELFFile) -> Exports:
         
         return exports
 
-def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
+def read_elf_relocations(elf: ELFFile, 
+                         text_data: bytes | None, 
+                         rodata_data: bytes | None, 
+                         data_data: bytes | None,
+                         patched_sections: PatchedSections | None) -> ReadRelocations:
     syms = elf.get_section_by_name(".symtab")
     assert isinstance(syms, SymbolTableSection)
 
@@ -103,10 +215,14 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
     rel_text = elf.get_section_by_name(".rel.text")
     if rel_text != None:
         assert isinstance(rel_text, RelocationSection)
+        assert text_data != None
 
-        text_data = elf.get_section_by_name(".text").data()
+        reloc_iter = rel_text.iter_relocations()
+        if patched_sections != None:
+            reloc_iter = filter_relocs_overwritten_by_patch(reloc_iter, patched_sections["text"]["patches"])
+            reloc_iter += patched_sections["text"]["relocations"]
 
-        for reloc in rel_text.iter_relocations():
+        for reloc in reloc_iter:
             reloc_offset = reloc["r_offset"]
             reloc_type = reloc["r_info_type"]
 
@@ -129,7 +245,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
                         sym_sec_name = elf.get_section(sym_shndx).name
                         got_idx = secs_to_got.get(sym_sec_name)
                         if got_idx == None:
-                            raise Exception(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
+                            raise ELF2DLLException(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
                     else:
                         if sym_value >= 0x8000:
                             # For local symbols that are too big, we need to generate a GOT entry for the hi bits (sorta)
@@ -153,7 +269,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
                             sym_sec_name = elf.get_section(sym_shndx).name
                             got_idx = secs_to_got.get(sym_sec_name)
                             if got_idx == None:
-                                raise Exception(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
+                                raise ELF2DLLException(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
                 else:
                     assert st_info_bind == "STB_GLOBAL"
 
@@ -181,20 +297,41 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
                 # Global syms won't have a lo16 pair (except _gp_disp but that's taken care of elsewhere)
                 # Section sym lo16 pairs will already have the correct value from the linker so we can leave them alone
+                assert st_info_bind != "STB_GLOBAL" or sym.name == "_gp_disp"
                 if st_info_bind == "STB_LOCAL" and sym_type != "STT_SECTION":
                     # AHL + S
                     ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
                     text_relocs.append({ "reloc_offset": reloc_offset, "half": (ahl + sym_value) & 0xFFFF })
+            elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_PC16"]:
+                # Note: R_MIPS_PC16 is not used by IDO, this is to support ROM hacking
+                if sym_shndx == "SHN_UNDEF":
+                    print(f"WARN: reloc with offset {hex(reloc_offset)} has undefined symbol: {sym.name}")
+                # sign–extend(A) + S – P
+                a = struct.unpack_from(">h", text_data, reloc_offset + 2)[0]
+                s = sym_value
+                p = reloc_offset
+                # Note: The PC16 value needs to be shifted down by 2 bits because it's measured in
+                # instructions and not bytes.
+                text_relocs.append({ "reloc_offset": reloc_offset, "half": ((a + s - p) >> 2) & 0xFFFF })
+            elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_JALR"]:
+                # Note: R_MIPS_JALR is not used by IDO, this is to support ROM hacking
+                # R_MIPS_JALR is a hint to linkers that a JALR instruction could possibly be turned into a direct call instead.
+                # This can safely be ignored.
+                pass
             else:
-                raise Exception(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise ELF2DLLException(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
     
     rel_data = elf.get_section_by_name(".rel.data")
     if rel_data != None:
         assert isinstance(rel_data, RelocationSection)
+        assert data_data != None
 
-        data_data = elf.get_section_by_name(".data").data()
+        reloc_iter = rel_data.iter_relocations()
+        if patched_sections != None:
+            reloc_iter = filter_relocs_overwritten_by_patch(reloc_iter, patched_sections["data"]["patches"])
+            reloc_iter += patched_sections["data"]["relocations"]
 
-        for reloc in rel_data.iter_relocations():
+        for reloc in reloc_iter:
             reloc_offset = reloc["r_offset"]
             reloc_type = reloc["r_info_type"]
 
@@ -208,16 +345,21 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
 
                 data_relocs.append({ "reloc_offset": reloc_offset, "word": s + a })
             else:
-                raise Exception(f"Unsupported .data reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise ELF2DLLException(f"Unsupported .data reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
 
     rel_rodata = elf.get_section_by_name(".rel.rodata")
     if rel_rodata != None:
         assert isinstance(rel_rodata, RelocationSection)
+        assert rodata_data != None
 
-        rodata_data = elf.get_section_by_name(".rodata").data()
         text_shndx = elf.get_section_index(".text")
 
-        for reloc in rel_rodata.iter_relocations():
+        reloc_iter = rel_rodata.iter_relocations()
+        if patched_sections != None:
+            reloc_iter = filter_relocs_overwritten_by_patch(reloc_iter, patched_sections["rodata"]["patches"])
+            reloc_iter += patched_sections["rodata"]["relocations"]
+
+        for reloc in reloc_iter:
             reloc_offset = reloc["r_offset"]
             reloc_type = reloc["r_info_type"]
 
@@ -233,7 +375,7 @@ def read_elf_relocations(elf: ELFFile) -> ReadRelocations:
 
                 rodata_relocs.append({ "reloc_offset": reloc_offset, "sa": s + a })
             else:
-                raise Exception(f"Unsupported .rodata reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise ELF2DLLException(f"Unsupported .rodata reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
 
     reginfo = elf.get_section_by_name(".reginfo")
     if reginfo != None:
@@ -305,52 +447,69 @@ def calc_got_and_relocs_size(got_and_relocs: GOTAndRelocations) -> int:
 def align(n: int, alignment: int) -> int:
     return math.ceil(n / alignment) * alignment
 
-def convert(elf: ELFFile, writer: BufferedWriter, bss_writer: TextIO):
-    # Read ELF
-    exports = read_elf_exports(elf)
-    exports_size = calc_exports_size(exports)
-
-    read_relocations = read_elf_relocations(elf)
-    got_and_relocs = read_relocations["got_and_relocs"]
-    got_and_relocs_size = 0
-    if got_and_relocs != None:
-        got_and_relocs_size = calc_got_and_relocs_size(got_and_relocs)
-
-    # Determine section sizes and positions
+def convert(elf: ELFFile, writer: BufferedWriter, bss_writer: TextIO, patches_enabled: bool):
+    # Read input sections
     text = elf.get_section_by_name(".text")
     rodata = elf.get_section_by_name(".rodata")
     data = elf.get_section_by_name(".data")
     bss = elf.get_section_by_name(".bss")
 
+    # Note: Output section sizes must be padded to at least a 4-byte alignment
+    #       (IDO pads these to 16 bytes already).
     text_data: bytes | None = None
     text_size: int = 0
-    text_pos = HEADER_SIZE + exports_size
     if isinstance(text, Section):
-        text_size = text.data_size
+        text_size = align(text.data_size, 4)
         if text_size > 0:
             text_data = text.data()
     
     rodata_data: bytes | None = None
     rodata_size: int = 0
-    rodata_pos = text_pos + text_size
     if isinstance(rodata, Section):
-        rodata_size = rodata.data_size
+        rodata_size = align(rodata.data_size, 4)
         if rodata_size > 0:
             rodata_data = rodata.data()
     
     data_data: bytes | None = None
     data_size: int = 0
-    data_pos = rodata_pos + rodata_size + got_and_relocs_size
     if isinstance(data, Section):
-        data_size = data.data_size
+        data_size = align(data.data_size, 4)
         if data_size > 0:
             data_data = data.data()
     
     bss_size: int = 0
-    bss_pos = data_pos + data_size
     if isinstance(bss, Section):
-        bss_size = bss.data_size
+        bss_size = align(bss.data_size, 4)
+
+    # Handle patch sections (if enabled)
+    patched_sections: PatchedSections | None = None
+    if patches_enabled:
+        patched_sections = read_patch_sections(elf)
+
+        # Apply patches
+        if text_data != None:
+            text_data = apply_patches_to_section(text_data, patched_sections["text"]["patches"])
+        if rodata_data != None:
+            rodata_data = apply_patches_to_section(rodata_data, patched_sections["rodata"]["patches"])
+        if data_data != None:
+            data_data = apply_patches_to_section(data_data, patched_sections["data"]["patches"])
     
+    # Read exports and relocations
+    exports = read_elf_exports(elf)
+    exports_size = calc_exports_size(exports)
+
+    read_relocations = read_elf_relocations(elf, text_data, rodata_data, data_data, patched_sections)
+    got_and_relocs = read_relocations["got_and_relocs"]
+    got_and_relocs_size = 0
+    if got_and_relocs != None:
+        got_and_relocs_size = calc_got_and_relocs_size(got_and_relocs)
+
+    # Determine section output positions
+    text_pos = HEADER_SIZE + exports_size
+    rodata_pos = text_pos + text_size
+    data_pos = rodata_pos + rodata_size + got_and_relocs_size
+    bss_pos = data_pos + data_size
+
     dll_size_aligned = align(data_pos + data_size, 16)
     
     # Fixup GOT entries
@@ -440,13 +599,24 @@ def main():
     parser.add_argument("elf", type=argparse.FileType("rb"), help="The DLL .elf file to convert.")
     parser.add_argument("-o", "--output", type=argparse.FileType("wb"), help="The path of the Dinosaur Planet DLL file to output.", required=True)
     parser.add_argument("-b", "--bss", type=argparse.FileType("w", encoding="utf-8"), help="Path to output the .bss size as a text file.", required=True)
+    parser.add_argument("--patches", dest="patches_enabled", action="store_true", 
+                        help="Whether handling for patch sections should be enabled (for ROM hacking).",
+                        default=False)
     args = parser.parse_args()
     
-    with ELFFile(args.elf) as elf:
-        convert(elf, args.output, args.bss)
+    error = False
+    try:
+        with ELFFile(args.elf) as elf:
+            convert(elf, args.output, args.bss, args.patches_enabled)
+    except ELF2DLLException as ex:
+        print(f"ERROR: {ex}")
+        error = True
+    finally:
+        args.output.close()
+        args.bss.close()
     
-    args.output.close()
-    args.bss.close()
+    if error:
+        exit(1)
 
 if __name__ == "__main__":
     main()
