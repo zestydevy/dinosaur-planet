@@ -23,6 +23,7 @@ from dino.dll_code_printer import stringify_instruction
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt
 from dino.dll_symbols import DLLSymbols
+from dino.dll_syms_txt import DLLSymsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = Path("asm")
@@ -264,7 +265,7 @@ class DLLSplitter:
                         rodata[offset:offset+size], 
                         "_rodata{}_".format("" if not offset in jtbl_refs else "_jtbl"), 
                         const=True,
-                        static=not (rodata_start + offset) in extern_offsets,
+                        static=not (rodata_start + offset - dll.header.size) in extern_offsets,
                         field_offset=offset)
             
             # .data stubs
@@ -295,7 +296,7 @@ class DLLSplitter:
                         data[offset:offset+size], 
                         "_data_", 
                         const=False,
-                        static=not (data_start + offset) in extern_offsets,
+                        static=not (data_start + offset - dll.header.size) in extern_offsets,
                         field_offset=offset,
                         relocs=dll.reloc_table.data_relocations)
             
@@ -313,7 +314,7 @@ class DLLSplitter:
                 for i in range(len(bss_refs) - 1):
                     offset = bss_refs[i]
                     size = bss_refs[i + 1] - offset
-                    static = not (bss_start + offset) in extern_offsets
+                    static = not (bss_start + offset - dll.header.size) in extern_offsets
                     c_file.write("/*0x{:X}*/ {}u8 _bss_{:X}[{:#x}];\n"
                         .format(offset, "static " if static else "", offset, size))
             
@@ -474,15 +475,16 @@ class DLLSplitter:
                 if (got_entry & 0x80000000) == 0 and got_entry >= text_size:
                     externs.append(got_entry)
             if len(externs) > 0:
-                syms_file.write("# external symbols\n")
                 for got_entry in externs:
                     syms_file.write("D_{0:X} = 0x{0:X};\n".format(got_entry))
                 syms_file.write("\n")
             
             # Write function symbols
-            syms_file.write("# .text | offset: 0x0\n")
+            syms_file.write(".text = 0x0;\n")
             for func in dll_functions:
-                syms_file.write("{} = 0x{:X};\n".format(func.symbol, func.address))
+                local = func.address not in dll.header.export_offsets and \
+                    func.address != dll.header.ctor_offset and func.address != dll.header.dtor_offset
+                syms_file.write("{}{} = 0x{:X};\n".format("local " if local else "", func.symbol, func.address))
             
             # Write discovered .rodata, .data, and .bss variables (if any)
             rodata_refs: "set[int] | list[int]" = set()
@@ -500,9 +502,9 @@ class DLLSplitter:
                     for ref in func.local_bss_refs:
                         bss_refs.add(ref)
 
-            # Note: Variable syms need to be relative to start of .text
+            # Note: Section syms need to be relative to start of .text
             if dll.has_rodata() and len(rodata_refs) > 0:
-                syms_file.write("\n# .rodata | offset: 0x{:X}\n".format(dll.header.rodata_offset - dll.header.size))
+                syms_file.write("\n.rodata = 0x{:X};\n".format(dll.header.rodata_offset - dll.header.size))
                 rodata_refs.add(0)
                 rodata_refs = list(rodata_refs)
                 rodata_refs.sort()
@@ -510,10 +512,13 @@ class DLLSplitter:
                 rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
 
                 for ref in rodata_refs:
-                    syms_file.write("_rodata_{:X} = 0x{:X}; # offset: 0x{:X}\n".format(ref, rodata_start + ref - text_start, ref))
+                    absolute = rodata_start + ref - text_start
+                    local = absolute not in externs
+                    syms_file.write("{}_rodata_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format("local " if local else "", ref, ref, absolute))
             
             if dll.has_data():
-                syms_file.write("\n# .data | offset: 0x{:X}\n".format(dll.header.data_offset - dll.header.size))
+                syms_file.write("\n.data = 0x{:X};\n".format(dll.header.data_offset - dll.header.size))
                 data_refs.add(0)
                 data_refs = list(data_refs)
                 data_refs.sort()
@@ -521,10 +526,13 @@ class DLLSplitter:
                 data_start = dll.header.data_offset
 
                 for ref in data_refs:
-                    syms_file.write("_data_{:X} = 0x{:X}; # offset: 0x{:X}\n".format(ref, data_start + ref - text_start, ref))
+                    absolute = data_start + ref - text_start
+                    local = absolute not in externs
+                    syms_file.write("{}_data_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format("local " if local else "", ref, ref, absolute))
             
             if bss_size > 0:
-                syms_file.write("\n# .bss | offset: 0x{:X}\n".format(dll.get_bss_offset() - dll.header.size))
+                syms_file.write("\n.bss = 0x{:X};\n".format(dll.get_bss_offset() - dll.header.size))
                 bss_refs.add(0)
                 bss_refs = list(bss_refs)
                 bss_refs.sort()
@@ -532,7 +540,10 @@ class DLLSplitter:
                 bss_start = dll.get_bss_offset()
 
                 for ref in bss_refs:
-                    syms_file.write("_bss_{:X} = 0x{:X}; # offset: 0x{:X}\n".format(ref, bss_start + ref - text_start, ref))
+                    absolute = bss_start + ref - text_start
+                    local = absolute not in externs
+                    syms_file.write("{}_bss_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format("local " if local else "", ref, ref, absolute))
 
     def __extract_text_asm(self, 
                            dir: Path, 
@@ -803,26 +814,8 @@ class DLLSplitter:
         if not path.exists():
             return {}
         
-        symbols: "dict[int, str]" = {}
-
         with open(path, "r", encoding="utf-8") as syms_file:
-            line_number = 1
-            for line in syms_file.readlines():
-                pairs = symbol_pattern.findall(line.strip())
-                for pair in pairs:
-                    addr_str: str = pair[1]
-                    if addr_str.lower().startswith("0x"):
-                        addr = int(addr_str, base=16)
-                    else:
-                        addr = int(addr_str)
-
-                    if addr in symbols:
-                        print(f"WARN: Duplicate symbol addr {hex(addr)} in {path} line {line_number}!")
-                    
-                    symbols[addr] = pair[0]
-                line_number += 1
-
-        return symbols
+            return DLLSymsTxt.parse(syms_file).to_absolute()
 
     def __get_core_export_symbols(self) -> "dict[int, str]":
         map: "dict[int, str]" = {}

@@ -1,0 +1,7 @@
+.text = 0x0;
+
+.rodata = 0x220;
+
+.data = 0x220;
+
+.bss = 0x1360;

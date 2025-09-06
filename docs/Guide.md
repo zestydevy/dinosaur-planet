@@ -375,7 +375,24 @@ For the C source of the DLL, the same decompilation process is used as described
 An important part of DLL recompilation is the `exports.s` file that you will find in each DLL's `src` directory. This defines both the names of the DLL's constructor and destructor as well as each entry of the DLL's export table. The `./dino.py setup-dll` command will set this file up for you, but the function names in this file will need to be updated if they are changed.
 
 ### DLL Symbols
-Just like the core code uses files like `symbol_addrs.txt` to define symbols, each DLL has their own `syms.txt` file instead. This file follows the same syntax as described before.
+Just like the core code uses files like `symbol_addrs.txt` to define symbols, each DLL has their own `syms.txt` file instead. This file has slightly different syntax compared to core symbol files.
+
+DLL `syms.txt` files have similar syntax to `symbol_addrs.txt` but instead:
+- Section symbols are included
+- Symbols are grouped by section (by placing them after a section symbol line)
+- Symbol addresses are relative to their section
+- Symbols can be defined as 'local'
+
+For example:
+```
+.text = 0x0;     # <- Defines a section
+dll_ctor = 0x0;
+dll_dtor = 0x8;
+
+.data = 0x10;
+foo = 0x0;       # <- Relative to .data
+local bar = 0x4; # <- Local (static) symbol
+```
 
 DLLs work with three types of symbols:
 - External symbols (non-static, defined in the DLL)

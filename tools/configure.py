@@ -222,6 +222,7 @@ class BuildNinjaWriter:
         self.writer.variable("ELF2DLL", f"{sys.executable} tools/elf2dll.py")
         self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
         self.writer.variable("DLL_ASMPROC_FIXUP", f"{sys.executable} tools/dll_asmproc_fixup.py")
+        self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
         
         self.writer.newline()
 
@@ -246,10 +247,11 @@ class BuildNinjaWriter:
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
         self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
-        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_TXT -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
+        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_LD -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
         self.writer.rule("ld_bin", "$LD -m $LD_EMULATION -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
+        self.writer.rule("dllsyms2ld", "$DLLSYMS2LD -o $out $in", "Converting $in to $out...")
         if sys.platform == "win32":
             self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         else:
@@ -338,27 +340,31 @@ class BuildNinjaWriter:
                 self.writer.build(obj_build_path, command, src_build_path, variables=variables)
                 dll_link_deps.append(obj_build_path)
             
+            # Convert syms.txt to linker script
+            syms_txt_path = f"{dll.dir}/syms.txt"
+            syms_ld_path = f"$BUILD_DIR/{dll.dir}/syms.ld"
+            self.writer.build(syms_ld_path, "dllsyms2ld", syms_txt_path)
+
             # Link
             elf_path = f"{obj_dir}/{dll.number}.elf"
-            syms_txt_path = f"{dll.dir}/syms.txt"
             custom_link_script = Path(f"{dll.dir}/dll.ld")
 
             if custom_link_script.exists():
                 # Use DLL's custom link script
                 # Note: Assume custom script lists all inputs
-                implicit_deps = [str(custom_link_script), syms_txt_path]
+                implicit_deps = [str(custom_link_script), syms_ld_path]
                 implicit_deps.extend(dll_link_deps)
                 self.writer.build(elf_path, "ld_dll", [], 
                     implicit=implicit_deps,
                     variables={
-                        "SYMS_TXT": syms_txt_path,
+                        "SYMS_LD": syms_ld_path,
                         "LINK_SCRIPT_DLL": str(custom_link_script)
                     })
             else:
                 # Use default DLL link script
                 self.writer.build(elf_path, "ld_dll", dll_link_deps, 
-                    implicit=["$LINK_SCRIPT_DLL", syms_txt_path, "export_symbol_addrs.txt"],
-                    variables={"SYMS_TXT": syms_txt_path})
+                    implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "export_symbol_addrs.txt"],
+                    variables={"SYMS_LD": syms_ld_path})
 
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"

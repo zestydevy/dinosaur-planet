@@ -1,12 +1,14 @@
-# functions
+.text = 0x0;
 screens_ctor = 0x0;
 screens_dtor = 0x3C;
 screens_show_screen = 0x48;
 screens_hide_screen = 0x1B0;
 screens_draw = 0x21C;
 
-# variables
-sLoadedScreenNo = 0x598;
-sRenderScreen = 0x59C;
-sLoadedScreenByteLength = 0x5A0;
-sLoadedScreen = 0x5A4;
+.rodata = 0x578;
+
+.bss = 0x598;
+local sLoadedScreenNo = 0x0; # absolute: 0x598
+local sRenderScreen = 0x4; # absolute: 0x59C
+local sLoadedScreenByteLength = 0x8; # absolute: 0x5A0
+local sLoadedScreen = 0xC; # absolute: 0x5A4

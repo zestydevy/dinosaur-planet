@@ -52,7 +52,7 @@ To give these symbols actual names, the file `symbol_addrs.txt` is used. Splat r
 
 Sometimes, splat won't be able to detect an address as a proper symbol. This usually happens when the address isn't referenced explicitly in assembly. For addresses that should have a symbol, the `undefined_syms.txt` and `undefined_funcs.txt` files can be used to define things like variables and functions respectively.
 
-DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their directory under `src/dlls`. This file follows the same syntax as the above symbol files. Additionally, all DLLs are linked with the `export_symbol_addrs.txt` file, which define names for DLL import symbols.
+DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their directory under `src/dlls`. This file is converted into a linker script at build time, rather than being used directly. Additionally, all DLLs are linked with the `export_symbol_addrs.txt` file, which define names for DLL import symbols.
 
 ## Building
 Rebuilding all of the extracted and decompiled code/data back into a ROM is done generally in two steps:

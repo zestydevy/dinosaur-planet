@@ -1,38 +1,38 @@
-# .text | offset: 0x0
+.text = 0x0;
 waterfx_ctor = 0x0;
 waterfx_dtor = 0x160;
 waterfx_func_24C = 0x24C;
 waterfx_func_564 = 0x564;
 waterfx_func_6E8 = 0x6E8;
 waterfx_func_C7C = 0xC7C;
-waterfx_func_135C = 0x135C;
+local waterfx_func_135C = 0x135C;
 waterfx_func_174C = 0x174C;
 waterfx_func_1B28 = 0x1B28;
 waterfx_func_1C88 = 0x1C88;
 waterfx_func_1CC8 = 0x1CC8;
 
-# .rodata | offset: 0x1E90
-allocateMemoryError = 0x1F28; # offset: 0x0
+.rodata = 0x1F28;
+local allocateMemoryError = 0x0; # absolute: 0x1F28
 
-# .bss | offset: 0x1F78
-_bss_0 = 0x1F78; # offset: 0x0
-_bss_4 = 0x1F7C; # offset: 0x4
-_bss_8 = 0x1F80; # offset: 0x8
-_bss_C = 0x1F84; # offset: 0xC
-_bss_10 = 0x1F88; # offset: 0x10
-_bss_14 = 0x1F8C; # offset: 0x14
-_bss_18 = 0x1F90; # offset: 0x18
-_bss_1C = 0x1F94; # offset: 0x1C
-_bss_20 = 0x1F98; # offset: 0x20
-_bss_24 = 0x1F9C; # offset: 0x24
-_bss_28 = 0x1FA0; # offset: 0x28
-_bss_2C = 0x1FA4; # offset: 0x2C
-_bss_30 = 0x1FA8; # offset: 0x30
-_bss_34 = 0x1FAC; # offset: 0x34
-_bss_38 = 0x1FB0; # offset: 0x38
-_bss_3C = 0x1FB4; # offset: 0x3C
-_bss_40 = 0x1FB8; # offset: 0x40
-_bss_44 = 0x1FBC; # offset: 0x44
-_bss_48 = 0x1FC0; # offset: 0x48
-_bss_4C = 0x1FC4; # offset: 0x4C
-_bss_50 = 0x1FC8; # offset: 0x50
+.bss = 0x1F78;
+local _bss_0 = 0x0; # absolute: 0x1F78
+local _bss_4 = 0x4; # absolute: 0x1F7C
+local _bss_8 = 0x8; # absolute: 0x1F80
+local _bss_C = 0xC; # absolute: 0x1F84
+local _bss_10 = 0x10; # absolute: 0x1F88
+local _bss_14 = 0x14; # absolute: 0x1F8C
+local _bss_18 = 0x18; # absolute: 0x1F90
+local _bss_1C = 0x1C; # absolute: 0x1F94
+local _bss_20 = 0x20; # absolute: 0x1F98
+local _bss_24 = 0x24; # absolute: 0x1F9C
+local _bss_28 = 0x28; # absolute: 0x1FA0
+local _bss_2C = 0x2C; # absolute: 0x1FA4
+local _bss_30 = 0x30; # absolute: 0x1FA8
+local _bss_34 = 0x34; # absolute: 0x1FAC
+local _bss_38 = 0x38; # absolute: 0x1FB0
+local _bss_3C = 0x3C; # absolute: 0x1FB4
+local _bss_40 = 0x40; # absolute: 0x1FB8
+local _bss_44 = 0x44; # absolute: 0x1FBC
+local _bss_48 = 0x48; # absolute: 0x1FC0
+local _bss_4C = 0x4C; # absolute: 0x1FC4
+local _bss_50 = 0x50; # absolute: 0x1FC8

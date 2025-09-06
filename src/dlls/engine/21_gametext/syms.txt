@@ -1,4 +1,4 @@
-# functions
+.text = 0x0;
 gametext_ctor = 0x0;
 gametext_dtor = 0x120;
 gametext_bank_count = 0x160;
@@ -8,13 +8,17 @@ gametext_curr_bank = 0x224;
 gametext_get_chunk = 0x240;
 gametext_get_text = 0x420;
 
-# variables
-sCurrentBankIndex = 0x5F4;
-sBankCount = 0x604;
-sBankEntryCount = 0x606;
-sBankSize = 0x608;
-sCurrentBank = 0x60C;
-sCurrentBank_GlobalOffset = 0x610;
-sCurrentBank_StrCounts = 0x614;
-sCurrentBank_Sizes = 0x618;
-sCurrentBank_Offsets = 0x61C;
+.rodata = 0x5F4;
+
+.data = 0x5F4;
+local sCurrentBankIndex = 0x0; # absolute: 0x5F4
+
+.bss = 0x604;
+local sBankCount = 0x0; # absolute: 0x604
+local sBankEntryCount = 0x2; # absolute: 0x606
+local sBankSize = 0x4; # absolute: 0x608
+local sCurrentBank = 0x8; # absolute: 0x60C
+local sCurrentBank_GlobalOffset = 0xC; # absolute: 0x610
+local sCurrentBank_StrCounts = 0x10; # absolute: 0x614
+local sCurrentBank_Sizes = 0x14; # absolute: 0x618
+local sCurrentBank_Offsets = 0x18; # absolute: 0x61C

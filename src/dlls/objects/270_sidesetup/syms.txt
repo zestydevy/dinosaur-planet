@@ -1,4 +1,4 @@
-# functions
+.text = 0x0;
 sidesetup_ctor = 0x0;
 sidesetup_dtor = 0xC;
 sidesetup_create = 0x18;
@@ -8,3 +8,5 @@ sidesetup_draw = 0x54;
 sidesetup_destroy = 0x6C;
 sidesetup_func_7C = 0x7C;
 sidesetup_get_state_size = 0x8C;
+
+.bss = 0xA0;

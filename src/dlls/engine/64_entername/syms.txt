@@ -1,18 +1,22 @@
-# functions
+.text = 0x0;
 dll_64_ctor = 0x0;
 dll_64_dtor = 0x1E4;
 dll_64_update1 = 0x224;
 dll_64_update2 = 0x42C;
 dll_64_draw = 0x434;
-dll_64_clean_up = 0x85C;
-dll_64_draw_letters = 0x8DC;
+local dll_64_clean_up = 0x85C;
+local dll_64_draw_letters = 0x8DC;
 
-# variables
-sMenuItems = 0xAC0;
-sGameTextChunk = 0x11C8;
-sLetterBgBoxTexture = 0x11D0;
-sNumNameLetters = 0x11D4;
-sNameLetters = 0x11D8;
-sMainRedrawFrames = 0x11E2;
-sNameLettersRedrawFrames = 0x11E3;
-sBackgroundTexture = 0x11E4;
+.rodata = 0xAC0;
+
+.data = 0xAC0;
+local sMenuItems = 0x0; # absolute: 0xAC0
+local sGameTextChunk = 0x708; # absolute: 0x11C8
+
+.bss = 0x11D0;
+local sLetterBgBoxTexture = 0x0; # absolute: 0x11D0
+local sNumNameLetters = 0x4; # absolute: 0x11D4
+local sNameLetters = 0x8; # absolute: 0x11D8
+local sMainRedrawFrames = 0x12; # absolute: 0x11E2
+local sNameLettersRedrawFrames = 0x13; # absolute: 0x11E3
+local sBackgroundTexture = 0x14; # absolute: 0x11E4

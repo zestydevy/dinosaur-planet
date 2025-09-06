@@ -1,1 +1,6 @@
-func_0007 = 0xe4;
+.text = 0x0;
+local func_0007 = 0xE4;
+
+.rodata = 0x128;
+
+.bss = 0x128;

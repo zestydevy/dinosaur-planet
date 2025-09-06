@@ -211,4 +211,4 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     }
 }
 
-void dll_60_func_D0C() { }
+static void dll_60_func_D0C() { }

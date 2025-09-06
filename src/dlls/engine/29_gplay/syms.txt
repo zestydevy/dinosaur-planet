@@ -1,4 +1,4 @@
-# functions
+.text = 0x0;
 gplay_ctor = 0x0;
 gplay_dtor = 0x9C;
 gplay_erase_save = 0x110;
@@ -16,7 +16,7 @@ gplay_restart_set = 0xB3C;
 gplay_restart_goto = 0xCBC;
 gplay_restart_clear = 0xD20;
 gplay_func_D70 = 0xD70;
-gplay_func_D94 = 0xD94;
+local gplay_func_D94 = 0xD94;
 gplay_func_E74 = 0xE74;
 gplay_func_E90 = 0xE90;
 gplay_func_EAC = 0xEAC;
@@ -34,7 +34,7 @@ gplay_func_121C = 0x121C;
 gplay_func_1238 = 0x1238;
 gplay_func_1254 = 0x1254;
 gplay_func_1270 = 0x1270;
-gplay_func_1314 = 0x1314;
+local gplay_func_1314 = 0x1314;
 gplay_func_1378 = 0x1378;
 gplay_func_139C = 0x139C;
 gplay_func_143C = 0x143C;
@@ -53,17 +53,21 @@ gplay_func_1AF8 = 0x1AF8;
 gplay_func_1B78 = 0x1B78;
 gplay_func_1BC4 = 0x1BC4;
 
-# variables
-rodata_230 = 0x1F80;
-data_0 = 0x1F90;
-data_F0 = 0x2080;
-data_1E0 = 0x2170;
-bss_0 = 0x2180;
-bss_4 = 0x2184;
-bss_8 = 0x2188;
-bss_10 = 0x2190;
-bss_183C = 0x39BC;
-bss_1840 = 0x39C0;
-bss_1868 = 0x39E8;
-bss_1A48 = 0x3BC8;
-bss_1A50 = 0x3BD0;
+.rodata = 0x1D50;
+local rodata_230 = 0x230; # absolute: 0x1F80
+
+.data = 0x1F90;
+local data_0 = 0x0; # absolute: 0x1F90
+local data_F0 = 0xF0; # absolute: 0x2080
+local data_1E0 = 0x1E0; # absolute: 0x2170
+
+.bss = 0x2180;
+local bss_0 = 0x0; # absolute: 0x2180
+local bss_4 = 0x4; # absolute: 0x2184
+local bss_8 = 0x8; # absolute: 0x2188
+local bss_10 = 0x10; # absolute: 0x2190
+local bss_183C = 0x183C; # absolute: 0x39BC
+local bss_1840 = 0x1840; # absolute: 0x39C0
+local bss_1868 = 0x1868; # absolute: 0x39E8
+local bss_1A48 = 0x1A48; # absolute: 0x3BC8
+local bss_1A50 = 0x1A50; # absolute: 0x3BD0

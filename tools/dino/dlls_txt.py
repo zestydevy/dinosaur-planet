@@ -43,7 +43,7 @@ class DLLsTxt:
 
     @staticmethod
     def parse(file: TextIO):
-        path_map: "OrderedDict[int, str]" = {}
+        path_map: "OrderedDict[int, str]" = OrderedDict()
         lines: "list[tuple[str, int | None]]" = []
 
         for line in file.readlines():

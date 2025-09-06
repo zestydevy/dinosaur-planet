@@ -8,7 +8,6 @@ from io import TextIOWrapper
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import sys
 
@@ -16,6 +15,7 @@ from dino.dll import DLL
 from dino.dll_analysis import get_all_dll_functions
 from dino.dlls_txt import DLLsTxt
 from dino.dll_symbols import DLLSymbols
+from dino.dll_syms_txt import DLLSymsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ROOT_DIR = Path(os.path.abspath(os.path.join(SCRIPT_DIR, "..")))
@@ -25,8 +25,6 @@ BIN_PATH = ROOT_DIR.joinpath("bin")
 BUILD_PATH = ROOT_DIR.joinpath("build")
 SRC_PATH = ROOT_DIR.joinpath("src")
 SRC_DLLS_PATH = ROOT_DIR.joinpath("src/dlls")
-
-symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
 
 class DLLProgress:
     def __init__(self,
@@ -149,21 +147,8 @@ def get_core_progress() -> CoreProgress:
     )
 
 def read_dll_symbols_txt(path: Path) -> "dict[int, str]":
-    symbols: "dict[int, str]" = {}
-
     with open(path, "r", encoding="utf-8") as syms_file:
-        for line in syms_file.readlines():
-            pairs = symbol_pattern.findall(line.strip())
-            for pair in pairs:
-                addr_str: str = pair[1]
-                if addr_str.lower().startswith("0x"):
-                    addr = int(addr_str, base=16)
-                else:
-                    addr = int(addr_str)
-                
-                symbols[addr] = pair[0]
-
-    return symbols
+        return DLLSymsTxt.parse(syms_file).to_absolute()
 
 def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLProgress:
     known_symbols: "dict[int, str]" = {}

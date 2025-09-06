@@ -1,4 +1,4 @@
-# functions
+.text = 0x0;
 picmenu_ctor = 0x0;
 picmenu_dtor = 0x74;
 picmenu_set_items = 0xD8;
@@ -14,25 +14,29 @@ picmenu_update_text = 0x1164;
 picmenu_get_highlight_alpha = 0x11C0;
 picmenu_update_flags = 0x11DC;
 picmenu_redraw_all = 0x1230;
-picmenu_calculate_redraw_area = 0x127C;
-picmenu_calculate_items_to_redraw = 0x13E0;
-picmenu_calculate_auto_width = 0x15E0;
-picmenu_generate_item_background = 0x1660;
+local picmenu_calculate_redraw_area = 0x127C;
+local picmenu_calculate_items_to_redraw = 0x13E0;
+local picmenu_calculate_auto_width = 0x15E0;
+local picmenu_generate_item_background = 0x1660;
 
-# variables
-sDefaultSounds = 0x18DC;
-sTextures = 0x18E8;
-sItems = 0x191C;
-sAllowButtons = 0x227C;
-sSelectedItem = 0x227D;
-sItemCount = 0x227E;
-sHighlightReverse = 0x227F;
-sHighlightAlpha = 0x2280;
-sOpacity = 0x2282;
-sSounds = 0x2284;
-sTextColorR = 0x2288;
-sTextColorG = 0x228A;
-sTextColorB = 0x228C;
-sTextHighlightR = 0x228E;
-sTextHighlightG = 0x2290;
-sTextHighlightB = 0x2292;
+.rodata = 0x184C;
+
+.data = 0x18DC;
+local sDefaultSounds = 0x0; # absolute: 0x18DC
+local sTextures = 0xC; # absolute: 0x18E8
+
+.bss = 0x191C;
+local sItems = 0x0; # absolute: 0x191C
+local sAllowButtons = 0x960; # absolute: 0x227C
+local sSelectedItem = 0x961; # absolute: 0x227D
+local sItemCount = 0x962; # absolute: 0x227E
+local sHighlightReverse = 0x963; # absolute: 0x227F
+local sHighlightAlpha = 0x964; # absolute: 0x2280
+local sOpacity = 0x966; # absolute: 0x2282
+local sSounds = 0x968; # absolute: 0x2284
+local sTextColorR = 0x96C; # absolute: 0x2288
+local sTextColorG = 0x96E; # absolute: 0x228A
+local sTextColorB = 0x970; # absolute: 0x228C
+local sTextHighlightR = 0x972; # absolute: 0x228E
+local sTextHighlightG = 0x974; # absolute: 0x2290
+local sTextHighlightB = 0x976; # absolute: 0x2292
