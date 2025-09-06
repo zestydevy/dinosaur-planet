@@ -75,6 +75,11 @@ class DinoCommandRunner:
         self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "clean", "VERSION=5.3"])
         self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "clean", "VERSION=7.1"])
 
+    def clean_rebuild(self):
+        self.clean()
+        self.extract(use_cache=False)
+        self.build(configure=False, force=False, skip_expected=False, no_verify=False, target=None)
+
     def update_submodules(self):
         print("Updating Git submodules...")
         self.__run_cmd(["git", "submodule", "update", "--init", "--recursive"])
@@ -458,6 +463,7 @@ def main():
     subparsers.add_parser("baseverify", help="Verify that the base ROM is correct.")
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
     subparsers.add_parser("clean-tools", help="Remove build artifacts for tools.")
+    subparsers.add_parser("clean-rebuild", help="Clean, re-extract, and re-build.")
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
     subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
     subparsers.add_parser("objdiff", help="Diff the re-rebuilt ROM with the original (redirects to objdiff-cli).", add_help=False)
@@ -507,6 +513,8 @@ def main():
             runner.clean()
         elif cmd == "clean-tools":
             runner.clean_tools()
+        elif cmd == "clean-rebuild":
+            runner.clean_rebuild()
         elif cmd == "submodules":
             runner.update_submodules()
         elif cmd == "diff":
