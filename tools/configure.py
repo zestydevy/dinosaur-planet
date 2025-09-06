@@ -146,8 +146,8 @@ class BuildNinjaWriter:
             "838", # Microsoft extension
             "649", # Missing member name in structure / union
         ]
-        
-        self.writer.variable("CC_FLAGS", " ".join([
+
+        cc_flags = [
             "$CC_DEFINES",
             "$INCLUDES",
             "-G 0",
@@ -156,7 +156,13 @@ class BuildNinjaWriter:
             "-Xcpluscomm",
             "-Wab,-r4300_mul",
             "-woff", ",".join(cc_ignore_warnings),
-        ]))
+        ]
+
+        self.writer.variable("CC_FLAGS", " ".join(cc_flags))
+
+        cc_flags_O3 = cc_flags.copy()
+        cc_flags_O3.remove("-Xfullwarn") # -O3 compilation doesn't support -Xfullwarn
+        self.writer.variable("CC_FLAGS_O3", " ".join(cc_flags_O3))
 
         self.writer.variable("CC_FLAGS_DLL", " ".join([
             "$CC_DEFINES",
@@ -270,6 +276,10 @@ class BuildNinjaWriter:
         for file in self.input.files:
             # Determine variables
             variables: dict[str, str] = self.__file_config_to_variables(file.config)
+
+            # -O3 builds use a custom flags list
+            if file.config != None and file.config.opt != None and "-O3" in file.config.opt:
+                variables["CC_FLAGS"] = "$CC_FLAGS_O3"
 
             # Determine command
             command: str
