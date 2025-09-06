@@ -7,6 +7,7 @@
 
 #define M_PI_F    3.141592741f
 #define DEG_TO_RAD(deg)  ((deg) * M_PI_F / 180.0f)
+#define SQ(a) (a) * (a)
 
 // typedef f32 MtxF[4][4];
 // For clarity:
