@@ -55,13 +55,14 @@ typedef struct Unk8002F24C {
 
 // size: 0x30
 typedef struct Unk80030A24 {
-    u8 pad0[8];
+    Vec3f *unk0;
+    Vec3f *unk4;
     Vec3f unk8;
     Vec3f unk14;
     s32 pad20;
     f32 unk24;
     s32 unk28;
-    s32 pad2C;
+    s32 unk2C;
 } Unk80030A24;
 
 typedef struct Unk8002F498_20 {
@@ -71,14 +72,25 @@ typedef struct Unk8002F498_20 {
 
 // size: 0x70
 typedef struct Unk8002F498 {
-    u8 pad0[0x20];
+    Vec3f *unk0;
+    f32 *unk4;
+    s32 pad8;
+    f32 *unkC;
+    f32 *unk10;
+    s32 pad14;
+    u8 *unk18;
+    s32 pad1C;
     Unk8002F498_20* unk20;
-    u8 pad24[0x54 - 0x24];
+    u8 pad24[0x48 - 0x24];
+    s32 pad48;
+    s32 pad4C;
+    s32 pad50;
     f32 *unk54;
     u8 pad58[0x6F - 0x58];
     u8 unk6F;
 } Unk8002F498;
 
+// size: 0x1C
 typedef struct Unk80030338 {
     s32 pad0;
     f32 *unk4;
@@ -88,6 +100,13 @@ typedef struct Unk80030338 {
     Unk8002F24C *unk14;
     s8 *unk18;
 } Unk80030338;
+
+// size: 0xC
+typedef struct Unk800B20B8 {
+    f32 unk0;
+    f32 unk4;
+    Object *unk8;
+} Unk800B20B8;
 
 void func_80028D90(void);
 void func_8002B410(Object *, s32);
@@ -123,6 +142,7 @@ extern f32 D_80099AC8;
 extern f32 D_80099ACC;
 extern f32 D_80099AD4;
 extern f32 D_80099AD8;
+extern f64 D_80099AE0;
 extern f32 D_80099AE8;
 extern f32 D_80099AEC;
 extern f32 D_80099AF0;
@@ -677,42 +697,32 @@ u32 func_80026BD8(Object* obj, u32 addr) {
     return addr;
 }
 
-#if 1
-void update_obj_hitboxes(s32 arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/update_obj_hitboxes.s")
-#else
-// https://decomp.me/scratch/vqoW9
 void update_obj_hitboxes(s32 arg0) {
     Object* curObj;
     Object** objects;
-    Object** var_t0;
     ObjectHitInfo* objhitInfo;
+    s32 j;
     s32 numObjs;
     s32 i;
-    s32 pad[2];
 
     objects = get_world_objects(&i, &numObjs);
     D_800B1998 = 0;
 
-    if (arg0 > 0) {
-        var_t0 = &objects[0];
-        do {
-            curObj = var_t0[0];
-            objhitInfo = curObj->objhitInfo;
-            if (objhitInfo != NULL && (objhitInfo->unk_0x58 & 1) && (objhitInfo->unk_0x5a & 8)) {
-                if (D_800B1998 < 40) {
-                    D_800B1994[D_800B1998] = curObj;
-                    D_800B1998 += 1;
-                }
-                objhitInfo->unk_0x0 = 0;
-                objhitInfo->unk_0x50 = 0x400;
-                objhitInfo->unk_0x58 &= ~8;
+    for (j = 0; j < arg0; j++) {
+        curObj = objects[j];
+        objhitInfo = curObj->objhitInfo;
+        if (objhitInfo != NULL && (objhitInfo->unk_0x58 & 1) && (objhitInfo->unk_0x5a & 8)) {
+            if (D_800B1998 < 40) {
+                D_800B1994[D_800B1998++] = curObj;
             }
-            var_t0 += 1;
-        } while (var_t0 != &objects[arg0]);
+            // @fake
+            if ((!arg0) && (!arg0)) {}
+            objhitInfo->unk_0x0 = 0;
+            objhitInfo->unk_0x58 &= ~8;
+            objhitInfo->unk_0x50 = 0x400;
+        }
     }
 }
-#endif
 
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     SRT sp70;
@@ -786,10 +796,197 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     return arg3;
 }
 
+#ifndef NON_EQUIVALENT
 void obj_do_hit_detection(s32 arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/obj_do_hit_detection.s")
+#else
+void obj_do_hit_detection(s32 arg0) {
+    u8 pad[0x9A0 - 0x984];
+    Object* sp980;
+    u8 pad2[0x980 - 0x560];
+    s32 sp55C;
+    u8 pad3[0x55C - 0x150];
+    s32 sp14C;
+    u8 pad4[0x14C - 0xEC];
+    s32 spE8;
+    ModelInstance* temp_a1;
+    Object* linkedObj;
+    Object* parentObj;
+    Object* currentObj;
+    Object* linkedParentObj;
+    Object** objects;
+    Object** objectsCopy;
+    ObjectHitInfo* parentObjInfo; // s1
+    ObjectHitInfo* currentObjHitInfo; // s3
+    Unk800B20B8** temp_v1;
+    Unk800B20B8** var_s5;
+    f32 var_fv0;
+    s32 sp84;
+    s32 sp80;
+    s32 sp7C;
+    s32 sp74;
+    s32 s4;
+    s32 var_s6;
+    s32 var_s7;
+    Unk800B20B8** sp68;
 
-#if 1
+    objects = get_world_objects(&sp7C, &sp80);
+    D_800B20B8->unk4 = D_80099AD0;
+    D_800B20B8->unk0 = D_800B20B8->unk4;
+    D_800B23B8 = D_800B20B8;
+    for (var_s6 = 0, var_s7 = 1; var_s6 < arg0; var_s6++) {
+        currentObj = objects[var_s6];
+        currentObjHitInfo = currentObj->objhitInfo;
+        if (currentObjHitInfo != NULL) {
+            if ((currentObjHitInfo->unk_0x58 & 3) && (currentObjHitInfo->unk_0x5a != 8)) {
+                temp_v1 = &(&D_800B23B8)[var_s7];
+                *temp_v1 = &D_800B20B8[var_s7];
+                (*temp_v1)->unk8 = currentObj;
+                temp_a1 = currentObj->modelInsts[currentObj->modelInstIdx];
+                if (temp_a1 != NULL) {
+                    temp_a1->unk_0x34 &= ~0x20;
+                }
+                (*temp_v1)->unk4 = currentObj->positionMirror.x - currentObjHitInfo->unk_0x30;
+                (*temp_v1)->unk0 = currentObj->positionMirror.x + currentObjHitInfo->unk_0x30;
+                var_s7++;
+            }
+            currentObjHitInfo->unk_0x9d = 0;
+            currentObjHitInfo->unk_0x9c = -1;
+            currentObjHitInfo->unk_0x58 &= ~8;
+            if (currentObj->linkedObject != NULL) {
+                currentObjHitInfo = currentObj->linkedObject->objhitInfo;
+                currentObjHitInfo->unk_0x9d = 0;
+                currentObjHitInfo->unk_0x9c = -1;
+            }
+        }
+    }
+    func_8002B7CC(&D_800B23B8, var_s7);
+    sp74 = 1;
+    var_s6 = 1;
+    if (var_s7 >= 2) {
+        sp68 = D_800B23BC;
+        do {
+            currentObj = sp68[0]->unk8;
+            currentObjHitInfo = currentObj->objhitInfo;
+            sp980 = currentObj->linkedObject;
+            if (sp980 != NULL && (sp980->objhitInfo == NULL || !(sp980->objhitInfo->unk_0x58 & 1))) {
+                sp980 = NULL;
+            }
+            if (currentObjHitInfo->unk_0x58 & 4) {
+                s4 = sp74;
+                if (((&D_800B23B8)[s4]->unk0 < sp68[0]->unk4) && (s4 < var_s7)) {
+                    var_s5 = &(&D_800B23B8)[s4];
+                    do {
+                        s4++;
+                    } while ((*&(&D_800B23B8)[s4])->unk0 < sp68[0]->unk4 && s4 < var_s7);
+                }
+                sp74 = s4;
+                if (sp74 < var_s7) {
+                    var_s5 = &(&D_800B23B8)[sp74];
+                    if ((*var_s5)->unk4 < sp68[0]->unk0) {
+                        do {
+                            parentObj = (*var_s5)->unk8;
+                            parentObjInfo = parentObj->objhitInfo;
+                            if ((var_s6 != sp74) && (parentObj != currentObj->parent)) {
+                                var_fv0 = currentObj->positionMirror.z - parentObj->positionMirror.z;
+                                if (!(var_fv0 > 0.0f)) {
+                                    var_fv0 = -var_fv0;
+                                }
+                                if (var_fv0 < (currentObjHitInfo->unk_0x30 + parentObjInfo->unk_0x30)) {
+                                    var_fv0 = currentObj->positionMirror.y - parentObj->positionMirror.y;
+                                    if (!(var_fv0 > 0.0f)) {
+                                        var_fv0 = -var_fv0;
+                                    }
+                                    if (var_fv0 < (currentObjHitInfo->unk_0x2c + parentObjInfo->unk_0x2c) && parentObjInfo->unk_0x58 & 1) {
+                                        if (!(currentObjHitInfo->unk_0x58 & 0x40) && !(parentObjInfo->unk_0x58 & 0x40) && (!(parentObjInfo->unk_0x58 & 4) || (var_s6 >= sp74))) {
+                                            if ((parentObj->def->_unk98[0] & currentObj->def->_unk98[2]) && (currentObj->def->_unk98[0] & parentObj->def->_unk98[2])) {
+                                                if (parentObjInfo->unk_0x5a & 0x20) {
+                                                    func_80027DAC(parentObj, currentObj, &D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
+                                                } else if (currentObjHitInfo->unk_0x5a & 0x20) {
+                                                        func_80027DAC(currentObj, parentObj, &D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
+                                                } else if ((currentObjHitInfo->unk_0x5a == 0x10) || parentObjInfo->unk_0x5a == 0x10) {
+                                                    if (currentObjHitInfo->unk_0x5b || parentObjInfo->unk_0x5b) {
+                                                        func_80029C04(currentObj, parentObj, currentObj, 0, 1, -1U, 0U);
+                                                    }
+                                                } else if (currentObjHitInfo->unk_0x5b || parentObjInfo->unk_0x5b) {
+                                                    func_80028238(currentObj, parentObj);
+                                                }
+                                            }
+                                        }
+                                        if (!(currentObjHitInfo->unk_0x58 & 0x100) && !(parentObjInfo->unk_0x58 & 0x100)) {
+                                            if (parentObj->def->_unk98[0] & currentObj->def->_unk98[1]) {
+                                                if (parentObj->def->_unk98[1] & 0x80 || currentObj->def->_unk98[0] & parentObj->def->_unk98[1]) {
+                                                    linkedParentObj = parentObj->linkedObject;
+                                                    if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk_0x58 & 1))) {
+                                                        linkedParentObj = NULL;
+                                                    }
+                                                    func_80028DCC(currentObj, parentObj, sp980, linkedParentObj, delayFloat);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            sp74++;
+                            var_s5++;
+                        } while (sp74 < var_s7 && (*var_s5)->unk4 < sp68[0]->unk0);
+                    }
+                }
+            }
+            var_s6++;
+            sp68++;
+        } while (var_s6 != var_s7);
+    }
+
+    var_s6 = 1;
+    if (var_s7 >= 2) {
+        sp68 = D_800B23BC;
+        do {
+            currentObj = sp68[0]->unk8;
+            if (currentObj->objhitInfo->unk_0x58 & 0x200) {
+                func_80027934(currentObj, currentObj);
+                linkedObj = currentObj->linkedObject;
+                if (linkedObj != NULL) {
+                    func_80027934(currentObj, linkedObj);
+                }
+            }
+            var_s6++;
+            sp68++;
+        } while (var_s6 != var_s7);
+    }
+
+    var_s6 = 1;
+    if (var_s7 >= 2) {
+        sp68 = D_800B23BC;
+        do {
+            currentObj = sp68[0]->unk8;
+            currentObjHitInfo = currentObj->objhitInfo;
+            currentObjHitInfo->unk_0x10.x = currentObj->srt.transl.x;
+            currentObjHitInfo->unk_0x10.y = currentObj->srt.transl.y;
+            currentObjHitInfo->unk_0x10.z = currentObj->srt.transl.z;
+            if (currentObj->parent != NULL) {
+                transform_point_by_object(currentObjHitInfo->unk_0x10.x, currentObjHitInfo->unk_0x10.y, currentObjHitInfo->unk_0x10.z, &currentObjHitInfo->unk_0x20.x, &currentObjHitInfo->unk_0x20.y, &currentObjHitInfo->unk_0x20.z, currentObj->parent);
+            } else {
+                currentObjHitInfo->unk_0x20.x = currentObj->srt.transl.x;
+                currentObjHitInfo->unk_0x20.y = currentObj->srt.transl.y;
+                currentObjHitInfo->unk_0x20.z = currentObj->srt.transl.z;
+            }
+            currentObjHitInfo->unk_0x1c = currentObj->animTimer;
+            currentObjHitInfo->unk_0x9e = 0;
+            currentObjHitInfo->unk_0x58 &= ~0x2000;
+            if (((currentObjHitInfo->unk_0x62 != 0) || (currentObjHitInfo->unk_0x58 & 8)) && !(currentObjHitInfo->unk_0x58 & 0x40)) {
+                currentObj->speed.x = (currentObj->srt.transl.x - currentObj->positionMirror2.x) * inverseDelay;
+                currentObj->speed.z = (currentObj->srt.transl.z - currentObj->positionMirror2.z) * inverseDelay;
+            }
+            var_s6++;
+            sp68++;
+        } while (var_s6 != var_s7);
+    }
+    func_80028D90();
+}
+#endif
+
+#ifndef NON_EQUIVALENT
 void func_80027934(Object *obj, Object *otherObj) ;
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027934.s")
 #else
@@ -2296,13 +2493,8 @@ void func_8002B74C(f32** arg0, s32 arg1) {
     }
 }
 
-#ifndef NON_MATCHING
-void func_8002B7CC(f32 **arg0, s32 arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002B7CC.s")
-#else
-// https://decomp.me/scratch/5wFq1
-void func_8002B7CC(f32** arg0, s32 arg1) {
-    f32* temp_a0_2;
+void func_8002B7CC(Unk800B20B8** arg0, s32 arg1) {
+    Unk800B20B8* temp_a0_2;
     f32* temp_a0_3;
     s32 var_t0;
     s32 i;
@@ -2315,7 +2507,7 @@ void func_8002B7CC(f32** arg0, s32 arg1) {
         while (var_v1 < arg1) {
             temp_a0_2 = arg0[var_v1];
             var_t0 = var_v1;
-            while (i < var_t0 && temp_a0_2[1] < (&arg0[var_t0])[-i][1]) {
+            while (i < var_t0 && temp_a0_2->unk4 < (arg0[var_t0 - i])->unk4) {
                 arg0[var_t0] = arg0[var_t0 - i];
                 var_t0 -= i;
             }
@@ -2325,7 +2517,7 @@ void func_8002B7CC(f32** arg0, s32 arg1) {
         i /= 3;
     }
 }
-#endif
+
 
 s32 func_8002B910(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32* argA, f32* argB, s32* argC, f32* argD, Vec3f* argE) {
     s32 sp64;
@@ -2487,7 +2679,7 @@ s32 func_8002C0C4(Vec3f* arg0, u32 arg1, u32 arg2, f32 arg3, Vec3f* arg4, f32 ar
 }
 
 #if 1
-s32 func_8002C278(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 argE, f32 argF, f32 arg10, f32 arg11, f32* arg12, f32* arg13);
+s32 func_8002C278(Vec3f arg0, Vec3f arg1, f32 arg2, f32 arg3, Vec3f arg4, Vec3f arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 *argA, Vec3f *argB);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C278.s")
 #else
 s32 func_8002C278(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 argE, f32 argF, f32 arg10, f32 arg11, f32* arg12, f32* arg13) {
@@ -2804,16 +2996,301 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
 }
 #endif
 
-// objects might be Unk8002F24C
-s32 func_8002D0DC(Vec3f *arg0, f32 arg1, Object *obj, Object *otherObj, s32 *arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, Vec3f *arg9);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002D0DC.s")
 
-// objects might be Unk8002F24C
-s32 func_8002D69C(Vec3f *arg0, f32 arg1, Object *obj, Object *otherObj, s32 *arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, Vec3f *arg9);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002D69C.s")
+s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, Unk80030338* arg4, f32 arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
+    Vec3f sp104;
+    Vec3f spF8;
+    s32 var_s3;
+    Vec3f spE8;
+    Vec3f spDC;
+    s32 pad_spD8;
+    Vec3f* temp_v0;
+    f32 temp_fs0;
+    s32 pad_spCC;
+    s32 pad_spC8;
+    s32 pad_spC4;
+    Vec3f spB8;
+    Vec3f spAC;
+    Vec3f spA0;
+    s32 pad_sp9C;
+    Vec3f sp90;
+    s32 pad_sp8C;
+    s32 pad_sp88;
+    f32 sp84;
+    Vec3f *temp;
+    Unk80030A24* sp7C;
 
-s32 func_8002DC58(Unk8002F24C* obj, Unk8002F24C* arg1, ObjDef* arg2, ObjDef* arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002DC58.s")
+    sp7C = arg3;
+    obj->speed.x = (obj->srt.transl.x - obj->positionMirror2.x) / delayFloat;
+    obj->speed.y = (obj->srt.transl.y - obj->positionMirror2.y) / delayFloat;
+    obj->speed.z = (obj->srt.transl.z - obj->positionMirror2.z) / delayFloat;
+    spE8.x = obj->srt.transl.x - obj->positionMirror2.x;
+    spE8.y = obj->srt.transl.y - obj->positionMirror2.y;
+    spE8.z = obj->srt.transl.z - obj->positionMirror2.z;
+    sp84 = vec3_length(&spE8);
+
+    sp90.x = arg0->x;
+    sp90.y = arg0->y;
+    sp90.z = arg0->z;
+
+    sp90.x -= spE8.x;\
+    sp90.y -= spE8.y;\
+    sp90.z -= spE8.z;
+
+    spDC.x = 0.0f;\
+    spDC.y = 0.0f;\
+    spDC.z = 0.0f;
+
+    sp104.x = 0.0f;\
+    sp104.y = 0.0f;\
+    sp104.z = 0.0f;
+
+    temp = func_8002C658(&sp90, arg6->unk14.x, arg6->unk0, arg6->unk4, arg4->unk4[arg6->unk28], arg4->unk4[arg6->unk2C], arg4->unkC[arg6->unk28], &spA0);
+    vec3_normalize(temp);
+    while (arg3->unk28 != -1) {
+        temp_v0 = func_8002C8C0(&sp90, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
+        arg3->unk24 /= arg8;
+        temp_v0->x *= arg3->unk24;
+        temp_v0->y *= arg3->unk24;
+        temp_v0->z *= arg3->unk24;
+        spDC.x += temp_v0->x;
+        spDC.y += temp_v0->y;
+        spDC.z += temp_v0->z;
+        temp_v0 = func_8002C658(arg0, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spA0);
+        vec3_normalize(temp_v0);
+        sp104.x += temp_v0->x;
+        sp104.y += temp_v0->y;
+        sp104.z += temp_v0->z;
+        arg3++;
+    }
+    vec3_normalize(&sp104);
+
+    spF8.x = spDC.x - sp90.x;
+    spF8.y = spDC.y - sp90.y;
+    spF8.z = spDC.z - sp90.z;
+    temp_fs0 = vec3_length(&spF8);
+
+    spF8.x = spDC.x - arg0->x;
+    spF8.y = spDC.y - arg0->y;
+    spF8.z = spDC.z - arg0->z;
+    vec3_normalize(&spE8);
+
+    if (temp_fs0 < sp84) {
+        spE8.x *= sp84 - temp_fs0;
+        spE8.y *= sp84 - temp_fs0;
+        spE8.z *= sp84 - temp_fs0;
+        vec3_reflect(&sp104, &spE8, &spAC);
+    } else {
+        spAC.x = 0.0f;
+        spAC.y = 0.0f;
+        spAC.z = 0.0f;
+    }
+
+    spDC.x += spAC.x;
+    spDC.y += spAC.y;
+    spDC.z += spAC.z;
+
+    spAC.x = 0.0f;\
+    spAC.y = 0.0f;\
+    spAC.z = 0.0f;
+
+    arg3 = sp7C;
+    while (arg3->unk28 != -1) {
+        temp_v0 = func_8002C8C0(&spDC, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
+        temp_v0->x *= arg3->unk24;
+        temp_v0->y *= arg3->unk24;
+        temp_v0->z *= arg3->unk24;
+        spAC.x += temp_v0->x;
+        spAC.y += temp_v0->y;
+        spAC.z += temp_v0->z;
+        arg3++;
+    }
+    arg9->x = spAC.x - arg0->x;
+    arg9->y = spAC.y - arg0->y;
+    arg9->z = spAC.z - arg0->z;
+    if (arg9->y > 0.0f) {
+        arg9->y += D_80099AE0;
+    }
+    return 1;
+}
+
+s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, Unk80030338* arg4, f32 arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
+    Vec3f sp104;
+    Vec3f spF8;
+    s32 pad_spF0;
+    Vec3f spE8;
+    Vec3f spDC;
+    s32 pad_spD8;
+    s32 pad_spD4;
+    s32 pad_spD0;
+    s32 pad_spCC;
+    s32 pad_spC8;
+    s32 pad_spC4;
+    Vec3f spB8;
+    Vec3f spAC;
+    Vec3f spA0;
+    s32 pad_sp9C;
+    Vec3f sp90;
+    Vec3f *temp;
+    Vec3f* temp_v0;
+    f32 sp84;
+    f32 temp_fv0;
+    Unk80030A24* sp7C;
+
+    sp7C = arg3;
+    obj->speed.x = (obj->positionMirror.x - obj->positionMirror3.x) / delayFloat;
+    obj->speed.z = (obj->positionMirror.z - obj->positionMirror3.z) / delayFloat;
+    spE8.x = obj->positionMirror.x - obj->positionMirror3.x;
+    spE8.y = obj->srt.transl.y - obj->positionMirror3.y;
+    spE8.z = obj->positionMirror.z - obj->positionMirror3.z;
+
+    sp84 = vec3_length(&spE8);
+
+    sp90.x = arg0->x;
+    sp90.y = arg0->y;
+    sp90.z = arg0->z;
+
+    spE8.x *= arg7;\
+    spE8.y *= arg7;\
+    spE8.z *= arg7;
+
+    sp90.x -= spE8.x;\
+    sp90.y -= spE8.y;\
+    sp90.z -= spE8.z;
+
+    spDC.x = 0.0f;\
+    spDC.y = 0.0f;\
+    spDC.z = 0.0f;
+
+    sp104.x = 0.0f;\
+    sp104.y = 0.0f;\
+    sp104.z = 0.0f;
+
+    temp = func_8002C658(&sp90, arg6->unk14.x, arg6->unk0, arg6->unk4, arg4->unk4[arg6->unk28], arg4->unk4[arg6->unk2C], arg4->unkC[arg6->unk28], &spA0);
+    vec3_normalize(temp);
+    while (arg3->unk28 != -1) {
+        temp_v0 = func_8002CBD4(&sp90, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
+        arg3->unk24 /= arg8;
+        temp_v0->x *= arg3->unk24;
+        temp_v0->y *= arg3->unk24;
+        temp_v0->z *= arg3->unk24;
+        spDC.x += temp_v0->x;
+        spDC.y += temp_v0->y;
+        spDC.z += temp_v0->z;
+        temp_v0 = func_8002C658(arg0, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spA0);
+        vec3_normalize(temp_v0);
+        sp104.x += temp_v0->x;
+        sp104.y += temp_v0->y;
+        sp104.z += temp_v0->z;
+        arg3 += 1;
+    }
+    vec3_normalize(&sp104);
+    spF8.x = spDC.x - sp90.x;
+    spF8.y = 0.0f;
+    spF8.z = spDC.z - sp90.z;
+    temp_fv0 = vec3_length(&spF8);
+
+    spF8.x = spDC.x - arg0->x;
+    spF8.y = 0.0f;
+    spF8.z = spDC.z - arg0->z;
+    vec3_normalize(&spE8);
+    if (temp_fv0 < sp84) {
+        arg7 = ((1.0f - arg7) * 0.25f) + 0.75;
+        spE8.x *= (sp84 - temp_fv0) * arg7;
+        spE8.y *= (sp84 - temp_fv0) * arg7;
+        spE8.z *= (sp84 - temp_fv0) * arg7;
+        vec3_reflect(&sp104, &spE8, &spAC);
+    } else {
+        spAC.x = 0.0f;
+        spAC.y = 0.0f;
+        spAC.z = 0.0f;
+    }
+    spDC.x += spAC.x;
+    spDC.y += spAC.y;
+    spDC.z += spAC.z;
+
+    spAC.x = 0.0f;\
+    spAC.y = 0.0f;\
+    spAC.z = 0.0f;
+
+    arg3 = sp7C;
+    while (arg3->unk28 != -1) {
+        temp_v0 = func_8002CBD4(&spDC, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
+        temp_v0->x *= arg3->unk24;
+        temp_v0->y *= arg3->unk24;
+        temp_v0->z *= arg3->unk24;
+        spAC.x += temp_v0->x;
+        spAC.y += temp_v0->y;
+        spAC.z += temp_v0->z;
+        arg3 += 1;
+    }
+    arg9->x = spAC.x - arg0->x;
+    arg9->y = 0.0f;
+    arg9->z = spAC.z - arg0->z;
+    return 1;
+}
+
+s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk8002F498* arg3) {
+    Vec3f* sp104;
+    Vec3f* sp100;
+    f32 temp_fs0;
+    f32 temp_fs1;
+    f32 temp_fs2;
+    s32 pad_spE8;
+    Vec3f spE4;
+    f32* spE0;
+    f32* spDC;
+    Vec3f *pad_spD8;
+    Vec3f *pad_spD4;
+    Vec3f *pad_spD0;
+    Vec3f *pad_spCC;
+    f32 spC8;
+    s32 pad_spC4;
+    s32 i; // s4
+    s32 j; // s3
+    s8 temp_s1;
+    s8 temp_s7;
+    f32 f0;
+    f32 f2;
+
+    sp104 = arg0->unk0;
+    sp100 = arg1->unk0;
+    spE4.x = sp104->x - sp100->x;
+    spE4.y = sp104->y - sp100->y;
+    spE4.z = sp104->z - sp100->z;
+    spC8 = sqrtf(SQ(spE4.x) + SQ(spE4.y) + SQ(spE4.z));
+    spE0 = arg0->unk4;
+    spDC = arg1->unk4;
+    for (i = 1; i < arg2->unk6F; i++) {
+        temp_fs0 = spC8 - arg0->unk10[i];
+        temp_s7 = arg2->unk20[i].unk0;
+        temp_fs1 = spE0[i];
+        temp_fs2 = spE0[temp_s7];
+        for (j = 1, pad_spC4 = 1; j < arg3->unk6F; j++) {
+            if (temp_fs0 < arg1->unk10[j]) {
+                temp_s1 = arg3->unk20[j].unk0;
+                f0 = spDC[j];
+                f2 = spDC[temp_s1];
+                // temp assignment below required for match
+                if (func_8002C278(
+                    (pad_spD8 = &sp104[i])[0], (pad_spD8 = &sp104[temp_s7])[0],
+                    temp_fs1, temp_fs2,
+                    (pad_spD8 = &sp100[j])[0], (pad_spD8 = &sp100[temp_s1])[0],
+                    f0, f2,
+                    arg0->unkC[i], arg1->unkC[j],
+                    &spC8, &spE4
+                ) != 0) {
+                    arg0->unk18[i] = 1;
+                    arg1->unk18[j] = 1;
+                    arg0->unk18[temp_s7] = 1;
+                    arg1->unk18[temp_s1] = 1;
+                }
+            }
+        }
+    }
+
+    return 1;
+}
 
 // objects might be Unk8002F24C
 s32 func_8002DFB8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, void **arg4, void *arg5, Object *arg6, Object *arg7, f32 *arg8);
