@@ -1,4 +1,4 @@
-.text = 0x0;
+.text = 0x0:
 task_ctor = 0x0;
 task_dtor = 0xC;
 task_load_recently_completed = 0x18;
@@ -8,9 +8,9 @@ task_get_recently_completed_task_text = 0x390;
 task_get_completion_task_text = 0x3F8;
 task_get_completion_percentage = 0x454;
 
-.rodata = 0x508;
+.rodata = 0x508:
 
-.bss = 0x508;
-local sRecentlyCompleted = 0x0; # absolute: 0x508
-local sCompletionIdx = 0x5; # absolute: 0x50D
-local sRecentlyCompletedNextIdx = 0x6; # absolute: 0x50E
+.bss = 0x508:
+sRecentlyCompleted = 0x0; # absolute: 0x508
+sCompletionIdx = 0x5; # absolute: 0x50D
+sRecentlyCompletedNextIdx = 0x6; # absolute: 0x50E

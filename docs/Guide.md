@@ -378,20 +378,22 @@ An important part of DLL recompilation is the `exports.s` file that you will fin
 Just like the core code uses files like `symbol_addrs.txt` to define symbols, each DLL has their own `syms.txt` file instead. This file has slightly different syntax compared to core symbol files.
 
 DLL `syms.txt` files have similar syntax to `symbol_addrs.txt` but instead:
-- Section symbols are included
-- Symbols are grouped by section (by placing them after a section symbol line)
+- Sections can be defined
+- Symbols are grouped by section (by placing them after a section definition)
 - Symbol addresses are relative to their section
-- Symbols can be defined as 'local'
 
 For example:
 ```
-.text = 0x0;     # <- Defines a section
-dll_ctor = 0x0;
+absSym = 0x1234; # <- Defines an absolute symbol (not part of 
+                 #    a section)
+
+.text = 0x0:     # <- Defines a section (note the colon syntax)
+dll_ctor = 0x0;  # <- Relative to .text
 dll_dtor = 0x8;
 
-.data = 0x10;
+.data = 0x10:
 foo = 0x0;       # <- Relative to .data
-local bar = 0x4; # <- Local (static) symbol
+bar = 0x4;
 ```
 
 DLLs work with three types of symbols:

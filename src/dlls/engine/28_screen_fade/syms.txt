@@ -1,4 +1,4 @@
-.text = 0x0;
+.text = 0x0:
 screen_fade_ctor = 0x0;
 screen_fade_dtor = 0x4C;
 screen_fade_draw = 0x58;
@@ -7,16 +7,16 @@ screen_fade_fade_reversed = 0x320;
 screen_fade_func_3AC = 0x3AC;
 screen_fade_get_progress = 0x41C;
 screen_fade_is_complete = 0x438;
-local screen_fade_draw_simple_black = 0x454;
-local screen_fade_draw_simple = 0x6DC;
-local screen_fade_draw_radial = 0x968;
+screen_fade_draw_simple_black = 0x454;
+screen_fade_draw_simple = 0x6DC;
+screen_fade_draw_radial = 0x968;
 
-.rodata = 0x1718;
+.rodata = 0x1718:
 
-.bss = 0x1718;
-local sFadeAlpha = 0x0; # absolute: 0x1718
-local sFadeSpeed = 0x4; # absolute: 0x171C
-local sAutoReverseTimer = 0x8; # absolute: 0x1720
-local sFadeType = 0xC; # absolute: 0x1724
-local sIsComplete = 0xD; # absolute: 0x1725
-local sDelayTimer = 0xE; # absolute: 0x1726
+.bss = 0x1718:
+sFadeAlpha = 0x0; # absolute: 0x1718
+sFadeSpeed = 0x4; # absolute: 0x171C
+sAutoReverseTimer = 0x8; # absolute: 0x1720
+sFadeType = 0xC; # absolute: 0x1724
+sIsComplete = 0xD; # absolute: 0x1725
+sDelayTimer = 0xE; # absolute: 0x1726

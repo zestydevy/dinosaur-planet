@@ -10,18 +10,12 @@ def convert(syms_file: TextIO, ld_file: TextIO):
     ld_file.write("{\n")
 
     for (addr, sym) in syms.absolute.items():
-        if sym.local:
-            ld_file.write("    HIDDEN({} = 0x{:X});\n".format(sym.name, addr))
-        else:
-            ld_file.write("    {} = 0x{:X};\n".format(sym.name, addr))
+        ld_file.write("    {} = 0x{:X};\n".format(sym, addr))
     
     for name, section in syms.sections.items():
         ld_file.write("    {} : {{\n".format(name))
         for (addr, sym) in section.syms.items():
-            if sym.local:
-                ld_file.write("        HIDDEN({} = 0x{:X});\n".format(sym.name, addr))
-            else:
-                ld_file.write("        {} = 0x{:X};\n".format(sym.name, addr))
+            ld_file.write("        {} = 0x{:X};\n".format(sym, addr))
         ld_file.write("    }\n")
 
     ld_file.write("}\n")

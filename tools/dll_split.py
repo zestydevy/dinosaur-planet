@@ -480,11 +480,9 @@ class DLLSplitter:
                 syms_file.write("\n")
             
             # Write function symbols
-            syms_file.write(".text = 0x0;\n")
+            syms_file.write(".text = 0x0:\n")
             for func in dll_functions:
-                local = func.address not in dll.header.export_offsets and \
-                    func.address != dll.header.ctor_offset and func.address != dll.header.dtor_offset
-                syms_file.write("{}{} = 0x{:X};\n".format("local " if local else "", func.symbol, func.address))
+                syms_file.write("{} = 0x{:X};\n".format(func.symbol, func.address))
             
             # Write discovered .rodata, .data, and .bss variables (if any)
             rodata_refs: "set[int] | list[int]" = set()
@@ -504,7 +502,7 @@ class DLLSplitter:
 
             # Note: Section syms need to be relative to start of .text
             if dll.has_rodata() and len(rodata_refs) > 0:
-                syms_file.write("\n.rodata = 0x{:X};\n"
+                syms_file.write("\n.rodata = 0x{:X}:\n"
                                 .format(dll.header.rodata_offset + dll.reloc_table.get_size() - dll.header.size))
                 rodata_refs.add(0)
                 rodata_refs = list(rodata_refs)
@@ -514,12 +512,11 @@ class DLLSplitter:
 
                 for ref in rodata_refs:
                     absolute = rodata_start + ref - text_start
-                    local = absolute not in externs
-                    syms_file.write("{}_rodata_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
-                                    .format("local " if local else "", ref, ref, absolute))
+                    syms_file.write("_rodata_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format(ref, ref, absolute))
             
             if dll.has_data():
-                syms_file.write("\n.data = 0x{:X};\n".format(dll.header.data_offset - dll.header.size))
+                syms_file.write("\n.data = 0x{:X}:\n".format(dll.header.data_offset - dll.header.size))
                 data_refs.add(0)
                 data_refs = list(data_refs)
                 data_refs.sort()
@@ -528,12 +525,11 @@ class DLLSplitter:
 
                 for ref in data_refs:
                     absolute = data_start + ref - text_start
-                    local = absolute not in externs
-                    syms_file.write("{}_data_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
-                                    .format("local " if local else "", ref, ref, absolute))
+                    syms_file.write("_data_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format(ref, ref, absolute))
             
             if bss_size > 0:
-                syms_file.write("\n.bss = 0x{:X};\n".format(dll.get_bss_offset() - dll.header.size))
+                syms_file.write("\n.bss = 0x{:X}:\n".format(dll.get_bss_offset() - dll.header.size))
                 bss_refs.add(0)
                 bss_refs = list(bss_refs)
                 bss_refs.sort()
@@ -542,9 +538,8 @@ class DLLSplitter:
 
                 for ref in bss_refs:
                     absolute = bss_start + ref - text_start
-                    local = absolute not in externs
-                    syms_file.write("{}_bss_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
-                                    .format("local " if local else "", ref, ref, absolute))
+                    syms_file.write("_bss_{:X} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format(ref, ref, absolute))
 
     def __extract_text_asm(self, 
                            dir: Path, 
