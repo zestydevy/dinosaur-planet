@@ -161,6 +161,10 @@ class DLLSymbols:
             elif (address & 0x8000_0000) != 0:
                 default = "IMPORT_{:X}".format(address)
             else:
+                (section, local_address) = self.convert_absolute_to_relative_address(address)
+                sym = self.local_syms[section].get(local_address, None)
+                if sym != None:
+                    return sym.name
                 default = "GLOBAL_{:X}".format(address)
         
         return default

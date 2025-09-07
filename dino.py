@@ -84,7 +84,7 @@ class DinoCommandRunner:
         print("Updating Git submodules...")
         self.__run_cmd(["git", "submodule", "update", "--init", "--recursive"])
 
-    def extract(self, use_cache: bool):
+    def extract(self, use_cache: bool, disassemble_all: bool):
         print("Extracting...")
 
         # If not using cache, clear existing extracted content
@@ -107,6 +107,8 @@ class DinoCommandRunner:
             args.append("--verbose")
         if use_cache:
             args.append("--use-cache")
+        if disassemble_all:
+            args.append("--disassemble-all")
         
         args.append("splat.yaml")
         self.__run_cmd(args)
@@ -125,12 +127,12 @@ class DinoCommandRunner:
         # Extract DLLs
         print()
         print("Extracting DLLs...")
-        self.__extract_dlls()
+        self.__extract_dlls(disassemble_all=disassemble_all)
 
         print()
         self.configure()
 
-    def extract_dll(self, number: int):
+    def extract_dll(self, number: int, disassemble_all: bool):
         print(f"Extracting DLL {number}...")
 
         dlls_txt_path = SRC_PATH.joinpath("dlls/dlls.txt")
@@ -149,7 +151,7 @@ class DinoCommandRunner:
                 shutil.rmtree(asm_dir)
         
         # Extract DLL
-        self.__extract_dlls([number])
+        self.__extract_dlls([number], disassemble_all=disassemble_all)
 
         print()
         self.configure()
@@ -401,7 +403,7 @@ class DinoCommandRunner:
             print(">", " ".join(args))
         subprocess.check_call(args)
 
-    def __extract_dlls(self, dlls: "list[str | int]"=[], quiet: bool=False):
+    def __extract_dlls(self, dlls: "list[str | int]"=[], quiet: bool=False, disassemble_all: bool=False):
         args = [
             sys.executable, str(DLL_SPLIT_PY),
             "--base-dir", str(SCRIPT_DIR),
@@ -411,6 +413,8 @@ class DinoCommandRunner:
             args.append("--verbose")
         if not self.verbose and quiet:
             args.append("--quiet")
+        if disassemble_all:
+            args.append("--disassemble-all")
 
         args.extend([str(dll) for dll in dlls])
 
@@ -438,9 +442,11 @@ def main():
     
     extract_cmd = subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
     extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
+    extract_cmd.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
 
     extract_dll_cmd = subparsers.add_parser("extract-dll", help="Split and extract DLL.")
     extract_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
+    extract_dll_cmd.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
 
     configure_cmd = subparsers.add_parser("configure", help="Re-configure the build script.")
     configure_cmd.add_argument("--non-matching", dest="non_matching", action="store_true", help="Define NON_MATCHING.", default=False)
@@ -483,9 +489,9 @@ def main():
         elif cmd == "setup-dll":
             runner.setup_dll(number=args.number, dll_dir=args.dir)
         elif cmd == "extract":
-            runner.extract(use_cache=args.use_cache)
+            runner.extract(use_cache=args.use_cache, disassemble_all=args.disassemble_all)
         elif cmd == "extract-dll":
-            runner.extract_dll(number=args.number)
+            runner.extract_dll(number=args.number, disassemble_all=args.disassemble_all)
         elif cmd == "build":
             runner.build(
                 configure=args.configure, 

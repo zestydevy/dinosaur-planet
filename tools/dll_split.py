@@ -43,8 +43,9 @@ class DLLFunctionWithLateRodata:
         self.late_rodata_end = late_rodata_end
 
 class DLLSplitter:
-    def __init__(self, verbose: bool) -> None:
+    def __init__(self, verbose: bool, disassemble_all: bool) -> None:
         self.verbose = verbose
+        self.disassemble_all = disassemble_all
 
     def extract_dlls(self, only_dlls: "list[str]"):
         # Load DLLS.tab
@@ -143,27 +144,30 @@ class DLLSplitter:
                     dll_dir: str):
         # Determine paths
         src_path = SRC_PATH.joinpath(f"dlls/{dll_dir}")
-        asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
+        nonmatching_asm_path = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
+        matching_asm_path = ASM_PATH.joinpath(f"matchings/dlls/{dll_dir}")
 
         # Determine what needs to be extracted
         has_c_files = False
-        emit_funcs: "list[str] | None" = None
+        nonmatching_funcs: "list[str] | None" = None
         for c_file_path in [Path(path) for path in glob.glob(f"{src_path}/*.c", recursive=True)]:
             if not has_c_files:
                 has_c_files = True
-                emit_funcs = []
-            emit_funcs.extend(self.__get_functions_to_extract(c_file_path))
+                nonmatching_funcs = []
+            nonmatching_funcs.extend(self.__get_nonmatching_functions_from_c(c_file_path))
 
         # Create directories if necessary
-        if not has_c_files or len(emit_funcs) > 0:
-            os.makedirs(asm_path, exist_ok=True)
+        if not has_c_files or len(nonmatching_funcs) > 0:
+            os.makedirs(nonmatching_asm_path, exist_ok=True)
+        if self.disassemble_all and (not has_c_files or len(dll_functions) != len(nonmatching_funcs)):
+            os.makedirs(matching_asm_path, exist_ok=True)
 
         # Migrate .late_rodata
         (funcs_with_late_rodata, late_rodata_start) = self.__migrate_late_rodata(dll_functions, dll.get_rodata_size())
 
         # Extract .text
-        if not has_c_files or len(emit_funcs) > 0:
-            self.__extract_text_asm(asm_path, dll, funcs_with_late_rodata, dll_symbols, data, emit_funcs)
+        if not has_c_files or len(nonmatching_funcs) > 0 or self.disassemble_all:
+            self.__extract_text_asm(nonmatching_asm_path, matching_asm_path, dll, funcs_with_late_rodata, dll_symbols, data, nonmatching_funcs)
 
         # Create exports.s if it doesn't exist
         exports_s_path = src_path.joinpath("exports.s")
@@ -178,7 +182,7 @@ class DLLSplitter:
         # Create <dll>.c stub if no .c files exist
         if not has_c_files:
             c_file_path = src_path.joinpath(f"{dll_number}.c")
-            self.__create_c_stub(c_file_path, asm_path, dll, dll_functions, data, bss_size, late_rodata_start)
+            self.__create_c_stub(c_file_path, nonmatching_asm_path, dll, dll_functions, data, bss_size, late_rodata_start)
 
     def __create_exports_s(self, path: Path, dll: DLL, dll_functions: "list[DLLFunction]"):
         funcs_by_address: "dict[int, str]" = {}
@@ -542,12 +546,13 @@ class DLLSplitter:
                                     .format(ref, ref, absolute))
 
     def __extract_text_asm(self, 
-                           dir: Path, 
+                           nonmatching_dir: Path,
+                           matching_dir: Path, 
                            dll: DLL, 
                            dll_functions: "list[DLLFunctionWithLateRodata]",
                            dll_symbols: DLLSymbols,
                            dll_data: bytearray,
-                           funcs: "list[str] | None"):
+                           nonmatching_funcs: "list[str] | None"):
         rodata: bytearray | None = None
         rodata_start: int | None = None
         
@@ -556,9 +561,13 @@ class DLLSplitter:
             late_rodata_start = func_with_late_rodata.late_rodata_start
             late_rodata_end = func_with_late_rodata.late_rodata_end
 
-            # Filter
-            if funcs is not None and not func.symbol in funcs:
-                continue
+            # Filter matching functions
+            dir = nonmatching_dir
+            if nonmatching_funcs is not None and not func.symbol in nonmatching_funcs:
+                if self.disassemble_all:
+                    dir = matching_dir
+                else:
+                    continue
 
             s_path = dir.joinpath(f"{func.symbol}.s")
             with open(s_path, "w", encoding="utf-8") as s_file:
@@ -792,8 +801,7 @@ class DLLSplitter:
 
         return (with_rodata, late_rodata_start)
 
-    def __get_functions_to_extract(self, path: Path) -> "list[str]":
-        """Returns None if all functions should be extracted (i.e. there is no .c file to derive the list from)"""
+    def __get_nonmatching_functions_from_c(self, path: Path) -> "list[str]":
         if not path.exists():
             return []
         
@@ -834,6 +842,7 @@ def main():
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable debug logging.", default=False)
     parser.add_argument("-q", "--quiet", action="store_true", help="Don't display informational messages.", default=False)
+    parser.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
     parser.add_argument("dlls", nargs="*", action="extend", help="The numbers of each DLL to extract. Don't specify any to extract all that have src directories.")
 
     args = parser.parse_args()
@@ -844,7 +853,7 @@ def main():
     # Extract DLLs
     start = timer()
     
-    splitter = DLLSplitter(verbose=args.verbose)
+    splitter = DLLSplitter(verbose=args.verbose, disassemble_all=args.disassemble_all)
     splitter.extract_dlls(args.dlls)
     
     end = timer()
