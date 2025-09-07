@@ -30,12 +30,12 @@ typedef struct Unk800B19A0 {
     f32 unkC;
     f32 unk10;
     f32 unk14;
-    s8 unk18;
-    s8 unk19;
+    u8 unk18;
+    u8 unk19;
     s8 unk1A;
     s8 unk1B;
 } Unk800B19A0;
-extern Unk800B19A0 *D_800B19A0[]; // 0x40 (64) elements?
+extern Unk800B19A0 D_800B19A0[64];
 
 typedef struct Unk800B199C {
     s32 unk0;
@@ -44,14 +44,6 @@ typedef struct Unk800B199C {
     u8 padC[0x3C - 0xC];
 } Unk800B199C;
 
-// size: 0x34
-typedef struct Unk8002F24C {
-    s32 unk0[3];
-    s32 unkC[3];
-    Vec3f unk18;
-    Vec3f unk24;
-    s32 unk30;
-} Unk8002F24C;
 
 // size: 0x30
 typedef struct Unk80030A24 {
@@ -59,7 +51,7 @@ typedef struct Unk80030A24 {
     Vec3f *unk4;
     Vec3f unk8;
     Vec3f unk14;
-    s32 pad20;
+    f32 unk20;
     f32 unk24;
     s32 unk28;
     s32 unk2C;
@@ -90,17 +82,6 @@ typedef struct Unk8002F498 {
     u8 unk6F;
 } Unk8002F498;
 
-// size: 0x1C
-typedef struct Unk80030338 {
-    s32 pad0;
-    f32 *unk4;
-    s32 pad8;
-    f32 *unkC;
-    s32 pad10;
-    Unk8002F24C *unk14;
-    s8 *unk18;
-} Unk80030338;
-
 // size: 0xC
 typedef struct Unk800B20B8 {
     f32 unk0;
@@ -126,7 +107,31 @@ void func_8001B4F0(MtxF**, MtxF*, AnimState*, ModelJoint*, s32, s16*, s32, s32);
 void func_80029A14(Model *model, AnimState *animState, AnimState *arg2, f32 arg3, u8 arg4);
 void func_80030994(ModelInstance* modelInstance, f32 arg1, f32 arg2);
 void func_80030E2C(Object *obj, f32 *arg1, Vec3f *arg2, Vec3f *arg3, Vec3f *arg4);
+void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, s32 arg7);
+s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelInstance_0x14* arg4, Model *arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9);
+s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelInstance_0x14* arg4, Model *arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9);
+s32 func_8002DFB8(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32* arg6);
+s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8);
+void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4);
+s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
+void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 arg4, Vec3f* arg5);
+void func_80027934(Object *obj, Object *otherObj);
+void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 arg4);
+void func_80028238(Object *obj, Object *otherObj);
+void func_8002B7CC(Unk800B20B8** arg0, s32 arg1);
 
+extern s32 *D_800916E0[5];
+extern s32 D_800916F4[4];
+extern f32 D_80099AC8;
+extern f32 D_80099ACC;
+extern f32 D_80099AD0;
+extern f32 D_80099AD4;
+extern f32 D_80099AD8;
+extern f64 D_80099AE0;
+extern f32 D_80099AE8;
+extern f32 D_80099AEC;
+extern f32 D_80099AF0;
+extern f32 D_80099AF4;
 extern f32 D_800B1990;
 extern Object **D_800B1994;
 extern s32 D_800B1998;
@@ -136,17 +141,10 @@ extern void* D_800B20A8;
 extern void* D_800B20AC;
 extern void* D_800B20B0;
 extern void* D_800B20B4;
-extern s32 *D_800916E0[5];
-extern s32 D_800916F4[4];
-extern f32 D_80099AC8;
-extern f32 D_80099ACC;
-extern f32 D_80099AD4;
-extern f32 D_80099AD8;
-extern f64 D_80099AE0;
-extern f32 D_80099AE8;
-extern f32 D_80099AEC;
-extern f32 D_80099AF0;
-extern f32 D_80099AF4;
+extern Unk800B20B8 D_800B20B8[];
+extern Unk800B20B8* D_800B23B8;
+extern Unk800B20B8* D_800B23BC;
+extern Object D_800B24B8;
 
 void alloc_some_object_arrays(void) {
     D_800B1994 = malloc(0xA0, 0xE, NULL);
@@ -800,6 +798,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
 void obj_do_hit_detection(s32 arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/obj_do_hit_detection.s")
 #else
+// https://decomp.me/scratch/om8Pt
 void obj_do_hit_detection(s32 arg0) {
     u8 pad[0x9A0 - 0x984];
     Object* sp980;
@@ -987,7 +986,7 @@ void obj_do_hit_detection(s32 arg0) {
 #endif
 
 #ifndef NON_EQUIVALENT
-void func_80027934(Object *obj, Object *otherObj) ;
+void func_80027934(Object *obj, Object *otherObj);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027934.s")
 #else
 // https://decomp.me/scratch/R1u2I
@@ -1113,8 +1112,69 @@ void func_80027934(Object* obj, Object* otherObj) {
 }
 #endif
 
-void func_80027DAC(Object *obj, Object *obj2, Object *obj3, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6, s32 arg7);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027DAC.s")
+void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, s32 arg7) {
+    f32 var_fv0;
+    f32 spE8;
+    Vec3f spDC;
+    Vec3f spD0;
+    ModelInstance_0x14_0x14 sp9C;
+    ModelInstance_0x14_0x14 sp68;
+    Unk80030A24* sp64;
+    ObjectHitInfo* temp_v0;
+    ObjectHitInfo* sp5C;
+    ModelInstance* sp58;
+    ModelInstance* sp54;
+
+    temp_v0 = obj->objhitInfo;
+    sp5C = obj2->objhitInfo;
+    if ((obj->objhitInfo->unk_0x9f == 0) && (sp5C->unk_0x9f == 0) && (sp5C->unk_0x9e == 0) && (obj->objhitInfo->unk_0x9e == 0)) {
+        sp58 = obj->modelInsts[obj->modelInstIdx];
+        sp54 = obj2->modelInsts[obj2->modelInstIdx];
+        if (sp5C->unk_0x5a & 1) {
+            spDC.x = obj2->positionMirror.x - gWorldX;
+            spDC.y = obj2->positionMirror.y;
+            spDC.z = obj2->positionMirror.z - gWorldZ;
+            if (func_8002DFB8(spDC, sp5C->unk_0x52, sp58->unk_0x14, sp58->model, arg2, &sp64, &spE8) != 0) {
+                var_fv0 = obj2->unk_0xa8 / obj->unk_0xa8;
+                if (var_fv0 > 1.0f) {
+                    var_fv0 = 1.0f;
+                }
+                func_8002D0DC(&spDC, sp5C->unk_0x52, obj2, arg2, sp58->unk_0x14, sp58->model, sp64, var_fv0, spE8, &spD0);
+                func_800287E4(obj, obj2, spD0.x, spD0.y, spD0.z, 0);
+            }
+        } else if (sp5C->unk_0x5a & 2) {
+            spDC.x = obj2->positionMirror.x - gWorldX;
+            spDC.y = obj2->positionMirror.y;
+            spDC.z = obj2->positionMirror.z - gWorldZ;
+            if (func_8002E3D0(spDC, sp5C->unk_0x52, sp58->unk_0x14, sp58->model, arg2, &sp64, obj2->positionMirror.y + sp5C->unk_0x56, obj2->positionMirror.y + (f32) sp5C->unk_0x54, &spE8) != 0) {
+                var_fv0 = obj2->unk_0xa8 / obj->unk_0xa8;
+                if (var_fv0 > 1.0f) {
+                    var_fv0 = 1.0f;
+                }
+                func_8002D69C(&spDC, sp5C->unk_0x52, obj2, arg2, sp58->unk_0x14, sp58->model, sp64, var_fv0, spE8, &spD0);
+                func_800287E4(obj, obj2, spD0.x, spD0.y, spD0.z, 0);
+            }
+        } else if (sp5C->unk_0x5a & 0x20) {
+            if (arg7 <= 0) {
+                arg7++;
+                func_80027DAC(obj2, obj, arg2, arg3, arg4, arg5, arg6, arg7);
+                return;
+            }
+            func_8002F498(sp58->unk_0x14->unk0, sp58->unk_0x14, sp58->model, arg3, &sp9C);
+            func_8002F498(sp54->unk_0x14->unk0, sp54->unk_0x14, sp54->model, arg4, &sp68);
+            if (func_8002F998(
+                sp58->unk_0x14, sp58->model, sp58->unk_0x14->unk0,
+                arg3, &sp9C, arg5,
+                arg6, sp54->unk_0x14, sp54->model,
+                sp54->unk_0x14->unk0, arg4, &sp68,
+                arg2, &spE8
+            ) != 0) {
+                func_80030A24(obj, obj2, arg2, spE8, 0, &spD0);
+                func_800287E4(obj2, obj, spD0.x, spD0.y, spD0.z, 1);
+            }
+        }
+    }
+}
 
 #ifndef NON_EQUIVALENT
 void func_80028238(Object *obj, Object *otherObj);
@@ -1732,7 +1792,7 @@ void func_80029AB4(ModelJoint* joints, s32 jointsCount, HitSphere* hitSpheres, s
     }
 }
 
-#if 1
+#ifndef NON_EQUIVALENT
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80029C04.s")
 #else
@@ -1740,6 +1800,7 @@ u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 
 u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6) {
     f32 sp1CC;
     f32 sp1C8;
+    f32 sp1C4;
     f32 sp1C0;
     f32 sp1BC;
     f32 sp1B8;
@@ -1757,182 +1818,129 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     f32* sp170;                                     /* compiler-managed */
     f32* sp16C;
     f32* sp168;                                     /* compiler-managed */
-    f32 sp164;
-    f32 sp160;
-    f32 sp15C;
-    f32 sp158;
-    Vec3f sp14C;
-    f32 sp148;
-    Vec3f sp13C;
-    f32 sp138;
-    Vec3f sp12C;
-    f32 sp128;
+    MtxF sp128;
     HitSphere sp11A;
     HitSphere sp10C;
-    HitSphere* sp108;
-    HitSphere* sp104;
-    s32 sp100;
+    HitSphere* spheres2; // sp108
+    HitSphere* spheres; // sp104
+    s32 sphereCount; // sp100
     s32 spFC;
-    s32 spF8;
-    s32 spF4;
+    s32 spF8; // s7
+    s32 spF4; // s3
     s8 spE6;
     ObjectHitInfo* spE0;
     ObjectHitInfo* spDC;
     ObjectHitInfo* spD8;
     s32 spB0[6];
-    s32 sp94;
-    s32 sp90;
-    f32 sp80;
     Model* model;
     ModelInstance* temp_v1;
-    ObjectHitInfo* temp_t0;
-    ObjectHitInfo* temp_t1;
-    ObjectHitInfo* temp_t4;
-    ObjectHitInfo* var_t0;
-    ObjectHitInfo* var_t1;
-    f32 temp_fa0;
-    f32 temp_fa0_2;
-    f32 temp_fa1;
-    f32 temp_fa1_2;
-    f32 temp_fs0;
-    f32 temp_fs0_2;
-    f32 temp_fs3;
-    f32 temp_ft3;
-    f32 temp_ft4;
-    f32 temp_ft5;
     f32 temp_fv0;
-    f32 temp_fv1;
     f32 var_fa0;
     f32 var_fa1;
-    f32 var_fs0;
     f32 var_fs1;
     f32 var_fs2;
     f32 var_fs3;
     f32 var_fs4;
     f32 var_fs5;
-    f32 var_ft1;
     f32 var_ft2;
     f32 var_ft4;
     f32 var_ft5;
-    f32* var_t2;
     s32 temp_a0;
-    u16 temp_t5;
-    s32 temp_t6;
-    s32 temp_t7;
-    s32 temp_t8;
-    s32 temp_t9;
+    s32 temp_a1;
     s32 temp_v0_4;
-    s32 temp_v1_3;
     s32 var_fp;
-    s32 var_s3;
     s32 var_s4;
     s32 var_s5;
-    s32 var_s6;
-    s32 var_s7;
+    s32 i;
+    s32 j;
     u16 var_v1_4;
-    s32 var_s2;
-    s32 var_t3;
-    u16 temp_a0_2;
-    u16 temp_a1;
-    u16 var_t5_7;
-    u16 var_v1_3;
-    u8 var_v0;
-    Unk800B19A0* temp_s0;
     f32* temp_s1;
-    f32* temp_v0_10;
-    f32* temp_v0_11;
-    f32* temp_v0_9;
-    Unk800B19A0* var_s0;
 
-    temp_t1 = obj2->objhitInfo;
-    temp_t0 = obj->objhitInfo;
-    temp_t4 = obj3->objhitInfo;
-    if ((temp_t1->unk_0x9e != 0) || (temp_t4->unk_0x9e != 0)) {
+    spE0 = obj->objhitInfo;
+    spDC = obj2->objhitInfo;
+    spD8 = obj3->objhitInfo;
+    if (spDC->unk_0x9e != 0 || spD8->unk_0x9e != 0) {
         return 0U;
     }
-    if ((temp_t1->unk_0x9f != 0) || (var_fp = 0, (temp_t4->unk_0x9f != 0))) {
+    if (spDC->unk_0x9f != 0 || spD8->unk_0x9f != 0) {
         return 0U;
     }
-    var_t3 = 0;
-    if (((arg3 != 0) && (temp_t0->unk_0x5a & 0x10)) || ((arg4 != 0) && (temp_t0->unk_0x5a == 0x10))) {
+    var_fp = 0;
+    spE6 = 0;
+    if ((arg3 != 0 && (spE0->unk_0x5a & 0x10)) || (arg4 != 0 && spE0->unk_0x5a == 0x10)) {
         temp_v1 = obj->modelInsts[obj->modelInstIdx];
         model = temp_v1->model;
         spFC = (s32) model->hitSphereCount;
         sp170 = temp_v1->unk_0x24;
         sp168 = temp_v1->unk_0x1c[(((s32) temp_v1->unk_0x34 >> 2) & 1) ^ 1];
-        sp108 = model->hitSpheres;
+        spheres2 = model->hitSpheres;
         if (obj3 != obj) {
-            sp1AC = (f32) model->maxAnimatedVertDistance * obj3->srt.scale;
+            sp1AC = model->maxAnimatedVertDistance * obj3->srt.scale;
         } else {
-            sp1AC = (f32) model->maxAnimatedVertDistance * obj->srt.scale;
+            sp1AC = model->maxAnimatedVertDistance * obj->srt.scale;
         }
         if (obj->srt.flags & 0x4000) {
             return 0U;
         }
     } else {
         spFC = 1;
-        sp170 = &sp128;
-        sp168 = &sp148;
-        sp108 = &sp10C;
-        if (temp_t0->unk_0x5a & 2) {
+        sp170 = sp128.m[0];
+        sp168 = sp128.m[2];
+        spheres2 = &sp10C;
+        if (spE0->unk_0x5a & 2) {
             var_fp = 1;
         }
-        sp128 = (f32) temp_t0->unk_0x52;
-        sp12C.x = obj->positionMirror.x - gWorldX;
-        sp12C.y = obj->positionMirror.y;
-        sp148 = sp128;
-        sp12C.z = obj->positionMirror.z - gWorldZ;
-        sp14C.x = temp_t0->unk_0x20.x - gWorldX;
-        sp14C.y = temp_t0->unk_0x20.y;
+        sp128.m[0][0] = spE0->unk_0x52;
+        sp128.m[0][1] = obj->positionMirror.x - gWorldX;
+        sp128.m[0][2] = obj->positionMirror.y;
+        sp128.m[0][3] = obj->positionMirror.z - gWorldZ;
+        sp128.m[2][0] = sp128.m[0][0];
+        sp128.m[2][1] = spE0->unk_0x20.x - gWorldX;
+        sp128.m[2][2] = spE0->unk_0x20.y;
+        sp128.m[2][3] = spE0->unk_0x20.z - gWorldZ;
         sp10C.unkC = 0;
         sp10C.unkD = 0;
         sp10C.unkA = 0;
-        sp1AC = sp128;
-        sp14C.z = temp_t0->unk_0x20.z - gWorldZ;
+        sp1AC = sp128.m[0][0];
     }
-    if (((arg3 != 0) && (temp_t1->unk_0x5a & 0x10)) || ((var_t2 = &sp138, (arg4 != 0)) && (temp_t1->unk_0x5a == 0x10))) {
+
+    if ((arg3 != 0 && (spDC->unk_0x5a & 0x10)) || (arg4 != 0 && spDC->unk_0x5a == 0x10)) {
         temp_v1 = obj2->modelInsts[obj2->modelInstIdx];
         model = temp_v1->model;
-        sp100 = (s32) model->hitSphereCount;
-        var_t2 = (f32* ) temp_v1->unk_0x24;
-        sp104 = model->hitSpheres;
-        sp1B0 = (f32) model->maxAnimatedVertDistance * obj2->srt.scale;
+        sphereCount = model->hitSphereCount;
+        sp16C = temp_v1->unk_0x24;
+        spheres = model->hitSpheres;
+        sp1B0 = model->maxAnimatedVertDistance * obj2->srt.scale;
         if (obj2->srt.flags & 0x4000) {
             return 0U;
         }
     } else {
-        sp100 = 1;
-        sp104 = &sp11A;
-        if (temp_t1->unk_0x5a & 2) {
-            var_t3 = 1;
+        sp16C = sp128.m[1];
+        sphereCount = 1;
+        spheres = &sp11A;
+        if (spDC->unk_0x5a & 2) {
+            spE6 = 1;
         }
-        temp_ft3 = (f32) temp_t1->unk_0x52;
-        sp138 = temp_ft3;
-        sp13C.x = obj2->positionMirror.x - gWorldX;
-        sp13C.y = obj2->positionMirror.y;
-        sp158 = sp128;
-        sp13C.z = obj2->positionMirror.z - gWorldZ;
-        sp15C = temp_t0->unk_0x20.x - gWorldX;
-        sp160 = temp_t0->unk_0x20.y;
+        sp128.m[1][0] = spDC->unk_0x52;
+        sp128.m[1][1] = obj2->positionMirror.x - gWorldX;
+        sp128.m[1][2] = obj2->positionMirror.y;
+        sp128.m[1][3] = obj2->positionMirror.z - gWorldZ;
+        sp128.m[3][0] = sp128.m[0][0];
+        sp128.m[3][1] = spE0->unk_0x20.x - gWorldX;
+        sp128.m[3][2] = spE0->unk_0x20.y;
+        sp128.m[3][3] = spE0->unk_0x20.z - gWorldZ;
         sp11A.unkC = 0;
         sp11A.unkD = 0;
         sp11A.unkA = 0;
-        sp1B0 = temp_ft3;
-        sp164 = temp_t0->unk_0x20.z - gWorldZ;
+        sp1B0 = sp128.m[1][0];
     }
     var_fs1 = obj->positionMirror.x - obj2->positionMirror.x;
     var_fs4 = obj->positionMirror.y - obj2->positionMirror.y;
-    spD8 = temp_t4;
     var_fs2 = obj->positionMirror.z - obj2->positionMirror.z;
-    spE6 = var_t3;
-    sp16C = var_t2;
-    spDC = temp_t1;
-    spE0 = temp_t0;
-    arg3 = arg3;
-    temp_fv0 = sqrtf((var_fs1 * var_fs1) + (var_fs4 * var_fs4) + (var_fs2 * var_fs2));
+    temp_fv0 = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
     var_fs5 = temp_fv0;
-    var_s6 = 0;
-    if ((sp1B0 + sp1AC + 100.0f) < temp_fv0) {
+    i = 0;
+    if ((sp1B0 + sp1AC + 100.0f) < var_fs5) {
         return 0U;
     }
     spB0[4] = 0;
@@ -1941,178 +1949,145 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     spB0[3] = 0;
     spB0[0] = 0;
     spB0[1] = 0;
-    for (var_s6 = 0; var_s6 < spFC; var_s6++) {
-        if (var_s6 == sp108[var_s6].unkC) {
-            temp_v0_4 = 1 << sp108[var_s6].unkD;
+    for (i = 0; i < spFC; i++) {
+        if (i == spheres2[i].unkC) {
+            temp_v0_4 = 1 << spheres2[i].unkD;
             if (temp_v0_4 & arg5) {
-                spB0[5] |= 1 << var_s6;
-                spB0[4] |= (1 << var_s6) >> 0x1F;
+                spB0[5] |= 1 << i;
+                spB0[4] |= (1 << i) >> 0x1F;
             }
             if (temp_v0_4 & arg6) {
-                spB0[1] |= 1 << var_s6;
-                spB0[0] |= (1 << var_s6) >> 0x1F;
+                spB0[1] |= 1 << i;
+                spB0[0] |= (1 << i) >> 0x1F;
             }
         }
     }
-    for (var_s6 = 0; var_s6 < sp100; var_s6++) {
-        if (var_s6 == sp104[var_s6].unkC) {
-            spB0[3] |= 1 << var_s6;
-            spB0[2] |= (1 << var_s6) >> 0x1F;
+    for (i = 0; i < sphereCount; i++) {
+        if (i == spheres[i].unkC) {
+            spB0[3] |= 1 << i;
+            spB0[2] |= (1 << i) >> 0x1F;
         }
     }
 
     sp188 = -1.0f;
-    var_fs0 = sp18C;
-    var_s7 = spF8;
-    var_s3 = spF4;
     do {
         var_s4 = 0;
-        for (var_s6 = 0; var_s6 < spFC; var_s6++) {
-            temp_t6 = 1 << var_s6;
-            temp_t8 = temp_t6 >> 0x1F;
-            sp94 = temp_t6;
-            sp90 = temp_t8;
-            if ((temp_t8 & spB0[4]) || (temp_t6 & spB0[5])) {
-                temp_v1_3 = var_s6 * 4;
-                temp_v0_9 = (f32*)sp170 + temp_v1_3;
-                sp1CC = temp_v0_9[0];
+        for (i = 0; i < spFC; i++) {
+            if ((((1 << i) >> 0x1F) & spB0[4]) || ((1 << i) & spB0[5])) {
                 var_s5 = 1;
-                var_s2 = 0;
-                sp1C8 = temp_v0_9[1];
-                temp_fs3 = temp_v0_9[2];
-                sp1C0 = temp_v0_9[3];
-                if ((temp_t8 & spB0[0]) || (temp_t6 & spB0[1])) {
+                sp1CC = sp170[i * 4 + 0];
+                sp1C8 = sp170[i * 4 + 1];
+                sp1C4 = sp170[i * 4 + 2];
+                sp1C0 = sp170[i * 4 + 3];
+                if ((((1 << i) >> 0x1F) & spB0[0]) || ((1 << i) & spB0[1])) {
                     var_s5 = 0;
                 }
                 if (var_s5 == 0) {
-                    temp_v0_10 = (f32*)sp168 + temp_v1_3;
-                    temp_ft4 = temp_v0_10[1];
-                    temp_ft5 = temp_v0_10[2];
-                    temp_fv0 = sp1C8 - temp_ft4;
-                    sp1B4 = temp_v0_10[3];
-                    temp_fv1 = temp_fs3 - temp_ft5;
-                    sp184 = temp_fv0;
-                    sp180 = temp_fv1;
-                    temp_fa0 = sp1C0 - sp1B4;
-                    sp1BC = temp_ft4;
-                    sp1B8 = temp_ft5;
-                    sp17C = temp_fa0;
-                    temp_fa1 = (temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0);
-                    sp174 = temp_fa1;
-                    if (temp_fa1 > 0.0f) {
+                    sp1BC = sp168[i * 4 + 1];
+                    sp1B8 = sp168[i * 4 + 2];
+                    sp1B4 = sp168[i * 4 + 3];
+                    sp184 = sp1C8 - sp1BC;
+                    sp180 = sp1C4 - sp1B8;
+                    sp17C = sp1C0 - sp1B4;
+                    sp174 = SQ(sp184) + SQ(sp180) + SQ(sp17C);
+                    if (sp174 > 0.0f) {
                         sp174 = 1.0f / sp174;
                     } else {
                         var_s5 = 1;
                     }
                 }
-                for (var_s2 = 0; var_s2 < sp100; var_s2++) {
-                    temp_t8 = 1 << var_s2;
-                    if (((temp_t8 >> 0x1F) & spB0[2]) || (temp_t8 & spB0[3])) {
-                        var_s3 = 0;
-                        temp_s1 = var_t2 + (var_s2 * 4);
-                        if (((var_s6 == 0) && (var_fp != 0)) || ((var_s2 == 0) && (var_t3 != 0))) {
+                for (j = 0; j < sphereCount; j++) {
+                    if ((((1 << j) >> 0x1F) & spB0[2]) || ((1 << j) & spB0[3])) {
+                        spF4 = 0;
+                        temp_s1 = &sp16C[j * 4];
+                        if (((i == 0) && (var_fp != 0)) || ((j == 0) && (spE6 != 0))) {
                             if (var_fp != 0) {
-                                temp_fv1 = temp_s1[2];
-                                temp_fv0 = temp_s1[0];
-                                var_fa0 = (f32) temp_t0->unk_0x54 + temp_fs3;
-                                var_fa1 = (f32) temp_t0->unk_0x56 + temp_fs3;
-                                var_ft4 = temp_fv1 - temp_fv0;
-                                var_ft5 = temp_fv0 + temp_fv1;
+                                var_fa0 = spE0->unk_0x54 + sp1C4;
+                                var_fa1 = spE0->unk_0x56 + sp1C4;
+                                var_ft4 = temp_s1[2] - temp_s1[0];
+                                var_ft5 = temp_s1[0] + temp_s1[2];
                             } else {
-                                temp_fv1 = temp_s1[2];
-                                var_fa0 = temp_fs3 - sp1CC;
-                                var_fa1 = temp_fs3 + sp1CC;
-                                var_ft4 = temp_fv1 + (f32) temp_t1->unk_0x54;
-                                var_ft5 = temp_fv1 + (f32) temp_t1->unk_0x56;
+                                var_fa0 = sp1C4 - sp1CC;
+                                var_fa1 = sp1C4 + sp1CC;
+                                var_ft4 = temp_s1[2] + spDC->unk_0x54;
+                                var_ft5 = temp_s1[2] + spDC->unk_0x56;
                             }
                             if ((!(var_ft4 < var_fa0) || !(var_ft5 < var_fa0)) && (!(var_fa1 < var_ft4) || !(var_fa1 < var_ft5))) {
-                                temp_fs0 = temp_s1[0] + sp1CC;
+                                sp18C = temp_s1[0] + sp1CC;
+                                sp18C = SQ(sp18C);
                                 var_fs1 = sp1C8 - temp_s1[1];
-                                var_fs0 = temp_fs0 * temp_fs0;
-                                temp_fv0 = var_fs1 * var_fs1;
-                                var_fs5 = temp_fv0;
-                                if (temp_fv0 < var_fs0) {
+                                var_fs5 = SQ(var_fs1);
+                                if (var_fs5 < sp18C) {
                                     var_fs2 = sp1C0 - temp_s1[3];
-                                    var_fs5 = temp_fv0 + (var_fs2 * var_fs2);
-                                    if (var_fs5 < var_fs0) {
+                                    var_fs5 += SQ(var_fs2);
+                                    if (var_fs5 < sp18C) {
                                         var_fs4 = 0.0f;
-                                        var_s3 = 1;
+                                        spF4 = 1;
                                     }
                                 }
                             }
                         } else {
-                            temp_fs0_2 = temp_s1[0] + sp1CC;
-                            var_fs0 = temp_fs0_2 * temp_fs0_2;
+                            sp18C = temp_s1[0] + sp1CC;
+                            sp18C = SQ(sp18C);
                             if (var_s5 != 0) {
                                 var_fs1 = sp1C8 - temp_s1[1];
-                                temp_fv0 = var_fs1 * var_fs1;
-                                var_fs5 = temp_fv0;
-                                if (temp_fv0 < var_fs0) {
-                                    var_fs4 = temp_fs3 - temp_s1[2];
-                                    var_fs5 = temp_fv0 + (var_fs4 * var_fs4);
-                                    if (var_fs5 < var_fs0) {
+                                var_fs5 = SQ(var_fs1);
+                                if (var_fs5 < sp18C) {
+                                    var_fs4 = sp1C4 - temp_s1[2];
+                                    var_fs5 += SQ(var_fs4);
+                                    if (var_fs5 < sp18C) {
                                         var_fs2 = sp1C0 - temp_s1[3];
-                                        var_fs5 += var_fs2 * var_fs2;
-                                        if (var_fs5 < var_fs0) {
-                                            var_s3 = 1;
+                                        var_fs5 += SQ(var_fs2);
+                                        if (var_fs5 < sp18C) {
+                                            spF4 = 1;
                                         }
                                     }
                                 }
                             } else {
-                                temp_fa0_2 = temp_s1[1];
-                                temp_fv1 = temp_s1[2];
-                                temp_fa1_2 = temp_s1[3];
-                                sp80 = sp1BC;
-                                temp_fv0 = -((sp1BC * sp184) + (sp1B8 * sp180) + (sp1B4 * sp17C) + -((temp_fa1_2 * sp17C) + ((temp_fa0_2 * sp184) + (temp_fv1 * sp180)))) * sp174;
+                                temp_fv0 = -((sp1BC * sp184) + (sp1B8 * sp180) + (sp1B4 * sp17C) + -((temp_s1[3] * sp17C) + ((temp_s1[1] * sp184) + (temp_s1[2] * sp180)))) * sp174;
                                 if (temp_fv0 <= 0.0f) {
-                                    var_fs1 = sp1BC - temp_fa0_2;
-                                    var_fs4 = sp1B8 - temp_fv1;
-                                    var_fs2 = sp1B4 - temp_fa1_2;
+                                    var_fs1 = sp1BC - temp_s1[1];
+                                    var_fs4 = sp1B8 - temp_s1[2];
+                                    var_fs2 = sp1B4 - temp_s1[3];
                                 } else {
                                     var_ft2 = sp1C0;
                                     if (temp_fv0 >= 1.0f) {
-                                        var_fs1 = sp1C8 - temp_fa0_2;
-                                        var_fs4 = temp_fs3 - temp_fv1;
+                                        var_fs1 = sp1C8 - temp_s1[1];
+                                        var_fs4 = sp1C4 - temp_s1[2];
                                     } else {
-                                        var_fs1 = (sp1BC + (temp_fv0 * sp184)) - temp_fa0_2;
-                                        var_fs4 = (sp1B8 + (temp_fv0 * sp180)) - temp_fv1;
+                                        var_fs1 = (sp1BC + (temp_fv0 * sp184)) - temp_s1[1];
+                                        var_fs4 = (sp1B8 + (temp_fv0 * sp180)) - temp_s1[2];
                                         var_ft2 = sp1B4 + (temp_fv0 * sp17C);
                                     }
-                                    var_fs2 = var_ft2 - temp_fa1_2;
+                                    var_fs2 = var_ft2 - temp_s1[3];
                                 }
-                                var_fs5 = (var_fs1 * var_fs1) + (var_fs4 * var_fs4) + (var_fs2 * var_fs2);
-                                if (var_fs5 < var_fs0) {
-                                    var_s3 = 1;
+                                var_fs5 = SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2);
+                                if (var_fs5 < sp18C) {
+                                    spF4 = 1;
                                 }
                             }
                         }
-                        if ((var_s3 != 0) && (var_s4 < 0x40)) {
-                            temp_s0 = (var_s4) + D_800B19A0;
+                        if (spF4 != 0 && var_s4 < 64) {
                             if (arg4 != 0) {
                                 if (var_fs5 > 0.0f) {
-                                    var_fs0 = (var_fs0 - var_fs5) / var_fs0;
-                                    temp_s0->unk14 = var_fs0;
-                                    temp_s0->unk0 = (f32) (var_fs1 * var_fs0);
-                                    temp_s0->unk4 = (f32) (var_fs2 * var_fs0);
+                                    sp18C = (sp18C - var_fs5) / sp18C;
+                                    D_800B19A0[var_s4].unk14 = sp18C;
+                                    D_800B19A0[var_s4].unk0 = var_fs1 * sp18C;
+                                    D_800B19A0[var_s4].unk4 = var_fs2 * sp18C;
                                 }
                             } else {
-                                spE0 = temp_t0;
-                                spDC = temp_t1;
-                                sp16C = var_t2;
-                                spE6 = var_t3;
-                                temp_fv0 = sqrtf((var_fs1 * var_fs1) + (var_fs4 * var_fs4) + (var_fs2 * var_fs2));
-                                var_fs0 = temp_fv0;
-                                if (temp_fv0 > 0.0f) {
-                                    var_fs1 /= temp_fv0;
-                                    var_fs4 /= temp_fv0;
-                                    var_fs2 /= temp_fv0;
+                                sp18C = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
+                                if (sp18C > 0.0f) {
+                                    var_fs1 /= sp18C;
+                                    var_fs4 /= sp18C;
+                                    var_fs2 /= sp18C;
                                 }
-                                temp_s0->unk8 = (f32) (temp_s1[0] * var_fs1);
-                                temp_s0->unkC = (f32) (temp_s1[0] * var_fs4);
-                                temp_s0->unk10 = (f32) (temp_s1[0] * var_fs2);
+                                D_800B19A0[var_s4].unk8 = temp_s1[0] * var_fs1;
+                                D_800B19A0[var_s4].unkC = temp_s1[0] * var_fs4;
+                                D_800B19A0[var_s4].unk10 = temp_s1[0] * var_fs2;
                             }
-                            temp_s0->unk18 = var_s6;
-                            temp_s0->unk19 = var_s2;
+                            D_800B19A0[var_s4].unk18 = i;
+                            D_800B19A0[var_s4].unk19 = j;
                             var_s4 += 1;
                         }
                     } 
@@ -2123,74 +2098,55 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         spB0[4] = 0;
         spB0[3] = 0;
         spB0[2] = 0;
-        for (var_s6 = 0; var_s6 < var_s4; var_s6++) {
-            var_s0 = &D_800B19A0[var_s6];
-            var_s7 = (s32) var_s0->unk18;
-            var_s3 = (s32) var_s0->unk19;
-            temp_a0_2 = sp108[var_s7].unkA;
-            var_v1_4 = temp_a0_2;
-            temp_a1 = sp104[var_s3].unkA;
-            while (var_v1_4) {
-                spB0[4] |= (1 << (var_s7 + (((s32) (var_v1_4 & 0xF000) >> 0xC) & 0xFFFF))) >> 0x1F;
-                spB0[5] |= (var_v1_4 * 0x10);
-                var_v1_4 = (var_v1_4 * 0x10);
+        for (i = 0; i < var_s4; i++) {
+            spF8 = D_800B19A0[i].unk18;
+            spF4 = D_800B19A0[i].unk19;
+            temp_a0 = spheres2[spF8].unkA;
+            temp_a1 = spheres[spF4].unkA;
+            for (var_v1_4 = temp_a0; var_v1_4; var_v1_4 <<= 4) {
+                spB0[4] |= (1 << (spF8 + ((var_v1_4 & 0xF000) >> 0xC))) >> 0x1F;
+                spB0[5] |= (1 << (spF8 + ((var_v1_4 & 0xF000) >> 0xC)));
             }
-            var_v1_4 = temp_a1;
-            while (var_v1_4) {
-                spB0[2] |= (1 << (var_s3 + (((s32) (var_v1_4 & 0xF000) >> 0xC) & 0xFFFF))) >> 0x1F;
-                spB0[3] |= (var_v1_4 * 0x10);
-                var_v1_4 = (var_v1_4 * 0x10);
+            for (var_v1_4 = temp_a1; var_v1_4; var_v1_4 <<= 4) {
+                spB0[2] |= (1 << (spF4 + ((var_v1_4 & 0xF000) >> 0xC))) >> 0x1F;
+                spB0[3] |= (1 << (spF4 + ((var_v1_4 & 0xF000) >> 0xC)));
             }
-            if ((temp_a0_2 == 0) && (temp_a1 == 0)) {
+            if ((temp_a0 == 0) && (temp_a1 == 0)) {
                 if (arg3 != 0) {
-                    temp_v0_11 = var_t2 + (var_s3);
-                    if (var_t3 != 0) {
-                        var_fs3 = (sp170 + (var_s7 ))[2];
-                    } else {
-                        var_fs3 = var_s0->unkC + temp_v0_11[2];
-                    }
-                    spE6 = var_t3;
-                    sp16C = var_t2;
-                    spDC = temp_t1;
-                    spE0 = temp_t0;
-                    func_800261E8(obj2, obj, (s8) spD8->unk_0x5f, (s8) spD8->unk_0x60, (s8) var_s3, var_s0->unk8 + temp_v0_11[1], var_fs3, var_s0->unk10 + temp_v0_11[3]);
+                    var_fs3 = spE6 != 0 ? sp170[spF8 * 4 + 2] : D_800B19A0[i].unkC + sp16C[spF4 * 4 + 2];
+                    func_800261E8(obj2, obj, spD8->unk_0x5f, spD8->unk_0x60, spF4, D_800B19A0[i].unk8 + sp16C[spF4 * 4 + 1], var_fs3, D_800B19A0[i].unk10 + sp16C[spF4 * 4 + 3]);
                 } else if (arg4 != 0) {
-                    temp_fv0 = var_s0->unk14;
-                    if (sp188 < temp_fv0) {
-                        sp188 = temp_fv0;
-                        sp1A8 = var_s0->unk0;
-                        sp1A0 = var_s0->unk4;
+                    if (sp188 < D_800B19A0[i].unk14) {
+                        sp188 = D_800B19A0[i].unk14;
+                        sp1A8 = D_800B19A0[i].unk0;
+                        sp1A0 = D_800B19A0[i].unk4;
                     }
                 }
-            } else if (temp_a0_2 == 0) {
-                spB0[5] |= 1 << var_s7;
-                spB0[4] |= (1 << var_s7) >> 0x1F;
+            } else if (temp_a0 == 0) {
+                spB0[5] |= 1 << spF8;
+                spB0[4] |= (1 << spF8) >> 0x1F;
             } else if (temp_a1 == 0) {
-                spB0[3] |= 1 << var_s3;
-                spB0[2] |= (1 << var_s3) >> 0x1F;
+                spB0[3] |= 1 << spF4;
+                spB0[2] |= (1 << spF4) >> 0x1F;
             }
         }
     } while (var_s4 != 0);
-    sp18C = var_fs0;
-    if ((arg3 != 0) && (temp_t1->unk_0x62 != 0)) {
-        if (temp_t0->unk_0x58 & 0x80) {
-            spDC = temp_t1;
+    if ((arg3 != 0) && (spDC->unk_0x62 != 0)) {
+        if (spE0->unk_0x58 & 0x80) {
             func_800267A4(obj);
         }
-        if (temp_t1->unk_0x58 & 0x80) {
+        if (spDC->unk_0x58 & 0x80) {
             func_800267A4(obj2);
         }
-        return 1U;
+        return 1;
     }
-    var_v0 = 0;
-    if ((arg4 != 0) && (sp188 > 0.0f) && (obj == obj3)) {
-        spDC = temp_t1;
-        func_8002635C(obj2, obj, spD8->unk_0x5d, spD8->unk_0x5e, (s8) var_s3);
-        func_8002635C(obj, obj2, temp_t1->unk_0x5d, temp_t1->unk_0x5e, (s8) var_s7);
+    if (arg4 != 0 && (sp188 > 0.0f) && (obj == obj3)) {
+        func_8002635C(obj2, obj, spD8->unk_0x5d, spD8->unk_0x5e, (s8) spF4);
+        func_8002635C(obj, obj2, spDC->unk_0x5d, spDC->unk_0x5e, (s8) spF8);
         func_800287E4(obj, obj2, -sp1A8, 0.0f, -sp1A0, 0);
-        var_v0 = 1;
+        return 1;
     }
-    return var_v0;
+    return 0;
 }
 #endif
 
@@ -2678,11 +2634,7 @@ s32 func_8002C0C4(Vec3f* arg0, u32 arg1, u32 arg2, f32 arg3, Vec3f* arg4, f32 ar
     return 0;
 }
 
-#if 1
-s32 func_8002C278(Vec3f arg0, Vec3f arg1, f32 arg2, f32 arg3, Vec3f arg4, Vec3f arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 *argA, Vec3f *argB);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C278.s")
-#else
-s32 func_8002C278(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC, f32 argD, f32 argE, f32 argF, f32 arg10, f32 arg11, f32* arg12, f32* arg13) {
+s32 func_8002C278(Vec3f arg0, Vec3f arg1, f32 arg2, f32 arg3, Vec3f arg4, Vec3f arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, f32* argA, Vec3f* argB) {
     Vec3f sp6C;
     Vec3f sp60;
     f32 sp5C;
@@ -2691,33 +2643,31 @@ s32 func_8002C278(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f3
     s32 sp50;
     f32 temp_fv1;
 
-    sp60.x = arg3 - arg0;
-    sp60.y = arg4 - arg1;
-    sp60.z = arg5 - arg2;
-    sp6C.x = argB - arg8;
-    sp6C.y = argC - arg9;
-    sp6C.z = argD - argA;
-    if (arg10 != 0.0f) {
-        temp_fv0 = 1.0f / arg10;
-        temp_fv1 = 1.0f / arg11;
-        sp60.x *= temp_fv0;
-        sp60.y *= temp_fv0;
-        sp60.z *= temp_fv0;
+    sp60.x = arg1.x - arg0.x;
+    sp60.y = arg1.y - arg0.y;
+    sp60.z = arg1.z - arg0.z;
+    sp6C.x = arg5.x - arg4.x;
+    sp6C.y = arg5.y - arg4.y;
+    sp6C.z = arg5.z - arg4.z;
+    if (arg8 != 0.0f) {
+        temp_fv0 = 1.0f / arg8;
+        temp_fv1 = 1.0f / arg9;
+        sp60.x = sp60.x * temp_fv0;
+        sp60.y = sp60.y * temp_fv0;
+        sp60.z = sp60.z * temp_fv0;
         sp6C.x *= temp_fv1;
         sp6C.y *= temp_fv1;
         sp6C.z *= temp_fv1;
     }
-    if (func_8002B910((Vec3f* ) &arg0, (Vec3f* ) &sp60, (Vec3f* ) &arg8, (Vec3f* ) &sp6C, arg6, arg7, argE, argF, arg10, arg11, &sp5C, &sp58, &sp50, arg12, (Vec3f* ) arg13)) {
-        if (sp50) {
+    if (func_8002B910(&arg0, &sp60, &arg4, &sp6C, arg2, arg3, arg6, arg7, arg8, arg9, &sp5C, &sp58, &sp50, argA, argB)) {
+        if (sp50 != 0) {
             return 1;
         }
-
         return 0;
     }
 
     return 0;
 }
-#endif
 
 #ifndef NON_MATCHING
 Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) ;
@@ -2997,7 +2947,7 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
 #endif
 
 
-s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, Unk80030338* arg4, f32 arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
+s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelInstance_0x14* arg4, Model *arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
     Vec3f sp104;
     Vec3f spF8;
     s32 var_s3;
@@ -3114,7 +3064,7 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, Unk8003
     return 1;
 }
 
-s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, Unk80030338* arg4, f32 arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
+s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelInstance_0x14* arg4, Model *arg5, Unk80030A24* arg6, f32 arg7, f32 arg8, Vec3f* arg9) {
     Vec3f sp104;
     Vec3f spF8;
     s32 pad_spF0;
@@ -3292,15 +3242,231 @@ s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk80
     return 1;
 }
 
-// objects might be Unk8002F24C
-s32 func_8002DFB8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, void **arg4, void *arg5, Object *arg6, Object *arg7, f32 *arg8);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002DFB8.s")
+s32 func_8002DFB8(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32* arg6) {
+    Vec3f* sp11C;
+    Unk80030A24* var_s0;
+    Vec3f* temp_s2;
+    Vec3f sp108;
+    s32 pad[3];
+    f32 spF8;
+    Vec3f* temp_s1;
+    f32 spF0;
+    f32 temp_fa0;
+    f32 temp_fs1;
+    s32 var_s3;
+    f32* spE0;
+    f32 var_fa1;
+    s32 var_fp;
+    f32 spD4;
+    f32 temp_ft4;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 spC4;
+    f32 spC0;
+    f32 spBC;
+    s32 temp_s5;
+    f32 zero_f;
+    s32 pad2[2];
 
-// objects might be Unk8002F24C
-s32 func_8002E3D0(s32 arg0, s32 arg1, f32 arg2, f32 arg3, void **arg4, void *arg5, Object *arg6, Object *arg7, f32 arg8, f32 arg9, f32 *argA);
+    var_fp = 0;
+    if (arg2 == NULL) {
+        return 0;
+    }
+    var_s0 = arg4;
+    sp11C = arg2->unk0;
+    spE0 = arg2->unk4;
+    *arg5 = var_s0;
+    zero_f = 0.0f;
+    *arg6 = zero_f;
+    spBC = sqrtf(SQ(sp11C->x - arg0.x) + SQ(sp11C->y - arg0.y) + SQ(sp11C->z - arg0.z)) - arg1;
+    spF0 = 2.0f * arg0.x;
+    spF8 = 2.0f * arg0.z;
+    var_s3 = model->jointCount - 1;
+    while (var_s3) {
+        if (spBC < arg2->unk10[var_s3]) {
+            temp_s5 = model->joints[var_s3].parentJointID;
+            temp_fv1 = spE0[var_s3];
+            temp_fa0 = spE0[temp_s5];
+            arg2->unk18[var_s3] = 1;
+            arg2->unk18[temp_s5] = 1;
+            temp_s1 = &sp11C[var_s3];
+            temp_s2 = &sp11C[temp_s5];
+            temp_ft4 = (temp_s2->x + temp_s1->x) - spF0;
+            temp_fs1 = (temp_s2->z + temp_s1->z) - spF8;
+            if (temp_fa0 < temp_fv1) {
+                var_fa1 = 2.0f * temp_fv1;
+            } else {
+                var_fa1 = 2.0f * temp_fa0;
+            }
+            temp_fv0 = arg2->unkC[var_s3] + var_fa1 + (2.0f * arg1);
+            temp_fv0 *= temp_fv0;
+            if ((SQ(temp_ft4) + SQ(zero_f) + SQ(temp_fs1)) < temp_fv0) {
+                sp108.x = temp_s2->x - temp_s1->x;
+                sp108.y = temp_s2->y - temp_s1->y;
+                sp108.z = temp_s2->z - temp_s1->z;
+                temp_fv0 = 1.0f / arg2->unkC[var_s3];
+                sp108.x *= temp_fv0;
+                sp108.y *= temp_fv0;
+                sp108.z *= temp_fv0;
+                if (func_8002BD04(&arg0, arg1, temp_s1, &sp108, temp_s2, temp_fv1, temp_fa0, arg2->unkC[var_s3], &spD4, &spC4, &spC0) != 0) {
+                    arg2->unk18[var_s3] = 1;
+                    arg2->unk18[temp_s5] = 1;
+                    var_s0->unk14.y = (sqrtf(spC4) - spC0) + arg1;
+                    if (var_s0->unk14.y > 0.0f) {
+                        var_fa1 = var_s0->unk14.y;
+                    } else {
+                        var_fa1 = -var_s0->unk14.y;
+                    }
+                    var_s0->unk24 = 1 / var_fa1;
+                    *arg6 += var_s0->unk24;
+                    if (var_s0->unk14.y < (*arg5)->unk14.y) {
+                        *arg5 = var_s0;
+                    }
+                    var_s0->unk0 = temp_s1;
+                    var_s0->unk4 = temp_s2;
+                    var_s0->unk14.x = spD4;
+                    var_s0->unk20 = spC0;
+                    var_s0->unk14.z = sqrtf(spC4);
+                    var_s0->unk8.x = sp108.x;
+                    var_s0->unk8.y = sp108.y;
+                    var_s0->unk8.z = sp108.z;
+                    var_s0->unk2C = temp_s5;
+                    var_s0->unk28 = var_s3;
+                    if (var_fp < 20) {
+                        var_fp += 1;
+                        var_s0 += 1;
+                    }
+                }
+            }
+        }
+        var_s3 -= 1;
+    }
+    var_s0->unk28 = -1;
+    return (s32) var_s0 != (s32) arg4;
+}
+
+#ifndef NON_MATCHING
+s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002E3D0.s")
+#else
+// https://decomp.me/scratch/vFxGY
+s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8) {
+    s32 pad[3];
+    Vec3f sp110;
+    f32 pad2;
+    Vec3f* temp_s1;
+    Vec3f* temp_s2;
+    f32 sp100;
+    Vec3f* temp_s7;
+    f32 spF8;
+    Unk80030A24* var_s0;
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32* spE8;
+    f32 temp_fs0;
+    f32 temp_fs1;
+    f32 spDC;
+    f32 temp_ft4;
+    f32 temp_ft5;
+    f32 temp_fv0;
+    f32 spCC;
+    f32 spC8;
+    f32 spC4;
+    f32 var_fv1;
+    s32 var_fp;
+    s32 var_s3;
+    s32 temp_s5;
+    f32 zero_f;
 
-void func_8002E84C(Unk8002F24C* arg0, Unk8002F24C* arg1) {
+    zero_f = 0.0f;
+    var_fp = 0;
+    if (arg2 == NULL) {
+        return 0;
+    }
+    temp_s7 = arg2->unk0;
+    if (temp_s7 == NULL) {
+        return 0;
+    }
+    var_s0 = arg4;
+    spE8 = arg2->unk4;
+    *arg5 = var_s0;
+    *arg8 = zero_f;
+    spC4 = sqrtf(SQ(temp_s7->x - arg0.x) + SQ(zero_f) + SQ(temp_s7->z - arg0.z)) - arg1;
+    spF8 = 2.0f * arg0.x;
+    sp100 = 2.0f * arg0.z;
+    var_s3 = model->jointCount - 1;
+    while (var_s3) {
+        if (spC4 < arg2->unk10[var_s3]) {
+            temp_s5 = model->joints[var_s3].parentJointID;
+            temp_s1 = &temp_s7[var_s3];
+            temp_s2 = &temp_s7[temp_s5];
+            temp_fa0 = spE8[var_s3];
+            temp_fa1 = spE8[temp_s5];
+            if ((!(arg6 < (temp_s1->y - temp_fa0))) || !(arg6 < (temp_s2->y - temp_fa1))) {
+                if (!((temp_s1->y + temp_fa0) < arg7) || !((temp_s2->y + temp_fa1) < arg7)) {
+                    temp_ft4 = (temp_s2->x + temp_s1->x) - spF8;
+                    temp_ft5 = (temp_s2->z + temp_s1->z) - sp100;
+                    if (temp_fa1 < temp_fa0) {
+                        var_fv1 = 2.0f * temp_fa0;
+                    } else {
+                        var_fv1 = 2.0f * temp_fa1;
+                    }
+                    temp_fv0 = arg2->unkC[var_s3] + var_fv1 + (2.0f * arg1);
+                    temp_fv0 *= temp_fv0;
+                    if ((SQ(temp_ft4) + SQ(zero_f) + SQ(temp_ft5)) < (temp_fv0)) {
+                        sp110.x = temp_s2->x - temp_s1->x;
+                        sp110.y = temp_s2->y - temp_s1->y;
+                        sp110.z = temp_s2->z - temp_s1->z;
+                        var_fv1 = arg2->unkC[var_s3];
+                        if (var_fv1 != 0.0f) {
+                            temp_fv0 = 1.0f / var_fv1;
+                            sp110.x *= temp_fv0;
+                            sp110.y *= temp_fv0;
+                            sp110.z *= temp_fv0;
+                            var_fv1 = arg2->unkC[var_s3];
+                        }
+                        if (func_8002BF0C(&arg0, arg1, temp_s1, &sp110, temp_s2, temp_fa0, temp_fa1, var_fv1, &spDC, &spCC, &spC8) != 0) {
+                            arg2->unk18[var_s3] = 1;
+                            arg2->unk18[temp_s5] = 1;
+                            var_s0->unk14.y = (sqrtf(spCC) - spC8) + arg1;
+                            temp_fa0 = var_s0->unk14.y;
+                            if (temp_fa0 > 0.0f) {
+                                var_fv1 = temp_fa0;
+                            } else {
+                                var_fv1 = -temp_fa0;
+                            }
+                            var_s0->unk24 = 1.0f / var_fv1;
+                            *arg8 += var_s0->unk24;
+                            if (var_s0->unk14.y < (*arg5)->unk14.y) {
+                                *arg5 = var_s0;
+                            }
+                            var_s0->unk0 = temp_s1;
+                            var_s0->unk4 = temp_s2;
+                            var_s0->unk14.x = spDC;
+                            var_s0->unk20 = spC8;
+                            var_s0->unk14.z = sqrtf(spCC);
+                            var_s0->unk8.x = sp110.x;
+                            var_s0->unk8.y = sp110.y;
+                            var_s0->unk8.z = sp110.z;
+                            var_s0->unk2C = temp_s5;
+                            var_s0->unk28 = var_s3;
+                            if (var_fp < 20) {
+                                var_s0 += 1;
+                                var_fp += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        var_s3 -= 1;
+    }
+    var_s0->unk28 = -1;
+    return (s32) var_s0 != (s32) arg4;
+}
+#endif
+
+void func_8002E84C(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1) {
     arg0->unk18.x = arg1->unk18.x;
     arg0->unk18.y = arg1->unk18.y;
     arg0->unk18.z = arg1->unk18.z;
@@ -3320,7 +3486,7 @@ s32 func_8002E88C(Vec3f* arg0, Vec3f* arg1) {
     return arg0->z < arg1->z;
 }
 
-s32 func_8002E904(Unk8002F24C* arg0, Unk8002F24C* arg1) {
+s32 func_8002E904(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1) {
     if (func_8002E88C(&arg0->unk18, &arg1->unk24) || func_8002E88C(&arg1->unk18, &arg0->unk24)) {
         return 0;
     }
@@ -3366,7 +3532,7 @@ s32 func_8002EA0C(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f3
 }
 
 // Return type has to be int
-int func_8002EAD0(Unk8002F24C* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, f32 arg4) {
+int func_8002EAD0(ModelInstance_0x14_0x14* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, f32 arg4) {
     return !func_8002E964(arg1->x, arg3, arg2->x, arg4, arg0->unk18.x, arg0->unk24.x) &&
         !func_8002E964(arg1->y, arg3, arg2->y, arg4, arg0->unk18.y, arg0->unk24.y) &&
         !func_8002E964(arg1->z, arg3, arg2->z, arg4, arg0->unk18.z, arg0->unk24.z);
@@ -3428,7 +3594,7 @@ s32 func_8002EE38(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, Vec3f* arg4, Vec
     return 1;
 }
 
-void func_8002F04C(Unk8002F24C* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, f32 arg4) {
+void func_8002F04C(ModelInstance_0x14_0x14* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, f32 arg4) {
     if ((arg2->x + arg4) < (arg1->x + arg3)) {
         arg0->unk18.x = arg1->x + arg3;
     } else {
@@ -3466,7 +3632,7 @@ void func_8002F04C(Unk8002F24C* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, f32 ar
     }
 }
 
-void func_8002F164(Unk8002F24C* arg0, Unk8002F24C* arg1) {
+void func_8002F164(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1) {
     if (arg1->unk18.x < arg0->unk18.x) {
         arg1->unk18.x = arg0->unk18.x;
     }
@@ -3492,11 +3658,11 @@ void func_8002F164(Unk8002F24C* arg0, Unk8002F24C* arg1) {
     }
 }
 
-f32 func_8002F214(Unk8002F24C* arg0) {
+f32 func_8002F214(ModelInstance_0x14_0x14* arg0) {
     return (arg0->unk18.x - arg0->unk24.x) * (arg0->unk18.y - arg0->unk24.y) * (arg0->unk18.z - arg0->unk24.z);
 }
 
-void func_8002F24C(Unk8002F24C* arg0, Unk8002F24C* arg1, s32* arg2) {
+void func_8002F24C(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1, s32* arg2) {
     s32 i;
 
     i = 0;
@@ -3511,7 +3677,7 @@ void func_8002F24C(Unk8002F24C* arg0, Unk8002F24C* arg1, s32* arg2) {
     arg2[0] = i;
 }
 
-s32 func_8002F2D8(Vec3f* arg0, f32 arg1, Unk8002F24C* arg2) {
+s32 func_8002F2D8(Vec3f* arg0, f32 arg1, ModelInstance_0x14_0x14* arg2) {
     f32 var_fv0;
 
     var_fv0 = 0.0f;
@@ -3536,7 +3702,7 @@ s32 func_8002F2D8(Vec3f* arg0, f32 arg1, Unk8002F24C* arg2) {
     return var_fv0 <= arg1;
 }
 
-s32 func_8002F3DC(Vec3f* arg0, f32 arg1, Unk8002F24C* arg2) {
+s32 func_8002F3DC(Vec3f* arg0, f32 arg1, ModelInstance_0x14_0x14* arg2) {
     f32 var_fv0;
 
     var_fv0 = 0.0f;
@@ -3555,15 +3721,15 @@ s32 func_8002F3DC(Vec3f* arg0, f32 arg1, Unk8002F24C* arg2) {
     return var_fv0 <= arg1;
 }
 
-void func_8002F498(Vec3f* arg0, f32** arg1, Unk8002F498* arg2, Unk8002F24C* arg3, Unk8002F24C* arg4) {
+void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4) {
     s32 sp1EC;
-    Unk8002F24C* var_s2;
+    ModelInstance_0x14_0x14* var_s2;
     s32 var_a2;
     s32 sp1E0;
-    Unk8002F24C *sp50[100];
+    ModelInstance_0x14_0x14 *sp50[100];
     s32 var_a3;
 
-    bzero(sp50, arg2->unk6F * 4);
+    bzero(sp50, model->jointCount * 4);
     arg4->unk18.x = arg0->x;
     arg4->unk18.y = arg0->y;
     arg4->unk18.z = arg0->z;
@@ -3572,8 +3738,8 @@ void func_8002F498(Vec3f* arg0, f32** arg1, Unk8002F498* arg2, Unk8002F24C* arg3
     arg4->unk24.z = arg0->z;
     sp1E0 = -1;
     sp1EC = 0;
-    while (sp1EC < arg2->unk6F) {
-        if (arg2->unk54[sp1EC] != 0.0f) {
+    while (sp1EC < model->jointCount) {
+        if (model->collisionB[sp1EC] != 0.0f) {
             arg3->unk0[0] = sp1EC;
             var_a2 = sp1EC;
             arg3->unk18.x = arg0[var_a2].x;
@@ -3582,40 +3748,38 @@ void func_8002F498(Vec3f* arg0, f32** arg1, Unk8002F498* arg2, Unk8002F24C* arg3
             arg3->unk24.x = arg0[var_a2].x;
             arg3->unk24.y = arg0[var_a2].y;
             arg3->unk24.z = arg0[var_a2].z;
-            arg3->unk18.x += arg1[1][var_a2];
-            arg3->unk18.y += arg1[1][var_a2];
-            arg3->unk18.z += arg1[1][var_a2];
-            arg3->unk24.x -= arg1[1][var_a2];
-            arg3->unk24.y -= arg1[1][var_a2];
-            arg3->unk24.z -= arg1[1][var_a2];
+            arg3->unk18.x += arg1->unk4[var_a2];
+            arg3->unk18.y += arg1->unk4[var_a2];
+            arg3->unk18.z += arg1->unk4[var_a2];
+            arg3->unk24.x -= arg1->unk4[var_a2];
+            arg3->unk24.y -= arg1->unk4[var_a2];
+            arg3->unk24.z -= arg1->unk4[var_a2];
             sp50[var_a2] = arg3;
             var_a3 = 0;
             var_s2 = NULL;
-            if (sp1E0 < arg2->unk20[var_a2].unk0) {
-                do {
-                    var_a2 = arg2->unk20[var_a2].unk0;
-                    var_s2 = sp50[var_a2];
-                    sp50[var_a2] = arg3;
-                    var_a3++;
-                    if (arg3->unk18.x < (arg0[var_a2].x + arg1[1][var_a2])) {
-                        arg3->unk18.x = arg0[var_a2].x + arg1[1][var_a2];
-                    }
-                    if (arg3->unk18.y < (arg0[var_a2].y + arg1[1][var_a2])) {
-                        arg3->unk18.y = arg0[var_a2].y + arg1[1][var_a2];
-                    }
-                    if (arg3->unk18.z < (arg0[var_a2].z + arg1[1][var_a2])) {
-                        arg3->unk18.z = arg0[var_a2].z + arg1[1][var_a2];
-                    }
-                    if (arg0[var_a2].x < (arg1[1][var_a2] + arg3->unk24.x)) {
-                        arg3->unk24.x = arg0[var_a2].x - arg1[1][var_a2];
-                    }
-                    if (arg0[var_a2].y < (arg1[1][var_a2] + arg3->unk24.y)) {
-                        arg3->unk24.y = arg0[var_a2].y - arg1[1][var_a2];
-                    }
-                    if (arg0[var_a2].z < (arg1[1][var_a2] + arg3->unk24.z)) {
-                        arg3->unk24.z = arg0[var_a2].z - arg1[1][var_a2];
-                    }
-                } while(sp1E0 < arg2->unk20[var_a2].unk0 && var_s2 == NULL);
+            while(sp1E0 < model->joints[var_a2].parentJointID && var_s2 == NULL) {
+                var_a2 = model->joints[var_a2].parentJointID;
+                var_s2 = sp50[var_a2];
+                sp50[var_a2] = arg3;
+                var_a3++;
+                if (arg3->unk18.x < (arg0[var_a2].x + arg1->unk4[var_a2])) {
+                    arg3->unk18.x = arg0[var_a2].x + arg1->unk4[var_a2];
+                }
+                if (arg3->unk18.y < (arg0[var_a2].y + arg1->unk4[var_a2])) {
+                    arg3->unk18.y = arg0[var_a2].y + arg1->unk4[var_a2];
+                }
+                if (arg3->unk18.z < (arg0[var_a2].z + arg1->unk4[var_a2])) {
+                    arg3->unk18.z = arg0[var_a2].z + arg1->unk4[var_a2];
+                }
+                if (arg0[var_a2].x < (arg1->unk4[var_a2] + arg3->unk24.x)) {
+                    arg3->unk24.x = arg0[var_a2].x - arg1->unk4[var_a2];
+                }
+                if (arg0[var_a2].y < (arg1->unk4[var_a2] + arg3->unk24.y)) {
+                    arg3->unk24.y = arg0[var_a2].y - arg1->unk4[var_a2];
+                }
+                if (arg0[var_a2].z < (arg1->unk4[var_a2] + arg3->unk24.z)) {
+                    arg3->unk24.z = arg0[var_a2].z - arg1->unk4[var_a2];
+                }
             }
             if (arg4->unk18.x < arg3->unk18.x) {
                 arg4->unk18.x = arg3->unk18.x;
@@ -3640,14 +3804,14 @@ void func_8002F498(Vec3f* arg0, f32** arg1, Unk8002F498* arg2, Unk8002F24C* arg3
             }
             if (var_a3 < 3 && var_s2 != NULL && var_s2->unk30 < 3) {
                 func_8002F164(arg3, var_s2);
-                var_s2->unkC[var_s2->unk30] = arg2->unk20[var_a2].unk0;
+                var_s2->unkC[var_s2->unk30] = model->joints[var_a2].parentJointID;
                 var_s2->unk0[var_s2->unk30] = sp1EC;
                 var_s2->unk30++;
             } else {
                 if ((var_s2 != NULL) && (var_s2->unk30 >= 3)) {
                     sp50[var_a2] = arg3;
                 }
-                arg3->unkC[0] = arg2->unk20[var_a2].unk0;
+                arg3->unkC[0] = model->joints[var_a2].parentJointID;
                 arg3->unk30 = 1;
                 arg3++;
                 if (var_a2 == 0) {
@@ -3661,11 +3825,11 @@ void func_8002F498(Vec3f* arg0, f32** arg1, Unk8002F498* arg2, Unk8002F24C* arg3
 }
 
 #if 1
-s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Unk8002F24C* arg4, s32* arg5, s32* arg6, f32 **arg7, Unk8002F498* arg8, Vec3f* arg9, Unk8002F24C* argA, Unk8002F24C* argB, f32* argC, f32* argD);
+s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002F998.s")
 #else
 // https://decomp.me/scratch/q2iY8
-s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Unk8002F24C* arg4, s32* arg5, s32* arg6, f32 **arg7, Unk8002F498* arg8, Vec3f* arg9, Unk8002F24C* argA, Unk8002F24C* argB, f32* argC, f32* argD) {
+s32 func_8002F998(ModelInstance_0x14 *arg0, Unk8002F498* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Unk8002F498* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, f32* argC, f32* argD) {
     Vec3f* sp14C;
     Vec3f* sp148;
     s32 sp13C;
@@ -3674,8 +3838,8 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
     s32 sp128;
     s32 sp124;
     s32 sp118;
-    Unk8002F24C* sp114;
-    Unk8002F24C* sp110;
+    ModelInstance_0x14_0x14* sp114;
+    ModelInstance_0x14_0x14* sp110;
     f32 spF4;
     Vec3f spE4;
     s32 spD0;
@@ -3684,7 +3848,7 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
     s32* spC4;
     s32* spBC;
     s32* spB8;
-    Unk8002F24C* temp_a0;
+    ModelInstance_0x14_0x14* temp_a0;
     Unk8002F498_20* var_a2;
     Unk8002F498_20* var_v0_4;
     Vec3f* temp_s0;
@@ -3784,7 +3948,7 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
                     sp130 = temp_v0_2;
                     var_s2 = var_a2[temp_v0_2].unk0;
                     var_a0 = spCC[3];
-                    var_fs3 = *(arg0[1] + (temp_v0_2 * 4));
+                    var_fs3 = arg0->unk4[temp_v0_2];
                     var_a1 = (temp_v0_2 * 0xC) + arg2;
                     if (var_s2 != var_a0) {
                         sp138 = (s32) var_s2;
@@ -3793,7 +3957,7 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
                             sp148 = temp_v0_3;
                             temp_fv1 = var_a1->x;
                             temp_fv0_2 = argA->unk18.x;
-                            temp_fs2 = *(arg0[1] + (var_s2 * 4));
+                            temp_fs2 = arg0->unk4[var_s2];
                             if ((!(temp_fv0_2 < (temp_fv1 - var_fs3)) || !(temp_fv0_2 < (temp_v0_3->x - temp_fs2))) && ((temp_fv0_3 = argA->unk24.x, !((temp_fv1 + var_fs3) < temp_fv0_3)) || !((temp_v0_3->x + temp_fs2) < temp_fv0_3)) && ((temp_fv1_2 = var_a1->y, temp_fv0_4 = argA->unk18.y, !(temp_fv0_4 < (temp_fv1_2 - var_fs3))) || !(temp_fv0_4 < (temp_v0_3->y - temp_fs2))) && ((temp_fv0_5 = argA->unk24.y, !((temp_fv1_2 + var_fs3) < temp_fv0_5)) || !((temp_v0_3->y + temp_fs2) < temp_fv0_5)) && ((temp_fv1_3 = var_a1->z, temp_fv0_6 = argA->unk18.z, !(temp_fv0_6 < (temp_fv1_3 - var_fs3))) || !(temp_fv0_6 < (temp_v0_3->z - temp_fs2)))) {
                                 temp_fv0_7 = argA->unk24.z;
                                 sp14C = var_a1;
@@ -3812,12 +3976,12 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
                                     var_s1 = &arg9[temp_s5];
                                     var_s2_2 = var_v0_4[temp_s5].unk0;
                                     var_s4 = temp_s5;
-                                    var_fs0 = *(arg7[1] + (temp_s5 * 4));
+                                    var_fs0 = arg7->unk4[temp_s5];
                                     var_s5 = var_s2_2;
                                     if (var_s2_2 != spC4[3]) {
                                         temp_s6 = (sp138 * 0xC) + arg2;
                                         do {
-                                            temp_fs1 = *(arg7[1] + (var_s2_2 * 4));
+                                            temp_fs1 = arg7->unk4[var_s2_2];
                                             temp_s0 = &arg9[var_s2_2];
                                             if (temp_fs1 <= var_fs0) {
                                                 var_fv1 = 0.0f;
@@ -3829,10 +3993,10 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
                                                 sp118 = var_t1;
                                                 var_t1 = sp118;
                                                 if (func_8002C278(/* subroutine_arg0 */ NULL, /* subroutine_arg1 */ NULL, /* subroutine_arg2 */ NULL, /* subroutine_arg3 */ NULL, temp_s6->y, temp_s6->z, var_fs3, temp_fs2, var_s1->x, var_s1->y, var_s1->z, temp_s0->x, temp_s0->y, temp_s0->z, var_fs0, temp_fs1, (Object *)(arg0[3] + (sp130 * 4)), *(arg7[3] + (var_s4 * 4)), &spF4, &spE4) != 0) {
-                                                    *((s8*)arg0[6] + sp138) = 1;
-                                                    *((s8*)arg0[6] + sp130) = 1;
-                                                    *((s8*)arg7[6] + var_s2_2) = 1;
-                                                    *((s8*)arg7[6] + var_s4) = 1;
+                                                    arg0->unk18[sp138] = 1;
+                                                    arg0->unk18[sp130] = 1;
+                                                    arg7->unk18[var_s2_2] = 1;
+                                                    arg7->unk18[var_s4] = 1;
                                                     var_s3[2] = spE4.x;
                                                     var_s3[3] = spE4.y;
                                                     var_s3[4] = spE4.z;
@@ -3904,7 +4068,7 @@ s32 func_8002F998(f32 **arg0, Unk8002F498* arg1, s32 arg2, Unk8002F24C* arg3, Un
 }
 #endif
 
-void func_800302B4(u8* arg0, u8 arg1, Unk8002F24C* arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6) {
+void func_800302B4(u8* arg0, u8 arg1, ModelInstance_0x14_0x14* arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6) {
     if (arg0[0] & arg1) {
         return;
     }
@@ -3914,7 +4078,7 @@ void func_800302B4(u8* arg0, u8 arg1, Unk8002F24C* arg2, Vec3f* arg3, Vec3f* arg
     arg0[0] |= arg1;
 }
 
-void func_80030338(Unk80030338* arg0, Unk8002F498* arg1, Vec3f *arg2, Unk8002F24C* arg3, Unk8002F24C* arg4, Vec3f* arg6, Vec3f *arg7, f32 arg8) {
+void func_80030338(ModelInstance_0x14* arg0, Unk8002F498* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, Vec3f* arg6, Vec3f *arg7, f32 arg8) {
     Vec3f* var_s2;
     f32 temp_fs0;
     Vec3f sp1BC;
@@ -3924,7 +4088,7 @@ void func_80030338(Unk80030338* arg0, Unk8002F498* arg1, Vec3f *arg2, Unk8002F24
     f32 var_fs1;
     f32 var_fv0;
     s32 temp_a0;
-    Unk8002F24C* sp1A0;
+    ModelInstance_0x14_0x14* sp1A0;
     s32 spD8[50];
     s32 temp_var_s0;
     s32 var_s6;
@@ -4052,7 +4216,7 @@ void func_80030994(ModelInstance* modelInstance, f32 arg1, f32 arg2) {
     }
 }
 
-void func_80030A24(s32 arg0, s32 arg1, Unk80030A24* arg2, f32 arg3, s32 arg4, Vec3f* arg5) {
+void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 arg4, Vec3f* arg5) {
     f32 temp_fv0;
 
     arg5->x = 0.0f;
