@@ -11,7 +11,12 @@ def stringify_instruction(i: DLLInst, function: DLLFunction) -> "tuple[str, str 
     elif i.is_branch:
         imm_override = ".L{:X}".format(i.i.getBranchVramGeneric())
     
-    return i.i.disassemble(imm_override), label
+    if i.is_branch_delay_slot:
+        inst_str = f" {i.i.disassemble(imm_override, extraLJust=-1)}"
+    else:
+        inst_str = i.i.disassemble(imm_override)
+        
+    return inst_str, label
 
 def __reloc_to_syntax(reloc: DLLInstRelocation):
     match reloc.type:

@@ -56,32 +56,34 @@ def dump_relocation_table(dll: DLL):
         print("Global offset table:")
         table = dll.reloc_table
         got_i = 0
-        for offset in table.global_offset_table:
+        for i, offset in enumerate(table.global_offset_table):
             if got_i == 0:
-                print(f"  {hex(offset).ljust(12)}(.text)")
+                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.text)")
             elif got_i == 1:
-                print(f"  {hex(offset).ljust(12)}(.rodata)")
+                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.rodata)")
             elif got_i == 2:
-                print(f"  {hex(offset).ljust(12)}(.data)")
+                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.data)")
             elif got_i == 3:
-                print(f"  {hex(offset).ljust(12)}(.bss)")
+                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.bss)")
             else:
-                print(f"  {hex(offset)}")
+                print(f"{str(i)+":":<3} {hex(offset)}")
             got_i += 1
         
         if len(table.global_offset_table) == 0:
             print("  (none)")
         
+        print()
         print("$gp relocations:")
-        for offset in table.gp_relocations:
-            print(f"  {hex(offset)}")
+        for i, offset in enumerate(table.gp_relocations):
+            print(f"{str(i)+":":<3} {hex(offset)}")
 
         if len(table.gp_relocations) == 0:
             print("  (none)")
         
+        print()
         print("DATA relocations:")
-        for offset in table.data_relocations:
-            print(f"  {hex(offset)}")
+        for i, offset in enumerate(table.data_relocations):
+            print(f"{str(i)+":":<3} {hex(offset)}")
 
         if len(table.data_relocations) == 0:
             print("  (none)")

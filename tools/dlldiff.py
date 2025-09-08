@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-from genericpath import isdir
-import glob
 import hashlib
 import os
 from pathlib import Path

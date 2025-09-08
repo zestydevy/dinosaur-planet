@@ -97,6 +97,9 @@ class DLLSplitter:
                 if self.verbose:
                     print("[{}] Parsing...".format(number))
                 start = timer()
+
+                # Get DLL .bss size
+                bss_size = tab.entries[number - 1].bss_size
                 
                 # Parse DLL header
                 data = bytearray(dll_file.read())
@@ -104,10 +107,7 @@ class DLLSplitter:
                 
                 # Parse functions
                 dll_symbols = DLLSymbols(dll, number, known_symbols)
-                dll_functions = get_all_dll_functions(data, dll, dll_symbols, analyze=True)
-
-                # Get DLL .bss size
-                bss_size = tab.entries[number - 1].bss_size
+                dll_functions = get_all_dll_functions(data, dll, dll_symbols, analyze=True, bss_size=bss_size)
                 
                 end = timer()
                 if self.verbose:

@@ -91,7 +91,8 @@ class DLLFunction:
 def get_all_dll_functions(dll_data: bytes, 
                           dll: DLL,
                           symbols: DLLSymbols,
-                          analyze: bool = False):
+                          analyze: bool = False,
+                          bss_size: int | None=None):
     """Locates all functions in the DLL."""
     header = dll.header
     
@@ -230,7 +231,7 @@ def get_all_dll_functions(dll_data: bytes,
     # Run full analysis for each function if requested
     if analyze:
         for func in funcs:
-            analyze_dll_function(func, dll, dll_data, symbols)
+            analyze_dll_function(func, dll, dll_data, symbols, bss_size)
 
     return funcs
 
@@ -252,9 +253,12 @@ __SAVED_REGISTERS = set([
 def analyze_dll_function(func: DLLFunction,
                          dll: DLL,
                          dll_data: bytes,
-                         symbols: DLLSymbols):
+                         symbols: DLLSymbols,
+                         bss_size: int | None=None):
     """Fully analyzes an individual DLL function."""
     insts = func.insts
+
+    data_size = dll.get_data_size()
 
     start_idx = 0
 
@@ -417,34 +421,42 @@ def analyze_dll_function(func: DLLFunction,
                                 sym_offset = addend
                             # Add local ref if possible
                             misalignment = 0
+                            ref_inside_section = True # A ref may be the end of the section, which we don't want a symbol for
                             if section == 1:
                                 local_rodata_refs.add(sym_offset)
                                 __infer_ref_info(local_rodata_ref_info, sym_offset, i)
                             elif section == 2:
                                 # .data symbols will always be 4-byte aligned
-                                if sym_offset % 4 == 0:
-                                    local_data_refs.add(sym_offset)
-                                    __infer_ref_info(local_data_ref_info, sym_offset, i)
+                                if sym_offset < data_size:
+                                    if sym_offset % 4 == 0:
+                                        local_data_refs.add(sym_offset)
+                                        __infer_ref_info(local_data_ref_info, sym_offset, i)
+                                    else:
+                                        misalignment = sym_offset % 4
+                                        sym_offset -= misalignment
+                                        local_data_refs.add(sym_offset)
+                                        __default_ref_info(local_data_ref_info, sym_offset)
                                 else:
-                                    misalignment = sym_offset % 4
-                                    sym_offset -= misalignment
-                                    local_data_refs.add(sym_offset)
-                                    __default_ref_info(local_data_ref_info, sym_offset)
+                                    ref_inside_section = False
                             elif section == 3:
-                                local_bss_refs.add(sym_offset)
-                                __infer_ref_info(local_bss_ref_info, sym_offset, i)
+                                if bss_size == None or sym_offset < bss_size:
+                                    local_bss_refs.add(sym_offset)
+                                    __infer_ref_info(local_bss_ref_info, sym_offset, i)
+                                else:
+                                    ref_inside_section = False
                             # Add relocations
-                            (sym_name, offset) = symbols.get_local_or_encapsulating(section, sym_offset)
-                            base_inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.GOT16,
-                                symbol=sym_name,
-                                offset=0
-                            )
-                            inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.LO16,
-                                symbol=sym_name,
-                                offset=offset + misalignment
-                            )
+                            if ref_inside_section:
+                                (sym_name, offset) = symbols.get_local_or_encapsulating(section, sym_offset)
+                                base_inst.relocation = DLLInstRelocation(
+                                    type=DLLInstRelocationType.GOT16,
+                                    symbol=sym_name,
+                                    offset=0
+                                )
+                                inst.relocation = DLLInstRelocation(
+                                    type=DLLInstRelocationType.LO16,
+                                    symbol=sym_name,
+                                    offset=offset + misalignment
+                                )
                         else:
                             # Extern symbol lookup, %got
                             base_inst.relocation = DLLInstRelocation(

@@ -77,7 +77,7 @@ class DinoCommandRunner:
 
     def clean_rebuild(self):
         self.clean()
-        self.extract(use_cache=False)
+        self.extract(use_cache=False, disassemble_all=False)
         self.build(configure=False, force=False, skip_expected=False, no_verify=False, target=None)
 
     def update_submodules(self):
@@ -323,7 +323,7 @@ class DinoCommandRunner:
         print()
         self.build_tools()
         print()
-        self.extract(use_cache=False)
+        self.extract(use_cache=False, disassemble_all=False)
         print()
         print(f"Done! Run '{self.__get_invoked_as()} build' to build the ROM.")
 
