@@ -75,7 +75,7 @@ The root of the repository and the `tools` directory contain many scripts and pr
 - `dino.py` - A general script for common tasks such as extracting and building the ROM as well as diffing.
 - `tools/asm_differ` - Diffs assembly between the base and re-built ROM. The project configuration for asm differ can be found in `diff_settings.py` in the repository root.
 - `tools/asm_processor` - Processes `GLOBAL_ASM` pragmas when compiling C code by patching in the included assembly into the resulting object file.
-- `tools/ido_recomp` - Contains recompiled IDO executables to run on a modern system.
+- `tools/ido_static_recomp` - Contains recompiled IDO executables to run on a modern system.
 - `tools/configure.py` - Configures the Ninja build script file (`build.ninja`) for the project.
 - `tools/dino_dll.py` - Packs and unpacks the `DLLS.bin` and `DLLS_tab.bin` files.
 - `tools/dll_split.py` - Like splat, but for Dinosaur Planet DLLs. Extracts assembly and data from each unpacked DLL and sets up a directory under `src/dlls` containing a C stub, the DLL's export table, and automatically discovered symbols. 
