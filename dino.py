@@ -7,10 +7,13 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tarfile
+import urllib.request
 
 from tools.dino.dlls_txt import DLLsTxt 
 
 TARGET = "dino"
+IDO_STATIC_RECOMP_VERSION = "v1.2"
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 ASM_PATH = SCRIPT_DIR.joinpath("asm/")
@@ -68,12 +71,6 @@ class DinoCommandRunner:
                 shutil.rmtree(path)
             else:
                 path.unlink()
-    
-    def clean_tools(self):
-        print("Cleaning IDO static recomp build...")
-        tool_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
-        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "clean", "VERSION=5.3"])
-        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "clean", "VERSION=7.1"])
 
     def clean_rebuild(self):
         self.clean()
@@ -232,16 +229,79 @@ class DinoCommandRunner:
             # If matching, update the 'expected' directory for diff
             self.create_expected_dir(already_verified=True, quiet=True)
 
-    def build_tools(self):
-        print("Building IDO static recomp...")
-        self.build_tool_ido()
+    def check_ido_update(self):
+        ido_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
+        ido_version_file = ido_dir.joinpath("version.txt")
 
-    def build_tool_ido(self):
-        tool_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
-        j = str(os.cpu_count())
-        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "setup"])
-        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "-j", j, "VERSION=5.3", "RELEASE=1"])
-        self.__run_cmd(["make", "-C", str(tool_dir), "--quiet", "-j", j, "VERSION=7.1", "RELEASE=1"])
+        version: str | None = None
+        if ido_version_file.exists():
+            version = ido_version_file.read_text()
+        
+        if version != IDO_STATIC_RECOMP_VERSION:
+            print()
+            print(
+                f"Note: IDO static recomp is out-of-date. Please run '{self.__get_invoked_as()} update-ido' " +
+                f"to update to {IDO_STATIC_RECOMP_VERSION}.")
+
+    def update_ido(self, force: bool):
+        # Check version
+        ido_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
+        ido_version_file = ido_dir.joinpath("version.txt")
+
+        version: str | None = None
+        if ido_version_file.exists():
+            version = ido_version_file.read_text()
+        
+        if not force and version == IDO_STATIC_RECOMP_VERSION:
+            print(f"IDO static recomp already up-to-date: {IDO_STATIC_RECOMP_VERSION}.")
+            return
+    
+        def ido_download_url(ido_version: str):
+            os_name: str
+            if sys.platform == "win32":
+                os_name = "windows"
+            else:
+                os_name = "linux"
+            
+            return f"https://github.com/decompals/ido-static-recomp/releases/download/{IDO_STATIC_RECOMP_VERSION}/ido-{ido_version}-recomp-{os_name}.tar.gz"
+        
+        def download_ido(ido_version: str, dir: Path):
+            # Clear existing download
+            if dir.exists():
+                if self.verbose:
+                    print(f"rm {dir}")
+                shutil.rmtree(dir)
+            if self.verbose:
+                print(f"mkdir {dir}")
+            dir.mkdir(exist_ok=True)
+
+            # Download
+            print(f"Downloading IDO {ido_version} to {dir.absolute().resolve()}...")
+            filename = dir.joinpath(f"ido-{ido_version}-recomp.tar.gz")
+            download_url = ido_download_url(ido_version)
+            if self.verbose:
+                print(f"Downloading '{download_url}' to '{filename.absolute().resolve()}'...")
+            urllib.request.urlretrieve(download_url, filename)
+
+            # Extract tar file
+            if self.verbose:
+                print(f"Extracting '{filename.absolute().resolve()}'...")
+            with tarfile.open(filename, "r:gz") as tar:
+                tar.extractall(dir, filter="data")
+            
+            # Clean up, remove tar file
+            if self.verbose:
+                print(f"rm {filename.absolute().resolve()}")
+            filename.unlink()
+        
+        # Download both 5.3 and 7.1 since we need both
+        ido_dir.mkdir(exist_ok=True)
+            
+        download_ido("5.3", ido_dir.joinpath("5.3"))
+        download_ido("7.1", ido_dir.joinpath("7.1"))
+        
+        ido_version_file.write_text(IDO_STATIC_RECOMP_VERSION)
+        print(f"Updated IDO static recomp to {IDO_STATIC_RECOMP_VERSION}.")
 
     def create_expected_dir(self, already_verified=False, force=False, quiet=False):
         # Ensure the build matches
@@ -321,7 +381,7 @@ class DinoCommandRunner:
         print()
         self.baseverify()
         print()
-        self.build_tools()
+        self.update_ido(force=False)
         print()
         self.extract(use_cache=False, disassemble_all=False)
         print()
@@ -461,15 +521,15 @@ def main():
 
     build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
     build_exp_cmd.add_argument("-f", "--force", action="store_true", help="Fully recreate the directory instead of updating it.", default=False)
-    
-    subparsers.add_parser("build-tools", help="Build all tools.")
-    subparsers.add_parser("build-tool-ido", help="Build ido-static-recomp.")
 
     subparsers.add_parser("verify", help="Verify that the re-built ROM matches the base ROM.")
     subparsers.add_parser("baseverify", help="Verify that the base ROM is correct.")
     subparsers.add_parser("clean", help="Remove extracted files, build artifacts, and build scripts.")
-    subparsers.add_parser("clean-tools", help="Remove build artifacts for tools.")
     subparsers.add_parser("clean-rebuild", help="Clean, re-extract, and re-build.")
+
+    update_ido_cmd = subparsers.add_parser("update-ido", help="Download and update IDO static recomp to the version currently used by the decomp.")
+    update_ido_cmd.add_argument("-f", "--force", action="store_true", help="Redownload even if IDO static recomp is already up-to-date.", default=False)
+
     subparsers.add_parser("submodules", help="Initialize and update Git submodules.")
     subparsers.add_parser("diff", help="Diff the re-rebuilt ROM with the original (redirects to asm-differ).", add_help=False)
     subparsers.add_parser("objdiff", help="Diff the re-rebuilt ROM with the original (redirects to objdiff-cli).", add_help=False)
@@ -502,10 +562,6 @@ def main():
             )
         elif cmd == "build-expected":
             runner.create_expected_dir(force=args.force)
-        elif cmd == "build-tools":
-            runner.build_tools()
-        elif cmd == "build-tool-ido":
-            runner.build_tool_ido()
         elif cmd == "configure":
             runner.configure(
                 non_matching=args.non_matching,
@@ -517,10 +573,10 @@ def main():
             runner.baseverify()
         elif cmd == "clean":
             runner.clean()
-        elif cmd == "clean-tools":
-            runner.clean_tools()
         elif cmd == "clean-rebuild":
             runner.clean_rebuild()
+        elif cmd == "update-ido":
+            runner.update_ido(args.force)
         elif cmd == "submodules":
             runner.update_submodules()
         elif cmd == "diff":
@@ -531,7 +587,7 @@ def main():
             diff_index = sys.argv.index("objdiff")
             full_args = sys.argv[diff_index + 1:]
             runner.objdiff(args=full_args)
-        elif cmd =="context":
+        elif cmd == "context":
             runner.make_context(args.file)
         elif cmd == "permuter":
             permuter_index = sys.argv.index("permuter")
@@ -541,6 +597,10 @@ def main():
             permuter_index = sys.argv.index("permuter-import")
             full_args = sys.argv[permuter_index + 1:]
             runner.permuter_import(args=full_args)
+        
+        # Notify user if IDO recomp is out-of-date
+        if cmd != "setup" and cmd != "update-ido":
+            runner.check_ido_update()
     except subprocess.CalledProcessError:
         sys.exit(1)
 

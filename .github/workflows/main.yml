@@ -10,15 +10,25 @@ jobs:
   build:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository || github.event_name == 'push' }}
     runs-on: ubuntu-24.04
-    container:
-      image: ghcr.io/francessco121/dpdecomp:latest
     steps:
     - name: Checkout this repo
       uses: actions/checkout@v2
       with:
         submodules: recursive
-    - name: Symlink IDO binaries
-      run: ln -s /dino/tools/ido_static_recomp/build ./tools/ido_static_recomp/build
+    - name: Install system packages
+      run: |
+        sudo rm /var/lib/man-db/auto-update
+        sudo apt-get update
+        sudo apt-get install -y $(cat packages.txt | tr '\n' ' ')
+    - name: Install Python packages and setup environment
+      run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
+        pip3 install -r requirements.txt
+    - name: Download IDO static recomp
+      run: |
+        . .venv/bin/activate
+        python3 ./dino.py update-ido
     - name: Checkout baserom
       uses: actions/checkout@v2
       with:
@@ -28,12 +38,16 @@ jobs:
     - name: Decrypt baserom
       run: echo ${{ secrets.DINOSAUR_PLANET_BASEROM }} | openssl enc -d -aes-256-cbc -pass stdin -pbkdf2 -in baserom/baserom.z64.aes -out baserom.z64
     - name: Extract ROM
-      run: python3 ./dino.py extract
+      run: |
+        . .venv/bin/activate
+        python3 ./dino.py extract
     - name: Build (matching)
       run: |
+        . .venv/bin/activate
         python3 ./dino.py configure
         python3 ./dino.py build
     - name: Build (non-matching, non-equivalent)
       run: |
+        . .venv/bin/activate
         python3 ./dino.py configure --non-matching --non-equivalent
         python3 ./dino.py build --no-verify

@@ -1,4 +1,4 @@
-FROM ubuntu:24.04 AS base
+FROM ubuntu:24.04
 
 # Create directory for mount
 RUN mkdir /dino
@@ -15,24 +15,8 @@ RUN apt-get update && \
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt --break-system-packages
 
-
 # Symlink dino.py
 RUN ln -s /dino/dino.py /usr/local/bin/dino
-
-
-FROM base AS ido
-
-# Compile IDO recomp
-ADD tools/ido_static_recomp ./tools/ido_static_recomp
-RUN make -C tools/ido_static_recomp setup && \
-    make -C tools/ido_static_recomp VERSION=5.3 RELEASE=1 -j && \
-    make -C tools/ido_static_recomp VERSION=7.1 RELEASE=1 -j
-
-
-FROM base
-
-# Copy IDO binaries
-COPY --from=ido /dino/tools/ido_static_recomp/build /dino/tools/ido_static_recomp/build
 
 # Set up user (if they don't exist)
 ARG login=sabre
