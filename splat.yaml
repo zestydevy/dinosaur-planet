@@ -21,6 +21,8 @@ options:
   disassemble_all: False
   # Allow use of 64-bit floating point registers
   generated_s_preamble: .set fp=64
+  asm_nonmatching_label_macro : ""
+  asm_data_end_label: ""
 
 segments:
   - [0x000000, header]

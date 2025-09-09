@@ -5,7 +5,7 @@
 #include "sys/map.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
-#include "dlls/objects/1002.h"
+#include "dlls/modgfx/106.h"
 
 // size: 0x14
 typedef struct Unk80026DF4 {

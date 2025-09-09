@@ -607,7 +607,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     SRT sp70;
     s32 i;
     Unk80026DF4* sp68;
-    DLL_1002* loadedDLL;
+    DLL_106* loadedDLL;
     ModelInstance *modelInst;
     s32 sp5C;
     f32 sp58;
@@ -640,7 +640,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
             // @fake
             if (!i) {}
             if (sp68->unk8 == 1) {
-                loadedDLL = dll_load(0x1002U, 1U, FALSE);
+                loadedDLL = dll_load(DLL_ID_106, 1U, FALSE);
                 // @fake
                 if (1) {}
                 loadedDLL->vtbl->func0(0, 1, &sp70, 0x401, -1, sp48);

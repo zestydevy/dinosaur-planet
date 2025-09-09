@@ -1430,19 +1430,17 @@ void func_800042A8(Object *object)
     func_800042C8(object, object->matrixIdx);
 }
 
-// regalloc
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800042C8.s")
-#else
 void func_800042C8(Object *object, int matrixIdx)
 {
-    s32 isChild;
+    s8 isChild;
     f32 oldScale;
     s8 objectCount;
     SRT invsrt;
     Object* objectList[5]; // how many?
 
     isChild = FALSE;
+    // @fake
+    if (isChild){}
     objectCount = 0;
 
     while (object != NULL)
@@ -1450,19 +1448,17 @@ void func_800042C8(Object *object, int matrixIdx)
         objectList[objectCount] = object;
         objectCount++;
 
-
         oldScale = object->srt.scale;
         object->srt.scale = 1.0f;
 
         if (!isChild) {
-            matrix_from_srt((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &object->srt);
+            matrix_from_srt((MtxF *) (((f32 *) gObjectMatrices) + (matrixIdx << 4)), &object->srt);
         } else {
-            matrix_from_srt(&gAuxMtx2, &object->srt);
-            matrix_concat((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &gAuxMtx2, (MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)));
+            matrix_from_srt(&gAuxMtx, &object->srt);
+            matrix_concat((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &gAuxMtx, (MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)));
         }
 
         object->srt.scale = oldScale;
-
         object = object->parent;
 
         isChild = TRUE;
@@ -1473,6 +1469,8 @@ void func_800042C8(Object *object, int matrixIdx)
         objectCount--;
         object = objectList[objectCount];
 
+        // @fake
+        if (gObjectMatrices) {}
         invsrt.transl.x = -object->srt.transl.x;
         invsrt.transl.y = -object->srt.transl.y;
         invsrt.transl.z = -object->srt.transl.z;
@@ -1483,7 +1481,6 @@ void func_800042C8(Object *object, int matrixIdx)
         matrix_from_srt_reversed((MtxF *) ((f32*)gInverseObjectMatrices + (matrixIdx << 4)), &invsrt);
     }
 }
-#endif
 
 void get_object_child_position(Object *object, f32 *ox, f32 *oy, f32 *oz)
 {
