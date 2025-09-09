@@ -24,7 +24,7 @@ jobs:
       run: |
         python3 -m venv .venv
         . .venv/bin/activate
-        pip3 install -r requirements.txt --break-system-packages
+        pip3 install -r requirements.txt
     - name: Download IDO static recomp
       run: |
         . .venv/bin/activate
