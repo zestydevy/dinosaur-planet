@@ -16,7 +16,9 @@ jobs:
       with:
         submodules: recursive
     - name: Install system packages
-      run: sudo apt-get update && sudo apt-get install -y $(cat packages.txt | tr '\n' ' ')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y $(cat packages.txt | tr '\n' ' ')
     - name: Install Python packages and setup environment
       run: |
         python3 -m venv .venv
