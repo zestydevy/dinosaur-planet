@@ -56,12 +56,7 @@ enum ObjDataFlags5F { //copied from SFA; may be incorrect
 typedef struct AttachPoint { //copied from SFA; may be incorrect
 /*00*/ Vec3f pos; //offset from bone
 /*0C*/ Vec3s16 rot; //offset from bone
-/*12*/ s8 bone; //bone idx to use
-/*13*/ s8 unk13; //always same as bone?
-/*14*/ s8 unk14; //always same as bone?
-/*15*/ u8 unk15; //always 0xCD?
-/*16*/ u8 unk16; //always 0xCD?
-/*17*/ u8 unk17; //always 0xCD?
+/*12*/ s8 bones[6]; //bone idx to use
 } AttachPoint;
 
 typedef struct {
@@ -181,7 +176,9 @@ typedef struct {
 /*90*/ u8 hitbox_flagsB6; // < 0xE = invincible (HitboxFlags62) // TODO: confirm
 /*91*/ u8 _unk91[2];
 /*93*/ s8 unk93; //render settings (can switch off vertex shading)
-/*94*/ u8 _unk94[7];
+/*94*/ s16 unk94;
+/*96*/ s16 unk96;
+/*98*/ u8 _unk98[3];
 /*9b*/ u8 unk9b; // length of unk40 (z-targetting data)
 /*9c*/ u8 unk9c;
 /*9d*/ u8 unk9d;

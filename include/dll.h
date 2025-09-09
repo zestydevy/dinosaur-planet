@@ -89,6 +89,10 @@ enum DLL_ID {
     DLL_ID_75 = 75,
     DLL_ID_76 = 76,
 
+    // Mod gfx
+    DLL_ID_106 = 0x1002,
+    DLL_ID_107 = 0x1003,
+
     // Objects
     DLL_ID_CANNON_CLAW = 0x800E
 };

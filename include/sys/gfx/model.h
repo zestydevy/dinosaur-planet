@@ -57,6 +57,14 @@ typedef struct {
 /*0012*/	u8 unk_0x12[0x18 - 0x12];
 } ModelDLInfo;
 
+typedef struct {
+/*0000*/    s16 jointIndex;
+/*0002*/    u8 pad0[0xA - 0x2];
+/*000A*/    u16 unkA;
+/*000C*/    s8 unkC;
+/*000D*/    s8 unkD;
+} HitSphere;
+
 typedef struct{
     // TODO
 /*0000*/    ModelTexture *materials; //materials
@@ -69,7 +77,7 @@ typedef struct{
 /*001C*/    void *blendshapes; //blendshapes
 /*0020*/    ModelJoint *joints; //joint_hierarchy
 /*0024*/    u8 *amap;
-/*0028*/    void *hitSpheres; //hitspheres
+/*0028*/    HitSphere *hitSpheres; //hitspheres
 /*002C*/    void *edgeVectors; //edgevectors (only on mobile map models?)
 /*0030*/    u32 unk_0x30;
 /*0034*/    void *facebatchBounds; //bounding boxes for each facebatch
@@ -79,8 +87,8 @@ typedef struct{
 /*0044*/    u32 unk_0x44;
 /*0048*/    u32 unk_0x48;
 /*004C*/    u32 unk_0x4c;
-/*0050*/    void *collisionA; //joint pushback collision A
-/*0054*/    void *collisionB; //joint pushback collision B
+/*0050*/    f32 *collisionA; //joint pushback collision A
+/*0054*/    f32 *collisionB; //joint pushback collision B
 /*0058*/    u32 decompressedSize; //length of decompressed model
 /*005C*/    u32 unk_0x5c;
 /*0060*/    s16 maxAnimatedVertDistance; //max radial distance (from model origin) to a vert throughout model's animations (used to simplify collision tests)
@@ -104,6 +112,26 @@ typedef struct{
 /*007c*/	u32 unk7c;
 } Model;
 
+// size: 0x34
+typedef struct ModelInstance_0x14_0x14 {
+/*0000*/    s32 unk0[3];
+/*000C*/    s32 unkC[3];
+/*0018*/    Vec3f unk18;
+/*0024*/    Vec3f unk24;
+/*0030*/    s32 unk30;
+} ModelInstance_0x14_0x14;
+
+// size: 0x1C
+typedef struct ModelInstance_0x14 {
+/*0000*/    Vec3f *unk0;
+/*0004*/    f32 *unk4;
+/*0008*/    s32 pad8;
+/*000C*/    f32 *unkC;
+/*0010*/    f32 *unk10;
+/*0014*/    ModelInstance_0x14_0x14 *unk14;
+/*0018*/    s8 *unk18;
+} ModelInstance_0x14;
+
 typedef struct {
 /*0000*/    f32 unk0x0;
 /*0004*/    f32 unk0x4;
@@ -118,9 +146,10 @@ typedef struct {
 /*0000*/    Model *model;
 /*0004*/    void *unk_0x4[2];
 /*000C*/    MtxF *matrices[2];
-/*0014*/    void *unk_0x14;
+/*0014*/    ModelInstance_0x14 *unk_0x14;
 /*0018*/    Gfx *displayList;
-/*001C*/    u8 unk_0x1c[0x28 - 0x1c];
+/*001C*/    s32 unk_0x1c[2];
+/*0024*/    f32 *unk_0x24;
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstance_0x30 *unk_0x30;

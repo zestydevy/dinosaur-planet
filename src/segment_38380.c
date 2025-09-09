@@ -1,6 +1,7 @@
 #include "PR/gbi.h"
 #include "common.h"
 #include "functions.h"
+#include "sys/map.h"
 #include "sys/gfx/map.h"
 
 extern u8 D_800917A0;
@@ -11,6 +12,8 @@ extern s32 D_800917BC;
 extern s32 D_800917C0;
 extern s32 D_800917C8;
 extern u8 D_800917CC;
+extern Gfx D_80091828[6];
+extern Gfx D_80091868[6];
 
 extern u8 gGfxDramStack[1024];
 extern OSMesgQueue D_800B3B90;
@@ -25,6 +28,8 @@ extern OSMesgQueue *sched_intQ_ptr;
 extern u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 
 extern Gfx D_800917D0[];
+void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8); 
+Texture* func_8003E904(Texture* arg0, s32 arg1);
 
 s32 schedule_gfx_task(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     OSScTask *task;
@@ -232,13 +237,361 @@ void func_80037F8C(s32 param1) {
     D_800917BC = param1;
 }
 
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_80037F9C.s")
+#else
+typedef struct Unk {
+    Texture *unk0;
+    s32 unk4;
+    s16 unk8;
+    s16 unkA;
+} Unk;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_8003825C.s")
+// https://decomp.me/scratch/MUNuy
+// Type for arg1 is incorrect, current definition (Func_80037F9C_Struct) is also not fully correct
+void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u8 arg6, u8 arg7) {
+    Texture* var_v0;
+    s32 temp_s5;
+    s32 temp_s6;
+    s32 temp_t8;
+    s32 var_s1;
+    s32 var_s2;
+    s32 var_s3;
+    s32 var_s4;
+    s32 i;
+    s32 j;
+    Gfx* sp68;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_800382AC.s")
+    j = 0;
+    sp68 = *gdl;
+    gSPLoadGeometryMode(sp68, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
+    dl_apply_geometry_mode(&sp68);
+    gDPSetCombineMode(sp68, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+    dl_apply_combine(&sp68);
+    gDPSetOtherMode(
+        sp68, 
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
+    );
+    dl_apply_other_mode(&sp68);
+    while (arg1[j].unk0 != NULL) {
+        var_s1 = (arg1[j].unk8 * 4) + (arg2 * 4);
+        var_s2 = (arg1[j].unkA * 4) + (arg3 * 4);
+        temp_s5 = (arg1[j].unk0->width * 4) + var_s1;
+        temp_s6 = (arg1[j].unk0->height * 4) + var_s2;
+        if (temp_s5 > 0 && temp_s6 > 0) {
+            var_s3 = 0;
+            var_s4 = 0;
+            if (var_s1 < 0) {
+                var_s3 = -(var_s1 * 8);
+                var_s1 = 0;
+            }
+            if (var_s2 < 0) {
+                var_s4 = -(var_s2 * 8);
+                var_s2 = 0;
+            }
+            temp_t8 = (s32) arg1[j].unk4 >> 8;
+            for (var_v0 = arg1[j].unk0, i = 0; i < temp_t8 && var_v0 != NULL; i++) {
+                var_v0 = var_v0->next;
+            }
+            sp68->words.w0 = var_v0->gdl->words.w0;
+            sp68->words.w1 = OS_PHYSICAL_TO_K0(var_v0 + 1);
+            
+            sp68++;
+            gSPDisplayList(sp68++, OS_PHYSICAL_TO_K0(var_v0->gdl + 1));
+            dl_set_prim_color(&sp68, arg4, arg5, arg6, arg7);
+            gSPTextureRectangle(sp68++, 
+            /* xl */ var_s1,
+            /* xl */ var_s2,
+            /* xh */ temp_s5,
+            /* yh */ temp_s6,
+            /* tile */ 0,
+            /* s */ var_s3,
+            /* t */ var_s4,
+            /* dsdx */ 1 << 10,
+            /* dsdy */ 1 << 10
+            );
+            gDLBuilder->needsPipeSync = 1;
+        }
+        j++;
+    }
+    func_8003DB5C();
+    *gdl = sp68;
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_8003833C.s")
+void func_8003825C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
+    s32 temp = tex->height | ((tex->unk_0x1b & 0xF) << 8);
+    func_8003833C(gdl, tex, arg2, arg3, 0, temp, arg5, arg6, arg7);
+}
+
+void func_800382AC(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
+    s32 temp_v1;
+    s32 var_s0;
+    s32 var_v0;
+
+    arg4 -= arg3;
+    temp_v1 = tex->height | ((tex->unk_0x1b & 0xF) << 8);
+    if (arg4 < 0) {
+        arg4 = 0;
+    }
+    arg5 -= arg3;
+    if (temp_v1 < arg5) {
+        arg5 = temp_v1;
+    }
+    if (arg4 < temp_v1 && arg5 >= 0) {
+        func_8003833C(gdl, tex, arg2, arg3, arg4, arg5, 0, arg6, arg7);
+    }
+}
+
+void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8) {
+    s32 width;
+    s32 sp148;
+    s32 temp_v0_9;
+    s32 temp_v1;
+    s32 height;
+    s32 var_t3;
+    s32 texFormat;
+    s32 sp130;
+    s32 sp12C;
+    s32 sp128;
+    s32 var_v0;
+    Texture* var_s6;
+    Texture* sp11C;
+
+    sp12C = func_80041DBC();
+    sp128 = func_80041E08();
+    
+    if (tex->levels != 0) {
+        var_v0 = (s32) tex->levels >> 8;
+    } else {
+        var_v0 = 0;    
+    }
+    sp11C = tex;
+    if ((var_v0 >= 2) && (arg6 < var_v0)) {
+        for (var_v0 = 0; var_v0 < arg6 && sp11C != NULL; var_v0++) {
+            sp11C = sp11C->next;
+        }
+    }
+    gSPGeometryMode(*gdl, 0xFFFFFF, 0);
+    dl_apply_geometry_mode(gdl);
+    width = tex->width | ((tex->unk_0x1b & 0xF0) * 16);
+    if (sp12C != 0) {
+        sp148 = (s32) ((f32)tex->width * 1) | ((tex->unk_0x1b & 0xF0) * 16);
+    } else {
+        sp148 = width;
+    }
+    texFormat = TEX_FORMAT(tex->format);
+    if (texFormat == TEX_FORMAT_RGBA16) {
+        sp130 = 2;
+        height = (0x800 / width) & ~1;
+    } else if (texFormat == TEX_FORMAT_IA8) {
+        sp130 = 1;
+        height = (0x1000 / width) & ~1;
+    } else {
+        sp130 = 4;
+        height = (0x400 / width) & ~1;
+    }
+    if (height == 0) {
+        return;
+    }
+
+    var_s6 = (Texture*)((u8*)sp11C + (width * arg4 * sp130) + sizeof(Texture));
+    if (arg8 & 2) {
+        gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
+        dl_apply_combine(gdl);
+        gDPSetOtherMode(
+            *gdl, 
+            G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
+            G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2
+        );
+        dl_apply_other_mode(gdl);
+    } else if ((arg7 == 0xFF) && (arg8 & 1)) {
+        gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
+        dl_apply_combine(gdl);
+        gDPSetOtherMode(
+            *gdl, 
+            G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+            G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2
+        );
+        dl_apply_other_mode(gdl);
+    } else {
+        gDPSetCombineLERP(*gdl, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
+        dl_apply_combine(gdl);
+        gDPSetOtherMode(
+            *gdl, 
+            G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+            G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
+        );
+        dl_apply_other_mode(gdl);
+    }
+    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, arg7);
+    var_t3 = arg4;
+    do {
+        temp_v0_9 = arg5 - var_t3;
+        if (temp_v0_9 < height) {
+            height = temp_v0_9;
+        }
+        if (texFormat == TEX_FORMAT_RGBA16) {
+            // Should be this but DP doesn't like using this macro?
+            // causes an incorrect use of gDPSetTile where the tile is set to 2 and a regswap of t0 and t1
+            // gDPLoadMultiBlockS(
+            //     /* pkt */ (*gdl)++,
+            //     /* timg */ OS_PHYSICAL_TO_K0(var_s6),
+            //     /* tmem */ 0,
+            //     /* rtile */ 0,
+            //     /* fmt */ G_IM_FMT_RGBA,
+            //     /* siz */ G_IM_SIZ_16b,
+            //     /* width */ width,
+            //     /* height */ height,
+            //     /* pal */ G_TX_NOMIRROR | G_TX_CLAMP,
+            //     /* cms */ G_TX_NOMIRROR | G_TX_CLAMP,
+            //     /* cmt */ G_TX_NOMIRROR | G_TX_CLAMP,
+            //     /* masks */ G_TX_NOMASK,
+            //     /* maskt */ G_TX_NOMASK,
+            //     /* shifts */ G_TX_NOLOD,
+            //     /* shiftt */ G_TX_NOLOD
+            // );
+            gDPSetTextureImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(var_s6));
+            gDPSetTile((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
+            gDPLoadSync((*gdl)++);
+            gDPLoadBlock((*gdl)++, G_TX_LOADTILE, 0, 0, width * height - 1, 0);
+            gDPPipeSync((*gdl)++);
+            gDPSetTile((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, ((width << 1) + 7) >> 3, G_TX_RENDERTILE, 0, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
+            gDPSetTileSize((*gdl)++, 0, 0, 0, (width - 1) << 2, ((height - 1) << 2));
+        } else if (texFormat == TEX_FORMAT_IA8) {
+                // Should be this but DP doesn't like using this macro?
+                // Instead they added a "but" when using gDPSetTile by passing in the incorrect format
+                // gDPLoadMultiBlockS(
+                //     /* pkt */ (*gdl)++,
+                //     /* timg */ OS_PHYSICAL_TO_K0(var_s6),
+                //     /* tmem */ 0,
+                //     /* rtile */ 0,
+                //     /* fmt */ G_IM_FMT_IA,
+                //     /* siz */ G_IM_SIZ_16b,
+                //     /* width */ width,
+                //     /* height */ height, // may be incorrect
+                //     /* pal */ G_TX_NOMIRROR | G_TX_CLAMP,
+                //     /* cms */ G_TX_NOMIRROR | G_TX_CLAMP,
+                //     /* cmt */ G_TX_NOMIRROR | G_TX_CLAMP,
+                //     /* masks */ G_TX_NOMASK,
+                //     /* maskt */ G_TX_NOMASK,
+                //     /* shifts */ G_TX_NOLOD,
+                //     /* shiftt */ G_TX_NOLOD
+                // );
+                gDPSetTextureImage((*gdl)++, G_IM_FMT_IA, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(var_s6));
+                gDPSetTile((*gdl)++, G_IM_FMT_IA, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
+                gDPLoadSync((*gdl)++);
+                gDPLoadBlock((*gdl)++, G_TX_LOADTILE, 0, 0, ((width * height + 1) >> 1) - 1, 0);
+                gDPPipeSync((*gdl)++);
+                // ?????????????? why G_IM_SIZ_8b here instead of 16b?
+                gDPSetTile((*gdl)++, G_IM_FMT_IA, G_IM_SIZ_8b, (width + 7) >> 3, G_TX_RENDERTILE, 0, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
+                gDPSetTileSize((*gdl)++, 0, 0, 0, (width - 1) << 2, ((height - 1) << 2));
+        } else {
+            // Should be this but DP doesn't like using this macro?
+            // causes an incorrect use of gDPSetTile where the tile is set to 2 and a regswap of t0 and t1
+            // gDPLoadMultiBlockS(
+            //     /* pkt */ (*gdl)++,
+            //     /* timg */ OS_PHYSICAL_TO_K0(var_s6),
+            //     /* tmem */ 0,
+            //     /* rtile */ 0,
+            //     /* fmt */ G_IM_FMT_RGBA,
+            //     /* siz */ G_IM_SIZ_32b,
+            //     /* width */ width,
+            //     /* height */ height,
+            //     /* pal */ G_TX_NOMIRROR | G_TX_CLAMP,
+            //     /* cms */ G_TX_NOMIRROR | G_TX_CLAMP,
+            //     /* cmt */ G_TX_NOMIRROR | G_TX_CLAMP,
+            //     /* masks */ G_TX_NOMASK,
+            //     /* maskt */ G_TX_NOMASK,
+            //     /* shifts */ G_TX_NOLOD,
+            //     /* shiftt */ G_TX_NOLOD
+            // );
+            gDPSetTextureImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 1, OS_PHYSICAL_TO_K0(var_s6));
+            gDPSetTile((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_32b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
+            gDPLoadSync((*gdl)++);
+            gDPLoadBlock((*gdl)++, G_TX_LOADTILE, 0, 0, width * height - 1, 0);
+            gDPPipeSync((*gdl)++);
+            gDPSetTile((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_32b, ((width << 1) + 7) >> 3, G_TX_RENDERTILE, 0, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD);
+            gDPSetTileSize((*gdl)++, 0, 0, 0, (width - 1) << 2, ((height - 1) << 2));
+        }
+
+        temp_v1 = arg3 + var_t3;
+        if (arg8 & 2) {
+            gSPTextureRectangle(
+            /* pkt */ (*gdl)++,
+            /* xl */ arg2 << 2,
+            /* yl */ temp_v1 << 2,
+            /* xh */ (arg2 + width) << 2,
+            /* yh */ (temp_v1 + height - 1) << 2,
+            /* tile */ 0,
+            /* s */ 0,
+            /* t */ 0,
+            /* dsdx */ 1 << 12,
+            /* dsdy */ 1 << 10
+            );
+            gDLBuilder->needsPipeSync = 1;
+        } else if ((sp128 != 0) && (sp12C != 0)) {
+            gSPTextureRectangle(
+            /* pkt */ (*gdl)++,
+            /* xl */ arg2 << 2,
+            /* yl */ temp_v1 << 2,
+            /* xh */ (arg2 + sp148) << 2,
+            /* yh */ (temp_v1 + height) << 2,
+            /* tile */ 0,
+            /* s */ 0,
+            /* t */ 0,
+            /* dsdx */ 0x4FF,
+            /* dsdy */ 0x4FF
+            );
+            gDLBuilder->needsPipeSync = 1;
+        } else if (sp12C != 0) {
+            gSPTextureRectangle(
+            /* pkt */ (*gdl)++,
+            /* xl */ arg2 << 2,
+            /* yl */ temp_v1 << 2,
+            /* xh */ (arg2 + sp148) << 2,
+            /* yh */ (temp_v1 + height) << 2,
+            /* tile */ 0,
+            /* s */ 0,
+            /* t */ 0,
+            /* dsdx */ 0x4FF,
+            /* dsdy */ 1 << 10
+            );
+            gDLBuilder->needsPipeSync = 1;
+        } else if (sp128 != 0) {
+            gSPTextureRectangle(
+            /* pkt */ (*gdl)++,
+            /* xl */ arg2 << 2,
+            /* yl */ temp_v1 << 2,
+            /* xh */ (arg2 + sp148) << 2,
+            /* yh */ (temp_v1 + height) << 2,
+            /* tile */ 0,
+            /* s */ 0,
+            /* t */ 0,
+            /* dsdx */ 1 << 10,
+            /* dsdy */ 1 << 10
+            );
+            gDLBuilder->needsPipeSync = 1;
+        } else {
+            gSPTextureRectangle(
+            /* pkt */ (*gdl)++,
+            /* xl */ arg2 << 2,
+            /* yl */ temp_v1 << 2,
+            /* xh */ (arg2 + width) << 2,
+            /* yh */ (temp_v1 + height) << 2,
+            /* tile */ 0,
+            /* s */ 0,
+            /* t */ 0,
+            /* dsdx */ 1 << 10,
+            /* dsdy */ 1 << 10
+            );
+            gDLBuilder->needsPipeSync = 1;
+        }
+        var_t3 += height;
+        var_s6 = (Texture *) ((u8*)var_s6 + width * height * sp130);
+    } while (var_t3 < arg5);
+}
 
 void draw_pause_screen_freeze_frame(Gfx** gdl) {
     u16* fbPtr;
@@ -308,7 +661,115 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
     }
 }
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_800390A4.s")
+#else
+// https://decomp.me/scratch/vcSVM
+typedef struct Unk2 {
+    void *unk0;
+    s32 unk4;
+    union {
+        struct {
+            s16 unk8;
+            s16 unkA;
+        } shorts;
+        Gfx *gdl;
+    };
+} Unk2;
+void func_800390A4(Gfx** arg0, Unk2* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, s32 arg6, s32 arg7, f32 arg8, f32 arg9, s32 arg10, s32 arg11) {
+    Unk2* var_s4;
+    s32 temp_a0;
+    s32 resolution;
+    s32 width; // cpCC
+    s32 height; // spC8
+    s32 minWidth;
+    s32 minHeight;
+    s32 var_s3;
+    s32 spB8;
+    s32 spB4;
+    s32 var_s5;
+    Gfx* temp_s0;
+    Gfx* spA8;
+    Unk2* var_s7;
+
+    spA8 = *arg0;
+    resolution = get_some_resolution_encoded();
+    height = ((u16)RESOLUTION_HEIGHT(resolution)) * 4;
+    width = RESOLUTION_WIDTH(resolution) * 4;
+    if (arg11 & 0x4000) {
+        temp_s0 = &D_80091868[(arg11 & 0xFF) * 3];
+    } else {
+        temp_s0 = &D_80091828[(arg11 & 0xFF) * 3];
+    }
+    gSPGeometryMode(spA8, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE);
+    dl_apply_geometry_mode(&spA8);
+    bcopy(temp_s0, spA8, 8);
+    dl_apply_combine(&spA8);
+    bcopy(temp_s0 + 1, spA8, 8);
+    dl_apply_other_mode(&spA8);
+    dl_set_prim_color(&spA8, ((u32) arg10 >> 0x18) & 0xFF, ((u32) arg10 >> 0x10) & 0xFF, ((u32) arg10 >> 8) & 0xFF, (u8) (arg10 & 0xFF));
+    var_s7 = arg1->unk0;
+    arg8 *= 4.0f;
+    arg9 *= 4.0f;
+    if (var_s7 != NULL) {
+        var_s4 = arg1;
+        do {
+            minWidth = (s32) ((f32) var_s4->shorts.unk8 * arg8) + (s32) (arg2 * 4.0f);
+            minHeight = (s32) ((f32) var_s4->shorts.unkA * arg9) + (s32) (arg3 * 4.0f);
+            if ((minWidth < width) && (minHeight < height)) {
+                spB8 = (s32) (arg4 * arg8) + minWidth;
+                spB4 = (s32) (arg5 * arg9) + minHeight;
+                if ((spB8 > 0) && (spB4 > 0) && (minWidth < spB8) && (minHeight < spB4)) {
+                    temp_a0 = (s32) arg4 - 1;
+                    var_s5 = (temp_a0 << 12);
+                    var_s5 /= (spB8 - minWidth);
+                    if (arg11 & 0x1000) {
+                        arg6 += temp_a0 << 5;
+                        var_s5 = -var_s5;
+                    }
+                    temp_a0 = (s32) arg5 - 1;
+                    var_s3 = temp_a0 << 12;
+                    var_s3 /= spB4 - minHeight;
+                    if (arg11 & 0x2000) {
+                        arg7 = temp_a0 << 5;
+                        var_s3 = -var_s3;
+                    }
+                    if (minWidth < 0) {
+                        arg6 += (-minWidth * var_s5) >> 7;
+                        minWidth = 0;
+                    }
+                    if (minHeight < 0) {
+                        arg7 += (-minHeight * var_s3) >> 7;
+                        minHeight = 0;
+                    }
+                    temp_s0 = (Gfx *)var_s7->gdl;
+                    spA8->words.w0 = temp_s0->words.w0;
+                    spA8->words.w1 = OS_PHYSICAL_TO_K0(func_8003E904((Texture* ) var_s7, var_s4->unk4));
+                    spA8++;
+                    temp_s0++;
+                    gSPDisplayList(spA8++, OS_PHYSICAL_TO_K0(temp_s0));
+                    gSPTextureRectangle(spA8++, 
+                    /* xl */ minWidth,
+                    /* xl */ minHeight,
+                    /* xh */ spB8,
+                    /* yh */ spB4,
+                    /* tile */ 0,
+                    /* s */ arg6,
+                    /* t */ arg7,
+                    /* dsdx */ var_s5, 
+                    /* dsdy */ var_s3
+                    );
+                    gDLBuilder->needsPipeSync = 1;
+                }
+            }
+            var_s7 = var_s4[1].unk0;
+            var_s4 += 1;
+        } while (var_s7 != NULL);
+    }
+    func_8003DB5C();
+    *arg0 = spA8;
+}
+#endif
 
 void func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
 

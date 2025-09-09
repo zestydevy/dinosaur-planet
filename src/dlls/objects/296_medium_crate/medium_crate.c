@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "PR/gu.h"
+#include "dlls/modgfx/106.h"
 #include "dll.h"
 #include "functions.h"
 #include "game/objects/object.h"
@@ -49,7 +50,7 @@ typedef struct {
 } idk2;
 
 static DLL_Unknown *_data_0 = NULL; // DAT_8122b7d0
-static DLL_Unknown *_data_4 = NULL; // DAT_8122b7d4
+static DLL_106 *_data_4 = NULL; // DAT_8122b7d4
 static u32 _data_8[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
@@ -99,8 +100,8 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
 
     state->unk15 = createInfo->unk19;
 
-    _data_0 = dll_load(0x1003, 1, /*runConstructor=*/FALSE); // 107
-    _data_4 = dll_load(0x1002, 1, /*runConstructor=*/FALSE); // 106
+    _data_0 = dll_load(DLL_ID_107, 1, /*runConstructor=*/FALSE);
+    _data_4 = dll_load(DLL_ID_106, 1, /*runConstructor=*/FALSE);
 
     state->unk8 = 0;
     state->unkE = rand_next(0, 100) + 300;

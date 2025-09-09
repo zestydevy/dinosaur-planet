@@ -5,6 +5,20 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 
+// Gets the texture type. E.g: rgba16
+#define TEX_FORMAT(x) (x & 0xF)
+
+// Taken from DKR, might be incorrect
+#define TEX_FORMAT_RGBA32 0
+#define TEX_FORMAT_RGBA16 1
+#define TEX_FORMAT_I8 2
+#define TEX_FORMAT_I4 3
+#define TEX_FORMAT_IA16 4
+#define TEX_FORMAT_IA8 5
+#define TEX_FORMAT_IA4 6
+#define TEX_FORMAT_CI4 7
+#define TEX_FORMAT_CI8 8
+
 typedef struct Texture
 {
 /*0000*/	u8 width;
