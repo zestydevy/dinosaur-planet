@@ -851,7 +851,7 @@ void obj_do_hit_detection(s32 arg0) {
                 currentObjHitInfo->unk_0x20.y = currentObj->srt.transl.y;
                 currentObjHitInfo->unk_0x20.z = currentObj->srt.transl.z;
             }
-            currentObjHitInfo->unk_0x1c = currentObj->animTimer;
+            currentObjHitInfo->unk_0x1c = currentObj->animProgress;
             currentObjHitInfo->unk_0x9e = 0;
             currentObjHitInfo->unk_0x58 &= ~0x2000;
             if (((currentObjHitInfo->unk_0x62 != 0) || (currentObjHitInfo->unk_0x58 & 8)) && !(currentObjHitInfo->unk_0x58 & 0x40)) {
@@ -1509,7 +1509,6 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     s32 var_v1;
     ModelInstance* sp248;
     ModelInstance* sp244;
-    u32 temp_v0;
     AnimState animState; // sp1DC
     s32 stopLoop;
     Model* model3; // sp1D4
@@ -1540,7 +1539,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     sp284 = obj->srt.transl.y - objHitInfo->unk_0x10.y;
     sp280 = obj->srt.transl.z - objHitInfo->unk_0x10.z;
     temp_fv0 = objHitInfo->unk_0x1c;\
-    var_fs1 = obj->animTimer - temp_fv0;
+    var_fs1 = obj->animProgress - temp_fv0;
     if (var_fs1 < 0.0f) {
         var_fs1 = 0.0f;
     }
@@ -1548,9 +1547,9 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     sp248 = obj->modelInsts[obj->modelInstIdx];
     model = sp248->model;
     matrixIdx = sp248->unk_0x34 & 1;
-    animState.unk_0x58 = 0;
-    animState.unk_0x5a = 0;
-    animState.unk_0x5c = 0;
+    animState.unk_0x58[0] = 0;
+    animState.unk_0x58[1] = 0;
+    animState.unk_0x5c[0] = 0;
     var_fs0 = temp_fv0 + var_fs1;
     tempJointCount = model->jointCount;
     i = 0;
@@ -1588,15 +1587,14 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
             var_v1 = sp264 - 1;
         }
         objHitInfo->unk_0x44 = objHitInfo->unk_0x40;
-        temp_v0 = sp260[var_v1];
-        objHitInfo->unk_0x40 = temp_v0;
-        temp_v0 = objHitInfo->unk_0x40;
-        if (temp_v0) {
-            pad =  temp_v0 >> 4;
-            pad2 = temp_v0 & 0xF;
+        tempJointCount = sp260[var_v1];
+        objHitInfo->unk_0x40 = tempJointCount;
+        tempJointCount = objHitInfo->unk_0x40;
+        if (tempJointCount) {
+            pad =  (u32)tempJointCount >> 4;
+            pad2 = tempJointCount & 0xF;
             func_80029A14(model, sp248->animState0, &animState, var_fs0, 1);
-            // @fake temp_v0 needs to be set to any value to match
-            temp_v0 = 0;
+            tempJointCount = -1;
             func_80029AB4(model->joints, model->jointCount, model->hitSpheres, model->hitSphereCount, pad, pad2 ? sp258 : -1);
             temp_fv0 = var_s4 / arg5;
             sp194.m[3][0] = (objHitInfo->unk_0x10.x - gWorldX) + (temp_fv0 * sp288);
@@ -1619,7 +1617,6 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
         }
         var_fs0 += var_fs1;
     }
-    // @fake
     if ((!obj->def) && (!obj->def)) {}
     sp248->matrices[matrixIdx] = sp10C;
     for (i = 0; i < model->jointCount; i++) {
@@ -1634,11 +1631,11 @@ void func_80029A14(Model* model, AnimState* animState, AnimState* arg2, f32 arg3
     arg2->anims2[1] = animState->anims2[1];
     arg2->animIndexes[0] = animState->animIndexes[0];
     arg2->unk_0x60[0] = animState->unk_0x60[0];
-    arg2->unk_0x14[0] = animState->unk_0x14[0];
+    arg2->totalAnimationFrames[0] = animState->totalAnimationFrames[0];
     if (arg4 != 0) {
-        arg2->unk_0x4[0] = animState->unk_0x14[0] * arg3;
+        arg2->curAnimationFrame[0] = animState->totalAnimationFrames[0] * arg3;
     } else {
-        arg2->unk_0x4[0] = animState->unk_0x4[0];
+        arg2->curAnimationFrame[0] = animState->curAnimationFrame[0];
     }
     arg2->unk_0x34[0] = animState->unk_0x34[0];
     func_8001A1D4(model, arg2, 1);

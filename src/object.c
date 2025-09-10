@@ -11,7 +11,7 @@ extern Object **gObjDeferredFreeList;
 extern s32 gObjDeferredFreeListCount;
 extern Object **D_800B1918;
 extern s32 D_800B191C;
-extern void *D_800B18E4;
+extern s16* D_800B18E4;
 extern int gObjIndexCount; //count of OBJINDEX.BIN entries
 extern int gNumObjectsTabEntries;
 extern ObjDef **gLoadedObjDefs;
@@ -563,7 +563,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     objHeader.id = objId;
     objHeader.unk0xb2 = param4;
     objHeader.mapID = mapID;
-    objHeader.unk_0xa2 = -1;
+    objHeader.curModAnimIdLayered = -1;
     objHeader.unk0xb4 = -1;
     objHeader.srt.scale = def->scale;
     objHeader.unk_0x36 = 0xFF;
@@ -1367,7 +1367,37 @@ s16 func_80022E3C(s32 param1) {
     return -1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80022EC0.s")
+//https://decomp.me/scratch/CPQVO
+s16 func_80022EC0(s32 arg0) {
+    s8 pad_sp8C[76];
+    s8 *var_v0;
+    s8 pad_sp87;
+    s8 sp86;
+    s32 pad_sp80;
+    s8 sp2C[84];
+    s16 pad_sp28;
+    s32 pad_sp24;
+    s32 var_v1;
+
+    if (gObjIndexCount < arg0) {
+        return 0;
+    }    
+
+    arg0 = gFile_OBJINDEX[arg0];
+    if (arg0 == -1) {
+        return 0;
+    }
+    var_v0 = (s8*)(&sp86 - sp2C);
+
+    var_v1 = 0;
+    while ((u32)var_v0 & 1){
+        var_v0 -= 1;
+        var_v1 += 1;        
+    }
+
+    queue_load_file_region_to_ptr((void*)D_800B18E4, OBJECTS_BIN, (s32)(gFile_OBJECTS_TAB[arg0] + var_v0), 8);
+    return D_800B18E4[var_v1];
+}
 
 void obj_free_object(Object *obj, s32 param2) {
     Object *obj2;
@@ -1618,15 +1648,35 @@ void func_80023628() {
     func_8004A67C();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023894.s")
+void func_80023894(Object* object, s32 objectId) {
+    SideCreateInfo* sideCreateInfo;
+
+    sideCreateInfo = (SideCreateInfo*)object->createInfo;
+    D_80091688.base.objId = objectId;
+    D_80091688.base.x = object->positionMirror.x;
+    D_80091688.base.y = object->positionMirror.y;
+    D_80091688.base.z = object->positionMirror.z;
+    D_80091688.unk18 = sideCreateInfo->unk18;
+    D_80091688.unk19 = sideCreateInfo->unk19;
+
+    obj_create((ObjCreateInfo*)&D_80091688, 1, -1, -1, NULL);
+}
 
 Object *get_player(void) {
-    Object **obj;
-    s32 idx;
-    obj = obj_get_all_of_type(0, &idx);
-    if(idx) {} else {}; //wat
-    if(idx) return *obj;
-    else return NULL;
+    Object **objectList;
+    s32 count;
+
+    objectList = obj_get_all_of_type(0, &count);
+
+    if(count > 1) {
+        STUBBED_PRINTF(" ERROR : Error in Get Main More Players Loaded ");
+    }
+
+    if (count) {
+        return objectList[0];
+    } else {
+        return NULL;
+    }
 }
 
 Object *get_sidekick() {
@@ -1635,9 +1685,11 @@ Object *get_sidekick() {
 
     objectList = obj_get_all_of_type(1, &count);
 
-    if (count) {}
+    if (count > 1) {
+        STUBBED_PRINTF(" ERROR : ERROR : Error in Get Sidekicks Loaded  ");
+    }
 
-    if (count != 0) {
+    if (count) {
         return objectList[0];
     } else {
         return NULL;
@@ -1692,13 +1744,13 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     modelInst2->unk_0x34 &= 0xFFF0;
     modelInst2->unk_0x34 |= modelInst->unk_0x34 & 7;
 
-    prevAnimId = obj->curAnimId;
+    prevAnimId = obj->curModAnimId;
 
     obj->modelInstIdx = modelInstIdx;
-    obj->curAnimId = -1;
-    obj->unk_0xa2 = -1;
+    obj->curModAnimId = -1;
+    obj->curModAnimIdLayered = -1;
 
-    func_80023D30(obj, prevAnimId, obj->animTimer, 0);
+    func_80023D30(obj, prevAnimId, obj->animProgress, 0);
 
     if (obj->objhitInfo != NULL) {
         if ((obj->objhitInfo->unk_0x5a & 0x10)) {
@@ -1808,51 +1860,3 @@ void func_80023D08(Object *obj, u16 param2) {
 
     obj->unk_0xd8 = param2;
 }
-
-// start of objanim.c or something like that?
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80023D30.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800240BC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80024108.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002493C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80024D74.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80024DD0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80024E2C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80024E50.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800250F4.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80025140.s")
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80025540.s")
-#else
-//in retail SFA 1.0 I believe this is at 8002ed18
-//but it's different because SFA doesn't use Model Instances
-//or, this might be a completely different function...
-void func_80025540(Object *obj, s32 a1, s32 a2)
-{
-    Model *model = obj->models[obj->curModel];
-    void **anims; //this is a struct of some sort.
-    if(model->unk66) {
-        anims = model->animations;
-        if (!anims) { }
-        func_800255F8(obj, model, anims, a1, (short) a2); //probably ObjSetBlendMove
-        //not certain about the order/count of params here.
-    }
-}
-#endif
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_8002559C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_800255F8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80025780.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80025CD4.s")
