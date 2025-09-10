@@ -29,23 +29,24 @@ s32 func_800240BC(Object* object, f32 progress) {
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")
 #else
 
-//https://decomp.me/scratch/zIGpo
 
-extern f32 D_80099838; //1023
 
 typedef struct {
-/*00*/    s16 X;
-/*02*/    s16 Y;
-/*04*/    s16 Z;
+    /*00*/    s16 X;
+    /*02*/    s16 Y;
+    /*04*/    s16 Z;
 } AnimationRootMotionComponents;
 
 typedef struct {
-/*00*/    f32 speed;
-/*04*/    s16 totalKeyframes;
-/*06*/    AnimationRootMotionComponents components;
-/*0C*/    s16 keyframes; //array
+    /*00*/    f32 speed;
+    /*04*/    s16 totalKeyframes;
+    /*06*/    AnimationRootMotionComponents components;
+    /*0C*/    s16 keyframes; //array
 } AnimationRootMotion;
 
+//https://decomp.me/scratch/zIGpo
+
+extern f32 gAnimBlendDivisor; //1023
 /*
     a0 = krystal
     a1 = 3D8F142C (0.06986269)
@@ -100,7 +101,7 @@ s32 func_8002493C(Object* object, f32 arg1, f32* arg2) {
     arg1 *= scale / object->def->scale;
     
     if (animState->unk_0x58[1] != 0) {
-        progress = animState->unk_0x58[1] / D_80099838;
+        progress = animState->unk_0x58[1] / gAnimBlendDivisor;
         remainingProgress = 1.0f - progress;
         if (model->unk_0x71 & 0x40) {
             anim = (Animation*)(&animState->anims2[animState->unk_0x48[0]]->anim);

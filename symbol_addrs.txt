@@ -1205,6 +1205,7 @@ gFontSquash = 0x800a7d40;
 gDescPowsOf10 = 0x8008C7E0;
 gFontWindowDimensions = 0x8008C804;
 gSizeBittable = 0x800ae2a8; // size 0x4
+gAnimBlendDivisor = 0x80099838; // size 0x4
 
 menu_set = 0x8000f404; // type:func
 menu_do_menu_swap = 0x8000f47c; // type:func
