@@ -25,9 +25,12 @@ s32 func_800240BC(Object* object, f32 progress) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80024108.s")
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")
 #else
+
+//https://decomp.me/scratch/zIGpo
+
 extern f32 D_80099838; //1023
 
 typedef struct {
@@ -46,7 +49,7 @@ typedef struct {
 /*
     a0 = krystal
     a1 = 3D8F142C (0.06986269)
-    a2 = [0.04, 0.14] (seem to be animation playback speeds!)
+    a2 = [0.04, 0.14] (seem to be animation playback speeds?)
 */
 s32 func_8002493C(Object* object, f32 arg1, f32* arg2) {
     f32 speedScaledA;
@@ -63,7 +66,6 @@ s32 func_8002493C(Object* object, f32 arg1, f32* arg2) {
     f32 var_fv0;
     f32 var_fv1;
     f32* rootSpeed;
-    s16 temp_a3;
     s16 rootMotion_offset2;
     s16 endValue;
     s16 temp_t6;
@@ -74,6 +76,7 @@ s32 func_8002493C(Object* object, f32 arg1, f32* arg2) {
     s32 keyIndex;
     s32 var_t1;
     s32 var_t1_2;
+    f32 new_var;
     AnimState* animState;
     s16* key1;
     ModelInstance* modelInstance;
@@ -95,15 +98,14 @@ s32 func_8002493C(Object* object, f32 arg1, f32* arg2) {
     keyframes1 = NULL;
     var_t1 = 0;
     arg1 *= scale / object->def->scale;
-    temp_a3 = animState->blendStrength_A;
     
-    if (temp_a3 != 0) {
-        progress = (f32) temp_a3 / D_80099838;
+    if (animState->unk_0x58[1] != 0) {
+        progress = animState->unk_0x58[1] / D_80099838;
         remainingProgress = 1.0f - progress;
         if (model->unk_0x71 & 0x40) {
-            anim = (Animation*)(&animState->anims2[animState->unk_0x48]->anim);
+            anim = (Animation*)(&animState->anims2[animState->unk_0x48[0]]->anim);
         } else {
-            anim = model->anims[animState->unk_0x48];
+            anim = model->anims[animState->unk_0x48[0]];
         }
 
         //Checking the XYZ components in the root motion header, to see which axis the root motion moves along
@@ -134,95 +136,91 @@ s32 func_8002493C(Object* object, f32 arg1, f32* arg2) {
     }
     
     if (model->unk_0x71 & 0x40) {
-        anim2 = (Animation*)(&animState->anims[animState->animIndexA]->anim);
+        anim2 = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
     } else {
-        anim2 = model->anims[animState->animIndexA];
+        anim2 = model->anims[animState->animIndexes[0]];
     }
     
     rootMotion_offset2 = anim2->offset_rootMotion;
-    rootMotion2 = (AnimationRootMotion*)(&anim2 + rootMotion_offset2);
+    rootMotion2 = (AnimationRootMotion*)((s8*)&anim2 + rootMotion_offset2);
     
-    if (rootMotion_offset2 == NULL) 
-        return 0;    
-        
-    component = rootMotion2->components.X;
-    speedScaledB = rootMotion2->speed * scale;
-    var_v1 = (s16*)(&rootMotion2 + 6);
-    lastKeyIndex = rootMotion2->totalKeyframes - 1;
-    if (component != 0) {
-        var_t1 = 1;
-    } else {
-        var_v1 += 2;
-        component = *var_v1;
-    }
-    if ((var_t1 == 0) && (component == 0)) {
-        var_v1 += 2;
-        component = *var_v1;
-    }
-    keyframes2 = var_v1 + 2;
-    
-    if (component != 0) {
-        endValue = keyframes2[lastKeyIndex];
-        if (endValue < 0) {
-            speedScaledB = -speedScaledB;
+    if (rootMotion_offset2 != NULL){
+        component = rootMotion2->components.X;
+        speedScaledB = rootMotion2->speed * scale;
+        var_v1 = (s16*)(&rootMotion2 + 6);
+        lastKeyIndex = rootMotion2->totalKeyframes - 1;
+        if (component == 0) {
+            component = rootMotion2->components.Y;
         }
-        if (endValue == 0) {
-            return 0;
+        if (component == 0) {
+            component = rootMotion2->components.Z;
         }
+        keyframes2 = var_v1 + 2;
         
-        lastKeyIndex_f = (f32) lastKeyIndex;
-        animProgressPerKey = 1.0f / lastKeyIndex_f;
-        curKeyIndex_f = object->animProgress * lastKeyIndex_f;
-        keyIndex = (s32) curKeyIndex_f;
-        key2 = &keyframes2[keyIndex];
-        keyframeDelta_f = curKeyIndex_f - (f32) keyIndex;
-        if (keyframes1 != NULL) {
-            if (keyframes1[lastKeyIndex] < 0) {
-                speedScaledA = -speedScaledA;
+        if (component != 0) {
+            endValue = keyframes2[lastKeyIndex];
+            if (endValue < 0) {
+                speedScaledB = -speedScaledB;
             }
-            key1 = &keyframes1[keyIndex];
-            var_fa0 = (key2[0] * remainingProgress * speedScaledB) + (key1[0] * progress * speedScaledA);
-            var_fv0 = (key2[1] * remainingProgress * speedScaledB) + (key1[1] * progress * speedScaledA);
-        } else {
+            if (endValue == 0) {
+                return 0;
+            }
+            
+            lastKeyIndex_f = (f32) lastKeyIndex;
+            animProgressPerKey = 1.0f / lastKeyIndex_f;
+            curKeyIndex_f = object->animProgress * lastKeyIndex_f;
+            keyIndex = (s32) curKeyIndex_f;
             key2 = &keyframes2[keyIndex];
-            var_fa0 = key2[0] * speedScaledB;
-            var_fv0 = key2[1] * speedScaledB;
-        }
-
-        
-        var_t1_2 = 0;
-        var_fv1 = animProgressPerKey - (animProgressPerKey * keyframeDelta_f);
-        temp_fa1 = ((var_fv0 - var_fa0) * keyframeDelta_f) + var_fa0 + arg1;
-        do {
-            if (temp_fa1 < var_fv0) {
-                var_t1_2 = 1;
-                var_fv1 -= ((var_fv0 - temp_fa1) * animProgressPerKey) / (var_fv0 - var_fa0);
+            keyframeDelta_f = curKeyIndex_f - (f32) keyIndex;
+            if (keyframes1 != NULL) {
+                if (keyframes1[lastKeyIndex] < 0) {
+                    speedScaledA = -speedScaledA;
+                }
+                key1 = &keyframes1[keyIndex];
+                new_var = (key2[0] * remainingProgress) * speedScaledB;
+                var_fa0 = new_var + (key1[0] * progress * speedScaledA);
+                var_fv0 = (key2[1] * remainingProgress * speedScaledB) + (key1[1] * progress * speedScaledA);
             } else {
-                keyIndex += 1;
-                key2 += 1;
-                if (keyIndex >= lastKeyIndex) {
-                    keyIndex = 0;
-                    key2 = keyframes2;
-                }
-                var_fa0 = var_fv0;
-                if (keyframes1 != NULL) {
-                    key1 = &keyframes1[keyIndex];
-                    var_fv0 += (((f32) key2[1] - (f32) key2[0]) * speedScaledB * remainingProgress) + (((f32) key1[1] - (f32) key1[0]) * speedScaledA * progress);
-                } else {
-                    var_fv0 += ((f32) key2[1] - (f32) key2[0]) * speedScaledB;
-                }
-                var_fv1 += animProgressPerKey;
+                key2 = &keyframes2[keyIndex];
+                var_fa0 = key2[0] * speedScaledB;
+                var_fv0 = key2[1] * speedScaledB;
             }
-        } while (var_t1_2 == 0);
-        
-        if (arg2 != NULL) {
-            *arg2 = var_fv1;
+    
+            
+            var_t1_2 = 0;
+            var_fv1 = animProgressPerKey - (animProgressPerKey * keyframeDelta_f);
+            temp_fa1 = ((var_fv0 - var_fa0) * keyframeDelta_f) + var_fa0 + arg1;
+            do {
+                if (temp_fa1 < var_fv0) {
+                    var_t1_2 = 1;
+                    var_fv1 -= ((var_fv0 - temp_fa1) * animProgressPerKey) / (var_fv0 - var_fa0);
+                } else {
+                    keyIndex += 1;
+                    key2 += 1;
+                    if (keyIndex >= lastKeyIndex) {
+                        keyIndex = 0;
+                        key2 = keyframes2;
+                    }
+                    var_fa0 = var_fv0;
+                    if (keyframes1 != NULL) {
+                        key1 = &keyframes1[keyIndex];
+                        var_fv0 += (((f32) key2[1] - (f32) key2[0]) * speedScaledB * remainingProgress) + (((f32) key1[1] - (f32) key1[0]) * speedScaledA * progress);
+                    } else {
+                        var_fv0 += ((f32) key2[1] - (f32) key2[0]) * speedScaledB;
+                    }
+                    var_fv1 += animProgressPerKey;
+                }
+            } while (var_t1_2 == 0);
+
+            
+            if (arg2 != NULL) {
+                *arg2 = var_fv1;
+            }
+            
+            return 1;
         }
-        
-        return 1;
     }
     return 0;
-
 }
 
 #endif
@@ -261,86 +259,81 @@ s16 func_80024E2C(Object* arg0) {
 
 Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80024E50.s")
-/** 
-  * setting animation blending for layered/additive animation? 
-  * (like the weapon stowing animation applied additively to the main body animation)
-  */
-// s32 func_80024E50(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
-//     s32 temp_t9;
-//     u8 curModAnimLayered;
-//     Model* model;
-//     AnimState* animState;
-//     Animation* anim;
+s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
+    s32 temp_t9;
+    u8 curModanim_layered;
+    Model* model;
+    AnimState* animState;
+    Animation* anim;
 
-//     if (animProgress > 1.0f) {
-//         animProgress = 1.0f;
-//     } else if (animProgress < 0.0f) {
-//         animProgress = 0.0f;
-//     }
-//     object->animProgressLayered = animProgress;
+    if (animProgress > 1.0f) {
+        animProgress = 1.0f;
+    } else if (animProgress < 0.0f) {
+        animProgress = 0.0f;
+    }
+    object->animProgressLayered = animProgress;
     
-//     model = object->modelInsts[object->modelInstIdx]->model;
-//     if (model->animCount == 0) {
-//         return 0;
-//     }
+    model = object->modelInsts[object->modelInstIdx]->model;
+    if (model->animCount == 0) {
+        return 0;
+    }
     
-//     animState = object->modelInsts[object->modelInstIdx]->animState1;
+    animState = object->modelInsts[object->modelInstIdx]->animState1;
 
-//     animState->unk46 = animState->unk44;
-//     animState->unk_0x63 = (u8)arg3;
-//     animState->unk_0x8 = animState->unk_0x4;
-//     animState->unk_0x18 = animState->unk_0x14;
-//     animState->unk_0x10 = animState->unk_0xc;
-//     animState->animHeaderB = animState->animHeaderA;
-//     animState->unk_0x61 = animState->unk_0x60;
-//     animState->unk4a = animState->unk48;
-//     animState->animHeaderD = animState->animHeaderC;
-//     animState->unk_0x5c = (u16)animState->unk_0x5a;
-//     animState->unk_0x5a = 0;
-//     animState->modAnimIdBlend = -1;
+    animState->animIndexes[1] = animState->animIndexes[0];
+    animState->unk_0x62[1] = (u8)arg3;
+    animState->curAnimationFrame[1] = animState->curAnimationFrame[0];
+    animState->totalAnimationFrames[1] = animState->totalAnimationFrames[0];
+    animState->unk_0xc[1] = animState->unk_0xc[0];
+    animState->unk_0x34[1] = animState->unk_0x34[0];
+    animState->unk_0x60[1] = animState->unk_0x60[0];
+    animState->unk_0x48[1] = animState->unk_0x48[0];
+    animState->unk_0x3c[1] = animState->unk_0x3c[0];
+    animState->unk_0x5c[0] = animState->unk_0x58[1];
+    animState->unk_0x58[1] = 0;
+    animState->modAnimIdBlend = -1;
     
-//     curModAnimLayered = modAnimIndex != object->curModAnimIdLayered;
-//     object->curModAnimIdLayered = modAnimIndex;
+    curModanim_layered = modanimIndex != object->curModAnimIdLayered;
+    object->curModAnimIdLayered = modanimIndex;
     
-//     modAnimIndex = model->modAnimBankBases[(modAnimIndex >> 8)] + (u8)modAnimIndex;
+    modanimIndex = (model->modAnimBankBases[(modanimIndex >> 8)]) + (u8)modanimIndex;
     
-//     if (modAnimIndex >= model->animCount) {
-//         modAnimIndex = model->animCount - 1;
-//     }
-//     if (modAnimIndex < 0) {
-//         modAnimIndex = 0;
-//     }
+    if (modanimIndex >= model->animCount) {
+        modanimIndex = model->animCount - 1;
+    }
+    if (modanimIndex < 0) {
+        modanimIndex = 0;
+    }
     
-//     if (model->unk_0x71 & 0x40) {
-//         if (curModAnimLayered) {
-//             animState->unk_0x62 = 1 - animState->unk_0x62;
-//             animState->unk44 = animState->unk_0x62;
-//             func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk44]->boneRemaps, model);
-//         }
-//         anim = (Animation*)(&animState->anims[animState->unk44]->anim);
-//     } else {
-//         animState->unk44 = modAnimIndex;
-//         anim = model->anims[(u16)modAnimIndex];
-//     }
+    if (model->unk_0x71 & 0x40) {
+        if (curModanim_layered) {
+            animState->unk_0x62[0] = 1 - animState->unk_0x62[0];
+            animState->animIndexes[0] = animState->unk_0x62[0];
+            func_80019118(model->modAnim[modanimIndex], modanimIndex, animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
+        }
+        anim = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
+    } else {
+        animState->animIndexes[0] = modanimIndex;
+        anim = model->anims[(u16)modanimIndex];
+    }
 
-//     animState->animHeaderA = &anim->animHeader;
-//     animState->unk_0x60 = anim->unk_0x1 & 0xF0;
-//     animState->unk_0x14 = animState->animHeaderA->totalKeyframes;
+    animState->unk_0x34[0] = &anim->animHeader;
+    animState->unk_0x60[0] = anim->unk_0x1 & 0xF0;
+    animState->totalAnimationFrames[0] = animState->unk_0x34[0]->totalKeyframes;
     
-//     if (animState->unk_0x60 == 0) {
-//         animState->unk_0x14 = animState->unk_0x14 - 1.0f;
-//     }
-//     temp_t9 = anim->unk_0x1 & 0xF;
-//     if (temp_t9 != 0) {
-//         animState->unk_0x10 = animState->unk_0xc;
-//         animState->unk_0x5e = (0x3FF / temp_t9);
-//         animState->unk_0x58 = 0x3FF;
-//     }
-//     animState->unk_0xc = 0.0f;
-//     animState->unk_0x4 = animState->unk_0x14 * animProgress;
-//     return 0;
-// }
+    if (animState->unk_0x60[0] == 0) {
+        animState->totalAnimationFrames[0] -= 1.0f;
+    }
+    temp_t9 = anim->unk_0x1 & 0xF;
+    if (temp_t9 != 0) {
+        animState->unk_0xc[1] = animState->unk_0xc[0];
+        animState->unk_0x5c[1] = (0x3FF / temp_t9);
+        animState->unk_0x58[0] = 0x3FF;
+    }
+    animState->unk_0xc[0] = 0.0f;
+    animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
+    return 0;
+}
 
 s32 func_800250F4(Object* object, f32 progress) {
     if (progress > 0.999f){
@@ -380,63 +373,54 @@ void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
 
 Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_800255F8.s")
-/*
-    a0: 8069F158 (Model)
-    a1: 806AB3A0 (AnimState)
-    a2: 4 (modanim bank in upper byte, index within bank on lower byte)
-    a3: 3FF (blend duration/speed, maybe?)
+void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3) {
+    f32 var_fv0;
+    s16 temp_v0;
+    s8 temp_v0_2;
+    s32 temp_t1;
+    Animation* anim;
 
-    something to do with blending between two animations?
-*/
-// void func_800255F8(Model* model, AnimState* animState, s32 modAnimIndex, s16 arg3) {
-//     f32 var_fv0;
-//     s16 temp_v0;
-//     s8 temp_v0_2;
-//     s32 temp_t1;
-//     Animation* anim;
+    modanimIndex = model->modAnimBankBases[modanimIndex >> 8] + (modanimIndex & 0xFF);
+    
+    if (modanimIndex >= model->animCount) {
+        modanimIndex = model->animCount - 1;
+    }
+    if (modanimIndex < 0) {
+        modanimIndex = 0;
+    }
+    
+    if (model->unk_0x71 & 0x40) {
+        if (modanimIndex != animState->modAnimIdBlend) {
+            temp_v0_2 = animState->unk_0x62[0];
+            animState->unk_0x48[1] = 1 - temp_v0_2;
+            animState->unk_0x48[0] = temp_v0_2;
+            func_80019118(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims2[(u16)temp_v0_2], model);
 
-//     modAnimIndex = model->modAnimBankBases[modAnimIndex >> 8] + (u8)modAnimIndex;
+            animState->modAnimIdBlend = modanimIndex;
+        }
+        anim = (Animation*)(&animState->anims2[animState->unk_0x48[0]]->anim);
+    } else {
+        animState->unk_0x48[0] = modanimIndex;
+        anim = model->anims[(u16)modanimIndex];
+    }
     
-//     if (modAnimIndex >= model->animCount) {
-//         modAnimIndex = model->animCount - 1;
-//     }
-//     if (modAnimIndex < 0) {
-//         modAnimIndex = 0;
-//     }
+    animState->unk_0x3c[0] = (AnimationHeader*) (&anim->animHeader);
+    temp_t1 = anim->unk_0x1 & 0xF0;
+    if (temp_t1 != animState->unk_0x60[0]) {
+        animState->unk_0x58[1] = 0;
+        return;
+    }
     
-//     if (model->unk_0x71 & 0x40) {
-//         if (modAnimIndex != animState->modAnimIdBlend) {
-//             temp_v0_2 = animState->unk_0x62;
-//             animState->unk4a = 1 - temp_v0_2;
-//             animState->unk48 = temp_v0_2;
-//             func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims2[(u16)temp_v0_2], model);
-
-//             animState->modAnimIdBlend = modAnimIndex;
-//         }
-//         anim = (Animation*)(&animState->anims2[animState->unk48]->anim);
-//     } else {
-//         animState->unk48 = modAnimIndex;
-//         anim = model->anims[(u16)modAnimIndex];
-//     }
-    
-//     animState->animHeaderC = (AnimationHeader*) (&anim->animHeader);
-//     temp_t1 = anim->unk_0x1 & 0xF0;
-//     if (temp_t1 != animState->unk_0x60) {
-//         animState->unk_0x5a = 0;
-//         return;
-//     }
-    
-//     var_fv0 = (u8)animState->animHeaderC->totalKeyframes; 
-//     if (temp_t1 == 0) {
-//         var_fv0 -= 1.0f;
-//     }
-//     if (var_fv0 != animState->unk_0x14) {
-//         animState->unk_0x5a = 0;
-//         return;
-//     }
-//     animState->unk_0x5a = arg3;
-// }
+    var_fv0 = (u8)animState->unk_0x3c[0]->totalKeyframes; 
+    if (temp_t1 == 0) {
+        var_fv0 -= 1.0f;
+    }
+    if (var_fv0 != animState->totalAnimationFrames[0]) {
+        animState->unk_0x58[1] = 0;
+        return;
+    }
+    animState->unk_0x58[1] = arg3;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025780.s")
 

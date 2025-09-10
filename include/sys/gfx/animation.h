@@ -48,7 +48,7 @@ typedef struct {
 /*0058*/    s16 unk_0x58[2]; //anim blend strength? (out of 1024)
 /*005C*/	s16 unk_0x5c[2]; //anim blend duration?
 /*0060*/    s8 unk_0x60[2];
-/*0062*/    u8 unk_0x62[2];
+/*0062*/    s8 unk_0x62[2];
 /*0064*/    s16 modAnimIdBlend; //seems to be a modanimIndex (when it's not 0xFFFF)
 } AnimState;
 
