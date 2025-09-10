@@ -413,7 +413,7 @@ void dll_496_func_24C(Object* snowhorn) {
 
     if (state->someAnimIDList) {
         animIndex = state->isWalking & 0xFFFF7FFF;
-        if (snowhorn->curAnimId != state->someAnimIDList[animIndex]) {
+        if (snowhorn->curModAnimId != state->someAnimIDList[animIndex]) {
             func_80023D30(snowhorn, state->someAnimIDList[animIndex], 0.0f, 0);
 
             if (state->unk48[animIndex] >= 0.0f) {
@@ -570,7 +570,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     temp2 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
     snowhorn->unk0xaf |= 8;    
     
-    switch (snowhorn->curAnimId) {
+    switch (snowhorn->curModAnimId) {
         //new_var = temp1;
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
@@ -675,7 +675,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     }
     
     state->quest &= 0x7FFF;
-    if (snowhorn->curAnimId != 0) {
+    if (snowhorn->curModAnimId != 0) {
         func_80023D30(snowhorn, 0, 0.0f, 0);
     }
 

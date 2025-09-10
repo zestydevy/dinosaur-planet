@@ -30,7 +30,7 @@ void cannon_claw_update(Object *self) {
         return;
     }
 
-    if (self->curAnimId != 0x208) {
+    if (self->curModAnimId != 0x208) {
         func_80023D30(self, 0x208, 0, 0);
     }
 

@@ -340,7 +340,7 @@ class DLLSplitter:
                     metadata.append(f"export: {export_idx}")
 
                 c_file.write("\n")
-                c_file.write(f"// {" | ".join(metadata)}\n")
+                c_file.write(f'// {" | ".join(metadata)}\n')
                 c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.symbol}.s")\n')
 
     def __adjust_refs_for_c_stub(self, refs: list[int]):

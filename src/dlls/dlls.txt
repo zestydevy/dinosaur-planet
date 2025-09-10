@@ -36,3 +36,4 @@
 325 = objects/325_trigger
 365 = objects/365
 496 = objects/496_snowhorn
+668 = objects/668_db_diamond

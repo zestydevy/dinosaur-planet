@@ -51,6 +51,20 @@ typedef struct {
 } ModelJoint;
 
 typedef struct {
+/*00*/ s16 totalInfluences; //The number of vertexGroups affected by each blendshape
+/*02*/ s16 headerLength;
+/*04*/ s16 totalBlendshapes;
+/*06*/ s16 influences; //Array of vertexGroupIDs
+} BlendshapeHeader;
+
+enum BlendshapeLayers {
+    BLENDSHAPE_LAYER_EYES = 0,
+    BLENDSHAPE_LAYER_UNK = 1,
+    BLENDSHAPE_LAYER_MOUTH = 2,
+    BLENDSHAPE_LAYER_LIMIT = 3
+};
+
+typedef struct {
 /*0000*/	Gfx gfx; //when opaque?
 /*0008*/	Gfx gfx2; //when fading?
 /*0010*/	s16 idx; //commandIndex to swap out with either gfx or gfx2
@@ -67,33 +81,30 @@ typedef struct {
 
 typedef struct{
     // TODO
-/*0000*/    ModelTexture *materials; //materials
-/*0004*/    Vtx *vertices; //vertexData
-/*0008*/    ModelFacebatch *faces; //faces datablock (materialID ref, joint assignments, f3dex command index, base faceID)
+/*0000*/    ModelTexture *materials;
+/*0004*/    Vtx *vertices;
+/*0008*/    ModelFacebatch *faces; //contains materialID ref, joint assignments, f3dex command index, base faceID, etc.
 /*000C*/    Gfx *displayList; //f3dex2 block
 /*0010*/    Animation **anims;
-/*0014*/    void *vertexGroupOffsets; //vertexGroup_offsets
-/*0018*/    void *vertexGroups; //vertexGroups (used by blendshapes, lighting system - contains copy of group vertices' colour, plus normal vector)
-/*001C*/    void *blendshapes; //blendshapes
-/*0020*/    ModelJoint *joints; //joint_hierarchy
+/*0014*/    void *vertexGroupOffsets;
+/*0018*/    void *vertexGroups; //used by blendshapes, lighting system - contains copy of group vertices' colour, plus normal vector
+/*001C*/    BlendshapeHeader *blendshapes;
+/*0020*/    ModelJoint *joints;
 /*0024*/    u8 *amap;
-/*0028*/    HitSphere *hitSpheres; //hitspheres
-/*002C*/    void *edgeVectors; //edgevectors (only on mobile map models?)
-/*0030*/    u32 unk_0x30;
+/*0028*/    HitSphere *hitSpheres;
+/*002C*/    void *edgeVectors; //only on mobile map models?
+/*0030*/    s16 *modAnim;
 /*0034*/    void *facebatchBounds; //bounding boxes for each facebatch
-/*0038*/    ModelDLInfo *drawModes; //drawModes (stores command indices of f3dex2 block's EF command settings, plus 2 settings to swap between)
-/*003C*/    void *textureAnimations; //textureAnimations (pupil UVs/eyelid flipbooks)
-/*0040*/    u32 unk_0x40;
-/*0044*/    u32 unk_0x44;
-/*0048*/    u32 unk_0x48;
-/*004C*/    u32 unk_0x4c;
+/*0038*/    ModelDLInfo *drawModes; //stores command indices of f3dex2 block's EF command settings, plus 2 settings to swap between
+/*003C*/    void *textureAnimations; //for animating pupil UVs/eyelid flipbooks
+/*0040*/    s16 modAnimBankBases[8]; //the base modanim index of each modanim bank
 /*0050*/    f32 *collisionA; //joint pushback collision A
 /*0054*/    f32 *collisionB; //joint pushback collision B
-/*0058*/    u32 decompressedSize; //length of decompressed model
-/*005C*/    u32 unk_0x5c;
+/*0058*/    u32 decompressedSize;
+/*005C*/    u32 unk_0x5c; //amap-related?
 /*0060*/    s16 maxAnimatedVertDistance; //max radial distance (from model origin) to a vert throughout model's animations (used to simplify collision tests)
-/*0062*/    s16 vertexCount; //vertex_count
-/*0064*/    u16 faceCount; //face_count
+/*0062*/    s16 vertexCount;
+/*0064*/    u16 faceCount;
 /*0066*/    s16 animCount;
 /*0068*/    s16 unk_0x68;
 /*006A*/    s16 modelId;
@@ -101,11 +112,11 @@ typedef struct{
 /*006E*/    u8 hitSphereCount; //hitsphere_count
 /*006F*/    u8 jointCount; //joints_count
 /*0070*/    u8 unk_0x70; //mesh settings bitfield (bit0 allows simultaneous eye/mouth blendshapes, bit3 involved in texturing?)
-/*0071*/    u8 unk_0x71; 
+/*0071*/    u8 unk_0x71; //animation-related bitfield?
 /*0072*/    u8 refCount; 
 /*0073*/    u8 textureCount; //material_count
-/*0074*/    u8 envMapCount; //envMap_material_count
-/*0075*/	u8 drawModesCount; //drawModes_count
+/*0074*/    u8 envMapCount;
+/*0075*/	u8 drawModesCount;
 /*0076*/	u8 textureAnimationCount;
 /*0077*/	u8 unk77;
 /*0078*/	u32 unk78;
@@ -133,13 +144,13 @@ typedef struct ModelInstance_0x14 {
 } ModelInstance_0x14;
 
 typedef struct {
-/*0000*/    f32 unk0x0;
+/*0000*/    f32 strength;
 /*0004*/    f32 unk0x4;
 /*0008*/    f32 unk0x8;
 /*000C*/    s8 unk0xC;
-/*000D*/    s8 unk0xD;
+/*000D*/    s8 id;
 /*000E*/    u8 unk0xE;
-} ModelInstance_0x30;
+} ModelInstanceBlendshape;
 
 typedef struct {
     // TODO
@@ -152,11 +163,37 @@ typedef struct {
 /*0024*/    f32 *unk_0x24;
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
-/*0030*/    ModelInstance_0x30 *unk_0x30;
+/*0030*/    ModelInstanceBlendshape *blendshapes;
 /*0034*/    u16 unk_0x34;
 } ModelInstance;
 
+typedef struct{
+/*0000*/    s32 vertexMalloc;
+/*0004*/    s32 hitSphereMalloc;
+/*0008*/    s32 unk8;
+/*000C*/    s32 unkC;
+/*0010*/    s32 blendShapeMalloc;
+/*0014*/    s32 unk14;
+/*0018*/    s32 jointsMalloc;
+} ModelStats;
+
+typedef struct {
+/*0000*/    s16 animCount;
+/*0002*/    s16 largestAnimSize;
+/*0004*/    s16 unk_0x4; //malloc-related Boolean (often set on character models)
+/*0006*/    s16 unk_0x6; //always 0 in ROM
+/*0008*/    u32 uncompressedSize; // CAUTION: little-endian
+} ModelHeader;
+
+typedef struct {
+/*0000*/    s32 id;
+/*0004*/    Model *model;
+} ModelSlot;
+
+void func_8001AF04(ModelInstance *modelInst, s32 param2, s32 param3, f32 param4, s32 param5, s32 param6);
 void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
 void func_8001B084(ModelInstance *modelInst, f32 param2);
+Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
+void anim_destroy(Animation*);
 
 #endif //_SYS_GFX_MODEL_H

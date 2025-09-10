@@ -3,6 +3,7 @@
 #include "PR/gbi.h"
 #include "libultra/io/piint.h"
 #include "game/objects/object.h"
+#include "macros.h"
 #include "sys/gfx/gx.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -20,8 +21,6 @@ static const char str_80098330[] = "%f  ";
 static const char str_80098338[] = "\n";
 static const char str_8009833c[] = "\n";
 static const char str_80098340[] = "CAM Error!! Convlist overflow.\n";
-static const char str_80098360[] = "Cam: Worldmtx overflow!!!\n";
-
 
 // .bss
 // pad to 0x800a7c20
@@ -1629,20 +1628,21 @@ void update_camera_for_object(Camera *camera)
     }
 }
 
-void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx)
-{
-    if (matrixIdx < 0)
-    {
-        ov->x = v->x;
-        ov->y = v->y;
-        ov->z = v->z;
-    }
-    else
-    {
-        vec3_transform((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), 
-            v->x, v->y, v->z, 
-            &ov->x, &ov->y, &ov->z);
-    }
+void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx){
+    u32 noTransformation = matrixIdx < 0; 
+
+    if (matrixIdx >= 30) {
+        STUBBED_PRINTF("Cam: Worldmtx overflow!!!\n");
+    }; 
+
+    if (noTransformation) {
+        ov->x = v->x; 
+        ov->y = v->y; 
+        ov->z = v->z; 
+        return; 
+    } 
+
+    vec3_transform(&gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
 }
 
 void func_80004A30(s16 param1) {

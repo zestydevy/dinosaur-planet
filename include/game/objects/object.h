@@ -187,10 +187,10 @@ typedef struct Object {
 /*007C*/    ModelInstance **modelInsts;
 /*0080*/    Vec3f positionMirror2; //gets copied twice.
 /*008C*/    Vec3f positionMirror3; //not sure why.
-/*0098*/    float animTimer; //guessed from SFA
-/*009C*/    f32 unk0x9c;
-/*00A0*/    s16 curAnimId;
-/*00A2*/	s16 unk_0xa2;
+/*0098*/    f32 animProgress;
+/*009C*/    f32 animProgressLayered;
+/*00A0*/    s16 curModAnimId;
+/*00A2*/	s16 curModAnimIdLayered;
 /*00A4*/	f32 unk_0xa4;
 /*00A8*/	f32 unk_0xa8;
 /*00AC*/    s8 mapID;
@@ -226,8 +226,18 @@ typedef struct ObjListItem {
 	Object *obj;
 } ObjListItem;
 
+/** Used to load Tricky/Kyte's object 
+  * 
+*/
+typedef struct {
+/*00*/	ObjCreateInfo base;
+/*18*/	u8 unk18;
+/*19*/	u8 unk19;
+} SideCreateInfo;
+
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
 extern struct Vec3_Int Vec3_Int_array[20];
+extern SideCreateInfo D_80091688;
 
 #endif
