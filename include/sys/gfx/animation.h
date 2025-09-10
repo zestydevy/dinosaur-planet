@@ -6,9 +6,6 @@
 #include "PR/ultratypes.h"
 
 typedef struct {
-/*0000*/    u8 unk_0x0;
-/*0001*/	u8 unk_0x1;
-/*0002*/	s16 unk_0x2;
 /*0000*/	u8 totalBones;
 /*0001*/	u8 totalKeyframes;
 /*0002*/	u8 keyframeStride;
@@ -21,8 +18,8 @@ and whether TS components are also animated (bones always have rotation componen
 } AnimationHeader;
 
 typedef struct {
-/*0000*/    u8 referenceCount;
-/*0001*/	u8 unk_0x1; //animation flags (looping etc?)
+/*0000*/    s8 referenceCount;
+/*0001*/	s8 unk_0x1; //animation flags (looping etc?)
 /*0002*/	s16 unk_0x2; //keyframe_data_offset
 /** keyframes for the root translation of the model
 (used to map the anim playback progress based on character speed, e.g. during walk cycles) */

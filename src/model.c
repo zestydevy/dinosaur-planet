@@ -580,9 +580,6 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/modanim_load.s")
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/model_setup_anim_playback.s")
-#else
 void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
     Model* model;
     AnimationHeader* animHeader;
@@ -636,7 +633,6 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
         animState->unk_0xc[1] = animState->unk_0xc[0];
     }
 }
-#endif
 
 Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
     Animation* anim;
@@ -648,9 +644,6 @@ Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/anim_destroy.s")
-#else
 void anim_destroy(Animation* anim) {
     AnimSlot* slot;
     s32 index;
@@ -679,7 +672,6 @@ void anim_destroy(Animation* anim) {
         free(anim);
     }        
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001943C.s")
