@@ -73,7 +73,6 @@ ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
 u32 modanim_load(Model *model, u32 id, void *modanim);
 void func_800186CC(Model *model);
 void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
-u32 align_8(u32 a0);
 ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 {
     s32 slot;
@@ -148,7 +147,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     header = gAuxBuffer;
     animCount = header->animCount;
     unk_0x4 = header->unk_0x4;
-    unk_0x2_aligned = align_8(header->unk_0x2);
+    unk_0x2_aligned = mmAlign8(header->unk_0x2);
     unk_0x68 = unk_0x2_aligned + 0x90;
     uncompressedSize = rarezip_uncompress_size(&header->uncompressedSize);
     modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
@@ -257,7 +256,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 
     func_800186CC(model);
 
-    modanim = (void*)align_8((u32)model + uncompressedSize);
+    modanim = (void*)mmAlign8((u32)model + uncompressedSize);
 
     if (modanim_load(model, id, modanim) != 0) {
         goto bail;

@@ -347,7 +347,7 @@ void func_800264D0(Object* arg0) {
 u32 func_8002667C(Object* obj, u32 addr) {
     ObjectHitInfo* objHitInfo;
 
-    objHitInfo = (ObjectHitInfo *)align_4(addr);
+    objHitInfo = (ObjectHitInfo *)mmAlign4(addr);
     obj->objhitInfo = objHitInfo;
     addr = (u32)(objHitInfo + 1);
     func_800264D0(obj);
@@ -515,7 +515,7 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
     }
 
     objHitInfo->unk_0x6 = 0x12C;
-    objHitInfo->unk_0x8 = (u32 *)align_8(arg3);
+    objHitInfo->unk_0x8 = (u32 *)mmAlign8(arg3);
     arg3 = (s32)objHitInfo->unk_0x8 + objHitInfo->unk_0x6;
     objHitInfo->unk_0x9e = 1;
     if (objHitInfo->unk_0x5a & 0x30) {
@@ -570,7 +570,7 @@ void func_80026B84(Object* obj) {
 }
 
 u32 func_80026BD8(Object* obj, u32 addr) {
-    obj->unk0x58 = (ObjectStruct58 *)align_4(addr);
+    obj->unk0x58 = (ObjectStruct58 *)mmAlign4(addr);
     addr = (u32)(obj->unk0x58 + 1);
     func_80026B84(obj);
     return addr;

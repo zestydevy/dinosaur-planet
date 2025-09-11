@@ -153,7 +153,7 @@ void func_8004D880(Object *arg0) {
 u32 func_8004D8A4(Object* obj, u32 addr, s32 arg2) {
     ObjectStruct64 *obj64;
 
-    obj64 = (ObjectStruct64 *) align_4(addr);
+    obj64 = (ObjectStruct64 *) mmAlign4(addr);
     obj->ptr0x64 = obj64;
     addr = (u32)(obj64 + 1);
     obj64->unk4 = texture_load((s32) -obj->def->shadowTexture, 0);

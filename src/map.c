@@ -2889,7 +2889,7 @@ void func_800484A8(void) {
     s32 j;
     s8* var_s1;
 
-    func_80017254(0);
+    mmSetDelay(0);
     func_80012B54(1, 0);
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         var_s1 = gBlockIndices[i];
@@ -2912,7 +2912,7 @@ void func_800484A8(void) {
     gWorldZ = 0.0f;
     gDLL_9_Newclouds->vtbl->func2(-1, 0);
     gDLL_12_Minic->vtbl->func4();
-    func_80017254(2);
+    mmSetDelay(2);
 }
 
 s32 func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
@@ -3014,7 +3014,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 
     if (block->vtxFlags & 0x8)
     {
-        Vtx_t *vtx = align_8(p);
+        Vtx_t *vtx = mmAlign8(p);
         Vtx_t *srcvtx = block->vertices;
         BlockShape *shape;
 
@@ -3057,16 +3057,16 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
         block->vertices2[1] = block->vertices;
     }
 
-    p = align_4(p);
+    p = mmAlign4(p);
     block->unk_0x28 = p;
 
     n = block_setup_textures(block);
 
-    p = align_2(p + n);
+    p = mmAlign2(p + n);
     block->xzBitmap = p;
     block_setup_xz_bitmap(block);
 
-    p = align_8(p + block->unk_0x34 * sizeof(s16));
+    p = mmAlign8(p + block->unk_0x34 * sizeof(s16));
     block_load_hits(block, id, queue, p);
 
     if (queue) {

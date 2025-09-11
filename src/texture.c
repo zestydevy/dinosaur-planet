@@ -169,7 +169,7 @@ Texture* texture_load(s32 id, s32 param2) {
                 sp44->levels = 1;
             }
             sp44->unk_0x10 = (u32) temp_s7 >> 2;
-            reduce_heap_block(sp44, (load_texture_to_tmem(sp44, align_16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
+            mmRealloc(sp44, (load_texture_to_tmem(sp44, mmAlign16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
         }
     }
     for (i = 0; i < D_800B49B0; i++) {

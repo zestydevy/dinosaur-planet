@@ -163,7 +163,7 @@ void mainproc(void *arg) {
 void game_init(void) {
     s32 tvMode;
 
-    init_memory();
+    mmInit();
     rarezip_init();
     create_asset_thread();
 
@@ -322,7 +322,7 @@ void game_tick(void) {
 
     func_80037924();
     obj_do_deferred_free();
-    update_mem_mon_values();
+    mmFreeTick();
 
     if (gPauseState == 0) {
         func_80001A3C();
@@ -384,7 +384,7 @@ void game_tick_no_expansion(void) {
     gSPEndDisplayList(gCurGfx++);
 
     func_80037924();
-    update_mem_mon_values();
+    mmFreeTick();
 
     delayByte = video_func_returning_delay(0);
     delayAmount = (u8)delayByte;
@@ -469,7 +469,7 @@ void func_80013FB4(void) {
 
 void func_80014074(void) {
     if (D_800B09C0 != 0) {
-        func_80017254(0);
+        mmSetDelay(0);
         if (D_8008CA30 != 0) {
             func_8003798C(0, 0, 0);
             func_800668A4();
@@ -482,7 +482,7 @@ void func_80014074(void) {
 
         D_800B09C0 = 0;
 
-        func_80017254(0);
+        mmSetDelay(0);
         camera_init();
 
         if (D_8008C968 >= 0) {
@@ -496,7 +496,7 @@ void func_80014074(void) {
             gDLL_23->vtbl->func_18(1);
         }
 
-        func_80017254(2);
+        mmSetDelay(2);
         D_8008CA30 = 1;
     }
 }
