@@ -123,7 +123,7 @@ void dll_6_ctor(s32 arg0) {
     temp_v0 = sp4C[0];
     temp_a3 = sp4C[1] - temp_v0;
     if (temp_a3 != 0) {
-        _bss_0 = mmAlloc(temp_a3, 0xD, NULL);
+        _bss_0 = mmAlloc(temp_a3, ALLOC_TAG_SFX_COL, NULL);
         queue_load_file_region_to_ptr((void*)_bss_0, 3, temp_v0, temp_a3);
         alBnkfNew(_bss_0, (u8*)file_get_romaddr(3U, sp4C[1]));
     }
@@ -137,7 +137,7 @@ void dll_6_ctor(s32 arg0) {
 
     _bss_8 = 0x41;
     temp_a3 = _bss_8 << 5;
-    _bss_4 = mmAlloc(temp_a3, 0xD, NULL);
+    _bss_4 = mmAlloc(temp_a3, ALLOC_TAG_SFX_COL, NULL);
     bzero(_bss_4, temp_a3);
     _bss_8 = 0;
 }

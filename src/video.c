@@ -31,7 +31,7 @@ void func_8005C780() {
         mmFree(D_800BCC10);
     }
 
-    D_800BCC10 = mmAlloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
+    D_800BCC10 = mmAlloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, ALLOC_TAG_GFX_COL, 0);
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++)
     {
@@ -444,7 +444,7 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE2C = 5;
 
     if (someBool) {
-        D_800BCE18[0] = mmAlloc(960, 2, NULL);
+        D_800BCE18[0] = mmAlloc(960, ALLOC_TAG_SCREEN_COL, NULL);
         D_800BCE18[1] = &D_800BCE18[0][480];
     }
 

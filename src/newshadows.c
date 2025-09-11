@@ -8,7 +8,7 @@ void func_8004D470(void) {
     void *temp_v0;
 
     D_80092BE8 = 0xA;
-    temp_v0 = (void *) mmAlloc(0x8020, 0x18, NULL);
+    temp_v0 = (void *) mmAlloc(0x8020, ALLOC_TAG_SHAD_COL, NULL);
     D_800B98A0[0] = (Gfx *) temp_v0;
     D_800B98A0[1] = (Gfx *) ((u32)temp_v0 + sizeof(Unk800B98A0));
     D_800B98A8[0] = (Unk800B98A8 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2);
@@ -16,7 +16,7 @@ void func_8004D470(void) {
     D_800B98B0[0] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
     D_800B98B0[1] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
 
-    temp_v0 = (void *) mmAlloc(0xC800, 0x18, NULL);
+    temp_v0 = (void *) mmAlloc(0xC800, ALLOC_TAG_SHAD_COL, NULL);
     D_800BB158[0] = (Gfx *) temp_v0;
     D_800BB158[1] = (Gfx *) ((u32)temp_v0 + sizeof(Unk800BB158));
     D_800BB168[0] = (Unk800BB168 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2);

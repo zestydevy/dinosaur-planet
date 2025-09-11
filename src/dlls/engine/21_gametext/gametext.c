@@ -26,7 +26,7 @@ void gametext_set_bank(s8 bank);
 void gametext_ctor(void *self) {
     u16 *header;
 
-    header = (u16*)mmAlloc(4, 0x19, NULL);
+    header = (u16*)mmAlloc(4, ALLOC_TAG_GAME_COL, NULL);
     queue_load_file_region_to_ptr((void**)header, GAMETEXT_TAB, 0, 4);
 
     sBankCount = header[0];
@@ -35,7 +35,7 @@ void gametext_ctor(void *self) {
     mmFree(header);
 
     sBankSize = sBankEntryCount * 5 + 4;
-    sCurrentBank = mmAlloc(sBankSize, 0x19, NULL);
+    sCurrentBank = mmAlloc(sBankSize, ALLOC_TAG_GAME_COL, NULL);
     sCurrentBank_StrCounts = sCurrentBank + 4;
     sCurrentBank_Sizes = (u16*)(sCurrentBank + sBankEntryCount + 4);
     sCurrentBank_Offsets = (u16*)(sCurrentBank + (sBankEntryCount * 3) + 4);
@@ -99,7 +99,7 @@ GameTextChunk *gametext_get_chunk(u16 chunk) {
 
     headerSize += alignmentPad + sCurrentBank_Sizes[chunk];
 
-    chunkPtr = (GameTextChunk*)mmAlloc(headerSize, 0x19, NULL);
+    chunkPtr = (GameTextChunk*)mmAlloc(headerSize, ALLOC_TAG_GAME_COL, NULL);
 
     chunkPtr->strings = (char**)((u32)chunkPtr + sizeof(GameTextChunk));
 
@@ -137,7 +137,7 @@ char *gametext_get_text(u16 chunk, u16 strIndex) {
     s32 i;
     s32 k;
 
-    text = mmAlloc(sCurrentBank_Sizes[chunk], 0x19, NULL);
+    text = mmAlloc(sCurrentBank_Sizes[chunk], ALLOC_TAG_GAME_COL, NULL);
 
     queue_load_file_region_to_ptr(
         (void**)text, 
@@ -157,7 +157,7 @@ char *gametext_get_text(u16 chunk, u16 strIndex) {
 
     len = strlen(str) + 1;
 
-    copy = mmAlloc(len, 0x19, NULL);
+    copy = mmAlloc(len, ALLOC_TAG_GAME_COL, NULL);
     bcopy(str, copy, len);
 
     mmFree(text);

@@ -24,7 +24,7 @@ void init_dll_system() {
         ++gDLLCount;
     }
 
-    gLoadedDLLList = (DLLState*)mmAlloc(sizeof(DLLState) * MAX_LOADED_DLLS, 4, NULL);
+    gLoadedDLLList = (DLLState*)mmAlloc(sizeof(DLLState) * MAX_LOADED_DLLS, ALLOC_TAG_DLL_COL, NULL);
 
     gLoadedDLLCount = MAX_LOADED_DLLS;
     while (gLoadedDLLCount != 0) {
@@ -179,7 +179,7 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
         }
     }
 
-    dll = (DLLFile*)mmAlloc(dllBytesSize + bssSize, 4, NULL);
+    dll = (DLLFile*)mmAlloc(dllBytesSize + bssSize, ALLOC_TAG_DLL_COL, NULL);
     bcopy(dllBytes, (void*)dll, dllBytesSize);
 
     if (bssSize) {

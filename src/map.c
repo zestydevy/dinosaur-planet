@@ -389,14 +389,14 @@ void init_maps(void) {
     s32 i;
 
     UINT_80092a98 = 0;
-    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, 5, NULL);
-    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, 5, NULL);
-    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, 5, NULL);
-    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, 5, NULL);
-    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, 5, NULL);
-    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
-    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, 5, NULL);
-    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
+    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, NULL);
+    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
+    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
+    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
+    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, ALLOC_TAG_TRACK_COL, NULL);
+    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, NULL);
+    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, ALLOC_TAG_TRACK_COL, NULL);
+    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, NULL);
     for (i = 1; i < MAP_LAYER_COUNT; i++) {
         gBlockIndices[i] = gBlockIndices[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
@@ -417,12 +417,12 @@ void init_maps(void) {
         gNumTotalBlocks++;
     }
     gNumTotalBlocks--;
-    D_800B96B0 = mmAlloc(sizeof(Unk800B96B0) * 100, 5, NULL);
+    D_800B96B0 = mmAlloc(sizeof(Unk800B96B0) * 100, ALLOC_TAG_TRACK_COL, NULL);
     D_800B4A5C = -1;
     D_800B4A5E = -2;
-    gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, 5, NULL);
+    gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, ALLOC_TAG_TRACK_COL, NULL);
     bzero(gBlockTextures, sizeof(BlockTexture) * 20);
-    D_800B97A8 = mmAlloc(sizeof(UnkTextureStruct) * 58, 5, NULL);
+    D_800B97A8 = mmAlloc(sizeof(UnkTextureStruct) * 58, ALLOC_TAG_TRACK_COL, NULL);
     bzero(D_800B97A8, sizeof(UnkTextureStruct) * 58);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
     gRenderList[0] = -0x4000;
@@ -1755,7 +1755,7 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gridB_size = gMapActiveStreamMap->gridB_sixteenthSize * 16;
     objectsCount_oneEighth = gMapActiveStreamMap->objectInstanceCount >> 3;
     objectsMallocSize = objectsCount_oneEighth + 1;
-    map = mmAlloc(((gridB_size << 1) + map_size) + objectsMallocSize, 5, 0);
+    map = mmAlloc(((gridB_size << 1) + map_size) + objectsMallocSize, ALLOC_TAG_TRACK_COL, 0);
     
     gMapActiveStreamMap = (MAPSHeader *) map;
     queue_load_file_region_to_ptr((void *) map, MAPS_BIN, map_start, map_size);
@@ -2805,7 +2805,7 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
     } else {
         temp_s4 = gFile_MAPS_TAB[arg0].unk0;
         temp_s1 = gFile_MAPS_TAB[arg0 + 1].unk0 - temp_s4;
-        temp_v0_2 = mmAlloc(temp_s1, 5, NULL);
+        temp_v0_2 = mmAlloc(temp_s1, ALLOC_TAG_TRACK_COL, NULL);
         queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
         temp_v0_2->unk20 = (MapsBinUnk20 *) (gFile_MAPS_TAB[arg0].unk10 + (s8 *)temp_v0_2 - temp_s4);
         temp_v0_2->unk24 = (D_800B9768.unk4[arg0].xMin + temp_v0_2->unk4) * BLOCKS_GRID_UNIT_F;
@@ -2970,7 +2970,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 
     uncompressedSize = *(u32*)gMapReadBuffer;
     allocSize = uncompressedSize + hits_get_size(id) + 0x8;
-    block = mmAlloc(allocSize, 5, NULL);
+    block = mmAlloc(allocSize, ALLOC_TAG_TRACK_COL, NULL);
     if (block == NULL) {
         return;
     }

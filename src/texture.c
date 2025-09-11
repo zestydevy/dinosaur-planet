@@ -42,7 +42,7 @@ void init_textures(void) {
     s32* temp_a1;
     s32 i;
 
-    D_800B49A8 = mmAlloc(0x15E0, 6, NULL);
+    D_800B49A8 = mmAlloc(0x15E0, ALLOC_TAG_TEX_COL, NULL);
     D_800B49B0 = 0;
     queue_alloc_load_file((void **) &gFile_TEX0_TAB, 0x28);
     queue_alloc_load_file(&gFile_TEX1_TAB, 0x25);
@@ -52,7 +52,7 @@ void init_textures(void) {
         for (var_v1 = 0; temp_a1[var_v1] != -1; var_v1++) {}
         D_800B49B8[i] = (var_v1 - 1);
     }
-    D_800B49C0 = mmAlloc(0x108, 6, NULL);
+    D_800B49C0 = mmAlloc(0x108, ALLOC_TAG_TEX_COL, NULL);
 }
 
 void func_8003CD6C(s32 arg0) {

@@ -27,7 +27,7 @@ UnkStruct_8000B2D0* func_8000B2D0(UnkStruct_8000B2D0* arg0, u8* arg1, s32 arg2, 
 UnkStruct_8000B2D0 *func_8000B334(s32 arg0, s32 arg1) {
     UnkStruct_8000B2D0* sp1C;
 
-    sp1C = (UnkStruct_8000B2D0 *) mmAlloc((arg0 * 2) + (arg1 * arg0) + 0x12, 0x1A, NULL);
+    sp1C = (UnkStruct_8000B2D0 *) mmAlloc((arg0 * 2) + (arg1 * arg0) + 0x12, ALLOC_TAG_TEST_COL, NULL);
     sp1C->unk8 = sp1C + 1;
     sp1C->unkC = (sp1C->unk8 + 2 + (arg0 * 2));
     sp1C->unk0 = 0;

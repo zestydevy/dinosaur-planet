@@ -22,8 +22,8 @@ static void dll_25_func_D00(Vec3 arg0, Vec3 arg1, s8 *arg2, f32 *arg3);
 void dll_25_ctor(s32 arg0)
 {
     bzero(_bss_0, 0xD9);
-    _bss_DC = (void *)mmAlloc(sizeof(Dll25BssDC) * 217, 5, 0);
-    _bss_E0 = (void *)mmAlloc(sizeof(Dll25BssE0) * 256, 5, 0);
+    _bss_DC = (void *)mmAlloc(sizeof(Dll25BssDC) * 217, ALLOC_TAG_TRACK_COL, 0);
+    _bss_E0 = (void *)mmAlloc(sizeof(Dll25BssE0) * 256, ALLOC_TAG_TRACK_COL, 0);
 }
 
 // offset: 0x84 | dtor

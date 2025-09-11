@@ -28,13 +28,13 @@ extern Unk800B20B8* D_800B23BC;
 extern Object D_800B24B8;
 
 void alloc_some_object_arrays(void) {
-    D_800B1994 = mmAlloc(0xA0, 0xE, NULL);
-    D_800B199C = mmAlloc(0x708, 0xE, NULL);
-    D_800B20A0 = mmAlloc(0x1900, 0xE, NULL);
-    D_800B20A8 = mmAlloc(0x400, 0xE, NULL);
-    D_800B20AC = mmAlloc(0x400, 0xE, NULL);
-    D_800B20B0 = mmAlloc(0x400, 0xE, NULL);
-    D_800B20B4 = mmAlloc(0x400, 0xE, NULL);
+    D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20A8 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20AC = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20B0 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20B4 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
     D_800B1990 = 2.0f;
     func_80028D90();
 }

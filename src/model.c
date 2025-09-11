@@ -153,7 +153,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
     modelSize += uncompressedSize + 500;
 
-    model = mmAlloc(modelSize, 9, 0);
+    model = mmAlloc(modelSize, ALLOC_TAG_MODELS_COL, 0);
     if (!model) {
         if (isOldSlot) {
             gNumFreeModelSlots++;
