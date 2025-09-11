@@ -93,8 +93,7 @@ MemoryPoolSlot *mmInitPool(MemoryPoolSlot *slots, s32 size, s32 maxSlots) {
     return pool->slots;
 }
 
-// mmAlloc
-void *malloc(s32 size, s32 tag, const char *name) {
+void *mmAlloc(s32 size, s32 tag, const char *name) {
     void *ptr;
 
     if (size == 0) {
@@ -364,8 +363,7 @@ void mmSetDelay(s32 delay) {
     interrupts_enable(intFlags);
 }
 
-// mmFree
-void free(void *address) {
+void mmFree(void *address) {
     s32 prevIE = interrupts_disable();
     if (gMemoryFreeDelay == 0) {
         mmFreeNow(address);
@@ -700,7 +698,7 @@ void *alHeapDBAlloc2(ALHeap *hp, s32 num, s32 size) {
 
     size = ALIGN16((size * num) + 0xF);
 
-    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
+    ptr = mmAlloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
     bzero(ptr, size);
     return (void*)mmAlign16((u32)ptr);
 }
@@ -714,7 +712,7 @@ void *alHeapDBAlloc(u8 *file, s32 line, ALHeap *hp, s32 num, s32 size) {
     if (size) {}
     if (size) {}
 
-    ptr = malloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
+    ptr = mmAlloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
     bzero(ptr, size);
     return (void*)mmAlign16((u32)ptr);
 }

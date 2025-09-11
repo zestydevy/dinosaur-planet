@@ -50,16 +50,16 @@ void screens_show_screen(s32 screenNo) {
 
         if (length != sLoadedScreenByteLength) {
             if (sLoadedScreen != NULL) {
-                free(sLoadedScreen);
+                mmFree(sLoadedScreen);
             }
 
-            sLoadedScreen = malloc(length, ALLOC_TAG_SCREEN_COL, NULL);
+            sLoadedScreen = mmAlloc(length, ALLOC_TAG_SCREEN_COL, NULL);
         }
 
         sLoadedScreenByteLength = length;
         queue_load_file_region_to_ptr((void*)sLoadedScreen, SCREENS_BIN, offset, length);
 
-        free(screensTab);
+        mmFree(screensTab);
         sLoadedScreenNo = screenNo;
     }
 
@@ -68,7 +68,7 @@ void screens_show_screen(s32 screenNo) {
 
 void screens_hide_screen() {
     if (sLoadedScreen != NULL) {
-        free(sLoadedScreen);
+        mmFree(sLoadedScreen);
         sLoadedScreen = NULL;
         sLoadedScreenNo = -1;
         sLoadedScreenByteLength = 0;
@@ -87,7 +87,7 @@ void screens_draw(Gfx **gdl) {
 
     if (!sRenderScreen) {
         if (sLoadedScreen != NULL) {
-            free(sLoadedScreen);
+            mmFree(sLoadedScreen);
             sLoadedScreen = NULL;
             sLoadedScreenByteLength = 0;
             sLoadedScreenNo = -1;

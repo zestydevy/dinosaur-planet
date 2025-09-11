@@ -22,15 +22,15 @@ static void dll_25_func_D00(Vec3 arg0, Vec3 arg1, s8 *arg2, f32 *arg3);
 void dll_25_ctor(s32 arg0)
 {
     bzero(_bss_0, 0xD9);
-    _bss_DC = (void *)malloc(sizeof(Dll25BssDC) * 217, 5, 0);
-    _bss_E0 = (void *)malloc(sizeof(Dll25BssE0) * 256, 5, 0);
+    _bss_DC = (void *)mmAlloc(sizeof(Dll25BssDC) * 217, 5, 0);
+    _bss_E0 = (void *)mmAlloc(sizeof(Dll25BssE0) * 256, 5, 0);
 }
 
 // offset: 0x84 | dtor
 void dll_25_dtor(s32 arg0)
 {
-    free(_bss_DC);
-    free(_bss_E0);
+    mmFree(_bss_DC);
+    mmFree(_bss_E0);
 }
 
 // offset: 0xD8 | func: 0 | export: 0

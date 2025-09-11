@@ -70,20 +70,20 @@ void gplay_func_139C(s32 param1, s32 param2);
 void gplay_func_15B8(s32 param1);
 
 void gplay_ctor(DLLFile *self)  {
-    bss_0 = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
+    bss_0 = (FlashStruct*)mmAlloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
     gplay_func_1314();
     bss_4 = NULL;
-    bss_8 = (GplayStruct4*)malloc(128, 0xFFFF00FF, NULL);
+    bss_8 = (GplayStruct4*)mmAlloc(128, 0xFFFF00FF, NULL);
     bss_1A48[0] = -1;
     bss_1A50[0] = -1;
 }
 
 void gplay_dtor(DLLFile *self)  {
-    free(bss_0);
+    mmFree(bss_0);
     if (bss_4 != NULL) {
-        free(bss_4);
+        mmFree(bss_4);
     }
-    free(bss_8);
+    mmFree(bss_8);
 }
 
 void gplay_erase_save(s8 idx) {
@@ -200,28 +200,28 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
         if (idx < 4) {
             bss_183C = idx;
 
-            flashPtr = (FlashStruct*)malloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
+            flashPtr = (FlashStruct*)mmAlloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
 
             var1 = gDLL_31_Flash->vtbl->load_game(bss_0, idx, sizeof(FlashStruct), 1);
             var2 = gDLL_31_Flash->vtbl->load_game(flashPtr, idx + 4, sizeof(FlashStruct), 1);
 
             if (var1 == 0) {
                 if (var2 == 0) {
-                    free(flashPtr);
+                    mmFree(flashPtr);
                     ret = 0;
                 } else {
-                    free(bss_0);
+                    mmFree(bss_0);
                     ret = 2;
                     bss_0 = flashPtr;
                 }
             } else if (var2 == 0) {
-                free(flashPtr);
+                mmFree(flashPtr);
                 ret = 2;
             } else if (flashPtr->gplay.unk0.unk0.unk0x2fc < bss_0->gplay.unk0.unk0.unk0x2fc) {
-                free(flashPtr);
+                mmFree(flashPtr);
                 ret = 1;
             } else {
-                free(bss_0);
+                mmFree(bss_0);
                 ret = 2;
                 bss_0 = flashPtr;
             }
@@ -349,7 +349,7 @@ void gplay_start_game() {
 
 void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     if (bss_4 == NULL) {
-        bss_4 = (GplayStruct3*)malloc(sizeof(GplayStruct3), 0xFFFF00FF, NULL);
+        bss_4 = (GplayStruct3*)mmAlloc(sizeof(GplayStruct3), 0xFFFF00FF, NULL);
         if (bss_4 == NULL) {
             return;
         }
@@ -379,7 +379,7 @@ void gplay_restart_goto() {
 
 void gplay_restart_clear() {
     if (bss_4 != NULL) {
-        free(bss_4);
+        mmFree(bss_4);
         bss_4 = NULL;
     }
 }

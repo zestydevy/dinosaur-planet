@@ -105,13 +105,13 @@ extern s32 gMemoryFreeDelay;
 
 void mmInit(void);
 MemoryPoolSlot *mmInitPool(MemoryPoolSlot *slots, s32 size, s32 maxSlots);
-void *malloc(s32 size, s32 tag, const char *name);
+void *mmAlloc(s32 size, s32 tag, const char *name);
 void *mmRealloc(void *address, s32 newSize, const char *name);
 s32 mmGetSlotSize(void *address);
 void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name);
 void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name);
 void mmSetDelay(s32 delay);
-void free(void *address);
+void mmFree(void *address);
 void mmFreeTick();
 void mmFreeNow(void *address);
 void mmFreeEnqueue(void *address);

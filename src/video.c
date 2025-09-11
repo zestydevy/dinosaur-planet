@@ -28,10 +28,10 @@ void func_8005C780() {
     s32 i;
 
     if (D_800BCC10 != NULL) {
-        free(D_800BCC10);
+        mmFree(D_800BCC10);
     }
 
-    D_800BCC10 = malloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
+    D_800BCC10 = mmAlloc(UNKNOWN_HEAP_VIDEO_STRUCT_SIZE, 0x13, 0);
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++)
     {
@@ -444,7 +444,7 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE2C = 5;
 
     if (someBool) {
-        D_800BCE18[0] = malloc(960, 2, NULL);
+        D_800BCE18[0] = mmAlloc(960, 2, NULL);
         D_800BCE18[1] = &D_800BCE18[0][480];
     }
 

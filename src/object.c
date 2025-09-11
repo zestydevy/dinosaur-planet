@@ -98,9 +98,9 @@ void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gObjDeferredFreeList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B1918     = malloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
-    D_800B18E4     = malloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
+    gObjDeferredFreeList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B1918     = mmAlloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
+    D_800B18E4     = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
 
     //load OBJINDEX.BIN and count number of entries
     queue_alloc_load_file((void **) (&gFile_OBJINDEX), FILE_OBJINDEX_BIN);
@@ -114,8 +114,8 @@ void init_objects(void) {
     gNumObjectsTabEntries--;
 
     //init ref count and pointers
-    gLoadedObjDefs = malloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
-    gObjDefRefCount   = malloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
+    gLoadedObjDefs = mmAlloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjDefRefCount   = mmAlloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
     for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
@@ -125,7 +125,7 @@ void init_objects(void) {
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
-    gObjList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
     alloc_some_object_arrays();
     obj_clear_all();
 }
@@ -596,7 +596,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
 
     var = obj_calc_mem_size(&objHeader, def, flags);
 
-    obj = (Object*)malloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
+    obj = (Object*)mmAlloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
 
     if (obj == NULL) {
         obj_free_objdef(tabIdx);
@@ -1218,7 +1218,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
     fileOffset = gFile_OBJECTS_TAB[tabIdx];
     fileSize = gFile_OBJECTS_TAB[tabIdx + 1] - fileOffset;
 
-    def = (ObjDef*)malloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
+    def = (ObjDef*)mmAlloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
     if (def != NULL) {
         read_file_region(OBJECTS_BIN, (void*)def, fileOffset, fileSize);
 
@@ -1281,14 +1281,14 @@ void obj_free_objdef(s32 tabIdx) {
             def = gLoadedObjDefs[tabIdx];
             
             if (def->pModLines != NULL) {
-                free(def->pModLines);
+                mmFree(def->pModLines);
             }
 
             if (def->pIntersectPoints != NULL) {
-                free(def->pIntersectPoints);
+                mmFree(def->pIntersectPoints);
             }
 
-            free(def);
+            mmFree(def);
         }
     }
 }
@@ -1310,18 +1310,18 @@ ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount) {
         return NULL;
     }
 
-    tabEntry = (s32*)malloc(16, ALLOC_TAG_TEST_COL, NULL);
+    tabEntry = (s32*)mmAlloc(16, ALLOC_TAG_TEST_COL, NULL);
     read_file_region(MODLINES_TAB, (void*)tabEntry, modLineNo << 2, 8);
 
     offset = tabEntry[0];
     size = tabEntry[1] - tabEntry[0];
 
     if (size > 0) {
-        modLines = (ModLine*)malloc(size, ALLOC_TAG_TRACK_COL, NULL);
+        modLines = (ModLine*)mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
         read_file_region(MODLINES_BIN, (void*)modLines, offset, size);
     }
 
-    free(tabEntry);
+    mmFree(tabEntry);
 
     *modLineCount = (size / sizeof(ModLine));
 
@@ -1501,7 +1501,7 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->mesgQueue != NULL) {
-        free(obj->mesgQueue);
+        mmFree(obj->mesgQueue);
         obj->mesgQueue = NULL;
     }
 
@@ -1523,16 +1523,16 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->srt.flags & 0x2000 && obj->createInfo != NULL) {
-        free(obj->createInfo);
+        mmFree(obj->createInfo);
     }
 
-    free(obj);
+    mmFree(obj);
 }
 
 void *obj_alloc_create_info(s32 size, s32 objId) {
     ObjCreateInfo *createInfo;
 
-    createInfo = (ObjCreateInfo*)malloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
+    createInfo = (ObjCreateInfo*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
     bzero(createInfo, size);
 
     createInfo->uID = -1;

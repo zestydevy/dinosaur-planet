@@ -583,19 +583,19 @@ void set_pause_state(s32 state) {
 void alloc_frame_buffers(void) {
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
-    gMainGfx[0] = malloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainGfx[0] = mmAlloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainGfx[1] = (Gfx *)((u32)gMainGfx[0] + MAIN_GFX_BUF_SIZE);
 
     // matrix buffers ("main:mtx")
-    gMainMtx[0] = malloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainMtx[0] = mmAlloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainMtx[1] = (Mtx *)((u32)gMainMtx[0] + MAIN_MTX_BUF_SIZE);
 
     // polygon buffers? ("main:pol")
-    gMainPol[0] = malloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainPol[0] = mmAlloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainPol[1] = (Triangle *)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
 
     // vertex buffers ("main:vtx")
-    gMainVtx[0] = malloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainVtx[0] = mmAlloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainVtx[1] = (Vertex *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 

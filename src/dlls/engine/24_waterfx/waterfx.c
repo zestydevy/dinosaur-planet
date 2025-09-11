@@ -114,7 +114,7 @@ void waterfx_ctor(s32 arg0)
 {
     s32 *state;
 
-    state = malloc(0x3E80, 0x13, NULL);
+    state = mmAlloc(0x3E80, 0x13, NULL);
     if (state == NULL) {
         STUBBED_PRINTF(allocateMemoryError); // Not sure this was actually printed but it would make the most sense
         return;
@@ -152,7 +152,7 @@ void waterfx_dtor(s32 arg0)
 {
     if (_bss_4 != NULL)
     {
-        free(_bss_4);
+        mmFree(_bss_4);
     }
     if (_bss_40 != NULL)
     {

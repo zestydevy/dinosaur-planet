@@ -60,7 +60,7 @@ void fonts_init() {
         gFile_FONTS_BIN[i].referenceCount = 0;
     }
 
-    gFontWindows = (FontWindow*)malloc(
+    gFontWindows = (FontWindow*)mmAlloc(
         sizeof(FontWindow) * FONT_WINDOW_COUNT
             + sizeof(FontString) * FONT_STRING_COUNT, 
         0xFFFF00FF, NULL);

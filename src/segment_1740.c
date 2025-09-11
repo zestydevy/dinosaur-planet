@@ -67,8 +67,8 @@ a0 = ((((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg
 sp0044 = ((((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2
 /* 17B8 80000BB8 AFAC0040 */  sw         $t4, 0x40($sp)
 sp0040 = t4
-/* 17BC 80000BBC 0C005AAA */  jal        malloc
-mem = malloc(
+/* 17BC 80000BBC 0C005AAA */  jal        mmAlloc
+mem = mmAlloc(
     ((((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2,
     0x7F7F7FFF,
     NULL
@@ -221,7 +221,7 @@ if (mem != NULL) {
 #endif
 
 void func_80000D30(void *arg0) {
-    free(arg0);
+    mmFree(arg0);
 }
 
 typedef struct {
@@ -451,7 +451,7 @@ if (sp0034 != 0) {
 /* 1B5C 80000F5C 01F82821 */  addu       $a1, $t7, $t8
 /* 1B60 80000F60 0C01F140 */  jal        bcopy
 /* 1B64 80000F64 00000000 */   nop
-/* 1B68 80000F68 0C005CBA */  jal        free
+/* 1B68 80000F68 0C005CBA */  jal        mmFree
 /* 1B6C 80000F6C 02602025 */   or        $a0, $s3, $zero
 /* 1B70 80000F70 92890001 */  lbu        $t1, 1($s4)
 /* 1B74 80000F74 26100001 */  addiu      $s0, $s0, 1

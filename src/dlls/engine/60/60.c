@@ -72,7 +72,7 @@ void dll_60_dtor(void *self) {
         texture_destroy(bss_1C);
     }
 
-    free(bss_14);
+    mmFree(bss_14);
 }
 
 s32 dll_60_update1() {

@@ -14,7 +14,7 @@ void obj_init_mesg_queue(Object *obj, u32 count) {
         if (obj != NULL && obj->mesgQueue == NULL) {
             size = count * 3;
 
-            mesgQueue = (ObjectMesgQueue*)malloc(
+            mesgQueue = (ObjectMesgQueue*)mmAlloc(
                 size * 4 + (sizeof(ObjectMesgQueue) - sizeof(ObjMesgQueueMessage)), 
                 ALLOC_TAG_OBJECTS_COL, 
                 NULL);

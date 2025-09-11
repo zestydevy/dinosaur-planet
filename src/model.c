@@ -27,8 +27,8 @@ extern s32 gNumModelsTabEntries;
 void init_models() {
     u32* temp_v0;    
 
-    gLoadedModels = malloc(0x230, ALLOC_TAG_MODELS_COL, NULL);
-    gFreeModelSlots = malloc(0x190, ALLOC_TAG_MODELS_COL, NULL);
+    gLoadedModels = mmAlloc(0x230, ALLOC_TAG_MODELS_COL, NULL);
+    gFreeModelSlots = mmAlloc(0x190, ALLOC_TAG_MODELS_COL, NULL);
     gNumLoadedModels = 0;
     gNumFreeModelSlots = 0;
 
@@ -40,11 +40,11 @@ void init_models() {
     }
     gNumModelsTabEntries--;
     
-    temp_v0 = malloc(0x830, ALLOC_TAG_ANIMS_COL, NULL);
+    temp_v0 = mmAlloc(0x830, ALLOC_TAG_ANIMS_COL, NULL);
     gAuxBuffer = temp_v0;
     D_800B17BC = temp_v0 + 0x200;
     gBuffer_ANIM_TAB = temp_v0 + 0x204;
-    gLoadedAnims = malloc(0x400, ALLOC_TAG_ANIMS_COL, NULL);
+    gLoadedAnims = mmAlloc(0x400, ALLOC_TAG_ANIMS_COL, NULL);
     gNumLoadedAnims = 0;
 }
 
@@ -153,7 +153,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
     modelSize += uncompressedSize + 500;
 
-    model = malloc(modelSize, 9, 0);
+    model = mmAlloc(modelSize, 9, 0);
     if (!model) {
         if (isOldSlot) {
             gNumFreeModelSlots++;
@@ -502,9 +502,9 @@ void _destroy_model_instance(ModelInstance *modelInst)
     model = modelInst->model;
 
     if (model->displayList != modelInst->displayList) {
-        free(modelInst->displayList);
+        mmFree(modelInst->displayList);
     }
-    free(modelInst);
+    mmFree(modelInst);
 
     if (--model->refCount <= 0)
     {
@@ -550,7 +550,7 @@ void model_destroy(Model* model) {
         }
     }
 
-    free(model);
+    mmFree(model);
 }
 
 s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
@@ -668,7 +668,7 @@ void anim_destroy(Animation* anim) {
     if (matchIndex != -1) {
         ((AnimSlot *)((u8*)gLoadedAnims + (matchIndex << 1 << 2)))->referenceCount = clear;
         ((AnimSlot *)((u8*)gLoadedAnims + (matchIndex << 1 << 2)))->animation = clear;
-        free(anim);
+        mmFree(anim);
     }        
 }
 

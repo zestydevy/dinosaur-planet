@@ -26,16 +26,16 @@ void gametext_set_bank(s8 bank);
 void gametext_ctor(void *self) {
     u16 *header;
 
-    header = (u16*)malloc(4, 0x19, NULL);
+    header = (u16*)mmAlloc(4, 0x19, NULL);
     queue_load_file_region_to_ptr((void**)header, GAMETEXT_TAB, 0, 4);
 
     sBankCount = header[0];
     sBankEntryCount = header[1];
 
-    free(header);
+    mmFree(header);
 
     sBankSize = sBankEntryCount * 5 + 4;
-    sCurrentBank = malloc(sBankSize, 0x19, NULL);
+    sCurrentBank = mmAlloc(sBankSize, 0x19, NULL);
     sCurrentBank_StrCounts = sCurrentBank + 4;
     sCurrentBank_Sizes = (u16*)(sCurrentBank + sBankEntryCount + 4);
     sCurrentBank_Offsets = (u16*)(sCurrentBank + (sBankEntryCount * 3) + 4);
@@ -44,7 +44,7 @@ void gametext_ctor(void *self) {
 }
 
 void gametext_dtor(void *self) {
-    free(sCurrentBank);
+    mmFree(sCurrentBank);
 }
 
 u16 gametext_bank_count() {
@@ -99,7 +99,7 @@ GameTextChunk *gametext_get_chunk(u16 chunk) {
 
     headerSize += alignmentPad + sCurrentBank_Sizes[chunk];
 
-    chunkPtr = (GameTextChunk*)malloc(headerSize, 0x19, NULL);
+    chunkPtr = (GameTextChunk*)mmAlloc(headerSize, 0x19, NULL);
 
     chunkPtr->strings = (char**)((u32)chunkPtr + sizeof(GameTextChunk));
 
@@ -137,7 +137,7 @@ char *gametext_get_text(u16 chunk, u16 strIndex) {
     s32 i;
     s32 k;
 
-    text = malloc(sCurrentBank_Sizes[chunk], 0x19, NULL);
+    text = mmAlloc(sCurrentBank_Sizes[chunk], 0x19, NULL);
 
     queue_load_file_region_to_ptr(
         (void**)text, 
@@ -157,10 +157,10 @@ char *gametext_get_text(u16 chunk, u16 strIndex) {
 
     len = strlen(str) + 1;
 
-    copy = malloc(len, 0x19, NULL);
+    copy = mmAlloc(len, 0x19, NULL);
     bcopy(str, copy, len);
 
-    free(text);
+    mmFree(text);
 
     return copy;
 }

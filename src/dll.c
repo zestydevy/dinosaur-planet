@@ -24,7 +24,7 @@ void init_dll_system() {
         ++gDLLCount;
     }
 
-    gLoadedDLLList = (DLLState*)malloc(sizeof(DLLState) * MAX_LOADED_DLLS, 4, NULL);
+    gLoadedDLLList = (DLLState*)mmAlloc(sizeof(DLLState) * MAX_LOADED_DLLS, 4, NULL);
 
     gLoadedDLLCount = MAX_LOADED_DLLS;
     while (gLoadedDLLCount != 0) {
@@ -132,7 +132,7 @@ void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     }
 
     if (dll->exportCount < exportCount) {
-        free(dll);
+        mmFree(dll);
         return NULL;
     }
 
@@ -146,7 +146,7 @@ void *dll_load(u16 id, u16 exportCount, s32 runConstructor) {
     // If no open slots were available, try to add a new slot
     if (i == (u32)gLoadedDLLCount) {
         if (gLoadedDLLCount == MAX_LOADED_DLLS) {
-            free(dll);
+            mmFree(dll);
             return NULL;
         }
 
@@ -179,7 +179,7 @@ void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize) 
         }
     }
 
-    dll = (DLLFile*)malloc(dllBytesSize + bssSize, 4, NULL);
+    dll = (DLLFile*)mmAlloc(dllBytesSize + bssSize, 4, NULL);
     bcopy(dllBytes, (void*)dll, dllBytesSize);
 
     if (bssSize) {
@@ -244,7 +244,7 @@ s32 dll_unload(void *dllInterfacePtr) {
             *(dllClearAddr++) = 0x0007000D; // MIPS break instruction
         }
 
-        free(dll);
+        mmFree(dll);
 
         gLoadedDLLList[idx].id = DLL_NONE;
 
@@ -281,7 +281,7 @@ DLLFile *dll_load_from_tab(u16 id, s32 *sizeOut) {
     dllSize = (((DLLTabEntry*)((u8*)gFile_DLLS_TAB + id * 2 * 4u)) + 1)->offset - offset;
     bssSize = ((DLLTabEntry*)((u8*)gFile_DLLS_TAB + id * 2 * 4u))->bssSize;
 
-    dll = malloc((u32)(dllSize + bssSize), ALLOC_TAG_DLL_COL, NULL);
+    dll = mmAlloc((u32)(dllSize + bssSize), ALLOC_TAG_DLL_COL, NULL);
     if (dll != NULL) {
         read_file_region(DLLS_BIN, dll, offset, dllSize);
     }

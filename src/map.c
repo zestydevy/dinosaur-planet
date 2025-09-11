@@ -389,14 +389,14 @@ void init_maps(void) {
     s32 i;
 
     UINT_80092a98 = 0;
-    D_800B97C0 = malloc(sizeof(MapsUnk_800B97C0) * 255, 5, NULL);
-    gLoadedBlocks = malloc(sizeof(BlocksModel *) * MAX_BLOCKS, 5, NULL);
-    gLoadedBlockIds = malloc(sizeof(s16) * MAX_BLOCKS, 5, NULL);
-    gBlockRefCounts = malloc(sizeof(u8) * MAX_BLOCKS, 5, NULL);
-    gMapReadBuffer = malloc(sizeof(u8) * 700, 5, NULL);
-    *gBlockIndices = malloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
-    *gDecodedGlobalMap = malloc(sizeof(GlobalMapCell) * 1280, 5, NULL);
-    *D_800B9700 = malloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
+    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, 5, NULL);
+    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, 5, NULL);
+    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, 5, NULL);
+    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, 5, NULL);
+    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, 5, NULL);
+    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
+    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, 5, NULL);
+    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, 5, NULL);
     for (i = 1; i < MAP_LAYER_COUNT; i++) {
         gBlockIndices[i] = gBlockIndices[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
@@ -417,12 +417,12 @@ void init_maps(void) {
         gNumTotalBlocks++;
     }
     gNumTotalBlocks--;
-    D_800B96B0 = malloc(sizeof(Unk800B96B0) * 100, 5, NULL);
+    D_800B96B0 = mmAlloc(sizeof(Unk800B96B0) * 100, 5, NULL);
     D_800B4A5C = -1;
     D_800B4A5E = -2;
-    gBlockTextures = malloc(sizeof(BlockTexture) * 20, 5, NULL);
+    gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, 5, NULL);
     bzero(gBlockTextures, sizeof(BlockTexture) * 20);
-    D_800B97A8 = malloc(sizeof(UnkTextureStruct) * 58, 5, NULL);
+    D_800B97A8 = mmAlloc(sizeof(UnkTextureStruct) * 58, 5, NULL);
     bzero(D_800B97A8, sizeof(UnkTextureStruct) * 58);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
     gRenderList[0] = -0x4000;
@@ -1755,7 +1755,7 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gridB_size = gMapActiveStreamMap->gridB_sixteenthSize * 16;
     objectsCount_oneEighth = gMapActiveStreamMap->objectInstanceCount >> 3;
     objectsMallocSize = objectsCount_oneEighth + 1;
-    map = malloc(((gridB_size << 1) + map_size) + objectsMallocSize, 5, 0);
+    map = mmAlloc(((gridB_size << 1) + map_size) + objectsMallocSize, 5, 0);
     
     gMapActiveStreamMap = (MAPSHeader *) map;
     queue_load_file_region_to_ptr((void *) map, MAPS_BIN, map_start, map_size);
@@ -1876,7 +1876,7 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
 void func_80045F48(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
         func_80045FC4(gLoadedMapsDataTable[mapID], (s32*)((mapID * 0x8C) + (&D_800B5508)), mapID, 1);
-        free(gLoadedMapsDataTable[mapID]);
+        mmFree(gLoadedMapsDataTable[mapID]);
         gLoadedMapsDataTable[mapID] = 0;
     }
 }
@@ -2151,10 +2151,10 @@ void init_global_map(void)
     size /= sizeof(StructBuf);
 
     D_800B9768.unk0  = -1;
-    D_800B9768.unk4  = malloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unk8  = malloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unkC  = malloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unk10 = malloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk4  = mmAlloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk8  = mmAlloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unkC  = mmAlloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk10 = mmAlloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
 
     bzero(D_800B9768.unk10, sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH);
 
@@ -2188,7 +2188,7 @@ void init_global_map(void)
 
     func_80048034();
 
-    free(buf);
+    mmFree(buf);
 }
 
 #ifndef NON_MATCHING
@@ -2438,7 +2438,7 @@ void map_update_streaming(void) {
                 if (var_s0_2->header != NULL) {
                     temp_s1 = var_s0_2->mapID;
                     func_80045FC4(var_s0_2->header, &D_800B5508 + (temp_s1 * 0x8C), temp_s1, 1);
-                    free(var_s0_2->header);
+                    mmFree(var_s0_2->header);
                     gLoadedMapsDataTable[temp_s1] = NULL;
                 }
                 var_s0_2->header = NULL;
@@ -2805,7 +2805,7 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
     } else {
         temp_s4 = gFile_MAPS_TAB[arg0].unk0;
         temp_s1 = gFile_MAPS_TAB[arg0 + 1].unk0 - temp_s4;
-        temp_v0_2 = malloc(temp_s1, 5, NULL);
+        temp_v0_2 = mmAlloc(temp_s1, 5, NULL);
         queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
         temp_v0_2->unk20 = (MapsBinUnk20 *) (gFile_MAPS_TAB[arg0].unk10 + (s8 *)temp_v0_2 - temp_s4);
         temp_v0_2->unk24 = (D_800B9768.unk4[arg0].xMin + temp_v0_2->unk4) * BLOCKS_GRID_UNIT_F;
@@ -2829,7 +2829,7 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
             var_s0 += var_s1->unk2 * 4;
             var_s1 = (MapsBinUnk20 *) ((s8*)var_s1 + var_s1->unk2 * 4);
         }
-        free(temp_v0_2);
+        mmFree(temp_v0_2);
     }
     temp_t1 = (u32)get_file_size(0x21U) >> 5;
     if ((arg0 < 0) || (arg0 >= temp_t1)) {
@@ -2901,7 +2901,7 @@ void func_800484A8(void) {
     obj_free_all();
     for (j = 0; j < 120; j++) {
         if (gLoadedMapsDataTable[j] != NULL) {
-            free(gLoadedMapsDataTable[j]);
+            mmFree(gLoadedMapsDataTable[j]);
             gLoadedMapsDataTable[j] = NULL;
         }
     }
@@ -2970,7 +2970,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
 
     uncompressedSize = *(u32*)gMapReadBuffer;
     allocSize = uncompressedSize + hits_get_size(id) + 0x8;
-    block = malloc(allocSize, 5, NULL);
+    block = mmAlloc(allocSize, 5, NULL);
     if (block == NULL) {
         return;
     }
@@ -3449,11 +3449,11 @@ void func_800496E4(s32 blockIndex) {
         }
         
         if ((u32*)block->unk_1c != NULL) {
-            free((u32*)block->unk_1c);
+            mmFree((u32*)block->unk_1c);
         }
         
         func_80058F3C();
-        free(block);
+        mmFree(block);
     }
 }
 
