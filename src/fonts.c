@@ -63,7 +63,7 @@ void fonts_init() {
     gFontWindows = (FontWindow*)mmAlloc(
         sizeof(FontWindow) * FONT_WINDOW_COUNT
             + sizeof(FontString) * FONT_STRING_COUNT, 
-        0xFFFF00FF, NULL);
+        COLOUR_TAG_YELLOW, NULL);
     gFontStrings = (FontString*)(gFontWindows + FONT_WINDOW_COUNT);
 
     for (i = 0; i < FONT_WINDOW_COUNT; i++) {

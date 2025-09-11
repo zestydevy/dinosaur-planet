@@ -70,10 +70,10 @@ void gplay_func_139C(s32 param1, s32 param2);
 void gplay_func_15B8(s32 param1);
 
 void gplay_ctor(DLLFile *self)  {
-    bss_0 = (FlashStruct*)mmAlloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
+    bss_0 = (FlashStruct*)mmAlloc(sizeof(FlashStruct), COLOUR_TAG_YELLOW, NULL);
     gplay_func_1314();
     bss_4 = NULL;
-    bss_8 = (GplayStruct4*)mmAlloc(128, 0xFFFF00FF, NULL);
+    bss_8 = (GplayStruct4*)mmAlloc(128, COLOUR_TAG_YELLOW, NULL);
     bss_1A48[0] = -1;
     bss_1A50[0] = -1;
 }
@@ -200,7 +200,7 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
         if (idx < 4) {
             bss_183C = idx;
 
-            flashPtr = (FlashStruct*)mmAlloc(sizeof(FlashStruct), 0xFFFF00FF, NULL);
+            flashPtr = (FlashStruct*)mmAlloc(sizeof(FlashStruct), COLOUR_TAG_YELLOW, NULL);
 
             var1 = gDLL_31_Flash->vtbl->load_game(bss_0, idx, sizeof(FlashStruct), 1);
             var2 = gDLL_31_Flash->vtbl->load_game(flashPtr, idx + 4, sizeof(FlashStruct), 1);
@@ -349,7 +349,7 @@ void gplay_start_game() {
 
 void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     if (bss_4 == NULL) {
-        bss_4 = (GplayStruct3*)mmAlloc(sizeof(GplayStruct3), 0xFFFF00FF, NULL);
+        bss_4 = (GplayStruct3*)mmAlloc(sizeof(GplayStruct3), COLOUR_TAG_YELLOW, NULL);
         if (bss_4 == NULL) {
             return;
         }

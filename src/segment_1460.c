@@ -34,7 +34,7 @@ s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3)
 {
     UnknownStruct000 *tmp;
 
-    tmp = mmAlloc(0x60, -1, 0);
+    tmp = mmAlloc(0x60, COLOUR_TAG_WHITE, 0);
 	// load from ENVFXACT
     queue_load_file_region_to_ptr (tmp, 0x49, arg2 * 0x60, 0x60);
     if (tmp != NULL)
@@ -64,7 +64,7 @@ s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3)
 {
     UnknownStruct000 *tmp;
 
-    tmp = mmAlloc(0x60, -1, 0);
+    tmp = mmAlloc(0x60, COLOUR_TAG_WHITE, 0);
 	// load from ENVFXACT
     queue_load_file_region_to_ptr(tmp, 0x49, arg2 * 0x60, 0x60);
     if (tmp != NULL)

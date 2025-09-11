@@ -1,8 +1,7 @@
 #include "common.h"
 #include "sys/rarezip.h"
 
-#define ALIGN8(a) (((u32) (a) & ~0x7) + 0x8)
-#define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
+#define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
 #define PAD16(a) while (a & 7){a++;}
 
 extern s16 *SHORT_ARRAY_800b17d0;
@@ -456,8 +455,11 @@ u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 b
     }
     total += 0x2F;
 
-    //NOTE: this 64-bit cast may be a fakematch!
-    return (u64)ALIGN16(total);
+    // align 16
+    total = total & ~0xF;
+    total += 0x10;
+
+    return total;
 }
 
 //Draw mode when opaque?

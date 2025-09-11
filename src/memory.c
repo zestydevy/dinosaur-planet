@@ -1,16 +1,23 @@
 #include "PR/libaudio.h"
 #include "PR/os.h"
+#include "libultra/audio/synthInternals.h"
 #include "sys/memory.h"
 #include "sys/interrupt_util.h"
 #include "sys/print.h"
+#include "macros.h"
 #include "bss.h"
-
-#define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 
 extern s32 get_stack_();
 
-// Note: Most of the function names here come from the Jet Force Gemini kisok symbols,
-// however some were made up for the same of completeness
+#define ALIGN16(a) (((u32)(a) & 0xF) ? (((u32)(a) & ~0xF) + 0x10) : (u32)(a))
+#define S32_MAX 0x7FFFFFFF
+
+// An extra 8 bytes appended to every slot's data to, presumably, detect memory corruption
+#define SLOT_CANARY_SIZE 8
+#define SLOT_CANARY_VALUE -1
+
+// Note: Most of the function names here come from the Jet Force Gemini kiosk symbols,
+// however some were made up for the sake of completeness
 
 // .data
 s32 memMonVal0 = 0;
@@ -43,9 +50,9 @@ void mmInit(void) {
     }
     else
     {
-        mmInitPool((void *)MEM_POOL_AREA_00, RAM_END - MEM_POOL_AREA_00, 400);
+        mmInitPool((void *)MEM_POOL_AREA_00, RAM_END - MEM_POOL_AREA_00,          400);
         mmInitPool((void *)MEM_POOL_AREA_01, MEM_POOL_AREA_00 - MEM_POOL_AREA_01, 800);
-        mmInitPool((void *)startAddr, MEM_POOL_AREA_02 - startAddr, 1200);
+        mmInitPool((void *)startAddr,        MEM_POOL_AREA_02 - startAddr,        1200);
     }
 
     mmSetDelay(2);
@@ -77,16 +84,12 @@ MemoryPoolSlot *mmInitPool(MemoryPoolSlot *slots, s32 size, s32 maxSlots) {
 
     slot = &pool->slots[0];
     slots += maxSlots;
-    if (((s32) slots & 0xF) != 0) {
-        slot->data = (u8*)ALIGN16(slots);
-    } else {
-        slot->data = (u8*)slots;
-    }
+    slot->data = (void*)ALIGN16(slots);
 
     slot->size = size - len;
-    slot->flags = 0;
-    slot->prevIndex = -1;
-    slot->nextIndex = -1;
+    slot->flags = SLOT_FREE;
+    slot->prevIndex = MEMSLOT_NONE;
+    slot->nextIndex = MEMSLOT_NONE;
 
     ++pool->numSlots;
     
@@ -135,16 +138,14 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
     s32 slotIndex;
     s32 size;
     s32 lastSize;
-    u32 *temp_v1_3;
+    u32 *canary;
 
     if (newSize <= 0) {
         get_stack_();
         return NULL;
     }
-    if (newSize & 0xF) {
-        newSize = ALIGN16(newSize);
-    }
-    newSize = newSize + 8;
+    newSize = (s32)ALIGN16(newSize);
+    newSize = newSize + SLOT_CANARY_SIZE;
     // find pool that the address is in
     poolIndex = mmFindPool(address);
     if (poolIndex == -1) {
@@ -153,13 +154,13 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
     slots = gMemoryPools[poolIndex].slots;
     // find the address's existing slot, if any
     slotIndex = 0;
-    while (slotIndex != -1) {
+    while (slotIndex != MEMSLOT_NONE) {
         if (address == (slots + slotIndex)->data) {
             break;
         }
         slotIndex = (slots + slotIndex)->nextIndex;
     }
-    if (slotIndex != -1) {
+    if (slotIndex != MEMSLOT_NONE) {
         gMemoryPools[poolIndex].memUsed -= (slots + slotIndex)->size;
         gMemoryPools[poolIndex].memUsed += newSize;
     }
@@ -168,13 +169,13 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
         if ((gMemoryPools[poolIndex].numSlots + 1) == gMemoryPools[poolIndex].maxSlots) {
             return NULL;
         }
-        mmAllocSlot2(poolIndex, slotIndex, newSize, 1, 0, (slots + slotIndex)->tag, name);
+        mmAllocSlot2(poolIndex, slotIndex, newSize, SLOT_USED, SLOT_FREE, (slots + slotIndex)->tag, name);
     } else if ((slots + slotIndex)->size < newSize) {
         nextIndex = (slots + slotIndex)->nextIndex;
         size = (slots + slotIndex)->size;
         lastSize = 0;
-        while (nextIndex != -1) {
-            if ((slots + nextIndex)->flags != 0) {
+        while (nextIndex != MEMSLOT_NONE) {
+            if ((slots + nextIndex)->flags != SLOT_FREE) {
                 break;
             }
             
@@ -189,7 +190,7 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
             return NULL;
         }
         if (newSize < size) {
-            mmAllocSlot2(poolIndex, nextIndex, newSize - lastSize, 1, 0, (slots + slotIndex)->tag, name);
+            mmAllocSlot2(poolIndex, nextIndex, newSize - lastSize, SLOT_USED, SLOT_FREE, (slots + slotIndex)->tag, name);
         }
         nextIndex = (slots + slotIndex)->nextIndex;
         size = (slots + slotIndex)->size;
@@ -197,7 +198,7 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
             lastSize = slots[nextIndex].nextIndex;
             size += slots[nextIndex].size;
             (slots + slotIndex)->nextIndex = lastSize;
-            if (lastSize != -1) {
+            if (lastSize != MEMSLOT_NONE) {
                 slots[lastSize].prevIndex = slotIndex;
             }
             gMemoryPools[poolIndex].numSlots = gMemoryPools[poolIndex].numSlots - 1;
@@ -206,10 +207,10 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
         }
         (slots + slotIndex)->size = newSize;
     }
-    temp_v1_3 = (u32*)((slots + slotIndex)->data);
-    temp_v1_3 += ((s32) (newSize - 8) >> 2);
-    temp_v1_3[0] = -1;
-    temp_v1_3[1] = -1;
+    canary = (u32*)((slots + slotIndex)->data);
+    canary += ((s32) (newSize - SLOT_CANARY_SIZE) >> 2);
+    canary[0] = SLOT_CANARY_VALUE;
+    canary[1] = SLOT_CANARY_VALUE;
     return address;
 }
 
@@ -224,7 +225,7 @@ s32 mmGetSlotSize(void *address) {
     nextIndex = 0;
     slots = gMemoryPools[poolIndex].slots;
 
-    while (nextIndex != -1) {
+    while (nextIndex != MEMSLOT_NONE) {
         slot = (slots + nextIndex);
         nextIndex = slot->nextIndex;
 
@@ -246,28 +247,25 @@ void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name) {
     s32 intFlags;
     s32 var_t0;
     s32 slotSize;
-    u32* temp_v1_2;
+    u32* canary;
 
     var_t0 = 0;
     intFlags = interrupts_disable();
-    currIndex = -1;
+    currIndex = MEMSLOT_NONE;
     pool = &gMemoryPools[poolIndex];
     pool->memUsed += size;
     if (pool->maxSlots == (pool->numSlots + 1)) {
         interrupts_enable(intFlags);
         return 0;
     }
-    if (size & 0xF) {
-        size = (size & ~0xF);
-        size += 0x10;
-    }
+    size = (s32)ALIGN16(size);
     size = size + 8;
     slots = pool->slots;
-    slotSize = 0x7FFFFFFF;
+    slotSize = S32_MAX;
     nextIndex = 0;
-    do {
+    while (nextIndex != MEMSLOT_NONE) {
         curSlot = &slots[nextIndex];
-        if (curSlot->flags == 0) {
+        if (curSlot->flags == SLOT_FREE) {
             if (curSlot->size >= size) {
                 // can fit in slot
                 if (curSlot->size < slotSize) {
@@ -276,19 +274,20 @@ void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name) {
                     currIndex = nextIndex;
                 }
             } else if (var_t0 < curSlot->size) {
+                // record the closest to fitting slot size found that's still to small
                 var_t0 = curSlot->size;
             }
         }
         nextIndex = curSlot->nextIndex;
-    } while (nextIndex != -1);
-    if (currIndex != -1) {
-        mmAllocSlot2(poolIndex, currIndex, size, 1, 0, tag, name);
+    }
+    if (currIndex != MEMSLOT_NONE) {
+        mmAllocSlot2(poolIndex, currIndex, size, SLOT_USED, SLOT_FREE, tag, name);
         interrupts_enable(intFlags);
         
-        temp_v1_2 = (u32*)((slots + currIndex)->data);
-        temp_v1_2 += ((s32) (size - 8) >> 2);
-        temp_v1_2[0] = -1;
-        temp_v1_2[1] = -1;
+        canary = (u32*)((slots + currIndex)->data);
+        canary += ((s32) (size - SLOT_CANARY_SIZE) >> 2);
+        canary[0] = SLOT_CANARY_VALUE;
+        canary[1] = SLOT_CANARY_VALUE;
         
         return (void*)(slots + currIndex)->data;
     }
@@ -304,7 +303,7 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
     MemoryPoolSlot *currSlot;
     MemoryPoolSlot *slots;
     s32 intFlags;
-    u32 *temp_a0_2;
+    u32 *canary;
 
     intFlags = interrupts_disable();
 
@@ -313,30 +312,28 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
     if ((gMemoryPools[0].numSlots + 1) == gMemoryPools[0].maxSlots) {
         interrupts_enable(intFlags);
     } else {
-        if (size & 0xF) {
-            size = (size & ~0xF) + 0x10;
-        }
-        size = size + 8;
+        size = (s32)ALIGN16(size);
+        size = size + SLOT_CANARY_SIZE;
         
         slots = gMemoryPools[0].slots;
-        for (idx = 0; idx != -1; idx = currSlot->nextIndex) {
+        for (idx = 0; idx != MEMSLOT_NONE; idx = currSlot->nextIndex) {
             currSlot = &slots[idx];
-            if (currSlot->flags == 0) {
+            if (currSlot->flags == SLOT_FREE) {
                 if ((u32) address >= (u32) currSlot->data && 
                     (u32) address + size <= (u32) currSlot->data + currSlot->size) {
                     if (address == currSlot->data) {
-                        mmAllocSlot2(0, idx, size, 1, 0, tag, name);
+                        mmAllocSlot2(0, idx, size, SLOT_USED, SLOT_FREE, tag, name);
                         interrupts_enable(intFlags);
                         return currSlot->data;
                     } else {
-                        idx = mmAllocSlot2(0, idx, (u32)address - (u32)currSlot->data, 0, 1, tag, name);
-                        mmAllocSlot2(0, idx, size, 1, 0, tag, name);
+                        idx = mmAllocSlot2(0, idx, (u32)address - (u32)currSlot->data, SLOT_FREE, SLOT_USED, tag, name);
+                        mmAllocSlot2(0, idx, size, SLOT_USED, SLOT_FREE, tag, name);
                         interrupts_enable(intFlags);
 
-                        temp_a0_2 = (u32*)(slots + idx)->data;
-                        temp_a0_2 += ((s32) (size - 8) >> 2);
-                        temp_a0_2[0] = -1;
-                        temp_a0_2[1] = -1;
+                        canary = (u32*)(slots + idx)->data;
+                        canary += ((s32) (size - SLOT_CANARY_SIZE) >> 2);
+                        canary[0] = SLOT_CANARY_VALUE;
+                        canary[1] = SLOT_CANARY_VALUE;
                         
                         return (slots + idx)->data;
                     }
@@ -405,37 +402,37 @@ void mmFreeTick(void) {
     
     slot = gMemoryPools[0].slots;
     do {
-        if (slot->flags != 0) {
+        if (slot->flags != SLOT_FREE) {
             memMonVal0 += slot->size;
         }
         nextIndex = slot->nextIndex;
-        if (nextIndex != -1) {
+        if (nextIndex != MEMSLOT_NONE) {
             slot = &gMemoryPools->slots[nextIndex];
         }
-    } while (nextIndex != -1);
+    } while (nextIndex != MEMSLOT_NONE);
     
     if ((s32) gNumMemoryPools >= 2) {
         slot = gMemoryPools[1].slots;
         do {
-            if (slot->flags != 0) {
+            if (slot->flags != SLOT_FREE) {
                 memMonVal1 += slot->size;
             }
             nextIndex = slot->nextIndex;
-            if (nextIndex != -1) {
+            if (nextIndex != MEMSLOT_NONE) {
                 slot = &gMemoryPools[1].slots[nextIndex];
             }
-        } while (nextIndex != -1);
+        } while (nextIndex != MEMSLOT_NONE);
         
         slot = gMemoryPools[2].slots;
         do {
-            if (slot->flags != 0) {
+            if (slot->flags != SLOT_FREE) {
                 memMonVal2 += slot->size;
             }
             nextIndex = slot->nextIndex;
-            if (nextIndex != -1) {
+            if (nextIndex != MEMSLOT_NONE) {
                 slot = &gMemoryPools[2].slots[nextIndex];
             }
-        } while (nextIndex != -1);
+        } while (nextIndex != MEMSLOT_NONE);
     }
 }
 
@@ -450,10 +447,10 @@ void mmFreeNow(void *address) {
     if (poolIndex != -1) {
         pool = &gMemoryPools[poolIndex];
         slots = pool->slots;
-        for (slotIndex = 0; slotIndex != -1; slotIndex = slot->nextIndex) {
+        for (slotIndex = 0; slotIndex != MEMSLOT_NONE; slotIndex = slot->nextIndex) {
             slot = &slots[slotIndex];
             if (address == slot->data) {
-                if (slot->flags == 1 || slot->flags == 4) {
+                if (slot->flags == SLOT_USED || slot->flags == SLOT_SAFEGUARD) {
                     mmFreeSlot(poolIndex, slotIndex);
                 }
                 break;
@@ -481,10 +478,6 @@ s32 mmFindPool(void *address) {
     return -1;
 }
 
-// https://decomp.me/scratch/EAQKN
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmFreeSlot.s")
-#else
 void mmFreeSlot(s32 poolIndex, s32 slotIndex) {
     MemoryPoolSlot* nextSlot;
     MemoryPoolSlot* prevSlot;
@@ -494,6 +487,7 @@ void mmFreeSlot(s32 poolIndex, s32 slotIndex) {
     s32 nextIndex;
     s32 prevIndex;
     s32 tempNextIndex;
+    s32 *canary;
 
     slots = gMemoryPools[poolIndex].slots;
     pool = &gMemoryPools[poolIndex];
@@ -505,36 +499,44 @@ void mmFreeSlot(s32 poolIndex, s32 slotIndex) {
     currSlot = &slots[slotIndex]; // @fake
 
     // set as free
-    currSlot->flags = 0;
+    currSlot->flags = SLOT_FREE;
 
-    tempNextIndex = currSlot->size;
-    if (pool->memUsed) {}
+    if (1){}
+    
+    // check canary
+    canary = (s32*)(currSlot->data);
+    canary += ((s32) ( currSlot->size - SLOT_CANARY_SIZE) >> 2);
+    if (canary[0] != SLOT_CANARY_VALUE || canary[1] != SLOT_CANARY_VALUE) {
+
+    }
+    
+    tempNextIndex = currSlot->size; // probably a fakematch
+
     pool->memUsed -= tempNextIndex;
-    if (nextIndex != -1 && nextSlot->flags == 0) {
+    if (nextIndex != MEMSLOT_NONE && nextSlot->flags == SLOT_FREE) {
         // merge with free slot to the right
         currSlot->size += nextSlot->size;
         tempNextIndex = nextSlot->nextIndex;
         currSlot->nextIndex = tempNextIndex;
-        if (tempNextIndex != -1) {
+        if (tempNextIndex != MEMSLOT_NONE) {
             slots[tempNextIndex].prevIndex = slotIndex;
         }
         pool->numSlots -= 1;
         slots[pool->numSlots].index = nextIndex;
     }
     
-    if (prevIndex != -1 && prevSlot->flags == 0) {
+    if (prevIndex != MEMSLOT_NONE && prevSlot->flags == SLOT_FREE) {
         // merge with free slot to the left
         prevSlot->size += currSlot->size;
         tempNextIndex = currSlot->nextIndex;
         prevSlot->nextIndex = tempNextIndex;
-        if (tempNextIndex != -1) {
+        if (tempNextIndex != MEMSLOT_NONE) {
             slots[tempNextIndex].prevIndex = prevIndex;
         }
         pool->numSlots--;
         slots[pool->numSlots].index = slotIndex;
     }
 }
-#endif
 
 MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex, s32 a1) {
     return gMemoryPools[poolIndex].slots;
@@ -561,8 +563,8 @@ s32 mmAllocSlot2(s32 poolIndex, s32 slotIndex, s32 size, s32 flags, s32 flags2, 
     if (size < temp) {
         // requested size is smaller than the slot's current size, fill in gap
         temp_a0 = slot->nextIndex;
-        if (temp_a0 != -1) {
-            if (((slots + temp_a0)->flags == 0) && (flags2 == 0)) {
+        if (temp_a0 != MEMSLOT_NONE) {
+            if (((slots + temp_a0)->flags == SLOT_FREE) && (flags2 == SLOT_FREE)) {
                 // grow empty next slot to fill in the gap
                 (slots + temp_a0)->data = slot->data + size;
                 (slots + temp_a0)->size = ((slots + temp_a0)->size + temp) - size;
@@ -581,7 +583,7 @@ s32 mmAllocSlot2(s32 poolIndex, s32 slotIndex, s32 size, s32 flags, s32 flags2, 
         (slots + temp_a0)->prevIndex = slotIndex;
         (slots + temp_a0)->nextIndex = temp;
         slot->nextIndex = temp_a0;
-        if (temp != -1) {
+        if (temp != MEMSLOT_NONE) {
             slots[temp].prevIndex = temp_a0;
         }
         // return gap fill slot
@@ -621,7 +623,7 @@ s32 mmAllocSlot(s32 poolIndex, s32 slotIndex, s32 size, s32 flags, s32 flags2, s
         slots[index].prevIndex = slotIndex;
         slots[index].nextIndex = temp;
         slots[slotIndex].nextIndex = index;
-        if (temp != -1) {
+        if (temp != MEMSLOT_NONE) {
             slots[temp].prevIndex = index;
         }
         return index;
@@ -629,46 +631,44 @@ s32 mmAllocSlot(s32 poolIndex, s32 slotIndex, s32 size, s32 flags, s32 flags2, s
     return slotIndex;
 }
 
-u32 mmAlign16(u32 a0) {
-    s32 tmp = a0 & 0xF;
+u32 mmAlign16(u32 a) {
+    s32 misalignment = a & 0xF;
 
-    if (tmp > 0)
-        a0 += 0x10 - tmp;
+    if (misalignment > 0) {
+        a += 0x10 - misalignment;
+    }
 
-    return a0;
+    return a;
 }
 
-u32 mmAlign8(u32 a0) {
-    s32 tmp;
+u32 mmAlign8(u32 a) {
+    s32 misalignment = a & 7;
 
-    tmp = a0 & 7;
+    if (misalignment > 0) {
+        a += 8 - misalignment;
+    }
 
-    if (tmp > 0)
-        a0 += 8 - tmp;
-
-    return a0;
+    return a;
 }
 
-u32 mmAlign4(u32 a0) {
-    s32 tmp;
+u32 mmAlign4(u32 a) {
+    s32 misalignment = a & 3;
 
-    tmp = a0 & 3;
+    if (misalignment > 0) {
+        a += 4 - misalignment;
+    }
 
-    if (tmp > 0)
-        a0 += 4 - tmp;
-
-    return a0;
+    return a;
 }
 
-u32 mmAlign2(u32 a0) {
-    s32 tmp;
+u32 mmAlign2(u32 a) {
+    s32 misalignment = a & 1;
 
-    tmp = a0 & 1;
+    if (misalignment > 0) {
+        a += 2 - misalignment;
+    }
 
-    if (tmp > 0)
-        a0 += 2 - tmp;
-
-    return a0;
+    return a;
 }
 
 s32 mmSlotPrint(s32 arg0) {
@@ -696,23 +696,23 @@ s32 mmSlotPrint(s32 arg0) {
 void *alHeapDBAlloc2(ALHeap *hp, s32 num, s32 size) {
     void *ptr;
 
-    size = ALIGN16((size * num) + 0xF);
+    size = (size * num + AL_CACHE_ALIGN) & ~AL_CACHE_ALIGN;
+    size += 0x10;
 
     ptr = mmAlloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
     bzero(ptr, size);
+    
     return (void*)mmAlign16((u32)ptr);
 }
 
 void *alHeapDBAlloc(u8 *file, s32 line, ALHeap *hp, s32 num, s32 size) {
     void *ptr;
 
-    size = ALIGN16((size * num) + 0xF);
-
-    // ??
-    if (size) {}
-    if (size) {}
+    size = (size * num + AL_CACHE_ALIGN) & ~AL_CACHE_ALIGN;
+    size += 0x10;
 
     ptr = mmAlloc(size, ALLOC_TAG_AUDIO_COL, "mm:audioheap");
     bzero(ptr, size);
+    
     return (void*)mmAlign16((u32)ptr);
 }

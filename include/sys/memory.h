@@ -14,10 +14,14 @@
 #define MEM_POOL_AREA_02 0x80119000
 #define MEM_POOL_AREA_NO_EXPANSION 0x802D4000
 
-enum AllocTagOld
-{
-    ALLOC_TAG_FS_COL = 0x7F7F7FFF
-};
+typedef enum MempoolFlags {
+    SLOT_FREE = 0,             // The slot is free.
+    SLOT_USED = (1 << 0),      // The slot is used.
+    SLOT_LOCKED = (1 << 1),    // The slot is used, and cannot be freed by normal means. (unused in dino planet)
+    SLOT_SAFEGUARD = (1 << 2)  // The slot is used, and marks the stopping point of a global pool clear.
+} MempoolFlags;
+
+#define MEMSLOT_NONE -1
 
 //Allocations are given a color tag.
 //names extracted from default.dol
@@ -65,7 +69,34 @@ enum AllocTag {
 //The game also sometimes passes the color directly.
 //That table is used to look up the color to render it.
 //The table and renderer are not in retail SFA, and probably also not this ROM.
-//XXX add defines for those colors if this ROM is passing them as tags.
+
+// Color tag defines below are taken from DKR, might not be 100% accurate
+
+// Model data. Mesh, collision, animation.
+#define COLOUR_TAG_RED 0xFF0000FF
+// Model headers
+#define COLOUR_TAG_GREEN 0x00FF00FF
+// Objects
+#define COLOUR_TAG_BLUE 0x0000FFFF
+// Tracks, Fonts, GPlay, Flash
+#define COLOUR_TAG_YELLOW 0xFFFF00FF
+// Textures(?)
+#define COLOUR_TAG_MAGENTA 0xFF00FFFF
+#define COLOUR_TAG_LIME 0x00FF0163
+// Audio, DLDebug(?)
+#define COLOUR_TAG_CYAN 0x00FFFFFF
+// Buffers and heaps
+#define COLOUR_TAG_WHITE 0xFFFFFFFF
+// Assets
+#define COLOUR_TAG_GREY 0x7F7F7FFF
+// Particles(?)
+#define COLOUR_TAG_SEMITRANS_GREY 0x80808080
+// Model normals(?)
+#define COLOUR_TAG_ORANGE 0xFF7F7FFF
+// RareZip (Controller Pak in DKR)
+#define COLOUR_TAG_BLACK 0x000000FF
+// Weather(?)
+#define COLOUR_TAG_LIGHT_ORANGE 0xFFAA55FF
 
 typedef struct {
 /*0000*/    u8 *data;
@@ -120,10 +151,10 @@ void mmFreeSlot(s32 poolIndex, s32 slotIndex);
 MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex, s32 a1);
 s32 mmAllocSlot2(s32 poolIndex, s32 slotIndex, s32 size, s32 flags, s32 flags2, s32 tag, const char* name);
 s32 mmAllocSlot(s32 poolIndex, s32 slotIndex, s32 size, s32 flags, s32 flags2, s32 tag);
-u32 mmAlign16(u32);
-u32 mmAlign8(u32);
-u32 mmAlign4(u32);
-u32 mmAlign2(u32);
+u32 mmAlign16(u32 a);
+u32 mmAlign8(u32 a);
+u32 mmAlign4(u32 a);
+u32 mmAlign2(u32 a);
 s32 mmSlotPrint(s32 arg0);
 
 #endif //_SYS_MEMORY_H
