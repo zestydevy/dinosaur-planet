@@ -42,7 +42,7 @@ void init_textures(void) {
     s32* temp_a1;
     s32 i;
 
-    D_800B49A8 = malloc(0x15E0, 6, NULL);
+    D_800B49A8 = mmAlloc(0x15E0, ALLOC_TAG_TEX_COL, NULL);
     D_800B49B0 = 0;
     queue_alloc_load_file((void **) &gFile_TEX0_TAB, 0x28);
     queue_alloc_load_file(&gFile_TEX1_TAB, 0x25);
@@ -52,7 +52,7 @@ void init_textures(void) {
         for (var_v1 = 0; temp_a1[var_v1] != -1; var_v1++) {}
         D_800B49B8[i] = (var_v1 - 1);
     }
-    D_800B49C0 = malloc(0x108, 6, NULL);
+    D_800B49C0 = mmAlloc(0x108, ALLOC_TAG_TEX_COL, NULL);
 }
 
 void func_8003CD6C(s32 arg0) {
@@ -145,7 +145,7 @@ Texture* texture_load(s32 id, s32 param2) {
         temp_s4 = D_800B49C0[var_s1].unk4;
         temp_s7 = temp_s4 + 0xE4;
         temp_s5_2 = (u32)D_800B49C0[var_s1+1].unk0 - (u32)D_800B49C0[var_s1].unk0;
-        sp44 = malloc(temp_s7, D_80092A40, NULL);
+        sp44 = mmAlloc(temp_s7, D_80092A40, NULL);
         if (sp44 == NULL) {
             var_s1++;
             if ((var_s1) == 1) {
@@ -169,7 +169,7 @@ Texture* texture_load(s32 id, s32 param2) {
                 sp44->levels = 1;
             }
             sp44->unk_0x10 = (u32) temp_s7 >> 2;
-            reduce_heap_block(sp44, (load_texture_to_tmem(sp44, align_16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
+            mmRealloc(sp44, (load_texture_to_tmem(sp44, mmAlign16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
         }
     }
     for (i = 0; i < D_800B49B0; i++) {
@@ -411,11 +411,11 @@ void texture_destroy(Texture* texture) {
                     var_s0 = NULL;
                 } else {
                     temp_s1 = var_s0->next;
-                    free(var_s0);
+                    mmFree(var_s0);
                     var_s0 = temp_s1;
                 }
             }
-            free(texture);
+            mmFree(texture);
             (D_800B49A8 + i)->unk0 = -1;
             (D_800B49A8 + i)->unk4 = -1;
             return;

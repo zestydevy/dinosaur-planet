@@ -98,9 +98,9 @@ void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gObjDeferredFreeList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B1918     = malloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
-    D_800B18E4     = malloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
+    gObjDeferredFreeList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B1918     = mmAlloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
+    D_800B18E4     = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
 
     //load OBJINDEX.BIN and count number of entries
     queue_alloc_load_file((void **) (&gFile_OBJINDEX), FILE_OBJINDEX_BIN);
@@ -114,8 +114,8 @@ void init_objects(void) {
     gNumObjectsTabEntries--;
 
     //init ref count and pointers
-    gLoadedObjDefs = malloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
-    gObjDefRefCount   = malloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
+    gLoadedObjDefs = mmAlloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjDefRefCount   = mmAlloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
     for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
@@ -125,7 +125,7 @@ void init_objects(void) {
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
-    gObjList = malloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
     alloc_some_object_arrays();
     obj_clear_all();
 }
@@ -596,7 +596,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
 
     var = obj_calc_mem_size(&objHeader, def, flags);
 
-    obj = (Object*)malloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
+    obj = (Object*)mmAlloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
 
     if (obj == NULL) {
         obj_free_objdef(tabIdx);
@@ -673,27 +673,27 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     }
 
     if (def->numSequenceBones != 0) {
-        obj->ptr0x6c = (u16*)align_4(addr);
+        obj->ptr0x6c = (u16*)mmAlign4(addr);
         addr = (u32)obj->ptr0x6c + (def->numSequenceBones * 0x12);
     }
 
     if (def->numAnimatedFrames != 0) {
-        obj->ptr0x70 = (void*)align_4(addr);
+        obj->ptr0x70 = (void*)mmAlign4(addr);
         addr = (u32)obj->ptr0x70 + (def->numAnimatedFrames * 0x10);
     }
 
     if (def->unk9b != 0) {
-        obj->unk0x74 = align_4(addr);
+        obj->unk0x74 = mmAlign4(addr);
         addr = (u32)obj->unk0x74 + (def->unk9b * 0x18);
     }
 
     if (def->unk8F != 0 && def->unk74 != 0) {
-        addr = align_4(addr);
+        addr = mmAlign4(addr);
         addr = func_80026A20(obj->id, obj->modelInsts[0], obj->objhitInfo, addr, obj);
     }
 
     if (def->unk9b != 0) {
-        obj->unk_0x78 = (ObjectStruct78*)align_4(addr);
+        obj->unk_0x78 = (ObjectStruct78*)mmAlign4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
             obj->unk_0x78[j].unk4 = def->unk40[j].unk10;
@@ -795,24 +795,24 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
     }
 
     if (flags & 0x40) {
-        size = align_4(size);
-        size = align_8(size + 8);
+        size = mmAlign4(size);
+        size = mmAlign8(size + 8);
         size += 0x50;
     }
 
     if (flags & 0x100) {
-        size = align_4(size);
-        size = align_8(size + 8);
+        size = mmAlign4(size);
+        size = mmAlign8(size + 8);
         size += 0x400;
     }
 
     if ((flags & 2) && (def->shadowType != 0)) {
-        size = align_4(size);
+        size = mmAlign4(size);
         size += 0x44;
     }
 
     if (def->unk8F != 0) {
-        size = align_4(size);
+        size = mmAlign4(size);
         size += 0xa4;
 
         if (def->unk93 & 8) {
@@ -821,27 +821,27 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
     }
 
     if (def->numSequenceBones != 0) {
-        size = align_4(size);
+        size = mmAlign4(size);
         size += def->numSequenceBones * 0x12;
     }
 
     if (def->numAnimatedFrames != 0) {
-        size = align_4(size);
+        size = mmAlign4(size);
         size += def->numAnimatedFrames * 0x10;
     }
 
     if (def->unk9b != 0) {
-        size = align_4(size);
+        size = mmAlign4(size);
         size += def->unk9b * 0x18;
     }
 
     if (def->unk8F != 0 && def->unk74 != 0) {
-        size = align_8(size);
+        size = mmAlign8(size);
         size += 300;
     }
 
     if (def->unk9b != 0) {
-        size = align_4(size);
+        size = mmAlign4(size);
         size += def->unk9b * 5;
     }
 
@@ -1076,7 +1076,7 @@ void func_8002272C(Object *obj) {
 u32 obj_alloc_object_state(Object *obj, u32 addr) {
     u32 stateSize = 0;
     
-    addr = align_4(addr);
+    addr = mmAlign4(addr);
 
     if (obj->dll != NULL) {
         stateSize = obj->dll->vtbl->get_state_size(obj, addr);
@@ -1101,9 +1101,9 @@ u32 func_80022828(Object *obj) {
 }
 
 u32 func_80022868(s32 objId, Object *obj, u32 addr) {
-    obj->ptr0x60 = (ObjectStruct60*)align_4(addr);
+    obj->ptr0x60 = (ObjectStruct60*)mmAlign4(addr);
 
-    addr = align_8((u32)obj->ptr0x60 + sizeof(ObjectStruct60));
+    addr = mmAlign8((u32)obj->ptr0x60 + sizeof(ObjectStruct60));
     obj->ptr0x60->unk4 = (UNK_PTR*)addr;
 
     addr += 80;
@@ -1154,9 +1154,9 @@ u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
     } else {
-        obj->ptr0x5c = (ObjectStruct5C*)align_4(addr);
+        obj->ptr0x5c = (ObjectStruct5C*)mmAlign4(addr);
 
-        addr = align_8((u32)obj->ptr0x5c + sizeof(ObjectStruct5C));
+        addr = mmAlign8((u32)obj->ptr0x5c + sizeof(ObjectStruct5C));
         obj->ptr0x5c->unk4 = (UNK_PTR*)addr;
 
         return addr + 1024;
@@ -1218,7 +1218,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
     fileOffset = gFile_OBJECTS_TAB[tabIdx];
     fileSize = gFile_OBJECTS_TAB[tabIdx + 1] - fileOffset;
 
-    def = (ObjDef*)malloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
+    def = (ObjDef*)mmAlloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
     if (def != NULL) {
         read_file_region(OBJECTS_BIN, (void*)def, fileOffset, fileSize);
 
@@ -1281,14 +1281,14 @@ void obj_free_objdef(s32 tabIdx) {
             def = gLoadedObjDefs[tabIdx];
             
             if (def->pModLines != NULL) {
-                free(def->pModLines);
+                mmFree(def->pModLines);
             }
 
             if (def->pIntersectPoints != NULL) {
-                free(def->pIntersectPoints);
+                mmFree(def->pIntersectPoints);
             }
 
-            free(def);
+            mmFree(def);
         }
     }
 }
@@ -1310,18 +1310,18 @@ ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount) {
         return NULL;
     }
 
-    tabEntry = (s32*)malloc(16, ALLOC_TAG_TEST_COL, NULL);
+    tabEntry = (s32*)mmAlloc(16, ALLOC_TAG_TEST_COL, NULL);
     read_file_region(MODLINES_TAB, (void*)tabEntry, modLineNo << 2, 8);
 
     offset = tabEntry[0];
     size = tabEntry[1] - tabEntry[0];
 
     if (size > 0) {
-        modLines = (ModLine*)malloc(size, ALLOC_TAG_TRACK_COL, NULL);
+        modLines = (ModLine*)mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
         read_file_region(MODLINES_BIN, (void*)modLines, offset, size);
     }
 
-    free(tabEntry);
+    mmFree(tabEntry);
 
     *modLineCount = (size / sizeof(ModLine));
 
@@ -1501,7 +1501,7 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->mesgQueue != NULL) {
-        free(obj->mesgQueue);
+        mmFree(obj->mesgQueue);
         obj->mesgQueue = NULL;
     }
 
@@ -1523,16 +1523,16 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->srt.flags & 0x2000 && obj->createInfo != NULL) {
-        free(obj->createInfo);
+        mmFree(obj->createInfo);
     }
 
-    free(obj);
+    mmFree(obj);
 }
 
 void *obj_alloc_create_info(s32 size, s32 objId) {
     ObjCreateInfo *createInfo;
 
-    createInfo = (ObjCreateInfo*)malloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
+    createInfo = (ObjCreateInfo*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
     bzero(createInfo, size);
 
     createInfo->uID = -1;

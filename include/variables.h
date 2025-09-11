@@ -13,12 +13,6 @@ struct PointersInts{
 	u32 valB;
 };
 
-struct UnkStruct_800175D4 {
-    s32 a;
-    u8  b[4];
-};
-
-extern s32 D_800B179C;
 extern s32 D_800A7D14;
 extern s32 D_800A7D10;
 
@@ -28,8 +22,6 @@ extern struct ErrString errStringArray_cause[];
 extern struct ErrString errStringArray_fpsr[];
 
 extern struct PointersInts pointersIntsArray[];
-extern struct UnkStruct_800175D4 pointerIntArray0[]; // possible 420 length. counter for array fits this size.
-extern u16 pointerIntArrayCounter; //yeah, this needs a better name.
 
 extern f32 gWorldX;
 extern f32 gWorldZ;

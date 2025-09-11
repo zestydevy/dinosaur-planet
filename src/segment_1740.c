@@ -22,9 +22,9 @@ s32 sp003c;
 s32 sp0040;
 s32 i;
 
-/* 1760 80000B60 0C005E69 */  jal        align_16
+/* 1760 80000B60 0C005E69 */  jal        mmAlign16
 /* 1764 80000B64 2404001C */   addiu     $a0, $zero, 0x1c
-align_16(0x1C)
+mmAlign16(0x1C)
 /* 1768 80000B68 93AE0057 */  lbu        $t6, 0x57($sp)
 t6 = arg1
 /* 176C 80000B6C 93A9005F */  lbu        $t1, 0x5f($sp)
@@ -42,7 +42,7 @@ a1 = 0x7F7F7FFF
 /* 1784 80000B84 00003025 */  or         $a2, $zero, $zero
 a2 = 0
 /* 1788 80000B88 AFA20034 */  sw         $v0, 0x34($sp)
-sp0034 = align_16(0x1C)
+sp0034 = mmAlign16(0x1C)
 /* 178C 80000B8C AFB00028 */  sw         $s0, 0x28($sp)
 sp0028 = arg2
 /* 1790 80000B90 AFA90024 */  sw         $t1, 0x24($sp)
@@ -50,26 +50,26 @@ sp0024 = arg3
 /* 1794 80000B94 00007812 */  mflo       $t7
 t7 = arg1 * arg2
 /* 1798 80000B98 004F5021 */  addu       $t2, $v0, $t7
-t2 = (align_16(0x1C)) + (arg1 * arg2)
+t2 = (mmAlign16(0x1C)) + (arg1 * arg2)
 /* 179C 80000B9C AFAA0038 */  sw         $t2, 0x38($sp)
-sp0038 = (align_16(0x1C)) + (arg1 * arg2)
+sp0038 = (mmAlign16(0x1C)) + (arg1 * arg2)
 /* 17A0 80000BA0 01300019 */  multu      $t1, $s0
 arg3 * arg2
 /* 17A4 80000BA4 0000C012 */  mflo       $t8
 t8 = arg3 * arg2
 /* 17A8 80000BA8 01585821 */  addu       $t3, $t2, $t8
-t3 = ((align_16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)
+t3 = ((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)
 /* 17AC 80000BAC 01796021 */  addu       $t4, $t3, $t9
-t4 = (((align_16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)
+t4 = (((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)
 /* 17B0 80000BB0 018D2021 */  addu       $a0, $t4, $t5
-a0 = ((((align_16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2
+a0 = ((((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2
 /* 17B4 80000BB4 AFA40044 */  sw         $a0, 0x44($sp)
-sp0044 = ((((align_16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2
+sp0044 = ((((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2
 /* 17B8 80000BB8 AFAC0040 */  sw         $t4, 0x40($sp)
 sp0040 = t4
-/* 17BC 80000BBC 0C005AAA */  jal        malloc
-mem = malloc(
-    ((((align_16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2,
+/* 17BC 80000BBC 0C005AAA */  jal        mmAlloc
+mem = mmAlloc(
+    ((((mmAlign16(0x1C)) + (arg1 * arg2)) + (arg3 * arg2)) + (arg3 << 1)) + arg3 << 2,
     0x7F7F7FFF,
     NULL
 );
@@ -221,7 +221,7 @@ if (mem != NULL) {
 #endif
 
 void func_80000D30(void *arg0) {
-    free(arg0);
+    mmFree(arg0);
 }
 
 typedef struct {
@@ -451,7 +451,7 @@ if (sp0034 != 0) {
 /* 1B5C 80000F5C 01F82821 */  addu       $a1, $t7, $t8
 /* 1B60 80000F60 0C01F140 */  jal        bcopy
 /* 1B64 80000F64 00000000 */   nop
-/* 1B68 80000F68 0C005CBA */  jal        free
+/* 1B68 80000F68 0C005CBA */  jal        mmFree
 /* 1B6C 80000F6C 02602025 */   or        $a0, $s3, $zero
 /* 1B70 80000F70 92890001 */  lbu        $t1, 1($s4)
 /* 1B74 80000F74 26100001 */  addiu      $s0, $s0, 1

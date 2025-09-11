@@ -171,7 +171,7 @@ static OSPiHandle *osFlashInit() {
 
     osCreateMesgQueue(&sFlashReadIdQueue, &sFlashReadIdQueueBuffer[0], 1);
 
-    sFlashId = (FlashId*)malloc(sizeof(FlashId), 0xFFFF00FF, NULL);
+    sFlashId = (FlashId*)mmAlloc(sizeof(FlashId), COLOUR_TAG_YELLOW, NULL);
 
     if (sFlashEPiHandle.baseAddress == 0xa8000000) {
         return &sFlashEPiHandle;

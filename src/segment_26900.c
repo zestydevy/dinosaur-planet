@@ -28,13 +28,13 @@ extern Unk800B20B8* D_800B23BC;
 extern Object D_800B24B8;
 
 void alloc_some_object_arrays(void) {
-    D_800B1994 = malloc(0xA0, 0xE, NULL);
-    D_800B199C = malloc(0x708, 0xE, NULL);
-    D_800B20A0 = malloc(0x1900, 0xE, NULL);
-    D_800B20A8 = malloc(0x400, 0xE, NULL);
-    D_800B20AC = malloc(0x400, 0xE, NULL);
-    D_800B20B0 = malloc(0x400, 0xE, NULL);
-    D_800B20B4 = malloc(0x400, 0xE, NULL);
+    D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20A8 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20AC = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20B0 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B20B4 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
     D_800B1990 = 2.0f;
     func_80028D90();
 }
@@ -347,7 +347,7 @@ void func_800264D0(Object* arg0) {
 u32 func_8002667C(Object* obj, u32 addr) {
     ObjectHitInfo* objHitInfo;
 
-    objHitInfo = (ObjectHitInfo *)align_4(addr);
+    objHitInfo = (ObjectHitInfo *)mmAlign4(addr);
     obj->objhitInfo = objHitInfo;
     addr = (u32)(objHitInfo + 1);
     func_800264D0(obj);
@@ -515,7 +515,7 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
     }
 
     objHitInfo->unk_0x6 = 0x12C;
-    objHitInfo->unk_0x8 = (u32 *)align_8(arg3);
+    objHitInfo->unk_0x8 = (u32 *)mmAlign8(arg3);
     arg3 = (s32)objHitInfo->unk_0x8 + objHitInfo->unk_0x6;
     objHitInfo->unk_0x9e = 1;
     if (objHitInfo->unk_0x5a & 0x30) {
@@ -570,7 +570,7 @@ void func_80026B84(Object* obj) {
 }
 
 u32 func_80026BD8(Object* obj, u32 addr) {
-    obj->unk0x58 = (ObjectStruct58 *)align_4(addr);
+    obj->unk0x58 = (ObjectStruct58 *)mmAlign4(addr);
     addr = (u32)(obj->unk0x58 + 1);
     func_80026B84(obj);
     return addr;

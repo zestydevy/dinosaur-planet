@@ -16,8 +16,8 @@ extern s32 gDLDebugInfoLengths[2];
 
 void dl_init_debug_infos()
 {
-    gDLDebugInfos[0] = malloc(MAX_DL_DEBUG_INFO_LENGTH * sizeof(DLDebugInfo), 0xffffff, NULL);
-    gDLDebugInfos[1] = malloc(MAX_DL_DEBUG_INFO_LENGTH * sizeof(DLDebugInfo), 0xffffff, NULL);
+    gDLDebugInfos[0] = mmAlloc(MAX_DL_DEBUG_INFO_LENGTH * sizeof(DLDebugInfo), COLOUR_TAG_CYAN, NULL);
+    gDLDebugInfos[1] = mmAlloc(MAX_DL_DEBUG_INFO_LENGTH * sizeof(DLDebugInfo), COLOUR_TAG_CYAN, NULL);
 }
 
 void dl_next_debug_info_set()

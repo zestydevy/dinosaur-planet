@@ -1,8 +1,7 @@
 #include "common.h"
 #include "sys/rarezip.h"
 
-#define ALIGN8(a) (((u32) (a) & ~0x7) + 0x8)
-#define ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
+#define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
 #define PAD16(a) while (a & 7){a++;}
 
 extern s16 *SHORT_ARRAY_800b17d0;
@@ -27,8 +26,8 @@ extern s32 gNumModelsTabEntries;
 void init_models() {
     u32* temp_v0;    
 
-    gLoadedModels = malloc(0x230, ALLOC_TAG_MODELS_COL, NULL);
-    gFreeModelSlots = malloc(0x190, ALLOC_TAG_MODELS_COL, NULL);
+    gLoadedModels = mmAlloc(0x230, ALLOC_TAG_MODELS_COL, NULL);
+    gFreeModelSlots = mmAlloc(0x190, ALLOC_TAG_MODELS_COL, NULL);
     gNumLoadedModels = 0;
     gNumFreeModelSlots = 0;
 
@@ -40,11 +39,11 @@ void init_models() {
     }
     gNumModelsTabEntries--;
     
-    temp_v0 = malloc(0x830, ALLOC_TAG_ANIMS_COL, NULL);
+    temp_v0 = mmAlloc(0x830, ALLOC_TAG_ANIMS_COL, NULL);
     gAuxBuffer = temp_v0;
     D_800B17BC = temp_v0 + 0x200;
     gBuffer_ANIM_TAB = temp_v0 + 0x204;
-    gLoadedAnims = malloc(0x400, ALLOC_TAG_ANIMS_COL, NULL);
+    gLoadedAnims = mmAlloc(0x400, ALLOC_TAG_ANIMS_COL, NULL);
     gNumLoadedAnims = 0;
 }
 
@@ -73,7 +72,6 @@ ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
 u32 modanim_load(Model *model, u32 id, void *modanim);
 void func_800186CC(Model *model);
 void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
-u32 align_8(u32 a0);
 ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 {
     s32 slot;
@@ -148,13 +146,13 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     header = gAuxBuffer;
     animCount = header->animCount;
     unk_0x4 = header->unk_0x4;
-    unk_0x2_aligned = align_8(header->unk_0x2);
+    unk_0x2_aligned = mmAlign8(header->unk_0x2);
     unk_0x68 = unk_0x2_aligned + 0x90;
     uncompressedSize = rarezip_uncompress_size(&header->uncompressedSize);
     modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
     modelSize += uncompressedSize + 500;
 
-    model = malloc(modelSize, 9, 0);
+    model = mmAlloc(modelSize, ALLOC_TAG_MODELS_COL, 0);
     if (!model) {
         if (isOldSlot) {
             gNumFreeModelSlots++;
@@ -257,7 +255,7 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 
     func_800186CC(model);
 
-    modanim = (void*)align_8((u32)model + uncompressedSize);
+    modanim = (void*)mmAlign8((u32)model + uncompressedSize);
 
     if (modanim_load(model, id, modanim) != 0) {
         goto bail;
@@ -457,8 +455,11 @@ u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 b
     }
     total += 0x2F;
 
-    //NOTE: this 64-bit cast may be a fakematch!
-    return (u64)ALIGN16(total);
+    // align 16
+    total = total & ~0xF;
+    total += 0x10;
+
+    return total;
 }
 
 //Draw mode when opaque?
@@ -503,9 +504,9 @@ void _destroy_model_instance(ModelInstance *modelInst)
     model = modelInst->model;
 
     if (model->displayList != modelInst->displayList) {
-        free(modelInst->displayList);
+        mmFree(modelInst->displayList);
     }
-    free(modelInst);
+    mmFree(modelInst);
 
     if (--model->refCount <= 0)
     {
@@ -551,7 +552,7 @@ void model_destroy(Model* model) {
         }
     }
 
-    free(model);
+    mmFree(model);
 }
 
 s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
@@ -669,7 +670,7 @@ void anim_destroy(Animation* anim) {
     if (matchIndex != -1) {
         ((AnimSlot *)((u8*)gLoadedAnims + (matchIndex << 1 << 2)))->referenceCount = clear;
         ((AnimSlot *)((u8*)gLoadedAnims + (matchIndex << 1 << 2)))->animation = clear;
-        free(anim);
+        mmFree(anim);
     }        
 }
 

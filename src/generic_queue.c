@@ -16,7 +16,7 @@ GenericQueue *generic_queue_init(GenericQueue *queue, void *data, s32 capacity, 
 GenericQueue *generic_queue_new(s32 capacity, s32 elementSize) {
     GenericQueue *queue;
 
-    queue = malloc(
+    queue = mmAlloc(
         /*elementSize*/(elementSize * capacity) + (sizeof(GenericQueue)),
         /*tag*/ALLOC_TAG_TEST_COL,
         /*name*/NULL);
@@ -32,7 +32,7 @@ GenericQueue *generic_queue_new(s32 capacity, s32 elementSize) {
 }
 
 void generic_queue_free(GenericQueue *queue) {
-    free(queue);
+    mmFree(queue);
 }
 
 void generic_queue_enqueue(GenericQueue *queue, void *element) {

@@ -499,7 +499,7 @@ static void dll_63_clean_up(s32 leavingMenus) {
     s32 i;
 
     if (sGameTextChunk != NULL) {
-        free(sGameTextChunk);
+        mmFree(sGameTextChunk);
         sGameTextChunk = NULL;
     }
 

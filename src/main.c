@@ -163,7 +163,7 @@ void mainproc(void *arg) {
 void game_init(void) {
     s32 tvMode;
 
-    init_memory();
+    mmInit();
     rarezip_init();
     create_asset_thread();
 
@@ -322,7 +322,7 @@ void game_tick(void) {
 
     func_80037924();
     obj_do_deferred_free();
-    update_mem_mon_values();
+    mmFreeTick();
 
     if (gPauseState == 0) {
         func_80001A3C();
@@ -384,7 +384,7 @@ void game_tick_no_expansion(void) {
     gSPEndDisplayList(gCurGfx++);
 
     func_80037924();
-    update_mem_mon_values();
+    mmFreeTick();
 
     delayByte = video_func_returning_delay(0);
     delayAmount = (u8)delayByte;
@@ -469,7 +469,7 @@ void func_80013FB4(void) {
 
 void func_80014074(void) {
     if (D_800B09C0 != 0) {
-        func_80017254(0);
+        mmSetDelay(0);
         if (D_8008CA30 != 0) {
             func_8003798C(0, 0, 0);
             func_800668A4();
@@ -482,7 +482,7 @@ void func_80014074(void) {
 
         D_800B09C0 = 0;
 
-        func_80017254(0);
+        mmSetDelay(0);
         camera_init();
 
         if (D_8008C968 >= 0) {
@@ -496,7 +496,7 @@ void func_80014074(void) {
             gDLL_23->vtbl->func_18(1);
         }
 
-        func_80017254(2);
+        mmSetDelay(2);
         D_8008CA30 = 1;
     }
 }
@@ -583,19 +583,19 @@ void set_pause_state(s32 state) {
 void alloc_frame_buffers(void) {
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
-    gMainGfx[0] = malloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainGfx[0] = mmAlloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainGfx[1] = (Gfx *)((u32)gMainGfx[0] + MAIN_GFX_BUF_SIZE);
 
     // matrix buffers ("main:mtx")
-    gMainMtx[0] = malloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainMtx[0] = mmAlloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainMtx[1] = (Mtx *)((u32)gMainMtx[0] + MAIN_MTX_BUF_SIZE);
 
     // polygon buffers? ("main:pol")
-    gMainPol[0] = malloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainPol[0] = mmAlloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainPol[1] = (Triangle *)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
 
     // vertex buffers ("main:vtx")
-    gMainVtx[0] = malloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
+    gMainVtx[0] = mmAlloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainVtx[1] = (Vertex *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 

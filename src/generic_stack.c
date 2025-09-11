@@ -15,7 +15,7 @@ GenericStack *generic_stack_init(GenericStack *stack, void *data, s32 capacity, 
 GenericStack *generic_stack_new(s32 capacity, s32 elementSize) {
     GenericStack *stack;
 
-    stack = malloc(
+    stack = mmAlloc(
         /*elementSize*/(elementSize * capacity) + (sizeof(GenericStack)),
         /*tag*/ALLOC_TAG_TEST_COL,
         /*name*/NULL);
@@ -30,7 +30,7 @@ GenericStack *generic_stack_new(s32 capacity, s32 elementSize) {
 }
 
 void generic_stack_free(GenericStack *stack) {
-    free(stack);
+    mmFree(stack);
 }
 
 void generic_stack_push(GenericStack *stack, void *element) {

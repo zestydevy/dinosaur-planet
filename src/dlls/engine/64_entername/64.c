@@ -198,7 +198,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 
 static void dll_64_clean_up() {
     gDLL_74_Picmenu->vtbl->clear_items();
-    free(sGameTextChunk);
+    mmFree(sGameTextChunk);
     texture_destroy(sLetterBgBoxTexture);
     texture_destroy(sBackgroundTexture);
 }

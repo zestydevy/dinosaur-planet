@@ -16,9 +16,9 @@ extern s32 gHuftTablePos;
 extern s32 rarezip_inflate_block();
 
 void rarezip_init() {
-    D_800918C0 = (void*)malloc(0x4000, 0x7F7F7FFF, NULL);
-    gHuftTable = (void*)malloc(sizeof(huft) * 1280, 0x7F7F7FFF, NULL);
-    gPackedHeader = (void*)malloc(0x20, 0x000000FF, NULL);
+    D_800918C0 = (void*)mmAlloc(0x4000, COLOUR_TAG_GREY, NULL);
+    gHuftTable = (void*)mmAlloc(sizeof(huft) * 1280, COLOUR_TAG_GREY, NULL);
+    gPackedHeader = (void*)mmAlloc(0x20, COLOUR_TAG_BLACK, NULL);
 }
 
 s32 rarezip_uncompress_size(u8 *b) {

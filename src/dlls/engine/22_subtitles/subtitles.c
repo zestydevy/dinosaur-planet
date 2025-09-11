@@ -214,7 +214,7 @@ void dll_22_func_448(void) {
     _data_4C = 0;
     _data_34 = 0;
     if (_bss_7AC != 0) {
-        free(_bss_7AC);
+        mmFree(_bss_7AC);
         _bss_7AC = 0;
     }
     _bss_780[0]->unk0[0][0] = 0;

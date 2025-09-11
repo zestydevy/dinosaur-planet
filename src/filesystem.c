@@ -27,7 +27,7 @@ void init_filesystem(void)
     // A4AA0 - A4970
     size = (s32)&__file1Address - (s32)&__fstAddress;
 
-    gFST = (Fs *)malloc(size, 0x7F7F7FFF, NULL);
+    gFST = (Fs *)mmAlloc(size, COLOUR_TAG_GREY, NULL);
     read_from_rom((u32)&__fstAddress, (u8 *)gFST, size);
 }
 
@@ -47,7 +47,7 @@ void *read_alloc_file(u32 id, u32 a1)
     offset = fstEntry[0];
     size = fstEntry[1] - offset;
 
-    data = malloc(size, ALLOC_TAG_FS_COL, NULL);
+    data = mmAlloc(size, COLOUR_TAG_GREY, NULL);
     if (data == NULL)
         return NULL;
 
