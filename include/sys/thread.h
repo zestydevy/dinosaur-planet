@@ -6,11 +6,11 @@
 #include "ultra64.h"
 #include "PR/sched.h"
 
-#define IDLE_THREAD_SIZE (0x800 / sizeof(u64))
+#define IDLE_THREAD_SIZE 0x20
 #define IDLE_THREAD_ID 1
 #define IDLE_THREAD_PRIORITY OS_PRIORITY_IDLE
 
-#define MAIN_THREAD_SIZE 1024
+#define MAIN_THREAD_SIZE 0x400
 #define MAIN_THREAD_ID 3
 #define MAIN_THREAD_PRIORITY 10
 
@@ -23,10 +23,10 @@
 extern OSThread* __osRunningThread;
 extern OSThread* __osRunQueue;
 // this needs double checking. its address is within gMainThreadStack....
-extern u8 gIdleThreadStack[IDLE_THREAD_SIZE];
+extern u64 gIdleThreadStack[];
+extern u64 gMainThreadStack[];
 extern OSThread gIdleThread;
 extern OSThread gMainThread;
-extern u64 gMainThreadStack[];        // some sort of data
 
 /**
  * @returns The address of s->interruptQ.

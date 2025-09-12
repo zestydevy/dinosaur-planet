@@ -1,5 +1,7 @@
 #include "PR/ultratypes.h"
 #include "libnaudio/n_libaudio.h"
+#include "sys/acache.h"
+#include "sys/fs.h"
 #include "common.h"
 
 /*0x0*/ static const u32 _rodata_0[] = {
@@ -99,7 +101,7 @@
 /*0x20*/ static u8 _bss_20[0x8];
 /*0x28*/ static u8 _bss_28[0x8];
 /*0x30*/ static u8 _bss_30[0xf8];
-/*0x128*/ static void *_bss_128;
+/*0x128*/ static ACache *_bss_128;
 
 // offset: 0x0 | ctor
 void dll_6_ctor(s32 arg0) {
@@ -128,7 +130,7 @@ void dll_6_ctor(s32 arg0) {
         alBnkfNew(_bss_0, (u8*)file_get_romaddr(3U, sp4C[1]));
     }
     mmFree(sp4C);
-    _bss_128 = func_80000B40(1U, 0x40U, 0xE, 0x40U, 0);
+    _bss_128 = acache_init(AUDIO_BIN, 0x40U, 0xE, 0x40U, 0);
     queue_alloc_load_file((void*)&sp4C, 0);
     _bss_C = sp4C[0];
     _bss_10 = sp4C[1] - _bss_C;

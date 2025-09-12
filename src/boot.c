@@ -1,4 +1,15 @@
-#include "common.h"
+#include "PR/os.h"
+#include "sys/main.h"
+#include "sys/thread.h"
+#include "macros.h"
+#include "bss.h"
+
+// .bss
+
+BSS_GLOBAL u64 gIdleThreadStack[IDLE_THREAD_SIZE + 1];
+BSS_GLOBAL u64 gMainThreadStack[MAIN_THREAD_SIZE + 1];
+BSS_GLOBAL OSThread gIdleThread;
+BSS_GLOBAL OSThread gMainThread;
 
 void idle(void * arg);
 
@@ -15,7 +26,7 @@ void idle(void * arg)
     osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainproc, NULL, 
         &gMainThreadStack[MAIN_THREAD_SIZE], MAIN_THREAD_PRIORITY);
 
-    gMainThreadStack[1024] = 0;
+    gMainThreadStack[MAIN_THREAD_SIZE] = 0;
     gMainThreadStack[0] = 0;
 
     osStartThread(&gMainThread);
@@ -26,8 +37,11 @@ void idle(void * arg)
 
 // official name: bootCheckStack
 void thread_timer_tick(void) {
-    ++gMainThreadStack[1024];
-    ++gMainThreadStack[0];
+    gMainThreadStack[MAIN_THREAD_SIZE]++;
+    gMainThreadStack[0]++;
+    if (gMainThreadStack[MAIN_THREAD_SIZE] != gMainThreadStack[0]) {
+        STUBBED_PRINTF("WARNING: Stack overflow/underflow!!!\n");
+    }
 }
 
 void func_80001178(s32 a0, s32 *a1)
