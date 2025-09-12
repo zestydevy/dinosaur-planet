@@ -37,7 +37,7 @@ segments:
     - [0x1050, c, segment_1050]
     - [0x13D0, c, segment_13D0]
     - [0x1460, c, segment_1460]
-    - [0x1740, c, segment_1740]
+    - [0x1740, c, acache]
     - [0x1C40, c, boot]
     - [0x1E20, c, camera]
     - [0x5660, c, curves]
@@ -354,7 +354,8 @@ segments:
     - [0x98E00, .data, libultra/rmon/rmonmain]
     
     # rodata
-    - [0x98E10, rodatabin]
+    - [0x98E10, .rodata, acache]
+    - [0x98E60, .rodata, boot]
     - [0x98E90, .rodata, camera]
     - [0x98FB0, .rodata, curves]
     - [0x99110, rodatabin]
