@@ -1,5 +1,7 @@
 #include "common.h"
 
+static const char str_8009b670[] = "diRcpTrace: Buffer not allocated!\n";
+
 #define MAX_DL_DEBUG_INFO_LENGTH 128
 
 typedef struct {

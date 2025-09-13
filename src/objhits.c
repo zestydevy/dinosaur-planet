@@ -1,17 +1,27 @@
-#include "segment_26900.h"
+#include "sys/objhits.h"
+
+static const char str_80099860[] = "objhits.c: keysize overflow error\n";
+static const char str_80099884[] = " Warning HitModel %x [%d] has no Polyhits\n";
+static const char str_800998b0[] = "OBJHITS: hitmodel overflow\n";
+static const char str_800998cc[] = "objHitReact.c: sphere overflow!\n";
+static const char str_800998f0[] = " WARNING : OBJHITS hitlist has overflowed \n\n";
+static const char str_80099920[] = "ACTIVE POLY HITS overflow\n";
+static const char str_8009993c[] = "ACTIVE POLY HITS overflow\n";
+static const char str_80099958[] = " Guard 1 ";
+static const char str_80099964[] = " player 1 ";
+static const char str_80099970[] = "OBJHITS: Temporary array overflow in 'hitVolumes'\n";
+static const char str_800999a4[] = "HIT VOLUMES: an object has too many hit spheres\n";
+static const char str_800999d8[] = " No Joints On Given Skeleton Object Error ";
+static const char str_80099a04[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n";
+static const char str_80099a48[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n";
+static const char str_80099a88[] = " Result1 ";
+static const char str_80099a94[] = " x %f y %f z %f \n";
+static const char str_80099aa8[] = " Result2 ";
+static const char str_80099ab4[] = " x %f y %f z %f \n";
+
 
 extern s32 *D_800916E0[5];
 extern s32 D_800916F4[4];
-extern f32 D_80099AC8;
-extern f32 D_80099ACC;
-extern f32 D_80099AD0;
-extern f32 D_80099AD4;
-extern f32 D_80099AD8;
-extern f64 D_80099AE0;
-extern f32 D_80099AE8;
-extern f32 D_80099AEC;
-extern f32 D_80099AF0;
-extern f32 D_80099AF4;
 extern f32 D_800B1990;
 extern Object **D_800B1994;
 extern s32 D_800B1998;
@@ -648,11 +658,11 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
                     dll_unload(loadedDLL);
                 }
             } else {
-                sp58 = D_80099AC8;
+                sp58 = 0.014f;
                 gDLL_17->vtbl->func1(obj, 0x325, &sp70, 0x200001, -1, &sp58);
                 sp70.scale = 92.0f;
                 gDLL_17->vtbl->func1(obj, 0x323, &sp70, 0x200001, -1, NULL);
-                sp58 = D_80099ACC;
+                sp58 = 0.015f;
                 sp70.scale = 231.0f;
                 gDLL_17->vtbl->func1(obj, 0x323, &sp70, 0x200001, -1, &sp58);
                 sp70.transl.x -= obj->positionMirror.x;
@@ -677,7 +687,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
 
 #ifndef NON_EQUIVALENT
 void obj_do_hit_detection(s32 arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/obj_do_hit_detection.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/obj_do_hit_detection.s")
 #else
 // https://decomp.me/scratch/om8Pt
 void obj_do_hit_detection(s32 arg0) {
@@ -711,7 +721,7 @@ void obj_do_hit_detection(s32 arg0) {
     Unk800B20B8** sp68;
 
     objects = get_world_objects(&sp7C, &sp80);
-    D_800B20B8->unk4 = D_80099AD0;
+    D_800B20B8->unk4 = -36288576.0f;
     D_800B20B8->unk0 = D_800B20B8->unk4;
     D_800B23B8 = D_800B20B8;
     for (var_s6 = 0, var_s7 = 1; var_s6 < arg0; var_s6++) {
@@ -868,7 +878,7 @@ void obj_do_hit_detection(s32 arg0) {
 
 #ifndef NON_EQUIVALENT
 void func_80027934(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80027934.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80027934.s")
 #else
 // https://decomp.me/scratch/R1u2I
 void func_80027934(Object* obj, Object* otherObj) {
@@ -1059,7 +1069,7 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
 
 #ifndef NON_EQUIVALENT
 void func_80028238(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80028238.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80028238.s")
 #else
 // https://decomp.me/scratch/Zv5Yv
 void func_80028238(Object* obj, Object* otherObj) {
@@ -1213,7 +1223,7 @@ void func_80028238(Object* obj, Object* otherObj) {
 
 #ifndef NON_MATCHING
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_800287E4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_800287E4.s")
 #else
 // https://decomp.me/scratch/ujKZh
 void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
@@ -1673,7 +1683,7 @@ void func_80029AB4(ModelJoint* joints, s32 jointsCount, HitSphere* hitSpheres, s
 
 #ifndef NON_EQUIVALENT
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80029C04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80029C04.s")
 #else
 // https://decomp.me/scratch/aFdcV
 u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6) {
@@ -2028,7 +2038,7 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
 
 #ifndef NON_EQUIVALENT
 s32 func_8002AD3C(Object *obj, Vec3f *arg1, Vec3f *arg2, Vec3f *arg3, f32 *arg4);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002AD3C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002AD3C.s")
 #else
 // https://decomp.me/scratch/z2C6y
 s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4) {
@@ -2476,11 +2486,11 @@ s32 func_8002C0C4(Vec3f* arg0, u32 arg1, u32 arg2, f32 arg3, Vec3f* arg4, f32 ar
         }
     }
     temp_fv0 = *arg13;
-    if (-(arg12 * D_80099AD4) < temp_fv0) {
+    if (-(arg12 * 0.2f) < temp_fv0) {
         *arg13 = 0.0f;
         return vec3_length(&sp20) <= argC;
     }
-    if (temp_fv0 < (arg12 * D_80099AD8)) {
+    if (temp_fv0 < (arg12 * 1.2f)) {
         *arg13 = arg12;
         sp20.x += arg9;
         sp20.y += argA;
@@ -2528,7 +2538,7 @@ s32 func_8002C278(Vec3f arg0, Vec3f arg1, f32 arg2, f32 arg3, Vec3f arg4, Vec3f 
 
 #ifndef NON_MATCHING
 Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) ;
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002C3EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002C3EC.s")
 #else
 // https://decomp.me/scratch/5vB1O
 Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec3f* arg5, Vec3f* arg6, Vec3f* arg7, f32 arg8, f32 arg9, f32 argA, f32* argB, f32* argC, Vec3f* argD) {
@@ -2748,7 +2758,7 @@ Vec3f* func_8002CBD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
 
 #ifndef NON_MATCHING
 void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002CEC8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002CEC8.s")
 #else
 // https://decomp.me/scratch/7dHqX
 void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, f32 arg9, Vec3f* arg10) {
@@ -2918,7 +2928,7 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     arg9->y = spAC.y - arg0->y;
     arg9->z = spAC.z - arg0->z;
     if (arg9->y > 0.0f) {
-        arg9->y += D_80099AE0;
+        arg9->y += 1.8;
     }
     return 1;
 }
@@ -3206,7 +3216,7 @@ s32 func_8002DFB8(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
 
 #ifndef NON_MATCHING
 s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002E3D0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002E3D0.s")
 #else
 // https://decomp.me/scratch/vFxGY
 s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, Unk80030A24* arg4, Unk80030A24** arg5, f32 arg6, f32 arg7, f32* arg8) {
@@ -3685,7 +3695,7 @@ void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelIns
 
 #ifndef NON_EQUIVALENT
 s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_8002F998.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002F998.s")
 #else
 // https://decomp.me/scratch/q2iY8
 s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14* arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD) {
@@ -3795,7 +3805,7 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
                                                 var_s3->unk8.y = spE4.y;
                                                 var_s3->unk8.z = spE4.z;
                                                 if (spF4 == 0.0f) {
-                                                    spF4 = D_80099AE8;
+                                                    spF4 = 0.1f;
                                                 }
                                                 var_s3->unk14.y = spF4;
                                                 var_s3->unk24 = 1.0f;
@@ -4027,7 +4037,7 @@ void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 
 
 #ifndef NON_MATCHING
 void func_80030AEC(Object *obj, Object *otherObj);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_26900/func_80030AEC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80030AEC.s")
 #else
 // https://decomp.me/scratch/5K9Wp
 void func_80030AEC(Object* obj, Object* otherObj) {
@@ -4064,10 +4074,10 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     spBC = (sp98.x * sp50.x) + (sp98.y * sp50.y) + (sp98.z * sp50.z);
     spB8 = (sp8C.x * sp50.x) + (sp8C.y * sp50.y) + (sp8C.z * sp50.z);
     if (spBC == 0.0f) {
-        spBC = D_80099AEC;
+        spBC = 0.2f;
     }
     if (spB8 == 0.0f) {
-        spB8 = D_80099AF0;
+        spB8 = -0.2f;
     }
     spAC = (spC0 / spC4) * temp_fa0;
     spA8 = (spC4 / spC0) * temp_fa0;
@@ -4111,7 +4121,7 @@ void func_80030AEC(Object* obj, Object* otherObj) {
 void func_80030E2C(Object* obj, f32* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4) {
     *arg1 = SQ(obj->unk_0xa8);
     *arg1 = SQ(*arg1);
-    *arg1 *= D_80099AF4;
+    *arg1 *= 3.926991f;
     arg3->x = obj->srt.transl.x;
     arg3->y = obj->srt.transl.y;
     arg3->z = obj->srt.transl.z;

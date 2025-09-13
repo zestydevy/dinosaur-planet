@@ -1,5 +1,8 @@
 #include "common.h"
 
+static const char str_8009ac70[] = "maketex: buffer out of range\n";
+static const char str_8009ac90[] = "maketex: buffer out of range\n";
+
 /** 
  * D_80092E9C could be one of the dimensions (height) for rendering dynamic shadow texture?
  * gPossiblyScreenWidthOrHeight might be the width!

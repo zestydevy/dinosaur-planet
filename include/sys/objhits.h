@@ -1,5 +1,5 @@
-#ifndef _SEGMENT_26900_H
-#define _SEGMENT_26900_H
+#ifndef _SYS_OBJHITS_H
+#define _SYS_OBJHITS_H
 
 #include "common.h"
 #include "sys/map.h"

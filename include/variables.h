@@ -16,11 +16,6 @@ struct PointersInts{
 extern s32 D_800A7D14;
 extern s32 D_800A7D10;
 
-
-// not variables?
-extern struct ErrString errStringArray_cause[];
-extern struct ErrString errStringArray_fpsr[];
-
 extern struct PointersInts pointersIntsArray[];
 
 extern f32 gWorldX;

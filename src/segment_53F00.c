@@ -1,5 +1,16 @@
 #include "common.h"
 
+static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
+static const char str_8009aaa0[] = "1: track/intersect.c: OVERFLOW error\n";
+static const char str_8009aac8[] = "2: track/intersect.c: OVERFLOW error\n";
+static const char str_8009aaf0[] = "3: track/intersect.c: OVERFLOW error\n";
+static const char str_8009ab18[] = "TrackGetHeight()-Overflow!!!\n";
+static const char str_8009ab38[] = "trackIntersect: FUNC OVERFLOW %d\n";
+static const char str_8009ab5c[] = "intersectModLineBuild point list overflow, %d/%d\n";
+static const char str_8009ab90[] = "trackIntersect: FUNC OVERFLOW %d\n";
+static const char str_8009abb4[] = "insertPoint array overrun %d/%d\n";
+static const char str_8009abd8[] = "NO FREE LAST LINE\n";
+
 s32 func_80055458(Object*, s32, s32, f32*, f32 *, s32, s8*, s32);
 s32 func_800564C8(s32, s32, f32 *, s32, s8*, s32);
 extern s32 D_80092E70;
