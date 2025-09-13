@@ -102,11 +102,6 @@ extern void *D_80092FE4;
 extern s8 D_80093060;
 extern UnkVidStruct3 D_80093068[];
 
-extern f32 gPalAspectRatio;  // 1.212121_ (4/3.3)
-extern f32 D_8009AD68;       // 1.1
-extern f32 gMPalAspectRatio; // 1.333333_ (4/3)
-extern f32 gNtscAspectRatio; // 1.333333_ (4/3)
-
 extern UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
 extern Texture *D_800BCC68;
 extern Texture *D_800BCC6C;

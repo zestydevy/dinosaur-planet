@@ -43,7 +43,6 @@ void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3);
 
 void func_80046320(s16 param1, Object *object);
 
-extern char D_80099600[]; // "objects/objects.c"
 extern s32 gNumObjs;
 
 extern void func_80058FE8();
@@ -51,8 +50,6 @@ extern void update_obj_hitboxes(s32);
 extern void func_80025E58();
 extern void obj_do_hit_detection(s32);
 extern void func_8002B6EC();
-
-extern char D_800994E0[]; // "objects/objects.c"
 
 void update_obj_models();
 void update_object(Object *obj);
@@ -206,8 +203,15 @@ void update_objects() {
     gDLL_3_Animation->vtbl->func5();
     gDLL_2_Camera->vtbl->func1(delayByte);
 
-    write_c_file_label_pointers(D_800994E0, 0x169);
+    write_c_file_label_pointers("objects/objects.c", 0x169);
 }
+
+static const char str_800994f4[] = "objGetSequence objtype out of range %d/%d\n";
+static const char str_80099520[] = "objSetupObjectActual objtype out of range %d/%d\n";
+static const char str_80099554[] = "Warning: Unknown object type '%d/%d romdefno %d', using DummyObject (128)\n";
+static const char str_800995a0[] = "ObjSetupObject(3) Memory fail!!\n";
+static const char str_800995c4[] = "ObjSetupObject(2) Memory fail!!\n";
+static const char str_800995e8[] = "ObjList Overflow %d!!!\n";
 
 void doNothing_80020A40(void) {}
 
@@ -673,7 +677,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     }
 
     if (def->numSequenceBones != 0) {
-        obj->ptr0x6c = (u16*)mmAlign4(addr);
+        obj->ptr0x6c = (void*)mmAlign4(addr);
         addr = (u32)obj->ptr0x6c + (def->numSequenceBones * 0x12);
     }
 
@@ -780,7 +784,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
         obj_add_object_type(obj, 56);
     }
 
-    write_c_file_label_pointers(D_80099600, 0x477);
+    write_c_file_label_pointers("objects/objects.c", 0x477);
 }
 
 u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
@@ -848,6 +852,8 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
     return size;
 }
 
+static const char str_80099614[] = " No Points ";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021E74.s")
 
 f32 func_80022150(Object *obj) {
@@ -884,6 +890,8 @@ void func_80022200(Object *obj, s32 param2, s32 param3) {
     }
 }
 
+static const char str_80099620[] = "objFreeTick %08x locked %d,already on list\n";
+
 // name guessed from leftover strings
 void obj_free_tick(Object *obj) {
     if (obj->unk0xb0 & 0x10) {
@@ -912,6 +920,8 @@ void obj_add_tick(Object *obj) {
         linked_list_insert(&gObjUpdateList, insertAfter, (void*)obj);
     }
 }
+
+static const char str_8009964c[] = "objFreeObject: delete list size overrun\n";
 
 void obj_destroy_object(Object *obj) {
     s32 i;
@@ -1113,6 +1123,8 @@ u32 func_80022868(s32 objId, Object *obj, u32 addr) {
     return addr;
 }
 
+static const char str_80099678[] = "objects.c: event data size overflow\n";
+
 void obj_load_event(Object *obj, s32 objId, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
@@ -1200,6 +1212,9 @@ void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 i
     }
 }
 
+static const char str_800996a0[] = "ob %d fileno %d\n";
+static const char str_800996b4[] = "Objects out of ram(1) !!\n";
+
 ObjDef *obj_load_objdef(s32 tabIdx) {
     ObjDef *def;
     s32 fileOffset;
@@ -1270,6 +1285,8 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
 
     return def;
 }
+
+static const char str_800996d0[] = "objFreeObjdef: Error!! (%d)\n";
 
 void obj_free_objdef(s32 tabIdx) {
     if (gObjDefRefCount[tabIdx] != 0) {
@@ -1343,6 +1360,8 @@ s32 func_80022DFC(s32 idx) {
 }
 
 extern u32 D_800B18E8;
+
+static const char str_800996f0[] = "objGetControlNo objtype out of range %d/%d\n";
 
 // unused
 s16 func_80022E3C(s32 param1) {
@@ -1763,6 +1782,9 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     obj->unk0xb0 &= 0xF0FF;
 }
 
+static const char str_80099780[] = "warning: objAddEffectBox max effect boxes\n";
+static const char str_800997ac[] = "objFreeEffectBox: Not found\n";
+
 extern s8 gEffectBoxCount;
 extern Object *gEffectBoxes[20];
 
@@ -1844,6 +1866,9 @@ void func_80023C6C(Object *obj) {
         }
     }
 }
+
+static const char str_800997cc[] = "locknum out of range\n";
+static const char str_800997e4[] = "infonum out of range\n";
 
 void func_80023CD8(Object *obj, u16 param2) {
     if (param2 > obj->def->unk9b) {

@@ -4,8 +4,6 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 
-extern int gSomeCrashVideoFlag;
-extern s32 D_800937F0;
 extern u16 D_800933C4[];
 
 // Length of gPiManagerArray

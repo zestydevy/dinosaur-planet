@@ -1,5 +1,9 @@
 #include "common.h"
 
+static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
+static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
+static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_800328F0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_80032A08.s")

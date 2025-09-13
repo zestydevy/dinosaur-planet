@@ -1,5 +1,16 @@
 #include "common.h"
 
+// voxmap2.c ?
+// unlike the other voxmap.c file, this one is used by kyte and tricky
+
+static const char str_80099db0[] = "****** GOAL FOUND Iterations=%d ******\n";
+static const char str_80099dd8[] = " VOXMAPS : Overflow in Route Points for Net Route Finding \n";
+static const char str_80099e14[] = " Curve Node %i \n";
+static const char str_80099e28[] = " Curve Node %i \n";
+static const char str_80099e3c[] = "net_route: No support for this type of node %d x=%f y=%f z=%f\n";
+static const char str_80099e7c[] = "**** HEAP INSERT ****\n";
+static const char str_80099e94[] = "**** NODE FIND ****\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_3A190/func_80039590.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_3A190/func_800395D8.s")

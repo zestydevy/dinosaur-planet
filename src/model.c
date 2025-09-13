@@ -4,6 +4,16 @@
 #define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
 #define PAD16(a) while (a & 7){a++;}
 
+static const char str_80099240[] = "Error: Model no. %d out of range on load. !!\n";
+static const char str_80099270[] = "TEXTURE ERROR!!\n%d,%d\n";
+static const char str_80099288[] = "Error: Model table overflow!!\n";
+static const char str_800992a8[] = "WARNING :: createModelInstance called with NULL pointer\n";
+static const char str_800992e4[] = "DANGER: createModelInstance: Actual size exceeded totalsize!!!\n";
+static const char str_80099324[] = "ModFreeModel : NULL mod_inst!!\n";
+static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent model!!\n";
+
+
+
 extern s16 *SHORT_ARRAY_800b17d0;
 
 void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
@@ -610,7 +620,7 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
         
         animHeader = &anim->animHeader;
         if (animHeader->totalBones != model->jointCount) {
-            STUBBED_PRINTF("makeModelAnimation() size mismatch!! (%d,%d)");
+            STUBBED_PRINTF("makeModelAnimation() size mismatch!! (%d,%d)\n");
         }
         animState->unk_0x34[0] = animHeader;
         animState->unk_0x60[0] = anim->unk_0x1 & 0xF0;
@@ -634,6 +644,9 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
         animState->unk_0xc[1] = animState->unk_0xc[0];
     }
 }
+
+static const char str_800993ac[] = "Warning: Model animation buffer overflow!! size=%d\n";
+static const char str_800993e0[] = "modLoadAnimActual: anim overflow %d/%d\n";
 
 Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
     Animation* anim;
@@ -673,6 +686,12 @@ void anim_destroy(Animation* anim) {
         mmFree(anim);
     }        
 }
+
+static const char str_80099440[] = "**Top matrix out of range: (%.1f,%.1f,%.1f) (%.1f,%.1f)\n";
+static const char str_8009947c[] = "Warning! Tiltlist overflow!!\n";
+static const char str_8009949c[] = "%d : %d\n";
+static const char str_800994a8[] = "\n";
+static const char str_800994ac[] = "blend_frames: %x\n";
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001943C.s")
