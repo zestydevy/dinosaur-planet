@@ -12,7 +12,7 @@ import re
 from shutil import which
 import sys
 from typing import TextIO
-from ninja import ninja_syntax
+import ninja_syntax
 
 from dino.dll_build_config import DLLBuildConfig
 from dino.dlls_txt import DLLsTxt
