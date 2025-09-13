@@ -5,7 +5,6 @@
 #   to the object file produced by the .c file (which breaks GOT order).
 
 import bisect
-from io import FileIO
 from pathlib import Path
 import re
 import subprocess
@@ -15,7 +14,7 @@ from elftools.elf.sections import Section, SymbolTableSection, Symbol
 from elftools.elf.relocation import RelocationSection, Relocation
 from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import os
-from typing import TextIO
+from typing import BinaryIO, TextIO
 import shutil
 
 EXPORT_PATTERN = re.compile(r"\s*\.dword\s*(\S+)")
@@ -80,7 +79,7 @@ def fix_local_syms(syms: list[Symbol], rel_text_relocations: list[Relocation], e
         if sym_type == "STT_NOTYPE":
             sym.entry["st_info"]["type"] = "STT_OBJECT"
 
-def fix_up(obj: ELFFile, out_obj: FileIO, exports: set[str]):
+def fix_up(obj: ELFFile, out_obj: BinaryIO, exports: set[str]):
     # Load symbols
     symtab_idx = obj.get_section_index(".symtab")
     symtab = obj.get_section(symtab_idx)

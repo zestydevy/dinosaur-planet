@@ -22,7 +22,7 @@ class Exports(TypedDict):
 
 class ReadRelocations(TypedDict):
     got_and_relocs: "GOTAndRelocations | None"
-    rodata_relocs: "list[Word32Reloc]"
+    rodata_relocs: "list[GPRel32Reloc]"
     ri_gp_value: int | None
 
 class GOTAndRelocations(TypedDict):
@@ -53,29 +53,30 @@ def read_elf_exports(elf: ELFFile) -> Exports:
     assert isinstance(syms, SymbolTableSection)
 
     rel_exports = elf.get_section_by_name(".rel.exports")
-    if rel_exports != None:
-        assert isinstance(rel_exports, RelocationSection)
+    if rel_exports == None:
+        raise ELF2DLLException("ELF missing required .rel.exports section.")
+    assert isinstance(rel_exports, RelocationSection)
 
-        export_list: "list[int]" = []
-        exports: Exports = {
-            "ctor": 0,
-            "dtor": 0,
-            "exports": export_list
-        }
+    export_list: "list[int]" = []
+    exports: Exports = {
+        "ctor": 0,
+        "dtor": 0,
+        "exports": export_list
+    }
 
-        i = 0
-        for reloc in rel_exports.iter_relocations():
-            sym = syms.get_symbol(reloc["r_info_sym"])
-            value = sym.entry["st_value"]
-            if i == 0:
-                exports["ctor"] = value
-            elif i == 1:
-                exports["dtor"] = value
-            else:
-                export_list.append(value)
-            i += 1
-        
-        return exports
+    i = 0
+    for reloc in rel_exports.iter_relocations():
+        sym = syms.get_symbol(reloc["r_info_sym"])
+        value = sym.entry["st_value"]
+        if i == 0:
+            exports["ctor"] = value
+        elif i == 1:
+            exports["dtor"] = value
+        else:
+            export_list.append(value)
+        i += 1
+    
+    return exports
 
 def read_elf_relocations(elf: ELFFile, 
                          text_data: bytes | None, 

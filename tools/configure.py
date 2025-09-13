@@ -3,7 +3,6 @@
 
 import argparse
 from enum import Enum
-from genericpath import isdir
 import glob
 import json
 import os
@@ -284,7 +283,7 @@ class BuildNinjaWriter:
             # Determine command
             command: str
             if file.type == BuildFileType.C:
-                with_asmproc = file.config.has_global_asm
+                with_asmproc = file.config != None and file.config.has_global_asm
                 if with_asmproc and file.config != None:
                     if file.config.opt != None and "-O3" in file.config.opt:
                         # Can't run asm processor with -O3 compilation
@@ -332,7 +331,7 @@ class BuildNinjaWriter:
                 # Determine command
                 command: str
                 if file.type == BuildFileType.C:
-                    if file.config.has_global_asm:
+                    if file.config != None and file.config.has_global_asm:
                         command = "cc_dll"
                         variables["EXPORTS_S"] = f"{dll.dir}/exports.s" # for dll_asmproc_fixup.py
                     else:
@@ -593,7 +592,7 @@ class InputScanner:
                 obj_path = self.__make_obj_path(src_path)
                 files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
             
-            self.dlls.append(DLL(str(number), dir, files))
+            self.dlls.append(DLL(str(number), str(dir), files))
             to_compile.add(str(number))
         
         # Scan for leftover DLLs that haven't been decompiled yet
@@ -606,7 +605,7 @@ class InputScanner:
             obj_path = src_path.with_suffix('.dll')
             self.leftover_dlls.append(BuildFile(str(src_path), str(obj_path), BuildFileType.BIN))
 
-    def __make_obj_path(self, path: Path) -> str:
+    def __make_obj_path(self, path: Path) -> Path:
         return path.with_suffix('.o')
     
     def __get_file_config(self, path: Path) -> BuildFileConfig:
