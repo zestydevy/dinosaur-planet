@@ -6,7 +6,7 @@
 #include "ultra64.h"
 #include "PR/sched.h"
 
-#define IDLE_THREAD_SIZE 0x20
+#define IDLE_THREAD_SIZE 0x8
 #define IDLE_THREAD_ID 1
 #define IDLE_THREAD_PRIORITY OS_PRIORITY_IDLE
 

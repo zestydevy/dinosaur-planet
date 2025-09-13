@@ -16,8 +16,9 @@ void idle(void * arg);
 // official name: boot
 void bootproc(void) {
     osInitialize();
+    // @bug: The idle thread stack size was shrunk but the call to osCreateThread was not adjusted!
     osCreateThread(&gIdleThread, IDLE_THREAD_ID, &idle, NULL, 
-        &gIdleThreadStack[IDLE_THREAD_SIZE], IDLE_THREAD_PRIORITY);
+        &gIdleThreadStack[IDLE_THREAD_SIZE + 0x18], IDLE_THREAD_PRIORITY);
     osStartThread(&gIdleThread);
 }
 
