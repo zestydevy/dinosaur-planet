@@ -1,5 +1,15 @@
 #include "common.h"
 
+// .data
+
+s32 gNoControllers = 0;
+u16 D_8008C8A4 = 0xFFFF;
+u16 gButtonMask[MAXCONTROLLERS] = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF };
+u8 gIgnoreJoystick = 0;
+u8 D_8008C8B4 = 0;
+
+// // //
+
 /**
  * @returns The message queue associated with SI controller interrupts.
  * This is the same message queue that is passed to osContInit.
