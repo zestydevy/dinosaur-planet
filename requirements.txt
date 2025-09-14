@@ -1,5 +1,6 @@
 # dinosaur-planet
 GitPython>=3.1.43
+mapfile-parser>=2.4.0,<3.0.0
 ninja_syntax>=1.7.2
 pyelftools>=0.32
 pylibyaml>=0.1.0

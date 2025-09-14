@@ -324,10 +324,12 @@ class DinoCommandRunner:
 
         # Determine which files need to be copied
         base_path = BUILD_PATH.relative_to(SCRIPT_DIR)
-        obj_paths = [Path(p) for p in glob.glob(f"{base_path}/**/*.o", recursive=True)]
+        file_paths = [Path(p) for p in glob.glob(f"{base_path}/**/*.o", recursive=True)]
+        file_paths.append(base_path.joinpath(f"{TARGET}.z64"))
+        file_paths.append(base_path.joinpath(f"{TARGET}.map"))
 
         to_create: "list[tuple[Path, Path]]" = []
-        for in_path in obj_paths:
+        for in_path in file_paths:
             out_path = EXPECTED_PATH.joinpath(in_path)
             if not os.path.exists(out_path) or os.path.getmtime(in_path) > os.path.getmtime(out_path):
                 to_create.append((in_path, out_path))
