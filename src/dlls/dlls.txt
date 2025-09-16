@@ -32,6 +32,7 @@
 210 = objects/210_player
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
+227 = objects/227_tumbleweed
 270 = objects/270_sidesetup
 296 = objects/296_medium_crate
 325 = objects/325_trigger

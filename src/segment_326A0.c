@@ -1,4 +1,6 @@
 #include "common.h"
+#include "dll.h"
+#include "dlls/objects/210_player.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_80031AA0.s")
 
@@ -20,7 +22,18 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_800323C4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_80032538.s")
+s32 func_80032538(Object* arg0) {
+    Object* player;
+
+    if (arg0->unk0xaf & 1 && !gDLL_1_UI->vtbl->func6()) {
+        player = get_player();
+        if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
+            set_button_mask(0, 0x8000);
+            return 1;
+        }
+    }
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_800325C0.s")
 

@@ -345,8 +345,8 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObjState* state) 
     if (state->unk9D & 0x40){
         returnVal = 1;
         state->unk9D &= 0xFFBF;
-        state->unk64 = state->unk80;
-        state->unk66 = state->unk64;
+        state->animCurvesCurrentFrameA = state->unk80;
+        state->animCurvesCurrentFrameB = state->animCurvesCurrentFrameA;
     }
     state->unk9D = 0;
     return returnVal;
