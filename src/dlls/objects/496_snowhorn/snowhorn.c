@@ -18,8 +18,13 @@
 
 s32 func_800053B0(void*, f32);
 s32 func_8002493C(void*, f32, void*);
+void func_80025780(Object*, f32, s32*, void*);
+s32 func_80026DF4(Object*, u32*, u32, s32, void*);
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
+void func_800328F0(Object*, void*, f32);
+void func_80032A08(Object*, void*);
+s16* func_80034804(Object* obj, s32 sequenceBoneID);
 s32* func_800348A0(Object*, s32, s32);
 void set_button_mask(int port, u16 mask);
 
@@ -76,7 +81,7 @@ typedef struct {
     u16 isWalking; //only on walking SnowHorn
     u16 GarundaTeQuest; //only on Garunda Te
 };
-/*00e*/ s16 unkE;
+/*00e*/ s16 unkE; //yaw?
 /*010*/ s32 unk10;
 /*014*/ Vec3f playerPositionCopy;
 /*020*/ f32 distanceFromPlayer;
@@ -300,6 +305,7 @@ void dll_496_ctor(s32 arg0) {
 void dll_496_dtor(s32 arg0) {
 }
 
+//https://decomp.me/scratch/tHX03
 //NOTE: dll_496_func_18 itself matches, it's just that these declared functions need to also be matched in order to be static
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_18.s")
@@ -359,17 +365,10 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
 }
 #endif
 
+//https://decomp.me/scratch/eOLnX
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_24C.s")
 #else
-
-void func_80025780(Object*, f32, s32*, void*);
-s32 func_80026DF4(Object*, u32*, u32, s32, void*);
-void func_800328F0(Object*, void*, f32);
-void func_80032A08(Object*, void*);
-    
-void set_button_mask(int port, u16 mask);
-
 void dll_496_func_11E0(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_1D68(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
@@ -749,12 +748,159 @@ void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     state->unk424 |= 0x44;
 }
 
+//https://decomp.me/scratch/KhEPZ
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_11E0.s")
+#else
+void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreateInfo* createInfo) {
+    SRT srt;
+    SnowHornState* state;
+    Vec3f v;
+    Object* player;
+    Vec3f* position;
+    
+    u16 seqBoneAngle;
+    s32 temp_v0;
+    s32 var_v1;
+    u16 temp_v1;
+    u8 temp_t3;
+    s16* temp_v0_2;
 
+    state = self->state;
+    
+    temp_v0 = func_80024108(self, 0.005f, delayByte, 0);
+    temp_v1 = state->quest;
+
+    position = &state->playerPositionCopy;
+    switch (temp_v1) {
+        case 0:
+            v.x = 0.0f; //50
+            v.y = 10.0f; //54
+            v.z = -25.0f; //58
+            srt.yaw = state->unkE; //5C
+            srt.pitch = 0; //5E
+            srt.yaw = 0; //60
+            srt.scale = 0.0f; //64
+            srt.transl.x = 0.0f; //68
+            srt.transl.y = 0.0f; //6C
+            srt.transl.z = 0.0f; //70
+            rotate_vec3(&srt, &v);
+            srt.transl.x = v.x + position->x;
+            srt.transl.y = v.y + self->srt.transl.y;
+            srt.transl.z = v.z + position->z;
+            srt.yaw = 0;
+            state->quest = 1;
+            break;
+        case 1:
+            if (self->animProgress > 0.25f) {
+                v.x = 0.0f;
+                v.y = 20.0f;
+                v.z = -20.0f;
+                srt.yaw = state->unkE;
+                srt.pitch = 0;
+                srt.yaw = 0;
+                srt.scale = 0.0f;
+                srt.transl.x = 0.0f;
+                srt.transl.y = 0.0f;
+                srt.transl.z = 0.0f;
+                rotate_vec3(&srt, &v);
+                srt.transl.x = v.x + position->x;
+                srt.transl.y = v.y + self->srt.transl.y;
+                srt.transl.z = v.z + position->z;
+                state->quest = 2;
+            }
+            break;
+        case 2:
+            if (self->animProgress > 0.65f) {
+                v.x = 0.0f;
+                v.y = 0.0f;
+                v.z = -40.0f;
+                srt.yaw = state->unkE;
+                srt.pitch = 0;
+                srt.yaw = 0;
+                srt.scale = 0.0f;
+                srt.transl.x = 0.0f;
+                srt.transl.y = 0.0f;
+                srt.transl.z = 0.0f;
+                rotate_vec3(&srt, &v);
+                srt.transl.x = v.x + position->x;
+                srt.transl.y = v.y + self->srt.transl.y;
+                srt.transl.z = v.z + position->z;
+                state->quest = 3;
+            }
+            break;
+        case 3:
+            v.x = 0.0f;
+            v.y = 0.0f;
+            v.z = -60.0f;
+            srt.yaw = state->unkE;
+            srt.pitch = 0;
+            srt.yaw = 0;
+            srt.scale = 0.0f;
+            srt.transl.x = 0.0f;
+            srt.transl.y = 0.0f;
+            srt.transl.z = 0.0f;
+            rotate_vec3(&srt, &v);
+            srt.transl.x = v.x + position->x;
+            srt.transl.y = v.y + self->srt.transl.y;
+            srt.transl.z = v.z + position->z;
+            state->quest = 4;
+            break;
+        case 4:
+            if (temp_v0 != 0) {
+                func_80023D30(self, 0, 0.0f, 0U);
+                state->quest = 5;
+                return;
+            }
+            break;
+        case 5:
+            if (_data_270 != 0) {
+                state->quest = (u16) (temp_v1 | 0x8000);
+                temp_t3 = self->unk0xaf | 8;
+                self->unk0xaf = temp_t3;
+                self->unk0xaf = temp_t3 & 0xFFFE;
+                break;
+            }
+            state->unk8 = (s16) (state->unk8 + delayByte);
+            if (state->unk6 < state->unk8) {
+                state->unk8 = 0;
+                temp_v0_2 = func_80034804(self, 0);
+
+                state->unkE = (u16) (0x8000 - *&temp_v0_2[1]);
+                player = get_player();
+                
+                var_v1 = (arctan2_f((player->positionMirror.x + (player->speed.x * 60.0f)) - self->positionMirror.x, (player->positionMirror.z + (player->speed.z * 60.0f)) - self->positionMirror.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
+                if (var_v1 >= 0x8001) {
+                    var_v1 += 0xFFFF0001;
+                }
+                if (var_v1 < -0x8000) {
+                    var_v1 += 0xFFFF;
+                }
+                
+                func_80023D30(self, 1, 0.0f, 0);
+                if ((var_v1 >= -0xBB7) && (var_v1 < 0xBB8)) {
+                    state->unk38 = player->srt.transl.x;
+                    state->unk3C = player->srt.transl.y;
+                    state->unk40 = player->srt.transl.z;
+                    state->unk2C = (u16) state->unkE;
+                } else {
+                    seqBoneAngle = self->srt.yaw + *&temp_v0_2[1];
+                    state->unk38 = self->srt.transl.x - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    state->unk3C = self->srt.transl.y;
+                    state->unk40 = self->srt.transl.z - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    state->unk2C = 0U;
+                }
+                state->quest = 0;
+            }
+            break;
+    }
+}
+#endif
+
+//https://decomp.me/scratch/fe0rJ
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_174C.s")
 #else
-
 void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* createInfo){
     s32 sp2C;
     
@@ -892,16 +1038,13 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     state->garundaTe_weedsEaten = get_gplay_bitstring(FLAG_Garunda_Te_NumFrostWeedsEaten);
 }
 
-#if 1
+//https://decomp.me/scratch/LgYGh
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_1D68.s")
 #else
-void dll_496_func_1D68-5(Object* self, SnowHornState* state, SnowHornCreateInfo* createInfo) {
-    PERM_RANDOMIZE(
-    
+void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* createInfo) {  
     Object* frostWeed;
     // f32 distance;
-
-    )
 
     self->unk0xaf &= 0xFFF7;
     switch (state->GarundaTeQuest) {
@@ -925,7 +1068,6 @@ void dll_496_func_1D68-5(Object* self, SnowHornState* state, SnowHornCreateInfo*
             }
             break;
         case 2:
-            PERM_RANDOMIZE(
             //Eating FrostWeeds?
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->func17(1, self, -1);
@@ -946,7 +1088,6 @@ void dll_496_func_1D68-5(Object* self, SnowHornState* state, SnowHornCreateInfo*
                     state->GarundaTeQuest = 3;
                 }
             }
-            )
             break;
         case 3:
             if (vec3_distance_xz_squared(&state->playerPositionCopy, &state->frostWeed->positionMirror) < 6.25f) {
