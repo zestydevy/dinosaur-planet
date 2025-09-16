@@ -94,7 +94,7 @@ typedef struct {
 
 typedef struct {
 	s32 unk0; // size of thing at unk4
-	UNK_PTR *unk4;
+	s8 *unk4;
 } ObjectStruct60;
 
 typedef struct {
@@ -225,6 +225,11 @@ typedef struct ObjListItem {
 	s16 size;
 	Object *obj;
 } ObjListItem;
+
+typedef struct {
+/*00*/ s8 unk0[0x84 - 0];
+/*84*/ u8 unk84;
+} ObjectStateCommon;
 
 /** Used to load Tricky/Kyte's object 
   * 

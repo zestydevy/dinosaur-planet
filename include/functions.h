@@ -14,7 +14,7 @@ void dl_segment(Gfx **gdl, u32 segment, void *base);
 void stop_alSyn_thread();
 
 void func_800267A4(Object *obj);
-s32 func_80023D30(Object*,s32,f32,s32);
+s32 func_80023D30(Object*,s32,f32,u8);
 s32 func_80024108(Object*,f32,f32,s32);
 s32 func_80025F40(Object*,s32 *,s32 *,s32 *);
 
