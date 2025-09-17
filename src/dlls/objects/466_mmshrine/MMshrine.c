@@ -98,7 +98,111 @@ s32 MMshrine_get_state_size(Object *self, s32 arg1) {
 }
 
 // offset: 0xC50 | func: 7
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_C50.s")
+#else
+s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
+    ShrineState* state;
+    Object* player;
+    s16 temp_v0;
+    UnkShrineStruct* var_s2;
+    s32 var_s3;
+
+    state = self->state;
+    player = get_player();
+    
+    arg2->unk7A = -1;
+    arg2->unk62 = 0;
+    
+    if (state->unkA) {
+        state->unk8_s16 += state->unkA;
+        if (state->unk8_s16 < 2 && state->unkA <= 0) {
+            state->unk8_s16 = 1;
+            state->unkA = 0;
+        } else if (state->unk8_s16 >= 0x46 && state->unkA >= 0) {
+            state->unk8_s16 = 0x46;
+            state->unkA = 0;
+        }
+        gDLL_5_AMSEQ->vtbl->func13(3, (u8)state->unk8_s16);
+    }
+
+    for (var_s3 = 0; var_s3 < arg2->unk98; var_s3++){
+        switch (arg2->unk8E[var_s3]) {
+            case 1:
+                func_80000860(self, self, 0xC7, 0);
+                break;
+            case 2:
+                if (D_80092A7C == -1) {
+                    func_80000860(self, self, 0x14, 0);
+                } else {
+                    func_80000860(self, self, D_80092A7C, 0);
+                }
+                break;
+            case 3:
+                state->unk10 = 1;
+                break;
+            case 4:
+                state->unk2 = 0;
+                break;
+            case 5:
+                state->unkF = 5;
+                state->unk10 = 2;
+                set_gplay_bitstring(0x129, 1);
+                break;
+            case 6:
+                state->unk10 = 3;
+                set_gplay_bitstring(0x129, 1);
+                break;
+            case 7:
+                set_gplay_bitstring(0x12B, 1);
+                break;
+            case 8:
+                set_gplay_bitstring(0x12B, 0);
+                state->unkA = -3;
+                break;
+            case 10:
+                set_gplay_bitstring(0x128, 1);
+                if (_data_0 == NULL)
+                    _data_0 = func_8004A1E8(1);
+                break;
+            case 9:
+                set_gplay_bitstring(0x127, 1);
+                break;
+            case 11:
+                state->unk8_s16 = 0x64;
+                gDLL_5_AMSEQ->vtbl->func5.withFiveArgs(3, 0x2f, 0x50, ((u8)state->unk8_s16 << 0x10) >> 0x10, 0);
+                break;
+            case 12:
+                func_80000860(self, self, 0xCE, 0);
+                set_gplay_bitstring(0x12D, 1);
+                gDLL_6_AMSFX->vtbl->func2(NULL, 0x342, 0x7F, 0, 0, 0, 0);
+                break;
+            case 13:
+                if (D_80092A7C == -1) {
+                    func_80000860(self, self, 0x14, 0);
+                } else {
+                    func_80000860(self, self, D_80092A7C, 0);
+                }
+                set_gplay_bitstring(0x12D, 0);
+                break;
+        }
+        arg2->unk8E[var_s3] = 0;
+    }
+    
+    if (state->unkF == 8) {
+        if (vec3_distance(&self->positionMirror, &player->positionMirror) > 10.0f) {
+            gDLL_3_Animation->vtbl->func18(arg2->unk63);
+            state->unkF = 7;
+        } else if (get_masked_buttons(0)) {
+            gDLL_3_Animation->vtbl->func18(arg2->unk63);
+            state->unkF = 7;
+        }
+    }
+    
+    return 0;
+}
+
+#endif
 
 // offset: 0x1140 | func: 8
 void MMshrine_func_1140(Object *arg0) {
