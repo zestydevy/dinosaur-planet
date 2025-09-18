@@ -57,14 +57,31 @@ def dump_relocation_table(dll: DLL):
         table = dll.reloc_table
         got_i = 0
         for i, offset in enumerate(table.global_offset_table):
+            comment: str | None = None
             if got_i == 0:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.text)")
+                comment = ".text"
             elif got_i == 1:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.rodata)")
+                comment = ".rodata"
             elif got_i == 2:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.data)")
+                comment = ".data"
             elif got_i == 3:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.bss)")
+                comment = ".bss"
+            elif (offset & 0x8000_0000) != 0:
+                comment = f"import {offset & ~0x8000_0000}"
+            elif offset >= 0x1_0000:
+                comment = "local hi"
+            else:
+                if offset >= table.global_offset_table[3]:
+                    comment = f".bss+0x{offset - table.global_offset_table[3]:X}"
+                elif offset >= table.global_offset_table[2]:
+                    comment = f".data+0x{offset - table.global_offset_table[2]:X}"
+                elif offset >= table.global_offset_table[1]:
+                    comment = f".rodata+0x{offset - table.global_offset_table[1]:X}"
+                elif offset >= table.global_offset_table[0]:
+                    comment = f".text+0x{offset - table.global_offset_table[0]:X}"
+            
+            if comment != None:
+                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}({comment})")
             else:
                 print(f"{str(i)+":":<3} {hex(offset)}")
             got_i += 1
