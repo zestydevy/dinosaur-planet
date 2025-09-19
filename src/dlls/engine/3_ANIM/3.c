@@ -1,48 +1,30 @@
 #include "PR/ultratypes.h"
 
-/*0x0*/ static const u32 _rodata_0[] = {
-    0x4d617820, 0x61637469, 0x76617465, 0x73207265, 0x61636865, 0x640a0000, 0x434f4445, 0x204f5645, 
-    0x52464c4f, 0x570a0000, 0x4d41585f, 0x44454349, 0x53494f4e, 0x20726561, 0x63686564, 0x0a000000, 
-    0x73742d3e, 0x6d657373, 0x61676573, 0x206f7665, 0x72666c6f, 0x770a0000, 0x204d4f44, 0x454c204e, 
-    0x4f202569, 0x200a0000, 0x20436f75, 0x6c64204e, 0x6f742046, 0x496e6420, 0x4f626a20, 0x25692020, 
-    0x6f766572, 0x20256920, 0x0a000000, 0x2a2a2a2a, 0x454e440a, 0x00000000, 0x656e644f, 0x626a5365, 
-    0x7175656e, 0x63653a20, 0x746f6f20, 0x6d616e79, 0x206f626a, 0x20667265, 0x65730a00, 0x70726565, 
-    0x6d707453, 0x65717565, 0x6e636554, 0x696d6528, 0x29204f76, 0x6572666c, 0x6f772121, 0x0a000000
-};
+/*0x0*/ static const char str_0[] = "Max activates reached\n";
+/*0x18*/ static const char str_18[] = "CODE OVERFLOW\n";
+/*0x28*/ static const char str_28[] = "MAX_DECISION reached\n";
+/*0x40*/ static const char str_40[] = "st->messages overflow\n";
+/*0x58*/ static const char str_58[] = " MODEL NO %i \n";
+/*0x68*/ static const char str_68[] = " Could Not FInd Obj %i  over %i \n";
+/*0x8C*/ static const char str_8C[] = "****END\n";
+/*0x98*/ static const char str_98[] = "endObjSequence: too many obj frees\n";
+/*0xBC*/ static const char str_BC[] = "preemptSequenceTime() Overflow!!\n";
 
-/*0x0*/ static u32 _data_0[] = {
-    0x00000000
-};
+/*0x0*/ static u32 _data_0 = 0x00000000;
 /*0x4*/ static u32 _data_4[] = {
     0x00000000, 0xff000000
 };
-/*0xC*/ static u32 _data_C[] = {
-    0x42700000, 0x00000000
+/*0xC*/ static f32 _data_C[] = {
+    60.0, 0.0
 };
-/*0x14*/ static u32 _data_14[] = {
-    0x00000000
-};
-/*0x18*/ static u32 _data_18[] = {
-    0x00000000
-};
-/*0x1C*/ static u32 _data_1C[] = {
-    0x00000000
-};
-/*0x20*/ static u32 _data_20[] = {
-    0xffffffff
-};
-/*0x24*/ static u32 _data_24[] = {
-    0x00000000
-};
-/*0x28*/ static u32 _data_28[] = {
-    0x00000000
-};
-/*0x2C*/ static u32 _data_2C[] = {
-    0x00000000
-};
-/*0x30*/ static u32 _data_30[] = {
-    0x00000000
-};
+/*0x14*/ static u32 _data_14 = 0x00000000;
+/*0x18*/ static u32 _data_18 = 0x00000000;
+/*0x1C*/ static u32 _data_1C = 0x00000000;
+/*0x20*/ static u32 _data_20 = 0xffffffff;
+/*0x24*/ static u32 _data_24 = 0x00000000;
+/*0x28*/ static u32 _data_28 = 0x00000000;
+/*0x2C*/ static u32 _data_2C = 0x00000000;
+/*0x30*/ static u32 _data_30 = 0x00000000;
 /*0x34*/ static u32 _data_34[] = {
     0x00008000, 0x00004000, 0x00000002, 0x00000001, 0x00000004, 0x00000008, 0xffffffff
 };
@@ -54,9 +36,7 @@
 /*0xAC*/ static u32 _data_AC[] = {
     0x00000000, 0x00000000, 0x00000202, 0x00000001, 0x01010101, 0x01000000
 };
-/*0xC4*/ static u32 _data_C4[] = {
-    0x00000000
-};
+/*0xC4*/ static u32 _data_C4 = 0x00000000;
 /*0xC8*/ static u32 _data_C8[] = {
     0x00000000, 0x00000000
 };

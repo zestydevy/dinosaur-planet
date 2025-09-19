@@ -242,7 +242,7 @@ class BuildNinjaWriter:
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll", 
-            "$HEADER_DEPS $DLL_ASMPROC_FIXUP $EXPORTS_S $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in", 
+            "$HEADER_DEPS $ASM_PROCESSOR $CC -- $AS $AS_FLAGS_DLL -- -c $CC_FLAGS_DLL $OPT_FLAGS $MIPS_ISET -o $out $in",  
             "Compiling $in...",
             depfile="$out.d")
         self.writer.rule("cc_dll_noasmproc", 
@@ -252,11 +252,12 @@ class BuildNinjaWriter:
         self.writer.rule("as", "$AS $AS_FLAGS -o $out $in", "Assembling $in...")
         self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
-        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -T $SYMS_LD -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
+        self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -Map $out.map -T $SYMS_LD -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
         self.writer.rule("ld_bin", "$LD -m $LD_EMULATION -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
         self.writer.rule("dllsyms2ld", "$DLLSYMS2LD -o $out $in", "Converting $in to $out...")
+        self.writer.rule("dll_fixup", "$DLL_ASMPROC_FIXUP $ORIGINAL_DLL $in $out", "Fixing up $in...")
         if sys.platform == "win32":
             self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         else:
@@ -324,6 +325,7 @@ class BuildNinjaWriter:
 
             # Compile DLL sources
             dll_link_deps: "list[str]" = []
+            needs_fixup = False
             for file in dll.files:
                 # Determine variables
                 variables: dict[str, str] = self.__file_config_to_variables(file.config)
@@ -333,7 +335,7 @@ class BuildNinjaWriter:
                 if file.type == BuildFileType.C:
                     if file.config != None and file.config.has_global_asm:
                         command = "cc_dll"
-                        variables["EXPORTS_S"] = f"{dll.dir}/exports.s" # for dll_asmproc_fixup.py
+                        needs_fixup = True
                     else:
                         command = "cc_dll_noasmproc"
                 elif file.type == BuildFileType.ASM:
@@ -355,7 +357,7 @@ class BuildNinjaWriter:
             self.writer.build(syms_ld_path, "dllsyms2ld", syms_txt_path)
 
             # Link
-            elf_path = f"{obj_dir}/{dll.number}.elf"
+            elf_path = Path(f"{obj_dir}/{dll.number}.elf")
             custom_link_script = Path(f"{dll.dir}/dll.ld")
 
             if custom_link_script.exists():
@@ -363,7 +365,7 @@ class BuildNinjaWriter:
                 # Note: Assume custom script lists all inputs
                 implicit_deps = [str(custom_link_script), syms_ld_path]
                 implicit_deps.extend(dll_link_deps)
-                self.writer.build(elf_path, "ld_dll", [], 
+                self.writer.build(elf_path.as_posix(), "ld_dll", [], 
                     implicit=implicit_deps,
                     variables={
                         "SYMS_LD": syms_ld_path,
@@ -371,14 +373,23 @@ class BuildNinjaWriter:
                     })
             else:
                 # Use default DLL link script
-                self.writer.build(elf_path, "ld_dll", dll_link_deps, 
+                self.writer.build(elf_path.as_posix(), "ld_dll", dll_link_deps, 
                     implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "export_symbol_addrs.txt"],
                     variables={"SYMS_LD": syms_ld_path})
+
+            # If needed, fixup DLL ELF
+            if needs_fixup:
+                final_elf_path = elf_path.with_suffix(".fixed.elf")
+                original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
+                self.writer.build(final_elf_path.as_posix(), "dll_fixup", elf_path.as_posix(),
+                                  variables={"ORIGINAL_DLL": original_dll_path})
+            else:
+                final_elf_path = elf_path
 
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
             dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
-            self.writer.build(dll_asset_path, "elf2dll", elf_path,
+            self.writer.build(dll_asset_path, "elf2dll", final_elf_path.as_posix(),
                 variables={
                     "DLL_BSS_TXT": dll_bss_asset_path
                 },

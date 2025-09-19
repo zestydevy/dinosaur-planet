@@ -71,3 +71,8 @@ bss_1840 = 0x1840; # absolute: 0x39C0
 bss_1868 = 0x1868; # absolute: 0x39E8
 bss_1A48 = 0x1A48; # absolute: 0x3BC8
 bss_1A50 = 0x1A50; # absolute: 0x3BD0
+# TODO: remove
+_bss_20 = 0x20;
+_bss_300 = 0x300;
+_bss_301 = 0x301;
+_bss_307 = 0x307;

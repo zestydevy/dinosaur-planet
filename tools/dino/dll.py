@@ -1,6 +1,4 @@
 import struct
-import os
-from typing import BinaryIO
 
 class DLL:
     """A Dinosaur Planet DLL"""

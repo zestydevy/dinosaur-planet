@@ -13,12 +13,7 @@
 #include "functions.h"
 #include "types.h"
 
-static const u32 _rodata_0[] = {
-    0x4d414d3a, 0x20637572, 0x76652073, 0x65747570, 0x20666169, 0x6c65640a, 0x00000000
-};
-static const u32 _rodata_1C[] = {
-    0x6e6f7765, 0x6564733d, 0x25640a00
-};
+/*0x0*/ static const char str_0[] = "MAM: curve setup failed\n";
 
 static u32 _data_0[] = {
     0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 0x0377ffff, 0x002f0030, 0x00000000, 

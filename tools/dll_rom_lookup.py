@@ -5,8 +5,7 @@ from pathlib import Path
 
 from dino.dll import DLL
 from dino.dll_tab import DLLTab
-from dino.dll_analysis import get_all_dll_functions
-from dino.dll_symbols import DLLSymbols
+from dino.dll_analysis import DLL_VRAM_BASE, get_dll_functions
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_ASSETS_DIR = Path("bin/assets")
@@ -20,12 +19,12 @@ def narrow_down(dll: DLL, dll_number: int, dll_data: bytes, relative_addr: int):
     elif dll.has_rodata() and relative_addr >= dll.header.rodata_offset:
         print(".rodata+0x{:X}".format(relative_addr - dll.header.rodata_offset))
     elif relative_addr >= dll.header.size and relative_addr < (dll.header.size + dll.get_text_size()):
-        funcs = get_all_dll_functions(dll_data, dll, DLLSymbols(dll, dll_number))
-        funcs.sort(key=lambda f: f.address, reverse=True)
+        funcs = get_dll_functions(dll, dll_number, dll_data)
+        funcs.sort(key=lambda f: f.vram, reverse=True)
         for func in funcs:
-            func_romaddr = dll.header.size + func.address
+            func_romaddr = dll.header.size + (func.vram - DLL_VRAM_BASE)
             if relative_addr >= func_romaddr:
-                print("func_{:X}+0x{:X}".format(func.address, relative_addr - func_romaddr))
+                print("{}+0x{:X}".format(func.getName(), relative_addr - func_romaddr))
                 break
     else:
         print("dll+0x{:X}".format(relative_addr))
