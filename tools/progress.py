@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 from dino.dll import DLL
-from tools.dino.dll_analysis import get_dll_functions
+from dino.dll_analysis import get_dll_functions
 from dino.dlls_txt import DLLsTxt
 from dino.dll_syms_txt import DLLSymsTxt
 

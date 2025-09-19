@@ -16,7 +16,7 @@ from timeit import default_timer as timer
 from typing import TextIO
 
 from dino.dll import DLL
-from tools.dino.dll_analysis import DLL_VRAM_BASE, AnalyzedDLL, analyze_dll
+from dino.dll_analysis import DLL_VRAM_BASE, AnalyzedDLL, analyze_dll
 from dino.dll_build_config import DLLBuildConfig
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt

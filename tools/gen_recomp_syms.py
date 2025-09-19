@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from dino.dll import DLL
-from tools.dino.dll_analysis import DLL_VRAM_BASE, get_dll_functions
+from dino.dll_analysis import DLL_VRAM_BASE, get_dll_functions
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt
 

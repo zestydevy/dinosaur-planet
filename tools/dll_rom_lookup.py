@@ -5,7 +5,7 @@ from pathlib import Path
 
 from dino.dll import DLL
 from dino.dll_tab import DLLTab
-from tools.dino.dll_analysis import DLL_VRAM_BASE, get_dll_functions
+from dino.dll_analysis import DLL_VRAM_BASE, get_dll_functions
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_ASSETS_DIR = Path("bin/assets")
