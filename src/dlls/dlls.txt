@@ -35,6 +35,7 @@
 227 = objects/227_tumbleweed
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+281 = objects/281_area
 296 = objects/296_medium_crate
 325 = objects/325_trigger
 345 = objects/345_animator
