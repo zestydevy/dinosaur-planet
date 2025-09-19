@@ -17,6 +17,7 @@
 61 = engine/61
 63 = engine/63_gameselect
 64 = engine/64_entername
+66 = engine/66_n_pausemenu
 74 = engine/74_picmenu
 82 = engine/82
 83 = engine/83

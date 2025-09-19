@@ -160,7 +160,8 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*1*/ void (*init_save)(s8 idx, char *filename);
     /*2*/ s32 (*load_save)(s8 idx, u8 startGame);
     /*3*/ void (*copy_save)(s8 srcIdx, s8 dstIdx);
-    /*4*/ void (*func_6AC)();
+    /** Used by the Pause Menu to save the game */
+    /*4*/ void (*func_6AC)(void);
     /*5*/ void (*func_94C)(s32 param1);
     /*6*/ void (*func_958)(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
     /*7*/ void (*start_game)();

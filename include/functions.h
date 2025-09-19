@@ -61,6 +61,9 @@ void draw_pause_screen_freeze_frame(Gfx** gdl);
 
 void func_80037A14(Gfx**, Mtx **, s32);
 
+/** Draws a 2D texture to screen, scaling it down horizontally (from its left edge) if
+  * widescreen is enabled in order to maintain aspect ratio 
+  */
 void func_8003825C(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
 void func_800382AC(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
 
