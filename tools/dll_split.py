@@ -165,8 +165,7 @@ class DLLSplitter:
     def __create_exports_s(self, path: Path, dll: AnalyzedDLL):
         funcs_by_address: "dict[int, str]" = {}
         for func in dll.functions:
-            assert(func.function != None)
-            funcs_by_address[func.function.vram - DLL_VRAM_BASE] = func.getName()
+            funcs_by_address[func.vram - DLL_VRAM_BASE] = func.getName()
 
         with open(path, "w", encoding="utf-8") as exports_s:
             exports_s.write(".option pic2\n")
@@ -200,58 +199,6 @@ class DLLSplitter:
         with open(c_path, "w", encoding="utf-8") as c_file:
             # Includes
             c_file.write("#include \"PR/ultratypes.h\"\n")
-
-            # .rodata stubs
-            if len(dll.orphaned_rodata) > 0:
-                rodata_start = dll.meta.header.rodata_offset - dll.meta.header.size \
-                    + dll.meta.reloc_table.get_size() # exclude relocation tables
-
-                c_file.write("\n")
-                for entry in dll.orphaned_rodata:
-                    for sym in entry.iterRodataSyms():
-                        assert(isinstance(sym, spimdisasm.mips.symbols.SymbolRodata))
-                        address = sym.vram - DLL_VRAM_BASE
-                        offset = address - rodata_start
-                        static = not address in extern_offsets
-
-                        if sym.isString():
-                            # Attempt to decode strings like spimdisasm does
-                            # This roughly follows the logic of spimdisasm's SymbolBase.getNthWordAsString function
-                            buffer = spimdisasm.common.Utils.wordsToBytes(sym.words)
-
-                            i = 0
-                            while i < sym.sizew:
-                                decodedStrings, rawStringSize = spimdisasm.common.Utils.decodeBytesToStrings(
-                                    buffer, 4 * i, sym.stringEncoding)
-                                
-                                if rawStringSize < 0:
-                                    skip = 0
-
-                                    c_file.write("// Failed to decode string at .rodata+0x{:X}\n".format(offset + (i * 4)))
-                                    self.__write_c_stub_data(
-                                        c_file, 
-                                        sym.words[i:i+1], 
-                                        "_rodata_", 
-                                        const=True,
-                                        static=static,
-                                        field_offset=offset + (i * 4))
-                                else:
-                                    skip = rawStringSize // 4
-
-                                    c_file.write("/*0x{:X}*/ static const char str_{:X}[] = \"{}\";\n"
-                                        .format(offset + (i * 4), offset + (i * 4), decodedStrings[-1]))
-
-                                i += skip
-                                i += 1
-                        else:
-                            self.__write_c_stub_data(
-                                c_file, 
-                                sym.words, 
-                                "_rodata{}_".format("" if not sym.isJumpTable() else "_jtbl"), 
-                                const=True,
-                                static=static,
-                                field_offset=offset,
-                                access_type=sym.contextSym.accessType)
             
             # .data stubs
             if dll.data != None:
@@ -311,31 +258,87 @@ class DLLSplitter:
                         offset += size
                         size_left -= size
             
-            # function stubs
+            # function stubs and .rodata
+            rodata_start = dll.meta.header.rodata_offset - dll.meta.header.size \
+                + dll.meta.reloc_table.get_size() # exclude relocation tables
+            writing_rodata: bool | None = None
             func_num = 0
-            for func_rodata in dll.functions:
-                func = func_rodata.function
-                assert(func != None)
+            for func_rodata in dll.function_rodata:
+                if func_rodata.function == None:
+                    if writing_rodata != True:
+                        c_file.write("\n")
+                        writing_rodata = True
+                    for sym in func_rodata.iterRodataSyms():
+                        assert(isinstance(sym, spimdisasm.mips.symbols.SymbolRodata))
+                        address = sym.vram - DLL_VRAM_BASE
+                        offset = address - rodata_start
+                        static = not address in extern_offsets
 
-                address = func.vram - DLL_VRAM_BASE
-                
-                metadata = ["offset: 0x{:X}".format(address)]
-                
-                if address == dll.meta.header.ctor_offset:
-                    metadata.append("ctor")
-                elif address == dll.meta.header.dtor_offset:
-                    metadata.append("dtor")
+                        if sym.isString():
+                            # Attempt to decode strings like spimdisasm does
+                            # This roughly follows the logic of spimdisasm's SymbolBase.getNthWordAsString function
+                            buffer = spimdisasm.common.Utils.wordsToBytes(sym.words)
+
+                            i = 0
+                            while i < sym.sizew:
+                                decodedStrings, rawStringSize = spimdisasm.common.Utils.decodeBytesToStrings(
+                                    buffer, 4 * i, sym.stringEncoding)
+                                
+                                if rawStringSize < 0:
+                                    skip = 0
+
+                                    c_file.write("// Failed to decode string at .rodata+0x{:X}\n".format(offset + (i * 4)))
+                                    self.__write_c_stub_data(
+                                        c_file, 
+                                        sym.words[i:i+1], 
+                                        "_rodata_", 
+                                        const=True,
+                                        static=static,
+                                        field_offset=offset + (i * 4))
+                                else:
+                                    skip = rawStringSize // 4
+
+                                    if rawStringSize == 0:
+                                        decodedStrings.append("")
+
+                                    c_file.write("/*0x{:X}*/ static const char str_{:X}[] = \"{}\";\n"
+                                        .format(offset + (i * 4), offset + (i * 4), decodedStrings[-1]))
+
+                                i += skip
+                                i += 1
+                        else:
+                            self.__write_c_stub_data(
+                                c_file, 
+                                sym.words, 
+                                "_rodata{}_".format("" if not sym.isJumpTable() else "_jtbl"), 
+                                const=True,
+                                static=static,
+                                field_offset=offset,
+                                access_type=sym.contextSym.accessType)
                 else:
-                    metadata.append(f"func: {func_num}")
-                    func_num += 1
+                    writing_rodata = False
 
-                export_idx = exports.get(address, None)
-                if export_idx != None:
-                    metadata.append(f"export: {export_idx}")
+                    func = func_rodata.function
 
-                c_file.write("\n")
-                c_file.write(f'// {" | ".join(metadata)}\n')
-                c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.getName()}.s")\n')
+                    address = func.vram - DLL_VRAM_BASE
+                    
+                    metadata = ["offset: 0x{:X}".format(address)]
+                    
+                    if address == dll.meta.header.ctor_offset:
+                        metadata.append("ctor")
+                    elif address == dll.meta.header.dtor_offset:
+                        metadata.append("dtor")
+                    else:
+                        metadata.append(f"func: {func_num}")
+                        func_num += 1
+
+                    export_idx = exports.get(address, None)
+                    if export_idx != None:
+                        metadata.append(f"export: {export_idx}")
+
+                    c_file.write("\n")
+                    c_file.write(f'// {" | ".join(metadata)}\n')
+                    c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.getName()}.s")\n')
 
     def __determine_alignment(self, offset: int) -> int:
         if (offset % 16) == 0:
@@ -361,7 +364,9 @@ class DLLSplitter:
         name = "{}{:X}".format(prefix, field_offset)
 
         data_type = "u32"
-        array = len(words) > 1
+        # Note: .rodata doesn't seem to match correctly when collapsing arrays.
+        #       When this happens, it seems to mainly be short strings that weren't detected correctly.
+        array = len(words) > 1 or const
         if access_type == rabbitizer.AccessType.FLOAT:
             data_type = "f32"
 
@@ -437,41 +442,45 @@ class DLLSplitter:
                     - dll.meta.header.size
                 syms_file.write("\n.rodata = 0x{:X}:\n".format(rodata_start))
 
-                for entry in dll.orphaned_rodata:
-                    for sym in entry.iterRodataSyms():
-                        offset = sym.vram - dll.rodata.vram
-                        absolute = rodata_start + offset
-                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
-                                        .format(sym.getName(), offset, absolute))
+                for entry in dll.function_rodata:
+                    # Write symbols for orphaned rodata
+                    if entry.function == None:
+                        for sym in entry.iterRodataSyms():
+                            offset = sym.vram - dll.rodata.vram
+                            absolute = rodata_start + offset
+                            syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                                            .format(sym.getName(), offset, absolute))
             
             # .data
             if dll.data != None:
                 data_start = dll.meta.header.data_offset - dll.meta.header.size
                 syms_file.write("\n.data = 0x{:X}:\n".format(data_start))
 
-                for sym in dll.data.symbolList:
-                    offset = sym.vram - dll.data.vram
-                    absolute = data_start + offset
-                    syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
-                                    .format(sym.getName(), offset, absolute))
+                for sym in dll.context.globalSegment.symbols.values():
+                    if sym.sectionType == spimdisasm.common.FileSectionType.Data:
+                        offset = sym.vram - dll.data.vram
+                        absolute = data_start + offset
+                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                                        .format(sym.getName(), offset, absolute))
             
             # .bss
             if dll.bss != None:
                 bss_start = dll.meta.get_bss_offset() - dll.meta.header.size
                 syms_file.write("\n.bss = 0x{:X}:\n".format(bss_start))
 
-                for sym in dll.bss.symbolList:
-                    offset = sym.vram - dll.bss.vram
-                    absolute = bss_start + offset
-                    syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
-                                    .format(sym.getName(), offset, absolute))
+                for sym in dll.context.globalSegment.symbols.values():
+                    if sym.sectionType == spimdisasm.common.FileSectionType.Bss:
+                        offset = sym.vram - dll.bss.vram
+                        absolute = bss_start + offset
+                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                                        .format(sym.getName(), offset, absolute))
 
     def __extract_text_asm(self, 
                            nonmatching_dir: Path,
                            matching_dir: Path, 
                            dll: AnalyzedDLL,
                            nonmatching_funcs: "list[str] | None"):
-        for func in dll.functions:
+        for func in dll.function_rodata:
             # Filter matching functions
             dir = nonmatching_dir
             if nonmatching_funcs is not None and not func.getName() in nonmatching_funcs:

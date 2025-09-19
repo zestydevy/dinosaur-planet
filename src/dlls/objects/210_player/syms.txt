@@ -680,6 +680,12 @@ _data_7C0 = 0x7C0; # absolute: 0x1F918
 _data_7C4 = 0x7C4; # absolute: 0x1F91C
 _data_7C8 = 0x7C8; # absolute: 0x1F920
 _data_7D4 = 0x7D4; # absolute: 0x1F92C
+# TODO: remove
+_data_69E = 0x69E;
+_data_57E = 0x57E;
+_data_5E2 = 0x5E2;
+_data_5E6 = 0x5E6;
+_data_5DE = 0x5DE;
 
 .bss = 0x1F938:
 _bss_0 = 0x0; # absolute: 0x1F938

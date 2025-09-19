@@ -24,8 +24,8 @@ class AnalyzedDLL:
                  rodata: spimdisasm.mips.sections.SectionRodata | None,
                  data: spimdisasm.mips.sections.SectionData | None,
                  bss: spimdisasm.mips.sections.SectionBss | None,
-                 functions: list[spimdisasm.mips.FunctionRodataEntry],
-                 orphaned_rodata: list[spimdisasm.mips.FunctionRodataEntry]) -> None:
+                 functions: list[spimdisasm.mips.symbols.SymbolFunction],
+                 function_rodata: list[spimdisasm.mips.FunctionRodataEntry]) -> None:
         self.meta = meta
         self.number = number
         self.bytes = bytes
@@ -36,7 +36,7 @@ class AnalyzedDLL:
         self.data = data
         self.bss = bss
         self.functions = functions
-        self.orphaned_rodata = orphaned_rodata
+        self.function_rodata = function_rodata
 
 def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[DLLSymsTxt], bss_size: int | None) -> AnalyzedDLL:
     # Setup global config for rabbitizer and spimdisasm
@@ -55,6 +55,9 @@ def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[
     # Create spimdisasm sections
     text, rodata, data, bss = __init_sections(context, dll, dll_bytes, bss_size)
 
+    # Infer symbols from GOT and reloc tables
+    __define_symbols_from_reloc_table(dll, context.globalSegment, text, rodata, data, bss)
+
     # Define known symbol names
     for symbol_file in symbol_files:
         __define_known_symbols(symbol_file, context.globalSegment, text, rodata, data, bss)
@@ -71,16 +74,17 @@ def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[
     # Set custom symbol name defaults
     __set_symbol_name_defaults(dll, dll_number, context.globalSegment, text, rodata, data, bss)
 
-    # Migrate .rodata
-    functions: list[spimdisasm.mips.FunctionRodataEntry] = []
-    orphaned_rodata: list[spimdisasm.mips.FunctionRodataEntry] = []
-    for entry in spimdisasm.mips.FunctionRodataEntry.getAllEntriesFromSections(text, rodata):
-        if entry.function == None:
-            orphaned_rodata.append(entry)
-        else:
-            functions.append(entry)
+    # Make function list
+    functions: list[spimdisasm.mips.symbols.SymbolFunction] = []
+    for sym in text.symbolList:
+        if sym.isFunction():
+            assert(isinstance(sym, spimdisasm.mips.symbols.SymbolFunction))
+            functions.append(sym)
 
-    return AnalyzedDLL(dll, dll_number, dll_bytes, bss_size, context, text, rodata, data, bss, functions, orphaned_rodata)
+    # Migrate .rodata
+    function_rodata =  spimdisasm.mips.FunctionRodataEntry.getAllEntriesFromSections(text, rodata)
+
+    return AnalyzedDLL(dll, dll_number, dll_bytes, bss_size, context, text, rodata, data, bss, functions, function_rodata)
     
 def __set_symbol_name_defaults(
         dll: DLL,
@@ -90,39 +94,27 @@ def __set_symbol_name_defaults(
         rodata: spimdisasm.mips.sections.SectionRodata | None,
         data: spimdisasm.mips.sections.SectionData | None,
         bss: spimdisasm.mips.sections.SectionBss | None):
-    for address in global_segment.symbols:
-        sym = global_segment.symbols[address]
-        if address < DLL_VRAM_BASE and (address & 0x8000_0000) != 0:
-            sym.setNameIfUnset("IMPORT_{:X}".format(address))
-    
-    for sym in text.symbolList:
-        if sym.contextSym.name == None:
-            if (sym.vromStart - text.vromStart) == dll.header.ctor_offset:
+    for sym in global_segment.symbols.values():
+        if sym.vram < DLL_VRAM_BASE and (sym.vram & 0x8000_0000) != 0:
+            sym.setNameIfUnset("IMPORT_{:X}".format(sym.vram))
+        elif sym.sectionType == spimdisasm.common.FileSectionType.Text:
+            if (sym.vram - DLL_VRAM_BASE) == dll.header.ctor_offset:
                 sym.setNameIfUnset("dll_{}_ctor".format(dll_number))
-            elif (sym.vromStart - text.vromStart) == dll.header.dtor_offset:
+            elif (sym.vram - DLL_VRAM_BASE) == dll.header.dtor_offset:
                 sym.setNameIfUnset("dll_{}_dtor".format(dll_number))
             else:
                 sym.setNameIfUnset("dll_{}_func_{:X}".format(dll_number, sym.vram - text.vram))
-
-    if rodata != None:
-        for sym in rodata.symbolList:
-            if sym.contextSym.name == None:
-                if sym.isJumpTable():
-                    sym.setNameIfUnset("jtbl_{:X}".format(sym.vram - rodata.vram))
-                elif sym.isString():
-                    sym.setNameIfUnset("str_{:X}".format(sym.vram - rodata.vram))
-                else:
-                    sym.setNameIfUnset("_rodata_{:X}".format(sym.vram - rodata.vram))
-    
-    if data != None:
-        for sym in data.symbolList:
-            if sym.contextSym.name == None:
-                sym.setNameIfUnset("_data_{:X}".format(sym.vram - data.vram))
-
-    if bss != None:
-        for sym in bss.symbolList:
-            if sym.contextSym.name == None:
-                sym.setNameIfUnset("_bss_{:X}".format(sym.vram - bss.vram))
+        elif sym.sectionType == spimdisasm.common.FileSectionType.Rodata and rodata != None:
+            if sym.isJumpTable():
+                sym.setNameIfUnset("jtbl_{:X}".format(sym.vram - rodata.vram))
+            elif sym.isString():
+                sym.setNameIfUnset("str_{:X}".format(sym.vram - rodata.vram))
+            else:
+                sym.setNameIfUnset("_rodata_{:X}".format(sym.vram - rodata.vram))
+        elif sym.sectionType == spimdisasm.common.FileSectionType.Data and data != None:
+            sym.setNameIfUnset("_data_{:X}".format(sym.vram - data.vram))
+        elif sym.sectionType == spimdisasm.common.FileSectionType.Bss and bss != None:
+            sym.setNameIfUnset("_bss_{:X}".format(sym.vram - bss.vram))
 
 def __define_known_symbols(symbols_file: DLLSymsTxt,
                            global_segment: spimdisasm.common.SymbolsSegment,
@@ -161,6 +153,41 @@ def __define_known_symbols(symbols_file: DLLSymsTxt,
             for address, name in bss_symbols.syms.items():
                 sym = bss.addSymbol(DLL_VRAM_BASE + bss_symbols.offset + address)
                 sym.name = name
+
+def __define_symbols_from_reloc_table(
+        dll: DLL,
+        global_segment: spimdisasm.common.SymbolsSegment,
+        text: spimdisasm.mips.sections.SectionText,
+        rodata: spimdisasm.mips.sections.SectionRodata | None,
+        data: spimdisasm.mips.sections.SectionData | None,
+        bss: spimdisasm.mips.sections.SectionBss | None):
+    if not dll.reloc_table.exists:
+        return
+    
+    # Known functions
+    for gp_reloc in dll.reloc_table.gp_relocations:
+        text.addSymbol(text.vram + gp_reloc)
+
+    # Known .data variables
+    if data != None:
+        for data_reloc in dll.reloc_table.data_relocations:
+            data_ptr = data.words[data_reloc // 4]
+            data.addSymbol(data.vram + data_ptr)
+    
+    # Known global variables
+    for e in dll.reloc_table.global_offset_table[4:]:
+        if (e & 0x80000000) == 0:
+            var_vram = DLL_VRAM_BASE + e
+            if bss != None and var_vram >= bss.vram and var_vram < bss.vramEnd:
+                bss.addSymbol(var_vram)
+            elif data != None and var_vram >= data.vram and var_vram < data.vramEnd:
+                data.addSymbol(var_vram)
+            elif rodata != None and var_vram >= rodata.vram and var_vram < rodata.vramEnd:
+                rodata.addSymbol(var_vram)
+            elif var_vram >= text.vram and var_vram < text.vramEnd:
+                text.addSymbol(var_vram)
+            else:
+                global_segment.addSymbol(var_vram)
 
 def __init_sections(context: spimdisasm.common.Context, dll: DLL, dll_bytes: bytes, bss_size: int | None):
     text: spimdisasm.mips.sections.SectionText
@@ -282,6 +309,7 @@ def __set_spimdisasm_config(gp: int):
     spimdisasm.common.GlobalConfig.ASM_NM_LABEL = ""
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_LOW = DLL_VRAM_BASE
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_HIGH = 0xB0000000 # Filter out direct ROM address
+    spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 4 # 3 can detect empty strings, 4 can detect whitespace strings
 
 def __set_rabbitizer_config():
     rabbitizer.config.regNames_gprAbiNames = rabbitizer.Abi.O32
