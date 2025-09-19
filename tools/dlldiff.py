@@ -159,18 +159,9 @@ def main():
 
     dlls: "list[str]" = args.dlls
     quiet_match = len(dlls) == 0
-    # Check all DLLs with a src directory if none were given
+    # Check all DLLs if none were specified
     if len(dlls) == 0:
-        dlls_txt_path = SRC_DLLS_DIR.joinpath("dlls.txt")
-        assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
-        
-        with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
-            dlls_txt = DLLsTxt.parse(dlls_txt_file)
-        
-        for number, dll_dir in dlls_txt.path_map.items():
-            src_dir = SRC_DLLS_DIR.joinpath(dll_dir)
-            if src_dir.exists():
-                dlls.append(str(number))
+        dlls = [str(i + 1) for i in range(796)]
 
     # Load DLLS.tabs
     targ_dllstab_path = BIN_ASSETS_DIR.joinpath("DLLS_tab.bin")
