@@ -8,6 +8,7 @@
 import argparse
 import glob
 import os
+import sys
 import spimdisasm
 from pathlib import Path
 import rabbitizer
@@ -28,6 +29,9 @@ BIN_PATH = Path("bin")
 SRC_PATH = Path("src")
 
 global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/\S+\/(.+)\.s\"\)")
+
+class DLLSplitterException(Exception):
+    pass
 
 class DLLSplitter:
     def __init__(self, verbose: bool, disassemble_all: bool) -> None:
@@ -58,22 +62,28 @@ class DLLSplitter:
         with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
             dlls_txt = DLLsTxt.parse(dlls_txt_file)
 
+        i = 0
+        count = 796 if len(only_dlls) == 0 else len(only_dlls)
         for (number, dll_dir) in dlls_txt.path_map.items():
-            dir = dlls_src_path.joinpath(dll_dir)
-
-            if not dir.exists():
-                print(f"WARN: No such DLL src directory {dir}!")
-                continue
-
             # Skip DLL if not in list
             if len(only_dlls) > 0 and not str(number) in only_dlls:
                 continue
 
+            if not self.verbose:
+                if sys.stdout.isatty():
+                    print("\033[K", end="\r")
+                print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir), end="")
+            i += 1
+
+            dir = dlls_src_path.joinpath(dll_dir)
+
+            if not dir.exists():
+                raise DLLSplitterException(f"No such DLL src directory {dir}!")
+
             # Check DLL path
             dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
             if not dll_path.exists():
-                print(f"WARN: No such DLL {dll_path}!")
-                continue
+                raise DLLSplitterException(f"No such DLL {dll_path}!")
 
             # Load known symbols for DLL
             symbol_files: list[DLLSymsTxt] = [core_export_syms]
@@ -131,11 +141,16 @@ class DLLSplitter:
             if len(only_dlls) > 0 and not str(number) in only_dlls:
                 continue
 
+            if not self.verbose:
+                if sys.stdout.isatty():
+                    print("\033[K", end="\r")
+                print("[{}/{}] DLL {}: ASM".format(i + 1, count, number), end="")
+            i += 1
+
             # Check DLL path
             dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
             if not dll_path.exists():
-                print(f"WARN: No such DLL {dll_path}!")
-                continue
+                raise DLLSplitterException(f"No such DLL {dll_path}!")
 
             # Load DLL
             with open(dll_path, "rb") as dll_file:
@@ -167,6 +182,9 @@ class DLLSplitter:
                 end = timer()
                 if self.verbose:
                     print("[{}] Extracting complete (took {:.3} seconds).".format(number, end - start))
+
+        if not self.verbose and sys.stdout.isatty():
+            print("\033[K", end="\r")
 
     def extract_dll(self, 
                     dll: AnalyzedDLL, 
