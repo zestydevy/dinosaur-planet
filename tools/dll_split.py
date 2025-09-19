@@ -101,12 +101,9 @@ class DLLSplitter:
                 if self.verbose:
                     print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
             
-                # Load or create DLL config
+                # Create DLL config if it doesn't exist
                 dll_config_path = dir.joinpath("dll.yaml")
-                if dll_config_path.exists():
-                    with open(dll_config_path, "r") as file:
-                        dll_config = DLLBuildConfig.parse(file)
-                else:
+                if not dll_config_path.exists():
                     dll_config = DLLBuildConfig(compile=True)
                     with open(dll_config_path, "w") as file:
                         dll_config.save(file)
@@ -420,17 +417,6 @@ class DLLSplitter:
                           syms_path: Path, 
                           dll: AnalyzedDLL):
         with open(syms_path, "w", encoding="utf-8") as syms_file:
-            # Absolute symbols
-            unknown_seg = dll.context.unknownSegment
-            any_abs_syms = False
-            for sym in unknown_seg.symbols.values():
-                # Skip imports (already covered by export_symbol_addrs.txt)
-                if sym.vram >= DLL_VRAM_BASE:
-                    syms_file.write("{} = 0x{:X};\n".format(sym.getName(), sym.vram - DLL_VRAM_BASE))
-                    any_abs_syms = True
-            if any_abs_syms:
-                syms_file.write("\n")
-                
             # .text
             syms_file.write(".text = 0x0:\n")
             for sym in dll.text.symbolList:
@@ -474,6 +460,15 @@ class DLLSplitter:
                         absolute = bss_start + offset
                         syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
                                         .format(sym.getName(), offset, absolute))
+            
+            # oob syms
+            if len(dll.oob_syms) > 0:
+                last_section_start = dll.last_section.vromStart - dll.meta.header.size
+                for sym in dll.oob_syms:
+                    offset = sym.vram - dll.last_section.vram
+                    absolute = last_section_start + offset
+                    syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                                    .format(sym.getName(), offset, absolute))
 
     def __extract_text_asm(self, 
                            nonmatching_dir: Path,

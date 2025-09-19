@@ -25,7 +25,9 @@ class AnalyzedDLL:
                  data: spimdisasm.mips.sections.SectionData | None,
                  bss: spimdisasm.mips.sections.SectionBss | None,
                  functions: list[spimdisasm.mips.symbols.SymbolFunction],
-                 function_rodata: list[spimdisasm.mips.FunctionRodataEntry]) -> None:
+                 function_rodata: list[spimdisasm.mips.FunctionRodataEntry],
+                 last_section: spimdisasm.mips.sections.SectionBase,
+                 oob_syms: list[spimdisasm.common.ContextSymbol]) -> None:
         self.meta = meta
         self.number = number
         self.bytes = bytes
@@ -37,6 +39,8 @@ class AnalyzedDLL:
         self.bss = bss
         self.functions = functions
         self.function_rodata = function_rodata
+        self.last_section = last_section
+        self.oob_syms = oob_syms
 
 def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[DLLSymsTxt], bss_size: int | None) -> AnalyzedDLL:
     # Setup global config for rabbitizer and spimdisasm
@@ -72,7 +76,24 @@ def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[
         bss.analyze()
 
     # Set custom symbol name defaults
-    __set_symbol_name_defaults(dll, dll_number, context.globalSegment, text, rodata, data, bss)
+    __set_symbol_name_defaults(dll, dll_number, context.globalSegment, context.unknownSegment, text, rodata, data, bss)
+
+    # Identify out of bounds symbols (those beyond the end of VRAM)
+    if bss != None:
+        last_section = bss
+    elif data != None:
+        last_section = data
+    elif rodata != None:
+        last_section = rodata
+    else:
+        last_section = text
+    last_section_name = last_section.getSectionName()[1:]
+    
+    oob_syms: list[spimdisasm.common.ContextSymbol] = []
+    for sym in context.unknownSegment.symbols.values():
+        if sym.vram >= last_section.vramEnd:
+            sym.setNameIfUnset("_oob_{}_{:X}".format(last_section_name, sym.vram - last_section.vram))
+            oob_syms.append(sym)
 
     # Make function list
     functions: list[spimdisasm.mips.symbols.SymbolFunction] = []
@@ -82,39 +103,67 @@ def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[
             functions.append(sym)
 
     # Migrate .rodata
-    function_rodata =  spimdisasm.mips.FunctionRodataEntry.getAllEntriesFromSections(text, rodata)
+    function_rodata = spimdisasm.mips.FunctionRodataEntry.getAllEntriesFromSections(text, rodata)
 
-    return AnalyzedDLL(dll, dll_number, dll_bytes, bss_size, context, text, rodata, data, bss, functions, function_rodata)
+    return AnalyzedDLL(dll, dll_number, dll_bytes, bss_size, context, text, rodata, data, bss, functions, function_rodata,
+                       last_section, oob_syms)
     
 def __set_symbol_name_defaults(
         dll: DLL,
         dll_number: int,
         global_segment: spimdisasm.common.SymbolsSegment,
+        unknown_segment: spimdisasm.common.SymbolsSegment,
         text: spimdisasm.mips.sections.SectionText,
         rodata: spimdisasm.mips.sections.SectionRodata | None,
         data: spimdisasm.mips.sections.SectionData | None,
         bss: spimdisasm.mips.sections.SectionBss | None):
+    # Sometimes symbols within known sections end up in the unknown segment
+    for sym in unknown_segment.symbols.values():
+        if sym.vram >= DLL_VRAM_BASE:
+            if bss != None and sym.vram >= bss.vram and sym.vram < bss.vramEnd:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Bss)
+                unknown_segment.removeSymbol(sym.vram)
+            elif data != None and sym.vram >= data.vram and sym.vram < data.vramEnd:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Data)
+                unknown_segment.removeSymbol(sym.vram)
+            elif rodata != None and sym.vram >= rodata.vram and sym.vram < rodata.vram:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Rodata)
+                unknown_segment.removeSymbol(sym.vram)
+            elif sym.vram >= text.vram and sym.vram < text.vram:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Text)
+                unknown_segment.removeSymbol(sym.vram)
+    # Update default names for symbols
     for sym in global_segment.symbols.values():
         if sym.vram < DLL_VRAM_BASE and (sym.vram & 0x8000_0000) != 0:
             sym.setNameIfUnset("IMPORT_{:X}".format(sym.vram))
-        elif sym.sectionType == spimdisasm.common.FileSectionType.Text:
-            if (sym.vram - DLL_VRAM_BASE) == dll.header.ctor_offset:
-                sym.setNameIfUnset("dll_{}_ctor".format(dll_number))
-            elif (sym.vram - DLL_VRAM_BASE) == dll.header.dtor_offset:
-                sym.setNameIfUnset("dll_{}_dtor".format(dll_number))
-            else:
-                sym.setNameIfUnset("dll_{}_func_{:X}".format(dll_number, sym.vram - text.vram))
-        elif sym.sectionType == spimdisasm.common.FileSectionType.Rodata and rodata != None:
-            if sym.isJumpTable():
-                sym.setNameIfUnset("jtbl_{:X}".format(sym.vram - rodata.vram))
-            elif sym.isString():
-                sym.setNameIfUnset("str_{:X}".format(sym.vram - rodata.vram))
-            else:
-                sym.setNameIfUnset("_rodata_{:X}".format(sym.vram - rodata.vram))
-        elif sym.sectionType == spimdisasm.common.FileSectionType.Data and data != None:
-            sym.setNameIfUnset("_data_{:X}".format(sym.vram - data.vram))
-        elif sym.sectionType == spimdisasm.common.FileSectionType.Bss and bss != None:
-            sym.setNameIfUnset("_bss_{:X}".format(sym.vram - bss.vram))
+        else:
+            # Sometimes the section type isn't set on symbols that are within known sections
+            if sym.sectionType == spimdisasm.common.FileSectionType.Unknown and sym.vram >= text.vramEnd:
+                if bss != None and sym.vram >= bss.vram and sym.vram < bss.vramEnd:
+                    sym.sectionType = spimdisasm.common.FileSectionType.Bss
+                elif data != None and sym.vram >= data.vram and sym.vram < data.vramEnd:
+                    sym.sectionType = spimdisasm.common.FileSectionType.Data
+                elif rodata != None and sym.vram >= rodata.vram and sym.vram < rodata.vram:
+                    sym.sectionType = spimdisasm.common.FileSectionType.Rodata
+
+            if sym.sectionType == spimdisasm.common.FileSectionType.Text:
+                if (sym.vram - DLL_VRAM_BASE) == dll.header.ctor_offset:
+                    sym.setNameIfUnset("dll_{}_ctor".format(dll_number))
+                elif (sym.vram - DLL_VRAM_BASE) == dll.header.dtor_offset:
+                    sym.setNameIfUnset("dll_{}_dtor".format(dll_number))
+                else:
+                    sym.setNameIfUnset("dll_{}_func_{:X}".format(dll_number, sym.vram - text.vram))
+            elif sym.sectionType == spimdisasm.common.FileSectionType.Rodata and rodata != None:
+                if sym.isJumpTable():
+                    sym.setNameIfUnset("jtbl_{:X}".format(sym.vram - rodata.vram))
+                elif sym.isString():
+                    sym.setNameIfUnset("str_{:X}".format(sym.vram - rodata.vram))
+                else:
+                    sym.setNameIfUnset("_rodata_{:X}".format(sym.vram - rodata.vram))
+            elif sym.sectionType == spimdisasm.common.FileSectionType.Data and data != None:
+                sym.setNameIfUnset("_data_{:X}".format(sym.vram - data.vram))
+            elif sym.sectionType == spimdisasm.common.FileSectionType.Bss and bss != None:
+                sym.setNameIfUnset("_bss_{:X}".format(sym.vram - bss.vram))
 
 def __define_known_symbols(symbols_file: DLLSymsTxt,
                            global_segment: spimdisasm.common.SymbolsSegment,
