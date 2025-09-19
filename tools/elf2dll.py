@@ -188,7 +188,10 @@ def read_elf_relocations(elf: ELFFile,
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
                 # Global syms won't have a lo16 pair (except _gp_disp but that's taken care of elsewhere)
                 # Section sym lo16 pairs will already have the correct value from the linker so we can leave them alone
-                assert st_info_bind != "STB_GLOBAL" or sym.name == "_gp_disp"
+                if st_info_bind == "STB_GLOBAL" and sym.name != "_gp_disp":
+                    raise ELF2DLLException(
+                        f".text R_MIPS_LO16 relocation with offset {hex(reloc_offset)} references global symbol {sym.name}, " +
+                        "which is not supported (only local symbols are supported at this time).")
                 if st_info_bind == "STB_LOCAL" and sym_type != "STT_SECTION":
                     # AHL + S
                     ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
@@ -208,7 +211,7 @@ def read_elf_relocations(elf: ELFFile,
                 # This can safely be ignored.
                 pass
             else:
-                raise ELF2DLLException(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise ELF2DLLException(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)} and symbol {sym.name}")
     
     rel_data = elf.get_section_by_name(".rel.data")
     if rel_data != None:
