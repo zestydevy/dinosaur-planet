@@ -8,10 +8,9 @@ import os
 from pathlib import Path
 
 from dino.dll import DLL
-from dino.dll_analysis import get_all_dll_functions
+from tools.dino.dll_analysis import DLL_VRAM_BASE, get_dll_functions
 from dino.dll_tab import DLLTab
 from dino.dlls_txt import DLLsTxt
-from dino.dll_symbols import DLLSymbols
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 BIN_PATH = Path("bin")
@@ -302,14 +301,14 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         
         # Grab functions by parsing the DLL contents
         dll = DLL.parse(dll_data)
-        dll_symbols = DLLSymbols(dll, number)
-        dll_functions = get_all_dll_functions(dll_data, dll, dll_symbols)
+        dll_functions = get_dll_functions(dll, number, dll_data)
         for func in dll_functions:
+            address = func.vram - DLL_VRAM_BASE
             func_info = { 
-                "name": "{}func_{:X}".format(dll_prefix, func.address), 
+                "name": "{}func_{:X}".format(dll_prefix, address), 
                 "symbol": None,
-                "vram": dll_vram + dll.header.size + func.address, 
-                "size": len(func.insts) * 4
+                "vram": dll_vram + dll.header.size + address, 
+                "size": func.sizew * 4
             }
             funcs.append(func_info)
             vrams_to_funcs[func_info["vram"]] = func_info

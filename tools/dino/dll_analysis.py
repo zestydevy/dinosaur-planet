@@ -1,109 +1,423 @@
-from typing import TypedDict
-from enum import Enum
+from io import BytesIO
+import spimdisasm
 import rabbitizer
-import struct
 
 from .dll import DLL
-from .dll_symbols import DLLSymbols
+from .dll_syms_txt import DLLSymsTxt
 
-class DLLJumpTableEntry:
+# Arbitrary base VRAM address to use when analyzing DLLs
+DLL_VRAM_BASE = 0x81000000
+__STANDARD_MIPS_GP_PROLOGUE = bytearray([
+    0x3C, 0x1C, 0x00, 0x00, # lui     gp,0x0
+    0x27, 0x9C, 0x00, 0x00, # addiu   gp,gp,0x0
+    0x03, 0x99, 0xE0, 0x21  # addu    gp,gp,t9
+])
+
+class AnalyzedDLL:
     def __init__(self,
-                 value: int,
-                 target: int):
-        self.value = value
-        self.target = target
+                 meta: DLL,
+                 number: int,
+                 bytes: bytes,
+                 bss_size: int | None,
+                 context: spimdisasm.common.Context,
+                 text: spimdisasm.mips.sections.SectionText,
+                 rodata: spimdisasm.mips.sections.SectionRodata | None,
+                 data: spimdisasm.mips.sections.SectionData | None,
+                 bss: spimdisasm.mips.sections.SectionBss | None,
+                 functions: list[spimdisasm.mips.symbols.SymbolFunction],
+                 function_rodata: list[spimdisasm.mips.FunctionRodataEntry],
+                 last_section: spimdisasm.mips.sections.SectionBase,
+                 oob_syms: list[spimdisasm.common.ContextSymbol]) -> None:
+        self.meta = meta
+        self.number = number
+        self.bytes = bytes
+        self.bss_size = bss_size
+        self.context = context
+        self.text = text
+        self.rodata = rodata
+        self.data = data
+        self.bss = bss
+        self.functions = functions
+        self.function_rodata = function_rodata
+        self.last_section = last_section
+        self.oob_syms = oob_syms
 
-class DLLJumpTable:
-    def __init__(self,
-                 address: int,
-                 offset: int,
-                 entries: list[DLLJumpTableEntry]):
-        self.address = address
-        self.offset = offset
-        self.entries = entries
+def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[DLLSymsTxt], bss_size: int | None) -> AnalyzedDLL:
+    # Setup global config for rabbitizer and spimdisasm
+    __set_rabbitizer_config()
+    __set_spimdisasm_config(__get_dll_gp(dll))
 
-class DLLLocalRefLoadType(Enum):
-    UNKNOWN = 0,
-    LW = 1
-    LWC1 = 2 # float
-    LDC1 = 3 # double
+    # Preprocess DLL data for spimdisasm
+    #
+    # spimdisasm doesn't understand Dinosaur Planet's custom $gp prologue format
+    if dll.reloc_table.exists and len(dll.reloc_table.gp_relocations) > 0:
+        dll_bytes = __rewrite_to_standard_gp_prologues(dll, dll_bytes)
 
-class DLLLocalRefInfo:
-    def __init__(self,
-                 load_type: DLLLocalRefLoadType):
-        self.load_type = load_type
+    # Create spimdisasm context
+    context = __make_spimdisasm_context(dll, dll_bytes, bss_size)
 
-class DLLInstRelocationType(Enum):
-    HI16 = 0,
-    LO16 = 1,
-    GOT16 = 2,
-    CALL16 = 3
+    # Create spimdisasm sections
+    text, rodata, data, bss = __init_sections(context, dll, dll_bytes, bss_size)
 
-class DLLInstRelocation:
-    def __init__(self,
-                 type: DLLInstRelocationType,
-                 symbol: str,
-                 offset: int):
-        self.type = type
-        self.symbol = symbol
-        self.offset = offset
+    # Infer symbols from GOT and reloc tables
+    __define_symbols_from_reloc_table(dll, context.globalSegment, text, rodata, data, bss)
 
-class DLLInst:
-    is_branch_target: bool = False
-    relocation: DLLInstRelocation | None = None
+    # Define known symbol names
+    for symbol_file in symbol_files:
+        __define_known_symbols(symbol_file, context.globalSegment, text, rodata, data, bss)
 
-    def __init__(self,
-                 i: rabbitizer.Instruction,
-                 is_branch: bool,
-                 is_branch_delay_slot: bool) -> None:
-        self.i = i
-        self.is_branch = is_branch
-        self.is_branch_delay_slot = is_branch_delay_slot
+    # Run analysis
+    text.analyze()
+    if rodata != None:
+        rodata.analyze()
+    if data != None:
+        data.analyze()
+    if bss != None:
+        bss.analyze()
 
-class DLLFunctionType(Enum):
-    Local = 0
-    Export = 1,
-    Ctor = 2,
-    Dtor = 3
+    # Don't let .data symbols reference others (except the relocs we explicitly defined).
+    # Otherwise, the re-assembled code will end up with more .data relocs than in the original DLL.
+    if data != None:
+        for sym in data.symbolList:
+            sym.contextSym.allowedToReferenceSymbols = False
 
-class DLLFunction:
-    has_gp_prologue: bool | None = None
-    local_rodata_refs: "set[int] | None" = None
-    local_rodata_ref_info: "dict[int, DLLLocalRefInfo] | None" = None
-    local_data_refs: "set[int] | None" = None
-    local_data_ref_info: "dict[int, DLLLocalRefInfo] | None" = None
-    local_bss_refs: "set[int] | None" = None
-    local_bss_ref_info: "dict[int, DLLLocalRefInfo] | None" = None
-    jump_table_refs: "set[int] | None" = None
-    jump_tables: "dict[int, DLLJumpTable] | None" = None
-    jump_table_targets: "set[int] | None" = None
+    # Set custom symbol name defaults
+    __set_symbol_name_defaults(dll, dll_number, context.globalSegment, context.unknownSegment, text, rodata, data, bss)
 
-    def __init__(self,
-                 insts: "list[DLLInst]",
-                 address: int,
-                 symbol: str,
-                 type: DLLFunctionType) -> None:
-        self.insts = insts
-        self.address = address
-        self.symbol = symbol
-        self.type = type
-
-def get_all_dll_functions(dll_data: bytes, 
-                          dll: DLL,
-                          symbols: DLLSymbols,
-                          analyze: bool = False,
-                          bss_size: int | None=None):
-    """Locates all functions in the DLL."""
-    header = dll.header
+    # Identify out of bounds symbols (those beyond the end of VRAM)
+    if bss != None:
+        last_section = bss
+    elif data != None:
+        last_section = data
+    elif rodata != None:
+        last_section = rodata
+    else:
+        last_section = text
+    last_section_name = last_section.getSectionName()[1:]
     
-    # Determine where in the file the .text section ends
-    text_file_end = header.size + dll.get_text_size()
+    oob_syms: list[spimdisasm.common.ContextSymbol] = []
+    for sym in context.unknownSegment.symbols.values():
+        if sym.vram >= last_section.vramEnd:
+            sym.setNameIfUnset("_oob_{}_{:X}".format(last_section_name, sym.vram - last_section.vram))
+            oob_syms.append(sym)
 
-    # Vars
-    new_func = True
-    last_inst: "rabbitizer.Instruction | None" = None
+    # Make function list
+    functions: list[spimdisasm.mips.symbols.SymbolFunction] = []
+    for sym in text.symbolList:
+        if sym.isFunction():
+            assert(isinstance(sym, spimdisasm.mips.symbols.SymbolFunction))
+            functions.append(sym)
 
-    # Set up rabbitizer
+    # Migrate .rodata
+    function_rodata = spimdisasm.mips.FunctionRodataEntry.getAllEntriesFromSections(text, rodata)
+
+    return AnalyzedDLL(dll, dll_number, dll_bytes, bss_size, context, text, rodata, data, bss, functions, function_rodata,
+                       last_section, oob_syms)
+
+def get_dll_functions(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[DLLSymsTxt]=[], bss_size: int | None=None) \
+        -> list[spimdisasm.mips.symbols.SymbolFunction]:
+    # Setup global config for rabbitizer and spimdisasm
+    __set_rabbitizer_config()
+    __set_spimdisasm_config(__get_dll_gp(dll))
+
+    # Preprocess DLL data for spimdisasm
+    #
+    # spimdisasm doesn't understand Dinosaur Planet's custom $gp prologue format
+    if dll.reloc_table.exists and len(dll.reloc_table.gp_relocations) > 0:
+        dll_bytes = __rewrite_to_standard_gp_prologues(dll, dll_bytes)
+
+    # Create spimdisasm context
+    context = __make_spimdisasm_context(dll, dll_bytes, bss_size)
+
+    # Create .text section
+    text = spimdisasm.mips.sections.SectionText(
+        context, 
+        vromStart=dll.header.size,
+        vromEnd=dll.header.size + dll.get_text_size(),
+        vram=DLL_VRAM_BASE,
+        filename="",
+        array_of_bytes=dll_bytes,
+        segmentVromStart=0,
+        overlayCategory=None)
+    text.setCommentOffset(text.vromStart)
+
+    # Define known symbol names
+    for symbol_file in symbol_files:
+        __define_known_symbols(symbol_file, context.globalSegment, text, None, None, None)
+
+    # Analyze
+    text.analyze()
+
+    # Set custom symbol name defaults
+    __set_symbol_name_defaults(dll, dll_number, context.globalSegment, context.unknownSegment, text, None, None, None)
+    
+    # Make function list
+    functions: list[spimdisasm.mips.symbols.SymbolFunction] = []
+    for sym in text.symbolList:
+        if sym.isFunction():
+            assert(isinstance(sym, spimdisasm.mips.symbols.SymbolFunction))
+            functions.append(sym)
+    
+    return functions
+
+def __set_symbol_name_defaults(
+        dll: DLL,
+        dll_number: int,
+        global_segment: spimdisasm.common.SymbolsSegment,
+        unknown_segment: spimdisasm.common.SymbolsSegment,
+        text: spimdisasm.mips.sections.SectionText,
+        rodata: spimdisasm.mips.sections.SectionRodata | None,
+        data: spimdisasm.mips.sections.SectionData | None,
+        bss: spimdisasm.mips.sections.SectionBss | None):
+    # Sometimes symbols within known sections end up in the unknown segment
+    for sym in unknown_segment.symbols.values():
+        if sym.vram >= DLL_VRAM_BASE:
+            if bss != None and sym.vram >= bss.vram and sym.vram < bss.vramEnd:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Bss)
+                unknown_segment.removeSymbol(sym.vram)
+            elif data != None and sym.vram >= data.vram and sym.vram < data.vramEnd:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Data)
+                unknown_segment.removeSymbol(sym.vram)
+            elif rodata != None and sym.vram >= rodata.vram and sym.vram < rodata.vram:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Rodata)
+                unknown_segment.removeSymbol(sym.vram)
+            elif sym.vram >= text.vram and sym.vram < text.vram:
+                global_segment.addSymbol(sym.vram, spimdisasm.common.FileSectionType.Text)
+                unknown_segment.removeSymbol(sym.vram)
+    # Update default names for symbols
+    for sym in global_segment.symbols.values():
+        if sym.vram < DLL_VRAM_BASE and (sym.vram & 0x8000_0000) != 0:
+            sym.setNameIfUnset("IMPORT_{:X}".format(sym.vram))
+        else:
+            # Sometimes the section type isn't set on symbols that are within known sections
+            if sym.sectionType == spimdisasm.common.FileSectionType.Unknown and sym.vram >= text.vramEnd:
+                if bss != None and sym.vram >= bss.vram and sym.vram < bss.vramEnd:
+                    sym.sectionType = spimdisasm.common.FileSectionType.Bss
+                elif data != None and sym.vram >= data.vram and sym.vram < data.vramEnd:
+                    sym.sectionType = spimdisasm.common.FileSectionType.Data
+                elif rodata != None and sym.vram >= rodata.vram and sym.vram < rodata.vram:
+                    sym.sectionType = spimdisasm.common.FileSectionType.Rodata
+
+            if sym.sectionType == spimdisasm.common.FileSectionType.Text:
+                if sym.type == spimdisasm.common.SymbolSpecialType.function:
+                    if (sym.vram - DLL_VRAM_BASE) == dll.header.ctor_offset:
+                        sym.setNameIfUnset("dll_{}_ctor".format(dll_number))
+                    elif (sym.vram - DLL_VRAM_BASE) == dll.header.dtor_offset:
+                        sym.setNameIfUnset("dll_{}_dtor".format(dll_number))
+                    else:
+                        sym.setNameIfUnset("dll_{}_func_{:X}".format(dll_number, sym.vram - text.vram))
+            elif sym.sectionType == spimdisasm.common.FileSectionType.Rodata and rodata != None:
+                if sym.isJumpTable():
+                    sym.setNameIfUnset("jtbl_{:X}".format(sym.vram - rodata.vram))
+                elif sym.isString():
+                    sym.setNameIfUnset("str_{:X}".format(sym.vram - rodata.vram))
+                else:
+                    sym.setNameIfUnset("_rodata_{:X}".format(sym.vram - rodata.vram))
+            elif sym.sectionType == spimdisasm.common.FileSectionType.Data and data != None:
+                sym.setNameIfUnset("_data_{:X}".format(sym.vram - data.vram))
+            elif sym.sectionType == spimdisasm.common.FileSectionType.Bss and bss != None:
+                sym.setNameIfUnset("_bss_{:X}".format(sym.vram - bss.vram))
+
+def __define_known_symbols(symbols_file: DLLSymsTxt,
+                           global_segment: spimdisasm.common.SymbolsSegment,
+                           text: spimdisasm.mips.sections.SectionText,
+                           rodata: spimdisasm.mips.sections.SectionRodata | None,
+                           data: spimdisasm.mips.sections.SectionData | None,
+                           bss: spimdisasm.mips.sections.SectionBss | None):
+    
+    for address, name in symbols_file.absolute.items():
+        sym = global_segment.addSymbol(address)
+        sym.name = name
+
+    text_symbols = symbols_file.sections.get(".text")
+    if text_symbols != None:
+        for address, name in text_symbols.syms.items():
+            sym = text.addSymbol(DLL_VRAM_BASE + text_symbols.offset + address)
+            sym.name = name
+
+    if rodata != None:
+        rodata_symbols = symbols_file.sections.get(".rodata")
+        if rodata_symbols != None:
+            for address, name in rodata_symbols.syms.items():
+                sym = rodata.addSymbol(DLL_VRAM_BASE + rodata_symbols.offset + address)
+                sym.name = name
+    
+    if data != None:
+        data_symbols = symbols_file.sections.get(".data")
+        if data_symbols != None:
+            for address, name in data_symbols.syms.items():
+                sym = data.addSymbol(DLL_VRAM_BASE + data_symbols.offset + address)
+                sym.name = name
+    
+    if bss != None:
+        bss_symbols = symbols_file.sections.get(".bss")
+        if bss_symbols != None:
+            for address, name in bss_symbols.syms.items():
+                sym = bss.addSymbol(DLL_VRAM_BASE + bss_symbols.offset + address)
+                sym.name = name
+
+def __define_symbols_from_reloc_table(
+        dll: DLL,
+        global_segment: spimdisasm.common.SymbolsSegment,
+        text: spimdisasm.mips.sections.SectionText,
+        rodata: spimdisasm.mips.sections.SectionRodata | None,
+        data: spimdisasm.mips.sections.SectionData | None,
+        bss: spimdisasm.mips.sections.SectionBss | None):
+    if not dll.reloc_table.exists:
+        return
+    
+    # Known functions
+    for gp_reloc in dll.reloc_table.gp_relocations:
+        text.addSymbol(text.vram + gp_reloc, sectionType=text.sectionType)
+
+    # Known .data variables
+    if data != None:
+        for data_reloc in dll.reloc_table.data_relocations:
+            data_ptr = data.words[data_reloc // 4]
+            target_sym = data.addSymbol(data.vram + data_ptr, sectionType=data.sectionType)
+
+            data.addSymbol(data.vram + data_reloc, sectionType=data.sectionType)
+            data.context.addGlobalReloc(data.vromStart + data_reloc, spimdisasm.common.RelocType.MIPS_32, target_sym)
+    
+    # Known global variables
+    for e in dll.reloc_table.global_offset_table[4:]:
+        if (e & 0x80000000) == 0:
+            var_vram = DLL_VRAM_BASE + e
+            if bss != None and var_vram >= bss.vram and var_vram < bss.vramEnd:
+                bss.addSymbol(var_vram, sectionType=bss.sectionType)
+            elif data != None and var_vram >= data.vram and var_vram < data.vramEnd:
+                data.addSymbol(var_vram, sectionType=data.sectionType)
+            elif rodata != None and var_vram >= rodata.vram and var_vram < rodata.vramEnd:
+                rodata.addSymbol(var_vram, sectionType=rodata.sectionType)
+            elif var_vram >= text.vram and var_vram < text.vramEnd:
+                text.addSymbol(var_vram, sectionType=text.sectionType)
+            else:
+                global_segment.addSymbol(var_vram)
+
+def __init_sections(context: spimdisasm.common.Context, dll: DLL, dll_bytes: bytes, bss_size: int | None):
+    text: spimdisasm.mips.sections.SectionText
+    rodata: spimdisasm.mips.sections.SectionRodata | None = None
+    data: spimdisasm.mips.sections.SectionData | None = None
+    bss: spimdisasm.mips.sections.SectionBss | None = None
+
+    text = spimdisasm.mips.sections.SectionText(
+        context, 
+        vromStart=dll.header.size,
+        vromEnd=dll.header.size + dll.get_text_size(),
+        vram=DLL_VRAM_BASE,
+        filename="",
+        array_of_bytes=dll_bytes,
+        segmentVromStart=0,
+        overlayCategory=None)
+    text.setCommentOffset(text.vromStart)
+
+    if dll.has_rodata():
+        rodata_offset = dll.header.rodata_offset + dll.reloc_table.get_size()
+        rodata = spimdisasm.mips.sections.SectionRodata(
+            context,
+            vromStart=rodata_offset,
+            vromEnd=rodata_offset + dll.get_rodata_size(),
+            vram=DLL_VRAM_BASE + (rodata_offset - dll.header.size),
+            filename="",
+            array_of_bytes=dll_bytes,
+            segmentVromStart=0,
+            overlayCategory=None)
+        rodata.setCommentOffset(rodata.vromStart)
+
+    if dll.has_data():
+        data = spimdisasm.mips.sections.SectionData(
+            context,
+            vromStart=dll.header.data_offset,
+            vromEnd=dll.header.data_offset + dll.get_data_size(),
+            vram=DLL_VRAM_BASE + (dll.header.data_offset - dll.header.size),
+            filename="",
+            array_of_bytes=dll_bytes,
+            segmentVromStart=0,
+            overlayCategory=None)
+        data.setCommentOffset(data.vromStart)
+    
+    if bss_size != None and bss_size > 0:
+        bss_offset = dll.get_bss_offset()
+        bss = spimdisasm.mips.sections.SectionBss(
+            context,
+            vromStart=bss_offset,
+            vromEnd=bss_offset,
+            bssVramStart=DLL_VRAM_BASE + (bss_offset - dll.header.size),
+            bssVramEnd=DLL_VRAM_BASE + (bss_offset - dll.header.size + bss_size),
+            filename="",
+            segmentVromStart=0,
+            overlayCategory=None)
+        bss.setCommentOffset(bss.vromStart)
+
+    return text, rodata, data, bss
+
+def __make_spimdisasm_context(dll: DLL, dll_bytes: bytes, bss_size: int | None) -> spimdisasm.common.Context:
+    if bss_size == None:
+        bss_size = 0
+    
+    context = spimdisasm.common.Context()
+
+    # Set ROM/VRAM ranges
+    context.changeGlobalSegmentRanges(
+        vromStart=0,
+        vromEnd=len(dll_bytes),
+        vramStart=DLL_VRAM_BASE,
+        vramEnd=DLL_VRAM_BASE + (dll.get_bss_offset() - dll.header.size + bss_size))
+    
+    # Set up global offset table
+    got: list[spimdisasm.common.GotEntry] = []
+    for i, e in enumerate(dll.reloc_table.global_offset_table):
+        if (e & 0x80000000) != 0:
+            # Import
+            is_local = False
+            s = context.globalSegment.addSymbol(e)
+            s.isGot = True # spimdisasm will emit %gp_rel without this set!
+        else:
+            if i < 4:
+                # Section symbol
+                is_local = True
+            elif e >= 0x1_0000 and (e & 0xFFFF) == 0:
+                # Hi address of local symbol (probably, this is somewhat heuristic)
+                is_local = True
+            else:
+                # Normal global symbol
+                is_local = False
+
+            e += DLL_VRAM_BASE
+        
+        got.append(spimdisasm.common.GotEntry(e, isGlobal=not is_local))
+    
+    context.setupGotTable(__get_dll_gp(dll), got)
+
+    return context
+
+def __get_dll_gp(dll: DLL) -> int:
+    return DLL_VRAM_BASE + (dll.header.rodata_offset - dll.header.size)
+
+def __rewrite_to_standard_gp_prologues(dll: DLL, dll_bytes: bytes) -> bytes:
+    io = BytesIO(dll_bytes)
+    
+    for gp_reloc in dll.reloc_table.gp_relocations:
+        io.seek(dll.header.size + gp_reloc)
+        io.write(__STANDARD_MIPS_GP_PROLOGUE)
+
+    return io.getvalue()
+
+def __set_spimdisasm_config(gp: int):
+    spimdisasm.common.GlobalConfig.ABI = spimdisasm.common.Abi.O32
+    spimdisasm.common.GlobalConfig.COMPILER = spimdisasm.common.Compiler.IDO
+    spimdisasm.common.GlobalConfig.ENDIAN = spimdisasm.common.InputEndian.BIG
+    spimdisasm.common.GlobalConfig.ARCHLEVEL = spimdisasm.common.ArchLevel.MIPS3
+    spimdisasm.common.GlobalConfig.GP_VALUE = gp # Should already have the base VRAM applied!
+    spimdisasm.common.GlobalConfig.PIC = True
+    spimdisasm.common.GlobalConfig.EMIT_CPLOAD = False
+    spimdisasm.common.GlobalConfig.ASM_NM_LABEL = ""
+    spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_LOW = DLL_VRAM_BASE
+    spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_HIGH = 0xB0000000 # Filter out direct ROM address
+    spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 4 # 3 can detect empty strings, 4 can detect whitespace strings
+    spimdisasm.common.GlobalConfig.ALLOW_ALL_ADDENDS_ON_DATA = False
+
+def __set_rabbitizer_config():
     rabbitizer.config.regNames_gprAbiNames = rabbitizer.Abi.O32
     rabbitizer.config.regNames_fprAbiNames = rabbitizer.Abi.O32
     rabbitizer.config.regNames_userFpcCsr = False
@@ -111,511 +425,3 @@ def get_all_dll_functions(dll_data: bytes,
     rabbitizer.config.pseudos_pseudoMove = False
     rabbitizer.config.toolchainTweaks_treatJAsUnconditionalBranch = False
     rabbitizer.config.toolchainTweaks_gnuMode = True # Required for emitting matching asm
-
-    # Extract functions
-    funcs: "list[DLLFunction]" = []
-    cur_func_insts: "list[DLLInst]" = []
-    cur_func_name = ""
-    cur_func_addr = 0
-    cur_func_type = DLLFunctionType.Local
-    cur_func_branch_dests: "list[int]" = []
-    cur_func_forward_branches: "set[int]" = set()
-
-    def add_function():
-        if cur_func_name == "":
-            # No functions were found
-            return
-
-        # Discard trailing nops
-        for idx in range(len(cur_func_insts) - 1, 0, -1):
-            i = cur_func_insts[idx]
-            if i.i.uniqueId == rabbitizer.InstrId.cpu_nop and not i.is_branch_delay_slot:
-                cur_func_insts.pop(idx)
-            else:
-                break
-
-        # Ensure function ends with jr $ra
-        # Otherwise, it's not a function
-        if len(cur_func_insts) >= 2:
-            jr = cur_func_insts[-2] # -2 to account for the delay slot after jr
-            if not jr.i.isReturn():
-                return
-
-        # Record branch targets
-        for addr in cur_func_branch_dests:
-            idx = (addr - cur_func_addr) // 4
-            if idx >= 0 and idx < len(cur_func_insts):
-                cur_func_insts[idx].is_branch_target = True
-
-        # Add function
-        funcs.append(DLLFunction(
-            insts=cur_func_insts,
-            address=cur_func_addr,
-            symbol=cur_func_name,
-            type=cur_func_type
-        ))
-
-    rom = header.size
-    vram = 0x0
-    while rom < text_file_end:
-        # Decode next instruction
-        word = struct.unpack_from(">I", dll_data, rom)[0]
-        i = rabbitizer.Instruction(word, vram, category=rabbitizer.InstrCategory.CPU)
-
-        if not i.isValid():
-            print("ERROR: Invalid instruction @ {:#x}. Stopping.".format(rom))
-            exit(1)
-            break
-
-        # Check if this instruction is a branch delay slot of the previous instruction
-        is_delay_slot = last_inst != None and last_inst.hasDelaySlot()
-         
-        if new_func and i.uniqueId != rabbitizer.InstrId.cpu_nop and not is_delay_slot:
-            # Add previous function
-            add_function()
-            
-            # New function, determine name and type
-            text_offset = i.vram
-            cur_func_name = symbols.get_func_name_or_default(i.vram)
-            if text_offset == header.ctor_offset:
-                cur_func_type = DLLFunctionType.Ctor
-            elif text_offset == header.dtor_offset:
-                cur_func_type = DLLFunctionType.Dtor
-            else:
-                cur_func_type = DLLFunctionType.Export if text_offset in header.export_offsets else DLLFunctionType.Local
-            
-            cur_func_addr = i.vram
-            cur_func_insts = []
-            cur_func_branch_dests = []
-            cur_func_forward_branches = set()
-            new_func = False
-        
-        is_branch = False
-        if i.isBranch():
-            is_branch = True
-            # Save branch address
-            branch_target = i.getBranchVramGeneric()
-            # Save target
-            cur_func_branch_dests.append(branch_target)
-            # If the branch target is ahead of this instruction, save it to assist in
-            # detecting the function end
-            if branch_target > i.vram:
-                cur_func_forward_branches.add(branch_target)
-        
-        # Add instruction
-        cur_func_insts.append(DLLInst(
-            i=i,
-            is_branch=is_branch,
-            is_branch_delay_slot=is_delay_slot
-        ))
-        
-        # If we reached a branch target, pop it
-        if i.vram in cur_func_forward_branches:
-            cur_func_forward_branches.remove(i.vram)
-        
-        # Check for function end
-        if i.isReturn() and len(cur_func_forward_branches) == 0:
-            # Reached a jr $ra and we're not inside of a branch, must be the function end
-            new_func = True
-
-        # Track last instruction
-        last_inst = i
-        
-        # Next
-        rom += 4
-        vram += 4
-    
-    # Add final function
-    add_function()
-
-    # Run full analysis for each function if requested
-    if analyze:
-        for func in funcs:
-            analyze_dll_function(func, dll, dll_data, symbols, bss_size)
-
-    return funcs
-
-class _GOTLoad(TypedDict):
-    got_idx: int
-    inst_idx: int
-
-class _PossibleJumpTable(TypedDict):
-    gp_lw_inst_idx: int             # lw reg, 0x4($gp)
-    rodata_lw_inst_idx: int | None  # lw reg, disp(gp_lw_reg)
-    addu_gp: bool                   # addu reg, reg, $gp
-    rodata_offset: int | None
-
-__SAVED_REGISTERS = set([
-    rabbitizer.RegGprO32.s0, rabbitizer.RegGprO32.s1, rabbitizer.RegGprO32.s2, rabbitizer.RegGprO32.s3,
-    rabbitizer.RegGprO32.s4, rabbitizer.RegGprO32.s5, rabbitizer.RegGprO32.s6, rabbitizer.RegGprO32.s7
-])
-
-def analyze_dll_function(func: DLLFunction,
-                         dll: DLL,
-                         dll_data: bytes,
-                         symbols: DLLSymbols,
-                         bss_size: int | None=None):
-    """Fully analyzes an individual DLL function."""
-    insts = func.insts
-
-    data_size = dll.get_data_size()
-
-    start_idx = 0
-
-    # Check for Dino Planet flavored $gp prologue
-    # lui $gp, 0
-    # ori $gp, $gp, 0
-    # nop
-    if len(insts) >= 3:
-        i1 = insts[0].i
-        i2 = insts[1].i
-        i3 = insts[2].i
-
-        if i1.uniqueId == rabbitizer.InstrId.cpu_lui and i1.rt == rabbitizer.RegGprO32.gp and i1.getProcessedImmediate() == 0 and \
-           i2.uniqueId == rabbitizer.InstrId.cpu_ori and i2.rt == rabbitizer.RegGprO32.gp and i2.rs == rabbitizer.RegGprO32.gp and i2.getProcessedImmediate() == 0 and \
-           i3.uniqueId == rabbitizer.InstrId.cpu_nop:
-            # Replace with standard MIPS $gp prologue
-            func.has_gp_prologue = True
-            # lui     gp,0x0
-            insts[0].i = rabbitizer.Instruction(0x3C1C0000, i1.vram, category=rabbitizer.InstrCategory.CPU)
-            insts[0].relocation = DLLInstRelocation(DLLInstRelocationType.HI16, "_gp_disp", 0)
-            # addiu   gp,gp,0x0
-            insts[1].i = rabbitizer.Instruction(0x279C0000, i2.vram, category=rabbitizer.InstrCategory.CPU)
-            insts[1].relocation = DLLInstRelocation(DLLInstRelocationType.LO16, "_gp_disp", 0)
-            # addu    gp,gp,t9
-            insts[2].i = rabbitizer.Instruction(0x0399E021, i3.vram, category=rabbitizer.InstrCategory.CPU)
-            start_idx = 3
-    
-    # Reverse analyze relocations
-    reg_to_got_loads: "dict[rabbitizer.Enum, _GOTLoad]" = {}
-    reg_to_possible_jtable: "dict[int, _PossibleJumpTable]" = {}
-    clear_loads_next_inst = False
-    local_rodata_refs: "set[int]" = set()
-    local_data_refs: "set[int]" = set()
-    local_bss_refs: "set[int]" = set()
-    jump_table_refs: "set[int]" = set()
-    local_rodata_ref_info: "dict[int, DLLLocalRefInfo]" = {}
-    local_data_ref_info: "dict[int, DLLLocalRefInfo]" = {}
-    local_bss_ref_info: "dict[int, DLLLocalRefInfo]" = {}
-
-    for idx, inst in enumerate(insts[start_idx:], start_idx):
-        i = inst.i
-        new_got_load = False
-
-        if i.uniqueId == rabbitizer.InstrId.cpu_lw and i.rs == rabbitizer.RegGprO32.gp:
-            # Found load from GOT, record reg so we can determine the relocation from use
-            # lw rt, imm(rs)
-            got_offset = i.getProcessedImmediate()
-            assert got_offset % 4 == 0
-            got_idx = got_offset // 4
-
-            existing_got_load = reg_to_got_loads.pop(i.rt, None)
-            if existing_got_load != None:
-                print("WARN: Unresolved GOT load @ {:#x}. Register overwritten @ {:#x}"
-                    .format(insts[existing_got_load["inst_idx"]].i.vram, i.vram))
-
-            reg_to_got_loads[i.rt] = { "got_idx": got_idx, "inst_idx": idx }
-            new_got_load = True
-        elif i.uniqueId == rabbitizer.InstrId.cpu_jalr:
-            got_load = reg_to_got_loads.pop(i.rs, None)
-            if got_load != None:
-                # Extern symbol lookup, $call16
-                base_inst = insts[got_load["inst_idx"]]
-                got_entry = dll.reloc_table.global_offset_table[got_load["got_idx"]]
-                base_inst.relocation = DLLInstRelocation(
-                    type=DLLInstRelocationType.CALL16,
-                    symbol=symbols.get_global_name_or_default(got_entry),
-                    offset=0
-                )
-        elif i.uniqueId == rabbitizer.InstrId.cpu_jr:
-            possible_jtbl = reg_to_possible_jtable.pop(i.rs, None)
-            if possible_jtbl != None:
-                if possible_jtbl["rodata_lw_inst_idx"] != None and possible_jtbl["addu_gp"]:
-                    # Found jr to jump table
-                    jtbl_rodata_offset = possible_jtbl["rodata_offset"]
-                    sym = symbols.get_jtable_name_or_default(jtbl_rodata_offset)
-
-                    hi_inst = insts[possible_jtbl["gp_lw_inst_idx"]]
-                    lo_inst = insts[possible_jtbl["rodata_lw_inst_idx"]]
-                    hi_inst.relocation = DLLInstRelocation(
-                        type=DLLInstRelocationType.GOT16,
-                        symbol=sym,
-                        offset=0
-                    )
-                    lo_inst.relocation = DLLInstRelocation(
-                        type=DLLInstRelocationType.LO16,
-                        symbol=sym,
-                        offset=0
-                    )
-                    jump_table_refs.add(jtbl_rodata_offset)
-                    local_rodata_ref_info[jtbl_rodata_offset] = DLLLocalRefInfo(
-                        load_type=DLLLocalRefLoadType.LW
-                    )
-                else:
-                    print("WARN: Unresolved possible jump table load @ {:#x}. Invalidated @ {:#x}"
-                        .format(insts[possible_jtbl["gp_lw_inst_idx"]].i.vram, i.vram))
-        else:
-            # Try to resolve jump table loads
-            handled_jtable = False
-            possible_jtbl: _PossibleJumpTable | None = None
-            if i.uniqueId == rabbitizer.InstrId.cpu_lw:
-                # lw rt, imm(rs)
-                possible_jtbl = reg_to_possible_jtable.pop(i.rs, None)
-                if possible_jtbl != None and possible_jtbl["rodata_lw_inst_idx"] == None:
-                    # Found lw reg, disp(gp_lw_reg)
-                    possible_jtbl["rodata_lw_inst_idx"] = idx
-                    possible_jtbl["rodata_offset"] = i.getProcessedImmediate()
-                    reg_to_possible_jtable[i.rt] = possible_jtbl
-                    handled_jtable = True
-            elif i.uniqueId == rabbitizer.InstrId.cpu_addu:
-                # addu rd, rs, rt
-                possible_jtbl = reg_to_possible_jtable.pop(i.rs, None)
-                if possible_jtbl != None and i.rt == rabbitizer.RegGprO32.gp and not possible_jtbl["addu_gp"]:
-                    # Found addu reg, reg, $gp
-                    possible_jtbl["addu_gp"] = True
-                    reg_to_possible_jtable[i.rd] = possible_jtbl
-                    handled_jtable = True
-
-            if possible_jtbl != None and not handled_jtable:
-                print("WARN: Unresolved possible jump table load @ {:#x}. Invalidated @ {:#x}"
-                    .format(insts[possible_jtbl["gp_lw_inst_idx"]].i.vram, i.vram))
-
-            if not handled_jtable:
-                for reg in __get_read_registers(i):
-                    possible_jtbl = reg_to_possible_jtable.pop(reg, None)
-                    if possible_jtbl != None:
-                        print("WARN: Unresolved possible jump table load @ {:#x}. Invalidated @ {:#x}"
-                            .format(insts[possible_jtbl["gp_lw_inst_idx"]].i.vram, i.vram))
-
-                    # Try to resolve GOT loads
-                    got_load = reg_to_got_loads.pop(reg, None)
-                    if got_load == None:
-                        continue
-                    
-                    # Found next use of register holding a GOT value, determine relocation type
-                    base_inst = insts[got_load["inst_idx"]]
-                    got_idx = got_load["got_idx"]
-                    # addu rd, rs, rt
-                    if got_idx == 1 and i.uniqueId == rabbitizer.InstrId.cpu_addu and i.getDestinationGpr() == reg:
-                        # This is most likely a jump table lookup
-                        reg_to_possible_jtable[reg] = { 
-                            "gp_lw_inst_idx": got_load["inst_idx"],
-                            "rodata_lw_inst_idx": None,
-                            "addu_gp": False
-                        }
-                    else:
-                        got_entry = dll.reloc_table.global_offset_table[got_idx]
-                        # Check if local symbol offset was too big and got split across the hi/lo pair
-                        # addiu rt, rs, imm
-                        split_local = (got_entry & 0x8000_0000) == 0 and got_entry >= 0x1_0000 and (got_entry & 0xFFFF) == 0 \
-                                and i.uniqueId == rabbitizer.InstrId.cpu_addiu and i.rt == i.rs
-                        if got_idx <= 3 or split_local:
-                            # Local symbol lookup, %got with %lo pair
-                            # Extract addend
-                            addend = i.getProcessedImmediate()
-                            # Determine section and symbol offset
-                            if split_local:
-                                (section, sym_offset) = symbols.convert_absolute_to_relative_address(got_entry + addend)
-                            else:
-                                section = got_idx
-                                sym_offset = addend
-                            # Add local ref if possible
-                            misalignment = 0
-                            ref_inside_section = True # A ref may be the end of the section, which we don't want a symbol for
-                            if section == 1:
-                                local_rodata_refs.add(sym_offset)
-                                __infer_ref_info(local_rodata_ref_info, sym_offset, i)
-                            elif section == 2:
-                                # .data symbols will always be 4-byte aligned
-                                if sym_offset < data_size:
-                                    if sym_offset % 4 == 0:
-                                        local_data_refs.add(sym_offset)
-                                        __infer_ref_info(local_data_ref_info, sym_offset, i)
-                                    else:
-                                        misalignment = sym_offset % 4
-                                        sym_offset -= misalignment
-                                        local_data_refs.add(sym_offset)
-                                        __default_ref_info(local_data_ref_info, sym_offset)
-                                else:
-                                    ref_inside_section = False
-                            elif section == 3:
-                                if bss_size == None or sym_offset < bss_size:
-                                    local_bss_refs.add(sym_offset)
-                                    __infer_ref_info(local_bss_ref_info, sym_offset, i)
-                                else:
-                                    ref_inside_section = False
-                            # Add relocations
-                            if ref_inside_section:
-                                (sym_name, offset) = symbols.get_local_or_encapsulating(section, sym_offset)
-                                base_inst.relocation = DLLInstRelocation(
-                                    type=DLLInstRelocationType.GOT16,
-                                    symbol=sym_name,
-                                    offset=0
-                                )
-                                inst.relocation = DLLInstRelocation(
-                                    type=DLLInstRelocationType.LO16,
-                                    symbol=sym_name,
-                                    offset=offset + misalignment
-                                )
-                        else:
-                            # Extern symbol lookup, %got
-                            base_inst.relocation = DLLInstRelocation(
-                                type=DLLInstRelocationType.GOT16,
-                                symbol=symbols.get_global_name_or_default(got_entry),
-                                offset=0
-                            )
-
-                    break
-            
-        if not new_got_load:
-            # Invalidate loads if register is overwritten
-            # Note: Register is only overwritten if that instruction loads to operand 0
-            dst_reg = i.getDestinationGpr()
-            if dst_reg != None:
-                got_load = reg_to_got_loads.pop(dst_reg, None)
-                if got_load != None:
-                    print("WARN: Unresolved GOT load @ {:#x}. Register overwritten @ {:#x}"
-                        .format(insts[got_load["inst_idx"]].i.vram, i.vram))
-            
-            
-        if i.hasDelaySlot():
-            # Clear after delay slot
-            clear_loads_next_inst = True
-        elif clear_loads_next_inst:
-            # Any loads after a branch are either unresolved or valid extern %got loads 
-            clear_loads_next_inst = False
-            for dst_reg in list(reg_to_got_loads.keys()):
-                if dst_reg in __SAVED_REGISTERS:
-                    # GOT loads into saved registers are an exception here as they stay valid across
-                    # basic blocks. Our analysis isn't fancy so just let leave these alone. This should
-                    # be fine in most cases...
-                    continue
-
-                got_load = reg_to_got_loads.pop(dst_reg)
-                base_inst = insts[got_load["inst_idx"]]
-                got_idx = got_load["got_idx"]
-
-                if got_idx <= 3:
-                    print("WARN: Unresolved GOT load @ {:#x}. Reached control flow before usage @ {:#x}"
-                        .format(base_inst.i.vram, i.vram))
-                else:
-                    # Extern symbol lookup, %got
-                    got_entry = dll.reloc_table.global_offset_table[got_idx]
-                    base_inst.relocation = DLLInstRelocation(
-                        type=DLLInstRelocationType.GOT16,
-                        symbol=symbols.get_global_name_or_default(got_entry),
-                        offset=0
-                    )
-            while len(reg_to_possible_jtable) > 0:
-                (_, possible_jtbl) = reg_to_possible_jtable.popitem()
-                base_inst = insts[possible_jtbl["gp_lw_inst_idx"]]
-                print("WARN: Unresolved possible jump table load @ {:#x}. Reached control flow before usage @ {:#x}"
-                    .format(base_inst.i.vram, i.vram))
-
-    
-    # Any leftover loads are either unresolved or valid extern %got loads 
-    while len(reg_to_got_loads) > 0:
-        (_, got_load) = reg_to_got_loads.popitem()
-        base_inst = insts[got_load["inst_idx"]]
-        got_idx = got_load["got_idx"]
-        if got_idx <= 3:
-            print("WARN: Unresolved GOT load @ {:#x}. Reached end of function before usage."
-                .format(base_inst.i.vram))
-        else:
-            # Extern symbol lookup, %got
-            got_entry = dll.reloc_table.global_offset_table[got_idx]
-            base_inst.relocation = DLLInstRelocation(
-                type=DLLInstRelocationType.GOT16,
-                symbol=symbols.get_global_name_or_default(got_entry),
-                offset=0
-            )
-    while len(reg_to_possible_jtable) > 0:
-        (_, possible_jtbl) = reg_to_possible_jtable.popitem()
-        base_inst = insts[possible_jtbl["gp_lw_inst_idx"]]
-        print("WARN: Unresolved possible jump table load @ {:#x}. Reached end of function before usage."
-            .format(base_inst.i.vram))
-    
-    # Attach found local syms
-    func.local_rodata_refs = local_rodata_refs
-    func.local_rodata_ref_info = local_rodata_ref_info
-    func.local_data_refs = local_data_refs
-    func.local_data_ref_info = local_data_ref_info
-    func.local_bss_refs = local_bss_refs
-    func.local_bss_ref_info = local_bss_ref_info
-    func.jump_table_refs = jump_table_refs
-
-    # Analyze jump tables
-    __analyze_dll_function_jump_tables(func, dll, dll_data)
-
-def __get_read_registers(i: rabbitizer.Instruction):
-    regs = []
-
-    if i.readsRd():
-        regs.append(i.rd)
-    if i.readsRs():
-        regs.append(i.rs)
-    if i.readsRt():
-        regs.append(i.rt)
-
-    if i.readsFd():
-        regs.append(i.fd)
-    if i.readsFs():
-        regs.append(i.fs)
-    if i.readsFt():
-        regs.append(i.ft)
-
-    return regs
-
-def __analyze_dll_function_jump_tables(func: DLLFunction,
-                                       dll: DLL,
-                                       dll_data: bytes):
-    assert(func.jump_table_refs != None)
-    if not dll.has_rodata():
-        return
-    
-    jump_tables: dict[int, DLLJumpTable] = {}
-    targets: set[int] = set()
-
-    func_start = func.address
-    func_end = func.address + len(func.insts) * 4
-
-    rodata_start = dll.header.rodata_offset + dll.reloc_table.get_size() # exclude relocation tables
-    rodata_end = rodata_start + dll.get_rodata_size()
-    rodata = dll_data[rodata_start:rodata_end]
-    rodata_size = rodata_end - rodata_start
-
-    for ref in func.jump_table_refs:
-        entries: list[DLLJumpTableEntry] = []
-        offset = ref
-        while offset < rodata_size and \
-              (offset == ref or not offset in func.jump_table_refs) and \
-              not offset in func.local_rodata_refs:
-            value = struct.unpack_from(">i", rodata, offset)[0]
-            target = dll.header.rodata_offset - dll.header.size + value
-            if target < func_start or target >= func_end:
-                break
-            entries.append(DLLJumpTableEntry(value, target))
-            targets.add(target)
-            offset += 4
-        
-        jump_tables[ref] = DLLJumpTable(rodata_start - dll.header.size + ref, ref, entries)
-
-    func.jump_tables = jump_tables
-    func.jump_table_targets = targets
-
-def __default_ref_info(local_ref_info: dict[int, DLLLocalRefInfo], ref: int) -> DLLLocalRefInfo:
-    if not ref in local_ref_info:
-        local_ref_info[ref] = DLLLocalRefInfo(load_type=DLLLocalRefLoadType.UNKNOWN)
-
-def __infer_ref_info(local_ref_info: dict[int, DLLLocalRefInfo], ref: int, i: rabbitizer.Instruction) -> DLLLocalRefInfo:
-    ref_info = local_ref_info.get(ref, None)
-    if ref_info == None:
-        ref_info = DLLLocalRefInfo(load_type=DLLLocalRefLoadType.UNKNOWN)
-        local_ref_info[ref] = ref_info
-    
-    if i.uniqueId == rabbitizer.InstrId.cpu_lw:
-        ref_info.load_type = DLLLocalRefLoadType.LW
-    elif i.uniqueId == rabbitizer.InstrId.cpu_lwc1:
-        ref_info.load_type = DLLLocalRefLoadType.LWC1
-    elif i.uniqueId == rabbitizer.InstrId.cpu_ldc1:
-        ref_info.load_type = DLLLocalRefLoadType.LDC1

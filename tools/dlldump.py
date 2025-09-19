@@ -7,7 +7,7 @@ from pathlib import Path
 from signal import signal, SIGPIPE, SIG_DFL
 
 from dino.dll import DLL
-from dino.dll_analysis2 import AnalyzedDLL, analyze_dll
+from tools.dino.dll_analysis import AnalyzedDLL, analyze_dll
 from dino.dll_syms_txt import DLLSymsTxt
 
 def dump_header(dll: DLL):

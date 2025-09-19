@@ -12,9 +12,8 @@ import subprocess
 import sys
 
 from dino.dll import DLL
-from dino.dll_analysis import get_all_dll_functions
+from tools.dino.dll_analysis import get_dll_functions
 from dino.dlls_txt import DLLsTxt
-from dino.dll_symbols import DLLSymbols
 from dino.dll_syms_txt import DLLSymsTxt
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
@@ -146,12 +145,12 @@ def get_core_progress() -> CoreProgress:
         matching_funcs=len(matching_funcs)
     )
 
-def read_dll_symbols_txt(path: Path) -> "dict[int, str]":
+def read_dll_symbols_txt(path: Path) -> DLLSymsTxt:
     with open(path, "r", encoding="utf-8") as syms_file:
-        return DLLSymsTxt.parse(syms_file).to_absolute()
+        return DLLSymsTxt.parse(syms_file)
 
 def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLProgress:
-    known_symbols: "dict[int, str]" = {}
+    symbol_files: list[DLLSymsTxt] = []
     nonmatching_funcs: "set[str]" = set()
     has_src = False
 
@@ -162,7 +161,7 @@ def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLPro
         if syms_path.exists():
             has_src = True
             # Get a list of known symbols for the DLL (we need the function symbols)
-            known_symbols = read_dll_symbols_txt(syms_path)
+            symbol_files.append(read_dll_symbols_txt(syms_path))
             # Get list of functions that aren't matching
             nonmatchings_dir = ASM_PATH.joinpath(f"nonmatchings/dlls/{dll_dir}")
             if nonmatchings_dir.exists():
@@ -174,14 +173,13 @@ def get_dll_progress(dll_path: Path, number: str, dll_dir: str | None) -> DLLPro
     with open(dll_path, "rb") as dll_file:
         dll_data = bytearray(dll_file.read())
         dll = DLL.parse(dll_data)
-        dll_symbols = DLLSymbols(dll, number, known_symbols)
-        dll_functions = get_all_dll_functions(dll_data, dll, dll_symbols)
+        dll_functions = get_dll_functions(dll, int(number, base=0), dll_data, symbol_files)
     
     func_sizes: "dict[str, int]" = {}
     total_bytes = 0
     for func in dll_functions:
-        size = len(func.insts) * 4
-        func_sizes[func.symbol] = size
+        size = func.sizew * 4
+        func_sizes[func.getName()] = size
         total_bytes += size
     
     # Compute matching amounts
