@@ -75,6 +75,12 @@ def analyze_dll(dll: DLL, dll_number: int, dll_bytes: bytes, symbol_files: list[
     if bss != None:
         bss.analyze()
 
+    # Don't let .data symbols reference others (except the relocs we explicitly defined).
+    # Otherwise, the re-assembled code will end up with more .data relocs than in the original DLL.
+    if data != None:
+        for sym in data.symbolList:
+            sym.contextSym.allowedToReferenceSymbols = False
+
     # Set custom symbol name defaults
     __set_symbol_name_defaults(dll, dll_number, context.globalSegment, context.unknownSegment, text, rodata, data, bss)
 
@@ -147,12 +153,13 @@ def __set_symbol_name_defaults(
                     sym.sectionType = spimdisasm.common.FileSectionType.Rodata
 
             if sym.sectionType == spimdisasm.common.FileSectionType.Text:
-                if (sym.vram - DLL_VRAM_BASE) == dll.header.ctor_offset:
-                    sym.setNameIfUnset("dll_{}_ctor".format(dll_number))
-                elif (sym.vram - DLL_VRAM_BASE) == dll.header.dtor_offset:
-                    sym.setNameIfUnset("dll_{}_dtor".format(dll_number))
-                else:
-                    sym.setNameIfUnset("dll_{}_func_{:X}".format(dll_number, sym.vram - text.vram))
+                if sym.type == spimdisasm.common.SymbolSpecialType.function:
+                    if (sym.vram - DLL_VRAM_BASE) == dll.header.ctor_offset:
+                        sym.setNameIfUnset("dll_{}_ctor".format(dll_number))
+                    elif (sym.vram - DLL_VRAM_BASE) == dll.header.dtor_offset:
+                        sym.setNameIfUnset("dll_{}_dtor".format(dll_number))
+                    else:
+                        sym.setNameIfUnset("dll_{}_func_{:X}".format(dll_number, sym.vram - text.vram))
             elif sym.sectionType == spimdisasm.common.FileSectionType.Rodata and rodata != None:
                 if sym.isJumpTable():
                     sym.setNameIfUnset("jtbl_{:X}".format(sym.vram - rodata.vram))
@@ -215,26 +222,29 @@ def __define_symbols_from_reloc_table(
     
     # Known functions
     for gp_reloc in dll.reloc_table.gp_relocations:
-        text.addSymbol(text.vram + gp_reloc)
+        text.addSymbol(text.vram + gp_reloc, sectionType=text.sectionType)
 
     # Known .data variables
     if data != None:
         for data_reloc in dll.reloc_table.data_relocations:
             data_ptr = data.words[data_reloc // 4]
-            data.addSymbol(data.vram + data_ptr)
+            target_sym = data.addSymbol(data.vram + data_ptr, sectionType=data.sectionType)
+
+            data.addSymbol(data.vram + data_reloc, sectionType=data.sectionType)
+            data.context.addGlobalReloc(data.vromStart + data_reloc, spimdisasm.common.RelocType.MIPS_32, target_sym)
     
     # Known global variables
     for e in dll.reloc_table.global_offset_table[4:]:
         if (e & 0x80000000) == 0:
             var_vram = DLL_VRAM_BASE + e
             if bss != None and var_vram >= bss.vram and var_vram < bss.vramEnd:
-                bss.addSymbol(var_vram)
+                bss.addSymbol(var_vram, sectionType=bss.sectionType)
             elif data != None and var_vram >= data.vram and var_vram < data.vramEnd:
-                data.addSymbol(var_vram)
+                data.addSymbol(var_vram, sectionType=data.sectionType)
             elif rodata != None and var_vram >= rodata.vram and var_vram < rodata.vramEnd:
-                rodata.addSymbol(var_vram)
+                rodata.addSymbol(var_vram, sectionType=rodata.sectionType)
             elif var_vram >= text.vram and var_vram < text.vramEnd:
-                text.addSymbol(var_vram)
+                text.addSymbol(var_vram, sectionType=text.sectionType)
             else:
                 global_segment.addSymbol(var_vram)
 
@@ -359,6 +369,7 @@ def __set_spimdisasm_config(gp: int):
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_LOW = DLL_VRAM_BASE
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_HIGH = 0xB0000000 # Filter out direct ROM address
     spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 4 # 3 can detect empty strings, 4 can detect whitespace strings
+    spimdisasm.common.GlobalConfig.ALLOW_ALL_ADDENDS_ON_DATA = False
 
 def __set_rabbitizer_config():
     rabbitizer.config.regNames_gprAbiNames = rabbitizer.Abi.O32
