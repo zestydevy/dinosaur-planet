@@ -3,24 +3,27 @@
 #   limitations with how asm-processor works.
 # - Sort .rel.text relocations by function because asm-processor appended them
 #   to the object file produced by the .c file (which breaks GOT order).
+# - Sort .rel.text relocations such that they match the order of the original GOT,
+#   since the assembler will not always emit relocations in the same order as IDO.
 
 import bisect
-from pathlib import Path
-import re
-import subprocess
+from io import BufferedReader
+import struct
 import sys
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import Section, SymbolTableSection, Symbol
+from elftools.elf.sections import SymbolTableSection, Symbol
 from elftools.elf.relocation import RelocationSection, Relocation
-from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import os
-from typing import BinaryIO, TextIO
+from typing import BinaryIO
 import shutil
 
-EXPORT_PATTERN = re.compile(r"\s*\.dword\s*(\S+)")
 VERBOSE = False
 
-def fix_rel_text_order(syms: list[Symbol], rel_text_relocations: list[Relocation]):
+def fix_rel_text_order(syms: list[Symbol], rel_text_relocations: list[Relocation], got: list[int]):
+    got_index_map: dict[int, int] = {}
+    for i, e in enumerate(got):
+        got_index_map[e] = i
+
     # asm-processor appends relocations contributed by GLOBAL_ASM blocks, which breaks the order
     # that GOT entries are detected and thus results in a non-matching GOT.
     #
@@ -44,23 +47,44 @@ def fix_rel_text_order(syms: list[Symbol], rel_text_relocations: list[Relocation
     
     i = 0
     for group in relocs_by_func:
+        # Match sort of original GOT within each function
+        pairs: list[tuple[int | None, Relocation]] = []
+        got_relocs: list[tuple[int, Relocation]] = []
+
+        # Extract relocs that point to a known GOT entry
         for reloc in group:
+            sym = syms[reloc.entry["r_info_sym"]]
+            sym_value = sym.entry["st_value"]
+            got_index = got_index_map.get(sym_value)
+            pairs.append((got_index, reloc))
+
+            if got_index != None:
+                got_relocs.append((got_index, reloc))
+
+        # Sort known GOT relocs
+        got_relocs.sort(key=lambda t: t[0])
+
+        # Re-integrate sorted GOT relocs into original list
+        k = 0
+        local_sort: list[Relocation] = []
+        for (got_index, reloc) in pairs:
+            if got_index == None:
+                local_sort.append(reloc)
+            else:
+                local_sort.append(got_relocs[k][1])
+                k += 1
+
+        # Update final reloc order
+        for reloc in local_sort:
             rel_text_relocations[i] = reloc
             i += 1
 
-def fix_local_syms(syms: list[Symbol], rel_text_relocations: list[Relocation], exports: set[str]):
-    # Find GOT16/LO16 relocations referencing defined symbols that we know should be local symbols.
-    # These will only show up from GLOBAL_ASM.
-    for reloc in rel_text_relocations:
-        reloc_type = reloc["r_info_type"]
-        
-        if reloc_type != ENUM_RELOC_TYPE_MIPS["R_MIPS_GOT16"] and reloc_type != ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
-            continue
-            
-        sym_idx = reloc["r_info_sym"]
-        sym = syms[sym_idx]
-        assert isinstance(sym, Symbol)
+def fix_local_syms(syms: list[Symbol], rel_exports_relocations: list[Relocation]):
+    export_syms: set[int] = set()
+    for reloc in rel_exports_relocations:
+        export_syms.add(reloc["r_info_sym"])
 
+    for idx, sym in enumerate(syms):
         sym_shndx = sym.entry["st_shndx"]
         if sym_shndx == "SHN_UNDEF" or sym_shndx == "SHN_ABS":
             continue
@@ -69,9 +93,12 @@ def fix_local_syms(syms: list[Symbol], rel_text_relocations: list[Relocation], e
         if sym_type == "STT_SECTION":
             continue
 
+        sym_bind = sym.entry["st_info"]["bind"]
+        if sym_bind != "STB_GLOBAL":
+            continue
+
         # Assume any defined symbol that isn't a DLL export is local
-        is_local_sym = not sym.name in exports
-        if not is_local_sym:
+        if idx in export_syms:
             continue
 
         # Convert to local symbol
@@ -79,7 +106,27 @@ def fix_local_syms(syms: list[Symbol], rel_text_relocations: list[Relocation], e
         if sym_type == "STT_NOTYPE":
             sym.entry["st_info"]["type"] = "STT_OBJECT"
 
-def fix_up(obj: ELFFile, out_obj: BinaryIO, exports: set[str]):
+def read_got(dll: BufferedReader):
+    got: list[int] = []
+
+    dll.seek(0x8, os.SEEK_SET)
+    rodata_offset = struct.unpack(">I", dll.read(4))[0]
+    if rodata_offset == 0xFFFF_FFFF:
+        return got
+    
+    dll.seek(rodata_offset, os.SEEK_SET)
+    while True:
+        word = struct.unpack(">I", dll.read(4))[0]
+        if word == 0xFFFF_FFFE:
+            break
+        got.append(word)
+    
+    return got
+
+def fix_up(obj: ELFFile, out_obj: BinaryIO, dll: BufferedReader):
+    # Read original GOT
+    got = read_got(dll)
+
     # Load symbols
     symtab_idx = obj.get_section_index(".symtab")
     symtab = obj.get_section(symtab_idx)
@@ -94,12 +141,14 @@ def fix_up(obj: ELFFile, out_obj: BinaryIO, exports: set[str]):
 
     # Apply fixes
     rel_text_tuple = rel_sections.get(".rel.text")
-    if rel_text_tuple != None:
+    rel_exports_tuple = rel_sections.get(".rel.exports")
+    if rel_text_tuple != None and rel_exports_tuple != None:
         (_, rel_text_relocations) = rel_text_tuple
+        (_, rel_exports_relocations) = rel_exports_tuple
         # Convert syms to local that should have already been local
-        fix_local_syms(syms, rel_text_relocations, exports)
+        fix_local_syms(syms, rel_exports_relocations)
         # Fix .rel.text relocation order due to asm-processor appending relocations
-        fix_rel_text_order(syms, rel_text_relocations)
+        fix_rel_text_order(syms, rel_text_relocations, got)
     
     # Re-sort symbols (local symbols must always be first and we modified symbol binds)
     new_syms = syms.copy()
@@ -136,47 +185,23 @@ def fix_up(obj: ELFFile, out_obj: BinaryIO, exports: set[str]):
     for sym in new_syms:
         obj.structs.Elf_Sym.build_stream(sym.entry, out_obj)
 
-def read_exports_s(exports_s: TextIO) -> "set[str]":
-    exports: "set[str]" = set()
-
-    for line in exports_s.readlines():
-        match = EXPORT_PATTERN.match(line)
-        if match != None:
-            sym_name = match.group(1)
-            exports.add(sym_name)
-    
-    return exports
-
 def main():
-    # Split our args from the actual command
+    # Read args
     args = sys.argv[1:]
 
-    exports_s_path = args[0] # We expect the DLL's exports.s file as the first argument
-    command_args = args[1:]
+    dll_path = args[0]
+    in_path = args[1]
+    out_path = args[2]
 
-    # Run command
-    retcode = subprocess.call(command_args)
-
-    # Don't fix up output if the command failed
-    if retcode != 0:
-        sys.exit(retcode)
-
-    # Get out file from args
-    out_index = command_args.index("-o")
-    out_file_path = Path(command_args[out_index + 1])
-
-    # Copy output file so we can replace it while keeping the original
-    copied_out_file_path = out_file_path.with_suffix(".beforefixup.o")
-    shutil.copy(out_file_path, copied_out_file_path)
+    # Clone input file so we can edit it
+    shutil.copy(in_path, out_path)
 
     # Do fix up
-    with open(copied_out_file_path, "rb") as obj_file, \
-         open(out_file_path, "r+b") as output_file, \
-         open(exports_s_path, "r", encoding="utf-8") as exports_file:
-        exports = read_exports_s(exports_file)
-        
+    with open(in_path, "rb") as obj_file, \
+         open(out_path, "r+b") as output_file, \
+         open(dll_path, "rb") as dll_file:
         with ELFFile(obj_file) as obj:
-            fix_up(obj, output_file, exports)
+            fix_up(obj, output_file, dll_file)
 
 if __name__ == "__main__":
     main()
