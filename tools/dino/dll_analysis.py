@@ -457,7 +457,7 @@ def __set_spimdisasm_config(gp: int):
     spimdisasm.common.GlobalConfig.ASM_NM_LABEL = ""
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_LOW = DLL_VRAM_BASE
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_HIGH = 0xB0000000 # Filter out direct ROM address
-    spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 4 # 3 can detect empty strings, 4 can detect whitespace strings
+    spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 3 # 3 can detect empty strings
     spimdisasm.common.GlobalConfig.ALLOW_ALL_ADDENDS_ON_DATA = False
 
 def __set_rabbitizer_config():
