@@ -75,10 +75,7 @@ void dll_227_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_18.s")
-#else
-void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, s32 arg2) {
+void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNuggetCreateInfo* arg2) {
     Object* object;
     Object** objects;
     TumbleweedState* state;
@@ -112,7 +109,7 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, s32 arg2) {
     } else {
         self->srt.scale = 0.001f;
         gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)state, 0, 0x40000, 1);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_84.withFiveArgs((void*)state, 1, &_data_0[0], &_data_C, 4);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_84.withFiveArgs((s32)state, 1, (s32)&_data_0[0], (s32)&_data_C, 4);
         gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, state);
         state->unk270 = 0;
         self->unk0xaf |= 8;
@@ -123,8 +120,15 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, s32 arg2) {
             while (index < count){
                 object = objects[index];
                 if (object->id == OBJ_SC_golden_nugge) {
+
+                    // @fake
+                    if (1) {}
                     state->goldenNugget = object;
-                    state->goldenNuggetFlag = ((GoldenNuggetCreateInfo*)object->createInfo)->unk24;
+                    arg2 = (GoldenNuggetCreateInfo*)object->createInfo;
+                    state->goldenNuggetFlag = arg2->unk24 & 0xFFFF;
+                    // @fake
+                    if (arg2) {}
+
                     if (get_gplay_bitstring(state->goldenNuggetFlag)) {
                         state->goldenNugget = NULL;
                     }
@@ -140,7 +144,6 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, s32 arg2) {
     obj_add_object_type(self, 0x33);
     func_800267A4(self);
 }
-#endif
 
 // offset: 0x354 | func: 1 | export: 1
 #ifndef NON_MATCHING
@@ -315,7 +318,7 @@ void dll_227_func_174C(Object* self) {
 }
 
 // offset: 0x17C0 | func: 13 | export: 10
-//When being eaten
+/** When being eaten */
 void dll_227_func_17C0(Object* self, Vec3f* arg1) {
     TumbleweedState *state = self->state;
     f32 dx;
@@ -356,10 +359,10 @@ s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
 
 void dll_227_func_1850(Object* self, TumbleweedState* state) {
     f32 var_fv0;
-    f32 minimum;
     s32 sampleCount;
-    f32** samples;
     s32 minimumIndex;
+    f32 **samples;
+    f32 minimum;
     s32 volume;
     s32 i;
 
@@ -415,19 +418,19 @@ void dll_227_func_1850(Object* self, TumbleweedState* state) {
     if (samples){        
         minimum = *samples[minimumIndex] + 7.0f;
         if (minimum < self->srt.transl.y) {
-            self->speed.y = self->speed.y + -0.17f;
+            self->speed.y = self->speed.y - 0.17f;
             return;
         }
         
         self->srt.transl.y = minimum;
-        if ((self->id == 0x3FB) || (self->id == 0x40B)) {
+        if (self->id == OBJ_Tumbleweed2 || self->id == OBJ_Tumbleweed2twig) {
             self->speed.y = 0.0f - (((f32)state->unk260 / rand_next(0x8C, 0xB4)) * (self->speed.y * 0.8f));
         } else {
             self->speed.y = 0.0f - (((f32) state->unk260 / rand_next(0x14, 0x28)) * (self->speed.y * 0.8f));
         }
         
         volume = self->speed.y * 32.0f;
-        if (volume >= 0x80) {
+        if (volume > 0x7F) {
             volume = 0x7F;
         }
         
