@@ -7,17 +7,6 @@
 s32 func_80023D30(Object*,s32,f32,s32);
 
 typedef struct {
-/*000*/ s8 unk0;
-/*001*/ s8 unk1;
-/*002*/ s8 unk2;
-/*003*/ s8 unk3;
-/*004*/ s16 unk4;
-/*006*/ s16 unk6;
-/*008*/ u16 unk8;
-/*008*/ u8 unkA;
-} PlayerStateUnk34C;
-
-typedef struct {
 /*000*/ s32 unk0; //bitfield?
 /*004*/ s8 unk4[0x48 - 0x4];
 /*048*/ Vec3f unk48;
@@ -69,7 +58,7 @@ typedef struct {
 /*33E*/ s8 unk33E[0x341 - 0x33E];
 /*341*/ s8 unk341;
 /*342*/ s8 unk342[0x34C - 0x342];
-/*34C*/ PlayerStateUnk34C* unk34C;
+/*34C*/ GplayStruct10* unk34C; //player stats! (health, Dusters, etc!)
 /*350*/ s32 flags;
 /*354*/ s8 unk354;    
 /*354*/ s8 unk355[0x372 - 0x355];    
@@ -1210,7 +1199,7 @@ s32 dll_210_func_1C9D8(Object* player, PlayerState* arg1, s32 arg2) {
 
     //NOTE: not sure whether arg1 is really a PlayerState struct
     arg1->unk341 = 3;
-    if (state->unk34C->unk1 > 0) {
+    if (state->unk34C->health > 0) {
         func_80023D30(player, 0xC5, 0.0f, 0);
         return -0x4D;
     }
@@ -1268,11 +1257,11 @@ void dll_210_func_1CD04(Object* player, s32 arg1) {
     if (arg1 < 0) {
         arg1 = 0;
     } else {
-        if (state->unk34C->unk2 < arg1) {
-            arg1 = state->unk34C->unk2;
+        if (state->unk34C->healthMax < arg1) {
+            arg1 = state->unk34C->healthMax;
         }
     }
-    state->unk34C->unk1 = arg1;
+    state->unk34C->health = arg1;
 }
 
 // offset: 0x1CD3C | func: 157 | export: 23
@@ -1284,7 +1273,7 @@ void dll_210_func_1CD3C(Object* player, s32 arg1) {
     } else if (arg1 >= 0x51) {
         arg1 = 0x50;
     }
-    state->unk34C->unk2 = arg1;
+    state->unk34C->healthMax = arg1;
 }
 
 // offset: 0x1CD6C | func: 158 | export: 24
@@ -1314,7 +1303,7 @@ void dll_210_func_1CDAC(Object* player, s32 arg1) {
     s32 var;
 
     state = player->state;
-    var = state->unk34C->unk2;
+    var = state->unk34C->healthMax;
     var += arg1;
 
     if (var < 0){
@@ -1322,19 +1311,19 @@ void dll_210_func_1CDAC(Object* player, s32 arg1) {
     } else if (var >= 0x51){
         var = 0x50;
     }
-    state->unk34C->unk2 = var;
+    state->unk34C->healthMax = var;
 }
 
 // offset: 0x1CDE4 | func: 160 | export: 26
 s8 dll_210_func_1CDE4(Object* player) {
     PlayerState* state = player->state;
-    return state->unk34C->unk1;
+    return state->unk34C->health;
 }
 
 // offset: 0x1CDF8 | func: 161 | export: 27
 s8 dll_210_func_1CDF8(Object* player) {
     PlayerState* state = player->state;
-    return state->unk34C->unk2;
+    return state->unk34C->healthMax;
 }
 
 // offset: 0x1CE0C | func: 162 | export: 13
@@ -1348,7 +1337,7 @@ void dll_210_func_1CE0C(Object* player, s32 arg1) {
         } else if (arg1 >= 0x65) {
             arg1 = 0x64;
         }
-        state->unk34C->unk6 = arg1;
+        state->unk34C->magicMax = arg1;
     }
 }
 
@@ -1358,14 +1347,14 @@ void dll_210_func_1CE48(Object* player, s32 arg1) {
     s32 var_v1;
 
     if (state->unk8BB != 0) {
-        var_v1 = state->unk34C->unk6;
+        var_v1 = state->unk34C->magicMax;
         var_v1 += arg1;
         if (var_v1 < 0) {
             var_v1 = 0;
         } else if (var_v1 >= 0x65) {
             var_v1 = 0x64;
         }
-        state->unk34C->unk6 = var_v1;
+        state->unk34C->magicMax = var_v1;
     }
 }
 
@@ -1377,7 +1366,7 @@ s16 dll_210_func_1CE8C(Object* player) {
     if (state->unk8BB == 0) {
         return 0;
     }
-    return state->unk34C->unk6;
+    return state->unk34C->magicMax;
 }
 
 // offset: 0x1CEB4 | func: 165 | export: 12
@@ -1389,21 +1378,21 @@ s16 dll_210_func_1CE8C(Object* player) {
 //https://dinosaurpla.net/wiki/Dinomod_Enhanced/Differences/DLLs/210_KrystalSabre#dll_210_func_1CEFC
 void dll_210_func_1CEFC(Object* player, s32 arg1) {
     PlayerState* state = player->state;
-    PlayerStateUnk34C* temp_v1;
+    GplayStruct10* temp_v1;
     s32 var_v0;
 
     if (state->unk8BB != 0) {
         temp_v1 = state->unk34C;
-        var_v0 = temp_v1->unk4;
+        var_v0 = temp_v1->magic;
         var_v0 += arg1;
         if (var_v0 < 0) {
             var_v0 = 0;
         } else {
-            if (temp_v1->unk6 < var_v0) {
-                var_v0 = temp_v1->unk6;
+            if (temp_v1->magicMax < var_v0) {
+                var_v0 = temp_v1->magicMax;
             }
         }
-        temp_v1->unk4 = var_v0;
+        temp_v1->magic = var_v0;
         if (arg1 > 0) {
             gDLL_6_AMSFX->vtbl->func2(NULL, 0x5EB, 0x7F, 0, 0, 0, 0);
         }
@@ -1418,7 +1407,7 @@ s16 dll_210_func_1CFA4(Object* arg0) {
     if (state->unk8BB == 0) {
         return 0;
     }
-    return state->unk34C->unk4;
+    return state->unk34C->magic;
 }
 
 // offset: 0x1CFCC | func: 168 | export: 70
@@ -1443,7 +1432,7 @@ void dll_210_func_1D04C(Object* player, s32 arg1) {
     } else if (arg1 >= 0x3E8) {
         arg1 = 0x3E7;
     }
-    state->unk34C->unk8 = arg1;
+    state->unk34C->scarabs = arg1;
 }
 
 // offset: 0x1D07C | func: 171 | export: 19
@@ -1452,7 +1441,7 @@ void dll_210_func_1D04C(Object* player, s32 arg1) {
 // offset: 0x1D128 | func: 172 | export: 20
 u16 dll_210_func_1D128(Object* player) {
     PlayerState* state = player->state;
-    return state->unk34C->unk8;
+    return state->unk34C->scarabs;
 }
 
 // offset: 0x1D13C | func: 173 | export: 21

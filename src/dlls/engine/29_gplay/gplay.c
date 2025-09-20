@@ -120,10 +120,10 @@ void gplay_init_save(s8 idx, char *filename) {
 
     for (i = 0; i < 2; i++) {
 
-        bss_10.unk0.unk0.unk0.unk0x0[i].hp = 12;
-        bss_10.unk0.unk0.unk0.unk0x0[i].hpMax = 12;
-        bss_10.unk0.unk0.unk0.unk0x0[i].manaMax = 25;
-        bss_10.unk0.unk0.unk0.unk0x0[i].mana = 0;
+        bss_10.unk0.unk0.unk0.unk0x0[i].health = 12;
+        bss_10.unk0.unk0.unk0.unk0x0[i].healthMax = 12;
+        bss_10.unk0.unk0.unk0.unk0x0[i].magicMax = 25;
+        bss_10.unk0.unk0.unk0.unk0x0[i].magic = 0;
 
         bss_10.unk0.unk0.unk0.unk0x18[i].unk0x0 = 4;
         bss_10.unk0.unk0.unk0.unk0x18[i].unk0x1 = 5;
