@@ -212,9 +212,7 @@ typedef struct {
   s8 unk1B; // current length of unk13
 } UnkFunc_80024108Struct;
 
-static const u32 _rodata_0[] = {
-    0x4d414d3a, 0x20637572, 0x76652073, 0x65747570, 0x20666169, 0x6c65640a, 0x00000000
-};
+static const char _rodata_0[] = "MAM: curve setup failed\n";
 
 static u32 _data_0[] = {
     0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 

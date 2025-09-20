@@ -107,6 +107,13 @@ def read_elf_relocations(elf: ELFFile,
     }
     his_to_got: "dict[int, int]" = {}
 
+    reginfo = elf.get_section_by_name(".reginfo")
+    if reginfo != None:
+        assert isinstance(reginfo, Section)
+
+        # Unpack from ELF_RegInfo
+        ri_gp_value = struct.unpack_from(">i", reginfo.data(), 0x14)[0]
+
     rel_text = elf.get_section_by_name(".rel.text")
     if rel_text != None:
         assert isinstance(rel_text, RelocationSection)
@@ -182,14 +189,21 @@ def read_elf_relocations(elf: ELFFile,
 
                 # Record reloc location for later fixup
                 text_relocs.append({ "reloc_offset": reloc_offset, "half": got_idx * 4 })
-            elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_HI16"] and sym.name == "_gp_disp":
-                # $gp prologue reloc
-                gp_relocs.append(reloc_offset)
+            elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_HI16"]:
+                if sym.name == "_gp_disp":
+                    # $gp prologue reloc
+                    gp_relocs.append(reloc_offset)
+                else:
+                    # ((AHL + S) – (short)(AHL + S)) >> 16
+                    ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
+                    s = sym_value
+                    ahls = ahl + s
+                    half = ((ahls - (ahls & 0xFFFF)) >> 16) & 0xFFFF
+                    text_relocs.append({ "reloc_offset": reloc_offset, "half": half })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
                 # Global syms won't have a lo16 pair (except _gp_disp but that's taken care of elsewhere)
                 # Section sym lo16 pairs will already have the correct value from the linker so we can leave them alone
-                assert st_info_bind != "STB_GLOBAL" or sym.name == "_gp_disp"
-                if st_info_bind == "STB_LOCAL" and sym_type != "STT_SECTION":
+                if sym.name != "_gp_disp":
                     # AHL + S
                     ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
                     text_relocs.append({ "reloc_offset": reloc_offset, "half": (ahl + sym_value) & 0xFFFF })
@@ -208,7 +222,7 @@ def read_elf_relocations(elf: ELFFile,
                 # This can safely be ignored.
                 pass
             else:
-                raise ELF2DLLException(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
+                raise ELF2DLLException(f"Unsupported .text reloc type '{reloc_type}' with offset {hex(reloc_offset)} and symbol {sym.name}")
     
     rel_data = elf.get_section_by_name(".rel.data")
     if rel_data != None:
@@ -253,21 +267,21 @@ def read_elf_relocations(elf: ELFFile,
 
             assert(sym.entry["st_shndx"] == text_shndx)
 
+            sym_type = sym.entry["st_info"]["type"]
+            sym_bind = sym.entry["st_info"]["bind"]
+
             if reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_GPREL32"]:
                 # rodata reloc
                 s = sym.entry["st_value"]
                 a = struct.unpack_from(">i", rodata_data, reloc_offset)[0]
 
+                if sym_bind != "STB_LOCAL" or sym_type != "STT_SECTION":
+                    # TODO: i don't fully understand why this is necessary
+                    s -= ri_gp_value
+
                 rodata_relocs.append({ "reloc_offset": reloc_offset, "sa": s + a })
             else:
                 raise ELF2DLLException(f"Unsupported .rodata reloc type '{reloc_type}' with offset {hex(reloc_offset)}")
-
-    reginfo = elf.get_section_by_name(".reginfo")
-    if reginfo != None:
-        assert isinstance(reginfo, Section)
-
-        # Unpack from ELF_RegInfo
-        ri_gp_value = struct.unpack_from(">i", reginfo.data(), 0x14)[0]
 
     got_and_relocs: GOTAndRelocations | None
     if len(text_relocs) == 0 and len(gp_relocs) == 0 and len(data_relocs) == 0:

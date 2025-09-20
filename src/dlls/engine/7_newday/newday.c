@@ -2,89 +2,44 @@
 #include "sys/gfx/texture.h"
 #include "unktypes.h"
 
-
-static u32 _data_0[] = {
-    0x00000000
-};
-static u32 _data_4[] = {
-    0x00000000
-};
-static f32 _data_8 = 0.0f;
-static u32 _data_C[] = {
-    0x00000000
-};
-static u32 _data_10[] = {
+/*0x0*/ static f32 _data_0 = 0.0;
+/*0x4*/ static u32 _data_4 = 0x00000000;
+/*0x8*/ static f32 _data_8 = 0.0;
+/*0xC*/ static f32 _data_C = 0.0;
+/*0x10*/ static u32 _data_10[] = {
     0x00000000, 0x3dcccccd
 };
-static u32 _data_18[] = {
-    0x00000000
-};
-static u32 _data_1C[] = {
-    0x3f800000, 0x00000000
-};
-static u32 _data_24[] = {
-    0x00000000
-};
-static u32 _data_28[] = {
-    0x3f800000, 0x00000000
-};
-static u32 _data_30[] = {
-    0xffffffff
-};
-static u32 _data_34[] = {
-    0x000000ff
-};
-static u32 _data_38[] = {
-    0x000000ff
-};
-static u32 _data_3C[] = {
-    0x000000ff
-};
-static u32 _data_40[] = {
-    0x00000000
-};
-static u32 _data_44[] = {
-    0x00000000
-};
-static u32 _data_48[] = {
-    0x00000000
-};
-static u32 _data_4C[] = {
-    0x00000000
-};
-static u32 _data_50[] = {
-    0x00000000
-};
-static u32 _data_54[] = {
-    0x00000000
-};
-static u8 _data_58 = 0;
-static f32 _data_5C = 43200.0f;
-static s32 _data_60 = 0;
-static u32 _data_64[] = {
-    0x00000000
-};
-static u32 _data_68[] = {
-    0x00000000
-};
-static u32 _data_6C[] = {
-    0x425c0000
-};
-static u32 _data_70[] = {
+/*0x18*/ static f32 _data_18 = 0.0;
+/*0x1C*/ static u32 _data_1C = 0x3f800000;
+/*0x20*/ static u32 _data_20 = 0x00000000;
+/*0x24*/ static f32 _data_24 = 0.0;
+/*0x28*/ static u32 _data_28 = 0x3f800000;
+/*0x2C*/ static u32 _data_2C = 0x00000000;
+/*0x30*/ static u32 _data_30 = 0xffffffff;
+/*0x34*/ static u32 _data_34 = 0x000000ff;
+/*0x38*/ static u32 _data_38 = 0x000000ff;
+/*0x3C*/ static u32 _data_3C = 0x000000ff;
+/*0x40*/ static u32 _data_40 = 0x00000000;
+/*0x44*/ static u32 _data_44 = 0x00000000;
+/*0x48*/ static u32 _data_48 = 0x00000000;
+/*0x4C*/ static u32 _data_4C = 0x00000000;
+/*0x50*/ static u32 _data_50 = 0x00000000;
+/*0x54*/ static u32 _data_54 = 0x00000000;
+/*0x58*/ static u8 _data_58 = 0;
+/*0x5C*/ static f32 _data_5C = 43200.0;
+/*0x60*/ static u32 _data_60 = 0x00000000;
+/*0x64*/ static u32 _data_64 = 0x00000000;
+/*0x68*/ static u32 _data_68 = 0x00000000;
+/*0x6C*/ static f32 _data_6C = 55.0;
+/*0x70*/ static u32 _data_70[] = {
     0x425c0000, 0x42c80000, 0x43520000, 0x42fa0000, 0x425c0000, 0x425c0000, 0x425c0000, 0x425c0000, 
     0x42700000, 0x43520000, 0x42f00000, 0x425c0000, 0x425c0000, 0x425c0000, 0x425c0000, 0x42700000, 
     0x435c0000, 0x43700000, 0x425c0000, 0x425c0000
 };
-static u32 _data_C0[] = {
-    0x00000000
-};
-static u32 _data_C4[] = {
-    0x3f800000
-};
-static u32 _data_C8[] = {
-    0x00000000
-};
-static u32 _data_CC[] = {
+/*0xC0*/ static u32 _data_C0 = 0x00000000;
+/*0xC4*/ static f32 _data_C4 = 1.0;
+/*0xC8*/ static u32 _data_C8 = 0x00000000;
+/*0xCC*/ static u32 _data_CC[] = {
     0x001da400, 0x00489b44, 0x1d0c351c, 0xff8fbfff, 0x74baffdb, 0xffffb0ff, 0xffffffe8, 0xd3ff82ff, 
     0xff4fa3ff, 0xb4ffff6f, 0xa7ffffff, 0xa5f5b78c, 0xffcd00ff, 0x9800ff81, 0x24f26021, 0x99356b68, 
     0x26660b00, 0x45070041, 0xffffffff, 0xffffca00, 0xfe4d0061, 0xff74c862, 0x003b65e0, 0x7f00532c, 
@@ -94,44 +49,34 @@ static u32 _data_CC[] = {
     0x8080537a, 0x6046c900, 0xfe4d0061, 0x1e4155c3, 0xdbf41e41, 0x55cbdb85, 0x1e41556f, 0x0c861e41, 
     0x55318ad8, 0x1e4155ff, 0xd5511e41, 0x55ff0c00
 };
-static u32 _data_1BC[] = {
-    0x00000000
-};
-static u32 _data_1C0[] = {
-    0x00000000
-};
-static u32 _data_1C4[] = {
-    0x00000000
-};
-static u32 _data_1C8[] = {
-    0x00000000
-};
-static u32 _data_1CC[] = {
+/*0x1BC*/ static u32 _data_1BC = 0x00000000;
+/*0x1C0*/ static u32 _data_1C0 = 0x00000000;
+/*0x1C4*/ static u32 _data_1C4 = 0x00000000;
+/*0x1C8*/ static f32 _data_1C8 = 0.0;
+/*0x1CC*/ static u32 _data_1CC[] = {
     0x00000003, 0x00020000, 0x001f0000, 0x0000000f, 0x000f0003, 0x00040002, 0x00000000, 0x001f0000, 
     0x000f000f, 0x00040001, 0x0002001f, 0x0000001f, 0x001f000f, 0x000f0001, 0x00000002, 0x001f001f, 
     0x0000001f, 0x000f000f
 };
-static u32 _data_214[] = {
+/*0x214*/ static u32 _data_214[] = {
     0xffec0014, 0x00000000, 0x03e00014, 0x00140000, 0x03e003e0, 0x00000000, 0x000001e0, 0x01e0ffec, 
     0xffec0000, 0x00000000, 0x0014ffec, 0x000003e0, 0x00000000
 };
-static u32 _data_248[] = {
+/*0x248*/ static u32 _data_248[] = {
     0xffec0014, 0x00000000, 0x07e00014, 0x00140000, 0x07e007e0, 0x00000000, 0x000003e0, 0x03e0ffec, 
     0xffec0000, 0x00000000, 0x0014ffec, 0x000007e0, 0x00000000
 };
-static u32 _data_27C[] = {
+/*0x27C*/ static u32 _data_27C[] = {
     0x00000000, 0x00000000, 0x458fc000
 };
-static u32 _data_288[] = {
+/*0x288*/ static u32 _data_288[] = {
     0x00000000, 0x00000000, 0x458fc000
 };
-static u32 _data_294[] = {
+/*0x294*/ static u32 _data_294[] = {
     0x00000000, 0x00000000, 0x43480000, 0x00000000
 };
-static u32 _data_2A4[] = {
-    0x00000000
-};
-static u32 _data_2A8[] = {
+/*0x2A4*/ static u32 _data_2A4 = 0x00000000;
+/*0x2A8*/ static u32 _data_2A8[] = {
     0x00000000, 0x00000000
 };
 
@@ -200,13 +145,13 @@ typedef struct
 /*115*/ u8 _unk115[3];
 } NewDayStruct;
 
-static u8 _bss_0[0x26]; // DAT_810296a0
-static u8 _bss_26[0x1]; // DAT_810296c6
-static u8 _bss_27[0x1]; // DAT_810296c7
-static u8 _bss_28[0x4]; // DAT_810296c8
-static u8 _bss_2C[0x4]; // DAT_810296cc
-static NewDayStruct *_bss_30; // PTR_810296d0
-static u8 _bss_34[0x28];
+/*0x0*/ static u8 _bss_0[0x26]; // DAT_810296a0
+/*0x26*/ static u8 _bss_26[0x1]; // DAT_810296c6
+/*0x27*/ static u8 _bss_27[0x1]; // DAT_810296c7
+/*0x28*/ static u8 _bss_28[0x4]; // DAT_810296c8
+/*0x2C*/ static u8 _bss_2C[0x4]; // DAT_810296cc
+/*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
+/*0x34*/ static u8 _bss_34[0x28];
 
 void dll_7_ctor(void *self) { }
 

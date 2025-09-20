@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
-import re
 from io import BufferedReader
+import spimdisasm
 from pathlib import Path
+from signal import signal, SIGPIPE, SIG_DFL
 
 from dino.dll import DLL
-from dino.dll_analysis import DLLFunction, get_all_dll_functions
-from dino.dll_code_printer import stringify_instruction
-from dino.dll_symbols import DLLSymbols
-
-symbol_pattern = re.compile(r"(\S+)\s*=\s*(\S+);")
+from dino.dll_analysis import AnalyzedDLL, analyze_dll
+from dino.dll_syms_txt import DLLSymsTxt
 
 def dump_header(dll: DLL):
     print("HEADER")
@@ -57,14 +55,31 @@ def dump_relocation_table(dll: DLL):
         table = dll.reloc_table
         got_i = 0
         for i, offset in enumerate(table.global_offset_table):
+            comment: str | None = None
             if got_i == 0:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.text)")
+                comment = ".text"
             elif got_i == 1:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.rodata)")
+                comment = ".rodata"
             elif got_i == 2:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.data)")
+                comment = ".data"
             elif got_i == 3:
-                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}(.bss)")
+                comment = ".bss"
+            elif (offset & 0x8000_0000) != 0:
+                comment = f"import {offset & ~0x8000_0000}"
+            elif offset >= 0x1_0000:
+                comment = "local hi"
+            else:
+                if offset >= table.global_offset_table[3]:
+                    comment = f".bss+0x{offset - table.global_offset_table[3]:X}"
+                elif offset >= table.global_offset_table[2]:
+                    comment = f".data+0x{offset - table.global_offset_table[2]:X}"
+                elif offset >= table.global_offset_table[1]:
+                    comment = f".rodata+0x{offset - table.global_offset_table[1]:X}"
+                elif offset >= table.global_offset_table[0]:
+                    comment = f".text+0x{offset - table.global_offset_table[0]:X}"
+            
+            if comment != None:
+                print(f"{str(i)+":":<3} {hex(offset).ljust(12)}({comment})")
             else:
                 print(f"{str(i)+":":<3} {hex(offset)}")
             got_i += 1
@@ -90,54 +105,35 @@ def dump_relocation_table(dll: DLL):
     else:
         print("No GOT or relocation tables present.")
 
-def dump_text_disassembly(dll_functions: "list[DLLFunction]",
+def dump_text_disassembly(dll: AnalyzedDLL,
                           only_funcs: "list[str] | None"):
+    spimdisasm.common.GlobalConfig.ASM_NM_LABEL = ""
+    spimdisasm.common.GlobalConfig.ASM_COMMENT_OFFSET_WIDTH = 4
+    
     print(".text")
     print("===================")
     
     first = True
 
-    for func in dll_functions:
-        if only_funcs is not None and not func.symbol in only_funcs:
+    for func in dll.text.symbolList:
+        if not func.isFunction():
+            continue
+        assert(isinstance(func, spimdisasm.mips.symbols.SymbolFunction))
+        
+        if only_funcs is not None and not func.getName() in only_funcs:
             continue
 
-        if not first:
-            print()
-        else:
+        if first:
             first = False
 
-        print("glabel {} ({})".format(func.symbol, func.type.name.lower()))
-
-        for i in func.insts:
-            inst_str, label = stringify_instruction(i, func)
-            if label != None:
-                print(label)
-            print("{:#x}:\t{}".format(i.i.vram, inst_str))
+        print(func.disassemble())
     
     if only_funcs is not None and first:
         print("(function(s) not found)")
 
-def read_syms(sym_files: list[str] | None):
-    if sym_files == None:
-        return {}
-    
-    map: "dict[int, str]" = {}
-
-    for path in sym_files:
-        with open(path, "r", encoding="utf-8") as syms_file:
-            for line in syms_file.readlines():
-                pairs = symbol_pattern.findall(line.strip())
-                for pair in pairs:
-                    addr_str: str = pair[1]
-                    if addr_str.lower().startswith("0x"):
-                        addr = int(addr_str, base=16)
-                    else:
-                        addr = int(addr_str)
-                    map[addr] = pair[0]
-    
-    return map
-
 def main():
+    signal(SIGPIPE, SIG_DFL) # Don't crash on "broken pipe" when stdout is piped
+
     parser = argparse.ArgumentParser(description="Display information from Dinosaur Planet DLLs.")
     parser.add_argument("dll", type=argparse.FileType("rb"), help="The Dinosaur Planet .dll file to read.")
     parser.add_argument("-x", "--header", action="store_true", help="Display the contents of the header.")
@@ -145,7 +141,6 @@ def main():
     parser.add_argument("-d", "--disassemble", action="store_true", help="Display assembler contents of the executable section.")
     parser.add_argument("-f", "--funcs", action="append", type=str, help="When disassembling, only show these functions.")
     parser.add_argument("-s", "--syms", action="append", type=str, help="Read known symbols from these files.")
-    parser.add_argument("--orig", action="store_true", help="Show original unanalyzed assembly.")
 
     args = parser.parse_args()
 
@@ -156,7 +151,7 @@ def main():
 
     with args.dll as dll_file:
         dll_file: BufferedReader
-        number = Path(dll_file.name).name.split(".")[0]
+        number = int(Path(dll_file.name).name.split(".")[0], base=0)
         data = bytearray(dll_file.read())
         dll = DLL.parse(data)
 
@@ -169,12 +164,16 @@ def main():
             print()
         
         if args.disassemble:
-            known_symbols = read_syms(args.syms)
-            dll_symbols = DLLSymbols(dll, number, known_symbols)
+            symbol_files: list[DLLSymsTxt] = []
+            if args.syms != None:
+                for path in args.syms:
+                    with open(path, "r") as symbol_file:
+                        symbol_files.append(DLLSymsTxt.parse(symbol_file))
 
-            dll_functions = get_all_dll_functions(data, dll, dll_symbols, 
-                                                  analyze=not args.orig)
-            dump_text_disassembly(dll_functions, args.funcs)
+            # .bss size of 0x1_0000 is a hack but it seems to be harmless for display purposes
+            analyzed_dll = analyze_dll(dll, number, data, symbol_files, bss_size=0x1_0000)
+
+            dump_text_disassembly(analyzed_dll, args.funcs)
             print()
 
 if __name__ == "__main__":
