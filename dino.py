@@ -74,22 +74,36 @@ class DinoCommandRunner:
 
     def clean_rebuild(self):
         self.clean()
-        self.extract(use_cache=False, disassemble_all=False)
+        self.extract(core_only=False, use_cache=False, disassemble_all=False)
         self.build(configure=False, force=False, skip_expected=False, no_verify=False, target=None)
 
     def update_submodules(self):
         print("Updating Git submodules...")
         self.__run_cmd(["git", "submodule", "update", "--init", "--recursive"])
 
-    def extract(self, use_cache: bool, disassemble_all: bool):
+    def extract(self, core_only: bool, use_cache: bool, disassemble_all: bool):
+        # Extract core/bin
         print("Extracting...")
-
         # If not using cache, clear existing extracted content
         if not use_cache:
             if ASM_PATH.exists():
-                if self.verbose:
-                    print(f"rm {ASM_PATH}")
-                shutil.rmtree(ASM_PATH)
+                for path in ASM_PATH.glob("*"):
+                    if path.name != "nonmatchings" and path.name != "matchings":
+                        if path.is_dir():
+                            if self.verbose:
+                                print(f"rm {path}")
+                            shutil.rmtree(path)
+                        else:
+                            if self.verbose:
+                                print(f"rm {path}")
+                            path.unlink()
+                for dir in [ASM_PATH.joinpath("nonmatchings"), ASM_PATH.joinpath("matchings")]:
+                    if dir.exists():
+                        for path in dir.glob("*"):
+                            if path.name != "dlls":
+                                if self.verbose:
+                                    print(f"rm {path}")
+                                shutil.rmtree(path)
             if BIN_PATH.exists():
                 if self.verbose:
                     print(f"rm {BIN_PATH}")
@@ -122,9 +136,22 @@ class DinoCommandRunner:
         ])
 
         # Extract DLLs
-        print()
-        print("Extracting DLLs...")
-        self.__extract_dlls(disassemble_all=disassemble_all)
+        if not core_only:
+            print()
+            print("Extracting DLLs...")
+
+            # If not using cache, clear existing DLL extracts
+            if not use_cache:
+                if ASM_PATH.exists():
+                    for dir in [ASM_PATH.joinpath("nonmatchings"), ASM_PATH.joinpath("matchings")]:
+                        if dir.exists():
+                            for path in dir.glob("*"):
+                                if path.name == "dlls":
+                                    if self.verbose:
+                                        print(f"rm {path}")
+                                    shutil.rmtree(path)
+
+            self.__extract_dlls(disassemble_all=disassemble_all)
 
         print()
         self.configure()
@@ -385,7 +412,7 @@ class DinoCommandRunner:
         print()
         self.update_ido(force=False)
         print()
-        self.extract(use_cache=False, disassemble_all=False)
+        self.extract(core_only=False, use_cache=False, disassemble_all=False)
         print()
         print(f"Done! Run '{self.__get_invoked_as()} build' to build the ROM.")
 
@@ -502,11 +529,15 @@ def main():
     setup_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
     setup_dll_cmd.add_argument("dir", type=str, help="Directory name to set up the DLL under.")
     
-    extract_cmd = subparsers.add_parser("extract", help="Split ROM and unpack DLLs.")
+    extract_cmd = subparsers.add_parser("extract", help="Split ROM and extract DLLs.")
     extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
     extract_cmd.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
 
-    extract_dll_cmd = subparsers.add_parser("extract-dll", help="Split and extract DLL.")
+    extract_core_cmd = subparsers.add_parser("extract-core", help="Split ROM (no DLLs).")
+    extract_core_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
+    extract_core_cmd.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
+
+    extract_dll_cmd = subparsers.add_parser("extract-dll", help="Extract a DLL.")
     extract_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
     extract_dll_cmd.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
 
@@ -551,7 +582,9 @@ def main():
         elif cmd == "setup-dll":
             runner.setup_dll(number=args.number, dll_dir=args.dir)
         elif cmd == "extract":
-            runner.extract(use_cache=args.use_cache, disassemble_all=args.disassemble_all)
+            runner.extract(core_only=False, use_cache=args.use_cache, disassemble_all=args.disassemble_all)
+        elif cmd == "extract-core":
+            runner.extract(core_only=True, use_cache=args.use_cache, disassemble_all=args.disassemble_all)
         elif cmd == "extract-dll":
             runner.extract_dll(number=args.number, disassemble_all=args.disassemble_all)
         elif cmd == "build":

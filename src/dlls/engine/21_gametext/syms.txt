@@ -11,14 +11,14 @@ gametext_get_text = 0x420;
 .rodata = 0x5F4:
 
 .data = 0x5F4:
-sCurrentBankIndex = 0x0; # absolute: 0x5F4
+sCurrentBankIndex = 0x0; // absolute:0x5F4
 
 .bss = 0x604:
-sBankCount = 0x0; # absolute: 0x604
-sBankEntryCount = 0x2; # absolute: 0x606
-sBankSize = 0x4; # absolute: 0x608
-sCurrentBank = 0x8; # absolute: 0x60C
-sCurrentBank_GlobalOffset = 0xC; # absolute: 0x610
-sCurrentBank_StrCounts = 0x10; # absolute: 0x614
-sCurrentBank_Sizes = 0x14; # absolute: 0x618
-sCurrentBank_Offsets = 0x18; # absolute: 0x61C
+sBankCount = 0x0; // absolute:0x604
+sBankEntryCount = 0x2; // absolute:0x606
+sBankSize = 0x4; // absolute:0x608
+sCurrentBank = 0x8; // absolute:0x60C
+sCurrentBank_GlobalOffset = 0xC; // absolute:0x610
+sCurrentBank_StrCounts = 0x10; // absolute:0x614
+sCurrentBank_Sizes = 0x14; // absolute:0x618
+sCurrentBank_Offsets = 0x18; // absolute:0x61C

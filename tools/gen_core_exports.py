@@ -15,7 +15,7 @@ def main():
     with open(path, "rb") as file:
         imports = DLLImportsTab.parse(file.read())
     
-    map: "dict[int, str]" = {}
+    map: "dict[int, list[str]]" = {}
 
     def read_syms(file: TextIO):
         for line in file.readlines():
@@ -26,9 +26,7 @@ def main():
                     addr = int(addr_str, base=16)
                 else:
                     addr = int(addr_str)
-                if addr in map and map[addr] != pair[0]:
-                    print(f"WARN: Overwriting {map[addr]} with {pair[0]} = {hex(addr)}")
-                map[addr] = pair[0]
+                map.setdefault(addr, []).append(pair[0])
 
     with open("symbol_addrs.txt", "r", encoding="utf-8") as syms_file:
         read_syms(syms_file)
@@ -43,12 +41,14 @@ def main():
     
     with open("export_symbol_addrs.txt", "w", encoding="utf-8") as out:
         for i, addr in enumerate(imports.imports):
-            sym = map.get(addr)
-            if sym == None:
+            syms = map.get(addr)
+            if syms == None:
                 if addr < 0x80089750: # addr < .data
                     sym = "func_{:X}".format(addr)
                 else:
                     sym = "D_{:X}".format(addr)
+            else:
+                sym = syms.pop(0)
             import_addr = (i + 1) | 0x80000000
             out.write("{} = 0x{:X};\n".format(sym, import_addr))
 

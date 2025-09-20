@@ -1242,7 +1242,10 @@ dll_load = 0x8000be78; // type:func
 dll_unload = 0x8000C258; // type:func
 dll_load_from_tab = 0x8000c3cc; // type:func
 dll_relocate = 0x8000c4a8; // type:func
-dll_throw_fault = 0x8000C3BC; // type:func
+dll_throw_fault = 0x8000C3BC; // type:func allow_duplicated:True
+dll_throw_fault2 = 0x8000C3BC; // type:func allow_duplicated:True
+dll_throw_fault3 = 0x8000C3BC; // type:func allow_duplicated:True
+dll_throw_fault4 = 0x8000C3BC; // type:func allow_duplicated:True
 gDLLCount = 0x800A7D1C; // size:0x4
 
 gDLL_3_Animation = 0x8008C97C; // size:0x4

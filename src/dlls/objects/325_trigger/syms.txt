@@ -31,9 +31,9 @@ trigger_curve_update = 0x2B20;
 .rodata = 0x2E14:
 
 .data = 0x35F4:
-sPointModel = 0x0; # absolute: 0x35F4
-sPlaneModel = 0x4; # absolute: 0x35F8
+sPointModel = 0x0; // absolute:0x35F4
+sPlaneModel = 0x4; // absolute:0x35F8
 
 .bss = 0x3604:
-sPointModelRefCount = 0x0; # absolute: 0x3604
-sPlaneModelRefCount = 0x2; # absolute: 0x3606
+sPointModelRefCount = 0x0; // absolute:0x3604
+sPlaneModelRefCount = 0x2; // absolute:0x3606

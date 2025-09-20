@@ -52,10 +52,18 @@ class DLL:
         self.dir = dir
         self.files = files
 
+class ASMDLL:
+    def __init__(self, number: str, dir: str, file: BuildFile, undefined_syms_file: str | None):
+        self.number = number
+        self.dir = dir
+        self.file = file
+        self.undefined_syms_file = undefined_syms_file
+
 class BuildFiles:
-    def __init__(self, files: "list[BuildFile]", dlls: "list[DLL]", leftover_dlls: "list[BuildFile]"):
+    def __init__(self, files: "list[BuildFile]", dlls: "list[DLL]", asm_dlls: "list[ASMDLL]", leftover_dlls: "list[BuildFile]"):
         self.files = files # excludes DLLs
         self.dlls = dlls
+        self.asm_dlls = asm_dlls # DLLs without a src directory
         self.leftover_dlls = leftover_dlls # Uncompiled DLLs
 
 class BuildConfig:
@@ -253,6 +261,7 @@ class BuildNinjaWriter:
         self.writer.rule("as_dll", "$AS $AS_FLAGS_DLL -o $out $in", "Assembling $in...")
         self.writer.rule("ld", "$LD $LD_FLAGS -o $out", "Linking...")
         self.writer.rule("ld_dll", "$LD $LD_FLAGS_DLL -Map $out.map -T $SYMS_LD -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
+        self.writer.rule("ld_asm_dll", "$LD $LD_FLAGS_DLL $EXTRA_DLL_LD_FLAGS -T $LINK_SCRIPT_DLL $in -o $out", "Linking DLL...")
         self.writer.rule("ld_bin", "$LD -m $LD_EMULATION -r -b binary -o $out $in", "Linking binary $in...")
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
@@ -316,6 +325,8 @@ class BuildNinjaWriter:
         self.writer.newline()
     
     def __write_dll_builds(self):
+        pack_deps: "list[str]" = []
+
         self.writer.comment("DLL compilation")
 
         pack_deps: "list[str]" = []
@@ -397,6 +408,48 @@ class BuildNinjaWriter:
             pack_deps.append(dll_asset_path)
             pack_deps.append(dll_bss_asset_path)
         
+        self.writer.comment("DLL assembly (DLLs without a src directory)")
+        for dll in self.input.asm_dlls:
+            self.writer.comment(f"DLL {dll.number}")
+            obj_dir = f"$BUILD_DIR/{dll.dir}"
+
+            # Assemble DLL
+            dll_link_deps: "list[str]" = []
+
+            obj_build_path = f"$BUILD_DIR/{Path(dll.file.obj_path).as_posix()}"
+            src_build_path = Path(dll.file.src_path).as_posix()
+            self.writer.build(obj_build_path, "as_dll", src_build_path)
+            dll_link_deps.append(obj_build_path)
+
+            # Link
+            ld_flags = ""
+            if dll.undefined_syms_file != None:
+                ld_flags += f"-T {dll.undefined_syms_file}"
+
+            elf_path = Path(f"{obj_dir}/{dll.number}.elf")
+            self.writer.build(elf_path.as_posix(), "ld_asm_dll", dll_link_deps, 
+                implicit=["$LINK_SCRIPT_DLL", "export_symbol_addrs.txt"],
+                variables={
+                    "EXTRA_DLL_LD_FLAGS": ld_flags
+                })
+            
+            # Fixup
+            final_elf_path = elf_path.with_suffix(".fixed.elf")
+            original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
+            self.writer.build(final_elf_path.as_posix(), "dll_fixup", elf_path.as_posix(),
+                                variables={"ORIGINAL_DLL": original_dll_path})
+
+            # Convert ELF to Dinosaur Planet DLL
+            dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
+            dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
+            self.writer.build(dll_asset_path, "elf2dll", final_elf_path.as_posix(),
+                variables={
+                    "DLL_BSS_TXT": dll_bss_asset_path
+                },
+                implicit_outputs=[dll_bss_asset_path])
+            pack_deps.append(dll_asset_path)
+            pack_deps.append(dll_bss_asset_path)
+
         any_dlls = len(pack_deps) > 0
 
         # Leftovers
@@ -532,6 +585,7 @@ class InputScanner:
     def scan(self) -> BuildFiles:
         self.files: "list[BuildFile]" = []
         self.dlls: "list[DLL]" = []
+        self.asm_dlls: "list[ASMDLL]" = []
         self.leftover_dlls: "list[BuildFile]" = []
 
         self.__scan_c_files()
@@ -541,7 +595,7 @@ class InputScanner:
         if not self.config.skip_dlls:
             self.__scan_dlls()
 
-        return BuildFiles(self.files, self.dlls, self.leftover_dlls)
+        return BuildFiles(self.files, self.dlls, self.asm_dlls, self.leftover_dlls)
         
     def __scan_c_files(self):
         # Exclude DLLs here, that's done separately
@@ -606,6 +660,24 @@ class InputScanner:
             self.dlls.append(DLL(str(number), str(dir), files))
             to_compile.add(str(number))
         
+        for number in range(796):
+            number += 1
+
+            if str(number) in to_compile:
+                continue
+                
+            dir = Path(f"asm/nonmatchings/dlls/_asm")
+            src_path = dir.joinpath(f"{number}.s")
+            if src_path.exists():
+                obj_path = self.__make_obj_path(src_path)
+                file = BuildFile(str(src_path), str(obj_path), BuildFileType.ASM)
+
+                undef_syms_path = dir.joinpath(f"{number}.undefined_syms.ld")
+                undef_syms_file = undef_syms_path.as_posix() if undef_syms_path.exists() else None
+
+                self.asm_dlls.append(ASMDLL(str(number), str(dir), file, undef_syms_file))
+                to_compile.add(str(number))
+
         # Scan for leftover DLLs that haven't been decompiled yet
         paths = [Path(path) for path in glob.glob("bin/assets/dlls/*.dll", recursive=True)]
         for src_path in paths:

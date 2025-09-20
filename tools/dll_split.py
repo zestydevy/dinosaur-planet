@@ -8,6 +8,7 @@
 import argparse
 import glob
 import os
+import sys
 import spimdisasm
 from pathlib import Path
 import rabbitizer
@@ -28,6 +29,9 @@ BIN_PATH = Path("bin")
 SRC_PATH = Path("src")
 
 global_asm_pattern = re.compile(r"#pragma GLOBAL_ASM\(\"asm\/nonmatchings\/dlls\/\S+\/(.+)\.s\"\)")
+
+class DLLSplitterException(Exception):
+    pass
 
 class DLLSplitter:
     def __init__(self, verbose: bool, disassemble_all: bool) -> None:
@@ -58,22 +62,31 @@ class DLLSplitter:
         with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
             dlls_txt = DLLsTxt.parse(dlls_txt_file)
 
+        i = 0
+        count = 796 if len(only_dlls) == 0 else len(only_dlls)
         for (number, dll_dir) in dlls_txt.path_map.items():
-            dir = dlls_src_path.joinpath(dll_dir)
-
-            if not dir.exists():
-                print(f"WARN: No such DLL src directory {dir}!")
-                continue
-
             # Skip DLL if not in list
             if len(only_dlls) > 0 and not str(number) in only_dlls:
                 continue
 
+            if not self.verbose:
+                if sys.stdout.isatty():
+                    print("\033[K", end="\r")
+                    print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir), end="")
+                else:
+                    print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir))
+
+            i += 1
+
+            dir = dlls_src_path.joinpath(dll_dir)
+
+            if not dir.exists():
+                raise DLLSplitterException(f"No such DLL src directory {dir}!")
+
             # Check DLL path
             dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
             if not dll_path.exists():
-                print(f"WARN: No such DLL {dll_path}!")
-                continue
+                raise DLLSplitterException(f"No such DLL {dll_path}!")
 
             # Load known symbols for DLL
             symbol_files: list[DLLSymsTxt] = [core_export_syms]
@@ -118,6 +131,65 @@ class DLLSplitter:
                 end = timer()
                 if self.verbose:
                     print("[{}] Extracting complete (took {:.3} seconds).".format(number, end - start))
+        
+        # Extract DLLs *without* a src directory as an asm stub
+        for number in range(796):
+            number += 1
+
+            # Skip if DLL has a src directory
+            if number in dlls_txt.path_map:
+                continue
+
+            # Skip DLL if not in list
+            if len(only_dlls) > 0 and not str(number) in only_dlls:
+                continue
+
+            if not self.verbose:
+                if sys.stdout.isatty():
+                    print("\033[K", end="\r")
+                    print("[{}/{}] DLL {}: ASM".format(i + 1, count, number), end="")
+                else:
+                    print("[{}/{}] DLL {}: ASM".format(i + 1, count, number))
+            i += 1
+
+            # Check DLL path
+            dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
+            if not dll_path.exists():
+                raise DLLSplitterException(f"No such DLL {dll_path}!")
+
+            # Load DLL
+            with open(dll_path, "rb") as dll_file:
+                if self.verbose:
+                    print("[{}] Parsing...".format(number))
+                start = timer()
+
+                # Get DLL .bss size
+                bss_size = tab.entries[number - 1].bss_size
+                
+                # Parse DLL header
+                data = bytearray(dll_file.read())
+                dll = DLL.parse(data)
+                
+                # Analyze DLL
+                analyzed_dll = analyze_dll(dll, number, data, [core_export_syms], bss_size)
+                
+                end = timer()
+                if self.verbose:
+                    print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
+
+                # Extract DLL
+                if self.verbose:
+                    print("[{}] Extracting...".format(number))
+                start = timer()
+
+                self.extract_asm_dll(analyzed_dll)
+
+                end = timer()
+                if self.verbose:
+                    print("[{}] Extracting complete (took {:.3} seconds).".format(number, end - start))
+
+        if not self.verbose and sys.stdout.isatty():
+            print("\033[K", end="\r")
 
     def extract_dll(self, 
                     dll: AnalyzedDLL, 
@@ -158,6 +230,78 @@ class DLLSplitter:
         if nonmatching_funcs == None:
             c_file_path = src_path.joinpath(f"{dll.number}.c")
             self.__create_c_stub(c_file_path, nonmatching_asm_path, dll)
+
+    def extract_asm_dll(self, dll: AnalyzedDLL):
+        # Determine path
+        s_path = ASM_PATH.joinpath(f"nonmatchings/dlls/_asm/{dll.number}.s")
+        
+        # Create directory if necessary
+        os.makedirs(s_path.parent, exist_ok=True)
+
+        # Create single ASM file for DLL
+        with open(s_path, "w", encoding="utf-8") as dll_s:
+            # Prelude
+            dll_s.write(".include \"macro.inc\"\n")
+            dll_s.write("\n")
+            dll_s.write(".set noat\n")
+            dll_s.write(".set noreorder\n")
+            dll_s.write(".set gp=64\n")
+            dll_s.write(".set fp=64\n")
+            dll_s.write("\n")
+            dll_s.write(".option pic2\n")
+            dll_s.write("\n")
+
+            # Exports
+            funcs_by_address: "dict[int, str]" = {}
+            for func in dll.functions:
+                funcs_by_address[func.vram - DLL_VRAM_BASE] = func.getName()
+            
+            dll_s.write(".section \".exports\"\n")
+            dll_s.write("\n")
+            dll_s.write(f".dword {funcs_by_address[dll.meta.header.ctor_offset]}\n")
+            dll_s.write(f".dword {funcs_by_address[dll.meta.header.dtor_offset]}\n")
+            for offset in dll.meta.header.export_offsets:
+                func_symbol = funcs_by_address[offset]
+                dll_s.write(f".dword {func_symbol}\n")
+
+            # .rodata
+            if dll.rodata != None:
+                dll_s.write("\n")
+                dll_s.write(".section .rodata, \"a\"\n")
+                dll_s.write("\n")
+                dll_s.write(dll.rodata.disassemble())
+            
+            # .data
+            if dll.data != None:
+                dll_s.write("\n")
+                dll_s.write(".section .data, \"wa\"\n")
+                dll_s.write("\n")
+                dll_s.write(dll.data.disassemble())
+            
+            # .bss
+            if dll.bss != None:
+                dll_s.write("\n")
+                dll_s.write(".section .bss, \"wa\"\n")
+                dll_s.write("\n")
+                dll_s.write(dll.bss.disassemble())
+            
+            # .text
+            dll_s.write("\n")
+            dll_s.write(".section .text, \"ax\"\n")
+            for func in dll.functions:
+                dll_s.write("\n")
+                dll_s.write(func.disassemble())
+
+        # Undefined symbols
+        if len(dll.oob_syms) > 0:
+            with open(s_path.with_suffix(".undefined_syms.ld"), "w", encoding="utf-8") as undef_syms_s:
+                undef_syms_s.write("SECTIONS\n")
+                undef_syms_s.write("{\n")
+                undef_syms_s.write(f"    {dll.last_section.getSectionName()} : {{\n")
+                for sym in dll.oob_syms:
+                    undef_syms_s.write(f"        {sym.getName()} = 0x{(sym.vram - dll.last_section.vram):X};\n")
+                undef_syms_s.write("    }\n")
+                undef_syms_s.write("}\n")
 
     def __create_exports_s(self, path: Path, dll: AnalyzedDLL):
         funcs_by_address: "dict[int, str]" = {}
@@ -434,7 +578,7 @@ class DLLSplitter:
                         for sym in entry.iterRodataSyms():
                             offset = sym.vram - dll.rodata.vram
                             absolute = rodata_start + offset
-                            syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                            syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                             .format(sym.getName(), offset, absolute))
             
             # .data
@@ -446,7 +590,7 @@ class DLLSplitter:
                     if sym.sectionType == spimdisasm.common.FileSectionType.Data:
                         offset = sym.vram - dll.data.vram
                         absolute = data_start + offset
-                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                        syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                         .format(sym.getName(), offset, absolute))
             
             # .bss
@@ -458,7 +602,7 @@ class DLLSplitter:
                     if sym.sectionType == spimdisasm.common.FileSectionType.Bss:
                         offset = sym.vram - dll.bss.vram
                         absolute = bss_start + offset
-                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                        syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                         .format(sym.getName(), offset, absolute))
             
             # oob syms
@@ -467,7 +611,7 @@ class DLLSplitter:
                 for sym in dll.oob_syms:
                     offset = sym.vram - dll.last_section.vram
                     absolute = last_section_start + offset
-                    syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                    syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                     .format(sym.getName(), offset, absolute))
 
     def __extract_text_asm(self, 
