@@ -420,7 +420,7 @@ void gplay_func_EAC(u8 character) {
     bss_10.unk0.unk0.unk0.character = character;
 }
 
-GplayStruct10 *gplay_func_ED4() {
+PlayerStats *gplay_func_ED4() {
     return &bss_10.unk0.unk0.unk0.unk0x0[bss_10.unk0.unk0.unk0.character];
 }
 

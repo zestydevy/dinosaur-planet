@@ -61,11 +61,11 @@ typedef struct {
     /*0x8*/u16 scarabs; //capped at 999.
     /*0xA*/u8 unkA;
     /*0xB*/s8 dusters;
-} GplayStruct10;
+} PlayerStats;
 
 // size: 0x13d4
 typedef struct {
-    GplayStruct10 unk0x0[2];
+    PlayerStats unk0x0[2];
     GplayStruct11 unk0x18[2];
     u8 _unk0x1E[0x2];
     GplayStruct14 unk0x20[2];
@@ -191,7 +191,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*31*/ s16 (*func_121C)(void);
     /*32*/ void (*func_1238)(s32 param1);
     /*33*/ GplayStruct7 *(*func_E74)();
-    /*34*/ GplayStruct10 *(*func_ED4)();
+    /*34*/ PlayerStats *(*func_ED4)();
     /*35*/ GplayStruct5 *(*func_F04)();
     /*36*/ GplayStruct11 *(*func_F30)();
     /*37*/ GplayStruct6 *(*func_F60)();
