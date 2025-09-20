@@ -8,7 +8,7 @@ screens_draw = 0x21C;
 .rodata = 0x578:
 
 .bss = 0x598:
-sLoadedScreenNo = 0x0; # absolute: 0x598
-sRenderScreen = 0x4; # absolute: 0x59C
-sLoadedScreenByteLength = 0x8; # absolute: 0x5A0
-sLoadedScreen = 0xC; # absolute: 0x5A4
+sLoadedScreenNo = 0x0; // absolute:0x598
+sRenderScreen = 0x4; // absolute:0x59C
+sLoadedScreenByteLength = 0x8; // absolute:0x5A0
+sLoadedScreen = 0xC; // absolute:0x5A4

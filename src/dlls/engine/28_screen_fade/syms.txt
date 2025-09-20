@@ -14,9 +14,9 @@ screen_fade_draw_radial = 0x968;
 .rodata = 0x1718:
 
 .bss = 0x1718:
-sFadeAlpha = 0x0; # absolute: 0x1718
-sFadeSpeed = 0x4; # absolute: 0x171C
-sAutoReverseTimer = 0x8; # absolute: 0x1720
-sFadeType = 0xC; # absolute: 0x1724
-sIsComplete = 0xD; # absolute: 0x1725
-sDelayTimer = 0xE; # absolute: 0x1726
+sFadeAlpha = 0x0; // absolute:0x1718
+sFadeSpeed = 0x4; // absolute:0x171C
+sAutoReverseTimer = 0x8; // absolute:0x1720
+sFadeType = 0xC; // absolute:0x1724
+sIsComplete = 0xD; // absolute:0x1725
+sDelayTimer = 0xE; // absolute:0x1726
