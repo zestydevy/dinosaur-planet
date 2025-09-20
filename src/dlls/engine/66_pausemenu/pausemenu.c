@@ -97,7 +97,7 @@ s32 n_pausemenu_update(void) {
                 gDLL_6_AMSFX->vtbl->func2(0, 2931, 0x7F, 0, 0, 0, 0);
                 menu_set(MENU_1);
                 unpause();
-                set_button_mask(0, CONTROLLER_BUTTON_A | CONTROLLER_BUTTON_B);
+                set_button_mask(0, A_BUTTON | B_BUTTON);
             } else {
                 gDLL_6_AMSFX->vtbl->func2(0, 2930, 0x7F, 0, 0, 0, 0);
                 gameSavedMessageTimer = 0;
@@ -112,7 +112,7 @@ s32 n_pausemenu_update(void) {
         } else if (action == PICMENU_ACTION_BACK) {
             menu_set(MENU_1);
             unpause();
-            set_button_mask(0, CONTROLLER_BUTTON_A | CONTROLLER_BUTTON_B);
+            set_button_mask(0, A_BUTTON | B_BUTTON);
         }
 
     } else if (pauseScreenState == PAUSE_MENU_GAME_SAVED) {
