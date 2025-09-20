@@ -3,6 +3,7 @@
 
 #include "PR/ultratypes.h"
 #include "dll_def.h"
+#include "game/objects/object.h"
 #include "types.h"
 
 DLL_INTERFACE(DLL_1_UI) {
@@ -13,8 +14,8 @@ DLL_INTERFACE(DLL_1_UI) {
     /*03*/ UnknownDLLFunc ui_func_1290;
     /*04*/ UnknownDLLFunc ui_func_12ec;
     /*05*/ UnknownDLLFunc ui_func_f5c;
-    /*06*/ UnknownDLLFunc ui_func_dc4;
-    /*07*/ s32 (*ui_func_df4)(s32 inventory_item_flag); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
+    /*06*/ s32 (*func6)(void);
+    /*07*/ s32 (*func7)(s32 inventory_item_flag); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
     /*08*/ UnknownDLLFunc ui_func_e2c;
     /*09*/ UnknownDLLFunc ui_func_f24;
     /*10*/ UnknownDLLFunc ui_func_f40;

@@ -52,20 +52,20 @@ typedef struct {
 
 // size: 0xc
 typedef struct {
-    /*0x0*/u8 unk0x0;
-    /*0x1*/u8 hp;
-    /*0x2*/u8 hpMax; //only shows up to 104, code caps it at 80.
-    /*0x3*/u8 _unk0x3[1];
-    /*0x4*/s16 mana; //only mods when byte at "state"0x8bb is set.
-    /*0x6*/s16 manaMax; //capped at 100.
-    /*0x8*/s16 scarabs; //capped at 999.
-    /*0xA*/UNK_TYPE_8 unk0xA;
+    /*0x0*/s8 unk0;
+    /*0x1*/s8 health;
+    /*0x2*/s8 healthMax; //only shows up to 104, code caps it at 80.
+    /*0x3*/s8 unk3;
+    /*0x4*/s16 magic; //only mods when byte at "state"0x8bb is set.
+    /*0x6*/s16 magicMax; //capped at 100.
+    /*0x8*/u16 scarabs; //capped at 999.
+    /*0xA*/u8 unkA;
     /*0xB*/s8 dusters;
-} GplayStruct10;
+} PlayerStats;
 
 // size: 0x13d4
 typedef struct {
-    GplayStruct10 unk0x0[2];
+    PlayerStats unk0x0[2];
     GplayStruct11 unk0x18[2];
     u8 _unk0x1E[0x2];
     GplayStruct14 unk0x20[2];
@@ -160,7 +160,8 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*1*/ void (*init_save)(s8 idx, char *filename);
     /*2*/ s32 (*load_save)(s8 idx, u8 startGame);
     /*3*/ void (*copy_save)(s8 srcIdx, s8 dstIdx);
-    /*4*/ void (*func_6AC)();
+    /** Used by the Pause Menu to save the game */
+    /*4*/ void (*func_6AC)(void);
     /*5*/ void (*func_94C)(s32 param1);
     /*6*/ void (*func_958)(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
     /*7*/ void (*start_game)();
@@ -190,7 +191,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*31*/ s16 (*func_121C)(void);
     /*32*/ void (*func_1238)(s32 param1);
     /*33*/ GplayStruct7 *(*func_E74)();
-    /*34*/ GplayStruct10 *(*func_ED4)();
+    /*34*/ PlayerStats *(*func_ED4)();
     /*35*/ GplayStruct5 *(*func_F04)();
     /*36*/ GplayStruct11 *(*func_F30)();
     /*37*/ GplayStruct6 *(*func_F60)();

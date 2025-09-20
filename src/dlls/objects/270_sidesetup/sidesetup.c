@@ -12,7 +12,7 @@ typedef struct {
 /*18*/	union Unk18{
         u8 byte[2];
         s16 halfword;
-    } Unk18;
+    } unk18;
 /*1A*/	u8 unk1A;
 } SideSetupObjCreateInfo;
 
@@ -23,8 +23,8 @@ void sidesetup_dtor(void *dll) {
 }
 
 void sidesetup_create(Object *self, SideSetupObjCreateInfo *createInfo, s32 arg2) {
-    createInfo->unk1A = createInfo->Unk18.byte[0] - 1;
-    createInfo->Unk18.halfword = -1;
+    createInfo->unk1A = createInfo->unk18.byte[0] - 1;
+    createInfo->unk18.halfword = -1;
 }
 
 void sidesetup_update(Object *self) {

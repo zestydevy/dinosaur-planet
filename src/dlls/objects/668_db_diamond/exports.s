@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_668_ctor
-.dword dll_668_dtor
+.dword DBdiamond_ctor
+.dword DBdiamond_dtor
 
 # export table
-.dword dll_668_func_18
-.dword dll_668_func_D0
-.dword dll_668_func_204
-.dword dll_668_func_210
-.dword dll_668_func_27C
-.dword dll_668_func_2BC
-.dword dll_668_func_2CC
+.dword DBdiamond_create
+.dword DBdiamond_update
+.dword DBdiamond_func_204
+.dword DBdiamond_draw
+.dword DBdiamond_destroy
+.dword DBdiamond_func_2BC
+.dword DBdiamond_get_state_size
