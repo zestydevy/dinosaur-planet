@@ -384,15 +384,15 @@ DLL `syms.txt` files have similar syntax to `symbol_addrs.txt` but instead:
 
 For example:
 ```
-absSym = 0x1234; # <- Defines an absolute symbol (not part of 
-                 #    a section)
+absSym = 0x1234; // <- Defines an absolute symbol (not part of 
+                 //    a section)
 
-.text = 0x0:     # <- Defines a section (note the colon syntax)
-dll_ctor = 0x0;  # <- Relative to .text
+.text = 0x0:     // <- Defines a section (note the colon syntax)
+dll_ctor = 0x0;  // <- Relative to .text
 dll_dtor = 0x8;
 
 .data = 0x10:
-foo = 0x0;       # <- Relative to .data
+foo = 0x0;       // <- Relative to .data
 bar = 0x4;
 ```
 
