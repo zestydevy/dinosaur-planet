@@ -14,6 +14,13 @@ void func_8002674C(Object* obj);
 
 static s32 dll_227_func_1FA0(Object* self);
 
+/*0x0*/ static f32 _data_0[] = {
+    0.0, 0.0, 0.0
+};
+/*0xC*/ static f32 _data_C = {
+    25.0
+};
+
 typedef struct {
 /*00*/ ObjCreateInfo base;
 /*18*/ s8 roll;
@@ -58,13 +65,6 @@ typedef struct {
 /*298*/ u8 unk298;
 /*299*/ u8 unk299;
 } TumbleweedState;
-
-/*0x0*/ static f32 _data_0[] = {
-    0.0, 0.0, 0.0
-};
-/*0xC*/ static f32 _data_C = {
-    25.0
-};
 
 // offset: 0x0 | ctor
 void dll_227_ctor(void* dll){
