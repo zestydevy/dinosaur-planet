@@ -180,7 +180,7 @@ typedef struct Object {
 /*0060*/    ObjectStruct60 *ptr0x60;
 /*0064*/    ObjectStruct64* ptr0x64; //ShadowData?
 /*0068*/    DLL_IObject *dll;
-/*006C*/    u16 (*ptr0x6c)[9];
+/*006C*/    s16 (*ptr0x6c)[9];
 /*0070*/    void* ptr0x70;
 /*0074*/    u32 unk0x74;
 /*0078*/    ObjectStruct78 *unk_0x78; // related to ObjDef.unk40
