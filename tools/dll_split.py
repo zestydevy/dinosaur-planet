@@ -573,7 +573,7 @@ class DLLSplitter:
                         for sym in entry.iterRodataSyms():
                             offset = sym.vram - dll.rodata.vram
                             absolute = rodata_start + offset
-                            syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                            syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                             .format(sym.getName(), offset, absolute))
             
             # .data
@@ -585,7 +585,7 @@ class DLLSplitter:
                     if sym.sectionType == spimdisasm.common.FileSectionType.Data:
                         offset = sym.vram - dll.data.vram
                         absolute = data_start + offset
-                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                        syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                         .format(sym.getName(), offset, absolute))
             
             # .bss
@@ -597,7 +597,7 @@ class DLLSplitter:
                     if sym.sectionType == spimdisasm.common.FileSectionType.Bss:
                         offset = sym.vram - dll.bss.vram
                         absolute = bss_start + offset
-                        syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                        syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                         .format(sym.getName(), offset, absolute))
             
             # oob syms
@@ -606,7 +606,7 @@ class DLLSplitter:
                 for sym in dll.oob_syms:
                     offset = sym.vram - dll.last_section.vram
                     absolute = last_section_start + offset
-                    syms_file.write("{} = 0x{:X}; # absolute: 0x{:X}\n"
+                    syms_file.write("{} = 0x{:X}; // absolute:0x{:X}\n"
                                     .format(sym.getName(), offset, absolute))
 
     def __extract_text_asm(self, 
