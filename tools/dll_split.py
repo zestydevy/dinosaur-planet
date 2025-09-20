@@ -72,7 +72,10 @@ class DLLSplitter:
             if not self.verbose:
                 if sys.stdout.isatty():
                     print("\033[K", end="\r")
-                print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir), end="")
+                    print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir), end="")
+                else:
+                    print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir))
+
             i += 1
 
             dir = dlls_src_path.joinpath(dll_dir)
@@ -144,7 +147,9 @@ class DLLSplitter:
             if not self.verbose:
                 if sys.stdout.isatty():
                     print("\033[K", end="\r")
-                print("[{}/{}] DLL {}: ASM".format(i + 1, count, number), end="")
+                    print("[{}/{}] DLL {}: ASM".format(i + 1, count, number), end="")
+                else:
+                    print("[{}/{}] DLL {}: ASM".format(i + 1, count, number))
             i += 1
 
             # Check DLL path
