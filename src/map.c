@@ -4033,13 +4033,13 @@ void map_update_objects_streaming(s32 arg0) {
         if (temp_s0->mapID >= 0) {
             if (!(temp_s2->loadParamA & 2)) {
                 if (temp_s2->loadParamA & 0x10) {
-                    if ((temp_s0->group >= 0) && (func_8004B190(temp_s0) != 0)) {
+                    if ((temp_s0->group >= GROUP_NONE) && (func_8004B190(temp_s0) != 0)) {
                         var_s1 = 1;
                     } else if ((temp_s0->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[temp_s0->mapID] == NULL)) {
                         var_s1 = 1;
                     }
                 } else {
-                    if ((temp_s0->group >= 0) && (func_8004B190(temp_s0) != 0)) {
+                    if ((temp_s0->group >= GROUP_NONE) && (func_8004B190(temp_s0) != 0)) {
                         var_s1 = 1;
                     } else if ((temp_s0->mapID < MAP_ID_MAX) && (func_8004AEFC(temp_s0->mapID, sp70, var_s4) == 0)) {
                         var_s1 = 1;

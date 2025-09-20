@@ -16,6 +16,13 @@
 
 struct Object;
 
+// This could be bit fields? so 0, 1, 2, 4, 8 (0 << 0, 0 << 1, 0 << 2 etc)
+enum ObjectGroup {
+	GROUP_NONE = 0,
+	GROUP_UNK1 = 1,
+	GROUP_UNK16 = 16
+};
+
 //used for PlayerPosBuffer and something else
 struct Vec3_Int{
 	Vec3f f;
