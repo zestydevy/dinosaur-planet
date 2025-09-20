@@ -315,7 +315,7 @@ segments:
     - [0x922B0, data, objanim]
     - [0x922E0, data, objhits]
     - [0x92310, data, segment_326A0]
-    - [0x92320, data, segment_334F0]
+    - [0x92320, .data, segment_334F0]
     - [0x92350, data, objprint]
     - [0x92370, .data, crash]
     - [0x92380, data, segment_38380]
