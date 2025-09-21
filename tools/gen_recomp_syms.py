@@ -167,6 +167,11 @@ def scan_dll_elf(
         data_globals: list,
         symbol_renames: "dict[str, tuple[str, int]]",
         dll_prefix: str):
+    text_offset = dll.header.size
+    rodata_offset = dll.header.rodata_offset + dll.reloc_table.get_size()
+    data_offset = dll.header.data_offset
+    bss_offset = dll.get_bss_offset()
+
     syms = elf.get_section_by_name(".symtab")
     assert isinstance(syms, SymbolTableSection)
 
@@ -202,13 +207,13 @@ def scan_dll_elf(
         else:
             section = elf.get_section(st_shndx).name
             if section == ".text":
-                sec_offset = dll.header.size
+                sec_offset = text_offset
             elif section == ".rodata":
-                sec_offset = dll.header.rodata_offset
+                sec_offset = rodata_offset
             elif section == ".data":
-                sec_offset = dll.header.data_offset
+                sec_offset = data_offset
             elif section == ".bss":
-                sec_offset = dll.get_bss_offset()
+                sec_offset = bss_offset
             else:
                 continue
 
@@ -368,21 +373,23 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         dino_dlls_txt.write(f".dll{number}\n")
 
         # Write functions
+        gp = dll.header.rodata_offset
+
         syms_toml.write("\n")
         syms_toml.write("[[section]]\n")
         syms_toml.write(f"name = \".dll{number}\"\n")
         syms_toml.write("rom = 0x{:X}\n".format(dll_rom + dll.header.size))
         syms_toml.write("vram = 0x{:X}\n".format(dll_vram + dll.header.size))
         syms_toml.write("size = 0x{:X}\n".format(entry.size))
-        syms_toml.write("got_address = 0x{:X}\n".format(dll_vram + dll.header.rodata_offset))
+        syms_toml.write("got_address = 0x{:X}\n".format(dll_vram + gp))
         syms_toml.write("\n")
 
         syms_toml.write("relocs = [\n")
         for reloc in dll.reloc_table.gp_relocations:
             syms_toml.write("    {{ type = \"R_MIPS_HI16\", vram = 0x{:X}, target_vram = 0x{:X} }},\n"
-                .format(dll_vram + dll.header.size + reloc, dll_vram + dll.header.rodata_offset))
+                .format(dll_vram + dll.header.size + reloc, dll_vram + gp))
             syms_toml.write("    {{ type = \"R_MIPS_LO16\", vram = 0x{:X}, target_vram = 0x{:X} }},\n"
-                .format(dll_vram + dll.header.size + reloc + 4, dll_vram + dll.header.rodata_offset))
+                .format(dll_vram + dll.header.size + reloc + 4, dll_vram + gp))
         syms_toml.write("]\n")
         syms_toml.write("\n")
 
