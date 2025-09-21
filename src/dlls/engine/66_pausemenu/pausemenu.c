@@ -8,7 +8,7 @@
 #include "sys/memory.h"
 #include "sys/menu.h"
 
-#include "dlls/engine/66_n_pausemenu.h"
+#include "dlls/engine/66_pausemenu.h"
 
 /*0x0*/ static const char formatCompletionPercentage[] = "%3d%%";
 /*0x8*/ static const char formatGameplayTime[] = "%3d:%02d:%02d";
