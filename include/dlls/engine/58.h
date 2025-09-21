@@ -7,7 +7,7 @@
 DLL_INTERFACE(DLL_58) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
-/*1*/ UnknownDLLFunc func1;
+/*1*/ void (*func1)(void *);
 /*2*/ void (*func2)(void);
 };
 

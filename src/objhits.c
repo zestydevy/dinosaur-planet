@@ -1268,7 +1268,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
         sp3C = arg4;
     }
 
-    if ((obj->group == 1) && !(otherObjhitInfo->unk_0x58 & 0x400)) {
+    if ((obj->group == GROUP_UNK1) && !(otherObjhitInfo->unk_0x58 & 0x400)) {
         obj->srt.transl.x -= sp50;
         obj->srt.transl.y -= sp4C;
         obj->srt.transl.z -= sp48;
@@ -1282,7 +1282,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
         return;
     }
 
-    if ((otherObj->group == 1) && !(objhitInfo->unk_0x58 & 0x400)) {
+    if ((otherObj->group == GROUP_UNK1) && !(objhitInfo->unk_0x58 & 0x400)) {
         otherObj->srt.transl.x += sp44;
         otherObj->srt.transl.y += sp40;
         otherObj->srt.transl.z += sp3C;
@@ -1419,7 +1419,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
     sp2F = 0;
     var_v1 = sp3C->unk_0x40;
     if ((var_v1 != 0) && (sp3C->unk_0x61 == 0)) {
-        if (obj->group == 1) {
+        if (obj->group == GROUP_UNK1) {
             sp28 = obj->modelInsts[obj->modelInstIdx];
             sp30 = ((s32) sp28->unk_0x34 >> 2) & 1;
             if (sp3C->unk_0x58 & 0x2000) {
@@ -1452,7 +1452,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
         }
         temp_v0_4 = sp2F;
         sp2F = 0;
-        if ((((u32)sp2F < temp_v0_4) == 0) && (obj->group == 1)) {
+        if ((((u32)sp2F < temp_v0_4) == 0) && (obj->group == GROUP_UNK1)) {
             func_8002949C(obj, obj2, obj3, sp3C, sp44, arg4);
         }
     }
@@ -1462,7 +1462,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
 
     var_v1 = sp38->unk_0x40;
     if ((var_v1 != 0) && (sp38->unk_0x61 == 0)) {
-        if (obj2->group == 1) {
+        if (obj2->group == GROUP_UNK1) {
             sp28 = obj2->modelInsts[obj2->modelInstIdx];
             sp30 = (sp28->unk_0x34 >> 2) & 1;
             if (sp38->unk_0x58 & 0x2000) {
@@ -1493,7 +1493,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
                 sp2F = func_80029C04(obj4, obj, obj2, 1, 0, sp38->unk_0x40 & 0xF, sp38->unk_0x44 & 0xF);
             }
         }
-        if ((sp2F == 0) && (obj2->group == 1)) {
+        if ((sp2F == 0) && (obj2->group == GROUP_UNK1)) {
             func_8002949C(obj2, obj, obj4, sp38, sp40, arg4);
         }
     }

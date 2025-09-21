@@ -276,7 +276,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
             temp_s1->gdl = NULL;
             return 0;
         }
-    } else if (arg0->group == 1) {
+    } else if (arg0->group == GROUP_UNK1) {
         if (arg2 == 0) {
             if (D_800BB170 != 0) {
                 if (!(temp_s1->flags & 4)) {
@@ -773,7 +773,7 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
     sp1C0 = (f32) arg2->unk36 * 0.015625f;
     if (arg2->flags & 0x40) {
         sp1C0 = arg2->unk3F;
-    } else if ((arg3->group == 1) && (D_80092C3C > 0.0f)) {
+    } else if ((arg3->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
         sp1C0 *= ((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4;
     } else {
         sp1C0 *= D_80092BE4;
