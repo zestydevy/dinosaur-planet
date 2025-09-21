@@ -134,7 +134,7 @@ typedef struct {
 
 // size: 0x80
 typedef struct {
-    u8 unk0x0;
+    u8 unk0x0; //languageID?
     u8 unk0x1;
     u8 _unk0x2[6];
     u8 unk0x8;

@@ -15,6 +15,7 @@
 31 = engine/31_flash
 60 = engine/60_post
 61 = engine/61_rareware
+62 = engine/62_mainmenu
 63 = engine/63_gameselect
 64 = engine/64_entername
 66 = engine/66_pausemenu
