@@ -1,0 +1,31 @@
+.text = 0x0:
+pausemenu_ctor = 0x0;
+pausemenu_dtor = 0x14C;
+pausemenu_update = 0x1F8;
+pausemenu_func_524 = 0x524;
+pausemenu_draw = 0x52C;
+
+.rodata = 0xE34:
+formatCompletionPercentage = 0x0; // absolute:0xE34
+formatGameplayTime = 0x8; // absolute:0xE3C
+formatSpellStoneCount = 0x18; // absolute:0xE4C
+formatDusterCount = 0x1C; // absolute:0xE50
+formatSpiritCount = 0x20; // absolute:0xE54
+
+.data = 0xE64:
+pauseMenuItems = 0x0; // absolute:0xE64
+pauseMenuSounds = 0x78; // absolute:0xEDC
+
+.bss = 0xEF4:
+gametext = 0x0; // absolute:0xEF4
+textureSpellStone = 0x4; // absolute:0xEF8
+textureDuster = 0x8; // absolute:0xEFC
+textureSpirit = 0xC; // absolute:0xF00
+gameplayTime = 0x10; // absolute:0xF04
+spiritCount = 0x1A; // absolute:0xF0E
+spellStoneCount = 0x1C; // absolute:0xF10
+dusterCount = 0x1E; // absolute:0xF12
+completionPercentage = 0x24; // absolute:0xF18
+pauseScreenState = 0x2A; // absolute:0xF1E
+gameSavedMessageTimer = 0x2B; // absolute:0xF1F
+pauseMenuOpacity = 0x2C; // absolute:0xF20

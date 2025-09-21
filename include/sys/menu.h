@@ -17,15 +17,15 @@ DLL_INTERFACE(DLL_IMenu) {
 // indices into gMenuDLLIDs
 enum MenuID {
     MENU_NONE = 0,
-    MENU_1 = 1, // active during gameplay?
-    MENU_2 = 2, // copyright/n64 logos
-    MENU_3 = 3, // rare logo
-    MENU_4 = 4, // main menu
-    MENU_5 = 5, // game select
-    MENU_6 = 6, // enter name screen
-    MENU_7 = 7, // options menu
-    MENU_8 = 8, // pause screen
-    MENU_9 = 9, // gameover screen
+    MENU_GAMEPLAY = 1,
+    MENU_POST = 2,
+    MENU_RAREWARE = 3,
+    MENU_TITLE_SCREEN = 4,
+    MENU_GAME_SELECT = 5,
+    MENU_ENTER_NAME = 6,
+    MENU_OPTIONS = 7,
+    MENU_PAUSE = 8,
+    MENU_GAME_OVER = 9,
     MENU_10 = 10,
     MENU_11 = 11,
     MENU_12 = 12,

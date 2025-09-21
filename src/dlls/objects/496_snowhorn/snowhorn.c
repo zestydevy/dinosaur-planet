@@ -4,88 +4,73 @@
 #include "dll.h"
 #include "dlls/engine/1_ui.h"
 #include "dlls/engine/27_head_turn.h"
+#include "dlls/objects/214_animobj.h"
+#include "dlls/objects/227_tumbleweed.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/print.h"
 #include "sys/rand.h"
 #include "variables.h"
 #include "functions.h"
 #include "types.h"
 
-/*0x0*/ static const char str_0[] = "MAM: curve setup failed\n";
+s32 func_800053B0(void*, f32);
+s32 func_8002493C(void*, f32, void*);
+void func_80025780(Object*, f32, s32*, void*);
+s32 func_80026DF4(Object*, u32*, u32, s32, void*);
+s32 func_80031BBC(f32, f32, f32);
+s32 func_80032538(Object* self);
+void func_800328F0(Object*, void*, f32);
+void func_80032A08(Object*, void*);
+s16* func_80034804(Object* obj, s32 sequenceBoneID);
+s32* func_800348A0(Object*, s32, s32);
+void set_button_mask(int port, u16 mask);
 
-static u32 _data_0[] = {
-    0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 0x0377ffff, 0x002f0030, 0x00000000, 
-    0x3c449ba6, 0x3ba3d70a, 0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 0x0677ffff, 
-    0xffffffff, 0x01000000, 0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 
-    0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 
-    0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0677ffff, 0xffffffff, 0x01000000, 0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 
-    0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 
-    0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 
-    0x00000000, 0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 0x0377ffff, 0x002a0030, 
-    0x00000000, 0x3c343958, 0x3ba3d70a, 0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
-    0x0377ffff, 0x002e0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 0x0377ffff, 0xffffffff, 0x00000000, 
-    0x00000000, 0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 
-    0x002d0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 
-    0x00000000, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 0x002c0030, 
-    0x00000000, 0x3c75c28f, 0x3ba3d70a, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 0x002b0030, 0x00000000, 
-    0x3c75c28f, 0x3ba3d70a, 0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 0x0377ffff, 
-    0xffffffff, 0x00000000, 0x00000000, 0x00000000
+enum SnowHornSoundIDs {
+    SFX_SNOWHORN_YAWN1 = 0x129,
+    SFX_SNOWHORN_SNOREHORN = 0x12A,
+    SFX_SNOWHORN_YAWN2 = 0x12B
 };
-static u32 _data_230[] = {
-    0xc1400000, 0x00000000, 0xc1a00000, 0x41400000, 0x00000000, 0xc1a00000, 0x41400000, 0x00000000, 
-    0x41a00000, 0xc1400000, 0x00000000, 0x41a00000
+
+enum SnowHornAnims {
+    MODANIM_SnowHorn_Idle = 0,
+    MODANIM_SnowHorn_Talk = 2,
+    MODANIM_SnowHorn_Walk = 3,
+    MODANIM_SnowHorn_Sleep_Intro = 4,
+    MODANIM_SnowHorn_Sleep = 5,
+    MODANIM_SnowHorn_Wake_Up = 6,
+    MODANIM_SnowHorn_Hit_React = 47
 };
-static u32 _data_260[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+
+enum SnowHornTutorialSequences {
+    SEQ_0157_SnowHorn_Chat_BeforeDefeatingSharpClaw = 0, //Hmph, shouldn't you help your friend?
+    SEQ_0157_SnowHorn_Chat_BeforeDiggingUpRoot = 1, //I'm too hungry to talk to strangers!
+    SEQ_0158_SnowHorn_Chat_AfterDiggingUpRoot = 2, //If you press the C-right button you can feed me that root!
+    SEQ_0159_SnowHorn_Cutscene_FeedingRoot1 = 3, //One root is never enough, I'm starving! To get out of the clearing...
+    SEQ_0625_SnowHorn_Chat_AfterEatingRoot1 = 4, //One root is never enough, I'm starving!
+    SEQ_0248_SnowHorn_Cutscene_FeedingRoot2 = 5, //Ahh, that hit the spot! Tell you what, young 'un, I'll help you out!
+    SEQ_0626_SnowHorn_Chat_AfterEatingRoot2 = 6  //I'm sorry lad, you're on your own now.
 };
-/** Boolean - decides whether all SnowHorn should go to sleep */
-static u8 _data_270 = 0;
-static u8 _data_274[] = {0,0,0,0, 0,0,0,0};
-static u32 _data_27C[] = {
-    0x00000003
+
+enum SnowHornGameBits {
+    FLAG_Always_1 = 0x95,
+    FLAG_Always_0 = 0x96,
+    INVENTORY_Alpine_Root = 0x576,
+    FLAG_SnowHorn_Tutorial_Defeated_SharpClaw = 0xD3,
+    FLAG_SnowHorn_Tutorial_NumRootsFed = 0x578,
+    FLAG_SnowHorn_Tutorial_GotAlpineRoot1 = 0x8E,
+    FLAG_SnowHorn_Tutorial_GotAlpineRoot2 = 0x116,
+    FLAG_Garunda_Te_Quest_Progress = 0x115,
+    FLAG_Garunda_Te_NumFrostWeedsEaten = 0x48B,
+    FLAG_SnowHorn_Unknown = 0x5A0, //Maybe intended to hide SnowHorn Wastes' minimap until SnowHorn gifts map?
+    FLAG_DarkIce_Mines_Leap_of_Faith_Completed = 0x22B,
+    FLAG_Tricky_Distract_Learned = 0x9E,
+    FLAG_SpellStone_1_Activated = 0x123
 };
-static f32 _data_280[] = {
-    0.005, 0.0
-};
-static u32 _data_288[] = {
-    0x00230023, 0x00230023, 0x00290000, 0x00000000
-};
-static f32 _data_298[] = {
-    0.005, 0.005, 0.005, 0.005, 0.008, 0.005, 0.005, 0.005
-};
-static u32 _data_2B8[] = {0};
-static f32 _data_2BC[] = {0.005};
-static u32 _data_2C0[] = {
-    0x00000000, 0x00000001
-};
-static u32 _data_2C8[] = {
-    0x00000002, 0x00000003
-};
-static u32 _data_2D0[] = {
-    0x00000004
-};
-static u32 _data_2D4[] = {
-    0x00000005
-};
-static u32 _data_2D8[] = {
-    0x00000006
-};
-static u32 _data_2DC[] = {
-    0x00000007
-};
-static u32 _data_2E0[] = {
-    0x00000008, 0x00000009
-};
-static u32 _data_2E8[] = {
-    0x00000009, 0x0000000b, 0x0000000c, 0x0000000d, 0x0000000e, 0x0000000f
-};
-static u32 _data_300[] = {
-    0x01010101, 0x00000000, 0x00000000, 0x00000000
-};
+
+#define GARUNDA_TE_WEEDS_NEEDED 12
 
 typedef struct {
 /*000*/ s32 *unk0;
@@ -98,35 +83,30 @@ typedef struct {
     u16 isWalking; //only on walking SnowHorn
     u16 GarundaTeQuest; //only on Garunda Te
 };
-/*00e*/ s16 unkE;
+/*00e*/ u16 unkE; //yaw?
 /*010*/ s32 unk10;
-
-/*014*/ f32 positionCopyX; //player position
-/*018*/ f32 positionCopyY; //player position
-/*01C*/ f32 positionCopyZ; //player position
-
+/*014*/ Vec3f playerPositionCopy;
 /*020*/ f32 distanceFromPlayer;
 /*024*/ s8 unk24;
 /*025*/ s8 unk25;
 /*026*/ s8 unk26;
 /*027*/ s8 unk27;
-/*028*/ s32 unk28;
-/*02c*/ s32 unk2C;
+/*028*/ Object* frostWeed;
+/*02c*/ s16 unk2C;
+/*02e*/ s16 unk2E;
 /*030*/ s32 unk30;
 /*034*/ s32 unk34;
 /*038*/ s32 unk38;
 /*03c*/ s32 unk3C;
 /*040*/ s32 unk40;
-/*044*/ u32* unk44;
+/*044*/ s32* someAnimIDList;
 /*048*/ f32* unk48;
-/*04c*/ s32 unk4C;
+/*04c*/ s32* chatSequenceList;
 /*050*/ f32 unk50;
 /*054*/ s32 unk54;
 /*058*/ f32 walkSpeed; //has something to do with the struct at 0x60?
 /*05C*/ s32 unk5C;
-
-/*060*/ UnkCurvesStruct60 unk60; //SEEMS TO BE THE START OF SOME NESTED STRUCT HERE! (Curves-related?)
-
+/*060*/ UnkCurvesStruct60 unk60;
 /*0E0*/ s32 unkE0;
 /*0E4*/ s32 unkE4;
 /*0E8*/ s32 unkE8;
@@ -166,11 +146,7 @@ typedef struct {
 /*110*/ Vec3f* unk170;
 /*114*/ s32 unk174;
 /*118*/ Vec3f unk178[8]; //position samples/deltas - maybe for walk-related calculus?
-
 /*1d8*/ s8 unk1d8[0x208];
-
-
-
 /*3e0*/ u32 unk3e0;
 /*3e4*/ u32 unk3e4;
 /*3e8*/ u32 unk3e8;
@@ -179,7 +155,6 @@ typedef struct {
 /*3f4*/ u32 unk3f4;
 /*3f8*/ u32 unk3f8;
 /*3fc*/ u32 unk3fc;
-
 /*400*/ s8 lookAtUnk; //something to do with the look-at behaviour!
 /*401*/ s8 unk401;
 /*402*/ s8 unk402;
@@ -187,7 +162,6 @@ typedef struct {
 /*404*/ f32 copyPlayerX;
 /*408*/ f32 copyPlayerY;
 /*40c*/ f32 copyPlayerZ;
-
 /*410*/ f32 unk410;
 /*414*/ f32 unk414;
 /*418*/ f32 unk418;
@@ -203,7 +177,6 @@ typedef struct {
 /*42B*/ s8 unk42B;
 /*42C*/ f32 unk42C;
 /*42C*/ s8 unk430[0x16c];
-
 /*59c*/ s16 unk59C; //eyeR_u
 /*59e*/ s16 unk59e; //eyeR_v
 /*600*/ u32 unk600;
@@ -224,16 +197,106 @@ SnowHornCreateInfo;
 
 typedef struct {
 /*000*/ s8 unk0[0x62];
-
 /*062*/ s8 unk62;
 /*063*/ s8 unk63;
-
 /*064*/ s8 unk64[0x2A];
-
 /*08E*/ u8 unk8E[10];
-
 /*098*/ u8 unk98[10];
 } UnkStruct2;
+
+typedef struct {
+  f32 unk0[3];
+  s16 unkc[3];
+  u8 unk12;
+  s8 unk13[8];
+  s8 unk1B; // current length of unk13
+} UnkFunc_80024108Struct;
+
+static const char _rodata_0[] = "MAM: curve setup failed\n";
+
+static u32 _data_0[] = {
+    0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
+    0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
+    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
+    0x0677ffff, 0xffffffff, 0x01000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0677ffff, 0xffffffff, 0x01000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
+    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
+    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
+    0x0377ffff, 0x002e0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0x002d0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0x002c0030, 0x00000000, 0x3c75c28f, 0x3ba3d70a, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0x002b0030, 0x00000000, 0x3c75c28f, 0x3ba3d70a, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
+    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000
+};
+static u32 _data_230[] = {
+    0xc1400000, 0x00000000, 0xc1a00000, 
+    0x41400000, 0x00000000, 0xc1a00000, 
+    0x41400000, 0x00000000, 0x41a00000, 
+    0xc1400000, 0x00000000, 0x41a00000
+};
+static u32 _data_260[] = {
+    0x00000000, 0x00000000, 0x00000000, 0x00000000
+};
+/** Boolean - decides whether all SnowHorn should go to sleep */
+static u8 _data_270 = 0;
+static u8 _data_274[] = {0,0,0,0, 0,0,0,0};
+static s32 _data_27C[] = {
+    0x3
+};
+static f32 _data_280[] = {
+    0.005, 0.0
+};
+static s16 _data_288[] = {
+    0x23, 0x23, 0x23, 0x23, 0x29, 0x0, 0x0, 0x0
+};
+static f32 _data_298[] = {
+    0.005, 0.005, 0.005, 0.005, 0.008, 0.005, 0.005, 0.005
+};
+static s32 _data_2B8[] = {0};
+static f32 _data_2BC[] = {0.005};
+static s32 _data_2C0[] = {
+    0x0, 0x1
+};
+static s32 _data_2C8[] = {
+    0x2, 0x3
+};
+static s32 _data_2D0[] = {
+    0x4
+};
+static s32 _data_2D4[] = {
+    0x5
+};
+static s32 _data_2D8[] = {
+    0x6
+};
+static s32 _data_2DC[] = {
+    0x7
+};
+static s32 _data_2E0[] = {
+    0x8, 0x9
+};
+static s32 _data_2E8[] = {
+    0x9, 0xb, 0xc, 0xd, 0xe, 0xf
+};
+static u32 _data_300[] = {
+    0x01010101, 0x00000000, 0x00000000, 0x00000000
+};
 
 void dll_496_ctor(s32 arg0) {
 }
@@ -241,11 +304,12 @@ void dll_496_ctor(s32 arg0) {
 void dll_496_dtor(s32 arg0) {
 }
 
+//https://decomp.me/scratch/tHX03
+//NOTE: dll_496_func_18 itself matches, it's just that these declared functions need to also be matched in order to be static
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_18.s")
 #else
-//NOTE: dll_496_func_18 itself matches, it's just that these declared functions need to also be matched in order to be static
-s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3);
+s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObjState* animObjState, s8 arg3);
 void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_174C(Object *snowHorn, SnowHornState *state, SnowHornCreateInfo* mapsObj);
@@ -300,18 +364,10 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
 }
 #endif
 
-#if 1
+//https://decomp.me/scratch/eOLnX
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_24C.s")
 #else
-
-void func_80025780(Object*, f32, s32*, void*);
-s32 func_80026DF4(Object*, u32*, u32, s32, void*);
-void func_800328F0(Object*, void*, f32);
-void func_80032A08(Object*, void*);
-    
-s16 rand_next(s32, s32);
-void set_button_mask(int port, u16 mask);
-
 void dll_496_func_11E0(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 void dll_496_func_1D68(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
@@ -401,9 +457,9 @@ void dll_496_func_24C(Object* snowhorn) {
     if (state->unk424 & 1) {
         sp34 = state->unk170;
 
-        gDLL_27->vtbl->head_turn_func_1e8(snowhorn, sp34, delayFloat);
-        gDLL_27->vtbl->head_turn_func_5a8(snowhorn, sp34);
-        gDLL_27->vtbl->head_turn_func_624(snowhorn, sp34, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(snowhorn, sp34, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(snowhorn, sp34);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_624(snowhorn, sp34, delayFloat);
     }
 
     if (state->someAnimIDList) {
@@ -452,7 +508,7 @@ void dll_496_func_77C(Object* snowHorn, Gfx **arg1, Mtx **arg2, Vertex **arg3, T
     state = snowHorn->state;
     if (doDraw) {
         draw_object(snowHorn, arg1, arg2, arg3, arg4, 1.0f);
-        func_80031F6C(snowHorn, 1, &state->positionCopyX, &state->positionCopyY, &state->positionCopyZ, 0);
+        func_80031F6C(snowHorn, 1, &state->playerPositionCopy.x, &state->playerPositionCopy.y, &state->playerPositionCopy.z, 0);
     }
 }
 
@@ -468,80 +524,31 @@ s32 dll_496_func_838(s32 arg0, s32 arg1) {
     return 0x42C;
 }
 
-enum GameBits {
-    FLAG_Always_1 = 0x95,
-    FLAG_Always_0 = 0x96,
-    INVENTORY_Alpine_Root = 0x576,
-    FLAG_SnowHorn_Tutorial_Defeated_SharpClaw = 0xD3,
-    FLAG_SnowHorn_Tutorial_NumRootsFed = 0x578,
-    FLAG_SnowHorn_Tutorial_GotAlpineRoot1 = 0x8E,
-    FLAG_SnowHorn_Tutorial_GotAlpineRoot2 = 0x116,
-    FLAG_Garunda_Te_Quest_Progress = 0x115,
-    FLAG_Garunda_Te_NumFrostWeedsEaten = 0x48B,
-    FLAG_SnowHorn_Unknown = 0x5A0, //Maybe intended to hide SnowHorn Wastes' minimap until SnowHorn gifts map?
-    FLAG_DarkIce_Mines_Leap_of_Faith_Completed = 0x22B,
-    FLAG_Tricky_Distract_Learned = 0x9E,
-    FLAG_SpellStone_1_Activated = 0x123
-};
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_84C.s")
-#else
-s32 dll_496_func_84C(Object* snowHorn, s32 arg1, UnkStruct2* arg2, s8 arg3) {
+/** When talking with SnowHorn */
+s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObjState* animObjState, s8 arg3) {
     SnowHornState* state;
-    UnkStruct2* var_s0;
-    void* var_v0;
-    s8 temp;
+    s32 i;
 
-    state = snowHorn->state;
-    //blink behaviour?
+    state = self->state;
     if (arg3 != 0) {
-        func_80024108(snowHorn, 0.005f, delayFloat, 0);
+        func_80024108(self, 0.005f, delayFloat, 0);
     }
     if (state->unk424 & 1) {
-        //lookAt behaviour! This DLL must have reusable functions for it throughout the objects
-        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(snowHorn, state->unk170);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, &state->unk170);
     }
-    snowHorn->unk0xaf |= 8;
-    temp = arg2->unk98;
-    arg2->unk62 = 0;
+    self->unk0xaf |= 8;
+    animObjState->unk62 = 0;
 
-    for (temp = 0; arg2->unk98[temp] > 0; temp++){
-        if (arg2->unk8E[temp] == 3){
-            set_gplay_bitstring(FLAG_SnowHorn_Unknown, 1);
-        }   
+    for (i = 0; i < animObjState->unk98; i++){
+        if (animObjState->unk8E[i] == 3) {
+            set_gplay_bitstring(0x5A0, 1);
+            continue;
+        }        
     }
     
     state->walkSpeed = 0.0f;
     return 0;
 }
-#endif
-
-typedef struct {
-  f32 unk0[3];
-  s16 unkc[3];
-  u8 unk12;
-  s8 unk13[8];
-  s8 unk1B; // current length of unk13
-} UnkFunc_80024108Struct;
-
-s32* func_800348A0(Object*, s32, s32);
-
-enum SoundIDs {
-    SFX_SNOWHORN_YAWN1 = 0x129,
-    SFX_SNOWHORN_SNOREHORN = 0x12A,
-    SFX_SNOWHORN_YAWN2 = 0x12B
-};
-
-enum SnowHornAnims {
-    MODANIM_SnowHorn_Idle = 0,
-    MODANIM_SnowHorn_Talk = 2,
-    MODANIM_SnowHorn_Walk = 3,
-    MODANIM_SnowHorn_Sleep_Intro = 4,
-    MODANIM_SnowHorn_Sleep = 5,
-    MODANIM_SnowHorn_Wake_Up = 6,
-    MODANIM_SnowHorn_Hit_React = 47
-};
 
 /** SnowHorn sleep state machine: handles anims and sounds */
 s32 dll_496_func_980(Object* snowhorn) {
@@ -566,7 +573,6 @@ s32 dll_496_func_980(Object* snowhorn) {
     snowhorn->unk0xaf |= 8;    
     
     switch (snowhorn->curModAnimId) {
-        //new_var = temp1;
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
                 gDLL_6_AMSFX->vtbl->func2((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
@@ -644,18 +650,6 @@ void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo
     state->unkRadius = mapsObj->unkRadius;
 }
 
-void set_button_mask(int port, u16 mask);
-
-enum SnowHornTutorialSequences {
-    SEQ_0157_SnowHorn_Chat_BeforeDefeatingSharpClaw = 0, //Hmph, shouldn't you help your friend?
-    SEQ_0157_SnowHorn_Chat_BeforeDiggingUpRoot = 1, //I'm too hungry to talk to strangers!
-    SEQ_0158_SnowHorn_Chat_AfterDiggingUpRoot = 2, //If you press the C-right button you can feed me that root!
-    SEQ_0159_SnowHorn_Cutscene_FeedingRoot1 = 3, //One root is never enough, I'm starving! To get out of the clearing...
-    SEQ_0625_SnowHorn_Chat_AfterEatingRoot1 = 4, //One root is never enough, I'm starving!
-    SEQ_0248_SnowHorn_Cutscene_FeedingRoot2 = 5, //Ahh, that hit the spot! Tell you what, young 'un, I'll help you out!
-    SEQ_0626_SnowHorn_Chat_AfterEatingRoot2 = 6  //I'm sorry lad, you're on your own now.
-};
-
 /** Called by the standing SnowHorn (not by the ones that walk around) */
 void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
     Object* player;
@@ -717,7 +711,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
             }
             break;
         case 2:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->ui_func_df4(INVENTORY_Alpine_Root)) {
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(INVENTORY_Alpine_Root)) {
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 1);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
                 gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
@@ -726,7 +720,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
             }
             break;
         case 4:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->ui_func_df4(INVENTORY_Alpine_Root)) {
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(INVENTORY_Alpine_Root)) {
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 2);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
                 gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
@@ -753,34 +747,178 @@ void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     state->unk424 |= 0x44;
 }
 
+//https://decomp.me/scratch/KhEPZ
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_11E0.s")
+#else
+void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreateInfo* createInfo) {
+    SnowHornState* state;
+    u32 questValue;
+    u16 seqBoneAngle;
+    SRT srt;
+    Vec3f v;
+    s32 pad[3];
+    Object* player;
+    // Vec3f* position;
+    u8 temp_t3;
+    s32 var_v1;
+    s32 temp_v0;
+    s16* temp_v0_2;
 
+    // object = self;
+    state = self->state;
+    
+    temp_v0 = func_80024108(self, 0.005f, delayByte, 0);
+    questValue = state->quest;
+
+    // position = &state->playerPositionCopy;
+    switch (questValue) {
+        case 0:
+            v.x = 0.0f;
+            v.y = 10.0f;
+            v.z = -25.0f;
+            srt.transl.z = 0.0f;
+            srt.transl.y = 0.0f;
+            srt.transl.x = 0.0f;
+            srt.roll = 0;
+            srt.pitch = 0;
+            srt.yaw = state->unkE;
+            srt.scale = 0.0f;
+            rotate_vec3(&srt, &v);
+            srt.transl.x = v.x + state->playerPositionCopy.x;
+            srt.transl.y = v.y + self->srt.transl.y;
+            srt.transl.z = v.z + state->playerPositionCopy.z;
+            srt.yaw = 0;
+            state->quest = 1;
+            break;
+        case 1:
+            if (self->animProgress > 0.25f) {
+                v.x = 0.0f;
+                v.y = 20.0f;
+                v.z = -20.0f;
+                srt.transl.z = 0.0f;
+                srt.transl.y = 0.0f;
+                srt.transl.x = 0.0f;
+                srt.roll = 0;
+                srt.pitch = 0;
+                srt.yaw = state->unkE;
+                srt.scale = 0.0f;
+                rotate_vec3(&srt, &v);
+                srt.transl.x = v.x + state->playerPositionCopy.x;
+                srt.transl.y = v.y + self->srt.transl.y;
+                srt.transl.z = v.z + state->playerPositionCopy.z;
+                srt.yaw = 0;
+                state->quest = 2;
+            }
+            break;
+        case 2:
+            if (self->animProgress > 0.65f) {
+                v.x = 0.0f;
+                v.y = 0.0f;
+                v.z = -40.0f;
+                srt.transl.z = 0.0f;
+                srt.transl.y = 0.0f;
+                srt.transl.x = 0.0f;
+                srt.roll = 0;
+                srt.pitch = 0;
+                srt.yaw = state->unkE;
+                srt.scale = 0.0f;
+                rotate_vec3(&srt, &v);
+                self->positionMirror.x = state->unk10 + 40.0f;
+                self->positionMirror.z = self->srt.transl.z;
+                self->positionMirror.y = state->playerPositionCopy.x;
+
+                srt.yaw = 0;
+                self->positionMirror.x = self->positionMirror.x;                
+                self->positionMirror.y = self->positionMirror.y;
+                self->positionMirror.z = self->positionMirror.z;
+                state->quest = 3;
+            }
+            break;
+        case 3:
+            v.x = 0.0f;
+            v.y = 0.0f;
+            v.z = -60.0f;
+            srt.transl.z = 0.0f;
+            srt.transl.y = 0.0f;
+            srt.transl.x = 0.0f;
+            srt.roll = 0;
+            srt.pitch = 0;
+            srt.yaw = state->unkE;
+            srt.scale = 0.0f;
+            rotate_vec3(&srt, &v);
+            srt.transl.x = v.x + state->playerPositionCopy.x;
+            srt.transl.y = v.y + self->srt.transl.y;
+            srt.transl.z = v.z + state->playerPositionCopy.z;
+            srt.yaw = 0;
+            state->quest = 4;
+            break;
+        case 4:
+            if (temp_v0 != 0) {
+                func_80023D30(self, 0, 0.0f, 0);
+                state->quest = 5;
+                return;
+            }
+            break;
+        case 5:
+            questValue |= 0x8000;
+            if (_data_270 != 0) {
+                state->quest = questValue;
+                temp_t3 = self->unk0xaf | 8;
+                self->unk0xaf = temp_t3;
+                self->unk0xaf = temp_t3 & 0xFFFE;
+                break;
+            }
+            state->unk8 = (s16) (state->unk8 + delayByte);
+            if (state->unk6 < state->unk8) {
+                state->unk8 = 0;
+                temp_v0_2 = func_80034804(self, 0);
+
+                state->unkE = (u16) (0x8000 - *&temp_v0_2[1]);
+                player = get_player();
+                
+                var_v1 = (arctan2_f((player->positionMirror.x + (player->speed.x * 60.0f)) - self->positionMirror.x, (player->positionMirror.z + (player->speed.z * 60.0f)) - self->positionMirror.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
+                if (var_v1 >= 0x8001) {
+                    var_v1 += 0xFFFF0001;
+                }
+                if (var_v1 < -0x8000) {
+                    var_v1 += 0xFFFF;
+                }
+                
+                func_80023D30(self, 1, 0.0f, 0);
+                if ((var_v1 >= -0xBB7) && (var_v1 < 0xBB8)) {
+                    state->unk38 = player->srt.transl.x;
+                    state->unk3C = player->srt.transl.y;
+                    state->unk40 = player->srt.transl.z;
+                    state->unk2C = state->unkE;
+                } else {
+                    seqBoneAngle = self->srt.yaw + *&temp_v0_2[1];
+                    state->unk38 = self->srt.transl.x - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    state->unk3C = self->srt.transl.y;
+                    state->unk40 = self->srt.transl.z - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    state->unk2C = 0;
+                }
+                state->quest = 0;
+            }
+            break;
+    }
+}
+#endif
+
+//https://decomp.me/scratch/fe0rJ
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_174C.s")
 #else
-typedef struct {
-/*0x00*/ s32 unk0;
-/*0x04*/ s32 unk4;
-/*0x08*/ s32 unk8;
-/*0x0C*/ s32 unkC;
-/*0x10*/ s32 unk10;
-/*0x14*/ s32 unk14;
-/*0x18*/ s32 unk18;
-/*0x1C*/ s8 unk1C;
-/*0x1D*/ s8 unk1D;
-} UnknownSnowHornStruct; //Possibly to do with talking to them, or controller inputs? TO-DO: figure out what this is!
-
-/** Need to figure out the struct for arg2! */
-void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj){
-    s32 sp2C;
-    
-    sp2C = 0x19;
+void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* createInfo){
+    s32 sp2C = 0x19;
+    s32 result;
     
     state->unk424 |= 0x45;
-    state->unk44 = _data_27C;
+    state->someAnimIDList = _data_27C;
     state->unk48 = _data_280;
 
-    if (gDLL_26_Curves->vtbl->curves_func_4288(&state->unk60, snowhorn, 1000.0f, &sp2C, -1) == 0){
+    result = gDLL_26_Curves->vtbl->curves_func_4288(&state->unk60, snowhorn, 1000.0f, &sp2C, -1);
+    if (!result){
         snowhorn->srt.transl.x = state->unk60.unk68;
         snowhorn->srt.transl.z = state->unk60.unk70;
         
@@ -789,42 +927,38 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     } else {
         state->isWalking = 0;
     }
-    
-    if (mapsObj->unk1D == 1){ //Regalloc on the 1, argh!
+
+    if (createInfo->unk1D == result){
         if (get_gplay_bitstring(FLAG_DarkIce_Mines_Leap_of_Faith_Completed)){
-            state->unk4C = (s32)_data_2E8;
+            state->chatSequenceList = _data_2E8;
             state->unk426 = 2.0f;
         } else if (get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
-            state->unk4C = (s32)_data_2DC;
+            state->chatSequenceList = _data_2DC;
             state->unk426 = 1.0f;
         } else if (get_gplay_bitstring(FLAG_Tricky_Distract_Learned)){
-            state->unk4C = (s32)_data_2D4;
+            state->chatSequenceList = _data_2D4;
             state->unk426 = 1.0f;
         } else {
-            state->unk4C = (s32)_data_2C8;
+            state->chatSequenceList = _data_2C8;
             state->unk426 = 2.0f;
         }
     } else {
         if (get_gplay_bitstring(FLAG_DarkIce_Mines_Leap_of_Faith_Completed)){
-            state->unk4C = (s32)_data_2E0;
+            state->chatSequenceList = _data_2E0;
             state->unk426 = 2.0f;
         } else if (get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
-            state->unk4C = (s32)_data_2D8;
+            state->chatSequenceList = _data_2D8;
             state->unk426 = 1.0f;
         } else if (get_gplay_bitstring(FLAG_Tricky_Distract_Learned)){
-            state->unk4C = (s32)_data_2D0;
+            state->chatSequenceList = _data_2D0;
             state->unk426 = 1.0f;
         } else {
-            state->unk4C = (s32)_data_2C0;
+            state->chatSequenceList = _data_2C0;
             state->unk426 = 2.0f;
         }
     }
 }
 #endif
-
-s32 func_800053B0(void*, f32);
-s32 func_8002493C(void*, f32, void*);
-s32 func_80031BBC(f32, f32, f32);
 
 void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* arg2) {
     f32 temp_walkSpeed;
@@ -907,15 +1041,113 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
         set_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress, questValue);
     }
     
-    state->unk44 = _data_288;
+    state->someAnimIDList = (s32*)_data_288;
     state->unk48 = _data_298;
     state->garundaTe_weedsEaten = get_gplay_bitstring(FLAG_Garunda_Te_NumFrostWeedsEaten);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_1D68.s")
+void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* createInfo) {
+    Object* frostWeed;
+    s32 weeds;
+    
+    self->unk0xaf &= 0xFFF7;
+    switch (state->GarundaTeQuest) {
+        case 0:
+            //Calling out to the player periodically
+            state->unk8 += delayByte;
+            if (state->unk8 >= 0x3E9) {
+                gDLL_6_AMSFX->vtbl->func2(self, 0x1E2, 0x7F, 0, 0, 0, 0);
+                gDLL_22_Subtitles->vtbl->func_368(0xA);
+                state->unk8 = 0;
+            }
+            if (self->unk0xaf & 4) {
+                state->GarundaTeQuest = 1;
+            }
+            break;
+        case 1:
+            if (func_80032538(self)) {
+                gDLL_3_Animation->vtbl->func17(0, self, -1);
+                state->GarundaTeQuest = 2;
+                set_gplay_bitstring(0x115, state->GarundaTeQuest);
+            }
+            break;
+        case 2:
+            //Eating FrostWeeds?
+            if (func_80032538(self)) {
+                gDLL_3_Animation->vtbl->func17(1, self, -1);
+            }
+            
+            frostWeed = obj_get_nearest_type_to(4, self, 0);
+            createInfo = (SnowHornCreateInfo*)self->createInfo;
+            if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < createInfo->unkRadius * createInfo->unkRadius) {
+                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func4(frostWeed)) {
+                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func3(frostWeed, &state->playerPositionCopy);
+                    state->frostWeed = frostWeed;
+                    if (0){
+                        state->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
+                    }
+                    state->garundaTe_weedsEaten++;
+                    if (state->garundaTe_weedsEaten > GARUNDA_TE_WEEDS_NEEDED) {
+                        state->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
+                    }
+                    set_gplay_bitstring(0x48B, state->garundaTe_weedsEaten);
+                    state->GarundaTeQuest = 3;
+                }
+            }
+            break;
+        case 3:
+            if (vec3_distance_xz_squared(&state->playerPositionCopy, &state->frostWeed->positionMirror) < 6.25f) {
+                state->GarundaTeQuest = 4;
+            }
+            break;
+        case 4:
+            if (state->unk424 & 8) {
+                weeds = state->garundaTe_weedsEaten;
+                if (weeds >= GARUNDA_TE_WEEDS_NEEDED) {
+                    set_gplay_bitstring(0x102, 1);
+                    state->GarundaTeQuest = 5;
+                    set_gplay_bitstring(0x115, state->GarundaTeQuest);
+                    break;
+                }
+                if (weeds % 3 == 0) {
+                    gDLL_6_AMSFX->vtbl->func2(self, 0x74B, 0x7F, 0, 0, 0, 0);
+                    gDLL_22_Subtitles->vtbl->func_368(2);
+                }
+                state->GarundaTeQuest = 2;
+            }
+            break;
+        case 5:
+            if (func_80032538(self)) {
+                if (state->unk425 % 2) {
+                    gDLL_3_Animation->vtbl->func17(3, self, -1);
+                } else {
+                    gDLL_3_Animation->vtbl->func17(2, self, -1);
+                }
+                state->unk425 += 1;
+            }
+            break;
+        case 6:
+            //SpellStone activation
+            if (func_80032538(self)) {
+                gDLL_3_Animation->vtbl->func17(4, self, -1);
+            } else if (gDLL_1_UI->vtbl->func7(0x123)) {
+                set_gplay_bitstring(0x22B, 1);
+                state->GarundaTeQuest = 7;
+                set_gplay_bitstring(0x115, state->GarundaTeQuest);
+            }
+            break;
+        case 7:
+            self->unk0xaf |= 8;
+            break;
+    }
+    
+    if (state->GarundaTeQuest >= 2 && state->GarundaTeQuest < 5) {
+        diPrintf("noweeds=%d\n", state->garundaTe_weedsEaten);
+    }
+}
 
 void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
-    state->unk44 = _data_2B8;
+    state->someAnimIDList = _data_2B8;
     state->unk48 = _data_2BC;
 }
 

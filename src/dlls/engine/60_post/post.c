@@ -106,7 +106,7 @@ s32 dll_60_update1() {
         if (bss_4 != 0) {
             bss_4 = 0;
             bss_0 = 0.0f;
-            menu_set(MENU_3);
+            menu_set(MENU_RAREWARE);
         }
 
         return 0;

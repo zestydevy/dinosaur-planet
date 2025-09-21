@@ -47,7 +47,7 @@ static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_80034678.s")
 
 /** object_find_seq_bone_data_by_bone_id? */
-u16* func_80034804(Object* obj, s32 sequenceBoneID) {
+s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     ObjDef* romdef;
     u8* seqBones;
     s32 index;

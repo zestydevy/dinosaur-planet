@@ -22,16 +22,16 @@ typedef struct {
 } DBDiamondState;
 
 // offset: 0x0 | ctor
-void dll_668_ctor(s32 arg0) {
+void DBdiamond_ctor(void *dll) {
 }
 
 // offset: 0xC | dtor
-void dll_668_dtor(s32 arg0) {
+void DBdiamond_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_668_func_18(Object* self, DBDiamondCreateInfo* createInfo, s32 arg2) {
-    DBDiamondState* state = self->state;
+void DBdiamond_create(Object *self, DBDiamondCreateInfo *createInfo, s32 arg2) {
+    DBDiamondState *state = self->state;
 
     if (get_gplay_bitstring(createInfo->flag1)){
         state->unk0 = 1;
@@ -48,14 +48,14 @@ void dll_668_func_18(Object* self, DBDiamondCreateInfo* createInfo, s32 arg2) {
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void dll_668_func_D0(Object* self) {
-    Object* player;
-    DBDiamondCreateInfo* createInfo;
+void DBdiamond_update(Object *self) {
+    Object *player;
+    DBDiamondCreateInfo *createInfo;
     DBDiamondState *state;
-    s16* sequenceBone;
+    s16 *sequenceBone;
 
     player = get_player();
-    createInfo = (DBDiamondCreateInfo*)self->createInfo;
+    createInfo = (DBDiamondCreateInfo *)self->createInfo;
     state = self->state;
 
     if (state->unk0 != 1 && state->unk0 == 2 && self->unk0xaf & 1) {
@@ -72,12 +72,12 @@ void dll_668_func_D0(Object* self) {
 }
 
 // offset: 0x204 | func: 2 | export: 2
-void dll_668_func_204(s32 arg0) {
+void DBdiamond_func_204(Object *self) {
 }
 
 // offset: 0x210 | func: 3 | export: 3
-void dll_668_func_210(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    DBDiamondState* state = self->state;
+void DBdiamond_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+    DBDiamondState *state = self->state;
     
     if (!visibility)
         return;
@@ -87,16 +87,16 @@ void dll_668_func_210(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 }
 
 // offset: 0x27C | func: 4 | export: 4
-void dll_668_func_27C(Object* self, s32 arg1) {
+void DBdiamond_destroy(Object *self, s32 arg1) {
     obj_free_object_type(self, 0x27);
 }
 
 // offset: 0x2BC | func: 5 | export: 5
-s32 dll_668_func_2BC(s32 arg0) {
+s32 DBdiamond_func_2BC(Object *self) {
     return 0;
 }
 
 // offset: 0x2CC | func: 6 | export: 6
-s32 dll_668_func_2CC(s32 arg0, s32 arg1) {
+s32 DBdiamond_get_state_size(Object *self, s32 arg1) {
     return 1;
 }

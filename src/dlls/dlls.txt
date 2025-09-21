@@ -13,10 +13,12 @@
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash
-60 = engine/60
-61 = engine/61
+60 = engine/60_post
+61 = engine/61_rareware
+62 = engine/62_mainmenu
 63 = engine/63_gameselect
-64 = engine/64_entername
+64 = engine/64_nameentry
+66 = engine/66_pausemenu
 74 = engine/74_picmenu
 82 = engine/82
 83 = engine/83
@@ -30,10 +32,16 @@
 
 # objects
 210 = objects/210_player
+214 = objects/214_animobj
 223 = objects/223_cannon_claw
+227 = objects/227_tumbleweed
+268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+281 = objects/281_area
 296 = objects/296_medium_crate
 325 = objects/325_trigger
+345 = objects/345_animator
 365 = objects/365
+466 = objects/466_mmshrine
 496 = objects/496_snowhorn
 668 = objects/668_db_diamond

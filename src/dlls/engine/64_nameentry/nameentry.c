@@ -121,7 +121,7 @@ s32 dll_64_update1() {
                 name[sNumNameLetters] = '\0';
 
                 gDLL_29_Gplay->vtbl->init_save(get_save_game_idx(), name);
-                menu_set(MENU_5);
+                menu_set(MENU_GAME_SELECT);
                 sNameLettersRedrawFrames = 2;
             }
         } else {
