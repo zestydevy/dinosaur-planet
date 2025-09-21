@@ -165,7 +165,7 @@ def scan_dll_elf(
         dll_vram: int,
         vrams_to_funcs: "dict[int, dict]",
         data_globals: list,
-        symbol_renames: "dict[str, str]",
+        symbol_renames: "dict[str, tuple[str, int]]",
         dll_prefix: str):
     syms = elf.get_section_by_name(".symtab")
     assert isinstance(syms, SymbolTableSection)
@@ -181,31 +181,24 @@ def scan_dll_elf(
         st_shndx = sym.entry["st_shndx"]
         st_info_type = sym.entry["st_info"]["type"]
         st_info_bind = sym.entry["st_info"]["bind"]
+        st_other_vis = sym.entry["st_other"]["visibility"]
 
         if st_shndx == "SHN_UNDEF":
             continue
 
-        static_sym = False
-        static_sym_is_data = False
+        if st_other_vis == "STV_INTERNAL":
+            continue
 
-        if st_info_type == "STT_NOTYPE" and st_shndx == "SHN_ABS":
-            # Probably either a static that IDO decided to not generate a symbol for (sometimes it does)
-            # and that existed in syms.txt or a static that it did generate a symbol for but decided
-            # to mark as ABS and not set the correct type...
-            static_sym = True
-            static_sym_is_data = value >= text_end
-        else:
-            if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT":
-                continue
-            if st_info_bind != "STB_LOCAL" and size == 0:
-                continue
-        
+        if st_info_type == "STT_SECTION":
+            continue
+
         if value & 0x80000000:
             # External symbol reference, already covered by core syms
             continue
 
         if st_shndx == "SHN_ABS":
             sec_offset = dll.header.size
+            section = None
         else:
             section = elf.get_section(st_shndx).name
             if section == ".text":
@@ -217,6 +210,24 @@ def scan_dll_elf(
             elif section == ".bss":
                 sec_offset = dll.get_bss_offset()
             else:
+                continue
+
+        static_sym = False
+        static_sym_is_data = False
+
+        if st_info_type == "STT_NOTYPE" or section != None:
+            if sym.name.startswith(".L"):
+                continue
+            # Probably either a static that IDO decided to not generate a symbol for (sometimes it does)
+            # and that existed in syms.txt or a static that it did generate a symbol for but decided
+            # to mark as ABS and not set the correct type. These *usually* have the correct section
+            # due to syms.txt mapping but not always.
+            static_sym = True
+            static_sym_is_data = section == None and value >= text_end or section != ".text"
+        else:
+            if st_info_type != "STT_FUNC" and st_info_type != "STT_OBJECT":
+                continue
+            if st_info_bind != "STB_LOCAL" and size == 0:
                 continue
 
         vram = dll_vram + sec_offset + value
@@ -231,7 +242,7 @@ def scan_dll_elf(
                 rename = dll_prefix + sym.name
                 func_info["name"] = rename
                 func_info["symbol"] = sym.name
-                symbol_renames[sym.name] = rename
+                symbol_renames[sym.name] = (rename, vram)
         elif st_info_type == "STT_OBJECT" or (static_sym and static_sym_is_data):
             # Data
             if sym.name.startswith("jtbl_"):
@@ -251,7 +262,7 @@ def scan_dll_elf(
                     # Prefer the duplicate with a defined symbol type
                     data_syms[existing_idx] = sym
                     data_globals[existing_idx] = data_global
-                    symbol_renames[sym.name] = rename
+                    symbol_renames[sym.name] = (rename, vram)
                 elif existing_st_info_type != "STT_NOTYPE" and st_info_type == "STT_NOTYPE":
                     # Don't downgrade to a notype sym
                     pass
@@ -261,7 +272,7 @@ def scan_dll_elf(
                 data_sym_map[sym.name] = len(data_globals)
                 data_syms.append(sym)
                 data_globals.append(data_global)
-                symbol_renames[sym.name] = rename
+                symbol_renames[sym.name] = (rename, vram)
 
 def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO, include_dir: Path):
     with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:
@@ -292,7 +303,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         funcs = []
         vrams_to_funcs: dict[int, dict] = {}
         data_globals = []
-        symbol_renames: "dict[str, str]" = {}
+        symbol_renames: "dict[str, tuple[str, int]]" = {}
 
         # Make sure the symbol names are globally unique
         # This isn't required in the decomp since DLLs are not linked with each other,
@@ -317,32 +328,37 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         dll_dir = dlls_txt.path_map.get(number, None)
         if dll_dir != None:
             dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{dll_dir}/{number}.elf")
-            if dll_elf_path.exists():
-                with open(dll_elf_path, "rb") as file:
-                    elf = ELFFile(file)
-                    scan_dll_elf(
-                        elf,
-                        dll,
-                        number,
-                        dll_vram,
-                        vrams_to_funcs,
-                        data_globals,
-                        symbol_renames,
-                        dll_prefix
-                    )
-                
-                # Emit recomp header for DLL symbol renames
-                header_path = include_dir.joinpath(f"dlls/{dll_dir}_recomp.h")
-                header_path.parent.mkdir(parents=True, exist_ok=True)
-                with open(header_path, "w", encoding="utf-8") as header:
-                    header.write("// AUTOGENERATED FILE - PLEASE DO NOT MODIFY\n\n")
-                    header.write("#ifndef _DLL_{}_RECOMP_H\n".format(number))
-                    header.write("#define _DLL_{}_RECOMP_H\n\n".format(number))
+        else:
+            dll_elf_path = BUILD_PATH.joinpath(f"asm/nonmatchings/dlls/_asm/{number}.elf")
+            dll_dir = f"_asm/{number}"
+        if dll_elf_path.exists():
+            with open(dll_elf_path, "rb") as file:
+                elf = ELFFile(file)
+                scan_dll_elf(
+                    elf,
+                    dll,
+                    number,
+                    dll_vram,
+                    vrams_to_funcs,
+                    data_globals,
+                    symbol_renames,
+                    dll_prefix
+                )
+            
+            # Emit recomp header for DLL symbol renames
+            header_path = include_dir.joinpath(f"dlls/{dll_dir}_recomp.h")
+            header_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(header_path, "w", encoding="utf-8") as header:
+                header.write("// AUTOGENERATED FILE - PLEASE DO NOT MODIFY\n\n")
+                header.write("#ifndef _DLL_{}_RECOMP_H\n".format(number))
+                header.write("#define _DLL_{}_RECOMP_H\n\n".format(number))
 
-                    for (sym, rename) in symbol_renames.items():
-                        header.write("#define {} {}\n".format(sym, rename))
+                renames = [t for t in symbol_renames.items()]
+                renames.sort(key=lambda t: t[1][1])
+                for (sym, (rename, _)) in renames:
+                    header.write("#define {} {}\n".format(sym, rename))
 
-                    header.write("\n#endif //_DLL_{}_RECOMP_H\n".format(number))
+                header.write("\n#endif //_DLL_{}_RECOMP_H\n".format(number))
 
         
         funcs.sort(key=lambda f : f["vram"])
