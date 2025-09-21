@@ -10,9 +10,9 @@
 #include "sys/menu.h"
 #include "sys/memory.h"
 
-#include "prevent_bss_reordering.h"
+// #include "prevent_bss_reordering.h"
 
-/*0x0*/ static PicMenuItem _data_0[] = {
+/*0x0*/ static PicMenuItem pressStartItem[] = {
     /*0*/ NEW_PICMENU_ITEM(
     /*textX*/ 160, /*textY*/ 165, /*innerWidth*/ 0, 
     /*itemX*/ 160, /*itemY*/ 175, /*textureID*/ -1, /*outerWidth*/ 0, 
@@ -21,7 +21,7 @@
     /*upLink*/ -1, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ -1
     )
 };
-/*0x3C*/ static PicMenuItem _data_3C[] = {
+/*0x3C*/ static PicMenuItem mainMenuItems[] = {
     /*0*/ NEW_PICMENU_ITEM(
     /*textX*/ 160, /*textY*/ 180, /*innerWidth*/ 0, 
     /*itemX*/ 160, /*itemY*/ 187, /*textureID*/ -1, /*outerWidth*/ 0, 
@@ -79,17 +79,17 @@
     /*upLink*/ 6, /*downLink*/ -1, /*leftLink*/ -1, /*rightLink*/ -1, /*overrideWith*/ 0
     ),
 };
-/*0x21C*/ static s16 _data_21C[] = {
-    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0007, 0x0008,
+/*0x21C*/ static s16 gametextLineIndices[] = {
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0007, 0x0008
 };
 
-/*0x0*/ static u8 _bss_0;
-/*0x4*/ static GameTextChunk* _bss_4;
-/*0x8*/ static GplayStruct4* _bss_8;
-/*0xC*/ static s8 _bss_C;
-/*0xD*/ static s8 _bss_D;
+/*0x0*/ static u8 showDPLogo;
+/*0x4*/ static GameTextChunk* gametext;
+/*0x8*/ static GplayStruct4* _bss_8; //current languageID obtained through this, so maybe general settings/options struct?
+/*0xC*/ static s8 sExitTransitionTimer;
+/*0xD*/ static s8 nextMenuID;
 /*0xE*/ static u8 _bss_E[0x2];
-/*0x10*/ static Texture* _bss_10;
+/*0x10*/ static Texture* dinosaurPlanetLogo;
 
 // offset: 0x0 | ctor
 void dll_62_ctor(s32 arg0) {
@@ -98,32 +98,32 @@ void dll_62_ctor(s32 arg0) {
 
     total_strings = 8;
     
-    _bss_10 = queue_load_texture_proxy(0xC5);
+    dinosaurPlanetLogo = queue_load_texture_proxy(0xC5);
     func_800379D0(0, 0, 0);
 
     //Set language and get text
     _bss_8 = gDLL_29_Gplay->vtbl->func_930();
     gDLL_21_Gametext->vtbl->set_bank(_bss_8->unk0x0);
-    _bss_4 = gDLL_21_Gametext->vtbl->get_chunk(238);
+    gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
 
     //Set "Press Start" text?
-    _data_0->text = _bss_4->strings[6];
+    pressStartItem->text = gametext->strings[6];
 
     for (index = 0; index < total_strings; index++){
-        _data_3C[index].text = _bss_4->strings[_data_21C[index]];
+        mainMenuItems[index].text = gametext->strings[gametextLineIndices[index]];
     }
     
     if (menu_get_previous() == 3) {
-        gDLL_74_Picmenu->vtbl->set_items(_data_0, 1, 0, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
-        _bss_0 = 0;
+        gDLL_74_Picmenu->vtbl->set_items(pressStartItem, 1, 0, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
+        showDPLogo = 0;
     } else {
-        _data_3C[7].overrideWith = _bss_8->unk0x0; //Set language index?
-        gDLL_74_Picmenu->vtbl->set_items(_data_3C, 8, 5, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
-        _bss_0 = 1;
+        mainMenuItems[7].overrideWith = _bss_8->unk0x0; //Set language index?
+        gDLL_74_Picmenu->vtbl->set_items(mainMenuItems, 8, 5, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
+        showDPLogo = 1;
     }
     
-    _bss_D = 0;
-    _bss_C = 0;
+    nextMenuID = 0;
+    sExitTransitionTimer = 0;
 }
 
 // offset: 0x310 | dtor
@@ -131,102 +131,97 @@ void dll_62_dtor(void *dll){
 
 }
 
+static void dll_62_func_8AC(void);
+
 // offset: 0x31C | func: 0 | export: 0
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/62_mainmenu/dll_62_func_31C.s")
-#else
-void dll_62_func_8AC(void);
-
 s32 dll_62_func_31C(void) {
-    // PicMenuItem* var_a0;
-    // s16 temp_t8;
     s32 items;
-    s32 var_v1_2;
-    s32 temp_v0;
-    // s32 temp_v0_2;
-    // s8 var_v0;
-    // u8 temp_v1;
-    s32 var_v1;
+    s32 index;
+    s32 action;
+    s32 lineIndex;
+    s8 prevExitTransitionTimer;
+    s32 delay;
 
+    prevExitTransitionTimer = sExitTransitionTimer;
 
-    
-    var_v1 = delayByte;
-    if (var_v1 >= 4) {
-        var_v1 = 3;
+    delay = delayByte;
+    if (delay > 3) {
+        delay = 3;
     }
-    
-    if (_bss_C > 0) {
-        _bss_C -= var_v1;
+
+    if (sExitTransitionTimer > 0) {
+        sExitTransitionTimer -= delay;
     }
-    
-    if (_bss_D != 0) {
-        if (_bss_C >= 0xD && _bss_C < 0xD) {
+
+    //Transitioning to different page once timer runs out
+    if (nextMenuID) {
+        if (prevExitTransitionTimer >= 13 && sExitTransitionTimer <= 12) {
+            //change resolution for game select?
             func_8005D410(0xE, get_ossched(), 0);
             dll_62_func_8AC();
             func_80041D20(0);
             func_80041C6C(0);
-            if (_bss_D == 5) {
+            if (nextMenuID == 5) {
                 gDLL_29_Gplay->vtbl->func_8D8();
             }
+        } else if (sExitTransitionTimer < 1) {
+            func_800141A4(1, 0, 1, (s32) nextMenuID);
         }
-        if (_bss_C <= 0) {
-            func_800141A4(1, 0, 1, (s32) _bss_D);
-        }
-        if (_bss_C < 0xD) {
+
+        if (sExitTransitionTimer <= 12) {
             return 1;
-        }
-        // goto block_29;
-        return 0;
-    }
-    
-    temp_v0 = gDLL_74_Picmenu->vtbl->update(_bss_C, &_bss_C, _bss_D);
-    
-    if (_bss_0 == 0) {
-        if (temp_v0 == PICMENU_ACTION_SELECT) {
-            gDLL_74_Picmenu->vtbl->clear_items();
-            _data_3C[7].overrideWith = (u8) _bss_8->unk0x0;
-            gDLL_74_Picmenu->vtbl->set_items(_data_3C, 8, 5, NULL, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
-            _bss_0 = 1;
-        }
-        // goto block_29;
-        return 0;
-    }
-    
-    if (temp_v0 == PICMENU_ACTION_SELECT) {
-        // temp_v0_2 = gDLL_74_Picmenu->vtbl->get_selected_item();
-        switch (gDLL_74_Picmenu->vtbl->get_selected_item()) {
-        case 5:
-            gDLL_28_ScreenFade->vtbl->fade(0x14, 1);
-            _bss_D = 5;
-            _bss_C = 0x23;
-            return 0;
-        case 6:
-            gDLL_28_ScreenFade->vtbl->fade(0x14, 1);
-            _bss_D = 7;
-            _bss_C = 0x23;
+        } else {
             return 0;
         }
     } else {
-        _bss_8->unk0x0 = gDLL_74_Picmenu->vtbl->get_item_override(7);
-        // temp_v1 = _bss_8->unk0x0;
-        if (gDLL_21_Gametext->vtbl->curr_bank() != _bss_8->unk0x0) {
-            gDLL_21_Gametext->vtbl->set_bank((s8) _bss_8->unk0x0);
-            mmFree(_bss_4);
-            _bss_4 = gDLL_21_Gametext->vtbl->get_chunk(0xEE);
+        action = gDLL_74_Picmenu->vtbl->update();
 
-            items = 8;
-            
-            for (var_v1_2 = 0; var_v1_2 < items; var_v1_2++){
-                _data_3C[var_v1_2].text = _bss_4->strings[_data_21C[var_v1_2]];
+        //When DP logo not visible and button pressed?
+        if (showDPLogo == 0){
+            if (action == PICMENU_ACTION_SELECT) {
+                gDLL_74_Picmenu->vtbl->clear_items();
+                mainMenuItems[7].overrideWith = _bss_8->unk0x0;
+                gDLL_74_Picmenu->vtbl->set_items(mainMenuItems, 8, 5, NULL, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
+                showDPLogo = 1;
             }
-            
-            gDLL_74_Picmenu->vtbl->update_text(_data_3C);
+        } else if (action == PICMENU_ACTION_SELECT) {
+
+            items = 1;
+            switch (gDLL_74_Picmenu->vtbl->get_selected_item()) {
+                case 5:
+                    gDLL_28_ScreenFade->vtbl->fade(0x14, items);
+                    nextMenuID = 5;
+                    sExitTransitionTimer = 0x23;
+                    return 0;
+                case 6:
+                    gDLL_28_ScreenFade->vtbl->fade(0x14, items);
+                    nextMenuID = 7;
+                    sExitTransitionTimer = 0x23;
+                    return 0;
+            }
+            goto label1;
+        } else {
+label1:
+            //Changing language
+            _bss_8->unk0x0 = gDLL_74_Picmenu->vtbl->get_item_override(7);
+            if (gDLL_21_Gametext->vtbl->curr_bank() != _bss_8->unk0x0) {
+                gDLL_21_Gametext->vtbl->set_bank(_bss_8->unk0x0);
+                mmFree(gametext);
+                gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
+    
+                items = 8;
+                
+                for (index = 0; index < items; index++){
+                    mainMenuItems[index].text = gametext->strings[gametextLineIndices[index]];
+                }
+                
+                gDLL_74_Picmenu->vtbl->update_text(mainMenuItems);
+            }
         }
-// block_29:
+        
         return 0;
     }
 }
-#endif
 
 // offset: 0x764 | func: 1 | export: 1
 void dll_62_func_764(void){
@@ -235,12 +230,12 @@ void dll_62_func_764(void){
 
 // offset: 0x76C | func: 2 | export: 2
 void dll_62_func_76C(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
-    if (!_bss_D || _bss_C >= 0xB) {
+    if (!nextMenuID || sExitTransitionTimer >= 0xB) {
         font_window_set_coords(1, 0, 0, get_some_resolution_encoded() & 0xFFFF, (get_some_resolution_encoded() >> 0x10));
         font_window_flush_strings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
         if (func_80014C60()) {
-            func_8003825C(gfx, _bss_10, 0x32, 0x32, 0, 0, 0xFF, 0);
+            func_8003825C(gfx, dinosaurPlanetLogo, 50, 50, 0, 0, 0xFF, 0);
         }
         font_window_draw(gfx, NULL, NULL, 1);
     }
@@ -248,9 +243,9 @@ void dll_62_func_76C(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
 
 // offset: 0x8AC | func: 3
 void dll_62_func_8AC(void) {
-    texture_destroy(_bss_10);
+    texture_destroy(dinosaurPlanetLogo);
     gDLL_74_Picmenu->vtbl->clear_items();
-    mmFree(_bss_4);
+    mmFree(gametext);
 }
 
 
