@@ -13,8 +13,8 @@
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash
-60 = engine/60
-61 = engine/61
+60 = engine/60_post
+61 = engine/61_rareware
 63 = engine/63_gameselect
 64 = engine/64_entername
 66 = engine/66_pausemenu
