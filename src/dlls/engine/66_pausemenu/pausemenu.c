@@ -95,7 +95,7 @@ s32 n_pausemenu_update(void) {
         if (action == PICMENU_ACTION_SELECT) {
             if (!selectedItem){
                 gDLL_6_AMSFX->vtbl->func2(0, 2931, 0x7F, 0, 0, 0, 0);
-                menu_set(MENU_1);
+                menu_set(MENU_GAMEPLAY);
                 unpause();
                 set_button_mask(0, A_BUTTON | B_BUTTON);
             } else {
@@ -110,7 +110,7 @@ s32 n_pausemenu_update(void) {
                 gDLL_74_Picmenu->vtbl->update_flags(pauseMenuItems);
             }
         } else if (action == PICMENU_ACTION_BACK) {
-            menu_set(MENU_1);
+            menu_set(MENU_GAMEPLAY);
             unpause();
             set_button_mask(0, A_BUTTON | B_BUTTON);
         }

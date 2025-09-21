@@ -257,7 +257,7 @@ void game_init(void) {
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
     dl_init_debug_infos();
-    menu_set(MENU_2);
+    menu_set(MENU_POST);
     if (osMemSize == EXPANSION_SIZE) {
         func_80014074();
     }
@@ -420,7 +420,7 @@ void func_80013D80(void) {
             if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (get_gplay_bitstring(1103) == 0)) {
                 gPauseState = 1;
                 set_button_mask(0, START_BUTTON);
-                menu_set(MENU_8);
+                menu_set(MENU_PAUSE);
             }
 
             gDLL_29_Gplay->vtbl->func_115C();

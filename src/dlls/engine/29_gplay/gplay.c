@@ -401,8 +401,8 @@ static void gplay_func_D94() {
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y,
         bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z);
     
-    if (menu_get_current() != MENU_4) {
-        menu_set(MENU_1);
+    if (menu_get_current() != MENU_TITLE_SCREEN) {
+        menu_set(MENU_GAMEPLAY);
     }
 
     gDLL_28_ScreenFade->vtbl->fade_reversed(40, SCREEN_FADE_BLACK);

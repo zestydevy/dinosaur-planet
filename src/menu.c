@@ -107,7 +107,7 @@ void menu_do_menu_swap() {
     if (gNextMenuID != 0) {
         gNextMenuID -= 1;
 
-        if (gNextMenuID == MENU_2) {
+        if (gNextMenuID == MENU_POST) {
             D_800A7D50 = 0;
         }
 

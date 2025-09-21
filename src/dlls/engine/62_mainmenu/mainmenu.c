@@ -113,7 +113,7 @@ void dll_62_ctor(s32 arg0) {
         mainMenuItems[index].text = gametext->strings[gametextLineIndices[index]];
     }
     
-    if (menu_get_previous() == 3) {
+    if (menu_get_previous() == MENU_RAREWARE) {
         gDLL_74_Picmenu->vtbl->set_items(pressStartItem, 1, 0, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
         showDPLogo = 0;
     } else {
@@ -161,7 +161,7 @@ s32 dll_62_func_31C(void) {
             dll_62_func_8AC();
             func_80041D20(0);
             func_80041C6C(0);
-            if (nextMenuID == 5) {
+            if (nextMenuID == MENU_GAME_SELECT) {
                 gDLL_29_Gplay->vtbl->func_8D8();
             }
         } else if (sExitTransitionTimer < 1) {
@@ -190,13 +190,13 @@ s32 dll_62_func_31C(void) {
             switch (gDLL_74_Picmenu->vtbl->get_selected_item()) {
                 case 5:
                     gDLL_28_ScreenFade->vtbl->fade(0x14, items);
-                    nextMenuID = 5;
-                    sExitTransitionTimer = 0x23;
+                        nextMenuID = MENU_GAME_SELECT;
+                        sExitTransitionTimer = 0x23;
                     return 0;
                 case 6:
                     gDLL_28_ScreenFade->vtbl->fade(0x14, items);
-                    nextMenuID = 7;
-                    sExitTransitionTimer = 0x23;
+                        nextMenuID = MENU_OPTIONS;
+                        sExitTransitionTimer = 0x23;
                     return 0;
             }
             goto label1;

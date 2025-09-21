@@ -284,7 +284,7 @@ void dll_63_ctor(void *self) {
         sSaveGameTextures[i] = queue_load_texture_proxy(sSaveGameTextureIDs[i]);
     }
 
-    if (menu_get_previous() != MENU_6) {
+    if (menu_get_previous() != MENU_ENTER_NAME) {
         gDLL_28_ScreenFade->vtbl->fade_reversed(20, SCREEN_FADE_BLACK);
         dll_63_goto_game_select(1);
     } else {
@@ -342,7 +342,7 @@ s32 dll_63_update1() {
                 // Exit to main menu
                 func_80014BBC();
                 func_800142F0(12457.1f, -1474.875f, -6690.398f, 1);
-                menu_set(MENU_4);
+                menu_set(MENU_TITLE_SCREEN);
             }
         }
 
@@ -847,7 +847,7 @@ static void dll_63_act_game_select(PicMenuAction action, s32 selected) {
                     // Go to name entry menu
                     dll_63_clean_up(0);
                     set_save_game_idx(selected);
-                    menu_set(MENU_6);
+                    menu_set(MENU_ENTER_NAME);
                 } else {
                     sSelectedSaveIdx = selected;
                     sSaveGameBoxX = 56;
