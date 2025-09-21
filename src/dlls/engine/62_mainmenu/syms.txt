@@ -1,22 +1,22 @@
 .text = 0x0:
-dll_62_ctor = 0x0;
-dll_62_dtor = 0x310;
-dll_62_func_31C = 0x31C;
-dll_62_func_764 = 0x764;
-dll_62_func_76C = 0x76C;
-dll_62_func_8AC = 0x8AC;
+mainmenu_ctor = 0x0;
+mainmenu_dtor = 0x310;
+mainmenu_update = 0x31C;
+mainmenu_func_764 = 0x764;
+mainmenu_draw = 0x76C;
+mainmenu_clean_up = 0x8AC;
 
 .rodata = 0x9A0:
 
 .data = 0x9A0:
-_data_0 = 0x0; // absolute:0x9A0
-_data_3C = 0x3C; // absolute:0x9DC
-_data_21C = 0x21C; // absolute:0xBBC
+pressStartItem = 0x0; // absolute:0x9A0
+mainMenuItems = 0x3C; // absolute:0x9DC
+gametextLineIndices = 0x21C; // absolute:0xBBC
 
 .bss = 0xBD0:
-_bss_0 = 0x0; // absolute:0xBD0
-_bss_4 = 0x4; // absolute:0xBD4
-_bss_8 = 0x8; // absolute:0xBD8
-_bss_C = 0xC; // absolute:0xBDC
-_bss_D = 0xD; // absolute:0xBDD
-_bss_10 = 0x10; // absolute:0xBE0
+showDPLogo = 0x0; // absolute:0xBD0
+gametext = 0x4; // absolute:0xBD4
+options = 0x8; // absolute:0xBD8
+sExitTransitionTimer = 0xC; // absolute:0xBDC
+nextMenuID = 0xD; // absolute:0xBDD
+logoDinosaurPlanet = 0x10; // absolute:0xBE0

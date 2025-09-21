@@ -51,7 +51,7 @@ static Vec3f data_1E0 = { -14149.352f, -82.0f, -15569.178f };
 
 /*0x0*/    static FlashStruct *bss_0;
 /*0x4*/    static GplayStruct3 *bss_4;
-/*0x8*/    static GplayStruct4 *bss_8;
+/*0x8*/    static GplayOptions *bss_8;
 /*0x10*/   static GplayStruct7 bss_10;
 /*0x183C*/ static s8 bss_183C;
 /*0x1840*/ static u8 bss_1840[40];
@@ -73,7 +73,7 @@ void gplay_ctor(DLLFile *self)  {
     bss_0 = (FlashStruct*)mmAlloc(sizeof(FlashStruct), COLOUR_TAG_YELLOW, NULL);
     gplay_func_1314();
     bss_4 = NULL;
-    bss_8 = (GplayStruct4*)mmAlloc(128, COLOUR_TAG_YELLOW, NULL);
+    bss_8 = (GplayOptions*)mmAlloc(128, COLOUR_TAG_YELLOW, NULL);
     bss_1A48[0] = -1;
     bss_1A50[0] = -1;
 }
@@ -278,39 +278,39 @@ u32 gplay_func_79C() {
     var = 1;
 
     ret = gDLL_31_Flash->vtbl->load_game(
-        bss_8, 3, sizeof(GplayStruct4), 0);
+        bss_8, 3, sizeof(GplayOptions), 0);
     
     if (ret == 0) {
-        bzero(bss_8, sizeof(GplayStruct4));
+        bzero(bss_8, sizeof(GplayOptions));
         var = 0;
-        bss_8->unk0x8 = 0x7f;
-        bss_8->unk0x9 = 0x7f;
-        bss_8->unk0xa = 0x7f;
+        bss_8->volumeMusic = 0x7f;
+        bss_8->volumeAudio = 0x7f;
+        bss_8->unkA = 0x7f;
     }
 
-    bss_8->unk0x0 = 0;
+    bss_8->languageID = 0;
     
-    if (bss_8->unk0xb < -7) {
-        bss_8->unk0xb = -7;
+    if (bss_8->screenOffsetX < -7) {
+        bss_8->screenOffsetX = -7;
     }
-    if (bss_8->unk0xb > 7) {
-        bss_8->unk0xb = 7;
+    if (bss_8->screenOffsetX > 7) {
+        bss_8->screenOffsetX = 7;
     }
-    if (bss_8->unk0xc < -7) {
-        bss_8->unk0xc = -7;
+    if (bss_8->screenOffsetY < -7) {
+        bss_8->screenOffsetY = -7;
     }
-    if (bss_8->unk0xc > 7) {
-        bss_8->unk0xc = 7;
+    if (bss_8->screenOffsetY > 7) {
+        bss_8->screenOffsetY = 7;
     }
 
     return var;
 }
 
 void gplay_func_8D8() {
-    gDLL_31_Flash->vtbl->save_game(bss_8, 3, sizeof(GplayStruct4), 0);
+    gDLL_31_Flash->vtbl->save_game(bss_8, 3, sizeof(GplayOptions), 0);
 }
 
-GplayStruct4 *gplay_func_930() {
+GplayOptions *gplay_func_930() {
     return bss_8;
 }
 
@@ -681,12 +681,12 @@ u32 gplay_func_19FC(u8 param1) {
         return 0;
     }
 
-    return bss_8->unk0x10 & (1 << param1);
+    return bss_8->cheatsUnlocked & (1 << param1);
 }
 
 void gplay_func_1A48(u8 param1) {
     if (param1 < 32) {
-        bss_8->unk0x10 |= (1 << param1);
+        bss_8->cheatsUnlocked |= (1 << param1);
     }
 }
 
@@ -699,20 +699,20 @@ s32 gplay_func_1A90(u8 param1) {
         return 0;
     } 
 
-    ret = (bss_8->unk0x10 & (1 << param1)) != 0;
+    ret = (bss_8->cheatsUnlocked & (1 << param1)) != 0;
     if (ret) {
-        return (bss_8->unk0x14 & (1 << param1)) != 0;
+        return (bss_8->cheatsEnabled & (1 << param1)) != 0;
     }
 
     // hmm...
 }
 
 void gplay_func_1AF8(u8 param1, u8 param2) {
-    if (param1 < 32 && (bss_8->unk0x10 & (1 << param1)) != 0) {
+    if (param1 < 32 && (bss_8->cheatsUnlocked & (1 << param1)) != 0) {
         if (param2 != 0) {
-            bss_8->unk0x14 |= (1 << param1);
+            bss_8->cheatsEnabled |= (1 << param1);
         } else {
-            bss_8->unk0x14 &= ~(1 << param1);
+            bss_8->cheatsEnabled &= ~(1 << param1);
         }
     }
 }
@@ -722,11 +722,11 @@ u32 gplay_func_1B78(u8 param1) {
         return 0;
     }
 
-    return bss_8->unk0x18 & (1 << param1);
+    return bss_8->cinemasUnlocked & (1 << param1);
 }
 
 void gplay_func_1BC4(u8 param1) {
     if (param1 < 32) {
-        bss_8->unk0x18 |= (1 << param1);
+        bss_8->cinemasUnlocked |= (1 << param1);
     }
 }

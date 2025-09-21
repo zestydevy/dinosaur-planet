@@ -10,8 +10,6 @@
 #include "sys/menu.h"
 #include "sys/memory.h"
 
-// #include "prevent_bss_reordering.h"
-
 /*0x0*/ static PicMenuItem pressStartItem[] = {
     /*0*/ NEW_PICMENU_ITEM(
     /*textX*/ 160, /*textY*/ 165, /*innerWidth*/ 0, 
@@ -85,56 +83,58 @@
 
 /*0x0*/ static u8 showDPLogo;
 /*0x4*/ static GameTextChunk* gametext;
-/*0x8*/ static GplayStruct4* _bss_8; //current languageID obtained through this, so maybe general settings/options struct?
+/*0x8*/ static GplayOptions* options;
 /*0xC*/ static s8 sExitTransitionTimer;
 /*0xD*/ static s8 nextMenuID;
-/*0xE*/ static u8 _bss_E[0x2];
-/*0x10*/ static Texture* dinosaurPlanetLogo;
+/*0x10*/ static Texture* logoDinosaurPlanet;
+
+#define MENU_TRANSITION_THRESHOLD 12
+#define MENU_TRANSITION_DURATION 35
+
+static void mainmenu_clean_up(void);
 
 // offset: 0x0 | ctor
-void dll_62_ctor(s32 arg0) {
+void mainmenu_ctor(s32 arg0) {
     int total_strings;
     s32 index;
 
     total_strings = 8;
     
-    dinosaurPlanetLogo = queue_load_texture_proxy(0xC5);
+    logoDinosaurPlanet = queue_load_texture_proxy(0xC5);
     func_800379D0(0, 0, 0);
 
     //Set language and get text
-    _bss_8 = gDLL_29_Gplay->vtbl->func_930();
-    gDLL_21_Gametext->vtbl->set_bank(_bss_8->unk0x0);
+    options = gDLL_29_Gplay->vtbl->func_930();
+    gDLL_21_Gametext->vtbl->set_bank(options->languageID);
     gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
 
-    //Set "Press Start" text?
+    //Set "Press Start" text
     pressStartItem->text = gametext->strings[6];
 
     for (index = 0; index < total_strings; index++){
         mainMenuItems[index].text = gametext->strings[gametextLineIndices[index]];
     }
     
+    //Hide the DP logo at first when entering from the Rareware screen 
     if (menu_get_previous() == MENU_RAREWARE) {
         gDLL_74_Picmenu->vtbl->set_items(pressStartItem, 1, 0, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
-        showDPLogo = 0;
+        showDPLogo = FALSE;
     } else {
-        mainMenuItems[7].overrideWith = _bss_8->unk0x0; //Set language index?
+        mainMenuItems[7].overrideWith = options->languageID; //Set language index
         gDLL_74_Picmenu->vtbl->set_items(mainMenuItems, 8, 5, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
-        showDPLogo = 1;
+        showDPLogo = TRUE;
     }
     
-    nextMenuID = 0;
+    nextMenuID = NULL;
     sExitTransitionTimer = 0;
 }
 
 // offset: 0x310 | dtor
-void dll_62_dtor(void *dll){
-
+void mainmenu_dtor(void *dll){
 }
 
-static void dll_62_func_8AC(void);
-
 // offset: 0x31C | func: 0 | export: 0
-s32 dll_62_func_31C(void) {
+s32 mainmenu_update(void) {
     s32 items;
     s32 index;
     s32 action;
@@ -155,20 +155,20 @@ s32 dll_62_func_31C(void) {
 
     //Transitioning to different page once timer runs out
     if (nextMenuID) {
-        if (prevExitTransitionTimer >= 13 && sExitTransitionTimer <= 12) {
-            //change resolution for game select?
-            func_8005D410(0xE, get_ossched(), 0);
-            dll_62_func_8AC();
+        if (prevExitTransitionTimer > MENU_TRANSITION_THRESHOLD && sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
+            //Change resolution for game select
+            func_8005D410(14, get_ossched(), 0);
+            mainmenu_clean_up();
             func_80041D20(0);
             func_80041C6C(0);
             if (nextMenuID == MENU_GAME_SELECT) {
                 gDLL_29_Gplay->vtbl->func_8D8();
             }
         } else if (sExitTransitionTimer < 1) {
-            func_800141A4(1, 0, 1, (s32) nextMenuID);
+            func_800141A4(1, 0, 1, nextMenuID);
         }
 
-        if (sExitTransitionTimer <= 12) {
+        if (sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
             return 1;
         } else {
             return 0;
@@ -176,41 +176,40 @@ s32 dll_62_func_31C(void) {
     } else {
         action = gDLL_74_Picmenu->vtbl->update();
 
-        //When DP logo not visible and button pressed?
-        if (showDPLogo == 0){
+        //When DP logo not visible and button pressed
+        if (showDPLogo == FALSE){
             if (action == PICMENU_ACTION_SELECT) {
                 gDLL_74_Picmenu->vtbl->clear_items();
-                mainMenuItems[7].overrideWith = _bss_8->unk0x0;
+                mainMenuItems[7].overrideWith = options->languageID;
                 gDLL_74_Picmenu->vtbl->set_items(mainMenuItems, 8, 5, NULL, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
-                showDPLogo = 1;
+                showDPLogo = TRUE;
             }
-        } else if (action == PICMENU_ACTION_SELECT) {
-
-            items = 1;
-            switch (gDLL_74_Picmenu->vtbl->get_selected_item()) {
-                case 5:
-                    gDLL_28_ScreenFade->vtbl->fade(0x14, items);
-                        nextMenuID = MENU_GAME_SELECT;
-                        sExitTransitionTimer = 0x23;
-                    return 0;
-                case 6:
-                    gDLL_28_ScreenFade->vtbl->fade(0x14, items);
-                        nextMenuID = MENU_OPTIONS;
-                        sExitTransitionTimer = 0x23;
-                    return 0;
-            }
-            goto label1;
         } else {
-label1:
+            if (action == PICMENU_ACTION_SELECT) {
+    
+                items = 1;
+                switch (gDLL_74_Picmenu->vtbl->get_selected_item()) {
+                    case 5:
+                        gDLL_28_ScreenFade->vtbl->fade(20, items);
+                        nextMenuID = MENU_GAME_SELECT;
+                        sExitTransitionTimer = MENU_TRANSITION_DURATION;
+                        return 0;
+                    case 6:
+                        gDLL_28_ScreenFade->vtbl->fade(20, items);
+                        nextMenuID = MENU_OPTIONS;
+                        sExitTransitionTimer = MENU_TRANSITION_DURATION;
+                        return 0;
+                }
+            }
+    
             //Changing language
-            _bss_8->unk0x0 = gDLL_74_Picmenu->vtbl->get_item_override(7);
-            if (gDLL_21_Gametext->vtbl->curr_bank() != _bss_8->unk0x0) {
-                gDLL_21_Gametext->vtbl->set_bank(_bss_8->unk0x0);
+            options->languageID = gDLL_74_Picmenu->vtbl->get_item_override(7);
+            if (gDLL_21_Gametext->vtbl->curr_bank() != options->languageID) {
+                gDLL_21_Gametext->vtbl->set_bank(options->languageID);
                 mmFree(gametext);
                 gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
     
                 items = 8;
-                
                 for (index = 0; index < items; index++){
                     mainMenuItems[index].text = gametext->strings[gametextLineIndices[index]];
                 }
@@ -224,28 +223,25 @@ label1:
 }
 
 // offset: 0x764 | func: 1 | export: 1
-void dll_62_func_764(void){
-
+void mainmenu_func_764(void){
 }
 
 // offset: 0x76C | func: 2 | export: 2
-void dll_62_func_76C(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
-    if (!nextMenuID || sExitTransitionTimer >= 0xB) {
-        font_window_set_coords(1, 0, 0, get_some_resolution_encoded() & 0xFFFF, (get_some_resolution_encoded() >> 0x10));
+void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
+    if (!nextMenuID || sExitTransitionTimer >= (MENU_TRANSITION_THRESHOLD - 1)) {
+        font_window_set_coords(1, 0, 0, RESOLUTION_WIDTH(get_some_resolution_encoded()), RESOLUTION_HEIGHT(get_some_resolution_encoded()));
         font_window_flush_strings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
         if (func_80014C60()) {
-            func_8003825C(gfx, dinosaurPlanetLogo, 50, 50, 0, 0, 0xFF, 0);
+            func_8003825C(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, 0);
         }
         font_window_draw(gfx, NULL, NULL, 1);
     }
 }
 
 // offset: 0x8AC | func: 3
-void dll_62_func_8AC(void) {
-    texture_destroy(dinosaurPlanetLogo);
+void mainmenu_clean_up(void) {
+    texture_destroy(logoDinosaurPlanet);
     gDLL_74_Picmenu->vtbl->clear_items();
     mmFree(gametext);
 }
-
-

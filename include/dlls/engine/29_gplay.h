@@ -132,21 +132,65 @@ typedef struct {
     GplayStruct13 unk0x179c[2];
 } GplayStruct3;
 
+enum Languages {
+    LANGUAGE_ENGLISH = 0,
+    LANGUAGE_FRANCAIS = 1,
+    LANGUAGE_DEUTSCH = 2,
+    LANGUAGE_ESPANOL = 3,
+    LANGUAGE_ITALIANO = 4,
+    LANGUAGE_JAPANESE = 5 //Unused, but a Gametext string exists for it as an option
+};
+
+enum ZTargetModes {
+    Z_TARGET_COMBO = 0,
+    Z_TARGET_TAP = 1,
+    Z_TARGET_HOLD = 2
+};
+
+/** Settings for anamorphic letterboxed widescreen (unimplemented, but presumably like in GoldenEye 64/Perfect Dark) */
+enum ScreenSizeModes {
+    SCREEN_SIZE_FULL = 0,
+    SCREEN_SIZE_WIDE = 1,
+    SCREEN_SIZE_CINEMA = 2
+};
+
+/** Changes the video aspect ratio */
+enum ScreenRatioModes {
+    SCREEN_RATIO_STANDARD = 0,
+    SCREEN_RATIO_WIDESCREEN = 1
+};
+
+/** Changes the audio panning (unknown if actually implemented) */
+enum AudioModes {
+    AUDIO_STEREO = 0,
+    AUDIO_SURROUND = 1,
+    AUDIO_MONO = 2,
+    AUDIO_HEADPHONES = 3
+};
+
 // size: 0x80
 typedef struct {
-    u8 unk0x0; //languageID?
-    u8 unk0x1;
-    u8 _unk0x2[6];
-    u8 unk0x8;
-    u8 unk0x9;
-    u8 unk0xa;
-    s8 unk0xb;
-    s8 unk0xc;
-    u32 unk0x10;
-    u32 unk0x14;
-    u32 unk0x18;
-    u8 _unk0x1C[0x64];
-} GplayStruct4;
+/*00*/ u8 languageID;
+/*01*/ u8 showSubtitles;
+/*02*/ u8 showInstruments; //hides minimap
+/*03*/ u8 zTargetMode; //0) combo, 1) tap, 2) hold
+/*04*/ u8 screenSizeAnamorphic; //0) full, 1) wide, 2) cinema
+/*05*/ u8 screenAspectRatio; //0) standard 4:3, 1) widescreen 16:9
+/*06*/ u8 unk6;
+/*07*/ u8 audioMode; //0) stereo, 1) surround, 2) mono, 3) headphones
+/*08*/ u8 volumeMusic; //max 255
+/*09*/ u8 volumeAudio; //max 127 (@bug: doesn't affect MP3s)
+/*0A*/ u8 unkA; 
+/*0B*/ s8 screenOffsetX;
+/*0C*/ s8 screenOffsetY;
+/*0D*/ s8 unkD;
+/*0E*/ s8 unkE;
+/*0F*/ s8 unkF;
+/*10*/ u32 cheatsUnlocked; //bitfield
+/*14*/ u32 cheatsEnabled; //bitfield
+/*18*/ u32 cinemasUnlocked; //bitfield
+/*1C*/ u8 _unk0x1C[0x64];
+} GplayOptions;
 
 // size: 0x182c
 typedef struct {
@@ -171,7 +215,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*11*/ s32 (*func_D70)();
     /*12*/ void (*func_8D8)();
     /*13*/ u32 (*func_79C)();
-    /*14*/ GplayStruct4 *(*func_930)();
+    /*14*/ GplayOptions *(*func_930)();
     /*15*/ u8 (*func_143C)(s32 param1); //arg0 is mapID?
     /*16*/ void (*func_139C)(s32 param1, s32 param2);
     /*17*/ void (*func_1378)(s32 param1, s32 param2);
