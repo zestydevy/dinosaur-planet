@@ -107,23 +107,23 @@ s32 func_8000B6BC(UnkStruct_8000B2D0* arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_BED0/func_8000B6D0.s")
 #else
 void func_8000B6D0(u8 *arg0, s32 arg1) {
-    u16 temp_t2;
     u16 var_t0;
-    s32 temp_a3;
+    u16 temp_t2;
+    u16 temp_a3;
 
+    temp_t2 = arg0[arg1 << 1] & ~0x80;
+    temp_a3 = arg0[(arg1 << 1) + 1];
     var_t0 = arg1 >> 1;
-    temp_t2 = arg0[arg1 * 2] & ~0x80;
-    temp_a3 = arg0[arg1 * 2 + 1];
-    while ((arg0[var_t0 * 2] & ~0x80) < temp_t2) {
-        arg0[arg1 * 2 + 1] = arg0[var_t0 * 2 + 1];
-        arg0[arg1 * 2] &= 0x80;
-        arg0[arg1 * 2] |= (arg0[var_t0 * 2] & ~0x80);
+    while ((arg0[var_t0 << 1] & ~0x80) < temp_t2) {
+        arg0[(arg1 << 1) + 1] = arg0[(var_t0 << 1) + 1];
+        arg0[arg1 << 1] &= 0x80;
+        arg0[arg1 << 1] |= (arg0[var_t0 << 1] & ~0x80);
         arg1 = var_t0;
-        var_t0 >>= 1;
+        var_t0 = arg1 >> 1;
     }
-    arg0[arg1 * 2] &= 0x80;
-    arg0[arg1 * 2] |= temp_t2;
-    arg0[arg1 * 2 + 1] = temp_a3;
+    arg0[arg1 << 1] &= 0x80;
+    arg0[arg1 << 1] |= temp_t2;
+    arg0[(arg1 << 1) + 1] = temp_a3;
 }
 #endif
 

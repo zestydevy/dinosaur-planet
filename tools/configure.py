@@ -211,7 +211,7 @@ class BuildNinjaWriter:
         ]))
 
         self.writer.variable("LD_FLAGS_DLL", " ".join([
-            "-T export_symbol_addrs.txt", 
+            "-T $BUILD_DIR/export_symbol_addrs.ld", 
             "-r",
             "--emit-relocs",
             "-m $LD_EMULATION",
@@ -325,6 +325,9 @@ class BuildNinjaWriter:
         self.writer.newline()
     
     def __write_dll_builds(self):
+        self.writer.comment("Convert export symbols to linker script")
+        self.writer.build("$BUILD_DIR/export_symbol_addrs.ld", "dllsyms2ld", "export_symbol_addrs.txt")
+
         pack_deps: "list[str]" = []
 
         self.writer.comment("DLL compilation")
@@ -385,7 +388,7 @@ class BuildNinjaWriter:
             else:
                 # Use default DLL link script
                 self.writer.build(elf_path.as_posix(), "ld_dll", dll_link_deps, 
-                    implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "export_symbol_addrs.txt"],
+                    implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"],
                     variables={"SYMS_LD": syms_ld_path})
 
             # If needed, fixup DLL ELF
@@ -428,7 +431,7 @@ class BuildNinjaWriter:
 
             elf_path = Path(f"{obj_dir}/{dll.number}.elf")
             self.writer.build(elf_path.as_posix(), "ld_asm_dll", dll_link_deps, 
-                implicit=["$LINK_SCRIPT_DLL", "export_symbol_addrs.txt"],
+                implicit=["$LINK_SCRIPT_DLL", "$BUILD_DIR/export_symbol_addrs.ld"],
                 variables={
                     "EXTRA_DLL_LD_FLAGS": ld_flags
                 })

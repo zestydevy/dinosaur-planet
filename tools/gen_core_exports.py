@@ -41,16 +41,23 @@ def main():
     
     with open("export_symbol_addrs.txt", "w", encoding="utf-8") as out:
         for i, addr in enumerate(imports.imports):
+            comment: str | None = None
+            is_func = addr < 0x80089750 # addr < .data
+            if is_func:
+                comment = "type:func"
             syms = map.get(addr)
             if syms == None:
-                if addr < 0x80089750: # addr < .data
+                if is_func:
                     sym = "func_{:X}".format(addr)
                 else:
                     sym = "D_{:X}".format(addr)
             else:
                 sym = syms.pop(0)
             import_addr = (i + 1) | 0x80000000
-            out.write("{} = 0x{:X};\n".format(sym, import_addr))
+            if comment == None:
+                out.write("{} = 0x{:X};\n".format(sym, import_addr))
+            else:
+                out.write("{} = 0x{:X}; // {}\n".format(sym, import_addr, comment))
 
 if __name__ == "__main__":
     main()

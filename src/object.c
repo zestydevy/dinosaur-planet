@@ -1471,7 +1471,7 @@ void obj_free_object(Object *obj, s32 param2) {
         }
     }
 
-    if (!param2 && obj->group == 16) {
+    if (!param2 && obj->group == GROUP_UNK16) {
         for (i = 0; i < gNumObjs; i++) {
             obj2 = gObjList[i];
             if (obj == obj2->unk0xc0) {
@@ -1482,7 +1482,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     for (k = 0; k < gNumObjs; k++) {
         obj2 = gObjList[k];
-        if (obj2->group == 16) {
+        if (obj2->group == GROUP_UNK16) {
             animState = (ObjectAnimState*)obj2->state;
             if (obj == animState->unk0) {
                 animState->unk0 = NULL;
