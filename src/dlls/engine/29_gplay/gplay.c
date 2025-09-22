@@ -120,14 +120,14 @@ void gplay_init_save(s8 idx, char *filename) {
     gplay_reset_state();
 
     sSavegameIdx = idx;
-    sState.save.unk0.file.character = 1;
+    sState.save.unk0.file.playerno = PLAYER_KRYSTAL;
 
     for (i = 0; i < 2; i++) {
 
-        sState.save.unk0.file.characters[i].health = 12;
-        sState.save.unk0.file.characters[i].healthMax = 12;
-        sState.save.unk0.file.characters[i].magicMax = 25;
-        sState.save.unk0.file.characters[i].magic = 0;
+        sState.save.unk0.file.players[i].health = 12;
+        sState.save.unk0.file.players[i].healthMax = 12;
+        sState.save.unk0.file.players[i].magicMax = 25;
+        sState.save.unk0.file.players[i].magic = 0;
 
         sState.save.unk0.file.unk0x18[i].unk0x0 = 4;
         sState.save.unk0.file.unk0x18[i].unk0x1 = 5;
@@ -349,16 +349,16 @@ void gplay_checkpoint(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
         bcopy(&sState.save.unk0, &sSavegame->asSave.unk0, sizeof(GplayStruct9));
     } else {
         if (func_8001EBE0() != 0) {
-            sState.save.unk0x16F4[sState.save.unk0.file.character].unk0x10 |= 1;
+            sState.save.unk0x16F4[sState.save.unk0.file.playerno].unk0x10 |= 1;
         } else {
-            sState.save.unk0x16F4[sState.save.unk0.file.character].unk0x10 &= ~1;
+            sState.save.unk0x16F4[sState.save.unk0.file.playerno].unk0x10 &= ~1;
         }
 
-        sState.save.charLocations[sState.save.unk0.file.character].vec.x = position->x;
-        sState.save.charLocations[sState.save.unk0.file.character].vec.y = position->y;
-        sState.save.charLocations[sState.save.unk0.file.character].vec.z = position->z;
-        sState.save.charLocations[sState.save.unk0.file.character].rotationY = yaw >> 8;
-        sState.save.charLocations[sState.save.unk0.file.character].mapLayer = mapLayer;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.x = position->x;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.y = position->y;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.z = position->z;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].rotationY = yaw >> 8;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].mapLayer = mapLayer;
 
         // Copy save state to active savegame
         //
@@ -388,16 +388,16 @@ void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     bcopy(&sState.save, sRestartSave, sizeof(Savegame));
 
     if (func_8001EBE0() != 0) {
-        sRestartSave->unk0x16F4[sRestartSave->unk0.file.character].unk0x10 |= 1;
+        sRestartSave->unk0x16F4[sRestartSave->unk0.file.playerno].unk0x10 |= 1;
     } else {
-        sRestartSave->unk0x16F4[sRestartSave->unk0.file.character].unk0x10 &= ~1;
+        sRestartSave->unk0x16F4[sRestartSave->unk0.file.playerno].unk0x10 &= ~1;
     }
 
-    sRestartSave->charLocations[sRestartSave->unk0.file.character].vec.x = position->x;
-    sRestartSave->charLocations[sRestartSave->unk0.file.character].vec.y = position->y;
-    sRestartSave->charLocations[sRestartSave->unk0.file.character].vec.z = position->z;
-    sRestartSave->charLocations[sRestartSave->unk0.file.character].rotationY = (u8)(yaw >> 8);
-    sRestartSave->charLocations[sState.save.unk0.file.character].mapLayer = mapLayer;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.x = position->x;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.y = position->y;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.z = position->z;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].rotationY = (u8)(yaw >> 8);
+    sRestartSave->playerLocations[sState.save.unk0.file.playerno].mapLayer = mapLayer;
 }
 
 void gplay_restart_goto(void) {
@@ -427,9 +427,9 @@ static void gplay_start_game(void) {
     unpause();
 
     func_800142A0(
-        sState.save.charLocations[sState.save.unk0.file.character].vec.x,
-        sState.save.charLocations[sState.save.unk0.file.character].vec.y,
-        sState.save.charLocations[sState.save.unk0.file.character].vec.z);
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.x,
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.y,
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.z);
     
     if (menu_get_current() != MENU_TITLE_SCREEN) {
         menu_set(MENU_GAMEPLAY);
@@ -442,44 +442,46 @@ GameState *gplay_get_state(void) {
     return &sState;
 }
 
-u8 gplay_get_character(void) {
-    return sState.save.unk0.file.character;
+u8 gplay_get_playerno(void) {
+    return sState.save.unk0.file.playerno;
 }
 
-void gplay_set_character(u8 character) {
-    sState.save.unk0.file.character = character;
+void gplay_set_playerno(u8 playerno) {
+    sState.save.unk0.file.playerno = playerno;
 }
 
 PlayerStats *gplay_get_player_stats(void) {
-    return &sState.save.unk0.file.characters[sState.save.unk0.file.character];
+    return &sState.save.unk0.file.players[sState.save.unk0.file.playerno];
 }
 
-CharacterLocation *gplay_get_saved_location(void) {
-    return &sState.save.charLocations[sState.save.unk0.file.character];
+PlayerLocation *gplay_get_player_saved_location(void) {
+    return &sState.save.playerLocations[sState.save.unk0.file.playerno];
 }
 
 GplayStruct11 *gplay_func_F30(void) {
-    return &sState.save.unk0.file.unk0x18[sState.save.unk0.file.character];
+    return &sState.save.unk0.file.unk0x18[sState.save.unk0.file.playerno];
 }
 
+// gplayGetCurrentPlayerLactions ?
 GplayStruct6 *gplay_func_F60(void) {
-    if (sState.save.unk0.file.character > 1) {
+    if (sState.save.unk0.file.playerno >= PLAYER_MAX) {
         return &sState.save.unk0x16F4[0];
     }
 
-    return &sState.save.unk0x16F4[sState.save.unk0.file.character];
+    return &sState.save.unk0x16F4[sState.save.unk0.file.playerno];
 }
 
+// gplayGetCurrentPlayerEnvactions ?
 GplayStruct12 *gplay_func_FA8(void) {
-    if (sState.save.unk0.file.character > 1) {
+    if (sState.save.unk0.file.playerno >= PLAYER_MAX) {
         return &sState.save.unk0x171C[0];
     }
 
-    return &sState.save.unk0x171C[sState.save.unk0.file.character];
+    return &sState.save.unk0x171C[sState.save.unk0.file.playerno];
 }
 
 GplayStruct13 *gplay_func_FE8(void) {
-    return &sState.save.unk0x179c[sState.save.unk0.file.character];
+    return &sState.save.unk0x179c[sState.save.unk0.file.playerno];
 }
 
 void gplay_add_time(s32 uid, f32 time) {
@@ -703,11 +705,11 @@ void gplay_func_16C4(s32 mapID, s32 param2, s32 param3) {
 }
 
 GplayStruct14 *gplay_func_1974(void) {
-    return &sState.save.unk0.file.unk0x20[sState.save.unk0.file.character];
+    return &sState.save.unk0.file.unk0x20[sState.save.unk0.file.playerno];
 }
 
 GplayStruct14 *gplay_func_19B8(void) {
-    return &sState.save.unk0.file.unk0x188[sState.save.unk0.file.character];
+    return &sState.save.unk0.file.unk0x188[sState.save.unk0.file.playerno];
 }
 
 u32 gplay_is_cheat_unlocked(u8 cheatIdx) {

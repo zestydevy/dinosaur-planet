@@ -165,7 +165,7 @@ s32 mainmenu_update(void) {
                 gDLL_29_Gplay->vtbl->save_game_options();
             }
         } else if (sExitTransitionTimer < 1) {
-            func_800141A4(1, 0, 1, nextMenuID);
+            func_800141A4(1, 0, PLAYER_KRYSTAL, nextMenuID);
         }
 
         if (sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {

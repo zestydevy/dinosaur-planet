@@ -8,7 +8,7 @@
 
 typedef struct {
     /*0*/ u8 isEmpty;
-    /*1*/ u8 character;
+    /*1*/ u8 playerno;
     /*2*/ u8 spiritBits;
     /*3*/ u8 unk3;
     /*4*/ s16 timeHours;

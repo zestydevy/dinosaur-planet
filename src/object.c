@@ -1564,18 +1564,18 @@ void *obj_alloc_create_info(s32 size, s32 objId) {
     return (void*)createInfo;
 }
 
-void func_80023464(s32 character) {
+void func_80023464(s32 playerno) {
     Object *player;
-    s32 activeCharacter;
+    s32 activePlayerno;
     ObjCreateInfo createInfo;
     f32 x, y, z;
     Object *newPlayer;
 
     player = get_player();
-    activeCharacter = gDLL_29_Gplay->vtbl->get_character();
+    activePlayerno = gDLL_29_Gplay->vtbl->get_playerno();
 
-    if (character != activeCharacter) {
-        gDLL_29_Gplay->vtbl->set_character(character);
+    if (playerno != activePlayerno) {
+        gDLL_29_Gplay->vtbl->set_playerno(playerno);
 
         if (player != NULL) {
             obj_destroy_object(player);
@@ -1590,7 +1590,7 @@ void func_80023464(s32 character) {
 
         newPlayer = NULL;
 
-        if (character > -1) {
+        if (playerno > PLAYER_NONE) {
             bzero(&createInfo, sizeof(createInfo));
             createInfo.uID = -1;
             createInfo.setup = 0;
@@ -1598,7 +1598,7 @@ void func_80023464(s32 character) {
             createInfo.loadParamB = 4;
             createInfo.loadDistance = -1;
             createInfo.fadeDistance = 100;
-            createInfo.objId = D_80091664[character];
+            createInfo.objId = D_80091664[playerno];
             createInfo.quarterSize = 24;
             createInfo.x = x;
             createInfo.y = y;
@@ -1617,9 +1617,9 @@ void func_80023628() {
     Object *player;
     s32 var;
     ObjCreateInfo createInfo;
-    CharacterLocation *charSavedLocation;
+    PlayerLocation *savedPlayerLocation;
     f32 x, y, z;
-    s32 activeCharacter;
+    s32 playerno;
 
     var = func_80048024();
     if (var == 2 || var == 3) {
@@ -1627,16 +1627,16 @@ void func_80023628() {
         return;
     }
 
-    activeCharacter = gDLL_29_Gplay->vtbl->get_character();
-    charSavedLocation = gDLL_29_Gplay->vtbl->get_saved_location();
+    playerno = gDLL_29_Gplay->vtbl->get_playerno();
+    savedPlayerLocation = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
-    x = charSavedLocation->vec.x;
-    y = charSavedLocation->vec.y;
-    z = charSavedLocation->vec.z;
+    x = savedPlayerLocation->vec.x;
+    y = savedPlayerLocation->vec.y;
+    z = savedPlayerLocation->vec.z;
 
     player = NULL;
 
-    if (activeCharacter > -1) {
+    if (playerno > PLAYER_NONE) {
         bzero(&createInfo, sizeof(createInfo));
         createInfo.uID = -1;
         createInfo.setup = 0;
@@ -1644,7 +1644,7 @@ void func_80023628() {
         createInfo.loadParamB = 4;
         createInfo.loadDistance = -1;
         createInfo.fadeDistance = 100;
-        createInfo.objId = D_80091664[activeCharacter];
+        createInfo.objId = D_80091664[playerno];
         createInfo.quarterSize = 24;
         createInfo.x = x;
         createInfo.y = y;
@@ -1653,9 +1653,9 @@ void func_80023628() {
         player = obj_create(&createInfo, 1, -1, -1, NULL);
     }
 
-    D_80091668.unk8 = fsin16_precise(charSavedLocation->rotationY << 8) * 60.0f + x;
+    D_80091668.unk8 = fsin16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + x;
     D_80091668.unkC = y + 40.0f;
-    D_80091668.unk10 = fcos16_precise(charSavedLocation->rotationY << 8) * 60.0f + z;
+    D_80091668.unk10 = fcos16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + z;
 
     gDLL_2_Camera->vtbl->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
     gDLL_2_Camera->vtbl->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);

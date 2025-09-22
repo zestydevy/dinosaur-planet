@@ -46,7 +46,7 @@ void dll_60_ctor(void *self) {
         font_load(FONT_DINO_MEDIUM_FONT_OUT);
         func_80014B1C();
         data_4 = 0;
-        func_800141A4(1, 0, -1, -1);
+        func_800141A4(1, 0, PLAYER_NONE, -1);
         gDLL_5_AMSEQ->vtbl->func0(NULL, 0x20, 0, 0x2f, 0);
         set_gplay_bitstring(0x44f, 1);
         gDLL_2_Camera->vtbl->func21(30, 1);

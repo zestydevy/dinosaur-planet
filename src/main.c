@@ -464,7 +464,7 @@ void func_80013FB4(void) {
     gDLL_5_AMSEQ->vtbl->func6(1);
     gDLL_22_Subtitles->vtbl->func_448();
     unpause();
-    func_800141A4(1, 0, 1, -1);
+    func_800141A4(1, 0, PLAYER_KRYSTAL, -1);
 }
 
 void func_80014074(void) {
@@ -501,21 +501,21 @@ void func_80014074(void) {
     }
 }
 
-void func_800141A4(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    CharacterLocation *temp_v0;
+void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
+    PlayerLocation *temp_v0;
 
     func_8001440C(0);
 
-    if (arg2 < 0) {
-        arg2 = 0;
+    if (playerno <= PLAYER_NONE) {
+        playerno = PLAYER_SABRE;
     }
 
     clear_PlayerPosBuffer();
 
     gDLL_30_Task->vtbl->load_recently_completed();
-    gDLL_29_Gplay->vtbl->set_character(arg2);
+    gDLL_29_Gplay->vtbl->set_playerno(playerno);
 
-    temp_v0 = gDLL_29_Gplay->vtbl->get_saved_location();
+    temp_v0 = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
     func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
     gDLL_29_Gplay->vtbl->checkpoint(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
@@ -531,7 +531,7 @@ void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     D_800B09C0 = 1;
 }
 
-void func_800142F0(f32 x, f32 y, f32 z, s32 arg3) {
+void func_800142F0(f32 x, f32 y, f32 z, s32 playerno) {
     Vec3f pos;
     pos.x = x;
     pos.y = y;
@@ -540,7 +540,7 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 arg3) {
     func_8001440C(0);
 
     gDLL_29_Gplay->vtbl->init_save(-1, NULL);
-    gDLL_29_Gplay->vtbl->set_character(arg3);
+    gDLL_29_Gplay->vtbl->set_playerno(playerno);
     gDLL_29_Gplay->vtbl->checkpoint(&pos, 0, 0, 0);
     gDLL_29_Gplay->vtbl->start_loaded_game();
 }
@@ -867,7 +867,7 @@ void func_80014BBC(void) {
     D_800B09C4 = 0;
 }
 
-void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+void func_80014BD4(f32 x, f32 y, f32 z, s32 playerno) {
     D_800B09C3++;
 
     if (D_800B09C3 >= 5) {
@@ -875,7 +875,7 @@ void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
         D_800B09C4 = 1;
     }
 
-    func_800142F0(arg0, arg1, arg2, arg3);
+    func_800142F0(x, y, z, playerno);
 }
 
 s32 func_80014C28(void) {

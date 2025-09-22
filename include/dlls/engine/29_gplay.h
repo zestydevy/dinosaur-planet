@@ -9,9 +9,13 @@
 #include "unktypes.h"
 
 typedef enum {
-    CHARACTER_SABRE = 0,
-    CHARACTER_KRYSTAL = 1
-} Character;
+    PLAYER_NONE = -1,
+
+    PLAYER_SABRE = 0,
+    PLAYER_KRYSTAL = 1,
+
+    PLAYER_MAX = 2
+} PlayerNo;
 
 #define MAX_SAVEGAMES 4
 #define MAX_TIMESAVES 256
@@ -22,7 +26,7 @@ typedef struct {
     /*0xC*/ s8 rotationY;
     /*0xD*/ s8 mapLayer;
     /*0xE*/ u8 unk0xE[2];
-} CharacterLocation;
+} PlayerLocation;
 
 // size: 0x14
 typedef struct {
@@ -73,14 +77,14 @@ typedef struct {
 
 // size: 0x13d4
 typedef struct {
-    PlayerStats characters[2];
+    PlayerStats players[2];
     GplayStruct11 unk0x18[2];
     u8 _unk0x1E[0x2];
     GplayStruct14 unk0x20[2];
     GplayStruct14 unk0x188[2];
     /*0x2F0*/char name[6]; // name of save
     u8 isEmpty; // whether this savefile is empty
-    /*0x2f7*/u8 character;
+    /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
     u8 numTimesSaved; // number of times this gamesave has been saved to flash
     f32 timePlayed; // this is game time played, but what unit of measure?
     s16 unk0x300;
@@ -134,7 +138,7 @@ typedef struct {
 typedef struct {
     GplayStruct9 unk0;
     /*0x15d4*/u8 bitString[256];
-    CharacterLocation charLocations[2]; // saved locations of each character
+    PlayerLocation playerLocations[2]; // saved locations of each player
     GplayStruct6 unk0x16F4[2];
     GplayStruct12 unk0x171C[2];
     GplayStruct13 unk0x179c[2];
@@ -246,14 +250,14 @@ DLL_INTERFACE(DLL_29_gplay) {
     /** Get time left on time save for object UID. */
     /*26*/ f32 (*get_time_remaining)(s32 uid);
     /*27*/ void (*tick)(void);
-    /*28*/ u8 (*get_character)(void);
-    /*29*/ void (*set_character)(u8 character);
+    /*28*/ u8 (*get_playerno)(void);
+    /*29*/ void (*set_playerno)(u8 playerno);
     /*30*/ void *(*func_1254)(void);
     /*31*/ s16 (*func_121C)(void);
     /*32*/ void (*func_1238)(s32 param1);
     /*33*/ GameState *(*get_state)(void);
     /*34*/ PlayerStats *(*get_player_stats)(void);
-    /*35*/ CharacterLocation *(*get_saved_location)(void);
+    /*35*/ PlayerLocation *(*get_player_saved_location)(void);
     /*36*/ GplayStruct11 *(*func_F30)(void);
     /*37*/ GplayStruct6 *(*func_F60)(void);
     /*38*/ GplayStruct12 *(*func_FA8)(void);

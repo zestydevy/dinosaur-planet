@@ -36,14 +36,14 @@ _exports:
 .dword gplay_did_time_expire
 .dword gplay_get_time_remaining
 .dword gplay_tick
-.dword gplay_get_character
-.dword gplay_set_character
+.dword gplay_get_playerno
+.dword gplay_set_playerno
 .dword gplay_func_1254
 .dword gplay_func_121C
 .dword gplay_func_1238
 .dword gplay_get_state
 .dword gplay_get_player_stats
-.dword gplay_get_saved_location
+.dword gplay_get_player_saved_location
 .dword gplay_func_F30
 .dword gplay_func_F60
 .dword gplay_func_FA8
