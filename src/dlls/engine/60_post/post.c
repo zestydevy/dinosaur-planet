@@ -55,7 +55,7 @@ void dll_60_ctor(void *self) {
         bss_18 = queue_load_texture_proxy(0x2db);
         bss_1C = queue_load_texture_proxy(0x2dc);
         bss_14 = gDLL_21_Gametext->vtbl->get_chunk(242);
-        gDLL_29_Gplay->vtbl->func_930(); // ignoring return value
+        gDLL_29_Gplay->vtbl->get_game_options(); // ignoring return value
     }
 
     bss_6 = 0;

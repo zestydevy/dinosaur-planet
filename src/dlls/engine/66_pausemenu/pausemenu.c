@@ -93,12 +93,14 @@ s32 n_pausemenu_update(void) {
         selectedItem = gDLL_74_Picmenu->vtbl->get_selected_item();
         
         if (action == PICMENU_ACTION_SELECT) {
-            if (!selectedItem){
+            if (selectedItem == 0) {
+                // Continue
                 gDLL_6_AMSFX->vtbl->func2(0, 2931, 0x7F, 0, 0, 0, 0);
                 menu_set(MENU_GAMEPLAY);
                 unpause();
                 set_button_mask(0, A_BUTTON | B_BUTTON);
             } else {
+                // Save
                 gDLL_6_AMSFX->vtbl->func2(0, 2930, 0x7F, 0, 0, 0, 0);
                 gameSavedMessageTimer = 0;
                 pauseScreenState = 1;
@@ -118,7 +120,7 @@ s32 n_pausemenu_update(void) {
     } else if (pauseScreenState == PAUSE_MENU_GAME_SAVED) {
 
         if (gameSavedMessageTimer == 0) {
-            gDLL_29_Gplay->vtbl->func_6AC();
+            gDLL_29_Gplay->vtbl->save_game();
         }
 
         gameSavedMessageTimer += delayFloat;
@@ -205,7 +207,7 @@ void n_pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
             //@bug: forgot to add a drop-shadow for the completion percentage
     
             //Draw gameplay time
-            gDLL_7_Newday->vtbl->convert_ticks_to_real_time(gDLL_29_Gplay->vtbl->func_1270(), &hours, &minutes, &seconds);
+            gDLL_7_Newday->vtbl->convert_ticks_to_real_time(gDLL_29_Gplay->vtbl->get_time_played(), &hours, &minutes, &seconds);
             sprintf(gameplayTime, formatGameplayTime, hours, minutes, seconds);
             font_window_add_string_xy(1, GAME_TIME_X, GAME_TIME_Y, gameplayTime, 1, ALIGN_TOP_CENTER);
             

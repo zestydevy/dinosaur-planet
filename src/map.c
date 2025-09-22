@@ -2599,8 +2599,8 @@ void func_80047724(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 void func_8004773C(void) {
     s32 i;
     s32 j;
-    s32 sp13C;
-    GplayStruct5* sp138;
+    s32 character;
+    CharacterLocation* savedCharLocation;
     Camera* camera;
     Object* sp130;
     Object sp4C;
@@ -2636,13 +2636,13 @@ void func_8004773C(void) {
     gLoadedBlockCount = 0;
     gMapNumStreamMaps = 0;
     D_800B97C4 = 0;
-    sp13C = gDLL_29_Gplay->vtbl->func_E90(&gLoadedBlockIds, &gLoadedBlocks);
-    sp138 = gDLL_29_Gplay->vtbl->func_F04();
-    gMapCurrentStreamCoordsX = floor_f(sp138->vec.x / BLOCKS_GRID_UNIT_F);
-    gMapCurrentStreamCoordsZ = floor_f(sp138->vec.z / BLOCKS_GRID_UNIT_F);
-    Vec3_Int_array->f.x = sp138->vec.x;
-    Vec3_Int_array->f.y = sp138->vec.y;
-    Vec3_Int_array->f.z = sp138->vec.z;
+    character = gDLL_29_Gplay->vtbl->get_character();
+    savedCharLocation = gDLL_29_Gplay->vtbl->get_saved_location();
+    gMapCurrentStreamCoordsX = floor_f(savedCharLocation->vec.x / BLOCKS_GRID_UNIT_F);
+    gMapCurrentStreamCoordsZ = floor_f(savedCharLocation->vec.z / BLOCKS_GRID_UNIT_F);
+    Vec3_Int_array->f.x = savedCharLocation->vec.x;
+    Vec3_Int_array->f.y = savedCharLocation->vec.y;
+    Vec3_Int_array->f.z = savedCharLocation->vec.z;
     Vec3_Int_array->i = 1;
     D_80092A60 = gMapCurrentStreamCoordsX * BLOCKS_GRID_UNIT;
     D_80092A64 = gMapCurrentStreamCoordsZ * BLOCKS_GRID_UNIT;
@@ -2652,7 +2652,7 @@ void func_8004773C(void) {
     gWorldZ = D_80092A64;
     D_800B4A50 = -1;
     D_800B4A54 = -1;
-    D_80092A8C = sp138->mapLayer;
+    D_80092A8C = savedCharLocation->mapLayer;
     gDLL_24_Waterfx->vtbl->func_24C();
     gDLL_11_Newlfx->vtbl->func1();
     gDLL_57->vtbl->func0();
@@ -2671,19 +2671,19 @@ void func_8004773C(void) {
     UINT_80092a98 &= 0x2010;
     UINT_80092a98 |= 0x81E0;
     UINT_80092a98 |= 0x804;
-    func_80046B58(sp138->vec.x, sp138->vec.y, sp138->vec.z);
+    func_80046B58(savedCharLocation->vec.x, savedCharLocation->vec.y, savedCharLocation->vec.z);
     UINT_80092a98 &= ~4;
     func_800591EC();
     func_80023628();
     D_800B4A58 = 0;
 
     camera = get_main_camera();
-    camera->srt.transl.x = sp138->vec.x;
-    camera->srt.transl.y = sp138->vec.y;
-    camera->srt.transl.z = sp138->vec.z;
+    camera->srt.transl.x = savedCharLocation->vec.x;
+    camera->srt.transl.y = savedCharLocation->vec.y;
+    camera->srt.transl.z = savedCharLocation->vec.z;
 
     sp130 = get_player();
-    if ((D_800B4A5E == -2) && (sp130 != NULL) && ((sp13C == 0) || (sp13C == 1))) {
+    if ((D_800B4A5E == -2) && (sp130 != NULL) && ((character == 0) || (character == 1))) {
         sp40 = gDLL_29_Gplay->vtbl->func_F60();
         sp3C = gDLL_29_Gplay->vtbl->func_FA8();
         sp38 = (s16 *) gDLL_29_Gplay->vtbl->func_FE8();
@@ -5176,7 +5176,7 @@ static void func_8004D328() {
     u8 temp2;
     u8 temp1;
 
-    var_a2 = (SimilarToWarp*)gDLL_29_Gplay->vtbl->func_F04();
+    var_a2 = (SimilarToWarp*)gDLL_29_Gplay->vtbl->get_saved_location();
     
     //Start fade?
     if (D_800B4A5E != -1) { //timer started?

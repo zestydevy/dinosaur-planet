@@ -104,7 +104,7 @@ void mainmenu_ctor(s32 arg0) {
     func_800379D0(0, 0, 0);
 
     //Set language and get text
-    options = gDLL_29_Gplay->vtbl->func_930();
+    options = gDLL_29_Gplay->vtbl->get_game_options();
     gDLL_21_Gametext->vtbl->set_bank(options->languageID);
     gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
 
@@ -162,7 +162,7 @@ s32 mainmenu_update(void) {
             func_80041D20(0);
             func_80041C6C(0);
             if (nextMenuID == MENU_GAME_SELECT) {
-                gDLL_29_Gplay->vtbl->func_8D8();
+                gDLL_29_Gplay->vtbl->save_game_options();
             }
         } else if (sExitTransitionTimer < 1) {
             func_800141A4(1, 0, 1, nextMenuID);

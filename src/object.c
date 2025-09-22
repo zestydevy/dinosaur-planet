@@ -1572,10 +1572,10 @@ void func_80023464(s32 character) {
     Object *newPlayer;
 
     player = get_player();
-    activeCharacter = gDLL_29_Gplay->vtbl->func_E90();
+    activeCharacter = gDLL_29_Gplay->vtbl->get_character();
 
     if (character != activeCharacter) {
-        gDLL_29_Gplay->vtbl->func_EAC(character);
+        gDLL_29_Gplay->vtbl->set_character(character);
 
         if (player != NULL) {
             obj_destroy_object(player);
@@ -1617,7 +1617,7 @@ void func_80023628() {
     Object *player;
     s32 var;
     ObjCreateInfo createInfo;
-    GplayStruct5 *gplayStruct;
+    CharacterLocation *charSavedLocation;
     f32 x, y, z;
     s32 activeCharacter;
 
@@ -1627,12 +1627,12 @@ void func_80023628() {
         return;
     }
 
-    activeCharacter = gDLL_29_Gplay->vtbl->func_E90();
-    gplayStruct = gDLL_29_Gplay->vtbl->func_F04();
+    activeCharacter = gDLL_29_Gplay->vtbl->get_character();
+    charSavedLocation = gDLL_29_Gplay->vtbl->get_saved_location();
 
-    x = gplayStruct->vec.x;
-    y = gplayStruct->vec.y;
-    z = gplayStruct->vec.z;
+    x = charSavedLocation->vec.x;
+    y = charSavedLocation->vec.y;
+    z = charSavedLocation->vec.z;
 
     player = NULL;
 
@@ -1653,9 +1653,9 @@ void func_80023628() {
         player = obj_create(&createInfo, 1, -1, -1, NULL);
     }
 
-    D_80091668.unk8 = fsin16_precise(gplayStruct->rotationY << 8) * 60.0f + x;
+    D_80091668.unk8 = fsin16_precise(charSavedLocation->rotationY << 8) * 60.0f + x;
     D_80091668.unkC = y + 40.0f;
-    D_80091668.unk10 = fcos16_precise(gplayStruct->rotationY << 8) * 60.0f + z;
+    D_80091668.unk10 = fcos16_precise(charSavedLocation->rotationY << 8) * 60.0f + z;
 
     gDLL_2_Camera->vtbl->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
     gDLL_2_Camera->vtbl->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);

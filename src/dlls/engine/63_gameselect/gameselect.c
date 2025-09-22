@@ -337,7 +337,7 @@ s32 dll_63_update1() {
             func_80041C6C(1);
         } else if (sExitTransitionTimer < 1) {
             if (sExitToGame) {
-                gDLL_29_Gplay->vtbl->start_game();
+                gDLL_29_Gplay->vtbl->start_loaded_game();
             } else {
                 // Exit to main menu
                 func_80014BBC();
@@ -563,7 +563,7 @@ static void dll_63_goto_game_select(s32 param1) {
 // func 5
 static void dll_63_load_save_game_info() {
     s32 i;
-    GplayStruct8 *saveFile;
+    Savefile *saveFile;
     char *filenamePtr;
 
     for (i = 0; i < 3; i++) {
@@ -573,9 +573,9 @@ static void dll_63_load_save_game_info() {
             bzero(&sSaveGameInfo[i], sizeof(GameSelectSaveInfo));
             sSaveGameInfo[i].isEmpty = TRUE;
         } else {
-            saveFile = &gDLL_29_Gplay->vtbl->func_E74()->unk0.unk0.unk0;
+            saveFile = &gDLL_29_Gplay->vtbl->get_state()->save.unk0.file;
 
-            if (saveFile->unk0x2f6 == 0) {
+            if (!saveFile->isEmpty) {
                 sSaveGameInfo[i].character = saveFile->character;
                 sSaveGameInfo[i].spiritBits = get_gplay_bitstring(0x489);
                 sSaveGameInfo[i].unk3 = 0;
@@ -583,13 +583,13 @@ static void dll_63_load_save_game_info() {
                 filenamePtr = sSaveGameInfo[i].filename;
 
                 gDLL_7_Newday->vtbl->convert_ticks_to_real_time(
-                    saveFile->unk0x2fc,
+                    saveFile->timePlayed,
                     &sSaveGameInfo[i].timeHours, &sSaveGameInfo[i].timeMinutes, &sSaveGameInfo[i].timeSeconds);
 
                 sSaveGameInfo[i].unkA = 0;
                 sSaveGameInfo[i].isEmpty = FALSE;
 
-                bcopy(saveFile->saveFilename, filenamePtr, 5); // 1 less to preserve null terminator
+                bcopy(saveFile->name, filenamePtr, sizeof(saveFile->name) - 1); // 1 less to preserve null terminator
             } else {
                 bzero(&sSaveGameInfo[i], sizeof(GameSelectSaveInfo));
                 sSaveGameInfo[i].isEmpty = TRUE;

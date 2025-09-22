@@ -141,7 +141,7 @@ void dll_296_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     state = (MediumCrateState*)self->state;
     createInfo = (MediumCrateCreateInfo*)self->createInfo;
 
-    if (!gDLL_29_Gplay->vtbl->func_109C(createInfo->base.uID)) {
+    if (!gDLL_29_Gplay->vtbl->did_time_expire(createInfo->base.uID)) {
         return;
     }
     if (state->unkC != 0 && state->unkC < 51) {
