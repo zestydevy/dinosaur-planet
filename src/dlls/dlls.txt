@@ -20,6 +20,7 @@
 64 = engine/64_nameentry
 66 = engine/66_pausemenu
 74 = engine/74_picmenu
+77 = engine/77_scarab
 82 = engine/82
 83 = engine/83
 94 = engine/94_camtalk1
