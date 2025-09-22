@@ -1,3 +1,4 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "bss.h"
 #include "functions.h"
@@ -33,7 +34,7 @@ void dll_77_func_90(){
 
 // offset: 0x98 | func: 2 | export: 2
 /** Possibly unused? The UI doesn't call this for the scarab counter, and the Scarab objects don't seem to either */
-void dll_77_func_98(Gfx** arg0, s32** arg1, s32** arg2) {
+void dll_77_func_98(Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     char scarabCountString[3];
     f32 distance;
     Object* object;
@@ -46,7 +47,7 @@ void dll_77_func_98(Gfx** arg0, s32** arg1, s32** arg2) {
     sp38 = 0;
     distance = 10000.0f;
     if (D_800A7D94 != 0) {
-        func_8000FB2C(arg0);
+        func_8000FB2C(gfx);
     }
     
     object = obj_get_nearest_type_to(0xA, get_player(), &distance);
@@ -54,7 +55,7 @@ void dll_77_func_98(Gfx** arg0, s32** arg1, s32** arg2) {
         ((DLL_Unknown*)object->dll)->vtbl->func[20].withFourArgs((s32)object, (s32)&sp40, (s32)&scarabCount, (s32)&sp38);
     }
     
-    func_8003825C(arg0, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, 0);
+    func_8003825C(gfx, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, 0);
     
     scarabCount = (sp38 - scarabCount) + sp40;
     if (scarabCount < 0) {
@@ -64,8 +65,8 @@ void dll_77_func_98(Gfx** arg0, s32** arg1, s32** arg2) {
     
     font_window_set_coords(1, 0, 0, get_some_resolution_encoded() & 0xFFFF, (get_some_resolution_encoded() >> 0x10));
     font_window_flush_strings(1);
-    font_window_use_font(1, 1);
+    font_window_use_font(1, FONT_DINO_SUBTITLE_FONT_1);
     font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-    font_window_add_string_xy(1, 0x10E, 0xCA, scarabCountString, 1, ALIGN_TOP_LEFT);
-    font_window_draw(arg0, arg1, arg2, 1);
+    font_window_add_string_xy(1, 270, 202, scarabCountString, 1, ALIGN_TOP_LEFT);
+    font_window_draw(gfx, (void*)mtx, (void*)vtx, 1);
 }
