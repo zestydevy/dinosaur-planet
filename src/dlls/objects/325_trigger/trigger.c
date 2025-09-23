@@ -802,16 +802,16 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             break;
         case TRG_CMD_ENABLE_OBJ_GROUP:
             // "Trigger [%d], Object Load\n"
-            gDLL_29_Gplay->vtbl->func_16C4((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 1);
             break;
         case TRG_CMD_DISABLE_OBJ_GROUP:
             // "Trigger [%d], Object Free\n"
-            gDLL_29_Gplay->vtbl->func_16C4((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status((s32) self->mapID, cmd->param2 | (cmd->param1 << 8), 0);
             break;
         case TRG_CMD_TOGGLE_OBJ_GROUP:
             // "Trigger [%d], Object Toggle\n"
             temp_a1 = (cmd->param2 | (cmd->param1 << 8));
-            gDLL_29_Gplay->vtbl->func_16C4((s32) self->mapID, temp_a1, gDLL_29_Gplay->vtbl->func_14F0((s32) self->mapID, temp_a1) ^ 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status((s32) self->mapID, temp_a1, gDLL_29_Gplay->vtbl->get_obj_group_status((s32) self->mapID, temp_a1) ^ 1);
             break;
         case TRG_CMD_TEXTURE_LOAD:
             // "Trigger [%d], Tex Load\n"
@@ -822,7 +822,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             trigger_func_1920((cmd->param2 | (cmd->param1 << 8)));
             break;
         case TRG_CMD_SET_MAP_SETUP:
-            gDLL_29_Gplay->vtbl->func_139C((s32) self->mapID, cmd->param2 | (cmd->param1 << 8));
+            gDLL_29_Gplay->vtbl->set_map_setup((s32) self->mapID, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SCRIPT:
             // "TRIGGER: warning DLL not loaded\n"
@@ -833,11 +833,11 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             break;
         case TRG_CMD_WORLD_ENABLE_OBJ_GROUP:
             // "Trigger [%d], Object Load\n"
-            gDLL_29_Gplay->vtbl->func_16C4((s32) cmd->param2, (s32) cmd->param1, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status((s32) cmd->param2, (s32) cmd->param1, 1);
             break;
         case TRG_CMD_WORLD_DISABLE_OBJ_GROUP:
             // "Trigger [%d], Object Free\n"
-            gDLL_29_Gplay->vtbl->func_16C4((s32) cmd->param2, (s32) cmd->param1, 0);
+            gDLL_29_Gplay->vtbl->set_obj_group_status((s32) cmd->param2, (s32) cmd->param1, 0);
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
             set_gplay_bitstring(0x46E, cmd->param2 | (cmd->param1 << 8));
@@ -846,7 +846,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             set_gplay_bitstring(0x488, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_MAP_SETUP:
-            gDLL_29_Gplay->vtbl->func_139C((s32) cmd->param2, (s32) cmd->param1);
+            gDLL_29_Gplay->vtbl->set_map_setup((s32) cmd->param2, (s32) cmd->param1);
             break;
         case TRG_CMD_11:
             // Tricky related?

@@ -426,7 +426,7 @@ void dll_496_func_24C(Object* snowhorn) {
         return;
     }
     state->isWalking &= 0xBFFF;
-    state->unk427 = gDLL_29_Gplay->vtbl->func_143C(snowhorn->mapID);
+    state->unk427 = gDLL_29_Gplay->vtbl->get_map_setup(snowhorn->mapID);
     _data_270 = gDLL_7_Newday->vtbl->func8((s32)&sp68); //check if night?
 
     var_v0 = state->isWalking & 0x8000;

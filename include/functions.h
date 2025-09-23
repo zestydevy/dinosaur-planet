@@ -87,7 +87,7 @@ void func_800529C0(u32* arg0, u32 arg1);
  */
 int func_8005BC38(s32*);
 
-void func_80048054(s32, s32, f32 *, f32 *, f32 *, s8 *);
+void func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
 void func_800484A8();
 void func_8004773C();
 

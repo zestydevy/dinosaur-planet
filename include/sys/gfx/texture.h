@@ -47,5 +47,8 @@ typedef struct Texture
  */
 Texture *queue_load_texture_proxy(s32 id);
 Texture *texture_load(s32 id, s32 param2);
+s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+void func_8003E9B4(s32 arg0);
+void func_8003E9D0(s32 arg0);
 
 #endif //_SYS_GFX_TEXTURE_H

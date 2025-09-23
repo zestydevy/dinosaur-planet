@@ -14,6 +14,9 @@ void *func_800213A0(s32 idx);
 void obj_do_deferred_free();
 void obj_free_all();
 
+s32 func_80020DA0(s32 *numObjs);
+void func_80020EE4(s32 param1, s32 param2);
+
 Object **get_world_objects(s32 *param1, s32 *numObjs);
 
 Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 param4, Object *parent);
