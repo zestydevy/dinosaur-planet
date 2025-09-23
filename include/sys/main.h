@@ -37,9 +37,9 @@ void mainproc(void *arg);
 
 void func_80013FB4(void);
 
-void func_800141A4(s32, s32, s32, s32);
+void func_800141A4(s32, s32, s32 playerno, s32);
 void func_800142A0(f32 arg0, f32 arg1, f32 arg2);
-void func_800142F0(f32 x, f32 y, f32 z, s32 arg3);
+void func_800142F0(f32 x, f32 y, f32 z, s32 playerno);
 void func_800143A4(void);
 
 s8 get_pause_state(void);
@@ -61,7 +61,7 @@ s32 remove_temp_dll(s32 id);
 void func_80014B1C(void);
 void func_80014B6C(void);
 void func_80014BBC(void);
-void func_80014BD4(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void func_80014BD4(f32 x, f32 y, f32 z, s32 playerno);
 s32 func_80014C28(void);
 u8 func_80014C50(void);
 u8 func_80014C60(void);

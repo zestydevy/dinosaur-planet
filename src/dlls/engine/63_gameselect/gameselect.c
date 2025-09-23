@@ -245,7 +245,7 @@ static s16 sSaveGameBgIndices[] = {
 /*54*/ static Texture *sLogoTexture;
 /*58*/ static Texture *sLogoShadowTexture;
 /*60*/ static char sRecentTaskNumStrs[4][4];
-/*70*/ static Texture *sSaveGameTextures[4]; // Textures used in the save game box (character icons, spirit icon, spellstone icon)
+/*70*/ static Texture *sSaveGameTextures[4]; // Textures used in the save game box (player icons, spirit icon, spellstone icon)
 /*80*/ static Texture *sSaveGameBgTextures[18]; // 32x32 tile textures making up the save game box background
 
 static void dll_63_clean_up(s32 leavingMenus);
@@ -337,11 +337,11 @@ s32 dll_63_update1() {
             func_80041C6C(1);
         } else if (sExitTransitionTimer < 1) {
             if (sExitToGame) {
-                gDLL_29_Gplay->vtbl->start_game();
+                gDLL_29_Gplay->vtbl->start_loaded_game();
             } else {
                 // Exit to main menu
                 func_80014BBC();
-                func_800142F0(12457.1f, -1474.875f, -6690.398f, 1);
+                func_800142F0(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
                 menu_set(MENU_TITLE_SCREEN);
             }
         }
@@ -563,7 +563,7 @@ static void dll_63_goto_game_select(s32 param1) {
 // func 5
 static void dll_63_load_save_game_info() {
     s32 i;
-    GplayStruct8 *saveFile;
+    Savefile *saveFile;
     char *filenamePtr;
 
     for (i = 0; i < 3; i++) {
@@ -573,23 +573,23 @@ static void dll_63_load_save_game_info() {
             bzero(&sSaveGameInfo[i], sizeof(GameSelectSaveInfo));
             sSaveGameInfo[i].isEmpty = TRUE;
         } else {
-            saveFile = &gDLL_29_Gplay->vtbl->func_E74()->unk0.unk0.unk0;
+            saveFile = &gDLL_29_Gplay->vtbl->get_state()->save.unk0.file;
 
-            if (saveFile->unk0x2f6 == 0) {
-                sSaveGameInfo[i].character = saveFile->character;
+            if (!saveFile->isEmpty) {
+                sSaveGameInfo[i].playerno = saveFile->playerno;
                 sSaveGameInfo[i].spiritBits = get_gplay_bitstring(0x489);
                 sSaveGameInfo[i].unk3 = 0;
 
                 filenamePtr = sSaveGameInfo[i].filename;
 
                 gDLL_7_Newday->vtbl->convert_ticks_to_real_time(
-                    saveFile->unk0x2fc,
+                    saveFile->timePlayed,
                     &sSaveGameInfo[i].timeHours, &sSaveGameInfo[i].timeMinutes, &sSaveGameInfo[i].timeSeconds);
 
                 sSaveGameInfo[i].unkA = 0;
                 sSaveGameInfo[i].isEmpty = FALSE;
 
-                bcopy(saveFile->saveFilename, filenamePtr, 5); // 1 less to preserve null terminator
+                bcopy(saveFile->name, filenamePtr, sizeof(saveFile->name) - 1); // 1 less to preserve null terminator
             } else {
                 bzero(&sSaveGameInfo[i], sizeof(GameSelectSaveInfo));
                 sSaveGameInfo[i].isEmpty = TRUE;
@@ -821,7 +821,7 @@ static void dll_63_init_submenu(GameSelectSubmenu *submenu) {
                 submenu->menuItems[i].text = saveGame->filename;
                 submenu->menuItems[i].flags &= ~PICMENU_ALIGN_TEXT_CENTER;
                 submenu->menuItems[i].flags |= 1;
-                submenu->menuItems[i].texture.asID = sSaveGameTextureIDs[saveGame->character];
+                submenu->menuItems[i].texture.asID = sSaveGameTextureIDs[saveGame->playerno];
             }
         }
     }
@@ -976,8 +976,8 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
         }
     }
 
-    // Draw character icon
-    func_8003825C(gdl, sSaveGameTextures[saveInfo->character], x + 14, y + 8, 0, 0, 0xFF, 0);
+    // Draw player icon
+    func_8003825C(gdl, sSaveGameTextures[saveInfo->playerno], x + 14, y + 8, 0, 0, 0xFF, 0);
     // Draw spirit icon
     func_8003825C(gdl, sSaveGameTextures[2], x + 241, y + 71, 0, 0, 0xFF, 0);
     // Draw spell stone icon

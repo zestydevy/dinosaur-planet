@@ -1,7 +1,10 @@
 #include "PR/ultratypes.h"
 
 #include "dlls/engine/28_screen_fade.h"
+#include "dlls/engine/29_gplay.h"
+#include "dlls/engine/31_flash.h"
 #include "game/objects/object.h"
+#include "sys/asset_thread.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -49,11 +52,11 @@ static u16 data_F0[120] = {
 };
 static Vec3f data_1E0 = { -14149.352f, -82.0f, -15569.178f };
 
-/*0x0*/    static FlashStruct *bss_0;
-/*0x4*/    static GplayStruct3 *bss_4;
-/*0x8*/    static GplayOptions *bss_8;
-/*0x10*/   static GplayStruct7 bss_10;
-/*0x183C*/ static s8 bss_183C;
+/*0x0*/    static GplaySaveFlash *sSavegame;
+/*0x4*/    static Savegame *sRestartSave;
+/*0x8*/    static GplayOptions *sGameOptions;
+/*0x10*/   static GameState sState;
+/*0x183C*/ static s8 sSavegameIdx; // current savegame index (slotno)
 /*0x1840*/ static u8 bss_1840[40];
 /*0x1868*/ static u32 bss_1868[120];
 /*0x1A48*/ static s8 bss_1A48[2];
@@ -61,46 +64,47 @@ static Vec3f data_1E0 = { -14149.352f, -82.0f, -15569.178f };
 /*0x1A50*/ static s32 bss_1A50[2];
 
 s32 gplay_load_save(s8 idx, u8 startGame);
-void gplay_func_6AC();
-void gplay_func_958(Vec3f *param1, s16 param2, s32 param3, s32 param4);
-void gplay_start_game();
-static void gplay_func_D94();
-static void gplay_func_1314();
+void gplay_save_game(void);
+void gplay_checkpoint(Vec3f *param1, s16 param2, s32 param3, s32 param4);
+void gplay_start_loaded_game(void);
+static void gplay_start_game(void);
+static void gplay_reset_state(void);
 void gplay_func_139C(s32 param1, s32 param2);
 void gplay_func_15B8(s32 param1);
 
 void gplay_ctor(DLLFile *self)  {
-    bss_0 = (FlashStruct*)mmAlloc(sizeof(FlashStruct), COLOUR_TAG_YELLOW, NULL);
-    gplay_func_1314();
-    bss_4 = NULL;
-    bss_8 = (GplayOptions*)mmAlloc(128, COLOUR_TAG_YELLOW, NULL);
+    sSavegame = (GplaySaveFlash*)mmAlloc(sizeof(GplaySaveFlash), COLOUR_TAG_YELLOW, NULL);
+    gplay_reset_state();
+    sRestartSave = NULL;
+    sGameOptions = (GplayOptions*)mmAlloc(sizeof(GplayOptions), COLOUR_TAG_YELLOW, NULL);
     bss_1A48[0] = -1;
     bss_1A50[0] = -1;
 }
 
 void gplay_dtor(DLLFile *self)  {
-    mmFree(bss_0);
-    if (bss_4 != NULL) {
-        mmFree(bss_4);
+    mmFree(sSavegame);
+    if (sRestartSave != NULL) {
+        mmFree(sRestartSave);
     }
-    mmFree(bss_8);
+    mmFree(sGameOptions);
 }
 
 void gplay_erase_save(s8 idx) {
-    gplay_func_1314();
-    bss_183C = idx;
-    bss_10.unk0.unk0.unk0.unk0x2f6 = 1;
-    bss_10.unk0.unk0.unk0.unk0x2fc = -1.0f;
-    gplay_func_6AC();
-    gplay_func_6AC();
+    gplay_reset_state();
+    sSavegameIdx = idx;
+    sState.save.unk0.file.isEmpty = 1;
+    sState.save.unk0.file.timePlayed = -1.0f;
+    // Save twice to erase both copies
+    gplay_save_game();
+    gplay_save_game();
 }
 
 // regalloc
+// https://decomp.me/scratch/74sZJ
 #ifndef NON_MATCHING
 void gplay_init_save(s8 idx, char *filename);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_init_save.s")
 #else
-static const Vec3f rodata_230 = { 43000.0f, 0.0f, 0.0f };
 void gplay_init_save(s8 idx, char *filename) {
     GplayStruct6 *struct6;
     GplayStruct12 *struct12;
@@ -108,28 +112,28 @@ void gplay_init_save(s8 idx, char *filename) {
     GplayStruct11 *struct11;
     Vec3f vec;
     s32 i;
-    u8 *dst;
-    u8 var;
+    char *dst;
+    char var;
 
     vec = data_1E0;
 
-    gplay_func_1314();
+    gplay_reset_state();
 
-    bss_183C = idx;
-    bss_10.unk0.unk0.unk0.character = 1;
+    sSavegameIdx = idx;
+    sState.save.unk0.file.playerno = PLAYER_KRYSTAL;
 
     for (i = 0; i < 2; i++) {
 
-        bss_10.unk0.unk0.unk0.unk0x0[i].health = 12;
-        bss_10.unk0.unk0.unk0.unk0x0[i].healthMax = 12;
-        bss_10.unk0.unk0.unk0.unk0x0[i].magicMax = 25;
-        bss_10.unk0.unk0.unk0.unk0x0[i].magic = 0;
+        sState.save.unk0.file.players[i].health = 12;
+        sState.save.unk0.file.players[i].healthMax = 12;
+        sState.save.unk0.file.players[i].magicMax = 25;
+        sState.save.unk0.file.players[i].magic = 0;
 
-        bss_10.unk0.unk0.unk0.unk0x18[i].unk0x0 = 4;
-        bss_10.unk0.unk0.unk0.unk0x18[i].unk0x1 = 5;
+        sState.save.unk0.file.unk0x18[i].unk0x0 = 4;
+        sState.save.unk0.file.unk0x18[i].unk0x1 = 5;
 
-        struct6 = &bss_10.unk0.unk0x16F4[i]; // a1
-        struct12 = &bss_10.unk0.unk0x171C[i]; // a0
+        struct13 = &sState.save.unk0x179c[i]; // v1
+        struct6 = &sState.save.unk0x16F4[i]; // a1
         struct6->unk0x0 = -1;
         struct6->unk0x2 = -1;
         struct6->unk0x4 = -1;
@@ -140,8 +144,8 @@ void gplay_init_save(s8 idx, char *filename) {
         struct6->unk0xe = -1;
         struct6->unk0x12 = -1;
 
-        //bss_10.unk0.unk0x171C[i].unk0x0 = 43000.0F;
-        struct12->unk0x0 = rodata_230.x;
+        struct12 = &sState.save.unk0x171C[i]; // a0
+        struct12->unk0x0 = 43000.0f;
         struct12->unk0x4 = -1;
         struct12->unk0x6 = -1;
         struct12->unk0x8 = -1;
@@ -153,7 +157,6 @@ void gplay_init_save(s8 idx, char *filename) {
         struct12->unk0x3f = -1;
         struct12->unk0x3c = 1;
 
-        struct13 = &bss_10.unk0.unk0x179c[i]; // v1
         struct13->unk0x6 = -1;
         struct13->unk0x4 = -1;
         struct13->unk0x2 = -1;
@@ -169,7 +172,7 @@ void gplay_init_save(s8 idx, char *filename) {
     set_gplay_bitstring(0x4E5, 1);
 
     if (filename != NULL) {
-        dst = &bss_10.unk0.unk0.unk0.saveFilename[0];
+        dst = &sState.save.unk0.file.name[0];
 
         var = *filename;
         *dst = var;
@@ -184,52 +187,60 @@ void gplay_init_save(s8 idx, char *filename) {
         }
     }
 
-    gplay_func_958(&vec, 0, 0, 0);
-    gplay_func_6AC();
-    gplay_func_6AC();
+    gplay_checkpoint(&vec, 0, 0, 0);
+    // Save twice to init both copies
+    gplay_save_game();
+    gplay_save_game();
 }
 #endif
 
 s32 gplay_load_save(s8 idx, u8 startGame) {
-    u8 var1;
-    u8 var2;
-    FlashStruct *flashPtr;
+    u8 loadStatus0;
+    u8 loadStatus1;
+    GplaySaveFlash *copy1Ptr;
     s32 ret;
 
-    if (idx != bss_183C) {
-        if (idx < 4) {
-            bss_183C = idx;
+    if (idx != sSavegameIdx) {
+        if (idx < MAX_SAVEGAMES) {
+            sSavegameIdx = idx;
 
-            flashPtr = (FlashStruct*)mmAlloc(sizeof(FlashStruct), COLOUR_TAG_YELLOW, NULL);
+            // Depending on whether this savegame was saved an even or odd number of times determines
+            // which copy is the main savegame and which is the backup. Load both and compare.
+            copy1Ptr = (GplaySaveFlash*)mmAlloc(sizeof(GplaySaveFlash), COLOUR_TAG_YELLOW, NULL);
 
-            var1 = gDLL_31_Flash->vtbl->load_game(bss_0, idx, sizeof(FlashStruct), 1);
-            var2 = gDLL_31_Flash->vtbl->load_game(flashPtr, idx + 4, sizeof(FlashStruct), 1);
+            loadStatus0 = gDLL_31_Flash->vtbl->load_game(&sSavegame->asFlash, idx,                 sizeof(FlashStruct), TRUE); // copy 0
+            loadStatus1 = gDLL_31_Flash->vtbl->load_game(&copy1Ptr->asFlash,  idx + MAX_SAVEGAMES, sizeof(FlashStruct), TRUE); // copy 1
 
-            if (var1 == 0) {
-                if (var2 == 0) {
-                    mmFree(flashPtr);
+            if (!loadStatus0) {
+                if (!loadStatus1) {
+                    // both copies of the savegame failed to load
+                    mmFree(copy1Ptr);
                     ret = 0;
                 } else {
-                    mmFree(bss_0);
+                    // copy 0 failed but copy 1 is good, use that one
+                    mmFree(sSavegame);
                     ret = 2;
-                    bss_0 = flashPtr;
+                    sSavegame = copy1Ptr;
                 }
-            } else if (var2 == 0) {
-                mmFree(flashPtr);
-                ret = 2;
-            } else if (flashPtr->gplay.unk0.unk0.unk0x2fc < bss_0->gplay.unk0.unk0.unk0x2fc) {
-                mmFree(flashPtr);
+            } else if (!loadStatus1) {
+                // copy 1 failed but copy 0 is good, use that one
+                mmFree(copy1Ptr);
+                ret = 2; // bug? shouldn't this be 1 since copy 0 is being returned?
+            } else if (copy1Ptr->asSave.unk0.file.timePlayed < sSavegame->asSave.unk0.file.timePlayed) {
+                // both copies are good but copy 0 is newer, use that one
+                mmFree(copy1Ptr);
                 ret = 1;
             } else {
-                mmFree(bss_0);
+                // both copies are good but copy 1 is newer, use that one
+                mmFree(sSavegame);
                 ret = 2;
-                bss_0 = flashPtr;
+                sSavegame = copy1Ptr;
             }
         } else {
             queue_load_file_region_to_ptr(
-                (void**)bss_0,
+                (void**)&sSavegame->asFlash,
                 SAVEGAME_BIN,
-                idx * sizeof(FlashStruct) - 0x6000,
+                idx * sizeof(FlashStruct) - (sizeof(FlashStruct) * 4),
                 sizeof(FlashStruct));
             ret = 1;
         }
@@ -238,9 +249,9 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
     }
 
     if (startGame) {
-        gplay_start_game();
+        gplay_start_loaded_game();
     } else {
-        bcopy(bss_0, &bss_10.unk0, 0x17ac);
+        bcopy(&sSavegame->asSave, &sState.save, sizeof(Savegame));
     }
 
     return ret;
@@ -248,158 +259,177 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
 
 void gplay_copy_save(s8 srcIdx, s8 dstIdx) {
     gplay_load_save(srcIdx, /*startGame*/FALSE);
-    bss_183C = dstIdx;
-    gplay_func_6AC();
-    gplay_func_6AC();
+    sSavegameIdx = dstIdx;
+    // Save twice to make sure both alternate slots are for the new save
+    gplay_save_game();
+    gplay_save_game();
 }
 
-void gplay_func_6AC() {
-    if (bss_183C != -1) {
-        bss_10.unk0.unk0.unk0.unk0x2f8 += 1;
+void gplay_save_game(void) {
+    if (sSavegameIdx != -1) {
+        sState.save.unk0.file.numTimesSaved += 1;
 
-        bcopy(&bss_10.unk0.unk0.unk0, &bss_0->gplay.unk0.unk0, sizeof(GplayStruct8));
+        bcopy(&sState.save.unk0.file, &sSavegame->asSave.unk0.file, sizeof(Savefile));
 
+        // Alternate save location in flash every time the gamesave is saved
+        //
+        // In flash, there are 8 gamesave slots but only 4 can be distinct gamesaves
+        // as each gamesave alternates between two slots (either idx + 0 or idx + 4).
+        //
+        // | 0 | savegame 0 alternate 0 |
+        // | 1 | savegame 1 alternate 0 |
+        // | 2 | savegame 2 alternate 0 |
+        // | 3 | savegame 3 alternate 0 |
+        // | 4 | savegame 0 alternate 1 |
+        // | 5 | savegame 1 alternate 1 |
+        // | 6 | savegame 2 alternate 1 |
+        // | 7 | savegame 3 alternate 1 |
         gDLL_31_Flash->vtbl->save_game(
-            bss_0, 
-            bss_183C + (bss_0->gplay.unk0.unk0.unk0x2f8 % 2) * 4, 
+            &sSavegame->asFlash, 
+            sSavegameIdx + (sSavegame->asSave.unk0.file.numTimesSaved % 2) * MAX_SAVEGAMES, 
             sizeof(FlashStruct), 
-            1);
+            TRUE);
         
-        if (bss_4 != NULL) {
-            bcopy(&bss_10.unk0.unk0, &bss_4->unk0, sizeof(GplayStruct9));
+        if (sRestartSave != NULL) {
+            bcopy(&sState.save.unk0, &sRestartSave->unk0, sizeof(GplayStruct9));
         }
     }
 }
 
-u32 gplay_func_79C() {
-    u32 var;
-    s32 ret;
+u32 gplay_load_game_options(void) {
+    u32 ret;
+    s32 loadStatus;
     
-    var = 1;
+    ret = 1;
 
-    ret = gDLL_31_Flash->vtbl->load_game(
-        bss_8, 3, sizeof(GplayOptions), 0);
+    loadStatus = gDLL_31_Flash->vtbl->load_game(
+        sGameOptions, 3, sizeof(GplayOptions), FALSE);
     
-    if (ret == 0) {
-        bzero(bss_8, sizeof(GplayOptions));
-        var = 0;
-        bss_8->volumeMusic = 0x7f;
-        bss_8->volumeAudio = 0x7f;
-        bss_8->unkA = 0x7f;
-    }
-
-    bss_8->languageID = 0;
-    
-    if (bss_8->screenOffsetX < -7) {
-        bss_8->screenOffsetX = -7;
-    }
-    if (bss_8->screenOffsetX > 7) {
-        bss_8->screenOffsetX = 7;
-    }
-    if (bss_8->screenOffsetY < -7) {
-        bss_8->screenOffsetY = -7;
-    }
-    if (bss_8->screenOffsetY > 7) {
-        bss_8->screenOffsetY = 7;
+    if (!loadStatus) {
+        // Failed to load
+        bzero(sGameOptions, sizeof(GplayOptions));
+        ret = 0;
+        sGameOptions->volumeMusic = 0x7f;
+        sGameOptions->volumeAudio = 0x7f;
+        sGameOptions->unkA = 0x7f;
     }
 
-    return var;
+    sGameOptions->languageID = 0;
+    
+    if (sGameOptions->screenOffsetX < -7) {
+        sGameOptions->screenOffsetX = -7;
+    }
+    if (sGameOptions->screenOffsetX > 7) {
+        sGameOptions->screenOffsetX = 7;
+    }
+    if (sGameOptions->screenOffsetY < -7) {
+        sGameOptions->screenOffsetY = -7;
+    }
+    if (sGameOptions->screenOffsetY > 7) {
+        sGameOptions->screenOffsetY = 7;
+    }
+
+    return ret;
 }
 
-void gplay_func_8D8() {
-    gDLL_31_Flash->vtbl->save_game(bss_8, 3, sizeof(GplayOptions), 0);
+void gplay_save_game_options(void) {
+    gDLL_31_Flash->vtbl->save_game(sGameOptions, 3, sizeof(GplayOptions), FALSE);
 }
 
-GplayOptions *gplay_func_930() {
-    return bss_8;
+GplayOptions *gplay_get_game_options(void) {
+    return sGameOptions;
 }
 
 void gplay_func_94C(s32 param1) {
 
 }
 
-void gplay_func_958(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
+void gplay_checkpoint(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
     if ((param3 & 1) != 0) {
-        bcopy(&bss_10.unk0.unk0, &bss_0->gplay.unk0, sizeof(GplayStruct9));
+        bcopy(&sState.save.unk0, &sSavegame->asSave.unk0, sizeof(GplayStruct9));
     } else {
         if (func_8001EBE0() != 0) {
-            bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 |= 1;
+            sState.save.unk0x16F4[sState.save.unk0.file.playerno].unk0x10 |= 1;
         } else {
-            bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character].unk0x10 &= ~1;
+            sState.save.unk0x16F4[sState.save.unk0.file.playerno].unk0x10 &= ~1;
         }
 
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x = position->x;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y = position->y;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z = position->z;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].rotationY = yaw >> 8;
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].mapLayer = mapLayer;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.x = position->x;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.y = position->y;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.z = position->z;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].rotationY = yaw >> 8;
+        sState.save.playerLocations[sState.save.unk0.file.playerno].mapLayer = mapLayer;
 
-        bcopy(&bss_10.unk0, &bss_0->gplay, sizeof(GplayStruct3));
+        // Copy save state to active savegame
+        //
+        // Does not persist savegame to flash until the player actually selects the save button,
+        // this just simply stages the data.
+        bcopy(&sState.save, &sSavegame->asSave, sizeof(Savegame));
     }
 
-    if (bss_4 != NULL) {
-        bcopy(&bss_10.unk0.unk0, &bss_4->unk0, sizeof(GplayStruct9));
+    if (sRestartSave != NULL) {
+        bcopy(&sState.save.unk0, &sRestartSave->unk0, sizeof(GplayStruct9));
     }
 }
 
-void gplay_start_game() {
-    bcopy(&bss_0->gplay, &bss_10.unk0, sizeof(GplayStruct3));
-    gplay_func_D94();
+void gplay_start_loaded_game(void) {
+    bcopy(&sSavegame->asSave, &sState.save, sizeof(Savegame));
+    gplay_start_game();
 }
 
 void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
-    if (bss_4 == NULL) {
-        bss_4 = (GplayStruct3*)mmAlloc(sizeof(GplayStruct3), COLOUR_TAG_YELLOW, NULL);
-        if (bss_4 == NULL) {
+    if (sRestartSave == NULL) {
+        sRestartSave = (Savegame*)mmAlloc(sizeof(Savegame), COLOUR_TAG_YELLOW, NULL);
+        if (sRestartSave == NULL) {
             return;
         }
     }
 
-    bcopy(&bss_10.unk0, bss_4, sizeof(GplayStruct3));
+    bcopy(&sState.save, sRestartSave, sizeof(Savegame));
 
     if (func_8001EBE0() != 0) {
-        bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 |= 1;
+        sRestartSave->unk0x16F4[sRestartSave->unk0.file.playerno].unk0x10 |= 1;
     } else {
-        bss_4->unk0x16F4[bss_4->unk0.unk0.character].unk0x10 &= ~1;
+        sRestartSave->unk0x16F4[sRestartSave->unk0.file.playerno].unk0x10 &= ~1;
     }
 
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.x = position->x;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.y = position->y;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].vec.z = position->z;
-    bss_4->unk0x16d4[bss_4->unk0.unk0.character].rotationY = (u8)(yaw >> 8);
-    bss_4->unk0x16d4[bss_10.unk0.unk0.unk0.character].mapLayer = mapLayer;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.x = position->x;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.y = position->y;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.z = position->z;
+    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].rotationY = (u8)(yaw >> 8);
+    sRestartSave->playerLocations[sState.save.unk0.file.playerno].mapLayer = mapLayer;
 }
 
-void gplay_restart_goto() {
-    if (bss_4 != NULL) {
-        bcopy(bss_4, &bss_10.unk0, sizeof(GplayStruct3));
-        gplay_func_D94();
-    }
-}
-
-void gplay_restart_clear() {
-    if (bss_4 != NULL) {
-        mmFree(bss_4);
-        bss_4 = NULL;
+void gplay_restart_goto(void) {
+    if (sRestartSave != NULL) {
+        bcopy(sRestartSave, &sState.save, sizeof(Savegame));
+        gplay_start_game();
     }
 }
 
-s32 gplay_func_D70() {
-    return bss_4 != NULL;
+void gplay_restart_clear(void) {
+    if (sRestartSave != NULL) {
+        mmFree(sRestartSave);
+        sRestartSave = NULL;
+    }
 }
 
-static void gplay_func_D94() {
+s32 gplay_restart_is_set(void) {
+    return sRestartSave != NULL;
+}
+
+static void gplay_start_game(void) {
     bss_1A48[0] = -1;
     bss_1A50[0] = -1;
 
-    bzero(&bss_10.bitString, 128);
+    bzero(&sState.bitString, sizeof(sState.bitString));
 
     unpause();
 
     func_800142A0(
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.x,
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.y,
-        bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character].vec.z);
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.x,
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.y,
+        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.z);
     
     if (menu_get_current() != MENU_TITLE_SCREEN) {
         menu_set(MENU_GAMEPLAY);
@@ -408,138 +438,144 @@ static void gplay_func_D94() {
     gDLL_28_ScreenFade->vtbl->fade_reversed(40, SCREEN_FADE_BLACK);
 }
 
-GplayStruct7 *gplay_func_E74() {
-    return &bss_10;
+GameState *gplay_get_state(void) {
+    return &sState;
 }
 
-u8 gplay_func_E90() {
-    return bss_10.unk0.unk0.unk0.character;
+u8 gplay_get_playerno(void) {
+    return sState.save.unk0.file.playerno;
 }
 
-void gplay_func_EAC(u8 character) {
-    bss_10.unk0.unk0.unk0.character = character;
+void gplay_set_playerno(u8 playerno) {
+    sState.save.unk0.file.playerno = playerno;
 }
 
-PlayerStats *gplay_func_ED4() {
-    return &bss_10.unk0.unk0.unk0.unk0x0[bss_10.unk0.unk0.unk0.character];
+PlayerStats *gplay_get_player_stats(void) {
+    return &sState.save.unk0.file.players[sState.save.unk0.file.playerno];
 }
 
-GplayStruct5 *gplay_func_F04() {
-    return &bss_10.unk0.unk0x16d4[bss_10.unk0.unk0.unk0.character];
+PlayerLocation *gplay_get_player_saved_location(void) {
+    return &sState.save.playerLocations[sState.save.unk0.file.playerno];
 }
 
-GplayStruct11 *gplay_func_F30() {
-    return &bss_10.unk0.unk0.unk0.unk0x18[bss_10.unk0.unk0.unk0.character];
+GplayStruct11 *gplay_func_F30(void) {
+    return &sState.save.unk0.file.unk0x18[sState.save.unk0.file.playerno];
 }
 
-GplayStruct6 *gplay_func_F60() {
-    if (bss_10.unk0.unk0.unk0.character > 1) {
-        return &bss_10.unk0.unk0x16F4[0];
+// gplayGetCurrentPlayerLactions ?
+GplayStruct6 *gplay_func_F60(void) {
+    if (sState.save.unk0.file.playerno >= PLAYER_NUM_PLAYERS) {
+        return &sState.save.unk0x16F4[0];
     }
 
-    return &bss_10.unk0.unk0x16F4[bss_10.unk0.unk0.unk0.character];
+    return &sState.save.unk0x16F4[sState.save.unk0.file.playerno];
 }
 
-GplayStruct12 *gplay_func_FA8() {
-    if (bss_10.unk0.unk0.unk0.character > 1) {
-        return &bss_10.unk0.unk0x171C[0];
+// gplayGetCurrentPlayerEnvactions ?
+GplayStruct12 *gplay_func_FA8(void) {
+    if (sState.save.unk0.file.playerno >= PLAYER_NUM_PLAYERS) {
+        return &sState.save.unk0x171C[0];
     }
 
-    return &bss_10.unk0.unk0x171C[bss_10.unk0.unk0.unk0.character];
+    return &sState.save.unk0x171C[sState.save.unk0.file.playerno];
 }
 
-GplayStruct13 *gplay_func_FE8() {
-    return &bss_10.unk0.unk0x179c[bss_10.unk0.unk0.unk0.character];
+GplayStruct13 *gplay_func_FE8(void) {
+    return &sState.save.unk0x179c[sState.save.unk0.file.playerno];
 }
 
-// gplayAddTime(uid, time)
-void gplay_func_1014(u32 param1, f32 param2) {
+void gplay_add_time(s32 uid, f32 time) {
     s32 i;
 
-    if (bss_10.unk0.unk0.unk0.unk0x302 == 256) {
+    if (sState.save.unk0.file.timeSaveCount == MAX_TIMESAVES) {
         return;
     }
 
-    param2 *= 20.0f;
-    param2 += bss_10.unk0.unk0.unk0.unk0x2fc;
+    time *= 20.0f;
+    time += sState.save.unk0.file.timePlayed;
 
-    for (i = 0; i < bss_10.unk0.unk0.unk0.unk0x302; i++) {
-        if (param1 == bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0) {
+    for (i = 0; i < sState.save.unk0.file.timeSaveCount; i++) {
+        if (uid == sState.save.unk0.file.timeSaves[i].uid) {
+            // Found existing time save for the given UID
             break;
         }
     }
 
-    if (i == bss_10.unk0.unk0.unk0.unk0x302) {
-        bss_10.unk0.unk0.unk0.unk0x302 += 1;
+    if (i == sState.save.unk0.file.timeSaveCount) {
+        // Time save doesn't exist yet for the given UID, add one
+        sState.save.unk0.file.timeSaveCount += 1;
     }
 
-    bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0 = param1;
-    bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x4 = param2;      
+    // Set time save expiry
+    sState.save.unk0.file.timeSaves[i].uid = uid;
+    sState.save.unk0.file.timeSaves[i].time = time;      
 }
 
-s32 gplay_func_109C(u32 param1) {
+s32 gplay_did_time_expire(s32 uid) {
     s32 i;
 
-    for (i = 0; i < bss_10.unk0.unk0.unk0.unk0x302; i++) {
-        if (param1 == bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0) {
-            return 0;
+    for (i = 0; i < sState.save.unk0.file.timeSaveCount; i++) {
+        if (uid == sState.save.unk0.file.timeSaves[i].uid) {
+            return FALSE;
         }
     }
 
-    return 1;
+    return TRUE;
 }
 
-f32 gplay_func_10F4(u32 param1) {
+f32 gplay_get_time_remaining(s32 uid) {
     s32 i;
 
-    for (i = 0; i < bss_10.unk0.unk0.unk0.unk0x302; i++) {
-        if (param1 == bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x0) {
-            return bss_10.unk0.unk0.unk0.unk0xad4[i].unk0x4 - bss_10.unk0.unk0.unk0.unk0x2fc;
+    for (i = 0; i < sState.save.unk0.file.timeSaveCount; i++) {
+        if (uid == sState.save.unk0.file.timeSaves[i].uid) {
+            return sState.save.unk0.file.timeSaves[i].time - sState.save.unk0.file.timePlayed;
         }
     }
 
     return 0.0f;
 }
 
-void gplay_func_115C() {
-    s32 var1;
+void gplay_tick(void) {
+    s32 i;
 
-    bss_10.unk0.unk0.unk0.unk0x2fc += delayFloat;
+    // Increment time played
+    sState.save.unk0.file.timePlayed += delayFloat;
 
-    var1 = 0;
+    // Process time saves
+    i = 0;
+    while (i < sState.save.unk0.file.timeSaveCount) {
+        if (sState.save.unk0.file.timeSaves[i].time < sState.save.unk0.file.timePlayed) {
+            // Expire time save
+            sState.save.unk0.file.timeSaveCount = sState.save.unk0.file.timeSaveCount - 1;
 
-    while (bss_10.unk0.unk0.unk0.unk0x302 > var1) {
-        if (bss_10.unk0.unk0.unk0.unk0xad4[var1].unk0x4 < bss_10.unk0.unk0.unk0.unk0x2fc) {
-            bss_10.unk0.unk0.unk0.unk0x302 = bss_10.unk0.unk0.unk0.unk0x302 - 1;
-
-            bss_10.unk0.unk0.unk0.unk0xad4[var1].unk0x0 = bss_10.unk0.unk0.unk0.unk0xad4[bss_10.unk0.unk0.unk0.unk0x302].unk0x0;
-            bss_10.unk0.unk0.unk0.unk0xad4[var1].unk0x4 = bss_10.unk0.unk0.unk0.unk0xad4[bss_10.unk0.unk0.unk0.unk0x302].unk0x4;
+            sState.save.unk0.file.timeSaves[i].uid = sState.save.unk0.file.timeSaves[sState.save.unk0.file.timeSaveCount].uid;
+            sState.save.unk0.file.timeSaves[i].time = sState.save.unk0.file.timeSaves[sState.save.unk0.file.timeSaveCount].time;
         } else {
-            var1++;
+            i++;
         }
     }
 }
 
 s16 gplay_func_121C(void) {
-    return bss_10.unk0.unk0.unk0.unk0x300;
+    return sState.save.unk0.file.unk0x300;
 }
 
 void gplay_func_1238(s32 param1) {
-    bss_10.unk0.unk0.unk0.unk0x300 = param1;
+    sState.save.unk0.file.unk0x300 = param1;
 }
 
-void *gplay_func_1254() {
-    return &bss_10.unk0.unk0.unk0.unk0x304;
+void *gplay_func_1254(void) {
+    return &sState.save.unk0.file.unk0x304;
 }
 
-u32 gplay_func_1270() {
-    return (u32)bss_10.unk0.unk0.unk0.unk0x2fc;
+u32 gplay_get_time_played(void) {
+    return (u32)sState.save.unk0.file.timePlayed;
 }
 
-static void gplay_func_1314() {
-    bss_183C = -1;
-    bzero(&bss_10, sizeof(GplayStruct7));
-    bzero(bss_0, sizeof(FlashStruct));
+static void gplay_reset_state(void) {
+    sSavegameIdx = -1;
+    bzero(&sState, sizeof(GameState));
+    bzero(sSavegame, sizeof(FlashStruct));
 }
 
 void gplay_func_1378(s32 param1, s32 param2) {
@@ -668,65 +704,65 @@ void gplay_func_16C4(s32 mapID, s32 param2, s32 param3) {
     }
 }
 
-GplayStruct14 *gplay_func_1974() {
-    return &bss_10.unk0.unk0.unk0.unk0x20[bss_10.unk0.unk0.unk0.character];
+GplayStruct14 *gplay_func_1974(void) {
+    return &sState.save.unk0.file.unk0x20[sState.save.unk0.file.playerno];
 }
 
-GplayStruct14 *gplay_func_19B8() {
-    return &bss_10.unk0.unk0.unk0.unk0x188[bss_10.unk0.unk0.unk0.character];
+GplayStruct14 *gplay_func_19B8(void) {
+    return &sState.save.unk0.file.unk0x188[sState.save.unk0.file.playerno];
 }
 
-u32 gplay_func_19FC(u8 param1) {
-    if (param1 >= 32) {
+u32 gplay_is_cheat_unlocked(u8 cheatIdx) {
+    if (cheatIdx >= 32) {
         return 0;
     }
 
-    return bss_8->cheatsUnlocked & (1 << param1);
+    return sGameOptions->cheatsUnlocked & (1 << cheatIdx);
 }
 
-void gplay_func_1A48(u8 param1) {
-    if (param1 < 32) {
-        bss_8->cheatsUnlocked |= (1 << param1);
+void gplay_unlock_cheat(u8 cheatIdx) {
+    if (cheatIdx < 32) {
+        sGameOptions->cheatsUnlocked |= (1 << cheatIdx);
     }
 }
 
-s32 gplay_func_1A90(u8 param1) {
+s32 gplay_is_cheat_active(u8 cheatIdx) {
     s32 ret;
 
-    ret = 0;
+    ret = FALSE;
 
-    if (param1 >= 32) {
-        return 0;
+    if (cheatIdx >= 32) {
+        return FALSE;
     } 
 
-    ret = (bss_8->cheatsUnlocked & (1 << param1)) != 0;
+    ret = (sGameOptions->cheatsUnlocked & (1 << cheatIdx)) != 0;
     if (ret) {
-        return (bss_8->cheatsEnabled & (1 << param1)) != 0;
+        return (sGameOptions->cheatsEnabled & (1 << cheatIdx)) != 0;
     }
 
     // hmm...
 }
 
-void gplay_func_1AF8(u8 param1, u8 param2) {
-    if (param1 < 32 && (bss_8->cheatsUnlocked & (1 << param1)) != 0) {
-        if (param2 != 0) {
-            bss_8->cheatsEnabled |= (1 << param1);
+void gplay_set_cheat_enabled(u8 cheatIdx, u8 enabled) {
+    if (cheatIdx < 32 && (sGameOptions->cheatsUnlocked & (1 << cheatIdx)) != 0) {
+        if (enabled) {
+            sGameOptions->cheatsEnabled |= (1 << cheatIdx);
         } else {
-            bss_8->cheatsEnabled &= ~(1 << param1);
+            sGameOptions->cheatsEnabled &= ~(1 << cheatIdx);
         }
     }
 }
 
-u32 gplay_func_1B78(u8 param1) {
-    if (param1 >= 32) {
+u32 gplay_is_cinema_unlocked(u8 cinemaIdx) {
+    if (cinemaIdx >= 32) {
         return 0;
     }
 
-    return bss_8->cinemasUnlocked & (1 << param1);
+    return sGameOptions->cinemasUnlocked & (1 << cinemaIdx);
 }
 
-void gplay_func_1BC4(u8 param1) {
-    if (param1 < 32) {
-        bss_8->cinemasUnlocked |= (1 << param1);
+void gplay_unlock_cinema(u8 cinemaIdx) {
+    if (cinemaIdx < 32) {
+        sGameOptions->cinemasUnlocked |= (1 << cinemaIdx);
     }
 }

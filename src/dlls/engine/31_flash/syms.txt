@@ -25,4 +25,4 @@ sFlashReadIoMesg = 0x40; // absolute:0xF60
 sFlashReadIdQueue = 0x58; // absolute:0xF78
 sFlashEPiHandle = 0x70; // absolute:0xF90
 sFlashReadIdQueueBuffer = 0xE4; // absolute:0x1004
-DAT_81084030 = 0xE8; // absolute:0x1008
+sFlashVersion = 0xE8; // absolute:0x1008

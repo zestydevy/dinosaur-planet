@@ -42,14 +42,14 @@ static OSIoMesg sFlashReadIoMesg;
 static OSMesgQueue sFlashReadIdQueue;
 static OSPiHandle sFlashEPiHandle;
 static OSMesg sFlashReadIdQueueBuffer[1];
-static u32 DAT_81084030;
+static u32 sFlashVersion;
 
 static void flash_compute_checksum(FlashStruct *param);
 static OSPiHandle *osFlashInit();
 static void osFlashReadId(u32 *flash_type, u32 *flash_maker);
-/*static*/ s32 osFlashSectorErase(u32 page_num);
-/*static*/ s32 osFlashWriteBuffer(OSIoMesg *mb, s32 priority, void *dramAddr, OSMesgQueue *mq);
-/*static*/ s32 osFlashWriteArray(u32 page_num);
+static s32 osFlashSectorErase(u32 page_num);
+static s32 osFlashWriteBuffer(OSIoMesg *mb, s32 priority, void *dramAddr, OSMesgQueue *mq);
+static s32 osFlashWriteArray(u32 page_num);
 static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dramAddr, 
     u32 n_pages, OSMesgQueue *mq);
 
@@ -62,17 +62,17 @@ static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dram
 
 }
 
-/*export*/ s32 flash_load_game(FlashStruct *param1, u8 param2, s32 param3, s32 param4) {
+/*export*/ s16 flash_load_game(void *dest, u8 slotno, s32 size, s32 validateChecksum) {
     s16 i;
     s16 result;
     u64 xor;
     u64 sum;
 
     for (i = 0; i < 3; i++) {
-        osInvalDCache((void*)param1, param3);
+        osInvalDCache(dest, size);
 
         result = osFlashReadArray(&sFlashIoMesg, OS_MESG_PRI_NORMAL, 
-            param2 * 128, (void*)param1, param3 / 128, &sFlashDmaMq);
+            slotno * 128, dest, size / 128, &sFlashDmaMq);
         
         if (result == -1) {
             return FALSE;
@@ -80,13 +80,14 @@ static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dram
 
         osRecvMesg(&sFlashDmaMq, NULL, OS_MESG_BLOCK);
 
-        if (param4 != 0) {
-            xor = param1->xor;
-            sum = param1->sum;
+        if (validateChecksum) {
+            FlashStruct *flashStruct = (FlashStruct*)dest;
+            xor = flashStruct->xor;
+            sum = flashStruct->sum;
     
-            flash_compute_checksum(param1);
+            flash_compute_checksum(flashStruct);
     
-            if (xor == param1->xor && sum == param1->sum) {
+            if (xor == flashStruct->xor && sum == flashStruct->sum) {
                 return TRUE;
             }
         } else {
@@ -97,51 +98,49 @@ static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dram
     return FALSE;
 }
 
-#if 1
-s16 flash_save_game(FlashStruct *param1, u8 param2, s32 param3, s32 param4);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/31_flash/flash_save_game.s")
-#else
-/*export*/ s16 flash_save_game(FlashStruct *param1, u8 param2, s32 param3, s32 param4) {
-    u32 *buf;
+/*export*/ s16 flash_save_game(void *src, u8 slotno, s32 size, s32 computeChecksum) {
     s16 i;
     s16 page;
-    s16 status;
+    s16 pad;
+    u8 *data;
+    s16 pad3;
     s16 ret;
 
     ret = 1;
-    buf = ((u32*)param1);
 
-    if (param4 != 0) {
-        flash_compute_checksum(param1);
+    if (computeChecksum) {
+        flash_compute_checksum((FlashStruct*)src);
     }
 
+    data = src;
+
     for (i = 0; i < 3; i++) {
-        if (osFlashSectorErase(param2 * 128) == -1) {
+        if (osFlashSectorErase(slotno * 128) == -1) {
             ret = 0;
             break;
         }
 
-        for (page = 0; page < (param3 / 128); page++) {
-            osWritebackDCache(&buf[page * 32], 128);
+        for (page = 0; page < (size / 128); page++) {
+            osWritebackDCache(data + (page * 128), 128);
 
-            if ((s16)osFlashWriteBuffer(&sFlashIoMesg, OS_MESG_PRI_NORMAL, 
-                    &buf[page * 32], &sFlashDmaMq) == -1) {
+            if ((s16)osFlashWriteBuffer(&sFlashIoMesg, OS_MESG_PRI_NORMAL, data + (page * 128), &sFlashDmaMq) == -1) {
                 ret = 0;
                 break;
             }
 
             osRecvMesg(&sFlashDmaMq, NULL, OS_MESG_BLOCK);
 
-            if ((s16)osFlashWriteArray(param2 * 128 + page) == -1) {
+            if ((s16)osFlashWriteArray(slotno * 128 + page) == -1) {
                 ret = 0;
                 break;
             }
         }
     }
+    
+    if (computeChecksum){}
 
     return ret;
 }
-#endif
 
 static void flash_compute_checksum(FlashStruct *param) {
     u16 i;
@@ -192,9 +191,9 @@ static OSPiHandle *osFlashInit() {
     osFlashReadId(&flashType, &flashMaker);
 
     if (flashMaker == 0xc2001e || flashMaker == 0xc20001 || flashMaker == 0xc20000) {
-        DAT_81084030 = 0x40;
+        sFlashVersion = 0x40;
     } else {
-        DAT_81084030 = 0x80;
+        sFlashVersion = 0x80;
     }
 
     return &sFlashEPiHandle;
@@ -305,7 +304,7 @@ static s32 osFlashReadArray(OSIoMesg *mb, s32 priority, u32 page_num, void *dram
     mb->hdr.pri = priority;
     mb->hdr.retQueue = mq;
     mb->dramAddr = dramAddr;
-    mb->devAddr = page_num * DAT_81084030;
+    mb->devAddr = page_num * sFlashVersion;
     mb->size = n_pages * 128;
 
     return osEPiStartDma(&sFlashEPiHandle, mb, OS_READ);

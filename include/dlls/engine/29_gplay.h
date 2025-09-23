@@ -2,13 +2,23 @@
 #define _DLLS_29_H
 
 #include "PR/ultratypes.h"
+#include "dlls/engine/31_flash.h"
+#include "game/objects/object.h"
 #include "sys/math.h"
 #include "dll_def.h"
 #include "unktypes.h"
-#include "game/objects/object.h"
 
-#define CHARACTER_SABRE 0
-#define CHARACTER_KRYSTAL 1
+typedef enum {
+    PLAYER_NONE = -1,
+
+    PLAYER_SABRE = 0,
+    PLAYER_KRYSTAL = 1,
+
+    PLAYER_NUM_PLAYERS = 2
+} PlayerNo;
+
+#define MAX_SAVEGAMES 4
+#define MAX_TIMESAVES 256
 
 // size: 0x10
 typedef struct {
@@ -16,7 +26,7 @@ typedef struct {
     /*0xC*/ s8 rotationY;
     /*0xD*/ s8 mapLayer;
     /*0xE*/ u8 unk0xE[2];
-} GplayStruct5;
+} PlayerLocation;
 
 // size: 0x14
 typedef struct {
@@ -39,9 +49,11 @@ typedef struct {
 
 // size: 0x8
 typedef struct {
-    s32 unk0x0;
-    f32 unk0x4;
-} GplayStruct17;
+    // Object UID.
+    s32 uid;
+    // Timestamp of when this time save expires.
+    f32 time;
+} TimeSave;
 
 // size: 0x3
 typedef struct {
@@ -65,27 +77,27 @@ typedef struct {
 
 // size: 0x13d4
 typedef struct {
-    PlayerStats unk0x0[2];
+    PlayerStats players[2];
     GplayStruct11 unk0x18[2];
     u8 _unk0x1E[0x2];
     GplayStruct14 unk0x20[2];
     GplayStruct14 unk0x188[2];
-    /*0x2F0*/char saveFilename[6];
-    u8 unk0x2f6;
-    /*0x2f7*/u8 character;
-    u8 unk0x2f8;
-    f32 unk0x2fc; // this is game time played, but what unit of measure?
+    /*0x2F0*/char name[6]; // name of save
+    u8 isEmpty; // whether this savefile is empty
+    /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
+    u8 numTimesSaved; // number of times this gamesave has been saved to flash
+    f32 timePlayed; // this is game time played, but what unit of measure?
     s16 unk0x300;
-    s16 unk0x302;
+    s16 timeSaveCount;
     u8 unk0x304;
     u8 _unk0x305[0x7CF];
-    GplayStruct17 unk0xad4[256]; // unconfirmed length, but probably
+    TimeSave timeSaves[MAX_TIMESAVES];
     /*0x12D4*/u8 bitString[256];
-} GplayStruct8;
+} Savefile;
 
 // size: 0x15d4
 typedef struct {
-    GplayStruct8 unk0;
+    Savefile file;
     /*0x13d4*/u8 bitString[512];
 } GplayStruct9;
 
@@ -126,11 +138,11 @@ typedef struct {
 typedef struct {
     GplayStruct9 unk0;
     /*0x15d4*/u8 bitString[256];
-    GplayStruct5 unk0x16d4[2];
+    PlayerLocation playerLocations[2]; // saved locations of each player
     GplayStruct6 unk0x16F4[2];
     GplayStruct12 unk0x171C[2];
     GplayStruct13 unk0x179c[2];
-} GplayStruct3;
+} Savegame;
 
 enum Languages {
     LANGUAGE_ENGLISH = 0,
@@ -194,9 +206,15 @@ typedef struct {
 
 // size: 0x182c
 typedef struct {
-    GplayStruct3 unk0;
-    /*0x17a*/u8 bitString[128];
-} GplayStruct7;
+    Savegame save;
+    /*0x17a*/u8 bitString[128]; // not persisted with savegame!
+} GameState;
+
+typedef union {
+    FlashStruct asFlash;
+    // Cannot exceed (sizeof(FlashStruct) - 0x10)
+    Savegame asSave;
+} GplaySaveFlash;
 
 DLL_INTERFACE(DLL_29_gplay) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
@@ -205,17 +223,17 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*2*/ s32 (*load_save)(s8 idx, u8 startGame);
     /*3*/ void (*copy_save)(s8 srcIdx, s8 dstIdx);
     /** Used by the Pause Menu to save the game */
-    /*4*/ void (*func_6AC)(void);
+    /*4*/ void (*save_game)(void);
     /*5*/ void (*func_94C)(s32 param1);
-    /*6*/ void (*func_958)(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
-    /*7*/ void (*start_game)();
+    /*6*/ void (*checkpoint)(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
+    /*7*/ void (*start_loaded_game)(void);
     /*8*/ void (*restart_set)(Vec3f *position, s16 yaw, s32 mapLayer);
-    /*9*/ void (*restart_goto)();
-    /*10*/ void (*restart_clear)();
-    /*11*/ s32 (*func_D70)();
-    /*12*/ void (*func_8D8)();
-    /*13*/ u32 (*func_79C)();
-    /*14*/ GplayOptions *(*func_930)();
+    /*9*/ void (*restart_goto)(void);
+    /*10*/ void (*restart_clear)(void);
+    /*11*/ s32 (*restart_is_set)(void);
+    /*12*/ void (*save_game_options)(void);
+    /*13*/ u32 (*load_game_options)(void);
+    /*14*/ GplayOptions *(*get_game_options)(void);
     /*15*/ u8 (*func_143C)(s32 param1); //arg0 is mapID?
     /*16*/ void (*func_139C)(s32 param1, s32 param2);
     /*17*/ void (*func_1378)(s32 param1, s32 param2);
@@ -225,31 +243,34 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*21*/ void (*func_15B8)(s32 param1);
     /*22*/ u32 (*func_163C)(s32 param1);
     /*23*/ void (*func_1680)(s32 param1);
-    /*24*/ void (*func_1014)(u32 param1, f32 param2);
-    /*25*/ s32 (*func_109C)(u32 param1);
-    /*26*/ f32 (*func_10F4)(u32 param1);
-    /*27*/ void (*func_115C)();
-    /*28*/ u8 (*func_E90)();
-    /*29*/ void (*func_EAC)(u8 character);
+    /** Add time save for object UID. */
+    /*24*/ void (*add_time)(s32 uid, f32 time);
+    /** Whether the time save for the object UID expired. */
+    /*25*/ s32 (*did_time_expire)(s32 uid);
+    /** Get time left on time save for object UID. */
+    /*26*/ f32 (*get_time_remaining)(s32 uid);
+    /*27*/ void (*tick)(void);
+    /*28*/ u8 (*get_playerno)(void);
+    /*29*/ void (*set_playerno)(u8 playerno);
     /*30*/ void *(*func_1254)(void);
     /*31*/ s16 (*func_121C)(void);
     /*32*/ void (*func_1238)(s32 param1);
-    /*33*/ GplayStruct7 *(*func_E74)();
-    /*34*/ PlayerStats *(*func_ED4)();
-    /*35*/ GplayStruct5 *(*func_F04)();
-    /*36*/ GplayStruct11 *(*func_F30)();
-    /*37*/ GplayStruct6 *(*func_F60)();
-    /*38*/ GplayStruct12 *(*func_FA8)();
-    /*39*/ GplayStruct13 *(*func_FE8)();
-    /*40*/ GplayStruct14 *(*func_1974)();
-    /*41*/ GplayStruct14 *(*func_19B8)();
-    /*42*/ u32 (*func_1270)();
-    /*43*/ u32 (*func_19FC)(u8 param1);
-    /*44*/ void (*func_1A48)(u8 param1);
-    /*45*/ s32 (*func_1A90)(u8 param1);
-    /*46*/ void (*func_1AF8)(u8 param1, u8 param2);
-    /*47*/ u32 (*func_1B78)(u8 param1);
-    /*48*/ void (*func_1BC4)(u8 param1);
+    /*33*/ GameState *(*get_state)(void);
+    /*34*/ PlayerStats *(*get_player_stats)(void);
+    /*35*/ PlayerLocation *(*get_player_saved_location)(void);
+    /*36*/ GplayStruct11 *(*func_F30)(void);
+    /*37*/ GplayStruct6 *(*func_F60)(void);
+    /*38*/ GplayStruct12 *(*func_FA8)(void);
+    /*39*/ GplayStruct13 *(*func_FE8)(void);
+    /*40*/ GplayStruct14 *(*func_1974)(void);
+    /*41*/ GplayStruct14 *(*func_19B8)(void);
+    /*42*/ u32 (*get_time_played)(void);
+    /*43*/ u32 (*is_cheat_unlocked)(u8 cheatIdx);
+    /*44*/ void (*unlock_cheat)(u8 cheatIdx);
+    /*45*/ s32 (*is_cheat_active)(u8 cheatIdx);
+    /*46*/ void (*set_cheat_enabled)(u8 cheatIdx, u8 enabled);
+    /*47*/ u32 (*is_cinema_unlocked)(u8 cinemaIdx);
+    /*48*/ void (*unlock_cinema)(u8 cinemaIdx);
 };
 
 #endif //_DLLS_29_H
