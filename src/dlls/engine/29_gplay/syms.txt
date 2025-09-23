@@ -54,12 +54,11 @@ gplay_is_cinema_unlocked = 0x1B78;
 gplay_unlock_cinema = 0x1BC4;
 
 .rodata = 0x1D50:
-rodata_230 = 0x230; // absolute:0x1F80
 
 .data = 0x1F90:
 sMapSetupBitKeys = 0x0; // absolute:0x1F90
 sMapObjGroupBitKeys = 0xF0; // absolute:0x2080
-data_1E0 = 0x1E0; // absolute:0x2170
+sPlayerStartPos = 0x1E0; // absolute:0x2170
 
 .bss = 0x2180:
 sSavegame = 0x0; // absolute:0x2180
@@ -71,8 +70,3 @@ bss_1840 = 0x1840; // absolute:0x39C0
 sAllMapObjGroups = 0x1868; // absolute:0x39E8
 sMapSetup = 0x1A48; // absolute:0x3BC8
 sMapObjGroups = 0x1A50; // absolute:0x3BD0
-// TODO: remove
-_bss_20 = 0x20; // absolute:0x21A0
-_bss_300 = 0x300; // absolute:0x2480
-_bss_301 = 0x301; // absolute:0x2481
-_bss_307 = 0x307; // absolute:0x2487

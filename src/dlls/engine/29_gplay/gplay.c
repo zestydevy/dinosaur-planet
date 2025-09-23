@@ -52,7 +52,7 @@ static u16 sMapObjGroupBitKeys[120] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
-static Vec3f data_1E0 = { -14149.352f, -82.0f, -15569.178f };
+static Vec3f sPlayerStartPos = { -14149.352f, -82.0f, -15569.178f };
 
 typedef struct {
     s8 mapID;
@@ -111,23 +111,15 @@ void gplay_erase_save(s8 idx) {
     gplay_save_game();
 }
 
-// regalloc
-// https://decomp.me/scratch/74sZJ
-#ifndef NON_MATCHING
-void gplay_init_save(s8 idx, char *filename);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/29_gplay/gplay_init_save.s")
-#else
 void gplay_init_save(s8 idx, char *filename) {
-    GplayStruct6 *struct6;
-    GplayStruct12 *struct12;
-    GplayStruct13 *struct13;
-    GplayStruct11 *struct11;
-    Vec3f vec;
+    u8 _pad[0x10];
+    Vec3f startPos;
     s32 i;
+    s32 k;
     char *dst;
     char var;
 
-    vec = data_1E0;
+    startPos = sPlayerStartPos;
 
     gplay_reset_state();
 
@@ -144,35 +136,31 @@ void gplay_init_save(s8 idx, char *filename) {
         sState.save.unk0.file.unk0x18[i].unk0x0 = 4;
         sState.save.unk0.file.unk0x18[i].unk0x1 = 5;
 
-        struct13 = &sState.save.unk0x179c[i]; // v1
-        struct6 = &sState.save.unk0x16F4[i]; // a1
-        struct6->unk0x0 = -1;
-        struct6->unk0x2 = -1;
-        struct6->unk0x4 = -1;
-        struct6->unk0x6 = -1;
-        struct6->unk0x8 = -1;
-        struct6->unk0xa = -1;
-        struct6->unk0xc = -1;
-        struct6->unk0xe = -1;
-        struct6->unk0x12 = -1;
+        sState.save.unk0x16F4[i].unk0x0 = -1;
+        sState.save.unk0x16F4[i].unk0x2 = -1;
+        sState.save.unk0x16F4[i].unk0x4 = -1;
+        sState.save.unk0x16F4[i].unk0x6 = -1;
+        sState.save.unk0x16F4[i].unk0x8 = -1;
+        sState.save.unk0x16F4[i].unk0xa = -1;
+        sState.save.unk0x16F4[i].unk0xc = -1;
+        sState.save.unk0x16F4[i].unk0xe = -1;
+        sState.save.unk0x16F4[i].unk0x12 = -1;
 
-        struct12 = &sState.save.unk0x171C[i]; // a0
-        struct12->unk0x0 = 43000.0f;
-        struct12->unk0x4 = -1;
-        struct12->unk0x6 = -1;
-        struct12->unk0x8 = -1;
-        struct12->unk0xa = -1;
-        struct12->unk0xc = -1;
-        struct12->unk0xe = -1;
-        struct12->unk0x3d = -1;
-        struct12->unk0x3e = -1;
-        struct12->unk0x3f = -1;
-        struct12->unk0x3c = 1;
+        sState.save.unk0x171C[i].unk0x0 = 43000.0f;
+        sState.save.unk0x171C[i].unk0x4 = -1;
+        sState.save.unk0x171C[i].unk0x6 = -1;
+        sState.save.unk0x171C[i].unk0x8 = -1;
+        sState.save.unk0x171C[i].unk0xa = -1;
+        sState.save.unk0x171C[i].unk0xc = -1;
+        sState.save.unk0x171C[i].unk0xe = -1;
+        sState.save.unk0x171C[i].unk0x3d = -1;
+        sState.save.unk0x171C[i].unk0x3e = -1;
+        sState.save.unk0x171C[i].unk0x3f = -1;
+        sState.save.unk0x171C[i].unk0x3c = 1;
 
-        struct13->unk0x0[3] = -1;
-        struct13->unk0x0[2] = -1;
-        struct13->unk0x0[1] = -1;
-        struct13->unk0x0[0] = -1;
+        for (k = 0; k < 4; k++) {
+            sState.save.unk0x179c[i].unk0x0[k] = -1;
+        }
     }
 
     for (i = 0; i < 120; i++) {
@@ -199,12 +187,11 @@ void gplay_init_save(s8 idx, char *filename) {
         }
     }
 
-    gplay_checkpoint(&vec, 0, 0, 0);
+    gplay_checkpoint(&startPos, 0, 0, 0);
     // Save twice to init both copies
     gplay_save_game();
     gplay_save_game();
 }
-#endif
 
 s32 gplay_load_save(s8 idx, u8 startGame) {
     u8 loadStatus0;
