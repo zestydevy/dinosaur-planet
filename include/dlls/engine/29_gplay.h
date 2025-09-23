@@ -14,7 +14,7 @@ typedef enum {
     PLAYER_SABRE = 0,
     PLAYER_KRYSTAL = 1,
 
-    PLAYER_MAX = 2
+    PLAYER_NUM_PLAYERS = 2
 } PlayerNo;
 
 #define MAX_SAVEGAMES 4

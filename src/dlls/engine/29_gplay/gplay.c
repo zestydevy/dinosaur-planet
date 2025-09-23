@@ -464,7 +464,7 @@ GplayStruct11 *gplay_func_F30(void) {
 
 // gplayGetCurrentPlayerLactions ?
 GplayStruct6 *gplay_func_F60(void) {
-    if (sState.save.unk0.file.playerno >= PLAYER_MAX) {
+    if (sState.save.unk0.file.playerno >= PLAYER_NUM_PLAYERS) {
         return &sState.save.unk0x16F4[0];
     }
 
@@ -473,7 +473,7 @@ GplayStruct6 *gplay_func_F60(void) {
 
 // gplayGetCurrentPlayerEnvactions ?
 GplayStruct12 *gplay_func_FA8(void) {
-    if (sState.save.unk0.file.playerno >= PLAYER_MAX) {
+    if (sState.save.unk0.file.playerno >= PLAYER_NUM_PLAYERS) {
         return &sState.save.unk0x171C[0];
     }
 
