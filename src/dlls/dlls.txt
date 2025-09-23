@@ -1,4 +1,5 @@
 # engine
+1 = engine/1_cmdmenu
 3 = engine/3_ANIM
 6 = engine/6_AMSFX
 7 = engine/7_newday
