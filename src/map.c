@@ -417,7 +417,7 @@ void init_maps(void) {
         gNumTotalBlocks++;
     }
     gNumTotalBlocks--;
-    D_800B96B0 = mmAlloc(sizeof(Unk800B96B0) * 100, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B96B0 = mmAlloc(sizeof(SavedObject) * 100, ALLOC_TAG_TRACK_COL, NULL);
     D_800B4A5C = -1;
     D_800B4A5E = -2;
     gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, ALLOC_TAG_TRACK_COL, NULL);
@@ -1025,19 +1025,19 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
 void func_80043FD8(s8* arg0) {
     Object* object;
     Object** objects;
-    s32 sp5C;
+    s32 numObjs;
     s32 sp58;
     s32 i;
     s32 var_v0;
     s8* var_s2;
 
     objects = get_world_objects(0, 0);
-    sp58 = func_80020DA0(&sp5C);
-    if (sp5C >= 0xB5) {
-        sp5C = 0xB4;
+    sp58 = func_80020DA0(&numObjs);
+    if (numObjs > 180) {
+        numObjs = 180;
     }
-    func_80020EE4(sp58, sp5C - 1);
-    for (i = 0; i < sp5C; i++) {
+    func_80020EE4(sp58, numObjs - 1);
+    for (i = 0; i < numObjs; i++) {
         object = objects[i];
         var_s2 = &arg0[i];
         if (i < sp58) {
@@ -1709,7 +1709,7 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap.s")
 #else
-void func_8004BD40(MAPSHeader*, s32, s32, s32); //Unsure of argument types, especially last one
+void map_restore_saved_objects(MAPSHeader*, s32, s32, s32); //Unsure of argument types, especially last one
 extern s32 *gFile_MAPS_TAB;
 extern MAPSHeader *gMapActiveStreamMap;
 
@@ -1788,10 +1788,10 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
     
     if (arg1 == 0){
         func_80045FC4(gMapActiveStreamMap, (mapID * 0x8C) + (&D_800B5508), mapID, 0);
-        gDLL_29_Gplay->vtbl->func_15B8(mapID);
+        gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     }
     else{
-        func_8004BD40(gMapActiveStreamMap, mapID, mapID, 0);
+        map_restore_saved_objects(gMapActiveStreamMap, mapID, mapID, 0);
     }
     return gMapActiveStreamMap;
 }
@@ -1801,7 +1801,7 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
 #else
-void func_8004BD40(MapHeader*, s32);                   /* extern */
+void map_restore_saved_objects(MapHeader*, s32);                   /* extern */
 MapHeader* map_load_streammap(s32, s32);         /* extern */
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 s32 map_load_streammap_add_to_table(s32 arg0) {
@@ -1821,7 +1821,7 @@ s32 map_load_streammap_add_to_table(s32 arg0) {
     gMapActiveStreamMap->originWorldX = (temp_a3->xMin + gMapActiveStreamMap->originOffsetX) * BLOCKS_GRID_UNIT_F;
     gMapActiveStreamMap->originWorldZ = (temp_a3->zMin + gMapActiveStreamMap->originOffsetZ) * BLOCKS_GRID_UNIT_F;
     map_convert_objpositions_to_ws(gMapActiveStreamMap, gMapActiveStreamMap->originWorldX, gMapActiveStreamMap->originWorldZ);
-    func_8004BD40(gMapActiveStreamMap, arg0);
+    map_restore_saved_objects(gMapActiveStreamMap, arg0);
     D_80092A94 = arg0;
     return sp2C;
 }
@@ -1875,13 +1875,13 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
 /** free_mapID? */
 void func_80045F48(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
-        func_80045FC4(gLoadedMapsDataTable[mapID], (s32*)((mapID * 0x8C) + (&D_800B5508)), mapID, 1);
+        func_80045FC4(gLoadedMapsDataTable[mapID], &D_800B5508[mapID], mapID, 1);
         mmFree(gLoadedMapsDataTable[mapID]);
         gLoadedMapsDataTable[mapID] = 0;
     }
 }
 
-void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
+void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
     s32 pad;
     s32 sp48;
     s32 var_a0;
@@ -1901,31 +1901,31 @@ void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
     var_s3 = 0;
 
     if (arg3 == 0) {
-        arg1[33] = -1;
-        for (i = 0; i < 32; i++) { arg1[i] = -1; }
+        arg1->unk84 = -1;
+        for (i = 0; i < 32; i++) { arg1->unk0[i] = -1; }
     }
     while (var_s3 < sp48) {
         if (arg3 != 0) {
-            if (obj->objId == 0x6E) {
+            if (obj->objId == OBJ_curve) {
                 gDLL_26_Curves->vtbl->curves_func_10c(obj);
             }
-            if (obj->objId == 5) {
+            if (obj->objId == OBJ_checkpoint4) {
                 gDLL_4_Race->vtbl->func2(obj);
             }
         } else {
-            if ((0x6E == obj->objId) || (5 == obj->objId)) {
-                if (0x6E == obj->objId) {
+            if ((OBJ_curve == obj->objId) || (OBJ_checkpoint4 == obj->objId)) {
+                if (OBJ_curve == obj->objId) {
                     gDLL_26_Curves->vtbl->curves_func_34(obj);
                 } else {
                     gDLL_4_Race->vtbl->func1(obj);
                 }
                 if ((u8)sp42[3] == FALSE) {
-                    arg1[33] = ((u32)obj - (u32)arg0->objectInstanceFile_ptr);
+                    arg1->unk84 = ((u32)obj - (u32)arg0->objectInstanceFile_ptr);
                     sp42[3] = TRUE;
                 }
             } else if (obj->loadParamA & 0x10) {
                 if (!((1 << obj->loadDistance) & var_s4)) {
-                    arg1[obj->loadDistance] = (u32)obj - (u32)arg0->objectInstanceFile_ptr;
+                    arg1->unk0[obj->loadDistance] = (u32)obj - (u32)arg0->objectInstanceFile_ptr;
                     var_s4 |= 1 << obj->loadDistance;
                 }
             }
@@ -1935,20 +1935,20 @@ void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3) {
     }
     if (arg3 == 0) {
         var_a0 = sp48;
-        if ((arg1[33] != -1) && (arg1[33] < sp48)) {
-            var_a0 = arg1[33];
+        if ((arg1->unk84 != -1) && (arg1->unk84 < sp48)) {
+            var_a0 = arg1->unk84;
         }
         for (i = 0; i < 32; i++) {
-            if ((arg1[i] != -1) && (arg1[i] < var_a0)) {
-                var_a0 = arg1[i];
+            if ((arg1->unk0[i] != -1) && (arg1->unk0[i] < var_a0)) {
+                var_a0 = arg1->unk0[i];
             }
         }
-        arg1[34] = var_a0;
-        if (arg1[33] != -1) {
-            arg1[32] = arg1[33];
+        arg1->unk88 = var_a0;
+        if (arg1->unk84 != -1) {
+            arg1->unk80 = arg1->unk84;
             return;
         }
-        arg1[32] = sp48;
+        arg1->unk80 = sp48;
     }
 }
 
@@ -1978,45 +1978,36 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046320.s")
-#else
 extern s32 D_800B4A50;
 extern s32 D_800B5468;
 
 void func_80046320(s32 arg0, Object *obj) {
     s32 sp24;
-    s8 var_t0;
-    s32 var_a2;
+    s32 t0;
+    s32 mapID;
     MapHeader *sp18;
-    s32* var_v1;
 
     sp24 = D_800B4A50;
     sp18 = map_load_streammap(arg0, 1);
     gLoadedMapsDataTable[arg0] = 0;
+    t0 = FALSE;
 
-    var_t0 = FALSE;
-    var_v1 = &D_800B5468;
-    var_a2 = MAP_ID_MAX;
-    while (var_a2 < 0x78){
-        if (*var_v1 == 0) {
-            var_t0 = TRUE;
-            *var_v1 = sp18;
+    for (mapID = 80; mapID < 120; mapID++) {
+        if (gLoadedMapsDataTable[mapID] == 0) {
+            t0 = TRUE;
+            gLoadedMapsDataTable[mapID] = sp18;
             break;
         } 
-        
-        var_a2++;
-        var_v1++;
     }
 
-    func_80045FC4(sp18, (var_a2 * 0x8C) + (u32)&D_800B5508, var_a2, 0);
-    gDLL_29_Gplay->vtbl->func_15B8(var_a2);
-    obj->unk_0x34 = var_a2;
-    gDLL_29_Gplay->vtbl->func_1378(arg0, var_a2);
+    func_80045FC4(sp18, &D_800B5508[mapID], mapID, 0);
+    gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
+    obj->unk_0x34 = mapID;
+    gDLL_29_Gplay->vtbl->func_1378(arg0, mapID);
     D_800B4A50 = sp24;
-}
 
-#endif
+    if (t0){}
+}
 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80046428.s")
@@ -2437,7 +2428,7 @@ void map_update_streaming(void) {
             if ((s8) var_s0_2->unk06 == 0) {
                 if (var_s0_2->header != NULL) {
                     temp_s1 = var_s0_2->mapID;
-                    func_80045FC4(var_s0_2->header, &D_800B5508 + (temp_s1 * 0x8C), temp_s1, 1);
+                    func_80045FC4(var_s0_2->header, &D_800B5508[temp_s1], temp_s1, 1);
                     mmFree(var_s0_2->header);
                     gLoadedMapsDataTable[temp_s1] = NULL;
                 }
@@ -2686,7 +2677,7 @@ void func_8004773C(void) {
     if ((D_800B4A5E == -2) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
         sp40 = gDLL_29_Gplay->vtbl->func_F60();
         sp3C = gDLL_29_Gplay->vtbl->func_FA8();
-        sp38 = (s16 *) gDLL_29_Gplay->vtbl->func_FE8();
+        sp38 = gDLL_29_Gplay->vtbl->func_FE8()->unk0x0;
         if (D_800B4A5E == -2) {
             if (sp40->unk0x0 != -1) {
                 func_80000608(player, player, sp40->unk0x0, 0, 0, 0);
@@ -2777,51 +2768,51 @@ void func_80048034(void) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048054.s")
 #else
-void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
+void func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
     u8 *sp64;
     s32 temp_s1;
     u32 temp_s4;
     s32 var_s0;
-    s32 var_s0_2;
+    s32 group;
     s32 var_v0;
     MapsBinUnk20* var_s1;
     MapsBinStruct *temp_v0_2;
     MapsTabStruct *mapsTab;
     s32 temp_t1;
 
-    var_v0 = D_800B9768.unkC[arg0];
+    var_v0 = D_800B9768.unkC[mapID];
     var_s0 = 0;
     if (var_v0 == -0x80) {
-        map_read_layout((Struct_D_800B9768_unk4* ) &D_800B9768.unk4[arg0], &D_800B9768.unk10[arg0], 0, 0, arg0);
-        D_800B9768.unkC[arg0] = 0;
-        var_v0 = D_800B9768.unkC[arg0];
+        map_read_layout((Struct_D_800B9768_unk4* ) &D_800B9768.unk4[mapID], &D_800B9768.unk10[mapID], 0, 0, mapID);
+        D_800B9768.unkC[mapID] = 0;
+        var_v0 = D_800B9768.unkC[mapID];
     }
     *arg5 = var_v0;
-    if (arg0 == 1) {
+    if (mapID == 1) {
         *arg2 = 0.0f;
         *arg3 = 0.0f;
         if ((!gDLL_29_Gplay->vtbl) && (!gDLL_29_Gplay->vtbl)) {}
         *arg4 = 0.0f;
     } else {
-        temp_s4 = gFile_MAPS_TAB[arg0].unk0;
-        temp_s1 = gFile_MAPS_TAB[arg0 + 1].unk0 - temp_s4;
+        temp_s4 = gFile_MAPS_TAB[mapID].unk0;
+        temp_s1 = gFile_MAPS_TAB[mapID + 1].unk0 - temp_s4;
         temp_v0_2 = mmAlloc(temp_s1, ALLOC_TAG_TRACK_COL, NULL);
         queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
-        temp_v0_2->unk20 = (MapsBinUnk20 *) (gFile_MAPS_TAB[arg0].unk10 + (s8 *)temp_v0_2 - temp_s4);
-        temp_v0_2->unk24 = (D_800B9768.unk4[arg0].xMin + temp_v0_2->unk4) * BLOCKS_GRID_UNIT_F;
-        temp_v0_2->unk28 = (D_800B9768.unk4[arg0].zMin + temp_v0_2->unk6) * BLOCKS_GRID_UNIT_F;
+        temp_v0_2->unk20 = (MapsBinUnk20 *) (gFile_MAPS_TAB[mapID].unk10 + (s8 *)temp_v0_2 - temp_s4);
+        temp_v0_2->unk24 = (D_800B9768.unk4[mapID].xMin + temp_v0_2->unk4) * BLOCKS_GRID_UNIT_F;
+        temp_v0_2->unk28 = (D_800B9768.unk4[mapID].zMin + temp_v0_2->unk6) * BLOCKS_GRID_UNIT_F;
         var_s1 = temp_v0_2->unk20;
         while (var_s0 < temp_v0_2->unk8) {
             if ((var_s1->unk0 == 0xD) && (arg1 == var_s1->unk19)) {
                 *arg2 = var_s1->unk8 + temp_v0_2->unk24;
                 *arg3 = var_s1->unkC;
                 *arg4 = var_s1->unk10 + temp_v0_2->unk28;
-                gDLL_29_Gplay->vtbl->func_139C(arg0, (s32) var_s1->unk18);
-                for (var_s0_2 = 0; var_s0_2 < 32; var_s0_2++) {
-                    if ((var_s1->unk1C >> var_s0_2) & 1) {
-                        gDLL_29_Gplay->vtbl->func_16C4(arg0, var_s0_2, -1);
+                gDLL_29_Gplay->vtbl->set_map_setup(mapID, (s32) var_s1->unk18);
+                for (group = 0; group < 32; group++) {
+                    if ((var_s1->unk1C >> group) & 1) {
+                        gDLL_29_Gplay->vtbl->set_obj_group_status(mapID, group, -1);
                     } else {
-                        gDLL_29_Gplay->vtbl->func_16C4(arg0, var_s0_2, -2);
+                        gDLL_29_Gplay->vtbl->set_obj_group_status(mapID, group, -2);
                     }
                 }
                 break;
@@ -2832,16 +2823,16 @@ void func_80048054(s32 arg0, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5
         mmFree(temp_v0_2);
     }
     temp_t1 = (u32)get_file_size(0x21U) >> 5;
-    if ((arg0 < 0) || (arg0 >= temp_t1)) {
+    if ((mapID < 0) || (mapID >= temp_t1)) {
         D_800B96A8 = 0;
     } else {
         sp64 = gMapReadBuffer;
-        queue_load_file_region_to_ptr((void** ) sp64, 0x21, arg0 << 5, 0x20);
+        queue_load_file_region_to_ptr((void** ) sp64, 0x21, mapID << 5, 0x20);
         D_800B96A8 = ((s8*)sp64)[0x1C]; // possibly s16/u16
     }
     D_800B4A72 = 0;
     if (D_800B96A8 == 1) {
-        D_800B4A70 = arg0;
+        D_800B4A70 = mapID;
         D_800B4A72 = ((s16*)sp64)[0xF]; // possibly s16/u16
     }
 }
@@ -3659,7 +3650,7 @@ void func_80049D88(void)
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_textures.s")
 #else
-void* block_setup_textures(Block* block) {
+s32 block_setup_textures(Block* block) {
     s32 var_a1;
     s32 var_s1;
     s32 i;
@@ -3990,13 +3981,13 @@ void map_update_objects_streaming(s32 arg0) {
     s32 sp9C;
     s32 var_a2;
     s32 var_s1;
-    s32 var_s2;
+    s32 group;
     s32 var_s3;
     s32 var_v0;
     ObjCreateInfo* var_s1_2;
     s32 temp_s7;
     s32 temp_s4;
-    u32 var_s0;
+    u32 objGroupBits;
     s16 sp70[3]; // unknown size however 3 feels way to small?
     u32 temp_fp;
     Object** sp68;
@@ -4063,16 +4054,16 @@ void map_update_objects_streaming(s32 arg0) {
     }
     for (spB8 = 0; spB8 < MAP_ID_MAX; spB8++) {
         if (gLoadedMapsDataTable[spB8] != NULL) {
-            var_s0 = gDLL_29_Gplay->vtbl->func_163C(spB8);
-            if (var_s0 != 0) {
-                gDLL_29_Gplay->vtbl->func_1680(spB8);
-                var_s2 = 0;
-                while (var_s0 != 0) {
-                    if (var_s0 & 1) {
-                        func_8004B548(gLoadedMapsDataTable[spB8], spB8, var_s2, NULL);
+            objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits(spB8);
+            if (objGroupBits != 0) {
+                gDLL_29_Gplay->vtbl->world_disable_all_obj_groups(spB8);
+                group = 0;
+                while (objGroupBits != 0) {
+                    if (objGroupBits & 1) {
+                        func_8004B548(gLoadedMapsDataTable[spB8], spB8, group, NULL);
                     }
-                    var_s0 >>= 1;
-                    var_s2++;
+                    objGroupBits >>= 1;
+                    group++;
                 }
             }
         }
@@ -4084,8 +4075,7 @@ void map_update_objects_streaming(s32 arg0) {
             var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
             temp_s7 = temp_s6->unk19;
             var_s3 = 0;
-            // mmmmmm yummmy casting shenanigans
-            temp_fp = *((s32*)&((s8 *)&D_800B5590)[temp_v0_3 * 0x8C]) + (s32)var_s1_2;
+            temp_fp = D_800B5508[temp_v0_3].unk88 + (s32)var_s1_2;
             while ((u32) var_s1_2 < (u32) temp_fp) {
                 temp_s2 = var_s1_2;
                 if ((var_s1_2->loadParamA & 0x10)) {
@@ -4116,18 +4106,17 @@ void map_update_objects_streaming(s32 arg0) {
         if (temp_s6 != NULL) {
             temp_s7 = temp_s5->matrixIdx + 1;
             var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
-            // mmmmmm yummmy casting shenanigans
-            temp_fp = *((s32*)&((s8 *)&D_800B5590)[temp_s4 * 0x8C]) + (s32)var_s1_2;
-            var_s0 = gDLL_29_Gplay->vtbl->func_163C((s32) temp_s4);
-            if (var_s0 != 0) {
-                gDLL_29_Gplay->vtbl->func_1680((s32) temp_s4);
-                var_s2 = 0;
-                while (var_s0 != 0) {
-                    if (var_s0 & 1) {
-                        func_8004B548(temp_s6, (s32) temp_s4, var_s2, temp_s5);
+            temp_fp = D_800B5508[temp_s4].unk88 + (s32)var_s1_2;
+            objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits((s32) temp_s4);
+            if (objGroupBits != 0) {
+                gDLL_29_Gplay->vtbl->world_disable_all_obj_groups((s32) temp_s4);
+                group = 0;
+                while (objGroupBits != 0) {
+                    if (objGroupBits & 1) {
+                        func_8004B548(temp_s6, (s32) temp_s4, group, temp_s5);
                     }
-                    var_s0 >>=1;
-                    var_s2++;
+                    objGroupBits >>=1;
+                    group++;
                 }
             }
             while ((u32) var_s1_2 < (u32) temp_fp) {
@@ -4275,7 +4264,7 @@ s32 func_8004B190(Object* arg0) {
         return 0;
     }
     if (sp1C->loadParamA & 0x10) {
-        if (gDLL_29_Gplay->vtbl->func_14F0(arg0->mapID, sp1C->loadDistance) != 0) {
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(arg0->mapID, sp1C->loadDistance) != 0) {
             return 0;
         }
         return 1;
@@ -4339,27 +4328,27 @@ s32 func_8004B190(Object* arg0) {
 }
 
 /** map_should_object_load? */
-s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1) {
-    u8 gplayValue;
+s32 func_8004B4A0(ObjCreateInfo* obj, s32 mapID) {
+    u8 setupID;
 
-    gplayValue = gDLL_29_Gplay->vtbl->func_143C(arg1);
-    if (gplayValue == -1) {// NOLINT
+    setupID = gDLL_29_Gplay->vtbl->get_map_setup(mapID);
+    if (setupID == -1) {// NOLINT
         return 0;
     }
-    if (gplayValue != 0) {
-        if (gplayValue < 9) {
-            if ((obj->setup >> (gplayValue + 0x1F)) & 1) { //bitshift by 0x1f?? But setup is a byte value... hmm.
+    if (setupID != 0) {
+        if (setupID < 9) {
+            if ((obj->setup >> (setupID + 0x1F)) & 1) { //bitshift by 0x1f?? But setup is a byte value... hmm.
                 return 0;
             }
         }
-        else if ((obj->loadParamB >> (0x10 - gplayValue)) & 1) {
+        else if ((obj->loadParamB >> (0x10 - setupID)) & 1) {
             return 0;
         }
     }
     return 1;
 }
 
-void func_8004B548(MapHeader* arg0, s32 arg1, s32 arg2, Object* arg3) {
+void func_8004B548(MapHeader* arg0, s32 arg1, s32 objGroupIdx, Object* arg3) {
     s8 *s4;
     s8 *s3;
     s8 *s0;
@@ -4368,8 +4357,8 @@ void func_8004B548(MapHeader* arg0, s32 arg1, s32 arg2, Object* arg3) {
     s32 var_s6;
     s32* temp_t1;
 
-    temp_t1 = (s32 *) &(&D_800B5508)[(arg1 * 0x8C)];
-    if (temp_t1[arg2] == -1) {
+    temp_t1 = (s32 *) &D_800B5508[arg1];
+    if (temp_t1[objGroupIdx] == -1) {
         return;
     }
 
@@ -4380,13 +4369,13 @@ void func_8004B548(MapHeader* arg0, s32 arg1, s32 arg2, Object* arg3) {
     }
     s0 = (s8 *) arg0->objectInstanceFile_ptr;
     mapID = 0;
-    s4 =  &((s8*)s0)[temp_t1[arg2]];
+    s4 =  &((s8*)s0)[temp_t1[objGroupIdx]];
     while ((u32) s0 < (u32) s4) {
         mapID += 1;
         s0 += ((ObjCreateInfo *)s0)->quarterSize * 4;
     }
 
-    for (someIndex = arg2 + 1; someIndex < 0x21; someIndex++) {
+    for (someIndex = objGroupIdx + 1; someIndex < 33; someIndex++) {
         if (temp_t1[someIndex] != -1) {
             break;
         }
@@ -4529,7 +4518,7 @@ ObjCreateInfo* func_8004B85C(s32 search_uID, s32 search_mapID) {
 void func_8004B914(s32 mapID) {
     MapHeader *map;
 
-    if ((mapID >= 0) && (mapID < 0x78)) {
+    if ((mapID >= 0) && (mapID < 120)) {
         map = gLoadedMapsDataTable[mapID];
         if (map != NULL) {
             map->unk18 = 1;
@@ -4545,108 +4534,110 @@ void func_8004B948(s32 arg0) {
     UINT_80092a98 &= ~0x200;
 }
 
-void func_8004B984(Unk800B96B0* arg0, s32 arg1, f32 x, f32 y, f32 z) {
-    s16 temp_s0;
-    s8 var_a1;
+void map_save_object(ObjCreateInfo* createInfo, s32 mapID, f32 x, f32 y, f32 z) {
+    s16 numSavedObjs;
+    s8 found;
     s32 i;
-    Unk800B96B0* temp_v0;
+    SavedObject* savedObjs;
 
-    temp_s0 = gDLL_29_Gplay->vtbl->func_121C();
-    temp_v0 = gDLL_29_Gplay->vtbl->func_1254();
-    if (arg0[1].unk0 == -1) {
+    numSavedObjs = gDLL_29_Gplay->vtbl->get_num_saved_objects();
+    savedObjs = gDLL_29_Gplay->vtbl->get_saved_objects();
+    if (createInfo->uID == -1) {
         return;
     }
-    for (var_a1 = FALSE, i = 0; i < temp_s0; i++) {
-        if (arg0[1].unk0 == temp_v0[i].unk0) {
-            var_a1 = TRUE;
-            temp_v0[i].x = x;
-            temp_v0[i].y = y;
-            temp_v0[i].z = z;
-            arg0->x = x;\
-            arg0->y = y;\
-            arg0->z = z;\
+    for (found = FALSE, i = 0; i < numSavedObjs; i++) {
+        if (createInfo->uID == savedObjs[i].uID) {
+            found = TRUE;
+            savedObjs[i].x = x;
+            savedObjs[i].y = y;
+            savedObjs[i].z = z;
+            createInfo->x = x;\
+            createInfo->y = y;\
+            createInfo->z = z;\
         }
     }
-    if (var_a1 == FALSE) {
-        D_800B96B0[temp_s0].x = arg0->x;\
-        D_800B96B0[temp_s0].y = arg0->y;\
-        D_800B96B0[temp_s0].z = arg0->z;
-        D_800B96B0[temp_s0].unk0 =  arg0[1].unk0;
-        D_800B96B0[temp_s0].unk4 = arg1;
-        i = temp_s0;
-        temp_v0[temp_s0].unk0 = arg0[1].unk0;
-        temp_v0[i].unk4 = arg1;
-        temp_v0[i].x = x;
-        temp_v0[i].y = y;
+    if (found == FALSE) {
+        D_800B96B0[numSavedObjs].x = createInfo->x;\
+        D_800B96B0[numSavedObjs].y = createInfo->y;\
+        D_800B96B0[numSavedObjs].z = createInfo->z;
+        D_800B96B0[numSavedObjs].uID =  createInfo->uID;
+        D_800B96B0[numSavedObjs].mapID = mapID;
+        i = numSavedObjs;
+        savedObjs[numSavedObjs].uID = createInfo->uID;
+        savedObjs[i].mapID = mapID;
+        savedObjs[i].x = x;
+        savedObjs[i].y = y;
         // @fake
-        if ((!temp_v0) && (!temp_v0)) {}
-        temp_v0[i].z = z;
-        temp_s0++;
-        arg0->x = x;\
-        arg0->y = y;\
-        arg0->z = z;
-        gDLL_29_Gplay->vtbl->func_1238(temp_s0);
+        if ((!savedObjs) && (!savedObjs)) {}
+        savedObjs[i].z = z;
+        numSavedObjs++;
+        createInfo->x = x;\
+        createInfo->y = y;\
+        createInfo->z = z;
+        gDLL_29_Gplay->vtbl->set_num_saved_objects(numSavedObjs);
     }
 }
 
-void func_8004BC20(Unk800B96B0* arg0, s32 arg1) {
-    s16 temp_s3;
+// unused
+void func_8004BC20(SavedObject* arg0, s32 uID) {
+    s16 numSavedObjs;
     s32 i;
-    Unk800B96B0* temp_s4;
+    SavedObject* savedObjs;
 
-    temp_s3 = gDLL_29_Gplay->vtbl->func_121C();
-    temp_s4 = gDLL_29_Gplay->vtbl->func_1254();
-    if (arg1 != -1) {
-        for (i = 0; i < temp_s3; i++) {
-            if (arg1 == temp_s4[i].unk0) {
-                bcopy(&D_800B96B0[i], &temp_s4[i], sizeof(Unk800B96B0));
+    numSavedObjs = gDLL_29_Gplay->vtbl->get_num_saved_objects();
+    savedObjs = gDLL_29_Gplay->vtbl->get_saved_objects();
+    if (uID != -1) {
+        for (i = 0; i < numSavedObjs; i++) {
+            if (uID == savedObjs[i].uID) {
+                bcopy(&D_800B96B0[i], &savedObjs[i], sizeof(SavedObject));
                 arg0->x = D_800B96B0[i].x;
                 arg0->y = D_800B96B0[i].y;
                 arg0->z = D_800B96B0[i].z;
                 // break
-                i = temp_s3;
+                i = numSavedObjs;
             }
         }
     }
 }
 
-void func_8004BD40(MapHeader* arg0, s32 arg1) {
-    s32 var_a3;
-    s32 temp_t0;
-    s32 var_t1;
+// official name: romdefMove_Set ?
+void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
+    s32 i;
+    s32 uID;
+    s32 numFound;
     s32 var_t3;
-    ObjCreateInfo* var_a1;
+    ObjCreateInfo* createInfo;
     s32 temp_t4;
-    s16 sp8E;
+    s16 numSavedObjs;
     s32 pad;
     s16 sp68[15]; // unknown size however should be the same as sp28
-    Unk800B96B0* temp_v0;
+    SavedObject* savedObjs;
     s32 sp28[15]; // unknown size however should be the same as sp68
 
-    sp8E = gDLL_29_Gplay->vtbl->func_121C();
-    temp_v0 = gDLL_29_Gplay->vtbl->func_1254();
-    var_t1 = 0;
-    for (var_a3 = 0; var_a3 < sp8E; var_a3++) {
-        if (arg1 == temp_v0[var_a3].unk4) {
-            sp68[var_t1] = var_a3;
-            sp28[var_t1] = temp_v0[var_a3].unk0;
-            var_t1++;
+    numSavedObjs = gDLL_29_Gplay->vtbl->get_num_saved_objects();
+    savedObjs = gDLL_29_Gplay->vtbl->get_saved_objects();
+    numFound = 0;
+    for (i = 0; i < numSavedObjs; i++) {
+        if (mapID == savedObjs[i].mapID) {
+            sp68[numFound] = i;
+            sp28[numFound] = savedObjs[i].uID;
+            numFound++;
         }
     }
     var_t3 = 0;
     temp_t4 = arg0->objectInstancesFileLength;
-    var_a1 = (ObjCreateInfo *) arg0->objectInstanceFile_ptr;
+    createInfo = (ObjCreateInfo *) arg0->objectInstanceFile_ptr;
     while (var_t3 < (s32) temp_t4) {
-        temp_t0 = var_a1->uID;
-        for (var_a3 = 0; var_a3 < var_t1; var_a3++) {
-            if (temp_t0 == sp28[var_a3]) {
-                var_a1->x = temp_v0[sp68[var_a3]].x;
-                var_a1->y = temp_v0[sp68[var_a3]].y;
-                var_a1->z = temp_v0[sp68[var_a3]].z;
+        uID = createInfo->uID;
+        for (i = 0; i < numFound; i++) {
+            if (uID == sp28[i]) {
+                createInfo->x = savedObjs[sp68[i]].x;
+                createInfo->y = savedObjs[sp68[i]].y;
+                createInfo->z = savedObjs[sp68[i]].z;
             }
         }
-        var_t3 += var_a1->quarterSize * 4;
-        var_a1 = (ObjCreateInfo *) &((s8 *)var_a1)[var_a1->quarterSize * 4];
+        var_t3 += createInfo->quarterSize * 4;
+        createInfo = (ObjCreateInfo *) &((s8 *)createInfo)[createInfo->quarterSize * 4];
     }
 }
 

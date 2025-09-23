@@ -75,6 +75,15 @@ typedef struct {
     /*0xB*/s8 dusters;
 } PlayerStats;
 
+typedef struct {
+    s32 uID;
+    s16 mapID;
+    s16 _unk6; // padding?
+    f32 x;
+    f32 y;
+    f32 z;
+} SavedObject;
+
 // size: 0x13d4
 typedef struct {
     PlayerStats players[2];
@@ -87,10 +96,9 @@ typedef struct {
     /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
     u8 numTimesSaved; // number of times this gamesave has been saved to flash
     f32 timePlayed; // this is game time played, but what unit of measure?
-    s16 unk0x300;
+    s16 numSavedObjects;
     s16 timeSaveCount;
-    u8 unk0x304;
-    u8 _unk0x305[0x7CF];
+    SavedObject savedObjects[100];
     TimeSave timeSaves[MAX_TIMESAVES];
     /*0x12D4*/u8 bitString[256];
 } Savefile;
@@ -128,10 +136,7 @@ typedef struct {
 
 // size: 0x8
 typedef struct {
-    s16 unk0x0;
-    s16 unk0x2;
-    s16 unk0x4;
-    s16 unk0x6;
+    s16 unk0x0[4];
 } GplayStruct13;
 
 // size: 0x17ac
@@ -234,15 +239,15 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*12*/ void (*save_game_options)(void);
     /*13*/ u32 (*load_game_options)(void);
     /*14*/ GplayOptions *(*get_game_options)(void);
-    /*15*/ u8 (*func_143C)(s32 param1); //arg0 is mapID?
-    /*16*/ void (*func_139C)(s32 param1, s32 param2);
+    /*15*/ u8 (*get_map_setup)(s32 mapID);
+    /*16*/ void (*set_map_setup)(s32 mapID, s32 setupID);
     /*17*/ void (*func_1378)(s32 param1, s32 param2);
-    /*18*/ u8 (*func_14F0)(s32 param1, s32 param2);
-    /*19*/ void (*func_16C4)(s32 param1, s32 param2, s32 param3);
-    /*20*/ u16 (*func_1590)(s32 param1);
-    /*21*/ void (*func_15B8)(s32 param1);
-    /*22*/ u32 (*func_163C)(s32 param1);
-    /*23*/ void (*func_1680)(s32 param1);
+    /*18*/ u8 (*get_obj_group_status)(s32 mapID, s32 group);
+    /*19*/ void (*set_obj_group_status)(s32 mapID, s32 group, s32 status);
+    /*20*/ u16 (*get_obj_group_bit_key)(s32 mapID);
+    /*21*/ void (*world_load_obj_group_bits)(s32 mapID);
+    /*22*/ u32 (*world_get_obj_group_bits)(s32 mapID);
+    /*23*/ void (*world_disable_all_obj_groups)(s32 mapID);
     /** Add time save for object UID. */
     /*24*/ void (*add_time)(s32 uid, f32 time);
     /** Whether the time save for the object UID expired. */
@@ -252,9 +257,9 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*27*/ void (*tick)(void);
     /*28*/ u8 (*get_playerno)(void);
     /*29*/ void (*set_playerno)(u8 playerno);
-    /*30*/ void *(*func_1254)(void);
-    /*31*/ s16 (*func_121C)(void);
-    /*32*/ void (*func_1238)(s32 param1);
+    /*30*/ SavedObject *(*get_saved_objects)(void);
+    /*31*/ s16 (*get_num_saved_objects)(void);
+    /*32*/ void (*set_num_saved_objects)(s32 num);
     /*33*/ GameState *(*get_state)(void);
     /*34*/ PlayerStats *(*get_player_stats)(void);
     /*35*/ PlayerLocation *(*get_player_saved_location)(void);

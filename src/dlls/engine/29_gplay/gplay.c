@@ -30,7 +30,8 @@ static const char str12[] = "CHEAT OUT OF RANGE\n";
 static const char str13[] = "CINEMA OUT OF RANGE\n";
 static const char str14[] = "CINEMA OUT OF RANGE\n";
 
-static u16 data_0[120] = {
+// Map of map ID -> bit table key
+static u16 sMapSetupBitKeys[120] = {
     0x0000, 0x0000, 0x076e, 0x08ec, 0x04fe, 0x00df, 0x00e0, 0x00e1, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 
     0x00e9, 0x00ea, 0x00eb, 0x0492, 0x0000, 0x05d0, 0x0000, 0x00ed, 0x00ed, 0x00ed, 0x00f0, 0x0000, 0x0229, 0x00ee, 0x0000, 0x00ef, 
     0x0000, 0x0000, 0x0000, 0x03ee, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0349, 0x0000, 0x0492, 0x0492, 
@@ -40,7 +41,8 @@ static u16 data_0[120] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
-static u16 data_F0[120] = {
+// Map of map ID -> bit table key
+static u16 sMapObjGroupBitKeys[120] = {
     0x03e0, 0x03e0, 0x05db, 0x08ed, 0x0500, 0x07ce, 0x0480, 0x0452, 0x0452, 0x047b, 0x04ae, 0x0405, 0x0458, 0x036a, 0x04a6, 0x045a, 
     0x047c, 0x0000, 0x042e, 0x0493, 0x0000, 0x05d1, 0x0000, 0x03ad, 0x03ad, 0x03ad, 0x0517, 0x0373, 0x0443, 0x03b7, 0x0421, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0397, 0x0000, 0x0000, 0x0000, 0x0473, 0x0000, 0x0000, 0x0000, 0x04a3, 0x0000, 0x0000, 0x0493, 0x0493, 
@@ -52,16 +54,26 @@ static u16 data_F0[120] = {
 };
 static Vec3f data_1E0 = { -14149.352f, -82.0f, -15569.178f };
 
+typedef struct {
+    s8 mapID;
+    s8 setupID;
+} MapSetup;
+
+typedef struct {
+    s32 mapID;
+    // Bitfield of the status of each object group
+    s32 groupBits;
+} MapObjGroupBits;
+
 /*0x0*/    static GplaySaveFlash *sSavegame;
 /*0x4*/    static Savegame *sRestartSave;
 /*0x8*/    static GplayOptions *sGameOptions;
 /*0x10*/   static GameState sState;
 /*0x183C*/ static s8 sSavegameIdx; // current savegame index (slotno)
 /*0x1840*/ static u8 bss_1840[40];
-/*0x1868*/ static u32 bss_1868[120];
-/*0x1A48*/ static s8 bss_1A48[2];
-/*0x1A4A*/ static u8 _bss_0x1a4a[0x4];
-/*0x1A50*/ static s32 bss_1A50[2];
+/*0x1868*/ static u32 sAllMapObjGroups[120]; // obj group bits for each map
+/*0x1A48*/ static MapSetup sMapSetup;
+/*0x1A50*/ static MapObjGroupBits sMapObjGroups; // obj group bits for current map
 
 s32 gplay_load_save(s8 idx, u8 startGame);
 void gplay_save_game(void);
@@ -69,16 +81,16 @@ void gplay_checkpoint(Vec3f *param1, s16 param2, s32 param3, s32 param4);
 void gplay_start_loaded_game(void);
 static void gplay_start_game(void);
 static void gplay_reset_state(void);
-void gplay_func_139C(s32 param1, s32 param2);
-void gplay_func_15B8(s32 param1);
+void gplay_set_map_setup(s32 param1, s32 param2);
+void gplay_world_load_obj_group_bits(s32 param1);
 
 void gplay_ctor(DLLFile *self)  {
     sSavegame = (GplaySaveFlash*)mmAlloc(sizeof(GplaySaveFlash), COLOUR_TAG_YELLOW, NULL);
     gplay_reset_state();
     sRestartSave = NULL;
     sGameOptions = (GplayOptions*)mmAlloc(sizeof(GplayOptions), COLOUR_TAG_YELLOW, NULL);
-    bss_1A48[0] = -1;
-    bss_1A50[0] = -1;
+    sMapSetup.mapID = -1;
+    sMapObjGroups.mapID = -1;
 }
 
 void gplay_dtor(DLLFile *self)  {
@@ -157,15 +169,15 @@ void gplay_init_save(s8 idx, char *filename) {
         struct12->unk0x3f = -1;
         struct12->unk0x3c = 1;
 
-        struct13->unk0x6 = -1;
-        struct13->unk0x4 = -1;
-        struct13->unk0x2 = -1;
-        struct13->unk0x0 = -1;
+        struct13->unk0x0[3] = -1;
+        struct13->unk0x0[2] = -1;
+        struct13->unk0x0[1] = -1;
+        struct13->unk0x0[0] = -1;
     }
 
     for (i = 0; i < 120; i++) {
-        if (data_0[i] != 0) {
-            gDLL_29_Gplay->vtbl->func_139C(i, 1);
+        if (sMapSetupBitKeys[i] != 0) {
+            gDLL_29_Gplay->vtbl->set_map_setup(i, 1);
         }
     }
 
@@ -419,8 +431,8 @@ s32 gplay_restart_is_set(void) {
 }
 
 static void gplay_start_game(void) {
-    bss_1A48[0] = -1;
-    bss_1A50[0] = -1;
+    sMapSetup.mapID = -1;
+    sMapObjGroups.mapID = -1;
 
     bzero(&sState.bitString, sizeof(sState.bitString));
 
@@ -556,16 +568,16 @@ void gplay_tick(void) {
     }
 }
 
-s16 gplay_func_121C(void) {
-    return sState.save.unk0.file.unk0x300;
+s16 gplay_get_num_saved_objects(void) {
+    return sState.save.unk0.file.numSavedObjects;
 }
 
-void gplay_func_1238(s32 param1) {
-    sState.save.unk0.file.unk0x300 = param1;
+void gplay_set_num_saved_objects(s32 num) {
+    sState.save.unk0.file.numSavedObjects = num;
 }
 
-void *gplay_func_1254(void) {
-    return &sState.save.unk0.file.unk0x304;
+SavedObject *gplay_get_saved_objects(void) {
+    return sState.save.unk0.file.savedObjects;
 }
 
 u32 gplay_get_time_played(void) {
@@ -582,122 +594,123 @@ void gplay_func_1378(s32 param1, s32 param2) {
     bss_1840[param2 - 80] = param1;
 }
 
-void gplay_func_139C(s32 mapID, s32 setupID) {
+void gplay_set_map_setup(s32 mapID, s32 setupID) {
     if (mapID >= 80) {
         mapID = bss_1840[mapID - 80];
     }
 
-    set_gplay_bitstring(data_0[mapID], setupID);
+    set_gplay_bitstring(sMapSetupBitKeys[mapID], setupID);
 
-    bss_1A48[0] = mapID;
-    bss_1A48[1] = setupID;
+    sMapSetup.mapID = mapID;
+    sMapSetup.setupID = setupID;
 
-    gplay_func_15B8(mapID);
+    gplay_world_load_obj_group_bits(mapID);
 }
 
-u8 gplay_func_143C(s32 mapID) {
+u8 gplay_get_map_setup(s32 mapID) {
     if (mapID >= 80) {
         mapID = bss_1840[mapID - 80];
     }
 
-    if (mapID != bss_1A48[0]) {
-        bss_1A48[0] = mapID;
+    if (mapID != sMapSetup.mapID) {
+        sMapSetup.mapID = mapID;
 
-        if (mapID < 0 || mapID >= 120 || !data_0[mapID]) {
-            bss_1A48[1] = 0;
+        if (mapID < 0 || mapID >= 120 || !sMapSetupBitKeys[mapID]) {
+            sMapSetup.setupID = 0;
         } else {
-            bss_1A48[1] = get_gplay_bitstring(data_0[mapID]);
+            sMapSetup.setupID = get_gplay_bitstring(sMapSetupBitKeys[mapID]);
         }
     }
 
-    return bss_1A48[1];
+    return sMapSetup.setupID;
 }
 
-u8 gplay_func_14F0(s32 param1, s32 param2) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+u8 gplay_get_obj_group_status(s32 mapID, s32 group) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
 
-    if (param1 != bss_1A50[0]) {
-        bss_1A50[0] = param1;
-        bss_1A50[1] = get_gplay_bitstring(data_F0[param1]);
+    if (mapID != sMapObjGroups.mapID) {
+        sMapObjGroups.mapID = mapID;
+        sMapObjGroups.groupBits = get_gplay_bitstring(sMapObjGroupBitKeys[mapID]);
     }
 
-    return (bss_1A50[1] >> param2) & 1;
+    return (sMapObjGroups.groupBits >> group) & 1;
 }
 
-u16 gplay_func_1590(s32 param1) {
-    return data_F0[param1];
+u16 gplay_get_obj_group_bit_key(s32 mapID) {
+    return sMapObjGroupBitKeys[mapID];
 }
 
-void gplay_func_15B8(s32 param1) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+void gplay_world_load_obj_group_bits(s32 mapID) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
 
-    bss_1868[param1] = get_gplay_bitstring(data_F0[param1]);
+    sAllMapObjGroups[mapID] = get_gplay_bitstring(sMapObjGroupBitKeys[mapID]);
 }
 
-u32 gplay_func_163C(s32 param1) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
-    }
-    
-    return bss_1868[param1];
-}
-
-void gplay_func_1680(s32 param1) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+u32 gplay_world_get_obj_group_bits(s32 mapID) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
     
-    bss_1868[param1] = 0;
+    return sAllMapObjGroups[mapID];
 }
 
-void gplay_func_16C4(s32 mapID, s32 param2, s32 param3) {
-    s32 var2;
-    s32 bit;
+void gplay_world_disable_all_obj_groups(s32 mapID) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
+    }
+    
+    // Disable all obj groups for map
+    sAllMapObjGroups[mapID] = 0;
+}
+
+void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
+    s32 newGroupBits;
+    s32 groupBits;
     s32 i;
 
     if (mapID >= 80) {
         mapID = bss_1840[mapID - 80];
     }
 
-    if ((mapID < 120 && data_F0[mapID] != 0) || (param3 >= 0 && 0)) {
-        if (param3 == -1) {
-            param3 = 1;
+    if ((mapID < 120 && sMapObjGroupBitKeys[mapID] != 0) || (status >= 0 && 0)) {
+        if (status == -1) {
+            status = 1;
         }
 
-        if (param3 == -2) {
-            param3 = 0;
+        if (status == -2) {
+            status = 0;
         }
 
-        bit = get_gplay_bitstring(data_F0[mapID]);
+        groupBits = get_gplay_bitstring(sMapObjGroupBitKeys[mapID]);
 
-        var2 = bit;
-        if (param3 != 0) {
-            var2 |= (1 << param2);
+        newGroupBits = groupBits;
+        if (status != 0) {
+            newGroupBits |= (1 << group);
         } else {
-            var2 &= ~(1 << param2);
+            newGroupBits &= ~(1 << group);
         }
 
-        set_gplay_bitstring(data_F0[mapID], var2);
+        set_gplay_bitstring(sMapObjGroupBitKeys[mapID], newGroupBits);
 
-        bss_1A50[0] = mapID;
-        bss_1A50[1] = var2;
+        sMapObjGroups.mapID = mapID;
+        sMapObjGroups.groupBits = newGroupBits;
 
-        if (param3 != 0) {
-            if (((1 << param2) & bit) == 0) {
+        if (status != 0) {
+            if (((1 << group) & groupBits) == 0) {
                 for (i = 0; i < 120; i++) {
-                    if (data_F0[i] == data_F0[mapID]) {
-                        bss_1868[i] = bss_1868[i] | (1 << param2);
+                    if (sMapObjGroupBitKeys[i] == sMapObjGroupBitKeys[mapID]) {
+                        sAllMapObjGroups[i] = sAllMapObjGroups[i] | (1 << group);
                     }
                 }
             }
         } else {
             for (i = 0; i < 120; i++) {
-                if (data_F0[i] == data_F0[mapID]) {
-                    bss_1868[i] = bss_1868[i] & ~(1 << param2);
+                if (sMapObjGroupBitKeys[i] == sMapObjGroupBitKeys[mapID]) {
+                    sAllMapObjGroups[i] = sAllMapObjGroups[i] & ~(1 << group);
                 }
             }
         }

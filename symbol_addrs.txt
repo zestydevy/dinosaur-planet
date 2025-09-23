@@ -1372,6 +1372,8 @@ map_update_objects_streaming = 0x8004a800; // type:func
 map_should_stream_load_object = 0x8004af4c; // type:func
 map_check_some_mapobj_flag = 0x8004b778; // type:func
 block_compute_vertex_colors = 0x8004c1a0; // type:func
+map_save_object = 0x8004B984; // type:func
+map_restore_saved_objects = 0x8004BD40; // type:func
 
 gWorldX = 0x80092a70; // size:0x4
 gWorldZ = 0x80092a74; // size:0x4

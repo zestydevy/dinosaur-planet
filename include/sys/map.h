@@ -2,6 +2,7 @@
 #define _SYS_MAP_H
 
 #include "PR/ultratypes.h"
+#include "dlls/engine/29_gplay.h"
 #include "ultra64.h"
 #include "PR/gbi.h"
 
@@ -292,15 +293,6 @@ typedef struct {
 /*0x8*/ s16 unk8; // some sort of index?
 } MapsUnk_800B97C0;
 
-typedef struct Unk800B96B0 {
-    s32 unk0;
-    s16 unk4;
-    s16 unk6;
-    f32 x;
-    f32 y;
-    f32 z;
-} Unk800B96B0;
-
 typedef struct Unk8005341C {
     Object *unk0;
     s16 unk4;
@@ -365,16 +357,19 @@ extern s32 gMapCurrentStreamCoordsZ;
 extern GlobalMapCell *gDecodedGlobalMap[MAP_LAYER_COUNT]; //16*16 grid of GlobalMapCell structs, one for each layer!
 extern s8 *D_800B9700[MAP_LAYER_COUNT];
 extern s32 gNumTotalBlocks;
-extern Unk800B96B0* D_800B96B0;
+extern SavedObject* D_800B96B0;
 extern s32* gFile_BLOCKS_TAB; // unknown pointer type
 extern MapsTabStruct* gFile_MAPS_TAB; // unknown pointer type
 extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 D_80092A8C;
-// D_800B5508 & D_800B5590 should probably use the same struct since they
-// multiply their index by 0x8C however no idea what the struct looks like
-extern s8 D_800B5508;
-extern s8 D_800B5590;
+typedef struct Unk800B5508 {
+    s32 unk0[32];
+    s32 unk80;
+    s32 unk84;
+    s32 unk88;
+} Unk800B5508;
+extern Unk800B5508 D_800B5508[120];
 
 extern DLBuilder D_800B4A20;
 extern DLBuilder D_800B49F0;
@@ -449,12 +444,13 @@ s32 func_80041E08(void);
 
 // defined in map.c but used before declared
 void func_800441F4(u32* arg0, s32 arg1);
+void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue);
 void func_80048B14(Block *block);
 void func_80048C24(Block *block);
 u32 hits_get_size(s32 id);
 void block_setup_vertices(Block *block);
 void block_setup_gdl_groups(Block *block);
-void *block_setup_textures(Block *block);
+s32 block_setup_textures(Block *block);
 void block_setup_xz_bitmap(Block *block);
 void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx);
 void block_compute_vertex_colors(Block*,s32,s32,s32);
@@ -468,7 +464,7 @@ void track_c_func(void);
 u8 func_800456AC(Object* obj);
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
-void func_80045FC4(MapHeader* arg0, s32* arg1, s32 arg2, s32 arg3);
+void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3);
 MapHeader *map_load_streammap(s32, s32);
 void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void func_80048034(void);
@@ -484,7 +480,7 @@ s32 map_should_stream_load_object(ObjCreateInfo*, s8, s32);
 s32 map_check_some_mapobj_flag(s32, u32);
 void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
-s32 func_8004B4A0(ObjCreateInfo* obj, s32 arg1);
+s32 func_8004B4A0(ObjCreateInfo* obj, s32 mapID);
 void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 func_80052148(Vec3f* arg0, Vec3f* arg1);
 void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
