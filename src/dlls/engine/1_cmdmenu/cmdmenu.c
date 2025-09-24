@@ -5,6 +5,7 @@
 #include "sys/memory.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
+#include "game/objects/inventory_items.h"
 
 // #include "prevent_bss_reordering.h"
 
@@ -21,9 +22,30 @@ typedef struct {
 typedef struct {
 /*0*/ Texture* unk0;
 /*4*/ s32 unk4;
-/*8*/ f32 unk8; //opacity?
+/*8*/ f32 unk8;
 /*C*/ s16 unkC;
 } CmdmenuItemUnkBSS;
+
+typedef struct {
+f32 unk0; //scarabUIOpacity
+f32 unk4; //playerIconMagicBarOpacity
+s32 unk8;
+s32 unkC; //healthValue
+
+} CmdmenuBSS0;
+
+typedef struct {
+s32 unk0;
+s32 unk4; //magic
+s32 unk8; //scarabCount
+s32 unkC;
+s32 unk10;
+s32 unk14;
+s32 unk18; //maxHealth
+s32 unk1C; //maxMagic
+s32 unk20;
+s32 unk24;
+} CmdmenuPlayerSidekickData;
 
 enum InventoryIcons {
     INVENTORY_ICON_SPELLSTONE_INACTIVE = 0x0562,
@@ -357,31 +379,10 @@ enum InventoryIcons {
     0x0477, 0x0478, 0x0000, 0x0000
 };
 
-typedef struct {
-f32 unk0; //scarabUIOpacity
-f32 unk4; //playerIconMagicBarOpacity
-s32 unk8;
-s32 unkC; //healthValue
-
-} UIBSS0;
-
-typedef struct {
-s32 unk0;
-s32 unk4; //magic
-s32 unk8; //scarabCount
-s32 unkC;
-s32 unk10;
-s32 unk14;
-s32 unk18; //maxHealth
-s32 unk1C; //maxMagic
-s32 unk20;
-s32 unk24;
-} UIPlayerSidekickData;
-
 /*0x0*/ static f32 _bss_0; //scarabUIOpacity
 /*0x4*/ static f32 _bss_4; //playerIconMagicBarOpacity
 /*0x8*/ static u8 _bss_8[0x8];
-/*0x10*/ static UIPlayerSidekickData _bss_10; //Tricky food level is stored in here! Maybe a struct?
+/*0x10*/ static CmdmenuPlayerSidekickData _bss_10; //Tricky food level is stored in here! Maybe a struct?
 /*0x38*/ static u8 _bss_38[0x8];
 /*0x40*/ static u8 _bss_40[0xc];
 /*0x4C*/ static u8 _bss_4C[0x4];
@@ -555,21 +556,18 @@ s16 dll_1_func_F40(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_F5C.s")
 
 // offset: 0x1290 | func: 11 | export: 3
-#if 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1290.s")
-#else
-void dll_1_func_1290(void) {
-    s32 i;
-    UIUnknownCharacterStruct *temp;
+// void dll_1_func_1290(void) {
+//     s32 i;
+//     UIUnknownCharacterStruct *temp;
 
-    temp = &_data_8F0;
+//     temp = &_data_8F0;
 
-    for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
-    _bss_C38 = -1;
-    _bss_C3C = 0;
-    _bss_C3D = -1;
-}
-#endif
+//     for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
+//     _bss_C38 = -1;
+//     _bss_C3C = 0;
+//     _bss_C3D = -1;
+// }
 
 // offset: 0x12EC | func: 12 | export: 4
 void dll_1_func_12EC(void) {
