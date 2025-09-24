@@ -72,8 +72,9 @@ void controller_querey(OSMesgQueue* arg0, ContQueryStruct* arg1) {
 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_11F70/func_80011490.s")
+s32 func_80011490(OSMesgQueue *arg0, UnkOSPifRam* arg1, ContQueryStruct* arg2);
 #else
-s32 func_80011490(OSMesgQueue *arg0, void* arg1, ContQueryStruct* arg2) {
+s32 func_80011490(OSMesgQueue *arg0, UnkOSPifRam* arg1, ContQueryStruct* arg2) {
     s32 i;
     s32 temp_v0;
     u8* sp1C;
