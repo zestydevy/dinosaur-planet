@@ -1,4 +1,12 @@
 #include "PR/ultratypes.h"
+#include "functions.h"
+#include "dll.h"
+#include "dlls/engine/21_gametext.h"
+#include "sys/memory.h"
+#include "sys/gfx/gx.h"
+#include "sys/gfx/texture.h"
+
+// #include "prevent_bss_reordering.h"
 
 typedef struct {
 /*0*/ s16 flagObtained; //Gamebit that adds item to inventory
@@ -20,6 +28,31 @@ typedef struct {
 /*E*/ s16 unkE;
 } UIUnknownCharacterStruct;
 
+typedef struct {
+/*0*/ Texture* unk0;
+/*4*/ s32 unk4;
+/*8*/ f32 unk8; //opacity?
+/*C*/ s16 unkC;
+} CmdmenuItemUnkBSS;
+
+typedef struct {
+/*00*/ s32 unk0;
+/*04*/ s32 unk4;
+/*08*/ s32 unk8;
+/*0C*/ s32 unkC;
+/*10*/ s32 unk10;
+/*14*/ s8 unk14;
+/*15*/ s8 unk15;
+/*16*/ s16 unk16;
+/*18*/ Texture* unk18;
+/*1C*/ s32 unk1C;
+/*20*/ s32 unk20;
+/*24*/ s32 unk24;
+/*28*/ s32 unk28;
+/*2C*/ s32 unk2C;
+/*30*/ Texture* unk30;
+} EnergyBar;
+
 enum InventoryIcons {
     INVENTORY_ICON_SPELLSTONE_INACTIVE = 0x0562,
     INVENTORY_ICON_SPELLSTONE_ACTIVE = 0x0563
@@ -31,23 +64,23 @@ enum InventoryIcons {
 /*0xC*/ static s16 _data_C = 0x0048;
 /*0x10*/ static u32 _data_10 = 0x00000000;
 /*0x14*/ static u32 _data_14 = 0x00000000;
-/*0x18*/ static u32 _data_18 = 0xffff0000;
+/*0x18*/ static s16 _data_18 = 0xffff;
 /*0x1C*/ static s8 _data_1C = 0;
-/*0x20*/ static u32 _data_20 = 0x003c0000;
-/*0x24*/ static u32 _data_24 = 0x00320000;
-/*0x28*/ static u32 _data_28 = 0x00140000;
-/*0x2C*/ static u32 _data_2C = 0x00a00000;
+/*0x20*/ static s16 _data_20 = 0x003c;
+/*0x24*/ static s16 _data_24 = 0x0032;
+/*0x28*/ static s16 _data_28 = 0x0014;
+/*0x2C*/ static s16 _data_2C = 0x00a0;
 /*0x30*/ static u32 _data_30 = 0x00000000;
 /*0x34*/ static u32 _data_34[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
-/*0x44*/ static u32 _data_44 = 0xffff0000;
+/*0x44*/ static s16 _data_44 = 0xffff;
 /*0x48*/ static s8 _data_48 = 0;
-/*0x4C*/ static u32 _data_4C = 0x00780000;
-/*0x50*/ static u32 _data_50 = 0x00500000;
-/*0x54*/ static u32 _data_54 = 0x00140000;
-/*0x58*/ static u32 _data_58 = 0x00a00000;
-/*0x5C*/ static u32 _data_5C = 0x00000000;
+/*0x4C*/ static s16 _data_4C = 0x0078;
+/*0x50*/ static s16 _data_50 = 0x0050;
+/*0x54*/ static s16 _data_54 = 0x0014;
+/*0x58*/ static s16 _data_58 = 0x00a0;
+/*0x5C*/ static s16 _data_5C = 0x0000;
 /*0x60*/ static u32 _data_60[] = {
     0x00000000, 0xffff0000
 };
@@ -337,11 +370,15 @@ enum InventoryIcons {
 
 /*0x9D0*/ static s8 _data_9D0 = 0;
 /*0x9D4*/ static u32 _data_9D4 = 0x00000000;
-/*0x9D8*/ static u32 _data_9D8[] = {
-    0x01be01bf, 0x01c001c2, 0x01c301c4, 0x01c501c6, 0x03e203e3, 0x03e403e5, 0x042101c9, 0x03ea03eb, 
-    0x01cb03e6, 0x03e703f5, 0x03f603f7, 0x03f803f9, 0x03fa03fb, 0x03fc03fd, 0x03fe0422, 0x04230429, 
-    0x042a042b, 0x042c0424, 0x042d0431, 0x01d4042f, 0x04320430, 0x0433042e, 0x04350436, 0x0438043a, 
-    0x043b043d, 0x043e0434, 0x04370267, 0x02680476, 0x04770478, 0x00000000
+/*0x9D8*/ static u16 _data_9D8[] = {
+    0x01be, 0x01bf, 0x1c0, 0x01c2, 0x01c3, 0x01c4, 0x01c5, 0x01c6, 
+    0x03e2, 0x03e3, 0x03e4, 0x03e5, 0x0421, 0x01c9, 0x03ea, 0x03eb, 
+    0x01cb, 0x03e6, 0x03e7, 0x03f5, 0x03f6, 0x03f7, 0x03f8, 0x03f9,
+    0x03fa, 0x03fb, 0x03fc, 0x03fd, 0x03fe, 0x0422, 0x0423, 0x0429, 
+    0x042a, 0x042b, 0x042c, 0x0424, 0x042d, 0x0431, 0x01d4, 0x042f,
+    0x0432, 0x0430, 0x0433, 0x042e, 0x0435, 0x0436, 0x0438, 0x043a, 
+    0x043b, 0x043d, 0x043e, 0x0434, 0x0437, 0x0267, 0x0268, 0x0476,
+    0x0477, 0x0478, 0x0000, 0x0000
 };
 
 typedef struct {
@@ -382,8 +419,8 @@ s32 unk24;
 /*0x8A*/ static u8 _bss_8A[0x1];
 /*0x8B*/ static u8 _bss_8B[0x1];
 /*0x8C*/ static u8 _bss_8C[0x4];
-/*0x90*/ static u8 _bss_90[0x8];
-/*0x98*/ static u8 _bss_98[0x8];
+/*0x90*/ static EnergyBar* _bss_90; 
+/*0x98*/ static u8 _bss_98[0x8]; //Pointers to inventory icon textures
 /*0xA0*/ static u8 _bss_A0[0xf8];
 /*0x198*/ static u8 _bss_198[0x8];
 /*0x1A0*/ static u8 _bss_1A0[0xf8];
@@ -391,11 +428,11 @@ s32 unk24;
 /*0x2A0*/ static u8 _bss_2A0[0x78];
 /*0x318*/ static u8 _bss_318[0x8];
 /*0x320*/ static u8 _bss_320[0xf8];
-/*0x418*/ static s16 _bss_418[4];
+/*0x418*/ static s16 _bss_418[4]; //array of textIDs
 /*0x420*/ static u8 _bss_420[0x78];
-/*0x498*/ static s8 _bss_498[8];
+/*0x498*/ static s8 _bss_498[8]; //array of unkAs (from InventoryItem)
 /*0x4A0*/ static u8 _bss_4A0[0x38];
-/*0x4D8*/ static s8 _bss_4D8[8];
+/*0x4D8*/ static s8 _bss_4D8[8]; //array of unkBs (from InventoryItem)
 /*0x4E0*/ static u8 _bss_4E0[0x38];
 /*0x518*/ static u8 _bss_518[0x8];
 /*0x520*/ static u8 _bss_520[0x38];
@@ -408,9 +445,9 @@ s32 unk24;
 /*0x5A8*/ static u8 _bss_5A8[0x4];
 /*0x5AC*/ static u8 _bss_5AC[0x4];
 /*0x5B0*/ static u8 _bss_5B0[0x4];
-/*0x5B4*/ static u8 _bss_5B4[0x4];
+/*0x5B4*/ static s32 _bss_5B4;
 /*0x5B8*/ static u8 _bss_5B8[0x4];
-/*0x5BC*/ static u8 _bss_5BC[0x4];
+/*0x5BC*/ static s32 _bss_5BC;
 /*0x5C0*/ static u8 _bss_5C0[0x8];
 /*0x5C8*/ static u8 _bss_5C8[0x8];
 /*0x5D0*/ static u8 _bss_5D0[0x4];
@@ -443,12 +480,12 @@ s32 unk24;
 /*0xA60*/ static u8 _bss_A60[0x30];
 /*0xA90*/ static u8 _bss_A90[0x108];
 /*0xB98*/ static u8 _bss_B98[0x8];
-/*0xBA0*/ static u8 _bss_BA0[0x88];
+/*0xBA0*/ static u8 _bss_BA0[0x88]; //infobox height and inventory box height stored near the end (height of paper scroll graphics)
 /*0xC28*/ static s16 _bss_C28;
 /*0xC2A*/ static s16 _bss_C2A;
-/*0xC2C*/ static u8 _bss_C2C[0x2];
-/*0xC2E*/ static u8 _bss_C2E[0x2];
-/*0xC30*/ static u8 _bss_C30[0x4];
+/*0xC2C*/ static s16 _bss_C2C;
+/*0xC2E*/ static s16 _bss_C2E;
+/*0xC30*/ static GameTextChunk* _bss_C30;
 /*0xC34*/ static u8 _bss_C34[0x4];
 /*0xC38*/ static s16 _bss_C38;
 /*0xC3A*/ static s16 _bss_C3A;
@@ -460,7 +497,7 @@ s32 unk24;
 /*0xC48*/ static s8 _bss_C48;
 /*0xC4C*/ static u8 _bss_C4C[0x4];
 /*0xC50*/ static u8 _bss_C50[0x4];
-/*0xC54*/ static s32 _bss_C54;
+/*0xC54*/ static s32 _bss_C54; //controllerButtons
 /*0xC58*/ static u8 _bss_C58[0x8];
 /*0xC60*/ static u8 _bss_C60[0x18];
 /*0xC78*/ static u8 _bss_C78[0x2];
@@ -468,8 +505,8 @@ s32 unk24;
 /*0xC7C*/ static u16 _bss_C7C;
 /*0xC7E*/ static u16 _bss_C7E;
 /*0xC80*/ static u16 _bss_C80;
-/*0xC88*/ static u8 _bss_C88[0x8];
-/*0xC90*/ static u8 _bss_C90[0x10];
+/*0xC88*/ static CmdmenuItemUnkBSS _bss_C88;
+// /*0xC90*/ static u8 _bss_C90[0x10];
 
 // offset: 0x0 | ctor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_ctor.s")
@@ -574,7 +611,18 @@ void dll_1_func_130C(u32 arg0, u32 arg1, u32 arg2) {
 }
 
 // offset: 0x1338 | func: 14 | export: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1338.s")
+void dll_1_func_1338(s32 gametextID, s32 arg1, s32 arg2) {
+    if (_bss_C30 == NULL) {
+        _bss_5B4 = 0x40000;
+        _bss_5BC = 0;
+        _bss_C30 = gDLL_21_Gametext->vtbl->get_chunk(gametextID);
+        _bss_C2E = 0;
+        _data_48 = 1;
+        _data_58 = arg1;
+        _data_54 = arg2;
+        _bss_C2C = _data_50;
+    }
+}
 
 // offset: 0x13F4 | func: 15 | export: 14
 void dll_1_func_13F4(void) {
@@ -603,13 +651,13 @@ void dll_1_func_13F4(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_3718.s")
 
 // offset: 0x3880 | func: 23
-void dll_1_func_3880(InventoryItem* items, s32 arg1, s32 itemIndex) {
+void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
     InventoryItem* item;
 
     item = (InventoryItem*)((s8*)items + 0xC*itemIndex);
-    _bss_418[arg1] = item->textID;
-    _bss_498[arg1] = item->unkA;
-    _bss_4D8[arg1] = item->unkB;
+    _bss_418[loadedItemIndex] = item->textID;
+    _bss_498[loadedItemIndex] = item->unkA;
+    _bss_4D8[loadedItemIndex] = item->unkB;
 }
 
 // offset: 0x38E4 | func: 24
@@ -658,7 +706,30 @@ void dll_1_func_3AB0(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_4630.s")
 
 // offset: 0x474C | func: 32
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_474C.s")
+#else
+void dll_1_func_474C(Gfx** gfx) {
+    f32 screen_height;
+    f32 screen_width;
+    s32 resolution;
+    Gfx* temp_a0;
+    s32 temp1;
+    s32 temp2;
+
+    resolution = get_some_resolution_encoded();
+    
+    screen_width = 4.0f * (resolution >> 0x10);
+    screen_height = 4.0f * (resolution & 0xFFFF);
+
+    temp1 = screen_height;
+    temp2 = screen_width;
+    
+    temp_a0 = *gfx++;
+    temp_a0->words.w0 = 0xED000000;
+    temp_a0->words.w1 = ((temp1 & 0xFFF) << 12) | (temp2 & 0xFFF);
+}
+#endif
 
 // offset: 0x47E8 | func: 33
 s32 dll_1_func_47E8(void) {
@@ -715,7 +786,13 @@ void dll_1_func_6984(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_69F8.s")
 
 // offset: 0x6B00 | func: 43 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_6B00.s")
+void dll_1_func_6B00(s16 textureID, s32 arg1, s32 arg2) {   
+    if ((_bss_C88.unk0 = queue_load_texture_proxy(textureID))){
+        _bss_C88.unk4 = arg1;
+        _bss_C88.unkC = arg2;
+        _bss_C88.unk8 = 0.0f;
+    }
+}
 
 // offset: 0x6B74 | func: 44
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_6B74.s")
@@ -729,13 +806,43 @@ void dll_1_func_70A0(u8 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_70C8.s")
 
 // offset: 0x7208 | func: 47 | export: 21
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_7208.s")
+#else
+void dll_1_func_7208(s32 arg0) {
+    f32 var_ft4;
+    f32 var_ft5;
+    s32 temp_ft1;
+    s32 temp_t9;
+    s32 temp_v1;
+
+    temp_v1 = _bss_90->unk0;
+    temp_t9 = _bss_90->unk8;
+    
+    var_ft5 = (f32) temp_t9;
+    
+    temp_ft1 = (s32) (var_ft5 * ((f32) (arg0 - temp_v1) / (f32) (_bss_90->unk4 - temp_v1)));
+    var_ft4 = (f32) temp_ft1;
+
+    _bss_90->unk10 = var_ft4;
+}
+#endif
 
 // offset: 0x7298 | func: 48
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_7298.s")
 
 // offset: 0x7550 | func: 49 | export: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_7550.s")
+/* Related to the fuel gauge at CloudRunner Fortress' Racetrack */
+void dll_1_func_7550(void) {
+    EnergyBar* temp_v0;
+
+    temp_v0 = _bss_90;
+    temp_v0->unk14 = 0;
+    texture_destroy(temp_v0->unk18);
+    texture_destroy(temp_v0->unk30);
+    mmFree(_bss_90);
+    _bss_90 = NULL;
+}
 
 // offset: 0x75CC | func: 50 | export: 23
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_75CC.s")
