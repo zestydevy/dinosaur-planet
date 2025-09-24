@@ -6,6 +6,34 @@
 #include "game/objects/object.h"
 #include "types.h"
 
+typedef struct {
+/*0*/ s16 flagObtained; //Gamebit that adds item to inventory
+/*2*/ s16 flagHide; //Gamebit that removes item from inventory
+/*4*/ s16 textureID; //Mapped through TABLES.bin
+/*6*/ u16 unk6; //Always 0xFFFF
+/*8*/ s16 textID; //Gametext lineID (in either file #3 or 568, depending on upper byte)
+/*A*/ s8 unkA; //Related to opening secondary menu?
+/*B*/ u8 unkB;
+} InventoryItem;
+
+typedef struct {
+/*00*/ s32 unk0;
+/*04*/ s32 unk4;
+/*08*/ u32 unk8;
+/*0C*/ s32 unkC;
+/*10*/ f32 unk10;
+/*14*/ s8 unk14;
+/*15*/ s8 unk15;
+/*16*/ s16 unk16;
+/*18*/ Texture* unk18;
+/*1C*/ s32 unk1C;
+/*20*/ s32 unk20;
+/*24*/ s32 unk24;
+/*28*/ s32 unk28;
+/*2C*/ s32 unk2C;
+/*30*/ Texture* unk30;
+} EnergyBar;
+
 DLL_INTERFACE(DLL_1_UI) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*00*/ UnknownDLLFunc ui_func_308;

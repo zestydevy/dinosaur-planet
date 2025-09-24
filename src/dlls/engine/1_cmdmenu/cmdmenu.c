@@ -9,16 +9,6 @@
 // #include "prevent_bss_reordering.h"
 
 typedef struct {
-/*0*/ s16 flagObtained; //Gamebit that adds item to inventory
-/*2*/ s16 flagHide; //Gamebit that removes item from inventory
-/*4*/ s16 textureID; //Mapped through TABLES.bin
-/*6*/ u16 unk6; //Always 0xFFFF
-/*8*/ s16 textID; //Gametext lineID (in either file #3 or 568, depending on upper byte)
-/*A*/ s8 unkA; //Related to opening secondary menu?
-/*B*/ u8 unkB;
-} InventoryItem;
-
-typedef struct {
 /*0*/ InventoryItem* characterItems;
 /*4*/ s16 unk4;
 /*6*/ s16 unk6;
@@ -34,24 +24,6 @@ typedef struct {
 /*8*/ f32 unk8; //opacity?
 /*C*/ s16 unkC;
 } CmdmenuItemUnkBSS;
-
-typedef struct {
-/*00*/ s32 unk0;
-/*04*/ s32 unk4;
-/*08*/ s32 unk8;
-/*0C*/ s32 unkC;
-/*10*/ s32 unk10;
-/*14*/ s8 unk14;
-/*15*/ s8 unk15;
-/*16*/ s16 unk16;
-/*18*/ Texture* unk18;
-/*1C*/ s32 unk1C;
-/*20*/ s32 unk20;
-/*24*/ s32 unk24;
-/*28*/ s32 unk28;
-/*2C*/ s32 unk2C;
-/*30*/ Texture* unk30;
-} EnergyBar;
 
 enum InventoryIcons {
     INVENTORY_ICON_SPELLSTONE_INACTIVE = 0x0562,
@@ -115,6 +87,7 @@ enum InventoryIcons {
 /*0x124*/ static u32 _data_124 = 0x00000000;
 
 //Krystal items
+
 /*0x128*/ static InventoryItem _data_128[] = {
     {0x00c7, 0x00b4, 0x0245, 0xffff, 0x0010, 0xff, 0x01}, //Warp Crystal
     {0x0044, 0xffff, 0x0175, 0xffff, 0x0007, 0xff, 0x01}, //Prison Key (CloudRunner Fortress)
@@ -156,6 +129,7 @@ enum InventoryIcons {
 };
 
 //Sabre items
+
 /*0x2E4*/ static InventoryItem _data_2E4[] = {
     {0x0098, 0xffff, 0x0175, 0xffff, 0x000a, 0xff, 0x01}, //Gate Key (Northern Wastes) (Unused?)
     {0x0576, 0xffff, 0x01a3, 0xffff, 0x000b, 0xff, 0x01}, //Alpine Root (Unsure whether geyser area or DIM)
@@ -197,6 +171,7 @@ enum InventoryIcons {
 };
 
 //Food Bag actions (Krystal)
+
 /*0x4A0*/ static InventoryItem _data_4A0[] = {
     {0x0385, 0xffff, 0x02c7, 0xffff, 0x001f, 0x04, 0x02},
     {0x0386, 0xffff, 0x02c8, 0xffff, 0x0020, 0x04, 0x02},
@@ -207,6 +182,7 @@ enum InventoryIcons {
 };
 
 //Food Bag actions (Sabre)
+
 /*0x4E8*/ static InventoryItem _data_4E8[] = {
     {0x0385, 0xffff, 0x02c7, 0xffff, 0x001f, 0x05, 0x02},
     {0x0386, 0xffff, 0x02c8, 0xffff, 0x0020, 0x05, 0x02},
@@ -217,6 +193,7 @@ enum InventoryIcons {
 };
 
 //Food Bag items (Krystal)
+
 /*0x530*/ static InventoryItem _data_530[] = {
     {0x0166, 0xffff, 0x026e, 0xffff, 0x0022, 0xff, 0x01}, //Green apple
     {0x0167, 0xffff, 0x026f, 0xffff, 0x0023, 0xff, 0x01}, //Red apple
@@ -236,6 +213,7 @@ enum InventoryIcons {
 };
 
 //Food Bag items (Sabre)
+
 /*0x5E4*/ static InventoryItem _data_5E4[] = {
     {0x0166, 0xffff, 0x026e, 0xffff, 0x0022, 0xff, 0x01}, //Green apple
     {0x0167, 0xffff, 0x026f, 0xffff, 0x0023, 0xff, 0x01}, //Red apple
@@ -255,6 +233,7 @@ enum InventoryIcons {
 };
 
 //Magic Spells
+
 /*0x698*/ static InventoryItem _data_698[] = {
     {0x002d, 0xffff, 0x0183, 0xffff, 0x000d, 0xff, 0x00}, //Projectile Spell
     {0x05ce, 0xffff, 0x0468, 0xffff, 0x003c, 0xff, 0x00}, //Ice Blast Spell
@@ -706,30 +685,12 @@ void dll_1_func_3AB0(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_4630.s")
 
 // offset: 0x474C | func: 32
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_474C.s")
-#else
 void dll_1_func_474C(Gfx** gfx) {
-    f32 screen_height;
-    f32 screen_width;
     s32 resolution;
-    Gfx* temp_a0;
-    s32 temp1;
-    s32 temp2;
 
     resolution = get_some_resolution_encoded();
-    
-    screen_width = 4.0f * (resolution >> 0x10);
-    screen_height = 4.0f * (resolution & 0xFFFF);
-
-    temp1 = screen_height;
-    temp2 = screen_width;
-    
-    temp_a0 = *gfx++;
-    temp_a0->words.w0 = 0xED000000;
-    temp_a0->words.w1 = ((temp1 & 0xFFF) << 12) | (temp2 & 0xFFF);
+    gDPSetScissor((*gfx)++, 0 , 0, 0, RESOLUTION_WIDTH(resolution), RESOLUTION_HEIGHT(resolution))
 }
-#endif
 
 // offset: 0x47E8 | func: 33
 s32 dll_1_func_47E8(void) {
@@ -806,27 +767,14 @@ void dll_1_func_70A0(u8 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_70C8.s")
 
 // offset: 0x7208 | func: 47 | export: 21
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_7208.s")
-#else
 void dll_1_func_7208(s32 arg0) {
-    f32 var_ft4;
-    f32 var_ft5;
-    s32 temp_ft1;
-    s32 temp_t9;
-    s32 temp_v1;
+    u32 temp_ft1;
+    f32 f0;
 
-    temp_v1 = _bss_90->unk0;
-    temp_t9 = _bss_90->unk8;
-    
-    var_ft5 = (f32) temp_t9;
-    
-    temp_ft1 = (s32) (var_ft5 * ((f32) (arg0 - temp_v1) / (f32) (_bss_90->unk4 - temp_v1)));
-    var_ft4 = (f32) temp_ft1;
-
-    _bss_90->unk10 = var_ft4;
+    f0 = ((f32)(arg0 - _bss_90->unk0)) / ((f32)(_bss_90->unk4 - _bss_90->unk0));
+    temp_ft1 = (s32) (_bss_90->unk8 * f0);
+    _bss_90->unk10 = temp_ft1;
 }
-#endif
 
 // offset: 0x7298 | func: 48
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_7298.s")
