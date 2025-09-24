@@ -10,7 +10,7 @@ typedef struct {
 /*0*/ s16 flagObtained; //Gamebit that adds item to inventory
 /*2*/ s16 flagHide; //Gamebit that removes item from inventory
 /*4*/ s16 textureID; //Mapped through TABLES.bin
-/*6*/ u16 unk6; //Always 0xFFFF
+/*6*/ u16 sidekickCommand; //Usually 0xFFFF, except on sidekick commands
 /*8*/ s16 textID; //Gametext lineID (in either file #3 or 568, depending on upper byte)
 /*A*/ s8 unkA; //Related to opening secondary menu?
 /*B*/ u8 unkB;
