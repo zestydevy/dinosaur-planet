@@ -8,6 +8,7 @@
 #include "sys/linked_list.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objanim.h"
 
 static const char str_80099800[] = "Error in loading Model Inst in ObjAnimSetMove ";
 
@@ -122,21 +123,6 @@ s32 func_800240BC(Object* object, f32 progress) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80024108.s")
 
-typedef struct {
-    /*00*/    s16 X;
-    /*02*/    s16 Y;
-    /*04*/    s16 Z;
-} AnimationRootMotionComponents;
-
-typedef struct {
-    /*00*/    f32 speed;
-    /*04*/    s16 totalKeyframes;
-    /*06*/    AnimationRootMotionComponents components;
-    /*0C*/    s16 keyframes; //array
-} AnimationRootMotion;
-
-// extern f32 gAnimBlendDivisor; //1023
-
 //https://decomp.me/scratch/zIGpo
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_8002493C.s")
 
@@ -171,8 +157,6 @@ s16 func_80024E2C(Object* arg0) {
   animState = model->animState0;
   return animState->unk_0x58[0];
 }
-
-Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
 s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     s32 temp_t9;
@@ -262,8 +246,6 @@ s32 func_800250F4(Object* object, f32 progress) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025140.s")
 
-void func_800255F8(Model* model, AnimState* animState, s32 bank_and_index, s16 arg3);
-
 void func_80025540(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
     ModelInstance* modelInstance;
     Model* model;
@@ -285,8 +267,6 @@ void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2) {
         func_800255F8(model, modelInstance->animState1, modAnimBankAndIndex, arg2); //"probably ObjSetBlendMove"
     }
 }
-
-Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
 void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3) {
     f32 var_fv0;
@@ -338,8 +318,6 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025780.s")
-
-extern u8 D_800916B0[];
 
 u8 func_80025CD4(s32 arg0) {
     if (arg0 >= 0x21)

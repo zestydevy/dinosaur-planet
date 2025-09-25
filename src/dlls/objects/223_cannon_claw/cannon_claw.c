@@ -5,6 +5,7 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objanim.h"
 #include "variables.h"
 #include "functions.h"
 #include "types.h"

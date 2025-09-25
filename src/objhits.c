@@ -1,4 +1,5 @@
 #include "sys/objhits.h"
+#include "sys/objanim.h"
 
 static const char str_80099860[] = "objhits.c: keysize overflow error\n";
 static const char str_80099884[] = " Warning HitModel %x [%d] has no Polyhits\n";
