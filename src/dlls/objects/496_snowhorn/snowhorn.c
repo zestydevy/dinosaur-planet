@@ -10,6 +10,7 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objanim.h"
 #include "sys/print.h"
 #include "sys/rand.h"
 #include "variables.h"
@@ -17,8 +18,6 @@
 #include "types.h"
 
 s32 func_800053B0(void*, f32);
-s32 func_8002493C(void*, f32, void*);
-void func_80025780(Object*, f32, s32*, void*);
 s32 func_80026DF4(Object*, u32*, u32, s32, void*);
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
@@ -99,7 +98,7 @@ typedef struct {
 /*038*/ s32 unk38;
 /*03c*/ s32 unk3C;
 /*040*/ s32 unk40;
-/*044*/ s32* someAnimIDList;
+/*044*/ s16* someAnimIDList;
 /*048*/ f32* unk48;
 /*04c*/ s32* chatSequenceList;
 /*050*/ f32 unk50;
@@ -203,14 +202,6 @@ typedef struct {
 /*08E*/ u8 unk8E[10];
 /*098*/ u8 unk98[10];
 } UnkStruct2;
-
-typedef struct {
-  f32 unk0[3];
-  s16 unkc[3];
-  u8 unk12;
-  s8 unk13[8];
-  s8 unk1B; // current length of unk13
-} UnkFunc_80024108Struct;
 
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
@@ -377,60 +368,46 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
 void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 
 void dll_496_func_24C(Object* snowhorn) {
-    void* sp68; //don't know the type
     SnowHornState* state;
+    f32 sp68;
     SnowHornCreateInfo* mapsObj;
     Object* player;
-    s16 animID;
-    Vec3f* temp_a0;
-    u16 temp_t1;
-    u32 temp_t9;
-    u32 seqIndex;
-    s32 sp44; //don't know the type
+    UnkFunc_80024108Struct sp44;
     s32 animIndex;
-    u16 var_v0;
-    Vec3f* sp34;
+    s32 seqIndex;
 
     state = snowhorn->state;
     mapsObj = (SnowHornCreateInfo*)snowhorn->createInfo;
-    player = get_player();   
-    
-    if (vec3_distance_xz_squared(&snowhorn->positionMirror, &player->positionMirror) < (2.0f * (f32) (state->unkRadius * state->unkRadius))) {
-        var_v0 = state->unk424;
-        temp_t9 = var_v0 | 0x80;
-        if (!(var_v0 & 0x80)) {
-            state->unk424 = temp_t9;
-            var_v0 = temp_t9;
+    player = get_player();
+
+    if (vec3_distance_xz_squared(&snowhorn->positionMirror, &player->positionMirror) 
+            < 2.0f * (state->unkRadius * state->unkRadius)) {
+        if (!(state->unk424 & 0x80)) {
+            state->unk424 |= 0x80;
         }
     } else {
-        var_v0 = state->unk424;
-        temp_t1 = var_v0 & -129;
-        if (var_v0 & 0x80) {
-            state->unk424 = temp_t1;
-            var_v0 = temp_t1 & 0xFF;
+        if (state->unk424 & 0x80) {
+            state->unk424 &= 0xFF7F;
         }
     }
     
-    if (var_v0 & 0x40) {
-        dll_496_func_CC4(snowhorn, var_v0 & 4);
+    if (state->unk424 & 0x40) {
+        dll_496_func_CC4(snowhorn, state->unk424 & 4);
         func_800328F0(snowhorn, &state->lookAtUnk, state->walkSpeed);
     }
     func_80032A08(snowhorn, &state->lookAtUnk);
-    if (state->isWalking & 0x4000) {
-        var_v0 = 1;
-    } else {
-        var_v0 = 0;
-    }
-    if (func_80026DF4(snowhorn, _data_0, 0x1C, var_v0 & 0xFF, (s8*)state + 0x54) != 0) {
-        state->isWalking = (u16) (state->isWalking | 0x4000);
+
+
+    if (func_80026DF4(snowhorn, _data_0, 0x1C, (state->isWalking & 0x4000 ? 1 : 0) & 0xFF, 
+                      (s8*)state + 0x54) != 0) {
+        state->isWalking |= 0x4000;
         return;
     }
     state->isWalking &= 0xBFFF;
-    state->unk427 = gDLL_29_Gplay->vtbl->func_143C(snowhorn->mapID);
+    state->unk427 = gDLL_29_Gplay->vtbl->func_143C(snowhorn->mapID);     
     _data_270 = gDLL_7_Newday->vtbl->func8((s32)&sp68); //check if night?
 
-    var_v0 = state->isWalking & 0x8000;
-    if (var_v0 && (dll_496_func_980(snowhorn) != 0)){
+    if (state->isWalking & 0x8000 && (dll_496_func_980(snowhorn) != 0)){
         return;
     }
 
@@ -454,12 +431,10 @@ void dll_496_func_24C(Object* snowhorn) {
             break;
     }
     
-    if (state->unk424 & 1) {
-        sp34 = state->unk170;
-
-        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(snowhorn, sp34, delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(snowhorn, sp34);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_624(snowhorn, sp34, delayFloat);
+    if (state->unk424 & 1) {       
+        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(snowhorn, &state->unk170, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(snowhorn, &state->unk170);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_624(snowhorn, &state->unk170, delayFloat);
     }
 
     if (state->someAnimIDList) {
@@ -472,14 +447,15 @@ void dll_496_func_24C(Object* snowhorn) {
             }
             state->unk424 &= 0xFFF7;
         }
-        if (func_80024108(snowhorn, state->unk50, delayFloat, (s32)&sp44) != 0) {
+        if (func_80024108(snowhorn, state->unk50, delayFloat, &sp44) != 0) {
             state->unk424 |= 8;
         } else {
             state->unk424 &= 0xFFF7;
         }
         func_80025780(snowhorn, delayFloat, &sp44, 0);
     }
-    if ((state->unk0 != 0) && (snowhorn->unk0xaf & 1)) {
+    
+    if ((state->chatSequenceList != 0) && (snowhorn->unk0xaf & 1)) {
         if (state->unk424 & 0x20) {
             seqIndex = rand_next(0, state->unk426 - 1);
         } else {
@@ -489,8 +465,8 @@ void dll_496_func_24C(Object* snowhorn) {
         if (state->unk425 >= state->unk426) {
             state->unk425 = 0;
         }
-        gDLL_3_Animation->vtbl->func17(state->unk0[seqIndex], snowhorn, -1);
-        set_button_mask(0, 0x8000);
+        gDLL_3_Animation->vtbl->func17(state->chatSequenceList[seqIndex], snowhorn, -1);
+        set_button_mask(0, A_BUTTON);
     }
 
 }
