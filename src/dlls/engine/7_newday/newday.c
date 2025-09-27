@@ -2,23 +2,33 @@
 #include "sys/gfx/texture.h"
 #include "unktypes.h"
 
+#define DAYTIME 18000.0f //5am
+#define NIGHTTIME 75600.0f //9pm
+#define NOON 12.0 * 60.0 * 60.0
+#define SECONDS_IN_DAY 86400.0f
+#define SECONDS_IN_HOUR (60 * 60)
+#define SECONDS_IN_MINUTE (60)
+#define TICKS_IN_HOUR (SECONDS_IN_HOUR * 60)
+#define TICKS_IN_MINUTE (SECONDS_IN_MINUTE * 60)
+#define TICKS_IN_SECOND (60)
+
 /*0x0*/ static f32 _data_0 = 0.0;
 /*0x4*/ static u32 _data_4 = 0x00000000;
 /*0x8*/ static f32 _data_8 = 0.0;
 /*0xC*/ static f32 _data_C = 0.0;
-/*0x10*/ static u32 _data_10[] = {
-    0x00000000, 0x3dcccccd
+/*0x10*/ static f32 _data_10[] = {
+    0.0, 0.1
 };
 /*0x18*/ static f32 _data_18 = 0.0;
-/*0x1C*/ static u32 _data_1C = 0x3f800000;
+/*0x1C*/ static f32 _data_1C = 1.0f;
 /*0x20*/ static u32 _data_20 = 0x00000000;
 /*0x24*/ static f32 _data_24 = 0.0;
-/*0x28*/ static u32 _data_28 = 0x3f800000;
+/*0x28*/ static f32 _data_28 = 1;
 /*0x2C*/ static u32 _data_2C = 0x00000000;
 /*0x30*/ static u32 _data_30 = 0xffffffff;
-/*0x34*/ static u32 _data_34 = 0x000000ff;
-/*0x38*/ static u32 _data_38 = 0x000000ff;
-/*0x3C*/ static u32 _data_3C = 0x000000ff;
+/*0x34*/ static u32 _data_34 = 255; //clouds R
+/*0x38*/ static u32 _data_38 = 255; //clouds G
+/*0x3C*/ static u32 _data_3C = 255; //clouds B
 /*0x40*/ static u32 _data_40 = 0x00000000;
 /*0x44*/ static u32 _data_44 = 0x00000000;
 /*0x48*/ static u32 _data_48 = 0x00000000;
@@ -26,15 +36,15 @@
 /*0x50*/ static u32 _data_50 = 0x00000000;
 /*0x54*/ static u32 _data_54 = 0x00000000;
 /*0x58*/ static u8 _data_58 = 0;
-/*0x5C*/ static f32 _data_5C = 43200.0;
+/*0x5C*/ static f32 _data_5C = NOON; //time of day
 /*0x60*/ static u32 _data_60 = 0x00000000;
 /*0x64*/ static u32 _data_64 = 0x00000000;
 /*0x68*/ static u32 _data_68 = 0x00000000;
 /*0x6C*/ static f32 _data_6C = 55.0;
-/*0x70*/ static u32 _data_70[] = {
-    0x425c0000, 0x42c80000, 0x43520000, 0x42fa0000, 0x425c0000, 0x425c0000, 0x425c0000, 0x425c0000, 
-    0x42700000, 0x43520000, 0x42f00000, 0x425c0000, 0x425c0000, 0x425c0000, 0x425c0000, 0x42700000, 
-    0x435c0000, 0x43700000, 0x425c0000, 0x425c0000
+/*0x70*/ static f32 _data_70[] = {
+    55, 100, 210, 125, 55, 55, 55, 55, 
+    60, 210, 120, 55, 55, 55, 55, 60, 
+    220, 240, 55, 55
 };
 /*0xC0*/ static u32 _data_C0 = 0x00000000;
 /*0xC4*/ static f32 _data_C4 = 1.0;
@@ -66,14 +76,14 @@
     0xffec0014, 0x00000000, 0x07e00014, 0x00140000, 0x07e007e0, 0x00000000, 0x000003e0, 0x03e0ffec, 
     0xffec0000, 0x00000000, 0x0014ffec, 0x000007e0, 0x00000000
 };
-/*0x27C*/ static u32 _data_27C[] = {
-    0x00000000, 0x00000000, 0x458fc000
+/*0x27C*/ static f32 _data_27C[] = {
+    0, 0, 4600
 };
-/*0x288*/ static u32 _data_288[] = {
-    0x00000000, 0x00000000, 0x458fc000
+/*0x288*/ static f32 _data_288[] = {
+    0, 0, 4600
 };
-/*0x294*/ static u32 _data_294[] = {
-    0x00000000, 0x00000000, 0x43480000, 0x00000000
+/*0x294*/ static f32 _data_294[] = {
+    0, 0, 200, 0
 };
 /*0x2A4*/ static u32 _data_2A4 = 0x00000000;
 /*0x2A8*/ static u32 _data_2A8[] = {
@@ -119,7 +129,7 @@ typedef struct
 /*090*/ f32 unk90;
 /*094*/ f32 unk94;
 /*098*/ u8 _unk98[0xc0 - 0x98];
-/*0C0*/ f32 unkC0;
+/*0C0*/ f32 timeSeconds; //time of day (seconds)
 /*0C4*/ f32 unkC4;
 /*0C8*/ f32 unkC8;
 /*0CC*/ UNK_TYPE_32 unkCC;
@@ -146,8 +156,8 @@ typedef struct
 } NewDayStruct;
 
 /*0x0*/ static u8 _bss_0[0x26]; // DAT_810296a0
-/*0x26*/ static u8 _bss_26[0x1]; // DAT_810296c6
-/*0x27*/ static u8 _bss_27[0x1]; // DAT_810296c7
+/*0x26*/ static u8 _bss_26; // DAT_810296c6
+/*0x27*/ static u8 _bss_27; // DAT_810296c7
 /*0x28*/ static u8 _bss_28[0x4]; // DAT_810296c8
 /*0x2C*/ static u8 _bss_2C[0x4]; // DAT_810296cc
 /*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
@@ -165,7 +175,11 @@ void dll_7_dtor(void *self) { }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_C58.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_CDC.s")
+void dll_7_func_CDC(f32* timeSeconds) {
+    if (_bss_30 != NULL) {
+        *timeSeconds = _bss_30->timeSeconds;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D08.s")
 
@@ -179,53 +193,54 @@ void dll_7_func_DAC(s32 *param1) {
     }
 }
 
-s32 dll_7_func_DF4(f32* arg0) {
+/** 
+  * Checks if nighttime
+  * Also sets the argument float to the seconds until nighttime/daytime 
+  */
+s32 dll_7_func_DF4(f32* timeSeconds) {
     if (_bss_30 == NULL) {
-        *arg0 = 0.0f;
-        return 0;
+        *timeSeconds = 0.0f;
+        return FALSE;
     }
 
-    if ((_data_5C >= 75600.0f) || (_data_5C < 18000.0f)) {
-        if (_data_5C >= 75600.0f) {
-            *arg0 = (_data_5C - 75600.0f) + 18000.0f;
+    //If night
+    if (_data_5C >= NIGHTTIME || _data_5C < DAYTIME) {
+        if (_data_5C >= NIGHTTIME) {
+            *timeSeconds = (_data_5C - NIGHTTIME) + DAYTIME; //seconds into nighttime (added to base daytime?)
         } else {
-            *arg0 = 18000.0f - _data_5C;
+            *timeSeconds = DAYTIME - _data_5C; //seconds until daytime (when time in 0-to-daytime range)
         }
 
-        return 1;
+        return TRUE;
     }
 
-    *arg0 = 75600.0f - _data_5C;
-    return 0;
+    //If day
+    *timeSeconds = NIGHTTIME - _data_5C; //seconds until nighttime
+    return FALSE;
 }
 
-void dll_7_func_EA0(f32 arg0) {
-    f32 var_f0;
+/** Sets the current time (in seconds), wrapping the value into a 24h range */
+void dll_7_func_EA0(f32 time) {
+    f32 tWrap;
 
-    var_f0 = arg0;
+    tWrap = time;
     _data_58 = 1;
-    if (var_f0 >= 86400.0f) {
-        var_f0 = var_f0 / 86400.0f;
-        var_f0 -= (s32) var_f0;
-        var_f0 *= 86400.0f;
+    if (tWrap >= SECONDS_IN_DAY) {
+        tWrap = tWrap / SECONDS_IN_DAY;
+        tWrap -= (s32) tWrap;
+        tWrap *= SECONDS_IN_DAY;
     }
-    if (_bss_30 != NULL) {
-        _bss_30->unkC0 = var_f0;
+    if (_bss_30) {
+        _bss_30->timeSeconds = tWrap;
     } else {
-        _data_5C = var_f0;
+        _data_5C = tWrap;
     }
-    _data_8 = var_f0;
+    _data_8 = tWrap;
 }
 
 s32 dll_7_func_F24() {
     return _data_60;
 }
-
-#define SECONDS_IN_HOUR (60 * 60)
-#define SECONDS_IN_MINUTE (60)
-#define TICKS_IN_HOUR (SECONDS_IN_HOUR * 60)
-#define TICKS_IN_MINUTE (SECONDS_IN_MINUTE * 60)
-#define TICKS_IN_SECOND (60)
 
 // F40
 void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 *seconds) {
@@ -268,7 +283,9 @@ void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D20.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D6C.s")
+s32 dll_7_func_5D6C(void) {
+    return _bss_27 & 0xF;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D90.s")
 
@@ -278,6 +295,8 @@ void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E5C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5EB4.s")
+u8 dll_7_func_5EB4(void) {
+    return _bss_26;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5ED0.s")
