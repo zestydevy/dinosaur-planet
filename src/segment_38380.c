@@ -606,7 +606,7 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
     
     fbPtr = get_framebuffer_end();
     
-    chunkSize = 6;
+    chunkSize = 6; //@bug: causes interleaved garbling at right edge of frame (value of 1 mostly fixes it)
     
     gSPClearGeometryMode(*gdl, 0xFFFFFF);
     dl_apply_geometry_mode(gdl);
