@@ -38,6 +38,7 @@
 223 = objects/223_cannon_claw
 227 = objects/227_tumbleweed
 264 = objects/264_kamerian_flame
+266 = objects/266_sfxplayer
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
 281 = objects/281_area
