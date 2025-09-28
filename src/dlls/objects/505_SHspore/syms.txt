@@ -1,0 +1,18 @@
+.text = 0x0:
+SHspore_ctor = 0x0;
+SHspore_dtor = 0xC;
+SHspore_create = 0x18;
+SHspore_update = 0x18C;
+SHspore_func_750 = 0x750;
+SHspore_func_A00 = 0xA00;
+SHspore_func_B88 = 0xB88;
+SHspore_draw = 0xB94;
+SHspore_destroy = 0xBAC;
+SHspore_func_BF4 = 0xBF4;
+SHspore_get_state_size = 0xC04;
+
+.rodata = 0xC90:
+
+.data = 0xCB0:
+_data_0 = 0x0; // absolute:0xCB0
+_data_C = 0xC; // absolute:0xCBC

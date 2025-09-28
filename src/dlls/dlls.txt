@@ -48,6 +48,7 @@
 365 = objects/365
 466 = objects/466_mmshrine
 496 = objects/496_snowhorn
+505 = objects/505_SHspore
 638 = objects/638_DFP_LevelContro
 668 = objects/668_db_diamond
 782 = objects/782_WCPushBlock
