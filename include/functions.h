@@ -140,6 +140,8 @@ void func_80041CE4(s32 arg0);
 void func_80041E24(s32 arg0);
 void func_80047374(void);
 void func_800473BC(void);
+
+/** Applies envFxAction */
 s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
 s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
 
