@@ -45,4 +45,6 @@ void *obj_alloc_create_info(s32 size, s32 objId);
 
 void func_800210DC();
 
+s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz);
+
 #endif
