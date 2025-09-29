@@ -2,6 +2,7 @@
 3 = engine/3_ANIM
 6 = engine/6_AMSFX
 7 = engine/7_newday
+13 = engine/13_expgfx
 16 = engine/16
 20 = engine/20_screens
 21 = engine/21_gametext
