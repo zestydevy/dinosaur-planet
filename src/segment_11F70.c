@@ -70,6 +70,8 @@ void controller_querey(OSMesgQueue* arg0, ContQueryStruct* arg1) {
     }
 }
 
+// regalloc
+// https://decomp.me/scratch/80VvQ
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_11F70/func_80011490.s")
 s32 func_80011490(OSMesgQueue *arg0, UnkOSPifRam* arg1, ContQueryStruct* arg2);
