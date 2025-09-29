@@ -80,7 +80,7 @@ typedef struct StructData1C {
 /*0x7A2*/ static u8 _bss_7A2;
 /*0x7A3*/ static u8 _bss_7A3;
 /*0x7A4*/ static u8 _bss_7A4;
-/*0x7A8*/ static s32 _bss_7A8;
+/*0x7A8*/ static s32 currentColourCommand;
 /*0x7AC*/ static GameTextChunk *_bss_7AC;
 /*0x7B0*/ static u16 _bss_7B0;
 /*0x7B2*/ static u8 _bss_7B2[0x2];
@@ -202,7 +202,7 @@ void dll_22_func_368(u16 arg0) {
         dll_22_func_448();
     }
     _data_34 = 1;
-    _bss_7A8 = -255;
+    currentColourCommand = -255;
     _bss_7AC = gDLL_21_Gametext->vtbl->get_chunk(arg0);
     _bss_7B0 = arg0;
 }
@@ -672,42 +672,44 @@ void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4)
 }
 
 // offset: 0x2000 | func: 17
-static void dll_22_func_2000(u8 *arg0, s32 arg1) {
-    s32 var_s0;
+/** Converts a Gametext RGBA8 colour command to an RGBA32 colour */
+static void dll_22_func_2000(u8 *colour_rgba32, s32 rgba8) {
+    s32 componentIndex;
 
-    _bss_7A8 = arg1;
-    arg1 = -arg1;
+    currentColourCommand = rgba8;
+    rgba8 = -rgba8;
 
-    switch (arg1 & 3) {
+    switch (rgba8 & 3) {
         case 0:
-            arg0[3] = 0x3F;
+            colour_rgba32[3] = 63;
             break;
         case 1:
-            arg0[3] = 0x7F;
+            colour_rgba32[3] = 127;
             break;
         case 2:
-            arg0[3] = 0xBF;
+            colour_rgba32[3] = 191;
             break;
         default:
-            arg0[3] = 0xFF;
+            colour_rgba32[3] = 255;
     }
-    for (var_s0 = 2; var_s0 >= 0; var_s0--) {
-        arg1 >>= 2;
-        arg0[var_s0] = dll_22_func_20CC(arg1 & 3);
+    for (componentIndex = 2; componentIndex >= 0; componentIndex--) {
+        rgba8 >>= 2;
+        colour_rgba32[componentIndex] = dll_22_func_20CC(rgba8 & 3);
     }
 }
 
 // offset: 0x20CC | func: 18
-static u8 dll_22_func_20CC(u8 arg0) {
-    switch (arg0) {
+/** Converts a 2-bit RGB colour component value to an 8bit value */
+static u8 dll_22_func_20CC(u8 colourComponent) {
+    switch (colourComponent) {
         case 0:
             return 0;
         case 1:
-            return 0x3F;
+            return 63;
         case 2:
-            return 0x7F;
+            return 127;
         default:
-            return 0xFF;
+            return 255;
     }
 }
 
