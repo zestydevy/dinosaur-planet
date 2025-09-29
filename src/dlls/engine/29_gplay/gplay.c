@@ -37,6 +37,8 @@ static u16 data_0[120] = {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
+
+//map object group flagIDs
 static u16 data_F0[120] = {
     0x03e0, 0x03e0, 0x05db, 0x08ed, 0x0500, 0x07ce, 0x0480, 0x0452, 0x0452, 0x047b, 0x04ae, 0x0405, 0x0458, 0x036a, 0x04a6, 0x045a, 
     0x047c, 0x0000, 0x042e, 0x0493, 0x0000, 0x05d1, 0x0000, 0x03ad, 0x03ad, 0x03ad, 0x0517, 0x0373, 0x0443, 0x03b7, 0x0421, 0x0000, 
@@ -577,21 +579,21 @@ u8 gplay_func_143C(s32 mapID) {
     return bss_1A48[1];
 }
 
-u8 gplay_func_14F0(s32 param1, s32 param2) {
-    if (param1 >= 80) {
-        param1 = bss_1840[param1 - 80];
+u8 gplay_func_14F0(s32 mapID, s32 objectGroupID) {
+    if (mapID >= 80) {
+        mapID = bss_1840[mapID - 80];
     }
 
-    if (param1 != bss_1A50[0]) {
-        bss_1A50[0] = param1;
-        bss_1A50[1] = get_gplay_bitstring(data_F0[param1]);
+    if (mapID != bss_1A50[0]) {
+        bss_1A50[0] = mapID;
+        bss_1A50[1] = get_gplay_bitstring(data_F0[mapID]);
     }
 
-    return (bss_1A50[1] >> param2) & 1;
+    return (bss_1A50[1] >> objectGroupID) & 1;
 }
 
-u16 gplay_func_1590(s32 param1) {
-    return data_F0[param1];
+u16 gplay_func_1590(s32 mapID) {
+    return data_F0[mapID];
 }
 
 void gplay_func_15B8(s32 param1) {
