@@ -21,7 +21,7 @@ typedef struct {
 /*25D*/ s8 unk25D;
 /*25E*/ s8 unk25E;
 /*25F*/ s8 unk25F;
-/*260*/ f32 unk260;
+/*260*/ f32 lifetime;
 /*264*/ f32 unk264;
 /*268*/ f32 unk268;
 /*26C*/ f32 unk26C;
@@ -62,7 +62,7 @@ void SHspore_create(Object* self, s32 arg1, s32 arg2) {
 
     state = self->state;
     sp37 = 5;
-    state->unk260 = 1500.0f;
+    state->lifetime = 1500.0f; //25s
     self->unk0xb0 |= 0x6000;
     self->speed.y = 3.0f;
     
@@ -158,13 +158,14 @@ void SHspore_update(Object* self) {
                 func_800267A4(self);
             }
         } else {
-            state->unk260 -= delayFloat;
-            if (state->unk260 <= 0.0f || state->unk25C & 0x11) {
+            state->lifetime -= delayFloat;
+            //Destroy the spore if its lifetime runs out or it collides with terrain
+            if (state->lifetime <= 0.0f || state->unk25C & 0x11) {
                 gDLL_6_AMSFX->vtbl->func2(self, 0x8A2, 0x7F, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
                 
                 //Create collision particles
-                for (var_s0 = 0; var_s0 < 0x14; var_s0++){
+                for (var_s0 = 0; var_s0 < 20; var_s0++){
                     gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
                 }
                 
