@@ -10,6 +10,7 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/objanim.h"
 #include "sys/print.h"
 #include "sys/rand.h"
 #include "variables.h"
@@ -18,7 +19,6 @@
 
 s32 func_800053B0(void*, f32);
 s32 func_8002493C(void*, f32, void*);
-void func_80025780(Object*, f32, s32*, void*);
 s32 func_80026DF4(Object*, u32*, u32, s32, void*);
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
@@ -199,14 +199,6 @@ typedef struct {
 /*08E*/ u8 unk8E[10];
 /*098*/ u8 unk98[10];
 } UnkStruct2;
-
-typedef struct {
-  f32 unk0[3];
-  s16 unkc[3];
-  u8 unk12;
-  s8 unk13[8];
-  s8 unk1B; // current length of unk13
-} UnkFunc_80024108Struct;
 
 typedef struct {
 s16 soundIDA;
@@ -473,7 +465,7 @@ void dll_496_func_24C(Object* snowhorn) {
         } else {
             state->unk424 &= 0xFFF7;
         }
-        func_80025780(snowhorn, delayFloat, &sp44, 0);
+        func_80025780(snowhorn, delayFloat, (void*)&sp44, 0);
     }
 
     if ((state->chatSequenceList != 0) && (snowhorn->unk0xaf & 1)) {
