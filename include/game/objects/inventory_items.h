@@ -91,4 +91,9 @@ enum InventorySpellIndices {
     INVENTORY_SPELL_8_MIND_READ = 8
 };
 
+enum InventoryIcons {
+    INVENTORY_ICON_SPELLSTONE_INACTIVE = 0x0562,
+    INVENTORY_ICON_SPELLSTONE_ACTIVE = 0x0563
+};
+
 #endif
