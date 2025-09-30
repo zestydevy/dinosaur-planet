@@ -12,12 +12,7 @@
 
 static const char str_80099800[] = "Error in loading Model Inst in ObjAnimSetMove ";
 
-
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80023D30.s")
-#else
-
-Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model);
+Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
 s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     s32 temp_t0;
@@ -80,7 +75,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         if (changed) {
             animState->unk_0x62[0] = (1 - animState->unk_0x62[0]);
             animState->animIndexes[0] = animState->unk_0x62[0] & 0xFFFF;
-            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, (s32)animState->anims[(u16)animState->unk_0x62[0]]->boneRemaps, model);
+            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk_0x62[0]]->boneRemaps, model);
         }
         anim = &animState->anims[animState->animIndexes[0]]->anim;
     } else {
@@ -114,7 +109,6 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     
     return 0;
 }
-#endif
 
 s32 func_800240BC(Object* object, f32 progress) {
     if (progress > 0.999f){
@@ -177,8 +171,6 @@ s16 func_80024E2C(Object* arg0) {
   animState = model->animState0;
   return animState->unk_0x58[0];
 }
-
-Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
 s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     s32 temp_t9;
