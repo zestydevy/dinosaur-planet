@@ -377,7 +377,7 @@ class BuildNinjaWriter:
             if custom_link_script.exists():
                 # Use DLL's custom link script
                 # Note: Assume custom script lists all inputs
-                implicit_deps = [str(custom_link_script), syms_ld_path]
+                implicit_deps = [str(custom_link_script), syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"]
                 implicit_deps.extend(dll_link_deps)
                 self.writer.build(elf_path.as_posix(), "ld_dll", [], 
                     implicit=implicit_deps,
