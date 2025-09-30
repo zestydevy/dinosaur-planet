@@ -2,12 +2,13 @@
 #define _DLL_17_H
 
 #include "dll_def.h"
+#include "game/objects/object.h"
 #include "types.h"
 
 DLL_INTERFACE(DLL_17) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
-/*1*/ void (*func1)(Object *obj, s32, SRT *, s32, s32, f32 *);
+/*1*/ s32 (*func1)(Object *obj, s32, SRT *, s32, s32, f32 *); //creates billboard particles
 /*2*/ UnknownDLLFunc func2;
 };
 
