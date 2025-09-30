@@ -264,18 +264,18 @@ static u32 _data_260[] = {
 static u8 _data_270 = 0;
 static u8 _data_274[] = {0,0,0,0, 0,0,0,0};
 static s32 _data_27C[] = {
-    0x3
+    3
 };
 static f32 _data_280[] = {
     0.005, 0.0
 };
 static s16 _data_288[] = {
-    0x23, 0x23, 0x23, 0x23, 0x29, 0x0, 0x0, 0x0
+    35, 35, 35, 35, 41, 0, 0, 0
 };
 static f32 _data_298[] = {
     0.005, 0.005, 0.005, 0.005, 0.008, 0.005, 0.005, 0.005
 };
-static s32 _data_2B8[] = {0};
+static s16 _data_2B8[] = {0};
 static f32 _data_2BC[] = {0.005};
 static s32 _data_2C0[] = {
     0x0, 0x1
@@ -911,7 +911,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     s32 result;
     
     state->unk424 |= 0x45;
-    state->someAnimIDList = _data_27C;
+    state->someAnimIDList = (s16*)_data_27C;
     state->unk48 = _data_280;
 
     result = gDLL_26_Curves->vtbl->curves_func_4288(&state->unk60, snowhorn, 1000.0f, &sp2C, -1);
@@ -1038,7 +1038,7 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
         set_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress, questValue);
     }
     
-    state->someAnimIDList = (s32*)_data_288;
+    state->someAnimIDList = _data_288;
     state->unk48 = _data_298;
     state->garundaTe_weedsEaten = get_gplay_bitstring(FLAG_Garunda_Te_NumFrostWeedsEaten);
 }
