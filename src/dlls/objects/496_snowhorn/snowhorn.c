@@ -78,11 +78,7 @@ typedef struct {
 /*006*/ s16 unk6;
 /*008*/ s16 unk8;
 /*00A*/ s16 sleepTimer; //randomly-assigned value?
-/*00c*/ union {
-    u16 quest; //on tutorial SnowHorn
-    u16 isWalking; //only on walking SnowHorn
-    u16 GarundaTeQuest; //only on Garunda Te
-};
+/*00c*/ u16 flags;
 /*00e*/ u16 unkE; //yaw?
 /*010*/ s32 unk10;
 /*014*/ Vec3f playerPositionCopy;
@@ -99,7 +95,7 @@ typedef struct {
 /*038*/ s32 unk38;
 /*03c*/ s32 unk3C;
 /*040*/ s32 unk40;
-/*044*/ s32* someAnimIDList;
+/*044*/ s16* someAnimIDList;
 /*048*/ f32* unk48;
 /*04c*/ s32* chatSequenceList;
 /*050*/ f32 unk50;
@@ -155,7 +151,7 @@ typedef struct {
 /*3f4*/ u32 unk3f4;
 /*3f8*/ u32 unk3f8;
 /*3fc*/ u32 unk3fc;
-/*400*/ s8 lookAtUnk; //something to do with the look-at behaviour!
+/*400*/ s8 lookAtUnk;
 /*401*/ s8 unk401;
 /*402*/ s8 unk402;
 /*403*/ s8 unk403;
@@ -177,13 +173,13 @@ typedef struct {
 /*42B*/ s8 unk42B;
 /*42C*/ f32 unk42C;
 /*42C*/ s8 unk430[0x16c];
-/*59c*/ s16 unk59C; //eyeR_u
-/*59e*/ s16 unk59e; //eyeR_v
+/*59c*/ s16 rEyeU;
+/*59e*/ s16 rEyeV;
 /*600*/ u32 unk600;
 /*604*/ u32 unk604;
 /*608*/ u32 unk608;
-/*60c*/ s16 unk60C;  //eyeL_u
-/*60e*/ s16 unk60e;  //eyeL_v
+/*60c*/ s16 lEyeU;
+/*60e*/ s16 lEyeV;
 } SnowHornState;
 
 typedef struct{
@@ -212,46 +208,57 @@ typedef struct {
   s8 unk1B; // current length of unk13
 } UnkFunc_80024108Struct;
 
+typedef struct {
+s16 soundIDA;
+s16 soundIDB;
+s16 unk4;
+s16 unk6;
+s8 unk8; //Boolean: seems to choose between using DLL17 (particles) or DLL106 (modgfx)
+f32 unkC;
+f32 unk10;
+} SnowHornData0;
+
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
-static u32 _data_0[] = {
-    0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
-    0x0377ffff, 0x002f0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
-    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
-    0x0677ffff, 0xffffffff, 0x01000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0677ffff, 0xffffffff, 0x01000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
-    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
-    0x0377ffff, 0x002a0030, 0x00000000, 0x3c343958, 0x3ba3d70a, 
-    0x0377ffff, 0x002e0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0x002d0030, 0x00000000, 0x3c449ba6, 0x3ba3d70a, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0x002c0030, 0x00000000, 0x3c75c28f, 0x3ba3d70a, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0x002b0030, 0x00000000, 0x3c75c28f, 0x3ba3d70a, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000, 
-    0x0377ffff, 0xffffffff, 0x00000000, 0x00000000, 0x00000000
+static SnowHornData0 _data_0[] = {
+    {0x0377, 0xffff, 0x002f, 0x0030, 0x00,  0.012, 0.005}, 
+    {0x0377, 0xffff, 0x002f, 0x0030, 0x00,  0.012, 0.005}, 
+    {0x0377, 0xffff, 0x002a, 0x0030, 0x00,  0.011, 0.005}, 
+    {0x0677, 0xffff, 0xffff, 0xffff, 0x01,  0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
+    {0x0677, 0xffff, 0xffff, 0xffff, 0x01,  0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0x002a, 0x0030, 0x00, 0.011, 0.005}, 
+    {0x0377, 0xffff, 0x002a, 0x0030, 0x00, 0.011, 0.005}, 
+    {0x0377, 0xffff, 0x002a, 0x0030, 0x00, 0.011, 0.005}, 
+    {0x0377, 0xffff, 0x002e, 0x0030, 0x00, 0.012, 0.005}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0x002d, 0x0030, 0x00, 0.012, 0.005}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0x002c, 0x0030, 0x00, 0.015, 0.005}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0x002b, 0x0030, 0x00, 0.015, 0.005}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
+    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}
 };
-static u32 _data_230[] = {
-    0xc1400000, 0x00000000, 0xc1a00000, 
-    0x41400000, 0x00000000, 0xc1a00000, 
-    0x41400000, 0x00000000, 0x41a00000, 
-    0xc1400000, 0x00000000, 0x41a00000
+
+static f32 _data_230[] = {
+    -12, 0, -20, 
+    12, 0, -20, 
+    12, 0, 20, 
+    -12, 0, 20
 };
 static u32 _data_260[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
+    0, 0, 0, 0
 };
 /** Boolean - decides whether all SnowHorn should go to sleep */
 static u8 _data_270 = 0;
@@ -294,8 +301,8 @@ static s32 _data_2E0[] = {
 static s32 _data_2E8[] = {
     0x9, 0xb, 0xc, 0xd, 0xe, 0xf
 };
-static u32 _data_300[] = {
-    0x01010101, 0x00000000, 0x00000000, 0x00000000
+static s8 _data_300[] = {
+    1,1,1,1
 };
 
 void dll_496_ctor(s32 arg0) {
@@ -377,7 +384,7 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
 void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 
 void dll_496_func_24C(Object* snowhorn) {
-    void* sp68; //don't know the type
+    f32 daytime; //don't know the type
     SnowHornState* state;
     SnowHornCreateInfo* mapsObj;
     Object* player;
@@ -388,49 +395,40 @@ void dll_496_func_24C(Object* snowhorn) {
     u32 seqIndex;
     s32 sp44; //don't know the type
     s32 animIndex;
-    u16 var_v0;
     Vec3f* sp34;
 
     state = snowhorn->state;
     mapsObj = (SnowHornCreateInfo*)snowhorn->createInfo;
-    player = get_player();   
-    
-    if (vec3_distance_xz_squared(&snowhorn->positionMirror, &player->positionMirror) < (2.0f * (f32) (state->unkRadius * state->unkRadius))) {
-        var_v0 = state->unk424;
-        temp_t9 = var_v0 | 0x80;
-        if (!(var_v0 & 0x80)) {
-            state->unk424 = temp_t9;
-            var_v0 = temp_t9;
+    player = get_player();
+
+    if (vec3_distance_xz_squared(&snowhorn->positionMirror, &player->positionMirror) 
+            < 2.0f * (state->unkRadius * state->unkRadius)) {
+        if (!(state->unk424 & 0x80)) {
+            state->unk424 |= 0x80;
         }
     } else {
-        var_v0 = state->unk424;
-        temp_t1 = var_v0 & -129;
-        if (var_v0 & 0x80) {
-            state->unk424 = temp_t1;
-            var_v0 = temp_t1 & 0xFF;
+        if (state->unk424 & 0x80) {
+            state->unk424 &= 0xFF7F;
         }
     }
     
-    if (var_v0 & 0x40) {
-        dll_496_func_CC4(snowhorn, var_v0 & 4);
+   if (state->unk424 & 0x40) {
+        dll_496_func_CC4(snowhorn, state->unk424 & 4);
         func_800328F0(snowhorn, &state->lookAtUnk, state->walkSpeed);
     }
     func_80032A08(snowhorn, &state->lookAtUnk);
-    if (state->isWalking & 0x4000) {
-        var_v0 = 1;
-    } else {
-        var_v0 = 0;
-    }
-    if (func_80026DF4(snowhorn, _data_0, 0x1C, var_v0 & 0xFF, (s8*)state + 0x54) != 0) {
-        state->isWalking = (u16) (state->isWalking | 0x4000);
+
+    if (func_80026DF4(snowhorn, (u32*)_data_0, 0x1C, (state->flags & 0x4000 ? 1 : 0) & 0xFF, 
+                      (s8*)state + 0x54) != 0) {
+        state->flags |= 0x4000;
         return;
     }
-    state->isWalking &= 0xBFFF;
+    
+    state->flags &= 0xBFFF;
     state->unk427 = gDLL_29_Gplay->vtbl->get_map_setup(snowhorn->mapID);
-    _data_270 = gDLL_7_Newday->vtbl->func8((s32)&sp68); //check if night?
+    _data_270 = gDLL_7_Newday->vtbl->func8(&daytime); //check if night
 
-    var_v0 = state->isWalking & 0x8000;
-    if (var_v0 && (dll_496_func_980(snowhorn) != 0)){
+    if (state->flags & 0x8000 && (dll_496_func_980(snowhorn) != 0)){
         return;
     }
 
@@ -455,15 +453,13 @@ void dll_496_func_24C(Object* snowhorn) {
     }
     
     if (state->unk424 & 1) {
-        sp34 = state->unk170;
-
-        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(snowhorn, sp34, delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(snowhorn, sp34);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_624(snowhorn, sp34, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(snowhorn, &state->unk170, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(snowhorn, &state->unk170);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_624(snowhorn, &state->unk170, delayFloat);
     }
 
     if (state->someAnimIDList) {
-        animIndex = state->isWalking & 0xFFFF7FFF;
+        animIndex = state->flags & 0xFFFF7FFF;
         if (snowhorn->curModAnimId != state->someAnimIDList[animIndex]) {
             func_80023D30(snowhorn, state->someAnimIDList[animIndex], 0.0f, 0);
 
@@ -479,7 +475,8 @@ void dll_496_func_24C(Object* snowhorn) {
         }
         func_80025780(snowhorn, delayFloat, &sp44, 0);
     }
-    if ((state->unk0 != 0) && (snowhorn->unk0xaf & 1)) {
+
+    if ((state->chatSequenceList != 0) && (snowhorn->unk0xaf & 1)) {
         if (state->unk424 & 0x20) {
             seqIndex = rand_next(0, state->unk426 - 1);
         } else {
@@ -489,8 +486,8 @@ void dll_496_func_24C(Object* snowhorn) {
         if (state->unk425 >= state->unk426) {
             state->unk425 = 0;
         }
-        gDLL_3_Animation->vtbl->func17(state->unk0[seqIndex], snowhorn, -1);
-        set_button_mask(0, 0x8000);
+        gDLL_3_Animation->vtbl->func17(state->chatSequenceList[seqIndex], snowhorn, -1);
+        set_button_mask(0, A_BUTTON);
     }
 
 }
@@ -501,14 +498,14 @@ void dll_496_func_770(u32 a0){
 
 s32 func_80031F6C(void*, s32, f32*, f32*, f32*, s32);
 
-void dll_496_func_77C(Object* snowHorn, Gfx **arg1, Mtx **arg2, Vertex **arg3, Triangle **arg4, s8 doDraw) {
+void dll_496_func_77C(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **pols, s8 visibility) {
     SnowHornState* state;
     u32 addr;
 
-    state = snowHorn->state;
-    if (doDraw) {
-        draw_object(snowHorn, arg1, arg2, arg3, arg4, 1.0f);
-        func_80031F6C(snowHorn, 1, &state->playerPositionCopy.x, &state->playerPositionCopy.y, &state->playerPositionCopy.z, 0);
+    state = self->state;
+    if (visibility) {
+        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        func_80031F6C(self, 1, &state->playerPositionCopy.x, &state->playerPositionCopy.y, &state->playerPositionCopy.z, 0);
     }
 }
 
@@ -609,7 +606,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
-                state->isWalking &= 0x7FFF;
+                state->flags &= 0x7FFF;
                 snowhorn->unk0xaf &= 0xFFF7;
                 return 0;
             }
@@ -645,7 +642,7 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
 }
 
 void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
-    state->isWalking = 0;
+    state->flags = 0;
     state->unk424 |= 0x44;
     state->unkRadius = mapsObj->unkRadius;
 }
@@ -656,14 +653,14 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
 
     if (_data_270 != 0) {
         state->sleepTimer = rand_next(0, 300);
-        state->quest |= 0x8000;
+        state->flags |= 0x8000;
 
         snowhorn->unk0xaf |= 8;
         snowhorn->unk0xaf &= -2;
         return;
     }
     
-    state->quest &= 0x7FFF;
+    state->flags &= 0x7FFF;
     if (snowhorn->curModAnimId != 0) {
         func_80023D30(snowhorn, 0, 0.0f, 0);
     }
@@ -685,11 +682,11 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     state->sleepTimer = 0;
     snowhorn->unk0xaf &= 0xFFF7;
 
-    switch (state->quest) {
+    switch (state->flags) {
         u32 rootsEaten;
         case 0:
             if (get_gplay_bitstring(FLAG_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-                state->quest = 1;
+                state->flags = 1;
             }
             break;    
         case 1:
@@ -699,14 +696,14 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
                     if (get_gplay_bitstring(FLAG_SnowHorn_Tutorial_GotAlpineRoot1) || 
                         get_gplay_bitstring(FLAG_SnowHorn_Tutorial_GotAlpineRoot2))
                     {
-                        state->quest = 2;
+                        state->flags = 2;
                     }
                     break;
                 case 1:
-                    state->quest = 4;
+                    state->flags = 4;
                     break;
                 default:
-                    state->quest = 6;
+                    state->flags = 6;
                     break;
             }
             break;
@@ -715,7 +712,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 1);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
                 gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
-                state->quest = 4;
+                state->flags = 4;
                 return;
             }
             break;
@@ -724,7 +721,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
                 set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 2);
                 decrement_gplay_bitstring(INVENTORY_Alpine_Root);
                 gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
-                state->quest = 6;
+                state->flags = 6;
                 return;
             }
             break;
@@ -735,8 +732,8 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     //Play chat sequence
     if (snowhorn->unk0xaf & 1) {
         snowhorn->unk0xaf &= 0xFFFE;
-        if (state->quest < 7) {
-            gDLL_3_Animation->vtbl->func17(state->quest, snowhorn, -1);
+        if (state->flags < 7) {
+            gDLL_3_Animation->vtbl->func17(state->flags, snowhorn, -1);
             set_button_mask(0, 0x8000);
         }
     }
@@ -769,7 +766,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
     state = self->state;
     
     temp_v0 = func_80024108(self, 0.005f, delayByte, 0);
-    questValue = state->quest;
+    questValue = state->flags;
 
     // position = &state->playerPositionCopy;
     switch (questValue) {
@@ -789,7 +786,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
             srt.transl.y = v.y + self->srt.transl.y;
             srt.transl.z = v.z + state->playerPositionCopy.z;
             srt.yaw = 0;
-            state->quest = 1;
+            state->flags = 1;
             break;
         case 1:
             if (self->animProgress > 0.25f) {
@@ -808,7 +805,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
                 srt.transl.y = v.y + self->srt.transl.y;
                 srt.transl.z = v.z + state->playerPositionCopy.z;
                 srt.yaw = 0;
-                state->quest = 2;
+                state->flags = 2;
             }
             break;
         case 2:
@@ -832,7 +829,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
                 self->positionMirror.x = self->positionMirror.x;                
                 self->positionMirror.y = self->positionMirror.y;
                 self->positionMirror.z = self->positionMirror.z;
-                state->quest = 3;
+                state->flags = 3;
             }
             break;
         case 3:
@@ -851,19 +848,19 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
             srt.transl.y = v.y + self->srt.transl.y;
             srt.transl.z = v.z + state->playerPositionCopy.z;
             srt.yaw = 0;
-            state->quest = 4;
+            state->flags = 4;
             break;
         case 4:
             if (temp_v0 != 0) {
                 func_80023D30(self, 0, 0.0f, 0);
-                state->quest = 5;
+                state->flags = 5;
                 return;
             }
             break;
         case 5:
             questValue |= 0x8000;
             if (_data_270 != 0) {
-                state->quest = questValue;
+                state->flags = questValue;
                 temp_t3 = self->unk0xaf | 8;
                 self->unk0xaf = temp_t3;
                 self->unk0xaf = temp_t3 & 0xFFFE;
@@ -898,7 +895,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
                     state->unk40 = self->srt.transl.z - (fsin16_precise(seqBoneAngle) * 250.0f);
                     state->unk2C = 0;
                 }
-                state->quest = 0;
+                state->flags = 0;
             }
             break;
     }
@@ -922,10 +919,10 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
         snowhorn->srt.transl.x = state->unk60.unk68;
         snowhorn->srt.transl.z = state->unk60.unk70;
         
-        state->isWalking = 1;
+        state->flags = 1;
         state->walkSpeed = 0.5f;
     } else {
-        state->isWalking = 0;
+        state->flags = 0;
     }
 
     if (createInfo->unk1D == result){
@@ -972,7 +969,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
         if (state->walkSpeed > 0.0f) {
             state->walkSpeed = temp_walkSpeed - 0.025f;
         } else {
-            state->isWalking |= 0x8000;
+            state->flags |= 0x8000;
             state->walkSpeed = 0.0f;
             state->sleepTimer = rand_next(0, 300);
             return;
@@ -996,10 +993,10 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
     }
     snowhorn->unk0xaf &= 0xFFF7;
 
-    if (state->isWalking != 0) {
+    if (state->flags != 0) {
         curveStruct = &state->unk60;
-        if (state->isWalking != 1) {
-            state->isWalking = 0;
+        if (state->flags != 1) {
+            state->flags = 0;
             return;
         }
         if ((func_800053B0(curveStruct, state->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
@@ -1017,12 +1014,12 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
         state->unk424 &= 0xFFFB;
         
         if (state->walkSpeed <= 0.0f) {
-            state->isWalking = 0;
+            state->flags = 0;
         }
     } else {
         state->unk424 = (u8) (state->unk424 | 4);
         if (0.1f < state->walkSpeed) {
-            state->isWalking = 1;
+            state->flags = 1;
         }
     }
 }
@@ -1032,12 +1029,12 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     u16 questValue;
     u16 questEnd = 6;
 
-    questValue = (state->GarundaTeQuest = get_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress));
+    questValue = (state->flags = get_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress));
     
     /** If the 1st SpellStone is activated, makes sure Garunda Te's flags are in their end state */
     if (questValue < questEnd && get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
-        state->GarundaTeQuest = questEnd;
-        questValue = state->GarundaTeQuest;
+        state->flags = questEnd;
+        questValue = state->flags;
         set_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress, questValue);
     }
     
@@ -1051,7 +1048,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
     s32 weeds;
     
     self->unk0xaf &= 0xFFF7;
-    switch (state->GarundaTeQuest) {
+    switch (state->flags) {
         case 0:
             //Calling out to the player periodically
             state->unk8 += delayByte;
@@ -1061,14 +1058,14 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                 state->unk8 = 0;
             }
             if (self->unk0xaf & 4) {
-                state->GarundaTeQuest = 1;
+                state->flags = 1;
             }
             break;
         case 1:
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
-                state->GarundaTeQuest = 2;
-                set_gplay_bitstring(0x115, state->GarundaTeQuest);
+                state->flags = 2;
+                set_gplay_bitstring(0x115, state->flags);
             }
             break;
         case 2:
@@ -1091,13 +1088,13 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                         state->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
                     set_gplay_bitstring(0x48B, state->garundaTe_weedsEaten);
-                    state->GarundaTeQuest = 3;
+                    state->flags = 3;
                 }
             }
             break;
         case 3:
             if (vec3_distance_xz_squared(&state->playerPositionCopy, &state->frostWeed->positionMirror) < 6.25f) {
-                state->GarundaTeQuest = 4;
+                state->flags = 4;
             }
             break;
         case 4:
@@ -1105,15 +1102,15 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                 weeds = state->garundaTe_weedsEaten;
                 if (weeds >= GARUNDA_TE_WEEDS_NEEDED) {
                     set_gplay_bitstring(0x102, 1);
-                    state->GarundaTeQuest = 5;
-                    set_gplay_bitstring(0x115, state->GarundaTeQuest);
+                    state->flags = 5;
+                    set_gplay_bitstring(0x115, state->flags);
                     break;
                 }
                 if (weeds % 3 == 0) {
                     gDLL_6_AMSFX->vtbl->func2(self, 0x74B, 0x7F, 0, 0, 0, 0);
                     gDLL_22_Subtitles->vtbl->func_368(2);
                 }
-                state->GarundaTeQuest = 2;
+                state->flags = 2;
             }
             break;
         case 5:
@@ -1132,8 +1129,8 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
             } else if (gDLL_1_UI->vtbl->func7(0x123)) {
                 set_gplay_bitstring(0x22B, 1);
-                state->GarundaTeQuest = 7;
-                set_gplay_bitstring(0x115, state->GarundaTeQuest);
+                state->flags = 7;
+                set_gplay_bitstring(0x115, state->flags);
             }
             break;
         case 7:
@@ -1141,7 +1138,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             break;
     }
     
-    if (state->GarundaTeQuest >= 2 && state->GarundaTeQuest < 5) {
+    if (state->flags >= 2 && state->flags < 5) {
         diPrintf("noweeds=%d\n", state->garundaTe_weedsEaten);
     }
 }
