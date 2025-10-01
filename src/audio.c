@@ -10,6 +10,7 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
+#include "macros.h"
 #include "bss.h"
 
 /* -------- .data start -------- */
@@ -48,9 +49,6 @@ BSS_GLOBAL OSMesgQueue audDMAMessageQ;
 BSS_GLOBAL OSMesg audDMAMessageBuf[NUM_DMA_MESSAGES];
 BSS_GLOBAL u32 D_800AB960;
 /* -------- .bss end -------- */
-
-static const char str_80099060[] = "OH DEAR - No audio DMA buffers left\n";
-static const char str_80099088[] = "Dma not done\n";
 
 // TODO: this is wrong! (but matches here...)
 extern void mpeg_fs_init(void);
@@ -121,10 +119,10 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     D_800AB084 = 0;
 
     for (i = 0; i < NUM_ACMD_LISTS; i++) {
-        __am_ACMDList[i] = (Acmd*)alHeapDBAlloc(NULL, 0, c.heap, 1, 0x4000);
+        __am_ACMDList[i] = (Acmd*)alHeapAlloc(c.heap, 1, 0x4000);
     }
     for (i = 0; i < NUM_OUTPUT_BUFFERS; i++) {
-        __am_audioInfo[i] = alHeapDBAlloc(NULL, 0, c.heap, 1, D_800AB080 * 4);
+        __am_audioInfo[i] = alHeapAlloc(c.heap, 1, D_800AB080 * 4);
         gFrameSamplesList[i] = 0;
     }
     
@@ -132,10 +130,10 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     gAudDmaBuffs->node.next = NULL;
     for (i = 0; i < (NUM_DMA_BUFFERS - 1); i++) {
         alLink(&gAudDmaBuffs[i + 1].node, &gAudDmaBuffs[i].node);
-        gAudDmaBuffs[i].ptr = alHeapDBAlloc(NULL, 0, c.heap, 1, 0x800);
+        gAudDmaBuffs[i].ptr = alHeapAlloc(c.heap, 1, 0x800);
     }
     /* last buffer already linked, but still needs buffer */
-    gAudDmaBuffs[i].ptr = alHeapDBAlloc(NULL, 0, c.heap, 1, 0x800);
+    gAudDmaBuffs[i].ptr = alHeapAlloc(c.heap, 1, 0x800);
     
     gAudioSched = sched;
     osCreateMesgQueue(&__am_audioReplyMsgQ, __am_audioReplyMsgBuf, MAX_MESGS);
@@ -292,7 +290,7 @@ void __amHandleDoneMsg(void) { }
      * pointer, it's better than nothing
      */
     if (!dmaPtr) {
-        //stubbed_printf("OH DEAR - No audio DMA buffers left\n");
+        STUBBED_PRINTF("OH DEAR - No audio DMA buffers left\n");
         return (int) osVirtualToPhysical(lastDmaPtr->ptr) + delta;
     }
 
@@ -350,10 +348,8 @@ void __clearAudioDMA(void) {
      */
     for (i = 0; i < nextDMA; i++) {
         if (osRecvMesg(&audDMAMessageQ, (OSMesg *) &iomsg, OS_MESG_NOBLOCK) == -1) {
-            //stubbed_printf("Dma not done\n");
+            STUBBED_PRINTF("Dma not done\n");
         }
-        // if (logging)
-        //     osLogEvent(log, 17, 2, iomsg->devAddr, iomsg->size);
     }
 
     dmaPtr = dmaState.firstUsed;
