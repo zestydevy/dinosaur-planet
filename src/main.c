@@ -4,6 +4,7 @@
 #include "PR/sched.h"
 #include "libnaudio/n_unkfuncs.h"
 #include "sys/asset_thread.h"
+#include "sys/audio.h"
 #include "sys/controller.h"
 #include "sys/crash.h"
 #include "sys/exception.h"
@@ -199,7 +200,7 @@ void game_init(void) {
     func_8005C780();
     fonts_init();
     menu_init();
-    init_audio(&osscheduler_, 0xE);
+    init_audio(&osscheduler_, /*threadPriority=*/14);
     init_global_map();
     if (osMemSize != EXPANSION_SIZE) {
         gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dll_load_deferred(DLL_ID_AMSEQ, 36);
@@ -251,8 +252,8 @@ void game_init(void) {
     }
     init_bittable();
     alSynFlag = 1;
-    start_alSyn_thread();
-    func_80012224(0);
+    start_audio_thread();
+    audio_func_80012224(0);
     if (0) {};
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
@@ -310,7 +311,7 @@ void game_tick(void) {
     func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
     func_80007178();
     func_80013D80();
-    func_800121DC();
+    audio_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(tmp_s0, &gCurMtx, &gCurVtx);
     gDLL_22_Subtitles->vtbl->func_578(tmp_s0);
     camera_tick();

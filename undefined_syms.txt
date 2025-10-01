@@ -30,6 +30,7 @@ piThreadStack = 0x800CD840;
 piRamRomThreadStack = 0x800CE9F0;
 gMapStreamMapIDTable = 0x800b972c;
 kdebugserver_buffer = 0x800cf110;
+gAudioThreadStack = 0x800a8948;
 
 __fstAddress = 0xA4970;
 __file1Address = 0xA4AA0;
