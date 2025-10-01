@@ -5,6 +5,7 @@
 #include "sys/asset_thread.h"
 #include "sys/audio/speaker.h"
 #include "sys/audio.h"
+#include "sys/fs.h"
 #include "sys/gfx/gx.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -81,22 +82,22 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     c.dmaproc = &__amDmaNew;
     c.heap = NULL;
     
-    queue_alloc_load_file((void**)&audioTab, 0);
+    queue_alloc_load_file((void**)&audioTab, AUDIO_TAB);
     
     offset = audioTab[24];
     size = audioTab[25] - offset;
-    queue_load_file_region_to_ptr((void** ) &D_800AB960, 1, offset, size);
+    queue_load_file_region_to_ptr((void** ) &D_800AB960, AUDIO_BIN, offset, size);
     
     offset = audioTab[D_800AB960 + 3];
     size = audioTab[D_800AB960 + 4] - offset;
     
     c.fxTypes[0] = AL_FX_CUSTOM;
     c.params[0] = mmAlloc(size, 0xB, NULL);
-    queue_load_file_region_to_ptr((void**)c.params[0], 1, offset, size);
+    queue_load_file_region_to_ptr((void**)c.params[0], AUDIO_BIN, offset, size);
     
     c.fxTypes[1] = AL_FX_CUSTOM;
     c.params[1] = mmAlloc(size, 0xB, NULL);
-    queue_load_file_region_to_ptr((void**)c.params[1], 1, offset, size);
+    queue_load_file_region_to_ptr((void**)c.params[1], AUDIO_BIN, offset, size);
     
     n_alInit(&__am_g, &c);
     
