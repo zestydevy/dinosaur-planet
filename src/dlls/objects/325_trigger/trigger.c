@@ -493,7 +493,7 @@ void trigger_destroy(Object *self, s32 param2) {
 
     for (i = 0; i < 8; i++) {
         if (state->soundHandles[i] != 0) {
-            gDLL_6_AMSFX->vtbl->func6(state->soundHandles[i]);
+            gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->soundHandles[i]);
         }
         if (state->scripts[i] != NULL) {
             dll_unload(state->scripts[i]);
@@ -663,10 +663,10 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
         case TRG_CMD_SOUND: 
             // "Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]"
             if (dir >= 0) {
-                gDLL_6_AMSFX->vtbl->func14(self, (cmd->param2 | (cmd->param1 << 8)), &state->soundHandles[i]);
+                gDLL_6_AMSFX->vtbl->dll_6_func_10D0(self, (cmd->param2 | (cmd->param1 << 8)), &state->soundHandles[i]);
             } else {
                 if (state->soundHandles[i] != 0) {
-                    gDLL_6_AMSFX->vtbl->func6(state->soundHandles[i]);
+                    gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->soundHandles[i]);
                     state->soundHandles[i] = 0;
                 }
             }

@@ -1,0 +1,11 @@
+#ifndef _LIBNAUDIO_MP3_H
+#define _LIBNAUDIO_MP3_H
+
+#include "libnaudio/n_sndplayer.h"
+
+void func_8006758C(sndstate *state);
+// Maybe takes in sndstate
+s32 func_800675EC(s32);
+void func_80067650(s32, s32);
+
+#endif

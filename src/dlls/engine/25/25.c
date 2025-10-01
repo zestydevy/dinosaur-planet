@@ -4,6 +4,7 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
+#include "constants.h"
 
 /* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";
 
@@ -12,8 +13,6 @@
 /* 0xE0 */ static Dll25BssE0 *_bss_E0;
 /* 0xE4 */ static s32 _bss_E4;
 /* 0xE8 */ static u8 _bss_E8[0x8];
-
-#define MAX_FLOAT 3.4028235e38f
 
 static s32 dll_25_func_DF8(Dll25BssDC *arg0, f32 arg1, f32 arg2);
 static void dll_25_func_D00(Vec3 arg0, Vec3 arg1, s8 *arg2, f32 *arg3);
@@ -523,7 +522,7 @@ CurvesFunc1BCReturnInner *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
 
     result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
-    var_fs0 = MAX_FLOAT;
+    var_fs0 = F32_MAX;
     for (i = 0; i < count; i++)
     {
         temp_s0 = result[i].unk4;
@@ -560,7 +559,7 @@ CurvesFunc1BCReturnInner *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
     result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     var_v1 = 0;
-    var_fs0 = MAX_FLOAT;
+    var_fs0 = F32_MAX;
     for (var_v1 = 0; var_v1 < count; var_v1++)
     {
         temp_v1 = result[var_v1].unk4;

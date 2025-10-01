@@ -1290,14 +1290,14 @@ MapHeader** func_80044A10(void) {
 }
 
 /** Assign object instance file length and get object instance file from map */
-s32 func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength) {
+void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength) {
     s32 mapID;
     MapHeader *map;
 
     mapID = map_get_map_id_from_xz_ws(worldX, worldZ);
     if (mapID != -1){
       *objectsFileLength = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
-      return (s32)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
+      return (void *)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
     }
     return 0;
 }

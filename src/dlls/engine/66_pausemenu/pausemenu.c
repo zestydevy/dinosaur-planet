@@ -93,15 +93,13 @@ s32 n_pausemenu_update(void) {
         selectedItem = gDLL_74_Picmenu->vtbl->get_selected_item();
         
         if (action == PICMENU_ACTION_SELECT) {
-            if (selectedItem == 0) {
-                // Continue
-                gDLL_6_AMSFX->vtbl->func2(0, 2931, 0x7F, 0, 0, 0, 0);
+            if (!selectedItem){
+                gDLL_6_AMSFX->vtbl->dll_6_func_48C(0, 2931, 0x7F, 0, 0, 0, 0);
                 menu_set(MENU_GAMEPLAY);
                 unpause();
                 set_button_mask(0, A_BUTTON | B_BUTTON);
             } else {
-                // Save
-                gDLL_6_AMSFX->vtbl->func2(0, 2930, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->dll_6_func_48C(0, 2930, 0x7F, 0, 0, 0, 0);
                 gameSavedMessageTimer = 0;
                 pauseScreenState = 1;
                 

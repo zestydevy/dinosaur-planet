@@ -6,6 +6,24 @@
 #include "dll_def.h"
 #include "types.h"
 
+typedef union FloatOrInt {
+    f32 unk0_f;
+    s32 unk0_s;
+} FloatOrInt;
+
+typedef struct UnkDE8 {
+    u16 unk0;
+    u8 unk2;
+    u8 unk3;
+    u8 unk4;
+    u8 unk5;
+    u8 unk6;
+    u8 unk7;
+    u16 pad8;
+    u16 unkA;
+    u16 unkC;
+} UnkDE8;
+
 DLL_INTERFACE(DLL_6_AMSFX) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(void);

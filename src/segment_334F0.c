@@ -89,9 +89,9 @@ void func_80032B44(Object *obj, s32 arg1) {
     s32 sp1C;
     s32 sp18;
 
-    v0 = gDLL_6_AMSFX->vtbl->func10(arg1, 2, &sp18, &sp1C);
+    v0 = gDLL_6_AMSFX->vtbl->dll_6_func_DCC(arg1, 2, &sp18, &sp1C);
     func_800339E0(obj, sp1C & 0xFF, v0, (f32) sp18);
-    v0 = gDLL_6_AMSFX->vtbl->func10(arg1, 1, &sp18, &sp1C);
+    v0 = gDLL_6_AMSFX->vtbl->dll_6_func_DCC(arg1, 1, &sp18, &sp1C);
     func_80033AA0(obj, sp1C & 0xFF, v0, (f32) sp18);
 }
 
@@ -661,10 +661,6 @@ void func_80033FD8(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
     }
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_80034250.s")
-#else
-// https://decomp.me/scratch/0bSyz
 s32 func_80034250(Unk80032CF8* arg0, s16* arg1) {
     Vec4f sp38;
     f32 sp34;
@@ -674,11 +670,12 @@ s32 func_80034250(Unk80032CF8* arg0, s16* arg1) {
     sp38.y = 10.0f;
     sp38.z = 500.0f;
     sp38.w = -500.0f;
-    if (arg0->unk14 == arg0->unk16) {
+    if (arg0->unk14 != arg0->unk16) {
+        sp34 = ((f32) arg1[1] - arg0->unk16) / ((f32) arg0->unk14 - arg0->unk16);
+    } else {
         return 1;
     }
 
-    sp34 = ((f32) arg1[1] - arg0->unk16) / ((f32) arg0->unk14 - arg0->unk16);
     if (sp34 > 1.0f) {
         sp34 = 1.0f;
     } else if (sp34 < 0.0f) {
@@ -696,12 +693,7 @@ s32 func_80034250(Unk80032CF8* arg0, s16* arg1) {
 
     return 0;
 }
-#endif
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_800343B8.s")
-#else
-// https://decomp.me/scratch/hEZ6w
 s32 func_800343B8(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     Vec4f sp38;
     f32 sp34;
@@ -711,11 +703,12 @@ s32 func_800343B8(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     sp38.y = arg2;
     sp38.z = arg3;
     sp38.w = -arg3;
-    if (arg0->unk14 == arg0->unk16) {
+    if (arg0->unk14 != arg0->unk16) {
+        sp34 = ((f32) arg1[1] - arg0->unk16) / ((f32) arg0->unk14 - arg0->unk16);
+    } else {
         return 1;
     }
 
-    sp34 = ((f32) arg1[1] - arg0->unk16) / ((f32) arg0->unk14 - arg0->unk16);
     if (sp34 > 1.0f) {
         sp34 = 1.0f;
     } else if (sp34 < 0.0f) {
@@ -733,12 +726,7 @@ s32 func_800343B8(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
 
     return 0;
 }
-#endif
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_334F0/func_80034518.s")
-#else
-// https://decomp.me/scratch/LTUhj
 s32 func_80034518(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     Vec4f sp38;
     f32 sp34;
@@ -748,11 +736,12 @@ s32 func_80034518(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     sp38.y = arg2;
     sp38.z = arg3;
     sp38.w = -arg3;
-    if (arg0->unk14 == arg0->unk16) {
+    if (arg0->unk14 != arg0->unk16) {
+        sp34 = ((f32) arg1[0] - arg0->unk16) / ((f32) arg0->unk14 - arg0->unk16);
+    } else {
         return 1;
     }
 
-    sp34 = ((f32) arg1[0] - arg0->unk16) / ((f32) arg0->unk14 - arg0->unk16);
     if (sp34 > 1.0f) {
         sp34 = 1.0f;
     } else if (sp34 < 0.0f) {
@@ -769,7 +758,6 @@ s32 func_80034518(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     }
     return 0;
 }
-#endif
 
 void func_80034678(Object* arg0, s8* arg1, f32 arg2) {
     s16* sp1C;
@@ -865,11 +853,11 @@ void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 arg2, s16 arg3, s32 arg4
     u32 sp34;
 
     sp34 = arg1->x;
-    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->func8(sp34)) {
+    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->dll_6_func_B48(sp34)) {
         if (sp34 != 0) {
-            gDLL_6_AMSFX->vtbl->func6(sp34);
+            gDLL_6_AMSFX->vtbl->dll_6_func_A1C(sp34);
         }
-        gDLL_6_AMSFX->vtbl->func2(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->dll_6_func_48C(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
         arg1->y = arg4;
         arg1->unk14 = -arg3;
         arg1->x = sp34;
@@ -901,16 +889,16 @@ void func_80034BC0(Object* obj, Unk80032CF8* arg1) {
             if (sp24 < 0) {
                 arg1->unk4 = 0.0f;
                 sp24 = sp24;
-                gDLL_6_AMSFX->vtbl->func6(temp_s1);
+                gDLL_6_AMSFX->vtbl->dll_6_func_A1C(temp_s1);
                 arg1->unk14 = 0;
                 arg1->x = 0.0f;
                 arg1->y = -1.0f;
             }
             arg1->y = (f32) sp24;
         }
-        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->func8(temp_s1)) {
+        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->dll_6_func_B48(temp_s1)) {
             arg1->unk4 = 0.0f;
-            gDLL_6_AMSFX->vtbl->func6((s32) temp_s1);
+            gDLL_6_AMSFX->vtbl->dll_6_func_A1C((s32) temp_s1);
             arg1->unk14 = 0;
             arg1->x = 0.0f;
             arg1->y = -1.0f;

@@ -116,13 +116,13 @@ void animobj_destroy(Object *self, s32 arg1) {
     gDLL_3_Animation->vtbl->func8((s32)state);
     for (i = 0; i < 4; i++){
         if (state->unk34[i]){
-            gDLL_6_AMSFX->vtbl->func6(state->unk34[i]);
+            gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->unk34[i]);
         }
     }
 
     gDLL_5_AMSEQ2->vtbl->func1(self, 0xFFFF, 0, 0, 0);
     if (state->unk30 != 0){
-        gDLL_6_AMSFX->vtbl->func6(state->unk30);
+        gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->unk30);
     }
 }
 

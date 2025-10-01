@@ -1,4 +1,5 @@
 #include "common.h"
+#include "libnaudio/mp3/segment_67F50.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/segment_67F50/mp3_init.s")
 
