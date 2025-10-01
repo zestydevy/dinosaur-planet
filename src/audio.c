@@ -386,33 +386,30 @@ void audio_func_800121DC(void) {
 
 void audio_func_80012224(s32 a0) { }
 
-// regalloc
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/audio/func_80012230.s")
-#else
 void func_80012230(u8 a0) {
     u8 i;
     
-    if (a0 != D_8008C8D4) {
-        D_8008C8D4 = a0;
+    if (a0 == D_8008C8D4) {
+        return;
+    }
 
-        if (D_8008C8D4 != 0) {
-            for (i = 0; i < 4; i++) {
-                if (D_8008C8DC[i] != 0) {
-                    gDLL_5_AMSEQ->vtbl->func4(i);
-                }
-            }
-        } else {
-            for (i = 0; i < 4; i++) {
-                D_8008C8DC[i] = gDLL_5_AMSEQ->vtbl->func7(i);
-                gDLL_5_AMSEQ->vtbl->func6(i);
-            }
+    D_8008C8D4 = a0;
 
-            func_80066854();
+    if (D_8008C8D4 != 0) {
+        for (i = 0; i < 4; i++) {
+            if (D_8008C8DC[i]) {
+                gDLL_5_AMSEQ->vtbl->func4(i, D_8008C8DC[i]);
+            }
         }
+    } else {
+        for (i = 0; i < 4; i++) {
+            D_8008C8DC[i] = gDLL_5_AMSEQ->vtbl->func7(i);
+            gDLL_5_AMSEQ->vtbl->func6(i);
+        }
+
+        func_80066854();
     }
 }
-#endif
 
 u8 audio_func_80012348(void) {
     return D_8008C8D4;

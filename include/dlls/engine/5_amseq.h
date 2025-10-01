@@ -12,7 +12,7 @@ DLL_INTERFACE(DLL_5_AMSEQ) {
     /*1*/ void (*func1)(Object*,u16,s32,s32,s32);
     /*2*/ s32 (*func2)(Object*,u16);
     /*3*/ void (*func3)(Object*);
-    /*4*/ void (*func4)(u8);
+    /*4*/ void (*func4)(u8, u8);
     /*5*/ UnknownDLLFunc func5;
     /*6*/ void (*func6)(u8);
     /*7*/ u8 (*func7)(u8);
