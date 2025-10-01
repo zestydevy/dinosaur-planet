@@ -145,7 +145,7 @@ void SHspore_update(Object* self) {
             }
             if (collidedObject->id != OBJ_SHrocketmushroo) {
                 //Other objects (ignoring SHrocketmushroom since the spores emerge out of it)
-                gDLL_6_AMSFX->vtbl->func2(self, 0xB31, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, 0xB31, 0x7F, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 
                 //Create collision particles
@@ -161,7 +161,7 @@ void SHspore_update(Object* self) {
             state->lifetime -= delayFloat;
             //Destroy the spore if its lifetime runs out or it collides with terrain
             if (state->lifetime <= 0.0f || state->unk25C & 0x11) {
-                gDLL_6_AMSFX->vtbl->func2(self, 0x8A2, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, 0x8A2, 0x7F, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 
                 //Create collision particles

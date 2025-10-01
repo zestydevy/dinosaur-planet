@@ -40,7 +40,7 @@ DLL_INTERFACE(DLL_6_AMSFX) {
     /*16*/ void (*dll_6_func_1218)(Object *obj);
     /*17*/ void (*dll_6_func_1504)(s32 arg0, Object* arg1, Object* arg2, f32 arg3);
     /*18*/ void (*dll_6_func_16E0)(void);
-    /*19*/ void (*dll_6_func_1C10)(u8 arg0);
+    /*19*/ void (*water_falls_set_flags)(u8 arg0);
     // arg2 might be passed in as a f32
     /*20*/ void (*dll_6_func_1320)(Object* arg0, u16 arg1, s32 arg2, f32 arg3, f32 arg4, u32* arg5) ;
 };

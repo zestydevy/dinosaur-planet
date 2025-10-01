@@ -64,14 +64,16 @@ typedef struct UnkBss28 {
 /*0x28*/ static UnkBss28 _bss_28[0x10];
 /*0x128*/ static ACache *_bss_128;
 
-static s32 dll_6_func_1C38(void);
-static s32 dll_6_func_1D58(s32, char *, s32);
-static s32 dll_6_func_1E64(s32);
-static void dll_6_func_2240(Object*, f32*, f32*, f32*, u16*);
-static void dll_6_func_22FC(f32, f32, f32, UnkDE8*, s8*);
 void dll_6_func_860(u32, u8);
 void dll_6_func_A1C(u32);
 s32 dll_6_func_DE8(u16, UnkDE8 *);
+static s32 dll_6_func_1C38(void);
+static s32 dll_6_func_1D58(s32, char *, s32);
+static s32 dll_6_func_1E64(s32);
+static void dll_6_func_1F78(void);
+static void dll_6_func_2240(Object*, f32*, f32*, f32*, u16*);
+static void dll_6_func_22FC(f32, f32, f32, UnkDE8*, s8*);
+/* static */ void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, u8* arg3, u8* arg4);
 
 // offset: 0x0 | ctor
 void dll_6_ctor(s32 arg0) {
@@ -680,7 +682,7 @@ void dll_6_func_16E0(void) {
 }
 
 // offset: 0x1C10 | func: 20 | export: 19
-void dll_6_func_1C10(u8 arg0) {
+void water_falls_set_flags(u8 arg0) {
     _bss_1E = arg0;
 }
 
@@ -783,7 +785,7 @@ static void dll_6_func_1F78(void) {
     s32 i;
     f32 sp6C;
     f32 sp68;
-    Arg1 sp64;
+    f32 sp64;
     s32 pad;
     s8 sp5F;
     s8 sp5E;
@@ -800,9 +802,9 @@ static void dll_6_func_1F78(void) {
         if (temp_s0 == (sndstate* )-1) { continue; } 
         if (!(_bss_4[i].unk7 & 3)) { continue; }
         
-        dll_6_func_2240(temp_a0, &sp6C, &sp68, &sp64.unk0_f, &sp5A);
-        dll_6_func_22FC(sp6C, sp68, sp64.unk0_s, &_bss_4[i], &sp5F);
-        dll_6_func_2438(sp6C, sp64.unk0_f, sp5A, &sp5E, &sp5D);
+        dll_6_func_2240(temp_a0, &sp6C, &sp68, &sp64, &sp5A);
+        dll_6_func_22FC(sp6C, sp68, sp64, &_bss_4[i], &sp5F);
+        dll_6_func_2438(sp6C, sp64, sp5A, &sp5E, &sp5D);
         _bss_4[i].unk17 = sp5F;
         if (sp5E != (s8) _bss_4[i].unk14) {
             _bss_4[i].unk14 = (u8) sp5E;

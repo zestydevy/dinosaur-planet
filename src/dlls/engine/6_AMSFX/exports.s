@@ -27,5 +27,5 @@ _exports:
 .dword dll_6_func_1218
 .dword dll_6_func_1504
 .dword dll_6_func_16E0
-.dword dll_6_func_1C10
+.dword water_falls_set_flags
 .dword dll_6_func_1320
