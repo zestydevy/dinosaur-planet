@@ -1,5 +1,6 @@
 #include "common.h"
 #include "PR/os_internal.h"
+#include "sys/audio.h"
 #include "sys/dl_debug.h"
 #include "sys/scheduler.h"
 
@@ -238,8 +239,8 @@ Gfx *func_8003BAD0(OSSched *sc,
     queueMsg = 0;
     done = FALSE;
 
-    // Stop audio syn thread
-    stop_alSyn_thread();
+    // Stop audio thread
+    stop_audio_thread();
 
     task = &sc->curRSPTask->list;
     cmdIndex = task->t.data_size / 2;

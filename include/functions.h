@@ -11,7 +11,6 @@
 
 void dl_segment(Gfx **gdl, u32 segment, void *base);
 
-void stop_alSyn_thread();
 
 void func_800267A4(Object *obj);
 s32 func_80023D30(Object*,s32,f32,u8);
@@ -105,15 +104,9 @@ void func_80053300();
 void func_8004D470();
 void func_8005C780();
 
-void init_audio(OSSched *sched, s32);
-
 void init_global_map();
-void start_alSyn_thread();
-
-void func_80012224(s32);
 
 void func_80007178();
-void func_800121DC();
 s32 schedule_gfx_task(Gfx*, Gfx*, s32);
 s32 func_80037924();
 void func_80037EC8(Gfx**);

@@ -302,7 +302,7 @@ segments:
     - [0x8D3E0, .data, fonts]
     - [0x8D440, .data, menu]
     - [0x8D4A0, .data, input]
-    - [0x8D4C0, data, audio]
+    - [0x8D4C0, .data, audio]
     - [0x8D4E0, .data, mpeg_fs]
     - [0x8D4F0, .data, main]
     - [0x8D640, data, math_util]
