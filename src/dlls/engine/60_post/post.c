@@ -11,7 +11,6 @@
 #include "dll.h"
 #include "functions.h"
 #include "types.h"
-#include "prevent_bss_reordering.h"
 
 static u8 data_0 = 0;
 static u8 data_4 = 0;
