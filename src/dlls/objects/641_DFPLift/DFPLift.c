@@ -5,6 +5,8 @@
 #include "dll.h"
 #include "functions.h"
 
+// Note: This file appears to be called "lift1.c" in the original game.
+
 typedef struct {
 /*0x00*/ ObjCreateInfo base;
 /*0x18*/ s8 rotation;
