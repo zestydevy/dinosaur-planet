@@ -1436,7 +1436,7 @@ void obj_free_object(Object *obj, s32 param2) {
         dll_unload(obj->dll);
     }
 
-    gDLL_6_AMSFX->vtbl->dll_6_func_1218(obj);
+    gDLL_6_AMSFX->vtbl->func_1218(obj);
     gDLL_5_AMSEQ->vtbl->func17(obj);
     gDLL_13_Expgfx->vtbl->func9(obj);
 
@@ -1608,7 +1608,7 @@ void func_80023464(s32 playerno) {
         }
 
         gDLL_2_Camera->vtbl->func0(newPlayer, x - 50.0f, y, z - 50.0f);
-        gDLL_6_AMSFX->vtbl->dll_6_func_480(newPlayer);
+        gDLL_6_AMSFX->vtbl->func_480(newPlayer);
         gDLL_5_AMSEQ->vtbl->func3(newPlayer);
     }
 }
@@ -1660,7 +1660,7 @@ void func_80023628() {
     gDLL_2_Camera->vtbl->func0(player, D_80091668.unk8, D_80091668.unkC, D_80091668.unk10);
     gDLL_2_Camera->vtbl->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
     gDLL_2_Camera->vtbl->func1(1);
-    gDLL_6_AMSFX->vtbl->dll_6_func_480(player);
+    gDLL_6_AMSFX->vtbl->func_480(player);
     gDLL_5_AMSEQ->vtbl->func3(player);
 
     D_800B1988 = 0;

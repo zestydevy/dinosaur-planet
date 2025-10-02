@@ -180,7 +180,7 @@ void dll_296_destroy(Object *self, s32 param2) {
     dll_unload(_data_4);
 
     if (state->unk8 != 0) {
-        gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->unk8);
+        gDLL_6_AMSFX->vtbl->func_A1C(state->unk8);
         state->unk8 = 0;
     }
 }

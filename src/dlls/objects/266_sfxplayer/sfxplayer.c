@@ -71,9 +71,9 @@ void sfxplayer_update(Object* self) {
         if (createInfo->flagPlay != -1){
             if ((flagValue != state->hasPlayed) && (mode & 6)){
                 if ((flagValue != ((mode & 4) == 4)) != 0){
-                    state->sound = gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                    state->sound = gDLL_6_AMSFX->vtbl->func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
                 } else if (state->sound){
-                    gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->sound);
+                    gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
                     state->sound = NULL;
                 }
             }
@@ -81,9 +81,9 @@ void sfxplayer_update(Object* self) {
             //Start sound when inside inner radius, stop sound when leaving outer radius
             playerDistanceSquared = vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror);
             if (!state->sound && (playerDistanceSquared < state->distanceSqInner)){
-                gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, createInfo->soundID, 0x7F, (u32*)&state->sound, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->func_48C(self, createInfo->soundID, 0x7F, (u32*)&state->sound, 0, 0, 0);
             } else if ((state->distanceSqOuter < playerDistanceSquared) && state->sound){
-                gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->sound);
+                gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
                 state->sound = NULL;
             }
         }
@@ -92,15 +92,15 @@ void sfxplayer_update(Object* self) {
             //Random chance of playing sound if player is inside inner radius
             playerDistanceSquared = vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror);
             if (!rand_next(0, 0x12C) && (playerDistanceSquared < state->distanceSqInner)){
-                gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
             }
         } else if (flagValue != state->hasPlayed){
             if ((flagValue == 1) && (mode & 2)){
                 //Play sound if flag is set
-                gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
             } else if ((flagValue == 0) && (mode & 4)){
                 //Play sound if flag isn't set
-                gDLL_6_AMSFX->vtbl->dll_6_func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->func_48C(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
             }
         }
     }
@@ -125,7 +125,7 @@ void sfxplayer_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 void sfxplayer_destroy(Object* arg0, s32 arg1) {
     SfxPlayerState* state = arg0->state;
     if (state->sound) {
-        gDLL_6_AMSFX->vtbl->dll_6_func_A1C(state->sound);
+        gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
     }
 }
 

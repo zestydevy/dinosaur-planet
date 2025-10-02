@@ -1252,7 +1252,7 @@ void dll_210_func_1CEFC(Object* player, s32 arg1) {
         }
         temp_v1->magic = var_v0;
         if (arg1 > 0) {
-            gDLL_6_AMSFX->vtbl->dll_6_func_48C(NULL, 0x5EB, 0x7F, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->func_48C(NULL, 0x5EB, 0x7F, 0, 0, 0, 0);
         }
     }
 }

@@ -381,7 +381,7 @@ void __clearAudioDMA(void) {
 
 void audio_func_800121DC(void) {
     gDLL_5_AMSEQ2->vtbl->func18();
-    gDLL_6_AMSFX->vtbl->dll_6_func_338();
+    gDLL_6_AMSFX->vtbl->func_338();
 }
 
 void audio_func_80012224(s32 a0) { }

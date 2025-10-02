@@ -89,9 +89,9 @@ void func_80032B44(Object *obj, s32 arg1) {
     s32 sp1C;
     s32 sp18;
 
-    v0 = gDLL_6_AMSFX->vtbl->dll_6_func_DCC(arg1, 2, &sp18, &sp1C);
+    v0 = gDLL_6_AMSFX->vtbl->func_DCC(arg1, 2, &sp18, &sp1C);
     func_800339E0(obj, sp1C & 0xFF, v0, (f32) sp18);
-    v0 = gDLL_6_AMSFX->vtbl->dll_6_func_DCC(arg1, 1, &sp18, &sp1C);
+    v0 = gDLL_6_AMSFX->vtbl->func_DCC(arg1, 1, &sp18, &sp1C);
     func_80033AA0(obj, sp1C & 0xFF, v0, (f32) sp18);
 }
 
@@ -853,11 +853,11 @@ void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 arg2, s16 arg3, s32 arg4
     u32 sp34;
 
     sp34 = arg1->x;
-    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->dll_6_func_B48(sp34)) {
+    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->func_B48(sp34)) {
         if (sp34 != 0) {
-            gDLL_6_AMSFX->vtbl->dll_6_func_A1C(sp34);
+            gDLL_6_AMSFX->vtbl->func_A1C(sp34);
         }
-        gDLL_6_AMSFX->vtbl->dll_6_func_48C(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->func_48C(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
         arg1->y = arg4;
         arg1->unk14 = -arg3;
         arg1->x = sp34;
@@ -889,16 +889,16 @@ void func_80034BC0(Object* obj, Unk80032CF8* arg1) {
             if (sp24 < 0) {
                 arg1->unk4 = 0.0f;
                 sp24 = sp24;
-                gDLL_6_AMSFX->vtbl->dll_6_func_A1C(temp_s1);
+                gDLL_6_AMSFX->vtbl->func_A1C(temp_s1);
                 arg1->unk14 = 0;
                 arg1->x = 0.0f;
                 arg1->y = -1.0f;
             }
             arg1->y = (f32) sp24;
         }
-        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->dll_6_func_B48(temp_s1)) {
+        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->func_B48(temp_s1)) {
             arg1->unk4 = 0.0f;
-            gDLL_6_AMSFX->vtbl->dll_6_func_A1C((s32) temp_s1);
+            gDLL_6_AMSFX->vtbl->func_A1C((s32) temp_s1);
             arg1->unk14 = 0;
             arg1->x = 0.0f;
             arg1->y = -1.0f;
