@@ -20,7 +20,7 @@ typedef struct {
 /*08*/ u8 hasPlayed;
 /*09*/ u8 unk9;
 /*0A*/ u16 unkA;
-/*0C*/ s32 sound;
+/*0C*/ u32 sound;
 } SfxPlayerState;
 
 // offset: 0x0 | ctor

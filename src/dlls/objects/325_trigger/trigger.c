@@ -126,7 +126,7 @@ typedef struct {
 /*58*/ s16 bitFlagID;
 /*5A*/ s16 conditionBitFlagIDs[4];
 /*62*/ u8 _unk62[2];
-/*64*/ s32 soundHandles[8];
+/*64*/ u32 soundHandles[8];
 // Special "script" DLLs where each export is a "subscript".
 /*84*/ DLL_TriggerScript *scripts[8];
 } TriggerState;
