@@ -10,7 +10,7 @@ _exports:
 # export table
 .dword dll_6_func_338
 .dword dll_6_func_480
-.dword dll_6_func_48C
+.dword dll_6_play_sound
 .dword dll_6_func_7E4
 .dword dll_6_func_860
 .dword dll_6_func_954

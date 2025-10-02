@@ -857,7 +857,7 @@ void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 arg2, s16 arg3, s32 arg4
         if (sp34 != 0) {
             gDLL_6_AMSFX->vtbl->func_A1C(sp34);
         }
-        gDLL_6_AMSFX->vtbl->func_48C(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
         arg1->y = arg4;
         arg1->unk14 = -arg3;
         arg1->x = sp34;

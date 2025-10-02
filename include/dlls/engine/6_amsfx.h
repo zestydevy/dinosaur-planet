@@ -24,7 +24,7 @@ DLL_INTERFACE(DLL_6_AMSFX) {
     /*0*/ void (*func_338)(void);
     /*1*/ void (*func_480)(Object *obj);
     // Play sound using source object for panning and distance falloff
-    /*2*/ s32 (*func_48C)(Object* obj, u16 soundID, u8 volume, u32* arg3, char *arg4, s32 arg5, char *arg6);
+    /*2*/ s32 (*play_sound)(Object* obj, u16 soundID, u8 volume, u32* arg3, char *arg4, s32 arg5, char *arg6);
     /*3*/ void (*func_7E4)(u8 arg0);
     /*4*/ void (*func_860)(s32 arg0, u8 arg1);
     /*5*/ void (*func_954)(s32 arg0, f32 arg1);
