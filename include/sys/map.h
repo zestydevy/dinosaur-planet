@@ -132,7 +132,7 @@ typedef struct {
 /*1b*/  s8 unk1b;
 /*1c*/  s16 objectInstanceCount; //malloc-related
 /*1e*/  s16 gridB_sixteenthSize; //malloc-related ((size_of_gridB)/16 (rounded up and ignoring zero padding?)
-/*20*/  s32 *objectInstanceFile_ptr;
+/*20*/  void *objectInstanceFile_ptr;
 /*24*/  f32 originWorldX;
 /*28*/  f32 originWorldZ;
 /*2c*/  s8 *grid_B1_ptr;
@@ -441,6 +441,7 @@ extern s16 D_800B97C4;
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 s32 func_80041DBC(void);
 s32 func_80041E08(void);
+void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
 
 // defined in map.c but used before declared
 void func_800441F4(u32* arg0, s32 arg1);

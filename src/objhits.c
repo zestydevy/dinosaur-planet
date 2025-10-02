@@ -642,10 +642,10 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
         sp68 = &arg1[sp5C];
         if (i != 15) {
             if (sp68->unk0 >= 0) {
-                gDLL_6_AMSFX->vtbl->func2(obj, sp68->unk0, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(obj, sp68->unk0, 0x7F, 0, 0, 0, 0);
             }
             if (sp68->unk2 >= 0) {
-                gDLL_6_AMSFX->vtbl->func2(obj, sp68->unk2, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(obj, sp68->unk2, 0x7F, 0, 0, 0, 0);
             }
             // @fake
             if (!i) {}

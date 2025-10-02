@@ -4,6 +4,7 @@
 #include <PR/os.h>
 #include "libnaudio/n_synthInternals.h"
 #include "libnaudio/n_sndp.h"
+#include "libnaudio/n_sndplayer.h"
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -16,40 +17,19 @@
 
 extern N_ALSndPlayer alSndPlayer_struct;
 
-struct sndstate {
-	/*0x00*/ ALLink node;
-	/*0x08*/ ALSound *sound;
-	/*0x0c*/ N_ALVoice voice;
-	/*0x28*/ f32 basepitch;
-	/*0x2c*/ f32 pitch;
-	/*0x30*/ struct sndstate **unk30;
-	/*0x34*/ s32 unk34;
-	/*0x38*/ s16 vol;
-	/*0x3a*/ s16 envvol;
-	/*0x3c*/ ALMicroTime endtime;
-	/*0x40*/ u8 priority;
-	/*0x41*/ ALPan pan;
-	/*0x42*/ u8 fxmix;
-	/*0x43*/ u8 fxbus;
-	/*0x44*/ u8 flags;
-	/*0x45*/ u8 state;
-	/*0x46*/ u16 soundnum;
-};
-
-struct sndstate *g_SndpAllocStatesHead = NULL; // TODO: volatile?
-struct sndstate *g_SndpAllocStatesTail = NULL;
-struct sndstate *g_SndpFreeStatesHead = NULL;
+sndstate *g_SndpAllocStatesHead = NULL; // TODO: volatile?
+sndstate *g_SndpAllocStatesTail = NULL;
+sndstate *g_SndpFreeStatesHead = NULL;
 
 N_ALSndPlayer *g_SndPlayer = &alSndPlayer_struct;
 s16 D_800938D0 = 0;
 
 s16 *D_800BFEF4;
 
-struct sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan, f32 pitch, u8 fxmix, u8 fxbus, struct sndstate **handleptr);
-void func_80065D7C(struct sndstate *state);
-void func_80065DEC(struct sndstate *state);
-void sndpFreeState(struct sndstate *state);
-struct sndstate *func_80066064(ALBank *bank, ALSound *sound);
+void func_80065D7C(sndstate *state);
+void func_80065DEC(sndstate *state);
+void sndpFreeState(sndstate *state);
+sndstate *func_80066064(ALBank *bank, ALSound *sound);
 void func_80066794(u8 arg0);
 
 void n_alSndpNew(ALSndpConfig *config) {
@@ -62,7 +42,7 @@ void n_alSndpNew(ALSndpConfig *config) {
 	g_SndPlayer->target = NULL;
 	g_SndPlayer->frameTime = AL_USEC_PER_FRAME;
 
-	ptr = alHeapAlloc(config->heap, 1, config->maxStates * sizeof(struct sndstate));
+	ptr = alHeapAlloc(config->heap, 1, config->maxStates * sizeof(sndstate));
 	g_SndPlayer->sndState = ptr;
 
 	// Init the event queue
@@ -72,7 +52,7 @@ void n_alSndpNew(ALSndpConfig *config) {
 	g_SndpFreeStatesHead = g_SndPlayer->sndState;
 
 	for (i = 1; i < config->maxStates; i++) {
-		struct sndstate *sndstate = g_SndPlayer->sndState;
+		sndstate *sndstate = g_SndPlayer->sndState;
 		alLink(&sndstate[i].node, &sndstate[i - 1].node);
 	}
 
@@ -136,9 +116,9 @@ void _n_handleEvent(N_ALSndpEvent *event) {
 	s32 isspecial;
 	s32 done = TRUE;
 	s32 hasvoice = FALSE;
-	struct sndstate *state = NULL;
-	struct sndstate *nextstate = NULL;
-	struct sndstate *iterstate;
+	sndstate *state = NULL;
+	sndstate *nextstate = NULL;
+	sndstate *iterstate;
 	N_ALSndpEvent sp44;
 
 	if (nextstate != NULL) {
@@ -148,7 +128,7 @@ void _n_handleEvent(N_ALSndpEvent *event) {
 		event = &sp84;
 	}
 
-	state = (struct sndstate *)event->common.state;
+	state = (sndstate *)event->common.state;
 
 	sound = state->sound;
 
@@ -159,7 +139,7 @@ void _n_handleEvent(N_ALSndpEvent *event) {
 	}
 
 	keymap = sound->keyMap;
-	nextstate = (struct sndstate *)state->node.next;
+	nextstate = (sndstate *)state->node.next;
 
 	switch (event->common.type) {
 	case AL_SNDP_PLAY_EVT:
@@ -201,7 +181,7 @@ void _n_handleEvent(N_ALSndpEvent *event) {
 						n_alSynSetVol(&iterstate->voice, 0, 1000);
 					}
 
-					iterstate = (struct sndstate *)iterstate->node.prev;
+					iterstate = (sndstate *)iterstate->node.prev;
 				} while (sp70 && iterstate);
 
 				if (sp70 == 0) {
@@ -403,7 +383,7 @@ void _n_handleEvent(N_ALSndpEvent *event) {
 	}
 }
 
-void func_80065D7C(struct sndstate *state) {
+void func_80065D7C(sndstate *state) {
 	if (state->flags & SNDSTATEFLAG_04) {
 		n_alSynStopVoice(&state->voice);
 		n_alSynFreeVoice(&state->voice);
@@ -416,7 +396,7 @@ void func_80065D7C(struct sndstate *state) {
 
 }
 
-void func_80065DEC(struct sndstate *state) {
+void func_80065DEC(sndstate *state) {
 	N_ALSndpEvent evt;
 	f32 pitch = alCents2Ratio(state->sound->keyMap->detune) * state->pitch;
 
@@ -465,13 +445,13 @@ u16 sndpCountStates(s16 *numfreeptr, s16 *numallocedptr) {
 	u16 numalloced;
 	u16 numfree;
 	u16 numalloced2;
-	struct sndstate *state1 = g_SndpAllocStatesHead;
-	struct sndstate *state2 = g_SndpFreeStatesHead;
-	struct sndstate *state3 = g_SndpAllocStatesTail;
+	sndstate *state1 = g_SndpAllocStatesHead;
+	sndstate *state2 = g_SndpFreeStatesHead;
+	sndstate *state3 = g_SndpAllocStatesTail;
 
-	for (numalloced = 0; state1; numalloced++, state1 = (struct sndstate *)state1->node.next);
-	for (numfree = 0; state2; numfree++, state2 = (struct sndstate *)state2->node.next);
-	for (numalloced2 = 0; state3; numalloced2++, state3 = (struct sndstate *)state3->node.prev);
+	for (numalloced = 0; state1; numalloced++, state1 = (sndstate *)state1->node.next);
+	for (numfree = 0; state2; numfree++, state2 = (sndstate *)state2->node.next);
+	for (numalloced2 = 0; state3; numalloced2++, state3 = (sndstate *)state3->node.prev);
 
 	*numfreeptr = numfree;
 	*numallocedptr = numalloced;
@@ -481,8 +461,8 @@ u16 sndpCountStates(s16 *numfreeptr, s16 *numallocedptr) {
 	return numalloced2;
 }
 
-struct sndstate *func_80066064(ALBank *bank, ALSound *sound) {
-	struct sndstate *state;
+sndstate *func_80066064(ALBank *bank, ALSound *sound) {
+	sndstate *state;
 	ALKeyMap *keymap;
 	s32 sp18;
 	OSIntMask mask;
@@ -493,7 +473,7 @@ struct sndstate *func_80066064(ALBank *bank, ALSound *sound) {
 	state = g_SndpFreeStatesHead;
 
 	if (state != NULL) {
-		g_SndpFreeStatesHead = (struct sndstate *)state->node.next;
+		g_SndpFreeStatesHead = (sndstate *)state->node.next;
 
 		alUnlink(&state->node);
 
@@ -540,13 +520,13 @@ struct sndstate *func_80066064(ALBank *bank, ALSound *sound) {
 	return state;
 }
 
-void sndpFreeState(struct sndstate *state) {
+void sndpFreeState(sndstate *state) {
 	if (g_SndpAllocStatesHead == state) {
-		g_SndpAllocStatesHead = (struct sndstate *)state->node.next;
+		g_SndpAllocStatesHead = (sndstate *)state->node.next;
 	}
 
 	if (g_SndpAllocStatesTail == state) {
-		g_SndpAllocStatesTail = (struct sndstate *)state->node.prev;
+		g_SndpAllocStatesTail = (sndstate *)state->node.prev;
 	}
 
 	alUnlink(&state->node);
@@ -572,13 +552,13 @@ void sndpFreeState(struct sndstate *state) {
 	}
 }
 
-void sndSetPriority(struct sndstate *state, u8 priority) {
+void sndSetPriority(sndstate *state, u8 priority) {
 	if (state) {
 		state->priority = (s16)priority;
 	}
 }
 
-s32 sndGetState(struct sndstate *state) {
+s32 sndGetState(sndstate *state) {
 	if (state) {
 		return state->state;
 	} else {
@@ -586,9 +566,9 @@ s32 sndGetState(struct sndstate *state) {
 	}
 }
 
-struct sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan, f32 pitch, u8 fxmix, u8 fxbus, struct sndstate **handleptr) {
-	struct sndstate *state;
-	struct sndstate *state2 = NULL;
+sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan, f32 pitch, u8 fxmix, u8 fxbus, sndstate **handleptr) {
+	sndstate *state;
+	sndstate *state2 = NULL;
 	ALKeyMap *keymap;
 	ALSound *sound;
 	s16 sp4e = 0;
@@ -668,7 +648,7 @@ struct sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan,
 	return state2;
 }
 
-void audioStop(struct sndstate *state) {
+void audioStop(sndstate *state) {
 	N_ALEvent evt;
     
     evt.type = AL_SNDP_0400_EVT;
@@ -686,9 +666,9 @@ void audioStop(struct sndstate *state) {
 void func_80066794(u8 flags) {
 	OSIntMask mask = osSetIntMask(1);
 	N_ALEvent evt;
-	struct sndstate *volatile state;
+	sndstate *volatile state;
 
-	for (state = g_SndpAllocStatesHead; state != NULL; state = (struct sndstate *)state->node.next) {
+	for (state = g_SndpAllocStatesHead; state != NULL; state = (sndstate *)state->node.next) {
 		evt.type = AL_SNDP_0400_EVT;
 		evt.msg.generic.sndstate = state;
 
@@ -713,7 +693,7 @@ void func_800668A4(void) {
     func_80066794(SNDSTATEFLAG_01 | SNDSTATEFLAG_02);
 }
 
-void audioPostEvent(struct sndstate *state, s16 type, s32 data) {
+void audioPostEvent(sndstate *state, s16 type, s32 data) {
 	N_ALEvent evt;
 
 	evt.type = type;
@@ -733,13 +713,13 @@ u16 func_8006694C(u8 index) {
 
 void func_80066978(u8 index, u16 volume) {
     OSIntMask mask = osSetIntMask(1);
-    struct sndstate *volatile state = g_SndpAllocStatesHead;
+    sndstate *volatile state = g_SndpAllocStatesHead;
     s32 i;
     N_ALEvent evt;
 
     D_800BFEF4[index] = volume;
 
-    for (i = 0; state != NULL; i++, state = (struct sndstate *)state->node.next) {
+    for (i = 0; state != NULL; i++, state = (sndstate *)state->node.next) {
         if ((state->sound->keyMap->keyMin & 0x1f) == index) {
             evt.type = AL_SNDP_0800_EVT;
             evt.msg.generic.sndstate = state;

@@ -564,7 +564,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->func2((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
@@ -579,7 +579,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->func2((void*)snowhorn, SFX_SNOWHORN_SNOREHORN, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound((void*)snowhorn, SFX_SNOWHORN_SNOREHORN, 0x7F, 0, 0, 0, 0);
             }
             state->sleepTimer-= delayByte;
             if ((_data_270 == 0) && state->sleepTimer <= 0) {  //if daytime rolls around
@@ -594,7 +594,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->func2((void*)snowhorn, SFX_SNOWHORN_YAWN2, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound((void*)snowhorn, SFX_SNOWHORN_YAWN2, 0x7F, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
@@ -1045,7 +1045,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             //Calling out to the player periodically
             state->unk8 += delayByte;
             if (state->unk8 >= 0x3E9) {
-                gDLL_6_AMSFX->vtbl->func2(self, 0x1E2, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, 0x1E2, 0x7F, 0, 0, 0, 0);
                 gDLL_22_Subtitles->vtbl->func_368(0xA);
                 state->unk8 = 0;
             }
@@ -1099,7 +1099,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                     break;
                 }
                 if (weeds % 3 == 0) {
-                    gDLL_6_AMSFX->vtbl->func2(self, 0x74B, 0x7F, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, 0x74B, 0x7F, 0, 0, 0, 0);
                     gDLL_22_Subtitles->vtbl->func_368(2);
                 }
                 state->flags = 2;

@@ -33,9 +33,9 @@ void kamerian_flame_create(Object* self, s32 arg1, s32 arg2) {
         temp_v0_2->unk2c = temp_v0_2->unk0 * 2.5f;
     }
 
-    gDLL_6_AMSFX->vtbl->func2(self, 0x9B1, 0x7F, NULL, 0, 0, 0);
+    gDLL_6_AMSFX->vtbl->play_sound(self, 0x9B1, 0x7F, NULL, 0, 0, 0);
     if (_bss_4 == 0) {
-        gDLL_6_AMSFX->vtbl->func2(self, 0x9B2, 0x7F, (u32*)&_bss_4, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(self, 0x9B2, 0x7F, (u32*)&_bss_4, 0, 0, 0);
     }
 }
 
@@ -147,10 +147,10 @@ void kamerian_flame_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
 // offset: 0x5B4 | func: 5 | export: 4
 void kamerian_flame_destroy(Object* self, s32 arg1) {
     if (_bss_4 != 0) {
-        gDLL_6_AMSFX->vtbl->func6(_bss_4);
+        gDLL_6_AMSFX->vtbl->func_A1C(_bss_4);
         _bss_4 = 0;
     }
-    gDLL_6_AMSFX->vtbl->func2(self, impactSoundID, 0x7F, NULL, 0, 0, 0);
+    gDLL_6_AMSFX->vtbl->play_sound(self, impactSoundID, 0x7F, NULL, 0, 0, 0);
     func_800013D0();
 }
 

@@ -391,7 +391,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
         }
         D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, temp_s1, arg0, D_80092C20, &sp2B0);
         goto block_59;
-    } else if (func_8004FA58(arg0, (s32) &sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, (Unk8004FA58_Arg5* ) D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
+    } else if (func_8004FA58(arg0, sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, (Unk8004FA58_Arg5* ) D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
         temp_s1->gdl = NULL;
         D_80092C34 = 0x190;
         if (temp_s1->flags & 0x20) {
@@ -904,8 +904,8 @@ s32 func_8004FA4C(void) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004FA58.s")
 #else
-
-s32 func_8004FA58(Object* arg0, s32 arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max) {
+// https://decomp.me/scratch/1Xf9d
+s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max) {
     s32 sp28C;
     Camera* camera;
     Vec3f* var_v0;

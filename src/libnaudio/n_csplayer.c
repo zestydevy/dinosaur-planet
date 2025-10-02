@@ -67,7 +67,7 @@ struct auxbus44 *func_8007A8B8(s16 bus);
 void func_8007A974(struct fx *fx, s16 arg1, void *param);
 void func_800794B0(N_ALCSPlayer *seqp);
 
-void mpeg_fs_play(u8 arg0);
+void mpeg_fs_play(s32 id);
 
 void func_80073518(N_ALCSPlayer *seqp, u8 channel);
 void func_8007346C(N_ALCSPlayer *seqp, u8 channel);
