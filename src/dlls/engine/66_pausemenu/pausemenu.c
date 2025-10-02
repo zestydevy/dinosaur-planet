@@ -93,7 +93,7 @@ s32 n_pausemenu_update(void) {
         selectedItem = gDLL_74_Picmenu->vtbl->get_selected_item();
         
         if (action == PICMENU_ACTION_SELECT) {
-            if (!selectedItem){
+            if (selectedItem == 0) {
                 gDLL_6_AMSFX->vtbl->play_sound(0, 2931, 0x7F, 0, 0, 0, 0);
                 menu_set(MENU_GAMEPLAY);
                 unpause();
