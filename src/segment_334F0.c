@@ -898,7 +898,7 @@ void func_80034BC0(Object* obj, Unk80032CF8* arg1) {
         }
         if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->func_B48(temp_s1)) {
             arg1->unk4 = 0.0f;
-            gDLL_6_AMSFX->vtbl->func_A1C((s32) temp_s1);
+            gDLL_6_AMSFX->vtbl->func_A1C(temp_s1);
             arg1->unk14 = 0;
             arg1->x = 0.0f;
             arg1->y = -1.0f;

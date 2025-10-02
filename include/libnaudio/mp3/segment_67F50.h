@@ -7,5 +7,6 @@ void func_8006758C(sndstate *state);
 // Maybe takes in sndstate
 s32 func_800675EC(s32);
 void func_80067650(s32, s32);
+void func_800676A4(s8, s32);
 
 #endif

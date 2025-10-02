@@ -24,7 +24,7 @@ typedef struct {
 typedef struct {
 /*00*/ s32 unk0;
 /*04*/ f32 unk4;
-/*08*/ s32 unk8;
+/*08*/ u32 unk8;
 /*0C*/ s16 unkC;
 /*0E*/ u16 unkE;
 /*10*/ u16 unk10;

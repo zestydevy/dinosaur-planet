@@ -8,7 +8,7 @@
 #include "sys/objhits.h"
 
 /*0x0*/ static s32 impactSoundID;
-/*0x4*/ static s32 _bss_4;
+/*0x4*/ static u32 _bss_4;
 /*0x8*/ static u8 _bss_8[0x8];
 
 // offset: 0x0 | ctor

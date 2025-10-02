@@ -69,7 +69,7 @@ void dll_6_func_A1C(u32);
 s32 dll_6_func_DE8(u16, UnkDE8 *);
 static s32 dll_6_func_1C38(void);
 static s32 dll_6_func_1D58(s32, char *, s32);
-static s32 dll_6_func_1E64(s32);
+static s32 dll_6_func_1E64(u32);
 static void dll_6_func_1F78(void);
 static void dll_6_func_2240(Object*, f32*, f32*, f32*, u16*);
 static void dll_6_func_22FC(f32, f32, f32, UnkDE8*, s8*);
@@ -174,12 +174,12 @@ void dll_6_func_480(s32 arg0) {
 }
 
 // offset: 0x48C | func: 2 | export: 2
-s32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* arg3, char *arg4, s32 arg5, char *arg6) {
+u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* arg3, char *arg4, s32 arg5, char *arg6) {
     UnkDE8 sp58;
     f32 sp54;
     f32 sp50;
     f32 sp4C;
-    s32 temp_v0;
+    u32 temp_v0;
     u16 sp46;
     s8 sp45;
 
@@ -245,7 +245,7 @@ void dll_6_func_860(u32 arg0, u8 arg1) {
     u8 temp_t6;
 
     if (1) {
-        if (_bss_8 < arg0) {
+        if ((u32)_bss_8 < arg0) {
             return;
         }
         
@@ -269,11 +269,11 @@ void dll_6_func_860(u32 arg0, u8 arg1) {
 }
 
 // offset: 0x954 | func: 5 | export: 5
-void dll_6_func_954(s32 arg0, s32 arg1) {
+void dll_6_func_954(u32 arg0, s32 arg1) {
     UnkBss4* temp_v0;
     sndstate* temp_a0;
 
-    if ((u32) _bss_8 < arg0) {
+    if ((u32)_bss_8 < arg0) {
         return;
     }
 
@@ -292,7 +292,7 @@ void dll_6_func_954(s32 arg0, s32 arg1) {
 // offset: 0xA1C | func: 6 | export: 6
 void dll_6_func_A1C(u32 arg0) {
     if ((u32) _bss_8 >= arg0) {
-        dll_6_func_1E64((s32) arg0);
+        dll_6_func_1E64(arg0);
     }
 }
 
@@ -422,8 +422,8 @@ s32 dll_6_func_EE4(s32 arg0, UNK_TYPE_32 arg1) {
 }
 
 // offset: 0xF2C | func: 13 | export: 13
-void dll_6_func_F2C(Object* arg0, u16 arg1, s32* arg2, char *arg3, s32 arg4) {
-    s32 temp_v0_2;
+void dll_6_func_F2C(Object* arg0, u16 arg1, u32* arg2, char *arg3, s32 arg4) {
+    u32 temp_v0_2;
 
     if (!arg1) {
         return;
@@ -747,7 +747,7 @@ static s32 dll_6_func_1D58(s32 arg0, char *arg1, s32 arg2) {
 }
 
 // offset: 0x1E64 | func: 23
-static s32 dll_6_func_1E64(s32 arg0) {
+static s32 dll_6_func_1E64(u32 arg0) {
     sndstate* temp_a0;
 
     if (arg0 == 0) {
@@ -788,8 +788,8 @@ static void dll_6_func_1F78(void) {
     f32 sp64;
     s32 pad;
     s8 sp5F;
-    s8 sp5E;
-    s8 sp5D;
+    u8 sp5E;
+    u8 sp5D;
     u16 sp5A;
     sndstate* temp_s0;
 
