@@ -1,6 +1,5 @@
 #include "segment_334F0.h"
 
-
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
 static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n";
@@ -849,7 +848,7 @@ s32* func_800349B0(void) {
     return D_80091720;
 }
 
-void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 arg2, s16 arg3, s32 arg4, u8 arg5) {
+void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 soundID, s16 arg3, s32 arg4, u8 arg5) {
     u32 sp34;
 
     sp34 = arg1->x;
@@ -857,7 +856,7 @@ void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 arg2, s16 arg3, s32 arg4
         if (sp34 != 0) {
             gDLL_6_AMSFX->vtbl->func_A1C(sp34);
         }
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, arg2, 0x7F, &sp34, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, soundID, MAX_VOLUME, &sp34, 0, 0, 0);
         arg1->y = arg4;
         arg1->unk14 = -arg3;
         arg1->x = sp34;
@@ -865,12 +864,12 @@ void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 arg2, s16 arg3, s32 arg4
     }
 }
 
-void func_80034B54(Object* arg0, Unk80032CF8* arg1, s16* arg2, u8 arg3) {
-    func_800349C0(arg0, arg1, arg2[0], arg2[1], -1, arg3);
+void func_80034B54(Object* arg0, Unk80032CF8* arg1, s16* soundIDs, u8 arg3) {
+    func_800349C0(arg0, arg1, soundIDs[0], soundIDs[1], -1, arg3);
 }
 
-void func_80034B94(Object* arg0, Unk80032CF8* arg1, s32 arg2) {
-    func_800349C0(arg0, arg1, arg2 , 0x500, -1, 0U);
+void func_80034B94(Object* arg0, Unk80032CF8* arg1, s32 soundID) {
+    func_800349C0(arg0, arg1, soundID , 0x500, -1, 0U);
 }
 
 void func_80034BC0(Object* obj, Unk80032CF8* arg1) {

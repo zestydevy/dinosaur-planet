@@ -9,7 +9,7 @@
 typedef struct {
 /*00*/ ObjCreateInfo base;
 /*18*/ s16 flagPlay;
-/*1A*/ s16 soundID;
+/*1A*/ s16 soundID; // Should use a SoundID enum value from dll 6
 /*1C*/ u8 mode;
 /*1D*/ u8 radius;
 } SfxPlayerCreateInfo;
@@ -71,7 +71,7 @@ void sfxplayer_update(Object* self) {
         if (createInfo->flagPlay != -1){
             if ((flagValue != state->hasPlayed) && (mode & 6)){
                 if ((flagValue != ((mode & 4) == 4)) != 0){
-                    state->sound = gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                    state->sound = gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, MAX_VOLUME, NULL, 0, 0, 0);
                 } else if (state->sound){
                     gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
                     state->sound = NULL;
@@ -81,7 +81,7 @@ void sfxplayer_update(Object* self) {
             //Start sound when inside inner radius, stop sound when leaving outer radius
             playerDistanceSquared = vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror);
             if (!state->sound && (playerDistanceSquared < state->distanceSqInner)){
-                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, 0x7F, (u32*)&state->sound, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, MAX_VOLUME, (u32*)&state->sound, 0, 0, 0);
             } else if ((state->distanceSqOuter < playerDistanceSquared) && state->sound){
                 gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
                 state->sound = NULL;
@@ -92,15 +92,15 @@ void sfxplayer_update(Object* self) {
             //Random chance of playing sound if player is inside inner radius
             playerDistanceSquared = vec3_distance_squared(&self->positionMirror, &get_player()->positionMirror);
             if (!rand_next(0, 0x12C) && (playerDistanceSquared < state->distanceSqInner)){
-                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             }
         } else if (flagValue != state->hasPlayed){
             if ((flagValue == 1) && (mode & 2)){
                 //Play sound if flag is set
-                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             } else if ((flagValue == 0) && (mode & 4)){
                 //Play sound if flag isn't set
-                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, createInfo->soundID, MAX_VOLUME, NULL, 0, 0, 0);
             }
         }
     }
