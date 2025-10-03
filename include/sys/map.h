@@ -442,6 +442,7 @@ void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 s32 func_80041DBC(void);
 s32 func_80041E08(void);
 void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
+MapHeader** func_80044A10(void);
 
 // defined in map.c but used before declared
 void func_800441F4(u32* arg0, s32 arg1);
