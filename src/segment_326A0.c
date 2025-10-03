@@ -3,8 +3,16 @@
 #include "dlls/objects/210_player.h"
 #include "sys/map.h"
 
+extern s32 sCallbackPairIndex;
+typedef struct ObjectPairCallback {
+    Object *primary;
+    Object *secondary;
+    void (*callback)(Object*, Object*); // callback that takes in the primary and secondary object
+} ObjectPairCallback;
+extern ObjectPairCallback sObjectPairCallbacks[16];
+
 typedef struct SomeCreateInfo {
-/*0x10*/ ObjCreateInfo base;
+    ObjCreateInfo base;
     u16 unk18;
     u16 unk1A;
     u16 unk1C;
@@ -12,14 +20,6 @@ typedef struct SomeCreateInfo {
     u8 unk20;
     u8 unk21;
 } SomeCreateInfo;
-
-typedef struct Unk80031DD8 {
-    s16 unk0;
-    u8 pad2[0xC - 0x2];
-    f32 unkC;
-    s32 pad10;
-    f32 unk14;
-} Unk80031DD8;
 
 void func_80031AA0(SomeCreateInfo* arg0, f32* ox, f32* oy, f32* oz) {
     f32 sp2C;
@@ -286,10 +286,96 @@ s32 func_80032538(Object* arg0) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_800325C0.s")
+s32 registerObjectCallback(Object* obj, Object* otherObj, void (*callback)(Object*, Object*)) {
+    ObjectPairCallback* callbackPair;
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_80032690.s")
+    if ((obj == NULL) || (otherObj == NULL)) {
+        return FALSE;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_8003273C.s")
+    callbackPair = sObjectPairCallbacks;
+    i = sCallbackPairIndex;
+    while (i--) {
+        if (obj == callbackPair->primary && otherObj == callbackPair->secondary) {
+            return FALSE;
+        }
+        callbackPair++;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_326A0/func_80032804.s")
+    if (sCallbackPairIndex >= 16) {
+        return FALSE;
+    }
+
+    callbackPair = &sObjectPairCallbacks[sCallbackPairIndex];
+    callbackPair->primary = obj;
+    callbackPair->secondary = otherObj;
+    callbackPair->callback = callback;
+    obj->unk_0xd9++;
+    otherObj->unk_0xd9++;
+    sCallbackPairIndex++;
+    return TRUE;
+}
+
+void func_80032690(Object* obj, Object* otherObj) {
+    ObjectPairCallback* callbackPair;
+    s32 i;
+
+    callbackPair = sObjectPairCallbacks;
+    i = sCallbackPairIndex;
+    while (i--) {
+        if (obj == callbackPair->primary && otherObj == callbackPair->secondary) {
+            sCallbackPairIndex--;
+            if (sCallbackPairIndex != 15 && sCallbackPairIndex != 0) {
+                *callbackPair = sObjectPairCallbacks[sCallbackPairIndex];
+            }
+            obj->unk_0xd9--;
+            otherObj->unk_0xd9--;
+            return;
+        }
+        callbackPair++;
+    }
+}
+
+void func_8003273C(Object* obj) {
+    ObjectPairCallback* callbackPair;
+    s32 i;
+
+    callbackPair = sObjectPairCallbacks;
+    i = sCallbackPairIndex;
+    while ((i--) > 0) {
+        if (obj == callbackPair->primary || obj == callbackPair->secondary) {
+            i--;
+            sCallbackPairIndex--;
+            callbackPair->primary->unk_0xd9 -= 1;
+            callbackPair->secondary->unk_0xd9 -= 1;
+            if (sCallbackPairIndex != 15 && sCallbackPairIndex != 0) {
+                *callbackPair = sObjectPairCallbacks[sCallbackPairIndex];
+            }
+        }
+        callbackPair++;
+    }
+}
+
+void func_80032804(Object* obj, Object* otherObj) {
+    ObjectPairCallback* callbackPair;
+    s32 i;
+    s32 var_s4;
+    s32 var_s5;
+
+    var_s4 = obj->unk_0xd9;
+    var_s5 = otherObj->unk_0xd9;
+    callbackPair = sObjectPairCallbacks;
+    i = sCallbackPairIndex;
+    while (var_s4 != 0 && var_s5 != 0 && i--) {
+        if (obj == callbackPair->primary && otherObj == callbackPair->secondary) {
+            var_s4--;
+            callbackPair->callback(obj, otherObj);
+        }
+        if (otherObj == callbackPair->primary && obj == callbackPair->secondary) {
+            var_s5--;
+            callbackPair->callback(otherObj, obj);
+        }
+        callbackPair++;
+    }
+}
