@@ -5,6 +5,7 @@
 #include "sys/gfx/texture.h"
 #include "dll_def.h"
 #include "types.h"
+#include "dlls/engine/6_amsfx.h"
 
 typedef struct
 {
@@ -72,9 +73,9 @@ typedef struct
 
 typedef struct
 {
-    s32 moveSoundID;
-    s32 selectSoundID;
-    s32 backSoundID;
+    enum SoundID moveSoundID;
+    enum SoundID selectSoundID;
+    enum SoundID backSoundID;
 } PicMenuSounds;
 
 DLL_INTERFACE(DLL_74_picmenu) {

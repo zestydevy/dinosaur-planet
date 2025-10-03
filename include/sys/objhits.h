@@ -9,8 +9,8 @@
 
 // size: 0x14
 typedef struct Unk80026DF4 {
-    s16 unk0;
-    s16 unk2;
+    s16 unk0; // sound ID
+    s16 unk2; // sound ID
     s16 unk4;
     s16 pad6;
     u8 unk8;

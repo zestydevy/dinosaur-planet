@@ -175,7 +175,7 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
             case 12:
                 func_80000860(self, self, 0xCE, 0);
                 set_gplay_bitstring(0x12D, 1);
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x342, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342, MAX_VOLUME, 0, 0, 0, 0);
                 break;
             case 13:
                 if (D_80092A7C == -1) {

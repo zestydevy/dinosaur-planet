@@ -35,9 +35,9 @@ static PicMenuItem pauseMenuItems[2] = {
 };
 
 static PicMenuSounds pauseMenuSounds = {
-    1493,
-    0xffffffff,
-    1492
+    SFX_PAUSE_MENU_MOVE,
+    SOUND_FFFF,
+    SFX_PAUSE_MENU_BACK
 };
 
 /*0x0*/ static GameTextChunk* gametext;
@@ -94,12 +94,12 @@ s32 n_pausemenu_update(void) {
         
         if (action == PICMENU_ACTION_SELECT) {
             if (selectedItem == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(0, 2931, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_B73, MAX_VOLUME, 0, 0, 0, 0);
                 menu_set(MENU_GAMEPLAY);
                 unpause();
                 set_button_mask(0, A_BUTTON | B_BUTTON);
             } else {
-                gDLL_6_AMSFX->vtbl->play_sound(0, 2930, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_B72, MAX_VOLUME, 0, 0, 0, 0);
                 gameSavedMessageTimer = 0;
                 pauseScreenState = 1;
                 

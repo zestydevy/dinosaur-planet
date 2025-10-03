@@ -89,7 +89,7 @@ void DFPLift_update(Object* self) {
             // go up with sound
             if (self->srt.transl.y < (createInfo->base.y + LIFT_UP)) {
                 if (state->soundHandle == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, 0x6EC, 0x75, &state->soundHandle, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, VOLUME_75, &state->soundHandle, NULL, 0, NULL);
                     state->unk11 = 1;
                 }
                 self->srt.transl.y += delayFloat;
@@ -134,14 +134,14 @@ void DFPLift_update(Object* self) {
                     // at top, start going down
                     state->stateType = LIFT_STATE_GO_DOWN;
                     if (state->soundHandle == 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, 0x6EC, 0x6B, &state->soundHandle, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, VOLUME_6B, &state->soundHandle, NULL, 0, NULL);
                         state->unk11 = 1;
                     }
                 } else if (self->srt.transl.y == (createInfo->base.y - LIFT_DOWN)) {
                     // at bottom, start going up
                     state->stateType = LIFT_STATE_GO_UP;
                     if (state->soundHandle == 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, 0x6EC, 0x43, &state->soundHandle, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, VOLUME_43, &state->soundHandle, NULL, 0, NULL);
                         state->unk11 = 1;
                     }
                 }
