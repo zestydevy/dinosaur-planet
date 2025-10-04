@@ -3,7 +3,7 @@ import argparse
 from io import BufferedWriter
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import Section, SymbolTableSection
-from elftools.elf.relocation import RelocationSection
+from elftools.elf.relocation import RelocationSection, Relocation
 from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import math
 import os
@@ -78,6 +78,16 @@ def read_elf_exports(elf: ELFFile) -> Exports:
     
     return exports
 
+class HiReloc(TypedDict):
+    # List of hi relocs that still need to be processed.
+    # This can be empty if one hi is followed by multiple lo.
+    # This can have more than one if multiple hi for the same symbol
+    # appear before the lo.
+    relocs: list[Relocation]
+    # GOT16/HI16 addend
+    addend: int
+    is_got: bool
+
 def read_elf_relocations(elf: ELFFile, 
                          text_data: bytes | None, 
                          rodata_data: bytes | None, 
@@ -119,6 +129,11 @@ def read_elf_relocations(elf: ELFFile,
         assert isinstance(rel_text, RelocationSection)
         assert text_data != None
 
+        # Note: For hi/lo pairs, defer handling them until the lo reloc so the AHL can be calculated
+        # sym idx -> hi reloc
+        hi_map: "dict[int, HiReloc]" = {}
+        last_hi_sym_idx = 0
+
         for reloc in rel_text.iter_relocations():
             reloc_offset = reloc["r_offset"]
             reloc_type = reloc["r_info_type"]
@@ -140,36 +155,15 @@ def read_elf_relocations(elf: ELFFile,
                 got_idx: int | None = None
 
                 if st_info_bind == "STB_LOCAL":
-                    if sym_type == "STT_SECTION":
-                        # For section symbols, use the existing GOT entry of one of the four supported sections
-                        sym_sec_name = elf.get_section(sym_shndx).name
-                        got_idx = secs_to_got.get(sym_sec_name)
-                        if got_idx == None:
-                            raise ELF2DLLException(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
-                    else:
-                        if sym_value >= 0x8000:
-                            # For local symbols that are too big, we need to generate a GOT entry for the hi bits (sorta)
-                            # Not sure if this logic is specific to Dinosaur Planet DLLs
-                            assert(elf.get_section(sym_shndx).name == ".text") # Not sure this logic works anywhere else at the moment
-
-                            remainder = sym_value % 0x1_0000
-                            if remainder < (0x1_0000 // 2):
-                                hi_got_value = sym_value - remainder
-                            else:
-                                hi_got_value = sym_value + (0x1_0000 - remainder)
-                            
-                            got_idx = his_to_got.get(hi_got_value)
-                            if got_idx == None:
-                                got_idx = len(got)
-                                his_to_got[hi_got_value] = got_idx
-                                
-                                got.append({ "value": hi_got_value, "section": None })
-                        else:
-                            # For local symbols, use the existing GOT entry of the section the symbol is relative to
-                            sym_sec_name = elf.get_section(sym_shndx).name
-                            got_idx = secs_to_got.get(sym_sec_name)
-                            if got_idx == None:
-                                raise ELF2DLLException(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
+                    # Defer until lo16 pair
+                    addend = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
+                    hi = hi_map.setdefault(sym_idx, {
+                        "relocs": [], 
+                        "addend": addend, 
+                        "is_got": True
+                    })
+                    hi["relocs"].append(reloc)
+                    last_hi_sym_idx = sym_idx
                 else:
                     assert st_info_bind == "STB_GLOBAL"
 
@@ -185,28 +179,95 @@ def read_elf_relocations(elf: ELFFile,
                         
                         got.append({ "value": sym_value, "section": section })
 
-                assert got_idx != None
-
-                # Record reloc location for later fixup
-                text_relocs.append({ "reloc_offset": reloc_offset, "half": got_idx * 4 })
+                    # Record reloc location for later fixup
+                    text_relocs.append({ "reloc_offset": reloc_offset, "half": got_idx * 4 })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_HI16"]:
                 if sym.name == "_gp_disp":
                     # $gp prologue reloc
                     gp_relocs.append(reloc_offset)
                 else:
-                    # ((AHL + S) – (short)(AHL + S)) >> 16
-                    ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
-                    s = sym_value
-                    ahls = ahl + s
-                    half = ((ahls - (ahls & 0xFFFF)) >> 16) & 0xFFFF
-                    text_relocs.append({ "reloc_offset": reloc_offset, "half": half })
+                    # Defer until lo16 pair
+                    addend = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
+                    hi = hi_map.setdefault(sym_idx, {
+                        "relocs": [], 
+                        "addend": addend, 
+                        "is_got": False
+                    })
+                    hi["relocs"].append(reloc)
+                    last_hi_sym_idx = sym_idx
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
                 # Global syms won't have a lo16 pair (except _gp_disp but that's taken care of elsewhere)
                 # Section sym lo16 pairs will already have the correct value from the linker so we can leave them alone
-                if sym.name != "_gp_disp":
-                    # AHL + S
-                    ahl = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
-                    text_relocs.append({ "reloc_offset": reloc_offset, "half": (ahl + sym_value) & 0xFFFF })
+                if sym.name == "_gp_disp":
+                    # Already recorded a $gp reloc in the hi16
+                    pass
+                else:
+                    if not sym_idx in hi_map:
+                        # Orphaned lo16
+                        hi = hi_map[last_hi_sym_idx]
+                        orphan = True
+                    else:
+                        hi = hi_map[sym_idx]
+                        orphan = False
+
+                    lo_addend = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
+                    ahl = (hi["addend"] << 16) + lo_addend
+                    s = sym_value
+                    # lo16: AHL + S
+                    addr = ahl + s
+
+                    if hi["is_got"]:
+                        # paired with got16
+                        if addr >= 0x8000:
+                            # For local symbols that are too big, we need to generate a GOT entry for the hi bits (sorta)
+                            assert(elf.get_section(sym_shndx).name == ".text") # This logic only work for .text at the moment
+
+                            remainder = addr % 0x1_0000
+                            if remainder < (0x1_0000 // 2):
+                                hi_got_value = addr - remainder
+                            else:
+                                hi_got_value = addr + (0x1_0000 - remainder)
+                            
+                            got_idx = his_to_got.get(hi_got_value)
+                            if got_idx == None:
+                                got_idx = len(got)
+                                his_to_got[hi_got_value] = got_idx
+                                
+                                got.append({ "value": hi_got_value, "section": None })
+                        else:
+                            # For local symbols, use the existing GOT entry of the section the symbol is relative to
+                            sym_sec_name = elf.get_section(sym_shndx).name
+                            got_idx = secs_to_got.get(sym_sec_name)
+                            if got_idx == None:
+                                raise ELF2DLLException(f"Found reloc with offset {hex(reloc_offset)} pointing to unsupported section symbol: {sym_sec_name}")
+                        
+                        assert got_idx != None
+
+                        hi_half = got_idx * 4
+                        lo_half = addr & 0xFFFF
+
+                        if not orphan:
+                            hi_relocs = hi["relocs"]
+                            while len(hi_relocs) > 0:
+                                hi_reloc_offset = hi_relocs.pop()["r_offset"]
+                                text_relocs.append({ "reloc_offset": hi_reloc_offset, "half": hi_half })
+
+                        text_relocs.append({ "reloc_offset": reloc_offset, "half": lo_half })
+                    else:
+                        # paired with hi16
+
+                        # hi16: ((AHL + S) – (short)(AHL + S)) >> 16
+                        hi_half = ((addr - (addr & 0xFFFF)) >> 16) & 0xFFFF
+                        # lo16: AHL + S
+                        lo_half = addr & 0xFFFF
+
+                        if not orphan:
+                            hi_relocs = hi["relocs"]
+                            while len(hi_relocs) > 0:
+                                hi_reloc_offset = hi_relocs.pop()["r_offset"]
+                                text_relocs.append({ "reloc_offset": hi_reloc_offset, "half": hi_half })
+                        
+                        text_relocs.append({ "reloc_offset": reloc_offset, "half": lo_half })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_PC16"]:
                 # Note: R_MIPS_PC16 is not used by IDO, this is to support ROM hacking
                 # sign–extend(A) + S – P
