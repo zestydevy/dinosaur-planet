@@ -88,9 +88,7 @@ static s16 _data_18[2] = {-1, 0};
 /*0x6C*/ static u32 _data_6C[] = {
     0x00000000
 };
-/*0x70*/ static u32 _data_70[] = {
-    0x41080000, 0x00000000, 0x00000000
-};
+/*0x70*/ static f32 _data_70[] = { 8.5f, 0.0f, 0.0f };
 /*0x7C*/ static u32 _data_7C[] = {
     0x00000000, 0x41200000, 0x00000000
 };
@@ -631,10 +629,10 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_363C.s")
 #else
-static void dll_210_func_1D8EC(Object* arg0, PlayerState* arg1, u8 arg2) {}
-static void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {}
-static void dll_210_func_9E00(Object* arg0) {}
-static void dll_210_func_1CEFC(Object* player, s32 arg1) {}
+// static void dll_210_func_1D8EC(Object* arg0, PlayerState* arg1, u8 arg2) {}
+// static void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {}
+// static void dll_210_func_9E00(Object* arg0) {}
+// static void dll_210_func_1CEFC(Object* player, s32 arg1) {}
 
 // Matches but has weird bss issues
 // requires dll_210_func_1D8EC, dll_210_func_41F4, dll_210_func_9E00, dll_210_func_1CEFC as static
@@ -1149,13 +1147,183 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7260.s")
 
 // offset: 0x7300 | func: 36
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7300.s")
+#else
+// https://decomp.me/scratch/t5pag
+// probably incorrect definition
+typedef struct Unk7300 {
+    MtxF mtx;
+    f32 unk40;
+    u8 pad44;
+    u8 unk45;
+    s8 unk46;
+    u8 pad47;
+    f32 unk48;
+    u32 pad4C;
+    s8 unk50;
+} Unk7300;
+s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, Unk7300* arg2, Unk7300* arg3, Vec3f* arg4, f32 arg5) {
+    Vec4f spC;
+    f32 temp_fv1;
+    s32 var_v0;
+    PlayerState *state;
+
+    state = arg0->state;
+
+    arg3->mtx.m[1][3] = arg2->mtx.m[1][3];
+    arg3->mtx.m[2][0] = arg2->mtx.m[2][0];
+    arg3->mtx.m[2][1] = arg2->mtx.m[2][1];
+    arg3->mtx.m[2][2] = arg2->mtx.m[2][2];
+    spC.x = -arg3->mtx.m[2][1];
+    spC.y = 0.0f;
+    spC.z = arg3->mtx.m[1][3];
+    spC.w = -(arg2->mtx.m[1][1] * spC.z) + (spC.x * arg2->mtx.m[0][1]);
+    temp_fv1 = *_data_70 + 0.5f;
+    if ((spC.x * arg4->x + spC.y * arg4->y + arg4->z * spC.z + spC.w) < temp_fv1) {
+        return 0;
+    }
+    spC.x = -spC.x;
+    spC.z = -spC.z;
+    spC.w = -(arg2->mtx.m[1][2] * spC.z) + (spC.x * arg2->mtx.m[0][2]);
+    if ((spC.x * arg4->x + spC.y * arg4->y + arg4->z * spC.z + spC.w) < temp_fv1) {
+        return 0;
+    }
+    arg3->mtx.m[2][3] = arg4->x;
+    arg3->mtx.m[3][0] = arg4->y;
+    arg3->mtx.m[3][1] = arg4->z;
+    arg3->mtx.m[3][3] = 0.0f;
+    arg3->mtx.m[3][2] = arg1->unk7EC;
+    arg3->unk40 = arg1->unk7F4;
+    temp_fv1 = arg2->mtx.m[3][3];
+    arg3->mtx.m[0][1] = ((arg2->unk40 - temp_fv1) * arg2->unk48) + temp_fv1;
+    arg3->mtx.m[0][2] = arg0->positionMirror2.y;
+    arg3->mtx.m[0][0] = arg3->mtx.m[0][1] - arg3->mtx.m[0][2];
+    arg3->unk46 = arg2->unk50;
+    if (arg2->unk50 == 6) {
+        if (state->unk260 & 0x10) {
+            if (arg5 < 9.0f) {
+                if ((arg3->mtx.m[0][0] <= 64.0f) && (arg3->mtx.m[0][0] > 32.0f)) {
+                    return 2;
+                }
+                if ((arg3->mtx.m[0][0] <= 32.0f) && (*_bss_1C8 <= arg3->mtx.m[0][0])) {
+                    return 3;
+                }
+                return 0;
+            }
+            return 0;
+        }
+        return 6;
+    }
+    if (*_bss_1DC < arg3->mtx.m[0][0]) {
+        arg3->mtx.m[0][0] = *_bss_1DC;
+    }
+    return 3;
+}
+#endif
 
 // offset: 0x75B0 | func: 37
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_75B0.s")
+#else
+// https://decomp.me/scratch/lhw69
+s32 dll_210_func_75B0(Object* arg0, Unk7300* arg1, Unk7300* arg2, Vec3f* arg3, f32 arg4, f32 arg5) {
+    Vec4f sp4;
+    f32 temp_ft0;
+    f32 temp_ft2;
+    f32 temp_ft3;
+    f32 temp_ft4;
+    f32 temp_ft5;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    PlayerState *state;
+
+    state = arg0->state;
+    arg2->mtx.m[1][3] = arg1->mtx.m[1][3];
+    arg2->mtx.m[2][0] = arg1->mtx.m[2][0];
+    arg2->mtx.m[2][1] = arg1->mtx.m[2][1];
+    arg2->mtx.m[1][3] = -arg2->mtx.m[1][3];
+    arg2->mtx.m[2][0] = -arg2->mtx.m[2][0];
+    arg2->mtx.m[2][1] = -arg2->mtx.m[2][1];
+    arg2->mtx.m[2][2] = -arg1->mtx.m[2][2];
+    arg2->mtx.m[2][3] = arg3->x;
+    arg2->mtx.m[3][0] = arg3->y;
+    arg2->mtx.m[3][1] = arg3->z;
+    temp_fv0 = arg1->mtx.m[0][3];
+    arg2->mtx.m[0][1] = ((arg1->mtx.m[1][0] - temp_fv0) * arg1->unk48) + temp_fv0;
+    temp_ft0 = -arg2->mtx.m[2][1];
+    arg2->mtx.m[0][2] = arg1->mtx.m[0][3];
+    arg2->mtx.m[0][0] = arg2->mtx.m[0][1] - arg2->mtx.m[0][2];
+    arg2->unk46 = arg1->unk50;
+    sp4.x = temp_ft0;
+    sp4.y = 0.0f;
+    sp4.z = arg2->mtx.m[1][3];
+    temp_ft2 = (arg1->mtx.m[1][1] * sp4.z) + (temp_ft0 * arg1->mtx.m[0][1]);
+    sp4.w = -temp_ft2;
+    temp_ft5 = -temp_ft0;
+    temp_fv1 = ((arg3->z * sp4.z) + ((temp_ft0 * arg3->x) + (0.0f * arg3->y))) - temp_ft2;
+    sp4.x = temp_ft5;
+    temp_ft3 = -sp4.z;
+    sp4.z = temp_ft3;
+    temp_ft4 = (arg1->mtx.m[1][2] * temp_ft3) + (temp_ft5 * arg1->mtx.m[0][2]);
+    sp4.w = -temp_ft4;
+    if (temp_fv1 < (((arg3->z * temp_ft3) + ((temp_ft5 * arg3->x) + (0.0f * arg3->y))) - temp_ft4)) {
+        arg2->unk47 = 0;
+    } else {
+        arg2->unk47 = 1;
+    }
+    if (arg4 <= (state->unk278 * arg5) || arg4 <= 3.5f) {
+        if ((arg1->unk50 == 2) || (arg1->unk50 == 0x11)) {
+            return 4;
+        }
+        if (state->unk278 >= 0.94f) {
+            return 5;
+        }
+        if (arg1->unk50 != 4) {
+            return 4;
+        }
+        return 5;
+    }
+    return 0;
+}
+#endif
 
 // offset: 0x77DC | func: 38
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_77DC.s")
+typedef struct UnkArg1 {
+    Object *unk0;
+    u8 pad4[0x1C - 0x4];
+    Vec3f unk1C;
+    u8 pad28[0x38 - 0x28];
+    f32 unk38;
+} UnkArg1;
+
+typedef struct UnkArg2 {
+    Vec3f unk0;
+    f32 unkC;
+    Vec3f unk10;
+    u8 pad1C[0x28 - 0x1C];
+    s32 unk28;
+    u8 pad2C;
+    s8 unk2D;
+} UnkArg2;
+
+s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
+    arg2->unk0.x = arg1->unk1C.x;
+    arg2->unk0.y = arg1->unk1C.y;
+    arg2->unk0.z = arg1->unk1C.z;
+    arg2->unkC = arg1->unk38;
+    arg2->unk2D = 0;
+    if (arg0 != 0) {
+        inverse_transform_point_by_object(arg3->x, arg3->y, arg3->z, &arg2->unk10.x, &arg2->unk10.y, &arg2->unk10.z, arg1->unk0);
+        arg2->unk28 = (s32) arg1->unk0;
+    } else {
+        arg2->unk10.x = arg3->x;
+        arg2->unk10.y = arg3->y;
+        arg2->unk10.z = arg3->z;
+        arg2->unk28 = 0;
+    }
+    return 1;
+}
 
 // offset: 0x78A8 | func: 39
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_78A8.s")
@@ -1176,6 +1344,15 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7DA0.s")
 
 // offset: 0x7E6C | func: 45
+// REquires these as static:
+// s32 dll_210_func_7300(Object*, PlayerState*, void**, s8*, f32*, f32); /* extern */
+// s32 dll_210_func_75B0(Object*, void**, s8*, f32*, f32, f32); /* extern */
+// s32 dll_210_func_77DC(Object*, void**, s8*, f32*);  /* extern */
+// s32 dll_210_func_78A8(Object*, PlayerState*, void**, s8*, s32); /* extern */
+// s32 dll_210_func_7AAC(Object*, PlayerState*, void**, f32*, s8*, s32); /* extern */
+// ? dll_210_func_7B98(Object*, void**, s8*);          /* extern */
+// ? dll_210_func_7CF8(PlayerState*, f32*);            /* extern */
+// ? dll_210_func_7DA0(Object*, PlayerState*, f32*);   /* extern */
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7E6C.s")
 
 // offset: 0x8AE0 | func: 46
