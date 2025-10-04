@@ -186,9 +186,7 @@ static s16 _data_18[2] = {-1, 0};
 /*0x52C*/ static u32 _data_52C[] = {
     0x00000000
 };
-/*0x530*/ static u32 _data_530[] = {
-    0x01000000
-};
+/*0x530*/ static u8 _data_530 = 0x01;
 /*0x534*/ static u32 _data_534[] = {
     0x0b04060a, 0x0a03030c, 0x05020e0f, 0x10111200
 };
@@ -833,7 +831,125 @@ void dll_210_func_64B4(Object* arg0, PlayerState* arg1, f32 arg2) {
 }
 
 // offset: 0x692C | func: 32
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_692C.s")
+void dll_210_func_692C(Object* arg0, PlayerState* arg1, f32 arg2) {
+    s32 var_s2;
+    s32 var_v0;
+    ModelInstance *modelInstance;
+    AnimState *animState;
+    Object *linkedObject = arg0->linkedObject;
+    u8 new_var;
+    u8 new_var2;
+    u8 *temp;
+
+    if (linkedObject == NULL) {
+        return;
+    }
+
+    var_v0 = 0;
+    do {
+        temp = &_data_530;
+        new_var = 1;
+        var_s2 = 0;
+        switch (arg1->unk878) {
+        case 2:
+            if (var_v0 != 0) {
+                func_80024E50(arg0, arg0->curModAnimId, arg0->animProgress, 0);
+                func_80024E50(arg0, 0x8A, 0.0f, 0);
+            }
+            if ((arg0->animProgressLayered > 0.2f) && !*temp) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, arg1->unk3B8[4], 0x7FU, NULL, NULL, 0, NULL);
+                _data_530 = new_var;
+            }
+            if (arg0->animProgressLayered > 0.4f) {
+                arg1->unk8A8 = 2;
+            }
+            if (func_80025140(arg0, 0.015f, arg2, 0) != 0) {
+                arg1->unk878 = 3;
+                var_s2 = new_var;
+            }
+            break;
+        case 13:
+            if (!*temp) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, arg1->unk3B8[4], 0x7FU, NULL, NULL, 0, NULL);
+                _data_530 = new_var;
+            }
+            arg1->unk8A8 = 2;
+            arg1->unk878 = 0;
+            break;
+        case 1:
+            if (var_v0 != 0) {
+                func_80024E50(arg0, arg0->curModAnimId, arg0->animProgress, 0);
+                func_80024E50(arg0, 0x8A, 0.99f, 0);
+            }
+            if ((arg0->animProgressLayered < 0.8f) && !*temp) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, arg1->unk3B8[3], 0x7FU, NULL, NULL, 0, NULL);
+                _data_530 = new_var;
+            }
+            if (arg0->animProgressLayered < 0.4f) {
+                arg1->unk8A8 = 0;
+            }
+            if (func_80025140(arg0, -0.015f, arg2, 0) != 0) {
+                arg1->unk87C = -1;
+                arg1->unk878 = 3;
+                var_s2 = new_var;
+            }
+            break;
+        case 14:
+            if (!*temp) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, arg1->unk3B8[3], 0x7FU, NULL, NULL, 0, NULL);
+                _data_530 = new_var;
+            }
+            arg1->unk87C = -1;
+            arg1->unk8A8 = 0;
+            arg1->unk878 = 0;
+            break;
+        case 3:
+            if (var_v0 != 0) {
+                func_80024E50(arg0, arg0->curModAnimId, arg0->animProgress, 0);
+            } else {
+                func_80025140(arg0, arg0->animProgress - arg0->animProgressLayered, 1.0f, 0);
+            }
+            modelInstance = arg0->modelInsts[arg0->modelInstIdx];
+            animState = modelInstance->animState1;
+            if (animState->unk_0x58[0] == 0) {
+                arg0->curModAnimIdLayered = -1;
+                arg1->unk878 = 0;
+            }
+            break;
+        default:
+            if (arg0->linkedObject != NULL) {
+                new_var2 = 0;
+                if (arg1->unk8A8 != 0) {
+                    if (arg1->unk8A9 == 0) {
+                        arg1->unk878 = new_var;
+                        var_s2 = new_var;
+                        _data_530 = new_var2;
+                        break;
+                    }
+                    if (arg1->unk8A9 == 1) {
+                        arg1->unk878 = 0xE;
+                        var_s2 = new_var;
+                        _data_530 = new_var2;
+                    }
+                    break;
+                }
+                if (arg1->unk8A9 == 2) {
+                    arg1->unk878 = 2;
+                    var_s2 = new_var;
+                    _data_530 = new_var2;
+                    break;
+                }
+                if (arg1->unk8A9 == 4) {
+                    arg1->unk878 = 0xD;
+                    var_s2 = new_var;
+                    _data_530 = new_var2;
+                }
+            }
+            break;
+        }
+        var_v0 = var_s2;
+    } while (var_s2 != 0);
+}
 
 // offset: 0x6DD8 | func: 33
 #ifndef NON_EQUIVALENT

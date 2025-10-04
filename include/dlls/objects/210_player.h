@@ -66,7 +66,9 @@ typedef struct {
 /*372*/ s8 unk372;
 /*354*/ s8 unk373[0x39C - 0x373];
 /*39C*/ Vec3f unk39C;
-/*3A8*/ u8 unk3A8[0x3C0 - 0x3A8];
+/*3A8*/ u8 pad3A8[0x3B8 - 0x3A8];
+/*3B8*/ s16 *unk3B8;
+/*3BC*/ s32 pad3BC;
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
