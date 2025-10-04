@@ -9,7 +9,7 @@ DLL_INTERFACE(DLL_32) {
 /*0*/ UnknownDLLFunc func0;
 /*1*/ UnknownDLLFunc func1;
 /*2*/ UnknownDLLFunc func2;
-/*3*/ UnknownDLLFunc func3;
+/*3*/ void (*func3)(Object *, f32, s32, s32, s32);
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;

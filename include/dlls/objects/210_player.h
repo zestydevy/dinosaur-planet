@@ -88,7 +88,9 @@ typedef struct {
 /*6A8*/ s32 unk6A8;
 /*6AC*/ s16 unk6AC;
 /*6AE*/ s8 unk6AE;
-/*6AF*/ s8 unk6AF[0x6e8 - 0x6AF];
+/*6AF*/ u8 pad6AF;
+/*6B0*/ UNK_TYPE_32 unk6B0;
+/*6B4*/ s8 unk6B4[0x6e8 - 0x6B4];
 /*6e8*/ s32 unk6E8;
 /*3CC*/ s8 unk6EC[0x708 - 0x6EC];
 /*708*/ Object *unk708;
@@ -119,7 +121,7 @@ typedef struct {
 /*828*/ s32 pad828;
 /*82C*/ f32 unk82C;
 /*830*/ f32 unk830;
-/*834*/ s32 pad834;
+/*834*/ f32 unk834;
 /*838*/ s32 pad838;
 /*83C*/ f32 unk83C;
 /*840*/ f32 unk840;
@@ -129,8 +131,9 @@ typedef struct {
 /*850*/ Object *unk850;
 /*854*/ s32 unk854;
 /*858*/ Object *unk858;
-/*85C*/ s8 unk85C[0x864 - 0x85C];
-/*868*/ s32 unk864;
+/*85C*/ Object *unk85C;
+/*860*/ s32 pad860;
+/*864*/ s32 unk864;
 /*868*/ Object* unk868;
 /*86C*/ f32 unk86C;
 /*870*/ u8 unk870;
@@ -153,7 +156,7 @@ typedef struct {
 /*898*/ s32 unk898;
 /*89C*/ s32 unk89C;
 /*8A0*/ s32 unk8A0;
-/*8A4*/ s8 unk8A4;
+/*8A4*/ u8 unk8A4;
 /*8A5*/ s8 unk8A5;
 /*8A6*/ u8 unk8A6;
 /*8A7*/ s8 unk8A7;
@@ -165,7 +168,7 @@ typedef struct {
 /*8B0*/ s32 unk8B0;
 /*8B4*/ s8 unk8B4;
 /*8B5*/ s8 unk8B5;
-/*8B6*/ s8 unk8B6;
+/*8B6*/ u8 unk8B6;
 /*8B7*/ s8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
