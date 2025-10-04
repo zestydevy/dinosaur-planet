@@ -51,7 +51,7 @@ typedef struct {
 /*28C*/ f32 unk28C;
 /*290*/ f32 unk290;
 /*294*/ f32 unk294;
-/*298*/ f32* unk298;
+/*298*/ f32 unk298;
 /*29C*/ s8 unk29C[0x2B0 - 0x29C];
 /*2b0*/ f32 unk2B0;
 /*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
@@ -93,7 +93,10 @@ typedef struct {
 /*3CC*/ s8 unk6EC[0x708 - 0x6EC];
 /*708*/ Object *unk708;
 /*70C*/ s16 unk70C;
-/*70E*/ s8 unk70E[0x7EC - 0x70E];
+/*70E*/ s8 unk70E[0x76C - 0x70E];
+/*76c*/ s16 *unk76C;
+/*770*/ u8 unk770;
+/*771*/ s8 unk771[0x7EC - 0x771];
 /*7EC*/ f32 unk7EC;
 /*7F0*/ f32 unk7F0;
 /*7F4*/ f32 unk7F4;
