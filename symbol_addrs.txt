@@ -1743,3 +1743,6 @@ __am_audioFrameMsgBuf = 0x800AA9E8;
 __am_audioReplyMsgBuf = 0x800AAA08;
 audDMAMessageBuf = 0x800AB820;
 __am_g = 0x800AA948;
+
+sCallbackPairIndex = 0x80091710;
+sObjectPairCallbacks = 0x800B2D40; // size:0xc0
