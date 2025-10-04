@@ -189,7 +189,7 @@ typedef struct Object {
 /*0068*/    DLL_IObject *dll;
 /*006C*/    s16 (*ptr0x6c)[9];
 /*0070*/    void* ptr0x70;
-/*0074*/    u32 unk0x74;
+/*0074*/    Vec3f* unk0x74;
 /*0078*/    ObjectStruct78 *unk_0x78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts;
 /*0080*/    Vec3f positionMirror2; //gets copied twice.
