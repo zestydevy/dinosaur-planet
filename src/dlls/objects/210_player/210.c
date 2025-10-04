@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "sys/print.h"
 
 #include "dll.h"
 #include "dlls/objects/210_player.h"
@@ -1129,34 +1130,38 @@ s32 dll_210_func_A3E4(Object* player, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_AA80.s")
 
 // offset: 0xAE34 | func: 60
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_AE34.s")
 #else
-int diPrintf(const char *format, ...);
-s32 func_8002493C(Object*, f32, void*);
-void dll_210_func_B4C8(Object* player, s32 arg1);
-s32 dll_210_func_BA38(Object*, void*, f32);
-s32 dll_210_func_C1F4(Object*, void*, f32);
+// matches but requires dll_210_func_B4C8, dll_210_func_BA38, dll_210_func_C1F4 as static
+
+//arg1 seems to point to Krystal's PlayerState struct!
+//krystal.c: objGetAnimChange()?
+static void dll_210_func_B4C8(Object* player, s32 arg1);
+static s32 dll_210_func_BA38(Object* arg0, void* arg1, f32 arg2);
+static s32 dll_210_func_C1F4(Object* arg0, void* arg1, f32 arg2);
+s32 func_8002493C(Object*, f32, f32*);
+//arg1 seems to point to Krystal's PlayerState struct!
 
 //krystal.c: objGetAnimChange()?
 s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
-    PlayerState *state;
     f32 temp_fv0;
     f32 temp_fv1;
-    f32 var_fa0;
     f32 var_fv0;
     f32 animProgress;
+    f32 var_fa0;
     s32 temp_t1;
     s32 temp_v0;
     s16 *modAnimIds;
+    PlayerState *state;
     s32 var_a1;
     s32 temp_t3;
     
     state = player->state;
     if (arg1->unk272 != 0){
         state->unk8C0 = 0;
-        state->unk888 = 0;
         state->unk3C8 = 1.65f;
+        state->unk888 = 0;
         arg1->unk2FC = &dll_210_func_B4C8;
     }
     
@@ -1222,17 +1227,15 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
         var_fa0 = -var_fa0;
     }
     
-    temp_fv0 = arg1->unk28C;
-    arg1->unk28C = (f32) (temp_fv0 + (((var_fa0 - temp_fv0) / arg1->unk2B0) * arg2));
+    arg1->unk28C = (f32) (arg1->unk28C + (((var_fa0 - arg1->unk28C) / arg1->unk2B0) * arg2));
     if (arg1->unk198 > 0){
         var_fa0 -= fsin16_precise(arg1->unk198) * 0.65f;
     }
     else {
         var_fa0 -= fsin16_precise(arg1->unk198) * 0.35f;
     }
-    temp_fv1 = state->unk3C8;
-    if (temp_fv1 < arg1->unk28C){
-        arg1->unk28C = temp_fv1;
+    if (state->unk3C8 < arg1->unk28C){
+        arg1->unk28C = state->unk3C8;
     }
     if (arg1->unk28C > 1.32f){
         state->unk888 = (s16) (state->unk888 + 1);
@@ -1247,37 +1250,33 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
     if (var_fa0 < state->unk3C4[2]){
         var_fa0 = state->unk3C4[2];
     }
-    temp_fv0 = var_fa0 - arg1->unk278;
-    arg1->unk278 += temp_fv0/arg1->unk2B0 * arg2;
+    arg1->unk278 += (var_fa0 - arg1->unk278) /arg1->unk2B0 * arg2;
     if (state->unk3C8 < arg1->unk278){
         arg1->unk278 = state->unk3C8;
     }
     var_a1 = 0;
     arg1->unk278 += _data_C[0];
     arg1->unk27C += _data_C[1];
-    if (!arg1 && !arg1){
-    }
     _data_C[0] = 0.0f;
     _data_C[1] = 0.0f;
     animProgress = player->animProgress;
     
     temp_t1 = (state->unk8C0 / 3) * 2;    
-    temp_t3 = (temp_t1 >> 1) + 1;
-    state->unk8A5 = temp_t3;
-    if ((u8) temp_t3 >= 4) {
+    state->unk8A5 = (temp_t1 >> 1) + 1;
+    if ((u8)state->unk8A5 >= 4) {
         state->unk89C = state->unk894;
     }
     else {
         state->unk89C = state->unk890;
     }
     
-    if (arg1->unk28C < *&state->unk3C4[temp_t1]){
+    if (arg1->unk28C < state->unk3C4[temp_t1]){
         var_a1 = 1;
         if (state->unk8C0 == 3){
             return 2;
         }
-        state->unk8C0 = (s8) (state->unk8C0 - 3);
-    } else if ((*(&state->unk3C4[temp_t1 + 1])) <= arg1->unk28C){
+        state->unk8C0 -= 3;
+    } else if (state->unk3C4[temp_t1 + 1] <= arg1->unk28C){
         if (state->unk8C0 < 0xC){
             var_a1 = 1;
             if (state->unk8C0 == 0){
@@ -1288,26 +1287,25 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
     }
     
     modAnimIds = state->modAnims;
-    if (var_a1){
-        func_80023D30(player, *(&modAnimIds[state->unk8C0]), animProgress, 0);
+    if (var_a1 || state->modAnims != modAnimIds){
+        func_80023D30(player, state->modAnims[state->unk8C0], animProgress, 0);
     }
-    
-    var_fv0 = (f32)arg1->unk198 / 0x2000;
-    if (var_fv0 > 1){
-        var_fv0 = 1;
-    } else if (var_fv0 < -1){
-        var_fv0 = -1;
+
+    // calculations here are absolutely useless but requires to match
+    temp_fv0 = (f32)arg1->unk198 / 0x2000;
+    if (1.0f < temp_fv0) { temp_fv0 = 1.0f; }
+    else if (temp_fv0 < -1.0f) { temp_fv0 = -1.0f; }
+
+    if (0.0f > temp_fv0) {
+        // @fake
+        if (arg1->unk278 && arg1->unk278) {}
     }
-    if (var_fv0 < 0){
-        
-    }
-    
-    if (!func_8002493C(player, arg1->unk278, ((s8 *) arg1) + 0x298)){
+
+    if (!func_8002493C(player, arg1->unk278, &arg1->unk298)){
         diPrintf("krystal.c: objGetAnimChange Error\n");
     }
     return 0;
 }
-
 #endif
 
 // offset: 0xB4C8 | func: 61
@@ -1408,7 +1406,52 @@ s32 dll_210_func_EF9C(Object* player, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_12514.s")
 
 // offset: 0x125BC | func: 91
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_125BC.s")
+s32 dll_210_func_125BC(Object* arg0, PlayerState* arg1, u32 arg2) {
+    f32 temp_fs0;
+    f32 temp_fs1;
+    f32 f2;
+    f32 f0;
+    s32 i;
+    PlayerState* temp_s3;
+
+    if (arg1->unk272 != 0) {
+        ((s16*)arg1)[0x138] = 0x1F;
+    }
+    arg1->unk0 |= 0x200000;
+    temp_s3 = (PlayerState *) &arg1->unk4;
+    if (arg1->unk272 != 0) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x3D8U, 0x7FU, NULL, NULL, 0, NULL);
+        for (i = 0; i < 3; i++) {
+            temp_fs0 = ((f32) rand_next(-0x32, 0x32) / 10.0f) + arg0->srt.transl.x;
+            temp_fs1 = ((f32) rand_next(-0x32, 0x32) / 10.0f) + arg0->srt.transl.z;
+            gDLL_24_Waterfx->vtbl->func_174C(temp_fs0, temp_s3->unk1B8, temp_fs1, 4.0f);
+            gDLL_24_Waterfx->vtbl->func_1CC8(temp_fs0, temp_s3->unk1B8, temp_fs1, 0, 0.0f, 3);
+        }
+    }
+    if (temp_s3->unk1B0 > 25.0f && temp_s3->unk1A8 < 100.0f) {
+        return 0x21;
+    }
+    if (temp_s3->unk25C & 0x10) {
+        return 2;
+    }
+    f0 = temp_s3->unk1B8 - 6.0f;
+    f2 = f0 - arg0->srt.transl.y;
+    if (f2 > 25.0f) {
+        f2 = 25.0f;
+    }
+    arg0->speed.y += (f2 / 25.0f) * 0.13f * delayFloat;
+    arg0->speed.y -= 0.1f * delayFloat;
+    arg0->speed.y *= 0.96f;
+    if (arg0->speed.y > 1.4f) {
+        arg0->speed.y = 1.4f;
+    }
+    arg0->speed.x *= 0.98f;
+    arg0->speed.z *= 0.98f;
+    for (i = 0; i < 4; i++) {
+        gDLL_17->vtbl->func1(arg0, 0x202, NULL, 0, -1, NULL);
+    }
+    return 0;
+}
 
 // offset: 0x128F4 | func: 92
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_128F4.s")

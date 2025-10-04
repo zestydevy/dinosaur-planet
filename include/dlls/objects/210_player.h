@@ -5,22 +5,31 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
+#include "sys/rand.h"
+#include "sys/main.h"
 #include "types.h"
 
 typedef struct {
 /*000*/ s32 unk0; //bitfield?
-/*004*/ s8 unk4[0x48 - 0x4];
+/*004*/ void *unk4;
+/*004*/ s8 unk8[0x48 - 0x8];
 /*048*/ Vec3f unk48;
 /*004*/ s8 unk54[0xBC - 0x54];
 /*0BC*/ s8 unkBC;
 /*004*/ s8 unkBD[0x198 - 0xBD];
 /*198*/ s16 unk198;
 /*19A*/ s16 unk19A;
-/*19C*/ s8 unk19C[0x1AC - 0x19C];
+/*19C*/ s8 unk19C[0x1A8 - 0x19C];
+/*1a8*/ f32 unk1A8;
 /*1ac*/ f32 unk1AC;
 /*1b0*/ f32 unk1B0;
 /*1b4*/ f32 unk1B4;
-/*1b8*/ s8 unk1B8[0x260 - 0x1B8];
+/*1b8*/ f32 unk1B8;
+/*1bc*/ s8 unk1BC[0x25C - 0x1BC];
+/*25c*/ s8 unk25C;
+/*25d*/ u8 pad25D;
+/*25e*/ u8 pad25E;
+/*25f*/ u8 pad25F;
 /*260*/ s8 unk260;
 /*261*/ s8 unk261;
 /*262*/ s8 unk262;
