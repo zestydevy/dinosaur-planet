@@ -4,12 +4,18 @@
 
 #include "dll.h"
 #include "dlls/objects/210_player.h"
+#include "segment_334F0.h"
 
 #include "prevent_bss_reordering.h"
 
-s32 func_80023D30(Object*,s32,f32,s32);
 void func_80024E50(Object*, s16, f32, s32);
 s32 func_80025140(Object*, f32, f32, s32);
+void func_800240BC(Object*, f32);
+void func_80024DD0(Object*, s32, s32, s16);
+void func_80025540(Object*, s16, s32);
+void func_8002559C(Object*, s16, s32);
+void func_800267A4(Object*);
+static void dll_210_func_14B70(Object* arg0, u32 arg1);
 
 /*0x0*/ static const u32 _rodata_0[] = {
     0x40020100, 0x00000000, 0x00000000, 0x00000000, 0x40030102, 0x00000000, 0x00000000, 0x00000000, 
@@ -1469,13 +1475,97 @@ s32 dll_210_func_125BC(Object* arg0, PlayerState* arg1, u32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1426C.s")
 
 // offset: 0x142C4 | func: 97
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_142C4.s")
+s32 dll_210_func_142C4(Object* arg0, PlayerState* arg1, f32 arg2) {
+    PlayerState* temp_s0;
+    Object* sp48;
+    f32 sp44;
+    f32 sp40;
+    f32 sp3C;
+    s32 sp38;
+    s32 sp34;
+    s32 sp30;
+
+    gDLL_2_Camera->vtbl->func24.withOneArg(2);
+    temp_s0 = arg0->state;
+    arg1->unk1BC[0x9F] = 0;
+    arg1->unk2FC = dll_210_func_14B70;
+    func_800267A4(arg0);
+    sp48 = temp_s0->unk858;
+    if (sp48 == NULL) {
+        arg0->curModAnimIdLayered = -1;
+        return 0;
+    }
+    if (arg1->unk272 != 0) {
+        if (temp_s0->unk76C == NULL) {
+            temp_s0->unk76C = (s16 *)_data_158;
+        }
+        if (temp_s0->unk770 & 2) {
+            sp30 = 8;
+            func_80024E50(arg0, *temp_s0->unk76C, 0.0f, 0);
+            func_80025140(arg0, 0.0f, 0, 0); // arg2 should be 0.0f
+            func_80024E50(arg0, temp_s0->unk76C[1], 0.0f, 0xA);
+            func_80025140(arg0, 0.0f, 0, 0); // arg2 should be 0.0f
+        }
+        func_80023D30(arg0, *temp_s0->unk76C, 0.0f, (u8)sp30);
+        func_80024108(arg0, 0.0f, 0.0f, 0);
+    }
+    if (temp_s0->unk770 & 4) {
+        func_800240BC(arg0, sp48->animProgress);
+        arg1->unk298 = NULL;
+    } else {
+        sp3C = ((DLL_Unknown*)sp48->dll)->vtbl->func[16].withTwoArgsF32(sp48, &sp44);
+        sp3C = sp3C;
+        if (sp44 <= 1.0f) {
+            arg1->unk298 = sp44;
+        } else {
+            arg1->unk298 = ((sp3C * 0.05f) + 0.01f);
+        }
+    }
+    if (temp_s0->unk770 & 1) {
+        ((DLL_Unknown*)sp48->dll)->vtbl->func[15].withThreeArgs(sp48, &sp40, &sp34);
+        sp38 = (s32) (sp40 * 1023.0f);
+        if (sp38 < 0) {
+            sp38 = -sp38;
+        }
+        if (sp34 != 0) {
+            func_80025540(arg0, temp_s0->unk76C[3], sp38);
+            func_8002559C(arg0, temp_s0->unk76C[5], sp38);
+        } else {
+            func_80025540(arg0, temp_s0->unk76C[2], sp38);
+            func_8002559C(arg0, temp_s0->unk76C[4], sp38);
+        }
+    }
+    if (temp_s0->unk770 & 1) {
+        func_80024DD0(arg0, 0, 2, 0);
+        func_80024DD0(arg0, 1, 2, 0);
+    }
+    if (temp_s0->unk770 & 2) {
+        func_80024DD0(arg0, 1, 0, (s16) (s32) (sp3C * 1023.0f));
+        func_80025140(arg0, arg1->unk298, arg2, 0);
+    }
+    if (((DLL_Unknown*)sp48->dll)->vtbl->func[10].withTwoArgsS32(sp48, arg0) != 0) {
+        return 0x27;
+    }
+    return 0;
+}
 
 // offset: 0x146D8 | func: 98
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_146D8.s")
 
 // offset: 0x14B70 | func: 99
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_14B70.s")
+static void dll_210_func_14B70(Object* arg0, u32 arg1) {
+    s16* temp_v0_2;
+
+    arg0->ptr0x64->flags &= ~0x1000;
+    arg0->srt.flags &= 0xFFF7 ;
+    arg0->curModAnimIdLayered = -1;
+    temp_v0_2 = func_80034804(arg0, 9);
+    if (temp_v0_2 != NULL) {
+        temp_v0_2[0] = 0;
+        temp_v0_2[1] = 0;
+        temp_v0_2[2] = 0;
+    }
+}
 
 // offset: 0x14BE8 | func: 100
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_14BE8.s")
