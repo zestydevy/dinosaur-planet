@@ -13,6 +13,7 @@
 #include "segment_334F0.h"
 
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
+static void dll_210_func_7260(Object* arg0, PlayerState* arg1);
 
 void func_80024E50(Object*, s16, f32, s32);
 s32 func_80025140(Object*, f32, f32, s32);
@@ -835,11 +836,6 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 
 // offset: 0x60A8 | func: 28
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_60A8.s")
-#else
-// matches but requires dll_210_func_7260 as static
-static void dll_210_func_7260(Object* arg0, PlayerState* arg1);
 void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
     PlayerState* sp24;
 
@@ -855,7 +851,6 @@ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
         func_80023A18(arg0, 0);
     }
 }
-#endif
 
 // offset: 0x618C | func: 29
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_618C.s")
@@ -1212,7 +1207,7 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7180.s")
 
 // offset: 0x7260 | func: 35
-void dll_210_func_7260(Object* arg0, PlayerState* arg1) {
+static void dll_210_func_7260(Object* arg0, PlayerState* arg1) {
     arg1->unk874 = (s16) arg0->srt.yaw;
     gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(arg0, &arg1->unk4);
     arg0->objhitInfo->unk_0x10.x = arg0->srt.transl.x;
