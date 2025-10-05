@@ -65,6 +65,4 @@ DLL_INTERFACE(DLL_3_animation) {
 /*32*/ s32 (*func32)(s32 arg0, s32 arg1);
 };
 
-
-
 #endif //_DLLS_3_H

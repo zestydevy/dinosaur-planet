@@ -222,7 +222,7 @@ typedef struct {
 /*8B4*/ s8 unk8B4;
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
-/*8B7*/ s8 unk8B7;
+/*8B7*/ u8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
 /*8BA*/ u8 unk8BA;

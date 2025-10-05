@@ -9,8 +9,6 @@
 #include "dlls/objects/210_player.h"
 #include "segment_334F0.h"
 
-#include "prevent_bss_reordering.h"
-
 void func_80024E50(Object*, s16, f32, s32);
 s32 func_80025140(Object*, f32, f32, s32);
 void func_800240BC(Object*, f32);
@@ -835,7 +833,7 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 // dll_210_func_1D2A8 (matched)
 // dll_210_func_1D4E0 (matched)
 // dll_210_func_1DB6C (matched)
-// dll_210_func_63F0(void*, f32);
+// dll_210_func_63F0 (matched)
 // dll_210_func_9F1C(Object*, ?);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 
@@ -846,7 +844,26 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_618C.s")
 
 // offset: 0x63F0 | func: 30
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_63F0.s")
+f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1) {
+    switch (arg0->unk8B7) {
+    case 1:
+        arg0->unk800 *= 0.85f;
+        if (arg0->unk800 < arg0->unk804) {
+            arg0->unk800 = arg0->unk804;
+        }
+        arg1 *= arg0->unk800;
+        break;
+    case 2:
+        arg0->unk800 += 0.02f;
+        if (arg0->unk800 >= 1.0f) {
+            arg0->unk800 = 1.0f;
+            arg0->unk8B7 = 0;
+        }
+        arg1 *= arg0->unk800;
+        break;
+    }
+    return arg1;
+}
 
 // offset: 0x64B4 | func: 31
 void dll_210_func_64B4(Object* arg0, PlayerState* arg1, f32 arg2) {
