@@ -5,22 +5,105 @@
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
+#include "sys/rand.h"
+#include "sys/main.h"
 #include "types.h"
+
+// size: 0x58
+typedef struct UnkArg4 {
+    Vec3f unk0;
+    u8 padC[0x1C - 0xC];
+    Vec3f unk1C;
+    u8 pad28[0x34 - 0x28];
+    Object *unk34;
+    Object *unk38;
+    f32 unk3C;
+    f32 unk40;
+    u8 pad44;
+    s8 unk45;
+    s8 unk46;
+    u8 pad47;
+    f32 unk48;
+    f32 unk4C;
+    u32 pad50;
+    s16 unk54;
+} UnkArg4;
+
+// size: 0x60
+typedef struct UnkArg3 {
+    s8 unk0;
+    s8 unk1;
+    s8 unk2;
+    s8 unk3;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    u8 pad10[0x18 - 0x10];
+    f32 unk18;
+    u8 pad1C[0x24 - 0x1C];
+    f32 unk24;
+    Vec4f unk28;
+    Vec3f unk38;
+    f32 unk44;
+    f32 unk48;
+    f32 unk4C;
+    f32 unk50;
+    Vec3f unk54;
+} UnkArg3;
+
+// size: 0x30
+typedef struct UnkArg2 {
+    Vec4f unk0;
+    Vec3f unk10;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    s32 unk28;
+    u8 pad2C;
+    s8 unk2D;
+    s8 unk2E;
+    u8 pad2F;
+} UnkArg2;
+
+// Size: 0x24
+typedef struct Unk80032CF8Copy {
+    /* 0x00 */ s8 unk0;
+    /* 0x01 */ u8 pad1[0x4 - 0x1];
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 x;
+    /* 0x0C */ f32 y;
+    /* 0x10 */ f32 z;
+    /* 0x14 */ s16 unk14;
+    /* 0x16 */ s16 unk16;
+    /* 0x18 */ s16 pad18;
+    /* 0x1A */ s16 unk1A;
+    /* 0x1C */ s16 unk1C;
+    /* 0x1E */ s8 unk1E;
+    /* 0x1E */ u8 pad1F[0x24 - 0x1F];
+} Unk80032CF8Copy;
 
 typedef struct {
 /*000*/ s32 unk0; //bitfield?
-/*004*/ s8 unk4[0x48 - 0x4];
+/*004*/ void *unk4;
+/*004*/ s8 unk8[0x48 - 0x8];
 /*048*/ Vec3f unk48;
 /*004*/ s8 unk54[0xBC - 0x54];
 /*0BC*/ s8 unkBC;
 /*004*/ s8 unkBD[0x198 - 0xBD];
 /*198*/ s16 unk198;
 /*19A*/ s16 unk19A;
-/*19C*/ s8 unk19C[0x1AC - 0x19C];
+/*19C*/ s8 unk19C[0x1A8 - 0x19C];
+/*1a8*/ f32 unk1A8;
 /*1ac*/ f32 unk1AC;
 /*1b0*/ f32 unk1B0;
 /*1b4*/ f32 unk1B4;
-/*1b8*/ s8 unk1B8[0x260 - 0x1B8];
+/*1b8*/ f32 unk1B8;
+/*1bc*/ s8 unk1BC[0x25B - 0x1BC];
+/*258*/ s8 unk25B;
+/*25c*/ s8 unk25C;
+/*25d*/ u8 pad25D;
+/*25e*/ u8 pad25E;
+/*25f*/ u8 pad25F;
 /*260*/ s8 unk260;
 /*261*/ s8 unk261;
 /*262*/ s8 unk262;
@@ -33,109 +116,144 @@ typedef struct {
 /*271*/ s8 unk271;
 /*272*/ s8 unk272;
 /*273*/ s8 unk273;
-/*274*/ s32 unk274;
+/*274*/ Vec3f *unk274;
 /*278*/ f32 unk278;
 /*27C*/ f32 unk27C;
 /*280*/ s32 unk280;
-/*284*/ s32 unk284;
-/*288*/ s32 unk288;
+/*284*/ f32 unk284;
+/*288*/ f32 unk288;
 /*28C*/ f32 unk28C;
 /*290*/ f32 unk290;
 /*294*/ f32 unk294;
-/*298*/ f32* unk298;
+/*298*/ f32 unk298;
 /*29C*/ s8 unk29C[0x2B0 - 0x29C];
 /*2b0*/ f32 unk2B0;
 /*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
-/*2c8*/ s32 unk2C8;
+/*2c8*/ Object *unk2C8;
 /*2cc*/ s8 unk2CC[0x2FC - 0x2CC];
-/*2fc*/ void* unk2FC;
-/*300*/ s8 unk300[0x310 - 0x300];
+/*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
+/*300*/ s8 unk300[0x30C - 0x300];
+/*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
-/*314*/ s8 unk314[0x328 - 0x314];
+/*314*/ s8 unk314[0x324 - 0x314];
+/*324*/ s16 unk324;
+/*326*/ u16 pad326;
 /*328*/ s16 unk328;
 /*32A*/ s16 unk32A;
 /*32C*/ s8 unk32C[0x33D - 0x32C];
 /*33D*/ u8 unk33D;
-/*33E*/ s8 unk33E[0x341 - 0x33E];
+/*33E*/ s8 unk33E[0x340 - 0x33E];
+/*340*/ s8 unk340;
 /*341*/ s8 unk341;
 /*342*/ s8 unk342[0x34C - 0x342];
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
-/*354*/ s8 unk354;    
-/*354*/ s8 unk355[0x372 - 0x355];    
-/*372*/ s8 unk372;    
-/*354*/ s8 unk373[0x3C0 - 0x373];    
+/*354*/ Unk80032CF8Copy unk354;
+/*378*/ Unk80032CF8Copy unk378;
+/*39C*/ Vec3f unk39C;
+/*3A8*/ u8 pad3A8[0x3B8 - 0x3A8];
+/*3B8*/ s16 *unk3B8;
+/*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, PlayerState*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
-/*3CC*/ s8 unk3CC[0x6A8 - 0x3CC];    
-/*6A8*/ s32 unk6A8; 
-/*6AC*/ s16 unk6AC; 
-/*6AE*/ s8 unk6AE;
-/*6AF*/ s8 unk6AF[0x6e8 - 0x6AF];    
-/*6e8*/ s32 unk6E8;
-/*3CC*/ s8 unk6EC[0x708 - 0x6EC];  
-/*708*/ s32 unk708;
-/*70C*/ s8 unk70C[0x7FC - 0x70C];    
+/*3CC*/ UnkArg3 unk3CC;
+/*42C*/ s32 pad42C;
+/*430*/ UnkArg3 unk430;
+/*490*/ UNK_TYPE_32 unk490;
+/*494*/ u8 pad494[0x4D8 - 0x494];
+/*4D8*/ UnkArg2 unk4D8;
+/*508*/ u8 pad508[0x680 - 0x508];
+/*680*/ UnkArg2 unk680;
+/*6B0*/ UnkArg4 unk6B0;
+/*708*/ Object *unk708;
+/*70C*/ s16 unk70C;
+/*70E*/ s8 unk70E[0x728 - 0x70E];
+/*728*/ f32 unk728;
+/*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
+/*734*/ u8 pad738[0x764 - 0x738];
+/*764*/ u16 unk764;
+/*766*/ u16 unk766;
+/*768*/ u16 unk768;
+/*76A*/ u16 pad76A;
+/*76C*/ s16 *unk76C;
+/*770*/ u8 unk770;
+/*771*/ s8 unk771[0x7EC - 0x771];
+/*7EC*/ Vec3f unk7EC;
+/*7F8*/ s32 pad7F8;
 /*7FC*/ f32 unk7FC;
 /*800*/ f32 unk800;
 /*804*/ f32 unk804;
 /*808*/ f32 unk808;
 /*80C*/ s32 aimX;
 /*810*/ s32 aimY;
-/*814*/ s8 unk814[0x840 - 0x814];  
+/*814*/ s32 aimZ;
+/*818*/ f32 unk818;
+/*81C*/ f32 unk81C;
+/*820*/ s32 pad820;
+/*824*/ s32 pad824;
+/*828*/ s32 pad828;
+/*82C*/ f32 unk82C;
+/*830*/ f32 unk830;
+/*834*/ f32 unk834;
+/*838*/ s32 pad838;
+/*83C*/ f32 unk83C;
 /*840*/ f32 unk840;
 /*844*/ f32 unk844;
-/*844*/ f32 unk848;
+/*844*/ u32 unk848;
 /*84C*/ f32 unk84C;
-/*850*/ f32 unk850;  
+/*850*/ Object *unk850;
 /*854*/ s32 unk854;
-/*858*/ s32 unk858;    
-/*85C*/ s8 unk85C[0x864 - 0x85C];
-/*868*/ s32 unk864;    
-/*868*/ s16* unk868;    
-/*86C*/ s32 unk86C;
-/*870*/ u8 unk870;    
-/*871*/ u8 unk871;    
-/*872*/ u8 unk872;    
-/*873*/ u8 unk873;    
-/*874*/ s8 unk874[0x87C - 0x874];
-/*87C*/ s16 unk87C;    
-/*87E*/ s16 unk87E;    
-/*880*/ s32 unk880;    
-/*884*/ s16 unk884;    
-/*886*/ s16 unk886;    
-/*888*/ s16 unk888;    
-/*88A*/ s16 unk88A;    
+/*858*/ Object *unk858;
+/*85C*/ Object *unk85C;
+/*860*/ s32 pad860;
+/*864*/ s32 unk864;
+/*868*/ Object* unk868;
+/*86C*/ f32 unk86C;
+/*870*/ u8 unk870;
+/*871*/ u8 unk871;
+/*872*/ u8 unk872;
+/*873*/ u8 unk873;
+/*874*/ s16 unk874;
+/*876*/ u16 pad876;
+/*878*/ s16 unk878;
+/*87A*/ u16 pad87A;
+/*87C*/ s16 unk87C;
+/*87E*/ s16 unk87E;
+/*880*/ s32 unk880;
+/*884*/ s16 unk884;
+/*886*/ s16 unk886;
+/*888*/ s16 unk888;
+/*88A*/ s16 unk88A;
 /*88C*/ s32 unk88C;
 /*890*/ s32 unk890;
 /*894*/ s32 unk894;
 /*898*/ s32 unk898;
 /*89C*/ s32 unk89C;
 /*8A0*/ s32 unk8A0;
-/*8A4*/ s8 unk8A4;
+/*8A4*/ u8 unk8A4;
 /*8A5*/ s8 unk8A5;
-/*8A6*/ s8 unk8A6;
+/*8A6*/ u8 unk8A6;
 /*8A7*/ s8 unk8A7;
-/*8A8*/ u8 unk8A8; 
-/*8A9*/ u8 unk8A9; 
-/*8AA*/ u8 unk8AA; 
-/*8AB*/ u8 unk8AB; 
-/*8AC*/ s32 unk8AC; 
-/*8B0*/ s32 unk8B0; 
-/*8B4*/ s8 unk8B4; 
-/*8B5*/ s8 unk8B5; 
-/*8B6*/ s8 unk8B6; 
-/*8B7*/ s8 unk8B7; 
-/*8B8*/ s8 unk8B8; 
-/*8B9*/ s8 unk8B9; 
-/*8BA*/ u8 unk8BA; 
-/*8BB*/ u8 unk8BB; 
-/*8BC*/ s8 unk8BC; 
-/*8BD*/ u8 unk8BD; 
-/*8BE*/ s8 unk8BE; 
-/*8BF*/ s8 unk8BF; 
-/*8C0*/ s8 unk8C0; 
+/*8A8*/ u8 unk8A8;
+/*8A9*/ u8 unk8A9;
+/*8AA*/ u8 unk8AA;
+/*8AB*/ u8 unk8AB;
+/*8AC*/ s32 unk8AC;
+/*8B0*/ s32 unk8B0;
+/*8B4*/ u8 unk8B4;
+/*8B5*/ s8 unk8B5;
+/*8B6*/ u8 unk8B6;
+/*8B7*/ u8 unk8B7;
+/*8B8*/ s8 unk8B8;
+/*8B9*/ s8 unk8B9;
+/*8BA*/ u8 unk8BA;
+/*8BB*/ u8 unk8BB;
+/*8BC*/ s8 unk8BC;
+/*8BD*/ u8 unk8BD;
+/*8BE*/ u8 unk8BE;
+/*8BF*/ s8 unk8BF;
+/*8C0*/ s8 unk8C0;
 } PlayerState;
 
 // AKA. krystal

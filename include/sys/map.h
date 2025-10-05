@@ -519,6 +519,6 @@ u8 map_get_is_object_streaming_disabled(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
 void func_800533D8(s32*, s32*);
 void func_80053408(Vec3f *);
-void func_80053750(Object*, Vec3f**, s32);
+void func_80053750(Object*, AABBs32*, s32);
 Unk8005341C *func_8005341C(s32*);
 #endif

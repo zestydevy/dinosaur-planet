@@ -358,7 +358,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
         sp1C0[j].z = sp244[i].z + arg0->positionMirror.z;
     }
     fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
-    func_80053750(arg0, (Vec3f** ) &sp68, 1);
+    func_80053750(arg0, &sp68, 1);
     func_80053408((Vec3f *)sp8C);
     func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
@@ -542,7 +542,7 @@ void func_8004E7A8(Object* arg0) {
             sp1EC[j].z = sp24C[i].z + arg0->positionMirror.z;
         }
         fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
-        func_80053750(arg0, (Vec3f** ) &sp70, 1);
+        func_80053750(arg0, &sp70, 1);
         func_80053408((Vec3f *)spA0);
         func_800533D8(&sp2B4, &sp9C);
         sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, &D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);

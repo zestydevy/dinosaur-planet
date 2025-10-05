@@ -174,7 +174,7 @@ u32 func_800013E0() {
     return UINT_800a6a54;
 }
 
-f32 camera_get_fov()
+f32 camera_get_fov(void)
 {
     return gFovY;
 }

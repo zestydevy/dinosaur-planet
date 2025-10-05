@@ -187,7 +187,7 @@ s32 get_video_mode();
  *
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-u32 get_some_resolution_encoded();
+u32 get_some_resolution_encoded(void);
 
 u16 *get_framebuffer_end();
 

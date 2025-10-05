@@ -184,7 +184,9 @@ typedef struct {
 /*9d*/ u8 unk9d;
 /*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
-/*a2*/ u8 _unka2[10];
+/*a2*/ s16 unkA2;
+/*a4*/ u8 _unka4[0xAA - 0xA4];
+/*aa*/ s16 unkAA;
 } ObjDef;
 
 #endif

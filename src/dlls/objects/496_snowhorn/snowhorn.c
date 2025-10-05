@@ -480,7 +480,7 @@ void dll_496_func_24C(Object* snowhorn) {
 void dll_496_func_770(u32 a0){
 }
 
-s32 func_80031F6C(void*, s32, f32*, f32*, f32*, s32);
+s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 
 void dll_496_func_77C(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **pols, s8 visibility) {
     SnowHornState* state;
