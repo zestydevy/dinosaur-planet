@@ -157,11 +157,9 @@ def read_elf_relocations(elf: ELFFile,
                 if st_info_bind == "STB_LOCAL":
                     # Defer until lo16 pair
                     addend = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
-                    hi = hi_map.setdefault(sym_idx, {
-                        "relocs": [], 
-                        "addend": addend, 
-                        "is_got": True
-                    })
+                    hi = hi_map.setdefault(sym_idx, { "relocs": [], "addend": 0, "is_got": False })
+                    hi["addend"] = addend
+                    hi["is_got"] = True
                     hi["relocs"].append(reloc)
                     last_hi_sym_idx = sym_idx
                 else:
@@ -188,11 +186,9 @@ def read_elf_relocations(elf: ELFFile,
                 else:
                     # Defer until lo16 pair
                     addend = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
-                    hi = hi_map.setdefault(sym_idx, {
-                        "relocs": [], 
-                        "addend": addend, 
-                        "is_got": False
-                    })
+                    hi = hi_map.setdefault(sym_idx, { "relocs": [], "addend": 0, "is_got": False })
+                    hi["addend"] = addend
+                    hi["is_got"] = False
                     hi["relocs"].append(reloc)
                     last_hi_sym_idx = sym_idx
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_LO16"]:
