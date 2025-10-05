@@ -7,6 +7,7 @@
 #include "sys/camera.h"
 #include "sys/menu.h"
 #include "sys/objmsg.h"
+#include "sys/map.h"
 
 #include "dll.h"
 #include "dlls/objects/210_player.h"
@@ -824,7 +825,29 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4634.s")
 
 // offset: 0x47B8 | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_47B8.s")
+void dll_210_func_47B8(Object* arg0, PlayerState* arg1) {
+    AABBs32 spB0;
+    s32 pad2;
+    s32 pad;
+    f32 spA4;
+    Vec3f sp98;
+    Unk80027934 sp2C;
+
+    spA4 = 0.0f;
+    sp2C.unk40[0] = 0.0f;
+    sp2C.unk50[0] = -1;
+    sp2C.unk54[0] = 3;
+    sp98.x = arg0->srt.transl.x - (fsin16_precise(arg0->srt.yaw) * 15.0f);
+    sp98.y = arg0->srt.transl.y + 5.0f;
+    sp98.z = arg0->srt.transl.z - (fcos16_precise(arg0->srt.yaw) * 15.0f);
+    fit_aabb_around_cubes(&spB0, &arg0->srt.transl, &sp98, &spA4, 1);
+    func_80053750(arg0, &spB0, 8);
+    if (func_8005509C(arg0, &arg0->srt.transl.x, (f32*)&sp98, 1, &sp2C, 0U) != 0) {
+        arg1->flags |= 0x100000;
+        return;
+    }
+    arg1->flags &= ~0x100000;
+}
 
 // offset: 0x4910 | func: 27
 // Needs these as static:

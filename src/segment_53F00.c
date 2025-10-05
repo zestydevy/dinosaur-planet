@@ -137,7 +137,7 @@ void _fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80054DF8.s")
 
-u8 func_8005509C(s32 arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
+u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
     Unk800BB268* var_s3;
     Unk800BB268* target;
     f32 spA0[4 * 3];
