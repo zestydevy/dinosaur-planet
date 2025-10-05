@@ -113,7 +113,7 @@ typedef struct {
 /*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
 /*2c8*/ Object *unk2C8;
 /*2cc*/ s8 unk2CC[0x2FC - 0x2CC];
-/*2fc*/ void* unk2FC;
+/*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
 /*300*/ s8 unk300[0x310 - 0x300];
 /*310*/ s32 unk310;
 /*314*/ s8 unk314[0x324 - 0x314];
@@ -193,7 +193,8 @@ typedef struct {
 /*871*/ u8 unk871;
 /*872*/ u8 unk872;
 /*873*/ u8 unk873;
-/*874*/ s32 pad874;
+/*874*/ s16 unk874;
+/*876*/ u16 pad876;
 /*878*/ s16 unk878;
 /*87A*/ u16 pad87A;
 /*87C*/ s16 unk87C;

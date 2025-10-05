@@ -2,6 +2,7 @@
 #include "game/objects/object.h"
 #include "sys/print.h"
 #include "sys/objects.h"
+#include "sys/objhits.h"
 #include "sys/gfx/gx.h"
 #include "sys/camera.h"
 #include "sys/menu.h"
@@ -11,6 +12,8 @@
 #include "dlls/objects/210_player.h"
 #include "segment_334F0.h"
 
+static void dll_210_func_14B70(Object* arg0, u32 arg1);
+
 void func_80024E50(Object*, s16, f32, s32);
 s32 func_80025140(Object*, f32, f32, s32);
 void func_800240BC(Object*, f32);
@@ -19,7 +22,6 @@ void func_80025540(Object*, s16, s32);
 void func_8002559C(Object*, s16, s32);
 void func_800267A4(Object*);
 MtxF* func_80032170(Object*, s32);
-static void dll_210_func_14B70(Object* arg0, u32 arg1);
 void func_80007E2C(Vec3f*, s32*);
 void func_80007EE0(Vec3f*, s32*);
 s32 func_80008048(s32*, s32*, s32*, s32, s32);
@@ -837,10 +839,31 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 // dll_210_func_1DB6C (matched)
 // dll_210_func_63F0 (matched)
 // dll_210_func_9F1C (matched)
+// dll_210_func_60A8 (matched)
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 
 // offset: 0x60A8 | func: 28
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_60A8.s")
+#else
+// matches but requires dll_210_func_7260 as static
+static void dll_210_func_7260(Object* arg0, PlayerState* arg1);
+void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+    PlayerState* sp24;
+
+    sp24 = arg0->state;
+    arg0->unk0xb0 &= 0xEFFF;
+    func_8002674C(arg0);
+    arg0->speed.y = 0.0f;
+    dll_210_func_7260(arg0, sp24);
+    sp24->unk8B7 = 2;
+    sp24->unk834 = 0.0f;
+    gDLL_22_Subtitles->vtbl->func_2248(0U);
+    if (arg0->modelInstIdx == 1) {
+        func_80023A18(arg0, 0);
+    }
+}
+#endif
 
 // offset: 0x618C | func: 29
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_618C.s")
@@ -1197,7 +1220,16 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7180.s")
 
 // offset: 0x7260 | func: 35
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7260.s")
+void dll_210_func_7260(Object* arg0, PlayerState* arg1) {
+    arg1->unk874 = (s16) arg0->srt.yaw;
+    gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(arg0, &arg1->unk4);
+    arg0->objhitInfo->unk_0x10.x = arg0->srt.transl.x;
+    arg0->objhitInfo->unk_0x10.y = arg0->srt.transl.y;
+    arg0->objhitInfo->unk_0x10.z = arg0->srt.transl.z;
+    arg0->objhitInfo->unk_0x20.x = arg0->positionMirror.x;
+    arg0->objhitInfo->unk_0x20.y = arg0->positionMirror.y;
+    arg0->objhitInfo->unk_0x20.z = arg0->positionMirror.z;
+}
 
 // offset: 0x7300 | func: 36
 #ifndef NON_EQUIVALENT
