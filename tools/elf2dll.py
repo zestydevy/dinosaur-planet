@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 import argparse
-from io import BufferedWriter
+from io import BufferedReader, BufferedWriter
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import Section, SymbolTableSection
+from elftools.elf.sections import Section, SymbolTableSection, Symbol
 from elftools.elf.relocation import RelocationSection, Relocation
 from elftools.elf.enums import ENUM_RELOC_TYPE_MIPS
 import math
 import os
-from typing import TextIO, TypedDict
+from typing import Callable, TextIO, TypedDict
 import struct
+
+# Hacks to assist in producing matching DLLs when a DLL is still compiled from some nonmatching asm. 
+# Should only be used by the decomp! Should not be used for DLLs that are entirely in C.
+hack_sym_bind_override: Callable[[int, Symbol], str] | None = None
+hack_got_reloc_override: Callable[[GOTAndRelocations], None] | None = None
 
 HEADER_SIZE = 0x18
 
@@ -39,6 +45,7 @@ class GOTEntry(TypedDict):
 class TextReloc(TypedDict):
     reloc_offset: int
     half: int
+    is_got_index: bool
 
 class Word32Reloc(TypedDict):
     reloc_offset: int
@@ -146,6 +153,9 @@ def read_elf_relocations(elf: ELFFile,
             sym_type = sym.entry["st_info"]["type"]
             st_info_bind = sym.entry["st_info"]["bind"]
 
+            if hack_sym_bind_override != None:
+                st_info_bind = hack_sym_bind_override(sym_idx, sym)
+
             if sym_shndx == "SHN_UNDEF" and sym.name != "_gp_disp":
                 raise ELF2DLLException(f".rel.text reloc with offset {hex(reloc_offset)} references an undefined symbol: {sym.name}")
 
@@ -178,7 +188,7 @@ def read_elf_relocations(elf: ELFFile,
                         got.append({ "value": sym_value, "section": section })
 
                     # Record reloc location for later fixup
-                    text_relocs.append({ "reloc_offset": reloc_offset, "half": got_idx * 4 })
+                    text_relocs.append({ "reloc_offset": reloc_offset, "half": got_idx * 4, "is_got_index": True })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_HI16"]:
                 if sym.name == "_gp_disp":
                     # $gp prologue reloc
@@ -246,9 +256,9 @@ def read_elf_relocations(elf: ELFFile,
                             hi_relocs = hi["relocs"]
                             while len(hi_relocs) > 0:
                                 hi_reloc_offset = hi_relocs.pop()["r_offset"]
-                                text_relocs.append({ "reloc_offset": hi_reloc_offset, "half": hi_half })
+                                text_relocs.append({ "reloc_offset": hi_reloc_offset, "half": hi_half, "is_got_index": True })
 
-                        text_relocs.append({ "reloc_offset": reloc_offset, "half": lo_half })
+                        text_relocs.append({ "reloc_offset": reloc_offset, "half": lo_half, "is_got_index": False })
                     else:
                         # paired with hi16
 
@@ -261,9 +271,9 @@ def read_elf_relocations(elf: ELFFile,
                             hi_relocs = hi["relocs"]
                             while len(hi_relocs) > 0:
                                 hi_reloc_offset = hi_relocs.pop()["r_offset"]
-                                text_relocs.append({ "reloc_offset": hi_reloc_offset, "half": hi_half })
+                                text_relocs.append({ "reloc_offset": hi_reloc_offset, "half": hi_half, "is_got_index": False })
                         
-                        text_relocs.append({ "reloc_offset": reloc_offset, "half": lo_half })
+                        text_relocs.append({ "reloc_offset": reloc_offset, "half": lo_half, "is_got_index": False })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_PC16"]:
                 # Note: R_MIPS_PC16 is not used by IDO, this is to support ROM hacking
                 # sign–extend(A) + S – P
@@ -272,7 +282,7 @@ def read_elf_relocations(elf: ELFFile,
                 p = reloc_offset
                 # Note: The PC16 value needs to be shifted down by 2 bits because it's measured in
                 # instructions and not bytes.
-                text_relocs.append({ "reloc_offset": reloc_offset, "half": (((a << 2) + s - p) >> 2) & 0xFFFF })
+                text_relocs.append({ "reloc_offset": reloc_offset, "half": (((a << 2) + s - p) >> 2) & 0xFFFF, "is_got_index": False })
             elif reloc_type == ENUM_RELOC_TYPE_MIPS["R_MIPS_JALR"]:
                 # Note: R_MIPS_JALR is not used by IDO, this is to support ROM hacking
                 # R_MIPS_JALR is a hint to linkers that a JALR instruction could possibly be turned into a direct call instead.
@@ -351,6 +361,9 @@ def read_elf_relocations(elf: ELFFile,
             "gp_relocs": gp_relocs,
             "data_relocs": data_relocs
         }
+
+        if hack_got_reloc_override != None:
+            hack_got_reloc_override(got_and_relocs)
     
     return {
         "got_and_relocs": got_and_relocs,
@@ -569,6 +582,11 @@ def convert(elf: ELFFile, writer: BufferedWriter, bss_writer: TextIO, syms_write
 
             syms_writer.write("{} = 0x{:X};\n".format(sym.name, sym_value))
 
+def elf2dll(elf: BufferedReader, output: BufferedWriter, bss_output: TextIO, syms_output: TextIO | None):
+    """Raises ELF2DLLException on error"""
+    with ELFFile(elf) as elffile:
+        convert(elffile, output, bss_output, syms_output)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("elf", type=argparse.FileType("rb"), help="The DLL .elf file to convert.")
@@ -579,8 +597,7 @@ def main():
     
     error = False
     try:
-        with ELFFile(args.elf) as elf:
-            convert(elf, args.output, args.bss, args.syms_output)
+        elf2dll(args.elf, args.output, args.bss, args.syms_output)
     except ELF2DLLException as ex:
         print(f"ERROR: {ex}")
         error = True

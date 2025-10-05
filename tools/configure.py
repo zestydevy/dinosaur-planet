@@ -233,8 +233,8 @@ class BuildNinjaWriter:
         self.writer.variable("ASM_PROCESSOR", f"{sys.executable} tools/asm_processor/build.py")
         self.writer.variable("HEADER_DEPS", f"{sys.executable} tools/header_deps.py")
         self.writer.variable("ELF2DLL", f"{sys.executable} tools/elf2dll.py")
+        self.writer.variable("ELF2DLL_WRAPPER", f"{sys.executable} tools/elf2dll_wrapper.py")
         self.writer.variable("DINODLL", f"{sys.executable} tools/dino_dll.py")
-        self.writer.variable("DLL_ASMPROC_FIXUP", f"{sys.executable} tools/dll_asmproc_fixup.py")
         self.writer.variable("DLLSYMS2LD", f"{sys.executable} tools/dllsyms2ld.py")
         
         self.writer.newline()
@@ -266,16 +266,17 @@ class BuildNinjaWriter:
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
         self.writer.rule("dllsyms2ld", "$DLLSYMS2LD -o $out $in", "Converting $in to $out...")
-        self.writer.rule("dll_fixup", "$DLL_ASMPROC_FIXUP $ORIGINAL_DLL $in $out", "Fixing up $in...")
         if sys.platform == "win32":
             self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
+            self.writer.rule("elf2dll_wrapper", "$ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT -d $ORIGINAL_DLL $in", "Converting $in to DP DLL $out...")
         else:
             # Note: for elf2dll, remove output file first since it might be a symlink and we don't want 
             # to write through the link to the original DLL (not relevant on Windows, we don't symlink there)
-            self.writer.rule("elf2dll", f"rm -f $out && $ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
+            self.writer.rule("elf2dll", "rm -f $out && $ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
+            self.writer.rule("elf2dll_wrapper", "rm -f $out && $ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT -d $ORIGINAL_DLL $in", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
         if sys.platform != "win32":
-            self.writer.rule("sym_link", f"ln -s -f -r $in $out", "Symbolic linking $in to $out...")
+            self.writer.rule("sym_link", "ln -s -f -r $in $out", "Symbolic linking $in to $out...")
 
         self.writer.newline()
 
@@ -339,7 +340,7 @@ class BuildNinjaWriter:
 
             # Compile DLL sources
             dll_link_deps: "list[str]" = []
-            needs_fixup = False
+            has_asm = False
             for file in dll.files:
                 # Determine variables
                 variables: dict[str, str] = self.__file_config_to_variables(file.config)
@@ -349,7 +350,7 @@ class BuildNinjaWriter:
                 if file.type == BuildFileType.C:
                     if file.config != None and file.config.has_global_asm:
                         command = "cc_dll"
-                        needs_fixup = True
+                        has_asm = True
                     else:
                         command = "cc_dll_noasmproc"
                 elif file.type == BuildFileType.ASM:
@@ -391,22 +392,21 @@ class BuildNinjaWriter:
                     implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"],
                     variables={"SYMS_LD": syms_ld_path})
 
-            # If needed, fixup DLL ELF
-            if needs_fixup:
-                final_elf_path = elf_path.with_suffix(".fixed.elf")
-                original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
-                self.writer.build(final_elf_path.as_posix(), "dll_fixup", elf_path.as_posix(),
-                                  variables={"ORIGINAL_DLL": original_dll_path})
-            else:
-                final_elf_path = elf_path
-
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
             dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
-            self.writer.build(dll_asset_path, "elf2dll", final_elf_path.as_posix(),
-                variables={
-                    "DLL_BSS_TXT": dll_bss_asset_path
-                },
+            elf2dll_cmd = "elf2dll"
+            elf2dll_variables = { "DLL_BSS_TXT": dll_bss_asset_path }
+            elf2dll_implicit = []
+            if has_asm:
+                # If nonmatching asm was involved, run the elf2dll wrapper
+                original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
+                elf2dll_cmd = "elf2dll_wrapper"
+                elf2dll_variables["ORIGINAL_DLL"] = original_dll_path
+                elf2dll_implicit.append(original_dll_path)
+            self.writer.build(dll_asset_path, elf2dll_cmd, elf_path.as_posix(),
+                variables=elf2dll_variables,
+                implicit=elf2dll_implicit,
                 implicit_outputs=[dll_bss_asset_path])
             pack_deps.append(dll_asset_path)
             pack_deps.append(dll_bss_asset_path)
@@ -435,20 +435,17 @@ class BuildNinjaWriter:
                 variables={
                     "EXTRA_DLL_LD_FLAGS": ld_flags
                 })
-            
-            # Fixup
-            final_elf_path = elf_path.with_suffix(".fixed.elf")
-            original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
-            self.writer.build(final_elf_path.as_posix(), "dll_fixup", elf_path.as_posix(),
-                                variables={"ORIGINAL_DLL": original_dll_path})
 
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
             dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
-            self.writer.build(dll_asset_path, "elf2dll", final_elf_path.as_posix(),
+            original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
+            self.writer.build(dll_asset_path, "elf2dll_wrapper", elf_path.as_posix(),
                 variables={
-                    "DLL_BSS_TXT": dll_bss_asset_path
+                    "DLL_BSS_TXT": dll_bss_asset_path,
+                    "ORIGINAL_DLL": original_dll_path
                 },
+                implicit=[original_dll_path],
                 implicit_outputs=[dll_bss_asset_path])
             pack_deps.append(dll_asset_path)
             pack_deps.append(dll_bss_asset_path)
