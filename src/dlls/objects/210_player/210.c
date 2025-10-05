@@ -1301,6 +1301,8 @@ typedef struct UnkArg1 {
     u8 pad2C[0x38 - 0x2C];
     f32 unk38;
     f32 unk3C;
+    u8 pad40[0x52 - 0x40];
+    s8 unk52;
 } UnkArg1;
 
 typedef struct UnkArg2 {
@@ -1335,14 +1337,15 @@ s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
 typedef struct UnkArg3 {
     s8 unk0;
     s8 unk1;
-    u8 pad2;
+    s8 unk2;
     s8 unk3;
     f32 unk4;
     f32 unk8;
     f32 unkC;
     u8 pad10[0x18 - 0x10];
     f32 unk18;
-    u8 pad1C[0x28 - 0x1C];
+    u8 pad1C[0x24 - 0x1C];
+    f32 unk24;
     Vec4f unk28;
     Vec3f unk38;
     f32 unk44;
@@ -1394,7 +1397,31 @@ s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* a
 }
 
 // offset: 0x7AAC | func: 40
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7AAC.s")
+s32 dll_210_func_7AAC(Object* arg0, PlayerState* arg1, UnkArg1* arg2, Vec3f* arg3, UnkArg3* arg4, s32 arg5) {
+    arg4->unk44 = arg3->x;
+    arg4->unk48 = arg2->unkC;
+    arg4->unk4C = arg3->z;
+    arg4->unk50 = arg1->unk7EC.x;
+    arg4->unk54.x = 0.0f;
+    arg4->unk54.y = arg1->unk7EC.z;
+    if (arg5 != 0) {
+        arg4->unk1 = 1;
+    } else {
+        arg4->unk1 = 0;
+    }
+    arg4->unk24 = arg2->unk1C.x;
+    arg4->unk28.x = arg2->unk1C.y;
+    arg4->unk28.y = arg2->unk1C.z;
+    arg4->unk28.z = arg2->unk1C.w;
+    arg4->unk28.w = -arg2->unk1C.z;
+    arg4->unk38.x = 0.0f;
+    arg4->unk38.y = arg2->unk1C.x;
+    arg4->unk38.z = -((arg4->unk38.y * arg4->unk4C) + (arg4->unk44 * arg4->unk28.w));
+    arg4->unk8 = arg2->unkC;
+    arg4->unk4 = arg2->unk3C;
+    arg4->unk2 = (s8) ((s32) (arg2->unk52 & 0x70) >> 4);
+    return 1;
+}
 
 // offset: 0x7B98 | func: 41
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7B98.s")
