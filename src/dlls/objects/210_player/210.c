@@ -604,7 +604,7 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
             }
         }
         if (state->unk26C == 0x29) {
-            func_80031F6C(arg0, 7, &state->unk69C, &state->unk6A0, &state->unk6A4, 0);
+            func_80031F6C(arg0, 7, &state->unk680.unk1C, &state->unk680.unk20, &state->unk680.unk2A, 0);
         }
         if (state->unk868 != NULL && state->unk868->unk_0xe0 == 1) {
             func_80031F6C(arg0, 6, &sp7C, &sp78, &sp74, 0);
@@ -721,7 +721,7 @@ s32 dll_210_func_3F50(s32 arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4038.s")
 
 // offset: 0x4114 | func: 18 | export: 45
-s32 dll_210_func_4114(Object* player) {
+Object *dll_210_func_4114(Object* player) {
     PlayerState* state = player->state;
 
     if (state->unk8B5 == 7) {
@@ -1305,15 +1305,6 @@ typedef struct UnkArg1 {
     s8 unk52;
 } UnkArg1;
 
-typedef struct UnkArg2 {
-    Vec4f unk0;
-    Vec3f unk10;
-    u8 pad1C[0x28 - 0x1C];
-    s32 unk28;
-    u8 pad2C;
-    s8 unk2D;
-} UnkArg2;
-
 s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
     arg2->unk0.x = arg1->unk1C.x;
     arg2->unk0.y = arg1->unk1C.y;
@@ -1333,26 +1324,6 @@ s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
 }
 
 // offset: 0x78A8 | func: 39
-typedef struct UnkArg3 {
-    s8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    u8 pad10[0x18 - 0x10];
-    f32 unk18;
-    u8 pad1C[0x24 - 0x1C];
-    f32 unk24;
-    Vec4f unk28;
-    Vec3f unk38;
-    f32 unk44;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
-    Vec3f unk54;
-} UnkArg3;
 s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* arg3, s32 arg4) {
     arg3->unk3 = 0;
     arg3->unk48 = ((arg2->unk8 - arg2->unk4) * 0.5f) + arg2->unk4;
@@ -3209,11 +3180,11 @@ int dll_210_func_1D5C0(Object* player) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D5E8.s")
 #else
-s32 dll_210_func_1D5E8(Object* player, s32 arg1, s8* arg2) {
+u8 dll_210_func_1D5E8(Object* player, s32 arg1, s8* arg2) {
     PlayerState* state = player->state;
 
-    *arg2 = state->unk6AE;
-    return (state->unk26C == 0x28 && state->unk6A8 == arg1) & 0xFF;
+    *arg2 = state->unk680.unk2E;
+    return (state->unk26C == 0x28 && state->unk680.unk28 == arg1);
 }
 #endif
 

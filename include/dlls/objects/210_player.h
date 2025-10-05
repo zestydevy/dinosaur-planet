@@ -9,6 +9,42 @@
 #include "sys/main.h"
 #include "types.h"
 
+// size: 0x60
+typedef struct UnkArg3 {
+    s8 unk0;
+    s8 unk1;
+    s8 unk2;
+    s8 unk3;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    u8 pad10[0x18 - 0x10];
+    f32 unk18;
+    u8 pad1C[0x24 - 0x1C];
+    f32 unk24;
+    Vec4f unk28;
+    Vec3f unk38;
+    f32 unk44;
+    f32 unk48;
+    f32 unk4C;
+    f32 unk50;
+    Vec3f unk54;
+} UnkArg3;
+
+// size: 0x30
+typedef struct UnkArg2 {
+    Vec4f unk0;
+    Vec3f unk10;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    s32 unk28;
+    u8 pad2C;
+    s8 unk2D;
+    s8 unk2E;
+    u8 pad2F;
+} UnkArg2;
+
 typedef struct {
 /*000*/ s32 unk0; //bitfield?
 /*004*/ void *unk4;
@@ -83,18 +119,23 @@ typedef struct {
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
-/*3CC*/ s8 unk3CC[0x69C - 0x3CC];
-/*69C*/ f32 unk69C;
-/*6A0*/ f32 unk6A0;
-/*6A4*/ f32 unk6A4;
-/*6A8*/ s32 unk6A8;
-/*6AC*/ s16 unk6AC;
-/*6AE*/ s8 unk6AE;
-/*6AF*/ u8 pad6AF;
+/*3CC*/ UnkArg3 unk3CC;
+/*42C*/ s32 pad42C;
+/*430*/ UnkArg3 unk430;
+/*490*/ UNK_TYPE_32 unk490;
+/*494*/ u8 pad494[0x4D8 - 0x494];
+/*4D8*/ UnkArg2 unk4D8;
+/*508*/ u8 pad508[0x680 - 0x508];
+/*680*/ UnkArg2 unk680;
 /*6B0*/ UNK_TYPE_32 unk6B0;
-/*6B4*/ s8 unk6B4[0x6e8 - 0x6B4];
-/*6e8*/ s32 unk6E8;
-/*3CC*/ s8 unk6EC[0x708 - 0x6EC];
+/*6B4*/ s8 unk6B4[0x6e4 - 0x6B4];
+/*6E4*/ Object *unk6E4;
+/*6E8*/ Object *unk6E8;
+/*6EC*/ f32 unk6EC;
+/*6F0*/ f32 unk6F0;
+/*6F4*/ s32 pad6F4;
+/*6F8*/ f32 unk6F8;
+/*6FC*/ s8 unk6FC[0x708 - 0x6FC];
 /*708*/ Object *unk708;
 /*70C*/ s16 unk70C;
 /*70E*/ s8 unk70E[0x764 - 0x70E];
