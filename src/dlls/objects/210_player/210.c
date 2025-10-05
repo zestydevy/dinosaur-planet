@@ -377,7 +377,30 @@ void dll_210_dtor(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_11A0.s")
 
 // offset: 0x1BC0 | func: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1BC0.s")
+void dll_210_func_1BC0(Object* arg0, PlayerState* arg1) {
+    Object* linkedObj;
+
+    arg0->unk0xb0 &= ~3;
+    if (arg1->unk8A8 == 2) {
+        arg0->unk0xb0 |= 3;
+    } else if (arg1->unk8A8 == 0) {
+        arg0->unk0xb0 |= 1;
+    }
+    if (arg0->id != 0) {
+        return;
+    }
+
+    linkedObj = arg0->linkedObject;
+    if (linkedObj == NULL) {
+        return;
+    }
+
+    if ((arg1->unk8A8 != 0) && (linkedObj->modelInstIdx != 0)) {
+        func_80023A18(linkedObj, 0);
+    } else if ((arg1->unk8A8 == 0) && (linkedObj->modelInstIdx != 1)) {
+        func_80023A18(linkedObj, 1);
+    }
+}
 
 // offset: 0x1CA8 | func: 5
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CA8.s")
@@ -807,6 +830,13 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_47B8.s")
 
 // offset: 0x4910 | func: 27
+// Needs these as static:
+// dll_210_func_1BC0 (matched)
+// dll_210_func_1D2A8(Object*, ?);
+// dll_210_func_1D4E0(Object*, ?);
+// dll_210_func_1DB6C(void*, ?);
+// dll_210_func_63F0(void*, f32);
+// dll_210_func_9F1C(Object*, ?);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 
 // offset: 0x60A8 | func: 28
