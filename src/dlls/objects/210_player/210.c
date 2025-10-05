@@ -1434,10 +1434,31 @@ void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7BC4.s")
 
 // offset: 0x7CF8 | func: 43
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7CF8.s")
+void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
+    s32 sp20;
+
+    sp20 = arctan2_f(arg0->unk288, -arg0->unk284) - arg0->unk324;
+    arg1->x = -fsin16_precise(sp20);
+    arg1->y = 0.0f;
+    arg1->z = -fcos16_precise(sp20);
+}
 
 // offset: 0x7DA0 | func: 44
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7DA0.s")
+void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
+    f32 f0;
+
+    f0 = sqrtf(SQ(arg0->speed.x) + SQ(arg0->speed.z));
+    arg2->y = 0.0f;
+    if (f0 > 0.01f) {
+        arg2->x = arg0->speed.x;
+        arg2->z = arg0->speed.z;
+        arg2->x /= f0;
+        arg2->z /= f0;
+        return;
+    }
+    arg2->x = -arg1->unk274->x;
+    arg2->z = -arg1->unk274->z;
+}
 
 // offset: 0x7E6C | func: 45
 // REquires these as static:
