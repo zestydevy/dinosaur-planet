@@ -65,6 +65,23 @@ typedef struct UnkArg2 {
     u8 pad2F;
 } UnkArg2;
 
+// Size: 0x24
+typedef struct Unk80032CF8Copy {
+    /* 0x00 */ s8 unk0;
+    /* 0x01 */ u8 pad1[0x4 - 0x1];
+    /* 0x04 */ f32 unk4;
+    /* 0x08 */ f32 x;
+    /* 0x0C */ f32 y;
+    /* 0x10 */ f32 z;
+    /* 0x14 */ s16 unk14;
+    /* 0x16 */ s16 unk16;
+    /* 0x18 */ s16 pad18;
+    /* 0x1A */ s16 unk1A;
+    /* 0x1C */ s16 unk1C;
+    /* 0x1E */ s8 unk1E;
+    /* 0x1E */ u8 pad1F[0x24 - 0x1F];
+} Unk80032CF8Copy;
+
 typedef struct {
 /*000*/ s32 unk0; //bitfield?
 /*004*/ void *unk4;
@@ -81,7 +98,8 @@ typedef struct {
 /*1b0*/ f32 unk1B0;
 /*1b4*/ f32 unk1B4;
 /*1b8*/ f32 unk1B8;
-/*1bc*/ s8 unk1BC[0x25C - 0x1BC];
+/*1bc*/ s8 unk1BC[0x25B - 0x1BC];
+/*258*/ s8 unk25B;
 /*25c*/ s8 unk25C;
 /*25d*/ u8 pad25D;
 /*25e*/ u8 pad25E;
@@ -114,7 +132,8 @@ typedef struct {
 /*2c8*/ Object *unk2C8;
 /*2cc*/ s8 unk2CC[0x2FC - 0x2CC];
 /*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
-/*300*/ s8 unk300[0x310 - 0x300];
+/*300*/ s8 unk300[0x30C - 0x300];
+/*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
 /*314*/ s8 unk314[0x324 - 0x314];
 /*324*/ s16 unk324;
@@ -123,19 +142,18 @@ typedef struct {
 /*32A*/ s16 unk32A;
 /*32C*/ s8 unk32C[0x33D - 0x32C];
 /*33D*/ u8 unk33D;
-/*33E*/ s8 unk33E[0x341 - 0x33E];
+/*33E*/ s8 unk33E[0x340 - 0x33E];
+/*340*/ s8 unk340;
 /*341*/ s8 unk341;
 /*342*/ s8 unk342[0x34C - 0x342];
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
-/*354*/ s8 unk354;
-/*354*/ s8 unk355[0x372 - 0x355];
-/*372*/ s8 unk372;
-/*354*/ s8 unk373[0x39C - 0x373];
+/*354*/ Unk80032CF8Copy unk354;
+/*378*/ Unk80032CF8Copy unk378;
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B8 - 0x3A8];
 /*3B8*/ s16 *unk3B8;
-/*3BC*/ s32 pad3BC;
+/*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, PlayerState*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
@@ -150,7 +168,10 @@ typedef struct {
 /*6B0*/ UnkArg4 unk6B0;
 /*708*/ Object *unk708;
 /*70C*/ s16 unk70C;
-/*70E*/ s8 unk70E[0x764 - 0x70E];
+/*70E*/ s8 unk70E[0x728 - 0x70E];
+/*728*/ f32 unk728;
+/*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
+/*734*/ u8 pad738[0x764 - 0x738];
 /*764*/ u16 unk764;
 /*766*/ u16 unk766;
 /*768*/ u16 unk768;
@@ -220,7 +241,7 @@ typedef struct {
 /*8AB*/ u8 unk8AB;
 /*8AC*/ s32 unk8AC;
 /*8B0*/ s32 unk8B0;
-/*8B4*/ s8 unk8B4;
+/*8B4*/ u8 unk8B4;
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
 /*8B7*/ u8 unk8B7;

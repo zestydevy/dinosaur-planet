@@ -211,7 +211,7 @@ typedef struct Object {
 /*00B8*/	void* state; //type depends on object
 /*00BC*/	ObjectCallback unk0xbc; // some kind of cutscene anim callback?
 /*00C0*/	struct Object *unk0xc0; // related to group 16 objects?
-/*00C4*/	UNK_TYPE_32 unk0xc4;
+/*00C4*/	struct Object *unk0xc4;
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    ObjectMesgQueue *mesgQueue;
 /*00D0*/    u8 unk_0xd0[0xd4 - 0xd0];

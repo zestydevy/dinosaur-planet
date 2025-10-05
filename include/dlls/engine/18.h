@@ -10,7 +10,7 @@ DLL_INTERFACE(DLL_18) {
 /*0*/ UnknownDLLFunc func0;
 /*1*/ UnknownDLLFunc func1;
 /*2*/ UnknownDLLFunc func2;
-/*3*/ UnknownDLLFunc func3;
+/*3*/ void (*func3)(Object *);
 // state is a PlayerState struct but including it causes an unmatch (TODO: use correct struct here)
 /*4*/ void (*func4)(Object *obj, void *state, s32 arg2);
 /*5*/ UnknownDLLFunc func5;

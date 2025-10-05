@@ -75,9 +75,7 @@ static s16 _data_18[2] = {-1, 0};
 /*0x20*/ static u32 _data_20[] = {
     0x01020000
 };
-/*0x24*/ static u32 _data_24[] = {
-    0x00690023
-};
+/*0x24*/ static s16 _data_24[] = { 0x0069, 0x0023 };
 /*0x28*/ static u32 _data_28[] = {
     0xc8aaa078, 0x64000000
 };
@@ -128,14 +126,14 @@ static s16 _data_18[2] = {-1, 0};
 /*0x140*/ static u32 _data_140[] = {
     0x00890089, 0x00890089, 0x00f900fa, 0x00fb00fc, 0x00fd00fe, 0x00ff0400
 };
-/*0x158*/ static u32 _data_158[] = {
-    0x001700c6, 0x00180019, 0x001a00be, 0x00c000bf, 0x00ca00cb, 0xffffffff
+/*0x158*/ static s16 _data_158[] = {
+    0x0017, 0x00c6, 0x0018, 0x0019, 0x001a, 0x00be, 0x00c0, 0x00bf, 0x00ca, 0x00cb, 0xffff, 0xffff
 };
-/*0x170*/ static u32 _data_170[] = {
-    0x00f500f5, 0x00f500f5, 0x00f500f5, 0x00f300f4, 0x00f600f7, 0xffffffff
+/*0x170*/ static s16 _data_170[] = {
+    0x00f5, 0x00f5, 0x00f5, 0x00f5, 0x00f5, 0x00f5, 0x00f3, 0x00f4, 0x00f6, 0x00f7, 0xffff, 0xffff
 };
-/*0x188*/ static u32 _data_188[] = {
-    0x001b001d, 0x04530454
+/*0x188*/ static s16 _data_188[] = {
+    0x001b, 0x001d, 0x0453, 0x0454
 };
 /*0x190*/ static u32 _data_190[] = {
     0x00990099, 0x0000000b, 0x01ff0000, 0x3cac0831, 0xbf800000, 0xbf800000, 0xbf800000, 0x3ea8f5c3, 
@@ -194,13 +192,9 @@ static s16 _data_18[2] = {-1, 0};
 /*0x518*/ static u32 _data_518[] = {
     0x00240025, 0x018c0024, 0x00240024, 0x00240024
 };
-/*0x528*/ static u32 _data_528[] = {
-    0x00000000
-};
-/*0x52C*/ static u32 _data_52C[] = {
-    0x00000000
-};
-/*0x530*/ static u8 _data_530 = 0x01;
+/*0x528*/ static f32 _data_528 = 0.0f;
+/*0x52C*/ static s8 _data_52C = 0;
+/*0x530*/ static u8 _data_530 = 1;
 /*0x534*/ static u32 _data_534[] = {
     0x0b04060a, 0x0a03030c, 0x05020e0f, 0x10111200
 };
@@ -330,7 +324,7 @@ static s16 _data_18[2] = {-1, 0};
 /*0x1A4*/ static u8 _bss_1A4[0x4];
 /*0x1A8*/ static u8 _bss_1A8[0x2];
 /*0x1AA*/ static u8 _bss_1AA[0x2];
-/*0x1AC*/ static u8 _bss_1AC[0x4];
+/*0x1AC*/ static f32 _bss_1AC;
 /*0x1B0*/ static u8 _bss_1B0[0x4];
 /*0x1B4*/ static u8 _bss_1B4[0x4];
 /*0x1B8*/ static u8 _bss_1B8[0x4];
@@ -834,8 +828,6 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 // offset: 0x4910 | func: 27
 // Needs these as static:
 // dll_210_func_1BC0 (matched)
-// dll_210_func_1D2A8 (matched)
-// dll_210_func_1D4E0 (matched)
 // dll_210_func_1DB6C (matched)
 // dll_210_func_63F0 (matched)
 // dll_210_func_9F1C (matched)
@@ -3583,7 +3575,7 @@ s32 dll_210_func_1D40C(Object* player, u32 arg1) {
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
     PlayerState* state = player->state;
-    return state->unk372 == 1;
+    return state->unk354.unk1E == 1;
 }
 
 // offset: 0x1D4E0 | func: 192 | export: 33
@@ -3678,7 +3670,7 @@ Object *dll_210_func_1D768(Object* player) {
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-s8* dll_210_func_1D778(Object* player) {
+Unk80032CF8Copy* dll_210_func_1D778(Object* player) {
     PlayerState* state = player->state;
     return &state->unk354;
 }

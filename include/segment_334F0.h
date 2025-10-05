@@ -18,7 +18,8 @@ typedef struct Unk80032CF8 {
     /* 0x18 */ s16 pad18;
     /* 0x1A */ s16 unk1A;
     /* 0x1C */ s16 unk1C;
-    /* 0x1E */ u8 pad1E[0x24 - 0x1E];
+    /* 0x1E */ s8 unk1E;
+    /* 0x1E */ u8 pad1F[0x24 - 0x1F];
 } Unk80032CF8;
 
 void func_80033B68(Object*, Unk80032CF8*, f32);
@@ -31,5 +32,6 @@ s32 func_80034250(Unk80032CF8*, s16*);
 s32 func_80034518(Unk80032CF8*, s16*, f32, f32);
 void func_80033C54(Object*, Unk80032CF8*, f32, s16*);
 void func_80033FD8(Object*, Unk80032CF8*, f32, s16*);
+s32 func_800343B8(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3);
 
 #endif //_SEGMENT_334F0
