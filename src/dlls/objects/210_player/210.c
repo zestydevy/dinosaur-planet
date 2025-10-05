@@ -834,7 +834,7 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 // dll_210_func_1BC0 (matched)
 // dll_210_func_1D2A8 (matched)
 // dll_210_func_1D4E0 (matched)
-// dll_210_func_1DB6C(void*, ?);
+// dll_210_func_1DB6C (matched)
 // dll_210_func_63F0(void*, f32);
 // dll_210_func_9F1C(Object*, ?);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
@@ -3744,7 +3744,23 @@ void dll_210_func_1D8EC(Object* arg0, PlayerState* arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1DAB0.s")
 
 // offset: 0x1DB6C | func: 217
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1DB6C.s")
+void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
+    f32 sp2C;
+    f32 sp28;
+    ObjectHitInfo* temp_v0;
+    f32 sp20;
+
+    temp_v0 = arg0->objhitInfo;
+    if (temp_v0 != NULL) {
+        sp28 = (f32) temp_v0->unk_0x52;
+    } else {
+        sp28 = arg0->unk_0xa8;
+    }
+    sp2C = (arg0->unk0x74->y - arg0->srt.transl.y) - arg1;
+    sp28 = sp28;
+    sp20 = fsin16_precise(arg0->srt.yaw);
+    gDLL_3_Animation->vtbl->func31(-sp20 * sp28, sp2C, -fcos16_precise(arg0->srt.yaw) * sp28);
+}
 
 // offset: 0x1DC48 | func: 218
 void dll_210_func_1DC48(Object* obj) {
