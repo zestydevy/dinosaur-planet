@@ -725,7 +725,7 @@ Object *dll_210_func_4114(Object* player) {
     PlayerState* state = player->state;
 
     if (state->unk8B5 == 7) {
-        return state->unk6E8;
+        return state->unk6B0.unk38;
     }
     return 0;
 }
@@ -1402,7 +1402,32 @@ void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2) {
 }
 
 // offset: 0x7BC4 | func: 42
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7BC4.s")
+s32 dll_210_func_7BC4(Object* arg0, PlayerState* arg1, u32* arg2, UnkArg4* arg3) {
+    Object* temp_a0;
+    s32 var_v1;
+    s32 temp;
+
+    temp_a0 = arg3->unk38;
+    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[7].withTwoArgs(temp_a0, arg3->padC);
+    temp_a0 = arg3->unk38;
+    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, arg3->unk48, &arg3->unk1C, &arg3->unk1C.y, &arg3->unk1C.z);
+    temp_a0 = arg3->unk38;
+    arg3->unk54 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[12].withOneArgS32(temp_a0);
+    arg3->unk46 = 0;
+    arg3->unk4C = arg3->unk48;
+    arg3->unk0.y = arg3->unk1C.y;
+    arg3->unk0.z = arg0->srt.transl.y;
+    arg3->unk0.x = arg3->unk1C.y - arg3->unk0.z;
+    var_v1 = arg0->srt.yaw - (arg3->unk54 & 0xFFFF);
+    if (var_v1 >= 0x8001) {
+        var_v1 += 0xFFFF0001;
+    }
+    if (var_v1 < -0x8000) {
+        var_v1 += 0xFFFF;
+    }
+    arg3->unk45 = !(var_v1 >= 0x3FFD) && !(var_v1 < -0x3FFC);
+    return 1;
+}
 
 // offset: 0x7CF8 | func: 43
 void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
@@ -1433,14 +1458,14 @@ void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
 
 // offset: 0x7E6C | func: 45
 // REquires these as static:
-// s32 dll_210_func_7300(Object*, PlayerState*, void**, s8*, f32*, f32); /* extern */
-// s32 dll_210_func_75B0(Object*, void**, s8*, f32*, f32, f32); /* extern */
-// s32 dll_210_func_77DC(Object*, void**, s8*, f32*);  /* extern */
-// s32 dll_210_func_78A8(Object*, PlayerState*, void**, s8*, s32); /* extern */
-// s32 dll_210_func_7AAC(Object*, PlayerState*, void**, f32*, s8*, s32); /* extern */
-// ? dll_210_func_7B98(Object*, void**, s8*);          /* extern */
-// ? dll_210_func_7CF8(PlayerState*, f32*);            /* extern */
-// ? dll_210_func_7DA0(Object*, PlayerState*, f32*);   /* extern */
+// dll_210_func_7300
+// dll_210_func_75B0
+// dll_210_func_77DC (matched)
+// dll_210_func_78A8 (matched)
+// dll_210_func_7AAC (matched)
+// dll_210_func_7B98 (matched)
+// dll_210_func_7CF8 (matched)
+// dll_210_func_7DA0 (matched)
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7E6C.s")
 
 // offset: 0x8AE0 | func: 46

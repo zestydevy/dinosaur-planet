@@ -9,6 +9,26 @@
 #include "sys/main.h"
 #include "types.h"
 
+// size: 0x58
+typedef struct UnkArg4 {
+    Vec3f unk0;
+    u8 padC[0x1C - 0xC];
+    Vec3f unk1C;
+    u8 pad28[0x34 - 0x28];
+    Object *unk34;
+    Object *unk38;
+    f32 unk3C;
+    f32 unk40;
+    u8 pad44;
+    s8 unk45;
+    s8 unk46;
+    u8 pad47;
+    f32 unk48;
+    f32 unk4C;
+    u32 pad50;
+    s16 unk54;
+} UnkArg4;
+
 // size: 0x60
 typedef struct UnkArg3 {
     s8 unk0;
@@ -127,15 +147,7 @@ typedef struct {
 /*4D8*/ UnkArg2 unk4D8;
 /*508*/ u8 pad508[0x680 - 0x508];
 /*680*/ UnkArg2 unk680;
-/*6B0*/ UNK_TYPE_32 unk6B0;
-/*6B4*/ s8 unk6B4[0x6e4 - 0x6B4];
-/*6E4*/ Object *unk6E4;
-/*6E8*/ Object *unk6E8;
-/*6EC*/ f32 unk6EC;
-/*6F0*/ f32 unk6F0;
-/*6F4*/ s32 pad6F4;
-/*6F8*/ f32 unk6F8;
-/*6FC*/ s8 unk6FC[0x708 - 0x6FC];
+/*6B0*/ UnkArg4 unk6B0;
 /*708*/ Object *unk708;
 /*70C*/ s16 unk70C;
 /*70E*/ s8 unk70E[0x764 - 0x70E];
