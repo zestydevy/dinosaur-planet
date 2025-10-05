@@ -832,7 +832,7 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 // offset: 0x4910 | func: 27
 // Needs these as static:
 // dll_210_func_1BC0 (matched)
-// dll_210_func_1D2A8(Object*, ?);
+// dll_210_func_1D2A8 (matched)
 // dll_210_func_1D4E0(Object*, ?);
 // dll_210_func_1DB6C(void*, ?);
 // dll_210_func_63F0(void*, f32);
@@ -3458,7 +3458,27 @@ s32 dll_210_func_1D288(Object* player, s32* arg1) {
 #endif
 
 // offset: 0x1D2A8 | func: 184 | export: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D2A8.s")
+s32 dll_210_func_1D2A8(Object* arg0, Object* arg1) {
+    PlayerState* sp24;
+    Object* var_v1;
+
+    sp24 = arg0->state;
+    if (arg1 != NULL) {
+        sp24->unk868 = arg1;
+        gDLL_18->vtbl->func4(arg0, sp24, 5);
+    } else {
+        var_v1 = sp24->unk868;
+        if (var_v1 != NULL) {
+            var_v1->unk_0xe0 = 0;
+            sp24->unk868 = NULL;
+            sp24->unk870 = 0;
+            gDLL_18->vtbl->func4(arg0, sp24, 1);
+        }
+    }
+
+    var_v1 = sp24->unk868;
+    return var_v1 != NULL;
+}
 
 // offset: 0x1D368 | func: 185 | export: 36
 u8 dll_210_func_1D368(Object* player, f32* arg1) {

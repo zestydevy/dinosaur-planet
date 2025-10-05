@@ -3,6 +3,7 @@
 
 #include "dll_def.h"
 #include "types.h"
+#include "game/objects/object.h"
 
 DLL_INTERFACE(DLL_18) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
@@ -10,7 +11,8 @@ DLL_INTERFACE(DLL_18) {
 /*1*/ UnknownDLLFunc func1;
 /*2*/ UnknownDLLFunc func2;
 /*3*/ UnknownDLLFunc func3;
-/*4*/ UnknownDLLFunc func4;
+// state is a PlayerState struct but including it causes an unmatch (TODO: use correct struct here)
+/*4*/ void (*func4)(Object *obj, void *state, s32 arg2);
 /*5*/ UnknownDLLFunc func5;
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
