@@ -73,9 +73,9 @@ typedef struct
 
 typedef struct
 {
-    enum SoundID moveSoundID;
-    enum SoundID selectSoundID;
-    enum SoundID backSoundID;
+    s32 moveSoundID;
+    s32 selectSoundID;
+    s32 backSoundID;
 } PicMenuSounds;
 
 DLL_INTERFACE(DLL_74_picmenu) {

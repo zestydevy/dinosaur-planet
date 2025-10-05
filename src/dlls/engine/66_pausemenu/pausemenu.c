@@ -36,7 +36,7 @@ static PicMenuItem pauseMenuItems[2] = {
 
 static PicMenuSounds pauseMenuSounds = {
     SFX_PAUSE_MENU_MOVE,
-    SOUND_FFFF,
+    NO_SOUND,
     SFX_PAUSE_MENU_BACK
 };
 

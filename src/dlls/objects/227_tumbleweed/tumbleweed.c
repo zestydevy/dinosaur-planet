@@ -471,7 +471,7 @@ s32 dll_227_func_1D64(Object* self) {
         //Squeaking (and growing in size temporarily)
         state->unk26C = rand_next(0x78, 0xF0);
         temp_v0 = rand_next(SOUND_614, SOUND_615);
-        random2 = rand_next(VOLUME_5A, VOLUME_64);
+        random2 = rand_next(90, 100);
         gDLL_6_AMSFX->vtbl->play_sound(self, temp_v0, random2, 0, 0, 0, 0);
         self->srt.scale = 0.2f;
     } else {

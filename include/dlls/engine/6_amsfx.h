@@ -71,14 +71,9 @@ enum SoundID {
     SOUND_B72 = 0xB72, // pause menu item selected
     SOUND_B73 = 0xB73, // pause menu no item selected
 
-    SOUND_FFFF = 0xFFFFFFFF // no sound?
+    NO_SOUND = 0xFFFFFFFF
 };
 
-#define VOLUME_43 0x43
-#define VOLUME_5A 0x5A
-#define VOLUME_64 0x64
-#define VOLUME_6B 0x6B
-#define VOLUME_75 0x75
 #define MAX_VOLUME 0x7F
 
 DLL_INTERFACE(DLL_6_AMSFX) {
