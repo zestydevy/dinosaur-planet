@@ -20,6 +20,9 @@ void func_8002559C(Object*, s16, s32);
 void func_800267A4(Object*);
 MtxF* func_80032170(Object*, s32);
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
+void func_80007E2C(Vec3f*, s32*);
+void func_80007EE0(Vec3f*, s32*);
+s32 func_80008048(s32*, s32*, s32*, s32, s32);
 
 /*0x0*/ static const u32 _rodata_0[] = {
     0x40020100, 0x00000000, 0x00000000, 0x00000000, 0x40030102, 0x00000000, 0x00000000, 0x00000000, 
@@ -1063,7 +1066,7 @@ void dll_210_func_692C(Object* arg0, PlayerState* arg1, f32 arg2) {
 // dll_210_func_1DE50 (matched)
 // dll_210_func_90A0
 // dll_210_func_955C (matched)
-// dll_210_func_98CC
+// dll_210_func_98CC (matched)
 
 void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
     Object* sp3C;
@@ -1668,7 +1671,112 @@ void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2) {
 }
 
 // offset: 0x98CC | func: 50
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_98CC.s")
+void dll_210_func_98CC(Object* arg0, PlayerState* arg1, f32 arg2) {
+    SRT spF8;
+    SRT spE0;
+    ObjCreateInfo* temp_v0;
+    Object* temp_a0;
+    Object* spD4;
+    MtxF sp94;
+    f32 sp90;
+    f32 sp8C;
+    f32 sp88;
+    f32 sp84;
+    Object* temp_v0_2;
+    s32 pad;
+    f32 sp70[3];
+    Vec3f sp64;
+    s32 pad_sp60;
+    s32 sp5C;
+    f32 var_fv1;
+    s32 sp54;
+    s32 var_v1;
+    s32 sp4C;
+    DLL_Unknown* dll;
+
+    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
+    temp_v0 = obj_alloc_create_info(0x24, 0x434);
+    temp_v0->loadParamA = 2;
+    temp_v0->loadParamB = 1;
+    temp_v0->loadDistance = 0xFF;
+    temp_v0->fadeDistance = 0xFF;
+    temp_v0->x = arg0->linkedObject->positionMirror.x;
+    temp_v0->y = arg0->linkedObject->positionMirror.y;
+    temp_v0->z = arg0->linkedObject->positionMirror.z;
+    temp_a0 = arg0->linkedObject;
+    ((s8*)temp_v0)[0x19] = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+    temp_v0_2 = obj_create(temp_v0, 5U, -1, -1, NULL);
+    if (temp_v0_2 == NULL) {
+        return;
+    }
+
+    temp_v0_2->srt.flags |= 0x2000;
+    if (arg1->unk2C8 != NULL) {
+        spD4 = arg1->unk2C8;
+    } else {
+        spD4 = NULL;
+    }
+    if (spD4 != NULL) {
+        sp90 = spD4->positionMirror.x - arg0->positionMirror.x;
+        sp8C = spD4->positionMirror.y - arg0->positionMirror.y;
+        sp88 = spD4->positionMirror.z - arg0->positionMirror.z;
+        spF8.yaw = 0;
+        spF8.pitch = arctan2_f(sp8C, sqrtf(SQ(sp90) + SQ(sp88)));
+    } else {
+        spF8.yaw = func_80034804(arg0, 9)[1];
+        spF8.pitch = arg2 * -14336.0f;
+    }
+    spF8.transl.x = 0.0f;
+    spF8.transl.y = 0.0f;
+    spF8.transl.z = 0.0f;
+    spF8.scale = 1.0f;
+    if (arg0->parent != NULL) {
+        var_v1 = arg0->parent->srt.yaw;
+    } else {
+        var_v1 = 0;
+    }
+    spF8.yaw = spF8.yaw + arg0->srt.yaw + var_v1;
+    spF8.roll = 0;
+    matrix_from_srt(&sp94, &spF8);
+    vec3_transform(&sp94, 0.0f, 0.0f, -5.0f, &temp_v0_2->speed.x, &temp_v0_2->speed.y, &temp_v0_2->speed.z);
+    temp_v0_2->positionMirror.x = temp_v0_2->srt.transl.x;
+    temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
+    temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
+    temp_v0_2->srt.yaw = arg0->srt.yaw;
+    temp_v0_2->unk0xdc = 0xBE;
+    temp_v0_2->unk_0xe0 = (s32) spD4;
+    sp84 = sqrtf(SQ(temp_v0_2->speed.x) + SQ(temp_v0_2->speed.z));
+    spE0.yaw = -0x4000 - arctan2_f(temp_v0_2->speed.z, temp_v0_2->speed.x);
+    spE0.pitch = arctan2_f(temp_v0_2->speed.y, sp84) - 0x4000;
+    spE0.roll = 0;
+    sp64.x = temp_v0_2->speed.x * 300.0f;
+    sp64.y = temp_v0_2->speed.y * 300.0f;
+    sp64.z = temp_v0_2->speed.z * 300.0f;
+    sp64.x += temp_v0_2->srt.transl.x;
+    sp64.y += temp_v0_2->srt.transl.y;
+    sp64.z += temp_v0_2->srt.transl.z;
+    func_80007EE0(&arg0->positionMirror, &sp5C);
+    func_80007EE0(&sp64, &sp54);
+    if (func_80008048(&sp5C, &sp54, &sp4C, 0, 0) == 0) {
+        func_80007E2C(&sp64, &sp4C);
+        sp70[0] = sp64.x - temp_v0_2->srt.transl.x;
+        sp70[1] = sp64.y - temp_v0_2->srt.transl.y;
+        sp70[2] = sp64.z - temp_v0_2->srt.transl.z;
+        var_fv1 = sqrtf(SQ(sp70[0]) + SQ(sp70[1]) + SQ(sp70[2]));
+    } else {
+        var_fv1 = 200.0f;
+    }
+    spE0.transl.z = 0.0f;
+    spE0.transl.y = var_fv1;
+    spE0.transl.x = 0.0f;
+    spE0.scale = 1.0f;
+    dll = dll_load_deferred(0x1043U, 1U);
+    dll->vtbl->func[0].withSixArgsCustom(arg0->linkedObject, 1, &spE0, 0x10401, -1, 0);
+    dll_unload(dll);
+    dll = dll_load_deferred(0x1044U, 1U);
+    dll->vtbl->func[0].withSixArgsCustom(arg0->linkedObject, 1, &spE0, 0x10401, -1, 0);
+    dll_unload(dll);
+}
 
 // offset: 0x9E00 | func: 51
 #ifndef NON_MATCHING
