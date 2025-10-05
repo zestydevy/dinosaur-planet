@@ -1306,8 +1306,7 @@ typedef struct UnkArg1 {
 } UnkArg1;
 
 typedef struct UnkArg2 {
-    Vec3f unk0;
-    f32 unkC;
+    Vec4f unk0;
     Vec3f unk10;
     u8 pad1C[0x28 - 0x1C];
     s32 unk28;
@@ -1319,7 +1318,7 @@ s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
     arg2->unk0.x = arg1->unk1C.x;
     arg2->unk0.y = arg1->unk1C.y;
     arg2->unk0.z = arg1->unk1C.z;
-    arg2->unkC = arg1->unk38;
+    arg2->unk0.w = arg1->unk38;
     arg2->unk2D = 0;
     if (arg0 != 0) {
         inverse_transform_point_by_object(arg3->x, arg3->y, arg3->z, &arg2->unk10.x, &arg2->unk10.y, &arg2->unk10.z, arg1->unk0);
@@ -1424,7 +1423,12 @@ s32 dll_210_func_7AAC(Object* arg0, PlayerState* arg1, UnkArg1* arg2, Vec3f* arg
 }
 
 // offset: 0x7B98 | func: 41
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7B98.s")
+void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2) {
+    arg2->unk0.x = arg1->unk1C.x;
+    arg2->unk0.y = arg1->unk1C.y;
+    arg2->unk0.z = arg1->unk1C.z;
+    arg2->unk0.w = arg1->unk1C.w;
+}
 
 // offset: 0x7BC4 | func: 42
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7BC4.s")
