@@ -589,7 +589,7 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
             dll_210_func_363C(arg0, state, arg1, arg2, arg3);
         }
         func_80032238(arg0, 4, 2, &state->unk39C);
-        func_80031F6C(arg0, 9, &state->unk7EC, &state->unk7F0, &state->unk7F4, 0);
+        func_80031F6C(arg0, 9, &state->unk7EC.x, &state->unk7EC.y, &state->unk7EC.z, 0);
         if (sp80->unk_0x34 & 8) {
             sp8C = state->unk850;
             if (sp8C != NULL && (state->flags & 4)) {
@@ -1193,8 +1193,8 @@ s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, Unk7300* arg2, Unk7300* a
     arg3->mtx.m[3][0] = arg4->y;
     arg3->mtx.m[3][1] = arg4->z;
     arg3->mtx.m[3][3] = 0.0f;
-    arg3->mtx.m[3][2] = arg1->unk7EC;
-    arg3->unk40 = arg1->unk7F4;
+    arg3->mtx.m[3][2] = arg1->.x;
+    arg3->unk40 = arg1->unk7EC.z;
     temp_fv1 = arg2->mtx.m[3][3];
     arg3->mtx.m[0][1] = ((arg2->unk40 - temp_fv1) * arg2->unk48) + temp_fv1;
     arg3->mtx.m[0][2] = arg0->positionMirror2.y;
@@ -1291,10 +1291,16 @@ s32 dll_210_func_75B0(Object* arg0, Unk7300* arg1, Unk7300* arg2, Vec3f* arg3, f
 // offset: 0x77DC | func: 38
 typedef struct UnkArg1 {
     Object *unk0;
-    u8 pad4[0x1C - 0x4];
-    Vec3f unk1C;
-    u8 pad28[0x38 - 0x28];
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    u32 pad10;
+    f32 unk14;
+    f32 unk18;
+    Vec4f unk1C;
+    u8 pad2C[0x38 - 0x2C];
     f32 unk38;
+    f32 unk3C;
 } UnkArg1;
 
 typedef struct UnkArg2 {
@@ -1326,7 +1332,66 @@ s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
 }
 
 // offset: 0x78A8 | func: 39
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_78A8.s")
+typedef struct UnkArg3 {
+    s8 unk0;
+    s8 unk1;
+    u8 pad2;
+    s8 unk3;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    u8 pad10[0x18 - 0x10];
+    f32 unk18;
+    u8 pad1C[0x28 - 0x1C];
+    Vec4f unk28;
+    Vec3f unk38;
+    f32 unk44;
+    f32 unk48;
+    f32 unk4C;
+    f32 unk50;
+    Vec3f unk54;
+} UnkArg3;
+s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* arg3, s32 arg4) {
+    arg3->unk3 = 0;
+    arg3->unk48 = ((arg2->unk8 - arg2->unk4) * 0.5f) + arg2->unk4;
+    arg3->unk4C = arg2->unkC;
+    arg3->unk50 = ((arg2->unk18 - arg2->unk14) * 0.5f) + arg2->unk14;
+    if (arg4 != 0) {
+        arg3->unk28.x = -arg2->unk1C.x;
+        arg3->unk28.y = -arg2->unk1C.y;
+        arg3->unk28.z = -arg2->unk1C.z;
+        arg3->unk28.w = -arg2->unk1C.w;
+    } else {
+        arg3->unk28.x = arg2->unk1C.x;
+        arg3->unk28.y = arg2->unk1C.y;
+        arg3->unk28.z = arg2->unk1C.z;
+        arg3->unk28.w = arg2->unk1C.w;
+    }
+    arg3->unk38.x = -arg2->unk1C.z;
+    arg3->unk38.y = 0.0f;
+    arg3->unk38.z = arg2->unk1C.x;
+
+    arg3->unk44 = -((arg3->unk38.z * arg3->unk50) + (arg3->unk48 * arg3->unk38.x));
+
+    arg3->unk54.x = arg1->unk7EC.x;
+    arg3->unk54.y = 0.0f;
+    arg3->unk54.z = arg1->unk7EC.z;
+
+    arg3->unk18 = (arg3->unk38.z * arg3->unk54.z) + (arg3->unk54.x * arg3->unk38.x) + arg3->unk44;
+    if ((arg3->unk18 > -9.0f) && (arg3->unk18 < 9.0f)) {
+        arg3->unk8 = arg2->unkC;
+        arg3->unk4 = arg2->unk3C;
+        arg3->unk1 = ((arg3->unk4 - arg3->unk8) + 2.2f) / 8.8f;
+        arg3->unkC = (arg3->unk4 - arg3->unk8) / arg3->unk1;
+        if ((arg3->unk4 - 10.0f) < arg0->srt.transl.y) {
+            arg3->unk0 = arg3->unk1 - 3;
+        } else {
+            arg3->unk0 = 1;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 // offset: 0x7AAC | func: 40
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7AAC.s")

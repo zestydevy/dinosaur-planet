@@ -103,9 +103,7 @@ typedef struct {
 /*76C*/ s16 *unk76C;
 /*770*/ u8 unk770;
 /*771*/ s8 unk771[0x7EC - 0x771];
-/*7EC*/ f32 unk7EC;
-/*7F0*/ f32 unk7F0;
-/*7F4*/ f32 unk7F4;
+/*7EC*/ Vec3f unk7EC;
 /*7F8*/ s32 pad7F8;
 /*7FC*/ f32 unk7FC;
 /*800*/ f32 unk800;
