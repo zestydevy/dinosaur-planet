@@ -4,6 +4,8 @@
 #include "sys/objects.h"
 #include "sys/gfx/gx.h"
 #include "sys/camera.h"
+#include "sys/menu.h"
+#include "sys/objmsg.h"
 
 #include "dll.h"
 #include "dlls/objects/210_player.h"
@@ -834,7 +836,7 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 // dll_210_func_1D4E0 (matched)
 // dll_210_func_1DB6C (matched)
 // dll_210_func_63F0 (matched)
-// dll_210_func_9F1C(Object*, ?);
+// dll_210_func_9F1C (matched)
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 
 // offset: 0x60A8 | func: 28
@@ -1850,7 +1852,21 @@ void dll_210_func_9E00(Object* arg0) {
 #endif
 
 // offset: 0x9F1C | func: 52
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_9F1C.s")
+void dll_210_func_9F1C(Object* arg0, s32 arg1) {
+    if (arg1 != 0) {
+        if (gDLL_29_Gplay->vtbl->restart_is_set() != 0) {
+            gDLL_29_Gplay->vtbl->restart_goto();
+            return;
+        }
+        menu_set(9);
+        func_80010038(0);
+        return;
+    }
+    func_800267A4(arg0);
+    menu_set(9);
+    func_80010038(1);
+    obj_send_mesg_many(0, 3, arg0, 0xE0000, arg0);
+}
 
 // offset: 0xA018 | func: 53
 s32 dll_210_func_A018(void) {
