@@ -3,6 +3,7 @@
 #include "sys/print.h"
 #include "sys/objects.h"
 #include "sys/gfx/gx.h"
+#include "sys/camera.h"
 
 #include "dll.h"
 #include "dlls/objects/210_player.h"
@@ -1057,12 +1058,12 @@ void dll_210_func_692C(Object* arg0, PlayerState* arg1, f32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_6DD8.s")
 #else
 // https://decomp.me/scratch/mF6MC
-/*
-void func_80023A18(Object *obj, s32 param2);
-void dll_210_func_90A0(void);
-void dll_210_func_955C(void);
-void dll_210_func_98CC(void);
-*/
+// Requires these as static:
+// dll_210_func_1DE64 (matched)
+// dll_210_func_1DE50 (matched)
+// dll_210_func_90A0
+// dll_210_func_955C (matched)
+// dll_210_func_98CC
 
 void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
     Object* sp3C;
@@ -1475,10 +1476,196 @@ void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_8EA4.s")
 
 // offset: 0x90A0 | func: 48
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_90A0.s")
+#else
+void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
+    f32 pad;
+    f32 temp2;
+    f32 temp3;
+    f32 temp4;
+    Camera* mainCam;
+    ObjCreateInfo* createInfo;
+    Object* temp_a0;
+    Object* temp_v0_2;
+    Object* temp_v1;
+    Object* var_s3;
+    f32 temp_fs0;
+    f32 temp_fs2;
+    Vec3f sp104;
+    f32 temp_fs1;
+    MtxF spC0;
+    f32 temp_fv0;
+    f32 temp_fv0_2;
+    f32 temp_fv1;
+    f32 temp;
+    s32 var_s4;
+    PlayerState* temp_fp;
+    SRT sp90;
+
+    var_s3 = NULL;
+    var_s4 = 1;
+    temp_fp = arg0->state;
+    mainCam = get_main_camera();
+    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
+    while (var_s4) {
+        createInfo = obj_alloc_create_info(0x24, 0x14B);
+        createInfo->loadParamA = 2;
+        createInfo->loadParamB = 1;
+        createInfo->loadDistance = 0xFF;
+        createInfo->fadeDistance = 0xFF;
+        if (arg1->unk2C8 != NULL) {
+            createInfo->x = arg0->linkedObject->srt.transl.x;
+            createInfo->y = arg0->linkedObject->srt.transl.y;
+            createInfo->z = arg0->linkedObject->srt.transl.z;
+        } else {
+            createInfo->x = mainCam->srt.transl.x;
+            createInfo->y = mainCam->srt.transl.y;
+            createInfo->z = mainCam->srt.transl.z;
+        }
+        temp_a0 = arg0->linkedObject;
+        ((s8*)createInfo)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+        temp_v0_2 = obj_create(createInfo, 5U, -1, -1, NULL);
+        if (temp_v0_2 != NULL) {
+            temp_v0_2->srt.flags |= 0x2000;
+            temp_v1 = arg1->unk2C8;
+            if (temp_v1 != NULL) {
+                temp_a0 = arg0->linkedObject;
+                temp2 = temp_v1->srt.transl.x - temp_a0->srt.transl.x;
+                temp_fs0 = temp_v1->srt.transl.y - temp_a0->srt.transl.y;
+                temp_fv1 = temp_v1->srt.transl.z - temp_a0->srt.transl.z;
+                sp90.transl.x = 0.0f;
+                sp90.transl.y = 0.0f;
+                sp90.transl.z = 0.0f;
+                sp90.scale = 1.0f;
+                // @fake
+                if (var_s3) {}
+                sp90.yaw = arg0->srt.yaw;
+                var_s3 = temp_v1;
+                sp90.pitch = arctan2_f(temp_fs0, sqrtf(SQ(temp2) + SQ(temp_fv1)));
+                sp90.roll = 0;
+                if (arg0->parent != NULL) {
+                    sp90.yaw += arg0->parent->srt.yaw;
+                }
+                matrix_from_srt(&spC0, &sp90);
+                vec3_transform(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->speed.x, &temp_v0_2->speed.y, &temp_v0_2->speed.z);
+                temp_v0_2->positionMirror.x = temp_v0_2->srt.transl.x;
+                temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
+                temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
+                temp_v0_2->srt.yaw = arg0->srt.yaw;
+                temp_v0_2->srt.pitch = 0;
+            } else {
+                temp_v0_2->srt.yaw = mainCam->srt.yaw;
+                temp_fs1 = camera_get_fov() * 91.022f;
+                temp_fv0 = fsin16_precise(temp_fs1);
+                temp_fv0 /= fcos16_precise(temp_fs1);
+                temp_fs1 = (100.0f * temp_fv0);
+                temp3 = -(((temp_fp->aimX - 0xA0) / 160.0f) * 1.333333f);
+                temp_fs1 *= temp3;
+                temp_fs2 = (100.0f * temp_fv0);
+                temp_fs2 *= ((temp_fp->aimY - 0x78) / 120.0f);
+                temp = 100.0f;
+                temp_fv0 = sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp));
+                sp104.x = temp_fs1 / temp_fv0;
+                sp104.y = temp_fs2 / temp_fv0;
+                sp104.z = temp / temp_fv0;
+                vec3_transform_no_translate(camera_get_view_mtx2(), &sp104, &sp104);
+                temp_v0_2->speed.x = sp104.x * -5.0f;
+                temp_v0_2->speed.y = sp104.y * -5.0f;
+                temp_v0_2->speed.z = sp104.z * -5.0f;
+
+                temp_fv0_2 = mainCam->srt.transl.x;
+                temp_v0_2->positionMirror.x = temp_fv0_2;
+                temp_v0_2->srt.transl.x = temp_fv0_2;
+
+                temp_fv0_2 = mainCam->srt.transl.y;
+                temp_v0_2->positionMirror.y = temp_fv0_2;
+                temp_v0_2->srt.transl.y = temp_fv0_2;
+
+                temp_fv0_2 = mainCam->srt.transl.z;
+                temp_v0_2->positionMirror.z = temp_fv0_2;
+                temp_v0_2->srt.transl.z = temp_fv0_2;
+
+                temp_v0_2->srt.pitch = 0;
+            }
+            temp_v0_2->unk0xdc = 0xBE;
+            temp_v0_2->unk_0xe0 = (s32) var_s3;
+        }
+        var_s4--;
+    }
+}
+
+#endif
 
 // offset: 0x955C | func: 49
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_955C.s")
+void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2) {
+    SRT spE8;
+    ObjCreateInfo* temp_v0;
+    Object* temp_a0;
+    Object* temp_v0_2;
+    MtxF sp9C;
+    Object* var_s2;
+    f32 temp_fs0;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 temp_s5;
+    s32 var_s4;
+
+    var_s4 = 1;
+    gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
+    while (var_s4) {
+        temp_v0 = obj_alloc_create_info(0x24, 0x4C9);
+        temp_v0->loadParamA = 2;
+        temp_v0->loadParamB = 1;
+        temp_v0->loadDistance = 0xFF;
+        temp_v0->fadeDistance = 0xFF;
+        temp_v0->x = arg0->linkedObject->positionMirror.x;
+        temp_v0->y = arg0->linkedObject->positionMirror.y;
+        temp_v0->z = arg0->linkedObject->positionMirror.z;
+        temp_a0 = arg0->linkedObject;
+        temp_s5 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+        temp_v0_2 = obj_create(temp_v0, 5U, -1, -1, NULL);
+        if (temp_v0_2 != NULL) {
+            temp_v0_2->srt.flags |= 0x2000;
+            if (arg1->unk2C8 != NULL) {
+                var_s2 = arg1->unk2C8;
+            } else {
+                var_s2 = NULL;
+            }
+            if (var_s2 != NULL) {
+                temp_fv0 = var_s2->srt.transl.x - arg0->srt.transl.x;
+                temp_fs0 = var_s2->srt.transl.y - arg0->srt.transl.y;
+                temp_fv1 = var_s2->srt.transl.z - arg0->srt.transl.z;
+                spE8.yaw = 0;
+                spE8.pitch = arctan2_f(temp_fs0, sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1)));
+            } else {
+                spE8.yaw = func_80034804(arg0, 9)[1];
+                spE8.pitch = arg2 * -14336.0f;
+            }
+            spE8.transl.x = 0.0f;
+            spE8.transl.y = 0.0f;
+            spE8.transl.z = 0.0f;
+            spE8.scale = 1.0f;
+            spE8.yaw += arg0->srt.yaw;
+            spE8.roll = 0;
+            if (arg0->parent != NULL) {
+                if (spE8.yaw) {}
+                spE8.yaw += arg0->parent->srt.yaw;
+            }
+            matrix_from_srt(&sp9C, &spE8);
+            vec3_transform(&sp9C, 0.0f, 0.0f, temp_s5 * -0.15f, &temp_v0_2->speed.x, &temp_v0_2->speed.y, &temp_v0_2->speed.z);
+            temp_v0_2->positionMirror.x = temp_v0_2->srt.transl.x;
+            temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
+            temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
+            temp_v0_2->srt.yaw = arg0->srt.yaw;
+            temp_v0_2->srt.pitch = 0;
+            temp_v0_2->unk0xdc = 0x15E;
+            temp_v0_2->unk_0xe0 = (s32) var_s2;
+            gDLL_17->vtbl->func1(temp_v0_2, 0x521, NULL, 4, -1, NULL);
+        }
+        var_s4 -= 1;
+    }
+}
 
 // offset: 0x98CC | func: 50
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_98CC.s")
@@ -2248,12 +2435,13 @@ s32 dll_210_func_18E80(Object* player, PlayerState* state, f32 arg2) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_18EAC.s")
 #else
-static s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5) { return 1; }
-static void dll_210_func_1DC48(Object* arg0) {}
-static s32 dll_210_func_1DD94(Object* arg0, s32 arg1) { return 1; }
-static void dll_210_func_6DD8(Object* arg0, PlayerState* arg1, s16 arg2) {}
-static void dll_210_func_1AAD8() {}
-static void dll_210_func_1CEFC(Object* player, s32 arg1);
+// Requires these statics:
+// dll_210_func_6DD8
+// dll_210_func_1A9D4 (matched)
+// dll_210_func_1DC48 (matched)
+// dll_210_func_1DD94 (matched)
+// dll_210_func_1AAD8 (matched)
+// dll_210_func_1CEFC (matched)
 // https://decomp.me/scratch/TtS1w
 s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
     s32 sp9C;
