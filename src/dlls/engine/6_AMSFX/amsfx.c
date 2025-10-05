@@ -59,8 +59,8 @@ typedef struct UnkBss28 {
 /*0x1C*/ static u8 _bss_1C;
 /*0x1D*/ static u8 _bss_1D;
 /*0x1E*/ static u8 _bss_1E;
-/*0x1F*/ static u8 _bss_1F;
-/*0x20*/ static u8 _bss_20[0x8];
+/*0x1F*/ static u8 _bss_1F; // sound volume
+/*0x20*/ static u8 _bss_20[0x8]; // sound volume(s?)
 /*0x28*/ static UnkBss28 _bss_28[0x10];
 /*0x128*/ static ACache *_bss_128;
 
@@ -453,23 +453,23 @@ void dll_6_func_F2C(Object* arg0, u16 arg1, u32* arg2, char *arg3, s32 arg4) {
     _bss_4[temp_v0_2].unk12 |= 0x80;
 }
 
-void dll_6_func_10D0(Object* arg0, u16 arg1, u32* arg2) {
+void dll_6_func_10D0(Object* obj, u16 soundID, u32* arg2) {
     if (arg2 != NULL) {
-        dll_6_play_sound(arg0, arg1, 0x7FU, arg2, "game/amsfx.c", 0x2BD, "");
+        dll_6_play_sound(obj, soundID, MAX_VOLUME, arg2, "game/amsfx.c", 0x2BD, "");
         return;
     }
 
-    dll_6_play_sound(arg0, arg1, 0x7FU, NULL, "game/amsfx.c", 0x2BE, "");
+    dll_6_play_sound(obj, soundID, MAX_VOLUME, NULL, "game/amsfx.c", 0x2BE, "");
 }
 
 // offset: 0x1174 | func: 15 | export: 15
-void dll_6_func_1174(Object* arg0, u16 arg1, u8 arg2, u32* arg3) {
+void dll_6_func_1174(Object* obj, u16 soundID, u8 volume, u32* arg3) {
     if (arg3 != NULL) {
-        dll_6_play_sound(arg0, arg1, arg2, arg3, "game/amsfx.c", 0x2C5, "");
+        dll_6_play_sound(obj, soundID, volume, arg3, "game/amsfx.c", 0x2C5, "");
         return;
     }
 
-    dll_6_play_sound(arg0, arg1, arg2, NULL, "game/amsfx.c", 0x2C6, "\0\0\0\0AMSFX: Software bug in object (controlfunc %d)\n\0       amSfxStop is required to release effect %d.\n\0AMSFX: Software bug in object (controlfunc %d)\n\0       amSfxStop is required to stop effect %d.\n");
+    dll_6_play_sound(obj, soundID, volume, NULL, "game/amsfx.c", 0x2C6, "\0\0\0\0AMSFX: Software bug in object (controlfunc %d)\n\0       amSfxStop is required to release effect %d.\n\0AMSFX: Software bug in object (controlfunc %d)\n\0       amSfxStop is required to stop effect %d.\n");
 }
 
 // offset: 0x1218 | func: 16 | export: 16
@@ -511,7 +511,7 @@ void dll_6_func_1320(Object* arg0, u16 arg1, s32 arg2, f32 arg3, f32 arg4, u32* 
     f32 zDiff;
     f32 yDiff;
     f32 xDiff;
-    s32 var_v1;
+    s32 soundVolume;
     Camera* sp30;
 
     sp30 = get_camera_array();
@@ -522,32 +522,32 @@ void dll_6_func_1320(Object* arg0, u16 arg1, s32 arg2, f32 arg3, f32 arg4, u32* 
     zDiff = arg0->positionMirror.z - sp30->tz;
     temp = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
     if (arg4 < temp) {
-        var_v1 = 0;
+        soundVolume = 0;
     } else if (temp <= arg3) {
-        var_v1 = 0x7F;
+        soundVolume = MAX_VOLUME;
     } else {
         temp2 = arg4 - arg3;
         temp3 = temp2 - (temp - arg3);
         temp3 = ((temp3 * 127.0f) / temp2);
-        var_v1 = temp3;
-        if (var_v1 >= 0x80) {
-            var_v1 = 0x7F;
+        soundVolume = temp3;
+        if (soundVolume > MAX_VOLUME) {
+            soundVolume = MAX_VOLUME;
         }
-        if (var_v1 < 0) {
-            var_v1 = 0;
+        if (soundVolume < 0) {
+            soundVolume = 0;
         }
     }
-    if ((var_v1 > 0) && (*arg5 == 0)) {
-        dll_6_play_sound(arg0, arg1, var_v1, arg5, "game/amsfx.c", 0x37B, "\0\0\0\0amSfxSetPitch: Warning,sound handle '%d' out of range.\n\0amSfxSetPitch: Warning,invalid handle '%d'.\n\0");
+    if ((soundVolume > 0) && (*arg5 == 0)) {
+        dll_6_play_sound(arg0, arg1, soundVolume, arg5, "game/amsfx.c", 0x37B, "\0\0\0\0amSfxSetPitch: Warning,sound handle '%d' out of range.\n\0amSfxSetPitch: Warning,invalid handle '%d'.\n\0");
         dll_6_func_954(*arg5, arg2);
     }
     if (*arg5 != 0) {
-        if (var_v1 == 0) {
+        if (soundVolume == 0) {
             dll_6_func_A1C(*arg5);
             *arg5 = 0;
             return;
         }
-        dll_6_func_860(*arg5, var_v1);
+        dll_6_func_860(*arg5, soundVolume);
     }
 }
 #endif
@@ -653,7 +653,7 @@ void dll_6_func_16E0(void) {
     } else if (sp50 != 0) {
         if (_bss_18 == 0) {
             _bss_1F = 1;
-            dll_6_play_sound(NULL, 0x986U, _bss_1F, &_bss_18, "game/amsfx.c", 0x3F8, "");
+            dll_6_play_sound(NULL, SOUND_986, _bss_1F, &_bss_18, "game/amsfx.c", 0x3F8, "");
         }
         if (sp50 < (u8) _bss_1F) {
             _bss_1F -= 1;
@@ -670,7 +670,7 @@ void dll_6_func_16E0(void) {
     if (sp4C != 0) {
         if (_bss_14 == 0) {
             *_bss_20 = 1;
-            dll_6_play_sound(NULL, 0x987U, *_bss_20, &_bss_14, "game/amsfx.c", 0x40C, "\0\0\0\0AMSFX: Maximum sfx handles allocated,%d (from %s:%d)\n\0\0\0AMSFX: allocSfxHandle handle out of range, %d\n\0\0AMSFX: freeSfxHandle invalid handle, %d\n\0\0\0\0AMSFX: freeSfxHandle not used, %d\n\0\0AMSFX: Warning min/max range identical\n");
+            dll_6_play_sound(NULL, SOUND_987, *_bss_20, &_bss_14, "game/amsfx.c", 0x40C, "\0\0\0\0AMSFX: Maximum sfx handles allocated,%d (from %s:%d)\n\0\0\0AMSFX: allocSfxHandle handle out of range, %d\n\0\0AMSFX: freeSfxHandle invalid handle, %d\n\0\0\0\0AMSFX: freeSfxHandle not used, %d\n\0\0AMSFX: Warning min/max range identical\n");
         }
         if (sp4C < (u8) *_bss_20) {
             *_bss_20 -= 1;

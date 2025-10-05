@@ -19,6 +19,63 @@ typedef struct UnkDE8 {
     u16 unkC;
 } UnkDE8;
 
+enum SoundID {
+    SFX_RECAP_MENU_BACK = 0x5D4,
+    SFX_RECAP_MENU_MOVE = 0x5D5,
+    SFX_RECAP_MENU_SELECT = 0x5D6,
+
+    SFX_SNOWHORN_YAWN1 = 0x129,
+    SFX_SNOWHORN_SNOREHORN = 0x12A,
+    SFX_SNOWHORN_YAWN2 = 0x12B,
+
+    SOUND_1E2 = 0x1E2, // snowhorn related
+
+    SOUND_242 = 0x242, // menu related
+
+    SOUND_342 = 0x342, // used in DLL 466
+
+    SOUND_377 = 0x377, // snowhorn related
+
+    SOUND_5EB = 0x5EB, // used in DLL 210
+
+    SFX_PAUSE_MENU_BACK = 0x5D4, // Used in DLL 66
+    SFX_PAUSE_MENU_MOVE = 0x5D5, // Used in DLL 66
+
+    SOUND_5F6 = 0x5F6, // used in DLL 227
+    SOUND_5F7 = 0x5F7, // used in DLL 227
+
+    SOUND_614 = 0x614, // used in DLL 227
+    SOUND_615 = 0x615, // used in DLL 227
+
+    SOUND_677 = 0x677, // snowhorn related
+
+    SOUND_6EC = 0x6EC, // used in DLL 641
+
+    SOUND_74B = 0x74B, // snowhorn related
+
+    SOUND_775 = 0x775, // menu related
+
+    SOUND_8A2 = 0x8A2, // used in DLL 505
+
+    SOUND_986 = 0x986, // used in DLL 6
+    SOUND_987 = 0x987, // used in DLL 6
+
+    SOUND_9B1 = 0x9B1, // kamerian related
+    SOUND_9B2 = 0x9B2, // kamerian related
+
+    SOUND_9B4 = 0x9B4, // kamerian related
+    SOUND_9B5 = 0x9B5, // kamerian related
+
+    SOUND_B31 = 0xB31, // Used in DLL 505
+
+    SOUND_B72 = 0xB72, // pause menu item selected
+    SOUND_B73 = 0xB73, // pause menu no item selected
+
+    NO_SOUND = 0xFFFFFFFF
+};
+
+#define MAX_VOLUME 0x7F
+
 DLL_INTERFACE(DLL_6_AMSFX) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func_338)(void);

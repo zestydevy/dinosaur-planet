@@ -200,9 +200,9 @@ static GameSelectSubmenu sSubmenus[] = {
 };
 
 static PicMenuSounds sGameRecapMenuSounds = {
-    /*move*/   0x5D5, 
-    /*select*/ 0x5D6, 
-    /*back*/   0x5D4
+    SFX_RECAP_MENU_MOVE,
+    SFX_RECAP_MENU_SELECT,
+    SFX_RECAP_MENU_BACK
 };
 static GameTextChunk *sGameTextChunk = NULL;
 static s8 sSubmenuIdx = -1;

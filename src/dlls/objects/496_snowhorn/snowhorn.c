@@ -2,8 +2,6 @@
 
 #include "PR/ultratypes.h"
 #include "dll.h"
-#include "dlls/engine/1_ui.h"
-#include "dlls/engine/27_head_turn.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/227_tumbleweed.h"
 #include "game/objects/object.h"
@@ -27,12 +25,6 @@ void func_80032A08(Object*, void*);
 s16* func_80034804(Object* obj, s32 sequenceBoneID);
 s32* func_800348A0(Object*, s32, s32);
 void set_button_mask(int port, u16 mask);
-
-enum SnowHornSoundIDs {
-    SFX_SNOWHORN_YAWN1 = 0x129,
-    SFX_SNOWHORN_SNOREHORN = 0x12A,
-    SFX_SNOWHORN_YAWN2 = 0x12B
-};
 
 enum SnowHornAnims {
     MODANIM_SnowHorn_Idle = 0,
@@ -213,34 +205,34 @@ f32 unk10;
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
 static SnowHornData0 _data_0[] = {
-    {0x0377, 0xffff, 0x002f, 0x0030, 0x00,  0.012, 0.005}, 
-    {0x0377, 0xffff, 0x002f, 0x0030, 0x00,  0.012, 0.005}, 
-    {0x0377, 0xffff, 0x002a, 0x0030, 0x00,  0.011, 0.005}, 
-    {0x0677, 0xffff, 0xffff, 0xffff, 0x01,  0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
-    {0x0677, 0xffff, 0xffff, 0xffff, 0x01,  0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00,  0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0x002a, 0x0030, 0x00, 0.011, 0.005}, 
-    {0x0377, 0xffff, 0x002a, 0x0030, 0x00, 0.011, 0.005}, 
-    {0x0377, 0xffff, 0x002a, 0x0030, 0x00, 0.011, 0.005}, 
-    {0x0377, 0xffff, 0x002e, 0x0030, 0x00, 0.012, 0.005}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0x002d, 0x0030, 0x00, 0.012, 0.005}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0x002c, 0x0030, 0x00, 0.015, 0.005}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0x002b, 0x0030, 0x00, 0.015, 0.005}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0x00, 0.0, 0.0}
+    {SOUND_377, NO_SOUND, 0x002f, 0x0030, 0x00,  0.012, 0.005},
+    {SOUND_377, NO_SOUND, 0x002f, 0x0030, 0x00,  0.012, 0.005},
+    {SOUND_377, NO_SOUND, 0x002a, 0x0030, 0x00,  0.011, 0.005},
+    {SOUND_677, NO_SOUND, 0xffff, 0xffff, 0x01,  0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
+    {SOUND_677, NO_SOUND, 0xffff, 0xffff, 0x01,  0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0x002a, 0x0030, 0x00, 0.011, 0.005},
+    {SOUND_377, NO_SOUND, 0x002a, 0x0030, 0x00, 0.011, 0.005},
+    {SOUND_377, NO_SOUND, 0x002a, 0x0030, 0x00, 0.011, 0.005},
+    {SOUND_377, NO_SOUND, 0x002e, 0x0030, 0x00, 0.012, 0.005},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0x002d, 0x0030, 0x00, 0.012, 0.005},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0x002c, 0x0030, 0x00, 0.015, 0.005},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0x002b, 0x0030, 0x00, 0.015, 0.005},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
+    {SOUND_377, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0}
 };
 
 static f32 _data_230[] = {
@@ -564,7 +556,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound((void*)snowhorn, SFX_SNOWHORN_YAWN1, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_SNOWHORN_YAWN1, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
@@ -579,7 +571,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound((void*)snowhorn, SFX_SNOWHORN_SNOREHORN, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_SNOWHORN_SNOREHORN, MAX_VOLUME, 0, 0, 0, 0);
             }
             state->sleepTimer-= delayByte;
             if ((_data_270 == 0) && state->sleepTimer <= 0) {  //if daytime rolls around
@@ -594,7 +586,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound((void*)snowhorn, SFX_SNOWHORN_YAWN2, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_SNOWHORN_YAWN2, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
@@ -1045,7 +1037,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             //Calling out to the player periodically
             state->unk8 += delayByte;
             if (state->unk8 >= 0x3E9) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x1E2, 0x7F, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1E2, MAX_VOLUME, 0, 0, 0, 0);
                 gDLL_22_Subtitles->vtbl->func_368(0xA);
                 state->unk8 = 0;
             }
@@ -1099,7 +1091,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                     break;
                 }
                 if (weeds % 3 == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, 0x74B, 0x7F, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_74B, MAX_VOLUME, 0, 0, 0, 0);
                     gDLL_22_Subtitles->vtbl->func_368(2);
                 }
                 state->flags = 2;
