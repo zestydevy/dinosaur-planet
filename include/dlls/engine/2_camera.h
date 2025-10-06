@@ -22,7 +22,7 @@ DLL_INTERFACE(DLL_2_camera) {
 /*11*/ UnknownDLLFunc func11;
 /*12*/ UnknownDLLFunc func12;
 /*13*/ UnknownDLLFunc func13;
-/*14*/ UnknownDLLFunc func14;
+/*14*/ Object *(*func14)(void);
 /*15*/ UnknownDLLFunc func15;
 /*16*/ UnknownDLLFunc func16;
 /*17*/ UnknownDLLFunc func17;

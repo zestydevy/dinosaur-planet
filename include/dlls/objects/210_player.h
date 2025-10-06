@@ -153,7 +153,9 @@ typedef struct {
 /*2c8*/ Object *unk2C8;
 /*2cc*/ s8 unk2CC[0x2FC - 0x2CC];
 /*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
-/*300*/ s8 unk300[0x30C - 0x300];
+/*300*/ s32 pad300;
+/*304*/ s32 unk304;
+/*308*/ s32 pad308;
 /*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
 /*314*/ s8 unk314[0x324 - 0x314];
@@ -257,15 +259,16 @@ typedef struct {
 /*8A0*/ u8 unk8A0;
 /*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];
 /*8A4*/ u8 unk8A4;
-/*8A5*/ s8 unk8A5;
+/*8A5*/ u8 unk8A5;
 /*8A6*/ u8 unk8A6;
 /*8A7*/ s8 unk8A7;
 /*8A8*/ u8 unk8A8;
 /*8A9*/ u8 unk8A9;
 /*8AA*/ u8 unk8AA;
 /*8AB*/ u8 unk8AB;
-/*8AC*/ s32 unk8AC;
-/*8B0*/ s32 unk8B0;
+/*8AC*/ u8 pad8AC;
+/*8AD*/ u8 unk8AD;
+/*8AE*/ u8 unk8AE[0x8B4 - 0x8AE];
 /*8B4*/ u8 unk8B4;
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
@@ -274,7 +277,7 @@ typedef struct {
 /*8B9*/ s8 unk8B9;
 /*8BA*/ u8 unk8BA;
 /*8BB*/ u8 unk8BB;
-/*8BC*/ s8 unk8BC;
+/*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
 /*8BE*/ u8 unk8BE;
 /*8BF*/ s8 unk8BF;
