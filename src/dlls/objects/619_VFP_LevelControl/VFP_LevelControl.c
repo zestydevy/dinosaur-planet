@@ -70,16 +70,16 @@ void VFP_LevelControl_update(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                func_80000860(self, self, 0x105U, 0);
-                func_80000860(self, self, 0x106U, 0);
-                func_80000860(self, self, 0x107U, 0);
-                func_80000450(self, self, 0x166U, 0, 0, 0);
-                func_80000450(self, self, 0x167U, 0, 0, 0);
-                func_80000450(self, self, 0x168U, 0, 0, 0);
-                func_80000450(self, self, 0x169U, 0, 0, 0);
-                func_80000450(self, self, 0x174U, 0, 0, 0);
-                func_80000450(self, self, 0x178U, 0, 0, 0);
-                set_gplay_bitstring(0x123, 1U);
+                func_80000860(self, self, 0x105, 0);
+                func_80000860(self, self, 0x106, 0);
+                func_80000860(self, self, 0x107, 0);
+                func_80000450(self, self, 0x166, 0, 0, 0);
+                func_80000450(self, self, 0x167, 0, 0, 0);
+                func_80000450(self, self, 0x168, 0, 0, 0);
+                func_80000450(self, self, 0x169, 0, 0, 0);
+                func_80000450(self, self, 0x174, 0, 0, 0);
+                func_80000450(self, self, 0x178, 0, 0, 0);
+                set_gplay_bitstring(0x123, 1);
             }
         }
         VFP_LevelControl_func_8EC(self);
@@ -90,18 +90,18 @@ void VFP_LevelControl_update(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                set_gplay_bitstring(0x4E9, 1U);
-                func_80000860(self, self, 0x105U, 0);
-                func_80000860(self, self, 0x106U, 0);
-                func_80000860(self, self, 0x107U, 0);
-                func_80000450(self, self, 0x166U, 0, 0, 0);
-                func_80000450(self, self, 0x167U, 0, 0, 0);
-                func_80000450(self, self, 0x168U, 0, 0, 0);
-                func_80000450(self, self, 0x169U, 0, 0, 0);
-                func_80000450(self, self, 0x174U, 0, 0, 0);
-                func_80000450(self, self, 0x178U, 0, 0, 0);
-                set_gplay_bitstring(0x83B, 1U);
-                set_gplay_bitstring(0x22B, 1U);
+                set_gplay_bitstring(0x4E9, 1);
+                func_80000860(self, self, 0x105, 0);
+                func_80000860(self, self, 0x106, 0);
+                func_80000860(self, self, 0x107, 0);
+                func_80000450(self, self, 0x166, 0, 0, 0);
+                func_80000450(self, self, 0x167, 0, 0, 0);
+                func_80000450(self, self, 0x168, 0, 0, 0);
+                func_80000450(self, self, 0x169, 0, 0, 0);
+                func_80000450(self, self, 0x174, 0, 0, 0);
+                func_80000450(self, self, 0x178, 0, 0, 0);
+                set_gplay_bitstring(0x83B, 1);
+                set_gplay_bitstring(0x22B, 1);
             }
         }
         VFP_LevelControl_func_A08(self);
@@ -111,17 +111,17 @@ void VFP_LevelControl_update(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                set_gplay_bitstring(0x4E9, 1U);
-                set_gplay_bitstring(0x63C, 1U);
-                func_80000860(self, self, 0x105U, 0);
-                func_80000860(self, self, 0x106U, 0);
-                func_80000860(self, self, 0x107U, 0);
-                func_80000450(self, self, 0x166U, 0, 0, 0);
-                func_80000450(self, self, 0x167U, 0, 0, 0);
-                func_80000450(self, self, 0x168U, 0, 0, 0);
-                func_80000450(self, self, 0x169U, 0, 0, 0);
-                func_80000450(self, self, 0x174U, 0, 0, 0);
-                set_gplay_bitstring(0x83C, 1U);
+                set_gplay_bitstring(0x4E9, 1);
+                set_gplay_bitstring(0x63C, 1);
+                func_80000860(self, self, 0x105, 0);
+                func_80000860(self, self, 0x106, 0);
+                func_80000860(self, self, 0x107, 0);
+                func_80000450(self, self, 0x166, 0, 0, 0);
+                func_80000450(self, self, 0x167, 0, 0, 0);
+                func_80000450(self, self, 0x168, 0, 0, 0);
+                func_80000450(self, self, 0x169, 0, 0, 0);
+                func_80000450(self, self, 0x174, 0, 0, 0);
+                set_gplay_bitstring(0x83C, 1);
             }
         }
         VFP_LevelControl_func_AAC(self);
@@ -159,7 +159,7 @@ static void VFP_LevelControl_func_8EC(Object *self) {
     if (_data_4 != 0) {
         set_gplay_bitstring(0x2D, 1);
         set_gplay_bitstring(0x1D7, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14.withTwoArgs((s32)player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_4 = 0;
     }
 
@@ -178,7 +178,7 @@ static void VFP_LevelControl_func_A08(Object *self) {
     if (_data_8 != 0) {
         set_gplay_bitstring(0x2D, 1);
         set_gplay_bitstring(0x1D7, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14.withTwoArgs((s32)player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_8 = 0;
     }
 }
@@ -192,7 +192,7 @@ static void VFP_LevelControl_func_AAC(Object *self) {
     if (_data_C != 0) {
         set_gplay_bitstring(0x2D, 1);
         set_gplay_bitstring(0x1D7, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14.withTwoArgs((s32)player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_C = 0;
     }
 }

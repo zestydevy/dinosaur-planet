@@ -66,6 +66,8 @@ enum SoundID {
     SOUND_9B4 = 0x9B4, // kamerian related
     SOUND_9B5 = 0x9B5, // kamerian related
 
+    SOUND_AAE = 0xAAE, // VFP_lavastar sound
+
     SOUND_B31 = 0xB31, // Used in DLL 505
 
     SOUND_B72 = 0xB72, // pause menu item selected
