@@ -9,6 +9,27 @@
 #include "sys/main.h"
 #include "types.h"
 
+// size: 0x3C
+typedef struct PlayerState3B4 {
+    s16 unk0;
+    s16 unk2;
+    u32 unk4;
+    s16 unk8;
+    s16 padA;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    s16 unk2C;
+    s16 unk2E;
+    u32 pad30;
+    WeaponDataPtr unk34;
+} PlayerState3B4;
+
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;
@@ -151,7 +172,8 @@ typedef struct {
 /*354*/ Unk80032CF8Copy unk354;
 /*378*/ Unk80032CF8Copy unk378;
 /*39C*/ Vec3f unk39C;
-/*3A8*/ u8 pad3A8[0x3B8 - 0x3A8];
+/*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
+/*3B4*/ PlayerState3B4* unk3B4;
 /*3B8*/ s16 *unk3B8;
 /*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, PlayerState*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
@@ -178,7 +200,9 @@ typedef struct {
 /*76A*/ u16 pad76A;
 /*76C*/ s16 *unk76C;
 /*770*/ u8 unk770;
-/*771*/ s8 unk771[0x7EC - 0x771];
+/*771*/ s8 unk771[0x774 - 0x771];
+/*774*/ Vec3f unk774;
+/*780*/ u8 pad780[0x7EC - 0x780];
 /*7EC*/ Vec3f unk7EC;
 /*7F8*/ s32 pad7F8;
 /*7FC*/ f32 unk7FC;
@@ -206,7 +230,7 @@ typedef struct {
 /*854*/ s32 unk854;
 /*858*/ Object *unk858;
 /*85C*/ Object *unk85C;
-/*860*/ s32 pad860;
+/*860*/ Object *unk860;
 /*864*/ s32 unk864;
 /*868*/ Object* unk868;
 /*86C*/ f32 unk86C;
@@ -230,7 +254,8 @@ typedef struct {
 /*894*/ s32 unk894;
 /*898*/ s32 unk898;
 /*89C*/ s32 unk89C;
-/*8A0*/ s32 unk8A0;
+/*8A0*/ u8 unk8A0;
+/*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];
 /*8A4*/ u8 unk8A4;
 /*8A5*/ s8 unk8A5;
 /*8A6*/ u8 unk8A6;
