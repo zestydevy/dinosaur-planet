@@ -79,11 +79,14 @@ typedef struct Unk {
 /* static */ void dll_210_func_1CA8(Object* arg0, PlayerState* arg1, PlayerState* arg2);
 /* static */ void dll_210_func_1DDC(Object* arg0, PlayerState* arg1, PlayerState* arg2);
 /* static */ void dll_210_func_47B8(Object* arg0, PlayerState* arg1);
+/* static */ void dll_210_func_A024(Object* player, PlayerState* state);
+/* static */ void dll_210_func_7180(Object* arg0, PlayerState* arg1, f32 arg2);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
 void dll_210_func_1D4E0(Object* arg0, s32 arg1);
 s32 dll_210_func_1D2A8(Object* arg0, Object* arg1);
+void dll_210_func_1CD6C(Object* player, s32 arg1);
 
 void *func_8005D3A4(int param);
 s32 func_80025140(Object*, f32, f32, s32);
@@ -495,9 +498,9 @@ void dll_210_func_444(Object* arg0, u32 arg1) {
 // Requires these as static:
 // dll_210_func_11A0
 // dll_210_func_1CA8 (matched)
-// dll_210_func_1DDC
+// dll_210_func_1DDC (matched)
 // dll_210_func_2534
-// dll_210_func_7180
+// dll_210_func_7180 (matched)
 // dll_210_func_47B8 (matched)
 // dll_210_func_1DE64 (matched)
 #ifndef NON_MATCHING
@@ -853,7 +856,148 @@ int dll_210_func_24FC(Object *player, PlayerState *state){
 }
 
 // offset: 0x2534 | func: 8
+#ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_2534.s")
+#else
+// https://decomp.me/scratch/I2VWJ
+void dll_210_func_2534(Object* arg0, PlayerState* arg1, PlayerState* arg2) {
+    s32 sp84;
+    s32 sp80;
+    s32 sp7C;
+    s32 sp78;
+    s32 sp74;
+    DLL_106* sp70 = NULL;
+    u32 sp60[4] = _data_508;
+    SRT sp48;
+    s16 temp_t5;
+    s32 var_t7;
+    Vec4f* temp_v1;
+
+    sp84 = func_80025F40(arg0, &sp74, &sp80, &sp7C);
+    if ((func_80026724(arg0) != 0) && !(arg1->unk818 > 0.0f)) {
+        if ((arg1->unk858 != NULL) && (sp84 != 0)) {
+            sp84 = 0x14;
+        }
+        if (sp84 == 0) {
+            return;
+        }
+
+        if (arg2->unk270 != 0) {
+            sp84 = 0x1B;
+        }
+        if ((arg2->unk341 == 3) && (sp84 >= arg2->unk343)) {
+            return;
+        }
+
+        arg2->unk343 = sp84;
+        arg0->curModAnimIdLayered = -1;
+        sp78 = -1;
+        switch (sp84) {
+        case 7:
+        case 8:
+        case 9:
+        case 11:
+            sp78 = 0x4F;
+            break;
+        case 10:
+        case 12:
+            sp78 = 0x50;
+            break;
+        case 4:
+            sp78 = 0x32;
+            break;
+        case 5:
+            sp78 = 0x30;
+            break;
+        case 1:
+            sp7C = arg1->stats->health;
+            break;
+        case 20:
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xD9U, 0x7FU, NULL, NULL, 0, NULL);
+            break;
+        case 21:
+            sp78 = 0x31;
+            break;
+        case 23:
+            sp78 = 0x33;
+            break;
+        case 24:
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xD9U, 0x7FU, NULL, NULL, 0, NULL);
+            func_800013BC();
+            func_80003B70(1.0f);
+            break;
+        case 27:
+            sp78 = arg2->unk270;
+            if (sp78 == 0xD) {
+                dll_210_func_A024(arg0, arg2);
+                arg0->srt.transl.x += fsin16_precise(arg0->srt.yaw) * 10.0f;
+                arg0->srt.transl.z += fcos16_precise(arg0->srt.yaw) * 10.0f;
+                dll_210_func_7260(arg0, arg1);
+            }
+            break;
+        case 28:
+            switch (sp7C) {
+                case 0x7F:
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x184U, 0x7FU, NULL, NULL, 0, NULL);
+                    sp7C = 0;
+                    dll_210_func_1CD6C(arg0, 1);
+                    break;
+                case 0:
+                    if (rand_next(0, 1) != 0) {
+                        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x183U, 0x7FU, NULL, NULL, 0, NULL);
+                    } else {
+                        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x193U, 0x7FU, NULL, NULL, 0, NULL);
+                    }
+                    break;
+                default:
+                    gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xB23U, 0x7FU, NULL, NULL, 0, NULL);
+                    break;
+            }
+            break;
+        default:
+            sp78 = 0x4F;
+            break;
+        }
+        if (arg1->flags & 0x800) {
+            sp7C = 0;
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x25BU, 0x7FU, NULL, NULL, 0, NULL);
+            temp_v1 = (Vec4f*)arg0->modelInsts[arg0->modelInstIdx]->unk_0x24 + (sp80 * 0x10);
+            sp48.transl.x = temp_v1->y + gWorldX;
+            sp48.transl.y = temp_v1->z;
+            sp48.transl.z = temp_v1->w + gWorldZ;
+            gDLL_17->vtbl->func1(arg0, 0x328, &sp48, 0x200001, -1, NULL);
+            sp48.transl.x -= arg0->positionMirror.x;
+            sp48.transl.y -= arg0->positionMirror.y;
+            sp48.transl.z -= arg0->positionMirror.z;
+            sp70 = dll_load_deferred(0x1002U, 1U);
+            sp60[1] += rand_next(0, 0x9B);
+            sp60[2] += rand_next(0, 0x9B);
+            sp48.yaw = 0;
+            sp48.pitch = 0;
+            sp48.roll = 0;
+            sp48.scale = 1.0f;
+            sp70->vtbl->func0(arg0, 0, &sp48, 1, -1, &sp60);
+            if (sp70 != NULL) {
+                dll_unload(sp70);
+            }
+        } else if (sp7C != 0) {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, (u16) arg1->unk3B8[rand_next(0x13, 0x15)], 0x7FU, NULL, NULL, 0, NULL);
+            arg1->unk8B9 = 0xC;
+            arg1->unk818 = 90.0f;
+            arg1->unk81C = 0.0f;
+            if (sp78 != -1) {
+                arg1->unk868 = NULL;
+                arg1->unk708 = NULL;
+                gDLL_18->vtbl->func4(arg0, arg2, sp78);
+            }
+        }
+        dll_210_func_1CD6C(arg0, -sp7C);
+        if (arg1->stats->health <= 0) {
+            gDLL_18->vtbl->func4(arg0, arg2, 0x34);
+        }
+    }
+}
+#endif
 
 // offset: 0x2C7C | func: 9 | export: 2
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_2C7C.s")
@@ -2037,7 +2181,24 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
 #endif
 
 // offset: 0x7180 | func: 34
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7180.s")
+void dll_210_func_7180(Object* arg0, PlayerState* arg1, f32 arg2) {
+    s32* sp2C;
+    s32* temp_v0;
+
+    func_800328F0(arg0, (Unk80032CF8* ) &arg1->unk354, arg1->unk278);
+    if (arg1->stats->health > 0) {
+        func_80032A08(arg0, &arg1->unk354.unk0);
+        return;
+    }
+    sp2C = func_800348A0(arg0, 5, 0);
+    temp_v0 = func_800348A0(arg0, 4, 0);
+    if (sp2C != NULL) {
+        *sp2C = 0x200;
+    }
+    if (temp_v0 != NULL) {
+        *temp_v0 = 0x200;
+    }
+}
 
 // offset: 0x7260 | func: 35
 static void dll_210_func_7260(Object* arg0, PlayerState* arg1) {

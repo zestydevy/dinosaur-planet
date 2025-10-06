@@ -133,8 +133,7 @@ typedef struct {
 /*268*/ s32 unk268;
 /*26c*/ s16 unk26C;
 /*26e*/ s16 unk26E;
-/*270*/ s8 unk270;
-/*271*/ s8 unk271;
+/*270*/ s16 unk270;
 /*272*/ s8 unk272;
 /*273*/ s8 unk273;
 /*274*/ Vec3f *unk274;
@@ -168,7 +167,9 @@ typedef struct {
 /*33E*/ s8 unk33E[0x340 - 0x33E];
 /*340*/ s8 unk340;
 /*341*/ s8 unk341;
-/*342*/ s8 unk342[0x34C - 0x342];
+/*342*/ s8 pad342;
+/*343*/ s8 unk343;
+/*344*/ s8 pad344[0x34C - 0x344];
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
 /*354*/ Unk80032CF8Copy unk354;
