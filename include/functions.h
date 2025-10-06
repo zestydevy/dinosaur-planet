@@ -141,4 +141,6 @@ s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
 
 void func_80037F9C(Gfx**, Func_80037F9C_Struct*, s32, s32, s32, s32, s32, s32);
 
+void func_80036438(Object*);
+
 #endif //_FUNCTIONS_H
