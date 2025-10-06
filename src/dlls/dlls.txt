@@ -50,6 +50,9 @@
 466 = objects/466_mmshrine
 496 = objects/496_snowhorn
 505 = objects/505_SHspore
+619 = objects/619_VFP_LevelControl
+633 = objects/633_VFP_PodiumPoint
+637 = objects/637_VFP_SpellPlace
 638 = objects/638_DFPlevcontrol
 641 = objects/641_DFPLift
 668 = objects/668_db_diamond

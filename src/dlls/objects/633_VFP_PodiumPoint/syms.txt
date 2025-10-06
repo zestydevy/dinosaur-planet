@@ -1,0 +1,17 @@
+.text = 0x0:
+VFP_PodiumPoint_ctor = 0x0;
+VFP_PodiumPoint_dtor = 0xC;
+VFP_PodiumPoint_create = 0x18;
+VFP_PodiumPoint_update = 0x68;
+VFP_PodiumPoint_func_128 = 0x128;
+VFP_PodiumPoint_draw = 0x16C;
+VFP_PodiumPoint_destroy = 0x184;
+VFP_PodiumPoint_func_194 = 0x194;
+VFP_PodiumPoint_get_state_size = 0x1A4;
+VFP_PodiumPoint_func_1B8 = 0x1B8;
+VFP_PodiumPoint_func_324 = 0x324;
+
+.rodata = 0x4C0:
+
+.data = 0x4C0:
+data_0 = 0x0; // absolute:0x4C0
