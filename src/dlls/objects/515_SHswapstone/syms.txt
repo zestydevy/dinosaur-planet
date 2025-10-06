@@ -1,0 +1,21 @@
+.text = 0x0:
+SHswapstone_ctor = 0x0;
+SHswapstone_dtor = 0xC;
+SHswapstone_create = 0x18;
+SHswapstone_update = 0x140;
+SHswapstone_func_278 = 0x278;
+SHswapstone_draw = 0x284;
+SHswapstone_destroy = 0x3C4;
+SHswapstone_func_3D4 = 0x3D4;
+SHswapstone_get_state_size = 0x434;
+SHswapstone_func_448 = 0x448;
+SHswapstone_func_A8C = 0xA8C;
+SHswapstone_func_AD4 = 0xAD4;
+SHswapstone_func_C04 = 0xC04;
+SHswapstone_func_D0C = 0xD0C;
+
+.rodata = 0xE00:
+
+.data = 0xED0:
+sWarlockMountainWarps = 0x0; // absolute:0xED0
+sSwapStoneWarps = 0x4; // absolute:0xED4

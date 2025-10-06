@@ -286,11 +286,11 @@ DLL_INTERFACE(DLL_210_Player) {
     /*31*/ UnknownDLLFunc func31;
     /*32*/ UnknownDLLFunc func32;
     /*33*/ UnknownDLLFunc func33;
-    /*34*/ UnknownDLLFunc func34;
+    /*34*/ s32 (*func34)(Object*);
     /*35*/ UnknownDLLFunc func35;
     /*36*/ UnknownDLLFunc func36;
     /*37*/ UnknownDLLFunc func37;
-    /*38*/ UnknownDLLFunc func38;
+    /*38*/ s32 (*func38)(Object*,s32);
     /*39*/ UnknownDLLFunc func39;
     /*40*/ UnknownDLLFunc func40;
     /*41*/ UnknownDLLFunc func41;
@@ -317,7 +317,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*62*/ UnknownDLLFunc func62;
     /*63*/ UnknownDLLFunc func63;
     /*64*/ UnknownDLLFunc func64;
-    /*65*/ UnknownDLLFunc func65;
+    /*65*/ void (*func65)(Object*,f32,f32,f32);
     /*66*/ s32 (*func66)(Object*, s32);
     /*67*/ void (*func67)(Object*,s32,f32);
     /*68*/ UnknownDLLFunc func68;

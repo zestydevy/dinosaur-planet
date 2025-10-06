@@ -14,6 +14,11 @@ DLL_INTERFACE(DLL_IMenu) {
     /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 };
 
+DLL_INTERFACE(DLL_Menu16) {
+    /*:*/ DLL_INTERFACE_BASE(DLL_IMenu);
+    /*3*/ void (*func3)(s32);
+};
+
 // indices into gMenuDLLIDs
 enum MenuID {
     MENU_NONE = 0,
@@ -32,7 +37,7 @@ enum MenuID {
     MENU_13 = 13,
     MENU_14 = 14,
     MENU_15 = 15,
-    MENU_16 = 16,
+    MENU_16 = 16, // used by swapstone and shopkeeper
     MENU_17 = 17
 };
 

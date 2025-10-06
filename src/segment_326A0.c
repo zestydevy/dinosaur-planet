@@ -127,7 +127,7 @@ void func_80031EBC(Vec4f* arg0, Vec4f* arg1) {
     arg1->w = arg0->y;
 }
 
-s32 func_80031F6C(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz, s32 arg5) {
+s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg5) {
     s32 boneIdx;
     ModelInstance* temp_v1;
     MtxF* sp9C;
@@ -141,7 +141,7 @@ s32 func_80031F6C(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz, s32 arg5) {
         *oz = obj->srt.transl.z;
         return 1;
     }
-    boneIdx = obj->def->pAttachPoints[arg1].bones[obj->modelInstIdx];
+    boneIdx = obj->def->pAttachPoints[attachIdx].bones[obj->modelInstIdx];
     sp9C = (MtxF *) &(((f32 **)temp_v1->matrices)[(temp_v1->unk_0x34 & 1)][boneIdx << 4]);
     if (arg5 != 0) {
         srt.transl.x = *ox;
@@ -151,12 +151,12 @@ s32 func_80031F6C(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz, s32 arg5) {
         srt.pitch = 0;
         srt.roll = 0;
     } else {
-        srt.transl.x = obj->def->pAttachPoints[arg1].pos.x;
-        srt.transl.y = obj->def->pAttachPoints[arg1].pos.y;
-        srt.transl.z = obj->def->pAttachPoints[arg1].pos.z;
-        srt.yaw = obj->def->pAttachPoints[arg1].rot[0];
-        srt.pitch = obj->def->pAttachPoints[arg1].rot[1];
-        srt.roll = obj->def->pAttachPoints[arg1].rot[2];
+        srt.transl.x = obj->def->pAttachPoints[attachIdx].pos.x;
+        srt.transl.y = obj->def->pAttachPoints[attachIdx].pos.y;
+        srt.transl.z = obj->def->pAttachPoints[attachIdx].pos.z;
+        srt.yaw = obj->def->pAttachPoints[attachIdx].rot[0];
+        srt.pitch = obj->def->pAttachPoints[attachIdx].rot[1];
+        srt.roll = obj->def->pAttachPoints[attachIdx].rot[2];
     }
     matrix_from_srt_reversed(&sp5C, (SRT* ) &srt);
     matrix_concat_4x3(&sp5C, sp9C, &sp5C);

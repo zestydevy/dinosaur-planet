@@ -50,6 +50,7 @@
 466 = objects/466_mmshrine
 496 = objects/496_snowhorn
 505 = objects/505_SHspore
+515 = objects/515_SHswapstone
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint
 636 = objects/636_VFP_lavastar

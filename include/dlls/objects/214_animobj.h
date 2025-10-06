@@ -20,6 +20,9 @@ typedef struct {
     u8 unk24;
 } AnimObjCreateInfo;
 
+typedef void (*AnimObjStateF4Callback)(Object *arg0, s32 arg1, s32 arg2);
+typedef s32 (*AnimObjStateF8Callback)(Object *arg0, s32 arg1, s32 arg2);
+
 typedef struct {
 /*00*/ s8 unk0[0x24 - 0];
 /*24*/ f32 unk24;
@@ -59,6 +62,8 @@ typedef struct {
 /*A4*/ AnimCurvesKeyframe* animCurvesKeyframes;
 /*A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS];
 /*CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
+/*F4*/ AnimObjStateF4Callback unkF4;
+/*F8*/ AnimObjStateF8Callback unkF8;
 } AnimObjState;
 
 #endif

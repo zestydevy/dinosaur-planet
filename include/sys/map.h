@@ -16,6 +16,15 @@
 
 #include "sys/map_enums.h"
 
+typedef enum {
+    WARP_ICE_MOUNTAIN_CAMPSITE = 2, // Sabre's campsite cave
+    WARP_WM_SABRE_SIDE = 5,
+    WARP_WM_KRYSTAL_SIDE = 6,
+    WARP_SC_RUBBLE_PODIUM = 14, // SwapStone Circle
+    WARP_SH_ROCKY_PODIUM = 15, // SwapStone Hollow
+    WARP_SWAPSTONE_SHOP_ENTRANCE = 86
+} WarpID;
+
 typedef struct{
 /*00*/    s16 Ax;
 /*02*/    s16 Bx;
@@ -521,4 +530,5 @@ void func_800533D8(s32*, s32*);
 void func_80053408(Vec3f *);
 void func_80053750(Object*, AABBs32*, s32);
 Unk8005341C *func_8005341C(s32*);
+void warpPlayer(s32 warpID, s8 fadeToBlack);
 #endif
