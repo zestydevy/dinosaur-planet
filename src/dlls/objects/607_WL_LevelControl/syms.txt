@@ -1,0 +1,31 @@
+.text = 0x0:
+WL_LevelControl_ctor = 0x0;
+WL_LevelControl_dtor = 0xC;
+WL_LevelControl_create = 0x18;
+WL_LevelControl_update = 0x25C;
+WL_LevelControl_func_394 = 0x394;
+WL_LevelControl_draw = 0x3A0;
+WL_LevelControl_destroy = 0x3F4;
+WL_LevelControl_func_43C = 0x43C;
+WL_LevelControl_get_state_size = 0x44C;
+WL_LevelControl_func_460 = 0x460;
+WL_LevelControl_func_648 = 0x648;
+WL_LevelControl_setup1_tick = 0x7A4;
+WL_LevelControl_setup2_tick = 0x940;
+WL_LevelControl_setup3_tick = 0xC50;
+WL_LevelControl_setup4_tick = 0xE34;
+WL_LevelControl_setup5_tick = 0x1118;
+WL_LevelControl_setup6_tick = 0x14FC;
+WL_LevelControl_setup7_tick = 0x1788;
+
+.rodata = 0x1A74:
+
+.data = 0x1AC4:
+_data_0 = 0x0; // absolute:0x1AC4
+_data_4 = 0x4; // absolute:0x1AC8
+_data_8 = 0x8; // absolute:0x1ACC
+_data_C = 0xC; // absolute:0x1AD0
+_data_10 = 0x10; // absolute:0x1AD4
+_data_14 = 0x14; // absolute:0x1AD8
+_data_18 = 0x18; // absolute:0x1ADC
+_data_1C = 0x1C; // absolute:0x1AE0
