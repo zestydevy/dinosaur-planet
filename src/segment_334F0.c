@@ -14,7 +14,7 @@ void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2) {
     if (obj->group == GROUP_UNK1) {
         arg1 = ((DLL_210_Player*)obj->dll)->vtbl->func54(obj);
         arg2 = ((DLL_210_Player*)obj->dll)->vtbl->func56(obj);
-        if (((DLL_210_Player*)obj->dll)->vtbl->func66(obj, 2) != 0) {
+        if (((DLL_210_Player*)obj->dll)->vtbl->func66(obj, 2) != NULL) {
             arg2 = 1.0f;
         }
         temp_v0 = ((DLL_210_Player*)obj->dll)->vtbl->func52(obj);
