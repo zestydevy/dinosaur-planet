@@ -1,6 +1,12 @@
-#include "common.h"
-#include "sys/interrupt_util.h"
 #include "game/objects/object.h"
+#include "sys/asset_thread.h"
+#include "sys/dll.h"
+#include "sys/fs.h"
+#include "sys/interrupt_util.h"
+#include "sys/map.h"
+#include "sys/objects.h"
+#include "functions.h"
+#include "macros.h"
 
 extern GenericStack gAssetThreadStackInternal;
 extern AssetThreadStackElement gAssetThreadStackData[5];
