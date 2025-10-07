@@ -51,6 +51,7 @@
 496 = objects/496_snowhorn
 501 = objects/501_SHtricky
 505 = objects/505_SHspore
+507 = objects/507_SHqueenearthwalker
 515 = objects/515_SHswapstone
 607 = objects/607_WL_LevelControl
 619 = objects/619_VFP_LevelControl
