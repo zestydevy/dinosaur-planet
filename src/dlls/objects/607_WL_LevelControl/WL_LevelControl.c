@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/objects.h"
@@ -18,13 +19,13 @@ typedef struct {
     u8 unk9;
 } WL_LevelControl_State;
 
-/*static*/ void dll_607_func_7A4(Object* self);
-/*static*/ void dll_607_func_940(Object* self);
-/*static*/ void dll_607_func_C50(Object* self);
-/*static*/ void dll_607_func_E34(Object* self);
-/*static*/ void dll_607_func_1118(Object* self);
-/*static*/ void dll_607_func_14FC(Object* self);
-/*static*/ void dll_607_func_1788(Object* self);
+static void dll_607_func_7A4(Object* self);
+static void dll_607_func_940(Object* self);
+static void dll_607_func_C50(Object* self);
+static void dll_607_func_E34(Object* self);
+static void dll_607_func_1118(Object* self);
+static void dll_607_func_14FC(Object* self);
+static void dll_607_func_1788(Object* self);
 
 // offset: 0x0 | ctor
 void dll_607_ctor(void *dll) { }
@@ -44,8 +45,8 @@ void dll_607_func_18(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
     case 0:
         break;
     case 1:
-        gDLL_29_Gplay->vtbl->set_map_setup(0xE, 1);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(0xE, 0, 1);
+        gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 1);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 0, 1);
         break;
     case 2:
         break;
@@ -78,10 +79,6 @@ void dll_607_func_18(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
 }
 
 // offset: 0x25C | func: 1 | export: 1
-// needs dll_607_func_7A4 matched and static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/607_WL_LevelControl/dll_607_func_25C.s")
-#else
 void dll_607_func_25C(Object* self) {
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
@@ -109,7 +106,6 @@ void dll_607_func_25C(Object* self) {
         break;
     }
 }
-#endif
 
 // offset: 0x394 | func: 2 | export: 2
 void dll_607_func_394(Object *self) { }
@@ -138,7 +134,7 @@ u32 dll_607_func_44C(Object *self, u32 a1) {
 }
 
 // offset: 0x460 | func: 7
-/*static*/ void dll_607_func_460(Object* self, WL_LevelControl_State* state) {
+static void dll_607_func_460(Object* self, WL_LevelControl_State* state) {
     Object** temp_v0;
     s32 sp38;
     s32 var_a1;
@@ -149,16 +145,16 @@ u32 dll_607_func_44C(Object *self, u32 a1) {
         var_t0 = 1;
         
         for (var_a1 = 0; var_a1 < sp38; var_a1++) {
-            if ((temp_v0[var_a1]->id == 0x139) || (temp_v0[var_a1]->id == 0x8E)) {
+            if ((temp_v0[var_a1]->id == OBJ_WL_Galleon) || (temp_v0[var_a1]->id == OBJ_SB_Galleon)) {
                 var_t0 = 0;
             }
         }
 
         if (var_t0 != 0) {
-            if (gDLL_29_Gplay->vtbl->get_obj_group_status((s32) self->mapID, 1) == 0) {
-                gDLL_29_Gplay->vtbl->set_obj_group_status((s32) self->mapID, 1, 1);
+            if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) == 0) {
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 1);
             }
-            set_gplay_bitstring(0xD1, 1U);
+            set_gplay_bitstring(0xD1, 1);
             state->unk7 = 1;
             state->unk8 |= 1;
         }
@@ -166,7 +162,7 @@ u32 dll_607_func_44C(Object *self, u32 a1) {
 }
 
 // offset: 0x648 | func: 8
-/*static*/ void dll_607_func_648(Object* self, WL_LevelControl_State* state) {
+static void dll_607_func_648(Object* self, WL_LevelControl_State* state) {
     u32 sp2C;
     s32 sp28;
     Object** temp_v0;
@@ -174,15 +170,15 @@ u32 dll_607_func_44C(Object *self, u32 a1) {
 
     sp2C = get_gplay_bitstring(0x355);
     if ((state->unk8 & 1) && (get_gplay_bitstring(0xD1) == 0)) {
-        if (gDLL_29_Gplay->vtbl->get_obj_group_status((s32) self->mapID, 1) != 0) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status((s32) self->mapID, 1, 0);
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) != 0) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
         }
         state->unk8 &= ~1;
     }
     if (!(state->unk8 & 2) && (sp2C != 0)) {
         temp_v0 = obj_get_all_of_type(7, &sp28);
         for (i = 0; i < sp28; i++) {
-            if (temp_v0[i]->id == 0x139) {
+            if (temp_v0[i]->id == OBJ_WL_Galleon) {
                 i = sp28; // break out of loop
             }
         }
@@ -191,45 +187,42 @@ u32 dll_607_func_44C(Object *self, u32 a1) {
 }
 
 // offset: 0x7A4 | func: 9
-#ifndef NON_MATCHING
-/*0x0*/ static u8 _data_0 = 0;
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/607_WL_LevelControl/dll_607_func_7A4.s")
-#else
-void dll_607_func_7A4(Object* arg0) {
+static void dll_607_func_7A4(Object* self) {
     /*0x0*/ static u8 _data_0 = 0;
 
     WL_LevelControl_State* state;
     u8 temp_t8;
 
-    state = arg0->state;
-    temp_t8 = get_gplay_bitstring(0xB1);
+    state = self->state;
+    temp_t8 = 0;
+    temp_t8 += get_gplay_bitstring(0xB1);
     temp_t8 += get_gplay_bitstring(0xB2);
     temp_t8 += get_gplay_bitstring(0xB3);
     if ((temp_t8 == 3) && (_data_0 != 3)) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xB89, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, 0xB89, 0x7F, NULL, NULL, 0, NULL);
     }
     _data_0 = temp_t8;
-    if (state->unk7 != 0) {
-        if ((state->unk7 == 1) && (state->unk9 == 1)) {
-            dll_607_func_648(arg0, state);
-        }
-    } else {
-        state->unk9 = gDLL_29_Gplay->vtbl->get_map_setup(arg0->mapID);
-        //temp_v1_2 = temp_v0 & 0xFF;
-        //state->unk9 = temp_v0;
-        switch (state->unk9) {                        /* irregular */
+    switch (state->unk7) {
         case 1:
-            dll_607_func_460(arg0, state);
+            if (state->unk9 == 1) {
+                dll_607_func_648(self, state);
+            }
             break;
-        case 2:
+        case 0:
+            state->unk9 = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
+            switch (state->unk9) {
+            case 1:
+                dll_607_func_460(self, state);
+                break;
+            case 2:
+                break;
+            }
             break;
-        }
     }
 }
-#endif
 
 // offset: 0x940 | func: 10
-void dll_607_func_940(Object* self) {
+static void dll_607_func_940(Object* self) {
     static u8 _data_4 = 1;
     
     Object* player;
@@ -266,7 +259,7 @@ void dll_607_func_940(Object* self) {
 }
 
 // offset: 0xC50 | func: 11
-void dll_607_func_C50(Object* self) {
+static void dll_607_func_C50(Object* self) {
     static u8 _data_8 = 1;
     
     Object* player;
@@ -291,7 +284,7 @@ void dll_607_func_C50(Object* self) {
 }
 
 // offset: 0xE34 | func: 12
-void dll_607_func_E34(Object* self) {
+static void dll_607_func_E34(Object* self) {
     /*0xC*/ static u8 _data_C = 1;
     /*0x10*/ static s32 _data_10 = -1;
 
@@ -304,9 +297,9 @@ void dll_607_func_E34(Object* self) {
     var_s2 = 0;
     state = self->state;
     if ((_data_C != 0) && (get_gplay_bitstring(0x317) == 0)) {
-        set_gplay_bitstring(0x2D, 1U);
-        set_gplay_bitstring(0x1D7, 1U);
-        set_gplay_bitstring(0x21B, 1U);
+        set_gplay_bitstring(0x2D, 1);
+        set_gplay_bitstring(0x1D7, 1);
+        set_gplay_bitstring(0x21B, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 4, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
@@ -333,7 +326,7 @@ void dll_607_func_E34(Object* self) {
 }
 
 // offset: 0x1118 | func: 13
-void dll_607_func_1118(Object* self) {
+static void dll_607_func_1118(Object* self) {
     /*0x14*/ static u8 _data_14 = 1;
 
     WL_LevelControl_State* state;
@@ -351,20 +344,20 @@ void dll_607_func_1118(Object* self) {
     player = get_player();
     state = self->state;
     if ((_data_14 != 0) && (get_gplay_bitstring(0x318) == 0)) {
-        set_gplay_bitstring(0x2D, 1U);
-        set_gplay_bitstring(0x1D7, 1U);
-        set_gplay_bitstring(0x40, 1U);
+        set_gplay_bitstring(0x2D, 1);
+        set_gplay_bitstring(0x1D7, 1);
+        set_gplay_bitstring(0x40, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 8, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
-        set_gplay_bitstring(0x2DD, 0U);
+        set_gplay_bitstring(0x2DD, 0);
         _data_14 = 0;
     }
     if (get_gplay_bitstring(0x2DB) != 0) {
         func_80059038(0x18, 0, 0);
     }
     if (get_gplay_bitstring(0x2DD) != 0) {
-        set_gplay_bitstring(0x32E, 1U);
-        set_gplay_bitstring(0x2DD, 0U);
+        set_gplay_bitstring(0x32E, 1);
+        set_gplay_bitstring(0x2DD, 0);
         temp_v0 = obj_get_nearest_type_to(4, self, &sp40);
         if (temp_v0 != NULL) {
             obj_destroy_object(temp_v0);
@@ -379,31 +372,31 @@ void dll_607_func_1118(Object* self) {
                 obj_destroy_object(var_a2[i]);
             }
         }
-        set_gplay_bitstring(0x2F7, 0U);
+        set_gplay_bitstring(0x2F7, 0);
     }
     if (get_gplay_bitstring(0x2EE) != 0) {
         temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
         if ((temp_v0_2 != 0x40) && (temp_v0_2 != 0x1D7) && (get_gplay_bitstring(0x2F3) == 0)) {
             warpPlayer(0x39, 0);
         }
-        set_gplay_bitstring(0x2EE, 0U);
+        set_gplay_bitstring(0x2EE, 0);
     }
     if (get_gplay_bitstring(0x2FA) != 0) {
         if (get_gplay_bitstring(0x2F7) == 0) {
-            set_gplay_bitstring(0x2F7, 1U);
+            set_gplay_bitstring(0x2F7, 1);
         }
         state->unk2 -= (s16)delayByte;
         if (state->unk2 <= 0) {
             state->unk2 = 0;
-            set_gplay_bitstring(0x2FA, 0U);
-            set_gplay_bitstring(0x2F3, 1U);
+            set_gplay_bitstring(0x2FA, 0);
+            set_gplay_bitstring(0x2F3, 1);
             state->unk2 = 0x1E;
         }
     }
 }
 
 // offset: 0x14FC | func: 14
-void dll_607_func_14FC(Object* self) {
+static void dll_607_func_14FC(Object* self) {
     /*0x18*/ static u8 _data_18 = 1;
 
     Object* player;
@@ -433,7 +426,7 @@ void dll_607_func_14FC(Object* self) {
 }
 
 // offset: 0x1788 | func: 15
-void dll_607_func_1788(Object* self) {
+static void dll_607_func_1788(Object* self) {
     /*0x1C*/ static u8 _data_1C = 1;
 
     WL_LevelControl_State* state;
