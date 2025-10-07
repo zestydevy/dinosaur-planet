@@ -49,6 +49,7 @@
 365 = objects/365
 466 = objects/466_mmshrine
 496 = objects/496_snowhorn
+501 = objects/501_SHtricky
 505 = objects/505_SHspore
 515 = objects/515_SHswapstone
 607 = objects/607_WL_LevelControl

@@ -1,0 +1,13 @@
+.text = 0x0:
+SHtricky_ctor = 0x0;
+SHtricky_dtor = 0xC;
+SHtricky_create = 0x18;
+SHtricky_update = 0xA8;
+SHtricky_func_1A8 = 0x1A8;
+SHtricky_draw = 0x1B4;
+SHtricky_destroy = 0x1CC;
+SHtricky_func_1DC = 0x1DC;
+SHtricky_get_state_size = 0x1EC;
+
+.rodata = 0x234:
+_oob_rodata_0 = 0x0; // absolute:0x234
