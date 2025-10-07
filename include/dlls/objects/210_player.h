@@ -146,7 +146,8 @@ typedef struct {
 /*290*/ f32 unk290;
 /*294*/ f32 unk294;
 /*298*/ f32 unk298;
-/*29C*/ s8 unk29C[0x2B0 - 0x29C];
+/*29C*/ f32 unk29C;
+/*2A0*/ s8 unk2A0[0x2B0 - 0x2A0];
 /*2b0*/ f32 unk2B0;
 /*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
 /*2c8*/ Object *unk2C8;
@@ -196,7 +197,11 @@ typedef struct {
 /*70E*/ s8 unk70E[0x728 - 0x70E];
 /*728*/ f32 unk728;
 /*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
-/*734*/ u8 pad738[0x764 - 0x738];
+/*734*/ u8 pad738[0x754 - 0x738];
+/*754*/ s32 unk754;
+/*758*/ s32 unk758;
+/*75C*/ f32 unk75C;
+/*760*/ f32 unk760;
 /*764*/ u16 unk764;
 /*766*/ u16 unk766;
 /*768*/ u16 unk768;
@@ -244,7 +249,7 @@ typedef struct {
 /*874*/ s16 unk874;
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
-/*87A*/ u16 pad87A;
+/*87A*/ s16 unk87A;
 /*87C*/ s16 unk87C;
 /*87E*/ s16 unk87E;
 /*880*/ s32 unk880;
@@ -252,7 +257,8 @@ typedef struct {
 /*886*/ s16 unk886;
 /*888*/ s16 unk888;
 /*88A*/ s16 unk88A;
-/*88C*/ s32 unk88C;
+/*88C*/ u16 pad88C;
+/*88E*/ u16 unk88E;
 /*890*/ s32 unk890;
 /*894*/ s32 unk894;
 /*898*/ s32 unk898;

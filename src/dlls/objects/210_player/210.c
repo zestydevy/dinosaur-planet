@@ -146,9 +146,7 @@ void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4,
 /*0xC*/ static f32 _data_C[] = { 0.0f, 0.0f };
 /*0x14*/ static u8 _data_14[4] = { 0, 0, 0, 0 };
 /*0x18*/ static s16 _data_18[2] = { -1, 0 };
-/*0x1C*/ static u32 _data_1C[] = {
-    0x00000000
-};
+/*0x1C*/ static f32 _data_1C = 0.0f;
 /*0x20*/ static u32 _data_20[] = {
     0x01020000
 };
@@ -495,6 +493,9 @@ void dll_210_func_444(Object* arg0, u32 arg1) {
 #endif
 
 // offset: 0x934 | func: 2 | export: 1
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_934.s")
+#else
 // Requires these as static:
 // dll_210_func_11A0
 // dll_210_func_1CA8 (matched)
@@ -503,9 +504,6 @@ void dll_210_func_444(Object* arg0, u32 arg1) {
 // dll_210_func_7180 (matched)
 // dll_210_func_47B8 (matched)
 // dll_210_func_1DE64 (matched)
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_934.s")
-#else
 // stack alloc: https://decomp.me/scratch/gO4st
 void dll_210_func_934(Object* arg0) {
     PlayerState* state = arg0->state;
@@ -644,7 +642,200 @@ void dll_210_func_934(Object* arg0) {
 #endif
 
 // offset: 0x11A0 | func: 3
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_11A0.s")
+#else
+// Matches but requires these as static:
+// dll_210_func_618C
+// dll_210_func_1BC0 (matched)
+void dll_210_func_11A0(Object* arg0, PlayerState* arg1, f32 arg2) {
+    f32 spCC;
+    f32 spC8;
+    f32 spC4;
+    Object* tempObj;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 pad;
+    SRT sp9C;
+    MtxF sp5C;
+    s32 temp_v0_6;
+    f32** sp54;
+    void** temp_v0_3;
+    f32 sp4C;
+
+    sp4C = 0.0f;
+    arg1->unk754 = 0;
+    arg1->unk758 = 0;
+    arg1->unk764 = 0;
+    arg1->unk766 = 0;
+    arg1->unk768 = 0;
+    if (!(arg1->flags & 0x200000)) {
+        if (arg1->unk884 != -1) {
+            if ((arg1->unk8BC != 0x56) && (arg1->unk8BC != 0x60)) {
+                arg1->unk754 = get_joystick_x_from_buffer(arg1->unk884, *_bss_1AA);
+                arg1->unk758 = get_joystick_y_from_buffer(arg1->unk884, *_bss_1AA);
+                arg1->unk764 = get_masked_buttons_from_buffer(arg1->unk884, *_bss_1AA);
+                arg1->unk766 = get_masked_button_presses_from_buffer(arg1->unk884, *_bss_1AA);
+                arg1->unk768 = get_masked_button_releases_from_buffer(arg1->unk884, *_bss_1AA);
+            }
+        }
+    }
+    arg1->unk760 = arg1->unk754;
+    arg1->unk75C = arg1->unk758;
+    if (!(arg1->flags & 0x1000)) {
+        if (arg1->unk766 & 0x2000) {
+            arg1->flags |= 0x1000;
+            arg1->unk834 = 0.0f;
+        }
+    } else {
+        if (arg1->unk768 & 0x2000) {
+            arg1->flags &= ~0x1000;
+            arg1->unk834 = 0.0f;
+        }
+        arg1->unk834 += arg2;
+        if (arg1->unk834 > 100.0f) {
+            arg1->unk834 = 100.0f;
+        }
+    }
+    arg1->flags &= ~0x300;
+    dll_210_func_618C(arg0, arg1, arg2, arg2);
+    if (!(arg1->unk340 & 2) && !(arg1->unk340 & 1)) {
+        sp9C.yaw = arg0->srt.yaw;
+        sp9C.pitch = 0;
+        sp9C.roll = 0;
+        sp9C.transl.x = 0;
+        sp9C.transl.y = 0;
+        sp9C.transl.z = 0;
+        sp9C.scale = 1.0f;
+        matrix_from_srt(&sp5C, &sp9C);
+        vec3_transform(&sp5C, arg1->unk27C, 0, -arg1->unk278, &arg0->speed.x, &spC8, &arg0->speed.z);
+    } else {
+        spC4 = fsin16_precise(arg0->srt.yaw);
+        temp_fv0 = fcos16_precise(arg0->srt.yaw);
+        arg1->unk27C = (arg0->speed.x * temp_fv0) - (arg0->speed.z * spC4);
+        arg1->unk278 = (-arg0->speed.z * temp_fv0) - (arg0->speed.x * spC4);
+    }
+    temp_v0_3 = &arg1->unk4;
+    if (!(arg1->unk0 & 0x200000)) {
+        arg0->speed.y *= 0.97f;
+        arg0->speed.y -= arg1->unk29C * arg2;
+    }
+    if (((s8*)temp_v0_3)[0x25C] & 0x10) {
+        switch (((s8*)temp_v0_3)[0xB8]) {
+        case 6:
+            arg1->unk87A -= delayByte;
+            if (arg1->unk87A <= 0) {
+                arg1->unk87A = 0x3C;
+                func_8002635C(arg0, NULL, 0x13, 1, 0);
+            }
+            break;
+        case 29:
+            spCC = 500.0f;
+            tempObj = obj_get_nearest_type_to(0x18, arg0, &spCC);
+            if (tempObj != NULL) {
+                ((DLL_Unknown *)tempObj->dll)->vtbl->func[7].withThreeArgsCustom(tempObj, arg0, 1.0f);
+            }
+            break;
+        case 26:
+            arg1->unk87A -= delayByte;
+            if (arg1->unk87A <= 0) {
+                arg1->unk87A = 0x3C;
+                func_8002635C(arg0, NULL, 0x13, 1, 0);
+            }
+            break;
+        case 8:
+            func_8002635C(arg0, NULL, 1, 0, 0);
+            break;
+        case 28:
+            if ((get_gplay_bitstring(0x21) == 0) && (arg1->unk87C != 0x1D7)) {
+                arg1->unk88E = arg1->unk88E + arg2;
+                if (arg1->unk88E >= 0x79) {
+                    arg1->unk88E -= 0x78;
+                    func_8002635C(arg0, NULL, 0x15, 2, 0);
+                }
+            }
+            break;
+        case 32:
+            if (arg1->unk278 > 0.5f) {
+                temp_fv0 = arg1->unk83C + 0.05f;
+                if (temp_fv0 < 0.0f) {
+                    arg1->unk83C = temp_fv0;
+                } else {
+                    arg1->unk83C = 0.0f;
+                }
+            } else {
+                arg1->unk83C -= 0.04f;
+                if (_data_1C > 0.0f) {
+                    _data_1C -= arg2;
+                } else {
+                    gDLL_6_AMSFX->vtbl->play_sound(arg0, (rand_next(0, 1) + 0x883), 0x7FU, NULL, NULL, 0, NULL);
+                    _data_1C = rand_next(0x28, 0x3C);
+                }
+            }
+            temp_v0_6 = func_80057F1C(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp54, 0, 0x20);
+            sp4C = -arg1->unk83C;
+            if (temp_v0_6 >= 2) {
+                sp4C += **sp54 - *sp54[temp_v0_6 - 1];
+            }
+            if (sp4C > 25.0f) {
+                dll_210_func_1CD6C(arg0, -1);
+                if (arg1->stats->health <= 0) {
+                    gDLL_18->vtbl->func4(arg0, arg1, 0x34);
+                } else {
+                    gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, func_80048498());
+                    gDLL_29_Gplay->vtbl->start_loaded_game();
+                }
+            }
+            break;
+        case 31:
+            set_gplay_bitstring(0x643, 1U);
+            break;
+        default:
+            arg1->unk87A = 0x3C;
+            if (arg1->unk83C < 0.0f) {
+                temp_fv1 = arg1->unk83C + (arg1->unk278 * 0.1f);
+                if (temp_fv1 < 0.0f) {
+                    arg1->unk83C = temp_fv1;
+                } else {
+                    arg1->unk83C = 0.0f;
+                }
+                sp4C = -arg1->unk83C;
+            }
+            break;
+        }
+        if (sp4C != 0.0f) {
+            if (1.0f - (sp4C * 0.05f) < 0.2f) {
+                sp4C = 0.2f;
+            } else {
+                sp4C = 1.0f - (sp4C * 0.05f);
+            }
+            arg0->speed.x *= sp4C;
+            arg0->speed.z *= sp4C;
+        }
+    }
+    if (arg0->speed.x < -3.0f) {
+        arg0->speed.x = -3.0f;
+    }
+    if (arg0->speed.x > 3.0f) {
+        arg0->speed.x = 3.0f;
+    }
+    if (arg0->speed.y < -4.0f) {
+        arg0->speed.y = -4.0f;
+    }
+    if (arg0->speed.y > 4.0f) {
+        arg0->speed.y = 4.0f;
+    }
+    if (arg0->speed.z < -3.0f) {
+        arg0->speed.z = -3.0f;
+    }
+    if (arg0->speed.z > 3.0f) {
+        arg0->speed.z = 3.0f;
+    }
+    temp_fv0 = arg0->srt.scale / arg0->def->scale;
+    obj_integrate_speed(arg0, arg0->speed.x * arg2 * temp_fv0, arg0->speed.y * arg2 * temp_fv0, arg0->speed.z * arg2 * temp_fv0);
+    dll_210_func_1BC0(arg0, arg1);
+}
+#endif
 
 // offset: 0x1BC0 | func: 4
 void dll_210_func_1BC0(Object* arg0, PlayerState* arg1) {
