@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_607_ctor
-.dword dll_607_dtor
+.dword WL_LevelControl_ctor
+.dword WL_LevelControl_dtor
 
 # export table
-.dword dll_607_func_18
-.dword dll_607_func_25C
-.dword dll_607_func_394
-.dword dll_607_func_3A0
-.dword dll_607_func_3F4
-.dword dll_607_func_43C
-.dword dll_607_func_44C
+.dword WL_LevelControl_create
+.dword WL_LevelControl_update
+.dword WL_LevelControl_func_394
+.dword WL_LevelControl_draw
+.dword WL_LevelControl_destroy
+.dword WL_LevelControl_func_43C
+.dword WL_LevelControl_get_state_size

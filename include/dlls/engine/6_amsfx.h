@@ -73,6 +73,8 @@ enum SoundID {
     SOUND_B72 = 0xB72, // pause menu item selected
     SOUND_B73 = 0xB73, // pause menu no item selected
 
+    SOUND_B89 = 0xB89, // "puzzle complete" jingle
+
     NO_SOUND = 0xFFFFFFFF
 };
 

@@ -22,6 +22,7 @@ typedef enum {
     WARP_WM_KRYSTAL_SIDE = 6,
     WARP_SC_RUBBLE_PODIUM = 14, // SwapStone Circle
     WARP_SH_ROCKY_PODIUM = 15, // SwapStone Hollow
+    WARP_WM_SABRE_KRAZOA_CORRIDOR = 57, // Warlock Mountain | Sabre-side | Krazoa statue corridor 
     WARP_SWAPSTONE_SHOP_ENTRANCE = 86
 } WarpID;
 

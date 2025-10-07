@@ -19,25 +19,25 @@ typedef struct {
     u8 unk9;
 } WL_LevelControl_State;
 
-static void dll_607_func_7A4(Object* self);
-static void dll_607_func_940(Object* self);
-static void dll_607_func_C50(Object* self);
-static void dll_607_func_E34(Object* self);
-static void dll_607_func_1118(Object* self);
-static void dll_607_func_14FC(Object* self);
-static void dll_607_func_1788(Object* self);
+static void WL_LevelControl_setup1_tick(Object* self);
+static void WL_LevelControl_setup2_tick(Object* self);
+static void WL_LevelControl_setup3_tick(Object* self);
+static void WL_LevelControl_setup4_tick(Object* self);
+static void WL_LevelControl_setup5_tick(Object* self);
+static void WL_LevelControl_setup6_tick(Object* self);
+static void WL_LevelControl_setup7_tick(Object* self);
 
 // offset: 0x0 | ctor
-void dll_607_ctor(void *dll) { }
+void WL_LevelControl_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_607_dtor(void *dll) { }
+void WL_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_607_func_18(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
+void WL_LevelControl_create(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
     WL_LevelControl_State* state;
 
-    obj_add_object_type(self, 0xA);
+    obj_add_object_type(self, OBJTYPE_10);
     state = self->state;
     state->unk7 = 0;
     state->unk2 = 0x1E;
@@ -79,73 +79,73 @@ void dll_607_func_18(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
 }
 
 // offset: 0x25C | func: 1 | export: 1
-void dll_607_func_25C(Object* self) {
+void WL_LevelControl_update(Object* self) {
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
         break;
     case 1:
-        dll_607_func_7A4(self);
+        WL_LevelControl_setup1_tick(self);
         break;
     case 2:
-        dll_607_func_940(self);
+        WL_LevelControl_setup2_tick(self);
         break;
     case 3:
-        dll_607_func_C50(self);
+        WL_LevelControl_setup3_tick(self);
         break;
     case 4:
-        dll_607_func_E34(self);
+        WL_LevelControl_setup4_tick(self);
         break;
     case 5:
-        dll_607_func_1118(self);
+        WL_LevelControl_setup5_tick(self);
         break;
     case 6:
-        dll_607_func_14FC(self);
+        WL_LevelControl_setup6_tick(self);
         break;
     case 7:
-        dll_607_func_1788(self);
+        WL_LevelControl_setup7_tick(self);
         break;
     }
 }
 
 // offset: 0x394 | func: 2 | export: 2
-void dll_607_func_394(Object *self) { }
+void WL_LevelControl_func_394(Object *self) { }
 
 // offset: 0x3A0 | func: 3 | export: 3
-void dll_607_func_3A0(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void WL_LevelControl_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x3F4 | func: 4 | export: 4
-void dll_607_func_3F4(Object *self, s32 a1) {
-    obj_free_object_type(self, 0xA);
+void WL_LevelControl_destroy(Object *self, s32 a1) {
+    obj_free_object_type(self, OBJTYPE_10);
     if (self){} // @fake
 }
 
 // offset: 0x43C | func: 5 | export: 5
-s32 dll_607_func_43C(Object* self) {
+s32 WL_LevelControl_func_43C(Object* self) {
     return 0;
 }
 
 // offset: 0x44C | func: 6 | export: 6
-u32 dll_607_func_44C(Object *self, u32 a1) {
+u32 WL_LevelControl_get_state_size(Object *self, u32 a1) {
     return sizeof(WL_LevelControl_State);
 }
 
 // offset: 0x460 | func: 7
-static void dll_607_func_460(Object* self, WL_LevelControl_State* state) {
-    Object** temp_v0;
-    s32 sp38;
-    s32 var_a1;
+static void WL_LevelControl_func_460(Object* self, WL_LevelControl_State* state) {
+    Object** objs;
+    s32 numObjs;
+    s32 i;
     s32 var_t0;
 
     if (get_gplay_bitstring(0x78) == 0) {
-        temp_v0 = obj_get_all_of_type(7, &sp38);
+        objs = obj_get_all_of_type(OBJTYPE_7, &numObjs);
         var_t0 = 1;
         
-        for (var_a1 = 0; var_a1 < sp38; var_a1++) {
-            if ((temp_v0[var_a1]->id == OBJ_WL_Galleon) || (temp_v0[var_a1]->id == OBJ_SB_Galleon)) {
+        for (i = 0; i < numObjs; i++) {
+            if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
                 var_t0 = 0;
             }
         }
@@ -162,10 +162,10 @@ static void dll_607_func_460(Object* self, WL_LevelControl_State* state) {
 }
 
 // offset: 0x648 | func: 8
-static void dll_607_func_648(Object* self, WL_LevelControl_State* state) {
+static void WL_LevelControl_func_648(Object* self, WL_LevelControl_State* state) {
     u32 sp2C;
-    s32 sp28;
-    Object** temp_v0;
+    s32 numObjs;
+    Object** objs;
     s32 i;
 
     sp2C = get_gplay_bitstring(0x355);
@@ -176,10 +176,10 @@ static void dll_607_func_648(Object* self, WL_LevelControl_State* state) {
         state->unk8 &= ~1;
     }
     if (!(state->unk8 & 2) && (sp2C != 0)) {
-        temp_v0 = obj_get_all_of_type(7, &sp28);
-        for (i = 0; i < sp28; i++) {
-            if (temp_v0[i]->id == OBJ_WL_Galleon) {
-                i = sp28; // break out of loop
+        objs = obj_get_all_of_type(OBJTYPE_7, &numObjs);
+        for (i = 0; i < numObjs; i++) {
+            if (objs[i]->id == OBJ_WL_Galleon) {
+                i = numObjs; // break out of loop
             }
         }
         state->unk8 |= 2;
@@ -187,7 +187,7 @@ static void dll_607_func_648(Object* self, WL_LevelControl_State* state) {
 }
 
 // offset: 0x7A4 | func: 9
-static void dll_607_func_7A4(Object* self) {
+static void WL_LevelControl_setup1_tick(Object* self) {
     /*0x0*/ static u8 _data_0 = 0;
 
     WL_LevelControl_State* state;
@@ -199,20 +199,20 @@ static void dll_607_func_7A4(Object* self) {
     temp_t8 += get_gplay_bitstring(0xB2);
     temp_t8 += get_gplay_bitstring(0xB3);
     if ((temp_t8 == 3) && (_data_0 != 3)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0xB89, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89, 0x7F, NULL, NULL, 0, NULL);
     }
     _data_0 = temp_t8;
     switch (state->unk7) {
         case 1:
             if (state->unk9 == 1) {
-                dll_607_func_648(self, state);
+                WL_LevelControl_func_648(self, state);
             }
             break;
         case 0:
             state->unk9 = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
             switch (state->unk9) {
             case 1:
-                dll_607_func_460(self, state);
+                WL_LevelControl_func_460(self, state);
                 break;
             case 2:
                 break;
@@ -222,7 +222,7 @@ static void dll_607_func_7A4(Object* self) {
 }
 
 // offset: 0x940 | func: 10
-static void dll_607_func_940(Object* self) {
+static void WL_LevelControl_setup2_tick(Object* self) {
     static u8 _data_4 = 1;
     
     Object* player;
@@ -259,7 +259,7 @@ static void dll_607_func_940(Object* self) {
 }
 
 // offset: 0xC50 | func: 11
-static void dll_607_func_C50(Object* self) {
+static void WL_LevelControl_setup3_tick(Object* self) {
     static u8 _data_8 = 1;
     
     Object* player;
@@ -284,7 +284,7 @@ static void dll_607_func_C50(Object* self) {
 }
 
 // offset: 0xE34 | func: 12
-static void dll_607_func_E34(Object* self) {
+static void WL_LevelControl_setup4_tick(Object* self) {
     /*0xC*/ static u8 _data_C = 1;
     /*0x10*/ static s32 _data_10 = -1;
 
@@ -326,7 +326,7 @@ static void dll_607_func_E34(Object* self) {
 }
 
 // offset: 0x1118 | func: 13
-static void dll_607_func_1118(Object* self) {
+static void WL_LevelControl_setup5_tick(Object* self) {
     /*0x14*/ static u8 _data_14 = 1;
 
     WL_LevelControl_State* state;
@@ -358,14 +358,14 @@ static void dll_607_func_1118(Object* self) {
     if (get_gplay_bitstring(0x2DD) != 0) {
         set_gplay_bitstring(0x32E, 1);
         set_gplay_bitstring(0x2DD, 0);
-        temp_v0 = obj_get_nearest_type_to(4, self, &sp40);
+        temp_v0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp40);
         if (temp_v0 != NULL) {
             obj_destroy_object(temp_v0);
         }
         state->unk2 = 0x1E;
     }
     if (get_gplay_bitstring(0x2F7) != 0) {
-        var_a2 = obj_get_all_of_type(4, &sp34);
+        var_a2 = obj_get_all_of_type(OBJTYPE_4, &sp34);
         for (i = 0; i < sp34; i++) {
             someCreateInfo = var_a2[i]->createInfo;
             if ((someCreateInfo->uID == 0x296E) || (someCreateInfo->uID == 0x296F)) {
@@ -377,7 +377,7 @@ static void dll_607_func_1118(Object* self) {
     if (get_gplay_bitstring(0x2EE) != 0) {
         temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
         if ((temp_v0_2 != 0x40) && (temp_v0_2 != 0x1D7) && (get_gplay_bitstring(0x2F3) == 0)) {
-            warpPlayer(0x39, 0);
+            warpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
         }
         set_gplay_bitstring(0x2EE, 0);
     }
@@ -396,7 +396,7 @@ static void dll_607_func_1118(Object* self) {
 }
 
 // offset: 0x14FC | func: 14
-static void dll_607_func_14FC(Object* self) {
+static void WL_LevelControl_setup6_tick(Object* self) {
     /*0x18*/ static u8 _data_18 = 1;
 
     Object* player;
@@ -426,7 +426,7 @@ static void dll_607_func_14FC(Object* self) {
 }
 
 // offset: 0x1788 | func: 15
-static void dll_607_func_1788(Object* self) {
+static void WL_LevelControl_setup7_tick(Object* self) {
     /*0x1C*/ static u8 _data_1C = 1;
 
     WL_LevelControl_State* state;
@@ -444,7 +444,7 @@ static void dll_607_func_1788(Object* self) {
         state->unk2 = 1;
         func_80000860(self, self, 0x32, 0);
         func_80000860(self, self, 0x33, 0);
-        set_gplay_bitstring(0x221, 1U);
+        set_gplay_bitstring(0x221, 1);
     }
     if (get_gplay_bitstring(0x36C) != 0) {
         if (state->unk4 > 0) {
@@ -461,10 +461,10 @@ static void dll_607_func_1788(Object* self) {
             }
         }
     }
-    if (rand_next(0, 0x1E) == 0) {
+    if (rand_next(0, 30) == 0) {
         set_gplay_bitstring(0xA7, 1);
     }
-    if (rand_next(0, 0xA) == 0) {
+    if (rand_next(0, 10) == 0) {
         set_gplay_bitstring(0xA7, 0);
     }
 }
