@@ -81,6 +81,7 @@ typedef struct Unk {
 /* static */ void dll_210_func_47B8(Object* arg0, PlayerState* arg1);
 /* static */ void dll_210_func_A024(Object* player, PlayerState* state);
 /* static */ void dll_210_func_7180(Object* arg0, PlayerState* arg1, f32 arg2);
+/* static */ void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -88,6 +89,7 @@ void dll_210_func_1D4E0(Object* arg0, s32 arg1);
 s32 dll_210_func_1D2A8(Object* arg0, Object* arg1);
 void dll_210_func_1CD6C(Object* player, s32 arg1);
 
+void func_8004D880(Object *arg0);
 void *func_8005D3A4(int param);
 s32 func_80025140(Object*, f32, f32, s32);
 MtxF* func_80032170(Object*, s32);
@@ -646,7 +648,7 @@ void dll_210_func_934(Object* arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_11A0.s")
 #else
 // Matches but requires these as static:
-// dll_210_func_618C
+// dll_210_func_618C (matched)
 // dll_210_func_1BC0 (matched)
 void dll_210_func_11A0(Object* arg0, PlayerState* arg1, f32 arg2) {
     f32 spCC;
@@ -2021,7 +2023,50 @@ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 }
 
 // offset: 0x618C | func: 29
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_618C.s")
+#else
+// matches but requires dll_210_func_7E6C as static
+void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3) {
+    PlayerState3B4 sp34;
+
+    arg1->unk29C = 0.14f;
+    arg1->unk288 = arg1->unk760;
+    arg1->unk284 = arg1->unk75C;
+    arg1->unk310 = (s32) arg1->unk766;
+    arg1->unk30C = (s32) arg1->unk764;
+    if (arg1->unk304 & 0x100) {
+        arg1->unk29C = -0.17f;
+    }
+    if (*_bss_1A0 > 0) {
+        *_bss_1A0 -= arg2;
+        if (*_bss_1A0 <= 0) {
+            *_bss_1A0 = -1;
+            if (gDLL_29_Gplay->vtbl->restart_is_set() != 0) {
+                gDLL_29_Gplay->vtbl->restart_goto();
+            } else {
+                gDLL_29_Gplay->vtbl->start_loaded_game();
+            }
+            obj_send_mesg_many(0, 3U, arg0, 0xE0000U, arg0);
+        }
+    }
+    arg0->objhitInfo->unk_0x5f = 0;
+    arg0->objhitInfo->unk_0x60 = 0;
+    arg0->objhitInfo->unk_0x5d = 0;
+    arg0->objhitInfo->unk_0x5e = 0;
+    arg1->unk25B = 1;
+    func_8004D880(arg0);
+    arg1->unk8B8 = 0;
+    arg1->flags &= ~0x2000;
+    arg1->unk0 |= 0x01000000;
+    if ((s8)dll_210_func_7E6C(arg0, arg1, arg1, &sp34, arg3, 0xC0) == 0xA) {
+        gDLL_18->vtbl->func4(arg0, arg1, 0x11);
+    }
+    gDLL_18->vtbl->func1(arg0, arg1, arg3, _bss_1AC, (u32) _bss_58, (u32) _bss_19C);
+    arg1->unk0 &= 0xFEFFFFFF;
+    arg1->unk3BC(arg0, arg1, delayFloat);
+}
+#endif
 
 // offset: 0x63F0 | func: 30
 f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1) {
