@@ -17,6 +17,7 @@
 #include "sys/camera.h"
 #include "sys/controller.h"
 #include "sys/scheduler.h"
+#include "sys/map.h"
 #include "sys/objects.h"
 #include "sys/print.h"
 #include "sys/gfx/gx.h"
