@@ -43,6 +43,7 @@
 266 = objects/266_sfxplayer
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+274 = objects/274_pushpull
 277 = objects/277_iceblast
 278 = objects/278_flameblast
 281 = objects/281_area

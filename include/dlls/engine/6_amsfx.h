@@ -38,6 +38,8 @@ enum SoundID {
 
     SOUND_377 = 0x377, // snowhorn related
 
+    SOUND_3D8 = 0x3D8, // used in pushpull (DLL 274)
+
     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
 

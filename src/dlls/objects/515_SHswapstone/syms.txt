@@ -11,8 +11,8 @@ SHswapstone_get_state_size = 0x434;
 SHswapstone_func_448 = 0x448;
 SHswapstone_func_A8C = 0xA8C;
 SHswapstone_func_AD4 = 0xAD4;
-SHswapstone_func_C04 = 0xC04;
-SHswapstone_func_D0C = 0xD0C;
+SHswapstone_get_held_spirit = 0xC04;
+SHswapstone_has_spellstone = 0xD0C;
 
 .rodata = 0xE00:
 
