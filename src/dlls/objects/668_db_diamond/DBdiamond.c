@@ -33,12 +33,12 @@ void DBdiamond_dtor(void *dll) {
 void DBdiamond_create(Object *self, DBDiamondCreateInfo *createInfo, s32 arg2) {
     DBDiamondState *state = self->state;
 
-    if (get_gplay_bitstring(createInfo->flag1)){
+    if (main_get_bits(createInfo->flag1)){
         state->unk0 = 1;
         return;
     }
 
-    if (get_gplay_bitstring(createInfo->flag2)) {
+    if (main_get_bits(createInfo->flag2)) {
         state->unk0 = 2;
         obj_add_object_type(self, OBJTYPE_39);
         return;
@@ -62,7 +62,7 @@ void DBdiamond_update(Object *self) {
         if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < 60.0f) {
             obj_free_object_type(self, OBJTYPE_39);
             self->unk0xaf |= 8;
-            set_gplay_bitstring(createInfo->flag1, 1);
+            main_set_bits(createInfo->flag1, 1);
             obj_send_mesg(player, 0x7000A, self, (void*)0x10000);
             state->unk0 = 1;
         }

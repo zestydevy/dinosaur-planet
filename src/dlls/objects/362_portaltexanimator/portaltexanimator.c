@@ -102,7 +102,7 @@ void portaltexanimator_update(Object* self) {
         if (createInfo->flagID == -1) {
             state->enabled = 1;
         } else {
-            state->enabled = get_gplay_bitstring(createInfo->flagID);
+            state->enabled = main_get_bits(createInfo->flagID);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity

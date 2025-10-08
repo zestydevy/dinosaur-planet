@@ -96,7 +96,7 @@ void levelname_create(Object* self, LevelNameCreateInfo* createInfo, s32 arg2) {
     state->timer = state->opacity;
 
     if (state->flagID != -1) {
-        if (get_gplay_bitstring(state->flagID)) {
+        if (main_get_bits(state->flagID)) {
             state->stateIndex = LEVELNAME_STATE_4_FINISHED;
         }
     }
@@ -115,7 +115,7 @@ void levelname_update(Object* self) {
             distance = vec3_distance(&self->positionMirror, &get_player()->positionMirror);
             if (distance < state->activationRadius) {
                 if (state->flagID != -1) {
-                    set_gplay_bitstring(state->flagID, 1);
+                    main_set_bits(state->flagID, 1);
                 }
                 state->stateIndex = 1;
             }
@@ -204,7 +204,7 @@ s32 levelname_anim_callback(Object* arg0, s32 arg1, Object0xbcCallbackStruct* ar
     for (i = 0; i < arg2->unk98; i++){
         if (arg2->unk8E[i] == 1) {
             if (state->flagID != -1) {
-                set_gplay_bitstring(state->flagID, 1);
+                main_set_bits(state->flagID, 1);
             }
             state->stateIndex = LEVELNAME_STATE_1_FADING_IN;
             return 4;

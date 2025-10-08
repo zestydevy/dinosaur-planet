@@ -35,7 +35,7 @@ void VFP_SpellPlace_create(Object* self, VFP_SpellPlace_CreateInfo* createInfo, 
     state->unk0 = createInfo->unk1E;
     state->unk2 = createInfo->unk20;
     
-    if (get_gplay_bitstring(state->unk2) != 0 || get_gplay_bitstring(state->unk0) != 0) {
+    if (main_get_bits(state->unk2) != 0 || main_get_bits(state->unk0) != 0) {
         state->unk4 = 1;
     } else {
         self->unk0xaf |= 8;
@@ -92,14 +92,14 @@ static void VFP_SpellPlace_do_act1(Object* self) {
 
     state = (VFP_SpellPlace_State*)self->state;
     
-    bits2 = get_gplay_bitstring(state->unk2);
-    bits1 = get_gplay_bitstring(state->unk0);
+    bits2 = main_get_bits(state->unk2);
+    bits1 = main_get_bits(state->unk0);
     
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unk0xaf &= ~0x8;
         
         if ((bits2 != 0) && (gDLL_1_UI->vtbl->func7(0x123) != 0)) {
-            set_gplay_bitstring(state->unk0, 1);
+            main_set_bits(state->unk0, 1);
             state->unk4 = 1;
             self->unk0xaf |= 8;
         }
@@ -114,14 +114,14 @@ static void VFP_SpellPlace_do_act2(Object* self) {
 
     state = (VFP_SpellPlace_State*)self->state;
     
-    bits2 = get_gplay_bitstring(state->unk2);
-    bits1 = get_gplay_bitstring(state->unk0);
+    bits2 = main_get_bits(state->unk2);
+    bits1 = main_get_bits(state->unk0);
     
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unk0xaf &= ~0x8;
         
         if ((bits2 != 0) && (gDLL_1_UI->vtbl->func7(0x83B) != 0)) {
-            set_gplay_bitstring(state->unk0, 1);
+            main_set_bits(state->unk0, 1);
             state->unk4 = 1;
             self->unk0xaf |= 8;
         }

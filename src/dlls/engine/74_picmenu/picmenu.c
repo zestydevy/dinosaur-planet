@@ -246,7 +246,7 @@ PicMenuAction picmenu_update() {
     if (sAllowButtons) {
         buttons = get_masked_button_presses(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
-            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && get_gplay_bitstring(BIT_44F) == 0) {
+            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
                 set_button_mask(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {

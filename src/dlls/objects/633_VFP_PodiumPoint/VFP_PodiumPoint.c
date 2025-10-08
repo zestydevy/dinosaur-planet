@@ -103,15 +103,15 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 
     if (player != NULL) {
         if (state->conditionGamebit != -1) {
-            conditionGamebitValue = get_gplay_bitstring(state->conditionGamebit);
+            conditionGamebitValue = main_get_bits(state->conditionGamebit);
         }
-        gamebitValue = get_gplay_bitstring(state->setGamebit);
+        gamebitValue = main_get_bits(state->setGamebit);
         if ((gamebitValue == 0) && (state->unk4 == 0) && (conditionGamebitValue != 0)) {
             self->unk0xaf &= ~0x8;
             if ((gDLL_1_UI->vtbl->func7(data_0) != 0) && 
                     (vec3_distance(&self->positionMirror, &player->positionMirror) < 100.0f)) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
-                set_gplay_bitstring(state->setGamebit, 1);
+                main_set_bits(state->setGamebit, 1);
                 state->unk4 = 1;
                 self->unk0xaf |= 8;
             }
@@ -129,13 +129,13 @@ static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObjState* a2, vo
             mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(a0->mapID);
             switch (mapSetupID) {
             case 1:
-                set_gplay_bitstring(BIT_VFP_Door_Seal_Break, 1);
+                main_set_bits(BIT_VFP_Door_Seal_Break, 1);
                 break;
             case 2:
-                set_gplay_bitstring(BIT_515, 1);
+                main_set_bits(BIT_515, 1);
                 break;
             case 3:
-                set_gplay_bitstring(BIT_VFP_Door_Open, 1);
+                main_set_bits(BIT_VFP_Door_Open, 1);
                 break;
             }
             a2->unk8E[i] = 0;

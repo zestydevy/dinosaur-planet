@@ -578,7 +578,7 @@ static void dll_63_load_save_game_info() {
 
             if (!saveFile->isEmpty) {
                 sSaveGameInfo[i].playerno = saveFile->playerno;
-                sSaveGameInfo[i].spiritBits = get_gplay_bitstring(BIT_Spirit_Bits);
+                sSaveGameInfo[i].spiritBits = main_get_bits(BIT_Spirit_Bits);
                 sSaveGameInfo[i].unk3 = 0;
 
                 filenamePtr = sSaveGameInfo[i].filename;

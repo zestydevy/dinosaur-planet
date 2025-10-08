@@ -54,17 +54,17 @@ void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
             break;
         case 1:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(BIT_CF_SpellStone, 1);
+            main_set_bits(BIT_CF_SpellStone, 1);
             break;
         case 2:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(BIT_BWC_SpellStone, 1);
-            set_gplay_bitstring(BIT_Spell_Unknown_777, 1);
+            main_set_bits(BIT_BWC_SpellStone, 1);
+            main_set_bits(BIT_Spell_Unknown_777, 1);
             break;
         case 3:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(BIT_SpellStone_Krystal, 1);
-            set_gplay_bitstring(BIT_Spell_Unknown_777, 1);
+            main_set_bits(BIT_SpellStone_Krystal, 1);
+            main_set_bits(BIT_Spell_Unknown_777, 1);
             break;
     }
     self->unk0xb0 |= 0x6000;

@@ -93,7 +93,7 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
         state->unk0 = createInfo->unk1C * 60;
     }
 
-    if (get_gplay_bitstring(state->gamebit) != 0) {
+    if (main_get_bits(state->gamebit) != 0) {
         state->unk4 = 1.0f;
         func_800267A4(self);
     }
@@ -429,7 +429,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
             }
             case 7:
             case 8:
-                set_gplay_bitstring(state->gamebit, 1);
+                main_set_bits(state->gamebit, 1);
                 break;
         }
     }

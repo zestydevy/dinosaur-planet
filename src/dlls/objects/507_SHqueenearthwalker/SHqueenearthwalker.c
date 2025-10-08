@@ -37,8 +37,8 @@ void SHqueenearthwalker_create(Object* self, SHqueenearthwalker_CreateInfo* crea
     sp24 = self->state;
     self->srt.yaw = createInfo->unk18 << 8;
     self->unk0xbc = (ObjectCallback)SHqueenearthwalker_func_4F8;
-    sp24->eatenWhiteMushrooms = get_gplay_bitstring(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
-    sp24->questProgress = get_gplay_bitstring(BIT_SH_Queen_EW_Quest_Progress);
+    sp24->eatenWhiteMushrooms = main_get_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
+    sp24->questProgress = main_get_bits(BIT_SH_Queen_EW_Quest_Progress);
 }
 
 // offset: 0xA0 | func: 1 | export: 1
@@ -62,7 +62,7 @@ void SHqueenearthwalker_update(Object* self) {
         if (self->unk0xaf & 1) {
             set_button_mask(0, 0x8000);
             gDLL_3_Animation->vtbl->func17(1, self, -1);
-            set_gplay_bitstring(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
+            main_set_bits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
             state->questProgress = 3;
         }
         break;
@@ -70,16 +70,16 @@ void SHqueenearthwalker_update(Object* self) {
         if (self->unk0xaf & 4) {
             if (gDLL_1_UI->vtbl->func7(BIT_Inventory_White_Mushrooms) != 0) {
                 set_button_mask(0, 0x8000);
-                state->eatenWhiteMushrooms += get_gplay_bitstring(BIT_Inventory_White_Mushrooms);
+                state->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
                 if (state->eatenWhiteMushrooms <= 0) {
                     gDLL_3_Animation->vtbl->func17(3, self, -1);
                 } else {
                     state->questProgress = 4U;
                     gDLL_30_Task->vtbl->mark_task_completed(0xB);
-                    set_gplay_bitstring(BIT_SH_Move_Thorntail_Blocking_Swapstone, 1);
+                    main_set_bits(BIT_SH_Move_Thorntail_Blocking_Swapstone, 1);
                 }
-                set_gplay_bitstring(BIT_Inventory_White_Mushrooms, 0);
-                set_gplay_bitstring(BIT_SH_Queen_EW_White_Mushrooms_Eaten, state->eatenWhiteMushrooms);
+                main_set_bits(BIT_Inventory_White_Mushrooms, 0);
+                main_set_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, state->eatenWhiteMushrooms);
             } else if (self->unk0xaf & 1) {
                 set_button_mask(0, 0x8000);
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
@@ -103,7 +103,7 @@ void SHqueenearthwalker_update(Object* self) {
         break;
     }
     if (prevQuestProgress != state->questProgress) {
-        set_gplay_bitstring(BIT_SH_Queen_EW_Quest_Progress, state->questProgress);
+        main_set_bits(BIT_SH_Queen_EW_Quest_Progress, state->questProgress);
     }
 }
 
@@ -146,20 +146,20 @@ static s32 SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObjState* a2,
         case 3:
             state->questProgress = 5;
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
-            set_gplay_bitstring(BIT_Play_Seq_0298_Queen_Shows_VFPT, 1);
+            main_set_bits(BIT_Play_Seq_0298_Queen_Shows_VFPT, 1);
             warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         case 4:
             state->questProgress = 6;
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
-            set_gplay_bitstring(BIT_Play_Seq_0299_Queen_Shows_SpellStones, 1);
+            main_set_bits(BIT_Play_Seq_0299_Queen_Shows_SpellStones, 1);
             warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         }
     }
 
     if (sp40 != state->questProgress) {
-        set_gplay_bitstring(BIT_SH_Queen_EW_Quest_Progress, state->questProgress);
+        main_set_bits(BIT_SH_Queen_EW_Quest_Progress, state->questProgress);
     }
     
     return 0;

@@ -22,10 +22,10 @@ void SHtricky_create(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
 
     state = (SHtricky_State*)self->state;
     
-    if (get_gplay_bitstring(BIT_SH_Queen_EW_Quest_Progress) != 0) {
+    if (main_get_bits(BIT_SH_Queen_EW_Quest_Progress) != 0) {
         state->unk0 = 3;
     } else {
-        set_gplay_bitstring(BIT_Play_Seq_00D1, 0);
+        main_set_bits(BIT_Play_Seq_00D1, 0);
         state->unk0 = 0;
     }
 
@@ -42,7 +42,7 @@ void SHtricky_update(Object *self) {
 
     switch (state->unk0) {
     case 0:
-        if (get_gplay_bitstring(BIT_Play_Seq_00D1) != 0) {
+        if (main_get_bits(BIT_Play_Seq_00D1) != 0) {
             gDLL_3_Animation->vtbl->func17(3, sidekick, -1);
             state->unk0 = 1;
         } 

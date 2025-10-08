@@ -61,7 +61,7 @@ s32 dll_61_update1() {
     }
 
     if (bss_2 != 0) {
-        set_gplay_bitstring(BIT_44F, 0);
+        main_set_bits(BIT_44F, 0);
         //@bug? Skips directly to Game Select screen, likely for developer convenience
         menu_set(MENU_GAME_SELECT);
     }

@@ -419,7 +419,7 @@ void func_80013D80(void) {
             update_objects();
             func_80042174(0);
 
-            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (get_gplay_bitstring(BIT_44F) == 0)) {
+            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 set_button_mask(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
@@ -679,8 +679,8 @@ void init_bittable(void) {
     gGplayState = gDLL_29_Gplay->vtbl->get_state();
 }
 
-// offical name: mainSet ?
-void set_gplay_bitstring(s32 entry, u32 value) {
+// offical name: mainSetBits
+void main_set_bits(s32 entry, u32 value) {
     u8 *bitString;
     u8 _pad[12]; // fake match
     s32 idx;
@@ -724,8 +724,8 @@ void set_gplay_bitstring(s32 entry, u32 value) {
     }
 }
 
-// offical name: mainGet ?
-u32 get_gplay_bitstring(s32 entry) {
+// offical name: mainGetBits
+u32 main_get_bits(s32 entry) {
     u8 *bitString;
     u32 value;
     s32 idx;
@@ -775,16 +775,16 @@ u32 get_gplay_bitstring(s32 entry) {
     return value;
 }
 
-s32 increment_gplay_bitstring(s32 entry) {
+s32 main_increment_bits(s32 entry) {
     s32 val;
     s32 maxVal;
 
-    val = get_gplay_bitstring(entry) + 1;
+    val = main_get_bits(entry) + 1;
 
     maxVal = 1 << ((gFile_BITTABLE[entry].field_0x2 & 0x1f) + 1);
 
     if (val < maxVal) {
-        set_gplay_bitstring(entry, val);
+        main_set_bits(entry, val);
     } else {
         val -= 1;
     }
@@ -792,10 +792,10 @@ s32 increment_gplay_bitstring(s32 entry) {
     return val;
 }
 
-s32 decrement_gplay_bitstring(s32 entry) {
-    s32 val = get_gplay_bitstring(entry);
+s32 main_decrement_bits(s32 entry) {
+    s32 val = main_get_bits(entry);
     if (val != 0) {
-        set_gplay_bitstring(entry, --val);
+        main_set_bits(entry, --val);
         return val;
     }
     return 0;
