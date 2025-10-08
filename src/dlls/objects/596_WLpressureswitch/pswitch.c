@@ -5,6 +5,7 @@
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/gamebits.h"
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -43,18 +44,6 @@ enum WarlockMountainActs {
     WM_ACT_7_SPIRIT_6_SABRE_WG = 7,
     WM_ACT_8_SPIRIT_7_KRYSTAL_GP = 8,
     WM_ACT_9_SPIRIT_8_SABRE_SW = 9
-};
-
-//TO-DO: merge in with main sound enum
-enum AUDIO {
-    AUDIO_0481_STONE_MOVING = 481,
-    AUDIO_2458_MECHANICAL_RATCHETING = 2458,
-    AUDIO_2953_PUZZLE_SOLVED = 2953
-};
-
-//TO-DO: merge in with main gamebit enum
-enum GAMEBITS {
-    GAMEBITS_2309_WM_RANDORN_HALL_OPENED = 2309,
 };
 
 static s32 WLpressureswitch_callbackBC(s32 self, s32 createInfo, CallbackBCUnkArg2* arg2, s32 arg3);
@@ -120,7 +109,7 @@ void WLpressureswitch_update(Object* self) {
             if (state->stateIndex == STATE_0_UP && 
                 listedObject && listedObject->id == OBJ_WL_Column_Top) {
                 if (!playerIsFarAway) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_2953_PUZZLE_SOLVED, 0x7F, NULL, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, 0, 0, 0);
                 }
                 state->stateIndex = STATE_1_DOWN;
             }
@@ -139,12 +128,12 @@ void WLpressureswitch_update(Object* self) {
         if (state->pressed) {
             deltaY = createInfo->base.y - self->srt.transl.y;
             if (2.5f < deltaY && deltaY < 5.0f) {
-                set_gplay_bitstring(GAMEBITS_2309_WM_RANDORN_HALL_OPENED, TRUE);
-            } else if (get_gplay_bitstring(GAMEBITS_2309_WM_RANDORN_HALL_OPENED)) {
-                set_gplay_bitstring(GAMEBITS_2309_WM_RANDORN_HALL_OPENED, FALSE);
+                set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, TRUE);
+            } else if (get_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened)) {
+                set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, FALSE);
             }
-        } else if (get_gplay_bitstring(GAMEBITS_2309_WM_RANDORN_HALL_OPENED)) {
-            set_gplay_bitstring(GAMEBITS_2309_WM_RANDORN_HALL_OPENED, FALSE);
+        } else if (get_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened)) {
+            set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, FALSE);
         }
     }
 
@@ -183,7 +172,7 @@ void WLpressureswitch_update(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!state->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_0481_STONE_MOVING, 0x7F, (u32*)&state->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&state->soundHandle, 0, 0, 0);
         }
     } else {
         if (state->soundHandle) {

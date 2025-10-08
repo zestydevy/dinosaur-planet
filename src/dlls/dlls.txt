@@ -75,4 +75,5 @@
 668 = objects/668_db_diamond
 714 = objects/714_DR_CloudRunner
 723 = objects/723_GPbonfire
+781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock

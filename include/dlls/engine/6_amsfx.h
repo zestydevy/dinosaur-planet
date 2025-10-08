@@ -28,6 +28,8 @@ enum SoundID {
     SFX_SNOWHORN_SNOREHORN = 0x12A,
     SFX_SNOWHORN_YAWN2 = 0x12B,
 
+    SOUND_1e1_Stone_Moving = 0x1e1,
+
     SOUND_1E2 = 0x1E2, // snowhorn related
 
     SOUND_242 = 0x242, // menu related
@@ -35,6 +37,9 @@ enum SoundID {
     SOUND_342 = 0x342, // used in DLL 466
 
     SOUND_377 = 0x377, // snowhorn related
+
+    SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
+    SOUND_50b_Fire_Burning_High_Loop = 0x50b,
 
     SOUND_5EB = 0x5EB, // used in DLL 210
 
@@ -60,6 +65,8 @@ enum SoundID {
     SOUND_986 = 0x986, // used in DLL 6
     SOUND_987 = 0x987, // used in DLL 6
 
+    SOUND_99a_Mechanical_Ratcheting = 0x99a,
+
     SOUND_9B1 = 0x9B1, // kamerian related
     SOUND_9B2 = 0x9B2, // kamerian related
 
@@ -73,7 +80,7 @@ enum SoundID {
     SOUND_B72 = 0xB72, // pause menu item selected
     SOUND_B73 = 0xB73, // pause menu no item selected
 
-    SOUND_B89 = 0xB89, // "puzzle complete" jingle
+    SOUND_B89_Puzzle_Solved = 0xB89, // "puzzle complete" jingle
 
     NO_SOUND = 0xFFFFFFFF
 };

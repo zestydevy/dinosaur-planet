@@ -28,4 +28,12 @@ typedef enum {
 /*7CF*/ FLAG_7CF = 0x7CF
 } GameBits;
 
+enum GAMEBITS {
+    BIT_46e_Kyte_Flight_Curve = 0x46e,
+    BIT_7d5_GP_ChimneySweep_Lifted = 0x7d5,
+    BIT_905_WM_Randorn_Hall_Opened = 0x905,
+    BIT_917_GP_Bonfire_Kindling_Placed = 0x917,
+    BIT_918_GP_Bonfire_Burning = 0x918
+};
+
 #endif // _SYS_GAMEBITS_H

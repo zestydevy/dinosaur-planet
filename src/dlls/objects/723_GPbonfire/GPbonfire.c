@@ -8,6 +8,7 @@
 #include "sys/menu.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/gamebits.h"
 
 typedef struct {
 s8 unk0[0x62 - 0];
@@ -54,23 +55,12 @@ enum GPBonfireStates{
     STATE_4_ADDING_TUMBLEWEEDS = 4
 };
 
-//TO-DO: merge in with main sound enum
-enum AUDIO {
-    AUDIO_0481_STONE_MOVING = 481,
-    AUDIO_2458_MECHANICAL_RATCHETING = 2458,
-    AUDIO_2953_PUZZLE_SOLVED = 2953,
-    AUDIO_1290_FIRE_BURNING_LOW_LOOP = 1290,
-    AUDIO_1291_FIRE_BURNING_HIGH_LOOP = 1291
-};
-
-//TO-DO: merge in with main gamebit enum
-enum GAMEBITS {
-    GAMEBITS_1134_KYTE_FLIGHT_CURVE = 1134,
-    GAMEBITS_2005_GP_CHIMNEYSWEEP_LIFTED = 2005,
-    GAMEBITS_2309_WM_RANDORN_HALL_OPENED = 2309,
-    GAMEBITS_2327_GP_BONFIRE_KINDLING_PLACED = 2327,
-    GAMEBITS_2328_GP_BONFIRE_BURNING = 2328
-};
+// enum AUDIO {
+//     SOUND_1e1_Stone_Moving = 0x1e1,
+//     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
+//     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
+//     SOUND_99a_Mechanical_Ratcheting = 0x99a
+// };
 
 /** Scale values for the GPbonfire object itself as the fire is built up */
 /*0x0*/ static f32 bonfireScaleData[] = {
@@ -107,8 +97,8 @@ void GPbonfire_create(Object* self, GPBonfireCreateInfo* createInfo, s32 arg2) {
     state->soundHandles[0] = 0;
     state->soundHandles[1] = 0;
     obj_add_object_type(self, 0x30);
-    state->gameBitKindlingPlaced = GAMEBITS_2327_GP_BONFIRE_KINDLING_PLACED;
-    state->gameBitBurning = GAMEBITS_2328_GP_BONFIRE_BURNING;
+    state->gameBitKindlingPlaced = BIT_917_GP_Bonfire_Kindling_Placed;
+    state->gameBitBurning = BIT_918_GP_Bonfire_Burning;
     state->sequenceIndexKindling = 0;
     state->sequenceIndexBurning = 1;
     state->unused14 = 0;
@@ -176,7 +166,7 @@ void GPbonfire_update(Object* self) {
             if (sidekick && playerIsNearby) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 4);
                 if (gDLL_1_UI->vtbl->func7(4)) {
-                    set_gplay_bitstring(GAMEBITS_1134_KYTE_FLIGHT_CURVE, createInfo->kyteCurveID);
+                    set_gplay_bitstring(BIT_46e_Kyte_Flight_Curve, createInfo->kyteCurveID);
                 }
             }
             break;
@@ -216,7 +206,7 @@ void GPbonfire_update(Object* self) {
 
                             //Lift up the ChimneySweep once the fire's roaring
                             if (state->weedsDeposited == 4) {
-                                set_gplay_bitstring(GAMEBITS_2005_GP_CHIMNEYSWEEP_LIFTED, TRUE);
+                                set_gplay_bitstring(BIT_7d5_GP_ChimneySweep_Lifted, TRUE);
                                 //Start a 60 second challenge timer
                                 func_8000F64C(0x15, 60);
                                 func_8000F6CC();
@@ -346,8 +336,8 @@ void GPbonfire_func_A44(Object* self) {
     }
 
     //Loop burning sounds
-    state->soundHandles[0] = gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_1290_FIRE_BURNING_LOW_LOOP, 0x7F, NULL, 0, 0, 0);
-    state->soundHandles[1] = gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_1291_FIRE_BURNING_HIGH_LOOP, 0x7F, NULL, 0, 0, 0);
+    state->soundHandles[0] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
+    state->soundHandles[1] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
     gDLL_14_Modgfx->vtbl->func10.withOneArg((s32)self);

@@ -42,11 +42,6 @@ s8 unk7C[0x8D - 0x7C];
 u8 unk8D;
 } CallbackBCUnkArg2;
 
-//TO-DO: merge in with main sound enum
-enum AUDIO {
-    AUDIO_0481_STONE_MOVING = 481
-};
-
 static void pressureswitch_add_object(Object* self, Object* objectOnSwitch);
 static s32 pressureswitch_is_object_on_switch(Object* self);
 static s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3);
@@ -159,7 +154,7 @@ void pressureswitch_update(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!state->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_0481_STONE_MOVING, 0x7F, (u32*)&state->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&state->soundHandle, 0, 0, 0);
         }
     } else {
         if (state->soundHandle) {

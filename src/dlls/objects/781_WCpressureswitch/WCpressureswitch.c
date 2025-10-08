@@ -43,12 +43,6 @@ s8 unk7C[0x8D - 0x7C];
 u8 unk8D;
 } CallbackBCUnkArg2;
 
-//TO-DO: merge in with main sound enum
-enum AUDIO {
-    AUDIO_0481_STONE_MOVING = 481,
-    AUDIO_2458_MECHANICAL_RATCHETING = 2458
-};
-
 enum WCPressureSwitchStates {
     STATE_0_UP = 0,
     STATE_1_MOVING_UP = 1,
@@ -143,7 +137,7 @@ void WCpressureswitch_update(Object* self) {
     switch (state->stateIndex) {
         case STATE_0_UP:
             if (state->pressed && deltaY <= self->srt.transl.y) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_2458_MECHANICAL_RATCHETING, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 state->stateIndex = STATE_3_MOVING_DOWN;
             }
             break;
@@ -159,7 +153,7 @@ void WCpressureswitch_update(Object* self) {
             /* Subtly different behaviour to other pressure switches,
              * waits for flag to unset before depressing the switch (for WC's timed challenges) */
             if (!get_gplay_bitstring(createInfo->gameBitPressed)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, AUDIO_2458_MECHANICAL_RATCHETING, 0x7F, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 state->stateIndex = STATE_1_MOVING_UP;
             }
             break;
