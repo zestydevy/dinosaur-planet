@@ -836,12 +836,12 @@ Object *dll_210_func_4114(Object* player) {
 // offset: 0x4198 | func: 20 | export: 48
 s16 dll_210_func_4198(Object* player) {
     PlayerState* state = player->state;
-    Object* temp_v1;
+    Object* heldObject;
 
     if (state->flags & 0x10000) {
-        temp_v1 = state->unk868;
-        if (temp_v1 != NULL) {
-            return temp_v1->id;
+        heldObject = state->unk868;
+        if (heldObject != NULL) {
+            return heldObject->id;
         }
     }
     return 0;
@@ -3899,7 +3899,7 @@ void dll_210_func_1CE0C(Object* player, s32 arg1) {
     if (state->unk8BB != 0) {
         if (arg1 < 0) {
             arg1 = 0;
-        } else if (arg1 >= 0x65) {
+        } else if (arg1 > 0x64) {
             arg1 = 0x64;
         }
         state->stats->magicMax = arg1;

@@ -199,7 +199,7 @@ static void WL_LevelControl_setup1_tick(Object* self) {
     temp_t8 += get_gplay_bitstring(0xB2);
     temp_t8 += get_gplay_bitstring(0xB3);
     if ((temp_t8 == 3) && (_data_0 != 3)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, NULL, 0, NULL);
     }
     _data_0 = temp_t8;
     switch (state->unk7) {

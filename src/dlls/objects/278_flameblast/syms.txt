@@ -1,0 +1,12 @@
+.text = 0x0:
+flameblast_ctor = 0x0;
+flameblast_dtor = 0xC;
+flameblast_create = 0x18;
+flameblast_update = 0x80;
+flameblast_func_274 = 0x274;
+flameblast_draw = 0x27C;
+flameblast_destroy = 0x294;
+flameblast_func_2EC = 0x2EC;
+flameblast_get_state_size = 0x2FC;
+
+.rodata = 0x34C:
