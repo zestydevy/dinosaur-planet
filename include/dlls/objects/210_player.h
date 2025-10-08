@@ -9,6 +9,22 @@
 #include "sys/main.h"
 #include "types.h"
 
+// TODO: not necessarily in story order
+// Which spirit the player is currently holding
+typedef enum {
+    PLAYER_NO_SPIRIT = 0x0,
+    PLAYER_SPIRIT_1 = 0x1,
+    PLAYER_SPIRIT_2 = 0x2,
+    PLAYER_SPIRIT_3 = 0x4,
+    PLAYER_SPIRIT_4 = 0x8,
+    PLAYER_SPIRIT_5 = 0x10,
+    PLAYER_SPIRIT_6 = 0x20,
+    PLAYER_SPIRIT_7 = 0x40,
+    PLAYER_SPIRIT_8 = 0x80,
+    // Mask to check for any spirit flag
+    PLAYER_SPIRIT_ANY = 0xFF
+} PlayerSpiritFlags;
+
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;

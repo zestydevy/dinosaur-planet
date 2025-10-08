@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "dlls/engine/29_gplay.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "sys/controller.h"
@@ -10,6 +11,12 @@
 #include "dll.h"
 #include "functions.h"
 
+typedef enum {
+    SWAPSTONE_PLAYER_HAS_SPIRIT = 0x1,
+    SWAPSTONE_PLAYER_HAS_SPELLSTONE = 0x2,
+    SWAPSTONE_IS_RUBBLE = 0x4
+} SwapstoneFlags;
+
 typedef struct {
     ObjCreateInfo base;
     u8 _unk18[2];
@@ -18,8 +25,8 @@ typedef struct {
 
 typedef struct {
     u8 attachIdx;
-    u8 unk1;
-    u8 unk2;
+    u8 bShowScreen;
+    u8 flags;
     u8 unk3;
     u8 unk4;
     s16 unk6; // game bits ID
@@ -33,8 +40,8 @@ typedef struct {
 /*0x4*/ static u16 sSwapStoneWarps[] = { WARP_SH_ROCKY_PODIUM, WARP_SC_RUBBLE_PODIUM };
 
 static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void* a3);
-static s32 SHswapstone_func_C04(void);
-static s32 SHswapstone_func_D0C(void);
+static s32 SHswapstone_get_held_spirit(void);
+static s32 SHswapstone_has_spellstone(void);
 static void SHswapstone_func_A8C(Object* self, s32 arg1, s32 arg2);
 static s32 SHswapstone_func_AD4(Object* self, s32 arg1, s32 arg2);
 
@@ -57,7 +64,7 @@ void SHswapstone_create(Object* self, SHswapstone_CreateInfo* createInfo, s32 ar
         state->unk6 = 0x883;
         state->unk8 = 0x3EB;
         state->unkA = 0x884;
-        state->unk2 |= 4;
+        state->flags |= SWAPSTONE_IS_RUBBLE;
         self->modelInstIdx = 1;
     } else {
         // We are Rocky
@@ -156,12 +163,12 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
     a2->unkF8 = SHswapstone_func_AD4;
     a2->unkF4 = SHswapstone_func_A8C;
     if (a2->unk62 != 0) {
-        state->unk2 &= ~3;
-        if (SHswapstone_func_C04() != 0) {
-            state->unk2 |= 1;
+        state->flags &= ~(SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE);
+        if (SHswapstone_get_held_spirit() != PLAYER_NO_SPIRIT) {
+            state->flags |= SWAPSTONE_PLAYER_HAS_SPIRIT;
         }
-        if (SHswapstone_func_D0C() != 0) {
-            state->unk2 |= 2;
+        if (SHswapstone_has_spellstone() != 0) {
+            state->flags |= SWAPSTONE_PLAYER_HAS_SPELLSTONE;
         }
         a2->unk62 = 0;
         if (get_gplay_bitstring(state->unk6) != 0) {
@@ -177,18 +184,22 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
             state->attachIdx = 1;
             break;
         case 6:
+            // Swap players
             playerno = 1 - gDLL_29_Gplay->vtbl->get_playerno();
             gDLL_29_Gplay->vtbl->set_playerno(playerno);
-            if (state->unk2 & 4) {
+            if (state->flags & SWAPSTONE_IS_RUBBLE) {
+                // Going to SwapStone Hollow
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 0, 1);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 7, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_HOLLOW, 1);
                 if ((get_gplay_bitstring(0x277) != 0) && (get_gplay_bitstring(0x178) == 0)) {
+                    // Set Rocky to give Tricky the distract command
                     set_gplay_bitstring(0x885, 1);
                 } else {
                     set_gplay_bitstring(state->unkA, 1);
                 }
             } else {
+                // Going to SwapStone Circle
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 0, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 2);
                 set_gplay_bitstring(state->unkA, 1);
@@ -196,20 +207,23 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
             warpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
         case 7:
+            // Warp to Warlock Mountain
             playerno = gDLL_29_Gplay->vtbl->get_playerno();
-            switch (SHswapstone_func_C04()) {
-            case 0x2:
-            case 0x8:
-            case 0x10:
-            case 0x40:
+            switch (SHswapstone_get_held_spirit()) {
+            case PLAYER_SPIRIT_2:
+            case PLAYER_SPIRIT_4:
+            case PLAYER_SPIRIT_5:
+            case PLAYER_SPIRIT_7:
+                // Sabre has a spirit
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_ICE_MOUNTAIN_1, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_SNOWHORN_WASTES, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 3);
                 break;
-            case 0x1:
-            case 0x4:
-            case 0x20:
-            case 0x80:
+            case PLAYER_SPIRIT_1:
+            case PLAYER_SPIRIT_3:
+            case PLAYER_SPIRIT_6:
+            case PLAYER_SPIRIT_8:
+                // Krystal has a spirit
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_ICE_MOUNTAIN_1, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_SNOWHORN_WASTES, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 2);
@@ -218,7 +232,7 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
             warpPlayer(sWarlockMountainWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
         case 10:
-            state->unk1 ^= 1;
+            state->bShowScreen ^= 1;
             break;
         case 9:
             playerno = gDLL_29_Gplay->vtbl->get_playerno();
@@ -243,7 +257,7 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
             break;
         }
     }
-    if (state->unk1 != 0) {
+    if (state->bShowScreen != 0) {
         gDLL_20_Screens->vtbl->show_screen(0);
     }
     return 0;
@@ -264,23 +278,23 @@ static s32 SHswapstone_func_AD4(Object* self, s32 arg1, s32 arg2) {
     get_joystick_menu_xy_sign(0, &joyXSign, &joyYSign);
     switch (arg2) {
     case 20:
-        if ((joyXSign < 0) && !(state->unk2 & 3)) {
+        if ((joyXSign < 0) && !(state->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {
             return 1;
         }
     default:
         break;
     case 21:
-        if ((joyXSign < 0) && (state->unk2 & 3)) {
+        if ((joyXSign < 0) && (state->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {
             return 1;
         }
         break;
     case 22:
-        if ((joyXSign > 0) && (state->unk2 & 1)) {
+        if ((joyXSign > 0) && (state->flags & SWAPSTONE_PLAYER_HAS_SPIRIT)) {
             return 1;
         }
         break;
     case 23:
-        if ((joyXSign > 0) && !(state->unk2 & 1)) {
+        if ((joyXSign > 0) && !(state->flags & SWAPSTONE_PLAYER_HAS_SPIRIT)) {
             return 1;
         }
         break;
@@ -294,47 +308,49 @@ static s32 SHswapstone_func_AD4(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0xC04 | func: 10
-static s32 SHswapstone_func_C04(void) {
+static s32 SHswapstone_get_held_spirit(void) {
     s32 playerno;
     Object* player;
-    s32 temp_v0_2;
+    s32 spiritBits;
 
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
     player = get_player();
-    temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func38(player, 0xFF);
-    if (playerno == 0) {
-        if (temp_v0_2 & 2) {
-            return 2;
+    spiritBits = ((DLL_210_Player*)player->dll)->vtbl->func38(player, PLAYER_SPIRIT_ANY);
+    if (playerno == PLAYER_SABRE) {
+        if (spiritBits & PLAYER_SPIRIT_2) {
+            return PLAYER_SPIRIT_2;
         }
-        if (temp_v0_2 & 8) {
-            return 8;
+        if (spiritBits & PLAYER_SPIRIT_4) {
+            return PLAYER_SPIRIT_4;
         }
-        if (temp_v0_2 & 0x40) {
-            return 0x40;
+        if (spiritBits & PLAYER_SPIRIT_7) {
+            return PLAYER_SPIRIT_7;
         }
-        if (temp_v0_2 & 0x10) {
-            return 0x10;
+        if (spiritBits & PLAYER_SPIRIT_5) {
+            return PLAYER_SPIRIT_5;
         }
     } else {
-        if (temp_v0_2 & 1) {
-            return 1;
+        if (spiritBits & PLAYER_SPIRIT_1) {
+            return PLAYER_SPIRIT_1;
         }
-        if (temp_v0_2 & 4) {
-            return 4;
+        if (spiritBits & PLAYER_SPIRIT_3) {
+            return PLAYER_SPIRIT_3;
         }
-        if (temp_v0_2 & 0x20) {
-            return 0x20;
+        if (spiritBits & PLAYER_SPIRIT_6) {
+            return PLAYER_SPIRIT_6;
         }
-        if (temp_v0_2 & 0x80) {
-            return 0x80;
+        if (spiritBits & PLAYER_SPIRIT_8) {
+            return PLAYER_SPIRIT_8;
         }
     }
     
-    return 0;
+    return PLAYER_NO_SPIRIT;
 }
 
 // offset: 0xD0C | func: 11
-static s32 SHswapstone_func_D0C(void) {
+// Whether the player has a SpellStone.
+// Only checks for the first two!
+static s32 SHswapstone_has_spellstone(void) {
     if (get_gplay_bitstring(0x2E8) != 0) {
         return 1;
     }

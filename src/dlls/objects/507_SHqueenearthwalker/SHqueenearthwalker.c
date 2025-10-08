@@ -144,15 +144,15 @@ static s32 SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObjState* a2,
         switch (a2->unk8E[i]) {
         case 3:
             state->unk0 = 5;
-            gDLL_29_Gplay->vtbl->set_map_setup(4, 0xB);
+            gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
             set_gplay_bitstring(0x486, 1);
-            warpPlayer(0x51, 0);
+            warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         case 4:
             state->unk0 = 6;
-            gDLL_29_Gplay->vtbl->set_map_setup(4, 0xB);
+            gDLL_29_Gplay->vtbl->set_map_setup(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
             set_gplay_bitstring(0x487, 1);
-            warpPlayer(0x51, 0);
+            warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         }
     }
