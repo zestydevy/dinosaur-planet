@@ -7,21 +7,33 @@
 
 typedef union {
     void (*asVoid)(void);
-    s32 (*asVoidS32)(void);
     void (*withOneArg)(s32);
-    s32 (*withOneArgS32)(s32);
     void (*withTwoArgs)(s32, s32);
-    s32 (*withTwoArgsS32)(s32, s32);
-    f32 (*withTwoArgsF32)(s32, s32);
-    void (*withOneS32OneF32)(s32, f32);
     void (*withThreeArgs)(s32, s32, s32);
     void (*withFourArgs)(s32, s32, s32, s32);
-    void (*withFourArgsCustom)(s32, s32, f32, s32);
     void (*withFiveArgs)(s32, s32, s32, s32, s32);
-    void (*withFiveArgsCustom)(s32, f32, s32, s32, s32);
     void (*withSixArgs)(s32, s32, s32, s32, s32, s32);
-    void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
     void (*withSevenArgs)(s32, s32, s32, s32, s32, s32, s32);
+    s32 (*asVoidS32)(void);
+    s32 (*withOneArgS32)(s32);
+    s32 (*withTwoArgsS32)(s32, s32);
+    s32 (*withThreeArgsS32)(s32, s32, s32);
+    s32 (*withFourArgsS32)(s32, s32, s32, s32);
+    s32 (*withFiveArgsS32)(s32, s32, s32, s32, s32);
+    s32 (*withSixArgsS32)(s32, s32, s32, s32, s32, s32);
+    s32 (*withSevenArgsS32)(s32, s32, s32, s32, s32, s32, s32);
+    f32 (*asVoidF32)(void);
+    f32 (*withOneArgF32)(s32);
+    f32 (*withTwoArgsF32)(s32, s32);
+    f32 (*withThreeArgsF32)(s32, s32, s32);
+    f32 (*withFourArgsF32)(s32, s32, s32, s32);
+    f32 (*withFiveArgsF32)(s32, s32, s32, s32, s32);
+    f32 (*withSixArgsF32)(s32, s32, s32, s32, s32, s32);
+    f32 (*withSevenArgsF32)(s32, s32, s32, s32, s32, s32, s32);
+    void (*withOneS32OneF32)(s32, f32);
+    void (*withFourArgsCustom)(s32, s32, f32, s32);
+    void (*withFiveArgsCustom)(s32, f32, s32, s32, s32);
+    void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
 } UnknownDLLFunc;
 
 // "Unknown" DLL interface to help match code calling DLLs where the exact
