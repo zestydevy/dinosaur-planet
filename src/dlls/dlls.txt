@@ -42,6 +42,7 @@
 266 = objects/266_sfxplayer
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+274 = objects/274_pushpull
 281 = objects/281_area
 296 = objects/296_medium_crate
 325 = objects/325_trigger

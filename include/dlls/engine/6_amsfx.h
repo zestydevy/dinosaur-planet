@@ -36,6 +36,8 @@ enum SoundID {
 
     SOUND_377 = 0x377, // snowhorn related
 
+    SOUND_3D8 = 0x3D8, // used in pushpull (DLL 274)
+
     SOUND_5EB = 0x5EB, // used in DLL 210
 
     SFX_PAUSE_MENU_BACK = 0x5D4, // Used in DLL 66
