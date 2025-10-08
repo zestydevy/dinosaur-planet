@@ -37,6 +37,7 @@
 210 = objects/210_player
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
+225 = objects/225_SabreBaddie
 227 = objects/227_tumbleweed
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
