@@ -9,6 +9,8 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/gamebits.h"
+#include "dlls/objects/210_player.h"
+#include "dll.h"
 
 typedef struct {
 s8 unk0[0x62 - 0];
@@ -157,7 +159,7 @@ void GPbonfire_update(Object* self) {
             break;
         case STATE_1_WAIT_FOR_PLAYER_INTERACTION:
             if (playerIsNearby && 
-                ((DLL_Unknown*)player->dll)->vtbl->func[48].s32withOneArg((s32)player) == 0x4BB) {
+                ((DLL_210_Player*)player->dll)->vtbl->func48(player) == 0x4BB) {
                 gDLL_3_Animation->vtbl->func17(state->sequenceIndexKindling, self, -1);
             }
             break;

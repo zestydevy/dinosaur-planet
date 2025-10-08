@@ -300,7 +300,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*45*/ UnknownDLLFunc func45;
     /*46*/ UnknownDLLFunc func46;
     /*47*/ UnknownDLLFunc func47;
-    /*48*/ UnknownDLLFunc func48;
+    /*48*/ s32 (*func48)(Object*);
     /*49*/ UnknownDLLFunc func49;
     /*50*/ s32 (*func50)(Object*);
     /*51*/ UnknownDLLFunc func51;
