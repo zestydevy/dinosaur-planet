@@ -139,7 +139,7 @@ typedef struct {
 /*1bc*/ s8 unk1BC[0x25B - 0x1BC];
 /*258*/ s8 unk25B;
 /*25c*/ s8 unk25C;
-/*25d*/ u8 pad25D;
+/*25d*/ s8 unk25D;
 /*25e*/ u8 pad25E;
 /*25f*/ u8 pad25F;
 /*260*/ s8 unk260;

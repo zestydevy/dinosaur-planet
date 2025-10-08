@@ -16,9 +16,6 @@
 #include "dlls/objects/210_player.h"
 #include "segment_334F0.h"
 
-static void dll_210_func_14B70(Object* arg0, u32 arg1);
-static void dll_210_func_7260(Object* arg0, PlayerState* arg1);
-
 // size: 0x54
 typedef struct UnkArg1 {
     Object *unk0;
@@ -38,6 +35,16 @@ typedef struct UnkArg1 {
     u8 pad51;
     s8 unk52;
 } UnkArg1;
+
+static void dll_210_func_7260(Object* arg0, PlayerState* arg1);
+static s32 dll_210_func_7AAC(Object* arg0, PlayerState* arg1, UnkArg1* arg2, Vec3f* arg3, UnkArg3* arg4, s32 arg5);
+static void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2);
+static void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1);
+static void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2);
+static s32 dll_210_func_7E6C(Object* arg0, PlayerState* arg1, PlayerState* arg2, PlayerState3B4* arg3, f32 arg4, s32 arg5);
+static void dll_210_func_14B70(Object* arg0, u32 arg1);
+static void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3);
+static void dll_210_func_1BC0(Object* arg0, PlayerState* arg1);
 
 typedef struct Unk {
     u8 pad0[0x24];
@@ -65,24 +72,20 @@ typedef struct Unk {
     void *unkF4;
 } Unk;
 
-// These funcs are static funcs but can only be made static once the funcs they are used in are matched
+// These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* arg0, PlayerState* arg1, s32 arg2);
 /* static */ void dll_210_func_41F4(Object* arg0, PlayerState* arg1);
 /* static */ void dll_210_func_9E00(Object* arg0);
 /* static */ void dll_210_func_1CEFC(Object* player, s32 arg1);
 /* static */ void dll_210_func_363C(Object* arg0, PlayerState* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4);
-/* static */ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
-/* static */ void dll_210_func_1BC0(Object* arg0, PlayerState* arg1);
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
 /* static */ f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1);
 /* static */ void dll_210_func_9F1C(Object* arg0, s32 arg1);
 /* static */ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
 /* static */ void dll_210_func_1DE64(UNK_TYPE_32 *arg0);
 /* static */ void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2);
-/* static */ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2);
 /* static */ void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2);
 /* static */ void dll_210_func_98CC(Object* arg0, PlayerState* arg1, f32 arg2);
-/* static */ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2);
 /* static */ s32 dll_210_func_C1F4(Object* arg0, PlayerState* arg1, f32 arg2);
 /* static */ void dll_210_func_B4C8(Object* player, s32 arg1);
 /* static */ void dll_210_func_1AAD8(Object* arg0, UNK_TYPE_32 arg1);
@@ -90,9 +93,6 @@ typedef struct Unk {
 /* static */ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5);
 /* static */ Object *dll_210_func_1DD94(Object* obj, s32 arg1);
 /* static */ void dll_210_func_1DC48(Object* obj);
-/* static */ void dll_210_func_8EA4(Object* arg0, PlayerState* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
-/* static */ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2);
-/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3);
 /* static */ void dll_210_func_692C(Object* arg0, PlayerState* arg1, f32 arg2);
 /* static */ void dll_210_func_64B4(Object* arg0, PlayerState* arg1, f32 arg2);
 /* static */ void dll_210_func_A058(Object* arg0);
@@ -101,9 +101,15 @@ typedef struct Unk {
 /* static */ void dll_210_func_47B8(Object* arg0, PlayerState* arg1);
 /* static */ void dll_210_func_A024(Object* player, PlayerState* state);
 /* static */ void dll_210_func_7180(Object* arg0, PlayerState* arg1, f32 arg2);
-/* static */ void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3);
-/* static */ s32 dll_210_func_75B0(Object* arg0, UnkArg1* arg1, PlayerState490* arg2, Vec3f* arg3, f32 arg4, f32 arg5);
-/* static */ s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, UnkArg1* arg2, PlayerState490* arg3, Vec3f* arg4, f32 arg5);
+/* static */ void dll_210_func_11A0(Object* arg0, PlayerState* arg1, f32 arg2);
+
+// These funcs must be static for other funcs but aren't matched yet
+/* static */ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
+/* static */ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2);
+/* static */ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2);
+/* static */ void dll_210_func_8EA4(Object* arg0, PlayerState* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
+/* static */ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2);
+/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -124,7 +130,8 @@ void func_80032238(Object* obj, s32 arg1, s32 arg2, Vec3f* arg3);
 void func_80034FF0(s32);
 void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32, void*, s32, s32);
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, s16 *param_7);
-s32 func_80059C40(f32*, f32*, s32, s32, UnkArg1*, Object*, s32, s32, s32, s32);
+s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, UnkArg1*, Object*, s8, s8, u8, s8);
+s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
 
 /*0x0*/ static const DLTri _rodata_0[] = {
     { 0x40, 0x02, 0x01, 0x00, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x01, 0x02, { 0, 0, 0, 0, 0, 0 }},
@@ -271,11 +278,13 @@ s32 func_80059C40(f32*, f32*, s32, s32, UnkArg1*, Object*, s32, s32, s32, s32);
 /*0x528*/ static f32 _data_528 = 0.0f;
 /*0x52C*/ static s8 _data_52C = 0;
 /*0x530*/ static u8 _data_530 = 1;
-/*0x534*/ static u32 _data_534[] = {
-    0x0b04060a, 0x0a03030c, 0x05020e0f, 0x10111200
+/*0x534*/ static u8 _data_534[] = {
+    0x0b, 0x04, 0x06, 0x0a, 0x0a, 0x03, 0x03, 0x0c,
+    0x05, 0x02, 0x0e, 0x0f, 0x10, 0x11, 0x12
 };
-/*0x544*/ static u32 _data_544[] = {
-    0x00010002, 0x00040008, 0x00080010, 0x00100020, 0x00400080, 0x01000200, 0x04000080, 0x00010000
+/*0x544*/ static u16 _data_544[] = {
+    0x0001, 0x0002, 0x0004, 0x0008, 0x0008, 0x0010, 0x0010, 0x0020,
+    0x0040, 0x0080, 0x0100, 0x0200, 0x0400, 0x0080, 0x0001
 };
 /*0x564*/ static s16 _data_564[] = { 0x000e, 0x0051 };
 /*0x568*/ static u32 _data_568[] = {
@@ -398,10 +407,7 @@ s32 func_80059C40(f32*, f32*, s32, s32, UnkArg1*, Object*, s32, s32, s32, s32);
 /*0x1A8*/ static u8 _bss_1A8[0x2];
 /*0x1AA*/ static u8 _bss_1AA[0x2];
 /*0x1AC*/ static f32 _bss_1AC;
-/*0x1B0*/ static u8 _bss_1B0[0x4];
-/*0x1B4*/ static u8 _bss_1B4[0x4];
-/*0x1B8*/ static u8 _bss_1B8[0x4];
-/*0x1BC*/ static u8 _bss_1BC[0x4];
+/*0x1B0*/ static f32 _bss_1B0[0x4];
 /*0x1C0*/ static u8 _bss_1C0[0x8];
 /*0x1C8*/ static f32 _bss_1C8[2];
 /*0x1D0*/ static u8 _bss_1D0[0xc];
@@ -522,7 +528,7 @@ void dll_210_func_444(Object* arg0, u32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_934.s")
 #else
 // Requires these as static:
-// dll_210_func_11A0
+// dll_210_func_11A0 (matched)
 // dll_210_func_1CA8 (matched)
 // dll_210_func_1DDC (matched)
 // dll_210_func_2534
@@ -667,12 +673,6 @@ void dll_210_func_934(Object* arg0) {
 #endif
 
 // offset: 0x11A0 | func: 3
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_11A0.s")
-#else
-// Matches but requires these as static:
-// dll_210_func_618C (matched)
-// dll_210_func_1BC0 (matched)
 void dll_210_func_11A0(Object* arg0, PlayerState* arg1, f32 arg2) {
     f32 spCC;
     f32 spC8;
@@ -860,10 +860,9 @@ void dll_210_func_11A0(Object* arg0, PlayerState* arg1, f32 arg2) {
     obj_integrate_speed(arg0, arg0->speed.x * arg2 * temp_fv0, arg0->speed.y * arg2 * temp_fv0, arg0->speed.z * arg2 * temp_fv0);
     dll_210_func_1BC0(arg0, arg1);
 }
-#endif
 
 // offset: 0x1BC0 | func: 4
-void dll_210_func_1BC0(Object* arg0, PlayerState* arg1) {
+static void dll_210_func_1BC0(Object* arg0, PlayerState* arg1) {
     Object* linkedObj;
 
     arg0->unk0xb0 &= ~3;
@@ -1568,7 +1567,6 @@ void dll_210_func_47B8(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 #else
 // Needs these as static:
-// dll_210_func_1BC0 (matched)
 // dll_210_func_1DB6C (matched)
 // dll_210_func_63F0 (matched)
 // dll_210_func_9F1C (matched)
@@ -2046,11 +2044,7 @@ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 }
 
 // offset: 0x618C | func: 29
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_618C.s")
-#else
-// matches but requires dll_210_func_7E6C as static
-void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3) {
+static void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3) {
     PlayerState3B4 sp34;
 
     arg1->unk29C = 0.14f;
@@ -2086,10 +2080,9 @@ void dll_210_func_618C(Object* arg0, PlayerState* arg1, s32 arg2, f32 arg3) {
         gDLL_18->vtbl->func4(arg0, arg1, 0x11);
     }
     gDLL_18->vtbl->func1(arg0, arg1, arg3, _bss_1AC, (u32) _bss_58, (u32) _bss_19C);
-    arg1->unk0 &= 0xFEFFFFFF;
-    arg1->unk3BC(arg0, arg1, delayFloat);
+    arg1->unk0 &= ~0x01000000;
+    ((void (*)(Object*, PlayerState*, f32))arg1->unk3BC)(arg0, arg1, delayFloat);
 }
-#endif
 
 // offset: 0x63F0 | func: 30
 f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1) {
@@ -2472,7 +2465,7 @@ static void dll_210_func_7260(Object* arg0, PlayerState* arg1) {
 }
 
 // offset: 0x7300 | func: 36
-s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, UnkArg1* arg2, PlayerState490* arg3, Vec3f* arg4, f32 arg5) {
+static s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, UnkArg1* arg2, PlayerState490* arg3, Vec3f* arg4, f32 arg5) {
     PlayerState *state = arg0->state;
     f32 f12;
     f32 f0;
@@ -2533,7 +2526,7 @@ s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, UnkArg1* arg2, PlayerStat
 }
 
 // offset: 0x75B0 | func: 37
-s32 dll_210_func_75B0(Object* arg0, UnkArg1* arg1, PlayerState490* arg2, Vec3f* arg3, f32 arg4, f32 arg5) {
+static s32 dll_210_func_75B0(Object* arg0, UnkArg1* arg1, PlayerState490* arg2, Vec3f* arg3, f32 arg4, f32 arg5) {
     PlayerState *state = arg0->state;
     f32 sp4[4];
     f32 temp_fv1;
@@ -2592,7 +2585,7 @@ s32 dll_210_func_75B0(Object* arg0, UnkArg1* arg1, PlayerState490* arg2, Vec3f* 
 }
 
 // offset: 0x77DC | func: 38
-s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
+static s32 dll_210_func_77DC(Object *arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
     arg2->unk0.x = arg1->unk1C.x;
     arg2->unk0.y = arg1->unk1C.y;
     arg2->unk0.z = arg1->unk1C.z;
@@ -2611,7 +2604,7 @@ s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
 }
 
 // offset: 0x78A8 | func: 39
-s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* arg3, s32 arg4) {
+static s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* arg3, s32 arg4) {
     arg3->unk3 = 0;
     arg3->unk48 = ((arg2->unk8 - arg2->unk4) * 0.5f) + arg2->unk4;
     arg3->unk4C = arg2->unkC;
@@ -2681,7 +2674,7 @@ s32 dll_210_func_7AAC(Object* arg0, PlayerState* arg1, UnkArg1* arg2, Vec3f* arg
 }
 
 // offset: 0x7B98 | func: 41
-void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2) {
+static void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2) {
     arg2->unk0.x = arg1->unk1C.x;
     arg2->unk0.y = arg1->unk1C.y;
     arg2->unk0.z = arg1->unk1C.z;
@@ -2717,7 +2710,7 @@ s32 dll_210_func_7BC4(Object* arg0, PlayerState* arg1, u32* arg2, UnkArg4* arg3)
 }
 
 // offset: 0x7CF8 | func: 43
-void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
+static void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
     s32 sp20;
 
     sp20 = arctan2_f(arg0->unk288, -arg0->unk284) - arg0->unk324;
@@ -2727,7 +2720,7 @@ void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
 }
 
 // offset: 0x7DA0 | func: 44
-void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
+static void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
     f32 f0;
 
     f0 = sqrtf(SQ(arg0->speed.x) + SQ(arg0->speed.z));
@@ -2744,16 +2737,309 @@ void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
 }
 
 // offset: 0x7E6C | func: 45
-// REquires these as static:
-// dll_210_func_7300 (matched)
-// dll_210_func_75B0 (matched)
-// dll_210_func_77DC (matched)
-// dll_210_func_78A8 (matched)
-// dll_210_func_7AAC (matched)
-// dll_210_func_7B98 (matched)
-// dll_210_func_7CF8 (matched)
-// dll_210_func_7DA0 (matched)
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7E6C.s")
+static s32 dll_210_func_7E6C(Object* arg0, PlayerState* arg1, PlayerState* arg2, PlayerState3B4* arg3, f32 arg4, s32 arg5) {
+    Vec3f sp164;
+    Vec3f sp158;
+    Vec3f sp14C;
+    Vec3f sp140;
+    Vec3f sp134;
+    Vec3f sp128;
+    s32 var_s0_2;
+    UnkArg1 spD0;
+    f32 spCC;
+    s32 pad2;
+    u8 var_v1;
+    u8 spB8[15] = _data_534;
+    u16 sp98[15] = _data_544;
+    u8 pad_sp97;
+    u8 sp96;
+    u8 sp95;
+    s32 pad;
+    Vec3f* var_s0;
+    Object* sp88;
+    Object** objects;
+    s32 sp80;
+    u8 someFlag;
+    s8 sp7E;
+    s8 sp7D;
+    s8 sp7C;
+    s32 i;
+    f32 sp74;
+    f32 sp70;
+    f32 sp6C;
+
+    dll_210_func_7CF8(arg2, &sp164);
+    dll_210_func_7DA0(arg0, arg2, &sp158);
+    sp134.x = sp164.x * 50.0f;
+    sp134.y = sp164.y * 50.0f;
+    sp134.z = sp164.z * 50.0f;
+    sp128.x = sp158.x * 50.0f;
+    sp128.y = sp158.y * 50.0f;
+    sp128.z = sp158.z * 50.0f;
+    arg1->flags &= ~0x100;
+    sp96 = 15;
+    for (i = 0; i < sp96; i++) {
+        someFlag = FALSE;
+        sp95 = FALSE;
+        sp7E = TRUE;
+        sp7D = FALSE;
+        if (sp98[i] & arg5) {
+            switch (i) {
+            case 1:
+            case 8:
+            case 9:
+            case 13:
+                sp7E = FALSE;
+                sp7D = TRUE;
+                /* fallthrough */
+            case 0:
+            case 7:
+            case 14:
+                someFlag = TRUE;
+                if (!(arg2->unk260 & 0x10)) {
+                    continue;
+                }
+                break;
+            case 3:
+            case 5:
+                someFlag = TRUE;
+                sp95 = TRUE;
+                if (!(arg2->unk260 & 0x10)) {
+                    continue;
+                }
+                break;
+            case 2:
+                if (!(arg2->unk260 & 0x10)) {
+                    someFlag = TRUE;
+                }
+                break;
+            case 4:
+            case 6:
+                break;
+            default:
+                break;
+            }
+
+            if (sp95 == 0) {
+                if (someFlag == 0) {
+                    var_s0 = &sp164;
+                    sp140.x = (0, sp134).x + arg0->srt.transl.x;
+                    sp140.y = (0, sp134).y + arg0->srt.transl.y;
+                    sp140.z = (0, sp134).z + arg0->srt.transl.z;
+                } else {
+                    var_s0 = &sp158;
+                    sp140.x = (0, sp128).x + arg0->srt.transl.x;
+                    sp140.y = (0, sp128).y + arg0->srt.transl.y;
+                    sp140.z = (0, sp128).z + arg0->srt.transl.z;
+                }
+                sp14C.x = arg0->srt.transl.x;
+                sp14C.y = arg0->srt.transl.y;
+                sp14C.z = arg0->srt.transl.z;
+            } else {
+                if (someFlag == 0) {
+                    var_s0 = &sp164;
+                    sp14C.x = (0, sp134).x + arg0->srt.transl.x;
+                    sp14C.y = (0, sp134).y + arg0->srt.transl.y;
+                    sp14C.z = (0, sp134).z + arg0->srt.transl.z;
+                } else {
+                    var_s0 = &sp158;
+                    sp14C.x = (0, sp128).x + arg0->srt.transl.x;
+                    sp14C.y = (0, sp128).y + arg0->srt.transl.y;
+                    sp14C.z = (0, sp128).z + arg0->srt.transl.z;
+                }
+                sp140.x = arg0->srt.transl.x;
+                sp140.y = arg0->srt.transl.y;
+                sp140.z = arg0->srt.transl.z;
+            }
+            var_v1 = func_80059C40(&sp14C, &sp140, 0.0f, 3, &spD0, arg0, arg2->unk25D, spB8[i], 0xFF, 0xA);
+            if (sp7D != 0 && var_v1 != 0) {
+                arg1->unk7FC = spD0.unk44;
+            }
+            if (sp7E != 0 && var_v1 != 0) {
+                spCC = (var_s0->z * spD0.unk1C.z) + ((spD0.unk1C.x * var_s0->x) + (spD0.unk1C.y * var_s0->y));
+                switch (i) {
+                case 3:
+                case 5:
+                    if (arg0->srt.transl.y < (spD0.unkC + 5.0f)) {
+                        var_v1 = FALSE;
+                    }
+                    break;
+                case 4:
+                case 6:
+                case 11:
+                    if ((arg2->unk260 & 0x10) && ((arg2->unk290 < 0.1f) || (spCC > -0.8f) || ((spD0.unk38.y - 10.0f) < arg0->srt.transl.y))) {
+                        var_v1 = FALSE;
+                    }
+                    break;
+                case 2:
+                    if ((arg2->unk260 & 0x10) && ((arg2->unk290 < 0.1f) || (spCC > -0.8f) || ((spD0.unk38.y - 10.0f) < arg0->srt.transl.y))) {
+                        var_v1 = FALSE;
+                    }
+                    break;
+                case 0:
+                case 14:
+                    if (spCC > -0.8f) {
+                        var_v1 = FALSE;
+                    }
+                    break;
+                default:
+                    if (spCC > -0.8f) {
+                        var_v1 = FALSE;
+                    }
+                    break;
+                }
+            }
+            if (sp7E != 0 && var_v1 != 0) {
+                if (!sp95) {
+                    sp14C.x = arg0->srt.transl.x;
+                    sp14C.y = arg0->srt.transl.y;
+                    sp140.x = arg0->srt.transl.x - (spD0.unk1C.x * 50.0f);
+                    sp140.y = arg0->srt.transl.y;
+                    sp140.z = arg0->srt.transl.z - (spD0.unk1C.z * 50.0f);
+                } else {
+                    sp14C.x = arg0->srt.transl.x + (spD0.unk1C.x * 50.0f);
+                    sp14C.y = arg0->srt.transl.y;
+                    sp14C.z = arg0->srt.transl.z + (spD0.unk1C.z * 50.0f);
+                    sp140.x = arg0->srt.transl.x;
+                    sp140.y = arg0->srt.transl.y;
+                    sp140.z = arg0->srt.transl.z;
+                }
+                var_v1 = func_80059C40(&sp14C, &sp140, 0.0f, 3, &spD0, arg0, arg2->unk25D, spB8[i], 0xFF, 0xA);
+            }
+            if (var_v1 != 0) {
+                spCC = spD0.unk44;
+                if (sp95) {
+                    spCC = 50.0f - spD0.unk44;
+                }
+                switch (i) {
+                case 0:
+                    sp88 = spD0.unk0;
+                    if (sp88 == NULL) {
+                        break;
+                    }
+
+                    if ((((DLL_Unknown*)sp88->dll)->vtbl->func[10].withOneArgS32(sp88) != 0) && (arg2->unk290 >= 0.1f) && (spCC < 10.5f)) {
+                        switch (dll_210_func_7300(arg0, arg1, &spD0, &arg1->unk490, &sp140, spCC)) {
+                        case 2:
+                            return 4;
+                        case 3:
+                            return 5;
+                        }
+                        // @fake
+                        do { break; } while (0);
+                    }
+
+                    if (spCC < 15.0f) {
+                        arg1->flags |= 0x100;
+                        if ((arg2->unk310 & 0x8000) && (dll_210_func_77DC(arg0, &spD0, &arg1->unk680, &sp140) != 0)) {
+                            return 8;
+                        }
+                    }
+                    break;
+                case 14:
+                    if ((spCC < 18.0f) && (arg2->unk310 & 0x8000)) {
+                        dll_210_func_77DC(arg0, &spD0, &arg1->unk680, &sp140);
+                        return 0x12;
+                    }
+                    break;
+                case 3:
+                case 4:
+                    if ((spCC < 14.0f) && (dll_210_func_78A8(arg0, arg1, &spD0, &arg1->unk3CC, i == 3))) {
+                        return 0;
+                    }
+                    break;
+                case 5:
+                case 6:
+                    if ((spCC < 14.0f) && (dll_210_func_7AAC(arg0, arg1, &spD0, &sp140, &arg1->unk430, i == 5))) {
+                        return 0xC;
+                    }
+                    break;
+                case 1:
+                case 8:
+                case 9:
+                case 13:
+                    if (spCC < 15.0f) {
+                        switch (dll_210_func_75B0(arg0, &spD0, &arg1->unk490, &sp140, spCC, arg4)) {
+                        case 4:
+                            return 0xA;
+                        case 5:
+                            return 9;
+                        }
+                    }
+                    break;
+                case 2:
+                case 12:
+                    if (spCC < 20.0f) {
+                        switch (dll_210_func_7300(arg0, arg1, &spD0, &arg1->unk490, &sp140, spCC)) {
+                        case 2:
+                            return 4;
+                        case 3:
+                            return 5;
+                        case 6:
+                            return 0x11;
+                        }
+                    }
+                    break;
+                case 10:
+                    if (spCC < 14.0f) {
+                        sp6C = 50.0f;
+                        sp88 = obj_get_nearest_type_to(0x25, arg0, &sp6C);
+                        var_s0_2 = TRUE;
+                        if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32(sp88) == 0)) {
+                            var_s0_2 = FALSE;
+                        }
+                        if (var_s0_2) {
+                            dll_210_func_7B98(arg0, &spD0, &arg1->unk4D8);
+                            return 0xE;
+                        }
+                        break;
+                    }
+                    break;
+                case 11:
+                    if (spCC < 14.0f) {
+                        return 0xF;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    if (arg2->unk310 & 0x8000) {
+        if (arg5 & 0x800) {
+            objects = obj_get_all_of_type(0xB, &sp80);
+            for (i = 0; i < sp80; i++) {
+                sp88 = objects[i];
+                if (((DLL_Unknown*)sp88->dll)->vtbl->func[7].withTwoArgsS32(sp88, arg0) != 0) {
+                    arg1->unk858 = sp88;
+                    return 0xD;
+                }
+            }
+        }
+        if ((arg5 & 0x1000) && (get_gplay_bitstring(0x880) != 0)) {
+            objects = obj_get_all_of_type(0x19, &sp80);
+            arg1->unk6B0.unk34 = NULL;
+            arg1->unk6B0.unk3C = 200.0f;
+            for (i = 0; i < sp80; i++) {
+                sp88 = objects[i];
+                if (((DLL_Unknown*)sp88->dll)->vtbl->func[14].withOneArgS32(sp88) != 0) {
+                    sp88 = objects[i];
+                    if ((((DLL_Unknown*)sp88->dll)->vtbl->func[11].withSevenArgsCustom(sp88, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp74, &sp70, &sp7C) != 0) && (sp74 < arg1->unk6B0.unk3C)) {
+                        arg1->unk6B0.unk34 = objects[i];
+                        arg1->unk6B0.unk3C = sp74;
+                        arg1->unk6B0.unk40 = sp70;
+                    }
+                }
+            }
+            if (arg1->unk6B0.unk34 != NULL) {
+                arg1->unk6B0.unk38 = arg1->unk6B0.unk34;
+                arg1->unk6B0.unk48 = arg1->unk6B0.unk40;
+                return 7;
+            }
+        }
+    }
+    return -1;
+}
+
 
 // offset: 0x8AE0 | func: 46
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_8AE0.s")
@@ -3118,10 +3404,6 @@ void dll_210_func_A024(Object* player, PlayerState* state) {
 }
 
 // offset: 0xA058 | func: 55
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_A058.s")
-#else
-// This matches on decomp.me but unmatches here? Maybe because of ub on _data_564
 void dll_210_func_A058(Object* arg0) {
     PlayerState *state = arg0->state;
     Vec3f sp78;
@@ -3169,7 +3451,6 @@ void dll_210_func_A058(Object* arg0) {
     }
     func_80024DD0(arg0, 0, 0, 0);
 }
-#endif
 
 // offset: 0xA3E4 | func: 56
 s32 dll_210_func_A3E4(Object* player, s32 arg1, s32 arg2) {
@@ -3377,7 +3658,7 @@ void dll_210_func_B4C8(Object* player, s32 arg1) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_BA38.s")
 #else
-// Requires dll_210_func_7E6C, dll_210_func_7BC4, dll_210_func_1DAB0, dll_210_func_18E80 as static
+// Requires dll_210_func_7BC4, dll_210_func_1DAB0, dll_210_func_18E80 as static
 // https://decomp.me/scratch/3CYBi
 s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2) {
     PlayerState* spC4;
