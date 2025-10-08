@@ -30,6 +30,23 @@ typedef struct PlayerState3B4 {
     WeaponDataPtr unk34;
 } PlayerState3B4;
 
+// size: 0x48
+typedef struct PlayerState490 {
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    Vec4f unk1C;
+    Vec3f unk2C;
+    Vec3f unk38;
+    u16 pad44;
+    s8 unk46;
+    u8 unk47;
+} PlayerState490;
+
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;
@@ -186,8 +203,7 @@ typedef struct {
 /*3CC*/ UnkArg3 unk3CC;
 /*42C*/ s32 pad42C;
 /*430*/ UnkArg3 unk430;
-/*490*/ UNK_TYPE_32 unk490;
-/*494*/ u8 pad494[0x4D8 - 0x494];
+/*490*/ PlayerState490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
 /*508*/ u8 pad508[0x680 - 0x508];
 /*680*/ UnkArg2 unk680;
