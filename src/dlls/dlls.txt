@@ -47,6 +47,7 @@
 278 = objects/278_flameblast
 281 = objects/281_area
 283 = objects/283_krazoatext
+284 = objects/284_levelname
 296 = objects/296_medium_crate
 325 = objects/325_trigger
 345 = objects/345_animator
