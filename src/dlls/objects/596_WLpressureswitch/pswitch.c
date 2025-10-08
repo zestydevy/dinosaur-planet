@@ -1,11 +1,11 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objects.h"
-#include "sys/gamebits.h"
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -128,12 +128,12 @@ void WLpressureswitch_update(Object* self) {
         if (state->pressed) {
             deltaY = createInfo->base.y - self->srt.transl.y;
             if (2.5f < deltaY && deltaY < 5.0f) {
-                set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, TRUE);
-            } else if (get_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened)) {
-                set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, FALSE);
+                set_gplay_bitstring(BIT_WM_Randorn_Hall_Opened, TRUE);
+            } else if (get_gplay_bitstring(BIT_WM_Randorn_Hall_Opened)) {
+                set_gplay_bitstring(BIT_WM_Randorn_Hall_Opened, FALSE);
             }
-        } else if (get_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened)) {
-            set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, FALSE);
+        } else if (get_gplay_bitstring(BIT_WM_Randorn_Hall_Opened)) {
+            set_gplay_bitstring(BIT_WM_Randorn_Hall_Opened, FALSE);
         }
     }
 

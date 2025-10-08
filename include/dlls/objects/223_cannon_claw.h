@@ -8,7 +8,7 @@
 typedef struct {
 /*00*/ ObjCreateInfo base;
 /*18*/ u8 _unk18[0x1a - 0x18];
-/*1A*/ s16 bitstringEntry;
+/*1A*/ s16 gamebit;
 } CannonClawCreateInfo;
 
 // TODO: not needed?

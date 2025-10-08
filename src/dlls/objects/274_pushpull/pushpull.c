@@ -100,7 +100,7 @@ u32 dll_274_get_state_size(Object *self, u32 a1) {
 s32 dll_274_func_2A74(Object* arg0, DLL274_State* arg1) {
     if ((arg1->unkCC == 0.0f) && (arg1->unkC8 > 0.0f)) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_3D8, MAX_VOLUME, NULL, NULL, 0, NULL);
-        set_gplay_bitstring(0x272, 1);
+        set_gplay_bitstring(BIT_DIM_Pushed_Ice_Block_Into_Lake, 1);
     }
     return 0;
 }

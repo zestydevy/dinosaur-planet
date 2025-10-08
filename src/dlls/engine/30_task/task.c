@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "game/gamebits.h"
 #include "sys/main.h"
 #include "variables.h"
 #include "functions.h"
@@ -21,7 +22,7 @@ void task_load_recently_completed() {
     u8 val;
 
     for (i = 0; i != 5; i++) {
-        val = get_gplay_bitstring(311 + i);
+        val = get_gplay_bitstring(BIT_Recent_Task_1 + i);
         sRecentlyCompleted[i] = val;
 
         if (val != 0) {
@@ -29,7 +30,7 @@ void task_load_recently_completed() {
         }
     }
 
-    val = get_gplay_bitstring(316);
+    val = get_gplay_bitstring(BIT_Furthest_Completed_Task);
     sCompletionIdx = val;
     if (val == 0) {
         sCompletionIdx = 1;
@@ -57,7 +58,7 @@ void task_mark_task_completed(u8 task) {
         sRecentlyCompletedNextIdx++;
         sRecentlyCompleted[sRecentlyCompletedNextIdx] = task;
 
-        set_gplay_bitstring(sRecentlyCompletedNextIdx + 311, task);
+        set_gplay_bitstring(BIT_Recent_Task_1 + sRecentlyCompletedNextIdx, task);
     } else {
         // Otherwise, shift everything down and add to the end
         for (i = 0; i < 4; i++) {
@@ -67,14 +68,14 @@ void task_mark_task_completed(u8 task) {
         sRecentlyCompleted[4] = task;
 
         for (i = 0; i < 5; i++) {
-            set_gplay_bitstring(311 + i, sRecentlyCompleted[i]);
+            set_gplay_bitstring(BIT_Recent_Task_1 + i, sRecentlyCompleted[i]);
         }
     }
 
     // Set bit for task in bitstring
     //
-    // This is a 256-bit bitstring from gplay bitstring entry 303 to 315 (8 entries)
-    bs_entry = (task / 32) + 303;
+    // This is a 256-bit bitstring from bit entry 303 to 315 (8 entries)
+    bs_entry = (task / 32) + BIT_Task_Bits_1;
 
     bs_value = get_gplay_bitstring(bs_entry);
     bit_idx = task % 32;
@@ -87,7 +88,7 @@ void task_mark_task_completed(u8 task) {
         do {
             sCompletionIdx++;
 
-            bs_entry2 = (sCompletionIdx / 32) + 303;
+            bs_entry2 = (sCompletionIdx / 32) + BIT_Task_Bits_1;
             if (bs_entry2 != bs_entry) {
                 bs_entry = bs_entry2;
 
@@ -97,7 +98,7 @@ void task_mark_task_completed(u8 task) {
 
         } while ((bs_value >> bit_idx) & 1);
 
-        set_gplay_bitstring(316, sCompletionIdx);
+        set_gplay_bitstring(BIT_Furthest_Completed_Task, sCompletionIdx);
     }
 
     // hmm

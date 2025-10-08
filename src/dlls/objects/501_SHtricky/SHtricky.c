@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/objects/common/sidekick.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -21,10 +22,10 @@ void SHtricky_create(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
 
     state = (SHtricky_State*)self->state;
     
-    if (get_gplay_bitstring(0xB0) != 0) {
+    if (get_gplay_bitstring(BIT_SH_Queen_EW_Quest_Progress) != 0) {
         state->unk0 = 3;
     } else {
-        set_gplay_bitstring(0xC3, 0);
+        set_gplay_bitstring(BIT_Play_Seq_00D1, 0);
         state->unk0 = 0;
     }
 
@@ -41,7 +42,7 @@ void SHtricky_update(Object *self) {
 
     switch (state->unk0) {
     case 0:
-        if (get_gplay_bitstring(0xC3) != 0) {
+        if (get_gplay_bitstring(BIT_Play_Seq_00D1) != 0) {
             gDLL_3_Animation->vtbl->func17(3, sidekick, -1);
             state->unk0 = 1;
         } 

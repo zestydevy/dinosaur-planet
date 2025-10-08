@@ -1,4 +1,5 @@
 #include "PR/ultratypes.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "functions.h"
 #include "dll.h"
@@ -9,15 +10,14 @@
 #include "sys/map_enums.h"
 #include "sys/menu.h"
 #include "sys/map.h"
-#include "sys/gamebits.h"
 
 #define SOMESIZE 28
 
 // tree order
 /*0x0*/ static u16 _data_0[3] = {
-    BIT_7D_SC_Hit_Village_Tree_One,
-    BIT_7E_SC_Hit_Village_Tree_Two,
-    BIT_7F_SC_Hit_Village_Tree_Three
+    BIT_SC_Hit_Village_Tree_One,
+    BIT_SC_Hit_Village_Tree_Two,
+    BIT_SC_Hit_Village_Tree_Three
 };
 // passed to func_80000860
 /*0x8*/ static u16 _data_8[SOMESIZE] = {
@@ -98,7 +98,7 @@ void SC_levelcontrol_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
     state->mapID = -1;
     state->isNighttime = FALSE;
     state->unk2 = 0;
-    state->index1 = get_gplay_bitstring(BIT_2BA_SC_UNKNOWN);
+    state->index1 = get_gplay_bitstring(BIT_SC_UNKNOWN_2BA);
     self->unk0xbc = (ObjectCallback)SC_levelcontrol_func_12D8;
 }
 
@@ -129,23 +129,23 @@ void SC_levelcontrol_update(Object *self) {
     state->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
 
     // trees must be hit in the correct order
-    if (get_gplay_bitstring(BIT_7D_SC_Hit_Village_Tree_One)) {
-        set_gplay_bitstring(BIT_7D_SC_Hit_Village_Tree_One, 0);
-        if (_data_0[state->treesHit] == BIT_7D_SC_Hit_Village_Tree_One) {
+    if (get_gplay_bitstring(BIT_SC_Hit_Village_Tree_One)) {
+        set_gplay_bitstring(BIT_SC_Hit_Village_Tree_One, 0);
+        if (_data_0[state->treesHit] == BIT_SC_Hit_Village_Tree_One) {
             state->treesHit++;
         } else {
             state->treesHit = 0;
         }
-    } else if (get_gplay_bitstring(BIT_7E_SC_Hit_Village_Tree_Two)) {
-        set_gplay_bitstring(BIT_7E_SC_Hit_Village_Tree_Two, 0);
-        if (_data_0[state->treesHit] == BIT_7E_SC_Hit_Village_Tree_Two) {
+    } else if (get_gplay_bitstring(BIT_SC_Hit_Village_Tree_Two)) {
+        set_gplay_bitstring(BIT_SC_Hit_Village_Tree_Two, 0);
+        if (_data_0[state->treesHit] == BIT_SC_Hit_Village_Tree_Two) {
             state->treesHit++;
         } else {
             state->treesHit = 0;
         }
-    } else if (get_gplay_bitstring(BIT_7F_SC_Hit_Village_Tree_Three)) {
-        set_gplay_bitstring(BIT_7F_SC_Hit_Village_Tree_Three, 0);
-        if (_data_0[state->treesHit] == BIT_7F_SC_Hit_Village_Tree_Three) {
+    } else if (get_gplay_bitstring(BIT_SC_Hit_Village_Tree_Three)) {
+        set_gplay_bitstring(BIT_SC_Hit_Village_Tree_Three, 0);
+        if (_data_0[state->treesHit] == BIT_SC_Hit_Village_Tree_Three) {
             state->treesHit++;
         } else {
             state->treesHit = 0;
@@ -153,7 +153,7 @@ void SC_levelcontrol_update(Object *self) {
     }
 
     if (state->treesHit >= 3) {
-        set_gplay_bitstring(BIT_80_SC_Village_Opened, 1);
+        set_gplay_bitstring(BIT_SC_Village_Opened, 1);
         state->treesHit = 0;
     }
 
@@ -162,8 +162,8 @@ void SC_levelcontrol_update(Object *self) {
             if (func_8000FB1C() != 0) {
                 set_gplay_bitstring(BIT_7CF, 1);
             }
-        } else if ((get_gplay_bitstring(BIT_89_Dont_Repeat_SwapStone_Intro)) && (func_8000FB1C() != 0)) {
-            set_gplay_bitstring(BIT_87_SC_Pond_Platform_Raised, 0);
+        } else if ((get_gplay_bitstring(BIT_Dont_Repeat_Swapstone_Intro)) && (func_8000FB1C() != 0)) {
+            set_gplay_bitstring(BIT_SC_Pond_Platform_Raised, 0);
             if (state->isNighttime) {
                 gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
             } else {
@@ -195,7 +195,7 @@ void SC_levelcontrol_destroy(Object *self, s32 arg1) {
     if (arg1 == 0) {
         func_80000860(self, get_player(), 0x1C3, 0);
     }
-    set_gplay_bitstring(BIT_2BA_SC_UNKNOWN, state->index1);
+    set_gplay_bitstring(BIT_SC_UNKNOWN_2BA, state->index1);
     func_8000FA2C();
     gDLL_5_AMSEQ2->vtbl->func0(self, 0xBB, 0, 0, 0);
     gDLL_5_AMSEQ2->vtbl->func0(self, 0xDA, 0, 0, 0);
@@ -227,8 +227,8 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
     state->unk2 = arg1;
 
     if (state->unk2 == 1) {
-        set_gplay_bitstring(BIT_87_SC_Pond_Platform_Raised, 1);
-        set_gplay_bitstring(BIT_2B8_SC_Platform_Rises_Totem_Challenge_Begins, 1);
+        set_gplay_bitstring(BIT_SC_Pond_Platform_Raised, 1);
+        set_gplay_bitstring(BIT_SC_Platform_Rises_Totem_Challenge_Begins, 1);
         gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
         func_8000F64C(0x1D, 0x2D);
         func_8000F6CC();
@@ -266,7 +266,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
     player = get_player();
 
     if (mapSetup < 3) {
-        if (get_gplay_bitstring(BIT_2C5_CC_Used_Cell_Door_Key)) {
+        if (get_gplay_bitstring(BIT_CC_Used_Cell_Door_Key)) {
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 3);
         }
     } else switch (mapSetup) {
@@ -276,12 +276,12 @@ void SC_levelcontrol_func_8B4(Object *self) {
         }
         break;
     case 8:
-        if (get_gplay_bitstring(BIT_316_WM_Spirit_Release_Sabre)) {
+        if (get_gplay_bitstring(BIT_Spirit_2_Release_Sabre)) {
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 9);
         }
         break;
     case 9:
-        if (get_gplay_bitstring(BIT_4B8_SpellStone_Activated_CRF)) {
+        if (get_gplay_bitstring(BIT_CF_Spellstone_Activated)) {
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 5);
         }
         break;
@@ -306,8 +306,8 @@ void SC_levelcontrol_func_8B4(Object *self) {
         state->unk2 = 7;
         break;
     case 6:
-        set_gplay_bitstring(BIT_2C8_SC_Play_Krystal_Spies_on_LightFoot, 0);
-        set_gplay_bitstring(BIT_2C9_SC_Played_Krystal_Spies_on_LightFoot, 0);
+        set_gplay_bitstring(BIT_SC_Play_Krystal_Sees_Tribe_Dino, 0);
+        set_gplay_bitstring(BIT_SC_Played_Krystal_Sees_Tribe_Dino, 0);
         break;
     }
 }
@@ -345,7 +345,7 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
             func_80000450(self, player, 0x1E4, 0, 0, 0);
         }
-        set_gplay_bitstring(BIT_2BA_SC_UNKNOWN, state->index1);
+        set_gplay_bitstring(BIT_SC_UNKNOWN_2BA, state->index1);
         return;
     }
 
@@ -362,7 +362,7 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
                     state->index1 = 0;
                 }
                 func_80000860(self, player, _data_40[state->index1], 0);
-                set_gplay_bitstring(BIT_2BA_SC_UNKNOWN, state->index1);
+                set_gplay_bitstring(BIT_SC_UNKNOWN_2BA, state->index1);
             }
             if (state->unk3 == 49) {
                 if (_data_B0[state->index1] != 0) {
@@ -404,9 +404,9 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
 
 // offset: 0x11FC | func: 11
 void SC_levelcontrol_func_11FC(Object *self) {
-    if (!get_gplay_bitstring(BIT_4D0_SC_Ambushed) &&
-        get_gplay_bitstring(BIT_2B5_SC_Encountered_Baby_Lightfoot)) {
-        set_gplay_bitstring(BIT_4D0_SC_Ambushed, 1);
+    if (!get_gplay_bitstring(BIT_SC_Ambushed) &&
+        get_gplay_bitstring(BIT_SC_Encountered_Baby_Lightfoot)) {
+        set_gplay_bitstring(BIT_SC_Ambushed, 1);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 2, 1);
         warpPlayer(WARP_SC_TOTEM_POLE, FALSE);
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 1, 0);

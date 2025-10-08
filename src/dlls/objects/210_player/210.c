@@ -2786,9 +2786,9 @@ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2) {
     if (gDLL_1_UI->vtbl->func6() != 0) {
         if (gDLL_1_UI->vtbl->func7(0x1EE) != 0) {
             set_button_mask(0, 0x8000U);
-            if ((get_gplay_bitstring(0x3DC) != 0) && (get_gplay_bitstring(0x449) != 0)) {
-                set_gplay_bitstring(0x3F1, 1U);
-                set_gplay_bitstring(0x3D8, 1U);
+            if ((get_gplay_bitstring(BIT_3DC) != 0) && (get_gplay_bitstring(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
+                set_gplay_bitstring(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
+                set_gplay_bitstring(BIT_3D8, 1);
             } else {
                 temp_v0_5 = obj_get_nearest_type_to(0x3B, arg0, &sp80);
                 if (temp_v0_5 != NULL) {
@@ -2806,10 +2806,10 @@ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2) {
         } else {
             sp8E = 0;
             if (gDLL_1_UI->vtbl->func7(0x5D6) != 0) {
-                if (get_gplay_bitstring(0x7E2) != 0) {
+                if (get_gplay_bitstring(BIT_7E2) != 0) {
                     sp8E = 0xA;
                 } else {
-                    set_gplay_bitstring(0x7E2, 1U);
+                    set_gplay_bitstring(BIT_7E2, 1U);
                     sp8E = 0xA;
                 }
             }

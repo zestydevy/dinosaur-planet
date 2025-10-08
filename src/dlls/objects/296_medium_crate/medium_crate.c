@@ -18,7 +18,7 @@ typedef struct {
     s8 unk19;
     s16 unk1A;
     s16 unk1C;
-    s16 unk1E;
+    s16 gamebit;
 } MediumCrateCreateInfo;
 
 typedef struct {
@@ -28,7 +28,7 @@ typedef struct {
 /*0C*/ s16 unkC;
 /*0E*/ u16 unkE;
 /*10*/ u16 unk10;
-/*12*/ s16 unk12;
+/*12*/ s16 gamebit;
 /*14*/ u8 unk14;
 /*15*/ u8 unk15;
 /*16*/ u8 unk16;
@@ -83,7 +83,7 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
     state = (MediumCrateState*)self->state;
 
     self->srt.yaw = createInfo->unk18 << 8;
-    state->unk12 = createInfo->unk1E;
+    state->gamebit = createInfo->gamebit;
 
     if (createInfo->unk1C == 0) {
         state->unk0 = 0;
@@ -93,7 +93,7 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
         state->unk0 = createInfo->unk1C * 60;
     }
 
-    if (get_gplay_bitstring(state->unk12) != 0) {
+    if (get_gplay_bitstring(state->gamebit) != 0) {
         state->unk4 = 1.0f;
         func_800267A4(self);
     }
@@ -429,7 +429,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
             }
             case 7:
             case 8:
-                set_gplay_bitstring(state->unk12, 1);
+                set_gplay_bitstring(state->gamebit, 1);
                 break;
         }
     }

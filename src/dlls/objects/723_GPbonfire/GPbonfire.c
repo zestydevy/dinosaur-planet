@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/dll.h"
@@ -8,7 +9,6 @@
 #include "sys/menu.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
-#include "sys/gamebits.h"
 #include "dlls/objects/210_player.h"
 #include "dll.h"
 
@@ -99,8 +99,8 @@ void GPbonfire_create(Object* self, GPBonfireCreateInfo* createInfo, s32 arg2) {
     state->soundHandles[0] = 0;
     state->soundHandles[1] = 0;
     obj_add_object_type(self, 0x30);
-    state->gameBitKindlingPlaced = BIT_917_GP_Bonfire_Kindling_Placed;
-    state->gameBitBurning = BIT_918_GP_Bonfire_Burning;
+    state->gameBitKindlingPlaced = BIT_GP_Bonfire_Kindling_Placed;
+    state->gameBitBurning = BIT_GP_Bonfire_Burning;
     state->sequenceIndexKindling = 0;
     state->sequenceIndexBurning = 1;
     state->unused14 = 0;
@@ -168,7 +168,7 @@ void GPbonfire_update(Object* self) {
             if (sidekick && playerIsNearby) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 4);
                 if (gDLL_1_UI->vtbl->func7(4)) {
-                    set_gplay_bitstring(BIT_46E_Kyte_Flight_Curve, createInfo->kyteCurveID);
+                    set_gplay_bitstring(BIT_Kyte_Flight_Curve, createInfo->kyteCurveID);
                 }
             }
             break;
@@ -208,7 +208,7 @@ void GPbonfire_update(Object* self) {
 
                             //Lift up the ChimneySweep once the fire's roaring
                             if (state->weedsDeposited == 4) {
-                                set_gplay_bitstring(BIT_7D5_GP_ChimneySweep_Lifted, TRUE);
+                                set_gplay_bitstring(BIT_GP_ChimneySweep_Lifted, TRUE);
                                 //Start a 60 second challenge timer
                                 func_8000F64C(0x15, 60);
                                 func_8000F6CC();

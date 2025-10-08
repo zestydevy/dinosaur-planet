@@ -3,6 +3,7 @@
 #include "PR/gu.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/sidekick.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/asset_thread.h"
@@ -840,17 +841,17 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             gDLL_29_Gplay->vtbl->set_obj_group_status((s32) cmd->param2, (s32) cmd->param1, 0);
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
-            set_gplay_bitstring(0x46E, cmd->param2 | (cmd->param1 << 8));
+            set_gplay_bitstring(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_KYTE_TALK_SEQ:
-            set_gplay_bitstring(0x488, cmd->param2 | (cmd->param1 << 8));
+            set_gplay_bitstring(BIT_488, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_MAP_SETUP:
             gDLL_29_Gplay->vtbl->set_map_setup((s32) cmd->param2, (s32) cmd->param1);
             break;
         case TRG_CMD_11:
             // Tricky related?
-            set_gplay_bitstring(0x4E2, cmd->param2 | (cmd->param1 << 8));
+            set_gplay_bitstring(BIT_4E2, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_GAME:
             gDLL_29_Gplay->vtbl->checkpoint(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, func_80048498());
