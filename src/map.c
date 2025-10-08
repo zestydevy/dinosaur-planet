@@ -4329,19 +4329,19 @@ s32 func_8004B190(Object* arg0) {
 
 /** map_should_object_load? */
 s32 func_8004B4A0(ObjCreateInfo* obj, s32 mapID) {
-    u8 setupID;
+    s32 setupID;
 
     setupID = gDLL_29_Gplay->vtbl->get_map_setup(mapID);
-    if (setupID == -1) {// NOLINT
+    if (setupID == -1) {
         return 0;
     }
     if (setupID != 0) {
         if (setupID < 9) {
-            if ((obj->setup >> (setupID + 0x1F)) & 1) { //bitshift by 0x1f?? But setup is a byte value... hmm.
+            if ((obj->setup >> (setupID - 1)) & 1) {
                 return 0;
             }
         }
-        else if ((obj->loadParamB >> (0x10 - setupID)) & 1) {
+        else if ((obj->loadParamB >> (16 - setupID)) & 1) {
             return 0;
         }
     }
