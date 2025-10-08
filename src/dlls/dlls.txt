@@ -53,6 +53,8 @@
 505 = objects/505_SHspore
 507 = objects/507_SHqueenearthwalker
 515 = objects/515_SHswapstone
+519 = objects/519_SC_levelcontrol
+547 = objects/547_GP_LevelControl
 607 = objects/607_WL_LevelControl
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint
