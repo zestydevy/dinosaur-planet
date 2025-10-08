@@ -1,0 +1,14 @@
+.text = 0x0:
+portaltexanimator_ctor = 0x0;
+portaltexanimator_dtor = 0xC;
+portaltexanimator_create = 0x18;
+portaltexanimator_update = 0x78;
+portaltexanimator_animate_vertices = 0x310;
+portaltexanimator_func_414 = 0x414;
+portaltexanimator_draw = 0x420;
+portaltexanimator_destroy = 0x474;
+portaltexanimator_func_4C4 = 0x4C4;
+portaltexanimator_get_state_size = 0x4D4;
+
+.rodata = 0x53C:
+str_0 = 0x0; // absolute:0x53C
