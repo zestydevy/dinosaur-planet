@@ -208,7 +208,7 @@ typedef struct {
 /*85C*/ Object *unk85C;
 /*860*/ s32 pad860;
 /*864*/ s32 unk864;
-/*868*/ Object* unk868;
+/*868*/ Object* unk868; //held object (baskets etc.)
 /*86C*/ f32 unk86C;
 /*870*/ u8 unk870;
 /*871*/ u8 unk871;
