@@ -1,0 +1,16 @@
+.text = 0x0:
+pressureswitch_ctor = 0x0;
+pressureswitch_dtor = 0xC;
+pressureswitch_create = 0x18;
+pressureswitch_update = 0x148;
+pressureswitch_func_524 = 0x524;
+pressureswitch_draw = 0x530;
+pressureswitch_destroy = 0x584;
+pressureswitch_func_604 = 0x604;
+pressureswitch_get_state_size = 0x614;
+pressureswitch_add_object = 0x628;
+pressureswitch_is_object_on_switch = 0x694;
+pressureswitch_callbackBC = 0x718;
+
+.rodata = 0x878:
+str_0 = 0x0; // absolute:0x878
