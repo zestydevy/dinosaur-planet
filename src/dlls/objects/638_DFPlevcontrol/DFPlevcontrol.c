@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -38,7 +39,7 @@ s16 unk0;
 void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
     u8 mapSetup;
 
-    obj_add_object_type(self, 0xA);
+    obj_add_object_type(self, OBJTYPE_10);
     _data_0 = queue_load_texture_proxy(0x46C);
     self->unk0xbc = (void*)dll_638_func_62C;
     gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
@@ -53,17 +54,17 @@ void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
             break;
         case 1:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(0x2E8, 1);
+            main_set_bits(BIT_CF_SpellStone, 1);
             break;
         case 2:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(0x83A, 1);
-            set_gplay_bitstring(0x777, 1);
+            main_set_bits(BIT_BWC_SpellStone, 1);
+            main_set_bits(BIT_Spell_Unknown_777, 1);
             break;
         case 3:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(0x7BD, 1);
-            set_gplay_bitstring(0x777, 1);
+            main_set_bits(BIT_SpellStone_Krystal, 1);
+            main_set_bits(BIT_Spell_Unknown_777, 1);
             break;
     }
     self->unk0xb0 |= 0x6000;

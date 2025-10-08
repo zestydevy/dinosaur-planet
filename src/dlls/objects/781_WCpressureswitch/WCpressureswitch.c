@@ -77,7 +77,7 @@ void WCpressureswitch_create(Object* self, PressureSwitchCreateInfo* createInfo,
         self->modelInstIdx = 0;
     }
 
-    if (get_gplay_bitstring(createInfo->gameBitPressed)) {
+    if (main_get_bits(createInfo->gameBitPressed)) {
         self->srt.transl.y = createInfo->base.y - createInfo->yOffsetAnimation;
         state->pressed = 30;
         state->stateIndex = 2;
@@ -105,7 +105,7 @@ void WCpressureswitch_update(Object* self) {
     state = self->state;
 
     //Bail if switch deactivated
-    if (createInfo->gameBitActivated > 0 && !get_gplay_bitstring(createInfo->gameBitActivated)) {
+    if (createInfo->gameBitActivated > 0 && !main_get_bits(createInfo->gameBitActivated)) {
         diPrintf(" Avitvate %i ", createInfo->gameBitActivated);
         return;
     }
@@ -144,7 +144,7 @@ void WCpressureswitch_update(Object* self) {
         case STATE_3_MOVING_DOWN:
             self->srt.transl.y -= 0.05f * delayFloat;
             if (self->srt.transl.y < deltaY) {
-                set_gplay_bitstring(createInfo->gameBitPressed, 1);
+                main_set_bits(createInfo->gameBitPressed, 1);
                 state->stateIndex = STATE_2_DOWN;
                 self->srt.transl.y = deltaY;
             }
@@ -152,7 +152,7 @@ void WCpressureswitch_update(Object* self) {
         case STATE_2_DOWN:
             /* Subtly different behaviour to other pressure switches,
              * waits for flag to unset before depressing the switch (for WC's timed challenges) */
-            if (!get_gplay_bitstring(createInfo->gameBitPressed)) {
+            if (!main_get_bits(createInfo->gameBitPressed)) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 state->stateIndex = STATE_1_MOVING_UP;
             }
@@ -278,7 +278,7 @@ s32 WCpressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2,
         self->srt.transl.z = createInfo->base.x; //@bug? should be x component?
         self->srt.transl.y = createInfo->base.y;
         self->srt.transl.z = createInfo->base.z;
-        set_gplay_bitstring(createInfo->gameBitPressed, 0);
+        main_set_bits(createInfo->gameBitPressed, 0);
         arg2->unk8D = 0;
     }
 

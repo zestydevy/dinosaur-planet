@@ -40,7 +40,7 @@ void cannon_claw_update(Object *self) {
     if (temp != 0) {
         if (self->parent != NULL) {
             CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
-            set_gplay_bitstring(createInfo->bitstringEntry, 1);
+            main_set_bits(createInfo->gamebit, 1);
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
         }
         
@@ -48,7 +48,7 @@ void cannon_claw_update(Object *self) {
     } else {
         if (self->parent != NULL) {
             CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
-            if (get_gplay_bitstring(createInfo->bitstringEntry) != 0) {
+            if (main_get_bits(createInfo->gamebit) != 0) {
                 cannon_claw_func_1B4(self);
             }
         }

@@ -52,10 +52,10 @@ s32 ret1_8001454c(void);
 
 OSSched *get_ossched(void);
 
-void set_gplay_bitstring(s32 entry, u32 value);
-u32 get_gplay_bitstring(s32 entry);
-s32 increment_gplay_bitstring(s32 entry);
-s32 decrement_gplay_bitstring(s32 entry);
+void main_set_bits(s32 entry, u32 value);
+u32 main_get_bits(s32 entry);
+s32 main_increment_bits(s32 entry);
+s32 main_decrement_bits(s32 entry);
 s32 create_temp_dll(s32 id);
 s32 remove_temp_dll(s32 id);
 void func_80014B1C(void);

@@ -10,7 +10,8 @@ enum ObjType {
     OBJTYPE_2 = 2,
     OBJTYPE_4 = 4,
     OBJTYPE_7 = 7,
-    OBJTYPE_10 = 10
+    OBJTYPE_10 = 10,
+    OBJTYPE_39 = 39
 };
 
 void obj_object_type_init();

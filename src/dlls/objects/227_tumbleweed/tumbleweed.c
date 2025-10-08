@@ -129,7 +129,7 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNugge
                     // @fake
                     if (arg2) {}
 
-                    if (get_gplay_bitstring(state->goldenNuggetFlag)) {
+                    if (main_get_bits(state->goldenNuggetFlag)) {
                         state->goldenNugget = NULL;
                     }
                     index = count;
@@ -277,7 +277,7 @@ void dll_227_func_1578(Object* self, s32 arg1) {
     }
     
     if (state->goldenNugget) {
-        set_gplay_bitstring(state->goldenNuggetFlag, 1);
+        main_set_bits(state->goldenNuggetFlag, 1);
         state->goldenNugget = 0;
     }
     obj_free_object_type(self, 4);

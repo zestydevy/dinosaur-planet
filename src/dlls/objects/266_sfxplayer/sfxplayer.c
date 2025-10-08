@@ -38,7 +38,7 @@ void sfxplayer_create(Object* self, SfxPlayerCreateInfo* createInfo, s32 arg2) {
 
     state = self->state;
     createInfo2 = (SfxPlayerCreateInfo*)self->createInfo;
-    state->hasPlayed = get_gplay_bitstring(createInfo->flagPlay);
+    state->hasPlayed = main_get_bits(createInfo->flagPlay);
 
     if ((createInfo2->mode & 1) && (!state->hasPlayed) && (createInfo2->mode & 4)) {
         state->hasPlayed = 1;
@@ -63,7 +63,7 @@ void sfxplayer_update(Object* self) {
     state = self->state;
     flagValue = 0;
     if (createInfo->flagPlay){
-        flagValue = get_gplay_bitstring(createInfo->flagPlay);
+        flagValue = main_get_bits(createInfo->flagPlay);
     }
 
     mode = createInfo->mode;

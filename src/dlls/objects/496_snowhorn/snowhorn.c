@@ -4,6 +4,7 @@
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/227_tumbleweed.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -44,22 +45,6 @@ enum SnowHornTutorialSequences {
     SEQ_0625_SnowHorn_Chat_AfterEatingRoot1 = 4, //One root is never enough, I'm starving!
     SEQ_0248_SnowHorn_Cutscene_FeedingRoot2 = 5, //Ahh, that hit the spot! Tell you what, young 'un, I'll help you out!
     SEQ_0626_SnowHorn_Chat_AfterEatingRoot2 = 6  //I'm sorry lad, you're on your own now.
-};
-
-enum SnowHornGameBits {
-    FLAG_Always_1 = 0x95,
-    FLAG_Always_0 = 0x96,
-    INVENTORY_Alpine_Root = 0x576,
-    FLAG_SnowHorn_Tutorial_Defeated_SharpClaw = 0xD3,
-    FLAG_SnowHorn_Tutorial_NumRootsFed = 0x578,
-    FLAG_SnowHorn_Tutorial_GotAlpineRoot1 = 0x8E,
-    FLAG_SnowHorn_Tutorial_GotAlpineRoot2 = 0x116,
-    FLAG_Garunda_Te_Quest_Progress = 0x115,
-    FLAG_Garunda_Te_NumFrostWeedsEaten = 0x48B,
-    FLAG_SnowHorn_Unknown = 0x5A0, //Maybe intended to hide SnowHorn Wastes' minimap until SnowHorn gifts map?
-    FLAG_DarkIce_Mines_Leap_of_Faith_Completed = 0x22B,
-    FLAG_Tricky_Distract_Learned = 0x9E,
-    FLAG_SpellStone_1_Activated = 0x123
 };
 
 #define GARUNDA_TE_WEEDS_NEEDED 12
@@ -522,7 +507,7 @@ s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObjState* animObj
 
     for (i = 0; i < animObjState->unk98; i++){
         if (animObjState->unk8E[i] == 3) {
-            set_gplay_bitstring(0x5A0, 1);
+            main_set_bits(BIT_5A0, 1);
             continue;
         }        
     }
@@ -669,16 +654,16 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
     switch (state->flags) {
         u32 rootsEaten;
         case 0:
-            if (get_gplay_bitstring(FLAG_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+            if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
                 state->flags = 1;
             }
             break;    
         case 1:
-            rootsEaten = get_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed);
+            rootsEaten = main_get_bits(BIT_SnowHorn_Tutorial_NumRootsFed);
             switch (rootsEaten) {
                 case 0:
-                    if (get_gplay_bitstring(FLAG_SnowHorn_Tutorial_GotAlpineRoot1) || 
-                        get_gplay_bitstring(FLAG_SnowHorn_Tutorial_GotAlpineRoot2))
+                    if (main_get_bits(BIT_SnowHorn_Tutorial_GotAlpineRoot1) || 
+                        main_get_bits(BIT_SnowHorn_Tutorial_GotAlpineRoot2))
                     {
                         state->flags = 2;
                     }
@@ -692,18 +677,18 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
             }
             break;
         case 2:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(INVENTORY_Alpine_Root)) {
-                set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 1);
-                decrement_gplay_bitstring(INVENTORY_Alpine_Root);
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_Inventory_Alpine_Root)) {
+                main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
+                main_decrement_bits(BIT_Inventory_Alpine_Root);
                 gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 state->flags = 4;
                 return;
             }
             break;
         case 4:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(INVENTORY_Alpine_Root)) {
-                set_gplay_bitstring(FLAG_SnowHorn_Tutorial_NumRootsFed, 2);
-                decrement_gplay_bitstring(INVENTORY_Alpine_Root);
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_Inventory_Alpine_Root)) {
+                main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
+                main_decrement_bits(BIT_Inventory_Alpine_Root);
                 gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 state->flags = 6;
                 return;
@@ -910,13 +895,13 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     }
 
     if (createInfo->unk1D == result){
-        if (get_gplay_bitstring(FLAG_DarkIce_Mines_Leap_of_Faith_Completed)){
+        if (main_get_bits(BIT_DIM_Leap_of_Faith_Completed)){
             state->chatSequenceList = _data_2E8;
             state->unk426 = 2.0f;
-        } else if (get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
+        } else if (main_get_bits(BIT_SpellStone_1)){
             state->chatSequenceList = _data_2DC;
             state->unk426 = 1.0f;
-        } else if (get_gplay_bitstring(FLAG_Tricky_Distract_Learned)){
+        } else if (main_get_bits(BIT_Tricky_Distract_Learned)){
             state->chatSequenceList = _data_2D4;
             state->unk426 = 1.0f;
         } else {
@@ -924,13 +909,13 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
             state->unk426 = 2.0f;
         }
     } else {
-        if (get_gplay_bitstring(FLAG_DarkIce_Mines_Leap_of_Faith_Completed)){
+        if (main_get_bits(BIT_DIM_Leap_of_Faith_Completed)){
             state->chatSequenceList = _data_2E0;
             state->unk426 = 2.0f;
-        } else if (get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
+        } else if (main_get_bits(BIT_SpellStone_1)){
             state->chatSequenceList = _data_2D8;
             state->unk426 = 1.0f;
-        } else if (get_gplay_bitstring(FLAG_Tricky_Distract_Learned)){
+        } else if (main_get_bits(BIT_Tricky_Distract_Learned)){
             state->chatSequenceList = _data_2D0;
             state->unk426 = 1.0f;
         } else {
@@ -1013,18 +998,18 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     u16 questValue;
     u16 questEnd = 6;
 
-    questValue = (state->flags = get_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress));
+    questValue = (state->flags = main_get_bits(BIT_Garunda_Te_Quest_Progress));
     
     /** If the 1st SpellStone is activated, makes sure Garunda Te's flags are in their end state */
-    if (questValue < questEnd && get_gplay_bitstring(FLAG_SpellStone_1_Activated)){
+    if (questValue < questEnd && main_get_bits(BIT_SpellStone_1)){
         state->flags = questEnd;
         questValue = state->flags;
-        set_gplay_bitstring(FLAG_Garunda_Te_Quest_Progress, questValue);
+        main_set_bits(BIT_Garunda_Te_Quest_Progress, questValue);
     }
     
     state->someAnimIDList = _data_288;
     state->unk48 = _data_298;
-    state->garundaTe_weedsEaten = get_gplay_bitstring(FLAG_Garunda_Te_NumFrostWeedsEaten);
+    state->garundaTe_weedsEaten = main_get_bits(BIT_Garunda_Te_Weeds_Eaten);
 }
 
 void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* createInfo) {
@@ -1049,7 +1034,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
                 state->flags = 2;
-                set_gplay_bitstring(0x115, state->flags);
+                main_set_bits(BIT_Garunda_Te_Quest_Progress, state->flags);
             }
             break;
         case 2:
@@ -1071,7 +1056,7 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
                     if (state->garundaTe_weedsEaten > GARUNDA_TE_WEEDS_NEEDED) {
                         state->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
-                    set_gplay_bitstring(0x48B, state->garundaTe_weedsEaten);
+                    main_set_bits(BIT_Garunda_Te_Weeds_Eaten, state->garundaTe_weedsEaten);
                     state->flags = 3;
                 }
             }
@@ -1085,9 +1070,9 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             if (state->unk424 & 8) {
                 weeds = state->garundaTe_weedsEaten;
                 if (weeds >= GARUNDA_TE_WEEDS_NEEDED) {
-                    set_gplay_bitstring(0x102, 1);
+                    main_set_bits(BIT_Garunda_Te_Fed, 1);
                     state->flags = 5;
-                    set_gplay_bitstring(0x115, state->flags);
+                    main_set_bits(BIT_Garunda_Te_Quest_Progress, state->flags);
                     break;
                 }
                 if (weeds % 3 == 0) {
@@ -1112,9 +1097,9 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
             } else if (gDLL_1_UI->vtbl->func7(0x123)) {
-                set_gplay_bitstring(0x22B, 1);
+                main_set_bits(BIT_DIM_Leap_of_Faith_Completed, 1);
                 state->flags = 7;
-                set_gplay_bitstring(0x115, state->flags);
+                main_set_bits(BIT_Garunda_Te_Quest_Progress, state->flags);
             }
             break;
         case 7:

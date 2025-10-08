@@ -67,7 +67,7 @@ void pressureswitch_create(Object* self, PressureSwitchCreateInfo* createInfo, s
         self->modelInstIdx = 0;
     }
 
-    if (get_gplay_bitstring(createInfo->gameBitPressed)) {
+    if (main_get_bits(createInfo->gameBitPressed)) {
         self->srt.transl.y = createInfo->base.y - createInfo->yOffsetAnimation;
         state->pressed = 30;
     }
@@ -95,7 +95,7 @@ void pressureswitch_update(Object* self) {
     state = self->state;
 
     //Bail if switch deactivated
-    if (createInfo->gameBitActivated > 0 && !get_gplay_bitstring(createInfo->gameBitActivated)){
+    if (createInfo->gameBitActivated > 0 && !main_get_bits(createInfo->gameBitActivated)){
         return;
     }
 
@@ -130,12 +130,12 @@ void pressureswitch_update(Object* self) {
             if (deltaY < self->srt.transl.y) {
                 self->srt.transl.y = deltaY;
             }
-            set_gplay_bitstring(createInfo->gameBitPressed, 1);
+            main_set_bits(createInfo->gameBitPressed, 1);
         } else {
             self->srt.transl.y -= 0.125f * delayFloat;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                set_gplay_bitstring(createInfo->gameBitPressed, 1);
+                main_set_bits(createInfo->gameBitPressed, 1);
             } else {
                 playSound = 1;
             }
@@ -145,7 +145,7 @@ void pressureswitch_update(Object* self) {
 
         if (createInfo->base.y < self->srt.transl.y) {
             self->srt.transl.y = createInfo->base.y;
-            set_gplay_bitstring(createInfo->gameBitPressed, 0);
+            main_set_bits(createInfo->gameBitPressed, 0);
         } else {
             playSound = 1;
         }
@@ -164,7 +164,7 @@ void pressureswitch_update(Object* self) {
     }
 
     //Activate sidekick behaviour when player close to switch
-    if (!get_gplay_bitstring(createInfo->gameBitPressed) && createInfo->distanceSidekickBehaviour) {
+    if (!main_get_bits(createInfo->gameBitPressed) && createInfo->distanceSidekickBehaviour) {
         player = get_player();
         sidekick = get_sidekick();
         if (sidekick) {
@@ -270,7 +270,7 @@ s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s
         self->srt.transl.z = createInfo->base.x; //@bug? should be x component?
         self->srt.transl.y = createInfo->base.y;
         self->srt.transl.z = createInfo->base.z;
-        set_gplay_bitstring(createInfo->gameBitPressed, 0);
+        main_set_bits(createInfo->gameBitPressed, 0);
         arg2->unk8D = 0;
     }
 

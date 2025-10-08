@@ -2,6 +2,7 @@
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
+#include "game/gamebits.h"
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/rand.h"
@@ -245,7 +246,7 @@ PicMenuAction picmenu_update() {
     if (sAllowButtons) {
         buttons = get_masked_button_presses(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
-            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && get_gplay_bitstring(0x44F) == 0) {
+            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
                 set_button_mask(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {

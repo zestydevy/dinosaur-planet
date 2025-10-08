@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/objects/210_player.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
@@ -64,7 +65,7 @@ void WL_LevelControl_create(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
     case 6:
         func_80000860(self, self, 0xA5, 0);
         func_80000860(self, self, 0xA6, 0);
-        set_gplay_bitstring(0x164, 1);
+        main_set_bits(BIT_Medium_Food_Bag, 1);
         break;
     case 7:
         func_80000860(self, self, 0xE4, 0);
@@ -140,7 +141,7 @@ static void WL_LevelControl_func_460(Object* self, WL_LevelControl_State* state)
     s32 i;
     s32 var_t0;
 
-    if (get_gplay_bitstring(0x78) == 0) {
+    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) == 0) {
         objs = obj_get_all_of_type(OBJTYPE_7, &numObjs);
         var_t0 = 1;
         
@@ -154,7 +155,7 @@ static void WL_LevelControl_func_460(Object* self, WL_LevelControl_State* state)
             if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) == 0) {
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 1);
             }
-            set_gplay_bitstring(0xD1, 1);
+            main_set_bits(BIT_WL_Load_Unload_Galleon, 1);
             state->unk7 = 1;
             state->unk8 |= 1;
         }
@@ -168,8 +169,8 @@ static void WL_LevelControl_func_648(Object* self, WL_LevelControl_State* state)
     Object** objs;
     s32 i;
 
-    sp2C = get_gplay_bitstring(0x355);
-    if ((state->unk8 & 1) && (get_gplay_bitstring(0xD1) == 0)) {
+    sp2C = main_get_bits(BIT_WM_Near_Cave_Exit_Krystal_Side);
+    if ((state->unk8 & 1) && (main_get_bits(BIT_WL_Load_Unload_Galleon) == 0)) {
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 1) != 0) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
         }
@@ -195,11 +196,11 @@ static void WL_LevelControl_setup1_tick(Object* self) {
 
     state = self->state;
     temp_t8 = 0;
-    temp_t8 += get_gplay_bitstring(0xB1);
-    temp_t8 += get_gplay_bitstring(0xB2);
-    temp_t8 += get_gplay_bitstring(0xB3);
+    temp_t8 += main_get_bits(BIT_WM_Force_Field_1_Disabled);
+    temp_t8 += main_get_bits(BIT_WM_Force_Field_2_Disabled);
+    temp_t8 += main_get_bits(BIT_WM_Force_Field_3_Disabled);
     if ((temp_t8 == 3) && (_data_0 != 3)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     _data_0 = temp_t8;
     switch (state->unk7) {
@@ -229,11 +230,11 @@ static void WL_LevelControl_setup2_tick(Object* self) {
     Object* temp_v0;
 
     player = get_player();
-    if ((_data_4 != 0) && (get_gplay_bitstring(0x277) == 0)) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+    if ((_data_4 != 0) && (main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) == 0)) {
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         player = get_player();
-        set_gplay_bitstring(0xFC, 1);
+        main_set_bits(BIT_FC, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 1, 1);
         func_80000860(self, self, 0x204, 0);
@@ -241,9 +242,9 @@ static void WL_LevelControl_setup2_tick(Object* self) {
         func_80000860(self, self, 0x206, 0);
         _data_4 = 0;
     }
-    if (get_gplay_bitstring(0x164) != 0) {
+    if (main_get_bits(BIT_Medium_Food_Bag) != 0) {
         temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
-        if ((temp_v0 != NULL) && (get_gplay_bitstring(0x166) == 0)) {
+        if ((temp_v0 != NULL) && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
             ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
             ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
             ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
@@ -264,13 +265,13 @@ static void WL_LevelControl_setup3_tick(Object* self) {
     
     Object* player;
 
-    if ((get_gplay_bitstring(0x316) == 0) & _data_8) {
+    if ((main_get_bits(BIT_Spirit_2_Release_Sabre) == 0) & _data_8) {
         func_80000860(self, self, 0xE4, 0);
         func_80000860(self, self, 0xE5, 0);
         func_80000450(self, self, 0x275, 0, 0, 0);
         func_80000450(self, self, 0x278, 0, 0, 0);
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 2, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
@@ -296,19 +297,19 @@ static void WL_LevelControl_setup4_tick(Object* self) {
 
     var_s2 = 0;
     state = self->state;
-    if ((_data_C != 0) && (get_gplay_bitstring(0x317) == 0)) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
-        set_gplay_bitstring(0x21B, 1);
+    if ((_data_C != 0) && (main_get_bits(BIT_317) == 0)) {
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
+        main_set_bits(BIT_Set_During_Spirit_Release_1, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 4, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_C = 0;
     }
     for (i = 0; i < 6; i++) {
-        var_s2 +=  get_gplay_bitstring(i + 0x2AA);
+        var_s2 +=  main_get_bits(i + BIT_WM_Killed_SharpClaw_2573);
     }
-    temp_v0_3 = get_gplay_bitstring(0x2C4);
+    temp_v0_3 = main_get_bits(BIT_2C4);
     if ((temp_v0_3 != 0) && (var_s2 != state->unk0)) {
         state->unk0 = var_s2;
         func_80000860(self, self, (state->unk0 + 0xF4), 0);
@@ -318,8 +319,8 @@ static void WL_LevelControl_setup4_tick(Object* self) {
             func_80000860(self, self, (state->unk0 + 0xF4), 0);
             func_80000450(self, self, ((state->unk0 / 2) + 0x13C), 0, 0, 0);
         } else {
-            func_80000860(self, self, 0xFBU, 0);
-            func_80000450(self, self, 0x144U, 0, 0, 0);
+            func_80000860(self, self, 0xFB, 0);
+            func_80000450(self, self, 0x144, 0, 0, 0);
         }
     }
     _data_10 = temp_v0_3;
@@ -343,28 +344,28 @@ static void WL_LevelControl_setup5_tick(Object* self) {
     sp40 = 10000.0f;
     player = get_player();
     state = self->state;
-    if ((_data_14 != 0) && (get_gplay_bitstring(0x318) == 0)) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
-        set_gplay_bitstring(0x40, 1);
+    if ((_data_14 != 0) && (main_get_bits(BIT_318) == 0)) {
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
+        main_set_bits(BIT_Spell_Illusion, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 8, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
-        set_gplay_bitstring(0x2DD, 0);
+        main_set_bits(BIT_2DD, 0);
         _data_14 = 0;
     }
-    if (get_gplay_bitstring(0x2DB) != 0) {
+    if (main_get_bits(BIT_2DB) != 0) {
         func_80059038(0x18, 0, 0);
     }
-    if (get_gplay_bitstring(0x2DD) != 0) {
-        set_gplay_bitstring(0x32E, 1);
-        set_gplay_bitstring(0x2DD, 0);
+    if (main_get_bits(BIT_2DD) != 0) {
+        main_set_bits(BIT_CFExplodeTunnel_Trigger_31B6F, 1);
+        main_set_bits(BIT_2DD, 0);
         temp_v0 = obj_get_nearest_type_to(OBJTYPE_4, self, &sp40);
         if (temp_v0 != NULL) {
             obj_destroy_object(temp_v0);
         }
         state->unk2 = 0x1E;
     }
-    if (get_gplay_bitstring(0x2F7) != 0) {
+    if (main_get_bits(BIT_2F7) != 0) {
         var_a2 = obj_get_all_of_type(OBJTYPE_4, &sp34);
         for (i = 0; i < sp34; i++) {
             someCreateInfo = var_a2[i]->createInfo;
@@ -372,24 +373,24 @@ static void WL_LevelControl_setup5_tick(Object* self) {
                 obj_destroy_object(var_a2[i]);
             }
         }
-        set_gplay_bitstring(0x2F7, 0);
+        main_set_bits(BIT_2F7, 0);
     }
-    if (get_gplay_bitstring(0x2EE) != 0) {
+    if (main_get_bits(BIT_2EE) != 0) {
         temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
-        if ((temp_v0_2 != 0x40) && (temp_v0_2 != 0x1D7) && (get_gplay_bitstring(0x2F3) == 0)) {
+        if ((temp_v0_2 != 0x40) && (temp_v0_2 != 0x1D7) && (main_get_bits(BIT_2F3) == 0)) {
             warpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
         }
-        set_gplay_bitstring(0x2EE, 0);
+        main_set_bits(BIT_2EE, 0);
     }
-    if (get_gplay_bitstring(0x2FA) != 0) {
-        if (get_gplay_bitstring(0x2F7) == 0) {
-            set_gplay_bitstring(0x2F7, 1);
+    if (main_get_bits(BIT_2FA) != 0) {
+        if (main_get_bits(BIT_2F7) == 0) {
+            main_set_bits(BIT_2F7, 1);
         }
         state->unk2 -= (s16)delayByte;
         if (state->unk2 <= 0) {
             state->unk2 = 0;
-            set_gplay_bitstring(0x2FA, 0);
-            set_gplay_bitstring(0x2F3, 1);
+            main_set_bits(BIT_2FA, 0);
+            main_set_bits(BIT_2F3, 1);
             state->unk2 = 0x1E;
         }
     }
@@ -403,7 +404,7 @@ static void WL_LevelControl_setup6_tick(Object* self) {
     Object* temp_v0;
 
     player = get_player();
-    if ((_data_18 != 0) && (get_gplay_bitstring(0x366) == 0)) {
+    if ((_data_18 != 0) && (main_get_bits(BIT_Play_Seq_020D) == 0)) {
         temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[10].withOneArg((s32)temp_v0);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
@@ -418,8 +419,8 @@ static void WL_LevelControl_setup6_tick(Object* self) {
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 2);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 4);
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 0x20, 1);
         _data_18 = 0;
     }
@@ -434,9 +435,9 @@ static void WL_LevelControl_setup7_tick(Object* self) {
 
     get_player();
     state = (WL_LevelControl_State*)self->state;
-    if ((_data_1C != 0) && (get_gplay_bitstring(0x366) == 0)) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+    if ((_data_1C != 0) && (main_get_bits(BIT_Play_Seq_020D) == 0)) {
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 0x40, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
@@ -444,15 +445,15 @@ static void WL_LevelControl_setup7_tick(Object* self) {
         state->unk2 = 1;
         func_80000860(self, self, 0x32, 0);
         func_80000860(self, self, 0x33, 0);
-        set_gplay_bitstring(0x221, 1);
+        main_set_bits(BIT_221, 1);
     }
-    if (get_gplay_bitstring(0x36C) != 0) {
+    if (main_get_bits(BIT_36C) != 0) {
         if (state->unk4 > 0) {
             state->unk4 -= (s16)delayByte;
             if (state->unk2 != 0) {
                 state->unk2 -= (s16)delayByte;
                 if (state->unk2 <= 0) {
-                    set_gplay_bitstring(0x36D, 1);
+                    main_set_bits(BIT_36D, 1);
                     if (state->unk6 >= 0xB) {
                         state->unk6 = state->unk6 - 1;
                     }
@@ -462,9 +463,9 @@ static void WL_LevelControl_setup7_tick(Object* self) {
         }
     }
     if (rand_next(0, 30) == 0) {
-        set_gplay_bitstring(0xA7, 1);
+        main_set_bits(BIT_WM_Randorn_Door_OpenClose, 1);
     }
     if (rand_next(0, 10) == 0) {
-        set_gplay_bitstring(0xA7, 0);
+        main_set_bits(BIT_WM_Randorn_Door_OpenClose, 0);
     }
 }

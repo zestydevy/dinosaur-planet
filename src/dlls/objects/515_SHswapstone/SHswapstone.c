@@ -1,4 +1,5 @@
 #include "PR/ultratypes.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/210_player.h"
@@ -29,9 +30,9 @@ typedef struct {
     u8 flags;
     u8 unk3;
     u8 unk4;
-    s16 unk6; // game bits ID
-    s16 unk8; // game bits ID
-    s16 unkA; // game bits ID
+    s16 bitSwapStoneSpokenTo; // game bits ID
+    s16 bitIntroSeq; // game bits ID
+    s16 bitSwappedToSeq; // game bits ID
 } SHswapstone_State;
 
 // warlock mountain warps (sabre, krystal)
@@ -61,24 +62,24 @@ void SHswapstone_create(Object* self, SHswapstone_CreateInfo* createInfo, s32 ar
 
     if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
-        state->unk6 = 0x883;
-        state->unk8 = 0x3EB;
-        state->unkA = 0x884;
+        state->bitSwapStoneSpokenTo = BIT_883;
+        state->bitIntroSeq = BIT_Play_Seq_0107_Rocky_Intro_Unused;
+        state->bitSwappedToSeq = BIT_Play_Seq_01FB_SwapStone_Back_In_SH;
         state->flags |= SWAPSTONE_IS_RUBBLE;
         self->modelInstIdx = 1;
     } else {
         // We are Rocky
-        state->unk6 = 0x15A;
-        state->unk8 = 0x886;
-        state->unkA = 0x3EA;
+        state->bitSwapStoneSpokenTo = BIT_Talked_to_Rocky;
+        state->bitIntroSeq = BIT_Play_Seq_035F_Rocky_Intro;
+        state->bitSwappedToSeq = BIT_Play_Seq_00D7_Swapped_to_Krystal;
         self->modelInstIdx = 0;
     }
-    if ((get_gplay_bitstring(0x887) != 0) && (get_gplay_bitstring(0x15A) != 0)) {
+    if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
         state->unk4 = 1;
     } else {
         state->unk4 = 0;
     }
-    set_gplay_bitstring(state->unk8, 0);
+    main_set_bits(state->bitIntroSeq, 0);
 }
 
 // offset: 0x140 | func: 1 | export: 1
@@ -91,7 +92,7 @@ void SHswapstone_update(Object* self) {
             func_80023D30(self, 0xC, 0.0f, 0);
         }
         func_80024108(self, 0.008f, delayFloat, 0);
-        if ((get_gplay_bitstring(0x887) != 0) && (get_gplay_bitstring(0x15A) != 0)) {
+        if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
             state->unk4 = 1;
         }
     } else {
@@ -99,7 +100,7 @@ void SHswapstone_update(Object* self) {
             func_80023D30(self, 0, 0.0f, 0);
         }
         func_80024108(self, 0.008f, delayFloat, 0);
-        if (get_gplay_bitstring(0x887) == 0) {
+        if (main_get_bits(BIT_Talking_to_Rocky) == 0) {
             state->unk4 = 0;
         }
     }
@@ -171,7 +172,7 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
             state->flags |= SWAPSTONE_PLAYER_HAS_SPELLSTONE;
         }
         a2->unk62 = 0;
-        if (get_gplay_bitstring(state->unk6) != 0) {
+        if (main_get_bits(state->bitSwapStoneSpokenTo) != 0) {
             a2->unk9D |= 4;
         }
     }
@@ -192,17 +193,17 @@ static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObjState* a2, void
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 0, 1);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 7, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_HOLLOW, 1);
-                if ((get_gplay_bitstring(0x277) != 0) && (get_gplay_bitstring(0x178) == 0)) {
+                if ((main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) != 0) && (main_get_bits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract) == 0)) {
                     // Set Rocky to give Tricky the distract command
-                    set_gplay_bitstring(0x885, 1);
+                    main_set_bits(BIT_Play_Seq_01FD_Rocky_Teaches_Distract, 1);
                 } else {
-                    set_gplay_bitstring(state->unkA, 1);
+                    main_set_bits(state->bitSwappedToSeq, 1);
                 }
             } else {
                 // Going to SwapStone Circle
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 0, 1);
                 gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 2);
-                set_gplay_bitstring(state->unkA, 1);
+                main_set_bits(state->bitSwappedToSeq, 1);
             }
             warpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
@@ -351,10 +352,10 @@ static s32 SHswapstone_get_held_spirit(void) {
 // Whether the player has a SpellStone.
 // Only checks for the first two!
 static s32 SHswapstone_has_spellstone(void) {
-    if (get_gplay_bitstring(0x2E8) != 0) {
+    if (main_get_bits(BIT_CF_SpellStone) != 0) {
         return 1;
     }
-    if (get_gplay_bitstring(0x123) != 0) {
+    if (main_get_bits(BIT_SpellStone_1) != 0) {
         return 1;
     }
     return 0;

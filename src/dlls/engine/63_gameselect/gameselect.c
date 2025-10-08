@@ -5,6 +5,7 @@
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "dlls/engine/74_picmenu.h"
+#include "game/gamebits.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
 #include "sys/fonts.h"
@@ -577,7 +578,7 @@ static void dll_63_load_save_game_info() {
 
             if (!saveFile->isEmpty) {
                 sSaveGameInfo[i].playerno = saveFile->playerno;
-                sSaveGameInfo[i].spiritBits = get_gplay_bitstring(0x489);
+                sSaveGameInfo[i].spiritBits = main_get_bits(BIT_Spirit_Bits);
                 sSaveGameInfo[i].unk3 = 0;
 
                 filenamePtr = sSaveGameInfo[i].filename;

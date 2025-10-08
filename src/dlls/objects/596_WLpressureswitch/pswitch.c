@@ -1,11 +1,11 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objects.h"
-#include "sys/gamebits.h"
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -63,7 +63,7 @@ void WLpressureswitch_create(Object* self, WLPressureSwitchCreateInfo* createInf
     state = self->state;
     self->unk0xbc = (void*)&WLpressureswitch_callbackBC;
     self->srt.yaw = createInfo->yaw << 8;
-    if (get_gplay_bitstring(createInfo->gameBitPressed)) {
+    if (main_get_bits(createInfo->gameBitPressed)) {
         self->srt.transl.y = createInfo->base.y - 25.0f;
         state->pressed = 30;
     }
@@ -128,12 +128,12 @@ void WLpressureswitch_update(Object* self) {
         if (state->pressed) {
             deltaY = createInfo->base.y - self->srt.transl.y;
             if (2.5f < deltaY && deltaY < 5.0f) {
-                set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, TRUE);
-            } else if (get_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened)) {
-                set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, FALSE);
+                main_set_bits(BIT_WM_Randorn_Hall_Opened, TRUE);
+            } else if (main_get_bits(BIT_WM_Randorn_Hall_Opened)) {
+                main_set_bits(BIT_WM_Randorn_Hall_Opened, FALSE);
             }
-        } else if (get_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened)) {
-            set_gplay_bitstring(BIT_905_WM_Randorn_Hall_Opened, FALSE);
+        } else if (main_get_bits(BIT_WM_Randorn_Hall_Opened)) {
+            main_set_bits(BIT_WM_Randorn_Hall_Opened, FALSE);
         }
     }
 
@@ -147,12 +147,12 @@ void WLpressureswitch_update(Object* self) {
                 self->srt.transl.y = deltaY;
             }
             playSound = FALSE;
-            set_gplay_bitstring(createInfo->gameBitPressed, TRUE);
+            main_set_bits(createInfo->gameBitPressed, TRUE);
         } else {
             self->srt.transl.y -= 0.125f * delayFloat;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                set_gplay_bitstring(createInfo->gameBitPressed, TRUE);
+                main_set_bits(createInfo->gameBitPressed, TRUE);
                 playSound = FALSE;
             } else {
                 playSound = TRUE;
@@ -166,7 +166,7 @@ void WLpressureswitch_update(Object* self) {
         } else {
             playSound = TRUE;
         }
-        set_gplay_bitstring(createInfo->gameBitPressed, FALSE);
+        main_set_bits(createInfo->gameBitPressed, FALSE);
     }
 
     //Play stone rumbling sound when moving

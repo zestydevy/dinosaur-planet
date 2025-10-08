@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "dll.h"
 #include "sys/main.h"
@@ -147,26 +148,26 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
             case 5:
                 state->unkF = 5;
                 state->unk10 = 2;
-                set_gplay_bitstring(0x129, 1);
+                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 6:
                 state->unk10 = 3;
-                set_gplay_bitstring(0x129, 1);
+                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 7:
-                set_gplay_bitstring(0x12B, 1);
+                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
                 break;
             case 8:
-                set_gplay_bitstring(0x12B, 0);
+                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
                 state->unkA = -3;
                 break;
             case 10:
-                set_gplay_bitstring(0x128, 1);
+                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
                 if (_data_0 == NULL)
                     _data_0 = func_8004A1E8(1);
                 break;
             case 9:
-                set_gplay_bitstring(0x127, 1);
+                main_set_bits(BIT_DB_Entered_Shrine_2, 1);
                 break;
             case 11:
                 state->unk8_s16 = 0x64;
@@ -174,7 +175,7 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
                 break;
             case 12:
                 func_80000860(self, self, 0xCE, 0);
-                set_gplay_bitstring(0x12D, 1);
+                main_set_bits(BIT_Test_of_Fear_Particles, 1);
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342, MAX_VOLUME, 0, 0, 0, 0);
                 break;
             case 13:
@@ -183,7 +184,7 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
                 } else {
                     func_80000860(self, self, D_80092A7C, 0);
                 }
-                set_gplay_bitstring(0x12D, 0);
+                main_set_bits(BIT_Test_of_Fear_Particles, 0);
                 break;
         }
         arg2->unk8E[var_s3] = 0;

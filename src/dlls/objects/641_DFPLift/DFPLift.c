@@ -84,7 +84,7 @@ void DFPLift_update(Object* self) {
     
     switch (state->stateType) {
     case LIFT_STATE_INIT:
-        if ((get_gplay_bitstring(state->unkA) != 0) && (state->unk10 != 1) && 
+        if ((main_get_bits(state->unkA) != 0) && (state->unk10 != 1) && 
                 (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_INIT_ACTIVATE_RANGE)) {
             // go up with sound
             if (self->srt.transl.y < (createInfo->base.y + LIFT_UP)) {

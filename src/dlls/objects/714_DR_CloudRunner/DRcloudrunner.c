@@ -244,7 +244,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
     }
 
     new_var = 4;
-    if (get_gplay_bitstring(createInfo->unk1E)) {
+    if (main_get_bits(createInfo->unk1E)) {
         self->unk0xc4 = NULL;
         state2->unk920 = (((new_var * (state2->unk910 > 0)) * 4) & 0x10) | (state2->unk920 & 0xFFEF);
         return 3;

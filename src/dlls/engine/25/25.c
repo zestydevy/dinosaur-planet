@@ -526,7 +526,7 @@ CurvesFunc1BCReturnInner *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
     for (i = 0; i < count; i++)
     {
         temp_s0 = result[i].unk4;
-        if ((temp_s0 != NULL) && (temp_s0->unk19 == 0x24) && ((arg1 == -1) || (arg1 == temp_s0->unk3)) && ((arg2 == -1) || (arg2 == temp_s0->unk1A.bytes.unk1A)) && ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) && ((temp_s0->unk30.words.unk30 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk30) != 0)) && ((temp_s0->unk30.words.unk32 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk32) == 0)))
+        if ((temp_s0 != NULL) && (temp_s0->unk19 == 0x24) && ((arg1 == -1) || (arg1 == temp_s0->unk3)) && ((arg2 == -1) || (arg2 == temp_s0->unk1A.bytes.unk1A)) && ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) && ((temp_s0->unk30.words.unk30 == -1) || (main_get_bits(temp_s0->unk30.words.unk30) != 0)) && ((temp_s0->unk30.words.unk32 == -1) || (main_get_bits(temp_s0->unk30.words.unk32) == 0)))
         {
             temp_fv0 = arg0[0] - temp_s0->unk8;
             temp_fv1 = arg0[1] - temp_s0->unkC;
@@ -768,8 +768,8 @@ CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)
         if ((temp_s0->unk19 == 0x22) &&
             ((arg1 == temp_s0->unk4.words.unk4) || ((temp_s0->unk1A.bytes.unk1A < 3) &&
                                                     (arg1 == -1))) &&
-            ((temp_s0->unk30.words.unk30 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk30) != 0)) &&
-            ((temp_s0->unk30.words.unk32 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk32) == 0)))
+            ((temp_s0->unk30.words.unk30 == -1) || (main_get_bits(temp_s0->unk30.words.unk30) != 0)) &&
+            ((temp_s0->unk30.words.unk32 == -1) || (main_get_bits(temp_s0->unk30.words.unk32) == 0)))
         {
             temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
             if (temp_fv0 < var_fs0)
@@ -835,8 +835,8 @@ CurvesFunc1BCReturnInner *dll_25_func_2CF8(Object *obj, s32 arg1)
         temp_s0 = result[i].unk4;
         if ((temp_s0->unk19 == 0x22) &&
             (arg1 == temp_s0->unk1A.bytes.unk1A) &&
-            ((temp_s0->unk30.words.unk30 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk30) != 0)) &&
-            ((temp_s0->unk30.words.unk32 == -1) || (get_gplay_bitstring(temp_s0->unk30.words.unk32) == 0)))
+            ((temp_s0->unk30.words.unk30 == -1) || (main_get_bits(temp_s0->unk30.words.unk30) != 0)) &&
+            ((temp_s0->unk30.words.unk32 == -1) || (main_get_bits(temp_s0->unk30.words.unk32) == 0)))
         {
             temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
             if (temp_fv0 < var_fs0)

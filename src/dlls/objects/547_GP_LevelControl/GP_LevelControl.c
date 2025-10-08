@@ -1,4 +1,5 @@
 #include "PR/ultratypes.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "dll.h"
@@ -6,7 +7,6 @@
 #include "sys/objects.h"
 #include "functions.h"
 #include "sys/map_enums.h"
-#include "sys/gamebits.h"
 
 typedef struct {
 /*00*/ f32 heatCutsceneTimer;
@@ -32,14 +32,14 @@ void GP_LevelControl_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
 
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
-        set_gplay_bitstring(BIT_479_GP_Sharpclaw_Jetbike_Cutscene2, 1);
+        main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene2, 1);
         break;
     case 3:
-        set_gplay_bitstring(BIT_479_GP_Sharpclaw_Jetbike_Cutscene2, 1);
+        main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene2, 1);
         break;
     }
 
-    set_gplay_bitstring(BIT_5F3_DFP_SpellStone_One_Placed, 1);
+    main_set_bits(BIT_DFP_Place_Spellstone_One, 1);
     state->mapID = 0xFF;
 }
 
@@ -66,7 +66,7 @@ void GP_LevelControl_update(Object *self) {
     state->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
 
     // heat reducing energy cutscene
-    if (!gDLL_7_Newday->vtbl->func8(&time) && !get_gplay_bitstring(BIT_643) && ((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0) {
+    if (!gDLL_7_Newday->vtbl->func8(&time) && !main_get_bits(BIT_643) && ((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0) {
         if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xA) != 0) {
             timerInc = 10.0f;
         } else {
@@ -89,8 +89,8 @@ void GP_LevelControl_update(Object *self) {
         state->heatCutsceneTimer += timerInc * delayFloat;
         if (state->heatCutsceneTimer > 600.0f) {
             state->heatCutsceneTimer -= 600.0f;
-            if (!get_gplay_bitstring(BIT_11_GP_Shown_Heat_Cutscene)) {
-                set_gplay_bitstring(BIT_11_GP_Shown_Heat_Cutscene, 1);
+            if (!main_get_bits(BIT_GP_Shown_Heat_Cutscene)) {
+                main_set_bits(BIT_GP_Shown_Heat_Cutscene, 1);
                 gDLL_3_Animation->vtbl->func17(9, player, -1);
             }
         }
@@ -102,8 +102,8 @@ void GP_LevelControl_update(Object *self) {
         obj2 = func_800211B4(0x3043B);
         if (obj && obj2 && vec3_distance_squared(&obj->positionMirror, &obj2->positionMirror) < 300.0f) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 3, 1);
-            set_gplay_bitstring(BIT_478_GP_Sharpclaw_Jetbike_Cutscene1, 1);
-            set_gplay_bitstring(BIT_479_GP_Sharpclaw_Jetbike_Cutscene2, 1);
+            main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene1, 1);
+            main_set_bits(BIT_GP_Sharpclaw_Jetbike_Cutscene2, 1);
         }
     }
 }
@@ -139,7 +139,7 @@ void GP_LevelControl_func_4C8(Object *self) {
     gDLL_5_AMSEQ2->vtbl->func0(self, 0xEE, 0, 0, 0);
     GP_LevelControl_func_58C(self, 1);
     if (mapSetup == 3) {
-        set_gplay_bitstring(BIT_773_GP_SharpClaw_Taken_Spellstone, 1);
+        main_set_bits(BIT_GP_Sharpclaw_Taken_Spellstone, 1);
     }
 }
 

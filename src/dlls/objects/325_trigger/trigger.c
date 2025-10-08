@@ -3,6 +3,7 @@
 #include "PR/gu.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/sidekick.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/asset_thread.h"
@@ -278,7 +279,7 @@ void trigger_create(Object *self, TriggerCreateInfo *createInfo, s32 param3) {
     }
 
     state->bitFlagID = createInfo->bitFlagID;
-    s0 = get_gplay_bitstring(state->bitFlagID);
+    s0 = main_get_bits(state->bitFlagID);
 
     cmd = createInfo->commands;
 
@@ -431,7 +432,7 @@ void trigger_update(Object* self) {
         case OBJ_TriggerPlane:
             b_allBitsSet = TRUE;
             if (state->conditionBitFlagIDs[0] >= 0) {
-                if (get_gplay_bitstring(state->conditionBitFlagIDs[0]) == 0) {
+                if (main_get_bits(state->conditionBitFlagIDs[0]) == 0) {
                     b_allBitsSet = FALSE;
                 }
             }
@@ -460,7 +461,7 @@ void trigger_update(Object* self) {
             b_allBitsSet = TRUE;
             for (i = 0; i < 4 && b_allBitsSet; i++) {
                 if (state->conditionBitFlagIDs[i] >= 0) {
-                    if (get_gplay_bitstring(state->conditionBitFlagIDs[i]) == 0) {
+                    if (main_get_bits(state->conditionBitFlagIDs[i]) == 0) {
                         b_allBitsSet = FALSE;
                     }
                 }
@@ -840,17 +841,17 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             gDLL_29_Gplay->vtbl->set_obj_group_status((s32) cmd->param2, (s32) cmd->param1, 0);
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
-            set_gplay_bitstring(0x46E, cmd->param2 | (cmd->param1 << 8));
+            main_set_bits(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_KYTE_TALK_SEQ:
-            set_gplay_bitstring(0x488, cmd->param2 | (cmd->param1 << 8));
+            main_set_bits(BIT_488, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_MAP_SETUP:
             gDLL_29_Gplay->vtbl->set_map_setup((s32) cmd->param2, (s32) cmd->param1);
             break;
         case TRG_CMD_11:
             // Tricky related?
-            set_gplay_bitstring(0x4E2, cmd->param2 | (cmd->param1 << 8));
+            main_set_bits(BIT_4E2, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_GAME:
             gDLL_29_Gplay->vtbl->checkpoint(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, func_80048498());
@@ -913,7 +914,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
     if (dir > 0) {
         // In
         state->flags |= TRG_ACTIVATOR_ENTERED;
-        set_gplay_bitstring(state->bitFlagID, 1);
+        main_set_bits(state->bitFlagID, 1);
     } else if (dir < 0) {
         // Out
         state->flags |= TRG_ACTIVATOR_EXITED;
@@ -930,7 +931,7 @@ void trigger_func_1764(u16 param1) {
 
     entry = param1 & 0x3FFF;
     param1 >>= 14;
-    value = get_gplay_bitstring(entry);
+    value = main_get_bits(entry);
 
     if (param1 == 0) {
         value = 0;
@@ -940,7 +941,7 @@ void trigger_func_1764(u16 param1) {
         value = ~value;
     }
 
-    set_gplay_bitstring(entry, value);
+    main_set_bits(entry, value);
 }
 
 void trigger_func_17FC(u16 param1) {
@@ -951,9 +952,9 @@ void trigger_func_17FC(u16 param1) {
     entry = param1 & 0x1FFF;
     param1 >>= 13;
 
-    value = get_gplay_bitstring(entry);
+    value = main_get_bits(entry);
     value ^= (1 << param1);
-    set_gplay_bitstring(entry, value);
+    main_set_bits(entry, value);
 }
 
 void trigger_func_1868(u16 param1) {
