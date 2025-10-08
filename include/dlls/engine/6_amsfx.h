@@ -89,7 +89,7 @@ DLL_INTERFACE(DLL_6_AMSFX) {
     /*3*/ void (*func_7E4)(u8 arg0);
     /*4*/ void (*func_860)(u32 arg0, u8 arg1);
     /*5*/ void (*func_954)(u32 arg0, f32 arg1);
-    /*6*/ void (*func_A1C)(u32 arg0);
+    /*6*/ void (*func_A1C)(u32 arg0); //stop_sound?
     /*7*/ void (*func_A6C)(Object *obj);
     /*8*/ s32 (*func_B48)(u32 arg0);
     /*9*/ s32 (*func_BBC)(Object* arg0, s32 arg1, s32 arg2, Object **arg3, s32 arg4);
