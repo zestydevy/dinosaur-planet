@@ -34,25 +34,133 @@ static const char str14[] = "CINEMA OUT OF RANGE\n";
 
 // Map of map ID -> bit table key
 static u16 sMapSetupBitKeys[120] = {
-    0x0000, 0x0000, 0x076e, 0x08ec, 0x04fe, 0x00df, 0x00e0, 0x00e1, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7, 0x00e8, 
-    0x00e9, 0x00ea, 0x00eb, 0x0492, 0x0000, 0x05d0, 0x0000, 0x00ed, 0x00ed, 0x00ed, 0x00f0, 0x0000, 0x0229, 0x00ee, 0x0000, 0x00ef, 
-    0x0000, 0x0000, 0x0000, 0x03ee, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0349, 0x0000, 0x0492, 0x0492, 
-    0x0547, 0x0000, 0x05d0, 0x0000, 0x076f, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+/*000*/ 0x0000, /*001*/ 0x0000, 
+/*002*/ BIT_DR_Top_Map_Setup, // MAP_DRAGON_ROCK_TOP
+/*003*/ BIT_KP_Map_Setup, // MAP_KRAZOA_PALACE
+/*004*/ BIT_VFP_Map_Setup, // MAP_VOLCANO_FORCE_POINT_TEMPLE
+/*005*/ BIT_Rolling_Demo_Map_Setup, // MAP_ROLLING_DEMO
+/*006*/ BIT_DF_Map_Setup, // MAP_DISCOVERY_FALLS
+/*007*/ BIT_SH_Map_Setup, // MAP_SWAPSTONE_HOLLOW
+/*008*/ BIT_SH_Map_Setup, // MAP_SWAPSTONE_HOLLOW_2
+/*009*/ BIT_GP_Map_Setup, // MAP_GOLDEN_PLAINS
+/*010*/ BIT_SW_Map_Setup, // MAP_SNOWHORN_WASTES
+/*011*/ BIT_WM_Map_Setup, // MAP_WARLOCK_MOUNTAIN
+/*012*/ BIT_CF_Map_Setup, // MAP_CLOUDRUNNER_FORTRESS
+/*013*/ BIT_WC_Map_Setup, // MAP_WALLED_CITY
+/*014*/ BIT_SC_Map_Setup, // MAP_SWAPSTONE_CIRCLE
+/*015*/ BIT_CF_Treasure_Map_Setup, // MAP_CLOUDRUNNER_TREASURE
+/*016*/ BIT_CF_Dungeon_Map_Setup, // MAP_CLOUDRUNNER_DUNGEON
+/*017*/ BIT_CF_TrapRooms_Map_Setup, // MAP_CLOUDRUNNER_TRAPROOMS
+/*018*/ BIT_MMP_Map_Setup, // MAP_MOON_MOUNTAIN_PASS
+/*019*/ BIT_DIM_Map_Setup, // MAP_DARK_ICE_MINES_1
+/*020*/ 0x0000, 
+/*021*/ BIT_DFP_Map_Setup, // MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM
+/*022*/ 0x0000, 
+/*023*/ BIT_IM_Map_Setup, // MAP_ICE_MOUNTAIN_1
+/*024*/ BIT_IM_Map_Setup, // MAP_ICE_MOUNTAIN_2
+/*025*/ BIT_IM_Map_Setup, // MAP_ICE_MOUNTAIN_3
+/*026*/ BIT_AnimTest_Map_Setup, // MAP_ANIMTEST
+/*027*/ 0x0000, 
+/*028*/ BIT_Boss_Galadon_Map_Setup, // MAP_BOSS_GALADON
+/*029*/ BIT_CC_Map_Setup, // MAP_CAPE_CLAW
+/*030*/ 0x0000, 
+/*031*/ BIT_DF_Shrine_Map_Setup, // MAP_SHRINE_DISCOVERY_FALLS
+/*032*/ 0x0000, /*033*/ 0x0000, /*034*/ 0x0000, 
+/*035*/ BIT_DB_Map_Setup, // MAP_DIAMOND_BAY
+/*036*/ 0x0000, /*037*/ 0x0000, /*038*/ 0x0000, /*039*/ 0x0000, 
+/*040*/ 0x0000, /*041*/ 0x0000, /*042*/ 0x0000, /*043*/ 0x0000, 
+/*044*/ BIT_Boss_Drakor_Map_Setup, // MAP_BOSS_DRAKOR
+/*045*/ 0x0000, 
+/*046*/ BIT_DIM_Map_Setup, // MAP_DARK_ICE_MINES_CAVES
+/*047*/ BIT_DIM_Map_Setup, // MAP_DARK_ICE_MINES_LAVA
+/*048*/ BIT_Boss_Klanadack_Map_Setup, // MAP_BOSS_KLANADACK
+/*049*/ 0x0000, 
+/*050*/ BIT_DFP_Map_Setup, // MAP_DESERT_FORCE_POINT_TEMPLE_TOP
+/*051*/ 0x0000, 
+/*052*/ BIT_DR_Bottom_Map_Setup, // MAP_DRAGON_ROCK_BOTTOM
+/*053*/ 0x0000, /*054*/ 0x0000, /*055*/ 0x0000, /*056*/ 0x0000, 
+/*057*/ 0x0000, /*058*/ 0x0000, /*059*/ 0x0000, /*060*/ 0x0000, 
+/*061*/ 0x0000, /*062*/ 0x0000, /*063*/ 0x0000, /*064*/ 0x0000, 
+/*065*/ 0x0000, /*066*/ 0x0000, /*067*/ 0x0000, /*068*/ 0x0000, 
+/*069*/ 0x0000, /*070*/ 0x0000, /*071*/ 0x0000, /*072*/ 0x0000, 
+/*073*/ 0x0000, /*074*/ 0x0000, /*075*/ 0x0000, /*076*/ 0x0000, 
+/*077*/ 0x0000, /*078*/ 0x0000, /*079*/ 0x0000, /*080*/ 0x0000, 
+/*081*/ 0x0000, /*082*/ 0x0000, /*083*/ 0x0000, /*084*/ 0x0000, 
+/*085*/ 0x0000, /*086*/ 0x0000, /*087*/ 0x0000, /*088*/ 0x0000, 
+/*089*/ 0x0000, /*090*/ 0x0000, /*091*/ 0x0000, /*092*/ 0x0000, 
+/*093*/ 0x0000, /*094*/ 0x0000, /*095*/ 0x0000, /*096*/ 0x0000, 
+/*097*/ 0x0000, /*098*/ 0x0000, /*099*/ 0x0000, /*100*/ 0x0000, 
+/*101*/ 0x0000, /*102*/ 0x0000, /*103*/ 0x0000, /*104*/ 0x0000, 
+/*105*/ 0x0000, /*106*/ 0x0000, /*107*/ 0x0000, /*108*/ 0x0000, 
+/*109*/ 0x0000, /*110*/ 0x0000, /*111*/ 0x0000, /*112*/ 0x0000, 
+/*113*/ 0x0000, /*114*/ 0x0000, /*115*/ 0x0000, /*116*/ 0x0000, 
+/*117*/ 0x0000, /*118*/ 0x0000, /*119*/ 0x0000
 };
 // Map of map ID -> bit table key
 static u16 sMapObjGroupBitKeys[120] = {
-    0x03e0, 0x03e0, 0x05db, 0x08ed, 0x0500, 0x07ce, 0x0480, 0x0452, 0x0452, 0x047b, 0x04ae, 0x0405, 0x0458, 0x036a, 0x04a6, 0x045a, 
-    0x047c, 0x0000, 0x042e, 0x0493, 0x0000, 0x05d1, 0x0000, 0x03ad, 0x03ad, 0x03ad, 0x0517, 0x0373, 0x0443, 0x03b7, 0x0421, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0397, 0x0000, 0x0000, 0x0000, 0x0473, 0x0000, 0x0000, 0x0000, 0x04a3, 0x0000, 0x0000, 0x0493, 0x0493, 
-    0x0548, 0x0000, 0x05d1, 0x0601, 0x05dc, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x03e0, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+/*000*/ BIT_Front_End_ObjGroup_Bits, // MAP_FRONT_END
+/*001*/ BIT_Front_End_ObjGroup_Bits, // MAP_FRONT_END2
+/*002*/ BIT_DR_Top_ObjGroup_Bits, // MAP_DRAGON_ROCK_TOP
+/*003*/ BIT_KP_ObjGroup_Bits, // MAP_KRAZOA_PALACE
+/*004*/ BIT_VFP_ObjGroup_Bits, // MAP_VOLCANO_FORCE_POINT_TEMPLE
+/*005*/ BIT_Rolling_Demo_ObjGroup_Bits, // MAP_ROLLING_DEMO
+/*006*/ BIT_DF_ObjGroup_Bits, // MAP_DISCOVERY_FALLS
+/*007*/ BIT_SH_ObjGroup_Bits, // MAP_SWAPSTONE_HOLLOW
+/*008*/ BIT_SH_ObjGroup_Bits, // MAP_SWAPSTONE_HOLLOW_2
+/*009*/ BIT_GP_ObjGroup_Bits, // MAP_GOLDEN_PLAINS
+/*010*/ BIT_SW_ObjGroup_Bits, // MAP_SNOWHORN_WASTES
+/*011*/ BIT_WM_ObjGroup_Bits, // MAP_WARLOCK_MOUNTAIN
+/*012*/ BIT_CF_ObjGroup_Bits, // MAP_CLOUDRUNNER_FORTRESS
+/*013*/ BIT_WC_ObjGroup_Bits, // MAP_WALLED_CITY
+/*014*/ BIT_SC_ObjGroup_Bits, // MAP_SWAPSTONE_CIRCLE
+/*015*/ BIT_CF_Treasure_ObjGroup_Bits, // MAP_CLOUDRUNNER_TREASURE
+/*016*/ BIT_CF_Dungeon_ObjGroup_Bits, // MAP_CLOUDRUNNER_DUNGEON
+/*017*/ 0x0000, 
+/*018*/ BIT_MMP_ObjGroup_Bits, // MAP_MOON_MOUNTAIN_PASS
+/*019*/ BIT_DIM_ObjGroupBits, // MAP_DARK_ICE_MINES_1
+/*020*/ 0x0000, 
+/*021*/ BIT_DFP_ObjGroup_Bits, // MAP_DESERT_FORCE_POINT_TEMPLE_BOTTOM
+/*022*/ 0x0000, 
+/*023*/ BIT_IM_ObjGroup_Bits, // MAP_ICE_MOUNTAIN_1
+/*024*/ BIT_IM_ObjGroup_Bits, // MAP_ICE_MOUNTAIN_2
+/*025*/ BIT_IM_ObjGroup_Bits, // MAP_ICE_MOUNTAIN_3
+/*026*/ BIT_AnimTest_ObjGroup_Bits, // MAP_ANIMTEST
+/*027*/ BIT_DIM2_ObjGroup_Bits, // MAP_DARK_ICE_MINES_2
+/*028*/ BIT_Boss_Galadon_ObjGroup_Bits, // MAP_BOSS_GALADON
+/*029*/ BIT_CC_ObjGroup_Bits, // MAP_CAPE_CLAW
+/*030*/ BIT_Galleon_Inside_ObjGroup_Bits, // MAP_INSIDE_GALLEON
+/*031*/ 0x0000, /*032*/ 0x0000, /*033*/ 0x0000, /*034*/ 0x0000, 
+/*035*/ BIT_DB_ObjGroup_Bits, // MAP_DIAMOND_BAY
+/*036*/ 0x0000, /*037*/ 0x0000, /*038*/ 0x0000, 
+/*039*/ BIT_DB_Shrine_ObjGroup_Bits, // MAP_SHRINE_DIAMOND_BAY
+/*040*/ 0x0000, /*041*/ 0x0000, /*042*/ 0x0000, 
+/*043*/ BIT_CF_RaceTrack_ObjGroup_Bits, // MAP_CLOUDRUNNER_RACETRACK
+/*044*/ 0x0000, /*045*/ 0x0000, 
+/*046*/ BIT_DIM_ObjGroupBits, // MAP_DARK_ICE_MINES_CAVES
+/*047*/ BIT_DIM_ObjGroupBits, // MAP_DARK_ICE_MINES_LAVA
+/*048*/ BIT_Boss_Klanadack_ObjGroup_Bits, // MAP_BOSS_KLANADACK
+/*049*/ 0x0000, 
+/*050*/ BIT_DFP_ObjGroup_Bits, // MAP_DESERT_FORCE_POINT_TEMPLE_TOP
+/*051*/ BIT_SwapStone_Store_ObjGroup_Bits, // MAP_SWAPSTONE_STORE
+/*052*/ BIT_DR_Bottom_ObjGroup_Bits, // MAP_DRAGON_ROCK_BOTTOM
+/*053*/ 0x0000, /*054*/ 0x0000, /*055*/ 0x0000, /*056*/ 0x0000, 
+/*057*/ 0x0000, /*058*/ 0x0000, /*059*/ 0x0000, 
+/*060*/ BIT_Front_End_ObjGroup_Bits, // MOBILE_MAP_GALLEONSHIP
+/*061*/ 0x0000, /*062*/ 0x0000, /*063*/ 0x0000, /*064*/ 0x0000, 
+/*065*/ 0x0000, /*066*/ 0x0000, /*067*/ 0x0000, /*068*/ 0x0000, 
+/*069*/ 0x0000, /*070*/ 0x0000, /*071*/ 0x0000, /*072*/ 0x0000, 
+/*073*/ 0x0000, /*074*/ 0x0000, /*075*/ 0x0000, /*076*/ 0x0000, 
+/*077*/ 0x0000, /*078*/ 0x0000, /*079*/ 0x0000, /*080*/ 0x0000, 
+/*081*/ 0x0000, /*082*/ 0x0000, /*083*/ 0x0000, /*084*/ 0x0000, 
+/*085*/ 0x0000, /*086*/ 0x0000, /*087*/ 0x0000, /*088*/ 0x0000, 
+/*089*/ 0x0000, /*090*/ 0x0000, /*091*/ 0x0000, /*092*/ 0x0000, 
+/*093*/ 0x0000, /*094*/ 0x0000, /*095*/ 0x0000, /*096*/ 0x0000, 
+/*097*/ 0x0000, /*098*/ 0x0000, /*099*/ 0x0000, /*100*/ 0x0000, 
+/*101*/ 0x0000, /*102*/ 0x0000, /*103*/ 0x0000, /*104*/ 0x0000, 
+/*105*/ 0x0000, /*106*/ 0x0000, /*107*/ 0x0000, /*108*/ 0x0000, 
+/*109*/ 0x0000, /*110*/ 0x0000, /*111*/ 0x0000, /*112*/ 0x0000, 
+/*113*/ 0x0000, /*114*/ 0x0000, /*115*/ 0x0000, /*116*/ 0x0000, 
+/*117*/ 0x0000, /*118*/ 0x0000, /*119*/ 0x0000
 };
 static Vec3f sPlayerStartPos = { -14149.352f, -82.0f, -15569.178f };
 
@@ -106,8 +214,8 @@ void gplay_dtor(DLLFile *self)  {
 void gplay_erase_save(s8 idx) {
     gplay_reset_state();
     sSavegameIdx = idx;
-    sState.save.unk0.file.isEmpty = 1;
-    sState.save.unk0.file.timePlayed = -1.0f;
+    sState.save.file.isEmpty = 1;
+    sState.save.file.timePlayed = -1.0f;
     // Save twice to erase both copies
     gplay_save_game();
     gplay_save_game();
@@ -126,42 +234,42 @@ void gplay_init_save(s8 idx, char *filename) {
     gplay_reset_state();
 
     sSavegameIdx = idx;
-    sState.save.unk0.file.playerno = PLAYER_KRYSTAL;
+    sState.save.file.playerno = PLAYER_KRYSTAL;
 
     for (i = 0; i < 2; i++) {
 
-        sState.save.unk0.file.players[i].health = 12;
-        sState.save.unk0.file.players[i].healthMax = 12;
-        sState.save.unk0.file.players[i].magicMax = 25;
-        sState.save.unk0.file.players[i].magic = 0;
+        sState.save.file.players[i].health = 12;
+        sState.save.file.players[i].healthMax = 12;
+        sState.save.file.players[i].magicMax = 25;
+        sState.save.file.players[i].magic = 0;
 
-        sState.save.unk0.file.unk0x18[i].unk0x0 = 4;
-        sState.save.unk0.file.unk0x18[i].unk0x1 = 5;
+        sState.save.file.unk0x18[i].unk0x0 = 4;
+        sState.save.file.unk0x18[i].unk0x1 = 5;
 
-        sState.save.unk0x16F4[i].unk0x0 = -1;
-        sState.save.unk0x16F4[i].unk0x2 = -1;
-        sState.save.unk0x16F4[i].unk0x4 = -1;
-        sState.save.unk0x16F4[i].unk0x6 = -1;
-        sState.save.unk0x16F4[i].unk0x8 = -1;
-        sState.save.unk0x16F4[i].unk0xa = -1;
-        sState.save.unk0x16F4[i].unk0xc = -1;
-        sState.save.unk0x16F4[i].unk0xe = -1;
-        sState.save.unk0x16F4[i].unk0x12 = -1;
+        sState.save.map.unk0x16F4[i].unk0x0 = -1;
+        sState.save.map.unk0x16F4[i].unk0x2 = -1;
+        sState.save.map.unk0x16F4[i].unk0x4 = -1;
+        sState.save.map.unk0x16F4[i].unk0x6 = -1;
+        sState.save.map.unk0x16F4[i].unk0x8 = -1;
+        sState.save.map.unk0x16F4[i].unk0xa = -1;
+        sState.save.map.unk0x16F4[i].unk0xc = -1;
+        sState.save.map.unk0x16F4[i].unk0xe = -1;
+        sState.save.map.unk0x16F4[i].unk0x12 = -1;
 
-        sState.save.unk0x171C[i].unk0x0 = 43000.0f;
-        sState.save.unk0x171C[i].unk0x4 = -1;
-        sState.save.unk0x171C[i].unk0x6 = -1;
-        sState.save.unk0x171C[i].unk0x8 = -1;
-        sState.save.unk0x171C[i].unk0xa = -1;
-        sState.save.unk0x171C[i].unk0xc = -1;
-        sState.save.unk0x171C[i].unk0xe = -1;
-        sState.save.unk0x171C[i].unk0x3d = -1;
-        sState.save.unk0x171C[i].unk0x3e = -1;
-        sState.save.unk0x171C[i].unk0x3f = -1;
-        sState.save.unk0x171C[i].unk0x3c = 1;
+        sState.save.map.unk0x171C[i].unk0x0 = 43000.0f;
+        sState.save.map.unk0x171C[i].unk0x4 = -1;
+        sState.save.map.unk0x171C[i].unk0x6 = -1;
+        sState.save.map.unk0x171C[i].unk0x8 = -1;
+        sState.save.map.unk0x171C[i].unk0xa = -1;
+        sState.save.map.unk0x171C[i].unk0xc = -1;
+        sState.save.map.unk0x171C[i].unk0xe = -1;
+        sState.save.map.unk0x171C[i].unk0x3d = -1;
+        sState.save.map.unk0x171C[i].unk0x3e = -1;
+        sState.save.map.unk0x171C[i].unk0x3f = -1;
+        sState.save.map.unk0x171C[i].unk0x3c = 1;
 
         for (k = 0; k < 4; k++) {
-            sState.save.unk0x179c[i].unk0x0[k] = -1;
+            sState.save.map.unk0x179c[i].unk0x0[k] = -1;
         }
     }
 
@@ -174,7 +282,7 @@ void gplay_init_save(s8 idx, char *filename) {
     main_set_bits(BIT_Tricky_Spawns, 1);
 
     if (filename != NULL) {
-        dst = &sState.save.unk0.file.name[0];
+        dst = &sState.save.file.name[0];
 
         var = *filename;
         *dst = var;
@@ -227,7 +335,7 @@ s32 gplay_load_save(s8 idx, u8 startGame) {
                 // copy 1 failed but copy 0 is good, use that one
                 mmFree(copy1Ptr);
                 ret = 2; // bug? shouldn't this be 1 since copy 0 is being returned?
-            } else if (copy1Ptr->asSave.unk0.file.timePlayed < sSavegame->asSave.unk0.file.timePlayed) {
+            } else if (copy1Ptr->asSave.file.timePlayed < sSavegame->asSave.file.timePlayed) {
                 // both copies are good but copy 0 is newer, use that one
                 mmFree(copy1Ptr);
                 ret = 1;
@@ -268,9 +376,10 @@ void gplay_copy_save(s8 srcIdx, s8 dstIdx) {
 
 void gplay_save_game(void) {
     if (sSavegameIdx != -1) {
-        sState.save.unk0.file.numTimesSaved += 1;
+        sState.save.file.numTimesSaved += 1;
 
-        bcopy(&sState.save.unk0.file, &sSavegame->asSave.unk0.file, sizeof(Savefile));
+        // Always stage & save data in the Savefile struct
+        bcopy(&sState.save.file, &sSavegame->asSave.file, sizeof(Savefile));
 
         // Alternate save location in flash every time the gamesave is saved
         //
@@ -287,12 +396,12 @@ void gplay_save_game(void) {
         // | 7 | savegame 3 alternate 1 |
         gDLL_31_Flash->vtbl->save_game(
             &sSavegame->asFlash, 
-            sSavegameIdx + (sSavegame->asSave.unk0.file.numTimesSaved % 2) * MAX_SAVEGAMES, 
+            sSavegameIdx + (sSavegame->asSave.file.numTimesSaved % 2) * MAX_SAVEGAMES, 
             sizeof(FlashStruct), 
             TRUE);
         
         if (sRestartSave != NULL) {
-            bcopy(&sState.save.unk0, &sRestartSave->unk0, sizeof(GplayStruct9));
+            bcopy(&sState.save.chkpnt, &sRestartSave->chkpnt, sizeof(CheckpointSaveData));
         }
     }
 }
@@ -347,19 +456,19 @@ void gplay_func_94C(s32 param1) {
 
 void gplay_checkpoint(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
     if ((param3 & 1) != 0) {
-        bcopy(&sState.save.unk0, &sSavegame->asSave.unk0, sizeof(GplayStruct9));
+        bcopy(&sState.save.chkpnt, &sSavegame->asSave.chkpnt, sizeof(CheckpointSaveData));
     } else {
         if (func_8001EBE0() != 0) {
-            sState.save.unk0x16F4[sState.save.unk0.file.playerno].unk0x10 |= 1;
+            sState.save.map.unk0x16F4[sState.save.file.playerno].unk0x10 |= 1;
         } else {
-            sState.save.unk0x16F4[sState.save.unk0.file.playerno].unk0x10 &= ~1;
+            sState.save.map.unk0x16F4[sState.save.file.playerno].unk0x10 &= ~1;
         }
 
-        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.x = position->x;
-        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.y = position->y;
-        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.z = position->z;
-        sState.save.playerLocations[sState.save.unk0.file.playerno].rotationY = yaw >> 8;
-        sState.save.playerLocations[sState.save.unk0.file.playerno].mapLayer = mapLayer;
+        sState.save.map.playerLocations[sState.save.file.playerno].vec.x = position->x;
+        sState.save.map.playerLocations[sState.save.file.playerno].vec.y = position->y;
+        sState.save.map.playerLocations[sState.save.file.playerno].vec.z = position->z;
+        sState.save.map.playerLocations[sState.save.file.playerno].rotationY = yaw >> 8;
+        sState.save.map.playerLocations[sState.save.file.playerno].mapLayer = mapLayer;
 
         // Copy save state to active savegame
         //
@@ -369,7 +478,7 @@ void gplay_checkpoint(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
     }
 
     if (sRestartSave != NULL) {
-        bcopy(&sState.save.unk0, &sRestartSave->unk0, sizeof(GplayStruct9));
+        bcopy(&sState.save.chkpnt, &sRestartSave->chkpnt, sizeof(CheckpointSaveData));
     }
 }
 
@@ -389,16 +498,16 @@ void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     bcopy(&sState.save, sRestartSave, sizeof(Savegame));
 
     if (func_8001EBE0() != 0) {
-        sRestartSave->unk0x16F4[sRestartSave->unk0.file.playerno].unk0x10 |= 1;
+        sRestartSave->map.unk0x16F4[sRestartSave->file.playerno].unk0x10 |= 1;
     } else {
-        sRestartSave->unk0x16F4[sRestartSave->unk0.file.playerno].unk0x10 &= ~1;
+        sRestartSave->map.unk0x16F4[sRestartSave->file.playerno].unk0x10 &= ~1;
     }
 
-    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.x = position->x;
-    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.y = position->y;
-    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].vec.z = position->z;
-    sRestartSave->playerLocations[sRestartSave->unk0.file.playerno].rotationY = (u8)(yaw >> 8);
-    sRestartSave->playerLocations[sState.save.unk0.file.playerno].mapLayer = mapLayer;
+    sRestartSave->map.playerLocations[sRestartSave->file.playerno].vec.x = position->x;
+    sRestartSave->map.playerLocations[sRestartSave->file.playerno].vec.y = position->y;
+    sRestartSave->map.playerLocations[sRestartSave->file.playerno].vec.z = position->z;
+    sRestartSave->map.playerLocations[sRestartSave->file.playerno].rotationY = (u8)(yaw >> 8);
+    sRestartSave->map.playerLocations[sState.save.file.playerno].mapLayer = mapLayer;
 }
 
 void gplay_restart_goto(void) {
@@ -428,9 +537,9 @@ static void gplay_start_game(void) {
     unpause();
 
     func_800142A0(
-        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.x,
-        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.y,
-        sState.save.playerLocations[sState.save.unk0.file.playerno].vec.z);
+        sState.save.map.playerLocations[sState.save.file.playerno].vec.x,
+        sState.save.map.playerLocations[sState.save.file.playerno].vec.y,
+        sState.save.map.playerLocations[sState.save.file.playerno].vec.z);
     
     if (menu_get_current() != MENU_TITLE_SCREEN) {
         menu_set(MENU_GAMEPLAY);
@@ -444,79 +553,79 @@ GameState *gplay_get_state(void) {
 }
 
 u8 gplay_get_playerno(void) {
-    return sState.save.unk0.file.playerno;
+    return sState.save.file.playerno;
 }
 
 void gplay_set_playerno(u8 playerno) {
-    sState.save.unk0.file.playerno = playerno;
+    sState.save.file.playerno = playerno;
 }
 
 PlayerStats *gplay_get_player_stats(void) {
-    return &sState.save.unk0.file.players[sState.save.unk0.file.playerno];
+    return &sState.save.file.players[sState.save.file.playerno];
 }
 
 PlayerLocation *gplay_get_player_saved_location(void) {
-    return &sState.save.playerLocations[sState.save.unk0.file.playerno];
+    return &sState.save.map.playerLocations[sState.save.file.playerno];
 }
 
 GplayStruct11 *gplay_func_F30(void) {
-    return &sState.save.unk0.file.unk0x18[sState.save.unk0.file.playerno];
+    return &sState.save.file.unk0x18[sState.save.file.playerno];
 }
 
 // gplayGetCurrentPlayerLactions ?
 GplayStruct6 *gplay_func_F60(void) {
-    if (sState.save.unk0.file.playerno >= PLAYER_NUM_PLAYERS) {
-        return &sState.save.unk0x16F4[0];
+    if (sState.save.file.playerno >= PLAYER_NUM_PLAYERS) {
+        return &sState.save.map.unk0x16F4[0];
     }
 
-    return &sState.save.unk0x16F4[sState.save.unk0.file.playerno];
+    return &sState.save.map.unk0x16F4[sState.save.file.playerno];
 }
 
 // gplayGetCurrentPlayerEnvactions ?
 GplayStruct12 *gplay_func_FA8(void) {
-    if (sState.save.unk0.file.playerno >= PLAYER_NUM_PLAYERS) {
-        return &sState.save.unk0x171C[0];
+    if (sState.save.file.playerno >= PLAYER_NUM_PLAYERS) {
+        return &sState.save.map.unk0x171C[0];
     }
 
-    return &sState.save.unk0x171C[sState.save.unk0.file.playerno];
+    return &sState.save.map.unk0x171C[sState.save.file.playerno];
 }
 
 GplayStruct13 *gplay_func_FE8(void) {
-    return &sState.save.unk0x179c[sState.save.unk0.file.playerno];
+    return &sState.save.map.unk0x179c[sState.save.file.playerno];
 }
 
 void gplay_add_time(s32 uid, f32 time) {
     s32 i;
 
-    if (sState.save.unk0.file.timeSaveCount == MAX_TIMESAVES) {
+    if (sState.save.file.timeSaveCount == MAX_TIMESAVES) {
         return;
     }
 
     time *= 20.0f;
-    time += sState.save.unk0.file.timePlayed;
+    time += sState.save.file.timePlayed;
 
-    for (i = 0; i < sState.save.unk0.file.timeSaveCount; i++) {
-        if (uid == sState.save.unk0.file.timeSaves[i].uid) {
+    for (i = 0; i < sState.save.file.timeSaveCount; i++) {
+        if (uid == sState.save.file.timeSaves[i].uid) {
             // Found existing time save for the given UID
             break;
         }
     }
 
-    if (i == sState.save.unk0.file.timeSaveCount) {
+    if (i == sState.save.file.timeSaveCount) {
         // Time save doesn't exist yet for the given UID, add one
-        sState.save.unk0.file.timeSaveCount += 1;
+        sState.save.file.timeSaveCount += 1;
     }
 
     // Set time save expiry
-    sState.save.unk0.file.timeSaves[i].uid = uid;
-    sState.save.unk0.file.timeSaves[i].time = time;      
+    sState.save.file.timeSaves[i].uid = uid;
+    sState.save.file.timeSaves[i].time = time;      
 }
 
 s32 gplay_did_time_expire(s32 uid) {
     s32 i;
 
-    for (i = 0; i < sState.save.unk0.file.timeSaveCount; i++) {
-        if (uid == sState.save.unk0.file.timeSaves[i].uid) {
+    for (i = 0; i < sState.save.file.timeSaveCount; i++) {
+        if (uid == sState.save.file.timeSaves[i].uid) {
             return FALSE;
         }
     }
@@ -527,9 +636,9 @@ s32 gplay_did_time_expire(s32 uid) {
 f32 gplay_get_time_remaining(s32 uid) {
     s32 i;
 
-    for (i = 0; i < sState.save.unk0.file.timeSaveCount; i++) {
-        if (uid == sState.save.unk0.file.timeSaves[i].uid) {
-            return sState.save.unk0.file.timeSaves[i].time - sState.save.unk0.file.timePlayed;
+    for (i = 0; i < sState.save.file.timeSaveCount; i++) {
+        if (uid == sState.save.file.timeSaves[i].uid) {
+            return sState.save.file.timeSaves[i].time - sState.save.file.timePlayed;
         }
     }
 
@@ -540,17 +649,17 @@ void gplay_tick(void) {
     s32 i;
 
     // Increment time played
-    sState.save.unk0.file.timePlayed += delayFloat;
+    sState.save.file.timePlayed += delayFloat;
 
     // Process time saves
     i = 0;
-    while (i < sState.save.unk0.file.timeSaveCount) {
-        if (sState.save.unk0.file.timeSaves[i].time < sState.save.unk0.file.timePlayed) {
+    while (i < sState.save.file.timeSaveCount) {
+        if (sState.save.file.timeSaves[i].time < sState.save.file.timePlayed) {
             // Expire time save
-            sState.save.unk0.file.timeSaveCount = sState.save.unk0.file.timeSaveCount - 1;
+            sState.save.file.timeSaveCount = sState.save.file.timeSaveCount - 1;
 
-            sState.save.unk0.file.timeSaves[i].uid = sState.save.unk0.file.timeSaves[sState.save.unk0.file.timeSaveCount].uid;
-            sState.save.unk0.file.timeSaves[i].time = sState.save.unk0.file.timeSaves[sState.save.unk0.file.timeSaveCount].time;
+            sState.save.file.timeSaves[i].uid = sState.save.file.timeSaves[sState.save.file.timeSaveCount].uid;
+            sState.save.file.timeSaves[i].time = sState.save.file.timeSaves[sState.save.file.timeSaveCount].time;
         } else {
             i++;
         }
@@ -558,19 +667,19 @@ void gplay_tick(void) {
 }
 
 s16 gplay_get_num_saved_objects(void) {
-    return sState.save.unk0.file.numSavedObjects;
+    return sState.save.file.numSavedObjects;
 }
 
 void gplay_set_num_saved_objects(s32 num) {
-    sState.save.unk0.file.numSavedObjects = num;
+    sState.save.file.numSavedObjects = num;
 }
 
 SavedObject *gplay_get_saved_objects(void) {
-    return sState.save.unk0.file.savedObjects;
+    return sState.save.file.savedObjects;
 }
 
 u32 gplay_get_time_played(void) {
-    return (u32)sState.save.unk0.file.timePlayed;
+    return (u32)sState.save.file.timePlayed;
 }
 
 static void gplay_reset_state(void) {
@@ -707,11 +816,11 @@ void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
 }
 
 GplayStruct14 *gplay_func_1974(void) {
-    return &sState.save.unk0.file.unk0x20[sState.save.unk0.file.playerno];
+    return &sState.save.file.unk0x20[sState.save.file.playerno];
 }
 
 GplayStruct14 *gplay_func_19B8(void) {
-    return &sState.save.unk0.file.unk0x188[sState.save.unk0.file.playerno];
+    return &sState.save.file.unk0x188[sState.save.file.playerno];
 }
 
 u32 gplay_is_cheat_unlocked(u8 cheatIdx) {

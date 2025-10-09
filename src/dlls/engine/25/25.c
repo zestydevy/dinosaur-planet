@@ -5,6 +5,7 @@
 #include "sys/memory.h"
 #include "dll.h"
 #include "constants.h"
+#include "prevent_bss_reordering.h"
 
 /* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";
 

@@ -688,19 +688,19 @@ void main_set_bits(s32 entry, u32 value) {
     s32 endBit;
     s32 startBit;
 
-    if (entry != 149 && entry != 150 && entry != -1) {
+    if (entry != BIT_ALWAYS_1 && entry != BIT_ALWAYS_0 && entry != -1) {
         switch (gFile_BITTABLE[entry].field_0x2 >> 6) {
-            case 0:
+            case 0: // Never saved to savegame
                 bitString = &gGplayState->bitString[0];
                 break;
-            case 1:
-                bitString = &gGplayState->save.unk0.bitString[0];
+            case 1: // Saved with checkpoints
+                bitString = &gGplayState->save.chkpnt.bitString[0];
                 break;
-            case 2:
-                bitString = &gGplayState->save.unk0.file.bitString[0];
+            case 2: // Always saved
+                bitString = &gGplayState->save.file.bitString[0];
                 break;
-            case 3:
-                bitString = &gGplayState->save.bitString[0];
+            case 3: // Saved with map saves
+                bitString = &gGplayState->save.map.bitString[0];
                 break;
         }
 
@@ -733,9 +733,9 @@ u32 main_get_bits(s32 entry) {
     s32 endBit;
     s32 startBit;
 
-    if (entry == 149) {
+    if (entry == BIT_ALWAYS_1) {
         return 1;
-    } else if (entry == 150) {
+    } else if (entry == BIT_ALWAYS_0) {
         return 0;
     } else if (entry == -1) {
         return 0;
@@ -743,17 +743,17 @@ u32 main_get_bits(s32 entry) {
         return 0;
     } else {
         switch (gFile_BITTABLE[entry].field_0x2 >> 6) {
-            case 0:
+            case 0: // Never saved to savegame
                 bitString = &gGplayState->bitString[0];
                 break;
-            case 1:
-                bitString = &gGplayState->save.unk0.bitString[0];
+            case 1: // Saved with checkpoints
+                bitString = &gGplayState->save.chkpnt.bitString[0];
                 break;
-            case 2:
-                bitString = &gGplayState->save.unk0.file.bitString[0];
+            case 2: // Always saved
+                bitString = &gGplayState->save.file.bitString[0];
                 break;
-            case 3:
-                bitString = &gGplayState->save.bitString[0];
+            case 3: // Saved with map saves
+                bitString = &gGplayState->save.map.bitString[0];
                 break;
         }
 
