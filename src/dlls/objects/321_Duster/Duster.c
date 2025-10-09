@@ -51,7 +51,7 @@ void Duster_create(Object *self, Duster_CreateInfo *createInfo, s32 arg2) {
     state->unk0 = 0.02f;
 
     state->gamebitDiscovered = createInfo->gamebit;
-    if (state->gamebitDiscovered >= BIT_COLLECTED_DUSTER_1) {
+    if (state->gamebitDiscovered >= BIT_Collected_Duster_1) {
         // this is not a hidden duster
         state->discovered = TRUE;
         state->gamebitCollected = state->gamebitDiscovered;
