@@ -53,6 +53,7 @@
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
+321 = objects/321_Duster
 325 = objects/325_trigger
 345 = objects/345_animator
 362 = objects/362_portaltexanimator
