@@ -1,0 +1,13 @@
+.text = 0x0:
+Duster_ctor = 0x0;
+Duster_dtor = 0xC;
+Duster_create = 0x18;
+Duster_update = 0x140;
+Duster_func_754 = 0x754;
+Duster_draw = 0x7FC;
+Duster_destroy = 0x870;
+Duster_get_setup_flags = 0x880;
+Duster_get_state_size = 0x890;
+
+.rodata = 0x91C:
+str_0 = 0x0; // absolute:0x91C
