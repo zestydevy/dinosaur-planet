@@ -94,7 +94,7 @@ typedef struct {
     /*0x2F0*/char name[6]; // name of save
     u8 isEmpty; // whether this savefile is empty
     /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
-    u8 numTimesSaved; // number of times this gamesave has been saved to flash
+    u8 numTimesSaved; // number of times this file has been saved to flash
     f32 timePlayed; // this is game time played, but what unit of measure?
     s16 numSavedObjects;
     s16 timeSaveCount;
@@ -107,7 +107,7 @@ typedef struct {
 typedef struct {
     Savefile file;
     /*0x13d4*/u8 bitString[512];
-} GplayStruct9;
+} CheckpointSaveData;
 
 // size: 0x40
 typedef struct {
@@ -141,13 +141,13 @@ typedef struct {
 
 // size: 0x17ac
 typedef struct {
-    GplayStruct9 unk0;
+    CheckpointSaveData chkpnt;
     /*0x15d4*/u8 bitString[256];
     PlayerLocation playerLocations[2]; // saved locations of each player
     GplayStruct6 unk0x16F4[2];
     GplayStruct12 unk0x171C[2];
     GplayStruct13 unk0x179c[2];
-} Savegame;
+} MapSaveData;
 
 enum Languages {
     LANGUAGE_ENGLISH = 0,
@@ -209,10 +209,17 @@ typedef struct {
 /*1C*/ u8 _unk0x1C[0x64];
 } GplayOptions;
 
+// size: 0x17ac
+typedef union {
+    MapSaveData map;
+    CheckpointSaveData chkpnt;
+    Savefile file;
+} Savegame;
+
 // size: 0x182c
 typedef struct {
     Savegame save;
-    /*0x17a*/u8 bitString[128]; // not persisted with savegame!
+    /*0x17ac*/u8 bitString[128]; // not persisted with savegame!
 } GameState;
 
 typedef union {
