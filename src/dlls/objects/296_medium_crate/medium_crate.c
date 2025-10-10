@@ -186,8 +186,8 @@ void dll_296_destroy(Object *self, s32 param2) {
 }
 
 // export 5
-u32 dll_296_func_C2C(Object *self) {
-    return 0;
+u32 dll_296_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // export 6

@@ -13,8 +13,8 @@ _exports:
 .dword dll_227_func_1518
 .dword dll_227_func_1524
 .dword dll_227_func_1578
-.dword dll_227_func_16F8
-.dword dll_227_func_1708
+.dword dll_227_get_model_flags
+.dword dll_227_get_state_size
 .dword dll_227_func_171C
 .dword dll_227_func_172C
 .dword dll_227_func_174C

@@ -7,7 +7,7 @@ cannon_claw_func_1B4 = 0x1B4;
 cannon_claw_func_200 = 0x200;
 cannon_claw_draw = 0x20C;
 cannon_claw_destroy = 0x26C;
-cannon_claw_func_27C = 0x27C;
+cannon_claw_get_model_flags = 0x27C;
 cannon_claw_get_state_size = 0x28C;
 
 .rodata = 0x2F0:

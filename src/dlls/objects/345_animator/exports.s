@@ -13,5 +13,5 @@ _exports:
 .dword animator_func_300
 .dword animator_draw
 .dword animator_destroy
-.dword animator_func_36C
+.dword animator_get_model_flags
 .dword animator_get_state_size

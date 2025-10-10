@@ -6,7 +6,7 @@ DFPLift_update = 0x9C;
 DFPLift_func_7EC = 0x7EC;
 DFPLift_draw = 0x7F8;
 DFPLift_destroy = 0x84C;
-DFPLift_func_8F8 = 0x8F8;
+DFPLift_get_model_flags = 0x8F8;
 DFPLift_get_state_size = 0x908;
 DFPLift_func_91C = 0x91C;
 

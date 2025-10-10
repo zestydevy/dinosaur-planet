@@ -6,5 +6,5 @@ setuppoint_update = 0x58;
 setuppoint_func_64 = 0x64;
 setuppoint_draw = 0x70;
 setuppoint_destroy = 0xC4;
-setuppoint_func_D4 = 0xD4;
+setuppoint_get_model_flags = 0xD4;
 setuppoint_get_state_size = 0xE4;

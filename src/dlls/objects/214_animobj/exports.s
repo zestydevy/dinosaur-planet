@@ -13,5 +13,5 @@ _exports:
 .dword animobj_func_318
 .dword animobj_draw
 .dword animobj_destroy
-.dword animobj_func_484
+.dword animobj_get_model_flags
 .dword animobj_get_state_size

@@ -13,7 +13,7 @@ _exports:
 /*2*/ .dword dll_274_func_87C
 /*3*/ .dword dll_274_draw
 /*4*/ .dword dll_274_destroy
-/*5*/ .dword dll_274_get_setup_flags
+/*5*/ .dword dll_274_get_model_flags
 /*6*/ .dword dll_274_get_state_size
 /*7*/ .dword dll_274_func_1190
 /*8*/ .dword dll_274_func_176C

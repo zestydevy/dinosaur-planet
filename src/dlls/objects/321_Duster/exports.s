@@ -13,5 +13,5 @@ _exports:
 .dword Duster_func_754
 .dword Duster_draw
 .dword Duster_destroy
-.dword Duster_get_setup_flags
+.dword Duster_get_model_flags
 .dword Duster_get_state_size

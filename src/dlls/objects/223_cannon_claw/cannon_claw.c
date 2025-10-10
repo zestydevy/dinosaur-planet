@@ -72,8 +72,8 @@ void cannon_claw_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 
 void cannon_claw_destroy(Object *self, s32 a1) { }
 
-u32 cannon_claw_func_27C(Object *self) {
-    return 0;
+u32 cannon_claw_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 u32 cannon_claw_get_state_size(Object *self, u32 a1) {

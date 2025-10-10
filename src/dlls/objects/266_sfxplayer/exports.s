@@ -13,5 +13,5 @@ _exports:
 .dword sfxplayer_func_458
 .dword sfxplayer_draw
 .dword sfxplayer_destroy
-.dword sfxplayer_func_51C
+.dword sfxplayer_get_model_flags
 .dword sfxplayer_get_state_size

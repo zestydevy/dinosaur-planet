@@ -205,12 +205,12 @@ void WLpressureswitch_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x654 | func: 5 | export: 5
-s32 WLpressureswitch_get_setup_flags(Object* self){
-    return 0;
+u32 WLpressureswitch_get_model_flags(Object* self){
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x664 | func: 6 | export: 6
-s32 WLpressureswitch_get_state_size(Object* self, s32 arg1){
+u32 WLpressureswitch_get_state_size(Object* self, s32 arg1){
     return sizeof(WLPressureSwitchState);
 }
 

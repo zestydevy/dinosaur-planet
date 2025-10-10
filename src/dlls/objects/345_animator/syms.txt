@@ -6,5 +6,5 @@ animator_update = 0x58;
 animator_func_300 = 0x300;
 animator_draw = 0x30C;
 animator_destroy = 0x324;
-animator_func_36C = 0x36C;
+animator_get_model_flags = 0x36C;
 animator_get_state_size = 0x37C;

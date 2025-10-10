@@ -13,5 +13,5 @@ _exports:
 .dword portaltexanimator_func_414
 .dword portaltexanimator_draw
 .dword portaltexanimator_destroy
-.dword portaltexanimator_func_4C4
+.dword portaltexanimator_get_model_flags
 .dword portaltexanimator_get_state_size

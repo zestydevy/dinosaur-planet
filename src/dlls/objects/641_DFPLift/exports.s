@@ -13,5 +13,5 @@ _exports:
 .dword DFPLift_func_7EC
 .dword DFPLift_draw
 .dword DFPLift_destroy
-.dword DFPLift_func_8F8
+.dword DFPLift_get_model_flags
 .dword DFPLift_get_state_size

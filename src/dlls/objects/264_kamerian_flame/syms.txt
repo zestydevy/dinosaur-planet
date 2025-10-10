@@ -7,7 +7,7 @@ kamerian_flame_update = 0x280;
 kamerian_flame_func_518 = 0x518;
 kamerian_flame_draw = 0x59C;
 kamerian_flame_destroy = 0x5B4;
-kamerian_flame_func_668 = 0x668;
+kamerian_flame_get_model_flags = 0x668;
 kamerian_flame_get_state_size = 0x678;
 
 .rodata = 0x704:

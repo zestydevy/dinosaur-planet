@@ -185,13 +185,13 @@ void levelname_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x4E4 | func: 5 | export: 5
-s32 levelname_func_4E4(Object* self){
-    return 0;
+u32 levelname_get_model_flags(Object* self){
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x4F4 | func: 6 | export: 6
-s32 levelname_get_state_size(Object* self, s32 arg1){
-    return 0x18;
+u32 levelname_get_state_size(Object* self, s32 arg1){
+    return sizeof(LevelNameState);
 }
 
 // offset: 0x508 | func: 7

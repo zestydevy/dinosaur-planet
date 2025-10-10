@@ -200,7 +200,7 @@ void WCpressureswitch_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x594 | func: 5 | export: 5
-s32 WCpressureswitch_get_setup_flags(Object* self) {
+u32 WCpressureswitch_get_model_flags(Object* self) {
     PressureSwitchCreateInfo* createInfo = (PressureSwitchCreateInfo*)self->createInfo;
     s32 modelIndex;
 
@@ -208,11 +208,11 @@ s32 WCpressureswitch_get_setup_flags(Object* self) {
     if (modelIndex >= self->def->numModels) {
         modelIndex = 0;
     }
-    return (modelIndex << 11) | 0x400;
+    return MODFLAGS_MODEL_INDEX(modelIndex) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
 // offset: 0x5C8 | func: 6 | export: 6
-s32 WCpressureswitch_get_state_size(Object* self, s32 arg1){
+u32 WCpressureswitch_get_state_size(Object* self, s32 arg1){
     return sizeof(PressureSwitchState);
 }
 

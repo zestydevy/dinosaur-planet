@@ -6,7 +6,7 @@ sfxplayer_update = 0xFC;
 sfxplayer_func_458 = 0x458;
 sfxplayer_draw = 0x464;
 sfxplayer_destroy = 0x4C0;
-sfxplayer_func_51C = 0x51C;
+sfxplayer_get_model_flags = 0x51C;
 sfxplayer_get_state_size = 0x52C;
 
 .rodata = 0x584:

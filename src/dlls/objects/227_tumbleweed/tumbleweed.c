@@ -285,13 +285,13 @@ void dll_227_func_1578(Object* self, s32 arg1) {
 }
 
 // offset: 0x16F8 | func: 8 | export: 5
-s32 dll_227_func_16F8(Object* self) {
-    return 0;
+u32 dll_227_get_model_flags(Object* self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x1708 | func: 9 | export: 6
-s32 dll_227_func_1708(Object* self, s32 arg1) {
-    return 0x29C;
+u32 dll_227_get_state_size(Object* self, s32 arg1) {
+    return sizeof(TumbleweedState);
 }
 
 // offset: 0x171C | func: 10 | export: 7

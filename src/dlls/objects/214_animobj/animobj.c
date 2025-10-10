@@ -127,11 +127,11 @@ void animobj_destroy(Object *self, s32 arg1) {
 }
 
 // offset: 0x484 | func: 5 | export: 5
-s32 animobj_func_484(Object *self) {
-    return 0xB;
+u32 animobj_get_model_flags(Object *self) {
+    return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8;
 }
 
 // offset: 0x494 | func: 6 | export: 6
-s32 animobj_get_state_size(Object *self, s32 arg1) {
-    return 0x144;
+u32 animobj_get_state_size(Object *self, s32 arg1) {
+    return sizeof(AnimObjState);
 }

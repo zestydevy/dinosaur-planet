@@ -13,5 +13,5 @@ _exports:
 /*2*/ .dword SHtricky_func_1A8
 /*3*/ .dword SHtricky_draw
 /*4*/ .dword SHtricky_destroy
-/*5*/ .dword SHtricky_func_1DC
+/*5*/ .dword SHtricky_get_model_flags
 /*6*/ .dword SHtricky_get_state_size

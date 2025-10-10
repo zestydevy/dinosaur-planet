@@ -64,6 +64,7 @@ typedef struct {
 /*CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
 /*F4*/ AnimObjStateF4Callback unkF4;
 /*F8*/ AnimObjStateF8Callback unkF8;
+/*FC*/ s8 unkFC[0x144 - 0xFC];
 } AnimObjState;
 
 #endif

@@ -98,11 +98,11 @@ void flameblast_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x2EC | func: 5 | export: 5
-s32 flameblast_func_2EC(Object* self){
-    return 0;
+u32 flameblast_get_model_flags(Object* self){
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x2FC | func: 6 | export: 6
-s32 flameblast_get_state_size(Object* self, s32 arg1){
-    return 8;
+u32 flameblast_get_state_size(Object* self, s32 arg1){
+    return sizeof(FlameBlastState);
 }

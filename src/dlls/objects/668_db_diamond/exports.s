@@ -13,5 +13,5 @@ _exports:
 .dword DBdiamond_func_204
 .dword DBdiamond_draw
 .dword DBdiamond_destroy
-.dword DBdiamond_func_2BC
+.dword DBdiamond_get_model_flags
 .dword DBdiamond_get_state_size

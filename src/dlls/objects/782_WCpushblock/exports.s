@@ -13,5 +13,5 @@ _exports:
 .dword dll_782_func_F38
 .dword dll_782_func_F44
 .dword dll_782_func_F98
-.dword dll_782_func_FA8
-.dword dll_782_func_FDC
+.dword dll_782_get_model_flags
+.dword dll_782_get_state_size

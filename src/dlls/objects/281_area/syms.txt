@@ -6,5 +6,5 @@ area_update = 0x30;
 area_func_3C = 0x3C;
 area_draw = 0x48;
 area_destroy = 0x60;
-area_func_70 = 0x70;
+area_get_model_flags = 0x70;
 area_get_state_size = 0x80;

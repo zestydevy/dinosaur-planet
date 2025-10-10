@@ -83,8 +83,9 @@ void dll_225_destroy(Object *self, s32 a1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_destroy.s")
 
 // offset: 0x5A4 | func: 6 | export: 5
-s32 dll_225_get_setup_flags(Object* self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_get_setup_flags.s")
+u32 dll_225_get_model_flags(Object *self) {
+    return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8 | MODFLAGS_EVENTS | MODFLAGS_100;
+}
 
 // offset: 0x5B4 | func: 7 | export: 6
 u32 dll_225_get_state_size(Object *self, u32 a1) {

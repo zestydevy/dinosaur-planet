@@ -69,8 +69,8 @@ void SHtricky_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 void SHtricky_destroy(Object *self, s32 a1) { }
 
 // offset: 0x1DC | func: 5 | export: 5
-s32 SHtricky_func_1DC(Object* self) {
-    return 0;
+u32 SHtricky_get_model_flags(Object* self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x1EC | func: 6 | export: 6

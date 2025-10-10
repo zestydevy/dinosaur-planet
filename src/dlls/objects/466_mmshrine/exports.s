@@ -13,5 +13,5 @@ _exports:
 .dword MMshrine_func_B3C
 .dword MMshrine_draw
 .dword MMshrine_destroy
-.dword MMshrine_func_C2C
+.dword MMshrine_get_model_flags
 .dword MMshrine_get_state_size

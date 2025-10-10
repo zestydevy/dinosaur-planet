@@ -27,6 +27,7 @@ static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3);
 
 typedef struct {
 s16 unk0;   
+u8 _unk2[4];
 } DFPTLevelControlState;
 
 // offset: 0x0 | ctor
@@ -83,10 +84,14 @@ void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_540.s")
 
 // offset: 0x5C0 | func: 5 | export: 5
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5C0.s")
+u32 dll_638_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
+}
 
 // offset: 0x5D0 | func: 6 | export: 6
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5D0.s")
+u32 dll_638_get_state_size(Object *self, u32 a1) {
+    return sizeof(DFPTLevelControlState);
+}
 
 // offset: 0x5E4 | func: 7 | export: 7
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5E4.s")

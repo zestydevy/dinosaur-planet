@@ -92,11 +92,11 @@ void DBdiamond_destroy(Object *self, s32 arg1) {
 }
 
 // offset: 0x2BC | func: 5 | export: 5
-s32 DBdiamond_func_2BC(Object *self) {
-    return 0;
+u32 DBdiamond_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x2CC | func: 6 | export: 6
-s32 DBdiamond_get_state_size(Object *self, s32 arg1) {
-    return 1;
+u32 DBdiamond_get_state_size(Object *self, s32 arg1) {
+    return sizeof(DBDiamondState);
 }

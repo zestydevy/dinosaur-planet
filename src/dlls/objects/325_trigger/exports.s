@@ -13,5 +13,5 @@ _exports:
 .dword trigger_func_7D4
 .dword trigger_draw
 .dword trigger_destroy
-.dword trigger_func_990
+.dword trigger_get_model_flags
 .dword trigger_get_state_size

@@ -190,12 +190,12 @@ void portaltexanimator_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x4C4 | func: 6 | export: 5
-s32 portaltexanimator_func_4C4(Object* self){
-    return 0;
+u32 portaltexanimator_get_model_flags(Object* self){
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x4D4 | func: 7 | export: 6
-s32 portaltexanimator_get_state_size(Object* self, s32 arg1){
+u32 portaltexanimator_get_state_size(Object* self, s32 arg1){
     return sizeof(PortalTexAnimatorState);
 }
 

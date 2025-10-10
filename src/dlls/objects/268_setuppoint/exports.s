@@ -13,5 +13,5 @@ _exports:
 .dword setuppoint_func_64
 .dword setuppoint_draw
 .dword setuppoint_destroy
-.dword setuppoint_func_D4
+.dword setuppoint_get_model_flags
 .dword setuppoint_get_state_size

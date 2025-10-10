@@ -7,6 +7,27 @@
 #include "animation.h"
 #include "sys/math.h"
 
+typedef enum {
+    MODFLAGS_NONE = 0x0,
+    MODFLAGS_1 = 0x1,
+    MODFLAGS_SHADOW = 0x2,
+    MODFLAGS_4 = 0x4,
+    MODFLAGS_8 = 0x8,
+    MODFLAGS_10 = 0x10,
+    MODFLAGS_20 = 0x20,
+    MODFLAGS_EVENTS = 0x40,
+    MODFLAGS_80 = 0x80,
+    MODFLAGS_100 = 0x100,
+    // Don't load any model, even if the object defines some.
+    MODFLAGS_DONT_LOAD_MODEL = 0x200,
+    // Only load the model specified by MODFLAGS_MODEL_INDEX.
+    MODFLAGS_LOAD_SINGLE_MODEL = 0x400
+} ModelFlags;
+
+// Add to model flags to specify which model to load when LOAD_SINGLE_MODEL is set.
+#define MODFLAGS_MODEL_INDEX(index) (index << 11)
+#define MODFLAGS_GET_MODEL_INDEX(flags) (((s32)flags >> 11) & 0xF)
+
 typedef struct {
 /*0000*/    Texture *texture; //textureID in ROM
 /*0004*/    u32 unk_0x4;

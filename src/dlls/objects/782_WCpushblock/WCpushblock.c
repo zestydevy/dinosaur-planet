@@ -64,7 +64,7 @@ void dll_782_func_F98(Object* self, s32 arg1) {
 }
 
 // offset: 0xFA8 | func: 5 | export: 5
-s32 dll_782_func_FA8(Object* self) {
+u32 dll_782_get_model_flags(Object* self) {
     WCPushBlockCreateInfo* createInfo;
     s8 modelIndex;
 
@@ -73,12 +73,12 @@ s32 dll_782_func_FA8(Object* self) {
     if (modelIndex >= self->def->numModels) {
         modelIndex = 0;
     }
-    return (modelIndex << 0xB) | 0x400;
+    return MODFLAGS_MODEL_INDEX(modelIndex) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
 // offset: 0xFDC | func: 6 | export: 6
-s32 dll_782_func_FDC(Object* self, s32 arg1) {
-    return 0x278;
+u32 dll_782_get_state_size(Object* self, s32 arg1) {
+    return sizeof(WCPushBlockState);
 }
 
 // offset: 0xFF0 | func: 7

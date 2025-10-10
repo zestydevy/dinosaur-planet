@@ -13,5 +13,5 @@ _exports:
 .dword VFP_lavastar_func_2BC
 .dword VFP_lavastar_draw
 .dword VFP_lavastar_destroy
-.dword VFP_lavastar_func_390
+.dword VFP_lavastar_get_model_flags
 .dword VFP_lavastar_get_state_size

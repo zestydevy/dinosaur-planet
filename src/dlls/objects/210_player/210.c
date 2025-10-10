@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/print.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
@@ -392,13 +393,13 @@ void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32,
 #else
 static void dll_210_func_0();
 
-void dll_210_ctor(s32 arg0) {
+void dll_210_ctor(void *dll) {
     dll_210_func_0();
 }
 #endif
 
 // offset: 0x438 | dtor
-void dll_210_dtor(s32 arg0) {
+void dll_210_dtor(void *dll) {
 }
 
 // offset: 0x444 | func: 1 | export: 0
@@ -805,13 +806,13 @@ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_3E50.s")
 
 // offset: 0x3F40 | func: 14 | export: 5
-s32 dll_210_func_3F40(s32 arg0) {
-    return 0x1CB;
+u32 dll_210_get_model_flags(Object *self) {
+    return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8 | MODFLAGS_EVENTS | MODFLAGS_80 | MODFLAGS_100;
 }
 
 // offset: 0x3F50 | func: 15 | export: 6
-s32 dll_210_func_3F50(s32 arg0, s32 arg1) {
-    return 0x8C4;
+u32 dll_210_get_state_size(Object *self, s32 arg1) {
+    return sizeof(PlayerState);
 }
 
 // offset: 0x3F64 | func: 16 | export: 63

@@ -6,7 +6,7 @@ Duster_update = 0x140;
 Duster_func_754 = 0x754;
 Duster_draw = 0x7FC;
 Duster_destroy = 0x870;
-Duster_get_setup_flags = 0x880;
+Duster_get_model_flags = 0x880;
 Duster_get_state_size = 0x890;
 
 .rodata = 0x91C:

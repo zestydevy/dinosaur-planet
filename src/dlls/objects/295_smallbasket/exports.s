@@ -13,5 +13,5 @@ _exports:
 /*2*/ .dword dll_295_func_C0C
 /*3*/ .dword dll_295_draw
 /*4*/ .dword dll_295_destroy
-/*5*/ .dword dll_295_get_setup_flags
+/*5*/ .dword dll_295_get_model_flags
 /*6*/ .dword dll_295_get_state_size

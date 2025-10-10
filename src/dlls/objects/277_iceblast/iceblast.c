@@ -15,6 +15,7 @@ typedef struct {
 
 typedef struct {
     s16 timer;
+    u8 _unk2[2];
 } IceBlastState;
 
 // offset: 0x0 | ctor
@@ -103,11 +104,11 @@ void iceblast_destroy(Object* self, s32 arg1){
 }
 
 // offset: 0x2CC | func: 5 | export: 5
-s32 iceblast_func_2CC(Object* self){
-    return 0;
+u32 iceblast_get_model_flags(Object* self){
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x2DC | func: 6 | export: 6
-s32 iceblast_get_state_size(Object* self, s32 arg1){
-    return 4;
+u32 iceblast_get_state_size(Object* self, s32 arg1){
+    return sizeof(IceBlastState);
 }

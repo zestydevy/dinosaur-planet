@@ -13,7 +13,7 @@ _exports:
 .dword SC_levelcontrol_func_420
 .dword SC_levelcontrol_draw
 .dword SC_levelcontrol_destroy
-.dword SC_levelcontrol_get_setup_flags
+.dword SC_levelcontrol_get_model_flags
 .dword SC_levelcontrol_get_state_size
 .dword SC_levelcontrol_func_660
 .dword SC_levelcontrol_func_8A4

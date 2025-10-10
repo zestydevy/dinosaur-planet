@@ -13,5 +13,5 @@ _exports:
 .dword SHswapstone_func_278
 .dword SHswapstone_draw
 .dword SHswapstone_destroy
-.dword SHswapstone_func_3D4
+.dword SHswapstone_get_model_flags
 .dword SHswapstone_get_state_size

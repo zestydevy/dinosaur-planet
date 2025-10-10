@@ -13,5 +13,5 @@ _exports:
 .dword flameblast_func_274
 .dword flameblast_draw
 .dword flameblast_destroy
-.dword flameblast_func_2EC
+.dword flameblast_get_model_flags
 .dword flameblast_get_state_size

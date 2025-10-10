@@ -32,11 +32,11 @@ void area_destroy(Object *self, s32 arg1){
 }
 
 // offset: 0x70 | func: 5 | export: 5
-s32 area_func_70(Object *self){  
-    return 0;
+u32 area_get_model_flags(Object *self){  
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x80 | func: 6 | export: 6
-s32 area_get_state_size(Object *self, s32 arg1){  
+u32 area_get_state_size(Object *self, s32 arg1){  
     return 0;
 }

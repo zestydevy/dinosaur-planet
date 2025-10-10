@@ -56,8 +56,8 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         func_80026AB8(object, modelInstance, object->id, object->objhitInfo, modAnimIndex, 0);
     }
     
-    if (object->ptr0x60) {
-        obj_load_event(object, object->id, object->ptr0x60, modAnimIndex, 0);
+    if (object->curEvent) {
+        obj_load_event(object, object->id, object->curEvent, modAnimIndex, /*dontQueueLoad=*/FALSE);
     }
     
     changed = modAnimIndex != object->curModAnimId;

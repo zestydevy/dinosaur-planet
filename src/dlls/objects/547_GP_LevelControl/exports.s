@@ -13,5 +13,5 @@ _exports:
 .dword GP_LevelControl_func_434
 .dword GP_LevelControl_draw
 .dword GP_LevelControl_destroy
-.dword GP_LevelControl_get_setup_flags
+.dword GP_LevelControl_get_model_flags
 .dword GP_LevelControl_get_state_size

@@ -13,5 +13,5 @@ _exports:
 .dword iceblast_func_26C
 .dword iceblast_draw
 .dword iceblast_destroy
-.dword iceblast_func_2CC
+.dword iceblast_get_model_flags
 .dword iceblast_get_state_size

@@ -13,5 +13,5 @@ _exports:
 .dword VFP_PodiumPoint_func_128
 .dword VFP_PodiumPoint_draw
 .dword VFP_PodiumPoint_destroy
-.dword VFP_PodiumPoint_func_194
+.dword VFP_PodiumPoint_get_model_flags
 .dword VFP_PodiumPoint_get_state_size

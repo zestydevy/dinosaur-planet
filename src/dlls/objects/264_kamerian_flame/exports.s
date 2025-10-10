@@ -13,5 +13,5 @@ _exports:
 .dword kamerian_flame_func_518
 .dword kamerian_flame_draw
 .dword kamerian_flame_destroy
-.dword kamerian_flame_func_668
+.dword kamerian_flame_get_model_flags
 .dword kamerian_flame_get_state_size

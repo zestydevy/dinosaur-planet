@@ -36,9 +36,9 @@ void dll_365_destroy(Object *self, s32 arg1)
 {
 }
 
-u32 func_0005(void* arg)
+u32 dll_365_get_model_flags(void* arg)
 {
-	return 0;
+	return MODFLAGS_NONE;
 }
 
 u32 dll_365_get_state_size(Object *self, u32 arg1)

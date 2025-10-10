@@ -13,5 +13,5 @@ _exports:
 .dword VFP_SpellPlace_func_1AC
 .dword VFP_SpellPlace_draw
 .dword VFP_SpellPlace_destroy
-.dword VFP_SpellPlace_func_1E0
+.dword VFP_SpellPlace_get_model_flags
 .dword VFP_SpellPlace_get_state_size

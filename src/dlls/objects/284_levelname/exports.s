@@ -13,5 +13,5 @@ _exports:
 .dword levelname_func_304
 .dword levelname_draw
 .dword levelname_destroy
-.dword levelname_func_4E4
+.dword levelname_get_model_flags
 .dword levelname_get_state_size

@@ -251,8 +251,8 @@ void DFPLift_destroy(Object *self, s32 a1) {
 }
 
 // offset: 0x8F8 | func: 5 | export: 5
-u32 DFPLift_func_8F8(Object *self) {
-    return 0;
+u32 DFPLift_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x908 | func: 6 | export: 6

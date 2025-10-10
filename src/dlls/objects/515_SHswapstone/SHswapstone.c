@@ -134,17 +134,17 @@ void SHswapstone_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
 void SHswapstone_destroy(Object *self, s32 a1) { }
 
 // offset: 0x3D4 | func: 5 | export: 5
-s32 SHswapstone_func_3D4(Object* self) {
-    s32 var_v1;
+u32 SHswapstone_get_model_flags(Object* self) {
+    s32 modelno;
 
     if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
-        var_v1 = 1;
+        modelno = 1;
     } else {
         // We are Rocky
-        var_v1 = 0;
+        modelno = 0;
     }
-    return (var_v1 << 0xB) | 0x400;
+    return MODFLAGS_MODEL_INDEX(modelno) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
 // offset: 0x434 | func: 6 | export: 6

@@ -13,5 +13,5 @@ _exports:
 .dword WLpressureswitch_func_598
 .dword WLpressureswitch_draw
 .dword WLpressureswitch_destroy
-.dword WLpressureswitch_get_setup_flags
+.dword WLpressureswitch_get_model_flags
 .dword WLpressureswitch_get_state_size

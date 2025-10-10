@@ -13,5 +13,5 @@ _exports:
 .dword dll_496_func_770
 .dword dll_496_func_77C
 .dword dll_496_func_804
-.dword dll_496_func_828
-.dword dll_496_func_838
+.dword dll_496_get_model_flags
+.dword dll_496_get_state_size

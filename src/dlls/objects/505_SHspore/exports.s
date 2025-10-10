@@ -13,5 +13,5 @@ _exports:
 .dword SHspore_func_B88
 .dword SHspore_draw
 .dword SHspore_destroy
-.dword SHspore_func_BF4
+.dword SHspore_get_model_flags
 .dword SHspore_get_state_size

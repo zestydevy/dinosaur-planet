@@ -13,5 +13,5 @@ _exports:
 .dword cannon_claw_func_200
 .dword cannon_claw_draw
 .dword cannon_claw_destroy
-.dword cannon_claw_func_27C
+.dword cannon_claw_get_model_flags
 .dword cannon_claw_get_state_size

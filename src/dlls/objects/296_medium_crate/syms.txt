@@ -6,7 +6,7 @@ dll_296_update = 0x250;
 dll_296_func_9C0 = 0x9C0;
 dll_296_draw = 0x9CC;
 dll_296_destroy = 0xB80;
-dll_296_func_C2C = 0xC2C;
+dll_296_get_model_flags = 0xC2C;
 dll_296_get_state_size = 0xC3C;
 dll_296_func_C50 = 0xC50;
 

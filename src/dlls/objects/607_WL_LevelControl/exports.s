@@ -13,5 +13,5 @@ _exports:
 .dword WL_LevelControl_func_394
 .dword WL_LevelControl_draw
 .dword WL_LevelControl_destroy
-.dword WL_LevelControl_func_43C
+.dword WL_LevelControl_get_model_flags
 .dword WL_LevelControl_get_state_size

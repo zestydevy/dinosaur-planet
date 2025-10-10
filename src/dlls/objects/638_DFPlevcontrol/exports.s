@@ -13,6 +13,6 @@ _exports:
 .dword dll_638_func_51C
 .dword dll_638_func_528
 .dword dll_638_func_540
-.dword dll_638_func_5C0
-.dword dll_638_func_5D0
+.dword dll_638_get_model_flags
+.dword dll_638_get_state_size
 .dword dll_638_func_5E4

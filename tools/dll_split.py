@@ -203,7 +203,7 @@ class DLLSplitter:
                 None,
                 "draw",
                 "destroy",
-                "get_setup_flags",
+                "get_model_flags",
                 "get_state_size"
             ]
 
@@ -371,11 +371,8 @@ class DLLSplitter:
         # Write
         with open(c_path, "w", encoding="utf-8") as c_file:
             # Includes
-            c_file.write("#include \"PR/ultratypes.h\"\n")
+            c_file.write("#include \"common.h\"\n")
             if dll.number >= 210:
-                c_file.write("#include \"PR/gbi.h\"\n")
-                c_file.write("#include \"game/objects/object.h\"\n")
-                c_file.write("#include \"types.h\"\n")
                 if obj_state_size != None:
                     c_file.write("\ntypedef struct {\n")
                     c_file.write(f"    u8 _unk0[0x{obj_state_size:X}];\n")
@@ -531,7 +528,7 @@ class DLLSplitter:
     DEFAULT_OBJ_FUNC3 = [0xAFA40000, 0x03E00008, 0x00000000]
     DEFAULT_OBJ_DRAW = [0xAFA40000, 0xAFA50004,  0xAFA60008, 0xAFA7000C, 0x03E00008, 0x000000]
     DEFAULT_OBJ_DESTROY = [0xAFA40000, 0xAFA50004, 0x03E00008, 0x000000]
-    DEFAULT_OBJ_GET_SETUP_FLAGS = [0xAFA40000, 0x00001025, 0x03E00008, 0x000000]
+    DEFAULT_OBJ_GET_MODEL_FLAGS = [0xAFA40000, 0x00001025, 0x03E00008, 0x000000]
 
     def __instructions_equal(self, func: spimdisasm.mips.symbols.SymbolFunction, inst_bytes: list[int]):
         if len(func.instructions) == len(inst_bytes):
@@ -559,10 +556,10 @@ class DLLSplitter:
             # Object DLL, check for function defaults
             if export_idx == 0:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_CREATE):
-                    c_file.write(f'void {func.getName()}(Object *self, ObjCreateInfo* createInfo, s32 arg2) {{ }}\n')
+                    c_file.write(f'void {func.getName()}(Object *self, ObjCreateInfo *createInfo, s32 arg2) {{ }}\n')
                     return True
                 else:
-                    c_file.write(f'void {func.getName()}(Object *self, ObjCreateInfo* createInfo, s32 arg2);\n')
+                    c_file.write(f'void {func.getName()}(Object *self, ObjCreateInfo *createInfo, s32 arg2);\n')
             elif export_idx == 1:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_UPDATE):
                     c_file.write(f'void {func.getName()}(Object *self) {{ }}\n')
@@ -577,10 +574,10 @@ class DLLSplitter:
                     c_file.write(f'void {func.getName()}(Object *self);\n')
             elif export_idx == 3:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_DRAW):
-                    c_file.write(f'void {func.getName()}(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {{ }}\n')
+                    c_file.write(f'void {func.getName()}(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {{ }}\n')
                     return True
                 else:
-                    c_file.write(f'void {func.getName()}(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);\n')
+                    c_file.write(f'void {func.getName()}(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);\n')
             elif export_idx == 4:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_DESTROY):
                     c_file.write(f'void {func.getName()}(Object *self, s32 a1) {{ }}\n')
@@ -588,13 +585,13 @@ class DLLSplitter:
                 else:
                     c_file.write(f'void {func.getName()}(Object *self, s32 a1);\n')
             elif export_idx == 5:
-                if self.__instructions_equal(func, self.DEFAULT_OBJ_GET_SETUP_FLAGS):
-                    c_file.write(f's32 {func.getName()}(Object* self) {{\n')
-                    c_file.write(f'    return 0;\n')
+                if self.__instructions_equal(func, self.DEFAULT_OBJ_GET_MODEL_FLAGS):
+                    c_file.write(f'u32 {func.getName()}(Object *self) {{\n')
+                    c_file.write(f'    return MODFLAGS_NONE;\n')
                     c_file.write('}\n')
                     return True
                 else:
-                    c_file.write(f's32 {func.getName()}(Object* self);\n')
+                    c_file.write(f'u32 {func.getName()}(Object *self);\n')
             elif export_idx == 6:
                 if obj_state_size != None:
                     c_file.write(f'u32 {func.getName()}(Object *self, u32 a1) {{\n')

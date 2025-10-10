@@ -151,8 +151,9 @@ void dll_714_destroy(Object *self, s32 a1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_destroy.s")
 
 // offset: 0xF50 | func: 9 | export: 5
-s32 dll_714_get_setup_flags(Object* self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_get_setup_flags.s")
+u32 dll_714_get_model_flags(Object* self) {
+    return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_EVENTS;
+}
 
 // offset: 0xF60 | func: 10 | export: 6
 u32 dll_714_get_state_size(Object *self, u32 a1) {

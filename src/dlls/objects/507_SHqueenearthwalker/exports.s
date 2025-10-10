@@ -13,5 +13,5 @@ _exports:
 /*2*/ .dword SHqueenearthwalker_func_464
 /*3*/ .dword SHqueenearthwalker_draw
 /*4*/ .dword SHqueenearthwalker_destroy
-/*5*/ .dword SHqueenearthwalker_get_setup_flags
+/*5*/ .dword SHqueenearthwalker_get_model_flags
 /*6*/ .dword SHqueenearthwalker_get_state_size

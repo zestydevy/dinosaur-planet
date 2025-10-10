@@ -8,7 +8,7 @@ SHspore_func_A00 = 0xA00;
 SHspore_func_B88 = 0xB88;
 SHspore_draw = 0xB94;
 SHspore_destroy = 0xBAC;
-SHspore_func_BF4 = 0xBF4;
+SHspore_get_model_flags = 0xBF4;
 SHspore_get_state_size = 0xC04;
 
 .rodata = 0xC90:

@@ -529,8 +529,8 @@ void trigger_destroy(Object *self, s32 param2) {
     obj_free_object_type(self, OBJTYPE_2);
 }
 
-u32 trigger_func_990(Object *self) {
-    return 0;
+u32 trigger_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 u32 trigger_get_state_size(Object *self, u32 param2) {

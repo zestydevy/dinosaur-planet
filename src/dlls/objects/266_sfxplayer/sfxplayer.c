@@ -130,11 +130,11 @@ void sfxplayer_destroy(Object* arg0, s32 arg1) {
 }
 
 // offset: 0x51C | func: 5 | export: 5
-s32 sfxplayer_func_51C(Object* arg0) {
-    return 0;
+u32 sfxplayer_get_model_flags(Object* arg0) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x52C | func: 6 | export: 6
-s32 sfxplayer_get_state_size(Object* arg0, s32 arg1) {
-    return 0x10;
+u32 sfxplayer_get_state_size(Object* arg0, s32 arg1) {
+    return sizeof(SfxPlayerState);
 }

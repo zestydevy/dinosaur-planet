@@ -199,8 +199,8 @@ void pressureswitch_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x604 | func: 5 | export: 5
-s32 pressureswitch_get_setup_flags(Object* self) {
-    return 0;
+u32 pressureswitch_get_model_flags(Object* self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x614 | func: 6 | export: 6

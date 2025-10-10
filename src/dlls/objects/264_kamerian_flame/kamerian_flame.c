@@ -155,11 +155,11 @@ void kamerian_flame_destroy(Object* self, s32 arg1) {
 }
 
 // offset: 0x668 | func: 6 | export: 5
-s32 kamerian_flame_func_668(Object* self){
-    return 0;
+u32 kamerian_flame_get_model_flags(Object* self){
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x678 | func: 7 | export: 6
-s32 kamerian_flame_get_state_size(Object* self, s32 arg1){
+u32 kamerian_flame_get_state_size(Object* self, s32 arg1){
     return 0;
 }

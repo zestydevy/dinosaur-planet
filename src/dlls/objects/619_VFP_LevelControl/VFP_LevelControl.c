@@ -142,8 +142,8 @@ void VFP_LevelControl_destroy(Object *obj, s32 a1) {
 }
 
 // offset: 0x8C8 | func: 5 | export: 5
-u32 VFP_LevelControl_func_8C8(Object *self) {
-    return 0;
+u32 VFP_LevelControl_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x8D8 | func: 6 | export: 6

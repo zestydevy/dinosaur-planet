@@ -81,8 +81,8 @@ void VFP_PodiumPoint_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 void VFP_PodiumPoint_destroy(Object *self, s32 a1) { }
 
 // offset: 0x194 | func: 5 | export: 5
-u32 VFP_PodiumPoint_func_194(Object *self) {
-    return 0;
+u32 VFP_PodiumPoint_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x1A4 | func: 6 | export: 6

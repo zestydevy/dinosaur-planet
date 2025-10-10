@@ -6,5 +6,5 @@ animobj_update = 0x19C;
 animobj_func_318 = 0x318;
 animobj_draw = 0x324;
 animobj_destroy = 0x378;
-animobj_func_484 = 0x484;
+animobj_get_model_flags = 0x484;
 animobj_get_state_size = 0x494;

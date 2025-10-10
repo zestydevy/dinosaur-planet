@@ -101,8 +101,8 @@ typedef struct {
 
 typedef struct {
 	s32 unk0; // size of thing at unk4
-	s8 *unk4;
-} ObjectStruct60;
+	UNK_PTR *unk4;
+} ObjectEvent;
 
 typedef struct {
 	s32 sizeInBytes;
@@ -150,7 +150,7 @@ DLL_INTERFACE(DLL_IObject) {
 	/*2*/ void (*func3)(struct Object *obj); // update_child?
 	/*3*/ void (*draw)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
 	/*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
-	/*5*/ u32 (*func6)(struct Object *obj);
+	/*5*/ u32 (*get_model_flags)(struct Object *obj);
 	/*6*/ u32 (*get_state_size)(struct Object *obj, u32);
 };
 
@@ -184,7 +184,7 @@ typedef struct Object {
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectStruct58 *unk0x58;
 /*005C*/    ObjectStruct5C *ptr0x5c;
-/*0060*/    ObjectStruct60 *ptr0x60;
+/*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectStruct64* ptr0x64; //ShadowData?
 /*0068*/    DLL_IObject *dll;
 /*006C*/    s16 (*ptr0x6c)[9];

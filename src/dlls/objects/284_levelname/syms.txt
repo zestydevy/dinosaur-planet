@@ -6,7 +6,7 @@ levelname_update = 0x120;
 levelname_func_304 = 0x304;
 levelname_draw = 0x310;
 levelname_destroy = 0x480;
-levelname_func_4E4 = 0x4E4;
+levelname_get_model_flags = 0x4E4;
 levelname_get_state_size = 0x4F4;
 levelname_anim_callback = 0x508;
 

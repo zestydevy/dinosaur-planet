@@ -13,5 +13,5 @@ _exports:
 /*2*/ .dword dll_297_func_1164
 /*3*/ .dword dll_297_draw
 /*4*/ .dword dll_297_destroy
-/*5*/ .dword dll_297_get_setup_flags
+/*5*/ .dword dll_297_get_model_flags
 /*6*/ .dword dll_297_get_state_size

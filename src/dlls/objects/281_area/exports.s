@@ -13,5 +13,5 @@ _exports:
 .dword area_func_3C
 .dword area_draw
 .dword area_destroy
-.dword area_func_70
+.dword area_get_model_flags
 .dword area_get_state_size

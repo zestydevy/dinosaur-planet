@@ -209,8 +209,8 @@ void SC_levelcontrol_destroy(Object *self, s32 arg1) {
 }
 
 // offset: 0x63C | func: 5 | export: 5
-s32 SC_levelcontrol_get_setup_flags(Object *self) {
-    return 0;
+u32 SC_levelcontrol_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x64C | func: 6 | export: 6

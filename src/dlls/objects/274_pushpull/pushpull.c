@@ -52,8 +52,8 @@ void dll_274_destroy(Object *self, s32 a1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_destroy.s")
 
 // offset: 0x116C | func: 5 | export: 5
-s32 dll_274_get_setup_flags(Object* self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_get_setup_flags.s")
+u32 dll_274_get_model_flags(Object* self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_get_model_flags.s")
 
 // offset: 0x117C | func: 6 | export: 6
 u32 dll_274_get_state_size(Object *self, u32 a1) {

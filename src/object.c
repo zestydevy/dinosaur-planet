@@ -68,14 +68,14 @@ ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount);
 extern void func_800596BC(ObjDef*);
 
 ObjDef *obj_load_objdef(s32 tabIdx);
-u32 func_80022828(Object *obj);
+u32 obj_get_model_flags(Object *obj);
 u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags);
 void obj_free_objdef(s32 tabIdx);
 
 void func_80021E74(f32, ModelInstance*);
 void func_80022200(Object *obj, s32 param2, s32 param3);
 u32 obj_alloc_object_state(Object *obj, u32 addr);
-u32 func_80022868(s32 param1, Object *obj, u32 addr);
+u32 obj_init_event_data(s32 param1, Object *obj, u32 addr);
 u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
 
 f32 func_80022150(Object *obj);
@@ -512,7 +512,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     ObjDef *def;
     s32 modelCount;
     s32 var;
-    s32 flags;
+    u32 modflags;
     ModelInstance *tempModel;
     Object *obj;
     s32 tabIdx;
@@ -581,25 +581,25 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
         objHeader.dll = (DLL_IObject*)dll_load(def->dllID, 6, 1);
     }
 
-    flags = func_80022828(&objHeader);
+    modflags = obj_get_model_flags(&objHeader);
 
     if (def->flags & 0x20) {
-        flags &= ~1;
+        modflags &= ~MODFLAGS_1;
     } else {
-        flags |= 1;
+        modflags |= MODFLAGS_1;
     }
 
     if (def->shadowType != 0) {
-        flags |= 2;
+        modflags |= MODFLAGS_SHADOW;
     } else {
-        flags &= ~2;
+        modflags &= ~MODFLAGS_SHADOW;
     }
 
     if (def->flags & 1) {
-        flags |= 0x200;
+        modflags |= MODFLAGS_DONT_LOAD_MODEL;
     }
 
-    var = obj_calc_mem_size(&objHeader, def, flags);
+    var = obj_calc_mem_size(&objHeader, def, modflags);
 
     obj = (Object*)mmAlloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
 
@@ -618,12 +618,12 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     modelLoadFailed = FALSE;
     var = 0;
     
-    if (!(flags & 0x200)) {
-        if (flags & 0x400) {
-            var = (flags >> 11) & 0xf;
+    if (!(modflags & MODFLAGS_DONT_LOAD_MODEL)) {
+        if (modflags & MODFLAGS_LOAD_SINGLE_MODEL) {
+            var = MODFLAGS_GET_MODEL_INDEX(modflags);
 
             if (var < modelCount) {
-                obj->modelInsts[var] = model_load_create_instance(-def->pModelList[var], flags);
+                obj->modelInsts[var] = model_load_create_instance(-def->pModelList[var], modflags);
 
                 if (obj->modelInsts[var] == NULL) {
                     modelLoadFailed = TRUE;
@@ -635,7 +635,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
             }
         } else {
             for (; var < modelCount; var++) {
-                obj->modelInsts[var] = model_load_create_instance(-def->pModelList[var], flags);
+                obj->modelInsts[var] = model_load_create_instance(-def->pModelList[var], modflags);
                 if (obj->modelInsts[var] == NULL) {
                     modelLoadFailed = TRUE;
                 } else {
@@ -655,15 +655,15 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
      
     addr = obj_alloc_object_state(obj, (u32)&obj->modelInsts[def->numModels]);
 
-    if (flags & 0x40) {
-        addr = func_80022868(obj->id, obj, addr);
+    if (modflags & MODFLAGS_EVENTS) {
+        addr = obj_init_event_data(obj->id, obj, addr);
     }
 
-    if (flags & 0x100) {
+    if (modflags & MODFLAGS_100) {
         addr = func_8002298C(obj->id, obj->modelInsts[0], obj, addr);
     }
 
-    if ((flags & 0x2) && (def->shadowType != 0)) {
+    if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
         addr = func_8004D8A4(obj, addr, 0);
     }
 
@@ -688,7 +688,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     }
 
     if (def->unk9b != 0) {
-        obj->unk0x74 = mmAlign4(addr);
+        obj->unk0x74 = (void*)mmAlign4(addr);
         addr = (u32)obj->unk0x74 + (def->unk9b * 0x18);
     }
 
@@ -788,7 +788,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
     write_c_file_label_pointers("objects/objects.c", 0x477);
 }
 
-u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
+u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
     u32 size;
 
     size = sizeof(Object);
@@ -799,29 +799,29 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags) {
         size += obj->dll->vtbl->get_state_size(obj, size);
     }
 
-    if (flags & 0x40) {
+    if (modflags & MODFLAGS_EVENTS) {
         size = mmAlign4(size);
-        size = mmAlign8(size + 8);
+        size = mmAlign8(size + sizeof(ObjectEvent));
         size += 0x50;
     }
 
-    if (flags & 0x100) {
+    if (modflags & MODFLAGS_100) {
         size = mmAlign4(size);
-        size = mmAlign8(size + 8);
+        size = mmAlign8(size + sizeof(ObjectStruct5C));
         size += 0x400;
     }
 
-    if ((flags & 2) && (def->shadowType != 0)) {
+    if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
         size = mmAlign4(size);
-        size += 0x44;
+        size += sizeof(ObjectStruct64);
     }
 
     if (def->unk8F != 0) {
         size = mmAlign4(size);
-        size += 0xa4;
+        size += sizeof(ObjectHitInfo);
 
         if (def->unk93 & 8) {
-            size += 0x110;
+            size += sizeof(ObjectStruct58);
         }
     }
 
@@ -1103,36 +1103,36 @@ u32 obj_alloc_object_state(Object *obj, u32 addr) {
     return addr;
 }
 
-u32 func_80022828(Object *obj) {
+u32 obj_get_model_flags(Object *obj) {
     if (obj->dll != NULL) {
-        return obj->dll->vtbl->func6(obj);
+        return obj->dll->vtbl->get_model_flags(obj);
     } else {
-        return 0;
+        return MODFLAGS_NONE;
     }
 }
 
-u32 func_80022868(s32 objId, Object *obj, u32 addr) {
-    obj->ptr0x60 = (ObjectStruct60*)mmAlign4(addr);
+u32 obj_init_event_data(s32 objId, Object *obj, u32 addr) {
+    obj->curEvent = (ObjectEvent*)mmAlign4(addr);
 
-    addr = mmAlign8((u32)obj->ptr0x60 + sizeof(ObjectStruct60));
-    obj->ptr0x60->unk4 = (UNK_PTR*)addr;
+    addr = mmAlign8((u32)obj->curEvent + sizeof(ObjectEvent));
+    obj->curEvent->unk4 = (UNK_PTR*)addr;
 
-    addr += 80;
+    addr += 0x50;
 
-    obj_load_event(obj, objId, obj->ptr0x60, 0, 1);
+    obj_load_event(obj, objId, obj->curEvent, 0, /*dontQueueLoad=*/TRUE);
 
     return addr;
 }
 
 static const char str_80099678[] = "objects.c: event data size overflow\n";
 
-void obj_load_event(Object *obj, s32 objId, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad) {
+void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
     
     eventList = obj->def->pEvent;
 
-    outParam->unk0 = 0;
+    outEvent->unk0 = 0;
     
     if (eventList == NULL) {
         return;
@@ -1144,18 +1144,18 @@ void obj_load_event(Object *obj, s32 objId, ObjectStruct60 *outParam, s32 id, u8
 
             offset = event->fileOffsetInBytes;
 
-            outParam->unk0 = event->fileSizeInBytes;
+            outEvent->unk0 = event->fileSizeInBytes;
 
-            if (outParam->unk0 > 80) {
-                outParam->unk0 = 80;
+            if (outEvent->unk0 > 80) {
+                outEvent->unk0 = 80;
             }
 
             if (eventList) {}
 
             if (!dontQueueLoad) {
-                queue_load_file_region_to_ptr((void**)outParam->unk4, OBJEVENT_BIN, offset, outParam->unk0);
+                queue_load_file_region_to_ptr((void**)outEvent->unk4, OBJEVENT_BIN, offset, outEvent->unk0);
             } else {
-                read_file_region(OBJEVENT_BIN, outParam->unk4, offset, outParam->unk0);
+                read_file_region(OBJEVENT_BIN, outEvent->unk4, offset, outEvent->unk0);
             }
 
             break;
@@ -1172,7 +1172,7 @@ u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
         addr = mmAlign8((u32)obj->ptr0x5c + sizeof(ObjectStruct5C));
         obj->ptr0x5c->unk4 = (UNK_PTR*)addr;
 
-        return addr + 1024;
+        return addr + 0x400;
     }
 }
 

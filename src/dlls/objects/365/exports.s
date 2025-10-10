@@ -13,5 +13,5 @@ _exports:
 .dword func_0002
 .dword dll_365_draw
 .dword dll_365_destroy
-.dword func_0005
+.dword dll_365_get_model_flags
 .dword dll_365_get_state_size

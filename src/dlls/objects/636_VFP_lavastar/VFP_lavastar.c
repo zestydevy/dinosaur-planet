@@ -82,8 +82,8 @@ void VFP_lavastar_destroy(Object* self, s32 arg1) {
 
 
 // offset: 0x390 | func: 5 | export: 5
-u32 VFP_lavastar_func_390(Object *self) {
-    return 0;
+u32 VFP_lavastar_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x3A0 | func: 6 | export: 6

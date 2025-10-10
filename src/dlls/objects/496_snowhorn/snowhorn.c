@@ -148,15 +148,16 @@ typedef struct {
 /*429*/ s8 unk429;
 /*42A*/ s8 unk42A;
 /*42B*/ s8 unk42B;
-/*42C*/ f32 unk42C;
-/*42C*/ s8 unk430[0x16c];
-/*59c*/ s16 rEyeU;
-/*59e*/ s16 rEyeV;
-/*600*/ u32 unk600;
-/*604*/ u32 unk604;
-/*608*/ u32 unk608;
-/*60c*/ s16 lEyeU;
-/*60e*/ s16 lEyeV;
+// TODO: below is not part of this DLL state! where are these supposed to be? does something inherit this DLL?
+// /*42C*/ f32 unk42C;
+// /*42C*/ s8 unk430[0x16c];
+// /*59c*/ s16 rEyeU;
+// /*59e*/ s16 rEyeV;
+// /*600*/ u32 unk600;
+// /*604*/ u32 unk604;
+// /*608*/ u32 unk608;
+// /*60c*/ s16 lEyeU;
+// /*60e*/ s16 lEyeV;
 } SnowHornState;
 
 typedef struct{
@@ -468,12 +469,12 @@ void dll_496_func_804(s32 arg0, s32 arg1) {
     _data_274[0] = 0;
 }
 
-s32 dll_496_func_828(s32 arg0) {
-    return 0xCB;
+u32 dll_496_get_model_flags(Object *self) {
+    return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8 | MODFLAGS_EVENTS | MODFLAGS_80;
 }
 
-s32 dll_496_func_838(s32 arg0, s32 arg1) {
-    return 0x42C;
+u32 dll_496_get_state_size(Object *self, s32 arg1) {
+    return sizeof(SnowHornState);
 }
 
 /** When talking with SnowHorn */

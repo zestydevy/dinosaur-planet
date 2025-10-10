@@ -75,8 +75,8 @@ void VFP_SpellPlace_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
 void VFP_SpellPlace_destroy(Object *self, s32 a1) { }
 
 // offset: 0x1E0 | func: 5 | export: 5
-u32 VFP_SpellPlace_func_1E0(Object *self) {
-    return 0;
+u32 VFP_SpellPlace_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x1F0 | func: 6 | export: 6

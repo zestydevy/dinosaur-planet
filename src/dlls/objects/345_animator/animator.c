@@ -100,11 +100,11 @@ void animator_destroy(Object *self, s32 arg1) {
 }
 
 // offset: 0x36C | func: 5 | export: 5
-s32 animator_func_36C(Object *self) {
-    return 0;
+u32 animator_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x37C | func: 6 | export: 6
-s32 animator_get_state_size(Object *self, s32 arg1) {
+u32 animator_get_state_size(Object *self, s32 arg1) {
     return 0;
 }

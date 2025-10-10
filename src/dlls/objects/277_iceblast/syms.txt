@@ -6,7 +6,7 @@ iceblast_update = 0x80;
 iceblast_func_26C = 0x26C;
 iceblast_draw = 0x274;
 iceblast_destroy = 0x2BC;
-iceblast_func_2CC = 0x2CC;
+iceblast_get_model_flags = 0x2CC;
 iceblast_get_state_size = 0x2DC;
 
 .rodata = 0x32C:

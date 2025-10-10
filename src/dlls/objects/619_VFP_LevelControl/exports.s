@@ -13,5 +13,5 @@ _exports:
 .dword VFP_LevelControl_func_864
 .dword VFP_LevelControl_draw
 .dword VFP_LevelControl_destroy
-.dword VFP_LevelControl_func_8C8
+.dword VFP_LevelControl_get_model_flags
 .dword VFP_LevelControl_get_state_size

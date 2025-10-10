@@ -125,8 +125,8 @@ void WL_LevelControl_destroy(Object *self, s32 a1) {
 }
 
 // offset: 0x43C | func: 5 | export: 5
-s32 WL_LevelControl_func_43C(Object* self) {
-    return 0;
+u32 WL_LevelControl_get_model_flags(Object* self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x44C | func: 6 | export: 6
