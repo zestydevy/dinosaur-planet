@@ -48,7 +48,8 @@ typedef struct {
 /*8B*/ s32 unk80;
 /*7C*/ s8 unk84[0x8B - 0x84];
 /*8B*/ s8 unk8B;
-/*8C*/ s8 unk8C[0x8E - 0x8C];
+/*8C*/ s8 unk8C;
+/*8D*/ u8 unk8D;
 /*8E*/ u8 unk8E[1];
 /*8F*/ s8 unk8F[0x98 - 0x8F];
 /*98*/ u8 unk98;

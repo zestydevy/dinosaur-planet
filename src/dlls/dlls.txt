@@ -58,6 +58,8 @@
 345 = objects/345_animator
 362 = objects/362_portaltexanimator
 365 = objects/365
+393 = objects/393_CFMainSlideDoor
+398 = objects/398_CFMagicWall
 466 = objects/466_mmshrine
 496 = objects/496_snowhorn
 501 = objects/501_SHtricky

@@ -49,7 +49,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*17*/ void (*func17)(s32 objectSeqIndex, Object* object, s32);
 /*18*/ void (*func18)(s32);
 /*19*/ void (*func19)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
-/*20*/ void (*func20)(s32 arg0, s32 arg1);
+/*20*/ void (*func20)(Object *arg0, s32 arg1);
 // /*21*/ void (*func21)(ANIMUnknown* arg0, s32 arg1);
 /*21*/ void (*func21)(void* arg0, s32 arg1);
 /*22*/ s8 (*func22)(void);

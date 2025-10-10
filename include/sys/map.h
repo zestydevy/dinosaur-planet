@@ -534,4 +534,6 @@ void func_80053408(Vec3f *);
 void func_80053750(Object*, AABBs32*, s32);
 Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
+Block* func_80044BB0(s32 blockIndex);
+
 #endif
