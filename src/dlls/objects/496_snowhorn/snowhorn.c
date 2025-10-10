@@ -8,6 +8,7 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objhits.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/print.h"
@@ -18,7 +19,6 @@
 
 s32 func_800053B0(void*, f32);
 s32 func_8002493C(void*, f32, void*);
-s32 func_80026DF4(Object*, u32*, u32, s32, void*);
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
 void func_800328F0(Object*, void*, f32);
@@ -76,7 +76,7 @@ typedef struct {
 /*048*/ f32* unk48;
 /*04c*/ s32* chatSequenceList;
 /*050*/ f32 unk50;
-/*054*/ s32 unk54;
+/*054*/ f32 unk54;
 /*058*/ f32 walkSpeed; //has something to do with the struct at 0x60?
 /*05C*/ s32 unk5C;
 /*060*/ UnkCurvesStruct60 unk60;
@@ -177,19 +177,9 @@ typedef struct {
 /*098*/ u8 unk98[10];
 } UnkStruct2;
 
-typedef struct {
-s16 soundIDA;
-s16 soundIDB;
-s16 unk4;
-s16 unk6;
-s8 unk8; //Boolean: seems to choose between using DLL17 (particles) or DLL106 (modgfx)
-f32 unkC;
-f32 unk10;
-} SnowHornData0;
-
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
-static SnowHornData0 _data_0[] = {
+static Unk80026DF4 _data_0[] = {
     {SOUND_377, NO_SOUND, 0x002f, 0x0030, 0x00,  0.012, 0.005},
     {SOUND_377, NO_SOUND, 0x002f, 0x0030, 0x00,  0.012, 0.005},
     {SOUND_377, NO_SOUND, 0x002a, 0x0030, 0x00,  0.011, 0.005},
@@ -340,7 +330,8 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
 }
 #endif
 
-//https://decomp.me/scratch/eOLnX
+//https://decomp.me/scratch/HgWtR
+// referenced funcs just need to be static
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_24C.s")
 #else
@@ -353,18 +344,13 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
 void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
 
 void dll_496_func_24C(Object* snowhorn) {
-    f32 daytime; //don't know the type
     SnowHornState* state;
+    f32 daytime;
     SnowHornCreateInfo* mapsObj;
     Object* player;
-    s16 animID;
-    Vec3f* temp_a0;
-    u16 temp_t1;
-    u32 temp_t9;
-    u32 seqIndex;
-    s32 sp44; //don't know the type
+    UnkFunc_80024108Struct sp44;
     s32 animIndex;
-    Vec3f* sp34;
+    s32 seqIndex;
 
     state = snowhorn->state;
     mapsObj = (SnowHornCreateInfo*)snowhorn->createInfo;
@@ -387,8 +373,8 @@ void dll_496_func_24C(Object* snowhorn) {
     }
     func_80032A08(snowhorn, &state->lookAtUnk);
 
-    if (func_80026DF4(snowhorn, (u32*)_data_0, 0x1C, (state->flags & 0x4000 ? 1 : 0) & 0xFF, 
-                      (s8*)state + 0x54) != 0) {
+    if (func_80026DF4(snowhorn, _data_0, 0x1C, (state->flags & 0x4000 ? 1 : 0), 
+                      &state->unk54) != 0) {
         state->flags |= 0x4000;
         return;
     }
@@ -437,12 +423,12 @@ void dll_496_func_24C(Object* snowhorn) {
             }
             state->unk424 &= 0xFFF7;
         }
-        if (func_80024108(snowhorn, state->unk50, delayFloat, (s32)&sp44) != 0) {
+        if (func_80024108(snowhorn, state->unk50, delayFloat, &sp44) != 0) {
             state->unk424 |= 8;
         } else {
             state->unk424 &= 0xFFF7;
         }
-        func_80025780(snowhorn, delayFloat, (void*)&sp44, 0);
+        func_80025780(snowhorn, delayFloat, &sp44, 0);
     }
 
     if ((state->chatSequenceList != 0) && (snowhorn->unk0xaf & 1)) {
@@ -497,7 +483,7 @@ s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObjState* animObj
 
     state = self->state;
     if (arg3 != 0) {
-        func_80024108(self, 0.005f, delayFloat, 0);
+        func_80024108(self, 0.005f, delayFloat, NULL);
     }
     if (state->unk424 & 1) {
         gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, &state->unk170);
@@ -526,7 +512,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
 
     state = (SnowHornState*)snowhorn->state;
-    animIsFinished = func_80024108(snowhorn, 0.006f, delayFloat, (s32)&sp4c);
+    animIsFinished = func_80024108(snowhorn, 0.006f, delayFloat, &sp4c);
     
     if (sp4c.unk1B != 0) {
         playSound = sp4c.unk13[0] == 0;
@@ -634,7 +620,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
         func_80023D30(snowhorn, 0, 0.0f, 0);
     }
 
-    func_80024108(snowhorn, state->unk50, delayByte, 0);
+    func_80024108(snowhorn, state->unk50, delayByte, NULL);
     player = get_player();
     if (!player) 
         return;
@@ -734,7 +720,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
     // object = self;
     state = self->state;
     
-    temp_v0 = func_80024108(self, 0.005f, delayByte, 0);
+    temp_v0 = func_80024108(self, 0.005f, delayByte, NULL);
     questValue = state->flags;
 
     // position = &state->playerPositionCopy;

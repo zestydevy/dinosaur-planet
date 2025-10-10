@@ -8,6 +8,7 @@
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/objects.h"
+#include "sys/objanim.h"
 #include "sys/menu.h"
 #include "dll.h"
 #include "functions.h"
@@ -91,7 +92,7 @@ void SHswapstone_update(Object* self) {
         if (self->curModAnimId != 0xC) {
             func_80023D30(self, 0xC, 0.0f, 0);
         }
-        func_80024108(self, 0.008f, delayFloat, 0);
+        func_80024108(self, 0.008f, delayFloat, NULL);
         if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
             state->unk4 = 1;
         }
@@ -99,7 +100,7 @@ void SHswapstone_update(Object* self) {
         if (self->curModAnimId != 0) {
             func_80023D30(self, 0, 0.0f, 0);
         }
-        func_80024108(self, 0.008f, delayFloat, 0);
+        func_80024108(self, 0.008f, delayFloat, NULL);
         if (main_get_bits(BIT_Talking_to_Rocky) == 0) {
             state->unk4 = 0;
         }

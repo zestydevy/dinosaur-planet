@@ -3050,7 +3050,7 @@ s32 dll_210_func_142C4(Object* arg0, PlayerState* arg1, f32 arg2) {
             func_80025140(arg0, 0.0f, 0, 0); // arg2 should be 0.0f
         }
         func_80023D30(arg0, *temp_s0->unk76C, 0.0f, (u8)sp30);
-        func_80024108(arg0, 0.0f, 0.0f, 0);
+        func_80024108(arg0, 0.0f, 0.0f, NULL);
     }
     if (temp_s0->unk770 & 4) {
         func_800240BC(arg0, sp48->animProgress);

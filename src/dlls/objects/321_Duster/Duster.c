@@ -2,6 +2,7 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objanim.h"
 #include "functions.h"
 #include "dll.h"
 #include "sys/rand.h"
@@ -106,7 +107,7 @@ void Duster_update(Object *self) {
     }
 
     if (state->timer1 == 0 && state->timer2 == 0) {
-        if (func_80024108(self, state->unk0, delayFloat, 0) || state->unkE) {
+        if (func_80024108(self, state->unk0, delayFloat, NULL) || state->unkE) {
             gDLL_6_AMSFX->vtbl->play_sound(self, 0x87B, 0x25, NULL, NULL, 0, NULL);
             gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
             gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);

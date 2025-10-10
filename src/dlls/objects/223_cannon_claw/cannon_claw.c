@@ -5,6 +5,7 @@
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "sys/objanim.h"
 #include "variables.h"
 #include "functions.h"
 #include "types.h"
@@ -34,7 +35,7 @@ void cannon_claw_update(Object *self) {
         func_80023D30(self, 0x208, 0, 0);
     }
 
-    func_80024108(self, 0.0049999998f, delayFloat, 0);
+    func_80024108(self, 0.0049999998f, delayFloat, NULL);
     temp = func_80025F40(self, 0, 0, 0);
     
     if (temp != 0) {

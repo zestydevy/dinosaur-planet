@@ -84,7 +84,7 @@ enum SoundID {
 
     SOUND_B89_Puzzle_Solved = 0xB89, // "puzzle complete" jingle
 
-    NO_SOUND = 0xFFFFFFFF
+    NO_SOUND = -1
 };
 
 #define MAX_VOLUME 0x7F

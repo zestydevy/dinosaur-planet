@@ -6,6 +6,7 @@
 #include "sys/controller.h"
 #include "sys/main.h"
 #include "sys/map.h"
+#include "sys/objanim.h"
 #include "functions.h"
 #include "types.h"
 #include "dll.h"
@@ -52,7 +53,7 @@ void SHqueenearthwalker_update(Object* self) {
     if (self->curModAnimId != 1) {
         func_80023D30(self, 1, 0.0f, 0);
     }
-    func_80024108(self, 0.005f, delayByte, 0);
+    func_80024108(self, 0.005f, delayByte, NULL);
     switch (state->questProgress) {
 
     case 1:

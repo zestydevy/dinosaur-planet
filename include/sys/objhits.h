@@ -13,9 +13,9 @@ typedef struct Unk80026DF4 {
     s16 unk2; // sound ID
     s16 unk4;
     s16 pad6;
-    u8 unk8;
+    u8 unk8; //Boolean: seems to choose between using DLL17 (particles) or DLL106 (modgfx)
     f32 unkC;
-    s32 pad10;
+    f32 unk10;
 } Unk80026DF4;
 
 // size: 0x6C
@@ -130,5 +130,6 @@ void func_8002B7CC(Unk800B20B8** arg0, s32 arg1);
 void func_80026128(Object* self, s32 arg1, s32 arg2, s32 arg3);
 void func_8002674C(Object* obj);
 void func_80026940(Object* obj, s16 arg1);
+u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 
 #endif
