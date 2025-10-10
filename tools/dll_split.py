@@ -373,7 +373,7 @@ class DLLSplitter:
             # Includes
             c_file.write("#include \"common.h\"\n")
             if dll.number >= 210:
-                if obj_state_size != None:
+                if obj_state_size != None and obj_state_size != 0:
                     c_file.write("\ntypedef struct {\n")
                     c_file.write(f"    u8 _unk0[0x{obj_state_size:X}];\n")
                     c_file.write(f"}} DLL{dll.number}_State;\n")
@@ -595,7 +595,10 @@ class DLLSplitter:
             elif export_idx == 6:
                 if obj_state_size != None:
                     c_file.write(f'u32 {func.getName()}(Object *self, u32 a1) {{\n')
-                    c_file.write(f'    return sizeof(DLL{dll.number}_State);\n')
+                    if obj_state_size == 0:
+                        c_file.write(f'    return 0;\n')
+                    else:
+                        c_file.write(f'    return sizeof(DLL{dll.number}_State);\n')
                     c_file.write('}\n')
                     return True
                 else:
@@ -617,10 +620,14 @@ class DLLSplitter:
                     if len(func.instructions) == 5:
                         if func.instructions[0].getRaw() == 0xAFA40000 and func.instructions[1].getRaw() == 0xAFA50004 and \
                            func.instructions[3].getRaw() == 0x03E00008 and func.instructions[4].getRaw() == 0x00000000:
-                            li_inst = func.instructions[2].getRaw()
-                            if (li_inst >> 0x10) == 0x2402:
-                                state_size = li_inst & 0xFFFF
+                            inst = func.instructions[2].getRaw()
+                            if (inst >> 0x10) == 0x2402:
+                                # li instruction
+                                state_size = inst & 0xFFFF
                                 return state_size
+                            elif inst == 0x00001025:
+                                # or $v0, $zero, $zero
+                                return 0
                     return None
 
         return None
