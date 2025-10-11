@@ -32,7 +32,7 @@ void sfxplayer_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void sfxplayer_create(Object* self, SfxPlayer_Setup* setup, s32 arg2) {
+void sfxplayer_setup(Object* self, SfxPlayer_Setup* setup, s32 arg2) {
     SfxPlayerState* state;
     SfxPlayer_Setup* setup2;
 
@@ -52,7 +52,7 @@ void sfxplayer_create(Object* self, SfxPlayer_Setup* setup, s32 arg2) {
 }
 
 // offset: 0xFC | func: 1 | export: 1
-void sfxplayer_update(Object* self) {
+void sfxplayer_control(Object* self) {
     SfxPlayerState *state;
     SfxPlayer_Setup *setup;
     u8 flagValue;
@@ -109,11 +109,11 @@ void sfxplayer_update(Object* self) {
 }
 
 // offset: 0x458 | func: 2 | export: 2
-void sfxplayer_func_458(Object* arg0) {
+void sfxplayer_update(Object* arg0) {
 }
 
 // offset: 0x464 | func: 3 | export: 3
-void sfxplayer_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
+void sfxplayer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
     Object** obj;
     if (visibility) {
         obj = &self;
@@ -122,7 +122,7 @@ void sfxplayer_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 }
 
 // offset: 0x4C0 | func: 4 | export: 4
-void sfxplayer_destroy(Object* arg0, s32 arg1) {
+void sfxplayer_free(Object* arg0, s32 arg1) {
     SfxPlayerState* state = arg0->state;
     if (state->sound) {
         gDLL_6_AMSFX->vtbl->func_A1C(state->sound);

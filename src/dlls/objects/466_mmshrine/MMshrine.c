@@ -65,24 +65,24 @@ void MMshrine_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_18.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/MMshrine_setup.s")
 
 // offset: 0x1BC | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_1BC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/MMshrine_control.s")
 
 // offset: 0xB3C | func: 2 | export: 2
-void MMshrine_func_B3C(Object *self) {
+void MMshrine_update(Object *self) {
 }
 
 // offset: 0xB48 | func: 3 | export: 3
-void MMshrine_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xB9C | func: 4 | export: 4
-void MMshrine_destroy(Object *self, s32 arg1) {
+void MMshrine_free(Object *self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_5_AMSEQ->vtbl->func13(3, 0);
     gDLL_5_AMSEQ->vtbl->func13(2, 0);

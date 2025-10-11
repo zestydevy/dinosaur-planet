@@ -8,10 +8,10 @@ _exports:
 .dword iceblast_dtor
 
 # export table
-.dword iceblast_create
+.dword iceblast_setup
+.dword iceblast_control
 .dword iceblast_update
-.dword iceblast_func_26C
-.dword iceblast_draw
-.dword iceblast_destroy
+.dword iceblast_print
+.dword iceblast_free
 .dword iceblast_get_model_flags
 .dword iceblast_get_state_size

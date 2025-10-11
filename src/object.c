@@ -796,7 +796,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
     size += def->numModels * sizeof(u32);
 
     if (obj->dll != NULL) {
-        size += obj->dll->vtbl->get_state_size(obj, size);
+        size += obj->dll->vtbl->get_data_size(obj, size);
     }
 
     if (modflags & MODFLAGS_EVENTS) {
@@ -1044,7 +1044,7 @@ void update_object(Object *obj) {
         }
 
         if (obj->dll != NULL && !(obj->unk0xb0 & 0x8000)) {
-            obj->dll->vtbl->update(obj);
+            obj->dll->vtbl->control(obj);
 
             get_object_child_position(obj,
                 &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
@@ -1075,7 +1075,7 @@ void func_8002272C(Object *obj) {
     update_pi_manager_array(3, obj->id);
 
     if (obj->dll != NULL && !(obj->unk0xb0 & 0x2000)) {
-        obj->dll->vtbl->func3(obj);
+        obj->dll->vtbl->update(obj);
 
         get_object_child_position(obj,
             &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z);
@@ -1090,7 +1090,7 @@ u32 obj_alloc_object_state(Object *obj, u32 addr) {
     addr = mmAlign4(addr);
 
     if (obj->dll != NULL) {
-        stateSize = obj->dll->vtbl->get_state_size(obj, addr);
+        stateSize = obj->dll->vtbl->get_data_size(obj, addr);
     }
 
     if (stateSize != 0) {
@@ -1432,7 +1432,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->dll != NULL) {
         update_pi_manager_array(4, obj->id);
-        obj->dll->vtbl->destroy(obj, param2);
+        obj->dll->vtbl->free(obj, param2);
         update_pi_manager_array(4, -1);
         dll_unload(obj->dll);
     }

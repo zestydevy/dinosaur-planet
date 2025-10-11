@@ -668,7 +668,7 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
             state->unk868->srt.transl.y = sp78;
             state->unk868->srt.transl.z = sp74;
             state->unk868->srt.yaw = arg0->srt.yaw;
-            state->unk868->dll->vtbl->draw(state->unk868, arg1, arg2, arg3, arg4, -1);
+            state->unk868->dll->vtbl->print(state->unk868, arg1, arg2, arg3, arg4, -1);
         }
         func_8004E64C(arg0, (s32) arg1, (s32) arg2, (s32) arg3, (s32) arg4);
     }

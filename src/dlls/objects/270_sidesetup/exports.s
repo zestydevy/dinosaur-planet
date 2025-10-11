@@ -8,10 +8,10 @@ _exports:
 .dword sidesetup_dtor
 
 # export table
-.dword sidesetup_create
+.dword sidesetup_setup
+.dword sidesetup_control
 .dword sidesetup_update
-.dword sidesetup_func_48
-.dword sidesetup_draw
-.dword sidesetup_destroy
+.dword sidesetup_print
+.dword sidesetup_free
 .dword sidesetup_get_model_flags
 .dword sidesetup_get_state_size

@@ -152,12 +152,12 @@ typedef struct {
 DLL_INTERFACE(DLL_IObject) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
 	/*0*/ void (*setup)(struct Object *obj, ObjSetup *setup, s32);
-	/*1*/ void (*update)(struct Object *obj);
-	/*2*/ void (*func3)(struct Object *obj); // update_child?
-	/*3*/ void (*draw)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-	/*4*/ void (*destroy)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
+	/*1*/ void (*control)(struct Object *obj);
+	/*2*/ void (*update)(struct Object *obj);
+	/*3*/ void (*print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+	/*4*/ void (*free)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
 	/*5*/ u32 (*get_model_flags)(struct Object *obj);
-	/*6*/ u32 (*get_state_size)(struct Object *obj, u32);
+	/*6*/ u32 (*get_data_size)(struct Object *obj, u32);
 };
 
 // arg3 and arg4 are unknown types

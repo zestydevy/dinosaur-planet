@@ -34,7 +34,7 @@ void VFP_PodiumPoint_ctor(void *dll) { }
 void VFP_PodiumPoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_PodiumPoint_create(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2) {
+void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2) {
     VFP_PodiumPoint_State* state;
 
     state = (VFP_PodiumPoint_State*)self->state;
@@ -46,7 +46,7 @@ void VFP_PodiumPoint_create(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2
 }
 
 // offset: 0x68 | func: 1 | export: 1
-void VFP_PodiumPoint_update(Object* self) {
+void VFP_PodiumPoint_control(Object* self) {
     u8 mapSetupID;
 
     mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
@@ -68,17 +68,17 @@ void VFP_PodiumPoint_update(Object* self) {
 }
 
 // offset: 0x128 | func: 2 | export: 2
-void VFP_PodiumPoint_func_128(Object *self) {
+void VFP_PodiumPoint_update(Object *self) {
     if (self->unk0x74 != NULL) {
         func_80036438(self);
     }
 }
 
 // offset: 0x16C | func: 3 | export: 3
-void VFP_PodiumPoint_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_PodiumPoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x184 | func: 4 | export: 4
-void VFP_PodiumPoint_destroy(Object *self, s32 a1) { }
+void VFP_PodiumPoint_free(Object *self, s32 a1) { }
 
 // offset: 0x194 | func: 5 | export: 5
 u32 VFP_PodiumPoint_get_model_flags(Object *self) {

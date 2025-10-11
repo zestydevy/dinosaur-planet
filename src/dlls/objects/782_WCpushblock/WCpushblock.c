@@ -33,7 +33,7 @@ void dll_782_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_782_func_18(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
+void dll_782_setup(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
     WCPushBlockState* state = self->state;
 
     self->unk_0x36 = 0;
@@ -46,21 +46,21 @@ void dll_782_func_18(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
 
 // offset: 0x58 | func: 1 | export: 1
 // https://decomp.me/scratch/WLIsx
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/782_WCpushblock/dll_782_func_58.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/782_WCpushblock/dll_782_control.s")
 
 // offset: 0xF38 | func: 2 | export: 2
-void dll_782_func_F38(Object* self) {
+void dll_782_update(Object* self) {
 }
 
 // offset: 0xF44 | func: 3 | export: 3
-void dll_782_func_F44(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_782_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xF98 | func: 4 | export: 4
-void dll_782_func_F98(Object* self, s32 arg1) {
+void dll_782_free(Object* self, s32 arg1) {
 }
 
 // offset: 0xFA8 | func: 5 | export: 5

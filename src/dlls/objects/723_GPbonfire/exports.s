@@ -8,11 +8,11 @@ _exports:
 .dword GPbonfire_dtor
 
 # export table
-.dword GPbonfire_create
+.dword GPbonfire_setup
+.dword GPbonfire_control
 .dword GPbonfire_update
-.dword GPbonfire_func_7F4
-.dword GPbonfire_draw
-.dword GPbonfire_destroy
+.dword GPbonfire_print
+.dword GPbonfire_free
 .dword GPbonfire_get_model_flags
 .dword GPbonfire_get_state_size
 .dword GPbonfire_func_910

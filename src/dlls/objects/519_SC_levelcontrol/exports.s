@@ -8,11 +8,11 @@ _exports:
 .dword SC_levelcontrol_dtor
 
 # export table
-.dword SC_levelcontrol_create
+.dword SC_levelcontrol_setup
+.dword SC_levelcontrol_control
 .dword SC_levelcontrol_update
-.dword SC_levelcontrol_func_420
-.dword SC_levelcontrol_draw
-.dword SC_levelcontrol_destroy
+.dword SC_levelcontrol_print
+.dword SC_levelcontrol_free
 .dword SC_levelcontrol_get_model_flags
 .dword SC_levelcontrol_get_state_size
 .dword SC_levelcontrol_func_660

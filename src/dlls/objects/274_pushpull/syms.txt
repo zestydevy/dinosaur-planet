@@ -1,11 +1,11 @@
 .text = 0x0:
 dll_274_ctor = 0x0;
 dll_274_dtor = 0xC;
-dll_274_create = 0x18;
-dll_274_update = 0x638;
-dll_274_func_87C = 0x87C;
-dll_274_draw = 0xEE4;
-dll_274_destroy = 0x1058;
+dll_274_setup = 0x18;
+dll_274_control = 0x638;
+dll_274_update = 0x87C;
+dll_274_print = 0xEE4;
+dll_274_free = 0x1058;
 dll_274_get_model_flags = 0x116C;
 dll_274_get_state_size = 0x117C;
 dll_274_func_1190 = 0x1190;

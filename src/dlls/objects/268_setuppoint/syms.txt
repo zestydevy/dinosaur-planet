@@ -1,10 +1,10 @@
 .text = 0x0:
 setuppoint_ctor = 0x0;
 setuppoint_dtor = 0xC;
-setuppoint_create = 0x18;
-setuppoint_update = 0x58;
-setuppoint_func_64 = 0x64;
-setuppoint_draw = 0x70;
-setuppoint_destroy = 0xC4;
+setuppoint_setup = 0x18;
+setuppoint_control = 0x58;
+setuppoint_update = 0x64;
+setuppoint_print = 0x70;
+setuppoint_free = 0xC4;
 setuppoint_get_model_flags = 0xD4;
 setuppoint_get_state_size = 0xE4;

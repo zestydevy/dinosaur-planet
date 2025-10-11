@@ -32,7 +32,7 @@ void SHqueenearthwalker_ctor(void *dll) { }
 void SHqueenearthwalker_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHqueenearthwalker_create(Object* self, SHqueenearthwalker_Setup* setup, s32 arg2) {
+void SHqueenearthwalker_setup(Object* self, SHqueenearthwalker_Setup* setup, s32 arg2) {
     SHqueenearthwalker_State* sp24;
 
     sp24 = self->state;
@@ -43,7 +43,7 @@ void SHqueenearthwalker_create(Object* self, SHqueenearthwalker_Setup* setup, s3
 }
 
 // offset: 0xA0 | func: 1 | export: 1
-void SHqueenearthwalker_update(Object* self) {
+void SHqueenearthwalker_control(Object* self) {
     SHqueenearthwalker_State* state;
     s32 prevQuestProgress;
 
@@ -109,17 +109,17 @@ void SHqueenearthwalker_update(Object* self) {
 }
 
 // offset: 0x464 | func: 2 | export: 2
-void SHqueenearthwalker_func_464(Object *self) { }
+void SHqueenearthwalker_update(Object *self) { }
 
 // offset: 0x470 | func: 3 | export: 3
-void SHqueenearthwalker_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SHqueenearthwalker_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x4C4 | func: 4 | export: 4
-void SHqueenearthwalker_destroy(Object *self, s32 a1) { }
+void SHqueenearthwalker_free(Object *self, s32 a1) { }
 
 // offset: 0x4D4 | func: 5 | export: 5
 u32 SHqueenearthwalker_get_model_flags(Object* self) {

@@ -50,7 +50,7 @@ void DFPLift_ctor(void *dll) { }
 void DFPLift_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFPLift_create(Object *self, DFPLift_Setup *setup, s32 a2) {
+void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
     DFPLiftState *state;
 
     state = (DFPLiftState*)self->state;
@@ -69,7 +69,7 @@ void DFPLift_create(Object *self, DFPLift_Setup *setup, s32 a2) {
 }
 
 // offset: 0x9C | func: 1 | export: 1
-void DFPLift_update(Object* self) {
+void DFPLift_control(Object* self) {
     DFPLift_Setup* setup;
     DFPLiftState* state;
     Object* player;
@@ -225,17 +225,17 @@ void DFPLift_update(Object* self) {
 }
 
 // offset: 0x7EC | func: 2 | export: 2
-void DFPLift_func_7EC(Object *self) { }
+void DFPLift_update(Object *self) { }
 
 // offset: 0x7F8 | func: 3 | export: 3
-void DFPLift_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DFPLift_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x84C | func: 4 | export: 4
-void DFPLift_destroy(Object *self, s32 a1) {
+void DFPLift_free(Object *self, s32 a1) {
     DFPLiftState *state;
 
     state = (DFPLiftState*)self->state;

@@ -74,7 +74,7 @@ void levelname_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void levelname_create(Object* self, LevelName_Setup* setup, s32 arg2) {
+void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     LevelNameState* state;
     GameTextChunk* gametext;
 
@@ -104,7 +104,7 @@ void levelname_create(Object* self, LevelName_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x120 | func: 1 | export: 1
-void levelname_update(Object* self) {
+void levelname_control(Object* self) {
     LevelNameState* state;
     f32 distance;
 
@@ -147,11 +147,11 @@ void levelname_update(Object* self) {
 }
 
 // offset: 0x304 | func: 2 | export: 2
-void levelname_func_304(Object* self){
+void levelname_update(Object* self){
 }
 
 // offset: 0x310 | func: 3 | export: 3
-void levelname_draw(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx) {
+void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     s32 index;
     s32 yCoord;
     LevelNameState* state;
@@ -177,7 +177,7 @@ void levelname_draw(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx) {
 }
 
 // offset: 0x480 | func: 4 | export: 4
-void levelname_destroy(Object* self, s32 arg1) {
+void levelname_free(Object* self, s32 arg1) {
     LevelNameState* state = self->state;
 
     font_unload(FONT_DINO_MEDIUM_FONT_IN);

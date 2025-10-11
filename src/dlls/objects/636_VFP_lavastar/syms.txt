@@ -1,11 +1,11 @@
 .text = 0x0:
 VFP_lavastar_ctor = 0x0;
 VFP_lavastar_dtor = 0xC;
-VFP_lavastar_create = 0x18;
-VFP_lavastar_update = 0x158;
-VFP_lavastar_func_2BC = 0x2BC;
-VFP_lavastar_draw = 0x2C8;
-VFP_lavastar_destroy = 0x2E0;
+VFP_lavastar_setup = 0x18;
+VFP_lavastar_control = 0x158;
+VFP_lavastar_update = 0x2BC;
+VFP_lavastar_print = 0x2C8;
+VFP_lavastar_free = 0x2E0;
 VFP_lavastar_get_model_flags = 0x390;
 VFP_lavastar_get_state_size = 0x3A0;
 

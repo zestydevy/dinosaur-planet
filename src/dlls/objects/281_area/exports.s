@@ -8,10 +8,10 @@ _exports:
 .dword area_dtor
 
 # export table
-.dword area_create
+.dword area_setup
+.dword area_control
 .dword area_update
-.dword area_func_3C
-.dword area_draw
-.dword area_destroy
+.dword area_print
+.dword area_free
 .dword area_get_model_flags
 .dword area_get_state_size

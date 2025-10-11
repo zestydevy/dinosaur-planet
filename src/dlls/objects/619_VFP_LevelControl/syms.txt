@@ -1,11 +1,11 @@
 .text = 0x0:
 VFP_LevelControl_ctor = 0x0;
 VFP_LevelControl_dtor = 0xC;
-VFP_LevelControl_create = 0x18;
-VFP_LevelControl_update = 0x24C;
-VFP_LevelControl_func_864 = 0x864;
-VFP_LevelControl_draw = 0x870;
-VFP_LevelControl_destroy = 0x888;
+VFP_LevelControl_setup = 0x18;
+VFP_LevelControl_control = 0x24C;
+VFP_LevelControl_update = 0x864;
+VFP_LevelControl_print = 0x870;
+VFP_LevelControl_free = 0x888;
 VFP_LevelControl_get_model_flags = 0x8C8;
 VFP_LevelControl_get_state_size = 0x8D8;
 VFP_LevelControl_func_8EC = 0x8EC;

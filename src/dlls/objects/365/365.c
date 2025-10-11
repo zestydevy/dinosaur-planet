@@ -11,28 +11,28 @@ void init(void *dll) { }
 
 void fini(void *dll) { }
 
-void dll_365_create(Object *self, ObjSetup *setup, s32 arg2)
+void dll_365_setup(Object *self, ObjSetup *setup, s32 arg2)
 {
 	self->srt.yaw = 0;
 	self->unk0xbc = (ObjectCallback)func_0007;
+}
+
+void dll_365_control(Object *self)
+{
 }
 
 void dll_365_update(Object *self)
 {
 }
 
-void func_0002(Object *self)
-{
-}
-
-void dll_365_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility)
+void dll_365_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility)
 {
 	if (visibility != 0) {
 		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 
-void dll_365_destroy(Object *self, s32 arg1)
+void dll_365_free(Object *self, s32 arg1)
 {
 }
 

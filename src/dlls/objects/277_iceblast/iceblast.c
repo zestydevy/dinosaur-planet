@@ -27,7 +27,7 @@ void iceblast_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void iceblast_create(Object* self, IceBlast_Setup* setup, s32 arg2) {
+void iceblast_setup(Object* self, IceBlast_Setup* setup, s32 arg2) {
     IceBlastState* state = self->state;
 
     state->timer = setup->timer;
@@ -35,7 +35,7 @@ void iceblast_create(Object* self, IceBlast_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x80 | func: 1 | export: 1
-void iceblast_update(Object* self) {
+void iceblast_control(Object* self) {
     Object* player;
     Object* weapon;
     IceBlastState* state;
@@ -90,17 +90,17 @@ void iceblast_update(Object* self) {
 }
 
 // offset: 0x26C | func: 2 | export: 2
-void iceblast_func_26C(void){
+void iceblast_update(void){
 }
 
 // offset: 0x274 | func: 3 | export: 3
-void iceblast_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
+void iceblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
     //@recomp: may want to hide these debug cubes
     draw_object(self, gfx, mtx, vtx, pols, 1.0f);
 }
 
 // offset: 0x2BC | func: 4 | export: 4
-void iceblast_destroy(Object* self, s32 arg1){
+void iceblast_free(Object* self, s32 arg1){
 }
 
 // offset: 0x2CC | func: 5 | export: 5

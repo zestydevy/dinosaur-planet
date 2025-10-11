@@ -53,7 +53,7 @@ void dll_287_ctor(void *dll) { }
 void dll_287_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void pressureswitch_create(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
+void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
     PressureSwitchState* state;
     s32 index;
 
@@ -80,7 +80,7 @@ void pressureswitch_create(Object* self, PressureSwitch_Setup* setup, s32 arg2) 
 }
 
 // offset: 0x148 | func: 1 | export: 1
-void pressureswitch_update(Object* self) {
+void pressureswitch_control(Object* self) {
     f32 deltaY;
     Object* sidekick;
     Object* player;
@@ -178,18 +178,18 @@ void pressureswitch_update(Object* self) {
 }
 
 // offset: 0x524 | func: 2 | export: 2
-void pressureswitch_func_524(Object* dll){
+void pressureswitch_update(Object* dll){
 }
 
 // offset: 0x530 | func: 3 | export: 3
-void pressureswitch_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void pressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x584 | func: 4 | export: 4
-void pressureswitch_destroy(Object* self, s32 arg1) {
+void pressureswitch_free(Object* self, s32 arg1) {
     PressureSwitchState* state = self->state;
 
     if (state->soundHandle) {

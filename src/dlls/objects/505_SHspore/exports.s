@@ -8,10 +8,10 @@ _exports:
 .dword SHspore_dtor
 
 # export table
-.dword SHspore_create
+.dword SHspore_setup
+.dword SHspore_control
 .dword SHspore_update
-.dword SHspore_func_B88
-.dword SHspore_draw
-.dword SHspore_destroy
+.dword SHspore_print
+.dword SHspore_free
 .dword SHspore_get_model_flags
 .dword SHspore_get_state_size

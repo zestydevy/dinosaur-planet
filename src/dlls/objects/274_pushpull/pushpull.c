@@ -32,24 +32,24 @@ void dll_274_ctor(void *dll) { }
 void dll_274_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_274_create(Object *self, ObjSetup* setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_create.s")
+void dll_274_setup(Object *self, ObjSetup* setup, s32 arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_setup.s")
 
 // offset: 0x638 | func: 1 | export: 1
+void dll_274_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_control.s")
+
+// offset: 0x87C | func: 2 | export: 2
 void dll_274_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_update.s")
 
-// offset: 0x87C | func: 2 | export: 2
-void dll_274_func_87C(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_87C.s")
-
 // offset: 0xEE4 | func: 3 | export: 3
-void dll_274_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_draw.s")
+void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_print.s")
 
 // offset: 0x1058 | func: 4 | export: 4
-void dll_274_destroy(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_destroy.s")
+void dll_274_free(Object *self, s32 a1);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_free.s")
 
 // offset: 0x116C | func: 5 | export: 5
 u32 dll_274_get_model_flags(Object* self);

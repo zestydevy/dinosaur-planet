@@ -57,7 +57,7 @@ void WLpressureswitch_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void WLpressureswitch_create(Object* self, WLPressureSwitch_Setup* setup, s32 arg2) {
+void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg2) {
     WLPressureSwitchState* state;
 
     state = self->state;
@@ -71,7 +71,7 @@ void WLpressureswitch_create(Object* self, WLPressureSwitch_Setup* setup, s32 ar
 }
 
 // offset: 0xB4 | func: 1 | export: 1
-void WLpressureswitch_update(Object* self) {
+void WLpressureswitch_control(Object* self) {
     Object* sidekick;
     Object* player;
     f32 deltaY;
@@ -183,18 +183,18 @@ void WLpressureswitch_update(Object* self) {
 }
 
 // offset: 0x598 | func: 2 | export: 2
-void WLpressureswitch_func_598(Object* self){
+void WLpressureswitch_update(Object* self){
 }
 
 // offset: 0x5A4 | func: 3 | export: 3
-void WLpressureswitch_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void WLpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x5F8 | func: 4 | export: 4
-void WLpressureswitch_destroy(Object* self, s32 arg1) {
+void WLpressureswitch_free(Object* self, s32 arg1) {
     WLPressureSwitchState* state = self->state;
     u32 soundHandle;
 

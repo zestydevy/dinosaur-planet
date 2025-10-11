@@ -24,7 +24,7 @@ void GP_LevelControl_ctor(void *dll) { }
 void GP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GP_LevelControl_create(Object *self, ObjSetup *setup, s32 arg2) {
+void GP_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     GP_LevelControl_State *state;
 
     state = self->state;
@@ -44,7 +44,7 @@ void GP_LevelControl_create(Object *self, ObjSetup *setup, s32 arg2) {
 }
 
 // offset: 0xF0 | func: 1 | export: 1
-void GP_LevelControl_update(Object *self) {
+void GP_LevelControl_control(Object *self) {
     GP_LevelControl_State *state;
     f32 time;
     f32 timerInc;
@@ -109,17 +109,17 @@ void GP_LevelControl_update(Object *self) {
 }
 
 // offset: 0x434 | func: 2 | export: 2
-void GP_LevelControl_func_434(Object *self) { }
+void GP_LevelControl_update(Object *self) { }
 
 // offset: 0x440 | func: 3 | export: 3
-void GP_LevelControl_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void GP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x494 | func: 4 | export: 4
-void GP_LevelControl_destroy(Object *self, s32 arg1) { }
+void GP_LevelControl_free(Object *self, s32 arg1) { }
 
 // offset: 0x4A4 | func: 5 | export: 5
 u32 GP_LevelControl_get_model_flags(Object *self) {

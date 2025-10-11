@@ -21,12 +21,12 @@ void CFMagicWall_ctor(void *dll) { }
 void CFMagicWall_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFMagicWall_create(Object *self, ObjSetup *setup, s32 arg2) {
+void CFMagicWall_setup(Object *self, ObjSetup *setup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_32);
 }
 
 // offset: 0x5C | func: 1 | export: 1
-void CFMagicWall_update(Object* self) {
+void CFMagicWall_control(Object* self) {
     CFMagicWall_Setup* setup;
     Object* player;
     u8 var_a1;
@@ -59,17 +59,17 @@ void CFMagicWall_update(Object* self) {
 }
 
 // offset: 0x2C0 | func: 2 | export: 2
-void CFMagicWall_func_2C0(Object *self) { }
+void CFMagicWall_update(Object *self) { }
 
 // offset: 0x2CC | func: 3 | export: 3
-void CFMagicWall_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CFMagicWall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x320 | func: 4 | export: 4
-void CFMagicWall_destroy(Object *self, s32 a1) {
+void CFMagicWall_free(Object *self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_32);
 }
 

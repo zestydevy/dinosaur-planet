@@ -8,10 +8,10 @@ _exports:
 .dword levelname_dtor
 
 # export table
-.dword levelname_create
+.dword levelname_setup
+.dword levelname_control
 .dword levelname_update
-.dword levelname_func_304
-.dword levelname_draw
-.dword levelname_destroy
+.dword levelname_print
+.dword levelname_free
 .dword levelname_get_model_flags
 .dword levelname_get_state_size

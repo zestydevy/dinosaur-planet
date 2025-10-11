@@ -35,7 +35,7 @@ void WL_LevelControl_ctor(void *dll) { }
 void WL_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_LevelControl_create(Object* self, ObjSetup* setup, s32 arg2) {
+void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     WL_LevelControl_State* state;
 
     obj_add_object_type(self, OBJTYPE_10);
@@ -80,7 +80,7 @@ void WL_LevelControl_create(Object* self, ObjSetup* setup, s32 arg2) {
 }
 
 // offset: 0x25C | func: 1 | export: 1
-void WL_LevelControl_update(Object* self) {
+void WL_LevelControl_control(Object* self) {
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 0:
         break;
@@ -109,17 +109,17 @@ void WL_LevelControl_update(Object* self) {
 }
 
 // offset: 0x394 | func: 2 | export: 2
-void WL_LevelControl_func_394(Object *self) { }
+void WL_LevelControl_update(Object *self) { }
 
 // offset: 0x3A0 | func: 3 | export: 3
-void WL_LevelControl_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void WL_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x3F4 | func: 4 | export: 4
-void WL_LevelControl_destroy(Object *self, s32 a1) {
+void WL_LevelControl_free(Object *self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_10);
     if (self){} // @fake
 }

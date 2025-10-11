@@ -28,7 +28,7 @@ void dll_652_ctor(void *dll) { }
 void dll_652_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_652_create(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
+void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
     DLL652_State* state;
 
     state = self->state;
@@ -45,7 +45,7 @@ void dll_652_create(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
 }
 
 // offset: 0xE0 | func: 1 | export: 1
-void dll_652_update(Object* self) {
+void dll_652_control(Object* self) {
     Object* player;
     u8 mapSetupID;
 
@@ -64,13 +64,13 @@ void dll_652_update(Object* self) {
 }
 
 // offset: 0x1C4 | func: 2 | export: 2
-void dll_652_func_1C4(Object *self) { }
+void dll_652_update(Object *self) { }
 
 // offset: 0x1D0 | func: 3 | export: 3
-void dll_652_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void dll_652_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x1E8 | func: 4 | export: 4
-void dll_652_destroy(Object* self, s32 a1) {
+void dll_652_free(Object* self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

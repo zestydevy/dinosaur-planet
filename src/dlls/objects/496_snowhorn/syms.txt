@@ -1,11 +1,11 @@
 .text = 0x0:
 dll_496_ctor = 0x0;
 dll_496_dtor = 0xC;
-dll_496_func_18 = 0x18;
-dll_496_func_24C = 0x24C;
-dll_496_func_770 = 0x770;
-dll_496_func_77C = 0x77C;
-dll_496_func_804 = 0x804;
+dll_496_setup = 0x18;
+dll_496_control = 0x24C;
+dll_496_update = 0x770;
+dll_496_print = 0x77C;
+dll_496_free = 0x804;
 dll_496_get_model_flags = 0x828;
 dll_496_get_state_size = 0x838;
 dll_496_func_84C = 0x84C;

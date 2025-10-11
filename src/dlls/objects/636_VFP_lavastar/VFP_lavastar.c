@@ -29,7 +29,7 @@ void VFP_lavastar_ctor(void *dll) { }
 void VFP_lavastar_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_lavastar_create(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
+void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
     VFP_lavastar_State* state;
 
     state = self->state;
@@ -43,7 +43,7 @@ void VFP_lavastar_create(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x158 | func: 1 | export: 1
-void VFP_lavastar_update(Object* self) {
+void VFP_lavastar_control(Object* self) {
     VFP_lavastar_Setup* setup;
     VFP_lavastar_State* state;
 
@@ -63,13 +63,13 @@ void VFP_lavastar_update(Object* self) {
 }
 
 // offset: 0x2BC | func: 2 | export: 2
-void VFP_lavastar_func_2BC(Object *self) { }
+void VFP_lavastar_update(Object *self) { }
 
 // offset: 0x2C8 | func: 3 | export: 3
-void VFP_lavastar_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_lavastar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x2E0 | func: 4 | export: 4
-void VFP_lavastar_destroy(Object* self, s32 arg1) {
+void VFP_lavastar_free(Object* self, s32 arg1) {
     VFP_lavastar_State* state;
 
     state = (VFP_lavastar_State*)self->state;

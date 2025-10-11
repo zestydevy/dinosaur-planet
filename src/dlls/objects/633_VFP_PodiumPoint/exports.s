@@ -8,10 +8,10 @@ _exports:
 .dword VFP_PodiumPoint_dtor
 
 # export table
-.dword VFP_PodiumPoint_create
+.dword VFP_PodiumPoint_setup
+.dword VFP_PodiumPoint_control
 .dword VFP_PodiumPoint_update
-.dword VFP_PodiumPoint_func_128
-.dword VFP_PodiumPoint_draw
-.dword VFP_PodiumPoint_destroy
+.dword VFP_PodiumPoint_print
+.dword VFP_PodiumPoint_free
 .dword VFP_PodiumPoint_get_model_flags
 .dword VFP_PodiumPoint_get_state_size

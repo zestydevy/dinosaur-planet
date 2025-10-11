@@ -28,7 +28,7 @@ void VFP_SpellPlace_ctor(void *dll) { }
 void VFP_SpellPlace_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_SpellPlace_create(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
+void VFP_SpellPlace_setup(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
     VFP_SpellPlace_State* state;
 
     state = self->state;
@@ -44,7 +44,7 @@ void VFP_SpellPlace_create(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
 }
 
 // offset: 0xC8 | func: 1 | export: 1
-void VFP_SpellPlace_update(Object* self) {
+void VFP_SpellPlace_control(Object* self) {
     Object* player;
     u8 mapSetupID;
 
@@ -66,13 +66,13 @@ void VFP_SpellPlace_update(Object* self) {
 }
 
 // offset: 0x1AC | func: 2 | export: 2
-void VFP_SpellPlace_func_1AC(Object *self) { }
+void VFP_SpellPlace_update(Object *self) { }
 
 // offset: 0x1B8 | func: 3 | export: 3
-void VFP_SpellPlace_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_SpellPlace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x1D0 | func: 4 | export: 4
-void VFP_SpellPlace_destroy(Object *self, s32 a1) { }
+void VFP_SpellPlace_free(Object *self, s32 a1) { }
 
 // offset: 0x1E0 | func: 5 | export: 5
 u32 VFP_SpellPlace_get_model_flags(Object *self) {

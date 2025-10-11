@@ -29,7 +29,7 @@ void CFMainSlideDoor_ctor(void *dll) { }
 void CFMainSlideDoor_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFMainSlideDoor_create(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2) {
+void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2) {
     CFMainSlideDoor_State* state;
 
     self->unk0xdc = 0;
@@ -42,7 +42,7 @@ void CFMainSlideDoor_create(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2
 }
 
 // offset: 0x108 | func: 1 | export: 1
-void CFMainSlideDoor_update(Object* self) {
+void CFMainSlideDoor_control(Object* self) {
     CFMainSlideDoor_State* state;
     CFMainSlideDoor_Setup* setup;
 
@@ -60,17 +60,17 @@ void CFMainSlideDoor_update(Object* self) {
 }
 
 // offset: 0x1D4 | func: 2 | export: 2
-void CFMainSlideDoor_func_1D4(Object *self) { }
+void CFMainSlideDoor_update(Object *self) { }
 
 // offset: 0x1E0 | func: 3 | export: 3
-void CFMainSlideDoor_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CFMainSlideDoor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x234 | func: 4 | export: 4
-void CFMainSlideDoor_destroy(Object *self, s32 a1) { }
+void CFMainSlideDoor_free(Object *self, s32 a1) { }
 
 // offset: 0x244 | func: 5 | export: 5
 u32 CFMainSlideDoor_get_model_flags(Object *self) {

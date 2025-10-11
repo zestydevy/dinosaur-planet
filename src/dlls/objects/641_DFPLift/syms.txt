@@ -1,11 +1,11 @@
 .text = 0x0:
 DFPLift_ctor = 0x0;
 DFPLift_dtor = 0xC;
-DFPLift_create = 0x18;
-DFPLift_update = 0x9C;
-DFPLift_func_7EC = 0x7EC;
-DFPLift_draw = 0x7F8;
-DFPLift_destroy = 0x84C;
+DFPLift_setup = 0x18;
+DFPLift_control = 0x9C;
+DFPLift_update = 0x7EC;
+DFPLift_print = 0x7F8;
+DFPLift_free = 0x84C;
 DFPLift_get_model_flags = 0x8F8;
 DFPLift_get_state_size = 0x908;
 DFPLift_func_91C = 0x91C;

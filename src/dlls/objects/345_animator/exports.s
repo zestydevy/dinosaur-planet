@@ -8,10 +8,10 @@ _exports:
 .dword animator_dtor
 
 # export table
-.dword animator_create
+.dword animator_setup
+.dword animator_control
 .dword animator_update
-.dword animator_func_300
-.dword animator_draw
-.dword animator_destroy
+.dword animator_print
+.dword animator_free
 .dword animator_get_model_flags
 .dword animator_get_state_size

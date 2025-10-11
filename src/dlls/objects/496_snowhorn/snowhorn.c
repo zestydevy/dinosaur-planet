@@ -271,9 +271,9 @@ void dll_496_dtor(s32 arg0) {
 }
 
 //https://decomp.me/scratch/tHX03
-//NOTE: dll_496_func_18 itself matches, it's just that these declared functions need to also be matched in order to be static
+//NOTE: dll_496_setup itself matches, it's just that these declared functions need to also be matched in order to be static
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_18.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_setup.s")
 #else
 s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObjState* animObjState, s8 arg3);
 void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
@@ -282,7 +282,7 @@ void dll_496_func_174C(Object *snowHorn, SnowHornState *state, SnowHorn_Setup* m
 void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 
-void dll_496_func_18(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
+void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     SnowHornState* state;
     u8* temp_a0;
     s32 sp34;
@@ -333,7 +333,7 @@ void dll_496_func_18(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
 //https://decomp.me/scratch/HgWtR
 // referenced funcs just need to be static
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_24C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_control.s")
 #else
 void dll_496_func_11E0(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
@@ -343,7 +343,7 @@ s32 dll_496_func_980(Object* snowhorn);
 void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
 void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 
-void dll_496_func_24C(Object* snowhorn) {
+void dll_496_control(Object* snowhorn) {
     SnowHornState* state;
     f32 daytime;
     SnowHorn_Setup* mapsObj;
@@ -448,12 +448,12 @@ void dll_496_func_24C(Object* snowhorn) {
 }
 #endif
 
-void dll_496_func_770(u32 a0){
+void dll_496_update(u32 a0){
 }
 
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 
-void dll_496_func_77C(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **pols, s8 visibility) {
+void dll_496_print(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **pols, s8 visibility) {
     SnowHornState* state;
     u32 addr;
 
@@ -464,7 +464,7 @@ void dll_496_func_77C(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle
     }
 }
 
-void dll_496_func_804(s32 arg0, s32 arg1) {
+void dll_496_free(s32 arg0, s32 arg1) {
     _data_274[0] = 0;
 }
 

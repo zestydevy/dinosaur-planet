@@ -55,7 +55,7 @@ void SHspore_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHspore_create(Object* self, s32 arg1, s32 arg2) {
+void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     SHSporeState* state;
     s8 pad[4];
     s8 sp37;
@@ -76,7 +76,7 @@ void SHspore_create(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x18C | func: 1 | export: 1
-void SHspore_update(Object* self) {
+void SHspore_control(Object* self) {
     SHSporeState* state;
     s8 pad[10];
     s32 particleCount;
@@ -270,15 +270,15 @@ static void SHspore_func_A00(Object* arg0, SHSporeState* state) {
 }
 
 // offset: 0xB88 | func: 4 | export: 2
-void SHspore_func_B88(Object *self) {
+void SHspore_update(Object *self) {
 }
 
 // offset: 0xB94 | func: 5 | export: 3
-void SHspore_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
 }
 
 // offset: 0xBAC | func: 6 | export: 4
-void SHspore_destroy(Object* arg0, s32 arg1) {
+void SHspore_free(Object* arg0, s32 arg1) {
     gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)arg0);
 }
 

@@ -45,7 +45,7 @@ void Duster_ctor(void *dll) { }
 void Duster_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Duster_create(Object *self, Duster_Setup *setup, s32 arg2) {
+void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
     Duster_State *state = self->state;
 
     state->timer1 = rand_next(0, 50);
@@ -74,7 +74,7 @@ void Duster_create(Object *self, Duster_Setup *setup, s32 arg2) {
 }
 
 // offset: 0x140 | func: 1 | export: 1
-void Duster_update(Object *self) {
+void Duster_control(Object *self) {
     s32 count;
     Object *player;
     SRT srt;
@@ -180,7 +180,7 @@ void Duster_update(Object *self) {
 }
 
 // offset: 0x754 | func: 2 | export: 2
-void Duster_func_754(Object *self) {
+void Duster_update(Object *self) {
     Duster_State *state;
     s32 _pad1[21];
     s32 sp3C;
@@ -207,7 +207,7 @@ void Duster_func_754(Object *self) {
 }
 
 // offset: 0x7FC | func: 3 | export: 3
-void Duster_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void Duster_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     Duster_State *state = self->state;
 
     if (visibility && state->discovered && !state->collected) {
@@ -216,7 +216,7 @@ void Duster_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **
 }
 
 // offset: 0x870 | func: 4 | export: 4
-void Duster_destroy(Object *self, s32 arg1) { }
+void Duster_free(Object *self, s32 arg1) { }
 
 // offset: 0x880 | func: 5 | export: 5
 u32 Duster_get_model_flags(Object *self) {

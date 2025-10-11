@@ -18,7 +18,7 @@ void setuppoint_dtor(void *dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void setuppoint_create(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
+void setuppoint_setup(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
     objsetup->base.loadParamA = 8;
     objsetup->base.loadDistance = 0;
     objsetup->base.fadeDistance = 0;
@@ -28,24 +28,24 @@ void setuppoint_create(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
 }
 
 // offset: 0x58 | func: 1 | export: 1
-void setuppoint_update(Object *self){
+void setuppoint_control(Object *self){
     
 }
 
 // offset: 0x64 | func: 2 | export: 2
-void setuppoint_func_64(Object *self){
+void setuppoint_update(Object *self){
     
 }
 
 // offset: 0x70 | func: 3 | export: 3
-void setuppoint_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void setuppoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xC4 | func: 4 | export: 4
-void setuppoint_destroy(Object *self, s32 arg1){
+void setuppoint_free(Object *self, s32 arg1){
 }
 
 // offset: 0xD4 | func: 5 | export: 5

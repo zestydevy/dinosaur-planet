@@ -48,14 +48,14 @@ void krazoatext_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void krazoatext_create(Object* self, s32 arg1, s32 arg2) {  
+void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
     obj_init_mesg_queue(self, 2);
     krazoatext_unload_all_glyph_textures(self, self->state);
     self->unk0xb0 |= 0x2000;
 }
 
 // offset: 0x88 | func: 1 | export: 1
-void krazoatext_update(Object* self) {
+void krazoatext_control(Object* self) {
     KTextState* state;
     KText_Setup* setup;
     u32 message;
@@ -105,11 +105,11 @@ void krazoatext_update(Object* self) {
 }
 
 // offset: 0x324 | func: 2 | export: 2
-void krazoatext_func_324(Object* self){
+void krazoatext_update(Object* self){
 }
 
 // offset: 0x330 | func: 3 | export: 3
-void krazoatext_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void krazoatext_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         self->srt.scale = 0.001f;
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
@@ -118,7 +118,7 @@ void krazoatext_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
 }
 
 // offset: 0x3A4 | func: 4 | export: 4
-void krazoatext_destroy(Object* self, s32 arg1) {
+void krazoatext_free(Object* self, s32 arg1) {
     KTextState* state = self->state;
 
     krazoatext_unload_all_glyph_textures(self, state);
@@ -138,7 +138,7 @@ u32 dll_283_get_state_size(Object *self, u32 a1) {
 }
 
 // offset: 0x438 | func: 7 | export: 7
-void krazoatext_print(Object* self, Gfx** gfx) {
+void krazoatext_print_text(Object* self, Gfx** gfx) {
     KTextState* state;
     Texture* glyph;
     s32 charCount;

@@ -72,7 +72,7 @@ void dll_296_ctor(void *dll) { }
 void dll_296_dtor(void *dll) { }
 
 // export 0
-void dll_296_create(Object *self, MediumCrate_Setup *setup, s32 param3) {
+void dll_295_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     MediumCrateState *state;
     idk1 local_10;
     idk2 local_18;
@@ -128,13 +128,13 @@ void dll_296_create(Object *self, MediumCrate_Setup *setup, s32 param3) {
 }
 
 // export 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/dll_296_update.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/dll_295_control.s")
 
 // export 2
-void dll_296_func_9C0(Object *self) { }
+void dll_295_update(Object *self) { }
 
 // export 3
-void dll_296_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_295_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     MediumCrateState *state;
     MediumCrate_Setup *setup;
 
@@ -169,7 +169,7 @@ void dll_296_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 }
 
 // export 4
-void dll_296_destroy(Object *self, s32 param2) {
+void dll_295_free(Object *self, s32 param2) {
     MediumCrateState *state;
 
     state = (MediumCrateState*)self->state;

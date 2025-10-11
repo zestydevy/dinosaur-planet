@@ -91,7 +91,7 @@ void SC_levelcontrol_ctor(void *dll) { }
 void SC_levelcontrol_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SC_levelcontrol_create(Object *self, ObjSetup *setup, s32 arg2) {
+void SC_levelcontrol_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SC_levelcontrol_State *state;
 
     state = self->state;
@@ -103,7 +103,7 @@ void SC_levelcontrol_create(Object *self, ObjSetup *setup, s32 arg2) {
 }
 
 // offset: 0x90 | func: 1 | export: 1
-void SC_levelcontrol_update(Object *self) {
+void SC_levelcontrol_control(Object *self) {
     SC_levelcontrol_State *state;
     Object *player;
     u8 sp2F;
@@ -178,17 +178,17 @@ void SC_levelcontrol_update(Object *self) {
 }
 
 // offset: 0x420 | func: 2 | export: 2
-void SC_levelcontrol_func_420(Object *self) { }
+void SC_levelcontrol_update(Object *self) { }
 
 // offset: 0x42C | func: 3 | export: 3
-void SC_levelcontrol_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SC_levelcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x480 | func: 4 | export: 4
-void SC_levelcontrol_destroy(Object *self, s32 arg1) {
+void SC_levelcontrol_free(Object *self, s32 arg1) {
     SC_levelcontrol_State *state;
 
     state = self->state;
@@ -427,6 +427,6 @@ s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObjState *arg2, vo
             break;
         }
     }
-    SC_levelcontrol_update(self);
+    SC_levelcontrol_control(self);
     return 0;
 }

@@ -8,10 +8,10 @@ _exports:
 .dword CFMagicWall_dtor
 
 # export table
-/*0*/ .dword CFMagicWall_create
-/*1*/ .dword CFMagicWall_update
-/*2*/ .dword CFMagicWall_func_2C0
-/*3*/ .dword CFMagicWall_draw
-/*4*/ .dword CFMagicWall_destroy
+/*0*/ .dword CFMagicWall_setup
+/*1*/ .dword CFMagicWall_control
+/*2*/ .dword CFMagicWall_update
+/*3*/ .dword CFMagicWall_print
+/*4*/ .dword CFMagicWall_free
 /*5*/ .dword CFMagicWall_get_model_flags
 /*6*/ .dword CFMagicWall_get_state_size

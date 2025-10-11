@@ -16,7 +16,7 @@ void animobj_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void animobj_create(Object *self, AnimObjSetup *setup, s32 arg2) {
+void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
     AnimObjState *state;
 
     obj_set_update_priority(self, 0x64);
@@ -49,7 +49,7 @@ void animobj_create(Object *self, AnimObjSetup *setup, s32 arg2) {
 }
 
 // offset: 0x19C | func: 1 | export: 1
-void animobj_update(Object *self) {
+void animobj_control(Object *self) {
     s32 index;
     AnimObjState *state;
     AnimObjSetup *setup;
@@ -97,18 +97,18 @@ void animobj_update(Object *self) {
 }
 
 // offset: 0x318 | func: 2 | export: 2
-void animobj_func_318(Object *self) {
+void animobj_update(Object *self) {
 }
 
 // offset: 0x324 | func: 3 | export: 3
-void animobj_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void animobj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x378 | func: 4 | export: 4
-void animobj_destroy(Object *self, s32 arg1) {
+void animobj_free(Object *self, s32 arg1) {
     AnimObjState *state;
     s32 i;
 

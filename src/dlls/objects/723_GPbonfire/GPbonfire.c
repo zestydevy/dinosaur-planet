@@ -88,7 +88,7 @@ void GPbonfire_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPbonfire_create(Object* self, GPBonfire_Setup* setup, s32 arg2) {
+void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfireState* state;
 
     state = self->state;
@@ -108,7 +108,7 @@ void GPbonfire_create(Object* self, GPBonfire_Setup* setup, s32 arg2) {
 }
 
 // offset: 0xB8 | func: 1 | export: 1
-void GPbonfire_update(Object* self) {
+void GPbonfire_control(Object* self) {
     GPBonfireState* state;
     GPBonfire_Setup* setup;
     Object* sidekick;
@@ -252,18 +252,18 @@ void GPbonfire_update(Object* self) {
 }
 
 // offset: 0x7F4 | func: 2 | export: 2
-void GPbonfire_func_7F4(Object* self){
+void GPbonfire_update(Object* self){
 }
 
 // offset: 0x800 | func: 3 | export: 3
-void GPbonfire_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility && self->modelInstIdx == 1) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x864 | func: 4 | export: 4
-void GPbonfire_destroy(Object* self, s32 arg1) {
+void GPbonfire_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     obj_free_object_type(self, 0x30);

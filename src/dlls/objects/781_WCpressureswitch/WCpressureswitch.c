@@ -63,7 +63,7 @@ void WCpressureswitch_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCpressureswitch_create(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
+void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
     PressureSwitchState* state;
     s32 index;
 
@@ -93,7 +93,7 @@ void WCpressureswitch_create(Object* self, PressureSwitch_Setup* setup, s32 arg2
 /*0x0*/ static const char str_0[] = "PRESSURESWITCH.c: modelno out of range romdefno=%d\n";
 
 // offset: 0x150 | func: 1 | export: 1
-void WCpressureswitch_update(Object* self) {
+void WCpressureswitch_control(Object* self) {
     PressureSwitch_Setup* setup;
     f32 deltaY;
     Object* listedObject;
@@ -179,18 +179,18 @@ void WCpressureswitch_update(Object* self) {
 }
 
 // offset: 0x4B4 | func: 2 | export: 2
-void WCpressureswitch_func_4B4(Object* self){
+void WCpressureswitch_update(Object* self){
 }
 
 // offset: 0x4C0 | func: 3 | export: 3
-void WCpressureswitch_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void WCpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x514 | func: 4 | export: 4
-void WCpressureswitch_destroy(Object* self, s32 arg1) {
+void WCpressureswitch_free(Object* self, s32 arg1) {
     PressureSwitchState* state = self->state;
 
     if (state->soundHandle) {

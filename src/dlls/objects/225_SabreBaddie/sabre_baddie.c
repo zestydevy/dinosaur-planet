@@ -63,24 +63,24 @@ void dll_225_ctor(void *dll);
 void dll_225_dtor(void *dll) { }
 
 // offset: 0x178 | func: 1 | export: 0
-void dll_225_create(Object *self, ObjSetup* setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_create.s")
+void dll_225_setup(Object *self, ObjSetup* setup, s32 arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_setup.s")
 
 // offset: 0x2A8 | func: 2 | export: 1
+void dll_225_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_control.s")
+
+// offset: 0x450 | func: 3 | export: 2
 void dll_225_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_update.s")
 
-// offset: 0x450 | func: 3 | export: 2
-void dll_225_func_450(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_450.s")
-
 // offset: 0x4A0 | func: 4 | export: 3
-void dll_225_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_draw.s")
+void dll_225_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_print.s")
 
 // offset: 0x500 | func: 5 | export: 4
-void dll_225_destroy(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_destroy.s")
+void dll_225_free(Object *self, s32 a1);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_free.s")
 
 // offset: 0x5A4 | func: 6 | export: 5
 u32 dll_225_get_model_flags(Object *self) {

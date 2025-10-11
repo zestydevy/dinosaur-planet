@@ -233,7 +233,7 @@ void trigger_ctor(void *dll) { }
 
 void trigger_dtor(void *dll) { }
 
-void trigger_create(Object *self, Trigger_Setup *setup, s32 param3) {
+void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     TriggerState *state;
     s32 s0;
     s32 i;
@@ -307,9 +307,9 @@ void trigger_create(Object *self, Trigger_Setup *setup, s32 param3) {
 
 // needs trigger_process_commands to be static
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_update.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_control.s")
 #else
-void trigger_update(Object* self) {
+void trigger_control(Object* self) {
     TriggerState* state;
     Trigger_Setup* setup;
     Object* player;
@@ -480,11 +480,11 @@ void trigger_update(Object* self) {
 }
 #endif
 
-void trigger_func_7D4(Object *self) { }
+void trigger_update(Object *self) { }
 
-void trigger_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void trigger_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
-void trigger_destroy(Object *self, s32 param2) {
+void trigger_free(Object *self, s32 param2) {
     Trigger_Setup *setup;
     TriggerState *state;
     u8 i;

@@ -30,7 +30,7 @@ void animator_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void animator_create(Object *self, Animator_Setup *setup, s32 arg2) {
+void animator_setup(Object *self, Animator_Setup *setup, s32 arg2) {
     self->srt.roll = setup->roll << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.yaw = setup->yaw << 8;
@@ -39,7 +39,7 @@ void animator_create(Object *self, Animator_Setup *setup, s32 arg2) {
 }
 
 // offset: 0x58 | func: 1 | export: 1
-void animator_update(Object *self) {
+void animator_control(Object *self) {
     Object *player;
     f32 dz;
     f32 dx;
@@ -87,15 +87,15 @@ void animator_update(Object *self) {
 }
 
 // offset: 0x300 | func: 2 | export: 2
-void animator_func_300(Object *self) {
+void animator_update(Object *self) {
 }
 
 // offset: 0x30C | func: 3 | export: 3
-void animator_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void animator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
 }
 
 // offset: 0x324 | func: 4 | export: 4
-void animator_destroy(Object *self, s32 arg1) {
+void animator_free(Object *self, s32 arg1) {
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

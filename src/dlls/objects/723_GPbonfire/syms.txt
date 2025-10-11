@@ -1,11 +1,11 @@
 .text = 0x0:
 GPbonfire_ctor = 0x0;
 GPbonfire_dtor = 0xC;
-GPbonfire_create = 0x18;
-GPbonfire_update = 0xB8;
-GPbonfire_func_7F4 = 0x7F4;
-GPbonfire_draw = 0x800;
-GPbonfire_destroy = 0x864;
+GPbonfire_setup = 0x18;
+GPbonfire_control = 0xB8;
+GPbonfire_update = 0x7F4;
+GPbonfire_print = 0x800;
+GPbonfire_free = 0x864;
 GPbonfire_get_model_flags = 0x8EC;
 GPbonfire_get_state_size = 0x8FC;
 GPbonfire_func_910 = 0x910;

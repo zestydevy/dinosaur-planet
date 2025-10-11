@@ -8,10 +8,10 @@ _exports:
 .dword fini
 
 # export table
-.dword dll_365_create
+.dword dll_365_setup
+.dword dll_365_control
 .dword dll_365_update
-.dword func_0002
-.dword dll_365_draw
-.dword dll_365_destroy
+.dword dll_365_print
+.dword dll_365_free
 .dword dll_365_get_model_flags
 .dword dll_365_get_state_size

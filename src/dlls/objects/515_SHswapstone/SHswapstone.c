@@ -54,7 +54,7 @@ void SHswapstone_ctor(void *dll) { }
 void SHswapstone_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHswapstone_create(Object* self, SHswapstone_Setup* setup, s32 arg2) {
+void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
     SHswapstone_State* state;
 
     state = self->state;
@@ -84,7 +84,7 @@ void SHswapstone_create(Object* self, SHswapstone_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x140 | func: 1 | export: 1
-void SHswapstone_update(Object* self) {
+void SHswapstone_control(Object* self) {
     SHswapstone_State* state;
 
     state = self->state;
@@ -108,10 +108,10 @@ void SHswapstone_update(Object* self) {
 }
 
 // offset: 0x278 | func: 2 | export: 2
-void SHswapstone_func_278(Object *self) { }
+void SHswapstone_update(Object *self) { }
 
 // offset: 0x284 | func: 3 | export: 3
-void SHswapstone_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     Object* player;
     f32 x;
     f32 y;
@@ -125,13 +125,13 @@ void SHswapstone_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         if ((player != NULL) && (((DLL_210_Player*)player->dll)->vtbl->func34(player) != 0)) {
             func_80031F6C(self, state->attachIdx, &x, &y, &z, 0);
             ((DLL_210_Player*)player->dll)->vtbl->func65(player, x, y, z);
-            ((DLL_210_Player*)player->dll)->vtbl->base.draw(player, gdl, mtxs, vtxs, pols, -1);
+            ((DLL_210_Player*)player->dll)->vtbl->base.print(player, gdl, mtxs, vtxs, pols, -1);
         }
     }
 }
 
 // offset: 0x3C4 | func: 4 | export: 4
-void SHswapstone_destroy(Object *self, s32 a1) { }
+void SHswapstone_free(Object *self, s32 a1) { }
 
 // offset: 0x3D4 | func: 5 | export: 5
 u32 SHswapstone_get_model_flags(Object* self) {

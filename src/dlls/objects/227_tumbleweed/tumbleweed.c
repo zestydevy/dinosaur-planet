@@ -75,7 +75,7 @@ void dll_227_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_227_func_18(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* arg2) { // arg2 fakematch, not actually a golden nugget setup pointer
+void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* arg2) { // arg2 fakematch, not actually a golden nugget setup pointer
     Object* object;
     Object** objects;
     TumbleweedState* state;
@@ -147,14 +147,14 @@ void dll_227_func_18(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* 
 
 // offset: 0x354 | func: 1 | export: 1
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_354.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_control.s")
 #else
 
 void dll_227_func_420(Object*);
 void dll_227_func_658(Object*);
 void dll_227_func_C04(Object*);
 
-void dll_227_func_354(Object* self) {
+void dll_227_control(Object* self) {
     TumbleweedState* state;
     Object* shiny;
 
@@ -231,18 +231,18 @@ void dll_227_func_420(Object* self) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_C04.s")
 
 // offset: 0x1518 | func: 5 | export: 2
-void dll_227_func_1518(Object* self){
+void dll_227_update(Object* self){
 }
 
 // offset: 0x1524 | func: 6 | export: 3
-void dll_227_func_1524(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_227_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility > 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x1578 | func: 7 | export: 4
-void dll_227_func_1578(Object* self, s32 arg1) {
+void dll_227_free(Object* self, s32 arg1) {
     TumbleweedState* state;
     Object* object;
     s32 sp3C;

@@ -8,10 +8,10 @@ _exports:
 .dword MMshrine_dtor
 
 # export table
-.dword dll_466_func_18
-.dword dll_466_func_1BC
-.dword MMshrine_func_B3C
-.dword MMshrine_draw
-.dword MMshrine_destroy
+.dword MMshrine_setup
+.dword MMshrine_control
+.dword MMshrine_update
+.dword MMshrine_print
+.dword MMshrine_free
 .dword MMshrine_get_model_flags
 .dword MMshrine_get_state_size

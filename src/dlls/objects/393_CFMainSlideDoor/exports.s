@@ -8,10 +8,10 @@ _exports:
 .dword CFMainSlideDoor_dtor
 
 # export table
-/*0*/ .dword CFMainSlideDoor_create
-/*1*/ .dword CFMainSlideDoor_update
-/*2*/ .dword CFMainSlideDoor_func_1D4
-/*3*/ .dword CFMainSlideDoor_draw
-/*4*/ .dword CFMainSlideDoor_destroy
+/*0*/ .dword CFMainSlideDoor_setup
+/*1*/ .dword CFMainSlideDoor_control
+/*2*/ .dword CFMainSlideDoor_update
+/*3*/ .dword CFMainSlideDoor_print
+/*4*/ .dword CFMainSlideDoor_free
 /*5*/ .dword CFMainSlideDoor_get_model_flags
 /*6*/ .dword CFMainSlideDoor_get_state_size

@@ -48,7 +48,7 @@ void portaltexanimator_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void portaltexanimator_create(Object* self, PortalTexAnimator_Setup* arg1, s32 arg2) {
+void portaltexanimator_setup(Object* self, PortalTexAnimator_Setup* arg1, s32 arg2) {
     PortalTexAnimatorState* state;
 
     state = self->state;
@@ -59,7 +59,7 @@ void portaltexanimator_create(Object* self, PortalTexAnimator_Setup* arg1, s32 a
 }
 
 // offset: 0x78 | func: 1 | export: 1
-void portaltexanimator_update(Object* self) {
+void portaltexanimator_control(Object* self) {
     PortalTexAnimatorState* state;
     PortalTexAnimator_Setup* setup;
     Block* block;
@@ -172,14 +172,14 @@ void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTex
 void dll_362_func_414(Object *self) { }
 
 // offset: 0x420 | func: 4 | export: 3
-void portaltexanimator_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void portaltexanimator_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x474 | func: 5 | export: 4
-void portaltexanimator_destroy(Object* self, s32 arg1) {
+void portaltexanimator_free(Object* self, s32 arg1) {
     PortalTexAnimatorState* state = self->state;
     s32 ptr;
 

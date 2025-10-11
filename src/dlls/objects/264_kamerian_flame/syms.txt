@@ -1,12 +1,12 @@
 .text = 0x0:
 kamerian_flame_ctor = 0x0;
 kamerian_flame_dtor = 0xC;
-kamerian_flame_create = 0x18;
+kamerian_flame_setup = 0x18;
 kamerian_flame_create_flame_billboards = 0x118;
-kamerian_flame_update = 0x280;
-kamerian_flame_func_518 = 0x518;
-kamerian_flame_draw = 0x59C;
-kamerian_flame_destroy = 0x5B4;
+kamerian_flame_control = 0x280;
+kamerian_flame_update = 0x518;
+kamerian_flame_print = 0x59C;
+kamerian_flame_free = 0x5B4;
 kamerian_flame_get_model_flags = 0x668;
 kamerian_flame_get_state_size = 0x678;
 

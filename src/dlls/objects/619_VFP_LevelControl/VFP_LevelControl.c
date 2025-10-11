@@ -25,7 +25,7 @@ void VFP_LevelControl_ctor(void *dll) { }
 void VFP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_LevelControl_create(Object* self, ObjSetup* setup, s32 a2) {
+void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
     u8 mapSetupID;
 
     obj_add_object_type(self, OBJTYPE_10);
@@ -55,7 +55,7 @@ void VFP_LevelControl_create(Object* self, ObjSetup* setup, s32 a2) {
 }
 
 // offset: 0x24C | func: 1 | export: 1
-void VFP_LevelControl_update(Object* self) {
+void VFP_LevelControl_control(Object* self) {
     /*0x0*/ static s16 _data_0 = 130;
     
     Object* player;
@@ -131,13 +131,13 @@ void VFP_LevelControl_update(Object* self) {
 }
 
 // offset: 0x864 | func: 2 | export: 2
-void VFP_LevelControl_func_864(Object *self) { }
+void VFP_LevelControl_update(Object *self) { }
 
 // offset: 0x870 | func: 3 | export: 3
-void VFP_LevelControl_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x888 | func: 4 | export: 4
-void VFP_LevelControl_destroy(Object *obj, s32 a1) {
+void VFP_LevelControl_free(Object *obj, s32 a1) {
     obj_free_object_type(obj, OBJTYPE_10);
 }
 

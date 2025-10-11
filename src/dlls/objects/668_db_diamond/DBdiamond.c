@@ -30,7 +30,7 @@ void DBdiamond_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBdiamond_create(Object *self, DBDiamond_Setup *setup, s32 arg2) {
+void DBdiamond_setup(Object *self, DBDiamond_Setup *setup, s32 arg2) {
     DBDiamondState *state = self->state;
 
     if (main_get_bits(setup->flag1)){
@@ -48,7 +48,7 @@ void DBdiamond_create(Object *self, DBDiamond_Setup *setup, s32 arg2) {
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void DBdiamond_update(Object *self) {
+void DBdiamond_control(Object *self) {
     Object *player;
     DBDiamond_Setup *setup;
     DBDiamondState *state;
@@ -72,11 +72,11 @@ void DBdiamond_update(Object *self) {
 }
 
 // offset: 0x204 | func: 2 | export: 2
-void DBdiamond_func_204(Object *self) {
+void DBdiamond_update(Object *self) {
 }
 
 // offset: 0x210 | func: 3 | export: 3
-void DBdiamond_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DBdiamond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     DBDiamondState *state = self->state;
     
     if (!visibility)
@@ -87,7 +87,7 @@ void DBdiamond_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 }
 
 // offset: 0x27C | func: 4 | export: 4
-void DBdiamond_destroy(Object *self, s32 arg1) {
+void DBdiamond_free(Object *self, s32 arg1) {
     obj_free_object_type(self, OBJTYPE_39);
 }
 

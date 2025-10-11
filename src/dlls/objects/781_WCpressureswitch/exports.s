@@ -8,10 +8,10 @@ _exports:
 .dword WCpressureswitch_dtor
 
 # export table
-.dword WCpressureswitch_create
+.dword WCpressureswitch_setup
+.dword WCpressureswitch_control
 .dword WCpressureswitch_update
-.dword WCpressureswitch_func_4B4
-.dword WCpressureswitch_draw
-.dword WCpressureswitch_destroy
-.dword WCpressureswitch_func_594
+.dword WCpressureswitch_print
+.dword WCpressureswitch_free
+.dword WCpressureswitch_get_model_flags
 .dword WCpressureswitch_get_state_size

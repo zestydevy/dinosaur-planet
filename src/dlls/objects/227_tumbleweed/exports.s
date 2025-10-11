@@ -8,11 +8,11 @@ _exports:
 .dword dll_227_dtor
 
 # export table
-.dword dll_227_func_18
-.dword dll_227_func_354
-.dword dll_227_func_1518
-.dword dll_227_func_1524
-.dword dll_227_func_1578
+.dword dll_227_setup
+.dword dll_227_control
+.dword dll_227_update
+.dword dll_227_print
+.dword dll_227_free
 .dword dll_227_get_model_flags
 .dword dll_227_get_state_size
 .dword dll_227_func_171C

@@ -28,7 +28,7 @@ void dll_549_ctor(void *dll) { }
 void dll_549_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_549_create(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
+void dll_549_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
     s32* temp_v0;
     GP_ShrinePillar_State* state;
 
@@ -50,7 +50,7 @@ void dll_549_create(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
 }
 
 // offset: 0xE0 | func: 1 | export: 1
-void dll_549_update(Object* self) {
+void dll_549_control(Object* self) {
     GP_ShrinePillar_State* state;
     GP_ShrinePillar_Setup* setup;
     s32 var_a2;
@@ -75,17 +75,17 @@ void dll_549_update(Object* self) {
 static const char str_1[] = " PREMPT %i seqtime %i \n\n";
 
 // offset: 0x1D0 | func: 2 | export: 2
-void dll_549_func_1D0(Object *self) { }
+void dll_549_update(Object *self) { }
 
 // offset: 0x1DC | func: 3 | export: 3
-void dll_549_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_549_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x230 | func: 4 | export: 4
-void dll_549_destroy(Object *self, s32 a1) { }
+void dll_549_free(Object *self, s32 a1) { }
 
 // offset: 0x240 | func: 5 | export: 5
 u32 dll_549_get_model_flags(Object *self) {

@@ -16,12 +16,12 @@ void cannon_claw_ctor(void *dll) { }
 
 void cannon_claw_dtor(void *dll) { }
 
-void cannon_claw_create(Object *self, ObjSetup *setup, s32 a2) {
+void cannon_claw_setup(Object *self, ObjSetup *setup, s32 a2) {
     self->srt.yaw = -32768;
     self->srt.transl.y = setup->y + 2.0f;  
 }
 
-void cannon_claw_update(Object *self) {
+void cannon_claw_control(Object *self) {
     s32 temp;
     Object *sidekick;
 
@@ -62,15 +62,15 @@ static void cannon_claw_func_1B4(Object *self) {
     func_800267A4(self);
 }
 
-void cannon_claw_func_200(Object *self) { }
+void cannon_claw_update(Object *self) { }
 
-void cannon_claw_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void cannon_claw_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0 && self->unk0xdc == 0) {
 		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 
-void cannon_claw_destroy(Object *self, s32 a1) { }
+void cannon_claw_free(Object *self, s32 a1) { }
 
 u32 cannon_claw_get_model_flags(Object *self) {
     return MODFLAGS_NONE;

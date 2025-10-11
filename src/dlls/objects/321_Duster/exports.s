@@ -8,10 +8,10 @@ _exports:
 .dword Duster_dtor
 
 # export table
-.dword Duster_create
+.dword Duster_setup
+.dword Duster_control
 .dword Duster_update
-.dword Duster_func_754
-.dword Duster_draw
-.dword Duster_destroy
+.dword Duster_print
+.dword Duster_free
 .dword Duster_get_model_flags
 .dword Duster_get_state_size

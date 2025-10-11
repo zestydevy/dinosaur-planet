@@ -122,12 +122,12 @@ void dll_714_ctor(void *dll);
 void dll_714_dtor(void *dll) { }
 
 // offset: 0xD8 | func: 1 | export: 0
-void dll_714_create(Object *self, ObjSetup* setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_create.s")
+void dll_714_setup(Object *self, ObjSetup* setup, s32 arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_setup.s")
 
 // offset: 0x318 | func: 2 | export: 1
-void dll_714_update(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_update.s")
+void dll_714_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_control.s")
 
 // offset: 0x85C | func: 3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_85C.s")
@@ -139,16 +139,16 @@ void dll_714_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_984.s")
 
 // offset: 0xB70 | func: 6 | export: 2
-void dll_714_func_B70(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_B70.s")
+void dll_714_update(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_update.s")
 
 // offset: 0xC8C | func: 7 | export: 3
-void dll_714_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_draw.s")
+void dll_714_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_print.s")
 
 // offset: 0xE60 | func: 8 | export: 4
-void dll_714_destroy(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_destroy.s")
+void dll_714_free(Object *self, s32 a1);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_free.s")
 
 // offset: 0xF50 | func: 9 | export: 5
 u32 dll_714_get_model_flags(Object* self) {

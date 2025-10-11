@@ -8,10 +8,10 @@ _exports:
 .dword VFP_LevelControl_dtor
 
 # export table
-.dword VFP_LevelControl_create
+.dword VFP_LevelControl_setup
+.dword VFP_LevelControl_control
 .dword VFP_LevelControl_update
-.dword VFP_LevelControl_func_864
-.dword VFP_LevelControl_draw
-.dword VFP_LevelControl_destroy
+.dword VFP_LevelControl_print
+.dword VFP_LevelControl_free
 .dword VFP_LevelControl_get_model_flags
 .dword VFP_LevelControl_get_state_size

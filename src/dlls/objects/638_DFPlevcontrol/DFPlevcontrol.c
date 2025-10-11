@@ -37,7 +37,7 @@ u8 _unk2[4];
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_dtor.s")
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
+void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
     u8 mapSetup;
 
     obj_add_object_type(self, OBJTYPE_10);
@@ -72,16 +72,16 @@ void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x260 | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_260.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_control.s")
 
 // offset: 0x51C | func: 2 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_51C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_update.s")
 
 // offset: 0x528 | func: 3 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_528.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_print.s")
 
 // offset: 0x540 | func: 4 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_540.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_free.s")
 
 // offset: 0x5C0 | func: 5 | export: 5
 u32 dll_638_get_model_flags(Object *self) {
