@@ -1,0 +1,15 @@
+.text = 0x0:
+dll_652_ctor = 0x0;
+dll_652_dtor = 0xC;
+dll_652_create = 0x18;
+dll_652_update = 0xE0;
+dll_652_func_1C4 = 0x1C4;
+dll_652_draw = 0x1D0;
+dll_652_destroy = 0x1E8;
+dll_652_get_model_flags = 0x230;
+dll_652_get_state_size = 0x240;
+dll_652_func_254 = 0x254;
+dll_652_func_364 = 0x364;
+dll_652_func_45C = 0x45C;
+
+.rodata = 0x4D0:

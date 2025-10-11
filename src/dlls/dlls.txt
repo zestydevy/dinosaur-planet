@@ -68,6 +68,7 @@
 515 = objects/515_SHswapstone
 519 = objects/519_SC_levelcontrol
 547 = objects/547_GP_LevelControl
+549 = objects/549_GP_ShrinePillar
 596 = objects/596_WLpressureswitch
 607 = objects/607_WL_LevelControl
 619 = objects/619_VFP_LevelControl
@@ -76,6 +77,7 @@
 637 = objects/637_VFP_SpellPlace
 638 = objects/638_DFPlevcontrol
 641 = objects/641_DFPLift
+652 = objects/652_DFP_SpellPlace
 668 = objects/668_db_diamond
 714 = objects/714_DR_CloudRunner
 723 = objects/723_GPbonfire

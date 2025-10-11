@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_549_ctor = 0x0;
+dll_549_dtor = 0xC;
+dll_549_create = 0x18;
+dll_549_update = 0xE0;
+dll_549_func_1D0 = 0x1D0;
+dll_549_draw = 0x1DC;
+dll_549_destroy = 0x230;
+dll_549_get_model_flags = 0x240;
+dll_549_get_state_size = 0x250;
+dll_549_func_264 = 0x264;
+
+.rodata = 0x5B0:
