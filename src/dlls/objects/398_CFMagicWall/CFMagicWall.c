@@ -12,7 +12,7 @@ typedef struct {
     u8 unk1A;
 } CFMagicWall_CreateInfo;
 
-/*static*/ void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID);
+static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID);
 
 // offset: 0x0 | ctor
 void CFMagicWall_ctor(void *dll) { }
@@ -26,31 +26,24 @@ void CFMagicWall_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
 }
 
 // offset: 0x5C | func: 1 | export: 1
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/398_CFMagicWall/CFMagicWall_update.s")
-#else
-// https://decomp.me/scratch/UYzEa
-// stack allocation issue, matches otherwise
 void CFMagicWall_update(Object* self) {
-    CFMagicWall_CreateInfo* createInfo; // 44
-    Object* player; // 40
-    //f32 sp28;
+    CFMagicWall_CreateInfo* createInfo;
+    Object* player;
     u8 var_a1;
     f32 var_fv0;
-    f32 var_ft1; // 34
-    //u8 pad[4];
-    //f32 temp;
+    f32 var_ft1;
+    s32 pad[2];
+    f32 temp;
 
     createInfo = (CFMagicWall_CreateInfo*)self->createInfo;
     player = get_player();
-    var_ft1 = (f32) createInfo->unk1A;
-   // sp28 = vec3_distance(&self->positionMirror, &player->positionMirror);
-    if (vec3_distance(&self->positionMirror, &player->positionMirror) < vec3_distance(&self->positionMirror, &get_sidekick()->positionMirror)) {
+    var_ft1 = (f32)createInfo->unk1A;
+    temp = vec3_distance(&self->positionMirror, &player->positionMirror);
+    if (temp < vec3_distance(&self->positionMirror, &get_sidekick()->positionMirror)) {
         var_fv0 = vec3_distance(&self->positionMirror, &player->positionMirror);
     } else {
         var_fv0 = vec3_distance(&self->positionMirror, &get_sidekick()->positionMirror);
     }
-    //temp = func_80001884(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     if (func_80001884(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) < var_fv0) {
         var_fv0 = func_80001884(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
@@ -64,7 +57,6 @@ void CFMagicWall_update(Object* self) {
     }
     CFMagicWall_func_384(self, var_a1, createInfo->unk18);
 }
-#endif
 
 // offset: 0x2C0 | func: 2 | export: 2
 void CFMagicWall_func_2C0(Object *self) { }
@@ -92,7 +84,7 @@ u32 CFMagicWall_get_state_size(Object *self, u32 a1) {
 }
 
 // offset: 0x384 | func: 7
-void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID) {
+static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID) {
     s32 blockIdx;
     Block* block;
     BlockShape* shapes;
