@@ -8,10 +8,10 @@ _exports:
 .dword dll_782_dtor
 
 # export table
-.dword dll_782_func_18
-.dword dll_782_func_58
-.dword dll_782_func_F38
-.dword dll_782_func_F44
-.dword dll_782_func_F98
+.dword dll_782_setup
+.dword dll_782_control
+.dword dll_782_update
+.dword dll_782_print
+.dword dll_782_free
 .dword dll_782_get_model_flags
-.dword dll_782_get_state_size
+.dword dll_782_get_data_size

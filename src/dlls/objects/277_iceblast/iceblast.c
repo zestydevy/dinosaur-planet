@@ -7,16 +7,16 @@
 #include "dlls/objects/210_player.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unused18;
     s8 unk19; //collision-related
     s16 timer;
-} IceBlastCreateInfo;
+} IceBlast_Setup;
 
 typedef struct {
     s16 timer;
     u8 _unk2[2];
-} IceBlastState;
+} IceBlast_Data;
 
 // offset: 0x0 | ctor
 void iceblast_ctor(void* dll){
@@ -27,22 +27,22 @@ void iceblast_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void iceblast_create(Object* self, IceBlastCreateInfo* createInfo, s32 arg2) {
-    IceBlastState* state = self->state;
+void iceblast_setup(Object* self, IceBlast_Setup* setup, s32 arg2) {
+    IceBlast_Data* objdata = self->data;
 
-    state->timer = createInfo->timer;
-    func_80026128(self, 0x19, createInfo->unk19 ? 3 : 1, 0);
+    objdata->timer = setup->timer;
+    func_80026128(self, 0x19, setup->unk19 ? 3 : 1, 0);
 }
 
 // offset: 0x80 | func: 1 | export: 1
-void iceblast_update(Object* self) {
+void iceblast_control(Object* self) {
     Object* player;
     Object* weapon;
-    IceBlastState* state;
+    IceBlast_Data* objdata;
     SRT transform;
 
     player = get_player();
-    state = self->state;
+    objdata = self->data;
     if (!player) {
         return;
     }
@@ -55,9 +55,9 @@ void iceblast_update(Object* self) {
     self->srt.roll = weapon->srt.roll;
     self->srt.pitch = weapon->srt.pitch;
     self->srt.yaw = weapon->srt.yaw;
-    state->timer -= (s16)delayFloat;
-    if (state->timer <= 0) {
-        state->timer = 30;
+    objdata->timer -= (s16)delayFloat;
+    if (objdata->timer <= 0) {
+        objdata->timer = 30;
         self->speed.x = 0.0f; 
         self->speed.y = -5.0f;
         self->speed.z = 0.0f; 
@@ -90,17 +90,17 @@ void iceblast_update(Object* self) {
 }
 
 // offset: 0x26C | func: 2 | export: 2
-void iceblast_func_26C(void){
+void iceblast_update(void){
 }
 
 // offset: 0x274 | func: 3 | export: 3
-void iceblast_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
+void iceblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
     //@recomp: may want to hide these debug cubes
     draw_object(self, gfx, mtx, vtx, pols, 1.0f);
 }
 
 // offset: 0x2BC | func: 4 | export: 4
-void iceblast_destroy(Object* self, s32 arg1){
+void iceblast_free(Object* self, s32 arg1){
 }
 
 // offset: 0x2CC | func: 5 | export: 5
@@ -109,6 +109,6 @@ u32 iceblast_get_model_flags(Object* self){
 }
 
 // offset: 0x2DC | func: 6 | export: 6
-u32 iceblast_get_state_size(Object* self, s32 arg1){
-    return sizeof(IceBlastState);
+u32 iceblast_get_data_size(Object* self, s32 arg1){
+    return sizeof(IceBlast_Data);
 }

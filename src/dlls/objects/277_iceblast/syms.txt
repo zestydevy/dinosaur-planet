@@ -1,12 +1,12 @@
 .text = 0x0:
 iceblast_ctor = 0x0;
 iceblast_dtor = 0xC;
-iceblast_create = 0x18;
-iceblast_update = 0x80;
-iceblast_func_26C = 0x26C;
-iceblast_draw = 0x274;
-iceblast_destroy = 0x2BC;
+iceblast_setup = 0x18;
+iceblast_control = 0x80;
+iceblast_update = 0x26C;
+iceblast_print = 0x274;
+iceblast_free = 0x2BC;
 iceblast_get_model_flags = 0x2CC;
-iceblast_get_state_size = 0x2DC;
+iceblast_get_data_size = 0x2DC;
 
 .rodata = 0x32C:

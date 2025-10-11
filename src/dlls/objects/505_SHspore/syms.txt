@@ -1,15 +1,15 @@
 .text = 0x0:
 SHspore_ctor = 0x0;
 SHspore_dtor = 0xC;
-SHspore_create = 0x18;
-SHspore_update = 0x18C;
+SHspore_setup = 0x18;
+SHspore_control = 0x18C;
 SHspore_func_750 = 0x750;
 SHspore_func_A00 = 0xA00;
-SHspore_func_B88 = 0xB88;
-SHspore_draw = 0xB94;
-SHspore_destroy = 0xBAC;
+SHspore_update = 0xB88;
+SHspore_print = 0xB94;
+SHspore_free = 0xBAC;
 SHspore_get_model_flags = 0xBF4;
-SHspore_get_state_size = 0xC04;
+SHspore_get_data_size = 0xC04;
 
 .rodata = 0xC90:
 

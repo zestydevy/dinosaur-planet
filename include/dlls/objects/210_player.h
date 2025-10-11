@@ -169,7 +169,7 @@ typedef struct {
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B8 - 0x3A8];
 /*3B8*/ s16 *unk3B8;
-/*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, PlayerState*, f32))
+/*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, Player_Data*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
@@ -270,7 +270,7 @@ typedef struct {
 /*8BE*/ u8 unk8BE;
 /*8BF*/ s8 unk8BF;
 /*8C0*/ s8 unk8C0;
-} PlayerState;
+} Player_Data;
 
 // AKA. krystal
 DLL_INTERFACE(DLL_210_Player) {

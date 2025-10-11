@@ -8,10 +8,10 @@ _exports:
 .dword VFP_SpellPlace_dtor
 
 # export table
-.dword VFP_SpellPlace_create
+.dword VFP_SpellPlace_setup
+.dword VFP_SpellPlace_control
 .dword VFP_SpellPlace_update
-.dword VFP_SpellPlace_func_1AC
-.dword VFP_SpellPlace_draw
-.dword VFP_SpellPlace_destroy
+.dword VFP_SpellPlace_print
+.dword VFP_SpellPlace_free
 .dword VFP_SpellPlace_get_model_flags
-.dword VFP_SpellPlace_get_state_size
+.dword VFP_SpellPlace_get_data_size

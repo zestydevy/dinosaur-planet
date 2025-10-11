@@ -8,10 +8,10 @@ _exports:
 .dword animobj_dtor
 
 # export table
-.dword animobj_create
+.dword animobj_setup
+.dword animobj_control
 .dword animobj_update
-.dword animobj_func_318
-.dword animobj_draw
-.dword animobj_destroy
+.dword animobj_print
+.dword animobj_free
 .dword animobj_get_model_flags
-.dword animobj_get_state_size
+.dword animobj_get_data_size

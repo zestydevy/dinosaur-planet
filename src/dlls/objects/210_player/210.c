@@ -17,35 +17,36 @@
 #include "segment_334F0.h"
 
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
-static void dll_210_func_7260(Object* arg0, PlayerState* arg1);
+static void dll_210_func_7260(Object* arg0, Player_Data* arg1);
 
 // These funcs are static funcs but can only be made static once the funcs they are used in are matched
-/* static */ void dll_210_func_1D8EC(Object* arg0, PlayerState* arg1, s32 arg2);
-/* static */ void dll_210_func_41F4(Object* arg0, PlayerState* arg1);
+/* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
+/* static */ void dll_210_func_41F4(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_9E00(Object* arg0);
 /* static */ void dll_210_func_1CEFC(Object* player, s32 arg1);
-/* static */ void dll_210_func_363C(Object* arg0, PlayerState* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4);
+/* static */ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4);
 /* static */ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
-/* static */ void dll_210_func_1BC0(Object* arg0, PlayerState* arg1);
+/* static */ void dll_210_func_1BC0(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
-/* static */ f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1);
+/* static */ f32 dll_210_func_63F0(Player_Data* arg0, f32 arg1);
 /* static */ void dll_210_func_9F1C(Object* arg0, s32 arg1);
 /* static */ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
 /* static */ void dll_210_func_1DE64(s32 arg0);
 /* static */ void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2);
-/* static */ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2);
-/* static */ void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2);
-/* static */ void dll_210_func_98CC(Object* arg0, PlayerState* arg1, f32 arg2);
-/* static */ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2);
-/* static */ s32 dll_210_func_C1F4(Object* arg0, PlayerState* arg1, f32 arg2);
+/* static */ void dll_210_func_90A0(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2);
+/* static */ s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_B4C8(Object* player, s32 arg1);
 /* static */ void dll_210_func_1AAD8(Object* arg0, UNK_TYPE_32 arg1);
-/* static */ s32 dll_210_func_18E80(Object* player, PlayerState* state, f32 arg2);
+/* static */ s32 dll_210_func_18E80(Object* player, Player_Data* objdata, f32 arg2);
 /* static */ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5);
 /* static */ Object *dll_210_func_1DD94(Object* obj, s32 arg1);
 /* static */ void dll_210_func_1DC48(Object* obj);
-/* static */ void dll_210_func_8EA4(Object* arg0, PlayerState* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
-/* static */ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2);
+/* static */ void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
+/* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
+void dll_210_func_1CD6C(Object* player, s32 arg1);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -403,16 +404,16 @@ void dll_210_dtor(void *dll) {
 }
 
 // offset: 0x444 | func: 1 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_444.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_setup.s")
 
 // offset: 0x934 | func: 2 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_934.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_control.s")
 
 // offset: 0x11A0 | func: 3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_11A0.s")
 
 // offset: 0x1BC0 | func: 4
-void dll_210_func_1BC0(Object* arg0, PlayerState* arg1) {
+void dll_210_func_1BC0(Object* arg0, Player_Data* arg1) {
     Object* linkedObj;
 
     arg0->unk0xb0 &= ~3;
@@ -445,7 +446,7 @@ void dll_210_func_1BC0(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1DDC.s")
 #else
 // Matches but requires dll_210_func_24FC, dll_210_func_6DD8 as static
-void dll_210_func_1DDC(Object* arg0, PlayerState* arg1, PlayerState* arg2) {
+void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
     Object* sp8C;
     s32 sp88;
     f32 temp_fv0;
@@ -583,24 +584,24 @@ void dll_210_func_1DDC(Object* arg0, PlayerState* arg1, PlayerState* arg2) {
 #endif
 
 // offset: 0x24FC | func: 7
-int dll_210_func_24FC(Object *player, PlayerState *state){
-  return state->unk26C == 1 || state->unk26C == 3 || state->unk26C == 4;
+int dll_210_func_24FC(Object *player, Player_Data *objdata){
+  return objdata->unk26C == 1 || objdata->unk26C == 3 || objdata->unk26C == 4;
 }
 
 // offset: 0x2534 | func: 8
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_2534.s")
 
 // offset: 0x2C7C | func: 9 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_2C7C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_update.s")
 
 // offset: 0x307C | func: 10 | export: 3
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_307C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_print.s")
 #else
-void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 arg5) {
+void dll_210_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 arg5) {
     Object* sp8C;
     s32 pad;
-    PlayerState* state;
+    Player_Data* objdata;
     ModelInstance* sp80;
     f32 sp7C;
     f32 sp78;
@@ -612,37 +613,37 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
     s32 pad2;
     Object* temp_a2;
 
-    state = arg0->state;
+    objdata = arg0->data;
     sp80 = arg0->modelInsts[arg0->modelInstIdx];
-    if (arg5 == -1 || !(state->flags & 0x4001)) {
-        if ((state->unk858 != NULL) && ((arg0->unk0xb0 & 0x1000) || state->unk26C == 0x24 || state->unk26C == 0x25)) {
-            dll_210_func_8EA4(arg0, state, state->unk858, arg1, arg2, arg3, arg4, 1);
+    if (arg5 == -1 || !(objdata->flags & 0x4001)) {
+        if ((objdata->unk858 != NULL) && ((arg0->unk0xb0 & 0x1000) || objdata->unk26C == 0x24 || objdata->unk26C == 0x25)) {
+            dll_210_func_8EA4(arg0, objdata, objdata->unk858, arg1, arg2, arg3, arg4, 1);
         }
-        if (state->unk8BE == 1) {
+        if (objdata->unk8BE == 1) {
             dll_210_func_3B40(arg0, arg1, arg2, arg3, arg4);
         }
         gDLL_16->vtbl->func1(arg0);
-        temp_a2 = state->unk858;
-        if (temp_a2 != 0 && ((arg0->unk0xb0 & 0x1000) || state->unk26C == 0x24 || state->unk26C == 0x25)) {
+        temp_a2 = objdata->unk858;
+        if (temp_a2 != 0 && ((arg0->unk0xb0 & 0x1000) || objdata->unk26C == 0x24 || objdata->unk26C == 0x25)) {
             ((DLL_Unknown*)temp_a2->dll)->vtbl->func[19].withThreeArgs(temp_a2, ((s32*)arg0->def)[1], temp_a2);
         }
-        if (state->unk818 > 0.0f) {
-            func_80036FBC(0xC8U, 0U, 0U, state->unk81C);
+        if (objdata->unk818 > 0.0f) {
+            func_80036FBC(0xC8U, 0U, 0U, objdata->unk81C);
         }
-        arg0->srt.transl.y += state->unk83C;
+        arg0->srt.transl.y += objdata->unk83C;
         draw_object(arg0, arg1, arg2, arg3, arg4, 1.0f);
-        arg0->srt.transl.y -= state->unk83C;
-        if (state->unk858 != 0 && ((arg0->unk0xb0 & 0x1000) || state->unk26C == 0x24 || state->unk26C == 0x25)) {
+        arg0->srt.transl.y -= objdata->unk83C;
+        if (objdata->unk858 != 0 && ((arg0->unk0xb0 & 0x1000) || objdata->unk26C == 0x24 || objdata->unk26C == 0x25)) {
             func_80034FF0(0);
         }
         if (arg5 != 0) {
-            dll_210_func_363C(arg0, state, arg1, arg2, arg3);
+            dll_210_func_363C(arg0, objdata, arg1, arg2, arg3);
         }
-        func_80032238(arg0, 4, 2, &state->unk39C);
-        func_80031F6C(arg0, 9, &state->unk7EC.x, &state->unk7EC.y, &state->unk7EC.z, 0);
+        func_80032238(arg0, 4, 2, &objdata->unk39C);
+        func_80031F6C(arg0, 9, &objdata->unk7EC.x, &objdata->unk7EC.y, &objdata->unk7EC.z, 0);
         if (sp80->unk_0x34 & 8) {
-            sp8C = state->unk850;
-            if (sp8C != NULL && (state->flags & 4)) {
+            sp8C = objdata->unk850;
+            if (sp8C != NULL && (objdata->flags & 4)) {
                 sp64 = sp8C->srt.scale;
                 sp8C->srt.scale /= arg0->srt.scale;
                 pad = arg0->unk_0x37;
@@ -653,22 +654,22 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
                 sp8C->srt.scale = sp64;
             }
         }
-        if (state->unk26C == 0x29) {
-            func_80031F6C(arg0, 7, &state->unk680.unk1C, &state->unk680.unk20, &state->unk680.unk24, 0);
+        if (objdata->unk26C == 0x29) {
+            func_80031F6C(arg0, 7, &objdata->unk680.unk1C, &objdata->unk680.unk20, &objdata->unk680.unk24, 0);
         }
-        if (state->unk868 != NULL && state->unk868->unk_0xe0 == 1) {
+        if (objdata->unk868 != NULL && objdata->unk868->unk_0xe0 == 1) {
             func_80031F6C(arg0, 6, &sp7C, &sp78, &sp74, 0);
             func_80031F6C(arg0, 7, &sp70, &sp6C, &sp68, 0);
             sp7C = (sp7C + sp70) * 0.5f;
             sp78 = (sp78 + sp6C) * 0.5f;
             sp74 = (sp74 + sp68) * 0.5f;
-            sp7C -= fsin16_precise(arg0->srt.yaw) * state->unk86C;
-            sp74 -= fcos16_precise(arg0->srt.yaw) * state->unk86C;
-            state->unk868->srt.transl.x = sp7C;
-            state->unk868->srt.transl.y = sp78;
-            state->unk868->srt.transl.z = sp74;
-            state->unk868->srt.yaw = arg0->srt.yaw;
-            state->unk868->dll->vtbl->draw(state->unk868, arg1, arg2, arg3, arg4, -1);
+            sp7C -= fsin16_precise(arg0->srt.yaw) * objdata->unk86C;
+            sp74 -= fcos16_precise(arg0->srt.yaw) * objdata->unk86C;
+            objdata->unk868->srt.transl.x = sp7C;
+            objdata->unk868->srt.transl.y = sp78;
+            objdata->unk868->srt.transl.z = sp74;
+            objdata->unk868->srt.yaw = arg0->srt.yaw;
+            objdata->unk868->dll->vtbl->print(objdata->unk868, arg1, arg2, arg3, arg4, -1);
         }
         func_8004E64C(arg0, (s32) arg1, (s32) arg2, (s32) arg3, (s32) arg4);
     }
@@ -680,7 +681,7 @@ void dll_210_func_307C(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_363C.s")
 #else
 // Matches but has weird bss issues
-void dll_210_func_363C(Object* arg0, PlayerState* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4) {
+void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4) {
     static SRT _bss_40;
     s32 i;
 
@@ -751,12 +752,12 @@ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
     Vertex* sp70;
     f32 sp64;
     SRT sp48;
-    PlayerState* sp44;
+    Player_Data* sp44;
     Gfx* temp_v0_4;
     s32 var_v0_2;
     s32 i;
 
-    sp44 = arg0->state;
+    sp44 = arg0->data;
     sp64 = sp44->unk844;
     if (sp64 < 0.0f) {
     }
@@ -803,7 +804,7 @@ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
 #endif
 
 // offset: 0x3E50 | func: 13 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_3E50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_free.s")
 
 // offset: 0x3F40 | func: 14 | export: 5
 u32 dll_210_get_model_flags(Object *self) {
@@ -811,8 +812,8 @@ u32 dll_210_get_model_flags(Object *self) {
 }
 
 // offset: 0x3F50 | func: 15 | export: 6
-u32 dll_210_get_state_size(Object *self, s32 arg1) {
-    return sizeof(PlayerState);
+u32 dll_210_get_data_size(Object *self, s32 arg1) {
+    return sizeof(Player_Data);
 }
 
 // offset: 0x3F64 | func: 16 | export: 63
@@ -823,10 +824,10 @@ u32 dll_210_get_state_size(Object *self, s32 arg1) {
 
 // offset: 0x4114 | func: 18 | export: 45
 Object *dll_210_func_4114(Object* player) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
-    if (state->unk8B5 == 7) {
-        return state->unk6B0.unk38;
+    if (objdata->unk8B5 == 7) {
+        return objdata->unk6B0.unk38;
     }
     return 0;
 }
@@ -836,11 +837,11 @@ Object *dll_210_func_4114(Object* player) {
 
 // offset: 0x4198 | func: 20 | export: 48
 s16 dll_210_func_4198(Object* player) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
     Object* heldObject;
 
-    if (state->flags & 0x10000) {
-        heldObject = state->unk868;
+    if (objdata->flags & 0x10000) {
+        heldObject = objdata->unk868;
         if (heldObject != NULL) {
             return heldObject->id;
         }
@@ -850,12 +851,12 @@ s16 dll_210_func_4198(Object* player) {
 
 // offset: 0x41CC | func: 21 | export: 49
 s16 dll_210_func_41CC(Object* player) {
-    PlayerState* state = player->state;
-    return !(state->flags & 0x100000);
+    Player_Data* objdata = player->data;
+    return !(objdata->flags & 0x100000);
 }
 
 // offset: 0x41F4 | func: 22
-void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
+void dll_210_func_41F4(Object* arg0, Player_Data* arg1) {
     SRT sp48;
     Vec3f sp3C;
     MtxF* temp_v0;
@@ -901,7 +902,7 @@ void dll_210_func_41F4(Object* arg0, PlayerState* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4634.s")
 
 // offset: 0x47B8 | func: 26
-void dll_210_func_47B8(Object* arg0, PlayerState* arg1) {
+void dll_210_func_47B8(Object* arg0, Player_Data* arg1) {
     AABBs32 spB0;
     s32 pad2;
     s32 pad;
@@ -965,7 +966,7 @@ typedef struct Unk {
 s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
-    ObjCreateInfo* temp_s1;
+    ObjSetup* temp_s1;
     Object* temp_a0_4;
     s32 var_v0;
     s32 spC8;
@@ -985,7 +986,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     s32 temp_v1_8;
     Object* var_s0; // sp8C
     s32 var_s1;
-    PlayerState* temp_fp;
+    Player_Data* temp_fp;
     Vec3f* temp_s0;
     Object* temp_v0_6;
     f32 *temp_data_528 = &_data_528;
@@ -995,8 +996,8 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     f32 sp60;
     Object *tempObj;
 
-    temp_fp = arg0->state;
-    temp_s1 = arg1->createInfo;
+    temp_fp = arg0->data;
+    temp_s1 = arg1->setup;
     spC8 = 0;
     arg2->unkF4 = dll_210_func_60A8;
     temp_fp->unk818 = 0.0f;
@@ -1410,7 +1411,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     if ((temp_a0_4 != NULL) && (((DLL_Unknown*)temp_a0_4->dll)->vtbl->func[13].withOneArgS32(temp_a0_4) == 2)) {
         arg2->unk7A &= 0xFFFC;
     }
-    ((void (*)(Object*, PlayerState*, f32)) temp_fp->unk3BC)(arg0, temp_fp, delayFloat);
+    ((void (*)(Object*, Player_Data*, f32)) temp_fp->unk3BC)(arg0, temp_fp, delayFloat);
     dll_210_func_1BC0(arg0, temp_fp);
     return spC8;
 }
@@ -1418,9 +1419,9 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
 
 // offset: 0x60A8 | func: 28
 void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
-    PlayerState* sp24;
+    Player_Data* sp24;
 
-    sp24 = arg0->state;
+    sp24 = arg0->data;
     arg0->unk0xb0 &= 0xEFFF;
     func_8002674C(arg0);
     arg0->speed.y = 0.0f;
@@ -1437,7 +1438,7 @@ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_618C.s")
 
 // offset: 0x63F0 | func: 30
-f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1) {
+f32 dll_210_func_63F0(Player_Data* arg0, f32 arg1) {
     switch (arg0->unk8B7) {
     case 1:
         arg0->unk800 *= 0.85f;
@@ -1459,7 +1460,7 @@ f32 dll_210_func_63F0(PlayerState* arg0, f32 arg1) {
 }
 
 // offset: 0x64B4 | func: 31
-void dll_210_func_64B4(Object* arg0, PlayerState* arg1, f32 arg2) {
+void dll_210_func_64B4(Object* arg0, Player_Data* arg1, f32 arg2) {
     Object* temp_s2;
     s32 temp_s3;
     s32 var_s4;
@@ -1576,7 +1577,7 @@ void dll_210_func_64B4(Object* arg0, PlayerState* arg1, f32 arg2) {
 }
 
 // offset: 0x692C | func: 32
-void dll_210_func_692C(Object* arg0, PlayerState* arg1, f32 arg2) {
+void dll_210_func_692C(Object* arg0, Player_Data* arg1, f32 arg2) {
     s32 var_s2;
     s32 var_v0;
     ModelInstance *modelInstance;
@@ -1708,7 +1709,7 @@ void dll_210_func_692C(Object* arg0, PlayerState* arg1, f32 arg2) {
 // dll_210_func_955C (matched)
 // dll_210_func_98CC (matched)
 
-void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
+void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
     Object* sp3C;
     s16 temp_v1_2;
     void* temp_v0_2;
@@ -1716,7 +1717,7 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
     void* temp_v1_3;
     s16 temp;
 
-    if (state->stats->magic == 0) {
+    if (objdata->stats->magic == 0) {
         return;
     }
 
@@ -1729,16 +1730,16 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
             *_data_0 = 0;
             break;
         case 0x40:
-            if (state->unk87C == 0x40) {
-                state->unk8BF = -1;
+            if (objdata->unk87C == 0x40) {
+                objdata->unk8BF = -1;
                 arg2 = -1;
                 dll_210_func_1DE64((s32) _data_38);
             } else {
-                state->unk8BF = 1;
+                objdata->unk8BF = 1;
                 dll_210_func_1DE50((s32) obj, (s32) _data_38, 1);
                 func_80023A18(obj, 2);
                 *_data_0 = 0;
-                gDLL_18->vtbl->func4(obj, state, 1);
+                gDLL_18->vtbl->func4(obj, objdata, 1);
             }
             gDLL_6_AMSFX->vtbl->play_sound(obj, 0x5B4U, 0x7FU, NULL, NULL, 0, NULL);
             break;
@@ -1780,7 +1781,7 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
             }
             break;
     }
-    state->unk87C = arg2;
+    objdata->unk87C = arg2;
 }
 #endif
 
@@ -1788,7 +1789,7 @@ void dll_210_func_6DD8(Object* obj, PlayerState* state, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_7180.s")
 
 // offset: 0x7260 | func: 35
-static void dll_210_func_7260(Object* arg0, PlayerState* arg1) {
+static void dll_210_func_7260(Object* arg0, Player_Data* arg1) {
     arg1->unk874 = (s16) arg0->srt.yaw;
     gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(arg0, &arg1->unk4);
     arg0->objhitInfo->unk_0x10.x = arg0->srt.transl.x;
@@ -1816,13 +1817,13 @@ typedef struct Unk7300 {
     u32 pad4C;
     s8 unk50;
 } Unk7300;
-s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, Unk7300* arg2, Unk7300* arg3, Vec3f* arg4, f32 arg5) {
+s32 dll_210_func_7300(Object* arg0, Player_Data* arg1, Unk7300* arg2, Unk7300* arg3, Vec3f* arg4, f32 arg5) {
     Vec4f spC;
     f32 temp_fv1;
     s32 var_v0;
-    PlayerState *state;
+    Player_Data *objdata;
 
-    state = arg0->state;
+    objdata = arg0->data;
 
     arg3->mtx.m[1][3] = arg2->mtx.m[1][3];
     arg3->mtx.m[2][0] = arg2->mtx.m[2][0];
@@ -1854,7 +1855,7 @@ s32 dll_210_func_7300(Object* arg0, PlayerState* arg1, Unk7300* arg2, Unk7300* a
     arg3->mtx.m[0][0] = arg3->mtx.m[0][1] - arg3->mtx.m[0][2];
     arg3->unk46 = arg2->unk50;
     if (arg2->unk50 == 6) {
-        if (state->unk260 & 0x10) {
+        if (objdata->unk260 & 0x10) {
             if (arg5 < 9.0f) {
                 if ((arg3->mtx.m[0][0] <= 64.0f) && (arg3->mtx.m[0][0] > 32.0f)) {
                     return 2;
@@ -1889,9 +1890,9 @@ s32 dll_210_func_75B0(Object* arg0, Unk7300* arg1, Unk7300* arg2, Vec3f* arg3, f
     f32 temp_ft5;
     f32 temp_fv0;
     f32 temp_fv1;
-    PlayerState *state;
+    Player_Data *objdata;
 
-    state = arg0->state;
+    objdata = arg0->data;
     arg2->mtx.m[1][3] = arg1->mtx.m[1][3];
     arg2->mtx.m[2][0] = arg1->mtx.m[2][0];
     arg2->mtx.m[2][1] = arg1->mtx.m[2][1];
@@ -1925,11 +1926,11 @@ s32 dll_210_func_75B0(Object* arg0, Unk7300* arg1, Unk7300* arg2, Vec3f* arg3, f
     } else {
         arg2->unk47 = 1;
     }
-    if (arg4 <= (state->unk278 * arg5) || arg4 <= 3.5f) {
+    if (arg4 <= (objdata->unk278 * arg5) || arg4 <= 3.5f) {
         if ((arg1->unk50 == 2) || (arg1->unk50 == 0x11)) {
             return 4;
         }
-        if (state->unk278 >= 0.94f) {
+        if (objdata->unk278 >= 0.94f) {
             return 5;
         }
         if (arg1->unk50 != 4) {
@@ -1977,7 +1978,7 @@ s32 dll_210_func_77DC(s32 arg0, UnkArg1* arg1, UnkArg2* arg2, Vec3f* arg3) {
 }
 
 // offset: 0x78A8 | func: 39
-s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* arg3, s32 arg4) {
+s32 dll_210_func_78A8(Object* arg0, Player_Data* arg1, UnkArg1* arg2, UnkArg3* arg3, s32 arg4) {
     arg3->unk3 = 0;
     arg3->unk48 = ((arg2->unk8 - arg2->unk4) * 0.5f) + arg2->unk4;
     arg3->unk4C = arg2->unkC;
@@ -2020,7 +2021,7 @@ s32 dll_210_func_78A8(Object* arg0, PlayerState* arg1, UnkArg1* arg2, UnkArg3* a
 }
 
 // offset: 0x7AAC | func: 40
-s32 dll_210_func_7AAC(Object* arg0, PlayerState* arg1, UnkArg1* arg2, Vec3f* arg3, UnkArg3* arg4, s32 arg5) {
+s32 dll_210_func_7AAC(Object* arg0, Player_Data* arg1, UnkArg1* arg2, Vec3f* arg3, UnkArg3* arg4, s32 arg5) {
     arg4->unk44 = arg3->x;
     arg4->unk48 = arg2->unkC;
     arg4->unk4C = arg3->z;
@@ -2055,7 +2056,7 @@ void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2) {
 }
 
 // offset: 0x7BC4 | func: 42
-s32 dll_210_func_7BC4(Object* arg0, PlayerState* arg1, u32* arg2, UnkArg4* arg3) {
+s32 dll_210_func_7BC4(Object* arg0, Player_Data* arg1, u32* arg2, UnkArg4* arg3) {
     Object* temp_a0;
     s32 var_v1;
     s32 temp;
@@ -2083,7 +2084,7 @@ s32 dll_210_func_7BC4(Object* arg0, PlayerState* arg1, u32* arg2, UnkArg4* arg3)
 }
 
 // offset: 0x7CF8 | func: 43
-void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
+void dll_210_func_7CF8(Player_Data* arg0, Vec3f* arg1) {
     s32 sp20;
 
     sp20 = arctan2_f(arg0->unk288, -arg0->unk284) - arg0->unk324;
@@ -2093,7 +2094,7 @@ void dll_210_func_7CF8(PlayerState* arg0, Vec3f* arg1) {
 }
 
 // offset: 0x7DA0 | func: 44
-void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
+void dll_210_func_7DA0(Object* arg0, Player_Data* arg1, Vec3f* arg2) {
     f32 f0;
 
     f0 = sqrtf(SQ(arg0->speed.x) + SQ(arg0->speed.z));
@@ -2131,13 +2132,13 @@ void dll_210_func_7DA0(Object* arg0, PlayerState* arg1, Vec3f* arg2) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_90A0.s")
 #else
-void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
+void dll_210_func_90A0(Object* arg0, Player_Data* arg1, f32 arg2) {
     f32 pad;
     f32 temp2;
     f32 temp3;
     f32 temp4;
     Camera* mainCam;
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
     Object* temp_a0;
     Object* temp_v0_2;
     Object* temp_v1;
@@ -2152,32 +2153,32 @@ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
     f32 temp_fv1;
     f32 temp;
     s32 var_s4;
-    PlayerState* temp_fp;
+    Player_Data* temp_fp;
     SRT sp90;
 
     var_s3 = NULL;
     var_s4 = 1;
-    temp_fp = arg0->state;
+    temp_fp = arg0->data;
     mainCam = get_main_camera();
     gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
     while (var_s4) {
-        createInfo = obj_alloc_create_info(0x24, 0x14B);
-        createInfo->loadParamA = 2;
-        createInfo->loadParamB = 1;
-        createInfo->loadDistance = 0xFF;
-        createInfo->fadeDistance = 0xFF;
+        objsetup = obj_alloc_create_info(0x24, 0x14B);
+        objsetup->loadParamA = 2;
+        objsetup->loadParamB = 1;
+        objsetup->loadDistance = 0xFF;
+        objsetup->fadeDistance = 0xFF;
         if (arg1->unk2C8 != NULL) {
-            createInfo->x = arg0->linkedObject->srt.transl.x;
-            createInfo->y = arg0->linkedObject->srt.transl.y;
-            createInfo->z = arg0->linkedObject->srt.transl.z;
+            objsetup->x = arg0->linkedObject->srt.transl.x;
+            objsetup->y = arg0->linkedObject->srt.transl.y;
+            objsetup->z = arg0->linkedObject->srt.transl.z;
         } else {
-            createInfo->x = mainCam->srt.transl.x;
-            createInfo->y = mainCam->srt.transl.y;
-            createInfo->z = mainCam->srt.transl.z;
+            objsetup->x = mainCam->srt.transl.x;
+            objsetup->y = mainCam->srt.transl.y;
+            objsetup->z = mainCam->srt.transl.z;
         }
         temp_a0 = arg0->linkedObject;
-        ((s8*)createInfo)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
-        temp_v0_2 = obj_create(createInfo, 5U, -1, -1, NULL);
+        ((s8*)objsetup)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+        temp_v0_2 = obj_create(objsetup, 5U, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
             temp_v0_2->srt.flags |= 0x2000;
             temp_v1 = arg1->unk2C8;
@@ -2250,9 +2251,9 @@ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
 #endif
 
 // offset: 0x955C | func: 49
-void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2) {
+void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2) {
     SRT spE8;
-    ObjCreateInfo* temp_v0;
+    ObjSetup* temp_v0;
     Object* temp_a0;
     Object* temp_v0_2;
     MtxF sp9C;
@@ -2320,10 +2321,10 @@ void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2) {
 }
 
 // offset: 0x98CC | func: 50
-void dll_210_func_98CC(Object* arg0, PlayerState* arg1, f32 arg2) {
+void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2) {
     SRT spF8;
     SRT spE0;
-    ObjCreateInfo* temp_v0;
+    ObjSetup* temp_v0;
     Object* temp_a0;
     Object* spD4;
     MtxF sp94;
@@ -2434,10 +2435,10 @@ void dll_210_func_98CC(Object* arg0, PlayerState* arg1, f32 arg2) {
 // Matches but has weird bss stuff going on
 void dll_210_func_9E00(Object* arg0) {
     static f32 _bss_3C;
-    PlayerState* sp2C;
+    Player_Data* sp2C;
     f32 temp_fv0;
 
-    sp2C = arg0->state;
+    sp2C = arg0->data;
     temp_fv0 = 40.0f - sp2C->unk844;
     if (_bss_3C < -40.0f) {
         sp2C->unk8BE = 0;
@@ -2474,10 +2475,10 @@ s32 dll_210_func_A018(void) {
 }
 
 // offset: 0xA024 | func: 54
-void dll_210_func_A024(Object* player, PlayerState* state) {
-    state->unk28C = 0.0f;
-    state->unk27C = 0.0f;
-    state->unk278 = 0.0f;
+void dll_210_func_A024(Object* player, Player_Data* objdata) {
+    objdata->unk28C = 0.0f;
+    objdata->unk27C = 0.0f;
+    objdata->unk278 = 0.0f;
     player->speed.x = 0.0f;
     player->speed.y = 0.0f;
     player->speed.z = 0.0f;
@@ -2506,9 +2507,9 @@ s32 dll_210_func_A3E4(Object* player, s32 arg1, s32 arg2) {
 #else
 // matches but requires dll_210_func_B4C8, dll_210_func_BA38, dll_210_func_C1F4 as static
 
-//arg1 seems to point to Krystal's PlayerState struct!
+//arg1 seems to point to Krystal's Player_Data struct!
 //krystal.c: objGetAnimChange()?
-s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
+s32 dll_210_func_AE34(Object* player, Player_Data* arg1, f32 arg2) {
     f32 temp_fv0;
     f32 temp_fv1;
     f32 var_fv0;
@@ -2517,35 +2518,35 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
     s32 temp_t1;
     s32 temp_v0;
     s16 *modAnimIds;
-    PlayerState *state;
+    Player_Data *objdata;
     s32 var_a1;
     s32 temp_t3;
     
-    state = player->state;
+    objdata = player->data;
     if (arg1->unk272 != 0){
-        state->unk8C0 = 0;
-        state->unk3C8 = 1.65f;
-        state->unk888 = 0;
+        objdata->unk8C0 = 0;
+        objdata->unk3C8 = 1.65f;
+        objdata->unk888 = 0;
         arg1->unk2FC = &dll_210_func_B4C8;
     }
     
-    if (state->unk868 != 0){
-        state->unk3C4 = &_data_6F8;
-        state->modAnims = (s16 *) (&_data_F8);
-        if (state->unk870 == 0){
+    if (objdata->unk868 != 0){
+        objdata->unk3C4 = &_data_6F8;
+        objdata->modAnims = (s16 *) (&_data_F8);
+        if (objdata->unk870 == 0){
             return 8;
         }
-    } else if (state->unk8A8 != 0){
-        state->unk3C4 = &_data_6F8;
-        state->modAnims = (s16 *) (&_data_C8);
+    } else if (objdata->unk8A8 != 0){
+        objdata->unk3C4 = &_data_6F8;
+        objdata->modAnims = (s16 *) (&_data_C8);
     } else {
-        state->unk3C4 = &_data_6F8;
-        state->modAnims = (s16 *) (&_data_98);
+        objdata->unk3C4 = &_data_6F8;
+        objdata->modAnims = (s16 *) (&_data_98);
     }
     
-    state->unk8BD = state->unk8BD & 0xFFFE;
+    objdata->unk8BD = objdata->unk8BD & 0xFFFE;
     arg1->unk0 |= 0x800000;
-    if (!state->unk868){
+    if (!objdata->unk868){
         temp_v0 = dll_210_func_BA38(player, arg1, arg2);
         if (temp_v0){
             return temp_v0;
@@ -2584,7 +2585,7 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
     if (var_fv0 > 1.0f){
         var_fv0 = 1.0f;
     }
-    var_fa0 = (state->unk3C8 - 0.05f) * var_fv0;
+    var_fa0 = (objdata->unk3C8 - 0.05f) * var_fv0;
     if (arg1->unk328 < 0x5A){
         player->srt.yaw = (s16) (player->srt.yaw + (((arg1->unk32A * arg2) / 9.0f) * 182.0f));
     } else {
@@ -2598,25 +2599,25 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
     else {
         var_fa0 -= fsin16_precise(arg1->unk198) * 0.35f;
     }
-    if (state->unk3C8 < arg1->unk28C){
-        arg1->unk28C = state->unk3C8;
+    if (objdata->unk3C8 < arg1->unk28C){
+        arg1->unk28C = objdata->unk3C8;
     }
     if (arg1->unk28C > 1.32f){
-        state->unk888 = (s16) (state->unk888 + 1);
+        objdata->unk888 = (s16) (objdata->unk888 + 1);
     } else {
-        state->unk888 = 0;
-        state->unk3C8 = 1.65f;
+        objdata->unk888 = 0;
+        objdata->unk3C8 = 1.65f;
     }
-    if (state->unk888 >= 0xB4){
-        state->unk888 = 0xB4;
-        state->unk3C8 = 1.9f;
+    if (objdata->unk888 >= 0xB4){
+        objdata->unk888 = 0xB4;
+        objdata->unk3C8 = 1.9f;
     }
-    if (var_fa0 < state->unk3C4[2]){
-        var_fa0 = state->unk3C4[2];
+    if (var_fa0 < objdata->unk3C4[2]){
+        var_fa0 = objdata->unk3C4[2];
     }
     arg1->unk278 += (var_fa0 - arg1->unk278) /arg1->unk2B0 * arg2;
-    if (state->unk3C8 < arg1->unk278){
-        arg1->unk278 = state->unk3C8;
+    if (objdata->unk3C8 < arg1->unk278){
+        arg1->unk278 = objdata->unk3C8;
     }
     var_a1 = 0;
     arg1->unk278 += _data_C[0];
@@ -2625,34 +2626,34 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
     _data_C[1] = 0.0f;
     animProgress = player->animProgress;
     
-    temp_t1 = (state->unk8C0 / 3) * 2;    
-    state->unk8A5 = (temp_t1 >> 1) + 1;
-    if ((u8)state->unk8A5 >= 4) {
-        state->unk89C = state->unk894;
+    temp_t1 = (objdata->unk8C0 / 3) * 2;    
+    objdata->unk8A5 = (temp_t1 >> 1) + 1;
+    if ((u8)objdata->unk8A5 >= 4) {
+        objdata->unk89C = objdata->unk894;
     }
     else {
-        state->unk89C = state->unk890;
+        objdata->unk89C = objdata->unk890;
     }
     
-    if (arg1->unk28C < state->unk3C4[temp_t1]){
+    if (arg1->unk28C < objdata->unk3C4[temp_t1]){
         var_a1 = 1;
-        if (state->unk8C0 == 3){
+        if (objdata->unk8C0 == 3){
             return 2;
         }
-        state->unk8C0 -= 3;
-    } else if (state->unk3C4[temp_t1 + 1] <= arg1->unk28C){
-        if (state->unk8C0 < 0xC){
+        objdata->unk8C0 -= 3;
+    } else if (objdata->unk3C4[temp_t1 + 1] <= arg1->unk28C){
+        if (objdata->unk8C0 < 0xC){
             var_a1 = 1;
-            if (state->unk8C0 == 0){
+            if (objdata->unk8C0 == 0){
                 animProgress = 0.0f;
             }
-            state->unk8C0 += 3;
+            objdata->unk8C0 += 3;
         }
     }
     
-    modAnimIds = state->modAnims;
-    if (var_a1 || state->modAnims != modAnimIds){
-        func_80023D30(player, state->modAnims[state->unk8C0], animProgress, 0);
+    modAnimIds = objdata->modAnims;
+    if (var_a1 || objdata->modAnims != modAnimIds){
+        func_80023D30(player, objdata->modAnims[objdata->unk8C0], animProgress, 0);
     }
 
     // calculations here are absolutely useless but requires to match
@@ -2674,9 +2675,9 @@ s32 dll_210_func_AE34(Object* player, PlayerState* arg1, f32 arg2) {
 
 // offset: 0xB4C8 | func: 61
 void dll_210_func_B4C8(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
-    state->unk89C = state->unk894;
+    objdata->unk89C = objdata->unk894;
 }
 
 // offset: 0xB4E0 | func: 62
@@ -2694,8 +2695,8 @@ void dll_210_func_B4C8(Object* player, s32 arg1) {
 #else
 // Requires dll_210_func_7E6C, dll_210_func_7BC4, dll_210_func_1DAB0, dll_210_func_18E80 as static
 // https://decomp.me/scratch/3CYBi
-s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2) {
-    PlayerState* spC4;
+s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* spC4;
     u32 sp90[12];
     s8 sp8E;
     s16 sp8C;
@@ -2707,7 +2708,7 @@ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2) {
     u32 sp38[17] = _data_778;
     s8 temp_v0_4;
 
-    spC4 = arg0->state;
+    spC4 = arg0->data;
     if (spC4->unk834 > 20.0f) {
         if (spC4->unk8BB != 0) {
             temp_v0 = gDLL_2_Camera->vtbl->func3();
@@ -2863,7 +2864,7 @@ s32 dll_210_func_BA38(Object* arg0, PlayerState* arg1, f32 arg2) {
 #endif
 
 // offset: 0xC1F4 | func: 66
-s32 dll_210_func_C1F4(Object* arg0, PlayerState* arg1, f32 arg2) {
+s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2) {
     s8 var_v0;
 
     if (arg1->unk1AC > 20.0f) {
@@ -2956,19 +2957,19 @@ s32 dll_210_func_EF9C(Object* player, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_12514.s")
 
 // offset: 0x125BC | func: 91
-s32 dll_210_func_125BC(Object* arg0, PlayerState* arg1, u32 arg2) {
+s32 dll_210_func_125BC(Object* arg0, Player_Data* arg1, u32 arg2) {
     f32 temp_fs0;
     f32 temp_fs1;
     f32 f2;
     f32 f0;
     s32 i;
-    PlayerState* temp_s3;
+    Player_Data* temp_s3;
 
     if (arg1->unk272 != 0) {
         ((s16*)arg1)[0x138] = 0x1F;
     }
     arg1->unk0 |= 0x200000;
-    temp_s3 = (PlayerState *) &arg1->unk4;
+    temp_s3 = (Player_Data *) &arg1->unk4;
     if (arg1->unk272 != 0) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x3D8U, 0x7FU, NULL, NULL, 0, NULL);
         for (i = 0; i < 3; i++) {
@@ -3019,8 +3020,8 @@ s32 dll_210_func_125BC(Object* arg0, PlayerState* arg1, u32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1426C.s")
 
 // offset: 0x142C4 | func: 97
-s32 dll_210_func_142C4(Object* arg0, PlayerState* arg1, f32 arg2) {
-    PlayerState* temp_s0;
+s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* temp_s0;
     Object* sp48;
     f32 sp44;
     f32 sp40;
@@ -3030,7 +3031,7 @@ s32 dll_210_func_142C4(Object* arg0, PlayerState* arg1, f32 arg2) {
     s32 sp30;
 
     gDLL_2_Camera->vtbl->func24.withOneArg(2);
-    temp_s0 = arg0->state;
+    temp_s0 = arg0->data;
     arg1->unk1BC[0x9F] = 0;
     arg1->unk2FC = dll_210_func_14B70;
     func_800267A4(arg0);
@@ -3188,8 +3189,8 @@ void dll_210_func_1660C(Object* player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_18E10.s")
 
 // offset: 0x18E80 | func: 122
-s32 dll_210_func_18E80(Object* player, PlayerState* state, f32 arg2) {
-    if (state->unk310 & 0x8000) {
+s32 dll_210_func_18E80(Object* player, Player_Data* objdata, f32 arg2) {
+    if (objdata->unk310 & 0x8000) {
         return 0x3D;
     }
     return 0;
@@ -3207,7 +3208,7 @@ s32 dll_210_func_18E80(Object* player, PlayerState* state, f32 arg2) {
 // dll_210_func_1AAD8 (matched)
 // dll_210_func_1CEFC (matched)
 // https://decomp.me/scratch/TtS1w
-s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
+s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
     s32 sp9C;
     s32 sp98;
     Object* temp_a0;
@@ -3225,9 +3226,9 @@ s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
     u32 temp_a0_4;
     s32* var_v0;
     s32 i;
-    PlayerState* temp_s1;
+    Player_Data* temp_s1;
 
-    temp_s1 = arg0->state;
+    temp_s1 = arg0->data;
     if (arg1->unk272 != 0) {
         if (arg1->unk2C8 != NULL) {
             func_80023D30(arg0, 0x43E, 0.0f, 0);
@@ -3260,7 +3261,7 @@ s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
     case 0x43D:
         if (arg1->unk32C[0xE] != 0) {
             func_80023D30(arg0, 0x43E, 0.0f, 0);
-            dll_210_func_6DD8(arg0, (PlayerState* ) temp_s1, 0x2D);
+            dll_210_func_6DD8(arg0, (Player_Data* ) temp_s1, 0x2D);
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xBA4U, 0x7FU, &temp_s1->unk848, NULL, 0, NULL);
             arg1->unk298 = 0.015f;
         }
@@ -3283,7 +3284,7 @@ s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
         }
         if (arg1->unk32C[0xE] != 0) {
             func_80023D30(arg0, 0x43E, 0.0f, 0);
-            dll_210_func_6DD8(arg0, (PlayerState* ) temp_s1, 0x2D);
+            dll_210_func_6DD8(arg0, (Player_Data* ) temp_s1, 0x2D);
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xBA4U, 0x7FU, &temp_s1->unk848, NULL, 0, NULL);
             arg1->unk298 = 0.015f;
         }
@@ -3538,7 +3539,7 @@ s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
                 sp98 = 9;
             }
             dll_210_func_1CEFC(arg0, -sp98);
-            ((void (*)(Object*, PlayerState*, f32)) *_bss_224)(arg0, arg1, temp_s1->unk830);
+            ((void (*)(Object*, Player_Data*, f32)) *_bss_224)(arg0, arg1, temp_s1->unk830);
             arg1->unk298 = 0.02f;
             func_80023D30(arg0, 0x43F, 0.0f, 0);
             if (temp_s1->unk830 > 0.0f) {
@@ -3612,7 +3613,7 @@ s32 dll_210_func_18EAC(Object* arg0, PlayerState* arg1, f32 arg2) {
                 for (sp9C = 0; sp9C < 0x14; sp9C++) {
                     gDLL_17->vtbl->func1(arg0->linkedObject, 0x3ED, &sp68, 0x200001, -1, NULL);
                 }
-                ((void (*)(Object*, PlayerState*, f32)) *_bss_224)(arg0, arg1, temp_s1->unk830);
+                ((void (*)(Object*, Player_Data*, f32)) *_bss_224)(arg0, arg1, temp_s1->unk830);
                 arg1->unk298 = 0.02f;
                 func_80023D30(arg0, 0x43F, 0.0f, 0);
             }
@@ -3662,9 +3663,9 @@ void dll_210_func_1AAD8(Object* arg0, UNK_TYPE_32 arg1) {
     Object* temp_a0;
     s16* temp_v0;
     s32 i;
-    PlayerState* temp_s0;
+    Player_Data* temp_s0;
 
-    temp_s0 = arg0->state;
+    temp_s0 = arg0->data;
     temp_s0->unk87C = -1;
     temp_s0->flags &= ~0x400;
     temp_a0 = arg0->linkedObject;
@@ -3714,8 +3715,8 @@ void dll_210_func_1AAD8(Object* arg0, UNK_TYPE_32 arg1) {
 
 // offset: 0x1BAC8 | func: 134
 void dll_210_func_1BAC8(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    state->flags &= ~0x800;
+    Player_Data* objdata = player->data;
+    objdata->flags &= ~0x800;
 }
 
 // offset: 0x1BAE8 | func: 135
@@ -3760,12 +3761,12 @@ void dll_210_func_1BF8C(Object* player, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C620.s")
 
 // offset: 0x1C9D8 | func: 147
-s32 dll_210_func_1C9D8(Object* player, PlayerState* arg1, s32 arg2) {
-    PlayerState* state = player->state;
+s32 dll_210_func_1C9D8(Object* player, Player_Data* arg1, s32 arg2) {
+    Player_Data* objdata = player->data;
 
-    //NOTE: not sure whether arg1 is really a PlayerState struct
+    //NOTE: not sure whether arg1 is really a Player_Data struct
     arg1->unk341 = 3;
-    if (state->stats->health > 0) {
+    if (objdata->stats->health > 0) {
         func_80023D30(player, 0xC5, 0.0f, 0);
         return -0x4D;
     }
@@ -3785,31 +3786,31 @@ s32 dll_210_func_1CC34(Object* player, s32 arg1, s32 arg2) {
 
 // offset: 0x1CC4C | func: 151 | export: 7
 Object *dll_210_func_1CC4C(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk858;
+    Player_Data* objdata = player->data;
+    return objdata->unk858;
 }
 
 // offset: 0x1CC5C | func: 152 | export: 69
 void dll_210_func_1CC5C(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
     if (arg1 != 0) {
-        state->flags |= 0x200000;
+        objdata->flags |= 0x200000;
         return;
     }
-    state->flags &= 0xFFDFFFFF;
+    objdata->flags &= 0xFFDFFFFF;
 }
 
 // offset: 0x1CC94 | func: 153 | export: 68
 void dll_210_func_1CC94(Object* player) {
-    PlayerState* state = player->state;
-    state->flags &= ~2;
+    Player_Data* objdata = player->data;
+    objdata->flags &= ~2;
 }
 
 // offset: 0x1CCB0 | func: 154 | export: 50
 s16 dll_210_func_1CCB0(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk87C;
+    Player_Data* objdata = player->data;
+    return objdata->unk87C;
 }
 
 // offset: 0x1CCC0 | func: 155 | export: 51
@@ -3817,59 +3818,53 @@ s16 dll_210_func_1CCB0(Object* player) {
 
 // offset: 0x1CD04 | func: 156 | export: 22
 void dll_210_func_1CD04(Object* player, s32 arg1) {
-    PlayerState* state;
+    Player_Data* objdata;
 
-    state = player->state;
+    objdata = player->data;
     if (arg1 < 0) {
         arg1 = 0;
     } else {
-        if (state->stats->healthMax < arg1) {
-            arg1 = state->stats->healthMax;
+        if (objdata->stats->healthMax < arg1) {
+            arg1 = objdata->stats->healthMax;
         }
     }
-    state->stats->health = arg1;
+    objdata->stats->health = arg1;
 }
 
 // offset: 0x1CD3C | func: 157 | export: 23
 void dll_210_func_1CD3C(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
     if (arg1 < 0) {
         arg1 = 0;
     } else if (arg1 >= 0x51) {
         arg1 = 0x50;
     }
-    state->stats->healthMax = arg1;
+    objdata->stats->healthMax = arg1;
 }
 
 // offset: 0x1CD6C | func: 158 | export: 24
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CD6C.s")
-#else
 void dll_210_func_1CD6C(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    PlayerStateUnk34C* temp;
+    Player_Data* objdata = player->data;
+    s32 health;
 
-    temp = state->unk34C;
-    arg1 = state->unk34C->unk1 + arg1;
-    if (arg1 < 0) {
-        arg1 = 0;
-    } else {
-        if (temp->unk2 < arg1) {
-            arg1 = temp->unk2;
-        }
+    health = objdata->stats->health;
+    health += arg1;
+    if (health < 0) {
+        health = 0;
+    } else if (objdata->stats->healthMax < health) {
+        health = objdata->stats->healthMax;
     }
-    temp->unk1 = arg1;
+    objdata->stats->health = health;
 }
-#endif
 
 // offset: 0x1CDAC | func: 159 | export: 25
 void dll_210_func_1CDAC(Object* player, s32 arg1) {
-    PlayerState* state;
+    Player_Data* objdata;
     s32 var;
 
-    state = player->state;
-    var = state->stats->healthMax;
+    objdata = player->data;
+    var = objdata->stats->healthMax;
     var += arg1;
 
     if (var < 0){
@@ -3877,62 +3872,62 @@ void dll_210_func_1CDAC(Object* player, s32 arg1) {
     } else if (var >= 0x51){
         var = 0x50;
     }
-    state->stats->healthMax = var;
+    objdata->stats->healthMax = var;
 }
 
 // offset: 0x1CDE4 | func: 160 | export: 26
 s8 dll_210_func_1CDE4(Object* player) {
-    PlayerState* state = player->state;
-    return state->stats->health;
+    Player_Data* objdata = player->data;
+    return objdata->stats->health;
 }
 
 // offset: 0x1CDF8 | func: 161 | export: 27
 s8 dll_210_func_1CDF8(Object* player) {
-    PlayerState* state = player->state;
-    return state->stats->healthMax;
+    Player_Data* objdata = player->data;
+    return objdata->stats->healthMax;
 }
 
 // offset: 0x1CE0C | func: 162 | export: 13
 void dll_210_func_1CE0C(Object* player, s32 arg1) {
-    PlayerState* state;
+    Player_Data* objdata;
 
-    state = player->state;
-    if (state->unk8BB != 0) {
+    objdata = player->data;
+    if (objdata->unk8BB != 0) {
         if (arg1 < 0) {
             arg1 = 0;
         } else if (arg1 > 0x64) {
             arg1 = 0x64;
         }
-        state->stats->magicMax = arg1;
+        objdata->stats->magicMax = arg1;
     }
 }
 
 // offset: 0x1CE48 | func: 163 | export: 15
 void dll_210_func_1CE48(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
     s32 var_v1;
 
-    if (state->unk8BB != 0) {
-        var_v1 = state->stats->magicMax;
+    if (objdata->unk8BB != 0) {
+        var_v1 = objdata->stats->magicMax;
         var_v1 += arg1;
         if (var_v1 < 0) {
             var_v1 = 0;
         } else if (var_v1 >= 0x65) {
             var_v1 = 0x64;
         }
-        state->stats->magicMax = var_v1;
+        objdata->stats->magicMax = var_v1;
     }
 }
 
 // offset: 0x1CE8C | func: 164 | export: 17
 s16 dll_210_func_1CE8C(Object* player) {
-    PlayerState* state;
+    Player_Data* objdata;
 
-    state = player->state;
-    if (state->unk8BB == 0) {
+    objdata = player->data;
+    if (objdata->unk8BB == 0) {
         return 0;
     }
-    return state->stats->magicMax;
+    return objdata->stats->magicMax;
 }
 
 // offset: 0x1CEB4 | func: 165 | export: 12
@@ -3943,12 +3938,12 @@ s16 dll_210_func_1CE8C(Object* player) {
 //NOTE: Patched in Dinomod to prevent undebounced sound!
 //https://dinosaurpla.net/wiki/Dinomod_Enhanced/Differences/DLLs/210_KrystalSabre#dll_210_func_1CEFC
 void dll_210_func_1CEFC(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
     PlayerStats* temp_v1;
     s32 var_v0;
 
-    if (state->unk8BB != 0) {
-        temp_v1 = state->stats;
+    if (objdata->unk8BB != 0) {
+        temp_v1 = objdata->stats;
         var_v0 = temp_v1->magic;
         var_v0 += arg1;
         if (var_v0 < 0) {
@@ -3967,21 +3962,21 @@ void dll_210_func_1CEFC(Object* player, s32 arg1) {
 
 // offset: 0x1CFA4 | func: 167 | export: 16
 s16 dll_210_func_1CFA4(Object* arg0) {
-    PlayerState* state;
+    Player_Data* objdata;
 
-    state = arg0->state;
-    if (state->unk8BB == 0) {
+    objdata = arg0->data;
+    if (objdata->unk8BB == 0) {
         return 0;
     }
-    return state->stats->magic;
+    return objdata->stats->magic;
 }
 
 // offset: 0x1CFCC | func: 168 | export: 70
 s8 dll_210_func_1CFCC(Object* player) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
     
-    if (state->unk260 & 0x10) {
-        return state->unkBC;
+    if (objdata->unk260 & 0x10) {
+        return objdata->unkBC;
     }
     return -1;
 }
@@ -3991,14 +3986,14 @@ s8 dll_210_func_1CFCC(Object* player) {
 
 // offset: 0x1D04C | func: 170 | export: 18
 void dll_210_func_1D04C(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
     if (arg1 < 0) {
         arg1 = 0;
     } else if (arg1 >= 0x3E8) {
         arg1 = 0x3E7;
     }
-    state->stats->scarabs = arg1;
+    objdata->stats->scarabs = arg1;
 }
 
 // offset: 0x1D07C | func: 171 | export: 19
@@ -4006,89 +4001,85 @@ void dll_210_func_1D04C(Object* player, s32 arg1) {
 
 // offset: 0x1D128 | func: 172 | export: 20
 u16 dll_210_func_1D128(Object* player) {
-    PlayerState* state = player->state;
-    return state->stats->scarabs;
+    Player_Data* objdata = player->data;
+    return objdata->stats->scarabs;
 }
 
 // offset: 0x1D13C | func: 173 | export: 21
 s8 dll_210_func_1D13C(Object* player) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
     s8 previous;
 
-    previous = state->stats->unkA;
-    state->stats->unkA = 0;
+    previous = objdata->stats->unkA;
+    objdata->stats->unkA = 0;
     return previous;
 }
 
 // offset: 0x1D154 | func: 174 | export: 28
 void dll_210_func_1D154(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    state->unk8A9 = arg1 ? 4 : 2;
+    Player_Data* objdata = player->data;
+    objdata->unk8A9 = arg1 ? 4 : 2;
 }
 
 // offset: 0x1D178 | func: 175 | export: 29
 void dll_210_func_1D178(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    state->unk8A9 = arg1 ? 1 : 0;
+    Player_Data* objdata = player->data;
+    objdata->unk8A9 = arg1 ? 1 : 0;
 }
 
 // offset: 0x1D198 | func: 176 | export: 30
 s32 dll_210_func_1D198(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk8A9 == 2;
+    Player_Data* objdata = player->data;
+    return objdata->unk8A9 == 2;
 }
 
 // offset: 0x1D1B0 | func: 177 | export: 31
 void dll_210_func_1D1B0(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    state->unk8A9 = arg1;
+    Player_Data* objdata = player->data;
+    objdata->unk8A9 = arg1;
 }
 
 // offset: 0x1D1C0 | func: 178 | export: 32
 u8 dll_210_func_1D1C0(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk8A9;
+    Player_Data* objdata = player->data;
+    return objdata->unk8A9;
 }
 
 // offset: 0x1D1D0 | func: 179 | export: 78
 s32 dll_210_func_1D1D0(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk864;
+    Player_Data* objdata = player->data;
+    return objdata->unk864;
 }
 
 // offset: 0x1D1E0 | func: 180 | export: 79
 f32 dll_210_func_1D1E0(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk7FC;
+    Player_Data* objdata = player->data;
+    return objdata->unk7FC;
 }
 
 // offset: 0x1D1F0 | func: 181 | export: 8
 s32 dll_210_func_1D1F0(Object* player, Object** arg1) {
-    PlayerState* state = player->state;
-    *arg1 = state->unk708;
-    return state->unk708 != NULL;
+    Player_Data* objdata = player->data;
+    *arg1 = objdata->unk708;
+    return objdata->unk708 != NULL;
 }
 
 // offset: 0x1D210 | func: 182 | export: 9
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D210.s")
 
 // offset: 0x1D288 | func: 183 | export: 10
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D288.s")
-#else
 s32 dll_210_func_1D288(Object* player, s32* arg1) {
-    PlayerState* state = player->state;
-    *arg1 = state->unk868;
-    return state->unk868 != 0;
+    Player_Data* objdata = player->data;
+    *arg1 = objdata->unk868;
+    return objdata->unk868 != 0;
 }
-#endif
 
 // offset: 0x1D2A8 | func: 184 | export: 11
 s32 dll_210_func_1D2A8(Object* arg0, Object* arg1) {
-    PlayerState* sp24;
+    Player_Data* sp24;
     Object* var_v1;
 
-    sp24 = arg0->state;
+    sp24 = arg0->data;
     if (arg1 != NULL) {
         sp24->unk868 = arg1;
         gDLL_18->vtbl->func4(arg0, sp24, 5);
@@ -4108,22 +4099,22 @@ s32 dll_210_func_1D2A8(Object* arg0, Object* arg1) {
 
 // offset: 0x1D368 | func: 185 | export: 36
 u8 dll_210_func_1D368(Object* player, f32* arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
-    *arg1 = state->unk800;
-    return state->unk8B7;
+    *arg1 = objdata->unk800;
+    return objdata->unk8B7;
 }
 
 // offset: 0x1D380 | func: 186 | export: 37
 void dll_210_func_1D380(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    state->unk8B7 = arg1;
+    Player_Data* objdata = player->data;
+    objdata->unk8B7 = arg1;
 }
 
 // offset: 0x1D390 | func: 187 | export: 38
 s32 dll_210_func_1D390(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
-    return state->unk8BA & arg1;
+    Player_Data* objdata = player->data;
+    return objdata->unk8BA & arg1;
 }
 
 // offset: 0x1D3A4 | func: 188 | export: 39
@@ -4131,11 +4122,11 @@ s32 dll_210_func_1D390(Object* player, s32 arg1) {
 
 // offset: 0x1D40C | func: 189 | export: 40
 s32 dll_210_func_1D40C(Object* player, u32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
     if (arg1 >= 8) {
         return 0;
     }
-    return state->unk8BB & (1 << arg1);
+    return objdata->unk8BB & (1 << arg1);
 }
 
 // offset: 0x1D438 | func: 190 | export: 41
@@ -4143,15 +4134,15 @@ s32 dll_210_func_1D40C(Object* player, u32 arg1) {
 
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk354.unk1E == 1;
+    Player_Data* objdata = player->data;
+    return objdata->unk354.unk1E == 1;
 }
 
 // offset: 0x1D4E0 | func: 192 | export: 33
 void dll_210_func_1D4E0(Object* arg0, s32 arg1) {
-    PlayerState* sp24;
+    Player_Data* sp24;
 
-    sp24 = arg0->state;
+    sp24 = arg0->data;
     if (arg1 != 0) {
         gDLL_18->vtbl->func4(arg0, sp24, 0x44);
         sp24->flags |= 1;
@@ -4168,20 +4159,20 @@ s32 dll_210_func_1D588(s32 arg0) {
 
 // offset: 0x1D598 | func: 194 | export: 34
 s32 dll_210_func_1D598(Object* player) {
-    PlayerState* state = player->state;
-    return state->flags & 1;
+    Player_Data* objdata = player->data;
+    return objdata->flags & 1;
 }
 
 // offset: 0x1D5B0 | func: 195 | export: 42
 u8 dll_210_func_1D5B0(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk8B8;
+    Player_Data* objdata = player->data;
+    return objdata->unk8B8;
 }
 
 // offset: 0x1D5C0 | func: 196 | export: 43
 int dll_210_func_1D5C0(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk26C == 0x20 || state->unk26C == 0x21;
+    Player_Data* objdata = player->data;
+    return objdata->unk26C == 0x20 || objdata->unk26C == 0x21;
 }
 
 // offset: 0x1D5E8 | func: 197 | export: 47
@@ -4189,34 +4180,34 @@ int dll_210_func_1D5C0(Object* player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D5E8.s")
 #else
 u8 dll_210_func_1D5E8(Object* player, s32 arg1, s8* arg2) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
-    *arg2 = state->unk680.unk2E;
-    return (state->unk26C == 0x28 && state->unk680.unk28 == arg1);
+    *arg2 = objdata->unk680.unk2E;
+    return (objdata->unk26C == 0x28 && objdata->unk680.unk28 == arg1);
 }
 #endif
 
 // offset: 0x1D620 | func: 198 | export: 60
 s32 dll_210_func_1D620(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk260 & 0x10;
+    Player_Data* objdata = player->data;
+    return objdata->unk260 & 0x10;
 }
 
 // offset: 0x1D638 | func: 199 | export: 61
 void dll_210_func_1D638(Object* player, s32 arg1) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
     if (arg1 != 0) {
-        state->flags |= 0x10;
+        objdata->flags |= 0x10;
         return;
     }
-    state->flags &= ~0x10;
+    objdata->flags &= ~0x10;
 }
 
 // offset: 0x1D668 | func: 200 | export: 58
 void dll_210_func_1D668(Object* player, f32 arg1) {
-    PlayerState* state = player->state;
-    state->unk808 = arg1;
+    Player_Data* objdata = player->data;
+    objdata->unk808 = arg1;
 }
 
 // offset: 0x1D680 | func: 201 | export: 59
@@ -4227,49 +4218,49 @@ void dll_210_func_1D668(Object* player, f32 arg1) {
 
 // offset: 0x1D754 | func: 203 | export: 52
 s32 dll_210_func_1D754(Object* player) {
-    PlayerState* state = player->state;
-    state->unk854 = 0;
+    Player_Data* objdata = player->data;
+    objdata->unk854 = 0;
     return 0;
 }
 
 // offset: 0x1D768 | func: 204 | export: 53
 Object *dll_210_func_1D768(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk2C8;
+    Player_Data* objdata = player->data;
+    return objdata->unk2C8;
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
 Unk80032CF8Copy* dll_210_func_1D778(Object* player) {
-    PlayerState* state = player->state;
-    return &state->unk354;
+    Player_Data* objdata = player->data;
+    return &objdata->unk354;
 }
 
 // offset: 0x1D788 | func: 206 | export: 56
 f32 dll_210_func_1D788(Object* player) {
-    PlayerState* state = player->state;
-    return state->unk278;
+    Player_Data* objdata = player->data;
+    return objdata->unk278;
 }
 
 // offset: 0x1D798 | func: 207 | export: 55
-void dll_210_func_1D798(Object* player, PlayerState* state, s32* arg2, s8* arg3, void** arg4) {
-    PlayerState* newState = player->state;
+void dll_210_func_1D798(Object* player, Player_Data* objdata, s32* arg2, s8* arg3, void** arg4) {
+    Player_Data* objdata2 = player->data;
 
     *arg3 = 0x7F;
-    *arg2 = newState->unk89C;
-    *arg4 = (s8*)newState + 0x39C;
+    *arg2 = objdata2->unk89C;
+    *arg4 = (s8*)objdata2 + 0x39C;
 }
 
 // offset: 0x1D7C4 | func: 208 | export: 57
 s32 dll_210_func_1D7C4(Object* player) {
-  PlayerState* state;
-  state = player->state;
-  return (s32)((s8*) state) + 4;
+  Player_Data* objdata;
+  objdata = player->data;
+  return (s32)((s8*) objdata) + 4;
 }
 
 // offset: 0x1D7D4 | func: 209 | export: 72
 void dll_210_func_1D7D4(Object* player, s16 arg1) {
-    PlayerState* state = player->state;
-    state->unk886 = arg1;
+    Player_Data* objdata = player->data;
+    objdata->unk886 = arg1;
 }
 
 // offset: 0x1D7F0 | func: 210 | export: 73
@@ -4299,12 +4290,12 @@ s32 dll_210_func_1D85C(s32 arg0, s32 arg1) {
 // offset: 0x1D880 | func: 213 | export: 77
 //While aiming with the Projectile Spell
 s32 dll_210_func_1D880(Object* player, s32* arg1, s32* arg2) {
-    PlayerState* state;
+    Player_Data* objdata;
 
-    state = player->state;
-    if (state->flags & 0x400) {
-        *arg1 = state->aimX;
-        *arg2 = state->aimY;
+    objdata = player->data;
+    if (objdata->flags & 0x400) {
+        *arg1 = objdata->aimX;
+        *arg2 = objdata->aimY;
         return 1;
     }
     return 0;
@@ -4312,15 +4303,15 @@ s32 dll_210_func_1D880(Object* player, s32* arg1, s32* arg2) {
 
 // offset: 0x1D8B8 | func: 214 | export: 76
 void dll_210_func_1D8B8(Object* player) {
-    PlayerState* state = player->state;
+    Player_Data* objdata = player->data;
 
-    state->unk8BE = 1;
-    state->unk840 = -0.2f;
-    state->unk844 = 0.0f;
+    objdata->unk8BE = 1;
+    objdata->unk840 = -0.2f;
+    objdata->unk844 = 0.0f;
 }
 
 // offset: 0x1D8EC | func: 215
-void dll_210_func_1D8EC(Object* arg0, PlayerState* arg1, s32 arg2) {
+void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2) {
     s32 i;
     s32 counter;
     s32 var_v1;
@@ -4391,51 +4382,51 @@ void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
 // offset: 0x1DC48 | func: 218
 void dll_210_func_1DC48(Object* obj) {
     s8 i;
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
 
     for (i = 0; i < 3; i++) {
         if (_bss_210[i] != 0) {
             continue;
         }
 
-        createInfo = obj_alloc_create_info(0x24, OBJ_iceblast);
-        if (createInfo == NULL) {
+        objsetup = obj_alloc_create_info(0x24, OBJ_iceblast);
+        if (objsetup == NULL) {
             break;
         }
 
-        createInfo->x = obj->positionMirror.x;
-        createInfo->y = obj->positionMirror.y;
-        createInfo->z = obj->positionMirror.z;
-        createInfo->loadParamA = 2;
-        createInfo->loadParamB = 1;
-        createInfo->loadDistance = 0xFF;
-        createInfo->fadeDistance = 0xFF;
-        ((s16* )createInfo)[13] = i * 0xA;
+        objsetup->x = obj->positionMirror.x;
+        objsetup->y = obj->positionMirror.y;
+        objsetup->z = obj->positionMirror.z;
+        objsetup->loadParamA = 2;
+        objsetup->loadParamB = 1;
+        objsetup->loadDistance = 0xFF;
+        objsetup->fadeDistance = 0xFF;
+        ((s16* )objsetup)[13] = i * 0xA;
         if (obj->id != 0) {
-            ((u16*)createInfo)[14] = 0;
+            ((u16*)objsetup)[14] = 0;
         } else {
-            ((u16*)createInfo)[14] = 0x8000;
+            ((u16*)objsetup)[14] = 0x8000;
         }
-        _bss_210[i] = obj_create(createInfo, 5, obj->mapID, -1, obj->parent);
+        _bss_210[i] = obj_create(objsetup, 5, obj->mapID, -1, obj->parent);
     }
 }
 
 // offset: 0x1DD94 | func: 219
 Object *dll_210_func_1DD94(Object* obj, s32 arg1) {
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
 
-    createInfo = obj_alloc_create_info(0x28, OBJ_LFXEmitter);
-    createInfo->loadParamA = 2;
-    createInfo->loadParamB = 1;
-    createInfo->loadDistance = 0xFF;
-    createInfo->fadeDistance = 0xFF;
-    createInfo->x = obj->srt.transl.x;
-    createInfo->y = obj->srt.transl.y;
-    createInfo->z = obj->srt.transl.z;
-    ((s16*)createInfo)[16] = 0;
-    ((s16*)createInfo)[15] = arg1;
-    ((s16*)createInfo)[17] = -1;
-    return obj_create(createInfo, 5, obj->mapID, -1, obj->parent);
+    objsetup = obj_alloc_create_info(0x28, OBJ_LFXEmitter);
+    objsetup->loadParamA = 2;
+    objsetup->loadParamB = 1;
+    objsetup->loadDistance = 0xFF;
+    objsetup->fadeDistance = 0xFF;
+    objsetup->x = obj->srt.transl.x;
+    objsetup->y = obj->srt.transl.y;
+    objsetup->z = obj->srt.transl.z;
+    ((s16*)objsetup)[16] = 0;
+    ((s16*)objsetup)[15] = arg1;
+    ((s16*)objsetup)[17] = -1;
+    return obj_create(objsetup, 5, obj->mapID, -1, obj->parent);
 }
 
 // offset: 0x1DE50 | func: 220

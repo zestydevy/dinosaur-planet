@@ -17,13 +17,13 @@ f32 z;
 typedef struct {
 /*00*/ u32 soundHandle;
 /*04*/ s8 pressed;
-/*05*/ s8 stateIndex;
+/*05*/ s8 state;
 /*08*/ Object* objectsOnSwitch[10];
 /*30*/ CoordXZ objCoords[10];
-} PressureSwitchState;
+} PressureSwitch_Data;
 
 typedef struct {
-ObjCreateInfo base;
+ObjSetup base;
 u8 yaw;
 u8 modelIdx;
 s16 gameBitPressed;             //flag to set when switch is pressed down
@@ -31,7 +31,7 @@ u8 yOffsetAnimation;            //how far down the switch should move when press
 u8 yThreshold;                  //threshold for other objects pressing switch
 u8 distanceSidekickBehaviour;   //player distance at which special sidekick behaviour is activated
 s16 gameBitActivated;            //flag to check if switch is deactivated
-} PressureSwitchCreateInfo;
+} PressureSwitch_Setup;
 
 typedef struct {
 s8 unk0[0x62 - 0];
@@ -53,56 +53,56 @@ void dll_287_ctor(void *dll) { }
 void dll_287_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void pressureswitch_create(Object* self, PressureSwitchCreateInfo* createInfo, s32 arg2) {
-    PressureSwitchState* state;
+void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
+    PressureSwitch_Data* objdata;
     s32 index;
 
-    self->srt.yaw = createInfo->yaw << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->unk0xb0 |= 0x6000;
 
-    state = self->state;
-    self->modelInstIdx = createInfo->modelIdx;
+    objdata = self->data;
+    self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         // diPrintf("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
         self->modelInstIdx = 0;
     }
 
-    if (main_get_bits(createInfo->gameBitPressed)) {
-        self->srt.transl.y = createInfo->base.y - createInfo->yOffsetAnimation;
-        state->pressed = 30;
+    if (main_get_bits(setup->gameBitPressed)) {
+        self->srt.transl.y = setup->base.y - setup->yOffsetAnimation;
+        objdata->pressed = 30;
     }
 
     obj_add_object_type(self, 0x33);
 
-    for (index = 0; index < 10; index++) { state->objectsOnSwitch[index] = 0; }
+    for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
     self->unk0xbc = (void*)&pressureswitch_callbackBC;
 }
 
 // offset: 0x148 | func: 1 | export: 1
-void pressureswitch_update(Object* self) {
+void pressureswitch_control(Object* self) {
     f32 deltaY;
     Object* sidekick;
     Object* player;
     Object* listedObject;
-    PressureSwitchCreateInfo* createInfo;
+    PressureSwitch_Setup* setup;
     s32 pad;
-    PressureSwitchState* state;
+    PressureSwitch_Data* objdata;
     s8 playSound;
     s32 index;
 
-    createInfo = (PressureSwitchCreateInfo*)self->createInfo;
-    state = self->state;
+    setup = (PressureSwitch_Setup*)self->setup;
+    objdata = self->data;
 
     //Bail if switch deactivated
-    if (createInfo->gameBitActivated > 0 && !main_get_bits(createInfo->gameBitActivated)){
+    if (setup->gameBitActivated > 0 && !main_get_bits(setup->gameBitActivated)){
         return;
     }
 
     //Decrement timer until not considered pressed (fps-dependent)
-    state->pressed--;
-    if (state->pressed < 0) {
-        state->pressed = 0;
+    objdata->pressed--;
+    if (objdata->pressed < 0) {
+        objdata->pressed = 0;
     }
 
     //Handle adding objects to switch
@@ -110,7 +110,7 @@ void pressureswitch_update(Object* self) {
         for (index = 0; index < self->unk0x58->unk10f; index++){
             listedObject = (Object*)self->unk0x58->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
-            if (deltaY > createInfo->yThreshold) {
+            if (deltaY > setup->yThreshold) {
                 pressureswitch_add_object(self, listedObject);
             }
         }
@@ -118,24 +118,24 @@ void pressureswitch_update(Object* self) {
 
     //Check if object on switch
     if (pressureswitch_is_object_on_switch(self)) {
-        state->pressed = 5;
+        objdata->pressed = 5;
     }
 
     //Animate the switch's y coordinate
     playSound = 0;
-    if (state->pressed) {
-        deltaY = createInfo->base.y - createInfo->yOffsetAnimation;
+    if (objdata->pressed) {
+        deltaY = setup->base.y - setup->yOffsetAnimation;
         if (self->srt.transl.y < deltaY) {
             self->srt.transl.y += 0.25f * delayFloat;
             if (deltaY < self->srt.transl.y) {
                 self->srt.transl.y = deltaY;
             }
-            main_set_bits(createInfo->gameBitPressed, 1);
+            main_set_bits(setup->gameBitPressed, 1);
         } else {
             self->srt.transl.y -= 0.125f * delayFloat;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                main_set_bits(createInfo->gameBitPressed, 1);
+                main_set_bits(setup->gameBitPressed, 1);
             } else {
                 playSound = 1;
             }
@@ -143,9 +143,9 @@ void pressureswitch_update(Object* self) {
     } else {
         self->srt.transl.y += 0.125f * delayFloat;
 
-        if (createInfo->base.y < self->srt.transl.y) {
-            self->srt.transl.y = createInfo->base.y;
-            main_set_bits(createInfo->gameBitPressed, 0);
+        if (setup->base.y < self->srt.transl.y) {
+            self->srt.transl.y = setup->base.y;
+            main_set_bits(setup->gameBitPressed, 0);
         } else {
             playSound = 1;
         }
@@ -153,23 +153,23 @@ void pressureswitch_update(Object* self) {
 
     //Play stone rumbling sound when moving
     if (playSound) {
-        if (!state->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&state->soundHandle, 0, 0, 0);
+        if (!objdata->soundHandle) {
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
-        if (state->soundHandle) {
-            gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
-            state->soundHandle = 0;
+        if (objdata->soundHandle) {
+            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+            objdata->soundHandle = 0;
         }
     }
 
     //Activate sidekick behaviour when player close to switch
-    if (!main_get_bits(createInfo->gameBitPressed) && createInfo->distanceSidekickBehaviour) {
+    if (!main_get_bits(setup->gameBitPressed) && setup->distanceSidekickBehaviour) {
         player = get_player();
         sidekick = get_sidekick();
         if (sidekick) {
             if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 
-                (createInfo->distanceSidekickBehaviour * createInfo->distanceSidekickBehaviour)) {
+                (setup->distanceSidekickBehaviour * setup->distanceSidekickBehaviour)) {
                 //TO-DO: use proper sidekick DLL interface
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 3);
             }
@@ -178,22 +178,22 @@ void pressureswitch_update(Object* self) {
 }
 
 // offset: 0x524 | func: 2 | export: 2
-void pressureswitch_func_524(Object* dll){
+void pressureswitch_update(Object* dll){
 }
 
 // offset: 0x530 | func: 3 | export: 3
-void pressureswitch_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void pressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x584 | func: 4 | export: 4
-void pressureswitch_destroy(Object* self, s32 arg1) {
-    PressureSwitchState* state = self->state;
+void pressureswitch_free(Object* self, s32 arg1) {
+    PressureSwitch_Data* objdata = self->data;
 
-    if (state->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
+    if (objdata->soundHandle) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
     }
     obj_free_object_type(self, 0x33);
 }
@@ -204,42 +204,42 @@ u32 pressureswitch_get_model_flags(Object* self) {
 }
 
 // offset: 0x614 | func: 6 | export: 6
-u32 pressureswitch_get_state_size(Object *self, u32 a1) {
-    return sizeof(PressureSwitchState);
+u32 pressureswitch_get_data_size(Object *self, u32 a1) {
+    return sizeof(PressureSwitch_Data);
 }
 
 // offset: 0x628 | func: 7
 void pressureswitch_add_object(Object* self, Object* objectOnSwitch) {
-    PressureSwitchState *state = self->state;
+    PressureSwitch_Data *objdata = self->data;
     u8 objectIndex;
 
     //@bug: should be && and "objectIndex != 9" (crashes game once objectsOnSwitch array overflows)
-    for (objectIndex = 0; state->objectsOnSwitch[objectIndex] || objectIndex == 9; objectIndex++);
+    for (objectIndex = 0; objdata->objectsOnSwitch[objectIndex] || objectIndex == 9; objectIndex++);
 
-    state->objectsOnSwitch[objectIndex] = objectOnSwitch;    
-    state->objCoords[objectIndex].x = objectOnSwitch->srt.transl.x;
-    state->objCoords[objectIndex].z = objectOnSwitch->srt.transl.z;
+    objdata->objectsOnSwitch[objectIndex] = objectOnSwitch;    
+    objdata->objCoords[objectIndex].x = objectOnSwitch->srt.transl.x;
+    objdata->objCoords[objectIndex].z = objectOnSwitch->srt.transl.z;
 }
 
 // offset: 0x694 | func: 8
 s32 pressureswitch_is_object_on_switch(Object* self) {
-    PressureSwitchState* state;
+    PressureSwitch_Data* objdata;
     CoordXZ* coord;
     u8 index;
     u8 returnVal;
 
-    state = self->state;
+    objdata = self->data;
 
     for (returnVal = FALSE, index = 0; index < 10; index++){
-        if (!state->objectsOnSwitch[index])
+        if (!objdata->objectsOnSwitch[index])
             continue;
 
-        coord = &state->objCoords[index];
-        if (state->objectsOnSwitch[index]->srt.transl.x == coord->x && 
-            state->objectsOnSwitch[index]->srt.transl.z == coord->z) {
+        coord = &objdata->objCoords[index];
+        if (objdata->objectsOnSwitch[index]->srt.transl.x == coord->x && 
+            objdata->objectsOnSwitch[index]->srt.transl.z == coord->z) {
             returnVal = TRUE;
         } else {
-            state->objectsOnSwitch[index] = NULL;
+            objdata->objectsOnSwitch[index] = NULL;
         }
     }
 
@@ -248,18 +248,18 @@ s32 pressureswitch_is_object_on_switch(Object* self) {
 
 // offset: 0x718 | func: 9
 s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3) {
-    PressureSwitchState* state;
-    PressureSwitchCreateInfo* createInfo;
+    PressureSwitch_Data* objdata;
+    PressureSwitch_Setup* setup;
     u8 index;
 
-    state = self->state;
-    createInfo = (PressureSwitchCreateInfo*)self->createInfo;
+    objdata = self->data;
+    setup = (PressureSwitch_Setup*)self->setup;
 
     if (arg2->unk8D == 1) {
         for (index = 0; index < 10; index++){
-            if (state->objectsOnSwitch[index]) {
-                state->objCoords[index].x = state->objectsOnSwitch[index]->srt.transl.x;
-                state->objCoords[index].z = state->objectsOnSwitch[index]->srt.transl.z;
+            if (objdata->objectsOnSwitch[index]) {
+                objdata->objCoords[index].x = objdata->objectsOnSwitch[index]->srt.transl.x;
+                objdata->objCoords[index].z = objdata->objectsOnSwitch[index]->srt.transl.z;
             }
         }
         arg2->unk8D = 0;
@@ -267,10 +267,10 @@ s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s
     } else if (arg2->unk8D == 2) {
         for (index = 0; index < 10; index++);
 
-        self->srt.transl.z = createInfo->base.x; //@bug? should be x component?
-        self->srt.transl.y = createInfo->base.y;
-        self->srt.transl.z = createInfo->base.z;
-        main_set_bits(createInfo->gameBitPressed, 0);
+        self->srt.transl.z = setup->base.x; //@bug? should be x component?
+        self->srt.transl.y = setup->base.y;
+        self->srt.transl.z = setup->base.z;
+        main_set_bits(setup->gameBitPressed, 0);
         arg2->unk8D = 0;
     }
 

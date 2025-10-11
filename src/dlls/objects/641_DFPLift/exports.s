@@ -8,10 +8,10 @@ _exports:
 .dword DFPLift_dtor
 
 # export table
-.dword DFPLift_create
+.dword DFPLift_setup
+.dword DFPLift_control
 .dword DFPLift_update
-.dword DFPLift_func_7EC
-.dword DFPLift_draw
-.dword DFPLift_destroy
+.dword DFPLift_print
+.dword DFPLift_free
 .dword DFPLift_get_model_flags
-.dword DFPLift_get_state_size
+.dword DFPLift_get_data_size

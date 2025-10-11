@@ -24,13 +24,13 @@ s16 unk24;
 u8 unk26;
 s8 unk27[0x29 - 0x27];
 u8 unk29; //scarabTypeIndex
-} ScarabState;
+} Scarab_Data;
 
 typedef struct {
-ObjCreateInfo base;
+ObjSetup base;
 s16 unk18;
 s16 unk1A;
-} ScarabCreateInfo;
+} Scarab_Setup;
 
 typedef struct {
 f32 unk0;
@@ -73,38 +73,38 @@ void dll_297_ctor(void *dll) { }
 void dll_297_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_297_create(Object* self, ScarabCreateInfo* createInfo, s32 arg2) {
-    ScarabState* state = self->state;
+void dll_295_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
+    Scarab_Data* objdata = self->data;
 
-    state->unk26 = 0;
-    state->unk18 = createInfo->unk1A;
-    state->unk1A = rand_next(1000, 4000);
-    state->unk20 = rand_next(50, 100);
-    state->unk10 = createInfo->base.y;
+    objdata->unk26 = 0;
+    objdata->unk18 = setup->unk1A;
+    objdata->unk1A = rand_next(1000, 4000);
+    objdata->unk20 = rand_next(50, 100);
+    objdata->unk10 = setup->base.y;
 
     self->unk0xb0 |= 0x2000;
 
     switch (self->id) {
         case OBJ_Green_scarab:
-            state->unk22 = 0xB6E;
-            state->unk24 = 0x1FF;
-            state->unk29 = 0;
+            objdata->unk22 = 0xB6E;
+            objdata->unk24 = 0x1FF;
+            objdata->unk29 = 0;
             break;
         case OBJ_Red_scarab:
-            state->unk22 = 0xB6F;
-            state->unk24 = 0x79;
-            state->unk29 = 1;
+            objdata->unk22 = 0xB6F;
+            objdata->unk24 = 0x79;
+            objdata->unk29 = 1;
             break;
         case OBJ_Gold_scarab:
-            state->unk22 = 0xB70;
-            state->unk24 = 0x1FE;
-            state->unk29 = 2;
+            objdata->unk22 = 0xB70;
+            objdata->unk24 = 0x1FE;
+            objdata->unk29 = 2;
             break;
         default:
         case OBJ_Rain_scarab:
-            state->unk22 = 0xB71;
-            state->unk24 = 0x7B;
-            state->unk29 = 3;
+            objdata->unk22 = 0xB71;
+            objdata->unk24 = 0x7B;
+            objdata->unk29 = 3;
             break;
     }
 
@@ -112,17 +112,17 @@ void dll_297_create(Object* self, ScarabCreateInfo* createInfo, s32 arg2) {
 }
 
 // offset: 0x174 | func: 1 | export: 1
-void dll_297_update(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_297_update.s")
+void dll_295_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_295_control.s")
 
 // offset: 0x1164 | func: 2 | export: 2
-void dll_297_func_1164(Object *self) { }
+void dll_295_update(Object *self) { }
 
 // offset: 0x1170 | func: 3 | export: 3
-void dll_297_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
-    ScarabState* state = self->state;
+void dll_295_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+    Scarab_Data* objdata = self->data;
 
-    if (state->unk14) {
+    if (objdata->unk14) {
         return;
     }
 
@@ -138,13 +138,13 @@ void dll_297_draw(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** p
 }
 
 // offset: 0x11F8 | func: 4 | export: 4
-void dll_297_destroy(Object* self, s32 arg1) {
-    ScarabState* state;
+void dll_295_free(Object* self, s32 arg1) {
+    Scarab_Data* objdata;
 
-    state = self->state;
-    if (state->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
-        state->soundHandle = 0;
+    objdata = self->data;
+    if (objdata->soundHandle) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        objdata->soundHandle = 0;
     }
 }
 
@@ -154,18 +154,18 @@ u32 dll_297_get_model_flags(Object* self) {
 }
 
 // offset: 0x1270 | func: 6 | export: 6
-u32 dll_297_get_state_size(Object *self, u32 a1) {
-    return sizeof(ScarabState);
+u32 dll_297_get_data_size(Object *self, u32 a1) {
+    return sizeof(Scarab_Data);
 }
 
 // offset: 0x1284 | func: 7
-void dll_297_func_1284(Object* self, Object* player, ScarabState* state) {
+void dll_297_func_1284(Object* self, Object* player, Scarab_Data* objdata) {
   ScarabValues values = _data_20;
 
-  ((DLL_Unknown*)player->dll)->vtbl->func[19].withTwoArgs((s32) player, values.bytes[state->unk29]);
+  ((DLL_Unknown*)player->dll)->vtbl->func[19].withTwoArgs((s32) player, values.bytes[objdata->unk29]);
 
-  state->unk14 = 0x50;
-  state->unk18 = 0;
+  objdata->unk14 = 0x50;
+  objdata->unk18 = 0;
 }
 
 // offset: 0x1304 | func: 8
@@ -175,9 +175,9 @@ void dll_297_func_1304(Object* self, ScarabFunc1304Arg1* arg1, u8 arg2, ScarabFu
     Vec3f v;
     u32 new_var;
     f32 doubleSpeed;
-    ScarabState *state;
+    Scarab_Data *objdata;
 
-    state = self->state;
+    objdata = self->data;
 
     if (arg2 == 1){
         v.x = arg1->unk4;
@@ -203,8 +203,8 @@ void dll_297_func_1304(Object* self, ScarabFunc1304Arg1* arg1, u8 arg2, ScarabFu
 
         self->speed.x /= doubleSpeed;
         self->speed.z /= doubleSpeed;
-        state->unk4 = self->speed.x;
-        state->unk8 = self->speed.z;
+        objdata->unk4 = self->speed.x;
+        objdata->unk8 = self->speed.z;
         self->srt.yaw = arctan2_f(-arg3->unk0, -arg3->unk8);
         return;
     }

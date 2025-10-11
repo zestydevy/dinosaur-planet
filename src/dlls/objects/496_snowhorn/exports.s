@@ -8,10 +8,10 @@ _exports:
 .dword dll_496_dtor
 
 # export table
-.dword dll_496_func_18
-.dword dll_496_func_24C
-.dword dll_496_func_770
-.dword dll_496_func_77C
-.dword dll_496_func_804
+.dword dll_496_setup
+.dword dll_496_control
+.dword dll_496_update
+.dword dll_496_print
+.dword dll_496_free
 .dword dll_496_get_model_flags
-.dword dll_496_get_state_size
+.dword dll_496_get_data_size

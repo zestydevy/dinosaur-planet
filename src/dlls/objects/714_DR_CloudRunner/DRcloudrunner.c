@@ -18,15 +18,15 @@ s8 unk273[0x910 - 0x273];
 s16 unk910;
 s8 unk912[0x920 - 0x912];
 u8 unk920;
-} DRCloudRunnerState;
+} DRCloudRunner_Data;
 
 typedef struct {
-ObjCreateInfo base;
+ObjSetup base;
 s16 unk18;
 s16 unk1A;
 s16 unk1C;
 s16 unk1E;
-} DRCloudRunnerCreateInfo;
+} DRCloudRunner_Setup;
 
 /*0x0*/ static u16 _data_0[] = {
     0x091d, 0x091e, 0x091f, 0x0000
@@ -122,12 +122,12 @@ void dll_714_ctor(void *dll);
 void dll_714_dtor(void *dll) { }
 
 // offset: 0xD8 | func: 1 | export: 0
-void dll_714_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_create.s")
+void dll_714_setup(Object *self, ObjSetup* setup, s32 arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_setup.s")
 
 // offset: 0x318 | func: 2 | export: 1
-void dll_714_update(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_update.s")
+void dll_714_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_control.s")
 
 // offset: 0x85C | func: 3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_85C.s")
@@ -139,16 +139,16 @@ void dll_714_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_984.s")
 
 // offset: 0xB70 | func: 6 | export: 2
-void dll_714_func_B70(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_B70.s")
+void dll_714_update(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_update.s")
 
 // offset: 0xC8C | func: 7 | export: 3
-void dll_714_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_draw.s")
+void dll_714_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_print.s")
 
 // offset: 0xE60 | func: 8 | export: 4
-void dll_714_destroy(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_destroy.s")
+void dll_714_free(Object *self, s32 a1);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_free.s")
 
 // offset: 0xF50 | func: 9 | export: 5
 u32 dll_714_get_model_flags(Object* self) {
@@ -156,8 +156,8 @@ u32 dll_714_get_model_flags(Object* self) {
 }
 
 // offset: 0xF60 | func: 10 | export: 6
-u32 dll_714_get_state_size(Object *self, u32 a1) {
-    return sizeof(DRCloudRunnerState);
+u32 dll_714_get_data_size(Object *self, u32 a1) {
+    return sizeof(DRCloudRunner_Data);
 }
 
 // offset: 0xF74 | func: 11 | export: 7
@@ -209,20 +209,20 @@ u32 dll_714_get_state_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_18E0.s")
 
 // offset: 0x1968 | func: 27
-s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
-    DRCloudRunnerState* state2;
+s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
+    DRCloudRunner_Data* objdata2;
     u32 new_var;
-    DRCloudRunnerCreateInfo* createInfo;
+    DRCloudRunner_Setup* setup;
     Object* parent;
 
-    createInfo = (DRCloudRunnerCreateInfo*)self->createInfo;
-    if (state->unk272) {
+    setup = (DRCloudRunner_Setup*)self->setup;
+    if (objdata->unk272) {
         func_800267A4(self);
-        state->unk25B = 0;
+        objdata->unk25B = 0;
         return 0;
     }
 
-    state2 = self->state;
+    objdata2 = self->data;
 
     //Randomly call out to player if in cage (Object parent hierarchy: DR_Cage -> DRPerch -> DR_CloudRunner)
     if (rand_next(0, 120) == 0) {
@@ -245,9 +245,9 @@ s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
     }
 
     new_var = 4;
-    if (main_get_bits(createInfo->unk1E)) {
+    if (main_get_bits(setup->unk1E)) {
         self->unk0xc4 = NULL;
-        state2->unk920 = (((new_var * (state2->unk910 > 0)) * 4) & 0x10) | (state2->unk920 & 0xFFEF);
+        objdata2->unk920 = (((new_var * (objdata2->unk910 > 0)) * 4) & 0x10) | (objdata2->unk920 & 0xFFEF);
         return 3;
     }
 

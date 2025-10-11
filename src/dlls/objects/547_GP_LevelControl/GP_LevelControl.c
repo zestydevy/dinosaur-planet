@@ -12,7 +12,7 @@ typedef struct {
 /*00*/ f32 heatCutsceneTimer;
 /*04*/ u8 unk4; // ?
 /*05*/ u8 mapID;
-} GP_LevelControl_State;
+} GP_LevelControl_Data;
 
 static void GP_LevelControl_func_4C8(Object *self);
 static void GP_LevelControl_func_58C(Object *self, s32 arg1);
@@ -24,11 +24,11 @@ void GP_LevelControl_ctor(void *dll) { }
 void GP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GP_LevelControl_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
-    GP_LevelControl_State *state;
+void GP_LevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
+    GP_LevelControl_Data *objdata;
 
-    state = self->state;
-    state->unk4 = 0;
+    objdata = self->data;
+    objdata->unk4 = 0;
 
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
@@ -40,22 +40,22 @@ void GP_LevelControl_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
     }
 
     main_set_bits(BIT_DFP_Place_Spellstone_One, 1);
-    state->mapID = 0xFF;
+    objdata->mapID = 0xFF;
 }
 
 // offset: 0xF0 | func: 1 | export: 1
-void GP_LevelControl_update(Object *self) {
-    GP_LevelControl_State *state;
+void GP_LevelControl_control(Object *self) {
+    GP_LevelControl_Data *objdata;
     f32 time;
     f32 timerInc;
     Object *obj;
     Object *obj2;
     Object *player;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
 
-    if (state->mapID != MAP_GOLDEN_PLAINS) {
+    if (objdata->mapID != MAP_GOLDEN_PLAINS) {
         if (map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z) == MAP_GOLDEN_PLAINS) {
             GP_LevelControl_func_4C8(self);
         } else {
@@ -63,7 +63,7 @@ void GP_LevelControl_update(Object *self) {
         }
     }
 
-    state->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
+    objdata->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
 
     // heat reducing energy cutscene
     if (!gDLL_7_Newday->vtbl->func8(&time) && !main_get_bits(BIT_643) && ((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0) {
@@ -86,9 +86,9 @@ void GP_LevelControl_update(Object *self) {
             }
         }
 
-        state->heatCutsceneTimer += timerInc * delayFloat;
-        if (state->heatCutsceneTimer > 600.0f) {
-            state->heatCutsceneTimer -= 600.0f;
+        objdata->heatCutsceneTimer += timerInc * delayFloat;
+        if (objdata->heatCutsceneTimer > 600.0f) {
+            objdata->heatCutsceneTimer -= 600.0f;
             if (!main_get_bits(BIT_GP_Shown_Heat_Cutscene)) {
                 main_set_bits(BIT_GP_Shown_Heat_Cutscene, 1);
                 gDLL_3_Animation->vtbl->func17(9, player, -1);
@@ -109,17 +109,17 @@ void GP_LevelControl_update(Object *self) {
 }
 
 // offset: 0x434 | func: 2 | export: 2
-void GP_LevelControl_func_434(Object *self) { }
+void GP_LevelControl_update(Object *self) { }
 
 // offset: 0x440 | func: 3 | export: 3
-void GP_LevelControl_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void GP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x494 | func: 4 | export: 4
-void GP_LevelControl_destroy(Object *self, s32 arg1) { }
+void GP_LevelControl_free(Object *self, s32 arg1) { }
 
 // offset: 0x4A4 | func: 5 | export: 5
 u32 GP_LevelControl_get_model_flags(Object *self) {
@@ -127,8 +127,8 @@ u32 GP_LevelControl_get_model_flags(Object *self) {
 }
 
 // offset: 0x4B4 | func: 6 | export: 6
-u32 GP_LevelControl_get_state_size(Object *self, u32 arg1) {
-    return sizeof(GP_LevelControl_State);
+u32 GP_LevelControl_get_data_size(Object *self, u32 arg1) {
+    return sizeof(GP_LevelControl_Data);
 }
 
 // offset: 0x4C8 | func: 7

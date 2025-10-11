@@ -8,10 +8,10 @@ _exports:
 .dword flameblast_dtor
 
 # export table
-.dword flameblast_create
+.dword flameblast_setup
+.dword flameblast_control
 .dword flameblast_update
-.dword flameblast_func_274
-.dword flameblast_draw
-.dword flameblast_destroy
+.dword flameblast_print
+.dword flameblast_free
 .dword flameblast_get_model_flags
-.dword flameblast_get_state_size
+.dword flameblast_get_data_size

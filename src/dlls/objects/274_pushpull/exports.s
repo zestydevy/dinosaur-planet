@@ -8,13 +8,13 @@ _exports:
 .dword dll_274_dtor
 
 # export table
-/*0*/ .dword dll_274_create
-/*1*/ .dword dll_274_update
-/*2*/ .dword dll_274_func_87C
-/*3*/ .dword dll_274_draw
-/*4*/ .dword dll_274_destroy
+/*0*/ .dword dll_274_setup
+/*1*/ .dword dll_274_control
+/*2*/ .dword dll_274_update
+/*3*/ .dword dll_274_print
+/*4*/ .dword dll_274_free
 /*5*/ .dword dll_274_get_model_flags
-/*6*/ .dword dll_274_get_state_size
+/*6*/ .dword dll_274_get_data_size
 /*7*/ .dword dll_274_func_1190
 /*8*/ .dword dll_274_func_176C
 /*9*/ .dword dll_274_func_1814

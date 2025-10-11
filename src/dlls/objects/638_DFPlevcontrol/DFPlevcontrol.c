@@ -28,7 +28,7 @@ static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3);
 typedef struct {
 s16 unk0;   
 u8 _unk2[4];
-} DFPTLevelControlState;
+} DFPTLevelControl_Data;
 
 // offset: 0x0 | ctor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_ctor.s")
@@ -37,7 +37,7 @@ u8 _unk2[4];
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_dtor.s")
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
+void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
     u8 mapSetup;
 
     obj_add_object_type(self, OBJTYPE_10);
@@ -72,16 +72,16 @@ void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x260 | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_260.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_control.s")
 
 // offset: 0x51C | func: 2 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_51C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_update.s")
 
 // offset: 0x528 | func: 3 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_528.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_print.s")
 
 // offset: 0x540 | func: 4 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_540.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_free.s")
 
 // offset: 0x5C0 | func: 5 | export: 5
 u32 dll_638_get_model_flags(Object *self) {
@@ -89,8 +89,8 @@ u32 dll_638_get_model_flags(Object *self) {
 }
 
 // offset: 0x5D0 | func: 6 | export: 6
-u32 dll_638_get_state_size(Object *self, u32 a1) {
-    return sizeof(DFPTLevelControlState);
+u32 dll_638_get_data_size(Object *self, u32 a1) {
+    return sizeof(DFPTLevelControl_Data);
 }
 
 // offset: 0x5E4 | func: 7 | export: 7
@@ -98,21 +98,21 @@ u32 dll_638_get_state_size(Object *self, u32 a1) {
 
 // offset: 0x62C | func: 8
 static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
-    DFPTLevelControlState *state;
+    DFPTLevelControl_Data *objdata;
     DLL_210_Player *dll;
     Object *player;
     s16 delay;
     s16 timerValueOriginal;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
-    timerValueOriginal = state->unk0;
+    timerValueOriginal = objdata->unk0;
     if (timerValueOriginal > 0){
         delay = ((s32) delayFloat);
 
         if (!(DLL_210_Player *) player->dll){} //@fake?
 
-        state->unk0 = timerValueOriginal - (delay & 0xFFFF);
+        objdata->unk0 = timerValueOriginal - (delay & 0xFFFF);
         ((DLL_210_Player *) player->dll)->vtbl->func72(player, 0x51E, timerValueOriginal);
     }
     return 0;

@@ -8,10 +8,10 @@ _exports:
 .dword DBdiamond_dtor
 
 # export table
-.dword DBdiamond_create
+.dword DBdiamond_setup
+.dword DBdiamond_control
 .dword DBdiamond_update
-.dword DBdiamond_func_204
-.dword DBdiamond_draw
-.dword DBdiamond_destroy
+.dword DBdiamond_print
+.dword DBdiamond_free
 .dword DBdiamond_get_model_flags
-.dword DBdiamond_get_state_size
+.dword DBdiamond_get_data_size

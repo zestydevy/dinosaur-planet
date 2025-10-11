@@ -16,10 +16,10 @@ typedef struct{
 /*10*/ s32 unk10;
 /*14*/ s16 shakeSoundTimer;
 /*16*/ s8 unk16[0x28 - 0x16];
-} SmallBasketState;
+} SmallBasket_Data;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s8 yaw;
 /*19*/ s8 storedItemID;
 /*1A*/ s8 unk1A;
@@ -29,7 +29,7 @@ typedef struct {
 /*1E*/ s8 unk1E;
 /*1F*/ s8 unk1F;
 /*20*/ s16 autoThrowRadius;
-} SmallBasketCreateInfo;
+} SmallBasket_Setup;
 
 /*0x0*/ static s32 _data_0[] = {
     0, 0, 0, 0, 0, 0, 0, 0
@@ -44,29 +44,29 @@ void dll_295_ctor(void *dll) { }
 void dll_295_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_295_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_create.s")
+void dll_295_setup(Object *self, ObjSetup* setup, s32 arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_setup.s")
 
 // offset: 0x1B8 | func: 1 | export: 1
-void dll_295_update(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_update.s")
+void dll_295_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_control.s")
 
 // offset: 0xC0C | func: 2 | export: 2
-void dll_295_func_C0C(Object *self) { }
+void dll_295_update(Object *self) { }
 
 // offset: 0xC18 | func: 3 | export: 3
-void dll_295_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_draw.s")
+void dll_295_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_print.s")
 
 // offset: 0xD04 | func: 4 | export: 4
-void dll_295_destroy(Object* self, s32 arg1) {
-    SmallBasketState* state = self->state;
+void dll_295_free(Object* self, s32 arg1) {
+    SmallBasket_Data* objdata = self->data;
 
     gDLL_14_Modgfx->vtbl->func5(self);
     dll_unload((void*)_data_0[0]);
-    if (state->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
-        state->soundHandle = 0;
+    if (objdata->soundHandle) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        objdata->soundHandle = 0;
     }
 }
 
@@ -76,8 +76,8 @@ u32 dll_295_get_model_flags(Object* self) {
 }
 
 // offset: 0xDAC | func: 6 | export: 6
-u32 dll_295_get_state_size(Object *self, u32 a1) {
-    return sizeof(SmallBasketState);
+u32 dll_295_get_data_size(Object *self, u32 a1) {
+    return sizeof(SmallBasket_Data);
 }
 
 // offset: 0xDC0 | func: 7

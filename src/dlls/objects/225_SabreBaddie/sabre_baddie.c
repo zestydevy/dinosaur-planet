@@ -13,7 +13,7 @@ typedef struct {
 /*349*/ s8 unk349[0x3B6 - 0x349];
 /*3B6*/ s16 unk3B6;
 /*3B6*/ s8 unk3B8[0x3FC - 0x3B8];
-} SabreBaddieState;
+} SabreBaddie_Data;
 
 /*0x0*/ static u32 _data_0[] = {
     0x00990000, 0x0000000b, 0x01ff0000, 0x3c9374bc, 0xbf800000, 0xbf800000, 0xbf800000, 0x3e4ccccd, 
@@ -63,24 +63,24 @@ void dll_225_ctor(void *dll);
 void dll_225_dtor(void *dll) { }
 
 // offset: 0x178 | func: 1 | export: 0
-void dll_225_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_create.s")
+void dll_225_setup(Object *self, ObjSetup* setup, s32 arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_setup.s")
 
 // offset: 0x2A8 | func: 2 | export: 1
+void dll_225_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_control.s")
+
+// offset: 0x450 | func: 3 | export: 2
 void dll_225_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_update.s")
 
-// offset: 0x450 | func: 3 | export: 2
-void dll_225_func_450(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_450.s")
-
 // offset: 0x4A0 | func: 4 | export: 3
-void dll_225_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_draw.s")
+void dll_225_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_print.s")
 
 // offset: 0x500 | func: 5 | export: 4
-void dll_225_destroy(Object *self, s32 a1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_destroy.s")
+void dll_225_free(Object *self, s32 a1);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_free.s")
 
 // offset: 0x5A4 | func: 6 | export: 5
 u32 dll_225_get_model_flags(Object *self) {
@@ -88,8 +88,8 @@ u32 dll_225_get_model_flags(Object *self) {
 }
 
 // offset: 0x5B4 | func: 7 | export: 6
-u32 dll_225_get_state_size(Object *self, u32 a1) {
-    return sizeof(SabreBaddieState);
+u32 dll_225_get_data_size(Object *self, u32 a1) {
+    return sizeof(SabreBaddie_Data);
 }
 
 // offset: 0x5C8 | func: 8
@@ -150,26 +150,26 @@ u32 dll_225_get_state_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_func_1F20.s")
 
 // offset: 0x1F38 | func: 27
-s32 dll_225_func_1F38(Object* self, SabreBaddieState* state, s32 arg2) {
-    SabreBaddieState* state2;
+s32 dll_225_func_1F38(Object* self, SabreBaddie_Data* objdata, s32 arg2) {
+    SabreBaddie_Data* objdata2;
 
-    state2 = self->state;
+    objdata2 = self->data;
 
-    if (state->unk348 <= 0) {
+    if (objdata->unk348 <= 0) {
         return 5;
     }
 
-    if (state->unk348 < 5) {
+    if (objdata->unk348 < 5) {
         main_set_bits(0x391, 1);
-        state->unk348 = 1;
+        objdata->unk348 = 1;
         return 3;
     }
 
-    if (state->unk33A) {
-        if (state->unk348 < rand_next(2, 4)) {
+    if (objdata->unk33A) {
+        if (objdata->unk348 < rand_next(2, 4)) {
             return 4;
         }
-        state2->unk3B6 = 300;
+        objdata2->unk3B6 = 300;
         return 8;
     }
     return 0;

@@ -3,23 +3,23 @@
 #include "sys/objanim.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unk18;
     s16 unk1A;
     s16 unk1C;
     s16 unk1E;
     s16 unk20;
-} DFP_SpellPlace_CreateInfo;
+} DFP_SpellPlace_Setup;
 
 typedef struct {
     s16 unk0;
     s16 unk2;
     u8 unk4;
-} DLL652_State;
+} DLL652_Data;
 
 static void dll_652_func_254(Object* self);
 static void dll_652_func_364(Object* self);
-static int dll_652_func_45C(Object* a0, Object* a1, AnimObjState* a2, void* a3);
+static int dll_652_func_45C(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
 
 // offset: 0x0 | ctor
 void dll_652_ctor(void *dll) { }
@@ -28,16 +28,16 @@ void dll_652_ctor(void *dll) { }
 void dll_652_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_652_create(Object* self, DFP_SpellPlace_CreateInfo* createInfo, s32 arg2) {
-    DLL652_State* state;
+void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
+    DLL652_Data* objdata;
 
-    state = self->state;
-    self->srt.yaw = createInfo->unk18 << 8;
+    objdata = self->data;
+    self->srt.yaw = setup->unk18 << 8;
     self->unk0xbc = (ObjectCallback)dll_652_func_45C;
-    state->unk0 = createInfo->unk1E;
-    state->unk2 = createInfo->unk20;
-    if (main_get_bits(state->unk2) != 0 && main_get_bits(state->unk0) != 0) {
-        state->unk4 = 1;
+    objdata->unk0 = setup->unk1E;
+    objdata->unk2 = setup->unk20;
+    if (main_get_bits(objdata->unk2) != 0 && main_get_bits(objdata->unk0) != 0) {
+        objdata->unk4 = 1;
     } else {
         self->unk0xaf |= 8;
     }
@@ -45,7 +45,7 @@ void dll_652_create(Object* self, DFP_SpellPlace_CreateInfo* createInfo, s32 arg
 }
 
 // offset: 0xE0 | func: 1 | export: 1
-void dll_652_update(Object* self) {
+void dll_652_control(Object* self) {
     Object* player;
     u8 mapSetupID;
 
@@ -64,13 +64,13 @@ void dll_652_update(Object* self) {
 }
 
 // offset: 0x1C4 | func: 2 | export: 2
-void dll_652_func_1C4(Object *self) { }
+void dll_652_update(Object *self) { }
 
 // offset: 0x1D0 | func: 3 | export: 3
-void dll_652_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void dll_652_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x1E8 | func: 4 | export: 4
-void dll_652_destroy(Object* self, s32 a1) {
+void dll_652_free(Object* self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
@@ -80,50 +80,50 @@ u32 dll_652_get_model_flags(Object *self) {
 }
 
 // offset: 0x240 | func: 6 | export: 6
-u32 dll_652_get_state_size(Object *self, u32 a1) {
-    return sizeof(DLL652_State);
+u32 dll_652_get_data_size(Object *self, u32 a1) {
+    return sizeof(DLL652_Data);
 }
 
 // offset: 0x254 | func: 7
 static void dll_652_func_254(Object* self) {
-    DLL652_State* state;
+    DLL652_Data* objdata;
     s16 bit2Val;
     s16 bit1Val;
 
-    state = self->state;
-    bit2Val = main_get_bits(state->unk2);
-    bit1Val = main_get_bits(state->unk0);
-    if ((bit1Val == 0) && (bit2Val != 0) && (state->unk4 == 0)) {
+    objdata = self->data;
+    bit2Val = main_get_bits(objdata->unk2);
+    bit1Val = main_get_bits(objdata->unk0);
+    if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unk0xaf &= ~8;
         if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(0x2E8) != 0)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
-            state->unk4 = 1;
+            objdata->unk4 = 1;
             self->unk0xaf |= 8;
-            main_set_bits(state->unk0, 1);
+            main_set_bits(objdata->unk0, 1);
         }
     }
 }
 
 // offset: 0x364 | func: 8
 static void dll_652_func_364(Object* self) {
-    DLL652_State* state;
+    DLL652_Data* objdata;
     s16 bit2Val;
     s16 bit1Val;
 
-    state = (DLL652_State*)self->state;
-    bit2Val = main_get_bits(state->unk2);
-    bit1Val = main_get_bits(state->unk0);
-    if ((bit1Val == 0) && (bit2Val != 0) && (state->unk4 == 0)) {
+    objdata = (DLL652_Data*)self->data;
+    bit2Val = main_get_bits(objdata->unk2);
+    bit1Val = main_get_bits(objdata->unk0);
+    if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unk0xaf &= ~8;
         if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(0x123) != 0)) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
-            state->unk4 = 1;
+            objdata->unk4 = 1;
             self->unk0xaf |= 8;
         }
     }
 }
 
 // offset: 0x45C | func: 9
-static int dll_652_func_45C(Object* a0, Object* a1, AnimObjState* a2, void* a3) {
+static int dll_652_func_45C(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
     return 0;
 }

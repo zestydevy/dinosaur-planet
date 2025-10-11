@@ -20,7 +20,7 @@ void kamerian_flame_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void kamerian_flame_create(Object* self, s32 arg1, s32 arg2) {
+void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
     ObjectStruct64* temp_v0;
     ObjectStruct64* temp_v0_2;
 
@@ -72,7 +72,7 @@ static void kamerian_flame_create_flame_billboards(Object* self) {
 }
 
 // offset: 0x280 | func: 2 | export: 1
-void kamerian_flame_update(Object* self) {
+void kamerian_flame_control(Object* self) {
     s32 dOpacity;
     s32 particleIndex;
     u8 temp_v0;
@@ -122,7 +122,7 @@ void kamerian_flame_update(Object* self) {
 }
 
 // offset: 0x518 | func: 3 | export: 2
-void kamerian_flame_func_518(Object* self) {
+void kamerian_flame_update(Object* self) {
     ObjectHitInfo* objHitInfo;
 
     objHitInfo = self->objhitInfo;
@@ -140,12 +140,12 @@ void kamerian_flame_func_518(Object* self) {
 }
 
 // offset: 0x59C | func: 4 | export: 3
-void kamerian_flame_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
+void kamerian_flame_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
     //no 3D model since it uses billboard particles
 }
 
 // offset: 0x5B4 | func: 5 | export: 4
-void kamerian_flame_destroy(Object* self, s32 arg1) {
+void kamerian_flame_free(Object* self, s32 arg1) {
     if (_bss_4 != 0) {
         gDLL_6_AMSFX->vtbl->func_A1C(_bss_4);
         _bss_4 = 0;
@@ -160,6 +160,6 @@ u32 kamerian_flame_get_model_flags(Object* self){
 }
 
 // offset: 0x678 | func: 7 | export: 6
-u32 kamerian_flame_get_state_size(Object* self, s32 arg1){
+u32 kamerian_flame_get_data_size(Object* self, s32 arg1){
     return 0;
 }

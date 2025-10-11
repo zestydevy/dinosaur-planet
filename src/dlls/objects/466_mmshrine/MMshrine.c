@@ -32,13 +32,13 @@ typedef struct {
 /*11*/ s8 unk11;
 /*12*/ s8 unk12;
 /*13*/ s8 unk13;
-} ShrineState;
+} MMShrine_Data;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s16 unk18;
 /*1A*/ s16 unk1A;
-} ShrineCreateInfo;
+} Shrine_Setup;
 
 typedef struct {
 /*00*/ s8 unk0[0x62 - 0];
@@ -65,24 +65,24 @@ void MMshrine_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_18.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/MMshrine_setup.s")
 
 // offset: 0x1BC | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_1BC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/MMshrine_control.s")
 
 // offset: 0xB3C | func: 2 | export: 2
-void MMshrine_func_B3C(Object *self) {
+void MMshrine_update(Object *self) {
 }
 
 // offset: 0xB48 | func: 3 | export: 3
-void MMshrine_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xB9C | func: 4 | export: 4
-void MMshrine_destroy(Object *self, s32 arg1) {
+void MMshrine_free(Object *self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_5_AMSEQ->vtbl->func13(3, 0);
     gDLL_5_AMSEQ->vtbl->func13(2, 0);
@@ -94,8 +94,8 @@ u32 MMshrine_get_model_flags(Object *self) {
 }
 
 // offset: 0xC3C | func: 6 | export: 6
-u32 MMshrine_get_state_size(Object *self, s32 arg1) {
-    return sizeof(ShrineState);
+u32 MMshrine_get_data_size(Object *self, s32 arg1) {
+    return sizeof(MMShrine_Data);
 }
 
 // offset: 0xC50 | func: 7
@@ -103,28 +103,28 @@ u32 MMshrine_get_state_size(Object *self, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_C50.s")
 #else
 s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
-    ShrineState* state;
+    MMShrine_Data* objdata;
     Object* player;
     s16 temp_v0;
     UnkShrineStruct* var_s2;
     s32 var_s3;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
     
     arg2->unk7A = -1;
     arg2->unk62 = 0;
     
-    if (state->unkA) {
-        state->unk8_s16 += state->unkA;
-        if (state->unk8_s16 < 2 && state->unkA <= 0) {
-            state->unk8_s16 = 1;
-            state->unkA = 0;
-        } else if (state->unk8_s16 >= 0x46 && state->unkA >= 0) {
-            state->unk8_s16 = 0x46;
-            state->unkA = 0;
+    if (objdata->unkA) {
+        objdata->unk8_s16 += objdata->unkA;
+        if (objdata->unk8_s16 < 2 && objdata->unkA <= 0) {
+            objdata->unk8_s16 = 1;
+            objdata->unkA = 0;
+        } else if (objdata->unk8_s16 >= 0x46 && objdata->unkA >= 0) {
+            objdata->unk8_s16 = 0x46;
+            objdata->unkA = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(3, (u8)state->unk8_s16);
+        gDLL_5_AMSEQ->vtbl->func13(3, (u8)objdata->unk8_s16);
     }
 
     for (var_s3 = 0; var_s3 < arg2->unk98; var_s3++){
@@ -140,18 +140,18 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
                 }
                 break;
             case 3:
-                state->unk10 = 1;
+                objdata->unk10 = 1;
                 break;
             case 4:
-                state->unk2 = 0;
+                objdata->unk2 = 0;
                 break;
             case 5:
-                state->unkF = 5;
-                state->unk10 = 2;
+                objdata->unkF = 5;
+                objdata->unk10 = 2;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 6:
-                state->unk10 = 3;
+                objdata->unk10 = 3;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 7:
@@ -159,7 +159,7 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
                 break;
             case 8:
                 main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-                state->unkA = -3;
+                objdata->unkA = -3;
                 break;
             case 10:
                 main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
@@ -170,8 +170,8 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
                 main_set_bits(BIT_DB_Entered_Shrine_2, 1);
                 break;
             case 11:
-                state->unk8_s16 = 0x64;
-                gDLL_5_AMSEQ->vtbl->func5.withFiveArgs(3, 0x2f, 0x50, ((u8)state->unk8_s16 << 0x10) >> 0x10, 0);
+                objdata->unk8_s16 = 0x64;
+                gDLL_5_AMSEQ->vtbl->func5.withFiveArgs(3, 0x2f, 0x50, ((u8)objdata->unk8_s16 << 0x10) >> 0x10, 0);
                 break;
             case 12:
                 func_80000860(self, self, 0xCE, 0);
@@ -190,13 +190,13 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
         arg2->unk8E[var_s3] = 0;
     }
     
-    if (state->unkF == 8) {
+    if (objdata->unkF == 8) {
         if (vec3_distance(&self->positionMirror, &player->positionMirror) > 10.0f) {
             gDLL_3_Animation->vtbl->func18(arg2->unk63);
-            state->unkF = 7;
+            objdata->unkF = 7;
         } else if (get_masked_buttons(0)) {
             gDLL_3_Animation->vtbl->func18(arg2->unk63);
-            state->unkF = 7;
+            objdata->unkF = 7;
         }
     }
     
@@ -210,18 +210,18 @@ void MMshrine_func_1140(Object *arg0) {
     Object *sp54;
     u32 message;
     void *outMesgArg;
-    ShrineState *state;
+    MMShrine_Data *objdata;
 
-    state = arg0->state;
+    objdata = arg0->data;
     outMesgArg = 0;
 
     while (obj_recv_mesg(arg0, &message, &sp54, &outMesgArg)){
         switch (message) {
             case 0x30005:
-                state->unk6 = -3;
+                objdata->unk6 = -3;
                 break;
             case 0x30006:
-                state->unk6 = 0x10;
+                objdata->unk6 = 0x10;
                 break;
         }
     }

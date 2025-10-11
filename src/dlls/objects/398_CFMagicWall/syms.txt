@@ -1,13 +1,13 @@
 .text = 0x0:
 CFMagicWall_ctor = 0x0;
 CFMagicWall_dtor = 0xC;
-CFMagicWall_create = 0x18;
-CFMagicWall_update = 0x5C;
-CFMagicWall_func_2C0 = 0x2C0;
-CFMagicWall_draw = 0x2CC;
-CFMagicWall_destroy = 0x320;
+CFMagicWall_setup = 0x18;
+CFMagicWall_control = 0x5C;
+CFMagicWall_update = 0x2C0;
+CFMagicWall_print = 0x2CC;
+CFMagicWall_free = 0x320;
 CFMagicWall_get_model_flags = 0x360;
-CFMagicWall_get_state_size = 0x370;
+CFMagicWall_get_data_size = 0x370;
 CFMagicWall_func_384 = 0x384;
 
 .rodata = 0x4E4:

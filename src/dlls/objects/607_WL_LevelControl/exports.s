@@ -8,10 +8,10 @@ _exports:
 .dword WL_LevelControl_dtor
 
 # export table
-.dword WL_LevelControl_create
+.dword WL_LevelControl_setup
+.dword WL_LevelControl_control
 .dword WL_LevelControl_update
-.dword WL_LevelControl_func_394
-.dword WL_LevelControl_draw
-.dword WL_LevelControl_destroy
+.dword WL_LevelControl_print
+.dword WL_LevelControl_free
 .dword WL_LevelControl_get_model_flags
-.dword WL_LevelControl_get_state_size
+.dword WL_LevelControl_get_data_size

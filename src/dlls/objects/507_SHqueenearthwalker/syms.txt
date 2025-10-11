@@ -1,13 +1,13 @@
 .text = 0x0:
 SHqueenearthwalker_ctor = 0x0;
 SHqueenearthwalker_dtor = 0xC;
-SHqueenearthwalker_create = 0x18;
-SHqueenearthwalker_update = 0xA0;
-SHqueenearthwalker_func_464 = 0x464;
-SHqueenearthwalker_draw = 0x470;
-SHqueenearthwalker_destroy = 0x4C4;
+SHqueenearthwalker_setup = 0x18;
+SHqueenearthwalker_control = 0xA0;
+SHqueenearthwalker_update = 0x464;
+SHqueenearthwalker_print = 0x470;
+SHqueenearthwalker_free = 0x4C4;
 SHqueenearthwalker_get_model_flags = 0x4D4;
-SHqueenearthwalker_get_state_size = 0x4E4;
+SHqueenearthwalker_get_data_size = 0x4E4;
 SHqueenearthwalker_func_4F8 = 0x4F8;
 
 .rodata = 0x71C:

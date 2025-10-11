@@ -5,7 +5,7 @@
 #include "dll.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s16 unk18;
     s16 unk1A;
     s16 unk1C;
@@ -14,13 +14,13 @@ typedef struct {
     u8 unk20;
     u8 unk21;
     s16 unk22;
-} CFMainSlideDoor_CreateInfo;
+} CFMainSlideDoor_Setup;
 
 typedef struct {
     u8 unk0;
-} CFMainSlideDoor_State;
+} CFMainSlideDoor_Data;
 
-static int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObjState* a2, void* a3);
+static int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
 
 // offset: 0x0 | ctor
 void CFMainSlideDoor_ctor(void *dll) { }
@@ -29,48 +29,48 @@ void CFMainSlideDoor_ctor(void *dll) { }
 void CFMainSlideDoor_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFMainSlideDoor_create(Object* self, CFMainSlideDoor_CreateInfo* createInfo, s32 arg2) {
-    CFMainSlideDoor_State* state;
+void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2) {
+    CFMainSlideDoor_Data* objdata;
 
     self->unk0xdc = 0;
-    self->srt.yaw = createInfo->unk1F << 8;
+    self->srt.yaw = setup->unk1F << 8;
     self->unk0xbc = (ObjectCallback)CFMainSlideDoor_func_268;
-    self->srt.scale = createInfo->unk21 * 0.015625f;
+    self->srt.scale = setup->unk21 * 0.015625f;
     self->srt.scale *= self->def->scale;
-    state = (CFMainSlideDoor_State*)self->state;
-    state->unk0 = vec3_distance_xz(&self->positionMirror, &get_player()->positionMirror) < 130.0f;
+    objdata = (CFMainSlideDoor_Data*)self->data;
+    objdata->unk0 = vec3_distance_xz(&self->positionMirror, &get_player()->positionMirror) < 130.0f;
 }
 
 // offset: 0x108 | func: 1 | export: 1
-void CFMainSlideDoor_update(Object* self) {
-    CFMainSlideDoor_State* state;
-    CFMainSlideDoor_CreateInfo* createInfo;
+void CFMainSlideDoor_control(Object* self) {
+    CFMainSlideDoor_Data* objdata;
+    CFMainSlideDoor_Setup* setup;
 
     if (self->unk0xdc == 0) {
-        createInfo = (CFMainSlideDoor_CreateInfo*)self->createInfo;
-        state = (CFMainSlideDoor_State*)self->state;
-        if ((createInfo->unk1C != 0) && (state->unk0 != 0)) {
-            gDLL_3_Animation->vtbl->func20(self, createInfo->unk1C);
+        setup = (CFMainSlideDoor_Setup*)self->setup;
+        objdata = (CFMainSlideDoor_Data*)self->data;
+        if ((setup->unk1C != 0) && (objdata->unk0 != 0)) {
+            gDLL_3_Animation->vtbl->func20(self, setup->unk1C);
         }
-        if (createInfo->unk1E != -1) {
-            gDLL_3_Animation->vtbl->func17(createInfo->unk1E, self, -1);
+        if (setup->unk1E != -1) {
+            gDLL_3_Animation->vtbl->func17(setup->unk1E, self, -1);
         }
         self->unk0xdc = 1;
     }
 }
 
 // offset: 0x1D4 | func: 2 | export: 2
-void CFMainSlideDoor_func_1D4(Object *self) { }
+void CFMainSlideDoor_update(Object *self) { }
 
 // offset: 0x1E0 | func: 3 | export: 3
-void CFMainSlideDoor_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CFMainSlideDoor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x234 | func: 4 | export: 4
-void CFMainSlideDoor_destroy(Object *self, s32 a1) { }
+void CFMainSlideDoor_free(Object *self, s32 a1) { }
 
 // offset: 0x244 | func: 5 | export: 5
 u32 CFMainSlideDoor_get_model_flags(Object *self) {
@@ -78,14 +78,14 @@ u32 CFMainSlideDoor_get_model_flags(Object *self) {
 }
 
 // offset: 0x254 | func: 6 | export: 6
-u32 CFMainSlideDoor_get_state_size(Object *self, u32 a1) {
-    return sizeof(CFMainSlideDoor_State);
+u32 CFMainSlideDoor_get_data_size(Object *self, u32 a1) {
+    return sizeof(CFMainSlideDoor_Data);
 }
 
 // offset: 0x268 | func: 7
-int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObjState* a2, void* a3) {
-    CFMainSlideDoor_State* state;
-    CFMainSlideDoor_CreateInfo* createInfo;
+int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
+    CFMainSlideDoor_Data* objdata;
+    CFMainSlideDoor_Setup* setup;
     Object* player;
     Object* sidekick;
     s32 var_t6;
@@ -103,33 +103,33 @@ int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObjState* a2, void* a3)
     } else {
         var_t7 = 0;
     }
-    state = (CFMainSlideDoor_State*)a0->state;
-    createInfo = (CFMainSlideDoor_CreateInfo*)a0->createInfo;
-    if (state->unk0 == 0) {
-        if (main_get_bits(createInfo->unk18) != 0) {
-            if (createInfo->unk22 == -1 || main_get_bits(createInfo->unk22) != 0) {
-                main_set_bits(createInfo->unk1A, 1);
+    objdata = (CFMainSlideDoor_Data*)a0->data;
+    setup = (CFMainSlideDoor_Setup*)a0->setup;
+    if (objdata->unk0 == 0) {
+        if (main_get_bits(setup->unk18) != 0) {
+            if (setup->unk22 == -1 || main_get_bits(setup->unk22) != 0) {
+                main_set_bits(setup->unk1A, 1);
                 if (var_t6 != 0 || var_t7 != 0) {
-                    state->unk0 = 2;
+                    objdata->unk0 = 2;
                 }
             }
         }
-    } else if (state->unk0 == 1) {
-        if (main_get_bits(createInfo->unk18) != 0 || (createInfo->unk22 != -1 && main_get_bits(createInfo->unk22) != 0)) {
+    } else if (objdata->unk0 == 1) {
+        if (main_get_bits(setup->unk18) != 0 || (setup->unk22 != -1 && main_get_bits(setup->unk22) != 0)) {
             if ((var_t6 == 0) && (var_t7 == 0)) {
-                state->unk0 = 3;
+                objdata->unk0 = 3;
             }
         }
     }
-    if (state->unk0 == 2) {
+    if (objdata->unk0 == 2) {
         if (a2->unk8D == 2) {
-            state->unk0 = 1;
+            objdata->unk0 = 1;
         }
-    } else if (state->unk0 == 3) {
+    } else if (objdata->unk0 == 3) {
         if (a2->unk8D == 1) {
-            state->unk0 = 0;
+            objdata->unk0 = 0;
         }
     }
     
-    return !(state->unk0 == 2) && !(state->unk0 == 3);
+    return !(objdata->unk0 == 2) && !(objdata->unk0 == 3);
 }

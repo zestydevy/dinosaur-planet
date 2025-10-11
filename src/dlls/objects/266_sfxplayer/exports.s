@@ -8,10 +8,10 @@ _exports:
 .dword sfxplayer_dtor
 
 # export table
-.dword sfxplayer_create
+.dword sfxplayer_setup
+.dword sfxplayer_control
 .dword sfxplayer_update
-.dword sfxplayer_func_458
-.dword sfxplayer_draw
-.dword sfxplayer_destroy
+.dword sfxplayer_print
+.dword sfxplayer_free
 .dword sfxplayer_get_model_flags
-.dword sfxplayer_get_state_size
+.dword sfxplayer_get_data_size

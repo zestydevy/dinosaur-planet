@@ -8,10 +8,10 @@ _exports:
 .dword SHswapstone_dtor
 
 # export table
-.dword SHswapstone_create
+.dword SHswapstone_setup
+.dword SHswapstone_control
 .dword SHswapstone_update
-.dword SHswapstone_func_278
-.dword SHswapstone_draw
-.dword SHswapstone_destroy
+.dword SHswapstone_print
+.dword SHswapstone_free
 .dword SHswapstone_get_model_flags
-.dword SHswapstone_get_state_size
+.dword SHswapstone_get_data_size

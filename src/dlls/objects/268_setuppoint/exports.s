@@ -8,10 +8,10 @@ _exports:
 .dword setuppoint_dtor
 
 # export table
-.dword setuppoint_create
+.dword setuppoint_setup
+.dword setuppoint_control
 .dword setuppoint_update
-.dword setuppoint_func_64
-.dword setuppoint_draw
-.dword setuppoint_destroy
+.dword setuppoint_print
+.dword setuppoint_free
 .dword setuppoint_get_model_flags
-.dword setuppoint_get_state_size
+.dword setuppoint_get_data_size

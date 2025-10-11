@@ -8,8 +8,8 @@
 DLL_INTERFACE(DLL_4_race) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
-/*1*/ void (*func1)(ObjCreateInfo *);
-/*2*/ void (*func2)(ObjCreateInfo *);
+/*1*/ void (*func1)(ObjSetup *);
+/*2*/ void (*func2)(ObjSetup *);
 /*3*/ UnknownDLLFunc func3;
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;

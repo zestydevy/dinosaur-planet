@@ -8,10 +8,10 @@ _exports:
 .dword dll_652_dtor
 
 # export table
-/*0*/ .dword dll_652_create
-/*1*/ .dword dll_652_update
-/*2*/ .dword dll_652_func_1C4
-/*3*/ .dword dll_652_draw
-/*4*/ .dword dll_652_destroy
+/*0*/ .dword dll_652_setup
+/*1*/ .dword dll_652_control
+/*2*/ .dword dll_652_update
+/*3*/ .dword dll_652_print
+/*4*/ .dword dll_652_free
 /*5*/ .dword dll_652_get_model_flags
-/*6*/ .dword dll_652_get_state_size
+/*6*/ .dword dll_652_get_data_size

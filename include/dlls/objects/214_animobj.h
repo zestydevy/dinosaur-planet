@@ -7,7 +7,7 @@
 #include "dll_def.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     /** isObjSeq2CurveIndex (1 bit) | sequenceID (11 bits) | actorIndex (4 bits) */
     s16 sequenceIdBitfield;
     s16 unk1A;
@@ -18,10 +18,10 @@ typedef struct {
     s8 unk22;
     s8 unk23;
     u8 unk24;
-} AnimObjCreateInfo;
+} AnimObjSetup;
 
-typedef void (*AnimObjStateF4Callback)(Object *arg0, s32 arg1, s32 arg2);
-typedef s32 (*AnimObjStateF8Callback)(Object *arg0, s32 arg1, s32 arg2);
+typedef void (*AnimObj_DataF4Callback)(Object *arg0, s32 arg1, s32 arg2);
+typedef s32 (*AnimObj_DataF8Callback)(Object *arg0, s32 arg1, s32 arg2);
 
 typedef struct {
 /*00*/ s8 unk0[0x24 - 0];
@@ -63,9 +63,9 @@ typedef struct {
 /*A4*/ AnimCurvesKeyframe* animCurvesKeyframes;
 /*A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS];
 /*CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
-/*F4*/ AnimObjStateF4Callback unkF4;
-/*F8*/ AnimObjStateF8Callback unkF8;
+/*F4*/ AnimObj_DataF4Callback unkF4;
+/*F8*/ AnimObj_DataF8Callback unkF8;
 /*FC*/ s8 unkFC[0x144 - 0xFC];
-} AnimObjState;
+} AnimObj_Data;
 
 #endif

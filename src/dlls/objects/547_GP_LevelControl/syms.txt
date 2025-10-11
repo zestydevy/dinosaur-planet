@@ -1,13 +1,13 @@
 .text = 0x0:
 GP_LevelControl_ctor = 0x0;
 GP_LevelControl_dtor = 0xC;
-GP_LevelControl_create = 0x18;
-GP_LevelControl_update = 0xF0;
-GP_LevelControl_func_434 = 0x434;
-GP_LevelControl_draw = 0x440;
-GP_LevelControl_destroy = 0x494;
+GP_LevelControl_setup = 0x18;
+GP_LevelControl_control = 0xF0;
+GP_LevelControl_update = 0x434;
+GP_LevelControl_print = 0x440;
+GP_LevelControl_free = 0x494;
 GP_LevelControl_get_model_flags = 0x4A4;
-GP_LevelControl_get_state_size = 0x4B4;
+GP_LevelControl_get_data_size = 0x4B4;
 GP_LevelControl_func_4C8 = 0x4C8;
 GP_LevelControl_func_58C = 0x58C;
 

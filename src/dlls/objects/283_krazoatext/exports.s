@@ -8,11 +8,11 @@ _exports:
 .dword krazoatext_dtor
 
 # export table
-.dword krazoatext_create
+.dword krazoatext_setup
+.dword krazoatext_control
 .dword krazoatext_update
-.dword krazoatext_func_324
-.dword krazoatext_draw
-.dword krazoatext_destroy
-.dword krazoatext_func_414
-.dword krazoatext_get_state_size
 .dword krazoatext_print
+.dword krazoatext_free
+.dword krazoatext_get_model_flags
+.dword krazoatext_get_data_size
+.dword krazoatext_print_text

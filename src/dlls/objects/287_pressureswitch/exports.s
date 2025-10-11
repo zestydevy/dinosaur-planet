@@ -8,10 +8,10 @@ _exports:
 .dword pressureswitch_dtor
 
 # export table
-.dword pressureswitch_create
+.dword pressureswitch_setup
+.dword pressureswitch_control
 .dword pressureswitch_update
-.dword pressureswitch_func_524
-.dword pressureswitch_draw
-.dword pressureswitch_destroy
-.dword pressureswitch_func_604
-.dword pressureswitch_get_state_size
+.dword pressureswitch_print
+.dword pressureswitch_free
+.dword pressureswitch_get_model_flags
+.dword pressureswitch_get_data_size
