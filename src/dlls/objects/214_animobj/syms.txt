@@ -7,4 +7,4 @@ animobj_update = 0x318;
 animobj_print = 0x324;
 animobj_free = 0x378;
 animobj_get_model_flags = 0x484;
-animobj_get_state_size = 0x494;
+animobj_get_data_size = 0x494;

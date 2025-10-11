@@ -76,6 +76,6 @@ u32 cannon_claw_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
-u32 cannon_claw_get_state_size(Object *self, u32 a1) {
+u32 cannon_claw_get_data_size(Object *self, u32 a1) {
     return 0;
 }

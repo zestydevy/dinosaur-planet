@@ -14,7 +14,7 @@ _exports:
 /*3*/ .dword dll_274_print
 /*4*/ .dword dll_274_free
 /*5*/ .dword dll_274_get_model_flags
-/*6*/ .dword dll_274_get_state_size
+/*6*/ .dword dll_274_get_data_size
 /*7*/ .dword dll_274_func_1190
 /*8*/ .dword dll_274_func_176C
 /*9*/ .dword dll_274_func_1814

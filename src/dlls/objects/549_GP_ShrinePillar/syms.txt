@@ -7,7 +7,7 @@ dll_549_update = 0x1D0;
 dll_549_print = 0x1DC;
 dll_549_free = 0x230;
 dll_549_get_model_flags = 0x240;
-dll_549_get_state_size = 0x250;
+dll_549_get_data_size = 0x250;
 dll_549_func_264 = 0x264;
 
 .rodata = 0x5B0:

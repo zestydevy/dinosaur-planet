@@ -14,4 +14,4 @@ _exports:
 .dword dll_782_print
 .dword dll_782_free
 .dword dll_782_get_model_flags
-.dword dll_782_get_state_size
+.dword dll_782_get_data_size

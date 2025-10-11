@@ -14,4 +14,4 @@ _exports:
 .dword VFP_PodiumPoint_print
 .dword VFP_PodiumPoint_free
 .dword VFP_PodiumPoint_get_model_flags
-.dword VFP_PodiumPoint_get_state_size
+.dword VFP_PodiumPoint_get_data_size

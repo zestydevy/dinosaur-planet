@@ -14,4 +14,4 @@ _exports:
 /*3*/ .dword SHqueenearthwalker_print
 /*4*/ .dword SHqueenearthwalker_free
 /*5*/ .dword SHqueenearthwalker_get_model_flags
-/*6*/ .dword SHqueenearthwalker_get_state_size
+/*6*/ .dword SHqueenearthwalker_get_data_size

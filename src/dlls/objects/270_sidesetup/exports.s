@@ -14,4 +14,4 @@ _exports:
 .dword sidesetup_print
 .dword sidesetup_free
 .dword sidesetup_get_model_flags
-.dword sidesetup_get_state_size
+.dword sidesetup_get_data_size

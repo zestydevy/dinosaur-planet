@@ -7,7 +7,7 @@ dll_782_update = 0xF38;
 dll_782_print = 0xF44;
 dll_782_free = 0xF98;
 dll_782_get_model_flags = 0xFA8;
-dll_782_get_state_size = 0xFDC;
+dll_782_get_data_size = 0xFDC;
 dll_782_func_FF0 = 0xFF0;
 
 .rodata = 0x1230:

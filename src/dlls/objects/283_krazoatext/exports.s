@@ -14,5 +14,5 @@ _exports:
 .dword krazoatext_print
 .dword krazoatext_free
 .dword krazoatext_get_model_flags
-.dword krazoatext_get_state_size
+.dword krazoatext_get_data_size
 .dword krazoatext_print_text

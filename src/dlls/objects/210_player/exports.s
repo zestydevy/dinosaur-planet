@@ -14,7 +14,7 @@ _exports:
 .dword dll_210_func_307C
 .dword dll_210_func_3E50
 .dword dll_210_get_model_flags
-.dword dll_210_get_state_size
+.dword dll_210_get_data_size
 .dword dll_210_func_1CC4C
 .dword dll_210_func_1D1F0
 .dword dll_210_func_1D210

@@ -7,7 +7,7 @@ SHqueenearthwalker_update = 0x464;
 SHqueenearthwalker_print = 0x470;
 SHqueenearthwalker_free = 0x4C4;
 SHqueenearthwalker_get_model_flags = 0x4D4;
-SHqueenearthwalker_get_state_size = 0x4E4;
+SHqueenearthwalker_get_data_size = 0x4E4;
 SHqueenearthwalker_func_4F8 = 0x4F8;
 
 .rodata = 0x71C:

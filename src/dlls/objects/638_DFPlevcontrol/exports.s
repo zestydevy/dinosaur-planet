@@ -14,5 +14,5 @@ _exports:
 .dword dll_638_print
 .dword dll_638_free
 .dword dll_638_get_model_flags
-.dword dll_638_get_state_size
+.dword dll_638_get_data_size
 .dword dll_638_func_5E4

@@ -14,4 +14,4 @@ _exports:
 .dword kamerian_flame_print
 .dword kamerian_flame_free
 .dword kamerian_flame_get_model_flags
-.dword kamerian_flame_get_state_size
+.dword kamerian_flame_get_data_size

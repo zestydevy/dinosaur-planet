@@ -14,6 +14,6 @@ _exports:
 .dword SC_levelcontrol_print
 .dword SC_levelcontrol_free
 .dword SC_levelcontrol_get_model_flags
-.dword SC_levelcontrol_get_state_size
+.dword SC_levelcontrol_get_data_size
 .dword SC_levelcontrol_func_660
 .dword SC_levelcontrol_func_8A4

@@ -7,7 +7,7 @@ VFP_lavastar_update = 0x2BC;
 VFP_lavastar_print = 0x2C8;
 VFP_lavastar_free = 0x2E0;
 VFP_lavastar_get_model_flags = 0x390;
-VFP_lavastar_get_state_size = 0x3A0;
+VFP_lavastar_get_data_size = 0x3A0;
 
 .rodata = 0x408:
 

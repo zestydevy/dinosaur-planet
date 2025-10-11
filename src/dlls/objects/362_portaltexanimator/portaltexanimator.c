@@ -35,9 +35,9 @@ typedef struct {
 /*19*/ s8 unk19;
 /*1A*/ s8 unk1A;
 /*1B*/ s8 unk1B;
-} PortalTexAnimatorState;
+} PortalTexAnimator_Data;
 
-static void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTexAnimator_Setup* setup, Block* block);
+static void portaltexanimator_animate_vertices(PortalTexAnimator_Data* objdata, PortalTexAnimator_Setup* setup, Block* block);
 
 // offset: 0x0 | ctor
 void portaltexanimator_ctor(void* dll){
@@ -49,30 +49,30 @@ void portaltexanimator_dtor(void* dll){
 
 // offset: 0x18 | func: 0 | export: 0
 void portaltexanimator_setup(Object* self, PortalTexAnimator_Setup* arg1, s32 arg2) {
-    PortalTexAnimatorState* state;
+    PortalTexAnimator_Data* objdata;
 
-    state = self->state;
+    objdata = self->data;
 
-    state->unk19 = -1;
-    state->minDistance = arg1->minDistance;
-    state->maxDistance = arg1->base.loadDistance * 8;
+    objdata->unk19 = -1;
+    objdata->minDistance = arg1->minDistance;
+    objdata->maxDistance = arg1->base.loadDistance * 8;
 }
 
 // offset: 0x78 | func: 1 | export: 1
 void portaltexanimator_control(Object* self) {
-    PortalTexAnimatorState* state;
+    PortalTexAnimator_Data* objdata;
     PortalTexAnimator_Setup* setup;
     Block* block;
     f32 distance;
     f32 blendValue;
 
     setup = (PortalTexAnimator_Setup*)self->setup;
-    state = self->state;
+    objdata = self->data;
 
     //Get the object's local BLOCKS model
     block = func_80044BB0(func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
-        state->blockFound = FALSE;
+        objdata->blockFound = FALSE;
         return;
     }
 
@@ -82,55 +82,55 @@ void portaltexanimator_control(Object* self) {
     }
 
     //Animate tagged shapes' vertex opacity based on player distance
-    if (state->animatedVertexCount == 0) {
-        state->animatorID = setup->animatorID;
-        state->animatedVertexCount = func_8004A528(self, state->animatorID);
+    if (objdata->animatedVertexCount == 0) {
+        objdata->animatorID = setup->animatorID;
+        objdata->animatedVertexCount = func_8004A528(self, objdata->animatorID);
 
-        if (state->animatedVertexCount == 0) {
-            state->animatorID = 0;
+        if (objdata->animatedVertexCount == 0) {
+            objdata->animatorID = 0;
         }
 
         //Bail if no shape animation tag is specified
-        if (!state->animatorID){
+        if (!objdata->animatorID){
             return;
         }
 
-        state->minDistance = setup->minDistance;
-        state->maxDistance = setup->base.loadDistance * 8;
-        state->unkC = setup->minDistance;
+        objdata->minDistance = setup->minDistance;
+        objdata->maxDistance = setup->base.loadDistance * 8;
+        objdata->unkC = setup->minDistance;
 
         if (setup->flagID == -1) {
-            state->enabled = 1;
+            objdata->enabled = 1;
         } else {
-            state->enabled = main_get_bits(setup->flagID);
+            objdata->enabled = main_get_bits(setup->flagID);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity
-        state->vertexOpacity = setup->maxOpacity;
-        portaltexanimator_animate_vertices(state, setup, block); 
+        objdata->vertexOpacity = setup->maxOpacity;
+        portaltexanimator_animate_vertices(objdata, setup, block); 
         block->vtxFlags ^= 1;
-        portaltexanimator_animate_vertices(state, setup, block);
+        portaltexanimator_animate_vertices(objdata, setup, block);
         block->vtxFlags ^= 1;
     } 
 
-    if (state->animatorID) {
-        distance = vec3_distance(&self->positionMirror, &get_player()->positionMirror) - state->minDistance;
+    if (objdata->animatorID) {
+        distance = vec3_distance(&self->positionMirror, &get_player()->positionMirror) - objdata->minDistance;
         if (distance < 0.0f) {
             distance = 0.0f;
         }
 
-        blendValue = distance / (state->maxDistance - state->minDistance);
+        blendValue = distance / (objdata->maxDistance - objdata->minDistance);
         if (blendValue < 0.0f) {
             blendValue = 0.0f;
         }
 
-        state->vertexOpacity = setup->minOpacity + (setup->maxOpacity - setup->minOpacity) * blendValue;
-        portaltexanimator_animate_vertices(state, setup, block);
+        objdata->vertexOpacity = setup->minOpacity + (setup->maxOpacity - setup->minOpacity) * blendValue;
+        portaltexanimator_animate_vertices(objdata, setup, block);
     }
 }
 
 // offset: 0x310 | func: 2
-void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTexAnimator_Setup* setup, Block* block) {
+void portaltexanimator_animate_vertices(PortalTexAnimator_Data* objdata, PortalTexAnimator_Setup* setup, Block* block) {
     BlockShape *shapes;
     Vtx_t *vertices;
     s32 shapeIndex;
@@ -144,13 +144,13 @@ void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTex
     //Iterate over shapes, and update all vertices' alpha on shapes with matching animatorID tag
     while (shapeIndex < block->shapeCount){
 
-        if (state->animatorID == shapes[shapeIndex].unk_0x14){
+        if (objdata->animatorID == shapes[shapeIndex].unk_0x14){
             for (vertexIndex = shapes[shapeIndex].vtxBase; vertexIndex < shapes[shapeIndex + 1].vtxBase; vertexIndex++){
-                vertices[vertexIndex].cn[3] = state->vertexOpacity; //@bug: setting a 16-bit value on an 8-bit colour field
+                vertices[vertexIndex].cn[3] = objdata->vertexOpacity; //@bug: setting a 16-bit value on an 8-bit colour field
             }
 
             //Switch shape's draw flags when opacity is zero
-            if (state->vertexOpacity == 0){
+            if (objdata->vertexOpacity == 0){
                 shapes[shapeIndex].flags |= 0x200000;
                 if (setup->unk21 != 0){
                     shapes[shapeIndex].flags |= 0x800;
@@ -180,10 +180,10 @@ void portaltexanimator_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, T
 
 // offset: 0x474 | func: 5 | export: 4
 void portaltexanimator_free(Object* self, s32 arg1) {
-    PortalTexAnimatorState* state = self->state;
+    PortalTexAnimator_Data* objdata = self->data;
     s32 ptr;
 
-    ptr = state->unk10;
+    ptr = objdata->unk10;
     if (ptr) {
         mmFree((void*)ptr);
     }
@@ -195,8 +195,8 @@ u32 portaltexanimator_get_model_flags(Object* self){
 }
 
 // offset: 0x4D4 | func: 7 | export: 6
-u32 portaltexanimator_get_state_size(Object* self, s32 arg1){
-    return sizeof(PortalTexAnimatorState);
+u32 portaltexanimator_get_data_size(Object* self, s32 arg1){
+    return sizeof(PortalTexAnimator_Data);
 }
 
 /*0x0*/ static const char str_0[] = "%d:%d,%d %d:%d\n";

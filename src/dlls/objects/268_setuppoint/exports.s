@@ -14,4 +14,4 @@ _exports:
 .dword setuppoint_print
 .dword setuppoint_free
 .dword setuppoint_get_model_flags
-.dword setuppoint_get_state_size
+.dword setuppoint_get_data_size

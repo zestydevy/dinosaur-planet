@@ -14,4 +14,4 @@ _exports:
 .dword area_print
 .dword area_free
 .dword area_get_model_flags
-.dword area_get_state_size
+.dword area_get_data_size

@@ -7,4 +7,4 @@ setuppoint_update = 0x64;
 setuppoint_print = 0x70;
 setuppoint_free = 0xC4;
 setuppoint_get_model_flags = 0xD4;
-setuppoint_get_state_size = 0xE4;
+setuppoint_get_data_size = 0xE4;

@@ -7,4 +7,4 @@ animator_update = 0x300;
 animator_print = 0x30C;
 animator_free = 0x324;
 animator_get_model_flags = 0x36C;
-animator_get_state_size = 0x37C;
+animator_get_data_size = 0x37C;

@@ -40,7 +40,7 @@ typedef struct {
 /*1F*/ u8 unk1F;
 /*20*/ f32 unk20;
 /*24*/ f32 unk24;
-} MediumCrateState;
+} MediumCrate_Data;
 
 typedef struct {
     s16 unk0[6];
@@ -73,52 +73,52 @@ void dll_296_dtor(void *dll) { }
 
 // export 0
 void dll_295_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
-    MediumCrateState *state;
+    MediumCrate_Data *objdata;
     idk1 local_10;
     idk2 local_18;
 
     local_10 = _data_20;
     local_18 = _data_2C;
 
-    state = (MediumCrateState*)self->state;
+    objdata = (MediumCrate_Data*)self->data;
 
     self->srt.yaw = setup->unk18 << 8;
-    state->gamebit = setup->gamebit;
+    objdata->gamebit = setup->gamebit;
 
     if (setup->unk1C == 0) {
-        state->unk0 = 0;
+        objdata->unk0 = 0;
     } else if (setup->unk1C == 0xFF) {
-        state->unk0 = -1;
+        objdata->unk0 = -1;
     } else {
-        state->unk0 = setup->unk1C * 60;
+        objdata->unk0 = setup->unk1C * 60;
     }
 
-    if (main_get_bits(state->gamebit) != 0) {
-        state->unk4 = 1.0f;
+    if (main_get_bits(objdata->gamebit) != 0) {
+        objdata->unk4 = 1.0f;
         func_800267A4(self);
     }
 
-    state->unk15 = setup->unk19;
+    objdata->unk15 = setup->unk19;
 
     _data_0 = dll_load(DLL_ID_107, 1, /*runConstructor=*/FALSE);
     _data_4 = dll_load(DLL_ID_106, 1, /*runConstructor=*/FALSE);
 
-    state->unk8 = 0;
-    state->unkE = rand_next(0, 100) + 300;
-    state->unk10 = 400;
-    state->unk16 = setup->unk1A;
+    objdata->unk8 = 0;
+    objdata->unkE = rand_next(0, 100) + 300;
+    objdata->unk10 = 400;
+    objdata->unk16 = setup->unk1A;
 
     self->unk0xb0 |= 0x2000;
     self->srt.yaw = setup->unk18 << 8;
 
     if (self->id == OBJ_MediumBasket) {
-        state->unk15 = local_10.unk0[state->unk15];
-        state->unk18 = 0x6b5;
-        state->unk1A = 0x6b6;
+        objdata->unk15 = local_10.unk0[objdata->unk15];
+        objdata->unk18 = 0x6b5;
+        objdata->unk1A = 0x6b6;
     } else if (self->id == OBJ_MediumMetalCrat) {
-        state->unk15 = local_18.unk0[state->unk15];
-        state->unk18 = 0x372;
-        state->unk1A = 0x371;
+        objdata->unk15 = local_18.unk0[objdata->unk15];
+        objdata->unk18 = 0x372;
+        objdata->unk1A = 0x371;
     }
 
     if (self->ptr0x64 != NULL) {
@@ -135,19 +135,19 @@ void dll_295_update(Object *self) { }
 
 // export 3
 void dll_295_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    MediumCrateState *state;
+    MediumCrate_Data *objdata;
     MediumCrate_Setup *setup;
 
-    state = (MediumCrateState*)self->state;
+    objdata = (MediumCrate_Data*)self->data;
     setup = (MediumCrate_Setup*)self->setup;
 
     if (!gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID)) {
         return;
     }
-    if (state->unkC != 0 && state->unkC < 51) {
+    if (objdata->unkC != 0 && objdata->unkC < 51) {
         return;
     }
-    if (state->unk4 > 0.0f) {
+    if (objdata->unk4 > 0.0f) {
         return;
     }
 
@@ -161,8 +161,8 @@ void dll_295_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         }
     }
 
-    if (state->unk20 != 0) {
-        func_80036FBC(200, 0, 0, state->unk20);
+    if (objdata->unk20 != 0) {
+        func_80036FBC(200, 0, 0, objdata->unk20);
     }
 
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
@@ -170,18 +170,18 @@ void dll_295_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // export 4
 void dll_295_free(Object *self, s32 param2) {
-    MediumCrateState *state;
+    MediumCrate_Data *objdata;
 
-    state = (MediumCrateState*)self->state;
+    objdata = (MediumCrate_Data*)self->data;
 
     gDLL_14_Modgfx->vtbl->func5(self);
 
     dll_unload(_data_0);
     dll_unload(_data_4);
 
-    if (state->unk8 != 0) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->unk8);
-        state->unk8 = 0;
+    if (objdata->unk8 != 0) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+        objdata->unk8 = 0;
     }
 }
 
@@ -191,8 +191,8 @@ u32 dll_296_get_model_flags(Object *self) {
 }
 
 // export 6
-u32 dll_296_get_state_size(Object *self, u32 currentSize) {
-    return sizeof(MediumCrateState);
+u32 dll_296_get_data_size(Object *self, u32 currentSize) {
+    return sizeof(MediumCrate_Data);
 }
 
 typedef struct {
@@ -227,18 +227,18 @@ typedef struct {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/dll_296_func_C50.s")
 #else
-s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
+s32 dll_296_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
     s32 spawnsLeft;
     Object *obj;
     SRT srt;
     f32 magnitude;
     s32 temp;
     
-    spawnsLeft = state->unk16;
+    spawnsLeft = objdata->unk16;
     while (spawnsLeft != 0) {
         spawnsLeft--;
 
-        switch (state->unk15) {
+        switch (objdata->unk15) {
             case 0: {
                 Scorpion_Setup *setup = (Scorpion_Setup*)obj_alloc_create_info(
                     sizeof(Scorpion_Setup), OBJ_Scorpion);
@@ -409,7 +409,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
             case 5:
             case 6: {
                 FoodPickup_Setup *setup;
-                if (state->unk15 == 5) {
+                if (objdata->unk15 == 5) {
                     setup = (FoodPickup_Setup*)obj_alloc_create_info(
                         sizeof(FoodPickup_Setup), OBJ_meatPickup);
                 } else {
@@ -429,7 +429,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
             }
             case 7:
             case 8:
-                main_set_bits(state->gamebit, 1);
+                main_set_bits(objdata->gamebit, 1);
                 break;
         }
     }

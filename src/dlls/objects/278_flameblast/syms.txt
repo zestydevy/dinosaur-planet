@@ -7,6 +7,6 @@ flameblast_update = 0x274;
 flameblast_print = 0x27C;
 flameblast_free = 0x294;
 flameblast_get_model_flags = 0x2EC;
-flameblast_get_state_size = 0x2FC;
+flameblast_get_data_size = 0x2FC;
 
 .rodata = 0x34C:

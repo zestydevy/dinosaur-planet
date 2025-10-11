@@ -7,7 +7,7 @@ Duster_update = 0x754;
 Duster_print = 0x7FC;
 Duster_free = 0x870;
 Duster_get_model_flags = 0x880;
-Duster_get_state_size = 0x890;
+Duster_get_data_size = 0x890;
 
 .rodata = 0x91C:
 str_0 = 0x0; // absolute:0x91C

@@ -14,4 +14,4 @@ _exports:
 .dword VFP_SpellPlace_print
 .dword VFP_SpellPlace_free
 .dword VFP_SpellPlace_get_model_flags
-.dword VFP_SpellPlace_get_state_size
+.dword VFP_SpellPlace_get_data_size

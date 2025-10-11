@@ -14,4 +14,4 @@ _exports:
 /*3*/ .dword SHtricky_print
 /*4*/ .dword SHtricky_free
 /*5*/ .dword SHtricky_get_model_flags
-/*6*/ .dword SHtricky_get_state_size
+/*6*/ .dword SHtricky_get_data_size

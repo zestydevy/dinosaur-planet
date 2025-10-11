@@ -16,7 +16,7 @@ typedef struct{
 /*10*/ s32 unk10;
 /*14*/ s16 shakeSoundTimer;
 /*16*/ s8 unk16[0x28 - 0x16];
-} SmallBasketState;
+} SmallBasket_Data;
 
 typedef struct {
 /*00*/ ObjSetup base;
@@ -60,13 +60,13 @@ void dll_295_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0xD04 | func: 4 | export: 4
 void dll_295_free(Object* self, s32 arg1) {
-    SmallBasketState* state = self->state;
+    SmallBasket_Data* objdata = self->data;
 
     gDLL_14_Modgfx->vtbl->func5(self);
     dll_unload((void*)_data_0[0]);
-    if (state->soundHandle) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
-        state->soundHandle = 0;
+    if (objdata->soundHandle) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+        objdata->soundHandle = 0;
     }
 }
 
@@ -76,8 +76,8 @@ u32 dll_295_get_model_flags(Object* self) {
 }
 
 // offset: 0xDAC | func: 6 | export: 6
-u32 dll_295_get_state_size(Object *self, u32 a1) {
-    return sizeof(SmallBasketState);
+u32 dll_295_get_data_size(Object *self, u32 a1) {
+    return sizeof(SmallBasket_Data);
 }
 
 // offset: 0xDC0 | func: 7

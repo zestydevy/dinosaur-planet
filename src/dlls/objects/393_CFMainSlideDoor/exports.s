@@ -14,4 +14,4 @@ _exports:
 /*3*/ .dword CFMainSlideDoor_print
 /*4*/ .dword CFMainSlideDoor_free
 /*5*/ .dword CFMainSlideDoor_get_model_flags
-/*6*/ .dword CFMainSlideDoor_get_state_size
+/*6*/ .dword CFMainSlideDoor_get_data_size

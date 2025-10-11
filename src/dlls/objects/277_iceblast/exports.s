@@ -14,4 +14,4 @@ _exports:
 .dword iceblast_print
 .dword iceblast_free
 .dword iceblast_get_model_flags
-.dword iceblast_get_state_size
+.dword iceblast_get_data_size

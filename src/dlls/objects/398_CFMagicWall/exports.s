@@ -14,4 +14,4 @@ _exports:
 /*3*/ .dword CFMagicWall_print
 /*4*/ .dword CFMagicWall_free
 /*5*/ .dword CFMagicWall_get_model_flags
-/*6*/ .dword CFMagicWall_get_state_size
+/*6*/ .dword CFMagicWall_get_data_size

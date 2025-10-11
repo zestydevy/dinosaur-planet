@@ -14,4 +14,4 @@ _exports:
 .dword dll_365_print
 .dword dll_365_free
 .dword dll_365_get_model_flags
-.dword dll_365_get_state_size
+.dword dll_365_get_data_size

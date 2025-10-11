@@ -7,7 +7,7 @@ levelname_update = 0x304;
 levelname_print = 0x310;
 levelname_free = 0x480;
 levelname_get_model_flags = 0x4E4;
-levelname_get_state_size = 0x4F4;
+levelname_get_data_size = 0x4F4;
 levelname_anim_callback = 0x508;
 
 .rodata = 0x620:

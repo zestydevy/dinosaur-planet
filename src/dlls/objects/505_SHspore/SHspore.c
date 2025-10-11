@@ -38,10 +38,10 @@ typedef struct {
 /*296*/ s16 unk296;
 /*298*/ s16 unk298;
 /*29A*/ s16 unk29A;
-} SHSporeState;
+} SHSpore_Data;
 
-static void SHspore_func_750(Object* self, SHSporeState* state);
-static void SHspore_func_A00(Object* arg0, SHSporeState* state);
+static void SHspore_func_750(Object* self, SHSpore_Data* objdata);
+static void SHspore_func_A00(Object* arg0, SHSpore_Data* objdata);
 
 /*0x0*/ static u32 _data_0[] = { 0, 0, 0 };
 /*0xC*/ static f32 _data_C = 5.0f;
@@ -56,28 +56,28 @@ void SHspore_dtor(void *dll) {
 
 // offset: 0x18 | func: 0 | export: 0
 void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
-    SHSporeState* state;
+    SHSpore_Data* objdata;
     s8 pad[4];
     s8 sp37;
 
-    state = self->state;
+    objdata = self->data;
     sp37 = 5;
-    state->lifetime = 1500.0f; //25s
+    objdata->lifetime = 1500.0f; //25s
     self->unk0xb0 |= 0x6000;
     self->speed.y = 3.0f;
 
     func_800267A4(self);
-    state->unk298 = rand_next(0, 0xFFFF);
-    state->unk26C = rand_next(0, 1000) / 1000.0f;
+    objdata->unk298 = rand_next(0, 0xFFFF);
+    objdata->unk26C = rand_next(0, 1000) / 1000.0f;
 
-    gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)state, 0, 0x40002, 1);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_c0((void*)state, 1, (s32)&_data_0, (s32)&_data_C, (s32)&sp37);
+    gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)objdata, 0, 0x40002, 1);
+    gDLL_27_HeadTurn->vtbl->head_turn_func_c0((void*)objdata, 1, (s32)&_data_0, (s32)&_data_C, (s32)&sp37);
     gDLL_17->vtbl->func1(self, 0x3F1, NULL, 4, -1, NULL);
 }
 
 // offset: 0x18C | func: 1 | export: 1
 void SHspore_control(Object* self) {
-    SHSporeState* state;
+    SHSpore_Data* objdata;
     s8 pad[10];
     s32 particleCount;
     f32 temp;
@@ -86,22 +86,22 @@ void SHspore_control(Object* self) {
     Object* collidedObject;
     s32 var_s0_2;
 
-    state = (SHSporeState*)self->state;
-    if (state->unk290 != 0.0f) {
+    objdata = (SHSpore_Data*)self->data;
+    if (objdata->unk290 != 0.0f) {
         self->srt.yaw += delayByte << 6;
-        state->unk290 -= delayFloat;
-        if (state->unk290 <= 0.0f) {
+        objdata->unk290 -= delayFloat;
+        if (objdata->unk290 <= 0.0f) {
             obj_destroy_object(self);
         }
     } else {
         //Update motion
-        state->unk270 -= delayFloat;
-        if (state->unk270 < 0.0f) {
-            state->unk270 = 0.0f;
+        objdata->unk270 -= delayFloat;
+        if (objdata->unk270 < 0.0f) {
+            objdata->unk270 = 0.0f;
         }
-        state->unk28C -= delayFloat;
-        if (state->unk28C < 0.0f) {
-            state->unk28C = 0.0f;
+        objdata->unk28C -= delayFloat;
+        if (objdata->unk28C < 0.0f) {
+            objdata->unk28C = 0.0f;
         }
         self->speed.y += -0.009f * delayFloat;
         if (self->speed.y < -0.2f) {
@@ -113,25 +113,25 @@ void SHspore_control(Object* self) {
         if (self->speed.y < 0.0f) {
             func_8002674C(self);
         }
-        SHspore_func_750(self, state);
-        if ((rand_next(0, 0x64) < 5) && (state->unk270 <= 0.0f)) {
-            SHspore_func_A00(self, state);
+        SHspore_func_750(self, objdata);
+        if ((rand_next(0, 0x64) < 5) && (objdata->unk270 <= 0.0f)) {
+            SHspore_func_A00(self, objdata);
         }
-        state->unk284 -= delayFloat;
-        if (state->unk284 <= 0.0f) {
-            state->unk27C *= 0.97f;
-            state->unk280 *= 0.97f;
-            state->unk284 = 0.0f;
+        objdata->unk284 -= delayFloat;
+        if (objdata->unk284 <= 0.0f) {
+            objdata->unk27C *= 0.97f;
+            objdata->unk280 *= 0.97f;
+            objdata->unk284 = 0.0f;
         } else {
-            temp_fv0 = state->unk288 - state->unk268;
-            state->unk268 += temp_fv0 * 0.01f * delayFloat;
+            temp_fv0 = objdata->unk288 - objdata->unk268;
+            objdata->unk268 += temp_fv0 * 0.01f * delayFloat;
         }
-        self->speed.x = state->unk274 + (state->unk27C * state->unk268);
-        self->speed.z = state->unk278 + (state->unk280 * state->unk268);
+        self->speed.x = objdata->unk274 + (objdata->unk27C * objdata->unk268);
+        self->speed.z = objdata->unk278 + (objdata->unk280 * objdata->unk268);
         obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(self, (void*)state, delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(self, (void*)state);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_624(self, (void*)state, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(self, (void*)objdata, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(self, (void*)objdata);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_624(self, (void*)objdata, delayFloat);
         func_80026128(self, 0xA, 0, 0);
 
         //Handle collisions
@@ -153,14 +153,14 @@ void SHspore_control(Object* self) {
                     gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
                 }
 
-                state->unk290 = 200.0f;
+                objdata->unk290 = 200.0f;
                 self->srt.flags |= 0x4000;
                 func_800267A4(self);
             }
         } else {
-            state->lifetime -= delayFloat;
+            objdata->lifetime -= delayFloat;
             //Destroy the spore if its lifetime runs out or it collides with terrain
-            if (state->lifetime <= 0.0f || state->unk25C & 0x11) {
+            if (objdata->lifetime <= 0.0f || objdata->unk25C & 0x11) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8A2, MAX_VOLUME, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 
@@ -169,7 +169,7 @@ void SHspore_control(Object* self) {
                     gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
                 }
 
-                state->unk290 = 200.0f;
+                objdata->unk290 = 200.0f;
                 self->srt.flags |= 0x4000;
                 func_800267A4(self);
             }
@@ -178,7 +178,7 @@ void SHspore_control(Object* self) {
 }
 
 // offset: 0x750 | func: 2
-static void SHspore_func_750(Object* self, SHSporeState* state) {
+static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
     s8 pad[4];
     SHSpore_Setup* setup;
     f32 temp_fv1;
@@ -188,13 +188,13 @@ static void SHspore_func_750(Object* self, SHSporeState* state) {
     setup = (SHSpore_Setup*)self->setup;
     sp20 = setup->unk1C;
 
-    if (rand_next(0, 0x64) < 0xA && state->unk28C <= 0.0f) {
-        state->unk298 = rand_next(0x7D0, 0xFA0);
+    if (rand_next(0, 0x64) < 0xA && objdata->unk28C <= 0.0f) {
+        objdata->unk298 = rand_next(0x7D0, 0xFA0);
         if (rand_next(0, 1) != 0) {
-            state->unk298 = -state->unk298;
+            objdata->unk298 = -objdata->unk298;
         }
-        state->unk298 += state->unk294;
-        var_v0 = state->unk298 - (sp20 & 0xFFFF);
+        objdata->unk298 += objdata->unk294;
+        var_v0 = objdata->unk298 - (sp20 & 0xFFFF);
         if (var_v0 > 0x8000) {
             var_v0 += 0xFFFF0001;
         }
@@ -203,24 +203,24 @@ static void SHspore_func_750(Object* self, SHSporeState* state) {
         }
 
         if (setup->unk1A < var_v0) {
-            state->unk298 = setup->unk1A + sp20;
+            objdata->unk298 = setup->unk1A + sp20;
         }
         if (var_v0 < -setup->unk1A) {
-            state->unk298 = sp20 - setup->unk1A;
+            objdata->unk298 = sp20 - setup->unk1A;
         }
-        state->unk28C = 150.0f;
+        objdata->unk28C = 150.0f;
     }
 
-    if (rand_next(0, 0x64) < 0xA && state->unk28C <= 0.0f) {
-        state->unk26C = (rand_next(-0xC8, 0xC8) / 1000.0f) + state->unk264;
-        if (state->unk26C < 0.5f) {
-            state->unk26C = 0.5f;
-        } else if (state->unk26C > 1.0f) {
-            state->unk26C = 1.0f;
+    if (rand_next(0, 0x64) < 0xA && objdata->unk28C <= 0.0f) {
+        objdata->unk26C = (rand_next(-0xC8, 0xC8) / 1000.0f) + objdata->unk264;
+        if (objdata->unk26C < 0.5f) {
+            objdata->unk26C = 0.5f;
+        } else if (objdata->unk26C > 1.0f) {
+            objdata->unk26C = 1.0f;
         }
     }
 
-    var_v0 = state->unk298 - (state->unk294 & 0xFFFF);
+    var_v0 = objdata->unk298 - (objdata->unk294 & 0xFFFF);
     if (var_v0 >= 0x8001) {
         var_v0 += 0xFFFF0001;
     }
@@ -228,27 +228,27 @@ static void SHspore_func_750(Object* self, SHSporeState* state) {
         var_v0 += 0xFFFF;
     }
 
-    state->unk294 += (var_v0 * delayByte) >> 4;
+    objdata->unk294 += (var_v0 * delayByte) >> 4;
 
-    temp_fv1 = state->unk26C - state->unk264;
-    state->unk264 += temp_fv1 * 0.006f * delayFloat;
-    state->unk274 = fsin16_precise(state->unk294) * state->unk264;
-    state->unk278 = fcos16_precise(state->unk294) * state->unk264;
+    temp_fv1 = objdata->unk26C - objdata->unk264;
+    objdata->unk264 += temp_fv1 * 0.006f * delayFloat;
+    objdata->unk274 = fsin16_precise(objdata->unk294) * objdata->unk264;
+    objdata->unk278 = fcos16_precise(objdata->unk294) * objdata->unk264;
 }
 
 // offset: 0xA00 | func: 3
-static void SHspore_func_A00(Object* arg0, SHSporeState* state) {
+static void SHspore_func_A00(Object* arg0, SHSpore_Data* objdata) {
     SHSpore_Setup* setup;
     s32 sp20;
     s32 var_v1;
 
     setup = (SHSpore_Setup*)arg0->setup;
     sp20 = setup->unk1C;
-    state->unk284 = rand_next(0x1E, 0x2D);
-    state->unk270 = rand_next(0x78, 0xB4) + state->unk284;
-    state->unk296 = rand_next(-0x7D0, 0x7D0) + state->unk294;
+    objdata->unk284 = rand_next(0x1E, 0x2D);
+    objdata->unk270 = rand_next(0x78, 0xB4) + objdata->unk284;
+    objdata->unk296 = rand_next(-0x7D0, 0x7D0) + objdata->unk294;
 
-    var_v1 = state->unk296 - (sp20 & 0xFFFF);
+    var_v1 = objdata->unk296 - (sp20 & 0xFFFF);
     if (var_v1 >= 0x8001) {
         var_v1 += 0xFFFF0001;
     }
@@ -257,16 +257,16 @@ static void SHspore_func_A00(Object* arg0, SHSporeState* state) {
     }
 
     if (setup->unk1A < var_v1) {
-        state->unk296 = setup->unk1A + sp20;
+        objdata->unk296 = setup->unk1A + sp20;
     }
     if (var_v1 < -setup->unk1A) {
-        state->unk296 = sp20 - setup->unk1A;
+        objdata->unk296 = sp20 - setup->unk1A;
     }
 
-    state->unk288 = rand_next(0x384, 0x514) / 1000.0f;
-    state->unk268 = 0.0f;
-    state->unk27C = fsin16_precise(state->unk296);
-    state->unk280 = fcos16_precise(state->unk296);
+    objdata->unk288 = rand_next(0x384, 0x514) / 1000.0f;
+    objdata->unk268 = 0.0f;
+    objdata->unk27C = fsin16_precise(objdata->unk296);
+    objdata->unk280 = fcos16_precise(objdata->unk296);
 }
 
 // offset: 0xB88 | func: 4 | export: 2
@@ -288,6 +288,6 @@ u32 SHspore_get_model_flags(Object *self) {
 }
 
 // offset: 0xC04 | func: 8 | export: 6
-u32 SHspore_get_state_size(Object *self, s32 arg1) {
-    return sizeof(SHSporeState);
+u32 SHspore_get_data_size(Object *self, s32 arg1) {
+    return sizeof(SHSpore_Data);
 }

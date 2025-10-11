@@ -16,7 +16,7 @@ typedef struct {
     s16 unk0;
     s16 unk2;
     u8 unk4;
-} VFP_SpellPlace_State;
+} VFP_SpellPlace_Data;
 
 static void VFP_SpellPlace_do_act1(Object* self);
 static void VFP_SpellPlace_do_act2(Object* self);
@@ -29,14 +29,14 @@ void VFP_SpellPlace_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void VFP_SpellPlace_setup(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
-    VFP_SpellPlace_State* state;
+    VFP_SpellPlace_Data* objdata;
 
-    state = self->state;
-    state->unk0 = setup->unk1E;
-    state->unk2 = setup->unk20;
+    objdata = self->data;
+    objdata->unk0 = setup->unk1E;
+    objdata->unk2 = setup->unk20;
     
-    if (main_get_bits(state->unk2) != 0 || main_get_bits(state->unk0) != 0) {
-        state->unk4 = 1;
+    if (main_get_bits(objdata->unk2) != 0 || main_get_bits(objdata->unk0) != 0) {
+        objdata->unk4 = 1;
     } else {
         self->unk0xaf |= 8;
     }
@@ -80,27 +80,27 @@ u32 VFP_SpellPlace_get_model_flags(Object *self) {
 }
 
 // offset: 0x1F0 | func: 6 | export: 6
-u32 VFP_SpellPlace_get_state_size(Object *self, u32 a1) {
-    return sizeof(VFP_SpellPlace_State);
+u32 VFP_SpellPlace_get_data_size(Object *self, u32 a1) {
+    return sizeof(VFP_SpellPlace_Data);
 }
 
 // offset: 0x204 | func: 7
 static void VFP_SpellPlace_do_act1(Object* self) {
-    VFP_SpellPlace_State* state;
+    VFP_SpellPlace_Data* objdata;
     s16 bits2;
     s16 bits1;
 
-    state = (VFP_SpellPlace_State*)self->state;
+    objdata = (VFP_SpellPlace_Data*)self->data;
     
-    bits2 = main_get_bits(state->unk2);
-    bits1 = main_get_bits(state->unk0);
+    bits2 = main_get_bits(objdata->unk2);
+    bits1 = main_get_bits(objdata->unk0);
     
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unk0xaf &= ~0x8;
         
         if ((bits2 != 0) && (gDLL_1_UI->vtbl->func7(0x123) != 0)) {
-            main_set_bits(state->unk0, 1);
-            state->unk4 = 1;
+            main_set_bits(objdata->unk0, 1);
+            objdata->unk4 = 1;
             self->unk0xaf |= 8;
         }
     }
@@ -108,21 +108,21 @@ static void VFP_SpellPlace_do_act1(Object* self) {
 
 // offset: 0x2E0 | func: 8
 static void VFP_SpellPlace_do_act2(Object* self) {
-    VFP_SpellPlace_State* state;
+    VFP_SpellPlace_Data* objdata;
     s16 bits2;
     s16 bits1;
 
-    state = (VFP_SpellPlace_State*)self->state;
+    objdata = (VFP_SpellPlace_Data*)self->data;
     
-    bits2 = main_get_bits(state->unk2);
-    bits1 = main_get_bits(state->unk0);
+    bits2 = main_get_bits(objdata->unk2);
+    bits1 = main_get_bits(objdata->unk0);
     
     if ((bits1 == 0) && (bits2 != 0)) {
         self->unk0xaf &= ~0x8;
         
         if ((bits2 != 0) && (gDLL_1_UI->vtbl->func7(0x83B) != 0)) {
-            main_set_bits(state->unk0, 1);
-            state->unk4 = 1;
+            main_set_bits(objdata->unk0, 1);
+            objdata->unk4 = 1;
             self->unk0xaf |= 8;
         }
     }

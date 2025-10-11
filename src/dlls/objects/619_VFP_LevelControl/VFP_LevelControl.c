@@ -12,7 +12,7 @@
 // size:0x3
 typedef struct {
     u8 _unk0[3];
-} VFP_LevelControl_State;
+} VFP_LevelControl_Data;
 
 static void VFP_LevelControl_func_8EC(Object *self);
 static void VFP_LevelControl_func_A08(Object *self);
@@ -147,8 +147,8 @@ u32 VFP_LevelControl_get_model_flags(Object *self) {
 }
 
 // offset: 0x8D8 | func: 6 | export: 6
-u32 VFP_LevelControl_get_state_size(Object *self, u32 a1) {
-    return sizeof(VFP_LevelControl_State);
+u32 VFP_LevelControl_get_data_size(Object *self, u32 a1) {
+    return sizeof(VFP_LevelControl_Data);
 }
 
 // offset: 0x8EC | func: 7

@@ -18,7 +18,7 @@ s8 unk273[0x910 - 0x273];
 s16 unk910;
 s8 unk912[0x920 - 0x912];
 u8 unk920;
-} DRCloudRunnerState;
+} DRCloudRunner_Data;
 
 typedef struct {
 ObjSetup base;
@@ -156,8 +156,8 @@ u32 dll_714_get_model_flags(Object* self) {
 }
 
 // offset: 0xF60 | func: 10 | export: 6
-u32 dll_714_get_state_size(Object *self, u32 a1) {
-    return sizeof(DRCloudRunnerState);
+u32 dll_714_get_data_size(Object *self, u32 a1) {
+    return sizeof(DRCloudRunner_Data);
 }
 
 // offset: 0xF74 | func: 11 | export: 7
@@ -209,20 +209,20 @@ u32 dll_714_get_state_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_18E0.s")
 
 // offset: 0x1968 | func: 27
-s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
-    DRCloudRunnerState* state2;
+s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
+    DRCloudRunner_Data* objdata2;
     u32 new_var;
     DRCloudRunner_Setup* setup;
     Object* parent;
 
     setup = (DRCloudRunner_Setup*)self->setup;
-    if (state->unk272) {
+    if (objdata->unk272) {
         func_800267A4(self);
-        state->unk25B = 0;
+        objdata->unk25B = 0;
         return 0;
     }
 
-    state2 = self->state;
+    objdata2 = self->data;
 
     //Randomly call out to player if in cage (Object parent hierarchy: DR_Cage -> DRPerch -> DR_CloudRunner)
     if (rand_next(0, 120) == 0) {
@@ -247,7 +247,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
     new_var = 4;
     if (main_get_bits(setup->unk1E)) {
         self->unk0xc4 = NULL;
-        state2->unk920 = (((new_var * (state2->unk910 > 0)) * 4) & 0x10) | (state2->unk920 & 0xFFEF);
+        objdata2->unk920 = (((new_var * (objdata2->unk910 > 0)) * 4) & 0x10) | (objdata2->unk920 & 0xFFEF);
         return 3;
     }
 

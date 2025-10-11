@@ -14,4 +14,4 @@ _exports:
 .dword dll_295_print
 .dword dll_295_free
 .dword dll_296_get_model_flags
-.dword dll_296_get_state_size
+.dword dll_296_get_data_size

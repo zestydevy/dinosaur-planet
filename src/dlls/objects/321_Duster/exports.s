@@ -14,4 +14,4 @@ _exports:
 .dword Duster_print
 .dword Duster_free
 .dword Duster_get_model_flags
-.dword Duster_get_state_size
+.dword Duster_get_data_size

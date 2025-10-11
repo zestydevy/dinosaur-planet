@@ -20,13 +20,13 @@
 #define ASCII_Z 0x5A
 
 typedef struct {
-/*00*/ s8 stateIndex;
+/*00*/ s8 state;
 /*01*/ s8 stringLoaded;
 /*02*/ s8 glyphsLoaded;
 /*03*/ char text[KRAZOA_STRING_MAX_LENGTH + 1];
 /*44*/ Texture* glyphs[KRAZOA_ALPHABET_LENGTH];
 /*AC*/ u32 sound;
-} KTextState;
+} KText_Data;
 
 typedef struct {
  /*00*/ ObjSetup base;
@@ -36,8 +36,8 @@ typedef struct {
 
 /*0x0*/ static u8 currentGlyph[0x10];
 
-static void krazoatext_load_required_glyph_textures(Object* self, KTextState* state);
-static void krazoatext_unload_all_glyph_textures(Object* self, KTextState* state);
+static void krazoatext_load_required_glyph_textures(Object* self, KText_Data* objdata);
+static void krazoatext_unload_all_glyph_textures(Object* self, KText_Data* objdata);
 
 // offset: 0x0 | ctor
 void krazoatext_ctor(void* dll){
@@ -50,57 +50,57 @@ void krazoatext_dtor(void* dll){
 // offset: 0x18 | func: 0 | export: 0
 void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
     obj_init_mesg_queue(self, 2);
-    krazoatext_unload_all_glyph_textures(self, self->state);
+    krazoatext_unload_all_glyph_textures(self, self->data);
     self->unk0xb0 |= 0x2000;
 }
 
 // offset: 0x88 | func: 1 | export: 1
 void krazoatext_control(Object* self) {
-    KTextState* state;
+    KText_Data* objdata;
     KText_Setup* setup;
     u32 message;
     GameTextChunk* gametext;
     u16 length;
 
-    state = self->state;
+    objdata = self->data;
     setup = ((KText_Setup*)self->setup);
 
-    if (state->stringLoaded == FALSE) {
+    if (objdata->stringLoaded == FALSE) {
         gametext = gDLL_21_Gametext->vtbl->get_chunk(1);
         length = strlen(gametext->strings[setup->stringID]) + 1;
         if (length > KRAZOA_STRING_MAX_LENGTH) {
             length = KRAZOA_STRING_MAX_LENGTH;
             gametext->strings[setup->stringID][KRAZOA_STRING_MAX_LENGTH - 1] = 0;
         }
-        bcopy(gametext->strings[setup->stringID], &state->text, length);
-        state->text[KRAZOA_STRING_MAX_LENGTH - 1] = 0;
+        bcopy(gametext->strings[setup->stringID], &objdata->text, length);
+        objdata->text[KRAZOA_STRING_MAX_LENGTH - 1] = 0;
         mmFree(gametext);
-        state->stringLoaded = TRUE;
+        objdata->stringLoaded = TRUE;
     }
 
     while (obj_recv_mesg(self, &message, 0, 0)) {
     }
 
-    if (state->stateIndex != 0) {
+    if (objdata->state != 0) {
         if (!(self->unk0xaf & 4) || (get_masked_button_presses(0) & B_BUTTON)) {
-            state->stateIndex = 0;
+            objdata->state = 0;
         }
     } else if (self->unk0xaf & 1) {
-        state->stateIndex = 1;
-        if (state->sound == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x286, 0x7F, (u32*)&state->sound, 0, 0, 0);
+        objdata->state = 1;
+        if (objdata->sound == 0) {
+            gDLL_6_AMSFX->vtbl->play_sound(self, 0x286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
         }
     }
 
-    if (state->stateIndex && state->stringLoaded) {
-        krazoatext_load_required_glyph_textures(self, state);
+    if (objdata->state && objdata->stringLoaded) {
+        krazoatext_load_required_glyph_textures(self, objdata);
     } else {
-        krazoatext_unload_all_glyph_textures(self, state);
+        krazoatext_unload_all_glyph_textures(self, objdata);
     }
 
-    if (state->sound && !gDLL_6_AMSFX->vtbl->func_B48(state->sound)) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
-        state->sound = NULL;
+    if (objdata->sound && !gDLL_6_AMSFX->vtbl->func_B48(objdata->sound)) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->sound);
+        objdata->sound = NULL;
     }
 }
 
@@ -119,11 +119,11 @@ void krazoatext_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle
 
 // offset: 0x3A4 | func: 4 | export: 4
 void krazoatext_free(Object* self, s32 arg1) {
-    KTextState* state = self->state;
+    KText_Data* objdata = self->data;
 
-    krazoatext_unload_all_glyph_textures(self, state);
-    if (state->sound) {
-        gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
+    krazoatext_unload_all_glyph_textures(self, objdata);
+    if (objdata->sound) {
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->sound);
     }
 }
 
@@ -133,35 +133,35 @@ u32 dll_283_get_model_flags(Object* self) {
 }
 
 // offset: 0x424 | func: 6 | export: 6
-u32 dll_283_get_state_size(Object *self, u32 a1) {
-    return sizeof(KTextState);
+u32 dll_283_get_data_size(Object *self, u32 a1) {
+    return sizeof(KText_Data);
 }
 
 // offset: 0x438 | func: 7 | export: 7
 void krazoatext_print_text(Object* self, Gfx** gfx) {
-    KTextState* state;
+    KText_Data* objdata;
     Texture* glyph;
     s32 charCount;
     s32 glyphIndex;
     s32 xCoord;
 
-    state = self->state;
-    if (!state->glyphsLoaded)
+    objdata = self->data;
+    if (!objdata->glyphsLoaded)
         return;
 
     charCount = 0;
-    while (state->text[charCount] != '\0'){
+    while (objdata->text[charCount] != '\0'){
         charCount += 1;
     }
 
     xCoord = KRAZOA_PRINT_BASE_X - (charCount * (KRAZOA_PRINT_KERNING/2));
 
     charCount = 0;
-    while (state->text[charCount] != '\0'){
-        if ((state->text[charCount] >= ASCII_A) && (state->text[charCount] <= ASCII_Z)) {
-            glyphIndex = state->text[charCount] - ASCII_A;
-            if (state->glyphs[glyphIndex]) {
-                ((Func_80037F9C_Struct*)currentGlyph)->unk0 = state->glyphs[glyphIndex];
+    while (objdata->text[charCount] != '\0'){
+        if ((objdata->text[charCount] >= ASCII_A) && (objdata->text[charCount] <= ASCII_Z)) {
+            glyphIndex = objdata->text[charCount] - ASCII_A;
+            if (objdata->glyphs[glyphIndex]) {
+                ((Func_80037F9C_Struct*)currentGlyph)->unk0 = objdata->glyphs[glyphIndex];
                 ((Func_80037F9C_Struct*)currentGlyph)->unk8 = 0;
                 ((Func_80037F9C_Struct*)currentGlyph)->unkA = 0;
                 ((Func_80037F9C_Struct*)currentGlyph)->pad4 = 0;
@@ -175,39 +175,39 @@ void krazoatext_print_text(Object* self, Gfx** gfx) {
 }
 
 // offset: 0x564 | func: 8
-void krazoatext_load_required_glyph_textures(Object* self, KTextState* state) {
+void krazoatext_load_required_glyph_textures(Object* self, KText_Data* objdata) {
     s32 charIndex;
     u32 glyphIndex;
 
-    if (state->glyphsLoaded){
+    if (objdata->glyphsLoaded){
         return;
     }
 
     charIndex = 0;
-    while (state->text[charIndex]){
-        if (ASCII_A <= state->text[charIndex] && state->text[charIndex] <= ASCII_Z){
-            glyphIndex = (u32)state->text[charIndex] - ASCII_A;
-            if (state->glyphs[glyphIndex] == NULL) {
-                state->glyphs[glyphIndex] = queue_load_texture_proxy(KRAZOA_ALPHABET_ICONS + glyphIndex);
+    while (objdata->text[charIndex]){
+        if (ASCII_A <= objdata->text[charIndex] && objdata->text[charIndex] <= ASCII_Z){
+            glyphIndex = (u32)objdata->text[charIndex] - ASCII_A;
+            if (objdata->glyphs[glyphIndex] == NULL) {
+                objdata->glyphs[glyphIndex] = queue_load_texture_proxy(KRAZOA_ALPHABET_ICONS + glyphIndex);
             }
         }
         charIndex++;
     }
-    state->glyphsLoaded = TRUE;
+    objdata->glyphsLoaded = TRUE;
 
 }
 
 // offset: 0x61C | func: 9
-void krazoatext_unload_all_glyph_textures(Object* self, KTextState* state) {
+void krazoatext_unload_all_glyph_textures(Object* self, KText_Data* objdata) {
     s32 index;
 
-    if (state->glyphsLoaded) {
+    if (objdata->glyphsLoaded) {
         for (index = 0; index < KRAZOA_ALPHABET_LENGTH; index++){
-            if (state->glyphs[index]) {
-                texture_destroy(state->glyphs[index]);
+            if (objdata->glyphs[index]) {
+                texture_destroy(objdata->glyphs[index]);
             }
-            state->glyphs[index] = NULL;
+            objdata->glyphs[index] = NULL;
         }
-        state->glyphsLoaded = FALSE;  
+        objdata->glyphsLoaded = FALSE;  
     }
 }

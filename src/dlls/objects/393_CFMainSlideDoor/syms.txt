@@ -7,7 +7,7 @@ CFMainSlideDoor_update = 0x1D4;
 CFMainSlideDoor_print = 0x1E0;
 CFMainSlideDoor_free = 0x234;
 CFMainSlideDoor_get_model_flags = 0x244;
-CFMainSlideDoor_get_state_size = 0x254;
+CFMainSlideDoor_get_data_size = 0x254;
 CFMainSlideDoor_func_268 = 0x268;
 
 .rodata = 0x548:

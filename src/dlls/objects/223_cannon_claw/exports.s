@@ -14,4 +14,4 @@ _exports:
 .dword cannon_claw_print
 .dword cannon_claw_free
 .dword cannon_claw_get_model_flags
-.dword cannon_claw_get_state_size
+.dword cannon_claw_get_data_size

@@ -14,4 +14,4 @@ _exports:
 .dword levelname_print
 .dword levelname_free
 .dword levelname_get_model_flags
-.dword levelname_get_state_size
+.dword levelname_get_data_size

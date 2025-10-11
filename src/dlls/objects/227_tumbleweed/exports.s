@@ -14,7 +14,7 @@ _exports:
 .dword dll_227_print
 .dword dll_227_free
 .dword dll_227_get_model_flags
-.dword dll_227_get_state_size
+.dword dll_227_get_data_size
 .dword dll_227_func_171C
 .dword dll_227_func_172C
 .dword dll_227_func_174C

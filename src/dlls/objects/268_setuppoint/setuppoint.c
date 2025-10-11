@@ -54,6 +54,6 @@ u32 setuppoint_get_model_flags(Object *self){
 }
 
 // offset: 0xE4 | func: 6 | export: 6
-u32 setuppoint_get_state_size(Object *self, s32 arg1){
+u32 setuppoint_get_data_size(Object *self, s32 arg1){
     return 0;
 }

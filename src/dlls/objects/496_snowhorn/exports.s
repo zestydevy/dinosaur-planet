@@ -14,4 +14,4 @@ _exports:
 .dword dll_496_print
 .dword dll_496_free
 .dword dll_496_get_model_flags
-.dword dll_496_get_state_size
+.dword dll_496_get_data_size

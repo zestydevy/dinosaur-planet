@@ -28,7 +28,7 @@ static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3);
 typedef struct {
 s16 unk0;   
 u8 _unk2[4];
-} DFPTLevelControlState;
+} DFPTLevelControl_Data;
 
 // offset: 0x0 | ctor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_ctor.s")
@@ -89,8 +89,8 @@ u32 dll_638_get_model_flags(Object *self) {
 }
 
 // offset: 0x5D0 | func: 6 | export: 6
-u32 dll_638_get_state_size(Object *self, u32 a1) {
-    return sizeof(DFPTLevelControlState);
+u32 dll_638_get_data_size(Object *self, u32 a1) {
+    return sizeof(DFPTLevelControl_Data);
 }
 
 // offset: 0x5E4 | func: 7 | export: 7
@@ -98,21 +98,21 @@ u32 dll_638_get_state_size(Object *self, u32 a1) {
 
 // offset: 0x62C | func: 8
 static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
-    DFPTLevelControlState *state;
+    DFPTLevelControl_Data *objdata;
     DLL_210_Player *dll;
     Object *player;
     s16 delay;
     s16 timerValueOriginal;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
-    timerValueOriginal = state->unk0;
+    timerValueOriginal = objdata->unk0;
     if (timerValueOriginal > 0){
         delay = ((s32) delayFloat);
 
         if (!(DLL_210_Player *) player->dll){} //@fake?
 
-        state->unk0 = timerValueOriginal - (delay & 0xFFFF);
+        objdata->unk0 = timerValueOriginal - (delay & 0xFFFF);
         ((DLL_210_Player *) player->dll)->vtbl->func72(player, 0x51E, timerValueOriginal);
     }
     return 0;

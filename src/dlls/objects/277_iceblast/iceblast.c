@@ -16,7 +16,7 @@ typedef struct {
 typedef struct {
     s16 timer;
     u8 _unk2[2];
-} IceBlastState;
+} IceBlast_Data;
 
 // offset: 0x0 | ctor
 void iceblast_ctor(void* dll){
@@ -28,9 +28,9 @@ void iceblast_dtor(void* dll){
 
 // offset: 0x18 | func: 0 | export: 0
 void iceblast_setup(Object* self, IceBlast_Setup* setup, s32 arg2) {
-    IceBlastState* state = self->state;
+    IceBlast_Data* objdata = self->data;
 
-    state->timer = setup->timer;
+    objdata->timer = setup->timer;
     func_80026128(self, 0x19, setup->unk19 ? 3 : 1, 0);
 }
 
@@ -38,11 +38,11 @@ void iceblast_setup(Object* self, IceBlast_Setup* setup, s32 arg2) {
 void iceblast_control(Object* self) {
     Object* player;
     Object* weapon;
-    IceBlastState* state;
+    IceBlast_Data* objdata;
     SRT transform;
 
     player = get_player();
-    state = self->state;
+    objdata = self->data;
     if (!player) {
         return;
     }
@@ -55,9 +55,9 @@ void iceblast_control(Object* self) {
     self->srt.roll = weapon->srt.roll;
     self->srt.pitch = weapon->srt.pitch;
     self->srt.yaw = weapon->srt.yaw;
-    state->timer -= (s16)delayFloat;
-    if (state->timer <= 0) {
-        state->timer = 30;
+    objdata->timer -= (s16)delayFloat;
+    if (objdata->timer <= 0) {
+        objdata->timer = 30;
         self->speed.x = 0.0f; 
         self->speed.y = -5.0f;
         self->speed.z = 0.0f; 
@@ -109,6 +109,6 @@ u32 iceblast_get_model_flags(Object* self){
 }
 
 // offset: 0x2DC | func: 6 | export: 6
-u32 iceblast_get_state_size(Object* self, s32 arg1){
-    return sizeof(IceBlastState);
+u32 iceblast_get_data_size(Object* self, s32 arg1){
+    return sizeof(IceBlast_Data);
 }

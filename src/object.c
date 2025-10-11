@@ -222,7 +222,7 @@ void update_obj_models() {
     int k;
     Object *object;
     ModelInstance *modelInst;
-    ObjectC0State *unk1;
+    ObjectC0_Data *unk1;
 
     for (i = 0; i < gNumObjs; i++) {
         object = gObjList[i];
@@ -243,7 +243,7 @@ void update_obj_models() {
                     modelInst->unk_0x34 &= ~0x8;
 
                     if (modelInst->model->blendshapes != NULL) {
-                        unk1 = object->unk0xc0 != NULL ? (ObjectC0State*)object->unk0xc0->state : NULL;
+                        unk1 = object->unk0xc0 != NULL ? (ObjectC0_Data*)object->unk0xc0->data : NULL;
 
                         if (object->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
                             func_8001B084(modelInst, delayFloat);
@@ -1085,19 +1085,19 @@ void func_8002272C(Object *obj) {
 }
 
 u32 obj_alloc_object_state(Object *obj, u32 addr) {
-    u32 stateSize = 0;
+    u32 dataSize = 0;
     
     addr = mmAlign4(addr);
 
     if (obj->dll != NULL) {
-        stateSize = obj->dll->vtbl->get_data_size(obj, addr);
+        dataSize = obj->dll->vtbl->get_data_size(obj, addr);
     }
 
-    if (stateSize != 0) {
-        obj->state = (void*)addr;
-        addr += stateSize;
+    if (dataSize != 0) {
+        obj->data = (void*)addr;
+        addr += dataSize;
     } else {
-        obj->state = NULL;
+        obj->data = NULL;
     }
 
     return addr;
@@ -1421,7 +1421,7 @@ s16 func_80022EC0(s32 arg0) {
 
 void obj_free_object(Object *obj, s32 param2) {
     Object *obj2;
-    ObjectAnimState *animState;
+    ObjectAnim_Data *animObjdata;
     /*sp+0xE4*/ NewLfxStruct newLfxStruct;
     ModelInstance *modelInst;
     /*sp+0x40*/ Object *stackObjs[40];
@@ -1484,10 +1484,10 @@ void obj_free_object(Object *obj, s32 param2) {
     for (k = 0; k < gNumObjs; k++) {
         obj2 = gObjList[k];
         if (obj2->group == GROUP_UNK16) {
-            animState = (ObjectAnimState*)obj2->state;
-            if (obj == animState->unk0) {
-                animState->unk0 = NULL;
-                animState->unk9C = 1;
+            animObjdata = (ObjectAnim_Data*)obj2->data;
+            if (obj == animObjdata->unk0) {
+                animObjdata->unk0 = NULL;
+                animObjdata->unk9C = 1;
             }
         }
     }

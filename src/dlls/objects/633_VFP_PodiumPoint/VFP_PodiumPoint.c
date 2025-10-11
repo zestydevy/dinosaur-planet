@@ -20,12 +20,12 @@ typedef struct {
     s16 setGamebit;
     s16 conditionGamebit;
     u8 unk4;
-} VFP_PodiumPoint_State;
+} VFP_PodiumPoint_Data;
 
 /*0x0*/ static s32 data_0 = 0;
 
 static void VFP_PodiumPoint_func_1B8(Object* self);
-static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObjState* a2, void* a3);
+static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
 
 // offset: 0x0 | ctor
 void VFP_PodiumPoint_ctor(void *dll) { }
@@ -35,13 +35,13 @@ void VFP_PodiumPoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2) {
-    VFP_PodiumPoint_State* state;
+    VFP_PodiumPoint_Data* objdata;
 
-    state = (VFP_PodiumPoint_State*)self->state;
+    objdata = (VFP_PodiumPoint_Data*)self->data;
     self->srt.yaw = setup->unk18 << 8;
     self->unk0xbc = (ObjectCallback)VFP_PodiumPoint_func_324;
-    state->setGamebit = setup->gamebit;
-    state->conditionGamebit = setup->gamebit2;
+    objdata->setGamebit = setup->gamebit;
+    objdata->conditionGamebit = setup->gamebit2;
     self->unk0xaf |= 8;
 }
 
@@ -86,33 +86,33 @@ u32 VFP_PodiumPoint_get_model_flags(Object *self) {
 }
 
 // offset: 0x1A4 | func: 6 | export: 6
-u32 VFP_PodiumPoint_get_state_size(Object *self, u32 a1) {
-    return sizeof(VFP_PodiumPoint_State);
+u32 VFP_PodiumPoint_get_data_size(Object *self, u32 a1) {
+    return sizeof(VFP_PodiumPoint_Data);
 }
 
 // offset: 0x1B8 | func: 7
 static void VFP_PodiumPoint_func_1B8(Object* self) {
-    VFP_PodiumPoint_State* state;
+    VFP_PodiumPoint_Data* objdata;
     s16 conditionGamebitValue;
     s16 gamebitValue;
     Object* player;
 
-    state = self->state;
+    objdata = self->data;
     conditionGamebitValue = 1;
     player = get_player();
 
     if (player != NULL) {
-        if (state->conditionGamebit != -1) {
-            conditionGamebitValue = main_get_bits(state->conditionGamebit);
+        if (objdata->conditionGamebit != -1) {
+            conditionGamebitValue = main_get_bits(objdata->conditionGamebit);
         }
-        gamebitValue = main_get_bits(state->setGamebit);
-        if ((gamebitValue == 0) && (state->unk4 == 0) && (conditionGamebitValue != 0)) {
+        gamebitValue = main_get_bits(objdata->setGamebit);
+        if ((gamebitValue == 0) && (objdata->unk4 == 0) && (conditionGamebitValue != 0)) {
             self->unk0xaf &= ~0x8;
             if ((gDLL_1_UI->vtbl->func7(data_0) != 0) && 
                     (vec3_distance(&self->positionMirror, &player->positionMirror) < 100.0f)) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
-                main_set_bits(state->setGamebit, 1);
-                state->unk4 = 1;
+                main_set_bits(objdata->setGamebit, 1);
+                objdata->unk4 = 1;
                 self->unk0xaf |= 8;
             }
         }
@@ -120,7 +120,7 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 }
 
 // offset: 0x324 | func: 8
-static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObjState* a2, void* a3) {
+static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
     s32 i;
     u8 mapSetupID;
 

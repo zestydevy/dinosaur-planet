@@ -7,7 +7,7 @@ sfxplayer_update = 0x458;
 sfxplayer_print = 0x464;
 sfxplayer_free = 0x4C0;
 sfxplayer_get_model_flags = 0x51C;
-sfxplayer_get_state_size = 0x52C;
+sfxplayer_get_data_size = 0x52C;
 
 .rodata = 0x584:
 _oob_rodata_0 = 0x0; // absolute:0x584

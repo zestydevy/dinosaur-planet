@@ -7,6 +7,6 @@ sidesetup_update = 0x48;
 sidesetup_print = 0x54;
 sidesetup_free = 0x6C;
 sidesetup_get_model_flags = 0x7C;
-sidesetup_get_state_size = 0x8C;
+sidesetup_get_data_size = 0x8C;
 
 .bss = 0xA0:

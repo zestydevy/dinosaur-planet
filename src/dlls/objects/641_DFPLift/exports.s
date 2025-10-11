@@ -14,4 +14,4 @@ _exports:
 .dword DFPLift_print
 .dword DFPLift_free
 .dword DFPLift_get_model_flags
-.dword DFPLift_get_state_size
+.dword DFPLift_get_data_size

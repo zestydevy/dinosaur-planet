@@ -14,4 +14,4 @@ _exports:
 .dword flameblast_print
 .dword flameblast_free
 .dword flameblast_get_model_flags
-.dword flameblast_get_state_size
+.dword flameblast_get_data_size

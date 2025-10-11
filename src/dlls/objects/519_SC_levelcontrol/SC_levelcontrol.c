@@ -77,12 +77,12 @@ typedef struct {
 /*08*/ s32 _unk8; // unused?
 /*0C*/ u8 index1; // index into SOMESIZE arrays
 /*0D*/ u8 index2; // index into _data_158
-} SC_levelcontrol_State;
+} SC_levelcontrol_Data;
 
 static void SC_levelcontrol_func_8B4(Object *self);
 static void SC_levelcontrol_func_BBC(Object *self, u8 arg1);
 static void SC_levelcontrol_func_11FC(Object *self);
-static s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObjState *arg2, void *arg3);
+static s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, void *arg3);
 
 // offset: 0x0 | ctor
 void SC_levelcontrol_ctor(void *dll) { }
@@ -92,32 +92,32 @@ void SC_levelcontrol_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SC_levelcontrol_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    SC_levelcontrol_State *state;
+    SC_levelcontrol_Data *objdata;
 
-    state = self->state;
-    state->mapID = -1;
-    state->isNighttime = FALSE;
-    state->unk2 = 0;
-    state->index1 = main_get_bits(BIT_SC_UNKNOWN_2BA);
+    objdata = self->data;
+    objdata->mapID = -1;
+    objdata->isNighttime = FALSE;
+    objdata->unk2 = 0;
+    objdata->index1 = main_get_bits(BIT_SC_UNKNOWN_2BA);
     self->unk0xbc = (ObjectCallback)SC_levelcontrol_func_12D8;
 }
 
 // offset: 0x90 | func: 1 | export: 1
 void SC_levelcontrol_control(Object *self) {
-    SC_levelcontrol_State *state;
+    SC_levelcontrol_Data *objdata;
     Object *player;
     u8 sp2F;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
     sp2F = 0;
     if (main_get_bits(BIT_4BD)) {
         main_set_bits(BIT_4BD, 0);
         sp2F = 1;
-        state->index1 = 15;
+        objdata->index1 = 15;
     }
 
-    if (state->mapID != MAP_SWAPSTONE_CIRCLE) {
+    if (objdata->mapID != MAP_SWAPSTONE_CIRCLE) {
         if (map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
             SC_levelcontrol_func_8B4(self);
             sp2F = 0;
@@ -126,50 +126,50 @@ void SC_levelcontrol_control(Object *self) {
         }
     }
 
-    state->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
+    objdata->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
 
     // trees must be hit in the correct order
     if (main_get_bits(BIT_SC_Hit_Village_Tree_One)) {
         main_set_bits(BIT_SC_Hit_Village_Tree_One, 0);
-        if (_data_0[state->treesHit] == BIT_SC_Hit_Village_Tree_One) {
-            state->treesHit++;
+        if (_data_0[objdata->treesHit] == BIT_SC_Hit_Village_Tree_One) {
+            objdata->treesHit++;
         } else {
-            state->treesHit = 0;
+            objdata->treesHit = 0;
         }
     } else if (main_get_bits(BIT_SC_Hit_Village_Tree_Two)) {
         main_set_bits(BIT_SC_Hit_Village_Tree_Two, 0);
-        if (_data_0[state->treesHit] == BIT_SC_Hit_Village_Tree_Two) {
-            state->treesHit++;
+        if (_data_0[objdata->treesHit] == BIT_SC_Hit_Village_Tree_Two) {
+            objdata->treesHit++;
         } else {
-            state->treesHit = 0;
+            objdata->treesHit = 0;
         }
     } else if (main_get_bits(BIT_SC_Hit_Village_Tree_Three)) {
         main_set_bits(BIT_SC_Hit_Village_Tree_Three, 0);
-        if (_data_0[state->treesHit] == BIT_SC_Hit_Village_Tree_Three) {
-            state->treesHit++;
+        if (_data_0[objdata->treesHit] == BIT_SC_Hit_Village_Tree_Three) {
+            objdata->treesHit++;
         } else {
-            state->treesHit = 0;
+            objdata->treesHit = 0;
         }
     }
 
-    if (state->treesHit >= 3) {
+    if (objdata->treesHit >= 3) {
         main_set_bits(BIT_SC_Village_Opened, 1);
-        state->treesHit = 0;
+        objdata->treesHit = 0;
     }
 
-    if (state->unk2 != 0) {
-        if (state->unk2 == 5) {
+    if (objdata->unk2 != 0) {
+        if (objdata->unk2 == 5) {
             if (func_8000FB1C() != 0) {
                 main_set_bits(BIT_7CF, 1);
             }
         } else if ((main_get_bits(BIT_Dont_Repeat_Swapstone_Intro)) && (func_8000FB1C() != 0)) {
             main_set_bits(BIT_SC_Pond_Platform_Raised, 0);
-            if (state->isNighttime) {
+            if (objdata->isNighttime) {
                 gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
             } else {
                 gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
             }
-            state->unk2 = 0;
+            objdata->unk2 = 0;
         }
     }
 
@@ -189,17 +189,17 @@ void SC_levelcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x480 | func: 4 | export: 4
 void SC_levelcontrol_free(Object *self, s32 arg1) {
-    SC_levelcontrol_State *state;
+    SC_levelcontrol_Data *objdata;
 
-    state = self->state;
+    objdata = self->data;
     if (arg1 == 0) {
         func_80000860(self, get_player(), 0x1C3, 0);
     }
-    main_set_bits(BIT_SC_UNKNOWN_2BA, state->index1);
+    main_set_bits(BIT_SC_UNKNOWN_2BA, objdata->index1);
     func_8000FA2C();
     gDLL_5_AMSEQ2->vtbl->func0(self, 0xBB, 0, 0, 0);
     gDLL_5_AMSEQ2->vtbl->func0(self, 0xDA, 0, 0, 0);
-    if (state->isNighttime) {
+    if (objdata->isNighttime) {
         gDLL_5_AMSEQ2->vtbl->func1(self, 0xEC, 0, 0, 0);
         gDLL_5_AMSEQ2->vtbl->func1(self, 0xBA, 0, 0, 0);
     } else {
@@ -214,25 +214,25 @@ u32 SC_levelcontrol_get_model_flags(Object *self) {
 }
 
 // offset: 0x64C | func: 6 | export: 6
-u32 SC_levelcontrol_get_state_size(Object *self, u32 arg1) {
-    return sizeof(SC_levelcontrol_State);
+u32 SC_levelcontrol_get_data_size(Object *self, u32 arg1) {
+    return sizeof(SC_levelcontrol_Data);
 }
 
 // offset: 0x660 | func: 7 | export: 7
 void SC_levelcontrol_func_660(Object *self, u8 arg1) {
-    SC_levelcontrol_State *state;
+    SC_levelcontrol_Data *objdata;
     f32 time;
 
-    state = self->state;
-    state->unk2 = arg1;
+    objdata = self->data;
+    objdata->unk2 = arg1;
 
-    if (state->unk2 == 1) {
+    if (objdata->unk2 == 1) {
         main_set_bits(BIT_SC_Pond_Platform_Raised, 1);
         main_set_bits(BIT_SC_Platform_Rises_Totem_Challenge_Begins, 1);
         gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
         func_8000F64C(0x1D, 0x2D);
         func_8000F6CC();
-    } else if (state->unk2 == 3) {
+    } else if (objdata->unk2 == 3) {
         if (gDLL_7_Newday->vtbl->func8(&time)) {
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
@@ -240,28 +240,28 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
             gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
         }
-        state->unk2 = 0;
-    } else if (state->unk2 == 5) {
-        state->index2 = rand_next(0, 2);
-        func_8000F64C(0x1D, _data_158[state->index2][4]);
+        objdata->unk2 = 0;
+    } else if (objdata->unk2 == 5) {
+        objdata->index2 = rand_next(0, 2);
+        func_8000F64C(0x1D, _data_158[objdata->index2][4]);
         func_8000F6CC();
     }
 }
 
 // offset: 0x8A4 | func: 8 | export: 8
 u8 SC_levelcontrol_func_8A4(Object *self) {
-    SC_levelcontrol_State *state;
-    state = self->state;
-    return state->unk2;
+    SC_levelcontrol_Data *objdata;
+    objdata = self->data;
+    return objdata->unk2;
 }
 
 // offset: 0x8B4 | func: 9
 void SC_levelcontrol_func_8B4(Object *self) {
-    SC_levelcontrol_State *state;
+    SC_levelcontrol_Data *objdata;
     s32 mapSetup;
     Object *player;
 
-    state = self->state;
+    objdata = self->data;
     mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(MAP_SWAPSTONE_CIRCLE);
     player = get_player();
 
@@ -303,7 +303,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
     switch (mapSetup) {
     case 1:
         gDLL_5_AMSEQ2->vtbl->func0(self, 0xCB, 0, 0, 0);
-        state->unk2 = 7;
+        objdata->unk2 = 7;
         break;
     case 6:
         main_set_bits(BIT_SC_Play_Krystal_Sees_Tribe_Dino, 0);
@@ -314,28 +314,28 @@ void SC_levelcontrol_func_8B4(Object *self) {
 
 // offset: 0xBBC | func: 10
 void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
-    SC_levelcontrol_State *state;
+    SC_levelcontrol_Data *objdata;
     f32 time;
     u8 isNighttime;
     Object *player;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
     isNighttime = gDLL_7_Newday->vtbl->func8(&time);
 
     if (arg1 != 0) {
-        if (state->index1 >= SOMESIZE) {
-            state->index1 = 0;
+        if (objdata->index1 >= SOMESIZE) {
+            objdata->index1 = 0;
         }
-        func_80000860(self, player, _data_40[state->index1], 0);
-        func_80000860(self, player, _data_8[state->index1], 0);
-        func_80000860(self, player, _data_78[state->index1], 0);
-        if (_data_B0[state->index1] != 0) {
-            func_80000860(self, player, _data_B0[state->index1], 0);
+        func_80000860(self, player, _data_40[objdata->index1], 0);
+        func_80000860(self, player, _data_8[objdata->index1], 0);
+        func_80000860(self, player, _data_78[objdata->index1], 0);
+        if (_data_B0[objdata->index1] != 0) {
+            func_80000860(self, player, _data_B0[objdata->index1], 0);
         }
 
-        func_80000450(self, player, _data_E8[state->index1], 0, 0, 0);
-        func_80000450(self, player, _data_120[state->index1], 0, 0, 0);
+        func_80000450(self, player, _data_E8[objdata->index1], 0, 0, 0);
+        func_80000450(self, player, _data_120[objdata->index1], 0, 0, 0);
         if (isNighttime) {
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
@@ -345,61 +345,61 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
             func_80000450(self, player, 0x1E4, 0, 0, 0);
         }
-        main_set_bits(BIT_SC_UNKNOWN_2BA, state->index1);
+        main_set_bits(BIT_SC_UNKNOWN_2BA, objdata->index1);
         return;
     }
 
-    if (isNighttime != state->isNighttime) {
-        state->unk3 = 60;
+    if (isNighttime != objdata->isNighttime) {
+        objdata->unk3 = 60;
     }
 
-    if (state->unk3 > 0) {
-        state->unk3--;
+    if (objdata->unk3 > 0) {
+        objdata->unk3--;
         if (!isNighttime) {
-            if (state->unk3 == 59) {
-                state->index1++;
-                if (state->index1 >= SOMESIZE) {
-                    state->index1 = 0;
+            if (objdata->unk3 == 59) {
+                objdata->index1++;
+                if (objdata->index1 >= SOMESIZE) {
+                    objdata->index1 = 0;
                 }
-                func_80000860(self, player, _data_40[state->index1], 0);
-                main_set_bits(BIT_SC_UNKNOWN_2BA, state->index1);
+                func_80000860(self, player, _data_40[objdata->index1], 0);
+                main_set_bits(BIT_SC_UNKNOWN_2BA, objdata->index1);
             }
-            if (state->unk3 == 49) {
-                if (_data_B0[state->index1] != 0) {
-                    func_80000860(self, player, _data_B0[state->index1], 0);
+            if (objdata->unk3 == 49) {
+                if (_data_B0[objdata->index1] != 0) {
+                    func_80000860(self, player, _data_B0[objdata->index1], 0);
                 }
             }
-            if (state->unk3 == 39) {
-                func_80000860(self, player, _data_8[state->index1], 0);
+            if (objdata->unk3 == 39) {
+                func_80000860(self, player, _data_8[objdata->index1], 0);
             }
-            if (state->unk3 == 29) {
-                func_80000860(self, player, _data_78[state->index1], 0);
+            if (objdata->unk3 == 29) {
+                func_80000860(self, player, _data_78[objdata->index1], 0);
             }
-            if (state->unk3 == 19) {
-                func_80000450(self, player, _data_E8[state->index1], 0, 0, 0);
+            if (objdata->unk3 == 19) {
+                func_80000450(self, player, _data_E8[objdata->index1], 0, 0, 0);
             }
-            if (state->unk3 == 9) {
-                func_80000450(self, player, _data_120[state->index1], 0, 0, 0);
+            if (objdata->unk3 == 9) {
+                func_80000450(self, player, _data_120[objdata->index1], 0, 0, 0);
             }
         }
-        if (state->unk3 <= 0) {
+        if (objdata->unk3 <= 0) {
             if (isNighttime) {
-                if (state->unk2 == 0) {
+                if (objdata->unk2 == 0) {
                     gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
                     gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
                 }
                 func_80000450(self, player, 0x1E3, 0, 0, 0);
             } else {
-                if (state->unk2 == 0) {
+                if (objdata->unk2 == 0) {
                     gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
                     gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
                 }
                 func_80000450(self, player, 0x1E4, 0, 0, 0);
             }
-            state->unk3 = 0;
+            objdata->unk3 = 0;
         }
     }
-    state->isNighttime = isNighttime;
+    objdata->isNighttime = isNighttime;
 }
 
 // offset: 0x11FC | func: 11
@@ -414,7 +414,7 @@ void SC_levelcontrol_func_11FC(Object *self) {
 }
 
 // offset: 0x12D8 | func: 12
-s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObjState *arg2, void *arg3) {
+s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, void *arg3) {
     s32 i;
 
     arg2->unk62 = 0;

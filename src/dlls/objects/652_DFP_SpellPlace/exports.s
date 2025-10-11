@@ -14,4 +14,4 @@ _exports:
 /*3*/ .dword dll_652_print
 /*4*/ .dword dll_652_free
 /*5*/ .dword dll_652_get_model_flags
-/*6*/ .dword dll_652_get_state_size
+/*6*/ .dword dll_652_get_data_size

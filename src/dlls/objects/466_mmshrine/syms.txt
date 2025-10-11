@@ -7,7 +7,7 @@ MMshrine_update = 0xB3C;
 MMshrine_print = 0xB48;
 MMshrine_free = 0xB9C;
 MMshrine_get_model_flags = 0xC2C;
-MMshrine_get_state_size = 0xC3C;
+MMshrine_get_data_size = 0xC3C;
 dll_466_func_C50 = 0xC50;
 MMshrine_func_1140 = 0x1140;
 

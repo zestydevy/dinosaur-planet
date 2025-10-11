@@ -29,18 +29,18 @@ struct Vec3_Int{
 	u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
 };
 
-// base state of objects in group 16?
+// base objdata of objects in group 16?
 typedef struct {
 /*0000*/ struct Object *unk0;
 /*0004*/ u8 unk_0x4[0x9C - 0x4];
 /*009C*/ u8 unk9C;
-} ObjectAnimState;
+} ObjectAnim_Data;
 
-// state of object in Object::unkC0
+// objdata of object in Object::unkC0
 typedef struct {
 /*0000*/    u8 unk_0x0[0x62 - 0x0];
 /*0062*/    s8 unk_0x62;
-} ObjectC0State;
+} ObjectC0_Data;
 
 typedef enum {
 	OBJSETUP_FLAG_1 = 0x1,
@@ -214,7 +214,7 @@ typedef struct Object {
 /*00B2*/    s16 unk0xb2;
 /*00B4*/    s16 unk0xb4;
 /*00B6*/	u8 unk0xb6[2];
-/*00B8*/	void* state; //type depends on object
+/*00B8*/	void* data; //type depends on object
 /*00BC*/	ObjectCallback unk0xbc; // some kind of cutscene anim callback?
 /*00C0*/	struct Object *unk0xc0; // related to group 16 objects?
 /*00C4*/	struct Object* unk0xc4; // parent object
@@ -242,7 +242,7 @@ typedef struct ObjListItem {
 typedef struct {
 /*00*/ s8 unk0[0x84 - 0];
 /*84*/ u8 unk84;
-} ObjectStateCommon;
+} ObjectAnim_Data_2;
 
 /** Used to load Tricky/Kyte's object 
   * 

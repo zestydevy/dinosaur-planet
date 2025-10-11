@@ -14,4 +14,4 @@ _exports:
 .dword pressureswitch_print
 .dword pressureswitch_free
 .dword pressureswitch_get_model_flags
-.dword pressureswitch_get_state_size
+.dword pressureswitch_get_data_size

@@ -14,4 +14,4 @@ _exports:
 .dword sfxplayer_print
 .dword sfxplayer_free
 .dword sfxplayer_get_model_flags
-.dword sfxplayer_get_state_size
+.dword sfxplayer_get_data_size

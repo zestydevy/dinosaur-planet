@@ -13,7 +13,7 @@
 
 u16* func_80034804(Object* obj, s32 sequenceBoneID);
 
-void dll_3_func_7B64(AnimObjState*);
+void dll_3_func_7B64(AnimObj_Data*);
 
 enum AnimCurvesKeyframeChannels {
 /*00*/    ANIMCURVES_CHANNEL_headRotateZ = 0,
@@ -336,7 +336,7 @@ void dll_3_func_394(s32 arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3170.s")
 
 // offset: 0x3268 | func: 13
-s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObjState* state) {
+s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) {
     s32 returnVal;
 
     returnVal = 0;
@@ -370,7 +370,7 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObjState* state) 
 
 // offset: 0x4924 | func: 20
 void dll_3_func_4924(Object* arg0, Object** arg1, ModelInstance** arg2) {
-    ANIMState *state = arg0->state;
+    ANIMState *state = arg0->data;
     Object *obj;
 
     obj = state->object;
@@ -454,7 +454,7 @@ void dll_3_func_65EC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
 f32 dll_3_func_6F3C(AnimCurvesKeyframe*, s32, s16);
 
-f32 dll_3_func_6EBC(AnimObjState* state, s32 channelIndex) {
+f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex) {
     f32 result;
     s16 total_keys;
     s16 first_key;
@@ -489,7 +489,7 @@ void dll_3_func_72E0(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_730C.s")
 
 // offset: 0x7974 | func: 40 | export: 6
-void dll_3_func_7974(AnimObjState* arg0, AnimObjSetup* setup) {
+void dll_3_func_7974(AnimObj_Data* arg0, AnimObjSetup* setup) {
     s32 animcurves_bin_offset;
     s32 size;
     s32 animCurvesIndex;
@@ -543,7 +543,7 @@ void dll_3_func_7974(AnimObjState* arg0, AnimObjSetup* setup) {
 }
 
 // offset: 0x7B64 | func: 41 | export: 7
-void dll_3_func_7B64(AnimObjState* state) {
+void dll_3_func_7B64(AnimObj_Data* state) {
     s32 channelKeyIndex;
     s32 index;
     s32 channelIndex;
@@ -582,7 +582,7 @@ void dll_3_func_7B64(AnimObjState* state) {
 }
 
 // offset: 0x7C6C | func: 42 | export: 8
-void dll_3_func_7C6C(AnimObjState* arg0) {
+void dll_3_func_7C6C(AnimObj_Data* arg0) {
     s32 temp_a0;
     s32 temp_a2;
 

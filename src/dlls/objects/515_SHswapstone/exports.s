@@ -14,4 +14,4 @@ _exports:
 .dword SHswapstone_print
 .dword SHswapstone_free
 .dword SHswapstone_get_model_flags
-.dword SHswapstone_get_state_size
+.dword SHswapstone_get_data_size

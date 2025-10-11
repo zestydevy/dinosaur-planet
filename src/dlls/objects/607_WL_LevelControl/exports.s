@@ -14,4 +14,4 @@ _exports:
 .dword WL_LevelControl_print
 .dword WL_LevelControl_free
 .dword WL_LevelControl_get_model_flags
-.dword WL_LevelControl_get_state_size
+.dword WL_LevelControl_get_data_size

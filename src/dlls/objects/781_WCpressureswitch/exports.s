@@ -14,4 +14,4 @@ _exports:
 .dword WCpressureswitch_print
 .dword WCpressureswitch_free
 .dword WCpressureswitch_get_model_flags
-.dword WCpressureswitch_get_state_size
+.dword WCpressureswitch_get_data_size

@@ -14,4 +14,4 @@ _exports:
 .dword WLpressureswitch_print
 .dword WLpressureswitch_free
 .dword WLpressureswitch_get_model_flags
-.dword WLpressureswitch_get_state_size
+.dword WLpressureswitch_get_data_size

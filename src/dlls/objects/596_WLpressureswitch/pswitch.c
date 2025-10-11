@@ -10,8 +10,8 @@
 typedef struct {
 /*00*/ u32 soundHandle;
 /*04*/ s8 pressed;
-/*05*/ s8 stateIndex;
-} WLPressureSwitchState;
+/*05*/ s8 state;
+} WLPressureSwitch_Data;
 
 typedef struct {
 ObjSetup base;
@@ -58,16 +58,16 @@ void WLpressureswitch_dtor(void* dll){
 
 // offset: 0x18 | func: 0 | export: 0
 void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg2) {
-    WLPressureSwitchState* state;
+    WLPressureSwitch_Data* objdata;
 
-    state = self->state;
+    objdata = self->data;
     self->unk0xbc = (void*)&WLpressureswitch_callbackBC;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;
-        state->pressed = 30;
+        objdata->pressed = 30;
     }
-    state->stateIndex = STATE_0_UP;
+    objdata->state = STATE_0_UP;
 }
 
 // offset: 0xB4 | func: 1 | export: 1
@@ -77,14 +77,14 @@ void WLpressureswitch_control(Object* self) {
     f32 deltaY;
     Object* listedObject;
     WLPressureSwitch_Setup* setup;
-    WLPressureSwitchState* state;
+    WLPressureSwitch_Data* objdata;
     s8 playSound;
     s8 playerIsFarAway;
     s32 index;
 
     player = get_player();
     setup = (WLPressureSwitch_Setup*)self->setup;
-    state = self->state;
+    objdata = self->data;
 
     playerIsFarAway = FALSE;
     if (vec3_distance(&self->positionMirror, &player->positionMirror) > 100.0f) {
@@ -92,10 +92,10 @@ void WLpressureswitch_control(Object* self) {
     }
 
     //Decrement timer until not considered pressed (fps-dependent)
-    state->pressed--;
-    if (state->pressed < 0) {
-        state->pressed = 0;
-        state->stateIndex = STATE_0_UP;
+    objdata->pressed--;
+    if (objdata->pressed < 0) {
+        objdata->pressed = 0;
+        objdata->state = STATE_0_UP;
     }
 
     //Handle objects on/near the switch
@@ -104,28 +104,28 @@ void WLpressureswitch_control(Object* self) {
             listedObject = (Object*)self->unk0x58->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > 8.9f) {
-                state->pressed = 5; //considered pressed for next 5 updates
+                objdata->pressed = 5; //considered pressed for next 5 updates
             }
-            if (state->stateIndex == STATE_0_UP && 
+            if (objdata->state == STATE_0_UP && 
                 listedObject && listedObject->id == OBJ_WL_Column_Top) {
                 if (!playerIsFarAway) {
                     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, 0, 0, 0);
                 }
-                state->stateIndex = STATE_1_DOWN;
+                objdata->state = STATE_1_DOWN;
             }
         }
     //Handle Tricky's behaviour during Sabre's first visit
     } else if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_ACT_3_SPIRIT_2_SABRE_DB) {
         sidekick = get_sidekick();
         if (sidekick && vec3_distance(&self->positionMirror, &sidekick->positionMirror) < 50.0f) {
-            state->pressed = 5;
+            objdata->pressed = 5;
         }
     }
 
     //Handle the column piece puzzle during Krystal's first visit
     if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_ACT_1_KRYSTAL_MEETS_WITH_RANDORN
              && !playerIsFarAway) {
-        if (state->pressed) {
+        if (objdata->pressed) {
             deltaY = setup->base.y - self->srt.transl.y;
             if (2.5f < deltaY && deltaY < 5.0f) {
                 main_set_bits(BIT_WM_Randorn_Hall_Opened, TRUE);
@@ -139,7 +139,7 @@ void WLpressureswitch_control(Object* self) {
 
     //Animate the switch's y coordinate
     playSound = FALSE;
-    if (state->pressed) {
+    if (objdata->pressed) {
         deltaY = setup->base.y - 5.0f;
         if (self->srt.transl.y < deltaY) {
             self->srt.transl.y += 0.25f * delayFloat;
@@ -171,13 +171,13 @@ void WLpressureswitch_control(Object* self) {
 
     //Play stone rumbling sound when moving
     if (playSound) {
-        if (!state->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&state->soundHandle, 0, 0, 0);
+        if (!objdata->soundHandle) {
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
-        if (state->soundHandle) {
-            gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
-            state->soundHandle = 0;
+        if (objdata->soundHandle) {
+            gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
+            objdata->soundHandle = 0;
         }
     }
 }
@@ -195,10 +195,10 @@ void WLpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Tr
 
 // offset: 0x5F8 | func: 4 | export: 4
 void WLpressureswitch_free(Object* self, s32 arg1) {
-    WLPressureSwitchState* state = self->state;
+    WLPressureSwitch_Data* objdata = self->data;
     u32 soundHandle;
 
-    soundHandle = state->soundHandle;
+    soundHandle = objdata->soundHandle;
     if (soundHandle) {
         gDLL_6_AMSFX->vtbl->func_A1C(soundHandle);
     }
@@ -210,8 +210,8 @@ u32 WLpressureswitch_get_model_flags(Object* self){
 }
 
 // offset: 0x664 | func: 6 | export: 6
-u32 WLpressureswitch_get_state_size(Object* self, s32 arg1){
-    return sizeof(WLPressureSwitchState);
+u32 WLpressureswitch_get_data_size(Object* self, s32 arg1){
+    return sizeof(WLPressureSwitch_Data);
 }
 
 // offset: 0x678 | func: 7

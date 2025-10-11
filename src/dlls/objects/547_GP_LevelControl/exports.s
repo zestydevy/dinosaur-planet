@@ -14,4 +14,4 @@ _exports:
 .dword GP_LevelControl_print
 .dword GP_LevelControl_free
 .dword GP_LevelControl_get_model_flags
-.dword GP_LevelControl_get_state_size
+.dword GP_LevelControl_get_data_size

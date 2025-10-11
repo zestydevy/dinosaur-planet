@@ -7,4 +7,4 @@ area_update = 0x3C;
 area_print = 0x48;
 area_free = 0x60;
 area_get_model_flags = 0x70;
-area_get_state_size = 0x80;
+area_get_data_size = 0x80;

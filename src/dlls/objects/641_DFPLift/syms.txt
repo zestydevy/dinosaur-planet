@@ -7,7 +7,7 @@ DFPLift_update = 0x7EC;
 DFPLift_print = 0x7F8;
 DFPLift_free = 0x84C;
 DFPLift_get_model_flags = 0x8F8;
-DFPLift_get_state_size = 0x908;
+DFPLift_get_data_size = 0x908;
 DFPLift_func_91C = 0x91C;
 
 .rodata = 0x98C:

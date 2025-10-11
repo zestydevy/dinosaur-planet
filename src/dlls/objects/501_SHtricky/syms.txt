@@ -7,7 +7,7 @@ SHtricky_update = 0x1A8;
 SHtricky_print = 0x1B4;
 SHtricky_free = 0x1CC;
 SHtricky_get_model_flags = 0x1DC;
-SHtricky_get_state_size = 0x1EC;
+SHtricky_get_data_size = 0x1EC;
 
 .rodata = 0x234:
 _oob_rodata_0 = 0x0; // absolute:0x234

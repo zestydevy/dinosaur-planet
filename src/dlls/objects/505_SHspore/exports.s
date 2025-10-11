@@ -14,4 +14,4 @@ _exports:
 .dword SHspore_print
 .dword SHspore_free
 .dword SHspore_get_model_flags
-.dword SHspore_get_state_size
+.dword SHspore_get_data_size

@@ -28,7 +28,7 @@ typedef struct {
 /*0F*/ u8 discovered;
 /*10*/ u8 collected;
 /*11*/ u8 unk11;
-} Duster_State;
+} Duster_Data;
 
 typedef struct {
 /*00*/ ObjSetup base;
@@ -46,29 +46,29 @@ void Duster_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
-    Duster_State *state = self->state;
+    Duster_Data *objdata = self->data;
 
-    state->timer1 = rand_next(0, 50);
-    state->unk0 = 0.02f;
+    objdata->timer1 = rand_next(0, 50);
+    objdata->unk0 = 0.02f;
 
-    state->gamebitDiscovered = setup->gamebit;
-    if (state->gamebitDiscovered >= BIT_Collected_Duster_1) {
+    objdata->gamebitDiscovered = setup->gamebit;
+    if (objdata->gamebitDiscovered >= BIT_Collected_Duster_1) {
         // this is not a hidden duster
-        state->discovered = TRUE;
-        state->gamebitCollected = state->gamebitDiscovered;
+        objdata->discovered = TRUE;
+        objdata->gamebitCollected = objdata->gamebitDiscovered;
     } else {
         // this is a hidden duster, check if it has been discovered
-        state->discovered = main_get_bits(state->gamebitDiscovered);
-        state->gamebitCollected = state->gamebitDiscovered + DUSTER_TOTAL_COUNT;
+        objdata->discovered = main_get_bits(objdata->gamebitDiscovered);
+        objdata->gamebitCollected = objdata->gamebitDiscovered + DUSTER_TOTAL_COUNT;
     }
-    state->collected = main_get_bits(state->gamebitCollected);
-    state->unk11 = setup->unk1B;
+    objdata->collected = main_get_bits(objdata->gamebitCollected);
+    objdata->unk11 = setup->unk1B;
 
-    if (self->objhitInfo && !state->discovered) {
+    if (self->objhitInfo && !objdata->discovered) {
         self->objhitInfo->unk_0x58 |= 1;
     }
 
-    if (state->collected || !state->discovered) {
+    if (objdata->collected || !objdata->discovered) {
         func_800267A4(self);
     }
 }
@@ -80,15 +80,15 @@ void Duster_control(Object *self) {
     SRT srt;
     f32 **sp54;
     s32 i;
-    Duster_State *state;
+    Duster_Data *objdata;
     PlayerStats *stats;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
-    if (!state->discovered || state->collected == TRUE) {
-        if (!state->discovered) {
-            state->discovered = main_get_bits(state->gamebitDiscovered);
-            state->timer1 = 0;
+    if (!objdata->discovered || objdata->collected == TRUE) {
+        if (!objdata->discovered) {
+            objdata->discovered = main_get_bits(objdata->gamebitDiscovered);
+            objdata->timer1 = 0;
         }
         return;
     }
@@ -96,7 +96,7 @@ void Duster_control(Object *self) {
     if (self->speed.y > -4.0f) {
         self->speed.y += -0.12f * delayFloat;
     }
-    state->unkE = FALSE;
+    objdata->unkE = FALSE;
     count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp54, 0, 0);
 
     for (i = 0; i < count; i++) {
@@ -106,17 +106,17 @@ void Duster_control(Object *self) {
         }
     }
 
-    if (state->timer1 == 0 && state->timer2 == 0) {
-        if (func_80024108(self, state->unk0, delayFloat, NULL) || state->unkE) {
+    if (objdata->timer1 == 0 && objdata->timer2 == 0) {
+        if (func_80024108(self, objdata->unk0, delayFloat, NULL) || objdata->unkE) {
             gDLL_6_AMSFX->vtbl->play_sound(self, 0x87B, 0x25, NULL, NULL, 0, NULL);
             gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
             gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
 
-            state->rand = rand_next(0, DUSTER_RANDOM_MAX);
-            if (state->rand == DUSTER_RANDOM_MAX) {
+            objdata->rand = rand_next(0, DUSTER_RANDOM_MAX);
+            if (objdata->rand == DUSTER_RANDOM_MAX) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, 0x87E, 0x25, NULL, NULL, 0, NULL);
             }
-            if (state->unk11 != 0) {
+            if (objdata->unk11 != 0) {
                 self->speed.x = 0.2f;
                 self->speed.z = 0.0f;
 
@@ -132,36 +132,36 @@ void Duster_control(Object *self) {
                 self->speed.x = 0.0f;
                 self->speed.z = 0.0f;
             }
-            if (state->resetTimer2) {
-                state->timer2 = 250;
+            if (objdata->resetTimer2) {
+                objdata->timer2 = 250;
             }
         } else {
             self->srt.transl.x += self->speed.x * delayFloat;
             self->srt.transl.z += self->speed.z * delayFloat;
         }
         if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
-            state->resetTimer2 = TRUE;
+            objdata->resetTimer2 = TRUE;
             gDLL_6_AMSFX->vtbl->play_sound(self, 0x6BC, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
-        if (state->timer1 != 0) {
-            state->timer1 = state->timer1 - (s16)delayFloat;
-            if (state->timer1 <= 0) {
-                state->timer1 = 0;
+        if (objdata->timer1 != 0) {
+            objdata->timer1 = objdata->timer1 - (s16)delayFloat;
+            if (objdata->timer1 <= 0) {
+                objdata->timer1 = 0;
             }
         }
-        if (state->timer2 != 0) {
-            state->timer2 = state->timer2 - (s16)delayFloat;
-            if (state->timer2 <= 0) {
-                state->timer2 = 0;
-                state->resetTimer2 = FALSE;
+        if (objdata->timer2 != 0) {
+            objdata->timer2 = objdata->timer2 - (s16)delayFloat;
+            if (objdata->timer2 <= 0) {
+                objdata->timer2 = 0;
+                objdata->resetTimer2 = FALSE;
             }
         }
     }
-    if (state->rand == DUSTER_RANDOM_MAX) {
-        if (state->unkE) {
+    if (objdata->rand == DUSTER_RANDOM_MAX) {
+        if (objdata->unkE) {
             self->srt.yaw -= 0x7FFF;
-            state->rand = 0;
+            objdata->rand = 0;
         }
         self->srt.yaw += 0xBB8 * (s16)delayFloat;
     }
@@ -170,8 +170,8 @@ void Duster_control(Object *self) {
         gDLL_17->vtbl->func1(self, 0x51A, 0, 1, -1, 0);
         gDLL_17->vtbl->func1(self, 0x51A, 0, 1, -1, 0);
         gDLL_17->vtbl->func1(self, 0x51A, 0, 1, -1, 0);
-        main_set_bits(state->gamebitCollected, 1);
-        state->collected = TRUE;
+        main_set_bits(objdata->gamebitCollected, 1);
+        objdata->collected = TRUE;
         func_800267A4(self);
         stats = gDLL_29_Gplay->vtbl->get_player_stats();
         stats->dusters++;
@@ -181,12 +181,12 @@ void Duster_control(Object *self) {
 
 // offset: 0x754 | func: 2 | export: 2
 void Duster_update(Object *self) {
-    Duster_State *state;
+    Duster_Data *objdata;
     s32 _pad1[21];
     s32 sp3C;
     s32 _pad2;
 
-    state = self->state;
+    objdata = self->data;
     if (func_80059C40(
         &self->positionMirror2,
         &self->srt.transl,
@@ -198,7 +198,7 @@ void Duster_update(Object *self) {
         -1,
         0xFF,
         0) != 0) {
-        state->unkE = TRUE;
+        objdata->unkE = TRUE;
     }
 
     self->positionMirror2.x = self->srt.transl.x;
@@ -208,9 +208,9 @@ void Duster_update(Object *self) {
 
 // offset: 0x7FC | func: 3 | export: 3
 void Duster_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    Duster_State *state = self->state;
+    Duster_Data *objdata = self->data;
 
-    if (visibility && state->discovered && !state->collected) {
+    if (visibility && objdata->discovered && !objdata->collected) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
@@ -224,6 +224,6 @@ u32 Duster_get_model_flags(Object *self) {
 }
 
 // offset: 0x890 | func: 6 | export: 6
-u32 Duster_get_state_size(Object *self, u32 arg1) {
-    return sizeof(Duster_State);
+u32 Duster_get_data_size(Object *self, u32 arg1) {
+    return sizeof(Duster_Data);
 }

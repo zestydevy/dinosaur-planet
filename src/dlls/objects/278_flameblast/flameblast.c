@@ -16,7 +16,7 @@ typedef struct {
     s16 timer;
     s16 pad;
     u32 sound;
-} FlameBlastState;
+} FlameBlast_Data;
 
 // offset: 0x0 | ctor
 void dll_278_ctor(void* dll){
@@ -28,29 +28,29 @@ void dll_278_dtor(void* dll){
 
 // offset: 0x18 | func: 0 | export: 0
 void flameblast_setup(Object* self, FlameBlast_Setup* setup, s32 arg2) {
-    FlameBlastState* state = self->state;
+    FlameBlast_Data* objdata = self->data;
 
-    state->timer = setup->timer;
+    objdata->timer = setup->timer;
     func_80026128(self, 0x1A, setup->unk19 ? 3 : 1, 0);
 }
 
 // offset: 0x80 | func: 1 | export: 1
 void flameblast_control(Object* self) {
     Object* sidekick;
-    FlameBlastState* state;
+    FlameBlast_Data* objdata;
     SRT sp30;
 
     sidekick = get_sidekick();
-    state = self->state;
+    objdata = self->data;
     if (!sidekick)
         return;
 
-    if (state->sound == 0)
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x304, 0x7F, &state->sound, 0, 0, 0);
+    if (objdata->sound == 0)
+        gDLL_6_AMSFX->vtbl->play_sound(self, 0x304, 0x7F, &objdata->sound, 0, 0, 0);
 
-    state->timer -= (s16) delayFloat;
-    if (state->timer <= 0) {
-        state->timer = 30;
+    objdata->timer -= (s16) delayFloat;
+    if (objdata->timer <= 0) {
+        objdata->timer = 30;
 
         self->speed.x = 0.0f;
         self->speed.y = 0.0f;
@@ -92,9 +92,9 @@ void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle
 
 // offset: 0x294 | func: 4 | export: 4
 void flameblast_free(Object* self, s32 arg1) {
-    FlameBlastState* state = self->state;
+    FlameBlast_Data* objdata = self->data;
 
-    gDLL_6_AMSFX->vtbl->func_A1C(state->sound);
+    gDLL_6_AMSFX->vtbl->func_A1C(objdata->sound);
 }
 
 // offset: 0x2EC | func: 5 | export: 5
@@ -103,6 +103,6 @@ u32 flameblast_get_model_flags(Object* self){
 }
 
 // offset: 0x2FC | func: 6 | export: 6
-u32 flameblast_get_state_size(Object* self, s32 arg1){
-    return sizeof(FlameBlastState);
+u32 flameblast_get_data_size(Object* self, s32 arg1){
+    return sizeof(FlameBlast_Data);
 }

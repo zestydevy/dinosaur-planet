@@ -14,4 +14,4 @@ _exports:
 .dword MMshrine_print
 .dword MMshrine_free
 .dword MMshrine_get_model_flags
-.dword MMshrine_get_state_size
+.dword MMshrine_get_data_size

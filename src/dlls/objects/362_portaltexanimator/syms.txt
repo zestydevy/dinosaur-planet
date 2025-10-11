@@ -8,7 +8,7 @@ portaltexanimator_update = 0x414;
 portaltexanimator_print = 0x420;
 portaltexanimator_free = 0x474;
 portaltexanimator_get_model_flags = 0x4C4;
-portaltexanimator_get_state_size = 0x4D4;
+portaltexanimator_get_data_size = 0x4D4;
 
 .rodata = 0x53C:
 str_0 = 0x0; // absolute:0x53C

@@ -14,4 +14,4 @@ _exports:
 .dword animator_print
 .dword animator_free
 .dword animator_get_model_flags
-.dword animator_get_state_size
+.dword animator_get_data_size

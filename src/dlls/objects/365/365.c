@@ -41,7 +41,7 @@ u32 dll_365_get_model_flags(void* arg)
 	return MODFLAGS_NONE;
 }
 
-u32 dll_365_get_state_size(Object *self, u32 arg1)
+u32 dll_365_get_data_size(Object *self, u32 arg1)
 {
 	return 0;
 }

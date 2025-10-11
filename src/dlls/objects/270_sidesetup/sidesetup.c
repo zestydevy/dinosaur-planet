@@ -43,6 +43,6 @@ u32 sidesetup_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
-u32 sidesetup_get_state_size(Object *self, u32 arg1) {
+u32 sidesetup_get_data_size(Object *self, u32 arg1) {
     return 0;
 }

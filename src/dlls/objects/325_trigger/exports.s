@@ -14,4 +14,4 @@ _exports:
 .dword trigger_print
 .dword trigger_free
 .dword trigger_get_model_flags
-.dword trigger_get_state_size
+.dword trigger_get_data_size

@@ -14,4 +14,4 @@ _exports:
 .dword VFP_lavastar_print
 .dword VFP_lavastar_free
 .dword VFP_lavastar_get_model_flags
-.dword VFP_lavastar_get_state_size
+.dword VFP_lavastar_get_data_size

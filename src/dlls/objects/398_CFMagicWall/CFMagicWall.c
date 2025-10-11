@@ -79,7 +79,7 @@ u32 CFMagicWall_get_model_flags(Object *self) {
 }
 
 // offset: 0x370 | func: 6 | export: 6
-u32 CFMagicWall_get_state_size(Object *self, u32 a1) {
+u32 CFMagicWall_get_data_size(Object *self, u32 a1) {
     return 0;
 }
 

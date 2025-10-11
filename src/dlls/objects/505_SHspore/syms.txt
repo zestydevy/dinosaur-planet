@@ -9,7 +9,7 @@ SHspore_update = 0xB88;
 SHspore_print = 0xB94;
 SHspore_free = 0xBAC;
 SHspore_get_model_flags = 0xBF4;
-SHspore_get_state_size = 0xC04;
+SHspore_get_data_size = 0xC04;
 
 .rodata = 0xC90:
 

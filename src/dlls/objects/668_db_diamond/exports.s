@@ -14,4 +14,4 @@ _exports:
 .dword DBdiamond_print
 .dword DBdiamond_free
 .dword DBdiamond_get_model_flags
-.dword DBdiamond_get_state_size
+.dword DBdiamond_get_data_size

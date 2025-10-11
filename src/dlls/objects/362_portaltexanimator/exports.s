@@ -14,4 +14,4 @@ _exports:
 .dword portaltexanimator_print
 .dword portaltexanimator_free
 .dword portaltexanimator_get_model_flags
-.dword portaltexanimator_get_state_size
+.dword portaltexanimator_get_data_size

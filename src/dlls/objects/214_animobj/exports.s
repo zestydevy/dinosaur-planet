@@ -14,4 +14,4 @@ _exports:
 .dword animobj_print
 .dword animobj_free
 .dword animobj_get_model_flags
-.dword animobj_get_state_size
+.dword animobj_get_data_size

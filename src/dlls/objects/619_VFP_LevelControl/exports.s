@@ -14,4 +14,4 @@ _exports:
 .dword VFP_LevelControl_print
 .dword VFP_LevelControl_free
 .dword VFP_LevelControl_get_model_flags
-.dword VFP_LevelControl_get_state_size
+.dword VFP_LevelControl_get_data_size

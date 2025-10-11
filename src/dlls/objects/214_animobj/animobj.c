@@ -17,26 +17,26 @@ void animobj_dtor(void *dll) {
 
 // offset: 0x18 | func: 0 | export: 0
 void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
-    AnimObjState *state;
+    AnimObj_Data *objdata;
 
     obj_set_update_priority(self, 0x64);
-    state = self->state;
+    objdata = self->data;
     if (!setup->sequenceIdBitfield){
     }
 
-    state->unk76 = setup->unk1A;
-    state->unk7A = -1;
-    state->unk24 = 1.0f / (setup->unk24 + 1.0f);
-    state->unk28 = -1;
+    objdata->unk76 = setup->unk1A;
+    objdata->unk7A = -1;
+    objdata->unk24 = 1.0f / (setup->unk24 + 1.0f);
+    objdata->unk28 = -1;
 
     if (self->unk0xdc == 0 && setup->sequenceIdBitfield != 1){
-        gDLL_3_Animation->vtbl->func6((s32)state, (ObjSetup*)setup);
+        gDLL_3_Animation->vtbl->func6((s32)objdata, (ObjSetup*)setup);
         self->unk0xdc = setup->sequenceIdBitfield + 1;
     } else {
         if (self->unk0xdc != 0 && (setup->sequenceIdBitfield + 1 != self->unk0xdc)){
-            gDLL_3_Animation->vtbl->func8((s32)state);
+            gDLL_3_Animation->vtbl->func8((s32)objdata);
             if (setup->sequenceIdBitfield != -1){
-                gDLL_3_Animation->vtbl->func6((s32)state, (ObjSetup*)setup);
+                gDLL_3_Animation->vtbl->func6((s32)objdata, (ObjSetup*)setup);
             }
             self->unk0xdc = setup->sequenceIdBitfield + 1;
         }
@@ -51,7 +51,7 @@ void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
 // offset: 0x19C | func: 1 | export: 1
 void animobj_control(Object *self) {
     s32 index;
-    AnimObjState *state;
+    AnimObj_Data *objdata;
     AnimObjSetup *setup;
     s8 new_var;
     Object *object;
@@ -70,8 +70,8 @@ void animobj_control(Object *self) {
         return;
     }
 
-    state = self->state;
-    new_var = state->unk63;
+    objdata = self->data;
+    new_var = objdata->unk63;
     matchObject = 0;
     objects = get_world_objects(&index, &count);
     matches = 0;
@@ -82,8 +82,8 @@ void animobj_control(Object *self) {
         }
 
         if (object->unk0xb4 == -2 && object->group == 0x10) {
-            state = object->state;    
-            if (new_var == state->unk63){
+            objdata = object->data;    
+            if (new_var == objdata->unk63){
                 matches++;
             }
         }
@@ -109,20 +109,20 @@ void animobj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x378 | func: 4 | export: 4
 void animobj_free(Object *self, s32 arg1) {
-    AnimObjState *state;
+    AnimObj_Data *objdata;
     s32 i;
 
-    state = self->state;
-    gDLL_3_Animation->vtbl->func8((s32)state);
+    objdata = self->data;
+    gDLL_3_Animation->vtbl->func8((s32)objdata);
     for (i = 0; i < 4; i++){
-        if (state->unk34[i]){
-            gDLL_6_AMSFX->vtbl->func_A1C(state->unk34[i]);
+        if (objdata->unk34[i]){
+            gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34[i]);
         }
     }
 
     gDLL_5_AMSEQ2->vtbl->func1(self, 0xFFFF, 0, 0, 0);
-    if (state->unk30 != 0){
-        gDLL_6_AMSFX->vtbl->func_A1C(state->unk30);
+    if (objdata->unk30 != 0){
+        gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk30);
     }
 }
 
@@ -132,6 +132,6 @@ u32 animobj_get_model_flags(Object *self) {
 }
 
 // offset: 0x494 | func: 6 | export: 6
-u32 animobj_get_state_size(Object *self, s32 arg1) {
-    return sizeof(AnimObjState);
+u32 animobj_get_data_size(Object *self, s32 arg1) {
+    return sizeof(AnimObj_Data);
 }

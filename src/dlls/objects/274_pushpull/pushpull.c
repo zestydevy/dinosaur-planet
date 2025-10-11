@@ -10,7 +10,7 @@ typedef struct {
     f32 unkC8;
     f32 unkCC;
     u8 _unkD0[0xDC - 0xD0];
-} DLL274_State;
+} DLL274_Data;
 
 /*0x0*/ static u32 _data_0[] = {
     0x00000000, 0x00000001, 0x00000002, 0x00000003
@@ -56,8 +56,8 @@ u32 dll_274_get_model_flags(Object* self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_get_model_flags.s")
 
 // offset: 0x117C | func: 6 | export: 6
-u32 dll_274_get_state_size(Object *self, u32 a1) {
-    return sizeof(DLL274_State);
+u32 dll_274_get_data_size(Object *self, u32 a1) {
+    return sizeof(DLL274_Data);
 }
 
 // offset: 0x1190 | func: 7 | export: 7
@@ -97,7 +97,7 @@ u32 dll_274_get_state_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_func_27C8.s")
 
 // offset: 0x2A74 | func: 19
-s32 dll_274_func_2A74(Object* arg0, DLL274_State* arg1) {
+s32 dll_274_func_2A74(Object* arg0, DLL274_Data* arg1) {
     if ((arg1->unkCC == 0.0f) && (arg1->unkC8 > 0.0f)) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_3D8, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(BIT_DIM_Pushed_Ice_Block_Into_Lake, 1);
