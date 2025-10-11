@@ -46,6 +46,7 @@ static void dll_210_func_7260(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_1DC48(Object* obj);
 /* static */ void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
 /* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
+void dll_210_func_1CD6C(Object* player, s32 arg1);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
