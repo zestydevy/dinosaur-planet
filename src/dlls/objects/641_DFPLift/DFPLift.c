@@ -8,13 +8,13 @@
 // Note: This file appears to be called "lift1.c" in the original game.
 
 typedef struct {
-/*0x00*/ ObjCreateInfo base;
+/*0x00*/ ObjSetup base;
 /*0x18*/ s8 rotation;
 /*0x1A*/ s16 unk1A;
 /*0x1C*/ s16 unk1C;
 /*0x1E*/ s16 unk1E;
 /*0x20*/ s16 unk20;
-} DFPLiftCreateInfo;
+} DFPLift_Setup;
 
 typedef struct {
 /*0x00*/ f32 unk0;
@@ -50,19 +50,19 @@ void DFPLift_ctor(void *dll) { }
 void DFPLift_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFPLift_create(Object *self, DFPLiftCreateInfo *createInfo, s32 a2) {
+void DFPLift_create(Object *self, DFPLift_Setup *setup, s32 a2) {
     DFPLiftState *state;
 
     state = (DFPLiftState*)self->state;
 
     self->unk0xbc = DFPLift_func_91C;
-    self->srt.yaw = createInfo->rotation * 256;
+    self->srt.yaw = setup->rotation * 256;
 
     state->stateType = LIFT_STATE_INIT;
-    state->unkA = createInfo->unk20;
-    state->unkC = createInfo->unk1E;
-    state->unk0 = createInfo->unk1A;
-    state->unk10 = createInfo->unk1C;
+    state->unkA = setup->unk20;
+    state->unkC = setup->unk1E;
+    state->unk0 = setup->unk1A;
+    state->unk10 = setup->unk1C;
 
     self->srt.transl.y -= LIFT_DOWN;
     self->unk0xb0 |= 0x2000;
@@ -70,11 +70,11 @@ void DFPLift_create(Object *self, DFPLiftCreateInfo *createInfo, s32 a2) {
 
 // offset: 0x9C | func: 1 | export: 1
 void DFPLift_update(Object* self) {
-    DFPLiftCreateInfo* createInfo;
+    DFPLift_Setup* setup;
     DFPLiftState* state;
     Object* player;
 
-    createInfo = (DFPLiftCreateInfo*)self->createInfo;
+    setup = (DFPLift_Setup*)self->setup;
     state = (DFPLiftState*)self->state;
     
     player = get_player();
@@ -87,14 +87,14 @@ void DFPLift_update(Object* self) {
         if ((main_get_bits(state->unkA) != 0) && (state->unk10 != 1) && 
                 (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_INIT_ACTIVATE_RANGE)) {
             // go up with sound
-            if (self->srt.transl.y < (createInfo->base.y + LIFT_UP)) {
+            if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
                 if (state->soundHandle == 0) {
                     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, 0x75, &state->soundHandle, NULL, 0, NULL);
                     state->unk11 = 1;
                 }
                 self->srt.transl.y += delayFloat;
-                if ((createInfo->base.y + LIFT_UP) <= self->srt.transl.y) {
-                    self->srt.transl.y = (createInfo->base.y + LIFT_UP);
+                if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
+                    self->srt.transl.y = (setup->base.y + LIFT_UP);
                     state->stateType = LIFT_STATE_INIT_DONE;
                     if (state->soundHandle != 0) {
                         gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
@@ -106,10 +106,10 @@ void DFPLift_update(Object* self) {
         } else if (state->unk10 == 1) {
             if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_INIT_ACTIVATE_RANGE) {
                 // go up without sound
-                if (self->srt.transl.y < (createInfo->base.y + LIFT_UP)) {
+                if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
                     self->srt.transl.y += delayFloat;
-                    if ((createInfo->base.y + LIFT_UP) <= self->srt.transl.y) {
-                        self->srt.transl.y = (createInfo->base.y + LIFT_UP);
+                    if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
+                        self->srt.transl.y = (setup->base.y + LIFT_UP);
                         state->stateType = LIFT_STATE_INIT_DONE;
                     }
                 }
@@ -130,14 +130,14 @@ void DFPLift_update(Object* self) {
         } else {
             if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) {
                 // player is on lift, start moving
-                if (self->srt.transl.y == (createInfo->base.y + LIFT_UP)) {
+                if (self->srt.transl.y == (setup->base.y + LIFT_UP)) {
                     // at top, start going down
                     state->stateType = LIFT_STATE_GO_DOWN;
                     if (state->soundHandle == 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, 0x6B, &state->soundHandle, NULL, 0, NULL);
                         state->unk11 = 1;
                     }
-                } else if (self->srt.transl.y == (createInfo->base.y - LIFT_DOWN)) {
+                } else if (self->srt.transl.y == (setup->base.y - LIFT_DOWN)) {
                     // at bottom, start going up
                     state->stateType = LIFT_STATE_GO_UP;
                     if (state->soundHandle == 0) {
@@ -147,12 +147,12 @@ void DFPLift_update(Object* self) {
                 }
             } else {
                 // player is not on the lift, move to where they are
-                if (player->srt.transl.y < createInfo->base.y) {
+                if (player->srt.transl.y < setup->base.y) {
                     state->stateType = LIFT_STATE_GO_DOWN;
                     if (state->unk11 == 1) {
                         state->unk11 = 0;
                     }
-                } else if (createInfo->base.y < player->srt.transl.y) {
+                } else if (setup->base.y < player->srt.transl.y) {
                     state->stateType = LIFT_STATE_GO_UP;
                     if (state->unk11 == 1) {
                         state->unk11 = 0;
@@ -163,11 +163,11 @@ void DFPLift_update(Object* self) {
         break;
     case LIFT_STATE_GO_DOWN:
         // going down
-        if ((createInfo->base.y - LIFT_DOWN) < self->srt.transl.y) {
+        if ((setup->base.y - LIFT_DOWN) < self->srt.transl.y) {
             self->srt.transl.y -= delayFloat;
-            if (self->srt.transl.y <= (createInfo->base.y - LIFT_DOWN)) {
+            if (self->srt.transl.y <= (setup->base.y - LIFT_DOWN)) {
                 // reached bottom
-                self->srt.transl.y = (createInfo->base.y - LIFT_DOWN);
+                self->srt.transl.y = (setup->base.y - LIFT_DOWN);
                 state->stateType = LIFT_STATE_STOPPED;
                 if (state->soundHandle != 0) {
                     gDLL_6_AMSFX->vtbl->func_A1C(state->soundHandle);
@@ -191,11 +191,11 @@ void DFPLift_update(Object* self) {
         break;
     case LIFT_STATE_GO_UP:
         // going up
-        if (self->srt.transl.y < (createInfo->base.y + LIFT_UP)) {
+        if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
             self->srt.transl.y += delayFloat;
-            if ((createInfo->base.y + LIFT_UP) <= self->srt.transl.y) {
+            if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
                 // reached top
-                self->srt.transl.y = (createInfo->base.y + LIFT_UP);
+                self->srt.transl.y = (setup->base.y + LIFT_UP);
                 state->stateType = LIFT_STATE_STOPPED;
                 state->cooldown = LIFT_COOLDOWN;
                 if (state->soundHandle != 0) {

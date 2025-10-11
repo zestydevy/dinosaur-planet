@@ -91,7 +91,7 @@ void SC_levelcontrol_ctor(void *dll) { }
 void SC_levelcontrol_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SC_levelcontrol_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
+void SC_levelcontrol_create(Object *self, ObjSetup *setup, s32 arg2) {
     SC_levelcontrol_State *state;
 
     state = self->state;

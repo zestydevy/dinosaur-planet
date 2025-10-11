@@ -19,7 +19,7 @@ typedef struct{
 } SmallBasketState;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s8 yaw;
 /*19*/ s8 storedItemID;
 /*1A*/ s8 unk1A;
@@ -29,7 +29,7 @@ typedef struct {
 /*1E*/ s8 unk1E;
 /*1F*/ s8 unk1F;
 /*20*/ s16 autoThrowRadius;
-} SmallBasketCreateInfo;
+} SmallBasket_Setup;
 
 /*0x0*/ static s32 _data_0[] = {
     0, 0, 0, 0, 0, 0, 0, 0
@@ -44,7 +44,7 @@ void dll_295_ctor(void *dll) { }
 void dll_295_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_295_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
+void dll_295_create(Object *self, ObjSetup* setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_create.s")
 
 // offset: 0x1B8 | func: 1 | export: 1

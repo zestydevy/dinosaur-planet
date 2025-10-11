@@ -18,11 +18,11 @@ typedef struct {
 } WCPushBlockState;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ u8 unk18;
 /*19*/ s8 modelIndex;
 /*1A*/ s16 unk1A;
-} WCPushBlockCreateInfo;
+} WCPushBlock_Setup;
 
 // offset: 0x0 | ctor
 void dll_782_ctor(void* dll){
@@ -33,15 +33,15 @@ void dll_782_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_782_func_18(Object* self, WCPushBlockCreateInfo* createInfo, s32 arg2) {
+void dll_782_func_18(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
     WCPushBlockState* state = self->state;
 
     self->unk_0x36 = 0;
-    self->modelInstIdx = createInfo->modelIndex;
+    self->modelInstIdx = setup->modelIndex;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
-    state->unk276 = createInfo->unk1A;
+    state->unk276 = setup->unk1A;
 }
 
 // offset: 0x58 | func: 1 | export: 1
@@ -65,11 +65,11 @@ void dll_782_func_F98(Object* self, s32 arg1) {
 
 // offset: 0xFA8 | func: 5 | export: 5
 u32 dll_782_get_model_flags(Object* self) {
-    WCPushBlockCreateInfo* createInfo;
+    WCPushBlock_Setup* setup;
     s8 modelIndex;
 
-    createInfo = (WCPushBlockCreateInfo*)self->createInfo;
-    modelIndex = createInfo->modelIndex;
+    setup = (WCPushBlock_Setup*)self->setup;
+    modelIndex = setup->modelIndex;
     if (modelIndex >= self->def->numModels) {
         modelIndex = 0;
     }

@@ -12,9 +12,9 @@
 #include "dll.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unk18;
-} SHqueenearthwalker_CreateInfo;
+} SHqueenearthwalker_Setup;
 
 typedef struct {
     u8 questProgress;
@@ -32,11 +32,11 @@ void SHqueenearthwalker_ctor(void *dll) { }
 void SHqueenearthwalker_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHqueenearthwalker_create(Object* self, SHqueenearthwalker_CreateInfo* createInfo, s32 arg2) {
+void SHqueenearthwalker_create(Object* self, SHqueenearthwalker_Setup* setup, s32 arg2) {
     SHqueenearthwalker_State* sp24;
 
     sp24 = self->state;
-    self->srt.yaw = createInfo->unk18 << 8;
+    self->srt.yaw = setup->unk18 << 8;
     self->unk0xbc = (ObjectCallback)SHqueenearthwalker_func_4F8;
     sp24->eatenWhiteMushrooms = main_get_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
     sp24->questProgress = main_get_bits(BIT_SH_Queen_EW_Quest_Progress);

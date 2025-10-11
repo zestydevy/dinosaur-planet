@@ -74,7 +74,7 @@ typedef struct {
 } TriggerCommand;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ TriggerCommand commands[8];
 /*38*/ s16 localID; // TODO: needs verification
 /*3A*/ u8 sizeX; // unit depends on trigger type
@@ -103,7 +103,7 @@ typedef struct {
 // Only supported by TriggerPlane and TriggerBits (plane only supports one flag to check).
 // A negative ID indicates that there is no flag to check for that condition slot. 
 /*48*/ s16 conditionBitFlagIDs[4];
-} TriggerCreateInfo;
+} Trigger_Setup;
 
 DLL_INTERFACE(DLL_TriggerScript) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
@@ -211,29 +211,29 @@ static s16 sPlaneModelRefCount;
 /*static*/ void trigger_func_1868(u16 param1);
 /*static*/ void trigger_func_1920(u16 param1);
 
-static void trigger_point_setup(Object *obj, TriggerCreateInfo *createInfo);
+static void trigger_point_setup(Object *obj, Trigger_Setup *setup);
 /*static*/ void trigger_point_update(Object *self, Object *activator);
 
-static void trigger_cylinder_setup(Object *obj, TriggerCreateInfo *createInfo);
+static void trigger_cylinder_setup(Object *obj, Trigger_Setup *setup);
 /*static*/ void trigger_cylinder_update(Object *self, Object* activator);
 
-static void trigger_plane_setup(Object *obj, TriggerCreateInfo *createInfo);
+static void trigger_plane_setup(Object *obj, Trigger_Setup *setup);
 /*static*/ void trigger_plane_update(Object *self, Object *activator);
 
-static void trigger_area_setup(Object *self, TriggerCreateInfo *createInfo);
+static void trigger_area_setup(Object *self, Trigger_Setup *setup);
 /*static*/ void trigger_area_update(Object *self, Object *activator);
 /*static*/ s32 trigger_func_273C(Object *self, Vec3f *vec);
 static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz);
 /*static*/ void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDistSquared);
 
-static void trigger_curve_setup(Object *self, TriggerCreateInfo *createInfo);
+static void trigger_curve_setup(Object *self, Trigger_Setup *setup);
 /*static*/ void trigger_curve_update(Object *self, Object *activator);
 
 void trigger_ctor(void *dll) { }
 
 void trigger_dtor(void *dll) { }
 
-void trigger_create(Object *self, TriggerCreateInfo *createInfo, s32 param3) {
+void trigger_create(Object *self, Trigger_Setup *setup, s32 param3) {
     TriggerState *state;
     s32 s0;
     s32 i;
@@ -244,30 +244,30 @@ void trigger_create(Object *self, TriggerCreateInfo *createInfo, s32 param3) {
 
     state = (TriggerState*)self->state;
 
-    switch (createInfo->base.objId) {
+    switch (setup->base.objId) {
         case OBJ_TriggerPoint:
-            trigger_point_setup(self, createInfo);
+            trigger_point_setup(self, setup);
             break;
         case OBJ_TriggerPlane:
-            if ((createInfo && createInfo) && createInfo){} // fakematch
+            if ((setup && setup) && setup){} // fakematch
 
-            state->conditionBitFlagIDs[0] = createInfo->conditionBitFlagIDs[0];
-            trigger_plane_setup(self, createInfo);
+            state->conditionBitFlagIDs[0] = setup->conditionBitFlagIDs[0];
+            trigger_plane_setup(self, setup);
             break;
         case OBJ_TriggerCylinder:
-            trigger_cylinder_setup(self, createInfo);
+            trigger_cylinder_setup(self, setup);
             break;
         case OBJ_TriggerArea:
-            trigger_area_setup(self, createInfo);
+            trigger_area_setup(self, setup);
             break;
         case OBJ_TriggerBits:
-            state->conditionBitFlagIDs[0] = createInfo->conditionBitFlagIDs[0];
-            state->conditionBitFlagIDs[1] = createInfo->conditionBitFlagIDs[1];
-            state->conditionBitFlagIDs[2] = createInfo->conditionBitFlagIDs[2];
-            state->conditionBitFlagIDs[3] = createInfo->conditionBitFlagIDs[3];
+            state->conditionBitFlagIDs[0] = setup->conditionBitFlagIDs[0];
+            state->conditionBitFlagIDs[1] = setup->conditionBitFlagIDs[1];
+            state->conditionBitFlagIDs[2] = setup->conditionBitFlagIDs[2];
+            state->conditionBitFlagIDs[3] = setup->conditionBitFlagIDs[3];
             break;
         case OBJ_TriggerCurve:
-            trigger_curve_setup(self, createInfo);
+            trigger_curve_setup(self, setup);
             break;
         case OBJ_TriggerTime:
         case OBJ_TriggerButton:
@@ -278,10 +278,10 @@ void trigger_create(Object *self, TriggerCreateInfo *createInfo, s32 param3) {
             break;
     }
 
-    state->bitFlagID = createInfo->bitFlagID;
+    state->bitFlagID = setup->bitFlagID;
     s0 = main_get_bits(state->bitFlagID);
 
-    cmd = createInfo->commands;
+    cmd = setup->commands;
 
     for (i = 0; i < 8; i++, cmd++) {
         state->soundHandles[i] = 0;
@@ -311,7 +311,7 @@ void trigger_create(Object *self, TriggerCreateInfo *createInfo, s32 param3) {
 #else
 void trigger_update(Object* self) {
     TriggerState* state;
-    TriggerCreateInfo* createInfo;
+    Trigger_Setup* setup;
     Object* player;
     Object* temp_v0_2;
     Object* sidekick;
@@ -322,7 +322,7 @@ void trigger_update(Object* self) {
     f32 maxObjSearchDist;
 
     state = (TriggerState*)self->state;
-    createInfo = (TriggerCreateInfo*)self->createInfo;
+    setup = (Trigger_Setup*)self->setup;
     
     maxObjSearchDist = 200.0f;
    
@@ -345,13 +345,13 @@ void trigger_update(Object* self) {
         }
         
         b_foundActivatorObj = TRUE;
-        if (createInfo->activatorObjType >= 3) {
-            activatorObj = obj_get_nearest_type_to(createInfo->activatorObjType, self, &maxObjSearchDist);
+        if (setup->activatorObjType >= 3) {
+            activatorObj = obj_get_nearest_type_to(setup->activatorObjType, self, &maxObjSearchDist);
             if (activatorObj == NULL) {
                 b_foundActivatorObj = FALSE;
             }
         } else {
-            switch (createInfo->activatorObjType) {
+            switch (setup->activatorObjType) {
             case 0:
                 activatorObj = player;
                 if (player == NULL) {
@@ -372,7 +372,7 @@ void trigger_update(Object* self) {
         
         if (b_foundActivatorObj) {
             if (state->flags & TRG_FIRST_TICK) {
-                switch (createInfo->activatorObjType) {
+                switch (setup->activatorObjType) {
                 default:
                     state->activatorPrevPos.x = activatorObj->positionMirror2.x;
                     state->activatorPrevPos.y = activatorObj->positionMirror2.y;
@@ -400,7 +400,7 @@ void trigger_update(Object* self) {
                 state->activatorPrevPos.z = state->activatorCurrPos.z;
             }
             
-            switch (createInfo->activatorObjType) {
+            switch (setup->activatorObjType) {
             case 0:
             case 1:
                 // Player/sidekick
@@ -418,7 +418,7 @@ void trigger_update(Object* self) {
             }
         }
         
-        switch (createInfo->base.objId) {
+        switch (setup->base.objId) {
         case OBJ_TriggerPoint:
             if (b_foundActivatorObj) {
                 trigger_point_update(self, activatorObj);
@@ -442,7 +442,7 @@ void trigger_update(Object* self) {
             break;
         case OBJ_TriggerTime:
             state->elapsedTicks += delayByte;
-            if (state->elapsedTicks >= createInfo->timerDuration) {
+            if (state->elapsedTicks >= setup->timerDuration) {
                 trigger_process_commands(self, NULL, 1, 0);
             }
             break;
@@ -485,11 +485,11 @@ void trigger_func_7D4(Object *self) { }
 void trigger_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 void trigger_destroy(Object *self, s32 param2) {
-    TriggerCreateInfo *createInfo;
+    Trigger_Setup *setup;
     TriggerState *state;
     u8 i;
 
-    createInfo = (TriggerCreateInfo*)self->createInfo;
+    setup = (Trigger_Setup*)self->setup;
     state = (TriggerState*)self->state;
 
     for (i = 0; i < 8; i++) {
@@ -504,7 +504,7 @@ void trigger_destroy(Object *self, s32 param2) {
         state->scripts[i] = NULL;
     }
 
-    switch (createInfo->base.objId) {
+    switch (setup->base.objId) {
         case OBJ_TriggerPoint:
         case OBJ_TriggerButton: // ??? is this a bug?
             if (sPointModel != NULL) {
@@ -548,7 +548,7 @@ u32 trigger_get_state_size(Object *self, u32 param2) {
 // -1 = exited
 // -2 = out
 void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activatorDistSquared) {
-    TriggerCreateInfo* createInfo; // sp+74
+    Trigger_Setup* setup; // sp+74
     TriggerState* state; // sp+70
     //Object* player;
     s32 pad;
@@ -560,9 +560,9 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
     s32 pad2;
 
     state = (TriggerState*)self->state;
-    createInfo = (TriggerCreateInfo*)self->createInfo;
+    setup = (Trigger_Setup*)self->setup;
     
-    for (i = 0, cmd = createInfo->commands; i < 8; i++, cmd++) {
+    for (i = 0, cmd = setup->commands; i < 8; i++, cmd++) {
         if (cmd->id == 0) {
             // No command assigned to this slot
             continue;
@@ -750,7 +750,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             }
             break;
         case TRG_CMD_5: 
-            if ((state->radiusSquared != 0.0f) && (activatorDistSquared != 0) && (createInfo->base.objId == OBJ_TriggerPlane)) {
+            if ((state->radiusSquared != 0.0f) && (activatorDistSquared != 0) && (setup->base.objId == OBJ_TriggerPlane)) {
 
             }
             break;
@@ -967,7 +967,7 @@ void trigger_func_1868(u16 param1) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
             tex = func_8003E960(*ptr2);
             if (tex == NULL) {
-                func_80012584(50, 3, NULL, (ObjCreateInfo*)*ptr2, 0, 0, 0, 0);
+                func_80012584(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
             }
         }
     }
@@ -989,7 +989,7 @@ void trigger_func_1920(u16 param1) {
     }
 }
 
-static void trigger_point_setup(Object *self, TriggerCreateInfo *createInfo) {
+static void trigger_point_setup(Object *self, Trigger_Setup *setup) {
     TriggerState *state;
     ModelInstance *modelInstance;
     Model *model;
@@ -1007,12 +1007,12 @@ static void trigger_point_setup(Object *self, TriggerCreateInfo *createInfo) {
     }
 
     state = (TriggerState*)self->state;
-    radius = createInfo->sizeX << 1;
+    radius = setup->sizeX << 1;
     state->radiusSquared = radius * radius;
 
     self->srt.roll = 0;
     self->srt.pitch = 0;
-    self->srt.yaw = createInfo->rotationY << 8;
+    self->srt.yaw = setup->rotationY << 8;
 
     modelInstance = sPointModel;
     model = modelInstance->model;
@@ -1030,7 +1030,7 @@ static void trigger_point_setup(Object *self, TriggerCreateInfo *createInfo) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_point_update.s")
 #else
 void trigger_point_update(Object *self, Object *activator) {
-    TriggerCreateInfo *createInfo;
+    Trigger_Setup *setup;
     TriggerState *state;
     f32 prevDist;
     f32 currDist;
@@ -1040,15 +1040,15 @@ void trigger_point_update(Object *self, Object *activator) {
     s32 dir;
 
     state = (TriggerState*)self->state;
-    createInfo = (TriggerCreateInfo*)self->createInfo;
+    setup = (Trigger_Setup*)self->setup;
 
     diffX = state->activatorPrevPos.x - self->positionMirror.x;
     diffY = state->activatorPrevPos.y - self->positionMirror.y;
     diffZ = state->activatorPrevPos.z - self->positionMirror.z;
     prevDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
 
-    if (createInfo->localID > 0) {
-        currDist = gDLL_26_Curves->vtbl->curves_func_14f4(7, createInfo->localID,
+    if (setup->localID > 0) {
+        currDist = gDLL_26_Curves->vtbl->curves_func_14f4(7, setup->localID,
             state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z,
             &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z);
         
@@ -1088,11 +1088,11 @@ void trigger_point_update(Object *self, Object *activator) {
 }
 #endif
 
-static void trigger_cylinder_setup(Object *self, TriggerCreateInfo *createInfo) {
+static void trigger_cylinder_setup(Object *self, Trigger_Setup *setup) {
     TriggerState *state;
 
     state = (TriggerState*)self->state;
-    state->radiusSquared = createInfo->sizeX << 1;
+    state->radiusSquared = setup->sizeX << 1;
     state->radiusSquared *= state->radiusSquared;
 }
 
@@ -1102,7 +1102,7 @@ static void trigger_cylinder_setup(Object *self, TriggerCreateInfo *createInfo) 
 #else
 void trigger_cylinder_update(Object* self, Object* activator) {
     TriggerState* state;
-    TriggerCreateInfo *createInfo;
+    Trigger_Setup *setup;
     f32 lengthSquared;
     f32 lengthSquared2;
     f32 diffX;
@@ -1113,8 +1113,8 @@ void trigger_cylinder_update(Object* self, Object* activator) {
     s32 dir;
 
     state = self->state;
-    createInfo = (TriggerCreateInfo*)self->createInfo;
-    unk3BTimes2 = createInfo->sizeY << 1;
+    setup = (Trigger_Setup*)self->setup;
+    unk3BTimes2 = setup->sizeY << 1;
     
     diffX = state->activatorPrevPos.x - self->positionMirror.x;
     diffY = state->activatorPrevPos.y - self->positionMirror.y;
@@ -1149,7 +1149,7 @@ void trigger_cylinder_update(Object* self, Object* activator) {
 }
 #endif
 
-static void trigger_plane_setup(Object *self, TriggerCreateInfo *createInfo) {
+static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     TriggerState *state;
     ModelInstance *modelInstance;
     Model *model;
@@ -1178,9 +1178,9 @@ static void trigger_plane_setup(Object *self, TriggerCreateInfo *createInfo) {
 
     state = (TriggerState*)self->state;
 
-    self->srt.yaw = createInfo->rotationY << 8 << 2;
-    self->srt.pitch = createInfo->rotationX << 8;
-    temp = createInfo->sizeX * 0.0625f;
+    self->srt.yaw = setup->rotationY << 8 << 2;
+    self->srt.pitch = setup->rotationX << 8;
+    temp = setup->sizeX * 0.0625f;
     self->srt.scale = self->def->scale * temp;
 
     srt.yaw = self->srt.yaw;
@@ -1312,9 +1312,9 @@ void trigger_plane_update(Object *self, Object *activator) {
 }
 #endif
 
-static void trigger_area_setup(Object *self, TriggerCreateInfo *createInfo) {
-    self->srt.yaw = createInfo->rotationY << 8;
-    self->srt.pitch = createInfo->rotationX << 8;
+static void trigger_area_setup(Object *self, Trigger_Setup *setup) {
+    self->srt.yaw = setup->rotationY << 8;
+    self->srt.pitch = setup->rotationX << 8;
     self->srt.roll = 0;
 }
 
@@ -1352,9 +1352,9 @@ s32 trigger_func_273C(Object *self, Vec3f *vec) {
     f32 x;
     f32 y;
     f32 z;
-    TriggerCreateInfo *createInfo;
+    Trigger_Setup *setup;
 
-    createInfo = (TriggerCreateInfo*)self->createInfo;
+    setup = (Trigger_Setup*)self->setup;
     x = vec->x;
     y = vec->y;
     z = vec->z;
@@ -1371,7 +1371,7 @@ s32 trigger_func_273C(Object *self, Vec3f *vec) {
         z = -z;
     }
     
-    if (x <= (createInfo->sizeX * 2) && y <= (createInfo->sizeY * 2) && z <= (createInfo->sizeZ * 2)) {
+    if (x <= (setup->sizeX * 2) && y <= (setup->sizeY * 2) && z <= (setup->sizeZ * 2)) {
         return 1;
     }
     
@@ -1409,17 +1409,17 @@ static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz) {
 void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDistSquared) {
     Object** objects;
     Object* obj;
-    TriggerCreateInfo* objCreateInfo;
+    Trigger_Setup* objsetup;
     s32 i;
     s32 numObjs;
     
     objects = get_world_objects(&i, &numObjs);
     while (i < numObjs) {
         obj = objects[i];
-        objCreateInfo = (TriggerCreateInfo*)obj->createInfo;
+        objsetup = (Trigger_Setup*)obj->setup;
         
-        if (objCreateInfo != NULL) {
-            switch (objCreateInfo->base.objId) {
+        if (objsetup != NULL) {
+            switch (objsetup->base.objId) {
             case OBJ_TriggerPoint:
             case OBJ_TriggerPlane:
             case OBJ_TriggerArea:
@@ -1429,7 +1429,7 @@ void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDist
             case OBJ_TriggerBits:
                 if (0) { } // fakematch
             case OBJ_TriggerCylinder:
-                if (objCreateInfo->localID == localID) {
+                if (objsetup->localID == localID) {
                     trigger_process_commands(obj, activator, dir, activatorDistSquared);
                 }
                 break;
@@ -1441,7 +1441,7 @@ void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDist
 }
 #endif
 
-static void trigger_curve_setup(Object *self, TriggerCreateInfo *createInfo) { }
+static void trigger_curve_setup(Object *self, Trigger_Setup *setup) { }
 
 // needs trigger_process_commands to be static
 #ifndef NON_MATCHING
@@ -1449,7 +1449,7 @@ static void trigger_curve_setup(Object *self, TriggerCreateInfo *createInfo) { }
 #else
 void trigger_curve_update(Object *self, Object *activator) {
     TriggerState* state;
-    TriggerCreateInfo *createInfo;
+    Trigger_Setup *setup;
     s32 sp3C;
     f32 dist;
     s32 sp34;
@@ -1458,9 +1458,9 @@ void trigger_curve_update(Object *self, Object *activator) {
 
     sp34 = 0x17;
     state = (TriggerState*)self->state;
-    createInfo = (TriggerCreateInfo*)self->createInfo;
+    setup = (Trigger_Setup*)self->setup;
     
-    temp_v0 = gDLL_26_Curves->vtbl->curves_func_1e4(state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &sp34, 1, createInfo->localID);
+    temp_v0 = gDLL_26_Curves->vtbl->curves_func_1e4(state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &sp34, 1, setup->localID);
     sp3C = gDLL_26_Curves->vtbl->curves_func_291c(temp_v0, state->activatorCurrPos.x, state->activatorCurrPos.y, state->activatorCurrPos.z, &dist);
     temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_291c(temp_v0, state->activatorPrevPos.x, state->activatorPrevPos.y, state->activatorPrevPos.z, &dist);
     

@@ -29,10 +29,10 @@ typedef struct {
 } KTextState;
 
 typedef struct {
- /*00*/ ObjCreateInfo base;
+ /*00*/ ObjSetup base;
  /*18*/ s16 unused18;
  /*1A*/ s16 stringID;
-} KTextCreateInfo;
+} KText_Setup;
 
 /*0x0*/ static u8 currentGlyph[0x10];
 
@@ -57,22 +57,22 @@ void krazoatext_create(Object* self, s32 arg1, s32 arg2) {
 // offset: 0x88 | func: 1 | export: 1
 void krazoatext_update(Object* self) {
     KTextState* state;
-    KTextCreateInfo* createInfo;
+    KText_Setup* setup;
     u32 message;
     GameTextChunk* gametext;
     u16 length;
 
     state = self->state;
-    createInfo = ((KTextCreateInfo*)self->createInfo);
+    setup = ((KText_Setup*)self->setup);
 
     if (state->stringLoaded == FALSE) {
         gametext = gDLL_21_Gametext->vtbl->get_chunk(1);
-        length = strlen(gametext->strings[createInfo->stringID]) + 1;
+        length = strlen(gametext->strings[setup->stringID]) + 1;
         if (length > KRAZOA_STRING_MAX_LENGTH) {
             length = KRAZOA_STRING_MAX_LENGTH;
-            gametext->strings[createInfo->stringID][KRAZOA_STRING_MAX_LENGTH - 1] = 0;
+            gametext->strings[setup->stringID][KRAZOA_STRING_MAX_LENGTH - 1] = 0;
         }
-        bcopy(gametext->strings[createInfo->stringID], &state->text, length);
+        bcopy(gametext->strings[setup->stringID], &state->text, length);
         state->text[KRAZOA_STRING_MAX_LENGTH - 1] = 0;
         mmFree(gametext);
         state->stringLoaded = TRUE;

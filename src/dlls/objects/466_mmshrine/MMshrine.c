@@ -35,10 +35,10 @@ typedef struct {
 } ShrineState;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s16 unk18;
 /*1A*/ s16 unk1A;
-} ShrineCreateInfo;
+} Shrine_Setup;
 
 typedef struct {
 /*00*/ s8 unk0[0x62 - 0];

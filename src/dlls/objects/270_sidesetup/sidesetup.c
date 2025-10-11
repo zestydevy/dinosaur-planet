@@ -8,13 +8,13 @@
 #include "types.h"
 
 typedef struct {
-/*00*/	ObjCreateInfo base;
+/*00*/	ObjSetup base;
 /*18*/	union Unk18{
         u8 byte[2];
         s16 halfword;
     } unk18;
 /*1A*/	u8 unk1A;
-} SideSetupObjCreateInfo;
+} SideSetupObj_Setup;
 
 void sidesetup_ctor(void *dll) {
 }
@@ -22,9 +22,9 @@ void sidesetup_ctor(void *dll) {
 void sidesetup_dtor(void *dll) {
 }
 
-void sidesetup_create(Object *self, SideSetupObjCreateInfo *createInfo, s32 arg2) {
-    createInfo->unk1A = createInfo->unk18.byte[0] - 1;
-    createInfo->unk18.halfword = -1;
+void sidesetup_create(Object *self, SideSetupObj_Setup *objsetup, s32 arg2) {
+    objsetup->unk1A = objsetup->unk18.byte[0] - 1;
+    objsetup->unk18.halfword = -1;
 }
 
 void sidesetup_update(Object *self) {

@@ -7,11 +7,11 @@
 #include "dlls/objects/210_player.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unused18;
     s8 unk19; //collision-related
     s16 timer;
-} IceBlastCreateInfo;
+} IceBlast_Setup;
 
 typedef struct {
     s16 timer;
@@ -27,11 +27,11 @@ void iceblast_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void iceblast_create(Object* self, IceBlastCreateInfo* createInfo, s32 arg2) {
+void iceblast_create(Object* self, IceBlast_Setup* setup, s32 arg2) {
     IceBlastState* state = self->state;
 
-    state->timer = createInfo->timer;
-    func_80026128(self, 0x19, createInfo->unk19 ? 3 : 1, 0);
+    state->timer = setup->timer;
+    func_80026128(self, 0x19, setup->unk19 ? 3 : 1, 0);
 }
 
 // offset: 0x80 | func: 1 | export: 1

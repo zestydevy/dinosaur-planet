@@ -3,11 +3,11 @@
 #include "game/objects/object.h"
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s8 unk18; //unused?
 /*19*/ u8 unk19; //assigned to Object->unk_0xe0
 /*1A*/ u8 yaw;
-} SetupPointCreateInfo;
+} SetupPoint_Setup;
 
 // offset: 0x0 | ctor
 void setuppoint_ctor(void *dll){
@@ -18,12 +18,12 @@ void setuppoint_dtor(void *dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void setuppoint_create(Object* self, SetupPointCreateInfo* createInfo, s32 arg2) {
-    createInfo->base.loadParamA = 8;
-    createInfo->base.loadDistance = 0;
-    createInfo->base.fadeDistance = 0;
-    self->unk_0xe0 = createInfo->unk19;
-    self->srt.yaw = (createInfo->yaw & 0x3F) << 0xA;
+void setuppoint_create(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
+    objsetup->base.loadParamA = 8;
+    objsetup->base.loadDistance = 0;
+    objsetup->base.fadeDistance = 0;
+    self->unk_0xe0 = objsetup->unk19;
+    self->srt.yaw = (objsetup->yaw & 0x3F) << 0xA;
     self->unk0xb0 |= 0x2000;
 }
 

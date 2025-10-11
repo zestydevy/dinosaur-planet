@@ -31,12 +31,12 @@ typedef struct {
 } Duster_State;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ u8 _unk18[0x1B-0x18];
 /*1B*/ u8 unk1B;
 /*1C*/ u8 _unk1C[0x24-0x1C];
 /*24*/ s16 gamebit;
-} Duster_CreateInfo;
+} Duster_Setup;
 
 // offset: 0x0 | ctor
 void Duster_ctor(void *dll) { }
@@ -45,13 +45,13 @@ void Duster_ctor(void *dll) { }
 void Duster_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Duster_create(Object *self, Duster_CreateInfo *createInfo, s32 arg2) {
+void Duster_create(Object *self, Duster_Setup *setup, s32 arg2) {
     Duster_State *state = self->state;
 
     state->timer1 = rand_next(0, 50);
     state->unk0 = 0.02f;
 
-    state->gamebitDiscovered = createInfo->gamebit;
+    state->gamebitDiscovered = setup->gamebit;
     if (state->gamebitDiscovered >= BIT_Collected_Duster_1) {
         // this is not a hidden duster
         state->discovered = TRUE;
@@ -62,7 +62,7 @@ void Duster_create(Object *self, Duster_CreateInfo *createInfo, s32 arg2) {
         state->gamebitCollected = state->gamebitDiscovered + DUSTER_TOTAL_COUNT;
     }
     state->collected = main_get_bits(state->gamebitCollected);
-    state->unk11 = createInfo->unk1B;
+    state->unk11 = setup->unk1B;
 
     if (self->objhitInfo && !state->discovered) {
         self->objhitInfo->unk_0x58 |= 1;

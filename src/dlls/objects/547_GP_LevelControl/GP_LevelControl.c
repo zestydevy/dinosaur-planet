@@ -24,7 +24,7 @@ void GP_LevelControl_ctor(void *dll) { }
 void GP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GP_LevelControl_create(Object *self, ObjCreateInfo *createInfo, s32 arg2) {
+void GP_LevelControl_create(Object *self, ObjSetup *setup, s32 arg2) {
     GP_LevelControl_State *state;
 
     state = self->state;

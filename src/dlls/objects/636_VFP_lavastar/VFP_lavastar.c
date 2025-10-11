@@ -7,12 +7,12 @@
 #include "dll.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     u8 _unk18[2];
     s16 unk1A;
     u8 _unk1C[2];
     s16 unk1E;
-} VFP_lavastar_CreateInfo;
+} VFP_lavastar_Setup;
 
 typedef struct {
     f32 speed;
@@ -29,13 +29,13 @@ void VFP_lavastar_ctor(void *dll) { }
 void VFP_lavastar_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_lavastar_create(Object* self, VFP_lavastar_CreateInfo* createInfo, s32 arg2) {
+void VFP_lavastar_create(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
     VFP_lavastar_State* state;
 
     state = self->state;
-    state->unk4 = createInfo->unk1E;
+    state->unk4 = setup->unk1E;
     state->speed = rand_next(5, 20) * 0.1f;
-    self->srt.transl.y = createInfo->unk1A + createInfo->base.y;
+    self->srt.transl.y = setup->unk1A + setup->base.y;
     self->unk0xb0 |= 0x2000;
     sDLL_182 = dll_load_deferred(DLL_ID_182, 1);
     gDLL_17->vtbl->func1(self, 0x3A3, NULL, 0x802, -1, NULL);
@@ -44,15 +44,15 @@ void VFP_lavastar_create(Object* self, VFP_lavastar_CreateInfo* createInfo, s32 
 
 // offset: 0x158 | func: 1 | export: 1
 void VFP_lavastar_update(Object* self) {
-    VFP_lavastar_CreateInfo* createInfo;
+    VFP_lavastar_Setup* setup;
     VFP_lavastar_State* state;
 
     state = (VFP_lavastar_State*)self->state;
-    createInfo = (VFP_lavastar_CreateInfo*)self->createInfo;
+    setup = (VFP_lavastar_Setup*)self->setup;
     self->srt.transl.y += delayFloat * state->speed;
-    if ((createInfo->base.y + 1200.0f) < self->srt.transl.y) {
+    if ((setup->base.y + 1200.0f) < self->srt.transl.y) {
         state->speed = rand_next(5, 20) * 0.1f;
-        self->srt.transl.y = createInfo->base.y;
+        self->srt.transl.y = setup->base.y;
     }
     if (rand_next(0, 3) == 0) {
         sDLL_182->vtbl->func0(self, 0, NULL, 4, -1, NULL);

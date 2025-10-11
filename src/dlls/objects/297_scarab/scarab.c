@@ -27,10 +27,10 @@ u8 unk29; //scarabTypeIndex
 } ScarabState;
 
 typedef struct {
-ObjCreateInfo base;
+ObjSetup base;
 s16 unk18;
 s16 unk1A;
-} ScarabCreateInfo;
+} Scarab_Setup;
 
 typedef struct {
 f32 unk0;
@@ -73,14 +73,14 @@ void dll_297_ctor(void *dll) { }
 void dll_297_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_297_create(Object* self, ScarabCreateInfo* createInfo, s32 arg2) {
+void dll_297_create(Object* self, Scarab_Setup* setup, s32 arg2) {
     ScarabState* state = self->state;
 
     state->unk26 = 0;
-    state->unk18 = createInfo->unk1A;
+    state->unk18 = setup->unk1A;
     state->unk1A = rand_next(1000, 4000);
     state->unk20 = rand_next(50, 100);
-    state->unk10 = createInfo->base.y;
+    state->unk10 = setup->base.y;
 
     self->unk0xb0 |= 0x2000;
 

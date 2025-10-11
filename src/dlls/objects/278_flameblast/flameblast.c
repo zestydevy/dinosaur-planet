@@ -6,11 +6,11 @@
 #include "sys/objects.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unk18;
     s8 unk19;
     s16 timer;
-} FlameBlastCreateInfo;
+} FlameBlast_Setup;
 
 typedef struct {
     s16 timer;
@@ -27,11 +27,11 @@ void dll_278_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void flameblast_create(Object* self, FlameBlastCreateInfo* createInfo, s32 arg2) {
+void flameblast_create(Object* self, FlameBlast_Setup* setup, s32 arg2) {
     FlameBlastState* state = self->state;
 
-    state->timer = createInfo->timer;
-    func_80026128(self, 0x1A, createInfo->unk19 ? 3 : 1, 0);
+    state->timer = setup->timer;
+    func_80026128(self, 0x1A, setup->unk19 ? 3 : 1, 0);
 }
 
 // offset: 0x80 | func: 1 | export: 1

@@ -35,7 +35,7 @@ void WL_LevelControl_ctor(void *dll) { }
 void WL_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_LevelControl_create(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
+void WL_LevelControl_create(Object* self, ObjSetup* setup, s32 arg2) {
     WL_LevelControl_State* state;
 
     obj_add_object_type(self, OBJTYPE_10);
@@ -337,7 +337,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
     s32 sp34;
     s16 i;
     s16 temp_v0_2;
-    ObjCreateInfo *someCreateInfo;
+    ObjSetup *someObjsetup;
     Object* player;
     
     sp34 = 0;
@@ -368,8 +368,8 @@ static void WL_LevelControl_setup5_tick(Object* self) {
     if (main_get_bits(BIT_2F7) != 0) {
         var_a2 = obj_get_all_of_type(OBJTYPE_4, &sp34);
         for (i = 0; i < sp34; i++) {
-            someCreateInfo = var_a2[i]->createInfo;
-            if ((someCreateInfo->uID == 0x296E) || (someCreateInfo->uID == 0x296F)) {
+            someObjsetup = var_a2[i]->setup;
+            if ((someObjsetup->uID == 0x296E) || (someObjsetup->uID == 0x296F)) {
                 obj_destroy_object(var_a2[i]);
             }
         }

@@ -1119,12 +1119,12 @@ s32 func_80044320(f32 worldX, f32 worldZ) {
     return 1;
 }
 
-ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4) {
+ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4) {
     s32 mapID;
     s32 object_offset;
     s32 object_indexInMap;
     u16 new_var;
-    ObjCreateInfo *obj;
+    ObjSetup *obj;
     
     for (mapID = 0; mapID < 120; mapID++){
         // @fake
@@ -1133,7 +1133,7 @@ ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_ma
             continue;
     
         gMapActiveStreamMap = gLoadedMapsDataTable[mapID];
-        obj = (ObjCreateInfo*)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
+        obj = (ObjSetup*)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
         new_var = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
         for (object_indexInMap = 0, object_offset = 0; object_offset < new_var; object_indexInMap++){
             if (match_uID == obj->uID){
@@ -1163,7 +1163,7 @@ ObjCreateInfo* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_ma
             }
 
             object_offset += obj->quarterSize * 4;
-            obj = (ObjCreateInfo*)&((s8 *)obj)[obj->quarterSize * 4];
+            obj = (ObjSetup*)&((s8 *)obj)[obj->quarterSize * 4];
         }
     }
 
@@ -1241,9 +1241,9 @@ s32 func_800448D0(s32 arg0) {
     s32 var_a2;
     s32 var_t0;
     s32 var_t1;
-    ObjCreateInfo* obj;
+    ObjSetup* obj;
     s16 sp20[4];
-    ObjCreateInfo* obj2;
+    ObjSetup* obj2;
     u32 new_var;
 
     var_v0 = 0;
@@ -1270,14 +1270,14 @@ s32 func_800448D0(s32 arg0) {
     for (var_a1 = 0; var_a1 < var_v0; var_a1++) {
         temp_v1 = gLoadedMapsDataTable[sp20[var_a1]];
         if (temp_v1 != NULL) {
-            obj = (ObjCreateInfo *) temp_v1->objectInstanceFile_ptr;
+            obj = (ObjSetup *) temp_v1->objectInstanceFile_ptr;
             new_var = (u32)(temp_v1->objectInstancesFileLength + (s8 *)obj);
             while ((u32)obj < new_var) {
                 obj2 = obj;
                 if ((s32)obj == arg0) {
                     return sp20[var_a1];
                 }
-                obj = (ObjCreateInfo*)&((s8 *)obj)[obj2->quarterSize * 4];
+                obj = (ObjSetup*)&((s8 *)obj)[obj2->quarterSize * 4];
             }
         }
     }
@@ -1650,7 +1650,7 @@ u8 func_800456AC(Object* obj) {
         obj->unk_0x37 = 0;
         return 0;
     }
-    if ((obj->createInfo != NULL) && (obj->createInfo->loadParamB & 1)) {
+    if ((obj->setup != NULL) && (obj->setup->loadParamB & 1)) {
         obj->unk_0x37 = ((obj->unk_0x36 * 0xFF) + 0xFF) >> 8;
     } else {
         temp_ft4 = obj->unk0x40;
@@ -1658,7 +1658,7 @@ u8 func_800456AC(Object* obj) {
             obj->unk_0x37 = 0;
             return 0;
         }
-        if ((obj->createInfo != NULL) && (obj->createInfo->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
+        if ((obj->setup != NULL) && (obj->setup->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
             var_fv0 = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
         } else {
             var_fv0 = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
@@ -1888,12 +1888,12 @@ void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
     s8 sp42[4];
     s32 var_s3;
     s32 var_s4;
-    ObjCreateInfo *obj;
+    ObjSetup *obj;
     s32 i;
 
     sp42[3] = FALSE;
     var_s4 = 0;
-    obj = (ObjCreateInfo *) arg0->objectInstanceFile_ptr;
+    obj = (ObjSetup *) arg0->objectInstanceFile_ptr;
     sp48 = arg0->objectInstancesFileLength;
     if (sp48 == 0) {
         return;
@@ -1931,7 +1931,7 @@ void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
             }
         }
         var_s3 += obj->quarterSize * 4;
-        obj = (ObjCreateInfo *) &((s8 *)obj)[obj->quarterSize * 4];
+        obj = (ObjSetup *) &((s8 *)obj)[obj->quarterSize * 4];
     }
     if (arg3 == 0) {
         var_a0 = sp48;
@@ -1955,11 +1955,11 @@ void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
 void func_800462B0(){
 }
 
-/** Iterates over all the ObjCreateInfo in a map's object instance file, transforming the objects' coordinates from local coordinates to world-space coordinates */
+/** Iterates over all the ObjSetup in a map's object instance file, transforming the objects' coordinates from local coordinates to world-space coordinates */
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     u8 *ptr;
     s32 offset;
-    ObjCreateInfo *obj;
+    ObjSetup *obj;
 
     if (!map){
         return;
@@ -1969,7 +1969,7 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     offset = 0; // current offset in MAPS object instance file data
     
     while (offset < map->objectInstancesFileLength){
-        obj = (ObjCreateInfo*)ptr;
+        obj = (ObjSetup*)ptr;
         obj->x += X;
         obj->z += Z;
 
@@ -2255,7 +2255,7 @@ typedef struct UnkStruct {
 } UnkStruct;
 
 // Size TBD
-extern ObjCreateInfo gMapStreamMapIDTable[16];
+extern ObjSetup gMapStreamMapIDTable[16];
 void map_update_streaming(void) {
     GlobalMapCell **var_a1;
     f32 sp308;
@@ -3972,7 +3972,7 @@ void map_update_objects_streaming(s32 arg0) {
     GlobalMapCell* var_a3;
     s32 spB8;
     MapHeader* temp_s6;
-    ObjCreateInfo* temp_s2;
+    ObjSetup* temp_s2;
     Object* temp_s0;
     Object* temp_s5;
     s16 temp_v0_3;
@@ -3984,7 +3984,7 @@ void map_update_objects_streaming(s32 arg0) {
     s32 group;
     s32 var_s3;
     s32 var_v0;
-    ObjCreateInfo* var_s1_2;
+    ObjSetup* var_s1_2;
     s32 temp_s7;
     s32 temp_s4;
     u32 objGroupBits;
@@ -4019,7 +4019,7 @@ void map_update_objects_streaming(s32 arg0) {
     while (spB8 < sp9C) {
         var_s1 = 0;
         temp_s0 = sp68[spB8];
-        temp_s2 = temp_s0->createInfo;
+        temp_s2 = temp_s0->setup;
         spB8++;
         if (temp_s0->mapID >= 0) {
             if (!(temp_s2->loadParamA & 2)) {
@@ -4072,7 +4072,7 @@ void map_update_objects_streaming(s32 arg0) {
         temp_v0_3 = sp70[spB8];
         temp_s6 = gLoadedMapsDataTable[temp_v0_3];
         if (temp_s6 != NULL) {
-            var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
+            var_s1_2 = (ObjSetup* ) temp_s6->objectInstanceFile_ptr;
             temp_s7 = temp_s6->unk19;
             var_s3 = 0;
             temp_fp = D_800B5508[temp_v0_3].unk88 + (s32)var_s1_2;
@@ -4085,15 +4085,15 @@ void map_update_objects_streaming(s32 arg0) {
                 if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[spB8]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[spB8]) != 0)) {
                     func_8004B710(var_s3, (u32) sp70[spB8], 1U);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, 1U, sp70[spB8], var_s3, NULL);
+                        obj_create(var_s1_2, OBJSETUP_FLAG_1, sp70[spB8], var_s3, NULL);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3E, 4U, NULL, var_s1_2, sp70[spB8], var_s3, 0, temp_s7);
                     } else {
-                        obj_create(var_s1_2, 1U, sp70[spB8], var_s3, NULL);
+                        obj_create(var_s1_2, OBJSETUP_FLAG_1, sp70[spB8], var_s3, NULL);
                     }
                 }
                 var_s3++;
-                var_s1_2 = (ObjCreateInfo* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
+                var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
             }
         }
     }
@@ -4105,7 +4105,7 @@ void map_update_objects_streaming(s32 arg0) {
         temp_s6 = gLoadedMapsDataTable[temp_s4];
         if (temp_s6 != NULL) {
             temp_s7 = temp_s5->matrixIdx + 1;
-            var_s1_2 = (ObjCreateInfo* ) temp_s6->objectInstanceFile_ptr;
+            var_s1_2 = (ObjSetup* ) temp_s6->objectInstanceFile_ptr;
             temp_fp = D_800B5508[temp_s4].unk88 + (s32)var_s1_2;
             objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits((s32) temp_s4);
             if (objGroupBits != 0) {
@@ -4121,18 +4121,18 @@ void map_update_objects_streaming(s32 arg0) {
             }
             while ((u32) var_s1_2 < (u32) temp_fp) {
                 temp_s2 = var_s1_2;
-                if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object((ObjCreateInfo* ) var_s1_2, temp_s7, temp_s4) != 0)) {
+                if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object((ObjSetup* ) var_s1_2, temp_s7, temp_s4) != 0)) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
-                        obj_create((ObjCreateInfo* ) var_s1_2, 1U, temp_s4, var_s3, temp_s5);
+                        obj_create((ObjSetup* ) var_s1_2, OBJSETUP_FLAG_1, temp_s4, var_s3, temp_s5);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
-                        obj_create((ObjCreateInfo* ) var_s1_2, 1U, temp_s4, var_s3, temp_s5);
+                        obj_create((ObjSetup* ) var_s1_2, OBJSETUP_FLAG_1, temp_s4, var_s3, temp_s5);
                     }
                 }
                 var_s3++;
-                var_s1_2 = (ObjCreateInfo* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
+                var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
             }
         }
     }
@@ -4150,7 +4150,7 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     return 0;
 }
 
-s32 map_should_stream_load_object(ObjCreateInfo* arg0, s8 arg1, s32 arg2) {
+s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     s32 scaledX;
     Object* player;
     s32 scaledZOrFlag;
@@ -4238,7 +4238,7 @@ s32 func_8004B190(Object* arg0) {
     s32 pad[6];
     f32 sp38;
     s32 pad2[6];
-    ObjCreateInfo* sp1C;
+    ObjSetup* sp1C;
     s32 temp_v0_2;
     Object* player;
     f32 temp_fv1;
@@ -4253,7 +4253,7 @@ s32 func_8004B190(Object* arg0) {
     s8 *currentBlockIndices;
     s32 i;
 
-    sp1C = arg0->createInfo;
+    sp1C = arg0->setup;
     if (sp1C == NULL) {
         return 0;
     }
@@ -4328,7 +4328,7 @@ s32 func_8004B190(Object* arg0) {
 }
 
 /** map_should_object_load? */
-s32 func_8004B4A0(ObjCreateInfo* obj, s32 mapID) {
+s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     s32 setupID;
 
     setupID = gDLL_29_Gplay->vtbl->get_map_setup(mapID);
@@ -4372,7 +4372,7 @@ void func_8004B548(MapHeader* arg0, s32 arg1, s32 objGroupIdx, Object* arg3) {
     s4 =  &((s8*)s0)[temp_t1[objGroupIdx]];
     while ((u32) s0 < (u32) s4) {
         mapID += 1;
-        s0 += ((ObjCreateInfo *)s0)->quarterSize * 4;
+        s0 += ((ObjSetup *)s0)->quarterSize * 4;
     }
 
     for (someIndex = objGroupIdx + 1; someIndex < 33; someIndex++) {
@@ -4385,16 +4385,16 @@ void func_8004B548(MapHeader* arg0, s32 arg1, s32 objGroupIdx, Object* arg3) {
     s4 = &((s8 *)arg0->objectInstanceFile_ptr)[temp_t1[someIndex]];
     while ((u32) s0 < (u32) s4) {
         s3 = s0;
-        if ((map_check_some_mapobj_flag(mapID, arg1) == 0) && (func_8004B4A0((ObjCreateInfo *)s0, arg1) != 0)) {
+        if ((map_check_some_mapobj_flag(mapID, arg1) == 0) && (func_8004B4A0((ObjSetup *)s0, arg1) != 0)) {
             func_8004B710(mapID, arg1, 1U);
             if (map_get_is_object_streaming_disabled() != 0) {
-                func_80012584(0x3E, 4U, NULL, (ObjCreateInfo *)s0, arg1, mapID, arg3, var_s6);
+                func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, arg1, mapID, arg3, var_s6);
             } else {
-                obj_create((ObjCreateInfo* )s0, 1U, arg1, mapID, arg3);
+                obj_create((ObjSetup* )s0, OBJSETUP_FLAG_1, arg1, mapID, arg3);
             }
         }
         mapID += 1;
-        s0 += ((ObjCreateInfo *)s3)->quarterSize * 4;
+        s0 += ((ObjSetup *)s3)->quarterSize * 4;
     }
 }
 
@@ -4442,7 +4442,7 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     return 0;
 }
 
-ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
+ObjSetup *func_8004B7D0(s32 search_uID, u32 arg1){
     MapHeader *map;
     u8 *ptr;
     s32 offset;
@@ -4455,13 +4455,13 @@ ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
             ptr = (u8*)map->objectInstanceFile_ptr;
             offset = 0;
             while (offset < map->objectInstancesFileLength){       
-                objID = ((ObjCreateInfo*)ptr)->objId;
-                if (objID == OBJ_curve && ((ObjCreateInfo*)ptr)->uID == search_uID){
-                    return ((ObjCreateInfo*)ptr);
+                objID = ((ObjSetup*)ptr)->objId;
+                if (objID == OBJ_curve && ((ObjSetup*)ptr)->uID == search_uID){
+                    return ((ObjSetup*)ptr);
                 }
         
-                offset += ((ObjCreateInfo*)ptr)->quarterSize << 2;
-                ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+                offset += ((ObjSetup*)ptr)->quarterSize << 2;
+                ptr += ((ObjSetup*)ptr)->quarterSize << 2;
             }
         } 
     }
@@ -4472,7 +4472,7 @@ ObjCreateInfo *func_8004B7D0(s32 search_uID, u32 arg1){
 /** map_find_checkpoint4_by_uID? 
   * "search_mapID == -1" searches through all maps instead of a specific mapID!
   */
-ObjCreateInfo* func_8004B85C(s32 search_uID, s32 search_mapID) {
+ObjSetup* func_8004B85C(s32 search_uID, s32 search_mapID) {
     MapHeader* map;
     s32 search_endID;
 
@@ -4499,13 +4499,13 @@ ObjCreateInfo* func_8004B85C(s32 search_uID, s32 search_mapID) {
             offset = 0;
             
             while (offset < map->objectInstancesFileLength){       
-                objID = ((ObjCreateInfo*)ptr)->objId;
-                if (objID == OBJ_checkpoint4 && ((ObjCreateInfo*)ptr)->uID == search_uID){
-                    return ((ObjCreateInfo*)ptr);
+                objID = ((ObjSetup*)ptr)->objId;
+                if (objID == OBJ_checkpoint4 && ((ObjSetup*)ptr)->uID == search_uID){
+                    return ((ObjSetup*)ptr);
                 }
         
-                offset += ((ObjCreateInfo*)ptr)->quarterSize << 2;
-                ptr += ((ObjCreateInfo*)ptr)->quarterSize << 2;
+                offset += ((ObjSetup*)ptr)->quarterSize << 2;
+                ptr += ((ObjSetup*)ptr)->quarterSize << 2;
             }
         }
 
@@ -4534,7 +4534,7 @@ void func_8004B948(s32 arg0) {
     UINT_80092a98 &= ~0x200;
 }
 
-void map_save_object(ObjCreateInfo* createInfo, s32 mapID, f32 x, f32 y, f32 z) {
+void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
     s16 numSavedObjs;
     s8 found;
     s32 i;
@@ -4542,28 +4542,28 @@ void map_save_object(ObjCreateInfo* createInfo, s32 mapID, f32 x, f32 y, f32 z) 
 
     numSavedObjs = gDLL_29_Gplay->vtbl->get_num_saved_objects();
     savedObjs = gDLL_29_Gplay->vtbl->get_saved_objects();
-    if (createInfo->uID == -1) {
+    if (objsetup->uID == -1) {
         return;
     }
     for (found = FALSE, i = 0; i < numSavedObjs; i++) {
-        if (createInfo->uID == savedObjs[i].uID) {
+        if (objsetup->uID == savedObjs[i].uID) {
             found = TRUE;
             savedObjs[i].x = x;
             savedObjs[i].y = y;
             savedObjs[i].z = z;
-            createInfo->x = x;\
-            createInfo->y = y;\
-            createInfo->z = z;\
+            objsetup->x = x;\
+            objsetup->y = y;\
+            objsetup->z = z;\
         }
     }
     if (found == FALSE) {
-        D_800B96B0[numSavedObjs].x = createInfo->x;\
-        D_800B96B0[numSavedObjs].y = createInfo->y;\
-        D_800B96B0[numSavedObjs].z = createInfo->z;
-        D_800B96B0[numSavedObjs].uID =  createInfo->uID;
+        D_800B96B0[numSavedObjs].x = objsetup->x;\
+        D_800B96B0[numSavedObjs].y = objsetup->y;\
+        D_800B96B0[numSavedObjs].z = objsetup->z;
+        D_800B96B0[numSavedObjs].uID =  objsetup->uID;
         D_800B96B0[numSavedObjs].mapID = mapID;
         i = numSavedObjs;
-        savedObjs[numSavedObjs].uID = createInfo->uID;
+        savedObjs[numSavedObjs].uID = objsetup->uID;
         savedObjs[i].mapID = mapID;
         savedObjs[i].x = x;
         savedObjs[i].y = y;
@@ -4571,9 +4571,9 @@ void map_save_object(ObjCreateInfo* createInfo, s32 mapID, f32 x, f32 y, f32 z) 
         if ((!savedObjs) && (!savedObjs)) {}
         savedObjs[i].z = z;
         numSavedObjs++;
-        createInfo->x = x;\
-        createInfo->y = y;\
-        createInfo->z = z;
+        objsetup->x = x;\
+        objsetup->y = y;\
+        objsetup->z = z;
         gDLL_29_Gplay->vtbl->set_num_saved_objects(numSavedObjs);
     }
 }
@@ -4606,7 +4606,7 @@ void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
     s32 uID;
     s32 numFound;
     s32 var_t3;
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
     s32 temp_t4;
     s16 numSavedObjs;
     s32 pad;
@@ -4626,18 +4626,18 @@ void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
     }
     var_t3 = 0;
     temp_t4 = arg0->objectInstancesFileLength;
-    createInfo = (ObjCreateInfo *) arg0->objectInstanceFile_ptr;
+    objsetup = (ObjSetup *) arg0->objectInstanceFile_ptr;
     while (var_t3 < (s32) temp_t4) {
-        uID = createInfo->uID;
+        uID = objsetup->uID;
         for (i = 0; i < numFound; i++) {
             if (uID == sp28[i]) {
-                createInfo->x = savedObjs[sp68[i]].x;
-                createInfo->y = savedObjs[sp68[i]].y;
-                createInfo->z = savedObjs[sp68[i]].z;
+                objsetup->x = savedObjs[sp68[i]].x;
+                objsetup->y = savedObjs[sp68[i]].y;
+                objsetup->z = savedObjs[sp68[i]].z;
             }
         }
-        var_t3 += createInfo->quarterSize * 4;
-        createInfo = (ObjCreateInfo *) &((s8 *)createInfo)[createInfo->quarterSize * 4];
+        var_t3 += objsetup->quarterSize * 4;
+        objsetup = (ObjSetup *) &((s8 *)objsetup)[objsetup->quarterSize * 4];
     }
 }
 

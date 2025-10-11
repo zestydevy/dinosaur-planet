@@ -16,29 +16,29 @@ void animobj_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void animobj_create(Object *self, AnimObjCreateInfo *createInfo, s32 arg2) {
+void animobj_create(Object *self, AnimObjSetup *setup, s32 arg2) {
     AnimObjState *state;
 
     obj_set_update_priority(self, 0x64);
     state = self->state;
-    if (!createInfo->sequenceIdBitfield){
+    if (!setup->sequenceIdBitfield){
     }
 
-    state->unk76 = createInfo->unk1A;
+    state->unk76 = setup->unk1A;
     state->unk7A = -1;
-    state->unk24 = 1.0f / (createInfo->unk24 + 1.0f);
+    state->unk24 = 1.0f / (setup->unk24 + 1.0f);
     state->unk28 = -1;
 
-    if (self->unk0xdc == 0 && createInfo->sequenceIdBitfield != 1){
-        gDLL_3_Animation->vtbl->func6((s32)state, (s32)createInfo);
-        self->unk0xdc = createInfo->sequenceIdBitfield + 1;
+    if (self->unk0xdc == 0 && setup->sequenceIdBitfield != 1){
+        gDLL_3_Animation->vtbl->func6((s32)state, (ObjSetup*)setup);
+        self->unk0xdc = setup->sequenceIdBitfield + 1;
     } else {
-        if (self->unk0xdc != 0 && (createInfo->sequenceIdBitfield + 1 != self->unk0xdc)){
+        if (self->unk0xdc != 0 && (setup->sequenceIdBitfield + 1 != self->unk0xdc)){
             gDLL_3_Animation->vtbl->func8((s32)state);
-            if (createInfo->sequenceIdBitfield != -1){
-                gDLL_3_Animation->vtbl->func6((s32)state, (s32)createInfo);
+            if (setup->sequenceIdBitfield != -1){
+                gDLL_3_Animation->vtbl->func6((s32)state, (ObjSetup*)setup);
             }
-            self->unk0xdc = createInfo->sequenceIdBitfield + 1;
+            self->unk0xdc = setup->sequenceIdBitfield + 1;
         }
     }
 
@@ -52,7 +52,7 @@ void animobj_create(Object *self, AnimObjCreateInfo *createInfo, s32 arg2) {
 void animobj_update(Object *self) {
     s32 index;
     AnimObjState *state;
-    AnimObjCreateInfo *createInfo;
+    AnimObjSetup *setup;
     s8 new_var;
     Object *object;
     Object *matchObject;
@@ -60,8 +60,8 @@ void animobj_update(Object *self) {
     s32 count;
     Object **objects;
 
-    createInfo = (AnimObjCreateInfo *) self->createInfo;
-    if (!createInfo || createInfo->sequenceIdBitfield == -1){
+    setup = (AnimObjSetup *) self->setup;
+    if (!setup || setup->sequenceIdBitfield == -1){
         return;
     }
 

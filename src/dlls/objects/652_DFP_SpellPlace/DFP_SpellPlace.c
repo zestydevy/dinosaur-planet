@@ -3,13 +3,13 @@
 #include "sys/objanim.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unk18;
     s16 unk1A;
     s16 unk1C;
     s16 unk1E;
     s16 unk20;
-} DFP_SpellPlace_CreateInfo;
+} DFP_SpellPlace_Setup;
 
 typedef struct {
     s16 unk0;
@@ -28,14 +28,14 @@ void dll_652_ctor(void *dll) { }
 void dll_652_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_652_create(Object* self, DFP_SpellPlace_CreateInfo* createInfo, s32 arg2) {
+void dll_652_create(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
     DLL652_State* state;
 
     state = self->state;
-    self->srt.yaw = createInfo->unk18 << 8;
+    self->srt.yaw = setup->unk18 << 8;
     self->unk0xbc = (ObjectCallback)dll_652_func_45C;
-    state->unk0 = createInfo->unk1E;
-    state->unk2 = createInfo->unk20;
+    state->unk0 = setup->unk1E;
+    state->unk2 = setup->unk20;
     if (main_get_bits(state->unk2) != 0 && main_get_bits(state->unk0) != 0) {
         state->unk4 = 1;
     } else {

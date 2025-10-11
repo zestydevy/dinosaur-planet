@@ -965,7 +965,7 @@ typedef struct Unk {
 s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
-    ObjCreateInfo* temp_s1;
+    ObjSetup* temp_s1;
     Object* temp_a0_4;
     s32 var_v0;
     s32 spC8;
@@ -996,7 +996,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     Object *tempObj;
 
     temp_fp = arg0->state;
-    temp_s1 = arg1->createInfo;
+    temp_s1 = arg1->setup;
     spC8 = 0;
     arg2->unkF4 = dll_210_func_60A8;
     temp_fp->unk818 = 0.0f;
@@ -2137,7 +2137,7 @@ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
     f32 temp3;
     f32 temp4;
     Camera* mainCam;
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
     Object* temp_a0;
     Object* temp_v0_2;
     Object* temp_v1;
@@ -2161,23 +2161,23 @@ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
     mainCam = get_main_camera();
     gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
     while (var_s4) {
-        createInfo = obj_alloc_create_info(0x24, 0x14B);
-        createInfo->loadParamA = 2;
-        createInfo->loadParamB = 1;
-        createInfo->loadDistance = 0xFF;
-        createInfo->fadeDistance = 0xFF;
+        objsetup = obj_alloc_create_info(0x24, 0x14B);
+        objsetup->loadParamA = 2;
+        objsetup->loadParamB = 1;
+        objsetup->loadDistance = 0xFF;
+        objsetup->fadeDistance = 0xFF;
         if (arg1->unk2C8 != NULL) {
-            createInfo->x = arg0->linkedObject->srt.transl.x;
-            createInfo->y = arg0->linkedObject->srt.transl.y;
-            createInfo->z = arg0->linkedObject->srt.transl.z;
+            objsetup->x = arg0->linkedObject->srt.transl.x;
+            objsetup->y = arg0->linkedObject->srt.transl.y;
+            objsetup->z = arg0->linkedObject->srt.transl.z;
         } else {
-            createInfo->x = mainCam->srt.transl.x;
-            createInfo->y = mainCam->srt.transl.y;
-            createInfo->z = mainCam->srt.transl.z;
+            objsetup->x = mainCam->srt.transl.x;
+            objsetup->y = mainCam->srt.transl.y;
+            objsetup->z = mainCam->srt.transl.z;
         }
         temp_a0 = arg0->linkedObject;
-        ((s8*)createInfo)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
-        temp_v0_2 = obj_create(createInfo, 5U, -1, -1, NULL);
+        ((s8*)objsetup)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+        temp_v0_2 = obj_create(objsetup, 5U, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
             temp_v0_2->srt.flags |= 0x2000;
             temp_v1 = arg1->unk2C8;
@@ -2252,7 +2252,7 @@ void dll_210_func_90A0(Object* arg0, PlayerState* arg1, f32 arg2) {
 // offset: 0x955C | func: 49
 void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2) {
     SRT spE8;
-    ObjCreateInfo* temp_v0;
+    ObjSetup* temp_v0;
     Object* temp_a0;
     Object* temp_v0_2;
     MtxF sp9C;
@@ -2323,7 +2323,7 @@ void dll_210_func_955C(Object* arg0, PlayerState* arg1, f32 arg2) {
 void dll_210_func_98CC(Object* arg0, PlayerState* arg1, f32 arg2) {
     SRT spF8;
     SRT spE0;
-    ObjCreateInfo* temp_v0;
+    ObjSetup* temp_v0;
     Object* temp_a0;
     Object* spD4;
     MtxF sp94;
@@ -4391,51 +4391,51 @@ void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
 // offset: 0x1DC48 | func: 218
 void dll_210_func_1DC48(Object* obj) {
     s8 i;
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
 
     for (i = 0; i < 3; i++) {
         if (_bss_210[i] != 0) {
             continue;
         }
 
-        createInfo = obj_alloc_create_info(0x24, OBJ_iceblast);
-        if (createInfo == NULL) {
+        objsetup = obj_alloc_create_info(0x24, OBJ_iceblast);
+        if (objsetup == NULL) {
             break;
         }
 
-        createInfo->x = obj->positionMirror.x;
-        createInfo->y = obj->positionMirror.y;
-        createInfo->z = obj->positionMirror.z;
-        createInfo->loadParamA = 2;
-        createInfo->loadParamB = 1;
-        createInfo->loadDistance = 0xFF;
-        createInfo->fadeDistance = 0xFF;
-        ((s16* )createInfo)[13] = i * 0xA;
+        objsetup->x = obj->positionMirror.x;
+        objsetup->y = obj->positionMirror.y;
+        objsetup->z = obj->positionMirror.z;
+        objsetup->loadParamA = 2;
+        objsetup->loadParamB = 1;
+        objsetup->loadDistance = 0xFF;
+        objsetup->fadeDistance = 0xFF;
+        ((s16* )objsetup)[13] = i * 0xA;
         if (obj->id != 0) {
-            ((u16*)createInfo)[14] = 0;
+            ((u16*)objsetup)[14] = 0;
         } else {
-            ((u16*)createInfo)[14] = 0x8000;
+            ((u16*)objsetup)[14] = 0x8000;
         }
-        _bss_210[i] = obj_create(createInfo, 5, obj->mapID, -1, obj->parent);
+        _bss_210[i] = obj_create(objsetup, 5, obj->mapID, -1, obj->parent);
     }
 }
 
 // offset: 0x1DD94 | func: 219
 Object *dll_210_func_1DD94(Object* obj, s32 arg1) {
-    ObjCreateInfo* createInfo;
+    ObjSetup* objsetup;
 
-    createInfo = obj_alloc_create_info(0x28, OBJ_LFXEmitter);
-    createInfo->loadParamA = 2;
-    createInfo->loadParamB = 1;
-    createInfo->loadDistance = 0xFF;
-    createInfo->fadeDistance = 0xFF;
-    createInfo->x = obj->srt.transl.x;
-    createInfo->y = obj->srt.transl.y;
-    createInfo->z = obj->srt.transl.z;
-    ((s16*)createInfo)[16] = 0;
-    ((s16*)createInfo)[15] = arg1;
-    ((s16*)createInfo)[17] = -1;
-    return obj_create(createInfo, 5, obj->mapID, -1, obj->parent);
+    objsetup = obj_alloc_create_info(0x28, OBJ_LFXEmitter);
+    objsetup->loadParamA = 2;
+    objsetup->loadParamB = 1;
+    objsetup->loadDistance = 0xFF;
+    objsetup->fadeDistance = 0xFF;
+    objsetup->x = obj->srt.transl.x;
+    objsetup->y = obj->srt.transl.y;
+    objsetup->z = obj->srt.transl.z;
+    ((s16*)objsetup)[16] = 0;
+    ((s16*)objsetup)[15] = arg1;
+    ((s16*)objsetup)[17] = -1;
+    return obj_create(objsetup, 5, obj->mapID, -1, obj->parent);
 }
 
 // offset: 0x1DE50 | func: 220

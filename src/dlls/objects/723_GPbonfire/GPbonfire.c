@@ -41,13 +41,13 @@ typedef struct {
 } GPBonfireState;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ u8 interactionDistance;
 /*1A*/ u16 kyteCurveID;
 /*1C*/ s16 unused1C;
 /*1E*/ s8 unused1E;
 /*1F*/ u8 yaw;
-} GPBonfireCreateInfo;
+} GPBonfire_Setup;
 
 enum GPBonfireStates{
     STATE_0_INITIALISE = 0,
@@ -88,12 +88,12 @@ void GPbonfire_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPbonfire_create(Object* self, GPBonfireCreateInfo* createInfo, s32 arg2) {
+void GPbonfire_create(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfireState* state;
 
     state = self->state;
     self->unk0xbc = (void*)&GPbonfire_callbackBC;
-    self->srt.yaw = createInfo->yaw << 8;
+    self->srt.yaw = setup->yaw << 8;
     state->stateIndex = STATE_0_INITIALISE;
     state->currentState = 0;
     state->soundHandles[0] = 0;
@@ -110,7 +110,7 @@ void GPbonfire_create(Object* self, GPBonfireCreateInfo* createInfo, s32 arg2) {
 // offset: 0xB8 | func: 1 | export: 1
 void GPbonfire_update(Object* self) {
     GPBonfireState* state;
-    GPBonfireCreateInfo* createInfo;
+    GPBonfire_Setup* setup;
     Object* sidekick;
     Object* player;
     f32 distanceToTumbleweed;
@@ -122,10 +122,10 @@ void GPbonfire_update(Object* self) {
     Object** tumbleweeds;
 
     state = self->state;
-    createInfo = (GPBonfireCreateInfo*)self->createInfo;
+    setup = (GPBonfire_Setup*)self->setup;
     player = get_player();
 
-    playerIsNearby = vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror) <= createInfo->interactionDistance * createInfo->interactionDistance;    
+    playerIsNearby = vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror) <= setup->interactionDistance * setup->interactionDistance;    
 
     state->currentState &= 0xFFFD;
     if (state->currentState & 1) {
@@ -168,7 +168,7 @@ void GPbonfire_update(Object* self) {
             if (sidekick && playerIsNearby) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 4);
                 if (gDLL_1_UI->vtbl->func7(4)) {
-                    main_set_bits(BIT_Kyte_Flight_Curve, createInfo->kyteCurveID);
+                    main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
                 }
             }
             break;
@@ -326,12 +326,12 @@ s32 GPbonfire_func_A38(void){
 // offset: 0xA44 | func: 11
 void GPbonfire_func_A44(Object* self) {
     GPBonfireState* state;
-    GPBonfireCreateInfo* createInfo;
+    GPBonfire_Setup* setup;
     void** dll;
     CurvesFunc1BCReturnInner* curves;
 
     state = self->state;
-    createInfo = (GPBonfireCreateInfo*)self->createInfo;
+    setup = (GPBonfire_Setup*)self->setup;
 
     if (!main_get_bits(state->gameBitKindlingPlaced)) {
         return;
@@ -356,7 +356,7 @@ void GPbonfire_func_A44(Object* self) {
     state->stateIndex = STATE_4_ADDING_TUMBLEWEEDS;
 
     //Set flag based on Kyte's curve motion
-    curves = gDLL_25->vtbl->dll_25_func_2BC4(self, createInfo->kyteCurveID);
+    curves = gDLL_25->vtbl->dll_25_func_2BC4(self, setup->kyteCurveID);
     state->curves = curves;
     if (curves->unk30.words.unk32 != -1) {
         main_set_bits(curves->unk30.words.unk32, 1);

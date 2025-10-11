@@ -16,9 +16,9 @@ void cannon_claw_ctor(void *dll) { }
 
 void cannon_claw_dtor(void *dll) { }
 
-void cannon_claw_create(Object *self, ObjCreateInfo *createInfo, s32 a2) {
+void cannon_claw_create(Object *self, ObjSetup *setup, s32 a2) {
     self->srt.yaw = -32768;
-    self->srt.transl.y = createInfo->y + 2.0f;  
+    self->srt.transl.y = setup->y + 2.0f;  
 }
 
 void cannon_claw_update(Object *self) {
@@ -40,16 +40,16 @@ void cannon_claw_update(Object *self) {
     
     if (temp != 0) {
         if (self->parent != NULL) {
-            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
-            main_set_bits(createInfo->gamebit, 1);
+            CannonClaw_Setup *setup = (CannonClaw_Setup*)self->parent->setup;
+            main_set_bits(setup->gamebit, 1);
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
         }
         
         cannon_claw_func_1B4(self);
     } else {
         if (self->parent != NULL) {
-            CannonClawCreateInfo *createInfo = (CannonClawCreateInfo*)self->parent->createInfo;
-            if (main_get_bits(createInfo->gamebit) != 0) {
+            CannonClaw_Setup *setup = (CannonClaw_Setup*)self->parent->setup;
+            if (main_get_bits(setup->gamebit) != 0) {
                 cannon_claw_func_1B4(self);
             }
         }

@@ -25,7 +25,7 @@ void VFP_LevelControl_ctor(void *dll) { }
 void VFP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_LevelControl_create(Object* self, ObjCreateInfo* createInfo, s32 a2) {
+void VFP_LevelControl_create(Object* self, ObjSetup* setup, s32 a2) {
     u8 mapSetupID;
 
     obj_add_object_type(self, OBJTYPE_10);

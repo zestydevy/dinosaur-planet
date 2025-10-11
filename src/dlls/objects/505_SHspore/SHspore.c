@@ -9,11 +9,11 @@
 
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s16 unk18;
 /*1A*/ s16 unk1A;
 /*1C*/ s16 unk1C;
-} SHSporeCreateInfo;
+} SHSpore_Setup;
 
 typedef struct {
 /*000*/ s8 unk0[0x25C - 0];
@@ -180,13 +180,13 @@ void SHspore_update(Object* self) {
 // offset: 0x750 | func: 2
 static void SHspore_func_750(Object* self, SHSporeState* state) {
     s8 pad[4];
-    SHSporeCreateInfo* createInfo;
+    SHSpore_Setup* setup;
     f32 temp_fv1;
     s32 sp20;
     s32 var_v0;
 
-    createInfo = (SHSporeCreateInfo*)self->createInfo;
-    sp20 = createInfo->unk1C;
+    setup = (SHSpore_Setup*)self->setup;
+    sp20 = setup->unk1C;
 
     if (rand_next(0, 0x64) < 0xA && state->unk28C <= 0.0f) {
         state->unk298 = rand_next(0x7D0, 0xFA0);
@@ -202,11 +202,11 @@ static void SHspore_func_750(Object* self, SHSporeState* state) {
             var_v0 += 0xFFFF;
         }
 
-        if (createInfo->unk1A < var_v0) {
-            state->unk298 = createInfo->unk1A + sp20;
+        if (setup->unk1A < var_v0) {
+            state->unk298 = setup->unk1A + sp20;
         }
-        if (var_v0 < -createInfo->unk1A) {
-            state->unk298 = sp20 - createInfo->unk1A;
+        if (var_v0 < -setup->unk1A) {
+            state->unk298 = sp20 - setup->unk1A;
         }
         state->unk28C = 150.0f;
     }
@@ -238,12 +238,12 @@ static void SHspore_func_750(Object* self, SHSporeState* state) {
 
 // offset: 0xA00 | func: 3
 static void SHspore_func_A00(Object* arg0, SHSporeState* state) {
-    SHSporeCreateInfo* createInfo;
+    SHSpore_Setup* setup;
     s32 sp20;
     s32 var_v1;
 
-    createInfo = (SHSporeCreateInfo*)arg0->createInfo;
-    sp20 = createInfo->unk1C;
+    setup = (SHSpore_Setup*)arg0->setup;
+    sp20 = setup->unk1C;
     state->unk284 = rand_next(0x1E, 0x2D);
     state->unk270 = rand_next(0x78, 0xB4) + state->unk284;
     state->unk296 = rand_next(-0x7D0, 0x7D0) + state->unk294;
@@ -256,11 +256,11 @@ static void SHspore_func_A00(Object* arg0, SHSporeState* state) {
         var_v1 += 0xFFFF;
     }
 
-    if (createInfo->unk1A < var_v1) {
-        state->unk296 = createInfo->unk1A + sp20;
+    if (setup->unk1A < var_v1) {
+        state->unk296 = setup->unk1A + sp20;
     }
-    if (var_v1 < -createInfo->unk1A) {
-        state->unk296 = sp20 - createInfo->unk1A;
+    if (var_v1 < -setup->unk1A) {
+        state->unk296 = sp20 - setup->unk1A;
     }
 
     state->unk288 = rand_next(0x384, 0x514) / 1000.0f;

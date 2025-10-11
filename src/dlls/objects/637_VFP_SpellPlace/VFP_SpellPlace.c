@@ -5,11 +5,11 @@
 #include "dll.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     u8 _unk18[6];
     s16 unk1E;
     s16 unk20;
-} VFP_SpellPlace_CreateInfo;
+} VFP_SpellPlace_Setup;
 
 // size:0x6
 typedef struct {
@@ -28,12 +28,12 @@ void VFP_SpellPlace_ctor(void *dll) { }
 void VFP_SpellPlace_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_SpellPlace_create(Object* self, VFP_SpellPlace_CreateInfo* createInfo, s32 a2) {
+void VFP_SpellPlace_create(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
     VFP_SpellPlace_State* state;
 
     state = self->state;
-    state->unk0 = createInfo->unk1E;
-    state->unk2 = createInfo->unk20;
+    state->unk0 = setup->unk1E;
+    state->unk2 = setup->unk20;
     
     if (main_get_bits(state->unk2) != 0 || main_get_bits(state->unk0) != 0) {
         state->unk4 = 1;

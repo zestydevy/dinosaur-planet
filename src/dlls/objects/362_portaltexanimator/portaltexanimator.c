@@ -10,7 +10,7 @@ Block* func_80044BB0(s32 blockIndex);
 s32 func_8004A528(Object* obj, u8 animatorID);
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s16 flagID;
 /*1A*/ s16 unk1A;
 /*1C*/ u8 maxOpacity;
@@ -20,7 +20,7 @@ typedef struct {
 /*20*/ s8 unk20;
 /*21*/ u8 unk21;
 /*22*/ u16 minDistance;
-} PortalTexAnimatorCreateInfo;
+} PortalTexAnimator_Setup;
 
 typedef struct {
 /*00*/ s32 animatedVertexCount;
@@ -37,7 +37,7 @@ typedef struct {
 /*1B*/ s8 unk1B;
 } PortalTexAnimatorState;
 
-static void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTexAnimatorCreateInfo* createInfo, Block* block);
+static void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTexAnimator_Setup* setup, Block* block);
 
 // offset: 0x0 | ctor
 void portaltexanimator_ctor(void* dll){
@@ -48,7 +48,7 @@ void portaltexanimator_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void portaltexanimator_create(Object* self, PortalTexAnimatorCreateInfo* arg1, s32 arg2) {
+void portaltexanimator_create(Object* self, PortalTexAnimator_Setup* arg1, s32 arg2) {
     PortalTexAnimatorState* state;
 
     state = self->state;
@@ -61,12 +61,12 @@ void portaltexanimator_create(Object* self, PortalTexAnimatorCreateInfo* arg1, s
 // offset: 0x78 | func: 1 | export: 1
 void portaltexanimator_update(Object* self) {
     PortalTexAnimatorState* state;
-    PortalTexAnimatorCreateInfo* createInfo;
+    PortalTexAnimator_Setup* setup;
     Block* block;
     f32 distance;
     f32 blendValue;
 
-    createInfo = (PortalTexAnimatorCreateInfo*)self->createInfo;
+    setup = (PortalTexAnimator_Setup*)self->setup;
     state = self->state;
 
     //Get the object's local BLOCKS model
@@ -83,7 +83,7 @@ void portaltexanimator_update(Object* self) {
 
     //Animate tagged shapes' vertex opacity based on player distance
     if (state->animatedVertexCount == 0) {
-        state->animatorID = createInfo->animatorID;
+        state->animatorID = setup->animatorID;
         state->animatedVertexCount = func_8004A528(self, state->animatorID);
 
         if (state->animatedVertexCount == 0) {
@@ -95,21 +95,21 @@ void portaltexanimator_update(Object* self) {
             return;
         }
 
-        state->minDistance = createInfo->minDistance;
-        state->maxDistance = createInfo->base.loadDistance * 8;
-        state->unkC = createInfo->minDistance;
+        state->minDistance = setup->minDistance;
+        state->maxDistance = setup->base.loadDistance * 8;
+        state->unkC = setup->minDistance;
 
-        if (createInfo->flagID == -1) {
+        if (setup->flagID == -1) {
             state->enabled = 1;
         } else {
-            state->enabled = main_get_bits(createInfo->flagID);
+            state->enabled = main_get_bits(setup->flagID);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity
-        state->vertexOpacity = createInfo->maxOpacity;
-        portaltexanimator_animate_vertices(state, createInfo, block); 
+        state->vertexOpacity = setup->maxOpacity;
+        portaltexanimator_animate_vertices(state, setup, block); 
         block->vtxFlags ^= 1;
-        portaltexanimator_animate_vertices(state, createInfo, block);
+        portaltexanimator_animate_vertices(state, setup, block);
         block->vtxFlags ^= 1;
     } 
 
@@ -124,13 +124,13 @@ void portaltexanimator_update(Object* self) {
             blendValue = 0.0f;
         }
 
-        state->vertexOpacity = createInfo->minOpacity + (createInfo->maxOpacity - createInfo->minOpacity) * blendValue;
-        portaltexanimator_animate_vertices(state, createInfo, block);
+        state->vertexOpacity = setup->minOpacity + (setup->maxOpacity - setup->minOpacity) * blendValue;
+        portaltexanimator_animate_vertices(state, setup, block);
     }
 }
 
 // offset: 0x310 | func: 2
-void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTexAnimatorCreateInfo* createInfo, Block* block) {
+void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTexAnimator_Setup* setup, Block* block) {
     BlockShape *shapes;
     Vtx_t *vertices;
     s32 shapeIndex;
@@ -152,12 +152,12 @@ void portaltexanimator_animate_vertices(PortalTexAnimatorState* state, PortalTex
             //Switch shape's draw flags when opacity is zero
             if (state->vertexOpacity == 0){
                 shapes[shapeIndex].flags |= 0x200000;
-                if (createInfo->unk21 != 0){
+                if (setup->unk21 != 0){
                     shapes[shapeIndex].flags |= 0x800;
                 }
             } else {
                 shapes[shapeIndex].flags &= 0xFFDFFFFF;
-                if (createInfo->unk21 != 0){
+                if (setup->unk21 != 0){
                     shapes[shapeIndex].flags &= ~0x800;
                 }
             }

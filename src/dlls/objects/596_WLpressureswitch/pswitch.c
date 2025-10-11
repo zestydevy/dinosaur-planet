@@ -14,11 +14,11 @@ typedef struct {
 } WLPressureSwitchState;
 
 typedef struct {
-ObjCreateInfo base;
+ObjSetup base;
 s8 yaw;
 s16 unused1A;
 s16 gameBitPressed;             //flag to set when switch is pressed down
-} WLPressureSwitchCreateInfo;
+} WLPressureSwitch_Setup;
 
 typedef struct {
 s8 unk0[0x62 - 0];
@@ -57,14 +57,14 @@ void WLpressureswitch_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void WLpressureswitch_create(Object* self, WLPressureSwitchCreateInfo* createInfo, s32 arg2) {
+void WLpressureswitch_create(Object* self, WLPressureSwitch_Setup* setup, s32 arg2) {
     WLPressureSwitchState* state;
 
     state = self->state;
     self->unk0xbc = (void*)&WLpressureswitch_callbackBC;
-    self->srt.yaw = createInfo->yaw << 8;
-    if (main_get_bits(createInfo->gameBitPressed)) {
-        self->srt.transl.y = createInfo->base.y - 25.0f;
+    self->srt.yaw = setup->yaw << 8;
+    if (main_get_bits(setup->gameBitPressed)) {
+        self->srt.transl.y = setup->base.y - 25.0f;
         state->pressed = 30;
     }
     state->stateIndex = STATE_0_UP;
@@ -76,14 +76,14 @@ void WLpressureswitch_update(Object* self) {
     Object* player;
     f32 deltaY;
     Object* listedObject;
-    WLPressureSwitchCreateInfo* createInfo;
+    WLPressureSwitch_Setup* setup;
     WLPressureSwitchState* state;
     s8 playSound;
     s8 playerIsFarAway;
     s32 index;
 
     player = get_player();
-    createInfo = (WLPressureSwitchCreateInfo*)self->createInfo;
+    setup = (WLPressureSwitch_Setup*)self->setup;
     state = self->state;
 
     playerIsFarAway = FALSE;
@@ -126,7 +126,7 @@ void WLpressureswitch_update(Object* self) {
     if (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID) == WM_ACT_1_KRYSTAL_MEETS_WITH_RANDORN
              && !playerIsFarAway) {
         if (state->pressed) {
-            deltaY = createInfo->base.y - self->srt.transl.y;
+            deltaY = setup->base.y - self->srt.transl.y;
             if (2.5f < deltaY && deltaY < 5.0f) {
                 main_set_bits(BIT_WM_Randorn_Hall_Opened, TRUE);
             } else if (main_get_bits(BIT_WM_Randorn_Hall_Opened)) {
@@ -140,19 +140,19 @@ void WLpressureswitch_update(Object* self) {
     //Animate the switch's y coordinate
     playSound = FALSE;
     if (state->pressed) {
-        deltaY = createInfo->base.y - 5.0f;
+        deltaY = setup->base.y - 5.0f;
         if (self->srt.transl.y < deltaY) {
             self->srt.transl.y += 0.25f * delayFloat;
             if (deltaY < self->srt.transl.y) {
                 self->srt.transl.y = deltaY;
             }
             playSound = FALSE;
-            main_set_bits(createInfo->gameBitPressed, TRUE);
+            main_set_bits(setup->gameBitPressed, TRUE);
         } else {
             self->srt.transl.y -= 0.125f * delayFloat;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                main_set_bits(createInfo->gameBitPressed, TRUE);
+                main_set_bits(setup->gameBitPressed, TRUE);
                 playSound = FALSE;
             } else {
                 playSound = TRUE;
@@ -160,13 +160,13 @@ void WLpressureswitch_update(Object* self) {
         }
     } else {
         self->srt.transl.y += 0.125f * delayFloat;
-        deltaY = createInfo->base.y;
+        deltaY = setup->base.y;
         if (deltaY < self->srt.transl.y) {
             self->srt.transl.y = deltaY;
         } else {
             playSound = TRUE;
         }
-        main_set_bits(createInfo->gameBitPressed, FALSE);
+        main_set_bits(setup->gameBitPressed, FALSE);
     }
 
     //Play stone rumbling sound when moving

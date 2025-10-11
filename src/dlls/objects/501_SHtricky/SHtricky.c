@@ -17,7 +17,7 @@ void SHtricky_ctor(void *dll) { }
 void SHtricky_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHtricky_create(Object* self, ObjCreateInfo* createInfo, s32 arg2) {
+void SHtricky_create(Object* self, ObjSetup* setup, s32 arg2) {
     SHtricky_State *state;
 
     state = (SHtricky_State*)self->state;

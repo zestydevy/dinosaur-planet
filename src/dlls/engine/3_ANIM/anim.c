@@ -394,7 +394,7 @@ void dll_3_func_4924(Object* arg0, Object** arg1, ModelInstance** arg2) {
 #else
 s32 dll_3_func_4BAC(Object*, Object*, f32, f32, f32, f32*, f32);
 
-void dll_3_func_4B20(Object* animObj, AnimObjCreateInfo* createInfo) {
+void dll_3_func_4B20(Object* animObj, AnimObjSetup* setup) {
     f32 floatVal;
 
     if (dll_3_func_4BAC(animObj, 
@@ -403,8 +403,8 @@ void dll_3_func_4B20(Object* animObj, AnimObjCreateInfo* createInfo) {
                         animObj->positionMirror.y, 
                         animObj->positionMirror.z,
                         &floatVal,
-                        createInfo->base.y) != 0) {
-        animObj->srt.transl.y += floatVal - createInfo->base.y;
+                        setup->base.y) != 0) {
+        animObj->srt.transl.y += floatVal - setup->base.y;
     }
 }
 #endif
@@ -489,18 +489,18 @@ void dll_3_func_72E0(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_730C.s")
 
 // offset: 0x7974 | func: 40 | export: 6
-void dll_3_func_7974(AnimObjState* arg0, AnimObjCreateInfo* arg1) {
+void dll_3_func_7974(AnimObjState* arg0, AnimObjSetup* setup) {
     s32 animcurves_bin_offset;
     s32 size;
     s32 animCurvesIndex;
 
-    if (arg1->sequenceIdBitfield == -1){
+    if (setup->sequenceIdBitfield == -1){
         return;
     }
 
     arg0->animCurvesKeyframeCount = 0;
     arg0->animCurvesEventCount = 0;
-    animCurvesIndex = arg1->sequenceIdBitfield;
+    animCurvesIndex = setup->sequenceIdBitfield;
 
     if (animCurvesIndex & ANIMCURVES_IS_OBJSEQ2CURVE_INDEX){
         queue_load_file_region_to_ptr((void *) _bss_5D8, OBJSEQ2CURVE_TAB, (((s32) (animCurvesIndex & 0x7FF0)) >> 4) * 2, 8);
@@ -525,7 +525,7 @@ void dll_3_func_7974(AnimObjState* arg0, AnimObjCreateInfo* arg1) {
     arg0->animCurvesEventCount = ((s32 *) _bss_5D8)[0] & 0xFFFF;
     arg0->animCurvesKeyframeCount = ((size >> 2) - arg0->animCurvesEventCount) >> 1;
     arg0->animCurvesKeyframes = (AnimCurvesKeyframe *) (&arg0->animCurvesEvents[arg0->animCurvesEventCount]);
-    arg0->unk63 = arg1->unk1F;
+    arg0->unk63 = setup->unk1F;
 
     if (arg0->unk63 >= 0){
         _bss_108[arg0->unk63] = 0;
@@ -533,7 +533,7 @@ void dll_3_func_7974(AnimObjState* arg0, AnimObjCreateInfo* arg1) {
         _bss_198[arg0->unk63] = 0;
     }
 
-    if (arg1->unk22 != 0){
+    if (setup->unk22 != 0){
         arg0->unk8B = 2;
     } else {
         arg0->unk8B = 0;

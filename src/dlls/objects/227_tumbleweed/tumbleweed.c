@@ -22,21 +22,21 @@ static s32 dll_227_func_1FA0(Object* self);
 };
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s8 roll;
 /*19*/ s8 pitch;
 /*1A*/ s8 yaw;
 /*1B*/ u8 unk1B;
 /*1C*/ f32 unk1C;
-} TumbleweedCreateInfo;
+} Tumbleweed_Setup;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s32 unk18;
 /*1c*/ s32 unk1c;
 /*20*/ s32 unk20;
 /*24*/ s16 unk24;
-} GoldenNuggetCreateInfo;
+} GoldenNugget_Setup;
 
 typedef struct {
 /*000*/ s8 unk0[0x260 - 0];
@@ -75,7 +75,7 @@ void dll_227_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNuggetCreateInfo* arg2) {
+void dll_227_func_18(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* arg2) { // arg2 fakematch, not actually a golden nugget setup pointer
     Object* object;
     Object** objects;
     TumbleweedState* state;
@@ -85,8 +85,8 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNugge
     state = self->state;
     state->xCopy = self->srt.transl.x;
     state->yCopy = self->srt.transl.z;
-    state->unk262 = 2.0f * createInfo->unk1C;
-    state->unk271 = createInfo->unk1B;
+    state->unk262 = 2.0f * setup->unk1C;
+    state->unk271 = setup->unk1B;
     state->flags = 0;
     state->scaleCopy = self->srt.scale;
     state->unk268 = (state->scaleCopy / rand_next(0xC8, 0x1F4));
@@ -124,7 +124,7 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNugge
                     // @fake
                     if (1) {}
                     state->goldenNugget = object;
-                    arg2 = (GoldenNuggetCreateInfo*)object->createInfo;
+                    arg2 = (GoldenNugget_Setup*)object->setup;
                     state->goldenNuggetFlag = arg2->unk24 & 0xFFFF;
                     // @fake
                     if (arg2) {}
@@ -515,30 +515,30 @@ s32 dll_227_func_1FA0(Object* self) {
 
 // offset: 0x2038 | func: 19
 void dll_227_func_2038(Object* self) {
-    TumbleweedCreateInfo* createInfo;
+    Tumbleweed_Setup* setup;
 
     switch (self->id) {
         case OBJ_Tumbleweed1:
-            createInfo = obj_alloc_create_info(0x20, OBJ_Tumbleweed1twig);
+            setup = obj_alloc_create_info(0x20, OBJ_Tumbleweed1twig);
             break;
         case OBJ_Tumbleweed2:
-            createInfo = obj_alloc_create_info(0x20, OBJ_Tumbleweed2twig);
+            setup = obj_alloc_create_info(0x20, OBJ_Tumbleweed2twig);
             break;
         case OBJ_Tumbleweed3:
-            createInfo = obj_alloc_create_info(0x20, OBJ_Tumbleweed3twig);
+            setup = obj_alloc_create_info(0x20, OBJ_Tumbleweed3twig);
             break;
     }
     
-    createInfo->base.x = self->srt.transl.x;
-    createInfo->base.y = self->srt.transl.y;
-    createInfo->base.z = self->srt.transl.z;
-    createInfo->base.fadeDistance = 0xFF;
-    createInfo->base.loadParamA = 0x20;
-    createInfo->base.loadParamB = 2;
-    createInfo->roll = self->srt.roll;
-    createInfo->pitch = self->srt.pitch;
-    createInfo->yaw = self->srt.yaw;
-    createInfo->unk1B = 0;
-    createInfo->unk1C = 64.0f;
-    obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+    setup->base.x = self->srt.transl.x;
+    setup->base.y = self->srt.transl.y;
+    setup->base.z = self->srt.transl.z;
+    setup->base.fadeDistance = 0xFF;
+    setup->base.loadParamA = 0x20;
+    setup->base.loadParamB = 2;
+    setup->roll = self->srt.roll;
+    setup->pitch = self->srt.pitch;
+    setup->yaw = self->srt.yaw;
+    setup->unk1B = 0;
+    setup->unk1C = 64.0f;
+    obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
 }

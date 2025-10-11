@@ -198,7 +198,7 @@ class DLLSplitter:
         if dll.number >= 210:
             # Object DLL
             OBJECT_INTERFACE = [
-                "create",
+                "setup",
                 "update",
                 None,
                 "draw",
@@ -556,10 +556,10 @@ class DLLSplitter:
             # Object DLL, check for function defaults
             if export_idx == 0:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_CREATE):
-                    c_file.write(f'void {func.getName()}(Object *self, ObjCreateInfo *createInfo, s32 arg2) {{ }}\n')
+                    c_file.write(f'void {func.getName()}(Object *self, ObjSetup *setup, s32 arg2) {{ }}\n')
                     return True
                 else:
-                    c_file.write(f'void {func.getName()}(Object *self, ObjCreateInfo *createInfo, s32 arg2);\n')
+                    c_file.write(f'void {func.getName()}(Object *self, ObjSetup *setup, s32 arg2);\n')
             elif export_idx == 1:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_UPDATE):
                     c_file.write(f'void {func.getName()}(Object *self) {{ }}\n')

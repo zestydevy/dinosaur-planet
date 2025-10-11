@@ -20,10 +20,10 @@ typedef enum {
 } SwapstoneFlags;
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     u8 _unk18[2];
     u8 rotation;
-} SHswapstone_CreateInfo;
+} SHswapstone_Setup;
 
 typedef struct {
     u8 attachIdx;
@@ -54,11 +54,11 @@ void SHswapstone_ctor(void *dll) { }
 void SHswapstone_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHswapstone_create(Object* self, SHswapstone_CreateInfo* createInfo, s32 arg2) {
+void SHswapstone_create(Object* self, SHswapstone_Setup* setup, s32 arg2) {
     SHswapstone_State* state;
 
     state = self->state;
-    self->srt.yaw = createInfo->rotation << 8;
+    self->srt.yaw = setup->rotation << 8;
     self->unk0xbc = (ObjectCallback)SHswapstone_func_448;
 
     if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {

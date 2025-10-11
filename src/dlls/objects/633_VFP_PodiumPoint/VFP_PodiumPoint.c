@@ -8,12 +8,12 @@
 #include "functions.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unk18;
     u8 _unk19[4];
     s16 gamebit;
     s16 gamebit2;
-} VFP_PodiumPoint_CreateInfo;
+} VFP_PodiumPoint_Setup;
 
 // size:0x6
 typedef struct {
@@ -34,14 +34,14 @@ void VFP_PodiumPoint_ctor(void *dll) { }
 void VFP_PodiumPoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_PodiumPoint_create(Object* self, VFP_PodiumPoint_CreateInfo* createInfo, s32 arg2) {
+void VFP_PodiumPoint_create(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2) {
     VFP_PodiumPoint_State* state;
 
     state = (VFP_PodiumPoint_State*)self->state;
-    self->srt.yaw = createInfo->unk18 << 8;
+    self->srt.yaw = setup->unk18 << 8;
     self->unk0xbc = (ObjectCallback)VFP_PodiumPoint_func_324;
-    state->setGamebit = createInfo->gamebit;
-    state->conditionGamebit = createInfo->gamebit2;
+    state->setGamebit = setup->gamebit;
+    state->conditionGamebit = setup->gamebit2;
     self->unk0xaf |= 8;
 }
 

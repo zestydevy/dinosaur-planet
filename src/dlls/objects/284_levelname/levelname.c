@@ -10,13 +10,13 @@
 #include "types.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s16 flagID;
     s16 unk1A;
     s16 unk1C;
     s16 textID; //1E
     u8 activationRadius;
-} LevelNameCreateInfo;
+} LevelName_Setup;
 
 typedef struct {
 /*00*/ GameTextChunk* gametext;
@@ -74,7 +74,7 @@ void levelname_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void levelname_create(Object* self, LevelNameCreateInfo* createInfo, s32 arg2) {
+void levelname_create(Object* self, LevelName_Setup* setup, s32 arg2) {
     LevelNameState* state;
     GameTextChunk* gametext;
 
@@ -83,13 +83,13 @@ void levelname_create(Object* self, LevelNameCreateInfo* createInfo, s32 arg2) {
     font_load(FONT_DINO_MEDIUM_FONT_IN);
     self->unk0xbc = (void*)&levelname_anim_callback;
 
-    gametext = gDLL_21_Gametext->vtbl->get_chunk(createInfo->textID);
+    gametext = gDLL_21_Gametext->vtbl->get_chunk(setup->textID);
 
     state->strings = gametext->strings[0];
     state->displayDuration = gametext->commands[0];
     state->gametext = gametext;
-    state->activationRadius = createInfo->activationRadius;
-    state->flagID = createInfo->flagID;
+    state->activationRadius = setup->activationRadius;
+    state->flagID = setup->flagID;
     state->opacity = 0;
 
     state->stateIndex = LEVELNAME_STATE_0_WAITING;

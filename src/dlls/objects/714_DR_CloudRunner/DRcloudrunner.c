@@ -21,12 +21,12 @@ u8 unk920;
 } DRCloudRunnerState;
 
 typedef struct {
-ObjCreateInfo base;
+ObjSetup base;
 s16 unk18;
 s16 unk1A;
 s16 unk1C;
 s16 unk1E;
-} DRCloudRunnerCreateInfo;
+} DRCloudRunner_Setup;
 
 /*0x0*/ static u16 _data_0[] = {
     0x091d, 0x091e, 0x091f, 0x0000
@@ -122,7 +122,7 @@ void dll_714_ctor(void *dll);
 void dll_714_dtor(void *dll) { }
 
 // offset: 0xD8 | func: 1 | export: 0
-void dll_714_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
+void dll_714_create(Object *self, ObjSetup* setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_create.s")
 
 // offset: 0x318 | func: 2 | export: 1
@@ -212,10 +212,10 @@ u32 dll_714_get_state_size(Object *self, u32 a1) {
 s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
     DRCloudRunnerState* state2;
     u32 new_var;
-    DRCloudRunnerCreateInfo* createInfo;
+    DRCloudRunner_Setup* setup;
     Object* parent;
 
-    createInfo = (DRCloudRunnerCreateInfo*)self->createInfo;
+    setup = (DRCloudRunner_Setup*)self->setup;
     if (state->unk272) {
         func_800267A4(self);
         state->unk25B = 0;
@@ -245,7 +245,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunnerState* state, s32 arg2) {
     }
 
     new_var = 4;
-    if (main_get_bits(createInfo->unk1E)) {
+    if (main_get_bits(setup->unk1E)) {
         self->unk0xc4 = NULL;
         state2->unk920 = (((new_var * (state2->unk910 > 0)) * 4) & 0x10) | (state2->unk920 & 0xFFEF);
         return 3;

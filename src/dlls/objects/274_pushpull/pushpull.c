@@ -32,7 +32,7 @@ void dll_274_ctor(void *dll) { }
 void dll_274_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_274_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
+void dll_274_create(Object *self, ObjSetup* setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_create.s")
 
 // offset: 0x638 | func: 1 | export: 1

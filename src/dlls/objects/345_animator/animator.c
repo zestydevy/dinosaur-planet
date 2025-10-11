@@ -6,7 +6,7 @@
 #include "game/objects/object.h"
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s16 unk18;
 /*1A*/ s8 roll;
 /*1B*/ s8 pitch;
@@ -19,7 +19,7 @@ typedef struct {
 /*22*/ s8 unk22;
 /*23*/ u8 unk23;
 /*24*/ u8 iterations;
-} AnimatorCreateInfo;
+} Animator_Setup;
 
 // offset: 0x0 | ctor
 void animator_ctor(void *dll) {
@@ -30,10 +30,10 @@ void animator_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void animator_create(Object *self, AnimatorCreateInfo *createInfo, s32 arg2) {
-    self->srt.roll = createInfo->roll << 8;
-    self->srt.pitch = createInfo->pitch << 8;
-    self->srt.yaw = createInfo->yaw << 8;
+void animator_create(Object *self, Animator_Setup *setup, s32 arg2) {
+    self->srt.roll = setup->roll << 8;
+    self->srt.pitch = setup->pitch << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->unk0xdc = 0;
     self->unk0xb0 |= 0x2000;
 }
@@ -45,10 +45,10 @@ void animator_update(Object *self) {
     f32 dx;
     f32 dy;
     s16 i;
-    AnimatorCreateInfo *createInfo;
+    Animator_Setup *setup;
     SRT srt;
 
-    createInfo = (AnimatorCreateInfo *)self->createInfo;
+    setup = (Animator_Setup *)self->setup;
     player = get_player();
     if (!player)
         return;
@@ -58,29 +58,29 @@ void animator_update(Object *self) {
         dy = self->positionMirror.y - player->positionMirror.y;
         dz = self->positionMirror.z - player->positionMirror.z;
 
-        if (sqrtf(dx*dx + dy*dy + dz*dz) <= createInfo->distance * 0x10 || createInfo->distance == 0) {
+        if (sqrtf(dx*dx + dy*dy + dz*dz) <= setup->distance * 0x10 || setup->distance == 0) {
 
-            for (i = 0; i < createInfo->iterations; i++){
-                srt.transl.x = rand_next(-createInfo->amplitudeX, createInfo->amplitudeX);
-                srt.transl.y = rand_next(-createInfo->amplitudeY, createInfo->amplitudeY);
-                srt.transl.z = rand_next(-createInfo->amplitudeZ, createInfo->amplitudeZ);
+            for (i = 0; i < setup->iterations; i++){
+                srt.transl.x = rand_next(-setup->amplitudeX, setup->amplitudeX);
+                srt.transl.y = rand_next(-setup->amplitudeY, setup->amplitudeY);
+                srt.transl.z = rand_next(-setup->amplitudeZ, setup->amplitudeZ);
 
-                if (createInfo->unk23 & 1) {
+                if (setup->unk23 & 1) {
                     gDLL_17->vtbl->func1(self, 0x320, &srt, 4, -1, 0);
                 }
-                if (createInfo->unk23 & 2) {
+                if (setup->unk23 & 2) {
                     gDLL_17->vtbl->func1(self, 0x321, &srt, 4, -1, 0);
                 }
-                if (createInfo->unk23 & 4) {
+                if (setup->unk23 & 4) {
                     gDLL_17->vtbl->func1(self, 0x322, &srt, 4, -1, 0);
                 }
-                if (createInfo->unk23 & 8) {
+                if (setup->unk23 & 8) {
                     gDLL_17->vtbl->func1(self, 0x351, &srt, 4, -1, 0);
                 }
             }
 
         }
-        self->unk0xdc = -createInfo->iterations;
+        self->unk0xdc = -setup->iterations;
     } else if (self->unk0xdc > 0) {
         self->unk0xdc -= delayByte;
     }

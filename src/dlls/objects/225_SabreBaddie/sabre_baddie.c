@@ -63,7 +63,7 @@ void dll_225_ctor(void *dll);
 void dll_225_dtor(void *dll) { }
 
 // offset: 0x178 | func: 1 | export: 0
-void dll_225_create(Object *self, ObjCreateInfo* createInfo, s32 arg2);
+void dll_225_create(Object *self, ObjSetup* setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/225_SabreBaddie/dll_225_create.s")
 
 // offset: 0x2A8 | func: 2 | export: 1

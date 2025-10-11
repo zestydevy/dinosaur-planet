@@ -11,7 +11,7 @@ void init(void *dll) { }
 
 void fini(void *dll) { }
 
-void dll_365_create(Object *self, ObjCreateInfo *createInfo, s32 arg2)
+void dll_365_create(Object *self, ObjSetup *setup, s32 arg2)
 {
 	self->srt.yaw = 0;
 	self->unk0xbc = (ObjectCallback)func_0007;

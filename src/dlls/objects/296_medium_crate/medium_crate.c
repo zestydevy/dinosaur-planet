@@ -13,13 +13,13 @@
 #include "types.h"
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     s8 unk18;
     s8 unk19;
     s16 unk1A;
     s16 unk1C;
     s16 gamebit;
-} MediumCrateCreateInfo;
+} MediumCrate_Setup;
 
 typedef struct {
 /*00*/ s32 unk0;
@@ -72,7 +72,7 @@ void dll_296_ctor(void *dll) { }
 void dll_296_dtor(void *dll) { }
 
 // export 0
-void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3) {
+void dll_296_create(Object *self, MediumCrate_Setup *setup, s32 param3) {
     MediumCrateState *state;
     idk1 local_10;
     idk2 local_18;
@@ -82,15 +82,15 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
 
     state = (MediumCrateState*)self->state;
 
-    self->srt.yaw = createInfo->unk18 << 8;
-    state->gamebit = createInfo->gamebit;
+    self->srt.yaw = setup->unk18 << 8;
+    state->gamebit = setup->gamebit;
 
-    if (createInfo->unk1C == 0) {
+    if (setup->unk1C == 0) {
         state->unk0 = 0;
-    } else if (createInfo->unk1C == 0xFF) {
+    } else if (setup->unk1C == 0xFF) {
         state->unk0 = -1;
     } else {
-        state->unk0 = createInfo->unk1C * 60;
+        state->unk0 = setup->unk1C * 60;
     }
 
     if (main_get_bits(state->gamebit) != 0) {
@@ -98,7 +98,7 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
         func_800267A4(self);
     }
 
-    state->unk15 = createInfo->unk19;
+    state->unk15 = setup->unk19;
 
     _data_0 = dll_load(DLL_ID_107, 1, /*runConstructor=*/FALSE);
     _data_4 = dll_load(DLL_ID_106, 1, /*runConstructor=*/FALSE);
@@ -106,10 +106,10 @@ void dll_296_create(Object *self, MediumCrateCreateInfo *createInfo, s32 param3)
     state->unk8 = 0;
     state->unkE = rand_next(0, 100) + 300;
     state->unk10 = 400;
-    state->unk16 = createInfo->unk1A;
+    state->unk16 = setup->unk1A;
 
     self->unk0xb0 |= 0x2000;
-    self->srt.yaw = createInfo->unk18 << 8;
+    self->srt.yaw = setup->unk18 << 8;
 
     if (self->id == OBJ_MediumBasket) {
         state->unk15 = local_10.unk0[state->unk15];
@@ -136,12 +136,12 @@ void dll_296_func_9C0(Object *self) { }
 // export 3
 void dll_296_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     MediumCrateState *state;
-    MediumCrateCreateInfo *createInfo;
+    MediumCrate_Setup *setup;
 
     state = (MediumCrateState*)self->state;
-    createInfo = (MediumCrateCreateInfo*)self->createInfo;
+    setup = (MediumCrate_Setup*)self->setup;
 
-    if (!gDLL_29_Gplay->vtbl->did_time_expire(createInfo->base.uID)) {
+    if (!gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID)) {
         return;
     }
     if (state->unkC != 0 && state->unkC < 51) {
@@ -196,23 +196,23 @@ u32 dll_296_get_state_size(Object *self, u32 currentSize) {
 }
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     u8 unk18;
     u8 unk19;
     s16 unk1A;
     u8 _unk1C[8];
-} ScorpionCreateInfo;
+} Scorpion_Setup;
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     u8 unk18;
     u8 unk19;
     s16 unk1A;
     u8 _unk1C[8];
-} ScarabCreateInfo;
+} Scarab_Setup;
 
 typedef struct {
-    ObjCreateInfo base;
+    ObjSetup base;
     u8 _unk18[2];
     u8 unk1A;
     u8 unk1B;
@@ -222,7 +222,7 @@ typedef struct {
     u8 _unk26[6];
     s16 unk2C;
     u8 _unk2E[2];
-} FoodPickupCreateInfo;
+} FoodPickup_Setup;
 
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/dll_296_func_C50.s")
@@ -240,25 +240,25 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
 
         switch (state->unk15) {
             case 0: {
-                ScorpionCreateInfo *createInfo = (ScorpionCreateInfo*)obj_alloc_create_info(
-                    sizeof(ScorpionCreateInfo), OBJ_Scorpion);
-                createInfo->unk18 = rand_next(-127, 126);
-                createInfo->base.x = rand_next(-10, 10) + self->srt.transl.x;
-                createInfo->base.y = self->srt.transl.y;
-                createInfo->base.z = rand_next(-10, 10) + self->srt.transl.z;
-                createInfo->unk1A = 49;
-                createInfo->unk19 = 7;
-                obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+                Scorpion_Setup *setup = (Scorpion_Setup*)obj_alloc_create_info(
+                    sizeof(Scorpion_Setup), OBJ_Scorpion);
+                setup->unk18 = rand_next(-127, 126);
+                setup->base.x = rand_next(-10, 10) + self->srt.transl.x;
+                setup->base.y = self->srt.transl.y;
+                setup->base.z = rand_next(-10, 10) + self->srt.transl.z;
+                setup->unk1A = 49;
+                setup->unk19 = 7;
+                obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 break;
             }
             case 1: {
-                ScarabCreateInfo *createInfo = (ScarabCreateInfo*)obj_alloc_create_info(
-                    sizeof(ScarabCreateInfo), OBJ_Green_scarab);
-                createInfo->base.x = self->srt.transl.x;
-                createInfo->base.y = self->srt.transl.y;
-                createInfo->base.z = self->srt.transl.z;
-                createInfo->unk1A = 400;
-                obj = obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
+                    sizeof(Scarab_Setup), OBJ_Green_scarab);
+                setup->base.x = self->srt.transl.x;
+                setup->base.y = self->srt.transl.y;
+                setup->base.z = self->srt.transl.z;
+                setup->unk1A = 400;
+                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -290,14 +290,14 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
                 break;
             }
             case 2: {
-                ScarabCreateInfo *createInfo = (ScarabCreateInfo*)obj_alloc_create_info(
-                    sizeof(ScarabCreateInfo), OBJ_Red_scarab);
-                createInfo->unk18 = rand_next(-127, 126);
-                createInfo->base.x = self->srt.transl.x;
-                createInfo->base.y = self->srt.transl.y;
-                createInfo->base.z = self->srt.transl.z;
-                createInfo->unk1A = 400;
-                obj = obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
+                    sizeof(Scarab_Setup), OBJ_Red_scarab);
+                setup->unk18 = rand_next(-127, 126);
+                setup->base.x = self->srt.transl.x;
+                setup->base.y = self->srt.transl.y;
+                setup->base.z = self->srt.transl.z;
+                setup->unk1A = 400;
+                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -329,14 +329,14 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
                 break;
             }
             case 3: {
-                ScarabCreateInfo *createInfo = (ScarabCreateInfo*)obj_alloc_create_info(
-                    sizeof(ScarabCreateInfo), OBJ_Gold_scarab);
-                createInfo->unk18 = rand_next(-127, 126);
-                createInfo->base.x = self->srt.transl.x;
-                createInfo->base.y = self->srt.transl.y;
-                createInfo->base.z = self->srt.transl.z;
-                createInfo->unk1A = 2000;
-                obj = obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
+                    sizeof(Scarab_Setup), OBJ_Gold_scarab);
+                setup->unk18 = rand_next(-127, 126);
+                setup->base.x = self->srt.transl.x;
+                setup->base.y = self->srt.transl.y;
+                setup->base.z = self->srt.transl.z;
+                setup->unk1A = 2000;
+                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -368,14 +368,14 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
                 break;
             }
             case 4: {
-                ScarabCreateInfo *createInfo = (ScarabCreateInfo*)obj_alloc_create_info(
-                    sizeof(ScarabCreateInfo), OBJ_Rain_scarab);
-                createInfo->unk18 = rand_next(-127, 126);
-                createInfo->base.x = self->srt.transl.x;
-                createInfo->base.y = self->srt.transl.y;
-                createInfo->base.z = self->srt.transl.z;
-                createInfo->unk1A = 2000;
-                obj = obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
+                    sizeof(Scarab_Setup), OBJ_Rain_scarab);
+                setup->unk18 = rand_next(-127, 126);
+                setup->base.x = self->srt.transl.x;
+                setup->base.y = self->srt.transl.y;
+                setup->base.z = self->srt.transl.z;
+                setup->unk1A = 2000;
+                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -408,22 +408,22 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrateState *state) {
             }
             case 5:
             case 6: {
-                FoodPickupCreateInfo *createInfo;
+                FoodPickup_Setup *setup;
                 if (state->unk15 == 5) {
-                    createInfo = (FoodPickupCreateInfo*)obj_alloc_create_info(
-                        sizeof(FoodPickupCreateInfo), OBJ_meatPickup);
+                    setup = (FoodPickup_Setup*)obj_alloc_create_info(
+                        sizeof(FoodPickup_Setup), OBJ_meatPickup);
                 } else {
-                    createInfo = (FoodPickupCreateInfo*)obj_alloc_create_info(
-                        sizeof(FoodPickupCreateInfo), OBJ_applePickup);
+                    setup = (FoodPickup_Setup*)obj_alloc_create_info(
+                        sizeof(FoodPickup_Setup), OBJ_applePickup);
                 }
-                createInfo->unk1A = 20;
-                createInfo->unk2C = -1;
-                createInfo->unk1C = -1;
-                createInfo->base.x = self->srt.transl.x;
-                createInfo->base.y = self->srt.transl.y + 5.0f;
-                createInfo->base.z = self->srt.transl.z;
-                createInfo->unk24 = -1;
-                obj = obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+                setup->unk1A = 20;
+                setup->unk2C = -1;
+                setup->unk1C = -1;
+                setup->base.x = self->srt.transl.x;
+                setup->base.y = self->srt.transl.y + 5.0f;
+                setup->base.z = self->srt.transl.z;
+                setup->unk24 = -1;
+                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->unk_0xe0 = 21600;
                 break;
             }

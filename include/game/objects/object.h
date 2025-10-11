@@ -42,9 +42,15 @@ typedef struct {
 /*0062*/    s8 unk_0x62;
 } ObjectC0State;
 
-// Base struct, objects "inherit" from this and add their own creation related info
+typedef enum {
+	OBJSETUP_FLAG_1 = 0x1,
+	OBJSETUP_FLAG_2 = 0x2,
+	OBJSETUP_FLAG_4 = 0x4
+} ObjSetupFlags;
+
+// Base struct, objects "inherit" from this and add their own setup info.
 // Curve objects use some of these parameters differently
-typedef struct ObjCreateInfo {
+typedef struct ObjSetup {
 /*00*/	s16 objId;
 /*02*/	u8 quarterSize;
 /*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
@@ -56,7 +62,7 @@ typedef struct ObjCreateInfo {
 /*0c*/	f32 y;
 /*10*/	f32 z;
 /*14*/	s32 uID;
-} ObjCreateInfo;
+} ObjSetup;
 
 typedef struct {
 /*0000*/    u8 unk_0x0[0x10 - 0x0];
@@ -145,7 +151,7 @@ typedef struct {
 // Any exports referenced with a higher index are specific to an object or subtype.
 DLL_INTERFACE(DLL_IObject) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-	/*0*/ void (*create)(struct Object *obj, ObjCreateInfo *createInfo, s32);
+	/*0*/ void (*setup)(struct Object *obj, ObjSetup *setup, s32);
 	/*1*/ void (*update)(struct Object *obj);
 	/*2*/ void (*func3)(struct Object *obj); // update_child?
 	/*3*/ void (*draw)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
@@ -179,7 +185,7 @@ typedef struct Object {
 /*0046*/    s16 id;
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
 /*004A*/    u8 unk0x4a[0x4c - 0x4a];
-/*004C*/    ObjCreateInfo *createInfo; // exact type depends on object
+/*004C*/    ObjSetup *setup; // exact type depends on object
 /*0050*/    ObjDef* def;
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectStruct58 *unk0x58;
@@ -242,14 +248,14 @@ typedef struct {
   * 
 */
 typedef struct {
-/*00*/	ObjCreateInfo base;
+/*00*/	ObjSetup base;
 /*18*/	u8 unk18;
 /*19*/	u8 unk19;
-} SideCreateInfo;
+} SidekickSetup;
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
 extern struct Vec3_Int Vec3_Int_array[20];
-extern SideCreateInfo D_80091688;
+extern SidekickSetup D_80091688;
 
 #endif

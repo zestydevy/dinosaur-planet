@@ -8,14 +8,14 @@
 s16* func_80034804(Object* obj, s32 sequenceBoneID);
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s32 unk18;
 /*1C*/ s16 flag1;
 /*1C*/ s16 unk1E;
 /*1C*/ s16 unk20;
 /*1C*/ s16 unk22;
 /*1C*/ s16 flag2;
-} DBDiamondCreateInfo;
+} DBDiamond_Setup;
 
 typedef struct {
 /*000*/ u8 unk0;
@@ -30,15 +30,15 @@ void DBdiamond_dtor(void *dll) {
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBdiamond_create(Object *self, DBDiamondCreateInfo *createInfo, s32 arg2) {
+void DBdiamond_create(Object *self, DBDiamond_Setup *setup, s32 arg2) {
     DBDiamondState *state = self->state;
 
-    if (main_get_bits(createInfo->flag1)){
+    if (main_get_bits(setup->flag1)){
         state->unk0 = 1;
         return;
     }
 
-    if (main_get_bits(createInfo->flag2)) {
+    if (main_get_bits(setup->flag2)) {
         state->unk0 = 2;
         obj_add_object_type(self, OBJTYPE_39);
         return;
@@ -50,19 +50,19 @@ void DBdiamond_create(Object *self, DBDiamondCreateInfo *createInfo, s32 arg2) {
 // offset: 0xD0 | func: 1 | export: 1
 void DBdiamond_update(Object *self) {
     Object *player;
-    DBDiamondCreateInfo *createInfo;
+    DBDiamond_Setup *setup;
     DBDiamondState *state;
     s16 *sequenceBone;
 
     player = get_player();
-    createInfo = (DBDiamondCreateInfo *)self->createInfo;
+    setup = (DBDiamond_Setup *)self->setup;
     state = self->state;
 
     if (state->unk0 != 1 && state->unk0 == 2 && self->unk0xaf & 1) {
         if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < 60.0f) {
             obj_free_object_type(self, OBJTYPE_39);
             self->unk0xaf |= 8;
-            main_set_bits(createInfo->flag1, 1);
+            main_set_bits(setup->flag1, 1);
             obj_send_mesg(player, 0x7000A, self, (void*)0x10000);
             state->unk0 = 1;
         }

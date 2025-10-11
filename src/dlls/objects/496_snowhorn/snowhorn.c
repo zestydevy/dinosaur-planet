@@ -161,13 +161,12 @@ typedef struct {
 } SnowHornState;
 
 typedef struct{
-/*0x10*/ ObjCreateInfo base;
+/*0x10*/ ObjSetup base;
 /*0x18*/ s16 unkRadius;
 /*0x1A*/ s16 unk1A;
 /*0x1C*/ s8 rotation;
 /*0x1D*/ s8 unk1D;
-}
-SnowHornCreateInfo;
+} SnowHorn_Setup;
 
 typedef struct {
 /*000*/ s8 unk0[0x62];
@@ -277,13 +276,13 @@ void dll_496_dtor(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_18.s")
 #else
 s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObjState* animObjState, s8 arg3);
-void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_174C(Object *snowHorn, SnowHornState *state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
+void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
+void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
+void dll_496_func_174C(Object *snowHorn, SnowHornState *state, SnowHorn_Setup* mapsObj);
+void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
+void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 
-void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
+void dll_496_func_18(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     SnowHornState* state;
     u8* temp_a0;
     s32 sp34;
@@ -336,25 +335,25 @@ void dll_496_func_18(Object* snowhorn, SnowHornCreateInfo* mapsObj, s32 arg2) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_24C.s")
 #else
-void dll_496_func_11E0(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_1D68(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
-void dll_496_func_2318(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
+void dll_496_func_11E0(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
+void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
+void dll_496_func_1D68(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
+void dll_496_func_2318(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 s32 dll_496_func_980(Object* snowhorn);
 void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
-void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj);
+void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj);
 
 void dll_496_func_24C(Object* snowhorn) {
     SnowHornState* state;
     f32 daytime;
-    SnowHornCreateInfo* mapsObj;
+    SnowHorn_Setup* mapsObj;
     Object* player;
     UnkFunc_80024108Struct sp44;
     s32 animIndex;
     s32 seqIndex;
 
     state = snowhorn->state;
-    mapsObj = (SnowHornCreateInfo*)snowhorn->createInfo;
+    mapsObj = (SnowHorn_Setup*)snowhorn->setup;
     player = get_player();
 
     if (vec3_distance_xz_squared(&snowhorn->positionMirror, &player->positionMirror) 
@@ -597,14 +596,14 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     state->lookAtUnk = 0;
 }
 
-void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
+void dll_496_func_D5C(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj) {
     state->flags = 0;
     state->unk424 |= 0x44;
     state->unkRadius = mapsObj->unkRadius;
 }
 
 /** Called by the standing SnowHorn (not by the ones that walk around) */
-void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
+void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj) {
     Object* player;
 
     if (_data_270 != 0) {
@@ -696,7 +695,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo
 
 }
 
-void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
+void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj) {
     state->unk424 |= 0x44;
 }
 
@@ -704,7 +703,7 @@ void dll_496_func_11C4(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_11E0.s")
 #else
-void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreateInfo* createInfo) {
+void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHorn_Setup* setup) {
     SnowHornState* state;
     u32 questValue;
     u16 seqBoneAngle;
@@ -862,7 +861,7 @@ void dll_496_func_11E0(Object* self, SnowHornState* snowHornState, SnowHornCreat
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_func_174C.s")
 #else
-void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* createInfo){
+void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* setup){
     s32 sp2C = 0x19;
     s32 result;
     
@@ -881,7 +880,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
         state->flags = 0;
     }
 
-    if (createInfo->unk1D == result){
+    if (setup->unk1D == result){
         if (main_get_bits(BIT_DIM_Leap_of_Faith_Completed)){
             state->chatSequenceList = _data_2E8;
             state->unk426 = 2.0f;
@@ -913,7 +912,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
 }
 #endif
 
-void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* arg2) {
+void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* arg2) {
     f32 temp_walkSpeed;
     f32 dx;
     f32 dz;
@@ -981,7 +980,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHornState* state, SnowHornCreateInf
 }
 
 /** snowHorn_handleGarundaTeFlags? */
-void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
+void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj) {
     u16 questValue;
     u16 questEnd = 6;
 
@@ -999,7 +998,7 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHornState* state, SnowHornCreateInf
     state->garundaTe_weedsEaten = main_get_bits(BIT_Garunda_Te_Weeds_Eaten);
 }
 
-void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* createInfo) {
+void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHorn_Setup* setup) {
     Object* frostWeed;
     s32 weeds;
     
@@ -1031,8 +1030,8 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
             }
             
             frostWeed = obj_get_nearest_type_to(4, self, 0);
-            createInfo = (SnowHornCreateInfo*)self->createInfo;
-            if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < createInfo->unkRadius * createInfo->unkRadius) {
+            setup = (SnowHorn_Setup*)self->setup;
+            if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func4(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func3(frostWeed, &state->playerPositionCopy);
                     state->frostWeed = frostWeed;
@@ -1099,10 +1098,10 @@ void dll_496_func_1D68(Object* self, SnowHornState* state, SnowHornCreateInfo* c
     }
 }
 
-void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
+void dll_496_func_22E4(Object *snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj) {
     state->someAnimIDList = _data_2B8;
     state->unk48 = _data_2BC;
 }
 
-void dll_496_func_2318(Object* snowhorn, SnowHornState* state, SnowHornCreateInfo* mapsObj) {
+void dll_496_func_2318(Object* snowhorn, SnowHornState* state, SnowHorn_Setup* mapsObj) {
 }

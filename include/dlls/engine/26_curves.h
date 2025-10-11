@@ -101,8 +101,8 @@ typedef struct CurvesFunc1BCReturn {
 DLL_INTERFACE(DLL_26_curves) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*curves_func_18)(void);
-    /*1*/ void (*curves_func_34)(ObjCreateInfo *);
-    /*2*/ void (*curves_func_10c)(ObjCreateInfo *);
+    /*1*/ void (*curves_func_34)(ObjSetup *);
+    /*2*/ void (*curves_func_10c)(ObjSetup *);
     /*3*/ CurvesFunc1BCReturn *(*curves_func_1bc)(s32 *);
     /*4*/ s32 (*curves_func_1e4)(f32, f32, f32, s32*, s32, s32);
     /*5*/ UnknownDLLFunc curves_func_3f00;

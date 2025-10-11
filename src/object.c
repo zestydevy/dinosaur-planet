@@ -40,7 +40,7 @@ void queue_load_file_to_ptr(void **dest, s32 fileId);
 void alloc_some_object_arrays(void); //related to objects
 void obj_clear_all(void);
 
-void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3);
+void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3);
 
 void func_80046320(s16 param1, Object *object);
 
@@ -447,7 +447,7 @@ Object *func_800211B4(s32 param1) {
 
     while (i < len) {
         obj = gObjList[i];
-        if (obj->createInfo != NULL && obj->createInfo->uID == param1) {
+        if (obj->setup != NULL && obj->setup->uID == param1) {
             return obj;
         }
 
@@ -497,18 +497,18 @@ void *func_800213A0(s32 idx) {
     return (void*)((u32)gFile_TABLES_BIN + gFile_TABLES_TAB[idx] * 4);
 }
 
-Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 param4, Object *parent) {
+Object *obj_create(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4, Object *parent) {
     Object *obj;
 
     obj = NULL;
-    queue_load_map_object(&obj, createInfo, createFlags, mapID, param4, parent, 0);
-    obj_add_object(obj, createFlags);
+    queue_load_map_object(&obj, setup, setupFlags, mapID, param4, parent, 0);
+    obj_add_object(obj, setupFlags);
 
     return obj;
 }
 
 // actual name: objSetupObjectActual ?
-Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *parent, s32 param6) {
+Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4, Object *parent, s32 param6) {
     ObjDef *def;
     s32 modelCount;
     s32 var;
@@ -522,11 +522,11 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     s32 addr;
     s8 modelLoadFailed;
 
-    objId = createInfo->objId;
+    objId = setup->objId;
 
     update_pi_manager_array(0, objId);
 
-    if (param2 & 2) {
+    if (setupFlags & OBJSETUP_FLAG_2) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
@@ -556,14 +556,14 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
         objHeader.unk0xb0 |= 0x80;
     }
 
-    if (param2 & 4) {
+    if (setupFlags & OBJSETUP_FLAG_4) {
         objHeader.srt.flags |= 0x2000;
     }
 
-    objHeader.srt.transl.x = createInfo->x;
-    objHeader.srt.transl.y = createInfo->y;
-    objHeader.srt.transl.z = createInfo->z;
-    objHeader.createInfo = createInfo;
+    objHeader.srt.transl.x = setup->x;
+    objHeader.srt.transl.y = setup->y;
+    objHeader.srt.transl.z = setup->z;
+    objHeader.setup = setup;
     objHeader.tabIdx = tabIdx;
     objHeader.id = objId;
     objHeader.unk0xb2 = param4;
@@ -573,8 +573,8 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     objHeader.srt.scale = def->scale;
     objHeader.unk_0x36 = 0xFF;
     objHeader.mesgQueue = NULL;
-    objHeader.unk0x3c = createInfo->loadDistance << 3;
-    objHeader.unk0x40 = createInfo->fadeDistance << 3;
+    objHeader.unk0x3c = setup->loadDistance << 3;
+    objHeader.unk0x40 = setup->fadeDistance << 3;
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
@@ -714,7 +714,7 @@ Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 p
     return obj;
 }
 
-void obj_add_object(Object *obj, u32 someFlags) {
+void obj_add_object(Object *obj, u32 setupFlags) {
     if (obj->parent != NULL) {
         transform_point_by_object(
             obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
@@ -735,7 +735,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
     obj->positionMirror3.y = obj->positionMirror.y;
     obj->positionMirror3.z = obj->positionMirror.z;
 
-    copy_obj_position_mirrors(obj, obj->createInfo, 0);
+    copy_obj_position_mirrors(obj, obj->setup, 0);
 
     if (obj->objhitInfo != NULL) {
         obj->objhitInfo->unk_0x10.x = obj->srt.transl.x;
@@ -765,7 +765,7 @@ void obj_add_object(Object *obj, u32 someFlags) {
         }
     }
 
-    if (someFlags & 1) {
+    if (setupFlags & OBJSETUP_FLAG_1) {
         obj->unk0xb0 |= 0x10;
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
@@ -997,13 +997,13 @@ void obj_destroy_object(Object *obj) {
     }
 }
 
-void copy_obj_position_mirrors(Object *obj, ObjCreateInfo *param2, s32 param3) {
+void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3) {
     DLL_IObject *dll;
     obj->group = obj->def->group;
     dll = obj->dll;
     if(1) {
         if(dll != NULL) {
-            obj->dll->vtbl->create(obj, param2, param3);
+            obj->dll->vtbl->setup(obj, setup, param3);
         }
     }
 
@@ -1457,7 +1457,7 @@ void obj_free_object(Object *obj, s32 param2) {
                 if (obj == obj2->parent) {
                     obj2->parent = NULL;
 
-                    if (obj2->createInfo != NULL) {
+                    if (obj2->setup != NULL) {
                         stackObjs[numStackObjs] = obj2;
                         numStackObjs++;
                     }
@@ -1542,33 +1542,33 @@ void obj_free_object(Object *obj, s32 param2) {
         }
     }
 
-    if (obj->srt.flags & 0x2000 && obj->createInfo != NULL) {
-        mmFree(obj->createInfo);
+    if (obj->srt.flags & 0x2000 && obj->setup != NULL) {
+        mmFree(obj->setup);
     }
 
     mmFree(obj);
 }
 
 void *obj_alloc_create_info(s32 size, s32 objId) {
-    ObjCreateInfo *createInfo;
+    ObjSetup *setup;
 
-    createInfo = (ObjCreateInfo*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
-    bzero(createInfo, size);
+    setup = (ObjSetup*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
+    bzero(setup, size);
 
-    createInfo->uID = -1;
-    createInfo->loadDistance = 100;
-    createInfo->fadeDistance = 50;
-    createInfo->loadParamA = 8;
-    createInfo->loadParamB = 4;
-    createInfo->objId = objId;
+    setup->uID = -1;
+    setup->loadDistance = 100;
+    setup->fadeDistance = 50;
+    setup->loadParamA = 8;
+    setup->loadParamB = 4;
+    setup->objId = objId;
 
-    return (void*)createInfo;
+    return (void*)setup;
 }
 
 void func_80023464(s32 playerno) {
     Object *player;
     s32 activePlayerno;
-    ObjCreateInfo createInfo;
+    ObjSetup playerSetup;
     f32 x, y, z;
     Object *newPlayer;
 
@@ -1592,20 +1592,20 @@ void func_80023464(s32 playerno) {
         newPlayer = NULL;
 
         if (playerno > PLAYER_NONE) {
-            bzero(&createInfo, sizeof(createInfo));
-            createInfo.uID = -1;
-            createInfo.setup = 0;
-            createInfo.loadParamA = 1;
-            createInfo.loadParamB = 4;
-            createInfo.loadDistance = -1;
-            createInfo.fadeDistance = 100;
-            createInfo.objId = D_80091664[playerno];
-            createInfo.quarterSize = 24;
-            createInfo.x = x;
-            createInfo.y = y;
-            createInfo.z = z;
+            bzero(&playerSetup, sizeof(playerSetup));
+            playerSetup.uID = -1;
+            playerSetup.setup = 0;
+            playerSetup.loadParamA = 1;
+            playerSetup.loadParamB = 4;
+            playerSetup.loadDistance = -1;
+            playerSetup.fadeDistance = 100;
+            playerSetup.objId = D_80091664[playerno];
+            playerSetup.quarterSize = 24;
+            playerSetup.x = x;
+            playerSetup.y = y;
+            playerSetup.z = z;
 
-            newPlayer = obj_create(&createInfo, 1, -1, -1, NULL);
+            newPlayer = obj_create(&playerSetup, OBJSETUP_FLAG_1, -1, -1, NULL);
         }
 
         gDLL_2_Camera->vtbl->func0(newPlayer, x - 50.0f, y, z - 50.0f);
@@ -1617,7 +1617,7 @@ void func_80023464(s32 playerno) {
 void func_80023628() {
     Object *player;
     s32 var;
-    ObjCreateInfo createInfo;
+    ObjSetup playerSetup;
     PlayerLocation *savedPlayerLocation;
     f32 x, y, z;
     s32 playerno;
@@ -1638,20 +1638,20 @@ void func_80023628() {
     player = NULL;
 
     if (playerno > PLAYER_NONE) {
-        bzero(&createInfo, sizeof(createInfo));
-        createInfo.uID = -1;
-        createInfo.setup = 0;
-        createInfo.loadParamA = 1;
-        createInfo.loadParamB = 4;
-        createInfo.loadDistance = -1;
-        createInfo.fadeDistance = 100;
-        createInfo.objId = D_80091664[playerno];
-        createInfo.quarterSize = 24;
-        createInfo.x = x;
-        createInfo.y = y;
-        createInfo.z = z;
+        bzero(&playerSetup, sizeof(playerSetup));
+        playerSetup.uID = -1;
+        playerSetup.setup = 0;
+        playerSetup.loadParamA = 1;
+        playerSetup.loadParamB = 4;
+        playerSetup.loadDistance = -1;
+        playerSetup.fadeDistance = 100;
+        playerSetup.objId = D_80091664[playerno];
+        playerSetup.quarterSize = 24;
+        playerSetup.x = x;
+        playerSetup.y = y;
+        playerSetup.z = z;
 
-        player = obj_create(&createInfo, 1, -1, -1, NULL);
+        player = obj_create(&playerSetup, OBJSETUP_FLAG_1, -1, -1, NULL);
     }
 
     D_80091668.unk8 = fsin16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + x;
@@ -1669,17 +1669,17 @@ void func_80023628() {
 }
 
 void func_80023894(Object* object, s32 objectId) {
-    SideCreateInfo* sideCreateInfo;
+    SidekickSetup* sidekickSetup;
 
-    sideCreateInfo = (SideCreateInfo*)object->createInfo;
+    sidekickSetup = (SidekickSetup*)object->setup;
     D_80091688.base.objId = objectId;
     D_80091688.base.x = object->positionMirror.x;
     D_80091688.base.y = object->positionMirror.y;
     D_80091688.base.z = object->positionMirror.z;
-    D_80091688.unk18 = sideCreateInfo->unk18;
-    D_80091688.unk19 = sideCreateInfo->unk19;
+    D_80091688.unk18 = sidekickSetup->unk18;
+    D_80091688.unk19 = sidekickSetup->unk19;
 
-    obj_create((ObjCreateInfo*)&D_80091688, 1, -1, -1, NULL);
+    obj_create((ObjSetup*)&D_80091688, OBJSETUP_FLAG_1, -1, -1, NULL);
 }
 
 Object *get_player(void) {
