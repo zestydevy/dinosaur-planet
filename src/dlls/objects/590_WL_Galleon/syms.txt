@@ -1,0 +1,19 @@
+.text = 0x0:
+WLgalleon_ctor = 0x0;
+WLgalleon_dtor = 0xC;
+WLgalleon_setup = 0x18;
+WLgalleon_control = 0x14C;
+WLgalleon_update = 0x4F0;
+WLgalleon_print = 0x4FC;
+WLgalleon_free = 0x5D8;
+WLgalleon_get_model_flags = 0x654;
+WLgalleon_get_data_size = 0x664;
+WLgalleon_anim_callback = 0x678;
+
+.rodata = 0x9E8:
+
+.data = 0xA18:
+dataShowKrystalsAdventureScreen = 0x0; // absolute:0xA18
+dataDLLUnused = 0x8; // absolute:0xA20
+dataDelayByte = 0xC; // absolute:0xA24
+_data_10 = 0x10; // absolute:0xA28
