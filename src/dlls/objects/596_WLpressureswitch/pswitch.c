@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/objects/214_animobj.h"
 #include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -20,15 +21,6 @@ s16 unused1A;
 s16 gameBitPressed;             //flag to set when switch is pressed down
 } WLPressureSwitch_Setup;
 
-typedef struct {
-s8 unk0[0x62 - 0];
-u8 unk62;
-s8 unk63[0x7A - 0x63];
-s16 unk7A;
-s8 unk7C[0x8D - 0x7C];
-u8 unk8D;
-} CallbackBCUnkArg2;
-
 enum WLPressureSwitchStates {
     STATE_0_UP = 0,
     STATE_1_DOWN = 1
@@ -46,7 +38,7 @@ enum WarlockMountainActs {
     WM_ACT_9_SPIRIT_8_SABRE_SW = 9
 };
 
-static s32 WLpressureswitch_callbackBC(s32 self, s32 createInfo, CallbackBCUnkArg2* arg2, s32 arg3);
+static s32 WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
 
 // offset: 0x0 | ctor
 void WLpressureswitch_ctor(void* dll){
@@ -61,7 +53,7 @@ void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg
     WLPressureSwitch_Data* objdata;
 
     objdata = self->data;
-    self->unk0xbc = (void*)&WLpressureswitch_callbackBC;
+    self->unk0xbc = (void*)&WLpressureswitch_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;
@@ -215,8 +207,8 @@ u32 WLpressureswitch_get_data_size(Object* self, s32 arg1){
 }
 
 // offset: 0x678 | func: 7
-s32 WLpressureswitch_callbackBC(s32 arg0, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3) {
-    arg2->unk7A = -1;
-    arg2->unk62 = 0;
+s32 WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+    animObjData->unk7A = -1;
+    animObjData->unk62 = 0;
     return 0;
 }

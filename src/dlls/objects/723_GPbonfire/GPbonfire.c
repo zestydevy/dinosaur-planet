@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/objects/214_animobj.h"
 #include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -11,17 +12,6 @@
 #include "sys/objtype.h"
 #include "dlls/objects/210_player.h"
 #include "dll.h"
-
-typedef struct {
-s8 unk0[0x62 - 0];
-u8 unk62;
-s8 unk63[0x7A - 0x63];
-s16 unk7A;
-s8 unk7C[0x8D - 0x7C];
-u8 unk8D;
-u8 unk8E[0x98 - 0x8E];
-u8 unk98;
-} CallbackBCUnkArg2;
 
 typedef struct {
 /*00*/ u8 stateIndex;
@@ -57,13 +47,6 @@ enum GPBonfireStates{
     STATE_4_ADDING_TUMBLEWEEDS = 4
 };
 
-// enum AUDIO {
-//     SOUND_1e1_Stone_Moving = 0x1e1,
-//     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
-//     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
-//     SOUND_99a_Mechanical_Ratcheting = 0x99a
-// };
-
 /** Scale values for the GPbonfire object itself as the fire is built up */
 /*0x0*/ static f32 bonfireScaleData[] = {
     0.1, 0.14, 0.196, 0.2744, 0.38415999
@@ -77,7 +60,7 @@ enum GPBonfireStates{
 #define BONFIRE_DWINDLING_TIMER 2000
 
 static void GPbonfire_func_A44(Object* self);
-static s32 GPbonfire_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3);
+static s32 GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
 
 // offset: 0x0 | ctor
 void GPbonfire_ctor(void* dll){
@@ -92,7 +75,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfire_Data* objdata;
 
     objdata = self->data;
-    self->unk0xbc = (void*)&GPbonfire_callbackBC;
+    self->unk0xbc = (void*)&GPbonfire_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objdata->stateIndex = STATE_0_INITIALISE;
     objdata->currentState = 0;
@@ -364,15 +347,15 @@ void GPbonfire_func_A44(Object* self) {
 }
 
 // offset: 0xC24 | func: 12
-s32 GPbonfire_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3) {
+s32 GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
     GPBonfire_Data* objdata;
     s32 index;
 
     objdata = self->data;
 
     if (!objdata->callbackBool) {
-        for (index = 0; index < arg2->unk98; index++){
-            if (arg2->unk8E[index] == 1) {
+        for (index = 0; index < animObjData->unk98; index++){
+            if (animObjData->unk8E[index] == 1) {
                 objdata->callbackBool = TRUE;
                 self->modelInstIdx = 1;
             }

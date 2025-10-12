@@ -10,7 +10,7 @@ WCpressureswitch_get_model_flags = 0x594;
 WCpressureswitch_get_data_size = 0x5C8;
 WCpressureswitch_add_object = 0x5DC;
 WCpressureswitch_is_object_on_switch = 0x648;
-WCpressureswitch_callbackBC = 0x6CC;
+WCpressureswitch_anim_callback = 0x6CC;
 
 .rodata = 0x824:
 str_0 = 0x0; // absolute:0x824

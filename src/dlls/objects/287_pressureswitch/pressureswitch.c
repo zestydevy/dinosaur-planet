@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/objects/214_animobj.h"
 #include "functions.h"
 #include "game/objects/object.h"
 #include "sys/objects.h"
@@ -33,18 +34,9 @@ u8 distanceSidekickBehaviour;   //player distance at which special sidekick beha
 s16 gameBitActivated;            //flag to check if switch is deactivated
 } PressureSwitch_Setup;
 
-typedef struct {
-s8 unk0[0x62 - 0];
-u8 unk62;
-s8 unk63[0x7A - 0x63];
-s16 unk7A;
-s8 unk7C[0x8D - 0x7C];
-u8 unk8D;
-} CallbackBCUnkArg2;
-
 static void pressureswitch_add_object(Object* self, Object* objectOnSwitch);
 static s32 pressureswitch_is_object_on_switch(Object* self);
-static s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3);
+static s32 pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
 
 // offset: 0x0 | ctor
 void dll_287_ctor(void *dll) { }
@@ -76,7 +68,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
-    self->unk0xbc = (void*)&pressureswitch_callbackBC;
+    self->unk0xbc = (void*)&pressureswitch_anim_callback;
 }
 
 // offset: 0x148 | func: 1 | export: 1
@@ -247,7 +239,7 @@ s32 pressureswitch_is_object_on_switch(Object* self) {
 }
 
 // offset: 0x718 | func: 9
-s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s32 arg3) {
+s32 pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
     PressureSwitch_Data* objdata;
     PressureSwitch_Setup* setup;
     u8 index;
@@ -255,23 +247,23 @@ s32 pressureswitch_callbackBC(Object* self, s32 arg1, CallbackBCUnkArg2* arg2, s
     objdata = self->data;
     setup = (PressureSwitch_Setup*)self->setup;
 
-    if (arg2->unk8D == 1) {
+    if (animObjData->unk8D == 1) {
         for (index = 0; index < 10; index++){
             if (objdata->objectsOnSwitch[index]) {
                 objdata->objCoords[index].x = objdata->objectsOnSwitch[index]->srt.transl.x;
                 objdata->objCoords[index].z = objdata->objectsOnSwitch[index]->srt.transl.z;
             }
         }
-        arg2->unk8D = 0;
+        animObjData->unk8D = 0;
 
-    } else if (arg2->unk8D == 2) {
+    } else if (animObjData->unk8D == 2) {
         for (index = 0; index < 10; index++);
 
         self->srt.transl.z = setup->base.x; //@bug? should be x component?
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
         main_set_bits(setup->gameBitPressed, 0);
-        arg2->unk8D = 0;
+        animObjData->unk8D = 0;
     }
 
     return 0;

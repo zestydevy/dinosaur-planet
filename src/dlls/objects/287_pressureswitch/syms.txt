@@ -10,7 +10,7 @@ pressureswitch_get_model_flags = 0x604;
 pressureswitch_get_data_size = 0x614;
 pressureswitch_add_object = 0x628;
 pressureswitch_is_object_on_switch = 0x694;
-pressureswitch_callbackBC = 0x718;
+pressureswitch_anim_callback = 0x718;
 
 .rodata = 0x878:
 str_0 = 0x0; // absolute:0x878
