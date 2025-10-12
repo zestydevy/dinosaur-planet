@@ -81,7 +81,6 @@ typedef struct Unk {
 /* static */ void dll_210_func_1CEFC(Object* player, s32 arg1);
 /* static */ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4);
 /* static */ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
-/* static */ void dll_210_func_1BC0(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* arg0, f32 arg1);
 /* static */ void dll_210_func_9F1C(Object* arg0, s32 arg1);
@@ -1653,7 +1652,28 @@ void dll_210_func_41F4(Object* arg0, Player_Data* arg1) {
 }
 
 // offset: 0x43EC | func: 23 | export: 65
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_43EC.s")
+void dll_210_func_43EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
+    Player_Data* objdata;
+
+    arg0->positionMirror3.x = arg1;
+    arg0->positionMirror2.x = arg1;
+    arg0->positionMirror.x = arg1;
+    arg0->srt.transl.x = arg1;
+
+    arg0->positionMirror3.y = arg2;
+    arg0->positionMirror2.y = arg2;
+    arg0->positionMirror.y = arg2;
+    arg0->srt.transl.y = arg2;
+
+    arg0->positionMirror3.z = arg3;
+    arg0->positionMirror2.z = arg3;
+    arg0->positionMirror.z = arg3;
+    arg0->srt.transl.z = arg3;
+
+    objdata = arg0->data;
+    dll_210_func_7260(arg0, objdata);
+    gDLL_18->vtbl->func4(arg0, objdata, 1);
+}
 
 // offset: 0x44A4 | func: 24 | export: 66
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_44A4.s")
