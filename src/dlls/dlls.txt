@@ -71,6 +71,7 @@
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
 581 = objects/581_SB_KyteCage
+583 = objects/583_SB_CageKyte
 596 = objects/596_WLpressureswitch
 607 = objects/607_WL_LevelControl
 619 = objects/619_VFP_LevelControl
