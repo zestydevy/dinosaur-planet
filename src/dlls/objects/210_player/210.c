@@ -124,6 +124,7 @@ void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4,
 s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, UnkArg1*, Object*, s8, s8, u8, s8);
 s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
 void func_8005B5B8(Object*, Object*, s32);
+void func_80023894(Object* object, s32 objectId);
 
 /*0x0*/ static const DLTri _rodata_0[] = {
     { 0x40, 0x02, 0x01, 0x00, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x01, 0x02, { 0, 0, 0, 0, 0, 0 }},
@@ -264,8 +265,8 @@ void func_8005B5B8(Object*, Object*, s32);
 /*0x508*/ static u32 _data_508[] = {
     0x00000006, 0x00000069, 0x00000069, 0x000000ff
 };
-/*0x518*/ static u32 _data_518[] = {
-    0x00240025, 0x018c0024, 0x00240024, 0x00240024
+/*0x518*/ static s16 _data_518[] = {
+    OBJ_Tricky, OBJ_Kyte, OBJ_396, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky
 };
 /*0x528*/ static f32 _data_528 = 0.0f;
 /*0x52C*/ static s8 _data_52C = 0;
@@ -1563,7 +1564,19 @@ s32 dll_210_func_3F64(Object* arg0) {
 }
 
 // offset: 0x4038 | func: 17 | export: 64
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4038.s")
+void dll_210_func_4038(Object* arg0, Object *arg1, s32 arg2) {
+    Player_Data* objdata = arg0->data;
+    u16 temp;
+    s16 sp28[8] = _data_518;
+
+    if (arg2 != 1) {
+        func_80023894(arg1, sp28[arg2]);
+        objdata->unk872 |= 1 << arg2;
+        temp = main_get_bits(BIT_2DA);
+        temp |= 1 << arg2;;
+        main_set_bits(BIT_2DA, temp);
+    }
+}
 
 // offset: 0x4114 | func: 18 | export: 45
 Object *dll_210_func_4114(Object* player) {

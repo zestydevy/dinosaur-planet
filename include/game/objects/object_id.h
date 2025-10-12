@@ -349,6 +349,7 @@ enum ObjID {
     OBJ_WM_GeneralScale = 393,
     OBJ_DIM2PrisonMammo = 394,
     OBJ_NWalpinerootani = 395,
+    OBJ_396 = 396,
     OBJ_DIMLavaBall = 397,
     OBJ_DIMLavaBallGene = 398,
     OBJ_DIMSnowHorn1 = 399,
