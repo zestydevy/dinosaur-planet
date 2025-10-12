@@ -127,7 +127,7 @@ void Duster_control(Object *self) {
                 srt.transl.z = 0.0f;
                 srt.scale = 1.0f;
                 srt.yaw = self->srt.yaw;
-                rotate_vec3(&srt, &self->speed);
+                rotate_vec3(&srt, self->speed.f);
             } else {
                 self->speed.x = 0.0f;
                 self->speed.z = 0.0f;

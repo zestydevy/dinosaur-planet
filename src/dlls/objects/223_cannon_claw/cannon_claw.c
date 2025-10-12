@@ -36,7 +36,7 @@ void cannon_claw_control(Object *self) {
     }
 
     func_80024108(self, 0.0049999998f, delayFloat, NULL);
-    temp = func_80025F40(self, 0, 0, 0);
+    temp = func_80025F40(self, NULL, 0, 0);
     
     if (temp != 0) {
         if (self->parent != NULL) {

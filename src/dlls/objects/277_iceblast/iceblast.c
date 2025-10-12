@@ -70,7 +70,7 @@ void iceblast_control(Object* self) {
         transform.pitch = weapon->srt.pitch;
         transform.yaw = weapon->srt.yaw;
 
-        rotate_vec3((SRT*) &transform, &self->speed);
+        rotate_vec3(&transform, self->speed.f);
         self->srt.transl.x = weapon->positionMirror.x;
         self->srt.transl.y = weapon->positionMirror.y;
         self->srt.transl.z = weapon->positionMirror.z;

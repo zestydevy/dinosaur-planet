@@ -736,7 +736,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             srt.pitch = 0;
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
-            rotate_vec3(&srt, &v);
+            rotate_vec3(&srt, v.f);
             srt.transl.x = v.x + objdata->playerPositionCopy.x;
             srt.transl.y = v.y + self->srt.transl.y;
             srt.transl.z = v.z + objdata->playerPositionCopy.z;
@@ -755,7 +755,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 srt.pitch = 0;
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
-                rotate_vec3(&srt, &v);
+                rotate_vec3(&srt, v.f);
                 srt.transl.x = v.x + objdata->playerPositionCopy.x;
                 srt.transl.y = v.y + self->srt.transl.y;
                 srt.transl.z = v.z + objdata->playerPositionCopy.z;
@@ -775,7 +775,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 srt.pitch = 0;
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
-                rotate_vec3(&srt, &v);
+                rotate_vec3(&srt, v.f);
                 self->positionMirror.x = objdata->unk10 + 40.0f;
                 self->positionMirror.z = self->srt.transl.z;
                 self->positionMirror.y = objdata->playerPositionCopy.x;
@@ -798,7 +798,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             srt.pitch = 0;
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
-            rotate_vec3(&srt, &v);
+            rotate_vec3(&srt, v.f);
             srt.transl.x = v.x + objdata->playerPositionCopy.x;
             srt.transl.y = v.y + self->srt.transl.y;
             srt.transl.z = v.z + objdata->playerPositionCopy.z;
