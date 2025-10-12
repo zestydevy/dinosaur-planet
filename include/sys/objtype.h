@@ -8,7 +8,13 @@ enum ObjType {
     OBJTYPE_PLAYER = 0,
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
-    OBJTYPE_39 = 39,
+    OBJTYPE_4 = 4,
+    OBJTYPE_7 = 7,
+    OBJTYPE_10 = 10,
+    OBJTYPE_16 = 16,
+    OBJTYPE_18 = 18,
+    OBJTYPE_32 = 32,
+    OBJTYPE_39 = 39
 };
 
 void obj_object_type_init();

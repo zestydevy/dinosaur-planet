@@ -13,8 +13,6 @@ void dl_segment(Gfx **gdl, u32 segment, void *base);
 
 
 void func_800267A4(Object *obj);
-s32 func_80023D30(Object*,s32,f32,u8);
-s32 func_80024108(Object*,f32,f32,s32);
 s32 func_80025F40(Object*,s32 *,s32 *,s32 *);
 
 void draw_object(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, f32 yPrescale);
@@ -142,5 +140,8 @@ s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
 void func_80037F9C(Gfx**, Func_80037F9C_Struct*, s32, s32, s32, s32, s32, s32);
 
 void func_80036438(Object*);
+
+s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg5);
+void func_80059038(s32, s32, s32);
 
 #endif //_FUNCTIONS_H

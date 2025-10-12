@@ -47,6 +47,22 @@ typedef struct PlayerState490 {
     u8 unk47;
 } PlayerState490;
 
+// TODO: not necessarily in story order
+// Which spirit the player is currently holding
+typedef enum {
+    PLAYER_NO_SPIRIT = 0x0,
+    PLAYER_SPIRIT_1 = 0x1,
+    PLAYER_SPIRIT_2 = 0x2,
+    PLAYER_SPIRIT_3 = 0x4,
+    PLAYER_SPIRIT_4 = 0x8,
+    PLAYER_SPIRIT_5 = 0x10,
+    PLAYER_SPIRIT_6 = 0x20,
+    PLAYER_SPIRIT_7 = 0x40,
+    PLAYER_SPIRIT_8 = 0x80,
+    // Mask to check for any spirit flag
+    PLAYER_SPIRIT_ANY = 0xFF
+} PlayerSpiritFlags;
+
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;
@@ -198,7 +214,7 @@ typedef struct {
 /*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
 /*3B4*/ PlayerState3B4* unk3B4;
 /*3B8*/ s16 *unk3B8;
-/*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, PlayerState*, f32))
+/*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, Player_Data*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
@@ -258,7 +274,7 @@ typedef struct {
 /*85C*/ Object *unk85C;
 /*860*/ Object *unk860;
 /*864*/ s32 unk864;
-/*868*/ Object* unk868;
+/*868*/ Object* unk868; //held object (baskets etc.)
 /*86C*/ f32 unk86C;
 /*870*/ u8 unk870;
 /*871*/ u8 unk871;
@@ -307,7 +323,7 @@ typedef struct {
 /*8BE*/ u8 unk8BE;
 /*8BF*/ s8 unk8BF;
 /*8C0*/ s8 unk8C0;
-} PlayerState;
+} Player_Data;
 
 // AKA. krystal
 DLL_INTERFACE(DLL_210_Player) {
@@ -339,21 +355,21 @@ DLL_INTERFACE(DLL_210_Player) {
     /*31*/ UnknownDLLFunc func31;
     /*32*/ UnknownDLLFunc func32;
     /*33*/ UnknownDLLFunc func33;
-    /*34*/ UnknownDLLFunc func34;
+    /*34*/ s32 (*func34)(Object*);
     /*35*/ UnknownDLLFunc func35;
     /*36*/ UnknownDLLFunc func36;
     /*37*/ UnknownDLLFunc func37;
-    /*38*/ UnknownDLLFunc func38;
-    /*39*/ UnknownDLLFunc func39;
+    /*38*/ s32 (*func38)(Object*,s32);
+    /*39*/ void (*func39)(Object*,s32,s32);
     /*40*/ UnknownDLLFunc func40;
     /*41*/ UnknownDLLFunc func41;
     /*42*/ UnknownDLLFunc func42;
-    /*43*/ UnknownDLLFunc func43;
+    /*43*/ s32 (*func43)(Object*);
     /*44*/ UnknownDLLFunc func44;
     /*45*/ UnknownDLLFunc func45;
     /*46*/ UnknownDLLFunc func46;
     /*47*/ UnknownDLLFunc func47;
-    /*48*/ UnknownDLLFunc func48;
+    /*48*/ s32 (*func48)(Object*);
     /*49*/ UnknownDLLFunc func49;
     /*50*/ s32 (*func50)(Object*);
     /*51*/ UnknownDLLFunc func51;
@@ -370,8 +386,8 @@ DLL_INTERFACE(DLL_210_Player) {
     /*62*/ UnknownDLLFunc func62;
     /*63*/ UnknownDLLFunc func63;
     /*64*/ UnknownDLLFunc func64;
-    /*65*/ UnknownDLLFunc func65;
-    /*66*/ s32 (*func66)(Object*, s32);
+    /*65*/ void (*func65)(Object*,f32,f32,f32);
+    /*66*/ Object *(*func66)(Object*, s32);
     /*67*/ void (*func67)(Object*,s32,f32);
     /*68*/ UnknownDLLFunc func68;
     /*69*/ UnknownDLLFunc func69;

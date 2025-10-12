@@ -1,0 +1,22 @@
+.text = 0x0:
+GPbonfire_ctor = 0x0;
+GPbonfire_dtor = 0xC;
+GPbonfire_setup = 0x18;
+GPbonfire_control = 0xB8;
+GPbonfire_update = 0x7F4;
+GPbonfire_print = 0x800;
+GPbonfire_free = 0x864;
+GPbonfire_get_model_flags = 0x8EC;
+GPbonfire_get_data_size = 0x8FC;
+GPbonfire_func_910 = 0x910;
+GPbonfire_func_A08 = 0xA08;
+GPbonfire_func_A20 = 0xA20;
+GPbonfire_func_A38 = 0xA38;
+GPbonfire_func_A44 = 0xA44;
+GPbonfire_callbackBC = 0xC24;
+
+.rodata = 0xD34:
+
+.data = 0xD54:
+bonfireScaleData = 0x0; // absolute:0xD54
+modgfxScaleData = 0x14; // absolute:0xD68

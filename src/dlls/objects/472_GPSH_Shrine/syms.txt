@@ -1,0 +1,21 @@
+.text = 0x0:
+GPSH_Shrine_ctor = 0x0;
+GPSH_Shrine_dtor = 0xC;
+GPSH_Shrine_setup = 0x18;
+GPSH_Shrine_control = 0x290;
+GPSH_Shrine_update = 0xF10;
+GPSH_Shrine_print = 0xF1C;
+GPSH_Shrine_free = 0xF70;
+GPSH_Shrine_get_model_flags = 0x1000;
+GPSH_Shrine_get_data_size = 0x1010;
+GPSH_Shrine_func_1024 = 0x1024;
+GPSH_Shrine_func_13E0 = 0x13E0;
+
+.rodata = 0x1578:
+
+.data = 0x1638:
+_data_0 = 0x0; // absolute:0x1638
+
+.bss = 0x1648:
+_bss_0 = 0x0; // absolute:0x1648
+_bss_8 = 0x8; // absolute:0x1650

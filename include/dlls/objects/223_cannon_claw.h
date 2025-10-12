@@ -6,10 +6,10 @@
 #include "dll_def.h"
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ u8 _unk18[0x1a - 0x18];
-/*1A*/ s16 bitstringEntry;
-} CannonClawCreateInfo;
+/*1A*/ s16 gamebit;
+} CannonClaw_Setup;
 
 // TODO: not needed?
 DLL_INTERFACE(DLL_223_cannon_claw) {

@@ -8,10 +8,10 @@ _exports:
 .dword trigger_dtor
 
 # export table
-.dword trigger_create
+.dword trigger_setup
+.dword trigger_control
 .dword trigger_update
-.dword trigger_func_7D4
-.dword trigger_draw
-.dword trigger_destroy
-.dword trigger_func_990
-.dword trigger_get_state_size
+.dword trigger_print
+.dword trigger_free
+.dword trigger_get_model_flags
+.dword trigger_get_data_size

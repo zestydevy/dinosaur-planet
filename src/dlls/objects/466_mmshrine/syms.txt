@@ -1,13 +1,13 @@
 .text = 0x0:
 MMshrine_ctor = 0x0;
 MMshrine_dtor = 0xC;
-dll_466_func_18 = 0x18;
-dll_466_func_1BC = 0x1BC;
-MMshrine_func_B3C = 0xB3C;
-MMshrine_draw = 0xB48;
-MMshrine_destroy = 0xB9C;
-MMshrine_func_C2C = 0xC2C;
-MMshrine_get_state_size = 0xC3C;
+MMshrine_setup = 0x18;
+MMshrine_control = 0x1BC;
+MMshrine_update = 0xB3C;
+MMshrine_print = 0xB48;
+MMshrine_free = 0xB9C;
+MMshrine_get_model_flags = 0xC2C;
+MMshrine_get_data_size = 0xC3C;
 dll_466_func_C50 = 0xC50;
 MMshrine_func_1140 = 0x1140;
 

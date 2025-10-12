@@ -1,13 +1,13 @@
 .text = 0x0:
 VFP_SpellPlace_ctor = 0x0;
 VFP_SpellPlace_dtor = 0xC;
-VFP_SpellPlace_create = 0x18;
-VFP_SpellPlace_update = 0xC8;
-VFP_SpellPlace_func_1AC = 0x1AC;
-VFP_SpellPlace_draw = 0x1B8;
-VFP_SpellPlace_destroy = 0x1D0;
-VFP_SpellPlace_func_1E0 = 0x1E0;
-VFP_SpellPlace_get_state_size = 0x1F0;
+VFP_SpellPlace_setup = 0x18;
+VFP_SpellPlace_control = 0xC8;
+VFP_SpellPlace_update = 0x1AC;
+VFP_SpellPlace_print = 0x1B8;
+VFP_SpellPlace_free = 0x1D0;
+VFP_SpellPlace_get_model_flags = 0x1E0;
+VFP_SpellPlace_get_data_size = 0x1F0;
 VFP_SpellPlace_do_act1 = 0x204;
 VFP_SpellPlace_do_act2 = 0x2E0;
 

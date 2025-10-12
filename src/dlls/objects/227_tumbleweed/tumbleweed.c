@@ -22,21 +22,21 @@ static s32 dll_227_func_1FA0(Object* self);
 };
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s8 roll;
 /*19*/ s8 pitch;
 /*1A*/ s8 yaw;
 /*1B*/ u8 unk1B;
 /*1C*/ f32 unk1C;
-} TumbleweedCreateInfo;
+} Tumbleweed_Setup;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ s32 unk18;
 /*1c*/ s32 unk1c;
 /*20*/ s32 unk20;
 /*24*/ s16 unk24;
-} GoldenNuggetCreateInfo;
+} GoldenNugget_Setup;
 
 typedef struct {
 /*000*/ s8 unk0[0x260 - 0];
@@ -64,7 +64,7 @@ typedef struct {
 /*296*/ s16 unk296;
 /*298*/ u8 unk298;
 /*299*/ u8 unk299;
-} TumbleweedState;
+} Tumbleweed_Data;
 
 // offset: 0x0 | ctor
 void dll_227_ctor(void* dll){
@@ -75,22 +75,22 @@ void dll_227_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNuggetCreateInfo* arg2) {
+void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* arg2) { // arg2 fakematch, not actually a golden nugget setup pointer
     Object* object;
     Object** objects;
-    TumbleweedState* state;
+    Tumbleweed_Data* objdata;
     s32 index;
     s32 count;
 
-    state = self->state;
-    state->xCopy = self->srt.transl.x;
-    state->yCopy = self->srt.transl.z;
-    state->unk262 = 2.0f * createInfo->unk1C;
-    state->unk271 = createInfo->unk1B;
-    state->flags = 0;
-    state->scaleCopy = self->srt.scale;
-    state->unk268 = (state->scaleCopy / rand_next(0xC8, 0x1F4));
-    state->unk280 = 0;
+    objdata = self->data;
+    objdata->xCopy = self->srt.transl.x;
+    objdata->yCopy = self->srt.transl.z;
+    objdata->unk262 = 2.0f * setup->unk1C;
+    objdata->unk271 = setup->unk1B;
+    objdata->flags = 0;
+    objdata->scaleCopy = self->srt.scale;
+    objdata->unk268 = (objdata->scaleCopy / rand_next(0xC8, 0x1F4));
+    objdata->unk280 = 0;
     
     self->speed.x = 0.0f;
     self->speed.y = 0.0f;
@@ -100,21 +100,21 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNugge
         self->ptr0x64->flags |= 0x810;
     }
     
-    state->unk296 = 0x32;
+    objdata->unk296 = 0x32;
     if (self->id == OBJ_Tumbleweed1twig || self->id == OBJ_Tumbleweed2twig || self->id == OBJ_Tumbleweed3twig) {
         self->unk0xaf &= 0xFFF7;
-        state->unk270 = 3;
-        state->unk268 = 480.0f;
-        self->srt.scale = state->scaleCopy;
+        objdata->unk270 = 3;
+        objdata->unk268 = 480.0f;
+        self->srt.scale = objdata->scaleCopy;
     } else {
         self->srt.scale = 0.001f;
-        gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)state, 0, 0x40000, 1);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_84.withFiveArgs((s32)state, 1, (s32)&_data_0[0], (s32)&_data_C, 4);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, state);
-        state->unk270 = 0;
+        gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)objdata, 0, 0x40000, 1);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_84.withFiveArgs((s32)objdata, 1, (s32)&_data_0[0], (s32)&_data_C, 4);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, objdata);
+        objdata->unk270 = 0;
         self->unk0xaf |= 8;
         
-        if (state->unk271 & 1) {
+        if (objdata->unk271 & 1) {
             objects = get_world_objects(&index, &count);
 
             while (index < count){
@@ -123,14 +123,14 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNugge
 
                     // @fake
                     if (1) {}
-                    state->goldenNugget = object;
-                    arg2 = (GoldenNuggetCreateInfo*)object->createInfo;
-                    state->goldenNuggetFlag = arg2->unk24 & 0xFFFF;
+                    objdata->goldenNugget = object;
+                    arg2 = (GoldenNugget_Setup*)object->setup;
+                    objdata->goldenNuggetFlag = arg2->unk24 & 0xFFFF;
                     // @fake
                     if (arg2) {}
 
-                    if (get_gplay_bitstring(state->goldenNuggetFlag)) {
-                        state->goldenNugget = NULL;
+                    if (main_get_bits(objdata->goldenNuggetFlag)) {
+                        objdata->goldenNugget = NULL;
                     }
                     index = count;
                 }
@@ -147,18 +147,18 @@ void dll_227_func_18(Object* self, TumbleweedCreateInfo* createInfo, GoldenNugge
 
 // offset: 0x354 | func: 1 | export: 1
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_354.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_control.s")
 #else
 
 void dll_227_func_420(Object*);
 void dll_227_func_658(Object*);
 void dll_227_func_C04(Object*);
 
-void dll_227_func_354(Object* self) {
-    TumbleweedState* state;
+void dll_227_control(Object* self) {
+    Tumbleweed_Data* objdata;
     Object* shiny;
 
-    state = self->state;
+    objdata = self->data;
     if (self->id == OBJ_Tumbleweed1 || self->id == OBJ_Tumbleweed1twig) {
         dll_227_func_658(self);
     } else {
@@ -166,7 +166,7 @@ void dll_227_func_354(Object* self) {
     }
     dll_227_func_420(self);
     
-    shiny = state->goldenNugget;
+    shiny = objdata->goldenNugget;
     if (shiny) {
         //TODO: update with SCcollectables DLL interface
         ((DLL_Unknown*)shiny->dll)->vtbl->func[8].withTwoArgs((s32)shiny, (s32)self); 
@@ -176,16 +176,16 @@ void dll_227_func_354(Object* self) {
 
 // offset: 0x420 | func: 2
 void dll_227_func_420(Object* self) {
-    TumbleweedState *new_var;
+    Tumbleweed_Data *new_var;
     s16 id;
     s32 index;
-    TumbleweedState *state;
+    Tumbleweed_Data *objdata;
     
-    new_var = self->state;
-    state = new_var;
+    new_var = self->data;
+    objdata = new_var;
     
     //When being struck by weapon
-    if (state->flags & 1){
+    if (objdata->flags & 1){
         id = self->id;
         if (id == OBJ_Tumbleweed1 || id == OBJ_Tumbleweed1twig || id == OBJ_Tumbleweed3 || id == OBJ_Tumbleweed3twig){
             for (index = 0x14; index > 0; index--){
@@ -202,7 +202,7 @@ void dll_227_func_420(Object* self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_5F7, MAX_VOLUME, 0, 0, 0, 0);
     }
     
-    if (state->flags & 2){
+    if (objdata->flags & 2){
         id = self->id;
         if (id == OBJ_Tumbleweed1 || id == OBJ_Tumbleweed1twig || id == OBJ_Tumbleweed3 || id == OBJ_Tumbleweed3twig){
             //Creates cloud of dust
@@ -214,14 +214,14 @@ void dll_227_func_420(Object* self) {
         }
     }
     
-    if (state->flags & 4){
+    if (objdata->flags & 4){
         self->unk_0x36 = 0;
         self->unk0xaf |= 8;
-        state->unk270 = 4;
-        state->unk268 = 120.0f;
+        objdata->unk270 = 4;
+        objdata->unk268 = 120.0f;
     }
     
-    state->flags = 0;
+    objdata->flags = 0;
 }
 
 // offset: 0x658 | func: 3
@@ -231,26 +231,26 @@ void dll_227_func_420(Object* self) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_C04.s")
 
 // offset: 0x1518 | func: 5 | export: 2
-void dll_227_func_1518(Object* self){
+void dll_227_update(Object* self){
 }
 
 // offset: 0x1524 | func: 6 | export: 3
-void dll_227_func_1524(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_227_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility > 0) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x1578 | func: 7 | export: 4
-void dll_227_func_1578(Object* self, s32 arg1) {
-    TumbleweedState* state;
+void dll_227_free(Object* self, s32 arg1) {
+    Tumbleweed_Data* objdata;
     Object* object;
     s32 sp3C;
     s32 count;
     s32 id;
     Object** objects;
 
-    state = self->state;
+    objdata = self->data;
       
     switch (self->id) {
         case OBJ_Tumbleweed1:
@@ -276,43 +276,43 @@ void dll_227_func_1578(Object* self, s32 arg1) {
         sp3C++;
     }
     
-    if (state->goldenNugget) {
-        set_gplay_bitstring(state->goldenNuggetFlag, 1);
-        state->goldenNugget = 0;
+    if (objdata->goldenNugget) {
+        main_set_bits(objdata->goldenNuggetFlag, 1);
+        objdata->goldenNugget = 0;
     }
     obj_free_object_type(self, 4);
     obj_free_object_type(self, 0x33);
 }
 
 // offset: 0x16F8 | func: 8 | export: 5
-s32 dll_227_func_16F8(Object* self) {
-    return 0;
+u32 dll_227_get_model_flags(Object* self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x1708 | func: 9 | export: 6
-s32 dll_227_func_1708(Object* self, s32 arg1) {
-    return 0x29C;
+u32 dll_227_get_data_size(Object* self, s32 arg1) {
+    return sizeof(Tumbleweed_Data);
 }
 
 // offset: 0x171C | func: 10 | export: 7
 u8 dll_227_func_171C(Object* self) {
-    TumbleweedState* state = self->state;
-    return state->unk270;
+    Tumbleweed_Data* objdata = self->data;
+    return objdata->unk270;
 }
 
 // offset: 0x172C | func: 11 | export: 8
 void dll_227_func_172C(Object* self, f32 arg1, f32 arg2) {
-    TumbleweedState *state = self->state;
-    state->xCopy = arg1;
-    state->yCopy = arg2;
+    Tumbleweed_Data *objdata = self->data;
+    objdata->xCopy = arg1;
+    objdata->yCopy = arg2;
 }
 
 // offset: 0x174C | func: 12 | export: 9
 void dll_227_func_174C(Object* self) {
-    TumbleweedState *state = self->state;
-    if (state->unk270 == 1) {
+    Tumbleweed_Data *objdata = self->data;
+    if (objdata->unk270 == 1) {
         func_8002674C(self);
-        state->unk270 = 2;
+        objdata->unk270 = 2;
         self->unk0xaf &= ~8;
     }
 }
@@ -320,7 +320,7 @@ void dll_227_func_174C(Object* self) {
 // offset: 0x17C0 | func: 13 | export: 10
 /** When being eaten */
 void dll_227_func_17C0(Object* self, Vec3f* arg1) {
-    TumbleweedState *state = self->state;
+    Tumbleweed_Data *objdata = self->data;
     f32 dx;
     f32 dy;
     f32 dz;
@@ -334,20 +334,20 @@ void dll_227_func_17C0(Object* self, Vec3f* arg1) {
     self->speed.y = dy * 0.02f;
     self->speed.z = dz * 0.02f;
     
-    state->unk270 = 5;
-    state->unk290 = arg1;
+    objdata->unk270 = 5;
+    objdata->unk290 = arg1;
 }
 
 // offset: 0x1828 | func: 14 | export: 11
 s32 dll_227_func_1828(Object* self) {
-    TumbleweedState *state = self->state;
-    return state->unk270 == 5;
+    Tumbleweed_Data *objdata = self->data;
+    return objdata->unk270 == 5;
 }
 
 // offset: 0x1840 | func: 15 | export: 12
 void dll_227_func_1840(Object* self, s32 arg1) {
-    TumbleweedState *state = self->state;
-    state->unk280 = arg1;
+    Tumbleweed_Data *objdata = self->data;
+    objdata->unk280 = arg1;
 }
 
 // offset: 0x1850 | func: 16
@@ -357,7 +357,7 @@ void dll_227_func_1840(Object* self, s32 arg1) {
 
 s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
 
-void dll_227_func_1850(Object* self, TumbleweedState* state) {
+void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
     f32 var_fv0;
     s32 sampleCount;
     s32 minimumIndex;
@@ -411,9 +411,9 @@ void dll_227_func_1850(Object* self, TumbleweedState* state) {
     self->srt.transl.x += self->speed.x * delayFloat;
     self->srt.transl.y += self->speed.y * delayFloat;
     self->srt.transl.z += self->speed.z * delayFloat;
-    self->srt.roll += state->unk274 * delayFloat;
-    self->srt.pitch += state->unk276 * delayFloat;
-    self->srt.yaw += state->unk278 * delayFloat;
+    self->srt.roll += objdata->unk274 * delayFloat;
+    self->srt.pitch += objdata->unk276 * delayFloat;
+    self->srt.yaw += objdata->unk278 * delayFloat;
     
     if (samples){        
         minimum = *samples[minimumIndex] + 7.0f;
@@ -424,9 +424,9 @@ void dll_227_func_1850(Object* self, TumbleweedState* state) {
         
         self->srt.transl.y = minimum;
         if (self->id == OBJ_Tumbleweed2 || self->id == OBJ_Tumbleweed2twig) {
-            self->speed.y = 0.0f - (((f32)state->unk260 / rand_next(0x8C, 0xB4)) * (self->speed.y * 0.8f));
+            self->speed.y = 0.0f - (((f32)objdata->unk260 / rand_next(0x8C, 0xB4)) * (self->speed.y * 0.8f));
         } else {
-            self->speed.y = 0.0f - (((f32) state->unk260 / rand_next(0x14, 0x28)) * (self->speed.y * 0.8f));
+            self->speed.y = 0.0f - (((f32) objdata->unk260 / rand_next(0x14, 0x28)) * (self->speed.y * 0.8f));
         }
         
         volume = self->speed.y * 32.0f;
@@ -452,24 +452,24 @@ s32 dll_227_func_1D64(Object* self) {
     u8 pad2[4];
     u8 random2;
     u32 temp_v0;
-    TumbleweedState* state;
+    Tumbleweed_Data* objdata;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
-    if (state->unk298 == 0) {
+    if (objdata->unk298 == 0) {
         temp_v0 = dll_227_func_1FA0(self);
-        state->unk298 = temp_v0;
+        objdata->unk298 = temp_v0;
         if (temp_v0 & 0xFF) {
-            state->unk299 = 1;
+            objdata->unk299 = 1;
         }
         self->unk0xaf &= 0xFFF7;
         return 1;
     }
     
-    state->unk26C = state->unk26C - delayFloat;
-    if (state->unk26C < 0.0f) {
+    objdata->unk26C = objdata->unk26C - delayFloat;
+    if (objdata->unk26C < 0.0f) {
         //Squeaking (and growing in size temporarily)
-        state->unk26C = rand_next(0x78, 0xF0);
+        objdata->unk26C = rand_next(0x78, 0xF0);
         temp_v0 = rand_next(SOUND_614, SOUND_615);
         random2 = rand_next(90, 100);
         gDLL_6_AMSFX->vtbl->play_sound(self, temp_v0, random2, 0, 0, 0, 0);
@@ -479,35 +479,35 @@ s32 dll_227_func_1D64(Object* self) {
     }
     
     self->unk0xaf |= 8;
-    state->unk268 = 0.0f;
+    objdata->unk268 = 0.0f;
     if (get_masked_button_presses(0) & 0x8000) {
         set_button_mask(0, 0x8000);
-        state->unk299 = 0;
+        objdata->unk299 = 0;
     }
     if (self->unk_0xe0 == 1) {
-        state->unk298 = 2;
+        objdata->unk298 = 2;
     }
-    if ((state->unk298 == 2) && (self->unk_0xe0 == 0)) {
-        state->unk298 = 0;
-        state->unk299 = 0;
+    if ((objdata->unk298 == 2) && (self->unk_0xe0 == 0)) {
+        objdata->unk298 = 0;
+        objdata->unk299 = 0;
     }
-    if (state->unk299 != 0) {
-        obj_send_mesg(player, 0x100008, self, (void*)((state->unk296 << 0x10) | (state->unk294 & 0xFFFF)));
+    if (objdata->unk299 != 0) {
+        obj_send_mesg(player, 0x100008, self, (void*)((objdata->unk296 << 0x10) | (objdata->unk294 & 0xFFFF)));
     }
     return 0;
 }
 
 // offset: 0x1FA0 | func: 18
 s32 dll_227_func_1FA0(Object* self) {
-    TumbleweedState* state = self->state;
+    Tumbleweed_Data* objdata = self->data;
     s32 returnVal;
 
-    state = self->state;
+    objdata = self->data;
     returnVal = 0;
     if (self->unk0xaf & 1 && self->unk_0xe0 == 0) {
-        state->unk294 = 0;
+        objdata->unk294 = 0;
         set_button_mask(0, 0x8000);
-        state->unk26C = rand_next(0x78, 0xF0);
+        objdata->unk26C = rand_next(0x78, 0xF0);
         returnVal = 1;
     }
     return returnVal;
@@ -515,30 +515,30 @@ s32 dll_227_func_1FA0(Object* self) {
 
 // offset: 0x2038 | func: 19
 void dll_227_func_2038(Object* self) {
-    TumbleweedCreateInfo* createInfo;
+    Tumbleweed_Setup* setup;
 
     switch (self->id) {
         case OBJ_Tumbleweed1:
-            createInfo = obj_alloc_create_info(0x20, OBJ_Tumbleweed1twig);
+            setup = obj_alloc_create_info(0x20, OBJ_Tumbleweed1twig);
             break;
         case OBJ_Tumbleweed2:
-            createInfo = obj_alloc_create_info(0x20, OBJ_Tumbleweed2twig);
+            setup = obj_alloc_create_info(0x20, OBJ_Tumbleweed2twig);
             break;
         case OBJ_Tumbleweed3:
-            createInfo = obj_alloc_create_info(0x20, OBJ_Tumbleweed3twig);
+            setup = obj_alloc_create_info(0x20, OBJ_Tumbleweed3twig);
             break;
     }
     
-    createInfo->base.x = self->srt.transl.x;
-    createInfo->base.y = self->srt.transl.y;
-    createInfo->base.z = self->srt.transl.z;
-    createInfo->base.fadeDistance = 0xFF;
-    createInfo->base.loadParamA = 0x20;
-    createInfo->base.loadParamB = 2;
-    createInfo->roll = self->srt.roll;
-    createInfo->pitch = self->srt.pitch;
-    createInfo->yaw = self->srt.yaw;
-    createInfo->unk1B = 0;
-    createInfo->unk1C = 64.0f;
-    obj_create((ObjCreateInfo*)createInfo, 5, self->mapID, -1, self->parent);
+    setup->base.x = self->srt.transl.x;
+    setup->base.y = self->srt.transl.y;
+    setup->base.z = self->srt.transl.z;
+    setup->base.fadeDistance = 0xFF;
+    setup->base.loadParamA = 0x20;
+    setup->base.loadParamB = 2;
+    setup->roll = self->srt.roll;
+    setup->pitch = self->srt.pitch;
+    setup->yaw = self->srt.yaw;
+    setup->unk1B = 0;
+    setup->unk1C = 64.0f;
+    obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
 }

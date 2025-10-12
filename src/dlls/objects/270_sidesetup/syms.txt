@@ -1,12 +1,12 @@
 .text = 0x0:
 sidesetup_ctor = 0x0;
 sidesetup_dtor = 0xC;
-sidesetup_create = 0x18;
-sidesetup_update = 0x3C;
-sidesetup_func_48 = 0x48;
-sidesetup_draw = 0x54;
-sidesetup_destroy = 0x6C;
-sidesetup_func_7C = 0x7C;
-sidesetup_get_state_size = 0x8C;
+sidesetup_setup = 0x18;
+sidesetup_control = 0x3C;
+sidesetup_update = 0x48;
+sidesetup_print = 0x54;
+sidesetup_free = 0x6C;
+sidesetup_get_model_flags = 0x7C;
+sidesetup_get_data_size = 0x8C;
 
 .bss = 0xA0:

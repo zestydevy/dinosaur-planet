@@ -1,0 +1,16 @@
+.text = 0x0:
+WCpressureswitch_ctor = 0x0;
+WCpressureswitch_dtor = 0xC;
+WCpressureswitch_setup = 0x18;
+WCpressureswitch_control = 0x150;
+WCpressureswitch_update = 0x4B4;
+WCpressureswitch_print = 0x4C0;
+WCpressureswitch_free = 0x514;
+WCpressureswitch_get_model_flags = 0x594;
+WCpressureswitch_get_data_size = 0x5C8;
+WCpressureswitch_add_object = 0x5DC;
+WCpressureswitch_is_object_on_switch = 0x648;
+WCpressureswitch_callbackBC = 0x6CC;
+
+.rodata = 0x824:
+str_0 = 0x0; // absolute:0x824

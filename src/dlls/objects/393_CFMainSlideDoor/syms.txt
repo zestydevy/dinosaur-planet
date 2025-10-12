@@ -1,0 +1,13 @@
+.text = 0x0:
+CFMainSlideDoor_ctor = 0x0;
+CFMainSlideDoor_dtor = 0xC;
+CFMainSlideDoor_setup = 0x18;
+CFMainSlideDoor_control = 0x108;
+CFMainSlideDoor_update = 0x1D4;
+CFMainSlideDoor_print = 0x1E0;
+CFMainSlideDoor_free = 0x234;
+CFMainSlideDoor_get_model_flags = 0x244;
+CFMainSlideDoor_get_data_size = 0x254;
+CFMainSlideDoor_func_268 = 0x268;
+
+.rodata = 0x548:

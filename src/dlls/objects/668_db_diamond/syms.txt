@@ -1,10 +1,10 @@
 .text = 0x0:
 DBdiamond_ctor = 0x0;
 DBdiamond_dtor = 0xC;
-DBdiamond_create = 0x18;
-DBdiamond_update = 0xD0;
-DBdiamond_func_204 = 0x204;
-DBdiamond_draw = 0x210;
-DBdiamond_destroy = 0x27C;
-DBdiamond_func_2BC = 0x2BC;
-DBdiamond_get_state_size = 0x2CC;
+DBdiamond_setup = 0x18;
+DBdiamond_control = 0xD0;
+DBdiamond_update = 0x204;
+DBdiamond_print = 0x210;
+DBdiamond_free = 0x27C;
+DBdiamond_get_model_flags = 0x2BC;
+DBdiamond_get_data_size = 0x2CC;

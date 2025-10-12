@@ -11,17 +11,17 @@ typedef struct ObjectPairCallback {
 } ObjectPairCallback;
 extern ObjectPairCallback sObjectPairCallbacks[16];
 
-typedef struct SomeCreateInfo {
-    ObjCreateInfo base;
+typedef struct SomeObjSetup {
+    ObjSetup base;
     u16 unk18;
     u16 unk1A;
     u16 unk1C;
     u16 unk1E;
     u8 unk20;
     u8 unk21;
-} SomeCreateInfo;
+} SomeObjSetup;
 
-void func_80031AA0(SomeCreateInfo* arg0, f32* ox, f32* oy, f32* oz) {
+void func_80031AA0(SomeObjSetup* arg0, f32* ox, f32* oy, f32* oz) {
     f32 sp2C;
     f32 sp28;
     f32 sp24;
@@ -46,7 +46,7 @@ void func_80031AA0(SomeCreateInfo* arg0, f32* ox, f32* oy, f32* oz) {
 u16 func_80031BBC(f32 arg0, f32 arg1, f32 arg2) {
     s32 pad;
     s32 out;
-    u8* createInfo;
+    u8* objsetup;
     s32 i;
     s32 j;
     MapHeader** sp68;
@@ -63,14 +63,14 @@ u16 func_80031BBC(f32 arg0, f32 arg1, f32 arg2) {
         }
 
         current = sp68[i];
-        createInfo = current->objectInstanceFile_ptr;
+        objsetup = current->objectInstanceFile_ptr;
         j = 0;
         while (j < current->objectInstancesFileLength) {
-            if (((SomeCreateInfo *)createInfo)->base.objId == OBJ_Area) {
+            if (((SomeObjSetup *)objsetup)->base.objId == OBJ_Area) {
                 sp7C = arg0;
                 sp78 = arg1;
                 sp74 = arg2;
-                func_80031AA0(((SomeCreateInfo *)createInfo), &sp7C, &sp78, &sp74);
+                func_80031AA0(((SomeObjSetup *)objsetup), &sp7C, &sp78, &sp74);
                 if (sp7C < 0.0f) {
                     sp7C = -sp7C;
                 }
@@ -80,16 +80,16 @@ u16 func_80031BBC(f32 arg0, f32 arg1, f32 arg2) {
                 if (sp74 < 0.0f) {
                     sp74 = -sp74;
                 }
-                if (sp7C <= ((SomeCreateInfo *)createInfo)->unk1A) {
-                    if (sp78 <= ((SomeCreateInfo *)createInfo)->unk1C) {
-                        if (sp74 <= ((SomeCreateInfo *)createInfo)->unk1E) {
-                            out = ((SomeCreateInfo *)createInfo)->unk18;
+                if (sp7C <= ((SomeObjSetup *)objsetup)->unk1A) {
+                    if (sp78 <= ((SomeObjSetup *)objsetup)->unk1C) {
+                        if (sp74 <= ((SomeObjSetup *)objsetup)->unk1E) {
+                            out = ((SomeObjSetup *)objsetup)->unk18;
                         }
                     }
                 }
             }
-            j += ((SomeCreateInfo *)createInfo)->base.quarterSize << 2;
-            createInfo += ((SomeCreateInfo *)createInfo)->base.quarterSize << 2;
+            j += ((SomeObjSetup *)objsetup)->base.quarterSize << 2;
+            objsetup += ((SomeObjSetup *)objsetup)->base.quarterSize << 2;
         }
     }
     return out;
@@ -127,7 +127,7 @@ void func_80031EBC(Vec4f* arg0, Vec4f* arg1) {
     arg1->w = arg0->y;
 }
 
-s32 func_80031F6C(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz, s32 arg5) {
+s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg5) {
     s32 boneIdx;
     ModelInstance* temp_v1;
     MtxF* sp9C;
@@ -141,7 +141,7 @@ s32 func_80031F6C(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz, s32 arg5) {
         *oz = obj->srt.transl.z;
         return 1;
     }
-    boneIdx = obj->def->pAttachPoints[arg1].bones[obj->modelInstIdx];
+    boneIdx = obj->def->pAttachPoints[attachIdx].bones[obj->modelInstIdx];
     sp9C = (MtxF *) &(((f32 **)temp_v1->matrices)[(temp_v1->unk_0x34 & 1)][boneIdx << 4]);
     if (arg5 != 0) {
         srt.transl.x = *ox;
@@ -151,12 +151,12 @@ s32 func_80031F6C(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz, s32 arg5) {
         srt.pitch = 0;
         srt.roll = 0;
     } else {
-        srt.transl.x = obj->def->pAttachPoints[arg1].pos.x;
-        srt.transl.y = obj->def->pAttachPoints[arg1].pos.y;
-        srt.transl.z = obj->def->pAttachPoints[arg1].pos.z;
-        srt.yaw = obj->def->pAttachPoints[arg1].rot[0];
-        srt.pitch = obj->def->pAttachPoints[arg1].rot[1];
-        srt.roll = obj->def->pAttachPoints[arg1].rot[2];
+        srt.transl.x = obj->def->pAttachPoints[attachIdx].pos.x;
+        srt.transl.y = obj->def->pAttachPoints[attachIdx].pos.y;
+        srt.transl.z = obj->def->pAttachPoints[attachIdx].pos.z;
+        srt.yaw = obj->def->pAttachPoints[attachIdx].rot[0];
+        srt.pitch = obj->def->pAttachPoints[attachIdx].rot[1];
+        srt.roll = obj->def->pAttachPoints[attachIdx].rot[2];
     }
     matrix_from_srt_reversed(&sp5C, (SRT* ) &srt);
     matrix_concat_4x3(&sp5C, sp9C, &sp5C);

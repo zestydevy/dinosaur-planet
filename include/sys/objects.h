@@ -19,14 +19,14 @@ void func_80020EE4(s32 param1, s32 param2);
 
 Object **get_world_objects(s32 *param1, s32 *numObjs);
 
-Object *obj_create(ObjCreateInfo *createInfo, u32 createFlags, s32 mapID, s32 param4, Object *parent);
-Object *obj_setup_object(ObjCreateInfo *createInfo, u32 param2, s32 mapID, s32 param4, Object *parent, s32 param6);
-void obj_add_object(Object *obj, u32 someFlags);
+Object *obj_create(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4, Object *parent);
+Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4, Object *parent, s32 param6);
+void obj_add_object(Object *obj, u32 setupFlags);
 void obj_free_tick(Object *obj);
 void obj_add_tick(Object *obj);
 void obj_destroy_object(Object *obj);
 
-void obj_load_event(Object *obj, s32 param2, ObjectStruct60 *outParam, s32 id, u8 dontQueueLoad);
+void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad);
 void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad);
 
 Object *get_player();
@@ -46,5 +46,6 @@ void *obj_alloc_create_info(s32 size, s32 objId);
 void func_800210DC();
 
 s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz);
+Object *func_800211B4(s32 param1);
 
 #endif

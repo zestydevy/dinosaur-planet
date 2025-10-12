@@ -1,0 +1,16 @@
+.text = 0x0:
+levelname_ctor = 0x0;
+levelname_dtor = 0xC;
+levelname_setup = 0x18;
+levelname_control = 0x120;
+levelname_update = 0x304;
+levelname_print = 0x310;
+levelname_free = 0x480;
+levelname_get_model_flags = 0x4E4;
+levelname_get_data_size = 0x4F4;
+levelname_anim_callback = 0x508;
+
+.rodata = 0x620:
+
+.data = 0x640:
+_data_0 = 0x0; // absolute:0x640

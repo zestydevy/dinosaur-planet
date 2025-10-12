@@ -1,0 +1,25 @@
+.text = 0x0:
+dll_297_ctor = 0x0;
+dll_297_dtor = 0xC;
+dll_295_setup = 0x18;
+dll_295_control = 0x174;
+dll_295_update = 0x1164;
+dll_295_print = 0x1170;
+dll_295_free = 0x11F8;
+dll_297_get_model_flags = 0x1260;
+dll_297_get_data_size = 0x1270;
+dll_297_func_1284 = 0x1284;
+dll_297_func_1304 = 0x1304;
+dll_297_func_1544 = 0x1544;
+
+.rodata = 0x183C:
+str_0 = 0x0; // absolute:0x183C
+
+.data = 0x187C:
+_data_0 = 0x0; // absolute:0x187C
+_data_8 = 0x8; // absolute:0x1884
+_data_14 = 0x14; // absolute:0x1890
+_data_20 = 0x20; // absolute:0x189C
+
+.bss = 0x18AC:
+_bss_0 = 0x0; // absolute:0x18AC

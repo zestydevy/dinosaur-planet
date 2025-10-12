@@ -1,6 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/28_screen_fade.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
@@ -60,7 +61,7 @@ s32 dll_61_update1() {
     }
 
     if (bss_2 != 0) {
-        set_gplay_bitstring(0x44f, 0);
+        main_set_bits(BIT_44F, 0);
         //@bug? Skips directly to Game Select screen, likely for developer convenience
         menu_set(MENU_GAME_SELECT);
     }

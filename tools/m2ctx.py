@@ -16,6 +16,7 @@ CPP_FLAGS = [
     "-D_FINALROM",
     "-DF3DEX_GBI_2",
     "-D_MIPS_SZLONG=32",
+    "-D__sgi",
     #"-DSCRIPT(...)={}"
     #"-D__attribute__(...)=",
     #"-D__asm__(...)=",

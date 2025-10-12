@@ -16,6 +16,18 @@
 
 #include "sys/map_enums.h"
 
+typedef enum {
+    WARP_ICE_MOUNTAIN_CAMPSITE = 2, // Sabre's campsite cave
+    WARP_WM_SABRE_SIDE = 5,
+    WARP_WM_KRYSTAL_SIDE = 6,
+    WARP_SC_RUBBLE_PODIUM = 14, // SwapStone Circle
+    WARP_SH_ROCKY_PODIUM = 15, // SwapStone Hollow
+    WARP_WM_SABRE_KRAZOA_CORRIDOR = 57, // Warlock Mountain | Sabre-side | Krazoa statue corridor
+    WARP_SC_TOTEM_POLE = 80,
+    WARP_VFP_CALDERA_LOWER = 81, // Volcano Force Point Temple | Caldera (Lower Floor) 
+    WARP_SWAPSTONE_SHOP_ENTRANCE = 86
+} WarpID;
+
 typedef struct{
 /*00*/    s16 Ax;
 /*02*/    s16 Bx;
@@ -437,6 +449,8 @@ extern s32 D_800B4A50;
 extern s32 D_800B4A54;
 extern s16 D_800B97C4;
 
+extern s32 D_80092A7C;
+
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 s32 func_80041DBC(void);
@@ -478,11 +492,11 @@ void map_update_streaming(void);
 s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
 s32 func_8004B190(Object*);
 void func_8004B548(MapHeader*, s32, s32, Object*);
-s32 map_should_stream_load_object(ObjCreateInfo*, s8, s32);
+s32 map_should_stream_load_object(ObjSetup*, s8, s32);
 s32 map_check_some_mapobj_flag(s32, u32);
 void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
-s32 func_8004B4A0(ObjCreateInfo* obj, s32 mapID);
+s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
 void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 func_80052148(Vec3f* arg0, Vec3f* arg1);
 void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
@@ -502,16 +516,15 @@ s32 func_80010048(void);
 void some_video_setup(s32 param1);
 void func_80012B54(s32 param1, s32 param2);
 void func_800307C4(f32, f32);
-void func_80000608(Object*, Object*, u16, s32, s32, s32);
-void func_800009C8(Object*, Object*, u16, s32);
+s32 func_80000608(Object*, Object*, u16, s8, s32, s32);
+s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
 void func_80023628(void);
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8003E648(Texture*, s32 *, s32 *);
-Object **obj_get_all_of_type(s32 idx, s32 *count);
 u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s32);
 void func_8001F81C(u8*, u8*, u8*);
-void func_8005C740(s32, s32*, s32*, s32);
+void func_8005C740(s32 arg0, u32* arg1, u32* arg2, u32 arg3);
 void func_8003DB7C(void);
 void func_8003DBCC(void);
 void func_8005B870(void);
@@ -521,4 +534,8 @@ void func_800533D8(s32*, s32*);
 void func_80053408(Vec3f *);
 void func_80053750(Object*, AABBs32*, s32);
 Unk8005341C *func_8005341C(s32*);
+void warpPlayer(s32 warpID, s8 fadeToBlack);
+Block* func_80044BB0(s32 blockIndex);
+Texture* func_8004A1E8(s32 match_value);
+
 #endif

@@ -8,10 +8,10 @@ _exports:
 .dword kamerian_flame_dtor
 
 # export table
-.dword kamerian_flame_create
+.dword kamerian_flame_setup
+.dword kamerian_flame_control
 .dword kamerian_flame_update
-.dword kamerian_flame_func_518
-.dword kamerian_flame_draw
-.dword kamerian_flame_destroy
-.dword kamerian_flame_func_668
-.dword kamerian_flame_get_state_size
+.dword kamerian_flame_print
+.dword kamerian_flame_free
+.dword kamerian_flame_get_model_flags
+.dword kamerian_flame_get_data_size

@@ -1,6 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "PR/os.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
@@ -47,7 +48,7 @@ void dll_60_ctor(void *self) {
         data_4 = 0;
         func_800141A4(1, 0, PLAYER_NONE, -1);
         gDLL_5_AMSEQ->vtbl->func0(NULL, 0x20, 0, 0x2f, 0);
-        set_gplay_bitstring(0x44f, 1);
+        main_set_bits(BIT_44F, 1);
         gDLL_2_Camera->vtbl->func21(30, 1);
         data_8 = queue_load_texture_proxy(0x2d2);
         data_C = queue_load_texture_proxy(0x2d3);

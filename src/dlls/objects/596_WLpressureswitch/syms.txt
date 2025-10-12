@@ -1,0 +1,13 @@
+.text = 0x0:
+WLpressureswitch_ctor = 0x0;
+WLpressureswitch_dtor = 0xC;
+WLpressureswitch_setup = 0x18;
+WLpressureswitch_control = 0xB4;
+WLpressureswitch_update = 0x598;
+WLpressureswitch_print = 0x5A4;
+WLpressureswitch_free = 0x5F8;
+WLpressureswitch_get_model_flags = 0x654;
+WLpressureswitch_get_data_size = 0x664;
+WLpressureswitch_callbackBC = 0x678;
+
+.rodata = 0x6F0:

@@ -106,13 +106,13 @@ GameTextChunk *gametext_get_chunk(u16 chunk) {
     chunkPtr->count = sCurrentBank_StrCounts[chunk];
 
     // Where to load actual chunk contents to (also contains data for some chunks)
-    chunkPtr->unk4 = (void*)((u32)chunkPtr->strings + sCurrentBank_StrCounts[chunk] * 4 + alignmentPad);
+    chunkPtr->commands = (void*)((u32)chunkPtr->strings + sCurrentBank_StrCounts[chunk] * 4 + alignmentPad);
     
     // Set up first string pointer
-    chunkPtr->strings[0] = (char*)((u32)chunkPtr->unk4 + sCurrentBank_StrCounts[chunk] * 2);
+    chunkPtr->strings[0] = (char*)((u32)chunkPtr->commands + sCurrentBank_StrCounts[chunk] * 2);
 
     queue_load_file_region_to_ptr(
-        (void**)chunkPtr->unk4,
+        (void**)chunkPtr->commands,
         GAMETEXT_BIN,
         sCurrentBank_Offsets[chunk] * 2 + sCurrentBank_GlobalOffset,
         sCurrentBank_Sizes[chunk]);

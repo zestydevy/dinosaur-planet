@@ -37,8 +37,8 @@ struct AssetLoadThreadMsg {
             /* 0C */ s32 unused0C; //debug?
             /* 10 */ s32 unused10;
             /* 14 */ Object *parent;
-            /* 18 */ ObjCreateInfo *createInfo;
-            /* 1C */ u32 arg2;
+            /* 18 */ ObjSetup *setup;
+            /* 1C */ u32 setupFlags;
             /* 20 */ s32 arg4;
             /* 24 */ s32 mapID;
             /* 28 */ s32 arg6;
@@ -75,7 +75,7 @@ struct AssetLoadThreadMsg {
 typedef struct {
     u8 unk0;
     u32 *unk4;
-    ObjCreateInfo *unk8;
+    ObjSetup *unk8;
     u32 unkC;
     u32 unk10;
     Object* unk14;
@@ -107,11 +107,11 @@ extern OSThread assetThread;
 
 void create_asset_thread(void);
 void asset_thread_main(void *arg);
-void func_80012584(s32 param1, u8 param2, u32 *param3, ObjCreateInfo *param4, s32 param5, s32 param6, Object* param7, s32 param8);
+void func_80012584(s32 param1, u8 param2, u32 *param3, ObjSetup *param4, s32 param5, s32 param6, Object* param7, s32 param8);
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
-void queue_load_map_object(Object **dest, ObjCreateInfo *createInfo, u32 arg2, s32 mapID, s32 arg4, Object *parent, s32 arg6);
+void queue_load_map_object(Object **dest, ObjSetup *setup, u32 setupFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6);
 void queue_load_texture(Texture **dest, s32 id);
 void queue_load_dll(void **dest, s32 id, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);

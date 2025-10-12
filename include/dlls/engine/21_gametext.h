@@ -7,7 +7,7 @@
 typedef struct {
     // Num strings
     u8 count;
-    void *unk4;
+    s16 *commands;
     char **strings;
 } GameTextChunk;
 

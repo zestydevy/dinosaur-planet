@@ -1,6 +1,12 @@
-#include "common.h"
-#include "sys/interrupt_util.h"
 #include "game/objects/object.h"
+#include "sys/asset_thread.h"
+#include "sys/dll.h"
+#include "sys/fs.h"
+#include "sys/interrupt_util.h"
+#include "sys/map.h"
+#include "sys/objects.h"
+#include "functions.h"
+#include "macros.h"
 
 extern GenericStack gAssetThreadStackInternal;
 extern AssetThreadStackElement gAssetThreadStackData[5];
@@ -45,7 +51,7 @@ void func_80012584(
         s32 param1, 
         u8 param2, 
         u32 *param3, 
-        ObjCreateInfo *param4,
+        ObjSetup *param4,
         s32 param5, 
         s32 param6,
         Object* param7,
@@ -100,12 +106,12 @@ void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 leng
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_map_object(Object **dest, ObjCreateInfo *createInfo, u32 arg2, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
+void queue_load_map_object(Object **dest, ObjSetup *setup, u32 setupFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
     assetLoadMsg.loadCategory  = 1;
     assetLoadMsg.loadType      = ASSET_TYPE_OBJECT;
     assetLoadMsg.p.object.mapID = mapID;
-    assetLoadMsg.p.object.createInfo = createInfo;
-    assetLoadMsg.p.object.arg2 = arg2;
+    assetLoadMsg.p.object.setup = setup;
+    assetLoadMsg.p.object.setupFlags = setupFlags;
     assetLoadMsg.p.object.arg4 = arg4;
     assetLoadMsg.p.object.parent = parent;
     assetLoadMsg.p.object.arg6 = arg6;
@@ -227,7 +233,7 @@ void func_80012B54(s32 param1, s32 param2) {
     UnkStructAssetThreadSingle elementTemp;
     s32 prevIE;
     UnkStructAssetThreadSingle *ptr;
-    ObjCreateInfo *ptr_unk8;
+    ObjSetup *ptr_unk8;
     
     prevIE = interrupts_disable();
 
@@ -382,8 +388,8 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
                 load->p.file.offset, load->p.file.length);
             break;
         case ASSET_TYPE_OBJECT:
-            *load->p.object.dest = obj_setup_object(load->p.object.createInfo,
-                load->p.object.arg2, load->p.object.mapID, load->p.object.arg4,
+            *load->p.object.dest = obj_setup_object(load->p.object.setup,
+                load->p.object.setupFlags, load->p.object.mapID, load->p.object.arg4,
                 load->p.object.parent, load->p.object.arg6);
             break;
         case ASSET_TYPE_TEXTURE:

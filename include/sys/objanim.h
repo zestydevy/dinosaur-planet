@@ -33,7 +33,7 @@ typedef struct {
 
 s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3);
 s32 func_800240BC(Object* object, f32 progress);
-// s32 func_80024108(Object*, f32, f32, UnkFunc_80024108Struct*);
+s32 func_80024108(Object*, f32, f32, UnkFunc_80024108Struct*);
 s32 func_8002493C(void*, f32, void*);
 void func_80024D74(Object* object, s32 arg1);
 void func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3);

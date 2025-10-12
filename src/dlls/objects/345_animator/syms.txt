@@ -1,10 +1,10 @@
 .text = 0x0:
 animator_ctor = 0x0;
 animator_dtor = 0xC;
-animator_create = 0x18;
-animator_update = 0x58;
-animator_func_300 = 0x300;
-animator_draw = 0x30C;
-animator_destroy = 0x324;
-animator_func_36C = 0x36C;
-animator_get_state_size = 0x37C;
+animator_setup = 0x18;
+animator_control = 0x58;
+animator_update = 0x300;
+animator_print = 0x30C;
+animator_free = 0x324;
+animator_get_model_flags = 0x36C;
+animator_get_data_size = 0x37C;

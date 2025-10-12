@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/objects/210_player.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -11,7 +12,7 @@
 // size:0x3
 typedef struct {
     u8 _unk0[3];
-} VFP_LevelControl_State;
+} VFP_LevelControl_Data;
 
 static void VFP_LevelControl_func_8EC(Object *self);
 static void VFP_LevelControl_func_A08(Object *self);
@@ -24,10 +25,10 @@ void VFP_LevelControl_ctor(void *dll) { }
 void VFP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_LevelControl_create(Object* self, ObjCreateInfo* createInfo, s32 a2) {
+void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
     u8 mapSetupID;
 
-    obj_add_object_type(self, 0xA);
+    obj_add_object_type(self, OBJTYPE_10);
     gDLL_29_Gplay->vtbl->set_map_setup((s32) self->mapID, 1);
     mapSetupID = gDLL_29_Gplay->vtbl->get_map_setup((s32) self->mapID);
     switch (mapSetupID) {
@@ -54,7 +55,7 @@ void VFP_LevelControl_create(Object* self, ObjCreateInfo* createInfo, s32 a2) {
 }
 
 // offset: 0x24C | func: 1 | export: 1
-void VFP_LevelControl_update(Object* self) {
+void VFP_LevelControl_control(Object* self) {
     /*0x0*/ static s16 _data_0 = 130;
     
     Object* player;
@@ -79,7 +80,7 @@ void VFP_LevelControl_update(Object* self) {
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
                 func_80000450(self, self, 0x178, 0, 0, 0);
-                set_gplay_bitstring(0x123, 1);
+                main_set_bits(BIT_SpellStone_1, 1);
             }
         }
         VFP_LevelControl_func_8EC(self);
@@ -90,7 +91,7 @@ void VFP_LevelControl_update(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                set_gplay_bitstring(0x4E9, 1);
+                main_set_bits(BIT_Increment_DB_By_1, 1);
                 func_80000860(self, self, 0x105, 0);
                 func_80000860(self, self, 0x106, 0);
                 func_80000860(self, self, 0x107, 0);
@@ -100,8 +101,8 @@ void VFP_LevelControl_update(Object* self) {
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
                 func_80000450(self, self, 0x178, 0, 0, 0);
-                set_gplay_bitstring(0x83B, 1);
-                set_gplay_bitstring(0x22B, 1);
+                main_set_bits(BIT_SpellStone_2, 1);
+                main_set_bits(BIT_DIM_Leap_of_Faith_Completed, 1);
             }
         }
         VFP_LevelControl_func_A08(self);
@@ -111,8 +112,8 @@ void VFP_LevelControl_update(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                set_gplay_bitstring(0x4E9, 1);
-                set_gplay_bitstring(0x63C, 1);
+                main_set_bits(BIT_Increment_DB_By_1, 1);
+                main_set_bits(BIT_DB_Increment_Map_Setup, 1);
                 func_80000860(self, self, 0x105, 0);
                 func_80000860(self, self, 0x106, 0);
                 func_80000860(self, self, 0x107, 0);
@@ -121,7 +122,7 @@ void VFP_LevelControl_update(Object* self) {
                 func_80000450(self, self, 0x168, 0, 0, 0);
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
-                set_gplay_bitstring(0x83C, 1);
+                main_set_bits(BIT_Fire_Crystal, 1);
             }
         }
         VFP_LevelControl_func_AAC(self);
@@ -130,24 +131,24 @@ void VFP_LevelControl_update(Object* self) {
 }
 
 // offset: 0x864 | func: 2 | export: 2
-void VFP_LevelControl_func_864(Object *self) { }
+void VFP_LevelControl_update(Object *self) { }
 
 // offset: 0x870 | func: 3 | export: 3
-void VFP_LevelControl_draw(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x888 | func: 4 | export: 4
-void VFP_LevelControl_destroy(Object *obj, s32 a1) {
-    obj_free_object_type(obj, 0xA);
+void VFP_LevelControl_free(Object *obj, s32 a1) {
+    obj_free_object_type(obj, OBJTYPE_10);
 }
 
 // offset: 0x8C8 | func: 5 | export: 5
-u32 VFP_LevelControl_func_8C8(Object *self) {
-    return 0;
+u32 VFP_LevelControl_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
 }
 
 // offset: 0x8D8 | func: 6 | export: 6
-u32 VFP_LevelControl_get_state_size(Object *self, u32 a1) {
-    return sizeof(VFP_LevelControl_State);
+u32 VFP_LevelControl_get_data_size(Object *self, u32 a1) {
+    return sizeof(VFP_LevelControl_Data);
 }
 
 // offset: 0x8EC | func: 7
@@ -157,15 +158,17 @@ static void VFP_LevelControl_func_8EC(Object *self) {
     Object *player = get_player();
 
     if (_data_4 != 0) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_4 = 0;
     }
 
-    if (get_gplay_bitstring(0x8F5) == 0 && get_gplay_bitstring(0x51F) == 0 && 
-            get_gplay_bitstring(0x520) == 0 && get_gplay_bitstring(0x522) != 0) {
-        set_gplay_bitstring(0x8F5, 1);
+    if (main_get_bits(BIT_VFP_Flamethrower_Turned_Off) == 0 && 
+            main_get_bits(BIT_VFP_Entered_Snake_Flame_Room_1) == 0 && 
+            main_get_bits(BIT_VFP_Entered_Snake_Flame_Room_1_2) == 0 && 
+            main_get_bits(BIT_VFP_Flamethrower_Turned_Off_2) != 0) {
+        main_set_bits(BIT_VFP_Flamethrower_Turned_Off, 1);
     }
 }
 
@@ -176,8 +179,8 @@ static void VFP_LevelControl_func_A08(Object *self) {
     Object *player = get_player();
 
     if (_data_8 != 0) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_8 = 0;
     }
@@ -190,8 +193,8 @@ static void VFP_LevelControl_func_AAC(Object *self) {
     Object *player = get_player();
 
     if (_data_C != 0) {
-        set_gplay_bitstring(0x2D, 1);
-        set_gplay_bitstring(0x1D7, 1);
+        main_set_bits(BIT_Spell_Projectile, 1);
+        main_set_bits(BIT_Spell_Forcefield, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
         _data_C = 0;
     }

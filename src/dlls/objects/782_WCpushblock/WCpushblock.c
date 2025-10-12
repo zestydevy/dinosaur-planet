@@ -15,14 +15,14 @@ typedef struct {
 /*275*/    u8 unk275;
 /*276*/    u8 unk276;
 /*277*/    u8 unk277;
-} WCPushBlockState;
+} WCPushBlock_Data;
 
 typedef struct {
-/*00*/ ObjCreateInfo base;
+/*00*/ ObjSetup base;
 /*18*/ u8 unk18;
 /*19*/ s8 modelIndex;
 /*1A*/ s16 unk1A;
-} WCPushBlockCreateInfo;
+} WCPushBlock_Setup;
 
 // offset: 0x0 | ctor
 void dll_782_ctor(void* dll){
@@ -33,56 +33,56 @@ void dll_782_dtor(void* dll){
 }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_782_func_18(Object* self, WCPushBlockCreateInfo* createInfo, s32 arg2) {
-    WCPushBlockState* state = self->state;
+void dll_782_setup(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
+    WCPushBlock_Data* objdata = self->data;
 
     self->unk_0x36 = 0;
-    self->modelInstIdx = createInfo->modelIndex;
+    self->modelInstIdx = setup->modelIndex;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
-    state->unk276 = createInfo->unk1A;
+    objdata->unk276 = setup->unk1A;
 }
 
 // offset: 0x58 | func: 1 | export: 1
 // https://decomp.me/scratch/WLIsx
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/782_WCpushblock/dll_782_func_58.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/782_WCpushblock/dll_782_control.s")
 
 // offset: 0xF38 | func: 2 | export: 2
-void dll_782_func_F38(Object* self) {
+void dll_782_update(Object* self) {
 }
 
 // offset: 0xF44 | func: 3 | export: 3
-void dll_782_func_F44(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_782_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xF98 | func: 4 | export: 4
-void dll_782_func_F98(Object* self, s32 arg1) {
+void dll_782_free(Object* self, s32 arg1) {
 }
 
 // offset: 0xFA8 | func: 5 | export: 5
-s32 dll_782_func_FA8(Object* self) {
-    WCPushBlockCreateInfo* createInfo;
+u32 dll_782_get_model_flags(Object* self) {
+    WCPushBlock_Setup* setup;
     s8 modelIndex;
 
-    createInfo = (WCPushBlockCreateInfo*)self->createInfo;
-    modelIndex = createInfo->modelIndex;
+    setup = (WCPushBlock_Setup*)self->setup;
+    modelIndex = setup->modelIndex;
     if (modelIndex >= self->def->numModels) {
         modelIndex = 0;
     }
-    return (modelIndex << 0xB) | 0x400;
+    return MODFLAGS_MODEL_INDEX(modelIndex) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
 // offset: 0xFDC | func: 6 | export: 6
-s32 dll_782_func_FDC(Object* self, s32 arg1) {
-    return 0x278;
+u32 dll_782_get_data_size(Object* self, s32 arg1) {
+    return sizeof(WCPushBlock_Data);
 }
 
 // offset: 0xFF0 | func: 7
-s32 dll_782_func_FF0(Object* self, WCPushBlockState* state, Object* player) {
+s32 dll_782_func_FF0(Object* self, WCPushBlock_Data* objdata, Object* player) {
     f32 positionX;
     f32 positionZ;
     f32 min;
@@ -97,16 +97,16 @@ s32 dll_782_func_FF0(Object* self, WCPushBlockState* state, Object* player) {
         if (isNighttime) {
             return 0;
         }
-        ((DLL_Unknown*)(state->unk260)->dll)->vtbl->func[11].withThreeArgs(state->unk276, (s32)&state->unk270, (s32)&state->unk272);
-        ((DLL_Unknown*)(state->unk260)->dll)->vtbl->func[7].withFiveArgs((s32)self, state->unk270, state->unk272, (s32)&positionX, (s32)&positionZ);
+        ((DLL_Unknown*)(objdata->unk260)->dll)->vtbl->func[11].withThreeArgs(objdata->unk276, (s32)&objdata->unk270, (s32)&objdata->unk272);
+        ((DLL_Unknown*)(objdata->unk260)->dll)->vtbl->func[7].withFiveArgs((s32)self, objdata->unk270, objdata->unk272, (s32)&positionX, (s32)&positionZ);
     } else {
         //Moon block?
         if (!isNighttime) {
             return 0;
         }
 
-        ((DLL_Unknown*)(state->unk260)->dll)->vtbl->func[18].withThreeArgs(state->unk276, (s32)&state->unk270, (s32)&state->unk272);
-        ((DLL_Unknown*)(state->unk260)->dll)->vtbl->func[14].withFiveArgs((s32)self, state->unk270, state->unk272, (s32)&positionX, (s32)&positionZ);
+        ((DLL_Unknown*)(objdata->unk260)->dll)->vtbl->func[18].withThreeArgs(objdata->unk276, (s32)&objdata->unk270, (s32)&objdata->unk272);
+        ((DLL_Unknown*)(objdata->unk260)->dll)->vtbl->func[14].withFiveArgs((s32)self, objdata->unk270, objdata->unk272, (s32)&positionX, (s32)&positionZ);
     }
 
     //Check if player out of range

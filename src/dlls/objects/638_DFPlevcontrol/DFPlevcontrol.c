@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -26,7 +27,8 @@ static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3);
 
 typedef struct {
 s16 unk0;   
-} DFPTLevelControlState;
+u8 _unk2[4];
+} DFPTLevelControl_Data;
 
 // offset: 0x0 | ctor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_ctor.s")
@@ -35,10 +37,10 @@ s16 unk0;
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_dtor.s")
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
+void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
     u8 mapSetup;
 
-    obj_add_object_type(self, 0xA);
+    obj_add_object_type(self, OBJTYPE_10);
     _data_0 = queue_load_texture_proxy(0x46C);
     self->unk0xbc = (void*)dll_638_func_62C;
     gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
@@ -53,60 +55,64 @@ void dll_638_func_18(Object* self, s32 arg1, s32 arg2) {
             break;
         case 1:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(0x2E8, 1);
+            main_set_bits(BIT_CF_SpellStone, 1);
             break;
         case 2:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(0x83A, 1);
-            set_gplay_bitstring(0x777, 1);
+            main_set_bits(BIT_BWC_SpellStone, 1);
+            main_set_bits(BIT_Spell_Unknown_777, 1);
             break;
         case 3:
             func_80000860(self, self, 415, 0);
-            set_gplay_bitstring(0x7BD, 1);
-            set_gplay_bitstring(0x777, 1);
+            main_set_bits(BIT_SpellStone_Krystal, 1);
+            main_set_bits(BIT_Spell_Unknown_777, 1);
             break;
     }
     self->unk0xb0 |= 0x6000;
 }
 
 // offset: 0x260 | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_260.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_control.s")
 
 // offset: 0x51C | func: 2 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_51C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_update.s")
 
 // offset: 0x528 | func: 3 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_528.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_print.s")
 
 // offset: 0x540 | func: 4 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_540.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_free.s")
 
 // offset: 0x5C0 | func: 5 | export: 5
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5C0.s")
+u32 dll_638_get_model_flags(Object *self) {
+    return MODFLAGS_NONE;
+}
 
 // offset: 0x5D0 | func: 6 | export: 6
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5D0.s")
+u32 dll_638_get_data_size(Object *self, u32 a1) {
+    return sizeof(DFPTLevelControl_Data);
+}
 
 // offset: 0x5E4 | func: 7 | export: 7
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5E4.s")
 
 // offset: 0x62C | func: 8
 static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
-    DFPTLevelControlState *state;
+    DFPTLevelControl_Data *objdata;
     DLL_210_Player *dll;
     Object *player;
     s16 delay;
     s16 timerValueOriginal;
 
-    state = self->state;
+    objdata = self->data;
     player = get_player();
-    timerValueOriginal = state->unk0;
+    timerValueOriginal = objdata->unk0;
     if (timerValueOriginal > 0){
         delay = ((s32) delayFloat);
 
         if (!(DLL_210_Player *) player->dll){} //@fake?
 
-        state->unk0 = timerValueOriginal - (delay & 0xFFFF);
+        objdata->unk0 = timerValueOriginal - (delay & 0xFFFF);
         ((DLL_210_Player *) player->dll)->vtbl->func72(player, 0x51E, timerValueOriginal);
     }
     return 0;

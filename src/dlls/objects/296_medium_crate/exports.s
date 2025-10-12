@@ -8,10 +8,10 @@ _exports:
 .dword dll_296_dtor
 
 # export table
-.dword dll_296_create
-.dword dll_296_update
-.dword dll_296_func_9C0
-.dword dll_296_draw
-.dword dll_296_destroy
-.dword dll_296_func_C2C
-.dword dll_296_get_state_size
+.dword dll_295_setup
+.dword dll_295_control
+.dword dll_295_update
+.dword dll_295_print
+.dword dll_295_free
+.dword dll_296_get_model_flags
+.dword dll_296_get_data_size

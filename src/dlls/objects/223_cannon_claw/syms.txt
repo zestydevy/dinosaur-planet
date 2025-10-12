@@ -1,14 +1,14 @@
 .text = 0x0:
 cannon_claw_ctor = 0x0;
 cannon_claw_dtor = 0xC;
-cannon_claw_create = 0x18;
-cannon_claw_update = 0x4C;
+cannon_claw_setup = 0x18;
+cannon_claw_control = 0x4C;
 cannon_claw_func_1B4 = 0x1B4;
-cannon_claw_func_200 = 0x200;
-cannon_claw_draw = 0x20C;
-cannon_claw_destroy = 0x26C;
-cannon_claw_func_27C = 0x27C;
-cannon_claw_get_state_size = 0x28C;
+cannon_claw_update = 0x200;
+cannon_claw_print = 0x20C;
+cannon_claw_free = 0x26C;
+cannon_claw_get_model_flags = 0x27C;
+cannon_claw_get_data_size = 0x28C;
 
 .rodata = 0x2F0:
 

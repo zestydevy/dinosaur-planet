@@ -56,8 +56,8 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         func_80026AB8(object, modelInstance, object->id, object->objhitInfo, modAnimIndex, 0);
     }
     
-    if (object->ptr0x60) {
-        obj_load_event(object, object->id, object->ptr0x60, modAnimIndex, 0);
+    if (object->curEvent) {
+        obj_load_event(object, object->id, object->curEvent, modAnimIndex, /*dontQueueLoad=*/FALSE);
     }
     
     changed = modAnimIndex != object->curModAnimId;
@@ -104,7 +104,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
     
     if (object->linkedObject && object->linkedObject->group == 0x30) {
-        ((ObjectStateCommon*)object->linkedObject->state)->unk84 &= 0xFFFE;
+        ((ObjectAnim_Data_2*)object->linkedObject->data)->unk84 &= 0xFFFE;
     }
     
     return 0;
