@@ -9,8 +9,8 @@
 // Common interface of menu DLLs
 DLL_INTERFACE(DLL_IMenu) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*update1)();
-    /*1*/ void (*update2)();
+    /*0*/ s32 (*update1)(void);
+    /*1*/ void (*update2)(void);
     /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 };
 
@@ -41,31 +41,31 @@ enum MenuID {
     MENU_17 = 17
 };
 
-void menu_init();
+void menu_init(void);
 void menu_set(s32 id);
-s32 menu_get_current();
-DLL_IMenu *menu_get_active_dll();
-s32 menu_get_previous();
-void menu_do_menu_swap();
-s32 menu_update1();
-void menu_update2();
+s32 menu_get_current(void);
+DLL_IMenu *menu_get_active_dll(void);
+s32 menu_get_previous(void);
+void menu_do_menu_swap(void);
+s32 menu_update1(void);
+void menu_update2(void);
 void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
 void func_8000F64C(s8 param1, s32 param2);
-void func_8000F6CC();
-void func_8000F9DC();
-void func_8000FA2C();
-void func_8000FAC8();
-s32 func_8000FB1C();
+void func_8000F6CC(void);
+void func_8000F9DC(void);
+void func_8000FA2C(void);
+void func_8000FAC8(void);
+s32 func_8000FB1C(void);
 void func_8000FB2C(Gfx **gdl);
-s32 func_80010008();
+s32 func_80010008(void);
 void func_80010018(s32 param1);
-s32 func_80010028();
+s32 func_80010028(void);
 void func_80010038(s32 param1);
-s32 func_80010048();
+s32 func_80010048(void);
 void func_80010058(s32 param1);
 void set_save_game_idx(s32 index);
-s32  get_save_game_idx();
-void func_80010088();
+s32  get_save_game_idx(void);
+void func_80010088(void);
 void func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4);
 void func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4);
 

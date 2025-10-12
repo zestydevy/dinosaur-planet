@@ -7,9 +7,9 @@
 
 DLL_INTERFACE(DLL_18) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ UnknownDLLFunc func0;
-/*1*/ void (*func1)(void *, void *, f32, f32, UNK_TYPE_32, UNK_TYPE_32);
-/*2*/ UnknownDLLFunc func2;
+/*0*/ void (*func0)(Object *, void *, s32, s32);
+/*1*/ void (*func1)(Object *, void *, f32, f32, UNK_TYPE_32, UNK_TYPE_32);
+/*2*/ void (*func2)(Object *, void *, UNK_PTR *);
 /*3*/ void (*func3)(Object *);
 // state is a Player_Data struct but including it causes an unmatch (TODO: use correct struct here)
 /*4*/ void (*func4)(Object *obj, void *state, s32 arg2);
