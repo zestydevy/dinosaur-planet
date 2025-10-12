@@ -216,7 +216,7 @@ void dll_297_func_1304(Object* self, ScarabFunc1304Arg1* arg1, u8 arg2, ScarabFu
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = self->srt.yaw;
-    rotate_vec3(&transform, &v);
+    rotate_vec3(&transform, v.f);
 
     if (arg1){
         new_var = arctan2_f(v.x, v.y);

@@ -66,5 +66,6 @@ void func_80004CE8(Vec4f *in, Vec4f *out);
 void func_8000523C(UnkCurvesStruct *arg0);
 f32 func_80006E04(Unk80006784 *, f32);
 f32 func_80006CFC(Unk80006784 *, f32, f32);
+f32 func_80004A60(Vec4f *a0, f32 a1, f32 *a2);
 
 #endif

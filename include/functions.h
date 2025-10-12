@@ -13,7 +13,7 @@ void dl_segment(Gfx **gdl, u32 segment, void *base);
 
 
 void func_800267A4(Object *obj);
-s32 func_80025F40(Object*,s32 *,s32 *,s32 *);
+s32 func_80025F40(Object*,Object **,s32 *,s32 *);
 
 void draw_object(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, f32 yPrescale);
 void func_80036FBC(u8,u8,u8,u8);

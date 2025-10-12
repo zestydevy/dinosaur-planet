@@ -216,7 +216,7 @@ def read_elf_relocations(elf: ELFFile,
                         hi = hi_map[sym_idx]
                         orphan = False
 
-                    lo_addend = struct.unpack_from(">H", text_data, reloc_offset + 2)[0]
+                    lo_addend = struct.unpack_from(">h", text_data, reloc_offset + 2)[0]
                     ahl = (hi["addend"] << 16) + lo_addend
                     s = sym_value
                     # lo16: AHL + S

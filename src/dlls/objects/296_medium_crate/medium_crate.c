@@ -277,7 +277,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
                 srt.roll = 0;
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, &obj->speed);
+                rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
@@ -316,7 +316,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
                 srt.roll = 0;
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, &obj->speed);
+                rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
@@ -355,7 +355,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
                 srt.roll = 0;
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, &obj->speed);
+                rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
@@ -394,7 +394,7 @@ s32 dll_296_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
                 srt.roll = 0;
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
-                rotate_vec3(&srt, &obj->speed);
+                rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {

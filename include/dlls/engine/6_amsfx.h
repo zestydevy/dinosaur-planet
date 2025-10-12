@@ -58,6 +58,9 @@ enum SoundID {
 
     SOUND_6EC = 0x6EC, // used in DLL 641
 
+    SOUND_72F = 0x72F, // used in DLL 475 GPSH_flybaddie
+    SOUND_730 = 0x730, // used in DLL 475 GPSH_flybaddie
+
     SOUND_74B = 0x74B, // snowhorn related
 
     SOUND_775 = 0x775, // menu related
