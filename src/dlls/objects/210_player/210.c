@@ -3286,7 +3286,79 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
 
 
 // offset: 0x8AE0 | func: 46
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_8AE0.s")
+s32 dll_210_func_8AE0(Object* arg0, s32 arg1, s32 arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, f32 arg6, u8 arg7, u8 arg8) {
+    ModelInstance* sp64;
+    f32 sp58[3];
+    f32 sp54;
+    f32 var_fv0;
+    f32 var_fv1;
+    s16 pad;
+    u8 sp49;
+    s32 temp;
+    s16 pad2;
+    s16 sp40;
+
+    sp64 = arg0->modelInsts[arg0->modelInstIdx];
+    sp49 = 0;
+    if (arg8 & 2) {
+        sp49 = 2;
+    }
+    if (arg8 & 0x40) {
+        sp49 |= 4;
+    }
+    if (arg8 & 0x10) {
+        sp49 |= 8;
+    }
+    if (arg8 & 0x20) {
+        sp49 |= 1;
+    }
+    if (arg8 & 4) {
+        func_80023D30(arg0, arg1, 0.0f, sp49);
+        func_80024108(arg0, arg6, 0.0f, NULL);
+        func_8001A3FC(sp64, 0U, 0, arg5, arg0->srt.scale, (Vec3f*)sp58, &sp40);
+    } else {
+        func_80024E50(arg0, arg1, 0.0f, sp49);
+        func_80025140(arg0, arg6, 0.0f, 0);
+        func_8001A3FC(sp64, 1U, 0, arg5, arg0->srt.scale, (Vec3f*)sp58, &sp40);
+    }
+    sp54 = sp58[arg7];
+    if (sp54 < 0.0f) {
+        sp54 = -sp54;
+    }
+    if (arg8 & 4) {
+        func_80025540(arg0, arg2, 0);
+        func_8001A3FC(sp64, 0U, 2, arg5, arg0->srt.scale, (Vec3f*)sp58, &sp40);
+    } else {
+        func_8002559C(arg0, arg2, 0);
+        func_8001A3FC(sp64, 1U, 2, arg5, arg0->srt.scale, (Vec3f*)sp58, &sp40);
+    }
+    var_fv0 = sp58[arg7];
+    if (var_fv0 < 0.0f) {
+        var_fv0 = -var_fv0;
+    }
+    var_fv1 = (arg3->x * arg4->x) + (arg3->z * arg4->z) + arg4->w;
+    if (var_fv1 < 0.0f) {
+        var_fv1 = -var_fv1;
+    }
+    sp54 = (var_fv1 - sp54) / (var_fv0 - sp54);
+    if (arg8 & 1) {
+        if (sp54 < 0.0f) {
+            sp54 = 0.0f;
+        }
+    } else if (sp54 < 0.0f) {
+        sp54 = -sp54;
+    }
+    if (sp54 > 1.0f) {
+        sp54 = 1.0f;
+    }
+    temp = (s16) (sp54 * 1023.0f);
+    if (arg8 & 4) {
+        func_80025540(arg0, arg2, temp);
+    } else {
+        func_8002559C(arg0, arg2, temp);
+    }
+    return temp;
+}
 
 // offset: 0x8EA4 | func: 47
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_8EA4.s")
