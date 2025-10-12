@@ -4,26 +4,19 @@
 #include "game/objects/object.h"
 #include "dll.h"
 #include "sys/main.h"
+#include "sys/map.h"
 #include "sys/objects.h"
 
 s32 obj_recv_mesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg);
 Texture* func_8004A1E8(s32 match_value);
 u16 get_masked_buttons(int port);
 
-extern s32 D_80092A7C;
-
 typedef struct {
 /*00*/ s16 unk0;
 /*02*/ s16 unk2;
 /*04*/ s16 unk4;
 /*06*/ s16 unk6;
-/*08*/ union {
-    s16 unk8_s16;
-    struct {
-        u8 unk8;
-        u8 unk9;
-    };
-};
+/*08*/ s16 unk8;
 /*0A*/ s16 unkA;
 /*0C*/ s16 unkC;
 /*0E*/ s8 unkE;
@@ -99,15 +92,12 @@ u32 MMshrine_get_data_size(Object *self, s32 arg1) {
 }
 
 // offset: 0xC50 | func: 7
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/466_mmshrine/dll_466_func_C50.s")
-#else
-s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
+int dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
     MMShrine_Data* objdata;
     Object* player;
-    s16 temp_v0;
     UnkShrineStruct* var_s2;
-    s32 var_s3;
+    s32 i;
+    u8 temp;
 
     objdata = self->data;
     player = get_player();
@@ -116,78 +106,81 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
     arg2->unk62 = 0;
     
     if (objdata->unkA) {
-        objdata->unk8_s16 += objdata->unkA;
-        if (objdata->unk8_s16 < 2 && objdata->unkA <= 0) {
-            objdata->unk8_s16 = 1;
+        objdata->unk8 += objdata->unkA;
+        if (objdata->unk8 < 2 && objdata->unkA <= 0) {
+            objdata->unk8 = 1;
             objdata->unkA = 0;
-        } else if (objdata->unk8_s16 >= 0x46 && objdata->unkA >= 0) {
-            objdata->unk8_s16 = 0x46;
+        } else if (objdata->unk8 >= 0x46 && objdata->unkA >= 0) {
+            objdata->unk8 = 0x46;
             objdata->unkA = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(3, (u8)objdata->unk8_s16);
+        gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
     }
 
-    for (var_s3 = 0; var_s3 < arg2->unk98; var_s3++){
-        switch (arg2->unk8E[var_s3]) {
-            case 1:
-                func_80000860(self, self, 0xC7, 0);
-                break;
-            case 2:
-                if (D_80092A7C == -1) {
-                    func_80000860(self, self, 0x14, 0);
-                } else {
-                    func_80000860(self, self, D_80092A7C, 0);
-                }
-                break;
-            case 3:
-                objdata->unk10 = 1;
-                break;
-            case 4:
-                objdata->unk2 = 0;
-                break;
-            case 5:
-                objdata->unkF = 5;
-                objdata->unk10 = 2;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-                break;
-            case 6:
-                objdata->unk10 = 3;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-                break;
-            case 7:
-                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
-                break;
-            case 8:
-                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-                objdata->unkA = -3;
-                break;
-            case 10:
-                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
-                if (_data_0 == NULL)
-                    _data_0 = func_8004A1E8(1);
-                break;
-            case 9:
-                main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-                break;
-            case 11:
-                objdata->unk8_s16 = 0x64;
-                gDLL_5_AMSEQ->vtbl->func5.withFiveArgs(3, 0x2f, 0x50, ((u8)objdata->unk8_s16 << 0x10) >> 0x10, 0);
-                break;
-            case 12:
-                func_80000860(self, self, 0xCE, 0);
-                main_set_bits(BIT_Test_of_Fear_Particles, 1);
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342, MAX_VOLUME, 0, 0, 0, 0);
-                break;
-            case 13:
-                if (D_80092A7C == -1) {
-                    func_80000860(self, self, 0x14, 0);
-                } else {
-                    func_80000860(self, self, D_80092A7C, 0);
-                }
-                main_set_bits(BIT_Test_of_Fear_Particles, 0);
-                break;
+    for (i = 0; i < arg2->unk98; i++){
+        temp = arg2->unk8E[i];
+        if (temp != 0) {
+            switch (temp) {
+                case 1:
+                    func_80000860(self, self, 0xC7, 0);
+                    break;
+                case 2:
+                    if (D_80092A7C == -1) {
+                        func_80000860(self, self, 0x14, 0);
+                    } else {
+                        func_80000860(self, self, D_80092A7C, 0);
+                    }
+                    break;
+                case 3:
+                    objdata->unk10 = 1;
+                    break;
+                case 4:
+                    objdata->unk2 = 0;
+                    break;
+                case 5:
+                    objdata->unkF = 5;
+                    objdata->unk10 = 2;
+                    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                    break;
+                case 6:
+                    objdata->unk10 = 3;
+                    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                    break;
+                case 7:
+                    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
+                    break;
+                case 8:
+                    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+                    objdata->unkA = -3;
+                    break;
+                case 10:
+                    main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+                    if (_data_0 == NULL)
+                        _data_0 = func_8004A1E8(1);
+                    break;
+                case 9:
+                    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+                    break;
+                case 11:
+                    objdata->unk8 = 0x64;
+                    gDLL_5_AMSEQ->vtbl->func5(3, 0x2f, 0x50, (u8)objdata->unk8, 0);
+                    break;
+                case 12:
+                    func_80000860(self, self, 0xCE, 0);
+                    main_set_bits(BIT_Test_of_Fear_Particles, 1);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342, MAX_VOLUME, 0, 0, 0, 0);
+                    break;
+                case 13:
+                    if (D_80092A7C == -1) {
+                        func_80000860(self, self, 0x14, 0);
+                    } else {
+                        func_80000860(self, self, D_80092A7C, 0);
+                    }
+                    main_set_bits(BIT_Test_of_Fear_Particles, 0);
+                    break;
+            }
         }
-        arg2->unk8E[var_s3] = 0;
+        arg2->unk8E[i] = 0;
     }
     
     if (objdata->unkF == 8) {
@@ -202,8 +195,6 @@ s32 dll_466_func_C50(Object* self, s32 arg1, UnkShrineStruct* arg2, s32 arg3) {
     
     return 0;
 }
-
-#endif
 
 // offset: 0x1140 | func: 8
 void MMshrine_func_1140(Object *arg0) {

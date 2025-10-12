@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/map.h"
+#include "sys/objtype.h"
 
 // .data start: 80092a60 ?
 // .bss start: 800b49f0 ?

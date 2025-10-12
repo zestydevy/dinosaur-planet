@@ -92,6 +92,9 @@ enum DLL_ID {
     // Mod gfx
     DLL_ID_106 = 0x1002,
     DLL_ID_107 = 0x1003,
+    DLL_ID_122 = 0x1012,
+    DLL_ID_147 = 0x102B,
+    DLL_ID_148 = 0x102C,
     DLL_ID_182 = 0x104E,
 
     // Objects

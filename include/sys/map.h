@@ -449,6 +449,8 @@ extern s32 D_800B4A50;
 extern s32 D_800B4A54;
 extern s16 D_800B97C4;
 
+extern s32 D_80092A7C;
+
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
 s32 func_80041DBC(void);
@@ -519,7 +521,6 @@ s32 func_800009C8(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
 void func_80023628(void);
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8003E648(Texture*, s32 *, s32 *);
-Object **obj_get_all_of_type(s32 idx, s32 *count);
 u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s32);
 void func_8001F81C(u8*, u8*, u8*);
@@ -535,5 +536,6 @@ void func_80053750(Object*, AABBs32*, s32);
 Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);
+Texture* func_8004A1E8(s32 match_value);
 
 #endif

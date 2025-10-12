@@ -11,6 +11,8 @@ enum ObjType {
     OBJTYPE_4 = 4,
     OBJTYPE_7 = 7,
     OBJTYPE_10 = 10,
+    OBJTYPE_16 = 16,
+    OBJTYPE_18 = 18,
     OBJTYPE_32 = 32,
     OBJTYPE_39 = 39
 };
