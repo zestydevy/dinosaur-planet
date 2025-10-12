@@ -1538,7 +1538,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
             pos.z = (D_800B97E0[i * 3 + 2] * (arg1->ptr0x64->unk2c * temp_fs4)) - temp_fv0;
         }
-        rotate_vec3((SRT* ) &srt, (Vec3f* ) &pos);
+        rotate_vec3(&srt, pos.f);
         arg2->x = pos.x;
         arg2->y = pos.y - arg4;
         arg2->z = pos.z;

@@ -7,7 +7,7 @@
 
 typedef struct {
     ObjSetup base;
-    s16 unk18;
+    s16 _unk18;
     s16 unk1A;
 } GPSH_Shrine_Setup;
 
@@ -19,15 +19,13 @@ typedef struct {
     s16 unk8;
     s16 unkA;
     s16 unkC;
-    s16 unkE;
     s32 unk10;
     u8 unk14;
     u8 unk15;
     u8 unk16;
-    s8 unk17;
+    u8 _unk17;
     u8 unk18;
     u8 unk19;
-    u8 _unk1A[0x1C - 0x1A];
 } GPSH_Shrine_Data;
 
 /*0x0*/ static Texture *_data_0 = NULL;

@@ -1,0 +1,17 @@
+.text = 0x0:
+GPSH_flybaddie_ctor = 0x0;
+GPSH_flybaddie_dtor = 0xC;
+GPSH_flybaddie_setup = 0x18;
+GPSH_flybaddie_control = 0x19C;
+GPSH_flybaddie_update = 0x5C0;
+GPSH_flybaddie_print = 0x5CC;
+GPSH_flybaddie_free = 0x620;
+GPSH_flybaddie_get_model_flags = 0x630;
+GPSH_flybaddie_get_data_size = 0x640;
+GPSH_flybaddie_func_654 = 0x654;
+GPSH_flybaddie_func_7F8 = 0x7F8;
+
+.rodata = 0xAE0:
+
+.data = 0xAF0:
+_data_0 = 0x0; // absolute:0xAF0

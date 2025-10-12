@@ -79,7 +79,7 @@ void func_80025E58(void) {
     }
 }
 
-s32 func_80025F40(Object* obj, s32 *arg1, s32 *arg2, s32 *arg3) {
+s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
     ObjectHitInfo* objHitInfo;
     s8 var_a0;
     s8 var_a1;
@@ -114,7 +114,7 @@ s32 func_80025F40(Object* obj, s32 *arg1, s32 *arg2, s32 *arg3) {
     return 0;
 }
 
-s8 func_8002601C(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32* arg4, f32* arg5, f32* arg6) {
+s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f32* arg5, f32* arg6) {
     ObjectHitInfo* objHitInfo;
     s8 var_a0;
     s8 var_a1;
@@ -225,7 +225,7 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
     }
 
     for (i = 0; i < objHitInfo->unk_0x62; i++) {
-        if ((s32)arg1 == objHitInfo->unk_0x6c[i]) {
+        if (arg1 == objHitInfo->unk_0x6c[i]) {
             if (arg2 < objHitInfo->unk_0x66[i]) {
                 objHitInfo->unk_0x63[i] = arg4;
                 objHitInfo->unk_0x66[i] = arg2;
@@ -242,7 +242,7 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
         objHitInfo->unk_0x63[objHitInfo->unk_0x62] = arg4;
         objHitInfo->unk_0x66[objHitInfo->unk_0x62] = arg2;
         objHitInfo->unk_0x69[objHitInfo->unk_0x62] = arg3;
-        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = (s32)arg1;
+        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = arg1;
         objHitInfo->unk_0x78[objHitInfo->unk_0x62] = arg5;
         objHitInfo->unk_0x84[objHitInfo->unk_0x62] = arg6;
         objHitInfo->unk_0x90[objHitInfo->unk_0x62] = arg7;
@@ -274,7 +274,7 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
     }
 
     for (i = 0; i < objHitInfo->unk_0x62; i++) {
-        if ((s32)arg1 == objHitInfo->unk_0x6c[i]) {
+        if (arg1 == objHitInfo->unk_0x6c[i]) {
             if (arg2 < objHitInfo->unk_0x66[i]) {
                 objHitInfo->unk_0x63[i] = arg4;
                 objHitInfo->unk_0x66[i] = arg2;
@@ -291,7 +291,7 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
         objHitInfo->unk_0x63[objHitInfo->unk_0x62] = arg4;
         objHitInfo->unk_0x66[objHitInfo->unk_0x62] = arg2;
         objHitInfo->unk_0x69[objHitInfo->unk_0x62] = arg3;
-        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = (s32)arg1;
+        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = arg1;
         objHitInfo->unk_0x78[objHitInfo->unk_0x62] = arg0->srt.transl.x;
         objHitInfo->unk_0x84[objHitInfo->unk_0x62] = arg0->srt.transl.y;
         objHitInfo->unk_0x90[objHitInfo->unk_0x62] = arg0->srt.transl.z;

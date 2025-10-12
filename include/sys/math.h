@@ -17,16 +17,37 @@ typedef struct {
 
 typedef f32 quartic[5];
 
-typedef struct {
-    f32 x, y;
+typedef struct Vec2f {
+    union {
+        struct {
+            f32 x;
+            f32 y;
+        };
+        f32 f[2];
+    };
 } Vec2f;
 
-typedef struct {
-    f32 x, y, z;
+typedef struct Vec3f {
+    union {
+        struct {
+            f32 x;
+            f32 y;
+            f32 z;
+        };
+        f32 f[3];
+    };
 } Vec3f;
 
-typedef struct {
-    f32 x, y, z, w;
+typedef struct Vec4f {
+    union {
+        struct {
+            f32 x;
+            f32 y;
+            f32 z;
+            f32 w;
+        };
+        f32 f[4];
+    };
 } Vec4f;
 
 typedef struct {
@@ -70,7 +91,7 @@ void matrix_from_srt_reversed(MtxF *mf, const SRT *srt);
 void matrix_from_srt_rotation(MtxF *mf, const SRT *srt);
 void matrix_from_yaw(s16 theta, MtxF *mf);
 void s16_vec3_apply_srt_rotation(const SRT *srt, s16 *vec);
-void rotate_vec3(const SRT *srt, Vec3f *vec);
+void rotate_vec3(const SRT *srt, f32 vec[3]);
 void rotate_vec_inv(const SRT *srt, Vec3f *vec);
 void vec_from_rotation(const SRT *srt, Vec3f *vec);
 void matrix_translation(MtxF *mf, f32 x, f32 y, f32 z);

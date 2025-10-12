@@ -64,7 +64,7 @@ void flameblast_control(Object* self) {
         sp30.pitch = sidekick->srt.pitch;
         sp30.yaw = sidekick->srt.yaw;
 
-        rotate_vec3(&sp30, &self->speed);
+        rotate_vec3(&sp30, self->speed.f);
 
         self->srt.transl.x = sidekick->srt.transl.x;
         self->srt.transl.y = sidekick->srt.transl.y;
