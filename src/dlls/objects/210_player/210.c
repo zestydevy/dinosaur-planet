@@ -1739,7 +1739,46 @@ s32 dll_210_func_44A4(Object* arg0, s32 arg1) {
 }
 
 // offset: 0x4634 | func: 25 | export: 67
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4634.s")
+void dll_210_func_4634(Object* arg0, s32 arg1, f32 arg2) {
+    Player_Data* objdata1;
+    Player_Data* objdata2;
+
+    objdata2 = arg0->data;
+    objdata1 = arg0->data;
+    switch (arg1) {
+    case 1:
+        if (objdata1->unk8AD < 4) {
+            objdata1->unk8AE[objdata1->unk8AD] = arg2;
+            objdata1->unk8AD++;
+            return;
+        }
+    default:
+        return;
+    case 6:
+        gDLL_18->vtbl->func4(arg0, objdata2, 0x47);
+        return;
+    case 3:
+        if (objdata2->unk26C != 0x46) {
+            gDLL_18->vtbl->func4(arg0, objdata2, 0x46);
+        }
+        break;
+    case 5:
+        gDLL_18->vtbl->func4(arg0, objdata2, 1);
+        return;
+    case 9:
+        if (*_bss_1A0 == 0) {
+            gDLL_28_ScreenFade->vtbl->fade(0x1E, 1);
+            *_bss_1A0 = 0x64;
+        }
+        break;
+    case 10:
+        objdata1->flags |= 0x80000;
+        return;
+    case 11:
+        objdata1->flags &= ~0x80000;
+        break;
+    }
+}
 
 // offset: 0x47B8 | func: 26
 void dll_210_func_47B8(Object* arg0, Player_Data* arg1) {

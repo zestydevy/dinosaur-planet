@@ -308,7 +308,8 @@ typedef struct {
 /*8AB*/ u8 unk8AB;
 /*8AC*/ u8 pad8AC;
 /*8AD*/ u8 unk8AD;
-/*8AE*/ u8 unk8AE[0x8B4 - 0x8AE];
+/*8AE*/ s8 unk8AE[4];
+/*8B2*/ u8 unk8B2[0x8B4 - 0x8B2];
 /*8B4*/ u8 unk8B4;
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
