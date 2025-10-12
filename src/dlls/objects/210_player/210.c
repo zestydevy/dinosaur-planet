@@ -396,7 +396,7 @@ void func_80023894(Object* object, s32 objectId);
 /*0x19C*/ static u8 _bss_19C[0x4];
 /*0x1A0*/ static s16 _bss_1A0[2];
 /*0x1A4*/ static s32 _bss_1A4;
-/*0x1A8*/ static u8 _bss_1A8[0x2];
+/*0x1A8*/ static s16 _bss_1A8;
 /*0x1AA*/ static u8 _bss_1AA[0x2];
 /*0x1AC*/ static f32 _bss_1AC;
 /*0x1B0*/ static f32 _bss_1B0[0x4];
@@ -1676,7 +1676,67 @@ void dll_210_func_43EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x44A4 | func: 24 | export: 66
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_44A4.s")
+s32 dll_210_func_44A4(Object* arg0, s32 arg1) {
+    s32 i;
+    Player_Data* objdata2;
+    Player_Data* objdata1;
+    s32 temp;
+
+    objdata1 = arg0->data;
+    objdata2 = arg0->data;
+    switch (arg1) {
+    case 1:
+        if (objdata1->unk304 & 0x1000) {
+            return 0;
+        }
+        if (arg0->unk0xb0 & 0x1000) {
+            return 0;
+        }
+        return 1;
+    case 2:
+        switch (objdata1->unk26C) {
+            case 1:
+                temp = 0;
+                break;
+            case 4:
+                i = 0;
+                while (arg0->curModAnimId != objdata2->modAnims[i] && i < 15) {
+                    i += 3;
+                }
+                temp = i / 3;
+                break;
+            default:
+                temp = 5;
+                break;
+        }
+        return temp;
+    case 8:
+        return _bss_1A8 > 0;
+    case 9:
+        return objdata1->unk341 == 3;
+    case 10:
+        return objdata2->flags & 0x200;
+    case 11:
+        return objdata2->flags & 0x100;
+    case 13:
+        return objdata1->unk33D == 1;
+    case 14:
+        return objdata2->unk87C;
+    case 15:
+        return objdata2->unk85C;
+    case 16:
+        return objdata2->unk860;
+    case 18:
+        return objdata2->unk872;
+    case 19:
+        if (objdata2->unk858 != NULL) {
+            return objdata2->unk858->id;
+        }
+        return 0;
+    default:
+        return 0;
+    }
+}
 
 // offset: 0x4634 | func: 25 | export: 67
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4634.s")
