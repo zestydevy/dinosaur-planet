@@ -10,7 +10,7 @@
 #include "types.h"
 
 // size: 0x3C
-typedef struct PlayerState3B4 {
+typedef struct Player_Data3B4 {
     s16 unk0;
     s16 unk2;
     u32 unk4;
@@ -28,10 +28,10 @@ typedef struct PlayerState3B4 {
     s16 unk2E;
     u32 pad30;
     WeaponDataPtr unk34;
-} PlayerState3B4;
+} Player_Data3B4;
 
 // size: 0x48
-typedef struct PlayerState490 {
+typedef struct Player_Data490 {
     f32 unk0;
     f32 unk4;
     f32 unk8;
@@ -45,7 +45,7 @@ typedef struct PlayerState490 {
     u16 pad44;
     s8 unk46;
     u8 unk47;
-} PlayerState490;
+} Player_Data490;
 
 // TODO: not necessarily in story order
 // Which spirit the player is currently holding
@@ -212,7 +212,7 @@ typedef struct {
 /*378*/ Unk80032CF8Copy unk378;
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
-/*3B4*/ PlayerState3B4* unk3B4;
+/*3B4*/ Player_Data3B4* unk3B4;
 /*3B8*/ s16 *unk3B8;
 /*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, Player_Data*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
@@ -221,7 +221,7 @@ typedef struct {
 /*3CC*/ UnkArg3 unk3CC;
 /*42C*/ s32 pad42C;
 /*430*/ UnkArg3 unk430;
-/*490*/ PlayerState490 unk490;
+/*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
 /*508*/ u8 pad508[0x680 - 0x508];
 /*680*/ UnkArg2 unk680;
