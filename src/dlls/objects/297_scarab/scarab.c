@@ -66,7 +66,7 @@ void dll_297_ctor(void *dll) { }
 void dll_297_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_295_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
+void dll_297_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
     Scarab_Data* objdata = self->data;
 
     objdata->unk26 = 0;
@@ -105,14 +105,14 @@ void dll_295_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x174 | func: 1 | export: 1
-void dll_295_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_295_control.s")
+void dll_297_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_297_control.s")
 
 // offset: 0x1164 | func: 2 | export: 2
-void dll_295_update(Object *self) { }
+void dll_297_update(Object *self) { }
 
 // offset: 0x1170 | func: 3 | export: 3
-void dll_295_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void dll_297_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     Scarab_Data* objdata = self->data;
 
     if (objdata->unk14) {
@@ -131,7 +131,7 @@ void dll_295_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** 
 }
 
 // offset: 0x11F8 | func: 4 | export: 4
-void dll_295_free(Object* self, s32 arg1) {
+void dll_297_free(Object* self, s32 arg1) {
     Scarab_Data* objdata;
 
     objdata = self->data;
