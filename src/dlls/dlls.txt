@@ -85,6 +85,7 @@
 668 = objects/668_db_diamond
 712 = objects/712_DIMSnowHorn1
 714 = objects/714_DR_CloudRunner
+718 = objects/718_PerchObject
 723 = objects/723_GPbonfire
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock

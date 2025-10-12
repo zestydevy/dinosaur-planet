@@ -1,0 +1,18 @@
+.text = 0x0:
+perchObject_ctor = 0x0;
+perchObject_dtor = 0xC;
+perchObject_setup = 0x18;
+perchObject_control = 0x74;
+perchObject_update = 0x25C;
+perchObject_print = 0x268;
+perchObject_free = 0x2BC;
+perchObject_get_model_flags = 0x2FC;
+perchObject_get_data_size = 0x30C;
+perchObject_land_on_perch = 0x320;
+perchObject_func_388 = 0x388;
+perchObject_approach_perch = 0x3A0;
+perchObject_func_460 = 0x460;
+perchObject_anim_callback = 0x470;
+
+.rodata = 0x604:
+str_0 = 0x0; // absolute:0x604
