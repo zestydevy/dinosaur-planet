@@ -99,8 +99,18 @@ typedef struct Unk {
 /* static */ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5);
 /* static */ Object *dll_210_func_1DD94(Object* obj, s32 arg1);
 /* static */ void dll_210_func_1DC48(Object* obj);
-
+/* static */ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ void dll_210_func_64B4(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ void dll_210_func_692C(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3);
+/* static */ void dll_210_func_47B8(Object* arg0, Player_Data* arg1);
+/* static */ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2);
+/* static */ void dll_210_func_1CA8(Object* arg0, Player_Data* arg1, Player_Data* arg2);
+/* static */ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2);
+/* static */ void dll_210_func_7180(Object* arg0, Player_Data* arg1, f32 arg2);
+/* static */ void dll_210_func_A058(Object* arg0);
+/* static */ void dll_210_func_A024(Object* player, Player_Data* objdata);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -454,7 +464,7 @@ void dll_210_setup(Object* arg0, u32 arg1) {
     obj_add_object_type(arg0, 0x27);
     obj_set_update_priority(arg0, 0x3C);
     obj_init_mesg_queue(arg0, 0x14U);
-    arg0->createInfo = NULL;
+    arg0->setup = NULL;
     arg0->unk0xbc = (s32 (*)(Object*, Object*, void*, void*)) dll_210_func_4910;
     _bss_1A4 = 0;
     data->stats = gDLL_29_Gplay->vtbl->get_player_stats();
@@ -1208,7 +1218,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
 #endif
 
 // offset: 0x2C7C | func: 9 | export: 2
-#ifdef NON_MATCHING
+#ifndef NON_MATCHING
 void dll_210_update(Object* arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_update.s")
 #else
@@ -1456,8 +1466,6 @@ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
     SRT sp48;
     Player_Data* sp44;
     Gfx* temp_v0_4;
-    s32 var_v0_2;
-    s32 i;
 
     sp44 = arg0->data;
     sp64 = sp44->unk844;
