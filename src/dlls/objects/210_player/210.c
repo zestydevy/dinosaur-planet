@@ -46,6 +46,7 @@ static void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2);
 static void dll_210_func_7CF8(Player_Data* arg0, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* arg0, Player_Data* arg1, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2, Player_Data3B4* arg3, f32 arg4, s32 arg5);
+static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
 
 typedef struct Unk {
@@ -110,7 +111,6 @@ typedef struct Unk {
 /* static */ void dll_210_func_7180(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_A058(Object* arg0);
 /* static */ void dll_210_func_A024(Object* player, Player_Data* objdata);
-/* static */ void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -1218,11 +1218,6 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
 #endif
 
 // offset: 0x2C7C | func: 9 | export: 2
-#ifndef NON_MATCHING
-void dll_210_update(Object* arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_update.s")
-#else
-// matches but requires dll_210_func_8EA4 as static
 void dll_210_update(Object* arg0) {
     Object* temp_a0;
     Player_Data* temp_s1;
@@ -1301,7 +1296,6 @@ void dll_210_update(Object* arg0) {
         }
     }
 }
-#endif
 
 // offset: 0x307C | func: 10 | export: 3
 #ifndef NON_MATCHING
@@ -3370,7 +3364,7 @@ s32 dll_210_func_8AE0(Object* arg0, s32 arg1, s32 arg2, Vec3f* arg3, Vec4f* arg4
 }
 
 // offset: 0x8EA4 | func: 47
-void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7) {
+static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7) {
     f32 sp44;
     f32 sp40;
     f32 sp3C;
