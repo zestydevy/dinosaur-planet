@@ -174,7 +174,7 @@ typedef struct Object {
 /*0018*/    Vec3f positionMirror; //local vs global?
 /*0024*/    Vec3f speed; // rename to velocity?
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
-/*0034*/    u8 unk_0x34;
+/*0034*/    u8 unk_0x34; //self-mapID for mobile map objects? (e.g. Galleon)
 /*0035*/    s8 matrixIdx;
 /*0036*/    u8 unk_0x36; // transparency
 /*0037*/    u8 unk_0x37; // also transparency? (set to unk_0x36)
