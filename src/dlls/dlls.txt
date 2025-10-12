@@ -83,6 +83,7 @@
 641 = objects/641_DFPLift
 652 = objects/652_DFP_SpellPlace
 668 = objects/668_db_diamond
+712 = objects/712_DIMSnowHorn1
 714 = objects/714_DR_CloudRunner
 723 = objects/723_GPbonfire
 781 = objects/781_WCpressureswitch
