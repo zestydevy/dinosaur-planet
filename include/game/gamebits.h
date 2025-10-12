@@ -553,7 +553,7 @@ typedef enum {
     BIT_224 = 0x224, // len:1 group:1
     BIT_225 = 0x225, // len:1 group:1
     BIT_226 = 0x226, // len:1 group:1
-    BIT_227 = 0x227, // len:1 group:0
+    BIT_WM_Spirit_Release_Effect = 0x227, // len:1 group:0
     BIT_228 = 0x228, // len:1 group:2
     BIT_Boss_Galadon_Map_Setup = 0x229, // len:4 group:1
     BIT_22A = 0x22A, // len:1 group:2

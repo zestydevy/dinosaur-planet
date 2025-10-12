@@ -45,6 +45,8 @@
 #include "dll_def.h"
 #include "types.h"
 
+#define DLL_ID_MODGFX(n) ((n-104)+0x1000)
+
 // Note: These are DLL IDs not indices
 enum DLL_ID {
     // Engine
@@ -90,12 +92,14 @@ enum DLL_ID {
     DLL_ID_76 = 76,
 
     // Mod gfx
-    DLL_ID_106 = 0x1002,
-    DLL_ID_107 = 0x1003,
-    DLL_ID_122 = 0x1012,
-    DLL_ID_147 = 0x102B,
-    DLL_ID_148 = 0x102C,
-    DLL_ID_182 = 0x104E,
+    DLL_ID_106 = DLL_ID_MODGFX(106),
+    DLL_ID_107 = DLL_ID_MODGFX(107),
+    DLL_ID_122 = DLL_ID_MODGFX(122),
+    DLL_ID_147 = DLL_ID_MODGFX(147),
+    DLL_ID_148 = DLL_ID_MODGFX(148),
+    DLL_ID_149 = DLL_ID_MODGFX(149),
+    DLL_ID_155 = DLL_ID_MODGFX(155),
+    DLL_ID_182 = DLL_ID_MODGFX(182),
 
     // Objects
     DLL_ID_CANNON_CLAW = 0x800E

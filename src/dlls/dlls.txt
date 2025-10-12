@@ -72,6 +72,7 @@
 549 = objects/549_GP_ShrinePillar
 596 = objects/596_WLpressureswitch
 607 = objects/607_WL_LevelControl
+610 = objects/610_WL_spiritplace
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint
 636 = objects/636_VFP_lavastar
