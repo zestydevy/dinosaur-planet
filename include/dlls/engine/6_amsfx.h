@@ -34,6 +34,11 @@ enum SoundID {
 
     SOUND_242 = 0x242, // menu related
 
+    SOUND_284_SB_Kyte_Heeelp = 0x284,
+    SOUND_285_SB_Kyte_Find_the_wizard_and_get_me_out_of_here = 0x285,
+
+    SOUND_287_SB_Kyte_Empty = 0x287,
+
     SOUND_342 = 0x342, // used in DLL 466
 
     SOUND_377 = 0x377, // snowhorn related
