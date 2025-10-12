@@ -1,5 +1,6 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
@@ -23,7 +24,9 @@ typedef struct {
     f32 unk3C;
     f32 unk40;
     f32 unk44;
-    s16 unk48[3];
+    s16 unk48;
+    s16 unk4A;
+    s16 unk4C;
     s16 unk4E;
     s8 unk50;
     s8 unk51;
@@ -70,10 +73,10 @@ void GPSH_flybaddie_setup(Object* self, GPSH_flybaddie_Setup* setup, s32 arg2) {
     objdata->unk30 = 1.0f;
     objdata->unk51 = 0;
     objdata->unk50 = 0;
-    objdata->unk48[0] = rand_next(0, 65000);
-    objdata->unk48[1] = 10000;
+    objdata->unk48 = rand_next(0, 65000);
+    objdata->unk4A = 10000;
     objdata->unk53 = 1;
-    objdata->unk48[2] = (s16) (rand_next(0, 1000) + 1000);
+    objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
     objdata->unk4E = rand_next(0, 1000);
     if (setup->unk1A == 0) {
         objdata->unk44 = -130.0f;
@@ -97,14 +100,14 @@ void GPSH_flybaddie_control(Object* self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_72F, 0x28, NULL, NULL, 0, NULL);
         objdata->unk4E = -999;
     }
-    self->srt.yaw += (s16) (objdata->unk48[0] / 10);
-    self->srt.pitch += (s16) (objdata->unk48[1] / 10);
-    if (objdata->unk48[2] != 0) {
-        objdata->unk48[2] -= (s16)delayFloat;
+    self->srt.yaw += (s16) (objdata->unk48 / 10);
+    self->srt.pitch += (s16) (objdata->unk4A / 10);
+    if (objdata->unk4C != 0) {
+        objdata->unk4C -= (s16)delayFloat;
     }
-    if (objdata->unk48[2] <= 0) {
+    if (objdata->unk4C <= 0) {
         GPSH_flybaddie_func_7F8(self);
-        objdata->unk48[2] = (s16) (rand_next(0, 1000) + 1000);
+        objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
     }
     if (objdata->unk30 > 1.0f) {
         objdata->unk30 -= 1.0f;
@@ -117,7 +120,7 @@ void GPSH_flybaddie_control(Object* self) {
     gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
     gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
     if ((func_80025F40(self, &sp48, NULL, NULL) == 0xF) && (sp48 != 0)) {
-        if (sp48->id != 0x3FC) {
+        if (sp48->id != OBJ_WGSH_projball) {
             for (i = 15; i != 0; i--) {
                 gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
             }
@@ -178,18 +181,18 @@ static void GPSH_flybaddie_func_654(Object* self) {
     sp48[0] = 0.0f;
     sp48[1] = 0.0f;
     sp48[2] = objdata->unk44;
-    objdata->unk48[0] += (s16)rand_next(1000, 2000);
-    if (((objdata->unk48[1] < 4001) && (objdata->unk53 == -1)) || ((objdata->unk48[1] >= 28000) && (objdata->unk53 == 1))) {
+    objdata->unk48 += (s16)rand_next(1000, 2000);
+    if (((objdata->unk4A < 4001) && (objdata->unk53 == -1)) || ((objdata->unk4A >= 28000) && (objdata->unk53 == 1))) {
         objdata->unk53 = -objdata->unk53;
     }
-    objdata->unk48[1] += ((s16)rand_next(2000, 3000) * objdata->unk53);
+    objdata->unk4A += ((s16)rand_next(2000, 3000) * objdata->unk53);
     sp30.roll = 0;
     sp30.transl.x = 0.0f;
     sp30.transl.y = 0.0f;
     sp30.transl.z = 0.0f;
     sp30.scale = 1.0f;
-    sp30.pitch = objdata->unk48[1];
-    sp30.yaw = objdata->unk48[0];
+    sp30.pitch = objdata->unk4A;
+    sp30.yaw = objdata->unk48;
     rotate_vec3(&sp30, sp48);
     objdata->unk0.w = (sp48[0] + objdata->unk38);
     objdata->unk10.w = (sp48[1] + (objdata->unk3C + 20.0f));
