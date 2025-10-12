@@ -1555,7 +1555,19 @@ s32 dll_210_func_3F50(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x3F64 | func: 16 | export: 63
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_3F64.s")
+s32 dll_210_func_3F64(Object* arg0) {
+    PlayerState *state = arg0->state;
+
+    if (arg0->linkedObject == NULL) {
+        arg0->linkedObject = obj_create(obj_alloc_create_info(sizeof(ObjCreateInfo), _data_24[state->unk8B4]), 4U, -1, -1, arg0->parent);
+        arg0->unk0xb0 &= ~3;
+        arg0->unk0xb0 |= 3;
+        func_80023D30(arg0->linkedObject, 0, 1.0f, 0U);
+        return 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x4038 | func: 17 | export: 64
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4038.s")
