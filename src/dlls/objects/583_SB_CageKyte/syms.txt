@@ -1,0 +1,17 @@
+.text = 0x0:
+SBCageKyte_ctor = 0x0;
+SBCageKyte_dtor = 0xC;
+SBCageKyte_setup = 0x18;
+SBCageKyte_control = 0x40;
+SBCageKyte_update = 0x26C;
+SBCageKyte_print = 0x278;
+SBCageKyte_free = 0x30C;
+SBCageKyte_get_model_flags = 0x368;
+SBCageKyte_get_data_size = 0x378;
+SBCageKyte_anim_callback = 0x38C;
+
+.rodata = 0x418:
+
+.data = 0x418:
+soundIDs = 0x0; // absolute:0x418
+dataUnused = 0x4; // absolute:0x41C

@@ -166,7 +166,7 @@ typedef enum {
     BIT_A1 = 0xA1, // len:1 group:0
     BIT_A2 = 0xA2, // len:1 group:1
     BIT_A3 = 0xA3, // len:1 group:2
-    BIT_A4 = 0xA4, // len:1 group:1
+    BIT_Galleon_Arrived_at_Warlock_Mountain = 0xA4, // len:1 group:1
     BIT_A5 = 0xA5, // len:1 group:0
     BIT_A6 = 0xA6, // len:1 group:1
     BIT_WM_Randorn_Door_OpenClose = 0xA7, // len:1 group:0
@@ -210,7 +210,7 @@ typedef enum {
     BIT_CD = 0xCD, // len:1 group:2
     BIT_CE = 0xCE, // len:1 group:2
     BIT_CF = 0xCF, // len:1 group:0
-    BIT_D0 = 0xD0, // len:1 group:2 task:3
+    BIT_WM_Played_Randorn_First_Meeting = 0xD0, // len:1 group:2 task:3
     BIT_WL_Load_Unload_Galleon = 0xD1, // len:1 group:2
     BIT_D2 = 0xD2, // len:1 group:2
     BIT_SnowHorn_Tutorial_Defeated_SharpClaw = 0xD3, // len:1 group:2

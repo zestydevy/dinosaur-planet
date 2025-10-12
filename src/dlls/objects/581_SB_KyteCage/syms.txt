@@ -1,0 +1,13 @@
+.text = 0x0:
+kyteCage_ctor = 0x0;
+kyteCage_dtor = 0xC;
+kyteCage_setup = 0x18;
+kyteCage_control = 0xD0;
+kyteCage_update = 0x298;
+kyteCage_print = 0x2A4;
+kyteCage_free = 0x848;
+kyteCage_get_model_flags = 0x858;
+kyteCage_get_data_size = 0x868;
+kyteCage_anim_callback = 0x87C;
+
+.rodata = 0x96C:

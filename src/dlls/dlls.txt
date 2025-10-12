@@ -71,6 +71,9 @@
 519 = objects/519_SC_levelcontrol
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
+581 = objects/581_SB_KyteCage
+583 = objects/583_SB_CageKyte
+590 = objects/590_WL_Galleon
 596 = objects/596_WLpressureswitch
 607 = objects/607_WL_LevelControl
 619 = objects/619_VFP_LevelControl
@@ -81,7 +84,9 @@
 641 = objects/641_DFPLift
 652 = objects/652_DFP_SpellPlace
 668 = objects/668_db_diamond
+712 = objects/712_DIMSnowHorn1
 714 = objects/714_DR_CloudRunner
+718 = objects/718_PerchObject
 723 = objects/723_GPbonfire
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock

@@ -8,22 +8,23 @@
 #include "sys/rand.h"
 
 typedef struct {
-u32 soundHandle;
-f32 unk4; //speedX
-f32 unk8; //speedZ
-f32 unkC;
-f32 unk10; //y
-s16 unk14;
-s8 unk16[0x18 - 0x16];
-s16 unk18;
-s16 unk1A;
-s8 unk1C[0x20 - 0x1C];
-s16 unk20;
-s16 unk22;
-s16 unk24;
-u8 unk26;
-s8 unk27[0x29 - 0x27];
-u8 unk29; //scarabTypeIndex
+/*00*/ u32 soundHandle;
+/*04*/ f32 speedX;
+/*08*/ f32 speedZ;
+/*0C*/ f32 unkC;
+/*10*/ f32 unk10; //y
+/*14*/ s16 unk14;
+/*16*/ s8 unk16[0x18 - 0x16];
+/*18*/ s16 unk18;
+/*1A*/ s16 unk1A;
+/*1C*/ s8 unk1C[0x20 - 0x1C];
+/*20*/ s16 unk20;
+/*22*/ s16 unk22;
+/*24*/ s16 unk24;
+/*26*/ u8 unk26;
+/*27*/ s8 unk27;
+/*27*/ s8 unk28;
+/*29*/ u8 scarabTypeIndex;
 } Scarab_Data;
 
 typedef struct {
@@ -46,11 +47,6 @@ f32 unk8;
 f32 unkC;
 } ScarabFunc1304Arg3;
 
-typedef union {
-    u8 bytes[4];
-    u32 word;
-} ScarabValues;
-
 /*0x0*/ static u16 _data_0[] = {
     0x0451, 0x0452, 0x0453, 0x0453
 };
@@ -59,9 +55,6 @@ typedef union {
 };
 /*0x14*/ static u32 _data_14[] = {
     0, 0, 0
-};
-/*0x20*/ static ScarabValues _data_20 = {
-    {1, 5, 10, 50}
 };
 
 /*0x0*/ static u8 _bss_0[0x10];
@@ -73,7 +66,7 @@ void dll_297_ctor(void *dll) { }
 void dll_297_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_295_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
+void dll_297_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
     Scarab_Data* objdata = self->data;
 
     objdata->unk26 = 0;
@@ -88,23 +81,23 @@ void dll_295_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
         case OBJ_Green_scarab:
             objdata->unk22 = 0xB6E;
             objdata->unk24 = 0x1FF;
-            objdata->unk29 = 0;
+            objdata->scarabTypeIndex = 0;
             break;
         case OBJ_Red_scarab:
             objdata->unk22 = 0xB6F;
             objdata->unk24 = 0x79;
-            objdata->unk29 = 1;
+            objdata->scarabTypeIndex = 1;
             break;
         case OBJ_Gold_scarab:
             objdata->unk22 = 0xB70;
             objdata->unk24 = 0x1FE;
-            objdata->unk29 = 2;
+            objdata->scarabTypeIndex = 2;
             break;
         default:
         case OBJ_Rain_scarab:
             objdata->unk22 = 0xB71;
             objdata->unk24 = 0x7B;
-            objdata->unk29 = 3;
+            objdata->scarabTypeIndex = 3;
             break;
     }
 
@@ -112,14 +105,14 @@ void dll_295_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x174 | func: 1 | export: 1
-void dll_295_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_295_control.s")
+void dll_297_control(Object *self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/297_scarab/dll_297_control.s")
 
 // offset: 0x1164 | func: 2 | export: 2
-void dll_295_update(Object *self) { }
+void dll_297_update(Object *self) { }
 
 // offset: 0x1170 | func: 3 | export: 3
-void dll_295_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void dll_297_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     Scarab_Data* objdata = self->data;
 
     if (objdata->unk14) {
@@ -138,7 +131,7 @@ void dll_295_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** 
 }
 
 // offset: 0x11F8 | func: 4 | export: 4
-void dll_295_free(Object* self, s32 arg1) {
+void dll_297_free(Object* self, s32 arg1) {
     Scarab_Data* objdata;
 
     objdata = self->data;
@@ -160,9 +153,9 @@ u32 dll_297_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x1284 | func: 7
 void dll_297_func_1284(Object* self, Object* player, Scarab_Data* objdata) {
-  ScarabValues values = _data_20;
+  u8 values[4] = {1, 5, 10, 50};
 
-  ((DLL_Unknown*)player->dll)->vtbl->func[19].withTwoArgs((s32) player, values.bytes[objdata->unk29]);
+  ((DLL_Unknown*)player->dll)->vtbl->func[19].withTwoArgs((s32) player, values[objdata->scarabTypeIndex]);
 
   objdata->unk14 = 0x50;
   objdata->unk18 = 0;
@@ -203,8 +196,8 @@ void dll_297_func_1304(Object* self, ScarabFunc1304Arg1* arg1, u8 arg2, ScarabFu
 
         self->speed.x /= doubleSpeed;
         self->speed.z /= doubleSpeed;
-        objdata->unk4 = self->speed.x;
-        objdata->unk8 = self->speed.z;
+        objdata->speedX = self->speed.x;
+        objdata->speedZ = self->speed.z;
         self->srt.yaw = arctan2_f(-arg3->unk0, -arg3->unk8);
         return;
     }
