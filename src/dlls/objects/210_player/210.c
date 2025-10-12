@@ -1589,7 +1589,11 @@ Object *dll_210_func_4114(Object* player) {
 }
 
 // offset: 0x413C | func: 19 | export: 46
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_413C.s")
+u8 dll_210_func_413C(Object* arg0) {
+    Player_Data *objdata = arg0->data;
+
+    return objdata->unk8B5 != 5 && objdata->unk8B5 != 4 && objdata->unk8B5 != 9 && objdata->unk8B5 != 0xA && objdata->unk8B5 != 0x11;
+}
 
 // offset: 0x4198 | func: 20 | export: 48
 s16 dll_210_func_4198(Object* player) {
