@@ -37,6 +37,8 @@ typedef struct UnkArg1 {
     s8 unk52;
 } UnkArg1;
 
+static void dll_210_func_1BC0(Object* arg0, Player_Data* arg1);
+static void dll_210_func_618C(Object* arg0, Player_Data* arg1, s32 arg2, f32 arg3);
 static void dll_210_func_7260(Object* arg0, Player_Data* arg1);
 static s32 dll_210_func_7300(Object* arg0, Player_Data* arg1, UnkArg1* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5);
 static s32 dll_210_func_7AAC(Object* arg0, Player_Data* arg1, UnkArg1* arg2, Vec3f* arg3, UnkArg3* arg4, s32 arg5);
@@ -44,9 +46,8 @@ static void dll_210_func_7B98(Object* arg0, UnkArg1* arg1, UnkArg2* arg2);
 static void dll_210_func_7CF8(Player_Data* arg0, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* arg0, Player_Data* arg1, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2, Player_Data3B4* arg3, f32 arg4, s32 arg5);
+static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
-static void dll_210_func_618C(Object* arg0, Player_Data* arg1, s32 arg2, f32 arg3);
-static void dll_210_func_1BC0(Object* arg0, Player_Data* arg1);
 
 typedef struct Unk {
     u8 pad0[0x24];
@@ -98,7 +99,7 @@ typedef struct Unk {
 /* static */ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5);
 /* static */ Object *dll_210_func_1DD94(Object* obj, s32 arg1);
 /* static */ void dll_210_func_1DC48(Object* obj);
-/* static */ void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
+
 /* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
 
 // Used before declared / implemented
@@ -1207,7 +1208,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
 #endif
 
 // offset: 0x2C7C | func: 9 | export: 2
-#ifndef NON_MATCHING
+#ifdef NON_MATCHING
 void dll_210_update(Object* arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_update.s")
 #else
@@ -3361,7 +3362,50 @@ s32 dll_210_func_8AE0(Object* arg0, s32 arg1, s32 arg2, Vec3f* arg3, Vec4f* arg4
 }
 
 // offset: 0x8EA4 | func: 47
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_8EA4.s")
+static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7) {
+    f32 sp44;
+    f32 sp40;
+    f32 sp3C;
+    s16* temp_v0;
+
+    if (arg7) {
+        temp_v0 = func_80034804(arg0, 0);
+        if (temp_v0 != NULL) {
+            if (temp_v0[1] > 0) {
+                temp_v0[1] -= (s16) (s32) (delayFloat * 200.0f);
+                if (temp_v0[1] < 0) {
+                    temp_v0[1] = 0;
+                }
+            } else {
+                temp_v0[1] += (s16) (s32) (delayFloat * 200.0f);
+                if (temp_v0[1] > 0) {
+                    temp_v0[1] = 0;
+                }
+            }
+        }
+        arg2->dll->vtbl->print(arg2, arg3, arg4, arg5, arg6, -1);
+        arg0->positionMirror3.x = arg0->positionMirror.x;
+        arg0->positionMirror3.y = arg0->positionMirror.y;
+        arg0->positionMirror3.z = arg0->positionMirror.z;
+        arg0->positionMirror2.x = arg0->srt.transl.x;
+        arg0->positionMirror2.y = arg0->srt.transl.y;
+        arg0->positionMirror2.z = arg0->srt.transl.z;
+    }
+    ((DLL_Unknown *)arg2->dll)->vtbl->func[9].withFourArgs(arg2, &sp44, &sp40, &sp3C);
+    arg0->srt.transl.x = sp44;
+    arg0->srt.transl.y = sp40;
+    arg0->srt.transl.z = sp3C;
+    arg0->srt.yaw = arg2->srt.yaw;
+    arg0->srt.pitch = arg2->srt.pitch;
+    arg0->srt.roll = arg2->srt.roll;
+    arg0->positionMirror.x = arg0->srt.transl.x;
+    arg0->positionMirror.y = arg0->srt.transl.y;
+    arg0->positionMirror.z = arg0->srt.transl.z;
+    arg0->speed.x = arg2->speed.x;
+    arg0->speed.y = arg2->speed.y;
+    arg0->speed.z = arg2->speed.z;
+    dll_210_func_7260(arg0, arg1);
+}
 
 // offset: 0x90A0 | func: 48
 #ifndef NON_EQUIVALENT
