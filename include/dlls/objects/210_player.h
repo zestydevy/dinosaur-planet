@@ -127,7 +127,9 @@ typedef struct {
 /*048*/ Vec3f unk48;
 /*004*/ s8 unk54[0xBC - 0x54];
 /*0BC*/ s8 unkBC;
-/*004*/ s8 unkBD[0x198 - 0xBD];
+/*0BD*/ s8 unkBD[0xD8 - 0xBD];
+/*0D8*/ Object *unkD8;
+/*0DC*/ u8 padDC[0x198 - 0xDC];
 /*198*/ s16 unk198;
 /*19A*/ s16 unk19A;
 /*19C*/ s8 unk19C[0x1A8 - 0x19C];

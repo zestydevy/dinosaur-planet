@@ -132,6 +132,7 @@ void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32,
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, s16 *param_7);
 s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, UnkArg1*, Object*, s8, s8, u8, s8);
 s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
+void func_8005B5B8(Object*, Object*, s32);
 
 /*0x0*/ static const DLTri _rodata_0[] = {
     { 0x40, 0x02, 0x01, 0x00, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x01, 0x02, { 0, 0, 0, 0, 0, 0 }},
@@ -1215,7 +1216,91 @@ void dll_210_func_2534(Object* arg0, PlayerState* arg1, PlayerState* arg2) {
 #endif
 
 // offset: 0x2C7C | func: 9 | export: 2
+#ifndef NON_MATCHING
+void dll_210_func_2C7C(Object* arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_2C7C.s")
+#else
+// matches but requires dll_210_func_8EA4 as static
+
+void dll_210_func_2C7C(Object* arg0) {
+    Object* temp_a0;
+    PlayerState* temp_s1;
+    f32 temp_fv0;
+    s32 pad[2];
+    f32 sp58;
+    f32 sp54;
+    s32 sp50;
+    f32 sp4C;
+    Object* temp_a1;
+    f32 sp44;
+
+    temp_s1 = arg0->state;
+    sp44 = delayFloat;
+    gDLL_18->vtbl->func2.withThreeArgs(arg0, temp_s1, _bss_58);
+    if ((temp_s1->unk341 == 1) && (arg0->linkedObject->objhitInfo->unk_0x48 != 0 || arg0->linkedObject->objhitInfo->unk_0x9d != 0)) {
+        arg0->objhitInfo->unk_0x61 = 1;
+    }
+    if (temp_s1->flags & 2) {
+        temp_a1 = temp_s1->unkD8;
+        if ((temp_a1 != NULL) && (temp_a1->def->flags & 0x40) != 0 && !(temp_a1->def->flags & 0x8000)) {
+            func_8005B5B8(arg0, temp_a1, 1);
+        } else if ((arg0->parent != NULL) && (temp_a1 == NULL)) {
+            func_8005B5B8(arg0, NULL, 1);
+        }
+    }
+    temp_a0 = temp_s1->unk858;
+    temp_s1->flags |= 2;
+    if ((temp_a0 != NULL) && ((arg0->unk0xb0 & 0x1000) || temp_s1->unk26C == 0x24 || temp_s1->unk26C == 0x25)) {
+        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[12].withFourArgs(temp_a0, &sp58, &sp54, &sp50);
+        gDLL_2_Camera->vtbl->func10(sp58, sp54, sp50);
+        dll_210_func_8EA4(arg0, temp_s1, temp_s1->unk858, NULL, NULL, NULL, NULL, 0);
+    }
+    if (temp_s1->unk25B == 1) {
+        if (!(temp_s1->flags & 0x2000) && (temp_s1->unk260 != 0)) {
+            temp_fv0 = (arg0->positionMirror.y - arg0->positionMirror3.y) / sp44;
+            arg0->speed.y = temp_fv0;
+            if (temp_fv0 < -4.0f) {
+                arg0->speed.y = -4.0f;
+            }
+            if (arg0->speed.y > 0.0f) {
+                arg0->speed.y = 0.0f;
+            }
+        }
+        if (temp_s1->unk0 & 0x800000) {
+            if (arg0->parent != NULL) {
+                arg0->speed.x = (arg0->srt.transl.x - arg0->positionMirror2.x) / sp44;
+                arg0->speed.z = (arg0->srt.transl.z - arg0->positionMirror2.z) / sp44;
+            } else {
+                arg0->speed.x = (arg0->positionMirror.x - arg0->positionMirror3.x) / sp44;
+                arg0->speed.z = (arg0->positionMirror.z - arg0->positionMirror3.z) / sp44;
+            }
+            if (((temp_s1->unk260 & 6) && !(temp_s1->unk260 & 0x60)) || (temp_s1->pad25E != 0)) {
+                sp4C = fsin16_precise(arg0->srt.yaw);
+                temp_fv0 = fcos16_precise(arg0->srt.yaw);
+                temp_s1->unk278 = (temp_fv0 * -arg0->speed.z) - (arg0->speed.x * sp4C);
+                if (temp_s1->unk278 > 1.65f) {
+                    temp_s1->unk278 = 1.65f;
+                }
+                temp_s1->unk28C = temp_s1->unk278;
+            }
+            temp_s1->unk0 &= ~0x800000;
+        }
+    }
+    if (temp_s1->unk8BE == 1) {
+        temp_s1->unk844 += temp_s1->unk840 * delayFloat;
+        temp_fv0 = temp_s1->unk844;
+        if (temp_fv0 >= 40.0f) {
+            temp_s1->unk844 = 40.0f;
+            temp_s1->unk840 = 0.0f;
+            return;
+        }
+        if (temp_fv0 <= 0.0f) {
+            temp_s1->unk844 = 0.0f;
+            temp_s1->unk840 = 0.2f;
+        }
+    }
+}
+#endif
 
 // offset: 0x307C | func: 10 | export: 3
 #ifndef NON_MATCHING
@@ -1439,7 +1524,25 @@ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
 #endif
 
 // offset: 0x3E50 | func: 13 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_3E50.s")
+void dll_210_func_3E50(Object* arg0, UNK_TYPE_32 arg1) {
+    s32 i;
+    PlayerState* state;
+
+    state = arg0->state;
+    if (arg0->linkedObject != NULL) {
+        obj_destroy_object(arg0->linkedObject);
+    }
+
+    arg0->linkedObject = NULL;
+    for (i = 0; i < state->unk8A0; i++) {
+        if (state->unk3B4[i].unk34.ptr != NULL) {
+            mmFree(state->unk3B4[i].unk34.ptr);
+        }
+    }
+
+    obj_free_object_type(arg0, OBJTYPE_PLAYER);
+    obj_free_object_type(arg0, OBJTYPE_39);
+}
 
 // offset: 0x3F40 | func: 14 | export: 5
 s32 dll_210_func_3F40(s32 arg0) {

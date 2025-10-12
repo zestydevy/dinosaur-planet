@@ -256,4 +256,5 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B274.s")
 
+void func_8005B5B8(Object*, Object*, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B5B8.s")
