@@ -30,10 +30,12 @@ typedef union {
     f32 (*withFiveArgsF32)(s32, s32, s32, s32, s32);
     f32 (*withSixArgsF32)(s32, s32, s32, s32, s32, s32);
     f32 (*withSevenArgsF32)(s32, s32, s32, s32, s32, s32, s32);
+    void (*withThreeArgsCustom)(s32, s32, f32);
     void (*withOneS32OneF32)(s32, f32);
     void (*withFourArgsCustom)(s32, s32, f32, s32);
     void (*withFiveArgsCustom)(s32, f32, s32, s32, s32);
     void (*withSixArgsCustom)(void *, s32, void *, s32, s32, s32);
+    s32 (*withSevenArgsCustom)(void *, f32, f32, f32, void*, void*, void*);
 } UnknownDLLFunc;
 
 // "Unknown" DLL interface to help match code calling DLLs where the exact

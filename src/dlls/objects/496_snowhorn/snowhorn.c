@@ -11,20 +11,17 @@
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
+#include "sys/objhits.h"
 #include "sys/print.h"
 #include "sys/rand.h"
 #include "variables.h"
 #include "functions.h"
 #include "types.h"
+#include "segment_334F0.h"
 
 s32 func_800053B0(void*, f32);
-s32 func_8002493C(void*, f32, void*);
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
-void func_800328F0(Object*, void*, f32);
-void func_80032A08(Object*, void*);
-s16* func_80034804(Object* obj, s32 sequenceBoneID);
-s32* func_800348A0(Object*, s32, s32);
 void set_button_mask(int port, u16 mask);
 
 enum SnowHornAnims {

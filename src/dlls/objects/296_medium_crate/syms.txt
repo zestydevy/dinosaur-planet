@@ -1,14 +1,14 @@
 .text = 0x0:
-dll_296_ctor = 0x0;
-dll_296_dtor = 0xC;
-dll_295_setup = 0x18;
-dll_295_control = 0x250;
-dll_295_update = 0x9C0;
-dll_295_print = 0x9CC;
-dll_295_free = 0xB80;
-dll_296_get_model_flags = 0xC2C;
-dll_296_get_data_size = 0xC3C;
-dll_296_func_C50 = 0xC50;
+medium_crate_ctor = 0x0;
+medium_crate_dtor = 0xC;
+medium_crate_setup = 0x18;
+medium_crate_control = 0x250;
+medium_crate_update = 0x9C0;
+medium_crate_print = 0x9CC;
+medium_crate_free = 0xB80;
+medium_crate_get_model_flags = 0xC2C;
+medium_crate_get_data_size = 0xC3C;
+medium_crate_func_C50 = 0xC50;
 
 .rodata = 0x1754:
 _rodata_0 = 0x0; // absolute:0x1754

@@ -9,6 +9,44 @@
 #include "sys/main.h"
 #include "types.h"
 
+// size: 0x3C
+typedef struct Player_Data3B4 {
+    s16 unk0;
+    s16 unk2;
+    u32 unk4;
+    s16 unk8;
+    s16 padA;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    s16 unk2C;
+    s16 unk2E;
+    u32 pad30;
+    WeaponDataPtr unk34;
+} Player_Data3B4;
+
+// size: 0x48
+typedef struct Player_Data490 {
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    Vec4f unk1C;
+    Vec3f unk2C;
+    Vec3f unk38;
+    u16 pad44;
+    s8 unk46;
+    u8 unk47;
+} Player_Data490;
+
 // TODO: not necessarily in story order
 // Which spirit the player is currently holding
 typedef enum {
@@ -105,7 +143,9 @@ typedef struct {
 /*048*/ Vec3f unk48;
 /*004*/ s8 unk54[0xBC - 0x54];
 /*0BC*/ s8 unkBC;
-/*004*/ s8 unkBD[0x198 - 0xBD];
+/*0BD*/ s8 unkBD[0xD8 - 0xBD];
+/*0D8*/ Object *unkD8;
+/*0DC*/ u8 padDC[0x198 - 0xDC];
 /*198*/ s16 unk198;
 /*19A*/ s16 unk19A;
 /*19C*/ s8 unk19C[0x1A8 - 0x19C];
@@ -117,7 +157,7 @@ typedef struct {
 /*1bc*/ s8 unk1BC[0x25B - 0x1BC];
 /*258*/ s8 unk25B;
 /*25c*/ s8 unk25C;
-/*25d*/ u8 pad25D;
+/*25d*/ s8 unk25D;
 /*25e*/ u8 pad25E;
 /*25f*/ u8 pad25F;
 /*260*/ s8 unk260;
@@ -128,8 +168,7 @@ typedef struct {
 /*268*/ s32 unk268;
 /*26c*/ s16 unk26C;
 /*26e*/ s16 unk26E;
-/*270*/ s8 unk270;
-/*271*/ s8 unk271;
+/*270*/ s16 unk270;
 /*272*/ s8 unk272;
 /*273*/ s8 unk273;
 /*274*/ Vec3f *unk274;
@@ -142,13 +181,16 @@ typedef struct {
 /*290*/ f32 unk290;
 /*294*/ f32 unk294;
 /*298*/ f32 unk298;
-/*29C*/ s8 unk29C[0x2B0 - 0x29C];
+/*29C*/ f32 unk29C;
+/*2A0*/ s8 unk2A0[0x2B0 - 0x2A0];
 /*2b0*/ f32 unk2B0;
 /*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
 /*2c8*/ Object *unk2C8;
 /*2cc*/ s8 unk2CC[0x2FC - 0x2CC];
 /*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
-/*300*/ s8 unk300[0x30C - 0x300];
+/*300*/ s32 pad300;
+/*304*/ s32 unk304;
+/*308*/ s32 pad308;
 /*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
 /*314*/ s8 unk314[0x324 - 0x314];
@@ -161,13 +203,16 @@ typedef struct {
 /*33E*/ s8 unk33E[0x340 - 0x33E];
 /*340*/ s8 unk340;
 /*341*/ s8 unk341;
-/*342*/ s8 unk342[0x34C - 0x342];
+/*342*/ s8 pad342;
+/*343*/ s8 unk343;
+/*344*/ s8 pad344[0x34C - 0x344];
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
 /*354*/ Unk80032CF8Copy unk354;
 /*378*/ Unk80032CF8Copy unk378;
 /*39C*/ Vec3f unk39C;
-/*3A8*/ u8 pad3A8[0x3B8 - 0x3A8];
+/*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
+/*3B4*/ Player_Data3B4* unk3B4;
 /*3B8*/ s16 *unk3B8;
 /*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, Player_Data*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
@@ -176,8 +221,7 @@ typedef struct {
 /*3CC*/ UnkArg3 unk3CC;
 /*42C*/ s32 pad42C;
 /*430*/ UnkArg3 unk430;
-/*490*/ UNK_TYPE_32 unk490;
-/*494*/ u8 pad494[0x4D8 - 0x494];
+/*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
 /*508*/ u8 pad508[0x680 - 0x508];
 /*680*/ UnkArg2 unk680;
@@ -187,14 +231,20 @@ typedef struct {
 /*70E*/ s8 unk70E[0x728 - 0x70E];
 /*728*/ f32 unk728;
 /*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
-/*734*/ u8 pad738[0x764 - 0x738];
+/*734*/ u8 pad738[0x754 - 0x738];
+/*754*/ s32 unk754;
+/*758*/ s32 unk758;
+/*75C*/ f32 unk75C;
+/*760*/ f32 unk760;
 /*764*/ u16 unk764;
 /*766*/ u16 unk766;
 /*768*/ u16 unk768;
 /*76A*/ u16 pad76A;
 /*76C*/ s16 *unk76C;
 /*770*/ u8 unk770;
-/*771*/ s8 unk771[0x7EC - 0x771];
+/*771*/ s8 unk771[0x774 - 0x771];
+/*774*/ Vec3f unk774;
+/*780*/ u8 pad780[0x7EC - 0x780];
 /*7EC*/ Vec3f unk7EC;
 /*7F8*/ s32 pad7F8;
 /*7FC*/ f32 unk7FC;
@@ -222,18 +272,17 @@ typedef struct {
 /*854*/ s32 unk854;
 /*858*/ Object *unk858;
 /*85C*/ Object *unk85C;
-/*860*/ s32 pad860;
+/*860*/ Object *unk860;
 /*864*/ s32 unk864;
 /*868*/ Object* unk868; //held object (baskets etc.)
 /*86C*/ f32 unk86C;
 /*870*/ u8 unk870;
 /*871*/ u8 unk871;
-/*872*/ u8 unk872;
-/*873*/ u8 unk873;
+/*872*/ u16 unk872;
 /*874*/ s16 unk874;
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
-/*87A*/ u16 pad87A;
+/*87A*/ s16 unk87A;
 /*87C*/ s16 unk87C;
 /*87E*/ s16 unk87E;
 /*880*/ s32 unk880;
@@ -241,22 +290,26 @@ typedef struct {
 /*886*/ s16 unk886;
 /*888*/ s16 unk888;
 /*88A*/ s16 unk88A;
-/*88C*/ s32 unk88C;
+/*88C*/ u16 pad88C;
+/*88E*/ u16 unk88E;
 /*890*/ s32 unk890;
 /*894*/ s32 unk894;
 /*898*/ s32 unk898;
 /*89C*/ s32 unk89C;
-/*8A0*/ s32 unk8A0;
+/*8A0*/ u8 unk8A0;
+/*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];
 /*8A4*/ u8 unk8A4;
-/*8A5*/ s8 unk8A5;
+/*8A5*/ u8 unk8A5;
 /*8A6*/ u8 unk8A6;
 /*8A7*/ s8 unk8A7;
 /*8A8*/ u8 unk8A8;
 /*8A9*/ u8 unk8A9;
 /*8AA*/ u8 unk8AA;
 /*8AB*/ u8 unk8AB;
-/*8AC*/ s32 unk8AC;
-/*8B0*/ s32 unk8B0;
+/*8AC*/ u8 pad8AC;
+/*8AD*/ u8 unk8AD;
+/*8AE*/ s8 unk8AE[4];
+/*8B2*/ u8 unk8B2[0x8B4 - 0x8B2];
 /*8B4*/ u8 unk8B4;
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
@@ -265,7 +318,7 @@ typedef struct {
 /*8B9*/ s8 unk8B9;
 /*8BA*/ u8 unk8BA;
 /*8BB*/ u8 unk8BB;
-/*8BC*/ s8 unk8BC;
+/*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
 /*8BE*/ u8 unk8BE;
 /*8BF*/ s8 unk8BF;
