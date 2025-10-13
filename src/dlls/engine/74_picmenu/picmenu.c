@@ -3,10 +3,13 @@
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
+#include "dll.h"
 #include "sys/menu.h"
 #include "sys/rand.h"
+#include "sys/main.h"
 #include "sys/fonts.h"
 #include "sys/gfx/texture.h"
+#include "game/gamebits.h"
 #include "functions.h"
 #include "macros.h"
 

@@ -2,9 +2,13 @@
 #include "PR/gbi.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/gamebits.h"
 #include "sys/asset_thread.h"
+#include "sys/camera.h"
 #include "sys/dll.h"
+#include "sys/objmsg.h"
 #include "sys/gfx/model.h"
+#include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -14,6 +18,8 @@
 #include "dll_def.h"
 #include "types.h"
 #include "functions.h"
+#include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/210_player.h"
 
 static const char str_1[] = "triggers: unknown trigger object %d.\n";
 static const char str_2[] = "TRIGGER: warning Script overflow\n";

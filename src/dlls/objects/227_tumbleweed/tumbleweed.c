@@ -113,8 +113,8 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
         self->srt.scale = objdata->scaleCopy;
     } else {
         self->srt.scale = 0.001f;
-        gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)objdata, 0, 0x40000, 1);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_84.withFiveArgs((s32)objdata, 1, (s32)&_data_0[0], (s32)&_data_C, 4);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_18(objdata, 0, 0x40000, 1);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_84(objdata, 1, &_data_0[0], &_data_C, 4);
         gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, objdata);
         objdata->unk270 = 0;
         self->unk0xaf |= 8;

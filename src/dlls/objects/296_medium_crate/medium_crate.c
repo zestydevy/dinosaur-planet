@@ -8,6 +8,7 @@
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/objects.h"
 #include "sys/math.h"
 #include "sys/rand.h"
 #include "types.h"

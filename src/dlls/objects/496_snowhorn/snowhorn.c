@@ -1,6 +1,7 @@
 //"NWmammoth.c" seems to have been Rare's name!
 
 #include "PR/gbi.h"
+#include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/26_curves.h"

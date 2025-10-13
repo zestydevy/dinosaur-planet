@@ -519,7 +519,7 @@ void dll_6_func_1218(Object *obj) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_func_1320.s")
 #else
 // https://decomp.me/scratch/eQMa4
-void dll_6_func_1320(Object* arg0, u16 arg1, s32 arg2, f32 arg3, f32 arg4, u32* arg5) {
+void dll_6_func_1320(Object* arg0, u16 arg1, FloatOrInt arg2, f32 arg3, f32 arg4, u32* arg5) {
     f32 temp3;
     f32 temp2;
     f32 temp;

@@ -118,6 +118,7 @@ Camera *get_main_camera(void);
 Camera *get_camera(void);
 Camera *get_camera_array(void);
 MtxF *camera_get_view_mtx2(void);
+MtxF *camera_get_viewmtx2(void);
 MtxF *camera_get_viewproj_mtx(void);
 MtxF *camera_get_projection_mtx(void);
 Mtx *camera_get_rsp_projection_mtx(void);
