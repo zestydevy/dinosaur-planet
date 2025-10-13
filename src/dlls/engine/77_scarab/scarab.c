@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "bss.h"
 #include "functions.h"
+#include "game/objects/object.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"

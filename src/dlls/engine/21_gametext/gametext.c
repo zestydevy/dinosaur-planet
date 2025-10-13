@@ -1,11 +1,10 @@
+#include "PR/os.h"
 #include "PR/ultratypes.h"
-#include "libc/string.h"
 #include "sys/fs.h"
 #include "sys/memory.h"
 #include "sys/asset_thread.h"
 #include "dlls/engine/21_gametext.h"
-#include "variables.h"
-#include "functions.h"
+#include "libc/string.h"
 
 static s8 sCurrentBankIndex = -1;
 

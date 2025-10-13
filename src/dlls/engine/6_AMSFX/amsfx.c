@@ -1,12 +1,22 @@
+#include "PR/libaudio.h"
+#include "PR/os.h"
 #include "PR/ultratypes.h"
+#include "game/objects/object.h"
+#include "dlls/engine/6_amsfx.h"
+#include "functions.h"
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_sndplayer.h"
 #include "libnaudio/mp3/segment_67F50.h"
 #include "sys/acache.h"
+#include "sys/asset_thread.h"
+#include "sys/camera.h"
 #include "sys/fs.h"
 #include "sys/map.h"
 #include "mpeg_fs.h"
-#include "common.h"
+#include "sys/math.h"
+#include "sys/memory.h"
+#include "unktypes.h"
+#include "sys/objects.h"
 
 /*0x0*/ static const char str_0[] = "AMSFX: Error sound effects bank missing!\n";
 /*0x2C*/ static const char str_2C[] = "amSfxPlayEx failed\n";

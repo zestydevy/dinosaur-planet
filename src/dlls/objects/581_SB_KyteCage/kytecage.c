@@ -170,7 +170,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3((SRT* ) &galleonTransform, (Vec3f* ) &boneTransform.transl);
+                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
@@ -206,7 +206,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3((SRT* ) &galleonTransform, (Vec3f* ) &boneTransform.transl);
+                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
