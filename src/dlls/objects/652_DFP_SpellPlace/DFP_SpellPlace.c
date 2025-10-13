@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
 #include "sys/objanim.h"
 
 typedef struct {
@@ -115,7 +116,7 @@ static void dll_652_func_364(Object* self) {
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unk0xaf &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(0x123) != 0)) {
+        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(BIT_SpellStone_1) != 0)) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             objdata->unk4 = 1;
             self->unk0xaf |= 8;

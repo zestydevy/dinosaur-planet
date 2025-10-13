@@ -2007,7 +2007,7 @@ typedef enum {
     BIT_7D2 = 0x7D2, // len:1 group:1
     BIT_7D3 = 0x7D3, // len:1 group:1
     BIT_7D4 = 0x7D4, // len:1 group:1
-    BIT_GP_ChimneySweep_Lifted = 0x7D5, // len:1 group:0
+    BIT_GP_ChimneySwipe_Lifted = 0x7D5, // len:1 group:0
     BIT_7D6 = 0x7D6, // len:1 group:1
     BIT_7D7 = 0x7D7, // len:1 group:0
     BIT_7D8 = 0x7D8, // len:1 group:0
@@ -2156,7 +2156,7 @@ typedef enum {
     BIT_MMP_MoonSeed_2_Planted = 0x867, // len:1 group:2
     BIT_MMP_MoonSeed_3_Planted = 0x868, // len:1 group:2
     BIT_MMP_MoonSeed_4_Planted = 0x869, // len:1 group:2
-    BIT_86A = 0x86A, // len:3 group:2
+    BIT_Inventory_MoonSeeds = 0x86A, // len:3 group:2
     BIT_86B = 0x86B, // len:1 group:1
     BIT_86C = 0x86C, // len:1 group:1
     BIT_86D = 0x86D, // len:1 group:1

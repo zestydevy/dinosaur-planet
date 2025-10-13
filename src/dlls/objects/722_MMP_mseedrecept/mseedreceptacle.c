@@ -1,7 +1,9 @@
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "sys/objtype.h"
+#include "libnaudio/n_libaudio.h"
 
 typedef struct {
 /*00*/	s16 objId;
@@ -108,7 +110,7 @@ void dll_722_control(Object* self) {
     Object *kyte;
     SRT particleTrans;
     f32 time;
-    u8 zero;
+    u8 bssIndex;
     s32 count;
         
     objData = self->data;
@@ -116,7 +118,7 @@ void dll_722_control(Object* self) {
     
     if (objData->unk1 & 1){
         objData->unk0 = 2;
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x798, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
         objData->unk1 &= 0xFFFE;
         self->unk_0x36 = 0xFF;
@@ -128,29 +130,29 @@ void dll_722_control(Object* self) {
         objData->unk1 &= 0xFFFD;
     }
     
-    zero = 0;
+    bssIndex = 0;
     switch (objData->unk0){
         case 0:
             objData->unk0 = 1;
             self->srt.transl.y = objSetup->base.y - 10.0f;
-            if (main_get_bits(objData->gamebitPlanted) != zero){
+            if (main_get_bits(objData->gamebitPlanted)){
                 objData->unk0 = 2;
                 self->srt.transl.y = objSetup->base.y;
                 self->unk_0x36 = 0xFF;
             }
-            if (main_get_bits(objData->gamebitGrown) != zero){
+            if (main_get_bits(objData->gamebitGrown)){
                 dll_722_func_D40(self);
             }
             return;
         
         case 1:
             if ((self->unk0xaf & 1) && gDLL_1_UI->vtbl->func7(0x86A)){
-                count = main_get_bits(0x86A); //inventory MoonSeed count
+                count = main_get_bits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
-                    self->unk_0x36 = zero;
-                    gDLL_3_Animation->vtbl->func17(zero, self, -1);
-                    main_set_bits(0x86A, count - 1);
+                    self->unk_0x36 = 0;
+                    gDLL_3_Animation->vtbl->func17(0, self, -1);
+                    main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
                 }
             }
             break;
@@ -165,29 +167,29 @@ void dll_722_control(Object* self) {
                 
                 objData->unk10 -= delayFloat;
                 if (objData->unk10 <= 0.0f){
-                    if (rand_next(zero, 1)){
+                    if (rand_next(0, 1)){
                         objData->unk10 = 45.0f;
-                        gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(0xA71, 0xA72), 0x7F, NULL, NULL, zero, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
                         objData->unk1 |= 4;
                     } else {
-                        objData->unk10 = rand_next(0x32, 0xC8);
+                        objData->unk10 = rand_next(50, 200);
                         objData->unk1 &= 0xFFFB;
                     }
                 }
                 
                 particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                particleTrans.transl.y = rand_next(zero, 10) + objSetup->base.y;
+                particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
                 particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
                 
-                _bss_0[zero] = (fsin16_precise(objData->unkC) + 1.0f) * 24.0f;
+                _bss_0[bssIndex] = (fsin16_precise(objData->unkC) + 1.0f) * 24.0f;
                 gDLL_17->vtbl->func1(self, 0x70D, &particleTrans, 0x200001, -1, NULL);
-                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[zero]);
+                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
                 
             }
             if (kyte && (self->unk0xaf & 4)){
                 ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 4);
                 if (gDLL_1_UI->vtbl->func7(4)){
-                    main_set_bits(0x46E, objSetup->kyteFlightGroup);
+                    main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
             break;
@@ -199,20 +201,20 @@ void dll_722_control(Object* self) {
                 
                 for (count = -1; count < (objData->unkC >> 0xD); count++){
                     particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                    particleTrans.transl.y = rand_next(zero, 10) + objSetup->base.y;
+                    particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
                     particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
                     gDLL_17->vtbl->func1(self, 0x70D, &particleTrans, 0x200001, -1, NULL);
                 }
                 
-                _bss_0[zero] = objData->unkC >> 7;
-                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[zero]);
+                _bss_0[bssIndex] = objData->unkC >> 7;
+                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
             } else {
                 particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                particleTrans.transl.y = rand_next(zero, 10) + objSetup->base.y;
+                particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
                 particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
-                _bss_0[zero] = 0x50;
+                _bss_0[bssIndex] = 0x50;
                 gDLL_17->vtbl->func1(self, 0x70D, &particleTrans, 0x200001, -1, NULL);
-                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[zero]);
+                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
             }
             break;
     
@@ -248,22 +250,22 @@ s32 dll_722_func_BEC(Object* self, s32 arg1) {
     s32 returnVal;
 
     objData = self->data;
-    returnVal = 0;
+    returnVal = FALSE;
     if (arg1 == 0) {
         if (objData->unk1 & 2) {
             objData->unk0 = 3;
             objData->unkC = 0;
         }
-        returnVal = 1;
+        returnVal = TRUE;
     } else if (arg1 == 1) {
         if (objData->unk0 == 3) {
-            returnVal = 1;
+            returnVal = TRUE;
             if (main_get_bits(objData->gamebitPlanted) && 
                 !main_get_bits(objData->gamebitGrown)) {
                 dll_722_func_D40(self);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x912, 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
     return returnVal;
@@ -295,7 +297,7 @@ void dll_722_func_D40(Object* self) {
     
     if (main_get_bits(objData->gamebitPlanted)) {
         self->unk0xaf |= 8;
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x798, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitGrown, 1);
         objData->unk0 = 4;
         self->srt.transl.y = objSetup->base.y;

@@ -199,7 +199,7 @@ void dll_227_func_420(Object* self) {
             }
         }
         //Play disintegration sound
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_5F7, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_5F7_Tumbleweed_Disintegrate, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     if (objdata->flags & 2){
@@ -436,9 +436,9 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
         
         //Noises when bouncing
         if (volume > 0x10) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_5F6, volume, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_5F6_Tumbleweed_Roll, volume, 0, 0, 0, 0);
             if (rand_next(0, 5) == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(SOUND_614, SOUND_615), volume, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2), volume, 0, 0, 0, 0);
             }
         }
     }
@@ -470,7 +470,7 @@ s32 dll_227_func_1D64(Object* self) {
     if (objdata->unk26C < 0.0f) {
         //Squeaking (and growing in size temporarily)
         objdata->unk26C = rand_next(0x78, 0xF0);
-        temp_v0 = rand_next(SOUND_614, SOUND_615);
+        temp_v0 = rand_next(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2);
         random2 = rand_next(90, 100);
         gDLL_6_AMSFX->vtbl->play_sound(self, temp_v0, random2, 0, 0, 0, 0);
         self->srt.scale = 0.2f;

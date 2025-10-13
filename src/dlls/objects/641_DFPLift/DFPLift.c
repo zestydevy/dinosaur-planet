@@ -89,7 +89,7 @@ void DFPLift_control(Object* self) {
             // go up with sound
             if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
                 if (objdata->soundHandle == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, 0x75, &objdata->soundHandle, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x75, &objdata->soundHandle, NULL, 0, NULL);
                     objdata->unk11 = 1;
                 }
                 self->srt.transl.y += delayFloat;
@@ -134,14 +134,14 @@ void DFPLift_control(Object* self) {
                     // at top, start going down
                     objdata->state = LIFT_STATE_GO_DOWN;
                     if (objdata->soundHandle == 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, 0x6B, &objdata->soundHandle, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x6B, &objdata->soundHandle, NULL, 0, NULL);
                         objdata->unk11 = 1;
                     }
                 } else if (self->srt.transl.y == (setup->base.y - LIFT_DOWN)) {
                     // at bottom, start going up
                     objdata->state = LIFT_STATE_GO_UP;
                     if (objdata->soundHandle == 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC, 0x43, &objdata->soundHandle, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x43, &objdata->soundHandle, NULL, 0, NULL);
                         objdata->unk11 = 1;
                     }
                 }
