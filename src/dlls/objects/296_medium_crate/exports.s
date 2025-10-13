@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_296_ctor
-.dword dll_296_dtor
+.dword medium_crate_ctor
+.dword medium_crate_dtor
 
 # export table
-.dword dll_295_setup
-.dword dll_295_control
-.dword dll_295_update
-.dword dll_295_print
-.dword dll_295_free
-.dword dll_296_get_model_flags
-.dword dll_296_get_data_size
+.dword medium_crate_setup
+.dword medium_crate_control
+.dword medium_crate_update
+.dword medium_crate_print
+.dword medium_crate_free
+.dword medium_crate_get_model_flags
+.dword medium_crate_get_data_size
