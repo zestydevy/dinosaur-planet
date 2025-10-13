@@ -22,6 +22,11 @@
 
 /*0x0*/ static u32 _data_0[4] = { 0 };
 
+typedef union {
+    s32 i;
+    f32 f;
+} FloatOrInt;
+
 typedef struct UnkBss4 {
     u16 pad0;
     u8 unk2;
@@ -269,7 +274,7 @@ void dll_6_func_860(u32 arg0, u8 arg1) {
 }
 
 // offset: 0x954 | func: 5 | export: 5
-void dll_6_func_954(u32 arg0, s32 arg1) {
+void dll_6_func_954(u32 arg0, FloatOrInt arg1) {
     UnkBss4* temp_v0;
     sndstate* temp_a0;
 
@@ -282,9 +287,9 @@ void dll_6_func_954(u32 arg0, s32 arg1) {
         return;
     }
 
-    (f32)arg1 *= _bss_4[arg0].unk4 / 100.0f;
+    arg1.f *= _bss_4[arg0].unk4 / 100.0f;
     if ((temp_a0 != (sndstate* )-2) && (temp_a0 != (sndstate* )-1)) {
-        audioPostEvent(temp_a0, 0x10, arg1);
+        audioPostEvent(temp_a0, 0x10, arg1.i);
     }
 }
 
@@ -554,7 +559,7 @@ void dll_6_func_1320(Object* arg0, u16 arg1, s32 arg2, f32 arg3, f32 arg4, u32* 
 
 void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
     s32 pad2;
-    s32 sp40;
+    FloatOrInt sp40;
     f32 sp3C;
     f32 temp_fa1;
     s32 pad[2];
@@ -578,19 +583,19 @@ void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
     sp3C = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
     temp_fv1 = ((sqrtf(SQ(sp28) + SQ(sp24) + SQ(sp20)) - sp3C) / arg3) + 1.0f;
     if (temp_fv1 < 0.1f) {
-        (f32)sp40 = 0.1f;
+        sp40.f = 0.1f;
     } else {
-        (f32)sp40 = temp_fv1;
+        sp40.f = temp_fv1;
         if (temp_fv1 > 1.9f) {
-            (f32)sp40 = 1.9f;
+            sp40.f = 1.9f;
         }
     }
     if (_bss_8 >= arg0) {
         temp_a0 = _bss_4[arg0].unk1C;
         if (temp_a0 != NULL) {
-            (f32)sp40 *= _bss_4[arg0].unk4 / 100.0f;
+            sp40.f *= _bss_4[arg0].unk4 / 100.0f;
             if ((temp_a0 != (sndstate* )-2) && (temp_a0 != (sndstate* )-1)) {
-                audioPostEvent(temp_a0, 0x10, sp40);
+                audioPostEvent(temp_a0, 0x10, sp40.i);
             }
         }
     }
