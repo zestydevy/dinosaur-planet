@@ -1,8 +1,22 @@
 #include "common.h"
 
+extern s32 PTR_DAT_800b2e1c;
+
+extern s8 BYTE_80091754;
+extern s8 BYTE_80091758;
+extern s16 SHORT_800b2e14;
+extern s16 SHORT_800b2e16;
+extern s16 SHORT_800b2e18;
+extern s8 BYTE_800b2e20;
+extern s8 BYTE_800b2e21;
+extern s8 BYTE_800b2e22;
+extern s8 BYTE_800b2e23;
+
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80034FF0.s")
+void func_80034FF0(s32 arg0) {
+    PTR_DAT_800b2e1c = arg0;
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/draw_object.s")
@@ -328,10 +342,55 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036B78.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036E5C.s")
+void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
+    SRT shadowTransform;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036F6C.s")
+    if (object->ptr0x64->gdl) {
+        if (object->ptr0x64->flags & 0x20) {
+            shadowTransform.transl.x = object->ptr0x64->tr.x;
+            shadowTransform.transl.y = object->ptr0x64->tr.y;
+            shadowTransform.transl.z = object->ptr0x64->tr.z;
+        } else {
+            shadowTransform.transl.x = object->srt.transl.x;
+            shadowTransform.transl.y = object->srt.transl.y;
+            shadowTransform.transl.z = object->srt.transl.z;
+        }
+        shadowTransform.yaw = 0;
+        shadowTransform.roll = 0;
+        shadowTransform.pitch = 0;
+        shadowTransform.scale = 0.05f;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036FBC.s")
+        func_800032C4(gdl, mtx, (SRT* ) &shadowTransform, 1.0f, 0.0f, NULL);
+        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->ptr0x64->gdl));
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80037020.s")
+        if (object->parent) {
+            setup_rsp_matrices_for_object(gdl, mtx, object->parent);
+        }
+        dl_set_all_dirty();
+        func_8003DB5C();
+    }
+}
+
+void func_80036F6C(s16 arg0, s16 arg1, s16 arg2) {
+    SHORT_800b2e14 = arg0;
+    SHORT_800b2e16 = arg1;
+    SHORT_800b2e18 = arg2;
+    BYTE_80091754 = 1;
+}
+
+void func_80036FBC(s16 arg0, s16 arg1, s16 arg2, u8 arg3) {
+    BYTE_800b2e20 = arg0;
+    BYTE_800b2e21 = arg1;
+    BYTE_800b2e22 = arg2;
+    BYTE_80091758 = 1;
+    BYTE_800b2e23 = arg3 & 0xFF;
+}
+
+void func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
+    f32 productSum;
+
+    productSum = (aX * bX) + (aY * bY) + (aZ * bZ);
+    *outX = bX - (productSum * aX);
+    *outY = bY - (productSum * aY);
+    *outZ = bZ - (productSum * aZ);
+}
