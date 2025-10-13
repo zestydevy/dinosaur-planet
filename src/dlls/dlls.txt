@@ -90,5 +90,6 @@
 718 = objects/718_PerchObject
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
+737 = objects/737_DRLavaControl
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock

@@ -1931,7 +1931,7 @@ typedef enum {
     BIT_786 = 0x786, // len:1 group:0
     BIT_787 = 0x787, // len:1 group:2
     BIT_788 = 0x788, // len:1 group:1
-    BIT_789 = 0x789, // len:3 group:1
+    BIT_DR_Lava_Pools_Cooled_Count = 0x789, // len:3 group:1
     BIT_78A = 0x78A, // len:1 group:0
     BIT_78B = 0x78B, // len:1 group:1
     BIT_78C = 0x78C, // len:1 group:0

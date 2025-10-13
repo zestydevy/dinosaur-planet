@@ -72,6 +72,9 @@ enum SoundID {
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
+    SOUND_80B_Crackling_Freezing = 0x80B,
+    SOUND_80C_Steam_Hissing = 0x80C,
+
     SOUND_8A2 = 0x8A2, // used in DLL 505
 
     SOUND_912_Object_Refused = 0x912,
