@@ -4,18 +4,18 @@
 _exports:
 
 # ctor/dtor
-.dword dll_722_ctor
-.dword dll_722_dtor
+.dword moonSeedReceptacle_ctor
+.dword moonSeedReceptacle_dtor
 
 # export table
-/*0*/ .dword dll_722_setup
-/*1*/ .dword dll_722_control
-/*2*/ .dword dll_722_update
+/*0*/ .dword moonSeedReceptacle_setup
+/*1*/ .dword moonSeedReceptacle_control
+/*2*/ .dword moonSeedReceptacle_update
 /*3*/ .dword dll_722_print
-/*4*/ .dword dll_722_free
-/*5*/ .dword dll_722_get_model_flags
-/*6*/ .dword dll_722_get_data_size
-/*7*/ .dword dll_722_func_BEC
-/*8*/ .dword dll_722_func_D00
-/*9*/ .dword dll_722_func_D18
-/*10*/ .dword dll_722_func_D30
+/*4*/ .dword moonSeedReceptacle_free
+/*5*/ .dword moonSeedReceptacle_get_model_flags
+/*6*/ .dword moonSeedReceptacle_get_data_size
+/*7*/ .dword moonSeedReceptacle_func_BEC
+/*8*/ .dword moonSeedReceptacle_func_D00
+/*9*/ .dword moonSeedReceptacle_func_D18
+/*10*/ .dword moonSeedReceptacle_func_D30

@@ -57,7 +57,7 @@ typedef struct {
 
 /*0x0*/ static u8 _bss_0[0x10];
 
-static void dll_722_func_D40(Object* self);
+static void moonSeedReceptacle_func_D40(Object* self);
 static s32 moonSeedReceptacle_anim_callback(Object* self, s32 animObj, AnimObj_Data* animObjData, s32 arg3);
 
 // offset: 0x0 | ctor
@@ -104,7 +104,7 @@ void moonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
 }
 
 // offset: 0x118 | func: 1 | export: 1
-void dll_722_control(Object* self) {
+void moonSeedReceptacle_control(Object* self) {
     MoonSeedReceptacle_Data *objData;
     MoonSeedReceptacle_Setup *objSetup;
     Object *kyte;
@@ -141,7 +141,7 @@ void dll_722_control(Object* self) {
                 self->unk_0x36 = 0xFF;
             }
             if (main_get_bits(objData->gamebitGrown)){
-                dll_722_func_D40(self);
+                moonSeedReceptacle_func_D40(self);
             }
             return;
         
@@ -245,7 +245,7 @@ u32 moonSeedReceptacle_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0xBEC | func: 7 | export: 7
-s32 dll_722_func_BEC(Object* self, s32 arg1) {
+s32 moonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
     MoonSeedReceptacle_Data* objData;
     s32 returnVal;
 
@@ -262,7 +262,7 @@ s32 dll_722_func_BEC(Object* self, s32 arg1) {
             returnVal = TRUE;
             if (main_get_bits(objData->gamebitPlanted) && 
                 !main_get_bits(objData->gamebitGrown)) {
-                dll_722_func_D40(self);
+                moonSeedReceptacle_func_D40(self);
             }
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -272,22 +272,22 @@ s32 dll_722_func_BEC(Object* self, s32 arg1) {
 }
 
 // offset: 0xD00 | func: 8 | export: 8
-u32 dll_722_func_D00(Object *self, u32 a1, u32 a2) {
+u32 moonSeedReceptacle_func_D00(Object *self, u32 a1, u32 a2) {
     return 0;
 }
 
 // offset: 0xD18 | func: 9 | export: 9
-u32 dll_722_func_D18(Object *self, u32 a1, u32 a2) {
+u32 moonSeedReceptacle_func_D18(Object *self, u32 a1, u32 a2) {
     return 0;
 }
 
 // offset: 0xD30 | func: 10 | export: 10
-u32 dll_722_func_D30(Object *self){
+u32 moonSeedReceptacle_func_D30(Object *self){
     return 2;
 }
 
 // offset: 0xD40 | func: 11
-void dll_722_func_D40(Object* self) {
+void moonSeedReceptacle_func_D40(Object* self) {
     MoonSeedReceptacle_Data* objData;
     MoonSeedReceptacle_Setup* objSetup;
     KyteCurve_Setup* curveSetup;
