@@ -1,5 +1,9 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "game/objects/object.h"
+#include "sys/math.h"
 #include "sys/objanim.h"
+#include "types.h"
 
 typedef struct {
     s32 unk0;

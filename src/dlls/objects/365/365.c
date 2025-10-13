@@ -1,7 +1,9 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 
 #include "game/objects/object.h"
-#include "variables.h"
+#include "types.h"
+#include "sys/gfx/model.h"
 #include "functions.h"
 #include "dlls/objects/365.h"
 

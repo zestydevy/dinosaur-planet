@@ -1,17 +1,23 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/engine/26_curves.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
 #include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/dll.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/menu.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "dlls/objects/210_player.h"
 #include "dll.h"
+#include "types.h"
 
 typedef struct {
 /*00*/ u8 stateIndex;

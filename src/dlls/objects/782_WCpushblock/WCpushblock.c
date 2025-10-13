@@ -1,7 +1,10 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
 #include "game/objects/object.h"
+#include "types.h"
+#include "sys/gfx/model.h"
 
 typedef struct {
 /*000*/    s8 unk0[0x260 - 0];

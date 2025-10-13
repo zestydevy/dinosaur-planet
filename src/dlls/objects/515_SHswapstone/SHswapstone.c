@@ -1,3 +1,4 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -5,13 +6,16 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "sys/controller.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"
+#include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/menu.h"
 #include "dll.h"
 #include "functions.h"
+#include "types.h"
 
 typedef enum {
     SWAPSTONE_PLAYER_HAS_SPIRIT = 0x1,
