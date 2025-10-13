@@ -1,12 +1,17 @@
+#include "PR/gbi.h"
 #include "PR/os.h"
 #include "PR/ultratypes.h"
+#include "dlls/engine/21_gametext.h"
 #include "libc/string.h"
 #include "dll.h"
 #include "functions.h"
 #include "game/objects/object.h"
 #include "sys/controller.h"
+#include "sys/gfx/texture.h"
+#include "sys/gfx/model.h"
 #include "sys/memory.h"
 #include "sys/objmsg.h"
+#include "types.h"
 
 #define KRAZOA_ALPHABET_ICONS 0x187
 #define KRAZOA_ALPHABET_LENGTH 26

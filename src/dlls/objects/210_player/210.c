@@ -1,21 +1,33 @@
 #include "PR/ultratypes.h"
+#include "PR/gbi.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "game/gamebits.h"
 #include "sys/gfx/model.h"
-#include "sys/print.h"
+#include "sys/gfx/animation.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/gfx/gx.h"
+#include "sys/rand.h"
 #include "sys/camera.h"
+#include "sys/main.h"
 #include "sys/menu.h"
+#include "sys/math.h"
 #include "sys/map.h"
+#include "sys/gfx/map.h"
+#include "sys/dll.h"
+#include "sys/memory.h"
 #include "functions.h"
-
 #include "dll.h"
+#include "types.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/engine/6_amsfx.h"
+#include "unktypes.h"
 #include "segment_334F0.h"
+#include "sys/input.h"
 
 // size: 0x54
 typedef struct UnkArg1 {
@@ -1247,7 +1259,7 @@ void dll_210_update(Object* arg0) {
     temp_a0 = temp_s1->unk858;
     temp_s1->flags |= 2;
     if ((temp_a0 != NULL) && ((arg0->unk0xb0 & 0x1000) || temp_s1->unk26C == 0x24 || temp_s1->unk26C == 0x25)) {
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[12].withFourArgs(temp_a0, &sp58, &sp54, &sp50);
+        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[12].withFourArgs((s32)temp_a0, (s32)&sp58, (s32)&sp54, (s32)&sp50);
         gDLL_2_Camera->vtbl->func10(sp58, sp54, sp50);
         dll_210_func_8EA4(arg0, temp_s1, temp_s1->unk858, NULL, NULL, NULL, NULL, 0);
     }
@@ -1726,9 +1738,9 @@ s32 dll_210_func_44A4(Object* arg0, s32 arg1) {
     case 14:
         return objdata2->unk87C;
     case 15:
-        return objdata2->unk85C;
+        return (s32)objdata2->unk85C;
     case 16:
-        return objdata2->unk860;
+        return (s32)objdata2->unk860;
     case 18:
         return objdata2->unk872;
     case 19:
@@ -2935,11 +2947,11 @@ s32 dll_210_func_7BC4(Object* arg0, Player_Data* arg1, u32* arg2, UnkArg4* arg3)
     s32 temp;
 
     temp_a0 = arg3->unk38;
-    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[7].withTwoArgs(temp_a0, arg3->padC);
+    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[7].withTwoArgs((s32)temp_a0, (s32)arg3->padC);
     temp_a0 = arg3->unk38;
-    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, arg3->unk48, &arg3->unk1C, &arg3->unk1C.y, &arg3->unk1C.z);
+    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, arg3->unk48, &arg3->unk1C.x, &arg3->unk1C.y, &arg3->unk1C.z);
     temp_a0 = arg3->unk38;
-    arg3->unk54 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[12].withOneArgS32(temp_a0);
+    arg3->unk54 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[12].withOneArgS32((s32)temp_a0);
     arg3->unk46 = 0;
     arg3->unk4C = arg3->unk48;
     arg3->unk0.y = arg3->unk1C.y;
@@ -3165,7 +3177,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
                         break;
                     }
 
-                    if ((((DLL_Unknown*)sp88->dll)->vtbl->func[10].withOneArgS32(sp88) != 0) && (arg2->unk290 >= 0.1f) && (spCC < 10.5f)) {
+                    if ((((DLL_Unknown*)sp88->dll)->vtbl->func[10].withOneArgS32((s32)sp88) != 0) && (arg2->unk290 >= 0.1f) && (spCC < 10.5f)) {
                         switch (dll_210_func_7300(arg0, arg1, &spD0, &arg1->unk490, &sp140, spCC)) {
                         case 2:
                             return 4;
@@ -3232,7 +3244,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
                         sp6C = 50.0f;
                         sp88 = obj_get_nearest_type_to(0x25, arg0, &sp6C);
                         var_s0_2 = TRUE;
-                        if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32(sp88) == 0)) {
+                        if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32((s32)sp88) == 0)) {
                             var_s0_2 = FALSE;
                         }
                         if (var_s0_2) {
@@ -3256,7 +3268,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
             objects = obj_get_all_of_type(0xB, &sp80);
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
-                if (((DLL_Unknown*)sp88->dll)->vtbl->func[7].withTwoArgsS32(sp88, arg0) != 0) {
+                if (((DLL_Unknown*)sp88->dll)->vtbl->func[7].withTwoArgsS32((s32)sp88, (s32)arg0) != 0) {
                     arg1->unk858 = sp88;
                     return 0xD;
                 }
@@ -3268,7 +3280,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
             arg1->unk6B0.unk3C = 200.0f;
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
-                if (((DLL_Unknown*)sp88->dll)->vtbl->func[14].withOneArgS32(sp88) != 0) {
+                if (((DLL_Unknown*)sp88->dll)->vtbl->func[14].withOneArgS32((s32)sp88) != 0) {
                     sp88 = objects[i];
                     if ((((DLL_Unknown*)sp88->dll)->vtbl->func[11].withSevenArgsCustom(sp88, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp74, &sp70, &sp7C) != 0) && (sp74 < arg1->unk6B0.unk3C)) {
                         arg1->unk6B0.unk34 = objects[i];
@@ -3393,7 +3405,7 @@ static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx
         arg0->positionMirror2.y = arg0->srt.transl.y;
         arg0->positionMirror2.z = arg0->srt.transl.z;
     }
-    ((DLL_Unknown *)arg2->dll)->vtbl->func[9].withFourArgs(arg2, &sp44, &sp40, &sp3C);
+    ((DLL_Unknown *)arg2->dll)->vtbl->func[9].withFourArgs((s32)arg2, (s32)&sp44, (s32)&sp40, (s32)&sp3C);
     arg0->srt.transl.x = sp44;
     arg0->srt.transl.y = sp40;
     arg0->srt.transl.z = sp3C;
@@ -3557,7 +3569,7 @@ void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2) {
         temp_v0->y = arg0->linkedObject->positionMirror.y;
         temp_v0->z = arg0->linkedObject->positionMirror.z;
         temp_a0 = arg0->linkedObject;
-        temp_s5 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+        temp_s5 = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
         temp_v0_2 = obj_create(temp_v0, 5U, -1, -1, NULL);
         if (temp_v0_2 != NULL) {
             temp_v0_2->srt.flags |= 0x2000;
@@ -3635,7 +3647,7 @@ void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2) {
     temp_v0->y = arg0->linkedObject->positionMirror.y;
     temp_v0->z = arg0->linkedObject->positionMirror.z;
     temp_a0 = arg0->linkedObject;
-    ((s8*)temp_v0)[0x19] = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32(temp_a0);
+    ((s8*)temp_v0)[0x19] = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
     temp_v0_2 = obj_create(temp_v0, 5U, -1, -1, NULL);
     if (temp_v0_2 == NULL) {
         return;
@@ -4385,7 +4397,7 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
         func_800240BC(arg0, sp48->animProgress);
         arg1->unk298 = NULL;
     } else {
-        sp3C = ((DLL_Unknown*)sp48->dll)->vtbl->func[16].withTwoArgsF32(sp48, &sp44);
+        sp3C = ((DLL_Unknown*)sp48->dll)->vtbl->func[16].withTwoArgsF32((s32)sp48, (s32)&sp44);
         sp3C = sp3C;
         if (sp44 <= 1.0f) {
             arg1->unk298 = sp44;
@@ -4394,7 +4406,7 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
         }
     }
     if (temp_s0->unk770 & 1) {
-        ((DLL_Unknown*)sp48->dll)->vtbl->func[15].withThreeArgs(sp48, &sp40, &sp34);
+        ((DLL_Unknown*)sp48->dll)->vtbl->func[15].withThreeArgs((s32)sp48, (s32)&sp40, (s32)&sp34);
         sp38 = (s32) (sp40 * 1023.0f);
         if (sp38 < 0) {
             sp38 = -sp38;
@@ -4415,7 +4427,7 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
         func_80024DD0(arg0, 1, 0, (s16) (s32) (sp3C * 1023.0f));
         func_80025140(arg0, arg1->unk298, arg2, 0);
     }
-    if (((DLL_Unknown*)sp48->dll)->vtbl->func[10].withTwoArgsS32(sp48, arg0) != 0) {
+    if (((DLL_Unknown*)sp48->dll)->vtbl->func[10].withTwoArgsS32((s32)sp48, (s32)arg0) != 0) {
         return 0x27;
     }
     return 0;
@@ -4996,7 +5008,7 @@ void dll_210_func_1AAD8(Object* arg0, UNK_TYPE_32 arg1) {
     temp_s0->unk87C = -1;
     temp_s0->flags &= ~0x400;
     temp_a0 = arg0->linkedObject;
-    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[14].withThreeArgs(temp_a0, 0, arg0);
+    ((DLL_Unknown*)temp_a0->dll)->vtbl->func[14].withThreeArgs((s32)temp_a0, 0, (s32)arg0);
     if (temp_s0->unk848 != 0) {
         gDLL_6_AMSFX->vtbl->func_A1C(temp_s0->unk848);
         temp_s0->unk848 = 0;
@@ -5395,7 +5407,7 @@ s32 dll_210_func_1D1F0(Object* player, Object** arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D210.s")
 
 // offset: 0x1D288 | func: 183 | export: 10
-s32 dll_210_func_1D288(Object* player, s32* arg1) {
+s32 dll_210_func_1D288(Object* player, Object** arg1) {
     Player_Data* objdata = player->data;
     *arg1 = objdata->unk868;
     return objdata->unk868 != 0;

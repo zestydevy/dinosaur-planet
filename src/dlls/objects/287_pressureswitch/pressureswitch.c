@@ -1,14 +1,17 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
 #include "functions.h"
 #include "game/objects/object.h"
+#include "sys/math.h"
+#include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "functions.h"
-#include "macros.h"
-#include "sys/print.h"
+#include "types.h"
 
 typedef struct {
 f32 x;

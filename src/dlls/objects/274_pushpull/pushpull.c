@@ -1,9 +1,11 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
+#include "dll.h"
 #include "dlls/engine/6_amsfx.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/main.h"
 #include "types.h"
-#include "common.h"
 
 typedef struct {
     u8 _unk0[0xC8 - 0x0];
