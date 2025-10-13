@@ -8,9 +8,9 @@
 typedef struct {
 /*0*/ Object* lfxEmitter;
 /*4*/ s16 lfxEmitterVal;
-/*4*/ s8 freezeTimer;
-/*4*/ s8 freezeDuration;
-/*4*/ s8 flags;
+/*6*/ s8 freezeTimer;
+/*7*/ s8 freezeDuration;
+/*8*/ s8 flags;
 /*9*/ s8 effectIndex; //used to switch between different effect presets during Ice Spell cooldown
 } DRLavaControl_Data;
 
