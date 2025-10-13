@@ -12,7 +12,7 @@ typedef struct {
 /*4*/ s8 freezeDuration;
 /*4*/ s8 flags;
 /*9*/ s8 effectIndex; //used to switch between different effect presets during Ice Spell cooldown
-} DLL737_Data;
+} DRLavaControl_Data;
 
 typedef struct {
 /*00*/    ObjSetup base;
@@ -21,7 +21,7 @@ typedef struct {
 /*1A*/    s16 freezeDuration;   //how long it takes to freeze with Ice Blast spell
 /*1C*/    s16 unused1C;
 /*1E*/    s16 gameBitFrozen;    //gamebit to set when fully cooled with Ice Blast
-} DLL737_Setup;
+} DRLavaControl_Setup;
 
 typedef struct {
 /*00*/    ObjSetup base;
@@ -41,8 +41,8 @@ typedef struct {
 };
 
 static void DRLavaControl_freeze(Object* self);
-static void DRLavaControl_freeze_update_effects(Object* self, DLL737_Data* objData, s32 arg2);
-static void DRLavaControl_create_particles(Object* self, u32 index);
+static void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objData, s32 effectIndex);
+static void DRLavaControl_create_particles(Object* self, u32 effectIndex);
 static Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E);
 
 // offset: 0x0 | ctor
@@ -52,8 +52,8 @@ void DRLavaControl_ctor(void *dll) { }
 void DRLavaControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DRLavaControl_setup(Object* self, DLL737_Setup* objSetup, s32 arg2) {
-    DLL737_Data* objData;
+void DRLavaControl_setup(Object* self, DRLavaControl_Setup* objSetup, s32 arg2) {
+    DRLavaControl_Data* objData;
     s32 isFrozen;
 
     objData = self->data;
@@ -78,12 +78,13 @@ void DRLavaControl_setup(Object* self, DLL737_Setup* objSetup, s32 arg2) {
 
 // offset: 0x130 | func: 1 | export: 1
 void DRLavaControl_control(Object* self) {
-    DLL737_Data* objData = self->data;
+    DRLavaControl_Data* objData = self->data;
     DRLavaControl_create_particles(self, objData->effectIndex);
 }
 
 // offset: 0x170 | func: 2 | export: 2
 void DRLavaControl_update(Object* self) {
+    //Check if hit with Ice Blast Spell
     if (func_80025F40(self, NULL, NULL, NULL) == 25) {
         DRLavaControl_freeze(self);
     }
@@ -95,7 +96,7 @@ void DRLavaControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
 
 // offset: 0x1F0 | func: 4 | export: 4
 void DRLavaControl_free(Object* self, s32 arg1) {
-    DLL737_Data* objData = self->data;
+    DRLavaControl_Data* objData = self->data;
 
     if (objData->lfxEmitter && (arg1 == 0)) {
         obj_destroy_object(objData->lfxEmitter);
@@ -110,21 +111,21 @@ u32 DRLavaControl_get_model_flags(Object *self) {
 
 // offset: 0x280 | func: 6 | export: 6
 u32 DRLavaControl_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL737_Data);
+    return sizeof(DRLavaControl_Data);
 }
 
 // offset: 0x294 | func: 7
 // Called when cooled with the Ice Blast Spell
 void DRLavaControl_freeze(Object* self) {
-    DLL737_Data* objData;
-    DLL737_Setup* objSetup;
+    DRLavaControl_Data* objData;
+    DRLavaControl_Setup* objSetup;
 
     objData = self->data;
     if (objData->flags & 1) {
         return;
     }
 
-    objSetup = (DLL737_Setup*)self->setup;
+    objSetup = (DRLavaControl_Setup*)self->setup;
 
     if (objData->freezeTimer > 0) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -146,7 +147,7 @@ void DRLavaControl_freeze(Object* self) {
 }
 
 // offset: 0x47C | func: 8
-void DRLavaControl_freeze_update_effects(Object* self, DLL737_Data* objData, s32 arg2) {
+void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objData, s32 effectIndex) {
     f32 distance;
     f32 temperature_tValue; //0.0 when cooled, 1.0 when hot
     u16 dataUnused[] = { 288, 287, 286, 282 }; //unused indices?
@@ -167,15 +168,15 @@ void DRLavaControl_freeze_update_effects(Object* self, DLL737_Data* objData, s32
         ((DLL_Unknown*)waveAnimator->dll)->vtbl->func[9].withFourArgs((s32)waveAnimator, 0xB3, 0x18, 0x18); //reddish RGB colour?
     }
     
-    if (arg2 != objData->effectIndex) {
+    if (effectIndex != objData->effectIndex) {
         if (objData->lfxEmitter) {
             obj_destroy_object(objData->lfxEmitter);
         }
-        if (arg2) {
+        if (effectIndex) {
             // diPrintf(" Creating LIGHT %i  x %f z %f \n", arg2, self->srt.transl.x, self->srt.transl.z);
-            objData->lfxEmitter = DRLavaControl_create_light(self, (objData->lfxEmitterVal - arg2) + 3);
+            objData->lfxEmitter = DRLavaControl_create_light(self, (objData->lfxEmitterVal - effectIndex) + 3);
         }
-        objData->effectIndex = arg2;
+        objData->effectIndex = effectIndex;
     }
 }
 
