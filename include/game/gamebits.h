@@ -1561,7 +1561,7 @@ typedef enum {
     BIT_614 = 0x614, // len:8 group:3
     BIT_615 = 0x615, // len:1 group:2 task:18
     BIT_SP_Magic_Chest_Large = 0x616, // len:1 group:1 (in stock in shop)
-    BIT_617 = 0x617, // len:1 group:1
+    BIT_SP_Entered_Shop = 0x617, // len:1 group:1
     BIT_618 = 0x618, // len:1 group:1
     BIT_619 = 0x619, // len:1 group:1
     BIT_61A = 0x61A, // len:1 group:1
