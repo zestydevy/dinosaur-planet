@@ -27,5 +27,5 @@ SPShop_set_random_prices = 0x8E4;
 .rodata = 0x9E8:
 
 .data = 0xAA8:
-_data_0 = 0x0; // absolute:0xAA8
+shopItemData = 0x0; // absolute:0xAA8
 _oob_data_3C0 = 0x3C0; // absolute:0xE68
