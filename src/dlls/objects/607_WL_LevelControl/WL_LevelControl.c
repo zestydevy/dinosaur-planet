@@ -71,7 +71,7 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     case 6:
         func_80000860(self, self, 0xA5, 0);
         func_80000860(self, self, 0xA6, 0);
-        main_set_bits(BIT_Medium_Food_Bag, 1);
+        main_set_bits(BIT_Krystal_Foodbag_M, 1);
         break;
     case 7:
         func_80000860(self, self, 0xE4, 0);
@@ -248,7 +248,7 @@ static void WL_LevelControl_setup2_tick(Object* self) {
         func_80000860(self, self, 0x206, 0);
         _data_4 = 0;
     }
-    if (main_get_bits(BIT_Medium_Food_Bag) != 0) {
+    if (main_get_bits(BIT_Krystal_Foodbag_M) != 0) {
         temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
         if ((temp_v0 != NULL) && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
             ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);

@@ -85,11 +85,13 @@
 641 = objects/641_DFPLift
 652 = objects/652_DFP_SpellPlace
 668 = objects/668_db_diamond
+702 = objects/702_KTrex
 712 = objects/712_DIMSnowHorn1
 714 = objects/714_DR_CloudRunner
 718 = objects/718_PerchObject
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 737 = objects/737_DRLavaControl
+768 = objects/768_SPShop
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock

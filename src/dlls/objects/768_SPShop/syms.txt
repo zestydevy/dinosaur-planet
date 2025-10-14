@@ -1,0 +1,31 @@
+.text = 0x0:
+SPShop_ctor = 0x0;
+SPShop_dtor = 0xC;
+SPShop_setup = 0x18;
+SPShop_control = 0x88;
+SPShop_update = 0x2D4;
+SPShop_print = 0x2E0;
+SPShop_free = 0x334;
+SPShop_get_model_flags = 0x374;
+SPShop_get_data_size = 0x384;
+SPShop_return_unk0 = 0x398;
+SPShop_play_sequence = 0x3A8;
+SPShop_is_item_shown = 0x40C;
+SPShop_is_item_hidden = 0x4D8;
+SPShop_get_minimum_price = 0x5A4;
+SPShop_get_special_price = 0x5E8;
+SPShop_get_initial_price = 0x62C;
+SPShop_get_item_gametext_index = 0x670;
+SPShop_set_current_item_index = 0x6B4;
+SPShop_get_current_item_index = 0x6C4;
+SPShop_buy_item = 0x6D4;
+SPShop_func_884 = 0x884;
+SPShop_func_89C = 0x89C;
+SPShop_func_8C0 = 0x8C0;
+SPShop_set_random_prices = 0x8E4;
+
+.rodata = 0x9E8:
+
+.data = 0xAA8:
+shopItemData = 0x0; // absolute:0xAA8
+_oob_data_3C0 = 0x3C0; // absolute:0xE68

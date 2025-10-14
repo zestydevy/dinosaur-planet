@@ -65,6 +65,8 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
     self->srt.yaw = setup->rotation << 8;
     self->unk0xbc = (ObjectCallback)SHswapstone_func_448;
 
+    // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon
+    // approaching SwapStone (happens if camera lags behind in SwapStone Circe)
     if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         objdata->bitSwapStoneSpokenTo = BIT_883;

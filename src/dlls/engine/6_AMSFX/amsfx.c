@@ -189,60 +189,66 @@ void dll_6_func_480(s32 arg0) {
 }
 
 // offset: 0x48C | func: 2 | export: 2
-u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* arg3, char *arg4, s32 arg5, char *arg6) {
+u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6) {
     UnkDE8 sp58;
     f32 sp54;
     f32 sp50;
     f32 sp4C;
-    u32 temp_v0;
+    u32 activeSoundIndex;
     u16 sp46;
     s8 sp45;
 
     _bss_4->unk12 = 0;
     _bss_4->unk1C = NULL;
+    
     if (!soundID) {
         return 0;
     }
+
     dll_6_func_DE8(soundID, &sp58);
     if (!(sp58.unk0 & 0x7FFF)) {
         return 0;
     }
-    if (arg3 != NULL) {
-        temp_v0 = arg3[0];
+
+    if (soundHandle != NULL) {
+        activeSoundIndex = soundHandle[0];
     } else {
-        temp_v0 = 0;
+        activeSoundIndex = 0;
     }
-    temp_v0 = dll_6_func_1D58(temp_v0, arg4, arg5);
-    _bss_4[temp_v0].unkE = soundID;
-    _bss_4[temp_v0].unk18 = obj;
-    _bss_4[temp_v0].unk17 = 0x7F;
+
+    activeSoundIndex = dll_6_func_1D58(activeSoundIndex, arg4, arg5);
+    _bss_4[activeSoundIndex].unkE = soundID;
+    _bss_4[activeSoundIndex].unk18 = obj;
+    _bss_4[activeSoundIndex].unk17 = 0x7F;
+
     if ((obj != NULL) && (sp58.unk7 & 3)) {
         dll_6_func_2240(obj, &sp54, &sp50, &sp4C, &sp46);
         dll_6_func_22FC(sp54, sp50, sp4C, &sp58, &sp45);
-        _bss_4[temp_v0].unk17 = sp45;
+        _bss_4[activeSoundIndex].unk17 = sp45;
     }
-    _bss_4[temp_v0].unk16 = (volume * sp58.unk2) >> 7;
-    sp45 = (_bss_4[temp_v0].unk16 * _bss_4[temp_v0].unk17) >> 7;
-    _bss_4[temp_v0].unk13 = sp45;
+    _bss_4[activeSoundIndex].unk16 = (volume * sp58.unk2) >> 7;
+    sp45 = (_bss_4[activeSoundIndex].unk16 * _bss_4[activeSoundIndex].unk17) >> 7;
+    _bss_4[activeSoundIndex].unk13 = sp45;
     if (sp58.unk0 & 0x8000) {
-        _bss_4[temp_v0].unk1C = (sndstate* )-2;
+        _bss_4[activeSoundIndex].unk1C = (sndstate* )-2;
         // @fake
-        if (_bss_4[temp_v0].pad0) {}
+        if (_bss_4[activeSoundIndex].pad0) {}
         mpeg_fs_play((sp58.unk0 & 0x7FFF) - 1);
         func_80067650(sp45 << 8, 0);
         // @fake
         if (_bss_4) {}
     } else {
-        some_sound_func(_bss_0->bankArray[0], sp58.unk0, (sp45 << 8), 0x40, sp58.unk4 / 100.0f, (s32)(f32)sp58.unk6, 1U, &_bss_4[temp_v0].unk1C);
+        some_sound_func(_bss_0->bankArray[0], sp58.unk0, (sp45 << 8), 0x40, sp58.unk4 / 100.0f, (s32)(f32)sp58.unk6, 1U, &_bss_4[activeSoundIndex].unk1C);
     }
-    bcopy(&sp58, &_bss_4[temp_v0], 0xE);
-    bcopy(&_bss_4[temp_v0], _bss_4, sizeof(UnkBss4));
-    if (arg3 != NULL) {
-        arg3[0] = temp_v0;
+    bcopy(&sp58, &_bss_4[activeSoundIndex], 0xE);
+    bcopy(&_bss_4[activeSoundIndex], _bss_4, sizeof(UnkBss4));
+
+    if (soundHandle != NULL) {
+        soundHandle[0] = activeSoundIndex;
     } else {
-        _bss_4[temp_v0].unk12 |= 0x80;
+        _bss_4[activeSoundIndex].unk12 |= 0x80;
     }
-    return temp_v0;
+    return activeSoundIndex;
 }
 
 // offset: 0x7E4 | func: 3 | export: 3

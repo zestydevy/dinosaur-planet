@@ -273,7 +273,7 @@ void GPSH_Shrine_control(Object* self) {
             }
             break;
         case 4:
-            if (main_get_bits(BIT_12A) != 0) {
+            if (main_get_bits(BIT_SP_Map_MMP) != 0) {
                 objdata->unk8 = 1;
                 gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
@@ -295,7 +295,7 @@ void GPSH_Shrine_control(Object* self) {
             main_set_bits(BIT_DB_Entered_Shrine_2, 0);
             objdata->unk15 = 6;
             main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_12A, 1);
+            main_set_bits(BIT_SP_Map_MMP, 1);
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_WARLOCK_MOUNTAIN, 8);
             break;
         case 7:
