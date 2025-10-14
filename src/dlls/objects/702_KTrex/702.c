@@ -94,15 +94,7 @@ typedef struct {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_0.s")
 
 // offset: 0x120 | ctor
-#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_ctor.s")
-#else
-static void dll_702_func_0(void){}
-
-void dll_702_ctor(void *dll) {
-    dll_702_func_0();
-}
-#endif
 
 // offset: 0x160 | dtor
 void dll_702_dtor(void *dll) { }
