@@ -1,11 +1,18 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/engine/6_amsfx.h"
 #include "functions.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/rand.h"
+#include "types.h"
 
 
 typedef struct {

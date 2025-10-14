@@ -1,8 +1,10 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "functions.h"
 #include "dll.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
@@ -10,6 +12,8 @@
 #include "sys/map_enums.h"
 #include "sys/menu.h"
 #include "sys/map.h"
+#include "types.h"
+#include "sys/rand.h"
 
 #define SOMESIZE 28
 

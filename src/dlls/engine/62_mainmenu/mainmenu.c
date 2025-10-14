@@ -1,3 +1,4 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/29_gplay.h"
@@ -6,9 +7,11 @@
 #include "functions.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/memory.h"
+#include "types.h"
 
 /*0x0*/ static PicMenuItem pressStartItem[] = {
     /*0*/ NEW_PICMENU_ITEM(

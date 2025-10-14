@@ -1,14 +1,17 @@
-#include "dlls/engine/22_subtitles.h"
+#include "PR/ultratypes.h"
+#include "dlls/engine/21_gametext.h"
+#include "PR/gbi.h"
 
-#include "libc/string.h"
+#include "sys/camera.h"
 #include "sys/gfx/gx.h"
 #include "sys/controller.h"
 #include "sys/fonts.h"
+#include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/memory.h"
-#include "sys/rand.h"
 #include "dll.h"
 #include "functions.h"
+#include "types.h"
 
 // Size: 0x18
 typedef struct InnerBss38 {

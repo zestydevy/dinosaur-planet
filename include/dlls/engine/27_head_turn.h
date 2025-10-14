@@ -10,9 +10,9 @@
 //Just a placeholder name - seems to have something to do with applying procedural head turn animations
 DLL_INTERFACE(DLL_27_head_turn) {
     /*:*/ DLL_INTERFACE_BASE(DLL); 
-    /*0*/ void (*head_turn_func_18)(Vec3f*, s32, s32, s32);
-    /*1*/ UnknownDLLFunc head_turn_func_84;
-    /*2*/ void (*head_turn_func_c0)(Vec3f*, s32, s32, s32, s32);
+    /*0*/ void (*head_turn_func_18)(void*, s32, s32, s32);
+    /*1*/ void (*head_turn_func_84)(void*, s32, void*, void*, s32);
+    /*2*/ void (*head_turn_func_c0)(void*, s32, s32, s32, s32);
     /*3*/ void (*head_turn_func_1e8)(Object* object, Vec3f** vector, f32 delayFloat);
     /*4*/ void (*head_turn_func_5a8)(Object* object, Vec3f** vector);
     /*5*/ void (*head_turn_func_624)(Object* object, Vec3f** vector, f32 delayFloat);

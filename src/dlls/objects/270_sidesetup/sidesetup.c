@@ -1,10 +1,7 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "dll.h"
 #include "game/objects/object.h"
-#include "sys/main.h"
-#include "sys/objects.h"
-#include "variables.h"
-#include "functions.h"
+#include "sys/gfx/model.h"
 #include "types.h"
 
 typedef struct {

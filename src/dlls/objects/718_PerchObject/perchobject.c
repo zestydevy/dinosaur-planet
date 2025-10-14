@@ -1,8 +1,17 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "dlls/engine/26_curves.h"
+#include "dll.h"
 #include "dlls/objects/214_animobj.h"
-#include "macros.h"
+#include "game/objects/object.h"
+#include "functions.h"
+#include "sys/objects.h"
+#include "sys/math.h"
+#include "sys/main.h"
+#include "sys/gfx/model.h"
 #include "sys/objtype.h"
 #include "game/gamebits.h"
+#include "types.h"
 
 typedef struct {
 /*00*/	s16 objId;

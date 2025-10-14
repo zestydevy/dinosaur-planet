@@ -1,12 +1,13 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 
 #include "dlls/objects/223_cannon_claw.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
-#include "variables.h"
 #include "functions.h"
 #include "types.h"
 

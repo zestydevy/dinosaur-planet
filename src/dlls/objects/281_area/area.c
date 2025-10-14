@@ -1,6 +1,8 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "functions.h"
 #include "game/objects/object.h"
+#include "types.h"
+#include "sys/gfx/model.h"
 
 // offset: 0x0 | ctor
 void area_ctor(void *dll){

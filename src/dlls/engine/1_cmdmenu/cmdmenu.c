@@ -1,11 +1,12 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
+#include "dlls/engine/1_ui.h"
 #include "functions.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "sys/memory.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
-#include "game/objects/inventory_items.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {

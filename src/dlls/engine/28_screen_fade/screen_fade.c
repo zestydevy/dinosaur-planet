@@ -1,12 +1,12 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "dlls/engine/28_screen_fade.h"
 #include "sys/camera.h"
-#include "sys/gfx/map.h"
 #include "sys/main.h"
-#include "sys/objects.h"
 #include "dll.h"
+#include "sys/gfx/map.h"
 #include "functions.h"
+#include "types.h"
+#include "dlls/engine/28_screen_fade.h"
 
 static f32 sFadeAlpha; // 0-255
 static f32 sFadeSpeed;

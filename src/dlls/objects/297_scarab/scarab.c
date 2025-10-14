@@ -1,11 +1,14 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "dlls/objects/210_player.h"
+#include "sys/gfx/model.h"
+#include "sys/math.h"
 #include "sys/objmsg.h"
 #include "sys/rand.h"
+#include "types.h"
 
 typedef struct {
 /*00*/ u32 soundHandle;

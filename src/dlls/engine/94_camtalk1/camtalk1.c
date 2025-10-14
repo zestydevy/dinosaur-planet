@@ -1,10 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "sys/main.h"
-#include "sys/objects.h"
-#include "variables.h"
-#include "functions.h"
-#include "types.h"
+#include "sys/camera.h"
 
 typedef struct {
 /*0000*/    Camera camera;

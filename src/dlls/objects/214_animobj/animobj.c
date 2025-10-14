@@ -1,11 +1,14 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "functions.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "game/objects/object.h"
 
 #include "dlls/objects/214_animobj.h"
+#include "types.h"
 
 // offset: 0x0 | ctor
 void animobj_ctor(void *dll) {

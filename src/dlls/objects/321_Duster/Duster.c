@@ -1,12 +1,18 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
+#include "dlls/engine/29_gplay.h"
+#include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "functions.h"
 #include "dll.h"
 #include "sys/rand.h"
 #include "game/gamebits.h"
+#include "types.h"
 
 s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, s32*, Object*, s32, s32, s32, s32);
 s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);

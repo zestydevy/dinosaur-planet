@@ -1,12 +1,15 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "sys/gfx/model.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "dll.h"
 #include "functions.h"
 
 #include "dlls/objects/745_DR_Cage.h"
+#include "types.h"
 
 typedef struct {
 s32 unk0;

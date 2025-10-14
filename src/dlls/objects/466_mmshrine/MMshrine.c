@@ -1,11 +1,17 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
+#include "dlls/engine/6_amsfx.h"
 #include "functions.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "dll.h"
+#include "sys/gfx/texture.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"
+#include "sys/math.h"
 #include "sys/objects.h"
+#include "types.h"
 
 s32 obj_recv_mesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg);
 Texture* func_8004A1E8(s32 match_value);

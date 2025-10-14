@@ -1,8 +1,13 @@
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "PR/os.h"
 #include "dlls/engine/24_waterfx.h"
 
 #include "macros.h"
+#include "sys/camera.h"
 #include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/rand.h"
 #include "sys/main.h"

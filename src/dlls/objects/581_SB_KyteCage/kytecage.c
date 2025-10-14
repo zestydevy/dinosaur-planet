@@ -1,8 +1,20 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
 #include "dlls/objects/214_animobj.h"
+#include "functions.h"
 #include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "game/objects/object_def.h"
 #include "segment_334F0.h"
+#include "sys/main.h"
+#include "sys/gfx/model.h"
+#include "sys/math.h"
+#include "sys/gfx/gx.h"
+#include "sys/dll.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
+#include "types.h"
 
 void func_80034FF0(s32); //arg seems to be a MtxF*
 
@@ -170,7 +182,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3((SRT* ) &galleonTransform, (f32* ) &boneTransform.transl);
+                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
@@ -206,7 +218,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3((SRT* ) &galleonTransform, (f32* ) &boneTransform.transl);
+                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
