@@ -68,12 +68,12 @@ static u32 _data_40[] = {
     0x00000008, 0x000000ff, 0x000000ff, 0x00000078
 };
 
-void dll_296_ctor(void *dll) { }
+void medium_crate_ctor(void *dll) { }
 
-void dll_296_dtor(void *dll) { }
+void medium_crate_dtor(void *dll) { }
 
 // export 0
-void dll_295_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
+void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     MediumCrate_Data *objdata;
     idk1 local_10;
     idk2 local_18;
@@ -129,13 +129,13 @@ void dll_295_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 }
 
 // export 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/dll_295_control.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/medium_crate_control.s")
 
 // export 2
-void dll_295_update(Object *self) { }
+void medium_crate_update(Object *self) { }
 
 // export 3
-void dll_295_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void medium_crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     MediumCrate_Data *objdata;
     MediumCrate_Setup *setup;
 
@@ -170,7 +170,7 @@ void dll_295_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 }
 
 // export 4
-void dll_295_free(Object *self, s32 param2) {
+void medium_crate_free(Object *self, s32 param2) {
     MediumCrate_Data *objdata;
 
     objdata = (MediumCrate_Data*)self->data;
@@ -187,12 +187,12 @@ void dll_295_free(Object *self, s32 param2) {
 }
 
 // export 5
-u32 dll_296_get_model_flags(Object *self) {
+u32 medium_crate_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // export 6
-u32 dll_296_get_data_size(Object *self, u32 currentSize) {
+u32 medium_crate_get_data_size(Object *self, u32 currentSize) {
     return sizeof(MediumCrate_Data);
 }
 
@@ -226,9 +226,9 @@ typedef struct {
 } FoodPickup_Setup;
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/dll_296_func_C50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/medium_crate_func_C50.s")
 #else
-s32 dll_296_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
+s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
     s32 spawnsLeft;
     Object *obj;
     SRT srt;

@@ -1,0 +1,23 @@
+.text = 0x0:
+DRLavaControl_ctor = 0x0;
+DRLavaControl_dtor = 0xC;
+DRLavaControl_setup = 0x18;
+DRLavaControl_control = 0x130;
+DRLavaControl_update = 0x170;
+DRLavaControl_print = 0x1D8;
+DRLavaControl_free = 0x1F0;
+DRLavaControl_get_model_flags = 0x270;
+DRLavaControl_get_data_size = 0x280;
+DRLavaControl_freeze = 0x294;
+DRLavaControl_freeze_update_effects = 0x47C;
+DRLavaControl_create_light = 0x604;
+DRLavaControl_create_particles = 0x720;
+
+.rodata = 0x8D0:
+str_0 = 0x0; // absolute:0x8D0
+
+.data = 0x910:
+lfxEmitterUnk1E = 0x0; // absolute:0x910
+dataUnused = 0x8; // absolute:0x918
+particleChanceA = 0x10; // absolute:0x920
+particleChanceB = 0x1C; // absolute:0x92C

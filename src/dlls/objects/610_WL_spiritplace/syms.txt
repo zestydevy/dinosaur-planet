@@ -1,0 +1,17 @@
+.text = 0x0:
+WL_spiritplace_ctor = 0x0;
+WL_spiritplace_dtor = 0xC;
+WL_spiritplace_setup = 0x18;
+WL_spiritplace_control = 0x130;
+WL_spiritplace_update = 0x4BC;
+WL_spiritplace_print = 0x4C8;
+WL_spiritplace_free = 0x51C;
+WL_spiritplace_get_model_flags = 0x5A0;
+WL_spiritplace_get_data_size = 0x5B0;
+WL_spiritplace_func_5C4 = 0x5C4;
+
+.rodata = 0x63C:
+
+.data = 0x64C:
+_data_0 = 0x0; // absolute:0x64C
+_data_4 = 0x4; // absolute:0x650

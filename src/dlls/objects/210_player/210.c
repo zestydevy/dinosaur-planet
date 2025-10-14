@@ -23,6 +23,7 @@
 #include "sys/gfx/map.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
+#include "sys/controller.h"
 #include "functions.h"
 #include "dll.h"
 #include "types.h"
@@ -31,7 +32,6 @@
 #include "dlls/modgfx/106.h"
 #include "unktypes.h"
 #include "segment_334F0.h"
-#include "sys/input.h"
 
 // size: 0x54
 typedef struct UnkArg1 {
@@ -5302,7 +5302,7 @@ void dll_210_func_1CEFC(Object* player, s32 arg1) {
         }
         temp_v1->magic = var_v0;
         if (arg1 > 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB_Magic_Refill_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
     }
 }

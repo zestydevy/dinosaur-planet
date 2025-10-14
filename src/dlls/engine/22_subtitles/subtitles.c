@@ -2,6 +2,7 @@
 #include "dlls/engine/21_gametext.h"
 #include "PR/gbi.h"
 
+#include "sys/camera.h"
 #include "sys/gfx/gx.h"
 #include "sys/controller.h"
 #include "sys/fonts.h"

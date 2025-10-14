@@ -195,9 +195,9 @@ void GPbonfire_control(Object* self) {
                             gDLL_13_Expgfx->vtbl->func5(self);
                             objdata->updateFireEffect = TRUE;
 
-                            //Lift up the ChimneySweep once the fire's roaring
+                            //Lift up the ChimneySwipe once the fire's roaring
                             if (objdata->weedsDeposited == 4) {
-                                main_set_bits(BIT_GP_ChimneySweep_Lifted, TRUE);
+                                main_set_bits(BIT_GP_ChimneySwipe_Lifted, TRUE);
                                 //Start a 60 second challenge timer
                                 func_8000F64C(0x15, 60);
                                 func_8000F6CC();

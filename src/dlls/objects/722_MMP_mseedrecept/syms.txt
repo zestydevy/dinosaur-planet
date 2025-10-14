@@ -1,0 +1,22 @@
+.text = 0x0:
+moonSeedReceptacle_ctor = 0x0;
+moonSeedReceptacle_dtor = 0xC;
+moonSeedReceptacle_setup = 0x18;
+moonSeedReceptacle_control = 0x118;
+moonSeedReceptacle_update = 0x998;
+dll_722_print = 0x9A4;
+moonSeedReceptacle_free = 0xB88;
+moonSeedReceptacle_get_model_flags = 0xBC8;
+moonSeedReceptacle_get_data_size = 0xBD8;
+moonSeedReceptacle_func_BEC = 0xBEC;
+moonSeedReceptacle_func_D00 = 0xD00;
+moonSeedReceptacle_func_D18 = 0xD18;
+moonSeedReceptacle_func_D30 = 0xD30;
+moonSeedReceptacle_func_D40 = 0xD40;
+moonSeedReceptacle_anim_callback = 0xE5C;
+
+.rodata = 0xF08:
+str_0 = 0x0; // absolute:0xF08
+
+.bss = 0xF38:
+_bss_0 = 0x0; // absolute:0xF38
