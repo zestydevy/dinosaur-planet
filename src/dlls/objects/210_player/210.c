@@ -5282,7 +5282,7 @@ void dll_210_func_1CEFC(Object* player, s32 arg1) {
         }
         temp_v1->magic = var_v0;
         if (arg1 > 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB_Magic_Refill_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
     }
 }

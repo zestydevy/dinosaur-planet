@@ -145,7 +145,7 @@ void SHspore_control(Object* self) {
             }
             if (collidedObject->id != OBJ_SHrocketmushroo) {
                 //Other objects (ignoring SHrocketmushroom since the spores emerge out of it)
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B31, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B31_Item_Collection_Chime, MAX_VOLUME, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 
                 //Create collision particles

@@ -195,7 +195,7 @@ void func_8000F6CC() {
             gDLL_6_AMSFX->vtbl->func_A1C(D_800A7D7C);
         }
 
-        D_800A7D7C = gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_775, MAX_VOLUME, 0, 0, 0, 0);
+        D_800A7D7C = gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_775_Timer_Countdown, MAX_VOLUME, 0, 0, 0, 0);
     } else {
         D_800A7D7C = 0;
     }
@@ -222,7 +222,7 @@ void func_8000FA2C() {
     D_800A7D94 = 0;
 
     if (D_800A7D79 & 8) {
-        gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_242, MAX_VOLUME, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
     }
 
     if (D_800A7D7C != 0) {
@@ -279,7 +279,7 @@ void func_8000FB2C(Gfx **gdl) {
 
     if (bvar) {
         if (D_800A7D79 & 8) {
-            gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_242, MAX_VOLUME, 0, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         if (D_800A7D7C != 0) {

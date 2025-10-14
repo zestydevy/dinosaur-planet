@@ -33,9 +33,9 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
         temp_v0_2->unk2c = temp_v0_2->unk0 * 2.5f;
     }
 
-    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B1, MAX_VOLUME, NULL, 0, 0, 0);
+    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B1_Flames_Venting, MAX_VOLUME, NULL, 0, 0, 0);
     if (_bss_4 == 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B2, MAX_VOLUME, (u32*)&_bss_4, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B2_Fire_Burning, MAX_VOLUME, (u32*)&_bss_4, 0, 0, 0);
     }
 }
 
@@ -107,7 +107,7 @@ void kamerian_flame_control(Object* self) {
         func_80003B70(1.0f);
 
         //Create particles (@bug: particles don't seem to show up?)
-        impactSoundID = SOUND_9B5;
+        impactSoundID = SOUND_9B5_Explosion;
         particleIndex = 25;
         while (particleIndex--) {
             gDLL_17->vtbl->func1(self, 0x343, NULL, 1, -1, NULL);
@@ -135,7 +135,7 @@ void kamerian_flame_update(Object* self) {
         self->speed.z = 0.0f;
         self->unk_0x36 = 0xFE;
         func_800267A4(self);
-        impactSoundID = SOUND_9B4;
+        impactSoundID = SOUND_9B4_Flamethrower;
     }
 }
 
