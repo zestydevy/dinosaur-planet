@@ -268,7 +268,7 @@ void SPShop_buy_item(Object* self, s32 cost) {
     objData = self->data;
 
     //Substract cost from player's scarabs
-    ((DLL_Unknown*)player->dll)->vtbl->func[19].withTwoArgs((s32)player, -cost);
+    ((DLL_210_Player*)player->dll)->vtbl->func19(player, -cost);
 
     //Handle special cases (player energy/magic refills)
     switch (objData->itemIndex) {  
@@ -280,16 +280,16 @@ void SPShop_buy_item(Object* self, s32 cost) {
         case 45:
             break;
         case SPItem_Fruit:
-            ((DLL_Unknown*)player->dll)->vtbl->func[24].withTwoArgs((s32)player, 1);
+            ((DLL_210_Player*)player->dll)->vtbl->func24(player, 1);
             break;
         case SPItem_Energy_Egg:
-            ((DLL_Unknown*)player->dll)->vtbl->func[24].withTwoArgs((s32)player, 2);
+            ((DLL_210_Player*)player->dll)->vtbl->func24(player, 2);
             break;
         case SPItem_Green_Magic:
-            ((DLL_Unknown*)player->dll)->vtbl->func[14].withTwoArgs((s32)player, 5);
+            ((DLL_210_Player*)player->dll)->vtbl->func14(player, 5);
             break;
         case SPItem_Blue_Magic:
-            ((DLL_Unknown*)player->dll)->vtbl->func[14].withTwoArgs((s32)player, 10);
+            ((DLL_210_Player*)player->dll)->vtbl->func14(player, 10);
             break;
     }
     
