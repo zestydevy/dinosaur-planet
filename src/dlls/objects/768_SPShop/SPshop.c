@@ -37,8 +37,8 @@
     {100, {100, 100, 100}, 0,  0, {BIT_SP_Krazoa_Translator, NONE},          {BIT_SP_Krazoa_Translator, NONE},              SPText_Translator},
     {18,  {18,  20,  23},  15, 0, {BIT_ALWAYS_1, BIT_Sabre_Dino_Bag_S},      {BIT_ALWAYS_1, BIT_Krystal_Dino_Bag_S},        SPText_Sidekick_Foodbag_S},
     {35,  {38,  40,  45},  0,  0, {BIT_SP_Dino_Bag_M, BIT_Sabre_Dino_Bag_M}, {BIT_SP_Dino_Bag_M, BIT_Krystal_Dino_Bag_M},   SPText_Sidekick_Foodbag_M},
-    {22,  {25,  28,  30},  20, 0, {BIT_SP_Magic_Chest_Medium, NONE},         {BIT_SP_Magic_Chest_Medium, NONE},                  SPText_Magic_Chest_M},
-    {50,  {50,  55,  60},  0,  0, {BIT_SP_Magic_Chest_Large, NONE},          {BIT_SP_Magic_Chest_Large, NONE},                  SPText_Magic_Chest_L},
+    {22,  {25,  28,  30},  20, 0, {BIT_SP_Magic_Chest_Medium, NONE},         {BIT_SP_Magic_Chest_Medium, NONE},             SPText_Magic_Chest_M},
+    {50,  {50,  55,  60},  0,  0, {BIT_SP_Magic_Chest_Large, NONE},          {BIT_SP_Magic_Chest_Large, NONE},              SPText_Magic_Chest_L},
     {18,  {20,  23,  25},  0,  0, {BIT_SP_Foodbag_S, BIT_Sabre_Foodbag_S},   {BIT_SP_Foodbag_S, BIT_Krystal_Foodbag_S},     SPText_Player_Foodbag_Small},
     {35,  {38,  40,  45},  0,  0, {BIT_SP_Foodbag_M, BIT_Sabre_Foodbag_M},   {BIT_SP_Foodbag_M, BIT_Krystal_Foodbag_M},     SPText_Player_Foodbag_Medium},
     {57,  {60,  65,  70},  55, 0, {BIT_SP_Foodbag_L, BIT_Sabre_Foodbag_L},   {BIT_SP_Foodbag_L, BIT_Krystal_Foodbag_L},     SPText_Player_Foodbag_Large},
@@ -267,7 +267,7 @@ void SPShop_buy_item(Object* self, s32 cost) {
 
     objData = self->data;
 
-    //Substract cost from player's scarabs
+    //Subtract cost from player's scarabs
     ((DLL_210_Player*)player->dll)->vtbl->func19(player, -cost);
 
     //Handle special cases (player energy/magic refills)

@@ -15,8 +15,8 @@
 #define TEXT(roomID, itemID) (63 + itemID)
 
 #define COLD_STORAGE 0
-#define MAIN_ROOM 6
-#define MAP_ROOM 16
+#define MAIN_ROOM 20
+#define MAP_ROOM 40
 
 typedef enum {
     //Cold storage
@@ -47,7 +47,7 @@ typedef enum {
     SPItem_Warlock_Replay_Disk = MAP_ROOM + 4,
     SPItem_Ice_Mountain_Replay_Disk = MAP_ROOM + 5,
     SPItem_Ice_Mountain_Map = MAP_ROOM + 6
-}  ShopItemIndices;
+} ShopItemIndices;
 
 typedef enum {
     //Cold storage
