@@ -5264,24 +5264,24 @@ s16 dll_210_func_1CE8C(Object* player) {
 //Plays sound effect when magic refilled?
 //NOTE: Patched in Dinomod to prevent undebounced sound!
 //https://dinosaurpla.net/wiki/Dinomod_Enhanced/Differences/DLLs/210_KrystalSabre#dll_210_func_1CEFC
-void dll_210_func_1CEFC(Object* player, s32 arg1) {
+void dll_210_func_1CEFC(Object* player, s32 magicDifference) {
     Player_Data* objdata = player->data;
-    PlayerStats* temp_v1;
-    s32 var_v0;
+    PlayerStats* stats;
+    s32 magic;
 
     if (objdata->unk8BB != 0) {
-        temp_v1 = objdata->stats;
-        var_v0 = temp_v1->magic;
-        var_v0 += arg1;
-        if (var_v0 < 0) {
-            var_v0 = 0;
+        stats = objdata->stats;
+        magic = stats->magic;
+        magic += magicDifference;
+        if (magic < 0) {
+            magic = 0;
         } else {
-            if (temp_v1->magicMax < var_v0) {
-                var_v0 = temp_v1->magicMax;
+            if (stats->magicMax < magic) {
+                magic = stats->magicMax;
             }
         }
-        temp_v1->magic = var_v0;
-        if (arg1 > 0) {
+        stats->magic = magic;
+        if (magicDifference > 0) {
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB_Magic_Refill_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
     }
