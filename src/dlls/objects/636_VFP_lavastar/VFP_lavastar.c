@@ -1,10 +1,14 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/modgfx/182.h"
+#include "game/objects/object.h"
 #include "sys/dll.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "dll.h"
+#include "types.h"
 
 typedef struct {
     ObjSetup base;

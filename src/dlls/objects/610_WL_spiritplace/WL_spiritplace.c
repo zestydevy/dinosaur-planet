@@ -1,7 +1,19 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "dll.h"
 #include "dlls/modgfx/149.h"
 #include "dlls/modgfx/155.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/objects/object.h"
+#include "sys/dll.h"
+#include "sys/main.h"
+#include "game/gamebits.h"
+#include "sys/rand.h"
+#include "sys/math.h"
+#include "sys/objects.h"
+#include "types.h"
+#include "functions.h"
+#include "sys/gfx/model.h"
 
 /*0x0*/ static DLL_155 *_data_0 = NULL;
 /*0x4*/ static DLL_149 *_data_4 = NULL;

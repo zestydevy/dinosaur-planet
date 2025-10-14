@@ -4,10 +4,11 @@
 #include "dlls/engine/21_gametext.h"
 #include "game/objects/object.h"
 #include "sys/fonts.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
-#include "types.h"
 
 typedef struct {
     ObjSetup base;

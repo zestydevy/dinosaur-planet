@@ -1,7 +1,14 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "dll.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/objects/object.h"
+#include "sys/main.h"
+#include "sys/math.h"
+#include "sys/gfx/model.h"
+#include "sys/objects.h"
+#include "types.h"
 #include "game/gamebits.h"
-#include "sys/objanim.h"
 
 typedef struct {
     ObjSetup base;

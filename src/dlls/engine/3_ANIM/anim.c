@@ -5,7 +5,9 @@
 #include "dlls/engine/3_animation.h"
 #include "sys/asset_thread.h"
 #include "sys/fs.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "game/objects/object.h"
 

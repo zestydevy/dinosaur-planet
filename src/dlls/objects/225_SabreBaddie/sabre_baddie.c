@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "types.h"

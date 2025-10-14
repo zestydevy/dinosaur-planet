@@ -1,10 +1,16 @@
 #include "dlls/engine/25.h"
 
-#include "libc/string.h"
+#include "PR/ultratypes.h"
+#include "PR/os.h"
+#include "dlls/engine/26_curves.h"
+#include "game/objects/object.h"
+#include "sys/curves.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "dll.h"
 #include "constants.h"
+#include "libc/string.h"
 #include "prevent_bss_reordering.h"
 
 /* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";

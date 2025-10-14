@@ -1,9 +1,14 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
+#include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/objects.h"
 #include "dll.h"
 #include "functions.h"
+#include "types.h"
 
 // Note: This file appears to be called "lift1.c" in the original game.
 

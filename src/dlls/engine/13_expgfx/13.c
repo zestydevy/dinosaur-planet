@@ -1,5 +1,5 @@
 #include "PR/ultratypes.h"
-#include "common.h"
+#include "game/objects/object.h"
 #include "prevent_bss_reordering.h"
 
 /*0x0*/ static s16 _data_0[] = {

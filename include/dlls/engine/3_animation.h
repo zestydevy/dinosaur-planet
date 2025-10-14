@@ -60,7 +60,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*27*/ void (*func27)(s16 arg0);
 /*28*/ void (*func28)(s32 arg0, s32 arg1);
 /*29*/ UnknownDLLFunc func29;
-/*30*/ s32 (*func30)(s32 arg0, s32 arg1, s32 arg2);
+/*30*/ s32 (*func30)(s32 arg0, void *arg1, s32 arg2);
 /*31*/ s32 (*func31)(f32 arg0, f32 arg1, f32 arg2);
 /*32*/ s32 (*func32)(s32 arg0, s32 arg1);
 };

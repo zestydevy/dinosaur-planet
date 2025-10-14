@@ -1,6 +1,17 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "dll.h"
 #include "dlls/objects/214_animobj.h"
+#include "functions.h"
 #include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "sys/math.h"
+#include "sys/main.h"
+#include "game/objects/object_id.h"
+#include "sys/objects.h"
+#include "types.h"
+#include "sys/dll.h"
+#include "sys/gfx/model.h"
 
 void func_8005B5B8(Object*, Object*, s32);
 

@@ -2,7 +2,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "game/gamebits.h"
-#include "game/objects/object.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/menu.h"

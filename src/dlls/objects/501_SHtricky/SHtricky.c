@@ -1,10 +1,13 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "dll.h"
+#include "types.h"
 
 typedef struct {
     u8 unk0;

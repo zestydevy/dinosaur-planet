@@ -2,7 +2,6 @@
 #include "dll.h"
 #include "game/gamebits.h"
 #include "sys/main.h"
-#include "variables.h"
 #include "functions.h"
 
 static u8 sRecentlyCompleted[5];

@@ -1,3 +1,4 @@
+#include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "sys/asset_thread.h"

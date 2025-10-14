@@ -1,14 +1,23 @@
+#include "PR/os.h"
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "dlls/engine/74_picmenu.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/engine/21_gametext.h"
 #include "functions.h"
+#include "sys/camera.h"
 #include "sys/controller.h"
 #include "sys/fonts.h"
+#include "sys/gfx/gx.h"
 #include "sys/gfx/map.h"
+#include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
 
 #include "dlls/engine/66_pausemenu.h"
+#include "types.h"
 
 /*0x0*/ static const char formatCompletionPercentage[] = "%3d%%";
 /*0x8*/ static const char formatGameplayTime[] = "%3d:%02d:%02d";

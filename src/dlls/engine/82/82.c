@@ -1,4 +1,3 @@
-#include "PR/ultratypes.h"
 
 void ctor(void *arg) {
 

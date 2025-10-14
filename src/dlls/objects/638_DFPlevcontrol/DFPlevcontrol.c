@@ -2,6 +2,8 @@
 #include "dll.h"
 #include "functions.h"
 #include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/objects.h"

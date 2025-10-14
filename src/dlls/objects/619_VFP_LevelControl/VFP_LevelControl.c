@@ -1,13 +1,16 @@
+#include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/print.h"
 #include "dll.h"
 #include "functions.h"
+#include "types.h"
 
 // size:0x3
 typedef struct {
