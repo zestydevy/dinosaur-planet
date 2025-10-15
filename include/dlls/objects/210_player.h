@@ -2,6 +2,7 @@
 #define _DLLS_210_H
 
 #include "PR/ultratypes.h"
+#include "dlls/engine/27_head_turn.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
@@ -138,32 +139,7 @@ typedef struct Unk80032CF8Copy {
 
 typedef struct {
 /*000*/ s32 unk0; //bitfield?
-/*004*/ void *unk4;
-/*004*/ s8 unk8[0x48 - 0x8];
-/*048*/ Vec3f unk48;
-/*004*/ s8 unk54[0xBC - 0x54];
-/*0BC*/ s8 unkBC;
-/*0BD*/ s8 unkBD[0xD8 - 0xBD];
-/*0D8*/ Object *unkD8;
-/*0DC*/ u8 padDC[0x198 - 0xDC];
-/*198*/ s16 unk198;
-/*19A*/ s16 unk19A;
-/*19C*/ s8 unk19C[0x1A8 - 0x19C];
-/*1a8*/ f32 unk1A8;
-/*1ac*/ f32 unk1AC;
-/*1b0*/ f32 unk1B0;
-/*1b4*/ f32 unk1B4;
-/*1b8*/ f32 unk1B8;
-/*1bc*/ s8 unk1BC[0x25B - 0x1BC];
-/*258*/ s8 unk25B;
-/*25c*/ s8 unk25C;
-/*25d*/ s8 unk25D;
-/*25e*/ u8 pad25E;
-/*25f*/ u8 pad25F;
-/*260*/ s8 unk260;
-/*261*/ s8 unk261;
-/*262*/ s8 unk262;
-/*263*/ s8 unk263;
+/*004*/ DLL27_Data unk4;
 /*264*/ s32 unk264;
 /*268*/ s32 unk268;
 /*26c*/ s16 unk26C;

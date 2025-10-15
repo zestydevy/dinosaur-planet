@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/gfx/model.h"
 
 typedef struct {
     u8 _unk0[0x26C - 0x0];
@@ -120,7 +121,7 @@ void dll_702_free(Object *self, s32 a1);
 
 // offset: 0xB3C | func: 6 | export: 5
 u32 dll_702_get_model_flags(Object *self) {
-    return 0x49;
+    return MODFLAGS_1 | MODFLAGS_8 | MODFLAGS_EVENTS;
 }
 
 // offset: 0xB4C | func: 7 | export: 6

@@ -14,9 +14,6 @@
 #include "game/gamebits.h"
 #include "types.h"
 
-s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, s32*, Object*, s32, s32, s32, s32);
-s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
-
 /*0x0*/ static const char str_0[] = "hit wall\n";
 
 #define DUSTER_RANDOM_MAX 4
@@ -84,7 +81,7 @@ void Duster_control(Object *self) {
     s32 count;
     Object *player;
     SRT srt;
-    f32 **sp54;
+    Func_80057F1C_Struct **sp54;
     s32 i;
     Duster_Data *objdata;
     PlayerStats *stats;
@@ -106,8 +103,8 @@ void Duster_control(Object *self) {
     count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp54, 0, 0);
 
     for (i = 0; i < count; i++) {
-        if (*(sp54[i]) < self->srt.transl.y + 140.0f) {
-            self->srt.transl.y = *(sp54[i]);
+        if (sp54[i]->unk0[0] < self->srt.transl.y + 140.0f) {
+            self->srt.transl.y = sp54[i]->unk0[0];
             break;
         }
     }
@@ -188,9 +185,8 @@ void Duster_control(Object *self) {
 // offset: 0x754 | func: 2 | export: 2
 void Duster_update(Object *self) {
     Duster_Data *objdata;
-    s32 _pad1[21];
-    s32 sp3C;
-    s32 _pad2;
+    s32 _pad;
+    Func_80059C40_Struct sp3C;
 
     objdata = self->data;
     if (func_80059C40(

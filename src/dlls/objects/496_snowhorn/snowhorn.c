@@ -98,30 +98,28 @@ typedef struct {
 /*114*/ s32 unk114;
 /*118*/ s32 unk118;
 /*11C*/ s32 unk11C;
-/*110*/ s32 unk120;
-/*114*/ s32 unk124;
-/*118*/ s32 unk128;
-/*11C*/ s32 unk12C;
-/*110*/ s32 unk130;
-/*114*/ s32 unk134;
-/*118*/ s32 unk138;
-/*11C*/ s32 unk13C;
-/*110*/ s32 unk140;
-/*114*/ s32 unk144;
-/*118*/ s32 unk148;
-/*11C*/ s32 unk14C;
-/*110*/ s32 unk150;
-/*114*/ s32 unk154;
-/*118*/ s32 unk158;
-/*11C*/ s32 unk15C;
-/*110*/ s32 unk160;
-/*114*/ s32 unk164;
-/*118*/ s32 unk168;
-/*11C*/ s32 unk16C;
-/*110*/ Vec3f* unk170;
-/*114*/ s32 unk174;
-/*118*/ Vec3f unk178[8]; //position samples/deltas - maybe for walk-related calculus?
-/*1d8*/ s8 unk1d8[0x208];
+/*120*/ s32 unk120;
+/*124*/ s32 unk124;
+/*128*/ s32 unk128;
+/*12C*/ s32 unk12C;
+/*130*/ s32 unk130;
+/*134*/ s32 unk134;
+/*138*/ s32 unk138;
+/*13C*/ s32 unk13C;
+/*140*/ s32 unk140;
+/*144*/ s32 unk144;
+/*148*/ s32 unk148;
+/*14C*/ s32 unk14C;
+/*150*/ s32 unk150;
+/*154*/ s32 unk154;
+/*158*/ s32 unk158;
+/*15C*/ s32 unk15C;
+/*160*/ s32 unk160;
+/*164*/ s32 unk164;
+/*168*/ s32 unk168;
+/*16C*/ s32 unk16C;
+/*170*/ DLL27_Data unk170;
+/*3d0*/ s8 _unk3D0[0x3E0-0x3D0];
 /*3e0*/ u32 unk3e0;
 /*3e4*/ u32 unk3e4;
 /*3e8*/ u32 unk3e8;
@@ -212,13 +210,13 @@ static Unk80026DF4 _data_0[] = {
     {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0}
 };
 
-static f32 _data_230[] = {
-    -12, 0, -20, 
-    12, 0, -20, 
-    12, 0, 20, 
-    -12, 0, 20
+static Vec3f _data_230[] = {
+    { -12, 0, -20 },
+    { 12, 0, -20 },
+    { 12, 0, 20 },
+    { -12, 0, 20 }
 };
-static u32 _data_260[] = {
+static f32 _data_260[] = {
     0, 0, 0, 0
 };
 /** Boolean - decides whether all SnowHorn should go to sleep */
@@ -286,7 +284,6 @@ void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 
 void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     SnowHorn_Data* objdata;
-    u8* temp_a0;
     s32 sp34;
 
     objdata = snowhorn->data;
@@ -322,10 +319,9 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
 
         //to do with setting up look-at behaviour?
         if (objdata->unk424 & 1) {
-            temp_a0 = (u8*)objdata + 0x170;
-            gDLL_27_HeadTurn->vtbl->head_turn_func_18((Vec3f*)temp_a0, 0x06000000, 0, 1);
-            gDLL_27_HeadTurn->vtbl->head_turn_func_c0((Vec3f*)temp_a0, 4, (s32)_data_230, (s32)_data_260, (s32)&sp34);
-            gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(snowhorn, (Vec3f*)temp_a0);
+            gDLL_27_HeadTurn->vtbl->head_turn_func_18(&objdata->unk170, 0x06000000, 0, 1);
+            gDLL_27_HeadTurn->vtbl->head_turn_func_c0(&objdata->unk170, 4, _data_230, _data_260, &sp34);
+            gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(snowhorn, &objdata->unk170);
         }
         snowhorn->ptr0x64->flags |= 0xA10;
     }

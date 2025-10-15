@@ -1,6 +1,7 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
+#include "sys/math.h"
 #include "ultra64.h"
 #include "dll_def.h"
 #include "sys/gfx/texture.h"
@@ -132,5 +133,32 @@ typedef struct Func_80037F9C_Struct {
     s32 unk18;
     u8 pad1C[0x28 - 0x1C];
 } Func_80037F9C_Struct;
+
+// size: 0x18
+typedef struct {
+    f32 unk0[4]; // maybe Vec4f and not an array
+    struct Object *unk10;
+    s8 unk14;
+} Func_80057F1C_Struct;
+
+// size: 0x54
+typedef struct Func_80059C40_Struct {
+    struct Object *unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    Vec4f unk1C;
+    u8 pad2C[0x38 - 0x2C];
+    Vec3f unk38;
+    f32 unk44;
+    f32 unk48;
+    s32 pad4C;
+    s8 unk50;
+    u8 pad51;
+    s8 unk52;
+} Func_80059C40_Struct;
 
 #endif

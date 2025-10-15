@@ -185,7 +185,7 @@ void func_80026160(Object* obj) {
     }
 }
 
-void func_80026184(Object* arg0, s32 arg1) {
+void func_80026184(Object* arg0, Object* arg1) {
     ObjectStruct58* obj58;
     s32 i;
 

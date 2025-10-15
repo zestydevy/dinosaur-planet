@@ -1,0 +1,33 @@
+.text = 0x0:
+dll_27_ctor = 0x0;
+dll_27_dtor = 0xC;
+dll_27_func_18 = 0x18;
+dll_27_func_84 = 0x84;
+dll_27_func_C0 = 0xC0;
+dll_27_func_1E8 = 0x1E8;
+dll_27_func_5A8 = 0x5A8;
+dll_27_func_624 = 0x624;
+dll_27_func_A74 = 0xA74;
+dll_27_func_B68 = 0xB68;
+dll_27_func_C7C = 0xC7C;
+dll_27_func_DF4 = 0xDF4;
+dll_27_func_FB8 = 0xFB8;
+dll_27_func_1148 = 0x1148;
+dll_27_func_11E0 = 0x11E0;
+dll_27_func_1278 = 0x1278;
+dll_27_func_151C = 0x151C;
+dll_27_func_15C0 = 0x15C0;
+dll_27_func_1AA0 = 0x1AA0;
+dll_27_func_1BA8 = 0x1BA8;
+dll_27_func_1D60 = 0x1D60;
+dll_27_func_214C = 0x214C;
+dll_27_func_2394 = 0x2394;
+
+.rodata = 0x280C:
+str_0 = 0x0; // absolute:0x280C
+_rodata_48 = 0x48; // absolute:0x2854 type:Vec3f force_migration:True function_owner:dll_27_func_FB8
+
+.bss = 0x287C:
+_bss_0 = 0x0; // absolute:0x287C
+_bss_8 = 0x8; // absolute:0x2884
+_bss_170 = 0x170; // absolute:0x29EC
