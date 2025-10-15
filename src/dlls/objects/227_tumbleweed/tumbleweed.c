@@ -19,7 +19,7 @@ void func_8002674C(Object* obj);
 
 static s32 dll_227_func_1FA0(Object* self);
 
-/*0x0*/ static f32 _data_0[] = {
+/*0x0*/ static Vec3f _data_0 = {
     0.0, 0.0, 0.0
 };
 /*0xC*/ static f32 _data_C = {
@@ -44,7 +44,7 @@ typedef struct {
 } GoldenNugget_Setup;
 
 typedef struct {
-/*000*/ s8 unk0[0x260 - 0];
+/*000*/ DLL27_Data unk0;
 /*260*/ u16 unk260;
 /*262*/ u16 unk262;
 /*264*/ f32 scaleCopy;
@@ -113,9 +113,9 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
         self->srt.scale = objdata->scaleCopy;
     } else {
         self->srt.scale = 0.001f;
-        gDLL_27_HeadTurn->vtbl->head_turn_func_18(objdata, 0, 0x40000, 1);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_84(objdata, 1, &_data_0[0], &_data_C, 4);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, objdata);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_18(&objdata->unk0, 0, 0x40000, 1);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_84(&objdata->unk0, 1, &_data_0, &_data_C, 4);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, &objdata->unk0);
         objdata->unk270 = 0;
         self->unk0xaf |= 8;
         
@@ -359,14 +359,11 @@ void dll_227_func_1840(Object* self, s32 arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_1850.s")
 #else
-
-s32 func_80057F1C(Object*, f32, f32, f32, f32***, s32, s32);
-
 void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
     f32 var_fv0;
     s32 sampleCount;
     s32 minimumIndex;
-    f32 **samples;
+    Func_80057F1C_Struct **samples;
     f32 minimum;
     s32 volume;
     s32 i;
@@ -376,7 +373,7 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
     sampleCount = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);
 
     for (i = 0, minimumIndex = 0; i < sampleCount; i++){
-        var_fv0 = self->srt.transl.y - *samples[i];
+        var_fv0 = self->srt.transl.y - samples[i]->unk0[0];
         if (var_fv0 < 0.0f) {
             var_fv0 = (var_fv0 * -1.0f) + 10.0f;
         }
@@ -421,7 +418,7 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
     self->srt.yaw += objdata->unk278 * delayFloat;
     
     if (samples){        
-        minimum = *samples[minimumIndex] + 7.0f;
+        minimum = samples[minimumIndex]->unk0[0] + 7.0f;
         if (minimum < self->srt.transl.y) {
             self->speed.y = self->speed.y - 0.17f;
             return;

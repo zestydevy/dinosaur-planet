@@ -22,14 +22,6 @@ typedef struct Unk800BB268 {
 } Unk800BB268;
 extern Unk800BB268 D_800BB268[];
 extern u8 D_800BB3A8;
-    typedef struct Unk80027934 {
-    u8 pad0[64];
-    f32 unk40[4];
-    s8 unk50[4];
-    s8 unk54[4];
-    s32 unk58[4];
-    s16 unk68;
-} Unk80027934;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053300.s")
 

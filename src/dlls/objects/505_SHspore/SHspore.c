@@ -23,11 +23,7 @@ typedef struct {
 } SHSpore_Setup;
 
 typedef struct {
-/*000*/ s8 unk0[0x25C - 0];
-/*25C*/ s8 unk25C;
-/*25D*/ s8 unk25D;
-/*25E*/ s8 unk25E;
-/*25F*/ s8 unk25F;
+/*000*/ DLL27_Data unk0;
 /*260*/ f32 lifetime;
 /*264*/ f32 unk264;
 /*268*/ f32 unk268;
@@ -50,7 +46,7 @@ typedef struct {
 static void SHspore_func_750(Object* self, SHSpore_Data* objdata);
 static void SHspore_func_A00(Object* arg0, SHSpore_Data* objdata);
 
-/*0x0*/ static u32 _data_0[] = { 0, 0, 0 };
+/*0x0*/ static Vec3f _data_0 = { 0, 0, 0 };
 /*0xC*/ static f32 _data_C = 5.0f;
 
 // offset: 0x0 | ctor
@@ -65,7 +61,7 @@ void SHspore_dtor(void *dll) {
 void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     SHSpore_Data* objdata;
     s8 pad[4];
-    s8 sp37;
+    u8 sp37;
 
     objdata = self->data;
     sp37 = 5;
@@ -77,8 +73,8 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     objdata->unk298 = rand_next(0, 0xFFFF);
     objdata->unk26C = rand_next(0, 1000) / 1000.0f;
 
-    gDLL_27_HeadTurn->vtbl->head_turn_func_18((void*)objdata, 0, 0x40002, 1);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_c0((void*)objdata, 1, (s32)&_data_0, (s32)&_data_C, (s32)&sp37);
+    gDLL_27_HeadTurn->vtbl->head_turn_func_18(&objdata->unk0, 0, 0x40002, 1);
+    gDLL_27_HeadTurn->vtbl->head_turn_func_c0(&objdata->unk0, 1, &_data_0, &_data_C, &sp37);
     gDLL_17->vtbl->func1(self, 0x3F1, NULL, 4, -1, NULL);
 }
 
@@ -135,9 +131,9 @@ void SHspore_control(Object* self) {
         self->speed.x = objdata->unk274 + (objdata->unk27C * objdata->unk268);
         self->speed.z = objdata->unk278 + (objdata->unk280 * objdata->unk268);
         obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(self, (void*)objdata, delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(self, (void*)objdata);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_624(self, (void*)objdata, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(self, &objdata->unk0, delayFloat);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(self, &objdata->unk0);
+        gDLL_27_HeadTurn->vtbl->head_turn_func_624(self, &objdata->unk0, delayFloat);
         func_80026128(self, 0xA, 0, 0);
 
         //Handle collisions
@@ -166,7 +162,7 @@ void SHspore_control(Object* self) {
         } else {
             objdata->lifetime -= delayFloat;
             //Destroy the spore if its lifetime runs out or it collides with terrain
-            if (objdata->lifetime <= 0.0f || objdata->unk25C & 0x11) {
+            if (objdata->lifetime <= 0.0f || objdata->unk0.unk25C & 0x11) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8A2, MAX_VOLUME, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 

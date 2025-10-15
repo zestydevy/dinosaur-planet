@@ -144,4 +144,7 @@ void func_80036438(Object*);
 s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg5);
 void func_80059038(s32, s32, s32);
 
+s32 func_80057F1C(Object*, f32, f32, f32, Func_80057F1C_Struct***, s32, s32);
+s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, Func_80059C40_Struct*, Object*, s8, s8, u8, s8);
+
 #endif //_FUNCTIONS_H

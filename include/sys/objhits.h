@@ -1,7 +1,6 @@
 #ifndef _SYS_OBJHITS_H
 #define _SYS_OBJHITS_H
 
-#include "common.h"
 #include "sys/map.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
@@ -108,7 +107,7 @@ void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHi
 void func_8002B5C0(Object *obj);
 u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-void func_80032804(Object*);
+void func_80032804(Object*,Object*);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 arg5);
 void func_80029AB4(ModelJoint *joints, s32 jointsCount, HitSphere *hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5);
@@ -134,5 +133,6 @@ void func_80026128(Object* self, s32 arg1, s32 arg2, s32 arg3);
 void func_8002674C(Object* obj);
 void func_80026940(Object* obj, s16 arg1);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
+void func_80026184(Object* arg0, Object* arg1);
 
 #endif

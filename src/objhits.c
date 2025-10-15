@@ -185,7 +185,7 @@ void func_80026160(Object* obj) {
     }
 }
 
-void func_80026184(Object* arg0, s32 arg1) {
+void func_80026184(Object* arg0, Object* arg1) {
     ObjectStruct58* obj58;
     s32 i;
 
@@ -1246,7 +1246,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
     f32 temp_fv1;
     s32 var_v1;
 
-    func_80032804(obj);
+    func_80032804(obj, otherObj);
     objhitInfo = obj->objhitInfo;
     otherObjhitInfo = otherObj->objhitInfo;
     objhitInfo->unk_0x58 |= 8;
