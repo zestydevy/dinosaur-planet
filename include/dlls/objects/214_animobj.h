@@ -62,7 +62,7 @@ typedef struct {
 /*A4*/ AnimCurvesKeyframe* animCurvesKeyframes;
 /*A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS];
 /*CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
-/*F4*/ AnimObj_DataF4Callback unkF4;
+/*F4*/ AnimObj_DataF4Callback unkF4; //end-of-sequence callback function
 /*F8*/ AnimObj_DataF8Callback unkF8;
 /*FC*/ s8 unkFC[0x144 - 0xFC];
 } AnimObj_Data;

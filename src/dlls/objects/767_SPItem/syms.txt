@@ -1,0 +1,14 @@
+.text = 0x0:
+SPItem_ctor = 0x0;
+SPItem_dtor = 0xC;
+SPItem_setup = 0x18;
+SPItem_control = 0x84;
+SPItem_update = 0x350;
+SPItem_print = 0x35C;
+SPItem_free = 0x440;
+SPItem_get_model_flags = 0x450;
+SPItem_get_data_size = 0x468;
+SPItem_anim_callback = 0x47C;
+SPItem_bought_callback = 0x4AC;
+
+.rodata = 0x5C0:
