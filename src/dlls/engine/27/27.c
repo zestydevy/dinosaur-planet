@@ -66,9 +66,6 @@ void dll_27_func_C0(DLL27_Data* arg0, s32 arg1, Vec3f *arg2, f32 *arg3, u8* arg4
 }
 
 // offset: 0x1E8 | func: 3 | export: 3
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/27/dll_27_func_1E8.s")
-#else
 void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
     MtxF sp110;
     Vec3f spE0[4];
@@ -140,15 +137,16 @@ void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
             minZ = temp_fv0;
         }
 
-        temp_fa0 = arg1->unk38[var_s4].x;
-        if (((!temp_fa0) && (!temp_fa0)) && (!temp_fa0)){} // @fake
+        if (((!arg1->unk38[var_s4].x) && (!arg1->unk38[var_s4].x)) && (!arg1->unk38[var_s4].x)){} // @fake
+
         temp_fa1 = arg1->unk38[var_s4].y;
         temp_ft4 = arg1->unk38[var_s4].z;
-        temp_fv0 = temp_fa0 + spD0[i];
+
+        temp_fv0 = arg1->unk38[var_s4].x + spD0[i];
         if (maxX < temp_fv0) {
             maxX = temp_fv0;
         }
-        temp_fv0 = temp_fa0 - spD0[i];
+        temp_fv0 = arg1->unk38[var_s4].x - spD0[i];
         if (temp_fv0 < minX) {
             minX = temp_fv0;
         }
@@ -179,7 +177,6 @@ void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
     arg1->unk23C.min.z = minZ;
     arg1->unk23C.max.z = maxZ;
 }
-#endif
 
 // offset: 0x5A8 | func: 4 | export: 4
 void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
