@@ -10,7 +10,7 @@
 
 // size:0x260
 typedef struct {
-    u32 unk0;
+    u32 unk0; // flags
     Vec3f *unk4;
     Vec3f unk8[4];
     Vec3f unk38[4];
@@ -44,7 +44,7 @@ typedef struct {
     AABBs32 unk23C;
     u8 unk254;
     u8 _unk255[0x257 - 0x255];
-    s8 unk257;
+    s8 unk257; // mode?
     u8 unk258;
     s8 unk259;
     u8 unk25A;

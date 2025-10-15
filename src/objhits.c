@@ -1246,7 +1246,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
     f32 temp_fv1;
     s32 var_v1;
 
-    func_80032804(obj);
+    func_80032804(obj, otherObj);
     objhitInfo = obj->objhitInfo;
     otherObjhitInfo = otherObj->objhitInfo;
     objhitInfo->unk_0x58 |= 8;
