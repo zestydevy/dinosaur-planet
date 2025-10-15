@@ -39,6 +39,7 @@
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
 227 = objects/227_tumbleweed
+245 = objects/245_BalloonBaddie
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
 268 = objects/268_setuppoint

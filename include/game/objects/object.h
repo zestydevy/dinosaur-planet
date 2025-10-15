@@ -14,6 +14,8 @@
 /** Game Object system
  */
 
+#define OBJECT_OPACITY_MAX 255
+
 struct Object;
 
 // This could be bit fields? so 0, 1, 2, 4, 8 (0 << 0, 0 << 1, 0 << 2 etc)

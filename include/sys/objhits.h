@@ -129,6 +129,7 @@ void func_80027934(Object *obj, Object *otherObj);
 void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 arg4);
 void func_80028238(Object *obj, Object *otherObj);
 void func_8002B7CC(Unk800B20B8** arg0, s32 arg1);
+s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f32* arg5, f32* arg6);
 void func_80026128(Object* self, s32 arg1, s32 arg2, s32 arg3);
 void func_8002674C(Object* obj);
 void func_80026940(Object* obj, s16 arg1);

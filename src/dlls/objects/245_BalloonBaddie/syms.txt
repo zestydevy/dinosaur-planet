@@ -1,0 +1,22 @@
+.text = 0x0:
+BalloonBaddie_ctor = 0x0;
+BalloonBaddie_dtor = 0xC;
+BalloonBaddie_setup = 0x18;
+BalloonBaddie_control = 0x178;
+BalloonBaddie_update = 0x808;
+BalloonBaddie_print = 0x814;
+BalloonBaddie_free = 0x99C;
+BalloonBaddie_get_model_flags = 0xA38;
+BalloonBaddie_get_data_size = 0xA48;
+BalloonBaddie_more_control = 0xA5C;
+
+.rodata = 0x11C0:
+_rodata_10 = 0x10; // absolute:0x11D0
+_rodata_18 = 0x18; // absolute:0x11D8
+_rodata_1C = 0x1C; // absolute:0x11DC
+
+.data = 0x11E0:
+_data_0 = 0x0; // absolute:0x11E0
+
+.bss = 0x11F0:
+_bss_0 = 0x0; // absolute:0x11F0

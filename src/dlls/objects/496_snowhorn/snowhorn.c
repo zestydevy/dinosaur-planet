@@ -24,7 +24,6 @@
 #include "types.h"
 #include "segment_334F0.h"
 
-s32 func_800053B0(void*, f32);
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
 void set_button_mask(int port, u16 mask);
