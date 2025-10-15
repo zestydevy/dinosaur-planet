@@ -10,16 +10,16 @@
 
 void dll_27_func_FB8(Object* arg0, DLL27_Data* arg1);
 
-/*static*/ void dll_27_func_A74(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_B68(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_1278(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_151C(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_214C(Object* arg0, DLL27_Data* arg1);
-/*static*/ void dll_27_func_2394(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_A74(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_B68(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_1278(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1);
 
 static void dll_27_func_1148(Object* obj, DLL27_Data* data, MtxF* mtx);
 static void dll_27_func_11E0(Object* obj, DLL27_Data* data, MtxF* mtx);
@@ -66,131 +66,118 @@ void dll_27_func_C0(DLL27_Data* arg0, s32 arg1, Vec3f *arg2, f32 *arg3, u8* arg4
 }
 
 // offset: 0x1E8 | func: 3 | export: 3
-#ifndef NON_EQUIVALENT
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/27/dll_27_func_1E8.s")
 #else
 void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
     MtxF sp110;
     Vec3f spE0[4];
     f32 spD0[4];
-    f32 temp_fa0;
-    f32 temp_fa0_2;
-    f32 temp_fa0_3;
-    f32 temp_fa0_4;
     f32 temp_fa1;
     f32 temp_ft4;
+    f32 temp_fa0;
     f32 temp_fv0;
-    f32 temp_fv0_10;
-    f32 temp_fv0_11;
-    f32 temp_fv0_12;
-    f32 temp_fv0_2;
-    f32 temp_fv0_3;
-    f32 temp_fv0_4;
-    f32 temp_fv0_5;
-    f32 temp_fv0_6;
-    f32 temp_fv0_7;
-    f32 temp_fv0_8;
-    f32 temp_fv0_9;
-    f32 temp_fv1;
-    f32 temp_fv1_2;
     f32 minX;
     f32 maxY;
     f32 minY;
     f32 maxZ;
     f32 minZ;
     f32 maxX;
-    f32 var_fv0;
-    s32 temp_t0;
-    s32 temp_t2;
-    s32 var_s0;
     s32 var_s4;
-    s32 var_v0;
+    s32 i;
 
-    if (arg1->unk257 != 0) {
-        transform_point_by_object(
-            arg0->srt.transl.f[0], arg0->srt.transl.f[1], arg0->srt.transl.f[2], 
-            &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, 
-            arg0->parent);
-        dll_27_func_1148(arg0, arg1, &sp110);
-
-        for (var_s4 = 0; var_s4 < ((s32) arg1->unk258 >> 4); var_s4++) {
-            vec3_transform(&sp110, 
-                           arg1->unk4[var_s4].x, arg1->unk4[var_s4].y, arg1->unk4[var_s4].z, 
-                           &spE0[var_s4].x, &spE0[var_s4].y, &spE0[var_s4].z);
-            spD0[var_s4] = arg1->unk68.unk40[var_s4];
-            spD0[var_s4] = sqrtf(spD0[var_s4] * (2 * spD0[var_s4]));
-        }
-        
-        maxX = -100000.0f;
-        minX = 100000.0f;
-        maxY = -100000.0f;
-        minY = 100000.0f;
-        maxZ = -100000.0f;
-        minZ = 100000.0f;
-        for (var_s4 = 0; var_s4 < ((s32) arg1->unk258 >> 4); var_s4++) {
-            temp_fv1_2 = spD0[var_s4];
-            temp_fa0 = spE0[var_s4].x;
-            temp_fv0 = temp_fv1_2 + temp_fa0;
-            if (maxX < temp_fv0) {
-                maxX = temp_fv0;
-            }
-            temp_fv0_2 = temp_fa0 - temp_fv1_2;
-            if (temp_fv0_2 < minX) {
-                minX = temp_fv0_2;
-            }
-            temp_fa0_2 = spE0[var_s4].y;
-            temp_fv0_3 = temp_fv1_2 + temp_fa0_2;
-            if (maxY < temp_fv0_3) {
-                maxY = temp_fv0_3;
-            }
-            temp_fv0_4 = temp_fa0_2 - temp_fv1_2;
-            if (temp_fv0_4 < minY) {
-                minY = temp_fv0_4;
-            }
-            temp_fa0_3 = spE0[var_s4].z;
-            temp_fv0_5 = temp_fv1_2 + temp_fa0_3;
-            if (maxZ < temp_fv0_5) {
-                maxZ = temp_fv0_5;
-            }
-            temp_fv0_6 = temp_fa0_3 - temp_fv1_2;
-            if (temp_fv0_6 < minZ) {
-                minZ = temp_fv0_6;
-            }
-            temp_fa0_4 = arg1->unk38[var_s4].f[0];
-            temp_fa1 = arg1->unk38[var_s4].f[1];
-            temp_ft4 = arg1->unk38[var_s4].f[2];
-            temp_fv0_7 = temp_fv1_2 + temp_fa0_4;
-            if (maxX < temp_fv0_7) {
-                maxX = temp_fv0_7;
-            }
-            temp_fv0_8 = temp_fa0_4 - temp_fv1_2;
-            if (temp_fv0_8 < minX) {
-                minX = temp_fv0_8;
-            }
-            temp_fv0_9 = temp_fv1_2 + temp_fa1;
-            if (maxY < temp_fv0_9) {
-                maxY = temp_fv0_9;
-            }
-            temp_fv0_10 = temp_fa1 - temp_fv1_2;
-            if (temp_fv0_10 < minY) {
-                minY = temp_fv0_10;
-            }
-            temp_fv0_11 = temp_fv1_2 + temp_ft4;
-            if (maxZ < temp_fv0_11) {
-                maxZ = temp_fv0_11;
-            }
-            temp_fv0_12 = temp_ft4 - temp_fv1_2;
-            if (temp_fv0_12 < minZ) {
-                minZ = temp_fv0_12;
-            }
-        }
-        arg1->unk23C.min.x = (s32) minX;
-        arg1->unk23C.max.x = (s32) maxX;
-        arg1->unk23C.min.y = (s32) (minY - arg1->unk254);
-        arg1->unk23C.max.y = (s32) (arg1->unk254 + maxY);
-        arg1->unk23C.min.z = (s32) minZ;
-        arg1->unk23C.max.z = (s32) maxZ;
+    if (arg1->unk257 == 0) {
+        return;
     }
+
+    transform_point_by_object(
+        arg0->srt.transl.f[0], arg0->srt.transl.f[1], arg0->srt.transl.f[2], 
+        &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, 
+        arg0->parent);
+    dll_27_func_1148(arg0, arg1, &sp110);
+
+    for (var_s4 = 0, i = 0; var_s4 < ((s32) arg1->unk258 >> 4); ) {
+        vec3_transform(&sp110, 
+                       arg1->unk4[var_s4].x, arg1->unk4[var_s4].y, arg1->unk4[var_s4].z, 
+                       &spE0[var_s4].x, &spE0[var_s4].y, &spE0[var_s4].z);
+        spD0[i] = arg1->unk68.unk40[i];
+        spD0[i] = sqrtf((2 * spD0[i]) * spD0[i]);
+        i++;
+        var_s4++;
+    }
+    
+    maxX = -100000.0f;
+    minX = 100000.0f;
+    maxY = -100000.0f;
+    minY = 100000.0f;
+    maxZ = -100000.0f;
+    minZ = 100000.0f;
+    var_s4 = 0;
+    i = 0;
+    while (i < ((s32) arg1->unk258 >> 4)) {
+        temp_fv0 = spE0[var_s4].x + spD0[i];
+        if (maxX < temp_fv0) {
+            maxX = temp_fv0;
+        }
+        temp_fv0 = spE0[var_s4].x - spD0[i];
+        if (temp_fv0 < minX) {
+            minX = temp_fv0;
+        }
+        temp_fv0 = spE0[var_s4].y + spD0[i];
+        if (maxY < temp_fv0) {
+            maxY = temp_fv0;
+        }
+        temp_fv0 = spE0[var_s4].y - spD0[i];
+        if (temp_fv0 < minY) {
+            minY = temp_fv0;
+        }
+        temp_fv0 = spE0[var_s4].z + spD0[i];
+        if (maxZ < temp_fv0) {
+            maxZ = temp_fv0;
+        }
+        temp_fv0 = spE0[var_s4].z - spD0[i];
+        if (temp_fv0 < minZ) {
+            minZ = temp_fv0;
+        }
+
+        temp_fa0 = arg1->unk38[var_s4].x;
+        if (((!temp_fa0) && (!temp_fa0)) && (!temp_fa0)){} // @fake
+        temp_fa1 = arg1->unk38[var_s4].y;
+        temp_ft4 = arg1->unk38[var_s4].z;
+        temp_fv0 = temp_fa0 + spD0[i];
+        if (maxX < temp_fv0) {
+            maxX = temp_fv0;
+        }
+        temp_fv0 = temp_fa0 - spD0[i];
+        if (temp_fv0 < minX) {
+            minX = temp_fv0;
+        }
+        temp_fv0 = temp_fa1 + spD0[i];
+        if (maxY < temp_fv0) {
+            maxY = temp_fv0;
+        }
+        temp_fv0 = temp_fa1 - spD0[i];
+        if (temp_fv0 < minY) {
+            minY = temp_fv0;
+        }
+        temp_fv0 = temp_ft4 + spD0[i];
+        if (maxZ < temp_fv0) {
+            maxZ = temp_fv0;
+        }
+        temp_fv0 = temp_ft4 - spD0[i];
+        if (temp_fv0 < minZ) {
+            minZ = temp_fv0;
+        }
+        var_s4++;
+        i++;
+        
+    }
+    arg1->unk23C.min.x = minX;
+    arg1->unk23C.max.x = maxX;
+    arg1->unk23C.min.y = (minY - arg1->unk254);
+    arg1->unk23C.max.y = (arg1->unk254 + maxY);
+    arg1->unk23C.min.z = minZ;
+    arg1->unk23C.max.z = maxZ;
 }
 #endif
 
@@ -211,10 +198,6 @@ void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x624 | func: 5 | export: 5
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/27/dll_27_func_624.s")
-#else
-// matches, just needs a bunch of static funcs to be matched
 void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
     f32 sp3C;
 
@@ -301,29 +284,26 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
         &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, 
         arg0->parent);
 }
-#endif
 
 // offset: 0xA74 | func: 6
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/27/dll_27_func_A74.s")
-#else
-void dll_27_func_A74(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_A74(Object* arg0, DLL27_Data* arg1) {
     s32 i;
-    s32 i2;
+    s32 pad;
     MtxF sp60;
 
     dll_27_func_11E0(arg0, arg1, &sp60);
 
-    for (i = 0; i < (arg1->unk258 & 0xF); i++) {
+    i = 0;
+    while (i < (arg1->unk258 & 0xF)) {
         vec3_transform(&sp60, 
                        arg1->unkD8[i].x, arg1->unkD8[i].y, arg1->unkD8[i].z, 
                        &arg1->unkE0[i].x, &arg1->unkE0[i].y, &arg1->unkE0[i].z);
+        i++;
     }
 }
-#endif
 
 // offset: 0xB68 | func: 7
-void dll_27_func_B68(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_B68(Object* arg0, DLL27_Data* arg1) {
     s32 i;
     s32 i2;
     MtxF sp68;
@@ -425,7 +405,7 @@ void dll_27_func_FB8(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x1148 | func: 11
-void dll_27_func_1148(Object* obj, DLL27_Data* data, MtxF* mtx) {
+static void dll_27_func_1148(Object* obj, DLL27_Data* data, MtxF* mtx) {
     SRT srt;
 
     srt.yaw = obj->srt.yaw;
@@ -463,7 +443,7 @@ static void dll_27_func_11E0(Object* obj, DLL27_Data* data, MtxF* mtx) {
 }
 
 // offset: 0x1278 | func: 13
-void dll_27_func_1278(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_1278(Object* arg0, DLL27_Data* arg1) {
     MtxF sp90;
     f32 sp8C;
     f32 sp88;
@@ -516,7 +496,7 @@ void dll_27_func_1278(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x151C | func: 14
-void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
     if (arg1->unk0 & 2) {
         arg1->unk25C = func_8005509C(arg0, 
                                      arg1->unk38[0].f, arg1->unk8[0].f, arg1->unk258 >> 4, 
@@ -528,7 +508,7 @@ void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x15C0 | func: 15
-void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
     Func_80057F1C_Struct* temp_v0;
     s32 sp60;
     s32 var_t1;
@@ -603,7 +583,7 @@ void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x1AA0 | func: 16
-void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
     Func_80057F1C_Struct* temp_v0;
     s32 sp48;
     f32 temp_fv1;
@@ -632,7 +612,7 @@ void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x1BA8 | func: 17
-void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1) {
     s16 temp_v1;
     s16 temp_v1_2;
     SRT sp7C;
@@ -667,7 +647,7 @@ void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x1D60 | func: 18
-void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
     f32 temp;
     f32 f2;
     f32 f0;
@@ -752,7 +732,7 @@ void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x214C | func: 19
-void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
     s32 spCC;
     Func_80057F1C_Struct* temp_v0;
     f32 var_ft4;
@@ -823,19 +803,19 @@ void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x2394 | func: 20
-void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     f32 spB0[4];
     f32 var_ft4;
     f32 spA0[3];
     f32 sp94[3];
-    f32 var_fv1; // 90
-    f32 var_fa0; // 8c
+    f32 var_fv1;
+    f32 var_fa0;
     f32 var_fa1;
     s32 sp84;
     f32* var_s2;
     s32 temp_v0;
     s32 var_a0;
-    s32 var_t0; // 74
+    s32 var_t0;
     s32 var_s0;
     Func_80057F1C_Struct** sp6C;
     s32 v1;
