@@ -95,10 +95,17 @@ enum SoundID {
 
     SOUND_AAE = 0xAAE, // VFP_lavastar sound
 
+    SOUND_B1F = 0xB1F,
+    SOUND_B20 = 0xB20,
+    SOUND_B21 = 0xB21,
+
     SOUND_B31_Item_Collection_Chime = 0xB31,
 
     SOUND_B72_Game_Saved = 0xB72,
     SOUND_B72_Option_Selected = 0xB73,
+
+    SOUND_B74 = 0xB74,
+    SOUND_B75 = 0xB75,
 
     SOUND_B89_Puzzle_Solved = 0xB89, // "puzzle complete" jingle
 

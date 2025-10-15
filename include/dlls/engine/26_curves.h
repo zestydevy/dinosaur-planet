@@ -5,7 +5,9 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 #include "types.h"
+#include "sys/curves.h"
 
+// remove this? seems to be the same as UnkCurvesStruct
 typedef struct {
 /*060*/ s32 unk00;
 /*064*/ f32 curveProgress; //(lerp t-value from 0 to 100?)
@@ -134,8 +136,8 @@ DLL_INTERFACE(DLL_26_curves) {
     /*31*/ UnknownDLLFunc curves_func_3018;
     /*32*/ UnknownDLLFunc curves_func_31e0;
     /*33*/ UnknownDLLFunc curves_func_32d8;
-    /*34*/ s32 (*curves_func_4288)(UnkCurvesStruct60*, Object*, f32, s32*, s16);
-    /*35*/ s32 (*curves_func_4704)(UnkCurvesStruct60*);
+    /*34*/ s32 (*curves_func_4288)(UnkCurvesStruct*, Object*, f32, s32*, s16);
+    /*35*/ s32 (*curves_func_4704)(UnkCurvesStruct*);
     /*36*/ UnknownDLLFunc curves_func_4cb4;
     /*37*/ UnknownDLLFunc curves_func_4fa8;
     /*38*/ UnknownDLLFunc curves_func_50e4;

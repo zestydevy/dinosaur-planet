@@ -5,6 +5,15 @@
 #include "game/objects/object.h"
 #include "types.h"
 
+enum ParticleID {
+    PARTICLE_32F = 0x32F,
+    PARTICLE_330 = 0x330,
+    PARTICLE_331 = 0x331,
+    PARTICLE_333 = 0x333,
+    PARTICLE_334 = 0x334,
+    PARTICLE_Green_Slime_Drop = 0x335
+};
+
 DLL_INTERFACE(DLL_17) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
