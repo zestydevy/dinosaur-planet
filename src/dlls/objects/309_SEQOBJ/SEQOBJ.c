@@ -23,7 +23,7 @@ typedef struct {
 typedef enum {
     SEQOBJ_FLAG_None = 0,
     SEQOBJ_FLAG_Playing = 1,
-    SEQOBJ_FLAG_Unk_2 = 2,
+    SEQOBJ_FLAG_Unk_2 = 2, //finished?
     SEQOBJ_FLAG_Anim_Callback_Ran = 4
 } SeqObj_Flags;
 
@@ -34,7 +34,7 @@ typedef enum {
     SEQOBJ_OPTIONS_4 = 4,
     SEQOBJ_OPTIONS_8 = 8,
     SEQOBJ_OPTIONS_A = 16
-} SeqObj_PlaybackOptions;
+} SeqObj_PlaybackOptions; //TO-DO: figure out what these do! Looping and auto-play may be options?
 
 static s32 SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
 
@@ -47,7 +47,6 @@ void SeqObj_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
     SeqObj_Data* objData;
-    s16 temp_a0;
 
     self->srt.yaw = objSetup->rotate << 8;
     self->unk0xbc = (void*)&SeqObj_anim_callback;
