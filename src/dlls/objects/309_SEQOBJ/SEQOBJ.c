@@ -4,21 +4,37 @@
 
 typedef struct {
     ObjSetup base;
-    s16 gamebitCheckPlay;
-    s16 gamebitSetFinish;
+    s16 gamebitPlay;        //The sequence will play when this gamebit is set
+    s16 gamebitFinished;    //This gamebit will be set when the sequence has played
     u8 rotate;
     u8 playbackOptions;
-    s8 seqIndex;
-    s8 unk1F;
+    s8 seqIndex;            //The index of the sequence in the Object.bin entry's sequence list
+    s8 modelInstIdx;        //Choose between 3D models, visible when debugging (usually a clapperboard)
     s16 unk20;
     u16 unk22;
-    u8 warpID;
+    u8 warpID;              //Optionally warp the player
 } SeqObj_Setup;
 
 typedef struct {
     u8 flags;
-    s8 unk1;
+    s8 finished;
 } SeqObj_Data;
+
+typedef enum {
+    SEQOBJ_FLAG_None = 0,
+    SEQOBJ_FLAG_Playing = 1,
+    SEQOBJ_FLAG_Unk_2 = 2,
+    SEQOBJ_FLAG_Anim_Callback_Ran = 4
+} SeqObj_Flags;
+
+typedef enum {
+    SEQOBJ_OPTIONS_None = 0,
+    SEQOBJ_OPTIONS_Stoppable = 1,
+    SEQOBJ_OPTIONS_2 = 2,
+    SEQOBJ_OPTIONS_4 = 4,
+    SEQOBJ_OPTIONS_8 = 8,
+    SEQOBJ_OPTIONS_A = 16
+} SeqObj_PlaybackOptions;
 
 static s32 SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
 
@@ -37,24 +53,23 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
     self->unk0xbc = (void*)&SeqObj_anim_callback;
     
     objData = self->data;
-    self->modelInstIdx = objSetup->unk1F;
+    self->modelInstIdx = objSetup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
     
     obj_add_object_type(self, 0x11);
     
-    objData->flags = 0;
-    if (objSetup->gamebitCheckPlay != -1) {
-
-        if (main_get_bits(objSetup->gamebitCheckPlay)) {
-            objData->flags |= 1;
+    objData->flags = SEQOBJ_FLAG_None;
+    if (objSetup->gamebitPlay != -1) {
+        if (main_get_bits(objSetup->gamebitPlay)) {
+            objData->flags |= SEQOBJ_FLAG_Playing;
             if (objSetup->unk20 != 0) {
-                objData->flags |= 2;
+                objData->flags |= SEQOBJ_FLAG_Unk_2;
             }
         }
     }
-    objData->unk1 = 0;
+    objData->finished = FALSE;
     self->unk0xb0 |= 0x2000;
 }
 
@@ -67,48 +82,57 @@ void SeqObj_control(Object* self) {
     objData = self->data;
     objSetup = (SeqObj_Setup*)self->setup;
     
-    if (objData->flags & 4) {
-        if (objSetup->playbackOptions & 1) {
-            if (!(objSetup->playbackOptions & 4)) {
-                main_set_bits(objSetup->gamebitSetFinish, 0);
+    //Check if the anim callback function successfully ran
+    if (objData->flags & SEQOBJ_FLAG_Anim_Callback_Ran) {
+        if (objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) {
+            if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_4) == FALSE) {
+                main_set_bits(objSetup->gamebitFinished, FALSE);
             }
         } else {
-            if (objSetup->playbackOptions & 8) {
-                main_set_bits(objSetup->gamebitCheckPlay, 1);
+            if (objSetup->playbackOptions & SEQOBJ_OPTIONS_8) {
+                main_set_bits(objSetup->gamebitPlay, TRUE);
             }
-            objData->flags |= 1;
+            objData->flags |= SEQOBJ_FLAG_Playing;
         }
 
-        objData->flags &= 0xFFFB;
+        objData->flags &= ~SEQOBJ_FLAG_Anim_Callback_Ran;
     }
     
-    if (!(objData->flags & 1)) {
-        if (main_get_bits(objSetup->gamebitCheckPlay)) {
-            objData->flags |= 1;
+    //If sequence isn't playing
+    if ((objData->flags & SEQOBJ_FLAG_Playing) == FALSE) {
+        //Start playing if "play" gamebit was set
+        if (main_get_bits(objSetup->gamebitPlay)) {
+            objData->flags |= SEQOBJ_FLAG_Playing;
         }
-        sequencePlayed = main_get_bits(objSetup->gamebitSetFinish);
-        if ((objData->unk1 != ((0, sequencePlayed))) && ((objData->unk1 = sequencePlayed, sequencePlayed))) {
+
+        //If "finished" gamebit is set, and objData->finished isn't set?
+        if (objData->finished != (sequencePlayed = main_get_bits(objSetup->gamebitFinished)) && 
+                (objData->finished = sequencePlayed, sequencePlayed)) {
             if (objSetup->seqIndex != -1) {
                 gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, -1);
             }
-            if (!(objSetup->playbackOptions & 1) && !(objSetup->playbackOptions & 0xA)) {
-                main_set_bits(objSetup->gamebitCheckPlay, 1);
+            if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) == FALSE && 
+                (objSetup->playbackOptions & (SEQOBJ_OPTIONS_2 | SEQOBJ_OPTIONS_8)) == FALSE) {
+                main_set_bits(objSetup->gamebitPlay, TRUE);
             }
         }
     } else {
-        if (objData->flags & 2) {
+    //If sequence is playing
+        if (objData->flags & SEQOBJ_FLAG_Unk_2) {
             gDLL_3_Animation->vtbl->func20(self, objSetup->unk20);
-            if (objSetup->playbackOptions & 0x10) {
+            if (objSetup->playbackOptions & SEQOBJ_OPTIONS_A) {
                 gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, objSetup->unk22);
             } else {
                 gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, 1);
             }
-            objData->flags &= 0xFFFD;
+            objData->flags &= ~SEQOBJ_FLAG_Unk_2;
             return;
         }
-        if (objSetup->playbackOptions & 1) {
-            if (main_get_bits(objSetup->gamebitCheckPlay) == 0) {
-                objData->flags &= 0xFFFE;
+
+        //If the sequence is stoppable and the "play" gamebit unsets, stop playing
+        if (objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) {
+            if (main_get_bits(objSetup->gamebitPlay) == FALSE) {
+                objData->flags &= ~SEQOBJ_FLAG_Playing;
             }
         }
     }
@@ -123,7 +147,6 @@ void SeqObj_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
-
 
 // offset: 0x418 | func: 4 | export: 4
 void SeqObj_free(Object *self, s32 arg1) {
@@ -157,8 +180,9 @@ s32 SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjDat
     for (index = 0; index < animObjData->unk98; index++){
         switch (animObjData->unk8E[index]) {
             case 1:
-                if (!(objSetup->playbackOptions & 1) && (objSetup->playbackOptions & 2)) {
-                    main_set_bits(objSetup->gamebitCheckPlay, 1);
+                if (!(objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) && 
+                     (objSetup->playbackOptions & SEQOBJ_OPTIONS_2)) {
+                    main_set_bits(objSetup->gamebitPlay, 1);
                 }
                 break;
             case 2:
@@ -169,7 +193,7 @@ s32 SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjDat
         }
     }
     
-    objData->flags |= 4;
+    objData->flags |= SEQOBJ_FLAG_Anim_Callback_Ran;
     return 0;
 }
 

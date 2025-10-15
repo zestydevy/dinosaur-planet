@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_309_ctor
-.dword dll_309_dtor
+.dword SeqObj_ctor
+.dword SeqObj_dtor
 
 # export table
-/*0*/ .dword dll_309_setup
-/*1*/ .dword dll_309_control
-/*2*/ .dword dll_309_update
-/*3*/ .dword dll_309_print
-/*4*/ .dword dll_309_free
-/*5*/ .dword dll_309_get_model_flags
-/*6*/ .dword dll_309_get_data_size
+/*0*/ .dword SeqObj_setup
+/*1*/ .dword SeqObj_control
+/*2*/ .dword SeqObj_update
+/*3*/ .dword SeqObj_print
+/*4*/ .dword SeqObj_free
+/*5*/ .dword SeqObj_get_model_flags
+/*6*/ .dword SeqObj_get_data_size
