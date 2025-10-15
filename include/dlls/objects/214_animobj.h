@@ -50,8 +50,7 @@ typedef struct {
 /*8B*/ s8 unk8B;
 /*8C*/ s8 unk8C;
 /*8D*/ u8 unk8D;
-/*8E*/ u8 unk8E[1];
-/*8F*/ s8 unk8F[0x98 - 0x8F];
+/*8E*/ u8 unk8E[0x98 - 0x8E];
 /*98*/ u8 unk98;
 /*99*/ u8 unk99;
 /*9A*/ u8 unk9A;
@@ -63,7 +62,7 @@ typedef struct {
 /*A4*/ AnimCurvesKeyframe* animCurvesKeyframes;
 /*A8*/ s16 channelFirstKeyIndex[ANIMCURVES_KEYFRAME_CHANNELS];
 /*CE*/ s16 channelTotalKeys[ANIMCURVES_KEYFRAME_CHANNELS];
-/*F4*/ AnimObj_DataF4Callback unkF4;
+/*F4*/ AnimObj_DataF4Callback unkF4; //end-of-sequence callback function
 /*F8*/ AnimObj_DataF8Callback unkF8;
 /*FC*/ s8 unkFC[0x144 - 0xFC];
 } AnimObj_Data;

@@ -1,0 +1,14 @@
+.text = 0x0:
+SeqObj_ctor = 0x0;
+SeqObj_dtor = 0xC;
+SeqObj_setup = 0x18;
+SeqObj_control = 0x124;
+SeqObj_update = 0x3B8;
+SeqObj_print = 0x3C4;
+SeqObj_free = 0x418;
+SeqObj_get_model_flags = 0x458;
+SeqObj_get_data_size = 0x468;
+SeqObj_anim_callback = 0x47C;
+
+.rodata = 0x60C:
+str_0 = 0x0; // absolute:0x60C

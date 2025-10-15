@@ -54,6 +54,7 @@
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
+309 = objects/309_SEQOBJ
 321 = objects/321_Duster
 325 = objects/325_trigger
 345 = objects/345_animator
@@ -93,6 +94,7 @@
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 737 = objects/737_DRLavaControl
+767 = objects/767_SPItem
 768 = objects/768_SPShop
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock

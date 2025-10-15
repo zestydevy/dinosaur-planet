@@ -89,9 +89,8 @@ void SHspore_control(Object* self) {
     s32 particleCount;
     f32 temp;
     f32 temp_fv0;
-    s32 var_s0;
+    s32 index;
     Object* collidedObject;
-    s32 var_s0_2;
 
     objdata = (SHSpore_Data*)self->data;
     if (objdata->unk290 != 0.0f) {
@@ -121,7 +120,7 @@ void SHspore_control(Object* self) {
             func_8002674C(self);
         }
         SHspore_func_750(self, objdata);
-        if ((rand_next(0, 0x64) < 5) && (objdata->unk270 <= 0.0f)) {
+        if ((rand_next(0, 100) < 5) && (objdata->unk270 <= 0.0f)) {
             SHspore_func_A00(self, objdata);
         }
         objdata->unk284 -= delayFloat;
@@ -156,7 +155,7 @@ void SHspore_control(Object* self) {
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 
                 //Create collision particles
-                for (var_s0 = 0; var_s0 < particleCount; var_s0++){
+                for (index = 0; index < particleCount; index++){
                     gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
                 }
 
@@ -172,7 +171,7 @@ void SHspore_control(Object* self) {
                 gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 
                 //Create collision particles
-                for (var_s0 = 0; var_s0 < 20; var_s0++){
+                for (index = 0; index < 20; index++){
                     gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
                 }
 
@@ -195,8 +194,8 @@ static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
     setup = (SHSpore_Setup*)self->setup;
     sp20 = setup->unk1C;
 
-    if (rand_next(0, 0x64) < 0xA && objdata->unk28C <= 0.0f) {
-        objdata->unk298 = rand_next(0x7D0, 0xFA0);
+    if (rand_next(0, 100) < 0xA && objdata->unk28C <= 0.0f) {
+        objdata->unk298 = rand_next(2000, 4000);
         if (rand_next(0, 1) != 0) {
             objdata->unk298 = -objdata->unk298;
         }
@@ -218,8 +217,8 @@ static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
         objdata->unk28C = 150.0f;
     }
 
-    if (rand_next(0, 0x64) < 0xA && objdata->unk28C <= 0.0f) {
-        objdata->unk26C = (rand_next(-0xC8, 0xC8) / 1000.0f) + objdata->unk264;
+    if (rand_next(0, 100) < 0xA && objdata->unk28C <= 0.0f) {
+        objdata->unk26C = (rand_next(-200, 200) / 1000.0f) + objdata->unk264;
         if (objdata->unk26C < 0.5f) {
             objdata->unk26C = 0.5f;
         } else if (objdata->unk26C > 1.0f) {
@@ -244,12 +243,12 @@ static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
 }
 
 // offset: 0xA00 | func: 3
-static void SHspore_func_A00(Object* arg0, SHSpore_Data* objdata) {
+static void SHspore_func_A00(Object* self, SHSpore_Data* objdata) {
     SHSpore_Setup* setup;
     s32 sp20;
     s32 var_v1;
 
-    setup = (SHSpore_Setup*)arg0->setup;
+    setup = (SHSpore_Setup*)self->setup;
     sp20 = setup->unk1C;
     objdata->unk284 = rand_next(0x1E, 0x2D);
     objdata->unk270 = rand_next(0x78, 0xB4) + objdata->unk284;
@@ -285,8 +284,8 @@ void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 }
 
 // offset: 0xBAC | func: 6 | export: 4
-void SHspore_free(Object* arg0, s32 arg1) {
-    gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)arg0);
+void SHspore_free(Object* self, s32 arg1) {
+    gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
 }
 
 // offset: 0xBF4 | func: 7 | export: 5
