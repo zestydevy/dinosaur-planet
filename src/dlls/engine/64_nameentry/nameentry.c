@@ -3,6 +3,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/74_picmenu.h"
+#include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
@@ -72,7 +73,7 @@ void dll_64_ctor(void *self) {
     sBackgroundTexture = queue_load_texture_proxy(0x2DE);
 
     if (sGameTextChunk == NULL) {
-        sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(0xED);
+        sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0ED_Menu_Name_Entry);
     }
 
 

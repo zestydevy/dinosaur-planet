@@ -5,6 +5,7 @@
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/74_picmenu.h"
 #include "functions.h"
+#include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
@@ -109,7 +110,7 @@ void mainmenu_ctor(s32 arg0) {
     //Set language and get text
     options = gDLL_29_Gplay->vtbl->get_game_options();
     gDLL_21_Gametext->vtbl->set_bank(options->languageID);
-    gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
+    gametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EE_Menu_Title_Screen);
 
     //Set "Press Start" text
     pressStartItem->text = gametext->strings[6];
@@ -210,7 +211,7 @@ s32 mainmenu_update(void) {
             if (gDLL_21_Gametext->vtbl->curr_bank() != options->languageID) {
                 gDLL_21_Gametext->vtbl->set_bank(options->languageID);
                 mmFree(gametext);
-                gametext = gDLL_21_Gametext->vtbl->get_chunk(238);
+                gametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EE_Menu_Title_Screen);
     
                 items = 8;
                 for (index = 0; index < items; index++){

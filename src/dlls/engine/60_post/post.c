@@ -5,6 +5,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "game/gamebits.h"
+#include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
@@ -30,7 +31,7 @@ static s8 bss_6;
 static f32 bss_8;
 static f32 bss_C;
 static f32 bss_10;
-static GameTextChunk *bss_14;
+static GameTextChunk *splashGametext;
 static Texture *bss_18;
 static Texture *bss_1C;
 
@@ -40,7 +41,7 @@ void dll_60_ctor(void *self) {
     if (osMemSize != 0x800000) {
         data_4 = 1;
         data_10 = queue_load_texture_proxy(0x2da);
-        bss_14 = gDLL_21_Gametext->vtbl->get_chunk(243);
+        splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F3_Expansion_Pak_Needed);
     } else {
         bss_4 = 0;
         bss_0 = 0.0f;
@@ -56,7 +57,7 @@ void dll_60_ctor(void *self) {
         data_C = queue_load_texture_proxy(0x2d3);
         bss_18 = queue_load_texture_proxy(0x2db);
         bss_1C = queue_load_texture_proxy(0x2dc);
-        bss_14 = gDLL_21_Gametext->vtbl->get_chunk(242);
+        splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F2_Splash_Screen);
         gDLL_29_Gplay->vtbl->get_game_options(); // ignoring return value
     }
 
@@ -74,7 +75,7 @@ void dll_60_dtor(void *self) {
         texture_destroy(bss_1C);
     }
 
-    mmFree(bss_14);
+    mmFree(splashGametext);
 }
 
 s32 dll_60_update1() {
@@ -137,11 +138,11 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         fontYSpacing = font_get_y_spacing(FONT_FUN_FONT);
 
         font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-        font_window_add_string_xy(2, 320, 198,                bss_14->strings[0], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 272,                bss_14->strings[1], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, fontYSpacing + 272, bss_14->strings[2], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 356,                bss_14->strings[3], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, fontYSpacing + 356, bss_14->strings[4], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, 198,                splashGametext->strings[0], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, 272,                splashGametext->strings[1], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, fontYSpacing + 272, splashGametext->strings[2], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, 356,                splashGametext->strings[3], 1, ALIGN_TOP_CENTER);
+        font_window_add_string_xy(2, 320, fontYSpacing + 356, splashGametext->strings[4], 1, ALIGN_TOP_CENTER);
         func_8003825C(gdl, data_10, 0xfd, 0x42, 0, 0, 0xff, 0);
     } else {
         gDLL_76->vtbl->func2(gdl, mtxs);
@@ -149,11 +150,11 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         if (bss_0 < 240.0f) {
             font_window_enable_wordwrap(2);
             font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-            font_window_add_string_xy(2, 57, 54,  bss_14->strings[0], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 179, 88, bss_14->strings[1], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 172, bss_14->strings[2], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 222, bss_14->strings[3], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 381, bss_14->strings[4], 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(2, 57, 54,  splashGametext->strings[0], 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(2, 179, 88, splashGametext->strings[1], 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(2, 57, 172, splashGametext->strings[2], 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(2, 57, 222, splashGametext->strings[3], 1, ALIGN_TOP_LEFT);
+            font_window_add_string_xy(2, 57, 381, splashGametext->strings[4], 1, ALIGN_TOP_LEFT);
             func_8003825C(gdl, bss_18, 0x3a, 0x65, 0, 0, 0xff, 0);
             func_8003825C(gdl, bss_1C, 0x16d, 0x68, 0, 0, 0xff, 0);
         }
