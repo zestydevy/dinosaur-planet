@@ -1,6 +1,8 @@
 #include "common.h"
 #include "sys/objtype.h"
 
+//Used by Skeetlas/Scorpions
+
 typedef struct {
     u8 _unk0[0x298];
 } DLL615_Data;
