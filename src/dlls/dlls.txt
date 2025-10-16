@@ -88,6 +88,7 @@
 668 = objects/668_db_diamond
 702 = objects/702_KTrex
 712 = objects/712_DIMSnowHorn1
+713 = objects/713_DR_EarthWarrior
 714 = objects/714_DR_CloudRunner
 718 = objects/718_PerchObject
 722 = objects/722_MMP_mseedrecept
