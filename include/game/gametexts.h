@@ -611,7 +611,7 @@ typedef enum {
         GAMETEXT_25E_WM_Randorn_and_Krystal_Meeting_1 = 0x25E, //Randorn Whats happened to you!
         GAMETEXT_25F_Empty = 0x25F,
         GAMETEXT_260_WM_Randorn_and_Krystal_Meeting_2 = 0x260, //They must be scattered all over the planet by now.
-        GAMETEXT_261_WM_Randorn_and_Krystal_Meeting_3 = 0x261, //But theres something else,
+        GAMETEXT_261_WM_Randorn_and_Krystal_Meeting_3 = 0x261  //But theres something else,
 } GameTexts;
 
 #endif // _GAME_GAMETEXTS_H

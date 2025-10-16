@@ -289,7 +289,7 @@ void func_80023894(Object* object, s32 objectId);
 /*0x4D8*/ static u32 _data_4D8[] = {
     0x0b220b1e, 0x0b220000
 };
-/*0x4E0*/ static s16 _data_4E0[] = { BIT_Spell_Projectile, BIT_Spell_Illusion, BIT_Spell_Forcefield, BIT_5BD, BIT_5CE, BIT_5FC, BIT_Spell_Unknown_777, BIT_0 };
+/*0x4E0*/ static s16 _data_4E0[] = { BIT_Spell_Projectile, BIT_Spell_Illusion, BIT_Spell_Forcefield, BIT_Spell_Portal, BIT_Spell_Ice_Blast, BIT_Spell_Mind_Read, BIT_Spell_Grenade, BIT_0 };
 /*0x4F0*/ static s32 _data_4F0[] = { 0, 1, 2, 3, 4, 5 };
 /*0x508*/ static u32 _data_508[] = {
     0x00000006, 0x00000069, 0x00000069, 0x000000ff

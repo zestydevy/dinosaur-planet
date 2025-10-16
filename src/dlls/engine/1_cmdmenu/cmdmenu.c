@@ -4,6 +4,7 @@
 #include "functions.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
+#include "game/gamebits.h"
 #include "sys/memory.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
@@ -33,6 +34,18 @@ s32 unk8;
 s32 unkC; //healthValue
 
 } CmdmenuBSS0;
+
+typedef struct {
+/*0*/ Texture* unk0;
+/*4*/ s32 unk4;
+/*8*/ s16 unk8;
+/*8*/ s16 unkA;
+/*C*/ s16 unkC;
+/*E*/ s16 unkE;
+/*10*/ s16 unk10;
+/*12*/ s16 unk12;
+/*14*/ s32 unk14;
+} CmdmenuItemUnkBSS6B8;
 
 typedef struct {
 s32 unk0;
@@ -103,222 +116,225 @@ s32 unk24;
 /*0x120*/ static u32 _data_120 = 0x00000000;
 /*0x124*/ static u32 _data_124 = 0x00000000;
 
+#define NONE 0xFFFF
+#define END {NONE, NONE, NONE, NONE, 0x0000, 0x00, 0x00}
+
 /* Krystal items
  * 0x128*/ static InventoryItem _data_128[] = {
-    {0x00c7, 0x00b4, 0x0245, 0xffff, 0x0010, 0xff, 0x01}, //Warp Crystal
-    {0x0044, 0xffff, 0x0175, 0xffff, 0x0007, 0xff, 0x01}, //Prison Key (CloudRunner Fortress)
-    {0x0060, 0xffff, 0x0176, 0xffff, 0x0008, 0xff, 0x01}, //Power Room Key (CloudRunner Fortress)
-    {0x0051, 0xffff, 0x0180, 0xffff, 0x0009, 0xff, 0x01}, //Red Power Crystal (CloudRunner Fortress)
-    {0x0052, 0xffff, 0x0181, 0xffff, 0x0009, 0xff, 0x01}, //Green Power Crystal (CloudRunner Fortress)
-    {0x0053, 0xffff, 0x0182, 0xffff, 0x0009, 0xff, 0x01}, //Blue Power Crystal (CloudRunner Fortress)
-    {0x00c8, 0xffff, 0x0175, 0xffff, 0x0011, 0xff, 0x01}, //Snowbike Key (Removed)
-    {0x002b, 0x002a, 0x0175, 0xffff, 0x0013, 0xff, 0x01}, //Mine Key
-    {0x0170, 0xffff, 0x01a3, 0xffff, 0x000b, 0xff, 0x01}, //Alpine Root (Unsure whether geyser area or DIM)
-    {0x017b, 0x0181, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 1
-    {0x017e, 0x0182, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 2
-    {0x017f, 0x0183, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 3
-    {0x0180, 0x0184, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 4
-    {0x0163, 0x0164, 0x027a, 0xffff, 0x0016, 0x02, 0x02}, //Small Food Bag
-    {0x0164, 0x0165, 0x0244, 0xffff, 0x0017, 0x02, 0x02}, //Medium Food Bag
-    {0x0165, 0xffff, 0x02bf, 0xffff, 0x0018, 0x02, 0x02}, //Large Food Bag
-    {0x00aa, 0x00f1, 0x0471, 0xffff, 0x002f, 0x09, 0x02}, //Small Grub Bag
-    {0x00f1, 0x00fe, 0x0560, 0xffff, 0x0030, 0x09, 0x02}, //Medium Grub Bag
-    {0x00fe, 0xffff, 0x0560, 0xffff, 0x0031, 0x09, 0x02}, //Large Grub Bag
-    {0x02b6, 0x0088, 0x0257, 0xffff, 0xffff, 0xff, 0x01}, //Gold Nugget #1 (Near Golden Plains)
-    {0x02b7, 0x02c5, 0x0257, 0xffff, 0xffff, 0xff, 0x01}, //Gold Nugget #2 (Near LightFoot Village)
-    {0x03d5, 0xffff, 0x04f7, 0xffff, 0x0102, 0xff, 0x01}, //Fire Crystal #3
-    {0x03ed, 0x02c5, 0x0175, 0xffff, 0x001e, 0xff, 0x01}, //Cell Door Key (Cape Claw?)
-    {0x02e8, 0xffff, 0x0562, 0xffff, 0xffff, 0xff, 0x01}, //SpellStone - CloudRunner Fortress (Activated)
-    {0x083a, 0xffff, 0x0562, 0xffff, 0xffff, 0xff, 0x01}, //SpellStone - BlackWater Canyon (Activated)
-    {0x07bd, 0xffff, 0x0562, 0xffff, 0xffff, 0xff, 0x01}, //SpellStone - Krazoa Palace (Activated)
-    {0x07bf, 0xffff, 0x0496, 0xffff, 0xffff, 0xff, 0x01}, //Krazoa Translator
-    {0x01ee, 0xffff, 0x0258, 0xffff, 0x001d, 0xff, 0x01}, //Horn of Truth
-    {0x0336, 0xffff, 0x0568, 0xffff, 0xffff, 0xff, 0x01}, //Treasure Chest Key (CloudRunner Fortress)
-    {0x0023, 0xffff, 0x01a5, 0xffff, 0x002a, 0xff, 0x01}, //Blue Mushroom (CloudRunner Grubs?)
-    {0x013d, 0xffff, 0x046d, 0xffff, 0x003d, 0xff, 0x01}, //Firefly Lantern
-    {0x0611, 0xffff, 0x0175, 0xffff, 0x0007, 0xff, 0x01}, //Prison Key (CloudRunner Fortress)
-    {0x023b, 0xffff, 0x0496, 0xffff, 0x005b, 0xff, 0x01}, //Krazoa Tablets
-    {0x086a, 0xffff, 0x040d, 0xffff, 0x005e, 0xff, 0x01}, //MoonSeeds
-    {0x08fc, 0xffff, 0x0175, 0xffff, 0x0064, 0xff, 0x01}, //Construction Engineer's Key (CloudRunner Fortress)
-    {0x0395, 0x0088, 0x0257, 0xffff, 0x0103, 0xff, 0x01}, //Gold Nugget #3 (Cape Claw)
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {BIT_Krystal_Warp_Crystal,   BIT_Krystal_Used_Warp_Crystal,    0x245, NONE,  0x010, -1, 1}, //Warp Crystal
+    {BIT_CRF_Prison_Key_1,       NONE,                             0x175, NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
+    {BIT_CRF_Power_Room_Key,     NONE,                             0x176, NONE,  0x008, -1, 1}, //Power Room Key (CloudRunner Fortress)
+    {BIT_CRF_Red_Power_Crystal,  NONE,                             0x180, NONE,  0x009, -1, 1}, //Red Power Crystal (CloudRunner Fortress)
+    {BIT_CRF_Green_Power_Crystal,NONE,                             0x181, NONE,  0x009, -1, 1}, //Green Power Crystal (CloudRunner Fortress)
+    {BIT_CRF_Blue_Power_Crystal, NONE,                             0x182, NONE,  0x009, -1, 1}, //Blue Power Crystal (CloudRunner Fortress)
+    {BIT_IM_Snowbike_Key,        NONE,                             0x175, NONE,  0x011, -1, 1}, //Snowbike Key (Removed)
+    {BIT_DIM_Mine_Key,           BIT_DIM_Used_Mine_Key,            0x175, NONE,  0x013, -1, 1}, //Mine Key (unused?)
+    {BIT_DIM_Alpine_Roots,       NONE,                             0x1a3, NONE,  0x00b, -1, 1}, //Alpine Root (unused?)
+    {BIT_DIM_Gear_1,             BIT_DIM_Used_Gear_1,              0x479, NONE,  0x00b, -1, 1}, //DIM Gear 1
+    {BIT_DIM_Gear_2,            BIT_DIM_Used_Gear_2,              0x479,  NONE,  0x00b, -1, 1}, //DIM Gear 2
+    {BIT_DIM_Gear_3,            BIT_DIM_Used_Gear_3,              0x479,  NONE,  0x00b, -1, 1}, //DIM Gear 3
+    {BIT_DIM_Gear_4,            BIT_DIM_Used_Gear_4,              0x479,  NONE,  0x00b, -1, 1}, //DIM Gear 4
+    {BIT_Krystal_Foodbag_S,     BIT_Krystal_Foodbag_M,            0x27a,  NONE,  0x016,  2, 2}, //Small Food Bag
+    {BIT_Krystal_Foodbag_M,     BIT_Krystal_Foodbag_L,            0x244,  NONE,  0x017,  2, 2}, //Medium Food Bag
+    {BIT_Krystal_Foodbag_L,     NONE,                             0x2bf,  NONE,  0x018,  2, 2}, //Large Food Bag
+    {BIT_Krystal_Dino_Bag_S,    BIT_Krystal_Dino_Bag_M,           0x471,  NONE,  0x02f,  9, 2}, //Small Grub Bag
+    {BIT_Krystal_Dino_Bag_M,    BIT_Krystal_Dino_Bag_L,           0x560,  NONE,  0x030,  9, 2}, //Medium Grub Bag
+    {BIT_Krystal_Dino_Bag_L,    NONE,                             0x560,  NONE,  0x031,  9, 2}, //Large Grub Bag
+    {BIT_Gold_Nugget_GP,        BIT_CC_Bribed_GuardClaw,          0x257,  NONE,  NONE,  -1, 1}, //Gold Nugget #1 (Near Golden Plains)
+    {BIT_Gold_Nugget_LFV,       BIT_CC_Used_Cell_Door_Key,        0x257,  NONE,  NONE,  -1, 1}, //Gold Nugget #2 (Near LightFoot Village)
+    {BIT_CC_Fire_Crystal,       NONE,                             0x4f7,  NONE,  0x102, -1, 1}, //Fire Crystal
+    {BIT_CC_Cell_Door_Key,      BIT_CC_Used_Cell_Door_Key,        0x175,  NONE,  0x01e, -1, 1}, //Cell Door Key (Cape Claw?)
+    {BIT_SpellStone_CRF,        NONE,                             0x562,  NONE,  NONE,  -1, 1}, //SpellStone - CloudRunner Fortress (Inactive)
+    {BIT_SpellStone_BWC,        NONE,                             0x562,  NONE,  NONE,  -1, 1}, //SpellStone - BlackWater Canyon (Inactive)
+    {BIT_SpellStone_KP,         NONE,                             0x562,  NONE,  NONE,  -1, 1}, //SpellStone - Krazoa Palace (Inactive)
+    {BIT_Krazoa_Translator,     NONE,                             0x496,  NONE,  NONE,  -1, 1}, //Krazoa Translator
+    {BIT_Horn_of_Truth,         NONE,                             0x258,  NONE,  0x01d, -1, 1}, //Horn of Truth
+    {BIT_CRF_Treasure_Chest_Key,NONE,                             0x568,  NONE,  NONE,  -1, 1}, //Treasure Chest Key (CloudRunner Fortress)
+    {BIT_CloudRunner_Grubs,     NONE,                             0x1a5,  NONE,  0x02a, -1, 1}, //Blue Mushroom (CloudRunner Grubs?)
+    {BIT_Krystal_Fireflies,     NONE,                             0x46d,  NONE,  0x03d, -1, 1}, //Firefly Lantern
+    {BIT_CRF_Prison_Key_2,      NONE,                             0x175,  NONE,  0x007, -1, 1}, //Prison Key (CloudRunner Fortress)
+    {BIT_CC_Krazoa_Tablets,     NONE,                             0x496,  NONE,  0x05b, -1, 1}, //Krazoa Tablets
+    {BIT_Inventory_MoonSeeds,   NONE,                             0x40d,  NONE,  0x05e, -1, 1}, //MoonSeeds
+    {BIT_CC_Engineers_Key,      NONE,                             0x175,  NONE,  0x064, -1, 1}, //Construction Engineer's Key (CloudRunner Fortress)
+    {BIT_Gold_Nugget_CC,        BIT_CC_Bribed_GuardClaw,          0x257,  NONE,  0x103, -1, 1}, //Gold Nugget #3 (Cape Claw)
+    END
 };
 
 /* Sabre items
  * 0x2E4*/ static InventoryItem _data_2E4[] = {
-    {0x0098, 0xffff, 0x0175, 0xffff, 0x000a, 0xff, 0x01}, //Gate Key (Northern Wastes) (Unused?)
-    {0x0576, 0xffff, 0x01a3, 0xffff, 0x000b, 0xff, 0x01}, //Alpine Root (Unsure whether geyser area or DIM)
-    {0x00c1, 0xffff, 0x01a5, 0xffff, 0x000c, 0xff, 0x01}, //Blue Mushroom
-    {0x066c, 0xffff, 0x0498, 0xffff, 0x0057, 0xff, 0x01}, //Purple Mushroom
-    {0x066d, 0xffff, 0x0497, 0xffff, 0x0056, 0xff, 0x01}, //White Mushroom
-    {0x002b, 0x002a, 0x0175, 0xffff, 0x0013, 0xff, 0x01}, //Mine Key
-    {0x0170, 0xffff, 0x01a3, 0xffff, 0x000b, 0xff, 0x01}, //Alpine Root (Unsure whether geyser area or DIM)
-    {0x017b, 0x0181, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 1 
-    {0x017e, 0x0182, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 2
-    {0x017f, 0x0183, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 3
-    {0x0180, 0x0184, 0x0479, 0xffff, 0x000b, 0xff, 0x01}, //DIM Gear 4
-    {0x01f1, 0x01f2, 0x0175, 0xffff, 0x0019, 0xff, 0x01}, //Belina Te Cell Key (DarkIce Mines)
-    {0x01f3, 0x01f4, 0x0175, 0xffff, 0x0019, 0xff, 0x01}, //Tricky Cell Key (DarkIce Mines)
-    {0x08a0, 0x08a2, 0x0245, 0xffff, 0x0010, 0xff, 0x01}, //Warp Crystal
-    {0x0241, 0x0242, 0x0175, 0xffff, 0x0019, 0xff, 0x01}, //Door Key 1 (DarkIce Mines)
-    {0x0282, 0x0283, 0x0175, 0xffff, 0x0019, 0xff, 0x01}, //Door Key 2 (DarkIce Mines)
-    {0x0160, 0x0161, 0x027a, 0xffff, 0x0016, 0x03, 0x02}, //Small Food Bag
-    {0x0161, 0x0162, 0x0244, 0xffff, 0x0017, 0x03, 0x02}, //Medium Food Bag
-    {0x0162, 0xffff, 0x02bf, 0xffff, 0x0018, 0x03, 0x02}, //Large Food Bag
-    {0x0009, 0x0024, 0x0471, 0xffff, 0x0032, 0x0a, 0x02}, //Small Dinosaur Food Bag
-    {0x0024, 0x00a6, 0x0560, 0xffff, 0x0033, 0x0a, 0x02}, //Medium Dinosaur Food Bag
-    {0x00a6, 0xffff, 0x0560, 0xffff, 0x0034, 0x0a, 0x02}, //Large Dinosaur Food Bag
-    {0x02d6, 0xffff, 0x0175, 0xffff, 0x001d, 0xff, 0x01}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
-    {0x01ee, 0xffff, 0x0258, 0xffff, 0x001d, 0xff, 0x01}, //Horn of Truth
-    {0x05d6, 0xffff, 0x046d, 0xffff, 0x003d, 0xff, 0x01}, //Firefly Lantern
-    {0x081d, 0x081f, 0x052b, 0xffff, 0x0000, 0xff, 0x01}, //Silver Tooth (Walled City)
-    {0x081e, 0x0820, 0x052a, 0xffff, 0x0000, 0xff, 0x01}, //Gold Tooth (Walled City)
-    {0x0201, 0x0202, 0x03a8, 0xffff, 0x001b, 0xff, 0x01}, //Sun Stone (Walled City)
-    {0x0264, 0x0243, 0x03d6, 0xffff, 0x001c, 0xff, 0x01}, //Moon Stone (Walled City)
-    {0x086a, 0xffff, 0x040d, 0xffff, 0x0062, 0xff, 0x01}, //MoonSeeds
-    {0x0123, 0x022b, 0x0562, 0xffff, 0x0060, 0xff, 0x01}, //SpellStone - DarkIce Mines (Inactive)
-    {0x022b, 0xffff, 0x0563, 0xffff, 0x0061, 0xff, 0x01}, //SpellStone - DarkIce Mines (Activated) 
-    {0x083b, 0xffff, 0x0180, 0xffff, 0xffff, 0xff, 0x01}, //Spellstone - Walled City (Activated)
-    {0x083c, 0xffff, 0x0180, 0xffff, 0xffff, 0xff, 0x01}, //Spellstone - Dragon Rock (Activated)
-    {0x086d, 0xffff, 0x055e, 0xffff, 0x005e, 0xff, 0x01}, //PointBack Egg (Diamond Bay)
-    {0x086c, 0xffff, 0x055f, 0xffff, 0x005f, 0xff, 0x01}, //Bay Diamond
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {BIT_SP_Krazoa_Translator,       NONE,                         0x175, NONE,  0x0a,  -1, 1}, //Gate Key (Northern Wastes) (Unused?)
+    {BIT_SW_Alpine_Roots,            NONE,                         0x1a3, NONE,  0x0b,  -1, 1}, //Alpine Root (Geyser area)
+    {BIT_Inventory_Blue_Mushrooms,   NONE,                         0x1a5, NONE,  0x0c,  -1, 1}, //Blue Mushroom
+    {BIT_Inventory_Purple_Mushrooms, NONE,                         0x498, NONE,  0x57,  -1, 1}, //Purple Mushroom
+    {BIT_Inventory_White_Mushrooms,  NONE,                         0x497, NONE,  0x56,  -1, 1}, //White Mushroom
+    {BIT_DIM_Mine_Key,               BIT_DIM_Used_Mine_Key,        0x175, NONE,  0x13,  -1, 1}, //Mine Key
+    {BIT_DIM_Alpine_Roots,           NONE,                         0x1a3, NONE,  0x0b,  -1, 1}, //Alpine Root (DIM)
+    {BIT_DIM_Gear_1,                 BIT_DIM_Used_Gear_1,          0x479, NONE,  0x0b,  -1, 1}, //DIM Gear 1 
+    {BIT_DIM_Gear_2,                 BIT_DIM_Used_Gear_2,          0x479, NONE,  0x0b,  -1, 1}, //DIM Gear 2
+    {BIT_DIM_Gear_3,                 BIT_DIM_Used_Gear_3,          0x479, NONE,  0x0b,  -1, 1}, //DIM Gear 3
+    {BIT_DIM_Gear_4,                BIT_DIM_Used_Gear_4,          0x479,  NONE,  0x0b,  -1, 1}, //DIM Gear 4
+    {BIT_Belina_Te_Cell_Key,        BIT_Used_Belina_Te_Cell_Key,  0x175,  NONE,  0x19,  -1, 1}, //Belina Te Cell Key (DarkIce Mines)
+    {BIT_Tricky_Cell_Key,           BIT_Used_Tricky_Cell_Key,     0x175,  NONE,  0x19,  -1, 1}, //Tricky Cell Key (DarkIce Mines)
+    {BIT_Sabre_Warp_Crystal,        BIT_Sabre_Used_Warp_Crystal,  0x245,  NONE,  0x10,  -1, 1}, //Warp Crystal
+    {BIT_DIM_Door_Key_1,            BIT_DIM_Used_Door_Key_1,      0x175,  NONE,  0x19,  -1, 1}, //Door Key 1 (DarkIce Mines)
+    {BIT_DIM_Door_Key_2,            BIT_DIM_Used_Door_Key_2,      0x175,  NONE,  0x19,  -1, 1}, //Door Key 2 (DarkIce Mines)
+    {BIT_Sabre_Foodbag_S,           BIT_Sabre_Foodbag_M,          0x27a,  NONE,  0x16,   3, 2}, //Small Food Bag
+    {BIT_Sabre_Foodbag_M,           BIT_Sabre_Foodbag_L,          0x244,  NONE,  0x17,   3, 2}, //Medium Food Bag
+    {BIT_Sabre_Foodbag_L,           NONE,                         0x2bf,  NONE,  0x18,   3, 2}, //Large Food Bag
+    {BIT_Sabre_Dino_Bag_S,          BIT_Sabre_Dino_Bag_M,         0x471,  NONE,  0x32,  10, 2}, //Small Dinosaur Food Bag
+    {BIT_Sabre_Dino_Bag_M,          BIT_Sabre_Dino_Bag_L,         0x560,  NONE,  0x33,  10, 2}, //Medium Dinosaur Food Bag
+    {BIT_Sabre_Dino_Bag_L,          NONE,                         0x560,  NONE,  0x34,  10, 2}, //Large Dinosaur Food Bag
+    {BIT_Inventory_Corrupt_Item,    NONE,                         0x175,  NONE,  0x1d,  -1, 1}, //Corrupted? A key with "ForceField Spell (Cape Claw)" as its description
+    {BIT_Horn_of_Truth,             NONE,                         0x258,  NONE,  0x1d,  -1, 1}, //Horn of Truth
+    {BIT_Sabre_Fireflies,           NONE,                         0x46d,  NONE,  0x3d,  -1, 1}, //Firefly Lantern
+    {BIT_WC_Silver_Tooth,           BIT_WC_Used_Silver_Tooth,     0x52b,  NONE,  0x00,  -1, 1}, //Silver Tooth (Walled City)
+    {BIT_WC_Gold_Tooth,             BIT_WC_Used_Gold_Tooth,       0x52a,  NONE,  0x00,  -1, 1}, //Gold Tooth (Walled City)
+    {BIT_WC_Sun_Stone,              BIT_WC_Used_Sun_Stone,        0x3a8,  NONE,  0x1b,  -1, 1}, //Sun Stone (Walled City)
+    {BIT_WC_Moon_Stone,             BIT_WC_Used_Moon_Stone,       0x3d6,  NONE,  0x1c,  -1, 1}, //Moon Stone (Walled City)
+    {BIT_Inventory_MoonSeeds,       NONE,                         0x40d,  NONE,  0x62,  -1, 1}, //MoonSeeds
+    {BIT_SpellStone_DIM,            BIT_SpellStone_DIM_Activated, 0x562,  NONE,  0x60,  -1, 1}, //SpellStone - DarkIce Mines (Inactive)
+    {BIT_SpellStone_DIM_Activated,  NONE,                         0x563,  NONE,  0x61,  -1, 1}, //SpellStone - DarkIce Mines (Activated) 
+    {BIT_SpellStone_WC,             NONE,                         0x180,  NONE,  NONE,  -1, 1}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {BIT_SpellStone_DR,             NONE,                         0x180,  NONE,  NONE,  -1, 1}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
+    {BIT_BD_PointBack_Egg,          NONE,                         0x55e,  NONE,  0x5e,  -1, 1}, //PointBack Egg (Diamond Bay)
+    {BIT_BD_Bay_Diamond,            NONE,                         0x55f,  NONE,  0x5f,  -1, 1}, //Bay Diamond
+    END
 };
 
 /* Food Bag actions (Krystal)
  * 0x4A0*/ static InventoryItem _data_4A0[] = {
-    {0x0385, 0xffff, 0x02c7, 0xffff, 0x001f, 0x04, 0x02}, //Eat food in foodbag
-    {0x0386, 0xffff, 0x02c8, 0xffff, 0x0020, 0x04, 0x02}, //Place food down from foodbag
-    {0x0387, 0xffff, 0x02ef, 0xffff, 0x0021, 0x04, 0x02}, //Give food from foodbag
-    {0x0383, 0xffff, 0x0265, 0xffff, 0x0039, 0x02, 0x02}, //Take all food
-    {0x0384, 0xffff, 0x0529, 0xffff, 0x003a, 0x02, 0x02}, //Eat first
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {0x385, NONE, 0x2c7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
+    {0x386, NONE, 0x2c8, NONE, 0x20, 4, 2}, //Place food down from foodbag
+    {0x387, NONE, 0x2ef, NONE, 0x21, 4, 2}, //Give food from foodbag
+    {0x383, NONE, 0x265, NONE, 0x39, 2, 2}, //Take all food
+    {0x384, NONE, 0x529, NONE, 0x3a, 2, 2}, //Eat first
+    END
 };
 
 /* Food Bag actions (Sabre)
  * 0x4E8*/ static InventoryItem _data_4E8[] = {
-    {0x0385, 0xffff, 0x02c7, 0xffff, 0x001f, 0x05, 0x02}, //Eat food in foodbag
-    {0x0386, 0xffff, 0x02c8, 0xffff, 0x0020, 0x05, 0x02}, //Place food down from foodbag
-    {0x0387, 0xffff, 0x02ef, 0xffff, 0x0021, 0x05, 0x02}, //Give food from foodbag
-    {0x0383, 0xffff, 0x0265, 0xffff, 0x0039, 0x03, 0x02}, //Take all food
-    {0x0384, 0xffff, 0x0529, 0xffff, 0x003a, 0x03, 0x02}, //Eat first
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {0x385, NONE, 0x2c7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
+    {0x386, NONE, 0x2c8, NONE, 0x20, 5, 2}, //Place food down from foodbag
+    {0x387, NONE, 0x2ef, NONE, 0x21, 5, 2}, //Give food from foodbag
+    {0x383, NONE, 0x265, NONE, 0x39, 3, 2}, //Take all food
+    {0x384, NONE, 0x529, NONE, 0x3a, 3, 2}, //Eat first
+    END
 };
 
 /* Food Bag items (Krystal)
  * 0x530*/ static InventoryItem _data_530[] = {
-    {0x0166, 0xffff, 0x026e, 0xffff, 0x0022, 0xff, 0x01}, //Green apple
-    {0x0167, 0xffff, 0x026f, 0xffff, 0x0023, 0xff, 0x01}, //Red apple
-    {0x0256, 0xffff, 0x0270, 0xffff, 0x0024, 0xff, 0x01}, //Brown Apple
-    {0x036e, 0xffff, 0x0272, 0xffff, 0x0025, 0xff, 0x01}, //Fish
-    {0x037f, 0xffff, 0x02c6, 0xffff, 0x0026, 0xff, 0x01}, //Smoked Fish
-    {0x0380, 0xffff, 0x02c4, 0xffff, 0x0027, 0xff, 0x01}, //Dino Egg
-    {0x0381, 0xffff, 0x02c5, 0xffff, 0x0028, 0xff, 0x01}, //Moldy Meat
-    {0x0543, 0xffff, 0x0270, 0xffff, 0x0035, 0xff, 0x01}, //Green Bean
-    {0x0544, 0xffff, 0x0270, 0xffff, 0x0036, 0xff, 0x01}, //Red Bean
-    {0x0545, 0xffff, 0x0270, 0xffff, 0x0037, 0xff, 0x01}, //Brown Bean
-    {0x0546, 0xffff, 0x0270, 0xffff, 0x0038, 0xff, 0x01}, //Blue Bean
-    {0x0163, 0x0164, 0x027a, 0xffff, 0x0016, 0x02, 0x02}, //Small Food Bag
-    {0x0164, 0x0165, 0x0244, 0xffff, 0x0017, 0x02, 0x02}, //Medium Food Bag
-    {0x0165, 0xffff, 0x02bf, 0xffff, 0x0018, 0x02, 0x02}, //Large Food Bag
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {BIT_Green_Apple_Count,  NONE,                  0x26e, NONE, 0x22, -1, 1}, //Green apple
+    {BIT_Red_Apple_Count,    NONE,                  0x26f, NONE, 0x23, -1, 1}, //Red apple
+    {BIT_Brown_Apple_Count,  NONE,                  0x270, NONE, 0x24, -1, 1}, //Brown Apple
+    {BIT_Fish_Count,         NONE,                  0x272, NONE, 0x25, -1, 1}, //Fish
+    {BIT_Smoked_Fish_Count,  NONE,                  0x2c6, NONE, 0x26, -1, 1}, //Smoked Fish
+    {BIT_Dino_Egg_Count,     NONE,                  0x2c4, NONE, 0x27, -1, 1}, //Dino Egg
+    {BIT_Moldy_Meat_Count,   NONE,                  0x2c5, NONE, 0x28, -1, 1}, //Moldy Meat
+    {BIT_Green_Bean_Count,   NONE,                  0x270, NONE, 0x35, -1, 1}, //Green Bean
+    {BIT_Red_Bean_Count,     NONE,                  0x270, NONE, 0x36, -1, 1}, //Red Bean
+    {BIT_Brown_Bean_Count,   NONE,                  0x270, NONE, 0x37, -1, 1}, //Brown Bean
+    {BIT_Blue_Bean_Count,   NONE,                  0x270,  NONE, 0x38, -1, 1}, //Blue Bean
+    {BIT_Krystal_Foodbag_S, BIT_Krystal_Foodbag_M, 0x27a,  NONE, 0x16,  2, 2}, //Small Food Bag
+    {BIT_Krystal_Foodbag_M, BIT_Krystal_Foodbag_L, 0x244,  NONE, 0x17,  2, 2}, //Medium Food Bag
+    {BIT_Krystal_Foodbag_L, NONE,                  0x2bf,  NONE, 0x18,  2, 2}, //Large Food Bag
+    END
 };
 
 /* Food Bag items (Sabre)
  * 0x5E4*/ static InventoryItem _data_5E4[] = {
-    {0x0166, 0xffff, 0x026e, 0xffff, 0x0022, 0xff, 0x01}, //Green apple
-    {0x0167, 0xffff, 0x026f, 0xffff, 0x0023, 0xff, 0x01}, //Red apple
-    {0x0256, 0xffff, 0x0270, 0xffff, 0x0024, 0xff, 0x01}, //Brown Apple
-    {0x036e, 0xffff, 0x0272, 0xffff, 0x0025, 0xff, 0x01}, //Fish
-    {0x037f, 0xffff, 0x02c6, 0xffff, 0x0026, 0xff, 0x01}, //Smoked Fish
-    {0x0380, 0xffff, 0x02c4, 0xffff, 0x0027, 0xff, 0x01}, //Dino Egg
-    {0x0381, 0xffff, 0x02c5, 0xffff, 0x0028, 0xff, 0x01}, //Moldy Meat
-    {0x0543, 0xffff, 0x0270, 0xffff, 0x0035, 0xff, 0x01}, //Green Bean 
-    {0x0544, 0xffff, 0x0270, 0xffff, 0x0036, 0xff, 0x01}, //Red Bean
-    {0x0545, 0xffff, 0x0270, 0xffff, 0x0037, 0xff, 0x01}, //Brown Bean
-    {0x0546, 0xffff, 0x0270, 0xffff, 0x0038, 0xff, 0x01}, //Blue Bean
-    {0x0160, 0x0161, 0x027a, 0xffff, 0x0016, 0x03, 0x02}, //Small Food Bag
-    {0x0161, 0x0162, 0x0244, 0xffff, 0x0017, 0x03, 0x02}, //Medium Food Bag
-    {0x0162, 0xffff, 0x02bf, 0xffff, 0x0018, 0x03, 0x02}, //Large Food Bag
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {BIT_Green_Apple_Count,  NONE,                  0x26e, NONE, 0x22, -1, 1}, //Green apple
+    {BIT_Red_Apple_Count,    NONE,                  0x26f, NONE, 0x23, -1, 1}, //Red apple
+    {BIT_Brown_Apple_Count,  NONE,                  0x270, NONE, 0x24, -1, 1}, //Brown Apple
+    {BIT_Fish_Count,         NONE,                  0x272, NONE, 0x25, -1, 1}, //Fish
+    {BIT_Smoked_Fish_Count,  NONE,                  0x2c6, NONE, 0x26, -1, 1}, //Smoked Fish
+    {BIT_Dino_Egg_Count,     NONE,                  0x2c4, NONE, 0x27, -1, 1}, //Dino Egg
+    {BIT_Moldy_Meat_Count,   NONE,                  0x2c5, NONE, 0x28, -1, 1}, //Moldy Meat
+    {BIT_Green_Bean_Count,   NONE,                  0x270, NONE, 0x35, -1, 1}, //Green Bean 
+    {BIT_Red_Bean_Count,     NONE,                  0x270, NONE, 0x36, -1, 1}, //Red Bean
+    {BIT_Brown_Bean_Count,   NONE,                  0x270, NONE, 0x37, -1, 1}, //Brown Bean
+    {BIT_Blue_Bean_Count,   NONE,                  0x270,  NONE, 0x38, -1, 1}, //Blue Bean
+    {BIT_Sabre_Foodbag_S,   BIT_Sabre_Foodbag_M,   0x27a,  NONE, 0x16,  3, 2}, //Small Food Bag
+    {BIT_Sabre_Foodbag_M,   BIT_Sabre_Foodbag_L,   0x244,  NONE, 0x17,  3, 2}, //Medium Food Bag
+    {BIT_Sabre_Foodbag_L,   NONE,                  0x2bf,  NONE, 0x18,  3, 2}, //Large Food Bag
+    END
 };
 
 /* Magic Spells
  * 0x698*/ static InventoryItem _data_698[] = {
-    {0x002d, 0xffff, 0x0183, 0xffff, 0x000d, 0xff, 0x00}, //Projectile Spell
-    {0x05ce, 0xffff, 0x0468, 0xffff, 0x003c, 0xff, 0x00}, //Ice Blast Spell
-    {0x0777, 0xffff, 0x04f8, 0xffff, 0x000f, 0xff, 0x00}, //Grenade Spell (Incorrectly labelled as Randorn)
-    {0x0040, 0xffff, 0x0177, 0xffff, 0x000e, 0xff, 0x00}, //Illusion Spell
-    {0x01d7, 0xffff, 0x0265, 0xffff, 0x0014, 0xff, 0x00}, //ForceField Spell
-    {0x0107, 0xffff, 0x0183, 0xffff, 0x000d, 0xff, 0x00}, //Glitched Spell
-    {0x0341, 0x0348, 0x0529, 0xffff, 0x000d, 0xff, 0x00}, //Glitched Spell (Quake?)
-    {0x05bd, 0xffff, 0x0466, 0xffff, 0x003b, 0xff, 0x00}, //Portal Spell
-    {0x05fc, 0xffff, 0x0470, 0xffff, 0x003e, 0xff, 0x00}, //Mind Read
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {BIT_Spell_Projectile, NONE,    0x0183, NONE, 0x0d, -1, 0}, //Projectile Spell
+    {BIT_Spell_Ice_Blast,  NONE,    0x0468, NONE, 0x3c, -1, 0}, //Ice Blast Spell
+    {BIT_Spell_Grenade,    NONE,    0x04f8, NONE, 0x0f, -1, 0}, //Grenade Spell (Incorrectly labelled as Randorn)
+    {BIT_Spell_Illusion,   NONE,    0x0177, NONE, 0x0e, -1, 0}, //Illusion Spell
+    {BIT_Spell_Forcefield, NONE,    0x0265, NONE, 0x14, -1, 0}, //ForceField Spell
+    {BIT_Spell_Glitched_1, NONE,    0x0183, NONE, 0x0d, -1, 0}, //Glitched Spell
+    {BIT_Spell_Glitched_2, BIT_348, 0x0529, NONE, 0x0d, -1, 0}, //Glitched Spell (Maybe "Quake", mentioned elsewhere?)
+    {BIT_Spell_Portal,     NONE,    0x0466, NONE, 0x3b, -1, 0}, //Portal Spell
+    {BIT_Spell_Mind_Read,  NONE,    0x0470, NONE, 0x3e, -1, 0}, //Mind Read
+    END
 };
 
 /* Sidekick Commands (Kyte)
  * 0x710*/ static InventoryItem _data_710[] = {
-    {0x0001, 0x0000, 0x01cd, 0x01cd, 0x0000, 0x00, 0x00}, //Heel
-    {0x0020, 0x0005, 0x01d1, 0x01d1, 0x0006, 0x00, 0x00}, //Play
-    {0x0002, 0x0001, 0x01ce, 0x01ce, 0x0001, 0x00, 0x00}, //Find
-    {0x0010, 0x0004, 0x01cf, 0x01cf, 0x0002, 0x00, 0x00}, //Flame
-    {0x0004, 0x0002, 0x01d0, 0x01d0, 0x0003, 0x00, 0x00}, //Distract
-    {0x0008, 0x0003, 0x01d2, 0x01d2, 0x0004, 0x00, 0x00}, //Guard
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {0x01, 0, 0x1cd, 0x1cd, 0, 0, 0}, //Heel
+    {0x20, 5, 0x1d1, 0x1d1, 6, 0, 0}, //Play
+    {0x02, 1, 0x1ce, 0x1ce, 1, 0, 0}, //Find
+    {0x10, 4, 0x1cf, 0x1cf, 2, 0, 0}, //Flame
+    {0x04, 2, 0x1d0, 0x1d0, 3, 0, 0}, //Distract
+    {0x08, 3, 0x1d2, 0x1d2, 4, 0, 0}, //Guard
+    END
 };
 
 /* Sidekick Commands (Tricky)
  * 0x764*/ static InventoryItem _data_764[] = {
-    {0x0001, 0x0000, 0x01cd, 0x01cd, 0x0000, 0x00, 0x00}, //Heel
-    {0x0020, 0x0005, 0x01d1, 0x01d1, 0x0006, 0x00, 0x00}, //Play
-    {0x0002, 0x0001, 0x01ce, 0x01ce, 0x0001, 0x00, 0x00}, //Find
-    {0x0010, 0x0004, 0x01cf, 0x01cf, 0x0002, 0x00, 0x00}, //Flame
-    {0x0004, 0x0002, 0x01d0, 0x01d0, 0x0003, 0x00, 0x00}, //Distract
-    {0x0008, 0x0003, 0x01d2, 0x01d2, 0x0004, 0x00, 0x00}, //Guard
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {0x01, 0, 0x1cd, 0x1cd, 0, 0, 0}, //Heel
+    {0x20, 5, 0x1d1, 0x1d1, 6, 0, 0}, //Play
+    {0x02, 1, 0x1ce, 0x1ce, 1, 0, 0}, //Find
+    {0x10, 4, 0x1cf, 0x1cf, 2, 0, 0}, //Flame
+    {0x04, 2, 0x1d0, 0x1d0, 3, 0, 0}, //Distract
+    {0x08, 3, 0x1d2, 0x1d2, 4, 0, 0}, //Guard
+    END
 };
 
 /* Dinosaur Food Bag Actions (Krystal)
  * 0x7B8*/ static InventoryItem _data_7B8[] = {
-    {0x0200, 0xffff, 0x02c8, 0xffff, 0x0020, 0x0b, 0x02}, //Place food down from foodbag
-    {0x022c, 0xffff, 0x0561, 0xffff, 0x0021, 0x0b, 0x02}, //Give food from foodbag
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {0x200, NONE, 0x2c8, NONE, 0x20, 11, 2}, //Place food down from foodbag
+    {0x22c, NONE, 0x561, NONE, 0x21, 11, 2}, //Give food from foodbag
+    END
 };
 
 /* Dinosaur Food Bag Actions (Sabre)
  * 0x7DC*/ static InventoryItem _data_7DC[] = {
-    {0x0200, 0xffff, 0x02c8, 0xffff, 0x0020, 0x0c, 0x02}, //Place food down from foodbag
-    {0x022c, 0xffff, 0x0561, 0xffff, 0x0021, 0x0c, 0x02}, //Give food from foodbag
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {0x200, NONE, 0x2c8, NONE, 0x20, 12, 2}, //Place food down from foodbag
+    {0x22c, NONE, 0x561, NONE, 0x21, 12, 2}, //Give food from foodbag
+    END
 };
 
 /* Dinosaur Food Bag Items (Kyte)
  * 0x800*/ static InventoryItem _data_800[] = {
-    {0x00aa, 0x00f1, 0x027a, 0xffff, 0x002f, 0x09, 0x02}, //Small Mushroom Bag
-    {0x00f1, 0x00fe, 0x0244, 0xffff, 0x0030, 0x09, 0x02}, //Medium Mushroom Bag
-    {0x00fe, 0xffff, 0x02bf, 0xffff, 0x0031, 0x09, 0x02}, //Large Mushroom Bag
-    {0x012e, 0xffff, 0x0270, 0xffff, 0x000c, 0xff, 0x01}, //Blue Mushroom
-    {0x0169, 0xffff, 0x0270, 0xffff, 0x002d, 0xff, 0x01}, //Red Mushroom
-    {0x01d0, 0xffff, 0x0270, 0xffff, 0x002e, 0xff, 0x01}, //Old Mushroom
-    {0x01d6, 0xffff, 0x0270, 0xffff, 0x002a, 0xff, 0x01}, //Blue Grub
-    {0x01ed, 0xffff, 0x0270, 0xffff, 0x002b, 0xff, 0x01}, //Red Grub
-    {0x01fd, 0xffff, 0x0270, 0xffff, 0x002c, 0xff, 0x01}, //Old Grub
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00},
+    {BIT_Krystal_Dino_Bag_S,      BIT_Krystal_Dino_Bag_M, 0x27a, NONE, 0x2f,  9, 2}, //Small Mushroom Bag
+    {BIT_Krystal_Dino_Bag_M,      BIT_Krystal_Dino_Bag_L, 0x244, NONE, 0x30,  9, 2}, //Medium Mushroom Bag
+    {BIT_Krystal_Dino_Bag_L,      NONE,                   0x2bf, NONE, 0x31,  9, 2}, //Large Mushroom Bag
+    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   0x270, NONE, 0x0c, -1, 1}, //Blue Mushroom
+    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   0x270, NONE, 0x2d, -1, 1}, //Red Mushroom
+    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   0x270, NONE, 0x2e, -1, 1}, //Old Mushroom
+    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   0x270, NONE, 0x2a, -1, 1}, //Blue Grub
+    {BIT_Dino_Bag_Red_Grubs,      NONE,                   0x270, NONE, 0x2b, -1, 1}, //Red Grub
+    {BIT_Dino_Bag_Old_Grubs,      NONE,                   0x270, NONE, 0x2c, -1, 1}, //Old Grub
+    END
 };
 
 /* Dinosaur Food Bag Items (Tricky)
  * 0x878*/ static InventoryItem _data_878[] = {
-    {0x0009, 0x0024, 0x027a, 0xffff, 0x0032, 0x0a, 0x02}, //Small Mushroom Bag
-    {0x0024, 0x00a6, 0x0244, 0xffff, 0x0033, 0x0a, 0x02}, //Medium Mushroom Bag
-    {0x00a6, 0xffff, 0x02bf, 0xffff, 0x0034, 0x0a, 0x02}, //Large Mushroom Bag
-    {0x012e, 0xffff, 0x0270, 0xffff, 0x000c, 0xff, 0x01}, //Blue Mushroom
-    {0x0169, 0xffff, 0x0270, 0xffff, 0x002d, 0xff, 0x01}, //Red Mushroom
-    {0x01d0, 0xffff, 0x0270, 0xffff, 0x002e, 0xff, 0x01}, //Old Mushroom
-    {0x01d6, 0xffff, 0x0270, 0xffff, 0x002a, 0xff, 0x01}, //Blue Grub
-    {0x01ed, 0xffff, 0x0270, 0xffff, 0x002b, 0xff, 0x01}, //Red Grub
-    {0x01fd, 0xffff, 0x0270, 0xffff, 0x002c, 0xff, 0x01}, //Old Grub
-    {0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x00, 0x00}
+    {BIT_Sabre_Dino_Bag_S,        BIT_Sabre_Dino_Bag_M,   0x27a, NONE, 0x32, 10, 2}, //Small Mushroom Bag
+    {BIT_Sabre_Dino_Bag_M,        BIT_Sabre_Dino_Bag_L,   0x244, NONE, 0x33, 10, 2}, //Medium Mushroom Bag
+    {BIT_Sabre_Dino_Bag_L,        NONE,                   0x2bf, NONE, 0x34, 10, 2}, //Large Mushroom Bag
+    {BIT_Dino_Bag_Blue_Mushrooms, NONE,                   0x270, NONE, 0x0c, -1, 1}, //Blue Mushroom
+    {BIT_Dino_Bag_Red_Mushrooms,  NONE,                   0x270, NONE, 0x2d, -1, 1}, //Red Mushroom
+    {BIT_Dino_Bag_Old_Mushrooms,  NONE,                   0x270, NONE, 0x2e, -1, 1}, //Old Mushroom
+    {BIT_Dino_Bag_Blue_Grubs,     NONE,                   0x270, NONE, 0x2a, -1, 1}, //Blue Grub
+    {BIT_Dino_Bag_Red_Grubs,      NONE,                   0x270, NONE, 0x2b, -1, 1}, //Red Grub
+    {BIT_Dino_Bag_Old_Grubs,      NONE,                   0x270, NONE, 0x2c, -1, 1}, //Old Grub
+    END
 };
 
 //Krystal
@@ -412,16 +428,16 @@ s32 unk24;
 /*0x560*/ static u8 _bss_560[0x38];
 /*0x598*/ static u8 _bss_598[0x4];
 /*0x59C*/ static u8 _bss_59C[0x4];
-/*0x5A0*/ static u8 _bss_5A0[0x4];
-/*0x5A4*/ static u8 _bss_5A4[0x4];
+/*0x5A0*/ static Texture* _bss_5A0;
+/*0x5A4*/ static s32 _bss_5A4;
 /*0x5A8*/ static u8 _bss_5A8[0x4];
 /*0x5AC*/ static u8 _bss_5AC[0x4];
-/*0x5B0*/ static u8 _bss_5B0[0x4];
+/*0x5B0*/ static s32 _bss_5B0;
 /*0x5B4*/ static s32 _bss_5B4;
-/*0x5B8*/ static u8 _bss_5B8[0x4];
+/*0x5B8*/ static u32 _bss_5B8;
 /*0x5BC*/ static s32 _bss_5BC;
-/*0x5C0*/ static u8 _bss_5C0[0x8];
-/*0x5C8*/ static u8 _bss_5C8[0x8];
+/*0x5C0*/ static s32 _bss_5C0[2];
+/*0x5C8*/ static Texture* _bss_5C8[2];
 /*0x5D0*/ static u8 _bss_5D0[0x4];
 /*0x5D4*/ static u8 _bss_5D4[0x4];
 /*0x5D8*/ static u8 _bss_5D8[0x4];
@@ -430,8 +446,8 @@ s32 unk24;
 /*0x5E4*/ static u8 _bss_5E4[0x4];
 /*0x5E8*/ static u8 _bss_5E8[0x8];
 /*0x5F0*/ static u8 _bss_5F0[0xc0];
-/*0x6B0*/ static u8 _bss_6B0[0x8];
-/*0x6B8*/ static u8 _bss_6B8[0x8];
+/*0x6B0*/ static Texture* _bss_6B0[2];
+/*0x6B8*/ static CmdmenuItemUnkBSS6B8* _bss_6B8[2]; //not a pointer, array of 58 of these up to bss_C28?
 /*0x6C0*/ static u8 _bss_6C0[0x10];
 /*0x6D0*/ static u8 _bss_6D0[0x18];
 /*0x6E8*/ static u8 _bss_6E8[0x8];
@@ -458,8 +474,8 @@ s32 unk24;
 /*0xC2C*/ static s16 _bss_C2C;
 /*0xC2E*/ static s16 _bss_C2E;
 /*0xC30*/ static GameTextChunk* _bss_C30;
-/*0xC34*/ static u8 _bss_C34[0x4];
-/*0xC38*/ static s16 _bss_C38;
+/*0xC34*/ static Texture* _bss_C34;
+/*0xC38*/ static s16 usedItemGamebitID;
 /*0xC3A*/ static s16 _bss_C3A;
 /*0xC3C*/ static s8 _bss_C3C;
 /*0xC3D*/ static s8 _bss_C3D;
@@ -472,8 +488,8 @@ s32 unk24;
 /*0xC54*/ static s32 _bss_C54; //controllerButtons
 /*0xC58*/ static u8 _bss_C58[0x8];
 /*0xC60*/ static u8 _bss_C60[0x18];
-/*0xC78*/ static u8 _bss_C78[0x2];
-/*0xC7A*/ static u8 _bss_C7A[0x2];
+/*0xC78*/ static s16 _bss_C78;
+/*0xC7A*/ static s16 _bss_C7A;
 /*0xC7C*/ static u16 _bss_C7C;
 /*0xC7E*/ static u16 _bss_C7E;
 /*0xC80*/ static u16 _bss_C80;
@@ -481,7 +497,43 @@ s32 unk24;
 // /*0xC90*/ static u8 _bss_C90[0x10];
 
 // offset: 0x0 | ctor
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_ctor.s")
+#else
+
+static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) ;
+
+void dll_1_ctor(s32 arg0) {
+    s32 i;
+
+    _bss_C78 = -1;
+    _bss_C7A = -1;
+    usedItemGamebitID = -1;
+    _bss_C3C = 0;
+    _bss_C3D = -1;
+    _bss_5A4 = -1;
+    _bss_5B0 = -1;
+
+    for (i = 0; i < 58; i++) {
+        _bss_5C8[i] = queue_load_texture_proxy(_data_9D8[i]);
+        _bss_6B8[i].unk0 = queue_load_texture_proxy(_data_9D8[i]);
+        _bss_6B8[i].unk4 = 0;
+        _bss_6B8[i].unk8 = 0;
+        _bss_6B8[i].unkA = 0;
+        _bss_6B8[i].unkC = 0;
+    }
+
+    _bss_C34 = queue_load_texture_proxy(0x500);
+    _bss_C34->unk_0xe = 0x28;
+    _bss_5B8 = 0x80000;
+    _bss_5C0 = 0;
+    _bss_6B0 = queue_load_texture_proxy(0x3A7);
+    _bss_5A0 = queue_load_texture_proxy(0x274);
+    _bss_5A0->unk_0xe = 0x28;
+    
+    dll_1_func_69CC(&_bss_C88);
+}
+#endif
 
 // offset: 0x180 | dtor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_dtor.s")
@@ -519,15 +571,15 @@ s32 dll_1_func_308(void) {
 
 // offset: 0xDC4 | func: 5 | export: 6
 s32 dll_1_func_DC4(void) {
-    if (_bss_C38 >= 0) {
+    if (usedItemGamebitID >= 0) {
         return 1;
     }
     return 0;
 }
 
 // offset: 0xDF4 | func: 6 | export: 7
-s32 dll_1_func_DF4(s32 arg0) {
-    if (arg0 == _bss_C38) {
+s32 dll_1_func_DF4(s32 itemGamebitID) {
+    if (itemGamebitID == usedItemGamebitID) {
         _bss_C3C = 0;
         return 1;
     }
@@ -622,7 +674,7 @@ void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
 
     item = (InventoryItem*)((s8*)items + 0xC*itemIndex);
     _bss_418[loadedItemIndex] = item->textID;
-    _bss_498[loadedItemIndex] = item->unkA;
+    _bss_498[loadedItemIndex] = item->openPage;
     _bss_4D8[loadedItemIndex] = item->unkB;
 }
 
@@ -728,7 +780,12 @@ void dll_1_func_6984(s32 arg0) {
 }
 
 // offset: 0x69CC | func: 41
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_69CC.s")
+void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
+    arg0->unk4 = -1;
+    arg0->unkC = 0;
+    arg0->unk0 = 0;
+    arg0->unk8 = 0.0f;
+}
 
 // offset: 0x69F8 | func: 42 | export: 17
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_69F8.s")
