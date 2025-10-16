@@ -2,7 +2,7 @@
 #define _DLLS_210_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/27_head_turn.h"
+#include "dlls/engine/27.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"

@@ -318,9 +318,9 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
 
         //to do with setting up look-at behaviour?
         if (objdata->unk424 & 1) {
-            gDLL_27_HeadTurn->vtbl->head_turn_func_18(&objdata->unk170, 0x06000000, 0, 1);
-            gDLL_27_HeadTurn->vtbl->head_turn_func_c0(&objdata->unk170, 4, _data_230, _data_260, &sp34);
-            gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(snowhorn, &objdata->unk170);
+            gDLL_27->vtbl->init(&objdata->unk170, DLL27FLAG_2000000 | DLL27FLAG_4000000, DLL27FLAG_NONE, DLL27MODE_1);
+            gDLL_27->vtbl->setup_terrain_collider(&objdata->unk170, 4, _data_230, _data_260, &sp34);
+            gDLL_27->vtbl->reset(snowhorn, &objdata->unk170);
         }
         snowhorn->ptr0x64->flags |= 0xA10;
     }
@@ -405,9 +405,9 @@ void dll_496_control(Object* snowhorn) {
     }
     
     if (objdata->unk424 & 1) {
-        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(snowhorn, &objdata->unk170, delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(snowhorn, &objdata->unk170);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_624(snowhorn, &objdata->unk170, delayFloat);
+        gDLL_27->vtbl->func_1e8(snowhorn, &objdata->unk170, delayFloat);
+        gDLL_27->vtbl->func_5a8(snowhorn, &objdata->unk170);
+        gDLL_27->vtbl->func_624(snowhorn, &objdata->unk170, delayFloat);
     }
 
     if (objdata->someAnimIDList) {
@@ -483,7 +483,7 @@ s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
         func_80024108(self, 0.005f, delayFloat, NULL);
     }
     if (objdata->unk424 & 1) {
-        gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(self, &objdata->unk170);
+        gDLL_27->vtbl->reset(self, &objdata->unk170);
     }
     self->unk0xaf |= 8;
     animObjdata->unk62 = 0;

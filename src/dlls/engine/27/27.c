@@ -1,28 +1,28 @@
-#include "dlls/engine/27_head_turn.h"
+#include "dlls/engine/27.h"
 #include "PR/os.h"
 #include "sys/main.h"
 #include "sys/objhits.h"
 #include "functions.h"
 
-/*0x0*/ static Object *_bss_0;
-/*0x8*/ static Func_80057F1C_Struct _bss_8[15];
-/*0x170*/ static s32 _bss_170;   
+/*0x0*/ static Object *bss_0;
+/*0x8*/ static Func_80057F1C_Struct bss_8[15];
+/*0x170*/ static s32 bss_170;   
 
-void dll_27_func_FB8(Object* arg0, DLL27_Data* arg1);
+void dll_27_reset(Object* obj, DLL27_Data* data);
 
-static void dll_27_func_A74(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_B68(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_1278(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1);
-static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1);
+static void dll_27_func_A74(Object* obj, DLL27_Data* data);
+static void dll_27_func_B68(Object* obj, DLL27_Data* data);
+static void dll_27_func_1278(Object* obj, DLL27_Data* data);
+static void dll_27_func_151C(Object* obj, DLL27_Data* data);
+static void dll_27_func_15C0(Object* obj, DLL27_Data* data);
+static void dll_27_func_1AA0(Object* obj, DLL27_Data* data);
+static void dll_27_func_1BA8(Object* obj, DLL27_Data* data);
+static void dll_27_func_1D60(Object* obj, DLL27_Data* data);
+static void dll_27_func_214C(Object* obj, DLL27_Data* data);
+static void dll_27_func_2394(Object* obj, DLL27_Data* data);
 
-static void dll_27_func_1148(Object* obj, DLL27_Data* data, MtxF* mtx);
-static void dll_27_func_11E0(Object* obj, DLL27_Data* data, MtxF* mtx);
+static void dll_27_get_obj_world_matrix(Object* obj, DLL27_Data* data, MtxF* mtx);
+static void dll_27_get_obj_local_matrix(Object* obj, DLL27_Data* data, MtxF* mtx);
 
 // offset: 0x0 | ctor
 void dll_27_ctor(void *dll) { }
@@ -31,45 +31,45 @@ void dll_27_ctor(void *dll) { }
 void dll_27_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_27_func_18(DLL27_Data *data, s32 a1, s32 a2, s32 a3) {
+void dll_27_init(DLL27_Data *data, s32 flags1, s32 flags2, s32 mode) {
     bzero(data, sizeof(DLL27_Data));
-    data->unk257 = a3;
-    data->unk0 = a2 | a1;
+    data->mode = mode;
+    data->flags = flags2 | flags1;
     data->boundsYExtension = 5;
 }
 
 // offset: 0x84 | func: 1 | export: 1
 // setup hits detection
-void dll_27_func_84(DLL27_Data *data, s32 a1, Vec3f *a2, f32 *a3, s32 a4) {
-    data->unk258 &= 0xf0;
-    data->unk258 |= (a1 & 0xf);
+void dll_27_setup_hits_collider(DLL27_Data *data, s32 testCount, Vec3f *testPoints, f32 *testRadii, s32 a4) {
+    data->numTestPoints &= 0xf0;
+    data->numTestPoints |= (testCount & 0xf);
     data->unk259 = a4;
-    data->unkD8 = a2;
-    data->unkDC = a3;
-    data->unk0 |= 8;
+    data->localHitsTestPoints = testPoints;
+    data->hitsTestRadii = testRadii;
+    data->flags |= DLL27FLAG_HAS_HITS_COLLIDER;
 }
 
 // offset: 0xC0 | func: 2 | export: 2
 // setup terrain detection
-void dll_27_func_C0(DLL27_Data* arg0, s32 arg1, Vec3f *arg2, f32 *arg3, u8* arg4) {
+void dll_27_setup_terrain_collider(DLL27_Data *data, s32 testCount, Vec3f *testPoints, f32 *arg3, u8 *arg4) {
     s32 i;
 
-    arg0->unk258 &= 0xF;
-    arg0->unk258 |= ((arg1 & 0xF) << 4);
-    arg0->unk4 = arg2;
+    data->numTestPoints &= 0xF;
+    data->numTestPoints |= ((testCount & 0xF) << 4);
+    data->unk4 = testPoints;
 
-    for (i = 0; i < arg1; i++) {
-        arg0->unk68.unk54[i] = arg4[i];
-        arg0->unk68.unk50[i] = -1;
-        arg0->unk68.unk40[i] = arg3[i];
+    for (i = 0; i < testCount; i++) {
+        data->unk68.unk54[i] = arg4[i];
+        data->unk68.unk50[i] = -1;
+        data->unk68.unk40[i] = arg3[i];
     }
     
-    arg0->unk0 |= 0x2000;
+    data->flags |= DLL27FLAG_HAS_TERRAIN_COLLIDER;
 }
 
 // offset: 0x1E8 | func: 3 | export: 3
-void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
-    MtxF sp110;
+void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 delayFloat) {
+    MtxF worldMtx;
     Vec3f spE0[4];
     f32 spD0[4];
     f32 temp_fa1;
@@ -85,21 +85,22 @@ void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
     s32 var_s4;
     s32 i;
 
-    if (arg1->unk257 == 0) {
+    if (data->mode == DLL27MODE_DISABLED) {
         return;
     }
 
     transform_point_by_object(
-        arg0->srt.transl.f[0], arg0->srt.transl.f[1], arg0->srt.transl.f[2], 
-        &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, 
-        arg0->parent);
-    dll_27_func_1148(arg0, arg1, &sp110);
+        obj->srt.transl.f[0], obj->srt.transl.f[1], obj->srt.transl.f[2], 
+        &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z, 
+        obj->parent);
+    
+    dll_27_get_obj_world_matrix(obj, data, &worldMtx);
 
-    for (var_s4 = 0, i = 0; var_s4 < ((s32) arg1->unk258 >> 4); ) {
-        vec3_transform(&sp110, 
-                       arg1->unk4[var_s4].x, arg1->unk4[var_s4].y, arg1->unk4[var_s4].z, 
+    for (var_s4 = 0, i = 0; var_s4 < ((s32) data->numTestPoints >> 4); ) {
+        vec3_transform(&worldMtx, 
+                       data->unk4[var_s4].x, data->unk4[var_s4].y, data->unk4[var_s4].z, 
                        &spE0[var_s4].x, &spE0[var_s4].y, &spE0[var_s4].z);
-        spD0[i] = arg1->unk68.unk40[i];
+        spD0[i] = data->unk68.unk40[i];
         spD0[i] = sqrtf((2 * spD0[i]) * spD0[i]);
         i++;
         var_s4++;
@@ -113,7 +114,7 @@ void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
     minZ = 100000.0f;
     var_s4 = 0;
     i = 0;
-    while (i < ((s32) arg1->unk258 >> 4)) {
+    while (i < ((s32) data->numTestPoints >> 4)) {
         temp_fv0 = spE0[var_s4].x + spD0[i];
         if (maxX < temp_fv0) {
             maxX = temp_fv0;
@@ -139,16 +140,16 @@ void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
             minZ = temp_fv0;
         }
 
-        if (((!arg1->unk38[var_s4].x) && (!arg1->unk38[var_s4].x)) && (!arg1->unk38[var_s4].x)){} // @fake
+        if (((!data->unk38[var_s4].x) && (!data->unk38[var_s4].x)) && (!data->unk38[var_s4].x)){} // @fake
 
-        temp_fa1 = arg1->unk38[var_s4].y;
-        temp_ft4 = arg1->unk38[var_s4].z;
+        temp_fa1 = data->unk38[var_s4].y;
+        temp_ft4 = data->unk38[var_s4].z;
 
-        temp_fv0 = arg1->unk38[var_s4].x + spD0[i];
+        temp_fv0 = data->unk38[var_s4].x + spD0[i];
         if (maxX < temp_fv0) {
             maxX = temp_fv0;
         }
-        temp_fv0 = arg1->unk38[var_s4].x - spD0[i];
+        temp_fv0 = data->unk38[var_s4].x - spD0[i];
         if (temp_fv0 < minX) {
             minX = temp_fv0;
         }
@@ -172,24 +173,25 @@ void dll_27_func_1E8(Object* arg0, DLL27_Data* arg1, f32 arg2) {
         i++;
         
     }
-    arg1->aabb.min.x = minX;
-    arg1->aabb.max.x = maxX;
-    arg1->aabb.min.y = (minY - arg1->boundsYExtension);
-    arg1->aabb.max.y = (arg1->boundsYExtension + maxY);
-    arg1->aabb.min.z = minZ;
-    arg1->aabb.max.z = maxZ;
+    data->aabb.min.x = minX;
+    data->aabb.max.x = maxX;
+    data->aabb.min.y = (minY - data->boundsYExtension);
+    data->aabb.max.y = (data->boundsYExtension + maxY);
+    data->aabb.min.z = minZ;
+    data->aabb.max.z = maxZ;
 }
 
 // offset: 0x5A8 | func: 4 | export: 4
+// run objhit code for map (terrain and hits)
 void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
     s32 var_a2;
 
     var_a2 = 0;
-    if ((arg1->unk257 == 1) || (arg1->unk257 == 2)) {
-        if (arg1->unk0 & 4) {
+    if ((arg1->mode == DLL27MODE_1) || (arg1->mode == DLL27MODE_2)) {
+        if (arg1->flags & DLL27FLAG_4) {
             var_a2 = 1;
         }
-        if (arg1->unk0 & 0x01000000) {
+        if (arg1->flags & DLL27FLAG_1000000) {
             var_a2 = (var_a2 | 0x20) & 0xFF;
         }
         func_80053750(arg0, &arg1->aabb, var_a2);
@@ -197,18 +199,18 @@ void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x624 | func: 5 | export: 5
-void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
+void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 delayFloat) {
     f32 sp3C;
 
-    sp3C = 1.0f / arg2;
+    sp3C = 1.0f / delayFloat;
     arg1->unkD4 = NULL;
-    if (arg1->unk257 == 1) {
-        _bss_0 = NULL;
-        _bss_170 = 0;
+    if (arg1->mode == DLL27MODE_1) {
+        bss_0 = NULL;
+        bss_170 = 0;
         arg1->floorNormalY = 1.0f;
         arg1->floorNormalX = 0.0f;
         arg1->floorNormalZ = 0.0f;
-        if (arg1->unk0 & 8) {
+        if (arg1->flags & DLL27FLAG_HAS_HITS_COLLIDER) {
             // Hit line detection and resolution
             dll_27_func_A74(arg0, arg1);
             dll_27_func_1278(arg0, arg1);
@@ -217,31 +219,31 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
                 &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, 
                 arg0->parent);
         }
-        if (arg1->unk0 & 0x2000) {
+        if (arg1->flags & DLL27FLAG_HAS_TERRAIN_COLLIDER) {
             dll_27_func_B68(arg0, arg1);
             dll_27_func_151C(arg0, arg1);
-            switch (arg1->unk0 & 0x06000000) {
-            case 0x2000000:
+            switch (arg1->flags & (DLL27FLAG_2000000 | DLL27FLAG_4000000)) {
+            case DLL27FLAG_2000000:
                 dll_27_func_214C(arg0, arg1);
                 break;
-            case 0x6000000:
+            case (DLL27FLAG_2000000 | DLL27FLAG_4000000):
                 dll_27_func_2394(arg0, arg1);
                 break;
             default:
                 dll_27_func_1D60(arg0, arg1);
                 break;
             }
-            if (arg1->unk0 & 0x100) {
+            if (arg1->flags & DLL27FLAG_100) {
                 dll_27_func_1AA0(arg0, arg1);
             }
-            if (arg1->unk0 & 0x80) {
+            if (arg1->flags & DLL27FLAG_80) {
                 dll_27_func_1BA8(arg0, arg1);
             }
-            if (arg1->unk0 & 1) {
+            if (arg1->flags & DLL27FLAG_1) {
                 dll_27_func_15C0(arg0, arg1);
             }
         }
-        if (arg1->unk0 & 0x800) {
+        if (arg1->flags & DLL27FLAG_800) {
             if (arg0->srt.pitch >= 0x3401) {
                 arg0->srt.pitch = 0x3400;
             }
@@ -249,7 +251,7 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
                 arg0->srt.pitch = -0x3400;
             }
         }
-        if (arg1->unk0 & 0x1000) {
+        if (arg1->flags & DLL27FLAG_1000) {
             if (arg0->srt.roll >= 0x3401) {
                 arg0->srt.roll = 0x3400;
             }
@@ -257,7 +259,7 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
                 arg0->srt.roll = -0x3400;
             }
         }
-        if (!(arg1->unk0 & 0x40000)) {
+        if (!(arg1->flags & DLL27FLAG_40000)) {
             if ((arg0->objhitInfo != NULL) && (arg0->objhitInfo->unk_0x58 & 1)) {
                 arg0->speed.y = (arg0->positionMirror.y - arg0->objhitInfo->unk_0x20.y) * sp3C;
                 if (arg0->objhitInfo->unk_0x20.y < arg0->positionMirror.y) {
@@ -267,17 +269,17 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
                 arg0->speed.y = (arg0->positionMirror.y - arg0->positionMirror3.y) * sp3C;
             }
         }
-    } else if (arg1->unk257 == 2) {
-        dll_27_func_FB8(arg0, arg1);
-        if (arg1->unk0 & 0x2000) {
+    } else if (arg1->mode == DLL27MODE_2) {
+        dll_27_reset(arg0, arg1);
+        if (arg1->flags & DLL27FLAG_HAS_TERRAIN_COLLIDER) {
             dll_27_func_B68(arg0, arg1);
-            bcopy(arg1->unk8, arg1->unk38, (arg1->unk258 >> 4) * sizeof(Vec3f));
-            if (arg1->unk0 & 1) {
+            bcopy(arg1->unk8, arg1->unk38, (arg1->numTestPoints >> 4) * sizeof(Vec3f));
+            if (arg1->flags & DLL27FLAG_1) {
                 dll_27_func_15C0(arg0, arg1);
             }
         }
     } else {
-        dll_27_func_FB8(arg0, arg1);
+        dll_27_reset(arg0, arg1);
     }
     inverse_transform_point_by_object(
         arg0->positionMirror.x, arg0->positionMirror.y, arg0->positionMirror.z, 
@@ -286,35 +288,35 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xA74 | func: 6
-static void dll_27_func_A74(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_A74(Object* obj, DLL27_Data* data) {
     s32 i;
     s32 pad;
-    MtxF sp60;
+    MtxF localMtx;
 
-    dll_27_func_11E0(arg0, arg1, &sp60);
+    dll_27_get_obj_local_matrix(obj, data, &localMtx);
 
     i = 0;
-    while (i < (arg1->unk258 & 0xF)) {
-        vec3_transform(&sp60, 
-                       arg1->unkD8[i].x, arg1->unkD8[i].y, arg1->unkD8[i].z, 
-                       &arg1->unkE0[i].x, &arg1->unkE0[i].y, &arg1->unkE0[i].z);
+    while (i < (data->numTestPoints & 0xF)) {
+        vec3_transform(&localMtx, 
+                       data->localHitsTestPoints[i].x, data->localHitsTestPoints[i].y, data->localHitsTestPoints[i].z, 
+                       &data->unkE0[i].x, &data->unkE0[i].y, &data->unkE0[i].z);
         i++;
     }
 }
 
 // offset: 0xB68 | func: 7
-static void dll_27_func_B68(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_B68(Object *obj, DLL27_Data *data) {
     s32 i;
     s32 i2;
-    MtxF sp68;
+    MtxF worldMtx;
 
-    dll_27_func_1148(arg0, arg1, &sp68);
+    dll_27_get_obj_world_matrix(obj, data, &worldMtx);
 
-    for (i = 0, i2 = 0; i < (arg1->unk258 >> 4); i++, i2 += 3) {
-        vec3_transform(&sp68, 
-                       arg1->unk4[0].f[i2], arg1->unk4[0].f[i2+1], arg1->unk4[0].f[i2+2], 
-                       &arg1->unk8[0].f[i2], &arg1->unk8[0].f[i2+1], &arg1->unk8[0].f[i2+2]);
-        arg1->unk68.unk50[i] = -1;
+    for (i = 0, i2 = 0; i < (data->numTestPoints >> 4); i++, i2 += 3) {
+        vec3_transform(&worldMtx, 
+                       data->unk4[0].f[i2], data->unk4[0].f[i2+1], data->unk4[0].f[i2+2], 
+                       &data->unk8[0].f[i2], &data->unk8[0].f[i2+1], &data->unk8[0].f[i2+2]);
+        data->unk68.unk50[i] = -1;
     }
 }
 
@@ -324,8 +326,8 @@ Func_80057F1C_Struct* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg
     s32 var_v0;
     s32 i;
 
-    if (arg0 != _bss_0) {
-        _bss_0 = arg0;
+    if (arg0 != bss_0) {
+        bss_0 = arg0;
         
         if (arg4 != 0) {
             var_v0 = 0;
@@ -333,19 +335,19 @@ Func_80057F1C_Struct* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg
             var_v0 = -1;
         }
         
-        _bss_170 = func_80057F1C(arg0, arg1, arg0->positionMirror.y, arg2, &sp4C, var_v0, 0);
+        bss_170 = func_80057F1C(arg0, arg1, arg0->positionMirror.y, arg2, &sp4C, var_v0, 0);
         
-        for (i = 0; i < _bss_170; i++) {
-            _bss_8[i].unk0[0] = sp4C[i]->unk0[0];
-            _bss_8[i].unk0[1] = sp4C[i]->unk0[1];
-            _bss_8[i].unk0[2] = sp4C[i]->unk0[2];
-            _bss_8[i].unk0[3] = sp4C[i]->unk0[3];
-            _bss_8[i].unk10 = sp4C[i]->unk10;
-            _bss_8[i].unk14 = sp4C[i]->unk14;
+        for (i = 0; i < bss_170; i++) {
+            bss_8[i].unk0[0] = sp4C[i]->unk0[0];
+            bss_8[i].unk0[1] = sp4C[i]->unk0[1];
+            bss_8[i].unk0[2] = sp4C[i]->unk0[2];
+            bss_8[i].unk0[3] = sp4C[i]->unk0[3];
+            bss_8[i].unk10 = sp4C[i]->unk10;
+            bss_8[i].unk14 = sp4C[i]->unk14;
         }
     }
-    *arg3 = _bss_170;
-    return _bss_8;
+    *arg3 = bss_170;
+    return bss_8;
 }
 
 // offset: 0xDF4 | func: 9 | export: 8
@@ -367,50 +369,50 @@ f32 dll_27_func_DF4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
 // offset: 0xFB8 | func: 10 | export: 7
 // reset detection state?
-void dll_27_func_FB8(Object* arg0, DLL27_Data* arg1) {
+void dll_27_reset(Object *obj, DLL27_Data *data) {
     s32 i;
 
     transform_point_by_object(
-        arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, 
-        &arg0->positionMirror.x, &arg0->positionMirror.y, &arg0->positionMirror.z, 
-        arg0->parent);
+        obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
+        &obj->positionMirror.x, &obj->positionMirror.y, &obj->positionMirror.z, 
+        obj->parent);
 
-    for (i = 0; i < ((s32) arg1->unk258 >> 4); i++) {
-        arg1->unk38[i].x = arg0->positionMirror.x;
-        arg1->unk38[i].y = arg0->positionMirror.y + 5.0f;
-        arg1->unk38[i].z = arg0->positionMirror.z;
+    for (i = 0; i < ((s32) data->numTestPoints >> 4); i++) {
+        data->unk38[i].x = obj->positionMirror.x;
+        data->unk38[i].y = obj->positionMirror.y + 5.0f;
+        data->unk38[i].z = obj->positionMirror.z;
     }
 
-    for (i = 0; i < (arg1->unk258 & 0xF); i++) {
-        arg1->unk110[i].x = arg0->positionMirror.x;
-        arg1->unk110[i].y = arg0->positionMirror.y + 5.0f;
-        arg1->unk110[i].z = arg0->positionMirror.z;
+    for (i = 0; i < (data->numTestPoints & 0xF); i++) {
+        data->unk110[i].x = obj->positionMirror.x;
+        data->unk110[i].y = obj->positionMirror.y + 5.0f;
+        data->unk110[i].z = obj->positionMirror.z;
     }
 
-    arg1->unk25C = 0;
-    arg1->unk25B = 0;
-    if (arg1->unk257 != 2) {
-        arg1->unkD4 = 0;
-        arg1->waterY = -100000.0f;
-        arg1->unk1AC = 100000.0f;
-        arg1->floorY = -100000.0f;
-        arg1->underwaterDist = 0;
-        arg1->floorDist = 0;
+    data->unk25C = 0;
+    data->unk25B = 0;
+    if (data->mode != DLL27MODE_2) {
+        data->unkD4 = 0;
+        data->waterY = -100000.0f;
+        data->unk1AC = 100000.0f;
+        data->floorY = -100000.0f;
+        data->underwaterDist = 0;
+        data->floorDist = 0;
         
-        for (i = 0; i < ((s32) arg1->unk258 >> 4); i++) {
-            arg1->waterYList[i] = -100000.0f;
-            arg1->floorYList[i] = -100000.0f;
-            arg1->unk1CC[i] = 100000.0f;
+        for (i = 0; i < ((s32) data->numTestPoints >> 4); i++) {
+            data->waterYList[i] = -100000.0f;
+            data->floorYList[i] = -100000.0f;
+            data->unk1CC[i] = 100000.0f;
         }
     }
 }
 
 // offset: 0x1148 | func: 11
-static void dll_27_func_1148(Object* obj, DLL27_Data* data, MtxF* mtx) {
+static void dll_27_get_obj_world_matrix(Object *obj, DLL27_Data *data, MtxF *mtx) {
     SRT srt;
 
     srt.yaw = obj->srt.yaw;
-    if (data->unk0 & 0x20) {
+    if (data->flags & DLL27FLAG_20) {
         srt.pitch = 0;
         srt.roll = 0;
     } else {
@@ -425,11 +427,11 @@ static void dll_27_func_1148(Object* obj, DLL27_Data* data, MtxF* mtx) {
 }
 
 // offset: 0x11E0 | func: 12
-static void dll_27_func_11E0(Object* obj, DLL27_Data* data, MtxF* mtx) {
+static void dll_27_get_obj_local_matrix(Object* obj, DLL27_Data* data, MtxF* mtx) {
     SRT srt;
 
     srt.yaw = obj->srt.yaw;
-    if (data->unk0 & 0x20) {
+    if (data->flags & DLL27FLAG_20) {
         srt.pitch = 0;
         srt.roll = 0;
     } else {
@@ -445,68 +447,68 @@ static void dll_27_func_11E0(Object* obj, DLL27_Data* data, MtxF* mtx) {
 
 // offset: 0x1278 | func: 13
 // does hit line detection and resolves collisions (moves object if needed)
-static void dll_27_func_1278(Object* arg0, DLL27_Data* arg1) {
+static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
     MtxF sp90;
     f32 sp8C;
     f32 sp88;
     f32 temp_fv0;
     s32 temp_t5;
     s32 i;
-    u8 sp7B;
+    u8 numHitsTestPoints;
     s32 i2;
 
-    sp7B = arg1->unk258 & 0xF;
-    arg1->unk25A = 0;
+    numHitsTestPoints = data->numTestPoints & 0xF;
+    data->hitsTouchBits = 0;
 
-    for (i = 0, i2 = 0; i < sp7B; i++, i2 += 3) {
+    for (i = 0, i2 = 0; i < numHitsTestPoints; i++, i2 += 3) {
         temp_t5 = func_80059C40(
-            &arg1->unk110[0].f[i2], 
-            &arg1->unkE0[0].f[i2], 
-            arg1->unkDC[i], 
-            (arg1->unk0 & 0x200000) ? 2 : 0, 
-            &arg1->unk140, 
-            arg0, 
-            arg1->unk259, -1, 0, 0);
-        arg1->unk25A |= (temp_t5 << i);
+            &data->unk110[0].f[i2], 
+            &data->unkE0[0].f[i2], 
+            data->hitsTestRadii[i], 
+            (data->flags & 0x200000) ? 2 : 0, 
+            &data->unk140, 
+            obj, 
+            data->unk259, -1, 0, 0);
+        data->hitsTouchBits |= (temp_t5 << i);
     }
     
-    if (sp7B >= 2) {
-        arg0->srt.transl.x = 0.0f;
-        arg0->srt.transl.z = 0.0f;
+    if (numHitsTestPoints >= 2) {
+        obj->srt.transl.x = 0.0f;
+        obj->srt.transl.z = 0.0f;
 
-        for (i = 0; i < (sp7B*3); i+=3) {
-            arg0->srt.transl.x += arg1->unkE0[0].f[i];
-            arg0->srt.transl.z += arg1->unkE0[0].f[i+2];
+        for (i = 0; i < (numHitsTestPoints*3); i+=3) {
+            obj->srt.transl.x += data->unkE0[0].f[i];
+            obj->srt.transl.z += data->unkE0[0].f[i+2];
         }
         
-        temp_fv0 = 1.0f / (f32) sp7B;
-        arg0->srt.transl.x *= temp_fv0;
-        arg0->srt.transl.z *= temp_fv0;
+        temp_fv0 = 1.0f / (f32) numHitsTestPoints;
+        obj->srt.transl.x *= temp_fv0;
+        obj->srt.transl.z *= temp_fv0;
     } else {
-        arg0->srt.transl.x = arg1->unkE0[0].x;
-        arg0->srt.transl.z = arg1->unkE0[0].z;
+        obj->srt.transl.x = data->unkE0[0].x;
+        obj->srt.transl.z = data->unkE0[0].z;
     }
-    dll_27_func_11E0(arg0, arg1, &sp90);
+    dll_27_get_obj_local_matrix(obj, data, &sp90);
 
-    for (i = 0; i < (sp7B*3); i+=3) {
-        arg1->unk110[0].f[i] = arg1->unkE0[0].f[i];
-        arg1->unk110[0].f[i+2] = arg1->unkE0[0].f[i+2];
+    for (i = 0; i < (numHitsTestPoints*3); i+=3) {
+        data->unk110[0].f[i] = data->unkE0[0].f[i];
+        data->unk110[0].f[i+2] = data->unkE0[0].f[i+2];
         vec3_transform(&sp90, 
-                       arg1->unkD8[0].f[i], arg1->unkD8[0].f[i+1], arg1->unkD8[0].f[i+2], 
-                       &sp8C, &arg1->unk110[0].f[i+1], &sp88);
+                       data->localHitsTestPoints[0].f[i], data->localHitsTestPoints[0].f[i+1], data->localHitsTestPoints[0].f[i+2], 
+                       &sp8C, &data->unk110[0].f[i+1], &sp88);
     }
 }
 
 // offset: 0x151C | func: 14
 static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
-    if (arg1->unk0 & 2) {
+    if (arg1->flags & DLL27FLAG_2) {
         arg1->unk25C = func_8005509C(arg0, 
-                                     arg1->unk38[0].f, arg1->unk8[0].f, arg1->unk258 >> 4, 
+                                     arg1->unk38[0].f, arg1->unk8[0].f, arg1->numTestPoints >> 4, 
                                      &arg1->unk68, 0);
         arg1->unk25B = 0;
         arg1->unk25D = arg1->unk68.unk68;
     }
-    bcopy(arg1->unk8, arg1->unk38, (arg1->unk258 >> 4) * sizeof(Vec3f));
+    bcopy(arg1->unk8, arg1->unk38, (arg1->numTestPoints >> 4) * sizeof(Vec3f));
 }
 
 // offset: 0x15C0 | func: 15
@@ -519,13 +521,13 @@ static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
     s8 var_t2;
     u8 var_v0;
 
-    var_v0 = arg1->unk258 >> 4;
-    if (!(arg1->unk0 & 0x08000000)) {
+    var_v0 = arg1->numTestPoints >> 4;
+    if (!(arg1->flags & DLL27FLAG_8000000)) {
         var_v0 = 1;
     }
     for (var_t4 = 0; var_t4 < var_v0; var_t4++) { 
         if (var_v0 >= 2) {
-            _bss_0 = NULL;
+            bss_0 = NULL;
         }
 
         var_t2 = 0;
@@ -672,7 +674,7 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
     f32 spA8[4];
     MtxF sp68;
 
-    temp_t7 = (arg1->unk258 >> 4);
+    temp_t7 = (arg1->numTestPoints >> 4);
     if (temp_t7 == 2 || temp_t7 == 4) {
         arg0->positionMirror.x = 0.0f;
         arg0->positionMirror.y = 0.0f;
@@ -685,7 +687,7 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
         arg0->positionMirror.x *= 1.0f / temp_t7;
         arg0->positionMirror.y *= 1.0f / temp_t7;
         arg0->positionMirror.z *= 1.0f / temp_t7;
-        if (!(arg1->unk0 & 0xA400)) {
+        if (!(arg1->flags & (DLL27FLAG_400 | DLL27FLAG_HAS_TERRAIN_COLLIDER | DLL27FLAG_8000))) {
             return;
         }
 
@@ -712,7 +714,7 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
             var_s0_2 = 1;
             var_a1 = 1;
         }
-        if (arg1->unk0 & 0x8000) {
+        if (arg1->flags & DLL27FLAG_8000) {
             f0 = spC8[0] + spC8[var_s1_2];
             f2 = spA8[0] + spA8[var_s1_2];
             temp = spC8[var_s0_2] + spC8[var_a1];
@@ -721,12 +723,12 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
             f14 = f2 - temp2;
             arg0->srt.yaw += (s16) ((arctan2_f(f12, f14) & 0xFFFF) + 0x8000) >> 2;
         }
-        if (arg1->unk0 & 0x200) {
+        if (arg1->flags & DLL27FLAG_200) {
             f12 = spA8[var_s0_2] - spA8[0];
             f14 = spB8[var_s0_2] - spB8[0];
             arg0->srt.pitch += (arctan2_f(f12, f14) - 0x4000) & 0xFFFF;
         }
-        if ((temp_t7 == 4) && (arg1->unk0 & 0x400)) {
+        if ((temp_t7 == 4) && (arg1->flags & DLL27FLAG_400)) {
             f12 = spC8[var_s1_2] - spC8[0];
             f14 = spB8[var_s1_2] - spB8[0];
             arg0->srt.roll += (0x4000 - arctan2_f(f12, f14)) & 0xFFFF;
@@ -749,7 +751,7 @@ static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
     u8 count;
     Unk80027934 sp40;
 
-    count = arg1->unk258 >> 4;
+    count = arg1->numTestPoints >> 4;
 
     if (count >= 3) {
         if (arg1->unk25C & 4) {
@@ -827,7 +829,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     Func_80057F1C_Struct** sp6C;
     s32 v1;
 
-    if ((arg1->unk258 >> 4) != 4) {
+    if ((arg1->numTestPoints >> 4) != 4) {
         return;
     }
 
@@ -837,7 +839,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     var_fv1 = 0.0f;
     var_fa0 = 0.0f;
     var_fa1 = 0.0f;
-    for (sp84 = 0; sp84 < ((s32) arg1->unk258 >> 4); sp84++) {
+    for (sp84 = 0; sp84 < ((s32) arg1->numTestPoints >> 4); sp84++) {
         spB0[sp84] = arg1->unk38[sp84].y;
         temp_v0 = func_80057F1C(arg0, arg1->unk38[sp84].x, arg0->positionMirror.y, arg1->unk38[sp84].z, &sp6C, -1, 0);
         var_s0 = 0;
@@ -882,7 +884,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
         v1 += 0xFFFF;
     }
     arg0->srt.pitch = -arctan2_f(sp94[2], sp94[0]);
-    if (arg1->unk0 & 0x400) {
+    if (arg1->flags & DLL27FLAG_400) {
         sp94[2] = spB0[1];
         spA0[1] = arg1->unk4[1].x;
         spA0[0] = spB0[0];

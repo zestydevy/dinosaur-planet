@@ -73,8 +73,8 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     objdata->unk298 = rand_next(0, 0xFFFF);
     objdata->unk26C = rand_next(0, 1000) / 1000.0f;
 
-    gDLL_27_HeadTurn->vtbl->head_turn_func_18(&objdata->unk0, 0, 0x40002, 1);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_c0(&objdata->unk0, 1, &_data_0, &_data_C, &sp37);
+    gDLL_27->vtbl->init(&objdata->unk0, DLL27FLAG_NONE, DLL27FLAG_2 | DLL27FLAG_40000, DLL27MODE_1);
+    gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, &_data_0, &_data_C, &sp37);
     gDLL_17->vtbl->func1(self, 0x3F1, NULL, 4, -1, NULL);
 }
 
@@ -131,9 +131,9 @@ void SHspore_control(Object* self) {
         self->speed.x = objdata->unk274 + (objdata->unk27C * objdata->unk268);
         self->speed.z = objdata->unk278 + (objdata->unk280 * objdata->unk268);
         obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(self, &objdata->unk0, delayFloat);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(self, &objdata->unk0);
-        gDLL_27_HeadTurn->vtbl->head_turn_func_624(self, &objdata->unk0, delayFloat);
+        gDLL_27->vtbl->func_1e8(self, &objdata->unk0, delayFloat);
+        gDLL_27->vtbl->func_5a8(self, &objdata->unk0);
+        gDLL_27->vtbl->func_624(self, &objdata->unk0, delayFloat);
         func_80026128(self, 0xA, 0, 0);
 
         //Handle collisions
