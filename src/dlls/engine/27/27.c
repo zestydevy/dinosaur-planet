@@ -39,6 +39,7 @@ void dll_27_func_18(DLL27_Data *data, s32 a1, s32 a2, s32 a3) {
 }
 
 // offset: 0x84 | func: 1 | export: 1
+// setup hits detection
 void dll_27_func_84(DLL27_Data *data, s32 a1, Vec3f *a2, f32 *a3, s32 a4) {
     data->unk258 &= 0xf0;
     data->unk258 |= (a1 & 0xf);
@@ -49,6 +50,7 @@ void dll_27_func_84(DLL27_Data *data, s32 a1, Vec3f *a2, f32 *a3, s32 a4) {
 }
 
 // offset: 0xC0 | func: 2 | export: 2
+// setup terrain detection
 void dll_27_func_C0(DLL27_Data* arg0, s32 arg1, Vec3f *arg2, f32 *arg3, u8* arg4) {
     s32 i;
 
@@ -207,6 +209,7 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 arg2) {
         arg1->floorNormalX = 0.0f;
         arg1->floorNormalZ = 0.0f;
         if (arg1->unk0 & 8) {
+            // Hit line detection and resolution
             dll_27_func_A74(arg0, arg1);
             dll_27_func_1278(arg0, arg1);
             transform_point_by_object(
@@ -363,6 +366,7 @@ f32 dll_27_func_DF4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 }
 
 // offset: 0xFB8 | func: 10 | export: 7
+// reset detection state?
 void dll_27_func_FB8(Object* arg0, DLL27_Data* arg1) {
     s32 i;
 
@@ -440,6 +444,7 @@ static void dll_27_func_11E0(Object* obj, DLL27_Data* data, MtxF* mtx) {
 }
 
 // offset: 0x1278 | func: 13
+// does hit line detection and resolves collisions (moves object if needed)
 static void dll_27_func_1278(Object* arg0, DLL27_Data* arg1) {
     MtxF sp90;
     f32 sp8C;
@@ -505,6 +510,7 @@ static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x15C0 | func: 15
+// does terrain checks
 static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
     Func_80057F1C_Struct* temp_v0;
     s32 sp60;
@@ -581,6 +587,7 @@ static void dll_27_func_15C0(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x1AA0 | func: 16
+// detect and resolve floor collision
 static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
     Func_80057F1C_Struct* temp_v0;
     s32 sp48;
@@ -610,6 +617,7 @@ static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x1BA8 | func: 17
+// calculate relative floor pitch/roll
 static void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1) {
     s16 temp_v1;
     s16 temp_v1_2;

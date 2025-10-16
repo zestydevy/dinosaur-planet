@@ -11,16 +11,16 @@
 // size:0x260
 typedef struct {
 /*0x000*/ u32 unk0; // flags
-/*0x004*/ Vec3f *unk4;
-/*0x008*/ Vec3f unk8[4];
-/*0x038*/ Vec3f unk38[4];
-/*0x068*/ Unk80027934 unk68;
+/*0x004*/ Vec3f *unk4; // points used for terrain detection
+/*0x008*/ Vec3f unk8[4]; // for terrain detection, derived from unk4
+/*0x038*/ Vec3f unk38[4]; // for terrain detection, derived from unk8
+/*0x068*/ Unk80027934 unk68; // terrain collision result
 /*0x0D4*/ Object *unkD4; // parent object (only when touching?)
-/*0x0D8*/ Vec3f *unkD8;
-/*0x0DC*/ f32 *unkDC;
-/*0x0E0*/ Vec3f unkE0[4]; // relative to unkD4 (if any, otherwise world)
-/*0x110*/ Vec3f unk110[4]; // relative to unkD4 (if any, otherwise world)
-/*0x140*/ Func_80059C40_Struct unk140;
+/*0x0D8*/ Vec3f *unkD8; // points used for hit line detection
+/*0x0DC*/ f32 *unkDC; // radii of hit line detection (smaller values means object can get closer to hit)
+/*0x0E0*/ Vec3f unkE0[4]; // for hit line detection, relative to unkD4 (if a mobile map, otherwise world)
+/*0x110*/ Vec3f unk110[4]; // for hit line detection, relative to unkD4 (if a mobile map, otherwise world)
+/*0x140*/ Func_80059C40_Struct unk140; // hit line collision result
           // Pitch/roll of floor normal, relative to object yaw
 /*0x194*/ s16 relativeFloorPitchSmooth;
 /*0x196*/ s16 relativeFloorRollSmooth;
@@ -36,7 +36,7 @@ typedef struct {
 /*0x1B4*/ f32 floorY; // y pos of floor when a floor is detected (not necessarily touching)
 /*0x1B8*/ f32 waterY; // y pos of detected water
 /*0x1BC*/ f32 floorDistList[4]; // height above floor (usually caps out at 100)
-/*0x1CC*/ f32 unk1CC[4];; // ceiling Y pos? (never set for player?)
+/*0x1CC*/ f32 unk1CC[4]; // ceiling Y pos? (never set for player?)
 /*0x1DC*/ f32 underwaterDistList[4]; // how far under water the checked point is
 /*0x1EC*/ f32 floorYList[4]; // y pos of floor when a floor is detected (not necessarily touching)
 /*0x1FC*/ f32 waterYList[4]; // y pos of detected water
