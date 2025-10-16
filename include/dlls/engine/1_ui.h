@@ -12,7 +12,7 @@ typedef struct {
 /*4*/ s16 textureID; //Mapped through TEXTABLE.bin
 /*6*/ u16 sidekickCommand; //Usually 0xFFFF, except on sidekick commands
 /*8*/ s16 textID; //Gametext lineID (in either file #3 or 568, depending on upper byte)
-/*A*/ s8 unkA; //Related to opening secondary menu?
+/*A*/ s8 openPage; //Command menu page to open after use (-1 to close)
 /*B*/ u8 unkB;
 } InventoryItem;
 

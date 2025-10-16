@@ -285,7 +285,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
         }
         break;
     case 9:
-        if (main_get_bits(BIT_CF_Spellstone_Activated)) {
+        if (main_get_bits(BIT_SpellStone_CRF_Activated)) {
             gDLL_29_Gplay->vtbl->set_map_setup(MAP_SWAPSTONE_CIRCLE, 5);
         }
         break;

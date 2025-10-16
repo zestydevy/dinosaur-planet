@@ -9,6 +9,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/74_picmenu.h"
 #include "game/gamebits.h"
+#include "game/gametexts.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
 #include "sys/fonts.h"
@@ -277,7 +278,7 @@ void dll_63_ctor(void *self) {
     sLogoShadowTexture = queue_load_texture_proxy(0x2E1);
 
     if (sGameTextChunk == NULL) {
-        sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(0xEC);
+        sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EC_Menu_Managing_Saves);
     }
 
     for (i = 0; i < 18; i++) {

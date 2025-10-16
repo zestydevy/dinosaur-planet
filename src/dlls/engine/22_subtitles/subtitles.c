@@ -39,9 +39,9 @@ typedef struct StructBss38 {
 } StructBss38;
 
 typedef struct StructData1C {
-    s32 unk0;
-    s16 unk4;
-} StructData1C;
+    s32 objectID;
+    s16 gametextID;
+} StructData1C; //Mind Read text for particular Objects?
 
 /*0x0*/ static const char subtitlesDelayError[] = "subtitles error: sentence has a delay less than %d ms\n";
 /*0x38*/ static const char subtitlesNewLineCountError[] = "Can't have more than one new line in a subtitle sentence, not enough space on screen\n";
@@ -725,25 +725,26 @@ f32 dll_22_func_2118(void) {
 s16 dll_22_func_214C(s32 arg0) {
     u32 var_v1;
 
-    for (var_v1 = 0; var_v1 < 3 && _data_1C[var_v1].unk0 != arg0; var_v1++) {
+    for (var_v1 = 0; var_v1 < 3 && _data_1C[var_v1].objectID != arg0; var_v1++) {
     }
     if (var_v1 == 3) {
         return 0xCD;
     }
-    return _data_1C[var_v1].unk4;
+    return _data_1C[var_v1].gametextID;
 }
 
 // offset: 0x21C0 | func: 21 | export: 8
-s32 dll_22_func_21C0(s32 arg0, s16 arg1) {
-    u32 var_v1;
+// Set Mind Read text for object?
+s32 dll_22_func_21C0(s32 objectID, s16 gametextID) {
+    u32 index;
 
-    for (var_v1 = 0; var_v1 < 3 && _data_1C[var_v1].unk0 != arg0; var_v1++) {
+    for (index = 0; index < 3 && _data_1C[index].objectID != objectID; index++) {
     }
-    if (var_v1 == 3) {
+    if (index == 3) {
         return 0;
     }
 
-    _data_1C[var_v1].unk4 = arg1;
+    _data_1C[index].gametextID = gametextID;
     return 1;
 }
 

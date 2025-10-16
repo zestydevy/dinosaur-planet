@@ -1,0 +1,22 @@
+.text = 0x0:
+dll_615_ctor = 0x0;
+dll_615_dtor = 0xC;
+dll_615_setup = 0x18;
+dll_615_control = 0x288;
+dll_615_update = 0x17B0;
+dll_615_print = 0x1888;
+dll_615_free = 0x194C;
+dll_615_get_model_flags = 0x19D8;
+dll_615_get_data_size = 0x19E8;
+dll_615_func_19FC = 0x19FC;
+dll_615_func_1AC8 = 0x1AC8;
+dll_615_func_1AE8 = 0x1AE8;
+
+.rodata = 0x1C70:
+
+.data = 0x1D00:
+_data_0 = 0x0; // absolute:0x1D00
+_data_10 = 0x10; // absolute:0x1D10
+_data_14 = 0x14; // absolute:0x1D14
+_data_18 = 0x18; // absolute:0x1D18
+_data_24 = 0x24; // absolute:0x1D24

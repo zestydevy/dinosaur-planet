@@ -83,7 +83,7 @@ void VFP_LevelControl_control(Object* self) {
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
                 func_80000450(self, self, 0x178, 0, 0, 0);
-                main_set_bits(BIT_SpellStone_1, 1);
+                main_set_bits(BIT_SpellStone_DIM, 1);
             }
         }
         VFP_LevelControl_func_8EC(self);
@@ -104,8 +104,8 @@ void VFP_LevelControl_control(Object* self) {
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
                 func_80000450(self, self, 0x178, 0, 0, 0);
-                main_set_bits(BIT_SpellStone_2, 1);
-                main_set_bits(BIT_DIM_Leap_of_Faith_Completed, 1);
+                main_set_bits(BIT_SpellStone_WC, 1);
+                main_set_bits(BIT_SpellStone_DIM_Activated, 1);
             }
         }
         VFP_LevelControl_func_A08(self);
@@ -125,7 +125,7 @@ void VFP_LevelControl_control(Object* self) {
                 func_80000450(self, self, 0x168, 0, 0, 0);
                 func_80000450(self, self, 0x169, 0, 0, 0);
                 func_80000450(self, self, 0x174, 0, 0, 0);
-                main_set_bits(BIT_Fire_Crystal, 1);
+                main_set_bits(BIT_SpellStone_DR, 1);
             }
         }
         VFP_LevelControl_func_AAC(self);

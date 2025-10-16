@@ -660,18 +660,18 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             }
             break;
         case 2:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_Inventory_Alpine_Root)) {
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
-                main_decrement_bits(BIT_Inventory_Alpine_Root);
+                main_decrement_bits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 objdata->flags = 4;
                 return;
             }
             break;
         case 4:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_Inventory_Alpine_Root)) {
+            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
-                main_decrement_bits(BIT_Inventory_Alpine_Root);
+                main_decrement_bits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 objdata->flags = 6;
                 return;
@@ -878,10 +878,10 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     }
 
     if (setup->unk1D == result){
-        if (main_get_bits(BIT_DIM_Leap_of_Faith_Completed)){
+        if (main_get_bits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E8;
             objdata->unk426 = 2.0f;
-        } else if (main_get_bits(BIT_SpellStone_1)){
+        } else if (main_get_bits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2DC;
             objdata->unk426 = 1.0f;
         } else if (main_get_bits(BIT_Tricky_Distract_Learned)){
@@ -892,10 +892,10 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
             objdata->unk426 = 2.0f;
         }
     } else {
-        if (main_get_bits(BIT_DIM_Leap_of_Faith_Completed)){
+        if (main_get_bits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E0;
             objdata->unk426 = 2.0f;
-        } else if (main_get_bits(BIT_SpellStone_1)){
+        } else if (main_get_bits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2D8;
             objdata->unk426 = 1.0f;
         } else if (main_get_bits(BIT_Tricky_Distract_Learned)){
@@ -984,7 +984,7 @@ void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     questValue = (objdata->flags = main_get_bits(BIT_Garunda_Te_Quest_Progress));
     
     /** If the 1st SpellStone is activated, makes sure Garunda Te's flags are in their end state */
-    if (questValue < questEnd && main_get_bits(BIT_SpellStone_1)){
+    if (questValue < questEnd && main_get_bits(BIT_SpellStone_DIM)){
         objdata->flags = questEnd;
         questValue = objdata->flags;
         main_set_bits(BIT_Garunda_Te_Quest_Progress, questValue);
@@ -1080,7 +1080,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
             } else if (gDLL_1_UI->vtbl->func7(0x123)) {
-                main_set_bits(BIT_DIM_Leap_of_Faith_Completed, 1);
+                main_set_bits(BIT_SpellStone_DIM_Activated, 1);
                 objdata->flags = 7;
                 main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
             }

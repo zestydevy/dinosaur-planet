@@ -11,6 +11,7 @@
 #include "sys/gfx/model.h"
 #include "sys/memory.h"
 #include "sys/objmsg.h"
+#include "game/gametexts.h"
 #include "types.h"
 
 #define KRAZOA_ALPHABET_ICONS 0x187
@@ -71,7 +72,7 @@ void krazoatext_control(Object* self) {
     setup = ((KText_Setup*)self->setup);
 
     if (objdata->stringLoaded == FALSE) {
-        gametext = gDLL_21_Gametext->vtbl->get_chunk(1);
+        gametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_001_Krazoa_Translator);
         length = strlen(gametext->strings[setup->stringID]) + 1;
         if (length > KRAZOA_STRING_MAX_LENGTH) {
             length = KRAZOA_STRING_MAX_LENGTH;

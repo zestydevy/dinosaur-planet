@@ -359,10 +359,10 @@ static s32 SHswapstone_get_held_spirit(void) {
 // Whether the player has a SpellStone.
 // Only checks for the first two!
 static s32 SHswapstone_has_spellstone(void) {
-    if (main_get_bits(BIT_CF_SpellStone) != 0) {
+    if (main_get_bits(BIT_SpellStone_CRF) != 0) {
         return 1;
     }
-    if (main_get_bits(BIT_SpellStone_1) != 0) {
+    if (main_get_bits(BIT_SpellStone_DIM) != 0) {
         return 1;
     }
     return 0;

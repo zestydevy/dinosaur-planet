@@ -6,6 +6,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/21_gametext.h"
 #include "functions.h"
+#include "game/gametexts.h"
 #include "sys/camera.h"
 #include "sys/controller.h"
 #include "sys/fonts.h"
@@ -71,7 +72,7 @@ void n_pausemenu_ctor(s32 arg0) {
     textureSpellStone = queue_load_texture_proxy(0x31E);
     textureDuster = queue_load_texture_proxy(0x310);
     textureSpirit = queue_load_texture_proxy(0x31F);
-    gametext = gDLL_21_Gametext->vtbl->get_chunk(0);
+    gametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_000_Pause_Menu);
     pauseMenuItems[0].text = gametext->strings[0];
     pauseMenuItems[1].text = gametext->strings[1];
     font_load(FONT_FUN_FONT);
