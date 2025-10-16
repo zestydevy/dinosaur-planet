@@ -26,7 +26,7 @@
 #include "dlls/engine/24_waterfx.h"
 #include "dlls/engine/25.h"
 #include "dlls/engine/26_curves.h"
-#include "dlls/engine/27_head_turn.h"
+#include "dlls/engine/27.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
@@ -125,7 +125,7 @@ extern DLL_23 *gDLL_23;
 extern DLL_24_waterfx *gDLL_24_Waterfx;
 extern DLL_25 *gDLL_25;
 extern DLL_26_curves *gDLL_26_Curves;
-extern DLL_27_head_turn *gDLL_27_HeadTurn; //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
+extern DLL_27 *gDLL_27; //"lookAt" DLL? (seems to have functions for aiming character necks etc!)
 extern DLL_28_screen_fade *gDLL_28_ScreenFade;
 extern DLL_29_gplay *gDLL_29_Gplay;
 extern DLL_30_task *gDLL_30_Task;

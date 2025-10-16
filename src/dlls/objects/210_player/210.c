@@ -482,10 +482,13 @@ void dll_210_setup(Object* arg0, u32 arg1) {
     }
     gDLL_18->vtbl->func0(arg0, data, 0x51, 1);
     data->unk274 = &data->unk774;
-    gDLL_27_HeadTurn->vtbl->head_turn_func_18(&data->unk4, 0x02000000, 0x400A7, 1);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_84(&data->unk4, 1, _data_7C, _data_88, 1);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_c0(&data->unk4, 2, _data_3C, _data_6C, _data_20);
-    data->unk4.unk254 = 0x64;
+    gDLL_27->vtbl->init(&data->unk4, 
+        DLL27FLAG_2000000, 
+        DLL27FLAG_1 | DLL27FLAG_2 | DLL27FLAG_4 | DLL27FLAG_20 | DLL27FLAG_80 | DLL27FLAG_40000, 
+        DLL27MODE_1);
+    gDLL_27->vtbl->setup_hits_collider(&data->unk4, 1, _data_7C, _data_88, 1);
+    gDLL_27->vtbl->setup_terrain_collider(&data->unk4, 2, _data_3C, _data_6C, _data_20);
+    data->unk4.boundsYExtension = 0x64;
     dll_210_func_7260(arg0, data);
     arg0->objhitInfo->unk_0xa1 = 0x29;
     arg0->unk_0x36 = 0xFF;
@@ -665,9 +668,9 @@ void dll_210_control(Object* arg0) {
     data->unk870 = 0;
     data->unk8AD = 0U;
     dll_210_func_2534(arg0, data, data);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_1e8(arg0, &data->unk4, delayFloat);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_5a8(arg0, &data->unk4);
-    gDLL_27_HeadTurn->vtbl->head_turn_func_624(arg0, &data->unk4, delayFloat);
+    gDLL_27->vtbl->func_1e8(arg0, &data->unk4, delayFloat);
+    gDLL_27->vtbl->func_5a8(arg0, &data->unk4);
+    gDLL_27->vtbl->func_624(arg0, &data->unk4, delayFloat);
     if (data->unk868 != NULL) {
         dll_210_func_47B8(arg0, data);
     }
@@ -1250,7 +1253,7 @@ void dll_210_update(Object* arg0) {
         gDLL_2_Camera->vtbl->func10(sp58, sp54, sp50);
         dll_210_func_8EA4(arg0, temp_s1, temp_s1->unk858, NULL, NULL, NULL, NULL, 0);
     }
-    if (temp_s1->unk4.unk257 == 1) {
+    if (temp_s1->unk4.mode == 1) {
         if (!(temp_s1->flags & 0x2000) && (temp_s1->unk4.unk25C != 0)) {
             temp_fv0 = (arg0->positionMirror.y - arg0->positionMirror3.y) / sp44;
             arg0->speed.y = temp_fv0;
@@ -1269,7 +1272,7 @@ void dll_210_update(Object* arg0) {
                 arg0->speed.x = (arg0->positionMirror.x - arg0->positionMirror3.x) / sp44;
                 arg0->speed.z = (arg0->positionMirror.z - arg0->positionMirror3.z) / sp44;
             }
-            if (((temp_s1->unk4.unk25C & 6) && !(temp_s1->unk4.unk25C & 0x60)) || (temp_s1->unk4.unk25A != 0)) {
+            if (((temp_s1->unk4.unk25C & 6) && !(temp_s1->unk4.unk25C & 0x60)) || (temp_s1->unk4.hitsTouchBits != 0)) {
                 sp4C = fsin16_precise(arg0->srt.yaw);
                 temp_fv0 = fcos16_precise(arg0->srt.yaw);
                 temp_s1->unk278 = (temp_fv0 * -arg0->speed.z) - (arg0->speed.x * sp4C);
@@ -2044,7 +2047,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                     temp_fp->unk30C = 0;
                     arg0->unk0xdc = 0;
                     temp_fp->unk324 = 0;
-                    temp_fp->unk4.unk257 = 1;
+                    temp_fp->unk4.mode = 1;
                     temp_fp->unk8B8 = 0;
                     gDLL_18->vtbl->func1(arg0, temp_fp, delayFloat, delayFloat, (u32) _bss_58, (u32) _bss_19C);
                 }
@@ -2061,7 +2064,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                 temp_fp->unk30C = 0;
                 arg0->unk0xdc = 0;
                 temp_fp->unk324 = 0;
-                temp_fp->unk4.unk257 = 1;
+                temp_fp->unk4.mode = 1;
                 temp_fp->unk8B8 = 0;
                 gDLL_18->vtbl->func1(arg0, temp_fp, delayFloat, delayFloat, (u32) _bss_58, (u32) _bss_19C);
             }
@@ -2076,7 +2079,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
         temp_fp->unk324 = 0;
         temp_fp->unk310 = 0;
         temp_fp->unk30C = 0;
-        temp_fp->unk4.unk257 = 0;
+        temp_fp->unk4.mode = 0;
         temp_fp->unk288 = 0.0f;
         temp_fp->unk284 = 0.0f;
         for (var_s1 = 0; var_s1 < arg2->unk98; var_s1++) {
@@ -2317,7 +2320,7 @@ static void dll_210_func_618C(Object* arg0, Player_Data* arg1, s32 arg2, f32 arg
     arg0->objhitInfo->unk_0x60 = 0;
     arg0->objhitInfo->unk_0x5d = 0;
     arg0->objhitInfo->unk_0x5e = 0;
-    arg1->unk4.unk257 = 1;
+    arg1->unk4.mode = 1;
     func_8004D880(arg0);
     arg1->unk8B8 = 0;
     arg1->flags &= ~0x2000;
@@ -2701,7 +2704,7 @@ void dll_210_func_7180(Object* arg0, Player_Data* arg1, f32 arg2) {
 // offset: 0x7260 | func: 35
 static void dll_210_func_7260(Object* arg0, Player_Data* arg1) {
     arg1->unk874 = (s16) arg0->srt.yaw;
-    gDLL_27_HeadTurn->vtbl->head_turn_func_fb8(arg0, &arg1->unk4);
+    gDLL_27->vtbl->reset(arg0, &arg1->unk4);
     arg0->objhitInfo->unk_0x10.x = arg0->srt.transl.x;
     arg0->objhitInfo->unk_0x10.y = arg0->srt.transl.y;
     arg0->objhitInfo->unk_0x10.z = arg0->srt.transl.z;
@@ -3881,7 +3884,7 @@ s32 dll_210_func_AE34(Object* player, Player_Data* arg1, f32 arg2) {
         if (temp_v0){
             return temp_v0;
         }
-        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)){
+        if ((arg1->unk4.underwaterDist > 25.0f) && (arg1->unk4.floorDist < 100.0f)){
             return 0x21;
         }
         if (arg1->unk2C8){
@@ -3919,11 +3922,11 @@ s32 dll_210_func_AE34(Object* player, Player_Data* arg1, f32 arg2) {
     }
     
     arg1->unk28C = (f32) (arg1->unk28C + (((var_fa0 - arg1->unk28C) / arg1->unk2B0) * arg2));
-    if (arg1->unk4.unk194 > 0){
-        var_fa0 -= fsin16_precise(arg1->unk4.unk194) * 0.65f;
+    if (arg1->unk4.relativeFloorPitchSmooth > 0){
+        var_fa0 -= fsin16_precise(arg1->unk4.relativeFloorPitchSmooth) * 0.65f;
     }
     else {
-        var_fa0 -= fsin16_precise(arg1->unk4.unk194) * 0.35f;
+        var_fa0 -= fsin16_precise(arg1->unk4.relativeFloorPitchSmooth) * 0.35f;
     }
     if (objdata->unk3C8 < arg1->unk28C){
         arg1->unk28C = objdata->unk3C8;
@@ -3983,7 +3986,7 @@ s32 dll_210_func_AE34(Object* player, Player_Data* arg1, f32 arg2) {
     }
 
     // calculations here are absolutely useless but requires to match
-    temp_fv0 = (f32)arg1->unk4.unk194 / 0x2000;
+    temp_fv0 = (f32)arg1->unk4.relativeFloorPitchSmooth / 0x2000;
     if (1.0f < temp_fv0) { temp_fv0 = 1.0f; }
     else if (temp_fv0 < -1.0f) { temp_fv0 = -1.0f; }
 
@@ -4193,7 +4196,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
 s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2) {
     s8 var_v0;
 
-    if (arg1->unk4.unk1A8 > 20.0f) {
+    if (arg1->unk4.floorDist > 20.0f) {
         var_v0 = _data_7BC + 1;
     } else {
         var_v0 = 0;
@@ -4301,17 +4304,17 @@ s32 dll_210_func_125BC(Object* arg0, Player_Data* arg1, u32 arg2) {
         for (i = 0; i < 3; i++) {
             temp_fs0 = ((f32) rand_next(-0x32, 0x32) / 10.0f) + arg0->srt.transl.x;
             temp_fs1 = ((f32) rand_next(-0x32, 0x32) / 10.0f) + arg0->srt.transl.z;
-            gDLL_24_Waterfx->vtbl->func_174C(temp_fs0, temp_s3->unk4.unk1B4, temp_fs1, 4.0f);
-            gDLL_24_Waterfx->vtbl->func_1CC8(temp_fs0, temp_s3->unk4.unk1B4, temp_fs1, 0, 0.0f, 3);
+            gDLL_24_Waterfx->vtbl->func_174C(temp_fs0, temp_s3->unk4.floorY, temp_fs1, 4.0f);
+            gDLL_24_Waterfx->vtbl->func_1CC8(temp_fs0, temp_s3->unk4.floorY, temp_fs1, 0, 0.0f, 3);
         }
     }
-    if (temp_s3->unk4.unk1AC > 25.0f && temp_s3->unk4.unk1A4 < 100.0f) {
+    if (temp_s3->unk4.unk1AC > 25.0f && temp_s3->unk4.floorNormalZ < 100.0f) {
         return 0x21;
     }
-    if ((s8)temp_s3->unk4.unk258 & 0x10) {
+    if ((s8)temp_s3->unk4.numTestPoints & 0x10) {
         return 2;
     }
-    f0 = temp_s3->unk4.unk1B4 - 6.0f;
+    f0 = temp_s3->unk4.floorY - 6.0f;
     f2 = f0 - arg0->srt.transl.y;
     if (f2 > 25.0f) {
         f2 = 25.0f;
@@ -4358,7 +4361,7 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
 
     gDLL_2_Camera->vtbl->func24.withOneArg(2);
     temp_s0 = arg0->data;
-    arg1->unk4.unk257 = 0;
+    arg1->unk4.mode = 0;
     arg1->unk2FC = dll_210_func_14B70;
     func_800267A4(arg0);
     sp48 = temp_s0->unk858;
