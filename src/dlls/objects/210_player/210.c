@@ -3873,7 +3873,7 @@ s32 dll_210_func_A3FC(Object* arg0, Player_Data* arg1, f32 arg2) {
             bzero(arg0, 0x100000);
         }
     }
-    if (((arg0->curModAnimId == sp4C->modAnims[0x12]) || (arg0->curModAnimId == sp4C->modAnims[0x13])) && (arg1->unk32C[0xE] != 0)) {
+    if (((arg0->curModAnimId == sp4C->modAnims[0x12]) || (arg0->curModAnimId == sp4C->modAnims[0x13])) && (arg1->unk33A != 0)) {
         func_80023D30(arg0, sp4C->modAnims[0], 0.0f, 0U);
         arg1->unk298 = 0.005f;
     }
@@ -4245,7 +4245,7 @@ s32 dll_210_func_B4E0(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xB73C | func: 63
-s32 dll_210_func_B73C(Object* arg0, Player_Data* arg1, u32 arg2) {
+s32 dll_210_func_B73C(Object* arg0, Player_Data* arg1, UNK_TYPE_32 arg2) {
     Player_Data* objdata;
 
     objdata = arg0->data;
@@ -4255,7 +4255,7 @@ s32 dll_210_func_B73C(Object* arg0, Player_Data* arg1, u32 arg2) {
     }
     arg1->unk278 = 0.0f;
     arg1->unk298 = 0.02f;
-    if ((objdata->unk868 == NULL) && (arg1->unk32C[0xE] != 0)) {
+    if ((objdata->unk868 == NULL) && (arg1->unk33A != 0)) {
         objdata->unk3C4 = &_data_6F8;
         objdata->modAnims = _data_98;
         return 2;
@@ -4268,7 +4268,36 @@ s32 dll_210_func_B73C(Object* arg0, Player_Data* arg1, u32 arg2) {
 }
 
 // offset: 0xB864 | func: 64
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_B864.s")
+s32 dll_210_func_B864(Object* arg0, Player_Data* arg1, UNK_TYPE_32 arg2) {
+    Player_Data* objdata;
+
+    objdata = arg0->data;
+    if (arg1->unk272 != 0) {
+        func_8002681C(objdata->unk868);
+        func_80023D30(arg0, 0x443, 0.3f, 0U);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x6B4U, 0x61U, NULL, NULL, 0, NULL);
+    }
+    arg1->unk278 = 0.0f;
+    arg1->unk298 = 0.015f;
+    if ((objdata->unk868 == NULL) && (arg1->unk33A != 0)) {
+        objdata->unk3C4 = &_data_6F8;
+        objdata->modAnims = _data_98;
+        return 2;
+    }
+    if ((objdata->unk868 != NULL) && (arg0->animProgress > 0.4f)) {
+        if (objdata->unk868->unk_0xe0 == 1) {
+            if (arg0->id == 0) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x701U, 0x25U, NULL, NULL, 0, NULL);
+            } else {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x700U, 0x25U, NULL, NULL, 0, NULL);
+            }
+        }
+        objdata->unk868->unk_0xe0 = 0;
+        objdata->unk868 = NULL;
+    }
+    return 0;
+}
+
 
 // offset: 0xBA38 | func: 65
 #ifndef NON_EQUIVALENT
@@ -4840,7 +4869,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
     }
     switch (arg0->curModAnimId) {
     case 0x43D:
-        if (arg1->unk32C[0xE] != 0) {
+        if (arg1->unk33A != 0) {
             func_80023D30(arg0, 0x43E, 0.0f, 0);
             dll_210_func_6DD8(arg0, (Player_Data* ) temp_s1, 0x2D);
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xBA4U, 0x7FU, &temp_s1->unk848, NULL, 0, NULL);
@@ -4848,7 +4877,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
         }
         break;
     case 0x449:
-        if (arg1->unk32C[0xE] != 0) {
+        if (arg1->unk33A != 0) {
             if (arg1->unk2C8 != NULL) {
                 return 0x36;
             }
@@ -4863,7 +4892,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
             temp_a0 = arg0->linkedObject;
             ((DLL_Unknown*)temp_a0->dll)->vtbl->func[7].withOneS32OneF32((s32)temp_a0, 0x3E19999A);
         }
-        if (arg1->unk32C[0xE] != 0) {
+        if (arg1->unk33A != 0) {
             func_80023D30(arg0, 0x43E, 0.0f, 0);
             dll_210_func_6DD8(arg0, (Player_Data* ) temp_s1, 0x2D);
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xBA4U, 0x7FU, &temp_s1->unk848, NULL, 0, NULL);
@@ -5171,7 +5200,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
         if ((arg1->unk2C8 == NULL) && (dll_210_func_1A9D4(arg0, &temp_s1->aimX, &temp_s1->aimY, &temp_s1->aimZ, temp_s1->unk82C, temp_s1->unk830) != 0)) {
             temp_s1->flags |= 0x400;
         }
-        if (arg1->unk32C[0xE] != 0) {
+        if (arg1->unk33A != 0) {
             temp_v0_4 = *_bss_34;
             temp_v0_4--;
             if ((temp_v0_4 < 0) || (*_bss_34 = temp_v0_4, (*_bss_220 == 0x777))) {

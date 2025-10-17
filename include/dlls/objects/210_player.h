@@ -174,7 +174,10 @@ typedef struct {
 /*326*/ u16 pad326;
 /*328*/ s16 unk328;
 /*32A*/ s16 unk32A;
-/*32C*/ s8 unk32C[0x33D - 0x32C];
+/*32C*/ s8 unk32C[0x33A - 0x32C];
+/*33A*/ s8 unk33A;
+/*33B*/ u8 pad33B;
+/*33C*/ u8 pad33C;
 /*33D*/ u8 unk33D;
 /*33E*/ s8 unk33E[0x340 - 0x33E];
 /*340*/ s8 unk340;
