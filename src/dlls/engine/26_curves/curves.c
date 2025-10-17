@@ -1,0 +1,229 @@
+#include "common.h"
+#include "game/objects/object.h"
+
+typedef struct {
+    ObjSetup base;
+    s8 unk18;
+    s8 unk19;
+    s8 unk1A;
+    s8 unk1B;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+} CurveSetup;
+
+typedef struct {
+    u32 uID;
+    CurveSetup *setup;
+} CurveNode;
+
+/*0x0*/ static s32 _bss_0;
+/*0x4*/ static s32 _bss_4;
+/*0x8*/ static CurveNode _bss_8[1300];
+/*0x10*/ //static u8 _bss_10[0x2898];
+/*0x28A8*/ static s32 _bss_28A8;
+
+// offset: 0x0 | ctor
+void dll_26_ctor(void *dll) { }
+
+// offset: 0xC | dtor
+void dll_26_dtor(void *dll) { }
+
+// offset: 0x18 | func: 0 | export: 0
+void dll_26_func_18(void) {
+    _bss_28A8 = 0;
+}
+
+// offset: 0x34 | func: 1 | export: 1
+#ifndef NON_MATCHING
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_34.s")
+#else
+void dll_26_func_34(CurveSetup* arg0) {
+    s32 var_v1;
+    s32 temp;
+
+    if ((_bss_28A8 && _bss_28A8) && _bss_28A8) {} // @fake
+    
+    if (_bss_28A8 == 1300) {
+        return;
+    }
+    
+    var_v1 = 0;
+    while (var_v1 < _bss_28A8 && _bss_8[var_v1].uID < arg0->base.uID) {
+        var_v1 += 1;
+    }
+    
+    temp = _bss_28A8;
+    while (temp > var_v1) {
+        _bss_8[temp].setup = _bss_8[temp - 1].setup;
+        _bss_8[temp].uID = _bss_8[temp - 1].uID;
+        temp--;
+    }
+
+    _bss_28A8 += 1;
+    _bss_8[var_v1].setup = arg0;
+    _bss_8[var_v1].uID = arg0->base.uID;
+}
+#endif
+
+// offset: 0x10C | func: 2 | export: 2
+void dll_26_func_10C(CurveSetup* setup) {
+    s32 i;
+    
+    i = 0;
+    while (i < _bss_28A8 && setup->base.uID != _bss_8[i].uID) {
+        i++;
+    }
+
+    if (i < _bss_28A8) {
+        _bss_28A8--;
+
+        while (i < _bss_28A8) {
+            i++;
+            _bss_8[i - 1].setup = _bss_8[i].setup;
+            _bss_8[i - 1].uID = _bss_8[i].uID;
+        }
+    }
+}
+
+// offset: 0x1BC | func: 3 | export: 3
+CurveNode *dll_26_func_1BC(s32 *count) {
+    *count = _bss_28A8;
+    return _bss_8;
+}
+
+// offset: 0x1E4 | func: 4 | export: 4
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_1E4.s")
+
+// offset: 0x39C | func: 5 | export: 6
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_39C.s")
+
+// offset: 0x438 | func: 6 | export: 20
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_438.s")
+
+// offset: 0x4F0 | func: 7 | export: 21
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_4F0.s")
+
+// offset: 0x590 | func: 8 | export: 23
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_590.s")
+
+// offset: 0x648 | func: 9
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_648.s")
+
+// offset: 0x854 | func: 10 | export: 22
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_854.s")
+
+// offset: 0xA34 | func: 11 | export: 26
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_A34.s")
+
+// offset: 0xB8C | func: 12 | export: 27
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_B8C.s")
+
+// offset: 0xD8C | func: 13 | export: 28
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_D8C.s")
+
+// offset: 0xE40 | func: 14 | export: 29
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_E40.s")
+
+// offset: 0x1420 | func: 15
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_1420.s")
+
+// offset: 0x14C8 | func: 16 | export: 10
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_14C8.s")
+
+// offset: 0x14F4 | func: 17 | export: 7
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_14F4.s")
+
+// offset: 0x174C | func: 18 | export: 8
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_174C.s")
+
+// offset: 0x17F4 | func: 19 | export: 9
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_17F4.s")
+
+// offset: 0x1880 | func: 20 | export: 11
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_1880.s")
+
+// offset: 0x1924 | func: 21 | export: 12
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_1924.s")
+
+// offset: 0x19C8 | func: 22 | export: 13
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_19C8.s")
+
+// offset: 0x1B90 | func: 23 | export: 14
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_1B90.s")
+
+// offset: 0x218C | func: 24 | export: 15
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_218C.s")
+
+// offset: 0x21FC | func: 25 | export: 16
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_21FC.s")
+
+// offset: 0x277C | func: 26 | export: 17
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_277C.s")
+
+// offset: 0x291C | func: 27 | export: 18
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_291C.s")
+
+// offset: 0x2AE8 | func: 28
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2AE8.s")
+
+// offset: 0x2C20 | func: 29 | export: 30
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2C20.s")
+
+// offset: 0x3018 | func: 30 | export: 31
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_3018.s")
+
+// offset: 0x31E0 | func: 31 | export: 32
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_31E0.s")
+
+// offset: 0x32D8 | func: 32 | export: 33
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_32D8.s")
+
+// offset: 0x35AC | func: 33 | export: 19
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_35AC.s")
+
+// offset: 0x374C | func: 34 | export: 24
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_374C.s")
+
+// offset: 0x3930 | func: 35 | export: 25
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_3930.s")
+
+// offset: 0x3F00 | func: 36 | export: 5
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_3F00.s")
+
+// offset: 0x4288 | func: 37 | export: 34
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_4288.s")
+
+// offset: 0x4704 | func: 38 | export: 35
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_4704.s")
+
+// offset: 0x4CB4 | func: 39 | export: 36
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_4CB4.s")
+
+// offset: 0x4FA8 | func: 40 | export: 37
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_4FA8.s")
+
+// offset: 0x50E4 | func: 41 | export: 38
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_50E4.s")
+
+// offset: 0x5698 | func: 42 | export: 39
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_5698.s")
+
+// offset: 0x577C | func: 43 | export: 40
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_577C.s")
+
+// offset: 0x5860 | func: 44 | export: 41
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_5860.s")
+
+/*0x0*/ static const char str_0[] = "curves.c: MAX_ROMCURVES exceeded!!\n";
+/*0x24*/ static const char str_24[] = "addCurveDef: max curves reached %d/%d\n";
+/*0x4C*/ static const char str_4C[] = " Curve Id %i ";
+/*0x5C*/ static const char str_5C[] = " CI %i ";
+/*0x64*/ static const char str_64[] = "Search\n";
+/*0x6C*/ static const char str_6C[] = "link:(%d) %d\n";
+/*0x7C*/ static const char str_7C[] = "Found: %d\n";
+/*0x88*/ static const char str_88[] = "%d\n";
+/*0x8C*/ static const char str_8C[] = " list Branch No %i ";
+/*0xA0*/ static const char str_A0[] = " list Branch %i Max %i Branch No %i ";

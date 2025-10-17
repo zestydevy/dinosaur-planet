@@ -63,7 +63,7 @@ typedef struct ObjSetup {
 /*08*/	f32 x;
 /*0c*/	f32 y;
 /*10*/	f32 z;
-/*14*/	s32 uID;
+/*14*/	u32 uID;
 } ObjSetup;
 
 typedef struct {
