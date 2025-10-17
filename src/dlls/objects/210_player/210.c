@@ -4245,7 +4245,27 @@ s32 dll_210_func_B4E0(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xB73C | func: 63
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_B73C.s")
+s32 dll_210_func_B73C(Object* arg0, Player_Data* arg1, u32 arg2) {
+    Player_Data* objdata;
+
+    objdata = arg0->data;
+    if (arg1->unk272 != 0) {
+        func_80023D30(arg0, 0x447, 0.0f, 0U);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x6B4U, 0x61U, NULL, NULL, 0, NULL);
+    }
+    arg1->unk278 = 0.0f;
+    arg1->unk298 = 0.02f;
+    if ((objdata->unk868 == NULL) && (arg1->unk32C[0xE] != 0)) {
+        objdata->unk3C4 = &_data_6F8;
+        objdata->modAnims = _data_98;
+        return 2;
+    }
+    if ((objdata->unk868 != NULL) && (arg0->animProgress > 0.6f)) {
+        objdata->unk868->unk_0xe0 = 0;
+        objdata->unk868 = NULL;
+    }
+    return 0;
+}
 
 // offset: 0xB864 | func: 64
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_B864.s")
