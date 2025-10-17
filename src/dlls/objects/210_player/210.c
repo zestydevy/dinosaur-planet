@@ -3835,7 +3835,7 @@ s32 dll_210_func_A3FC(Object* arg0, Player_Data* arg1, f32 arg2) {
         if (temp_v0 != 0) {
             return temp_v0;
         }
-        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)) {
+        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.floorDist < 100.0f)) {
             return 0x21;
         }
     } else if (sp4C->unk870 == 0) {
@@ -3928,7 +3928,7 @@ s32 dll_210_func_A8CC(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (temp_v0 != 0) {
         return temp_v0;
     }
-    if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)) {
+    if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.floorDist < 100.0f)) {
         return 0x21;
     }
     if (arg1->unk272 != 0) {
@@ -3968,7 +3968,7 @@ s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, f32 arg2) {
         if (temp_v0 != 0) {
             return temp_v0;
         }
-        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)) {
+        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.floorDist < 100.0f)) {
             return 0x21;
         }
     } else if (sp20->unk870 == 0) {
@@ -4667,10 +4667,152 @@ s32 dll_210_func_CAA8(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xCC24 | func: 70
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_CC24.s")
+#else
+// https://decomp.me/scratch/m6YCi
+s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
+    s32 pad;
+    Player_Data* sp38;
+
+    sp38 = arg0->data;
+    if (arg1->unk272 != 0) {
+        arg1->unk270 = 0xD;
+    }
+    arg1->unk27C = 0.0f;
+    arg1->unk0 |= 0x200000;
+    sp38->unk8B8 = 2;
+    switch (arg0->curModAnimId) {
+    case 0x54:
+        arg1->unk298 = 0.01f;
+        if (arg1->unk4.unk25C & 0x10) {
+            if (arg1->unk4.unk68.unk50[0] == 8) {
+                dll_210_func_4634(arg0, 9, 0);
+                return 0x10;
+            }
+            if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && (*_data_6FC <= arg1->unk28C)) {
+                func_80023D30(arg0, 0x418, 0.0f, 0U);
+                arg1->unk298 = 0.08f;
+            } else {
+                func_80023D30(arg0, 0x13, 0.0f, 0U);
+                arg1->unk278 = 0.0f;
+                arg1->unk27C = 0.0f;
+                arg1->unk298 = 0.035f;
+            }
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, sp38->unk898[func_80025CD4(arg1->unk4.unk68.unk50[0])], 0x7FU, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, sp38->unk3B8[0x16], 0x7FU, NULL, NULL, 0, NULL);
+        }
+        if (arg1->unk32C >= 0x51) {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, sp38->unk3B8[9], 0x7FU, NULL, NULL, 0, NULL);
+            func_80023D30(arg0, 9, 0.0f, 0U);
+        }
+        arg0->speed.f[1] -= 0.1f * arg2;
+        arg1->unk278 *= 0.98f;
+        break;
+    case 0x13:
+        gDLL_18->vtbl->func7(arg0, arg1, 1.0f, 1);
+        arg0->speed.f[1] = 0.0f;
+        if (arg0->animProgress > 0.99f) {
+            return 2;
+        }
+        sp38->unk8B8 = 3;
+        break;
+    case 0x418:
+        gDLL_18->vtbl->func7(arg0, arg1, 1.0f, 1);
+        arg0->speed.f[1] = 0.0f;
+        if (arg0->animProgress > 0.99f) {
+            if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && (*_data_6FC <= arg1->unk28C)) {
+                return 5;
+            }
+            return 2;
+        }
+        sp38->unk8B8 = 3;
+        break;
+    case 9:
+        arg1->unk298 = 0.02f;
+        if (arg1->unk32E[0xC] != 0) {
+            func_80023D30(arg0, 0xA, 0.0f, 0U);
+        }
+        if (arg1->unk4.floorDist == 0.0f) {
+            if (arg1->unk4.unk68.unk50[0] == 8) {
+                dll_210_func_4634(arg0, 9, 0);
+                return 0x10;
+            }
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x226U, 0x7FU, NULL, NULL, 0, NULL);
+            func_80023D30(arg0, 0xB, 0.0f, 0U);
+            dll_210_func_1CD6C(arg0, -4);
+        }
+        arg0->speed.f[1] -= 0.1f * arg2;
+        arg1->unk278 *= 0.98f;
+        break;
+    case 10:
+        arg1->unk298 = 0.01f;
+        if (arg1->unk4.floorDist == 0.0f) {
+            if (arg1->unk4.unk68.unk50[0] == 8) {
+                dll_210_func_4634(arg0, 9, 0);
+                return 0x10;
+            }
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x226U, 0x7FU, NULL, NULL, 0, NULL);
+            func_80023D30(arg0, 0xB, 0.0f, 0U);
+            dll_210_func_1CD6C(arg0, -8);
+        }
+        if (arg1->unk32C >= 0x3D) {
+            dll_210_func_4634(arg0, 9, 0);
+        }
+        arg0->speed.f[1] -= 0.1f * arg2;
+        arg1->unk278 *= 0.98f;
+        break;
+    case 0xB:
+        arg1->unk298 = 0.015f;
+        arg1->unk278 = 0.0f;
+        if (arg1->unk32E[0xC] != 0) {
+            if (sp38->stats->health > 0) {
+                func_80023D30(arg0, 0xC, 0.0f, 0U);
+                break;
+            }
+            dll_210_func_9F1C(arg0, 1);
+            return -0xE;
+        }
+        break;
+    case 0xC:
+        arg1->unk298 = 0.004f;
+        arg1->unk278 = 0.0f;
+        if (arg1->unk32E[0xC] != 0) {
+            return -1;
+        }
+        break;
+    default:
+        func_80023D30(arg0, 0x54, 0.0f, 0U);
+        break;
+    }
+
+    if (gDLL_2_Camera->vtbl->func3() == 0x5D) {
+        gDLL_2_Camera->vtbl->func6(0x54, 0, 2, 0, NULL, 0, 0xFF);
+    }
+
+    if ((arg0->speed.f[1] < 0.0f) && (arg1->unk4.underwaterDist > 5.0f)) {
+        return 0x20;
+    }
+    return 0;
+}
+#endif
 
 // offset: 0xD3E4 | func: 71
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D3E4.s")
+s32 dll_210_func_D3E4(Object* arg0, Player_Data* arg1, u32 arg2) {
+    Player_Data *objdata = arg0->data;
+
+    if (!(arg1->unk4.unk25C & 0x10) && (arg1->unk4.underwaterDist > 5.0f)) {
+        return 0x20;
+    }
+
+    arg1->unk341 = 3;
+
+    if (objdata->stats->health > 0) {
+        func_80023D30(arg0, 0xC, 0.0f, 0U);
+        return -0xD;
+    }
+    return 0;
+}
 
 // offset: 0xD480 | func: 72
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D480.s")
