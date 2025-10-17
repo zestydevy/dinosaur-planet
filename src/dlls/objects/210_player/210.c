@@ -45,6 +45,7 @@ static void dll_210_func_7DA0(Object* arg0, Player_Data* arg1, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2, Player_Data3B4* arg3, f32 arg4, s32 arg5);
 static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
+static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
 
 typedef struct Unk {
     u8 pad0[0x24];
@@ -4492,7 +4493,29 @@ s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xC264 | func: 67
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_C264.s")
+s32 dll_210_func_C264(Object* arg0, Player_Data* arg1, f32 arg2) {
+    arg1->unk0 |= 0x200000;
+    arg1->unk27C = 0.0f;
+    dll_210_func_D510(arg1, arg2);
+    if (arg0->curModAnimId == 0x426) {
+        if (arg0->animProgress > 0.95f) {
+            if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && (*_data_6FC <= arg1->unk28C)) {
+                if (arg1->unk328 < 0x5A) {
+                    return 5;
+                }
+                return 2;
+            }
+            return 2;
+        }
+    } else {
+        arg0->speed.f[1] = 2.6f;
+        arg1->unk278 = 0.72f;
+        arg1->unk298 = 0.026f;
+        func_80023D30(arg0, 0x426, 0.0f, 0U);
+    }
+    arg0->speed.f[1] -= 0.15f;
+    return 0;
+}
 
 // offset: 0xC3D0 | func: 68
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_C3D0.s")
@@ -4510,7 +4533,26 @@ s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D480.s")
 
 // offset: 0xD510 | func: 73
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D510.s")
+static void dll_210_func_D510(Player_Data* arg0, f32 arg1) {
+    f32 var_fv1;
+
+    if (arg0->unk290 < 0.05f) {
+        arg0->unk328 = 0;
+        arg0->unk32A = 0;
+        arg0->unk290 = 0.0f;
+    }
+    var_fv1 = (arg0->unk290 - 0.4f) / 0.6f;
+    if (var_fv1 < 0.0f) {
+        var_fv1 = 0.0f;
+    }
+    if (var_fv1 > 1.0f) {
+        var_fv1 = 1.0f;
+    }
+    arg0->unk28C += (((var_fv1 * 1.6f) - arg0->unk28C) / arg0->unk2B0) * arg1;
+    if (arg0->unk28C > 1.65f) {
+        arg0->unk28C = 1.65f;
+    }
+}
 
 // offset: 0xD5F0 | func: 74
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D5F0.s")
