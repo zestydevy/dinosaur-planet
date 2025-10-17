@@ -174,7 +174,8 @@ typedef struct {
 /*326*/ u16 pad326;
 /*328*/ s16 unk328;
 /*32A*/ s16 unk32A;
-/*32C*/ s8 unk32C[0x33A - 0x32C];
+/*32C*/ s16 unk32C;
+/*32E*/ s8 unk32E[0x33A - 0x32E];
 /*33A*/ s8 unk33A;
 /*33B*/ u8 pad33B;
 /*33C*/ u8 pad33C;
@@ -274,7 +275,7 @@ typedef struct {
 /*88E*/ u16 unk88E;
 /*890*/ UNK_PTR *unk890;
 /*894*/ UNK_PTR *unk894;
-/*898*/ UNK_PTR *unk898;
+/*898*/ s16 *unk898;
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
 /*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];

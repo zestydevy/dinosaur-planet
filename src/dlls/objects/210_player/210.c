@@ -29,6 +29,7 @@
 #include "types.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/engine/27.h"
 #include "dlls/modgfx/106.h"
 #include "unktypes.h"
 #include "segment_334F0.h"
@@ -172,12 +173,8 @@ s32 func_80031DD8(Object*, Object*, s32);
 /*0x0*/ static u32 _data_0[] = {
     0x00000000
 };
-/*0x4*/ static u32 _data_4[] = {
-    0x3ecccccd
-};
-/*0x8*/ static u32 _data_8[] = {
-    0x3f19999a
-};
+/*0x4*/ static f32 _data_4[] = { 0.4f };
+/*0x8*/ static f32 _data_8[] = { 0.6f };
 /*0xC*/ static f32 _data_C[] = { 0.0f, 0.0f };
 /*0x14*/ static u8 _data_14[4] = { 0, 0, 0, 0 };
 /*0x18*/ static s16 _data_18[2] = { -1, 0 };
@@ -369,8 +366,8 @@ s32 func_80031DD8(Object*, Object*, s32);
 
 /*0x0*/ static u8 _bss_0[0x2];
 /*0x2*/ static u8 _bss_2[0x2];
-/*0x4*/ static u8 _bss_4[0x4];
-/*0x8*/ static u8 _bss_8[0x8];
+/*0x4*/ static f32 _bss_4[1];
+/*0x8*/ static f32 _bss_8[2];
 /*0x10*/ static u8 _bss_10[0x4];
 /*0x14*/ static u8 _bss_14[0x4];
 /*0x18*/ static u8 _bss_18[0x4];
@@ -675,7 +672,7 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
     MtxF sp5C;
     s32 temp_v0_6;
     Func_80057F1C_Struct** sp54;
-    void** temp_v0_3;
+    DLL27_Data* temp_v0_3;
     f32 sp4C;
 
     sp4C = 0.0f;
@@ -3954,11 +3951,8 @@ s32 dll_210_func_A8CC(Object* arg0, Player_Data* arg1, f32 arg2) {
 // offset: 0xAA80 | func: 59
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_AA80.s")
 #else
-typedef union {
-    s32 i;
-    f32 f;
-} FloatOrInt;
-s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, FloatOrInt arg2) {
+// matches but requires dll_210_func_BA38, dll_210_func_C1F4 (matched) as static
+s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, f32 arg2) {
     f32 var_fv0;
     Player_Data* sp20;
     s16 var_v1;
@@ -3966,11 +3960,11 @@ s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, FloatOrInt arg2) {
 
     sp20 = arg0->data;
     if (sp20->unk868 == 0) {
-        temp_v0 = dll_210_func_BA38(arg0, arg1, arg2.f);
+        temp_v0 = dll_210_func_BA38(arg0, arg1, arg2);
         if (temp_v0 != 0) {
             return temp_v0;
         }
-        temp_v0 = dll_210_func_C1F4(arg0, arg1, arg2.f);
+        temp_v0 = dll_210_func_C1F4(arg0, arg1, arg2);
         if (temp_v0 != 0) {
             return temp_v0;
         }
@@ -3999,7 +3993,7 @@ s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, FloatOrInt arg2) {
     if (var_fv0 > 1.0f) {
         var_fv0 = 1.0f;
     }
-    arg1->unk28C += ((((var_fv0 * 1.6f) - arg1->unk28C) / arg1->unk2B0) * arg2.f);
+    arg1->unk28C += ((((var_fv0 * 1.6f) - arg1->unk28C) / arg1->unk2B0) * arg2);
     if (arg1->unk28C > 1.65f) {
         arg1->unk28C = 1.65f;
     }
@@ -4017,7 +4011,7 @@ s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, FloatOrInt arg2) {
         func_80025540(arg0, sp20->modAnims[0x16], (s16) ((var_v1 / 90.0f) * 1023.0f));
     }
     arg1->unk298 = 0.04f;
-    gDLL_18->vtbl->func7.withFourArgs(arg0, arg1, arg2.i, 8);
+    gDLL_18->vtbl->func7(arg0, arg1, arg2, 8);
     if ((sp20->unk868 == 0) && (arg1->unk2C8 != NULL)) {
         if (arg1->unk33D == 1) {
             return -0x35;
@@ -4518,10 +4512,159 @@ s32 dll_210_func_C264(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xC3D0 | func: 68
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_C3D0.s")
+#else
+// Matches but we can't match statics in funcs yet
+s32 dll_210_func_C3D0(Object* arg0, Player_Data* arg1, f32 arg2) {
+    static f32 _bss_4;
+    static f32 _bss_8;
+    Player_Data* spAC;
+    f32 temp_ft2;
+    f32 spA4;
+    f32 spA0;
+    f32 sp9C;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 var_fa0;
+    f32 var_fv0;
+    s32 temp_v1;
+    s32 temp_v0;
+    s32 pad;
+    Player_Data3B4 sp44;
+
+    spAC = arg0->data;
+    if (arg1->unk272 != 0) {
+        arg1->unk270 = 0xD;
+    }
+    temp_v0 = dll_210_func_7E6C(arg0, spAC, arg1, &sp44, arg2, 0x14);
+    if (temp_v0 == 0x11) {
+        return 0x11;
+    }
+    if (temp_v0 == 0xC) {
+        var_fv0 = spAC->unk430.unk8 + 30.0f;
+        var_fa0 = spAC->unk430.unk4 - 5.0f;
+        temp_fv1 = arg0->srt.transl.f[1] + 26.0f;
+        if (var_fv0 <= temp_fv1 && temp_fv1 <= var_fa0) {
+            return 0x1B;
+        }
+    }
+    spAC->unk8B8 = 1;
+    arg1->unk0 |= 0x200000;
+    dll_210_func_D510(arg1, arg2);
+    switch (arg0->curModAnimId) {
+        case 0x417:
+            arg1->unk298 = 0.1f;
+            gDLL_18->vtbl->func7(arg0, arg1, 1.0f, 1);
+            if (arg0->animProgress > 0.99f) {
+                func_80023D30(arg0, 0x12, 0.0f, 0U);
+                arg1->unk278 = 2.0f;
+                arg1->unk298 = 0.0f;
+                _bss_8 = 0.5f;
+                _bss_8 = 38.4f * _bss_8;
+                _bss_4 = 0.0f;
+                arg0->speed.f[1] = 0.1f * _bss_8;
+                _bss_8 = _bss_8 + _bss_8;
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, spAC->unk3B8[0x8], 0x7FU, NULL, NULL, 0, NULL);
+                if (*_bss_14 != 0) {
+                    arg0->speed.f[1] *= *_data_8;
+                    arg1->unk278 *= *_data_8;
+                }
+            }
+            break;
+        case 0x12:
+            arg0->speed.f[1] += -0.1f * arg2;
+            _bss_4 += arg2;
+            func_800240BC(arg0, _bss_4 / _bss_8);
+            if ((_bss_4 > 10.0f) && (arg1->unk4.unk25C & 0x10)) {
+                func_80023D30(arg0, 0x11, 0.0f, 0U);
+                arg1->unk278 = 0.0f;
+                arg1->unk27C = 0.0f;
+                arg1->unk298 = 0.045f;
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, spAC->unk898[func_80025CD4(arg1->unk4.unk68.unk50[0])], 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, spAC->unk3B8[0x16], 0x7FU, NULL, NULL, 0, NULL);
+            } else {
+                if ((_bss_8 + 2.0f) < _bss_4) {
+                    return 0xE;
+                }
+                if ((arg0->speed.f[1] < 0.0f) && (arg1->unk4.underwaterDist > 5.0f)) {
+                    return 0x20;
+                }
+            }
+            spA4 = fsin16_precise(arg0->srt.yaw);
+            spA0 = fcos16_precise(arg0->srt.yaw);
+            temp_v1 = arctan2_f(arg1->unk288, -arg1->unk284) - arg1->unk324;
+            sp9C = fsin16_precise(temp_v1);
+            var_fv0 = fcos16_precise(temp_v1);
+            temp_fv0 = (spA4 * sp9C) + (spA0 * var_fv0);
+            var_fa0 = temp_fv0;
+            if (temp_fv0 < 0.0f) {
+                var_fa0 = -temp_fv0;
+            }
+            temp_fv0 = var_fa0;
+            var_fv0 = arg1->unk290;
+            if (var_fv0 < 0.4f) {
+                var_fv0 = 0;
+            }
+            temp_fv0 = (1.0f - temp_fv0) * var_fv0;
+            if (arg1->unk32A > 0) {
+                temp_fv0 = -temp_fv0;
+            }
+            arg1->unk27C += (temp_fv0 - arg1->unk27C) * 0.05f * arg2;
+            arg1->unk27C *= 0.98f;
+            arg1->unk27C += (temp_fv0 - arg1->unk27C) * 0.015f * arg2;
+            if (arg1->unk27C > 0.3f) {
+                arg1->unk27C = 0.3f;
+            } else if (arg1->unk27C < -0.3f) {
+                arg1->unk27C = -0.3f;
+            }
+            arg1->unk27C *= 0.99f;
+            break;
+        case 0x11:
+            gDLL_18->vtbl->func7(arg0, arg1, 1.0f, 1);
+            arg0->speed.f[1] += -0.1f * arg2;
+            if (arg0->animProgress > 0.99f) {
+                arg0->speed.f[1] = 0.0f;
+                return 2;
+            }
+            break;
+        default:
+            if (arg1->unk290 < *_data_4) {
+                *_bss_14 = 1;
+            } else {
+                *_bss_14 = 0;
+            }
+            func_80023D30(arg0, 0x417, 0.0f, 0U);
+            break;
+    }
+    return 0;
+}
+#endif
 
 // offset: 0xCAA8 | func: 69
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_CAA8.s")
+s32 dll_210_func_CAA8(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data *objdata = arg0->data;
+
+    // @fake
+    if (arg1) {}
+    arg1->unk0 |= 0x200000;
+    arg1->unk27C = 0.0f;
+    if (arg1->unk272 != 0) {
+        arg0->speed.f[1] = -2.0f;
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, objdata->unk3B8[9], 0x7FU, NULL, NULL, 0, NULL);
+        gDLL_2_Camera->vtbl->func6(0x67, 1, 0, 0, NULL, 0, 0);
+        func_80023D30(arg0, 0xA, 0.0f, 0U);
+    }
+    arg0->speed.f[1] -= 0.12f * arg2;
+    arg1->unk278 *= 0.98f;
+    if (arg0->curModAnimId == 0xA) {
+        arg1->unk298 = 0.01f;
+    }
+    if (arg1->unk32C >= 0x1F) {
+        dll_210_func_4634(arg0, 9, 0.0f);
+    }
+    return 0;
+}
 
 // offset: 0xCC24 | func: 70
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_CC24.s")
