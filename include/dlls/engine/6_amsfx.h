@@ -41,6 +41,9 @@ enum SoundID {
 
     SOUND_342 = 0x342, // used in DLL 466
 
+    SOUND_371 = 0x371, // used by MediumMetalCrat
+    SOUND_372 = 0x372, // used by MediumMetalCrat
+
     SOUND_377_Metal_Smack = 0x377,
 
     SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274)
@@ -59,7 +62,14 @@ enum SoundID {
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
 
+    SOUND_64C = 0x64C, // used by MediumCrate
+    SOUND_64D = 0x64D, // used by MediumCrate
+
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
+
+    SOUND_6B5 = 0x6B5, // used by MediumCrate
+    SOUND_6B6 = 0x6B6, // used by MediumCrate
+    SOUND_6B7 = 0x6B7, // used by MediumCrate
 
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 

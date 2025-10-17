@@ -14,7 +14,7 @@ DLL_INTERFACE(DLL_7_newday) {
 /*2*/ void (*func2)(void);
 /*3*/ void (*func3)(Gfx **gdl, Mtx **arg1, u8 arg2);
 /*4*/ UnknownDLLFunc func4;
-/*5*/ UnknownDLLFunc func5;
+/*5*/ void (*func5)(f32*);
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
 /*8*/ s32 (*func8)(f32*); // check if night-time
