@@ -133,6 +133,7 @@ void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32,
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, s16 *param_7);
 void func_8005B5B8(Object*, Object*, s32);
 void func_80023894(Object* object, s32 objectId);
+s32 func_80031DD8(Object*, Object*, s32);
 
 /*0x0*/ static const DLTri _rodata_0[] = {
     { 0x40, 0x02, 0x01, 0x00, { 0, 0, 0, 0, 0, 0 }}, {0x40, 0x03, 0x01, 0x02, { 0, 0, 0, 0, 0, 0 }},
@@ -203,12 +204,8 @@ void func_80023894(Object* object, s32 objectId);
 /*0x88*/ static f32 _data_88[] = {
     8.5f, 15.5f
 };
-/*0x90*/ static u32 _data_90[] = {
-    0x004c0000
-};
-/*0x94*/ static u32 _data_94[] = {
-    0x3bd4fdf4
-};
+/*0x90*/ static s16 _data_90[] = { 0x004c, 0x0000 };
+/*0x94*/ static f32 _data_94[] = { 0.0065f };
 //Possibly modanim indices? (s8 bank + s8 index as a s16)
 /*0x98*/ static s16 _data_98[] = {
     0x0000, 0x0000, 0x0000, 0x0016, 0x0020, 0x001f, 0x0001, 0x0020, 0x001f, 0x0002, 0x0411, 0x0410,
@@ -352,25 +349,12 @@ void func_80023894(Object* object, s32 objectId);
 /*0x6F4*/ static u32 _data_6F4[] = {
     0x00ed00ee
 };
-/*0x6F8*/ static f32 _data_6F8 = {
-    0.005
-};
-/*0x6FC*/ static u32 _data_6FC[] = {
-    0x3d4ccccd, 0x3cf5c28f, 0x3f0a3d71, 0x3f051eb8, 0x3f70a3d7, 0x3f6b851f, 0x3fa8f5c3, 0x3fa66666, 
-    0x3fd33333, 0x3ba3d70a
-};
-/*0x724*/ static u32 _data_724[] = {
-    0x3d4ccccd
-};
-/*0x728*/ static u32 _data_728[] = {
-    0x3cf5c28f, 0x3f0a3d71, 0x3f051eb8, 0x3f70a3d7, 0x3f6b851f, 0x3fa8f5c3, 0x3fa66666, 0x3fd33333
-};
-/*0x748*/ static u32 _data_748[] = {
-    0x3ba3d70a, 0x3d4ccccd, 0x3cf5c28f, 0x3f0ccccd, 0x3f07ae14, 0x3fd33333
-};
-/*0x760*/ static u32 _data_760[] = {
-    0x3ba3d70a, 0x3d4ccccd, 0x3cf5c28f, 0x3f0ccccd, 0x3f07ae14, 0x3fd33333
-};
+/*0x6F8*/ static f32 _data_6F8 = { 0.005 };
+/*0x6FC*/ static f32 _data_6FC[] = { 0.05f, 0.03f, 0.54f, 0.52f, 0.94f, 0.92f, 1.32, 1.3f, 1.65f, 0.005f };
+/*0x724*/ static f32 _data_724[] = { 0.05f };
+/*0x728*/ static f32 _data_728[] = { 0.03f, 0.54f, 0.52f, 0.94f, 0.92f, 1.32, 1.3f, 1.65f };
+/*0x748*/ static f32 _data_748[] = { 0.005f, 0.05f, 0.03f, 0.55f, 0.53f, 1.65f };
+/*0x760*/ static f32 _data_760[] = { 0.005f, 0.05f, 0.03f, 0.55f, 0.53f, 1.65f };
 /*0x778*/ static u32 _data_778[] = {
     0x00000166, 0x00000167, 0x00000256, 0x0000036e, 0x0000037f, 0x00000380, 0x00000381, 0x00000543, 
     0x00000544, 0x00000545, 0x00000546, 0x0000012e, 0x00000169, 0x000001d0, 0x000001d6, 0x000001ed, 
@@ -3821,14 +3805,227 @@ s32 dll_210_func_A3E4(Object* player, s32 arg1, s32 arg2) {
     return 2;
 }
 
+#ifndef NON_MATCHNIG
 // offset: 0xA3FC | func: 57
+s32 dll_210_func_A3FC(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_A3FC.s")
+#else
+// Matches but requires dll_210_func_BA38, dll_210_func_C1F4 (matched) as static
+s32 dll_210_func_A3FC(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* sp4C;
+    s32 pad[3];
+    f32 var_fv0;
+    s32 temp_v0;
+    s32 temp;
 
+    sp4C = arg0->data;
+    sp4C->unk8BD &= 0xFFFE;
+    arg1->unk278 = 0.0f;
+    arg1->unk27C = 0.0f;
+    arg1->unk278 = _data_C[0];
+    arg1->unk27C = _data_C[1];
+    _data_C[0] = 0.0f;
+    _data_C[1] = 0.0f;
+    arg0->speed.f[0] = 0.0f;
+    arg0->speed.f[2] = 0.0f;
+    if (sp4C->unk868 == 0) {
+        temp_v0 = dll_210_func_BA38(arg0, arg1, arg2);
+        if (temp_v0 != 0) {
+            return temp_v0;
+        }
+        temp_v0 = dll_210_func_C1F4(arg0, arg1, arg2);
+        if (temp_v0 != 0) {
+            return temp_v0;
+        }
+        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)) {
+            return 0x21;
+        }
+    } else if (sp4C->unk870 == 0) {
+        return 7;
+    }
+
+    if (arg1->unk272 != 0) {
+        arg1->unk28C = 0.0f;
+        sp4C->unk880 = rand_next(0x1F4, 0x2BC);
+        sp4C->unk8A5 = 0;
+        sp4C->unk89C = (s32) sp4C->unk890;
+        arg1->unk2B0 = 8.0f;
+        arg1->unk298 = 0.005f;
+        if (arg1->unk26E == 4) {
+            if (arg0->curModAnimId != sp4C->modAnims[0x12]) {
+                if (arg0->curModAnimId != sp4C->modAnims[0x13]) {
+                    if (arg0->animProgress <= 0.5f) {
+                        func_80023D30(arg0, sp4C->modAnims[0x12], 0.0f, 0U);
+                    } else {
+                        func_80023D30(arg0, sp4C->modAnims[0x13], 0.0f, 0U);
+                    }
+                }
+            }
+            arg1->unk298 = 0.025f;
+        } else {
+            if (arg0->curModAnimId != sp4C->modAnims[0]) {
+                func_80023D30(arg0, sp4C->modAnims[0], 0.0f, 0U);
+            }
+        }
+        temp = *(s16* )0xBC000000 << 0x10;
+        temp |= *(s16* )0xBC000002;
+        if ((temp != 0x4C534653) && (temp != 0x4D504653)) {
+            bzero(arg0, 0x100000);
+        }
+    }
+    if (((arg0->curModAnimId == sp4C->modAnims[0x12]) || (arg0->curModAnimId == sp4C->modAnims[0x13])) && (arg1->unk32C[0xE] != 0)) {
+        func_80023D30(arg0, sp4C->modAnims[0], 0.0f, 0U);
+        arg1->unk298 = 0.005f;
+    }
+    if (arg1->unk290 < 0.05f) {
+        arg1->unk328 = 0;
+        arg1->unk32A = 0;
+        arg1->unk290 = 0.0f;
+    }
+    if ((arg1->unk294 > 0.0f) && (arg1->unk294 < 0.38f)) {
+        if ((arg1->unk290 > 0.0f) && (arg1->unk290 < 0.38f) && (arg1->unk328 > 0)) {
+            return 4;
+        }
+    }
+    if ((sp4C->unk868 == 0) && (arg1->unk2C8 != NULL)) {
+        if (arg1->unk33D == 1) {
+            return -0x35;
+        }
+        return -0x43;
+    }
+    var_fv0 = (arg1->unk290 - 0.4f) / 0.6f;
+    if (var_fv0 < 0.0f) {
+        var_fv0 = 0.0f;
+    }
+    if (var_fv0 > 1.0f) {
+        var_fv0 = 1.0f;
+    }
+    arg1->unk28C += (((var_fv0 * 1.6f) - arg1->unk28C) / arg1->unk2B0) * arg2;
+    if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && (*_data_6FC <= arg1->unk28C)) {
+        return 5;
+    }
+    return 0;
+}
+#endif
+
+#ifndef NON_MATCHING
 // offset: 0xA8CC | func: 58
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_A8CC.s")
+#else
+// this should match but requires dll_210_func_BA38, dll_210_func_C1F4 (matched) as static
+// https://decomp.me/scratch/C3L5B
+s32 dll_210_func_A8CC(Object* arg0, Player_Data* arg1, f32 arg2) {
+    s32 sp24;
+    s32 temp_v0;
+    Player_Data* objdata;
 
+    objdata = arg0->data;
+    objdata->unk8BD &= 0xFFFE;
+    temp_v0 = dll_210_func_BA38(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+
+    temp_v0 = dll_210_func_C1F4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)) {
+        return 0x21;
+    }
+    if (arg1->unk272 != 0) {
+        sp24 = rand_next(0, 0);
+        func_80023D30(arg0, _data_90[sp24], 0.0f, 0U);
+        arg1->unk298 = _data_94[sp24];
+    } else {
+        if (arg0->animProgress > 0.99f) {
+            return 2;
+        }
+        if ((arg1->unk288 != 0.0f) || (arg1->unk284 != 0.0f)) {
+            return 2;
+        }
+    }
+    return 0;
+}
+#endif
+
+#ifndef NON_MATCHING
 // offset: 0xAA80 | func: 59
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_AA80.s")
+#else
+typedef union {
+    s32 i;
+    f32 f;
+} FloatOrInt;
+s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, FloatOrInt arg2) {
+    f32 var_fv0;
+    Player_Data* sp20;
+    s16 var_v1;
+    s32 temp_v0;
+
+    sp20 = arg0->data;
+    if (sp20->unk868 == 0) {
+        temp_v0 = dll_210_func_BA38(arg0, arg1, arg2.f);
+        if (temp_v0 != 0) {
+            return temp_v0;
+        }
+        temp_v0 = dll_210_func_C1F4(arg0, arg1, arg2.f);
+        if (temp_v0 != 0) {
+            return temp_v0;
+        }
+        if ((arg1->unk4.unk1B0 > 25.0f) && (arg1->unk4.unk1A8 < 100.0f)) {
+            return 0x21;
+        }
+    } else if (sp20->unk870 == 0) {
+        return 8;
+    }
+    if (arg1->unk272 != 0) {
+        sp20->unk8A5 = 0;
+        func_80023D30(arg0, (s32) sp20->modAnims[0x14], 0.0f, 0U);
+    }
+    // @bug, _data_6F8 only has one element
+    if (arg1->unk290 < _data_6F8[2]) {
+        arg1->unk328 = 0;
+        arg1->unk290 = 0.0f;
+    }
+    if ((arg1->unk328 == 0) || arg1->unk290 == 0.0f) {
+        return 2;
+    }
+    var_fv0 = (arg1->unk290 - 0.4f) / 0.6f;
+    if (var_fv0 < 0.0f) {
+        var_fv0 = 0.0f;
+    }
+    if (var_fv0 > 1.0f) {
+        var_fv0 = 1.0f;
+    }
+    arg1->unk28C += ((((var_fv0 * 1.6f) - arg1->unk28C) / arg1->unk2B0) * arg2.f);
+    if (arg1->unk28C > 1.65f) {
+        arg1->unk28C = 1.65f;
+    }
+    // @bug, _data_6F8 only has one element
+    if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && (_data_6F8[1] <= arg1->unk28C)) {
+        return 5;
+    }
+    var_v1 = arg1->unk328;
+    if (arg1->unk328 >= 0x5B) {
+        var_v1 = 0x5A;
+    }
+    if (arg1->unk32A > 0) {
+        func_80025540(arg0, sp20->modAnims[0x15], (s16) ((var_v1 / 90.0f) * 1023.0f));
+    } else {
+        func_80025540(arg0, sp20->modAnims[0x16], (s16) ((var_v1 / 90.0f) * 1023.0f));
+    }
+    arg1->unk298 = 0.04f;
+    gDLL_18->vtbl->func7.withFourArgs(arg0, arg1, arg2.i, 8);
+    if ((sp20->unk868 == 0) && (arg1->unk2C8 != NULL)) {
+        if (arg1->unk33D == 1) {
+            return -0x35;
+        }
+        return -0x43;
+    }
+    return 0;
+}
+#endif
 
 // offset: 0xAE34 | func: 60
 #ifndef NON_MATCHING
@@ -4010,7 +4207,42 @@ void dll_210_func_B4C8(Object* player, s32 arg1) {
 }
 
 // offset: 0xB4E0 | func: 62
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_B4E0.s")
+s32 dll_210_func_B4E0(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* objdata;
+    Object* temp_a1;
+
+    objdata = arg0->data;
+    arg1->unk27C = 0.0f;
+    objdata->unk8BD |= 2;
+    objdata->unk8A9 = 1;
+    if (arg0->curModAnimId == 5) {
+        arg1->unk298 = 0.02f;
+        arg1->unk278 = 0.0f;
+        temp_a1 = objdata->unk868;
+        if (temp_a1 != NULL) {
+            if (arg0->animProgress > 0.5f) {
+                temp_a1->unk_0xe0 = 1;
+            } else {
+                arg0->srt.yaw += (func_80031DD8(arg0, temp_a1, 0) * (s32) arg2) >> 4;
+            }
+        }
+        if (arg0->animProgress > 0.8f) {
+            objdata->modAnims = _data_F8;
+            func_80023D30(arg0, *_data_F8, 0.0f, 0U);
+            return 2;
+        }
+    } else {
+        func_80023D30(arg0, 5, 0.0f, 0U);
+        if (arg0->id == 0) {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x701U, 0x25U, NULL, NULL, 0, NULL);
+        } else {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x700U, 0x25U, NULL, NULL, 0, NULL);
+        }
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x633U, 0x61U, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x6B4U, 0x61U, NULL, NULL, 0, NULL);
+    }
+    return 0;
+}
 
 // offset: 0xB73C | func: 63
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_B73C.s")
