@@ -24,6 +24,7 @@
 #include "sys/dll.h"
 #include "sys/memory.h"
 #include "sys/controller.h"
+#include "sys/newshadows.h"
 #include "functions.h"
 #include "dll.h"
 #include "types.h"
@@ -3274,7 +3275,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
 
 
 // offset: 0x8AE0 | func: 46
-s32 dll_210_func_8AE0(Object* arg0, s32 arg1, s32 arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, f32 arg6, u8 arg7, u8 arg8) {
+static s32 dll_210_func_8AE0(Object* arg0, s32 arg1, s32 arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, f32 arg6, u8 arg7, u8 arg8) {
     ModelInstance* sp64;
     f32 sp58[3];
     f32 sp54;
@@ -4989,7 +4990,99 @@ s32 dll_210_func_D788(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xDC10 | func: 76
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_DC10.s")
+s32 dll_210_func_DC10(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* temp_s1;
+    f32 var_fa0;
+    f32 var_fv0;
+    f32 sp60;
+    f32 sp5C;
+    f32 sp58;
+    f32 var_fv1;
+    s32 temp_v0;
+    s32 pad;
+
+    if (arg1->unk272 != 0) {
+        arg1->unk270 = 0x12;
+    }
+    temp_s1 = arg0->data;
+    goto dummy_label_21840; dummy_label_21840: ;
+    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    arg0->speed.f[1] = 0.0f;
+    switch (_bss_200) {
+        case 0xE:
+        case 0x12:
+        case 0x16:
+        case 0x1A:
+            if (arg1->unk308 & 1) {
+                gDLL_6_AMSFX->vtbl->play_sound(arg0, temp_s1->unk3B8[rand_next(0xA, 0xB)], 0x7FU, NULL, NULL, 0, NULL);
+            }
+            if (arg1->unk32E[0xC] != 0) {
+                arg0->positionMirror.f[0] = temp_s1->unk7EC.x;
+                arg0->positionMirror.f[1] = temp_s1->unk490.unk4;
+                arg0->positionMirror.f[2] = temp_s1->unk7EC.z;
+                inverse_transform_point_by_object(arg0->positionMirror.f[0], arg0->positionMirror.f[1], arg0->positionMirror.f[2], arg0->srt.transl.f, &arg0->srt.transl.f[1], &arg0->srt.transl.f[2], arg0->parent);
+                arg0->curModAnimIdLayered = -1;
+                dll_210_func_7260(arg0, temp_s1);
+                func_80023D30(arg0, (s32) *temp_s1->modAnims, 0.0f, 1U);
+                return 2;
+            }
+            break;
+        default:
+            if (temp_s1->unk490.unk46 == 6) {
+                if (_bss_1B0[4] <= temp_s1->unk490.unk0) {
+                    _bss_200 = 0xE;
+                    var_fa0 = _bss_1B0[5];
+                    var_fv1 = _bss_1B0[4];
+                    arg1->unk298 = 0.009f;
+                } else if (_bss_1B0[8] <= temp_s1->unk490.unk0) {
+                    _bss_200 = 0x16;
+                    var_fa0 = _bss_1B0[9];
+                    var_fv1 = _bss_1B0[8];
+                    arg1->unk298 = 0.011f;
+                } else {
+                    _bss_200 = 0x12;
+                    var_fv1 = _bss_1B0[6];
+                    var_fa0 = _bss_1B0[7];
+                    arg1->unk298 = 0.014f;
+                }
+            } else {
+                _bss_200 = 0x1A;
+                var_fv1 = _bss_1B0[10];
+                var_fa0 = _bss_1B0[11];
+                arg1->unk298 = 0.01f;
+            }
+            var_fv0 = ((temp_s1->unk490.unk0 - var_fv1) / (var_fa0 - var_fv1));
+            var_fv0 *= 1023.0f;
+            if (var_fv0 < 0.0f) {
+                var_fv0 = 0.0f;
+            } else if (var_fv0 > 1023.0f) {
+                var_fv0 = 1023.0f;
+            }
+            temp_s1->unk490.unk44 = var_fv0;
+            dll_210_func_8AE0(arg0, _data_564[_bss_200 + 0], _data_564[_bss_200 + 2], &temp_s1->unk490.unk38, &temp_s1->unk490.unk1C, 0.0f, arg1->unk298, 2U, 9U);
+            dll_210_func_8AE0(arg0, _data_564[_bss_200 + 0], _data_564[_bss_200 + 1], &temp_s1->unk490.unk38, &temp_s1->unk490.unk1C, 0.0f, arg1->unk298, 2U, 0x34U);
+            dll_210_func_8AE0(arg0, _data_564[_bss_200 + 2], _data_564[_bss_200 + 3], &temp_s1->unk490.unk38, &temp_s1->unk490.unk1C, 0.0f, arg1->unk298, 2U, 0x1AU);
+            arg0->srt.yaw = arctan2_f(temp_s1->unk490.unk1C.x, temp_s1->unk490.unk1C.z);
+            arg0->srt.transl.f[0] = temp_s1->unk490.unk2C.x;
+            arg0->srt.transl.f[2] = temp_s1->unk490.unk2C.z;
+            dll_210_func_7260(arg0, temp_s1);
+            break;
+    }
+    func_80024DD0(arg0, 0, 2, 0);
+    func_80024DD0(arg0, 1, 2, 0);
+    func_80024DD0(arg0, 1, 0, temp_s1->unk490.unk44);
+    func_80025140(arg0, arg1->unk298, arg2, 0);
+    sp60 = temp_s1->unk7EC.x;
+    sp5C = arg0->srt.transl.f[1];
+    sp5C += (temp_s1->unk490.unk4 - arg0->srt.transl.f[1]) * arg0->animProgress;
+    sp58 = temp_s1->unk7EC.z;
+    gDLL_2_Camera->vtbl->func10(sp60, sp5C, sp58);
+    func_8004D844(arg0, sp60, sp5C, sp58);
+    return 0;
+}
 
 // offset: 0xE14C | func: 77
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_E14C.s")

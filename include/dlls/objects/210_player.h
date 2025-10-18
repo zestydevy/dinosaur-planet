@@ -43,8 +43,8 @@ typedef struct Player_Data490 {
     Vec4f unk1C;
     Vec3f unk2C;
     Vec3f unk38;
-    u16 pad44;
-    s8 unk46;
+    s16 unk44;
+    u8 unk46;
     u8 unk47;
 } Player_Data490;
 
@@ -173,7 +173,7 @@ typedef struct {
 /*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
 /*300*/ s32 pad300;
 /*304*/ s32 unk304;
-/*308*/ s32 pad308;
+/*308*/ s32 unk308;
 /*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
 /*314*/ s8 unk314[0x324 - 0x314];
