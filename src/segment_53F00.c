@@ -11,9 +11,15 @@ static const char str_8009ab90[] = "trackIntersect: FUNC OVERFLOW %d\n";
 static const char str_8009abb4[] = "insertPoint array overrun %d/%d\n";
 static const char str_8009abd8[] = "NO FREE LAST LINE\n";
 
-s32 func_80055458(Object*, s32, s32, f32*, f32 *, s32, s8*, s32);
-s32 func_800564C8(s32, s32, f32 *, s32, s8*, s32);
-extern s32 D_80092E70;
+typedef struct {
+    u8 _unk0[0x34];
+} D_80092E70_Struct;
+
+
+s32 func_80055458(Object*, D_80092E70_Struct *, D_80092E70_Struct *, f32*, f32 *, s32, s8*, s32);
+s32 func_800564C8(D_80092E70_Struct *, D_80092E70_Struct *, f32 *, s32, s8*, s32);
+
+extern D_80092E70_Struct *D_80092E70; // 250 length
 typedef struct Unk800BB268 {
     Object *unk0;
     s16 unk4;
@@ -31,11 +37,7 @@ extern u8 D_800BB3A8;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005341C.s")
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/fit_aabb_around_cubes.s")
-#else
-// close
-void _fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, float *cubeRadiusArray, int arrayLength) {
+void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength) {
     aabb->min.x = 1000000;
     aabb->max.x = -1000000;
     aabb->min.y = 1000000;
@@ -43,74 +45,69 @@ void _fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f
     aabb->min.z = 1000000;
     aabb->max.z = -1000000;
 
-    while (arrayLength-- != 0) {
-        float left;
-        float right;
-        float bottom;
-        float top;
-        float back;
-        float front;
+    while (arrayLength--) {
+        f32 var;
 
         // vec1
-        left = posArray1->x - *cubeRadiusArray;
-        if (left < aabb->min.x) {
-            aabb->min.x = left;
+        var = posArray1->x - *cubeRadiusArray;
+        if (var < aabb->min.x) {
+            aabb->min.x = var;
         }
 
-        right = posArray1->x + *cubeRadiusArray;
-        if (right > aabb->max.x) {
-            aabb->max.x = right;
+        var = posArray1->x + *cubeRadiusArray;
+        if (var > aabb->max.x) {
+            aabb->max.x = var;
         }
 
-        bottom = posArray1->y - *cubeRadiusArray;
-        if (bottom < aabb->min.y) {
-            aabb->min.y = bottom;
+        var = posArray1->y - *cubeRadiusArray;
+        if (var < aabb->min.y) {
+            aabb->min.y = var;
         }
 
-        top = posArray1->y + *cubeRadiusArray;
-        if (top > aabb->max.y) {
-            aabb->max.y = top;
+        var = posArray1->y + *cubeRadiusArray;
+        if (var > aabb->max.y) {
+            aabb->max.y = var;
         }
 
-        back = posArray1->z - *cubeRadiusArray;
-        if (back < aabb->min.z) {
-            aabb->min.z = back;
+        var = posArray1->z - *cubeRadiusArray;
+        if (var < aabb->min.z) {
+            aabb->min.z = var;
         }
 
-        front = posArray1->z + *cubeRadiusArray;
-        if (front > aabb->max.z) {
-            aabb->max.z = front;
+        var = posArray1->z + *cubeRadiusArray;
+        if (var > aabb->max.z) {
+            aabb->max.z = var;
         }
 
         // vec2
-        left = posArray2->x - *cubeRadiusArray;
-        if (left < aabb->min.x) {
-            aabb->min.x = left;
+        var = posArray2->x - *cubeRadiusArray;
+        if (var < aabb->min.x) {
+            aabb->min.x = var;
         }
 
-        right = posArray2->x + *cubeRadiusArray;
-        if (right > aabb->max.x) {
-            aabb->max.x = right;
+        var = posArray2->x + *cubeRadiusArray;
+        if (var > aabb->max.x) {
+            aabb->max.x = var;
         }
 
-        bottom = posArray2->y - *cubeRadiusArray;
-        if (bottom < aabb->min.y) {
-            aabb->min.y = bottom;
+        var = posArray2->y - *cubeRadiusArray;
+        if (var < aabb->min.y) {
+            aabb->min.y = var;
         }
 
-        top = posArray2->y + *cubeRadiusArray;
-        if (top > aabb->max.y) {
-            aabb->max.y = top;
+        var = posArray2->y + *cubeRadiusArray;
+        if (var > aabb->max.y) {
+            aabb->max.y = var;
         }
 
-        back = posArray2->z - *cubeRadiusArray;
-        if (back < aabb->min.z) {
-            aabb->min.z = back;
+        var = posArray2->z - *cubeRadiusArray;
+        if (var < aabb->min.z) {
+            aabb->min.z = var;
         }
 
-        front = posArray2->z + *cubeRadiusArray;
-        if (front > aabb->max.z) {
-            aabb->max.z = front;
+        var = posArray2->z + *cubeRadiusArray;
+        if (var > aabb->max.z) {
+            aabb->max.z = var;
         }
 
         posArray1++;
@@ -119,7 +116,6 @@ void _fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f
         cubeRadiusArray++;
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053750.s")
 
@@ -164,9 +160,9 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
                     var_s2++;
                 }
                 if (arg5 & 2) {
-                    sp6F |= func_800564C8((var_s3->unk4 * 0x34) + D_80092E70, (var_s3[1].unk4 * 0x34) + D_80092E70, &spA0[0], arg3, (s8* ) arg4, 1);
+                    sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], &spA0[0], arg3, (s8* ) arg4, 1);
                 } else {
-                    temp_v0_3 = func_80055458(sp64, (var_s3->unk4 * 0x34) + D_80092E70, (var_s3[1].unk4 * 0x34) + D_80092E70, &sp70[0], &spA0[0], arg3, (s8* ) arg4, 1);
+                    temp_v0_3 = func_80055458(sp64, &D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], &sp70[0], &spA0[0], arg3, (s8* ) arg4, 1);
                     if (temp_v0_3) {
                         func_80026184(sp64, arg0);
                         sp6F |= temp_v0_3;
@@ -184,9 +180,9 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
                     var_s1 += 3;
                 }
             } else if (arg5 & 2) {
-                sp6F |= func_800564C8((var_s3->unk4 * 0x34) + D_80092E70, (var_s3[1].unk4 * 0x34) + D_80092E70, arg2, arg3, (s8* ) arg4, 0);
+                sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], arg2, arg3, (s8* ) arg4, 0);
             } else {
-                sp6F |= func_80055458(sp64, (var_s3->unk4 * 0x34) + D_80092E70, (var_s3[1].unk4 * 0x34) + D_80092E70, arg1, arg2, arg3, (s8* ) arg4, 0);
+                sp6F |= func_80055458(sp64, &D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], arg1, arg2, arg3, (s8* ) arg4, 0);
             }
             var_s3 += 1;
         } while ((u32) var_s3 < (u32) target);
@@ -230,6 +226,7 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058FE8.s")
 
+// void func_80059038(s16 param_1, Object *param_2, s32 param_3)
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80059038.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800591EC.s")

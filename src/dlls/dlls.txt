@@ -5,12 +5,14 @@
 7 = engine/7_newday
 13 = engine/13_expgfx
 16 = engine/16
+18 = engine/18
 20 = engine/20_screens
 21 = engine/21_gametext
 22 = engine/22_subtitles
 23 = engine/23
 24 = engine/24_waterfx
 25 = engine/25
+26 = engine/26_curves
 27 = engine/27
 28 = engine/28_screen_fade
 29 = engine/29_gplay
