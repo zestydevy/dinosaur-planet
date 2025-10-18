@@ -17,7 +17,7 @@ DLL_INTERFACE(DLL_18) {
 /*6*/ UnknownDLLFunc func6;
 /*7*/ void (*func7)(Object *, void *, f32, s32);
 /*8*/ UnknownDLLFunc func8;
-/*9*/ UnknownDLLFunc func9;
+/*9*/ void (*func9)(Object *, void *, f32, f32);
 /*10*/ UnknownDLLFunc func10;
 /*11*/ UnknownDLLFunc func11;
 /*12*/ UnknownDLLFunc func12;

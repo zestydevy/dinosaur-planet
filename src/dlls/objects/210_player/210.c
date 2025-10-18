@@ -45,8 +45,10 @@ static void dll_210_func_7CF8(Player_Data* arg0, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* arg0, Player_Data* arg1, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2, Player_Data3B4* arg3, f32 arg4, s32 arg5);
 static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* arg2, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
-static void dll_210_func_14B70(Object* arg0, u32 arg1);
+static void dll_210_func_A024(Object* player, Player_Data* objdata);
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
+static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
+static void dll_210_func_14B70(Object* arg0, u32 arg1);
 
 typedef struct Unk {
     u8 pad0[0x24];
@@ -109,7 +111,6 @@ typedef struct Unk {
 /* static */ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2);
 /* static */ void dll_210_func_7180(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_A058(Object* arg0);
-/* static */ void dll_210_func_A024(Object* player, Player_Data* objdata);
 /* static */ int dll_210_func_24FC(Object *player, Player_Data *data);
 /* static */ void dll_210_func_1DAB0(Object *player);
 
@@ -291,9 +292,9 @@ s32 func_80031DD8(Object*, Object*, s32);
 /*0x574*/ static u32 _data_574[] = {
     0x00150021, 0x000d0022
 };
-/*0x57C*/ static u32 _data_57C[] = {
-    0x004f0050, 0x005200eb, 0x005300ec, 0x005500e7, 0x005600e8, 0x005800e9, 0x005900ea, 0x04140414, 
-    0x04150415
+/*0x57C*/ static s16 _data_57C[] = {
+    0x004f, 0x0050, 0x0052, 0x00eb, 0x0053, 0x00ec, 0x0055, 0x00e7, 0x0056,
+    0x00e8, 0x0058, 0x00e9,0x0059, 0x00ea, 0x0414, 0x0414, 0x0415, 0x0415
 };
 /*0x5A0*/ static s16 _data_5A0[] = { 0x002d, 0x002e, 0x0038, 0x0039, 0x002f, 0x0030, 0x0031, 0x0032 };
 /*0x5B0*/ static u32 _data_5B0[] = {
@@ -1209,7 +1210,7 @@ void dll_210_update(Object* arg0) {
     s32 pad[2];
     f32 sp58;
     f32 sp54;
-    s32 sp50;
+    f32 sp50;
     f32 sp4C;
     Object* temp_a1;
     f32 sp44;
@@ -3740,7 +3741,7 @@ s32 dll_210_func_A018(void) {
 }
 
 // offset: 0xA024 | func: 54
-void dll_210_func_A024(Object* player, Player_Data* objdata) {
+static void dll_210_func_A024(Object* player, Player_Data* objdata) {
     objdata->unk28C = 0.0f;
     objdata->unk27C = 0.0f;
     objdata->unk278 = 0.0f;
@@ -4798,7 +4799,7 @@ s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
 #endif
 
 // offset: 0xD3E4 | func: 71
-s32 dll_210_func_D3E4(Object* arg0, Player_Data* arg1, u32 arg2) {
+s32 dll_210_func_D3E4(Object* arg0, Player_Data* arg1, UNK_TYPE_32 arg2) {
     Player_Data *objdata = arg0->data;
 
     if (!(arg1->unk4.unk25C & 0x10) && (arg1->unk4.underwaterDist > 5.0f)) {
@@ -4815,7 +4816,15 @@ s32 dll_210_func_D3E4(Object* arg0, Player_Data* arg1, u32 arg2) {
 }
 
 // offset: 0xD480 | func: 72
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D480.s")
+s32 dll_210_func_D480(Object* arg0, Player_Data* arg1, UNK_TYPE_32 arg2) {
+    if (!(arg1->unk4.unk25C & 0x10) && (arg1->unk4.underwaterDist > 5.0f)) {
+        return 0x20;
+    }
+
+    dll_210_func_A024(arg0, arg1);
+    arg1->unk0 |= 0x200000;
+    return 0;
+}
 
 // offset: 0xD510 | func: 73
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1) {
@@ -4840,10 +4849,144 @@ static void dll_210_func_D510(Player_Data* arg0, f32 arg1) {
 }
 
 // offset: 0xD5F0 | func: 74
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D5F0.s")
+#else
+// https://decomp.me/scratch/9mAUT
+s32 dll_210_func_D5F0(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* sp2C;
+    s32 temp_v0;
+
+    sp2C = arg0->data;
+    if (arg1->unk272 != 0) {
+        arg1->unk270 = 0x10;
+    }
+    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    arg0->speed.f[1] = 0.0f;
+    if (arg0->curModAnimId == 0x419) {
+        if (arg1->unk32E[0xC] != 0) {
+            _bss_200 = 3;
+            // changed arg2 to f32?
+            gDLL_2_Camera->vtbl->func10(arg0->srt.transl.f[0], sp2C->unk490.unk10, arg0->srt.transl.f[2]);
+            return -0x13;
+        }
+    } else {
+        func_80023D30(arg0, 0x419, 0.0f, 1U);
+        arg0->srt.yaw = arctan2_f(sp2C->unk490.unk1C.x, sp2C->unk490.unk1C.z);
+        arg0->srt.transl.f[0] = sp2C->unk490.unk2C.x;
+        arg0->srt.transl.f[1] = sp2C->unk490.unk4;
+        arg0->srt.transl.f[2] = sp2C->unk490.unk2C.z;
+        sp2C->unk490.unkC = sp2C->unk490.unk2C.x;
+        sp2C->unk490.unk10 = (sp2C->unk490.unk4 - 26.0f);
+        sp2C->unk490.unk14 = sp2C->unk490.unk2C.z;
+        arg1->unk298 = 0.04f;
+    }
+    gDLL_2_Camera->vtbl->func10(arg0->srt.transl.f[0], sp2C->unk490.unk10, arg0->srt.transl.f[2]);
+    return 0;
+}
+#endif
 
 // offset: 0xD788 | func: 75
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D788.s")
+typedef struct {
+s16 unk0;
+s8 unk2;
+s8 unk3;
+s32 pad;
+f32 unk8;
+f32 unkC;
+f32 unk10;
+} UnkStruct_D788;
+
+s32 dll_210_func_D788(Object* arg0, Player_Data* arg1, f32 arg2) {
+    s32 temp_v0;
+    s32 var_v0;
+    UnkStruct_D788 sp44;
+    Player_Data* temp_s0;
+
+    temp_s0 = arg0->data;
+    if (arg1->unk272 != 0) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, temp_s0->unk3B8[0x17], 0x7FU, NULL, NULL, 0, NULL);
+        arg1->unk270 = 0x11;
+    }
+    temp_s0->unk7FC = 0;
+    goto dummy_label_21840; dummy_label_21840: ;
+    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    arg0->speed.f[1] = 0.0f;
+    sp44.unk10 = temp_s0->unk490.unk2C.x;
+    sp44.unk8 = temp_s0->unk490.unk2C.z;
+    switch (arg0->curModAnimId) {
+    case 0xD:
+        sp44.unkC = temp_s0->unk490.unk4 + ((temp_s0->unk490.unk10 - temp_s0->unk490.unk4) * arg0->animProgress);
+        gDLL_18->vtbl->func9(arg0, arg1, arg2, 0.2f);
+        if (arg1->unk32E[0xC] != 0) {
+            func_80023D30(arg0, _data_57C[0], 0.0f, 0U);
+            arg1->unk298 = 0.021f;
+            sp44.unk0 = 0;
+            sp44.unk2 = 0;
+            sp44.unk3 = 1;
+        }
+        break;
+    case 0x22:
+        sp44.unkC = temp_s0->unk490.unk4 + ((temp_s0->unk490.unk10 - temp_s0->unk490.unk4) * arg0->animProgress);
+        gDLL_18->vtbl->func9(arg0, arg1, arg2, 0.2f);
+        if (arg1->unk32E[0xC] != 0) {
+            func_80023D30(arg0, _data_57C[1], 0.0f, 0U);
+            arg1->unk298 = 0.021f;
+            sp44.unk0 = 0;
+            sp44.unk2 = 0;
+            sp44.unk3 = 1;
+        }
+        break;
+    case 0x4F:
+    case 0x50:
+        sp44.unkC = temp_s0->unk490.unk10;
+        gDLL_18->vtbl->func9(arg0, arg1, arg2, 0.2f);
+        gDLL_18->vtbl->func7(arg0, arg1, arg2, 2);
+        if (arg1->unk32E[0xC] != 0) {
+            _bss_200 = 3;
+            gDLL_2_Camera->vtbl->func10(sp44.unk10, sp44.unkC, sp44.unk8);
+            return -0x13;
+        }
+        break;
+    default:
+        temp_v0 = arctan2_f(temp_s0->unk490.unk1C.x, temp_s0->unk490.unk1C.z) - arg0->srt.yaw;
+        if (temp_v0 >= 0x8001) {
+            temp_v0 += 0xFFFF0001;
+        }
+        if (temp_v0 < -0x8000) {
+            temp_v0 += 0xFFFF;
+        }
+        if (temp_s0->unk490.unk47 == 1) {
+            var_v0 = 0xA;
+        } else {
+            var_v0 = 0xB;
+        }
+        arg0->srt.yaw += temp_v0;
+        arg0->srt.transl.f[1] = temp_s0->unk490.unk4;
+        func_80023D30(arg0, _data_564[var_v0], 0.0f, 4U);
+        arg1->unk298 = 0.033f;
+        arg1->unk2EC = ((temp_s0->unk490.unk2C.x - arg0->srt.transl.f[0]) + (temp_s0->unk490.unk1C.x * 0.5f));
+        arg1->unk2F0 = 0.0f;
+        arg1->unk2F4 = ((temp_s0->unk490.unk2C.z - arg0->srt.transl.f[2]) + (temp_s0->unk490.unk1C.z * 0.5f));
+        arg1->unk2A4 = 0.0f;
+        temp_s0->unk490.unkC = temp_s0->unk490.unk2C.x;
+        temp_s0->unk490.unk10 = (temp_s0->unk490.unk4 - 26.0f);
+        temp_s0->unk490.unk14 = temp_s0->unk490.unk2C.z;
+        sp44.unkC = temp_s0->unk490.unk4;
+        gDLL_2_Camera->vtbl->func6(0x55, 1, 0, 4, &sp44, 0, 0xFF);
+        break;
+    }
+
+    temp_s0->unk8BD |= 4;
+    gDLL_2_Camera->vtbl->func10(sp44.unk10, sp44.unkC, sp44.unk8);
+    return 0;
+}
 
 // offset: 0xDC10 | func: 76
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_DC10.s")
@@ -4864,7 +5007,20 @@ s32 dll_210_func_EF9C(Object* player, s32 arg1, s32 arg2) {
 }
 
 // offset: 0xEFB4 | func: 81
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_EFB4.s")
+static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* temp_v1;
+
+    temp_v1 = arg0->data;
+    temp_v1->flags &= ~2;
+    arg1->unk4.mode = 0;
+    arg1->unk278 = 0.0f;
+    arg1->unk27C = 0.0f;
+    arg1->unk0 |= 0x200000;
+    arg0->speed.f[0] = 0.0f;
+    arg0->speed.f[2] = 0.0f;
+
+    return 0;
+}
 
 // offset: 0xF00C | func: 82
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_F00C.s")
