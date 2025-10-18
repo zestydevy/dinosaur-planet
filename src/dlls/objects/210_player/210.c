@@ -5082,10 +5082,6 @@ s32 dll_210_func_DC10(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xE14C | func: 77
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_E14C.s")
-#else
-// https://decomp.me/scratch/4KKVc
 s32 dll_210_func_E14C(Object* arg0, Player_Data* arg1, f32 arg2) {
     f32 temp_fa0;
     f32 temp_ft1;
@@ -5117,6 +5113,7 @@ s32 dll_210_func_E14C(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (temp_v0 != 0) {
         return temp_v0;
     }
+    if ((_bss_200 && _bss_200) && _bss_200) {}
     _bss_202 = _bss_200;
     sp5E = 0;
     sp47 = 0;
@@ -5253,7 +5250,6 @@ s32 dll_210_func_E14C(Object* arg0, Player_Data* arg1, f32 arg2) {
     dll_210_func_7260(arg0, objdata);
     return 0;
 }
-#endif
 
 // offset: 0xEB1C | func: 78
 s32 dll_210_func_EB1C(Object* arg0, Player_Data* arg1, f32 arg2) {
