@@ -53,6 +53,7 @@ static void dll_210_func_EF8C(Object *arg0, UNK_TYPE_32 arg1);
 static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
+static void dll_210_func_EF8C(Object *arg0, UNK_TYPE_32 arg1);
 static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 static void dll_210_func_14B70(Object* arg0, u32 arg1);
 
