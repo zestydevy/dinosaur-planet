@@ -45,14 +45,14 @@ DLL_INTERFACE(DLL_1_UI) {
     /*06*/ s32 (*func6)(void);
     /*07*/ s32 (*func7)(s32 inventory_item_flag); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
     /*08*/ UnknownDLLFunc ui_func_e2c;
-    /*09*/ UnknownDLLFunc ui_func_f24;
+    /*09*/ s32 (*ui_func_f24)(void);
     /*10*/ UnknownDLLFunc ui_func_f40;
     /*11*/ UnknownDLLFunc ui_func_70a0;
-    /*12*/ UnknownDLLFunc ui_func_130c;
+    /*12*/ void (*ui_func_130c)(s32, s32, s32);
     /*13*/ UnknownDLLFunc ui_func_1338;
     /*14*/ UnknownDLLFunc ui_func_13f4;
-    /*15*/ UnknownDLLFunc ui_func_2b8;
-    /*16*/ UnknownDLLFunc ui_func_6984;
+    /*15*/ void (*ui_func_2b8)(s32);
+    /*16*/ void (*ui_func_6984)(s32);
     /*17*/ UnknownDLLFunc ui_func_69f8;
     /*18*/ UnknownDLLFunc ui_func_6b00;
     /*19*/ UnknownDLLFunc ui_func_2e0;

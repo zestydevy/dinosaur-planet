@@ -1,0 +1,16 @@
+.text = 0x0:
+CCspellpage_ctor = 0x0;
+CCspellpage_dtor = 0xC;
+CCspellpage_setup = 0x18;
+CCspellpage_control = 0x90;
+CCspellpage_update = 0x9C;
+CCspellpage_print = 0xA8;
+CCspellpage_free = 0xFC;
+CCspellpage_get_model_flags = 0x13C;
+CCspellpage_get_data_size = 0x14C;
+CCspellpage_anim_callback = 0x160;
+
+.rodata = 0x2B4:
+
+.data = 0x2B4:
+_data_0 = 0x0; // absolute:0x2B4

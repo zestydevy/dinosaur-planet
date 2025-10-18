@@ -1,0 +1,12 @@
+.text = 0x0:
+DIM_LevelControl_ctor = 0x0;
+DIM_LevelControl_dtor = 0xC;
+DIM_LevelControl_setup = 0x18;
+DIM_LevelControl_control = 0xF8;
+DIM_LevelControl_update = 0x250;
+DIM_LevelControl_print = 0x25C;
+DIM_LevelControl_free = 0x2B0;
+DIM_LevelControl_get_model_flags = 0x2C0;
+DIM_LevelControl_get_data_size = 0x2D0;
+
+.rodata = 0x330:

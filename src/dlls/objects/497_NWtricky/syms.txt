@@ -1,0 +1,14 @@
+.text = 0x0:
+NWtricky_ctor = 0x0;
+NWtricky_dtor = 0xC;
+NWtricky_setup = 0x18;
+NWtricky_control = 0x134;
+NWtricky_update = 0x538;
+NWtricky_print = 0x544;
+NWtricky_free = 0x55C;
+NWtricky_get_model_flags = 0x5EC;
+NWtricky_get_data_size = 0x5FC;
+NWtricky_anim_callback = 0x610;
+
+.rodata = 0x94C:
+str_0 = 0x0; // absolute:0x94C

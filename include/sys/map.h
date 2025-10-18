@@ -22,6 +22,7 @@ typedef enum {
     WARP_WM_KRYSTAL_SIDE = 6,
     WARP_SC_RUBBLE_PODIUM = 14, // SwapStone Circle
     WARP_SH_ROCKY_PODIUM = 15, // SwapStone Hollow
+    WARP_IM_RACE_START = 26,
     WARP_WM_SABRE_KRAZOA_CORRIDOR = 57, // Warlock Mountain | Sabre-side | Krazoa statue corridor
     WARP_SC_TOTEM_POLE = 80,
     WARP_VFP_CALDERA_LOWER = 81, // Volcano Force Point Temple | Caldera (Lower Floor) 

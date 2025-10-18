@@ -94,7 +94,7 @@ void VFP_LevelControl_control(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                main_set_bits(BIT_Increment_DB_By_1, 1);
+                main_set_bits(BIT_DB_Unlock_Act_Two, 1);
                 func_80000860(self, self, 0x105, 0);
                 func_80000860(self, self, 0x106, 0);
                 func_80000860(self, self, 0x107, 0);
@@ -115,8 +115,8 @@ void VFP_LevelControl_control(Object* self) {
             _data_0 -= (s16)delayFloat;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                main_set_bits(BIT_Increment_DB_By_1, 1);
-                main_set_bits(BIT_DB_Increment_Map_Setup, 1);
+                main_set_bits(BIT_DB_Unlock_Act_Two, 1);
+                main_set_bits(BIT_DB_Unlock_Act_Three, 1);
                 func_80000860(self, self, 0x105, 0);
                 func_80000860(self, self, 0x106, 0);
                 func_80000860(self, self, 0x107, 0);

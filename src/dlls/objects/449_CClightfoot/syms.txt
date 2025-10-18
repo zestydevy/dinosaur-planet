@@ -1,0 +1,13 @@
+.text = 0x0:
+CClightfoot_ctor = 0x0;
+CClightfoot_dtor = 0xC;
+CClightfoot_setup = 0x18;
+CClightfoot_control = 0xAC;
+CClightfoot_update = 0x1F4;
+CClightfoot_print = 0x200;
+CClightfoot_free = 0x254;
+CClightfoot_get_model_flags = 0x294;
+CClightfoot_get_data_size = 0x2A4;
+CClightfoot_anim_callback = 0x2B8;
+
+.rodata = 0x3D0:

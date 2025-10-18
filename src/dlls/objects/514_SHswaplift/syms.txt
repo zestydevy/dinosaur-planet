@@ -1,0 +1,12 @@
+.text = 0x0:
+SHswaplift_ctor = 0x0;
+SHswaplift_dtor = 0xC;
+SHswaplift_setup = 0x18;
+SHswaplift_control = 0x7C;
+SHswaplift_update = 0x188;
+SHswaplift_print = 0x194;
+SHswaplift_free = 0x1E8;
+SHswaplift_get_model_flags = 0x1F8;
+SHswaplift_get_data_size = 0x208;
+
+.rodata = 0x258:

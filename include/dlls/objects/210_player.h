@@ -325,11 +325,11 @@ DLL_INTERFACE(DLL_210_Player) {
     /*13*/ UnknownDLLFunc func13;
     /*14*/ void (*func14)(Object* player, s32 magicDifference);
     /*15*/ UnknownDLLFunc func15;
-    /*16*/ UnknownDLLFunc func16;
+    /*16*/ s32 (*func16)(Object *player);
     /*17*/ UnknownDLLFunc func17;
-    /*18*/ UnknownDLLFunc func18;
+    /*18*/ void (*func18)(Object* player, s32);
     /*19*/ void (*func19)(Object* player, s32 scarabsDifference);
-    /*20*/ UnknownDLLFunc func20;
+    /*20*/ s32 (*func20)(Object*);
     /*21*/ UnknownDLLFunc func21;
     /*22*/ UnknownDLLFunc func22;
     /*23*/ UnknownDLLFunc func23;

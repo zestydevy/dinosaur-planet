@@ -1,0 +1,12 @@
+.text = 0x0:
+WL_SpiritSet_ctor = 0x0;
+WL_SpiritSet_dtor = 0xC;
+WL_SpiritSet_setup = 0x18;
+WL_SpiritSet_control = 0x60;
+WL_SpiritSet_update = 0x6C;
+WL_SpiritSet_print = 0x78;
+WL_SpiritSet_free = 0x114;
+WL_SpiritSet_get_model_flags = 0x124;
+WL_SpiritSet_get_data_size = 0x134;
+
+.rodata = 0x17C:

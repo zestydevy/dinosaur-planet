@@ -1,0 +1,14 @@
+.text = 0x0:
+UseObj_ctor = 0x0;
+UseObj_dtor = 0xC;
+UseObj_setup = 0x18;
+UseObj_control = 0x110;
+UseObj_update = 0x3B8;
+UseObj_print = 0x410;
+UseObj_free = 0x464;
+UseObj_get_model_flags = 0x4A4;
+UseObj_get_data_size = 0x4B4;
+UseObj_anim_callback = 0x4C8;
+
+.rodata = 0x5F8:
+str_0 = 0x0; // absolute:0x5F8
