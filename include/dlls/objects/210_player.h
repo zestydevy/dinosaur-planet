@@ -43,8 +43,8 @@ typedef struct Player_Data490 {
     Vec4f unk1C;
     Vec3f unk2C;
     Vec3f unk38;
-    u16 pad44;
-    s8 unk46;
+    s16 unk44;
+    u8 unk46;
     u8 unk47;
 } Player_Data490;
 
@@ -158,15 +158,22 @@ typedef struct {
 /*294*/ f32 unk294;
 /*298*/ f32 unk298;
 /*29C*/ f32 unk29C;
-/*2A0*/ s8 unk2A0[0x2B0 - 0x2A0];
+/*2A0*/ f32 unk2A0;
+/*2A4*/ f32 unk2A4;
+/*2A8*/ u32 pad2A8;
+/*2AC*/ u32 pad2AC;
 /*2b0*/ f32 unk2B0;
 /*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
 /*2c8*/ Object *unk2C8;
-/*2cc*/ s8 unk2CC[0x2FC - 0x2CC];
+/*2cc*/ s8 unk2CC[0x2EC - 0x2CC];
+/*2EC*/ f32 unk2EC;
+/*2F0*/ f32 unk2F0;
+/*2F4*/ f32 unk2F4;
+/*2F8*/ f32 unk2F8;
 /*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
 /*300*/ s32 pad300;
 /*304*/ s32 unk304;
-/*308*/ s32 pad308;
+/*308*/ s32 unk308;
 /*30C*/ s32 unk30C;
 /*310*/ s32 unk310;
 /*314*/ s8 unk314[0x324 - 0x314];
@@ -174,7 +181,11 @@ typedef struct {
 /*326*/ u16 pad326;
 /*328*/ s16 unk328;
 /*32A*/ s16 unk32A;
-/*32C*/ s8 unk32C[0x33D - 0x32C];
+/*32C*/ s16 unk32C;
+/*32E*/ s8 unk32E[0x33A - 0x32E];
+/*33A*/ s8 unk33A;
+/*33B*/ u8 pad33B;
+/*33C*/ u8 pad33C;
 /*33D*/ u8 unk33D;
 /*33E*/ s8 unk33E[0x340 - 0x33E];
 /*340*/ s8 unk340;
@@ -261,7 +272,8 @@ typedef struct {
 /*87A*/ s16 unk87A;
 /*87C*/ s16 unk87C;
 /*87E*/ s16 unk87E;
-/*880*/ s32 unk880;
+/*880*/ s16 unk880;
+/*882*/ u16 pad882;
 /*884*/ s16 unk884;
 /*886*/ s16 unk886;
 /*888*/ s16 unk888;
@@ -270,7 +282,7 @@ typedef struct {
 /*88E*/ u16 unk88E;
 /*890*/ UNK_PTR *unk890;
 /*894*/ UNK_PTR *unk894;
-/*898*/ UNK_PTR *unk898;
+/*898*/ s16 *unk898;
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
 /*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];

@@ -17,7 +17,7 @@ enum ParticleID {
 DLL_INTERFACE(DLL_17) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
-/*1*/ s32 (*func1)(Object *obj, s32, SRT *, s32, s32, u8 *); //creates billboard particles
+/*1*/ s32 (*func1)(Object *obj, s32, SRT *, s32, s32, void *); //creates billboard particles
 /*2*/ UnknownDLLFunc func2;
 };
 

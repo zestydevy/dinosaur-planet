@@ -3346,14 +3346,8 @@ void func_8002E84C(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1)
     arg0->unk0[0] = 1;
 }
 
-s32 func_8002E88C(Vec3f* arg0, Vec3f* arg1) {
-    s32 var_v0;
-
-    var_v0 = arg0->x < arg1->x;
-    if (var_v0 != 0) { return; }
-    var_v0 = arg0->y < arg1->y;
-    if (var_v0 != 0) { return; }
-    return arg0->z < arg1->z;
+int func_8002E88C(Vec3f* arg0, Vec3f* arg1) {
+    return arg0->x < arg1->x || arg0->y < arg1->y || arg0->z < arg1->z;
 }
 
 s32 func_8002E904(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1) {
@@ -3364,41 +3358,12 @@ s32 func_8002E904(ModelInstance_0x14_0x14* arg0, ModelInstance_0x14_0x14* arg1) 
     return 1;
 }
 
-s32 func_8002E964(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
-    s32 var_v0;
-    s32 *new_var;
-
-    var_v0 = arg4 < (arg0 - arg1);
-    if (var_v0 != 0) {
-        var_v0 = arg4 < (arg2 - arg3);
-        // ????? huh
-        new_var = &var_v0;
-        if ((*new_var) != 0) {
-            return;
-        }
-    }
-
-    var_v0 = (arg0 + arg1) < arg5;
-    if (var_v0 == 0) {
-        return;
-    }
-
-    return (arg2 + arg3) < arg5;
+int func_8002E964(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+    return (arg4 < (arg0 - arg1) && arg4 < (arg2 - arg3)) || ((arg0 + arg1) < arg5 && (arg2 + arg3) < arg5);
 }
 
-s32 func_8002EA0C(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
-    s32 var_v0;
-    s32 *new_var;
-
-    var_v0 = (arg4 + arg5) < (arg0 - arg1);
-    if (var_v0 != 0) {
-        var_v0 = (arg6 + arg7) < (arg0 - arg1);\
-        new_var = &var_v0;\
-        if ((*new_var) != 0) { return; }\
-    }\
-    var_v0 = (arg2 + arg3) < (arg4 - arg5);\
-    if (var_v0 == 0) { return; }\
-    return (arg2 + arg3) < (arg6 - arg7);
+int func_8002EA0C(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7) {
+    return ((arg4 + arg5) < (arg0 - arg1) && (arg6 + arg7) < (arg0 - arg1)) || ((arg2 + arg3) < (arg4 - arg5) && (arg2 + arg3) < (arg6 - arg7));
 }
 
 // Return type has to be int
