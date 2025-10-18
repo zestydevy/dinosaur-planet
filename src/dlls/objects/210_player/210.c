@@ -3977,8 +3977,8 @@ s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, f32 arg2) {
         sp20->unk8A5 = 0;
         func_80023D30(arg0, (s32) sp20->modAnims[0x14], 0.0f, 0U);
     }
-    // @bug, _data_6F8 only has one element
-    if (arg1->unk290 < _data_6F8[2]) {
+    // @bug, _data_6F8 only has one element, probably should use _data_6FC
+    if (arg1->unk290 < (&_data_6F8)[2]) {
         arg1->unk328 = 0;
         arg1->unk290 = 0.0f;
     }
@@ -3996,8 +3996,8 @@ s32 dll_210_func_AA80(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (arg1->unk28C > 1.65f) {
         arg1->unk28C = 1.65f;
     }
-    // @bug, _data_6F8 only has one element
-    if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && (_data_6F8[1] <= arg1->unk28C)) {
+    // @bug, _data_6F8 only has one element, probably should use _data_6FC
+    if ((arg1->unk294 >= 0.42000002f) && (arg1->unk290 >= 0.42000002f) && ((&_data_6F8)[1] <= arg1->unk28C)) {
         return 5;
     }
     var_v1 = arg1->unk328;
@@ -4729,7 +4729,7 @@ s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
         break;
     case 9:
         arg1->unk298 = 0.02f;
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             func_80023D30(arg0, 0xA, 0.0f, 0U);
         }
         if (arg1->unk4.floorDist == 0.0f) {
@@ -4764,7 +4764,7 @@ s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
     case 0xB:
         arg1->unk298 = 0.015f;
         arg1->unk278 = 0.0f;
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             if (sp38->stats->health > 0) {
                 func_80023D30(arg0, 0xC, 0.0f, 0U);
                 break;
@@ -4776,7 +4776,7 @@ s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
     case 0xC:
         arg1->unk298 = 0.004f;
         arg1->unk278 = 0.0f;
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             return -1;
         }
         break;
@@ -4865,9 +4865,8 @@ s32 dll_210_func_D5F0(Object* arg0, Player_Data* arg1, f32 arg2) {
     }
     arg0->speed.f[1] = 0.0f;
     if (arg0->curModAnimId == 0x419) {
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             _bss_200 = 3;
-            // changed arg2 to f32?
             gDLL_2_Camera->vtbl->func10(arg0->srt.transl.f[0], sp2C->unk490.unk10, arg0->srt.transl.f[2]);
             return -0x13;
         }
@@ -4922,7 +4921,7 @@ s32 dll_210_func_D788(Object* arg0, Player_Data* arg1, f32 arg2) {
     case 0xD:
         sp44.unkC = temp_s0->unk490.unk4 + ((temp_s0->unk490.unk10 - temp_s0->unk490.unk4) * arg0->animProgress);
         gDLL_18->vtbl->func9(arg0, arg1, arg2, 0.2f);
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             func_80023D30(arg0, _data_57C[0], 0.0f, 0U);
             arg1->unk298 = 0.021f;
             sp44.unk0 = 0;
@@ -4933,7 +4932,7 @@ s32 dll_210_func_D788(Object* arg0, Player_Data* arg1, f32 arg2) {
     case 0x22:
         sp44.unkC = temp_s0->unk490.unk4 + ((temp_s0->unk490.unk10 - temp_s0->unk490.unk4) * arg0->animProgress);
         gDLL_18->vtbl->func9(arg0, arg1, arg2, 0.2f);
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             func_80023D30(arg0, _data_57C[1], 0.0f, 0U);
             arg1->unk298 = 0.021f;
             sp44.unk0 = 0;
@@ -4946,7 +4945,7 @@ s32 dll_210_func_D788(Object* arg0, Player_Data* arg1, f32 arg2) {
         sp44.unkC = temp_s0->unk490.unk10;
         gDLL_18->vtbl->func9(arg0, arg1, arg2, 0.2f);
         gDLL_18->vtbl->func7(arg0, arg1, arg2, 2);
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             _bss_200 = 3;
             gDLL_2_Camera->vtbl->func10(sp44.unk10, sp44.unkC, sp44.unk8);
             return -0x13;
@@ -5016,7 +5015,7 @@ s32 dll_210_func_DC10(Object* arg0, Player_Data* arg1, f32 arg2) {
             if (arg1->unk308 & 1) {
                 gDLL_6_AMSFX->vtbl->play_sound(arg0, temp_s1->unk3B8[rand_next(0xA, 0xB)], 0x7FU, NULL, NULL, 0, NULL);
             }
-            if (arg1->unk32E[0xC] != 0) {
+            if (arg1->unk33A != 0) {
                 arg0->positionMirror.f[0] = temp_s1->unk7EC.x;
                 arg0->positionMirror.f[1] = temp_s1->unk490.unk4;
                 arg0->positionMirror.f[2] = temp_s1->unk7EC.z;
@@ -5119,7 +5118,7 @@ s32 dll_210_func_E14C(Object* arg0, Player_Data* arg1, f32 arg2) {
     sp47 = 0;
     switch (_bss_200) {
     case 0:
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             arg0->positionMirror.f[0] = objdata->unk7EC.x;
             arg0->positionMirror.f[1] = objdata->unk7EC.y;
             arg0->positionMirror.f[2] = objdata->unk7EC.z;
@@ -5178,7 +5177,7 @@ s32 dll_210_func_E14C(Object* arg0, Player_Data* arg1, f32 arg2) {
         func_8004D844(arg0, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
         break;
     case 3:
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             temp_fv0 = arg1->unk284;
             if (temp_fv0 > 5.0f) {
                 _bss_200 = 5;
@@ -5207,7 +5206,7 @@ s32 dll_210_func_E14C(Object* arg0, Player_Data* arg1, f32 arg2) {
         func_8004D844(arg0, objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
         break;
     case 5:
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             arg0->positionMirror.f[0] = objdata->unk7EC.x;
             arg0->positionMirror.f[2] = objdata->unk7EC.z;
             inverse_transform_point_by_object(arg0->positionMirror.f[0], 0.0f, arg0->positionMirror.f[2], arg0->srt.transl.f, &sp68, &arg0->srt.transl.f[2], arg0->parent);
@@ -5306,7 +5305,7 @@ s32 dll_210_func_EB1C(Object* arg0, Player_Data* arg1, f32 arg2) {
         sp64 += (objdata->unk490.unk2C.f[0] - sp64) * temp_fv0;
         sp60 = objdata->unk490.unk10;
         sp5C += (objdata->unk490.unk2C.f[2] - sp5C) * temp_fv0;
-        if (arg1->unk32E[0xC] != 0) {
+        if (arg1->unk33A != 0) {
             arg0->positionMirror.x = temp_fv1;
             // @fake
             if (1) {}
