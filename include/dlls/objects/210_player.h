@@ -101,11 +101,28 @@ typedef struct UnkArg3 {
     f32 unk24;
     Vec4f unk28;
     Vec4f unk38;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
+    Vec3f unk48;
     Vec3f unk54;
 } UnkArg3;
+
+// size: 0x60
+typedef struct Player_Data430 {
+    s8 unk0;
+    s8 unk1;
+    s8 unk2;
+    s8 unk3;
+    f32 unk4;
+    f32 unk8;
+    u8 padC[0x18 - 0xC];
+    Vec3f unk18;
+    Vec4f unk24;
+    f32 unk34;
+    Vec3f unk38;
+    Vec3f unk44;
+    Vec3f unk50;
+    s16 unk5C;
+    u16 pad5E;
+} Player_Data430;
 
 // size: 0x30
 typedef struct UnkArg2 {
@@ -209,7 +226,7 @@ typedef struct {
 /*3CC*/ UnkArg3 unk3CC;
 /*42C*/ s16 unk42C;
 /*42E*/ u16 unk42E;
-/*430*/ UnkArg3 unk430;
+/*430*/ Player_Data430 unk430;
 /*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
 /*508*/ u8 pad508[0x680 - 0x508];
