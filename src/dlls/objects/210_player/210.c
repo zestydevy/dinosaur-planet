@@ -119,6 +119,7 @@ typedef struct Unk {
 /* static */ void dll_210_func_A058(Object* arg0);
 /* static */ int dll_210_func_24FC(Object *player, Player_Data *data);
 /* static */ void dll_210_func_1DAB0(Object *player);
+/* static */ void dll_210_func_12514(Object* arg0, UNK_TYPE_32 arg1);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -5422,7 +5423,13 @@ static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1209C.s")
 
 // offset: 0x12514 | func: 90
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_12514.s")
+void dll_210_func_12514(Object* arg0, UNK_TYPE_32 arg1) {
+    Player_Data *objdata = arg0->data;
+
+    if ((objdata->unk818 > 0.0f) && (gDLL_2_Camera->vtbl->func3() != 0x54)) {
+        gDLL_2_Camera->vtbl->func6(0x54, 0, 1, 0, NULL, 0, 0xFF);
+    }
+}
 
 // offset: 0x125BC | func: 91
 s32 dll_210_func_125BC(Object* arg0, Player_Data* arg1, u32 arg2) {
