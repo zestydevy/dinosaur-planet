@@ -93,13 +93,14 @@ typedef struct UnkArg3 {
     f32 unk4;
     f32 unk8;
     f32 unkC;
-    u8 pad10[0x18 - 0x10];
+    f32 unk10;
+    f32 unk14;
     f32 unk18;
-    u8 pad1C[0x24 - 0x1C];
+    f32 unk1C;
+    f32 unk20;
     f32 unk24;
     Vec4f unk28;
-    Vec3f unk38;
-    f32 unk44;
+    Vec4f unk38;
     f32 unk48;
     f32 unk4C;
     f32 unk50;
@@ -206,7 +207,8 @@ typedef struct {
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
 /*3C8*/ f32 unk3C8;
 /*3CC*/ UnkArg3 unk3CC;
-/*42C*/ s32 pad42C;
+/*42C*/ s16 unk42C;
+/*42E*/ u16 unk42E;
 /*430*/ UnkArg3 unk430;
 /*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
