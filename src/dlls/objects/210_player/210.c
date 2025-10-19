@@ -304,15 +304,9 @@ s32 func_80031DD8(Object*, Object*, s32);
     0x006e, 0x00b6, 0x00ba, 0x00b8, 0x006f, 0x00b7, 0x00b9, 0x00b5,
     0x00bb, 0x0068, 0x006c, 0x006a, 0x00bc, 0x006b, 0x006d, 0x0069
 };
-/*0x5DC*/ static u32 _data_5DC[] = {
-    0x00660071
-};
-/*0x5E0*/ static u32 _data_5E0[] = {
-    0x00720403
-};
-/*0x5E4*/ static u32 _data_5E4[] = {
-    0x04040070
-};
+/*0x5DC*/ static s16 _data_5DC[] = { 0x0066, 0x0071 };
+/*0x5E0*/ static s16 _data_5E0[] = { 0x0072, 0x0403 };
+/*0x5E4*/ static s16 _data_5E4[] = { 0x0404, 0x0070 };
 /*0x5E8*/ static u32 _data_5E8[] = {
     0x00bd0000, 0x007700e4, 0x007500e3, 0x00d100e6, 0x00cc00e5, 0x00770075, 0x0078007e, 0x0076007d, 
     0x007b007c, 0x0079007a, 0x007f0080, 0x00840085, 0x00810082, 0x00860087, 0x0083007f, 0x008000e4, 
@@ -5258,8 +5252,7 @@ s32 dll_210_func_EB1C(Object* arg0, Player_Data* arg1, f32 arg2) {
     f32 sp60;
     f32 sp5C;
     f32 temp_fa1;
-    s32 sp54;
-    s16 sp52[2];
+    s16 sp52[3];
     f32 temp_fv0;
     f32 temp_fv1;
     f32 var_fv1;
@@ -5312,7 +5305,7 @@ s32 dll_210_func_EB1C(Object* arg0, Player_Data* arg1, f32 arg2) {
             arg1->unk298 = 0.02f;
             _bss_200 = 8;
             _bss_202 = 8;
-            func_8001A3FC(modelInstance, 0U, 0, 0.0f, arg0->srt.scale, &sp6C, &sp54);
+            func_8001A3FC(modelInstance, 0U, 0, 0.0f, arg0->srt.scale, &sp6C, &sp52[2]);
             arg0->srt.transl.f[1] -= sp6C.f[1];
             arg0->speed.f[1] = -2.0f;
             objdata->unk490.unk18 = 1.0f;
@@ -5804,7 +5797,7 @@ s32 dll_210_func_1034C(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (!(arg1->unk4.unk25C & 0x10) && (arg1->unk4.underwaterDist > 5.0f)) {
         return 0x20;
     }
-    arg1->unk4.unk257 = 2;
+    arg1->unk4.mode = 2;
     arg1->unk0 |= 0x200000;
     switch (arg0->curModAnimId) {
     case 0x35:
@@ -6006,10 +5999,118 @@ s32 dll_210_func_10A0C(Object* arg0, Player_Data* arg1, f32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_10E94.s")
 
 // offset: 0x11C60 | func: 88
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_11C60.s")
+s32 dll_210_func_11C60(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* temp_s1;
+    Vec3f sp60;
+    f32 sp5C;
+    f32 sp58;
+    f32 sp54;
+    f32 sp50;
+    s32 temp_v0;
+    s16 pad_sp4E;
+    s16 sp48;
+    u32 sp44;
+
+    temp_s1 = arg0->data;
+    if (arg1->unk308 & 0x80) {
+        sp44 = gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_4D8[temp_s1->unk430.unk2], rand_next(0x5A, 0x7F), NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->func_954(sp44, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
+    }
+    if (arg1->unk272 != 0) {
+        gDLL_2_Camera->vtbl->func6(0x54, 0, 1, 0, NULL, 0x3C, 0xFF);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, temp_s1->unk3B8[rand_next(0xA, 0xE)], 0x7FU, NULL, NULL, 0, NULL);
+        func_80023D30(arg0, _data_5DC[1], 0.0f, 1U);
+        func_80025540(arg0, _data_5E0[0], 0);
+        arg1->unk298 = 0.012f;
+        func_8001A3FC(arg0->modelInsts[arg0->modelInstIdx], 0U, 0, 1.0f, arg0->srt.scale, &sp60, &sp48);
+        temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
+        temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
+        arg0->srt.transl.y = temp_s1->unk430.unk4;
+        arg1->unk270 = 0x1D;
+        arg1->unk2FC = dll_210_func_12514;
+    }
+    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    arg0->speed.y = 0.0f;
+    func_80024DD0(arg0, 0, 1, temp_s1->unk430.unk5C);
+    if (arg0->animProgress > 0.99f) {
+        arg0->positionMirror.x = temp_s1->unk7EC.x;
+        arg0->positionMirror.z = temp_s1->unk7EC.z;
+        inverse_transform_point_by_object(arg0->positionMirror.x, 0.0f, arg0->positionMirror.z, arg0->srt.transl.f, &sp50, &arg0->srt.transl.z, arg0->parent);
+        dll_210_func_7260(arg0, temp_s1);
+        func_80023D30(arg0, (s32) *temp_s1->modAnims, 0.0f, 1U);
+        return -1;
+    }
+    sp5C = arg0->srt.transl.x + (temp_s1->unk430.unk18.y * arg0->animProgress);
+    sp58 = arg0->srt.transl.y - (temp_s1->unk430.unk18.x * (1.0f - arg0->animProgress));
+    sp54 = arg0->srt.transl.z + (temp_s1->unk430.unk18.z * arg0->animProgress);
+    gDLL_2_Camera->vtbl->func10(sp5C, sp58, sp54);
+    func_8004D844(arg0, sp5C, sp58, sp54);
+    dll_210_func_7260(arg0, temp_s1);
+    return 0;
+}
 
 // offset: 0x1209C | func: 89
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1209C.s")
+s32 dll_210_func_1209C(Object* arg0, Player_Data* arg1, f32 arg2) {
+    f32 temp_fv0;
+    Vec3f sp60;
+    f32 sp5C;
+    f32 sp58;
+    f32 sp54;
+    f32 sp50;
+    Player_Data* temp_s1;
+    s16 pad_sp4A;
+    s16 sp48;
+    u32 sp44;
+    s32 temp_v0;
+
+    temp_s1 = arg0->data;
+    if (!(arg1->unk4.unk25C & 0x10) && (arg1->unk4.underwaterDist > 5.0f)) {
+        return 0x20;
+    }
+    if (arg1->unk308 & 1) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, temp_s1->unk3B8[rand_next(0xA, 0xE)], 0x7FU, NULL, NULL, 0, NULL);
+    }
+    if (arg1->unk308 & 0x80) {
+        sp44 = gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_4D8[temp_s1->unk430.unk2], rand_next(0x5A, 0x7F), NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->func_954(sp44, ((f32) rand_next(-0x64, 0x64) * 0.001f) + 1.0f);
+    }
+    if (arg1->unk272 != 0) {
+        gDLL_2_Camera->vtbl->func6(0x54, 0, 1, 0, NULL, 0x3C, 0xFF);
+        func_80023D30(arg0, _data_5E0[1], 0.0f, 1U);
+        func_80025540(arg0, (s32) *_data_5E4, 0);
+        arg1->unk298 = 0.015f;
+        func_8001A3FC(arg0->modelInsts[arg0->modelInstIdx], 0U, 0, 1.0f, arg0->srt.scale, &sp60, &sp48);
+        temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
+        temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
+        arg0->srt.transl.y = temp_s1->unk430.unk8;
+        arg1->unk270 = 0x1E;
+        arg1->unk2FC = dll_210_func_12514;
+    }
+    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    arg0->speed.y = 0.0f;
+    func_80024DD0(arg0, 0, 1, temp_s1->unk430.unk5C);
+    if (arg0->animProgress > 0.99f) {
+        arg0->positionMirror.x = temp_s1->unk7EC.x;
+        arg0->positionMirror.z = temp_s1->unk7EC.z;
+        inverse_transform_point_by_object(arg0->positionMirror.x, 0.0f, arg0->positionMirror.z, arg0->srt.transl.f, &sp50, &arg0->srt.transl.z, arg0->parent);
+        dll_210_func_7260(arg0, temp_s1);
+        func_80023D30(arg0, (s32) *temp_s1->modAnims, 0.0f, 1U);
+        return -1;
+    }
+    sp5C = arg0->srt.transl.x + (temp_s1->unk430.unk18.y * arg0->animProgress);
+    sp58 = arg0->srt.transl.y - (temp_s1->unk430.unk18.x * (1.0f - arg0->animProgress));
+    sp54 = arg0->srt.transl.z + (temp_s1->unk430.unk18.z * arg0->animProgress);
+    gDLL_2_Camera->vtbl->func10(sp5C, sp58, sp54);
+    func_8004D844(arg0, sp5C, sp58, sp54);
+    dll_210_func_7260(arg0, temp_s1);
+    return 0;
+}
 
 // offset: 0x12514 | func: 90
 static void dll_210_func_12514(Object* arg0, UNK_TYPE_32 arg1) {
