@@ -1,0 +1,12 @@
+.text = 0x0:
+CCkrazoaBits_ctor = 0x0;
+CCkrazoaBits_dtor = 0xC;
+CCkrazoaBits_setup = 0x18;
+CCkrazoaBits_control = 0xB4;
+CCkrazoaBits_update = 0x260;
+CCkrazoaBits_print = 0x26C;
+CCkrazoaBits_free = 0x284;
+CCkrazoaBits_get_model_flags = 0x294;
+CCkrazoaBits_get_data_size = 0x2A4;
+
+.rodata = 0x2F0:

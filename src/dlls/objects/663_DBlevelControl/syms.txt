@@ -1,0 +1,22 @@
+.text = 0x0:
+DBlevelControl_ctor = 0x0;
+DBlevelControl_dtor = 0xC;
+DBlevelControl_setup = 0x18;
+DBlevelControl_control = 0xE4;
+DBlevelControl_update = 0x360;
+DBlevelControl_print = 0x36C;
+DBlevelControl_free = 0x384;
+DBlevelControl_get_model_flags = 0x3C4;
+DBlevelControl_get_data_size = 0x3D4;
+
+.rodata = 0x434:
+str_0 = 0x0; // absolute:0x434
+
+.data = 0x464:
+_data_0 = 0x0; // absolute:0x464
+_data_8 = 0x8; // absolute:0x46C
+_data_E = 0xE; // absolute:0x472
+_data_10 = 0x10; // absolute:0x474
+_data_18 = 0x18; // absolute:0x47C
+_data_1E = 0x1E; // absolute:0x482
+_data_20 = 0x20; // absolute:0x484

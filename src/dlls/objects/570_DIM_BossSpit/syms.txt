@@ -1,0 +1,18 @@
+.text = 0x0:
+DIM_BossSpit_ctor = 0x0;
+DIM_BossSpit_dtor = 0xC;
+DIM_BossSpit_setup = 0x18;
+DIM_BossSpit_control = 0xCC;
+DIM_BossSpit_update = 0x1A8;
+DIM_BossSpit_print = 0x1B4;
+DIM_BossSpit_free = 0x208;
+DIM_BossSpit_get_model_flags = 0x288;
+DIM_BossSpit_get_data_size = 0x298;
+DIM_BossSpit_func_2AC = 0x2AC;
+DIM_BossSpit_func_360 = 0x360;
+DIM_BossSpit_func_53C = 0x53C;
+
+.rodata = 0x964:
+
+.bss = 0x974:
+_bss_0 = 0x0; // absolute:0x974

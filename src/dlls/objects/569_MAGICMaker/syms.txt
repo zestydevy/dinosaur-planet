@@ -1,0 +1,13 @@
+.text = 0x0:
+MAGICMaker_ctor = 0x0;
+MAGICMaker_dtor = 0xC;
+MAGICMaker_setup = 0x18;
+MAGICMaker_control = 0x2C;
+MAGICMaker_update = 0x2A0;
+MAGICMaker_print = 0x2AC;
+MAGICMaker_free = 0x300;
+MAGICMaker_get_model_flags = 0x310;
+MAGICMaker_get_data_size = 0x320;
+
+.rodata = 0x384:
+_oob_rodata_0 = 0x0; // absolute:0x384

@@ -1,0 +1,13 @@
+.text = 0x0:
+checkpoint4_ctor = 0x0;
+checkpoint4_dtor = 0xC;
+checkpoint4_setup = 0x18;
+checkpoint4_control = 0x1D8;
+checkpoint4_update = 0x1E4;
+checkpoint4_print = 0x1F0;
+checkpoint4_free = 0x244;
+checkpoint4_get_model_flags = 0x254;
+checkpoint4_get_data_size = 0x264;
+checkpoint4_func_278 = 0x278;
+
+.rodata = 0x2C4:

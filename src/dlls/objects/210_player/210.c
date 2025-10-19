@@ -2237,7 +2237,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                     gDLL_1_UI->vtbl->ui_func_1338.withThreeArgs(temp_fp->unk708->def->unkAA, 0xA0, 0x8C);
                 }
             } else {
-                gDLL_1_UI->vtbl->ui_func_130c.withThreeArgs(temp_fp->unk708->def->unkA2, 0xA0, 0x8C);
+                gDLL_1_UI->vtbl->ui_func_130c(temp_fp->unk708->def->unkA2, 0xA0, 0x8C);
             }
             if (arg2->unk8D == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);

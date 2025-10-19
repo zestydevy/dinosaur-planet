@@ -1,0 +1,12 @@
+.text = 0x0:
+CCgasventControl_ctor = 0x0;
+CCgasventControl_dtor = 0xC;
+CCgasventControl_setup = 0x18;
+CCgasventControl_control = 0x84;
+CCgasventControl_update = 0x37C;
+CCgasventControl_print = 0x388;
+CCgasventControl_free = 0x3DC;
+CCgasventControl_get_model_flags = 0x3EC;
+CCgasventControl_get_data_size = 0x3FC;
+
+.rodata = 0x460:

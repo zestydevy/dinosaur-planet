@@ -196,8 +196,8 @@ s32 unk24;
     {BIT_SpellStone_DIM_Activated,  NONE,                         0x563,  NONE,  0x61,  -1, 1}, //SpellStone - DarkIce Mines (Activated) 
     {BIT_SpellStone_WC,             NONE,                         0x180,  NONE,  NONE,  -1, 1}, //Spellstone - Walled City (Inactive) (Incorrect icon: Red Power Crystal, CRF)
     {BIT_SpellStone_DR,             NONE,                         0x180,  NONE,  NONE,  -1, 1}, //Spellstone - Dragon Rock (Inactive) (Incorrect icon: Red Power Crystal, CRF)
-    {BIT_BD_PointBack_Egg,          NONE,                         0x55e,  NONE,  0x5e,  -1, 1}, //PointBack Egg (Diamond Bay)
-    {BIT_BD_Bay_Diamond,            NONE,                         0x55f,  NONE,  0x5f,  -1, 1}, //Bay Diamond
+    {BIT_DB_PointBack_Egg,          NONE,                         0x55e,  NONE,  0x5e,  -1, 1}, //PointBack Egg (Diamond Bay)
+    {BIT_DB_Bay_Diamond,            NONE,                         0x55f,  NONE,  0x5f,  -1, 1}, //Bay Diamond
     END
 };
 

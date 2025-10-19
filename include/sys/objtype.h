@@ -9,12 +9,21 @@ enum ObjType {
     OBJTYPE_SIDEKICK = 1,
     OBJTYPE_2 = 2,
     OBJTYPE_4 = 4,
+    OBJTYPE_5 = 5,
+    OBJTYPE_6 = 6,
     OBJTYPE_7 = 7,
     OBJTYPE_10 = 10,
+    OBJTYPE_11 = 11,
     OBJTYPE_16 = 16,
+    OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
+    OBJTYPE_23 = 23,
     OBJTYPE_32 = 32,
-    OBJTYPE_39 = 39
+    OBJTYPE_39 = 39,
+    OBJTYPE_40 = 40,
+    OBJTYPE_51 = 51,
+    OBJTYPE_52 = 52,
+    OBJTYPE_64 = 64
 };
 
 void obj_object_type_init();
