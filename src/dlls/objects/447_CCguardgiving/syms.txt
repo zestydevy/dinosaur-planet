@@ -1,0 +1,12 @@
+.text = 0x0:
+CCguardgiving_ctor = 0x0;
+CCguardgiving_dtor = 0xC;
+CCguardgiving_setup = 0x18;
+CCguardgiving_control = 0xCC;
+CCguardgiving_update = 0x66C;
+CCguardgiving_print = 0x6C4;
+CCguardgiving_free = 0x6DC;
+CCguardgiving_get_model_flags = 0x6EC;
+CCguardgiving_get_data_size = 0x6FC;
+
+.rodata = 0x75C:

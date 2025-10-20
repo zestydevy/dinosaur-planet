@@ -191,6 +191,8 @@ u32 get_some_resolution_encoded(void);
 
 u16 *get_framebuffer_end();
 
+void func_8005DA00(u32 param1);
+
 s32 video_func_returning_delay(s32);
 
 #define RESOLUTION_WIDTH(encoded) (encoded & 0xFFFF)

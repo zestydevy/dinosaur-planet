@@ -1,0 +1,13 @@
+.text = 0x0:
+DIMbosscrackparticles_ctor = 0x0;
+DIMbosscrackparticles_dtor = 0xC;
+DIMbosscrackparticles_setup = 0x18;
+DIMbosscrackparticles_control = 0x70;
+DIMbosscrackparticles_update = 0x134;
+DIMbosscrackparticles_print = 0x140;
+DIMbosscrackparticles_free = 0x158;
+DIMbosscrackparticles_get_model_flags = 0x1A0;
+DIMbosscrackparticles_get_data_size = 0x1B0;
+DIMbosscrackparticles_anim_callback = 0x1C4;
+
+.rodata = 0x2D8:

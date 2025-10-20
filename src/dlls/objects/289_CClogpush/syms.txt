@@ -1,0 +1,14 @@
+.text = 0x0:
+CClogpush_ctor = 0x0;
+CClogpush_dtor = 0xC;
+CClogpush_setup = 0x18;
+CClogpush_control = 0x40;
+CClogpush_update = 0x400;
+CClogpush_print = 0x458;
+CClogpush_free = 0x4AC;
+CClogpush_get_model_flags = 0x4BC;
+CClogpush_get_data_size = 0x4CC;
+CClogpush_func_4E0 = 0x4E0;
+
+.rodata = 0x544:
+_oob_rodata_0 = 0x0; // absolute:0x544

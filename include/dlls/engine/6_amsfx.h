@@ -28,9 +28,13 @@ enum SoundID {
     SFX_12A_SnowHorn_SnoreHorn = 0x12A,
     SFX_12B_SnowHorn_Yawn_2 = 0x12B,
 
+    SOUND_177 = 0x177,
+
     SOUND_1e1_Stone_Moving = 0x1e1,
 
     SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here = 0x1E2,
+
+    SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 
     SOUND_242_Failure_Glissando = 0x242,
 
@@ -39,11 +43,21 @@ enum SoundID {
 
     SOUND_287_SB_Kyte_Empty = 0x287,
 
+    SOUND_290 = 0x290,
+
     SOUND_342 = 0x342, // used in DLL 466
+
+    SOUND_371 = 0x371, // used by MediumMetalCrat
+    SOUND_372 = 0x372, // used by MediumMetalCrat
 
     SOUND_377_Metal_Smack = 0x377,
 
+    SOUND_380 = 0x380,
+    SOUND_386 = 0x386,
+
     SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274)
+
+    SOUND_4BC = 0x4BC,
 
     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
@@ -59,7 +73,16 @@ enum SoundID {
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
 
+    SOUND_64C = 0x64C, // used by MediumCrate
+    SOUND_64D = 0x64D, // used by MediumCrate
+
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
+
+    SOUND_699 = 0x699,
+
+    SOUND_6B5 = 0x6B5, // used by MediumCrate
+    SOUND_6B6 = 0x6B6, // used by MediumCrate
+    SOUND_6B7 = 0x6B7, // used by MediumCrate
 
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 
@@ -102,12 +125,14 @@ enum SoundID {
     SOUND_B31_Item_Collection_Chime = 0xB31,
 
     SOUND_B72_Game_Saved = 0xB72,
-    SOUND_B72_Option_Selected = 0xB73,
-
+    SOUND_B73_Option_Selected = 0xB73,
     SOUND_B74 = 0xB74,
     SOUND_B75 = 0xB75,
 
     SOUND_B89_Puzzle_Solved = 0xB89, // "puzzle complete" jingle
+
+    SOUND_B95_Gasvent_Uncovered = 0xB95,
+    SOUND_B96_Gasvent_Covered = 0xB96,
 
     NO_SOUND = -1
 };

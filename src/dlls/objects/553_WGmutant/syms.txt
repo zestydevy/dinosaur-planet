@@ -1,0 +1,13 @@
+.text = 0x0:
+WGmutant_ctor = 0x0;
+WGmutant_dtor = 0xC;
+WGmutant_setup = 0x18;
+WGmutant_control = 0x58;
+WGmutant_update = 0x64;
+WGmutant_print = 0x70;
+WGmutant_free = 0xC4;
+WGmutant_get_model_flags = 0xD4;
+WGmutant_get_data_size = 0xE4;
+WGmutant_anim_callback = 0xF8;
+
+.rodata = 0x148:

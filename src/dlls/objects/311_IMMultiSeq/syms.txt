@@ -1,0 +1,14 @@
+.text = 0x0:
+IMMultiSeq_ctor = 0x0;
+IMMultiSeq_dtor = 0xC;
+IMMultiSeq_setup = 0x18;
+IMMultiSeq_control = 0x114;
+IMMultiSeq_update = 0x2B8;
+IMMultiSeq_print = 0x2C4;
+IMMultiSeq_free = 0x318;
+IMMultiSeq_get_model_flags = 0x358;
+IMMultiSeq_get_data_size = 0x368;
+IMMultiSeq_anim_callback = 0x37C;
+
+.rodata = 0x4C8:
+str_0 = 0x0; // absolute:0x4C8

@@ -1,0 +1,12 @@
+.text = 0x0:
+FElevControl_ctor = 0x0;
+FElevControl_dtor = 0xC;
+FElevControl_setup = 0x18;
+FElevControl_control = 0x5C;
+FElevControl_update = 0x68;
+FElevControl_print = 0x74;
+FElevControl_free = 0xC8;
+FElevControl_get_model_flags = 0xD8;
+FElevControl_get_data_size = 0xE8;
+
+.rodata = 0x12C:

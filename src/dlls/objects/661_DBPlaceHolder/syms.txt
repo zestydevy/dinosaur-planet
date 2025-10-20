@@ -1,0 +1,13 @@
+.text = 0x0:
+DBPlaceHolder_ctor = 0x0;
+DBPlaceHolder_dtor = 0xC;
+DBPlaceHolder_setup = 0x18;
+DBPlaceHolder_control = 0xD8;
+DBPlaceHolder_update = 0x338;
+DBPlaceHolder_print = 0x344;
+DBPlaceHolder_free = 0x3CC;
+DBPlaceHolder_get_model_flags = 0x40C;
+DBPlaceHolder_get_data_size = 0x41C;
+DBPlaceHolder_anim_callback = 0x430;
+
+.rodata = 0x4E0:

@@ -87,15 +87,16 @@ typedef struct Triangle {
 /* 0x0C */ TexCoords uv2;   // Texture coordinates for the third vertex
 } Triangle;
 
+// size may be 0x28
 typedef struct {
 /*0000*/ u16 unk0;
 /*0002*/ u16 unk2;
-/*0004*/ u16 unk4;
-/*0006*/ u16 unk6;
-/*0008*/ u16 unk8;
-/*000A*/ u16 unka;
-/*000C*/ u16 unkc;
-/*000E*/ s16 unke;
+/*0004*/ s16 unk4;
+/*0006*/ s16 unk6;
+/*0008*/ s16 unk8;
+/*000A*/ s16 unka;
+/*000C*/ s16 unkc;
+/*000E*/ u16 unke;
 /*0010*/ u16 unk10;
 /*0012*/ union {
              u16 asShort;

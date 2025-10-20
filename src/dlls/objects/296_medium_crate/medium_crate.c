@@ -1,12 +1,12 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "dlls/modgfx/106.h"
 #include "dll.h"
 #include "functions.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/math.h"
@@ -27,15 +27,15 @@ typedef struct {
 /*04*/ f32 unk4;
 /*08*/ u32 unk8;
 /*0C*/ s16 unkC;
-/*0E*/ u16 unkE;
+/*0E*/ s16 unkE;
 /*10*/ u16 unk10;
 /*12*/ s16 gamebit;
 /*14*/ u8 unk14;
 /*15*/ u8 unk15;
 /*16*/ u8 unk16;
 /*17*/ u8 unk17;
-/*18*/ s16 unk18;
-/*1A*/ s16 unk1A;
+/*18*/ s16 soundID1;
+/*1A*/ s16 soundID2;
 /*1C*/ s16 unk1C;
 /*1E*/ u8 unk1E;
 /*1F*/ u8 unk1F;
@@ -43,30 +43,13 @@ typedef struct {
 /*24*/ f32 unk24;
 } MediumCrate_Data;
 
-typedef struct {
-    s16 unk0[6];
-} idk1;
-typedef struct {
-    s16 unk0[4];
-} idk2;
-
-static DLL_Unknown *_data_0 = NULL; // DAT_8122b7d0
-static DLL_106 *_data_4 = NULL; // DAT_8122b7d4
+static DLL_IModgfx *_data_0 = NULL;
+static DLL_IModgfx *_data_4 = NULL;
 static u32 _data_8[] = {
     0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
-static idk1 _data_20 = {
-    { 0, 1, 2, 3, 4, 8 }
-};
-static idk2 _data_2C = {
-    { 0, 5, 6, 7 }
-};
-static u32 _data_34[] = {
-    0x00000000, 0x3f800000, 0x00000000
-};
-static u32 _data_40[] = {
-    0x00000008, 0x000000ff, 0x000000ff, 0x00000078
-};
+
+static s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdata);
 
 void medium_crate_ctor(void *dll) { }
 
@@ -75,11 +58,8 @@ void medium_crate_dtor(void *dll) { }
 // export 0
 void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     MediumCrate_Data *objdata;
-    idk1 local_10;
-    idk2 local_18;
-
-    local_10 = _data_20;
-    local_18 = _data_2C;
+    s16 local_10[] = { 0, 1, 2, 3, 4, 8 };
+    s16 local_18[] = { 0, 5, 6, 7 };
 
     objdata = (MediumCrate_Data*)self->data;
 
@@ -113,13 +93,13 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     self->srt.yaw = setup->unk18 << 8;
 
     if (self->id == OBJ_MediumBasket) {
-        objdata->unk15 = local_10.unk0[objdata->unk15];
-        objdata->unk18 = 0x6b5;
-        objdata->unk1A = 0x6b6;
+        objdata->unk15 = local_10[objdata->unk15];
+        objdata->soundID1 = SOUND_6B5;
+        objdata->soundID2 = SOUND_6B6;
     } else if (self->id == OBJ_MediumMetalCrat) {
-        objdata->unk15 = local_18.unk0[objdata->unk15];
-        objdata->unk18 = 0x372;
-        objdata->unk1A = 0x371;
+        objdata->unk15 = local_18[objdata->unk15];
+        objdata->soundID1 = SOUND_372;
+        objdata->soundID2 = SOUND_371;
     }
 
     if (self->ptr0x64 != NULL) {
@@ -129,7 +109,138 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 }
 
 // export 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/medium_crate_control.s")
+void medium_crate_control(Object *self) {
+    Object* sp9C;
+    Object* player;
+    MediumCrate_Setup* setup = (MediumCrate_Setup*)self->setup;
+    f32 sp88[3] = { 0.0f, 1.0f, 0.0f };
+    s32 sp80;
+    s32 temp_v0_4;
+    s32 sp7C = -1;
+    s32 sp78;
+    f32 temp_fv0_2;
+    f32 sp70 = 1.0f;
+    s32 sp60[4] = { 8, 255, 255, 120 };
+    SRT sp48;
+    MediumCrate_Data* objdata;
+
+    gDLL_7_Newday->vtbl->func5(&sp70);
+    objdata = self->data;
+    player = get_player();
+    if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID) == 0) {
+        return;
+    }
+    if (objdata->unk4 > 0.0f) {
+        if (objdata->unk0 != -1) {
+            objdata->unk4 -= (delayFloat * sp70);
+            if (objdata->unk4 <= 0.0f) {
+                objdata->unk4 = 0.0f;
+                objdata->unkC = 0;
+                func_8002674C(self);
+                self->unk0xaf &= ~0x8;
+            }
+        }
+    } else {
+        if (objdata->unkC != 0) {
+            objdata->unk20 = 0;
+            objdata->unkC -= delayByte;
+            if (objdata->unkC <= 0) {
+                if (objdata->unk0 > 0) {
+                    objdata->unk4 = 1.0f;
+                    gDLL_29_Gplay->vtbl->add_time(setup->base.uID, (f32) objdata->unk0);
+                } else {
+                    objdata->unk4 = 1.0f;
+                }
+                self->srt.transl.x = setup->base.x;
+                self->srt.transl.y = setup->base.y;
+                self->srt.transl.z = setup->base.z;
+                self->positionMirror2.x = setup->base.x;
+                self->positionMirror2.y = setup->base.y;
+                self->positionMirror2.z = setup->base.z;
+                self->speed.x = 0.0f;
+                self->speed.y = 0.0f;
+                self->speed.z = 0.0f;
+                func_800267A4(self);
+            }
+            if (objdata->unkC <= 50) {
+                return;
+            }
+        }
+        
+        self->srt.pitch = objdata->unk1C;
+        objdata->unk1C = (s16) (s32) ((f32) objdata->unk1C * -0.5f);
+        if ((self->srt.pitch < 0xA) && (self->srt.pitch >= -9)) {
+            self->srt.pitch = 0;
+        }
+        temp_v0_4 = func_8002601C(self, &sp9C, &sp7C, &sp78, &sp48.transl.x, &sp48.transl.y, &sp48.transl.z);
+        if (temp_v0_4 != 0) {
+            objdata->unk17 += sp78;
+            if (objdata->unk17 < 2) {
+                gDLL_6_AMSFX->vtbl->play_sound(self, objdata->soundID1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objdata->unk20 = 1.0f;
+                objdata->unk24 = 12.0f;
+                if (self->id == OBJ_MediumBasket) {
+                    objdata->unk1C = rand_next(600, 800);
+                }
+                if (temp_v0_4 != 0xF) {
+                    sp48.transl.x += gWorldX;
+                    sp48.roll = 0;
+                    sp48.transl.z += gWorldZ;
+                    sp48.pitch = 0;
+                    sp48.yaw = 0;
+                    sp48.scale = 1.0f;
+                    _data_4->vtbl->func0(NULL, 1, &sp48, 0x401, -1, &sp60);
+                }
+            } else {
+                if (objdata->unk8 != 0) {
+                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+                    objdata->unk8 = 0;
+                }
+                _data_0->vtbl->func0(self, 1, NULL, 2, -1, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, objdata->soundID2, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objdata->unkC = 50;
+                objdata->unk17 = 0;
+                medium_crate_func_C50(self, player, objdata);
+                self->unk0xaf |= 8;
+            }
+        }
+        temp_fv0_2 = vec3_distance_squared(&get_player()->positionMirror, &self->positionMirror);
+        objdata->unkE -= delayByte;
+        if (objdata->unkE <= 0) {
+            objdata->unkE = rand_next(0, 100) + 300;
+            if (temp_fv0_2 < 8100.0f) {
+                if ((objdata->unk15 == 5) || (objdata->unk15 == 6) || (objdata->unk15 == 7) || (objdata->unk15 == 8)) {
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_64D, 0x39, NULL, NULL, 0, NULL);
+                } else if (objdata->unk15 == 0) {
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_6B7, 0x39, NULL, NULL, 0, NULL);
+                }
+            }
+        } else {
+            if ((objdata->unk15 == 1) || (objdata->unk15 == 2) || (objdata->unk15 == 3) || (objdata->unk15 == 4)) {
+                if (objdata->unk8 == 0) {
+                    if (temp_fv0_2 < 8100.0f) {
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_64C, 0x39, &objdata->unk8, NULL, 0, NULL);
+                    }
+                } else if (temp_fv0_2 >= 8100.0f) {
+                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);
+                    objdata->unk8 = 0;
+                }
+            }
+        }
+        
+        if (objdata->unk20 > 0.0f) {
+            objdata->unk20 += (delayFloat * objdata->unk24);
+            if (objdata->unk20 < 0.0f) {
+                objdata->unk20 = 0.0f;
+                return;
+            }
+            if (objdata->unk20 > 120.0f) {
+                objdata->unk20 = 120.0f - (objdata->unk20 - 120.0f);
+                objdata->unk24 = -objdata->unk24;
+            }
+        }
+    }
+}
 
 // export 2
 void medium_crate_update(Object *self) { }
@@ -196,6 +307,7 @@ u32 medium_crate_get_data_size(Object *self, u32 currentSize) {
     return sizeof(MediumCrate_Data);
 }
 
+// TODO: move to headers
 typedef struct {
     ObjSetup base;
     u8 unk18;
@@ -225,15 +337,15 @@ typedef struct {
     u8 _unk2E[2];
 } FoodPickup_Setup;
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/296_medium_crate/medium_crate_func_C50.s")
-#else
 s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdata) {
     s32 spawnsLeft;
     Object *obj;
     SRT srt;
     f32 magnitude;
     s32 temp;
+    Scorpion_Setup *scorpionSetup;
+    Scarab_Setup *scarabSetup;
+    FoodPickup_Setup *foodPickupSetup;
     
     spawnsLeft = objdata->unk16;
     while (spawnsLeft != 0) {
@@ -241,29 +353,27 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
 
         switch (objdata->unk15) {
             case 0: {
-                Scorpion_Setup *setup = (Scorpion_Setup*)obj_alloc_create_info(
-                    sizeof(Scorpion_Setup), OBJ_Scorpion);
-                setup->unk18 = rand_next(-127, 126);
-                setup->base.x = rand_next(-10, 10) + self->srt.transl.x;
-                setup->base.y = self->srt.transl.y;
-                setup->base.z = rand_next(-10, 10) + self->srt.transl.z;
-                setup->unk1A = 49;
-                setup->unk19 = 7;
-                obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                scorpionSetup = obj_alloc_create_info(sizeof(Scorpion_Setup), OBJ_Scorpion);
+                scorpionSetup->unk18 = rand_next(-127, 126);
+                scorpionSetup->base.x = rand_next(-10, 10) + self->srt.transl.x;
+                scorpionSetup->base.y = self->srt.transl.y;
+                scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
+                scorpionSetup->unk1A = 49;
+                scorpionSetup->unk19 = 7;
+                obj_create((ObjSetup*)scorpionSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 break;
             }
             case 1: {
-                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
-                    sizeof(Scarab_Setup), OBJ_Green_scarab);
-                setup->base.x = self->srt.transl.x;
-                setup->base.y = self->srt.transl.y;
-                setup->base.z = self->srt.transl.z;
-                setup->unk1A = 400;
-                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Green_scarab);
+                scarabSetup->base.x = self->srt.transl.x;
+                scarabSetup->base.y = self->srt.transl.y;
+                scarabSetup->base.z = self->srt.transl.z;
+                scarabSetup->unk1A = 400;
+                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
-                if (magnitude != 0.0f) {
+                if (magnitude != 0) {
                     magnitude = sqrtf(magnitude);
                     obj->speed.x /= magnitude;
                     obj->speed.z /= magnitude;
@@ -279,7 +389,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
                 rotate_vec3(&srt, obj->speed.f);
-                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
+                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
                     temp += 0xFFFF0001;
@@ -291,18 +401,17 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 2: {
-                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
-                    sizeof(Scarab_Setup), OBJ_Red_scarab);
-                setup->unk18 = rand_next(-127, 126);
-                setup->base.x = self->srt.transl.x;
-                setup->base.y = self->srt.transl.y;
-                setup->base.z = self->srt.transl.z;
-                setup->unk1A = 400;
-                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Red_scarab);
+                scarabSetup->unk18 = rand_next(-127, 126);
+                scarabSetup->base.x = self->srt.transl.x;
+                scarabSetup->base.y = self->srt.transl.y;
+                scarabSetup->base.z = self->srt.transl.z;
+                scarabSetup->unk1A = 400;
+                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
-                if (magnitude != 0.0f) {
+                if (magnitude != 0) {
                     magnitude = sqrtf(magnitude);
                     obj->speed.x /= magnitude;
                     obj->speed.z /= magnitude;
@@ -318,7 +427,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
                 rotate_vec3(&srt, obj->speed.f);
-                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
+                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
                     temp += 0xFFFF0001;
@@ -330,18 +439,17 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 3: {
-                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
-                    sizeof(Scarab_Setup), OBJ_Gold_scarab);
-                setup->unk18 = rand_next(-127, 126);
-                setup->base.x = self->srt.transl.x;
-                setup->base.y = self->srt.transl.y;
-                setup->base.z = self->srt.transl.z;
-                setup->unk1A = 2000;
-                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Gold_scarab);
+                scarabSetup->unk18 = rand_next(-127, 126);
+                scarabSetup->base.x = self->srt.transl.x;
+                scarabSetup->base.y = self->srt.transl.y;
+                scarabSetup->base.z = self->srt.transl.z;
+                scarabSetup->unk1A = 2000;
+                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
-                if (magnitude != 0.0f) {
+                if (magnitude != 0) {
                     magnitude = sqrtf(magnitude);
                     obj->speed.x /= magnitude;
                     obj->speed.z /= magnitude;
@@ -357,7 +465,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
                 rotate_vec3(&srt, obj->speed.f);
-                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
+                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
                     temp += 0xFFFF0001;
@@ -369,18 +477,17 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 break;
             }
             case 4: {
-                Scarab_Setup *setup = (Scarab_Setup*)obj_alloc_create_info(
-                    sizeof(Scarab_Setup), OBJ_Rain_scarab);
-                setup->unk18 = rand_next(-127, 126);
-                setup->base.x = self->srt.transl.x;
-                setup->base.y = self->srt.transl.y;
-                setup->base.z = self->srt.transl.z;
-                setup->unk1A = 2000;
-                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
-                obj->speed.x = self->srt.transl.x - player->srt.transl.x;
-                obj->speed.z = self->srt.transl.z - player->srt.transl.z;
+                scarabSetup = obj_alloc_create_info(sizeof(Scarab_Setup), OBJ_Rain_scarab);
+                scarabSetup->unk18 = rand_next(-127, 126);
+                scarabSetup->base.x = self->srt.transl.x;
+                scarabSetup->base.y = self->srt.transl.y;
+                scarabSetup->base.z = self->srt.transl.z;
+                scarabSetup->unk1A = 2000;
+                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj->speed.x = player->srt.transl.x - self->srt.transl.x;
+                obj->speed.z = player->srt.transl.z - self->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
-                if (magnitude != 0.0f) {
+                if (magnitude != 0) {
                     magnitude = sqrtf(magnitude);
                     obj->speed.x /= magnitude;
                     obj->speed.z /= magnitude;
@@ -396,7 +503,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 srt.pitch = 0;
                 srt.yaw = rand_next(-10000, 10000);
                 rotate_vec3(&srt, obj->speed.f);
-                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF;
+                temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
                 if (temp > 0x8000) {
                     temp += 0xFFFF0001;
@@ -409,22 +516,19 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 5:
             case 6: {
-                FoodPickup_Setup *setup;
                 if (objdata->unk15 == 5) {
-                    setup = (FoodPickup_Setup*)obj_alloc_create_info(
-                        sizeof(FoodPickup_Setup), OBJ_meatPickup);
+                    foodPickupSetup = obj_alloc_create_info(sizeof(FoodPickup_Setup), OBJ_meatPickup);
                 } else {
-                    setup = (FoodPickup_Setup*)obj_alloc_create_info(
-                        sizeof(FoodPickup_Setup), OBJ_applePickup);
+                    foodPickupSetup = obj_alloc_create_info(sizeof(FoodPickup_Setup), OBJ_applePickup);
                 }
-                setup->unk1A = 20;
-                setup->unk2C = -1;
-                setup->unk1C = -1;
-                setup->base.x = self->srt.transl.x;
-                setup->base.y = self->srt.transl.y + 5.0f;
-                setup->base.z = self->srt.transl.z;
-                setup->unk24 = -1;
-                obj = obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                foodPickupSetup->unk1A = 20;
+                foodPickupSetup->unk2C = -1;
+                foodPickupSetup->unk1C = -1;
+                foodPickupSetup->base.x = self->srt.transl.x;
+                foodPickupSetup->base.y = self->srt.transl.y + 5.0f;
+                foodPickupSetup->base.z = self->srt.transl.z;
+                foodPickupSetup->unk24 = -1;
+                obj = obj_create((ObjSetup*)foodPickupSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
                 obj->unk_0xe0 = 21600;
                 break;
             }
@@ -437,4 +541,3 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
     
     return 0;
 }
-#endif

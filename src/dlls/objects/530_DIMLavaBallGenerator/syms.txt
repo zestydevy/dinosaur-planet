@@ -1,0 +1,15 @@
+.text = 0x0:
+DIMLavaBallGenerator_ctor = 0x0;
+DIMLavaBallGenerator_dtor = 0xC;
+DIMLavaBallGenerator_setup = 0x18;
+DIMLavaBallGenerator_control = 0x114;
+DIMLavaBallGenerator_update = 0x388;
+DIMLavaBallGenerator_print = 0x394;
+DIMLavaBallGenerator_free = 0x3E8;
+DIMLavaBallGenerator_get_model_flags = 0x4D8;
+DIMLavaBallGenerator_get_data_size = 0x4E8;
+DIMLavaBallGenerator_func_4FC = 0x4FC;
+DIMLavaBallGenerator_func_59C = 0x59C;
+
+.rodata = 0x68C:
+_oob_rodata_0 = 0x0; // absolute:0x68C

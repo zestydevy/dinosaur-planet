@@ -1,0 +1,12 @@
+.text = 0x0:
+BWLevelControl_ctor = 0x0;
+BWLevelControl_dtor = 0xC;
+BWLevelControl_setup = 0x18;
+BWLevelControl_control = 0x5C;
+BWLevelControl_update = 0xA4;
+BWLevelControl_print = 0xB0;
+BWLevelControl_free = 0x104;
+BWLevelControl_get_model_flags = 0x144;
+BWLevelControl_get_data_size = 0x154;
+
+.rodata = 0x1AC:

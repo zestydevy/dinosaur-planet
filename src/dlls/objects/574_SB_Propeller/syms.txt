@@ -1,0 +1,15 @@
+.text = 0x0:
+SB_Propeller_ctor = 0x0;
+SB_Propeller_dtor = 0xC;
+SB_Propeller_setup = 0x18;
+SB_Propeller_control = 0x4C;
+SB_Propeller_update = 0x464;
+SB_Propeller_print = 0x4AC;
+SB_Propeller_free = 0x6B8;
+SB_Propeller_get_model_flags = 0x714;
+SB_Propeller_get_data_size = 0x724;
+
+.rodata = 0x790:
+
+.data = 0x7A0:
+_data_0 = 0x0; // absolute:0x7A0

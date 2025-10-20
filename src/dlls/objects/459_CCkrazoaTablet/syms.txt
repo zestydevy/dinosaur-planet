@@ -1,0 +1,15 @@
+.text = 0x0:
+CCkrazoaTablet_ctor = 0x0;
+CCkrazoaTablet_dtor = 0xC;
+CCkrazoaTablet_setup = 0x18;
+CCkrazoaTablet_control = 0xB4;
+CCkrazoaTablet_update = 0x1BC;
+CCkrazoaTablet_print = 0x1C8;
+CCkrazoaTablet_free = 0x1E0;
+CCkrazoaTablet_get_model_flags = 0x1F0;
+CCkrazoaTablet_get_data_size = 0x200;
+CCkrazoaTablet_anim_callback = 0x214;
+CCkrazoaTablet_func_3F8 = 0x3F8;
+CCkrazoaTablet_func_48C = 0x48C;
+
+.rodata = 0x624:

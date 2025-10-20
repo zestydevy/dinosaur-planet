@@ -1,0 +1,18 @@
+.text = 0x0:
+KT_RexLevel_ctor = 0x0;
+KT_RexLevel_dtor = 0xC;
+KT_RexLevel_setup = 0x18;
+KT_RexLevel_control = 0x1FC;
+KT_RexLevel_update = 0x470;
+KT_RexLevel_print = 0x47C;
+KT_RexLevel_free = 0x4D0;
+KT_RexLevel_get_model_flags = 0x560;
+KT_RexLevel_get_data_size = 0x570;
+
+.rodata = 0x5D8:
+
+.data = 0x5D8:
+_data_0 = 0x0; // absolute:0x5D8
+
+.bss = 0x5E8:
+_bss_0 = 0x0; // absolute:0x5E8

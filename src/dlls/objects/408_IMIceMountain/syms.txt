@@ -1,0 +1,18 @@
+.text = 0x0:
+IMIceMountain_ctor = 0x0;
+IMIceMountain_dtor = 0xC;
+IMIceMountain_setup = 0x18;
+IMIceMountain_control = 0x330;
+IMIceMountain_update = 0x444;
+IMIceMountain_print = 0x450;
+IMIceMountain_free = 0x4A4;
+IMIceMountain_get_model_flags = 0x4B4;
+IMIceMountain_get_data_size = 0x4C4;
+IMIceMountain_anim_callback = 0x4D8;
+IMIceMountain_do_act1 = 0x694;
+IMIceMountain_do_race = 0xAB4;
+IMIceMountain_do_act2 = 0xC60;
+IMIceMountain_do_act3 = 0xC6C;
+IMIceMountain_do_act4 = 0xC78;
+
+.rodata = 0xCF4:

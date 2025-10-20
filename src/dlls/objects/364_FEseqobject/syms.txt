@@ -1,0 +1,16 @@
+.text = 0x0:
+FEseqobject_ctor = 0x0;
+FEseqobject_dtor = 0xC;
+FEseqobject_setup = 0x18;
+FEseqobject_control = 0x6C;
+FEseqobject_update = 0xE4;
+FEseqobject_print = 0xF0;
+FEseqobject_free = 0x144;
+FEseqobject_get_model_flags = 0x154;
+FEseqobject_get_data_size = 0x164;
+FEseqobject_anim_callback = 0x178;
+
+.rodata = 0x630:
+
+.data = 0x650:
+_data_0 = 0x0; // absolute:0x650

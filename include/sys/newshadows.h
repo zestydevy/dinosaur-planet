@@ -168,6 +168,7 @@ extern Texture* D_800BB190;
 
 void func_8004D880(Object *arg0);
 s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5);
+void func_8004D844(Object *obj, f32 x, f32 y, f32 z);
 
 // defined in newshadows.c but used before declared
 s32 func_8004FA4C(void);

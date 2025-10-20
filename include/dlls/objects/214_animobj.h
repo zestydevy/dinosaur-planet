@@ -44,7 +44,8 @@ typedef struct {
 /*76*/ s16 unk76;
 /*78*/ s8 unk78[0x7A - 0x78];
 /*7A*/ s16 unk7A;
-/*7C*/ s8 unk7C[0x80 - 0x7C];
+/*7C*/ s16 unk7C;
+/*7E*/ s8 unk7E[0x80 - 0x7E];
 /*8B*/ s32 unk80;
 /*7C*/ s8 unk84[0x8B - 0x84];
 /*8B*/ s8 unk8B;

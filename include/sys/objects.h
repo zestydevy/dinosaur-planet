@@ -44,8 +44,11 @@ void obj_free_effect_box(Object *obj);
 void *obj_alloc_create_info(s32 size, s32 objId);
 
 void func_800210DC();
+void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6);
 
 s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz);
 Object *func_800211B4(s32 param1);
+
+void func_80036F6C(s16 arg0, s16 arg1, s16 arg2);
 
 #endif
