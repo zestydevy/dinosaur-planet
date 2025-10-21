@@ -25,6 +25,7 @@ typedef struct {
 /*0x28A8*/ static s32 _bss_28A8;
 
 s32 dll_26_func_1924(CurveSetup *setup);
+static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5);
 
 // offset: 0x0 | ctor
 void dll_26_ctor(void *dll) { }
@@ -726,10 +727,80 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x291C | func: 27 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_291C.s")
+s32 dll_26_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
+    CurveSetup* temp_v0;
+    CurveSetup* var_s1;
+    s32 sp64;
+    f32 temp_fa1;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 var_s0;
+    s32 var_s5;
+    s32 var_v0;
+
+    sp64 = arg0;
+    var_s1 = dll_26_func_39C(sp64);
+    var_s5 = 0;
+    arg4[0] = 200000.0f;
+
+    do {
+        var_s0 = -1;
+        for (var_v0 = 0; var_v0 < 4 && var_s0 == -1; var_v0++) {
+            if (var_s1->unk1B & (1 << var_v0)) {
+                continue;
+            }
+
+            var_s0 = var_s1->unk1C[var_v0];
+        }
+
+        if (var_s0 != -1) {
+            temp_v0 = dll_26_func_39C(var_s0);
+            if (dll_26_func_2AE8(arg1, arg2, arg3, var_s1, temp_v0, 1000.0f) != 0) {
+                temp_fv0 = var_s1->base.x - arg1;
+                temp_fv1 = var_s1->base.y - arg2;
+                temp_fa1 = var_s1->base.z - arg3;
+                temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
+                if (temp_fv0 < arg4[0]) {
+                    arg4[0] = temp_fv0;
+                }
+                var_s5++;
+            }
+
+            sp64 = var_s0;
+            var_s1 = temp_v0;
+        }
+
+        if (sp64 == arg0) {
+            break;
+        }
+    } while (var_s0 != -1);
+    
+    return var_s5 & 1;
+}
 
 // offset: 0x2AE8 | func: 28
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2AE8.s")
+static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5) {
+    f32 temp_fa1;
+    f32 temp_ft4;
+    f32 temp_ft5;
+    f32 temp_fv0;
+    f32 temp_ft1;
+    f32 temp_fv1;
+
+    temp_fv0 = a3->base.x;
+    temp_fv1 = a3->base.z;
+    temp_fa1 = a4->base.x;
+    temp_ft4 = a4->base.z;
+    temp_ft5 = (temp_fa1 * temp_fv1) - (temp_fv0 * temp_ft4);
+    temp_ft1 = ((temp_ft4 - temp_fv1) * a0) + ((temp_fv0 - temp_fa1) * a2) + temp_ft5;
+    if ((temp_ft1 <= 0.0f && temp_ft5 >= 0.0f) || (temp_ft1 >= 0.0f && temp_ft5 < 0.0f)) {
+        if (((((-a2 * temp_fv0) + (a0 * temp_fv1)) <= 0.0f) && (((-a2 * temp_fa1) + (a0 * temp_ft4)) >= 0.0f)) || 
+            ((((-a2 * temp_fv0) + (a0 * temp_fv1)) >= 0.0f) && (((-a2 * temp_fa1) + (a0 * temp_ft4)) < 0.0f))) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 // offset: 0x2C20 | func: 29 | export: 30
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2C20.s")
@@ -739,6 +810,23 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 
 // offset: 0x31E0 | func: 31 | export: 32
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_31E0.s")
+// void dll_26_func_31E0(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg4) {
+//     CurveSetup *temp_v0;
+//     f32 temp_fv0;
+
+//     temp_v0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
+//     if (temp_v0 == NULL) {
+//         *arg1 = arg0->base.x;
+//         *arg2 = arg0->base.y;
+//         *arg3 = arg0->base.z;
+//         return;
+//     }
+//     temp_fv0 = arg0->base.x;
+//     *arg1 = temp_fv0 + ((temp_v0->base.x - temp_fv0) * arg4);
+//     *arg2 = arg0->base.y + ((temp_v0->base.y - arg0->base.y) * arg4);
+//     *arg3 = arg0->base.z + ((temp_v0->base.z - arg0->base.z) * arg4);
+// }
+
 
 // offset: 0x32D8 | func: 32 | export: 33
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_32D8.s")
