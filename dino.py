@@ -4,6 +4,7 @@ import argparse
 import glob
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -53,6 +54,8 @@ DIFF_PY = TOOLS_PATH.joinpath("asm_differ/diff.py")
 M2CTX_PY = TOOLS_PATH.joinpath("m2ctx.py")
 PERMUTER_IMPORT_PY = TOOLS_PATH.joinpath("decomp_permuter/import.py")
 PERMUTER_PERMUTER_PY = TOOLS_PATH.joinpath("decomp_permuter/permuter.py")
+
+GLOBAL_ASM_PATTERN = re.compile(r"#pragma GLOBAL_ASM\(\"(.+)/(.+)\.s\"\)")
 
 class DinoCommandRunner:
     def __init__(self, verbose: bool) -> None:
@@ -480,6 +483,39 @@ class DinoCommandRunner:
     
     def permuter(self, args: "list[str]"):
         self.__run_cmd([sys.executable, str(PERMUTER_PERMUTER_PY)] + args)
+
+    def m2c(self, args: "list[str]"):
+        self.__run_cmd(["m2c", "-t", "mips-ido-c"] + args)
+
+    def decompile(self, file: str, func_name: str, keep_ctx: bool):
+        filepath = Path(file)
+        if not filepath.exists():
+            print(f"File not found at: {filepath.absolute().resolve()}")
+            sys.exit(1)
+
+        # Find GLOBAL_ASM for function
+        asmpath: Path | None = None
+        with open(filepath, "r", encoding="utf-8") as c_file:
+            for line in c_file.readlines():
+                match = GLOBAL_ASM_PATTERN.match(line.strip())
+                if match != None:
+                    asmdir = match.group(1)
+                    name = match.group(2)
+
+                    if name == func_name:
+                        asmpath = Path(asmdir).joinpath(f"{name}.s")
+                        break
+
+        if asmpath == None:
+            print(f"Could not find GLOBAL_ASM pragma for function '{func_name}' in {filepath.absolute().resolve()}")
+            sys.exit(1)
+
+        # Re-create context for file
+        if not keep_ctx:
+            self.__run_cmd([sys.executable, str(M2CTX_PY), file])
+
+        # Run m2c
+        self.__run_cmd(["m2c", "-t", "mips-ido-c", "--context", "ctx.c", "-f", func_name, asmpath.as_posix()])
     
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")
@@ -569,8 +605,15 @@ def main():
     subparsers.add_parser("permuter", help="Randomly permute a C file to better match a target binary (redirects to decomp-permuter permuter.py).", add_help=False)
     subparsers.add_parser("permuter-import", help="Import a function for permuter (redirects to decomp-permuter import.py).", add_help=False)
     
-    ctx_cmd = subparsers.add_parser("context", help="Create a context file that can be used for mips2c/decomp.me.")
+    ctx_cmd = subparsers.add_parser("context", help="Create a context file that can be used for m2c/decomp.me.")
     ctx_cmd.add_argument("file", help="The C file to create context for.")
+
+    subparsers.add_parser("m2c", help="Run m2c with the target (-t) argument already set (redirects to m2c).", add_help=False)
+
+    decompile_cmd = subparsers.add_parser("decompile", help="Run m2c for a specific file/function. Automatically generates the context file.")
+    decompile_cmd.add_argument("file", help="The C file to create context for. Must contain a GLOBAL_ASM pragma for the function to be decompiled.")
+    decompile_cmd.add_argument("function", help="The name of the function to decompile. A GLOBAL_ASM pragma must exist with a path to the asm of the function.")
+    decompile_cmd.add_argument("--keep-ctx", dest="keep_ctx", action="store_true", help="Don't regenerate ctx.c. Useful if you need to manually edit the context file.", default=False)
 
     args, _ = parser.parse_known_args()
     cmd = args.command
@@ -632,6 +675,12 @@ def main():
             permuter_index = sys.argv.index("permuter-import")
             full_args = sys.argv[permuter_index + 1:]
             runner.permuter_import(args=full_args)
+        elif cmd == "m2c":
+            m2c_index = sys.argv.index("m2c")
+            full_args = sys.argv[m2c_index + 1:]
+            runner.m2c(args=full_args)
+        elif cmd == "decompile":
+            runner.decompile(args.file, args.function, args.keep_ctx)
         
         # Notify user if IDO recomp is out-of-date
         if cmd != "setup" and cmd != "update-ido":

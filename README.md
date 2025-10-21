@@ -78,7 +78,8 @@ The repository comes with a bunch of tools for decompilation and managing the re
     - `extract` - Splits the ROM and unpacks DLLs.
     - `clean` - Removes all extracted files, build artifacts, and build scripts for a fresh state.
     - `diff` - Diff a function/address between the base and re-built ROM.
-    - `context` - Create a context file that can be used for mips2c/decomp.me.
+    - `context` - Create a context file that can be used for m2c/decomp.me.
+    - `decompile` - Run m2c locally for a specific file/function.
 - `tools/first-diff.py` - Find the first N differences between the base and re-built ROM.
 - `tools/first_bin_diff.py` - Find the first N differences between two binary files.
 - `tools/dlldump.py` - Dump headers, relocation tables, and assembly from a Dinosaur Planet DLL.
