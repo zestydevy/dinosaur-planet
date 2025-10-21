@@ -11,6 +11,7 @@ import re
 from shutil import which
 import sys
 from typing import TextIO
+from natsort import os_sort_keygen
 import ninja_syntax
 
 from dino.dll_build_config import DLLBuildConfig
@@ -543,10 +544,15 @@ class ObjDiffConfigWriter:
         config["custom_make"] = "ninja"
         config["build_target"] = False # We don't have build commands for the expected directory
         config["build_base"] = True
-        config["progress_categories"] = [
-            { "id": "core", "name": "Core Code" },
-            { "id": "dll", "name": "DLL Code" },
+
+        categories = [
+            { "id": "core", "name": "Core" },
+            { "id": "dll", "name": "DLLs" },
         ]
+        config["progress_categories"] = categories
+
+        for i in range(796):
+            categories.append({ "id": f"dll-{i + 1}", "name": f"DLL {i + 1}" })
 
         units = []
         config["units"] = units
@@ -562,19 +568,49 @@ class ObjDiffConfigWriter:
                         "progress_categories": ["core"]
                     }
                 })
+            elif file.type == BuildFileType.ASM:
+                # hasm files
+                units.append({
+                    "name": file.obj_path,
+                    "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
+                    "base_path": f"{self.config.build_dir}/{file.obj_path}",
+                    "metadata": {
+                        "auto_generated": True,
+                        "complete": True,
+                        "source_path": file.src_path,
+                        "progress_categories": ["core"]
+                    }
+                })
         
         for dll in self.input.dlls:
             for file in dll.files:
-                if file.type == BuildFileType.C:
+                if file.type == BuildFileType.C or (file.type == BuildFileType.ASM and not file.obj_path.endswith("exports.o")):
                     units.append({
                         "name": file.obj_path,
                         "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
                         "base_path": f"{self.config.build_dir}/{file.obj_path}",
                         "metadata": {
                             "source_path": file.src_path,
-                            "progress_categories": ["dll"]
+                            "progress_categories": ["dll", f"dll-{dll.number}"]
                         }
                     })
+
+        # Sort directories first, "OS" natsort for paths in the same
+        natsort_key = os_sort_keygen(key=lambda u: (-u["name"].count(os.path.sep), u["name"]))
+        units.sort(key=lambda u: natsort_key(u))
+
+        # Add ASM DLLs after the sort, we don't need to waste time sorting these since they're hidden
+        for dll in self.input.asm_dlls:
+            file = dll.file
+
+            units.append({
+                "name": file.obj_path,
+                "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
+                "metadata": {
+                    "auto_generated": True,
+                    "progress_categories": ["dll", f"dll-{dll.number}"]
+                }
+            })
         
         json.dump(config, self.output_file, indent=2)
 
