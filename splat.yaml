@@ -85,9 +85,9 @@ segments:
     - [0x3F5F0, c, segment_3F5F0]
     - [0x41BD0, c, map]
     - [0x4E070, c, newshadows]
-    - [0x535C0, c, segment_535C0]
+    - [0x535C0, c, segment_535C0] # shadow hasm?
     - [0x53F00, c, segment_53F00] # track/intersect.c ?
-    - [0x5C470, c, segment_5C470]
+    - [0x5C470, c, segment_5C470] # more shadow code
     - [0x5D380, c, video]
     - [0x5E010, c, vi]
     - [0x5EE00, c, libultra/io/vimgr]
