@@ -16,6 +16,7 @@ __pycache__
 
 # Context file from m2ctx.py
 ctx.c
+*.m2c
 
 # Virtual Env for newer python versions
 .venv

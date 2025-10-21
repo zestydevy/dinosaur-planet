@@ -71,8 +71,8 @@ Before opening a pull request, you should make sure that:
 The following is a list of external resources that may be helpful:
 - Tools
     - [decomp.me](https://decomp.me/) - Online space for decompiling individual functions with a live diff.
-    - [mips2c (online)](https://simonsoftware.se/other/mips_to_c.py) - Online MIPS to C decompiler.
-    - [mips2c (offline)](https://github.com/matt-kempster/mips_to_c) - Source of mips2c.
+    - [m2c (online)](https://simonsoftware.se/other/m2c.html) - Online MIPS to C decompiler.
+    - [m2c (offline)](https://github.com/matt-kempster/m2c) - Source of m2c.
     - [Ghidra](https://ghidra-sre.org/) - Reverse engineering suite (including a decompiler).
     - [Ghidra N64LoaderWV-DinoPlanet](https://github.com/HugoPeters/N64LoaderWV-DinoPlanet) - A Ghidra plugin for loading the Dinosaur Planet ROM.
     - [f32 converter](https://www.h-schmidt.net/FloatConverter/IEEE754.html) - Convert between 32-bit floating point numbers and binary/hexadecimal representations.

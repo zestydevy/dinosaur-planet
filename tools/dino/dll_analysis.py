@@ -462,7 +462,6 @@ def __set_spimdisasm_config(gp: int):
     spimdisasm.common.GlobalConfig.GP_VALUE = gp # Should already have the base VRAM applied!
     spimdisasm.common.GlobalConfig.PIC = True
     spimdisasm.common.GlobalConfig.EMIT_CPLOAD = False
-    spimdisasm.common.GlobalConfig.ASM_NM_LABEL = ""
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_LOW = DLL_VRAM_BASE
     spimdisasm.common.GlobalConfig.SYMBOL_FINDER_FILTER_ADDRESSES_ADDR_HIGH = 0xB0000000 # Filter out direct ROM address
     spimdisasm.common.GlobalConfig.RODATA_STRING_GUESSER_LEVEL = 3 # 3 can detect empty strings

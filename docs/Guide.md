@@ -198,7 +198,7 @@ void vec3_normalize(f32 *a0) {
 }
 ```
 
-> Whew! That was a bit of code to go through and annotate. It's worth mentioning at this point that auto-decompilers can be used instead of manually translating each instruction, such as [decomp.me](https://decomp.me/) and [mips2c](https://simonsoftware.se/other/mips_to_c.py).
+> Whew! That was a bit of code to go through and annotate. It's worth mentioning at this point that auto-decompilers can be used instead of manually translating each instruction, such as [decomp.me](https://decomp.me/) and [m2c](https://simonsoftware.se/other/m2c.html).
 >
 > It's unlikely that a tool will decompile assembly into a perfectly matching function, but it can still save a lot of time.
 
@@ -415,10 +415,10 @@ Here are some recommended tools:
 ### decomp.me
 [decomp.me](https://decomp.me/) is an online collaborative space for decomp. Here, you can create a 'scratch' for a function and get a live diff of your current C implementation and the expected assembly code. You can also share a link to your function for others to play around with. The site has a preset for the Dinosaur Planet decomp that will automatically set up the correct compiler version and default flags.
 
-> Note: To use decomp.me, you'll need a 'context' file for the function you're working on. This is essentially just a C header file that contains all of the declarations of types, functions, and macros that are used by your function. You can generate this file by running `./dino.py context <path to your file.c>` (you may need to remove function implementations at the bottom of the generated file).
+> Note: To use decomp.me, you'll need a 'context' file for the function you're working on. This is essentially just a C header file that contains all of the declarations of types, functions, and macros that are used by your function. You can generate this file by running `./dino.py context <path to your file.c>`.
 
-### mips2c
-mips2c can be used to automatically decompile a function from assembly into C. There is an [online](https://simonsoftware.se/other/mips_to_c.py) and [offline](https://github.com/matt-kempster/mips_to_c) version of the tool. This tool can save a lot of time by producing an initial C implementation to work with that you can then tweak until the function matches.
+### m2c
+m2c can be used to automatically decompile a function from assembly into C. There is an [online](https://simonsoftware.se/other/m2c.html) and [offline](https://github.com/matt-kempster/m2c) version of the tool. This tool can save a lot of time by producing an initial C implementation to work with that you can then tweak until the function matches.
 
 ### Ghidra
 [Ghidra](https://ghidra-sre.org/) is a full reverse engineering tool suite. It can be used for many things such as exploring the full assembly of the ROM, getting instant C decompilations of each function, tracing references between addresses, and testing function and structure definitions. Ghidra can be a bit overwhelming at first, but once learned it can be extremely valuable for analyzing and understanding functions and data structures.
