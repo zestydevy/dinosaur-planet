@@ -5,6 +5,11 @@
 #include "types.h"
 #include "game/objects/object.h"
 
+typedef struct {
+    u8 _unk0[2];
+    u16 soundID;
+} DLL18_Func_11BC_Struct;
+
 DLL_INTERFACE(DLL_18) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, void *, s32, s32);
