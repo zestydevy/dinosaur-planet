@@ -1908,7 +1908,7 @@ void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
     while (var_s3 < sp48) {
         if (arg3 != 0) {
             if (obj->objId == OBJ_curve) {
-                gDLL_26_Curves->vtbl->curves_func_10c(obj);
+                gDLL_26_Curves->vtbl->curves_func_10c((CurveSetup*)obj);
             }
             if (obj->objId == OBJ_checkpoint4) {
                 gDLL_4_Race->vtbl->func2(obj);
@@ -1916,7 +1916,7 @@ void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
         } else {
             if ((OBJ_curve == obj->objId) || (OBJ_checkpoint4 == obj->objId)) {
                 if (OBJ_curve == obj->objId) {
-                    gDLL_26_Curves->vtbl->curves_func_34(obj);
+                    gDLL_26_Curves->vtbl->curves_func_34((CurveSetup*)obj);
                 } else {
                     gDLL_4_Race->vtbl->func1(obj);
                 }

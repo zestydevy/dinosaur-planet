@@ -13,32 +13,22 @@
 #include "game/gamebits.h"
 #include "types.h"
 
-typedef struct {
-/*00*/	s16 objId;
-/*02*/	u8 quarterSize;
-/*03*/	u8 act;
-/*04*/	u8 nextCurveGroup;
-/*05*/	u8 prevCurveGroup;
-/*06*/	u8 branch1CurveGroup;
-/*07*/	u8 branch2CurveGroup;
-/*08*/	f32 x;
-/*0c*/	f32 y;
-/*10*/	f32 z;
-/*14*/	s32 uID;
-} CurveSetup; //curves use the base objSetup fields differently, so creating a unique base struct
+// typedef struct {
+// /*00*/	s16 objId;
+// /*02*/	u8 quarterSize;
+// /*03*/	u8 act;
+// /*04*/	u8 nextCurveGroup;
+// /*05*/	u8 prevCurveGroup;
+// /*06*/	u8 branch1CurveGroup;
+// /*07*/	u8 branch2CurveGroup;
+// /*08*/	f32 x;
+// /*0c*/	f32 y;
+// /*10*/	f32 z;
+// /*14*/	s32 uID;
+// } CurveSetup; //curves use the base objSetup fields differently, so creating a unique base struct
 
 typedef struct {
 /*00*/ CurveSetup base;
-/*18*/ s8 curveType; //2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
-/*1C*/ s32 unk1C;
-/*20*/ s32 nextCurveUID;
-/*24*/ s32 prevCurveUID;
-/*28*/ s32 branch1UID;
-/*2C*/ s32 branch2UID;
-/*30*/ s8 yaw;
-/*31*/ s8 pitch;
-/*32*/ s16 usedBit; //gameBit
-/*34*/ s16 unk34; //gameBit?
 /*36*/ s16 unk36;
 /*38*/ s16 unk38; //gameBit?
 } KyteCurve_Setup;
@@ -54,7 +44,7 @@ typedef struct {
 
 typedef struct {
     s8 stateIndex;
-    KyteCurve_Setup* curveSetup;
+    CurveSetup* curveSetup;
 } PerchObject_Data;
 
 static s32 perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
@@ -85,7 +75,7 @@ void perchObject_control(Object* self) {
     PerchObject_Setup *objSetup;
     Object *kyte;
     Object *player;
-    CurvesFunc1BCReturnInner *curveSetup;
+    CurveSetup *curveSetup;
     s32 playerIsNearby;
     u8 stateIndex;
     f32 playerToCurveDistance;
@@ -98,7 +88,7 @@ void perchObject_control(Object* self) {
         case STATE_0_Initialise:
             //Get the curveCreateInfo for Kyte's flight group
             curveSetup = gDLL_25->vtbl->dll_25_func_2A50(self, objSetup->kyteFlightGroup);
-            objData->curveSetup = (KyteCurve_Setup*)curveSetup;
+            objData->curveSetup = curveSetup;
             if (curveSetup){
                 objData->stateIndex = STATE_1_Wait_for_Player_to_Instruct_Kyte;
                 return;
@@ -174,8 +164,8 @@ s32 perchObject_land_on_perch(Object* self, s32 arg1) {
 
     landedOnPerch = FALSE;
     if (arg1 == 5) {
-        if (objData->curveSetup->usedBit != -1) {
-            main_set_bits(objData->curveSetup->usedBit, 1);
+        if (objData->curveSetup->type22.usedBit != -1) {
+            main_set_bits(objData->curveSetup->type22.usedBit, 1);
         }
         landedOnPerch = TRUE;
     }
@@ -199,7 +189,7 @@ u32 perchObject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
 
     switch (arg1){
         case 0:
-            flag = state->curveSetup->usedBit;
+            flag = state->curveSetup->type22.usedBit;
             return main_get_bits(flag);
         case 1:
             *deltaY = self->srt.transl.y - kyte->srt.transl.y;

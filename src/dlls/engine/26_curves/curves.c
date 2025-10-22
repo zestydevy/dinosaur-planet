@@ -1,27 +1,9 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "dlls/engine/26_curves.h"
 
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s8 unk1A;
-    s8 unk1B;
-    s32 unk1C[4];
-    s8 unk2C;
-    s8 unk2D;
-    u8 unk2E;
-    s32 unk30; // TODO: unknown type
-    s16 unk34;
-} CurveSetup;
-
-typedef struct {
-    u32 uID;
-    CurveSetup *setup;
-} CurveNode;
-
-/*0x0*/ static s32 _bss_0;
-/*0x4*/ static s32 _bss_4;
+/*0x0*/ static CurveSetup *_bss_0;
+/*0x4*/ static CurveSetup *_bss_4;
 /*0x8*/ static CurveNode _bss_8[1300];
 /*0x28A8*/ static s32 _bss_28A8;
 
@@ -102,7 +84,7 @@ CurveNode *dll_26_func_1BC(s32 *count) {
 }
 
 // offset: 0x1E4 | func: 4 | export: 4
-u32 dll_26_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
+s32 dll_26_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
     CurveSetup* curveSetup;
     CurveSetup* var_s4;
     CurveSetup* var_s5;
@@ -169,9 +151,9 @@ CurveSetup* dll_26_func_39C(s32 curveUID) {
     while (min <= max) {
         temp_t6 = (max + min) >> 1;
 
-        if (_bss_8[temp_t6].uID < curveUID) {
+        if (_bss_8[temp_t6].uID < (u32)curveUID) {
             min = temp_t6 + 1;
-        } else if (_bss_8[temp_t6].uID > curveUID) {
+        } else if (_bss_8[temp_t6].uID > (u32)curveUID) {
             max = temp_t6 - 1;
         } else {
             return _bss_8[temp_t6].setup;
@@ -546,9 +528,9 @@ CurveSetup* dll_26_func_1420(s32 curveUID, s32* arg1) {
     while (min <= max) {
         temp_t6 = (max + min) >> 1;
 
-        if (_bss_8[temp_t6].uID < curveUID) {
+        if (_bss_8[temp_t6].uID < (u32)curveUID) {
             min = temp_t6 + 1;
-        } else if (_bss_8[temp_t6].uID > curveUID) {
+        } else if (_bss_8[temp_t6].uID > (u32)curveUID) {
             max = temp_t6 - 1;
         } else {
             *arg1 = temp_t6;
@@ -560,7 +542,7 @@ CurveSetup* dll_26_func_1420(s32 curveUID, s32* arg1) {
 }
 
 // offset: 0x14C8 | func: 16 | export: 10
-void dll_26_func_14C8(s32* arg0, s32* arg1) {
+void dll_26_func_14C8(CurveSetup** arg0, CurveSetup** arg1) {
     *arg0 = _bss_0;
     *arg1 = _bss_4;
 }
@@ -610,8 +592,8 @@ f32 dll_26_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5
                             var_fv1 = var_fs0;
                         }
                         if (var_fa0 < var_fv1) {
-                            _bss_0 = (s32) temp_s2;
-                            _bss_4 = (s32) temp_v0;
+                            _bss_0 = temp_s2;
+                            _bss_4 = temp_v0;
                             var_fs0 = temp_fv0;
                             *arg5 = sp7C[2].x;
                             *arg6 = sp7C[2].y;
@@ -864,7 +846,7 @@ s32 dll_26_func_218C(s32 arg0) {
 
     for (i = 0; i < _bss_28A8; i++) {
         temp_a0 = _bss_8[i].setup;
-        if ((temp_a0->unk19 == 0x15) && (arg0 == temp_a0->unk34)) {
+        if ((temp_a0->unk19 == 0x15) && (arg0 == temp_a0->type15.unk34)) {
             return temp_a0->base.uID;
         }
     }
@@ -1352,7 +1334,7 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
         }
         
         arg0->unk0x94 = func_80004C5C;
-        arg0->unk0x98 = (void (*)(f32*, f32*, f32*, f32*)) func_80004CE8;
+        arg0->unk0x98 = func_80004CE8;
         arg0->unk0x84 = arg0->unk0xA8;
         arg0->unk0x88 = arg0->unk0xC8;
         arg0->unk0x8C = arg0->unk0xE8;
@@ -1477,7 +1459,7 @@ s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     }
     
     arg0->unk0x94 = func_80004C5C;
-    arg0->unk0x98 = (void (*)(f32*, f32*, f32*, f32*)) func_80004CE8;
+    arg0->unk0x98 = func_80004CE8;
     arg0->unk0x84 = arg0->unk0xA8;
     arg0->unk0x88 = arg0->unk0xC8;
     arg0->unk0x8C = arg0->unk0xE8;
@@ -1704,7 +1686,7 @@ s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
         }
 
         arg0->unk0x94 = func_80004C5C;
-        arg0->unk0x98 = (void (*)(f32*, f32*, f32*, f32*)) func_80004CE8;
+        arg0->unk0x98 = func_80004CE8;
         arg0->unk0x84 = arg0->unk0xA8;
         arg0->unk0x88 = arg0->unk0xC8;
         arg0->unk0x8C = arg0->unk0xE8;

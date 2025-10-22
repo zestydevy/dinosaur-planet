@@ -382,11 +382,7 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
 }
 #endif
 
-#ifndef NON_MATCHING
-void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, void (*arg7)(f32*, f32*, f32*, f32*));
-#pragma GLOBAL_ASM("asm/nonmatchings/curves/func_8000598C.s")
-#else
-void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, void (*arg7)(f32*, f32*, f32*, f32*)) {
+void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* arg5, s32 arg6, unk_curve_func_2 arg7) {
     f32 spC0[4];
     f32 spB0[4];
     f32 spA0[4];
@@ -403,20 +399,18 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
     f32 sp74;
     f32 sp70;
     s32 i;
-    f32 temp;
 
     if (arg6 != D_8008C7D0) {
-        temp = 1.0f / arg6;
-        D_800A7C30[0] = temp * temp;
+        D_800A7C30[0] = SQ(1.0f / arg6);
         D_800A7C30[1] = D_800A7C30[0] * 2;
-        D_800A7C30[2] = D_800A7C30[0] * temp;
+        D_800A7C30[2] = D_800A7C30[0] * (1.0f / arg6);
         D_800A7C30[3] = D_800A7C30[2] * 6.0f;
         D_8008C7D0 = arg6;
-        D_800A7C40 = temp;
+        D_800A7C40 = 1.0f / arg6;
     }
 
     if (arg0 != NULL) {
-        arg7(arg0, spC0, arg2, arg3);
+        arg7(arg0, spC0);
         sp9C = spC0[3];
         sp98 = (D_800A7C30[2] * spC0[0]) + (D_800A7C30[0] * spC0[1]) + (D_800A7C40 * spC0[2]);
         sp94 = (D_800A7C30[3] * spC0[0]) + (D_800A7C30[1] * spC0[1]);
@@ -424,7 +418,7 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
     }
 
     if (arg1 != NULL) {
-        arg7(arg1, spB0, arg2, arg3);
+        arg7(arg1, spB0);
         sp8C = spB0[3];
         sp88 = (D_800A7C30[2] * spB0[0]) + (D_800A7C30[0] * spB0[1]) + (D_800A7C40 * spB0[2]);
         sp84 = (D_800A7C30[3] * spB0[0]) + (D_800A7C30[1] * spB0[1]);
@@ -432,7 +426,7 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
     }
 
     if (arg2 != NULL) {
-        arg7(arg2, spA0, arg2, arg3);
+        arg7(arg2, spA0);
         sp7C = spA0[3];
         sp78 = (D_800A7C30[2] * spA0[0]) + (D_800A7C30[0] * spA0[1]) + (D_800A7C40 * spA0[2]);
         sp74 = (D_800A7C30[3] * spA0[0]) + (D_800A7C30[1] * spA0[1]);
@@ -463,8 +457,6 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
         }
     }
 }
-
-#endif
 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80005E60.s")
