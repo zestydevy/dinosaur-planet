@@ -2,6 +2,7 @@
 #define _DLLS_210_H
 
 #include "PR/ultratypes.h"
+#include "dlls/engine/18.h"
 #include "dlls/engine/27.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
@@ -156,61 +157,7 @@ typedef struct Unk80032CF8Copy {
 } Unk80032CF8Copy;
 
 typedef struct {
-/*000*/ s32 unk0; //bitfield?
-/*004*/ DLL27_Data unk4;
-/*264*/ s32 unk264;
-/*268*/ s32 unk268;
-/*26c*/ s16 unk26C;
-/*26e*/ s16 unk26E;
-/*270*/ s16 unk270;
-/*272*/ s8 unk272;
-/*273*/ s8 unk273;
-/*274*/ Vec3f *unk274;
-/*278*/ f32 unk278;
-/*27C*/ f32 unk27C;
-/*280*/ s32 unk280;
-/*284*/ f32 unk284;
-/*288*/ f32 unk288;
-/*28C*/ f32 unk28C;
-/*290*/ f32 unk290;
-/*294*/ f32 unk294;
-/*298*/ f32 unk298;
-/*29C*/ f32 unk29C;
-/*2A0*/ f32 unk2A0;
-/*2A4*/ f32 unk2A4;
-/*2A8*/ u32 pad2A8;
-/*2AC*/ u32 pad2AC;
-/*2b0*/ f32 unk2B0;
-/*2b4*/ s8 unk2B4[0x2C8 - 0x2B4];
-/*2c8*/ Object *unk2C8;
-/*2cc*/ s8 unk2CC[0x2EC - 0x2CC];
-/*2EC*/ f32 unk2EC;
-/*2F0*/ f32 unk2F0;
-/*2F4*/ f32 unk2F4;
-/*2F8*/ f32 unk2F8;
-/*2fc*/ void* unk2FC; // stores a callback that with prototype: static void (*func)(Object* arg0, UNK_TYPE_32 arg1)
-/*300*/ s32 pad300;
-/*304*/ s32 unk304;
-/*308*/ s32 unk308;
-/*30C*/ s32 unk30C;
-/*310*/ s32 unk310;
-/*314*/ s8 unk314[0x324 - 0x314];
-/*324*/ s16 unk324;
-/*326*/ u16 pad326;
-/*328*/ s16 unk328;
-/*32A*/ s16 unk32A;
-/*32C*/ s16 unk32C;
-/*32E*/ s8 unk32E[0x33A - 0x32E];
-/*33A*/ s8 unk33A;
-/*33B*/ u8 pad33B;
-/*33C*/ u8 pad33C;
-/*33D*/ u8 unk33D;
-/*33E*/ s8 unk33E[0x340 - 0x33E];
-/*340*/ s8 unk340;
-/*341*/ s8 unk341;
-/*342*/ s8 pad342;
-/*343*/ s8 unk343;
-/*344*/ s8 pad344[0x34C - 0x344];
+/*000*/ DLL18_Data unk0;
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
 /*354*/ Unk80032CF8Copy unk354;

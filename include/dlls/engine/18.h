@@ -27,8 +27,8 @@ typedef struct DLL18_Data {
     s16 unk26C;
     s16 unk26E;
     s16 unk270;
-    u8 unk272;
-    u8 unk273;
+    s8 unk272;
+    s8 unk273;
     Vec3f *unk274;
     f32 unk278;
     f32 unk27C;
@@ -53,9 +53,12 @@ typedef struct DLL18_Data {
     Vec3f unk2EC;
     f32 unk2F8;
     dll18_callback2 unk2FC;
-    u8 _unk300[0x308 - 0x300];
+    u8 _unk300[0x304 - 0x300];
+    s32 unk304;
     u32 unk308;
-    u8 _unk30C[0x322 - 0x30C];
+    s32 unk30C;
+    s32 unk310;
+    u8 _unk314[0x322 - 0x314];
     s16 unk322;
     s16 unk324;
     s16 unk326;
@@ -68,18 +71,24 @@ typedef struct DLL18_Data {
     s8 unk338;
     s8 unk339;
     s8 unk33A;
-    u8 _unk33B[0x33F - 0x33B];
+    u8 _unk33B[0x33D - 0x33B];
+    u8 unk33D;
+    u8 _unk33E;
     u8 unk33F;
     s8 unk340;
     s8 unk341;
-    u8 _unk342[0x34C - 0x342];
+    u8 _unk342;
+    s8 unk343;
+    u8 _unk344[0x34A - 0x344];
+    u8 unk34A;
+    u8 _unk34B;
 } DLL18_Data;
 
 DLL_INTERFACE(DLL_18) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3);
 /*1*/ void (*func1)(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_callback *arg4, dll18_callback *arg5);
-/*2*/ void (*func2)(Object *obj, DLL18_Data *data, s32 arg2);
+/*2*/ void (*func2)(Object *obj, DLL18_Data *data, dll18_callback *arg2);
 /*3*/ void (*func3)(SRT *srt);
 /*4*/ void (*func4)(Object *obj, DLL18_Data *data, u32 arg2);
 /*5*/ void (*func5)(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);

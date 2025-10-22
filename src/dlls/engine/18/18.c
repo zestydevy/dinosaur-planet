@@ -160,7 +160,7 @@ void dll_18_func_90(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_cal
 }
 
 // offset: 0x5E0 | func: 2 | export: 2
-void dll_18_func_5E0(Object *obj, DLL18_Data *data, s32 arg2) {
+void dll_18_func_5E0(Object *obj, DLL18_Data *data, dll18_callback *arg2) {
     f32 sp24;
     f32 temp_fv0;
     f32 temp_fv0_2;
@@ -184,7 +184,7 @@ void dll_18_func_5E0(Object *obj, DLL18_Data *data, s32 arg2) {
         _bss_1C = 1;
         _bss_1 = 0;
         _bss_2 = 1;
-        dll_18_func_81C(obj, data, delayFloat, (s16 (**)(Object*, DLL18_Data*, f32)) arg2);
+        dll_18_func_81C(obj, data, delayFloat, arg2);
     }
 }
 
@@ -213,7 +213,7 @@ void dll_18_func_778(Object *obj, DLL18_Data *data, u32 arg2) {
     data->unk272 = 1;
     data->unk341 = 0;
     data->unk340 = 0;
-    data->_unk342[8] = 0;
+    data->unk34A = 0;
     data->unk270 = 0;
     if (obj->objhitInfo != NULL) {
         obj->objhitInfo->unk_0x61 = 0;
@@ -224,9 +224,9 @@ void dll_18_func_778(Object *obj, DLL18_Data *data, u32 arg2) {
 static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callback *arg3) {
     s32 temp_v0;
     s32 temp_v0_2;
-    u32 var_s1;
+    s32 var_s1;
     s32 var_s5;
-    s32 var_s7;
+    u32 var_s7;
     s32 var_v1;
     dll18_callback2 temp_v0_5;
     UnkFunc_80024108Struct sp50;
@@ -256,7 +256,7 @@ static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
             data->unk32C = 0;
             data->unk341 = 0;
             data->unk340 = 0;
-            data->_unk342[8] = 0;
+            data->unk34A = 0;
             data->unk270 = 0;
             if (obj->objhitInfo != NULL) {
                 obj->objhitInfo->unk_0x61 = 0;
@@ -274,7 +274,7 @@ static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
                 data->unk32C = 0;
                 data->unk341 = 0;
                 data->unk340 = 0;
-                data->_unk342[8] = 0;
+                data->unk34A = 0;
                 data->unk270 = 0;
                 if (obj->objhitInfo != NULL) {
                     obj->objhitInfo->unk_0x61 = 0;
@@ -314,9 +314,9 @@ static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
 static void dll_18_func_B34(Object *obj, DLL18_Data *data, f32 arg2, dll18_callback *arg3) {
     s32 temp_v0;
     s32 temp_v0_2;
-    u32 var_s1;
+    s32 var_s1;
     s32 var_s3;
-    s32 var_s5;
+    u32 var_s5;
     dll18_callback callback;
 
     var_s5 = 0;
