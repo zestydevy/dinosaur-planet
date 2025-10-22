@@ -201,6 +201,9 @@ def scan_dll_elf(
             # External symbol reference, already covered by core syms
             continue
 
+        if sym.name.endswith(".NON_MATCHING"):
+            continue
+
         if st_shndx == "SHN_ABS":
             sec_offset = dll.header.size
             section = None
