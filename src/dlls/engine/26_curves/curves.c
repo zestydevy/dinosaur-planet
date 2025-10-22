@@ -1,6 +1,9 @@
-#include "common.h"
 #include "game/objects/object.h"
 #include "dlls/engine/26_curves.h"
+#include "libc/string.h"
+#include "sys/objects.h"
+#include "sys/rand.h"
+#include "functions.h"
 
 /*0x0*/ static CurveSetup *_bss_0;
 /*0x4*/ static CurveSetup *_bss_4;
