@@ -228,7 +228,7 @@ static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
     s32 var_s5;
     u32 var_s7;
     s32 var_v1;
-    dll18_callback2 temp_v0_5;
+    s32 _pad;
     UnkFunc_80024108Struct sp50;
     dll18_callback callback;
 
