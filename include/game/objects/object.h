@@ -55,12 +55,28 @@ typedef enum {
 typedef struct ObjSetup {
 /*00*/	s16 objId;
 /*02*/	u8 quarterSize;
+// TODO: different for curves?
 /*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
-/*04*/	u8 loadParamA;
-/*05*/	u8 loadParamB;
-/*06*/	u8 loadDistance;
-/*07*/	u8 fadeDistance;
-/*08*/	f32 x;
+/*04*/	union {
+	struct {
+	/*04*/	u8 loadParamA;
+	/*05*/	u8 loadParamB;
+	/*06*/	u8 loadDistance;
+	/*07*/	u8 fadeDistance;
+	};
+	struct { // Curve specific
+	/*04*/	s8 unk4;
+	/*05*/	s8 unk5;
+	/*06*/	s8 unk6;
+	/*07*/	s8 unk7;
+	} curve_type26;
+	struct { // Curve specific
+	/*04*/	u16 unk4;
+	/*06*/	s8 unk6;
+	/*07*/	s8 unk7;
+	} curve_type22;
+};
+/*08*/	f32 x; // TODO: xyz here is a Vec3f...
 /*0c*/	f32 y;
 /*10*/	f32 z;
 /*14*/	s32 uID;

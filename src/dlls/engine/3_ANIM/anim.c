@@ -13,6 +13,8 @@
 
 #include "dlls/objects/214_animobj.h"
 
+#include "prevent_bss_reordering.h"
+
 u16* func_80034804(Object* obj, s32 sequenceBoneID);
 
 void dll_3_func_7B64(AnimObj_Data*);

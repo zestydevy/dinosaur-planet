@@ -80,41 +80,7 @@ typedef struct {
 /*054*/ f32 unk54;
 /*058*/ f32 walkSpeed; //has something to do with the struct at 0x60?
 /*05C*/ s32 unk5C;
-/*060*/ UnkCurvesStruct60 unk60;
-/*0E0*/ s32 unkE0;
-/*0E4*/ s32 unkE4;
-/*0E8*/ s32 unkE8;
-/*0EC*/ s32 unkEC;
-/*0F0*/ s32 unkF0;
-/*0F4*/ s32 unkF4;
-/*0F8*/ s32 unkF8;
-/*0FC*/ s32 unkFC;
-/*100*/ s32 unk100;
-/*104*/ s32 unk104;
-/*108*/ s32 unk108;
-/*10C*/ s32 unk10C;
-/*110*/ s32 unk110;
-/*114*/ s32 unk114;
-/*118*/ s32 unk118;
-/*11C*/ s32 unk11C;
-/*120*/ s32 unk120;
-/*124*/ s32 unk124;
-/*128*/ s32 unk128;
-/*12C*/ s32 unk12C;
-/*130*/ s32 unk130;
-/*134*/ s32 unk134;
-/*138*/ s32 unk138;
-/*13C*/ s32 unk13C;
-/*140*/ s32 unk140;
-/*144*/ s32 unk144;
-/*148*/ s32 unk148;
-/*14C*/ s32 unk14C;
-/*150*/ s32 unk150;
-/*154*/ s32 unk154;
-/*158*/ s32 unk158;
-/*15C*/ s32 unk15C;
-/*160*/ s32 unk160;
-/*164*/ s32 unk164;
+/*060*/ UnkCurvesStruct unk60;
 /*168*/ s32 unk168;
 /*16C*/ s32 unk16C;
 /*170*/ DLL27_Data unk170;
@@ -868,8 +834,8 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 
     result = gDLL_26_Curves->vtbl->curves_func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
     if (!result){
-        snowhorn->srt.transl.x = objdata->unk60.unk68;
-        snowhorn->srt.transl.z = objdata->unk60.unk70;
+        snowhorn->srt.transl.x = objdata->unk60.unk0x68;
+        snowhorn->srt.transl.z = objdata->unk60.unk0x70;
         
         objdata->flags = 1;
         objdata->walkSpeed = 0.5f;
@@ -914,7 +880,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     f32 dx;
     f32 dz;
     f32 speed;
-    UnkCurvesStruct60* curveStruct;
+    UnkCurvesStruct* curveStruct;
 
     if (_data_270) {
         temp_walkSpeed = objdata->walkSpeed;
@@ -951,18 +917,18 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
             objdata->flags = 0;
             return;
         }
-        if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
+        if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk0x10 != 0)) {
             gDLL_26_Curves->vtbl->curves_func_4704(curveStruct);
         }
-        dx = curveStruct->unk68 - snowhorn->srt.transl.x;
-        dz = curveStruct->unk70 - snowhorn->srt.transl.z;
+        dx = curveStruct->unk0x68 - snowhorn->srt.transl.x;
+        dz = curveStruct->unk0x70 - snowhorn->srt.transl.z;
 
         //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf((dx * dx) + (dz * dz)) * inverseDelay;
         func_8002493C(snowhorn, speed, &objdata->unk50);
-        snowhorn->srt.yaw = arctan2_f(curveStruct->unk74, curveStruct->unk7C) + 0x8000;
-        snowhorn->srt.transl.x = curveStruct->unk68;
-        snowhorn->srt.transl.z = curveStruct->unk70;
+        snowhorn->srt.yaw = arctan2_f(curveStruct->unk0x74, curveStruct->unk0x7C) + 0x8000;
+        snowhorn->srt.transl.x = curveStruct->unk0x68;
+        snowhorn->srt.transl.z = curveStruct->unk0x70;
         objdata->unk424 &= 0xFFFB;
         
         if (objdata->walkSpeed <= 0.0f) {

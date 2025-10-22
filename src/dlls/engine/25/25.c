@@ -53,9 +53,9 @@ void dll_25_func_D8(void)
     Dll25BssE0 *var_v1_3;
     Vec3 sp24C;
     Vec3 sp240;
-    CurvesFunc1BCReturn *curvesResult;
-    CurvesFunc1BCReturnInner *temp_s4;
-    CurvesFunc1BCReturnInner *var_s7;
+    CurveNode *curvesResult;
+    CurveSetup *temp_s4;
+    CurveSetup *var_s7;
     f32 temp_ft1;
     f32 temp_ft3;
     f32 temp_ft5;
@@ -66,8 +66,8 @@ void dll_25_func_D8(void)
     s32 var_s0;
     s8 *temp_t4;
     s32 temp_v0;
-    CurvesFunc1BCReturnInner *temp_s2;
-    CurvesFunc1BCReturnInner *temp_v0_2;
+    s32 _pad;
+    CurveSetup *temp_v0_2;
     u8 sp80[388]; // unknown size, variable used for padding
     s32 temp_t1;
     s32 var_v1_2;
@@ -82,38 +82,38 @@ void dll_25_func_D8(void)
     _bss_E4 = 1;
     for (sp270 = 0; sp270 < curvesCount; sp270++)
     {
-        temp_s4 = curvesResult[sp270].unk4;
+        temp_s4 = curvesResult[sp270].setup;
         if (temp_s4->unk19 == 0x26)
         {
-            temp_v0 = temp_s4->unk3;
+            temp_v0 = temp_s4->base.setup;
             temp_s0 = &_bss_DC[temp_v0];
             _bss_0[temp_v0] = 1;
-            sp24C[0] = (temp_s4->unk4.bytes.unk4 * 5.7f) + temp_s4->unk8;
-            sp24C[2] = (temp_s4->unk4.bytes.unk5 * 5.7f) + temp_s4->unk10;
-            sp240[0] = (temp_s4->unk4.bytes.unk6 * 5.7f) + temp_s4->unk8;
-            sp240[2] = (temp_s4->unk4.bytes.unk7 * 5.7f) + temp_s4->unk10;
+            sp24C[0] = (temp_s4->base.curve_type26.unk4 * 5.7f) + temp_s4->base.x;
+            sp24C[2] = (temp_s4->base.curve_type26.unk5 * 5.7f) + temp_s4->base.z;
+            sp240[0] = (temp_s4->base.curve_type26.unk6 * 5.7f) + temp_s4->base.x;
+            sp240[2] = (temp_s4->base.curve_type26.unk7 * 5.7f) + temp_s4->base.z;
             dll_25_func_D00(sp24C, sp240, &temp_s0->unk0[0], &temp_s0->unk8[0]);
-            sp24C[0] = (temp_s4->unk30.bytes.unk30 * 5.7f) + temp_s4->unk8;
-            sp24C[2] = (temp_s4->unk30.bytes.unk31 * 5.7f) + temp_s4->unk10;
+            sp24C[0] = (temp_s4->type26.unk30 * 5.7f) + temp_s4->base.x;
+            sp24C[2] = (temp_s4->type26.unk31 * 5.7f) + temp_s4->base.z;
             dll_25_func_D00(sp240, sp24C, &temp_s0->unk0[2], &temp_s0->unk8[1]);
-            sp240[0] = (temp_s4->unk30.bytes.unk32 * 5.7f) + temp_s4->unk8;
-            sp240[2] = (temp_s4->unk30.bytes.unk33 * 5.7f) + temp_s4->unk10;
+            sp240[0] = (temp_s4->type26.unk32 * 5.7f) + temp_s4->base.x;
+            sp240[2] = (temp_s4->type26.unk33 * 5.7f) + temp_s4->base.z;
             dll_25_func_D00(sp24C, sp240, &temp_s0->unk0[4], &temp_s0->unk8[2]);
-            sp24C[0] = (temp_s4->unk4.bytes.unk4 * 5.7f) + temp_s4->unk8;
-            sp24C[2] = (temp_s4->unk4.bytes.unk5 * 5.7f) + temp_s4->unk10;
+            sp24C[0] = (temp_s4->base.curve_type26.unk4 * 5.7f) + temp_s4->base.x;
+            sp24C[2] = (temp_s4->base.curve_type26.unk5 * 5.7f) + temp_s4->base.z;
             dll_25_func_D00(sp240, sp24C, &temp_s0->unk0[6], &temp_s0->unk8[3]);
 
-            temp_s0->unk18 = temp_s4->unkC + (2.0f * temp_s4->unk18);
-            temp_s0->unk1A.word = temp_s4->unkC - (2.0f * temp_s4->unk1A.bytes.unk1A);
+            temp_s0->unk18 = temp_s4->base.y + (2.0f * temp_s4->unk18);
+            temp_s0->unk1A.word = temp_s4->base.y - (2.0f * temp_s4->unk1A);
             for (var_v1_2 = 0; var_v1_2 < 4; var_v1_2++)
             {
                 temp_s0->unk1C[var_v1_2] = 0;
                 // ugly casting required for matching
-                var_s7 = (CurvesFunc1BCReturnInner *)&((s8 *)temp_s4)[var_v1_2 * 4];
+                var_s7 = &((s8 *)temp_s4)[var_v1_2 * 4]; // TODO: inner array access going on here, such as unk1C
                 if (var_s7->unk1C[0] >= 0)
                 {
                     temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_39c(var_s7->unk1C[0]);
-                    temp_t1 = temp_s4->unk3 * temp_v0_2->unk3;
+                    temp_t1 = temp_s4->base.setup * temp_v0_2->base.setup;
                     for (var_s0 = 1; var_s0 < _bss_E4; var_s0++)
                     {
                         if (temp_t1 == _bss_E0[var_s0].unk1C)
@@ -127,35 +127,35 @@ void dll_25_func_D8(void)
                         // asm uses s1, might be @fake use of var_s0
                         for (var_s0 = 0; var_s0 < 4; var_s0++)
                         {
-                            if (temp_s4->unk14 == temp_v0_2->unk1C[var_s0])
+                            if (temp_s4->base.uID == temp_v0_2->unk1C[var_s0])
                             {
                                 break;
                             }
                         }
                         temp_s0->unk1C[var_v1_2] = _bss_E4;
                         _bss_E0[_bss_E4].unk1C = temp_t1;
-                        sp80[_bss_E4 * 2 + 0] = temp_s4->unk3;
-                        sp80[_bss_E4 * 2 + 1] = temp_v0_2->unk3;
-                        sp24C[0] = (var_s7->unk34 * 5.7f) + temp_s4->unk8;
-                        sp24C[2] = (var_s7->unk35 * 5.7f) + temp_s4->unk10;
-                        sp240[0] = (var_s7->unk36 * 5.7f) + temp_s4->unk8;
-                        sp240[2] = (var_s7->unk37 * 5.7f) + temp_s4->unk10;
+                        sp80[_bss_E4 * 2 + 0] = temp_s4->base.setup;
+                        sp80[_bss_E4 * 2 + 1] = temp_v0_2->base.setup;
+                        sp24C[0] = (var_s7->type26.unk34 * 5.7f) + temp_s4->base.x;
+                        sp24C[2] = (var_s7->type26.unk35 * 5.7f) + temp_s4->base.z;
+                        sp240[0] = (var_s7->type26.unk36 * 5.7f) + temp_s4->base.x;
+                        sp240[2] = (var_s7->type26.unk37 * 5.7f) + temp_s4->base.z;
                         _bss_E0[_bss_E4].unk1E = (sp24C[0] + sp240[0]) / 2; // use 2 instead of 2.0f to force a div.s
                         _bss_E0[_bss_E4].unk20 = (sp24C[2] + sp240[2]) / 2; // use 2 instead of 2.0f to force a div.s
                         dll_25_func_D00(sp24C, sp240, &_bss_E0[_bss_E4].unk0[0], &_bss_E0[_bss_E4].unk8[0]);
-                        sp24C[0] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x34] * 5.7f) + temp_v0_2->unk8;
-                        sp24C[2] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x35] * 5.7f) + temp_v0_2->unk10;
+                        sp24C[0] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x34] * 5.7f) + temp_v0_2->base.x;
+                        sp24C[2] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x35] * 5.7f) + temp_v0_2->base.z;
                         dll_25_func_D00(sp240, sp24C, &_bss_E0[_bss_E4].unk0[2], &_bss_E0[_bss_E4].unk8[1]);
-                        sp240[0] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x36] * 5.7f) + temp_v0_2->unk8;
-                        sp240[2] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x37] * 5.7f) + temp_v0_2->unk10;
+                        sp240[0] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x36] * 5.7f) + temp_v0_2->base.x;
+                        sp240[2] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x37] * 5.7f) + temp_v0_2->base.z;
                         _bss_E0[_bss_E4].unk22 = (sp24C[0] + sp240[0]) / 2; // use 2 instead of 2.0f to force a div.s
                         _bss_E0[_bss_E4].unk24 = (sp24C[2] + sp240[2]) / 2; // use 2 instead of 2.0f to force a div.s
                         dll_25_func_D00(sp24C, sp240, &_bss_E0[_bss_E4].unk0[4], &_bss_E0[_bss_E4].unk8[2]);
-                        sp24C[0] = (var_s7->unk34 * 5.7f) + temp_s4->unk8;
-                        sp24C[2] = (var_s7->unk35 * 5.7f) + temp_s4->unk10;
+                        sp24C[0] = (var_s7->type26.unk34 * 5.7f) + temp_s4->base.x;
+                        sp24C[2] = (var_s7->type26.unk35 * 5.7f) + temp_s4->base.z;
                         dll_25_func_D00(sp240, sp24C, &_bss_E0[_bss_E4].unk0[6], &_bss_E0[_bss_E4].unk8[3]);
-                        temp_fv0 = temp_s4->unkC + (2.0f * temp_s4->unk18);
-                        temp_fv1 = temp_v0_2->unkC + (2.0f * temp_v0_2->unk18);
+                        temp_fv0 = temp_s4->base.y + (2.0f * temp_s4->unk18);
+                        temp_fv1 = temp_v0_2->base.y + (2.0f * temp_v0_2->unk18);
                         if (temp_fv1 < temp_fv0)
                         {
                             _bss_E0[_bss_E4].unk18 = temp_fv0;
@@ -164,8 +164,8 @@ void dll_25_func_D8(void)
                         {
                             _bss_E0[_bss_E4].unk18 = temp_fv1;
                         }
-                        temp_fv0 = temp_s4->unkC - (2.0f * temp_s4->unk1A.bytes.unk1A);
-                        temp_fv1 = temp_v0_2->unkC - (2.0f * temp_v0_2->unk1A.bytes.unk1A);
+                        temp_fv0 = temp_s4->base.y - (2.0f * temp_s4->unk1A);
+                        temp_fv1 = temp_v0_2->base.y - (2.0f * temp_v0_2->unk1A);
                         if (temp_fv0 < temp_fv1)
                         {
                             _bss_E0[_bss_E4].unk1A.word = temp_fv0;
@@ -490,7 +490,7 @@ s32 dll_25_func_16D4(Vec3f *arg0, Vec3f *arg1, s32 arg2)
     f32 tempDistance;
     s32 pad;
 
-    for (i = 0; i < 0x100; i++)
+    for (i = 0; i < 256; i++) // @bug: This condition is always true!
     {
         if (arg2 == _bss_E0[i].unk1C)
         {
@@ -514,7 +514,7 @@ s32 dll_25_func_16D4(Vec3f *arg0, Vec3f *arg1, s32 arg2)
 }
 
 // offset: 0x1864 | func: 9 | export: 5
-CurvesFunc1BCReturnInner *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
+CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
 {
     f32 temp_fa0;
     f32 temp_fa1;
@@ -523,21 +523,27 @@ CurvesFunc1BCReturnInner *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
     f32 var_fs0;
     s32 i;
     s32 count;
-    CurvesFunc1BCReturnInner *temp_s0;
-    CurvesFunc1BCReturn *result;
-    CurvesFunc1BCReturnInner *out;
+    CurveSetup *temp_s0;
+    CurveNode *result;
+    CurveSetup *out;
 
     result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
     out = NULL;
     var_fs0 = F32_MAX;
     for (i = 0; i < count; i++)
     {
-        temp_s0 = result[i].unk4;
-        if ((temp_s0 != NULL) && (temp_s0->unk19 == 0x24) && ((arg1 == -1) || (arg1 == temp_s0->unk3)) && ((arg2 == -1) || (arg2 == temp_s0->unk1A.bytes.unk1A)) && ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) && ((temp_s0->unk30.words.unk30 == -1) || (main_get_bits(temp_s0->unk30.words.unk30) != 0)) && ((temp_s0->unk30.words.unk32 == -1) || (main_get_bits(temp_s0->unk30.words.unk32) == 0)))
+        temp_s0 = result[i].setup;
+        if ((temp_s0 != NULL) && 
+            (temp_s0->unk19 == 0x24) && 
+            ((arg1 == -1) || (arg1 == temp_s0->base.setup)) && 
+            ((arg2 == -1) || (arg2 == temp_s0->unk1A)) && 
+            ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) && 
+            ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) && 
+            ((temp_s0->type24.unk32 == -1) || (main_get_bits(temp_s0->type24.unk32) == 0)))
         {
-            temp_fv0 = arg0[0] - temp_s0->unk8;
-            temp_fv1 = arg0[1] - temp_s0->unkC;
-            temp_fa0 = arg0[2] - temp_s0->unk10;
+            temp_fv0 = arg0[0] - temp_s0->base.x;
+            temp_fv1 = arg0[1] - temp_s0->base.y;
+            temp_fa0 = arg0[2] - temp_s0->base.z;
             temp_fa1 = (temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0);
             if (temp_fa1 < var_fs0)
             {
@@ -550,11 +556,11 @@ CurvesFunc1BCReturnInner *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
 }
 
 // offset: 0x1A2C | func: 10 | export: 6
-CurvesFunc1BCReturnInner *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
+CurveSetup *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
 {
-    CurvesFunc1BCReturn *result;
-    CurvesFunc1BCReturnInner *temp_v1;
-    CurvesFunc1BCReturnInner *out;
+    CurveNode *result;
+    CurveSetup *temp_v1;
+    CurveSetup *out;
     f32 temp_fa1;
     f32 temp_ft4;
     f32 temp_ft5;
@@ -569,16 +575,16 @@ CurvesFunc1BCReturnInner *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
     var_fs0 = F32_MAX;
     for (var_v1 = 0; var_v1 < count; var_v1++)
     {
-        temp_v1 = result[var_v1].unk4;
+        temp_v1 = result[var_v1].setup;
         if ((temp_v1 != NULL) &&
             (temp_v1->unk19 == 0x24) &&
-            ((arg1 == -1) || (arg1 == temp_v1->unk3)) &&
-            ((arg2 == -1) || (arg2 == temp_v1->unk1A.bytes.unk1A)) &&
+            ((arg1 == -1) || (arg1 == temp_v1->base.setup)) &&
+            ((arg2 == -1) || (arg2 == temp_v1->unk1A)) &&
             ((temp_v1->unk1C[0] != -1) || (temp_v1->unk2F == -1)))
         {
-            temp_fa1 = arg0[0] - temp_v1->unk8;
-            temp_ft4 = arg0[1] - temp_v1->unkC;
-            temp_ft5 = arg0[2] - temp_v1->unk10;
+            temp_fa1 = arg0[0] - temp_v1->base.x;
+            temp_ft4 = arg0[1] - temp_v1->base.y;
+            temp_ft5 = arg0[2] - temp_v1->base.z;
             if (((temp_fa1 * temp_fa1) + (temp_ft4 * temp_ft4) + (temp_ft5 * temp_ft5)) < var_fs0)
             {
                 out = temp_v1;
@@ -593,22 +599,22 @@ CurvesFunc1BCReturnInner *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_1D30.s")
 #else
-s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurvesFunc1BCReturnInner *arg1, CurvesFunc1BCReturnInner *arg2, UnkInnerCurvesStruct *arg3)
+s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, CurveSetup *arg3)
 {
     if (arg0->unk0x80 != 0)
     {
         arg0->unk0xA0 = arg1;
         arg0->unk0xA4 = arg2;
-        arg0->unk0xA8[0] = arg2->unk8;
-        arg0->unk0xA8[1] = arg1->unk8;
+        arg0->unk0xA8[0] = arg2->base.x;
+        arg0->unk0xA8[1] = arg1->base.x;
         arg0->unk0xA8[2] = 2.0f * (fsin16_precise(arg2->unk2C << 8) * arg0->unk0xA4->unk2E);
         arg0->unk0xA8[3] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
-        arg0->unk0xC8[0] = arg0->unk0xA4->unkC;
-        arg0->unk0xC8[1] = arg0->unk0xA0->unkC;
+        arg0->unk0xC8[0] = arg0->unk0xA4->base.y;
+        arg0->unk0xC8[1] = arg0->unk0xA0->base.y;
         arg0->unk0xC8[2] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2D << 8) * arg0->unk0xA4->unk2E);
         arg0->unk0xC8[3] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2D << 8) * arg0->unk0xA0->unk2E);
-        arg0->unk0xE8[0] = arg0->unk0xA4->unk10;
-        arg0->unk0xE8[1] = arg0->unk0xA0->unk10;
+        arg0->unk0xE8[0] = arg0->unk0xA4->base.z;
+        arg0->unk0xE8[1] = arg0->unk0xA0->base.z;
         arg0->unk0xE8[2] = 2.0f * (fcos16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
         arg0->unk0xE8[3] = 2.0f * (fcos16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
     }
@@ -616,16 +622,16 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurvesFunc1BCReturnInner *arg1, Curv
     {
         arg0->unk0xA0 = arg1;
         arg0->unk0xA4 = arg2;
-        arg0->unk0xB8[0] = arg1->unk8;
-        arg0->unk0xB8[1] = arg2->unk8;
+        arg0->unk0xB8[0] = arg1->base.x;
+        arg0->unk0xB8[1] = arg2->base.x;
         arg0->unk0xB8[2] = 2.0f * (fsin16_precise(arg1->unk2C << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xB8[3] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
-        arg0->unk0xD8[0] = arg0->unk0xA0->unkC;
-        arg0->unk0xD8[1] = arg0->unk0xA4->unkC;
+        arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+        arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
         arg0->unk0xD8[2] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2D << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xD8[3] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2D << 8) * arg0->unk0xA4->unk2E);
-        arg0->unk0xF8[0] = arg0->unk0xA0->unk10;
-        arg0->unk0xF8[1] = arg0->unk0xA4->unk10;
+        arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+        arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
         arg0->unk0xF8[2] = 2.0f * (fcos16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
     }
@@ -638,18 +644,15 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurvesFunc1BCReturnInner *arg1, Curv
     arg0->unk0x8C = arg0->unk0xE8;
     arg0->unk0x90 = 8;
     arg0->unk0x94 = func_80004C5C;
-    arg0->unk0x98 = func_80004CE8;
+    arg0->unk0x98 = (unk_curve_func_2)func_80004CE8;
     func_80005094(arg0);
     return 0;
 }
 #endif
 
 // offset: 0x21F4 | func: 12 | export: 9
-s32 dll_25_func_21F4(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
+s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
 {
-    UnkInnerCurvesStruct *temp_v0;
-    UnkInnerCurvesStruct *temp_v1;
-
     if ((arg0->unk0xA0 == NULL) || (arg0->unk0xA4 == NULL) || (arg1 == NULL))
     {
         return 1;
@@ -663,16 +666,16 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
         memcpy(arg0->unk0xB8, arg0->unk0xA8, sizeof(arg0->unk0xA8));
         memcpy(arg0->unk0xD8, arg0->unk0xC8, sizeof(arg0->unk0xC8));
         memcpy(arg0->unk0xF8, arg0->unk0xE8, sizeof(arg0->unk0xE8));
-        arg0->unk0xA8[0] = arg0->unk0xA4->unk8;
-        arg0->unk0xA8[1] = arg0->unk0xA0->unk8;
+        arg0->unk0xA8[0] = arg0->unk0xA4->base.x;
+        arg0->unk0xA8[1] = arg0->unk0xA0->base.x;
         arg0->unk0xA8[2] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
         arg0->unk0xA8[3] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
-        arg0->unk0xC8[0] = arg0->unk0xA4->unkC;
-        arg0->unk0xC8[1] = arg0->unk0xA0->unkC;
+        arg0->unk0xC8[0] = arg0->unk0xA4->base.y;
+        arg0->unk0xC8[1] = arg0->unk0xA0->base.y;
         arg0->unk0xC8[2] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2D << 8) * arg0->unk0xA4->unk2E);
         arg0->unk0xC8[3] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2D << 8) * arg0->unk0xA0->unk2E);
-        arg0->unk0xE8[0] = arg0->unk0xA4->unk10;
-        arg0->unk0xE8[1] = arg0->unk0xA0->unk10;
+        arg0->unk0xE8[0] = arg0->unk0xA4->base.z;
+        arg0->unk0xE8[1] = arg0->unk0xA0->base.z;
         arg0->unk0xE8[2] = 2.0f * (fcos16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
         arg0->unk0xE8[3] = 2.0f * (fcos16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
         if (arg0->unk0x90 != 0)
@@ -692,16 +695,16 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
         memcpy(arg0->unk0xA8, arg0->unk0xB8, 0x10U);
         memcpy(arg0->unk0xC8, arg0->unk0xD8, 0x10U);
         memcpy(arg0->unk0xE8, arg0->unk0xF8, 0x10U);
-        arg0->unk0xB8[0] = arg0->unk0xA0->unk8;
-        arg0->unk0xB8[1] = arg0->unk0xA4->unk8;
+        arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+        arg0->unk0xB8[1] = arg0->unk0xA4->base.x;
         arg0->unk0xB8[2] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xB8[3] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
-        arg0->unk0xD8[0] = arg0->unk0xA0->unkC;
-        arg0->unk0xD8[1] = arg0->unk0xA4->unkC;
+        arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+        arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
         arg0->unk0xD8[2] = 2.0f * (fsin16_precise(arg0->unk0xA0->unk2D << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xD8[3] = 2.0f * (fsin16_precise(arg0->unk0xA4->unk2D << 8) * arg0->unk0xA4->unk2E);
-        arg0->unk0xF8[0] = arg0->unk0xA0->unk10;
-        arg0->unk0xF8[1] = arg0->unk0xA4->unk10;
+        arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+        arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
         arg0->unk0xF8[2] = 2.0f * (fcos16_precise(arg0->unk0xA0->unk2C << 8) * arg0->unk0xA0->unk2E);
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise(arg0->unk0xA4->unk2C << 8) * arg0->unk0xA4->unk2E);
         if (arg0->unk0x90 != 0)
@@ -717,7 +720,7 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
 }
 
 // offset: 0x27A8 | func: 13 | export: 10
-s32 dll_25_func_27A8(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
+s32 dll_25_func_27A8(UnkCurvesStruct *arg0, CurveSetup *arg1)
 {
     if ((arg0->unk0xA0 == 0) || (arg0->unk0xA4 == NULL) || (arg1 == NULL))
     {
@@ -726,20 +729,20 @@ s32 dll_25_func_27A8(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
     arg0->unk0xA4 = arg1;
     if (arg0->unk0x80 != 0)
     {
-        arg0->unk0xA8[0] = arg1->unk8;
+        arg0->unk0xA8[0] = arg1->base.x;
         arg0->unk0xA8[2] = 2.0f * (fsin16_precise(arg1->unk2C << 8) * arg1->unk2E);
-        arg0->unk0xC8[0] = arg1->unkC;
+        arg0->unk0xC8[0] = arg1->base.y;
         arg0->unk0xC8[2] = 2.0f * (fsin16_precise(arg1->unk2D << 8) * arg1->unk2E);
-        arg0->unk0xE8[0] = arg1->unk10;
+        arg0->unk0xE8[0] = arg1->base.z;
         arg0->unk0xE8[2] = 2.0f * (fcos16_precise(arg1->unk2C << 8) * arg1->unk2E);
     }
     else
     {
-        arg0->unk0xB8[1] = arg1->unk8;
+        arg0->unk0xB8[1] = arg1->base.x;
         arg0->unk0xB8[3] = 2.0f * (fsin16_precise(arg1->unk2C << 8) * arg1->unk2E);
-        arg0->unk0xD8[1] = arg1->unkC;
+        arg0->unk0xD8[1] = arg1->base.y;
         arg0->unk0xD8[3] = 2.0f * (fsin16_precise(arg1->unk2D << 8) * arg1->unk2E);
-        arg0->unk0xF8[1] = arg1->unk10;
+        arg0->unk0xF8[1] = arg1->base.z;
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise(arg1->unk2C << 8) * arg1->unk2E);
     }
     return 0;
@@ -747,20 +750,21 @@ s32 dll_25_func_27A8(UnkCurvesStruct *arg0, UnkInnerCurvesStruct *arg1)
 
 // offset: 0x29FC | func: 14 | export: 11
 void dll_25_func_29FC(UnkCurvesStruct* arg0) {
-    arg0->unk0x9C = (UnkInnerCurvesStruct *)((s32)arg0->unk0x9C ^ (s32)arg0->unk0xA4);\
-    arg0->unk0xA4 = (UnkInnerCurvesStruct *)((s32)arg0->unk0xA4 ^ (s32)arg0->unk0x9C);\
-    arg0->unk0x9C = (UnkInnerCurvesStruct *)((s32)arg0->unk0x9C ^ (s32)arg0->unk0xA4);
+    arg0->unk0x9C = (CurveSetup *)((s32)arg0->unk0x9C ^ (s32)arg0->unk0xA4);\
+    arg0->unk0xA4 = (CurveSetup *)((s32)arg0->unk0xA4 ^ (s32)arg0->unk0x9C);\
+    arg0->unk0x9C = (CurveSetup *)((s32)arg0->unk0x9C ^ (s32)arg0->unk0xA4);
     if (arg0->unk0x0 >= 1.0f) {
         arg0->unk0x0 = 0.99f;
     }
 }
 
 // offset: 0x2A50 | func: 15 | export: 12
-CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)
+// returns a CurveSetup of type 0x22
+CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
 {
-    CurvesFunc1BCReturn *result;
-    CurvesFunc1BCReturnInner *temp_s0;
-    CurvesFunc1BCReturnInner *out;
+    CurveNode *result;
+    CurveSetup *temp_s0;
+    CurveSetup *out;
     s32 count;
     f32 temp_fv0;
     f32 var_fs0;
@@ -771,14 +775,14 @@ CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)
     {
-        temp_s0 = result[i].unk4;
+        temp_s0 = result[i].setup;
         if ((temp_s0->unk19 == 0x22) &&
-            ((arg1 == temp_s0->unk4.words.unk4) || ((temp_s0->unk1A.bytes.unk1A < 3) &&
+            ((arg1 == temp_s0->base.curve_type22.unk4) || ((temp_s0->unk1A < 3) &&
                                                     (arg1 == -1))) &&
-            ((temp_s0->unk30.words.unk30 == -1) || (main_get_bits(temp_s0->unk30.words.unk30) != 0)) &&
-            ((temp_s0->unk30.words.unk32 == -1) || (main_get_bits(temp_s0->unk30.words.unk32) == 0)))
+            ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
+            ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
+            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->base.x);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -790,11 +794,12 @@ CurvesFunc1BCReturnInner *dll_25_func_2A50(Object *obj, s32 arg1)
 }
 
 // offset: 0x2BC4 | func: 16 | export: 13
-CurvesFunc1BCReturnInner *dll_25_func_2BC4(Object *obj, s32 arg1)
+// returns a CurveSetup of type 0x22
+CurveSetup *dll_25_func_2BC4(Object *obj, s32 arg1)
 {
-    CurvesFunc1BCReturn *result;
-    CurvesFunc1BCReturnInner *temp_s0;
-    CurvesFunc1BCReturnInner *out;
+    CurveNode *result;
+    CurveSetup *temp_s0;
+    CurveSetup *out;
     s32 count;
     f32 temp_fv0;
     f32 var_fs0;
@@ -806,12 +811,12 @@ CurvesFunc1BCReturnInner *dll_25_func_2BC4(Object *obj, s32 arg1)
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)
     {
-        temp_s0 = result[i].unk4;
+        temp_s0 = result[i].setup;
         if (
             (temp_s0->unk19 == 0x22) &&
-            ((arg1 == temp_s0->unk4.words.unk4) || ((temp_s0->unk1A.bytes.unk1A < 3) && (arg1 == -1))))
+            ((arg1 == temp_s0->base.curve_type22.unk4) || ((temp_s0->unk1A < 3) && (arg1 == -1))))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
+            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->base.x);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
@@ -823,13 +828,13 @@ CurvesFunc1BCReturnInner *dll_25_func_2BC4(Object *obj, s32 arg1)
 }
 
 // offset: 0x2CF8 | func: 17 | export: 14
-CurvesFunc1BCReturnInner *dll_25_func_2CF8(Object *obj, s32 arg1)
+CurveSetup *dll_25_func_2CF8(Object *obj, s32 arg1)
 {
-    CurvesFunc1BCReturn *result;
-    CurvesFunc1BCReturn *var_s2;
-    CurvesFunc1BCReturnInner *temp_s0;
+    CurveNode *result;
+    s32 _pad;
+    CurveSetup *temp_s0;
     s32 count;
-    CurvesFunc1BCReturnInner *out;
+    CurveSetup *out;
     f32 temp_fv0;
     f32 var_fs0;
     s32 i;
@@ -839,13 +844,13 @@ CurvesFunc1BCReturnInner *dll_25_func_2CF8(Object *obj, s32 arg1)
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)
     {
-        temp_s0 = result[i].unk4;
+        temp_s0 = result[i].setup;
         if ((temp_s0->unk19 == 0x22) &&
-            (arg1 == temp_s0->unk1A.bytes.unk1A) &&
-            ((temp_s0->unk30.words.unk30 == -1) || (main_get_bits(temp_s0->unk30.words.unk30) != 0)) &&
-            ((temp_s0->unk30.words.unk32 == -1) || (main_get_bits(temp_s0->unk30.words.unk32) == 0)))
+            (arg1 == temp_s0->unk1A) &&
+            ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
+            ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
-            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->unk8);
+            temp_fv0 = vec3_distance_squared(&obj->positionMirror, (Vec3f *)&temp_s0->base.x);
             if (temp_fv0 < var_fs0)
             {
                 var_fs0 = temp_fv0;
