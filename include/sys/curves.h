@@ -14,6 +14,7 @@ typedef struct {
 /*1A*/ s8 unk1A;
 /*1B*/ s8 unk1B;
 /*1C*/ s32 unk1C[4];
+// TODO: struct split here?
 /*2C*/ s8 unk2C;
 /*2D*/ s8 unk2D;
 /*2E*/ u8 unk2E; 
@@ -21,40 +22,17 @@ typedef struct {
 // TODO: some of this depends on the curve type (unk19 not unk18?)
 /*30*/ union {
     struct {
-        /*30*/ s8 unk30; 
-        /*31*/ s8 unk31;
-        /*32*/ union {
-            s16 usedBit; //gameBit
-            struct {
-                s8 unk32;
-                s8 unk33;
-            };
-        };
-        /*34*/ union {
-            struct {
-            /*34*/ s16 unk34_s16;
-            /*36*/ s16 unk36_s16;
-            };
-            struct {
-            /*34*/ s8 unk34_s8;
-            /*35*/ s8 unk35_s8;
-            /*36*/ s8 unk36_s8;
-            /*36*/ s8 unk37_s8;
-            };
-        };
-    } unk30;
-    struct {
         s32 unk30;
         s16 unk34;
     } type15;
     struct {
         /*30*/ s16 unk30; // gameBit
         /*32*/ s16 usedBit; // gameBit
-    } type22;
+    } type22; // kyte?
     struct {
-        s16 unk30;
-        s16 unk32;
-    } type24;
+        s16 unk30; // gameBit
+        s16 unk32; // gameBit
+    } type24; // tricky?
     struct {
         /*30*/ s8 unk30; 
         /*31*/ s8 unk31;
@@ -69,33 +47,21 @@ typedef struct {
 
 } CurveSetup;
 
-// TODO: this is a CurveSetup
-typedef struct UnkInnerCurvesStruct {
-    s32 unk0;
-    s32 pad4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    u8 pad14[0x2C - 0x14];
-    s8 unk2C;
-    s8 unk2D;
-    u8 unk2E;
-} UnkInnerCurvesStruct;
-
+// NOTE: If the size of this struct changes, SnowHorn_Data must also be adjusted!
 typedef struct {
     /* 0000 */ f32 unk0x0;
-    /* 0004 */ f32 unk0x4;
+    /* 0004 */ f32 unk0x4; // curveProgress? (lerp t-value from 0 to 100?)
     /* 0008 */ f32 unk0x8;
     /* 000C */ f32 unk0xC;
     /* 0010 */ s32 unk0x10;
     /* 0014 */ f32 unk0x14[20];
     /* 0064 */ f32 unk0x64;
-    /* 0068 */ f32 unk0x68;
-    /* 006C */ f32 unk0x6C;
-    /* 0070 */ f32 unk0x70;
-    /* 0074 */ f32 unk0x74;
-    /* 0078 */ f32 unk0x78;
-    /* 007C */ f32 unk0x7C;
+    /* 0068 */ f32 unk0x68; //lerp_result_x?
+    /* 006C */ f32 unk0x6C; //lerp_result_y?
+    /* 0070 */ f32 unk0x70; //lerp_result_z?
+    /* 0074 */ f32 unk0x74; //some x component
+    /* 0078 */ f32 unk0x78; //some y component
+    /* 007C */ f32 unk0x7C; //some z component
     /* 0080 */ s32 unk0x80;
     /* 0084 */ f32 *unk0x84;
     /* 0088 */ f32 *unk0x88;
@@ -103,9 +69,9 @@ typedef struct {
     /* 0090 */ s32 unk0x90;
     /* 0094 */ unk_curve_func unk0x94;
     /* 0098 */ unk_curve_func_2 unk0x98;
-    UnkInnerCurvesStruct *unk0x9C;
-    UnkInnerCurvesStruct *unk0xA0;
-    UnkInnerCurvesStruct *unk0xA4;
+    CurveSetup *unk0x9C;
+    CurveSetup *unk0xA0;
+    CurveSetup *unk0xA4;
     f32 unk0xA8[4];
     f32 unk0xB8[4];
     f32 unk0xC8[4];

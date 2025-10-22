@@ -298,7 +298,7 @@ void moonSeedReceptacle_func_D40(Object* self) {
         main_set_bits(objData->gamebitGrown, 1);
         objData->unk0 = 4;
         self->srt.transl.y = objSetup->base.y;
-        curveSetup = (CurveSetup*)gDLL_25->vtbl->dll_25_func_2BC4(self, objSetup->kyteFlightGroup);
+        curveSetup = gDLL_25->vtbl->dll_25_func_2BC4(self, objSetup->kyteFlightGroup);
         objData->curveSetup = curveSetup;
         if (curveSetup->type22.usedBit != -1) {
             main_set_bits(curveSetup->type22.usedBit, 1);

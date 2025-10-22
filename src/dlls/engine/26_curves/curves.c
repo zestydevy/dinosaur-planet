@@ -1275,7 +1275,7 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
     if (var_a0 != -1) {
         if (arg0->unk0x80 != 0) {
             arg0->unk0xA0 = dll_26_func_39C(var_a0);
-            var_a0 = dll_26_func_438((CurveSetup* ) arg0->unk0xA0, -1);
+            var_a0 = dll_26_func_438(arg0->unk0xA0, -1);
             if (var_a0 == -1) {
                 return 1;
             }
@@ -1287,9 +1287,9 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
             return 1;
         }
         if (arg0->unk0x80 != 0) {
-            var_v0 = dll_26_func_590((CurveSetup* ) arg0->unk0xA0, -1);
+            var_v0 = dll_26_func_590(arg0->unk0xA0, -1);
         } else {
-            var_v0 = dll_26_func_438((CurveSetup* ) arg0->unk0xA0, -1);
+            var_v0 = dll_26_func_438(arg0->unk0xA0, -1);
         }
         if (var_v0 == -1) {
             return 1;
@@ -1301,31 +1301,31 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
             return 1;
         }
         if (arg0->unk0x80 != 0) {
-            xDiff = arg0->unk0xA4->unk8 - arg1->srt.transl.x;
-            yDiff = arg0->unk0xA4->unkC - arg1->srt.transl.y;
-            zDiff = arg0->unk0xA4->unk10 - arg1->srt.transl.z;
+            xDiff = arg0->unk0xA4->base.x - arg1->srt.transl.x;
+            yDiff = arg0->unk0xA4->base.y - arg1->srt.transl.y;
+            zDiff = arg0->unk0xA4->base.z - arg1->srt.transl.z;
         } else {
-            xDiff = arg0->unk0xA0->unk8 - arg1->srt.transl.x;
-            yDiff = arg0->unk0xA0->unkC - arg1->srt.transl.y;
-            zDiff = arg0->unk0xA0->unk10 - arg1->srt.transl.z;
+            xDiff = arg0->unk0xA0->base.x - arg1->srt.transl.x;
+            yDiff = arg0->unk0xA0->base.y - arg1->srt.transl.y;
+            zDiff = arg0->unk0xA0->base.z - arg1->srt.transl.z;
         }
         
         if (arg2 < sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff))) {
             return 1;
         }
         
-        arg0->unk0xB8[0] = arg0->unk0xA0->unk8;
-        arg0->unk0xB8[1] = arg0->unk0xA4->unk8;
+        arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+        arg0->unk0xB8[1] = arg0->unk0xA4->base.x;
         arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
         arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
         
-        arg0->unk0xD8[0] = arg0->unk0xA0->unkC;
-        arg0->unk0xD8[1] = arg0->unk0xA4->unkC;
+        arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+        arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
         arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32) arg0->unk0xA0->unk2E);
         arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2D << 8)) * (f32) arg0->unk0xA4->unk2E);
         
-        arg0->unk0xF8[0] = arg0->unk0xA0->unk10;
-        arg0->unk0xF8[1] = arg0->unk0xA4->unk10;
+        arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+        arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
         arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
         
@@ -1334,7 +1334,7 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
         }
         
         arg0->unk0x94 = func_80004C5C;
-        arg0->unk0x98 = func_80004CE8;
+        arg0->unk0x98 = (unk_curve_func_2)func_80004CE8;
         arg0->unk0x84 = arg0->unk0xA8;
         arg0->unk0x88 = arg0->unk0xC8;
         arg0->unk0x8C = arg0->unk0xE8;
@@ -1364,41 +1364,41 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
     memcpy(arg0->unk0xC8, arg0->unk0xD8, 0x10U);
     memcpy(arg0->unk0xE8, arg0->unk0xF8, 0x10U);
     if (arg0->unk0x80 != 0) {
-        var_v0 = dll_26_func_590((CurveSetup* ) arg0->unk0xA0, -1);
+        var_v0 = dll_26_func_590(arg0->unk0xA0, -1);
     } else {
-        var_v0 = dll_26_func_438((CurveSetup* ) arg0->unk0xA0, -1);
+        var_v0 = dll_26_func_438(arg0->unk0xA0, -1);
     }
     if (var_v0 != -1) {
         arg0->unk0xA4 = dll_26_func_39C(var_v0);
         if (arg0->unk0xA4 != NULL) {
             if (arg0->unk0x80 != 0) {
-                arg0->unk0xB8[0] = arg0->unk0xA0->unk8;
-                arg0->unk0xB8[1] = arg0->unk0x9C->unk8;
+                arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+                arg0->unk0xB8[1] = arg0->unk0x9C->base.x;
                 arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0x9C->unk2C << 8)) * (f32) arg0->unk0x9C->unk2E);
                 
-                arg0->unk0xD8[0] = arg0->unk0xA0->unkC;
-                arg0->unk0xD8[1] = arg0->unk0x9C->unkC;
+                arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+                arg0->unk0xD8[1] = arg0->unk0x9C->base.y;
                 arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0x9C->unk2D << 8)) * (f32) arg0->unk0x9C->unk2E);
                 
-                arg0->unk0xF8[0] = arg0->unk0xA0->unk10;
-                arg0->unk0xF8[1] = arg0->unk0x9C->unk10;
+                arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+                arg0->unk0xF8[1] = arg0->unk0x9C->base.z;
                 arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0x9C->unk2C << 8)) * (f32) arg0->unk0x9C->unk2E);
             } else {
-                arg0->unk0xB8[0] = arg0->unk0xA0->unk8;
-                arg0->unk0xB8[1] = arg0->unk0xA4->unk8;
+                arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+                arg0->unk0xB8[1] = arg0->unk0xA4->base.x;
                 arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
                 
-                arg0->unk0xD8[0] = arg0->unk0xA0->unkC;
-                arg0->unk0xD8[1] = arg0->unk0xA4->unkC;
+                arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+                arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
                 arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32)  arg0->unk0xA0->unk2E);
                 arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2D << 8)) * (f32) arg0->unk0xA4->unk2E);
                 
-                arg0->unk0xF8[0] = arg0->unk0xA0->unk10;
-                arg0->unk0xF8[1] = arg0->unk0xA4->unk10;
+                arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+                arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
                 arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
             }
@@ -1422,7 +1422,7 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
 // offset: 0x4CB4 | func: 39 | export: 36
 s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     f32 sp24;
-    UnkInnerCurvesStruct* temp_t7;
+    CurveSetup* temp_t7;
 
     if (arg1 == arg0->unk0x80) {
         return 0;
@@ -1439,18 +1439,18 @@ s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     arg0->unk0x9C = arg0->unk0xA4;
     arg0->unk0xA4 = temp_t7;
     
-    arg0->unk0xB8[0] = arg0->unk0xA0->unk8;
-    arg0->unk0xB8[1] = arg0->unk0xA4->unk8;
+    arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+    arg0->unk0xB8[1] = arg0->unk0xA4->base.x;
     arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
     arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
     
-    arg0->unk0xD8[0] = arg0->unk0xA0->unkC;
-    arg0->unk0xD8[1] = arg0->unk0xA4->unkC;
+    arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+    arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
     arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32) arg0->unk0xA0->unk2E);
     arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2D << 8)) * (f32) arg0->unk0xA4->unk2E);
     
-    arg0->unk0xF8[0] = arg0->unk0xA0->unk10;
-    arg0->unk0xF8[1] = arg0->unk0xA4->unk10;
+    arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+    arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
     arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
     arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
     
@@ -1459,7 +1459,7 @@ s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     }
     
     arg0->unk0x94 = func_80004C5C;
-    arg0->unk0x98 = func_80004CE8;
+    arg0->unk0x98 = (unk_curve_func_2)func_80004CE8;
     arg0->unk0x84 = arg0->unk0xA8;
     arg0->unk0x88 = arg0->unk0xC8;
     arg0->unk0x8C = arg0->unk0xE8;
@@ -1472,16 +1472,16 @@ s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
 
 // offset: 0x4FA8 | func: 40 | export: 37
 void dll_26_func_4FA8(UnkCurvesStruct* arg0, CurveSetup* arg1) {
-    if ((arg1 != NULL) && ((UnkInnerCurvesStruct*)arg1 != arg0->unk0xA4)) {
-        arg0->unk0xA4 = (UnkInnerCurvesStruct* ) arg1;
+    if ((arg1 != NULL) && (arg1 != arg0->unk0xA4)) {
+        arg0->unk0xA4 = arg1;
         
         arg0->unk0xB8[1] = arg1->base.x;
         arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg1->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
         
-        arg0->unk0xD8[1] = arg0->unk0xA4->unkC;
+        arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
         arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2D << 8)) * (f32) arg0->unk0xA4->unk2E);
         
-        arg0->unk0xF8[1] = arg0->unk0xA4->unk10;
+        arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
     }
 }
@@ -1511,33 +1511,33 @@ s32 dll_26_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
         arg0->unk0xA4 = dll_26_func_39C(var_v0);
         if (arg0->unk0xA4 != NULL) {
             if (arg0->unk0x80 != 0) {
-                arg0->unk0xB8[0] = ((CurveSetup*)arg0->unk0xA0)->base.x;
-                arg0->unk0xB8[1] = ((CurveSetup*)arg0->unk0x9C)->base.x;
+                arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+                arg0->unk0xB8[1] = arg0->unk0x9C->base.x;
                 arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0x9C->unk2C << 8)) * (f32) arg0->unk0x9C->unk2E);
                 
-                arg0->unk0xD8[0] = ((CurveSetup*)arg0->unk0xA0)->base.y;
-                arg0->unk0xD8[1] = ((CurveSetup*)arg0->unk0x9C)->base.y;
+                arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+                arg0->unk0xD8[1] = arg0->unk0x9C->base.y;
                 arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0x9C->unk2D << 8)) * (f32) arg0->unk0x9C->unk2E);
                 
-                arg0->unk0xF8[0] = ((CurveSetup*)arg0->unk0xA0)->base.z;
-                arg0->unk0xF8[1] = ((CurveSetup*)arg0->unk0x9C)->base.z;
+                arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+                arg0->unk0xF8[1] = arg0->unk0x9C->base.z;
                 arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0x9C->unk2C << 8)) * (f32) arg0->unk0x9C->unk2E);
             } else {
-                arg0->unk0xB8[0] = ((CurveSetup*)arg0->unk0xA0)->base.x;
-                arg0->unk0xB8[1] = ((CurveSetup*)arg0->unk0xA4)->base.x;
+                arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+                arg0->unk0xB8[1] = arg0->unk0xA4->base.x;
                 arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
                 
-                arg0->unk0xD8[0] = ((CurveSetup*)arg0->unk0xA0)->base.y;
-                arg0->unk0xD8[1] = ((CurveSetup*)arg0->unk0xA4)->base.y;
+                arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+                arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
                 arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2D << 8)) * (f32) arg0->unk0xA4->unk2E);
                 
-                arg0->unk0xF8[0] = ((CurveSetup*)arg0->unk0xA0)->base.z;
-                arg0->unk0xF8[1] = ((CurveSetup*)arg0->unk0xA4)->base.z;
+                arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+                arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
                 arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
                 arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
             }
@@ -1665,18 +1665,18 @@ s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
             return 1;
         }
         
-        arg0->unk0xB8[0] = ((CurveSetup*)arg0->unk0xA0)->base.x;
-        arg0->unk0xB8[1] = ((CurveSetup*)arg0->unk0xA4)->base.x;
+        arg0->unk0xB8[0] = arg0->unk0xA0->base.x;
+        arg0->unk0xB8[1] = arg0->unk0xA4->base.x;
         arg0->unk0xB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
         arg0->unk0xB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
         
-        arg0->unk0xD8[0] = ((CurveSetup*)arg0->unk0xA0)->base.y;
-        arg0->unk0xD8[1] = ((CurveSetup*)arg0->unk0xA4)->base.y;
+        arg0->unk0xD8[0] = arg0->unk0xA0->base.y;
+        arg0->unk0xD8[1] = arg0->unk0xA4->base.y;
         arg0->unk0xD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA0->unk2D << 8)) * (f32) arg0->unk0xA0->unk2E);
         arg0->unk0xD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk0xA4->unk2D << 8)) * (f32) arg0->unk0xA4->unk2E);
         
-        arg0->unk0xF8[0] = ((CurveSetup*)arg0->unk0xA0)->base.z;
-        arg0->unk0xF8[1] = ((CurveSetup*)arg0->unk0xA4)->base.z;
+        arg0->unk0xF8[0] = arg0->unk0xA0->base.z;
+        arg0->unk0xF8[1] = arg0->unk0xA4->base.z;
         arg0->unk0xF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA0->unk2C << 8)) * (f32) arg0->unk0xA0->unk2E);
         arg0->unk0xF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk0xA4->unk2C << 8)) * (f32) arg0->unk0xA4->unk2E);
         
@@ -1686,7 +1686,7 @@ s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
         }
 
         arg0->unk0x94 = func_80004C5C;
-        arg0->unk0x98 = func_80004CE8;
+        arg0->unk0x98 = (unk_curve_func_2)func_80004CE8;
         arg0->unk0x84 = arg0->unk0xA8;
         arg0->unk0x88 = arg0->unk0xC8;
         arg0->unk0x8C = arg0->unk0xE8;

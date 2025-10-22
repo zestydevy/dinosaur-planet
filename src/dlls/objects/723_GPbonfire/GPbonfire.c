@@ -25,7 +25,7 @@ typedef struct {
 /*02*/ u8 previousState;
 /*04*/ s32 sequenceIndexKindling;   //the cutscene for placing the kindling
 /*08*/ s32 sequenceIndexBurning;    //the cutscene for Kyte starting the fire
-/*0C*/ CurvesFunc1BCReturnInner* curves;
+/*0C*/ CurveSetup* curves;
 /*10*/ s16 gameBitKindlingPlaced;   //flag to set when kindling is ready to burn
 /*12*/ s16 gameBitBurning;          //flag to set when the bonfire's burning
 /*14*/ s32 unused14;
@@ -317,7 +317,7 @@ void GPbonfire_func_A44(Object* self) {
     GPBonfire_Data* objdata;
     GPBonfire_Setup* setup;
     void** dll;
-    CurvesFunc1BCReturnInner* curves;
+    CurveSetup* curves;
 
     objdata = self->data;
     setup = (GPBonfire_Setup*)self->setup;
@@ -347,8 +347,8 @@ void GPbonfire_func_A44(Object* self) {
     //Set flag based on Kyte's curve motion
     curves = gDLL_25->vtbl->dll_25_func_2BC4(self, setup->kyteCurveID);
     objdata->curves = curves;
-    if (curves->unk30.words.unk32 != -1) {
-        main_set_bits(curves->unk30.words.unk32, 1);
+    if (curves->type22.usedBit != -1) {
+        main_set_bits(curves->type22.usedBit, 1);
     }
 }
 
