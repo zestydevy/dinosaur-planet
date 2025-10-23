@@ -133,7 +133,7 @@ void BalloonBaddie_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17->vtbl->func1(self, PARTICLE_331, NULL, 2, -1, NULL);
-                gDLL_33->vtbl->func18.withFourArgs((s32)self, setup->unk18, -1, 0);
+                gDLL_33->vtbl->func18(self, setup->unk18, -1, 0);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, setup->respawnTimer * 60);
             }
             func_80026128(self, 0xA, 1, 0);
