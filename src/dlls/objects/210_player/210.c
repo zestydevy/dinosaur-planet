@@ -130,7 +130,6 @@ void func_8004D880(Object *arg0);
 void *func_8005D3A4(int param);
 s32 func_80025140(Object*, f32, f32, s32);
 MtxF* func_80032170(Object*, s32);
-void func_80007E2C(Vec3f*, s32*);
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_80032238(Object* obj, s32 arg1, s32 arg2, Vec3f* arg3);
@@ -3582,15 +3581,13 @@ void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2) {
     f32 sp88;
     f32 sp84;
     Object* temp_v0_2;
-    s32 pad;
+    f32 var_fv1;
     f32 sp70[3];
     Vec3f sp64;
-    s32 pad_sp60;
-    s32 sp5C;
-    f32 var_fv1;
-    s32 sp54;
+    Vec3s16 sp5C;
+    Vec3s16 sp54;
+    Vec3s16 sp4C;
     s32 var_v1;
-    s32 sp4C; // TODO: this should be u8
     DLL_Unknown* dll;
 
     gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);

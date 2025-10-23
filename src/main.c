@@ -19,6 +19,7 @@
 #include "sys/fonts.h"
 #include "sys/boot.h"
 #include "sys/dl_debug.h"
+#include "sys/voxmap.h"
 #include "dll.h"
 #include "constants.h"
 #include "functions.h"

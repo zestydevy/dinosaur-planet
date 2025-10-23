@@ -3,6 +3,7 @@
 #include "libc/string.h"
 #include "sys/objects.h"
 #include "sys/rand.h"
+#include "sys/voxmap.h"
 #include "functions.h"
 
 /*0x0*/ static CurveSetup *_bss_0;
@@ -1186,21 +1187,19 @@ s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
 // offset: 0x3F00 | func: 36 | export: 5
 s32 dll_26_func_3F00(Object* arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
-    u8 temp_t5;
-    s32 var_v0_2;
     f32 temp_fs0;
     f32 temp_fv0;
     f32 temp_fv1;
     f32 var_fs2;
-    s32 sp104;
     f32 var_fs3;
-    s32 spFC;
+    Vec3s16 sp104;
+    Vec3s16 spFC;
     Vec3f spF0;
     s32 spEC;
-    CurveSetup* temp_s0;
-    u8 _pad2;
+    s32 var_v0_2;
+    u8 temp_t5;
     u8 spE6;
-    s32 _pad;
+    CurveSetup* temp_s0;
     CurveSetup* spDC;
     CurveSetup* spD8;
     Func_80059C40_Struct sp84;
