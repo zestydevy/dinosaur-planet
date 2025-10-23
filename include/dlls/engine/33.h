@@ -4,6 +4,7 @@
 #include "dlls/engine/18.h"
 #include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
+#include "segment_334F0.h"
 #include "sys/curves.h"
 #include "sys/voxmap.h"
 #include "dll_def.h"
@@ -18,39 +19,39 @@ typedef struct {
 } DLL33Data_34C;
 
 typedef struct {
-    DLL18_Data unk0;
-    DLL33Data_34C unk34C;
-    SomeVoxmapAllocStruct unk374;
-    u8 _unk380[0x39C - 0x380];
-    s16 unk39C;
-    s16 unk39E;
-    s16 unk3A0;
-    s16 unk3A2;
-    s16 unk3A4;
-    s16 unk3A6;
-    u32 unk3A8;
-    u8 _unk3AC[0x3B0 - 0x3AC];
-    u8 unk3B0;
-    u8 _unk3B1;
-    u16 unk3B2;
-    u8 unk3B4;
-    u8 _unk3B5;
-    s16 unk3B6;
-    u8 unk3B8;
-    s8 unk3B9;
-    s8 _unk3BA;
-    s8 unk3BB;
-    u8 _unk3BC[0x3E0 - 0x3BC];
-    s16 unk3E0;
-    u16 unk3E2;
-    f32 unk3E4;
-    f32 unk3E8;
-    f32 unk3EC;
-    u8 unk3F0;
-    u8 _unk3F1[0x3F4 - 0x3F1];
-    void *unk3F4;
-    UnkCurvesStruct *unk3F8;
-    s32 unk3FC;
+/*000*/ DLL18_Data unk0;
+/*34C*/ DLL33Data_34C unk34C;
+/*374*/ SomeVoxmapAllocStruct unk374;
+/*380*/ u8 _unk380[0x39C - 0x380];
+/*39C*/ s16 unk39C;
+/*39E*/ s16 unk39E;
+/*3A0*/ s16 unk3A0;
+/*3A2*/ s16 unk3A2;
+/*3A4*/ s16 unk3A4;
+/*3A6*/ s16 unk3A6;
+/*3A8*/ u32 unk3A8;
+/*3AC*/ u8 _unk3AC[0x3B0 - 0x3AC];
+/*3B0*/ u8 unk3B0;
+/*3B1*/ u8 _unk3B1;
+/*3B2*/ u16 unk3B2;
+/*3B4*/ s8 unk3B4;
+/*3B5*/ u8 _unk3B5;
+/*3B6*/ s16 unk3B6;
+/*3B8*/ u8 unk3B8;
+/*3B9*/ s8 unk3B9;
+/*3BA*/ s8 _unk3BA;
+/*3BB*/ s8 unk3BB;
+/*3BC*/ Unk80032CF8 unk3BC;
+/*3E0*/ s16 unk3E0;
+/*3E2*/ u16 unk3E2;
+/*3E4*/ f32 unk3E4;
+/*3E8*/ f32 unk3E8;
+/*3EC*/ f32 unk3EC;
+/*3F0*/ u8 unk3F0;
+/*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
+/*3F4*/ void *unk3F4; // pointer to unk3FC
+/*3F8*/ UnkCurvesStruct *unk3F8;
+/*3FC*/ s32 unk3FC; // TODO: doesn't exist?
 } DLL33_Data;
 
 typedef struct {

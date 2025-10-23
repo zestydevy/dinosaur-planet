@@ -1,4 +1,6 @@
 #include "segment_334F0.h"
+#include "sys/curves.h"
+#include "dll.h"
 
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
@@ -9,7 +11,7 @@ s32 D_80091720[] = { 0x0, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13 };
 s32 D_80091748[] = { 0, 0 };
 
 void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2) {
-    f32* temp_v0;
+    f32* temp_v0; // TODO: this is an Object* ?
 
     if (obj->group == GROUP_UNK1) {
         arg1 = ((DLL_210_Player*)obj->dll)->vtbl->func54(obj);
@@ -32,7 +34,7 @@ void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2) {
     func_80033B68(obj, arg1, 0.0f);
 }
 
-void func_80032A08(Object* obj, s8* arg1) {
+void func_80032A08(Object* obj, s8* arg1) { // TODO: arg1 = Unk80032CF8*
     s32* sp1C;
     s32 temp_v1;
     s32* temp_v0;
@@ -803,7 +805,7 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     s32 index;
     s32 listPosition;
     u32 jointID;
-    s16* sequenceBoneData;
+    u16* sequenceBoneData;
 
     romdef = obj->def;
     sequenceBoneData = NULL;

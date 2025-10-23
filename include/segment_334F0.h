@@ -1,8 +1,6 @@
 #ifndef _SEGMENT_334F0
 #define _SEGMENT_334F0
 
-#include "common.h"
-
 #include "dlls/objects/210_player.h"
 
 // Size: 0x24
@@ -22,14 +20,14 @@ typedef struct Unk80032CF8 {
     /* 0x1E */ u8 pad1F[0x24 - 0x1F];
 } Unk80032CF8;
 
-void func_80032A08(Object* obj, s8* arg1);
+void func_80032A08(Object* obj, s8* arg1); // TODO: arg1 = Unk80032CF8*
 void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2);
 void func_80033B68(Object*, Unk80032CF8*, f32);
 void func_80034678(Object*, s8*, f32);
 void* func_800348A0(Object*, s32, s32);
 void func_800339E0(Object*, s32, s32, f32);
 void func_80033AA0(Object*, s32, s32, f32);
-s16* func_80034804(Object*, s32);
+s16* func_80034804(Object *obj, s32 sequenceBoneID);
 s32 func_80034250(Unk80032CF8*, s16*);
 s32 func_80034518(Unk80032CF8*, s16*, f32, f32);
 void func_80033C54(Object*, Unk80032CF8*, f32, s16*);

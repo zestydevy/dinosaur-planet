@@ -135,5 +135,6 @@ void func_80026940(Object* obj, s16 arg1);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 void func_80026184(Object* arg0, Object* arg1);
 void func_8002681C(Object* obj);
+void func_80028D2C(s32* val); // TODO: Object*
 
 #endif

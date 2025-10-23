@@ -1367,7 +1367,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
 
 #endif
 
-void func_80028D2C(s32* val) {
+void func_80028D2C(s32* val) { // TODO: this takes an Object*
     s32 i = 0;
 
     while (i < 5 && D_800916E0[i] != NULL) {
