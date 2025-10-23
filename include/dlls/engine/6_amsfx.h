@@ -33,6 +33,7 @@ enum SoundID {
     SOUND_1e1_Stone_Moving = 0x1e1,
 
     SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here = 0x1E2,
+    SOUND_1E3_SharpClaw_Ah_Shuddup = 0x1E3, // used in DLL 33
 
     SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 

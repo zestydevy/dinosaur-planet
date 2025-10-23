@@ -301,7 +301,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*23*/ UnknownDLLFunc func23;
     /*24*/ void (*func24)(Object* player, s32 healthDifference);
     /*25*/ UnknownDLLFunc func25;
-    /*26*/ UnknownDLLFunc func26;
+    /*26*/ s32 (*func26)(Object *player);
     /*27*/ UnknownDLLFunc func27;
     /*28*/ UnknownDLLFunc func28;
     /*29*/ UnknownDLLFunc func29;
@@ -327,11 +327,11 @@ DLL_INTERFACE(DLL_210_Player) {
     /*49*/ UnknownDLLFunc func49;
     /*50*/ s32 (*func50)(Object*);
     /*51*/ UnknownDLLFunc func51;
-    /*53*/ f32 *(*func52)(Object*);
-    /*52*/ UnknownDLLFunc func53;
-    /*55*/ void *(*func54)(Object*);
-    /*54*/ UnknownDLLFunc func55;
-    /*57*/ f32 (*func56)(Object*);
+    /*52*/ f32 *(*func52)(Object*);
+    /*53*/ UnknownDLLFunc func53;
+    /*54*/ void *(*func54)(Object*);
+    /*55*/ UnknownDLLFunc func55;
+    /*56*/ f32 (*func56)(Object*);
     /*57*/ UnknownDLLFunc func57;
     /*58*/ UnknownDLLFunc func58;
     /*59*/ UnknownDLLFunc func59;

@@ -105,7 +105,6 @@ void func_8005C780();
 
 void init_global_map();
 
-void func_80007178();
 s32 schedule_gfx_task(Gfx*, Gfx*, s32);
 s32 func_80037924();
 void func_80037EC8(Gfx**);
@@ -147,8 +146,5 @@ void func_80059038(s32, s32, s32);
 
 s32 func_80057F1C(Object*, f32, f32, f32, Func_80057F1C_Struct***, s32, s32);
 s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, Func_80059C40_Struct*, Object*, s8, s8, u8, s8);
-
-s32 func_80008048(s32*, s32*, s32*, u8*, s32);
-void func_80007EE0(Vec3f*, s32*);
 
 #endif //_FUNCTIONS_H

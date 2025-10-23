@@ -194,9 +194,9 @@ void dll_18_func_75C(SRT *srt) {
 }
 
 // offset: 0x778 | func: 4 | export: 4
-void dll_18_func_778(Object *obj, DLL18_Data *data, u32 arg2) {
+void dll_18_func_778(Object *obj, DLL18_Data *data, s32 arg2) {
     dll18_callback2 temp_v1;
-    u32 var_v0;
+    s32 var_v0;
 
     var_v0 = data->unk26C;
     if (arg2 != var_v0) {
