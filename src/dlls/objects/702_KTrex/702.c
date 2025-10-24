@@ -1,4 +1,3 @@
-#include "common.h"
 #include "dlls/engine/33.h"
 #include "dlls/objects/214_animobj.h"
 #include "sys/gfx/model.h"
@@ -11,6 +10,7 @@
 #include "segment_334F0.h"
 #include "prevent_bss_reordering.h"
 
+// Note: This is not the only object data. DLL 33 data is prepended to this in memory.
 typedef struct {
     GenericStack *stack;
     f32 unk4;
@@ -50,13 +50,12 @@ typedef struct {
     s8 unk103;
     s32 unk104;
     u8 unk108;
-    u8 _unk109[0x10c - 0x109];
     SRT unk10C;
     SRT unk124;
     SRT unk13C;
     SRT unk154;
     Vec3f unk16C;
-} KTrex_ActualData;
+} KTrex_Data;
 
 typedef struct {
     DLL33_ObjSetup base;
@@ -70,16 +69,16 @@ typedef struct {
 /*0x0*/ static u32 _data_0[] = {
     0x00000002, 0x00000002
 };
-/*0x8*/ static s16 _data_8[] = {
+/*0x8*/ static s16 _data_8[] = { // mod anim indices
     0x0009, 0x0012, 0x0012, 0x0000
 };
-/*0x10*/ static s16 _data_10[] = {
+/*0x10*/ static s16 _data_10[] = { // mod anim indices
     0x0001, 0x0002, 0x0003, 0x0000
 };
-/*0x18*/ static s16 _data_18[] = {
+/*0x18*/ static s16 _data_18[] = { // mod anim indices
     0x0004, 0x0006, 0x0006, 0x0000
 };
-/*0x20*/ static s16 _data_20[3][2] = {
+/*0x20*/ static s16 _data_20[3][2] = { // mod anim indices
     { 0x0008, 0x000e }, 
     { 0x0010, 0x0011 }, 
     { 0x0010, 0x0011 }
@@ -111,34 +110,34 @@ typedef struct {
 /*0x78*/ static f32 _data_78[] = {
     1, 0.975, 0.975
 };
-/*0x84*/ static u16 _data_84[2] = {0x06fa, 0x06fb};
-/*0x88*/ static u16 _data_88[2] = {0x0691, 0x06fd};
-/*0x8C*/ static u16 _data_8C[2] = {0x06fe, 0x0000};
-/*0x90*/ static u16 _data_90[2] = {0x025b, 0x025c};
+/*0x84*/ static u16 _data_84[2] = {SOUND_6FA, SOUND_6FB};
+/*0x88*/ static u16 _data_88[2] = {SOUND_691_KT_Rex_Roar, SOUND_6FD_KT_Rex_Roar};
+/*0x8C*/ static u16 _data_8C[2] = {SOUND_6FE_KT_Rex_Roar, 0};
+/*0x90*/ static u16 _data_90[2] = {SOUND_25B_Magic_Attack_Deflected, SOUND_25C_Melee_Attack_Deflected};
 /*0x94*/ static u32 _data_94[] = { // curve uIDs
-    0x00032136, 0x0003213d, 0x00032128, 0x0003212f
+    0x32136, 0x3213d, 0x32128, 0x3212f
 };
 /*0xA4*/ static u32 _data_A4[] = { // curve uIDs
-    0x00032130, 0x00032137, 0x00032123, 0x00032129
+    0x32130, 0x32137, 0x32123, 0x32129
 };
 /*0xB4*/ static u32 _data_B4[] = { // curve uIDs
-    0x00032367, 0x00032369, 0x0003236a, 0x00032365
+    0x32367, 0x32369, 0x3236a, 0x32365
 };
 /*0xC4*/ static u32 _data_C4[] = { // curve uIDs
-    0x00032132, 0x00032139, 0x00032124, 0x0003212b
+    0x32132, 0x32139, 0x32124, 0x3212b
 };
 /*0xD4*/ static s16 _data_D4[] = { // game bits
-    0x0566, 0x0567, 0x0568, 0x0569
+    BIT_566, BIT_567, BIT_568, BIT_569
 };
 /*0xDC*/ static s16 _data_DC[] = { // game bits
-    0x0560, 0x0561, 0x0562, 0x0563
+    BIT_560, BIT_561, BIT_562, BIT_563
 };
 /*0xE4*/ static DLL_IModgfx *_data_E4 = NULL;
 
 /*0x0*/ static dll18_callback _bss_0[9];
 /*0x28*/ static dll18_callback _bss_28[12];
-/*0x58*/ static DLL33_Data* _bss_58;
-/*0x5C*/ static KTrex_ActualData *_bss_5C;
+/*0x58*/ static DLL33_Data* sDLL33Data;
+/*0x5C*/ static KTrex_Data *sKTData;
 
 static s32 dll_702_func_23EC(Object* arg1, DLL18_Data* arg2, f32 arg3);
 static s32 dll_702_func_2454(Object* arg0, DLL18_Data* arg1, f32 arg2);
@@ -165,7 +164,7 @@ static s32 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2);
 
 static s32 dll_702_func_B98(void);
 static u8 dll_702_func_C2C(u16 arg0);
-static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1);
+static f32 dll_702_func_C74(Object* arg0, KTrex_Data* arg1);
 static s32 dll_702_func_D5C(u8 arg0);
 /*static*/ int dll_702_func_119C(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 static void dll_702_func_12DC(Object* arg0);
@@ -216,7 +215,7 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     s32 i;
     s32 var_v0;
     DLL33_Data* objdata;
-    KTrex_ActualData* ktdata;
+    KTrex_Data* ktdata;
 
     objdata = (DLL33_Data*)self->data;
     var_v0 = 0x10;
@@ -277,8 +276,8 @@ void dll_702_control(Object* self) {
 
     if (self->unk0xdc == 0) {
         temp_s1 = (DLL33_Data*)self->data;
-        _bss_58 = temp_s1;
-        _bss_5C = _bss_58->unk3F4;
+        sDLL33Data = temp_s1;
+        sKTData = sDLL33Data->unk3F4;
         func_80028D2C(self);
         temp_s1->unk0.unk2C8 = get_player();
         if (temp_s1->unk0.unk2C8 != NULL) {
@@ -287,13 +286,13 @@ void dll_702_control(Object* self) {
             sp38[2] = temp_s1->unk0.unk2C8->positionMirror.z - self->positionMirror.z;
             temp_s1->unk0.unk2B8 = sqrtf(SQ(sp38[0]) + SQ(sp38[1]) + SQ(sp38[2]));
         }
-        func_80032A08(self, &_bss_58->unk3BC);
-        _bss_5C->unkFF = dll_702_func_B98();
-        _bss_5C->unkF4 = dll_702_func_C74(temp_s1->unk0.unk2C8, _bss_5C);
-        _bss_5C->unkFE = dll_702_func_C2C(_bss_5C->unkFA);
-        _bss_5C->unk100 = dll_702_func_D5C(_bss_5C->unkFE);
-        gDLL_33->vtbl->func20(self, &temp_s1->unk0, &_bss_58->unk34C, _bss_58->unk39E, &_bss_58->unk3B4, 2, 2, 0);
-        if (_bss_5C->unkFA & 0x10) {
+        func_80032A08(self, &sDLL33Data->unk3BC);
+        sKTData->unkFF = dll_702_func_B98();
+        sKTData->unkF4 = dll_702_func_C74(temp_s1->unk0.unk2C8, sKTData);
+        sKTData->unkFE = dll_702_func_C2C(sKTData->unkFA);
+        sKTData->unk100 = dll_702_func_D5C(sKTData->unkFE);
+        gDLL_33->vtbl->func20(self, &temp_s1->unk0, &sDLL33Data->unk34C, sDLL33Data->unk39E, &sDLL33Data->unk3B4, 2, 2, 0);
+        if (sKTData->unkFA & 0x10) {
             temp_s1->unk0.unk348 = 2;
         } else {
             temp_s1->unk0.unk348 = 0;
@@ -303,7 +302,7 @@ void dll_702_control(Object* self) {
         gDLL_33->vtbl->func10(self, temp_s1, 0.0f, 0);
         func_80026128(self, 0x17, 1, -1);
         gDLL_18->vtbl->func1(self, &temp_s1->unk0, delayFloat, delayFloat, _bss_0, _bss_28);
-        self->srt.transl.y = _bss_5C->unkEC;
+        self->srt.transl.y = sKTData->unkEC;
     }
 }
 
@@ -315,35 +314,35 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     MtxF sp48;
     s32 _pad;
  
-    _bss_58 = (DLL33_Data* ) self->data;
+    sDLL33Data = (DLL33_Data* ) self->data;
     if ((visibility != 0) && (self->unk0xdc == 0)) {
-        if (_bss_58->unk3E8 != 0.0f) {
-            func_80036FBC(0xC8, 0, 0, _bss_58->unk3E8);
+        if (sDLL33Data->unk3E8 != 0.0f) {
+            func_80036FBC(0xC8, 0, 0, sDLL33Data->unk3E8);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 1, &_bss_5C->unk124.transl.x, &_bss_5C->unk124.transl.y, &_bss_5C->unk124.transl.z, 0);
-        func_80031F6C(self, 2, &_bss_5C->unk13C.transl.x, &_bss_5C->unk13C.transl.y, &_bss_5C->unk13C.transl.z, 0);
-        func_80031F6C(self, 3, &_bss_5C->unk154.transl.x, &_bss_5C->unk154.transl.y, &_bss_5C->unk154.transl.z, 0);
-        func_80031F6C(self, 0, &_bss_5C->unk10C.transl.x, &_bss_5C->unk10C.transl.y, &_bss_5C->unk10C.transl.z, 0);
+        func_80031F6C(self, 1, &sKTData->unk124.transl.x, &sKTData->unk124.transl.y, &sKTData->unk124.transl.z, 0);
+        func_80031F6C(self, 2, &sKTData->unk13C.transl.x, &sKTData->unk13C.transl.y, &sKTData->unk13C.transl.z, 0);
+        func_80031F6C(self, 3, &sKTData->unk154.transl.x, &sKTData->unk154.transl.y, &sKTData->unk154.transl.z, 0);
+        func_80031F6C(self, 0, &sKTData->unk10C.transl.x, &sKTData->unk10C.transl.y, &sKTData->unk10C.transl.z, 0);
         memcpy(&sp48, func_80032170(self, 4), 0x40);
         sp48.m[3][1] = 0.0f;
         sp48.m[3][0] = 0.0f;
         sp48.m[3][2] = 0.0f;
-        _bss_5C->unk16C.x = (f32) ((f32) rand_next(-0x32, 0x32) * 0.1f);
-        _bss_5C->unk16C.y = (f32) ((f32) rand_next(0x3C, 0x78) * 0.1f);
-        _bss_5C->unk16C.z = (f32) ((f32) rand_next(0x64, 0x96) * -0.25f);
-        vec3_transform(&sp48, _bss_5C->unk16C.x, _bss_5C->unk16C.y, _bss_5C->unk16C.z, &_bss_5C->unk16C.x, &_bss_5C->unk16C.y, &_bss_5C->unk16C.z);
-        _bss_5C->unk104 |= 0x100000;
+        sKTData->unk16C.x = (f32) ((f32) rand_next(-0x32, 0x32) * 0.1f);
+        sKTData->unk16C.y = (f32) ((f32) rand_next(0x3C, 0x78) * 0.1f);
+        sKTData->unk16C.z = (f32) ((f32) rand_next(0x64, 0x96) * -0.25f);
+        vec3_transform(&sp48, sKTData->unk16C.x, sKTData->unk16C.y, sKTData->unk16C.z, &sKTData->unk16C.x, &sKTData->unk16C.y, &sKTData->unk16C.z);
+        sKTData->unk104 |= 0x100000;
     }
 }
 
 // offset: 0xA78 | func: 5 | export: 4
 void dll_702_free(Object* self, s32 a1) {
-    _bss_58 = (DLL33_Data* ) self->data;
-    _bss_5C = _bss_58->unk3F4;
+    sDLL33Data = (DLL33_Data* ) self->data;
+    sKTData = sDLL33Data->unk3F4;
     obj_free_object_type(self, 4);
-    gDLL_33->vtbl->func15(self, _bss_58, 0);
-    generic_stack_free(_bss_5C->stack);
+    gDLL_33->vtbl->func15(self, sDLL33Data, 0);
+    generic_stack_free(sKTData->stack);
     if (_data_E4 != NULL) {
         dll_unload(_data_E4);
     }
@@ -357,14 +356,14 @@ u32 dll_702_get_model_flags(Object *self) {
 
 // offset: 0xB4C | func: 7 | export: 6
 u32 dll_702_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL33_Data) + sizeof(KTrex_ActualData);
+    return sizeof(DLL33_Data) + sizeof(KTrex_Data);
 }
 
 // offset: 0xB60 | func: 8 | export: 7
 s16 dll_702_func_B60(Object* self) {
     DLL33_Data *dll33data;
     
-    dll33data = (_bss_58 = (DLL33_Data*)self->data);
+    dll33data = (sDLL33Data = (DLL33_Data*)self->data);
     return dll33data->unk0.unk26C;
 }
 
@@ -395,7 +394,7 @@ static u8 dll_702_func_C2C(u16 arg0) {
 }
 
 // offset: 0xC74 | func: 12
-static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1) {
+static f32 dll_702_func_C74(Object* arg0, KTrex_Data* arg1) {
     s32 _pad;
     s32 temp_t7;
     f32 sp2C;
@@ -430,8 +429,8 @@ static s32 dll_702_func_D5C(u8 arg0) {
 
 // offset: 0xE24 | func: 14
 static void dll_702_func_E24(s32 arg0) {
-    if (!generic_stack_is_full(_bss_5C->stack)) {
-        generic_stack_push(_bss_5C->stack, &arg0);
+    if (!generic_stack_is_full(sKTData->stack)) {
+        generic_stack_push(sKTData->stack, &arg0);
     }
 }
 
@@ -440,8 +439,8 @@ static s32 dll_702_func_E88(void) {
     s32 sp24;
 
     sp24 = 0;
-    if (!generic_stack_is_empty(_bss_5C->stack)) {
-        generic_stack_pop(_bss_5C->stack, &sp24);
+    if (!generic_stack_is_empty(sKTData->stack)) {
+        generic_stack_pop(sKTData->stack, &sp24);
     }
     return sp24;
 }
@@ -451,10 +450,10 @@ static s32 dll_702_func_EF0(Object* arg0) {
     f32 temp_fv1;
     f32 temp_fv1_2;
 
-    if (_bss_5C->unk100 == 0) {
+    if (sKTData->unk100 == 0) {
         return 0;
     }
-    switch (_bss_5C->unk100) {
+    switch (sKTData->unk100) {
     case 1:
     case 2:
         temp_fv1 = arg0->srt.transl.z - 150.0f;
@@ -477,7 +476,7 @@ static s32 dll_702_func_EF0(Object* arg0) {
 }
 
 // offset: 0xFE4 | func: 17
-static s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_ActualData* a1) {
+static s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_Data* a1) {
     f32 var_fv0;
     s32 temp_v0;
     s32 var_a3;
@@ -535,19 +534,19 @@ static s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_ActualData* a1) {
     for (i = 0; i < a2->unk98; i++) {
         switch (a2->unk8E[i]) {
         case 1:
-            _bss_5C->unk104 |= 4;
+            sKTData->unk104 |= 4;
             break;
         case 2:
-            _bss_5C->unk104 |= 8;
+            sKTData->unk104 |= 8;
             break;
         case 3:
-            _bss_5C->unk104 |= 0x800;
+            sKTData->unk104 |= 0x800;
             break;
         case 4:
-            _bss_5C->unk104 |= 0x1000;
+            sKTData->unk104 |= 0x1000;
             break;
         case 5:
-            _bss_5C->unk104 |= 0x20000;
+            sKTData->unk104 |= 0x20000;
             break;
         default:
             break;
@@ -563,132 +562,132 @@ static void dll_702_func_12DC(Object* arg0) {
     s32 i;
     f32 sp48;
 
-    sp48 = 1.0f - (_bss_58->unk0.unk2B8 / 2000.0f);
+    sp48 = 1.0f - (sDLL33Data->unk0.unk2B8 / 2000.0f);
     if (sp48 < 0.0f) {
         sp48 = 0.0f;
     } else if (sp48 > 1.0f) {
         sp48 = 1.0f;
     }
-    if (_bss_5C->unk104 & 0x40) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x68E, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x40) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x80) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x68F, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x80) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x100) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x690, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x100) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x200) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x68D, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x200) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x10000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x6FC, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x10000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x40000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_84[rand_next(0, 1)], 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x40000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_84[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x80000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, *_data_8C, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x80000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, *_data_8C, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x2000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_88[rand_next(0, 2)], 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x2000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_88[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (_bss_5C->unk104 & 0x1000) {
-        _bss_5C->unk104 = _bss_5C->unk104 & ~0x1800;
+    if (sKTData->unk104 & 0x1000) {
+        sKTData->unk104 = sKTData->unk104 & ~0x1800;
     }
-    if (_bss_5C->unk104 & 0x20000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x6F9, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x20000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800013BC();
         func_80003B70(2.0f * sp48);
     }
-    if (_bss_5C->unk104 & 0x4000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x68B, 0x7F, NULL, NULL, 0, NULL);
-        _bss_5C->unk108 ^= 1;
+    if (sKTData->unk104 & 0x4000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68B_KT_Rex_Groan, MAX_VOLUME, NULL, NULL, 0, NULL);
+        sKTData->unk108 ^= 1;
     }
-    if (_bss_5C->unk104 & 0x8000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x68C, 0x7F, NULL, NULL, 0, NULL);
-        _bss_5C->unk108 ^= 1;
+    if (sKTData->unk104 & 0x8000) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68C_KT_Rex_Groan, MAX_VOLUME, NULL, NULL, 0, NULL);
+        sKTData->unk108 ^= 1;
     }
-    if (_bss_5C->unk104 & 3) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x688, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 3) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             func_800013BC();
             func_80003B70(sp48);
-            main_set_bits(0x554, 1U);
+            main_set_bits(BIT_554, 1);
         }
     }
-    if (_bss_5C->unk104 & 0xC) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x689, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0xC) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             func_800013BC();
             func_80003B70(2.0f * sp48);
-            main_set_bits(0x554, 1U);
+            main_set_bits(BIT_554, 1);
         }
     }
-    if (_bss_5C->unk104 & 0x30) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x68A, 0x7F, NULL, NULL, 0, NULL);
+    if (sKTData->unk104 & 0x30) {
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             func_800013BC();
             func_80003B70(3.0f * sp48);
-            main_set_bits(0x554, 1U);
+            main_set_bits(BIT_554, 1);
         }
     }
-    if (!(_bss_5C->unk104 & 0x100000)) {
-        _bss_5C->unk104 = _bss_5C->unk104 & 0x1800;
+    if (!(sKTData->unk104 & 0x100000)) {
+        sKTData->unk104 = sKTData->unk104 & 0x1800;
         return;
     }
-    if (_bss_5C->unk104 & 1) {
-        _bss_5C->unk124.scale = 1.0f;
+    if (sKTData->unk104 & 1) {
+        sKTData->unk124.scale = 1.0f;
         for (i = 0; i != 0xA; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &_bss_5C->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
         }
     }
-    if (_bss_5C->unk104 & 2) {
-        _bss_5C->unk13C.scale = 1.0f;
+    if (sKTData->unk104 & 2) {
+        sKTData->unk13C.scale = 1.0f;
         for (i = 0; i != 0xA; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &_bss_5C->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
         }
     }
-    if (_bss_5C->unk104 & 4) {
-        _bss_5C->unk124.scale = 1.5f;
+    if (sKTData->unk104 & 4) {
+        sKTData->unk124.scale = 1.5f;
         for (i = 0; i != 0xD; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &_bss_5C->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
         }
     }
-    if (_bss_5C->unk104 & 8) {
-        _bss_5C->unk13C.scale = 1.5f;
+    if (sKTData->unk104 & 8) {
+        sKTData->unk13C.scale = 1.5f;
         for (i = 0; i != 0xD; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &_bss_5C->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
         }
     }
-    if (_bss_5C->unk104 & 0x10) {
-        _bss_5C->unk124.scale = 2.0f;
+    if (sKTData->unk104 & 0x10) {
+        sKTData->unk124.scale = 2.0f;
         for (i = 0; i != 0x10; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &_bss_5C->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
         }
     }
-    if (_bss_5C->unk104 & 0x20) {
-        _bss_5C->unk13C.scale = 2.0f;
+    if (sKTData->unk104 & 0x20) {
+        sKTData->unk13C.scale = 2.0f;
         for (i = 0; i != 0x10; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &_bss_5C->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &_bss_5C->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
         } 
     }
-    if (_bss_5C->unk104 & 0x800) {
-        gDLL_17->vtbl->func1(arg0, 0x487, &_bss_5C->unk10C, 0x200001, -1, (void*)&_bss_5C->unk16C);
+    if (sKTData->unk104 & 0x800) {
+        gDLL_17->vtbl->func1(arg0, 0x487, &sKTData->unk10C, 0x200001, -1, (void*)&sKTData->unk16C);
     }
-    _bss_5C->unk104 = _bss_5C->unk104 & 0x1800;
+    sKTData->unk104 = sKTData->unk104 & 0x1800;
 }
 
 // offset: 0x1E9C | func: 20
@@ -696,9 +695,9 @@ static void dll_702_func_1E9C(s32 arg0, s32 arg1) {
     s32 temp_v0;
 
     temp_v0 = 1 << arg0;
-    if (_bss_58->unk0.unk308 & temp_v0) {
-        _bss_58->unk0.unk308 = _bss_58->unk0.unk308 & ~temp_v0;
-        _bss_5C->unk104 |= arg1;
+    if (sDLL33Data->unk0.unk308 & temp_v0) {
+        sDLL33Data->unk0.unk308 = sDLL33Data->unk0.unk308 & ~temp_v0;
+        sKTData->unk104 |= arg1;
     }
 }
 
@@ -731,17 +730,17 @@ static void dll_702_func_1EF0(Object* arg0, DLL33_Data* arg1) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
-            gDLL_6_AMSFX->vtbl->play_sound(arg0, *_data_8C, 0x7F, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x693, 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, *_data_8C, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_2_Camera->vtbl->func8(2, 0);
             gDLL_17->vtbl->func1(arg0, 0x4B2, &_bss_60, 0x200001, -1, NULL);
             gDLL_17->vtbl->func1(arg0, 0x4B3, &_bss_60, 0x200001, -1, NULL);
-            _bss_5C->unkFA &= ~0x10;
-            _bss_5C->unkFA |= 8;
+            sKTData->unkFA &= ~0x10;
+            sKTData->unkFA |= 8;
             arg1->unk0.unk343 = (s8) sp60;
             arg1->unk0.unk348 -= 1;
         } else {
-            gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_90[rand_next(0, 1)], 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_90[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = arg0->modelInsts[arg0->modelInstIdx];
             temp_v1 = modelInst->unk_0x24;
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
@@ -782,23 +781,23 @@ static s32 dll_702_func_2454(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     s32 var_a1;
 
     if (arg1->unk272 != 0) {
-        func_80023D30(arg0, (s32) _data_10[_bss_5C->unkFC], 0.0f, 0U);
+        func_80023D30(arg0, (s32) _data_10[sKTData->unkFC], 0.0f, 0U);
         arg1->unk278 = 0.0f;
         arg1->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(2, (s32) _data_2C[_bss_5C->unkFC]);
-    dll_702_func_1E9C(1, (s32) _data_34[_bss_5C->unkFC]);
-    if (_bss_5C->unk108 != 0) {
-        var_a1 = _data_3C[_bss_5C->unkFC];
+    dll_702_func_1E9C(2, (s32) _data_2C[sKTData->unkFC]);
+    dll_702_func_1E9C(1, (s32) _data_34[sKTData->unkFC]);
+    if (sKTData->unk108 != 0) {
+        var_a1 = _data_3C[sKTData->unkFC];
     } else {
-        var_a1 = _data_44[_bss_5C->unkFC];
+        var_a1 = _data_44[sKTData->unkFC];
     }
     dll_702_func_1E9C(0, var_a1);
-    temp_fv0 = (_bss_5C->unkE8 - arg0->srt.transl.x) * inverseDelay;
-    temp_fa1 = (_bss_5C->unkF0 - arg0->srt.transl.z) * inverseDelay;
+    temp_fv0 = (sKTData->unkE8 - arg0->srt.transl.x) * inverseDelay;
+    temp_fa1 = (sKTData->unkF0 - arg0->srt.transl.z) * inverseDelay;
     func_8002493C(arg0, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &arg1->unk298);
-    arg0->srt.transl.x = _bss_5C->unkE8;
-    arg0->srt.transl.z = _bss_5C->unkF0;
+    arg0->srt.transl.x = sKTData->unkE8;
+    arg0->srt.transl.z = sKTData->unkF0;
     return 0;
 }
 
@@ -809,11 +808,11 @@ static s32 dll_702_func_2644(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     SRT sp44;
     u16 temp_t7;
 
-    temp_t7 = _bss_5C->unkFA & 1;
+    temp_t7 = sKTData->unkFA & 1;
     if (arg1->unk272 != 0) {
-        func_80023D30(arg0, _data_20[_bss_5C->unkFC & 0xFFFF][temp_t7], 0.0f, 0);
-        arg1->unk298 = _data_60[_bss_5C->unkFC];
-        _bss_5C->unkF8 = arg0->srt.yaw;
+        func_80023D30(arg0, _data_20[sKTData->unkFC & 0xFFFF][temp_t7], 0.0f, 0);
+        arg1->unk298 = _data_60[sKTData->unkFC];
+        sKTData->unkF8 = arg0->srt.yaw;
     }
     dll_702_func_1E9C(2, 1);
     dll_702_func_1E9C(1, 2);
@@ -821,7 +820,7 @@ static s32 dll_702_func_2644(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     dll_702_func_1E9C(7, 0x10000);
     arg1->unk340 |= 1;
     gDLL_18->vtbl->func7(arg0, arg1, delayFloat, 3);
-    sp44.yaw = _bss_5C->unkF8;
+    sp44.yaw = sKTData->unkF8;
     sp44.pitch = 0;
     sp44.roll = 0;
     sp44.transl.x = 0.0f;
@@ -831,9 +830,9 @@ static s32 dll_702_func_2644(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     matrix_from_srt(&sp60, &sp44);
     vec3_transform(&sp60, arg1->unk27C, 0.0f, -arg1->unk278, &arg0->speed.x, &temp_y, &arg0->speed.z);
     if (temp_t7 != 0) {
-        arg0->srt.yaw = (s16) (s32) ((f32) _bss_5C->unkF8 + (16384.0f * arg0->animProgress));
+        arg0->srt.yaw = (s16) (s32) ((f32) sKTData->unkF8 + (16384.0f * arg0->animProgress));
     } else {
-        arg0->srt.yaw = (s16) (s32) ((f32) _bss_5C->unkF8 - (16384.0f * arg0->animProgress));
+        arg0->srt.yaw = (s16) (s32) ((f32) sKTData->unkF8 - (16384.0f * arg0->animProgress));
     }
     return 0;
 }
@@ -842,18 +841,18 @@ static s32 dll_702_func_2644(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 static s32 dll_702_func_28BC(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     u16 var_t0;
 
-    var_t0 = _bss_5C->unkFA & 1;
+    var_t0 = sKTData->unkFA & 1;
     if (arg1->unk272 != 0) {
-        func_80023D30(arg0, 0xF, 0.0f, 0U);
+        func_80023D30(arg0, 0xF, 0.0f, 0);
         arg1->unk298 = 0.005f;
         arg1->unk278 = 0.0f;
         arg1->unk27C = 0.0f;
-        _bss_5C->unkF8 = arg0->srt.yaw;
+        sKTData->unkF8 = arg0->srt.yaw;
     }
     if (var_t0 != 0) {
-        arg0->srt.yaw = (s16) (s32) ((f32) _bss_5C->unkF8 + (32768.0f * arg0->animProgress));
+        arg0->srt.yaw = (s16) (s32) ((f32) sKTData->unkF8 + (32768.0f * arg0->animProgress));
     } else {
-        arg0->srt.yaw = (s16) (s32) ((f32) _bss_5C->unkF8 - (32768.0f * arg0->animProgress));
+        arg0->srt.yaw = (s16) (s32) ((f32) sKTData->unkF8 - (32768.0f * arg0->animProgress));
     }
     return 0;
 }
@@ -861,12 +860,12 @@ static s32 dll_702_func_28BC(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 // offset: 0x29D0 | func: 26
 static s32 dll_702_func_29D0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk272 != 0) {
-        func_80023D30(arg0, _data_18[_bss_5C->unkFD], 0.0f, 0);
-        arg1->unk298 = _data_54[_bss_5C->unkFD];
+        func_80023D30(arg0, _data_18[sKTData->unkFD], 0.0f, 0);
+        arg1->unk298 = _data_54[sKTData->unkFD];
         arg1->unk278 = 0.0f;
         arg1->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(0, _data_4C[_bss_5C->unkFD]);
+    dll_702_func_1E9C(0, _data_4C[sKTData->unkFD]);
     dll_702_func_1E9C(9, 0x800);
     dll_702_func_1E9C(0xA, 0x1000);
     return 0;
@@ -874,7 +873,7 @@ static s32 dll_702_func_29D0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 // offset: 0x2AF0 | func: 27
 static s32 dll_702_func_2AF0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk272 != 0) {
-        func_80023D30(arg0, _data_8[_bss_5C->unkFC], 0.0f, 0);
+        func_80023D30(arg0, _data_8[sKTData->unkFC], 0.0f, 0);
         arg1->unk298 = 0.005f;
         arg1->unk278 = 0.0f;
         arg1->unk27C = 0.0f;
@@ -899,7 +898,7 @@ static s32 dll_702_func_2BA4(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 // offset: 0x2C54 | func: 29
 static s32 dll_702_func_2C54(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk272 != 0) {
-        func_80023D30(arg0, 0xC, 0.0f, 0U);
+        func_80023D30(arg0, 0xC, 0.0f, 0);
         arg1->unk298 = 0.01f;
     }
     dll_702_func_1E9C(0, 0x2000);
@@ -944,37 +943,37 @@ static s32 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     objsetup = (KTrex_ObjSetup*)arg0->setup;
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 1);
-        _bss_5C->unkFC = 0;
-        _bss_5C->unkFA &= ~0x20;
-        arg1->unk28C = objsetup->unk38[_bss_5C->unkFC] / 1000.0f;
+        sKTData->unkFC = 0;
+        sKTData->unkFA &= ~0x20;
+        arg1->unk28C = objsetup->unk38[sKTData->unkFC] / 1000.0f;
     }
-    if (dll_702_func_FE4(arg1, _bss_5C) != 0) {
+    if (dll_702_func_FE4(arg1, sKTData) != 0) {
         dll_702_func_E24(2);
         return 4;
     }
 
-    temp_a3 = _bss_5C->unkFA & 1;
-    if (_bss_5C->unkFC == 0) {
-        if (((s32) _bss_5C->unk101 >= 2) && !(_bss_5C->unkFA & 0x20) && (((temp_a3 == 0) && (_bss_5C->unk8 >= 0.7f)) || ((temp_a3 != 0) && (_bss_5C->unk8 <= 0.3f)))) {
-            sp30 = (s32) _bss_5C->unk101 >> 1;
+    temp_a3 = sKTData->unkFA & 1;
+    if (sKTData->unkFC == 0) {
+        if (((s32) sKTData->unk101 >= 2) && !(sKTData->unkFA & 0x20) && (((temp_a3 == 0) && (sKTData->unk8 >= 0.7f)) || ((temp_a3 != 0) && (sKTData->unk8 <= 0.3f)))) {
+            sp30 = (s32) sKTData->unk101 >> 1;
             if (rand_next(0, 0x64) <= (s32) objsetup->unk56[sp30]) {
-                _bss_5C->unk103 = 2;
+                sKTData->unk103 = 2;
                 dll_702_func_E24(5);
-                _bss_5C->unkFD = 1;
+                sKTData->unkFD = 1;
                 return 5;
             }
             if (rand_next(0, 0x64) <= (s32) objsetup->unk52[sp30]) {
-                _bss_5C->unkFD = 0;
+                sKTData->unkFD = 0;
                 dll_702_func_E24(0xB);
                 return 5;
             }
-            _bss_5C->unkFA |= 0x20;
+            sKTData->unkFA |= 0x20;
         }
     }
-    if ((_bss_5C->unkFE & _bss_5C->unkFF) && (((temp_a3 == 0) && (_bss_5C->unk8 <= _bss_5C->unkF4)) || ((temp_a3 != 0) && (_bss_5C->unkF4 <= _bss_5C->unk8)))) {
-        _bss_5C->unk103 = 1;
+    if ((sKTData->unkFE & sKTData->unkFF) && (((temp_a3 == 0) && (sKTData->unk8 <= sKTData->unkF4)) || ((temp_a3 != 0) && (sKTData->unkF4 <= sKTData->unk8)))) {
+        sKTData->unk103 = 1;
         dll_702_func_E24(5);
-        _bss_5C->unkFD = 1;
+        sKTData->unkFD = 1;
         return 5;
     }
     return 0;
@@ -985,7 +984,7 @@ static s32 dll_702_func_3160(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 2);
     } else if (arg1->unk33A != 0) {
-        _bss_5C->unk8 = dll_702_func_C74(arg0, _bss_5C);
+        sKTData->unk8 = dll_702_func_C74(arg0, sKTData);
         return dll_702_func_E88() + 1;
     }
 
@@ -1001,13 +1000,13 @@ static s32 dll_702_func_3208(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     objsetup = (KTrex_ObjSetup*)arg0->setup;
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 4);
-        _bss_5C->unk4 = (f32) objsetup->unk44[_bss_5C->unkFD];
+        sKTData->unk4 = (f32) objsetup->unk44[sKTData->unkFD];
     } else {
-        _bss_5C->unk4 -= delayFloat;
-        if (_bss_5C->unk4 < 0.0f) {
-            _bss_5C->unk4 = 0.0f;
+        sKTData->unk4 -= delayFloat;
+        if (sKTData->unk4 < 0.0f) {
+            sKTData->unk4 = 0.0f;
         }
-        if ((arg1->unk33A != 0) && (_bss_5C->unk4 <= 0.0f)) {
+        if ((arg1->unk33A != 0) && (sKTData->unk4 <= 0.0f)) {
             return dll_702_func_E88() + 1;
         }
     }
@@ -1021,13 +1020,13 @@ static s32 dll_702_func_3330(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     objsetup = (KTrex_ObjSetup*)arg0->setup;
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 1);
-        _bss_5C->unkFC = 1;
-        arg1->unk28C = objsetup->unk38[_bss_5C->unkFC] / 1000.0f;
+        sKTData->unkFC = 1;
+        arg1->unk28C = objsetup->unk38[sKTData->unkFC] / 1000.0f;
     }
-    if (dll_702_func_FE4(arg1, _bss_5C) != 0) {
-        _bss_5C->unk103 -= 1;
+    if (dll_702_func_FE4(arg1, sKTData) != 0) {
+        sKTData->unk103 -= 1;
     }
-    if (_bss_5C->unk103 <= 0) {
+    if (sKTData->unk103 <= 0) {
         dll_702_func_E24(2);
         dll_702_func_E24(6);
         return 4;
@@ -1068,16 +1067,16 @@ static s32 dll_702_func_35A0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     objsetup = (KTrex_ObjSetup*)arg0->setup;
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 7);
-        _bss_5C->unk4 = (f32) objsetup->unk4A[(s32) _bss_5C->unk101 >> 1];
-        _bss_5C->unkFA |= 0x10;
-        _bss_5C->unkFA &= ~8;
+        sKTData->unk4 = (f32) objsetup->unk4A[(s32) sKTData->unk101 >> 1];
+        sKTData->unkFA |= 0x10;
+        sKTData->unkFA &= ~8;
         arg0->unk0xaf &= ~8;
     } else {
-        if ((_bss_5C->unkFA & 8) || (_bss_5C->unk4 -= delayFloat) <= 0.0f) {
-            if (_bss_5C->unkFA & 8) {
-                _bss_5C->unk102 -= 1;
+        if ((sKTData->unkFA & 8) || (sKTData->unk4 -= delayFloat) <= 0.0f) {
+            if (sKTData->unkFA & 8) {
+                sKTData->unk102 -= 1;
             }
-            if ((s32) _bss_5C->unk102 <= 0) {
+            if ((s32) sKTData->unk102 <= 0) {
                 return 2;
             }
             arg0->unk0xaf |= 8;
@@ -1095,13 +1094,13 @@ static s32 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 8);
     } else if (arg1->unk33A != 0) {
-        if (_bss_5C->unkFA & 8) {
-            _bss_5C->unk101 += 1;
-            main_set_bits(0x572, _bss_5C->unk101);
+        if (sKTData->unkFA & 8) {
+            sKTData->unk101 += 1;
+            main_set_bits(BIT_572, sKTData->unk101);
         }
-        temp = _bss_5C->unkFA;
-        _bss_5C->unkC = (temp >> 1) & 3;
-        _bss_5C->unk4 = 300.0f;
+        temp = sKTData->unkFA;
+        sKTData->unkC = (temp >> 1) & 3;
+        sKTData->unk4 = 300.0f;
         gDLL_2_Camera->vtbl->func8(2, 0);
         return 0xB;
     }
@@ -1115,32 +1114,32 @@ static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     s32 temp_t0;
 
     objsetup = (KTrex_ObjSetup*)arg0->setup;
-    sp28 = ((s32) _bss_5C->unkFA >> 1) & 3;
-    temp_t0 = _bss_5C->unkFA & 1;
+    sp28 = ((s32) sKTData->unkFA >> 1) & 3;
+    temp_t0 = sKTData->unkFA & 1;
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 1);
-        _bss_5C->unkFC = 2;
-        arg1->unk28C = objsetup->unk38[_bss_5C->unkFC] / 1000.0f;
+        sKTData->unkFC = 2;
+        arg1->unk28C = objsetup->unk38[sKTData->unkFC] / 1000.0f;
     }
-    if (dll_702_func_FE4(arg1, _bss_5C) != 0) {
+    if (dll_702_func_FE4(arg1, sKTData) != 0) {
         dll_702_func_E24(0xA);
         return 4;
     }
-    _bss_5C->unk4 = (f32) (_bss_5C->unk4 - delayFloat);
-    if (_bss_5C->unk4 <= 0.0f) {
-        _bss_5C->unk4 = 0.0f;
+    sKTData->unk4 = (f32) (sKTData->unk4 - delayFloat);
+    if (sKTData->unk4 <= 0.0f) {
+        sKTData->unk4 = 0.0f;
     }
-    if ((_bss_5C->unk4 <= 0.0f) && (sp28 == _bss_5C->unkC) && (((temp_t0 == 0) && (_bss_5C->unk8 >= 0.75f)) || ((temp_t0 != 0) && (_bss_5C->unk8 <= 0.25f)))) {
-        if (_bss_5C->unkFA & 8) {
-            _bss_5C->unk101 += 1;
-            _bss_5C->unkFD = 0;
+    if ((sKTData->unk4 <= 0.0f) && (sp28 == sKTData->unkC) && (((temp_t0 == 0) && (sKTData->unk8 >= 0.75f)) || ((temp_t0 != 0) && (sKTData->unk8 <= 0.25f)))) {
+        if (sKTData->unkFA & 8) {
+            sKTData->unk101 += 1;
+            sKTData->unkFD = 0;
             dll_702_func_E24(0xB);
             dll_702_func_E24(4);
         } else {
             dll_702_func_E24(2);
         }
         gDLL_2_Camera->vtbl->func8(3, 0);
-        main_set_bits(0x572, (u32) _bss_5C->unk101);
+        main_set_bits(BIT_572, (u32) sKTData->unk101);
         return 7;
     }
     return 0;
@@ -1151,23 +1150,23 @@ static s32 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 3);
     } else if (arg1->unk33A != 0) {
-        _bss_5C->unkFA ^= 1;
-        if (_bss_5C->unkFA & 1) {
-            _bss_5C->unkD0 = _bss_5C->unk70;
-            _bss_5C->unkD4 = _bss_5C->unk80;
-            _bss_5C->unkD8 = _bss_5C->unk90;
-            _bss_5C->unkDC = _bss_5C->unkA0;
-            _bss_5C->unkE0 = _bss_5C->unkB0;
-            _bss_5C->unkE4 = _bss_5C->unkC0;
+        sKTData->unkFA ^= 1;
+        if (sKTData->unkFA & 1) {
+            sKTData->unkD0 = sKTData->unk70;
+            sKTData->unkD4 = sKTData->unk80;
+            sKTData->unkD8 = sKTData->unk90;
+            sKTData->unkDC = sKTData->unkA0;
+            sKTData->unkE0 = sKTData->unkB0;
+            sKTData->unkE4 = sKTData->unkC0;
         } else {
-            _bss_5C->unkD0 = _bss_5C->unk10;
-            _bss_5C->unkD4 = _bss_5C->unk20;
-            _bss_5C->unkD8 = _bss_5C->unk30;
-            _bss_5C->unkDC = _bss_5C->unk40;
-            _bss_5C->unkE0 = _bss_5C->unk50;
-            _bss_5C->unkE4 = _bss_5C->unk60;
+            sKTData->unkD0 = sKTData->unk10;
+            sKTData->unkD4 = sKTData->unk20;
+            sKTData->unkD8 = sKTData->unk30;
+            sKTData->unkDC = sKTData->unk40;
+            sKTData->unkE0 = sKTData->unk50;
+            sKTData->unkE4 = sKTData->unk60;
         }
-        _bss_5C->unk8 = dll_702_func_C74(arg0, _bss_5C);
+        sKTData->unk8 = dll_702_func_C74(arg0, sKTData);
         return 3;
     }
 
