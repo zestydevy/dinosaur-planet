@@ -161,18 +161,18 @@ static s32 dll_702_func_2BA4(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_2C54(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_2CF8(Object* arg1, DLL18_Data* arg2, f32 arg3);
 
-static u32 dll_702_func_2D80(Object *self, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_2D80(Object *self, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_3160(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_3208(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_3330(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_3490(Object* arg0, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_3518(Object* arg0, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_35A0(Object* arg0, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2);
-static s16 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_3518(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_35A0(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2);
+static s32 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2);
 
 /*static*/ s32 dll_702_func_B98(void);
 /*static*/ u8 dll_702_func_C2C(u16 arg0);
@@ -183,28 +183,28 @@ static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1);
 
 // offset: 0x0 | func: 0
 static void dll_702_func_0(void) {
-    _bss_0[0] = (dll18_callback)dll_702_func_23EC;
-    _bss_0[1] = (dll18_callback)dll_702_func_2454;
-    _bss_0[2] = (dll18_callback)dll_702_func_2644;
-    _bss_0[3] = (dll18_callback)dll_702_func_28BC;
-    _bss_0[4] = (dll18_callback)dll_702_func_29D0;
-    _bss_0[5] = (dll18_callback)dll_702_func_2AF0;
-    _bss_0[6] = (dll18_callback)dll_702_func_2BA4;
-    _bss_0[7] = (dll18_callback)dll_702_func_2C54;
-    _bss_0[8] = (dll18_callback)dll_702_func_2CF8;
+    _bss_0[0] = dll_702_func_23EC;
+    _bss_0[1] = dll_702_func_2454;
+    _bss_0[2] = dll_702_func_2644;
+    _bss_0[3] = dll_702_func_28BC;
+    _bss_0[4] = dll_702_func_29D0;
+    _bss_0[5] = dll_702_func_2AF0;
+    _bss_0[6] = dll_702_func_2BA4;
+    _bss_0[7] = dll_702_func_2C54;
+    _bss_0[8] = dll_702_func_2CF8;
     
-    _bss_28[0] = (dll18_callback)dll_702_func_2D80;
-    _bss_28[1] = (dll18_callback)dll_702_func_2D98;
-    _bss_28[2] = (dll18_callback)dll_702_func_2E64;
-    _bss_28[3] = (dll18_callback)dll_702_func_3160;
-    _bss_28[4] = (dll18_callback)dll_702_func_3208;
-    _bss_28[5] = (dll18_callback)dll_702_func_3330;
-    _bss_28[6] = (dll18_callback)dll_702_func_3490;
-    _bss_28[7] = (dll18_callback)dll_702_func_3518;
-    _bss_28[8] = (dll18_callback)dll_702_func_35A0;
-    _bss_28[9] = (dll18_callback)dll_702_func_3720;
-    _bss_28[10] = (dll18_callback)dll_702_func_3828;
-    _bss_28[11] = (dll18_callback)dll_702_func_3AA0;
+    _bss_28[0] = dll_702_func_2D80;
+    _bss_28[1] = dll_702_func_2D98;
+    _bss_28[2] = dll_702_func_2E64;
+    _bss_28[3] = dll_702_func_3160;
+    _bss_28[4] = dll_702_func_3208;
+    _bss_28[5] = dll_702_func_3330;
+    _bss_28[6] = dll_702_func_3490;
+    _bss_28[7] = dll_702_func_3518;
+    _bss_28[8] = dll_702_func_35A0;
+    _bss_28[9] = dll_702_func_3720;
+    _bss_28[10] = dll_702_func_3828;
+    _bss_28[11] = dll_702_func_3AA0;
 }
 
 // offset: 0x120 | ctor
@@ -879,12 +879,12 @@ static s32 dll_702_func_2CF8(Object* arg1, DLL18_Data* arg2, f32 arg3) {
 }
 
 // offset: 0x2D80 | func: 31
-static u32 dll_702_func_2D80(Object *self, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_2D80(Object *self, DLL18_Data* arg1, f32 arg2) {
     return 0;
 }
 
 // offset: 0x2D98 | func: 32
-static s16 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
         func_80013FB4();
@@ -897,7 +897,7 @@ static s16 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x2E64 | func: 33
-static s16 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     KTrex_ObjSetup* objsetup;
     s32 sp30;
     s32 temp_a3;
@@ -1011,7 +1011,7 @@ static s32 dll_702_func_3490(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x3518 | func: 38
-static s16 dll_702_func_3518(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_3518(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 6);
         arg0->unk0xaf &= ~0x8;
@@ -1023,7 +1023,7 @@ static s16 dll_702_func_3518(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x35A0 | func: 39
-static s16 dll_702_func_35A0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_35A0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     KTrex_ObjSetup* objsetup;
 
     objsetup = (KTrex_ObjSetup*)arg0->setup;
@@ -1050,7 +1050,7 @@ static s16 dll_702_func_35A0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x3720 | func: 40
-static s16 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     u16 temp;
     
     if (arg1->unk273 != 0) {
@@ -1070,7 +1070,7 @@ static s16 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x3828 | func: 41
-static s16 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     KTrex_ObjSetup* objsetup;
     s32 sp28;
     s32 temp_t0;
@@ -1108,7 +1108,7 @@ static s16 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x3AA0 | func: 42
-static s16 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+static s32 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 3);
     } else if (arg1->unk33A != 0) {

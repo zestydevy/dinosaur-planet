@@ -13,7 +13,7 @@ typedef struct {
 
 struct DLL18_Data;
 
-typedef s16 (*dll18_callback)(Object*, struct DLL18_Data*, f32);
+typedef s32 (*dll18_callback)(Object*, struct DLL18_Data*, f32);
 typedef void (*dll18_callback2)(Object*, struct DLL18_Data*);
 
 // size:0x34C
