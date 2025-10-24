@@ -18,6 +18,7 @@ typedef struct {
     s8 unk27;
 } DLL33Data_34C;
 
+// size:0x3FC
 typedef struct {
 /*000*/ DLL18_Data unk0;
 /*34C*/ DLL33Data_34C unk34C;
@@ -49,9 +50,8 @@ typedef struct {
 /*3EC*/ f32 unk3EC;
 /*3F0*/ u8 unk3F0;
 /*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
-/*3F4*/ void *unk3F4; // pointer to unk3FC
+/*3F4*/ void *unk3F4; // pointer to data immediately following this struct
 /*3F8*/ UnkCurvesStruct *unk3F8;
-/*3FC*/ s32 unk3FC; // TODO: doesn't exist?
 } DLL33_Data;
 
 typedef struct {

@@ -806,7 +806,7 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
     s32 sp38;
 
     sp4B = 1;
-    data->unk3F4 = &data->unk3FC;
+    data->unk3F4 = (void*)(data + 1);
     data->unk3B6 = 0;
     sp38 = arg6 & 1;
     sp3C = (s32) arg6;

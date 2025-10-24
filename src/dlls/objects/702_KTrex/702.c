@@ -10,12 +10,11 @@
 
 typedef struct {
     DLL33_Data unk0;
-    u8 _unk400[0x574 - 0x400];
+    u8 _unk3FC[0x574 - 0x3FC];
 } DLL702_Data;
 
 typedef struct {
     DLL33_ObjSetup base;
-    u8 _unk36[0x38 - 0x36];
     f32 unk38[4]; // unknown length
     u8 _unk48[0x52 - 0x48];
     u8 unk52[4];
@@ -45,9 +44,9 @@ typedef struct {
     f32 *unkDC;
     f32 *unkE0;
     f32 *unkE4;
-    u8 _unkE8[0xEC - 0xE8];
+    f32 unkE8;
     f32 unkEC;
-    u8 _unkF0[0xF4 - 0xF0];
+    f32 unkF0;
     f32 unkF4;
     u8 _unkF8[0xFA - 0xF8];
     u16 unkFA;
@@ -145,6 +144,7 @@ typedef struct {
 /*0x74*/ static u8 _bss_74[0x4];
 /*0x78*/ static u8 _bss_78[0x8];
 
+static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1);
 /*static*/ int dll_702_func_119C(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 
 // offset: 0x0 | func: 0
@@ -310,7 +310,7 @@ void dll_702_func_B88(Object *self, s32 arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_C2C.s")
 #else
-u8 dll_702_func_C2C(u16 arg0) {
+/*static*/ u8 dll_702_func_C2C(u16 arg0) {
   s8 data_E8_local[4] = {0x02, 0x08, 0x01, 0x04};
 
   return data_E8_local[(arg0 >> 1) & 3];
@@ -318,22 +318,92 @@ u8 dll_702_func_C2C(u16 arg0) {
 #endif
 
 // offset: 0xC74 | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_C74.s")
+static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1) {
+    s32 _pad;
+    s32 temp_t7;
+    f32 sp2C;
+    f32 zDiff;
+    f32 xDiff;
+
+    temp_t7 = ((s32) arg1->unkFA >> 1) & 3;
+    xDiff = arg1->unkDC[temp_t7] - arg1->unkD0[temp_t7];
+    zDiff = arg1->unkE4[temp_t7] - arg1->unkD8[temp_t7];
+    sp2C = sqrtf(SQ(xDiff) + SQ(zDiff));
+    xDiff = arg0->srt.transl.x - arg1->unkD0[temp_t7];
+    zDiff = arg0->srt.transl.z - arg1->unkD8[temp_t7];
+    return sqrtf(SQ(xDiff) + SQ(zDiff)) / sp2C;
+}
 
 // offset: 0xD5C | func: 13
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_D5C.s")
 
 // offset: 0xE24 | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_E24.s")
+static void dll_702_func_E24(s32 arg0) {
+    if (generic_stack_is_full(_bss_5C->stack) == 0) {
+        generic_stack_push(_bss_5C->stack, &arg0);
+    }
+}
 
 // offset: 0xE88 | func: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_E88.s")
+static s32 dll_702_func_E88(void) {
+    s32 sp24;
+
+    sp24 = 0;
+    if (generic_stack_is_empty(_bss_5C->stack) == 0) {
+        generic_stack_pop(_bss_5C->stack, &sp24);
+    }
+    return sp24;
+}
 
 // offset: 0xEF0 | func: 16
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_EF0.s")
 
 // offset: 0xFE4 | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_FE4.s")
+static s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_ActualData* a1) {
+    f32 var_fv0;
+    s32 temp_v0;
+    s32 var_a3;
+    s32 var_v1;
+
+    var_v1 = 0;
+    temp_v0 = a1->unkFA & 1;
+    var_a3 = ((s32) a1->unkFA >> 1) & 3;
+    if (temp_v0 != 0) {
+        var_fv0 = -a0->unk28C;
+    } else {
+        var_fv0 = a0->unk28C;
+    }
+
+    a1->unk8 += var_fv0 * delayFloat;
+
+    if ((_data_78[a1->unkFC] < a1->unk8) || (a1->unk8 < _data_6C[a1->unkFC])) {
+        var_v1 = 1;
+        if (temp_v0 != 0) {
+            var_a3 -= 1;
+            if (var_a3 < 0) {
+                var_a3 = 3;
+            }
+        } else {
+            var_a3 += 1;
+            if (var_a3 >= 4) {
+                var_a3 = 0;
+            }
+        }
+        a1->unkFA &= ~0x6;
+        a1->unkFA |= (var_a3 * 2);
+        if (a1->unk8 > _data_78[a1->unkFC]) {
+            a1->unk8 = _data_78[a1->unkFC];
+        } else if (a1->unk8 < _data_6C[a1->unkFC]) {
+            a1->unk8 = _data_6C[a1->unkFC];
+        }
+        if ((a1 && a1) && a1){} // @fake
+    }
+    
+    a1->unkE8 = a1->unkD0[var_a3] + ((a1->unkDC[var_a3] - a1->unkD0[var_a3]) * a1->unk8);
+    a1->unkEC = a1->unkD4[var_a3] + ((a1->unkE0[var_a3] - a1->unkD4[var_a3]) * a1->unk8);
+    a1->unkF0 = a1->unkD8[var_a3] + ((a1->unkE4[var_a3] - a1->unkD8[var_a3]) * a1->unk8);
+    return var_v1;
+}
 
 // offset: 0x119C | func: 18
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_119C.s")
@@ -375,12 +445,12 @@ u8 dll_702_func_C2C(u16 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_2CF8.s")
 
 // offset: 0x2D80 | func: 31
-u32 dll_702_func_2D80(Object *self, u32 a1, u32 a2) {
+/*static*/ u32 dll_702_func_2D80(Object *self, u32 a1, u32 a2) {
     return 0;
 }
 
 // offset: 0x2D98 | func: 32
-s16 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+/*static*/ s16 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
         func_80013FB4();
@@ -393,13 +463,7 @@ s16 dll_702_func_2D98(Object* arg0, DLL18_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x2E64 | func: 33
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_2E64.s")
-#else
-/*static*/ void dll_702_func_E24(s32 a0);
-/*static*/ s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_ActualData* a1);
-
-s16 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+/*static*/ s16 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     KTrex_ObjSetup* objsetup;
     s32 sp30;
     s32 temp_a3;
@@ -442,10 +506,18 @@ s16 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     }
     return 0;
 }
-#endif
 
 // offset: 0x3160 | func: 34
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_3160.s")
+/*static*/ s32 dll_702_func_3160(Object* arg0, DLL18_Data* arg1, f32 arg2) {
+    if (arg1->unk273 != 0) {
+        gDLL_18->vtbl->func4(arg0, arg1, 2);
+    } else if (arg1->unk33A != 0) {
+        _bss_5C->unk8 = dll_702_func_C74(arg0, _bss_5C);
+        return dll_702_func_E88() + 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x3208 | func: 35
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_3208.s")
