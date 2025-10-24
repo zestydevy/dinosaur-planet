@@ -9,6 +9,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "segment_334F0.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
     GenericStack *stack;
@@ -114,42 +115,30 @@ typedef struct {
 /*0x88*/ static u16 _data_88[2] = {0x0691, 0x06fd};
 /*0x8C*/ static u16 _data_8C[2] = {0x06fe, 0x0000};
 /*0x90*/ static u16 _data_90[2] = {0x025b, 0x025c};
-/*0x94*/ static u32 _data_94[] = { //uIDs?
+/*0x94*/ static u32 _data_94[] = { // curve uIDs
     0x00032136, 0x0003213d, 0x00032128, 0x0003212f
 };
-/*0xA4*/ static u32 _data_A4[] = {
+/*0xA4*/ static u32 _data_A4[] = { // curve uIDs
     0x00032130, 0x00032137, 0x00032123, 0x00032129
 };
-/*0xB4*/ static u32 _data_B4[] = {
+/*0xB4*/ static u32 _data_B4[] = { // curve uIDs
     0x00032367, 0x00032369, 0x0003236a, 0x00032365
 };
-/*0xC4*/ static u32 _data_C4[] = {
+/*0xC4*/ static u32 _data_C4[] = { // curve uIDs
     0x00032132, 0x00032139, 0x00032124, 0x0003212b
 };
-/*0xD4*/ static s16 _data_D4[] = {
+/*0xD4*/ static s16 _data_D4[] = { // game bits
     0x0566, 0x0567, 0x0568, 0x0569
 };
-/*0xDC*/ static s16 _data_DC[] = {
+/*0xDC*/ static s16 _data_DC[] = { // game bits
     0x0560, 0x0561, 0x0562, 0x0563
 };
 /*0xE4*/ static DLL_IModgfx *_data_E4 = NULL;
-/*0xE8*/ static u32 _data_E8 = 0x02080104;
-/*0xEC*/ static u32 _data_EC[] = {
-    0x00000006, 0x00000069, 0x00000069, 0x000000ff, 0x00000000
-};
 
 /*0x0*/ static dll18_callback _bss_0[9];
 /*0x28*/ static dll18_callback _bss_28[12];
 /*0x58*/ static DLL33_Data* _bss_58;
 /*0x5C*/ static KTrex_ActualData *_bss_5C;
-/*0x60*/ static u8 _bss_60[0x2];
-/*0x62*/ static u8 _bss_62[0x2];
-/*0x64*/ static u8 _bss_64[0x4];
-/*0x68*/ static u8 _bss_68[0x4];
-/*0x6C*/ static u8 _bss_6C[0x4];
-/*0x70*/ static u8 _bss_70[0x4];
-/*0x74*/ static u8 _bss_74[0x4];
-/*0x78*/ static u8 _bss_78[0x8];
 
 static s32 dll_702_func_23EC(Object* arg1, DLL18_Data* arg2, f32 arg3);
 static s32 dll_702_func_2454(Object* arg0, DLL18_Data* arg1, f32 arg2);
@@ -174,12 +163,13 @@ static s32 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2);
 static s32 dll_702_func_3AA0(Object* arg0, DLL18_Data* arg1, f32 arg2);
 
-/*static*/ s32 dll_702_func_B98(void);
-/*static*/ u8 dll_702_func_C2C(u16 arg0);
+static s32 dll_702_func_B98(void);
+static u8 dll_702_func_C2C(u16 arg0);
 static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1);
-/*static*/ s32 dll_702_func_D5C(u8 arg0);
+static s32 dll_702_func_D5C(u8 arg0);
 /*static*/ int dll_702_func_119C(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
-/*static*/ void dll_702_func_12DC(Object* arg0);
+static void dll_702_func_12DC(Object* arg0);
+static void dll_702_func_1EF0(Object* arg0, DLL33_Data* arg1);
 
 // offset: 0x0 | func: 0
 static void dll_702_func_0(void) {
@@ -281,13 +271,6 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
 #endif
 
 // offset: 0x448 | func: 2 | export: 1
-#ifndef NON_MATCHING
-void dll_702_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_control.s")
-#else
-/*static*/ void dll_702_func_1EF0(Object* a0, void* a1);
-
-// needs static ref
 void dll_702_control(Object* self) {
     DLL33_Data* temp_s1;
     f32 sp38[3];
@@ -323,7 +306,6 @@ void dll_702_control(Object* self) {
         self->srt.transl.y = _bss_5C->unkEC;
     }
 }
-#endif
 
 // offset: 0x72C | func: 3 | export: 2
 void dll_702_update(Object *self) { }
@@ -392,7 +374,7 @@ void dll_702_func_B88(Object *self, s32 arg1) {
 }
 
 // offset: 0xB98 | func: 10
-/*static*/ s32 dll_702_func_B98(void) {
+static s32 dll_702_func_B98(void) {
     s32 i;
     u8 var_s2;
 
@@ -406,15 +388,11 @@ void dll_702_func_B88(Object *self, s32 arg1) {
 }
 
 // offset: 0xC2C | func: 11
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_C2C.s")
-#else
-/*static*/ u8 dll_702_func_C2C(u16 arg0) {
+static u8 dll_702_func_C2C(u16 arg0) {
   s8 data_E8_local[4] = {0x02, 0x08, 0x01, 0x04};
 
   return data_E8_local[(arg0 >> 1) & 3];
 }
-#endif
 
 // offset: 0xC74 | func: 12
 static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1) {
@@ -434,7 +412,7 @@ static f32 dll_702_func_C74(Object* arg0, KTrex_ActualData* arg1) {
 }
 
 // offset: 0xD5C | func: 13
-/*static*/ s32 dll_702_func_D5C(u8 arg0) {
+static s32 dll_702_func_D5C(u8 arg0) {
     s32 temp_s1;
     s32 i;
     u8 var_s2;
@@ -581,7 +559,7 @@ static s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_ActualData* a1) {
 #endif
 
 // offset: 0x12DC | func: 19
-/*static*/ void dll_702_func_12DC(Object* arg0) {
+static void dll_702_func_12DC(Object* arg0) {
     s32 i;
     f32 sp48;
 
@@ -725,7 +703,68 @@ static void dll_702_func_1E9C(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x1EF0 | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_func_1EF0.s")
+static void dll_702_func_1EF0(Object* arg0, DLL33_Data* arg1) {
+    static SRT _bss_60;
+    DLL33_Data* temp_v0 = (DLL33_Data*)arg0->data;
+    s32 sp60;
+    s32 sp5C;
+    s32 sp58;
+    Object* sp54;
+    MtxF* temp_v1;
+    ModelInstance* modelInst;
+    u32 sp3C[] = {0x00000006, 0x00000069, 0x00000069, 0x000000ff};
+
+    if (temp_v0->unk3E8 > 0.0f) {
+        temp_v0->unk3E8 += (delayFloat * temp_v0->unk3EC);
+        if (temp_v0->unk3E8 < 0.0f) {
+            temp_v0->unk3E8 = 0.0f;
+        } else if (temp_v0->unk3E8 > 120.0f) {
+            temp_v0->unk3E8 = (f32) (120.0f - (temp_v0->unk3E8 - 120.0f));
+            temp_v0->unk3EC = (f32) -temp_v0->unk3EC;
+        }
+    }
+    sp60 = func_80025F40(arg0, &sp54, &sp5C, &sp58);
+    if (sp60 != 0) {
+        modelInst = arg0->modelInsts[arg0->modelInstIdx];
+        temp_v1 = modelInst->unk_0x24;
+        if ((arg1->unk0.unk348 != 0) && ((sp5C == 3) || (sp5C == 2))) {
+            _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
+            _bss_60.transl.y = temp_v1->m[sp5C][2];
+            _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, *_data_8C, 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x693, 0x7F, NULL, NULL, 0, NULL);
+            gDLL_2_Camera->vtbl->func8(2, 0);
+            gDLL_17->vtbl->func1(arg0, 0x4B2, &_bss_60, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(arg0, 0x4B3, &_bss_60, 0x200001, -1, NULL);
+            _bss_5C->unkFA &= ~0x10;
+            _bss_5C->unkFA |= 8;
+            arg1->unk0.unk343 = (s8) sp60;
+            arg1->unk0.unk348 -= 1;
+        } else {
+            gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_90[rand_next(0, 1)], 0x7F, NULL, NULL, 0, NULL);
+            modelInst = arg0->modelInsts[arg0->modelInstIdx];
+            temp_v1 = modelInst->unk_0x24;
+            _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
+            _bss_60.transl.y = temp_v1->m[sp5C][2];
+            _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
+            gDLL_17->vtbl->func1(arg0, 0x328, &_bss_60, 0x200001, -1, NULL);
+            _bss_60.transl.x -= arg0->positionMirror.x;
+            _bss_60.transl.y -= arg0->positionMirror.y;
+            _bss_60.transl.z -= arg0->positionMirror.z;
+            _bss_60.scale = 1.0f;
+            _bss_60.yaw = 0;
+            _bss_60.pitch = 0;
+            _bss_60.roll = 0;
+            sp3C[1] += rand_next(0, 0x9B);
+            sp3C[2] += rand_next(0, 0x9B);
+            _data_E4->vtbl->func0(arg0, 0, &_bss_60, 1, -1, &sp3C);
+        }
+        if (arg1->unk0.unk348 <= 0) {
+            arg1->unk0.unk348 = 0;
+        }
+        obj_send_mesg(sp54, 0xE0001, arg0, NULL);
+    }
+}
 
 // offset: 0x23EC | func: 22
 static s32 dll_702_func_23EC(Object* arg1, DLL18_Data* arg2, f32 arg3) {
