@@ -2,7 +2,7 @@
 #define _DLLS_210_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/18.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
@@ -141,7 +141,7 @@ typedef struct UnkArg2 {
 } UnkArg2;
 
 typedef struct {
-/*000*/ DLL18_Data unk0;
+/*000*/ ObjFSA_Data unk0;
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
 /*354*/ Unk80032CF8 unk354;

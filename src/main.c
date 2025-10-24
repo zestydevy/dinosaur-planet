@@ -76,7 +76,7 @@ DLL_14_modgfx *gDLL_14_Modgfx = NULL;
 DLL_15_projgfx *gDLL_15_Projgfx = NULL;
 DLL_16 *gDLL_16 = NULL;
 DLL_17 *gDLL_17 = NULL;
-DLL_18 *gDLL_18 = NULL;
+DLL_18_objfsa *gDLL_18_objfsa = NULL;
 DLL_20_screens *gDLL_20_Screens = NULL;
 DLL_21_gametext *gDLL_21_Gametext = NULL;
 DLL_22_subtitles *gDLL_22_Subtitles = NULL;
@@ -215,7 +215,7 @@ void game_init(void) {
         gDLL_1_UI = dll_load_deferred(DLL_ID_UI, 15);
         gDLL_2_Camera = dll_load_deferred(DLL_ID_CAMERA, 23);
         gDLL_23 = dll_load_deferred(DLL_ID_23, 8);  // 0x12 in SFA
-        gDLL_18 = dll_load_deferred(DLL_ID_18, 22); // 0x0F in SFA
+        gDLL_18_objfsa = dll_load_deferred(DLL_ID_18, 22); // 0x0F in SFA
         gDLL_3_Animation = dll_load_deferred(DLL_ID_ANIM, 29);
         gDLL_28_ScreenFade = dll_load_deferred(DLL_ID_SCREEN_FADE, 4); // 0x16 in SFA
         gDLL_25 = dll_load_deferred(DLL_ID_25, 14);                    // not present in SFA

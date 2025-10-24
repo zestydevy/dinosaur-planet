@@ -18,7 +18,7 @@
 #include "dlls/engine/15_projgfx.h"
 #include "dlls/engine/16.h"
 #include "dlls/engine/17.h"
-#include "dlls/engine/18.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
 #include "dlls/engine/22_subtitles.h"
@@ -142,7 +142,7 @@ extern DLL_13_expgfx *gDLL_13_Expgfx;
 extern DLL_14_modgfx *gDLL_14_Modgfx;
 extern DLL_15_projgfx *gDLL_15_Projgfx;
 extern DLL_17 *gDLL_17;
-extern DLL_18 *gDLL_18;
+extern DLL_18_objfsa *gDLL_18_objfsa;
 extern DLL_75 *gDLL_75;
 extern DLL_56 *gDLL_56;
 extern DLL_32 *gDLL_32;

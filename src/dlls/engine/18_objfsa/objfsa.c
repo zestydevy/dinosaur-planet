@@ -1,8 +1,9 @@
-#include "dlls/engine/18.h"
+#include "dlls/engine/18_objfsa.h"
 #include "sys/curves.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 
+// This is a modgfx interface?
 DLL_INTERFACE(DLL_18_UnknownDLL) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(Object *, s32, SRT *, s32, s32, void *); // TODO: figure out exact sig
@@ -21,13 +22,13 @@ DLL_INTERFACE(DLL_18_UnknownDLL) {
 /*0x18*/ static s32 _bss_18;
 /*0x1C*/ static s8 _bss_1C;
 
-void dll_18_func_13E4(DLL18_Data *data, void *arg1);
-void dll_18_func_1F64(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callback *arg3);
-static void dll_18_func_B34(Object *obj, DLL18_Data *data, f32 arg2, dll18_callback *arg3);
-static void dll_18_func_1AC4(Object *obj, DLL18_Data *data);
-static void dll_18_func_1C70(Object *obj, DLL18_Data *data, f32 arg2);
-static void dll_18_func_1E30(Object *obj, DLL18_Data *data);
+void dll_18_func_13E4(ObjFSA_Data *data, void *arg1);
+void dll_18_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
+static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3);
+static void dll_18_func_B34(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3);
+static void dll_18_func_1AC4(Object *obj, ObjFSA_Data *data);
+static void dll_18_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2);
+static void dll_18_func_1E30(Object *obj, ObjFSA_Data *data);
 
 // offset: 0x0 | ctor
 void dll_18_ctor(void *dll) { }
@@ -36,14 +37,14 @@ void dll_18_ctor(void *dll) { }
 void dll_18_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_18_func_18(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
+void dll_18_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     u32 i;
     s8* var_v1;
 
     i = 0;
     var_v1 = (s8*)data;
     var_v1[0] = 0;
-    while (i < sizeof(DLL18_Data)) {
+    while (i < sizeof(ObjFSA_Data)) {
         var_v1[i] = 0;
         i++;
     }
@@ -59,7 +60,7 @@ void dll_18_func_18(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x90 | func: 1 | export: 1
-void dll_18_func_90(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_callback *arg4, dll18_callback *arg5) {
+void dll_18_func_90(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, ObjFSA_Callback *arg4, ObjFSA_Callback *arg5) {
     f32 temp_fv0;
     f32 var_fv1;
     f32 temp_fv1;
@@ -81,22 +82,22 @@ void dll_18_func_90(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_cal
         data->unk2B8 = 0.0f;
     }
     if (obj->unk0xc0) {}
-    if ((data->unk0 & 0x8000) && (obj->unk0xc0 == NULL)) {
+    if ((data->flags & 0x8000) && (obj->unk0xc0 == NULL)) {
         dll_18_func_B34(obj, data, arg2, arg5);
         data->unk322 += arg2;
         if ((f32) data->unk322 > 10000.0f) {
             data->unk322 = 10000;
         }
     }
-    data->unk0 |= 0x8000;
+    data->flags |= 0x8000;
     if (data->unk274 != NULL) {
         dll_18_func_1E30(obj, data);
     }
     dll_18_func_1AC4(obj, data);
-    data->unk0 &= ~0x200000;
+    data->flags &= ~0x200000;
     data->unk341 = 0;
     _bss_1C = 0;
-    data->unk0 &= ~0x80000;
+    data->flags &= ~0x80000;
     data->unk340 = 0;
     _bss_1 = 0;
     dll_18_func_81C(obj, data, arg2, arg4);
@@ -106,7 +107,7 @@ void dll_18_func_90(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_cal
     }
     _bss_8 = obj->srt.transl.x;
     _bss_C = obj->srt.transl.z;
-    if (!(data->unk0 & 0x01000000)) {
+    if (!(data->flags & 0x01000000)) {
         dll_18_func_1C70(obj, data, arg2);
     }
     temp_v0_2 = _data_0;
@@ -136,21 +137,21 @@ void dll_18_func_90(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_cal
         }
     }
     _data_0 = NULL;
-    if (!(data->unk0 & 0x01000000) && !(data->unk0 & 0x400000)) {
+    if (!(data->flags & 0x01000000) && !(data->flags & 0x400000)) {
         gDLL_27->vtbl->func_1e8(obj, &data->unk4, arg2);
         gDLL_27->vtbl->func_5a8(obj, &data->unk4);
         gDLL_27->vtbl->func_624(obj, &data->unk4, arg3);
         if (data->unk4.unk25C & 0x10) {
-            data->unk0 |= 0x40000;
+            data->flags |= 0x40000;
         } else {
-            data->unk0 &= ~0x40000;
+            data->flags &= ~0x40000;
         }
-        if (data->unk0 & 0x800000) {
+        if (data->flags & 0x800000) {
             if ((data->unk4.unk25C & 2) || (data->unk4.hitsTouchBits != 0)) {
                 obj->speed.x = (obj->srt.transl.x - obj->objhitInfo->unk_0x10.x) / arg2;
                 obj->speed.z = (obj->srt.transl.z - obj->objhitInfo->unk_0x10.z) / arg2;
             }
-            data->unk0 &= ~0x800000;
+            data->flags &= ~0x800000;
         }
     }
     if (data->unk2C8 != NULL && sp2F != data->unk341) {
@@ -160,7 +161,7 @@ void dll_18_func_90(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, dll18_cal
 }
 
 // offset: 0x5E0 | func: 2 | export: 2
-void dll_18_func_5E0(Object *obj, DLL18_Data *data, dll18_callback *arg2) {
+void dll_18_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_Callback *arg2) {
     f32 sp24;
     f32 temp_fv0;
     f32 temp_fv0_2;
@@ -180,7 +181,7 @@ void dll_18_func_5E0(Object *obj, DLL18_Data *data, dll18_callback *arg2) {
             }
         }
         data->unk340 = 0;
-        data->unk0 |= 0x80000;
+        data->flags |= 0x80000;
         _bss_1C = 1;
         _bss_1 = 0;
         _bss_2 = 1;
@@ -194,8 +195,8 @@ void dll_18_func_75C(SRT *srt) {
 }
 
 // offset: 0x778 | func: 4 | export: 4
-void dll_18_func_778(Object *obj, DLL18_Data *data, s32 arg2) {
-    dll18_callback2 temp_v1;
+void dll_18_func_778(Object *obj, ObjFSA_Data *data, s32 arg2) {
+    ObjFSA_Callback2 temp_v1;
     s32 var_v0;
 
     var_v0 = data->unk26C;
@@ -221,7 +222,7 @@ void dll_18_func_778(Object *obj, DLL18_Data *data, s32 arg2) {
 }
 
 // offset: 0x81C | func: 5
-static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callback *arg3) {
+static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3) {
     s32 temp_v0;
     s32 temp_v0_2;
     s32 var_s1;
@@ -230,7 +231,7 @@ static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
     s32 var_v1;
     s32 _pad;
     UnkFunc_80024108Struct sp50;
-    dll18_callback callback;
+    ObjFSA_Callback callback;
 
     var_s7 = 0;
     var_s5 = 0;
@@ -302,22 +303,22 @@ static void dll_18_func_81C(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
             data->unk308 |= 1 << sp50.unk13[var_v1];
         }
         func_80025780(obj, arg2, &sp50, NULL);
-        data->unk0 &= ~0x10000;
+        data->flags &= ~0x10000;
     }
-    if (!(data->unk0 & 0x4000)) {
+    if (!(data->flags & 0x4000)) {
         obj->srt.pitch -= (s32) ((f32) obj->srt.pitch * arg2 * 0.125f) & 0xFFFF & 0xFFFF;
         obj->srt.roll -= (s32) ((f32) obj->srt.roll * arg2 * 0.125f) & 0xFFFF & 0xFFFF;
     }
 }
 
 // offset: 0xB34 | func: 6
-static void dll_18_func_B34(Object *obj, DLL18_Data *data, f32 arg2, dll18_callback *arg3) {
+static void dll_18_func_B34(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3) {
     s32 temp_v0;
     s32 temp_v0_2;
     s32 var_s1;
     s32 var_s3;
     u32 var_s5;
-    dll18_callback callback;
+    ObjFSA_Callback callback;
 
     var_s5 = 0;
     var_s3 = 0;
@@ -362,7 +363,7 @@ static void dll_18_func_B34(Object *obj, DLL18_Data *data, f32 arg2, dll18_callb
 }
 
 // offset: 0xC84 | func: 7 | export: 7
-void dll_18_func_C84(Object *obj, DLL18_Data *data, f32 arg2, s32 arg3) {
+void dll_18_func_C84(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
     UnkFunc_80024108Struct sp34;
     s32 var_v1;
 
@@ -373,7 +374,7 @@ void dll_18_func_C84(Object *obj, DLL18_Data *data, f32 arg2, s32 arg3) {
         data->unk308 |= 1 << sp34.unk13[var_v1];
     }
     func_80025780(obj, arg2, &sp34, NULL);
-    data->unk0 &= ~0x10000;
+    data->flags &= ~0x10000;
     if (sp34.unk12 != 0) {
         if (arg3 & 0x10) {
             if (arg3 & 1) {
@@ -400,7 +401,7 @@ void dll_18_func_C84(Object *obj, DLL18_Data *data, f32 arg2, s32 arg3) {
             }
             if (arg3 & 4) {
                 data->unk280 = sp34.unk0[1] / arg2;
-                data->unk0 |= 0x10000;
+                data->flags |= 0x10000;
             }
         }
     } else {
@@ -411,14 +412,14 @@ void dll_18_func_C84(Object *obj, DLL18_Data *data, f32 arg2, s32 arg3) {
 }
 
 // offset: 0xE60 | func: 8 | export: 8
-void dll_18_func_E60(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, f32 arg4) {
+void dll_18_func_E60(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4) {
     if (data->unk290 > 0.1f) {
         obj->srt.yaw += (((arg3 * arg2) / arg4) * 182.0f);
     }
 }
 
 // offset: 0xED4 | func: 9 | export: 9
-void dll_18_func_ED4(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
+void dll_18_func_ED4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     f32 temp_fa0;
     f32 var_fv0;
 
@@ -436,7 +437,7 @@ void dll_18_func_ED4(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0xF78 | func: 10 | export: 10
-void dll_18_func_F78(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
+void dll_18_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     f32 temp_fa0;
     f32 var_fv0;
 
@@ -452,7 +453,7 @@ void dll_18_func_F78(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x1008 | func: 11 | export: 11
-void dll_18_func_1008(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
+void dll_18_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     f32 var_fv0;
     f32 var_fv1;
     s32 var_v1;
@@ -477,7 +478,7 @@ void dll_18_func_1008(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x1120 | func: 12 | export: 12
-void dll_18_func_1120(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, DLL18_Func_11BC_Struct *arg4) {
+void dll_18_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4) {
     s32 temp_v0;
 
     temp_v0 = 1 << arg2;
@@ -488,7 +489,7 @@ void dll_18_func_1120(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, DLL18_F
 }
 
 // offset: 0x11BC | func: 13 | export: 13
-void dll_18_func_11BC(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, DLL18_Func_11BC_Struct *arg4, f32 arg5, u8 volume) {
+void dll_18_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume) {
     s32 temp_v0;
     u32 temp_v0_2;
 
@@ -503,14 +504,14 @@ void dll_18_func_11BC(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, DLL18_F
 }
 
 // offset: 0x1280 | func: 14 | export: 14
-void dll_18_func_1280(Object *obj, DLL18_Data *data, s32 arg2) {
+void dll_18_func_1280(Object *obj, ObjFSA_Data *data, s32 arg2) {
     data->unk330 = gDLL_26_Curves->vtbl->curves_func_1e4(
         obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
         &arg2, 1, (s32) data->unk338);
 }
 
 // offset: 0x12F4 | func: 15 | export: 15
-void dll_18_func_12F4(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
+void dll_18_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     CurveSetup* temp_v0;
 
     if (data->unk330 == -1) {
@@ -529,10 +530,10 @@ void dll_18_func_12F4(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x13E4 | func: 16 | export: 22
-void dll_18_func_13E4(DLL18_Data *data, void *arg1) { }
+void dll_18_func_13E4(ObjFSA_Data *data, void *arg1) { }
 
 // offset: 0x13F4 | func: 17 | export: 16
-void dll_18_func_13F4(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
+void dll_18_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     f32 var_fa0;
     f32 var_fa1;
     f32 sp2C;
@@ -564,7 +565,7 @@ void dll_18_func_13F4(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x15D0 | func: 18 | export: 17
-void dll_18_func_15D0(Object *obj, DLL18_Data *data) {
+void dll_18_func_15D0(Object *obj, ObjFSA_Data *data) {
     obj->speed.x = 0.0f;
     obj->speed.z = 0.0f;
     data->unk28C = 0.0f;
@@ -573,13 +574,13 @@ void dll_18_func_15D0(Object *obj, DLL18_Data *data) {
 }
 
 // offset: 0x1600 | func: 19 | export: 18
-void dll_18_func_1600(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
+void dll_18_func_1600(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     _bss_14 = arg2;
     _bss_18 = arg3;
 }
 
 // offset: 0x162C | func: 20 | export: 19
-void dll_18_func_162C(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
+void dll_18_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     f32 sp34;
     f32 sp30;
     s32 var_a2;
@@ -617,7 +618,7 @@ void dll_18_func_162C(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x1824 | func: 21 | export: 20
-void dll_18_func_1824(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6) {
+void dll_18_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6) {
     DLL_18_UnknownDLL* temp_s3;
 
     temp_s3 = dll_load_deferred((arg2 + 0x1000), 1);
@@ -635,7 +636,7 @@ void dll_18_func_1824(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, u32 arg
 }
 
 // offset: 0x1978 | func: 22 | export: 21
-void dll_18_func_1978(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, u32 arg4) {
+void dll_18_func_1978(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg4) {
     while ((arg3 != 0) && (obj != NULL)) {
         if (arg4 == 0) {
             gDLL_17->vtbl->func1(obj, arg2, NULL, 2, -1, NULL);
@@ -649,7 +650,7 @@ void dll_18_func_1978(Object *obj, DLL18_Data *data, s32 arg2, s32 arg3, u32 arg
 }
 
 // offset: 0x1AC4 | func: 23
-static void dll_18_func_1AC4(Object *obj, DLL18_Data *data) {
+static void dll_18_func_1AC4(Object *obj, ObjFSA_Data *data) {
     f32 temp_fv0;
     f32 temp_fv1;
     s32 var_v0;
@@ -696,15 +697,15 @@ static void dll_18_func_1AC4(Object *obj, DLL18_Data *data) {
 }
 
 // offset: 0x1C70 | func: 24
-static void dll_18_func_1C70(Object *obj, DLL18_Data *data, f32 arg2) {
+static void dll_18_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
     SRT sp88;
     MtxF sp48;
     f32 sp44;
     f32 sp40;
     f32 sp3C;
 
-    if (!(data->unk0 & 0x02000000)) {
-        if (!(data->unk0 & 0x200000)) {
+    if (!(data->flags & 0x02000000)) {
+        if (!(data->flags & 0x200000)) {
             obj->speed.y *= 0.97f;
             obj->speed.y -= data->unk29C * arg2;
         }
@@ -718,7 +719,7 @@ static void dll_18_func_1C70(Object *obj, DLL18_Data *data, f32 arg2) {
             sp88.transl.z = 0;
             sp88.scale = 1.0f;
             matrix_from_srt(&sp48, &sp88);
-            if (data->unk0 & 0x10000) {
+            if (data->flags & 0x10000) {
                 vec3_transform(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->speed.y, &sp3C);
             } else {
                 vec3_transform(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
@@ -731,7 +732,7 @@ static void dll_18_func_1C70(Object *obj, DLL18_Data *data, f32 arg2) {
 }
 
 // offset: 0x1E30 | func: 25
-static void dll_18_func_1E30(Object *obj, DLL18_Data *data) {
+static void dll_18_func_1E30(Object *obj, ObjFSA_Data *data) {
     MtxF sp50;
     SRT sp38;
 
@@ -750,13 +751,13 @@ static void dll_18_func_1E30(Object *obj, DLL18_Data *data) {
 }
 
 // offset: 0x1F64 | func: 26 | export: 5
-void dll_18_func_1F64(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
+void dll_18_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
     f32 temp_fv1;
     f32 temp_fa1;
     f32 var_ft4;
     f32 temp;
 
-    data->unk0 &= ~0x100000;
+    data->flags &= ~0x100000;
     temp_fv1 = obj->srt.transl.x - arg2;
     temp_fa1 = obj->srt.transl.z - arg3;
     data->unk2B4 = sqrtf(SQ(temp_fv1) + SQ(temp_fa1));
@@ -789,7 +790,7 @@ void dll_18_func_1F64(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, f32 arg
 }
 
 // offset: 0x20CC | func: 27 | export: 6
-void dll_18_func_20CC(Object *obj, DLL18_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
+void dll_18_func_20CC(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
     f32 temp_fv1;
     f32 temp_fa1;
     f32 temp_fv0;
