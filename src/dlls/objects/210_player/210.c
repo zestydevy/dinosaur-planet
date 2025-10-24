@@ -2646,9 +2646,9 @@ void dll_210_func_7180(Object* arg0, Player_Data* arg1, f32 arg2) {
     s32* sp2C;
     s32* temp_v0;
 
-    func_800328F0(arg0, (Unk80032CF8* ) &arg1->unk354, arg1->unk0.unk278);
+    func_800328F0(arg0, &arg1->unk354, arg1->unk0.unk278);
     if (arg1->stats->health > 0) {
-        func_80032A08(arg0, &arg1->unk354.unk0);
+        func_80032A08(arg0, &arg1->unk354);
         return;
     }
     sp2C = func_800348A0(arg0, 5, 0);
@@ -7388,7 +7388,7 @@ Object *dll_210_func_1D768(Object* player) {
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-Unk80032CF8Copy* dll_210_func_1D778(Object* player) {
+Unk80032CF8* dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }

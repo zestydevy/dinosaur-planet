@@ -21,7 +21,7 @@ static const char str_80099aa8[] = " Result2 ";
 static const char str_80099ab4[] = " x %f y %f z %f \n";
 
 
-extern s32 *D_800916E0[5];
+extern Object *D_800916E0[5];
 extern s32 D_800916F4[4];
 extern f32 D_800B1990;
 extern Object **D_800B1994;
@@ -1367,7 +1367,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
 
 #endif
 
-void func_80028D2C(s32* val) { // TODO: this takes an Object*
+void func_80028D2C(Object* obj) {
     s32 i = 0;
 
     while (i < 5 && D_800916E0[i] != NULL) {
@@ -1375,11 +1375,11 @@ void func_80028D2C(s32* val) { // TODO: this takes an Object*
     }
 
     if (i == 5) {
-        D_800916E0[0] = val;
+        D_800916E0[0] = obj;
         return;
     }
 
-    D_800916E0[i] = val;
+    D_800916E0[i] = obj;
 }
 
 void func_80028D90(void) {

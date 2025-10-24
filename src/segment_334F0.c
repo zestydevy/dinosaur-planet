@@ -1,6 +1,9 @@
 #include "segment_334F0.h"
+#include "dlls/objects/210_player.h"
 #include "sys/curves.h"
 #include "dll.h"
+#include "sys/main.h"
+#include "sys/rand.h"
 
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
@@ -11,7 +14,7 @@ s32 D_80091720[] = { 0x0, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13 };
 s32 D_80091748[] = { 0, 0 };
 
 void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2) {
-    f32* temp_v0; // TODO: this is an Object* ?
+    Object* temp_v0; // could also be SRT*
 
     if (obj->group == GROUP_UNK1) {
         arg1 = ((DLL_210_Player*)obj->dll)->vtbl->func54(obj);
@@ -21,9 +24,9 @@ void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2) {
         }
         temp_v0 = ((DLL_210_Player*)obj->dll)->vtbl->func52(obj);
         if (temp_v0 != NULL) {
-            arg1->unk4 = temp_v0[3];
-            arg1->x = temp_v0[4];
-            arg1->y = temp_v0[5];
+            arg1->x = temp_v0->srt.transl.x;
+            arg1->y = temp_v0->srt.transl.y;
+            arg1->z = temp_v0->srt.transl.z;
             arg1->unk0 = 1;
         } else {
             arg1->unk0 = 0;
@@ -34,7 +37,7 @@ void func_800328F0(Object* obj, Unk80032CF8* arg1, f32 arg2) {
     func_80033B68(obj, arg1, 0.0f);
 }
 
-void func_80032A08(Object* obj, s8* arg1) { // TODO: arg1 = Unk80032CF8*
+void func_80032A08(Object* obj, Unk80032CF8* arg1) {
     s32* sp1C;
     s32 temp_v1;
     s32* temp_v0;
@@ -46,22 +49,22 @@ void func_80032A08(Object* obj, s8* arg1) { // TODO: arg1 = Unk80032CF8*
     }
 
     temp_v1 = *temp_v0;
-    switch (arg1[0x1E] & 0xF) {
+    switch (arg1->unk1E & 0xF) {
     case 0:
-        if (arg1[0x1F] > 0) {
-            arg1[0x1F] -= delayByte;
+        if (arg1->unk1F > 0) {
+            arg1->unk1F -= delayByte;
         } else if (rand_next(0, 0x3E8) >= 0x3DA) {
-            arg1[0x1E] = 1;
-            arg1[0x1F] = 0;
+            arg1->unk1E = 1;
+            arg1->unk1F = 0;
         }
         break;
     case 1:
-        if (arg1[0x1E] & 0x80) {
+        if (arg1->unk1E & 0x80) {
             temp_v1 -= 0x100;
             if (temp_v1 < 0) {
                 temp_v1 = 0;
-                arg1[0x1E] = 0;
-                arg1[0x1F] = 0;
+                arg1->unk1E = 0;
+                arg1->unk1F = 0;
             }
         } else {
             temp_v1 += 0x100;
@@ -69,11 +72,11 @@ void func_80032A08(Object* obj, s8* arg1) { // TODO: arg1 = Unk80032CF8*
                 temp_v1 -= 0x200;
                 if (temp_v1 < 0) {
                     temp_v1 = 0;
-                    arg1[0x1E] = 0;
+                    arg1->unk1E = 0;
                 } else {
-                    arg1[0x1E] = -0x7F;
+                    arg1->unk1E = -0x7F;
                 }
-                arg1[0x1F] = 0;
+                arg1->unk1F = 0;
             }
         }
         *sp1C = temp_v1;
@@ -515,7 +518,7 @@ void func_80033C54(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         if (arg1->unk0 != 0) {
             arg1->unk1A = (sp28 << 8) | 3;
             arg1->unk16 = arg3[1];
-            arg1->z = 1.0f;
+            arg1->unk10 = 1.0f;
         } else {
             arg1->unk1A = (sp28 << 8) | 1;
             arg1->unk1C = rand_next(100, 400);
@@ -557,7 +560,7 @@ void func_80033C54(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         if (arg1->unk0 == 0) {
             arg1->unk1A = sp28 << 8;
         } else {
-            arg1->unk14 = arctan2_f(obj->srt.transl.x - arg1->unk4, obj->srt.transl.z - arg1->y) - (obj->srt.yaw & 0xFFFF);
+            arg1->unk14 = arctan2_f(obj->srt.transl.x - arg1->x, obj->srt.transl.z - arg1->z) - (obj->srt.yaw & 0xFFFF);
             if (arg1->unk14 >= 0x8001) {
                 arg1->unk14 += 0xFFFF0001;
             }
@@ -567,11 +570,11 @@ void func_80033C54(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
             if ((arg1->unk14 >= 0x2000) || (arg1->unk14 < -0x1FFF)) {
                 arg1->unk1A = sp28 << 8;
             } else {
-                if (arg1->z > 0.0f) {
-                    arg3[1] = arg1->unk14 + ((arg1->unk16 - arg1->unk14) * arg1->z);
-                    arg1->z -= 0.01f * delayFloat;
-                    if (arg1->z < 0.0f) {
-                        arg1->z = 0.0f;
+                if (arg1->unk10 > 0.0f) {
+                    arg3[1] = arg1->unk14 + ((arg1->unk16 - arg1->unk14) * arg1->unk10);
+                    arg1->unk10 -= 0.01f * delayFloat;
+                    if (arg1->unk10 < 0.0f) {
+                        arg1->unk10 = 0.0f;
                     }
                 } else {
                     arg3[1] = arg1->unk14;
@@ -760,7 +763,7 @@ s32 func_80034518(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     return 0;
 }
 
-void func_80034678(Object* arg0, s8* arg1, f32 arg2) {
+void func_80034678(Object* arg0, Unk80032CF8* arg1, f32 arg2) {
     s16* sp1C;
     s16* sp18;
     s32 var_v0;
@@ -769,29 +772,29 @@ void func_80034678(Object* arg0, s8* arg1, f32 arg2) {
     sp18 = func_800348A0(arg0, 0, 0);
     if ((sp1C != NULL) && (sp18 != NULL)) {
         var_v0 = 0;
-        if (arg1[0x20] == 0) {
+        if (arg1->unk20 == 0) {
             var_v0 = 1;
         }
-        if ((arg1[0x20] > 0) && (sp1C[4] >= arg1[0x22])) {
+        if ((arg1->unk20 > 0) && (sp1C[4] >= arg1->unk22)) {
             var_v0 = 1;
         }
-        if ((arg1[0x20] < 0) && (arg1[0x22] >= sp1C[4])) {
+        if ((arg1->unk20 < 0) && (arg1->unk22 >= sp1C[4])) {
             var_v0 = 1;
         }
         if (var_v0 != 0) {
-            arg1[0x22] = rand_next(-0x64, 0xA);
-            if (arg1[0x22] < sp1C[4]) {
-                arg1[0x20] = -5;
+            arg1->unk22 = rand_next(-0x64, 0xA);
+            if (arg1->unk22 < sp1C[4]) {
+                arg1->unk20 = -5;
             } else {
-                arg1[0x20] = 5;
+                arg1->unk20 = 5;
             }
-            arg1[0x21] = rand_next(0x1E, 0x64);
+            arg1->unk21 = rand_next(0x1E, 0x64);
         }
-        if (arg1[0x21] > 0) {
-            arg1[0x21] -= delayByte;
+        if (arg1->unk21 > 0) {
+            arg1->unk21 -= delayByte;
             return;
         }
-        sp1C[4] += arg1[0x20] * delayByte;
+        sp1C[4] += arg1->unk20 * delayByte;
         sp1C[5] = 0;
         sp18[4] = -0x64 - sp1C[4];
         sp18[5] = 0;
@@ -805,7 +808,7 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     s32 index;
     s32 listPosition;
     u32 jointID;
-    u16* sequenceBoneData;
+    s16* sequenceBoneData;
 
     romdef = obj->def;
     sequenceBoneData = NULL;
@@ -853,15 +856,15 @@ s32* func_800349B0(void) {
 void func_800349C0(Object* arg0, Unk80032CF8* arg1, s32 soundID, s16 arg3, s32 arg4, u8 arg5) {
     u32 sp34;
 
-    sp34 = arg1->x;
+    sp34 = arg1->y;
     if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->func_B48(sp34)) {
         if (sp34 != 0) {
             gDLL_6_AMSFX->vtbl->func_A1C(sp34);
         }
         gDLL_6_AMSFX->vtbl->play_sound(arg0, soundID, MAX_VOLUME, &sp34, 0, 0, 0);
-        arg1->y = arg4;
+        arg1->z = arg4;
         arg1->unk14 = -arg3;
-        arg1->x = sp34;
+        arg1->y = sp34;
         arg1->unk0 = 1;
     }
 }
@@ -879,8 +882,8 @@ void func_80034BC0(Object* obj, Unk80032CF8* arg1) {
     u32 temp_s1;
     s32 sp24;
 
-    temp_s1 = (u32) arg1->x;
-    sp24 = (s32) arg1->y;
+    temp_s1 = (u32) arg1->y;
+    sp24 = (s32) arg1->z;
     sp2C = func_80034804(obj, 1);
     if (arg1->unk0 != 0) {
         arg1->unk0 = 0;
@@ -888,21 +891,21 @@ void func_80034BC0(Object* obj, Unk80032CF8* arg1) {
         if ((sp24 != -1) && (temp_s1 != 0)) {
             sp24 = sp24 - delayByte;
             if (sp24 < 0) {
-                arg1->unk4 = 0.0f;
+                arg1->x = 0.0f;
                 sp24 = sp24;
                 gDLL_6_AMSFX->vtbl->func_A1C(temp_s1);
                 arg1->unk14 = 0;
-                arg1->x = 0.0f;
-                arg1->y = -1.0f;
+                arg1->y = 0.0f;
+                arg1->z = -1.0f;
             }
-            arg1->y = (f32) sp24;
+            arg1->z = (f32) sp24;
         }
         if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->func_B48(temp_s1)) {
-            arg1->unk4 = 0.0f;
+            arg1->x = 0.0f;
             gDLL_6_AMSFX->vtbl->func_A1C(temp_s1);
             arg1->unk14 = 0;
-            arg1->x = 0.0f;
-            arg1->y = -1.0f;
+            arg1->y = 0.0f;
+            arg1->z = -1.0f;
         }
     }
 
