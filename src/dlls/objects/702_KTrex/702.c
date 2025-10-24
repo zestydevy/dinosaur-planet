@@ -10,11 +10,15 @@
 #include "segment_334F0.h"
 #include "prevent_bss_reordering.h"
 
+enum {
+    KTSTATE_0 = 0,
+};
+
 // Note: This is not the only object data. DLL 33 data is prepended to this in memory.
 typedef struct {
-    GenericStack *stack;
+    GenericStack *stateStack;
     f32 unk4;
-    f32 unk8;
+    f32 unk8; // how far along a straight (0-1 progress to next corner)
     s32 unkC;
     f32 unk10[4];
     f32 unk20[4];
@@ -235,7 +239,7 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
         self->ptr0x64->flags |= 0x810;
     }
     ktdata = objdata->unk3F4;
-    ktdata->stack = generic_stack_new(4, 4);
+    ktdata->stateStack = generic_stack_new(4, 4);
 
     for (i = 0; i < 4; i++) {
         curve = gDLL_26_Curves->vtbl->curves_func_39c(_data_A4[i]);
@@ -342,7 +346,7 @@ void dll_702_free(Object* self, s32 a1) {
     sKTData = sDLL33Data->unk3F4;
     obj_free_object_type(self, 4);
     gDLL_33->vtbl->func15(self, sDLL33Data, 0);
-    generic_stack_free(sKTData->stack);
+    generic_stack_free(sKTData->stateStack);
     if (_data_E4 != NULL) {
         dll_unload(_data_E4);
     }
@@ -428,21 +432,21 @@ static s32 dll_702_func_D5C(u8 arg0) {
 }
 
 // offset: 0xE24 | func: 14
-static void dll_702_func_E24(s32 arg0) {
-    if (!generic_stack_is_full(sKTData->stack)) {
-        generic_stack_push(sKTData->stack, &arg0);
+static void dll_702_push_state(s32 state) {
+    if (!generic_stack_is_full(sKTData->stateStack)) {
+        generic_stack_push(sKTData->stateStack, &state);
     }
 }
 
 // offset: 0xE88 | func: 15
-static s32 dll_702_func_E88(void) {
-    s32 sp24;
+static s32 dll_702_pop_state(void) {
+    s32 state;
 
-    sp24 = 0;
-    if (!generic_stack_is_empty(sKTData->stack)) {
-        generic_stack_pop(sKTData->stack, &sp24);
+    state = 0;
+    if (!generic_stack_is_empty(sKTData->stateStack)) {
+        generic_stack_pop(sKTData->stateStack, &state);
     }
-    return sp24;
+    return state;
 }
 
 // offset: 0xEF0 | func: 16
@@ -507,7 +511,7 @@ static s32 dll_702_func_FE4(DLL18_Data* a0, KTrex_Data* a1) {
             }
         }
         a1->unkFA &= ~0x6;
-        a1->unkFA |= (var_a3 * 2);
+        a1->unkFA |= (var_a3 << 1);
         if (a1->unk8 > _data_78[a1->unkFC]) {
             a1->unk8 = _data_78[a1->unkFC];
         } else if (a1->unk8 < _data_6C[a1->unkFC]) {
@@ -948,7 +952,7 @@ static s32 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         arg1->unk28C = objsetup->unk38[sKTData->unkFC] / 1000.0f;
     }
     if (dll_702_func_FE4(arg1, sKTData) != 0) {
-        dll_702_func_E24(2);
+        dll_702_push_state(2);
         return 4;
     }
 
@@ -958,21 +962,22 @@ static s32 dll_702_func_2E64(Object* arg0, DLL18_Data* arg1, f32 arg2) {
             sp30 = (s32) sKTData->unk101 >> 1;
             if (rand_next(0, 0x64) <= (s32) objsetup->unk56[sp30]) {
                 sKTData->unk103 = 2;
-                dll_702_func_E24(5);
+                dll_702_push_state(5);
                 sKTData->unkFD = 1;
                 return 5;
             }
             if (rand_next(0, 0x64) <= (s32) objsetup->unk52[sp30]) {
                 sKTData->unkFD = 0;
-                dll_702_func_E24(0xB);
+                dll_702_push_state(0xB);
                 return 5;
             }
             sKTData->unkFA |= 0x20;
         }
     }
-    if ((sKTData->unkFE & sKTData->unkFF) && (((temp_a3 == 0) && (sKTData->unk8 <= sKTData->unkF4)) || ((temp_a3 != 0) && (sKTData->unkF4 <= sKTData->unk8)))) {
+    if ((sKTData->unkFE & sKTData->unkFF) && 
+            (((temp_a3 == 0) && (sKTData->unk8 <= sKTData->unkF4)) || ((temp_a3 != 0) && (sKTData->unkF4 <= sKTData->unk8)))) {
         sKTData->unk103 = 1;
-        dll_702_func_E24(5);
+        dll_702_push_state(5);
         sKTData->unkFD = 1;
         return 5;
     }
@@ -985,7 +990,7 @@ static s32 dll_702_func_3160(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         gDLL_18->vtbl->func4(arg0, arg1, 2);
     } else if (arg1->unk33A != 0) {
         sKTData->unk8 = dll_702_func_C74(arg0, sKTData);
-        return dll_702_func_E88() + 1;
+        return dll_702_pop_state() + 1;
     }
 
     return 0;
@@ -1007,7 +1012,7 @@ static s32 dll_702_func_3208(Object* arg0, DLL18_Data* arg1, f32 arg2) {
             sKTData->unk4 = 0.0f;
         }
         if ((arg1->unk33A != 0) && (sKTData->unk4 <= 0.0f)) {
-            return dll_702_func_E88() + 1;
+            return dll_702_pop_state() + 1;
         }
     }
     return 0;
@@ -1027,8 +1032,8 @@ static s32 dll_702_func_3330(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         sKTData->unk103 -= 1;
     }
     if (sKTData->unk103 <= 0) {
-        dll_702_func_E24(2);
-        dll_702_func_E24(6);
+        dll_702_push_state(2);
+        dll_702_push_state(6);
         return 4;
     }
     if (dll_702_func_EF0(arg0) != 0) {
@@ -1042,7 +1047,7 @@ static s32 dll_702_func_3490(Object* arg0, DLL18_Data* arg1, f32 arg2) {
     if (arg1->unk273 != 0) {
         gDLL_18->vtbl->func4(arg0, arg1, 5);
     } else if (arg1->unk33A != 0) {
-        return dll_702_func_E88() + 1;
+        return dll_702_pop_state() + 1;
     }
 
     return 0;
@@ -1102,7 +1107,7 @@ static s32 dll_702_func_3720(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         sKTData->unkC = (temp >> 1) & 3;
         sKTData->unk4 = 300.0f;
         gDLL_2_Camera->vtbl->func8(2, 0);
-        return 0xB;
+        return 11;
     }
     return 0;
 }
@@ -1122,7 +1127,7 @@ static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         arg1->unk28C = objsetup->unk38[sKTData->unkFC] / 1000.0f;
     }
     if (dll_702_func_FE4(arg1, sKTData) != 0) {
-        dll_702_func_E24(0xA);
+        dll_702_push_state(10);
         return 4;
     }
     sKTData->unk4 = (f32) (sKTData->unk4 - delayFloat);
@@ -1133,10 +1138,10 @@ static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         if (sKTData->unkFA & 8) {
             sKTData->unk101 += 1;
             sKTData->unkFD = 0;
-            dll_702_func_E24(0xB);
-            dll_702_func_E24(4);
+            dll_702_push_state(10);
+            dll_702_push_state(4);
         } else {
-            dll_702_func_E24(2);
+            dll_702_push_state(2);
         }
         gDLL_2_Camera->vtbl->func8(3, 0);
         main_set_bits(BIT_572, (u32) sKTData->unk101);

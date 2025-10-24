@@ -6,6 +6,10 @@
 #include "game/objects/object.h"
 #include "types.h"
 
+typedef enum {
+    DLL18FLAG_8000 = 0x8000 // Set after first iteration?
+} DLL18Flags;
+
 typedef struct {
     u8 _unk0[2];
     u16 soundID;
@@ -18,20 +22,20 @@ typedef void (*dll18_callback2)(Object*, struct DLL18_Data*);
 
 // size:0x34C
 typedef struct DLL18_Data {
-    u32 unk0;
+    u32 unk0; // flags
     DLL27_Data unk4;
     s16 unk264;
     s16 unk266;
-    s16 unk268;
+    s16 unk268; // index of second callback group to run
     s16 unk26A;
-    s16 unk26C;
+    s16 unk26C; // index of first callback group to run
     s16 unk26E;
     s16 unk270;
     s8 unk272;
     s8 unk273;
     Vec3f *unk274;
-    f32 unk278;
-    f32 unk27C;
+    f32 unk278; // rate of turning (yaw only)?
+    f32 unk27C; // rate of turning (yaw only)?
     f32 unk280;
     f32 unk284;
     f32 unk288;
@@ -46,9 +50,9 @@ typedef struct DLL18_Data {
     f32 unk2AC;
     f32 unk2B0;
     f32 unk2B4;
-    f32 unk2B8;
+    f32 unk2B8; // distance to target
     u8 _unk2BC[0x2C8 - 0x2BC];
-    Object *unk2C8;
+    Object *unk2C8; // target
     u8 _unk2CC[0x2EC - 0x2CC];
     Vec3f unk2EC;
     f32 unk2F8;
@@ -59,12 +63,12 @@ typedef struct DLL18_Data {
     s32 unk30C;
     s32 unk310;
     u8 _unk314[0x322 - 0x314];
-    s16 unk322;
+    s16 unk322; // time spent in current state (caps at 10000) (callback 2)
     s16 unk324;
     s16 unk326;
-    s16 unk328;
-    s16 unk32A;
-    s16 unk32C;
+    s16 unk328; // yaw in degrees (absolute value) (sorta, more to this)
+    s16 unk32A; // yaw in degrees (sorta, more to this)
+    s16 unk32C; // time spent in current state (caps at 10000) (callback 1)
     s16 unk32E;
     s32 unk330;
     s32 unk334;
@@ -75,7 +79,7 @@ typedef struct DLL18_Data {
     u8 unk33D;
     u8 _unk33E;
     u8 unk33F;
-    s8 unk340;
+    s8 unk340; // bit 0 set when turning?
     s8 unk341;
     u8 unk342;
     s8 unk343;
