@@ -16,58 +16,58 @@ enum {
 
 // Note: This is not the only object data. DLL 33 data is prepended to this in memory.
 typedef struct {
-    GenericStack *stateStack;
-    f32 unk4;
-    f32 unk8; // how far along a straight (0-1 progress to next corner)
-    s32 unkC;
-    f32 unk10[4];
-    f32 unk20[4];
-    f32 unk30[4];
-    f32 unk40[4];
-    f32 unk50[4];
-    f32 unk60[4];
-    f32 unk70[4];
-    f32 unk80[4];
-    f32 unk90[4];
-    f32 unkA0[4];
-    f32 unkB0[4];
-    f32 unkC0[4];
-    f32 *unkD0;
-    f32 *unkD4;
-    f32 *unkD8;
-    f32 *unkDC;
-    f32 *unkE0;
-    f32 *unkE4;
-    f32 unkE8;
-    f32 unkEC;
-    f32 unkF0;
-    f32 unkF4;
-    s16 unkF8;
-    u16 unkFA;
-    u8 unkFC;
-    u8 unkFD;
-    u8 unkFE;
-    u8 unkFF;
-    u8 unk100;
-    u8 unk101;
-    u8 unk102;
-    s8 unk103;
-    s32 unk104;
-    u8 unk108;
-    SRT unk10C;
-    SRT unk124;
-    SRT unk13C;
-    SRT unk154;
-    Vec3f unk16C;
+/*000*/ GenericStack *stateStack;
+/*004*/ f32 unk4;
+/*008*/ f32 unk8; // how far along a straight (0-1 progress to next corner)
+/*00C*/ s32 unkC;
+/*010*/ f32 unk10[4];
+/*020*/ f32 unk20[4];
+/*030*/ f32 unk30[4];
+/*040*/ f32 unk40[4];
+/*050*/ f32 unk50[4];
+/*060*/ f32 unk60[4];
+/*070*/ f32 unk70[4];
+/*080*/ f32 unk80[4];
+/*090*/ f32 unk90[4];
+/*0A0*/ f32 unkA0[4];
+/*0B0*/ f32 unkB0[4];
+/*0C0*/ f32 unkC0[4];
+/*0D0*/ f32 *unkD0;
+/*0D4*/ f32 *unkD4;
+/*0D8*/ f32 *unkD8;
+/*0DC*/ f32 *unkDC;
+/*0E0*/ f32 *unkE0;
+/*0E4*/ f32 *unkE4;
+/*0E8*/ f32 unkE8;
+/*0EC*/ f32 unkEC;
+/*0F0*/ f32 unkF0;
+/*0F4*/ f32 unkF4;
+/*0F8*/ s16 unkF8;
+/*0FA*/ u16 unkFA;
+/*0FC*/ u8 unkFC;
+/*0FD*/ u8 unkFD;
+/*0FE*/ u8 unkFE;
+/*0FF*/ u8 unkFF;
+/*100*/ u8 unk100;
+/*101*/ u8 unk101;
+/*102*/ u8 unk102;
+/*103*/ s8 unk103;
+/*104*/ s32 unk104;
+/*108*/ u8 unk108;
+/*10C*/ SRT unk10C;
+/*124*/ SRT unk124;
+/*13C*/ SRT unk13C;
+/*154*/ SRT unk154;
+/*16C*/ Vec3f unk16C;
 } KTrex_Data;
 
 typedef struct {
-    DLL33_ObjSetup base;
-    f32 unk38[3];
-    u16 unk44[3];
-    u16 unk4A[4];
-    u8 unk52[4];
-    u8 unk56[4];
+/*00*/ DLL33_ObjSetup base;
+/*38*/ f32 unk38[3];
+/*44*/ u16 unk44[3];
+/*4A*/ u16 unk4A[4];
+/*52*/ u8 unk52[4];
+/*56*/ u8 unk56[4];
 } KTrex_ObjSetup;
 
 /*0x0*/ static u32 _data_0[] = {

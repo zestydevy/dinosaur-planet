@@ -11,11 +11,11 @@
 #include "types.h"
 
 typedef struct {
-    u8 _unk0[0x24 - 0x0];
-    s8 unk24;
-    u8 unk25;
-    s8 unk26;
-    s8 unk27;
+/*00*/ u8 _unk0[0x24 - 0x0];
+/*24*/ s8 unk24;
+/*25*/ u8 unk25;
+/*26*/ s8 unk26;
+/*27*/ s8 unk27;
 } DLL33Data_34C;
 
 // size:0x3FC
@@ -55,26 +55,26 @@ typedef struct {
 } DLL33_Data;
 
 typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-    u8 _unk24[0x27 - 0x24];
-    s8 unk27;
-    s8 unk28;
-    u8 unk29;
-    s8 unk2A;
-    u8 unk2B;
-    s16 unk2C;
-    s8 unk2E;
-    u8 unk2F;
-    s16 unk30;
-    u8 unk32;
-    u8 pad33;
-    u16 unk34;
+/*00*/ ObjSetup base;
+/*18*/ s16 unk18;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 unk1E;
+/*20*/ s16 unk20;
+/*22*/ s16 unk22;
+/*24*/ u8 _unk24[0x27 - 0x24];
+/*27*/ s8 unk27;
+/*28*/ s8 unk28;
+/*29*/ u8 unk29;
+/*2A*/ s8 unk2A;
+/*2B*/ u8 unk2B;
+/*2C*/ s16 unk2C;
+/*2E*/ s8 unk2E;
+/*2F*/ u8 unk2F;
+/*30*/ s16 unk30;
+/*32*/ u8 unk32;
+/*33*/ u8 pad33;
+/*34*/ u16 unk34;
 } DLL33_ObjSetup;
 
 DLL_INTERFACE(DLL_33) {

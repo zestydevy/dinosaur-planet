@@ -11,8 +11,8 @@ typedef enum {
 } DLL18Flags;
 
 typedef struct {
-    u8 _unk0[2];
-    u16 soundID;
+/*0*/ u8 _unk0[2];
+/*2*/ u16 soundID;
 } DLL18_Func_11BC_Struct;
 
 struct DLL18_Data;
@@ -22,72 +22,72 @@ typedef void (*dll18_callback2)(Object*, struct DLL18_Data*);
 
 // size:0x34C
 typedef struct DLL18_Data {
-    u32 unk0; // flags
-    DLL27_Data unk4;
-    s16 unk264;
-    s16 unk266;
-    s16 unk268; // index of second callback group to run
-    s16 unk26A;
-    s16 unk26C; // index of first callback group to run
-    s16 unk26E;
-    s16 unk270;
-    s8 unk272;
-    s8 unk273;
-    Vec3f *unk274;
-    f32 unk278; // rate of turning (yaw only)?
-    f32 unk27C; // rate of turning (yaw only)?
-    f32 unk280;
-    f32 unk284;
-    f32 unk288;
-    f32 unk28C;
-    f32 unk290;
-    f32 unk294;
-    f32 unk298;
-    f32 unk29C;
-    f32 unk2A0;
-    f32 unk2A4;
-    s32 unk2A8;
-    f32 unk2AC;
-    f32 unk2B0;
-    f32 unk2B4;
-    f32 unk2B8; // distance to target
-    u8 _unk2BC[0x2C8 - 0x2BC];
-    Object *unk2C8; // target
-    u8 _unk2CC[0x2EC - 0x2CC];
-    Vec3f unk2EC;
-    f32 unk2F8;
-    dll18_callback2 unk2FC;
-    u8 _unk300[0x304 - 0x300];
-    s32 unk304;
-    u32 unk308;
-    s32 unk30C;
-    s32 unk310;
-    u8 _unk314[0x322 - 0x314];
-    s16 unk322; // time spent in current state (caps at 10000) (callback 2)
-    s16 unk324;
-    s16 unk326;
-    s16 unk328; // yaw in degrees (absolute value) (sorta, more to this)
-    s16 unk32A; // yaw in degrees (sorta, more to this)
-    s16 unk32C; // time spent in current state (caps at 10000) (callback 1)
-    s16 unk32E;
-    s32 unk330;
-    s32 unk334;
-    s8 unk338;
-    s8 unk339;
-    s8 unk33A;
-    u8 _unk33B[0x33D - 0x33B];
-    u8 unk33D;
-    u8 _unk33E;
-    u8 unk33F;
-    s8 unk340; // bit 0 set when turning?
-    s8 unk341;
-    u8 unk342;
-    s8 unk343;
-    u8 _unk344[0x348 - 0x344];
-    s8 unk348;
-    u8 _unk349;
-    u8 unk34A;
-    u8 _unk34B;
+/*000*/ u32 unk0; // flags
+/*004*/ DLL27_Data unk4;
+/*264*/ s16 unk264;
+/*266*/ s16 unk266;
+/*268*/ s16 unk268; // index of second callback group to run
+/*26A*/ s16 unk26A;
+/*26C*/ s16 unk26C; // index of first callback group to run
+/*26E*/ s16 unk26E;
+/*270*/ s16 unk270;
+/*272*/ s8 unk272;
+/*273*/ s8 unk273;
+/*274*/ Vec3f *unk274;
+/*278*/ f32 unk278; // rate of turning (yaw only)?
+/*27C*/ f32 unk27C; // rate of turning (yaw only)?
+/*280*/ f32 unk280;
+/*284*/ f32 unk284;
+/*288*/ f32 unk288;
+/*28C*/ f32 unk28C;
+/*290*/ f32 unk290;
+/*294*/ f32 unk294;
+/*298*/ f32 unk298;
+/*29C*/ f32 unk29C;
+/*2A0*/ f32 unk2A0;
+/*2A4*/ f32 unk2A4;
+/*2A8*/ s32 unk2A8;
+/*2AC*/ f32 unk2AC;
+/*2B0*/ f32 unk2B0;
+/*2B4*/ f32 unk2B4;
+/*2B8*/ f32 unk2B8; // distance to target
+/*2BC*/ u8 _unk2BC[0x2C8 - 0x2BC];
+/*2C8*/ Object *unk2C8; // target
+/*2CC*/ u8 _unk2CC[0x2EC - 0x2CC];
+/*2EC*/ Vec3f unk2EC;
+/*2F8*/ f32 unk2F8;
+/*2FC*/ dll18_callback2 unk2FC;
+/*300*/ u8 _unk300[0x304 - 0x300];
+/*304*/ s32 unk304;
+/*308*/ u32 unk308;
+/*30C*/ s32 unk30C;
+/*310*/ s32 unk310;
+/*314*/ u8 _unk314[0x322 - 0x314];
+/*322*/ s16 unk322; // time spent in current state (caps at 10000) (callback 2)
+/*324*/ s16 unk324;
+/*326*/ s16 unk326;
+/*328*/ s16 unk328; // yaw in degrees (absolute value) (sorta, more to this)
+/*32A*/ s16 unk32A; // yaw in degrees (sorta, more to this)
+/*32C*/ s16 unk32C; // time spent in current state (caps at 10000) (callback 1)
+/*32E*/ s16 unk32E;
+/*330*/ s32 unk330;
+/*334*/ s32 unk334;
+/*338*/ s8 unk338;
+/*339*/ s8 unk339;
+/*33A*/ s8 unk33A;
+/*33B*/ u8 _unk33B[0x33D - 0x33B];
+/*33D*/ u8 unk33D;
+/*33E*/ u8 _unk33E;
+/*33F*/ u8 unk33F;
+/*340*/ s8 unk340; // bit 0 set when turning?
+/*341*/ s8 unk341;
+/*342*/ u8 unk342;
+/*343*/ s8 unk343;
+/*344*/ u8 _unk344[0x348 - 0x344];
+/*348*/ s8 unk348;
+/*349*/ u8 _unk349;
+/*34A*/ u8 unk34A;
+/*34B*/ u8 _unk34B;
 } DLL18_Data;
 
 DLL_INTERFACE(DLL_18) {
