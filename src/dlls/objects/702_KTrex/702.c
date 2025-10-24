@@ -1138,7 +1138,7 @@ static s32 dll_702_func_3828(Object* arg0, DLL18_Data* arg1, f32 arg2) {
         if (sKTData->unkFA & 8) {
             sKTData->unk101 += 1;
             sKTData->unkFD = 0;
-            dll_702_push_state(10);
+            dll_702_push_state(11);
             dll_702_push_state(4);
         } else {
             dll_702_push_state(2);
