@@ -2,11 +2,12 @@
 #define _DLLS_210_H
 
 #include "PR/ultratypes.h"
-#include "dlls/engine/18.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
+#include "segment_334F0.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "types.h"
@@ -139,29 +140,12 @@ typedef struct UnkArg2 {
     u8 pad2F;
 } UnkArg2;
 
-// Size: 0x24
-typedef struct Unk80032CF8Copy {
-    /* 0x00 */ s8 unk0;
-    /* 0x01 */ u8 pad1[0x4 - 0x1];
-    /* 0x04 */ f32 unk4;
-    /* 0x08 */ f32 x;
-    /* 0x0C */ f32 y;
-    /* 0x10 */ f32 z;
-    /* 0x14 */ s16 unk14;
-    /* 0x16 */ s16 unk16;
-    /* 0x18 */ s16 pad18;
-    /* 0x1A */ s16 unk1A;
-    /* 0x1C */ s16 unk1C;
-    /* 0x1E */ s8 unk1E;
-    /* 0x1E */ u8 pad1F[0x24 - 0x1F];
-} Unk80032CF8Copy;
-
 typedef struct {
-/*000*/ DLL18_Data unk0;
+/*000*/ ObjFSA_Data unk0;
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
-/*354*/ Unk80032CF8Copy unk354;
-/*378*/ Unk80032CF8Copy unk378;
+/*354*/ Unk80032CF8 unk354;
+/*378*/ Unk80032CF8 unk378;
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
 /*3B4*/ Player_Data3B4* unk3B4;

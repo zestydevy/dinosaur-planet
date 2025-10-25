@@ -39,6 +39,9 @@ enum SoundID {
 
     SOUND_242_Failure_Glissando = 0x242,
 
+    SOUND_25B_Magic_Attack_Deflected = 0x25B,
+    SOUND_25C_Melee_Attack_Deflected = 0x25C,
+
     SOUND_284_SB_Kyte_Heeelp = 0x284,
     SOUND_285_SB_Kyte_Find_the_wizard_and_get_me_out_of_here = 0x285,
 
@@ -79,6 +82,20 @@ enum SoundID {
 
     SOUND_677_Metal_Clang = 0x677, // snowhorn related
 
+    SOUND_688_KT_Rex_Stomp = 0x688,
+    SOUND_689_KT_Rex_Stomp = 0x689,
+    SOUND_68A_KT_Rex_Stomp = 0x68A,
+    
+    SOUND_68B_KT_Rex_Groan = 0x68B,
+    SOUND_68C_KT_Rex_Groan = 0x68C,
+    SOUND_68D_KT_Rex_Roar_Kinda = 0x68D,
+    SOUND_68E_KT_Rex_Noise = 0x68E, // when he notices sabre?
+    SOUND_68F_KT_Rex_Roar = 0x68F,
+    SOUND_690_KT_Rex_Roar = 0x690,
+    SOUND_691_KT_Rex_Roar = 0x691,
+
+    SOUND_693_Explosion = 0x693, // used by KT_Rex
+
     SOUND_699 = 0x699,
 
     SOUND_6B5 = 0x6B5, // used by MediumCrate
@@ -86,6 +103,13 @@ enum SoundID {
     SOUND_6B7 = 0x6B7, // used by MediumCrate
 
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
+
+    SOUND_6F9_Explosion = 0x6F9, // used by KT_Rex
+    SOUND_6FA = 0x6FA, // used by KT_Rex
+    SOUND_6FB = 0x6FB, // used by KT_Rex
+    SOUND_6FC_KT_Rex_Slam = 0x6FC,
+    SOUND_6FD_KT_Rex_Roar = 0x6FD,
+    SOUND_6FE_KT_Rex_Roar = 0x6FE,
 
     SOUND_72F_Harsh_Magical_Thrum_Loop = 0x72F, // used in DLL 475 GPSH_flybaddie
     SOUND_730_Electrified_Blast = 0x730, // used in DLL 475 GPSH_flybaddie

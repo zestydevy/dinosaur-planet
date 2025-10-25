@@ -1,16 +1,18 @@
 #include "PR/ultratypes.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "dll.h"
 #include "dlls/objects/214_animobj.h"
 #include "segment_334F0.h"
+#include "functions.h"
 
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s8 yaw;
 /*19*/ s8 objectSeqIndex;
-/*1A*/ s8 _unk1A[0x1E-0x1A];
+/*1A*/ s8 _unk1A[0x1E - 0x1A];
 /*1E*/ s16 gamebit;
 } CCkrazoaTablet_Setup;
 

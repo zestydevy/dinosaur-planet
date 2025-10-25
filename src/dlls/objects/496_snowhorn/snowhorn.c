@@ -93,18 +93,7 @@ typedef struct {
 /*3f4*/ u32 unk3f4;
 /*3f8*/ u32 unk3f8;
 /*3fc*/ u32 unk3fc;
-/*400*/ s8 lookAtUnk;
-/*401*/ s8 unk401;
-/*402*/ s8 unk402;
-/*403*/ s8 unk403;
-/*404*/ f32 copyPlayerX;
-/*408*/ f32 copyPlayerY;
-/*40c*/ f32 copyPlayerZ;
-/*410*/ f32 unk410;
-/*414*/ f32 unk414;
-/*418*/ f32 unk418;
-/*41C*/ f32 unk41C;
-/*420*/ f32 unk420;
+/*400*/ Unk80032CF8 lookAtUnk;
 /*424*/ u8 unk424;
 /*425*/ u8 unk425;
 /*426*/ u8 unk426;
@@ -549,14 +538,14 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     player = get_player();
       
     if (lookAt && player && objdata->distanceFromPlayer < 200.0f){
-      objdata->lookAtUnk = 1;
-      objdata->copyPlayerX = player->srt.transl.x;
-      objdata->copyPlayerY = player->srt.transl.y;
-      objdata->copyPlayerZ = player->srt.transl.z;
+      objdata->lookAtUnk.unk0 = 1;
+      objdata->lookAtUnk.x = player->srt.transl.x;
+      objdata->lookAtUnk.y = player->srt.transl.y;
+      objdata->lookAtUnk.z = player->srt.transl.z;
       return;
     }
   
-    objdata->lookAtUnk = 0;
+    objdata->lookAtUnk.unk0 = 0;
 }
 
 void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
