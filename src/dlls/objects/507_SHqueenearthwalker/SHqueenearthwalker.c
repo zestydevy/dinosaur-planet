@@ -39,7 +39,7 @@ void SHqueenearthwalker_setup(Object* self, SHqueenearthwalker_Setup* setup, s32
 
     objdata = self->data;
     self->srt.yaw = setup->unk18 << 8;
-    self->unk0xbc = (ObjectCallback)SHqueenearthwalker_func_4F8;
+    self->animCallback = (AnimationCallback)SHqueenearthwalker_func_4F8;
     objdata->eatenWhiteMushrooms = main_get_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
     objdata->questProgress = main_get_bits(BIT_SH_Queen_EW_Quest_Progress);
 }

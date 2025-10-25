@@ -25,7 +25,7 @@ void FEseqobject_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void FEseqobject_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->srt.yaw = 0;
-    self->unk0xbc = (ObjectCallback)FEseqobject_anim_callback;
+    self->animCallback = (AnimationCallback)FEseqobject_anim_callback;
     obj_init_mesg_queue(self, 10);
 }
 

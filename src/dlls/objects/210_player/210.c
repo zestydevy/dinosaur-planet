@@ -426,7 +426,7 @@ void dll_210_setup(Object* arg0, u32 arg1) {
     obj_set_update_priority(arg0, 0x3C);
     obj_init_mesg_queue(arg0, 0x14U);
     arg0->setup = NULL;
-    arg0->unk0xbc = (ObjectCallback)dll_210_func_4910;
+    arg0->animCallback = (AnimationCallback)dll_210_func_4910;
     _bss_1A4 = 0;
     data->stats = gDLL_29_Gplay->vtbl->get_player_stats();
     arg0->srt.yaw = gDLL_29_Gplay->vtbl->get_player_saved_location()->rotationY << 8;

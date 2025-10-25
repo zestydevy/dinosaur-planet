@@ -381,8 +381,8 @@ void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     arg0->positionMirror3.f[0] = arg0->positionMirror.f[0];
     arg0->positionMirror3.f[1] = arg0->positionMirror.f[1];
     arg0->positionMirror3.f[2] = arg0->positionMirror.f[2];
-    if (arg0->unk0xbc != NULL) {
-        temp_v1 = arg0->unk0xbc;
+    if (arg0->animCallback != NULL) {
+        temp_v1 = arg0->animCallback;
         temp_v0 = temp_v1(arg0, arg1, arg2, arg3);
         if (temp_v0 == 4) {
             *_bss_A4 = 1;

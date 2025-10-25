@@ -47,7 +47,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     Object *player;
 
     objdata = self->data;
-    self->unk0xbc = (ObjectCallback)IMIceMountain_anim_callback;
+    self->animCallback = (AnimationCallback)IMIceMountain_anim_callback;
     gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:

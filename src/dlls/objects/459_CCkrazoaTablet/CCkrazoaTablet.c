@@ -35,7 +35,7 @@ void CCkrazoaTablet_dtor(void *dll) { }
 void CCkrazoaTablet_setup(Object *self, CCkrazoaTablet_Setup *setup, s32 arg2) {
     CCkrazoaTablet_Data *objdata = self->data;
 
-    self->unk0xbc = (ObjectCallback)CCkrazoaTablet_anim_callback;
+    self->animCallback = (AnimationCallback)CCkrazoaTablet_anim_callback;
     self->unk0xb0 |= 0x6000;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gamebit)) {

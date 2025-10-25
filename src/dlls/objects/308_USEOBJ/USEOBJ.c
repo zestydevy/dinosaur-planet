@@ -39,7 +39,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
-    self->unk0xbc = (ObjectCallback)UseObj_anim_callback;
+    self->animCallback = (AnimationCallback)UseObj_anim_callback;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         // diPrintf("USEOBJ.c: modelno out of range romdefno=%d\n"), self->modelInstIdx);

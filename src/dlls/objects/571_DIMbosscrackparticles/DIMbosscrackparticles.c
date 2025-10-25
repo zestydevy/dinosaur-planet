@@ -26,7 +26,7 @@ void DIMbosscrackparticles_dtor(void *dll) { }
 void DIMbosscrackparticles_setup(Object *self, DIMbosscrackparticles_Setup *setup, s32 arg2) {
     self->srt.yaw = 0;
     self->srt.scale = 0.1f;
-    self->unk0xbc = (ObjectCallback)DIMbosscrackparticles_anim_callback;
+    self->animCallback = (AnimationCallback)DIMbosscrackparticles_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;

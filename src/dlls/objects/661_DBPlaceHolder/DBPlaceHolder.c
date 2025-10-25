@@ -39,7 +39,7 @@ void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xbc = (ObjectCallback)DBPlaceHolder_anim_callback;
+    self->animCallback = (AnimationCallback)DBPlaceHolder_anim_callback;
     objdata->flags = 0;
     if (main_get_bits(setup->gamebit1)) {
         self->unk0xaf |= 8;

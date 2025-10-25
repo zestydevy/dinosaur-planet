@@ -180,7 +180,7 @@ DLL_INTERFACE(DLL_IObject) {
 
 // arg3 and arg4 are unknown types
 // always called by DLL 3 "ANIM" during cutscenes?
-typedef s32 (*ObjectCallback)(struct Object *, struct Object *, void *, void *);
+typedef int (*AnimationCallback)(struct Object *, struct Object *, struct AnimObj_Data *, s8);
 
 /**
  * Game object instance.
@@ -233,7 +233,7 @@ typedef struct Object {
 /*00B4*/    s16 unk0xb4;
 /*00B6*/	u8 unk0xb6[2];
 /*00B8*/	void* data; //type depends on object
-/*00BC*/	ObjectCallback unk0xbc; // some kind of cutscene anim callback?
+/*00BC*/	AnimationCallback animCallback; // some kind of cutscene anim callback?
 /*00C0*/	struct Object *unk0xc0; // related to group 16 objects?
 /*00C4*/	struct Object* unk0xc4; // parent object
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object

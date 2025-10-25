@@ -243,7 +243,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     objdata = snowhorn->data;
     sp34 = *_data_300;
     snowhorn->srt.yaw = mapsObj->rotation << 8;
-    snowhorn->unk0xbc = (void*)dll_496_func_84C;
+    snowhorn->animCallback = (void*)dll_496_func_84C;
     
     if (arg2 == 0) {
         obj_add_object_type(snowhorn, 0xC);

@@ -35,7 +35,7 @@ void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
     CClightfoot_Data *objdata;
 
     objdata = self->data;
-    self->unk0xbc = (ObjectCallback)CClightfoot_anim_callback; // NOLINT
+    self->animCallback = (AnimationCallback)CClightfoot_anim_callback; // NOLINT
     objdata->spokeToPlayer = main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
     self->srt.yaw = setup->yaw << 8;
     obj_add_object_type(self, OBJTYPE_40);

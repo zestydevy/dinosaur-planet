@@ -68,7 +68,7 @@ void moonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;
-    self->unk0xbc = (void*)&moonSeedReceptacle_anim_callback;
+    self->animCallback = (void*)&moonSeedReceptacle_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objData->unk0 = 0;
     
