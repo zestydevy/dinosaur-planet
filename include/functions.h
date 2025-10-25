@@ -147,4 +147,6 @@ void func_80059038(s32, s32, s32);
 s32 func_80057F1C(Object*, f32, f32, f32, Func_80057F1C_Struct***, s32, s32);
 s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, Func_80059C40_Struct*, Object*, s8, s8, u8, s8);
 
+MtxF *func_80032170(Object* obj, s32 arg1);
+
 #endif //_FUNCTIONS_H

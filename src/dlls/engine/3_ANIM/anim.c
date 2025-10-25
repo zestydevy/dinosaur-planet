@@ -15,8 +15,6 @@
 
 #include "prevent_bss_reordering.h"
 
-u16* func_80034804(Object* obj, s32 sequenceBoneID);
-
 void dll_3_func_7B64(AnimObj_Data*);
 
 enum AnimCurvesKeyframeChannels {
@@ -706,9 +704,9 @@ void dll_3_func_94FC(s16 arg0) {
 
 // offset: 0x9B70 | func: 64
 void dll_3_func_9B70(Object* arg1, s32 arg2, s32 arg3) {
-    u16* temp_v0;
+    s16* temp_v0;
 
-    //NOTE: sequence bone should probably be a struct instead of u16*?
+    //NOTE: sequence bone should probably be a struct instead of s16*?
     temp_v0 = func_80034804(arg1, 0);
     if (temp_v0 != NULL) {
         temp_v0[1] = 0;
