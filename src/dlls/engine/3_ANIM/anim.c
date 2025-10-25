@@ -16,6 +16,7 @@
 #include "prevent_bss_reordering.h"
 
 void dll_3_func_7B64(AnimObj_Data*);
+s32 dll_3_func_9524(Object * arg0, AnimObj_Data *arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 
 enum AnimCurvesKeyframeChannels {
 /*00*/    ANIMCURVES_CHANNEL_headRotateZ = 0,
@@ -167,13 +168,13 @@ typedef struct {
 /*0x98*/ static s32 _bss_98;
 /*0x9C*/ static u8 _bss_9C[0x4];
 /*0xA0*/ static u8 _bss_A0[0x4];
-/*0xA4*/ static u8 _bss_A4[0x4];
+/*0xA4*/ static s8 _bss_A4[0x4];
 /*0xA8*/ static u8 _bss_A8[0x1];
 /*0xA9*/ static u8 _bss_A9[0x1];
 /*0xAA*/ static u8 _bss_AA[0x2];
 /*0xAC*/ static u8 _bss_AC[0x4];
 /*0xB0*/ static u8 _bss_B0[0x28];
-/*0xD8*/ static u8 _bss_D8[0x1];
+/*0xD8*/ static s8 _bss_D8[0x1];
 /*0xD9*/ static u8 _bss_D9[0x1];
 /*0xDA*/ static u8 _bss_DA[0x2];
 /*0xDC*/ static u8 _bss_DC[0x4];
@@ -368,7 +369,71 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_422C.s")
 
 // offset: 0x4698 | func: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4698.s")
+void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
+    int (*temp_v1)(Object*, Object*, AnimObj_Data*, s8);
+    s32 temp_v0;
+    s8 *setup;
+
+    setup = (s8*)arg1->setup;
+    arg0->positionMirror2.f[0] = arg0->srt.transl.f[0];
+    arg0->positionMirror2.f[1] = arg0->srt.transl.f[1];
+    arg0->positionMirror2.f[2] = arg0->srt.transl.f[2];
+    arg0->positionMirror3.f[0] = arg0->positionMirror.f[0];
+    arg0->positionMirror3.f[1] = arg0->positionMirror.f[1];
+    arg0->positionMirror3.f[2] = arg0->positionMirror.f[2];
+    if (arg0->unk0xbc != NULL) {
+        temp_v1 = arg0->unk0xbc;
+        temp_v0 = temp_v1(arg0, arg1, arg2, arg3);
+        if (temp_v0 == 4) {
+            *_bss_A4 = 1;
+        } else if (temp_v0 != 0) {
+            if (_bss_D8[arg2->unk63] < 2) {
+                _bss_D8[arg2->unk63] = temp_v0;
+            }
+        }
+        arg2->unk98 = 0;
+        arg2->unk8D = 0;
+    } else {
+        if (arg2->unk84[3] != 0) {
+            arg2->unk62 = 0;
+            return;
+        }
+        if (arg2->unk62 >= 4) {
+            if (dll_3_func_9524(arg0, arg2, 6, 0x1E, 0x50, -1, -1) != 0) {
+                if (_bss_D8[arg2->unk63] < 2) {
+                    _bss_D8[arg2->unk63] = 1;
+                }
+            }
+        } else if (arg2->unk62 != 0) {
+            if (arg2->unk62 != 2) {
+                arg2->unk58 = 1.0f;
+                arg2->unk4C.x = arg0->srt.transl.f[0] - arg1->srt.transl.f[0];
+                arg2->unk4C.y = arg0->srt.transl.f[1] - arg1->srt.transl.f[1];
+                arg2->unk4C.z = arg0->srt.transl.f[2] - arg1->srt.transl.f[2];
+                arg2->unk62 = 2;
+            }
+            if (setup[0x20] == 1) {
+                arg2->unk24 = 0.016666668f;
+                if (_bss_D8[arg2->unk63] < 2) {
+                    _bss_D8[arg2->unk63] = 1;
+                }
+            }
+            arg2->unk58 = arg2->unk58 - (arg2->unk24 * delayFloat);
+            if (arg2->unk58 <= 0.0f) {
+                arg2->unk62 = 0;
+            }
+        }
+    }
+    arg0->unk0xaf &= 0xFFF8;
+    get_object_child_position(arg0, arg0->positionMirror.f, &arg0->positionMirror.f[1], &arg0->positionMirror.f[2]);
+    if (arg0->objhitInfo != NULL) {
+        arg0->objhitInfo->unk_0x48 = 0;
+        arg0->objhitInfo->unk_0x62 = 0;
+    }
+    if (arg0->unk0x58 != NULL) {
+        arg0->unk0x58->unk10f = 0;
+    }
+}
 
 // offset: 0x4924 | func: 20
 void dll_3_func_4924(Object* arg0, Object** arg1, ModelInstance** arg2) {

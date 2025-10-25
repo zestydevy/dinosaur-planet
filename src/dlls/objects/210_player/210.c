@@ -29,6 +29,7 @@
 #include "dll.h"
 #include "types.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/214_animobj.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
@@ -109,7 +110,7 @@ typedef struct Unk {
 /* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_64B4(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_692C(Object* arg0, Player_Data* arg1, f32 arg2);
-/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3);
+/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 /* static */ void dll_210_func_47B8(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2);
 /* static */ void dll_210_func_1CA8(Object* arg0, Player_Data* arg1, Player_Data* arg2);
@@ -1781,7 +1782,7 @@ void dll_210_func_47B8(Object* arg0, Player_Data* arg1) {
 // dll_210_func_9F1C (matched)
 // dll_210_func_60A8 (matched)
 
-s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
+s32 dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
     ObjSetup* temp_s1;
