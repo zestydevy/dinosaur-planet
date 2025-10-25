@@ -64,27 +64,27 @@ typedef struct {
 /*008*/ f32 segmentPos;
 /*00C*/ s32 standingUpSegment; // The last segment the boss stood up in after being knocked down.
         // The following fields are curve XYZ coords. These determine the positions used
-        // for near and far sides of each segment, for both clockwise and counter-clockwise movement.
-/*010*/ f32 unk10[4];
-/*020*/ f32 unk20[4];
-/*030*/ f32 unk30[4];
-/*040*/ f32 unk40[4];
-/*050*/ f32 unk50[4];
-/*060*/ f32 unk60[4];
-/*070*/ f32 unk70[4]; // Reversed positions start here (see above comments)
-/*080*/ f32 unk80[4];
-/*090*/ f32 unk90[4];
-/*0A0*/ f32 unkA0[4];
-/*0B0*/ f32 unkB0[4];
-/*0C0*/ f32 unkC0[4];
-        // The current near and far positions of each segment.
+        // for the A and B sides of each arena segment, for both clockwise and counter-clockwise movement.
+/*010*/ f32 segStartCW_X[4];
+/*020*/ f32 segStartCW_Y[4];
+/*030*/ f32 segStartCW_Z[4];
+/*040*/ f32 segEndCW_X[4];
+/*050*/ f32 segEndCW_Y[4];
+/*060*/ f32 segEndCW_Z[4];
+/*070*/ f32 segEndCCW_X[4]; // Reversed positions start here (see above comments)
+/*080*/ f32 segEndCCW_Y[4];
+/*090*/ f32 segEndCCW_Z[4];
+/*0A0*/ f32 segStartCCW_X[4];
+/*0B0*/ f32 segStartCCW_Y[4];
+/*0C0*/ f32 segStartCCW_Z[4];
+        // The current A and B positions of each segment.
         // These are flipped when the boss is reversed (moving counter-clockwise).
-/*0D0*/ f32 *segNearX;
-/*0D4*/ f32 *segNearY;
-/*0D8*/ f32 *segNearZ;
-/*0DC*/ f32 *segFarX;
-/*0E0*/ f32 *segFarY;
-/*0E4*/ f32 *segFarZ;
+/*0D0*/ f32 *segA_X;
+/*0D4*/ f32 *segA_Y;
+/*0D8*/ f32 *segA_Z;
+/*0DC*/ f32 *segB_X;
+/*0E0*/ f32 *segB_Y;
+/*0E4*/ f32 *segB_Z;
         // World position that the boss should be in.
         // Moves to this position on the next tick.
         // Calculated by combining the current segment pos with the target curve pos.
@@ -99,7 +99,7 @@ typedef struct {
         // = 1 when charging at sabre.
         // = 2 when charging around the arena after getting zapped.
 /*0FC*/ u8 anger;
-/*0FD*/ u8 playerSpotted; // Whether the player was seen.
+/*0FD*/ u8 roarType;
         // Which arena segment the boss is in (bitfield).
         // This is used to check if the boss is in the same segment as the player.
 /*0FE*/ u8 selfSegmentBitfield;
@@ -176,23 +176,35 @@ typedef struct {
 /*0x88*/ static u16 _data_88[2] = {SOUND_691_KT_Rex_Roar, SOUND_6FD_KT_Rex_Roar};
 /*0x8C*/ static u16 _data_8C[2] = {SOUND_6FE_KT_Rex_Roar, 0};
 /*0x90*/ static u16 _data_90[2] = {SOUND_25B_Magic_Attack_Deflected, SOUND_25C_Melee_Attack_Deflected};
-/*0x94*/ static u32 _data_94[] = { // curve uIDs
-    0x32136, 0x3213d, 0x32128, 0x3212f
+/*0x94*/ static u32 sSegEndCurvesCW[] = { // curve uIDs
+    0x32136, // end of segment 0 (cw), more in
+    0x3213d, // end of segment 1 (cw), more in
+    0x32128, // end of segment 2 (cw), more in
+    0x3212f  // end of segment 3 (cw), more in
 };
-/*0xA4*/ static u32 _data_A4[] = { // curve uIDs
-    0x32130, 0x32137, 0x32123, 0x32129
+/*0xA4*/ static u32 sSegStartCurvesCW[] = { // curve uIDs
+    0x32130, // start of segment 0 (cw), more out
+    0x32137, // start of segment 1 (cw), more out
+    0x32123, // start of segment 2 (cw), more out 
+    0x32129  // start of segment 3 (cw), more out
 };
-/*0xB4*/ static u32 _data_B4[] = { // curve uIDs
-    0x32367, 0x32369, 0x3236a, 0x32365
+/*0xB4*/ static u32 sSegStartCurvesCCW[] = { // curve uIDs
+    0x32367, // end of segment 0 (cw), more out
+    0x32369, // end of segment 1 (cw), more out
+    0x3236a, // end of segment 2 (cw), more out
+    0x32365  // end of segment 3 (cw), more out
 };
-/*0xC4*/ static u32 _data_C4[] = { // curve uIDs
-    0x32132, 0x32139, 0x32124, 0x3212b
+/*0xC4*/ static u32 sSegEndCurvesCCW[] = { // curve uIDs
+    0x32132, // start of segment 0 (cw), more in
+    0x32139, // start of segment 1 (cw), more in 
+    0x32124, // start of segment 2 (cw), more in 
+    0x3212b  // start of segment 3 (cw), more in
 };
-/*0xD4*/ static s16 _data_D4[] = { // game bits
-    BIT_566, BIT_567, BIT_568, BIT_569
+/*0xD4*/ static s16 sPlayerSegmentGamebits[] = {
+    BIT_KT_Player_In_Segment_2, BIT_KT_Player_In_Segment_0, BIT_KT_Player_In_Segment_3, BIT_KT_Player_In_Segment_1
 };
-/*0xDC*/ static s16 _data_DC[] = { // game bits
-    BIT_560, BIT_561, BIT_562, BIT_563
+/*0xDC*/ static s16 sLaserWallGamebits[] = {
+    BIT_KT_Lazerwall_1, BIT_KT_Lazerwall_2, BIT_KT_Lazerwall_3, BIT_KT_Lazerwall_4
 };
 /*0xE4*/ static DLL_IModgfx *_data_E4 = NULL;
 
@@ -300,32 +312,32 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     ktdata->stateStack = generic_stack_new(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
-        curve = gDLL_26_Curves->vtbl->curves_func_39c(_data_A4[i]);
+        curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegStartCurvesCW[i]);
         if (curve != NULL) {
-            ktdata->unk10[i] = curve->base.x;
-            ktdata->unk20[i] = curve->base.y;
-            ktdata->unk30[i] = curve->base.z;
-            curve = gDLL_26_Curves->vtbl->curves_func_39c(_data_94[i]);
-            ktdata->unk40[i] = curve->base.x;
-            ktdata->unk50[i] = curve->base.y;
-            ktdata->unk60[i] = curve->base.z;
-            curve = gDLL_26_Curves->vtbl->curves_func_39c(_data_C4[i]);
-            ktdata->unk70[i] = curve->base.x;
-            ktdata->unk80[i] = curve->base.y;
-            ktdata->unk90[i] = curve->base.z;
-            curve = gDLL_26_Curves->vtbl->curves_func_39c(_data_B4[i]);
-            ktdata->unkA0[i] = curve->base.x;
-            ktdata->unkB0[i] = curve->base.y;
-            ktdata->unkC0[i] = curve->base.z;
+            ktdata->segStartCW_X[i] = curve->base.x;
+            ktdata->segStartCW_Y[i] = curve->base.y;
+            ktdata->segStartCW_Z[i] = curve->base.z;
+            curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegEndCurvesCW[i]);
+            ktdata->segEndCW_X[i] = curve->base.x;
+            ktdata->segEndCW_Y[i] = curve->base.y;
+            ktdata->segEndCW_Z[i] = curve->base.z;
+            curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegEndCurvesCCW[i]);
+            ktdata->segEndCCW_X[i] = curve->base.x;
+            ktdata->segEndCCW_Y[i] = curve->base.y;
+            ktdata->segEndCCW_Z[i] = curve->base.z;
+            curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegStartCurvesCCW[i]);
+            ktdata->segStartCCW_X[i] = curve->base.x;
+            ktdata->segStartCCW_Y[i] = curve->base.y;
+            ktdata->segStartCCW_Z[i] = curve->base.z;
         }
     }
     
-    ktdata->segNearX = ktdata->unk10;
-    ktdata->segNearY = ktdata->unk20;
-    ktdata->segNearZ = ktdata->unk30;
-    ktdata->segFarX = ktdata->unk40;
-    ktdata->segFarY = ktdata->unk50;
-    ktdata->segFarZ = ktdata->unk60;
+    ktdata->segA_X = ktdata->segStartCW_X;
+    ktdata->segA_Y = ktdata->segStartCW_Y;
+    ktdata->segA_Z = ktdata->segStartCW_Z;
+    ktdata->segB_X = ktdata->segEndCW_X;
+    ktdata->segB_Y = ktdata->segEndCW_Y;
+    ktdata->segB_Z = ktdata->segEndCW_Z;
     ktdata->health = 4;
     _data_E4 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_106, 1);
 }
@@ -441,7 +453,7 @@ static s32 dll_702_get_player_segment_bitfield(void) {
 
     var_s2 = 0;
     for (i = 0;  i < 4; i++) {
-        if (main_get_bits(_data_D4[i]) != 0) {
+        if (main_get_bits(sPlayerSegmentGamebits[i]) != 0) {
             var_s2 |= (1 << i);
         }
     }
@@ -450,9 +462,14 @@ static s32 dll_702_get_player_segment_bitfield(void) {
 
 // offset: 0xC2C | func: 11
 static u8 dll_702_get_self_segment_bitfield(u16 ktflags) {
-  s8 data_E8_local[4] = {0x02, 0x08, 0x01, 0x04};
+  s8 segmentToBitfield[4] = {0x02, 0x08, 0x01, 0x04};
 
-  return data_E8_local[KTFLAG_GET_SEGMENT(ktflags)];
+  // segment 0 -> player bit 1
+  // segment 1 -> player bit 3
+  // segment 2 -> player bit 0
+  // segment 3 -> player bit 2
+
+  return segmentToBitfield[KTFLAG_GET_SEGMENT(ktflags)];
 }
 
 // offset: 0xC74 | func: 12
@@ -464,11 +481,11 @@ static f32 dll_702_get_obj_segment_pos(Object* obj, KTrex_Data* ktdata) {
     f32 xDiff;
 
     segment = KTFLAG_GET_SEGMENT(ktdata->flags);
-    xDiff = ktdata->segFarX[segment] - ktdata->segNearX[segment];
-    zDiff = ktdata->segFarZ[segment] - ktdata->segNearZ[segment];
+    xDiff = ktdata->segB_X[segment] - ktdata->segA_X[segment];
+    zDiff = ktdata->segB_Z[segment] - ktdata->segA_Z[segment];
     segmentLength = sqrtf(SQ(xDiff) + SQ(zDiff));
-    xDiff = obj->srt.transl.x - ktdata->segNearX[segment];
-    zDiff = obj->srt.transl.z - ktdata->segNearZ[segment];
+    xDiff = obj->srt.transl.x - ktdata->segA_X[segment];
+    zDiff = obj->srt.transl.z - ktdata->segA_Z[segment];
     return sqrtf(SQ(xDiff) + SQ(zDiff)) / segmentLength;
 }
 
@@ -482,7 +499,7 @@ static s32 dll_702_get_laser_wall_bitfield(u8 segmentBitfield) {
     
     for (i = 0; i < 4; i++) {
         mask = 1 << i;
-        if ((segmentBitfield & mask) && (main_get_bits(_data_DC[i]) != 0)) {
+        if ((segmentBitfield & mask) && (main_get_bits(sLaserWallGamebits[i]) != 0)) {
             var_s2 |= mask;
         }
     }
@@ -584,9 +601,9 @@ static s32 dll_702_move_and_check_turn(ObjFSA_Data* fsa, KTrex_Data* ktdata) {
         if ((ktdata && ktdata) && ktdata){} // @fake
     }
     
-    ktdata->pos.x = ktdata->segNearX[segment] + ((ktdata->segFarX[segment] - ktdata->segNearX[segment]) * ktdata->segmentPos);
-    ktdata->pos.y = ktdata->segNearY[segment] + ((ktdata->segFarY[segment] - ktdata->segNearY[segment]) * ktdata->segmentPos);
-    ktdata->pos.z = ktdata->segNearZ[segment] + ((ktdata->segFarZ[segment] - ktdata->segNearZ[segment]) * ktdata->segmentPos);
+    ktdata->pos.x = ktdata->segA_X[segment] + ((ktdata->segB_X[segment] - ktdata->segA_X[segment]) * ktdata->segmentPos);
+    ktdata->pos.y = ktdata->segA_Y[segment] + ((ktdata->segB_Y[segment] - ktdata->segA_Y[segment]) * ktdata->segmentPos);
+    ktdata->pos.z = ktdata->segA_Z[segment] + ((ktdata->segB_Z[segment] - ktdata->segA_Z[segment]) * ktdata->segmentPos);
     return turn;
 }
 
@@ -932,12 +949,12 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 /** Roar, standing in place. */
 static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, _data_18[sKTData->playerSpotted], 0.0f, 0);
-        fsa->unk298 = _data_54[sKTData->playerSpotted];
+        func_80023D30(self, _data_18[sKTData->roarType], 0.0f, 0);
+        fsa->unk298 = _data_54[sKTData->roarType];
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(0, _data_4C[sKTData->playerSpotted]);
+    dll_702_func_1E9C(0, _data_4C[sKTData->roarType]);
     dll_702_func_1E9C(9, 0x800);
     dll_702_func_1E9C(0xA, 0x1000);
     return 0;
@@ -1038,11 +1055,11 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
             if (rand_next(0, 100) <= (s32) objsetup->chargeChance[sp30]) {
                 sKTData->chargeCounter = 2;
                 dll_702_push_state(KT_LSTATE_5_CHARGE);
-                sKTData->playerSpotted = TRUE;
+                sKTData->roarType = 1;
                 return KT_LSTATE_4_ROAR + 1;
             }
             if (rand_next(0, 100) <= (s32) objsetup->reverseChance[sp30]) {
-                sKTData->playerSpotted = FALSE;
+                sKTData->roarType = 0;
                 dll_702_push_state(KT_LSTATE_11_REVERSE);
                 return KT_LSTATE_4_ROAR + 1;
             }
@@ -1054,7 +1071,7 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         // Player is ahead of the boss, in the same segment. Charge!
         sKTData->chargeCounter = 1;
         dll_702_push_state(KT_LSTATE_5_CHARGE);
-        sKTData->playerSpotted = TRUE;
+        sKTData->roarType = 1;
         return KT_LSTATE_4_ROAR + 1;
     }
     return 0;
@@ -1083,7 +1100,7 @@ static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     objsetup = (KTrex_ObjSetup*)self->setup;
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_4_ROAR);
-        sKTData->timer = (f32) objsetup->chargePrepTime[sKTData->playerSpotted];
+        sKTData->timer = (f32) objsetup->chargePrepTime[sKTData->roarType];
     } else {
         sKTData->timer -= delayFloat;
         if (sKTData->timer < 0.0f) {
@@ -1185,7 +1202,7 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     } else if (fsa->unk33A != 0) {
         if (sKTData->flags & KTFLAG_DAMAGED) {
             sKTData->fightProgress += 1;
-            main_set_bits(BIT_572, sKTData->fightProgress);
+            main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         }
         ktflags = sKTData->flags;
         sKTData->standingUpSegment = KTFLAG_GET_SEGMENT(ktflags);
@@ -1223,14 +1240,14 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 arg2) {
             ((!reversed && sKTData->segmentPos >= 0.75f) || (reversed && sKTData->segmentPos <= 0.25f))) {
         if (sKTData->flags & KTFLAG_DAMAGED) {
             sKTData->fightProgress += 1;
-            sKTData->playerSpotted = FALSE;
+            sKTData->roarType = 0;
             dll_702_push_state(KT_LSTATE_11_REVERSE);
             dll_702_push_state(KT_LSTATE_4_ROAR);
         } else {
             dll_702_push_state(KT_LSTATE_2_WALK);
         }
         gDLL_2_Camera->vtbl->func8(3, 0);
-        main_set_bits(BIT_572, sKTData->fightProgress);
+        main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         return KT_LSTATE_6_CHARGE_END + 1;
     }
     return 0;
@@ -1244,19 +1261,19 @@ static s32 dll_702_logic_state_11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     } else if (fsa->unk33A != 0) {
         sKTData->flags ^= KTFLAG_REVERSED;
         if (sKTData->flags & KTFLAG_REVERSED) {
-            sKTData->segNearX = sKTData->unk70;
-            sKTData->segNearY = sKTData->unk80;
-            sKTData->segNearZ = sKTData->unk90;
-            sKTData->segFarX = sKTData->unkA0;
-            sKTData->segFarY = sKTData->unkB0;
-            sKTData->segFarZ = sKTData->unkC0;
+            sKTData->segA_X = sKTData->segEndCCW_X;
+            sKTData->segA_Y = sKTData->segEndCCW_Y;
+            sKTData->segA_Z = sKTData->segEndCCW_Z;
+            sKTData->segB_X = sKTData->segStartCCW_X;
+            sKTData->segB_Y = sKTData->segStartCCW_Y;
+            sKTData->segB_Z = sKTData->segStartCCW_Z;
         } else {
-            sKTData->segNearX = sKTData->unk10;
-            sKTData->segNearY = sKTData->unk20;
-            sKTData->segNearZ = sKTData->unk30;
-            sKTData->segFarX = sKTData->unk40;
-            sKTData->segFarY = sKTData->unk50;
-            sKTData->segFarZ = sKTData->unk60;
+            sKTData->segA_X = sKTData->segStartCW_X;
+            sKTData->segA_Y = sKTData->segStartCW_Y;
+            sKTData->segA_Z = sKTData->segStartCW_Z;
+            sKTData->segB_X = sKTData->segEndCW_X;
+            sKTData->segB_Y = sKTData->segEndCW_Y;
+            sKTData->segB_Z = sKTData->segEndCW_Z;
         }
         sKTData->segmentPos = dll_702_get_obj_segment_pos(self, sKTData);
         return KT_LSTATE_2_WALK + 1;

@@ -29,10 +29,10 @@ void KT_RexLevel_setup(Object *self, ObjSetup *setup, s32 arg2) {
     func_80000450(self, self, 0x1FD, 0, 0, 0);
     func_80000450(self, self, 0x1FE, 0, 0, 0);
     gDLL_5_AMSEQ2->vtbl->func0(self, 0xD5, 0, 0, 0);
-    main_set_bits(BIT_572, 0);
+    main_set_bits(BIT_572_KT_FightProgress, 0);
     main_set_bits(BIT_56E, 1);
-    main_set_bits(BIT_566, 1);
-    main_set_bits(BIT_569, 1);
+    main_set_bits(BIT_KT_Player_In_Segment_2, 1);
+    main_set_bits(BIT_KT_Player_In_Segment_1, 1);
     objdata->unk0 = 600.0f;
     main_set_bits(BIT_55A, 1);
     main_set_bits(BIT_54A, 2);
@@ -50,7 +50,7 @@ void KT_RexLevel_control(Object *self) {
         main_set_bits(BIT_55E, 1);
         self->unk0xdc = 1;
     }
-    temp_v0 = main_get_bits(BIT_572);
+    temp_v0 = main_get_bits(BIT_572_KT_FightProgress);
     if (_bss_0 != (temp_v0 ^ 0)) {
         if (temp_v0 & 1) {
             main_set_bits(BIT_54A, 0);
