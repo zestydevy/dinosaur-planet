@@ -14,7 +14,7 @@ void area_dtor(void *dll){
 
 // offset: 0x18 | func: 0 | export: 0
 void area_setup(Object* self, s32 arg1) {
-    self->unk0xb0 |= 0xA000;
+    self->unkB0 |= 0xA000;
 }
 
 // offset: 0x30 | func: 1 | export: 1

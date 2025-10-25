@@ -40,7 +40,7 @@ void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
     objdata->unk4 = setup->unk1E;
     objdata->speed = rand_next(5, 20) * 0.1f;
     self->srt.transl.y = setup->unk1A + setup->base.y;
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
     sDLL_182 = dll_load_deferred(DLL_ID_182, 1);
     gDLL_17->vtbl->func1(self, 0x3A3, NULL, 0x802, -1, NULL);
     gDLL_17->vtbl->func1(self, 0x3A4, NULL, 0x802, -1, NULL);

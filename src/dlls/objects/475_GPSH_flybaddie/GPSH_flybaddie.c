@@ -254,8 +254,8 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
         obj->speed.x = 2.0f * dirVec[0];
         obj->speed.y = 2.0f * dirVec[1];
         obj->speed.z = 2.0f * dirVec[2];
-        obj->unk0xdc = 0xBE;
-        obj->unk_0xe0 = 0;
+        obj->unkDC = 0xBE;
+        obj->unkE0 = 0;
         obj->positionMirror.x = obj->srt.transl.x;
         obj->positionMirror.y = obj->srt.transl.y;
         obj->positionMirror.z = obj->srt.transl.z;

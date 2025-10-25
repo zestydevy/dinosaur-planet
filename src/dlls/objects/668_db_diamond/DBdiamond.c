@@ -63,10 +63,10 @@ void DBdiamond_control(Object *self) {
     setup = (DBDiamond_Setup *)self->setup;
     objdata = self->data;
 
-    if (objdata->unk0 != 1 && objdata->unk0 == 2 && self->unk0xaf & 1) {
+    if (objdata->unk0 != 1 && objdata->unk0 == 2 && self->unkAF & 1) {
         if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < 60.0f) {
             obj_free_object_type(self, OBJTYPE_39);
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
             main_set_bits(setup->flag1, 1);
             obj_send_mesg(player, 0x7000A, self, (void*)0x10000);
             objdata->unk0 = 1;

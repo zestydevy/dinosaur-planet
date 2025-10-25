@@ -35,7 +35,7 @@ void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
     CClightfoot_Data *objdata;
 
     objdata = self->data;
-    self->unk0xbc = (ObjectCallback)CClightfoot_anim_callback; // NOLINT
+    self->unkBC = (ObjectCallback)CClightfoot_anim_callback; // NOLINT
     objdata->spokeToPlayer = main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
     self->srt.yaw = setup->yaw << 8;
     obj_add_object_type(self, OBJTYPE_40);
@@ -60,8 +60,8 @@ void CClightfoot_control(Object *self) {
         }
         func_80024108(self, 0.005f, delayFloat, NULL);
         if (main_get_bits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
-            self->unk0xaf &= ~0x8;
-            if (self->unk0xaf & 1) {
+            self->unkAF &= ~0x8;
+            if (self->unkAF & 1) {
                 main_set_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
                 objdata->spokeToPlayer = TRUE;
             }
@@ -97,13 +97,13 @@ u32 CClightfoot_get_data_size(Object *self, u32 arg1) {
 // offset: 0x2B8 | func: 7
 int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData) {
     CClightfoot_Data *objdata = self->data;
-    if (self->unk0xaf & 1) {
+    if (self->unkAF & 1) {
         gDLL_3_Animation->vtbl->func18(animObjData->unk63);
         main_set_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
         objdata->spokeToPlayer = TRUE;
     } else {
-        self->unk0xaf &= ~1;
+        self->unkAF &= ~1;
     }
     return 0;
 }

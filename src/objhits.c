@@ -89,24 +89,24 @@ s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
     if (objHitInfo == NULL) {
         return 0;
     }
-    if (objHitInfo->unk_0x62 != 0) {
+    if (objHitInfo->unk62 != 0) {
         var_a0 = 0x7F;
         var_a1 = -1;
-        for (i = 0; i < objHitInfo->unk_0x62; i++) {
-            if (objHitInfo->unk_0x66[i] < var_a0) {
-                var_a0 = objHitInfo->unk_0x66[i];
+        for (i = 0; i < objHitInfo->unk62; i++) {
+            if (objHitInfo->unk66[i] < var_a0) {
+                var_a0 = objHitInfo->unk66[i];
                 var_a1 = i;
             }
         }
         if (var_a1 != -1) {
             if (arg1 != 0) {
-                *arg1 = objHitInfo->unk_0x6c[var_a1];
+                *arg1 = objHitInfo->unk6C[var_a1];
             }
             if (arg2 != 0) {
-                *arg2 = objHitInfo->unk_0x63[var_a1];
+                *arg2 = objHitInfo->unk63[var_a1];
             }
             if (arg3 != 0) {
-                *arg3 = objHitInfo->unk_0x69[var_a1];
+                *arg3 = objHitInfo->unk69[var_a1];
             }
             return var_a0;
         }
@@ -125,29 +125,29 @@ s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f
         return 0;
     }
 
-    if (objHitInfo->unk_0x62 != 0) {
+    if (objHitInfo->unk62 != 0) {
         var_a0 = 0x7F;
         var_a1 = -1;
-        for (i = 0; i < objHitInfo->unk_0x62; i++) {
-            if (objHitInfo->unk_0x66[i] < var_a0) {
-                var_a0 = objHitInfo->unk_0x66[i];
+        for (i = 0; i < objHitInfo->unk62; i++) {
+            if (objHitInfo->unk66[i] < var_a0) {
+                var_a0 = objHitInfo->unk66[i];
                 var_a1 = i;
             }
         }
         if (var_a1 != -1) {
             if (arg1 != 0) {
-                *arg1 = objHitInfo->unk_0x6c[var_a1];
+                *arg1 = objHitInfo->unk6C[var_a1];
             }
             if (arg2 != 0) {
-                *arg2 = objHitInfo->unk_0x63[var_a1];
+                *arg2 = objHitInfo->unk63[var_a1];
             }
             if (arg3 != 0) {
-                *arg3 = objHitInfo->unk_0x69[var_a1];
+                *arg3 = objHitInfo->unk69[var_a1];
             }
             if (arg4 != NULL) {
-                *arg4 = objHitInfo->unk_0x78[var_a1];
-                *arg5 = objHitInfo->unk_0x84[var_a1];
-                *arg6 = objHitInfo->unk_0x90[var_a1];
+                *arg4 = objHitInfo->unk78[var_a1];
+                *arg5 = objHitInfo->unk84[var_a1];
+                *arg6 = objHitInfo->unk90[var_a1];
             }
             return var_a0;
         }
@@ -163,14 +163,14 @@ void func_80026128(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
         return;
     }
 
-    objHitInfo->unk_0x5f = arg1;
-    objHitInfo->unk_0x60 = arg2;
+    objHitInfo->unk5F = arg1;
+    objHitInfo->unk60 = arg2;
     if (arg3 == -1) {
         return;
     }
 
-    objHitInfo->unk_0x40 = 1 << (arg3 + 4);
-    objHitInfo->unk_0x44 = 1 << (arg3 + 4);
+    objHitInfo->unk40 = 1 << (arg3 + 4);
+    objHitInfo->unk44 = 1 << (arg3 + 4);
 }
 
 void func_80026160(Object* obj) {
@@ -178,10 +178,10 @@ void func_80026160(Object* obj) {
 
     objHitInfo = obj->objhitInfo;
     if (objHitInfo != NULL) {
-        objHitInfo->unk_0x5f = 0;
-        objHitInfo->unk_0x60 = 0;
-        objHitInfo->unk_0x40 = 0;
-        objHitInfo->unk_0x44 = 0;
+        objHitInfo->unk5F = 0;
+        objHitInfo->unk60 = 0;
+        objHitInfo->unk40 = 0;
+        objHitInfo->unk44 = 0;
     }
 }
 
@@ -189,7 +189,7 @@ void func_80026184(Object* arg0, Object* arg1) {
     ObjectStruct58* obj58;
     s32 i;
 
-    obj58 = arg0->unk0x58;
+    obj58 = arg0->unk58;
     if (obj58->unk10f < 3) {
         for (i = 0; i < obj58->unk10f; i++) {
             if (arg1 == obj58->unk100[i]) {
@@ -198,7 +198,7 @@ void func_80026184(Object* arg0, Object* arg1) {
         }
         
         obj58->unk100[obj58->unk10f] = arg1;
-        obj58 = arg0->unk0x58;
+        obj58 = arg0->unk58;
         obj58->unk10f += 1;
     }
 }
@@ -213,40 +213,40 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
     }
 
     objHitInfo = arg0->objhitInfo;
-    if (!(objHitInfo->unk_0x58 & 1)) {
+    if (!(objHitInfo->unk58 & 1)) {
         return FALSE;
     }
 
     if (arg1 != NULL) {
         objHitInfo2 = arg1->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk_0x48 = (s32)arg0;
+            objHitInfo2->unk48 = (s32)arg0;
         }
     }
 
-    for (i = 0; i < objHitInfo->unk_0x62; i++) {
-        if (arg1 == objHitInfo->unk_0x6c[i]) {
-            if (arg2 < objHitInfo->unk_0x66[i]) {
-                objHitInfo->unk_0x63[i] = arg4;
-                objHitInfo->unk_0x66[i] = arg2;
-                objHitInfo->unk_0x69[i] = arg3;
-                objHitInfo->unk_0x78[i] = arg5;
-                objHitInfo->unk_0x84[i] = arg6;
-                objHitInfo->unk_0x90[i] = arg7;
+    for (i = 0; i < objHitInfo->unk62; i++) {
+        if (arg1 == objHitInfo->unk6C[i]) {
+            if (arg2 < objHitInfo->unk66[i]) {
+                objHitInfo->unk63[i] = arg4;
+                objHitInfo->unk66[i] = arg2;
+                objHitInfo->unk69[i] = arg3;
+                objHitInfo->unk78[i] = arg5;
+                objHitInfo->unk84[i] = arg6;
+                objHitInfo->unk90[i] = arg7;
             }
-            i = objHitInfo->unk_0x62 + 1;
+            i = objHitInfo->unk62 + 1;
         }
     }
 
-    if (i == objHitInfo->unk_0x62 && objHitInfo->unk_0x62 < 3) {
-        objHitInfo->unk_0x63[objHitInfo->unk_0x62] = arg4;
-        objHitInfo->unk_0x66[objHitInfo->unk_0x62] = arg2;
-        objHitInfo->unk_0x69[objHitInfo->unk_0x62] = arg3;
-        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = arg1;
-        objHitInfo->unk_0x78[objHitInfo->unk_0x62] = arg5;
-        objHitInfo->unk_0x84[objHitInfo->unk_0x62] = arg6;
-        objHitInfo->unk_0x90[objHitInfo->unk_0x62] = arg7;
-        objHitInfo->unk_0x62 += 1;
+    if (i == objHitInfo->unk62 && objHitInfo->unk62 < 3) {
+        objHitInfo->unk63[objHitInfo->unk62] = arg4;
+        objHitInfo->unk66[objHitInfo->unk62] = arg2;
+        objHitInfo->unk69[objHitInfo->unk62] = arg3;
+        objHitInfo->unk6C[objHitInfo->unk62] = arg1;
+        objHitInfo->unk78[objHitInfo->unk62] = arg5;
+        objHitInfo->unk84[objHitInfo->unk62] = arg6;
+        objHitInfo->unk90[objHitInfo->unk62] = arg7;
+        objHitInfo->unk62 += 1;
     }
 
     return TRUE;
@@ -262,40 +262,40 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
     }
 
     objHitInfo = arg0->objhitInfo;
-    if (!(objHitInfo->unk_0x58 & 1)) {
+    if (!(objHitInfo->unk58 & 1)) {
         return FALSE;
     }
 
     if (arg1 != NULL) {
         objHitInfo2 = arg1->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk_0x48 = (s32) arg0;
+            objHitInfo2->unk48 = (s32) arg0;
         }
     }
 
-    for (i = 0; i < objHitInfo->unk_0x62; i++) {
-        if (arg1 == objHitInfo->unk_0x6c[i]) {
-            if (arg2 < objHitInfo->unk_0x66[i]) {
-                objHitInfo->unk_0x63[i] = arg4;
-                objHitInfo->unk_0x66[i] = arg2;
-                objHitInfo->unk_0x69[i] = arg3;
-                objHitInfo->unk_0x78[i] = arg0->srt.transl.x;
-                objHitInfo->unk_0x84[i] = arg0->srt.transl.y;
-                objHitInfo->unk_0x90[i] = arg0->srt.transl.z;
+    for (i = 0; i < objHitInfo->unk62; i++) {
+        if (arg1 == objHitInfo->unk6C[i]) {
+            if (arg2 < objHitInfo->unk66[i]) {
+                objHitInfo->unk63[i] = arg4;
+                objHitInfo->unk66[i] = arg2;
+                objHitInfo->unk69[i] = arg3;
+                objHitInfo->unk78[i] = arg0->srt.transl.x;
+                objHitInfo->unk84[i] = arg0->srt.transl.y;
+                objHitInfo->unk90[i] = arg0->srt.transl.z;
             }
-            i = objHitInfo->unk_0x62 + 1;
+            i = objHitInfo->unk62 + 1;
         }
     }
 
-    if ((i == objHitInfo->unk_0x62) && (objHitInfo->unk_0x62 < 3)) {
-        objHitInfo->unk_0x63[objHitInfo->unk_0x62] = arg4;
-        objHitInfo->unk_0x66[objHitInfo->unk_0x62] = arg2;
-        objHitInfo->unk_0x69[objHitInfo->unk_0x62] = arg3;
-        objHitInfo->unk_0x6c[objHitInfo->unk_0x62] = arg1;
-        objHitInfo->unk_0x78[objHitInfo->unk_0x62] = arg0->srt.transl.x;
-        objHitInfo->unk_0x84[objHitInfo->unk_0x62] = arg0->srt.transl.y;
-        objHitInfo->unk_0x90[objHitInfo->unk_0x62] = arg0->srt.transl.z;
-        objHitInfo->unk_0x62 += 1;
+    if ((i == objHitInfo->unk62) && (objHitInfo->unk62 < 3)) {
+        objHitInfo->unk63[objHitInfo->unk62] = arg4;
+        objHitInfo->unk66[objHitInfo->unk62] = arg2;
+        objHitInfo->unk69[objHitInfo->unk62] = arg3;
+        objHitInfo->unk6C[objHitInfo->unk62] = arg1;
+        objHitInfo->unk78[objHitInfo->unk62] = arg0->srt.transl.x;
+        objHitInfo->unk84[objHitInfo->unk62] = arg0->srt.transl.y;
+        objHitInfo->unk90[objHitInfo->unk62] = arg0->srt.transl.z;
+        objHitInfo->unk62 += 1;
     }
 
     return TRUE;
@@ -312,45 +312,45 @@ void func_800264D0(Object* arg0) {
         return;
     }
 
-    objHitInfo->unk_0x58 = arg0->def->helpTexts[0];
-    objHitInfo->unk_0x5a = arg0->def->unk93;
-    objHitInfo->unk_0x5b = arg0->def->_unk91[0];
-    objHitInfo->unk_0x5c = arg0->def->_unk91[1];
-    objHitInfo->unk_0x52 = arg0->def->hitbox_flagsB6;
-    objHitInfo->unk_0x54 = arg0->def->unk94;
-    objHitInfo->unk_0x56 = arg0->def->unk96;
-    objHitInfo->unk_0xa0 = arg0->def->colorIdx;
-    objHitInfo->unk_0x50 = 0x400;
-    temp_fv0 = (f32) objHitInfo->unk_0x52;
-    objHitInfo->unk_0xc = temp_fv0 * temp_fv0;
-    objHitInfo->unk_0x2c = arg0->unk_0xa8;
-    if (objHitInfo->unk_0x5a & 2) {
-        if (objHitInfo->unk_0x54 < 0) {
-            var_a3 = objHitInfo->unk_0x54 * -1;
+    objHitInfo->unk58 = arg0->def->helpTexts[0];
+    objHitInfo->unk5A = arg0->def->unk93;
+    objHitInfo->unk5B = arg0->def->_unk91[0];
+    objHitInfo->unk5C = arg0->def->_unk91[1];
+    objHitInfo->unk52 = arg0->def->hitbox_flagsB6;
+    objHitInfo->unk54 = arg0->def->unk94;
+    objHitInfo->unk56 = arg0->def->unk96;
+    objHitInfo->unkA0 = arg0->def->colorIdx;
+    objHitInfo->unk50 = 0x400;
+    temp_fv0 = (f32) objHitInfo->unk52;
+    objHitInfo->unkC = temp_fv0 * temp_fv0;
+    objHitInfo->unk2C = arg0->unkA8;
+    if (objHitInfo->unk5A & 2) {
+        if (objHitInfo->unk54 < 0) {
+            var_a3 = objHitInfo->unk54 * -1;
         } else {
-            var_a3 = objHitInfo->unk_0x54;
+            var_a3 = objHitInfo->unk54;
         }
-        if (objHitInfo->unk_0x56 < 0) {
-            var_t0 = objHitInfo->unk_0x56 * -1;
+        if (objHitInfo->unk56 < 0) {
+            var_t0 = objHitInfo->unk56 * -1;
         } else {
-            var_t0 = objHitInfo->unk_0x56;
+            var_t0 = objHitInfo->unk56;
         }
         if (var_t0 < var_a3) {
             var_t0 = var_a3;
         }
-        if (objHitInfo->unk_0x2c < var_t0) {
-            objHitInfo->unk_0x2c = var_t0;
+        if (objHitInfo->unk2C < var_t0) {
+            objHitInfo->unk2C = var_t0;
         }
-    } else if (objHitInfo->unk_0x5a & 1) {
-        if (objHitInfo->unk_0x2c < objHitInfo->unk_0x52) {
-            objHitInfo->unk_0x2c = objHitInfo->unk_0x52;
+    } else if (objHitInfo->unk5A & 1) {
+        if (objHitInfo->unk2C < objHitInfo->unk52) {
+            objHitInfo->unk2C = objHitInfo->unk52;
         }
     }
 
-    objHitInfo->unk_0x30 = arg0->unk_0xa8;
-    if ((objHitInfo->unk_0x5a & 2) || (objHitInfo->unk_0x5a & 1)) {
-        if (objHitInfo->unk_0x30 < objHitInfo->unk_0x52) {
-            objHitInfo->unk_0x30 = objHitInfo->unk_0x52;
+    objHitInfo->unk30 = arg0->unkA8;
+    if ((objHitInfo->unk5A & 2) || (objHitInfo->unk5A & 1)) {
+        if (objHitInfo->unk30 < objHitInfo->unk52) {
+            objHitInfo->unk30 = objHitInfo->unk52;
         }
     }
 }
@@ -362,9 +362,9 @@ u32 func_8002667C(Object* obj, u32 addr) {
     obj->objhitInfo = objHitInfo;
     addr = (u32)(objHitInfo + 1);
     func_800264D0(obj);
-    objHitInfo->unk_0x9e = 1;
-    if (objHitInfo->unk_0x5a & 0x30) {
-        objHitInfo->unk_0x9f = 2;
+    objHitInfo->unk9E = 1;
+    if (objHitInfo->unk5A & 0x30) {
+        objHitInfo->unk9F = 2;
     }
     return addr;
 }
@@ -374,12 +374,12 @@ void func_800266E0(Object* obj) {
 
     objhitInfo = obj->objhitInfo;
     if (objhitInfo != NULL) {
-        objhitInfo->unk_0x10.x = obj->srt.transl.x;
-        objhitInfo->unk_0x10.y = obj->srt.transl.y;
-        objhitInfo->unk_0x10.z = obj->srt.transl.z;
-        objhitInfo->unk_0x20.x = obj->positionMirror.x;
-        objhitInfo->unk_0x20.y = obj->positionMirror.y;
-        objhitInfo->unk_0x20.z = obj->positionMirror.z;
+        objhitInfo->unk10.x = obj->srt.transl.x;
+        objhitInfo->unk10.y = obj->srt.transl.y;
+        objhitInfo->unk10.z = obj->srt.transl.z;
+        objhitInfo->unk20.x = obj->positionMirror.x;
+        objhitInfo->unk20.y = obj->positionMirror.y;
+        objhitInfo->unk20.z = obj->positionMirror.z;
     }
 }
 
@@ -388,7 +388,7 @@ s32 func_80026724(Object* obj) {
 
     objhitInfo = obj->objhitInfo;
     if (objhitInfo != NULL) {
-        return objhitInfo->unk_0x58 & 1;
+        return objhitInfo->unk58 & 1;
     }
 
     return 0;
@@ -402,14 +402,14 @@ void func_8002674C(Object* obj) {
         return;
     }
 
-    if (!(objhitInfo->unk_0x58 & 1)) {
-        objhitInfo->unk_0x58 |= 1;
-        objhitInfo->unk_0x10.x = obj->srt.transl.x;
-        objhitInfo->unk_0x10.y = obj->srt.transl.y;
-        objhitInfo->unk_0x10.z = obj->srt.transl.z;
-        objhitInfo->unk_0x20.x = obj->positionMirror.x;
-        objhitInfo->unk_0x20.y = obj->positionMirror.y;
-        objhitInfo->unk_0x20.z = obj->positionMirror.z;
+    if (!(objhitInfo->unk58 & 1)) {
+        objhitInfo->unk58 |= 1;
+        objhitInfo->unk10.x = obj->srt.transl.x;
+        objhitInfo->unk10.y = obj->srt.transl.y;
+        objhitInfo->unk10.z = obj->srt.transl.z;
+        objhitInfo->unk20.x = obj->positionMirror.x;
+        objhitInfo->unk20.y = obj->positionMirror.y;
+        objhitInfo->unk20.z = obj->positionMirror.z;
     }
 }
 
@@ -418,7 +418,7 @@ void func_800267A4(Object* obj) {
 
     objhitInfo = obj->objhitInfo;
     if (objhitInfo != NULL) {
-        objhitInfo->unk_0x58 &= ~1;
+        objhitInfo->unk58 &= ~1;
     }
 }
 
@@ -430,14 +430,14 @@ void func_800267C4(Object* obj) {
         return;
     }
 
-    if (objhitInfo->unk_0x58 & 0x40) {
-        objhitInfo->unk_0x58 &= ~0x40;
-        objhitInfo->unk_0x10.x = obj->srt.transl.x;
-        objhitInfo->unk_0x10.y = obj->srt.transl.y;
-        objhitInfo->unk_0x10.z = obj->srt.transl.z;
-        objhitInfo->unk_0x20.x = obj->positionMirror.x;
-        objhitInfo->unk_0x20.y = obj->positionMirror.y;
-        objhitInfo->unk_0x20.z = obj->positionMirror.z;
+    if (objhitInfo->unk58 & 0x40) {
+        objhitInfo->unk58 &= ~0x40;
+        objhitInfo->unk10.x = obj->srt.transl.x;
+        objhitInfo->unk10.y = obj->srt.transl.y;
+        objhitInfo->unk10.z = obj->srt.transl.z;
+        objhitInfo->unk20.x = obj->positionMirror.x;
+        objhitInfo->unk20.y = obj->positionMirror.y;
+        objhitInfo->unk20.z = obj->positionMirror.z;
     }
 }
 
@@ -446,7 +446,7 @@ void func_8002681C(Object* obj) {
 
     objhitInfo = obj->objhitInfo;
     if (objhitInfo != NULL) {
-        objhitInfo->unk_0x58 |= 0x40;
+        objhitInfo->unk58 |= 0x40;
     }
 }
 
@@ -459,17 +459,17 @@ void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3) {
         return;
     }
     
-    if (!(objhitInfo->unk_0x5a & 2)) {
+    if (!(objhitInfo->unk5A & 2)) {
         return;
     }
 
-    objhitInfo->unk_0x52 = arg1;
-    objhitInfo->unk_0x54 = arg2;
-    objhitInfo->unk_0x56 = arg3;
-    var_fv0 = objhitInfo->unk_0x52;
-    objhitInfo->unk_0x50 = 0x400;
-    objhitInfo->unk_0xc = var_fv0 * var_fv0;
-    objhitInfo->unk_0x2c = arg0->unk_0xa8;
+    objhitInfo->unk52 = arg1;
+    objhitInfo->unk54 = arg2;
+    objhitInfo->unk56 = arg3;
+    var_fv0 = objhitInfo->unk52;
+    objhitInfo->unk50 = 0x400;
+    objhitInfo->unkC = var_fv0 * var_fv0;
+    objhitInfo->unk2C = arg0->unkA8;
     if (arg2 < 0) {
         arg2 = -arg2;
     }
@@ -479,13 +479,13 @@ void func_8002683C(Object* arg0, s16 arg1, s16 arg2, s16 arg3) {
     if (arg3 < arg2) {
         arg3 = arg2;
     }
-    if (objhitInfo->unk_0x2c < arg3) {
-        objhitInfo->unk_0x2c = arg3;
+    if (objhitInfo->unk2C < arg3) {
+        objhitInfo->unk2C = arg3;
     }
-    objhitInfo->unk_0x30 = arg0->unk_0xa8;
-    var_fv0 = objhitInfo->unk_0x52;
-    if (objhitInfo->unk_0x30 < var_fv0) {
-        objhitInfo->unk_0x30 = var_fv0;
+    objhitInfo->unk30 = arg0->unkA8;
+    var_fv0 = objhitInfo->unk52;
+    if (objhitInfo->unk30 < var_fv0) {
+        objhitInfo->unk30 = var_fv0;
     }
 }
 
@@ -494,17 +494,17 @@ void func_80026940(Object* obj, s16 arg1) {
     f32 temp_fv0;
 
     objhitInfo = obj->objhitInfo;
-    if ((objhitInfo != NULL) && (objhitInfo->unk_0x5a & 1)) {
-        objhitInfo->unk_0x52 = arg1;
-        temp_fv0 = (f32) objhitInfo->unk_0x52;
-        objhitInfo->unk_0xc = temp_fv0 * temp_fv0;
-        objhitInfo->unk_0x2c = obj->unk_0xa8;
-        if (objhitInfo->unk_0x2c < temp_fv0) {
-            objhitInfo->unk_0x2c = temp_fv0;
+    if ((objhitInfo != NULL) && (objhitInfo->unk5A & 1)) {
+        objhitInfo->unk52 = arg1;
+        temp_fv0 = (f32) objhitInfo->unk52;
+        objhitInfo->unkC = temp_fv0 * temp_fv0;
+        objhitInfo->unk2C = obj->unkA8;
+        if (objhitInfo->unk2C < temp_fv0) {
+            objhitInfo->unk2C = temp_fv0;
         }
-        objhitInfo->unk_0x30 = obj->unk_0xa8;
-        if (objhitInfo->unk_0x30 < temp_fv0) {
-            objhitInfo->unk_0x30 = temp_fv0;
+        objhitInfo->unk30 = obj->unkA8;
+        if (objhitInfo->unk30 < temp_fv0) {
+            objhitInfo->unk30 = temp_fv0;
         }
     }
 }
@@ -517,7 +517,7 @@ void func_800269CC(Object* obj, ObjectHitInfo* objHitInfo, s32 arg2) {
     }
 
     func_8002B5C0(obj);
-    objHitInfo->unk_0xa0 = arg2;
+    objHitInfo->unkA0 = arg2;
 }
 
 u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHitInfo, u32 arg3, Object* obj) {
@@ -525,12 +525,12 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
         return arg3;
     }
 
-    objHitInfo->unk_0x6 = 0x12C;
-    objHitInfo->unk_0x8 = (u32 *)mmAlign8(arg3);
-    arg3 = (s32)objHitInfo->unk_0x8 + objHitInfo->unk_0x6;
-    objHitInfo->unk_0x9e = 1;
-    if (objHitInfo->unk_0x5a & 0x30) {
-        objHitInfo->unk_0x9f = 2;
+    objHitInfo->unk6 = 0x12C;
+    objHitInfo->unk8 = (u32 *)mmAlign8(arg3);
+    arg3 = (s32)objHitInfo->unk8 + objHitInfo->unk6;
+    objHitInfo->unk9E = 1;
+    if (objHitInfo->unk5A & 0x30) {
+        objHitInfo->unk9F = 2;
     }
     func_80026AB8(obj, modelInstance, objId, objHitInfo, 0, 1);
     return arg3;
@@ -542,7 +542,7 @@ void func_80026AB8(Object* obj, ModelInstance* modelInstance, s32 arg2, ObjectHi
     s32 i;
 
     temp_a2 = obj->def->pHits;
-    objHitInfo->unk_0x4 = 0;
+    objHitInfo->unk4 = 0;
     if (temp_a2 == NULL) {
         return;
     }
@@ -553,15 +553,15 @@ void func_80026AB8(Object* obj, ModelInstance* modelInstance, s32 arg2, ObjectHi
         }
 
         temp_a2_2 = temp_a2[i].fileOffsetInBytes;
-        objHitInfo->unk_0x4 = temp_a2[i].fileSizeInBytes;
-        if (objHitInfo->unk_0x6 < objHitInfo->unk_0x4) {
-            objHitInfo->unk_0x4 = objHitInfo->unk_0x6;
+        objHitInfo->unk4 = temp_a2[i].fileSizeInBytes;
+        if (objHitInfo->unk6 < objHitInfo->unk4) {
+            objHitInfo->unk4 = objHitInfo->unk6;
         }
 
         if (arg5 == 0) {
-            queue_load_file_region_to_ptr((void **)objHitInfo->unk_0x8, 0x45, temp_a2_2, objHitInfo->unk_0x4);
+            queue_load_file_region_to_ptr((void **)objHitInfo->unk8, 0x45, temp_a2_2, objHitInfo->unk4);
         } else {
-            read_file_region(0x45U, (void *)objHitInfo->unk_0x8, temp_a2_2, objHitInfo->unk_0x4);
+            read_file_region(0x45U, (void *)objHitInfo->unk8, temp_a2_2, objHitInfo->unk4);
         }
         return;
     }
@@ -570,19 +570,19 @@ void func_80026AB8(Object* obj, ModelInstance* modelInstance, s32 arg2, ObjectHi
 void func_80026B84(Object* obj) {
     ObjectStruct58* obj58;
 
-    obj58 = obj->unk0x58;
+    obj58 = obj->unk58;
     if (obj58 != NULL) {
         obj58->unk10c = 0;
-        obj->unk0x58->unk10d = 0xA;
-        obj->unk0x58->unk10f = 0;
+        obj->unk58->unk10d = 0xA;
+        obj->unk58->unk10f = 0;
         func_8002B410(obj, 1);
         func_8002B410(obj, 1);
     }
 }
 
 u32 func_80026BD8(Object* obj, u32 addr) {
-    obj->unk0x58 = (ObjectStruct58 *)mmAlign4(addr);
-    addr = (u32)(obj->unk0x58 + 1);
+    obj->unk58 = (ObjectStruct58 *)mmAlign4(addr);
+    addr = (u32)(obj->unk58 + 1);
     func_80026B84(obj);
     return addr;
 }
@@ -601,15 +601,15 @@ void update_obj_hitboxes(s32 arg0) {
     for (j = 0; j < arg0; j++) {
         curObj = objects[j];
         objhitInfo = curObj->objhitInfo;
-        if (objhitInfo != NULL && (objhitInfo->unk_0x58 & 1) && (objhitInfo->unk_0x5a & 8)) {
+        if (objhitInfo != NULL && (objhitInfo->unk58 & 1) && (objhitInfo->unk5A & 8)) {
             if (D_800B1998 < 40) {
                 D_800B1994[D_800B1998++] = curObj;
             }
             // @fake
             if ((!arg0) && (!arg0)) {}
-            objhitInfo->unk_0x0 = 0;
-            objhitInfo->unk_0x58 &= ~8;
-            objhitInfo->unk_0x50 = 0x400;
+            objhitInfo->unk0 = 0;
+            objhitInfo->unk58 &= ~8;
+            objhitInfo->unk50 = 0x400;
         }
     }
 }
@@ -729,25 +729,25 @@ void obj_do_hit_detection(s32 arg0) {
         currentObj = objects[var_s6];
         currentObjHitInfo = currentObj->objhitInfo;
         if (currentObjHitInfo != NULL) {
-            if ((currentObjHitInfo->unk_0x58 & 3) && (currentObjHitInfo->unk_0x5a != 8)) {
+            if ((currentObjHitInfo->unk58 & 3) && (currentObjHitInfo->unk5A != 8)) {
                 temp_v1 = &(&D_800B23B8)[var_s7];
                 *temp_v1 = &D_800B20B8[var_s7];
                 (*temp_v1)->unk8 = currentObj;
                 temp_a1 = currentObj->modelInsts[currentObj->modelInstIdx];
                 if (temp_a1 != NULL) {
-                    temp_a1->unk_0x34 &= ~0x20;
+                    temp_a1->unk34 &= ~0x20;
                 }
-                (*temp_v1)->unk4 = currentObj->positionMirror.x - currentObjHitInfo->unk_0x30;
-                (*temp_v1)->unk0 = currentObj->positionMirror.x + currentObjHitInfo->unk_0x30;
+                (*temp_v1)->unk4 = currentObj->positionMirror.x - currentObjHitInfo->unk30;
+                (*temp_v1)->unk0 = currentObj->positionMirror.x + currentObjHitInfo->unk30;
                 var_s7++;
             }
-            currentObjHitInfo->unk_0x9d = 0;
-            currentObjHitInfo->unk_0x9c = -1;
-            currentObjHitInfo->unk_0x58 &= ~8;
+            currentObjHitInfo->unk9D = 0;
+            currentObjHitInfo->unk9C = -1;
+            currentObjHitInfo->unk58 &= ~8;
             if (currentObj->linkedObject != NULL) {
                 currentObjHitInfo = currentObj->linkedObject->objhitInfo;
-                currentObjHitInfo->unk_0x9d = 0;
-                currentObjHitInfo->unk_0x9c = -1;
+                currentObjHitInfo->unk9D = 0;
+                currentObjHitInfo->unk9C = -1;
             }
         }
     }
@@ -760,10 +760,10 @@ void obj_do_hit_detection(s32 arg0) {
             currentObj = sp68[0]->unk8;
             currentObjHitInfo = currentObj->objhitInfo;
             sp980 = currentObj->linkedObject;
-            if (sp980 != NULL && (sp980->objhitInfo == NULL || !(sp980->objhitInfo->unk_0x58 & 1))) {
+            if (sp980 != NULL && (sp980->objhitInfo == NULL || !(sp980->objhitInfo->unk58 & 1))) {
                 sp980 = NULL;
             }
-            if (currentObjHitInfo->unk_0x58 & 4) {
+            if (currentObjHitInfo->unk58 & 4) {
                 s4 = sp74;
                 if (((&D_800B23B8)[s4]->unk0 < sp68[0]->unk4) && (s4 < var_s7)) {
                     var_s5 = &(&D_800B23B8)[s4];
@@ -783,32 +783,32 @@ void obj_do_hit_detection(s32 arg0) {
                                 if (!(var_fv0 > 0.0f)) {
                                     var_fv0 = -var_fv0;
                                 }
-                                if (var_fv0 < (currentObjHitInfo->unk_0x30 + parentObjInfo->unk_0x30)) {
+                                if (var_fv0 < (currentObjHitInfo->unk30 + parentObjInfo->unk30)) {
                                     var_fv0 = currentObj->positionMirror.y - parentObj->positionMirror.y;
                                     if (!(var_fv0 > 0.0f)) {
                                         var_fv0 = -var_fv0;
                                     }
-                                    if (var_fv0 < (currentObjHitInfo->unk_0x2c + parentObjInfo->unk_0x2c) && parentObjInfo->unk_0x58 & 1) {
-                                        if (!(currentObjHitInfo->unk_0x58 & 0x40) && !(parentObjInfo->unk_0x58 & 0x40) && (!(parentObjInfo->unk_0x58 & 4) || (var_s6 >= sp74))) {
+                                    if (var_fv0 < (currentObjHitInfo->unk2C + parentObjInfo->unk2C) && parentObjInfo->unk58 & 1) {
+                                        if (!(currentObjHitInfo->unk58 & 0x40) && !(parentObjInfo->unk58 & 0x40) && (!(parentObjInfo->unk58 & 4) || (var_s6 >= sp74))) {
                                             if ((parentObj->def->_unk98[0] & currentObj->def->_unk98[2]) && (currentObj->def->_unk98[0] & parentObj->def->_unk98[2])) {
-                                                if (parentObjInfo->unk_0x5a & 0x20) {
+                                                if (parentObjInfo->unk5A & 0x20) {
                                                     func_80027DAC(parentObj, currentObj, &D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
-                                                } else if (currentObjHitInfo->unk_0x5a & 0x20) {
+                                                } else if (currentObjHitInfo->unk5A & 0x20) {
                                                         func_80027DAC(currentObj, parentObj, &D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
-                                                } else if ((currentObjHitInfo->unk_0x5a == 0x10) || parentObjInfo->unk_0x5a == 0x10) {
-                                                    if (currentObjHitInfo->unk_0x5b || parentObjInfo->unk_0x5b) {
+                                                } else if ((currentObjHitInfo->unk5A == 0x10) || parentObjInfo->unk5A == 0x10) {
+                                                    if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
                                                         func_80029C04(currentObj, parentObj, currentObj, 0, 1, -1U, 0U);
                                                     }
-                                                } else if (currentObjHitInfo->unk_0x5b || parentObjInfo->unk_0x5b) {
+                                                } else if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
                                                     func_80028238(currentObj, parentObj);
                                                 }
                                             }
                                         }
-                                        if (!(currentObjHitInfo->unk_0x58 & 0x100) && !(parentObjInfo->unk_0x58 & 0x100)) {
+                                        if (!(currentObjHitInfo->unk58 & 0x100) && !(parentObjInfo->unk58 & 0x100)) {
                                             if (parentObj->def->_unk98[0] & currentObj->def->_unk98[1]) {
                                                 if (parentObj->def->_unk98[1] & 0x80 || currentObj->def->_unk98[0] & parentObj->def->_unk98[1]) {
                                                     linkedParentObj = parentObj->linkedObject;
-                                                    if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk_0x58 & 1))) {
+                                                    if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk58 & 1))) {
                                                         linkedParentObj = NULL;
                                                     }
                                                     func_80028DCC(currentObj, parentObj, sp980, linkedParentObj, delayFloat);
@@ -834,7 +834,7 @@ void obj_do_hit_detection(s32 arg0) {
         sp68 = D_800B23BC;
         do {
             currentObj = sp68[0]->unk8;
-            if (currentObj->objhitInfo->unk_0x58 & 0x200) {
+            if (currentObj->objhitInfo->unk58 & 0x200) {
                 func_80027934(currentObj, currentObj);
                 linkedObj = currentObj->linkedObject;
                 if (linkedObj != NULL) {
@@ -852,20 +852,20 @@ void obj_do_hit_detection(s32 arg0) {
         do {
             currentObj = sp68[0]->unk8;
             currentObjHitInfo = currentObj->objhitInfo;
-            currentObjHitInfo->unk_0x10.x = currentObj->srt.transl.x;
-            currentObjHitInfo->unk_0x10.y = currentObj->srt.transl.y;
-            currentObjHitInfo->unk_0x10.z = currentObj->srt.transl.z;
+            currentObjHitInfo->unk10.x = currentObj->srt.transl.x;
+            currentObjHitInfo->unk10.y = currentObj->srt.transl.y;
+            currentObjHitInfo->unk10.z = currentObj->srt.transl.z;
             if (currentObj->parent != NULL) {
-                transform_point_by_object(currentObjHitInfo->unk_0x10.x, currentObjHitInfo->unk_0x10.y, currentObjHitInfo->unk_0x10.z, &currentObjHitInfo->unk_0x20.x, &currentObjHitInfo->unk_0x20.y, &currentObjHitInfo->unk_0x20.z, currentObj->parent);
+                transform_point_by_object(currentObjHitInfo->unk10.x, currentObjHitInfo->unk10.y, currentObjHitInfo->unk10.z, &currentObjHitInfo->unk20.x, &currentObjHitInfo->unk20.y, &currentObjHitInfo->unk20.z, currentObj->parent);
             } else {
-                currentObjHitInfo->unk_0x20.x = currentObj->srt.transl.x;
-                currentObjHitInfo->unk_0x20.y = currentObj->srt.transl.y;
-                currentObjHitInfo->unk_0x20.z = currentObj->srt.transl.z;
+                currentObjHitInfo->unk20.x = currentObj->srt.transl.x;
+                currentObjHitInfo->unk20.y = currentObj->srt.transl.y;
+                currentObjHitInfo->unk20.z = currentObj->srt.transl.z;
             }
-            currentObjHitInfo->unk_0x1c = currentObj->animProgress;
-            currentObjHitInfo->unk_0x9e = 0;
-            currentObjHitInfo->unk_0x58 &= ~0x2000;
-            if (((currentObjHitInfo->unk_0x62 != 0) || (currentObjHitInfo->unk_0x58 & 8)) && !(currentObjHitInfo->unk_0x58 & 0x40)) {
+            currentObjHitInfo->unk1C = currentObj->animProgress;
+            currentObjHitInfo->unk9E = 0;
+            currentObjHitInfo->unk58 &= ~0x2000;
+            if (((currentObjHitInfo->unk62 != 0) || (currentObjHitInfo->unk58 & 8)) && !(currentObjHitInfo->unk58 & 0x40)) {
                 currentObj->speed.x = (currentObj->srt.transl.x - currentObj->positionMirror2.x) * inverseDelay;
                 currentObj->speed.z = (currentObj->srt.transl.z - currentObj->positionMirror2.z) * inverseDelay;
             }
@@ -904,25 +904,25 @@ void func_80027934(Object* obj, Object* otherObj) {
 
     objectHitInfo = obj->objhitInfo;
     if (otherObj == obj) {
-        sp17C = objectHitInfo->unk_0x40 >> 4;
+        sp17C = objectHitInfo->unk40 >> 4;
     } else {
-        sp17C = objectHitInfo->unk_0x40 & 0xF;
+        sp17C = objectHitInfo->unk40 & 0xF;
     }
     if (sp17C == 0) {
         return;
     }
-    if (objectHitInfo->unk_0x61 != 0) {
+    if (objectHitInfo->unk61 != 0) {
         return;
     }
 
     objectHitInfo = otherObj->objhitInfo;
-    if (objectHitInfo->unk_0x5a & 0x10) {
+    if (objectHitInfo->unk5A & 0x10) {
         var_s0 = 0;
         temp_v0_2 = otherObj->modelInsts[otherObj->modelInstIdx];
         temp_fp = temp_v0_2->model;
-        temp_t8 = (temp_v0_2->unk_0x34 >> 2) & 1;
-        temp_s2 = temp_v0_2->unk_0x1c[temp_t8];
-        temp_s3 = temp_v0_2->unk_0x1c[temp_t8 ^ 1];
+        temp_t8 = (temp_v0_2->unk34 >> 2) & 1;
+        temp_s2 = temp_v0_2->unk1C[temp_t8];
+        temp_s3 = temp_v0_2->unk1C[temp_t8 ^ 1];
         for (i = 0; i < temp_fp->hitSphereCount; i++) {
             temp_v0_3 = &temp_fp->hitSpheres[i];
             if ((i == temp_v0_3->unkC) && ((1 << temp_v0_3->unkD) & sp17C)) {
@@ -964,10 +964,10 @@ void func_80027934(Object* obj, Object* otherObj) {
         spA8[0] = obj->srt.transl.x;
         spA8[1] = obj->srt.transl.y;
         spA8[2] = obj->srt.transl.z;
-        sp78[0] = objectHitInfo->unk_0x10.x;
-        sp78[1] = objectHitInfo->unk_0x10.y;
-        sp78[2] = objectHitInfo->unk_0x10.z;
-        spF0.unk40[0] = (f32) objectHitInfo->unk_0x52;
+        sp78[0] = objectHitInfo->unk10.x;
+        sp78[1] = objectHitInfo->unk10.y;
+        sp78[2] = objectHitInfo->unk10.z;
+        spF0.unk40[0] = (f32) objectHitInfo->unk52;
         spF0.unk50[0] = -1;
         spF0.unk54[0] = 6;
     }
@@ -977,7 +977,7 @@ void func_80027934(Object* obj, Object* otherObj) {
     }
 
     fit_aabb_around_cubes(&spD8, (Vec3f *) sp78, (Vec3f *) spA8, spF0.unk40, var_s0);
-    func_80053750(otherObj, (Vec3f** ) &spD8, objectHitInfo->unk_0xa1);
+    func_80053750(otherObj, (Vec3f** ) &spD8, objectHitInfo->unkA1);
     temp_v1_3 = func_8005509C(otherObj, (Vec3f *) sp78, (Vec3f *) spA8, var_s0, &spF0, 0);
     if (!temp_v1_3) {
         return;
@@ -992,14 +992,14 @@ void func_80027934(Object* obj, Object* otherObj) {
     } else {
         var_s0 = 3;
     }
-    objectHitInfo->unk_0x9c = spF0.unk50[var_s0];
-    objectHitInfo->unk_0x34 = spA8[var_s0 * 3 + 0];
-    objectHitInfo->unk_0x38 = spA8[var_s0 * 3 + 1];
-    objectHitInfo->unk_0x3c = spA8[var_s0 * 3 + 2];
+    objectHitInfo->unk9C = spF0.unk50[var_s0];
+    objectHitInfo->unk34 = spA8[var_s0 * 3 + 0];
+    objectHitInfo->unk38 = spA8[var_s0 * 3 + 1];
+    objectHitInfo->unk3C = spA8[var_s0 * 3 + 2];
     if (spF0.unk58[var_s0] != 0) {
-        objectHitInfo->unk_0x9d |= 2;
+        objectHitInfo->unk9D |= 2;
     } else {
-        objectHitInfo->unk_0x9d |= 1;
+        objectHitInfo->unk9D |= 1;
     }
 }
 #endif
@@ -1019,46 +1019,46 @@ void func_80027DAC(Object* obj, Object* obj2, Unk80030A24* arg2, ModelInstance_0
 
     temp_v0 = obj->objhitInfo;
     sp5C = obj2->objhitInfo;
-    if ((obj->objhitInfo->unk_0x9f == 0) && (sp5C->unk_0x9f == 0) && (sp5C->unk_0x9e == 0) && (obj->objhitInfo->unk_0x9e == 0)) {
+    if ((obj->objhitInfo->unk9F == 0) && (sp5C->unk9F == 0) && (sp5C->unk9E == 0) && (obj->objhitInfo->unk9E == 0)) {
         sp58 = obj->modelInsts[obj->modelInstIdx];
         sp54 = obj2->modelInsts[obj2->modelInstIdx];
-        if (sp5C->unk_0x5a & 1) {
+        if (sp5C->unk5A & 1) {
             spDC.x = obj2->positionMirror.x - gWorldX;
             spDC.y = obj2->positionMirror.y;
             spDC.z = obj2->positionMirror.z - gWorldZ;
-            if (func_8002DFB8(spDC, sp5C->unk_0x52, sp58->unk_0x14, sp58->model, arg2, &sp64, &spE8) != 0) {
-                var_fv0 = obj2->unk_0xa8 / obj->unk_0xa8;
+            if (func_8002DFB8(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, &spE8) != 0) {
+                var_fv0 = obj2->unkA8 / obj->unkA8;
                 if (var_fv0 > 1.0f) {
                     var_fv0 = 1.0f;
                 }
-                func_8002D0DC(&spDC, sp5C->unk_0x52, obj2, arg2, sp58->unk_0x14, sp58->model, sp64, var_fv0, spE8, &spD0);
+                func_8002D0DC(&spDC, sp5C->unk52, obj2, arg2, sp58->unk14, sp58->model, sp64, var_fv0, spE8, &spD0);
                 func_800287E4(obj, obj2, spD0.x, spD0.y, spD0.z, 0);
             }
-        } else if (sp5C->unk_0x5a & 2) {
+        } else if (sp5C->unk5A & 2) {
             spDC.x = obj2->positionMirror.x - gWorldX;
             spDC.y = obj2->positionMirror.y;
             spDC.z = obj2->positionMirror.z - gWorldZ;
-            if (func_8002E3D0(spDC, sp5C->unk_0x52, sp58->unk_0x14, sp58->model, arg2, &sp64, obj2->positionMirror.y + sp5C->unk_0x56, obj2->positionMirror.y + (f32) sp5C->unk_0x54, &spE8) != 0) {
-                var_fv0 = obj2->unk_0xa8 / obj->unk_0xa8;
+            if (func_8002E3D0(spDC, sp5C->unk52, sp58->unk14, sp58->model, arg2, &sp64, obj2->positionMirror.y + sp5C->unk56, obj2->positionMirror.y + (f32) sp5C->unk54, &spE8) != 0) {
+                var_fv0 = obj2->unkA8 / obj->unkA8;
                 if (var_fv0 > 1.0f) {
                     var_fv0 = 1.0f;
                 }
-                func_8002D69C(&spDC, sp5C->unk_0x52, obj2, arg2, sp58->unk_0x14, sp58->model, sp64, var_fv0, spE8, &spD0);
+                func_8002D69C(&spDC, sp5C->unk52, obj2, arg2, sp58->unk14, sp58->model, sp64, var_fv0, spE8, &spD0);
                 func_800287E4(obj, obj2, spD0.x, spD0.y, spD0.z, 0);
             }
-        } else if (sp5C->unk_0x5a & 0x20) {
+        } else if (sp5C->unk5A & 0x20) {
             if (arg7 <= 0) {
                 arg7++;
                 func_80027DAC(obj2, obj, arg2, arg3, arg4, arg5, arg6, arg7);
                 return;
             }
-            func_8002F498(sp58->unk_0x14->unk0, sp58->unk_0x14, sp58->model, arg3, &sp9C);
-            func_8002F498(sp54->unk_0x14->unk0, sp54->unk_0x14, sp54->model, arg4, &sp68);
+            func_8002F498(sp58->unk14->unk0, sp58->unk14, sp58->model, arg3, &sp9C);
+            func_8002F498(sp54->unk14->unk0, sp54->unk14, sp54->model, arg4, &sp68);
             if (func_8002F998(
-                sp58->unk_0x14, sp58->model, sp58->unk_0x14->unk0,
+                sp58->unk14, sp58->model, sp58->unk14->unk0,
                 arg3, &sp9C, arg5,
-                arg6, sp54->unk_0x14, sp54->model,
-                sp54->unk_0x14->unk0, arg4, &sp68,
+                arg6, sp54->unk14, sp54->model,
+                sp54->unk14->unk0, arg4, &sp68,
                 arg2, &spE8
             ) != 0) {
                 func_80030A24(obj, obj2, arg2, spE8, 0, &spD0);
@@ -1100,29 +1100,29 @@ void func_80028238(Object* obj, Object* otherObj) {
 
     sp58 = obj->objhitInfo;
     sp54 = otherObj->objhitInfo;
-    if (sp58->unk_0x9e != 0) {
+    if (sp58->unk9E != 0) {
         return;
     }
 
-    if (sp54->unk_0x9e != 0) {
+    if (sp54->unk9E != 0) {
         return;
     }
 
     sp70 = otherObj->positionMirror.x - obj->positionMirror.x;
     sp6C = otherObj->positionMirror.y - obj->positionMirror.y;
     sp68 = otherObj->positionMirror.z - obj->positionMirror.z;
-    sp60 = sp58->unk_0x52;
-    sp5C = sp54->unk_0x52;
+    sp60 = sp58->unk52;
+    sp5C = sp54->unk52;
     sp53 = 0;
-    if (sp54->unk_0x5a & 2 || sp58->unk_0x5a & 2) {
+    if (sp54->unk5A & 2 || sp58->unk5A & 2) {
         if (sp6C > 0.0f) {
-            if (sp58->unk_0x5a & 2) {
-                var_fa1 = obj->positionMirror.y + sp58->unk_0x56;
+            if (sp58->unk5A & 2) {
+                var_fa1 = obj->positionMirror.y + sp58->unk56;
             } else {
                 var_fa1 = obj->positionMirror.y + sp60;
             }
-            if (sp54->unk_0x5a & 2) {
-                var_fv0 = otherObj->positionMirror.y + sp54->unk_0x54;
+            if (sp54->unk5A & 2) {
+                var_fv0 = otherObj->positionMirror.y + sp54->unk54;
             } else {
                 var_fv0 = otherObj->positionMirror.y - sp5C;
             }
@@ -1130,13 +1130,13 @@ void func_80028238(Object* obj, Object* otherObj) {
                 return;
             }
         } else {
-            if (sp54->unk_0x5a & 2) {
-                var_fa1 = otherObj->positionMirror.y + sp54->unk_0x56;
+            if (sp54->unk5A & 2) {
+                var_fa1 = otherObj->positionMirror.y + sp54->unk56;
             } else {
                 var_fa1 = otherObj->positionMirror.y + sp5C;
             }
-            if (sp58->unk_0x5a & 2) {
-                var_fv0 = obj->positionMirror.y + sp58->unk_0x54;
+            if (sp58->unk5A & 2) {
+                var_fv0 = obj->positionMirror.y + sp58->unk54;
             } else {
                 var_fv0 = obj->positionMirror.y - sp60;
             }
@@ -1154,35 +1154,35 @@ void func_80028238(Object* obj, Object* otherObj) {
     if (var_v0 > 0x400) {
         var_v0 = 0x400;
     }
-    if (sp58->unk_0x50 >= var_v0) {
-        sp58->unk_0x0 = otherObj;
-        sp58->unk_0x50 = var_v0;
+    if (sp58->unk50 >= var_v0) {
+        sp58->unk0 = otherObj;
+        sp58->unk50 = var_v0;
     }
     var_v0 = (s32) (f32) (s32) spA4;
     if (var_v0 > 0x400) {
         var_v0 = 0x400;
     }
-    if (sp54->unk_0x50 >= var_v0) {
-        sp54->unk_0x0 = obj;
-        sp54->unk_0x50 = var_v0;
+    if (sp54->unk50 >= var_v0) {
+        sp54->unk0 = obj;
+        sp54->unk50 = var_v0;
     }
-    if (!(sp54->unk_0x58 & 1)) {
+    if (!(sp54->unk58 & 1)) {
         return;
     }
 
-    sp8C = obj->positionMirror.x - sp58->unk_0x20.x;
-    sp88 = obj->positionMirror.y - sp58->unk_0x20.y;
-    sp84 = obj->positionMirror.z - sp58->unk_0x20.z;
+    sp8C = obj->positionMirror.x - sp58->unk20.x;
+    sp88 = obj->positionMirror.y - sp58->unk20.y;
+    sp84 = obj->positionMirror.z - sp58->unk20.z;
     if (sp53 != 0) {
         sp88 = 0.0f;
     }
     temp_fa1 = (sp8C * sp8C) + (sp88 * sp88) + (sp84 * sp84);
     if (temp_fa1 > 1.0f) {
-        temp_fv1 = (((otherObj->positionMirror.x - sp58->unk_0x20.x) * sp8C) + ((otherObj->positionMirror.y - sp58->unk_0x20.y) * sp88) + ((otherObj->positionMirror.z - sp58->unk_0x20.z) * sp84)) / temp_fa1;
+        temp_fv1 = (((otherObj->positionMirror.x - sp58->unk20.x) * sp8C) + ((otherObj->positionMirror.y - sp58->unk20.y) * sp88) + ((otherObj->positionMirror.z - sp58->unk20.z) * sp84)) / temp_fa1;
         if (temp_fv1 >= 0.0f && temp_fv1 <= 1.0f) {
-            sp9C = sp58->unk_0x20.x + (temp_fv1 * sp8C);
-            sp98 = sp58->unk_0x20.y + (temp_fv1 * sp88);
-            sp94 = sp58->unk_0x20.z + (temp_fv1 * sp84);
+            sp9C = sp58->unk20.x + (temp_fv1 * sp8C);
+            sp98 = sp58->unk20.y + (temp_fv1 * sp88);
+            sp94 = sp58->unk20.z + (temp_fv1 * sp84);
             temp_fv0_2 = sp9C - otherObj->positionMirror.x;
             temp_fa1 = sp98 - otherObj->positionMirror.y;
             temp_ft4_2 = sp94 - otherObj->positionMirror.z;
@@ -1190,12 +1190,12 @@ void func_80028238(Object* obj, Object* otherObj) {
         }
     }
     if ((spA4 < (sp5C + sp60)) && (spA4 > 0.0f)) {
-        func_8002635C(otherObj, obj, sp58->unk_0x5d, sp58->unk_0x5e, 0);
-        func_8002635C(obj, otherObj, sp54->unk_0x5d, sp54->unk_0x5e, 0);
-        if (!(sp54->unk_0x58 & 2) && !(sp58->unk_0x58 & 2)) {
-            sp9C = sp54->unk_0x20.x - sp58->unk_0x20.x;
-            sp98 = sp54->unk_0x20.y - sp58->unk_0x20.y;
-            sp94 = sp54->unk_0x20.z - sp58->unk_0x20.z;
+        func_8002635C(otherObj, obj, sp58->unk5D, sp58->unk5E, 0);
+        func_8002635C(obj, otherObj, sp54->unk5D, sp54->unk5E, 0);
+        if (!(sp54->unk58 & 2) && !(sp58->unk58 & 2)) {
+            sp9C = sp54->unk20.x - sp58->unk20.x;
+            sp98 = sp54->unk20.y - sp58->unk20.y;
+            sp94 = sp54->unk20.z - sp58->unk20.z;
             if (sp53 != 0) {
                 sp98 = 0.0f;
             }
@@ -1249,10 +1249,10 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
     func_80032804(obj, otherObj);
     objhitInfo = obj->objhitInfo;
     otherObjhitInfo = otherObj->objhitInfo;
-    objhitInfo->unk_0x58 |= 8;
-    otherObjhitInfo->unk_0x58 |= 8;
-    objhitInfo->unk_0x0 = otherObj;
-    otherObjhitInfo->unk_0x0 = obj;
+    objhitInfo->unk58 |= 8;
+    otherObjhitInfo->unk58 |= 8;
+    objhitInfo->unk0 = otherObj;
+    otherObjhitInfo->unk0 = obj;
     if (obj->parent != NULL) {
         inverse_rotate_point_by_object(arg2, arg3, arg4, &sp50, &sp4C, &sp48, obj->parent);
     } else {
@@ -1269,7 +1269,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
         sp3C = arg4;
     }
 
-    if ((obj->group == GROUP_UNK1) && !(otherObjhitInfo->unk_0x58 & 0x400)) {
+    if ((obj->group == GROUP_UNK1) && !(otherObjhitInfo->unk58 & 0x400)) {
         obj->srt.transl.x -= sp50;
         obj->srt.transl.y -= sp4C;
         obj->srt.transl.z -= sp48;
@@ -1283,7 +1283,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
         return;
     }
 
-    if ((otherObj->group == GROUP_UNK1) && !(objhitInfo->unk_0x58 & 0x400)) {
+    if ((otherObj->group == GROUP_UNK1) && !(objhitInfo->unk58 & 0x400)) {
         otherObj->srt.transl.x += sp44;
         otherObj->srt.transl.y += sp40;
         otherObj->srt.transl.z += sp3C;
@@ -1297,9 +1297,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
         return;
     }
 
-    var_v1 = otherObjhitInfo->unk_0x5b;
+    var_v1 = otherObjhitInfo->unk5B;
     if (var_v1 == 0) {
-        if (objhitInfo->unk_0x5b == 0) {
+        if (objhitInfo->unk5B == 0) {
             return;
         }
 
@@ -1316,7 +1316,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
         return;
     }
 
-    if (objhitInfo->unk_0x5b == 0) {
+    if (objhitInfo->unk5B == 0) {
         if (var_v1 == 0) {
             return;
         }
@@ -1351,11 +1351,11 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
     }
     temp_fv0 = fcos16_precise(var_v1);
     temp_fa0 = temp_fv0 * temp_fv0;
-    sp74 = (objhitInfo->unk_0x5b * temp_fa0) + (objhitInfo->unk_0x5c * (1.0f - temp_fa0));
+    sp74 = (objhitInfo->unk5B * temp_fa0) + (objhitInfo->unk5C * (1.0f - temp_fa0));
     temp_fv0 = fcos16_precise((s16) var_a2);
     temp_fa0 = temp_fv0 * temp_fv0;
     temp_ft0 = 1.0f - temp_fa0;
-    temp_fa1 = (otherObjhitInfo->unk_0x5b * temp_fa0) + (otherObjhitInfo->unk_0x5c * temp_ft0);
+    temp_fa1 = (otherObjhitInfo->unk5B * temp_fa0) + (otherObjhitInfo->unk5C * temp_ft0);
     temp_fv1 = temp_fa1 / (sp74 + temp_fa1);
     obj->srt.transl.x -= sp50 * temp_fv1;
     obj->srt.transl.y -= sp4C * temp_fv1;
@@ -1418,37 +1418,37 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
         sp40 = NULL;
     }
     sp2F = 0;
-    var_v1 = sp3C->unk_0x40;
-    if ((var_v1 != 0) && (sp3C->unk_0x61 == 0)) {
+    var_v1 = sp3C->unk40;
+    if ((var_v1 != 0) && (sp3C->unk61 == 0)) {
         if (obj->group == GROUP_UNK1) {
             sp28 = obj->modelInsts[obj->modelInstIdx];
-            sp30 = ((s32) sp28->unk_0x34 >> 2) & 1;
-            if (sp3C->unk_0x58 & 0x2000) {
-                bcopy(D_800B20A8, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
-                bcopy(D_800B20AC, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+            sp30 = ((s32) sp28->unk34 >> 2) & 1;
+            if (sp3C->unk58 & 0x2000) {
+                bcopy(D_800B20A8, (void* ) sp28->unk1C[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20AC, (void* ) sp28->unk1C[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
             } else {
-                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20A8, sp28->model->hitSphereCount * 0x10);
-                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20AC, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk1C[sp30], D_800B20A8, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk1C[sp30 ^ 1], D_800B20AC, sp28->model->hitSphereCount * 0x10);
             }
             sp28 = obj3->modelInsts[obj3->modelInstIdx];
-            sp30 = ((s32) sp28->unk_0x34 >> 2) & 1;
-            if (sp3C->unk_0x58 & 0x2000) {
-                bcopy(D_800B20B0, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
-                bcopy(D_800B20B4, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
-                var_v1 = sp3C->unk_0x40;
+            sp30 = ((s32) sp28->unk34 >> 2) & 1;
+            if (sp3C->unk58 & 0x2000) {
+                bcopy(D_800B20B0, (void* ) sp28->unk1C[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20B4, (void* ) sp28->unk1C[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp3C->unk40;
             } else {
-                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20B0, sp28->model->hitSphereCount * 0x10);
-                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20B4, sp28->model->hitSphereCount * 0x10);
-                var_v1 = sp3C->unk_0x40;
-                sp3C->unk_0x58 |= 0x2000;
+                bcopy((void* ) sp28->unk1C[sp30], D_800B20B0, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk1C[sp30 ^ 1], D_800B20B4, sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp3C->unk40;
+                sp3C->unk58 |= 0x2000;
             }
         }
         if (var_v1 >> 4) {
-            sp2F = func_80029C04(obj, obj2, obj, 1, 0, var_v1 >> 4, sp3C->unk_0x44 >> 4);
+            sp2F = func_80029C04(obj, obj2, obj, 1, 0, var_v1 >> 4, sp3C->unk44 >> 4);
         }
         if ((obj3 != NULL) && (sp2F == 0)) {
-            if (sp3C->unk_0x40 & 0xF) {
-                sp2F = func_80029C04(obj3, obj2, obj, 1, 0, sp3C->unk_0x40 & 0xF, sp3C->unk_0x44 & 0xF);
+            if (sp3C->unk40 & 0xF) {
+                sp2F = func_80029C04(obj3, obj2, obj, 1, 0, sp3C->unk40 & 0xF, sp3C->unk44 & 0xF);
             }
         }
         temp_v0_4 = sp2F;
@@ -1461,37 +1461,37 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
         return;
     }
 
-    var_v1 = sp38->unk_0x40;
-    if ((var_v1 != 0) && (sp38->unk_0x61 == 0)) {
+    var_v1 = sp38->unk40;
+    if ((var_v1 != 0) && (sp38->unk61 == 0)) {
         if (obj2->group == GROUP_UNK1) {
             sp28 = obj2->modelInsts[obj2->modelInstIdx];
-            sp30 = (sp28->unk_0x34 >> 2) & 1;
-            if (sp38->unk_0x58 & 0x2000) {
-                bcopy(D_800B20A8, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
-                bcopy(D_800B20AC, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+            sp30 = (sp28->unk34 >> 2) & 1;
+            if (sp38->unk58 & 0x2000) {
+                bcopy(D_800B20A8, (void* ) sp28->unk1C[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20AC, (void* ) sp28->unk1C[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
             } else {
-                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20A8, sp28->model->hitSphereCount * 0x10);
-                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20AC, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk1C[sp30], D_800B20A8, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk1C[sp30 ^ 1], D_800B20AC, sp28->model->hitSphereCount * 0x10);
             }
             sp28 = obj4->modelInsts[obj4->modelInstIdx];
-            sp30 = (sp28->unk_0x34 >> 2) & 1;
-            if (sp38->unk_0x58 & 0x2000) {
-                bcopy(D_800B20B0, (void* ) sp28->unk_0x1c[sp30], sp28->model->hitSphereCount * 0x10);
-                bcopy(D_800B20B4, (void* ) sp28->unk_0x1c[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
-                var_v1 = sp38->unk_0x40;
+            sp30 = (sp28->unk34 >> 2) & 1;
+            if (sp38->unk58 & 0x2000) {
+                bcopy(D_800B20B0, (void* ) sp28->unk1C[sp30], sp28->model->hitSphereCount * 0x10);
+                bcopy(D_800B20B4, (void* ) sp28->unk1C[sp30 ^ 1], sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp38->unk40;
             } else {
-                bcopy((void* ) sp28->unk_0x1c[sp30], D_800B20B0, sp28->model->hitSphereCount * 0x10);
-                bcopy((void* ) sp28->unk_0x1c[sp30 ^ 1], D_800B20B4, sp28->model->hitSphereCount * 0x10);
-                var_v1 = sp38->unk_0x40;
-                sp38->unk_0x58 |= 0x2000;
+                bcopy((void* ) sp28->unk1C[sp30], D_800B20B0, sp28->model->hitSphereCount * 0x10);
+                bcopy((void* ) sp28->unk1C[sp30 ^ 1], D_800B20B4, sp28->model->hitSphereCount * 0x10);
+                var_v1 = sp38->unk40;
+                sp38->unk58 |= 0x2000;
             }
         }
         if (var_v1 >> 4) {
-            sp2F = func_80029C04(obj2, obj, obj2, 1, 0, var_v1 >> 4, sp38->unk_0x44 >> 4);
+            sp2F = func_80029C04(obj2, obj, obj2, 1, 0, var_v1 >> 4, sp38->unk44 >> 4);
         }
         if ((obj4 != NULL) && (sp2F == 0)) {
-            if (sp38->unk_0x40 & 0xF) {
-                sp2F = func_80029C04(obj4, obj, obj2, 1, 0, sp38->unk_0x40 & 0xF, sp38->unk_0x44 & 0xF);
+            if (sp38->unk40 & 0xF) {
+                sp2F = func_80029C04(obj4, obj, obj2, 1, 0, sp38->unk40 & 0xF, sp38->unk44 & 0xF);
             }
         }
         if ((sp2F == 0) && (obj2->group == GROUP_UNK1)) {
@@ -1535,9 +1535,9 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     s32 pad2;
 
     sp26C = arg5;
-    sp264 = objHitInfo->unk_0x4 >> 2;
+    sp264 = objHitInfo->unk4 >> 2;
     if (sp264 > 0) {
-        sp260 = objHitInfo->unk_0x8;
+        sp260 = objHitInfo->unk8;
     } else {
         sp260 = 0;
     }
@@ -1546,10 +1546,10 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
         return;
     }
 
-    sp288 = obj->srt.transl.x - objHitInfo->unk_0x10.x;
-    sp284 = obj->srt.transl.y - objHitInfo->unk_0x10.y;
-    sp280 = obj->srt.transl.z - objHitInfo->unk_0x10.z;
-    temp_fv0 = objHitInfo->unk_0x1c;\
+    sp288 = obj->srt.transl.x - objHitInfo->unk10.x;
+    sp284 = obj->srt.transl.y - objHitInfo->unk10.y;
+    sp280 = obj->srt.transl.z - objHitInfo->unk10.z;
+    temp_fv0 = objHitInfo->unk1C;\
     var_fs1 = obj->animProgress - temp_fv0;
     if (var_fs1 < 0.0f) {
         var_fs1 = 0.0f;
@@ -1557,10 +1557,10 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     var_fs1 /= arg5;
     sp248 = obj->modelInsts[obj->modelInstIdx];
     model = sp248->model;
-    matrixIdx = sp248->unk_0x34 & 1;
-    animState.unk_0x58[0] = 0;
-    animState.unk_0x58[1] = 0;
-    animState.unk_0x5c[0] = 0;
+    matrixIdx = sp248->unk34 & 1;
+    animState.unk58[0] = 0;
+    animState.unk58[1] = 0;
+    animState.unk5C[0] = 0;
     var_fs0 = temp_fv0 + var_fs1;
     tempJointCount = model->jointCount;
     i = 0;
@@ -1577,7 +1577,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     if (obj3 != NULL) {
         sp244 = obj3->modelInsts[obj3->modelInstIdx];
         model3 = sp244->model;
-        attachPointIdx = obj->unk0xb0 & 0xFFFF & 3;
+        attachPointIdx = obj->unkB0 & 0xFFFF & 3;
         sp258 = obj->def->pAttachPoints[attachPointIdx].bones[obj->modelInstIdx];
         spEC.transl.x = obj->def->pAttachPoints[attachPointIdx].pos.x;
         spEC.transl.y = obj->def->pAttachPoints[attachPointIdx].pos.y;
@@ -1597,10 +1597,10 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
         if (var_v1 >= sp264) {
             var_v1 = sp264 - 1;
         }
-        objHitInfo->unk_0x44 = objHitInfo->unk_0x40;
+        objHitInfo->unk44 = objHitInfo->unk40;
         tempJointCount = sp260[var_v1];
-        objHitInfo->unk_0x40 = tempJointCount;
-        tempJointCount = objHitInfo->unk_0x40;
+        objHitInfo->unk40 = tempJointCount;
+        tempJointCount = objHitInfo->unk40;
         if (tempJointCount) {
             pad =  (u32)tempJointCount >> 4;
             pad2 = tempJointCount & 0xF;
@@ -1608,18 +1608,18 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
             tempJointCount = -1;
             func_80029AB4(model->joints, model->jointCount, model->hitSpheres, model->hitSphereCount, pad, pad2 ? sp258 : -1);
             temp_fv0 = var_s4 / arg5;
-            sp194.m[3][0] = (objHitInfo->unk_0x10.x - gWorldX) + (temp_fv0 * sp288);
-            sp194.m[3][1] = objHitInfo->unk_0x10.y + (temp_fv0 * sp284);
-            sp194.m[3][2] = (objHitInfo->unk_0x10.z - gWorldZ) + (temp_fv0 * sp280);
+            sp194.m[3][0] = (objHitInfo->unk10.x - gWorldX) + (temp_fv0 * sp288);
+            sp194.m[3][1] = objHitInfo->unk10.y + (temp_fv0 * sp284);
+            sp194.m[3][2] = (objHitInfo->unk10.z - gWorldZ) + (temp_fv0 * sp280);
             func_8001B4F0(&sp248->matrices[matrixIdx], &sp194, &animState, model->joints, (s32) model->jointCount, &sp106, -1, 0);
             if (pad) {
                 func_8001AC44(sp248, model, obj, NULL, sp248->matrices[matrixIdx], pad, obj->srt.scale);
-                stopLoop = func_80029C04(obj, obj2, obj, 1, 0, pad, objHitInfo->unk_0x44 >> 4);
+                stopLoop = func_80029C04(obj, obj2, obj, 1, 0, pad, objHitInfo->unk44 >> 4);
             }
             if (stopLoop == 0 && objHitInfo2 != NULL && (pad2)) {
                 matrix_concat_4x3(&sp150, sp190, &sp110);
                 func_8001AC44(sp244, model3, obj3, &sp110, sp248->matrices[matrixIdx], pad2, obj->srt.scale);
-                stopLoop = func_80029C04(obj3, obj2, obj, 1, 0, pad2, objHitInfo->unk_0x44 & 0xF);
+                stopLoop = func_80029C04(obj3, obj2, obj, 1, 0, pad2, objHitInfo->unk44 & 0xF);
             }
         }
         if (stopLoop) {
@@ -1641,14 +1641,14 @@ void func_80029A14(Model* model, AnimState* animState, AnimState* arg2, f32 arg3
     arg2->anims2[0] = animState->anims2[0];
     arg2->anims2[1] = animState->anims2[1];
     arg2->animIndexes[0] = animState->animIndexes[0];
-    arg2->unk_0x60[0] = animState->unk_0x60[0];
+    arg2->unk60[0] = animState->unk60[0];
     arg2->totalAnimationFrames[0] = animState->totalAnimationFrames[0];
     if (arg4 != 0) {
         arg2->curAnimationFrame[0] = animState->totalAnimationFrames[0] * arg3;
     } else {
         arg2->curAnimationFrame[0] = animState->curAnimationFrame[0];
     }
-    arg2->unk_0x34[0] = animState->unk_0x34[0];
+    arg2->unk34[0] = animState->unk34[0];
     func_8001A1D4(model, arg2, 1);
 }
 
@@ -1749,20 +1749,20 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
     spE0 = obj->objhitInfo;
     spDC = obj2->objhitInfo;
     spD8 = obj3->objhitInfo;
-    if (spDC->unk_0x9e != 0 || spD8->unk_0x9e != 0) {
+    if (spDC->unk9E != 0 || spD8->unk9E != 0) {
         return 0U;
     }
-    if (spDC->unk_0x9f != 0 || spD8->unk_0x9f != 0) {
+    if (spDC->unk9F != 0 || spD8->unk9F != 0) {
         return 0U;
     }
     var_fp = 0;
     spE6 = 0;
-    if ((arg3 != 0 && (spE0->unk_0x5a & 0x10)) || (arg4 != 0 && spE0->unk_0x5a == 0x10)) {
+    if ((arg3 != 0 && (spE0->unk5A & 0x10)) || (arg4 != 0 && spE0->unk5A == 0x10)) {
         temp_v1 = obj->modelInsts[obj->modelInstIdx];
         model = temp_v1->model;
         spFC = (s32) model->hitSphereCount;
-        sp170 = temp_v1->unk_0x24;
-        sp168 = temp_v1->unk_0x1c[(((s32) temp_v1->unk_0x34 >> 2) & 1) ^ 1];
+        sp170 = temp_v1->unk24;
+        sp168 = temp_v1->unk1C[(((s32) temp_v1->unk34 >> 2) & 1) ^ 1];
         spheres2 = model->hitSpheres;
         if (obj3 != obj) {
             sp1AC = model->maxAnimatedVertDistance * obj3->srt.scale;
@@ -1777,28 +1777,28 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         sp170 = sp128.m[0];
         sp168 = sp128.m[2];
         spheres2 = &sp10C;
-        if (spE0->unk_0x5a & 2) {
+        if (spE0->unk5A & 2) {
             var_fp = 1;
         }
-        sp128.m[0][0] = spE0->unk_0x52;
+        sp128.m[0][0] = spE0->unk52;
         sp128.m[0][1] = obj->positionMirror.x - gWorldX;
         sp128.m[0][2] = obj->positionMirror.y;
         sp128.m[0][3] = obj->positionMirror.z - gWorldZ;
         sp128.m[2][0] = sp128.m[0][0];
-        sp128.m[2][1] = spE0->unk_0x20.x - gWorldX;
-        sp128.m[2][2] = spE0->unk_0x20.y;
-        sp128.m[2][3] = spE0->unk_0x20.z - gWorldZ;
+        sp128.m[2][1] = spE0->unk20.x - gWorldX;
+        sp128.m[2][2] = spE0->unk20.y;
+        sp128.m[2][3] = spE0->unk20.z - gWorldZ;
         sp10C.unkC = 0;
         sp10C.unkD = 0;
         sp10C.unkA = 0;
         sp1AC = sp128.m[0][0];
     }
 
-    if ((arg3 != 0 && (spDC->unk_0x5a & 0x10)) || (arg4 != 0 && spDC->unk_0x5a == 0x10)) {
+    if ((arg3 != 0 && (spDC->unk5A & 0x10)) || (arg4 != 0 && spDC->unk5A == 0x10)) {
         temp_v1 = obj2->modelInsts[obj2->modelInstIdx];
         model = temp_v1->model;
         sphereCount = model->hitSphereCount;
-        sp16C = temp_v1->unk_0x24;
+        sp16C = temp_v1->unk24;
         spheres = model->hitSpheres;
         sp1B0 = model->maxAnimatedVertDistance * obj2->srt.scale;
         if (obj2->srt.flags & 0x4000) {
@@ -1808,17 +1808,17 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         sp16C = sp128.m[1];
         sphereCount = 1;
         spheres = &sp11A;
-        if (spDC->unk_0x5a & 2) {
+        if (spDC->unk5A & 2) {
             spE6 = 1;
         }
-        sp128.m[1][0] = spDC->unk_0x52;
+        sp128.m[1][0] = spDC->unk52;
         sp128.m[1][1] = obj2->positionMirror.x - gWorldX;
         sp128.m[1][2] = obj2->positionMirror.y;
         sp128.m[1][3] = obj2->positionMirror.z - gWorldZ;
         sp128.m[3][0] = sp128.m[0][0];
-        sp128.m[3][1] = spE0->unk_0x20.x - gWorldX;
-        sp128.m[3][2] = spE0->unk_0x20.y;
-        sp128.m[3][3] = spE0->unk_0x20.z - gWorldZ;
+        sp128.m[3][1] = spE0->unk20.x - gWorldX;
+        sp128.m[3][2] = spE0->unk20.y;
+        sp128.m[3][3] = spE0->unk20.z - gWorldZ;
         sp11A.unkC = 0;
         sp11A.unkD = 0;
         sp11A.unkA = 0;
@@ -1887,15 +1887,15 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                         temp_s1 = &sp16C[j * 4];
                         if (((i == 0) && (var_fp != 0)) || ((j == 0) && (spE6 != 0))) {
                             if (var_fp != 0) {
-                                var_fa0 = spE0->unk_0x54 + sp1C4;
-                                var_fa1 = spE0->unk_0x56 + sp1C4;
+                                var_fa0 = spE0->unk54 + sp1C4;
+                                var_fa1 = spE0->unk56 + sp1C4;
                                 var_ft4 = temp_s1[2] - temp_s1[0];
                                 var_ft5 = temp_s1[0] + temp_s1[2];
                             } else {
                                 var_fa0 = sp1C4 - sp1CC;
                                 var_fa1 = sp1C4 + sp1CC;
-                                var_ft4 = temp_s1[2] + spDC->unk_0x54;
-                                var_ft5 = temp_s1[2] + spDC->unk_0x56;
+                                var_ft4 = temp_s1[2] + spDC->unk54;
+                                var_ft5 = temp_s1[2] + spDC->unk56;
                             }
                             if ((!(var_ft4 < var_fa0) || !(var_ft5 < var_fa0)) && (!(var_fa1 < var_ft4) || !(var_fa1 < var_ft5))) {
                                 sp18C = temp_s1[0] + sp1CC;
@@ -2003,7 +2003,7 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
             if ((temp_a0 == 0) && (temp_a1 == 0)) {
                 if (arg3 != 0) {
                     var_fs3 = spE6 != 0 ? sp170[spF8 * 4 + 2] : D_800B19A0[i].unkC + sp16C[spF4 * 4 + 2];
-                    func_800261E8(obj2, obj, spD8->unk_0x5f, spD8->unk_0x60, spF4, D_800B19A0[i].unk8 + sp16C[spF4 * 4 + 1], var_fs3, D_800B19A0[i].unk10 + sp16C[spF4 * 4 + 3]);
+                    func_800261E8(obj2, obj, spD8->unk5F, spD8->unk60, spF4, D_800B19A0[i].unk8 + sp16C[spF4 * 4 + 1], var_fs3, D_800B19A0[i].unk10 + sp16C[spF4 * 4 + 3]);
                 } else if (arg4 != 0) {
                     if (sp188 < D_800B19A0[i].unk14) {
                         sp188 = D_800B19A0[i].unk14;
@@ -2018,18 +2018,18 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
             }
         }
     } while (var_s4 != 0);
-    if ((arg3 != 0) && (spDC->unk_0x62 != 0)) {
-        if (spE0->unk_0x58 & 0x80) {
+    if ((arg3 != 0) && (spDC->unk62 != 0)) {
+        if (spE0->unk58 & 0x80) {
             func_800267A4(obj);
         }
-        if (spDC->unk_0x58 & 0x80) {
+        if (spDC->unk58 & 0x80) {
             func_800267A4(obj2);
         }
         return 1;
     }
     if (arg4 != 0 && (sp188 > 0.0f) && (obj == obj3)) {
-        func_8002635C(obj2, obj, spD8->unk_0x5d, spD8->unk_0x5e, (s8) spF4);
-        func_8002635C(obj, obj2, spDC->unk_0x5d, spDC->unk_0x5e, (s8) spF8);
+        func_8002635C(obj2, obj, spD8->unk5D, spD8->unk5E, (s8) spF4);
+        func_8002635C(obj, obj2, spDC->unk5D, spDC->unk5E, (s8) spF8);
         func_800287E4(obj, obj2, -sp1A8, 0.0f, -sp1A0, 0);
         return 1;
     }
@@ -2076,10 +2076,10 @@ s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4)
 
     objHitInfo = obj->objhitInfo;
     modelInstance = obj->modelInsts[obj->modelInstIdx];
-    if ((objHitInfo->unk_0x9e != 0) || (objHitInfo->unk_0x9f != 0)) {
+    if ((objHitInfo->unk9E != 0) || (objHitInfo->unk9F != 0)) {
         return FALSE;
     }
-    if (objHitInfo->unk_0x5a & 0x10) {
+    if (objHitInfo->unk5A & 0x10) {
         model = modelInstance->model;
         spE4 = 10.0f;
         spE0 = arg2->x - arg1->x;
@@ -2089,7 +2089,7 @@ s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4)
         spA0 = arg1->y;
         sp9C = arg1->z - gWorldZ;
         temp_s3 = model->hitSphereCount;
-        temp_s5 = modelInstance->unk_0x24;
+        temp_s5 = modelInstance->unk24;
         temp_s4 = model->hitSpheres;
         spE8 = 0;
         for (i = 0; i < temp_s3; i++) {
@@ -2184,19 +2184,19 @@ void func_8002B410(Object* obj, s32 arg1) {
     ObjectStruct58* sp24;
     MtxF *a0;
 
-    sp24 = obj->unk0x58;
+    sp24 = obj->unk58;
     if (sp24 != NULL) {
         if (arg1 != 0) {
             sp24->unk10c = (sp24->unk10c + 1) & 1;
         }
         a0 = (MtxF *)((f32 *)sp24 + (sp24->unk10c << 4));
         srt.yaw = -obj->srt.yaw;
-        if (obj->objhitInfo->unk_0x58 & 0x800) {
+        if (obj->objhitInfo->unk58 & 0x800) {
             srt.pitch = 0;
         } else {
             srt.pitch = -obj->srt.pitch;
         }
-        if (obj->objhitInfo->unk_0x58 & 0x1000) {
+        if (obj->objhitInfo->unk58 & 0x1000) {
             srt.roll = 0;
         } else {
             srt.roll = -obj->srt.roll;
@@ -2207,12 +2207,12 @@ void func_8002B410(Object* obj, s32 arg1) {
         srt.transl.z = -obj->srt.transl.z;
         matrix_from_srt_reversed(a0, &srt);
         srt.yaw = obj->srt.yaw;
-        if (obj->objhitInfo->unk_0x58 & 0x800) {
+        if (obj->objhitInfo->unk58 & 0x800) {
             srt.pitch = 0;
         } else {
             srt.pitch = obj->srt.pitch;
         }
-        if (obj->objhitInfo->unk_0x58 & 0x1000) {
+        if (obj->objhitInfo->unk58 & 0x1000) {
             srt.roll = 0;
         } else {
             srt.roll = obj->srt.roll;
@@ -3939,7 +3939,7 @@ void func_800307C4(f32 arg0, f32 arg1) {
     i = sp38;
     while (i < sp34) {
         modelInstance = objects[i]->modelInsts[objects[i]->modelInstIdx];
-        if ((modelInstance != NULL) && (modelInstance->unk_0x34 & 0x20)) {
+        if ((modelInstance != NULL) && (modelInstance->unk34 & 0x20)) {
             func_80030994(modelInstance, arg0, arg1);
         }
         i++;
@@ -3957,9 +3957,9 @@ void func_80030880(void) {
     i = sp28;
     while (i < sp24) {
         temp_v1 = objects[i]->modelInsts[objects[i]->modelInstIdx];
-        if ((temp_v1->unk_0x34 & 0x20) != 0) {
-            temp_v1->unk_0x34 &= ~0x20;
-            temp_v1->unk_0x34 ^= 1;
+        if ((temp_v1->unk34 & 0x20) != 0) {
+            temp_v1->unk34 &= ~0x20;
+            temp_v1->unk34 ^= 1;
         }
         i += 1;
     }
@@ -3969,7 +3969,7 @@ void func_80030994(ModelInstance* modelInstance, f32 arg1, f32 arg2) {
     f32* current;
     f32* target;
 
-    current = modelInstance->matrices[(modelInstance->unk_0x34 & 1) ^ 1]->m[3];
+    current = modelInstance->matrices[(modelInstance->unk34 & 1) ^ 1]->m[3];
     target = (modelInstance->model->jointCount << 4) + current;
     while ((u32) current < (u32) target) {
         current[0] += arg1;
@@ -4035,7 +4035,7 @@ void func_80030AEC(Object* obj, Object* otherObj) {
     sp50.x = sp74.x - sp80.x;
     sp50.y = 0.0f;
     sp50.z = sp74.z - sp80.z;
-    temp_fa0 = vec3_normalize(&sp50) / (obj->unk_0xa8 + otherObj->unk_0xa8);
+    temp_fa0 = vec3_normalize(&sp50) / (obj->unkA8 + otherObj->unkA8);
     temp_fa0 = 1.0f - temp_fa0;
     spBC = (sp98.x * sp50.x) + (sp98.y * sp50.y) + (sp98.z * sp50.z);
     spB8 = (sp8C.x * sp50.x) + (sp8C.y * sp50.y) + (sp8C.z * sp50.z);
@@ -4085,7 +4085,7 @@ void func_80030AEC(Object* obj, Object* otherObj) {
 #endif
 
 void func_80030E2C(Object* obj, f32* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4) {
-    *arg1 = SQ(obj->unk_0xa8);
+    *arg1 = SQ(obj->unkA8);
     *arg1 = SQ(*arg1);
     *arg1 *= 3.926991f;
     arg3->x = obj->srt.transl.x;

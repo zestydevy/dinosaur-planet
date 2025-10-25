@@ -66,7 +66,7 @@ void perchObject_setup(Object* self, s32 arg1, s32 arg2) {
 
     objData->stateIndex = STATE_0_Initialise;
     obj_add_object_type(self, 0x30);
-    self->unk0xbc = (void*)&perchObject_anim_callback;
+    self->unkBC = (void*)&perchObject_anim_callback;
 }
 
 // offset: 0x74 | func: 1 | export: 1

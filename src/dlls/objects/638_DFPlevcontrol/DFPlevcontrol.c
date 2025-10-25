@@ -44,7 +44,7 @@ void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
 
     obj_add_object_type(self, OBJTYPE_10);
     _data_0 = queue_load_texture_proxy(0x46C);
-    self->unk0xbc = (void*)dll_638_func_62C;
+    self->unkBC = (void*)dll_638_func_62C;
     gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
     mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
 
@@ -70,7 +70,7 @@ void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
             main_set_bits(BIT_Spell_Grenade, 1);
             break;
     }
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
 }
 
 // offset: 0x260 | func: 1 | export: 1

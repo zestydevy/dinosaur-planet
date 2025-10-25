@@ -47,7 +47,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     Object *player;
 
     objdata = self->data;
-    self->unk0xbc = (ObjectCallback)IMIceMountain_anim_callback;
+    self->unkBC = (ObjectCallback)IMIceMountain_anim_callback;
     gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
@@ -183,7 +183,7 @@ void IMIceMountain_do_act1(Object *self) {
         if (main_get_bits(BIT_IM_Race_Started)) {
             objdata->state = STATE_Race;
         }
-        if (self->unk0xdc == 0) {
+        if (self->unkDC == 0) {
             func_80000860(self, self, 0xA3, 0);
             func_80000860(self, self, 0x9E, 0);
             func_80000860(self, self, 0x119, 0);
@@ -192,7 +192,7 @@ void IMIceMountain_do_act1(Object *self) {
             func_80000450(self, self, 0x17C, 0, 0, 0);
             func_80000450(self, self, 0x17B, 0, 0, 0);
             gDLL_12_Minic->vtbl->func6(1);
-            self->unk0xdc = 1;
+            self->unkDC = 1;
         }
         break;
     case STATE_Race:

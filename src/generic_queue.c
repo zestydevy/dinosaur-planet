@@ -66,22 +66,22 @@ void generic_queue_dequeue(GenericQueue *queue, void *outElement) {
 }
 
 void generic_queue_func_8000af78(GenericQueue *queue) {
-    queue->unk0x6 = queue->bottom;
+    queue->unk6 = queue->bottom;
 }
 
 s32 generic_queue_func_8000af88(GenericQueue *queue) {
-    return queue->unk0x6 == queue->top;
+    return queue->unk6 == queue->top;
 }
 
 void *generic_queue_func_8000afa0(GenericQueue *queue) {
     void *element;
 
-    element = (void*)((u32)queue->data + queue->unk0x6 * queue->elementSize);
+    element = (void*)((u32)queue->data + queue->unk6 * queue->elementSize);
     
-    queue->unk0x6 += 1;
+    queue->unk6 += 1;
 
-    if (queue->unk0x6 == queue->capacity) {
-        queue->unk0x6 = 0;
+    if (queue->unk6 == queue->capacity) {
+        queue->unk6 = 0;
     }
 
     return element;

@@ -31,7 +31,7 @@ void CClevcontrol_setup(Object *self, ObjSetup *objsetup, s32 arg2) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 14, 1);
     }
 
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x120 | func: 1 | export: 1

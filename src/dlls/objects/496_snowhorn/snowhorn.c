@@ -243,14 +243,14 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     objdata = snowhorn->data;
     sp34 = *_data_300;
     snowhorn->srt.yaw = mapsObj->rotation << 8;
-    snowhorn->unk0xbc = (void*)dll_496_func_84C;
+    snowhorn->unkBC = (void*)dll_496_func_84C;
     
     if (arg2 == 0) {
         obj_add_object_type(snowhorn, 0xC);
         objdata->unk50 = 0.005f;
         objdata->unkRadius = mapsObj->unkRadius;
         objdata->unk6 = mapsObj->unk1A * 0x3C;
-        snowhorn->unk0xaf |= 8;
+        snowhorn->unkAF |= 8;
 
         switch (mapsObj->unk1D) {
             case 0:
@@ -383,7 +383,7 @@ void dll_496_control(Object* snowhorn) {
         func_80025780(snowhorn, delayFloat, &sp44, 0);
     }
 
-    if ((objdata->chatSequenceList != 0) && (snowhorn->unk0xaf & 1)) {
+    if ((objdata->chatSequenceList != 0) && (snowhorn->unkAF & 1)) {
         if (objdata->unk424 & 0x20) {
             seqIndex = rand_next(0, objdata->unk426 - 1);
         } else {
@@ -440,7 +440,7 @@ s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
     if (objdata->unk424 & 1) {
         gDLL_27->vtbl->reset(self, &objdata->unk170);
     }
-    self->unk0xaf |= 8;
+    self->unkAF |= 8;
     animObjdata->unk62 = 0;
 
     for (i = 0; i < animObjdata->unk98; i++){
@@ -474,7 +474,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     
     temp1 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep, 0);
     temp2 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
-    snowhorn->unk0xaf |= 8;    
+    snowhorn->unkAF |= 8;    
     
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
@@ -514,7 +514,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
                 objdata->flags &= 0x7FFF;
-                snowhorn->unk0xaf &= 0xFFF7;
+                snowhorn->unkAF &= 0xFFF7;
                 return 0;
             }
             break;
@@ -562,8 +562,8 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
         objdata->sleepTimer = rand_next(0, 300);
         objdata->flags |= 0x8000;
 
-        snowhorn->unk0xaf |= 8;
-        snowhorn->unk0xaf &= -2;
+        snowhorn->unkAF |= 8;
+        snowhorn->unkAF &= -2;
         return;
     }
     
@@ -587,7 +587,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     } 
     
     objdata->sleepTimer = 0;
-    snowhorn->unk0xaf &= 0xFFF7;
+    snowhorn->unkAF &= 0xFFF7;
 
     switch (objdata->flags) {
         u32 rootsEaten;
@@ -615,7 +615,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             }
             break;
         case 2:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
+            if ((snowhorn->unkAF & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
                 main_decrement_bits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
@@ -624,7 +624,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             }
             break;
         case 4:
-            if ((snowhorn->unk0xaf & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
+            if ((snowhorn->unkAF & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
                 main_decrement_bits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
@@ -637,8 +637,8 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     }
     
     //Play chat sequence
-    if (snowhorn->unk0xaf & 1) {
-        snowhorn->unk0xaf &= 0xFFFE;
+    if (snowhorn->unkAF & 1) {
+        snowhorn->unkAF &= 0xFFFE;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->func17(objdata->flags, snowhorn, -1);
             set_button_mask(0, 0x8000);
@@ -768,9 +768,9 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
             questValue |= 0x8000;
             if (_data_270 != 0) {
                 objdata->flags = questValue;
-                temp_t3 = self->unk0xaf | 8;
-                self->unk0xaf = temp_t3;
-                self->unk0xaf = temp_t3 & 0xFFFE;
+                temp_t3 = self->unkAF | 8;
+                self->unkAF = temp_t3;
+                self->unkAF = temp_t3 & 0xFFFE;
                 break;
             }
             objdata->unk8 = (s16) (objdata->unk8 + delayByte);
@@ -823,8 +823,8 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 
     result = gDLL_26_Curves->vtbl->curves_func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
     if (!result){
-        snowhorn->srt.transl.x = objdata->unk60.unk0x68;
-        snowhorn->srt.transl.z = objdata->unk60.unk0x70;
+        snowhorn->srt.transl.x = objdata->unk60.unk68;
+        snowhorn->srt.transl.z = objdata->unk60.unk70;
         
         objdata->flags = 1;
         objdata->walkSpeed = 0.5f;
@@ -881,7 +881,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
             objdata->sleepTimer = rand_next(0, 300);
             return;
         }
-    } else if (snowhorn->unk0xaf & 4 || objdata->distanceFromPlayer < 80.0f) {
+    } else if (snowhorn->unkAF & 4 || objdata->distanceFromPlayer < 80.0f) {
         objdata->walkSpeed -= 0.025f;
         if (objdata->walkSpeed < 0.05f) {
             objdata->walkSpeed = 0.0f;
@@ -898,7 +898,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         gDLL_3_Animation->vtbl->func17(0x10, snowhorn, -1); //setAnimation?
         return;
     }
-    snowhorn->unk0xaf &= 0xFFF7;
+    snowhorn->unkAF &= 0xFFF7;
 
     if (objdata->flags != 0) {
         curveStruct = &objdata->unk60;
@@ -906,18 +906,18 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
             objdata->flags = 0;
             return;
         }
-        if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk0x10 != 0)) {
+        if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
             gDLL_26_Curves->vtbl->curves_func_4704(curveStruct);
         }
-        dx = curveStruct->unk0x68 - snowhorn->srt.transl.x;
-        dz = curveStruct->unk0x70 - snowhorn->srt.transl.z;
+        dx = curveStruct->unk68 - snowhorn->srt.transl.x;
+        dz = curveStruct->unk70 - snowhorn->srt.transl.z;
 
         //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf((dx * dx) + (dz * dz)) * inverseDelay;
         func_8002493C(snowhorn, speed, &objdata->unk50);
-        snowhorn->srt.yaw = arctan2_f(curveStruct->unk0x74, curveStruct->unk0x7C) + 0x8000;
-        snowhorn->srt.transl.x = curveStruct->unk0x68;
-        snowhorn->srt.transl.z = curveStruct->unk0x70;
+        snowhorn->srt.yaw = arctan2_f(curveStruct->unk74, curveStruct->unk7C) + 0x8000;
+        snowhorn->srt.transl.x = curveStruct->unk68;
+        snowhorn->srt.transl.z = curveStruct->unk70;
         objdata->unk424 &= 0xFFFB;
         
         if (objdata->walkSpeed <= 0.0f) {
@@ -954,7 +954,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
     Object* frostWeed;
     s32 weeds;
     
-    self->unk0xaf &= 0xFFF7;
+    self->unkAF &= 0xFFF7;
     switch (objdata->flags) {
         case 0:
             //Calling out to the player periodically
@@ -964,7 +964,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
                 gDLL_22_Subtitles->vtbl->func_368(0xA);
                 objdata->unk8 = 0;
             }
-            if (self->unk0xaf & 4) {
+            if (self->unkAF & 4) {
                 objdata->flags = 1;
             }
             break;
@@ -1041,7 +1041,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             }
             break;
         case 7:
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
             break;
     }
     

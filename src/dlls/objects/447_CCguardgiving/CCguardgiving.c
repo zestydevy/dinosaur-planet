@@ -77,7 +77,7 @@ void CCguardgiving_control(Object *self) {
         return;
     }
 
-    objdata->positionObj->unk0xaf |= 0x20;
+    objdata->positionObj->unkAF |= 0x20;
 
     switch (objdata->state) {
     case STATE_0:
@@ -140,7 +140,7 @@ void CCguardgiving_control(Object *self) {
 
 // offset: 0x66C | func: 2 | export: 2
 void CCguardgiving_update(Object *self) {
-    if (self->def->flags & 1 && self->unk0x74) {
+    if (self->def->flags & 1 && self->unk74) {
         func_80036438(self);
     }
 }

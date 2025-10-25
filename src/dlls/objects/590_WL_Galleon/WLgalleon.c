@@ -54,21 +54,21 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
     }
 
     obj_set_update_priority(self, 0x5A);
-    self->unk0xbc = (void*)WLgalleon_anim_callback;
+    self->unkBC = (void*)WLgalleon_anim_callback;
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xdc = 9;
+    self->unkDC = 9;
 
     objData->translate.x = self->srt.transl.x;
     objData->translate.y = self->srt.transl.y;
     objData->translate.z = self->srt.transl.z;
     objData->yaw = self->srt.yaw;
 
-    self->unk0xb0 |= 8;
+    self->unkB0 |= 8;
 
     func_80059038(0, (s32) self, 0);
 
     for (index = 0; index < 5; index++){
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, index, 0);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, index, 0);
     }
 }
 
@@ -81,7 +81,7 @@ void WLgalleon_control(Object* self) {
 
     if (!main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
         if (self->id == OBJ_SB_ShipShadow) {
-            self->unk_0x36 = 0x80;
+            self->unk36 = 0x80;
             return;
         }
 
@@ -89,25 +89,25 @@ void WLgalleon_control(Object* self) {
         objData = self->data;
 
         if (main_get_bits(BIT_429)) {
-            if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk_0x34, 2)) {
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 1, 0);
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 2, 0);
+            if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 2)) {
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 0);
             }
         } else if (!main_get_bits(BIT_WM_Played_Randorn_First_Meeting) && 
-                !gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk_0x34, 2)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 1, 1);
-            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 2, 1);
+                !gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 2)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 1);
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 1);
         }
 
         if (!main_get_bits(BIT_WM_Played_Randorn_First_Meeting)) {
             if (!objData->unk10 && !main_get_bits(BIT_429)) {
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 1, 1);
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 2, 1);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 1);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 1);
                 objData->unk10 = TRUE;
             }
         } else {
-            if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk_0x34, 4)) {
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 4, 1);
+            if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 4)) {
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 4, 1);
             }
             if (objData->unk10) {
                 objData->unk10 = FALSE;
@@ -117,7 +117,7 @@ void WLgalleon_control(Object* self) {
         arrivedAtWM = main_get_bits(BIT_Galleon_Arrived_at_Warlock_Mountain);
 
         if (arrivedAtWM) {
-            self->unk0xdc = 0xA;
+            self->unkDC = 0xA;
         }
 
         if (!arrivedAtWM) {
@@ -126,17 +126,17 @@ void WLgalleon_control(Object* self) {
             player->srt.transl.z = 5.0f;
             func_8005B5B8(player, self, 0);
             ((DLL_Unknown*)player->dll)->vtbl->func[68].withOneArg((s32)player);
-            self->unk_0xe0 = 1;
+            self->unkE0 = 1;
             return;
         }
 
-        if (self->unk_0xe0 == 1) {
+        if (self->unkE0 == 1) {
             self->srt.transl.x = objData->translate.x;
             self->srt.transl.y = objData->translate.y;
             self->srt.transl.z = objData->translate.z;
             self->srt.yaw = objData->yaw;
             gDLL_3_Animation->vtbl->func17(0, self, -1);
-            self->unk_0xe0 = 2;
+            self->unkE0 = 2;
         }
     }
 }
@@ -150,7 +150,7 @@ void WLgalleon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         return;
     }
 
-    if (self->id != OBJ_SB_ShipShadow || self->parent->unk0xdc < 7) {
+    if (self->id != OBJ_SB_ShipShadow || self->parent->unkDC < 7) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (dataShowKrystalsAdventureScreen[0]) {
             gDLL_20_Screens->vtbl->show_screen(1);
@@ -198,21 +198,21 @@ s32 WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObj
     for (index = 0; index < animObjData->unk98; index++){
         switch (animObjData->unk8E[index]) {
             case 1:
-                self->unk0xdc = 0xA;
+                self->unkDC = 0xA;
                 break;
             case 9:
-                self->unk0xdc = 0xB;
+                self->unkDC = 0xB;
                 break;
             case 4:
-                self->unk0xdc = 0xC;
+                self->unkDC = 0xC;
                 break;
             case 5:
-                self->unk0xdc = 0xD;
+                self->unkDC = 0xD;
                 break;
             case 6:
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 1, 0);
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 2, 0);
-                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 4, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 0);
+                gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 4, 0);
                 main_set_bits(BIT_WL_Load_Unload_Galleon, 0);
                 break;
             case 2:
@@ -232,9 +232,9 @@ s32 WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObj
                 break;
         }
     }
-    if (main_get_bits(BIT_429) && gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk_0x34, 2)) {
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 1, 0);
-        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk_0x34, 2, 0);
+    if (main_get_bits(BIT_429) && gDLL_29_Gplay->vtbl->get_obj_group_status(self->unk34, 2)) {
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 1, 0);
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, 2, 0);
     }
     return 0;
 }

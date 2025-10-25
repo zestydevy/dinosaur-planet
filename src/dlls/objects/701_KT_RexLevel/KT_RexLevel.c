@@ -39,16 +39,16 @@ void KT_RexLevel_setup(Object *self, ObjSetup *setup, s32 arg2) {
     main_set_bits(BIT_54E, 2);
     main_set_bits(BIT_552, 1);
     main_set_bits(BIT_556, 1);
-    self->unk0xdc = 0;
+    self->unkDC = 0;
 }
 
 // offset: 0x1FC | func: 1 | export: 1
 void KT_RexLevel_control(Object *self) {
     s32 temp_v0;
 
-    if (self->unk0xdc == 0) {
+    if (self->unkDC == 0) {
         main_set_bits(BIT_55E, 1);
-        self->unk0xdc = 1;
+        self->unkDC = 1;
     }
     temp_v0 = main_get_bits(BIT_572_KT_FightProgress);
     if (_bss_0 != (temp_v0 ^ 0)) {

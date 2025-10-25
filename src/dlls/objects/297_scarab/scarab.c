@@ -78,7 +78,7 @@ void dll_297_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
     objdata->unk20 = rand_next(50, 100);
     objdata->unk10 = setup->base.y;
 
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 
     switch (self->id) {
         case OBJ_Green_scarab:
@@ -122,7 +122,7 @@ void dll_297_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** 
         return;
     }
 
-    if (self->unk_0xe0) {
+    if (self->unkE0) {
         if (visibility != -1) {
             return;
         }

@@ -297,13 +297,13 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
         var_v0 = 0x11;
     }
     gDLL_33->vtbl->func21(self, setup, objdata, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
-    self->unk0xbc = (ObjectCallback)dll_702_func_119C;
+    self->unkBC = (ObjectCallback)dll_702_func_119C;
     gDLL_18_objfsa->vtbl->set_anim_state(self, &objdata->fsa, KT_ASTATE_0);
     objdata->fsa.logicState = KT_LSTATE_2_WALK; // set initial state
     objdata->fsa.target = NULL;
     objdata->fsa.unk4.mode = 0;
     objdata->fsa.unk33D = 0;
-    self->unk0xaf |= 0x88;
+    self->unkAF |= 0x88;
     func_8002674C(self);
     if (self->ptr0x64 != NULL) {
         self->ptr0x64->flags |= 0x810;
@@ -348,7 +348,7 @@ void dll_702_control(Object* self) {
     DLL33_Data* dll33Data;
     f32 vec[3];
 
-    if (self->unk0xdc == 0) {
+    if (self->unkDC == 0) {
         dll33Data = (DLL33_Data*)self->data;
         sDLL33Data = dll33Data;
         sKTData = sDLL33Data->unk3F4;
@@ -389,7 +389,7 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     s32 _pad;
  
     sDLL33Data = (DLL33_Data* ) self->data;
-    if ((visibility != 0) && (self->unk0xdc == 0)) {
+    if ((visibility != 0) && (self->unkDC == 0)) {
         if (sDLL33Data->unk3E8 != 0.0f) {
             func_80036FBC(0xC8, 0, 0, sDLL33Data->unk3E8);
         }
@@ -810,7 +810,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     sp60 = func_80025F40(self, &sp54, &sp5C, &sp58);
     if (sp60 != 0) {
         modelInst = self->modelInsts[self->modelInstIdx];
-        temp_v1 = modelInst->unk_0x24;
+        temp_v1 = modelInst->unk24;
         if ((fsa->unk348 != 0) && ((sp5C == 3) || (sp5C == 2))) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
@@ -827,7 +827,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, _data_90[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
-            temp_v1 = modelInst->unk_0x24;
+            temp_v1 = modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
@@ -1020,7 +1020,7 @@ static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredLogicState) {
         gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
         func_80013FB4();
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
         fsa->unk33D = 0;
         fsa->unk4.mode = 0;
         obj_send_mesg(get_player(), 0xE0000, self, NULL);
@@ -1156,7 +1156,7 @@ static s32 dll_702_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_6_ZAPPED);
-        self->unk0xaf &= ~0x8;
+        self->unkAF &= ~0x8;
     } else if (fsa->unk33A != 0) {
         return KT_LSTATE_8_ON_GROUND + 1;
     }
@@ -1175,7 +1175,7 @@ static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         sKTData->timer = (f32) objsetup->vulnerableTime[sKTData->fightProgress >> 1];
         sKTData->flags |= KTFLAG_VULNERABLE;
         sKTData->flags &= ~KTFLAG_DAMAGED;
-        self->unk0xaf &= ~8;
+        self->unkAF &= ~8;
     } else {
         if ((sKTData->flags & KTFLAG_DAMAGED) || (sKTData->timer -= delayFloat) <= 0.0f) {
             if (sKTData->flags & KTFLAG_DAMAGED) {
@@ -1184,7 +1184,7 @@ static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
             if (sKTData->health <= 0) {
                 return KT_LSTATE_1_DEFEATED + 1;
             }
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
             return KT_LSTATE_9_STAND_UP + 1;
         }
     }

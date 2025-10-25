@@ -147,7 +147,7 @@ void update_objects() {
         update_object(obj);
         node = *((void**)(nextFieldOffset + (u32)node));
 
-        if (obj->objhitInfo->unk_0x58){} // fake match
+        if (obj->objhitInfo->unk58){} // fake match
     }
 
     for (obj = (Object*)node; node != NULL && obj->def->flags & 0x40; obj = (Object*)node) {
@@ -162,7 +162,7 @@ void update_objects() {
         obj = (Object*)node;
 
         if (obj->objhitInfo != NULL) {
-            if (obj->objhitInfo->unk_0x5a != 8 || (obj->objhitInfo->unk_0x58 & 1) == 0) {
+            if (obj->objhitInfo->unk5A != 8 || (obj->objhitInfo->unk58 & 1) == 0) {
                 update_object(obj);
             }
         } else {
@@ -240,12 +240,12 @@ void update_obj_models() {
                 modelInst = object->modelInsts[k];
 
                 if (modelInst != NULL) {
-                    modelInst->unk_0x34 &= ~0x8;
+                    modelInst->unk34 &= ~0x8;
 
                     if (modelInst->model->blendshapes != NULL) {
-                        unk1 = object->unk0xc0 != NULL ? (ObjectC0_Data*)object->unk0xc0->data : NULL;
+                        unk1 = object->unkC0 != NULL ? (ObjectC0_Data*)object->unkC0->data : NULL;
 
-                        if (object->unk0xc0 == NULL || (unk1 != NULL && unk1->unk_0x62 == 0)) {
+                        if (object->unkC0 == NULL || (unk1 != NULL && unk1->unk62 == 0)) {
                             func_8001B084(modelInst, delayFloat);
                         }
                     }
@@ -374,9 +374,9 @@ void func_80020EE4(s32 param1, s32 param2) {
             obj = gObjList[i];
 
             if (obj->def->flags & 0x80000) {
-                obj->unk_0xa4 = obj->def->unk9d * 1000;
+                obj->unkA4 = obj->def->unk9d * 1000;
             } else {
-                obj->unk_0xa4 = -camera_get_angle_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+                obj->unkA4 = -camera_get_angle_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
             }
         }
 
@@ -384,7 +384,7 @@ void func_80020EE4(s32 param1, s32 param2) {
             endLoop = TRUE;
 
             for (i = param1; i < param2; i++) {
-                if (gObjList[i]->unk_0xa4 < gObjList[i + 1]->unk_0xa4) {
+                if (gObjList[i]->unkA4 < gObjList[i + 1]->unkA4) {
                     obj = gObjList[i];
                     gObjList[i] = gObjList[i + 1];
                     gObjList[i + 1] = obj;
@@ -404,8 +404,8 @@ void func_800210DC() {
     for (i = 0; i < gNumObjs; i++) {
         obj = gObjList[i];
 
-        if (obj->unk0xc0 != NULL) {
-            var = obj->unk0xc0;
+        if (obj->unkC0 != NULL) {
+            var = obj->unkC0;
 
             if (obj->parent == NULL) {
                 if (var->parent != NULL) {
@@ -413,7 +413,7 @@ void func_800210DC() {
                 }
             }
             
-            obj->unk0xc0 = NULL;
+            obj->unkC0 = NULL;
         }
     }
 }
@@ -553,7 +553,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     }
 
     if (def->flags & 0x40000) {
-        objHeader.unk0xb0 |= 0x80;
+        objHeader.unkB0 |= 0x80;
     }
 
     if (setupFlags & OBJSETUP_FLAG_4) {
@@ -566,15 +566,15 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     objHeader.setup = setup;
     objHeader.tabIdx = tabIdx;
     objHeader.id = objId;
-    objHeader.unk0xb2 = param4;
+    objHeader.unkB2 = param4;
     objHeader.mapID = mapID;
     objHeader.curModAnimIdLayered = -1;
-    objHeader.unk0xb4 = -1;
+    objHeader.unkB4 = -1;
     objHeader.srt.scale = def->scale;
-    objHeader.unk_0x36 = 0xFF;
+    objHeader.unk36 = 0xFF;
     objHeader.mesgQueue = NULL;
-    objHeader.unk0x3c = setup->loadDistance << 3;
-    objHeader.unk0x40 = setup->fadeDistance << 3;
+    objHeader.unk3C = setup->loadDistance << 3;
+    objHeader.unk40 = setup->fadeDistance << 3;
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
@@ -667,7 +667,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
         addr = func_8004D8A4(obj, addr, 0);
     }
 
-    obj->unk_0xa8 = func_80022150(obj) * obj->srt.scale;
+    obj->unkA8 = func_80022150(obj) * obj->srt.scale;
 
     if (def->unk8F != 0) {
         addr = func_8002667C(obj, addr);
@@ -688,8 +688,8 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     }
 
     if (def->unk9b != 0) {
-        obj->unk0x74 = (void*)mmAlign4(addr);
-        addr = (u32)obj->unk0x74 + (def->unk9b * 0x18);
+        obj->unk74 = (void*)mmAlign4(addr);
+        addr = (u32)obj->unk74 + (def->unk9b * 0x18);
     }
 
     if (def->unk8F != 0 && def->unk74 != 0) {
@@ -698,14 +698,14 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     }
 
     if (def->unk9b != 0) {
-        obj->unk_0x78 = (ObjectStruct78*)mmAlign4(addr);
+        obj->unk78 = (ObjectStruct78*)mmAlign4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
-            obj->unk_0x78[j].unk4 = def->unk40[j].unk10;
-            obj->unk_0x78[j].unk0 = def->unk40[j].unk0c;
-            obj->unk_0x78[j].unk3 = def->unk40[j].unk0f;
-            obj->unk_0x78[j].unk1 = def->unk40[j].unk0d;
-            obj->unk_0x78[j].unk2 = def->unk40[j].unk0e;
+            obj->unk78[j].unk4 = def->unk40[j].unk10;
+            obj->unk78[j].unk0 = def->unk40[j].unk0c;
+            obj->unk78[j].unk3 = def->unk40[j].unk0f;
+            obj->unk78[j].unk1 = def->unk40[j].unk0d;
+            obj->unk78[j].unk2 = def->unk40[j].unk0e;
         }
     }
 
@@ -738,13 +738,13 @@ void obj_add_object(Object *obj, u32 setupFlags) {
     copy_obj_position_mirrors(obj, obj->setup, 0);
 
     if (obj->objhitInfo != NULL) {
-        obj->objhitInfo->unk_0x10.x = obj->srt.transl.x;
-        obj->objhitInfo->unk_0x10.y = obj->srt.transl.y;
-        obj->objhitInfo->unk_0x10.z = obj->srt.transl.z;
+        obj->objhitInfo->unk10.x = obj->srt.transl.x;
+        obj->objhitInfo->unk10.y = obj->srt.transl.y;
+        obj->objhitInfo->unk10.z = obj->srt.transl.z;
 
-        obj->objhitInfo->unk_0x20.x = obj->srt.transl.x;
-        obj->objhitInfo->unk_0x20.y = obj->srt.transl.y;
-        obj->objhitInfo->unk_0x20.z = obj->srt.transl.z;
+        obj->objhitInfo->unk20.x = obj->srt.transl.x;
+        obj->objhitInfo->unk20.y = obj->srt.transl.y;
+        obj->objhitInfo->unk20.z = obj->srt.transl.z;
     }
 
     if (obj->def->unka0 > -1) {
@@ -766,7 +766,7 @@ void obj_add_object(Object *obj, u32 setupFlags) {
     }
 
     if (setupFlags & OBJSETUP_FLAG_1) {
-        obj->unk0xb0 |= 0x10;
+        obj->unkB0 |= 0x10;
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
 
@@ -895,7 +895,7 @@ static const char str_80099620[] = "objFreeTick %08x locked %d,already on list\n
 
 // name guessed from leftover strings
 void obj_free_tick(Object *obj) {
-    if (obj->unk0xb0 & 0x10) {
+    if (obj->unkB0 & 0x10) {
         linked_list_remove(&gObjUpdateList, obj);
     }
 }
@@ -906,7 +906,7 @@ void obj_add_tick(Object *obj) {
     Object *objNode;
     s32 nextFieldOffset;
     
-    if (obj->unk0xb0 & 0x10) {
+    if (obj->unkB0 & 0x10) {
         nextFieldOffset = gObjUpdateList.nextFieldOffset;
         insertAfter = NULL;
 
@@ -933,12 +933,12 @@ void obj_destroy_object(Object *obj) {
         return;
     }
 
-    if (!(obj->unk0xb0 & 0x40)) {
-        if (obj->unk_0xd9 != 0) {
+    if (!(obj->unkB0 & 0x40)) {
+        if (obj->unkD9 != 0) {
             func_8003273C(obj);
         }
 
-        if (obj->unk0xb0 & 0x10) {
+        if (obj->unkB0 & 0x10) {
             for (i = 0; i < gNumObjs; i++) {
                 if (obj == gObjList[i]) {
                     break;
@@ -957,9 +957,9 @@ void obj_destroy_object(Object *obj) {
             func_80020D90();
         }
 
-        obj->unk0xb0 |= 0x40;
+        obj->unkB0 |= 0x40;
 
-        if (obj->unk_0xda != 0) {
+        if (obj->unkDA != 0) {
             for (i = 0; i < D_800B191C; i++) {
                 if (obj == D_800B1918[i]) {
                     break;
@@ -1016,19 +1016,19 @@ void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3) {
 }
 
 void update_object(Object *obj) {
-    if (obj->unk0xb0 & 0x40) {
+    if (obj->unkB0 & 0x40) {
         return;
     }
 
-    if (obj->unk0xc0 != NULL) {
+    if (obj->unkC0 != NULL) {
         if (obj->linkedObject != NULL) {
-            obj->linkedObject->objhitInfo->unk_0x48 = 0;
-            obj->linkedObject->objhitInfo->unk_0x62 = 0;
+            obj->linkedObject->objhitInfo->unk48 = 0;
+            obj->linkedObject->objhitInfo->unk62 = 0;
         }
 
         if (obj->objhitInfo != NULL) {
-            obj->objhitInfo->unk_0x48 = 0;
-            obj->objhitInfo->unk_0x62 = 0;
+            obj->objhitInfo->unk48 = 0;
+            obj->objhitInfo->unk62 = 0;
         }
     } else {
         update_pi_manager_array(1, obj->id);
@@ -1043,7 +1043,7 @@ void update_object(Object *obj) {
             obj->positionMirror3.z = obj->positionMirror.z;
         }
 
-        if (obj->dll != NULL && !(obj->unk0xb0 & 0x8000)) {
+        if (obj->dll != NULL && !(obj->unkB0 & 0x8000)) {
             obj->dll->vtbl->control(obj);
 
             get_object_child_position(obj,
@@ -1052,20 +1052,20 @@ void update_object(Object *obj) {
 
         if (obj->objhitInfo != NULL) {
             if (obj->linkedObject != NULL) {
-                obj->linkedObject->objhitInfo->unk_0x48 = 0;
-                obj->linkedObject->objhitInfo->unk_0x62 = 0;
+                obj->linkedObject->objhitInfo->unk48 = 0;
+                obj->linkedObject->objhitInfo->unk62 = 0;
             }
 
-            obj->objhitInfo->unk_0x4c = 0;
-            obj->objhitInfo->unk_0x48 = 0;
-            obj->objhitInfo->unk_0x62 = 0;
+            obj->objhitInfo->unk4C = 0;
+            obj->objhitInfo->unk48 = 0;
+            obj->objhitInfo->unk62 = 0;
         }
 
-        if (obj->unk0x58 != NULL) {
-            obj->unk0x58->unk10f = 0;
+        if (obj->unk58 != NULL) {
+            obj->unk58->unk10f = 0;
         }
 
-        obj->unk0xaf &= 0xFFF8;
+        obj->unkAF &= 0xFFF8;
 
         update_pi_manager_array(1, -1);
     }
@@ -1074,7 +1074,7 @@ void update_object(Object *obj) {
 void func_8002272C(Object *obj) {
     update_pi_manager_array(3, obj->id);
 
-    if (obj->dll != NULL && !(obj->unk0xb0 & 0x2000)) {
+    if (obj->dll != NULL && !(obj->unkB0 & 0x2000)) {
         obj->dll->vtbl->update(obj);
 
         get_object_child_position(obj,
@@ -1468,15 +1468,15 @@ void obj_free_object(Object *obj, s32 param2) {
                 obj_destroy_object(stackObjs[i]);
             }
 
-            func_80045F48(obj->unk_0x34);
+            func_80045F48(obj->unk34);
         }
     }
 
     if (!param2 && obj->group == GROUP_UNK16) {
         for (i = 0; i < gNumObjs; i++) {
             obj2 = gObjList[i];
-            if (obj == obj2->unk0xc0) {
-                obj2->unk0xc0 = NULL;
+            if (obj == obj2->unkC0) {
+                obj2->unkC0 = NULL;
             }
         }
     }
@@ -1500,7 +1500,7 @@ void obj_free_object(Object *obj, s32 param2) {
     if (obj->def->unk87 & 0x10) {
         newLfxStruct.unk12.asByte = 2;
         newLfxStruct.unke = 0;
-        newLfxStruct.unk10 = obj->unk_0xd6;
+        newLfxStruct.unk10 = obj->unkD6;
         newLfxStruct.unk1b = 0;
 
         gDLL_11_Newlfx->vtbl->func0(obj, obj, &newLfxStruct, 0, 0, 0);
@@ -1535,10 +1535,10 @@ void obj_free_object(Object *obj, s32 param2) {
 
     obj_free_objdef(obj->tabIdx);
 
-    if (obj->unk0xb4 >= 0) {
+    if (obj->unkB4 >= 0) {
         if (!param2) {
-            gDLL_3_Animation->vtbl->func18((s32)obj->unk0xb4);
-            obj->unk0xb4 = -1;
+            gDLL_3_Animation->vtbl->func18((s32)obj->unkB4);
+            obj->unkB4 = -1;
         }
     }
 
@@ -1737,7 +1737,7 @@ void obj_set_update_priority(Object *obj, s8 priority) {
 }
 
 void func_80023A18(Object *obj, s32 param2) {
-    obj->unk0xb0 &= 0xF0FF;
+    obj->unkB0 &= 0xF0FF;
 
     if (param2 == obj->modelInstIdx) {
         return;
@@ -1749,8 +1749,8 @@ void func_80023A18(Object *obj, s32 param2) {
         param2 = obj->def->numModels - 1;
     }
 
-    obj->unk0xb0 |= 0x800;
-    obj->unk0xb0 |= (param2 << 8) & 0x700;
+    obj->unkB0 |= 0x800;
+    obj->unkB0 |= (param2 << 8) & 0x700;
 }
 
 void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
@@ -1758,11 +1758,11 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     ModelInstance *modelInst2;
     s32 prevAnimId;
 
-    modelInstIdx = (obj->unk0xb0 & 0x700) >> 8;
+    modelInstIdx = (obj->unkB0 & 0x700) >> 8;
     modelInst2 = obj->modelInsts[modelInstIdx];
 
-    modelInst2->unk_0x34 &= 0xFFF0;
-    modelInst2->unk_0x34 |= modelInst->unk_0x34 & 7;
+    modelInst2->unk34 &= 0xFFF0;
+    modelInst2->unk34 |= modelInst->unk34 & 7;
 
     prevAnimId = obj->curModAnimId;
 
@@ -1773,14 +1773,14 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     func_80023D30(obj, prevAnimId, obj->animProgress, 0);
 
     if (obj->objhitInfo != NULL) {
-        if ((obj->objhitInfo->unk_0x5a & 0x10)) {
-            obj->objhitInfo->unk_0x9f = 2;
+        if ((obj->objhitInfo->unk5A & 0x10)) {
+            obj->objhitInfo->unk9F = 2;
         }
 
-        obj->objhitInfo->unk_0x9e = 1;
+        obj->objhitInfo->unk9E = 1;
     }
 
-    obj->unk0xb0 &= 0xF0FF;
+    obj->unkB0 &= 0xF0FF;
 }
 
 static const char str_80099780[] = "warning: objAddEffectBox max effect boxes\n";
@@ -1820,10 +1820,10 @@ void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
     ObjectStruct78 *dst;
 
     if (obj != NULL) {
-        dst = obj->unk_0x78;
+        dst = obj->unk78;
 
         if (dst != NULL) {
-            dst += obj->unk_0xd4;
+            dst += obj->unkD4;
 
             if (param2 != 0) {
                 dst->unk0 = param2 >> 2;
@@ -1853,11 +1853,11 @@ void func_80023C6C(Object *obj) {
     ObjectStruct78 *dst;
 
     if (obj != NULL) {
-        dst = obj->unk_0x78;
+        dst = obj->unk78;
 
         if (dst != NULL) {
-            src = &obj->def->unk40[obj->unk_0xd4];
-            dst += obj->unk_0xd4;
+            src = &obj->def->unk40[obj->unkD4];
+            dst += obj->unkD4;
 
             dst->unk0 = src->unk0c;
             dst->unk1 = src->unk0d;
@@ -1876,7 +1876,7 @@ void func_80023CD8(Object *obj, u16 param2) {
         param2 = 0;
     }
 
-    obj->unk_0xd4 = param2;
+    obj->unkD4 = param2;
 }
 
 void func_80023D08(Object *obj, u16 param2) {
@@ -1884,5 +1884,5 @@ void func_80023D08(Object *obj, u16 param2) {
         param2 = 0;
     }
 
-    obj->unk_0xd8 = param2;
+    obj->unkD8 = param2;
 }

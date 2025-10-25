@@ -107,7 +107,7 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
     
     objdata->unk296 = 0x32;
     if (self->id == OBJ_Tumbleweed1twig || self->id == OBJ_Tumbleweed2twig || self->id == OBJ_Tumbleweed3twig) {
-        self->unk0xaf &= 0xFFF7;
+        self->unkAF &= 0xFFF7;
         objdata->unk270 = 3;
         objdata->unk268 = 480.0f;
         self->srt.scale = objdata->scaleCopy;
@@ -117,7 +117,7 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
         gDLL_27->vtbl->setup_hits_collider(&objdata->unk0, 1, &_data_0, &_data_C, 4);
         gDLL_27->vtbl->reset(self, &objdata->unk0);
         objdata->unk270 = 0;
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
         
         if (objdata->unk271 & 1) {
             objects = get_world_objects(&index, &count);
@@ -220,8 +220,8 @@ void dll_227_func_420(Object* self) {
     }
     
     if (objdata->flags & 4){
-        self->unk_0x36 = 0;
-        self->unk0xaf |= 8;
+        self->unk36 = 0;
+        self->unkAF |= 8;
         objdata->unk270 = 4;
         objdata->unk268 = 120.0f;
     }
@@ -318,7 +318,7 @@ void dll_227_func_174C(Object* self) {
     if (objdata->unk270 == 1) {
         func_8002674C(self);
         objdata->unk270 = 2;
-        self->unk0xaf &= ~8;
+        self->unkAF &= ~8;
     }
 }
 
@@ -464,7 +464,7 @@ s32 dll_227_func_1D64(Object* self) {
         if (temp_v0 & 0xFF) {
             objdata->unk299 = 1;
         }
-        self->unk0xaf &= 0xFFF7;
+        self->unkAF &= 0xFFF7;
         return 1;
     }
     
@@ -480,16 +480,16 @@ s32 dll_227_func_1D64(Object* self) {
         self->srt.scale = 0.15f;
     }
     
-    self->unk0xaf |= 8;
+    self->unkAF |= 8;
     objdata->unk268 = 0.0f;
     if (get_masked_button_presses(0) & 0x8000) {
         set_button_mask(0, 0x8000);
         objdata->unk299 = 0;
     }
-    if (self->unk_0xe0 == 1) {
+    if (self->unkE0 == 1) {
         objdata->unk298 = 2;
     }
-    if ((objdata->unk298 == 2) && (self->unk_0xe0 == 0)) {
+    if ((objdata->unk298 == 2) && (self->unkE0 == 0)) {
         objdata->unk298 = 0;
         objdata->unk299 = 0;
     }
@@ -506,7 +506,7 @@ s32 dll_227_func_1FA0(Object* self) {
 
     objdata = self->data;
     returnVal = 0;
-    if (self->unk0xaf & 1 && self->unk_0xe0 == 0) {
+    if (self->unkAF & 1 && self->unkE0 == 0) {
         objdata->unk294 = 0;
         set_button_mask(0, 0x8000);
         objdata->unk26C = rand_next(0x78, 0xF0);

@@ -49,7 +49,7 @@ void sfxplayer_setup(Object* self, SfxPlayer_Setup* setup, s32 arg2) {
         objdata->hasPlayed = 1;
     }
 
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
     objdata->distanceSqInner = setup->radius * 2;
     objdata->distanceSqOuter = objdata->distanceSqInner + 10.0f;
     objdata->distanceSqInner = objdata->distanceSqInner * objdata->distanceSqInner;

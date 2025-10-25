@@ -53,7 +53,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
     s32 index;
 
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
 
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
@@ -71,7 +71,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
-    self->unk0xbc = (void*)&pressureswitch_anim_callback;
+    self->unkBC = (void*)&pressureswitch_anim_callback;
 }
 
 // offset: 0x148 | func: 1 | export: 1
@@ -101,9 +101,9 @@ void pressureswitch_control(Object* self) {
     }
 
     //Handle adding objects to switch
-    if (self->unk0x58->unk10f > 0) {
-        for (index = 0; index < self->unk0x58->unk10f; index++){
-            listedObject = (Object*)self->unk0x58->unk100[index];
+    if (self->unk58->unk10f > 0) {
+        for (index = 0; index < self->unk58->unk10f; index++){
+            listedObject = (Object*)self->unk58->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > setup->yThreshold) {
                 pressureswitch_add_object(self, listedObject);

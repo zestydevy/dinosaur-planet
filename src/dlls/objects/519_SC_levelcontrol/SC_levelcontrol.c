@@ -103,7 +103,7 @@ void SC_levelcontrol_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->isNighttime = FALSE;
     objdata->unk2 = 0;
     objdata->index1 = main_get_bits(BIT_SC_UNKNOWN_2BA);
-    self->unk0xbc = (ObjectCallback)SC_levelcontrol_func_12D8;
+    self->unkBC = (ObjectCallback)SC_levelcontrol_func_12D8;
 }
 
 // offset: 0x90 | func: 1 | export: 1

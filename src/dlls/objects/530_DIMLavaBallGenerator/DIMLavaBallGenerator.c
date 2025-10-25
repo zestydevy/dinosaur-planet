@@ -79,7 +79,7 @@ void DIMLavaBallGenerator_setup(Object *self, DIMLavaBallGenerator_Setup *setup,
         objdata->lfxStructs[0] = mmAlloc(sizeof(NewLfxStruct_Local), ALLOC_TAG_OBJECTS_COL, NULL);
         objdata->lfxStructs[1] = mmAlloc(sizeof(NewLfxStruct_Local), ALLOC_TAG_OBJECTS_COL, NULL);
     }
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
 }
 
 // offset: 0x114 | func: 1 | export: 1

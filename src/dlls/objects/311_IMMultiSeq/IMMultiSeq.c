@@ -46,8 +46,8 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xbc = (ObjectCallback)IMMultiSeq_anim_callback;
-    self->unk0xb0 |= 0x6000;
+    self->unkBC = (ObjectCallback)IMMultiSeq_anim_callback;
+    self->unkB0 |= 0x6000;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         // diPrintf("SEQOBJ.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
@@ -150,7 +150,7 @@ int IMMultiSeq_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
     setup = (IMMultiSeq_Setup*)self->setup;
     animObjData->unk62 = 0;
     animObjData->unk7A = animObjData->unk7C;
-    if (self->unk0xb4 == -1) {
+    if (self->unkB4 == -1) {
         return 0;
     }
     currentSetBitsCount = objdata->setBitsCount;
@@ -158,7 +158,7 @@ int IMMultiSeq_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
     if (currentSetBitsCount != IMMULTISEQ_GAMEBIT_COUNT && nextSetBitsCount < IMMULTISEQ_GAMEBIT_COUNT && setup->gamebits2[nextSetBitsCount] != -1) {
         value = VALUE_GAMEBITS2(nextSetBitsCount) == 0;
         if (main_get_bits(setup->gamebits2[nextSetBitsCount]) == value) {
-            gDLL_3_Animation->vtbl->func18(self->unk0xb4);
+            gDLL_3_Animation->vtbl->func18(self->unkB4);
         }
     }
     objdata->flags |= IMMULTISEQ_SET_GAMEBIT;

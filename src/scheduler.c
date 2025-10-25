@@ -59,7 +59,7 @@ void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4) {
 
     c->msgQ = msgQ;
     c->next = s->clientList;
-    c->unk0x0 = param4;
+    c->unk0 = param4;
     s->clientList = c;
 
     osSetIntMask(mask);
@@ -214,8 +214,8 @@ static const char str_8009a254[] = "scheduler: Looks like the DP has crashed %s"
 void some_dummied_task_func(OSScTask *task) { }
 
 Gfx *func_8003BAD0(OSSched *sc, 
-    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
-    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
+    char **retFile, u32 *retunkC, s32 *retunk10,
+    char **retFile_2, u32 *retunkC_2, s32 *retunk10_2) {
 
     OSMesg queueBuffer[8];
     OSMesg queueMsg;
@@ -223,18 +223,18 @@ Gfx *func_8003BAD0(OSSched *sc,
     s64 tempCmds[2];
     Gfx *displayListPtr;
     OSTask *task;
-    s32 dldi_unk0x10_2;
-    s32 dldi_unk0x10;
+    s32 dldi_unk10_2;
+    s32 dldi_unk10;
     char *dldi_file_2;
     char *dldi_file;
     s32 done;
     s32 numRetraces;
     s32 gotRdpDone;
     s32 cmdIndex;
-    u32 dldi_unk0xc_2;
-    u32 dldi_unk0xc;
-    u32 dldi_unk0x4_2;
-    u32 dldi_unk0x4;
+    u32 dldi_unkC_2;
+    u32 dldi_unkC;
+    u32 dldi_unk4_2;
+    u32 dldi_unk4;
 
     queueMsg = 0;
     done = FALSE;
@@ -339,19 +339,19 @@ Gfx *func_8003BAD0(OSSched *sc,
         *retFile = NULL;
 
         dl_get_debug_info2(displayListPtr,
-            &dldi_unk0x4, &dldi_file, &dldi_unk0xc, &dldi_unk0x10,
-            &dldi_unk0x4_2, &dldi_file_2, &dldi_unk0xc_2, &dldi_unk0x10_2);
+            &dldi_unk4, &dldi_file, &dldi_unkC, &dldi_unk10,
+            &dldi_unk4_2, &dldi_file_2, &dldi_unkC_2, &dldi_unk10_2);
         
         if (dldi_file_2 != NULL || dldi_file != NULL) {
             if (dldi_file != NULL) {
                 *retFile = dldi_file;
-                *retUnk0xc = dldi_unk0xc;
-                *retUnk0x10 = dldi_unk0x10;
+                *retunkC = dldi_unkC;
+                *retunk10 = dldi_unk10;
             }
             if (dldi_file_2 != NULL) {
                 *retFile_2 = dldi_file_2;
-                *retUnk0xc_2 = dldi_unk0xc_2;
-                *retUnk0x10_2 = dldi_unk0x10_2;
+                *retunkC_2 = dldi_unkC_2;
+                *retunk10_2 = dldi_unk10_2;
             }
         }
     }
@@ -369,18 +369,18 @@ void __scHandleRetrace(OSSched *sc) {
     u8 setRDPTaskToNull = FALSE;
     Gfx *displayListPtr1;
     Gfx *displayListPtr2;
-    s32 sp_dldi_unk0x10;
-    s32 sp_dldi_unk0x10_2;
-    s32 dp_dldi_unk0x10;
-    s32 dp_dldi_unk0x10_2;
+    s32 sp_dldi_unk10;
+    s32 sp_dldi_unk10_2;
+    s32 dp_dldi_unk10;
+    s32 dp_dldi_unk10_2;
     char *sp_dldi_file;
     char *sp_dldi_file_2;
     char *dp_dldi_file;
     char *dp_dldi_file_2;
-    u32 sp_dldi_unk0xc;
-    u32 sp_dldi_unk0xc_2;
-    u32 dp_dldi_unk0xc;
-    u32 dp_dldi_unk0xc_2;
+    u32 sp_dldi_unkC;
+    u32 sp_dldi_unkC_2;
+    u32 dp_dldi_unkC;
+    u32 dp_dldi_unkC_2;
     OSMesg queueBuffer[8];
     OSMesgQueue queue;
     OSScTask *unkTask2;
@@ -405,8 +405,8 @@ void __scHandleRetrace(OSSched *sc) {
 
             if (sc->curRSPTask->list.t.type == OS_SC_TASK_AUDIO) {
                 displayListPtr1 = func_8003BAD0(sc, 
-                    &sp_dldi_file, &sp_dldi_unk0xc, &sp_dldi_unk0x10, 
-                    &sp_dldi_file_2, &sp_dldi_unk0xc_2, &sp_dldi_unk0x10_2);
+                    &sp_dldi_file, &sp_dldi_unkC, &sp_dldi_unk10, 
+                    &sp_dldi_file_2, &sp_dldi_unkC_2, &sp_dldi_unk10_2);
             }
 
             gCurRSPTaskIsSet = 0;
@@ -423,7 +423,7 @@ void __scHandleRetrace(OSSched *sc) {
     }
 
     if ((gCurRDPTaskCounter > 10) && (sc->curRDPTask)) {
-        if (sc->curRDPTask->unk0x68 == 0) {
+        if (sc->curRDPTask->unk68 == 0) {
             osSendMesg(sc->curRDPTask->msgQ, (OSMesg)&D_800918D8, OS_MESG_BLOCK);
         }
 
@@ -433,8 +433,8 @@ void __scHandleRetrace(OSSched *sc) {
 
             if (sc->curRDPTask->list.t.type == OS_SC_TASK_AUDIO) {
                 displayListPtr2 = func_8003BAD0(sc, 
-                    &dp_dldi_file, &dp_dldi_unk0xc, &dp_dldi_unk0x10, 
-                    &dp_dldi_file_2, &dp_dldi_unk0xc_2, &dp_dldi_unk0x10_2);
+                    &dp_dldi_file, &dp_dldi_unkC, &dp_dldi_unk10, 
+                    &dp_dldi_file_2, &dp_dldi_unkC_2, &dp_dldi_unk10_2);
             }
 
             gCurRDPTaskIsSet = FALSE;
@@ -478,12 +478,12 @@ void __scHandleRetrace(OSSched *sc) {
             if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
                 if (sp_dldi_file != NULL) {
                     diPrintfSetXY(30, 40);
-                    diPrintf("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                    diPrintf("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file, sp_dldi_unkC, sp_dldi_unk10);
                 }
 
                 if (sp_dldi_file_2 != NULL) {
                     diPrintfSetXY(30, 50);
-                    diPrintf("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                    diPrintf("TRACE:  %s:%d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unkC_2, sp_dldi_unk10_2);
                 }
             }
         }
@@ -495,12 +495,12 @@ void __scHandleRetrace(OSSched *sc) {
             if (sp_dldi_file != NULL || sp_dldi_file_2 != NULL) {
                 if (sp_dldi_file != NULL) {
                     diPrintfSetXY(30, 80);
-                    diPrintf("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file, sp_dldi_unk0xc, sp_dldi_unk0x10);
+                    diPrintf("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file, sp_dldi_unkC, sp_dldi_unk10);
                 }
 
                 if (sp_dldi_file_2 != NULL) {
                     diPrintfSetXY(30, 90);
-                    diPrintf("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unk0xc_2, sp_dldi_unk0x10_2);
+                    diPrintf("TRACE:  %s:%5d    gfx=%x\n", sp_dldi_file_2, sp_dldi_unkC_2, sp_dldi_unk10_2);
                 }
             }
         }
@@ -558,7 +558,7 @@ void __scHandleRetrace(OSSched *sc) {
     if ((sc->unkTask) && (sc->frameCount >= 2)) {
         unkTask = sc->unkTask;
         if (unkTask->msgQ) {
-            if ((unkTask->unk0x68) || (unkTask->msg)) {
+            if ((unkTask->unk68) || (unkTask->msg)) {
                 osSendMesg(unkTask->msgQ, unkTask->msg, OS_MESG_BLOCK);
             } else {
                 osSendMesg(unkTask->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
@@ -569,7 +569,7 @@ void __scHandleRetrace(OSSched *sc) {
     }
 
     for (client = sc->clientList; client != NULL; client = client->next) {
-        if (client->unk0x0 == 1) {
+        if (client->unk0 == 1) {
             // Only run this on even calls to this function
             if (gRetraceCounter64 % 2 == 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
@@ -577,7 +577,7 @@ void __scHandleRetrace(OSSched *sc) {
                     func_8003B9C0(sc);
                 }
             }
-        } else if (client->unk0x0 == 2) {
+        } else if (client->unk0 == 2) {
             osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
         }
     }
@@ -620,7 +620,7 @@ void __scHandleRSP(OSSched *sc) {
                     sc->gfxListTail = t;
                 }
 
-                if (t->unk0x60 != 0) { } // ??
+                if (t->unk60 != 0) { } // ??
             }
         } else {
             t->state &= ~OS_SC_NEEDS_RSP;
@@ -682,7 +682,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                     return 1;
                 }
 
-                if (t->unk0x68 || t->msg) {
+                if (t->unk68 || t->msg) {
                     osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 } else {
                     osSendMesg(t->msgQ, (OSMesg)&D_800918D0, OS_MESG_BLOCK);
@@ -692,7 +692,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                 return 1;
             }
 
-            if (t->unk0x68 || t->msg) {
+            if (t->unk68 || t->msg) {
                 osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 return 1;
             }

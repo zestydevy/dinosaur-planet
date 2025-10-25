@@ -164,7 +164,7 @@ Texture* texture_load(s32 id, s32 param2) {
             } else {
                 sp44->levels = 1;
             }
-            sp44->unk_0x10 = (u32) temp_s7 >> 2;
+            sp44->unk10 = (u32) temp_s7 >> 2;
             mmRealloc(sp44, (load_texture_to_tmem(sp44, mmAlign16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
         }
     }
@@ -209,7 +209,7 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
     if ((texture->flags & 0xc000) == 0 && (texture->flags & 0x40) != 0)
     {
         if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32) {
-            load_texture_to_tmem2(&mygdl, texture, 1, (0x1000 - texture->unk_0x18) >> 3, 0);
+            load_texture_to_tmem2(&mygdl, texture, 1, (0x1000 - texture->unk18) >> 3, 0);
         } else if (TEX_FORMAT(texture->format) == TEX_FORMAT_CI4) {
             load_texture_to_tmem2(&mygdl, texture, 1, 0x80, 1);
         } else {
@@ -239,8 +239,8 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
     s32 sizshift;
     s32 line2;
 
-    width = texture->width | (texture->unk_0x1b & 0xf0) << 4;
-    height = texture->height | (texture->unk_0x1b & 0xf) << 8;
+    width = texture->width | (texture->unk1B & 0xf0) << 4;
+    height = texture->height | (texture->unk1B & 0xf) << 8;
 
     // This implements a dynamic version of gDPLoadTextureBlock
     switch (TEX_FORMAT(texture->format))
@@ -799,7 +799,7 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         }
 
         if (temp_t2 == 0) {
-            *arg2 +=(arg0->unk_0xe * delayByte);
+            *arg2 +=(arg0->unkE * delayByte);
             if (*arg2 >= arg0->levels) {
                 *arg2 = ((arg0->levels * 2) - *arg2) - 1;
                 if (*arg2 < 0) {
@@ -812,7 +812,7 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
             return;
         }
 
-        *arg2 -= arg0->unk_0xe * delayByte;
+        *arg2 -= arg0->unkE * delayByte;
         if (*arg2 < 0) {
             *arg2 = 0;
             *arg1 &= 0xFFF3FFFF;
@@ -822,9 +822,9 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
 
     if (temp_t1) {
         if (temp_t2 == 0) {
-            *arg2 += arg0->unk_0xe * delayByte;
+            *arg2 += arg0->unkE * delayByte;
         } else {
-            *arg2 -= arg0->unk_0xe * delayByte;
+            *arg2 -= arg0->unkE * delayByte;
         }
         do {
             var_a0 = 0;
@@ -849,12 +849,12 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         return;
     }
     if (temp_t2 == 0) {
-        *arg2 += arg0->unk_0xe * delayByte;
+        *arg2 += arg0->unkE * delayByte;
         while ((s32) *arg2 >= arg0->levels) {
             *arg2 -= arg0->levels;
         }
     } else {
-        *arg2 -= arg0->unk_0xe * delayByte;
+        *arg2 -= arg0->unkE * delayByte;
         while ((s32) *arg2 < 0) {
             *arg2 += arg0->levels;
         }

@@ -89,7 +89,7 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
     objdata->unk10 = 400;
     objdata->unk16 = setup->unk1A;
 
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
     self->srt.yaw = setup->unk18 << 8;
 
     if (self->id == OBJ_MediumBasket) {
@@ -137,7 +137,7 @@ void medium_crate_control(Object *self) {
                 objdata->unk4 = 0.0f;
                 objdata->unkC = 0;
                 func_8002674C(self);
-                self->unk0xaf &= ~0x8;
+                self->unkAF &= ~0x8;
             }
         }
     } else {
@@ -201,7 +201,7 @@ void medium_crate_control(Object *self) {
                 objdata->unkC = 50;
                 objdata->unk17 = 0;
                 medium_crate_func_C50(self, player, objdata);
-                self->unk0xaf |= 8;
+                self->unkAF |= 8;
             }
         }
         temp_fv0_2 = vec3_distance_squared(&get_player()->positionMirror, &self->positionMirror);
@@ -263,7 +263,7 @@ void medium_crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         return;
     }
 
-    if (self->unk_0xe0 != 0) {
+    if (self->unkE0 != 0) {
         if (visibility != -1) {
             return;
         }
@@ -529,7 +529,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 foodPickupSetup->base.z = self->srt.transl.z;
                 foodPickupSetup->unk24 = -1;
                 obj = obj_create((ObjSetup*)foodPickupSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
-                obj->unk_0xe0 = 21600;
+                obj->unkE0 = 21600;
                 break;
             }
             case 7:

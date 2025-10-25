@@ -28,7 +28,7 @@ void cannon_claw_control(Object *self) {
 
     sidekick = get_sidekick();
     
-    if (self->unk0xdc != 0) {
+    if (self->unkDC != 0) {
         return;
     }
 
@@ -58,15 +58,15 @@ void cannon_claw_control(Object *self) {
 }
 
 static void cannon_claw_func_1B4(Object *self) {
-    self->unk0xdc = 1;
-    self->unk0xaf = self->unk0xaf | 8;    
+    self->unkDC = 1;
+    self->unkAF = self->unkAF | 8;    
     func_800267A4(self);
 }
 
 void cannon_claw_update(Object *self) { }
 
 void cannon_claw_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    if (visibility != 0 && self->unk0xdc == 0) {
+    if (visibility != 0 && self->unkDC == 0) {
 		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }

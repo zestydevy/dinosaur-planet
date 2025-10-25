@@ -41,15 +41,15 @@ void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xbc = (ObjectCallback)dll_652_func_45C;
+    self->unkBC = (ObjectCallback)dll_652_func_45C;
     objdata->unk0 = setup->unk1E;
     objdata->unk2 = setup->unk20;
     if (main_get_bits(objdata->unk2) != 0 && main_get_bits(objdata->unk0) != 0) {
         objdata->unk4 = 1;
     } else {
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
     }
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
 }
 
 // offset: 0xE0 | func: 1 | export: 1
@@ -102,11 +102,11 @@ static void dll_652_func_254(Object* self) {
     bit2Val = main_get_bits(objdata->unk2);
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
-        self->unk0xaf &= ~8;
+        self->unkAF &= ~8;
         if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(BIT_SpellStone_CRF) != 0)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
             objdata->unk4 = 1;
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
             main_set_bits(objdata->unk0, 1);
         }
     }
@@ -122,11 +122,11 @@ static void dll_652_func_364(Object* self) {
     bit2Val = main_get_bits(objdata->unk2);
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
-        self->unk0xaf &= ~8;
+        self->unkAF &= ~8;
         if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(BIT_SpellStone_DIM) != 0)) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             objdata->unk4 = 1;
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
         }
     }
 }

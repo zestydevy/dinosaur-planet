@@ -466,7 +466,7 @@ void func_8005DEE8(void) {
             // temp_t5 >> 0xB loads the first 21 bits
             temp_a3 = &D_80093068[((temp_t5 >> 0xB) & 7)];
             // temp_t5 & 0x7FF loads the last 11 bits
-            temp2[i].x = (temp_a3->unk0x4 + ((temp_t5 & 0x7FF) << temp_a3->unk0x0)) >> 3;
+            temp2[i].x = (temp_a3->unk4 + ((temp_t5 & 0x7FF) << temp_a3->unk0)) >> 3;
         } else {
             temp2[i].x = 0;
         }

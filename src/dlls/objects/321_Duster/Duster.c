@@ -68,7 +68,7 @@ void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
     objdata->unk11 = setup->unk1B;
 
     if (self->objhitInfo && !objdata->discovered) {
-        self->objhitInfo->unk_0x58 |= 1;
+        self->objhitInfo->unk58 |= 1;
     }
 
     if (objdata->collected || !objdata->discovered) {

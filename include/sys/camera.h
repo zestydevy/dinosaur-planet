@@ -9,16 +9,16 @@
 
 typedef struct {
 /*0000*/    SRT srt;
-/*0018*/    f32 unk_0x18;
-/*001C*/    u32 unk_0x1c;
-/*0020*/    f32 unk_0x20;
-/*0024*/    f32 unk_0x24;
-/*0028*/    f32 unk_0x28;
+/*0018*/    f32 unk18;
+/*001C*/    u32 unk1C;
+/*0020*/    f32 unk20;
+/*0024*/    f32 unk24;
+/*0028*/    f32 unk28;
 /*002C*/    f32 dty;
-/*0030*/    f32 unk_0x30;
-/*0034*/    f32 unk_0x34;
-/*0038*/    f32 unk_0x38;
-/*003C*/    f32 unk_0x3c;
+/*0030*/    f32 unk30;
+/*0034*/    f32 unk34;
+/*0038*/    f32 unk38;
+/*003C*/    f32 unk3C;
 /*0040*/    Object *object;
 /*0044*/    f32 tx;
 /*0048*/    f32 ty;
@@ -26,11 +26,11 @@ typedef struct {
 /*0050*/    s16 yaw;
 /*0052*/    s16 pitch;
 /*0054*/    s16 roll;
-/*0056*/    u16 unk_0x56;
-/*0058*/    u16 unk_0x58;
+/*0056*/    u16 unk56;
+/*0058*/    u16 unk58;
 /*005A*/    s16 dpitch;
-/*005C*/    s8 unk_0x5c;
-/*005D*/    s8 unk_0x5d;
+/*005C*/    s8 unk5C;
+/*005D*/    s8 unk5D;
 } Camera;
 
 typedef union

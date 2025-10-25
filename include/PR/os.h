@@ -71,7 +71,7 @@ typedef struct OSThread_s {
 	/* 0x014 */ OSId			id;		/* id for debugging */
 	/* 0x018 */ int			fp;		/* thread has used fp unit */
 	/* 0x01C */ __OSThreadContext	context;	/* register/interrupt mask */
-	/* 0x1B0 */ u8			unk0x1b0[128]; /* NOTE: Not from the original os.h! */
+	/* 0x1B0 */ u8			unk1B0[128]; /* NOTE: Not from the original os.h! */
 } OSThread;
 
 typedef u32 OSEvent;
