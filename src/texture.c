@@ -754,7 +754,7 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
         temp_a2 = temp_v1->valB | (flags & temp_v1->valA);
         var_v0 = 0x200004;
         if (temp_a2 & 2) {
-            var_v0 = 0x200005;
+            var_v0 |= 1;
         }
         if (temp_a2 & 8) {
             var_v0 |= 0x10000;

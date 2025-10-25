@@ -111,12 +111,7 @@ s16 func_80031DD8(Object* arg0, Object* arg1, f32* arg2) {
         *arg2 = sqrtf(SQ(sp1C) + SQ(sp18));
     }
     var_v1 = sp26 - (arg0->srt.yaw & 0xFFFF);
-    if (var_v1 >= 0x8001) {
-        var_v1 += 0xFFFF0001;
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v1)
     return var_v1;
 }
 
@@ -279,7 +274,7 @@ s32 func_80032538(Object* arg0) {
     if (arg0->unkAF & 1 && !gDLL_1_UI->vtbl->func6()) {
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
-            set_button_mask(0, 0x8000);
+            set_button_mask(0, A_BUTTON);
             return 1;
         }
     }

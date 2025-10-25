@@ -89,7 +89,7 @@ void UseObj_control(Object *self) {
                 objdata->unk0 = 1;
                 self->unkDC = 1;
             }
-            set_button_mask(0, 0x8000);
+            set_button_mask(0, A_BUTTON);
         }
     } else {
         if (self->unkDC == 0) {

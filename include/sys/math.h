@@ -9,6 +9,36 @@
 #define DEG_TO_RAD(deg)  ((deg) * M_PI_F / 180.0f)
 #define SQ(a) (a) * (a)
 
+/**
+ * Keeps the value within the range.
+ */
+#define CLAMP(x, low, high) {       \
+    if ((x) > (high)) (x) = (high); \
+    if ((x) < (low)) (x) = (low);   \
+}
+
+/**
+ * Allows an arbitrary range the number can wrap around.
+ * Often used for angles, to keep them within s16 bounds while stored in an s32.
+ */
+#define WRAP(x, low, high) {                    \
+    if ((x) > (high)) (x) -= ((high) * 2) - 1;  \
+    if ((x) < (low)) (x) += ((high) * 2) - 1;   \
+}
+
+/*
+ * CIRCLE_WRAP - Wraps a value within a circular range
+ *
+ * Specifically designed for the game's angle system where:
+ * - Angles use a signed 16-bit range: -0x8000 to 0x7FFF
+ * - This represents a full circle from -180° to just under +180°
+ * - The wrap boundary is at 0x8000, which wraps to -0x8000
+ *
+ * Usage for angles: CIRCLE_WRAP(angle)
+ * Usage for other ranges: WRAP(value, low, high)
+ */
+#define CIRCLE_WRAP(x) WRAP(x, -0x8000, 0x8000)
+
 // typedef f32 MtxF[4][4];
 // For clarity:
 typedef struct {

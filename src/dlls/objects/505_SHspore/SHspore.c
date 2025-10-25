@@ -197,12 +197,7 @@ static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
         }
         objdata->unk298 += objdata->unk294;
         var_v0 = objdata->unk298 - (sp20 & 0xFFFF);
-        if (var_v0 > 0x8000) {
-            var_v0 += 0xFFFF0001;
-        }
-        if (var_v0 < -0x8000) {
-            var_v0 += 0xFFFF;
-        }
+        CIRCLE_WRAP(var_v0)
 
         if (setup->unk1A < var_v0) {
             objdata->unk298 = setup->unk1A + sp20;
@@ -223,12 +218,7 @@ static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
     }
 
     var_v0 = objdata->unk298 - (objdata->unk294 & 0xFFFF);
-    if (var_v0 >= 0x8001) {
-        var_v0 += 0xFFFF0001;
-    }
-    if (var_v0 < -0x8000) {
-        var_v0 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v0)
 
     objdata->unk294 += (var_v0 * delayByte) >> 4;
 
@@ -251,12 +241,7 @@ static void SHspore_func_A00(Object* self, SHSpore_Data* objdata) {
     objdata->unk296 = rand_next(-0x7D0, 0x7D0) + objdata->unk294;
 
     var_v1 = objdata->unk296 - (sp20 & 0xFFFF);
-    if (var_v1 >= 0x8001) {
-        var_v1 += 0xFFFF0001;
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v1)
 
     if (setup->unk1A < var_v1) {
         objdata->unk296 = setup->unk1A + sp20;

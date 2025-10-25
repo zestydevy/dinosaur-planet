@@ -226,11 +226,11 @@ void dll_22_func_448(void) {
 // offset: 0x4C0 | func: 5 | export: 5
 void dll_22_func_4C0(void) {
     if (_data_54 == 0) {
-        if (get_masked_buttons(0) & 0x10) {
+        if (get_masked_buttons(0) & R_TRIG) {
             *_bss_7B2 = dll_22_func_2D0(1U);
             _data_54 = 1;
         }
-    } else if (!(get_masked_buttons(0) & 0x10)) {
+    } else if (!(get_masked_buttons(0) & R_TRIG)) {
         dll_22_func_2D0((u32)*_bss_7B2);
         _data_54 = 0;
     }

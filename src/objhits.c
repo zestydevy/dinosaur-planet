@@ -1336,19 +1336,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
 
     v0 = arctan2_f(-arg2, -arg4);
     var_v1 = obj->srt.yaw - ((u16)v0);
-    if (var_v1 >= 0x8001) {
-        var_v1 += 0xFFFF0001;
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v1)
     var_a2 = otherObj->srt.yaw - ((v0 + 0x8000) & 0xFFFF);
-    if (var_a2 >= 0x8001) {
-        var_a2 += 0xFFFF0001;
-    }
-    if (var_a2 < -0x8000) {
-        var_a2 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_a2)
     temp_fv0 = fcos16_precise(var_v1);
     temp_fa0 = temp_fv0 * temp_fv0;
     sp74 = (objhitInfo->unk5B * temp_fa0) + (objhitInfo->unk5C * (1.0f - temp_fa0));

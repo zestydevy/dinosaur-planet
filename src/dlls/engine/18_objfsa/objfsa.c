@@ -471,12 +471,7 @@ void objfsa_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
             var_fv1 = obj->positionMirror.z - data->target->positionMirror.z;
         }
         var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
-        if (var_v1 >= 0x8001) {
-            var_v1 += 0xFFFF0001;
-        }
-        if (var_v1 < -0x8000) {
-            var_v1 += 0xFFFF;
-        }
+        CIRCLE_WRAP(var_v1)
         obj->srt.yaw += (s32) (((f32) var_v1 * delayFloat) / ((f32) arg3 * 3.0f));
     }
 }
@@ -672,12 +667,7 @@ static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
     _bss_4 -= data->unk324;
     var_v1 = _bss_4;
     var_v1 -= (obj->srt.yaw & 0xFFFF);
-    if (var_v1 >= 0x8001) {
-        var_v1 += 0xFFFF0001;
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v1)
     data->unk32A = (s16) (s32) ((f32) var_v1 / 182.04f);
     if (var_v1 < 0) {
         data->unk328 = -data->unk32A;
@@ -779,18 +769,8 @@ void objfsa_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 ar
     }
     data->unk288 = temp_fv1 * arg4;
     data->unk284 = -temp_fa1 * arg4;
-    if (data->unk288 > 65.0f) {
-        data->unk288 = 65.0f;
-    }
-    if (data->unk288 < -65.0f) {
-        data->unk288 = -65.0f;
-    }
-    if (data->unk284 > 65.0f) {
-        data->unk284 = 65.0f;
-    }
-    if (data->unk284 < -65.0f) {
-        data->unk284 = -65.0f;
-    }
+    CLAMP(data->unk288, -65.0f, 65.0f)
+    CLAMP(data->unk284, -65.0f, 65.0f)
 }
 
 // offset: 0x20CC | func: 27 | export: 6
@@ -815,16 +795,6 @@ void objfsa_func_20CC(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 ar
         data->unk288 = 0.0f;
         data->unk284 = 0.0f;
     }
-    if (data->unk288 > 65.0f) {
-        data->unk288 = 65.0f;
-    }
-    if (data->unk288 < -65.0f) {
-        data->unk288 = -65.0f;
-    }
-    if (data->unk284 > 65.0f) {
-        data->unk284 = 65.0f;
-    }
-    if (data->unk284 < -65.0f) {
-        data->unk284 = -65.0f;
-    }
+    CLAMP(data->unk288, -65.0f, 65.0f)
+    CLAMP(data->unk284, -65.0f, 65.0f)
 }
