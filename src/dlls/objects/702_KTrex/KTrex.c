@@ -297,7 +297,7 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
         var_v0 = 0x11;
     }
     gDLL_33->vtbl->func21(self, setup, objdata, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
-    self->unk0xbc = (ObjectCallback)dll_702_func_119C;
+    self->animCallback = (AnimationCallback)dll_702_func_119C;
     gDLL_18_objfsa->vtbl->set_anim_state(self, &objdata->fsa, KT_ASTATE_0);
     objdata->fsa.logicState = KT_LSTATE_2_WALK; // set initial state
     objdata->fsa.target = NULL;
@@ -810,7 +810,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     sp60 = func_80025F40(self, &sp54, &sp5C, &sp58);
     if (sp60 != 0) {
         modelInst = self->modelInsts[self->modelInstIdx];
-        temp_v1 = modelInst->unk_0x24;
+        temp_v1 = (MtxF*)modelInst->unk_0x24;
         if ((fsa->unk348 != 0) && ((sp5C == 3) || (sp5C == 2))) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
@@ -827,7 +827,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, _data_90[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
-            temp_v1 = modelInst->unk_0x24;
+            temp_v1 = (MtxF*)modelInst->unk_0x24;
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;

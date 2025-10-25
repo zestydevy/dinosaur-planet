@@ -93,7 +93,7 @@ typedef struct Unk {
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* arg0, f32 arg1);
 /* static */ void dll_210_func_9F1C(Object* arg0, s32 arg1);
-/* static */ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
+/* static */ void dll_210_func_60A8(Object* arg0, s32 arg1, s32 arg2);
 /* static */ void dll_210_func_1DE64(UNK_TYPE_32 *arg0);
 /* static */ void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2);
 /* static */ void dll_210_func_90A0(Object* arg0, Player_Data* arg1, f32 arg2);
@@ -110,7 +110,7 @@ typedef struct Unk {
 /* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_64B4(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_692C(Object* arg0, Player_Data* arg1, f32 arg2);
-/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);
+/* static */ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 /* static */ void dll_210_func_47B8(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2);
 /* static */ void dll_210_func_1CA8(Object* arg0, Player_Data* arg1, Player_Data* arg2);
@@ -1818,7 +1818,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     temp_fp = arg0->data;
     temp_s1 = arg1->setup;
     spC8 = 0;
-    arg2->unkF4 = dll_210_func_60A8;
+    arg2->unkF4 = (AnimObj_DataF4Callback)dll_210_func_60A8;
     temp_fp->unk818 = 0.0f;
     _bss_1AC = dll_210_func_63F0(temp_fp, delayFloat);
     if (_bss_1AC > 4.0f) {
@@ -1998,7 +1998,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     arg0->curModAnimIdLayered = -1;
                     arg2->unk7A = arg2->unk7C;
                     arg2->unk62 = 0;
-                    arg2->unk66 = arg2->unk64 - 1;
+                    arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA - 1;
                     spC8 = 0;
                 } else {
                     temp_fp->unk0.unk288 = 0.0f;
@@ -2237,7 +2237,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
 #endif
 
 // offset: 0x60A8 | func: 28
-void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+void dll_210_func_60A8(Object* arg0, s32 arg1, s32 arg2) {
     Player_Data* sp24;
 
     sp24 = arg0->data;

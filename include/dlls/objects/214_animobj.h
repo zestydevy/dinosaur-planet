@@ -34,7 +34,9 @@ typedef struct {
 /*44*/ s8 unk44[0x4C - 0x44];
 /*4C*/ Vec3f unk4C;
 /*58*/ f32 unk58;
-/*5C*/ u8 pad5C[0x62 - 0x5C];
+/*5C*/ s16 yawDiff;
+/*5E*/ s16 pitchDiff;
+/*60*/ s16 rollDiff;
 /*62*/ s8 unk62;
 /*63*/ s8 unk63;
 /*64*/ s16 animCurvesCurrentFrameA;
