@@ -229,17 +229,17 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
 
     //Randomly call out to player if in cage (Object parent hierarchy: DR_Cage -> DRPerch -> DR_CloudRunner)
     if (rand_next(0, 120) == 0) {
-        parent = self->unk0xc4; //DRPerch
+        parent = self->unkC4; //DRPerch
         if (parent) {
-            parent = parent->unk0xc4; //DR_Cage
+            parent = parent->unkC4; //DR_Cage
             if (parent && (parent->id == OBJ_DR_Cage)) {
                 gDLL_3_Animation->vtbl->func17(rand_next(0, 1), self, -1);
             }
         }
     } else {
-        parent = self->unk0xc4; //DRPerch
+        parent = self->unkC4; //DRPerch
         if (parent) {
-            parent = parent->unk0xc4; //DR_Cage
+            parent = parent->unkC4; //DR_Cage
             if (parent && (parent->id == OBJ_DR_Cage) && 
                 ((DLL_745_DR_Cage*)parent->dll)->vtbl->func0(parent)) {
                 gDLL_3_Animation->vtbl->func17(2, self, -1);
@@ -249,7 +249,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
 
     new_var = 4;
     if (main_get_bits(setup->unk1E)) {
-        self->unk0xc4 = NULL;
+        self->unkC4 = NULL;
         objdata2->unk920 = (((new_var * (objdata2->unk910 > 0)) * 4) & 0x10) | (objdata2->unk920 & 0xFFEF);
         return 3;
     }

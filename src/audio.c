@@ -220,10 +220,10 @@ void __amHandleFrameMsg(void) {
     gAudioTask.next = NULL;
     gAudioTask.msgQ = &__am_audioReplyMsgQ;
     gAudioTask.msg = NULL;
-    gAudioTask.unk0x58 = -1;
-    gAudioTask.unk0x60 = 0xFF;
-    gAudioTask.unk0x5c = 0;
-    gAudioTask.unk0x64 = 0;
+    gAudioTask.unk58 = -1;
+    gAudioTask.unk60 = 0xFF;
+    gAudioTask.unk5C = 0;
+    gAudioTask.unk64 = 0;
     
     gAudioTask.list.t.type = 2;
     gAudioTask.list.t.flags = 2;

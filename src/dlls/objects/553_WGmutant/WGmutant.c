@@ -29,7 +29,7 @@ void WGmutant_setup(Object *self, WGmutant_Setup *setup, s32 arg2) {
     objdata->unk0 = 0;
     objdata->unk1 = 1;
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xbc = (ObjectCallback)WGmutant_anim_callback;
+    self->unkBC = (ObjectCallback)WGmutant_anim_callback;
 }
 
 // offset: 0x58 | func: 1 | export: 1

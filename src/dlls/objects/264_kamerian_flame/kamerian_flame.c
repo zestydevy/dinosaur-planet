@@ -29,7 +29,7 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
     ObjectStruct64* temp_v0;
     ObjectStruct64* temp_v0_2;
 
-    self->unk_0x36 = 0xFF;
+    self->unk36 = 0xFF;
     func_800267A4(self);
     temp_v0 = self->ptr0x64;
     if (self->ptr0x64) {
@@ -83,16 +83,16 @@ void kamerian_flame_control(Object* self) {
     u8 temp_v0;
 
     dOpacity = delayByte * 3;
-    if (dOpacity >= self->unk_0x36) {
+    if (dOpacity >= self->unk36) {
         //Destroy if faded out
-        self->unk_0x36 = 0;
+        self->unk36 = 0;
         obj_destroy_object(self);
         return;
     }
 
     //Fade out if not fully opaque
-    if (self->unk_0x36 != 255) {
-        self->unk_0x36 -= dOpacity;
+    if (self->unk36 != 255) {
+        self->unk36 -= dOpacity;
         return;
     }
 
@@ -105,8 +105,8 @@ void kamerian_flame_control(Object* self) {
     func_8002674C(self);
 
     //Handle object collisions
-    if (self->objhitInfo->unk_0x48 && 
-        (((s32)get_player()) == self->objhitInfo->unk_0x48 || ((s32)get_sidekick()) == self->objhitInfo->unk_0x48)) {
+    if (self->objhitInfo->unk48 && 
+        (((s32)get_player()) == self->objhitInfo->unk48 || ((s32)get_sidekick()) == self->objhitInfo->unk48)) {
 
         func_800013BC();
         func_80003B70(1.0f);
@@ -119,7 +119,7 @@ void kamerian_flame_control(Object* self) {
         }
 
         //Hide fireball
-        self->unk_0x36 = 0;
+        self->unk36 = 0;
         func_800267A4(self);
     } else {
         kamerian_flame_create_flame_billboards(self);
@@ -131,14 +131,14 @@ void kamerian_flame_update(Object* self) {
     ObjectHitInfo* objHitInfo;
 
     objHitInfo = self->objhitInfo;
-    if (objHitInfo->unk_0x9d != 0) {
-        self->srt.transl.x = objHitInfo->unk_0x34;
-        self->srt.transl.y = objHitInfo->unk_0x38;
-        self->srt.transl.z = objHitInfo->unk_0x3c;
+    if (objHitInfo->unk9D != 0) {
+        self->srt.transl.x = objHitInfo->unk34;
+        self->srt.transl.y = objHitInfo->unk38;
+        self->srt.transl.z = objHitInfo->unk3C;
         self->speed.x = 0.0f;
         self->speed.y = 0.0f;
         self->speed.z = 0.0f;
-        self->unk_0x36 = 0xFE;
+        self->unk36 = 0xFE;
         func_800267A4(self);
         impactSoundID = SOUND_9B4_Flamethrower;
     }

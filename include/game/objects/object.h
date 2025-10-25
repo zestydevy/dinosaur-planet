@@ -34,14 +34,14 @@ struct Vec3_Int{
 // base objdata of objects in group 16?
 typedef struct {
 /*0000*/ struct Object *unk0;
-/*0004*/ u8 unk_0x4[0x9C - 0x4];
+/*0004*/ u8 unk4[0x9C - 0x4];
 /*009C*/ u8 unk9C;
 } ObjectAnim_Data;
 
 // objdata of object in Object::unkC0
 typedef struct {
-/*0000*/    u8 unk_0x0[0x62 - 0x0];
-/*0062*/    s8 unk_0x62;
+/*0000*/    u8 unk0[0x62 - 0x0];
+/*0062*/    s8 unk62;
 } ObjectC0_Data;
 
 typedef enum {
@@ -83,15 +83,15 @@ typedef struct ObjSetup {
 } ObjSetup;
 
 typedef struct {
-/*0000*/    u8 unk_0x0[0x10 - 0x0];
-/*0010*/	u8 *unk_0x10;
-/*0014*/	u8 unk_0x14[0x44 - 0x14];
-/*0044*/    s32 unk_0x44;
-/*0048*/	u8 unk_0x48[0x5d - 0x48];
-/*005D*/	s8 unk_0x5d;
-/*005E*/    u8 unk_0x5e[0x71 - 0x5e];
-/*0071*/    u8 unk_0x71;
-/*0072*/	u8 unk_0x72;
+/*0000*/    u8 unk0[0x10 - 0x0];
+/*0010*/	u8 *unk10;
+/*0014*/	u8 unk14[0x44 - 0x14];
+/*0044*/    s32 unk44;
+/*0048*/	u8 unk48[0x5d - 0x48];
+/*005D*/	s8 unk5D;
+/*005E*/    u8 unk5E[0x71 - 0x5e];
+/*0071*/    u8 unk71;
+/*0072*/	u8 unk72;
 } ObjectStruct50;
 
 typedef struct {
@@ -192,29 +192,29 @@ typedef struct Object {
 /*0018*/    Vec3f positionMirror; //local vs global?
 /*0024*/    Vec3f speed; // rename to velocity?
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
-/*0034*/    u8 unk_0x34; //self-mapID for mobile map objects? (e.g. Galleon)
+/*0034*/    u8 unk34; //self-mapID for mobile map objects? (e.g. Galleon)
 /*0035*/    s8 matrixIdx;
-/*0036*/    u8 unk_0x36; // transparency
-/*0037*/    u8 unk_0x37; // also transparency? (set to unk_0x36)
+/*0036*/    u8 unk36; // transparency
+/*0037*/    u8 unk37; // also transparency? (set to unk36)
 /*0038*/    struct Object *next; // the object after this in a linked list
-/*003C*/    f32 unk0x3c;
-/*0040*/    f32 unk0x40;
+/*003C*/    f32 unk3C;
+/*0040*/    f32 unk40;
 /*0044*/    s16 group; // complete guess at a name, needs more investigation
 /*0046*/    s16 id;
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
-/*004A*/    u8 unk0x4a[0x4c - 0x4a];
+/*004A*/    u8 unk4A[0x4c - 0x4a];
 /*004C*/    ObjSetup *setup; // exact type depends on object
 /*0050*/    ObjDef* def;
 /*0054*/    ObjectHitInfo* objhitInfo;
-/*0058*/    ObjectStruct58 *unk0x58;
+/*0058*/    ObjectStruct58 *unk58;
 /*005C*/    ObjectStruct5C *ptr0x5c;
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectStruct64* ptr0x64; //ShadowData?
 /*0068*/    DLL_IObject *dll;
 /*006C*/    s16 (*ptr0x6c)[9];
 /*0070*/    void* ptr0x70;
-/*0074*/    Vec3f* unk0x74;
-/*0078*/    ObjectStruct78 *unk_0x78; // related to ObjDef.unk40
+/*0074*/    Vec3f* unk74;
+/*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts;
 /*0080*/    Vec3f positionMirror2; //gets copied twice.
 /*008C*/    Vec3f positionMirror3; //not sure why.
@@ -222,33 +222,33 @@ typedef struct Object {
 /*009C*/    f32 animProgressLayered;
 /*00A0*/    s16 curModAnimId;
 /*00A2*/	s16 curModAnimIdLayered;
-/*00A4*/	f32 unk_0xa4;
-/*00A8*/	f32 unk_0xa8;
+/*00A4*/	f32 unkA4;
+/*00A8*/	f32 unkA8;
 /*00AC*/    s8 mapID;
 /*00AD*/    s8 modelInstIdx;
 /*00AE*/    s8 updatePriority;
-/*00AF*/    u8 unk0xaf; //Target arrow-related flags? (Changes when A pressed on highlighted objects)
-/*00B0*/    u16 unk0xb0; //Animation flags? (Animation updating can be switched off here)
-/*00B2*/    s16 unk0xb2;
-/*00B4*/    s16 unk0xb4;
-/*00B6*/	u8 unk0xb6[2];
+/*00AF*/    u8 unkAF; //Target arrow-related flags? (Changes when A pressed on highlighted objects)
+/*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here)
+/*00B2*/    s16 unkB2;
+/*00B4*/    s16 unkB4;
+/*00B6*/	u8 unkB6[2];
 /*00B8*/	void* data; //type depends on object
-/*00BC*/	ObjectCallback unk0xbc; // some kind of cutscene anim callback?
-/*00C0*/	struct Object *unk0xc0; // related to group 16 objects?
-/*00C4*/	struct Object* unk0xc4; // parent object
+/*00BC*/	ObjectCallback unkBC; // some kind of cutscene anim callback?
+/*00C0*/	struct Object *unkC0; // related to group 16 objects?
+/*00C4*/	struct Object* unkC4; // parent object
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    ObjectMesgQueue *mesgQueue;
-/*00D0*/    u8 unk_0xd0[0xd4 - 0xd0];
-/*00D4*/    u8 unk_0xd4; // index into ObjDef.unk40
-/*00D5*/    u8 unk_0xd5[0xd6 - 0xd5];
-/*00D6*/    u8 unk_0xd6;
-/*00D5*/    u8 unk_0xd7[0xd8 - 0xd7];
-/*00D8*/    u8 unk_0xd8;
-/*00D9*/    u8 unk_0xd9;
-/*00DA*/    u8 unk_0xda;
-/*00DB*/    u8 unk_0xdb[0xdc - 0xdb];
-/*00DC*/    s32 unk0xdc;
-/*00E0*/    s32 unk_0xe0; // lifetime?
+/*00D0*/    u8 unkD0[0xd4 - 0xd0];
+/*00D4*/    u8 unkD4; // index into ObjDef.unk40
+/*00D5*/    u8 unkD5[0xd6 - 0xd5];
+/*00D6*/    u8 unkD6;
+/*00D5*/    u8 unkD7[0xd8 - 0xd7];
+/*00D8*/    u8 unkD8;
+/*00D9*/    u8 unkD9;
+/*00DA*/    u8 unkDA;
+/*00DB*/    u8 unkDB[0xdc - 0xdb];
+/*00DC*/    s32 unkDC;
+/*00E0*/    s32 unkE0; // lifetime?
 } Object;
 
 typedef struct ObjListItem {

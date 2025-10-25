@@ -42,9 +42,9 @@ void VFP_SpellPlace_setup(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
     if (main_get_bits(objdata->unk2) != 0 || main_get_bits(objdata->unk0) != 0) {
         objdata->unk4 = 1;
     } else {
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
     }
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
 }
 
 // offset: 0xC8 | func: 1 | export: 1
@@ -100,12 +100,12 @@ static void VFP_SpellPlace_do_act1(Object* self) {
     bits1 = main_get_bits(objdata->unk0);
     
     if ((bits1 == 0) && (bits2 != 0)) {
-        self->unk0xaf &= ~0x8;
+        self->unkAF &= ~0x8;
         
         if ((bits2 != 0) && (gDLL_1_UI->vtbl->func7(0x123) != 0)) {
             main_set_bits(objdata->unk0, 1);
             objdata->unk4 = 1;
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
         }
     }
 }
@@ -122,12 +122,12 @@ static void VFP_SpellPlace_do_act2(Object* self) {
     bits1 = main_get_bits(objdata->unk0);
     
     if ((bits1 == 0) && (bits2 != 0)) {
-        self->unk0xaf &= ~0x8;
+        self->unkAF &= ~0x8;
         
         if ((bits2 != 0) && (gDLL_1_UI->vtbl->func7(0x83B) != 0)) {
             main_set_bits(objdata->unk0, 1);
             objdata->unk4 = 1;
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
         }
     }
 }

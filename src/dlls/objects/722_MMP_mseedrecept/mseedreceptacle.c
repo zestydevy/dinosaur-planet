@@ -68,7 +68,7 @@ void moonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;
-    self->unk0xbc = (void*)&moonSeedReceptacle_anim_callback;
+    self->unkBC = (void*)&moonSeedReceptacle_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objData->unk0 = 0;
     
@@ -118,7 +118,7 @@ void moonSeedReceptacle_control(Object* self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
         objData->unk1 &= 0xFFFE;
-        self->unk_0x36 = 0xFF;
+        self->unk36 = 0xFF;
     }
     
     if (gDLL_7_Newday->vtbl->func8(&time) || objData->unk0 == 3){
@@ -135,7 +135,7 @@ void moonSeedReceptacle_control(Object* self) {
             if (main_get_bits(objData->gamebitPlanted)){
                 objData->unk0 = 2;
                 self->srt.transl.y = objSetup->base.y;
-                self->unk_0x36 = 0xFF;
+                self->unk36 = 0xFF;
             }
             if (main_get_bits(objData->gamebitGrown)){
                 moonSeedReceptacle_func_D40(self);
@@ -143,11 +143,11 @@ void moonSeedReceptacle_control(Object* self) {
             return;
         
         case 1:
-            if ((self->unk0xaf & 1) && gDLL_1_UI->vtbl->func7(0x86A)){
+            if ((self->unkAF & 1) && gDLL_1_UI->vtbl->func7(0x86A)){
                 count = main_get_bits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
-                    self->unk_0x36 = 0;
+                    self->unk36 = 0;
                     gDLL_3_Animation->vtbl->func17(0, self, -1);
                     main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
                 }
@@ -183,7 +183,7 @@ void moonSeedReceptacle_control(Object* self) {
                 gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
                 
             }
-            if (kyte && (self->unk0xaf & 4)){
+            if (kyte && (self->unkAF & 4)){
                 ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 4);
                 if (gDLL_1_UI->vtbl->func7(4)){
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
@@ -293,7 +293,7 @@ void moonSeedReceptacle_func_D40(Object* self) {
     objSetup = (MoonSeedReceptacle_Setup*)self->setup;
     
     if (main_get_bits(objData->gamebitPlanted)) {
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitGrown, 1);
         objData->unk0 = 4;

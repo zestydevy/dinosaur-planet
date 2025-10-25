@@ -68,7 +68,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
             main_set_bits(BIT_4D4, 1);
         }
     }
-    self->unk0xbc = (ObjectCallback)NWtricky_anim_callback;
+    self->unkBC = (ObjectCallback)NWtricky_anim_callback;
 }
 
 // offset: 0x134 | func: 1 | export: 1
@@ -112,7 +112,7 @@ void NWtricky_control(Object *self) {
             if (objdata->timer >= NWTRICKY_MAX_TIMER_2) {
                 if (main_get_bits(BIT_4E3) == 0xFF) {
                     objdata->timer = 0.0f;
-                    if (objdata->gplaystruct->unk0x0 < 4) {
+                    if (objdata->gplaystruct->unk0 < 4) {
                         main_set_bits(BIT_4E3, 1);
                     } else if (!main_get_bits(BIT_111) && main_get_bits(BIT_4E4)) {
                         player = get_player();

@@ -260,7 +260,7 @@ void func_80012B54(s32 param1, s32 param2) {
     gAssetThreadQueue->count = D_800AD6C0.count;
     gAssetThreadQueue->top = D_800AD6C0.top;
     gAssetThreadQueue->bottom = D_800AD6C0.bottom;
-    gAssetThreadQueue->unk0x6 = D_800AD6C0.unk0x6;
+    gAssetThreadQueue->unk6 = D_800AD6C0.unk6;
 
     bcopy(D_800AD6C0.data, gAssetThreadQueue->data, D_800AD6C0.capacity * sizeof(UnkStructAssetThreadSingle));
 

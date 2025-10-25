@@ -58,7 +58,7 @@ void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg
     WLPressureSwitch_Data* objdata;
 
     objdata = self->data;
-    self->unk0xbc = (void*)&WLpressureswitch_anim_callback;
+    self->unkBC = (void*)&WLpressureswitch_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;
@@ -96,9 +96,9 @@ void WLpressureswitch_control(Object* self) {
     }
 
     //Handle objects on/near the switch
-    if (self->unk0x58->unk10f > 0) {
-        for (index = 0; index < self->unk0x58->unk10f; index++){
-            listedObject = (Object*)self->unk0x58->unk100[index];
+    if (self->unk58->unk10f > 0) {
+        for (index = 0; index < self->unk58->unk10f; index++){
+            listedObject = (Object*)self->unk58->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > 8.9f) {
                 objdata->pressed = 5; //considered pressed for next 5 updates

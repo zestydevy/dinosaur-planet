@@ -39,20 +39,20 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         return 0;
 
     animState = modelInstance->animState0;
-    animState->unk_0x62[1] = arg3;
+    animState->unk62[1] = arg3;
     animState->animIndexes[1] = animState->animIndexes[0];
     animState->curAnimationFrame[1] = animState->curAnimationFrame[0];
     animState->totalAnimationFrames[1] = animState->totalAnimationFrames[0];
-    animState->unk_0xc[1] = animState->unk_0xc[0];
-    animState->unk_0x34[1] = animState->unk_0x34[0];
-    animState->unk_0x60[1] = animState->unk_0x60[0];
-    animState->unk_0x48[1] = animState->unk_0x48[0];
-    animState->unk_0x3c[1] = animState->unk_0x3c[0];
-    animState->unk_0x5c[0] = animState->unk_0x58[1];
-    animState->unk_0x58[1] = 0;
+    animState->unkC[1] = animState->unkC[0];
+    animState->unk34[1] = animState->unk34[0];
+    animState->unk60[1] = animState->unk60[0];
+    animState->unk48[1] = animState->unk48[0];
+    animState->unk3C[1] = animState->unk3C[0];
+    animState->unk5C[0] = animState->unk58[1];
+    animState->unk58[1] = 0;
     animState->modAnimIdBlend = -1;
     
-    if (object->objhitInfo && object->objhitInfo->unk_0x8) {
+    if (object->objhitInfo && object->objhitInfo->unk8) {
         func_80026AB8(object, modelInstance, object->id, object->objhitInfo, modAnimIndex, 0);
     }
     
@@ -71,11 +71,11 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         modAnimIndex = 0;
     }
     
-    if (model->unk_0x71 & 0x40) {
+    if (model->unk71 & 0x40) {
         if (changed) {
-            animState->unk_0x62[0] = (1 - animState->unk_0x62[0]);
-            animState->animIndexes[0] = animState->unk_0x62[0] & 0xFFFF;
-            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk_0x62[0]]->boneRemaps, model);
+            animState->unk62[0] = (1 - animState->unk62[0]);
+            animState->animIndexes[0] = animState->unk62[0] & 0xFFFF;
+            func_80019118(model->modAnim[modAnimIndex], modAnimIndex, animState->anims[(u16)animState->unk62[0]]->boneRemaps, model);
         }
         anim = &animState->anims[animState->animIndexes[0]]->anim;
     } else {
@@ -83,24 +83,24 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
         anim = model->anims[(u16)modAnimIndex];
     }
     
-    animState->unk_0x34[0] = &anim->animHeader;
-    animState->unk_0x60[0] = anim->unk_0x1 & 0xF0;
-    animState->totalAnimationFrames[0] = animState->unk_0x34[0]->totalKeyframes;
+    animState->unk34[0] = &anim->animHeader;
+    animState->unk60[0] = anim->unk1 & 0xF0;
+    animState->totalAnimationFrames[0] = animState->unk34[0]->totalKeyframes;
     
-    if (animState->unk_0x60[0] == 0) {
+    if (animState->unk60[0] == 0) {
         animState->totalAnimationFrames[0] -= 1.0f;
     }
     
-    temp_t0 = anim->unk_0x1 & 0xF;
+    temp_t0 = anim->unk1 & 0xF;
     if (temp_t0 && !(arg3 & 0x10)) {
-        animState->unk_0xc[1] = animState->unk_0xc[0];
-        animState->unk_0x5c[1] = 0x3FF / temp_t0;
-        animState->unk_0x58[0] = 0x3FF;
+        animState->unkC[1] = animState->unkC[0];
+        animState->unk5C[1] = 0x3FF / temp_t0;
+        animState->unk58[0] = 0x3FF;
     } else {
-        animState->unk_0x58[0] = 0;
+        animState->unk58[0] = 0;
     }
     
-    animState->unk_0xc[0] = 0.0f;
+    animState->unkC[0] = 0.0f;
     animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
     
     if (object->linkedObject && object->linkedObject->group == 0x30) {
@@ -147,7 +147,7 @@ void func_80024D74(Object* object, s32 arg1) {
     model = object->modelInsts[object->modelInstIdx];
     if (model != NULL) {
         animState = model->animState0;
-        animState->unk_0x5c[1] = 0x3FF / arg1;
+        animState->unk5C[1] = 0x3FF / arg1;
     }
 }
 
@@ -160,7 +160,7 @@ void func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3) {
         return;
         
     animState = animStateLayer ? model->animState1 : model->animState0;
-    animState->unk_0x58[arg2] = arg3;
+    animState->unk58[arg2] = arg3;
 }
 
 s16 func_80024E2C(Object* arg0) {
@@ -169,7 +169,7 @@ s16 func_80024E2C(Object* arg0) {
     
   model = arg0->modelInsts[arg0->modelInstIdx];
   animState = model->animState0;
-  return animState->unk_0x58[0];
+  return animState->unk58[0];
 }
 
 s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
@@ -194,16 +194,16 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
     animState = object->modelInsts[object->modelInstIdx]->animState1;
 
     animState->animIndexes[1] = animState->animIndexes[0];
-    animState->unk_0x62[1] = (u8)arg3;
+    animState->unk62[1] = (u8)arg3;
     animState->curAnimationFrame[1] = animState->curAnimationFrame[0];
     animState->totalAnimationFrames[1] = animState->totalAnimationFrames[0];
-    animState->unk_0xc[1] = animState->unk_0xc[0];
-    animState->unk_0x34[1] = animState->unk_0x34[0];
-    animState->unk_0x60[1] = animState->unk_0x60[0];
-    animState->unk_0x48[1] = animState->unk_0x48[0];
-    animState->unk_0x3c[1] = animState->unk_0x3c[0];
-    animState->unk_0x5c[0] = animState->unk_0x58[1];
-    animState->unk_0x58[1] = 0;
+    animState->unkC[1] = animState->unkC[0];
+    animState->unk34[1] = animState->unk34[0];
+    animState->unk60[1] = animState->unk60[0];
+    animState->unk48[1] = animState->unk48[0];
+    animState->unk3C[1] = animState->unk3C[0];
+    animState->unk5C[0] = animState->unk58[1];
+    animState->unk58[1] = 0;
     animState->modAnimIdBlend = -1;
     
     curModanim_layered = modanimIndex != object->curModAnimIdLayered;
@@ -218,10 +218,10 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
         modanimIndex = 0;
     }
     
-    if (model->unk_0x71 & 0x40) {
+    if (model->unk71 & 0x40) {
         if (curModanim_layered) {
-            animState->unk_0x62[0] = 1 - animState->unk_0x62[0];
-            animState->animIndexes[0] = animState->unk_0x62[0];
+            animState->unk62[0] = 1 - animState->unk62[0];
+            animState->animIndexes[0] = animState->unk62[0];
             func_80019118(model->modAnim[modanimIndex], modanimIndex, animState->anims[(u16)animState->animIndexes[0]]->boneRemaps, model);
         }
         anim = (Animation*)(&animState->anims[animState->animIndexes[0]]->anim);
@@ -230,20 +230,20 @@ s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3) {
         anim = model->anims[(u16)modanimIndex];
     }
 
-    animState->unk_0x34[0] = &anim->animHeader;
-    animState->unk_0x60[0] = anim->unk_0x1 & 0xF0;
-    animState->totalAnimationFrames[0] = animState->unk_0x34[0]->totalKeyframes;
+    animState->unk34[0] = &anim->animHeader;
+    animState->unk60[0] = anim->unk1 & 0xF0;
+    animState->totalAnimationFrames[0] = animState->unk34[0]->totalKeyframes;
     
-    if (animState->unk_0x60[0] == 0) {
+    if (animState->unk60[0] == 0) {
         animState->totalAnimationFrames[0] -= 1.0f;
     }
-    temp_t9 = anim->unk_0x1 & 0xF;
+    temp_t9 = anim->unk1 & 0xF;
     if (temp_t9 != 0) {
-        animState->unk_0xc[1] = animState->unk_0xc[0];
-        animState->unk_0x5c[1] = (0x3FF / temp_t9);
-        animState->unk_0x58[0] = 0x3FF;
+        animState->unkC[1] = animState->unkC[0];
+        animState->unk5C[1] = (0x3FF / temp_t9);
+        animState->unk58[0] = 0x3FF;
     }
-    animState->unk_0xc[0] = 0.0f;
+    animState->unkC[0] = 0.0f;
     animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
     return 0;
 }
@@ -302,37 +302,37 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
         modanimIndex = 0;
     }
     
-    if (model->unk_0x71 & 0x40) {
+    if (model->unk71 & 0x40) {
         if (modanimIndex != animState->modAnimIdBlend) {
-            temp_v0_2 = animState->unk_0x62[0];
-            animState->unk_0x48[1] = 1 - temp_v0_2;
-            animState->unk_0x48[0] = temp_v0_2;
+            temp_v0_2 = animState->unk62[0];
+            animState->unk48[1] = 1 - temp_v0_2;
+            animState->unk48[0] = temp_v0_2;
             func_80019118(model->modAnim[modanimIndex], modanimIndex, (u8*)animState->anims2[(u16)temp_v0_2], model);
 
             animState->modAnimIdBlend = modanimIndex;
         }
-        anim = (Animation*)(&animState->anims2[animState->unk_0x48[0]]->anim);
+        anim = (Animation*)(&animState->anims2[animState->unk48[0]]->anim);
     } else {
-        animState->unk_0x48[0] = modanimIndex;
+        animState->unk48[0] = modanimIndex;
         anim = model->anims[(u16)modanimIndex];
     }
     
-    animState->unk_0x3c[0] = (AnimationHeader*) (&anim->animHeader);
-    temp_t1 = anim->unk_0x1 & 0xF0;
-    if (temp_t1 != animState->unk_0x60[0]) {
-        animState->unk_0x58[1] = 0;
+    animState->unk3C[0] = (AnimationHeader*) (&anim->animHeader);
+    temp_t1 = anim->unk1 & 0xF0;
+    if (temp_t1 != animState->unk60[0]) {
+        animState->unk58[1] = 0;
         return;
     }
     
-    var_fv0 = (u8)animState->unk_0x3c[0]->totalKeyframes; 
+    var_fv0 = (u8)animState->unk3C[0]->totalKeyframes; 
     if (temp_t1 == 0) {
         var_fv0 -= 1.0f;
     }
     if (var_fv0 != animState->totalAnimationFrames[0]) {
-        animState->unk_0x58[1] = 0;
+        animState->unk58[1] = 0;
         return;
     }
-    animState->unk_0x58[1] = arg3;
+    animState->unk58[1] = arg3;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025780.s")

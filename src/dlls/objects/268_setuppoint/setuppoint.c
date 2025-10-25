@@ -8,7 +8,7 @@
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s8 unk18; //unused?
-/*19*/ u8 unk19; //assigned to Object->unk_0xe0
+/*19*/ u8 unk19; //assigned to Object->unkE0
 /*1A*/ u8 yaw;
 } SetupPoint_Setup;
 
@@ -25,9 +25,9 @@ void setuppoint_setup(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
     objsetup->base.loadParamA = 8;
     objsetup->base.loadDistance = 0;
     objsetup->base.fadeDistance = 0;
-    self->unk_0xe0 = objsetup->unk19;
+    self->unkE0 = objsetup->unk19;
     self->srt.yaw = (objsetup->yaw & 0x3F) << 0xA;
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x58 | func: 1 | export: 1

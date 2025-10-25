@@ -20,7 +20,7 @@ void SHswaplift_dtor(void *dll) { }
 void SHswaplift_setup(Object *self, SHswaplift_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     if (map_get_map_id_from_xz_ws(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
-        self->unk0xdc = MAP_SWAPSTONE_CIRCLE;
+        self->unkDC = MAP_SWAPSTONE_CIRCLE;
     }
 }
 
@@ -31,19 +31,19 @@ void SHswaplift_control(Object *self) {
     s32 dostuff;
 
     dostuff = FALSE;
-    if (self->unk0x58->unk10f > 0) {
-        for (index = 0; index < self->unk0x58->unk10f; index++) {
-            listedObject = (Object*)self->unk0x58->unk100[index];
+    if (self->unk58->unk10f > 0) {
+        for (index = 0; index < self->unk58->unk10f; index++) {
+            listedObject = (Object*)self->unk58->unk100[index];
             if (listedObject->group == 1) {
                 dostuff = TRUE;
             }
         }
     }
     if (dostuff) {
-        self->unk0xaf &= ~0x8;
+        self->unkAF &= ~0x8;
 
-        if (self->unk0xaf & 0x1) {
-            if (self->unk0xdc == MAP_SWAPSTONE_CIRCLE) {
+        if (self->unkAF & 0x1) {
+            if (self->unkDC == MAP_SWAPSTONE_CIRCLE) {
                 main_set_bits(BIT_Play_Seq_0107_Rocky_Intro_Unused, 1);
             } else {
                 main_set_bits(BIT_Play_Seq_035F_Rocky_Intro, 1);
@@ -52,7 +52,7 @@ void SHswaplift_control(Object *self) {
             set_button_mask(0, 0x8000);
         }
     } else {
-        self->unk0xaf |= 0x8;
+        self->unkAF |= 0x8;
     }
 }
 

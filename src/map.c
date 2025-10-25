@@ -637,18 +637,18 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
             level = 0;
             if (shape->flags & 0x10000)
             {
-                Block_0x28Struct *bs = func_8004A284(block, shape->unk_0x14);
+                Block_0x28Struct *bs = func_8004A284(block, shape->unk14);
                 if (bs != NULL) {
-                    level = gBlockTextures[bs->texIdx].unk_0x4 << 8;
+                    level = gBlockTextures[bs->texIdx].unk4 << 8;
                     flags |= gBlockTextures[bs->texIdx].flags;
                 } else {
                     level = 0;
                 }
 
-                if (SHORT_800b51dc != shape->unk_0x14 || level != UINT_800b51e0)
+                if (SHORT_800b51dc != shape->unk14 || level != UINT_800b51e0)
                 {
                     force = 1;
-                    SHORT_800b51dc = shape->unk_0x14;
+                    SHORT_800b51dc = shape->unk14;
                     UINT_800b51e0 = level;
                 }
             }
@@ -665,9 +665,9 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
 
             set_textures_on_gdl(&gMainDL, tex0, tex1, flags, level, force, 0);
 
-            if (shape->unk_0x16 != 0xff)
+            if (shape->unk16 != 0xff)
             {
-                Struct0x22 *s = func_80049D68(shape->unk_0x16);
+                Struct0x22 *s = func_80049D68(shape->unk16);
                 gDPSetTileSize(gMainDL++, 0, s->uls0, s->ult0, tex0->width - 1, (tex0->height - 1) * 4);
                 if (tex1 != NULL) {
                     gDPSetTileSize(gMainDL++, 1, s->uls1, s->ult1, tex1->width - 1, (tex1->height - 1) * 4);
@@ -907,21 +907,21 @@ void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
         sp88 = ((var_s0->unkE * 4) | ((var_s0->unk17 >> 2) & 3)) + D_800B97BC;
         for (i = 0; i < MAP_LAYER_COUNT; i++) {
             var_v0 = &gFrustumPlanes[i];
-            if (var_v0->unk_0x14[0] & 1) {
+            if (var_v0->unk14[0] & 1) {
                 var_fs1 = sp84;
                 var_fs4 = sp90;
             } else {
                 var_fs1 = sp90;
                 var_fs4 = sp84;
             }
-            if (var_v0->unk_0x14[0] & 2) {
+            if (var_v0->unk14[0] & 2) {
                 var_fs2 = sp80;
                 var_fs3 = sp8C;
             } else {
                 var_fs2 = sp8C;
                 var_fs3 = sp80;
             }
-            if (var_v0->unk_0x14[0] & 4) {
+            if (var_v0->unk14[0] & 4) {
                 var_fv1 = sp7C;
                 var_fa0 = sp88;
             } else {
@@ -1054,7 +1054,7 @@ void func_80043FD8(s8* arg0) {
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
                 if (object->def->flags & 0x100000) {
                     var_v0 = 150000 - i;
-                } else if ((object->unk_0x37 == 0xFF) && !(object->srt.flags & 0x80)) {
+                } else if ((object->unk37 == 0xFF) && !(object->srt.flags & 0x80)) {
                     var_v0 = 150000 - i;
                 } else {
                     var_v0 = i + 50000;
@@ -1447,28 +1447,28 @@ void func_80044BEC(void) {
         // @bug, sp68 could be unassigned
         switch (sp68) {
         case 0:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 0;
+            gFrustumPlanes[var_s0].unk14[0] = 0;
             break;
         case 3:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 2;
+            gFrustumPlanes[var_s0].unk14[0] = 2;
             break;
         case 6:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 5;
+            gFrustumPlanes[var_s0].unk14[0] = 5;
             break;
         case 9:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 7;
+            gFrustumPlanes[var_s0].unk14[0] = 7;
             break;
         case 12:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 1;
+            gFrustumPlanes[var_s0].unk14[0] = 1;
             break;
         case 15:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 3;
+            gFrustumPlanes[var_s0].unk14[0] = 3;
             break;
         case 18:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 4;
+            gFrustumPlanes[var_s0].unk14[0] = 4;
             break;
         case 21:
-            gFrustumPlanes[var_s0].unk_0x14[0] = 6;
+            gFrustumPlanes[var_s0].unk14[0] = 6;
             break;
         }
     }
@@ -1647,16 +1647,16 @@ u8 func_800456AC(Object* obj) {
     f32 temp;
     s32 var_v0;
 
-    if (obj->unk_0x36 == 0) {
-        obj->unk_0x37 = 0;
+    if (obj->unk36 == 0) {
+        obj->unk37 = 0;
         return 0;
     }
     if ((obj->setup != NULL) && (obj->setup->loadParamB & 1)) {
-        obj->unk_0x37 = ((obj->unk_0x36 * 0xFF) + 0xFF) >> 8;
+        obj->unk37 = ((obj->unk36 * 0xFF) + 0xFF) >> 8;
     } else {
-        temp_ft4 = obj->unk0x40;
+        temp_ft4 = obj->unk40;
         if (temp_ft4 < 40.0f) {
-            obj->unk_0x37 = 0;
+            obj->unk37 = 0;
             return 0;
         }
         if ((obj->setup != NULL) && (obj->setup->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
@@ -1665,7 +1665,7 @@ u8 func_800456AC(Object* obj) {
             var_fv0 = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
         }
         if (temp_ft4 < var_fv0) {
-            obj->unk_0x37 = 0;
+            obj->unk37 = 0;
             return 0;
         }
         var_v0 = 0xFF;
@@ -1676,15 +1676,15 @@ u8 func_800456AC(Object* obj) {
             temp = 1.0f - ((var_fv0) / temp_ft4);
             var_v0 = 255.0f * temp;
         }
-        obj->unk_0x37 = (u8) ((s32) ((obj->unk_0x36 + 1) * var_v0) >> 8);
+        obj->unk37 = (u8) ((s32) ((obj->unk36 + 1) * var_v0) >> 8);
     }
-    if (obj->unk_0x37 == 0) {
+    if (obj->unk37 == 0) {
         return 0;
     }
     if (obj->id == 0xD4) {
         return 1;
     }
-    return is_sphere_in_frustum(&obj->positionMirror, obj->unk_0xa8);
+    return is_sphere_in_frustum(&obj->positionMirror, obj->unkA8);
 }
 
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
@@ -2003,7 +2003,7 @@ void func_80046320(s32 arg0, Object *obj) {
 
     func_80045FC4(sp18, &D_800B5508[mapID], mapID, 0);
     gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
-    obj->unk_0x34 = mapID;
+    obj->unk34 = mapID;
     gDLL_29_Gplay->vtbl->func_1378(arg0, mapID);
     D_800B4A50 = sp24;
 
@@ -2678,50 +2678,50 @@ void func_8004773C(void) {
     if ((D_800B4A5E == -2) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
         sp40 = gDLL_29_Gplay->vtbl->func_F60();
         sp3C = gDLL_29_Gplay->vtbl->func_FA8();
-        sp38 = gDLL_29_Gplay->vtbl->func_FE8()->unk0x0;
+        sp38 = gDLL_29_Gplay->vtbl->func_FE8()->unk0;
         if (D_800B4A5E == -2) {
-            if (sp40->unk0x0 != -1) {
-                func_80000608(player, player, sp40->unk0x0, 0, 0, 0);
+            if (sp40->unk0 != -1) {
+                func_80000608(player, player, sp40->unk0, 0, 0, 0);
             }
-            if (sp40->unk0x2 != -1) {
-                func_80000608(player, player, sp40->unk0x2, 0, 0, 0);
+            if (sp40->unk2 != -1) {
+                func_80000608(player, player, sp40->unk2, 0, 0, 0);
             }
-            if (sp40->unk0x4 != -1) {
-                func_80000608(player, player, sp40->unk0x4, 0, 0, 0);
+            if (sp40->unk4 != -1) {
+                func_80000608(player, player, sp40->unk4, 0, 0, 0);
             }
-            if (sp40->unk0x6 != -1) {
-                func_80000608(player, player, sp40->unk0x6, 0, 0, 0);
+            if (sp40->unk6 != -1) {
+                func_80000608(player, player, sp40->unk6, 0, 0, 0);
             }
-            if (sp40->unk0x8 != -1) {
-                func_80000608(player, player, sp40->unk0x8, 0, 0, 0);
+            if (sp40->unk8 != -1) {
+                func_80000608(player, player, sp40->unk8, 0, 0, 0);
             }
-            if (sp40->unk0xa != -1) {
-                func_80000608(player, player, sp40->unk0xa, 0, 0, 0);
+            if (sp40->unkA != -1) {
+                func_80000608(player, player, sp40->unkA, 0, 0, 0);
             }
-            if (sp40->unk0xc != -1) {
-                func_80000608(player, player, sp40->unk0xc, 0, 0, 0);
+            if (sp40->unkC != -1) {
+                func_80000608(player, player, sp40->unkC, 0, 0, 0);
             }
-            if (sp40->unk0xe != -1) {
-                func_80000608(player, player, sp40->unk0xe, 0, 0, 0);
+            if (sp40->unkE != -1) {
+                func_80000608(player, player, sp40->unkE, 0, 0, 0);
             }
-            func_8001EBD0(sp40->unk0x10 & 1);
-            if (sp3C->unk0x4 != -1) {
-                func_800009C8(player, player, sp3C->unk0x4, 0);
+            func_8001EBD0(sp40->unk10 & 1);
+            if (sp3C->unk4 != -1) {
+                func_800009C8(player, player, sp3C->unk4, 0);
             }
-            if (sp3C->unk0x6 != -1) {
-                func_800009C8(player, player, sp3C->unk0x6, 0);
+            if (sp3C->unk6 != -1) {
+                func_800009C8(player, player, sp3C->unk6, 0);
             }
-            if (sp3C->unk0x8 != -1) {
-                func_800009C8(player, player, sp3C->unk0x8, 0);
+            if (sp3C->unk8 != -1) {
+                func_800009C8(player, player, sp3C->unk8, 0);
             }
-            gDLL_12_Minic->vtbl->func6(sp3C->unk0x3c & 1);
+            gDLL_12_Minic->vtbl->func6(sp3C->unk3C & 1);
             for (i = 0; i < 4; i++) {
                 if (sp38[i] != -1) {
                     gDLL_5_AMSEQ2->vtbl->func0(NULL, sp38[i], 0, 0, 0);
                 }
             }
-            if (sp40->unk0x12 != -1) {
-                gDLL_2_Camera->vtbl->func8(0, sp40->unk0x12);
+            if (sp40->unk12 != -1) {
+                gDLL_2_Camera->vtbl->func8(0, sp40->unk12);
             }
             sp4C.parent = NULL;
             sp4C.srt.transl.x = 0.0f;
@@ -2730,25 +2730,25 @@ void func_8004773C(void) {
             sp4C.positionMirror.x = 0.0f;
             sp4C.positionMirror.y = 0.0f;
             sp4C.positionMirror.z = 0.0f;
-            if (sp3C->unk0xa != -1) {
+            if (sp3C->unkA != -1) {
                 sp4C.srt.transl.x = sp3C->unk10;
                 sp4C.srt.transl.y = sp3C->unk14;
                 sp4C.srt.transl.z = sp3C->unk18;
-                func_80000860(&sp4C, player, sp3C->unk0xa, 0);
+                func_80000860(&sp4C, player, sp3C->unkA, 0);
             }
-            if (sp3C->unk0xc != -1) {
+            if (sp3C->unkC != -1) {
                 sp4C.srt.transl.x = sp3C->unk1C;
                 sp4C.srt.transl.y = sp3C->unk20;
                 sp4C.srt.transl.z = sp3C->unk24;
-                func_80000860(&sp4C, player, sp3C->unk0xc, 0);
+                func_80000860(&sp4C, player, sp3C->unkC, 0);
             }
-            if (sp3C->unk0xe != -1) {
+            if (sp3C->unkE != -1) {
                 sp4C.srt.transl.x = sp3C->unk28;
                 sp4C.srt.transl.y = sp3C->unk2C;
                 sp4C.srt.transl.z = sp3C->unk30;
-                func_80000860(&sp4C, player, sp3C->unk0xe, 0);
+                func_80000860(&sp4C, player, sp3C->unkE, 0);
             }
-            gDLL_7_Newday->vtbl->func9(sp3C->unk0x0);
+            gDLL_7_Newday->vtbl->func9(sp3C->unk0);
         }
     } else {
         gDLL_7_Newday->vtbl->func9(43000.0f);
@@ -2985,7 +2985,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
     block->vertices = (Vtx_t*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
-    block->unk_0x10 = (void*)((u32)block->unk_0x10 + (u32)block);
+    block->unk10 = (void*)((u32)block->unk10 + (u32)block);
     block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
 
     func_8003CD6C(7);
@@ -3050,7 +3050,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
     }
 
     p = mmAlign4(p);
-    block->unk_0x28 = p;
+    block->unk28 = p;
 
     n = block_setup_textures(block);
 
@@ -3058,7 +3058,7 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
     block->xzBitmap = p;
     block_setup_xz_bitmap(block);
 
-    p = mmAlign8(p + block->unk_0x34 * sizeof(s16));
+    p = mmAlign8(p + block->unk34 * sizeof(s16));
     block_load_hits(block, id, queue, p);
 
     if (queue) {
@@ -3238,7 +3238,7 @@ void block_setup_gdl_groups(Block *block)
         s32 flags;
         Gfx *mygdl;
 
-        block->shapes[i].unk_0x16 = 0xff;
+        block->shapes[i].unk16 = 0xff;
         
         shape = &block->shapes[i];
         flags = shape->flags;
@@ -3640,7 +3640,7 @@ void func_80049D88(void)
             texture = gBlockTextures[i].texture;
 
             if ((texture != NULL) && (texture->levels != 0x100)) {
-                if (texture->unk_0xe != 0) {
+                if (texture->unkE != 0) {
                     func_8003E648(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
                 }
             }
@@ -3668,19 +3668,19 @@ s32 block_setup_textures(Block* block) {
         if (temp_a3->flags & 0x4000) {
             var_s6++;
         }
-        if (temp_a3->flags & 0x10000 && temp_a3->unk_0x14 != 0) {
+        if (temp_a3->flags & 0x10000 && temp_a3->unk14 != 0) {
             var_a1 = FALSE;
             for (j = 0; j < var_s1; j++) {
-                if (block->unk_0x28[j].unk_0x2 == temp_a3->unk_0x14) {
+                if (block->unk28[j].unk2 == temp_a3->unk14) {
                     var_a1 = TRUE;
                     break;
                 }
             }
-            var_a2 = temp_a3->unk_0x14;
+            var_a2 = temp_a3->unk14;
             if (var_a1 == FALSE) {
                 var_a1 = temp_a3->flags;
-                block->unk_0x28[var_s1].texIdx = func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
-                block->unk_0x28[var_s1].unk_0x2 = block->shapes[i].unk_0x14;
+                block->unk28[var_s1].texIdx = func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
+                block->unk28[var_s1].unk2 = block->shapes[i].unk14;
                 var_s1++;
             } else {
                 var_a1 = temp_a3->flags;
@@ -3688,8 +3688,8 @@ s32 block_setup_textures(Block* block) {
             }
         }
     }
-    block->unk_0x49 = var_s6;
-    block->unk_0x48 = var_s1;
+    block->unk49 = var_s6;
+    block->unk48 = var_s1;
     return var_s1 * 4;
 }
 #endif
@@ -3787,10 +3787,10 @@ Block_0x28Struct *func_8004A284(Block *block, u32 param_2)
 {
     s32 i;
 
-    for (i = 0; i < block->unk_0x48; i++)
+    for (i = 0; i < block->unk48; i++)
     {
-        if (block->unk_0x28[i].unk_0x2 == param_2) {
-            return &block->unk_0x28[i];
+        if (block->unk28[i].unk2 == param_2) {
+            return &block->unk28[i];
         }
     }
 
@@ -3885,7 +3885,7 @@ s32 func_8004A528(Object* obj, u8 animatorID) {
     anim_vertex_count = 0;
     blockShapes = block->shapes;
     for (index = 0; index < block->shapeCount; index++){
-        if (animatorID == (blockShapes[index]).unk_0x14){
+        if (animatorID == (blockShapes[index]).unk14){
             anim_vertex_count += blockShapes[index + 1].vtxBase - blockShapes[index].vtxBase;
         }
     }
@@ -3905,7 +3905,7 @@ s32 func_8004A5D8(Object* obj, u8 arg1) {
     }
 
     for (i = 0, out = 0, shapes = block->shapes; i < block->shapeCount; i++) {
-        if (arg1 == shapes[i].unk_0x14) {
+        if (arg1 == shapes[i].unk14) {
             out += 1;
         }
     }
@@ -4041,8 +4041,8 @@ void map_update_objects_streaming(s32 arg0) {
         }
         if (var_s1 != 0) {
             if (gLoadedMapsDataTable[temp_s0->mapID] != NULL) {
-                if (temp_s0->unk0xb2 >= 0) {
-                    func_8004B710(temp_s0->unk0xb2, temp_s0->mapID, 0U);
+                if (temp_s0->unkB2 >= 0) {
+                    func_8004B710(temp_s0->unkB2, temp_s0->mapID, 0U);
                 }
             }
             if (temp_s0->id == 0x72) {
@@ -4102,7 +4102,7 @@ void map_update_objects_streaming(s32 arg0) {
     for (spB8 = 0; spB8 < sp9C; spB8++) {
         temp_s5 = sp68[spB8];
         var_s3 = 0;
-        temp_s4 = temp_s5->unk_0x34;
+        temp_s4 = temp_s5->unk34;
         temp_s6 = gLoadedMapsDataTable[temp_s4];
         if (temp_s6 != NULL) {
             temp_s7 = temp_s5->matrixIdx + 1;
@@ -4273,7 +4273,7 @@ s32 func_8004B190(Object* arg0) {
     if (sp1C->loadParamA & 2) {
         return 0;
     }
-    if ((arg0->unk0xc0 != NULL) && (arg0->unk0xb4 < 0)) {
+    if ((arg0->unkC0 != NULL) && (arg0->unkB4 < 0)) {
         return 0;
     }
     if (arg0->parent == NULL) {
@@ -4310,7 +4310,7 @@ s32 func_8004B190(Object* arg0) {
         var_fa0 = Vec3_Int_array[var_a0].f.y;
         var_fa1 = Vec3_Int_array[var_a0].f.z;
     }
-    sp38 = arg0->unk0x3c;
+    sp38 = arg0->unk3C;
     if (arg0->parent != NULL) {
         var_fv0 = var_fv1 - arg0->srt.transl.x;
         var_ft4 = var_fa0 - arg0->srt.transl.y;
@@ -4851,10 +4851,10 @@ void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                         if (var_s0 != NULL) {
                             var_v0 = &sp8C[var_s3];
                             if (
-                                ((blockShape->unk_0x8[4] - 0x32) << 2) < var_v0->unk0 &&
-                                var_v0->unk0 < ((blockShape->unk_0x8[5] + 0x32) << 2) &&
-                                ((blockShape->unk_0x8[6] - 0x32) << 2) < var_v0->unk8 &&
-                                var_v0->unk8 < ((blockShape->unk_0x8[7] + 0x32) << 2)
+                                ((blockShape->unk8[4] - 0x32) << 2) < var_v0->unk0 &&
+                                var_v0->unk0 < ((blockShape->unk8[5] + 0x32) << 2) &&
+                                ((blockShape->unk8[6] - 0x32) << 2) < var_v0->unk8 &&
+                                var_v0->unk8 < ((blockShape->unk8[7] + 0x32) << 2)
                             ) {
                                 sp120 = 1;
                             }

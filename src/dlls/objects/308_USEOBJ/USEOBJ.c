@@ -39,7 +39,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
-    self->unk0xbc = (ObjectCallback)UseObj_anim_callback;
+    self->unkBC = (ObjectCallback)UseObj_anim_callback;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         // diPrintf("USEOBJ.c: modelno out of range romdefno=%d\n"), self->modelInstIdx);
@@ -49,7 +49,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     objdata->unk0 = main_get_bits(setup->gamebit);
     obj_add_object_type(self, OBJTYPE_17);
     if (setup->flags & 1 && objdata->unk0 != 0) {
-        self->unk_0x36 = 0;
+        self->unk36 = 0;
     }
 }
 
@@ -63,20 +63,20 @@ void UseObj_control(Object *self) {
     setup = (UseObj_Setup*)self->setup;
     objdata->unk0 = main_get_bits(setup->gamebit);
     if (objdata->unk0 == 0) {
-        self->unk0xaf &= ~8;
+        self->unkAF &= ~8;
         if (setup->gamebit3 != -1) {
             if (main_get_bits(setup->gamebit3)) {
-                self->unk0xaf &= ~0x10;
+                self->unkAF &= ~0x10;
             } else {
-                self->unk0xaf |= 0x10;
+                self->unkAF |= 0x10;
                 if (setup->flags & 0x10) {
-                    self->unk0xaf |= 8;
+                    self->unkAF |= 8;
                 }
             }
         } else {
-            self->unk0xaf &= ~0x10;
+            self->unkAF &= ~0x10;
         }
-        if (self->unk0xaf & 1 && (setup->gamebit2 == -1 || gDLL_1_UI->vtbl->func7(setup->gamebit2))) {
+        if (self->unkAF & 1 && (setup->gamebit2 == -1 || gDLL_1_UI->vtbl->func7(setup->gamebit2))) {
             if (setup->objectSeqIndex != -1) {
                 gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, -1);
             }
@@ -87,12 +87,12 @@ void UseObj_control(Object *self) {
                 main_set_bits(setup->gamebit3, 0);
             } else {
                 objdata->unk0 = 1;
-                self->unk0xdc = 1;
+                self->unkDC = 1;
             }
             set_button_mask(0, 0x8000);
         }
     } else {
-        if (self->unk0xdc == 0) {
+        if (self->unkDC == 0) {
             if (setup->objectSeqIndex != -1) {
                 if (setup->unk24 != 0) {
                     gDLL_3_Animation->vtbl->func20(self, setup->unk24);
@@ -109,15 +109,15 @@ void UseObj_control(Object *self) {
                     gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, var_a2);
                 }
             }
-            self->unk0xdc = 1;
+            self->unkDC = 1;
         }
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
     }
 }
 
 // offset: 0x3B8 | func: 2 | export: 2
 void UseObj_update(Object *self) {
-    if (self->def->flags & 1 && self->unk0x74) {
+    if (self->def->flags & 1 && self->unk74) {
         func_80036438(self);
     }
 }
@@ -149,7 +149,7 @@ int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDat
     UseObj_Setup *setup;
 
     setup = (UseObj_Setup*)self->setup;
-    self->unk0xaf |= 8;
+    self->unkAF |= 8;
     if (animObjData->unk8D != 0) {
         if (setup->flags & 4 && animObjData->unk8D == 1) {
             main_set_bits(setup->gamebit, 1);

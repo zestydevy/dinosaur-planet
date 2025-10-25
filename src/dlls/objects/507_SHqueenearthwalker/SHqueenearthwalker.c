@@ -39,7 +39,7 @@ void SHqueenearthwalker_setup(Object* self, SHqueenearthwalker_Setup* setup, s32
 
     objdata = self->data;
     self->srt.yaw = setup->unk18 << 8;
-    self->unk0xbc = (ObjectCallback)SHqueenearthwalker_func_4F8;
+    self->unkBC = (ObjectCallback)SHqueenearthwalker_func_4F8;
     objdata->eatenWhiteMushrooms = main_get_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
     objdata->questProgress = main_get_bits(BIT_SH_Queen_EW_Quest_Progress);
 }
@@ -51,7 +51,7 @@ void SHqueenearthwalker_control(Object* self) {
 
     objdata = self->data;
     prevQuestProgress = objdata->questProgress;
-    self->unk0xaf &= ~8;
+    self->unkAF &= ~8;
     if (self->curModAnimId != 1) {
         func_80023D30(self, 1, 0.0f, 0);
     }
@@ -62,7 +62,7 @@ void SHqueenearthwalker_control(Object* self) {
         objdata->questProgress = 2;
         break;
     case 2:
-        if (self->unk0xaf & 1) {
+        if (self->unkAF & 1) {
             set_button_mask(0, 0x8000);
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             main_set_bits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
@@ -70,7 +70,7 @@ void SHqueenearthwalker_control(Object* self) {
         }
         break;
     case 3:
-        if (self->unk0xaf & 4) {
+        if (self->unkAF & 4) {
             if (gDLL_1_UI->vtbl->func7(BIT_Inventory_White_Mushrooms) != 0) {
                 set_button_mask(0, 0x8000);
                 objdata->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
@@ -83,7 +83,7 @@ void SHqueenearthwalker_control(Object* self) {
                 }
                 main_set_bits(BIT_Inventory_White_Mushrooms, 0);
                 main_set_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, objdata->eatenWhiteMushrooms);
-            } else if (self->unk0xaf & 1) {
+            } else if (self->unkAF & 1) {
                 set_button_mask(0, 0x8000);
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
             }
@@ -141,7 +141,7 @@ static s32 SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2,
 
     objdata = a0->data;
     sp40 = objdata->questProgress;
-    a0->unk0xaf |= 8;
+    a0->unkAF |= 8;
     a2->unk62 = 0;
 
     for (i = 0; i < a2->unk98; i++) {

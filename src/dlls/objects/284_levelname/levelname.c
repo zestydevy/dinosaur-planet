@@ -82,7 +82,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     objdata = self->data;
 
     font_load(FONT_DINO_MEDIUM_FONT_IN);
-    self->unk0xbc = (void*)&levelname_anim_callback;
+    self->unkBC = (void*)&levelname_anim_callback;
 
     gametext = gDLL_21_Gametext->vtbl->get_chunk(setup->textID);
 
@@ -101,7 +101,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
             objdata->state = LEVELNAME_STATE_4_FINISHED;
         }
     }
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x120 | func: 1 | export: 1

@@ -93,15 +93,15 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
     s8 fail;
     ModelHeader *header;
     s16 animCount;
-    s16 unk_0x2_aligned;
-    s16 unk_0x4;
+    s16 unk2_aligned;
+    s16 unk4;
     s32 i;
     s8 isOldSlot;
     s8 isNewSlot;
     Model *model;
     ModelInstance *modelInst;
     void *modanim;
-    s16 unk_0x68;
+    s16 unk68;
 
     if (id < 0) {
         id = -id;
@@ -123,9 +123,9 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
             {
                 model->refCount++;
 
-                model_setup_anim_playback(modelInst, modelInst->unk_0x28);
-                if (modelInst->unk_0x2c != 0) {
-                    model_setup_anim_playback(modelInst, modelInst->unk_0x2c);
+                model_setup_anim_playback(modelInst, modelInst->unk28);
+                if (modelInst->unk2C != 0) {
+                    model_setup_anim_playback(modelInst, modelInst->unk2C);
                 }
             }
 
@@ -155,11 +155,11 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 
     header = gAuxBuffer;
     animCount = header->animCount;
-    unk_0x4 = header->unk_0x4;
-    unk_0x2_aligned = mmAlign8(header->unk_0x2);
-    unk_0x68 = unk_0x2_aligned + 0x90;
+    unk4 = header->unk4;
+    unk2_aligned = mmAlign8(header->unk2);
+    unk68 = unk2_aligned + 0x90;
     uncompressedSize = rarezip_uncompress_size(&header->uncompressedSize);
-    modelSize = model_load_anim_remap_table(id, unk_0x4, animCount);
+    modelSize = model_load_anim_remap_table(id, unk4, animCount);
     modelSize += uncompressedSize + 500;
 
     model = mmAlloc(modelSize, ALLOC_TAG_MODELS_COL, 0);
@@ -193,54 +193,54 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
 
     // Convert offsets to pointers
     model->textures = (ModelTexture*)((u32)model->textures + (u32)model);
-    model->unk_0x4 = (void*)((u32)model->unk_0x4 + (u32)model);
-    model->unk_0x8 = (void*)((u32)model->unk_0x8 + (u32)model);
-    model->unk_0x28 = (void*)((u32)model->unk_0x28 + (u32)model);
-    model->unk_0x18 = (void*)((u32)model->unk_0x18 + (u32)model);
-    model->unk_0x14 = (void*)((u32)model->unk_0x14 + (u32)model);
-    model->unk_0xc = (void*)((u32)model->unk_0xc + (u32)model);
-    if (model->unk_0x3c != NULL) {
-        model->unk_0x3c = (void*)((u32)model + (u32)model->unk_0x3c);
+    model->unk4 = (void*)((u32)model->unk4 + (u32)model);
+    model->unk8 = (void*)((u32)model->unk8 + (u32)model);
+    model->unk28 = (void*)((u32)model->unk28 + (u32)model);
+    model->unk18 = (void*)((u32)model->unk18 + (u32)model);
+    model->unk14 = (void*)((u32)model->unk14 + (u32)model);
+    model->unkC = (void*)((u32)model->unkC + (u32)model);
+    if (model->unk3C != NULL) {
+        model->unk3C = (void*)((u32)model + (u32)model->unk3C);
     }
-    if (model->unk_0x38 != NULL) {
-        model->unk_0x38 = (void*)((u32)model + (u32)model->unk_0x38);
+    if (model->unk38 != NULL) {
+        model->unk38 = (void*)((u32)model + (u32)model->unk38);
     }
-    if (model->unk_0x1c != NULL) {
-        model->unk_0x1c = (void*)((u32)model + (u32)model->unk_0x1c);
+    if (model->unk1C != NULL) {
+        model->unk1C = (void*)((u32)model + (u32)model->unk1C);
     }
 
     model->anims = NULL;
 
-    model->unk_0x24 = 0;
+    model->unk24 = 0;
 
-    if (model->unk_0x20 != NULL) {
-        model->unk_0x20 = (void*)((u32)model + (u32)model->unk_0x20);
-        if (model->unk_0x50 != NULL) {
-            model->unk_0x50 = (void*)((u32)model + (u32)model->unk_0x50);
+    if (model->unk20 != NULL) {
+        model->unk20 = (void*)((u32)model + (u32)model->unk20);
+        if (model->unk50 != NULL) {
+            model->unk50 = (void*)((u32)model + (u32)model->unk50);
         }
-        if (model->unk_0x54 != NULL) {
-            model->unk_0x54 = (void*)((u32)model + (u32)model->unk_0x54);
+        if (model->unk54 != NULL) {
+            model->unk54 = (void*)((u32)model + (u32)model->unk54);
         }
     } else {
-        model->unk_0x50 = NULL;
-        model->unk_0x54 = NULL;
+        model->unk50 = NULL;
+        model->unk54 = NULL;
     }
 
-    if (model->unk_0x2c != NULL) {
-        model->unk_0x2c = (void*)((u32)model + (u32)model->unk_0x2c);
+    if (model->unk2C != NULL) {
+        model->unk2C = (void*)((u32)model + (u32)model->unk2C);
     }
-    if (model->unk_0x34 != NULL) {
-        model->unk_0x34 = (void*)((u32)model + (u32)model->unk_0x34);
+    if (model->unk34 != NULL) {
+        model->unk34 = (void*)((u32)model + (u32)model->unk34);
     }
 
-    model->unk_0x68 = unk_0x68;
+    model->unk68 = unk68;
     model->modelId = id;
     model->refCount = 1;
     model->animCount = animCount;
 
-    model->unk_0x71 &= ~0x40;
-    if (unk_0x4 != 0) {
-        model->unk_0x71 |= 0x40;
+    model->unk71 &= ~0x40;
+    if (unk4 != 0) {
+        model->unk71 |= 0x40;
     }
 
     fail = FALSE;
@@ -256,9 +256,9 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
         goto bail;
     }
 
-    for (i = 0; i < model->unk_0x70; i++)
+    for (i = 0; i < model->unk70; i++)
     {
-        if (model->unk_0x8[i].unk_0x0 != 0xff && model->unk_0x8[i].unk_0x0 >= model->textureCount) {
+        if (model->unk8[i].unk0 != 0xff && model->unk8[i].unk0 >= model->textureCount) {
             goto bail;
         }
     }
@@ -276,9 +276,9 @@ ModelInstance *_model_load_create_instance(s32 id, u32 flags)
         goto bail;
     }
 
-    model_setup_anim_playback(modelInst, modelInst->unk_0x28);
-    if (modelInst->unk_0x2c != 0) {
-        model_setup_anim_playback(modelInst, modelInst->unk_0x2c);
+    model_setup_anim_playback(modelInst, modelInst->unk28);
+    if (modelInst->unk2C != 0) {
+        model_setup_anim_playback(modelInst, modelInst->unk2C);
     }
 
     gLoadedModels[slot].id = id;
@@ -434,8 +434,8 @@ u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 b
     stats->hitSphereMalloc = (model->hitSphereCount << 2) << 3;
     stats->unkC = 0;
 
-    if (model->unk_0x71 & 0x40){
-        stats->unk14 = model->unk_0x68;
+    if (model->unk71 & 0x40){
+        stats->unk14 = model->unk68;
         while (stats->unk14 & 7) {
             stats->unk14++;
         }
@@ -597,17 +597,17 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
     Animation* anim;
 
     animState->animIndexes[0] = 0;
-    animState->unk_0x5c[1] = 0;
-    animState->unk_0x58[0] = 0;
-    animState->unk_0x58[1] = 0;
-    animState->unk_0x5c[0] = 0;
-    animState->unk_0xc[0] = 0.0f;
+    animState->unk5C[1] = 0;
+    animState->unk58[0] = 0;
+    animState->unk58[1] = 0;
+    animState->unk5C[0] = 0;
+    animState->unkC[0] = 0.0f;
     animState->curAnimationFrame[0] = 0.0f;
     animState->totalAnimationFrames[0] = 0.0f;
-    animState->unk_0x60[0] = 0;
+    animState->unk60[0] = 0;
     model = arg0->model;
     if (model->animCount != 0) {
-        if (model->unk_0x71 & 0x40) {
+        if (model->unk71 & 0x40) {
             anim_load(*model->modAnim, 0, animState->anims[0], model);
             anim_load(*model->modAnim, 0, animState->anims[1], model);
             anim_load(*model->modAnim, 0, animState->anims2[0], model);
@@ -622,26 +622,26 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
         if (animHeader->totalBones != model->jointCount) {
             STUBBED_PRINTF("makeModelAnimation() size mismatch!! (%d,%d)\n");
         }
-        animState->unk_0x34[0] = animHeader;
-        animState->unk_0x60[0] = anim->unk_0x1 & 0xF0;
+        animState->unk34[0] = animHeader;
+        animState->unk60[0] = anim->unk1 & 0xF0;
 
         animState->totalAnimationFrames[0] = animHeader->totalKeyframes;
         //If the anim doesn't loop, maybe?
         //(i.e. no need to blend from last key to first key, so finished as soon as it reaches last key)
-        if (animState->unk_0x60[0] == 0) {
+        if (animState->unk60[0] == 0) {
             animState->totalAnimationFrames[0] -= 1.0f;
         }
         
-        animState->unk_0x60[1] = animState->unk_0x60[0];
-        animState->unk_0x34[1] = animState->unk_0x34[0];
-        animState->unk_0x3c[0] = animState->unk_0x34[0];
-        animState->unk_0x3c[1] = animState->unk_0x34[0];
+        animState->unk60[1] = animState->unk60[0];
+        animState->unk34[1] = animState->unk34[0];
+        animState->unk3C[0] = animState->unk34[0];
+        animState->unk3C[1] = animState->unk34[0];
         animState->animIndexes[1] = animState->animIndexes[0];
-        animState->unk_0x48[0] = animState->animIndexes[0];
-        animState->unk_0x48[1] = animState->animIndexes[0];
+        animState->unk48[0] = animState->animIndexes[0];
+        animState->unk48[1] = animState->animIndexes[0];
         animState->curAnimationFrame[1] = animState->curAnimationFrame[0];
         animState->totalAnimationFrames[1] = animState->totalAnimationFrames[0];
-        animState->unk_0xc[1] = animState->unk_0xc[0];
+        animState->unkC[1] = animState->unkC[0];
     }
 }
 
@@ -758,46 +758,46 @@ void _func_80019730(ModelInstance *modelInst, Model *model, Object *object, MtxF
 
     func_8001A640(object, modelInst, model);
 
-    modelInst->unk_0x34 ^= 0x1;
-    mtxSelector = modelInst->unk_0x34 & 0x1;
+    modelInst->unk34 ^= 0x1;
+    mtxSelector = modelInst->unk34 & 0x1;
 
     animState0 = modelInst->animState0;
 
-    if (animState0->unk_0x63 & 0x4)
+    if (animState0->unk63 & 0x4)
     {
         short xyz[3];
         Vec3f v;
-        func_8001A3FC(modelInst, 0, 0, object->unk0x98, object->srt.scale, &v, xyz);
+        func_8001A3FC(modelInst, 0, 0, object->unk98, object->srt.scale, &v, xyz);
         *(s16*)0x800903dc = xyz[0];
         *(s16*)0x800903de = xyz[1];
         *(s16*)0x800903e0 = xyz[2];
     }
 
-    if (modelInst->model->unk_0x71 & 0x8)
+    if (modelInst->model->unk71 & 0x8)
     {
-        func_800199A8(param_4, modelInst, animState0, object->unk0x98, 0x7f);
+        func_800199A8(param_4, modelInst, animState0, object->unk98, 0x7f);
     }
     else
     {
-        if (modelInst->animState0->unk_0x63 & 0x8)
+        if (modelInst->animState0->unk63 & 0x8)
         {
             AnimState *animState1 = modelInst->animState1;
 
-            func_80019FC0(param_4, modelInst, animState0, object->unk0x98, 0x7f, 0, 0, 2, 0x14, animState0->unk_0x5a);
-            func_80019FC0(param_4, modelInst, animState1, object->unk0x9c, 0x7f, 0, 0, 2, 0x18, animState0->unk_0x5a);
-            func_80019FC0(param_4, modelInst, animState0, object->unk0x98, 0x7f, 0, 0, 0, 7, animState1->unk_0x58);
-            func_80019FC0(param_4, modelInst, animState0, object->unk0x98, 0x7f, 0, 1, 1, 1, animState0->unk_0x58);
+            func_80019FC0(param_4, modelInst, animState0, object->unk98, 0x7f, 0, 0, 2, 0x14, animState0->unk5A);
+            func_80019FC0(param_4, modelInst, animState1, object->unk9C, 0x7f, 0, 0, 2, 0x18, animState0->unk5A);
+            func_80019FC0(param_4, modelInst, animState0, object->unk98, 0x7f, 0, 0, 0, 7, animState1->unk58);
+            func_80019FC0(param_4, modelInst, animState0, object->unk98, 0x7f, 0, 1, 1, 1, animState0->unk58);
         }
         else
         {
-            func_800199A8(param_4, modelInst, animState0, object->unk0x98, 0x7f);
+            func_800199A8(param_4, modelInst, animState0, object->unk98, 0x7f);
             if (modelInst->animState1 != NULL && object->curModAnimIdLayered >= 0) {
-                func_800199A8(param_4, modelInst, modelInst->animState1, object->unk0x9c, -1);
+                func_800199A8(param_4, modelInst, modelInst->animState1, object->unk9C, -1);
             }
         }
     }
 
-    pointerIntArray2_func(modelInst->unk_0x4.matrices[mtxSelector], model->unk_0x6f);
+    pointerIntArray2_func(modelInst->unk4.matrices[mtxSelector], model->unk6F);
 }
 #endif
 
@@ -814,11 +814,11 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
     s32 j;
 
     model = modelInst->model;
-    modelMtx = modelInst->unk_0x4.matrices[modelInst->unk_0x34 & 0x1];
+    modelMtx = modelInst->unk4.matrices[modelInst->unk34 & 0x1];
 
-    animState->unk_0x4[0] = animState->unk_0x14[0] * param_4;
+    animState->unk4[0] = animState->unk14[0] * param_4;
 
-    if (model->unk_0x71 & 0x8)
+    if (model->unk71 & 0x8)
     {
         myAnimState.anims[0] = animState->anims[0];
         myAnimState.anims[1] = animState->anims[1];
@@ -829,27 +829,27 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
         {
             s32 srci = 0;
 
-            if (animState->unk_0x58 != 0) {
+            if (animState->unk58 != 0) {
                 srci = i;
             }
 
             myAnimState.animIndexes[i] = animState->animIndexes[srci];
-            myAnimState.unk_0x60[i] = animState->unk_0x60[srci];
-            myAnimState.unk_0x4[i] = animState->unk_0x4[srci];
+            myAnimState.unk60[i] = animState->unk60[srci];
+            myAnimState.unk4[i] = animState->unk4[srci];
         }
 
-        myAnimState.unk_0x58 = animState->unk_0x58;
+        myAnimState.unk58 = animState->unk58;
 
         func_8001A1D4(model, &myAnimState, 2);
 
-        if (animState->unk_0x63 & 0x1) {
+        if (animState->unk63 & 0x1) {
             flags |= 0x10;
         }
-        if (animState->unk_0x63 & 0x4) {
+        if (animState->unk63 & 0x4) {
             flags |= 0x20;
         }
 
-        func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk_0x20, model->unk_0x6f, SHORT_ARRAY_800b17d0, param_5, flags | 0x40);
+        func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, SHORT_ARRAY_800b17d0, param_5, flags | 0x40);
 
         return;
     }
@@ -857,31 +857,31 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
     for (i = 0; i < 2; i++)
     {
         if (i == 0) {
-            myAnimState.unk_0x58 = animState->unk_0x5a;
+            myAnimState.unk58 = animState->unk5A;
         } else {
-            myAnimState.unk_0x58 = animState->unk_0x5c;
+            myAnimState.unk58 = animState->unk5C;
         }
 
-        if (myAnimState.unk_0x58 != 0)
+        if (myAnimState.unk58 != 0)
         {
             u32 bit;
 
-            if (animState->unk_0x58 == 0) {
+            if (animState->unk58 == 0) {
                 bit = 0;
             } else {
                 bit = 4 << i;
             }
 
-            myAnimState.unk_0x60[0] = animState->unk_0x60[i];
-            myAnimState.unk_0x14[0] = animState->unk_0x14[i];
-            myAnimState.unk_0x4[0] = animState->unk_0x4[i];
-            myAnimState.unk_0x34[0] = animState->unk_0x34[i];
-            myAnimState.unk_0x60[1] = animState->unk_0x60[i];
-            myAnimState.unk_0x14[1] = animState->unk_0x14[i];
-            myAnimState.unk_0x4[1] = animState->unk_0x4[i];
-            myAnimState.unk_0x34[1] = animState->unk_0x3c[i];
+            myAnimState.unk60[0] = animState->unk60[i];
+            myAnimState.unk14[0] = animState->unk14[i];
+            myAnimState.unk4[0] = animState->unk4[i];
+            myAnimState.unk34[0] = animState->unk34[i];
+            myAnimState.unk60[1] = animState->unk60[i];
+            myAnimState.unk14[1] = animState->unk14[i];
+            myAnimState.unk4[1] = animState->unk4[i];
+            myAnimState.unk34[1] = animState->unk3C[i];
 
-            if (model->unk_0x71 & 0x40) {
+            if (model->unk71 & 0x40) {
                 myAnimState.animIndexes[0] = 0;
                 myAnimState.animIndexes[1] = 1;
                 myAnimState.anims[0] = animState->anims[animState->animIndexes[i]];
@@ -892,7 +892,7 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
             }
 
             func_8001A1D4(model, &myAnimState, 2);
-            func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk_0x20, model->unk_0x6f, SHORT_ARRAY_800b17d0, param_5, bit);
+            func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, SHORT_ARRAY_800b17d0, param_5, bit);
 
             if (bit != 0) {
                 bit |= 1 << i;
@@ -900,14 +900,14 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
         }
     }
 
-    if (animState->unk_0x5a != 0 || animState->unk_0x5c != 0) {
+    if (animState->unk5A != 0 || animState->unk5C != 0) {
         if (flags == 0) {
             return;
         }
     }
 
     j = 1;
-    if (animState->unk_0x58) {
+    if (animState->unk58) {
         j = 2;
     }
 
@@ -923,10 +923,10 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
             for (i = 0; i < j; i++)
             {
                 myAnimState.animIndexes[i] = animState->animIndexes[i];
-                myAnimState.unk_0x60[i] = animState->unk_0x60[i];
-                myAnimState.unk_0x14[i] = animState->unk_0x14[i];
-                myAnimState.unk_0x4[i] = animState->unk_0x4[i];
-                myAnimState.unk_0x34[i] = animState->unk_0x34[i];
+                myAnimState.unk60[i] = animState->unk60[i];
+                myAnimState.unk14[i] = animState->unk14[i];
+                myAnimState.unk4[i] = animState->unk4[i];
+                myAnimState.unk34[i] = animState->unk34[i];
             }
             if (i == 1)
                 goto lab_80019f2c;
@@ -936,15 +936,15 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
     }
 
     lab_80019f2c:
-    myAnimState.unk_0x58 = animState->unk_0x58;
+    myAnimState.unk58 = animState->unk58;
     func_8001A1D4(model, &myAnimState, 1);
-    if (animState->unk_0x63 & 0x1) {
+    if (animState->unk63 & 0x1) {
         flags |= 0x10;
     }
-    if (animState->unk_0x63 & 0x4) {
+    if (animState->unk63 & 0x4) {
         flags |= 0x20;
     }
-    func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk_0x20, model->unk_0x6f, SHORT_ARRAY_800b17d0, param_5, flags);
+    func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, SHORT_ARRAY_800b17d0, param_5, flags);
 }
 #endif
 
@@ -955,24 +955,24 @@ void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
 void _func_80019FC0(MtxF *param_1, ModelInstance *modelInst, AnimState *animState, f32 param_4, u32 param_5, u8 animIdx0, u8 param_7, u8 animIdx1, u32 flags, u16 param_10)
 {
     Model *model = modelInst->model;
-    MtxF *modelMtx = modelInst->unk_0x4.matrices[modelInst->unk_0x34 & 1];
+    MtxF *modelMtx = modelInst->unk4.matrices[modelInst->unk34 & 1];
     AnimState myAnimState;
     u8 flags2;
 
     if (flags & 0x10) {
-        animState->unk_0x4[0] = animState->unk_0x14[0] * param_4;
+        animState->unk4[0] = animState->unk14[0] * param_4;
     }
 
-    myAnimState.unk_0x60[0] = animState->unk_0x60[animIdx0];
-    myAnimState.unk_0x14[0] = animState->unk_0x14[animIdx0];
-    myAnimState.unk_0x4[0] = animState->unk_0x4[animIdx0];
-    myAnimState.unk_0x34[0] = animState->unk_0x34[animIdx0];
-    myAnimState.unk_0x60[1] = animState->unk_0x60[param_7];
-    myAnimState.unk_0x14[1] = animState->unk_0x14[param_7];
-    myAnimState.unk_0x4[1] = animState->unk_0x4[param_7];
-    myAnimState.unk_0x34[1] = animState->unk_0x34[animIdx1];
+    myAnimState.unk60[0] = animState->unk60[animIdx0];
+    myAnimState.unk14[0] = animState->unk14[animIdx0];
+    myAnimState.unk4[0] = animState->unk4[animIdx0];
+    myAnimState.unk34[0] = animState->unk34[animIdx0];
+    myAnimState.unk60[1] = animState->unk60[param_7];
+    myAnimState.unk14[1] = animState->unk14[param_7];
+    myAnimState.unk4[1] = animState->unk4[param_7];
+    myAnimState.unk34[1] = animState->unk34[animIdx1];
 
-    if (model->unk_0x71 & 0x40)
+    if (model->unk71 & 0x40)
     {
         myAnimState.animIndexes[0] = 0;
         myAnimState.animIndexes[1] = 1;
@@ -990,9 +990,9 @@ void _func_80019FC0(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
     }
 
     if (param_10 == 0) {
-        myAnimState.unk_0x58 = 1;
+        myAnimState.unk58 = 1;
     } else {
-        myAnimState.unk_0x58 = param_10;
+        myAnimState.unk58 = param_10;
     }
 
     func_8001A1D4(model, &myAnimState, 2);
@@ -1000,15 +1000,15 @@ void _func_80019FC0(MtxF *param_1, ModelInstance *modelInst, AnimState *animStat
     flags2 = flags & 0xf;
     if (!(flags & 0xc))
     {
-        if (animState->unk_0x63 & 0x1) {
+        if (animState->unk63 & 0x1) {
             flags2 |= 0x10;
         }
-        if (animState->unk_0x63 & 0x4) {
+        if (animState->unk63 & 0x4) {
             flags2 |= 0x20;
         }
     }
 
-    func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk_0x20, model->unk_0x6f, 0x800b17d0, param_5, flags2);
+    func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, 0x800b17d0, param_5, flags2);
 }
 #endif
 
@@ -1027,49 +1027,49 @@ void _func_8001A1D4(Model *model, AnimState *animState, s32 count)
 
     for (i = 0; i < count; i++)
     {
-        if (model->unk_0x71 & 0x40) {
+        if (model->unk71 & 0x40) {
             amap = animState->anims[animState->animIndexes[i]];
             anim = (Animation*)(amap + 0x80);
         } else {
-            amap = model->amap + animState->animIndexes[i] * ALIGN8(model->unk_0x6f);
+            amap = model->amap + animState->animIndexes[i] * ALIGN8(model->unk6F);
             anim = model->anims[animState->animIndexes[i]];
         }
 
-        for (j = 0; j < model->unk_0x6f; j++) {
-            *(u8*)((u8*)model->unk_0x20 + j + i * 0x10 + 2) = amap[j];
+        for (j = 0; j < model->unk6F; j++) {
+            *(u8*)((u8*)model->unk20 + j + i * 0x10 + 2) = amap[j];
         }
 
-        n = animState->unk_0x34[i][2];
+        n = animState->unk34[i][2];
 
-        k = (int)animState->unk_0x4[i] - 1;
-        if (k < 0 && animState->unk_0x60[i] != 0) {
-            k += (int)animState->unk_0x14[i];
+        k = (int)animState->unk4[i] - 1;
+        if (k < 0 && animState->unk60[i] != 0) {
+            k += (int)animState->unk14[i];
         }
 
-        animState->unk_0x4c[i][0] = n;
-        animState->unk_0x4c[i][1] = n * 2;
-        animState->unk_0x4c[i][2] = n * 3;
+        animState->unk4C[i][0] = n;
+        animState->unk4C[i][1] = n * 2;
+        animState->unk4C[i][2] = n * 3;
 
         if (k < 0) {
             k = 0;
         }
 
-        m = (s16)animState->unk_0x4[i];
-        n = animState->unk_0x34[i][2];
+        m = (s16)animState->unk4[i];
+        n = animState->unk34[i][2];
 
-        animState->unk_0x2c[i] = (u8*)anim + n * k + anim->unk_0x2;
+        animState->unk2C[i] = (u8*)anim + n * k + anim->unk2;
 
-        if (m == animState->unk_0x4[i]) {
-            animState->unk_0x4c[i][0] = n;
+        if (m == animState->unk4[i]) {
+            animState->unk4C[i][0] = n;
         } else {
-            animState->unk_0x4c[i][0] = 0;
+            animState->unk4C[i][0] = 0;
         }
 
-        if (animState->unk_0x60[i] != 0 && animState->unk_0x4[i] == m - 1.0f) {
-            animState->unk_0x4c[i][0] = -n * m;
+        if (animState->unk60[i] != 0 && animState->unk4[i] == m - 1.0f) {
+            animState->unk4C[i][0] = -n * m;
         }
 
-        animState->unk_0x2c[i] = (u8*)anim + n * m + anim->unk_0x2;
+        animState->unk2C[i] = (u8*)anim + n * m + anim->unk2;
     }
 }
 #endif
@@ -1082,10 +1082,10 @@ void _func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4
 {
     AnimState *animState;
     Animation *anim;
-    u8 *old_unk_0x34;
-    f32 unk0x14;
-    s32 iunk0x14;
-    u8 unk0x34;
+    u8 *old_unk34;
+    f32 unk14;
+    s32 iunk14;
+    u8 unk34;
     s16 xyz[3];
 
     if (selector != 0) {
@@ -1094,10 +1094,10 @@ void _func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4
         animState = modelInst->animState0;
     }
 
-    old_unk_0x34 = animState->unk_0x34[0];
-    animState->unk_0x34[0] = animState->unk_0x34[idx];
+    old_unk34 = animState->unk34[0];
+    animState->unk34[0] = animState->unk34[idx];
 
-    if (modelInst->model->unk_0x71 & 0x40)
+    if (modelInst->model->unk71 & 0x40)
     {
         if (idx >= 2) {
             anim = animState->anims2[animState->animIndexes[idx]] + 0x80;
@@ -1108,32 +1108,32 @@ void _func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4
         anim = modelInst->model->anims[animState->animIndexes[idx]];
     }
 
-    unk0x14 = animState->unk_0x14[0] * param_4;
-    iunk0x14 = (int)unk0x14;
-    animState->unk_0x4[0] = unk0x14;
-    unk0x34 = animState->unk_0x34[0][2];
-    if (iunk0x14 != unk0x14) {
-        animState->unk_0x4c[0][0] = unk0x34;
+    unk14 = animState->unk14[0] * param_4;
+    iunk14 = (int)unk14;
+    animState->unk4[0] = unk14;
+    unk34 = animState->unk34[0][2];
+    if (iunk14 != unk14) {
+        animState->unk4C[0][0] = unk34;
     } else {
-        animState->unk_0x4c[0][0] = 0;
+        animState->unk4C[0][0] = 0;
     }
 
-    if (animState->unk_0x60[0] != 0 && iunk0x14 == animState->unk_0x14[0] - 1.0f) {
-        animState->unk_0x4c[0][0] = -unk0x34 * iunk0x14;
+    if (animState->unk60[0] != 0 && iunk14 == animState->unk14[0] - 1.0f) {
+        animState->unk4C[0][0] = -unk34 * iunk14;
     }
 
-    animState->unk_0x2c[0] = (u8*)anim + anim->unk_0x2 + unk0x34 * iunk0x14;
+    animState->unk2C[0] = (u8*)anim + anim->unk2 + unk34 * iunk14;
 
     func_8001CAA4(animState, xyz, param_7);
 
-    animState->unk_0x34[0] = old_unk_0x34;
+    animState->unk34[0] = old_unk34;
 
     param_6->x = xyz[0] / 32.0f;
     param_6->y = xyz[1] / 32.0f;
     param_6->z = xyz[2] / 32.0f;
-    param_6->x += modelInst->model->unk_0x20->x;
-    param_6->y += modelInst->model->unk_0x20->y;
-    param_6->z += modelInst->model->unk_0x20->z;
+    param_6->x += modelInst->model->unk20->x;
+    param_6->y += modelInst->model->unk20->y;
+    param_6->z += modelInst->model->unk20->z;
     param_6->x *= scale;
     param_6->y *= scale;
     param_6->z *= scale;
@@ -1153,20 +1153,20 @@ void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
     s32 n;
     s8* amap;
 
-    if (model->unk_0x71 & 0x40) {
+    if (model->unk71 & 0x40) {
         amap = modelInst->animState0->anims[modelInst->animState0->animIndexes[0]];
     } else {
-        amap = model->amap + modelInst->animState0->animIndexes[0] * ALIGN8(model->unk_0x6f);
+        amap = model->amap + modelInst->animState0->animIndexes[0] * ALIGN8(model->unk6F);
     }
 
     j = 0;
     m = 0;
-    for (i = 0; i < object->ptr0x50->unk_0x72; i++)
+    for (i = 0; i < object->ptr0x50->unk72; i++)
     {
-        if (object->ptr0x50->unk_0x10[object->modelInstIdx + j + 1] != 0xff)
+        if (object->ptr0x50->unk10[object->modelInstIdx + j + 1] != 0xff)
         {
             s16 *src = &object->ptr0x6c[i * 9];
-            u32 code = amap[object->ptr0x50->unk_0x10[object->modelInstIdx + j + 1]] << 6;
+            u32 code = amap[object->ptr0x50->unk10[object->modelInstIdx + j + 1]] << 6;
 
             for (k = 0; k < 3; k++)
             {
@@ -1185,7 +1185,7 @@ void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
             }
         }
 
-        j += object->ptr0x50->unk_0x5d + 1;
+        j += object->ptr0x50->unk5D + 1;
     }
 }
 #endif
@@ -1219,18 +1219,18 @@ void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3
     if (arg1 >= -1 && shapeId >= -1 && arg1 < totalBlendshapes && shapeId < totalBlendshapes) {
         blendshape = &modelInstance->blendshapes[layer];
         if (arg1 == -1 && shapeId == -1) {
-            if (blendshape->unk0xC == -1 && blendshape->id == -1)
+            if (blendshape->unkC == -1 && blendshape->id == -1)
                 return;
             arg5 |= 6;
         }
-        blendshape->unk0xC = arg1;
+        blendshape->unkC = arg1;
         blendshape->id = shapeId;
         if (!(arg5 & 0x10)) {
             blendshape->strength = 0.0f;
         }
-        blendshape->unk0x4 = -1.0f;
-        blendshape->unk0x8 = arg3;
-        blendshape->unk0xE = arg5 | 4;
+        blendshape->unk4 = -1.0f;
+        blendshape->unk8 = arg3;
+        blendshape->unkE = arg5 | 4;
     }
 }
 
@@ -1240,7 +1240,7 @@ void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3) {
     if (param2 < 3 && modelInst->model->blendshapes != NULL) {
         var1 = &modelInst->blendshapes[param2];
         var1->strength = param3;
-        var1->unk0xE |= 4;
+        var1->unkE |= 4;
     }
 }
 
@@ -1255,7 +1255,7 @@ s32 func_8001B010(ModelInstance *modelInst) {
     for (i = 0; i < 3; i++) {
         var1 = &modelInst->blendshapes[i];
 
-        if (var1->strength != var1->unk0x4 || (var1->unk0xE & 0xE) != 0) {
+        if (var1->strength != var1->unk4 || (var1->unkE & 0xE) != 0) {
             return 1;
         }
     }
@@ -1274,9 +1274,9 @@ void func_8001B084(ModelInstance *modelInst, f32 param2) {
     for (i = 0; i < 3; i++) {
         var1 = &modelInst->blendshapes[i];
 
-        if (var1->unk0xC != -1 || var1->id != -1) {
-            if ((var1->unk0xE & 1) == 0) {
-                var1->strength += var1->unk0x8 * param2;
+        if (var1->unkC != -1 || var1->id != -1) {
+            if ((var1->unkE & 1) == 0) {
+                var1->strength += var1->unk8 * param2;
             }
         }
     }

@@ -95,7 +95,7 @@ void SPShop_control(Object* self) {
     Object* player;
 
     player = get_player();
-    if (self->unk0xdc == 0) {
+    if (self->unkDC == 0) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0, 1);
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 5, 1);
 
@@ -112,7 +112,7 @@ void SPShop_control(Object* self) {
         main_set_bits(BIT_SP_Entered_Shop, 1);
         gDLL_5_AMSEQ2->vtbl->func0(NULL, 0xF3, 0, 0, 0);
         func_8001EBD0(1);
-        self->unk0xdc = 1;
+        self->unkDC = 1;
     }
 
     if (main_get_bits(BIT_SP_Exiting_Shop)) {

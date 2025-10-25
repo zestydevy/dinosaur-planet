@@ -28,60 +28,60 @@ typedef struct VideoResolution {
 #define UNKNOWN_HEAP_VIDEO_STRUCT_SIZE 0x60
 
 typedef struct _UnkHeapVidStruct {
-    f32 unk0x0;
-    f32 unk0x4;
-    f32 unk0x8;
-    f32 unk0xc;
-    f32 unk0x10;
-    f32 unk0x14;
-    f32 unk0x18;
-    f32 unk0x1c;
-    f32 unk0x20;
-    f32 unk0x24;
-    f32 unk0x28;
-    f32 unk0x2c;
-    f32 unk0x30;
-    f32 unk0x34;
-    f32 unk0x38;
-    f32 unk0x3c;
-    f32 unk0x40;
-    f32 unk0x44;
-    f32 unk0x48;
-    f32 unk0x4c;
-    f32 unk0x50;
-    f32 unk0x54;
-    f32 unk0x58;
-    f32 unk0x5c;
+    f32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    f32 unk2C;
+    f32 unk30;
+    f32 unk34;
+    f32 unk38;
+    f32 unk3C;
+    f32 unk40;
+    f32 unk44;
+    f32 unk48;
+    f32 unk4C;
+    f32 unk50;
+    f32 unk54;
+    f32 unk58;
+    f32 unk5C;
 } UnkHeapVidStruct;
 
 // size: 0x90
 typedef struct _UnkVidStruct {
     Gfx dl;
     Gfx *dl2;
-    u8 unk0xC_pad[12];
-    Vtx_t unk0x18[4];
-    u8 unk0x58_pad[0x20];
-    f32 unk0x78;
-    f32 unk0x7c;
+    u8 unkC_pad[12];
+    Vtx_t unk18[4];
+    u8 unk58_pad[0x20];
+    f32 unk78;
+    f32 unk7C;
     Object *obj;
     OSViMode *viMode;
-    s16 unk0x88;
-    u8 unk0x8a_padd[6];
+    s16 unk88;
+    u8 unk8A_padd[6];
 } UnkVidStruct;
 
 // size: 0x14
 typedef struct UnkVidStruct2 {
-/*0000*/    f32 unk0x0;
-/*0004*/    f32 unk0x4;
-/*0008*/    f32 unk0x8;
-/*000C*/    u8 unk0xc;
+/*0000*/    f32 unk0;
+/*0004*/    f32 unk4;
+/*0008*/    f32 unk8;
+/*000C*/    u8 unkC;
 /*000D*/    // padding
-/*0010*/    Object *unk0x10;
+/*0010*/    Object *unk10;
 } UnkVidStruct2;
 
 typedef struct UnkVidStruct3 {
-    s32 unk0x0;
-    s32 unk0x4;
+    s32 unk0;
+    s32 unk4;
 } UnkVidStruct3;
 
 // Length of gUnknownVideoStructs

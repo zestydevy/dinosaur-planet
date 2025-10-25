@@ -35,13 +35,13 @@ void CCkrazoaTablet_dtor(void *dll) { }
 void CCkrazoaTablet_setup(Object *self, CCkrazoaTablet_Setup *setup, s32 arg2) {
     CCkrazoaTablet_Data *objdata = self->data;
 
-    self->unk0xbc = (ObjectCallback)CCkrazoaTablet_anim_callback;
-    self->unk0xb0 |= 0x6000;
+    self->unkBC = (ObjectCallback)CCkrazoaTablet_anim_callback;
+    self->unkB0 |= 0x6000;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gamebit)) {
         objdata->unk0 |= 1;
     } else {
-        self->unk0xaf |= 8;
+        self->unkAF |= 8;
     }
 }
 
@@ -58,7 +58,7 @@ void CCkrazoaTablet_control(Object *self) {
     if (!(objdata->unk0 & 2)) {
         if (main_get_bits(BIT_3A9)) {
             objdata->unk0 |= 2;
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
         } else {
             if (func_80032538(self) != 0) {
                 gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex + 3, obj_get_nearest_type_to(0x11, self, NULL), -1);
@@ -102,7 +102,7 @@ int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *an
             case 1:
                 main_set_bits(setup->gamebit, 1);
                 main_decrement_bits(BIT_CC_Krazoa_Tablets);
-                self->unk0xaf &= ~8;
+                self->unkAF &= ~8;
                 objdata->unk4 = 0.0f;
                 objdata->unk0 |= 1;
                 if (CCkrazoaTablet_func_3F8()) {
@@ -113,7 +113,7 @@ int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *an
             case 2:
                 main_set_bits(setup->gamebit, 0);
                 main_increment_bits(BIT_CC_Krazoa_Tablets);
-                self->unk0xaf |= 8;
+                self->unkAF |= 8;
                 objdata->unk4 = 256.0f;
                 objdata->unk0 &= ~1;
                 break;

@@ -425,7 +425,7 @@ void dll_210_setup(Object* arg0, u32 arg1) {
     obj_set_update_priority(arg0, 0x3C);
     obj_init_mesg_queue(arg0, 0x14U);
     arg0->setup = NULL;
-    arg0->unk0xbc = (ObjectCallback)dll_210_func_4910;
+    arg0->unkBC = (ObjectCallback)dll_210_func_4910;
     _bss_1A4 = 0;
     data->stats = gDLL_29_Gplay->vtbl->get_player_stats();
     arg0->srt.yaw = gDLL_29_Gplay->vtbl->get_player_saved_location()->rotationY << 8;
@@ -450,8 +450,8 @@ void dll_210_setup(Object* arg0, u32 arg1) {
     gDLL_27->vtbl->setup_terrain_collider(&data->unk0.unk4, 2, _data_3C, _data_6C, _data_20);
     data->unk0.unk4.boundsYExtension = 0x64;
     dll_210_func_7260(arg0, data);
-    arg0->objhitInfo->unk_0xa1 = 0x29;
-    arg0->unk_0x36 = 0xFF;
+    arg0->objhitInfo->unkA1 = 0x29;
+    arg0->unk36 = 0xFF;
     *_bss_1A0 = 0;
     if (arg0->ptr0x64 != NULL) {
         arg0->ptr0x64->flags |= 0x4008;
@@ -830,11 +830,11 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
 void dll_210_func_1BC0(Object* arg0, Player_Data* arg1) {
     Object* linkedObj;
 
-    arg0->unk0xb0 &= ~3;
+    arg0->unkB0 &= ~3;
     if (arg1->unk8A8 == 2) {
-        arg0->unk0xb0 |= 3;
+        arg0->unkB0 |= 3;
     } else if (arg1->unk8A8 == 0) {
-        arg0->unk0xb0 |= 1;
+        arg0->unkB0 |= 1;
     }
     if (arg0->id != 0) {
         return;
@@ -942,7 +942,7 @@ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, 0x4D);
             dll_210_func_1CD6C(arg0, -sp88);
             if (arg1->unk868 != NULL) {
-                arg1->unk868->unk_0xe0 = 0;
+                arg1->unk868->unkE0 = 0;
                 arg1->unk868 = NULL;
             }
             break;
@@ -960,7 +960,7 @@ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, 0x4D);
             dll_210_func_1CD6C(arg0, -sp88);
             if (arg1->unk868 != NULL) {
-                arg1->unk868->unk_0xe0 = 0;
+                arg1->unk868->unkE0 = 0;
                 arg1->unk868 = NULL;
             }
             break;
@@ -980,7 +980,7 @@ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             func_80023D30(arg0, 0x450, 0.0f, 0);
             dll_210_func_1CD6C(arg0, -sp88);
             if (arg1->unk868 != NULL) {
-                arg1->unk868->unk_0xe0 = 0;
+                arg1->unk868->unkE0 = 0;
                 arg1->unk868 = NULL;
             }
             break;
@@ -1141,7 +1141,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
         if (arg1->flags & 0x800) {
             sp7C = 0;
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x25BU, 0x7FU, NULL, NULL, 0, NULL);
-            temp_v1 = (Vec4f*)arg0->modelInsts[arg0->modelInstIdx]->unk_0x24 + (sp80 * 0x10);
+            temp_v1 = (Vec4f*)arg0->modelInsts[arg0->modelInstIdx]->unk24 + (sp80 * 0x10);
             sp48.transl.x = temp_v1->y + gWorldX;
             sp48.transl.y = temp_v1->z;
             sp48.transl.z = temp_v1->w + gWorldZ;
@@ -1195,8 +1195,8 @@ void dll_210_update(Object* arg0) {
     temp_s1 = arg0->data;
     sp44 = delayFloat;
     gDLL_18_objfsa->vtbl->func2(arg0, &temp_s1->unk0, _bss_58);
-    if ((temp_s1->unk0.unk341 == 1) && (arg0->linkedObject->objhitInfo->unk_0x48 != 0 || arg0->linkedObject->objhitInfo->unk_0x9d != 0)) {
-        arg0->objhitInfo->unk_0x61 = 1;
+    if ((temp_s1->unk0.unk341 == 1) && (arg0->linkedObject->objhitInfo->unk48 != 0 || arg0->linkedObject->objhitInfo->unk9D != 0)) {
+        arg0->objhitInfo->unk61 = 1;
     }
     if (temp_s1->flags & 2) {
         temp_a1 = temp_s1->unk0.unk4.unkD4;
@@ -1208,7 +1208,7 @@ void dll_210_update(Object* arg0) {
     }
     temp_a0 = temp_s1->unk858;
     temp_s1->flags |= 2;
-    if ((temp_a0 != NULL) && ((arg0->unk0xb0 & 0x1000) || temp_s1->unk0.animState == 0x24 || temp_s1->unk0.animState == 0x25)) {
+    if ((temp_a0 != NULL) && ((arg0->unkB0 & 0x1000) || temp_s1->unk0.animState == 0x24 || temp_s1->unk0.animState == 0x25)) {
         ((DLL_Unknown *)temp_a0->dll)->vtbl->func[12].withFourArgs((s32)temp_a0, (s32)&sp58, (s32)&sp54, (s32)&sp50);
         gDLL_2_Camera->vtbl->func10(sp58, sp54, sp50);
         dll_210_func_8EA4(arg0, temp_s1, temp_s1->unk858, NULL, NULL, NULL, NULL, 0);
@@ -1281,7 +1281,7 @@ void dll_210_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
     data = arg0->data;
     sp80 = arg0->modelInsts[arg0->modelInstIdx];
     if (arg5 == -1 || !(data->flags & 0x4001)) {
-        if ((data->unk858 != NULL) && ((arg0->unk0xb0 & 0x1000) || data->unk0.animState == 0x24 || data->unk0.animState == 0x25)) {
+        if ((data->unk858 != NULL) && ((arg0->unkB0 & 0x1000) || data->unk0.animState == 0x24 || data->unk0.animState == 0x25)) {
             dll_210_func_8EA4(arg0, data, data->unk858, arg1, arg2, arg3, arg4, 1);
         }
         if (data->unk8BE == 1) {
@@ -1289,7 +1289,7 @@ void dll_210_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
         }
         gDLL_16->vtbl->func1(arg0);
         temp_a2 = data->unk858;
-        if (temp_a2 != 0 && ((arg0->unk0xb0 & 0x1000) || data->unk0.animState == 0x24 || data->unk0.animState == 0x25)) {
+        if (temp_a2 != 0 && ((arg0->unkB0 & 0x1000) || data->unk0.animState == 0x24 || data->unk0.animState == 0x25)) {
             ((DLL_Unknown*)temp_a2->dll)->vtbl->func[19].withThreeArgs((s32)temp_a2, ((s32*)arg0->def)[1], (s32)temp_a2);
         }
         if (data->unk818 > 0.0f) {
@@ -1298,7 +1298,7 @@ void dll_210_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
         arg0->srt.transl.y += data->unk83C;
         draw_object(arg0, arg1, arg2, arg3, arg4, 1.0f);
         arg0->srt.transl.y -= data->unk83C;
-        if (data->unk858 != 0 && ((arg0->unk0xb0 & 0x1000) || data->unk0.animState == 0x24 || data->unk0.animState == 0x25)) {
+        if (data->unk858 != 0 && ((arg0->unkB0 & 0x1000) || data->unk0.animState == 0x24 || data->unk0.animState == 0x25)) {
             func_80034FF0(0);
         }
         if (arg5 != 0) {
@@ -1306,23 +1306,23 @@ void dll_210_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
         }
         func_80032238(arg0, 4, 2, &data->unk39C);
         func_80031F6C(arg0, 9, &data->unk7EC.x, &data->unk7EC.y, &data->unk7EC.z, 0);
-        if (sp80->unk_0x34 & 8) {
+        if (sp80->unk34 & 8) {
             sp8C = data->unk850;
             if (sp8C != NULL && (data->flags & 4)) {
                 sp64 = sp8C->srt.scale;
                 sp8C->srt.scale /= arg0->srt.scale;
-                pad = arg0->unk_0x37;
+                pad = arg0->unk37;
                 if (pad > 0xFF) {
                     pad = 0xFF;
                 }
-                func_80035AF4(arg1, arg2, arg3, arg4, arg0, sp80, 0, 0, sp8C, 6, arg0->unk_0x37 > 0xFF ? 0xFF : arg0->unk_0x37);
+                func_80035AF4(arg1, arg2, arg3, arg4, arg0, sp80, 0, 0, sp8C, 6, arg0->unk37 > 0xFF ? 0xFF : arg0->unk37);
                 sp8C->srt.scale = sp64;
             }
         }
         if (data->unk0.animState == 0x29) {
             func_80031F6C(arg0, 7, &data->unk680.unk1C, &data->unk680.unk20, &data->unk680.unk24, 0);
         }
-        if (data->unk868 != NULL && data->unk868->unk_0xe0 == 1) {
+        if (data->unk868 != NULL && data->unk868->unkE0 == 1) {
             func_80031F6C(arg0, 6, &sp7C, &sp78, &sp74, 0);
             func_80031F6C(arg0, 7, &sp70, &sp6C, &sp68, 0);
             sp7C = (sp7C + sp70) * 0.5f;
@@ -1353,7 +1353,7 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
     gDLL_14_Modgfx->vtbl->func6(arg2, arg3, arg4, 1, arg0->linkedObject);
     if (arg1->unk87C == 0x40) {
         *_data_0 += delayByte;
-        if ((*_data_0 >= 0x65) && !(arg0->unk0xb0 & 0x1000)) {
+        if ((*_data_0 >= 0x65) && !(arg0->unkB0 & 0x1000)) {
             dll_210_func_1CEFC(arg0, -1);
             *_data_0 = 0;
         }
@@ -1364,7 +1364,7 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
     if (arg1->unk87C == 0x1D7) {
         gDLL_32->vtbl->func4(arg2, arg3, arg0);
         *_data_0 += delayByte;
-        if ((*_data_0 >= 0x65) && !(arg0->unk0xb0 & 0x1000)) {
+        if ((*_data_0 >= 0x65) && !(arg0->unkB0 & 0x1000)) {
             dll_210_func_1CEFC(arg0, -1);
             *_data_0 = 0;
         }
@@ -1471,11 +1471,11 @@ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tria
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp74), 8, 0);
     dl_triangles(arg1, (DLTri* ) _rodata_0, 0xC);
     if (sp44->unk844 >= 68.0f) {
-        var_v0_2 = arg0->unk_0x36 - (delayByte * 4);
+        var_v0_2 = arg0->unk36 - (delayByte * 4);
         if (var_v0_2 < 0) {
             var_v0_2 = 0;
         }
-        arg0->unk_0x36 = var_v0_2;
+        arg0->unk36 = var_v0_2;
     }
     *arg3 = curVtx;
 }
@@ -1518,8 +1518,8 @@ s32 dll_210_func_3F64(Object* arg0) {
 
     if (arg0->linkedObject == NULL) {
         arg0->linkedObject = obj_create(obj_alloc_create_info(sizeof(ObjSetup), _data_24[data->unk8B4]), 4U, -1, -1, arg0->parent);
-        arg0->unk0xb0 &= ~3;
-        arg0->unk0xb0 |= 3;
+        arg0->unkB0 &= ~3;
+        arg0->unkB0 |= 3;
         func_80023D30(arg0->linkedObject, 0, 1.0f, 0U);
         return 1;
     }
@@ -1654,7 +1654,7 @@ s32 dll_210_func_44A4(Object* arg0, s32 arg1) {
         if (objdata1->unk0.unk304 & 0x1000) {
             return 0;
         }
-        if (arg0->unk0xb0 & 0x1000) {
+        if (arg0->unkB0 & 0x1000) {
             return 0;
         }
         return 1;
@@ -1880,10 +1880,10 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
             arg2->unk7A &= 0xFFF3;
             arg2->unk7C &= 0xFFF7;
             temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
-            if (temp_v0_6 == NULL || temp_v0_6->unk0x74 == NULL) {
+            if (temp_v0_6 == NULL || temp_v0_6->unk74 == NULL) {
                 return 0;
             }
-            temp_s0 = temp_v0_6->unk0x74;
+            temp_s0 = temp_v0_6->unk74;
             spB4 = arg0->srt.transl.x - temp_s0->x;
             spB0 = arg0->srt.transl.z - temp_s0->z;
             spA4 = (arg0->srt.transl.y + 30.0f) - temp_s0->y;
@@ -2005,7 +2005,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                     gDLL_18_objfsa->vtbl->func3(&arg0->srt);
                     temp_fp->unk0.unk310 = 0;
                     temp_fp->unk0.unk30C = 0;
-                    arg0->unk0xdc = 0;
+                    arg0->unkDC = 0;
                     temp_fp->unk0.unk324 = 0;
                     temp_fp->unk0.unk4.mode = 1;
                     temp_fp->unk8B8 = 0;
@@ -2022,7 +2022,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                 gDLL_18_objfsa->vtbl->func3(&arg0->srt);
                 temp_fp->unk0.unk310 = 0;
                 temp_fp->unk0.unk30C = 0;
-                arg0->unk0xdc = 0;
+                arg0->unkDC = 0;
                 temp_fp->unk0.unk324 = 0;
                 temp_fp->unk0.unk4.mode = 1;
                 temp_fp->unk8B8 = 0;
@@ -2145,33 +2145,33 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                 temp_fp->unk8A8 = 1;
                 break;
             case 12:
-                sp6A = gDLL_22_Subtitles->vtbl->func_214C((s32) arg0->unk0xc4->id);
+                sp6A = gDLL_22_Subtitles->vtbl->func_214C((s32) arg0->unkC4->id);
                 gDLL_22_Subtitles->vtbl->func_2248(1U);
                 gDLL_22_Subtitles->vtbl->func_368((u16) sp6A);
-                arg0->unk0xc4 = NULL;
+                arg0->unkC4 = NULL;
                 break;
             case 13:
-                tempObj = arg0->unk0xc4;
+                tempObj = arg0->unkC4;
                 gDLL_3_Animation->vtbl->func30(tempObj->id, tempObj, 0);
-                dll_210_func_1DB6C(arg0->unk0xc4, 29.0f);
-                gDLL_3_Animation->vtbl->func17(arg0->unk0xdc, arg0, -1);
+                dll_210_func_1DB6C(arg0->unkC4, 29.0f);
+                gDLL_3_Animation->vtbl->func17(arg0->unkDC, arg0, -1);
                 break;
             case 14:
                 if (*_data_14 == 1) {
                     *_data_18 = -1;
                     tempObj = temp_fp->unk85C;
-                    ((DLL_Unknown*)tempObj->dll)->vtbl->func[12].withTwoArgs((s32)tempObj, (s16)arg0->unk_0xe0);
+                    ((DLL_Unknown*)tempObj->dll)->vtbl->func[12].withTwoArgs((s32)tempObj, (s16)arg0->unkE0);
                     arg2->unk9D |= 4;
-                    arg0->unk0xc4 = NULL;
+                    arg0->unkC4 = NULL;
                     return 4;
                 }
-                if ((*_data_14 != 0) || (arg0->unk0xdc < 0)) {
+                if ((*_data_14 != 0) || (arg0->unkDC < 0)) {
                     arg2->unk9D |= 4;
-                    arg0->unk0xc4 = NULL;
+                    arg0->unkC4 = NULL;
                 } else {
-                    *_data_18 = arg0->unk_0xe0;
+                    *_data_18 = arg0->unkE0;
                 }
-                arg0->unk0xdc -= 1;
+                arg0->unkDC -= 1;
                 break;
             case 17:
                 dll_210_func_1D8B8(arg0);
@@ -2240,7 +2240,7 @@ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
     Player_Data* sp24;
 
     sp24 = arg0->data;
-    arg0->unk0xb0 &= 0xEFFF;
+    arg0->unkB0 &= 0xEFFF;
     func_8002674C(arg0);
     arg0->speed.y = 0.0f;
     dll_210_func_7260(arg0, sp24);
@@ -2276,10 +2276,10 @@ static void dll_210_func_618C(Object* arg0, Player_Data* arg1, s32 arg2, f32 arg
             obj_send_mesg_many(0, 3U, arg0, 0xE0000U, arg0);
         }
     }
-    arg0->objhitInfo->unk_0x5f = 0;
-    arg0->objhitInfo->unk_0x60 = 0;
-    arg0->objhitInfo->unk_0x5d = 0;
-    arg0->objhitInfo->unk_0x5e = 0;
+    arg0->objhitInfo->unk5F = 0;
+    arg0->objhitInfo->unk60 = 0;
+    arg0->objhitInfo->unk5D = 0;
+    arg0->objhitInfo->unk5E = 0;
     arg1->unk0.unk4.mode = 1;
     func_8004D880(arg0);
     arg1->unk8B8 = 0;
@@ -2395,7 +2395,7 @@ void dll_210_func_64B4(Object* arg0, Player_Data* arg1, f32 arg2) {
             }
             modelInstance = arg0->modelInsts[arg0->modelInstIdx];
             animState = modelInstance->animState1;
-            if (animState->unk_0x58[0] == 0) {
+            if (animState->unk58[0] == 0) {
                 arg0->curModAnimIdLayered = -1;
                 arg1->unk878 = 0;
             }
@@ -2513,7 +2513,7 @@ void dll_210_func_692C(Object* arg0, Player_Data* arg1, f32 arg2) {
             }
             modelInstance = arg0->modelInsts[arg0->modelInstIdx];
             animState = modelInstance->animState1;
-            if (animState->unk_0x58[0] == 0) {
+            if (animState->unk58[0] == 0) {
                 arg0->curModAnimIdLayered = -1;
                 arg1->unk878 = 0;
             }
@@ -2615,13 +2615,13 @@ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
             sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
             if (sp3C != NULL) {
                 if ((sp3C->def->unk40->unk10 & 0xF) == 3) {
-                    obj->unk0xdc = 4;
+                    obj->unkDC = 4;
                     gDLL_3_Animation->vtbl->func17(3, obj, -1);
-                    if (sp3C->unk0x74 != NULL) {
-                        temp = arctan2_f(sp3C->unk0x74->x - obj->srt.transl.x, sp3C->unk0x74->z - obj->srt.transl.z) + 0x8000;
-                        gDLL_3_Animation->vtbl->func28(obj->unk0xb4, temp);
+                    if (sp3C->unk74 != NULL) {
+                        temp = arctan2_f(sp3C->unk74->x - obj->srt.transl.x, sp3C->unk74->z - obj->srt.transl.z) + 0x8000;
+                        gDLL_3_Animation->vtbl->func28(obj->unkB4, temp);
                     }
-                    obj->unk0xc4 = sp3C;
+                    obj->unkC4 = sp3C;
                 }
             } else {
                 break;
@@ -2632,8 +2632,8 @@ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
             if ((sp3C != NULL) && (sp3C->id == 0x414 || sp3C->id == 0x4A9)) {
                 gDLL_3_Animation->vtbl->func17(5, obj, -1);
                 arg2 = 0x5BD;
-                temp = arctan2_f(sp3C->unk0x74->x - obj->srt.transl.x, sp3C->unk0x74->z - obj->srt.transl.z) + 0x8000;
-                gDLL_3_Animation->vtbl->func28(obj->unk0xb4, temp);
+                temp = arctan2_f(sp3C->unk74->x - obj->srt.transl.x, sp3C->unk74->z - obj->srt.transl.z) + 0x8000;
+                gDLL_3_Animation->vtbl->func28(obj->unkB4, temp);
             }
             break;
     }
@@ -2665,12 +2665,12 @@ void dll_210_func_7180(Object* arg0, Player_Data* arg1, f32 arg2) {
 static void dll_210_func_7260(Object* arg0, Player_Data* arg1) {
     arg1->unk874 = (s16) arg0->srt.yaw;
     gDLL_27->vtbl->reset(arg0, &arg1->unk0.unk4);
-    arg0->objhitInfo->unk_0x10.x = arg0->srt.transl.x;
-    arg0->objhitInfo->unk_0x10.y = arg0->srt.transl.y;
-    arg0->objhitInfo->unk_0x10.z = arg0->srt.transl.z;
-    arg0->objhitInfo->unk_0x20.x = arg0->positionMirror.x;
-    arg0->objhitInfo->unk_0x20.y = arg0->positionMirror.y;
-    arg0->objhitInfo->unk_0x20.z = arg0->positionMirror.z;
+    arg0->objhitInfo->unk10.x = arg0->srt.transl.x;
+    arg0->objhitInfo->unk10.y = arg0->srt.transl.y;
+    arg0->objhitInfo->unk10.z = arg0->srt.transl.z;
+    arg0->objhitInfo->unk20.x = arg0->positionMirror.x;
+    arg0->objhitInfo->unk20.y = arg0->positionMirror.y;
+    arg0->objhitInfo->unk20.z = arg0->positionMirror.z;
 }
 
 // offset: 0x7300 | func: 36
@@ -3488,8 +3488,8 @@ void dll_210_func_90A0(Object* arg0, Player_Data* arg1, f32 arg2) {
 
                 temp_v0_2->srt.pitch = 0;
             }
-            temp_v0_2->unk0xdc = 0xBE;
-            temp_v0_2->unk_0xe0 = (s32) var_s3;
+            temp_v0_2->unkDC = 0xBE;
+            temp_v0_2->unkE0 = (s32) var_s3;
         }
         var_s4--;
     }
@@ -3559,8 +3559,8 @@ void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2) {
             temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
             temp_v0_2->srt.yaw = arg0->srt.yaw;
             temp_v0_2->srt.pitch = 0;
-            temp_v0_2->unk0xdc = 0x15E;
-            temp_v0_2->unk_0xe0 = (s32) var_s2;
+            temp_v0_2->unkDC = 0x15E;
+            temp_v0_2->unkE0 = (s32) var_s2;
             gDLL_17->vtbl->func1(temp_v0_2, 0x521, NULL, 4, -1, NULL);
         }
         var_s4 -= 1;
@@ -3638,8 +3638,8 @@ void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2) {
     temp_v0_2->positionMirror.y = temp_v0_2->srt.transl.y;
     temp_v0_2->positionMirror.z = temp_v0_2->srt.transl.z;
     temp_v0_2->srt.yaw = arg0->srt.yaw;
-    temp_v0_2->unk0xdc = 0xBE;
-    temp_v0_2->unk_0xe0 = (s32) spD4;
+    temp_v0_2->unkDC = 0xBE;
+    temp_v0_2->unkE0 = (s32) spD4;
     sp84 = sqrtf(SQ(temp_v0_2->speed.x) + SQ(temp_v0_2->speed.z));
     spE0.yaw = -0x4000 - arctan2_f(temp_v0_2->speed.z, temp_v0_2->speed.x);
     spE0.pitch = arctan2_f(temp_v0_2->speed.y, sp84) - 0x4000;
@@ -4196,7 +4196,7 @@ s32 dll_210_func_B4E0(Object* arg0, Player_Data* arg1, f32 arg2) {
         temp_a1 = objdata->unk868;
         if (temp_a1 != NULL) {
             if (arg0->animProgress > 0.5f) {
-                temp_a1->unk_0xe0 = 1;
+                temp_a1->unkE0 = 1;
             } else {
                 arg0->srt.yaw += (func_80031DD8(arg0, temp_a1, 0) * (s32) arg2) >> 4;
             }
@@ -4236,7 +4236,7 @@ s32 dll_210_func_B73C(Object* arg0, Player_Data* arg1, UNK_TYPE_32 arg2) {
         return 2;
     }
     if ((objdata->unk868 != NULL) && (arg0->animProgress > 0.6f)) {
-        objdata->unk868->unk_0xe0 = 0;
+        objdata->unk868->unkE0 = 0;
         objdata->unk868 = NULL;
     }
     return 0;
@@ -4260,14 +4260,14 @@ s32 dll_210_func_B864(Object* arg0, Player_Data* arg1, UNK_TYPE_32 arg2) {
         return 2;
     }
     if ((objdata->unk868 != NULL) && (arg0->animProgress > 0.4f)) {
-        if (objdata->unk868->unk_0xe0 == 1) {
+        if (objdata->unk868->unkE0 == 1) {
             if (arg0->id == 0) {
                 gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x701U, 0x25U, NULL, NULL, 0, NULL);
             } else {
                 gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x700U, 0x25U, NULL, NULL, 0, NULL);
             }
         }
-        objdata->unk868->unk_0xe0 = 0;
+        objdata->unk868->unkE0 = 0;
         objdata->unk868 = NULL;
     }
     return 0;
@@ -4410,19 +4410,19 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
     }
     if (gDLL_1_UI->vtbl->ui_func_f40.asVoidS32() == 0x387) {
         sp8C = gDLL_1_UI->vtbl->ui_func_e2c.withTwoArgsS32((s32)&sp38, 0x10);
-        if (sp8C != -1 && (arg0->unk0xc4 == NULL)) {
+        if (sp8C != -1 && (arg0->unkC4 == NULL)) {
             set_button_mask(0, 0x8000U);
-            arg0->unk_0xe0 = sp8C;
+            arg0->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)spC4->unk85C->dll)->vtbl->func[20].withOneArgS32(sp8C);
             sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
             if ((sp88 != NULL) && ((sp88->def->unk40->unk10 & 0xF) == 3)) {
                 sp88 = sp88;
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
                 gDLL_3_Animation->vtbl->func17(2, arg0, -1);
-                arg0->unk0xc4 = sp88;
+                arg0->unkC4 = sp88;
                 *_data_18 = -1;
                 *_data_14 = 0;
-                arg0->unk0xdc = 3;
+                arg0->unkDC = 3;
             }
         }
     }
@@ -6772,10 +6772,10 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
         break;
     case 0x43E:
         if (arg1->unk0.target != NULL) {
-            if (arg1->unk0.target->unk0x74 != NULL) {
-                var_fv0 = ((f32 *)arg1->unk0.target->unk0x74)[3] - arg0->srt.transl.x;
-                sp8C = ((f32 *)arg1->unk0.target->unk0x74)[4] - arg0->srt.transl.y;
-                var_fv1 = ((f32 *)arg1->unk0.target->unk0x74)[5] - arg0->srt.transl.z;
+            if (arg1->unk0.target->unk74 != NULL) {
+                var_fv0 = ((f32 *)arg1->unk0.target->unk74)[3] - arg0->srt.transl.x;
+                sp8C = ((f32 *)arg1->unk0.target->unk74)[4] - arg0->srt.transl.y;
+                var_fv1 = ((f32 *)arg1->unk0.target->unk74)[5] - arg0->srt.transl.z;
             } else {
                 var_fv0 = arg1->unk0.target->srt.transl.x - arg0->srt.transl.x;
                 sp8C = arg1->unk0.target->srt.transl.y - arg0->srt.transl.y;
@@ -7567,7 +7567,7 @@ s32 dll_210_func_1D2A8(Object* arg0, Object* arg1) {
     } else {
         var_v1 = sp24->unk868;
         if (var_v1 != NULL) {
-            var_v1->unk_0xe0 = 0;
+            var_v1->unkE0 = 0;
             sp24->unk868 = NULL;
             sp24->unk870 = 0;
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &sp24->unk0, 1);
@@ -7850,11 +7850,11 @@ void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
 
     temp_v0 = arg0->objhitInfo;
     if (temp_v0 != NULL) {
-        sp28 = (f32) temp_v0->unk_0x52;
+        sp28 = (f32) temp_v0->unk52;
     } else {
-        sp28 = arg0->unk_0xa8;
+        sp28 = arg0->unkA8;
     }
-    sp2C = (arg0->unk0x74->y - arg0->srt.transl.y) - arg1;
+    sp2C = (arg0->unk74->y - arg0->srt.transl.y) - arg1;
     sp28 = sp28;
     sp20 = fsin16_precise(arg0->srt.yaw);
     gDLL_3_Animation->vtbl->func31(-sp20 * sp28, sp2C, -fcos16_precise(arg0->srt.yaw) * sp28);

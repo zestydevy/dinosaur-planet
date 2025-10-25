@@ -84,22 +84,22 @@ void generic_stack_delete_element(GenericStack *stack, s32 idx) {
 }
 
 void generic_stack_func_8000B23C(GenericStack *stack) {
-    stack->unk0x6 = 0;
+    stack->unk6 = 0;
 }
 
 s32 generic_stack_func_8000B248(GenericStack *stack) {
-    return stack->unk0x6 == stack->top;
+    return stack->unk6 == stack->top;
 }
 
 void *generic_stack_func_8000B260(GenericStack *stack) {
     void *element;
 
-    element = (void*)((u32)stack->data + stack->unk0x6 * stack->elementSize);
+    element = (void*)((u32)stack->data + stack->unk6 * stack->elementSize);
     
-    stack->unk0x6 += 1;
+    stack->unk6 += 1;
 
-    if (stack->unk0x6 == stack->capacity) {
-        stack->unk0x6 = 0;
+    if (stack->unk6 == stack->capacity) {
+        stack->unk6 = 0;
     }
 
     return element;

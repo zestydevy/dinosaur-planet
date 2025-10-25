@@ -32,7 +32,7 @@ void SHtricky_setup(Object* self, ObjSetup* setup, s32 arg2) {
         objdata->unk0 = 0;
     }
 
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0xA8 | func: 1 | export: 1

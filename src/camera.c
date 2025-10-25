@@ -328,13 +328,13 @@ void func_80001914(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw)
     gCameras[gCameraSelector].srt.transl.x = tx;
     gCameras[gCameraSelector].srt.transl.y = ty;
     gCameras[gCameraSelector].srt.transl.z = tz;
-    gCameras[gCameraSelector].unk_0x18 = 60.0f;
+    gCameras[gCameraSelector].unk18 = 60.0f;
     gCameras[gCameraSelector].srt.roll = roll * 0xb6;
     gCameras[gCameraSelector].srt.pitch = pitch * 0xb6;
     gCameras[gCameraSelector].srt.yaw = yaw * 0xb6;
-    gCameras[gCameraSelector].unk_0x20 = 0.0f;
-    gCameras[gCameraSelector].unk_0x24 = 0.0f;
-    gCameras[gCameraSelector].unk_0x28 = 0.0f;
+    gCameras[gCameraSelector].unk20 = 0.0f;
+    gCameras[gCameraSelector].unk24 = 0.0f;
+    gCameras[gCameraSelector].unk28 = 0.0f;
     gCameras[gCameraSelector].dty = 0.0f;
     gCameras[gCameraSelector].object = NULL;
     gCameras[gCameraSelector].dpitch = 0;
@@ -1071,7 +1071,7 @@ void func_800034CC(f32 x, f32 y, f32 z)
     gCameras[gCameraSelector].srt.transl.x += x;
     gCameras[gCameraSelector].srt.transl.y += y;
     gCameras[gCameraSelector].srt.transl.z += z;
-    gCameras[gCameraSelector].unk_0x56 = func_8004454C(
+    gCameras[gCameraSelector].unk56 = func_8004454C(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
         gCameras[gCameraSelector].srt.transl.z);
@@ -1083,7 +1083,7 @@ void func_8000356C(f32 a, f32 b, f32 c)
     gCameras[gCameraSelector].srt.transl.z -= a * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
     gCameras[gCameraSelector].srt.transl.x -= c * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
     gCameras[gCameraSelector].srt.transl.z += c * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].unk_0x56 = func_8004454C(
+    gCameras[gCameraSelector].unk56 = func_8004454C(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
         gCameras[gCameraSelector].srt.transl.z);
@@ -1225,7 +1225,7 @@ void func_80003AA0(f32 x, f32 y, f32 z, f32 distance, f32 param_5)
         f32 dz = z - gCameras[i].srt.transl.z;
         f32 d = sqrtf(dx * dx + dy * dy + dz * dz);
         if (d < distance) {
-            gCameras[i].unk_0x5d = 0;
+            gCameras[i].unk5D = 0;
             gCameras[i].dty = (distance - d) * param_5 / distance;
         }
     }
@@ -1238,7 +1238,7 @@ void func_80003B70(f32 dty)
     for (i = 0; i < CAMERA_COUNT; i++)
     {
         gCameras[i].dty = dty;
-        gCameras[i].unk_0x5d = 0;
+        gCameras[i].unk5D = 0;
     }
 }
 
@@ -1249,11 +1249,11 @@ void func_80003bb0(f32 param_1, f32 param_2, f32 param_3)
     for (i = 0; i < CAMERA_COUNT; i++)
     {
         gCameras[i].dty = param_1;
-        gCameras[i].unk_0x30 = param_1;
-        gCameras[i].unk_0x34 = param_2;
-        gCameras[i].unk_0x38 = 0.0f;
-        gCameras[i].unk_0x3c = param_3;
-        gCameras[i].unk_0x5d = 1;
+        gCameras[i].unk30 = param_1;
+        gCameras[i].unk34 = param_2;
+        gCameras[i].unk38 = 0.0f;
+        gCameras[i].unk3C = param_3;
+        gCameras[i].unk5D = 1;
     }
 }
 
@@ -1311,27 +1311,27 @@ void camera_tick() {
     
     camera = &gCameras[gCameraSelector];
 
-    if (camera->unk_0x5d == 0) {
-        camera->unk_0x5c--;
+    if (camera->unk5D == 0) {
+        camera->unk5C--;
 
-        while (camera->unk_0x5c < 0) {
+        while (camera->unk5C < 0) {
             camera->dty = -camera->dty * 0.89999998f;
 
-            camera->unk_0x5c++;
+            camera->unk5C++;
         }
-    } else if (camera->unk_0x5d == 1) {
-        var4 = fexp(-camera->unk_0x3c * camera->unk_0x38, 20);
-        var5 = fcos16_precise(camera->unk_0x34 * 65535.0f * camera->unk_0x38);
-        var5 *= camera->unk_0x30 * var4;
+    } else if (camera->unk5D == 1) {
+        var4 = fexp(-camera->unk3C * camera->unk38, 20);
+        var5 = fcos16_precise(camera->unk34 * 65535.0f * camera->unk38);
+        var5 *= camera->unk30 * var4;
 
         camera->dty = var5;
 
         if (camera->dty < 0.1f && -0.1f < camera->dty) {
-            camera->unk_0x5d = -1;
+            camera->unk5D = -1;
             camera->dty = 0.0f;
         }
 
-        camera->unk_0x38 += delayFloat / 60.0f;
+        camera->unk38 += delayFloat / 60.0f;
     }
 }
 
@@ -1376,7 +1376,7 @@ void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object)
             }
 
             oldScale = object->srt.scale;
-            if (!(object->unk0xb0 & 0x8)) {
+            if (!(object->unkB0 & 0x8)) {
                 object->srt.scale = 1.0f;
             }
 

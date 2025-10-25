@@ -56,11 +56,11 @@ typedef struct OSScTask_s {
     OSTask              list;
     OSMesgQueue         *msgQ;
     OSMesg              msg;
-    u32                 unk0x58;    /* NOTE: Not from the original sched.h! */
-    u32                 unk0x5c;    /* NOTE: Not from the original sched.h! */
-    u32                 unk0x60;    /* NOTE: Not from the original sched.h! */
-    u32                 unk0x64;    /* NOTE: Not from the original sched.h! */
-    u32                 unk0x68;    /* NOTE: Not from the original sched.h! */
+    u32                 unk58;    /* NOTE: Not from the original sched.h! */
+    u32                 unk5C;    /* NOTE: Not from the original sched.h! */
+    u32                 unk60;    /* NOTE: Not from the original sched.h! */
+    u32                 unk64;    /* NOTE: Not from the original sched.h! */
+    u32                 unk68;    /* NOTE: Not from the original sched.h! */
     u32                 taskType;   /* NOTE: Not from the original sched.h! 0x6c */
 #ifndef _FINALROM                       /* all #ifdef items should    */
    // OSTime              startTime;      /* remain at the end!!, or    */
@@ -88,7 +88,7 @@ typedef struct OSScTask_s {
  *
  */
 typedef struct SCClient_s {
-    u8                  unk0x0; /* NOTE: Not from the original sched.h! */
+    u8                  unk0; /* NOTE: Not from the original sched.h! */
     struct SCClient_s   *next;  /* next client in the list      */
     OSMesgQueue         *msgQ;  /* where to send the frame msg  */
 } OSScClient;

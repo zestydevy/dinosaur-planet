@@ -139,106 +139,106 @@ void func_80005084(void *a0, void *a1) {
 }
 
 void func_80005094(UnkCurvesStruct *arg0) {
-    if (arg0->unk0x90) {
+    if (arg0->unk90) {
 
     }
-    if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
+    if ((arg0->unk94 == &func_80004D70) || (arg0->unk94 == &func_80004C5C)) {
 
     }
 
-    arg0->unk0x10 = 0;
-    arg0->unk0xC = 0.0f;
+    arg0->unk10 = 0;
+    arg0->unkC = 0.0f;
 
-    while (arg0->unk0x10 < (arg0->unk0x90 - 3)) {
+    while (arg0->unk10 < (arg0->unk90 - 3)) {
         func_800065C0(arg0, 5);
         
-        arg0->unk0xC += arg0->unk0x14[0];
+        arg0->unkC += arg0->unk14[0];
         
-        if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
-            arg0->unk0x10 += 4;
+        if ((arg0->unk94 == &func_80004D70) || (arg0->unk94 == &func_80004C5C)) {
+            arg0->unk10 += 4;
         } else {
-            arg0->unk0x10 += 1;
+            arg0->unk10 += 1;
         }
     }
 
-    if (arg0->unk0x80 != 0) {
-        arg0->unk0x10 = arg0->unk0x90 - 4;
+    if (arg0->unk80 != 0) {
+        arg0->unk10 = arg0->unk90 - 4;
     } else {
-        arg0->unk0x10 = 0;
+        arg0->unk10 = 0;
     }
 
     func_800065C0(arg0, 0x14);
 
-    if (arg0->unk0x80 != 0) {
-        arg0->unk0x0 = 1.0f;
-        arg0->unk0x4 = arg0->unk0x64;
-        arg0->unk0x8 = arg0->unk0xC;
+    if (arg0->unk80 != 0) {
+        arg0->unk0 = 1.0f;
+        arg0->unk4 = arg0->unk64;
+        arg0->unk8 = arg0->unkC;
     } else {
-        arg0->unk0x0 = 0.0f;
-        arg0->unk0x4 = 0.0f;
-        arg0->unk0x8 = 0.0f;
+        arg0->unk0 = 0.0f;
+        arg0->unk4 = 0.0f;
+        arg0->unk8 = 0.0f;
     }
 
-    if (arg0->unk0x84 != NULL) {
-        arg0->unk0x68 = arg0->unk0x94(arg0->unk0x84, arg0->unk0x0, &arg0->unk0x74);
+    if (arg0->unk84 != NULL) {
+        arg0->unk68 = arg0->unk94(arg0->unk84, arg0->unk0, &arg0->unk74);
     }
-    if (arg0->unk0x88 != NULL) {
-        arg0->unk0x6C = arg0->unk0x94(arg0->unk0x88, arg0->unk0x0, &arg0->unk0x78);
+    if (arg0->unk88 != NULL) {
+        arg0->unk6C = arg0->unk94(arg0->unk88, arg0->unk0, &arg0->unk78);
     }
-    if (arg0->unk0x8C != NULL) {
-        arg0->unk0x70 = arg0->unk0x94(arg0->unk0x8C, arg0->unk0x0, &arg0->unk0x7C);
+    if (arg0->unk8C != NULL) {
+        arg0->unk70 = arg0->unk94(arg0->unk8C, arg0->unk0, &arg0->unk7C);
     }
 }
 
 void func_8000523C(UnkCurvesStruct *arg0) {
-    if (arg0->unk0x90) {
+    if (arg0->unk90) {
 
     }
-    if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
+    if ((arg0->unk94 == &func_80004D70) || (arg0->unk94 == &func_80004C5C)) {
 
     }
 
-    arg0->unk0x10 = 0;
-    arg0->unk0xC = 0.0f;
+    arg0->unk10 = 0;
+    arg0->unkC = 0.0f;
     
-    while (arg0->unk0x10 < (arg0->unk0x90 - 3)) {
+    while (arg0->unk10 < (arg0->unk90 - 3)) {
         func_800065C0(arg0, 5);
 
-        arg0->unk0xC += arg0->unk0x14[0];
+        arg0->unkC += arg0->unk14[0];
 
-        if ((arg0->unk0x94 == &func_80004D70) || (arg0->unk0x94 == &func_80004C5C)) {
-            arg0->unk0x10 += 4;
+        if ((arg0->unk94 == &func_80004D70) || (arg0->unk94 == &func_80004C5C)) {
+            arg0->unk10 += 4;
         } else {
-            arg0->unk0x10 += 1;
+            arg0->unk10 += 1;
         }
     }
 
-    if (arg0->unk0x80 != 0) {
-        arg0->unk0x10 = arg0->unk0x90 - 4;
+    if (arg0->unk80 != 0) {
+        arg0->unk10 = arg0->unk90 - 4;
     } else {
-        arg0->unk0x10 = 0;
+        arg0->unk10 = 0;
     }
 
     func_800065C0(arg0, 0x14);
     
-    if (arg0->unk0x80 != 0) {
-        arg0->unk0x8 = arg0->unk0xC - arg0->unk0x4;
+    if (arg0->unk80 != 0) {
+        arg0->unk8 = arg0->unkC - arg0->unk4;
     } else {
-        arg0->unk0x8 = arg0->unk0x4;
+        arg0->unk8 = arg0->unk4;
     }
 }
 
 void func_8000535C(UnkCurvesStruct *arg0) {
-    if (arg0->unk0x80 != 0) {
-        arg0->unk0x0 = 1.0f;
-        arg0->unk0x4 = arg0->unk0x64;
-        arg0->unk0x8 = arg0->unk0xC;
-        arg0->unk0x10 = arg0->unk0x90 - 4;
+    if (arg0->unk80 != 0) {
+        arg0->unk0 = 1.0f;
+        arg0->unk4 = arg0->unk64;
+        arg0->unk8 = arg0->unkC;
+        arg0->unk10 = arg0->unk90 - 4;
     } else {
-        arg0->unk0x0 = 0.0f;
-        arg0->unk0x4 = 0.0f;
-        arg0->unk0x8 = 0.0f;
-        arg0->unk0x10 = 0;
+        arg0->unk0 = 0.0f;
+        arg0->unk4 = 0.0f;
+        arg0->unk8 = 0.0f;
+        arg0->unk10 = 0;
     }
 }
 
@@ -257,18 +257,18 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
 
     var_fs0 = arg1 * delayFloat;
     if (var_fs0 > 0.0f) {
-        var_v1 = (s32) (arg0->unk0x0 * 20.0f);
+        var_v1 = (s32) (arg0->unk0 * 20.0f);
         if (var_v1 == 20) {
             var_v1 -= 1;
         }
-        if (arg0->unk0x80 != 0) {
-            arg0->unk0x4 = arg0->unk0x14[1 + var_v1] + arg0->unk0x4;
-        } else if (arg0->unk0x0 >= 1.0f) {
+        if (arg0->unk80 != 0) {
+            arg0->unk4 = arg0->unk14[1 + var_v1] + arg0->unk4;
+        } else if (arg0->unk0 >= 1.0f) {
             return 1;
         }
-        arg0->unk0x8 += var_fs0;
-        var_fs0 += arg0->unk0x4;
-        var_v0 = &arg0->unk0x14[var_v1];
+        arg0->unk8 += var_fs0;
+        var_fs0 += arg0->unk4;
+        var_v0 = &arg0->unk14[var_v1];
         s1 = var_v0;
         while (var_fs0 > 0.0f) {
             var_fs0 -= var_v0[1];
@@ -276,25 +276,25 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
                 var_v1 += 1;
                 var_v0 += 1;
                 if (var_v1 >= 20) {
-                    var_t0 = arg0->unk0x10;
-                    if ((arg0->unk0x94 == func_80004D70) || (arg0->unk0x94 == func_80004C5C)) {
-                        arg0->unk0x10 += 3;
+                    var_t0 = arg0->unk10;
+                    if ((arg0->unk94 == func_80004D70) || (arg0->unk94 == func_80004C5C)) {
+                        arg0->unk10 += 3;
                     }
-                    arg0->unk0x10 += 1;
-                    if ((arg0->unk0x90 - 4) < arg0->unk0x10) {
-                        if (arg0->unk0x84 != NULL) {
-                            arg0->unk0x68 = arg0->unk0x94((Vec4f *) &arg0->unk0x84[var_t0], 1.0f, &arg0->unk0x74);
+                    arg0->unk10 += 1;
+                    if ((arg0->unk90 - 4) < arg0->unk10) {
+                        if (arg0->unk84 != NULL) {
+                            arg0->unk68 = arg0->unk94((Vec4f *) &arg0->unk84[var_t0], 1.0f, &arg0->unk74);
                         }
-                        if (arg0->unk0x88 != NULL) {
-                            arg0->unk0x6C = arg0->unk0x94((Vec4f *) &arg0->unk0x88[var_t0], 1.0f, &arg0->unk0x78);
+                        if (arg0->unk88 != NULL) {
+                            arg0->unk6C = arg0->unk94((Vec4f *) &arg0->unk88[var_t0], 1.0f, &arg0->unk78);
                         }
-                        if (arg0->unk0x8C != NULL) {
-                            arg0->unk0x70 = arg0->unk0x94((Vec4f *) &arg0->unk0x8C[var_t0], 1.0f, &arg0->unk0x7C);
+                        if (arg0->unk8C != NULL) {
+                            arg0->unk70 = arg0->unk94((Vec4f *) &arg0->unk8C[var_t0], 1.0f, &arg0->unk7C);
                         }
-                        arg0->unk0x4 = 0.0f;
-                        arg0->unk0x10 = arg0->unk0x90 - 4;
-                        arg0->unk0x0 = 1.0f;
-                        arg0->unk0x8 = arg0->unk0xC;
+                        arg0->unk4 = 0.0f;
+                        arg0->unk10 = arg0->unk90 - 4;
+                        arg0->unk0 = 1.0f;
+                        arg0->unk8 = arg0->unkC;
                         return 1;
                     }
                     func_800065C0(arg0, 20);
@@ -305,57 +305,57 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
         }
         var_fs0 += var_v0[1];
         temp_fs1 = ((var_fs0 / var_v0[1]) * (((var_v1 + 1) / 20.0f) - (var_v1 / 20.0f))) + (var_v1 / 20.0f);
-        if (arg0->unk0x84 != NULL) {
-            arg0->unk0x68 = arg0->unk0x94((Vec4f* ) &arg0->unk0x84[arg0->unk0x10], temp_fs1, &arg0->unk0x74);
+        if (arg0->unk84 != NULL) {
+            arg0->unk68 = arg0->unk94((Vec4f* ) &arg0->unk84[arg0->unk10], temp_fs1, &arg0->unk74);
         }
-        if (arg0->unk0x88 != NULL) {
-            arg0->unk0x6C = arg0->unk0x94((Vec4f* ) &arg0->unk0x88[arg0->unk0x10], temp_fs1, &arg0->unk0x78);
+        if (arg0->unk88 != NULL) {
+            arg0->unk6C = arg0->unk94((Vec4f* ) &arg0->unk88[arg0->unk10], temp_fs1, &arg0->unk78);
         }
-        if (arg0->unk0x8C != NULL) {
-            arg0->unk0x70 = arg0->unk0x94((Vec4f* ) &arg0->unk0x8C[arg0->unk0x10], temp_fs1, &arg0->unk0x7C);
+        if (arg0->unk8C != NULL) {
+            arg0->unk70 = arg0->unk94((Vec4f* ) &arg0->unk8C[arg0->unk10], temp_fs1, &arg0->unk7C);
         }
-        arg0->unk0x0 = temp_fs1;
-        arg0->unk0x4 = var_fs0;
-        arg0->unk0x80 = 0;
+        arg0->unk0 = temp_fs1;
+        arg0->unk4 = var_fs0;
+        arg0->unk80 = 0;
     } else if (var_fs0 < 0.0f) {
-        var_v1 = (s32) (arg0->unk0x0 * 20.0f);
+        var_v1 = (s32) (arg0->unk0 * 20.0f);
         if (var_v1 == 20) {
             var_v1 -= 1;
         }
-        if (arg0->unk0x80 == 0) {
-            arg0->unk0x4 = arg0->unk0x14[ 1 + var_v1] - arg0->unk0x4;
-        } else if (arg0->unk0x0 <= 0.0f) {
+        if (arg0->unk80 == 0) {
+            arg0->unk4 = arg0->unk14[ 1 + var_v1] - arg0->unk4;
+        } else if (arg0->unk0 <= 0.0f) {
             return 1;
         }
-        var_v0 = &arg0->unk0x14[var_v1];
+        var_v0 = &arg0->unk14[var_v1];
         s1 = var_v0;
-        arg0->unk0x8 += var_fs0;
-        var_fs0 += arg0->unk0x4;
+        arg0->unk8 += var_fs0;
+        var_fs0 += arg0->unk4;
         while (var_fs0 < 0.0f) {
             var_fs0 += var_v0[1];
             if (var_fs0 < 0.0f) {
                 var_v1 -= 1;
                 var_v0 -= 1;
                 if (var_v1 < 0) {
-                    var_t0 = arg0->unk0x10;
-                    if ((arg0->unk0x94 == func_80004D70) || (arg0->unk0x94 == func_80004C5C)) {
-                        arg0->unk0x10 -= 3;
+                    var_t0 = arg0->unk10;
+                    if ((arg0->unk94 == func_80004D70) || (arg0->unk94 == func_80004C5C)) {
+                        arg0->unk10 -= 3;
                     }
-                    arg0->unk0x10 -= 1;
-                    if (arg0->unk0x10 < 0) {
-                        if (arg0->unk0x84 != NULL) {
-                            arg0->unk0x68 = arg0->unk0x94((Vec4f* ) &arg0->unk0x84[var_t0], 0.0f, &arg0->unk0x74);
+                    arg0->unk10 -= 1;
+                    if (arg0->unk10 < 0) {
+                        if (arg0->unk84 != NULL) {
+                            arg0->unk68 = arg0->unk94((Vec4f* ) &arg0->unk84[var_t0], 0.0f, &arg0->unk74);
                         }
-                        if (arg0->unk0x88 != NULL) {
-                            arg0->unk0x6C = arg0->unk0x94((Vec4f* ) &arg0->unk0x88[var_t0], 0.0f, &arg0->unk0x78);
+                        if (arg0->unk88 != NULL) {
+                            arg0->unk6C = arg0->unk94((Vec4f* ) &arg0->unk88[var_t0], 0.0f, &arg0->unk78);
                         }
-                        if (arg0->unk0x8C != NULL) {
-                            arg0->unk0x70 = arg0->unk0x94((Vec4f* ) &arg0->unk0x8C[var_t0], 0.0f, &arg0->unk0x7C);
+                        if (arg0->unk8C != NULL) {
+                            arg0->unk70 = arg0->unk94((Vec4f* ) &arg0->unk8C[var_t0], 0.0f, &arg0->unk7C);
                         }
-                        arg0->unk0x0 = 0.0f;
-                        arg0->unk0x4 = -s1[1];
-                        arg0->unk0x8 = 0.0f;
-                        arg0->unk0x10 = 0;
+                        arg0->unk0 = 0.0f;
+                        arg0->unk4 = -s1[1];
+                        arg0->unk8 = 0.0f;
+                        arg0->unk10 = 0;
                         return 1;
                     }
                     func_800065C0(arg0, 20);
@@ -365,18 +365,18 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
             }
         }
         temp_fs1 = ((var_fs0 / var_v0[1]) * (((var_v1 + 1) / 20.0f) - (var_v1 / 20.0f))) + (var_v1 / 20.0f);
-        if (arg0->unk0x84 != NULL) {
-            arg0->unk0x68 = arg0->unk0x94((Vec4f* ) &arg0->unk0x84[arg0->unk0x10], temp_fs1, &arg0->unk0x74);
+        if (arg0->unk84 != NULL) {
+            arg0->unk68 = arg0->unk94((Vec4f* ) &arg0->unk84[arg0->unk10], temp_fs1, &arg0->unk74);
         }
-        if (arg0->unk0x88 != NULL) {
-            arg0->unk0x6C = arg0->unk0x94((Vec4f* ) &arg0->unk0x88[arg0->unk0x10], temp_fs1, &arg0->unk0x78);
+        if (arg0->unk88 != NULL) {
+            arg0->unk6C = arg0->unk94((Vec4f* ) &arg0->unk88[arg0->unk10], temp_fs1, &arg0->unk78);
         }
-        if (arg0->unk0x8C != NULL) {
-            arg0->unk0x70 = arg0->unk0x94((Vec4f* ) &arg0->unk0x8C[arg0->unk0x10], temp_fs1, &arg0->unk0x7C);
+        if (arg0->unk8C != NULL) {
+            arg0->unk70 = arg0->unk94((Vec4f* ) &arg0->unk8C[arg0->unk10], temp_fs1, &arg0->unk7C);
         }
-        arg0->unk0x0 = temp_fs1;
-        arg0->unk0x4 = var_fs0 - var_v0[1];
-        arg0->unk0x80 = 1;
+        arg0->unk0 = temp_fs1;
+        arg0->unk4 = var_fs0 - var_v0[1];
+        arg0->unk80 = 1;
     }
     return 0;
 }
@@ -592,23 +592,23 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
     phi_s5 = 0;
     phi_s6 = 0;
 
-    if (arg0->unk0x84 != 0) {
-        phi_s4 = &arg0->unk0x84[arg0->unk0x10];
+    if (arg0->unk84 != 0) {
+        phi_s4 = &arg0->unk84[arg0->unk10];
     }
-    if (arg0->unk0x88 != 0) {
-        phi_s5 = &arg0->unk0x88[arg0->unk0x10];
+    if (arg0->unk88 != 0) {
+        phi_s5 = &arg0->unk88[arg0->unk10];
     }
-    if (arg0->unk0x8C != 0) {
-        phi_s6 = &arg0->unk0x8C[arg0->unk0x10];
+    if (arg0->unk8C != 0) {
+        phi_s6 = &arg0->unk8C[arg0->unk10];
     }
 
-    if (arg0->unk0x98 != 0) {
-        func_8000598C(phi_s4, phi_s5, phi_s6, xCoords, yCoords, zCoords, arg1, arg0->unk0x98);
+    if (arg0->unk98 != 0) {
+        func_8000598C(phi_s4, phi_s5, phi_s6, xCoords, yCoords, zCoords, arg1, arg0->unk98);
     } else {
         
     }
 
-    arg0->unk0x14[0] = 0.0f;
+    arg0->unk14[0] = 0.0f;
 
     for (i = 0; i < arg1; ++i) {
         // Find distance between current and next coord
@@ -631,9 +631,9 @@ void func_800065C0(UnkCurvesStruct *arg0, s32 arg1) {
         }
 
         // Compute distance between current and next coord
-        arg0->unk0x14[i + 1] = sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
+        arg0->unk14[i + 1] = sqrtf((xDist * xDist) + (yDist * yDist) + (zDist * zDist));
         // Sum distances
-        arg0->unk0x14[0] += arg0->unk0x14[i + 1];
+        arg0->unk14[0] += arg0->unk14[i + 1];
     }
 }
 
@@ -813,24 +813,24 @@ void func_80006E58(UnkCurvesStruct* arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 var_ft5;
     s32 var_v0;
 
-    arg0->unk0x0 = 0.0f;
+    arg0->unk0 = 0.0f;
     var_ft5 = 0.0f;
     var_fa0 = 0.0f;
     var_fa1 = 0.0f;
     var_ft4 = 0.0f;
-    for (var_v0 = 0; var_v0 < arg0->unk0x90; var_v0 += 4) {
-        if (arg0->unk0x84 != NULL) {
-            var_ft4 = arg1 - arg0->unk0x84[var_v0];
+    for (var_v0 = 0; var_v0 < arg0->unk90; var_v0 += 4) {
+        if (arg0->unk84 != NULL) {
+            var_ft4 = arg1 - arg0->unk84[var_v0];
         }
-        if (arg0->unk0x88 != NULL) {
-            var_fa1 = arg2 - arg0->unk0x88[var_v0];
+        if (arg0->unk88 != NULL) {
+            var_fa1 = arg2 - arg0->unk88[var_v0];
         }
-        if (arg0->unk0x8C != NULL) {
-            var_fa0 = arg1 - arg0->unk0x8C[var_v0];
+        if (arg0->unk8C != NULL) {
+            var_fa0 = arg1 - arg0->unk8C[var_v0];
         }
         temp_fv0 = (var_ft4 * var_ft4) + (var_fa1 * var_fa1) + (var_fa0 * var_fa0);
         if ((var_v0 == 0) || (temp_fv0 < var_ft5)) {
-            arg0->unk0x10 = var_v0;
+            arg0->unk10 = var_v0;
             var_ft5 = temp_fv0;
         }
     }

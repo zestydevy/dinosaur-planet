@@ -26,45 +26,45 @@ void func_8005C780() {
     {
         gSPEndDisplayList(&gUnknownVideoStructs[i].dl);
         gUnknownVideoStructs[i].viMode = NULL;
-        gUnknownVideoStructs[i].unk0x88 = 0;
+        gUnknownVideoStructs[i].unk88 = 0;
     }
 
     for (i = 0; i < 4; i++)
     {
-        D_800BCC18[i].unk0x10 = NULL;
-        D_800BCC18[i].unk0x0 = 0;
-        D_800BCC18[i].unk0x4 = 0;
-        D_800BCC18[i].unk0x8 = 0;
-        D_800BCC18[i].unk0xc = 0;
+        D_800BCC18[i].unk10 = NULL;
+        D_800BCC18[i].unk0 = 0;
+        D_800BCC18[i].unk4 = 0;
+        D_800BCC18[i].unk8 = 0;
+        D_800BCC18[i].unkC = 0;
     }
 
-    D_800BCC10->unk0x0 = -3.0f;
-    D_800BCC10->unk0x4 = 0.0f;
-    D_800BCC10->unk0x8 = -3.0f;
-    D_800BCC10->unk0xc = -3.0f;
-    D_800BCC10->unk0x10 = 0.0f;
-    D_800BCC10->unk0x14 = 3.0f;
+    D_800BCC10->unk0 = -3.0f;
+    D_800BCC10->unk4 = 0.0f;
+    D_800BCC10->unk8 = -3.0f;
+    D_800BCC10->unkC = -3.0f;
+    D_800BCC10->unk10 = 0.0f;
+    D_800BCC10->unk14 = 3.0f;
     
-    D_800BCC10->unk0x18 = 3.0f;
-    D_800BCC10->unk0x1c = 0.0f;
-    D_800BCC10->unk0x20 = 3.0f;
-    D_800BCC10->unk0x24 = 3.0f;
-    D_800BCC10->unk0x28 = 0.0f;
-    D_800BCC10->unk0x2c = -3.0f;
+    D_800BCC10->unk18 = 3.0f;
+    D_800BCC10->unk1C = 0.0f;
+    D_800BCC10->unk20 = 3.0f;
+    D_800BCC10->unk24 = 3.0f;
+    D_800BCC10->unk28 = 0.0f;
+    D_800BCC10->unk2C = -3.0f;
     
-    D_800BCC10->unk0x30 = -3.0f;
-    D_800BCC10->unk0x34 = 0.0f;
-    D_800BCC10->unk0x38 = -3.0f;
-    D_800BCC10->unk0x3c = -3.0f;
-    D_800BCC10->unk0x40 = 0.0f;
-    D_800BCC10->unk0x44 = 3.0f;
+    D_800BCC10->unk30 = -3.0f;
+    D_800BCC10->unk34 = 0.0f;
+    D_800BCC10->unk38 = -3.0f;
+    D_800BCC10->unk3C = -3.0f;
+    D_800BCC10->unk40 = 0.0f;
+    D_800BCC10->unk44 = 3.0f;
     
-    D_800BCC10->unk0x48 = 3.0f;
-    D_800BCC10->unk0x4c = 0.0f;
-    D_800BCC10->unk0x50 = 3.0f;
-    D_800BCC10->unk0x54 = 3.0f;
-    D_800BCC10->unk0x58 = 0.0f;
-    D_800BCC10->unk0x5c = -3.0f;
+    D_800BCC10->unk48 = 3.0f;
+    D_800BCC10->unk4C = 0.0f;
+    D_800BCC10->unk50 = 3.0f;
+    D_800BCC10->unk54 = 3.0f;
+    D_800BCC10->unk58 = 0.0f;
+    D_800BCC10->unk5C = -3.0f;
 
     D_800BCC68 = queue_load_texture_proxy(0x18);
     D_800BCC6C = queue_load_texture_proxy(0x19);
@@ -79,15 +79,15 @@ void func_8005C998() {
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
         gSPEndDisplayList(&gUnknownVideoStructs[i].dl);
         gUnknownVideoStructs[i].viMode = NULL;
-        gUnknownVideoStructs[i].unk0x88 = 0;
+        gUnknownVideoStructs[i].unk88 = 0;
     }
 
     for (i = 0; i < 4; i++) {
-        D_800BCC18[i].unk0x10 = 0;
-        D_800BCC18[i].unk0x0 = 0.0f;
-        D_800BCC18[i].unk0x4 = 0.0f;
-        D_800BCC18[i].unk0x8 = 0.0f;
-        D_800BCC18[i].unk0xc = 0;
+        D_800BCC18[i].unk10 = 0;
+        D_800BCC18[i].unk0 = 0.0f;
+        D_800BCC18[i].unk4 = 0.0f;
+        D_800BCC18[i].unk8 = 0.0f;
+        D_800BCC18[i].unkC = 0;
     }
 }
 
@@ -103,11 +103,11 @@ void func_8005CA88(f32 *a0, f32 *a1, u8 a2) {
     static s32 D_80092FF8 = 0;
 
     if (D_800BCC78 != 0) {
-        D_800BCC18[D_80092FF8].unk0x10 = a0;
-        D_800BCC18[D_80092FF8].unk0x0 = a1[0];
-        D_800BCC18[D_80092FF8].unk0x4 = a0[4] + a1[1];
-        D_800BCC18[D_80092FF8].unk0x8 = a1[2];
-        D_800BCC18[D_80092FF8].unk0xc = a2;
+        D_800BCC18[D_80092FF8].unk10 = a0;
+        D_800BCC18[D_80092FF8].unk0 = a1[0];
+        D_800BCC18[D_80092FF8].unk4 = a0[4] + a1[1];
+        D_800BCC18[D_80092FF8].unk8 = a1[2];
+        D_800BCC18[D_80092FF8].unkC = a2;
 
         D_80092FF8 = D_80092FF8 + 1;
 
@@ -169,7 +169,7 @@ void func_8005CC74(Gfx **gdl, Object *arg1) {
     }
 
     for (i = 0; i < 4; i++) {
-        if ((D_800BCC18[i].unk0x10 != 0) && (arg1 == D_800BCC18[i].unk0x10)) {
+        if ((D_800BCC18[i].unk10 != 0) && (arg1 == D_800BCC18[i].unk10)) {
             func_8005CF4C(arg1, &D_800BCC18[i]);
         }
     }
@@ -183,17 +183,17 @@ void func_8005CD80() {
     Vtx_t *ptr;
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
-        ptr = &gUnknownVideoStructs[i].unk0x18[0];
+        ptr = &gUnknownVideoStructs[i].unk18[0];
         
         if (gUnknownVideoStructs[i].viMode != NULL) {
-            gUnknownVideoStructs[i].unk0x88 -= 5;
+            gUnknownVideoStructs[i].unk88 -= 5;
 
-            if (gUnknownVideoStructs[i].unk0x88 < 0) {
-                gUnknownVideoStructs[i].unk0x88 = 0;
+            if (gUnknownVideoStructs[i].unk88 < 0) {
+                gUnknownVideoStructs[i].unk88 = 0;
             }
 
             for (k = 0; k < 4; k++) {
-                (ptr++)->cn[3] = gUnknownVideoStructs[i].unk0x88;
+                (ptr++)->cn[3] = gUnknownVideoStructs[i].unk88;
             }
         }
     }
@@ -211,13 +211,13 @@ void func_8005CDFC(s32 _) {
 
     for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
         if (gUnknownVideoStructs[i].viMode != NULL) {
-            ptr = &gUnknownVideoStructs[i].unk0x18[0];
+            ptr = &gUnknownVideoStructs[i].unk18[0];
             
-            var1 = gWorldX - gUnknownVideoStructs[i].unk0x78;
-            var2 = gWorldZ - gUnknownVideoStructs[i].unk0x7c;
+            var1 = gWorldX - gUnknownVideoStructs[i].unk78;
+            var2 = gWorldZ - gUnknownVideoStructs[i].unk7C;
 
-            gUnknownVideoStructs[i].unk0x78 += var1;
-            gUnknownVideoStructs[i].unk0x7c += var2;
+            gUnknownVideoStructs[i].unk78 += var1;
+            gUnknownVideoStructs[i].unk7C += var2;
 
             for (k = 0; k < 4; k++) {
                 ptr->ob[0] -= var1;
@@ -252,13 +252,13 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     sp68.z = 0.0f;
     var_s2 = 0;
     var_s3 = 0;
-    arg1->unk0x10 = NULL;
+    arg1->unk10 = NULL;
     sp66[1] = arg0->srt.yaw;
 
     if (D_80093000 == 0x27) {
         D_80093000 = 0;
     }
-    if (func_80051D68(arg0, arg1->unk0x0 - ((Vec3s32 *)D_80092BE0)->x, arg1->unk0x8 - ((Vec3s32 *)D_80092BE0)->z, (UnkFunc80051D68Arg3* ) D_80092BDC, D_80092C1C, &sp68) == 0) {
+    if (func_80051D68(arg0, arg1->unk0 - ((Vec3s32 *)D_80092BE0)->x, arg1->unk8 - ((Vec3s32 *)D_80092BE0)->z, (UnkFunc80051D68Arg3* ) D_80092BDC, D_80092C1C, &sp68) == 0) {
         return;
     }
 
@@ -281,18 +281,18 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     sp7C.transl.y = 0.0f;
     sp7C.transl.z = 0.0f;
     sp7C.scale = 1.0f;
-    var_s0 = gUnknownVideoStructs[D_80093000].unk0x18;
-    var_s5 = (DLTri *)gUnknownVideoStructs[D_80093000].unk0x58_pad;
+    var_s0 = gUnknownVideoStructs[D_80093000].unk18;
+    var_s5 = (DLTri *)gUnknownVideoStructs[D_80093000].unk58_pad;
     temp_v0 = &gUnknownVideoStructs[D_80093000];
-    temp_v0->unk0x88 = 0xC8;
+    temp_v0->unk88 = 0xC8;
     temp_v0->viMode = 1;
     sp94.pitch = var_s3;
     sp94.roll = -var_s2;
     sp94.yaw = 0;
     sp7C.roll = 0;
     sp7C.pitch = 0;
-    temp_v0->unk0x78 = gWorldX;
-    temp_v0->unk0x7c = gWorldZ;
+    temp_v0->unk78 = gWorldX;
+    temp_v0->unk7C = gWorldZ;
     sp7C.yaw = sp66[1];
     for (var_s1 = 0; var_s1 < 4; var_s1++, var_s0++) {
         spAC.x = D_800BCC10[var_s1].x;
@@ -300,13 +300,13 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
         spAC.z = D_800BCC10[var_s1].z;
         rotate_vec3(&sp7C, &spAC);
         rotate_vec3(&sp94, &spAC);
-        var_s0->ob[0] = spAC.x + arg1->unk0x0 - gWorldX;
-        var_s0->ob[1] = spAC.y + arg1->unk0x4 + 1;
-        var_s0->ob[2] = spAC.z + arg1->unk0x8 - gWorldZ;
+        var_s0->ob[0] = spAC.x + arg1->unk0 - gWorldX;
+        var_s0->ob[1] = spAC.y + arg1->unk4 + 1;
+        var_s0->ob[2] = spAC.z + arg1->unk8 - gWorldZ;
         var_s0->cn[0] = 0xFF;
         var_s0->cn[1] = 0xE1;
         var_s0->cn[2] = 0xE1;
-        var_s0->cn[3] = temp_v0->unk0x88;
+        var_s0->cn[3] = temp_v0->unk88;
     }
     var_s0 -= 4;
     var_s0[0].tc[0] = 0;
@@ -317,7 +317,7 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     var_s0[2].tc[1] = 0;
     var_s0[3].tc[0] = 0x400;
     var_s0[3].tc[1] = 0x400;
-    if (arg1->unk0xc == 1) {
+    if (arg1->unkC == 1) {
         var_s5->v0 = 0;
         var_s5->v1 = 1;
         var_s5->v2 = 2;
@@ -325,7 +325,7 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
         var_s5->v0 = 0;
         var_s5->v1 = 2;
         var_s5->v2 = 3;
-    } else if (arg1->unk0xc == 2) {
+    } else if (arg1->unkC == 2) {
         var_s5->v0 = 0;
         var_s5->v1 = 1;
         var_s5->v2 = 2;

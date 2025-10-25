@@ -25,26 +25,26 @@ typedef struct {
     /*0x0*/ Vec3f vec;
     /*0xC*/ s8 rotationY;
     /*0xD*/ s8 mapLayer;
-    /*0xE*/ u8 unk0xE[2];
+    /*0xE*/ u8 unkE[2];
 } PlayerLocation;
 
 // size: 0x14
 typedef struct {
-    s16 unk0x0;
-    s16 unk0x2;
-    s16 unk0x4;
-    s16 unk0x6;
-    s16 unk0x8;
-    s16 unk0xa;
-    s16 unk0xc;
-    s16 unk0xe;
-    s16 unk0x10;
-    s16 unk0x12;
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    s16 unkC;
+    s16 unkE;
+    s16 unk10;
+    s16 unk12;
 } GplayStruct6;
 
 // size: 0xB4
 typedef struct {
-    u8 unk0x0[0xB4];
+    u8 unk0[0xB4];
 } GplayStruct14;
 
 // size: 0x8
@@ -57,9 +57,9 @@ typedef struct {
 
 // size: 0x3
 typedef struct {
-    u8 unk0x0;
-    u8 unk0x1;
-    u8 _unk0x2[1];
+    u8 unk0;
+    u8 unk1;
+    u8 _unk2[1];
 } GplayStruct11;
 
 // size: 0xc
@@ -87,10 +87,10 @@ typedef struct {
 // size: 0x13d4
 typedef struct {
     PlayerStats players[2];
-    GplayStruct11 unk0x18[2];
-    u8 _unk0x1E[0x2];
-    GplayStruct14 unk0x20[2];
-    GplayStruct14 unk0x188[2];
+    GplayStruct11 unk18[2];
+    u8 _unk1E[0x2];
+    GplayStruct14 unk20[2];
+    GplayStruct14 unk188[2];
     /*0x2F0*/char name[6]; // name of save
     u8 isEmpty; // whether this savefile is empty
     /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
@@ -111,13 +111,13 @@ typedef struct {
 
 // size: 0x40
 typedef struct {
-    f32 unk0x0;
-    s16 unk0x4;
-    s16 unk0x6;
-    s16 unk0x8;
-    s16 unk0xa;
-    s16 unk0xc;
-    s16 unk0xe;
+    f32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    s16 unkC;
+    s16 unkE;
     /*0x10*/ s32 unk10;
     /*0x14*/ s32 unk14;
     /*0x18*/ s32 unk18;
@@ -127,16 +127,16 @@ typedef struct {
     /*0x28*/ s32 unk28;
     /*0x2C*/ s32 unk2C;
     /*0x30*/ s32 unk30;
-    u8 _unk0x34[8];
-    u8 unk0x3c;
-    s8 unk0x3d;
-    s8 unk0x3e;
-    s8 unk0x3f;
+    u8 _unk34[8];
+    u8 unk3C;
+    s8 unk3D;
+    s8 unk3E;
+    s8 unk3F;
 } GplayStruct12;
 
 // size: 0x8
 typedef struct {
-    s16 unk0x0[4];
+    s16 unk0[4];
 } GplayStruct13;
 
 // size: 0x17ac
@@ -144,9 +144,9 @@ typedef struct {
     CheckpointSaveData chkpnt;
     /*0x15d4*/u8 bitString[256];
     PlayerLocation playerLocations[2]; // saved locations of each player
-    GplayStruct6 unk0x16F4[2];
-    GplayStruct12 unk0x171C[2];
-    GplayStruct13 unk0x179c[2];
+    GplayStruct6 unk16F4[2];
+    GplayStruct12 unk171C[2];
+    GplayStruct13 unk179C[2];
 } MapSaveData;
 
 enum Languages {
@@ -206,7 +206,7 @@ typedef struct {
 /*10*/ u32 cheatsUnlocked; //bitfield
 /*14*/ u32 cheatsEnabled; //bitfield
 /*18*/ u32 cinemasUnlocked; //bitfield
-/*1C*/ u8 _unk0x1C[0x64];
+/*1C*/ u8 _unk1C[0x64];
 } GplayOptions;
 
 // size: 0x17ac

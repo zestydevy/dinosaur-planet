@@ -57,7 +57,7 @@ void krazoatext_dtor(void* dll){
 void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
     obj_init_mesg_queue(self, 2);
     krazoatext_unload_all_glyph_textures(self, self->data);
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x88 | func: 1 | export: 1
@@ -88,10 +88,10 @@ void krazoatext_control(Object* self) {
     }
 
     if (objdata->state != 0) {
-        if (!(self->unk0xaf & 4) || (get_masked_button_presses(0) & B_BUTTON)) {
+        if (!(self->unkAF & 4) || (get_masked_button_presses(0) & B_BUTTON)) {
             objdata->state = 0;
         }
-    } else if (self->unk0xaf & 1) {
+    } else if (self->unkAF & 1) {
         objdata->state = 1;
         if (objdata->sound == 0) {
             gDLL_6_AMSFX->vtbl->play_sound(self, 0x286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);

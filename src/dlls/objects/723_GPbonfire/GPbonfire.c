@@ -81,7 +81,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfire_Data* objdata;
 
     objdata = self->data;
-    self->unk0xbc = (void*)&GPbonfire_anim_callback;
+    self->unkBC = (void*)&GPbonfire_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objdata->stateIndex = STATE_0_INITIALISE;
     objdata->currentState = 0;
@@ -337,8 +337,8 @@ void GPbonfire_func_A44(Object* self) {
     dll_unload(dll);
 
     //Add damaging collision?
-    self->objhitInfo->unk_0x58 = 0x100;
-    self->unk0xaf |= 8;
+    self->objhitInfo->unk58 = 0x100;
+    self->unkAF |= 8;
 
     //Advance state
     main_set_bits(objdata->gameBitBurning, TRUE);
