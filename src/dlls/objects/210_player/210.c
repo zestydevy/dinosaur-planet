@@ -6020,10 +6020,10 @@ s32 dll_210_func_10E94(Object* arg0, Player_Data* arg1, f32 arg2) {
     Func_80059C40_Struct sp50;
     f32 var_fv0;
 
-    if (arg1->unk0.unk272 != 0) {
+    if (arg1->unk0.enteredAnimState) {
         _bss_200 = 0x10;
         arg1->unk0.unk270 = 0xD;
-        arg1->unk0.unk2FC = dll_210_func_12514;
+        arg1->unk0.animExitAction = dll_210_func_12514;
     }
     if ((arg1->unk0.unk4.underwaterDist > 25.0f) && (arg1->unk0.unk4.floorDist < 100.0f)) {
         return 0x21;
