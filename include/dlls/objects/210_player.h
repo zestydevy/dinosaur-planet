@@ -118,12 +118,11 @@ typedef struct Player_Data430 {
     u8 padC[0x18 - 0xC];
     Vec3f unk18;
     Vec4f unk24;
-    f32 unk34;
-    Vec3f unk38;
+    Vec4f unk34;
     Vec3f unk44;
     Vec3f unk50;
     s16 unk5C;
-    u16 pad5E;
+    s16 unk5E;
 } Player_Data430;
 
 // size: 0x30
