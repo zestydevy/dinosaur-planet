@@ -122,7 +122,7 @@ typedef struct {
 typedef struct {
 /*00*/ DLL33_ObjSetup base;
 /*38*/ f32 speeds[3]; // Movement speed, per "anger" level.
-/*44*/ u16 chargePrepTime[3]; // Delay before charging.
+/*44*/ u16 roarTime[3]; // How long a roar lasts.
 /*4A*/ u16 vulnerableTime[4]; // How long the boss is vulnerable for.
 /*52*/ u8 reverseChance[4]; // Chance to reverse direction.
 /*56*/ u8 chargeChance[4]; // Chance to charge without seeing Sabre.
@@ -803,8 +803,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         if (dll33Data->unk3E8 < 0.0f) {
             dll33Data->unk3E8 = 0.0f;
         } else if (dll33Data->unk3E8 > 120.0f) {
-            dll33Data->unk3E8 = (f32) (120.0f - (dll33Data->unk3E8 - 120.0f));
-            dll33Data->unk3EC = (f32) -dll33Data->unk3EC;
+            dll33Data->unk3E8 = 120.0f - (dll33Data->unk3E8 - 120.0f);
+            dll33Data->unk3EC = -dll33Data->unk3EC;
         }
     }
     sp60 = func_80025F40(self, &sp54, &sp5C, &sp58);
@@ -917,9 +917,9 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     matrix_from_srt(&tempMtx, &tempSRT);
     vec3_transform(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->speed.x, &tempY, &self->speed.z);
     if (reversed) {
-        self->srt.yaw = (s16) (s32) ((f32) sKTData->turnStartYaw + (16384.0f * self->animProgress));
+        self->srt.yaw = (f32) sKTData->turnStartYaw + (16384.0f * self->animProgress);
     } else {
-        self->srt.yaw = (s16) (s32) ((f32) sKTData->turnStartYaw - (16384.0f * self->animProgress));
+        self->srt.yaw = (f32) sKTData->turnStartYaw - (16384.0f * self->animProgress);
     }
     return 0;
 }
@@ -938,9 +938,9 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         sKTData->turnStartYaw = self->srt.yaw;
     }
     if (reversed) {
-        self->srt.yaw = (s16) (s32) ((f32) sKTData->turnStartYaw + (32768.0f * self->animProgress));
+        self->srt.yaw = (f32) sKTData->turnStartYaw + (32768.0f * self->animProgress);
     } else {
-        self->srt.yaw = (s16) (s32) ((f32) sKTData->turnStartYaw - (32768.0f * self->animProgress));
+        self->srt.yaw = (f32) sKTData->turnStartYaw - (32768.0f * self->animProgress);
     }
     return 0;
 }
@@ -1032,7 +1032,7 @@ static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 /** Walk straight down arena segment. */
 static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     KTrex_ObjSetup* objsetup;
-    s32 sp30;
+    s32 chanceIdx;
     s32 reversed;
 
     objsetup = (KTrex_ObjSetup*)self->setup;
@@ -1051,14 +1051,14 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (sKTData->anger == 0) {
         if ((sKTData->fightProgress >= 2) && !(sKTData->flags & KTFLAG_CHARGING) && 
                 ((!reversed && sKTData->segmentPos >= 0.7f) || (reversed && sKTData->segmentPos <= 0.3f))) {
-            sp30 = (s32) sKTData->fightProgress >> 1;
-            if (rand_next(0, 100) <= (s32) objsetup->chargeChance[sp30]) {
+            chanceIdx = sKTData->fightProgress >> 1;
+            if (rand_next(0, 100) <= objsetup->chargeChance[chanceIdx]) {
                 sKTData->chargeCounter = 2;
                 dll_702_push_state(KT_LSTATE_5_CHARGE);
                 sKTData->roarType = 1;
                 return KT_LSTATE_4_ROAR + 1;
             }
-            if (rand_next(0, 100) <= (s32) objsetup->reverseChance[sp30]) {
+            if (rand_next(0, 100) <= objsetup->reverseChance[chanceIdx]) {
                 sKTData->roarType = 0;
                 dll_702_push_state(KT_LSTATE_11_REVERSE);
                 return KT_LSTATE_4_ROAR + 1;
@@ -1100,7 +1100,7 @@ static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     objsetup = (KTrex_ObjSetup*)self->setup;
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_4_ROAR);
-        sKTData->timer = (f32) objsetup->chargePrepTime[sKTData->roarType];
+        sKTData->timer = (f32) objsetup->roarTime[sKTData->roarType];
     } else {
         sKTData->timer -= delayFloat;
         if (sKTData->timer < 0.0f) {
