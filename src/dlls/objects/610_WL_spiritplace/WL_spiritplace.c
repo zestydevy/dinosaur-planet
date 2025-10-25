@@ -38,7 +38,7 @@ typedef struct {
 /*20*/ s16 bit2;
 } WL_spiritplace_Setup;
 
-static s32 WL_spiritplace_func_5C4(Object *self, Object *arg1, AnimObj_Data *arg2, void *arg3);
+static int WL_spiritplace_func_5C4(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
 
 // offset: 0x0 | ctor
 void WL_spiritplace_ctor(void *dll) { }
@@ -139,7 +139,7 @@ u32 WL_spiritplace_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0x5C4 | func: 7
-s32 WL_spiritplace_func_5C4(Object *self, Object *arg1, AnimObj_Data *arg2, void *arg3) {
+static int WL_spiritplace_func_5C4(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
     arg2->unk7A = -1;
     arg2->unk62 = 0;
     return 0;

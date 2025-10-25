@@ -15,7 +15,7 @@ typedef struct {
 /*1F*/ u8 yaw;
 } WGmutant_Setup;
 
-static int WGmutant_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int WGmutant_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void WGmutant_ctor(void *dll) { }
@@ -59,6 +59,6 @@ u32 WGmutant_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0xF8 | func: 7
-int WGmutant_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int WGmutant_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     return 0;
 }

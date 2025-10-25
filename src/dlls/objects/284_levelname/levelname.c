@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
 #include "sys/fonts.h"
 #include "sys/gfx/model.h"
@@ -32,12 +33,6 @@ typedef struct {
 /*15*/ u8 pad[3];
 } LevelName_Data;
 
-typedef struct {
-    s8 unk0[0x8E - 0];
-    u8 unk8E[0x98 - 0x8E];
-    u8 unk98; //count for unk8E
-} Object0xbcCallbackStruct;
-
 enum LevelNameStates{
     LEVELNAME_STATE_0_WAITING = 0,
     LEVELNAME_STATE_1_FADING_IN = 1,
@@ -64,7 +59,7 @@ enum LevelNameStates{
     0x01f6
 };
 
-static s32 levelname_anim_callback(Object* arg0, s32 arg1, Object0xbcCallbackStruct* arg2, s32 arg3);
+static int levelname_anim_callback(Object* arg0, Object *arg1, AnimObj_Data* arg2, s8 arg3);
 
 // offset: 0x0 | ctor
 void levelname_ctor(void* dll){
@@ -82,7 +77,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     objdata = self->data;
 
     font_load(FONT_DINO_MEDIUM_FONT_IN);
-    self->animCallback = (void*)&levelname_anim_callback;
+    self->animCallback = (AnimationCallback)levelname_anim_callback;
 
     gametext = gDLL_21_Gametext->vtbl->get_chunk(setup->textID);
 
@@ -196,7 +191,7 @@ u32 levelname_get_data_size(Object* self, s32 arg1){
 }
 
 // offset: 0x508 | func: 7
-s32 levelname_anim_callback(Object* arg0, s32 arg1, Object0xbcCallbackStruct* arg2, s32 arg3) {
+static int levelname_anim_callback(Object* arg0, Object *arg1, AnimObj_Data* arg2, s8 arg3) {
     LevelName_Data* objdata;
     s32 i;
 

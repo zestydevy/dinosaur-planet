@@ -24,7 +24,7 @@ typedef struct {
 /*24*/ s16 unk24;
 } UseObj_Setup;
 
-static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void UseObj_ctor(void *dll) { }
@@ -145,7 +145,7 @@ u32 UseObj_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x4C8 | func: 7
-int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     UseObj_Setup *setup;
 
     setup = (UseObj_Setup*)self->setup;

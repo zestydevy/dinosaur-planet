@@ -27,7 +27,7 @@ typedef struct {
 
 static void dll_652_func_254(Object* self);
 static void dll_652_func_364(Object* self);
-static int dll_652_func_45C(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
+static int dll_652_func_45C(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 
 // offset: 0x0 | ctor
 void dll_652_ctor(void *dll) { }
@@ -132,6 +132,6 @@ static void dll_652_func_364(Object* self) {
 }
 
 // offset: 0x45C | func: 9
-static int dll_652_func_45C(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
+static int dll_652_func_45C(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     return 0;
 }

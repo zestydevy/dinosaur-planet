@@ -36,7 +36,7 @@ typedef enum {
     SEQOBJ_OPTIONS_A = 16
 } SeqObj_PlaybackOptions; //TO-DO: figure out what these do! Looping and auto-play may be options?
 
-static s32 SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void SeqObj_ctor(void *dll) { }
@@ -49,7 +49,7 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
     SeqObj_Data* objData;
 
     self->srt.yaw = objSetup->rotate << 8;
-    self->animCallback = (void*)&SeqObj_anim_callback;
+    self->animCallback = (AnimationCallback)SeqObj_anim_callback;
     
     objData = self->data;
     self->modelInstIdx = objSetup->modelInstIdx;
@@ -163,7 +163,7 @@ u32 SeqObj_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x47C | func: 7
-s32 SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     SeqObj_Setup* objSetup;
     SeqObj_Data* objData;
     s32 index;

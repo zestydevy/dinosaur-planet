@@ -43,7 +43,7 @@ enum WarlockMountainActs {
     WM_ACT_9_SPIRIT_8_SABRE_SW = 9
 };
 
-static s32 WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void WLpressureswitch_ctor(void* dll){
@@ -58,7 +58,7 @@ void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg
     WLPressureSwitch_Data* objdata;
 
     objdata = self->data;
-    self->animCallback = (void*)&WLpressureswitch_anim_callback;
+    self->animCallback = (AnimationCallback)WLpressureswitch_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;
@@ -212,7 +212,7 @@ u32 WLpressureswitch_get_data_size(Object* self, s32 arg1){
 }
 
 // offset: 0x678 | func: 7
-s32 WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     animObjData->unk7A = -1;
     animObjData->unk62 = 0;
     return 0;

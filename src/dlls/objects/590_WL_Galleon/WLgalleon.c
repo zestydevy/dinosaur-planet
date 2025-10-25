@@ -33,7 +33,7 @@ typedef struct {
 /*0x8*/ static void* dataDLLUnused = NULL;
 /*0xC*/ static u32 dataDelayByte = 3;
 
-static s32 WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void WLgalleon_ctor(void *dll) { }
@@ -54,7 +54,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
     }
 
     obj_set_update_priority(self, 0x5A);
-    self->animCallback = (void*)WLgalleon_anim_callback;
+    self->animCallback = (AnimationCallback)WLgalleon_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     self->unk0xdc = 9;
 
@@ -188,7 +188,7 @@ u32 WLgalleon_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x678 | func: 7
-s32 WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     s32 index;
 
     dataDelayByte = delayByte; //unused?

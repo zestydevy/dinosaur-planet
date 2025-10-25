@@ -86,7 +86,7 @@ typedef struct {
 static void SC_levelcontrol_func_8B4(Object *self);
 static void SC_levelcontrol_func_BBC(Object *self, u8 arg1);
 static void SC_levelcontrol_func_11FC(Object *self);
-static s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, void *arg3);
+static int SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
 
 // offset: 0x0 | ctor
 void SC_levelcontrol_ctor(void *dll) { }
@@ -418,7 +418,7 @@ void SC_levelcontrol_func_11FC(Object *self) {
 }
 
 // offset: 0x12D8 | func: 12
-s32 SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, void *arg3) {
+static int SC_levelcontrol_func_12D8(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
     s32 i;
 
     arg2->unk62 = 0;

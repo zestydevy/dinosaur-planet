@@ -49,7 +49,7 @@ typedef struct {
 /*0x8*/ static f32 _bss_8;
 /*0xC*/ static u8 _bss_C[0x10];
 
-static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
+static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 static void GPSH_Shrine_func_13E0(Object* self);
 
 // offset: 0x0 | ctor
@@ -350,7 +350,7 @@ u32 GPSH_Shrine_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x1024 | func: 7
-static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
+static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     GPSH_Shrine_Data* objdata;
     Object* player;
     s32 i;

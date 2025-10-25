@@ -21,7 +21,7 @@ typedef struct {
 /*04*/ f32 unk4;
 } CCkrazoaTablet_Data;
 
-static int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 static s32 CCkrazoaTablet_func_3F8(void);
 static void CCkrazoaTablet_func_48C(Object *self, CCkrazoaTablet_Data *objdata);
 
@@ -87,7 +87,7 @@ u32 CCkrazoaTablet_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0x214 | func: 7
-int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int CCkrazoaTablet_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     s32 i;
     CCkrazoaTablet_Data *objdata;
     CCkrazoaTablet_Setup *setup;

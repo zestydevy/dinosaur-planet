@@ -42,7 +42,7 @@ typedef struct {
 /*18*/ s8 yaw;
 } KyteCage_Setup;
 
-static s32 kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void kyteCage_ctor(void *dll) { }
@@ -54,7 +54,7 @@ void kyteCage_dtor(void *dll) { }
 void kyteCage_setup(Object* self, KyteCage_Setup* setup, s32 arg2) {
     KyteCage_Data* data = self->data;
 
-    self->animCallback = (void*)&kyteCage_anim_callback;
+    self->animCallback = (AnimationCallback)kyteCage_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     data->createLightning = 0;
     if (!main_get_bits(BIT_75)) {
@@ -249,7 +249,7 @@ u32 kyteCage_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x87C | func: 7
-s32 kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     s32 index;
     KyteCage_Data *data;
     

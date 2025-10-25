@@ -95,7 +95,7 @@ u32 CClightfoot_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0x2B8 | func: 7
-int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData) {
+static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData) {
     CClightfoot_Data *objdata = self->data;
     if (self->unk0xaf & 1) {
         gDLL_3_Animation->vtbl->func18(animObjData->unk63);

@@ -14,7 +14,8 @@ typedef struct {
     s16 unk1C;
     s8 unk1E;
     s8 unk1F;
-    s16 unk20;
+    s8 unk20;
+    u8 pad21;
     s8 unk22;
     s8 unk23;
     u8 unk24;

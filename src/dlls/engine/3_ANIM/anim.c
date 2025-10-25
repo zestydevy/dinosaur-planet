@@ -372,9 +372,9 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     int (*temp_v1)(Object*, Object*, AnimObj_Data*, s8);
     s32 temp_v0;
-    s8 *setup;
+    AnimObjSetup *setup;
 
-    setup = (s8*)arg1->setup;
+    setup = (AnimObjSetup*)arg1->setup;
     arg0->positionMirror2.f[0] = arg0->srt.transl.f[0];
     arg0->positionMirror2.f[1] = arg0->srt.transl.f[1];
     arg0->positionMirror2.f[2] = arg0->srt.transl.f[2];
@@ -382,7 +382,8 @@ void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     arg0->positionMirror3.f[1] = arg0->positionMirror.f[1];
     arg0->positionMirror3.f[2] = arg0->positionMirror.f[2];
     if (arg0->animCallback != NULL) {
-        temp_v1 = arg0->animCallback;
+        // a re-cast to use the actual struct instead of a forward declaration is fine here
+        temp_v1 = (int (*)(Object*, Object*, AnimObj_Data*, s8))arg0->animCallback;
         temp_v0 = temp_v1(arg0, arg1, arg2, arg3);
         if (temp_v0 == 4) {
             *_bss_A4 = 1;
@@ -412,7 +413,7 @@ void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 arg2->unk4C.z = arg0->srt.transl.f[2] - arg1->srt.transl.f[2];
                 arg2->unk62 = 2;
             }
-            if (setup[0x20] == 1) {
+            if (setup->unk20 == 1) {
                 arg2->unk24 = 0.016666668f;
                 if (_bss_D8[arg2->unk63] < 2) {
                     _bss_D8[arg2->unk63] = 1;

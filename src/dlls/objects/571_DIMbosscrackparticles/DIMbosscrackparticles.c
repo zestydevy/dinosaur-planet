@@ -14,7 +14,7 @@ typedef struct {
 /*24*/ s8 yaw;
 } DIMbosscrackparticles_Setup;
 
-static int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void DIMbosscrackparticles_ctor(void *dll) { }
@@ -65,7 +65,7 @@ u32 DIMbosscrackparticles_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x1C4 | func: 7
-int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     DIMbosscrackparticles_Setup *setup;
 
     setup = (DIMbosscrackparticles_Setup*)self->setup;

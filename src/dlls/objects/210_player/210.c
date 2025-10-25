@@ -1782,7 +1782,7 @@ void dll_210_func_47B8(Object* arg0, Player_Data* arg1) {
 // dll_210_func_9F1C (matched)
 // dll_210_func_60A8 (matched)
 
-s32 dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
+int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
     ObjSetup* temp_s1;

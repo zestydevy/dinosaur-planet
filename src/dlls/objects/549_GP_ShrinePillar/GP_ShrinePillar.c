@@ -27,7 +27,7 @@ typedef struct {
     f32 unk4;
 } GP_ShrinePillar_Data;
 
-static int dll_549_func_264(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
+static int dll_549_func_264(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 
 // offset: 0x0 | ctor
 void dll_549_ctor(void *dll) { }
@@ -106,7 +106,7 @@ u32 dll_549_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x264 | func: 7
-int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, void* a3) {
+int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
     GP_ShrinePillar_Setup* setup;
     GP_ShrinePillar_Data* objdata;
     s32* temp_v0_2;

@@ -39,7 +39,7 @@ s16 gameBitActivated;            //flag to check if switch is deactivated
 
 static void pressureswitch_add_object(Object* self, Object* objectOnSwitch);
 static s32 pressureswitch_is_object_on_switch(Object* self);
-static s32 pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void dll_287_ctor(void *dll) { }
@@ -71,7 +71,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
-    self->animCallback = (void*)&pressureswitch_anim_callback;
+    self->animCallback = (AnimationCallback)pressureswitch_anim_callback;
 }
 
 // offset: 0x148 | func: 1 | export: 1
@@ -242,7 +242,7 @@ s32 pressureswitch_is_object_on_switch(Object* self) {
 }
 
 // offset: 0x718 | func: 9
-s32 pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     PressureSwitch_Data* objdata;
     PressureSwitch_Setup* setup;
     u8 index;
@@ -258,7 +258,6 @@ s32 pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* an
             }
         }
         animObjData->unk8D = 0;
-
     } else if (animObjData->unk8D == 2) {
         for (index = 0; index < 10; index++);
 
