@@ -69,7 +69,7 @@ void DBlevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
             objdata->floodLevel++;
         }
     }
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
     obj_add_object_type(self, OBJTYPE_52);
 }
 

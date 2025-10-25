@@ -30,7 +30,7 @@ typedef enum {
 
 typedef struct {
 /*0000*/    Texture *texture; //textureID in ROM
-/*0004*/    u32 unk_0x4;
+/*0004*/    u32 unk4;
 } ModelTexture;
 
 typedef struct {
@@ -89,7 +89,7 @@ typedef struct {
 /*0000*/	Gfx gfx; //when opaque?
 /*0008*/	Gfx gfx2; //when fading?
 /*0010*/	s16 idx; //commandIndex to swap out with either gfx or gfx2
-/*0012*/	u8 unk_0x12[0x18 - 0x12];
+/*0012*/	u8 unk12[0x18 - 0x12];
 } ModelDLInfo;
 
 typedef struct {
@@ -122,18 +122,18 @@ typedef struct{
 /*0050*/    f32 *collisionA; //joint pushback collision A
 /*0054*/    f32 *collisionB; //joint pushback collision B
 /*0058*/    u32 decompressedSize;
-/*005C*/    u32 unk_0x5c; //amap-related?
+/*005C*/    u32 unk5C; //amap-related?
 /*0060*/    s16 maxAnimatedVertDistance; //max radial distance (from model origin) to a vert throughout model's animations (used to simplify collision tests)
 /*0062*/    s16 vertexCount;
 /*0064*/    u16 faceCount;
 /*0066*/    s16 animCount;
-/*0068*/    s16 unk_0x68;
+/*0068*/    s16 unk68;
 /*006A*/    s16 modelId;
 /*006C*/    s16 displayListLength; //f3dex2 command count
 /*006E*/    u8 hitSphereCount; //hitsphere_count
 /*006F*/    u8 jointCount; //joints_count
-/*0070*/    u8 unk_0x70; //mesh settings bitfield (bit0 allows simultaneous eye/mouth blendshapes, bit3 involved in texturing?)
-/*0071*/    u8 unk_0x71; //animation-related bitfield?
+/*0070*/    u8 unk70; //mesh settings bitfield (bit0 allows simultaneous eye/mouth blendshapes, bit3 involved in texturing?)
+/*0071*/    u8 unk71; //animation-related bitfield?
 /*0072*/    u8 refCount; 
 /*0073*/    u8 textureCount; //material_count
 /*0074*/    u8 envMapCount;
@@ -166,26 +166,26 @@ typedef struct ModelInstance_0x14 {
 
 typedef struct {
 /*0000*/    f32 strength;
-/*0004*/    f32 unk0x4;
-/*0008*/    f32 unk0x8;
-/*000C*/    s8 unk0xC;
+/*0004*/    f32 unk4;
+/*0008*/    f32 unk8;
+/*000C*/    s8 unkC;
 /*000D*/    s8 id;
-/*000E*/    u8 unk0xE;
+/*000E*/    u8 unkE;
 } ModelInstanceBlendshape;
 
 typedef struct {
     // TODO
 /*0000*/    Model *model;
-/*0004*/    void *unk_0x4[2];
+/*0004*/    void *unk4[2];
 /*000C*/    MtxF *matrices[2];
-/*0014*/    ModelInstance_0x14 *unk_0x14;
+/*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;
-/*001C*/    s32 unk_0x1c[2];
-/*0024*/    f32 *unk_0x24;
+/*001C*/    s32 unk1C[2];
+/*0024*/    f32 *unk24;
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstanceBlendshape *blendshapes;
-/*0034*/    u16 unk_0x34;
+/*0034*/    u16 unk34;
 } ModelInstance;
 
 typedef struct{
@@ -201,8 +201,8 @@ typedef struct{
 typedef struct {
 /*0000*/    s16 animCount;
 /*0002*/    s16 largestAnimSize;
-/*0004*/    s16 unk_0x4; //malloc-related Boolean (often set on character models)
-/*0006*/    s16 unk_0x6; //always 0 in ROM
+/*0004*/    s16 unk4; //malloc-related Boolean (often set on character models)
+/*0006*/    s16 unk6; //always 0 in ROM
 /*0008*/    u32 uncompressedSize; // CAUTION: little-endian
 } ModelHeader;
 

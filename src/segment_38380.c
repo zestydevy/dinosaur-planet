@@ -45,8 +45,8 @@ s32 schedule_gfx_task(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
 
     task->flags = OS_SC_NEEDS_RDP | OS_SC_NEEDS_RSP | OS_SC_LAST_TASK;
     task->msgQ = &D_800B3BC8;
-    task->unk0x58 = 0xff0000ff;
-    task->unk0x5c = 0xff0000ff;
+    task->unk58 = 0xff0000ff;
+    task->unk5C = 0xff0000ff;
     task->taskType = OS_SC_TASK_GAME;
     task->list.t.data_ptr = (u64*)dlStart;
     task->list.t.data_size = ((s32)dlEnd - (s32)dlStart) >> 3;
@@ -69,8 +69,8 @@ s32 schedule_gfx_task(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     task->list.t.yield_data_size = sizeof(gGfxYieldData);
     task->next = NULL;
     task->framebuffer = (void*)gFramebufferNext;
-    task->unk0x60 = 0xff;
-    task->unk0x64 = 0xff;
+    task->unk60 = 0xff;
+    task->unk64 = 0xff;
 
     osWritebackDCacheAll();
 
@@ -321,7 +321,7 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
 #endif
 
 void func_8003825C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
-    s32 temp = tex->height | ((tex->unk_0x1b & 0xF) << 8);
+    s32 temp = tex->height | ((tex->unk1B & 0xF) << 8);
     func_8003833C(gdl, tex, arg2, arg3, 0, temp, arg5, arg6, arg7);
 }
 
@@ -331,7 +331,7 @@ void func_800382AC(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     s32 var_v0;
 
     arg4 -= arg3;
-    temp_v1 = tex->height | ((tex->unk_0x1b & 0xF) << 8);
+    temp_v1 = tex->height | ((tex->unk1B & 0xF) << 8);
     if (arg4 < 0) {
         arg4 = 0;
     }
@@ -375,9 +375,9 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     }
     gSPGeometryMode(*gdl, 0xFFFFFF, 0);
     dl_apply_geometry_mode(gdl);
-    width = tex->width | ((tex->unk_0x1b & 0xF0) * 16);
+    width = tex->width | ((tex->unk1B & 0xF0) * 16);
     if (sp12C != 0) {
-        sp148 = (s32) ((f32)tex->width * 1) | ((tex->unk_0x1b & 0xF0) * 16);
+        sp148 = (s32) ((f32)tex->width * 1) | ((tex->unk1B & 0xF0) * 16);
     } else {
         sp148 = width;
     }

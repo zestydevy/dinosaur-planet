@@ -28,7 +28,7 @@ void DIM_BossSpit_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     DIM_BossSpit_func_2AC(self);
-    self->unk0xdc = 0xB4;
+    self->unkDC = 0xB4;
     func_80026128(self, 0, 0, 0);
     func_80026940(self, 0);
     objdata->unk0 = 0;
@@ -42,15 +42,15 @@ void DIM_BossSpit_control(Object *self) {
 
     objdata = self->data;
     if (objdata->unk0 == 0) {
-        self->unk0xdc -= delayByte;
-        if (self->unk0xdc < 0) {
+        self->unkDC -= delayByte;
+        if (self->unkDC < 0) {
             obj_destroy_object(self);
         } else {
             DIM_BossSpit_func_360(self);
-            if (self->objhitInfo->unk_0x9d != 0) {
-                self->srt.transl.x = self->objhitInfo->unk_0x34;
-                self->srt.transl.y = (self->objhitInfo->unk_0x38 - 10.0f);
-                self->srt.transl.z = self->objhitInfo->unk_0x3c;
+            if (self->objhitInfo->unk9D != 0) {
+                self->srt.transl.x = self->objhitInfo->unk34;
+                self->srt.transl.y = (self->objhitInfo->unk38 - 10.0f);
+                self->srt.transl.z = self->objhitInfo->unk3C;
                 objdata->unk0 = 1;
             }
         }
@@ -169,8 +169,8 @@ void DIM_BossSpit_func_53C(Object *self) {
     _bss_0 = 0x94 - (objdata->unk0 >> 2);
     if (i >= 0) {
         func_80026128(self, 5, 2, 0);
-        func_80026940(self, self->objhitInfo->unk_0x52 + 2.1f);
-        self->unk_0x36 = i;
+        func_80026940(self, self->objhitInfo->unk52 + 2.1f);
+        self->unk36 = i;
         lfxEmitter = objdata->lfxEmitter;
         if (lfxEmitter) {
             lfxEmitterData = lfxEmitter->data;
@@ -182,7 +182,7 @@ void DIM_BossSpit_func_53C(Object *self) {
             obj_destroy_object(lfxEmitter);
             objdata->lfxEmitter = NULL;
         }
-        self->unk_0x36 = 0;
+        self->unk36 = 0;
         if (((_bss_0 - 0x40) >> 1) > 10.0f) {
             func_80026128(self, 9, 1, 0);
             func_80026940(self, (_bss_0 - 0x40) >> 1);

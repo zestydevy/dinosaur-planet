@@ -7,7 +7,7 @@
     0x00000002, 0x00000003, 0x00000000, 0x00000000
 };
 
-/*0x0*/ static s32 _bss_0; // stores unk0x10 of curveStruct
+/*0x0*/ static s32 _bss_0; // stores unk10 of curveStruct
 
 typedef struct {
 /*00*/ UnkCurvesStruct *curveStruct;
@@ -64,7 +64,7 @@ void BalloonBaddie_setup(Object *self, BalloonBaddie_Setup *setup, s32 arg2) {
     objdata->unk8 = setup->unk1A / 100.0f;
     objdata->unkC = 0.005f;
     objdata->attackRange = setup->attackRange * 4.0f;
-    self->unk0xaf &= ~0x8;
+    self->unkAF &= ~0x8;
     if (arg2 == 0) {
         objdata->curveStruct = mmAlloc(sizeof(UnkCurvesStruct), ALLOC_TAG_TEST_COL, NULL);
         if (objdata->curveStruct) {
@@ -75,7 +75,7 @@ void BalloonBaddie_setup(Object *self, BalloonBaddie_Setup *setup, s32 arg2) {
         }
         objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x178 | func: 1 | export: 1
@@ -95,12 +95,12 @@ void BalloonBaddie_control(Object* self) {
     objdata = self->data;
     curveStruct = objdata->curveStruct;
     setup = (BalloonBaddie_Setup*)self->setup;
-    if (self->unk0xdc != BALLOONBADDIE_ALIVE) {
+    if (self->unkDC != BALLOONBADDIE_ALIVE) {
         // check respawn timer
         if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID)) {
-            self->unk0xdc = BALLOONBADDIE_ALIVE;
-            self->unk_0x36 = OBJECT_OPACITY_MAX;
-            self->unk0xaf &= ~8;
+            self->unkDC = BALLOONBADDIE_ALIVE;
+            self->unk36 = OBJECT_OPACITY_MAX;
+            self->unkAF &= ~8;
             objdata->flags |= BALLOONBADDIE_RESPAWNED;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -110,13 +110,13 @@ void BalloonBaddie_control(Object* self) {
             objdata->fadeoutTimer += delayFloat * 0.01f;
             if (objdata->fadeoutTimer > 3.0f) {
                 // delay dead state until shortly after fully invisible
-                self->unk0xdc = BALLOONBADDIE_DEAD;
+                self->unkDC = BALLOONBADDIE_DEAD;
                 objdata->fadeoutTimer = 0.0f;
             } else if (objdata->fadeoutTimer > 2.0f) {
                 objdata->flags &= ~(BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2);
             } else {
                 // fadeout from 1.0 (fully opaque) to 2.0 (fully transparent)
-                self->unk_0x36 = ((2.0f - objdata->fadeoutTimer) * 255.0f);
+                self->unk36 = ((2.0f - objdata->fadeoutTimer) * 255.0f);
             }
             func_800267A4(self);
         } else {
@@ -128,7 +128,7 @@ void BalloonBaddie_control(Object* self) {
                 }
                 objdata->flags |= (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2);
                 objdata->fadeoutTimer = 1.0f;
-                self->unk0xaf |= 8;
+                self->unkAF |= 8;
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -152,9 +152,9 @@ void BalloonBaddie_control(Object* self) {
             objdata->distToPlayer = sqrtf(SQ(delta.x) + SQ(delta.y) + SQ(delta.f[2]));
         }
         if (curveStruct) {
-            delta.x = curveStruct->unk0x68 - self->positionMirror.x;
-            delta.y = curveStruct->unk0x6C - self->positionMirror.y;
-            delta.z = curveStruct->unk0x70 - self->positionMirror.z;
+            delta.x = curveStruct->unk68 - self->positionMirror.x;
+            delta.y = curveStruct->unk6C - self->positionMirror.y;
+            delta.z = curveStruct->unk70 - self->positionMirror.z;
             objdata->distToCurve = sqrtf(SQ(delta.x) + SQ(delta.y) + SQ(delta.f[2]));
         }
         // start retreating
@@ -186,7 +186,7 @@ void BalloonBaddie_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
     BalloonBaddie_Data* objdata;
 
     objdata = self->data;
-    if (visibility && self->unk0xdc == BALLOONBADDIE_ALIVE) {
+    if (visibility && self->unkDC == BALLOONBADDIE_ALIVE) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         // dying particles
         if (objdata->flags & (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2)) {
@@ -241,12 +241,12 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     UnkCurvesStruct* curveStruct;
 
     curveStruct = objdata->curveStruct;
-    if (((func_800053B0(curveStruct, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk0x10))
+    if (((func_800053B0(curveStruct, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk10))
         && (gDLL_26_Curves->vtbl->curves_func_4704(curveStruct) != 0)
         && (gDLL_26_Curves->vtbl->curves_func_4288(objdata->curveStruct, self, 400.0f, (s32*) _data_0, -1) != 0)) {
         objdata->flags &= ~1;
     }
-    _bss_0 = curveStruct->unk0x10;
+    _bss_0 = curveStruct->unk10;
 
     objdata->theta[0] += (u16)(128.0f * delayFloat);
     objdata->theta[1] += (u16)(256.0f * delayFloat);
@@ -260,13 +260,13 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->speed.y += ((objdata->player->srt.transl.y + 60.0f) - self->srt.transl.y) * 0.001f;
         self->speed.z += (objdata->player->srt.transl.z - self->srt.transl.z) * 0.001f;
     } else if (objdata->flags & BALLOONBADDIE_RETREAT) {
-        self->speed.x += (curveStruct->unk0x68 - self->srt.transl.x) * 0.001f;
-        self->speed.y += (curveStruct->unk0x6C - self->srt.transl.y) * 0.001f;
-        self->speed.z += (curveStruct->unk0x70 - self->srt.transl.z) * 0.001f;
+        self->speed.x += (curveStruct->unk68 - self->srt.transl.x) * 0.001f;
+        self->speed.y += (curveStruct->unk6C - self->srt.transl.y) * 0.001f;
+        self->speed.z += (curveStruct->unk70 - self->srt.transl.z) * 0.001f;
     } else {
-        self->speed.x += (curveStruct->unk0x68 - self->srt.transl.x) * _rodata_10;
-        self->speed.y += (curveStruct->unk0x6C + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * _rodata_18;
-        self->speed.z += (curveStruct->unk0x70 - self->srt.transl.z) * _rodata_18;
+        self->speed.x += (curveStruct->unk68 - self->srt.transl.x) * _rodata_10;
+        self->speed.y += (curveStruct->unk6C + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * _rodata_18;
+        self->speed.z += (curveStruct->unk70 - self->srt.transl.z) * _rodata_18;
     }
 
     self->speed.x *= _rodata_1C;

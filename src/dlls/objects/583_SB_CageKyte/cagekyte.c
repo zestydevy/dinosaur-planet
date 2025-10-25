@@ -44,12 +44,12 @@ void SBCageKyte_control(Object* self) {
     s32 pad2;
 
     objData = self->data;
-    if (self->unk0xdc > 0) {
-        self->unk0xdc--;
+    if (self->unkDC > 0) {
+        self->unkDC--;
     }
-    self->unk0xaf |= 8;
+    self->unkAF |= 8;
 
-    if (self->parent->unk0xdc == 7) {
+    if (self->parent->unkDC == 7) {
         //Randomly call out to Krystal
         objData->randomSoundDelay -= delayByte;
         if ((vec3_distance(&self->positionMirror, &get_player()->positionMirror) < 280.0f) && (objData->randomSoundDelay <= 0)) {
@@ -61,14 +61,14 @@ void SBCageKyte_control(Object* self) {
             gDLL_6_AMSFX->vtbl->play_sound(self, soundIDs[randomSoundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->randomSoundDelay = rand_next(400, 600);
         }
-    } else if (self->parent->unk0xdc >= 9) {
+    } else if (self->parent->unkDC >= 9) {
         //Play empty sound? (May have been removed)
-        self->unk0xaf &= 0xFFF7;
-        if (self->unk0xaf & 1) {
+        self->unkAF &= 0xFFF7;
+        if (self->unkAF & 1) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_287_SB_Kyte_Empty, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
         if (objData->soundHandle) {
-            self->unk0xaf |= 8;
+            self->unkAF |= 8;
             if (!gDLL_6_AMSFX->vtbl->func_B48(objData->soundHandle)) {
                 gDLL_6_AMSFX->vtbl->func_A1C(objData->soundHandle);
                 objData->soundHandle = 0;
@@ -82,7 +82,7 @@ void SBCageKyte_update(Object *self) { }
 
 // offset: 0x278 | func: 3 | export: 3
 void SBCageKyte_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    if (visibility && !main_get_bits(BIT_WM_Played_Randorn_First_Meeting) && !self->unk0xdc) {
+    if (visibility && !main_get_bits(BIT_WM_Played_Randorn_First_Meeting) && !self->unkDC) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
@@ -108,10 +108,10 @@ u32 SBCageKyte_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x38C | func: 7
 int SBCageKyte_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
-    if (self->unk0xdc > 0) {
-        self->unk0xdc--;
+    if (self->unkDC > 0) {
+        self->unkDC--;
     }
-    self->unk0xaf |= 8;
+    self->unkAF |= 8;
     animObjData->unk7A = -2;
     animObjData->unk62 = 0;
     return 0;

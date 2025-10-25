@@ -71,7 +71,7 @@ void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
     objdata->unk10 = setup->unk1C;
 
     self->srt.transl.y -= LIFT_DOWN;
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x9C | func: 1 | export: 1

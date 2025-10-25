@@ -46,7 +46,7 @@ void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2)
     self->animCallback = (AnimationCallback)VFP_PodiumPoint_func_324;
     objdata->setGamebit = setup->gamebit;
     objdata->conditionGamebit = setup->gamebit2;
-    self->unk0xaf |= 8;
+    self->unkAF |= 8;
 }
 
 // offset: 0x68 | func: 1 | export: 1
@@ -73,7 +73,7 @@ void VFP_PodiumPoint_control(Object* self) {
 
 // offset: 0x128 | func: 2 | export: 2
 void VFP_PodiumPoint_update(Object *self) {
-    if (self->unk0x74 != NULL) {
+    if (self->unk74 != NULL) {
         func_80036438(self);
     }
 }
@@ -111,13 +111,13 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
         }
         gamebitValue = main_get_bits(objdata->setGamebit);
         if ((gamebitValue == 0) && (objdata->unk4 == 0) && (conditionGamebitValue != 0)) {
-            self->unk0xaf &= ~0x8;
+            self->unkAF &= ~0x8;
             if ((gDLL_1_UI->vtbl->func7(data_0) != 0) && 
                     (vec3_distance(&self->positionMirror, &player->positionMirror) < 100.0f)) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
                 main_set_bits(objdata->setGamebit, 1);
                 objdata->unk4 = 1;
-                self->unk0xaf |= 8;
+                self->unkAF |= 8;
             }
         }
     }

@@ -44,7 +44,7 @@ void CClogpush_setup(Object *self, CClogpush_Setup *objsetup, s32 arg2) {
     objdata = self->data;
     objdata->state = STATE_0;
     objdata->obj = NULL;
-    self->unk0xb0 |= 0x4000;
+    self->unkB0 |= 0x4000;
 }
 
 // offset: 0x40 | func: 1 | export: 1
@@ -100,20 +100,20 @@ void CClogpush_control(Object *self) {
             break;
         }
 
-        if ((self->unk0xaf & 0x1) && (( (setup->gamebit3 == -1)) || ((gDLL_1_UI->vtbl->func7(setup->gamebit3) != 0)))) {
+        if ((self->unkAF & 0x1) && (( (setup->gamebit3 == -1)) || ((gDLL_1_UI->vtbl->func7(setup->gamebit3) != 0)))) {
             if (setup->flags & 2) {
                 main_set_bits(setup->gamebit1, 0);
             }
             if (setup->gamebit2 != -1) {
                 main_set_bits(setup->gamebit2, 1);
             }
-            self->unk0xaf |= 0x8;
+            self->unkAF |= 0x8;
             objdata->unk1 = TRUE;
             gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, -1);
             break;
         }
-        objdata->obj->unk0xaf |= 0x20;
-        self->unk0xaf &= ~0x8;
+        objdata->obj->unkAF |= 0x20;
+        self->unkAF &= ~0x8;
         break;
     case STATE_3:
         if (main_get_bits(setup->gamebit1)) {
@@ -127,7 +127,7 @@ void CClogpush_control(Object *self) {
 
 // offset: 0x400 | func: 2 | export: 2
 void CClogpush_update(Object *self) {
-    if (self->def->flags & 1 && self->unk0x74) {
+    if (self->def->flags & 1 && self->unk74) {
         func_80036438(self);
     }
 }
@@ -154,6 +154,6 @@ u32 CClogpush_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x4E0 | func: 7
 void CClogpush_func_4E0(Object *self, Object *arg1) {
-    arg1->unk0xaf &= ~0x20;
-    self->unk0xaf |= 0x8;
+    arg1->unkAF &= ~0x20;
+    self->unkAF |= 0x8;
 }

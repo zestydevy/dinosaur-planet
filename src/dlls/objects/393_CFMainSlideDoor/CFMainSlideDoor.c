@@ -38,7 +38,7 @@ void CFMainSlideDoor_dtor(void *dll) { }
 void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2) {
     CFMainSlideDoor_Data* objdata;
 
-    self->unk0xdc = 0;
+    self->unkDC = 0;
     self->srt.yaw = setup->unk1F << 8;
     self->animCallback = (AnimationCallback)CFMainSlideDoor_func_268;
     self->srt.scale = setup->unk21 * 0.015625f;
@@ -52,7 +52,7 @@ void CFMainSlideDoor_control(Object* self) {
     CFMainSlideDoor_Data* objdata;
     CFMainSlideDoor_Setup* setup;
 
-    if (self->unk0xdc == 0) {
+    if (self->unkDC == 0) {
         setup = (CFMainSlideDoor_Setup*)self->setup;
         objdata = (CFMainSlideDoor_Data*)self->data;
         if ((setup->unk1C != 0) && (objdata->unk0 != 0)) {
@@ -61,7 +61,7 @@ void CFMainSlideDoor_control(Object* self) {
         if (setup->unk1E != -1) {
             gDLL_3_Animation->vtbl->func17(setup->unk1E, self, -1);
         }
-        self->unk0xdc = 1;
+        self->unkDC = 1;
     }
 }
 

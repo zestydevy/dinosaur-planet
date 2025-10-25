@@ -49,35 +49,35 @@ typedef struct {
 
 // NOTE: If the size of this struct changes, SnowHorn_Data must also be adjusted!
 typedef struct {
-    /* 0000 */ f32 unk0x0;
-    /* 0004 */ f32 unk0x4; // curveProgress? (lerp t-value from 0 to 100?)
-    /* 0008 */ f32 unk0x8;
-    /* 000C */ f32 unk0xC;
-    /* 0010 */ s32 unk0x10;
-    /* 0014 */ f32 unk0x14[20];
-    /* 0064 */ f32 unk0x64;
-    /* 0068 */ f32 unk0x68; //lerp_result_x?
-    /* 006C */ f32 unk0x6C; //lerp_result_y?
-    /* 0070 */ f32 unk0x70; //lerp_result_z?
-    /* 0074 */ f32 unk0x74; //some x component
-    /* 0078 */ f32 unk0x78; //some y component
-    /* 007C */ f32 unk0x7C; //some z component
-    /* 0080 */ s32 unk0x80;
-    /* 0084 */ f32 *unk0x84;
-    /* 0088 */ f32 *unk0x88;
-    /* 008C */ f32 *unk0x8C;
-    /* 0090 */ s32 unk0x90;
-    /* 0094 */ unk_curve_func unk0x94;
-    /* 0098 */ unk_curve_func_2 unk0x98;
-    CurveSetup *unk0x9C;
-    CurveSetup *unk0xA0;
-    CurveSetup *unk0xA4;
-    f32 unk0xA8[4];
-    f32 unk0xB8[4];
-    f32 unk0xC8[4];
-    f32 unk0xD8[4];
-    f32 unk0xE8[4];
-    f32 unk0xF8[4];
+    /* 0000 */ f32 unk0;
+    /* 0004 */ f32 unk4; // curveProgress? (lerp t-value from 0 to 100?)
+    /* 0008 */ f32 unk8;
+    /* 000C */ f32 unkC;
+    /* 0010 */ s32 unk10;
+    /* 0014 */ f32 unk14[20];
+    /* 0064 */ f32 unk64;
+    /* 0068 */ f32 unk68; //lerp_result_x?
+    /* 006C */ f32 unk6C; //lerp_result_y?
+    /* 0070 */ f32 unk70; //lerp_result_z?
+    /* 0074 */ f32 unk74; //some x component
+    /* 0078 */ f32 unk78; //some y component
+    /* 007C */ f32 unk7C; //some z component
+    /* 0080 */ s32 unk80;
+    /* 0084 */ f32 *unk84;
+    /* 0088 */ f32 *unk88;
+    /* 008C */ f32 *unk8C;
+    /* 0090 */ s32 unk90;
+    /* 0094 */ unk_curve_func unk94;
+    /* 0098 */ unk_curve_func_2 unk98;
+    CurveSetup *unk9C;
+    CurveSetup *unkA0;
+    CurveSetup *unkA4;
+    f32 unkA8[4];
+    f32 unkB8[4];
+    f32 unkC8[4];
+    f32 unkD8[4];
+    f32 unkE8[4];
+    f32 unkF8[4];
 } UnkCurvesStruct;
 
 typedef struct Unk80006784 {

@@ -7,7 +7,7 @@ typedef struct {
     /*00*/ s16 count;
     /*02*/ s16 capacity;
     /*04*/ s16 elementSize; // in bytes
-    /*06*/ s16 unk0x6; // unused and uninitialized (ref'd by unused funcs)
+    /*06*/ s16 unk6; // unused and uninitialized (ref'd by unused funcs)
     /*08*/ s16 top;
     /*0C*/ void *data;
 } GenericStack;

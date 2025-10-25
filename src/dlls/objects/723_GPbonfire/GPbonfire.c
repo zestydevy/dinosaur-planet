@@ -337,8 +337,8 @@ void GPbonfire_func_A44(Object* self) {
     dll_unload(dll);
 
     //Add damaging collision?
-    self->objhitInfo->unk_0x58 = 0x100;
-    self->unk0xaf |= 8;
+    self->objhitInfo->unk58 = 0x100;
+    self->unkAF |= 8;
 
     //Advance state
     main_set_bits(objdata->gameBitBurning, TRUE);

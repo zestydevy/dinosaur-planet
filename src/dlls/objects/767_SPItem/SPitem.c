@@ -30,7 +30,7 @@ void SPItem_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SPItem_setup(Object* self, SPItem_Setup* objSetup, s32 arg2) {
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
     self->animCallback = (AnimationCallback)SPItem_anim_callback;
 
     self->modelInstIdx = objSetup->modelIndex;
@@ -64,14 +64,14 @@ void SPItem_control(Object* self) {
             if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
                 (((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_is_item_hidden(objData->shop, objSetup->itemIndex))) {
                 self->srt.flags |= 0x4000;  //don't draw
-                self->unk0xb0 |= 0x8000;    //don't animate
-                self->unk0xaf |= 8;         //don't allow targetting
+                self->unkB0 |= 0x8000;    //don't animate
+                self->unkAF |= 8;         //don't allow targetting
             }
             //Get gametext line index
             objData->gametextLineIdx = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_get_item_gametext_index(objData->shop, objSetup->itemIndex);
         }
     //Check if A pressed while target overhead
-    } else if (self->unk0xaf & 1) {
+    } else if (self->unkAF & 1) {
         scarabCount = ((DLL_Unknown*)player->dll)->vtbl->func[20].withOneArgS32((s32)player);
         initialPrice = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_get_initial_price(objData->shop, objSetup->itemIndex);
         ((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_set_current_item_index(objData->shop, objSetup->itemIndex);
@@ -158,8 +158,8 @@ void SPItem_bought_callback(Object* self, s32 arg1, s32 arg2) {
     //Check if object should be hidden
     if (((DLL_768_SPShop*) shop->dll)->vtbl->SPShop_is_item_hidden(shop, objSetup->itemIndex)){
         self->srt.flags |= 0x4000;  //don't draw
-        self->unk0xb0 |= 0x8000;    //don't update animation
-        self->unk0xaf |= 8;         //don't allow targetting
+        self->unkB0 |= 0x8000;    //don't update animation
+        self->unkAF |= 8;         //don't allow targetting
     }
     
     //Clear SPShop DLL's current item index

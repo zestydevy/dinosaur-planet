@@ -71,7 +71,7 @@ void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
             main_set_bits(BIT_Spell_Grenade, 1);
             break;
     }
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
 }
 
 // offset: 0x260 | func: 1 | export: 1

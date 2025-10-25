@@ -32,16 +32,16 @@ void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
     objdata->unk24 = 1.0f / (setup->unk24 + 1.0f);
     objdata->unk28 = -1;
 
-    if (self->unk0xdc == 0 && setup->sequenceIdBitfield != 1){
+    if (self->unkDC == 0 && setup->sequenceIdBitfield != 1){
         gDLL_3_Animation->vtbl->func6((s32)objdata, (ObjSetup*)setup);
-        self->unk0xdc = setup->sequenceIdBitfield + 1;
+        self->unkDC = setup->sequenceIdBitfield + 1;
     } else {
-        if (self->unk0xdc != 0 && (setup->sequenceIdBitfield + 1 != self->unk0xdc)){
+        if (self->unkDC != 0 && (setup->sequenceIdBitfield + 1 != self->unkDC)){
             gDLL_3_Animation->vtbl->func8((s32)objdata);
             if (setup->sequenceIdBitfield != -1){
                 gDLL_3_Animation->vtbl->func6((s32)objdata, (ObjSetup*)setup);
             }
-            self->unk0xdc = setup->sequenceIdBitfield + 1;
+            self->unkDC = setup->sequenceIdBitfield + 1;
         }
     }
 
@@ -69,7 +69,7 @@ void animobj_control(Object *self) {
     }
 
     index = gDLL_3_Animation->vtbl->func4(self, delayByte);
-    if (!index || self->unk0xb4 != -2){
+    if (!index || self->unkB4 != -2){
         return;
     }
 
@@ -80,11 +80,11 @@ void animobj_control(Object *self) {
     matches = 0;
     for (index = 0; index < count; index++){
         object = objects[index];
-        if (new_var == object->unk0xb4){
+        if (new_var == object->unkB4){
             matchObject = object;
         }
 
-        if (object->unk0xb4 == -2 && object->group == 0x10) {
+        if (object->unkB4 == -2 && object->group == 0x10) {
             objdata = object->data;    
             if (new_var == objdata->unk63){
                 matches++;
@@ -92,11 +92,11 @@ void animobj_control(Object *self) {
         }
     }
 
-    if (matches < 2 && matchObject && matchObject->unk0xb4 != -1){
-        matchObject->unk0xb4 = -1;
+    if (matches < 2 && matchObject && matchObject->unkB4 != -1){
+        matchObject->unkB4 = -1;
         gDLL_3_Animation->vtbl->func18(new_var);
     }
-    self->unk0xb4 = -1;
+    self->unkB4 = -1;
 }
 
 // offset: 0x318 | func: 2 | export: 2

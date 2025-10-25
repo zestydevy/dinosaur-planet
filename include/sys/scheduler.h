@@ -74,8 +74,8 @@ char *get_task_type_string(u32 taskType);
 void some_dummied_task_func(OSScTask *task);
 
 Gfx *func_8003BAD0(OSSched *sc, 
-    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
-    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
+    char **retFile, u32 *retunkC, s32 *retunk10,
+    char **retFile_2, u32 *retunkC_2, s32 *retunk10_2);
 
 void __scHandleRetrace(OSSched *sc);
 

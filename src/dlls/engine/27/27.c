@@ -260,9 +260,9 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 delayFloat) {
             }
         }
         if (!(arg1->flags & DLL27FLAG_40000)) {
-            if ((arg0->objhitInfo != NULL) && (arg0->objhitInfo->unk_0x58 & 1)) {
-                arg0->speed.y = (arg0->positionMirror.y - arg0->objhitInfo->unk_0x20.y) * sp3C;
-                if (arg0->objhitInfo->unk_0x20.y < arg0->positionMirror.y) {
+            if ((arg0->objhitInfo != NULL) && (arg0->objhitInfo->unk58 & 1)) {
+                arg0->speed.y = (arg0->positionMirror.y - arg0->objhitInfo->unk20.y) * sp3C;
+                if (arg0->objhitInfo->unk20.y < arg0->positionMirror.y) {
                     arg0->speed.y = 0.0f;
                 }
             } else {

@@ -82,8 +82,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
     } else {
         data->targetDist = 0.0f;
     }
-    if (obj->unk0xc0) {}
-    if ((data->flags & 0x8000) && (obj->unk0xc0 == NULL)) {
+    if (obj->unkC0) {}
+    if ((data->flags & 0x8000) && (obj->unkC0 == NULL)) {
         objfsa_run_logic_state(obj, data, arg2, logicStateCallbacks);
         data->logicStateTime += arg2;
         if ((f32) data->logicStateTime > 10000.0f) {
@@ -149,8 +149,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
         }
         if (data->flags & 0x800000) {
             if ((data->unk4.unk25C & 2) || (data->unk4.hitsTouchBits != 0)) {
-                obj->speed.x = (obj->srt.transl.x - obj->objhitInfo->unk_0x10.x) / arg2;
-                obj->speed.z = (obj->srt.transl.z - obj->objhitInfo->unk_0x10.z) / arg2;
+                obj->speed.x = (obj->srt.transl.x - obj->objhitInfo->unk10.x) / arg2;
+                obj->speed.z = (obj->srt.transl.z - obj->objhitInfo->unk10.z) / arg2;
             }
             data->flags &= ~0x800000;
         }
@@ -215,7 +215,7 @@ void objfsa_set_anim_state(Object *obj, ObjFSA_Data *data, s32 state) {
     data->unk34A = 0;
     data->unk270 = 0;
     if (obj->objhitInfo != NULL) {
-        obj->objhitInfo->unk_0x61 = 0;
+        obj->objhitInfo->unk61 = 0;
     }
 }
 
@@ -259,7 +259,7 @@ static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjF
             data->unk34A = 0;
             data->unk270 = 0;
             if (obj->objhitInfo != NULL) {
-                obj->objhitInfo->unk_0x61 = 0;
+                obj->objhitInfo->unk61 = 0;
             }
         } else if (nextState < 0) {
             // Switch to next state (run asynchronously (i.e. on next tick))
@@ -278,7 +278,7 @@ static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjF
                 data->unk34A = 0;
                 data->unk270 = 0;
                 if (obj->objhitInfo != NULL) {
-                    obj->objhitInfo->unk_0x61 = 0;
+                    obj->objhitInfo->unk61 = 0;
                 }
             }
             data->animState = nextState;

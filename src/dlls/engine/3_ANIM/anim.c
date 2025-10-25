@@ -425,14 +425,14 @@ void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             }
         }
     }
-    arg0->unk0xaf &= 0xFFF8;
+    arg0->unkAF &= 0xFFF8;
     get_object_child_position(arg0, arg0->positionMirror.f, &arg0->positionMirror.f[1], &arg0->positionMirror.f[2]);
     if (arg0->objhitInfo != NULL) {
-        arg0->objhitInfo->unk_0x48 = 0;
-        arg0->objhitInfo->unk_0x62 = 0;
+        arg0->objhitInfo->unk48 = 0;
+        arg0->objhitInfo->unk62 = 0;
     }
-    if (arg0->unk0x58 != NULL) {
-        arg0->unk0x58->unk10f = 0;
+    if (arg0->unk58 != NULL) {
+        arg0->unk58->unk10f = 0;
     }
 }
 

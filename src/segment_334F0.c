@@ -444,11 +444,11 @@ void func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     if (arg2 != 0) {
         sp28 = sp28;
         func_8001AF04(sp2C, (s32) sp28->id, arg1, 0.0f, 0, 1);
-        sp28->unk0x8 = arg3;
+        sp28->unk8 = arg3;
         return;
     }
-    if (sp28->unk0x8 != 0.0f) {
-        sp28->strength = (sp28->unk0x8 - arg3) / sp28->unk0x8;
+    if (sp28->unk8 != 0.0f) {
+        sp28->strength = (sp28->unk8 - arg3) / sp28->unk8;
         return;
     }
     sp28->strength = 0.0f;
@@ -466,11 +466,11 @@ void func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
             // @fake?
             if (arg1) {}
             func_8001AF04(sp24, sp20->id, arg1 - 1, 0.0f, 2, 1);
-            sp20->unk0x8 = arg3;
+            sp20->unk8 = arg3;
             return;
         }
-        if (sp20->unk0x8 != 0.0f) {
-            sp20->strength = (sp20->unk0x8 - arg3) / sp20->unk0x8;
+        if (sp20->unk8 != 0.0f) {
+            sp20->strength = (sp20->unk8 - arg3) / sp20->unk8;
             return;
         }
         sp20->strength = 0.0f;

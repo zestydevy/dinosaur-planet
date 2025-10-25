@@ -18,7 +18,7 @@ void CCgasvent_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CCgasvent_setup(Object *self, ObjSetup *objsetup, s32 arg2) {
     obj_add_object_type(self, OBJTYPE_64);
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x6C | func: 1 | export: 1

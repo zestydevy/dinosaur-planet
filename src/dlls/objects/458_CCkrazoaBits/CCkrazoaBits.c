@@ -23,7 +23,7 @@ void CCkrazoaBits_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->unk0 = main_get_bits(BIT_CC_Activate_Krazoa_Tablet_Slots);
     objdata->unk1 = main_get_bits(BIT_236);
     objdata->unk2 = main_get_bits(BIT_237);
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0xB4 | func: 1 | export: 1

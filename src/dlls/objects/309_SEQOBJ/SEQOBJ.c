@@ -69,7 +69,7 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
         }
     }
     objData->finished = FALSE;
-    self->unk0xb0 |= 0x2000;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x124 | func: 1 | export: 1
@@ -168,7 +168,7 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     SeqObj_Data* objData;
     s32 index;
 
-    if (self->unk0xb4 == -1) {
+    if (self->unkB4 == -1) {
         return 0;
     }
     

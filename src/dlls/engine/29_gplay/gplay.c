@@ -242,33 +242,33 @@ void gplay_init_save(s8 idx, char *filename) {
         sState.save.file.players[i].magicMax = 25;
         sState.save.file.players[i].magic = 0;
 
-        sState.save.file.unk0x18[i].unk0x0 = 4;
-        sState.save.file.unk0x18[i].unk0x1 = 5;
+        sState.save.file.unk18[i].unk0 = 4;
+        sState.save.file.unk18[i].unk1 = 5;
 
-        sState.save.map.unk0x16F4[i].unk0x0 = -1;
-        sState.save.map.unk0x16F4[i].unk0x2 = -1;
-        sState.save.map.unk0x16F4[i].unk0x4 = -1;
-        sState.save.map.unk0x16F4[i].unk0x6 = -1;
-        sState.save.map.unk0x16F4[i].unk0x8 = -1;
-        sState.save.map.unk0x16F4[i].unk0xa = -1;
-        sState.save.map.unk0x16F4[i].unk0xc = -1;
-        sState.save.map.unk0x16F4[i].unk0xe = -1;
-        sState.save.map.unk0x16F4[i].unk0x12 = -1;
+        sState.save.map.unk16F4[i].unk0 = -1;
+        sState.save.map.unk16F4[i].unk2 = -1;
+        sState.save.map.unk16F4[i].unk4 = -1;
+        sState.save.map.unk16F4[i].unk6 = -1;
+        sState.save.map.unk16F4[i].unk8 = -1;
+        sState.save.map.unk16F4[i].unkA = -1;
+        sState.save.map.unk16F4[i].unkC = -1;
+        sState.save.map.unk16F4[i].unkE = -1;
+        sState.save.map.unk16F4[i].unk12 = -1;
 
-        sState.save.map.unk0x171C[i].unk0x0 = 43000.0f;
-        sState.save.map.unk0x171C[i].unk0x4 = -1;
-        sState.save.map.unk0x171C[i].unk0x6 = -1;
-        sState.save.map.unk0x171C[i].unk0x8 = -1;
-        sState.save.map.unk0x171C[i].unk0xa = -1;
-        sState.save.map.unk0x171C[i].unk0xc = -1;
-        sState.save.map.unk0x171C[i].unk0xe = -1;
-        sState.save.map.unk0x171C[i].unk0x3d = -1;
-        sState.save.map.unk0x171C[i].unk0x3e = -1;
-        sState.save.map.unk0x171C[i].unk0x3f = -1;
-        sState.save.map.unk0x171C[i].unk0x3c = 1;
+        sState.save.map.unk171C[i].unk0 = 43000.0f;
+        sState.save.map.unk171C[i].unk4 = -1;
+        sState.save.map.unk171C[i].unk6 = -1;
+        sState.save.map.unk171C[i].unk8 = -1;
+        sState.save.map.unk171C[i].unkA = -1;
+        sState.save.map.unk171C[i].unkC = -1;
+        sState.save.map.unk171C[i].unkE = -1;
+        sState.save.map.unk171C[i].unk3D = -1;
+        sState.save.map.unk171C[i].unk3E = -1;
+        sState.save.map.unk171C[i].unk3F = -1;
+        sState.save.map.unk171C[i].unk3C = 1;
 
         for (k = 0; k < 4; k++) {
-            sState.save.map.unk0x179c[i].unk0x0[k] = -1;
+            sState.save.map.unk179C[i].unk0[k] = -1;
         }
     }
 
@@ -458,9 +458,9 @@ void gplay_checkpoint(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer) {
         bcopy(&sState.save.chkpnt, &sSavegame->asSave.chkpnt, sizeof(CheckpointSaveData));
     } else {
         if (func_8001EBE0() != 0) {
-            sState.save.map.unk0x16F4[sState.save.file.playerno].unk0x10 |= 1;
+            sState.save.map.unk16F4[sState.save.file.playerno].unk10 |= 1;
         } else {
-            sState.save.map.unk0x16F4[sState.save.file.playerno].unk0x10 &= ~1;
+            sState.save.map.unk16F4[sState.save.file.playerno].unk10 &= ~1;
         }
 
         sState.save.map.playerLocations[sState.save.file.playerno].vec.x = position->x;
@@ -497,9 +497,9 @@ void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     bcopy(&sState.save, sRestartSave, sizeof(Savegame));
 
     if (func_8001EBE0() != 0) {
-        sRestartSave->map.unk0x16F4[sRestartSave->file.playerno].unk0x10 |= 1;
+        sRestartSave->map.unk16F4[sRestartSave->file.playerno].unk10 |= 1;
     } else {
-        sRestartSave->map.unk0x16F4[sRestartSave->file.playerno].unk0x10 &= ~1;
+        sRestartSave->map.unk16F4[sRestartSave->file.playerno].unk10 &= ~1;
     }
 
     sRestartSave->map.playerLocations[sRestartSave->file.playerno].vec.x = position->x;
@@ -568,29 +568,29 @@ PlayerLocation *gplay_get_player_saved_location(void) {
 }
 
 GplayStruct11 *gplay_func_F30(void) {
-    return &sState.save.file.unk0x18[sState.save.file.playerno];
+    return &sState.save.file.unk18[sState.save.file.playerno];
 }
 
 // gplayGetCurrentPlayerLactions ?
 GplayStruct6 *gplay_func_F60(void) {
     if (sState.save.file.playerno >= PLAYER_NUM_PLAYERS) {
-        return &sState.save.map.unk0x16F4[0];
+        return &sState.save.map.unk16F4[0];
     }
 
-    return &sState.save.map.unk0x16F4[sState.save.file.playerno];
+    return &sState.save.map.unk16F4[sState.save.file.playerno];
 }
 
 // gplayGetCurrentPlayerEnvactions ?
 GplayStruct12 *gplay_func_FA8(void) {
     if (sState.save.file.playerno >= PLAYER_NUM_PLAYERS) {
-        return &sState.save.map.unk0x171C[0];
+        return &sState.save.map.unk171C[0];
     }
 
-    return &sState.save.map.unk0x171C[sState.save.file.playerno];
+    return &sState.save.map.unk171C[sState.save.file.playerno];
 }
 
 GplayStruct13 *gplay_func_FE8(void) {
-    return &sState.save.map.unk0x179c[sState.save.file.playerno];
+    return &sState.save.map.unk179C[sState.save.file.playerno];
 }
 
 void gplay_add_time(s32 uid, f32 time) {
@@ -815,11 +815,11 @@ void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
 }
 
 GplayStruct14 *gplay_func_1974(void) {
-    return &sState.save.file.unk0x20[sState.save.file.playerno];
+    return &sState.save.file.unk20[sState.save.file.playerno];
 }
 
 GplayStruct14 *gplay_func_19B8(void) {
-    return &sState.save.file.unk0x188[sState.save.file.playerno];
+    return &sState.save.file.unk188[sState.save.file.playerno];
 }
 
 u32 gplay_is_cheat_unlocked(u8 cheatIdx) {

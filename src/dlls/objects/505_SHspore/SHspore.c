@@ -66,7 +66,7 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
     objdata = self->data;
     sp37 = 5;
     objdata->lifetime = 1500.0f; //25s
-    self->unk0xb0 |= 0x6000;
+    self->unkB0 |= 0x6000;
     self->speed.y = 3.0f;
 
     func_800267A4(self);
@@ -137,7 +137,7 @@ void SHspore_control(Object* self) {
         func_80026128(self, 0xA, 0, 0);
 
         //Handle collisions
-        collidedObject = (Object*)self->objhitInfo->unk_0x48;
+        collidedObject = (Object*)self->objhitInfo->unk48;
         if (collidedObject) {
             particleCount = 20;
             if (get_player() == collidedObject) {

@@ -42,13 +42,13 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
 {
     ModelInstance *modelInst;
     Model *model;
-    ObjectStruct50 *unk0x50;
+    ObjectStruct50 *unk50;
     u8 r = 0xff, g = 0xff, b = 0xff, a, r_, g_, b_;
     Gfx *mygdl;
     Mtx *myrspMtxs;
     f32 tx, ty, tz;
     s16 yaw;
-    ObjectStruct64* unk0x64;
+    ObjectStruct64* unk64;
     SRT srt;
     MtxF mtxf;
     u32 out_param_4;
@@ -66,8 +66,8 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
     }
 
     model = modelInst->model;
-    unk0x50 = obj->ptr0x50;
-    a = obj->unk_0x37;
+    unk50 = obj->ptr0x50;
+    a = obj->unk37;
 
     // A piece of very strange code occurs here:
     //
@@ -80,7 +80,7 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
     //
     // Note the condition tested by slti/bnez, a >= 256, will never be true.
 
-    if ((unk0x50->unk_0x44 & 0x10000) || !func_8001EBE0())
+    if ((unk50->unk44 & 0x10000) || !func_8001EBE0())
     {
         r = 0xff;
         g = 0xff;
@@ -93,7 +93,7 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
         b = b_;
     }
 
-    if (unk0x50->unk_0x71 != 0) {
+    if (unk50->unk71 != 0) {
         func_80036890(obj);
     }
 
@@ -139,16 +139,16 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
         yaw = obj->srt.yaw;
     }
 
-    unk0x64 = obj->ptr0x64;
-    if (unk0x64 != NULL)
+    unk64 = obj->ptr0x64;
+    if (unk64 != NULL)
     {
-        if (unk0x64->gdl != NULL)
+        if (unk64->gdl != NULL)
         {
-            if (unk0x64->unk_0x30 & 0x20)
+            if (unk64->unk30 & 0x20)
             {
-                srt.tx = unk0x64->tx;
-                srt.ty = unk0x64->ty;
-                srt.tz = unk0x64->tz;
+                srt.tx = unk64->tx;
+                srt.ty = unk64->ty;
+                srt.tz = unk64->tz;
             }
             else
             {
@@ -178,9 +178,9 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
 
     if (!(obj->srt.flags & 0x1000))
     {
-        if (!(modelInst->unk_0x34 & 0x8))
+        if (!(modelInst->unk34 & 0x8))
         {
-            if (model->animCount != 0 && !(model->unk_0x71 & 0x2))
+            if (model->animCount != 0 && !(model->unk71 & 0x2))
             {
                 if (*(MtxF**)0x800b2e1c == NULL) {
                     func_8001943C(obj, &mtxf, yPrescale);
@@ -193,8 +193,8 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
             {
                 MtxF *mf;
                 
-                modelInst->unk_0x34 ^= 0x1;
-                mf = modelInst->unk_0x4.matrices[modelInst->unk_0x34 & 0x1];
+                modelInst->unk34 ^= 0x1;
+                mf = modelInst->unk4.matrices[modelInst->unk34 & 0x1];
                 if (*(MtxF**)0x800b2e1c == NULL) {
                     func_8001943C(obj, mf, yPrescale);
                 } else {
@@ -204,63 +204,63 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
                 pointerIntArray2_func(mf, 1);
             }
 
-            modelInst->unk_0x34 ^= 0x2;
+            modelInst->unk34 ^= 0x2;
 
-            unk0x50 = obj->ptr0x50;
-            if ((unk0x50->unk_0x44 & 0x10) || model->unk_0x1c != NULL)
+            unk50 = obj->ptr0x50;
+            if ((unk50->unk44 & 0x10) || model->unk1C != NULL)
             {
-                if (model->unk_0x1c != NULL) {
+                if (model->unk1C != NULL) {
                     func_8001B100(modelInst);
                 }
-                if (unk0x50->unk_0x44 & 0x10) {
+                if (unk50->unk44 & 0x10) {
                     func_8001DF60(obj, modelInst);
                 }
             }
 
-            if (unk0x50->unk_0x71) {
+            if (unk50->unk71) {
                 func_8001E818(obj, model, modelInst);
             }
 
-            if (model->unk_0x74) {
+            if (model->unk74) {
                 func_8001F094(modelInst);
             }
 
-            if (obj->unk0x74) {
+            if (obj->unk74) {
                 func_80036438(obj);
             }
 
-            if (model->unk_0x6e != 0) {
+            if (model->unk6E != 0) {
                 func_8001A8EC(modelInst, model, obj, NULL, obj);
             } else {
-                if (obj->objhitInfo != NULL && (obj->objhitInfo->unk_0x5a & 0x20) && obj->objhitInfo->unk_0x9f != 0) {
-                    obj->objhitInfo->unk_0x9f--;
+                if (obj->objhitInfo != NULL && (obj->objhitInfo->unk5A & 0x20) && obj->objhitInfo->unk9F != 0) {
+                    obj->objhitInfo->unk9F--;
                 }
             }
         }
     }
 
-    if (model->unk_0x71 & 0x4) {
+    if (model->unk71 & 0x4) {
         dl_set_env_color(&mygdl, r, g, b, BYTE_800b2e23);
     }
     dl_set_prim_color(&mygdl, r, g, b, a);
 
     if (!(obj->srt.flags & 0x200))
     {
-        gMoveWd(mygdl++, 0x0c, 0x06, modelInst->unk_0x4.matrices[modelInst->unk_0x34 & 0x1]);
-        gMoveWd(mygdl++, 0x14, 0x6, modelInst->unk_0x4.unk_0x0[(modelInst->unk_0x34 >> 1) & 0x1]);
+        gMoveWd(mygdl++, 0x0c, 0x06, modelInst->unk4.matrices[modelInst->unk34 & 0x1]);
+        gMoveWd(mygdl++, 0x14, 0x6, modelInst->unk4.unk0[(modelInst->unk34 >> 1) & 0x1]);
 
         if (a == 0xff)
         {
-            if (modelInst->unk_0x34 & 0x10) {
+            if (modelInst->unk34 & 0x10) {
                 load_model_display_list(model, modelInst);
-                modelInst->unk_0x34 ^= 0x10;
+                modelInst->unk34 ^= 0x10;
             }
         }
         else
         {
-            if (!(modelInst->unk_0x34 & 0x10)) {
+            if (!(modelInst->unk34 & 0x10)) {
                 func_800189A8(model, modelInst);
-                modelInst->unk_0x34 ^= 0x10;
+                modelInst->unk34 ^= 0x10;
             }
         }
 
@@ -270,14 +270,14 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
     }
 
     if (obj->linkedObject != NULL) {
-        func_80035AF4(&mygdl, &myrspMtxs, &out_param_4, &out_param_5, obj, modelInst, &mtxf, 0, obj->linkedObject, obj->unk0xb0 & 0x3, a);
+        func_80035AF4(&mygdl, &myrspMtxs, &out_param_4, &out_param_5, obj, modelInst, &mtxf, 0, obj->linkedObject, obj->unkB0 & 0x3, a);
     }
 
-    if (obj->objhitInfo != NULL && (obj->objhitInfo->unk_0x5a & 0x20) && modelInst->unk_0x14) {
+    if (obj->objhitInfo != NULL && (obj->objhitInfo->unk5A & 0x20) && modelInst->unk14) {
         func_800357B4(obj, modelInst, modelInst->model);
     }
 
-    modelInst->unk_0x34 |= 0x8;
+    modelInst->unk34 |= 0x8;
 
     if (obj->parent != NULL)
     {
@@ -320,9 +320,9 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param
     modelInst = obj->modelInsts[mainIdx];
     modelInst2 = obj->modelInsts[otherIdx];
 
-    d = modelInst->matrices[modelInst->unk_0x34 & 1];
+    d = modelInst->matrices[modelInst->unk34 & 1];
     gSPSegment(mygdl++, 3, d);
-    gSPSegment(mygdl++, 5, modelInst2->unk_0x4[(modelInst2->unk_0x34 >> 1) & 0x1]);
+    gSPSegment(mygdl++, 5, modelInst2->unk4[(modelInst2->unk34 >> 1) & 0x1]);
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
     dl_set_all_dirty();

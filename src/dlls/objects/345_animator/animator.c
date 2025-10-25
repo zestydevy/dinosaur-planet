@@ -37,8 +37,8 @@ void animator_setup(Object *self, Animator_Setup *setup, s32 arg2) {
     self->srt.roll = setup->roll << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.yaw = setup->yaw << 8;
-    self->unk0xdc = 0;
-    self->unk0xb0 |= 0x2000;
+    self->unkDC = 0;
+    self->unkB0 |= 0x2000;
 }
 
 // offset: 0x58 | func: 1 | export: 1
@@ -56,7 +56,7 @@ void animator_control(Object *self) {
     if (!player)
         return;
 
-    if (self->unk0xdc <= 0) {
+    if (self->unkDC <= 0) {
         dx = self->positionMirror.x - player->positionMirror.x;
         dy = self->positionMirror.y - player->positionMirror.y;
         dz = self->positionMirror.z - player->positionMirror.z;
@@ -83,9 +83,9 @@ void animator_control(Object *self) {
             }
 
         }
-        self->unk0xdc = -setup->iterations;
-    } else if (self->unk0xdc > 0) {
-        self->unk0xdc -= delayByte;
+        self->unkDC = -setup->iterations;
+    } else if (self->unkDC > 0) {
+        self->unkDC -= delayByte;
     }
 }
 

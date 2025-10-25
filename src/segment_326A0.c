@@ -135,14 +135,14 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg
     SRT srt;
 
     temp_v1 = obj->modelInsts[obj->modelInstIdx];
-    if (!(temp_v1->unk_0x34 & 8)) {
+    if (!(temp_v1->unk34 & 8)) {
         *ox = obj->srt.transl.x;
         *oy = obj->srt.transl.y;
         *oz = obj->srt.transl.z;
         return 1;
     }
     boneIdx = obj->def->pAttachPoints[attachIdx].bones[obj->modelInstIdx];
-    sp9C = (MtxF *) &(((f32 **)temp_v1->matrices)[(temp_v1->unk_0x34 & 1)][boneIdx << 4]);
+    sp9C = (MtxF *) &(((f32 **)temp_v1->matrices)[(temp_v1->unk34 & 1)][boneIdx << 4]);
     if (arg5 != 0) {
         srt.transl.x = *ox;
         srt.transl.y = *oy;
@@ -178,11 +178,11 @@ MtxF *func_80032170(Object* obj, s32 arg1) {
     u16 new_var;
 
     temp_v1 = obj->modelInsts[obj->modelInstIdx];
-    if (!(temp_v1->unk_0x34 & 8)) {
+    if (!(temp_v1->unk34 & 8)) {
         return NULL;
     }
     boneIdx = obj->def->pAttachPoints[arg1].bones[obj->modelInstIdx];
-    new_var = temp_v1->unk_0x34;
+    new_var = temp_v1->unk34;
     return (MtxF *) &((f32 **)temp_v1->matrices)[new_var & 1][boneIdx << 4];
 }
 
@@ -206,9 +206,9 @@ void func_80032238(Object* obj, s32 arg1, s32 arg2, Vec3f* arg3) {
 
     modelInst = obj->modelInsts[obj->modelInstIdx];
     for (i = 0; i < arg2; i++) {
-        if (modelInst->unk_0x34 & 8) {
+        if (modelInst->unk34 & 8) {
             boneIdx = objDef->pAttachPoints[arg1 + i].bones[obj->modelInstIdx];
-            mtx = (MtxF *) &((f32 **)modelInst->matrices)[modelInst->unk_0x34 & 1][boneIdx << 4];
+            mtx = (MtxF *) &((f32 **)modelInst->matrices)[modelInst->unk34 & 1][boneIdx << 4];
             arg3[i].x = mtx->m[3][0];
             arg3[i].y = mtx->m[3][1];
             arg3[i].z = mtx->m[3][2];
@@ -276,7 +276,7 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
 s32 func_80032538(Object* arg0) {
     Object* player;
 
-    if (arg0->unk0xaf & 1 && !gDLL_1_UI->vtbl->func6()) {
+    if (arg0->unkAF & 1 && !gDLL_1_UI->vtbl->func6()) {
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
             set_button_mask(0, 0x8000);
@@ -311,8 +311,8 @@ s32 registerObjectCallback(Object* obj, Object* otherObj, void (*callback)(Objec
     callbackPair->primary = obj;
     callbackPair->secondary = otherObj;
     callbackPair->callback = callback;
-    obj->unk_0xd9++;
-    otherObj->unk_0xd9++;
+    obj->unkD9++;
+    otherObj->unkD9++;
     sCallbackPairIndex++;
     return TRUE;
 }
@@ -329,8 +329,8 @@ void func_80032690(Object* obj, Object* otherObj) {
             if (sCallbackPairIndex != 15 && sCallbackPairIndex != 0) {
                 *callbackPair = sObjectPairCallbacks[sCallbackPairIndex];
             }
-            obj->unk_0xd9--;
-            otherObj->unk_0xd9--;
+            obj->unkD9--;
+            otherObj->unkD9--;
             return;
         }
         callbackPair++;
@@ -347,8 +347,8 @@ void func_8003273C(Object* obj) {
         if (obj == callbackPair->primary || obj == callbackPair->secondary) {
             i--;
             sCallbackPairIndex--;
-            callbackPair->primary->unk_0xd9 -= 1;
-            callbackPair->secondary->unk_0xd9 -= 1;
+            callbackPair->primary->unkD9 -= 1;
+            callbackPair->secondary->unkD9 -= 1;
             if (sCallbackPairIndex != 15 && sCallbackPairIndex != 0) {
                 *callbackPair = sObjectPairCallbacks[sCallbackPairIndex];
             }
@@ -363,8 +363,8 @@ void func_80032804(Object* obj, Object* otherObj) {
     s32 var_s4;
     s32 var_s5;
 
-    var_s4 = obj->unk_0xd9;
-    var_s5 = otherObj->unk_0xd9;
+    var_s4 = obj->unkD9;
+    var_s5 = otherObj->unkD9;
     callbackPair = sObjectPairCallbacks;
     i = sCallbackPairIndex;
     while (var_s4 != 0 && var_s5 != 0 && i--) {

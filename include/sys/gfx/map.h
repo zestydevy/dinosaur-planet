@@ -10,10 +10,10 @@
 typedef struct {
 /*0000*/    s16 uls0;
 /*0002*/    s16 ult0;
-/*0004*/    u8 unk_0x4[0x10 - 0x4];
+/*0004*/    u8 unk4[0x10 - 0x4];
 /*0010*/    s16 uls1;
 /*0012*/    s16 ult1;
-/*0014*/    u8 unk_0x14[0x22 - 0x14];
+/*0014*/    u8 unk14[0x22 - 0x14];
 } Struct0x22;
 
 typedef struct {
@@ -27,26 +27,26 @@ typedef struct {
 
 typedef struct {
 /*0000*/    Texture *texture;
-/*0004*/    u8 unk_0x4[0xc - 0x4];
+/*0004*/    u8 unk4[0xc - 0x4];
 } Block_0x0Struct;
 
 typedef struct {
 /*0000*/    s16 texIdx;
-/*0002*/    u8 unk_0x2;
-/*0003*/    u8 unk_0x3;
+/*0002*/    u8 unk2;
+/*0003*/    u8 unk3;
 } Block_0x28Struct;
 
 typedef struct {
 /*0000*/    u32 flags;
 /*0004*/    s16 vtxBase;
 /*0006*/    s16 triBase;
-/*0008*/    u8 unk_0x8[0x12 - 0x8];
+/*0008*/    u8 unk8[0x12 - 0x8];
 /*0012*/    u8 tileIdx0;
 /*0013*/    u8 alpha;
-/*0014*/    u8 unk_0x14; // animator ID?
+/*0014*/    u8 unk14; // animator ID?
 /*0015*/    u8 tileIdx1;
-/*0016*/    u8 unk_0x16;
-/*0017*/    u8 unk_0x17;
+/*0016*/    u8 unk16;
+/*0017*/    u8 unk17;
 } BlockShape;
 
 typedef struct {
@@ -59,25 +59,25 @@ typedef struct {
 /*0004*/    Vtx_t *vertices;
 /*0008*/    EncodedTri *encodedTris;
 /*000C*/    BlockShape *shapes;
-/*0010*/    void *unk_0x10;
+/*0010*/    void *unk10;
 /*0014*/    s16 *xzBitmap;
-/*0018*/    u8 unk_0x18[0x20 - 0x18];
+/*0018*/    u8 unk18[0x20 - 0x18];
 /*0020*/    Vtx_t *vertices2[2];
-/*0028*/    Block_0x28Struct *unk_0x28;
+/*0028*/    Block_0x28Struct *unk28;
 /*002C*/    Gfx *gdlGroups; // In groups of 3 per shape; used to set up materials.
 /*0030*/    s16 vtxFlags;
 /*0032*/    s16 vtxCount;
-/*0034*/    s16 unk_0x34;
+/*0034*/    s16 unk34;
 /*0036*/    s16 shapeCount;
-/*0038*/    u8 unk_0x38[0x3e - 0x38];
-/*003E*/    s16 unk_0x3e;
+/*0038*/    u8 unk38[0x3e - 0x38];
+/*003E*/    s16 unk3E;
 /*0040*/    s16 elevation;
-/*0042*/    u16 unk_0x42;
+/*0042*/    u16 unk42;
 /*0044*/    u16 gdlGroupsOffset;
-/*0046*/    u8 unk_0x46;
-/*0047*/    u8 unk_0x47;
-/*0048*/    u8 unk_0x48;
-/*0049*/    u8 unk_0x49;
+/*0046*/    u8 unk46;
+/*0047*/    u8 unk47;
+/*0048*/    u8 unk48;
+/*0049*/    u8 unk49;
 /*004A*/    u8 textureCount;
 } Block;
 
@@ -105,11 +105,11 @@ typedef struct {
 #define DIRTY_FLAGS_ALL 0xFF
 
 typedef struct {
-/*0000*/    u8 unk_0x0;
+/*0000*/    u8 unk0;
 /*0001*/    u8 v0;
 /*0002*/    u8 v1;
 /*0003*/    u8 v2;
-/*0004*/    u8 unk_0x4[0x10 - 0x4];
+/*0004*/    u8 unk4[0x10 - 0x4];
 } DLTri;
 
 /** Flags
@@ -127,7 +127,7 @@ typedef struct {
 /*0004*/    f32 y;
 /*0008*/    f32 z;
 /*000C*/    f32 d;
-/*0010*/    u8 unk_0x14[4];
+/*0010*/    u8 unk14[4];
 } Plane;
 
 #endif

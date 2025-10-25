@@ -84,12 +84,12 @@ void kyteCage_control(Object* self) {
         }
     }
 
-    if (self->unk0xdc == 0) {
-        self->unk0xdc = 1;
+    if (self->unkDC == 0) {
+        self->unkDC = 1;
     }
 
     if (self->parent) {
-        parentDC = self->parent->unk0xdc;
+        parentDC = self->parent->unkDC;
         rotate = (BoneRotation*)func_80034804(self, 0);
         if ((parentDC < 9) && (self->curModAnimId != 5)) {
             rotate->z = self->parent->srt.roll;
@@ -131,7 +131,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
     if (objData != NULL) {
         if (objData->kyte != NULL) {
             kyte = objData->kyte;
-            if (kyte->unk0xb0 & 0x40) {
+            if (kyte->unkB0 & 0x40) {
                 objData->kyte = NULL;
             }
             objDef = self->def;
@@ -140,9 +140,9 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
             /* Using the end of the cage's joint chain to update Kyte's 
              * transformation in sync with the swinging cage animation */
             if (objDef->numAttachPoints != 0) {
-                if (model->unk_0x34 & 8) { 
+                if (model->unk34 & 8) { 
                     boneIdx = objDef->pAttachPoints[1].bones[self->modelInstIdx];
-                    boneMatrix = (MtxF *) &(((f32 **)model->matrices)[(model->unk_0x34 & 1)][boneIdx << 4]);
+                    boneMatrix = (MtxF *) &(((f32 **)model->matrices)[(model->unk34 & 1)][boneIdx << 4]);
 
                     boneTransform.transl.x = 200.0f;
                     boneTransform.transl.y = 0.0f;
@@ -157,7 +157,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     draw_object(kyte, gfx, mtxs, vtxs, pols, 1.0f);
                     func_80034FF0(NULL);
                 }
-                kyte->unk0xdc = 2;
+                kyte->unkDC = 2;
             }
 
             //Create a lightning strike from above (at a random angle)
@@ -171,7 +171,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 galleonTransform.scale = 1.0f;
 
                 boneIdx = self->def->pAttachPoints->bones[0];
-                boneMatrix = (MtxF *) &(((f32 **)model->matrices)[(model->unk_0x34 & 1)][boneIdx << 4]);
+                boneMatrix = (MtxF *) &(((f32 **)model->matrices)[(model->unk34 & 1)][boneIdx << 4]);
                 boneTransform.yaw = 0;
                 boneTransform.roll = 0;
                 boneTransform.pitch = 0;
@@ -206,7 +206,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 galleonTransform.scale = 1.0f;
 
                 boneIdx = self->def->pAttachPoints->bones[0];
-                boneMatrix = (MtxF *) &(((f32 **)model->matrices)[(model->unk_0x34 & 1)][boneIdx << 4]);
+                boneMatrix = (MtxF *) &(((f32 **)model->matrices)[(model->unk34 & 1)][boneIdx << 4]);
                 boneTransform.yaw = 0;
                 boneTransform.roll = 0;
                 boneTransform.pitch = 0;
