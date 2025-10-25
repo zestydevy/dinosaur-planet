@@ -20,7 +20,7 @@ typedef struct {
 
 // size:0x3FC
 typedef struct {
-/*000*/ ObjFSA_Data unk0;
+/*000*/ ObjFSA_Data fsa;
 /*34C*/ DLL33Data_34C unk34C;
 /*374*/ SomeVoxmapAllocStruct unk374;
 /*380*/ u8 _unk380[0x39C - 0x380];
@@ -91,8 +91,8 @@ DLL_INTERFACE(DLL_33) {
 /*9*/ void (*func9)(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s32 arg7, s8 arg8);
 /*10*/ void (*func10)(Object* arg0, DLL33_Data* arg1, f32 arg2, s8 arg3);
 /*11*/ s32 (*func11)(Object* arg0, DLL33_Data* arg1, u8 arg2);
-/*12*/ s32 (*func12)(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_Callback *arg3, ObjFSA_Callback *arg4, s16 arg5);
-/*13*/ s32 (*func13)(Object* arg0, DLL33_Data* arg1, ObjFSA_Callback *arg2, ObjFSA_Callback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7);
+/*12*/ s32 (*func12)(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_StateCallback *arg3, ObjFSA_StateCallback *arg4, s16 arg5);
+/*13*/ s32 (*func13)(Object* arg0, DLL33_Data* arg1, ObjFSA_StateCallback *arg2, ObjFSA_StateCallback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7);
 // TODO: arg count might be off
 /*14*/ void (*func14)(Object* arg0, DLL33_Data* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 /*15*/ void (*func15)(Object* arg0, DLL33_Data* arg1, u8 arg2);

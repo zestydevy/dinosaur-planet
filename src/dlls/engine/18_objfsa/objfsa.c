@@ -22,22 +22,22 @@ DLL_INTERFACE(DLL_18_UnknownDLL) {
 /*0x18*/ static s32 _bss_18;
 /*0x1C*/ static s8 _bss_1C;
 
-void dll_18_func_13E4(ObjFSA_Data *data, void *arg1);
-void dll_18_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3);
-static void dll_18_func_B34(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3);
-static void dll_18_func_1AC4(Object *obj, ObjFSA_Data *data);
-static void dll_18_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2);
-static void dll_18_func_1E30(Object *obj, ObjFSA_Data *data);
+void objfsa_func_13E4(ObjFSA_Data *data, void *arg1);
+void objfsa_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
+static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *arg3);
+static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *arg3);
+static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data);
+static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2);
+static void objfsa_func_1E30(Object *obj, ObjFSA_Data *data);
 
 // offset: 0x0 | ctor
-void dll_18_ctor(void *dll) { }
+void objfsa_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_18_dtor(void *dll) { }
+void objfsa_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_18_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
+void objfsa_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     u32 i;
     s8* var_v1;
 
@@ -50,17 +50,18 @@ void dll_18_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     }
     data->unk264 = arg2;
     data->unk266 = arg3;
-    data->unk268 = 0;
-    data->unk26C = 0;
-    data->unk272 = 1;
-    data->unk273 = 1;
+    data->logicState = 0;
+    data->animState = 0;
+    data->enteredAnimState = 1;
+    data->enteredLogicState = 1;
     data->unk330 = -1;
     data->unk334 = -1;
     data->unk2B0 = 10.0f;
 }
 
 // offset: 0x90 | func: 1 | export: 1
-void dll_18_func_90(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, ObjFSA_Callback *arg4, ObjFSA_Callback *arg5) {
+void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, 
+        ObjFSA_StateCallback *animStateCallbacks, ObjFSA_StateCallback *logicStateCallbacks) {
     f32 temp_fv0;
     f32 var_fv1;
     f32 temp_fv1;
@@ -74,41 +75,41 @@ void dll_18_func_90(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, ObjFSA_C
     _bss_2 = 0;
     sp2F = data->unk341;
     
-    if (data->unk2C8 != NULL) {
-        temp_fv0 = data->unk2C8->srt.transl.x - obj->srt.transl.x;
-        temp_fv1 = data->unk2C8->srt.transl.z - obj->srt.transl.z;
-        data->unk2B8 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
+    if (data->target != NULL) {
+        temp_fv0 = data->target->srt.transl.x - obj->srt.transl.x;
+        temp_fv1 = data->target->srt.transl.z - obj->srt.transl.z;
+        data->targetDist = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
     } else {
-        data->unk2B8 = 0.0f;
+        data->targetDist = 0.0f;
     }
     if (obj->unk0xc0) {}
     if ((data->flags & 0x8000) && (obj->unk0xc0 == NULL)) {
-        dll_18_func_B34(obj, data, arg2, arg5);
-        data->unk322 += arg2;
-        if ((f32) data->unk322 > 10000.0f) {
-            data->unk322 = 10000;
+        objfsa_run_logic_state(obj, data, arg2, logicStateCallbacks);
+        data->logicStateTime += arg2;
+        if ((f32) data->logicStateTime > 10000.0f) {
+            data->logicStateTime = 10000;
         }
     }
     data->flags |= 0x8000;
     if (data->unk274 != NULL) {
-        dll_18_func_1E30(obj, data);
+        objfsa_func_1E30(obj, data);
     }
-    dll_18_func_1AC4(obj, data);
+    objfsa_func_1AC4(obj, data);
     data->flags &= ~0x200000;
     data->unk341 = 0;
     _bss_1C = 0;
     data->flags &= ~0x80000;
     data->unk340 = 0;
     _bss_1 = 0;
-    dll_18_func_81C(obj, data, arg2, arg4);
-    data->unk32C += arg2;
-    if ((f32) data->unk32C > 10000.0f) {
-        data->unk32C = 10000;
+    objfsa_run_anim_state(obj, data, arg2, animStateCallbacks);
+    data->animStateTime += arg2;
+    if ((f32) data->animStateTime > 10000.0f) {
+        data->animStateTime = 10000;
     }
     _bss_8 = obj->srt.transl.x;
     _bss_C = obj->srt.transl.z;
     if (!(data->flags & 0x01000000)) {
-        dll_18_func_1C70(obj, data, arg2);
+        objfsa_func_1C70(obj, data, arg2);
     }
     temp_v0_2 = _data_0;
     if (temp_v0_2 != NULL) {
@@ -154,14 +155,14 @@ void dll_18_func_90(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, ObjFSA_C
             data->flags &= ~0x800000;
         }
     }
-    if (data->unk2C8 != NULL && sp2F != data->unk341) {
+    if (data->target != NULL && sp2F != data->unk341) {
         mesgArg = (void*)(s32)data->unk341;
-        obj_send_mesg(data->unk2C8, 11, obj, mesgArg);
+        obj_send_mesg(data->target, 11, obj, mesgArg);
     }
 }
 
 // offset: 0x5E0 | func: 2 | export: 2
-void dll_18_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_Callback *arg2) {
+void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *arg2) {
     f32 sp24;
     f32 temp_fv0;
     f32 temp_fv0_2;
@@ -172,12 +173,12 @@ void dll_18_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_Callback *arg2) {
         temp_fv0 = fcos16_precise(obj->srt.yaw);
         if (data->unk340 & 8) {
             data->unk278 = (-obj->speed.z * temp_fv0) - (obj->speed.x * sp24);
-            data->unk28C = data->unk278;
+            data->speed = data->unk278;
         } else {
             data->unk27C = (obj->speed.x * temp_fv0) - (obj->speed.z * sp24);
             data->unk278 = (-obj->speed.z * temp_fv0) - (obj->speed.x * sp24);
             if (data->unk340 & 4) {
-                data->unk28C = sqrtf(SQ(obj->speed.x) + SQ(obj->speed.z));
+                data->speed = sqrtf(SQ(obj->speed.x) + SQ(obj->speed.z));
             }
         }
         data->unk340 = 0;
@@ -185,33 +186,30 @@ void dll_18_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_Callback *arg2) {
         _bss_1C = 1;
         _bss_1 = 0;
         _bss_2 = 1;
-        dll_18_func_81C(obj, data, delayFloat, arg2);
+        objfsa_run_anim_state(obj, data, delayFloat, arg2);
     }
 }
 
 // offset: 0x75C | func: 3 | export: 3
-void dll_18_func_75C(SRT *srt) {
+void objfsa_func_75C(SRT *srt) {
     _data_0 = srt;
 }
 
 // offset: 0x778 | func: 4 | export: 4
-void dll_18_func_778(Object *obj, ObjFSA_Data *data, s32 arg2) {
-    ObjFSA_Callback2 temp_v1;
-    s32 var_v0;
+void objfsa_set_anim_state(Object *obj, ObjFSA_Data *data, s32 state) {
+    ObjFSA_ExitCallback callback;
 
-    var_v0 = data->unk26C;
-    if (arg2 != var_v0) {
-        temp_v1 = data->unk2FC;
-        if (temp_v1 != NULL) {
-            temp_v1(obj, data);
-            data->unk2FC = NULL;
-            var_v0 = data->unk26C;
+    if (state != data->animState) {
+        callback = data->animExitAction;
+        if (callback != NULL) {
+            callback(obj, data);
+            data->animExitAction = NULL;
         }
-        data->unk26E = var_v0;
-        data->unk26C = (s16) arg2;
+        data->prevAnimState = data->animState;
+        data->animState = (s16) state;
     }
-    data->unk32C = 0;
-    data->unk272 = 1;
+    data->animStateTime = 0;
+    data->enteredAnimState = TRUE;
     data->unk341 = 0;
     data->unk340 = 0;
     data->unk34A = 0;
@@ -222,39 +220,40 @@ void dll_18_func_778(Object *obj, ObjFSA_Data *data, s32 arg2) {
 }
 
 // offset: 0x81C | func: 5
-static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3) {
-    s32 temp_v0;
-    s32 temp_v0_2;
-    s32 var_s1;
-    s32 var_s5;
-    u32 var_s7;
-    s32 var_v1;
+static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *callbacks) {
+    s32 prevState;
+    s32 nextState;
+    s32 stop;
+    s32 transitionCount;
+    u32 asyncTransition;
+    s32 i;
     s32 _pad;
     UnkFunc_80024108Struct sp50;
-    ObjFSA_Callback callback;
+    ObjFSA_StateCallback callback;
 
-    var_s7 = 0;
-    var_s5 = 0;
+    asyncTransition = FALSE;
+    transitionCount = 0;
     _bss_0 = 0;
     _bss_10 = 0;
-    if (data->unk26C != data->unk26E) {
-        data->unk272 = 1;
-        data->unk32C = 0;
+    if (data->animState != data->prevAnimState) {
+        data->enteredAnimState = TRUE;
+        data->animStateTime = 0;
     }
     do {
-        var_s1 = 0;
-        temp_v0 = data->unk26C;
-        callback = arg3[data->unk26C];
-        temp_v0_2 = callback(obj, data, arg2);
-        if (temp_v0_2 > 0) {
-            if (data->unk2FC != NULL) {
-                data->unk2FC(obj, data);
-                data->unk2FC = NULL;
+        stop = FALSE;
+        prevState = data->animState;
+        callback = callbacks[data->animState];
+        nextState = callback(obj, data, arg2);
+        if (nextState > 0) {
+            // Switch to next state (run synchronously)
+            if (data->animExitAction != NULL) {
+                data->animExitAction(obj, data);
+                data->animExitAction = NULL;
             }
-            data->unk26E = data->unk26C;
-            data->unk26C = temp_v0_2 - 1;
-            data->unk272 = 1;
-            data->unk32C = 0;
+            data->prevAnimState = data->animState;
+            data->animState = nextState - 1;
+            data->enteredAnimState = TRUE;
+            data->animStateTime = 0;
             data->unk341 = 0;
             data->unk340 = 0;
             data->unk34A = 0;
@@ -262,17 +261,18 @@ static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Cal
             if (obj->objhitInfo != NULL) {
                 obj->objhitInfo->unk_0x61 = 0;
             }
-        } else if (temp_v0_2 < 0) {
-            var_s7 = 1;
-            temp_v0_2 = -temp_v0_2;
-            if (temp_v0_2 != temp_v0) {
-                if (data->unk2FC != NULL) {
-                    data->unk2FC(obj, data);
-                    data->unk2FC = NULL;
+        } else if (nextState < 0) {
+            // Switch to next state (run asynchronously (i.e. on next tick))
+            asyncTransition = TRUE;
+            nextState = -nextState;
+            if (nextState != prevState) {
+                if (data->animExitAction != NULL) {
+                    data->animExitAction(obj, data);
+                    data->animExitAction = NULL;
                 }
-                data->unk26E = temp_v0;
-                data->unk272 = 1;
-                data->unk32C = 0;
+                data->prevAnimState = prevState;
+                data->enteredAnimState = TRUE;
+                data->animStateTime = 0;
                 data->unk341 = 0;
                 data->unk340 = 0;
                 data->unk34A = 0;
@@ -281,26 +281,27 @@ static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Cal
                     obj->objhitInfo->unk_0x61 = 0;
                 }
             }
-            data->unk26C = temp_v0_2;
-            var_s1 = 1;
+            data->animState = nextState;
+            stop = TRUE;
         } else {
-            var_s1 = 1;
+            stop = TRUE;
         }
-        var_s5 += 1;
-        if (var_s5 >= 0x100) {
-            var_s1 = 1;
+        transitionCount += 1;
+        // Bail after too many synchronous transitions
+        if (transitionCount >= 256) {
+            stop = TRUE;
         }
-    } while (var_s1 == 0);
-    data->unk26E = data->unk26C;
-    if (var_s7 == 0) {
-        data->unk272 = 0;
+    } while (!stop);
+    data->prevAnimState = data->animState;
+    if (!asyncTransition) {
+        data->enteredAnimState = FALSE;
     }
     if ((_bss_10 == 0) && !(data->unk340 & 1)) {
         sp50.unk1B = 0;
         data->unk33A = func_80024108(obj, data->unk298, arg2, &sp50);
         data->unk308 = 0;
-        for (var_v1 = 0; var_v1 < sp50.unk1B; var_v1++) {
-            data->unk308 |= 1 << sp50.unk13[var_v1];
+        for (i = 0; i < sp50.unk1B; i++) {
+            data->unk308 |= 1 << sp50.unk13[i];
         }
         func_80025780(obj, arg2, &sp50, NULL);
         data->flags &= ~0x10000;
@@ -312,58 +313,61 @@ static void dll_18_func_81C(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Cal
 }
 
 // offset: 0xB34 | func: 6
-static void dll_18_func_B34(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_Callback *arg3) {
-    s32 temp_v0;
-    s32 temp_v0_2;
-    s32 var_s1;
-    s32 var_s3;
-    u32 var_s5;
-    ObjFSA_Callback callback;
+static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *callbacks) {
+    s32 prevState;
+    s32 nextState;
+    s32 stop;
+    s32 transitionCount;
+    u32 asyncTransition;
+    ObjFSA_StateCallback callback;
 
-    var_s5 = 0;
-    var_s3 = 0;
-    if (data->unk268 != data->unk26A) {
-        data->unk273 = 1;
-        data->unk322 = 0;
+    asyncTransition = FALSE;
+    transitionCount = 0;
+    if (data->logicState != data->prevLogicState) {
+        data->enteredLogicState = TRUE;
+        data->logicStateTime = 0;
     }
     do {
-        temp_v0 = data->unk268;
-        var_s1 = 0;
-        callback = arg3[data->unk268];
-        temp_v0_2 = callback(obj, data, arg2);
-        if (temp_v0_2 > 0) {
-            data->unk26A = data->unk268;
-            data->unk268 = temp_v0_2 - 1;
-            data->unk273 = 1;
-            data->unk322 = 0;
-        } else if (temp_v0_2 < 0) {
-            temp_v0_2 = -temp_v0_2;
-            var_s5 = 1;
-            if (temp_v0_2 != temp_v0) {
-                data->unk26A = temp_v0;
-                data->unk273 = 1;
-                data->unk322 = 0;
+        prevState = data->logicState;
+        stop = FALSE;
+        callback = callbacks[data->logicState];
+        nextState = callback(obj, data, arg2);
+        if (nextState > 0) {
+            // Switch to next state (run synchronously)
+            data->prevLogicState = data->logicState;
+            data->logicState = nextState - 1;
+            data->enteredLogicState = TRUE;
+            data->logicStateTime = 0;
+        } else if (nextState < 0) {
+            // Switch to next state (run asynchronously (i.e. on next tick))
+            nextState = -nextState;
+            asyncTransition = TRUE;
+            if (nextState != prevState) {
+                data->prevLogicState = prevState;
+                data->enteredLogicState = TRUE;
+                data->logicStateTime = 0;
             } else {
-                data->unk273 = 0;
+                data->enteredLogicState = FALSE;
             }
-            data->unk268 = temp_v0_2;
-            var_s1 = 1;
+            data->logicState = nextState;
+            stop = TRUE;
         } else {
-            var_s1 = 1;
+            stop = TRUE;
         }
-        var_s3 += 1;
-        if (var_s3 >= 0x100) {
-            var_s1 = 1;
+        transitionCount += 1;
+        // Bail after too many synchronous transitions
+        if (transitionCount >= 256) {
+            stop = TRUE;
         }
-    } while (var_s1 == 0);
-    data->unk26A = data->unk268;
-    if (var_s5 == 0) {
-        data->unk273 = 0;
+    } while (!stop);
+    data->prevLogicState = data->logicState;
+    if (!asyncTransition) {
+        data->enteredLogicState = FALSE;
     }
 }
 
 // offset: 0xC84 | func: 7 | export: 7
-void dll_18_func_C84(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
+void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
     UnkFunc_80024108Struct sp34;
     s32 var_v1;
 
@@ -412,14 +416,14 @@ void dll_18_func_C84(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
 }
 
 // offset: 0xE60 | func: 8 | export: 8
-void dll_18_func_E60(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4) {
+void objfsa_func_E60(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4) {
     if (data->unk290 > 0.1f) {
         obj->srt.yaw += (((arg3 * arg2) / arg4) * 182.0f);
     }
 }
 
 // offset: 0xED4 | func: 9 | export: 9
-void dll_18_func_ED4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
+void objfsa_func_ED4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     f32 temp_fa0;
     f32 var_fv0;
 
@@ -437,7 +441,7 @@ void dll_18_func_ED4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0xF78 | func: 10 | export: 10
-void dll_18_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
+void objfsa_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     f32 temp_fa0;
     f32 var_fv0;
 
@@ -453,18 +457,18 @@ void dll_18_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x1008 | func: 11 | export: 11
-void dll_18_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
+void objfsa_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     f32 var_fv0;
     f32 var_fv1;
     s32 var_v1;
 
-    if (data->unk2C8 != NULL) {
-        if (data->unk2C8->parent == obj->parent) {
-            var_fv0 = data->unk2C8->srt.transl.x - obj->srt.transl.x;
-            var_fv1 = data->unk2C8->srt.transl.z - obj->srt.transl.z;
+    if (data->target != NULL) {
+        if (data->target->parent == obj->parent) {
+            var_fv0 = data->target->srt.transl.x - obj->srt.transl.x;
+            var_fv1 = data->target->srt.transl.z - obj->srt.transl.z;
         } else {
-            var_fv0 = obj->positionMirror.x - data->unk2C8->positionMirror.x;
-            var_fv1 = obj->positionMirror.z - data->unk2C8->positionMirror.z;
+            var_fv0 = obj->positionMirror.x - data->target->positionMirror.x;
+            var_fv1 = obj->positionMirror.z - data->target->positionMirror.z;
         }
         var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
         if (var_v1 >= 0x8001) {
@@ -478,7 +482,7 @@ void dll_18_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x1120 | func: 12 | export: 12
-void dll_18_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4) {
+void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4) {
     s32 temp_v0;
 
     temp_v0 = 1 << arg2;
@@ -489,7 +493,7 @@ void dll_18_func_1120(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
 }
 
 // offset: 0x11BC | func: 13 | export: 13
-void dll_18_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume) {
+void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume) {
     s32 temp_v0;
     u32 temp_v0_2;
 
@@ -504,14 +508,14 @@ void dll_18_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
 }
 
 // offset: 0x1280 | func: 14 | export: 14
-void dll_18_func_1280(Object *obj, ObjFSA_Data *data, s32 arg2) {
+void objfsa_func_1280(Object *obj, ObjFSA_Data *data, s32 arg2) {
     data->unk330 = gDLL_26_Curves->vtbl->curves_func_1e4(
         obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
         &arg2, 1, (s32) data->unk338);
 }
 
 // offset: 0x12F4 | func: 15 | export: 15
-void dll_18_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
+void objfsa_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     CurveSetup* temp_v0;
 
     if (data->unk330 == -1) {
@@ -523,17 +527,17 @@ void dll_18_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
         data->unk2B4 = 0.0f;
         return;
     }
-    dll_18_func_1F64(obj, data, temp_v0->base.x, temp_v0->base.z, arg2, 1);
+    objfsa_func_1F64(obj, data, temp_v0->base.x, temp_v0->base.z, arg2, 1);
     if (data->unk2B4 < 20.0f) {
-        dll_18_func_13E4(data, NULL);
+        objfsa_func_13E4(data, NULL);
     }
 }
 
 // offset: 0x13E4 | func: 16 | export: 22
-void dll_18_func_13E4(ObjFSA_Data *data, void *arg1) { }
+void objfsa_func_13E4(ObjFSA_Data *data, void *arg1) { }
 
 // offset: 0x13F4 | func: 17 | export: 16
-void dll_18_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
+void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     f32 var_fa0;
     f32 var_fa1;
     f32 sp2C;
@@ -552,9 +556,9 @@ void dll_18_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     } else {
         data->unk340 &= ~0x1;
     }
-    data->unk28C = sqrtf(SQ(obj->speed.x) + SQ(obj->speed.z));
-    if (data->unk28C < 0.04f) {
-        data->unk28C = 0.0f;
+    data->speed = sqrtf(SQ(obj->speed.x) + SQ(obj->speed.z));
+    if (data->speed < 0.04f) {
+        data->speed = 0.0f;
         obj->speed.x = 0.0f;
         obj->speed.z = 0.0f;
     }
@@ -565,22 +569,22 @@ void dll_18_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x15D0 | func: 18 | export: 17
-void dll_18_func_15D0(Object *obj, ObjFSA_Data *data) {
+void objfsa_func_15D0(Object *obj, ObjFSA_Data *data) {
     obj->speed.x = 0.0f;
     obj->speed.z = 0.0f;
-    data->unk28C = 0.0f;
+    data->speed = 0.0f;
     data->unk278 = 0.0f;
     data->unk27C = 0.0f;
 }
 
 // offset: 0x1600 | func: 19 | export: 18
-void dll_18_func_1600(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
+void objfsa_func_1600(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     _bss_14 = arg2;
     _bss_18 = arg3;
 }
 
 // offset: 0x162C | func: 20 | export: 19
-void dll_18_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
+void objfsa_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
     f32 sp34;
     f32 sp30;
     s32 var_a2;
@@ -618,7 +622,7 @@ void dll_18_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x1824 | func: 21 | export: 20
-void dll_18_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6) {
+void objfsa_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6) {
     DLL_18_UnknownDLL* temp_s3;
 
     temp_s3 = dll_load_deferred((arg2 + 0x1000), 1);
@@ -636,7 +640,7 @@ void dll_18_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 ar
 }
 
 // offset: 0x1978 | func: 22 | export: 21
-void dll_18_func_1978(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg4) {
+void objfsa_func_1978(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg4) {
     while ((arg3 != 0) && (obj != NULL)) {
         if (arg4 == 0) {
             gDLL_17->vtbl->func1(obj, arg2, NULL, 2, -1, NULL);
@@ -650,7 +654,7 @@ void dll_18_func_1978(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 ar
 }
 
 // offset: 0x1AC4 | func: 23
-static void dll_18_func_1AC4(Object *obj, ObjFSA_Data *data) {
+static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
     f32 temp_fv0;
     f32 temp_fv1;
     s32 var_v0;
@@ -697,7 +701,7 @@ static void dll_18_func_1AC4(Object *obj, ObjFSA_Data *data) {
 }
 
 // offset: 0x1C70 | func: 24
-static void dll_18_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
+static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
     SRT sp88;
     MtxF sp48;
     f32 sp44;
@@ -732,7 +736,7 @@ static void dll_18_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
 }
 
 // offset: 0x1E30 | func: 25
-static void dll_18_func_1E30(Object *obj, ObjFSA_Data *data) {
+static void objfsa_func_1E30(Object *obj, ObjFSA_Data *data) {
     MtxF sp50;
     SRT sp38;
 
@@ -751,7 +755,7 @@ static void dll_18_func_1E30(Object *obj, ObjFSA_Data *data) {
 }
 
 // offset: 0x1F64 | func: 26 | export: 5
-void dll_18_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
+void objfsa_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
     f32 temp_fv1;
     f32 temp_fa1;
     f32 var_ft4;
@@ -766,7 +770,7 @@ void dll_18_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 ar
     var_ft4 = 65.0f;
     if (data->unk2B4 < 15.0f) {
         var_ft4 = data->unk2B4 * 3.0f;
-        data->unk28C *= 0.9f;
+        data->speed *= 0.9f;
     }
     if (var_ft4 < temp) {
         temp /= var_ft4;
@@ -790,7 +794,7 @@ void dll_18_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 ar
 }
 
 // offset: 0x20CC | func: 27 | export: 6
-void dll_18_func_20CC(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
+void objfsa_func_20CC(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
     f32 temp_fv1;
     f32 temp_fa1;
     f32 temp_fv0;
@@ -807,7 +811,7 @@ void dll_18_func_20CC(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 ar
         data->unk288 = temp_fv1 * arg6;
         data->unk284 = -temp_fa1 * arg6;
     } else {
-        data->unk28C *= 0.9f;
+        data->speed *= 0.9f;
         data->unk288 = 0.0f;
         data->unk284 = 0.0f;
     }
