@@ -59,7 +59,7 @@ void cannon_claw_control(Object *self) {
 
 static void cannon_claw_func_1B4(Object *self) {
     self->unkDC = 1;
-    self->unkAF = self->unkAF | 8;    
+    self->unkAF |= 8;
     func_800267A4(self);
 }
 

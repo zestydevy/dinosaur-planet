@@ -518,7 +518,7 @@ void dll_210_control(Object* arg0) {
         return;
     }
 
-    if (get_masked_buttons(0) & 0x800) {
+    if (get_masked_buttons(0) & U_JPAD) {
         dll_210_func_1D07C(arg0, 1);
     }
     _bss_1AC = delayFloat;
@@ -541,12 +541,7 @@ void dll_210_control(Object* arg0) {
     if (arg0->parent != NULL) {
         var_v0 = (0x8000 - _bss_20C->srt.yaw);
         var_v0 = (arg0->parent->srt.yaw & 0xFFFF) - (var_v0 & 0xFFFF);
-        if (var_v0 >= 0x8001) {
-            var_v0 += 0xFFFF0001;
-        }
-        if (var_v0 < -0x8000) {
-            var_v0 += 0xFFFF;
-        }
+        CIRCLE_WRAP(var_v0)
         data->unk0.unk324 = var_v0 + 0x8000;
     } else {
         data->unk0.unk324 = _bss_20C->srt.yaw;
@@ -1849,26 +1844,11 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                 arg2->unk4C.y = arg0->srt.transl.y - arg1->srt.transl.y;
                 arg2->unk4C.z = arg0->srt.transl.z - arg1->srt.transl.z;
                 arg2->yawDiff = arg0->srt.yaw - (arg1->srt.yaw & 0xFFFF);
-                if (arg2->yawDiff >= 0x8001) {
-                    arg2->yawDiff += 0xFFFF0001;
-                }
-                if (arg2->yawDiff < -0x8000) {
-                    arg2->yawDiff += 0xFFFF;
-                }
+                CIRCLE_WRAP(arg2->yawDiff)
                 arg2->pitchDiff = arg0->srt.pitch - (arg1->srt.pitch & 0xFFFF);
-                if (arg2->pitchDiff >= 0x8001) {
-                    arg2->pitchDiff += 0xFFFF0001;
-                }
-                if (arg2->pitchDiff < -0x8000) {
-                    arg2->pitchDiff += 0xFFFF;
-                }
+                CIRCLE_WRAP(arg2->pitchDiff)
                 arg2->rollDiff = (arg1->srt.roll  & 0xFFFF) - (arg0->srt.roll & 0xFFFF);
-                if (arg2->rollDiff >= 0x8001) {
-                    arg2->rollDiff += 0xFFFF0001;
-                }
-                if (arg2->rollDiff < -0x8000) {
-                    arg2->rollDiff += 0xFFFF;
-                }
+                CIRCLE_WRAP(arg2->rollDiff)
                 arg2->unk62 = 2;
             }
             arg2->unk58 -= arg2->unk24 * delayFloat;
@@ -1890,12 +1870,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
             _bss_2 = arctan2_f(spB4, spB0);
             temp_fv0_4 = sqrtf(SQ(spB4) + SQ(spB0));
             arg2->yawDiff = _bss_2 - (arg0->srt.yaw & 0xFFFF);
-            if (arg2->yawDiff >= 0x8001) {
-                arg2->yawDiff += 0xFFFF0001;
-            }
-            if (arg2->yawDiff < -0x8000) {
-                arg2->yawDiff += 0xFFFF;
-            }
+            CIRCLE_WRAP(arg2->yawDiff)
             arg2->pitchDiff = -arctan2_f(spA4, temp_fv0_4);
             arg2->rollDiff = 0;
             arg2->unk58 = 0.0f;
@@ -1939,12 +1914,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                 temp_fv0_2 = arg2->unk58 - temp_fv0_2;
                 arg0->srt.yaw += (s16) (temp_fv0_2 * arg2->yawDiff);
                 temp_s0_2[1] = _bss_2 - (arg0->srt.yaw & 0xFFFF);
-                if (temp_s0_2[1] >= 0x8001) {
-                    temp_s0_2[1] += 0xFFFF0001;
-                }
-                if (temp_s0_2[1] < -0x8000) {
-                    temp_s0_2[1] += 0xFFFF;
-                }
+                CIRCLE_WRAP(temp_s0_2[1])
             } else {
                 _bss_0 |= func_800343B8((Unk80032CF8 *)&temp_fp->unk354, temp_s0_2, 100.0f, 2000.0f);
                 _bss_0 |= func_80034518((Unk80032CF8 *)&temp_fp->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
@@ -1977,18 +1947,8 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
             }
             if ((temp_fv0_4 <= sp9C) || (*temp_data_52C >= 6)) {
                 var_v0 = arg0->srt.yaw - (arg1->srt.yaw & 0xFFFF & 0xFFFF);
-                if (var_v0 >= 0x8001) {
-                    var_v0 += 0xFFFF0001;
-                }
-                if (var_v0 < -0x8000) {
-                    var_v0 += 0xFFFF;
-                }
-                if (var_v0 >= 0x4001) {
-                    var_v0 = 0x4000;
-                }
-                if (var_v0 < -0x4000) {
-                    var_v0 = -0x4000;
-                }
+                CIRCLE_WRAP(var_v0)
+                WRAP(var_v0 , -0x4000, 0x4000)
                 arg0->srt.yaw -= (var_v0 * delayByte) >> 3;
                 if (*temp_data_52C >= 7) {
                     var_v0 = 0;
@@ -2912,12 +2872,7 @@ s32 dll_210_func_7BC4(Object* arg0, Player_Data* arg1, u32* arg2, UnkArg4* arg3)
     arg3->unk0.z = arg0->srt.transl.y;
     arg3->unk0.x = arg3->unk1C.y - arg3->unk0.z;
     var_v1 = arg0->srt.yaw - (arg3->unk54 & 0xFFFF);
-    if (var_v1 >= 0x8001) {
-        var_v1 += 0xFFFF0001;
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v1)
     arg3->unk45 = !(var_v1 >= 0x3FFD) && !(var_v1 < -0x3FFC);
     return 1;
 }
@@ -4372,7 +4327,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
 
     if (gDLL_1_UI->vtbl->func6() != 0) {
         if (gDLL_1_UI->vtbl->func7(0x1EE) != 0) {
-            set_button_mask(0, 0x8000U);
+            set_button_mask(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
@@ -4411,7 +4366,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (gDLL_1_UI->vtbl->ui_func_f40.asVoidS32() == 0x387) {
         sp8C = gDLL_1_UI->vtbl->ui_func_e2c.withTwoArgsS32((s32)&sp38, 0x10);
         if (sp8C != -1 && (arg0->unkC4 == NULL)) {
-            set_button_mask(0, 0x8000U);
+            set_button_mask(0, A_BUTTON);
             arg0->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)spC4->unk85C->dll)->vtbl->func[20].withOneArgS32(sp8C);
             sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
@@ -4934,12 +4889,7 @@ s32 dll_210_func_D788(Object* arg0, Player_Data* arg1, f32 arg2) {
         break;
     default:
         temp_v0 = arctan2_f(temp_s0->unk490.unk1C.x, temp_s0->unk490.unk1C.z) - arg0->srt.yaw;
-        if (temp_v0 >= 0x8001) {
-            temp_v0 += 0xFFFF0001;
-        }
-        if (temp_v0 < -0x8000) {
-            temp_v0 += 0xFFFF;
-        }
+        CIRCLE_WRAP(temp_v0)
         if (temp_s0->unk490.unk47 == 1) {
             var_v0 = 0xA;
         } else {
@@ -5429,12 +5379,7 @@ s32 dll_210_func_F00C(Object* arg0, Player_Data* arg1, f32 arg2) {
             sp5C.w = objdata->unk3CC.unk28.w;
         }
         var_v1 = arctan2_f(sp5C.x, sp5C.z) - arg0->srt.yaw;
-        if (var_v1 >= 0x8001) {
-            var_v1 += 0xFFFF0001;
-        }
-        if (var_v1 < -0x8000) {
-            var_v1 += 0xFFFF;
-        }
+        CIRCLE_WRAP(var_v1)
         arg0->srt.yaw += var_v1;
         objdata->unk3CC.unk20 = arg0->srt.transl.x;
         objdata->unk3CC.unk24 = arg0->srt.transl.z;

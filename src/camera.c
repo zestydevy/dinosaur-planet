@@ -1586,13 +1586,7 @@ void func_800047C8(SRT *a, SRT *b, SRT *out)
         &out->transl.x, &out->transl.y, &out->transl.z);
 
     yaw = a->yaw - b->yaw;
-    if (yaw > 0x8000) {
-        yaw -= 0xffff;
-    }
-    if (yaw < -0x8000) {
-        yaw += 0xffff;
-    }
-
+    CIRCLE_WRAP(yaw)
     out->yaw = yaw;
     out->pitch = a->pitch;
     out->roll = a->roll;

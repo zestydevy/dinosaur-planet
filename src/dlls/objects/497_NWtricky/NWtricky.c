@@ -190,17 +190,17 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
                     objdata->demoState = STATE2_2;
                     break;
                 } else if (animObjData->unk8E[i] == 1)
-                    buttonMask = 0x4; // simulate C-Down press?
+                    buttonMask = D_CBUTTONS; // simulate C-Down press?
             }
-            buttonMask |= get_button_presses(0) & 0x4;
+            buttonMask |= get_button_presses(0) & D_CBUTTONS;
             break;
         case STATE2_2:
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 2)
-                    buttonMask = 0x8000; // simulate A press?
+                    buttonMask = A_BUTTON; // simulate A press?
             }
-            buttonMask |= get_button_presses(0) & 0x8000;
-            if (buttonMask & 0x8000) {
+            buttonMask |= get_button_presses(0) & A_BUTTON;
+            if (buttonMask & A_BUTTON) {
                 objdata->doneDemo = TRUE;
             }
             break;

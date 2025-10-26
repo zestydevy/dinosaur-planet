@@ -641,7 +641,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
         snowhorn->unkAF &= 0xFFFE;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->func17(objdata->flags, snowhorn, -1);
-            set_button_mask(0, 0x8000);
+            set_button_mask(0, A_BUTTON);
         }
     }
 
@@ -782,12 +782,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 player = get_player();
                 
                 var_v1 = (arctan2_f((player->positionMirror.x + (player->speed.x * 60.0f)) - self->positionMirror.x, (player->positionMirror.z + (player->speed.z * 60.0f)) - self->positionMirror.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
-                if (var_v1 >= 0x8001) {
-                    var_v1 += 0xFFFF0001;
-                }
-                if (var_v1 < -0x8000) {
-                    var_v1 += 0xFFFF;
-                }
+                CIRCLE_WRAP(var_v1)
                 
                 func_80023D30(self, 1, 0.0f, 0);
                 if ((var_v1 >= -0xBB7) && (var_v1 < 0xBB8)) {
