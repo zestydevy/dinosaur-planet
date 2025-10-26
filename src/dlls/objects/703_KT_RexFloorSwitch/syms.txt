@@ -1,0 +1,17 @@
+.text = 0x0:
+dll_703_ctor = 0x0;
+dll_703_dtor = 0xC;
+dll_703_setup = 0x18;
+dll_703_control = 0xA4;
+dll_703_update = 0x960;
+dll_703_print = 0x96C;
+dll_703_free = 0x9FC;
+dll_703_get_model_flags = 0xA58;
+dll_703_get_data_size = 0xA68;
+dll_703_func_A7C = 0xA7C;
+
+.rodata = 0xB84:
+str_0 = 0x0; // absolute:0xB84
+
+.data = 0xBB4:
+_data_0 = 0x0; // absolute:0xBB4

@@ -95,12 +95,17 @@ enum SoundID {
     SOUND_691_KT_Rex_Roar = 0x691,
 
     SOUND_693_Explosion = 0x693, // used by KT_Rex
+    SOUND_694_KT_Laserwall_PowerUp = 0x694, // used by KT_Lazerwall
+    SOUND_695_KT_Laserwall_Zap = 0x695, // used by KT_Lazerwall
+    SOUND_696_KT_Laserwall_PowerDown = 0x696, // used by KT_Lazerwall
 
-    SOUND_699 = 0x699,
+    SOUND_699_KT_RaisingFloorSwitches = 0x699,
 
     SOUND_6B5 = 0x6B5, // used by MediumCrate
     SOUND_6B6 = 0x6B6, // used by MediumCrate
     SOUND_6B7 = 0x6B7, // used by MediumCrate
+
+    SOUND_6E2 = 0x6E2, // used by KT_RexFloorSwitch
 
     SOUND_6EC_Mechanical_Hum_Loop = 0x6EC, // used in DLL 641
 

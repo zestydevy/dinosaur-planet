@@ -44,22 +44,24 @@ void KT_RexLevel_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
 // offset: 0x1FC | func: 1 | export: 1
 void KT_RexLevel_control(Object *self) {
-    s32 temp_v0;
+    s32 ktFightProgress;
 
     if (self->unkDC == 0) {
         main_set_bits(BIT_55E, 1);
         self->unkDC = 1;
     }
-    temp_v0 = main_get_bits(BIT_572_KT_FightProgress);
-    if (_bss_0 != (temp_v0 ^ 0)) {
-        if (temp_v0 & 1) {
+    ktFightProgress = main_get_bits(BIT_572_KT_FightProgress);
+    if (_bss_0 != (ktFightProgress ^ 0)) {
+        if (ktFightProgress & 1) {
+            // KTrex is doing a full charge around the arena
             main_set_bits(BIT_54A, 0);
             main_set_bits(BIT_54E, 0);
             main_set_bits(BIT_552, 0);
             main_set_bits(BIT_556, 0);
         } else {
+            // KTrex is back to his normal state, raise floor switches again
             main_set_bits(BIT_55C, 1);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_699, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_699_KT_RaisingFloorSwitches, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
     if (main_get_bits(BIT_55C)) {
@@ -76,7 +78,7 @@ void KT_RexLevel_control(Object *self) {
         }
         main_set_bits(BIT_55C, 0);
     }
-    _bss_0 = temp_v0;
+    _bss_0 = ktFightProgress;
 }
 
 // offset: 0x470 | func: 2 | export: 2
