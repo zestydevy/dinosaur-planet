@@ -127,8 +127,8 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     local4 = data_18;
 
     font_window_set_coords(2, 0, 0, 
-        (RESOLUTION_WIDTH(get_some_resolution_encoded())) - 50,
-        (RESOLUTION_HEIGHT(get_some_resolution_encoded())));
+        (GET_VIDEO_WIDTH(vi_get_current_size())) - 50,
+        (GET_VIDEO_HEIGHT(vi_get_current_size())));
     
     font_window_flush_strings(2);
     font_window_use_font(2, FONT_FUN_FONT);

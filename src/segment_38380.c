@@ -131,9 +131,9 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
 
     var1 = func_80004A4C();
 
-    resolution = get_some_resolution_encoded();
-    resWidth = RESOLUTION_WIDTH(resolution);
-    resHeight = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    resWidth = GET_VIDEO_WIDTH(resolution);
+    resHeight = GET_VIDEO_HEIGHT(resolution);
 
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, resWidth - 1, resHeight - 1);
 
@@ -191,8 +191,8 @@ void func_80037DB8(Gfx **gdl) {
     s32 resolution;
     s32 resWidth;
 
-    resolution = get_some_resolution_encoded();
-    resWidth = RESOLUTION_WIDTH(resolution);
+    resolution = vi_get_current_size();
+    resWidth = GET_VIDEO_WIDTH(resolution);
 
     if (gDLBuilder->needsPipeSync) {
         gDLBuilder->needsPipeSync = FALSE;
@@ -604,7 +604,7 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
     width = 320;
     height = 240;
     
-    fbPtr = get_framebuffer_end();
+    fbPtr = vi_get_framebuffer_end();
     
     chunkSize = 6;
     
@@ -693,9 +693,9 @@ void func_800390A4(Gfx** arg0, Unk2* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
     Unk2* var_s7;
 
     spA8 = *arg0;
-    resolution = get_some_resolution_encoded();
-    height = ((u16)RESOLUTION_HEIGHT(resolution)) * 4;
-    width = RESOLUTION_WIDTH(resolution) * 4;
+    resolution = vi_get_current_size();
+    height = ((u16)GET_VIDEO_HEIGHT(resolution)) * 4;
+    width = GET_VIDEO_WIDTH(resolution) * 4;
     if (arg11 & 0x4000) {
         temp_s0 = &D_80091868[(arg11 & 0xFF) * 3];
     } else {

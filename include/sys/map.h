@@ -514,7 +514,7 @@ void func_80058F3C(void);
 void func_800143A4(void);
 void func_8001EB80(void);
 s32 func_80010048(void);
-void some_video_setup(s32 param1);
+void vi_some_video_setup(s32 param1);
 void func_80012B54(s32 param1, s32 param2);
 void func_800307C4(f32, f32);
 s32 func_80000608(Object*, Object*, u16, s8, s32, s32);

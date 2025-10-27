@@ -99,7 +99,7 @@ void start_controller_thread(OSSched *scheduler) {
         /*count*/   CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH
     );
 
-    osScAddClient(scheduler, &gContSchedulerClient, &gContThreadMesgQueue, 2);
+    osScAddClient(scheduler, &gContSchedulerClient, &gContThreadMesgQueue, OS_SC_ID_VIDEO);
 
     osCreateMesgQueue(
         /*mq*/      &gContThreadInputsAppliedQueue,

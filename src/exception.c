@@ -344,7 +344,7 @@ void check_video_mode_crash_and_clear_framebuffer() {
     D_800937F0 = 0;
 
     // Set a video crash flag if video mode is between 4-6
-    if (get_video_mode() > 3 && get_video_mode() < 7) {
+    if (vi_get_mode() > 3 && vi_get_mode() < 7) {
         gSomeCrashVideoFlag = 1;
     } else {
         gSomeCrashVideoFlag = 0;
@@ -373,7 +373,7 @@ void func_80062D38(s32 col, s32 row, char *param3) {
     u16 *pixelPtr;
     char c;
 
-    res = get_some_resolution_encoded();
+    res = vi_get_current_size();
     resWidth = res & 0xffff;
     fb = &gFramebufferCurrent[(row * resWidth) + col];
     someArray = &D_800933C4[D_800937F0 << 2];
@@ -500,8 +500,8 @@ static const char str_8009b660[] = "%s:%d\n";
  * Sets all values of gFramebufferCurrent to 0.
  */
 void clear_framebuffer_current() {
-    u32 resEncoded = get_some_resolution_encoded();
-    s32 valuesLeft = (/*hRes*/resEncoded & 0xffff) * (/*vRes*/(resEncoded >> 0x10) & 0xffff);
+    u32 resEncoded = vi_get_current_size();
+    s32 valuesLeft = GET_VIDEO_WIDTH(resEncoded) * (GET_VIDEO_HEIGHT(resEncoded) & 0xffff);
     u16 *framebufferPtr = gFramebufferCurrent;
 
     while (valuesLeft--) {

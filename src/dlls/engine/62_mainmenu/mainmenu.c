@@ -161,7 +161,7 @@ s32 mainmenu_update(void) {
     if (nextMenuID) {
         if (prevExitTransitionTimer > MENU_TRANSITION_THRESHOLD && sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
             //Change resolution for game select
-            func_8005D410(14, get_ossched(), 0);
+            vi_init(14, get_ossched(), FALSE);
             mainmenu_clean_up();
             func_80041D20(0);
             func_80041C6C(0);
@@ -233,7 +233,7 @@ void mainmenu_func_764(void){
 // offset: 0x76C | func: 2 | export: 2
 void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     if (!nextMenuID || sExitTransitionTimer >= (MENU_TRANSITION_THRESHOLD - 1)) {
-        font_window_set_coords(1, 0, 0, RESOLUTION_WIDTH(get_some_resolution_encoded()), RESOLUTION_HEIGHT(get_some_resolution_encoded()));
+        font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
         font_window_flush_strings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
         if (func_80014C60()) {

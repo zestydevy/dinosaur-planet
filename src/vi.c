@@ -28,36 +28,35 @@ static const char str_8009ace0[] = "320 by 240 Anti-aliased, Non interlaced.\n";
 static const char str_8009ad0c[] = "640 by 480 Anti-aliased, Interlaced, De-flickered.\n";
 static const char str_8009ad40[] = "vi sizes %d %d %d %d  w %d h %d\n";
 
-void func_8005D9D8();
-void set_video_mode(s32 mode);
-void initialize_framebuffers(int someBool, s32 width, s32 height);
-void swap_framebuffer_pointers();
-void set_custom_vi_mode();
-void func_8005DEE8();
-int is_size_smaller_than_resolution(s32 width, s32 height);
+void vi_reset_update_rate(void);
+void vi_set_mode(s32 mode);
+void vi_init_framebuffers(int someBool, s32 width, s32 height);
+void vi_swap_buffers(void);
+void vi_update_mode(void);
+void vi_func_8005DEE8(void);
+int vi_contains_point(s32 x, s32 y);
 
 extern OSIoMesg D_800BCC90;
 extern OSDevMgr __osViDevMgr;
 extern s8 D_80093064;
 
-// viInit (see https://github.com/DavidSM64/Diddy-Kong-Racing/blob/aacc45612e4235da67137355bd8d6e1f345d1e04/src/video.c#L59)
-void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
+void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     int i;
     u32 width;
     u32 height;
     
     if (osTvType == OS_TV_PAL) {
         gDisplayHertz = REFRESH_50HZ;
-        aspectRatioFloat = ASPECT_RATIO_PAL;
-        D_800BCCB8 = HEIGHT_RATIO_PAL;
+        gAspectRatio = ASPECT_RATIO_PAL;
+        gViHeightRatio = HEIGHT_RATIO_PAL;
     } else if (osTvType == OS_TV_MPAL) {
         gDisplayHertz = REFRESH_60HZ;
-        aspectRatioFloat = ASPECT_RATIO_MPAL;
-        D_800BCCB8 = HEIGHT_RATIO_MPAL;
+        gAspectRatio = ASPECT_RATIO_MPAL;
+        gViHeightRatio = HEIGHT_RATIO_MPAL;
     } else {
         gDisplayHertz = REFRESH_60HZ;
-        aspectRatioFloat = ASPECT_RATIO_NTSC;
-        D_800BCCB8 = HEIGHT_RATIO_NTSC;
+        gAspectRatio = ASPECT_RATIO_NTSC;
+        gViHeightRatio = HEIGHT_RATIO_NTSC;
     }
 
     if (someBool && osTvType == OS_TV_PAL) {
@@ -66,16 +65,16 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
         }
     }
 
-    func_8005D9D8();
+    vi_reset_update_rate();
 
-    set_video_mode(videoMode);
+    vi_set_mode(videoMode);
 
     gFramebufferPointers[0] = NULL;
     gFramebufferPointers[1] = NULL;
 
     if (someBool) {
-        osCreateMesgQueue(&OSMesgQueue_800bcce0, &D_800bccc0[0], 8);
-        osScAddClient(scheduler, &D_800bce60, &OSMesgQueue_800bcce0, 2);
+        osCreateMesgQueue(&gVideoMesgQueue, D_800bccc0, ARRAYCOUNT(D_800bccc0));
+        osScAddClient(scheduler, &gVideoSched, &gVideoMesgQueue, OS_SC_ID_VIDEO);
     }
 
     width = 320;
@@ -86,14 +85,14 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
         height = 480;
     }
 
-    initialize_framebuffers(someBool, width, height);
+    vi_init_framebuffers(someBool, width, height);
 
     gFramebufferChoice = 1;
 
-    swap_framebuffer_pointers();
-    set_custom_vi_mode();
+    vi_swap_buffers();
+    vi_update_mode();
 
-    D_800BCE14 = 0xc;
+    gViBlackTimer = 0xc;
 
     osViBlack(TRUE);
 
@@ -110,32 +109,32 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE20 = 0;
     D_800BCE22[0] = 0;
     D_800BCE22[1] = 0;
-    gMinUpdateRate = 1;
+    gViUpdateRateTarget = 1;
 }
 
 /**
  * Sets gVideoMode.
  */
-void set_video_mode(s32 mode) {
+void vi_set_mode(s32 mode) {
     gVideoMode = mode;
 }
 
 /**
  * Returns gVideoMode.
  */
-s32 get_video_mode() {
+s32 vi_get_mode() {
     return gVideoMode;
 }
 
-OSMesgQueue *get_addr_of_OSMesgQueue_8005D670() {
-    return &OSMesgQueue_800bcce0;
+OSMesgQueue *vi_get_mesg_queue() {
+    return &gVideoMesgQueue;
 }
 
 /**
  * Sets gCurrentResolution*[framebufferIndex] to the resolution
  * specified by gVideoMode from gResolutionArray.
  */
-void set_current_resolution_from_video_mode(int framebufferIndex) {
+void vi_update_fb_size_from_current_mode(int framebufferIndex) {
     // Note: framebufferIndex was decided on because another function calls this
     //       with gFramebufferChoice (which is either 0 or 1 presumably) and
     //       gCurrentResolutionH and gCurrentResolutionV both conveniently contain
@@ -149,7 +148,7 @@ void set_current_resolution_from_video_mode(int framebufferIndex) {
  *
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-u32 get_some_resolution_encoded(void) {
+u32 vi_get_current_size(void) {
     s32 var1;
     int flag;
 
@@ -172,65 +171,59 @@ u32 get_some_resolution_encoded(void) {
  *
  * Note: The resolution is found by gCurrentResolution*[gFramebufferChoice < 1]
  */
-u32 get_other_resolution_encoded() {
+u32 vi_get_backbuffer_size(void) {
     return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) |
             gCurrentResolutionH[gFramebufferChoice < 1];
 }
 
-void set_custom_vi_mode() {
-    u8 viLpn;
+void vi_update_mode(void) {
+    u8 viModeTableIndex;
     OSViMode *viMode;
 
-    // Determine VI LPN from TV type
-    viLpn = OS_VI_NTSC_LPN1;
-
+    // Determine VI mode from video mode and TV type
+    viModeTableIndex = OS_VI_NTSC_LPN1;
     if (osTvType == OS_TV_PAL) {
-        viLpn = OS_VI_PAL_LPN1;
+        viModeTableIndex = OS_VI_PAL_LPN1;
     } else if (osTvType == OS_TV_MPAL) {
-        viLpn = OS_VI_MPAL_LPN1;
+        viModeTableIndex = OS_VI_MPAL_LPN1;
     }
 
-    // Determine VI mode from video mode and VI LPN
     switch (gVideoMode & 0x7) {
         case 0x1:
         default:
-            viMode = &osViModeTable[2 + viLpn];
+            viMode = &osViModeTable[2 + viModeTableIndex];
             break;
         case 0x6:
-            viMode = &osViModeTable[11 + viLpn];
+            viMode = &osViModeTable[11 + viModeTableIndex];
             break;
     }
 
-    // Set gOSViModeCustom to the chosen VI mode
-    bcopy(
-        viMode,
-        &gOSViModeCustom,
-        sizeof(OSViMode)
-    );
+    // Copy VI mode so we can make adjustments
+    bcopy(viMode, &gTvViMode, sizeof(OSViMode));
 
     // Make PAL-specific vStart adjustments
     if (osTvType == OS_TV_PAL) {
-        gOSViModeCustom.fldRegs[0].vStart -= 0x180000;
-        gOSViModeCustom.fldRegs[1].vStart -= 0x180000;
-        gOSViModeCustom.fldRegs[0].vStart += 0x10;
-        gOSViModeCustom.fldRegs[1].vStart += 0x10;
+        gTvViMode.fldRegs[0].vStart -= (PAL_HEIGHT_DIFFERENCE << 16);
+        gTvViMode.fldRegs[1].vStart -= (PAL_HEIGHT_DIFFERENCE << 16);
+        gTvViMode.fldRegs[0].vStart += 16;
+        gTvViMode.fldRegs[1].vStart += 16;
     }
 
-    gOSViModeCustom.fldRegs[0].vStart += gVScaleMod * 0x20000;
-    gOSViModeCustom.fldRegs[1].vStart += gVScaleMod * 0x20000;
-    gOSViModeCustom.fldRegs[0].vStart += gVScaleMod * 0x2;
-    gOSViModeCustom.fldRegs[1].vStart += gVScaleMod * 0x2;
-    gOSViModeCustom.comRegs.hStart += gHStartMod * 0x20000;
-    gOSViModeCustom.comRegs.hStart += gHStartMod * 0x2;
+    gTvViMode.fldRegs[0].vStart += gVScaleMod * 0x20000;
+    gTvViMode.fldRegs[1].vStart += gVScaleMod * 0x20000;
+    gTvViMode.fldRegs[0].vStart += gVScaleMod * 0x2;
+    gTvViMode.fldRegs[1].vStart += gVScaleMod * 0x2;
+    gTvViMode.comRegs.hStart += gHStartMod * 0x20000;
+    gTvViMode.comRegs.hStart += gHStartMod * 0x2;
 
     // Use the custom VI mode and set some special features
-    osViSetMode(&gOSViModeCustom);
+    osViSetMode(&gTvViMode);
     osViSetSpecialFeatures(OS_VI_DIVOT_ON);
     osViSetSpecialFeatures(OS_VI_DITHER_FILTER_ON);
     osViSetSpecialFeatures(OS_VI_GAMMA_OFF);
 }
 
-void initialize_framebuffers(int someBool, s32 width, s32 height) {
+void vi_init_framebuffers(int someBool, s32 width, s32 height) {
     VideoResolution *resPtr;
     u32 hRes;
     u32 vRes;
@@ -271,62 +264,62 @@ void initialize_framebuffers(int someBool, s32 width, s32 height) {
     }
 }
 
-void func_8005D9D8() {
+void vi_reset_update_rate(void) {
     D_800BCE58 = 0;
-    gTargetUpdateRate = 2;
-    gMinUpdateRate = 1;
+    gViUpdateRate = 2;
+    gViUpdateRateTarget = 1;
 }
 
-void func_8005DA00(u32 param1) {
-    gMinUpdateRate = param1;
+void vi_set_update_rate_target(u32 target) {
+    gViUpdateRateTarget = target;
 }
 
-s32 video_func_returning_delay(s32 param1) {
+s32 vi_frame_sync(s32 param1) {
     s32 updateRate;
     s32 vidMode;
 
     updateRate = 1;
 
-    if (D_800BCE14 != 0) {
-        D_800BCE14 -= 1;
+    if (gViBlackTimer != 0) {
+        gViBlackTimer -= 1;
 
-        if (D_800BCE14 == 0) {
+        if (gViBlackTimer == 0) {
             osViBlack(FALSE);
         }
     }
 
     if (param1 != 8) {
-        swap_framebuffer_pointers();
+        vi_swap_buffers();
     }
 
-    while (osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_NOBLOCK) != -1) {
+    while (osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_NOBLOCK) != -1) {
         updateRate += 1;
     }
 
-    gTargetUpdateRate = updateRate;
+    gViUpdateRate = updateRate;
 
-    if (gTargetUpdateRate < gMinUpdateRate) {
-        gTargetUpdateRate = gMinUpdateRate;
+    if (gViUpdateRate < gViUpdateRateTarget) {
+        gViUpdateRate = gViUpdateRateTarget;
     }
 
-    while (updateRate < gTargetUpdateRate) {
-        osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_BLOCK);
+    while (updateRate < gViUpdateRate) {
+        osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_BLOCK);
         updateRate++;
     }
 
     if (D_80093060 != 0) {
-        vidMode = get_video_mode();
+        vidMode = vi_get_mode();
 
         if (D_80093060 == 3) {
-            set_video_mode(vidMode);
-            set_current_resolution_from_video_mode(gFramebufferChoice);
+            vi_set_mode(vidMode);
+            vi_update_fb_size_from_current_mode(gFramebufferChoice);
             osViSwapBuffer(gFramebufferCurrent);
         } else if (D_80093060 == 2) {
-            set_current_resolution_from_video_mode(gFramebufferChoice);
+            vi_update_fb_size_from_current_mode(gFramebufferChoice);
             osViSwapBuffer(gFramebufferCurrent);
         } else {
             D_800BCC90.hdr.type = 0x11;
-            D_800BCC90.hdr.retQueue = (OSMesgQueue*)&gOSViModeCustom;
+            D_800BCC90.hdr.retQueue = (OSMesgQueue*)&gTvViMode;
             osSendMesg(__osViDevMgr.evtQueue, &D_800BCC90, OS_MESG_BLOCK);
             osViSwapBuffer(gFramebufferCurrent);
             D_80093064 ^= 1;
@@ -344,18 +337,18 @@ s32 video_func_returning_delay(s32 param1) {
     }
 
     signal_apply_controller_inputs();
-    func_8005DEE8();
-    osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_BLOCK);
+    vi_func_8005DEE8();
+    osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_BLOCK);
 
     return updateRate;
 }
 
-void func_8005DC68() {}
+void vi_func_8005DC68(void) {}
 
-void func_8005DC70(int _) {}
+void vi_func_8005DC70(int _) {}
 
-s32 func_8005DC7C() {
-    return (s32)((f32)gDisplayHertz / (f32)gTargetUpdateRate);
+s32 vi_get_current_frame_rate(void) {
+    return (s32)((f32)gDisplayHertz / (f32)gViUpdateRate);
 }
 
 /**
@@ -363,7 +356,7 @@ s32 func_8005DC7C() {
  *
  * Uses gFramebufferChoice to keep track of the index for the next framebuffer to swap to.
  */
-void swap_framebuffer_pointers() {
+void vi_swap_buffers(void) {
     // Set the current framebuffer to the one last chosen for framebufferNext (see below)
     gFramebufferCurrent = gFramebufferPointers[gFramebufferChoice];
 
@@ -384,24 +377,25 @@ void swap_framebuffer_pointers() {
     D_800BCCB0 = gFramebufferStart; // D_800BCCB0 = &framebufferCurrent+4
 }
 
+// TODO: these function names are not right
 /**
  * Returns gFramebufferStart.
  */
-u16 *get_framebuffer_start() {
+u16 *vi_get_framebuffer_start() {
     return gFramebufferStart;
 }
 
 /**
  * Returns gFramebufferEnd.
  */
-u16 *get_framebuffer_end() {
+u16 *vi_get_framebuffer_end() {
     return gFramebufferEnd;
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/vi/func_8005DD4C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/vi/vi_func_8005DD4C.s")
 #else
-s32 func_8005DD4C(s32 arg0, s32 arg1, s32 arg2) {
+s32 vi_func_8005DD4C(s32 x, s32 y, s32 arg2) {
     s32 sp2C;
     s32 var_v1;
     Vec3s32* sp24;
@@ -421,10 +415,10 @@ s32 func_8005DD4C(s32 arg0, s32 arg1, s32 arg2) {
     sp24 = D_800BCE18[D_800BCE20];
     sp24[*sp1C].z = arg2;
     sp24[*sp1C].x = 0;
-    if (is_size_smaller_than_resolution(arg0, arg1) == 0) {
+    if (vi_contains_point(x, y) == 0) {
         temp_t6 = -1;
     } else {
-        temp_t6 = (gCurrentResolutionH[gFramebufferChoice] * arg1) + arg0;
+        temp_t6 = (gCurrentResolutionH[gFramebufferChoice] * y) + x;
     }
 
     sp24[*sp1C].y = temp_t6;
@@ -434,18 +428,16 @@ s32 func_8005DD4C(s32 arg0, s32 arg1, s32 arg2) {
 #endif
 
 /**
- * Returns whether the given width and height is smaller than the current framebuffer's resolution.
- *
- * Note: Both width AND height must be smaller for this to return true.
+ * Whether a 2D point is within the current framebuffer's bounds.
  */
-int is_size_smaller_than_resolution(s32 width, s32 height) {
-    return width >= 0
-        && (u32)width < gCurrentResolutionH[gFramebufferChoice]
-        && height >= 0
-        && (u32)height < gCurrentResolutionV[gFramebufferChoice];
+int vi_contains_point(s32 x, s32 y) {
+    return x >= 0
+        && (u32)x < gCurrentResolutionH[gFramebufferChoice]
+        && y >= 0
+        && (u32)y < gCurrentResolutionV[gFramebufferChoice];
 }
 
-void func_8005DEE8(void) {
+void vi_func_8005DEE8(void) {
     s32 i;
     u8 new_var;
     s32 new_var2;
@@ -479,77 +471,72 @@ void func_8005DEE8(void) {
 /**
  * Note: param1 is most likely a boolean
  */
-void some_video_setup(s32 param1) {
+void vi_some_video_setup(s32 param1) {
     if (param1) {
-        set_video_mode(7);
-        initialize_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
+        vi_set_mode(7);
+        vi_init_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
 
-        set_custom_vi_mode();
-        D_800BCE14 = 0xc;
+        vi_update_mode();
+        gViBlackTimer = 12;
         osViBlack(TRUE);
         D_800BCE58 = 0;
         D_800BCE2C = 0x5;
     } else {
-        set_video_mode(1);
-        initialize_framebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
+        vi_set_mode(1);
+        vi_init_framebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
 
-        set_custom_vi_mode();
-        D_800BCE14 = 0xc;
+        vi_update_mode();
+        gViBlackTimer = 12;
         osViBlack(TRUE);
         D_800BCE58 = 0;
         D_800BCE2C = 0x5;
     }
 }
 
-void modify_vi_mode(u8 a0, s8 hStartMod, s8 vScaleMod) {
-    u8 viLpn;
+void vi_set_modifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod) {
+    u8 viModeTableIndex;
     OSViMode *viMode;
 
     gHStartMod = hStartMod;
     gVScaleMod = vScaleMod;
 
-    // If a0 is 0, don't set custom vi mode
-    if (a0 == 0) {
+    // Only update modifiers if not set
+    if (!updateViMode) {
         return;
     }
 
-    // Determine VI LPN from TV type
+    // Determine VI mode from video mode and TV type
     if (osTvType == OS_TV_PAL) {
-        viLpn = OS_VI_PAL_LPN1;
+        viModeTableIndex = OS_VI_PAL_LPN1;
     } else if (osTvType == OS_TV_MPAL) {
-        viLpn = OS_VI_MPAL_LPN1;
+        viModeTableIndex = OS_VI_MPAL_LPN1;
     } else {
-        viLpn = OS_VI_NTSC_LPN1;
+        viModeTableIndex = OS_VI_NTSC_LPN1;
     }
 
-    // Determine VI mode from video mode and VI LPN
-    if (gVideoMode == OS_VI_PAL_LPN1 /*0xe*/) {
-        viMode = &osViModeTable[11 + viLpn];
+    if (gVideoMode == 14) {
+        viMode = &osViModeTable[11 + viModeTableIndex];
     } else {
-        viMode = &osViModeTable[2 + viLpn];
+        viMode = &osViModeTable[2 + viModeTableIndex];
     }
 
-    // Set gOSViModeCustom to the chosen VI mode
-    bcopy(
-        viMode,
-        &gOSViModeCustom,
-        sizeof(OSViMode)
-    );
+    // Copy VI mode so we can make adjustments
+    bcopy(viMode, &gTvViMode, sizeof(OSViMode));
 
     // Make PAL-specific vStart adjustments
     if (osTvType == OS_TV_PAL) {
-        gOSViModeCustom.fldRegs[0].vStart -= 0x180000;
-        gOSViModeCustom.fldRegs[1].vStart -= 0x180000;
-        gOSViModeCustom.fldRegs[0].vStart += 0x10;
-        gOSViModeCustom.fldRegs[1].vStart += 0x10;
+        gTvViMode.fldRegs[0].vStart -= (PAL_HEIGHT_DIFFERENCE << 16);
+        gTvViMode.fldRegs[1].vStart -= (PAL_HEIGHT_DIFFERENCE << 16);
+        gTvViMode.fldRegs[0].vStart += 16;
+        gTvViMode.fldRegs[1].vStart += 16;
     }
 
-    gOSViModeCustom.fldRegs[0].vStart += gVScaleMod * 0x20000;
-    gOSViModeCustom.fldRegs[1].vStart += gVScaleMod * 0x20000;
-    gOSViModeCustom.fldRegs[0].vStart += gVScaleMod * 0x2;
-    gOSViModeCustom.fldRegs[1].vStart += gVScaleMod * 0x2;
-    gOSViModeCustom.comRegs.hStart += gHStartMod * 0x20000;
-    gOSViModeCustom.comRegs.hStart += gHStartMod * 0x2;
+    gTvViMode.fldRegs[0].vStart += gVScaleMod * 0x20000;
+    gTvViMode.fldRegs[1].vStart += gVScaleMod * 0x20000;
+    gTvViMode.fldRegs[0].vStart += gVScaleMod * 0x2;
+    gTvViMode.fldRegs[1].vStart += gVScaleMod * 0x2;
+    gTvViMode.comRegs.hStart += gHStartMod * 0x20000;
+    gTvViMode.comRegs.hStart += gHStartMod * 0x2;
 
     D_80093060 = 3;
 }

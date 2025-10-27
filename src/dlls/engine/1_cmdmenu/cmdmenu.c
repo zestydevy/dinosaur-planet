@@ -727,8 +727,8 @@ void dll_1_func_3AB0(void) {
 void dll_1_func_474C(Gfx** gfx) {
     s32 resolution;
 
-    resolution = get_some_resolution_encoded();
-    gDPSetScissor((*gfx)++, 0 , 0, 0, RESOLUTION_WIDTH(resolution), RESOLUTION_HEIGHT(resolution))
+    resolution = vi_get_current_size();
+    gDPSetScissor((*gfx)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution))
 }
 
 // offset: 0x47E8 | func: 33

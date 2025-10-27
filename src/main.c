@@ -331,7 +331,7 @@ void game_tick(void) {
         func_80001A3C();
     }
 
-    gUpdateRate = video_func_returning_delay(0);
+    gUpdateRate = vi_frame_sync(0);
     
     if (0) {}
 
@@ -389,7 +389,7 @@ void game_tick_no_expansion(void) {
     func_80037924();
     mmFreeTick();
 
-    gUpdateRate = video_func_returning_delay(0);
+    gUpdateRate = vi_frame_sync(0);
     updateRate = (u8)gUpdateRate;
     if ((s32)updateRate > 6) {
         gUpdateRate = 6;
@@ -459,7 +459,7 @@ void func_80013D80(void) {
 }
 
 void func_80013FB4(void) {
-    func_8005D410(OS_VI_PAL_LPN1, NULL, FALSE);
+    vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
     func_80041D20(0);
     func_80041C6C(0);
     gDLL_5_AMSEQ->vtbl->func6(3);

@@ -480,7 +480,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
             camera_set_aspect(1.3333334f);
         }
         func_80001D58(get_camera_selector(), 0U);
-        some_video_setup(0);
+        vi_some_video_setup(0);
         UINT_80092a98 &= ~0x10000;
     }
     if (UINT_80092a98 & 0x10) {

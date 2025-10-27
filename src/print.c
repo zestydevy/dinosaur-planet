@@ -298,11 +298,11 @@ int sprintf(char *str, const char *fmt, ...) {
 void diPrintfInit() {
     u32 fbRes;
 
-    fbRes = get_some_resolution_encoded();
-    if (RESOLUTION_WIDTH(fbRes) > 320) {
+    fbRes = vi_get_current_size();
+    if (GET_VIDEO_WIDTH(fbRes) > 320) {
         D_800931AC = 1;
     }
-    if (RESOLUTION_HEIGHT(fbRes) > 240) {
+    if (GET_VIDEO_HEIGHT(fbRes) > 240) {
         D_800931B0 = 1;
     }
 
@@ -339,9 +339,9 @@ void diPrintfAll(Gfx **gdl) {
     char *buffer;
     u32 fbRes;
 
-    fbRes = get_some_resolution_encoded();
-    D_800BEB02 = RESOLUTION_HEIGHT(fbRes);
-    D_800BEB00 = RESOLUTION_WIDTH(fbRes);
+    fbRes = vi_get_current_size();
+    D_800BEB02 = GET_VIDEO_HEIGHT(fbRes);
+    D_800BEB00 = GET_VIDEO_WIDTH(fbRes);
 
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, D_800BEB00, D_800BEB02);
 

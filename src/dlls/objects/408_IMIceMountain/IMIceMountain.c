@@ -93,7 +93,7 @@ void IMIceMountain_control(Object *self) {
     IMIceMountain_Data *objdata;
 
     objdata = self->data;
-    func_8005DA00(1);
+    vi_set_update_rate_target(1); // 60 FPS
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
         IMIceMountain_do_act1(self);
@@ -232,7 +232,7 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
     Object *snowbike;
 
     gDLL_1_UI->vtbl->ui_func_2b8(7);
-    func_8005DA00(3);
+    vi_set_update_rate_target(3); // 20 FPS
     if (main_get_bits(BIT_IM_Race_Ended)) {
         main_set_bits(BIT_IM_Race_Ended, 0);
         main_set_bits(BIT_IM_Race_Started, 0);

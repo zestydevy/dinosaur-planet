@@ -109,7 +109,7 @@ extern Texture *D_800BCC70;
 extern u8 D_800BCC78;
 extern f32 D_800BCC80[2];
 
-extern OSViMode gOSViModeCustom;
+extern OSViMode gTvViMode;
 
 extern u16 *gFramebufferNext;
 extern u16 *gFramebufferCurrent;
@@ -151,52 +151,58 @@ extern s32 gPossiblyScreenWidthOrHeight;
  */
 extern int gSomeVideoFlag;
 
-extern f32 D_800BCCB8;
+extern f32 gViHeightRatio;
 
 extern s8 gVScaleMod;
 extern s8 gHStartMod;
 
 extern OSMesg D_800bccc0[8];
-extern OSMesgQueue OSMesgQueue_800bcce0;
+extern OSMesgQueue gVideoMesgQueue;
 
-extern u32 D_800BCE14;
+extern u32 gViBlackTimer;
 extern s32 gDisplayHertz;
 extern u8 D_800BCE2C;
 
-extern u8 gMinUpdateRate;
+extern u8 gViUpdateRateTarget;
 extern u8 D_800BCE58;
-extern u8 gTargetUpdateRate;
+extern u8 gViUpdateRate;
 
 extern u8 *D_800BCE18[];
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 D_800BCE22[2];
 
-extern float aspectRatioFloat; //1.121212 for PAL, 1.333 for NTSC/MPAL.
+extern float gAspectRatio; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
-extern OSScClient D_800bce60;
+extern OSScClient gVideoSched;
 
-void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool);
+void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool);
 
 /**
  * Returns gVideoMode.
  */
-s32 get_video_mode();
+s32 vi_get_mode();
 
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  *
  * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
  */
-u32 get_some_resolution_encoded(void);
+u32 vi_get_current_size(void);
 
-u16 *get_framebuffer_end();
+u16 *vi_get_framebuffer_end();
 
-void func_8005DA00(u32 param1);
+void vi_set_update_rate_target(u32 target);
 
-s32 video_func_returning_delay(s32);
+s32 vi_frame_sync(s32);
 
-#define RESOLUTION_WIDTH(encoded) (encoded & 0xFFFF)
-#define RESOLUTION_HEIGHT(encoded) (encoded >> 16)
+/**
+ * The video width is the lower 16 bits of the returned 32 bit value
+ */
+#define GET_VIDEO_WIDTH(width_and_height) (width_and_height & 0xFFFF)
+/**
+ * The video width is the higher 16 bits of the returned 32 bit value
+ */
+#define GET_VIDEO_HEIGHT(width_and_height) (width_and_height >> 16)
 
 void func_8005CA5C(u32 param1);
 

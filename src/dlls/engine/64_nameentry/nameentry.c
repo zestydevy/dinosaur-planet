@@ -146,8 +146,8 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 lry;
     
     font_window_set_coords(1, 0, 0, 
-        RESOLUTION_WIDTH(get_some_resolution_encoded()), 
-        RESOLUTION_HEIGHT(get_some_resolution_encoded()));
+        GET_VIDEO_WIDTH(vi_get_current_size()), 
+        GET_VIDEO_HEIGHT(vi_get_current_size()));
     font_window_flush_strings(1);
     font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
 

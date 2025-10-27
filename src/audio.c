@@ -152,7 +152,7 @@ void __amMain(void *arg) {
     OSMesg *lastInfo = 0;
     s32 done = 0;
 
-    osScAddClient(gAudioSched, &gAudioScClient, &__am_audioFrameMsgQ, OS_MESG_BLOCK);
+    osScAddClient(gAudioSched, &gAudioScClient, &__am_audioFrameMsgQ, OS_SC_ID_AUDIO);
 
     while (!done) {
         (void) osRecvMesg(&__am_audioFrameMsgQ, (OSMesg *) &msg, OS_MESG_BLOCK);

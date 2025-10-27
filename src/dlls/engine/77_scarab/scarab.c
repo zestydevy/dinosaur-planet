@@ -64,7 +64,7 @@ void dll_77_func_98(Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     }
     sprintf(scarabCountString, "%2d", (int)scarabCount);
     
-    font_window_set_coords(1, 0, 0, get_some_resolution_encoded() & 0xFFFF, (get_some_resolution_encoded() >> 0x10));
+    font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
     font_window_flush_strings(1);
     font_window_use_font(1, FONT_DINO_SUBTITLE_FONT_1);
     font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);

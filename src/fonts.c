@@ -47,9 +47,9 @@ void fonts_init() {
     s32 fbWidth;
     s32 fbHeight;
 
-    resolution = get_some_resolution_encoded();
-    fbWidth = RESOLUTION_WIDTH(resolution);
-    fbHeight = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    fbWidth = GET_VIDEO_WIDTH(resolution);
+    fbHeight = GET_VIDEO_HEIGHT(resolution);
 
     queue_alloc_load_file((void**)&gFile_FONTS_BIN, FONTS_BIN);
 
@@ -1140,9 +1140,9 @@ void font_number_to_string(char **outString, s32 number) {
 }
 
 void font_render_fill_rect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
-    u32 resolution = get_some_resolution_encoded();
-    u32 width = RESOLUTION_WIDTH(resolution);
-    u32 height = RESOLUTION_HEIGHT(resolution);
+    u32 resolution = vi_get_current_size();
+    u32 width = GET_VIDEO_WIDTH(resolution);
+    u32 height = GET_VIDEO_HEIGHT(resolution);
 
     if (lrx >= 0 && (u32) ulx < width && lry >= 0 && (u32) uly < height) {
         if (ulx < 0) {
@@ -1209,7 +1209,7 @@ void font_window_draw(Gfx **gdl, s32 **mtxs, s32 **vtxs, s32 windowID) {
         i = 0;
         height = window->y2 - window->y1;
 
-        vidMode = get_video_mode();
+        vidMode = vi_get_mode();
         if (vidMode == 3) {
             window->x1 += 96;
             window->x2 += 96;

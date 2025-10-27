@@ -19,7 +19,7 @@ void start_crash_thread(OSSched *scheduler) {
         videoMode = 1;
     }
 
-    func_8005D410(videoMode, scheduler, TRUE);
+    vi_init(videoMode, scheduler, TRUE);
 
     osCreateThread(
         /*t*/       &gCrashThread,
@@ -52,7 +52,7 @@ void crash_thread_entry(void *arg) {
         /*count*/   CRASH_MESG_QUEUE_BUFFER_LENGTH
     );
 
-    osScAddClient(scheduler, &gCrashScClient, &gCrashMesgQueue, 3);
+    osScAddClient(scheduler, &gCrashScClient, &gCrashMesgQueue, OS_SC_ID_PRENMI);
 
     if (osResetType == 1 && gCrashDllListCopy->loaded == TRUE) {
         // System was previously reset via NMI and we have a copy of state from then

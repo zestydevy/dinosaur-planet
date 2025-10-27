@@ -7046,8 +7046,8 @@ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, 
     s32 temp_v1;
     s32 temp_v1_2;
 
-    temp_v0 = get_some_resolution_encoded();
-    temp_t6 = (temp_v0 & 0xFFFF) >> 1;
+    temp_v0 = vi_get_current_size();
+    temp_t6 = GET_VIDEO_WIDTH(temp_v0) >> 1;
     *arg1 = temp_t6 + (arg4 * ((temp_t6 >> 1) + 0xA));
     if (arg5 < 0.0f) {
         temp_v1 = temp_v0 >> 0x11;

@@ -500,9 +500,9 @@ void func_80001E04(s32 viewPortIndex, s32 x1, s32 y1, s32 x2, s32 y2) {
     s32 height;
     s32 temp;
 
-    resolution = get_some_resolution_encoded();
-    height = RESOLUTION_HEIGHT(resolution) & 0xFFFF;
-    width = RESOLUTION_WIDTH(resolution);
+    resolution = vi_get_current_size();
+    height = GET_VIDEO_HEIGHT(resolution) & 0xFFFF;
+    width = GET_VIDEO_WIDTH(resolution);
 
     if (x2 < x1) {
         temp = x1;
@@ -607,9 +607,9 @@ void func_800020E4(s32 selector, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
 {
-    u32 wh = get_some_resolution_encoded();
-    u32 width = wh & 0xffff;
-    u32 height = wh >> 16;
+    u32 wh = vi_get_current_size();
+    u32 width = GET_VIDEO_WIDTH(wh);
+    u32 height = GET_VIDEO_HEIGHT(wh);
 
     *ulx = 0;
     *lrx = width;
@@ -632,10 +632,10 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
     u32 mode;
 
     cameraSelPre = gCameraSelector;
-    wh = get_some_resolution_encoded();
+    wh = vi_get_current_size();
     cameraSelPost = gCameraSelector;
-    width = wh & 0xffff;
-    height = wh >> 16;
+    width = GET_VIDEO_WIDTH(wh);
+    height = GET_VIDEO_HEIGHT(wh);
 
     if (gViewports[cameraSelPre].flags & 0x1)
     {
@@ -721,15 +721,6 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002490.s")
 #else
-/**
- * The video width is the lower 16 bits of the returned 32 bit value
- */
-#define GET_VIDEO_WIDTH(width_and_height) (width_and_height & 0xFFFF)
-/**
- * The video width is the higher 16 bits of the returned 32 bit value
- */
-#define GET_VIDEO_HEIGHT(width_and_height) ((width_and_height >> 16) & 0xFFFF)
-
 void func_80002490(Gfx **gdl)
 {
     s32 ulx, uly, lrx, lry;
@@ -742,7 +733,7 @@ void func_80002490(Gfx **gdl)
     s32 padY;
     s32 mode;
     
-    wh = get_some_resolution_encoded();
+    wh = vi_get_current_size();
     
     mode = UINT_800a66f8;
     
@@ -986,9 +977,9 @@ void func_8000302C(Gfx **gdl)
 
     gCameraSelector = 4;
 
-    wh = get_some_resolution_encoded();
-    height = wh >> 16;
-    width = wh & 0xffff;
+    wh = vi_get_current_size();
+    height = GET_VIDEO_HEIGHT(wh);
+    width = GET_VIDEO_WIDTH(wh);
 
     if (!(gViewports[gCameraSelector].flags & 0x1))
     {

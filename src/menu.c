@@ -350,11 +350,11 @@ s32 get_save_game_idx() {
 void func_80010088() {
     u32 res;
 
-    res = get_some_resolution_encoded();
+    res = vi_get_current_size();
     
-    D_800A7D8C = RESOLUTION_WIDTH(res);
+    D_800A7D8C = GET_VIDEO_WIDTH(res);
     D_800A7D8E = 0;
-    D_800A7D90 = RESOLUTION_HEIGHT(res);
+    D_800A7D90 = GET_VIDEO_HEIGHT(res);
     D_800A7D92 = 0;
     D_800A7D69 = 0;
 }
@@ -386,11 +386,11 @@ void func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4) {
         *param3 = D_800A7D90;
         *param4 = D_800A7D92;
     } else {
-        u32 res = get_some_resolution_encoded();
+        u32 res = vi_get_current_size();
 
         *param1 = 0;
-        *param2 = RESOLUTION_WIDTH(res);
+        *param2 = GET_VIDEO_WIDTH(res);
         *param3 = 0;
-        *param4 = RESOLUTION_HEIGHT(res);
+        *param4 = GET_VIDEO_HEIGHT(res);
     }
 }

@@ -67,9 +67,9 @@ void func_8003EBD4(s32 hOffset) {
     u16* nextFB;
     u16* currentFB;
 
-    resolution = get_some_resolution_encoded();
-    width = RESOLUTION_WIDTH(resolution);
-    height = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(resolution);
+    height = GET_VIDEO_HEIGHT(resolution);
     nextFB = gFramebufferNext;
     currentFB = gFramebufferCurrent;
     hOffset = width - hOffset;
@@ -157,9 +157,9 @@ void func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, v
     s32 s1;
     s32 s2;
 
-    resolution = get_some_resolution_encoded();
-    width = RESOLUTION_WIDTH(resolution);
-    height = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(resolution);
+    height = GET_VIDEO_HEIGHT(resolution);
     currentFB = gFramebufferCurrent;
     nextFB = gFramebufferNext;
     i = 0;
@@ -306,9 +306,9 @@ void func_8003F4C0(s32 arg0) {
     u16* currentFB;
     s32 v0;
 
-    resolution = get_some_resolution_encoded();
-    width = RESOLUTION_WIDTH(resolution);
-    height = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(resolution);
+    height = GET_VIDEO_HEIGHT(resolution);
     if (arg0 == 0) {
         nextFB = gFramebufferNext;
         nextFB[-1] = 0;
@@ -359,9 +359,9 @@ void func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 temp;
     s32 s8;
 
-    resolution = get_some_resolution_encoded();
-    width = RESOLUTION_WIDTH(resolution);
-    height = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(resolution);
+    height = GET_VIDEO_HEIGHT(resolution);
     if (arg3 != 0) {
         var_v0 = (height - ((height * 0xB6) / 240)) >> 1;
         height -= var_v0;
@@ -683,9 +683,9 @@ void func_80040590(s32 arg0, s32 arg1) {
     s32 var_s2;
     s32 i;
 
-    resolution = get_some_resolution_encoded();
-    width = RESOLUTION_WIDTH(resolution);
-    height = RESOLUTION_HEIGHT(resolution);
+    resolution = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(resolution);
+    height = GET_VIDEO_HEIGHT(resolution);
     nextFB = gFramebufferNext;
     currentFB = gFramebufferCurrent;
     for (i = 0; i < height; i++) {

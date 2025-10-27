@@ -52,14 +52,14 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     osStartThread(&s->thread);
 }
 
-void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4) {
+void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 id) {
     OSIntMask mask;
 
     mask = osSetIntMask(OS_IM_NONE);
 
     c->msgQ = msgQ;
     c->next = s->clientList;
-    c->unk0 = param4;
+    c->id = id;
     s->clientList = c;
 
     osSetIntMask(mask);
@@ -569,7 +569,7 @@ void __scHandleRetrace(OSSched *sc) {
     }
 
     for (client = sc->clientList; client != NULL; client = client->next) {
-        if (client->unk0 == 1) {
+        if (client->id == OS_SC_ID_AUDIO) {
             // Only run this on even calls to this function
             if (gRetraceCounter64 % 2 == 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
@@ -577,7 +577,7 @@ void __scHandleRetrace(OSSched *sc) {
                     func_8003B9C0(sc);
                 }
             }
-        } else if (client->unk0 == 2) {
+        } else if (client->id == OS_SC_ID_VIDEO) {
             osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
         }
     }

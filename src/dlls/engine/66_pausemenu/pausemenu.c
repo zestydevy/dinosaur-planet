@@ -184,7 +184,7 @@ void n_pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     gDPFillRectangle((*gfx)++, ulx, uly, lrx, lry);
     gDLBuilder->needsPipeSync = TRUE;
     
-    font_window_set_coords(1, 0, 0, get_some_resolution_encoded() & 0xFFFF, get_some_resolution_encoded() >> 0x10);
+    font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
     font_window_flush_strings(1);
     opacity_main = ((f32) pauseMenuOpacity / BG_OVERLAY_MAX_OPACITY) * 255.0f;
 

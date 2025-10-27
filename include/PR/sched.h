@@ -42,6 +42,11 @@
 #define OS_SC_LAST_MSG          4	/* this should have highest number */
 #define OS_SC_MAX_MESGS         8
 
+#define OS_SC_ID_NONE   0
+#define OS_SC_ID_AUDIO  1
+#define OS_SC_ID_VIDEO  2
+#define OS_SC_ID_PRENMI 3
+
 typedef struct {
     short type;
     char  misc[30];
@@ -88,7 +93,7 @@ typedef struct OSScTask_s {
  *
  */
 typedef struct SCClient_s {
-    u8                  unk0; /* NOTE: Not from the original sched.h! */
+    u8                  id; /* NOTE: Not from the original sched.h! */
     struct SCClient_s   *next;  /* next client in the list      */
     OSMesgQueue         *msgQ;  /* where to send the frame msg  */
 } OSScClient;
@@ -115,8 +120,8 @@ typedef struct {
 
 void            osCreateScheduler(OSSched *s, void *stack, OSPri priority,
                                   u8 mode, u8 numFields);
-/* NOTE: param4 is not from the original sched.h! */
-void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 param4);
+/* NOTE: param "id" is not from the original sched.h! */
+void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 id);
 void            osScRemoveClient(OSSched *s, OSScClient *c);
 OSMesgQueue     *osScGetCmdQ(OSSched *s);
 
