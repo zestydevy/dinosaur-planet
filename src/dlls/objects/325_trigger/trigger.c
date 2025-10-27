@@ -116,7 +116,7 @@ typedef struct {
 /*01*/ u8 _unk1[3];
 /*04*/ f32 radiusSquared;
 /*08*/ u8 _unk8[4];
-/*0C*/ s32 elapsedTicks; // for TriggerTime
+/*0C*/ u32 elapsedTicks; // for TriggerTime
 /*10*/ Vec3f lookVector; // for TriggerPlane
 /*1C*/ f32 lookVectorNegDot;
 /*20*/ Vec3f activatorPrevPos;
@@ -204,30 +204,30 @@ static ModelInstance *sPlaneModel = NULL;
 static s16 sPointModelRefCount;
 static s16 sPlaneModelRefCount;
 
-/*static*/ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activatorDistSquared);
-/*static*/ void trigger_func_1754(u8 param1, u8 param2);
-/*static*/ void trigger_func_1764(u16 param1);
-/*static*/ void trigger_func_17FC(u16 param1);
-/*static*/ void trigger_func_1868(u16 param1);
-/*static*/ void trigger_func_1920(u16 param1);
+static void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activatorDistSquared);
+static void trigger_func_1754(u8 param1, u8 param2);
+static void trigger_func_1764(u16 param1);
+static void trigger_func_17FC(u16 param1);
+static void trigger_func_1868(u16 param1);
+static void trigger_func_1920(u16 param1);
 
 static void trigger_point_setup(Object *obj, Trigger_Setup *setup);
-/*static*/ void trigger_point_update(Object *self, Object *activator);
+static void trigger_point_update(Object *self, Object *activator);
 
 static void trigger_cylinder_setup(Object *obj, Trigger_Setup *setup);
-/*static*/ void trigger_cylinder_update(Object *self, Object* activator);
+static void trigger_cylinder_update(Object *self, Object* activator);
 
 static void trigger_plane_setup(Object *obj, Trigger_Setup *setup);
-/*static*/ void trigger_plane_update(Object *self, Object *activator);
+static void trigger_plane_update(Object *self, Object *activator);
 
 static void trigger_area_setup(Object *self, Trigger_Setup *setup);
-/*static*/ void trigger_area_update(Object *self, Object *activator);
-/*static*/ s32 trigger_func_273C(Object *self, Vec3f *vec);
+static void trigger_area_update(Object *self, Object *activator);
+static s32 trigger_func_273C(Object *self, Vec3f *vec);
 static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz);
-/*static*/ void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDistSquared);
+static void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDistSquared);
 
 static void trigger_curve_setup(Object *self, Trigger_Setup *setup);
-/*static*/ void trigger_curve_update(Object *self, Object *activator);
+static void trigger_curve_update(Object *self, Object *activator);
 
 void trigger_ctor(void *dll) { }
 
@@ -305,10 +305,6 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     objdata->flags |= TRG_FIRST_TICK;
 }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_control.s")
-#else
 void trigger_control(Object* self) {
     Trigger_Data* objdata;
     Trigger_Setup* setup;
@@ -478,7 +474,6 @@ void trigger_control(Object* self) {
         }
     }
 }
-#endif
 
 void trigger_update(Object *self) { }
 
@@ -537,27 +532,21 @@ u32 trigger_get_data_size(Object *self, u32 param2) {
     return sizeof(Trigger_Data);
 }
 
-// godspeed https://decomp.me/scratch/Imc8a
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_process_commands.s")
-#else
 // dir represents the positional status of the activator relative to the trigger:
 // 2  = in
 // 1  = entered
 // 0  = n/a
 // -1 = exited
 // -2 = out
-void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activatorDistSquared) {
+static void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activatorDistSquared) {
     Trigger_Setup* setup; // sp+74
     Trigger_Data* objdata; // sp+70
-    //Object* player;
     s32 pad;
     TriggerCommand *cmd;
     s32 temp_a1;
     u8 i;
     Object* var_v0_2;
     Object* sidekick;
-    s32 pad2;
 
     objdata = (Trigger_Data*)self->data;
     setup = (Trigger_Setup*)self->setup;
@@ -606,19 +595,20 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             }
         }
         
-        switch (cmd->id) {                  /* switch 1 */
+        switch (cmd->id) {
         case TRG_CMD_HAZARD: 
             // "Trigger [%d], Gamplay Vulnerable"
-            switch (cmd->param1) {              /* switch 2 */
-            case 0:                         /* switch 2 */
-            case 1:                         /* switch 2 */
-            case 2:                         /* switch 2 */
-            case 3:                         /* switch 2 */
-            case 4:                         /* switch 2 */
-            case 5:                         /* switch 2 */
-            case 6:                         /* switch 2 */
+            switch (cmd->param1) {
+            Object *obj;
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 6:
                 break;
-            case 7: {                         /* switch 2 */
+            case 7: {
                     s32 mesgID; // sp+50
                     if (dir == 1) {
                         mesgID = 0x80;
@@ -629,24 +619,27 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
                     obj_send_mesg_many_nearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);
                 }
                 break;
-            case 8: {                        /* switch 2 */
-                    Object *player = get_player();
-                    if (player != NULL) {
-                        ((DLL_210_Player*)player->dll)->vtbl->func67(player, 9, 0.0f);
+            case 8: {
+                    s16 pad;
+                    obj = get_player();
+                    if (obj != NULL) {
+                        ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 9, 0.0f);
                     }
                 }
                 break;
-            case 9: {                        /* switch 2 */
-                    Object *player = get_player();
-                    if (player != NULL) {
-                        ((DLL_210_Player*)player->dll)->vtbl->func67(player, 10, 0.0f);
+            case 9: {
+                    s16 pad;
+                    obj = get_player();
+                    if (obj != NULL) {
+                        ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 10, 0.0f);
                     }
                 }
                 break;
-            case 10: {                       /* switch 2 */
-                    Object *player = get_player();
-                    if (player != NULL) {
-                        ((DLL_210_Player*)player->dll)->vtbl->func67(player, 11, 0.0f);
+            case 10: {
+                    s32 pad;
+                    obj = get_player();
+                    if (obj != NULL) {
+                        ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 11, 0.0f);
                     }
                 }
                 break;
@@ -687,8 +680,8 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             // "Trigger [%d], Track Dome Off"
             // "Trigger [%d], Track MrSheen On %d"
             // "Trigger [%d], Track MrSheen Off"
-            switch (cmd->param1) {              /* switch 3 */
-            case 0:                         /* switch 3 */
+            switch (cmd->param1) {
+            case 0:
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
@@ -697,7 +690,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
 
                 }
                 break;
-            case 1:                         /* switch 3 */
+            case 1:
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
@@ -706,7 +699,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
 
                 }
                 break;
-            case 2:                         /* switch 3 */
+            case 2:
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
@@ -715,7 +708,7 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
 
                 }
                 break;
-            case 3:                         /* switch 3 */
+            case 3:
                 if ((s32) cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
@@ -724,23 +717,23 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
 
                 }
                 break;
-            case 4:                         /* switch 3 */
+            case 4:
                 gDLL_16->vtbl->func2(cmd->param2);
                 if (cmd->param2 != 0) {
 
                 }
                 break;
-            case 5:                         /* switch 3 */
+            case 5:
                 func_8005CA5C((u32) cmd->param2);
                 break;
-            case 6:                         /* switch 3 */
+            case 6:
                 if ((s32) cmd->param2 > 0) {
                     func_8001EBD0(1);
                 } else {
                     func_8001EBD0(0);
                 }
                 break;
-            case 7:                         /* switch 3 */
+            case 7:
                 if ((s32) cmd->param2 > 0) {
                     func_80041E24(1);
                 } else {
@@ -864,16 +857,16 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
             }
             break;
         case TRG_CMD_RESTART:
-            switch (cmd->param1) {            /* switch 4; irregular */
-            case 0:                         /* switch 4 */
+            switch (cmd->param1) {
+            case 0:
                 // "Restart Set [%d]\n"
                 gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, func_80048498());
                 break;
-            case 1:                         /* switch 4 */
+            case 1:
                 // "Restart Clear [%d]\n"
                 gDLL_29_Gplay->vtbl->restart_clear();
                 break;
-            case 2:                         /* switch 4 */
+            case 2:
                 // "Restart Goto [%d]\n"
                 gDLL_29_Gplay->vtbl->restart_goto();
                 break;
@@ -882,15 +875,15 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
         case TRG_CMD_SIDEKICK:
             sidekick = get_sidekick();
             if (sidekick != NULL) {
-                switch (cmd->param1) {       /* switch 5; irregular */
-                case 0:                     /* switch 5 */
+                switch (cmd->param1) {
+                case 0:
                     ((DLL_ISidekick *)sidekick->dll)->vtbl->func23(sidekick);
                     break;
-                case 1:                     /* switch 5 */
+                case 1:
                     // "killing sidekick\n"
                     obj_destroy_object(get_sidekick());
                     break;
-                case 2:                     /* switch 5 */
+                case 2:
                     // "findobj %i \n"
                     var_v0_2 = obj_get_nearest_type_to(0x34, sidekick, NULL);
                     if (var_v0_2 == NULL) {
@@ -920,11 +913,10 @@ void trigger_process_commands(Object *self, Object *activator, s8 dir, s32 activ
         objdata->flags |= TRG_ACTIVATOR_EXITED;
     }
 }
-#endif
 
-void trigger_func_1754(u8 param1, u8 param2) { }
+static void trigger_func_1754(u8 param1, u8 param2) { }
 
-void trigger_func_1764(u16 param1) {
+static void trigger_func_1764(u16 param1) {
     s32 _stack_pad[2];
     s32 entry;
     u32 value;
@@ -944,7 +936,7 @@ void trigger_func_1764(u16 param1) {
     main_set_bits(entry, value);
 }
 
-void trigger_func_17FC(u16 param1) {
+static void trigger_func_17FC(u16 param1) {
     s32 _stack_pad[2];
     s32 entry;
     u32 value;
@@ -957,7 +949,7 @@ void trigger_func_17FC(u16 param1) {
     main_set_bits(entry, value);
 }
 
-void trigger_func_1868(u16 param1) {
+static void trigger_func_1868(u16 param1) {
     s32 *ptr;
     s32 *ptr2;
     Texture *tex;
@@ -973,7 +965,7 @@ void trigger_func_1868(u16 param1) {
     }
 }
 
-void trigger_func_1920(u16 param1) {
+static void trigger_func_1920(u16 param1) {
     s32 *ptr;
     s32 *ptr2;
     Texture *tex;
@@ -1025,11 +1017,7 @@ static void trigger_point_setup(Object *self, Trigger_Setup *setup) {
     self->srt.scale = radius / modelRadius;
 }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_point_update.s")
-#else
-void trigger_point_update(Object *self, Object *activator) {
+static void trigger_point_update(Object *self, Object *activator) {
     Trigger_Setup *setup;
     Trigger_Data *objdata;
     f32 prevDist;
@@ -1037,7 +1025,7 @@ void trigger_point_update(Object *self, Object *activator) {
     f32 diffX;
     f32 diffY;
     f32 diffZ;
-    s32 dir;
+    s8 dir;
 
     objdata = (Trigger_Data*)self->data;
     setup = (Trigger_Setup*)self->setup;
@@ -1086,7 +1074,6 @@ void trigger_point_update(Object *self, Object *activator) {
 
     trigger_process_commands(self, activator, dir, currDist);
 }
-#endif
 
 static void trigger_cylinder_setup(Object *self, Trigger_Setup *setup) {
     Trigger_Data *objdata;
@@ -1096,11 +1083,7 @@ static void trigger_cylinder_setup(Object *self, Trigger_Setup *setup) {
     objdata->radiusSquared *= objdata->radiusSquared;
 }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_cylinder_update.s")
-#else
-void trigger_cylinder_update(Object* self, Object* activator) {
+static void trigger_cylinder_update(Object* self, Object* activator) {
     Trigger_Data* objdata;
     Trigger_Setup *setup;
     f32 lengthSquared;
@@ -1110,7 +1093,7 @@ void trigger_cylinder_update(Object* self, Object* activator) {
     f32 diffY;
     f32 diffZ;
     f32 unk3BTimes2;
-    s32 dir;
+    s8 dir;
 
     objdata = self->data;
     setup = (Trigger_Setup*)self->setup;
@@ -1147,7 +1130,6 @@ void trigger_cylinder_update(Object* self, Object* activator) {
     }
     trigger_process_commands(self, activator, dir, lengthSquared2);
 }
-#endif
 
 static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     Trigger_Data *objdata;
@@ -1256,11 +1238,7 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     objdata->radiusSquared = (self->srt.scale * 145.0f) * (self->srt.scale * 145.0f);
 }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_plane_update.s")
-#else
-void trigger_plane_update(Object *self, Object *activator) {
+static void trigger_plane_update(Object *self, Object *activator) {
     Trigger_Data *objdata;
     f32 prevDist;
     f32 currDist;
@@ -1271,7 +1249,7 @@ void trigger_plane_update(Object *self, Object *activator) {
     f32 temp_f16_2;
     f32 temp_f18_2;
     f32 temp_f2;
-    s32 dir;
+    s8 dir;
 
     objdata = (Trigger_Data*)self->data;
     
@@ -1310,7 +1288,6 @@ void trigger_plane_update(Object *self, Object *activator) {
         }
     }
 }
-#endif
 
 static void trigger_area_setup(Object *self, Trigger_Setup *setup) {
     self->srt.yaw = setup->rotationY << 8;
@@ -1318,11 +1295,7 @@ static void trigger_area_setup(Object *self, Trigger_Setup *setup) {
     self->srt.roll = 0;
 }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_area_update.s")
-#else
-void trigger_area_update(Object *self, Object *activator) {
+static void trigger_area_update(Object *self, Object *activator) {
     Trigger_Data *objdata;
     s32 sp20;
     s32 temp_v0;
@@ -1346,9 +1319,8 @@ void trigger_area_update(Object *self, Object *activator) {
         }
     }
 }
-#endif
 
-s32 trigger_func_273C(Object *self, Vec3f *vec) {
+static s32 trigger_func_273C(Object *self, Vec3f *vec) {
     f32 x;
     f32 y;
     f32 z;
@@ -1402,11 +1374,7 @@ static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     *oz = (temp_f16 * sp24) + (temp_f12 * temp_f0);
 }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_func_29C0.s")
-#else
-void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDistSquared) {
+static void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDistSquared) {
     Object** objects;
     Object* obj;
     Trigger_Setup* objsetup;
@@ -1439,15 +1407,10 @@ void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activatorDist
         i++;
     }
 }
-#endif
 
 static void trigger_curve_setup(Object *self, Trigger_Setup *setup) { }
 
-// needs trigger_process_commands to be static
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/325_trigger/trigger_curve_update.s")
-#else
-void trigger_curve_update(Object *self, Object *activator) {
+static void trigger_curve_update(Object *self, Object *activator) {
     Trigger_Data* objdata;
     Trigger_Setup *setup;
     s32 sp3C;
@@ -1478,4 +1441,3 @@ void trigger_curve_update(Object *self, Object *activator) {
         }
     }
 }
-#endif
