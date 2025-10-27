@@ -69,7 +69,7 @@ void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
     objdata->unkF = 0;
     objdata->unk10 = 0;
     objdata->unk2 = 0;
-    self->unkBC = dll_466_func_C50;
+    self->animCallback = dll_466_func_C50;
     obj_init_mesg_queue(self, 4);
     main_set_bits(BIT_DB_Entered_Shrine_3, 1);
     main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
