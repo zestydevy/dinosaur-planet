@@ -43,7 +43,7 @@ void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2)
 
     objdata = (VFP_PodiumPoint_Data*)self->data;
     self->srt.yaw = setup->unk18 << 8;
-    self->animCallback = (AnimationCallback)VFP_PodiumPoint_func_324;
+    self->animCallback = VFP_PodiumPoint_func_324;
     objdata->setGamebit = setup->gamebit;
     objdata->conditionGamebit = setup->gamebit2;
     self->unkAF |= 8;

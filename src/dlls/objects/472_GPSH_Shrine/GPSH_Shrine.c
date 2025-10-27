@@ -74,7 +74,7 @@ void GPSH_Shrine_setup(Object* self, GPSH_Shrine_Setup* setup, s32 arg2) {
     objdata->unk15 = 0;
     objdata->unk16 = 0;
     objdata->unk2 = 0;
-    self->animCallback = (AnimationCallback)GPSH_Shrine_func_1024;
+    self->animCallback = GPSH_Shrine_func_1024;
     obj_init_mesg_queue(self, 4);
     main_set_bits(BIT_DB_Entered_Shrine_3, 1);
     main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);

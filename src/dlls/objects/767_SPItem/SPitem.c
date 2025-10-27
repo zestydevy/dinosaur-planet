@@ -31,7 +31,7 @@ void SPItem_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SPItem_setup(Object* self, SPItem_Setup* objSetup, s32 arg2) {
     self->unkB0 |= 0x2000;
-    self->animCallback = (AnimationCallback)SPItem_anim_callback;
+    self->animCallback = SPItem_anim_callback;
 
     self->modelInstIdx = objSetup->modelIndex;
     self->srt.yaw = objSetup->yaw << 8;

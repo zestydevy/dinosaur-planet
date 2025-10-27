@@ -27,7 +27,7 @@ void CCspellpage_setup(Object *self, CCspellpage_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
-    self->animCallback = (AnimationCallback)CCspellpage_anim_callback;
+    self->animCallback = CCspellpage_anim_callback;
     obj_add_object_type(self, 5);
 }
 

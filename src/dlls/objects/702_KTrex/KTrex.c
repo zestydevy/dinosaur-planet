@@ -297,7 +297,7 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
         var_v0 = 0x11;
     }
     gDLL_33->vtbl->func21(self, setup, objdata, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
-    self->animCallback = (AnimationCallback)dll_702_func_119C;
+    self->animCallback = dll_702_func_119C;
     gDLL_18_objfsa->vtbl->set_anim_state(self, &objdata->fsa, KT_ASTATE_0);
     objdata->fsa.logicState = KT_LSTATE_2_WALK; // set initial state
     objdata->fsa.target = NULL;

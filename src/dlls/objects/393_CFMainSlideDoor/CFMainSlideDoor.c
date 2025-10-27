@@ -40,7 +40,7 @@ void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2)
 
     self->unkDC = 0;
     self->srt.yaw = setup->unk1F << 8;
-    self->animCallback = (AnimationCallback)CFMainSlideDoor_func_268;
+    self->animCallback = CFMainSlideDoor_func_268;
     self->srt.scale = setup->unk21 * 0.015625f;
     self->srt.scale *= self->def->scale;
     objdata = (CFMainSlideDoor_Data*)self->data;

@@ -41,7 +41,7 @@ void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->animCallback = (AnimationCallback)dll_652_func_45C;
+    self->animCallback = dll_652_func_45C;
     objdata->unk0 = setup->unk1E;
     objdata->unk2 = setup->unk20;
     if (main_get_bits(objdata->unk2) != 0 && main_get_bits(objdata->unk0) != 0) {

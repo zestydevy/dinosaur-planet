@@ -46,7 +46,7 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->animCallback = (AnimationCallback)IMMultiSeq_anim_callback;
+    self->animCallback = IMMultiSeq_anim_callback;
     self->unkB0 |= 0x6000;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {

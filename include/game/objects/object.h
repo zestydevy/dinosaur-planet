@@ -180,6 +180,7 @@ DLL_INTERFACE(DLL_IObject) {
 
 // arg3 and arg4 are unknown types
 // always called by DLL 3 "ANIM" during cutscenes?
+struct AnimObj_Data;
 typedef int (*AnimationCallback)(struct Object *, struct Object *, struct AnimObj_Data *, s8);
 
 /**

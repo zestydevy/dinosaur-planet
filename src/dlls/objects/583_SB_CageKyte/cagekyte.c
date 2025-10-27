@@ -29,7 +29,7 @@ void SBCageKyte_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SBCageKyte_setup(Object* self, s32 arg1, s32 arg2) {
-    self->animCallback = (AnimationCallback)SBCageKyte_anim_callback;
+    self->animCallback = SBCageKyte_anim_callback;
 }
 
 // offset: 0x40 | func: 1 | export: 1

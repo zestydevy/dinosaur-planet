@@ -24,7 +24,7 @@ typedef struct {
 typedef void (*AnimObj_DataF4Callback)(Object *arg0, s32 arg1, s32 arg2);
 typedef s32 (*AnimObj_DataF8Callback)(Object *arg0, s32 arg1, s32 arg2);
 
-typedef struct {
+typedef struct AnimObj_Data {
 /*00*/ s8 unk0[0x24 - 0];
 /*24*/ f32 unk24;
 /*28*/ s32 unk28;

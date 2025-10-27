@@ -77,7 +77,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     objdata = self->data;
 
     font_load(FONT_DINO_MEDIUM_FONT_IN);
-    self->animCallback = (AnimationCallback)levelname_anim_callback;
+    self->animCallback = levelname_anim_callback;
 
     gametext = gDLL_21_Gametext->vtbl->get_chunk(setup->textID);
 

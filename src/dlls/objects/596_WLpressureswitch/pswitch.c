@@ -58,7 +58,7 @@ void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg
     WLPressureSwitch_Data* objdata;
 
     objdata = self->data;
-    self->animCallback = (AnimationCallback)WLpressureswitch_anim_callback;
+    self->animCallback = WLpressureswitch_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     if (main_get_bits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;

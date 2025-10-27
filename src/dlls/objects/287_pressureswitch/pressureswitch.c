@@ -71,7 +71,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
-    self->animCallback = (AnimationCallback)pressureswitch_anim_callback;
+    self->animCallback = pressureswitch_anim_callback;
 }
 
 // offset: 0x148 | func: 1 | export: 1

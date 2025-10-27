@@ -81,7 +81,7 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
-    self->animCallback = (AnimationCallback)WCpressureswitch_anim_callback;
+    self->animCallback = WCpressureswitch_anim_callback;
 }
 
 /*0x0*/ static const char str_0[] = "PRESSURESWITCH.c: modelno out of range romdefno=%d\n";

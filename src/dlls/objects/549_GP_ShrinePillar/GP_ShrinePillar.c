@@ -50,7 +50,7 @@ void dll_549_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
     }
     objdata->unk1 = 1;
     self->srt.yaw = setup->yaw << 8;
-    self->animCallback = (AnimationCallback)dll_549_func_264;
+    self->animCallback = dll_549_func_264;
     temp_v0 = func_800348A0(self, 0, 0);
     if (temp_v0 != NULL) {
         *temp_v0 = 0;

@@ -68,7 +68,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
             main_set_bits(BIT_4D4, 1);
         }
     }
-    self->animCallback = (AnimationCallback)NWtricky_anim_callback;
+    self->animCallback = NWtricky_anim_callback;
 }
 
 // offset: 0x134 | func: 1 | export: 1

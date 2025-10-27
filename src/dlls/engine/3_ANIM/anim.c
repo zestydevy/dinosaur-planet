@@ -370,7 +370,7 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 
 // offset: 0x4698 | func: 19
 void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
-    int (*temp_v1)(Object*, Object*, AnimObj_Data*, s8);
+    AnimationCallback temp_v1;
     s32 temp_v0;
     AnimObjSetup *setup;
 
@@ -383,7 +383,7 @@ void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     arg0->positionMirror3.f[2] = arg0->positionMirror.f[2];
     if (arg0->animCallback != NULL) {
         // a re-cast to use the actual struct instead of a forward declaration is fine here
-        temp_v1 = (int (*)(Object*, Object*, AnimObj_Data*, s8))arg0->animCallback;
+        temp_v1 = arg0->animCallback;
         temp_v0 = temp_v1(arg0, arg1, arg2, arg3);
         if (temp_v0 == 4) {
             *_bss_A4 = 1;

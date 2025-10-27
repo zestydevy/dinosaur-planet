@@ -17,7 +17,7 @@ void fini(void *dll) { }
 void dll_365_setup(Object *self, ObjSetup *setup, s32 arg2)
 {
 	self->srt.yaw = 0;
-	self->animCallback = (AnimationCallback)func_0007;
+	self->animCallback = func_0007;
 }
 
 void dll_365_control(Object *self)

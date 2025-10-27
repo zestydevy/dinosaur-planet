@@ -50,7 +50,7 @@ void WL_spiritplace_dtor(void *dll) { }
 void WL_spiritplace_setup(Object *self, WL_spiritplace_Setup *objsetup, s32 arg2) {
     WL_spiritplace_Data *objdata = self->data;
 
-    self->animCallback = (AnimationCallback)WL_spiritplace_func_5C4;
+    self->animCallback = WL_spiritplace_func_5C4;
     self->srt.yaw = objsetup->yaw << 8;
     self->srt.pitch = objsetup->pitch << 8;
     objdata->unk10 = (objsetup->unk1C / 32767.0f) / 100.0f;

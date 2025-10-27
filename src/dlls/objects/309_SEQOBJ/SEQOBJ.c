@@ -49,7 +49,7 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
     SeqObj_Data* objData;
 
     self->srt.yaw = objSetup->rotate << 8;
-    self->animCallback = (AnimationCallback)SeqObj_anim_callback;
+    self->animCallback = SeqObj_anim_callback;
     
     objData = self->data;
     self->modelInstIdx = objSetup->modelInstIdx;

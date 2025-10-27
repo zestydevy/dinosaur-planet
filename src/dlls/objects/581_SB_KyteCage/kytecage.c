@@ -54,7 +54,7 @@ void kyteCage_dtor(void *dll) { }
 void kyteCage_setup(Object* self, KyteCage_Setup* setup, s32 arg2) {
     KyteCage_Data* data = self->data;
 
-    self->animCallback = (AnimationCallback)kyteCage_anim_callback;
+    self->animCallback = kyteCage_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     data->createLightning = 0;
     if (!main_get_bits(BIT_75)) {

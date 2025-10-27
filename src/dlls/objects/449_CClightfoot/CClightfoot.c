@@ -21,7 +21,7 @@ typedef struct {
 /*04*/ Unk80032CF8 unk4;
 } CClightfoot_Data;
 
-// no arg3?
+// @bug: no arg3?
 static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData);
 
 // offset: 0x0 | ctor

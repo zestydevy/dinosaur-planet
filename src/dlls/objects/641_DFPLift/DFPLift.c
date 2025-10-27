@@ -61,7 +61,7 @@ void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
 
     objdata = (DFPLift_Data*)self->data;
 
-    self->animCallback = (AnimationCallback)DFPLift_func_91C;
+    self->animCallback = DFPLift_func_91C;
     self->srt.yaw = setup->rotation * 256;
 
     objdata->state = LIFT_STATE_INIT;

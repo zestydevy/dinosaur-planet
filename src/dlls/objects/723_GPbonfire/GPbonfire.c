@@ -81,7 +81,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfire_Data* objdata;
 
     objdata = self->data;
-    self->animCallback = (AnimationCallback)GPbonfire_anim_callback;
+    self->animCallback = GPbonfire_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objdata->stateIndex = STATE_0_INITIALISE;
     objdata->currentState = 0;
