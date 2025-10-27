@@ -48,8 +48,8 @@ enum KTFlags {
     KTFLAG_DAMAGED = 0x8,
     // Whether the boss can be damaged.
     KTFLAG_VULNERABLE = 0x10,
-    // Whether the boss is currently charging forward. Not used for the full lap he does after getting zapped.
-    KTFLAG_CHARGING = 0x20
+    // Whether the random chance reverse/charge was already rolled for the current logic state.
+    KTFLAG_ROLLED_CHANCE = 0x20
 };
 
 #define KTFLAG_GET_SEGMENT(ktflags) ((ktflags >> 1) & 3)
@@ -111,7 +111,7 @@ typedef struct {
 /*102*/ u8 health;
 /*103*/ s8 chargeCounter; // How many segments to charge down. Decrements after each turn while charging.
 /*104*/ s32 fxFlags;
-/*108*/ u8 unk108;
+/*108*/ u8 breathingSfxIndex;
 /*10C*/ SRT unk10C;
 /*124*/ SRT unk124;
 /*13C*/ SRT unk13C;
@@ -128,42 +128,96 @@ typedef struct {
 /*56*/ u8 chargeChance[4]; // Chance to charge without seeing Sabre.
 } KTrex_ObjSetup;
 
+enum KTModAnims {
+    KTANIM_Idle = 0,
+    KTANIM_Walk1 = 1, // anger level 0
+    KTANIM_Walk2 = 2, // anger level 1
+    KTANIM_Walk3 = 3, // anger level 2
+    KTANIM_Roar_Small = 4,
+    KTANIM_Roar_VeryBig = 5, // unused
+    KTANIM_Roar_Big = 6,
+    KTANIM_Walk_Slow = 7, // creepy, unused
+    KTANIM_Turn_90_CW_Normal = 8,
+    KTANIM_Roar_ChargeEnd1 = 9, // referenced but unused due to logic
+    KTANIM_Roar_10 = 10, // unused
+    KTANIM_FallDown = 11,
+    KTANIM_FlailOnGround = 12,
+    KTANIM_GetBackUp = 13,
+    KTANIM_Turn_90_CCW_Normal = 14,
+    KTANIM_Turn_180 = 15,
+    KTANIM_Turn_90_CW_Fast = 16,
+    KTANIM_Turn_90_CCW_Fast = 17,
+    KTANIM_Roar_ChargeEnd2 = 18
+};
+
+enum KTModAnimEvents {
+    KTANIM_EVT_0_Speak = 0,
+    KTANIM_EVT_1_Footfall_Left = 1,
+    KTANIM_EVT_2_Footfall_Right = 2,
+    KTANIM_EVT_7 = 7,
+    KTANIM_EVT_9_Spit_Partfx_Enable = 9,
+    KTANIM_EVT_10_Spit_Partfx_Disable = 10
+};
+
+enum KTFxFlags {
+    KTFX_Footfall_Right1 = 0x1,
+    KTFX_Footfall_Left1 = 0x2,
+    KTFX_Footfall_Right2 = 0x4,
+    KTFX_Footfall_Left2 = 0x8,
+    KTFX_Footfall_Right3 = 0x10,
+    KTFX_Footfall_Left3 = 0x20,
+    KTFX_Sound_68E = 0x40,
+    KTFX_Sound_BigRoar = 0x80,
+    KTFX_Sound_IntroRoar = 0x100,
+    KTFX_Sound_ChargeEndRoar = 0x200,
+    KTFX_Spit_Partfx = 0x800,
+    KTFX_Spit_Partfx_Disable = 0x1000,
+    KTFX_Sound_FlailRoar = 0x2000,
+    KTFX_Sound_Breathing1 = 0x4000,
+    KTFX_Sound_Breathing2 = 0x8000,
+    KTFX_Sound_WallSlam = 0x10000,
+    KTFX_Sound_Explosion = 0x20000,
+    KTFX_Sound_GroundScrape = 0x40000,
+    KTFX_Sound_PainRoar = 0x80000,
+    KTFX_EnablePartFx = 0x100000,
+};
+
 /*0x0*/ static u32 _data_0[] = {
     0x00000002, 0x00000002
 };
-/*0x8*/ static s16 _data_8[] = { // mod anim indices
-    0x0009, 0x0012, 0x0012, 0x0000
+/*0x8*/ static s16 sChargeEndModAnims[] = { // mod anim indices (charge end)
+    KTANIM_Roar_ChargeEnd1, KTANIM_Roar_ChargeEnd2, KTANIM_Roar_ChargeEnd2, 0
 };
-/*0x10*/ static s16 _data_10[] = { // mod anim indices
-    0x0001, 0x0002, 0x0003, 0x0000
+/*0x10*/ static s16 sWalkModAnims[] = { // mod anim indices (walking)
+    KTANIM_Walk1, KTANIM_Walk2, KTANIM_Walk3, 0
 };
-/*0x18*/ static s16 _data_18[] = { // mod anim indices
-    0x0004, 0x0006, 0x0006, 0x0000
+/*0x18*/ static s16 sRoarModAnims[] = { // mod anim indices (roars)
+    KTANIM_Roar_Small, KTANIM_Roar_Big, KTANIM_Roar_Big, 0
 };
-/*0x20*/ static s16 _data_20[3][2] = { // mod anim indices
-    { 0x0008, 0x000e }, 
-    { 0x0010, 0x0011 }, 
-    { 0x0010, 0x0011 }
+/*0x20*/ static s16 sTurn90ModAnims[3][2] = { // mod anim indices (90 degree turns (CW, CCW))
+    { KTANIM_Turn_90_CW_Normal, KTANIM_Turn_90_CCW_Normal }, 
+    { KTANIM_Turn_90_CW_Fast, KTANIM_Turn_90_CCW_Fast }, 
+    { KTANIM_Turn_90_CW_Fast, KTANIM_Turn_90_CCW_Fast }
 };
-/*0x2C*/ static u16 _data_2C[] = {
-    0x0001, 0x0004, 0x0010, 0x0000
+/*0x2C*/ static u16 sFootfallRightFxFlags[] = {
+    KTFX_Footfall_Right1, KTFX_Footfall_Right2, KTFX_Footfall_Right3, 0x0000
 };
-/*0x34*/ static u16 _data_34[] = {
-    0x0002, 0x0008, 0x0020, 0x0000
+/*0x34*/ static u16 sFootfallLeftFxFlags[] = {
+    KTFX_Footfall_Left1, KTFX_Footfall_Left2, KTFX_Footfall_Left3, 0x0000
 };
-/*0x3C*/ static u16 _data_3C[] = {
-    0x4000, 0x4000, 0x4000, 0x0000
+/*0x3C*/ static u16 sBreathingFxFlags1[] = {
+    KTFX_Sound_Breathing1, KTFX_Sound_Breathing1, KTFX_Sound_Breathing1, 0x0000
 };
-/*0x44*/ static u16 _data_44[] = {
-    0x8000, 0x8000, 0x8000, 0x0000
+/*0x44*/ static u16 sBreathingFxFlags2[] = {
+    KTFX_Sound_Breathing2, KTFX_Sound_Breathing2, KTFX_Sound_Breathing2, 0x0000
 };
-/*0x4C*/ static u16 _data_4C[] = {
-    0x0040, 0x0080, 0x0100, 0x0000
+/*0x4C*/ static u16 sRoarFxFlags[] = {
+    KTFX_Sound_68E, KTFX_Sound_BigRoar, KTFX_Sound_IntroRoar, 0x0000
 };
-/*0x54*/ static f32 _data_54[] = {
+/*0x54*/ static f32 sRoarAnimTickDeltas[] = {
     0.006, 0.003, 0.003
 };
-/*0x60*/ static f32 _data_60[] = {
+/*0x60*/ static f32 sTurn90AnimTickDeltas[] = {
     0.0055, 0.012, 0.012
 };
 /*0x6C*/ static f32 _data_6C[] = { // Segment progress to turn at when near the start of a segment.
@@ -172,10 +226,9 @@ typedef struct {
 /*0x78*/ static f32 _data_78[] = { // Segment progress to turn at when near the end of a segment.
     1, 0.975, 0.975
 };
-/*0x84*/ static u16 _data_84[2] = {SOUND_6FA, SOUND_6FB};
-/*0x88*/ static u16 _data_88[2] = {SOUND_691_KT_Rex_Roar, SOUND_6FD_KT_Rex_Roar};
-/*0x8C*/ static u16 _data_8C[2] = {SOUND_6FE_KT_Rex_Roar, 0};
-/*0x90*/ static u16 _data_90[2] = {SOUND_25B_Magic_Attack_Deflected, SOUND_25C_Melee_Attack_Deflected};
+/*0x84*/ static u16 sSndScrapeGround[2] = {SOUND_6FA, SOUND_6FB};
+/*0x88*/ static u16 sSndRoars[3] = {SOUND_691_KT_Rex_Roar, SOUND_6FD_KT_Rex_Roar, SOUND_6FE_KT_Rex_Roar};
+/*0x90*/ static u16 sSndDeflectAttack[2] = {SOUND_25B_Magic_Attack_Deflected, SOUND_25C_Melee_Attack_Deflected};
 /*0x94*/ static u32 sSegEndCurvesCW[] = { // curve uIDs
     0x32136, // end of segment 0 (cw), more in
     0x3213d, // end of segment 1 (cw), more in
@@ -241,7 +294,7 @@ static u8 dll_702_get_self_segment_bitfield(u16 ktflags);
 static f32 dll_702_get_obj_segment_pos(Object* obj, KTrex_Data* ktdata);
 static s32 dll_702_get_laser_wall_bitfield(u8 segmentBitfield);
 /*static*/ int dll_702_func_119C(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
-static void dll_702_func_12DC(Object* arg0);
+static void dll_702_fx_tick(Object* self);
 static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa);
 
 // offset: 0x0 | func: 0
@@ -308,7 +361,7 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     if (self->ptr0x64 != NULL) {
         self->ptr0x64->flags |= 0x810;
     }
-    ktdata = objdata->unk3F4;
+    ktdata = (KTrex_Data*)objdata->unk3F4;
     ktdata->stateStack = generic_stack_new(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
@@ -372,7 +425,7 @@ void dll_702_control(Object* self) {
             dll33Data->fsa.unk348 = 0;
         }
         dll_702_func_1EF0(self, &dll33Data->fsa);
-        dll_702_func_12DC(self);
+        dll_702_fx_tick(self);
         gDLL_33->vtbl->func10(self, dll33Data, 0.0f, 0);
         func_80026128(self, 0x17, 1, -1);
         gDLL_18_objfsa->vtbl->tick(self, &dll33Data->fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
@@ -398,7 +451,7 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         func_80031F6C(self, 2, &sKTData->unk13C.transl.x, &sKTData->unk13C.transl.y, &sKTData->unk13C.transl.z, 0);
         func_80031F6C(self, 3, &sKTData->unk154.transl.x, &sKTData->unk154.transl.y, &sKTData->unk154.transl.z, 0);
         func_80031F6C(self, 0, &sKTData->unk10C.transl.x, &sKTData->unk10C.transl.y, &sKTData->unk10C.transl.z, 0);
-        memcpy(&sp48, func_80032170(self, 4), 0x40);
+        memcpy(&sp48, func_80032170(self, 4), sizeof(MtxF));
         sp48.m[3][1] = 0.0f;
         sp48.m[3][0] = 0.0f;
         sp48.m[3][2] = 0.0f;
@@ -406,7 +459,7 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         sKTData->unk16C.y = (f32) ((f32) rand_next(0x3C, 0x78) * 0.1f);
         sKTData->unk16C.z = (f32) ((f32) rand_next(0x64, 0x96) * -0.25f);
         vec3_transform(&sp48, sKTData->unk16C.x, sKTData->unk16C.y, sKTData->unk16C.z, &sKTData->unk16C.x, &sKTData->unk16C.y, &sKTData->unk16C.z);
-        sKTData->fxFlags |= 0x100000;
+        sKTData->fxFlags |= KTFX_EnablePartFx;
     }
 }
 
@@ -619,33 +672,33 @@ static s32 dll_702_move_and_check_turn(ObjFSA_Data* fsa, KTrex_Data* ktdata) {
     for (i = 0; i < a2->unk98; i++) {
         switch (a2->unk8E[i]) {
         case 1:
-            sKTData->fxFlags |= 4;
+            sKTData->fxFlags |= KTFX_Footfall_Right2;
             break;
         case 2:
-            sKTData->fxFlags |= 8;
+            sKTData->fxFlags |= KTFX_Footfall_Left2;
             break;
         case 3:
-            sKTData->fxFlags |= 0x800;
+            sKTData->fxFlags |= KTFX_Spit_Partfx;
             break;
         case 4:
-            sKTData->fxFlags |= 0x1000;
+            sKTData->fxFlags |= KTFX_Spit_Partfx_Disable;
             break;
         case 5:
-            sKTData->fxFlags |= 0x20000;
+            sKTData->fxFlags |= KTFX_Sound_Explosion;
             break;
         default:
             break;
         }
     }
-    dll_702_func_12DC(a0);
+    dll_702_fx_tick(a0);
     return 0;
 }
 #endif
 
 // offset: 0x12DC | func: 19
-static void dll_702_func_12DC(Object* arg0) {
+static void dll_702_fx_tick(Object *self) {
     s32 i;
-    f32 sp48;
+    f32 sp48; // camera shake amount?
 
     sp48 = 1.0f - (sDLL33Data->fsa.targetDist / 2000.0f);
     if (sp48 < 0.0f) {
@@ -653,136 +706,150 @@ static void dll_702_func_12DC(Object* arg0) {
     } else if (sp48 > 1.0f) {
         sp48 = 1.0f;
     }
-    if (sKTData->fxFlags & 0x40) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_68E) {
+        // the little sound he makes turning a corner
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x80) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_BigRoar) {
+        // the big roar
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x100) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_IntroRoar) {
+        // intro cutscene roar
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x200) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_ChargeEndRoar) {
+        // unused roar on "charge end" anim
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x10000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_WallSlam) {
+        // wall slam on charge turn
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x40000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_84[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_GroundScrape) {
+        // scraping ground, while knocked over
+        gDLL_6_AMSFX->vtbl->play_sound(self, sSndScrapeGround[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x80000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, *_data_8C, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_PainRoar) {
+        // roar from getting zapped
+        gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x2000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, _data_88[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_FlailRoar) {
+        // roar, flailing on ground
+        gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    if (sKTData->fxFlags & 0x1000) {
-        sKTData->fxFlags = sKTData->fxFlags & ~0x1800;
+    if (sKTData->fxFlags & KTFX_Spit_Partfx_Disable) {
+        sKTData->fxFlags = sKTData->fxFlags & ~(KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
     }
-    if (sKTData->fxFlags & 0x20000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & KTFX_Sound_Explosion) {
+        // explosion sound, when he falls on the ground. also during intro
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800013BC();
         func_80003B70(2.0f * sp48);
     }
-    if (sKTData->fxFlags & 0x4000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68B_KT_Rex_Groan, MAX_VOLUME, NULL, NULL, 0, NULL);
-        sKTData->unk108 ^= 1;
+    if (sKTData->fxFlags & KTFX_Sound_Breathing1) {
+        // breathing
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68B_KT_Rex_Breathing1, MAX_VOLUME, NULL, NULL, 0, NULL);
+        sKTData->breathingSfxIndex ^= 1;
     }
-    if (sKTData->fxFlags & 0x8000) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68C_KT_Rex_Groan, MAX_VOLUME, NULL, NULL, 0, NULL);
-        sKTData->unk108 ^= 1;
+    if (sKTData->fxFlags & KTFX_Sound_Breathing2) {
+        // more breathing
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68C_KT_Rex_Breathing2, MAX_VOLUME, NULL, NULL, 0, NULL);
+        sKTData->breathingSfxIndex ^= 1;
     }
-    if (sKTData->fxFlags & 3) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & (KTFX_Footfall_Right1 | KTFX_Footfall_Left1)) {
+        // footfall
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             func_800013BC();
             func_80003B70(sp48);
             main_set_bits(BIT_554, 1);
         }
     }
-    if (sKTData->fxFlags & 0xC) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & (KTFX_Footfall_Right2 | KTFX_Footfall_Left2)) {
+        // footfall
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             func_800013BC();
             func_80003B70(2.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }
-    if (sKTData->fxFlags & 0x30) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+    if (sKTData->fxFlags & (KTFX_Footfall_Right3 | KTFX_Footfall_Left3)) {
+        // footfall
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
             func_800013BC();
             func_80003B70(3.0f * sp48);
             main_set_bits(BIT_554, 1);
         }
     }
-    if (!(sKTData->fxFlags & 0x100000)) {
-        sKTData->fxFlags = sKTData->fxFlags & 0x1800;
+    if (!(sKTData->fxFlags & KTFX_EnablePartFx)) {
+        sKTData->fxFlags &= (KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
         return;
     }
-    if (sKTData->fxFlags & 1) {
+    if (sKTData->fxFlags & KTFX_Footfall_Right1) {
         sKTData->unk124.scale = 1.0f;
         for (i = 0; i != 0xA; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
         }
     }
-    if (sKTData->fxFlags & 2) {
+    if (sKTData->fxFlags & KTFX_Footfall_Left1) {
         sKTData->unk13C.scale = 1.0f;
         for (i = 0; i != 0xA; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
         }
     }
-    if (sKTData->fxFlags & 4) {
+    if (sKTData->fxFlags & KTFX_Footfall_Right2) {
         sKTData->unk124.scale = 1.5f;
         for (i = 0; i != 0xD; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
         }
     }
-    if (sKTData->fxFlags & 8) {
+    if (sKTData->fxFlags & KTFX_Footfall_Left2) {
         sKTData->unk13C.scale = 1.5f;
         for (i = 0; i != 0xD; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
         }
     }
-    if (sKTData->fxFlags & 0x10) {
+    if (sKTData->fxFlags & KTFX_Footfall_Right3) {
         sKTData->unk124.scale = 2.0f;
         for (i = 0; i != 0x10; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
         }
     }
-    if (sKTData->fxFlags & 0x20) {
+    if (sKTData->fxFlags & KTFX_Footfall_Left3) {
         sKTData->unk13C.scale = 2.0f;
         for (i = 0; i != 0x10; i++) {
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
         } 
     }
-    if (sKTData->fxFlags & 0x800) {
-        gDLL_17->vtbl->func1(arg0, 0x487, &sKTData->unk10C, 0x200001, -1, (void*)&sKTData->unk16C);
+    if (sKTData->fxFlags & KTFX_Spit_Partfx) {
+        gDLL_17->vtbl->func1(self, 0x487, &sKTData->unk10C, 0x200001, -1, (void*)&sKTData->unk16C);
     }
-    sKTData->fxFlags = sKTData->fxFlags & 0x1800;
+    sKTData->fxFlags &= (KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
 }
 
 // offset: 0x1E9C | func: 20
-static void dll_702_func_1E9C(s32 arg0, s32 arg1) {
-    s32 temp_v0;
+static void dll_702_anim_event_to_fx(s32 modAnimEvent, s32 fxFlags) {
+    s32 mask;
 
-    temp_v0 = 1 << arg0;
-    if (sDLL33Data->fsa.unk308 & temp_v0) {
-        sDLL33Data->fsa.unk308 &= ~temp_v0;
-        sKTData->fxFlags |= arg1;
+    mask = 1 << modAnimEvent;
+    if (sDLL33Data->fsa.unk308 & mask) {
+        sDLL33Data->fsa.unk308 &= ~mask;
+        sKTData->fxFlags |= fxFlags;
     }
 }
 
@@ -815,7 +882,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
-            gDLL_6_AMSFX->vtbl->play_sound(self, _data_8C[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_2_Camera->vtbl->func8(2, 0);
             gDLL_17->vtbl->func1(self, 0x4B2, &_bss_60, 0x200001, -1, NULL);
@@ -825,7 +892,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             fsa->unk343 = (s8) sp60;
             fsa->unk348 -= 1;
         } else {
-            gDLL_6_AMSFX->vtbl->play_sound(self, _data_90[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, sSndDeflectAttack[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
             temp_v1 = modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
@@ -853,7 +920,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
 // offset: 0x23EC | func: 22
 static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0, 0.0f, 0);
+        func_80023D30(self, KTANIM_Idle, 0.0f, 0);
     }
     fsa->animTickDelta = 0.01f;
     return 0;
@@ -864,21 +931,21 @@ static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     f32 temp_fa1;
     f32 temp_fv0;
-    s32 var_a1;
+    s32 speakFxFlags;
 
     if (fsa->enteredAnimState) {
-        func_80023D30(self, (s32) _data_10[sKTData->anger], 0.0f, 0);
+        func_80023D30(self, sWalkModAnims[sKTData->anger], 0.0f, 0);
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(2, (s32) _data_2C[sKTData->anger]);
-    dll_702_func_1E9C(1, (s32) _data_34[sKTData->anger]);
-    if (sKTData->unk108 != 0) {
-        var_a1 = _data_3C[sKTData->anger];
+    dll_702_anim_event_to_fx(KTANIM_EVT_2_Footfall_Right, sFootfallRightFxFlags[sKTData->anger]); // on event 2 -> right footfall
+    dll_702_anim_event_to_fx(KTANIM_EVT_1_Footfall_Left, sFootfallLeftFxFlags[sKTData->anger]); // on event 1 -> left footfall
+    if (sKTData->breathingSfxIndex != 0) {
+        speakFxFlags = sBreathingFxFlags1[sKTData->anger];
     } else {
-        var_a1 = _data_44[sKTData->anger];
+        speakFxFlags = sBreathingFxFlags2[sKTData->anger];
     }
-    dll_702_func_1E9C(0, var_a1);
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, speakFxFlags); // on event 0 -> breathing sfx
     temp_fv0 = (sKTData->pos.x - self->srt.transl.x) * gUpdateRateInverseF;
     temp_fa1 = (sKTData->pos.z - self->srt.transl.z) * gUpdateRateInverseF;
     func_8002493C(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->animTickDelta);
@@ -897,14 +964,14 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
-        func_80023D30(self, _data_20[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
-        fsa->animTickDelta = _data_60[sKTData->anger];
+        func_80023D30(self, sTurn90ModAnims[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
+        fsa->animTickDelta = sTurn90AnimTickDeltas[sKTData->anger];
         sKTData->turnStartYaw = self->srt.yaw;
     }
-    dll_702_func_1E9C(2, 1);
-    dll_702_func_1E9C(1, 2);
-    dll_702_func_1E9C(0, 0x40);
-    dll_702_func_1E9C(7, 0x10000);
+    dll_702_anim_event_to_fx(KTANIM_EVT_2_Footfall_Right, KTFX_Footfall_Right1); // on event 2 -> right footfall
+    dll_702_anim_event_to_fx(KTANIM_EVT_1_Footfall_Left, KTFX_Footfall_Left1); // on event 1 -> left footfall
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_68E); // on event 1 -> little noise he makes on the corner
+    dll_702_anim_event_to_fx(KTANIM_EVT_7, KTFX_Sound_WallSlam); // on event 7 -> wall slam fx
     fsa->unk340 |= 1;
     gDLL_18_objfsa->vtbl->func7(self, fsa, gUpdateRateF, 3);
     tempSRT.yaw = sKTData->turnStartYaw;
@@ -931,7 +998,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xF, 0.0f, 0);
+        func_80023D30(self, KTANIM_Turn_180, 0.0f, 0);
         fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -949,26 +1016,29 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Roar, standing in place. */
 static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, _data_18[sKTData->roarType], 0.0f, 0);
-        fsa->animTickDelta = _data_54[sKTData->roarType];
+        func_80023D30(self, sRoarModAnims[sKTData->roarType], 0.0f, 0);
+        fsa->animTickDelta = sRoarAnimTickDeltas[sKTData->roarType];
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(0, _data_4C[sKTData->roarType]);
-    dll_702_func_1E9C(9, 0x800);
-    dll_702_func_1E9C(0xA, 0x1000);
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, sRoarFxFlags[sKTData->roarType]);
+    dll_702_anim_event_to_fx(KTANIM_EVT_9_Spit_Partfx_Enable, KTFX_Spit_Partfx); // on event 9 -> enable spit partfx
+    dll_702_anim_event_to_fx(KTANIM_EVT_10_Spit_Partfx_Disable, KTFX_Spit_Partfx_Disable); // on event 10 -> disable spit partfx
     return 0;
 }
+
 // offset: 0x2AF0 | func: 27
 /** Roar, after completing a charge. */
 static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, _data_8[sKTData->anger], 0.0f, 0);
+        func_80023D30(self, sChargeEndModAnims[sKTData->anger], 0.0f, 0);
         fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(0, 0x200);
+    // @bug: this event never plays with the above mod anim. the boss ends up doing a roar anim
+    //       but with no sound here. the sound is a shorter quieter roar.
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_ChargeEndRoar);
     return 0;
 }
 
@@ -976,13 +1046,13 @@ static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Zapped, fall down. */
 static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xB, 0.0f, 0);
+        func_80023D30(self, KTANIM_FallDown, 0.0f, 0);
         fsa->animTickDelta = 0.006f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
-    dll_702_func_1E9C(0, 0x80000);
-    dll_702_func_1E9C(7, 0x20000);
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_PainRoar);
+    dll_702_anim_event_to_fx(KTANIM_EVT_7, KTFX_Sound_Explosion);
     return 0;
 }
 
@@ -990,11 +1060,11 @@ static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Knocked over on the ground. */
 static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xC, 0.0f, 0);
+        func_80023D30(self, KTANIM_FlailOnGround, 0.0f, 0);
         fsa->animTickDelta = 0.01f;
     }
-    dll_702_func_1E9C(0, 0x2000);
-    dll_702_func_1E9C(7, 0x40000);
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_FlailRoar);
+    dll_702_anim_event_to_fx(KTANIM_EVT_7, KTFX_Sound_GroundScrape);
     return 0;
 }
 
@@ -1002,10 +1072,10 @@ static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Standing back up, after being zapped and knocked down. */
 static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xD, 0.0f, 0);
+        func_80023D30(self, KTANIM_GetBackUp, 0.0f, 0);
         fsa->animTickDelta = 0.0017f;
     }
-    dll_702_func_1E9C(0, 0x2000);
+    dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_FlailRoar);
     return 0;
 }
 
@@ -1039,7 +1109,7 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate)
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_1_MOVING_STRAIGHT);
         sKTData->anger = 0;
-        sKTData->flags &= ~KTFLAG_CHARGING;
+        sKTData->flags &= ~KTFLAG_ROLLED_CHANCE;
         fsa->speed = objsetup->speeds[sKTData->anger] / 1000.0f;
     }
     if (dll_702_move_and_check_turn(fsa, sKTData) != 0) {
@@ -1049,7 +1119,7 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (sKTData->anger == 0) {
-        if ((sKTData->fightProgress >= 2) && !(sKTData->flags & KTFLAG_CHARGING) && 
+        if ((sKTData->fightProgress >= 2) && !(sKTData->flags & KTFLAG_ROLLED_CHANCE) && 
                 ((!reversed && sKTData->segmentPos >= 0.7f) || (reversed && sKTData->segmentPos <= 0.3f))) {
             chanceIdx = sKTData->fightProgress >> 1;
             if (rand_next(0, 100) <= objsetup->chargeChance[chanceIdx]) {
@@ -1063,7 +1133,7 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate)
                 dll_702_push_state(KT_LSTATE_11_REVERSE);
                 return KT_LSTATE_4_ROAR + 1;
             }
-            sKTData->flags |= KTFLAG_CHARGING;
+            sKTData->flags |= KTFLAG_ROLLED_CHANCE;
         }
     }
     if ((sKTData->selfSegmentBitfield & sKTData->playerSegmentBitfield) && 

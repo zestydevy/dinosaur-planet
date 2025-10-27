@@ -86,8 +86,8 @@ enum SoundID {
     SOUND_689_KT_Rex_Stomp = 0x689,
     SOUND_68A_KT_Rex_Stomp = 0x68A,
     
-    SOUND_68B_KT_Rex_Groan = 0x68B,
-    SOUND_68C_KT_Rex_Groan = 0x68C,
+    SOUND_68B_KT_Rex_Breathing1 = 0x68B,
+    SOUND_68C_KT_Rex_Breathing2 = 0x68C,
     SOUND_68D_KT_Rex_Roar_Kinda = 0x68D,
     SOUND_68E_KT_Rex_Noise = 0x68E, // when he notices sabre?
     SOUND_68F_KT_Rex_Roar = 0x68F,
