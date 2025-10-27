@@ -213,28 +213,28 @@ typedef struct {
 /*0x58*/ static DLL33_Data* sDLL33Data;
 /*0x5C*/ static KTrex_Data *sKTData;
 
-static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2);
+static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
-static s32 dll_702_logic_state_0(Object *self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 arg2);
-static s32 dll_702_logic_state_11(Object* self, ObjFSA_Data* fsa, f32 arg2);
+static s32 dll_702_logic_state_0(Object *self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_702_logic_state_11(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 static s32 dll_702_get_player_segment_bitfield(void);
 static u8 dll_702_get_self_segment_bitfield(u16 ktflags);
@@ -851,7 +851,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
 }
 
 // offset: 0x23EC | func: 22
-static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 arg3) {
+static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0, 0.0f, 0);
     }
@@ -861,7 +861,7 @@ static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 arg3) {
 
 // offset: 0x2454 | func: 23
 /** Walking straight through arena segment. */
-static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     f32 temp_fa1;
     f32 temp_fv0;
     s32 var_a1;
@@ -889,7 +889,7 @@ static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x2644 | func: 24
 /** 90 degree turn. */
-static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     MtxF tempMtx;
     f32 tempY;
     SRT tempSRT;
@@ -926,7 +926,7 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x28BC | func: 25
 /** 180 degree turn. */
-static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     u16 reversed;
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
@@ -947,7 +947,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x29D0 | func: 26
 /** Roar, standing in place. */
-static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, _data_18[sKTData->roarType], 0.0f, 0);
         fsa->animTickDelta = _data_54[sKTData->roarType];
@@ -961,7 +961,7 @@ static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 }
 // offset: 0x2AF0 | func: 27
 /** Roar, after completing a charge. */
-static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, _data_8[sKTData->anger], 0.0f, 0);
         fsa->animTickDelta = 0.005f;
@@ -974,7 +974,7 @@ static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x2BA4 | func: 28
 /** Zapped, fall down. */
-static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xB, 0.0f, 0);
         fsa->animTickDelta = 0.006f;
@@ -988,7 +988,7 @@ static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x2C54 | func: 29
 /** Knocked over on the ground. */
-static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xC, 0.0f, 0);
         fsa->animTickDelta = 0.01f;
@@ -1000,7 +1000,7 @@ static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x2CF8 | func: 30
 /** Standing back up, after being zapped and knocked down. */
-static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 arg3) {
+static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xD, 0.0f, 0);
         fsa->animTickDelta = 0.0017f;
@@ -1010,13 +1010,13 @@ static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 arg3) {
 }
 
 // offset: 0x2D80 | func: 31
-static s32 dll_702_logic_state_0(Object *self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_0(Object *self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 }
 
 // offset: 0x2D98 | func: 32
 /** Boss defeated. */
-static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
         func_80013FB4();
@@ -1030,7 +1030,7 @@ static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x2E64 | func: 33
 /** Walk straight down arena segment. */
-static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     KTrex_ObjSetup* objsetup;
     s32 chanceIdx;
     s32 reversed;
@@ -1079,7 +1079,7 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3160 | func: 34
 /** Turn 90 degrees around a corner. */
-static s32 dll_702_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_2_TURN_90);
     } else if (fsa->unk33A != 0) {
@@ -1092,7 +1092,7 @@ static s32 dll_702_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3208 | func: 35
 /** Stop moving and do a roar. */
-static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     KTrex_ObjSetup* objsetup;
     f32 var_ft1;
     u16 temp_t3;
@@ -1115,7 +1115,7 @@ static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3330 | func: 36
 /** Charging straight down an arena segment. */
-static s32 dll_702_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     KTrex_ObjSetup* objsetup;
 
     objsetup = (KTrex_ObjSetup*)self->setup;
@@ -1141,7 +1141,7 @@ static s32 dll_702_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3490 | func: 37
 /** Handle end of a charge. */
-static s32 dll_702_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_5_CHARGE_END);
     } else if (fsa->unk33A != 0) {
@@ -1153,7 +1153,7 @@ static s32 dll_702_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3518 | func: 38
 /** Got zapped, fall down. */
-static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_6_ZAPPED);
         self->unkAF &= ~0x8;
@@ -1166,7 +1166,7 @@ static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x35A0 | func: 39
 /** On ground, vulnerable after getting zapped. */
-static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     KTrex_ObjSetup* objsetup;
 
     objsetup = (KTrex_ObjSetup*)self->setup;
@@ -1194,7 +1194,7 @@ static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3720 | func: 40
 /** Get back up after being on the ground. */
-static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     u16 ktflags;
     
     if (fsa->enteredLogicState) {
@@ -1215,7 +1215,7 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3828 | func: 41
 /** Full charge around the entire arena. */
-static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     KTrex_ObjSetup* objsetup;
     s32 segment;
     s32 reversed;
@@ -1255,7 +1255,7 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x3AA0 | func: 42
 /** Turn 180 to reverse direction to move around the arena. */
-static s32 dll_702_logic_state_11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_702_logic_state_11(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_3_TURN_180);
     } else if (fsa->unk33A != 0) {

@@ -24,8 +24,8 @@ DLL_INTERFACE(DLL_18_UnknownDLL) {
 
 void objfsa_func_13E4(ObjFSA_Data *data, void *arg1);
 void objfsa_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 updateRate, ObjFSA_StateCallback *arg3);
-static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *arg3);
+static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 updateRate, ObjFSA_StateCallback *callbacks);
+static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 updateRate, ObjFSA_StateCallback *callbacks);
 static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data);
 static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2);
 static void objfsa_func_1E30(Object *obj, ObjFSA_Data *data);
@@ -313,7 +313,7 @@ static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 updateRate
 }
 
 // offset: 0xB34 | func: 6
-static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *callbacks) {
+static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 updateRate, ObjFSA_StateCallback *callbacks) {
     s32 prevState;
     s32 nextState;
     s32 stop;
@@ -331,7 +331,7 @@ static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, Obj
         prevState = data->logicState;
         stop = FALSE;
         callback = callbacks[data->logicState];
-        nextState = callback(obj, data, arg2);
+        nextState = callback(obj, data, updateRate);
         if (nextState > 0) {
             // Switch to next state (run synchronously)
             data->prevLogicState = data->logicState;
