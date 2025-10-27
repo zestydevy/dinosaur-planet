@@ -63,7 +63,7 @@ void SHqueenearthwalker_control(Object* self) {
         break;
     case 2:
         if (self->unkAF & 1) {
-            set_button_mask(0, 0x8000);
+            set_button_mask(0, A_BUTTON);
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             main_set_bits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
             objdata->questProgress = 3;
@@ -72,7 +72,7 @@ void SHqueenearthwalker_control(Object* self) {
     case 3:
         if (self->unkAF & 4) {
             if (gDLL_1_UI->vtbl->func7(BIT_Inventory_White_Mushrooms) != 0) {
-                set_button_mask(0, 0x8000);
+                set_button_mask(0, A_BUTTON);
                 objdata->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
                 if (objdata->eatenWhiteMushrooms <= 0) {
                     gDLL_3_Animation->vtbl->func17(3, self, -1);
@@ -84,7 +84,7 @@ void SHqueenearthwalker_control(Object* self) {
                 main_set_bits(BIT_Inventory_White_Mushrooms, 0);
                 main_set_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, objdata->eatenWhiteMushrooms);
             } else if (self->unkAF & 1) {
-                set_button_mask(0, 0x8000);
+                set_button_mask(0, A_BUTTON);
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
             }
         }

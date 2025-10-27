@@ -957,12 +957,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
     temp_fv0 = sqrtf((spD8 * spD8) + (spDC * spDC) + (spE0 * spE0));
     var_fs2 = temp_fv0 * 0.1f;
     var_a0 = arctan2_f(spDC, sqrtf((spD8 * spD8) + (spE0 * spE0)));
-    if (var_a0 >= 0x2001) {
-        var_a0 = 0x2000;
-    }
-    if (var_a0 < 0) {
-        var_a0 = 0;
-    }
+    CLAMP(var_a0, 0, 0x2000)
     var_a3 = 0;
     var_fv0 = (f32)var_a0 / 8192;
     if (var_fv0 > 1.0f) {

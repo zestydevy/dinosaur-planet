@@ -391,12 +391,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
-                if (temp > 0x8000) {
-                    temp += 0xFFFF0001;
-                }
-                if (temp < -0x8000) {
-                    temp += 0x0000FFFF;
-                }
+                CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
                 break;
             }
@@ -429,12 +424,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
-                if (temp > 0x8000) {
-                    temp += 0xFFFF0001;
-                }
-                if (temp < -0x8000) {
-                    temp += 0x0000FFFF;
-                }
+                CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
                 break;
             }
@@ -467,12 +457,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
-                if (temp > 0x8000) {
-                    temp += 0xFFFF0001;
-                }
-                if (temp < -0x8000) {
-                    temp += 0x0000FFFF;
-                }
+                CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
                 break;
             }
@@ -505,12 +490,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 rotate_vec3(&srt, obj->speed.f);
                 temp = arctan2_f(obj->speed.x, -obj->speed.z) & 0xFFFF & 0xFFFF & 0xFFFF;
                 temp = obj->srt.yaw - temp;
-                if (temp > 0x8000) {
-                    temp += 0xFFFF0001;
-                }
-                if (temp < -0x8000) {
-                    temp += 0x0000FFFF;
-                }
+                CIRCLE_WRAP(temp)
                 obj->srt.yaw = temp;
                 break;
             }

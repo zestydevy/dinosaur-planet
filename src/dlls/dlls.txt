@@ -123,6 +123,8 @@
 668 = objects/668_db_diamond
 701 = objects/701_KT_RexLevel
 702 = objects/702_KTrex
+703 = objects/703_KT_RexFloorSwitch
+704 = objects/704_KT_Lazerwall
 712 = objects/712_DIMSnowHorn1
 713 = objects/713_DR_EarthWarrior
 714 = objects/714_DR_CloudRunner

@@ -877,12 +877,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     sp94[0] = sp94[0] - sp94[1];
     sp94[2] = spB0[3] - spB0[0];
     v1 = (arg0->srt.pitch - (arctan2_f(sp94[2], sp94[0]) & 0xFFFF));
-    if (v1 >= 0x8001) {
-        v1 += 0xFFFF0001;
-    }
-    if (v1 < -0x8000) {
-        v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(v1)
     arg0->srt.pitch = -arctan2_f(sp94[2], sp94[0]);
     if (arg1->flags & DLL27FLAG_400) {
         sp94[2] = spB0[1];

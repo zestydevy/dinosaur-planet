@@ -551,12 +551,7 @@ void dll_6_func_1320(Object* arg0, u16 arg1, FloatOrInt arg2, f32 arg3, f32 arg4
         temp3 = temp2 - (temp - arg3);
         temp3 = ((temp3 * 127.0f) / temp2);
         soundVolume = temp3;
-        if (soundVolume > MAX_VOLUME) {
-            soundVolume = MAX_VOLUME;
-        }
-        if (soundVolume < 0) {
-            soundVolume = 0;
-        }
+        CLAMP(soundVolume, 0, MAX_VOLUME)
     }
     if ((soundVolume > 0) && (*arg5 == 0)) {
         dll_6_play_sound(arg0, arg1, soundVolume, arg5, "game/amsfx.c", 0x37B, "\0\0\0\0amSfxSetPitch: Warning,sound handle '%d' out of range.\n\0amSfxSetPitch: Warning,invalid handle '%d'.\n\0");
@@ -917,8 +912,7 @@ void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, u8* arg3, u8* arg4) {
 
     sp34 = sqrtf(SQ(arg0) + SQ(arg1));
     sp24 = (arg2 - -arctan2_f(arg0, arg1)) - 0x8000;
-    if (sp24 >= 0x8001) { sp24 = sp24 + 0xFFFF0001; }
-    if (sp24 < -0x8000) { sp24 += 0xFFFF; }
+    CIRCLE_WRAP(sp24)
     if (sp34 <= 100.0f) {
         sp2B = -((sin16_precise(sp24) / 1024) * (sp34 * 0.01f));
         var_v1_2 = (s8)( -((cos16_precise(sp24) / 1024) * (sp34 * 0.01f)));

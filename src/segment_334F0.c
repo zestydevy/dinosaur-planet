@@ -146,12 +146,7 @@ void func_80032CF8(Object* obj, Object* otherObj, Unk80032CF8* arg2, s32 arg3) {
     sp38 = sqrtf(SQ(sp44) + SQ(sp40));
     temp = arctan2_f(sp44, sp40);
     sp2C[0] = ((s16)temp - (obj->srt.yaw & 0xFFFF));
-    if (sp2C[0] >= 0x8001) {
-        sp2C[0] += 0xFFFF0001;
-    }
-    if (sp2C[0] < -0x8000) {
-        sp2C[0] += 0xFFFF;
-    }
+    CIRCLE_WRAP(sp2C[0])
     sp2C[1] = (arctan2_f(sp38, sp3C) - 0x3FFF) & 0xFFFF & 0xFFFF;
     arg3 = (s16) (arg3 * 182.04f);
     for (i = 0; i < 2; i++) {
@@ -343,26 +338,13 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, Unk80032CF8* arg3,
     sp8C = arg2->z - otherObj->srt.transl.z;
     sp90 = (arg2->y + arg5) - otherObj->srt.transl.y;
     sp88 = sqrtf(SQ(temp_fs0) + SQ(sp8C));
-    temp_t5 = arctan2_f(temp_fs0, sp8C) - (obj->srt.yaw & 0xFFFF);
-    sp84[0] = temp_t5;
-    if (temp_t5 >= 0x8001) {
-        sp84[0] = temp_t5 + 0xFFFF0001;
-    }
-    if (sp84[0] < -0x8000) {
-        sp84[0] += 0xFFFF;
-    }
-    i = 0;
-    var_v1 = (s16)(arg7 - -arctan2_f(sp88, sp90));
-    if (var_v1 >= 0x8001) {
-        var_v1 = (s16)(var_v1 + 0xFFFF0001);
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 = (s16)(var_v1 + 0xFFFF);
-    }
-    sp84[1] = var_v1;
+    sp84[0] = ((s16)((u16)arctan2_f(temp_fs0, sp8C)) - (obj->srt.yaw & 0xFFFF));
+    CIRCLE_WRAP(sp84[0])
+    sp84[1] = arg7 - -(u16)arctan2_f(sp88, sp90);
+    CIRCLE_WRAP(sp84[1])
     if ((D_800B2E00 >> 0x1F) != 0) {
         sp84[0] -= 0x8000;
-        sp84[1] = -var_v1;
+        sp84[1] = -sp84[1];
     }
 
     for (i = 0; i < 10; i++) {
@@ -561,12 +543,7 @@ void func_80033C54(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
             arg1->unk1A = sp28 << 8;
         } else {
             arg1->unk14 = arctan2_f(obj->srt.transl.x - arg1->x, obj->srt.transl.z - arg1->z) - (obj->srt.yaw & 0xFFFF);
-            if (arg1->unk14 >= 0x8001) {
-                arg1->unk14 += 0xFFFF0001;
-            }
-            if (arg1->unk14 < -0x8000) {
-                arg1->unk14 += 0xFFFF;
-            }
+            CIRCLE_WRAP(arg1->unk14)
             if ((arg1->unk14 >= 0x2000) || (arg1->unk14 < -0x1FFF)) {
                 arg1->unk1A = sp28 << 8;
             } else {

@@ -87,7 +87,7 @@ s32 dll_33_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
 
 // offset: 0x278 | func: 2 | export: 4
 void dll_33_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, s16* arg5) {
-    u16* sp2C;
+    DLL33_Data* sp2C;
     Vec3f sp20;
     Object* temp_v1;
     s32 temp_a0;
@@ -113,18 +113,13 @@ void dll_33_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, 
         var_a1 = arg0->srt.yaw;
     }
     var_v1 = temp_v0 - (var_a1 & 0xFFFF);
-    if (var_v1 >= 0x8001) {
-        var_v1 = var_v1 + 0xFFFF0001;
-    }
-    if (var_v1 < -0x8000) {
-        var_v1 += 0xFFFF;
-    }
+    CIRCLE_WRAP(var_v1)
     temp_v0_2 = var_v1;
     *arg4 = var_v1;
     if ((temp_v0_2 < 0x31C4) || (temp_v0_2 >= 0xCE3C)) {
-        sp2C[0x1D9] &= ~0x10; // unk3B2
+        sp2C->unk3B2 &= ~0x10;
     } else {
-        sp2C[0x1D9] |= 0x10; // unk3B2
+        sp2C->unk3B2 |= 0x10;
     }
     *arg3 = (temp_v0_2 / (0x10000 / arg2));
     *arg5 = (u32) sqrtf(SQ(sp20.f[2]) + (SQ(sp20.x) + SQ(sp20.y)));
@@ -262,18 +257,8 @@ s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_S
     }
     if ((temp_fv0_2 <= sp30) || (_data_4 >= 0xA)) {
         var_v0 = arg0->srt.yaw - (arg2->fsa.target->srt.yaw & 0xFFFF);
-        if (var_v0 >= 0x8001) {
-            var_v0 += 0xFFFF0001;
-        }
-        if (var_v0 < -0x8000) {
-            var_v0 += 0xFFFF;
-        }
-        if (var_v0 >= 0x2001) {
-            var_v0 = 0x2000;
-        }
-        if (var_v0 < -0x2000) {
-            var_v0 = -0x2000;
-        }
+        CIRCLE_WRAP(var_v0)
+        CLAMP(var_v0, -0x2000, 0x2000)
         arg0->srt.yaw -= (var_v0 * delayByte) >> 3;
         if (_data_4 >= 0xB) {
             var_v0 = 0;
@@ -443,20 +428,10 @@ Object* dll_33_func_10F4(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
             var_v1 = arctan2_f(-spE0[0], -spE0[2]);
             if (arg0->parent != NULL) {
                 var_v1 -= ((arg0->srt.yaw + arg0->parent->srt.yaw) & 0xFFFF);
-                if (var_v1 >= 0x8001) {
-                    var_v1 += 0xFFFF0001;
-                }
-                if (var_v1 < -0x8000) {
-                    var_v1 += 0xFFFF;
-                }
+                CIRCLE_WRAP(var_v1)
             } else {
                 var_v1 -= (arg0->srt.yaw & 0xFFFF);
-                if (var_v1 >= 0x8001) {
-                    var_v1 += 0xFFFF0001;
-                }
-                if (var_v1 < -0x8000) {
-                    var_v1 += 0xFFFF;
-                }
+                CIRCLE_WRAP(var_v1)
             }
             if ((var_v1 < arg3) && (-arg3 < var_v1)) {
                 stop = TRUE;

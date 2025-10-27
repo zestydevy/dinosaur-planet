@@ -1,0 +1,15 @@
+.text = 0x0:
+dll_704_ctor = 0x0;
+dll_704_dtor = 0xC;
+dll_704_setup = 0x18;
+dll_704_control = 0x90;
+dll_704_update = 0x650;
+dll_704_print = 0x65C;
+dll_704_free = 0x674;
+dll_704_get_model_flags = 0x73C;
+dll_704_get_data_size = 0x74C;
+
+.rodata = 0x7AC:
+
+.data = 0x7AC:
+_data_0 = 0x0; // absolute:0x7AC

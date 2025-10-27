@@ -69,12 +69,7 @@ void SB_Propeller_control(Object *self) {
             sp54 = ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func8(parent);
             if (parent_unkDC < 4) {
                 torque = (1800 - objdata->torque) >> 3;
-                if (torque > 2) {
-                    torque = 2;
-                }
-                if (torque < -2) {
-                    torque = -2;
-                }
+                CLAMP(torque, -2, 2)
                 objdata->torque += torque * delayByte;
                 objdata->torqueFloat = objdata->torque / 1600.0f;
                 if (objdata->torqueFloat < 0.0f) {

@@ -296,12 +296,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     func_80024108(self, objdata->unkC, delayFloat, &sp50);
 
     angle = arctan2_f(self->positionMirror.x - objdata->player->positionMirror.x, self->positionMirror.z - objdata->player->positionMirror.z) - ((u16)self->srt.yaw);
-    if (angle > 0x8000) {
-        angle += -0xFFFF;
-    }
-    if (angle < -0x8000) {
-        angle += 0xFFFF;
-    }
+    CIRCLE_WRAP(angle)
     self->srt.yaw += (s32)((angle * delayFloat) / 12.0f);
 }
 
