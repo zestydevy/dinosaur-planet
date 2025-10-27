@@ -794,7 +794,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     s32 sp5C;
     s32 sp58;
     Object* sp54;
-    MtxF* temp_v1; // maybe not a matrix?
+    MtxF* temp_v1; // TODO: maybe not a matrix?
     ModelInstance* modelInst;
     u32 sp3C[] = {0x00000006, 0x00000069, 0x00000069, 0x000000ff};
 
@@ -810,7 +810,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     sp60 = func_80025F40(self, &sp54, &sp5C, &sp58);
     if (sp60 != 0) {
         modelInst = self->modelInsts[self->modelInstIdx];
-        temp_v1 = (MtxF*)modelInst->unk24;
+        temp_v1 = modelInst->unk24;
         if ((fsa->unk348 != 0) && ((sp5C == 3) || (sp5C == 2))) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
@@ -827,7 +827,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, _data_90[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
-            temp_v1 = (MtxF*)modelInst->unk24;
+            temp_v1 = modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;

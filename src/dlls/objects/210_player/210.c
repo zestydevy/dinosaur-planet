@@ -57,32 +57,6 @@ static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1);
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
 static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 
-typedef struct Unk {
-    u8 pad0[0x24];
-    f32 unk24;
-    u8 pad28[0x4C - 0x28];
-    Vec3f unk4C;
-    f32 unk58;
-    s16 yawDiff;
-    s16 pitchDiff;
-    s16 rollDiff;
-    s8 unk62;
-    u8 pad63;
-    s16 unk64;
-    s16 unk66;
-    u8 pad68[0x7A - 0x68];
-    s16 unk7A;
-    s16 unk7C;
-    u8 unk7E[0x8D - 0x7E];
-    u8 unk8D;
-    u8 unk8E[0x98 - 0x8E]; // unknwon size
-    u8 unk98;
-    u8 pad99[0x9D - 0x99];
-    u8 unk9D;
-    u8 pad9E[0xF4 - 0x9E];
-    void *unkF4;
-} Unk;
-
 // These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
 /* static */ void dll_210_func_41F4(Object* arg0, Player_Data* arg1);
