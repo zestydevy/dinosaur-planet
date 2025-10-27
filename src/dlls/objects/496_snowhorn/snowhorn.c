@@ -229,7 +229,7 @@ void dll_496_dtor(s32 arg0) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/496_snowhorn/dll_496_setup.s")
 #else
-s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3);
+int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3);
 void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
 void dll_496_func_174C(Object *snowHorn, SnowHorn_Data *objdata, SnowHorn_Setup* mapsObj);
@@ -243,7 +243,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     objdata = snowhorn->data;
     sp34 = *_data_300;
     snowhorn->srt.yaw = mapsObj->rotation << 8;
-    snowhorn->unkBC = (void*)dll_496_func_84C;
+    snowhorn->animCallback = dll_496_func_84C;
     
     if (arg2 == 0) {
         obj_add_object_type(snowhorn, 0xC);
@@ -429,7 +429,7 @@ u32 dll_496_get_data_size(Object *self, s32 arg1) {
 }
 
 /** When talking with SnowHorn */
-s32 dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3) {
+int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3) {
     SnowHorn_Data* objdata;
     s32 i;
 

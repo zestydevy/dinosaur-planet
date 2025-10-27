@@ -9,6 +9,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/214_animobj.h"
 
 //Official name unknown, but VFPT's equivalent was named "VFlevcontrol.c"
 
@@ -25,7 +26,7 @@
     0x01000000, 0x00000000, 0x00000000
 };
 
-static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3);
+static int dll_638_func_62C(Object* self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
 
 typedef struct {
 s16 unk0;   
@@ -44,7 +45,7 @@ void dll_638_setup(Object* self, s32 arg1, s32 arg2) {
 
     obj_add_object_type(self, OBJTYPE_10);
     _data_0 = queue_load_texture_proxy(0x46C);
-    self->unkBC = (void*)dll_638_func_62C;
+    self->animCallback = dll_638_func_62C;
     gDLL_29_Gplay->vtbl->set_map_setup(self->mapID, 1);
     mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(self->mapID);
 
@@ -99,7 +100,7 @@ u32 dll_638_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/638_DFPlevcontrol/dll_638_func_5E4.s")
 
 // offset: 0x62C | func: 8
-static s32 dll_638_func_62C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
+static int dll_638_func_62C(Object* self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
     DFPTLevelControl_Data *objdata;
     DLL_210_Player *dll;
     Object *player;

@@ -47,7 +47,7 @@ typedef struct {
     CurveSetup* curveSetup;
 } PerchObject_Data;
 
-static s32 perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 enum PerchObjectStates {
     STATE_0_Initialise = 0,
@@ -66,7 +66,7 @@ void perchObject_setup(Object* self, s32 arg1, s32 arg2) {
 
     objData->stateIndex = STATE_0_Initialise;
     obj_add_object_type(self, 0x30);
-    self->unkBC = (void*)&perchObject_anim_callback;
+    self->animCallback = perchObject_anim_callback;
 }
 
 // offset: 0x74 | func: 1 | export: 1
@@ -209,7 +209,7 @@ u32 perchObject_func_460(Object *self) {
 }
 
 // offset: 0x470 | func: 11
-s32 perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     s32 pad;
     Object* kyte;
     PerchObject_Data* state;

@@ -55,7 +55,7 @@ typedef struct {
 /*0x0*/ static u8 _bss_0[0x10];
 
 static void moonSeedReceptacle_func_D40(Object* self);
-static s32 moonSeedReceptacle_anim_callback(Object* self, s32 animObj, AnimObj_Data* animObjData, s32 arg3);
+static int moonSeedReceptacle_anim_callback(Object* self, Object *animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void moonSeedReceptacle_ctor(void *dll) { }
@@ -68,7 +68,7 @@ void moonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;
-    self->unkBC = (void*)&moonSeedReceptacle_anim_callback;
+    self->animCallback = moonSeedReceptacle_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objData->unk0 = 0;
     
@@ -307,7 +307,7 @@ void moonSeedReceptacle_func_D40(Object* self) {
 }
 
 // offset: 0xE5C | func: 12
-s32 moonSeedReceptacle_anim_callback(Object* self, s32 animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int moonSeedReceptacle_anim_callback(Object* self, Object *animObj, AnimObj_Data* animObjData, s8 arg3) {
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;

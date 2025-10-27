@@ -14,7 +14,8 @@ typedef struct {
     s16 unk1C;
     s8 unk1E;
     s8 unk1F;
-    s16 unk20;
+    s8 unk20;
+    u8 pad21;
     s8 unk22;
     s8 unk23;
     u8 unk24;
@@ -23,7 +24,7 @@ typedef struct {
 typedef void (*AnimObj_DataF4Callback)(Object *arg0, s32 arg1, s32 arg2);
 typedef s32 (*AnimObj_DataF8Callback)(Object *arg0, s32 arg1, s32 arg2);
 
-typedef struct {
+typedef struct AnimObj_Data {
 /*00*/ s8 unk0[0x24 - 0];
 /*24*/ f32 unk24;
 /*28*/ s32 unk28;
@@ -32,7 +33,10 @@ typedef struct {
 /*34*/ u32 unk34[4];
 /*44*/ s8 unk44[0x4C - 0x44];
 /*4C*/ Vec3f unk4C;
-/*58*/ u8 pad58[0x62 - 0x58];
+/*58*/ f32 unk58;
+/*5C*/ s16 yawDiff;
+/*5E*/ s16 pitchDiff;
+/*60*/ s16 rollDiff;
 /*62*/ s8 unk62;
 /*63*/ s8 unk63;
 /*64*/ s16 animCurvesCurrentFrameA;

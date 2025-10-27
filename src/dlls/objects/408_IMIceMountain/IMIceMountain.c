@@ -28,7 +28,7 @@ typedef enum {
     IMICEMOUNTAIN_FLAG_1 = 0x1
 } IMIceMountain_Flag;
 
-static int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 static void IMIceMountain_do_act1(Object *self);
 static void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata);
 static void IMIceMountain_do_act2(Object *self);
@@ -47,7 +47,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
     Object *player;
 
     objdata = self->data;
-    self->unkBC = (ObjectCallback)IMIceMountain_anim_callback;
+    self->animCallback = IMIceMountain_anim_callback;
     gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 1, 0);
     switch (gDLL_29_Gplay->vtbl->get_map_setup(self->mapID)) {
     case 1:
@@ -135,7 +135,7 @@ u32 IMIceMountain_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x4D8 | func: 7
-int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     s32 i;
     IMIceMountain_Data *objdata;
 

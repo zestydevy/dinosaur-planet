@@ -31,7 +31,7 @@ typedef enum {
     IMMULTISEQ_SET_GAMEBIT = 0x1
 } IMMultiSeq_Flags;
 
-static int IMMultiSeq_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int IMMultiSeq_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void IMMultiSeq_ctor(void *dll) { }
@@ -46,7 +46,7 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->unkBC = (ObjectCallback)IMMultiSeq_anim_callback;
+    self->animCallback = IMMultiSeq_anim_callback;
     self->unkB0 |= 0x6000;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
@@ -137,7 +137,7 @@ u32 IMMultiSeq_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x37C | func: 7
-int IMMultiSeq_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) { // NOLINT
+int IMMultiSeq_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) { // NOLINT
     s32 currentSetBitsCount;
     IMMultiSeq_Data *objdata;
     s32 nextSetBitsCount;

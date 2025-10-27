@@ -38,7 +38,7 @@ typedef enum {
 #define NWTRICKY_MAX_TIMER_1 600.0f
 #define NWTRICKY_MAX_TIMER_2 2000.0f
 
-static int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void NWtricky_ctor(void *dll) { }
@@ -68,7 +68,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
             main_set_bits(BIT_4D4, 1);
         }
     }
-    self->unkBC = (ObjectCallback)NWtricky_anim_callback;
+    self->animCallback = NWtricky_anim_callback;
 }
 
 // offset: 0x134 | func: 1 | export: 1
@@ -159,7 +159,7 @@ u32 NWtricky_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x610 | func: 7
-int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     NWtricky_Data *objdata;
     Object *tricky;
     s32 i;

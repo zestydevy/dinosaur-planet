@@ -24,7 +24,7 @@ typedef struct {
 /*24*/ s16 unk24;
 } UseObj_Setup;
 
-static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void UseObj_ctor(void *dll) { }
@@ -39,7 +39,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
-    self->unkBC = (ObjectCallback)UseObj_anim_callback;
+    self->animCallback = UseObj_anim_callback;
     self->modelInstIdx = setup->modelInstIdx;
     if (self->modelInstIdx >= self->def->numModels) {
         // diPrintf("USEOBJ.c: modelno out of range romdefno=%d\n"), self->modelInstIdx);
@@ -145,7 +145,7 @@ u32 UseObj_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x4C8 | func: 7
-int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     UseObj_Setup *setup;
 
     setup = (UseObj_Setup*)self->setup;

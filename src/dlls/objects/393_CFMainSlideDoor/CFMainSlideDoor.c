@@ -26,7 +26,7 @@ typedef struct {
     u8 unk0;
 } CFMainSlideDoor_Data;
 
-static int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
+static int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 
 // offset: 0x0 | ctor
 void CFMainSlideDoor_ctor(void *dll) { }
@@ -40,7 +40,7 @@ void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2)
 
     self->unkDC = 0;
     self->srt.yaw = setup->unk1F << 8;
-    self->unkBC = (ObjectCallback)CFMainSlideDoor_func_268;
+    self->animCallback = CFMainSlideDoor_func_268;
     self->srt.scale = setup->unk21 * 0.015625f;
     self->srt.scale *= self->def->scale;
     objdata = (CFMainSlideDoor_Data*)self->data;
@@ -89,7 +89,7 @@ u32 CFMainSlideDoor_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x268 | func: 7
-int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
+int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     CFMainSlideDoor_Data* objdata;
     CFMainSlideDoor_Setup* setup;
     Object* player;

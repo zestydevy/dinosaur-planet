@@ -25,7 +25,7 @@ typedef struct {
     u8 unk3;
 } SHqueenearthwalker_Data;
 
-static s32 SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
+static int SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 
 // offset: 0x0 | ctor
 void SHqueenearthwalker_ctor(void *dll) { }
@@ -39,7 +39,7 @@ void SHqueenearthwalker_setup(Object* self, SHqueenearthwalker_Setup* setup, s32
 
     objdata = self->data;
     self->srt.yaw = setup->unk18 << 8;
-    self->unkBC = (ObjectCallback)SHqueenearthwalker_func_4F8;
+    self->animCallback = SHqueenearthwalker_func_4F8;
     objdata->eatenWhiteMushrooms = main_get_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
     objdata->questProgress = main_get_bits(BIT_SH_Queen_EW_Quest_Progress);
 }
@@ -134,7 +134,7 @@ u32 SHqueenearthwalker_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x4F8 | func: 7
-static s32 SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
+static int SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     SHqueenearthwalker_Data* objdata;
     s32 sp40;
     s32 i;

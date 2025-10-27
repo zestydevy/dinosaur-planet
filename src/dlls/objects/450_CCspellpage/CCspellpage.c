@@ -14,7 +14,7 @@ typedef struct {
 /*1A*/ u8 yaw;
 } CCspellpage_Setup;
 
-static int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void CCspellpage_ctor(void *dll) { }
@@ -27,7 +27,7 @@ void CCspellpage_setup(Object *self, CCspellpage_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
-    self->unkBC = (ObjectCallback)CCspellpage_anim_callback;
+    self->animCallback = CCspellpage_anim_callback;
     obj_add_object_type(self, 5);
 }
 
@@ -60,7 +60,7 @@ u32 CCspellpage_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0x160 | func: 7
-int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     /*0x0*/ static f32 _data_0 = 0.0f;
     s32 i;
 

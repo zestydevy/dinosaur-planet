@@ -25,7 +25,7 @@ typedef struct {
 /*22*/ u16 unk22;
 } DBPlaceHolder_Setup;
 
-static int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void DBPlaceHolder_ctor(void *dll) { }
@@ -39,7 +39,7 @@ void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    self->unkBC = (ObjectCallback)DBPlaceHolder_anim_callback;
+    self->animCallback = DBPlaceHolder_anim_callback;
     objdata->flags = 0;
     if (main_get_bits(setup->gamebit1)) {
         self->unkAF |= 8;
@@ -128,7 +128,7 @@ u32 DBPlaceHolder_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x430 | func: 7
-int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     DBPlaceHolder_Setup *setup;
 
     setup = (DBPlaceHolder_Setup*)self->setup;

@@ -14,7 +14,7 @@ typedef struct {
 
 /*0x0*/ static u32 _data_0[] = { 0x00000000, 0x0019ffff, 0x80000000, 0x00190000 }; // ?
 
-static int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3);
+static int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void FEseqobject_ctor(void *dll) { }
@@ -25,7 +25,7 @@ void FEseqobject_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void FEseqobject_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->srt.yaw = 0;
-    self->unkBC = (ObjectCallback)FEseqobject_anim_callback;
+    self->animCallback = FEseqobject_anim_callback;
     obj_init_mesg_queue(self, 10);
 }
 
@@ -61,7 +61,7 @@ u32 FEseqobject_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x178 | func: 7
-int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, void *arg3) {
+int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     Object *mesgSender;
     s32 i;
     u32 mesgID;

@@ -19,7 +19,7 @@ typedef struct {
     u8 pitch;
 } SPItem_Setup;
 
-static s32 SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 static void SPItem_bought_callback(Object* self, s32 arg1, s32 arg2);
 
 // offset: 0x0 | ctor
@@ -31,7 +31,7 @@ void SPItem_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SPItem_setup(Object* self, SPItem_Setup* objSetup, s32 arg2) {
     self->unkB0 |= 0x2000;
-    self->unkBC = (void*)&SPItem_anim_callback;
+    self->animCallback = SPItem_anim_callback;
 
     self->modelInstIdx = objSetup->modelIndex;
     self->srt.yaw = objSetup->yaw << 8;
@@ -139,7 +139,7 @@ u32 SPItem_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x47C | func: 7
-s32 SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     //Set end-of-sequence callback
     animObjData->unkF4 = &SPItem_bought_callback; 
     return 0;

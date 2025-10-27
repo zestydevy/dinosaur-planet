@@ -29,7 +29,7 @@ typedef struct {
 /*0x0*/ static s32 data_0 = 0;
 
 static void VFP_PodiumPoint_func_1B8(Object* self);
-static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, void* a3);
+static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
 
 // offset: 0x0 | ctor
 void VFP_PodiumPoint_ctor(void *dll) { }
@@ -43,7 +43,7 @@ void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2)
 
     objdata = (VFP_PodiumPoint_Data*)self->data;
     self->srt.yaw = setup->unk18 << 8;
-    self->unkBC = (ObjectCallback)VFP_PodiumPoint_func_324;
+    self->animCallback = VFP_PodiumPoint_func_324;
     objdata->setGamebit = setup->gamebit;
     objdata->conditionGamebit = setup->gamebit2;
     self->unkAF |= 8;
@@ -124,7 +124,7 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 }
 
 // offset: 0x324 | func: 8
-static s32 VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, void* a3) {
+static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     s32 i;
     u8 mapSetupID;
 

@@ -1,6 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -46,7 +47,7 @@ typedef enum {
 #define PLAYER_ACTIVATE_RANGE 50.0f
 #define PLAYER_INIT_ACTIVATE_RANGE 230.0f
 
-static s32 DFPLift_func_91C(Object *, Object *, void *, void *);
+static int DFPLift_func_91C(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3);
 
 // offset: 0x0 | ctor
 void DFPLift_ctor(void *dll) { }
@@ -60,7 +61,7 @@ void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
 
     objdata = (DFPLift_Data*)self->data;
 
-    self->unkBC = DFPLift_func_91C;
+    self->animCallback = DFPLift_func_91C;
     self->srt.yaw = setup->rotation * 256;
 
     objdata->state = LIFT_STATE_INIT;
@@ -266,6 +267,6 @@ u32 DFPLift_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x91C | func: 7
-static s32 DFPLift_func_91C(Object *a0, Object *a1, void *a2, void *a3) {
+static int DFPLift_func_91C(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3) {
     return 0;
 }

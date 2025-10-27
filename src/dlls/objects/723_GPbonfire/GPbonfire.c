@@ -66,7 +66,7 @@ enum GPBonfireStates{
 #define BONFIRE_DWINDLING_TIMER 2000
 
 static void GPbonfire_func_A44(Object* self);
-static s32 GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
+static int GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
 void GPbonfire_ctor(void* dll){
@@ -81,7 +81,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfire_Data* objdata;
 
     objdata = self->data;
-    self->unkBC = (void*)&GPbonfire_anim_callback;
+    self->animCallback = GPbonfire_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objdata->stateIndex = STATE_0_INITIALISE;
     objdata->currentState = 0;
@@ -353,7 +353,7 @@ void GPbonfire_func_A44(Object* self) {
 }
 
 // offset: 0xC24 | func: 12
-s32 GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+static int GPbonfire_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     GPBonfire_Data* objdata;
     s32 index;
 

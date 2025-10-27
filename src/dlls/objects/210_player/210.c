@@ -29,6 +29,7 @@
 #include "dll.h"
 #include "types.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/214_animobj.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
@@ -56,32 +57,6 @@ static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1);
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
 static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 
-typedef struct Unk {
-    u8 pad0[0x24];
-    f32 unk24;
-    u8 pad28[0x4C - 0x28];
-    Vec3f unk4C;
-    f32 unk58;
-    s16 yawDiff;
-    s16 pitchDiff;
-    s16 rollDiff;
-    s8 unk62;
-    u8 pad63;
-    s16 unk64;
-    s16 unk66;
-    u8 pad68[0x7A - 0x68];
-    s16 unk7A;
-    s16 unk7C;
-    u8 unk7E[0x8D - 0x7E];
-    u8 unk8D;
-    u8 unk8E[0x98 - 0x8E]; // unknwon size
-    u8 unk98;
-    u8 pad99[0x9D - 0x99];
-    u8 unk9D;
-    u8 pad9E[0xF4 - 0x9E];
-    void *unkF4;
-} Unk;
-
 // These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
 /* static */ void dll_210_func_41F4(Object* arg0, Player_Data* arg1);
@@ -92,7 +67,7 @@ typedef struct Unk {
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* arg0, f32 arg1);
 /* static */ void dll_210_func_9F1C(Object* arg0, s32 arg1);
-/* static */ void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
+/* static */ void dll_210_func_60A8(Object* arg0, s32 arg1, s32 arg2);
 /* static */ void dll_210_func_1DE64(UNK_TYPE_32 *arg0);
 /* static */ void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2);
 /* static */ void dll_210_func_90A0(Object* arg0, Player_Data* arg1, f32 arg2);
@@ -109,7 +84,7 @@ typedef struct Unk {
 /* static */ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_64B4(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_692C(Object* arg0, Player_Data* arg1, f32 arg2);
-/* static */ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3);
+/* static */ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 /* static */ void dll_210_func_47B8(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2);
 /* static */ void dll_210_func_1CA8(Object* arg0, Player_Data* arg1, Player_Data* arg2);
@@ -425,7 +400,7 @@ void dll_210_setup(Object* arg0, u32 arg1) {
     obj_set_update_priority(arg0, 0x3C);
     obj_init_mesg_queue(arg0, 0x14U);
     arg0->setup = NULL;
-    arg0->unkBC = (ObjectCallback)dll_210_func_4910;
+    arg0->animCallback = dll_210_func_4910;
     _bss_1A4 = 0;
     data->stats = gDLL_29_Gplay->vtbl->get_player_stats();
     arg0->srt.yaw = gDLL_29_Gplay->vtbl->get_player_saved_location()->rotationY << 8;
@@ -1776,7 +1751,7 @@ void dll_210_func_47B8(Object* arg0, Player_Data* arg1) {
 // dll_210_func_9F1C (matched)
 // dll_210_func_60A8 (matched)
 
-s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
+int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
     ObjSetup* temp_s1;
@@ -1812,7 +1787,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
     temp_fp = arg0->data;
     temp_s1 = arg1->setup;
     spC8 = 0;
-    arg2->unkF4 = dll_210_func_60A8;
+    arg2->unkF4 = (AnimObj_DataF4Callback)dll_210_func_60A8;
     temp_fp->unk818 = 0.0f;
     _bss_1AC = dll_210_func_63F0(temp_fp, delayFloat);
     if (_bss_1AC > 4.0f) {
@@ -1957,7 +1932,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
                     arg0->curModAnimIdLayered = -1;
                     arg2->unk7A = arg2->unk7C;
                     arg2->unk62 = 0;
-                    arg2->unk66 = arg2->unk64 - 1;
+                    arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA - 1;
                     spC8 = 0;
                 } else {
                     temp_fp->unk0.unk288 = 0.0f;
@@ -2196,7 +2171,7 @@ s32 dll_210_func_4910(Object* arg0, Object* arg1, Unk* arg2, s8 arg3) {
 #endif
 
 // offset: 0x60A8 | func: 28
-void dll_210_func_60A8(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+void dll_210_func_60A8(Object* arg0, s32 arg1, s32 arg2) {
     Player_Data* sp24;
 
     sp24 = arg0->data;

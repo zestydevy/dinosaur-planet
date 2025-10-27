@@ -21,7 +21,7 @@ typedef struct {
 /*04*/ Unk80032CF8 unk4;
 } CClightfoot_Data;
 
-// no arg3?
+// @bug: no arg3?
 static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData);
 
 // offset: 0x0 | ctor
@@ -35,7 +35,7 @@ void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
     CClightfoot_Data *objdata;
 
     objdata = self->data;
-    self->unkBC = (ObjectCallback)CClightfoot_anim_callback; // NOLINT
+    self->animCallback = (AnimationCallback)CClightfoot_anim_callback; // NOLINT
     objdata->spokeToPlayer = main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
     self->srt.yaw = setup->yaw << 8;
     obj_add_object_type(self, OBJTYPE_40);
@@ -95,7 +95,7 @@ u32 CClightfoot_get_data_size(Object *self, u32 arg1) {
 }
 
 // offset: 0x2B8 | func: 7
-int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData) {
+static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData) {
     CClightfoot_Data *objdata = self->data;
     if (self->unkAF & 1) {
         gDLL_3_Animation->vtbl->func18(animObjData->unk63);

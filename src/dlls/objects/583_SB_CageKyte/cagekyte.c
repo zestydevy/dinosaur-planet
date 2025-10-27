@@ -19,7 +19,7 @@ typedef struct {
     s16 randomSoundDelay;
 } CageKyte_Data;
 
-static s32 SBCageKyte_anim_callback(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3);
+static int SBCageKyte_anim_callback(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 
 // offset: 0x0 | ctor
 void SBCageKyte_ctor(void *dll) { }
@@ -29,7 +29,7 @@ void SBCageKyte_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SBCageKyte_setup(Object* self, s32 arg1, s32 arg2) {
-    self->unkBC = (void*)&SBCageKyte_anim_callback;
+    self->animCallback = SBCageKyte_anim_callback;
 }
 
 // offset: 0x40 | func: 1 | export: 1
@@ -107,7 +107,7 @@ u32 SBCageKyte_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x38C | func: 7
-s32 SBCageKyte_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
+int SBCageKyte_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     if (self->unkDC > 0) {
         self->unkDC--;
     }

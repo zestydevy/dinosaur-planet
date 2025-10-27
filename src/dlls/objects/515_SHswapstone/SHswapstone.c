@@ -45,7 +45,7 @@ typedef struct {
 // swapstone warps (sabre, krystal). this is for swapping characters
 /*0x4*/ static u16 sSwapStoneWarps[] = { WARP_SH_ROCKY_PODIUM, WARP_SC_RUBBLE_PODIUM };
 
-static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, void* a3);
+static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a3);
 static s32 SHswapstone_get_held_spirit(void);
 static s32 SHswapstone_has_spellstone(void);
 static void SHswapstone_func_A8C(Object* self, s32 arg1, s32 arg2);
@@ -63,7 +63,7 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
 
     objdata = self->data;
     self->srt.yaw = setup->rotation << 8;
-    self->unkBC = (ObjectCallback)SHswapstone_func_448;
+    self->animCallback = SHswapstone_func_448;
 
     // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon
     // approaching SwapStone (happens if camera lags behind in SwapStone Circe)
@@ -159,7 +159,7 @@ u32 SHswapstone_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x448 | func: 7
-static s32 SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, void* a3) {
+static int SHswapstone_func_448(Object* self, Object* a1, AnimObj_Data* a2, s8 a3) {
     SHswapstone_Data* objdata;
     s32 playerno;
     s32 i;
