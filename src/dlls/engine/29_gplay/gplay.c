@@ -648,7 +648,7 @@ void gplay_tick(void) {
     s32 i;
 
     // Increment time played
-    sState.save.file.timePlayed += delayFloat;
+    sState.save.file.timePlayed += gUpdateRateF;
 
     // Process time saves
     i = 0;

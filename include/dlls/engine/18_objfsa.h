@@ -60,7 +60,7 @@ typedef struct ObjFSA_Data {
 /*28C*/ f32 speed;
 /*290*/ f32 unk290;
 /*294*/ f32 unk294;
-/*298*/ f32 unk298;
+/*298*/ f32 animTickDelta; // How much the object's animation progresses per fsa tick.
 /*29C*/ f32 unk29C;
 /*2A0*/ f32 unk2A0;
 /*2A4*/ f32 unk2A4;
@@ -113,14 +113,14 @@ typedef struct ObjFSA_Data {
 DLL_INTERFACE(DLL_18_objfsa) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3);
-/*1*/ void (*tick)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, 
+/*1*/ void (*tick)(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3, 
     ObjFSA_StateCallback *animStateCallbacks, ObjFSA_StateCallback *logicStateCallbacks);
 /*2*/ void (*func2)(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *arg2);
 /*3*/ void (*func3)(SRT *srt);
 /*4*/ void (*set_anim_state)(Object *obj, ObjFSA_Data *data, s32 state);
 /*5*/ void (*func5)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 /*6*/ void (*func6)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
-/*7*/ void (*func7)(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3);
+/*7*/ void (*func7)(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3);
 /*8*/ void (*func8)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4);
 /*9*/ void (*func9)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
 /*10*/ void (*func10)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);

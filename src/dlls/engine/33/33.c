@@ -178,9 +178,9 @@ void dll_33_func_768(Object* arg0, DLL33_Data* arg1, u32 arg2, f32 arg3, f32 arg
         arg1->fsa.unk278 = 0.0f;
     }
     arg1->fsa.unk27C = 0.0f;
-    arg0->srt.yaw = ((f32) arg0->srt.yaw + ((((f32) arg1->fsa.unk32A * delayFloat) / arg4) * 182.0f));
-    arg1->fsa.speed += ((arg1->fsa.unk290 - arg1->fsa.speed) / arg1->fsa.unk2B0) * delayFloat;
-    arg1->fsa.unk278 += ((arg1->fsa.unk290 - arg1->fsa.unk278) / arg1->fsa.unk2B0) * delayFloat;
+    arg0->srt.yaw = ((f32) arg0->srt.yaw + ((((f32) arg1->fsa.unk32A * gUpdateRateF) / arg4) * 182.0f));
+    arg1->fsa.speed += ((arg1->fsa.unk290 - arg1->fsa.speed) / arg1->fsa.unk2B0) * gUpdateRateF;
+    arg1->fsa.unk278 += ((arg1->fsa.unk290 - arg1->fsa.unk278) / arg1->fsa.unk2B0) * gUpdateRateF;
     if (arg3 < arg1->fsa.speed) {
         arg1->fsa.speed = arg3;
     }
@@ -246,7 +246,7 @@ s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_S
     sp38 = arg2->fsa.target->srt.transl.x - arg1->unk4C.x;
     sp34 = arg2->fsa.target->srt.transl.z - arg1->unk4C.z;
     temp_fv0_2 = sqrtf(SQ(sp38) + SQ(sp34));
-    var_fv1 = (temp_fv0_2 - sp30) * delayFloat * 0.25f;
+    var_fv1 = (temp_fv0_2 - sp30) * gUpdateRateF * 0.25f;
     if (var_fv1 > 50.0f) {
         var_fv1 = 50.0f;
     } else if (var_fv1 < 15.0f) {
@@ -259,7 +259,7 @@ s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_S
         var_v0 = arg0->srt.yaw - (arg2->fsa.target->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v0)
         CLAMP(var_v0, -0x2000, 0x2000)
-        arg0->srt.yaw -= (var_v0 * delayByte) >> 3;
+        arg0->srt.yaw -= (var_v0 * gUpdateRate) >> 3;
         if (_data_4 >= 0xB) {
             var_v0 = 0;
         }
@@ -267,7 +267,7 @@ s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_S
             arg1->unk62 = 0;
             arg1->animCurvesCurrentFrameB = arg1->animCurvesCurrentFrameA - 1;
         } else {
-            gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, delayFloat, delayFloat, arg3, arg4);
+            gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, gUpdateRateF, gUpdateRateF, arg3, arg4);
         }
     } else {
         sp38 /= temp_fv0_2;
@@ -276,7 +276,7 @@ s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_S
         arg2->fsa.unk284 = sp34 * var_fv1;
         arg0->srt.transl.x = arg1->unk4C.x + (sp30 * sp38);
         arg0->srt.transl.z = arg1->unk4C.z + (sp30 * sp34);
-        gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, delayFloat, delayFloat, arg3, arg4);
+        gDLL_18_objfsa->vtbl->tick(arg0, &arg2->fsa, gUpdateRateF, gUpdateRateF, arg3, arg4);
     }
     _data_0 = sp30;
     if (arg1->unk62 == 0) {
@@ -316,7 +316,7 @@ s32 dll_33_func_C88(Object* arg0, DLL33_Data* arg1, ObjFSA_StateCallback *arg2, 
             arg1->fsa.unk284 = sp28 * 50.0f;
             arg0->srt.transl.x += temp_fv0 * sp2C;
             arg0->srt.transl.z += temp_fv0 * sp28;
-            gDLL_18_objfsa->vtbl->tick(arg0, &arg1->fsa, delayFloat, delayFloat, arg2, arg3);
+            gDLL_18_objfsa->vtbl->tick(arg0, &arg1->fsa, gUpdateRateF, gUpdateRateF, arg2, arg3);
         }
         if (*arg7 == 0) {
             arg1->unk3B4 = 0;
@@ -613,7 +613,7 @@ s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, s32 arg2, s32 arg3, s32 *a
     objdata = (DLL33_Data*)arg0->data;
     player = get_player();
     if (objdata->unk3E8 > 0.0f) {
-        objdata->unk3E8 += (delayFloat * objdata->unk3EC);
+        objdata->unk3E8 += (gUpdateRateF * objdata->unk3EC);
         if (objdata->unk3B2 & 0x20) {
             objdata->unk3B2 &= ~0x20;
             objdata->unk3B2 |= 0x40;

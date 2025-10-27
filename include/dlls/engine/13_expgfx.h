@@ -11,7 +11,7 @@ DLL_INTERFACE(DLL_13_expgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(void);
     /*1*/ UnknownDLLFunc func1;
-    /*2*/ void (*func2)(s32 arg0, u8 arg1, s32 arg2, s32 arg3);
+    /*2*/ void (*func2)(s32 arg0, u8 updateRate, s32 arg2, s32 arg3);
     /*3*/ UnknownDLLFunc func3;
     /*4*/ UnknownDLLFunc func4;
     /*5*/ void (*func5)(Object *arg0);

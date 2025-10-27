@@ -90,22 +90,22 @@ void SHspore_control(Object* self) {
 
     objdata = (SHSpore_Data*)self->data;
     if (objdata->unk290 != 0.0f) {
-        self->srt.yaw += delayByte << 6;
-        objdata->unk290 -= delayFloat;
+        self->srt.yaw += gUpdateRate << 6;
+        objdata->unk290 -= gUpdateRateF;
         if (objdata->unk290 <= 0.0f) {
             obj_destroy_object(self);
         }
     } else {
         //Update motion
-        objdata->unk270 -= delayFloat;
+        objdata->unk270 -= gUpdateRateF;
         if (objdata->unk270 < 0.0f) {
             objdata->unk270 = 0.0f;
         }
-        objdata->unk28C -= delayFloat;
+        objdata->unk28C -= gUpdateRateF;
         if (objdata->unk28C < 0.0f) {
             objdata->unk28C = 0.0f;
         }
-        self->speed.y += -0.009f * delayFloat;
+        self->speed.y += -0.009f * gUpdateRateF;
         if (self->speed.y < -0.2f) {
             self->speed.y = -0.2f;
         }
@@ -119,21 +119,21 @@ void SHspore_control(Object* self) {
         if ((rand_next(0, 100) < 5) && (objdata->unk270 <= 0.0f)) {
             SHspore_func_A00(self, objdata);
         }
-        objdata->unk284 -= delayFloat;
+        objdata->unk284 -= gUpdateRateF;
         if (objdata->unk284 <= 0.0f) {
             objdata->unk27C *= 0.97f;
             objdata->unk280 *= 0.97f;
             objdata->unk284 = 0.0f;
         } else {
             temp_fv0 = objdata->unk288 - objdata->unk268;
-            objdata->unk268 += temp_fv0 * 0.01f * delayFloat;
+            objdata->unk268 += temp_fv0 * 0.01f * gUpdateRateF;
         }
         self->speed.x = objdata->unk274 + (objdata->unk27C * objdata->unk268);
         self->speed.z = objdata->unk278 + (objdata->unk280 * objdata->unk268);
-        obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
-        gDLL_27->vtbl->func_1e8(self, &objdata->unk0, delayFloat);
+        obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+        gDLL_27->vtbl->func_1e8(self, &objdata->unk0, gUpdateRateF);
         gDLL_27->vtbl->func_5a8(self, &objdata->unk0);
-        gDLL_27->vtbl->func_624(self, &objdata->unk0, delayFloat);
+        gDLL_27->vtbl->func_624(self, &objdata->unk0, gUpdateRateF);
         func_80026128(self, 0xA, 0, 0);
 
         //Handle collisions
@@ -160,7 +160,7 @@ void SHspore_control(Object* self) {
                 func_800267A4(self);
             }
         } else {
-            objdata->lifetime -= delayFloat;
+            objdata->lifetime -= gUpdateRateF;
             //Destroy the spore if its lifetime runs out or it collides with terrain
             if (objdata->lifetime <= 0.0f || objdata->unk0.unk25C & 0x11) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8A2, MAX_VOLUME, NULL, 0, 0, 0);
@@ -220,10 +220,10 @@ static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
     var_v0 = objdata->unk298 - (objdata->unk294 & 0xFFFF);
     CIRCLE_WRAP(var_v0)
 
-    objdata->unk294 += (var_v0 * delayByte) >> 4;
+    objdata->unk294 += (var_v0 * gUpdateRate) >> 4;
 
     temp_fv1 = objdata->unk26C - objdata->unk264;
-    objdata->unk264 += temp_fv1 * 0.006f * delayFloat;
+    objdata->unk264 += temp_fv1 * 0.006f * gUpdateRateF;
     objdata->unk274 = fsin16_precise(objdata->unk294) * objdata->unk264;
     objdata->unk278 = fcos16_precise(objdata->unk294) * objdata->unk264;
 }

@@ -437,7 +437,7 @@ void trigger_control(Object* self) {
             }
             break;
         case OBJ_TriggerTime:
-            objdata->elapsedTicks += delayByte;
+            objdata->elapsedTicks += gUpdateRate;
             if (objdata->elapsedTicks >= setup->timerDuration) {
                 trigger_process_commands(self, NULL, 1, 0);
             }

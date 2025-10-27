@@ -213,7 +213,7 @@ typedef struct {
 
 void func_8001AF04(ModelInstance *modelInst, s32 param2, s32 param3, f32 param4, s32 param5, s32 param6);
 void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
-void func_8001B084(ModelInstance *modelInst, f32 param2);
+void func_8001B084(ModelInstance *modelInst, f32 updateRate);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
 

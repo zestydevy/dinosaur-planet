@@ -334,7 +334,7 @@ void dll_227_func_17C0(Object* self, Vec3f* arg1) {
     dy = arg1->y - self->srt.transl.y;
     dz = arg1->z - self->srt.transl.z;
     
-    //@bug: not using delayByte (delta-time)?
+    //@bug: not using gUpdateRate (delta-time)?
     self->speed.x = dx * 0.02f;
     self->speed.y = dy * 0.02f;
     self->speed.z = dz * 0.02f;
@@ -410,12 +410,12 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
         self->speed.z = -1.0f;
     }
     
-    self->srt.transl.x += self->speed.x * delayFloat;
-    self->srt.transl.y += self->speed.y * delayFloat;
-    self->srt.transl.z += self->speed.z * delayFloat;
-    self->srt.roll += objdata->unk274 * delayFloat;
-    self->srt.pitch += objdata->unk276 * delayFloat;
-    self->srt.yaw += objdata->unk278 * delayFloat;
+    self->srt.transl.x += self->speed.x * gUpdateRateF;
+    self->srt.transl.y += self->speed.y * gUpdateRateF;
+    self->srt.transl.z += self->speed.z * gUpdateRateF;
+    self->srt.roll += objdata->unk274 * gUpdateRateF;
+    self->srt.pitch += objdata->unk276 * gUpdateRateF;
+    self->srt.yaw += objdata->unk278 * gUpdateRateF;
     
     if (samples){        
         minimum = samples[minimumIndex]->unk0[0] + 7.0f;
@@ -468,7 +468,7 @@ s32 dll_227_func_1D64(Object* self) {
         return 1;
     }
     
-    objdata->unk26C = objdata->unk26C - delayFloat;
+    objdata->unk26C = objdata->unk26C - gUpdateRateF;
     if (objdata->unk26C < 0.0f) {
         //Squeaking (and growing in size temporarily)
         objdata->unk26C = rand_next(0x78, 0xF0);

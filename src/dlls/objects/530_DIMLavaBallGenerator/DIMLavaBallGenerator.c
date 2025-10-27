@@ -131,7 +131,7 @@ void DIMLavaBallGenerator_control(Object *self) {
     }
 
     lavaball = objdata->lavaball;
-    objdata->timer -= delayByte;
+    objdata->timer -= gUpdateRate;
     if (objdata->timer > 0) {
         return;
     }

@@ -85,7 +85,7 @@ void animator_control(Object *self) {
         }
         self->unkDC = -setup->iterations;
     } else if (self->unkDC > 0) {
-        self->unkDC -= delayByte;
+        self->unkDC -= gUpdateRate;
     }
 }
 

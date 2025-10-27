@@ -360,9 +360,9 @@ void dll_496_control(Object* snowhorn) {
     }
     
     if (objdata->unk424 & 1) {
-        gDLL_27->vtbl->func_1e8(snowhorn, &objdata->unk170, delayFloat);
+        gDLL_27->vtbl->func_1e8(snowhorn, &objdata->unk170, gUpdateRateF);
         gDLL_27->vtbl->func_5a8(snowhorn, &objdata->unk170);
-        gDLL_27->vtbl->func_624(snowhorn, &objdata->unk170, delayFloat);
+        gDLL_27->vtbl->func_624(snowhorn, &objdata->unk170, gUpdateRateF);
     }
 
     if (objdata->someAnimIDList) {
@@ -375,12 +375,12 @@ void dll_496_control(Object* snowhorn) {
             }
             objdata->unk424 &= 0xFFF7;
         }
-        if (func_80024108(snowhorn, objdata->unk50, delayFloat, &sp44) != 0) {
+        if (func_80024108(snowhorn, objdata->unk50, gUpdateRateF, &sp44) != 0) {
             objdata->unk424 |= 8;
         } else {
             objdata->unk424 &= 0xFFF7;
         }
-        func_80025780(snowhorn, delayFloat, &sp44, 0);
+        func_80025780(snowhorn, gUpdateRateF, &sp44, 0);
     }
 
     if ((objdata->chatSequenceList != 0) && (snowhorn->unkAF & 1)) {
@@ -435,7 +435,7 @@ int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObj
 
     objdata = self->data;
     if (arg3 != 0) {
-        func_80024108(self, 0.005f, delayFloat, NULL);
+        func_80024108(self, 0.005f, gUpdateRateF, NULL);
     }
     if (objdata->unk424 & 1) {
         gDLL_27->vtbl->reset(self, &objdata->unk170);
@@ -464,7 +464,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
 
     objdata = (SnowHorn_Data*)snowhorn->data;
-    animIsFinished = func_80024108(snowhorn, 0.006f, delayFloat, &sp4c);
+    animIsFinished = func_80024108(snowhorn, 0.006f, gUpdateRateF, &sp4c);
     
     if (sp4c.unk1B != 0) {
         playSound = sp4c.unk13[0] == 0;
@@ -496,7 +496,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             if (playSound) {
                 gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
             }
-            objdata->sleepTimer-= delayByte;
+            objdata->sleepTimer-= gUpdateRate;
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
                 if (temp1 != NULL) {
@@ -519,7 +519,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             }
             break;
         default:
-            objdata->sleepTimer -= delayByte;
+            objdata->sleepTimer -= gUpdateRate;
             if (objdata->sleepTimer <= 0) { //Go back to sleep if interrupted (by flinch anim etc.)
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
                 objdata->walkSpeed = 0.0f;
@@ -572,13 +572,13 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
         func_80023D30(snowhorn, 0, 0.0f, 0);
     }
 
-    func_80024108(snowhorn, objdata->unk50, delayByte, NULL);
+    func_80024108(snowhorn, objdata->unk50, gUpdateRate, NULL);
     player = get_player();
     if (!player) 
         return;
     
     if ((f32)objdata->unkRadius*objdata->unkRadius < vec3_distance_squared(&snowhorn->positionMirror, &player->positionMirror)) {
-        objdata->sleepTimer += delayByte;
+        objdata->sleepTimer += gUpdateRate;
         if (objdata->sleepTimer > 900) {
             gDLL_3_Animation->vtbl->func17(7, snowhorn, -1); //play seq 7?
             objdata->sleepTimer = (s16) -rand_next(0, 50);
@@ -672,7 +672,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
     // object = self;
     objdata = self->data;
     
-    temp_v0 = func_80024108(self, 0.005f, delayByte, NULL);
+    temp_v0 = func_80024108(self, 0.005f, gUpdateRate, NULL);
     questValue = objdata->flags;
 
     // position = &objdata->playerPositionCopy;
@@ -773,7 +773,7 @@ void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Se
                 self->unkAF = temp_t3 & 0xFFFE;
                 break;
             }
-            objdata->unk8 = (s16) (objdata->unk8 + delayByte);
+            objdata->unk8 = (s16) (objdata->unk8 + gUpdateRate);
             if (objdata->unk6 < objdata->unk8) {
                 objdata->unk8 = 0;
                 temp_v0_2 = func_80034804(self, 0);
@@ -908,7 +908,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         dz = curveStruct->unk70 - snowhorn->srt.transl.z;
 
         //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
-        speed = sqrtf((dx * dx) + (dz * dz)) * inverseDelay;
+        speed = sqrtf((dx * dx) + (dz * dz)) * gUpdateRateInverseF;
         func_8002493C(snowhorn, speed, &objdata->unk50);
         snowhorn->srt.yaw = arctan2_f(curveStruct->unk74, curveStruct->unk7C) + 0x8000;
         snowhorn->srt.transl.x = curveStruct->unk68;
@@ -953,7 +953,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
     switch (objdata->flags) {
         case 0:
             //Calling out to the player periodically
-            objdata->unk8 += delayByte;
+            objdata->unk8 += gUpdateRate;
             if (objdata->unk8 >= 0x3E9) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here, MAX_VOLUME, 0, 0, 0, 0);
                 gDLL_22_Subtitles->vtbl->func_368(0xA);

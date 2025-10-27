@@ -5,6 +5,7 @@
 #include "dll.h"
 #include "sys/gfx/map.h"
 #include "functions.h"
+#include "sys/objects.h"
 #include "types.h"
 #include "dlls/engine/28_screen_fade.h"
 
@@ -51,7 +52,7 @@ void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             }
         }
 
-        sFadeAlpha += sFadeSpeed * delayFloat;
+        sFadeAlpha += sFadeSpeed * gUpdateRateF;
         if (sFadeAlpha < 0.0f) {
             sFadeAlpha = 0.0f;
             sIsComplete = 1;
@@ -61,7 +62,7 @@ void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         if (sFadeAlpha > 255.0f) {
             sFadeAlpha = 255.0f;
             sIsComplete = 1;
-            sAutoReverseTimer += delayFloat;
+            sAutoReverseTimer += gUpdateRateF;
         } else {
             sIsComplete = 0;
         }

@@ -139,14 +139,14 @@ void WLpressureswitch_control(Object* self) {
     if (objdata->pressed) {
         deltaY = setup->base.y - 5.0f;
         if (self->srt.transl.y < deltaY) {
-            self->srt.transl.y += 0.25f * delayFloat;
+            self->srt.transl.y += 0.25f * gUpdateRateF;
             if (deltaY < self->srt.transl.y) {
                 self->srt.transl.y = deltaY;
             }
             playSound = FALSE;
             main_set_bits(setup->gameBitPressed, TRUE);
         } else {
-            self->srt.transl.y -= 0.125f * delayFloat;
+            self->srt.transl.y -= 0.125f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
                 main_set_bits(setup->gameBitPressed, TRUE);
@@ -156,7 +156,7 @@ void WLpressureswitch_control(Object* self) {
             }
         }
     } else {
-        self->srt.transl.y += 0.125f * delayFloat;
+        self->srt.transl.y += 0.125f * gUpdateRateF;
         deltaY = setup->base.y;
         if (deltaY < self->srt.transl.y) {
             self->srt.transl.y = deltaY;

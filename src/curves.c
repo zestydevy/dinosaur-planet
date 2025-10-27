@@ -255,7 +255,7 @@ s32 func_800053B0(UnkCurvesStruct* arg0, f32 arg1) {
     f32 *s1;
     s32 pad[2];
 
-    var_fs0 = arg1 * delayFloat;
+    var_fs0 = arg1 * gUpdateRateF;
     if (var_fs0 > 0.0f) {
         var_v1 = (s32) (arg0->unk0 * 20.0f);
         if (var_v1 == 20) {

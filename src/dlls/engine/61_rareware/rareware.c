@@ -50,7 +50,7 @@ void dll_61_dtor(void *self) {
 s32 dll_61_update1() {
     s32 delay;
 
-    delay = delayByte;
+    delay = gUpdateRate;
     if (delay > 3) {
         delay = 3;
     }
@@ -65,7 +65,7 @@ s32 dll_61_update1() {
         menu_set(MENU_GAME_SELECT);
     }
 
-    data_0 += delayByte;
+    data_0 += gUpdateRate;
     if (data_0 > 620) {
         bss_0 = 1;
     }
@@ -77,10 +77,10 @@ s32 dll_61_update1() {
     }
 
     if (data_4 > 0) {
-        bss_4 -= delayFloat;
+        bss_4 -= gUpdateRateF;
     }
     if (data_4 > 2) {
-        bss_8 -= delayFloat;
+        bss_8 -= gUpdateRateF;
     }
 
     return 0;

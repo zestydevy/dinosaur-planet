@@ -90,7 +90,7 @@ void GP_LevelControl_control(Object *self) {
             }
         }
 
-        objdata->heatCutsceneTimer += timerInc * delayFloat;
+        objdata->heatCutsceneTimer += timerInc * gUpdateRateF;
         if (objdata->heatCutsceneTimer > 600.0f) {
             objdata->heatCutsceneTimer -= 600.0f;
             if (!main_get_bits(BIT_GP_Shown_Heat_Cutscene)) {

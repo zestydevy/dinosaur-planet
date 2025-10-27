@@ -799,7 +799,7 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         }
 
         if (temp_t2 == 0) {
-            *arg2 +=(arg0->unkE * delayByte);
+            *arg2 +=(arg0->unkE * gUpdateRate);
             if (*arg2 >= arg0->levels) {
                 *arg2 = ((arg0->levels * 2) - *arg2) - 1;
                 if (*arg2 < 0) {
@@ -812,7 +812,7 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
             return;
         }
 
-        *arg2 -= arg0->unkE * delayByte;
+        *arg2 -= arg0->unkE * gUpdateRate;
         if (*arg2 < 0) {
             *arg2 = 0;
             *arg1 &= 0xFFF3FFFF;
@@ -822,9 +822,9 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
 
     if (temp_t1) {
         if (temp_t2 == 0) {
-            *arg2 += arg0->unkE * delayByte;
+            *arg2 += arg0->unkE * gUpdateRate;
         } else {
-            *arg2 -= arg0->unkE * delayByte;
+            *arg2 -= arg0->unkE * gUpdateRate;
         }
         do {
             var_a0 = 0;
@@ -849,12 +849,12 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         return;
     }
     if (temp_t2 == 0) {
-        *arg2 += arg0->unkE * delayByte;
+        *arg2 += arg0->unkE * gUpdateRate;
         while ((s32) *arg2 >= arg0->levels) {
             *arg2 -= arg0->levels;
         }
     } else {
-        *arg2 -= arg0->unkE * delayByte;
+        *arg2 -= arg0->unkE * gUpdateRate;
         while ((s32) *arg2 < 0) {
             *arg2 += arg0->levels;
         }

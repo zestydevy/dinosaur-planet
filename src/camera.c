@@ -1288,7 +1288,7 @@ void camera_tick() {
     SHORT_8008c524 = SHORT_8008c528;
 
     if (D_8008C518 != 0) {
-        D_8008C518 -= delayByte;
+        D_8008C518 -= gUpdateRate;
 
         if (D_8008C518 < 0) {
             D_8008C518 = 0;
@@ -1331,7 +1331,7 @@ void camera_tick() {
             camera->dty = 0.0f;
         }
 
-        camera->unk38 += delayFloat / 60.0f;
+        camera->unk38 += gUpdateRateF / 60.0f;
     }
 }
 

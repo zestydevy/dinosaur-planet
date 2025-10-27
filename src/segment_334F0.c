@@ -52,7 +52,7 @@ void func_80032A08(Object* obj, Unk80032CF8* arg1) {
     switch (arg1->unk1E & 0xF) {
     case 0:
         if (arg1->unk1F > 0) {
-            arg1->unk1F -= delayByte;
+            arg1->unk1F -= gUpdateRate;
         } else if (rand_next(0, 0x3E8) >= 0x3DA) {
             arg1->unk1E = 1;
             arg1->unk1F = 0;
@@ -378,22 +378,22 @@ s32 func_800334A4(Object* obj, Object* otherObj, Vec3f* arg2, Unk80032CF8* arg3,
             arg3 += 2;
         } else {
             temp_a1 = (s16) ((s16) ((sp80[0] + temp_v0[1]) >> 1) - temp_v0[1]);
-            temp_lo = ((s16) (-arg4[i] * 182.04f) / 10) * delayByte;
+            temp_lo = ((s16) (-arg4[i] * 182.04f) / 10) * gUpdateRate;
             if (temp_a1 < temp_lo) {
                 var_t7 = temp_lo;
             } else {
-                temp_lo = ((s16) (arg4[i] * 182.04f) / 10) * delayByte;
+                temp_lo = ((s16) (arg4[i] * 182.04f) / 10) * gUpdateRate;
                 if (temp_lo < temp_a1) {
                     temp_a1 = temp_lo;
                 }
                 var_t7 = temp_a1;
             }
             temp_a0 = (s16) ((s16) ((sp80[1] + temp_v0[0]) >> 1) - temp_v0[0]);
-            temp_lo = (-(s16) (arg4[i + 15] * 182.04f) / 10) * delayByte;
+            temp_lo = (-(s16) (arg4[i + 15] * 182.04f) / 10) * gUpdateRate;
             if (temp_a0 < temp_lo) {
                 var_a0 = temp_lo;
             } else {
-                temp_lo = ((s16) (arg4[i + 15] * 182.04f) / 20) * delayByte;
+                temp_lo = ((s16) (arg4[i + 15] * 182.04f) / 20) * gUpdateRate;
                 if (temp_lo < temp_a0) {
                     temp_a0 = temp_lo;
                 }
@@ -508,7 +508,7 @@ void func_80033C54(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         }
         break;
     case 1:
-        arg1->unk1C -= delayByte;
+        arg1->unk1C -= gUpdateRate;
         if (arg1->unk1C < 0) {
             sp24 = arg1->unk14;
             arg1->unk14 = rand_next(0, 0x1FFF);
@@ -549,7 +549,7 @@ void func_80033C54(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
             } else {
                 if (arg1->unk10 > 0.0f) {
                     arg3[1] = arg1->unk14 + ((arg1->unk16 - arg1->unk14) * arg1->unk10);
-                    arg1->unk10 -= 0.01f * delayFloat;
+                    arg1->unk10 -= 0.01f * gUpdateRateF;
                     if (arg1->unk10 < 0.0f) {
                         arg1->unk10 = 0.0f;
                     }
@@ -585,7 +585,7 @@ void func_80033FD8(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         arg1->unk1C = rand_next(0x32, 0xC8);
         return;
     case 1:
-        arg1->unk1C -= delayByte;
+        arg1->unk1C -= gUpdateRate;
         if (arg1->unk1C < 0 && !(rand_next(0, 0x64) < 0x5B)) {
             arg1->unk1A = (sp20 << 8) | 5;
             if (arg1->unk0 != 0) {
@@ -607,7 +607,7 @@ void func_80033FD8(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         break;
     case 5:
         if (arg1->unk1C > 0) {
-            arg1->unk1C -= delayByte;
+            arg1->unk1C -= gUpdateRate;
             return;
         }
         if (func_80034250(arg1, arg3) != 0) {
@@ -619,7 +619,7 @@ void func_80033FD8(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         break;
     case 6:
         if (arg1->unk1C > 0) {
-            arg1->unk1C -= delayByte;
+            arg1->unk1C -= gUpdateRate;
             return;
         }
         if (func_80034250(arg1, arg3) != 0) {
@@ -631,7 +631,7 @@ void func_80033FD8(Object* obj, Unk80032CF8* arg1, f32 arg2, s16* arg3) {
         break;
     case 4:
         if (arg1->unk1C > 0) {
-            arg1->unk1C -= delayByte;
+            arg1->unk1C -= gUpdateRate;
             return;
         }
         if (func_80034250(arg1, arg3) != 0) {
@@ -666,7 +666,7 @@ s32 func_80034250(Unk80032CF8* arg0, s16* arg1) {
     if (arg0->unk14 < arg0->unk16) {
         var_fa0 = -var_fa0;
     }
-    arg1[1] += var_fa0 * delayFloat;
+    arg1[1] += var_fa0 * gUpdateRateF;
     if (sp34 == 1.0f || !(arg1[1] < 0x1FFF) || arg1[1] < -0x1FFE) {
         arg1[1] = arg0->unk14;
         return 1;
@@ -699,7 +699,7 @@ s32 func_800343B8(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     if (arg0->unk14 < arg0->unk16) {
         var_fa0 = -var_fa0;
     }
-    arg1[1] += var_fa0 * delayFloat;
+    arg1[1] += var_fa0 * gUpdateRateF;
     if (sp34 == 1.0f || !(arg1[1] < 0x1FFF) || arg1[1] < -0x1FFE) {
         arg1[1] = (s16) arg0->unk14;
         return 1;
@@ -732,7 +732,7 @@ s32 func_80034518(Unk80032CF8* arg0, s16* arg1, f32 arg2, f32 arg3) {
     if (arg0->unk14 < arg0->unk16) {
         var_fa0 = -var_fa0;
     }
-    arg1[0] += var_fa0 * delayFloat;
+    arg1[0] += var_fa0 * gUpdateRateF;
     if (sp34 == 1.0f || !(arg1[0] < 0x1FFF) || arg1[0] < -0x1FFE) {
         arg1[0] = arg0->unk14;
         return 1;
@@ -768,10 +768,10 @@ void func_80034678(Object* arg0, Unk80032CF8* arg1, f32 arg2) {
             arg1->unk21 = rand_next(0x1E, 0x64);
         }
         if (arg1->unk21 > 0) {
-            arg1->unk21 -= delayByte;
+            arg1->unk21 -= gUpdateRate;
             return;
         }
-        sp1C[4] += arg1->unk20 * delayByte;
+        sp1C[4] += arg1->unk20 * gUpdateRate;
         sp1C[5] = 0;
         sp18[4] = -0x64 - sp1C[4];
         sp18[5] = 0;
@@ -866,7 +866,7 @@ void func_80034BC0(Object* obj, Unk80032CF8* arg1) {
         arg1->unk0 = 0;
     } else {
         if ((sp24 != -1) && (temp_s1 != 0)) {
-            sp24 = sp24 - delayByte;
+            sp24 = sp24 - gUpdateRate;
             if (sp24 < 0) {
                 arg1->x = 0.0f;
                 sp24 = sp24;

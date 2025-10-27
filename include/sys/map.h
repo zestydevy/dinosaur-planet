@@ -506,7 +506,7 @@ void func_800436DC(Object* arg0, s32 arg1);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
-s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3);
+s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate);
 void func_8004E7A8(Object* arg0);
 
 // other funcs that are used

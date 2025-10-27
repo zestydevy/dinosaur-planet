@@ -24,7 +24,7 @@ DLL_INTERFACE(DLL_18_UnknownDLL) {
 
 void objfsa_func_13E4(ObjFSA_Data *data, void *arg1);
 void objfsa_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *arg3);
+static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 updateRate, ObjFSA_StateCallback *arg3);
 static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *arg3);
 static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data);
 static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2);
@@ -60,7 +60,7 @@ void objfsa_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x90 | func: 1 | export: 1
-void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, 
+void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3, 
         ObjFSA_StateCallback *animStateCallbacks, ObjFSA_StateCallback *logicStateCallbacks) {
     f32 temp_fv0;
     f32 var_fv1;
@@ -84,8 +84,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
     }
     if (obj->unkC0) {}
     if ((data->flags & 0x8000) && (obj->unkC0 == NULL)) {
-        objfsa_run_logic_state(obj, data, arg2, logicStateCallbacks);
-        data->logicStateTime += arg2;
+        objfsa_run_logic_state(obj, data, fsaUpdateRate, logicStateCallbacks);
+        data->logicStateTime += fsaUpdateRate;
         if ((f32) data->logicStateTime > 10000.0f) {
             data->logicStateTime = 10000;
         }
@@ -101,15 +101,15 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
     data->flags &= ~0x80000;
     data->unk340 = 0;
     _bss_1 = 0;
-    objfsa_run_anim_state(obj, data, arg2, animStateCallbacks);
-    data->animStateTime += arg2;
+    objfsa_run_anim_state(obj, data, fsaUpdateRate, animStateCallbacks);
+    data->animStateTime += fsaUpdateRate;
     if ((f32) data->animStateTime > 10000.0f) {
         data->animStateTime = 10000;
     }
     _bss_8 = obj->srt.transl.x;
     _bss_C = obj->srt.transl.z;
     if (!(data->flags & 0x01000000)) {
-        objfsa_func_1C70(obj, data, arg2);
+        objfsa_func_1C70(obj, data, fsaUpdateRate);
     }
     temp_v0_2 = _data_0;
     if (temp_v0_2 != NULL) {
@@ -139,7 +139,7 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
     }
     _data_0 = NULL;
     if (!(data->flags & 0x01000000) && !(data->flags & 0x400000)) {
-        gDLL_27->vtbl->func_1e8(obj, &data->unk4, arg2);
+        gDLL_27->vtbl->func_1e8(obj, &data->unk4, fsaUpdateRate);
         gDLL_27->vtbl->func_5a8(obj, &data->unk4);
         gDLL_27->vtbl->func_624(obj, &data->unk4, arg3);
         if (data->unk4.unk25C & 0x10) {
@@ -149,8 +149,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
         }
         if (data->flags & 0x800000) {
             if ((data->unk4.unk25C & 2) || (data->unk4.hitsTouchBits != 0)) {
-                obj->speed.x = (obj->srt.transl.x - obj->objhitInfo->unk10.x) / arg2;
-                obj->speed.z = (obj->srt.transl.z - obj->objhitInfo->unk10.z) / arg2;
+                obj->speed.x = (obj->srt.transl.x - obj->objhitInfo->unk10.x) / fsaUpdateRate;
+                obj->speed.z = (obj->srt.transl.z - obj->objhitInfo->unk10.z) / fsaUpdateRate;
             }
             data->flags &= ~0x800000;
         }
@@ -162,7 +162,7 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3,
 }
 
 // offset: 0x5E0 | func: 2 | export: 2
-void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *arg2) {
+void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *callbacks) {
     f32 sp24;
     f32 temp_fv0;
     f32 temp_fv0_2;
@@ -186,7 +186,7 @@ void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *arg2)
         _bss_1C = 1;
         _bss_1 = 0;
         _bss_2 = 1;
-        objfsa_run_anim_state(obj, data, delayFloat, arg2);
+        objfsa_run_anim_state(obj, data, gUpdateRateF, callbacks);
     }
 }
 
@@ -220,7 +220,7 @@ void objfsa_set_anim_state(Object *obj, ObjFSA_Data *data, s32 state) {
 }
 
 // offset: 0x81C | func: 5
-static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjFSA_StateCallback *callbacks) {
+static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 updateRate, ObjFSA_StateCallback *callbacks) {
     s32 prevState;
     s32 nextState;
     s32 stop;
@@ -243,7 +243,7 @@ static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjF
         stop = FALSE;
         prevState = data->animState;
         callback = callbacks[data->animState];
-        nextState = callback(obj, data, arg2);
+        nextState = callback(obj, data, updateRate);
         if (nextState > 0) {
             // Switch to next state (run synchronously)
             if (data->animExitAction != NULL) {
@@ -298,17 +298,17 @@ static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 arg2, ObjF
     }
     if ((_bss_10 == 0) && !(data->unk340 & 1)) {
         sp50.unk1B = 0;
-        data->unk33A = func_80024108(obj, data->unk298, arg2, &sp50);
+        data->unk33A = func_80024108(obj, data->animTickDelta, updateRate, &sp50);
         data->unk308 = 0;
         for (i = 0; i < sp50.unk1B; i++) {
             data->unk308 |= 1 << sp50.unk13[i];
         }
-        func_80025780(obj, arg2, &sp50, NULL);
+        func_80025780(obj, updateRate, &sp50, NULL);
         data->flags &= ~0x10000;
     }
     if (!(data->flags & 0x4000)) {
-        obj->srt.pitch -= (s32) ((f32) obj->srt.pitch * arg2 * 0.125f) & 0xFFFF & 0xFFFF;
-        obj->srt.roll -= (s32) ((f32) obj->srt.roll * arg2 * 0.125f) & 0xFFFF & 0xFFFF;
+        obj->srt.pitch -= (s32) ((f32) obj->srt.pitch * updateRate * 0.125f) & 0xFFFF & 0xFFFF;
+        obj->srt.roll -= (s32) ((f32) obj->srt.roll * updateRate * 0.125f) & 0xFFFF & 0xFFFF;
     }
 }
 
@@ -367,17 +367,17 @@ static void objfsa_run_logic_state(Object *obj, ObjFSA_Data *data, f32 arg2, Obj
 }
 
 // offset: 0xC84 | func: 7 | export: 7
-void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
+void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3) {
     UnkFunc_80024108Struct sp34;
     s32 var_v1;
 
     sp34.unk12 = 0;
-    data->unk33A = func_80024108(obj, data->unk298, arg2, &sp34);
+    data->unk33A = func_80024108(obj, data->animTickDelta, updateRate, &sp34);
     data->unk308 = 0;
     for (var_v1 = 0; var_v1 < sp34.unk1B; var_v1++) {
         data->unk308 |= 1 << sp34.unk13[var_v1];
     }
-    func_80025780(obj, arg2, &sp34, NULL);
+    func_80025780(obj, updateRate, &sp34, NULL);
     data->flags &= ~0x10000;
     if (sp34.unk12 != 0) {
         if (arg3 & 0x10) {
@@ -395,16 +395,16 @@ void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
             }
         } else {
             if (arg3 & 1) {
-                data->unk278 = -sp34.unk0[2] / arg2;
+                data->unk278 = -sp34.unk0[2] / updateRate;
             }
             if (arg3 & 2) {
-                data->unk27C = sp34.unk0[0] / arg2;
+                data->unk27C = sp34.unk0[0] / updateRate;
             }
             if (arg3 & 8) {
                 obj->srt.yaw += sp34.unkc[1];
             }
             if (arg3 & 4) {
-                data->unk280 = sp34.unk0[1] / arg2;
+                data->unk280 = sp34.unk0[1] / updateRate;
                 data->flags |= 0x10000;
             }
         }
@@ -472,7 +472,7 @@ void objfsa_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
         }
         var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v1)
-        obj->srt.yaw += (s32) (((f32) var_v1 * delayFloat) / ((f32) arg3 * 3.0f));
+        obj->srt.yaw += (s32) (((f32) var_v1 * gUpdateRateF) / ((f32) arg3 * 3.0f));
     }
 }
 
@@ -594,7 +594,7 @@ void objfsa_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
         }
         sp30 = sqrtf(SQ(data->unk278) + SQ(data->unk27C));
         if (func_8002493C(obj, sp30, &sp34) != 0) {
-            data->unk298 = sp34;
+            data->animTickDelta = sp34;
         }
         if (sp30 != 0.0f) {
             sp34 = data->unk27C / sp30;

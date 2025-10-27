@@ -9,7 +9,7 @@
 DLL_INTERFACE(DLL_2_camera) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(Object *, f32, f32, f32);
-/*1*/ void (*func1)(u8);
+/*1*/ void (*func1)(u8 updateRate);
 /*2*/ Object *(*func2)(void);
 /*3*/ s32 (*func3)(void);
 /*4*/ UnknownDLLFunc func4;

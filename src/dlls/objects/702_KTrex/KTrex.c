@@ -375,7 +375,7 @@ void dll_702_control(Object* self) {
         dll_702_func_12DC(self);
         gDLL_33->vtbl->func10(self, dll33Data, 0.0f, 0);
         func_80026128(self, 0x17, 1, -1);
-        gDLL_18_objfsa->vtbl->tick(self, &dll33Data->fsa, delayFloat, delayFloat, sAnimStateCallbacks, sLogicStateCallbacks);
+        gDLL_18_objfsa->vtbl->tick(self, &dll33Data->fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
         self->srt.transl.y = sKTData->pos.y;
     }
 }
@@ -575,7 +575,7 @@ static s32 dll_702_move_and_check_turn(ObjFSA_Data* fsa, KTrex_Data* ktdata) {
         posDelta = fsa->speed;
     }
 
-    ktdata->segmentPos += posDelta * delayFloat;
+    ktdata->segmentPos += posDelta * gUpdateRateF;
 
     if ((_data_78[ktdata->anger] < ktdata->segmentPos) || (ktdata->segmentPos < _data_6C[ktdata->anger])) {
         // Reached end of segment, turn
@@ -799,7 +799,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     u32 sp3C[] = {0x00000006, 0x00000069, 0x00000069, 0x000000ff};
 
     if (dll33Data->unk3E8 > 0.0f) {
-        dll33Data->unk3E8 += (delayFloat * dll33Data->unk3EC);
+        dll33Data->unk3E8 += (gUpdateRateF * dll33Data->unk3EC);
         if (dll33Data->unk3E8 < 0.0f) {
             dll33Data->unk3E8 = 0.0f;
         } else if (dll33Data->unk3E8 > 120.0f) {
@@ -855,7 +855,7 @@ static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 arg3) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0, 0.0f, 0);
     }
-    fsa->unk298 = 0.01f;
+    fsa->animTickDelta = 0.01f;
     return 0;
 }
 
@@ -879,9 +879,9 @@ static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         var_a1 = _data_44[sKTData->anger];
     }
     dll_702_func_1E9C(0, var_a1);
-    temp_fv0 = (sKTData->pos.x - self->srt.transl.x) * inverseDelay;
-    temp_fa1 = (sKTData->pos.z - self->srt.transl.z) * inverseDelay;
-    func_8002493C(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->unk298);
+    temp_fv0 = (sKTData->pos.x - self->srt.transl.x) * gUpdateRateInverseF;
+    temp_fa1 = (sKTData->pos.z - self->srt.transl.z) * gUpdateRateInverseF;
+    func_8002493C(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->animTickDelta);
     self->srt.transl.x = sKTData->pos.x;
     self->srt.transl.z = sKTData->pos.z;
     return 0;
@@ -898,7 +898,7 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
         func_80023D30(self, _data_20[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
-        fsa->unk298 = _data_60[sKTData->anger];
+        fsa->animTickDelta = _data_60[sKTData->anger];
         sKTData->turnStartYaw = self->srt.yaw;
     }
     dll_702_func_1E9C(2, 1);
@@ -906,7 +906,7 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     dll_702_func_1E9C(0, 0x40);
     dll_702_func_1E9C(7, 0x10000);
     fsa->unk340 |= 1;
-    gDLL_18_objfsa->vtbl->func7(self, fsa, delayFloat, 3);
+    gDLL_18_objfsa->vtbl->func7(self, fsa, gUpdateRateF, 3);
     tempSRT.yaw = sKTData->turnStartYaw;
     tempSRT.pitch = 0;
     tempSRT.roll = 0;
@@ -932,7 +932,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xF, 0.0f, 0);
-        fsa->unk298 = 0.005f;
+        fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
         sKTData->turnStartYaw = self->srt.yaw;
@@ -950,7 +950,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, _data_18[sKTData->roarType], 0.0f, 0);
-        fsa->unk298 = _data_54[sKTData->roarType];
+        fsa->animTickDelta = _data_54[sKTData->roarType];
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
@@ -964,7 +964,7 @@ static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, _data_8[sKTData->anger], 0.0f, 0);
-        fsa->unk298 = 0.005f;
+        fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
@@ -977,7 +977,7 @@ static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xB, 0.0f, 0);
-        fsa->unk298 = 0.006f;
+        fsa->animTickDelta = 0.006f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
@@ -991,7 +991,7 @@ static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xC, 0.0f, 0);
-        fsa->unk298 = 0.01f;
+        fsa->animTickDelta = 0.01f;
     }
     dll_702_func_1E9C(0, 0x2000);
     dll_702_func_1E9C(7, 0x40000);
@@ -1003,7 +1003,7 @@ static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 arg3) {
     if (fsa->enteredAnimState) {
         func_80023D30(self, 0xD, 0.0f, 0);
-        fsa->unk298 = 0.0017f;
+        fsa->animTickDelta = 0.0017f;
     }
     dll_702_func_1E9C(0, 0x2000);
     return 0;
@@ -1102,7 +1102,7 @@ static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_4_ROAR);
         sKTData->timer = (f32) objsetup->roarTime[sKTData->roarType];
     } else {
-        sKTData->timer -= delayFloat;
+        sKTData->timer -= gUpdateRateF;
         if (sKTData->timer < 0.0f) {
             sKTData->timer = 0.0f;
         }
@@ -1177,7 +1177,7 @@ static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         sKTData->flags &= ~KTFLAG_DAMAGED;
         self->unkAF &= ~8;
     } else {
-        if ((sKTData->flags & KTFLAG_DAMAGED) || (sKTData->timer -= delayFloat) <= 0.0f) {
+        if ((sKTData->flags & KTFLAG_DAMAGED) || (sKTData->timer -= gUpdateRateF) <= 0.0f) {
             if (sKTData->flags & KTFLAG_DAMAGED) {
                 sKTData->health -= 1;
             }
@@ -1232,7 +1232,7 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         dll_702_push_state(KT_LSTATE_10_FULL_CHARGE);
         return KT_LSTATE_3_TURN_CORNER + 1;
     }
-    sKTData->timer -= delayFloat;
+    sKTData->timer -= gUpdateRateF;
     if (sKTData->timer <= 0.0f) {
         sKTData->timer = 0.0f;
     }

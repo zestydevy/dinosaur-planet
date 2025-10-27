@@ -419,7 +419,7 @@ void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     _bss_D8[arg2->unk63] = 1;
                 }
             }
-            arg2->unk58 = arg2->unk58 - (arg2->unk24 * delayFloat);
+            arg2->unk58 = arg2->unk58 - (arg2->unk24 * gUpdateRateF);
             if (arg2->unk58 <= 0.0f) {
                 arg2->unk62 = 0;
             }
@@ -550,7 +550,7 @@ f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex) {
 // offset: 0x72E0 | func: 38
 void dll_3_func_72E0(s32 arg0) {
     _bss_6FC = arg0;
-    _bss_700[0] = delayByte;
+    _bss_700[0] = gUpdateRate;
 }
 
 // offset: 0x730C | func: 39 | export: 5

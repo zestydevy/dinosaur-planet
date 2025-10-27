@@ -68,7 +68,7 @@ void dll_27_setup_terrain_collider(DLL27_Data *data, s32 testCount, Vec3f *testP
 }
 
 // offset: 0x1E8 | func: 3 | export: 3
-void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 delayFloat) {
+void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 updateRate) {
     MtxF worldMtx;
     Vec3f spE0[4];
     f32 spD0[4];
@@ -199,10 +199,10 @@ void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
 }
 
 // offset: 0x624 | func: 5 | export: 5
-void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 delayFloat) {
-    f32 sp3C;
+void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 updateRate) {
+    f32 updateRateInverse;
 
-    sp3C = 1.0f / delayFloat;
+    updateRateInverse = 1.0f / updateRate;
     arg1->unkD4 = NULL;
     if (arg1->mode == DLL27MODE_1) {
         bss_0 = NULL;
@@ -261,12 +261,12 @@ void dll_27_func_624(Object* arg0, DLL27_Data* arg1, f32 delayFloat) {
         }
         if (!(arg1->flags & DLL27FLAG_40000)) {
             if ((arg0->objhitInfo != NULL) && (arg0->objhitInfo->unk58 & 1)) {
-                arg0->speed.y = (arg0->positionMirror.y - arg0->objhitInfo->unk20.y) * sp3C;
+                arg0->speed.y = (arg0->positionMirror.y - arg0->objhitInfo->unk20.y) * updateRateInverse;
                 if (arg0->objhitInfo->unk20.y < arg0->positionMirror.y) {
                     arg0->speed.y = 0.0f;
                 }
             } else {
-                arg0->speed.y = (arg0->positionMirror.y - arg0->positionMirror3.y) * sp3C;
+                arg0->speed.y = (arg0->positionMirror.y - arg0->positionMirror3.y) * updateRateInverse;
             }
         }
     } else if (arg1->mode == DLL27MODE_2) {
@@ -642,13 +642,13 @@ static void dll_27_func_1BA8(Object* arg0, DLL27_Data* arg1) {
         // 0x4000 = 90deg
         temp_v1 = 0x4000 - arctan2_f(y, z);
         arg1->relativeFloorPitch = temp_v1;
-        arg1->relativeFloorPitchSmooth += ((s32) ((temp_v1 - arg1->relativeFloorPitchSmooth) * delayByte) >> 4);
+        arg1->relativeFloorPitchSmooth += ((s32) ((temp_v1 - arg1->relativeFloorPitchSmooth) * gUpdateRate) >> 4);
         temp_v1_2 = -0x4000 - -arctan2_f(y, x);
         arg1->relativeFloorRoll = temp_v1_2;
-        arg1->relativeFloorRollSmooth += ((s32) ((temp_v1_2 - arg1->relativeFloorRollSmooth) * delayByte) >> 4);
+        arg1->relativeFloorRollSmooth += ((s32) ((temp_v1_2 - arg1->relativeFloorRollSmooth) * gUpdateRate) >> 4);
     } else {
-        arg1->relativeFloorPitchSmooth -= ((s32) (arg1->relativeFloorPitchSmooth * delayByte) >> 4);
-        arg1->relativeFloorRollSmooth -= ((s32) (arg1->relativeFloorRollSmooth * delayByte) >> 4);
+        arg1->relativeFloorPitchSmooth -= ((s32) (arg1->relativeFloorPitchSmooth * gUpdateRate) >> 4);
+        arg1->relativeFloorRollSmooth -= ((s32) (arg1->relativeFloorRollSmooth * gUpdateRate) >> 4);
         arg1->floorNormalX = 0.0f;
         arg1->floorNormalZ = 0.0f;
         arg1->floorNormalY = 1.0f;

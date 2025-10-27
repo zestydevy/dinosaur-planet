@@ -31,7 +31,7 @@ typedef struct {
     0, 0, 0, 0, 0, 0, 0, 0
 };
 /*0x8*/ static void* dataDLLUnused = NULL;
-/*0xC*/ static u32 dataDelayByte = 3;
+/*0xC*/ static u32 sUpdateRateCopy = 3;
 
 static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
@@ -191,7 +191,7 @@ u32 WLgalleon_get_data_size(Object *self, u32 a1) {
 static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     s32 index;
 
-    dataDelayByte = delayByte; //unused?
+    sUpdateRateCopy = gUpdateRate; //unused?
     animObjData->unk7A = -1;
     animObjData->unk62 = 0;
 

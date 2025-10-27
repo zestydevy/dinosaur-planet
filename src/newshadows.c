@@ -222,7 +222,7 @@ void func_8004DABC(void) {
     }
 }
 
-s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
+s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2A4; // end of loop
@@ -268,7 +268,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
     D_800BB170 = 0;
     temp_s1 = arg0->ptr0x64;
     if (temp_s1->flags & 0x1000) {
-        temp_s1->unk36 -= arg3 * 2;
+        temp_s1->unk36 -= updateRate * 2;
         if (temp_s1->unk36 <= 0) {
             temp_s1->unk36 = 0;
         }
@@ -280,32 +280,32 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 arg3) {
         if (arg2 == 0) {
             if (D_800BB170 != 0) {
                 if (!(temp_s1->flags & 4)) {
-                    temp_s1->unk36 += arg3 * 2;
+                    temp_s1->unk36 += updateRate * 2;
                     if (temp_s1->unk36 >= 0x40) {
                         temp_s1->unk36 = 0x40;
                     }
                 } else {
-                    temp_s1->unk36 -= arg3 * 2;
+                    temp_s1->unk36 -= updateRate * 2;
                     if (temp_s1->unk36 <= 0) {
                         temp_s1->unk36 = 0;
                         temp_s1->flags &= ~4;
                     }
                 }
             } else if (!(temp_s1->flags & 4)) {
-                temp_s1->unk36 -= arg3 * 2;
+                temp_s1->unk36 -= updateRate * 2;
                 if (temp_s1->unk36 <= 0) {
                     temp_s1->unk36 = 0;
                     temp_s1->flags |= 4;
                 }
             } else {
-                temp_s1->unk36 += arg3 * 2;
+                temp_s1->unk36 += updateRate * 2;
                 if (temp_s1->unk36 >= 0x40) {
                     temp_s1->unk36 = 0x40;
                 }
             }
         }
     } else if (!(temp_s1->flags & 0x10000)) {
-        temp_s1->unk36 += arg3 * 2;
+        temp_s1->unk36 += updateRate * 2;
         if (temp_s1->unk36 >= 0x40) {
             temp_s1->unk36 = 0x40;
         }

@@ -53,7 +53,7 @@ void VFP_lavastar_control(Object* self) {
 
     objdata = (VFP_lavastar_Data*)self->data;
     setup = (VFP_lavastar_Setup*)self->setup;
-    self->srt.transl.y += delayFloat * objdata->speed;
+    self->srt.transl.y += gUpdateRateF * objdata->speed;
     if ((setup->base.y + 1200.0f) < self->srt.transl.y) {
         objdata->speed = rand_next(5, 20) * 0.1f;
         self->srt.transl.y = setup->base.y;

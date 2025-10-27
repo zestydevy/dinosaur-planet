@@ -82,7 +82,7 @@ s32 dll_60_update1() {
     if (data_4 == 1) {
         return 0;
     } else {
-        bss_0 += delayFloat;
+        bss_0 += gUpdateRateF;
 
         if (bss_6 == 0 && bss_0 > 205.0f) {
             gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
@@ -93,13 +93,13 @@ s32 dll_60_update1() {
         }
 
         if (data_0 > 1) {
-            bss_8 -= delayFloat;
+            bss_8 -= gUpdateRateF;
         }
         if (data_0 > 2) {
-            bss_C -= delayFloat;
+            bss_C -= gUpdateRateF;
         }
         if (data_0 > 3) {
-            bss_10 -= delayFloat;
+            bss_10 -= gUpdateRateF;
         }
 
         if (bss_0 > 720.0f) {

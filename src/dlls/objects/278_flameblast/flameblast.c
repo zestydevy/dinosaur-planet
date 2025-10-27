@@ -52,7 +52,7 @@ void flameblast_control(Object* self) {
     if (objdata->sound == 0)
         gDLL_6_AMSFX->vtbl->play_sound(self, 0x304, 0x7F, &objdata->sound, 0, 0, 0);
 
-    objdata->timer -= (s16) delayFloat;
+    objdata->timer -= (s16) gUpdateRateF;
     if (objdata->timer <= 0) {
         objdata->timer = 30;
 
@@ -73,17 +73,17 @@ void flameblast_control(Object* self) {
         self->srt.transl.x = sidekick->srt.transl.x;
         self->srt.transl.y = sidekick->srt.transl.y;
         self->srt.transl.z = sidekick->srt.transl.z;
-        self->srt.transl.x += self->speed.x * delayFloat;
-        self->srt.transl.y += self->speed.y * delayFloat;
-        self->srt.transl.z += self->speed.z * delayFloat;
+        self->srt.transl.x += self->speed.x * gUpdateRateF;
+        self->srt.transl.y += self->speed.y * gUpdateRateF;
+        self->srt.transl.z += self->speed.z * gUpdateRateF;
     }
 
     self->positionMirror2.x = self->srt.transl.x;
     self->positionMirror2.y = self->srt.transl.y;
     self->positionMirror2.z = self->srt.transl.z;
-    self->srt.transl.x += self->speed.x * delayFloat;
-    self->srt.transl.y += self->speed.y * delayFloat;
-    self->srt.transl.z += self->speed.z * delayFloat;
+    self->srt.transl.x += self->speed.x * gUpdateRateF;
+    self->srt.transl.y += self->speed.y * gUpdateRateF;
+    self->srt.transl.z += self->speed.z * gUpdateRateF;
 }
 
 // offset: 0x274 | func: 2 | export: 2

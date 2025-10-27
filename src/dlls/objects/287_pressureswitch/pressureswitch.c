@@ -121,13 +121,13 @@ void pressureswitch_control(Object* self) {
     if (objdata->pressed) {
         deltaY = setup->base.y - setup->yOffsetAnimation;
         if (self->srt.transl.y < deltaY) {
-            self->srt.transl.y += 0.25f * delayFloat;
+            self->srt.transl.y += 0.25f * gUpdateRateF;
             if (deltaY < self->srt.transl.y) {
                 self->srt.transl.y = deltaY;
             }
             main_set_bits(setup->gameBitPressed, 1);
         } else {
-            self->srt.transl.y -= 0.125f * delayFloat;
+            self->srt.transl.y -= 0.125f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
                 main_set_bits(setup->gameBitPressed, 1);
@@ -136,7 +136,7 @@ void pressureswitch_control(Object* self) {
             }
         }
     } else {
-        self->srt.transl.y += 0.125f * delayFloat;
+        self->srt.transl.y += 0.125f * gUpdateRateF;
 
         if (setup->base.y < self->srt.transl.y) {
             self->srt.transl.y = setup->base.y;

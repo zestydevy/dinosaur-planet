@@ -132,7 +132,7 @@ void medium_crate_control(Object *self) {
     }
     if (objdata->unk4 > 0.0f) {
         if (objdata->unk0 != -1) {
-            objdata->unk4 -= (delayFloat * sp70);
+            objdata->unk4 -= (gUpdateRateF * sp70);
             if (objdata->unk4 <= 0.0f) {
                 objdata->unk4 = 0.0f;
                 objdata->unkC = 0;
@@ -143,7 +143,7 @@ void medium_crate_control(Object *self) {
     } else {
         if (objdata->unkC != 0) {
             objdata->unk20 = 0;
-            objdata->unkC -= delayByte;
+            objdata->unkC -= gUpdateRate;
             if (objdata->unkC <= 0) {
                 if (objdata->unk0 > 0) {
                     objdata->unk4 = 1.0f;
@@ -205,7 +205,7 @@ void medium_crate_control(Object *self) {
             }
         }
         temp_fv0_2 = vec3_distance_squared(&get_player()->positionMirror, &self->positionMirror);
-        objdata->unkE -= delayByte;
+        objdata->unkE -= gUpdateRate;
         if (objdata->unkE <= 0) {
             objdata->unkE = rand_next(0, 100) + 300;
             if (temp_fv0_2 < 8100.0f) {
@@ -229,7 +229,7 @@ void medium_crate_control(Object *self) {
         }
         
         if (objdata->unk20 > 0.0f) {
-            objdata->unk20 += (delayFloat * objdata->unk24);
+            objdata->unk20 += (gUpdateRateF * objdata->unk24);
             if (objdata->unk20 < 0.0f) {
                 objdata->unk20 = 0.0f;
                 return;

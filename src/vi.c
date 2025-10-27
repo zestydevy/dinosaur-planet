@@ -110,7 +110,7 @@ void func_8005D410(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE20 = 0;
     D_800BCE22[0] = 0;
     D_800BCE22[1] = 0;
-    D_800BCE34 = 1;
+    gMinUpdateRate = 1;
 }
 
 /**
@@ -273,19 +273,19 @@ void initialize_framebuffers(int someBool, s32 width, s32 height) {
 
 void func_8005D9D8() {
     D_800BCE58 = 0;
-    D_800BCE59 = 2;
-    D_800BCE34 = 1;
+    gTargetUpdateRate = 2;
+    gMinUpdateRate = 1;
 }
 
 void func_8005DA00(u32 param1) {
-    D_800BCE34 = param1;
+    gMinUpdateRate = param1;
 }
 
 s32 video_func_returning_delay(s32 param1) {
-    s32 ret;
+    s32 updateRate;
     s32 vidMode;
 
-    ret = 1;
+    updateRate = 1;
 
     if (D_800BCE14 != 0) {
         D_800BCE14 -= 1;
@@ -300,18 +300,18 @@ s32 video_func_returning_delay(s32 param1) {
     }
 
     while (osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_NOBLOCK) != -1) {
-        ret += 1;
+        updateRate += 1;
     }
 
-    D_800BCE59 = ret;
+    gTargetUpdateRate = updateRate;
 
-    if (D_800BCE59 < D_800BCE34) {
-        D_800BCE59 = D_800BCE34;
+    if (gTargetUpdateRate < gMinUpdateRate) {
+        gTargetUpdateRate = gMinUpdateRate;
     }
 
-    while (ret < D_800BCE59) {
+    while (updateRate < gTargetUpdateRate) {
         osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_BLOCK);
-        ret++;
+        updateRate++;
     }
 
     if (D_80093060 != 0) {
@@ -347,7 +347,7 @@ s32 video_func_returning_delay(s32 param1) {
     func_8005DEE8();
     osRecvMesg(&OSMesgQueue_800bcce0, NULL, OS_MESG_BLOCK);
 
-    return ret;
+    return updateRate;
 }
 
 void func_8005DC68() {}
@@ -355,7 +355,7 @@ void func_8005DC68() {}
 void func_8005DC70(int _) {}
 
 s32 func_8005DC7C() {
-    return (s32)((f32)gDisplayHertz / (f32)D_800BCE59);
+    return (s32)((f32)gDisplayHertz / (f32)gTargetUpdateRate);
 }
 
 /**

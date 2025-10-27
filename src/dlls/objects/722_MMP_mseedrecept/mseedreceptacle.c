@@ -162,7 +162,7 @@ void moonSeedReceptacle_control(Object* self) {
                     gDLL_17->vtbl->func1(self, 0x70F, NULL, 2, -1, NULL);
                 }
                 
-                objData->unk10 -= delayFloat;
+                objData->unk10 -= gUpdateRateF;
                 if (objData->unk10 <= 0.0f){
                     if (rand_next(0, 1)){
                         objData->unk10 = 45.0f;

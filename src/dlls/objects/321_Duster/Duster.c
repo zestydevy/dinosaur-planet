@@ -97,7 +97,7 @@ void Duster_control(Object *self) {
     }
 
     if (self->speed.y > -4.0f) {
-        self->speed.y += -0.12f * delayFloat;
+        self->speed.y += -0.12f * gUpdateRateF;
     }
     objdata->unkE = FALSE;
     count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp54, 0, 0);
@@ -110,7 +110,7 @@ void Duster_control(Object *self) {
     }
 
     if (objdata->timer1 == 0 && objdata->timer2 == 0) {
-        if (func_80024108(self, objdata->unk0, delayFloat, NULL) || objdata->unkE) {
+        if (func_80024108(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
             gDLL_6_AMSFX->vtbl->play_sound(self, 0x87B, 0x25, NULL, NULL, 0, NULL);
             gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
             gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
@@ -139,8 +139,8 @@ void Duster_control(Object *self) {
                 objdata->timer2 = 250;
             }
         } else {
-            self->srt.transl.x += self->speed.x * delayFloat;
-            self->srt.transl.z += self->speed.z * delayFloat;
+            self->srt.transl.x += self->speed.x * gUpdateRateF;
+            self->srt.transl.z += self->speed.z * gUpdateRateF;
         }
         if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
             objdata->resetTimer2 = TRUE;
@@ -148,13 +148,13 @@ void Duster_control(Object *self) {
         }
     } else {
         if (objdata->timer1 != 0) {
-            objdata->timer1 = objdata->timer1 - (s16)delayFloat;
+            objdata->timer1 = objdata->timer1 - (s16)gUpdateRateF;
             if (objdata->timer1 <= 0) {
                 objdata->timer1 = 0;
             }
         }
         if (objdata->timer2 != 0) {
-            objdata->timer2 = objdata->timer2 - (s16)delayFloat;
+            objdata->timer2 = objdata->timer2 - (s16)gUpdateRateF;
             if (objdata->timer2 <= 0) {
                 objdata->timer2 = 0;
                 objdata->resetTimer2 = FALSE;
@@ -166,7 +166,7 @@ void Duster_control(Object *self) {
             self->srt.yaw -= 0x7FFF;
             objdata->rand = 0;
         }
-        self->srt.yaw += 0xBB8 * (s16)delayFloat;
+        self->srt.yaw += 0xBB8 * (s16)gUpdateRateF;
     }
     if (vec3_distance_xz(&player->positionMirror, &self->positionMirror) < 20.0f) {
         gDLL_6_AMSFX->vtbl->play_sound(self, 0x6CA, 0x7F, 0, 0, 0, 0);

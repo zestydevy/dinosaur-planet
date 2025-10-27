@@ -98,7 +98,7 @@ void DFPLift_control(Object* self) {
                     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x75, &objdata->soundHandle, NULL, 0, NULL);
                     objdata->unk11 = 1;
                 }
-                self->srt.transl.y += delayFloat;
+                self->srt.transl.y += gUpdateRateF;
                 if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
                     self->srt.transl.y = (setup->base.y + LIFT_UP);
                     objdata->state = LIFT_STATE_INIT_DONE;
@@ -113,7 +113,7 @@ void DFPLift_control(Object* self) {
             if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_INIT_ACTIVATE_RANGE) {
                 // go up without sound
                 if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
-                    self->srt.transl.y += delayFloat;
+                    self->srt.transl.y += gUpdateRateF;
                     if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
                         self->srt.transl.y = (setup->base.y + LIFT_UP);
                         objdata->state = LIFT_STATE_INIT_DONE;
@@ -129,7 +129,7 @@ void DFPLift_control(Object* self) {
     case LIFT_STATE_STOPPED:
         // stopped
         if (objdata->cooldown != 0) {
-            objdata->cooldown -= (s16)delayFloat;
+            objdata->cooldown -= (s16)gUpdateRateF;
             if (objdata->cooldown <= 0) {
                 objdata->cooldown = 0;
             }
@@ -170,7 +170,7 @@ void DFPLift_control(Object* self) {
     case LIFT_STATE_GO_DOWN:
         // going down
         if ((setup->base.y - LIFT_DOWN) < self->srt.transl.y) {
-            self->srt.transl.y -= delayFloat;
+            self->srt.transl.y -= gUpdateRateF;
             if (self->srt.transl.y <= (setup->base.y - LIFT_DOWN)) {
                 // reached bottom
                 self->srt.transl.y = (setup->base.y - LIFT_DOWN);
@@ -198,7 +198,7 @@ void DFPLift_control(Object* self) {
     case LIFT_STATE_GO_UP:
         // going up
         if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
-            self->srt.transl.y += delayFloat;
+            self->srt.transl.y += gUpdateRateF;
             if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
                 // reached top
                 self->srt.transl.y = (setup->base.y + LIFT_UP);

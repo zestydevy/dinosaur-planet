@@ -33,7 +33,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*1*/ void (*func1)(s32, s32);
 /*2*/ void (*func2)(s32, s32);
 /*3*/ s8 (*func3)(s32 arg0);
-/*4*/ s32 (*func4)(Object* object, s32 delayByte);
+/*4*/ s32 (*func4)(Object* object, s32 updateRate);
 /*5*/ void (*func5)();
 /*6*/ void (*func6)(s32 state, void *setup); // TODO: make ObjAnimSetup
 /*7*/ void (*func7)(s32 state);

@@ -155,7 +155,7 @@ int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, s
         }
         break;
     case 3:
-        objdata->unk4 -= delayFloat;
+        objdata->unk4 -= gUpdateRateF;
         if (objdata->unk4 <= 0.0f) {
             objdata->state = 5;
         }
@@ -163,7 +163,7 @@ int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, s
     case 4:
         temp_v0 = func_800348A0(self, 0, 0);
         if (temp_v0 != NULL) {
-            var_v1_3 = *temp_v0 + (delayByte * 8);
+            var_v1_3 = *temp_v0 + (gUpdateRate * 8);
             if (var_v1_3 > 0x100) {
                 var_v1_3 = 0x100;
                 objdata->state = 3;
@@ -175,7 +175,7 @@ int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, s
     case 5:
         temp_v0_2 = func_800348A0(self, 0, 0);
         if (temp_v0_2 != NULL) {
-            var_v1_4 = *temp_v0_2 - (delayByte * 8);
+            var_v1_4 = *temp_v0_2 - (gUpdateRate * 8);
             if (var_v1_4 < 0) {
                 var_v1_4 = 0;
                 objdata->state = 2;

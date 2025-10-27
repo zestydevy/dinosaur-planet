@@ -139,12 +139,12 @@ void CCkrazoaTablet_func_48C(Object *self, CCkrazoaTablet_Data *objdata) {
     s32 *temp_v0;
 
     if (objdata->unk0 & 1) {
-        objdata->unk4 += delayFloat * 5.0f;
+        objdata->unk4 += gUpdateRateF * 5.0f;
         if (objdata->unk4 > 512.0f) {
             objdata->unk4 -= 512.0f;
         }
     } else {
-        objdata->unk4 -= delayFloat * 5.0f;
+        objdata->unk4 -= gUpdateRateF * 5.0f;
         if (objdata->unk4 < 0.0f) {
             objdata->unk4 = 0.0f;
         }

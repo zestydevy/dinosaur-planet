@@ -248,7 +248,7 @@ void dll_22_func_578(Gfx **gdl) {
     s32 temp_v1;
     s32 temp_v0;
 
-    temp_ft5 = (delayFloat * 100.0f) / 30.0f;
+    temp_ft5 = (gUpdateRateF * 100.0f) / 30.0f;
     if (_data_38 != 0) {
         _data_40 += temp_ft5;
         if (_data_40 >= 0x65) {
@@ -378,7 +378,7 @@ void dll_22_func_578(Gfx **gdl) {
     s32 temp_t2;
 
     temp_fv0 = _data_60;
-    temp_fv0 += delayFloat;
+    temp_fv0 += gUpdateRateF;
     if (_data_5C != 0) {
         _data_60 = temp_fv0;
         if (temp_fv0 > 10.0f) {
@@ -718,7 +718,7 @@ static u8 dll_22_func_20CC(u8 colourComponent) {
 
 // offset: 0x2118 | func: 19
 f32 dll_22_func_2118(void) {
-    return (1000.0f * delayFloat) / 60.0f;
+    return (1000.0f * gUpdateRateF) / 60.0f;
 }
 
 // offset: 0x214C | func: 20 | export: 7

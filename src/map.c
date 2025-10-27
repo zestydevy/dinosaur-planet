@@ -1046,7 +1046,7 @@ void func_80043FD8(s8* arg0) {
         } else {
             var_s2[0] = func_800456AC(object);
             if ((var_s2[0] != 0) && (object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
-                func_8004DBAC(object, 0, 0, delayByte);
+                func_8004DBAC(object, 0, 0, gUpdateRate);
             }
             if ((object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
                 func_8004E7A8(object);
@@ -3509,8 +3509,8 @@ void func_800499BC(void) {
         temp_a0 = &D_800B97A8[i];
         if (temp_a0->unk20 != 0) {
             var_a1 = temp_a0->unk8;
-            var_a3 = temp_a0->unk4 * delayByte;
-            var_t1 = temp_a0->unk6 * delayByte;
+            var_a3 = temp_a0->unk4 * gUpdateRate;
+            var_t1 = temp_a0->unk6 * gUpdateRate;
             temp_a0->unk8 = (var_a1 + var_a3) & 3;
             temp_a0->unk0 += (var_a1 + var_a3) >> 2;
             var_a2 = temp_a0->unkA;
@@ -3527,8 +3527,8 @@ void func_800499BC(void) {
                 temp_a0->unk2 += temp_a0->unkE;
             }
             var_a1 = temp_a0->unk18;
-            var_a3 = temp_a0->unk14 * delayByte;
-            var_t1 = temp_a0->unk16 * delayByte;
+            var_a3 = temp_a0->unk14 * gUpdateRate;
+            var_t1 = temp_a0->unk16 * gUpdateRate;
             temp_a0->unk18 = (var_a1 + var_a3) & 3;
             temp_a0->unk10 += (var_a1 + var_a3) >> 2;
             var_a2 = temp_a0->unk1A;

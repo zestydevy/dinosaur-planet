@@ -335,8 +335,8 @@ void waterfx_func_6E8() {
     for (i = 0; i < 30; i++) {
         temp_v0 = &_bss_24[i];
         if (temp_v0->unk16 != 0) {
-            temp_v0->unk10 += 0.0007f * delayFloat;
-            temp_v0->unk16 -= (delayByte * temp_v0->unk18);
+            temp_v0->unk10 += 0.0007f * gUpdateRateF;
+            temp_v0->unk16 -= (gUpdateRate * temp_v0->unk18);
             if (temp_v0->unk16 < 0) {
                 temp_v0->unk16 = 0;
                 _bss_20 -= 1;
@@ -358,9 +358,9 @@ void waterfx_func_6E8() {
             for (j = 0; j < 14; j++) {\
                 if (j & 1) {\
                     temp2 = ((StructBss2C *) (((s32 *) temp_t0) + ((j % 12) >> 1)));\
-                    temp_a1[j].unk0 += (s16) (temp2->unkC * delayFloat * 100.0f); \
-                    temp_a1[j].unk2 += (s16) (temp2->unk24 * delayFloat * 100.0f); \
-                    temp_a1[j].unk4 += (s16) (temp2->unk3C * delayFloat * 100.0f); \
+                    temp_a1[j].unk0 += (s16) (temp2->unkC * gUpdateRateF * 100.0f); \
+                    temp_a1[j].unk2 += (s16) (temp2->unk24 * gUpdateRateF * 100.0f); \
+                    temp_a1[j].unk4 += (s16) (temp2->unk3C * gUpdateRateF * 100.0f); \
                 }\
                 temp = 255.0f - (var_fv0 * 255.0f);\
                 temp_a1[j].unkF = temp;
@@ -375,8 +375,8 @@ void waterfx_func_6E8() {
     for (i = 0; i < 30; i++) {
         temp_v0_2 = &_bss_34[i];
         if (temp_v0_2->unk14 != 0) {
-            temp_v0_2->unk10 += 0.004f * delayFloat;
-            temp_v0_2->unk14 -= delayByte * 5;
+            temp_v0_2->unk10 += 0.004f * gUpdateRateF;
+            temp_v0_2->unk14 -= gUpdateRate * 5;
             if (temp_v0_2->unk14 < 0) {
                 temp_v0_2->unk14 = 0;
                 _bss_30 -= 1;
@@ -393,7 +393,7 @@ void waterfx_func_6E8() {
             temp_t0 = &_bss_2C[temp_v0_3->unk12];
             temp_a1 = &_bss_10[i * 4];
 
-            var_fv0 = 100.0f * delayFloat;
+            var_fv0 = 100.0f * gUpdateRateF;
             temp_fv1 = temp_v0_3->unk8 * var_fv0;
             temp_ft4 = (temp_v0_3->unk0 * temp_fv1);
             temp_ft1 = (temp_v0_3->unkC * var_fv0);
@@ -413,7 +413,7 @@ void waterfx_func_6E8() {
             temp_a1->unk2 += temp_ft1;
             temp_a1->unk4 += temp_ft4_2;
 
-            temp_v0_3->unkC += -0.025f * delayFloat;
+            temp_v0_3->unkC += -0.025f * gUpdateRateF;
             if (temp_t0->unk54 == 0) {
                 if (temp_a1->unk2 < 0) {
                     temp_v0_3->unk12 = -1;

@@ -92,7 +92,7 @@ void SPItem_control(Object* self) {
         set_button_mask(0, A_BUTTON);
     }
 
-    func_80024108(self, 0.005f, delayFloat, NULL);
+    func_80024108(self, 0.005f, gUpdateRateF, NULL);
 }
 
 // offset: 0x350 | func: 2 | export: 2

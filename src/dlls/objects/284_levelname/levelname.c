@@ -117,21 +117,21 @@ void levelname_control(Object* self) {
             }
             break;
         case LEVELNAME_STATE_1_FADING_IN:
-            objdata->opacity += delayByte * 4;
+            objdata->opacity += gUpdateRate * 4;
             if (objdata->opacity > 220) {
                 objdata->opacity = 220;
                 objdata->state = 2;
             }
             break;
         case LEVELNAME_STATE_2_HOLDING:
-            objdata->timer += delayByte;
+            objdata->timer += gUpdateRate;
             if ((u32)objdata->timer > objdata->displayDuration) {
                 objdata->state = 3;
             }    
             objdata->opacity = (s32) (fsin16_precise(objdata->timer * 0x500) * 30.0f) + 0xDC;
             break;
         case LEVELNAME_STATE_3_FADING_OUT:
-            objdata->opacity -= delayByte * 4;
+            objdata->opacity -= gUpdateRate * 4;
             if (objdata->opacity < 0) {
                 objdata->opacity = 0;
                 objdata->state = 4;

@@ -109,7 +109,7 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 void func_80032804(Object*,Object*);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
-void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 arg5);
+void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 updateRate);
 void func_80029AB4(ModelJoint *joints, s32 jointsCount, HitSphere *hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5);
 void func_8001AC44(ModelInstance*, Model*, Object*, MtxF*, MtxF*, u32, f32);
 void func_8001B4F0(MtxF**, MtxF*, AnimState*, ModelJoint*, s32, s16*, s32, s32);
@@ -125,7 +125,7 @@ void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelIns
 s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
 void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 arg4, Vec3f* arg5);
 void func_80027934(Object *obj, Object *otherObj);
-void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 arg4);
+void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 updateRate);
 void func_80028238(Object *obj, Object *otherObj);
 void func_8002B7CC(Unk800B20B8** arg0, s32 arg1);
 s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f32* arg5, f32* arg6);

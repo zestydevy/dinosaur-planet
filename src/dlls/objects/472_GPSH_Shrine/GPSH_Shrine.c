@@ -170,7 +170,7 @@ void GPSH_Shrine_control(Object* self) {
         gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
     }
     if (objdata->unk2 > 0) {
-        objdata->unk2 -= delayByte;
+        objdata->unk2 -= gUpdateRate;
         if (objdata->unk2 <= 0) {
             objdata->unk2 = 0;
             if (objdata->unk18 == 0) {
@@ -232,7 +232,7 @@ void GPSH_Shrine_control(Object* self) {
             }
             break;
         case 2:
-            objdata->unk10 -= delayByte;
+            objdata->unk10 -= gUpdateRate;
             diPrintf("\ntime %d\n", objdata->unk10);
             objdata->unk14 = 0;
             if (main_get_bits(BIT_149) != 0) {

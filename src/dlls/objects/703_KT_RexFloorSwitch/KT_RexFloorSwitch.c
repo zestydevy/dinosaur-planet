@@ -101,7 +101,7 @@ void dll_703_control(Object* self) {
     if (objdata->unk14 & 4) {
         temp_fv0 = objsetup->base.y - (f32) objsetup->unk1F;
         if (temp_fv0 < self->srt.transl.y) {
-            self->srt.transl.y -= (0.075f * delayFloat);
+            self->srt.transl.y -= (0.075f * gUpdateRateF);
             if (self->srt.transl.y <= temp_fv0) {
                 self->srt.transl.y = temp_fv0;
                 objdata->unk14 = objdata->unk14 & ~0x4;
@@ -112,7 +112,7 @@ void dll_703_control(Object* self) {
         }
     } else if (objdata->unk14 & 2) {
         if (self->srt.transl.y < objsetup->base.y) {
-            self->srt.transl.y += (0.075f * delayFloat);
+            self->srt.transl.y += (0.075f * gUpdateRateF);
             if (objsetup->base.y <= self->srt.transl.y) {
                 self->srt.transl.y = objsetup->base.y;
                 objdata->unk14 = objdata->unk14 & ~0x2;
@@ -124,7 +124,7 @@ void dll_703_control(Object* self) {
     } else if ((objdata->unk8 != 0) && !(objdata->unk14 & 1)) {
         temp_fv0 = objsetup->base.y - (f32) objsetup->unk1E;
         if (temp_fv0 < self->srt.transl.y) {
-            self->srt.transl.y -= (0.125f * delayFloat);
+            self->srt.transl.y -= (0.125f * gUpdateRateF);
             if (self->srt.transl.y < temp_fv0) {
                 self->srt.transl.y = temp_fv0;
             } else {
@@ -140,9 +140,9 @@ void dll_703_control(Object* self) {
                 objdata->unk14 |= 9;
             }
         }
-        objdata->unkC -= delayFloat;
+        objdata->unkC -= gUpdateRateF;
     } else {
-        self->srt.transl.y += 0.125f * delayFloat;
+        self->srt.transl.y += 0.125f * gUpdateRateF;
         if (objsetup->base.y < self->srt.transl.y) {
             self->srt.transl.y = objsetup->base.y;
         } else {
@@ -178,7 +178,7 @@ void dll_703_control(Object* self) {
             if (objdata->unk10 == 0.0f) {
                 objdata->unk10 = 8.0f;
             }
-            var_v0 = (s32) ((f32) *sp3C + (delayFloat * objdata->unk10));
+            var_v0 = (s32) ((f32) *sp3C + (gUpdateRateF * objdata->unk10));
             if (var_v0 >= 0x201) {
                 var_v0 = 0x400 - var_v0;
                 objdata->unk10 = -objdata->unk10;
@@ -188,7 +188,7 @@ void dll_703_control(Object* self) {
             }
             *sp3C = var_v0;
         } else {
-            var_v0 = (s32) ((f32) *sp3C + (delayFloat * objdata->unk10));
+            var_v0 = (s32) ((f32) *sp3C + (gUpdateRateF * objdata->unk10));
             if (var_v0 >= 0x201) {
                 var_v0 = 0x400 - var_v0;
                 objdata->unk10 = -objdata->unk10;
@@ -203,7 +203,7 @@ void dll_703_control(Object* self) {
         }
     } else {
         if (*sp3C != 0) {
-            var_v0 = (s32) ((f32) *sp3C + (delayFloat * objdata->unk10));
+            var_v0 = (s32) ((f32) *sp3C + (gUpdateRateF * objdata->unk10));
             if (var_v0 >= 0x201) {
                 var_v0 = 0x400 - var_v0;
                 objdata->unk10 = -objdata->unk10;

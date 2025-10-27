@@ -88,13 +88,13 @@ void WL_spiritplace_control(Object *self) {
             }
             objdata->effectTimer = 15;
         }
-        objdata->effectTimer -= delayByte;
+        objdata->effectTimer -= gUpdateRate;
     } else if (main_get_bits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
         if (objdata->effectTimer <= 0) {
             _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
             objdata->effectTimer = 195 + rand_next(0, 35);
         }
-        objdata->effectTimer -= delayByte;
+        objdata->effectTimer -= gUpdateRate;
     } else if (
         main_get_bits(objdata->bit1) &&
         objdata->mode == 0 &&

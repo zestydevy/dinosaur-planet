@@ -163,9 +163,9 @@ extern u32 D_800BCE14;
 extern s32 gDisplayHertz;
 extern u8 D_800BCE2C;
 
-extern u8 D_800BCE34;
+extern u8 gMinUpdateRate;
 extern u8 D_800BCE58;
-extern u8 D_800BCE59;
+extern u8 gTargetUpdateRate;
 
 extern u8 *D_800BCE18[];
 extern u8 D_800BCE20; // index of D_800BCE22?

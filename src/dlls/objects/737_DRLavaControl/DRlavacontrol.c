@@ -139,7 +139,7 @@ void DRLavaControl_freeze(Object* self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_17->vtbl->func1(self, 0x5A, NULL, 2, -1, NULL);
         gDLL_17->vtbl->func1(self, 0x5B, NULL, 2, -1, NULL);
-        objData->freezeTimer--; //@bug: doesn't use delayByte, frame-rate dependent
+        objData->freezeTimer--; //@bug: doesn't use gUpdateRate, frame-rate dependent
 
         if (objData->freezeTimer == 0) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);

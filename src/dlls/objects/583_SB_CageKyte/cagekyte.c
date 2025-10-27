@@ -51,7 +51,7 @@ void SBCageKyte_control(Object* self) {
 
     if (self->parent->unkDC == 7) {
         //Randomly call out to Krystal
-        objData->randomSoundDelay -= delayByte;
+        objData->randomSoundDelay -= gUpdateRate;
         if ((vec3_distance(&self->positionMirror, &get_player()->positionMirror) < 280.0f) && (objData->randomSoundDelay <= 0)) {
             if (rand_next(0, 10) < 8) {
                 randomSoundIndex = 0;

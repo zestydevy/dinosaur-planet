@@ -14,7 +14,7 @@ extern s32 D_80092A50;
 extern s32 D_80092A54[3];
 extern s32 D_800B49E0;
 
-void func_8003E9F0(Gfx** arg0, s32 arg1) {
+void func_8003E9F0(Gfx** gdl, s32 updateRate) {
     s32 temp_v0;
     s32 *v0;
 
@@ -23,11 +23,11 @@ void func_8003E9F0(Gfx** arg0, s32 arg1) {
         if ((D_80092A50 == 0xA) && ((temp_v0 = D_800B49E0) == 0)) {
             D_800B49E0 = temp_v0 = *D_80092A54;
         }
-        func_8003FE70(arg0, *D_80092A54, D_80092A50, func_80004A4C());
+        func_8003FE70(gdl, *D_80092A54, D_80092A50, func_80004A4C());
         v0 = &D_800B49E0;
         if (D_80092A50 == 0xA) {
             temp_v0 = D_800B49E0;
-            temp_v0 -= arg1;
+            temp_v0 -= updateRate;
             *v0 = temp_v0;
             if (*v0 <= 0) {
                 D_80092A50 = 0;

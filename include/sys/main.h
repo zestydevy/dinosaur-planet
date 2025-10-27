@@ -19,12 +19,16 @@ extern const char *gGameBuildDateTime;
 extern const char *gGameBuildName;
 extern char gDBVersion[];
 
-extern u8 delayByte; //60/int(x) FPS x<=6
-extern u8 delayByteMirror;
-extern f32 delayFloat;
-extern f32 delayFloatMirror;
-extern f32 inverseDelay; // 1/delayByte
-extern f32 inverseDelayMirror;
+/**
+ * The update rate multiplier for the current game tick.
+ * This is equal to the number of vi frames that passed since the last tick.
+ */
+extern u8 gUpdateRate;
+extern u8 gUpdateRateMirror;
+extern f32 gUpdateRateF;
+extern f32 gUpdateRateMirrorF;
+extern f32 gUpdateRateInverseF; // 1/gUpdateRate
+extern f32 gUpdateRateInverseMirrorF;
 
 extern u8 alSynFlag;
 

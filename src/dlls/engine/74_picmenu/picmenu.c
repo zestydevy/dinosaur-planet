@@ -4,6 +4,7 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "sys/controller.h"
 #include "sys/menu.h"
 #include "sys/rand.h"
 #include "sys/main.h"
@@ -267,9 +268,9 @@ PicMenuAction picmenu_update() {
     }
 
     if (sHighlightReverse) {
-        sHighlightAlpha += delayByte * 5;
+        sHighlightAlpha += gUpdateRate * 5;
     } else {
-        sHighlightAlpha -= delayByte * 5;
+        sHighlightAlpha -= gUpdateRate * 5;
     }
 
     if (sHighlightAlpha >= 256) {

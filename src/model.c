@@ -1263,7 +1263,7 @@ s32 func_8001B010(ModelInstance *modelInst) {
     return 0;
 }
 
-void func_8001B084(ModelInstance *modelInst, f32 param2) {
+void func_8001B084(ModelInstance *modelInst, f32 updateRate) {
     int i;
     ModelInstanceBlendshape *var1;
     
@@ -1276,7 +1276,7 @@ void func_8001B084(ModelInstance *modelInst, f32 param2) {
 
         if (var1->unkC != -1 || var1->id != -1) {
             if ((var1->unkE & 1) == 0) {
-                var1->strength += var1->unk8 * param2;
+                var1->strength += var1->unk8 * updateRate;
             }
         }
     }

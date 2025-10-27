@@ -73,7 +73,7 @@ void dll_704_control(Object* self) {
         objdata->unkC = 120.0f;
     }
     if (objdata->unkC > 0.0f) {
-        objdata->unkC -= delayFloat;
+        objdata->unkC -= gUpdateRateF;
         if (objdata->unkC <= 0.0f) {
             main_set_bits(objsetup->unk1E, 0);
             objdata->unk0 &= ~0x8;
@@ -113,7 +113,7 @@ void dll_704_control(Object* self) {
         objdata->unk4 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_696_KT_Laserwall_PowerDown, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (objdata->unk10 > 0.0f) {
-        objdata->unk10 -= delayFloat;
+        objdata->unk10 -= gUpdateRateF;
         if (objdata->unk10 <= 0.0f) {
             objdata->unk4 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_695_KT_Laserwall_Zap, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10 = 0.0f;

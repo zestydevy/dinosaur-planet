@@ -70,7 +70,7 @@ void SB_Propeller_control(Object *self) {
             if (parent_unkDC < 4) {
                 torque = (1800 - objdata->torque) >> 3;
                 CLAMP(torque, -2, 2)
-                objdata->torque += torque * delayByte;
+                objdata->torque += torque * gUpdateRate;
                 objdata->torqueFloat = objdata->torque / 1600.0f;
                 if (objdata->torqueFloat < 0.0f) {
                     objdata->torqueFloat = -objdata->torqueFloat;
@@ -83,7 +83,7 @@ void SB_Propeller_control(Object *self) {
                     gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
                 }
             }
-            self->unkDC -= delayByte;
+            self->unkDC -= gUpdateRate;
             if (self->unkDC < 0) {
                 self->unkDC = 0;
             }
@@ -120,7 +120,7 @@ void SB_Propeller_control(Object *self) {
                 self->objhitInfo->unk5D = 0;
             }
         }
-        self->srt.roll += objdata->torque * delayByte;
+        self->srt.roll += objdata->torque * gUpdateRate;
     }
 }
 
@@ -129,7 +129,7 @@ void SB_Propeller_update(Object *self) {
     SB_Propeller_Data *objdata;
 
     objdata = self->data;
-    objdata->theta += delayByte * 1200;
+    objdata->theta += gUpdateRate * 1200;
 }
 
 // offset: 0x4AC | func: 3 | export: 3

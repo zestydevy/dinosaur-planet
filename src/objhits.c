@@ -624,7 +624,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     f32 sp58;
     s32 sp48[4] = D_800916F4;
 
-    if (arg3 != 0 && func_80024108(obj, *arg4, delayFloat, NULL)) {
+    if (arg3 != 0 && func_80024108(obj, *arg4, gUpdateRateF, NULL)) {
         arg3 = 0;
     }
     i = func_8002601C(obj, NULL, &sp5C, NULL, &sp70.transl.x, &sp70.transl.y, &sp70.transl.z);
@@ -811,7 +811,7 @@ void obj_do_hit_detection(s32 arg0) {
                                                     if (linkedParentObj != NULL && (linkedParentObj->objhitInfo == NULL || !(linkedParentObj->objhitInfo->unk58 & 1))) {
                                                         linkedParentObj = NULL;
                                                     }
-                                                    func_80028DCC(currentObj, parentObj, sp980, linkedParentObj, delayFloat);
+                                                    func_80028DCC(currentObj, parentObj, sp980, linkedParentObj, gUpdateRateF);
                                                 }
                                             }
                                         }
@@ -866,8 +866,8 @@ void obj_do_hit_detection(s32 arg0) {
             currentObjHitInfo->unk9E = 0;
             currentObjHitInfo->unk58 &= ~0x2000;
             if (((currentObjHitInfo->unk62 != 0) || (currentObjHitInfo->unk58 & 8)) && !(currentObjHitInfo->unk58 & 0x40)) {
-                currentObj->speed.x = (currentObj->srt.transl.x - currentObj->positionMirror2.x) * inverseDelay;
-                currentObj->speed.z = (currentObj->srt.transl.z - currentObj->positionMirror2.z) * inverseDelay;
+                currentObj->speed.x = (currentObj->srt.transl.x - currentObj->positionMirror2.x) * gUpdateRateInverseF;
+                currentObj->speed.z = (currentObj->srt.transl.z - currentObj->positionMirror2.z) * gUpdateRateInverseF;
             }
             var_s6++;
             sp68++;
@@ -1384,7 +1384,7 @@ void func_80028DC4(void) {
 
 }
 
-void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 arg4) {
+void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 updateRate) {
     ObjectHitInfo* sp44;
     ObjectHitInfo* sp40;
     ObjectHitInfo* sp3C;
@@ -1444,7 +1444,7 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
         temp_v0_4 = sp2F;
         sp2F = 0;
         if ((((u32)sp2F < temp_v0_4) == 0) && (obj->group == GROUP_UNK1)) {
-            func_8002949C(obj, obj2, obj3, sp3C, sp44, arg4);
+            func_8002949C(obj, obj2, obj3, sp3C, sp44, updateRate);
         }
     }
     if (obj2->def->_unk98[1] & 0x80) {
@@ -1485,12 +1485,12 @@ void func_80028DCC(Object* obj, Object* obj2, Object* obj3, Object* obj4, f32 ar
             }
         }
         if ((sp2F == 0) && (obj2->group == GROUP_UNK1)) {
-            func_8002949C(obj2, obj, obj4, sp38, sp40, arg4);
+            func_8002949C(obj2, obj, obj4, sp38, sp40, updateRate);
         }
     }
 }
 
-void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHitInfo, ObjectHitInfo* objHitInfo2, f32 arg5) {
+void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHitInfo, ObjectHitInfo* objHitInfo2, f32 updateRate) {
     Model* model;
     f32 sp288;
     f32 sp284;
@@ -1524,7 +1524,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     s8 sp80[0xEC - 0x80];
     s32 pad2;
 
-    sp26C = arg5;
+    sp26C = updateRate;
     sp264 = objHitInfo->unk4 >> 2;
     if (sp264 > 0) {
         sp260 = objHitInfo->unk8;
@@ -1544,7 +1544,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
     if (var_fs1 < 0.0f) {
         var_fs1 = 0.0f;
     }
-    var_fs1 /= arg5;
+    var_fs1 /= updateRate;
     sp248 = obj->modelInsts[obj->modelInstIdx];
     model = sp248->model;
     matrixIdx = sp248->unk34 & 1;
@@ -1597,7 +1597,7 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
             func_80029A14(model, sp248->animState0, &animState, var_fs0, 1);
             tempJointCount = -1;
             func_80029AB4(model->joints, model->jointCount, model->hitSpheres, model->hitSphereCount, pad, pad2 ? sp258 : -1);
-            temp_fv0 = var_s4 / arg5;
+            temp_fv0 = var_s4 / updateRate;
             sp194.m[3][0] = (objHitInfo->unk10.x - gWorldX) + (temp_fv0 * sp288);
             sp194.m[3][1] = objHitInfo->unk10.y + (temp_fv0 * sp284);
             sp194.m[3][2] = (objHitInfo->unk10.z - gWorldZ) + (temp_fv0 * sp280);
@@ -2284,7 +2284,7 @@ void func_8002B6EC(void) {
         i++;
     }
 
-    D_800B1990 = delayFloat;
+    D_800B1990 = gUpdateRateF;
 }
 
 void func_8002B74C(f32** arg0, s32 arg1) {
@@ -2831,9 +2831,9 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     Unk80030A24* sp7C;
 
     sp7C = arg3;
-    obj->speed.x = (obj->srt.transl.x - obj->positionMirror2.x) / delayFloat;
-    obj->speed.y = (obj->srt.transl.y - obj->positionMirror2.y) / delayFloat;
-    obj->speed.z = (obj->srt.transl.z - obj->positionMirror2.z) / delayFloat;
+    obj->speed.x = (obj->srt.transl.x - obj->positionMirror2.x) / gUpdateRateF;
+    obj->speed.y = (obj->srt.transl.y - obj->positionMirror2.y) / gUpdateRateF;
+    obj->speed.z = (obj->srt.transl.z - obj->positionMirror2.z) / gUpdateRateF;
     spE8.x = obj->srt.transl.x - obj->positionMirror2.x;
     spE8.y = obj->srt.transl.y - obj->positionMirror2.y;
     spE8.z = obj->srt.transl.z - obj->positionMirror2.z;
@@ -2948,8 +2948,8 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     Unk80030A24* sp7C;
 
     sp7C = arg3;
-    obj->speed.x = (obj->positionMirror.x - obj->positionMirror3.x) / delayFloat;
-    obj->speed.z = (obj->positionMirror.z - obj->positionMirror3.z) / delayFloat;
+    obj->speed.x = (obj->positionMirror.x - obj->positionMirror3.x) / gUpdateRateF;
+    obj->speed.z = (obj->positionMirror.z - obj->positionMirror3.z) / gUpdateRateF;
     spE8.x = obj->positionMirror.x - obj->positionMirror3.x;
     spE8.y = obj->srt.transl.y - obj->positionMirror3.y;
     spE8.z = obj->positionMirror.z - obj->positionMirror3.z;

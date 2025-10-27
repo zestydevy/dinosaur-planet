@@ -193,16 +193,16 @@ void update_objects() {
         func_8002272C(player->linkedObject);
     }
 
-    gDLL_24_Waterfx->vtbl->func_6E8(delayByte);
-    gDLL_15_Projgfx->vtbl->func2(delayByte, 0);
+    gDLL_24_Waterfx->vtbl->func_6E8(gUpdateRate);
+    gDLL_15_Projgfx->vtbl->func2(gUpdateRate, 0);
     gDLL_14_Modgfx->vtbl->func2(0, 0, 0);
-    gDLL_13_Expgfx->vtbl->func2(0, delayByte, 0, 0);
+    gDLL_13_Expgfx->vtbl->func2(0, gUpdateRate, 0, 0);
 
     func_8002B6EC();
 
     gDLL_3_Animation->vtbl->func9();
     gDLL_3_Animation->vtbl->func5();
-    gDLL_2_Camera->vtbl->func1(delayByte);
+    gDLL_2_Camera->vtbl->func1(gUpdateRate);
 
     write_c_file_label_pointers("objects/objects.c", 0x169);
 }
@@ -246,7 +246,7 @@ void update_obj_models() {
                         unk1 = object->unkC0 != NULL ? (ObjectC0_Data*)object->unkC0->data : NULL;
 
                         if (object->unkC0 == NULL || (unk1 != NULL && unk1->unk62 == 0)) {
-                            func_8001B084(modelInst, delayFloat);
+                            func_8001B084(modelInst, gUpdateRateF);
                         }
                     }
                 }

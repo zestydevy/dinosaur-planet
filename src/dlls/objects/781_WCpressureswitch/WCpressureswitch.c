@@ -136,7 +136,7 @@ void WCpressureswitch_control(Object* self) {
             }
             break;
         case STATE_3_MOVING_DOWN:
-            self->srt.transl.y -= 0.05f * delayFloat;
+            self->srt.transl.y -= 0.05f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
                 main_set_bits(setup->gameBitPressed, 1);
                 objdata->state = STATE_2_DOWN;
@@ -152,7 +152,7 @@ void WCpressureswitch_control(Object* self) {
             }
             break;
         case STATE_1_MOVING_UP:
-            self->srt.transl.y += 0.05f * delayFloat;
+            self->srt.transl.y += 0.05f * gUpdateRateF;
             if (setup->base.y < self->srt.transl.y) {
                 self->srt.transl.y = setup->base.y;
                 objdata->state = STATE_0_UP;

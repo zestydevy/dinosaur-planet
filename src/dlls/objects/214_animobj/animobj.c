@@ -68,7 +68,7 @@ void animobj_control(Object *self) {
         return;
     }
 
-    index = gDLL_3_Animation->vtbl->func4(self, delayByte);
+    index = gDLL_3_Animation->vtbl->func4(self, gUpdateRate);
     if (!index || self->unkB4 != -2){
         return;
     }

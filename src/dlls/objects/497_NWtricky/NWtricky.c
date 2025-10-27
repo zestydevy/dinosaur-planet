@@ -100,7 +100,7 @@ void NWtricky_control(Object *self) {
                 main_set_bits(BIT_4E3, 0);
                 objdata->state = STATE_2;
             } else {
-                objdata->timer += delayFloat;
+                objdata->timer += gUpdateRateF;
                 if (objdata->timer >= NWTRICKY_MAX_TIMER_1) {
                     objdata->timer -= NWTRICKY_MAX_TIMER_1;
                     gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_222_NW_Tricky_Sharpclaw_Help, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -108,7 +108,7 @@ void NWtricky_control(Object *self) {
             }
             break;
         case STATE_2:
-            objdata->timer += delayFloat;
+            objdata->timer += gUpdateRateF;
             if (objdata->timer >= NWTRICKY_MAX_TIMER_2) {
                 if (main_get_bits(BIT_4E3) == 0xFF) {
                     objdata->timer = 0.0f;

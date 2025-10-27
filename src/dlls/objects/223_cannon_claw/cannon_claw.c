@@ -36,7 +36,7 @@ void cannon_claw_control(Object *self) {
         func_80023D30(self, 0x208, 0, 0);
     }
 
-    func_80024108(self, 0.0049999998f, delayFloat, NULL);
+    func_80024108(self, 0.0049999998f, gUpdateRateF, NULL);
     temp = func_80025F40(self, NULL, 0, 0);
     
     if (temp != 0) {

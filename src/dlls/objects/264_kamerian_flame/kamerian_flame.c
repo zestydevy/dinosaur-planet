@@ -82,7 +82,7 @@ void kamerian_flame_control(Object* self) {
     s32 particleIndex;
     u8 temp_v0;
 
-    dOpacity = delayByte * 3;
+    dOpacity = gUpdateRate * 3;
     if (dOpacity >= self->unk36) {
         //Destroy if faded out
         self->unk36 = 0;
@@ -96,10 +96,10 @@ void kamerian_flame_control(Object* self) {
         return;
     }
 
-    self->speed.y += -0.046f * delayFloat;
+    self->speed.y += -0.046f * gUpdateRateF;
     self->srt.yaw = arctan2_f(self->speed.x, self->speed.z);
     self->srt.pitch = arctan2_f(sqrtf((self->speed.x * self->speed.x) + (self->speed.z * self->speed.z)), self->speed.y) - 0x4000;
-    obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
+    obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
     func_80026128(self, 0xA, 1, 0);
     func_80026940(self, 0x10);
     func_8002674C(self);

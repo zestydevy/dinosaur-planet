@@ -134,7 +134,7 @@ void MMshrine_control(Object *self) {
         gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
     }
     if (objdata->unk2 > 0) {
-        objdata->unk2 = (s16) (objdata->unk2 - delayByte);
+        objdata->unk2 = (s16) (objdata->unk2 - gUpdateRate);
         if (objdata->unk2 <= 0) {
             objdata->unk2 = 0;
             if (objdata->unk12 == 0) {

@@ -46,12 +46,12 @@ u8 D_8008C944 = 0xFF;
  */
 s8 gLastInsertedControllerIndex = 0;
 s8 D_8008C94C = 0;
-u8 delayByte = 1;
-u8 delayByteMirror = 1;
-f32 delayFloat = 1.0f;
-f32 delayFloatMirror = 1.0f;
-f32 inverseDelay = 1.0f;
-f32 inverseDelayMirror = 1.0f;
+u8 gUpdateRate = 1;
+u8 gUpdateRateMirror = 1;
+f32 gUpdateRateF = 1.0f;
+f32 gUpdateRateMirrorF = 1.0f;
+f32 gUpdateRateInverseF = 1.0f;
+f32 gUpdateRateInverseMirrorF = 1.0f;
 s32 D_8008C968 = -1;
 u8 alSynFlag = 0;
 s32 D_8008C970 = 0;
@@ -270,7 +270,7 @@ void game_init(void) {
 
 void game_tick(void) {
     u8 phi_v1;
-    u32 delayAmount;
+    u32 updateRate;
     Gfx **tmp_s0;
 
     osSetTime(0);
@@ -291,7 +291,7 @@ void game_tick(void) {
     dl_segment(&gCurGfx, 0, (void *)0x80000000);
     dl_segment(&gCurGfx, 1, gFramebufferCurrent);
     dl_segment(&gCurGfx, 2, D_800BCCB4);
-    func_8003E9F0(&gCurGfx, delayByte);
+    func_8003E9F0(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
     func_8003DB5C();
 
@@ -331,27 +331,27 @@ void game_tick(void) {
         func_80001A3C();
     }
 
-    delayByte = video_func_returning_delay(0);
+    gUpdateRate = video_func_returning_delay(0);
     
     if (0) {}
 
-    delayAmount = (u32) delayByte;
-    if (delayByte >= 7) {
-        delayByte = 6;
-        delayAmount = delayByte;
+    updateRate = (u32) gUpdateRate;
+    if (gUpdateRate > 6) {
+        gUpdateRate = 6;
+        updateRate = gUpdateRate;
     }
-    delayFloat = (f32) delayAmount;
-    inverseDelay = 1.0f / delayFloat;
-    delayByteMirror = (s8) delayAmount;
-    delayFloatMirror = delayFloat;
-    inverseDelayMirror = 1.0f / delayFloatMirror;
+    gUpdateRateF = (f32) updateRate;
+    gUpdateRateInverseF = 1.0f / gUpdateRateF;
+    gUpdateRateMirror = updateRate;
+    gUpdateRateMirrorF = gUpdateRateF;
+    gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 
     func_80014074();
     write_c_file_label_pointers("main/main.c", 0x37C);
 }
 
 void game_tick_no_expansion(void) {
-    u32 delayAmount;
+    u32 updateRate;
     Gfx **tmp_s0;
 
     tmp_s0 = &gCurGfx;
@@ -389,17 +389,17 @@ void game_tick_no_expansion(void) {
     func_80037924();
     mmFreeTick();
 
-    delayByte = video_func_returning_delay(0);
-    delayAmount = (u8)delayByte;
-    if ((s32)delayAmount >= 7) {
-        delayByte = 6;
-        delayAmount = (u8)delayByte;
+    gUpdateRate = video_func_returning_delay(0);
+    updateRate = (u8)gUpdateRate;
+    if ((s32)updateRate > 6) {
+        gUpdateRate = 6;
+        updateRate = (u8)gUpdateRate;
     }
-    delayFloat = (f32) delayAmount;
-    inverseDelay = 1.0f / delayFloat;
-    delayByteMirror = delayAmount;
-    delayFloatMirror = delayFloat;
-    inverseDelayMirror = 1.0f / delayFloatMirror;
+    gUpdateRateF = (f32) updateRate;
+    gUpdateRateInverseF = 1.0f / gUpdateRateF;
+    gUpdateRateMirror = updateRate;
+    gUpdateRateMirrorF = gUpdateRateF;
+    gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 }
 
 void func_80013D80(void) {
@@ -450,7 +450,7 @@ void func_80013D80(void) {
         gDLL_20_Screens->vtbl->draw(&gCurGfx);
         menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
-        D_8008C94C -= delayByte;
+        D_8008C94C -= gUpdateRate;
 
         if ((s32)D_8008C94C < 0) {
             D_8008C94C = 0;
@@ -907,7 +907,7 @@ void update_PlayerPosBuffer(void) {
 
     player = get_player();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
-    D_800AE674 += delayByte;
+    D_800AE674 += gUpdateRate;
 
     if (player != NULL) {
         pos->f.x = player->srt.transl.x;

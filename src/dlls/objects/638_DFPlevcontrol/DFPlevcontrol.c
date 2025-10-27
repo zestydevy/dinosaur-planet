@@ -111,7 +111,7 @@ static int dll_638_func_62C(Object* self, Object *arg1, AnimObj_Data *arg2, s8 a
     player = get_player();
     timerValueOriginal = objdata->unk0;
     if (timerValueOriginal > 0){
-        delay = ((s32) delayFloat);
+        delay = ((s32) gUpdateRateF);
 
         if (!(DLL_210_Player *) player->dll){} //@fake?
 

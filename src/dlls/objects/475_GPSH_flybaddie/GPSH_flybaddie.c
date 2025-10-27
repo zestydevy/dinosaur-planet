@@ -102,7 +102,7 @@ void GPSH_flybaddie_control(Object* self) {
 
     objdata = self->data;
     if (objdata->unk4E > 0) {
-        objdata->unk4E -= (s16)delayFloat;
+        objdata->unk4E -= (s16)gUpdateRateF;
     }
     if ((objdata->unk4E != -999) && (objdata->unk4E <= 0)) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
@@ -111,7 +111,7 @@ void GPSH_flybaddie_control(Object* self) {
     self->srt.yaw += (s16) (objdata->unk48 / 10);
     self->srt.pitch += (s16) (objdata->unk4A / 10);
     if (objdata->unk4C != 0) {
-        objdata->unk4C -= (s16)delayFloat;
+        objdata->unk4C -= (s16)gUpdateRateF;
     }
     if (objdata->unk4C <= 0) {
         GPSH_flybaddie_func_7F8(self);
@@ -124,7 +124,7 @@ void GPSH_flybaddie_control(Object* self) {
     self->srt.transl.x = func_80004A60(&objdata->unk0, objdata->unk30, NULL);
     self->srt.transl.y = func_80004A60(&objdata->unk10, objdata->unk30, NULL);
     self->srt.transl.z = func_80004A60(&objdata->unk20, objdata->unk30, NULL);
-    objdata->unk30 += (objdata->unk34 * (f32) (_data_0 + 1) * delayFloat);
+    objdata->unk30 += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
     gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
     gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
     if ((func_80025F40(self, &sp48, NULL, NULL) == 0xF) && (sp48 != 0)) {

@@ -78,7 +78,7 @@ void CCgasventControl_control(Object *self) {
             if (vec3_distance_xz_squared(&objects[i]->positionMirror,
                 &obj_get_nearest_type_to(OBJTYPE_6, objects[i], NULL)->positionMirror) > DISTANCE) {
                 count++;
-                objdata->timer += delayFloat;
+                objdata->timer += gUpdateRateF;
             }
         }
         if (count == 0) {

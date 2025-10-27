@@ -316,7 +316,7 @@ s32 dll_63_update1() {
 
     prevExitTransitionTimer = sExitTransitionTimer;
 
-    delay = delayByte;
+    delay = gUpdateRate;
     if (delay > 3) {
         delay = 3;
     }

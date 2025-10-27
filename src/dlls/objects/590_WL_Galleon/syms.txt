@@ -15,5 +15,5 @@ WLgalleon_anim_callback = 0x678;
 .data = 0xA18:
 dataShowKrystalsAdventureScreen = 0x0; // absolute:0xA18
 dataDLLUnused = 0x8; // absolute:0xA20
-dataDelayByte = 0xC; // absolute:0xA24
+sUpdateRateCopy = 0xC; // absolute:0xA24
 _data_10 = 0x10; // absolute:0xA28

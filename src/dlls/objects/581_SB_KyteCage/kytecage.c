@@ -100,7 +100,7 @@ void kyteCage_control(Object* self) {
         }
     }
 
-    func_80024108(self, 0.004, delayByte, 0);
+    func_80024108(self, 0.004, gUpdateRate, 0);
 }
 
 // offset: 0x298 | func: 2 | export: 2

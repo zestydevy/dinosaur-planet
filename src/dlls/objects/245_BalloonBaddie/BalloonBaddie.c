@@ -107,7 +107,7 @@ void BalloonBaddie_control(Object* self) {
         }
     } else {
         if (objdata->fadeoutTimer > 0.0f) {
-            objdata->fadeoutTimer += delayFloat * 0.01f;
+            objdata->fadeoutTimer += gUpdateRateF * 0.01f;
             if (objdata->fadeoutTimer > 3.0f) {
                 // delay dead state until shortly after fully invisible
                 self->unkDC = BALLOONBADDIE_DEAD;
@@ -138,7 +138,7 @@ void BalloonBaddie_control(Object* self) {
             }
             func_80026128(self, 0xA, 1, 0);
             func_8002674C(self);
-            objdata->particleTimer -= delayFloat;
+            objdata->particleTimer -= gUpdateRateF;
             if (objdata->particleTimer < 0.0f) {
                 gDLL_17->vtbl->func1(self, PARTICLE_Green_Slime_Drop, NULL, 2, -1, NULL);
                 objdata->particleTimer = rand_next(30, 120);
@@ -248,9 +248,9 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     }
     _bss_0 = curveStruct->unk10;
 
-    objdata->theta[0] += (u16)(128.0f * delayFloat);
-    objdata->theta[1] += (u16)(256.0f * delayFloat);
-    objdata->theta[2] += (u16)(512.0f * delayFloat);
+    objdata->theta[0] += (u16)(128.0f * gUpdateRateF);
+    objdata->theta[1] += (u16)(256.0f * gUpdateRateF);
+    objdata->theta[2] += (u16)(512.0f * gUpdateRateF);
 
     self->srt.roll = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[1])) * 1000.0f;
     self->srt.pitch = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[2])) * 1000.0f;
@@ -292,11 +292,11 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->speed.z = -BALLOONBADDIE_MAX_SPEED;
     }
 
-    obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
-    func_80024108(self, objdata->unkC, delayFloat, &sp50);
+    obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
+    func_80024108(self, objdata->unkC, gUpdateRateF, &sp50);
 
     angle = arctan2_f(self->positionMirror.x - objdata->player->positionMirror.x, self->positionMirror.z - objdata->player->positionMirror.z) - ((u16)self->srt.yaw);
     CIRCLE_WRAP(angle)
-    self->srt.yaw += (s32)((angle * delayFloat) / 12.0f);
+    self->srt.yaw += (s32)((angle * gUpdateRateF) / 12.0f);
 }
 

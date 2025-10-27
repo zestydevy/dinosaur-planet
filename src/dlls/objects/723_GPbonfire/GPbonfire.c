@@ -211,7 +211,7 @@ void GPbonfire_control(Object* self) {
             }
 
             //Handle bonfire dwindling
-            objdata->timer -= delayByte;
+            objdata->timer -= gUpdateRate;
             if (objdata->timer < 0) {
                 objdata->weedsDeposited--;
                 gDLL_14_Modgfx->vtbl->func5(self);

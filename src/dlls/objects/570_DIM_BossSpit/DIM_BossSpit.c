@@ -42,7 +42,7 @@ void DIM_BossSpit_control(Object *self) {
 
     objdata = self->data;
     if (objdata->unk0 == 0) {
-        self->unkDC -= delayByte;
+        self->unkDC -= gUpdateRate;
         if (self->unkDC < 0) {
             obj_destroy_object(self);
         } else {
@@ -122,12 +122,12 @@ void DIM_BossSpit_func_360(Object *self) {
     self->positionMirror2.x = self->srt.transl.x;
     self->positionMirror2.y = self->srt.transl.y;
     self->positionMirror2.z = self->srt.transl.z;
-    self->speed.y -= 0.07f * delayFloat;
+    self->speed.y -= 0.07f * gUpdateRateF;
     self->speed.y *= 0.97f;
     self->srt.yaw += 0xAAA;
     self->srt.roll += 0x38E;
     self->srt.pitch += 0x38E;
-    obj_integrate_speed(self, self->speed.x * delayFloat, self->speed.y * delayFloat, self->speed.z * delayFloat);
+    obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
     if (objdata->lfxEmitter != NULL) {
         objdata->lfxEmitter->srt.transl.x = self->srt.transl.x;
         objdata->lfxEmitter->srt.transl.y = self->srt.transl.y;
@@ -161,7 +161,7 @@ void DIM_BossSpit_func_53C(Object *self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_386, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_80003B70(3.0f);
     }
-    objdata->unk0 += delayByte;
+    objdata->unk0 += gUpdateRate;
     if (objdata->unk0 > 512) {
         obj_destroy_object(self);
     }

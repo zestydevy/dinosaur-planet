@@ -148,7 +148,7 @@ s32 mainmenu_update(void) {
 
     prevExitTransitionTimer = sExitTransitionTimer;
 
-    delay = delayByte;
+    delay = gUpdateRate;
     if (delay > 3) {
         delay = 3;
     }

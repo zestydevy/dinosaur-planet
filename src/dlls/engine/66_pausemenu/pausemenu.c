@@ -133,7 +133,7 @@ s32 n_pausemenu_update(void) {
             gDLL_29_Gplay->vtbl->save_game();
         }
 
-        gameSavedMessageTimer += delayFloat;
+        gameSavedMessageTimer += gUpdateRateF;
         if (gameSavedMessageTimer >= 120.0f) {
             pauseScreenState = 0;
 
@@ -147,7 +147,7 @@ s32 n_pausemenu_update(void) {
     }
     
     //Gradually fade in BG overlay (and the UI elements, which depend on this value)
-    pauseMenuOpacity += delayByte * 8;
+    pauseMenuOpacity += gUpdateRate * 8;
     if (pauseMenuOpacity > BG_OVERLAY_MAX_OPACITY) {
         pauseMenuOpacity = BG_OVERLAY_MAX_OPACITY;
     }
