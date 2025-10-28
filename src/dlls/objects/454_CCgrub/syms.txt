@@ -1,0 +1,18 @@
+.text = 0x0:
+CCgrub_ctor = 0x0;
+CCgrub_dtor = 0xC;
+CCgrub_setup = 0x18;
+CCgrub_control = 0x214;
+CCgrub_func_AB0 = 0xAB0;
+CCgrub_update = 0xB54;
+CCgrub_print = 0xB60;
+CCgrub_free = 0xBB4;
+CCgrub_get_model_flags = 0xBC4;
+CCgrub_get_data_size = 0xBD4;
+CCgrub_func_BE8 = 0xBE8;
+CCgrub_func_CEC = 0xCEC;
+CCgrub_func_DC4 = 0xDC4;
+CCgrub_func_104C = 0x104C;
+
+.rodata = 0x1228:
+str_0 = 0x0; // absolute:0x1228

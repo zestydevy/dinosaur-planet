@@ -78,6 +78,7 @@
 447 = objects/447_CCguardgiving
 449 = objects/449_CClightfoot
 450 = objects/450_CCspellpage
+454 = objects/454_CCgrub
 458 = objects/458_CCkrazoaBits
 459 = objects/459_CCkrazoaTablet
 460 = objects/460_CClevcontrol

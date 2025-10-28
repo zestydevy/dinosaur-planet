@@ -53,7 +53,7 @@ DLL_INTERFACE(DLL_25) {
 // returns a CurveSetup of type 0x24
 /* 6 */ CurveSetup* (*dll_25_func_1A2C)(Vec3 arg0, s32 arg1, s32 arg2);
 /* 7 */ s32 (*dll_25_func_16D4)(Vec3f* arg0, Vec3f* arg1, s32 arg2);
-/* 8 */ s32 (*dll_25_func_1D30)(UnkCurvesStruct* arg0, CurveSetup* arg1, CurveSetup* arg2, s32 arg3);
+/* 8 */ s32 (*dll_25_func_1D30)(UnkCurvesStruct* arg0, CurveSetup* arg1, CurveSetup* arg2, CurveSetup* arg3);
 /* 9 */ s32 (*dll_25_func_21F4)(UnkCurvesStruct* arg0, CurveSetup* arg1) ;
 /* 10 */ s32 (*dll_25_func_27A8)(UnkCurvesStruct* arg0, CurveSetup* arg1);
 /* 11 */ void (*dll_25_func_29FC)(UnkCurvesStruct* arg0);

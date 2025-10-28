@@ -29,8 +29,8 @@ void obj_destroy_object(Object *obj);
 void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad);
 void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad);
 
-Object *get_player();
-Object *get_sidekick();
+Object *get_player(void);
+Object *get_sidekick(void);
 
 void obj_clear_map_id(Object *obj);
 void obj_infer_map_id(Object *obj);
