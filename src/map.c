@@ -762,9 +762,10 @@ void func_800436DC(Object* obj, s32 arg1) {
     u8 someBool;
 
     someBool = TRUE;
-    if ((obj->id == 0x72) || (obj->id == 0x38C)) {
+    if ((obj->id == OBJ_IMSnowBike) || (obj->id == OBJ_CRSnowBike)) {
         someBool = TRUE;
-        if (((DLL_13_expgfx*)obj->dll)->vtbl->func13(obj) != 0) {
+        // TODO: snowbike dll
+        if (((DLL_Unknown*)obj->dll)->vtbl->func[13].withOneArgS32((s32)obj) != 0) {
             someBool = FALSE;
         }
     }
@@ -773,13 +774,13 @@ void func_800436DC(Object* obj, s32 arg1) {
     }
     gDLL_14_Modgfx->vtbl->func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, obj);
     if (sp37 >= 2) {
-        if ((obj->id != 0x72) && (obj->id != 0x38C)) {
+        if ((obj->id != OBJ_IMSnowBike) && (obj->id != OBJ_CRSnowBike)) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
         }
     }
     objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, arg1);
     if (sp37 != 0) {
-        if ((obj->id != 0x72) && (obj->id != 0x38C)) {
+        if ((obj->id != OBJ_IMSnowBike) && (obj->id != OBJ_CRSnowBike)) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
         }
     }

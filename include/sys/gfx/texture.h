@@ -25,7 +25,8 @@ typedef struct Texture
 /*0001*/	u8 height;
 /*0002*/	u8 format;
 /*0003*/	u8 unk3;
-/*0004*/	u16 unk4;
+/*0004*/	u8 unk4;
+/*0005*/	u8 unk5;
 /*0006*/	s16 flags;
 /*0008*/	Gfx *gdl;
 /*000C*/	u16 levels;
