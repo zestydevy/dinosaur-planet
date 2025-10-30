@@ -26,12 +26,12 @@ typedef struct {
     u8 unk60;
     s8 unk61;
     s8 unk62;
-} D74Stack;
+} ExpgfxStruct;
 
 DLL_INTERFACE(DLL_13_expgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(void);
-    /*1*/ s16 (*func1)(D74Stack *arg0, s32 arg1);
+    /*1*/ s16 (*func1)(ExpgfxStruct *arg0, s32 arg1);
     /*2*/ void (*func2)(u8 arg0, s32 updateRate, s32 arg2, s32 arg3);
     /*3*/ void (*func3)(void);
     /*4*/ void (*func4)(Object *arg0);

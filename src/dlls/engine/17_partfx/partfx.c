@@ -390,7 +390,7 @@ void partfx_func_3A0(s32 arg0) {
 
 // offset: 0xD74 | func: 2 | export: 1
 s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data) {
-    D74Stack sp6C;
+    ExpgfxStruct sp6C;
     UNUSED f32* sp68;
     s32 sp64;
     s16 sp62;

@@ -189,7 +189,7 @@ void dll_13_func_158(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_228.s")
 #else
 // needs dll_13_func_4684 to be static
-s16 dll_13_func_228(D74Stack* arg0, s32 arg1) {
+s16 dll_13_func_228(ExpgfxStruct* arg0, s32 arg1) {
     UnkBss0Struct* var_a3; // sp7C
     f32 fv1;
     s16 sp76;
