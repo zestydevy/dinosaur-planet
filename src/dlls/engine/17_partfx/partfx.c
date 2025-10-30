@@ -401,7 +401,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
     f32* dataf;
     s32 sp30;
 
-    if (((id >= 0x384) && (id < 0x3B5)) || ((id >= 0x5DD) && (id < 0x641))) {
+    if (((id >= PARTICLE_384) && (id <= PARTICLE_3B4)) || ((id >= PARTICLE_5DD) && (id <= PARTICLE_640))) {
         sDLLTimers[0] = 2000;
         if (_data_4 == NULL) {
             sLoadedDLLCount += 1;
@@ -409,7 +409,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_4->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0x258) && (id < 0x2BC)) {
+    if ((id >= PARTICLE_258) && (id <= PARTICLE_2BB)) {
         sDLLTimers[1] = 2000;
         if (_data_8 == NULL) {
             sLoadedDLLCount += 1;
@@ -417,7 +417,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_8->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0x1F4) && (id < 0x258)) {
+    if ((id >= PARTICLE_1F4) && (id <= PARTICLE_257)) {
         sDLLTimers[2] = 2000;
         if (_data_C == NULL) {
             sLoadedDLLCount += 1;
@@ -425,7 +425,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[2] | void
     }
-    if ((id >= 0x190) && (id < 0x1F4)) {
+    if ((id >= PARTICLE_190) && (id <= PARTICLE_1F3)) {
         sDLLTimers[3] = 2000;
         if (_data_10 == NULL) {
             sLoadedDLLCount += 1;
@@ -433,7 +433,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_10->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0xC8) && (id < 0x12C)) {
+    if ((id >= PARTICLE_C8) && (id <= PARTICLE_12B)) {
         sDLLTimers[4] = 2000;
         if (_data_14 == NULL) {
             sLoadedDLLCount += 1;
@@ -441,7 +441,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_14->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[3] | void
     }
-    if ((id >= 0x41A) && (id < 0x44C)) {
+    if ((id >= PARTICLE_41A) && (id <= PARTICLE_44B)) {
         sDLLTimers[5] = 2000;
         if (_data_18 == NULL) {
             sLoadedDLLCount += 1;
@@ -449,7 +449,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_18->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = u8[1] | void
     }
-    if ((id >= 0x73A) && (id < 0x76C)) {
+    if ((id >= PARTICLE_73A) && (id <= PARTICLE_76B)) {
         sDLLTimers[0x10] = 2000;
         if (_data_1C == NULL) {
             sLoadedDLLCount += 1;
@@ -457,7 +457,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_1C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id == 0x84) || (id == 0x85) || ((id >= 0x8A) && (id < 0xC8))) {
+    if ((id == PARTICLE_84) || (id == PARTICLE_85) || ((id >= PARTICLE_8A) && (id <= PARTICLE_C7))) {
         sDLLTimers[6] = 2000;
         if (_data_20 == NULL) {
             sLoadedDLLCount += 1;
@@ -465,7 +465,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_20->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = s32 | void
     }
-    if ((id >= 0x3B6) && (id < 0x3DE)) {
+    if ((id >= PARTICLE_3B6) && (id <= PARTICLE_3DD)) {
         sDLLTimers[8] = 2000;
         if (_data_28 == NULL) {
             sLoadedDLLCount += 1;
@@ -473,7 +473,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_28->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0x352) && (id < 0x384)) {
+    if ((id >= PARTICLE_352) && (id <= PARTICLE_383)) {
         sDLLTimers[7] = 2000;
         if (_data_24 == NULL) {
             sLoadedDLLCount += 1;
@@ -481,7 +481,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_24->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0x32A) && (id < 0x351)) {
+    if ((id >= PARTICLE_32A) && (id <= PARTICLE_350)) {
         sDLLTimers[9] = 2000;
         if (_data_2C == NULL) {
             sLoadedDLLCount += 1;
@@ -489,7 +489,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_2C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[1] | void
     }
-    if ((id >= 0x12C) && (id < 0x190)) {
+    if ((id >= PARTICLE_12C) && (id <= PARTICLE_18F)) {
         sDLLTimers[10] = 2000;
         if (_data_30 == NULL) {
             sLoadedDLLCount += 1;
@@ -497,7 +497,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_30->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0x47E) && (id < 0x4B0)) {
+    if ((id >= PARTICLE_47E) && (id <= PARTICLE_4AF)) {
         sDLLTimers[11] = 2000;
         if (_data_34 == NULL) {
             sLoadedDLLCount += 1;
@@ -505,7 +505,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_34->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[1] | void
     }
-    if ((id >= 0x4B0) && (id < 0x4E2)) {
+    if ((id >= PARTICLE_4B0) && (id <= PARTICLE_4E1)) {
         sDLLTimers[12] = 2000;
         if (_data_38 == NULL) {
             sLoadedDLLCount += 1;
@@ -513,7 +513,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_38->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[1] | f32[3] | void
     }
-    if ((id >= 0x3E8) && (id < 0x41A)) {
+    if ((id >= PARTICLE_3E8) && (id <= PARTICLE_419)) {
         sDLLTimers[13] = 2000;
         if (_data_3C == NULL) {
             sLoadedDLLCount += 1;
@@ -521,7 +521,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_3C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[2] | void
     }
-    if ((id >= 0x44C) && (id < 0x47E)) {
+    if ((id >= PARTICLE_44C) && (id <= PARTICLE_47D)) {
         sDLLTimers[14] = 2000;
         if (_data_40 == NULL) {
             sLoadedDLLCount += 1;
@@ -529,7 +529,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_40->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
     }
-    if ((id >= 0x6D7) && (id < 0x708)) {
+    if ((id >= PARTICLE_6D7) && (id <= PARTICLE_707)) {
         sDLLTimers[15] = 2000;
         if (_data_44 == NULL) {
             sLoadedDLLCount += 1;
@@ -537,7 +537,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_44->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = s32 | void
     }
-    if ((id >= 0x708) && (id < 0x73A)) {
+    if ((id >= PARTICLE_708) && (id <= PARTICLE_739)) {
         sDLLTimers[17] = 2000;
         if (_data_48 == NULL) {
             sLoadedDLLCount += 1;
@@ -545,7 +545,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         }
         return _data_48->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = u8[1] | void
     }
-    if ((id >= 0x76C) && (id < 0x79E)) {
+    if ((id >= PARTICLE_76C) && (id <= PARTICLE_79D)) {
         sDLLTimers[18] = 2000;
         if (_data_4C == NULL) {
             sLoadedDLLCount += 1;
@@ -600,9 +600,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
     sp6C.unk24.y = 0.0f;
     sp6C.unk24.z = 0.0f;
     sp6C.unk3C = 0.0f;
-    sp6C.unk58[0] = 0xFFFFU;
-    sp6C.unk58[1] = 0xFFFFU;
-    sp6C.unk58[2] = 0xFFFFU;
+    sp6C.unk58[0] = 0xFFFF;
+    sp6C.unk58[1] = 0xFFFF;
+    sp6C.unk58[2] = 0xFFFF;
     sp6C.unk4C[0] = 0xFFFF;
     sp6C.unk4C[1] = 0xFFFF;
     sp6C.unk4C[2] = 0xFFFF;
@@ -1054,9 +1054,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x4FE;
             sp6C.unk30.z = 0.0f;
             sp6C.unk3C = 0.03f;
-            sp6C.unk58[0] = 0xB1DFU;
-            sp6C.unk58[1] = 0xB1DFU;
-            sp6C.unk58[2] = 0xFFFFU;
+            sp6C.unk58[0] = 0xB1DF;
+            sp6C.unk58[1] = 0xB1DF;
+            sp6C.unk58[2] = 0xFFFF;
             sp6C.unk4C[0] = sp6C.unk58[0];
             sp6C.unk4C[1] = sp6C.unk58[1];
             sp6C.unk4C[2] = sp6C.unk58[2];
@@ -1066,9 +1066,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk48 = 0x22;
             sp6C.unk30.z = -200.0f;
             sp6C.unk3C = 0.036f;
-            sp6C.unk58[0] = 0xFFFFU;
-            sp6C.unk58[1] = 0xB1DFU;
-            sp6C.unk58[2] = 0xFFFFU;
+            sp6C.unk58[0] = 0xFFFF;
+            sp6C.unk58[1] = 0xB1DF;
+            sp6C.unk58[2] = 0xFFFF;
             sp6C.unk4C[0] = sp6C.unk58[0];
             sp6C.unk4C[1] = sp6C.unk58[1];
             sp6C.unk4C[2] = sp6C.unk58[2];
@@ -1080,9 +1080,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk48 = 0x22;
             sp6C.unk30.z = -400.0f;
             sp6C.unk3C = 0.042f;
-            sp6C.unk58[0] = 0xB1DFU;
-            sp6C.unk58[1] = 0xFFFFU;
-            sp6C.unk58[2] = 0xFFFFU;
+            sp6C.unk58[0] = 0xB1DF;
+            sp6C.unk58[1] = 0xFFFF;
+            sp6C.unk58[2] = 0xFFFF;
             sp6C.unk4C[0] = sp6C.unk58[0];
             sp6C.unk4C[1] = sp6C.unk58[1];
             sp6C.unk4C[2] = sp6C.unk58[2];
@@ -1161,9 +1161,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk48 = 0x01400020;
             sp6C.unk42 = 0x162;
             sp6C.unk60 = 0x7F;
-            sp6C.unk58[0] = 0xFFFFU;
-            sp6C.unk58[1] = 0xFFFFU;
-            sp6C.unk58[2] = 0xFFFFU;
+            sp6C.unk58[0] = 0xFFFF;
+            sp6C.unk58[1] = 0xFFFF;
+            sp6C.unk58[2] = 0xFFFF;
             sp6C.unk4C[0] = 0x3CAF;
             sp6C.unk4C[1] = 0x3CAF;
             sp6C.unk4C[2] = 0x3CAF;
@@ -1375,7 +1375,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             sp6C.unk3C = rand_next(0xA, 0x14) * 0.00088f;
             sp6C.unk8 = 0xFF;
-            sp6C.unk58[0] = 0xFFFFU;
+            sp6C.unk58[0] = 0xFFFF;
             sp6C.unk58[1] = (u16) (rand_next(0, 0x2710) + 0xB1DF);
             sp6C.unk58[2] = (u16) (rand_next(0, 0x2710) + 0x63BF);
             sp6C.unk4C[0] = 0xC350;
@@ -1423,9 +1423,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk8 = 0x55;
             sp6C.unk44 = 0x100200;
             sp6C.unk42 = 0x60;
-            sp6C.unk58[0] = 0x7FFFU;
-            sp6C.unk58[1] = 0x7FFFU;
-            sp6C.unk58[2] = 0x7FFFU;
+            sp6C.unk58[0] = 0x7FFF;
+            sp6C.unk58[1] = 0x7FFF;
+            sp6C.unk58[2] = 0x7FFF;
             sp6C.unk4C[0] = rand_next(0, 0xA) * 0xACF;
             sp6C.unk4C[1] = sp6C.unk4C[0];
             sp6C.unk4C[2] = sp6C.unk4C[0];
@@ -1497,9 +1497,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk48 = 0x600020;
             sp6C.unk42 = 0x33;
             sp6C.unk60 = 0xFF;
-            sp6C.unk58[0] = 0xFFFFU;
-            sp6C.unk58[1] = 0xFFFFU;
-            sp6C.unk58[2] = 0xFFFFU;
+            sp6C.unk58[0] = 0xFFFF;
+            sp6C.unk58[1] = 0xFFFF;
+            sp6C.unk58[2] = 0xFFFF;
             sp6C.unk4C[0] = 0xFFFF;
             sp6C.unk4C[1] = sp6C.unk4C[2] = rand_next(0, 0x8000);
             break;
@@ -1512,9 +1512,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk8 = rand_next(0x5A, 0x78);
             sp6C.unk44 = 0x80100100;
             sp6C.unk42 = 0x60;
-            sp6C.unk58[0] = 0x7FFFU;
-            sp6C.unk58[1] = 0x7FFFU;
-            sp6C.unk58[2] = 0x7FFFU;
+            sp6C.unk58[0] = 0x7FFF;
+            sp6C.unk58[1] = 0x7FFF;
+            sp6C.unk58[2] = 0x7FFF;
             sp6C.unk4C[0] = rand_next(0, 0xA) * 0xACF;
             sp6C.unk4C[1] = sp6C.unk4C[0];
             sp6C.unk4C[2] = sp6C.unk4C[0];
@@ -1738,9 +1738,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
                 flags |= PARTFXFLAG_1;
             }
             sp6C.unk8 = 0xDC;
-            sp6C.unk58[0] = 0xB1DFU;
-            sp6C.unk58[1] = 0x8ACFU;
-            sp6C.unk58[2] = 0x63BFU;
+            sp6C.unk58[0] = 0xB1DF;
+            sp6C.unk58[1] = 0x8ACF;
+            sp6C.unk58[2] = 0x63BF;
             sp6C.unk4C[0] = 0x3CAF;
             sp6C.unk4C[1] = 0x30F7;
             sp6C.unk4C[2] = 0x2710;
@@ -1821,9 +1821,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk44 = 0x100218;
             sp6C.unk42 = arg2->roll;
             if (arg2->roll == 0x4C) {
-                sp6C.unk58[0] = 0x6400U;
-                sp6C.unk58[1] = 0x3200U;
-                sp6C.unk58[2] = 0xA000U;
+                sp6C.unk58[0] = 0x6400;
+                sp6C.unk58[1] = 0x3200;
+                sp6C.unk58[2] = 0xA000;
                 sp6C.unk4C[0] = 0x1F4;
                 sp6C.unk4C[1] = 0;
                 sp6C.unk4C[2] = 0x3E8;
@@ -2067,9 +2067,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk4C[0] = 0xFFFF;
             sp6C.unk4C[1] = 0xFFFF;
             sp6C.unk4C[2] = 0xFFFF;
-            sp6C.unk58[0] = 0U;
-            sp6C.unk58[1] = 0U;
-            sp6C.unk58[2] = 0U;
+            sp6C.unk58[0] = 0;
+            sp6C.unk58[1] = 0;
+            sp6C.unk58[2] = 0;
             sp6C.unk8 = 0x64;
             sp6C.unk60 = 0xFF;
             sp6C.unk48 = 0x20;
@@ -3067,9 +3067,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk24.y = 0.2f;
             sp6C.unk24.z = 0.0f;
             sp6C.unk3C = 0.015f;
-            sp6C.unk58[0] = 0xFFFFU;
-            sp6C.unk58[1] = 0xFFFFU;
-            sp6C.unk58[2] = 0xA000U;
+            sp6C.unk58[0] = 0xFFFF;
+            sp6C.unk58[1] = 0xFFFF;
+            sp6C.unk58[2] = 0xA000;
             sp6C.unk4C[0] = 0xFFFF;
             sp6C.unk4C[1] = 0xFFFF;
             sp6C.unk4C[2] = 0xC000;
@@ -3093,9 +3093,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk4C[0] = 0xFF00;
             sp6C.unk4C[1] = 0xAC00;
             sp6C.unk4C[2] = 0x2800;
-            sp6C.unk58[0] = 0xE100U;
-            sp6C.unk58[1] = 0xAC00U;
-            sp6C.unk58[2] = 0xB00U;
+            sp6C.unk58[0] = 0xE100;
+            sp6C.unk58[1] = 0xAC00;
+            sp6C.unk58[2] = 0x0B00;
             break;
         case 0x320:
             if (arg2 == NULL) {
