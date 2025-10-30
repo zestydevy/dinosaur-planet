@@ -75,7 +75,7 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
 
     gDLL_27->vtbl->init(&objdata->unk0, DLL27FLAG_NONE, DLL27FLAG_2 | DLL27FLAG_40000, DLL27MODE_1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, &_data_0, &_data_C, &sp37);
-    gDLL_17->vtbl->func1(self, 0x3F1, NULL, 4, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F1, NULL, PARTFXFLAG_4, -1, NULL);
 }
 
 // offset: 0x18C | func: 1 | export: 1
@@ -148,11 +148,11 @@ void SHspore_control(Object* self) {
             if (collidedObject->id != OBJ_SHrocketmushroo) {
                 //Other objects (ignoring SHrocketmushroom since the spores emerge out of it)
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B31_Item_Collection_Chime, MAX_VOLUME, NULL, 0, 0, 0);
-                gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
+                gDLL_13_Expgfx->vtbl->func4(self);
 
                 //Create collision particles
                 for (index = 0; index < particleCount; index++){
-                    gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F3, NULL, PARTFXFLAG_4, -1, NULL);
                 }
 
                 objdata->unk290 = 200.0f;
@@ -164,11 +164,11 @@ void SHspore_control(Object* self) {
             //Destroy the spore if its lifetime runs out or it collides with terrain
             if (objdata->lifetime <= 0.0f || objdata->unk0.unk25C & 0x11) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8A2, MAX_VOLUME, NULL, 0, 0, 0);
-                gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
+                gDLL_13_Expgfx->vtbl->func4(self);
 
                 //Create collision particles
                 for (index = 0; index < 20; index++){
-                    gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F3, NULL, PARTFXFLAG_4, -1, NULL);
                 }
 
                 objdata->unk290 = 200.0f;
@@ -266,7 +266,7 @@ void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0xBAC | func: 6 | export: 4
 void SHspore_free(Object* self, s32 arg1) {
-    gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
+    gDLL_13_Expgfx->vtbl->func4(self);
 }
 
 // offset: 0xBF4 | func: 7 | export: 5

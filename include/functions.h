@@ -149,4 +149,6 @@ s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, Func_80059C40_Struct*, Object*, s8, 
 
 MtxF *func_80032170(Object* obj, s32 arg1);
 
+s16 func_80000824(s32 arg0);
+
 #endif //_FUNCTIONS_H

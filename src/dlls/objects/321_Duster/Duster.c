@@ -112,8 +112,8 @@ void Duster_control(Object *self) {
     if (objdata->timer1 == 0 && objdata->timer2 == 0) {
         if (func_80024108(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
             gDLL_6_AMSFX->vtbl->play_sound(self, 0x87B, 0x25, NULL, NULL, 0, NULL);
-            gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
-            gDLL_17->vtbl->func1(self, 0x51F, 0, 2, -1, 0);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
 
             objdata->rand = rand_next(0, DUSTER_RANDOM_MAX);
             if (objdata->rand == DUSTER_RANDOM_MAX) {
@@ -170,9 +170,9 @@ void Duster_control(Object *self) {
     }
     if (vec3_distance_xz(&player->positionMirror, &self->positionMirror) < 20.0f) {
         gDLL_6_AMSFX->vtbl->play_sound(self, 0x6CA, 0x7F, 0, 0, 0, 0);
-        gDLL_17->vtbl->func1(self, 0x51A, 0, 1, -1, 0);
-        gDLL_17->vtbl->func1(self, 0x51A, 0, 1, -1, 0);
-        gDLL_17->vtbl->func1(self, 0x51A, 0, 1, -1, 0);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         main_set_bits(objdata->gamebitCollected, 1);
         objdata->collected = TRUE;
         func_800267A4(self);

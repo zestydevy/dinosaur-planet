@@ -125,12 +125,12 @@ void GPSH_flybaddie_control(Object* self) {
     self->srt.transl.y = func_80004A60(&objdata->unk10, objdata->unk30, NULL);
     self->srt.transl.z = func_80004A60(&objdata->unk20, objdata->unk30, NULL);
     objdata->unk30 += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
-    gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
-    gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     if ((func_80025F40(self, &sp48, NULL, NULL) == 0xF) && (sp48 != 0)) {
         if (sp48->id != OBJ_WGSH_projball) {
             for (i = 15; i != 0; i--) {
-                gDLL_17->vtbl->func1(self, self->modelInstIdx + 0x286, NULL, 1, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
             }
             objdata->unk52++;
             objdata->unk34 *= 1.2f;

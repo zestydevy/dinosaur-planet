@@ -57,7 +57,7 @@ static void kamerian_flame_create_flame_billboards(Object* self) {
     transform.yaw = 0;
     transform.scale = 0.003f;
 
-    gDLL_17->vtbl->func1(self, 0x680, (SRT* ) &transform, 1, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_680, &transform, PARTFXFLAG_1, -1, NULL);
 
     delta.x = self->srt.transl.x - self->positionMirror2.x;
     delta.y = self->srt.transl.y - self->positionMirror2.y;
@@ -67,13 +67,13 @@ static void kamerian_flame_create_flame_billboards(Object* self) {
     transform.transl.y = delta.y / 3.0f;
     transform.transl.z = delta.z / 3.0f;
 
-    gDLL_17->vtbl->func1(self, 0x680, (SRT* ) &transform, 1, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_680, &transform, PARTFXFLAG_1, -1, NULL);
 
     transform.transl.x *= 4.0f;
     transform.transl.y *= 4.0f;
     transform.transl.z *= 4.0f;
 
-    gDLL_17->vtbl->func1(self, 0x680, (SRT* ) &transform, 1, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_680, &transform, PARTFXFLAG_1, -1, NULL);
 }
 
 // offset: 0x280 | func: 2 | export: 1
@@ -115,7 +115,7 @@ void kamerian_flame_control(Object* self) {
         impactSoundID = SOUND_9B5_Explosion;
         particleIndex = 25;
         while (particleIndex--) {
-            gDLL_17->vtbl->func1(self, 0x343, NULL, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_343, NULL, PARTFXFLAG_1, -1, NULL);
         }
 
         //Hide fireball

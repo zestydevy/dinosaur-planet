@@ -104,7 +104,7 @@ void SB_Propeller_control(Object *self) {
                         parentagain = self->parent;
                         ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func7(parentagain, self->parent);
                         for (var_v1 = 10; var_v1 != 0; var_v1--) {
-                            gDLL_17->vtbl->func1(self, PARTICLE_Explosion, NULL, 2, -1, NULL);
+                            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Explosion, NULL, PARTFXFLAG_2, -1, NULL);
                         }
                     }
                 } else {
