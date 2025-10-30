@@ -6925,7 +6925,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
             temp_s1->flags = (s32) (temp_s1->flags | 0x400);
         }
         if ((((arg1->unk0.target != NULL) && !(temp_s1->unk764 & 0x8000)) || ((arg1->unk0.target == NULL) && (temp_s1->unk768 & 0x8000))) && (sp98 != 0) && (*_bss_220 != 0x5CE)) {
-            gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)arg0->linkedObject);
+            gDLL_13_Expgfx->vtbl->func4(arg0->linkedObject);
             sp68.transl.x = arg0->linkedObject->srt.transl.x;
             sp68.transl.y = arg0->linkedObject->srt.transl.y;
             sp68.transl.z = arg0->linkedObject->srt.transl.z;
