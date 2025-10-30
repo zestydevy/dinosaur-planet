@@ -75,7 +75,7 @@ void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
 
     gDLL_27->vtbl->init(&objdata->unk0, DLL27FLAG_NONE, DLL27FLAG_2 | DLL27FLAG_40000, DLL27MODE_1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, &_data_0, &_data_C, &sp37);
-    gDLL_17->vtbl->func1(self, 0x3F1, NULL, 4, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F1, NULL, PARTFXFLAG_4, -1, NULL);
 }
 
 // offset: 0x18C | func: 1 | export: 1
@@ -152,7 +152,7 @@ void SHspore_control(Object* self) {
 
                 //Create collision particles
                 for (index = 0; index < particleCount; index++){
-                    gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F3, NULL, PARTFXFLAG_4, -1, NULL);
                 }
 
                 objdata->unk290 = 200.0f;
@@ -168,7 +168,7 @@ void SHspore_control(Object* self) {
 
                 //Create collision particles
                 for (index = 0; index < 20; index++){
-                    gDLL_17->vtbl->func1(self, 0x3F3, NULL, 4, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F3, NULL, PARTFXFLAG_4, -1, NULL);
                 }
 
                 objdata->unk290 = 200.0f;

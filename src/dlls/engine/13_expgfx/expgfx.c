@@ -1,11 +1,15 @@
 #include "common.h"
 
 typedef struct {
-    s32 unk0;
+    s16 unk0;
+    s16 unk2;
     s16 unk4;
     s16 unk6;
-    s32 unk8;
-    s32 unkC;
+    s16 unk8;
+    s16 unkA;
+    s16 unkC;
+    u8 unkE;
+    u8 unkF;
 } UnkBss0Struct_Unk0;
 
 typedef struct {
@@ -18,13 +22,53 @@ typedef struct {
     f32 unk70;
     f32 unk74;
     f32 unk78;
-    u32 unk7C;
+    union {
+        u32 unk7C;
+        struct {
+            u32 unk7C_31: 1;
+            u32 unk7C_30: 1;
+            u32 unk7C_29: 1;
+            u32 unk7C_28: 1;
+            u32 unk7C_27: 1;
+            u32 unk7C_26: 1;
+            u32 unk7C_25: 1;
+            u32 unk7C_24: 1;
+            u32 unk7C_23: 1;
+            u32 unk7C_22: 1;
+            u32 unk7C_21: 1;
+            u32 unk7C_20: 1; // & 0x100000
+            u32 unk7C_19: 1;
+            u32 unk7C_18: 1;
+            u32 unk7C_17: 1;
+            u32 unk7C_16: 1;
+            u32 unk7C_15: 1;
+            u32 unk7C_14: 1;
+            u32 unk7C_13: 1;
+            u32 unk7C_12: 1;
+            u32 unk7C_11: 1;
+            u32 unk7C_10: 1;
+            u32 unk7C_9: 1;
+            u32 unk7C_8: 1;
+            u32 unk7C_7: 1;
+            u32 unk7C_6: 1;
+            u32 unk7C_5: 1;
+            u32 unk7C_4: 1;
+            u32 unk7C_3: 1;
+            u32 unk7C_2: 1;
+            u32 unk7C_1: 1;
+            u32 unk7C_0: 1;
+        } bits;
+    };
     u32 unk80;
     u16 unk84;
-    s16 unk86;
+    u16 unk86;
     u16 unk88;
     u16 unk8A : 7;
-    u16 unk8A_2 : 9;
+    u16 unk8A_2 : 1;
+    u16 unk8A_3 : 4;
+    u16 unk8A_4 : 2;
+    u16 unk8A_5 : 1;
+    u16 unk8A_6 : 1;
     u8 unk8C;
     u8 unk8D;
     u8 unk8E;
@@ -77,26 +121,263 @@ typedef struct {
 /*0x190*/ static UnkBss190Struct _bss_190[30];
 /*0x370*/ static UnkBss370Struct _bss_370[8];
 
+/*static*/ s16 dll_13_func_2060(Texture* arg0, Object* arg1, Object* arg2);
 static void dll_13_func_2254(u8 arg0);
 /*static*/ void dll_13_func_2298(u8 a0, s32 a1, s32 a2);
+/*static*/ void dll_13_func_4684(UnkBss0Struct* a0);
+/*static*/ s32 dll_13_func_4A18(s16* arg0, s16* arg1, s16 arg2, s32 arg3, Object *arg4);
+static void dll_13_func_4DCC(void);
 static void dll_13_func_4F2C(s32 arg0, s32 arg1, s32 arg2);
+/*static*/ s16 dll_13_func_5068(s32 textureID);
 
 // offset: 0x0 | ctor
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_ctor.s")
+void dll_13_ctor(s32 arg0) {
+    s32 i;
+
+    for (i = 0; i < 30; i++) {
+        _bss_78[i] = 0;
+        _bss_F0[i] = 0;
+        _data_0[i] = -1;
+    }
+
+    for (i = 0; i < 30; i++) {
+        _bss_0[i] = mmAlloc(sizeof(UnkBss0Struct) * 30, ALLOC_TAG_EXPGFX_COL, NULL);
+        bzero(_bss_0[i], sizeof(UnkBss0Struct) * 30);
+    }
+    
+    bzero(_bss_190, sizeof(UnkBss190Struct) * 30);
+}
 
 // offset: 0xE0 | dtor
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_dtor.s")
+void dll_13_dtor(s32 arg0) {
+    s32 i;
+
+    dll_13_func_4DCC();
+
+    for (i = 0; i < 30; i++) {
+        mmFree(_bss_0[i]);
+        
+    }
+}
 
 // offset: 0x158 | func: 0 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_158.s")
+void dll_13_func_158(void) {
+    s32 i;
+
+    dll_13_func_4DCC();
+
+    for (i = 0; i < 30; i++) {
+        _bss_78[i] = 0;
+        _bss_F0[i] = 0;
+        _data_0[i] = -1;
+    }
+
+    for (i = 0; i < 8; i++) {
+        if (_bss_370[i].unk0 != NULL) {
+            texture_destroy(_bss_370[i].unk0);
+        }
+
+        _bss_370[i].unk0 = NULL;
+        _bss_370[i].unk8 = 0;
+        _bss_370[i].unk4 = 0;
+        _bss_370[i].unkC = 0;
+    }
+}
 
 // offset: 0x228 | func: 1 | export: 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_228.s")
+#else
+// needs dll_13_func_4684 to be static
+s16 dll_13_func_228(D74Stack* arg0, s32 arg1) {
+    UnkBss0Struct* var_a3; // sp7C
+    f32 fv1;
+    s16 sp76;
+    s16 sp74;
+    Object* var_a2;
+    Texture* temp_a0;
+    f32 temp_fv0;
+    s16 temp_v0_3;
+    Object* temp_v0_5; // sp60
+    s16 sp5A[4];
+    u32 sp54;
+    s32 sp50;
+    f32 sp44[3];
+    s32 temp_t9;
+    u32 temp_v0_2;
+
+    sp74 = 0;
+    sp5A[3] = 0;
+    sp5A[1] = 0;
+    sp76 = 0;
+    sp54 = osGetCount();
+    if (dll_13_func_4A18(&sp76, &sp74, arg0->unk5E, arg1, arg0->unk0) == -1) {
+        return -1;
+    }
+    if (sp76 < 30) {
+        _bss_118[sp76] = arg0->unk0;
+    }
+    if ((sp76 < 30) && (arg0->unk44 & 0x40000)) {
+        _bss_110 |= 1 << sp76;
+    } else {
+        _bss_110 &= ~(1 << sp76);
+    }
+    var_a3 = _bss_0[sp76];
+    var_a3 += sp74;
+    _data_5C += 1;
+    if (_data_5C > 30000) {
+        _data_5C = 0;
+    }
+    var_a3->unk0[2].unk6 = _data_5C;
+    var_a3->unk7C = arg0->unk44;
+    var_a3->unk80 = arg0->unk48;
+    var_a3->unk8A_4 = 0;
+    sp50 = dll_13_func_5068(arg0->unk42);
+    if (sp50 < 0) {
+        dll_13_func_4F2C(sp76, sp74, 1);
+        return -1;
+    }
+    temp_a0 = _bss_370[sp50].unk0;
+    if (temp_a0 != NULL) {
+        temp_a0->unk5 += 1;
+        temp_a0->unkE = (u16) (u8) arg0->unk61;
+    }
+    temp_v0_2 = var_a3->unk7C;
+    var_a2 = NULL;
+    temp_v0_5 = arg0->unk0;
+    if (temp_v0_5 == NULL) {
+        var_a3->unk40.transl.x = arg0->transform.transl.x;
+        var_a3->unk40.transl.y = arg0->transform.transl.y;
+        var_a3->unk40.transl.z = arg0->transform.transl.z;
+        var_a3->unk40.scale = arg0->transform.scale;
+        var_a3->unk40.roll = arg0->transform.roll;
+        var_a3->unk40.pitch = arg0->transform.pitch;
+        var_a3->unk40.yaw = arg0->transform.yaw;
+    } else if (temp_v0_2 & 0x200000) {
+        var_a3->unk40.transl.x = temp_v0_5->positionMirror.x;
+        var_a3->unk40.transl.y = temp_v0_5->positionMirror.y;
+        var_a3->unk40.transl.z = temp_v0_5->positionMirror.z;
+        var_a3->unk40.scale = temp_v0_5->srt.scale;
+        var_a3->unk40.roll = temp_v0_5->srt.roll;
+        var_a3->unk40.pitch = temp_v0_5->srt.pitch;
+        var_a3->unk40.yaw = temp_v0_5->srt.yaw;
+        if ((temp_v0_2 & 2) || (temp_v0_2 & 4)) {
+            arg0->unk24.x += temp_v0_5->speed.x;
+            arg0->unk24.y += temp_v0_5->speed.y;
+            arg0->unk24.z += temp_v0_5->speed.z;
+        }
+        if (temp_v0_5 != NULL) {
+            var_a2 = temp_v0_5->parent;
+        }
+        temp_v0_5 = NULL;
+    }
+    temp_v0_3 = dll_13_func_2060(temp_a0, temp_v0_5, var_a2);
+    if (temp_v0_3 == -1) {
+        return -1;
+    }
+    var_a3->unk8A = temp_v0_3;
+    var_a3->unk58.x = var_a3->unk64 = arg0->unk30.x;
+    var_a3->unk58.y = var_a3->unk68 = arg0->unk30.y;
+    var_a3->unk58.z = var_a3->unk6C = arg0->unk30.z;
+    var_a3->unk70 = arg0->unk24.x;
+    var_a3->unk74 = arg0->unk24.y;
+    var_a3->unk78 = arg0->unk24.z;
+    var_a3->unk0[0].unkF = arg0->unk60;
+    var_a3->unk0[3].unk6 = arg0->unk4;
+    var_a3->unk0[0].unk6 = arg0->unk8;
+    var_a3->unk0[1].unk6 = arg0->unk8;
+    // @fake
+    if (arg0->unk3C) {}
+    temp_fv0 = arg0->unk3C * 65535.0f;
+    if (var_a3->unk7C & 0x100000) {
+        var_a3->unk84 = 0;
+        var_a3->unk88 = temp_fv0 / var_a3->unk0[1].unk6;
+        var_a3->unk86 = temp_fv0;
+    } else {
+        var_a3->unk84 = temp_fv0;
+        var_a3->unk86 = var_a3->unk84;
+        var_a3->unk88 = 0;
+    }
+    if ((var_a3->unk7C & 0x20000) || (var_a3->unk7C & 0x04000000)) {
+        var_a3->unk40.transl.x = arg0->transform.transl.x;
+        var_a3->unk40.transl.y = arg0->transform.transl.y;
+        var_a3->unk40.transl.z = arg0->transform.transl.z;
+        var_a3->unk40.scale = arg0->transform.scale;
+        var_a3->unk40.roll = arg0->transform.roll ;
+        var_a3->unk40.pitch = arg0->transform.pitch ;
+        var_a3->unk40.yaw = arg0->transform.yaw ;
+    }
+    var_a3->unk8A_6 = _data_60;
+    if (var_a3->unk80 & 8) {
+        var_a3->unk80 = var_a3->unk80 ^ 8;
+        temp_fv0 = var_a3->unk0[0].unk6 * 1.5f;
+        var_a3->unk58.x += var_a3->unk70 * temp_fv0;
+        var_a3->unk58.y += var_a3->unk74 * temp_fv0;
+        var_a3->unk58.z += var_a3->unk78 * temp_fv0;
+        var_a3->unk70 *= -1.0f;
+        var_a3->unk74 *= -1.0f;
+        var_a3->unk78 *= -1.0f;
+    }
+    if (var_a3->unk80 & 0x10) {
+        var_a2 = get_player();
+        var_a3->unk80 ^= 0x10;
+        if (var_a3->unk7C & 1) {
+            sp44[0] = var_a2->positionMirror.x - var_a3->unk64;
+            sp44[2] = var_a2->positionMirror.z - var_a3->unk6C;
+            temp_fv0 = SQ(sp44[0]) + SQ(sp44[2]);
+            if (temp_fv0 < 3600.0f && var_a2->speed.x != 0.0f && var_a2->speed.z != 0.0f) {
+                temp_fv0 = var_a3->unk0[0].unk6 * 2;
+                var_a3->unk70 += (var_a2->positionMirror.x - var_a3->unk64) / temp_fv0;
+                var_a3->unk74 += ((var_a2->positionMirror.y + 30.0f) - var_a3->unk68) / temp_fv0;
+                var_a3->unk78 += (var_a2->positionMirror.z - var_a3->unk6C) / temp_fv0;
+            }
+        } else {
+            sp44[0] = var_a2->positionMirror.x - (var_a3->unk64 + temp_v0_5->srt.transl.x);
+            sp44[2] = var_a2->positionMirror.z - (var_a3->unk6C + temp_v0_5->srt.transl.z);
+            temp_fv0 = SQ(sp44[0]) + SQ(sp44[2]);
+            if (temp_fv0 < 3600.0f && var_a2->speed.x != 0.0f && var_a2->speed.z != 0.0f) {
+                temp_fv0 = var_a3->unk0[0].unk6 * 2;
+                var_a3->unk70 -= (var_a2->positionMirror.x - (var_a3->unk64 + temp_v0_5->srt.transl.x)) / temp_fv0;
+                var_a3->unk74 -= ((var_a2->positionMirror.y + 30.0f) - (var_a3->unk68 + temp_v0_5->srt.transl.y)) / temp_fv0;
+                var_a3->unk78 -= (var_a2->positionMirror.z - (var_a3->unk6C + temp_v0_5->srt.transl.z)) / temp_fv0;
+            }
+        }
+    }
+    if (sp50 == 1) {
+        _data_90 += 1;
+        _data_94 += osGetCount() - sp54;
+        _data_98 = ((s32) _data_94 / (s32) _data_90);
+    }
+    if (arg0->unk48 & 0x20) {
+        var_a3->unk8C = arg0->unk58[0] >> 8;
+        var_a3->unk8D = arg0->unk58[1] >> 8;
+        var_a3->unk8E = arg0->unk58[2] >> 8;
+        var_a3->unk0[1].unkF = arg0->unk4C[0] >> 8;
+        var_a3->unk0[2].unkF = arg0->unk4C[1] >> 8;
+        var_a3->unk0[3].unkF = arg0->unk4C[2] >> 8;
+    }
+    temp_v0_2 = sp5A[1] << 5;
+    var_a3->unk0[0].unk8 = temp_v0_2;
+    temp_t9 = sp5A[3] << 5;
+    var_a3->unk0[0].unkA = temp_t9;
+    var_a3->unk0[1].unk8 = 0;
+    var_a3->unk0[1].unkA = temp_t9;
+    var_a3->unk0[2].unk8 = 0;
+    var_a3->unk0[2].unkA = 0;
+    var_a3->unk0[3].unk8 = temp_v0_2;
+    var_a3->unk0[3].unkA = 0;
+    if (var_a3->unk80 & 2) {
+        dll_13_func_4684(var_a3);
+    }
+    return var_a3->unk0[2].unk6;
+}
+#endif
 
 // offset: 0xC18 | func: 2 | export: 2
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_C18.s")
 #else
+// needs dll_13_func_2298 to be static
 void dll_13_func_C18(u8 arg0, s32 arg1, s32 arg2, s32 arg3) {
     u8 i;
 
@@ -109,7 +390,7 @@ void dll_13_func_C18(u8 arg0, s32 arg1, s32 arg2, s32 arg3) {
             i--;
             _data_3C[i] = 0;
         } while (i != 0);
-        gDLL_17->vtbl->func2(0);
+        gDLL_17_partfx->vtbl->func2(0);
         _data_68[0] = 1;
     }
 }
@@ -230,7 +511,7 @@ s8 dll_13_func_1F44(Object* arg0) {
             _data_3C[i] = 0;
         }
     }
-    if ((arg0->id == OBJ_WL_WallTorch) && (_data_0[29] != -1)) {
+    if ((arg0->id == OBJ_WL_WallTorch) && (_data_0[29] != -1)) { // ???
         _data_64 = 1;
     }
     return var_v1;
@@ -277,6 +558,7 @@ static void dll_13_func_2254(u8 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_2298.s")
 
 // offset: 0x4684 | func: 14
+// https://decomp.me/scratch/mORFk
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_4684.s")
 
 // offset: 0x4A18 | func: 15
@@ -348,7 +630,7 @@ s32 dll_13_func_4A18(s16* arg0, s16* arg1, s16 arg2, s32 arg3, Object *arg4) {
 }
 
 // offset: 0x4DCC | func: 16
-void dll_13_func_4DCC(void) {
+static void dll_13_func_4DCC(void) {
     UnkBss0Struct* var_s0;
     s32 i;
     s32 k;

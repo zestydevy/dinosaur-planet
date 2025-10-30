@@ -159,7 +159,7 @@ void moonSeedReceptacle_control(Object* self) {
             if (objData->unk1 & 2){
                 if (objData->unk1 & 4){
                     self->srt.transl.y = rand_next(-1, 1) + objSetup->base.y;
-                    gDLL_17->vtbl->func1(self, 0x70F, NULL, 2, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70F, NULL, PARTFXFLAG_2, -1, NULL);
                 }
                 
                 objData->unk10 -= gUpdateRateF;
@@ -179,8 +179,8 @@ void moonSeedReceptacle_control(Object* self) {
                 particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
                 
                 _bss_0[bssIndex] = (fsin16_precise(objData->unkC) + 1.0f) * 24.0f;
-                gDLL_17->vtbl->func1(self, 0x70D, &particleTrans, 0x200001, -1, NULL);
-                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &_bss_0[bssIndex]);
                 
             }
             if (kyte && (self->unkAF & 4)){
@@ -200,18 +200,18 @@ void moonSeedReceptacle_control(Object* self) {
                     particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
                     particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
                     particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
-                    gDLL_17->vtbl->func1(self, 0x70D, &particleTrans, 0x200001, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 }
                 
                 _bss_0[bssIndex] = objData->unkC >> 7;
-                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, 2, -1, &_bss_0[bssIndex]);
             } else {
                 particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
                 particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
                 particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
                 _bss_0[bssIndex] = 0x50;
-                gDLL_17->vtbl->func1(self, 0x70D, &particleTrans, 0x200001, -1, NULL);
-                gDLL_17->vtbl->func1(self, 0x70E, NULL, 2, -1, &_bss_0[bssIndex]);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &_bss_0[bssIndex]);
             }
             break;
     

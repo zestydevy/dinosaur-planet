@@ -42,8 +42,8 @@ void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
     self->srt.transl.y = setup->unk1A + setup->base.y;
     self->unkB0 |= 0x2000;
     sDLL_182 = dll_load_deferred(DLL_ID_182, 1);
-    gDLL_17->vtbl->func1(self, 0x3A3, NULL, 0x802, -1, NULL);
-    gDLL_17->vtbl->func1(self, 0x3A4, NULL, 0x802, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A3, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A4, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
 }
 
 // offset: 0x158 | func: 1 | export: 1

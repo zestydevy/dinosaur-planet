@@ -163,8 +163,8 @@ void GPbonfire_control(Object* self) {
             break;
         case STATE_3_START_BURNING:
             if (vec3_distance_xz_squared(&get_sidekick()->positionMirror, &self->positionMirror) <= 2500.0f) {
-                gDLL_17->vtbl->func1(self, 0x425, NULL, 2, -1, NULL);
-                gDLL_17->vtbl->func1(self, 0x426, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, PARTFXFLAG_2, -1, NULL);
             }
             break;
         case STATE_4_ADDING_TUMBLEWEEDS:
@@ -176,7 +176,7 @@ void GPbonfire_control(Object* self) {
             } else if (!(objdata->currentState & 2) && (objdata->previousState & 2)) {
                 func_80000450(self, self, 0x5A, 0, 0, 0);
             }
-            gDLL_17->vtbl->func1(self, 0x425, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
 
             //Handle tumbleweeds (only whole ones, twigs don't count)
             tumbleweeds = obj_get_all_of_type(4, &count);

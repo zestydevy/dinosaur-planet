@@ -37,7 +37,7 @@ void CCgasvent_control(Object *self) {
         if (objdata->soundHandle == 0) {
             objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B95_Gasvent_Uncovered, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_17->vtbl->func1(self, PARTICLE_Gasvent_Gas, NULL, 0, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Gasvent_Gas, NULL, PARTFXFLAG_NONE, -1, NULL);
     }
 }
 

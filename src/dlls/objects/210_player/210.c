@@ -1115,7 +1115,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             sp48.transl.x = temp_v1->y + gWorldX;
             sp48.transl.y = temp_v1->z;
             sp48.transl.z = temp_v1->w + gWorldZ;
-            gDLL_17->vtbl->func1(arg0, 0x328, &sp48, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_328, &sp48, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             sp48.transl.x -= arg0->positionMirror.x;
             sp48.transl.y -= arg0->positionMirror.y;
             sp48.transl.z -= arg0->positionMirror.z;
@@ -1357,13 +1357,13 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
         _bss_40.transl.y = arg0->srt.transl.y;
         _bss_40.transl.z = arg0->srt.transl.z;
         if (arg1->flags & 0x40000) {
-            gDLL_17->vtbl->func1(arg0, 0x427, &_bss_40, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x427, &_bss_40, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(arg0, 0x427, &_bss_40, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_427, &_bss_40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_427, &_bss_40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_427, &_bss_40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
         if (arg1->flags & 0x20000) {
             for (i = 0; i < 0x14; i++) {
-                gDLL_17->vtbl->func1(arg0, 0x427, &_bss_40, 0x200001, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_427, &_bss_40, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             }
             for (i = 0; i < 7; i++) {
                 _bss_40.transl.x += rand_next(-0x32, 0x32) / 10.0f;
@@ -1581,7 +1581,7 @@ void dll_210_func_41F4(Object* arg0, Player_Data* arg1) {
         sp48.transl.y = -3.0f;
         sp48.transl.z = -50.0f;
         func_80031F6C(arg0, 8, &sp48.transl.x, &sp48.transl.y, &sp48.transl.z, 1);
-        gDLL_17->vtbl->func1(arg0, 0xC9, &sp48, 0x200001, -1, &sp3C.x);
+        gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_C9, &sp48, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp3C);
     }
     arg1->unk8A6--;
 }
@@ -3491,7 +3491,7 @@ void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2) {
             temp_v0_2->srt.pitch = 0;
             temp_v0_2->unkDC = 0x15E;
             temp_v0_2->unkE0 = (s32) var_s2;
-            gDLL_17->vtbl->func1(temp_v0_2, 0x521, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(temp_v0_2, PARTICLE_521, NULL, PARTFXFLAG_4, -1, NULL);
         }
         var_s4 -= 1;
     }
@@ -6400,7 +6400,7 @@ s32 dll_210_func_125BC(Object* arg0, Player_Data* arg1, u32 arg2) {
     arg0->speed.x *= 0.98f;
     arg0->speed.z *= 0.98f;
     for (i = 0; i < 4; i++) {
-        gDLL_17->vtbl->func1(arg0, 0x202, NULL, 0, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_202, NULL, PARTFXFLAG_NONE, -1, NULL);
     }
     return 0;
 }
@@ -6853,7 +6853,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
                 temp_fa1 -= arg2;
                 _bss_20 = temp_fa1;
                 if (temp_fa1 <= 0.0f) {
-                    gDLL_17->vtbl->func1(arg0->linkedObject, 0x3EC, &sp68, 2, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(arg0->linkedObject, PARTICLE_3EC, &sp68, PARTFXFLAG_2, -1, NULL);
                     if (sp68.scale == 0.0f) {
                         _bss_20 = 8.0f;
                     } else if (sp68.scale == 1.0f) {
@@ -6903,13 +6903,13 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
                         sp68.pitch = -0x8000;
                     }
                     if (rand_next(0, 2) == 0) {
-                        gDLL_17->vtbl->func1(arg0->linkedObject, 0x525, &sp68, 1, -1, NULL);
+                        gDLL_17_partfx->vtbl->spawn(arg0->linkedObject, PARTICLE_525, &sp68, PARTFXFLAG_1, -1, NULL);
                     }
                     if (rand_next(0, 2) == 0) {
-                        gDLL_17->vtbl->func1(arg0->linkedObject, 0x526, &sp68, 1, -1, NULL);
+                        gDLL_17_partfx->vtbl->spawn(arg0->linkedObject, PARTICLE_526, &sp68, PARTFXFLAG_1, -1, NULL);
                     }
                     if (rand_next(0, 2) == 0) {
-                        gDLL_17->vtbl->func1(arg0->linkedObject, 0x529, &sp68, 1, -1, NULL);
+                        gDLL_17_partfx->vtbl->spawn(arg0->linkedObject, PARTICLE_529, &sp68, PARTFXFLAG_1, -1, NULL);
                     }
                 }
             }
@@ -6930,7 +6930,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
             sp68.transl.y = arg0->linkedObject->srt.transl.y;
             sp68.transl.z = arg0->linkedObject->srt.transl.z;
             for (sp9C = 0; sp9C < 0x14; sp9C++) {
-                gDLL_17->vtbl->func1(arg0->linkedObject, 0x3ED, &sp68, 0x200001, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(arg0->linkedObject, PARTICLE_3ED, &sp68, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             }
             if (sp68.scale == 0.0f) {
                 sp98 = 1;
@@ -7012,7 +7012,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
                 sp68.transl.y = arg0->linkedObject->srt.transl.y;
                 sp68.transl.z = arg0->linkedObject->srt.transl.z;
                 for (sp9C = 0; sp9C < 0x14; sp9C++) {
-                    gDLL_17->vtbl->func1(arg0->linkedObject, 0x3ED, &sp68, 0x200001, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(arg0->linkedObject, PARTICLE_3ED, &sp68, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 }
                 ((void (*)(Object*, Player_Data*, f32)) *_bss_224)(arg0, arg1, temp_s1->unk830);
                 arg1->unk0.animTickDelta = 0.02f;

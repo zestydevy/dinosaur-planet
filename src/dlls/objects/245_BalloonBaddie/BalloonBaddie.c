@@ -132,7 +132,7 @@ void BalloonBaddie_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_17->vtbl->func1(self, PARTICLE_331, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_33->vtbl->func18(self, setup->unk18, -1, 0);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, setup->respawnTimer * 60);
             }
@@ -140,7 +140,7 @@ void BalloonBaddie_control(Object* self) {
             func_8002674C(self);
             objdata->particleTimer -= gUpdateRateF;
             if (objdata->particleTimer < 0.0f) {
-                gDLL_17->vtbl->func1(self, PARTICLE_Green_Slime_Drop, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Green_Slime_Drop, NULL, PARTFXFLAG_2, -1, NULL);
                 objdata->particleTimer = rand_next(30, 120);
             }
         }

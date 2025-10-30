@@ -660,18 +660,18 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
                 }
             } else {
                 sp58 = 0.014f;
-                gDLL_17->vtbl->func1(obj, 0x325, &sp70, 0x200001, -1, &sp58);
+                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_325, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp58);
                 sp70.scale = 92.0f;
-                gDLL_17->vtbl->func1(obj, 0x323, &sp70, 0x200001, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 sp58 = 0.015f;
                 sp70.scale = 231.0f;
-                gDLL_17->vtbl->func1(obj, 0x323, &sp70, 0x200001, -1, &sp58);
+                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp58);
                 sp70.transl.x -= obj->positionMirror.x;
                 sp70.transl.y -= obj->positionMirror.y;
                 sp70.transl.z -= obj->positionMirror.z;
                 sp70.scale = 123.0f;
                 for (i = 0; i < 15; i++) {
-                    gDLL_17->vtbl->func1(obj, 0x324, &sp70, 2, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_324, &sp70, PARTFXFLAG_2, -1, NULL);
                 }
             }
         }

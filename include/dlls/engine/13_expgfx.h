@@ -8,23 +8,24 @@
 #include "types.h"
 
 typedef struct {
-    Object *unk0; // sp6C
-    s32 unk4; // sp70;
-    s32 unk8; // sp74;
-    SRT transform; // sp78;
-    Vec3f unk24; // sp90;
-    Vec4f unk30; // sp9C;
-    s16 unk40; // spAC;
-    s16 unk42; // spAE;
-    s32 unk44; // spB0;
-    s32 unk48; // spB4;
-    s32 unk4C[3]; // spB8 - C0;
-    u16 unk58[3]; // spC4 - C8;
-    s8 unk5E; // spCA;
-    u8 unk5F; // spCB;
-    u8 unk60; // spCC;
-    s8 unk61; // spCD;
-    s8 unk62; // spCE;
+    Object *unk0;
+    s32 unk4;
+    s32 unk8;
+    SRT transform;
+    Vec3f unk24; // local offset?
+    Vec3f unk30; // world position?
+    f32 unk3C; // scale
+    s16 unk40;
+    s16 unk42; // textureID
+    s32 unk44;
+    s32 unk48;
+    s32 unk4C[3];
+    u16 unk58[3];
+    s8 unk5E;
+    u8 unk5F;
+    u8 unk60;
+    s8 unk61;
+    s8 unk62;
 } D74Stack;
 
 DLL_INTERFACE(DLL_13_expgfx) {

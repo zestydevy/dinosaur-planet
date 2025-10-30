@@ -116,7 +116,7 @@ void SPItem_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
             trans.pitch = 0x12;
         }
         //Create sparkle particles
-        gDLL_17->vtbl->func1(self, 0x136, &trans, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_136, &trans, PARTFXFLAG_4, -1, NULL);
     }
 
     draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);

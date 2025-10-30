@@ -635,14 +635,14 @@ void objfsa_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 ar
 }
 
 // offset: 0x1978 | func: 22 | export: 21
-void objfsa_func_1978(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg4) {
+void objfsa_func_1978(Object *obj, ObjFSA_Data *data, s32 partfxID, s32 arg3, u32 arg4) {
     while ((arg3 != 0) && (obj != NULL)) {
         if (arg4 == 0) {
-            gDLL_17->vtbl->func1(obj, arg2, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(obj, partfxID, NULL, PARTFXFLAG_2, -1, NULL);
         } else if (arg4 == 1) {
-            gDLL_17->vtbl->func1(obj, arg2, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(obj, partfxID, NULL, PARTFXFLAG_2, -1, NULL);
         } else if (arg4 == 2) {
-            gDLL_17->vtbl->func1(obj, arg2, NULL, 4, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(obj, partfxID, NULL, PARTFXFLAG_4, -1, NULL);
         }
         arg3 -= 1;
     }

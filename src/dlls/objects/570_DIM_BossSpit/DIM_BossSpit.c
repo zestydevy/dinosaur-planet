@@ -133,9 +133,9 @@ void DIM_BossSpit_func_360(Object *self) {
         objdata->lfxEmitter->srt.transl.y = self->srt.transl.y;
         objdata->lfxEmitter->srt.transl.z = self->srt.transl.z;
     }
-    gDLL_17->vtbl->func1(self, PARTICLE_4B5, NULL, 1, -1, NULL);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B5, NULL, PARTFXFLAG_1, -1, NULL);
     for (i = 0; i != 4; i++) {
-        gDLL_17->vtbl->func1(self, PARTICLE_4BA, NULL, 1, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4BA, NULL, PARTFXFLAG_1, -1, NULL);
     }
 }
 
@@ -154,9 +154,9 @@ void DIM_BossSpit_func_53C(Object *self) {
     self->srt.pitch += 0x38E;
     if (objdata->unk0 == 1) {
         for (i = 0; i != 18; i++) {
-            gDLL_17->vtbl->func1(self, PARTICLE_340, NULL, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_340, NULL, PARTFXFLAG_1, -1, NULL);
         }
-        gDLL_17->vtbl->func1(self, PARTICLE_4BB, NULL, 1, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4BB, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_380, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_386, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_80003B70(3.0f);
@@ -188,5 +188,5 @@ void DIM_BossSpit_func_53C(Object *self) {
             func_80026940(self, (_bss_0 - 0x40) >> 1);
         }
     }
-    gDLL_17->vtbl->func1(self, PARTICLE_4BC, 0, 1, -1, &_bss_0);
+    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4BC, NULL, PARTFXFLAG_1, -1, &_bss_0);
 }
