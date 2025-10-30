@@ -38,10 +38,7 @@ typedef struct {
         /*31*/ s8 unk31;
         /*32*/ s8 unk32;
         /*33*/ s8 unk33;
-        /*34*/ s8 unk34; // TODO: s8[4][4] ?
-        /*35*/ s8 unk35;
-        /*36*/ s8 unk36;
-        /*37*/ s8 unk37;
+        /*34*/ s8 unk34[4][4];
     } type26;
 };
 
