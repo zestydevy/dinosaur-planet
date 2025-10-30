@@ -32,13 +32,13 @@ DLL_INTERFACE(DLL_13_expgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*func0)(void);
     /*1*/ s16 (*func1)(D74Stack *arg0, s32 arg1);
-    /*2*/ void (*func2)(s32 arg0, u8 updateRate, s32 arg2, s32 arg3);
-    /*3*/ UnknownDLLFunc func3;
-    /*4*/ UnknownDLLFunc func4;
+    /*2*/ void (*func2)(u8 arg0, s32 updateRate, s32 arg2, s32 arg3);
+    /*3*/ void (*func3)(void);
+    /*4*/ void (*func4)(Object *arg0);
     /*5*/ void (*func5)(Object *arg0);
     /*6*/ void (*func6)(Object *arg0, Gfx **gdl, Mtx **mtxs, Vertex **vertices, s32 arg4, s32 arg5, s32 arg6);
-    /*7*/ UnknownDLLFunc func7;
-    /*8*/ UnknownDLLFunc func8;
+    /*7*/ void (*func7)(void);
+    /*8*/ void (*func8)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
     /*9*/ void (*func9)(Object *arg0);
     /*10*/ s8 (*func10)(Object *obj);
 };

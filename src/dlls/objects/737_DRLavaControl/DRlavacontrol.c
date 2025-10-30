@@ -109,7 +109,7 @@ void DRLavaControl_free(Object* self, s32 arg1) {
     if (objData->lfxEmitter && (arg1 == 0)) {
         obj_destroy_object(objData->lfxEmitter);
     }
-    gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
+    gDLL_13_Expgfx->vtbl->func4(self);
 }
 
 // offset: 0x270 | func: 5 | export: 5
