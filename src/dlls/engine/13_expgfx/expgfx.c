@@ -1,5 +1,4 @@
 #include "common.h"
-#include "prevent_bss_reordering.h"
 
 typedef struct {
     s32 unk0;
@@ -24,7 +23,8 @@ typedef struct {
     u16 unk84;
     s16 unk86;
     u16 unk88;
-    u16 unk8A;
+    u16 unk8A : 7;
+    u16 unk8A_2 : 9;
     u8 unk8C;
     u8 unk8D;
     u8 unk8E;
@@ -48,12 +48,10 @@ typedef struct {
     0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 
     0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
-/*0x3C*/ static u32 _data_3C[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-};
+/*0x3C*/ static u8 _data_3C[30] = {0};
 /*0x5C*/ static u32 _data_5C = 0x00000000;
 /*0x60*/ static u32 _data_60 = 0x00000000;
-/*0x64*/ static u32 _data_64 = 0x00000000;
+/*0x64*/ static u8 _data_64 = 0;
 /*0x68*/ static u32 _data_68[] = {
     0x00000000, 0x00000000
 };
@@ -74,10 +72,14 @@ typedef struct {
 /*0x0*/ static UnkBss0Struct *_bss_0[30];
 /*0x78*/ static u32 _bss_78[30];
 /*0xF0*/ static s8 _bss_F0[30];
-/*0x110*/ static u8 _bss_110[0x8];
+/*0x110*/ static u32 _bss_110;
 /*0x118*/ static Object *_bss_118[30];
 /*0x190*/ static UnkBss190Struct _bss_190[30];
 /*0x370*/ static UnkBss370Struct _bss_370[8];
+
+static void dll_13_func_2254(u8 arg0);
+/*static*/ void dll_13_func_2298(u8 a0, s32 a1, s32 a2);
+static void dll_13_func_4F2C(s32 arg0, s32 arg1, s32 arg2);
 
 // offset: 0x0 | ctor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_ctor.s")
@@ -92,34 +94,177 @@ typedef struct {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_228.s")
 
 // offset: 0xC18 | func: 2 | export: 2
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_C18.s")
+#else
+void dll_13_func_C18(u8 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    u8 i;
+
+    if (func_80000824(-1) != 1) {
+        D_8008C504 = 1;
+        dll_13_func_2298(arg0, arg1, 0);
+        D_8008C504 = 0;
+        i = 30;
+        do {
+            i--;
+            _data_3C[i] = 0;
+        } while (i != 0);
+        gDLL_17->vtbl->func2(0);
+        _data_68[0] = 1;
+    }
+}
+#endif
 
 // offset: 0xCEC | func: 3 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_CEC.s")
+void dll_13_func_CEC(void) {
+    UnkBss0Struct* var_s0;
+    s32 i;
+    s32 k;
+
+    for (i = 0; i < 30; i++) {
+        var_s0 = _bss_0[i];
+
+        for (k = 0; k < 30; k++) {
+            if (_bss_78[i] & (1 << k)) {
+                if (_bss_190[var_s0->unk8A].unk8 != NULL) {
+                    _bss_190[var_s0->unk8A].unk8->unk5 -= 1;
+                }
+                dll_13_func_2254(var_s0->unk8A);
+                var_s0->unk0[2].unk6 = -1;
+                _bss_78[i] &= ~(1 << k);
+            }
+
+            var_s0++;
+        }
+
+        _bss_F0[i] = 0;
+        _data_0[i] = -1;
+        _bss_118[i] = NULL;
+        _data_3C[i] = 0;
+    }
+
+    for (i = 0; i < 8; i++) {
+        if (_bss_370[i].unk0 != NULL) {
+            texture_destroy(_bss_370[i].unk0);
+        }
+
+        _bss_370[i].unk0 = NULL;
+        _bss_370[i].unk8 = 0;
+        _bss_370[i].unk4 = 0;
+        _bss_370[i].unkC = 0;
+    }
+}
 
 // offset: 0xED4 | func: 4 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_ED4.s")
+void dll_13_func_ED4(Object* arg0) {
+    UnkBss0Struct* var_s1;
+    s32 var_s0;
+    s32 var_s2;
+
+    var_s0 = 0;
+    
+    if (arg0 != NULL) {
+        for (var_s2 = 0; var_s2 < 30; var_s2++) {
+            var_s1 = _bss_0[var_s2];
+            if (arg0 == _bss_118[var_s2]) {
+                for (var_s0 = 0; var_s0 < 30; var_s0++) {
+                    if ((var_s1 != NULL) && (arg0 == _bss_190[var_s1->unk8A].unk0)) {
+                        dll_13_func_4F2C(var_s2, var_s0, 0);
+                    }
+                    var_s1 += 1;
+                    if (_bss_F0[var_s2] == 0) {
+                        _data_0[var_s2] = -1;
+                    }
+                }
+                _bss_118[var_s2] = NULL;
+                _data_3C[var_s2] = 0;
+            }
+        }
+    }
+}
 
 // offset: 0x1048 | func: 5 | export: 5
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1048.s")
+void dll_13_func_1048(Object *arg0) {
+    dll_13_func_ED4(arg0);
+}
 
 // offset: 0x1080 | func: 6 | export: 6
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1080.s")
 
 // offset: 0x1EEC | func: 7 | export: 7
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1EEC.s")
+void dll_13_func_1EEC(void) { }
 
 // offset: 0x1EF4 | func: 8 | export: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1EF4.s")
+void dll_13_func_1EF4(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3) { }
 
 // offset: 0x1F0C | func: 9 | export: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1F0C.s")
+void dll_13_func_1F0C(Object *arg0) {
+    dll_13_func_ED4(arg0);
+}
 
 // offset: 0x1F44 | func: 10 | export: 10
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1F44.s")
+s8 dll_13_func_1F44(Object* arg0) {
+    s16 i;
+    s8 var_v1;
+
+    var_v1 = 0;
+    _data_64 = 0;
+    for (i = 0; i < 30; i++) {
+        if ((arg0->id == OBJ_FXEmit) || (arg0 == _bss_118[i])) {
+            if ((1 << i) & _bss_110) {
+                _data_3C[i] = 2;
+                if (var_v1 == 1) {
+                    var_v1 = 3;
+                } else {
+                    var_v1 = 2;
+                }
+            } else {
+                _data_3C[i] = 1;
+                if (var_v1 == 2) {
+                    var_v1 = 3;
+                } else {
+                    var_v1 = 1;
+                }
+            }
+        } else {
+            _data_3C[i] = 0;
+        }
+    }
+    if ((arg0->id == OBJ_WL_WallTorch) && (_data_0[29] != -1)) {
+        _data_64 = 1;
+    }
+    return var_v1;
+}
 
 // offset: 0x2060 | func: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_2060.s")
+s16 dll_13_func_2060(Texture* arg0, Object* arg1, Object* arg2) {
+    s32 i;
+
+    i = 0;
+    while (TRUE) {
+        if ((_bss_190[i].unkC != 0) && (arg0 == _bss_190[i].unk8) && 
+                (arg1 == _bss_190[i].unk0) && (arg2 == _bss_190[i].unk4)) {
+            if (_bss_190[i].unkC >= 0xFFFF) {
+                return -1;
+            }
+            _bss_190[i].unkC++;
+            return i;
+        }
+        i += 1;
+        if (i >= 30) {
+            for (i = 0; i < 30; i++) {
+                if (_bss_190[i].unkC == 0) {
+                    _bss_190[i].unkC = 1;
+                    _bss_190[i].unk8 = arg0;
+                    _bss_190[i].unk0 = arg1;
+                    _bss_190[i].unk4 = arg2;
+                    return i;
+                }
+            }
+            return -1;
+        }
+    }
+}
 
 // offset: 0x2254 | func: 12
 static void dll_13_func_2254(u8 arg0) {
@@ -212,10 +357,10 @@ void dll_13_func_4DCC(void) {
         var_s0 = _bss_0[i];
         for (k = 0; k < 30; k++) {
             if (_bss_78[i] & (1 << k)) {
-                if (_bss_190[(u32)var_s0->unk8A >> 9].unk8 != NULL) {
-                    _bss_190[(u32)var_s0->unk8A >> 9].unk8->unk5 -= 1;
+                if (_bss_190[var_s0->unk8A].unk8 != NULL) {
+                    _bss_190[var_s0->unk8A].unk8->unk5 -= 1;
                 }
-                dll_13_func_2254((u32)var_s0->unk8A >> 9);
+                dll_13_func_2254(var_s0->unk8A);
                 var_s0->unk0[2].unk6 = -1;
                 _bss_78[i] &= ~(1 << k);
             }
@@ -227,7 +372,7 @@ void dll_13_func_4DCC(void) {
 }
 
 // offset: 0x4F2C | func: 17
-void dll_13_func_4F2C(s32 arg0, s32 arg1, s32 arg2) {
+static void dll_13_func_4F2C(s32 arg0, s32 arg1, s32 arg2) {
     UnkBss0Struct* temp_v1;
 
     if (_bss_78[arg0] & (1 << arg1)) {
@@ -235,9 +380,9 @@ void dll_13_func_4F2C(s32 arg0, s32 arg1, s32 arg2) {
         temp_v1 += arg1;
         temp_v1->unk7C = 0;
         if (arg2 == 0) {
-            if (_bss_190[(u32)temp_v1->unk8A >> 9].unk8 != NULL) {
-                _bss_190[(u32)temp_v1->unk8A >> 9].unk8->unk5 -= 1;
-                dll_13_func_2254((u32)temp_v1->unk8A >> 9);
+            if (_bss_190[temp_v1->unk8A].unk8 != NULL) {
+                _bss_190[temp_v1->unk8A].unk8->unk5 -= 1;
+                dll_13_func_2254(temp_v1->unk8A);
             }
         }
         temp_v1->unk0[2].unk6 = -1;
