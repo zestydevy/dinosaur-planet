@@ -29,7 +29,7 @@ DLL_INTERFACE(DLL_17) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
 /*1*/ s32 (*func1)(Object *obj, s32, SRT *, s32, s32, void *); //creates billboard particles
-/*2*/ s32 (*func2)(Object *arg0, s32 arg1, SRT *arg, s32 arg3, s8 arg4, f32 *arg5);
+/*2*/ s32 (*func2)(s32 arg0);
 };
 
 #endif // _DLL_17_H
