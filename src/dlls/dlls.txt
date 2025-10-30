@@ -5,6 +5,7 @@
 7 = engine/7_newday
 13 = engine/13_expgfx
 16 = engine/16
+17 = engine/17_partfx
 18 = engine/18_objfsa
 20 = engine/20_screens
 21 = engine/21_gametext
