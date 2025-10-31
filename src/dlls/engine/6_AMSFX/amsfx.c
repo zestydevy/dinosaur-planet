@@ -5,6 +5,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "functions.h"
 #include "libnaudio/n_libaudio.h"
+#include "libnaudio/n_sndp.h"
 #include "libnaudio/n_sndplayer.h"
 #include "libnaudio/mp3/segment_67F50.h"
 #include "sys/acache.h"
@@ -32,20 +33,8 @@
 
 /*0x0*/ static u32 _data_0[4] = { 0 };
 
-typedef union {
-    s32 i;
-    f32 f;
-} FloatOrInt;
-
 typedef struct UnkBss4 {
-    u16 pad0;
-    u8 unk2;
-    u8 unk3;
-    u8 unk4;
-    u8 unk5;
-    u8 pad6;
-    u8 unk7;
-    u8 pad8[0xE - 0x8];
+    UnkDE8 base;
     s16 unkE;
     u16 pad10;
     u8 unk12;
@@ -79,16 +68,16 @@ typedef struct UnkBss28 {
 /*0x28*/ static UnkBss28 _bss_28[0x10];
 /*0x128*/ static ACache *_bss_128;
 
-void dll_6_func_860(u32, u8);
-void dll_6_func_A1C(u32);
-s32 dll_6_func_DE8(u16, UnkDE8 *);
+void dll_6_func_860(u32 arg0, u8 arg1);
+void dll_6_func_A1C(u32 arg0);
+s32 dll_6_func_DE8(u16 arg0, UnkDE8* arg1);
 static s32 dll_6_func_1C38(void);
 static s32 dll_6_func_1D58(s32, char *, s32);
 static s32 dll_6_func_1E64(u32);
 static void dll_6_func_1F78(void);
-static void dll_6_func_2240(Object*, f32*, f32*, f32*, u16*);
-static void dll_6_func_22FC(f32, f32, f32, UnkDE8*, s8*);
-/* static */ void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, u8* arg3, u8* arg4);
+static void dll_6_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut);
+static void dll_6_func_22FC(f32 arg0, f32 arg1, f32 arg2, UnkDE8* arg3, s8* outVolume);
+static void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, s8* outPan, s8* outFx);
 
 // offset: 0x0 | ctor
 void dll_6_ctor(s32 arg0) {
@@ -154,10 +143,6 @@ void dll_6_dtor(s32 arg0) {
 
 
 // offset: 0x338 | func: 0 | export: 0
-#ifndef NON_MATCHING
-// Matches requires dll_6_func_1F78 as static
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_func_338.s")
-#else
 void dll_6_func_338(void) {
     sndstate *temp_a0;
     s32 i;
@@ -174,18 +159,17 @@ void dll_6_func_338(void) {
                 }
             } else if (temp_a0 == (sndstate*)-2) {
                 if (func_800675EC(temp_a0) == 0) {
-                    _bss_4[i].unk1C = -1;
+                    _bss_4[i].unk1C = (sndstate*)-1;
                 }
             } else if (sndGetState(temp_a0) == 0) {
-                _bss_4[i].unk1C = -1;
+                _bss_4[i].unk1C = (sndstate*)-1;
             }
         }
     }
 }
-#endif
 
 // offset: 0x480 | func: 1 | export: 1
-void dll_6_func_480(s32 arg0) {
+void dll_6_func_480(Object *obj) {
 }
 
 // offset: 0x48C | func: 2 | export: 2
@@ -232,7 +216,7 @@ u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char
     if (sp58.unk0 & 0x8000) {
         _bss_4[activeSoundIndex].unk1C = (sndstate* )-2;
         // @fake
-        if (_bss_4[activeSoundIndex].pad0) {}
+        if (_bss_4[activeSoundIndex].base.unk0) {}
         mpeg_fs_play((sp58.unk0 & 0x7FFF) - 1);
         func_80067650(sp45 << 8, 0);
         // @fake
@@ -263,7 +247,7 @@ void dll_6_func_7E4(u8 arg0) {
 // offset: 0x860 | func: 4 | export: 4
 void dll_6_func_860(u32 arg0, u8 arg1) {
     sndstate* temp_a0;
-    u8 temp_t6;
+    u8 vol;
 
     if (1) {
         if ((u32)_bss_8 < arg0) {
@@ -275,26 +259,25 @@ void dll_6_func_860(u32 arg0, u8 arg1) {
             return;
         }
         
-        _bss_4[arg0].unk16 = (_bss_4[arg0].unk2 * arg1) >> 7;
+        _bss_4[arg0].unk16 = (_bss_4[arg0].base.unk2 * arg1) >> 7;
     }
 
-    temp_t6 = (_bss_4[arg0].unk16 * _bss_4[arg0].unk17) >> 7;
-    if (temp_t6 != (s8) _bss_4[arg0].unk13) {
-        _bss_4[arg0].unk13 = temp_t6;
+    vol = (_bss_4[arg0].unk16 * _bss_4[arg0].unk17) >> 7;
+    if (vol != (s8) _bss_4[arg0].unk13) {
+        _bss_4[arg0].unk13 = vol;
         if (temp_a0 == (sndstate* )-2) {
-            func_80067650(temp_t6 << 8, arg0 * 0);
+            func_80067650(vol << 8, arg0 * 0);
         } else if (temp_a0 != (sndstate* )-1) {
-            audioPostEvent(temp_a0, 8, temp_t6 << 8);
+            audioPostEvent(temp_a0, AL_SNDP_VOL_EVT, (void *)(vol << 8));
         }
     }
 }
 
 // offset: 0x954 | func: 5 | export: 5
-void dll_6_func_954(u32 arg0, FloatOrInt arg1) {
-    UnkBss4* temp_v0;
-    sndstate* temp_a0;
+void dll_6_func_954(s32 arg0, f32 pitch) {
+    sndstate *temp_a0;
 
-    if ((u32)_bss_8 < arg0) {
+    if ((u32) _bss_8 < arg0) {
         return;
     }
 
@@ -303,9 +286,9 @@ void dll_6_func_954(u32 arg0, FloatOrInt arg1) {
         return;
     }
 
-    arg1.f *= _bss_4[arg0].unk4 / 100.0f;
-    if ((temp_a0 != (sndstate* )-2) && (temp_a0 != (sndstate* )-1)) {
-        audioPostEvent(temp_a0, 0x10, arg1.i);
+    pitch *= _bss_4[arg0].base.unk4 / 100.0f;
+    if ((temp_a0 != (sndstate *)-2) && (temp_a0 != (sndstate *)-1)) {
+        audioPostEvent(temp_a0, AL_SNDP_PITCH_EVT, ((void **)&pitch)[0]);
     }
 }
 
@@ -318,7 +301,7 @@ void dll_6_func_A1C(u32 arg0) {
 }
 
 // offset: 0xA6C | func: 7 | export: 7
-void dll_6_func_A6C(Object *arg0) {
+void dll_6_func_A6C(Object *obj) {
     s32 i;
 
     if (arg0 == 0) {
@@ -520,57 +503,60 @@ void dll_6_func_1218(Object *obj) {
 }
 
 
-#ifndef NON_EQUIVALENT
 // offset: 0x1320 | func: 17 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_func_1320.s")
-#else
-// https://decomp.me/scratch/eQMa4
-void dll_6_func_1320(Object* arg0, u16 arg1, FloatOrInt arg2, f32 arg3, f32 arg4, u32* arg5) {
-    f32 temp3;
+void dll_6_func_1320(Object* arg0, u16 arg1, f32 arg2, f32 arg3, f32 arg4, u32* arg5) {
+    f32 pad;
     f32 temp2;
     f32 temp;
-    f32 zDiff;
-    f32 yDiff;
     f32 xDiff;
-    s32 soundVolume;
+    f32 yDiff;
+    f32 zDiff;
+    s32 var_v1;
     Camera* sp30;
 
     sp30 = get_camera_array();
     update_camera_for_object(sp30);
-    if (sp30) {}
-    xDiff = arg0->positionMirror.x - sp30->tx;
-    yDiff = arg0->positionMirror.y - sp30->ty;
-    zDiff = arg0->positionMirror.z - sp30->tz;
-    temp = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
+    xDiff = sp30->tx;
+    yDiff = sp30->ty;
+    zDiff = sp30->tz;
+    pad  = arg0->positionMirror.y - yDiff;
+    temp = arg0->positionMirror.y - yDiff;
+    temp = sqrtf(SQ(arg0->positionMirror.x - xDiff) + SQ(temp) + SQ(arg0->positionMirror.z - zDiff));
     if (arg4 < temp) {
-        soundVolume = 0;
+        var_v1 = 0;
     } else if (temp <= arg3) {
-        soundVolume = MAX_VOLUME;
+        var_v1 = 0x7F;
     } else {
-        temp2 = arg4 - arg3;
-        temp3 = temp2 - (temp - arg3);
-        temp3 = ((temp3 * 127.0f) / temp2);
-        soundVolume = temp3;
-        CLAMP(soundVolume, 0, MAX_VOLUME)
+        temp2 = (temp - arg3);
+        temp = arg4 - arg3;
+        temp2 = temp - (temp2);
+        temp2 = ((temp2 * 127.0f) / temp);
+        var_v1 = temp2;
+        if (var_v1 >= 0x80) {
+            var_v1 = 0x7F;
+        }
+        if (var_v1 < 0) {
+            var_v1 = 0;
+        }
     }
-    if ((soundVolume > 0) && (*arg5 == 0)) {
-        dll_6_play_sound(arg0, arg1, soundVolume, arg5, "game/amsfx.c", 0x37B, "\0\0\0\0amSfxSetPitch: Warning,sound handle '%d' out of range.\n\0amSfxSetPitch: Warning,invalid handle '%d'.\n\0");
+    if ((var_v1 > 0) && (*arg5 == 0)) {
+        dll_6_play_sound(arg0, arg1, var_v1, arg5, "game/amsfx.c", 0x37B, "\0\0\0\0amSfxSetPitch: Warning,sound handle '%d' out of range.\n\0amSfxSetPitch: Warning,invalid handle '%d'.\n");
         dll_6_func_954(*arg5, arg2);
     }
     if (*arg5 != 0) {
-        if (soundVolume == 0) {
+        if (var_v1 == 0) {
             dll_6_func_A1C(*arg5);
             *arg5 = 0;
             return;
         }
-        dll_6_func_860(*arg5, soundVolume);
+        dll_6_func_860(*arg5, var_v1);
     }
 }
-#endif
+
 
 void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
     s32 pad2;
-    FloatOrInt sp40;
+    f32 pitch;
     f32 sp3C;
     f32 temp_fa1;
     s32 pad[2];
@@ -594,19 +580,19 @@ void dll_6_func_1504(s32 arg0, Object* arg1, Object* arg2, f32 arg3) {
     sp3C = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
     temp_fv1 = ((sqrtf(SQ(sp28) + SQ(sp24) + SQ(sp20)) - sp3C) / arg3) + 1.0f;
     if (temp_fv1 < 0.1f) {
-        sp40.f = 0.1f;
+        pitch = 0.1f;
     } else {
-        sp40.f = temp_fv1;
+        pitch = temp_fv1;
         if (temp_fv1 > 1.9f) {
-            sp40.f = 1.9f;
+            pitch = 1.9f;
         }
     }
     if (_bss_8 >= arg0) {
         temp_a0 = _bss_4[arg0].unk1C;
         if (temp_a0 != NULL) {
-            sp40.f *= _bss_4[arg0].unk4 / 100.0f;
+            pitch *= _bss_4[arg0].base.unk4 / 100.0f;
             if ((temp_a0 != (sndstate* )-2) && (temp_a0 != (sndstate* )-1)) {
-                audioPostEvent(temp_a0, 0x10, sp40.i);
+                audioPostEvent(temp_a0, AL_SNDP_PITCH_EVT, ((void **)&pitch)[0]);
             }
         }
     }
@@ -791,11 +777,7 @@ static s32 dll_6_func_1E64(u32 arg0) {
     return 0;
 }
 
-#ifndef NON_MATCHING
-// Matches but requires dll_6_func_2438 as static
 // offset: 0x1F78 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_func_1F78.s")
-#else
 static void dll_6_func_1F78(void) {
     Object* temp_a0;
     s32 i;
@@ -803,9 +785,9 @@ static void dll_6_func_1F78(void) {
     f32 sp68;
     f32 sp64;
     s32 pad;
-    s8 sp5F;
-    u8 sp5E;
-    u8 sp5D;
+    s8 vol;
+    s8 pan;
+    s8 fx;
     u16 sp5A;
     sndstate* temp_s0;
 
@@ -816,42 +798,41 @@ static void dll_6_func_1F78(void) {
         temp_s0 = _bss_4[i].unk1C;
         if (temp_s0 == NULL) { continue; }
         if (temp_s0 == (sndstate* )-1) { continue; } 
-        if (!(_bss_4[i].unk7 & 3)) { continue; }
+        if (!(_bss_4[i].base.unk7 & 3)) { continue; }
         
         dll_6_func_2240(temp_a0, &sp6C, &sp68, &sp64, &sp5A);
-        dll_6_func_22FC(sp6C, sp68, sp64, &_bss_4[i], &sp5F);
-        dll_6_func_2438(sp6C, sp64, sp5A, &sp5E, &sp5D);
-        _bss_4[i].unk17 = sp5F;
-        if (sp5E != (s8) _bss_4[i].unk14) {
-            _bss_4[i].unk14 = (u8) sp5E;
+        dll_6_func_22FC(sp6C, sp68, sp64, &_bss_4[i].base, &vol);
+        dll_6_func_2438(sp6C, sp64, sp5A, &pan, &fx);
+        _bss_4[i].unk17 = vol;
+        if (pan != (s8) _bss_4[i].unk14) {
+            _bss_4[i].unk14 = (u8) pan;
             if (temp_s0 == (sndstate* )-2) {
-                func_800676A4(sp5E, 0);
+                func_800676A4(pan, 0);
             } else {
-                audioPostEvent(temp_s0, 4, (s32) sp5E);
+                audioPostEvent(temp_s0, AL_SNDP_PAN_EVT, (void *)pan);
             }
         }
-        sp5F = (s32) (_bss_4[i].unk16 * _bss_4[i].unk17) >> 7;
-        if (sp5F < _bss_4[i].unk3) {
-            sp5F = _bss_4[i].unk3;
+        vol = (s32) (_bss_4[i].unk16 * _bss_4[i].unk17) >> 7;
+        if (vol < _bss_4[i].base.unk3) {
+            vol = _bss_4[i].base.unk3;
         }
-        if (sp5F != (s8)_bss_4[i].unk13) {
-            _bss_4[i].unk13 = sp5F;
+        if (vol != (s8)_bss_4[i].unk13) {
+            _bss_4[i].unk13 = vol;
             if (temp_s0 == (sndstate* )-2) {
-                func_80067650(sp5F << 8, 0);
+                func_80067650(vol << 8, 0);
             } else {
-                audioPostEvent(temp_s0, 8, sp5F << 8);
+                audioPostEvent(temp_s0, AL_SNDP_VOL_EVT, (void*)(vol << 8));
             }
         }
-        sp5D = sp5D > 0 ? 0 : -0x80;
-        if (sp5D != _bss_4[i].unk15) {
-            _bss_4[i].unk15 = sp5D;
+        fx = fx > 0 ? 0 : -0x80;
+        if (fx != _bss_4[i].unk15) {
+            _bss_4[i].unk15 = fx;
             if (temp_s0 != (sndstate* )-2) {
-                audioPostEvent(temp_s0, 0x100, sp5D);
+                audioPostEvent(temp_s0, AL_SNDP_FX_EVT, (void*)(fx));
             }
         }
     }
 }
-#endif
 
 // offset: 0x2240 | func: 25
 static void dll_6_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut) {
@@ -870,7 +851,7 @@ static void dll_6_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut)
 }
 
 // offset: 0x22FC | func: 26
-static void dll_6_func_22FC(f32 arg0, f32 arg1, f32 arg2, UnkDE8* arg3, s8* arg4) {
+static void dll_6_func_22FC(f32 arg0, f32 arg1, f32 arg2, UnkDE8* arg3, s8* outVolume) {
     f32 temp_fa0;
     f32 temp_fv0;
     f32 a1;
@@ -879,12 +860,12 @@ static void dll_6_func_22FC(f32 arg0, f32 arg1, f32 arg2, UnkDE8* arg3, s8* arg4
 
     temp_fv0 = sqrtf(SQ(arg0) + SQ(arg1) + SQ(arg2));
     if (temp_fv0 < arg3->unkA) {
-        *arg4 = 0x7F;
+        *outVolume = 0x7F;
         return;
     }
 
     if (arg3->unkC < temp_fv0) {
-        *arg4 = 0;
+        *outVolume = 0;
         return;
     }
 
@@ -893,34 +874,32 @@ static void dll_6_func_22FC(f32 arg0, f32 arg1, f32 arg2, UnkDE8* arg3, s8* arg4
     if (temp_fa0 != 0.0f) {
         arg1 /= temp_fa0;
         arg1 = 1.0f - arg1;
-        *arg4 = (127.0f * arg1);
+        *outVolume = (127.0f * arg1);
         return;
     }
-    *arg4 = 0x7F;
+    *outVolume = 0x7F;
 }
 
-#ifndef NON_MATCHING
 // offset: 0x2438 | func: 27
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/6_AMSFX/dll_6_func_2438.s")
-#else
-// https://decomp.me/scratch/TxBKM
-void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, u8* arg3, u8* arg4) {
+static void dll_6_func_2438(f32 arg0, f32 arg1, s32 arg2, s8* outPan, s8* outFx) {
     f32 sp34;
     s32 var_v1_2;
-    s32 sp24;
+    s32 pad;
     s8 sp2B;
+    s8 sp2A;
 
     sp34 = sqrtf(SQ(arg0) + SQ(arg1));
-    sp24 = (arg2 - -arctan2_f(arg0, arg1)) - 0x8000;
-    CIRCLE_WRAP(sp24)
+    var_v1_2 = -arctan2_f(arg0, arg1);
+    var_v1_2 = (arg2 - var_v1_2) - 0x8000;
+    CIRCLE_WRAP(var_v1_2)
     if (sp34 <= 100.0f) {
-        sp2B = -((sin16_precise(sp24) / 1024) * (sp34 * 0.01f));
-        var_v1_2 = (s8)( -((cos16_precise(sp24) / 1024) * (sp34 * 0.01f)));
+        sp2B = -((sin16_precise(var_v1_2) / 1024) * (sp34 * 0.01f));
+        sp2A = (s8) -((cos16_precise(var_v1_2) / 1024) * (sp34 * 0.01f));
     } else {
-        sp2B = -sin16(sp24) / 1024;
-        var_v1_2 = (s8)( -cos16(sp24) / 1024);
+        sp2B = -sin16(var_v1_2) / 1024;
+        sp2A = (s8)  (-cos16(var_v1_2) / 1024) ;
     }
-    *arg3 = sp2B + 0x40;
-    *arg4 = var_v1_2 * -1;
+    sp2A = -sp2A;
+    *outPan = sp2B + 0x40;
+    *outFx = sp2A;
 }
-#endif

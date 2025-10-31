@@ -693,7 +693,7 @@ void func_800668A4(void) {
     func_80066794(SNDSTATEFLAG_01 | SNDSTATEFLAG_02);
 }
 
-void audioPostEvent(sndstate *state, s16 type, s32 data) {
+void audioPostEvent(sndstate *state, s16 type, void *data) {
 	N_ALEvent evt;
 
 	evt.type = type;
