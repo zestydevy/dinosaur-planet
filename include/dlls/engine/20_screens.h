@@ -8,7 +8,7 @@
 DLL_INTERFACE(DLL_20_screens) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ void (*show_screen)(s32 screenNo);
-    /*1*/ void (*hide_screen)();
+    /*1*/ void (*hide_screen)(void);
     /*2*/ void (*draw)(Gfx **gdl);
 };
 
