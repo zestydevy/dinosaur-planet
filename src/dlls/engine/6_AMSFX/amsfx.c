@@ -250,7 +250,7 @@ void dll_6_func_860(u32 arg0, u8 arg1) {
     u8 vol;
 
     if (1) {
-        if ((u32)_bss_8 < arg0) {
+        if (_bss_8 < arg0) {
             return;
         }
         
@@ -274,7 +274,7 @@ void dll_6_func_860(u32 arg0, u8 arg1) {
 }
 
 // offset: 0x954 | func: 5 | export: 5
-void dll_6_func_954(s32 arg0, f32 pitch) {
+void dll_6_func_954(u32 arg0, f32 pitch) {
     sndstate *temp_a0;
 
     if ((u32) _bss_8 < arg0) {
@@ -304,14 +304,14 @@ void dll_6_func_A1C(u32 arg0) {
 void dll_6_func_A6C(Object *obj) {
     s32 i;
 
-    if (arg0 == 0) {
+    if (obj == 0) {
         return;
     }
 
     // @fake
     if (1) {}
     for (i = 1; i < (_bss_8+1); i++) {
-        if ((_bss_4[i].unk12 & 0x40) != 0 && arg0 == _bss_4[i].unk18 && _bss_4[i].unk1C != NULL) {
+        if ((_bss_4[i].unk12 & 0x40) != 0 && obj == _bss_4[i].unk18 && _bss_4[i].unk1C != NULL) {
             dll_6_func_1E64(i);
         }
     }

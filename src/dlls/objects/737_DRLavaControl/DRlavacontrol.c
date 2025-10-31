@@ -109,7 +109,7 @@ void DRLavaControl_free(Object* self, s32 arg1) {
     if (objData->lfxEmitter && (arg1 == 0)) {
         obj_destroy_object(objData->lfxEmitter);
     }
-    gDLL_13_Expgfx->vtbl->func4.withOneArg((s32)self);
+    gDLL_13_Expgfx->vtbl->func4(self);
 }
 
 // offset: 0x270 | func: 5 | export: 5
@@ -137,8 +137,8 @@ void DRLavaControl_freeze(Object* self) {
 
     if (objData->freezeTimer > 0) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_17->vtbl->func1(self, 0x5A, NULL, 2, -1, NULL);
-        gDLL_17->vtbl->func1(self, 0x5B, NULL, 2, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5A, NULL, PARTFXFLAG_2, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5B, NULL, PARTFXFLAG_2, -1, NULL);
         objData->freezeTimer--; //@bug: doesn't use gUpdateRate, frame-rate dependent
 
         if (objData->freezeTimer == 0) {
@@ -224,10 +224,10 @@ void DRLavaControl_create_particles(Object* self, u32 effectIndex) {
     if (effectIndex){
         effectIndex--;        
         if (!rand_next(0, particleChanceA[effectIndex])){
-            gDLL_17->vtbl->func1(self, 0x684, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_684, NULL, PARTFXFLAG_2, -1, NULL);
         }
         if (!rand_next(0, particleChanceB[effectIndex])){
-            gDLL_17->vtbl->func1(self, 0x683, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_683, NULL, PARTFXFLAG_2, -1, NULL);
         }
     }
 }

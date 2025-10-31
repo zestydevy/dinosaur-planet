@@ -87,23 +87,23 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
             main_set_bits(BIT_75, 1);
             break;
         case 2:
-            gDLL_17->vtbl->func1(self, PARTICLE_85, &transform, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);
             break;
         case 3:
             transform.roll = 1;
-            gDLL_17->vtbl->func1(self, PARTICLE_85, &transform, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);
             break;
         case 4:
             transform.roll = 2;
-            gDLL_17->vtbl->func1(self, PARTICLE_85, &transform, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);
             break;
         case 5:
             transform.roll = 3;
-            gDLL_17->vtbl->func1(self, PARTICLE_85, &transform, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);
             break;
         case 6:
             transform.roll = 4;
-            gDLL_17->vtbl->func1(self, PARTICLE_85, &transform, 1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);
             break;
         }
     }

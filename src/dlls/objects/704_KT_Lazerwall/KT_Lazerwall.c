@@ -86,18 +86,18 @@ void dll_704_control(Object* self) {
             _data_0->vtbl->func0(self, 0, NULL, 4, -1, NULL);
             _data_0->vtbl->func0(self, 0, NULL, 4, -1, NULL);
         }
-        gDLL_17->vtbl->func1(self, 0x47E, NULL, 2, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_47E, NULL, PARTFXFLAG_2, -1, NULL);
         for (sp48 = 10; sp48 != 0; sp48--) {
             sp44 = 2;
-            gDLL_17->vtbl->func1(self, 0x48C, NULL, 2, -1, &sp44);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         }
         objdata->unk10 = (f32) rand_next(1, 0x3C);
     }
     if (objdata->unk0 & 4) {
         sp44 = 0;
-        gDLL_17->vtbl->func1(self, 0x48C, NULL, 2, -1, &sp44);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         sp44 = 1;
-        gDLL_17->vtbl->func1(self, 0x48C, NULL, 2, -1, &sp44);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         if (!(objdata->unk1 & 4)) {
             objdata->unk8 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_694_KT_Laserwall_PowerUp, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->func_954(objdata->unk8, (((f32) objsetup->unk1C / 15.0f) * 0.5f) + 1.0f);
@@ -105,9 +105,9 @@ void dll_704_control(Object* self) {
     }
     if (objdata->unk0 & 8) {
         sp44 = 0;
-        gDLL_17->vtbl->func1(self, 0x48C, NULL, 2, -1, &sp44);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         sp44 = 2;
-        gDLL_17->vtbl->func1(self, 0x48C, NULL, 2, -1, &sp44);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
     }
     if (!(objdata->unk0 & 8) && (objdata->unk1 & 8)) {
         objdata->unk4 = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_696_KT_Laserwall_PowerDown, MAX_VOLUME, NULL, NULL, 0, NULL);

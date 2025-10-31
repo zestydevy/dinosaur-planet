@@ -17,7 +17,7 @@
 #include "dlls/engine/14_modgfx.h"
 #include "dlls/engine/15_projgfx.h"
 #include "dlls/engine/16.h"
-#include "dlls/engine/17.h"
+#include "dlls/engine/17_partfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/20_screens.h"
 #include "dlls/engine/21_gametext.h"
@@ -64,7 +64,7 @@ enum DLL_ID {
     DLL_ID_MODGFX = 14,
     DLL_ID_PROJGFX = 15,
     DLL_ID_16 = 16,
-    DLL_ID_17 = 17,
+    DLL_ID_PARTFX = 17,
     DLL_ID_18 = 18,
     DLL_ID_SCREENS = 20,
     DLL_ID_TEXT = 21,
@@ -80,6 +80,25 @@ enum DLL_ID {
     DLL_ID_FLASH = 31,
     DLL_ID_32 = 32,
     DLL_ID_33 = 33,
+    DLL_ID_34 = 34, // partfx related
+    DLL_ID_35 = 35, // partfx related
+    DLL_ID_36 = 36, // partfx related
+    DLL_ID_37 = 37, // partfx related
+    DLL_ID_38 = 38, // partfx related
+    DLL_ID_39 = 39, // partfx related
+    DLL_ID_40 = 40, // partfx related
+    DLL_ID_41 = 41, // partfx related
+    DLL_ID_42 = 42, // partfx related
+    DLL_ID_43 = 43, // partfx related
+    DLL_ID_44 = 44, // partfx related
+    DLL_ID_45 = 45, // partfx related
+    DLL_ID_46 = 46, // partfx related
+    DLL_ID_47 = 47, // partfx related
+    DLL_ID_48 = 48, // partfx related
+    DLL_ID_49 = 49, // partfx related
+    DLL_ID_50 = 50, // partfx related
+    DLL_ID_51 = 51, // partfx related
+    DLL_ID_52 = 52, // partfx related
     DLL_ID_54 = 54,
     DLL_ID_56 = 56,
     DLL_ID_57 = 57,
@@ -142,7 +161,7 @@ extern DLL_58 *gDLL_58;
 extern DLL_13_expgfx *gDLL_13_Expgfx;
 extern DLL_14_modgfx *gDLL_14_Modgfx;
 extern DLL_15_projgfx *gDLL_15_Projgfx;
-extern DLL_17 *gDLL_17;
+extern DLL_17 *gDLL_17_partfx;
 extern DLL_18_objfsa *gDLL_18_objfsa;
 extern DLL_75 *gDLL_75;
 extern DLL_56 *gDLL_56;

@@ -134,7 +134,7 @@ DLL_INTERFACE(DLL_18_objfsa) {
 /*18*/ void (*func18)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3);
 /*19*/ void (*func19)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3);
 /*20*/ void (*func20)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6);
-/*21*/ void (*func21)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg4);
+/*21*/ void (*func21)(Object *obj, ObjFSA_Data *data, s32 partfxID, s32 arg3, u32 arg4);
 /*22*/ void (*func22)(ObjFSA_Data *data, void *arg1);
 };
 

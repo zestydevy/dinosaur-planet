@@ -195,12 +195,12 @@ void dll_227_func_420(Object* self) {
         if (id == OBJ_Tumbleweed1 || id == OBJ_Tumbleweed1twig || id == OBJ_Tumbleweed3 || id == OBJ_Tumbleweed3twig){
             for (index = 0x14; index > 0; index--){
                 //Creates leaf particles
-                gDLL_17->vtbl->func1(self, 845, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_34D, NULL, PARTFXFLAG_2, -1, NULL);
             }
         } else {
             for (index = 0x14; index > 0; index--){
                 //Creates frosty leaf particles
-                gDLL_17->vtbl->func1(self, 814, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_32E, NULL, PARTFXFLAG_2, -1, NULL);
             }
         }
         //Play disintegration sound
@@ -211,11 +211,11 @@ void dll_227_func_420(Object* self) {
         id = self->id;
         if (id == OBJ_Tumbleweed1 || id == OBJ_Tumbleweed1twig || id == OBJ_Tumbleweed3 || id == OBJ_Tumbleweed3twig){
             //Creates cloud of dust
-            gDLL_17->vtbl->func1(self, 844, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_34C, NULL, PARTFXFLAG_2, -1, NULL);
             if (1) { } if (1) { } if (1) { } if (1) { } if (1) { } //nice, definitely how Rare wrote it
         } else {
             //Creates cloud of frost
-            gDLL_17->vtbl->func1(self, 813, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_32D, NULL, PARTFXFLAG_2, -1, NULL);
         }
     }
     

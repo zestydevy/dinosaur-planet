@@ -107,7 +107,7 @@ void dll_703_control(Object* self) {
                 objdata->unk14 = objdata->unk14 & ~0x4;
             } else {
                 sp4B = 1;
-                gDLL_17->vtbl->func1(self, 0x488, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_488, NULL, PARTFXFLAG_2, -1, NULL);
             }
         }
     } else if (objdata->unk14 & 2) {
@@ -118,7 +118,7 @@ void dll_703_control(Object* self) {
                 objdata->unk14 = objdata->unk14 & ~0x2;
             } else {
                 sp4B = 1;
-                gDLL_17->vtbl->func1(self, 0x488, NULL, 2, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_488, NULL, PARTFXFLAG_2, -1, NULL);
             }
         }
     } else if ((objdata->unk8 != 0) && !(objdata->unk14 & 1)) {
@@ -199,7 +199,7 @@ void dll_703_control(Object* self) {
             *sp3C = var_v0;
         }
         if (!(objdata->unk14 & 6)) {
-            gDLL_17->vtbl->func1(self, 0x486, NULL, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_486, NULL, PARTFXFLAG_2, -1, NULL);
         }
     } else {
         if (*sp3C != 0) {

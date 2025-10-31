@@ -75,7 +75,7 @@ DLL_13_expgfx *gDLL_13_Expgfx = NULL;
 DLL_14_modgfx *gDLL_14_Modgfx = NULL;
 DLL_15_projgfx *gDLL_15_Projgfx = NULL;
 DLL_16 *gDLL_16 = NULL;
-DLL_17 *gDLL_17 = NULL;
+DLL_17 *gDLL_17_partfx = NULL;
 DLL_18_objfsa *gDLL_18_objfsa = NULL;
 DLL_20_screens *gDLL_20_Screens = NULL;
 DLL_21_gametext *gDLL_21_Gametext = NULL;
@@ -232,7 +232,7 @@ void game_init(void) {
         gDLL_14_Modgfx = dll_load_deferred(DLL_ID_MODGFX, 12);
         gDLL_15_Projgfx = dll_load_deferred(DLL_ID_PROJGFX, 8);
         gDLL_16 = dll_load_deferred(DLL_ID_16, 3);
-        gDLL_17 = dll_load_deferred(DLL_ID_17, 2); // probably particle FX
+        gDLL_17_partfx = dll_load_deferred(DLL_ID_PARTFX, 2); // probably particle FX
         gDLL_20_Screens = dll_load_deferred(DLL_ID_SCREENS, 3);
         gDLL_21_Gametext = dll_load_deferred(DLL_ID_TEXT, 5);
         gDLL_22_Subtitles = dll_load_deferred(DLL_ID_SUBTITLES, 7);

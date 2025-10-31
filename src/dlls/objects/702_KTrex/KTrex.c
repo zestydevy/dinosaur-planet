@@ -791,53 +791,53 @@ static void dll_702_fx_tick(Object *self) {
     if (sKTData->fxFlags & KTFX_Footfall_Right1) {
         sKTData->unk124.scale = 1.0f;
         for (i = 0; i != 0xA; i++) {
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_484, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
     }
     if (sKTData->fxFlags & KTFX_Footfall_Left1) {
         sKTData->unk13C.scale = 1.0f;
         for (i = 0; i != 0xA; i++) {
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_484, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
     }
     if (sKTData->fxFlags & KTFX_Footfall_Right2) {
         sKTData->unk124.scale = 1.5f;
         for (i = 0; i != 0xD; i++) {
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_484, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
     }
     if (sKTData->fxFlags & KTFX_Footfall_Left2) {
         sKTData->unk13C.scale = 1.5f;
         for (i = 0; i != 0xD; i++) {
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_484, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
     }
     if (sKTData->fxFlags & KTFX_Footfall_Right3) {
         sKTData->unk124.scale = 2.0f;
         for (i = 0; i != 0x10; i++) {
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk124, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk124, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_484, &sKTData->unk124, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         }
     }
     if (sKTData->fxFlags & KTFX_Footfall_Left3) {
         sKTData->unk13C.scale = 2.0f;
         for (i = 0; i != 0x10; i++) {
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x483, &sKTData->unk13C, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x484, &sKTData->unk13C, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_483, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_484, &sKTData->unk13C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
         } 
     }
     if (sKTData->fxFlags & KTFX_Spit_Partfx) {
-        gDLL_17->vtbl->func1(self, 0x487, &sKTData->unk10C, 0x200001, -1, (void*)&sKTData->unk16C);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_487, &sKTData->unk10C, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sKTData->unk16C);
     }
     sKTData->fxFlags &= (KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
 }
@@ -885,8 +885,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             gDLL_6_AMSFX->vtbl->play_sound(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_2_Camera->vtbl->func8(2, 0);
-            gDLL_17->vtbl->func1(self, 0x4B2, &_bss_60, 0x200001, -1, NULL);
-            gDLL_17->vtbl->func1(self, 0x4B3, &_bss_60, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B2, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             sKTData->flags &= ~KTFLAG_VULNERABLE;
             sKTData->flags |= KTFLAG_DAMAGED;
             fsa->unk343 = (s8) sp60;
@@ -898,7 +898,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
-            gDLL_17->vtbl->func1(self, 0x328, &_bss_60, 0x200001, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_328, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             _bss_60.transl.x -= self->positionMirror.x;
             _bss_60.transl.y -= self->positionMirror.y;
             _bss_60.transl.z -= self->positionMirror.z;

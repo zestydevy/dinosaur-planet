@@ -2653,7 +2653,7 @@ void func_8004773C(void) {
     gDLL_15_Projgfx->vtbl->func0();
     gDLL_14_Modgfx->vtbl->func0();
     gDLL_13_Expgfx->vtbl->func0();
-    gDLL_17->vtbl->func0();
+    gDLL_17_partfx->vtbl->func0();
     gDLL_12_Minic->vtbl->func4();
     gDLL_12_Minic->vtbl->func1();
     gDLL_8->vtbl->func1();

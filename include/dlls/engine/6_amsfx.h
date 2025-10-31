@@ -177,7 +177,7 @@ DLL_INTERFACE(DLL_6_AMSFX) {
 /*2*/ u32 (*play_sound)(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6);
 /*3*/ void (*func_7E4)(u8 arg0);
 /*4*/ void (*func_860)(u32 arg0, u8 arg1);
-/*5*/ void (*func_954)(s32 arg0, f32 pitch);
+/*5*/ void (*func_954)(u32 arg0, f32 pitch);
 /*6*/ void (*func_A1C)(u32 arg0);
 /*7*/ void (*func_A6C)(Object *obj);
 /*8*/ s32 (*func_B48)(u32 arg0);

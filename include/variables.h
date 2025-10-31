@@ -21,6 +21,8 @@ extern struct PointersInts pointersIntsArray[];
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
+extern u8 D_8008C504;
+
 struct UnkStruct_80064514 {
     s32 var0;
     s32 var4;

@@ -69,16 +69,16 @@ void animator_control(Object *self) {
                 srt.transl.z = rand_next(-setup->amplitudeZ, setup->amplitudeZ);
 
                 if (setup->unk23 & 1) {
-                    gDLL_17->vtbl->func1(self, 0x320, &srt, 4, -1, 0);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_320, &srt, PARTFXFLAG_4, -1, NULL);
                 }
                 if (setup->unk23 & 2) {
-                    gDLL_17->vtbl->func1(self, 0x321, &srt, 4, -1, 0);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_321, &srt, PARTFXFLAG_4, -1, NULL);
                 }
                 if (setup->unk23 & 4) {
-                    gDLL_17->vtbl->func1(self, 0x322, &srt, 4, -1, 0);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_322, &srt, PARTFXFLAG_4, -1, NULL);
                 }
                 if (setup->unk23 & 8) {
-                    gDLL_17->vtbl->func1(self, 0x351, &srt, 4, -1, 0);
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_351, &srt, PARTFXFLAG_4, -1, NULL);
                 }
             }
 

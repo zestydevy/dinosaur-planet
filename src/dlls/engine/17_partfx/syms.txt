@@ -1,19 +1,19 @@
 .text = 0x0:
-dll_17_ctor = 0x0;
-dll_17_dtor = 0x48;
-dll_17_func_398 = 0x398;
-dll_17_func_3A0 = 0x3A0;
-dll_17_func_D74 = 0xD74;
+partfx_ctor = 0x0;
+partfx_dtor = 0x48;
+partfx_func_398 = 0x398;
+partfx_func_3A0 = 0x3A0;
+partfx_spawn = 0xD74;
 
 .rodata = 0xB974:
-_rodata_0 = 0x0; // absolute:0xB974 type:char force_migration:True function_owner:dll_17_func_D74
-_rodata_680 = 0x680; // absolute:0xBFF4 type:f32 force_migration:True function_owner:dll_17_func_D74
-_rodata_688 = 0x688; // absolute:0xBFFC type:f32 force_migration:True function_owner:dll_17_func_D74
-_rodata_6D0 = 0x6D0; // absolute:0xC044 type:f32 force_migration:True function_owner:dll_17_func_D74
-_rodata_6D8 = 0x6D8; // absolute:0xC04C type:f32 force_migration:True function_owner:dll_17_func_D74
+_rodata_0 = 0x0; // absolute:0xB974 type:char force_migration:True function_owner:partfx_spawn
+_rodata_680 = 0x680; // absolute:0xBFF4 type:f32 force_migration:True function_owner:partfx_spawn
+_rodata_688 = 0x688; // absolute:0xBFFC type:f32 force_migration:True function_owner:partfx_spawn
+_rodata_6D0 = 0x6D0; // absolute:0xC044 type:f32 force_migration:True function_owner:partfx_spawn
+_rodata_6D8 = 0x6D8; // absolute:0xC04C type:f32 force_migration:True function_owner:partfx_spawn
 
 .data = 0xC3B4:
-_data_0 = 0x0; // absolute:0xC3B4
+sLoadedDLLCount = 0x0; // absolute:0xC3B4
 _data_4 = 0x4; // absolute:0xC3B8
 _data_8 = 0x8; // absolute:0xC3BC
 _data_C = 0xC; // absolute:0xC3C0
@@ -51,4 +51,4 @@ _bss_8 = 0x8; // absolute:0xC46C
 _bss_C = 0xC; // absolute:0xC470
 _bss_10 = 0x10; // absolute:0xC474
 _bss_14 = 0x14; // absolute:0xC478
-_bss_18 = 0x18; // absolute:0xC47C
+sDLLTimers = 0x18; // absolute:0xC47C

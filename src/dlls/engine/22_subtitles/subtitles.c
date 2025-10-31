@@ -12,6 +12,7 @@
 #include "dll.h"
 #include "functions.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 // Size: 0x18
 typedef struct InnerBss38 {
