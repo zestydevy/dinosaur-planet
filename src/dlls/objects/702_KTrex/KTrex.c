@@ -365,20 +365,20 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     ktdata->stateStack = generic_stack_new(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
-        curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegStartCurvesCW[i]);
+        curve = gDLL_26_Curves->vtbl->func_39C(sSegStartCurvesCW[i]);
         if (curve != NULL) {
             ktdata->segStartCW_X[i] = curve->base.x;
             ktdata->segStartCW_Y[i] = curve->base.y;
             ktdata->segStartCW_Z[i] = curve->base.z;
-            curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegEndCurvesCW[i]);
+            curve = gDLL_26_Curves->vtbl->func_39C(sSegEndCurvesCW[i]);
             ktdata->segEndCW_X[i] = curve->base.x;
             ktdata->segEndCW_Y[i] = curve->base.y;
             ktdata->segEndCW_Z[i] = curve->base.z;
-            curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegEndCurvesCCW[i]);
+            curve = gDLL_26_Curves->vtbl->func_39C(sSegEndCurvesCCW[i]);
             ktdata->segEndCCW_X[i] = curve->base.x;
             ktdata->segEndCCW_Y[i] = curve->base.y;
             ktdata->segEndCCW_Z[i] = curve->base.z;
-            curve = gDLL_26_Curves->vtbl->curves_func_39c(sSegStartCurvesCCW[i]);
+            curve = gDLL_26_Curves->vtbl->func_39C(sSegStartCurvesCCW[i]);
             ktdata->segStartCCW_X[i] = curve->base.x;
             ktdata->segStartCCW_Y[i] = curve->base.y;
             ktdata->segStartCCW_Z[i] = curve->base.z;

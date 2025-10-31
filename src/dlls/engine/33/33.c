@@ -871,7 +871,7 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
         if (data->unk3F8 != NULL) {
             bzero(data->unk3F8, sizeof(UnkCurvesStruct));
         }
-        if (gDLL_26_Curves->vtbl->curves_func_4288(data->unk3F8, obj, (f32) data->unk3E2, sp4C, -1) == 0) {
+        if (gDLL_26_Curves->vtbl->func_4288(data->unk3F8, obj, (f32) data->unk3E2, sp4C, -1) == 0) {
             data->unk3B2 |= 8;
         }
     } else {

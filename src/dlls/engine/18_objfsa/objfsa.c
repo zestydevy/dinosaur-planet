@@ -504,7 +504,7 @@ void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA
 
 // offset: 0x1280 | func: 14 | export: 14
 void objfsa_func_1280(Object *obj, ObjFSA_Data *data, s32 arg2) {
-    data->unk330 = gDLL_26_Curves->vtbl->curves_func_1e4(
+    data->unk330 = gDLL_26_Curves->vtbl->func_1E4(
         obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
         &arg2, 1, (s32) data->unk338);
 }
@@ -517,7 +517,7 @@ void objfsa_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
         data->unk2B4 = 0.0f;
         return;
     }
-    temp_v0 = gDLL_26_Curves->vtbl->curves_func_39c(data->unk330);
+    temp_v0 = gDLL_26_Curves->vtbl->func_39C(data->unk330);
     if (temp_v0 == NULL) {
         data->unk2B4 = 0.0f;
         return;
