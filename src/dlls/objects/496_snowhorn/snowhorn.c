@@ -333,7 +333,7 @@ void dll_496_control(Object* snowhorn) {
     
     objdata->flags &= 0xBFFF;
     objdata->unk427 = gDLL_29_Gplay->vtbl->get_map_setup(snowhorn->mapID);
-    _data_270 = gDLL_7_Newday->vtbl->func8(&daytime); //check if night
+    _data_270 = gDLL_7_Newday->vtbl->set_seconds_till_nighttime(&daytime); //check if night
 
     if (objdata->flags & 0x8000 && (dll_496_func_980(snowhorn) != 0)){
         return;

@@ -1349,7 +1349,7 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
     if (arg1->unk8BA != 0) {
         gDLL_32->vtbl->func5(arg2, arg3, arg0);
     }
-    if (gDLL_7_Newday->vtbl->func12.asVoidS32() != 0) {
+    if (gDLL_7_Newday->vtbl->func12() != 0) {
         dll_210_func_41F4(arg0, arg1);
     }
     if (arg1->flags & 0x60000) {
