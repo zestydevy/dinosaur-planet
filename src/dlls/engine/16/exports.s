@@ -4,10 +4,10 @@
 _exports:
 
 # ctor/dtor
-.dword init
-.dword fini
+.dword dll_16_ctor
+.dword dll_16_dtor
 
 # export table
-.dword func_0000
-.dword func_0001
-.dword func_0002
+.dword dll_16_func_18
+.dword dll_16_func_20
+.dword dll_16_func_2C
