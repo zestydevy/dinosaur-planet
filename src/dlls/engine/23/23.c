@@ -34,7 +34,7 @@ s32 dll_23_func_3C(s32 arg0) {
 }
 
 // offset: 0x4C | func: 4 | export: 4
-void dll_23_func_4C(s32 arg0, f32 arg1, f32 arg2) {
+void dll_23_func_4C(s32 arg0, s32 arg1, s32 arg2) {
 
 }
 // offset: 0x60 | func: 5 | export: 5
