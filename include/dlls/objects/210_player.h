@@ -286,8 +286,8 @@ DLL_INTERFACE(DLL_210_Player) {
     /*25*/ UnknownDLLFunc func25;
     /*26*/ s32 (*func26)(Object *player);
     /*27*/ UnknownDLLFunc func27;
-    /*28*/ UnknownDLLFunc func28;
-    /*29*/ UnknownDLLFunc func29;
+    /*28*/ void (*func28)(Object* player, s32 arg1);
+    /*29*/ void (*func29)(Object* player, s32 arg1);
     /*30*/ UnknownDLLFunc func30;
     /*31*/ UnknownDLLFunc func31;
     /*32*/ UnknownDLLFunc func32;
