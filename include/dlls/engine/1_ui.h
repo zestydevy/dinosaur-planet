@@ -35,31 +35,31 @@ typedef struct {
 } EnergyBar;
 
 DLL_INTERFACE(DLL_1_UI) {
-    /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*00*/ UnknownDLLFunc ui_func_308;
-    /*01*/ UnknownDLLFunc ui_func_35c;
-    /*02*/ UnknownDLLFunc ui_func_bb8;
-    /*03*/ UnknownDLLFunc ui_func_1290;
-    /*04*/ UnknownDLLFunc ui_func_12ec;
-    /*05*/ UnknownDLLFunc ui_func_f5c;
-    /*06*/ s32 (*func6)(void);
-    /*07*/ s32 (*func7)(s32 inventory_item_flag); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
-    /*08*/ UnknownDLLFunc ui_func_e2c;
-    /*09*/ s32 (*ui_func_f24)(void);
-    /*10*/ UnknownDLLFunc ui_func_f40;
-    /*11*/ UnknownDLLFunc ui_func_70a0;
-    /*12*/ void (*ui_func_130c)(s32, s32, s32);
-    /*13*/ UnknownDLLFunc ui_func_1338;
-    /*14*/ UnknownDLLFunc ui_func_13f4;
-    /*15*/ void (*ui_func_2b8)(s32);
-    /*16*/ void (*ui_func_6984)(s32);
-    /*17*/ UnknownDLLFunc ui_func_69f8;
-    /*18*/ UnknownDLLFunc ui_func_6b00;
-    /*19*/ UnknownDLLFunc ui_func_2e0;
-    /*20*/ UnknownDLLFunc ui_func_70c8;
-    /*21*/ UnknownDLLFunc ui_func_7208;
-    /*22*/ UnknownDLLFunc ui_func_7550;
-    /*23*/ UnknownDLLFunc ui_func_75cc;
+/*:*/ DLL_INTERFACE_BASE(DLL);
+/*0*/ s32 (*func_308)(void);
+/*1*/ UnknownDLLFunc func_35C;
+/*2*/ UnknownDLLFunc func_BB8;
+/*3*/ void (*func_1290)(void);
+/*4*/ void (*func_12EC)(void);
+/*5*/ UnknownDLLFunc func_F5C;
+/*6*/ s32 (*func_DC4)(void);
+/*7*/ s32 (*func_DF4)(s32 itemGamebitID); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
+/*8*/ s32 (*func_E2C)(s32 *arg0, s32 arg1);
+/*9*/ s32 (*func_F24)(void);
+/*10*/ s16 (*func_F40)(void);
+/*11*/ void (*func_70A0)(u8 arg0);
+/*12*/ void (*func_130C)(u32 arg0, u32 arg1, u32 arg2);
+/*13*/ void (*func_1338)(s32 gametextID, s32 arg1, s32 arg2);
+/*14*/ void (*func_13F4)(void);
+/*15*/ void (*func_2B8)(u16 arg0);
+/*16*/ void (*func_6984)(s32 arg0);
+/*17*/ void (*func_69F8)(s32 arg0, s32 arg1, s32 arg2);
+/*18*/ void (*func_6B00)(s16 textureID, s32 arg1, s32 arg2);
+/*19*/ void (*func_2E0)(u8 arg0);
+/*20*/ UnknownDLLFunc func_70C8;
+/*21*/ void (*func_7208)(s32 arg0);
+/*22*/ void (*func_7550)(void);
+/*23*/ UnknownDLLFunc func_75CC;
 };
 
 #endif //_DLLS_1_H

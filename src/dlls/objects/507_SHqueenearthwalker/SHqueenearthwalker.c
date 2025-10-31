@@ -71,7 +71,7 @@ void SHqueenearthwalker_control(Object* self) {
         break;
     case 3:
         if (self->unkAF & 4) {
-            if (gDLL_1_UI->vtbl->func7(BIT_Inventory_White_Mushrooms) != 0) {
+            if (gDLL_1_UI->vtbl->func_DF4(BIT_Inventory_White_Mushrooms) != 0) {
                 set_button_mask(0, A_BUTTON);
                 objdata->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
                 if (objdata->eatenWhiteMushrooms <= 0) {

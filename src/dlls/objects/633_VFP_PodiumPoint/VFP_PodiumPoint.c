@@ -112,7 +112,7 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
         gamebitValue = main_get_bits(objdata->setGamebit);
         if ((gamebitValue == 0) && (objdata->unk4 == 0) && (conditionGamebitValue != 0)) {
             self->unkAF &= ~0x8;
-            if ((gDLL_1_UI->vtbl->func7(data_0) != 0) && 
+            if ((gDLL_1_UI->vtbl->func_DF4(data_0) != 0) &&
                     (vec3_distance(&self->positionMirror, &player->positionMirror) < 100.0f)) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
                 main_set_bits(objdata->setGamebit, 1);

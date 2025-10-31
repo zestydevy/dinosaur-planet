@@ -76,7 +76,7 @@ void UseObj_control(Object *self) {
         } else {
             self->unkAF &= ~0x10;
         }
-        if (self->unkAF & 1 && (setup->gamebit2 == -1 || gDLL_1_UI->vtbl->func7(setup->gamebit2))) {
+        if (self->unkAF & 1 && (setup->gamebit2 == -1 || gDLL_1_UI->vtbl->func_DF4(setup->gamebit2))) {
             if (setup->objectSeqIndex != -1) {
                 gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex, self, -1);
             }

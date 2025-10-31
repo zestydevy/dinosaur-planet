@@ -100,7 +100,7 @@ void CClogpush_control(Object *self) {
             break;
         }
 
-        if ((self->unkAF & 0x1) && (( (setup->gamebit3 == -1)) || ((gDLL_1_UI->vtbl->func7(setup->gamebit3) != 0)))) {
+        if ((self->unkAF & 0x1) && (( (setup->gamebit3 == -1)) || ((gDLL_1_UI->vtbl->func_DF4(setup->gamebit3) != 0)))) {
             if (setup->flags & 2) {
                 main_set_bits(setup->gamebit1, 0);
             }

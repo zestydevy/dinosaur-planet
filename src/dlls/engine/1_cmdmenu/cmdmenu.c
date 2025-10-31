@@ -526,9 +526,8 @@ void dll_1_func_2E0(u8 arg0) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_308.s")
 #else
-
-void dll_1_func_1410();
-void dll_1_func_1FEC();
+/* static */ void dll_1_func_1410(void);
+/* static */ void dll_1_func_1FEC(void);
 
 s32 dll_1_func_308(void) {
     dll_1_func_1FEC();
@@ -561,6 +560,7 @@ s32 dll_1_func_DF4(s32 itemGamebitID) {
 }
 
 // offset: 0xE2C | func: 7 | export: 8
+s32 dll_1_func_E2C(s32 *arg0, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_E2C.s")
 
 // offset: 0xF24 | func: 8 | export: 9
@@ -577,18 +577,17 @@ s16 dll_1_func_F40(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_F5C.s")
 
 // offset: 0x1290 | func: 11 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1290.s")
-// void dll_1_func_1290(void) {
-//     s32 i;
-//     UIUnknownCharacterStruct *temp;
+void dll_1_func_1290(void) {
+    s32 i;
+    UIUnknownCharacterStruct *temp;
 
-//     temp = &_data_8F0;
+    temp = &_data_8F0;
 
-//     for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
-//     _bss_C38 = -1;
-//     _bss_C3C = 0;
-//     _bss_C3D = -1;
-// }
+    for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
+    usedItemGamebitID = -1;
+    _bss_C3C = 0;
+    _bss_C3D = -1;
+}
 
 // offset: 0x12EC | func: 12 | export: 4
 void dll_1_func_12EC(void) {
@@ -656,16 +655,15 @@ void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_38E4.s")
 
 // offset: 0x39FC | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_39FC.s")
-// s32 dll_1_func_39FC(void) {
-//     if (_data_0 == 0) {
-//         return 0;
-//     }
-//     if (_data_C != _bss_C28) {
-//         return 0;
-//     }
-//     return 1;
-// }
+s32 dll_1_func_39FC(void) {
+    if (_data_0 == 0) {
+        return 0;
+    }
+    if (_bss_C28 != _data_C) {
+        return 0;
+    }
+    return 1;
+}
 
 // offset: 0x3A4C | func: 26
 s32 dll_1_func_3A4C(void) {
@@ -762,6 +760,7 @@ static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
 }
 
 // offset: 0x69F8 | func: 42 | export: 17
+void dll_1_func_69F8(s32 arg0, s32 arg1, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_69F8.s")
 
 // offset: 0x6B00 | func: 43 | export: 18

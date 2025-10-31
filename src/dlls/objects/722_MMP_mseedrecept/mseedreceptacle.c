@@ -143,7 +143,7 @@ void moonSeedReceptacle_control(Object* self) {
             return;
         
         case 1:
-            if ((self->unkAF & 1) && gDLL_1_UI->vtbl->func7(0x86A)){
+            if ((self->unkAF & 1) && gDLL_1_UI->vtbl->func_DF4(0x86A)){
                 count = main_get_bits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
@@ -185,7 +185,7 @@ void moonSeedReceptacle_control(Object* self) {
             }
             if (kyte && (self->unkAF & 4)){
                 ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 4);
-                if (gDLL_1_UI->vtbl->func7(4)){
+                if (gDLL_1_UI->vtbl->func_DF4(4)){
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }

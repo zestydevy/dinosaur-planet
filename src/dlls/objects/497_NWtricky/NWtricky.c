@@ -205,9 +205,9 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             }
             break;
         }
-        gDLL_1_UI->vtbl->ui_func_6984(buttonMask);
+        gDLL_1_UI->vtbl->func_6984(buttonMask);
     } else {
-        gDLL_1_UI->vtbl->ui_func_6984(-1);
+        gDLL_1_UI->vtbl->func_6984(-1);
     }
 
     return 0;

@@ -103,7 +103,7 @@ static void dll_652_func_254(Object* self) {
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(BIT_SpellStone_CRF) != 0)) {
+        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func_DF4(BIT_SpellStone_CRF) != 0)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= 8;
@@ -123,7 +123,7 @@ static void dll_652_func_364(Object* self) {
     bit1Val = main_get_bits(objdata->unk0);
     if ((bit1Val == 0) && (bit2Val != 0) && (objdata->unk4 == 0)) {
         self->unkAF &= ~8;
-        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func7(BIT_SpellStone_DIM) != 0)) {
+        if ((bit2Val != 0) && (gDLL_1_UI->vtbl->func_DF4(BIT_SpellStone_DIM) != 0)) {
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             objdata->unk4 = 1;
             self->unkAF |= 8;
