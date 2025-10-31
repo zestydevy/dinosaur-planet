@@ -138,4 +138,5 @@
 768 = objects/768_SPShop
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock
+793 = objects/793_BWlog
 795 = objects/795_BWLevelControl

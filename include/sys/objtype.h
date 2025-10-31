@@ -17,6 +17,7 @@ enum ObjType {
     OBJTYPE_16 = 16,
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
+    OBJTYPE_22 = 22, // includes DFriverflow
     OBJTYPE_23 = 23,
     OBJTYPE_32 = 32,
     OBJTYPE_39 = 39,
