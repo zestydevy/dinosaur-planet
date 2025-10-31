@@ -28,7 +28,7 @@ typedef struct AnimObj_Data {
 /*00*/ s8 unk0[0x24 - 0];
 /*24*/ f32 unk24;
 /*28*/ s32 unk28;
-/*2C*/ s32 unk2C;
+/*2C*/ void *unk2C;
 /*30*/ u32 unk30;
 /*34*/ u32 unk34[4];
 /*44*/ s8 unk44[0x4C - 0x44];

@@ -11,6 +11,15 @@
 #include "prevent_bss_reordering.h"
 
 typedef struct {
+/*0*/ Texture* unk0;
+/*4*/ s32 unk4;
+/*8*/ f32 unk8;
+/*C*/ s16 unkC;
+} CmdmenuItemUnkBSS;
+
+static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0);
+
+typedef struct {
 /*0*/ InventoryItem* characterItems;
 /*4*/ s16 unk4;
 /*6*/ s16 unk6;
@@ -20,28 +29,21 @@ typedef struct {
 /*E*/ s16 unkE;
 } UIUnknownCharacterStruct;
 
-typedef struct {
-/*0*/ Texture* unk0;
-/*4*/ s32 unk4;
-/*8*/ f32 unk8;
-/*C*/ s16 unkC;
-} CmdmenuItemUnkBSS;
 
 typedef struct {
-f32 unk0; //scarabUIOpacity
-f32 unk4; //playerIconMagicBarOpacity
-s32 unk8;
-s32 unkC; //healthValue
-
+    f32 unk0; //scarabUIOpacity
+    f32 unk4; //playerIconMagicBarOpacity
+    s32 unk8;
+    s32 unkC; //healthValue
 } CmdmenuBSS0;
 
+// size: 0x18
 typedef struct {
 /*0*/ Texture* unk0;
 /*4*/ s32 unk4;
 /*8*/ s16 unk8;
 /*8*/ s16 unkA;
-/*C*/ s16 unkC;
-/*E*/ s16 unkE;
+/*C*/ s32 unkC;
 /*10*/ s16 unk10;
 /*12*/ s16 unk12;
 /*14*/ s32 unk14;
@@ -379,7 +381,7 @@ s32 unk24;
 
 /*0x9D0*/ static s8 _data_9D0 = 0;
 /*0x9D4*/ static u32 _data_9D4 = 0x00000000;
-/*0x9D8*/ static u16 _data_9D8[] = {
+/*0x9D8*/ static s16 _data_9D8[] = {
     0x01be, 0x01bf, 0x1c0, 0x01c2, 0x01c3, 0x01c4, 0x01c5, 0x01c6, 
     0x03e2, 0x03e3, 0x03e4, 0x03e5, 0x0421, 0x01c9, 0x03ea, 0x03eb, 
     0x01cb, 0x03e6, 0x03e7, 0x03f5, 0x03f6, 0x03f7, 0x03f8, 0x03f9,
@@ -429,10 +431,10 @@ s32 unk24;
 /*0x598*/ static u8 _bss_598[0x4];
 /*0x59C*/ static u8 _bss_59C[0x4];
 /*0x5A0*/ static Texture* _bss_5A0;
-/*0x5A4*/ static s32 _bss_5A4;
+/*0x5A4*/ static s16 _bss_5A4;
 /*0x5A8*/ static u8 _bss_5A8[0x4];
 /*0x5AC*/ static u8 _bss_5AC[0x4];
-/*0x5B0*/ static s32 _bss_5B0;
+/*0x5B0*/ static s16 _bss_5B0;
 /*0x5B4*/ static s32 _bss_5B4;
 /*0x5B8*/ static u32 _bss_5B8;
 /*0x5BC*/ static s32 _bss_5BC;
@@ -447,28 +449,7 @@ s32 unk24;
 /*0x5E8*/ static u8 _bss_5E8[0x8];
 /*0x5F0*/ static u8 _bss_5F0[0xc0];
 /*0x6B0*/ static Texture* _bss_6B0[2];
-/*0x6B8*/ static CmdmenuItemUnkBSS6B8* _bss_6B8[2]; //not a pointer, array of 58 of these up to bss_C28?
-/*0x6C0*/ static u8 _bss_6C0[0x10];
-/*0x6D0*/ static u8 _bss_6D0[0x18];
-/*0x6E8*/ static u8 _bss_6E8[0x8];
-/*0x6F0*/ static u8 _bss_6F0[0x280];
-/*0x970*/ static u8 _bss_970[0x18];
-/*0x988*/ static u8 _bss_988[0x8];
-/*0x990*/ static u8 _bss_990[0x10];
-/*0x9A0*/ static u8 _bss_9A0[0x18];
-/*0x9B8*/ static u8 _bss_9B8[0x8];
-/*0x9C0*/ static u8 _bss_9C0[0x10];
-/*0x9D0*/ static u8 _bss_9D0[0x18];
-/*0x9E8*/ static u8 _bss_9E8[0x8];
-/*0x9F0*/ static u8 _bss_9F0[0x10];
-/*0xA00*/ static u8 _bss_A00[0x18];
-/*0xA18*/ static u8 _bss_A18[0x8];
-/*0xA20*/ static u8 _bss_A20[0x10];
-/*0xA30*/ static u8 _bss_A30[0x30];
-/*0xA60*/ static u8 _bss_A60[0x30];
-/*0xA90*/ static u8 _bss_A90[0x108];
-/*0xB98*/ static u8 _bss_B98[0x8];
-/*0xBA0*/ static u8 _bss_BA0[0x88]; //infobox height and inventory box height stored near the end (height of paper scroll graphics)
+/*0x6B8*/ static CmdmenuItemUnkBSS6B8 _bss_6B8[58];
 /*0xC28*/ static s16 _bss_C28;
 /*0xC2A*/ static s16 _bss_C2A;
 /*0xC2C*/ static s16 _bss_C2C;
@@ -488,7 +469,7 @@ s32 unk24;
 /*0xC54*/ static s32 _bss_C54; //controllerButtons
 /*0xC58*/ static u8 _bss_C58[0x8];
 /*0xC60*/ static u8 _bss_C60[0x18];
-/*0xC78*/ static s16 _bss_C78;
+/*0xC78*/ static s8 _bss_C78;
 /*0xC7A*/ static s16 _bss_C7A;
 /*0xC7C*/ static u16 _bss_C7C;
 /*0xC7E*/ static u16 _bss_C7E;
@@ -497,12 +478,6 @@ s32 unk24;
 // /*0xC90*/ static u8 _bss_C90[0x10];
 
 // offset: 0x0 | ctor
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_ctor.s")
-#else
-
-static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) ;
-
 void dll_1_ctor(s32 arg0) {
     s32 i;
 
@@ -526,14 +501,13 @@ void dll_1_ctor(s32 arg0) {
     _bss_C34 = queue_load_texture_proxy(0x500);
     _bss_C34->unkE = 0x28;
     _bss_5B8 = 0x80000;
-    _bss_5C0 = 0;
-    _bss_6B0 = queue_load_texture_proxy(0x3A7);
+    _bss_5C0[0] = 0;
+    _bss_6B0[0] = queue_load_texture_proxy(0x3A7);
     _bss_5A0 = queue_load_texture_proxy(0x274);
     _bss_5A0->unkE = 0x28;
     
     dll_1_func_69CC(&_bss_C88);
 }
-#endif
 
 // offset: 0x180 | dtor
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_dtor.s")
@@ -552,9 +526,8 @@ void dll_1_func_2E0(u8 arg0) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_308.s")
 #else
-
-void dll_1_func_1410();
-void dll_1_func_1FEC();
+/* static */ void dll_1_func_1410(void);
+/* static */ void dll_1_func_1FEC(void);
 
 s32 dll_1_func_308(void) {
     dll_1_func_1FEC();
@@ -587,6 +560,7 @@ s32 dll_1_func_DF4(s32 itemGamebitID) {
 }
 
 // offset: 0xE2C | func: 7 | export: 8
+s32 dll_1_func_E2C(s32 *arg0, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_E2C.s")
 
 // offset: 0xF24 | func: 8 | export: 9
@@ -603,18 +577,17 @@ s16 dll_1_func_F40(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_F5C.s")
 
 // offset: 0x1290 | func: 11 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_1290.s")
-// void dll_1_func_1290(void) {
-//     s32 i;
-//     UIUnknownCharacterStruct *temp;
+void dll_1_func_1290(void) {
+    s32 i;
+    UIUnknownCharacterStruct *temp;
 
-//     temp = &_data_8F0;
+    temp = &_data_8F0;
 
-//     for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
-//     _bss_C38 = -1;
-//     _bss_C3C = 0;
-//     _bss_C3D = -1;
-// }
+    for (i = 0; temp[i].characterItems; i++) { temp[i].unk4 = 0; }
+    usedItemGamebitID = -1;
+    _bss_C3C = 0;
+    _bss_C3D = -1;
+}
 
 // offset: 0x12EC | func: 12 | export: 4
 void dll_1_func_12EC(void) {
@@ -682,16 +655,15 @@ void dll_1_func_3880(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_38E4.s")
 
 // offset: 0x39FC | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_39FC.s")
-// s32 dll_1_func_39FC(void) {
-//     if (_data_0 == 0) {
-//         return 0;
-//     }
-//     if (_data_C != _bss_C28) {
-//         return 0;
-//     }
-//     return 1;
-// }
+s32 dll_1_func_39FC(void) {
+    if (_data_0 == 0) {
+        return 0;
+    }
+    if (_bss_C28 != _data_C) {
+        return 0;
+    }
+    return 1;
+}
 
 // offset: 0x3A4C | func: 26
 s32 dll_1_func_3A4C(void) {
@@ -780,7 +752,7 @@ void dll_1_func_6984(s32 arg0) {
 }
 
 // offset: 0x69CC | func: 41
-void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
+static void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
     arg0->unk4 = -1;
     arg0->unkC = 0;
     arg0->unk0 = 0;
@@ -788,6 +760,7 @@ void dll_1_func_69CC(CmdmenuItemUnkBSS* arg0) {
 }
 
 // offset: 0x69F8 | func: 42 | export: 17
+void dll_1_func_69F8(s32 arg0, s32 arg1, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_69F8.s")
 
 // offset: 0x6B00 | func: 43 | export: 18

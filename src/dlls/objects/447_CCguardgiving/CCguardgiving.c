@@ -88,20 +88,20 @@ void CCguardgiving_control(Object *self) {
             } else {
                 objdata->objectSeqIndex = 0;
             }
-        } else if (gDLL_1_UI->vtbl->ui_func_f24() == 3) {
+        } else if (gDLL_1_UI->vtbl->func_F24() == 3) {
             objdata->state = STATE_1;
             func_80023BF8(self, 0, 0, 0, 0, 3);
         }
         break;
     case STATE_1:
-        if (gDLL_1_UI->vtbl->func7(BIT_Gold_Nugget_CC)) {
+        if (gDLL_1_UI->vtbl->func_DF4(BIT_Gold_Nugget_CC)) {
             gDLL_3_Animation->vtbl->func17(2, self, -1);
             objdata->state = STATE_2;
             func_80023BF8(self, 0, 0, 0, 0, 2);
             main_set_bits(BIT_CC_Bribed_GuardClaw, 1);
-        } else if (gDLL_1_UI->vtbl->func7(BIT_3E4)) {
+        } else if (gDLL_1_UI->vtbl->func_DF4(BIT_3E4)) {
             gDLL_3_Animation->vtbl->func17(6, self, -1);
-        } else if (gDLL_1_UI->vtbl->ui_func_f24() != 3) {
+        } else if (gDLL_1_UI->vtbl->func_F24() != 3) {
             objdata->state = STATE_0;
             func_80023BF8(self, 0, 0, 0, 0, 2);
         }
@@ -109,13 +109,13 @@ void CCguardgiving_control(Object *self) {
     case STATE_2:
         if (func_80032538(self)) {
             gDLL_3_Animation->vtbl->func17(3, self, -1);
-        } else if (gDLL_1_UI->vtbl->ui_func_f24() == 3) {
+        } else if (gDLL_1_UI->vtbl->func_F24() == 3) {
             objdata->state = STATE_3;
             func_80023BF8(self, 0, 0, 0, 0, 3);
         }
         break;
     case STATE_3:
-        if (gDLL_1_UI->vtbl->func7(BIT_3E4)) {
+        if (gDLL_1_UI->vtbl->func_DF4(BIT_3E4)) {
             player = get_player();
             count = ((DLL_210_Player*)player->dll)->vtbl->func20(player);
             if (count >= 10) {
@@ -125,7 +125,7 @@ void CCguardgiving_control(Object *self) {
                 func_80023BF8(self, 0, 0, 0, 0, 2);
                 main_set_bits(BIT_82F, 1);
             }
-        } else if (gDLL_1_UI->vtbl->ui_func_f24() != 3) {
+        } else if (gDLL_1_UI->vtbl->func_F24() != 3) {
             objdata->state = STATE_2;
             func_80023BF8(self, 0, 0, 0, 0, 2);
         }

@@ -676,7 +676,7 @@ void anim_destroy(Animation* anim) {
     for (matchIndex = -1, index = 0; index < gNumLoadedAnims; index++){
         if (anim == ((AnimSlot *)((s32*)gLoadedAnims + (index << 1)))->animation) {
             matchIndex = index;
-            //@bug?: continues interating through animations after animation found
+            //@bug?: continues iterating through animations after animation found
         }
     }
     

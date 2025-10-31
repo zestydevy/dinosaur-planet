@@ -432,7 +432,7 @@ void dll_210_setup(Object* arg0, u32 arg1) {
         arg0->ptr0x64->flags |= 0x4008;
         arg0->ptr0x64->unk2c = arg0->ptr0x64->unk0 * 0.5f;
     }
-    gDLL_1_UI->vtbl->ui_func_12ec.asVoid();
+    gDLL_1_UI->vtbl->func_12EC();
     data->unk85C = obj_create(obj_alloc_create_info(0x24, 0x212), 5U, -1, -1, arg0->parent);
     data->unk860 = obj_create(obj_alloc_create_info(0x24, 0x403), 5U, -1, -1, arg0->parent);
     data->modAnims = _data_98;
@@ -546,7 +546,7 @@ void dll_210_control(Object* arg0) {
         *_bss_1AA = 0;
         dll_210_func_11A0(arg0, data, _bss_1AC);
     }
-    i = gDLL_1_UI->vtbl->ui_func_e2c.withTwoArgsS32((s32)&sp48, 6);
+    i = gDLL_1_UI->vtbl->func_E2C((s32)&sp48, 6);
     if (i != -1U) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, (arg0->id != 0 ? _data_4C0 : _data_4CC)[i], 0x7FU, NULL, NULL, 0, NULL);
     }
@@ -2148,10 +2148,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         if (temp_fp->unk708 != NULL) {
             if (temp_fp->unk708->def->unkAA >= 0) {
                 if (arg2->unk8D == 0x1A) {
-                    gDLL_1_UI->vtbl->ui_func_1338.withThreeArgs(temp_fp->unk708->def->unkAA, 0xA0, 0x8C);
+                    gDLL_1_UI->vtbl->func_1338(temp_fp->unk708->def->unkAA, 0xA0, 0x8C);
                 }
             } else {
-                gDLL_1_UI->vtbl->ui_func_130c(temp_fp->unk708->def->unkA2, 0xA0, 0x8C);
+                gDLL_1_UI->vtbl->func_130C(temp_fp->unk708->def->unkA2, 0xA0, 0x8C);
             }
             if (arg2->unk8D == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
@@ -4300,8 +4300,8 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
         break;
     }
 
-    if (gDLL_1_UI->vtbl->func6() != 0) {
-        if (gDLL_1_UI->vtbl->func7(0x1EE) != 0) {
+    if (gDLL_1_UI->vtbl->func_DC4() != 0) {
+        if (gDLL_1_UI->vtbl->func_DF4(0x1EE) != 0) {
             set_button_mask(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
@@ -4317,12 +4317,12 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
         }
         if (arg0->id != 0) {
             sp8E = 0;
-            if (gDLL_1_UI->vtbl->func7(0x13D) != 0) {
+            if (gDLL_1_UI->vtbl->func_DF4(0x13D) != 0) {
                 sp8E = 0xA;
             }
         } else {
             sp8E = 0;
-            if (gDLL_1_UI->vtbl->func7(0x5D6) != 0) {
+            if (gDLL_1_UI->vtbl->func_DF4(0x5D6) != 0) {
                 if (main_get_bits(BIT_7E2) != 0) {
                     sp8E = 0xA;
                 } else {
@@ -4334,12 +4334,12 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
         if (sp8E != 0) {
             dll_210_func_1DAB0(arg0);
             gDLL_3_Animation->vtbl->func17((s32) sp8E, arg0, -1);
-            gDLL_1_UI->vtbl->ui_func_1290.asVoid();
+            gDLL_1_UI->vtbl->func_1290();
             return 0;
         }
     }
-    if (gDLL_1_UI->vtbl->ui_func_f40.asVoidS32() == 0x387) {
-        sp8C = gDLL_1_UI->vtbl->ui_func_e2c.withTwoArgsS32((s32)&sp38, 0x10);
+    if (gDLL_1_UI->vtbl->func_F40() == 0x387) {
+        sp8C = gDLL_1_UI->vtbl->func_E2C(sp38, 0x10);
         if (sp8C != -1 && (arg0->unkC4 == NULL)) {
             set_button_mask(0, A_BUTTON);
             arg0->unkE0 = sp8C;

@@ -271,7 +271,7 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
 s32 func_80032538(Object* arg0) {
     Object* player;
 
-    if (arg0->unkAF & 1 && !gDLL_1_UI->vtbl->func6()) {
+    if (arg0->unkAF & 1 && !gDLL_1_UI->vtbl->func_DC4()) {
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
             set_button_mask(0, A_BUTTON);

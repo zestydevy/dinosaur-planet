@@ -72,7 +72,7 @@ int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
     }
     _data_0 -= gUpdateRateF;
     if (_data_0 > 0.0f) {
-        gDLL_1_UI->vtbl->ui_func_130c(0x1D, 0x50, 0x3C);
+        gDLL_1_UI->vtbl->func_130C(0x1D, 0x50, 0x3C);
     }
 
     return 0;

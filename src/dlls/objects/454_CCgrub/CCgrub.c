@@ -90,7 +90,7 @@ void CCgrub_control(Object* self) {
             if (((DLL_Unknown*)sp54->dll)->vtbl->func[7].withOneArgS32((s32)sp54) != 0) {
                 ((DLL_Unknown*)sp54->dll)->vtbl->func[11].withTwoArgs((s32)sp54, 8);
             } else {
-                gDLL_1_UI->vtbl->ui_func_69f8.withThreeArgs(0x23, 0x12c, main_increment_bits(0x23));
+                gDLL_1_UI->vtbl->func_69F8(0x23, 0x12c, main_increment_bits(0x23));
             }
             objdata->unk109 = 0xA;
         }

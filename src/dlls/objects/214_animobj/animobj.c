@@ -33,13 +33,13 @@ void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
     objdata->unk28 = -1;
 
     if (self->unkDC == 0 && setup->sequenceIdBitfield != 1){
-        gDLL_3_Animation->vtbl->func6((s32)objdata, (ObjSetup*)setup);
+        gDLL_3_Animation->vtbl->func6(objdata, setup);
         self->unkDC = setup->sequenceIdBitfield + 1;
     } else {
         if (self->unkDC != 0 && (setup->sequenceIdBitfield + 1 != self->unkDC)){
-            gDLL_3_Animation->vtbl->func8((s32)objdata);
+            gDLL_3_Animation->vtbl->func8(objdata);
             if (setup->sequenceIdBitfield != -1){
-                gDLL_3_Animation->vtbl->func6((s32)objdata, (ObjSetup*)setup);
+                gDLL_3_Animation->vtbl->func6(objdata, setup);
             }
             self->unkDC = setup->sequenceIdBitfield + 1;
         }
@@ -116,7 +116,7 @@ void animobj_free(Object *self, s32 arg1) {
     s32 i;
 
     objdata = self->data;
-    gDLL_3_Animation->vtbl->func8((s32)objdata);
+    gDLL_3_Animation->vtbl->func8(objdata);
     for (i = 0; i < 4; i++){
         if (objdata->unk34[i]){
             gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk34[i]);

@@ -108,11 +108,9 @@ void dll_25_func_D8(void)
             for (var_v1_2 = 0; var_v1_2 < 4; var_v1_2++)
             {
                 temp_s0->unk1C[var_v1_2] = 0;
-                // ugly casting required for matching
-                var_s7 = &((s8 *)temp_s4)[var_v1_2 * 4]; // TODO: inner array access going on here, such as unk1C
-                if (var_s7->unk1C[0] >= 0)
+                if (temp_s4->unk1C[var_v1_2] >= 0)
                 {
-                    temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_39c(var_s7->unk1C[0]);
+                    temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_39c(temp_s4->unk1C[var_v1_2]);
                     temp_t1 = temp_s4->base.setup * temp_v0_2->base.setup;
                     for (var_s0 = 1; var_s0 < _bss_E4; var_s0++)
                     {
@@ -124,7 +122,6 @@ void dll_25_func_D8(void)
                     }
                     if (temp_s0->unk1C[var_v1_2] == 0)
                     {
-                        // asm uses s1, might be @fake use of var_s0
                         for (var_s0 = 0; var_s0 < 4; var_s0++)
                         {
                             if (temp_s4->base.uID == temp_v0_2->unk1C[var_s0])
@@ -136,23 +133,23 @@ void dll_25_func_D8(void)
                         _bss_E0[_bss_E4].unk1C = temp_t1;
                         sp80[_bss_E4 * 2 + 0] = temp_s4->base.setup;
                         sp80[_bss_E4 * 2 + 1] = temp_v0_2->base.setup;
-                        sp24C[0] = (var_s7->type26.unk34 * 5.7f) + temp_s4->base.x;
-                        sp24C[2] = (var_s7->type26.unk35 * 5.7f) + temp_s4->base.z;
-                        sp240[0] = (var_s7->type26.unk36 * 5.7f) + temp_s4->base.x;
-                        sp240[2] = (var_s7->type26.unk37 * 5.7f) + temp_s4->base.z;
+                        sp24C[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->base.x;
+                        sp24C[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->base.z;
+                        sp240[0] = (temp_s4->type26.unk34[var_v1_2][2] * 5.7f) + temp_s4->base.x;
+                        sp240[2] = (temp_s4->type26.unk34[var_v1_2][3] * 5.7f) + temp_s4->base.z;
                         _bss_E0[_bss_E4].unk1E = (sp24C[0] + sp240[0]) / 2; // use 2 instead of 2.0f to force a div.s
                         _bss_E0[_bss_E4].unk20 = (sp24C[2] + sp240[2]) / 2; // use 2 instead of 2.0f to force a div.s
                         dll_25_func_D00(sp24C, sp240, &_bss_E0[_bss_E4].unk0[0], &_bss_E0[_bss_E4].unk8[0]);
-                        sp24C[0] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x34] * 5.7f) + temp_v0_2->base.x;
-                        sp24C[2] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x35] * 5.7f) + temp_v0_2->base.z;
+                        sp24C[0] = (temp_v0_2->type26.unk34[var_s0][0] * 5.7f) + temp_v0_2->base.x;
+                        sp24C[2] = (temp_v0_2->type26.unk34[var_s0][1] * 5.7f) + temp_v0_2->base.z;
                         dll_25_func_D00(sp240, sp24C, &_bss_E0[_bss_E4].unk0[2], &_bss_E0[_bss_E4].unk8[1]);
-                        sp240[0] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x36] * 5.7f) + temp_v0_2->base.x;
-                        sp240[2] = (((s8 *)temp_v0_2 + var_s0 * 4)[0x37] * 5.7f) + temp_v0_2->base.z;
+                        sp240[0] = (temp_v0_2->type26.unk34[var_s0][2] * 5.7f) + temp_v0_2->base.x;
+                        sp240[2] = (temp_v0_2->type26.unk34[var_s0][3] * 5.7f) + temp_v0_2->base.z;
                         _bss_E0[_bss_E4].unk22 = (sp24C[0] + sp240[0]) / 2; // use 2 instead of 2.0f to force a div.s
                         _bss_E0[_bss_E4].unk24 = (sp24C[2] + sp240[2]) / 2; // use 2 instead of 2.0f to force a div.s
                         dll_25_func_D00(sp24C, sp240, &_bss_E0[_bss_E4].unk0[4], &_bss_E0[_bss_E4].unk8[2]);
-                        sp24C[0] = (var_s7->type26.unk34 * 5.7f) + temp_s4->base.x;
-                        sp24C[2] = (var_s7->type26.unk35 * 5.7f) + temp_s4->base.z;
+                        sp24C[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->base.x;
+                        sp24C[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->base.z;
                         dll_25_func_D00(sp240, sp24C, &_bss_E0[_bss_E4].unk0[6], &_bss_E0[_bss_E4].unk8[3]);
                         temp_fv0 = temp_s4->base.y + (2.0f * temp_s4->unk18);
                         temp_fv1 = temp_v0_2->base.y + (2.0f * temp_v0_2->unk18);

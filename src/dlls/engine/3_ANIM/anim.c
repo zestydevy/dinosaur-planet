@@ -62,18 +62,14 @@ enum AnimCurvesEvents {
 };
 
 typedef struct {
-u32 unk0;
-u32 unk4;
+    Object *unk0;
+    s32 unk4;
 } ANIMBSSUnk0;
 
 typedef struct{
     Object* object;
     Object* overrideObject;
 } ANIMActorOverride;
-
-typedef struct{
-    ANIMActorOverride actors[16];
-} ANIMUnknownBSS708;
 
 typedef struct {
     u16 unk0;
@@ -86,13 +82,6 @@ typedef struct {
 /*04*/ s8 unk4[0xAD - 4];
 /*AD*/ s8 unkAD;
 } ANIMState;
-
-typedef struct {
-/*00*/ s8 unk0[0x80 - 0];
-/*80*/ s32 unk80;
-/*84*/ s8 unk84[0x9D - 0x84];
-/*9D*/ u8 unk9D;
-} ANIMUnknown;
 
 /*0x0*/ static const char str_0[] = "Max activates reached\n";
 /*0x18*/ static const char str_18[] = "CODE OVERFLOW\n";
@@ -119,7 +108,7 @@ typedef struct {
 };
 /*0x1C*/ static s8 _data_1C[4] = {0,0,0,0};
 /*0x20*/ static s32 _data_20 = -1;
-/*0x24*/ static s32 _data_24 = 0;
+/*0x24*/ static Object *_data_24 = 0;
 /*0x28*/ static s8 _data_28[] = {
     0, 0, 0, 0
 };
@@ -268,7 +257,7 @@ typedef struct {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_ctor.s")
 #else
 // Needs dll_3_func_98 matched 
-void dll_3_func_98();
+void dll_3_func_98(void);
 
 void dll_3_ctor(s32 arg0) {
     _bss_5D8 = mmAlloc(0x10, ALLOC_TAG_ANIMSEQ_COL, 0);
@@ -282,11 +271,12 @@ void dll_3_dtor(s32 arg0) {
 }
 
 // offset: 0x98 | func: 0 | export: 0
+void dll_3_func_98(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_98.s")
 
 // offset: 0x2C0 | func: 1 | export: 1
 void dll_3_func_2C0(s32 arg0, s32 arg1, s32 arg2) {   
-    if (arg0 >= 0 && arg0 < ANIMCURVES_SCENES_MAX && _bss_6F8[0] < ANIMCURVES_ACTORS_MAX){
+    if (arg0 >= 0 && arg0 < ANIMCURVES_SCENES_MAX && _bss_6F8[0] < ANIMCURVES_ACTORS_MAX) {
         (&_bss_698[_bss_6F8[0]])->unk0 = arg0;
         (&_bss_698[_bss_6F8[0]])->totalActors = arg2;
         (&_bss_698[_bss_6F8[0]])->unk2 = arg1; _bss_6F8[0]++; 
@@ -315,6 +305,7 @@ void dll_3_func_394(s32 arg0, s32 arg1) {
 }
 
 // offset: 0x3D0 | func: 5 | export: 4
+s32 dll_3_func_3D0(Object* object, s32 updateRate);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3D0.s")
 
 // offset: 0x15FC | func: 6
@@ -343,7 +334,7 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
     s32 returnVal;
 
     returnVal = 0;
-    if (state->unk9D & 0x40){
+    if (state->unk9D & 0x40) {
         returnVal = 1;
         state->unk9D &= 0xFFBF;
         state->animCurvesCurrentFrameA = state->unk80;
@@ -442,7 +433,7 @@ void dll_3_func_4924(Object* arg0, Object** arg1, ModelInstance** arg2) {
     Object *obj;
 
     obj = state->object;
-    if (!obj){
+    if (!obj) {
         obj = arg0;
     }
 
@@ -554,6 +545,7 @@ void dll_3_func_72E0(s32 arg0) {
 }
 
 // offset: 0x730C | func: 39 | export: 5
+void dll_3_func_730C(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_730C.s")
 
 // offset: 0x7974 | func: 40 | export: 6
@@ -562,7 +554,7 @@ void dll_3_func_7974(AnimObj_Data* arg0, AnimObjSetup* setup) {
     s32 size;
     s32 animCurvesIndex;
 
-    if (setup->sequenceIdBitfield == -1){
+    if (setup->sequenceIdBitfield == -1) {
         return;
     }
 
@@ -570,7 +562,7 @@ void dll_3_func_7974(AnimObj_Data* arg0, AnimObjSetup* setup) {
     arg0->animCurvesEventCount = 0;
     animCurvesIndex = setup->sequenceIdBitfield;
 
-    if (animCurvesIndex & ANIMCURVES_IS_OBJSEQ2CURVE_INDEX){
+    if (animCurvesIndex & ANIMCURVES_IS_OBJSEQ2CURVE_INDEX) {
         queue_load_file_region_to_ptr((void *) _bss_5D8, OBJSEQ2CURVE_TAB, (((s32) (animCurvesIndex & 0x7FF0)) >> 4) * 2, 8);
         animCurvesIndex = ((s16 *) _bss_5D8)[0] + (animCurvesIndex & 0xF);
     } else {
@@ -580,12 +572,12 @@ void dll_3_func_7974(AnimObj_Data* arg0, AnimObjSetup* setup) {
     queue_load_file_region_to_ptr((void *) _bss_5D8, ANIMCURVES_TAB, animCurvesIndex * 8, 0x10);
     animcurves_bin_offset = ((s32 *) _bss_5D8)[1];
     size = (((s32 *) _bss_5D8)[0] >> 0x10) & 0xFFFF;
-    if (!size){
+    if (!size) {
         return;
     }
 
     arg0->animCurvesEvents = mmAlloc(size, ALLOC_TAG_ANIMSEQ_COL, 0);
-    if (arg0->animCurvesEvents == NULL){
+    if (arg0->animCurvesEvents == NULL) {
         return;
     }
 
@@ -595,13 +587,13 @@ void dll_3_func_7974(AnimObj_Data* arg0, AnimObjSetup* setup) {
     arg0->animCurvesKeyframes = (AnimCurvesKeyframe *) (&arg0->animCurvesEvents[arg0->animCurvesEventCount]);
     arg0->unk63 = setup->unk1F;
 
-    if (arg0->unk63 >= 0){
+    if (arg0->unk63 >= 0) {
         _bss_108[arg0->unk63] = 0;
         _bss_138[arg0->unk63] = 0;
         _bss_198[arg0->unk63] = 0;
     }
 
-    if (setup->unk22 != 0){
+    if (setup->unk22 != 0) {
         arg0->unk8B = 2;
     } else {
         arg0->unk8B = 0;
@@ -644,31 +636,27 @@ void dll_3_func_7B64(AnimObj_Data* state) {
     state->animCurvesDuration = 1000;
     for (index = 0; index < 2 && index < state->animCurvesEventCount; index++) {
         if ((&state->animCurvesEvents[index])->type == ANIMCURVES_EVENTS_setDuration) {
-            state->animCurvesDuration = (&state->animCurvesEvents[index])->params + 1;
+            state->animCurvesDuration = state->animCurvesEvents[index].params + 1;
         }
     }
 }
 
 // offset: 0x7C6C | func: 42 | export: 8
-void dll_3_func_7C6C(AnimObj_Data* arg0) {
-    s32 temp_a0;
-    s32 temp_a2;
-
-    temp_a2 = (s32)arg0->animCurvesEvents;
-    if (temp_a2) {
-        mmFree((void*)temp_a2);
-        arg0->animCurvesEvents = 0;
-        arg0->animCurvesKeyframes = 0;
+void dll_3_func_7C6C(AnimObj_Data* state) {
+    if (state->animCurvesEvents) {
+        mmFree(state->animCurvesEvents);
+        state->animCurvesEvents = 0;
+        state->animCurvesKeyframes = 0;
     }
 
-    temp_a0 = arg0->unk2C;
-    if (temp_a0) {
-        mmFree((void*)temp_a0);
-        arg0->unk2C = 0;
+    if (state->unk2C) {
+        mmFree(state->unk2C);
+        state->unk2C = 0;
     }
 }
 
 // offset: 0x7CF0 | func: 43 | export: 9
+void dll_3_func_7CF0(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_7CF0.s")
 
 // offset: 0x81F8 | func: 44
@@ -678,7 +666,7 @@ void dll_3_func_7C6C(AnimObj_Data* arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_8598.s")
 
 // offset: 0x8878 | func: 46 | export: 12
-s32 dll_3_func_8878(void){
+s32 dll_3_func_8878(void) {
     return 1;
 }
 
@@ -693,7 +681,7 @@ void dll_3_func_88A0(s32 arg0) {
 }
 
 // offset: 0x88BC | func: 49 | export: 11
-s32 dll_3_func_88BC(s32 arg0){
+s32 dll_3_func_88BC(s32 arg0) {
     return 0;
 }
 
@@ -703,22 +691,24 @@ s32 dll_3_func_88CC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x88E8 | func: 51 | export: 16
-void dll_3_func_88E8(s32 arg0, s32 arg1, s32 arg2, s32 arg3){
+void dll_3_func_88E8(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x8900 | func: 52 | export: 17
+void dll_3_func_8900(s32 objectSeqIndex, Object* object, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_8900.s")
 
 // offset: 0x906C | func: 53 | export: 18
+void dll_3_func_906C(s32 arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_906C.s")
 
 // offset: 0x9358 | func: 54 | export: 20
-void dll_3_func_9358(s32 arg0, s32 arg1) {
+void dll_3_func_9358(Object *arg0, s32 arg1) {
     ANIMBSSUnk0 *temp;
     s8 currentValue;
 
     currentValue = _bss_20[0];    
-    if (currentValue < 4){
+    if (currentValue < 4) {
         temp = &_bss_0[currentValue];
         temp->unk0 = arg0;
         temp->unk4 = arg1;
@@ -730,7 +720,7 @@ void dll_3_func_9358(s32 arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_93A0.s")
 
 // offset: 0x9440 | func: 56 | export: 21
-void dll_3_func_9440(ANIMUnknown* arg0, s32 arg1) {
+void dll_3_func_9440(AnimObj_Data* arg0, s32 arg1) {
     arg0->unk80 = arg1;
     arg0->unk9D |= 0x40;
 }
@@ -796,7 +786,7 @@ Object* dll_3_func_9C08(s32 animCurvesIndex, Object* searchObject) {
 
     actors = _bss_708[animCurvesIndex];
 
-    for (i = 0; i < ANIMCURVES_ACTORS_MAX; i++){
+    for (i = 0; i < ANIMCURVES_ACTORS_MAX; i++) {
         if (searchObject == actors[i].object) {
             return actors[i].overrideObject;
         }
@@ -814,10 +804,10 @@ void dll_3_func_9C94(s32 index, Object* object, Object* overrideObject) {
     actors = (u8*)&_bss_708[index][0];
     actorObject = NULL;
 
-    for (offset = 0; offset < 0x80; offset += 8){
+    for (offset = 0; offset < 0x80; offset += 8) {
         actor = (ANIMActorOverride *) (actors + offset);
         actorObject = actor->object;
-        if (!actorObject || object == actorObject){
+        if (!actorObject || object == actorObject) {
             break;
         }
     }
@@ -838,7 +828,7 @@ void dll_3_func_9DD4(void) {
 }
 
 // offset: 0x9E58 | func: 70 | export: 30
-s32 dll_3_func_9E58(s32 arg0, s32 arg1, s32 arg2) {
+s32 dll_3_func_9E58(s32 arg0, Object *arg1, s32 arg2) {
     _data_20 = arg0;
     _data_24 = arg1;
     _data_1C[0] = arg2;
@@ -859,7 +849,7 @@ s32 dll_3_func_9E88(f32 arg0, f32 arg1, f32 arg2) {
 
 // offset: 0x9F90 | func: 73 | export: 32
 s32 dll_3_func_9F90(s32 arg0, s32 arg1) {
-    switch (arg1){
+    switch (arg1) {
         case 0:
             _bss_1D88[0] = (_bss_1D88[0] & 0xFFFF) | 0x80;
             break;

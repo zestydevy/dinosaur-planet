@@ -27,7 +27,8 @@ typedef struct sndstate {
 } sndstate;
 
 void audioStop(sndstate *state);
-void audioPostEvent(sndstate *state, s16 type, s32 data);
+// data depends on the given type parameter. See N_ALSndpEvent for reference on which data can be expected/sent
+void audioPostEvent(sndstate *state, s16 type, void *data);
 s32 sndGetState(sndstate *state);
 void func_80066978(u8 index, u16 volume);
 sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan, f32 pitch, u8 fxmix, u8 fxbus, sndstate **handleptr);

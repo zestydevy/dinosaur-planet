@@ -615,7 +615,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             }
             break;
         case 2:
-            if ((snowhorn->unkAF & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
+            if ((snowhorn->unkAF & 4) && gDLL_1_UI->vtbl->func_DF4(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
                 main_decrement_bits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->func17(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
@@ -624,7 +624,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
             }
             break;
         case 4:
-            if ((snowhorn->unkAF & 4) && gDLL_1_UI->vtbl->func7(BIT_SW_Alpine_Roots)) {
+            if ((snowhorn->unkAF & 4) && gDLL_1_UI->vtbl->func_DF4(BIT_SW_Alpine_Roots)) {
                 main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
                 main_decrement_bits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->func17(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
@@ -1029,7 +1029,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             //SpellStone activation
             if (func_80032538(self)) {
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
-            } else if (gDLL_1_UI->vtbl->func7(0x123)) {
+            } else if (gDLL_1_UI->vtbl->func_DF4(0x123)) {
                 main_set_bits(BIT_SpellStone_DIM_Activated, 1);
                 objdata->flags = 7;
                 main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
