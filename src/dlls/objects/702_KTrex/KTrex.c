@@ -179,7 +179,7 @@ enum KTFxFlags {
     KTFX_Sound_Explosion = 0x20000,
     KTFX_Sound_GroundScrape = 0x40000,
     KTFX_Sound_PainRoar = 0x80000,
-    KTFX_EnablePartFx = 0x100000,
+    KTFX_EnablePartFx = 0x100000
 };
 
 /*0x0*/ static u32 _data_0[] = {
