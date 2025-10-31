@@ -75,6 +75,7 @@
 393 = objects/393_CFMainSlideDoor
 398 = objects/398_CFMagicWall
 408 = objects/408_IMIceMountain
+417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
 447 = objects/447_CCguardgiving
 449 = objects/449_CClightfoot

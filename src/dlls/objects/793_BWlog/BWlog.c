@@ -131,7 +131,7 @@ void dll_793_control(Object* self) {
 
     objdata = (BWlog_Data*)self->data;
     sp98 = 10000.0f;
-    objdata->unk338 = obj_get_nearest_type_to(0x17, self, &sp98);
+    objdata->unk338 = obj_get_nearest_type_to(OBJTYPE_23, self, &sp98);
     if (objdata->unk338 != NULL) {
         temp_s0 = (ObjType23Setup*)objdata->unk338->setup;
         sp98 = vec3_distance(&self->positionMirror, &objdata->unk338->positionMirror);
@@ -205,9 +205,9 @@ void dll_793_control(Object* self) {
         sp184[0] = objdata->unk278[i].x * gUpdateRateF;
         sp184[1] = objdata->unk278[i].y * gUpdateRateF;
         sp184[2] = objdata->unk278[i].z * gUpdateRateF;
-        objdata->unk260[i].f[0] = objdata->unk260[i].f[0] + sp184[0];
-        objdata->unk260[i].f[1] = objdata->unk260[i].f[1] + sp184[1];
-        objdata->unk260[i].f[2] = objdata->unk260[i].f[2] + sp184[2];
+        objdata->unk260[i].x = objdata->unk260[i].x + sp184[0];
+        objdata->unk260[i].y = objdata->unk260[i].y + sp184[1];
+        objdata->unk260[i].z = objdata->unk260[i].z + sp184[2];
     }
     sp178[0] = objdata->unk260[0].x + objdata->unk260[1].x;
     sp178[1] = objdata->unk260[0].y + objdata->unk260[1].y;
@@ -267,7 +267,6 @@ s32 dll_793_func_950(Object *self, Object *a1) {
     return 0;
 }
 
-
 // offset: 0x9E0 | func: 8 | export: 8
 s32 dll_793_func_9E0(Object *self) {
     SRT sp88;
@@ -307,7 +306,7 @@ void dll_793_func_B28(Object *self, f32 *a1, f32 *a2, f32 *a3) {
 }
 
 // offset: 0xB48 | func: 10 | export: 10
-s32 dll_793_func_B48(Object *self, u32 a1) {
+s32 dll_793_func_B48(Object *self, Object *a1) {
     BWlog_Data *objdata;
     f32 var_fs0;
     s32 i;
@@ -337,9 +336,9 @@ void dll_793_func_C4C(Object *self, f32 *a1, f32 *a2, f32 *a3) {
     sp30.pitch = 0;
     sp30.roll = 0;
     sp30.scale = 1.0f;
-    sp30.transl.x = self->srt.transl.f[0];
-    sp30.transl.y = self->srt.transl.f[1];
-    sp30.transl.z = self->srt.transl.f[2];
+    sp30.transl.x = self->srt.transl.x;
+    sp30.transl.y = self->srt.transl.y;
+    sp30.transl.z = self->srt.transl.z;
     matrix_from_srt(&sp48, &sp30);
     vec3_transform(&sp48, 0.0f, 0.0f, -10.0f, a1, a2, a3);
 }
