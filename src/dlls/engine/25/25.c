@@ -532,11 +532,11 @@ CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
         temp_s0 = result[i].setup;
         if ((temp_s0 != NULL) && 
             (temp_s0->unk19 == 0x24) && 
-            ((arg1 == -1) || (arg1 == temp_s0->base.setup)) && 
-            ((arg2 == -1) || (arg2 == temp_s0->unk1A)) && 
-            ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) && 
-            ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) && 
-            ((temp_s0->type24.unk32 == -1) || (main_get_bits(temp_s0->type24.unk32) == 0)))
+            ((arg1 == -1) || (arg1 == temp_s0->base.setup)) &&
+            ((arg2 == -1) || (arg2 == temp_s0->unk1A)) &&
+            ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) &&
+            ((temp_s0->type22.unk30 == -1) || (main_get_bits(temp_s0->type22.unk30) != 0)) &&
+            ((temp_s0->type22.usedBit == -1) || (main_get_bits(temp_s0->type22.usedBit) == 0)))
         {
             temp_fv0 = arg0[0] - temp_s0->base.x;
             temp_fv1 = arg0[1] - temp_s0->base.y;

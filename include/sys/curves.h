@@ -22,17 +22,13 @@ typedef struct {
 // TODO: some of this depends on the curve type (unk19 not unk18?)
 /*30*/ union {
     struct {
-        s32 unk30;
+        s32 pad30;
         s16 unk34;
     } type15;
     struct {
         /*30*/ s16 unk30; // gameBit
         /*32*/ s16 usedBit; // gameBit
-    } type22; // kyte?
-    struct {
-        s16 unk30; // gameBit
-        s16 unk32; // gameBit
-    } type24; // tricky?
+    } type22; // kyte / tricky?
     struct {
         /*30*/ s8 unk30; 
         /*31*/ s8 unk31;

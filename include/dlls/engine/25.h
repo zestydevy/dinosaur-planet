@@ -43,26 +43,26 @@ typedef struct Dll25BssE0 {
 
 DLL_INTERFACE(DLL_25) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/* 0 */ void (*dll_25_func_D8)(void);
-/* 1 */ s32 (*dll_25_func_1158)(f32* arg0, Dll25BssDC* arg1);
-/* 2 */ s32 (*dll_25_func_12FC)(Vec3 arg0);
-/* 3 */ s32 (*dll_25_func_1474)(Vec3 arg0, s32 arg1);
-/* 4 */ s32 (*dll_25_func_15B0)(Vec3 arg0, s32 arg1, s32 arg2);
-// returns a CurveSetup of type 0x24
-/* 5 */ CurveSetup* (*dll_25_func_1864)(Vec3 arg0, s32 arg1, s32 arg2);
-// returns a CurveSetup of type 0x24
-/* 6 */ CurveSetup* (*dll_25_func_1A2C)(Vec3 arg0, s32 arg1, s32 arg2);
-/* 7 */ s32 (*dll_25_func_16D4)(Vec3f* arg0, Vec3f* arg1, s32 arg2);
-/* 8 */ s32 (*dll_25_func_1D30)(UnkCurvesStruct* arg0, CurveSetup* arg1, CurveSetup* arg2, CurveSetup* arg3);
-/* 9 */ s32 (*dll_25_func_21F4)(UnkCurvesStruct* arg0, CurveSetup* arg1) ;
-/* 10 */ s32 (*dll_25_func_27A8)(UnkCurvesStruct* arg0, CurveSetup* arg1);
-/* 11 */ void (*dll_25_func_29FC)(UnkCurvesStruct* arg0);
+/*0*/ void (*func_D8)(void);
+/*1*/ s32 (*func_1158)(f32 *arg0, Dll25BssDC *arg1);
+/*2*/ s32 (*func_12FC)(Vec3 arg0);
+/*3*/ s32 (*func_1474)(Vec3 arg0, s32 arg1);
+/*4*/ s32 (*func_15B0)(Vec3 arg0, s32 arg1, s32 arg2);
 // returns a CurveSetup of type 0x22
-/* 12 */ CurveSetup* (*dll_25_func_2A50)(Object *obj, s32 arg1);
+/*5*/ CurveSetup *(*func_1864)(Vec3 arg0, s32 arg1, s32 arg2);
 // returns a CurveSetup of type 0x22
-/* 13 */ CurveSetup* (*dll_25_func_2BC4)(Object *obj, s32 arg1);
+/*6*/ CurveSetup *(*func_1A2C)(Vec3 arg0, s32 arg1, s32 arg2);
+/*7*/ s32 (*func_16D4)(Vec3f *arg0, Vec3f *arg1, s32 arg2);
+/*8*/ s32 (*func_1D30)(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, CurveSetup *arg3);
+/*9*/ s32 (*func_21F4)(UnkCurvesStruct *arg0, CurveSetup *arg1);
+/*10*/ s32 (*func_27A8)(UnkCurvesStruct *arg0, CurveSetup *arg1);
+/*11*/ void (*func_29FC)(UnkCurvesStruct* arg0);
 // returns a CurveSetup of type 0x22
-/* 14 */ CurveSetup* (*dll_25_func_2CF8)(Object *obj, s32 arg1);
+/*12*/ CurveSetup *(*func_2A50)(Object *obj, s32 arg1);
+// returns a CurveSetup of type 0x22
+/*13*/ CurveSetup *(*func_2BC4)(Object *obj, s32 arg1);
+// returns a CurveSetup of type 0x22
+/*14*/ CurveSetup *(*func_2CF8)(Object *obj, s32 arg1);
 };
 
 #endif //_DLLS_25_H
