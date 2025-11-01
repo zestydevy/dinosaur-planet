@@ -139,8 +139,8 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
     }
     _data_0 = NULL;
     if (!(data->flags & 0x01000000) && !(data->flags & 0x400000)) {
-        gDLL_27->vtbl->func_1e8(obj, &data->unk4, fsaUpdateRate);
-        gDLL_27->vtbl->func_5a8(obj, &data->unk4);
+        gDLL_27->vtbl->func_1E8(obj, &data->unk4, fsaUpdateRate);
+        gDLL_27->vtbl->func_5A8(obj, &data->unk4);
         gDLL_27->vtbl->func_624(obj, &data->unk4, arg3);
         if (data->unk4.unk25C & 0x10) {
             data->flags |= 0x40000;

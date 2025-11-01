@@ -17,11 +17,12 @@ static u8 sFadeType;
 static u8 sIsComplete;
 static u8 sDelayTimer;
 
-void screen_fade_fade_reversed(s32, s32);
-/*static*/ void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
-/*static*/ void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue);
-/*static*/ void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue);
+void screen_fade_fade_reversed(s32 duration, s32 type);
+static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
+static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue);
+static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red, u8 green, u8 blue);
 
+// offset: 0x0 | ctor
 void screen_fade_ctor(void *self) {
     sFadeAlpha = 0;
     sFadeSpeed = 0;
@@ -31,13 +32,11 @@ void screen_fade_ctor(void *self) {
     sDelayTimer = 0;
 }
 
+// offset: 0x4C | dtor
 void screen_fade_dtor(void *self) {
 }
 
-// called functions just need to be static, then it matches
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/28_screen_fade/screen_fade_draw.s")
-#else
+// offset: 0x58 | func: 0 | export: 0
 void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     Object *player;
 
@@ -83,47 +82,52 @@ void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             break;
     }
 }
-#endif
 
-void screen_fade_fade(s32 param1, s32 param2) {
+// offset: 0x294 | func: 1 | export: 1
+void screen_fade_fade(s32 duration, s32 type) {
     if (sFadeSpeed <= 0.0f || sFadeAlpha == 255.0f) {
         sFadeAlpha = 0.0f;
     }
 
-    sFadeSpeed = 256.0f / param1;
+    sFadeSpeed = 256.0f / duration;
     sAutoReverseTimer = 0.0f;
-    sFadeType = param2;
+    sFadeType = type;
     sDelayTimer = 0;
 }
 
-void screen_fade_fade_reversed(s32 param1, s32 param2) {
+// offset: 0x320 | func: 2 | export: 2
+void screen_fade_fade_reversed(s32 duration, s32 type) {
     if (sFadeSpeed >= 0.0f || sFadeAlpha == 0.0f) {
         sFadeAlpha = 255.0f;
     }
 
-    sFadeSpeed = -256.0f / param1;
+    sFadeSpeed = -256.0f / duration;
     sAutoReverseTimer = 0.0f;
-    sFadeType = param2;
+    sFadeType = type;
     sDelayTimer = 1;
 }
 
-void screen_fade_func_3AC(s32 param1, s32 param2, f32 param3) {
-    sFadeAlpha = param3 * 255.0f;
-    sFadeSpeed = -(param3 * 256.0f) / param1;
+// offset: 0x3AC | func: 3 | export: 3
+void screen_fade_func_3AC(s32 param1, s32 type, f32 alphaFactor) {
+    sFadeAlpha = alphaFactor * 255.0f;
+    sFadeSpeed = -(alphaFactor * 256.0f) / param1;
     sAutoReverseTimer = 0.0f;
-    sFadeType = param2;
+    sFadeType = type;
     sDelayTimer = 1;
 }
 
-f32 screen_fade_get_progress() {
+// offset: 0x41C | func: 4 | export: 5
+f32 screen_fade_get_progress(void) {
     return sFadeAlpha;
 }
 
-s32 screen_fade_is_complete() {
+// offset: 0x438 | func: 5 | export: 4
+s32 screen_fade_is_complete(void) {
     return sIsComplete;
 }
 
-/*static */ void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+// offset: 0x454 | func: 6
+static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 ulx;
     s32 uly;
     s32 lrx;
@@ -150,7 +154,8 @@ s32 screen_fade_is_complete() {
     func_80002490(gdl);
 }
 
-/*static */ void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue) {
+// offset: 0x6DC | func: 7
+static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue) {
     s32 ulx;
     s32 uly;
     s32 lrx;
@@ -176,5 +181,113 @@ s32 screen_fade_is_complete() {
     func_80002490(gdl);
 }
 
-// https://decomp.me/scratch/WVuzl
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/28_screen_fade/screen_fade_draw_radial.s")
+// offset: 0x968 | func: 8
+static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red, u8 green, u8 blue) {
+    s32 ulx;
+    s32 uly;
+    s32 lrx;
+    s32 lry;
+    u16 temp_s4;
+    u16 height;
+    u16 temp_s5;
+    u16 spB0;
+    u16 spAE;
+    u16 sp64;
+    u16 temp_t7;
+    u16 spA8;
+    u16 width;
+    u8 var_a1;
+    u8 spA4;
+    s32 pad;
+
+    func_80002130(&ulx, &uly, &lrx, &lry);
+    width = lrx - ulx;
+    height = lry - uly;
+    if (sFadeAlpha > 127.0f) {
+        spA4 = 0xFF;
+        sp64 = sFadeAlpha - 127.0f;
+    } else {
+        spA4 = 2.0f * sFadeAlpha;
+        sp64 = 0;
+    }
+    temp_s5 = width / 2;
+    // 0.0078125f = (1 / 128)
+    temp_t7 = (sp64 * temp_s5) * 0.0078125f;
+    if (temp_t7 == temp_s5) {
+        screen_fade_draw_simple(gdl, mtxs, vtxs, red & 0xFF, blue, green);
+    temp_s4 = temp_s5 - temp_t7 - 1;
+        return;
+    }
+    spA8 = temp_s5 - temp_t7; // going left from center
+    spAE = temp_s5 + temp_t7; // going right from center
+    temp_s4 = temp_s5 - temp_t7 - 1;
+    gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, ulx, uly, lrx, lry);
+    gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
+    dl_apply_combine(gdl);
+    gDPSetOtherMode(*gdl, 
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | 
+            G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2);
+    dl_apply_other_mode(gdl);
+
+    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF,  spA4);
+    // fill centered rect expanding out horz
+    gDPFillRectangle((*gdl)++, temp_s4 + ulx + 1, uly, spAE + ulx, lry);
+    gDLBuilder->needsPipeSync = 1;
+
+    var_a1 = spA8 / (temp_s5 / 6);
+    if (var_a1 <= 0) {
+        var_a1 = 1;
+    }
+    for (spB0 = 0; spB0 < (spA8 - var_a1); spB0 += var_a1, spAE += var_a1, temp_s4 -= var_a1) {
+        dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+
+        gDPFillRectangle((*gdl)++, spAE + ulx, uly, spAE + ulx + var_a1, lry);
+        gDLBuilder->needsPipeSync = 1;
+
+        gDPFillRectangle((*gdl)++, ((temp_s4 + ulx) - var_a1) + 1, uly, temp_s4 + ulx + 1, lry);
+        gDLBuilder->needsPipeSync = 1;
+    }
+    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+
+    gDPFillRectangle((*gdl)++, spAE + ulx, uly, lrx, lry);
+    gDLBuilder->needsPipeSync = 1;
+
+    gDPFillRectangle((*gdl)++, ulx, uly, temp_s4 + ulx + 1, lry);
+    gDLBuilder->needsPipeSync = 1;
+
+    temp_s5 = height / 2;
+    temp_t7 = (sp64 * temp_s5) * 0.0078125f;
+    spA8 = temp_s5 - temp_t7; // going down from center
+    spAE = temp_s5 + temp_t7; // going up from center
+    temp_s4 = temp_s5 - temp_t7 - 1;
+
+    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, spA4);
+
+    gDPFillRectangle((*gdl)++, ulx, uly + temp_s4 + 1, lrx, uly + spAE);
+    gDLBuilder->needsPipeSync = 1;
+
+    var_a1 = spA8 / (temp_s5 / 8);
+    if (var_a1 <= 0) {
+        var_a1 = 1;
+    }
+    for (spB0 = 0; spB0 < (spA8 - var_a1); spB0 += var_a1, spAE += var_a1, temp_s4 -= var_a1) {
+        dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+
+        gDPFillRectangle((*gdl)++, ulx, uly + spAE, lrx, uly + spAE + var_a1);
+        gDLBuilder->needsPipeSync = 1;
+
+        gDPFillRectangle((*gdl)++, ulx, ((uly + temp_s4) - var_a1) + 1, lrx, uly + temp_s4 + 1);
+        gDLBuilder->needsPipeSync = 1;
+    }
+
+    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, ((temp_s5 - spB0) * spA4) / temp_s5);
+
+    gDPFillRectangle((*gdl)++, ulx, uly + spAE, lrx, lry);
+    gDLBuilder->needsPipeSync = 1;
+
+    gDPFillRectangle((*gdl)++, ulx, uly, lrx, uly + temp_s4 + 1);
+    gDLBuilder->needsPipeSync = 1;
+
+    func_80002490(gdl);
+}

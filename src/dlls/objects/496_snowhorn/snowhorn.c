@@ -360,8 +360,8 @@ void dll_496_control(Object* snowhorn) {
     }
     
     if (objdata->unk424 & 1) {
-        gDLL_27->vtbl->func_1e8(snowhorn, &objdata->unk170, gUpdateRateF);
-        gDLL_27->vtbl->func_5a8(snowhorn, &objdata->unk170);
+        gDLL_27->vtbl->func_1E8(snowhorn, &objdata->unk170, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(snowhorn, &objdata->unk170);
         gDLL_27->vtbl->func_624(snowhorn, &objdata->unk170, gUpdateRateF);
     }
 

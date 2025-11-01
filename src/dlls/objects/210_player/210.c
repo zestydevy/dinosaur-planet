@@ -598,8 +598,8 @@ void dll_210_control(Object* arg0) {
     data->unk870 = 0;
     data->unk8AD = 0U;
     dll_210_func_2534(arg0, data, data);
-    gDLL_27->vtbl->func_1e8(arg0, &data->unk0.unk4, gUpdateRateF);
-    gDLL_27->vtbl->func_5a8(arg0, &data->unk0.unk4);
+    gDLL_27->vtbl->func_1E8(arg0, &data->unk0.unk4, gUpdateRateF);
+    gDLL_27->vtbl->func_5A8(arg0, &data->unk0.unk4);
     gDLL_27->vtbl->func_624(arg0, &data->unk0.unk4, gUpdateRateF);
     if (data->unk868 != NULL) {
         dll_210_func_47B8(arg0, data);
