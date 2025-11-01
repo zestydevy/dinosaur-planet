@@ -28,7 +28,11 @@ typedef struct {
     struct {
         /*30*/ s16 unk30; // gameBit
         /*32*/ s16 usedBit; // gameBit
-    } type22; // kyte / tricky?
+    } type22; // kyte?
+    struct {
+        s16 unk30; // gameBit
+        s16 unk32; // gameBit
+    } type24; // tricky?
     struct {
         /*30*/ s8 unk30; 
         /*31*/ s8 unk31;

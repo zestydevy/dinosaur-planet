@@ -16,7 +16,7 @@ _exports:
 .dword dll_7_func_D08
 .dword dll_7_func_D50
 .dword dll_7_func_DAC
-.dword dll_7_set_seconds_till_nighttime
+.dword dll_7_func_DF4
 .dword dll_7_func_EA0
 .dword dll_7_func_F24
 .dword dll_7_convert_ticks_to_real_time

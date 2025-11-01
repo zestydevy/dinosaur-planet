@@ -237,7 +237,7 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
         func_8000F64C(0x1D, 0x2D);
         func_8000F6CC();
     } else if (objdata->unk2 == 3) {
-        if (gDLL_7_Newday->vtbl->set_seconds_till_nighttime(&time)) {
+        if (gDLL_7_Newday->vtbl->func8(&time)) {
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
         } else {
@@ -325,7 +325,7 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
 
     objdata = self->data;
     player = get_player();
-    isNighttime = gDLL_7_Newday->vtbl->set_seconds_till_nighttime(&time);
+    isNighttime = gDLL_7_Newday->vtbl->func8(&time);
 
     if (arg1 != 0) {
         if (objdata->index1 >= SOMESIZE) {

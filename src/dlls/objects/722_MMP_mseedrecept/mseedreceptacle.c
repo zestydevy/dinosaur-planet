@@ -121,7 +121,7 @@ void moonSeedReceptacle_control(Object* self) {
         self->unk36 = 0xFF;
     }
     
-    if (gDLL_7_Newday->vtbl->set_seconds_till_nighttime(&time) || objData->unk0 == 3){
+    if (gDLL_7_Newday->vtbl->func8(&time) || objData->unk0 == 3){
         objData->unk1 |= 2;
     } else {
         objData->unk1 &= 0xFFFD;

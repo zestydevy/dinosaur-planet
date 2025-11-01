@@ -70,7 +70,7 @@ void GP_LevelControl_control(Object *self) {
     objdata->mapID = map_get_map_id_from_xz_ws(player->srt.transl.x, player->srt.transl.z);
 
     // heat reducing energy cutscene
-    if (!gDLL_7_Newday->vtbl->set_seconds_till_nighttime(&time) && !main_get_bits(BIT_643) && ((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0) {
+    if (!gDLL_7_Newday->vtbl->func8(&time) && !main_get_bits(BIT_643) && ((DLL_210_Player*)player->dll)->vtbl->func43(player) == 0) {
         if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xA) != 0) {
             timerInc = 10.0f;
         } else {

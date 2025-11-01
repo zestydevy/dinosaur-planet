@@ -22,7 +22,7 @@ DLL_INTERFACE(DLL_7_newday) {
 /*5*/ void (*func5)(f32* arg0);
 /*6*/ UnknownDLLFunc func6;
 /*7*/ void (*func7)(s32 *param1);
-/*8*/ s32 (*set_seconds_till_nighttime)(f32* outTime);
+/*8*/ s32 (*func8)(f32* outTime); // check if night-time
 /*9*/ void (*func9)(f32 time);
 /*10*/ s32 (*func10)(void);
 /*11*/ void (*convert_ticks_to_real_time)(f32 ticksF, s16 *hours, s16 *minutes, s16 *seconds);

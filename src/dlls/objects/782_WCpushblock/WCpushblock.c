@@ -93,7 +93,7 @@ s32 dll_782_func_FF0(Object* self, WCPushBlock_Data* objdata, Object* player) {
     f32* time;
     u8 isNighttime;
 
-    isNighttime = gDLL_7_Newday->vtbl->set_seconds_till_nighttime((f32*)&time);
+    isNighttime = gDLL_7_Newday->vtbl->func8((f32*)&time);
 
     if (self->modelInstIdx == 1) {
         //Sun block?

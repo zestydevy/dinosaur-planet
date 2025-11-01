@@ -212,7 +212,7 @@ void dll_7_func_DAC(s32 *param1) {
  * Checks if nighttime
  * Also sets the argument float to the seconds until nighttime/daytime
  */
-s32 dll_7_set_seconds_till_nighttime(f32* outTime) {
+s32 dll_7_func_DF4(f32* outTime) {
     if (_bss_30 == NULL) {
         *outTime = 0.0f;
         return FALSE;
