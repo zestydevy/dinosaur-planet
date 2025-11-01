@@ -1036,7 +1036,7 @@ static void trigger_point_update(Object *self, Object *activator) {
     prevDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
 
     if (setup->localID > 0) {
-        currDist = gDLL_26_Curves->vtbl->curves_func_14f4(7, setup->localID,
+        currDist = gDLL_26_Curves->vtbl->func_14F4(7, setup->localID,
             objdata->activatorCurrPos.x, objdata->activatorCurrPos.y, objdata->activatorCurrPos.z,
             &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z);
         
@@ -1423,9 +1423,9 @@ static void trigger_curve_update(Object *self, Object *activator) {
     objdata = (Trigger_Data*)self->data;
     setup = (Trigger_Setup*)self->setup;
     
-    temp_v0 = gDLL_26_Curves->vtbl->curves_func_1e4(objdata->activatorCurrPos.x, objdata->activatorCurrPos.y, objdata->activatorCurrPos.z, &sp34, 1, setup->localID);
-    sp3C = gDLL_26_Curves->vtbl->curves_func_291c(temp_v0, objdata->activatorCurrPos.x, objdata->activatorCurrPos.y, objdata->activatorCurrPos.z, &dist);
-    temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_291c(temp_v0, objdata->activatorPrevPos.x, objdata->activatorPrevPos.y, objdata->activatorPrevPos.z, &dist);
+    temp_v0 = gDLL_26_Curves->vtbl->func_1E4(objdata->activatorCurrPos.x, objdata->activatorCurrPos.y, objdata->activatorCurrPos.z, &sp34, 1, setup->localID);
+    sp3C = gDLL_26_Curves->vtbl->func_291C(temp_v0, objdata->activatorCurrPos.x, objdata->activatorCurrPos.y, objdata->activatorCurrPos.z, &dist);
+    temp_v0_2 = gDLL_26_Curves->vtbl->func_291C(temp_v0, objdata->activatorPrevPos.x, objdata->activatorPrevPos.y, objdata->activatorPrevPos.z, &dist);
     
     if (sp3C != 0) {
         if (temp_v0_2 == 0) {

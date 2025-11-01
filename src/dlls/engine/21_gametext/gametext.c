@@ -22,6 +22,7 @@ static s8 sCurrentBankIndex = -1;
 
 void gametext_set_bank(s8 bank);
 
+// offset: 0x0 | ctor
 void gametext_ctor(void *self) {
     u16 *header;
 
@@ -42,18 +43,22 @@ void gametext_ctor(void *self) {
     gametext_set_bank(0);
 }
 
+// offset: 0x120 | dtor
 void gametext_dtor(void *self) {
     mmFree(sCurrentBank);
 }
 
-u16 gametext_bank_count() {
+// offset: 0x160 | func: 0 | export: 0
+u16 gametext_bank_count(void) {
     return sBankCount;
 }
 
-u16 gametext_chunk_count() {
+// offset: 0x17C | func: 1 | export: 1
+u16 gametext_chunk_count(void) {
     return sBankEntryCount;
 }
 
+// offset: 0x198 | func: 2 | export: 2
 void gametext_set_bank(s8 bank) {
     u32 offset;
 
@@ -74,10 +79,12 @@ void gametext_set_bank(s8 bank) {
     sCurrentBank_GlobalOffset = *((u32*)sCurrentBank);
 }
 
-s8 gametext_curr_bank() {
+// offset: 0x224 | func: 3 | export: 3
+s8 gametext_curr_bank(void) {
     return sCurrentBankIndex;
 }
 
+// offset: 0x240 | func: 4 | export: 4
 GameTextChunk *gametext_get_chunk(u16 chunk) {
     GameTextChunk *chunkPtr;
     s32 headerSize;
@@ -128,6 +135,7 @@ GameTextChunk *gametext_get_chunk(u16 chunk) {
     return chunkPtr;
 }
 
+// offset: 0x420 | func: 5 | export: 5
 char *gametext_get_text(u16 chunk, u16 strIndex) {
     u8 *text;
     char *str;

@@ -131,8 +131,8 @@ void SHspore_control(Object* self) {
         self->speed.x = objdata->unk274 + (objdata->unk27C * objdata->unk268);
         self->speed.z = objdata->unk278 + (objdata->unk280 * objdata->unk268);
         obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
-        gDLL_27->vtbl->func_1e8(self, &objdata->unk0, gUpdateRateF);
-        gDLL_27->vtbl->func_5a8(self, &objdata->unk0);
+        gDLL_27->vtbl->func_1E8(self, &objdata->unk0, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, &objdata->unk0);
         gDLL_27->vtbl->func_624(self, &objdata->unk0, gUpdateRateF);
         func_80026128(self, 0xA, 0, 0);
 

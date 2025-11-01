@@ -378,12 +378,12 @@ s16 dll_13_func_228(ExpgfxStruct* arg0, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_C18.s")
 #else
 // needs dll_13_func_2298 to be static
-void dll_13_func_C18(u8 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void dll_13_func_C18(u8 arg0, s32 updateRate, s32 arg2, s32 arg3) {
     u8 i;
 
     if (func_80000824(-1) != 1) {
         D_8008C504 = 1;
-        dll_13_func_2298(arg0, arg1, 0);
+        dll_13_func_2298(arg0, updateRate, 0);
         D_8008C504 = 0;
         i = 30;
         do {
@@ -437,19 +437,19 @@ void dll_13_func_CEC(void) {
 }
 
 // offset: 0xED4 | func: 4 | export: 4
-void dll_13_func_ED4(Object* arg0) {
+void dll_13_func_ED4(Object* obj) {
     UnkBss0Struct* var_s1;
     s32 var_s0;
     s32 var_s2;
 
     var_s0 = 0;
     
-    if (arg0 != NULL) {
+    if (obj != NULL) {
         for (var_s2 = 0; var_s2 < 30; var_s2++) {
             var_s1 = _bss_0[var_s2];
-            if (arg0 == _bss_118[var_s2]) {
+            if (obj == _bss_118[var_s2]) {
                 for (var_s0 = 0; var_s0 < 30; var_s0++) {
-                    if ((var_s1 != NULL) && (arg0 == _bss_190[var_s1->unk8A].unk0)) {
+                    if ((var_s1 != NULL) && (obj == _bss_190[var_s1->unk8A].unk0)) {
                         dll_13_func_4F2C(var_s2, var_s0, 0);
                     }
                     var_s1 += 1;
@@ -465,11 +465,12 @@ void dll_13_func_ED4(Object* arg0) {
 }
 
 // offset: 0x1048 | func: 5 | export: 5
-void dll_13_func_1048(Object *arg0) {
-    dll_13_func_ED4(arg0);
+void dll_13_func_1048(Object *obj) {
+    dll_13_func_ED4(obj);
 }
 
 // offset: 0x1080 | func: 6 | export: 6
+void dll_13_func_1080(Object *arg0, Gfx **gdl, Mtx **mtxs, Vertex **vertices, s32 arg4, s32 arg5, s32 arg6);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/13_expgfx/dll_13_func_1080.s")
 
 // offset: 0x1EEC | func: 7 | export: 7
@@ -479,19 +480,19 @@ void dll_13_func_1EEC(void) { }
 void dll_13_func_1EF4(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3) { }
 
 // offset: 0x1F0C | func: 9 | export: 9
-void dll_13_func_1F0C(Object *arg0) {
-    dll_13_func_ED4(arg0);
+void dll_13_func_1F0C(Object *obj) {
+    dll_13_func_ED4(obj);
 }
 
 // offset: 0x1F44 | func: 10 | export: 10
-s8 dll_13_func_1F44(Object* arg0) {
+s8 dll_13_func_1F44(Object* obj) {
     s16 i;
     s8 var_v1;
 
     var_v1 = 0;
     _data_64 = 0;
     for (i = 0; i < 30; i++) {
-        if ((arg0->id == OBJ_FXEmit) || (arg0 == _bss_118[i])) {
+        if ((obj->id == OBJ_FXEmit) || (obj == _bss_118[i])) {
             if ((1 << i) & _bss_110) {
                 _data_3C[i] = 2;
                 if (var_v1 == 1) {
@@ -511,7 +512,7 @@ s8 dll_13_func_1F44(Object* arg0) {
             _data_3C[i] = 0;
         }
     }
-    if ((arg0->id == OBJ_WL_WallTorch) && (_data_0[29] != -1)) { // ???
+    if ((obj->id == OBJ_WL_WallTorch) && (_data_0[29] != -1)) { // ???
         _data_64 = 1;
     }
     return var_v1;

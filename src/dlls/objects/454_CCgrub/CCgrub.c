@@ -51,10 +51,9 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
             setup->unk19 = setup->unk18;
         }
         sp3C = self->data;
-        temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_39c(gDLL_26_Curves->vtbl->curves_func_1e4(self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], NULL, -1, -1));
-        sp34 = gDLL_26_Curves->vtbl->curves_func_39c(gDLL_26_Curves->vtbl->curves_func_438(temp_v0_2, -1));
-        gDLL_25->vtbl->dll_25_func_1D30(&sp3C->unk0, temp_v0_2, sp34, 
-            gDLL_26_Curves->vtbl->curves_func_39c(gDLL_26_Curves->vtbl->curves_func_438(sp34, -1)));
+        temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], NULL, -1, -1));
+        sp34 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(temp_v0_2, -1));
+        gDLL_25->vtbl->func_1D30(&sp3C->unk0, temp_v0_2, sp34, gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp34, -1)));
         CCgrub_func_AB0(self, sp3C, 0.2f);
         func_800053B0(&sp3C->unk0, 0.1f);
         self->srt.transl.x = temp_v0_2->base.x;
@@ -101,12 +100,12 @@ void CCgrub_control(Object* self) {
         objdata->unk109 = 0;
     }
     if ((objdata->unk0.unk80 == 0) && (objdata->unk0.unk10 != 0)) {
-        sp60 = gDLL_26_Curves->vtbl->curves_func_438(objdata->unk0.unkA4, -1);
+        sp60 = gDLL_26_Curves->vtbl->func_438(objdata->unk0.unkA4, -1);
     } else if ((objdata->unk0.unk80 != 0) && (objdata->unk0.unk10 == 0)) {
-        sp60 = gDLL_26_Curves->vtbl->curves_func_590(objdata->unk0.unkA4, -1);
+        sp60 = gDLL_26_Curves->vtbl->func_590(objdata->unk0.unkA4, -1);
     }
     if (sp60 >= 0) {
-        gDLL_25->vtbl->dll_25_func_21F4(&objdata->unk0, gDLL_26_Curves->vtbl->curves_func_39c(sp60));
+        gDLL_25->vtbl->func_21F4(&objdata->unk0, gDLL_26_Curves->vtbl->func_39C(sp60));
     }
     switch (objdata->unk109) {
     case 0:

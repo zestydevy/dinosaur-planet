@@ -73,7 +73,7 @@ void dll_25_func_D8(void)
     s32 var_v1_2;
     f32 sp70[2];
 
-    curvesResult = gDLL_26_Curves->vtbl->curves_func_1bc(&curvesCount);
+    curvesResult = gDLL_26_Curves->vtbl->func_1BC(&curvesCount);
     bzero(_bss_0, 0xD9);
     for (sp270 = 0; sp270 < 256; sp270++)
     {
@@ -110,7 +110,7 @@ void dll_25_func_D8(void)
                 temp_s0->unk1C[var_v1_2] = 0;
                 if (temp_s4->unk1C[var_v1_2] >= 0)
                 {
-                    temp_v0_2 = gDLL_26_Curves->vtbl->curves_func_39c(temp_s4->unk1C[var_v1_2]);
+                    temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_s4->unk1C[var_v1_2]);
                     temp_t1 = temp_s4->base.setup * temp_v0_2->base.setup;
                     for (var_s0 = 1; var_s0 < _bss_E4; var_s0++)
                     {
@@ -524,7 +524,7 @@ CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
     CurveNode *result;
     CurveSetup *out;
 
-    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->func_1BC(&count);
     out = NULL;
     var_fs0 = F32_MAX;
     for (i = 0; i < count; i++)
@@ -532,10 +532,10 @@ CurveSetup *dll_25_func_1864(Vec3 arg0, s32 arg1, s32 arg2)
         temp_s0 = result[i].setup;
         if ((temp_s0 != NULL) && 
             (temp_s0->unk19 == 0x24) && 
-            ((arg1 == -1) || (arg1 == temp_s0->base.setup)) && 
-            ((arg2 == -1) || (arg2 == temp_s0->unk1A)) && 
-            ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) && 
-            ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) && 
+            ((arg1 == -1) || (arg1 == temp_s0->base.setup)) &&
+            ((arg2 == -1) || (arg2 == temp_s0->unk1A)) &&
+            ((temp_s0->unk1C[0] != -1) || (temp_s0->unk2F == -1)) &&
+            ((temp_s0->type24.unk30 == -1) || (main_get_bits(temp_s0->type24.unk30) != 0)) &&
             ((temp_s0->type24.unk32 == -1) || (main_get_bits(temp_s0->type24.unk32) == 0)))
         {
             temp_fv0 = arg0[0] - temp_s0->base.x;
@@ -566,7 +566,7 @@ CurveSetup *dll_25_func_1A2C(Vec3 arg0, s32 arg1, s32 arg2)
     s32 var_t0;
     s32 var_v1;
 
-    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->func_1BC(&count);
     out = NULL;
     var_v1 = 0;
     var_fs0 = F32_MAX;
@@ -632,7 +632,7 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, 
         arg0->unkF8[2] = 2.0f * (fcos16_precise(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
     }
-    if (gDLL_25->vtbl->dll_25_func_21F4(arg0, arg3) != 0)
+    if (gDLL_25->vtbl->func_21F4(arg0, arg3) != 0)
     {
         return 1;
     }
@@ -767,7 +767,7 @@ CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
     f32 var_fs0;
     s32 i;
 
-    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->func_1BC(&count);
     out = NULL;
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)
@@ -802,7 +802,7 @@ CurveSetup *dll_25_func_2BC4(Object *obj, s32 arg1)
     f32 var_fs0;
     s32 i;
 
-    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->func_1BC(&count);
     out = NULL;
     i = 0;
     var_fs0 = 1e12f;
@@ -836,7 +836,7 @@ CurveSetup *dll_25_func_2CF8(Object *obj, s32 arg1)
     f32 var_fs0;
     s32 i;
 
-    result = gDLL_26_Curves->vtbl->curves_func_1bc(&count);
+    result = gDLL_26_Curves->vtbl->func_1BC(&count);
     out = NULL;
     var_fs0 = 1e12f;
     for (i = 0; i < count; i++)

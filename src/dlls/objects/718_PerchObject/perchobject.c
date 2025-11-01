@@ -87,7 +87,7 @@ void perchObject_control(Object* self) {
     switch (stateIndex){
         case STATE_0_Initialise:
             //Get the curveCreateInfo for Kyte's flight group
-            curveSetup = gDLL_25->vtbl->dll_25_func_2A50(self, objSetup->kyteFlightGroup);
+            curveSetup = gDLL_25->vtbl->func_2A50(self, objSetup->kyteFlightGroup);
             objData->curveSetup = curveSetup;
             if (curveSetup){
                 objData->stateIndex = STATE_1_Wait_for_Player_to_Instruct_Kyte;

@@ -345,7 +345,7 @@ void GPbonfire_func_A44(Object* self) {
     objdata->stateIndex = STATE_4_ADDING_TUMBLEWEEDS;
 
     //Set flag based on Kyte's curve motion
-    curves = gDLL_25->vtbl->dll_25_func_2BC4(self, setup->kyteCurveID);
+    curves = gDLL_25->vtbl->func_2BC4(self, setup->kyteCurveID);
     objdata->curves = curves;
     if (curves->type22.usedBit != -1) {
         main_set_bits(curves->type22.usedBit, 1);
