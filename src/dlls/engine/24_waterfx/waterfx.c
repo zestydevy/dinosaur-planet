@@ -86,10 +86,9 @@ typedef struct StructBss3C
 static const u8 allocateMemoryError[] = "Could not allocate memory for waterfx dll\n";
 
 void waterfx_func_24C(void);
-void waterfx_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4);
-void waterfx_func_174C(f32, f32, f32, f32);
-void waterfx_func_1B28(f32, f32, f32, s16, f32);
-void waterfx_func_1CC8(f32, f32, f32, s16, f32, s32);
+void waterfx_func_174C(f32 arg0, f32 arg1, f32 arg2, f32 arg3);
+void waterfx_func_1B28(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4);
+void waterfx_func_1CC8(f32 arg0, f32 arg1, f32 arg2, s16 arg3, f32 arg4, s32 arg5);
 
 static StructBss8 *_bss_0; // 120 items
 static DLTri *_bss_4; // 60 items
@@ -282,34 +281,27 @@ void waterfx_func_24C(void) {
 }
 
 // offset: 0x564 | func: 1 | export: 1
-void waterfx_func_564(Func564Arg0 *arg0, u16 arg1, Vec3f *arg2, Func564Arg3 *arg3, f32 arg4)
+void waterfx_func_564(SRT *transform, u16 arg1, Vec3f *arg2, DLL27_Data *arg3, f32 arg4)
 {
     f32 temp_fs1;
     f32 temp_fs2;
     s32 i;
 
-    if (arg1 != 0)
-    {
-        i = 0;
-        do
-        {
-            if (arg1 & 1)
-            {
-                temp_fs1 = arg2[i].x;
-                temp_fs2 = arg2[i].z;
-                if (arg3->unk1B0 < 10.0f)
-                {
-                    waterfx_func_174C(temp_fs1, arg0->unk10 + arg3->unk1B0, temp_fs2, 0.0f);
-                }
-                waterfx_func_1CC8(temp_fs1, arg0->unk10 + arg3->unk1B0, temp_fs2, arg0->unk0, 0.0f, 3);
+    i = 0;
+    while (arg1) {
+        if (arg1 & 1) {
+            temp_fs1 = arg2[i].x;
+            temp_fs2 = arg2[i].z;
+            if (arg3->underwaterDist < 10.0f) {
+                waterfx_func_174C(temp_fs1, transform->transl.y + arg3->underwaterDist, temp_fs2, 0.0f);
             }
-            arg1 >>= 1;
-            i += 1;
-        } while (arg1);
+            waterfx_func_1CC8(temp_fs1, transform->transl.y + arg3->underwaterDist, temp_fs2, transform->yaw, 0.0f, 3);
+        }
+        arg1 >>= 1;
+        i += 1;
     }
-    if (arg4 > 0.01f)
-    {
-        waterfx_func_1B28(arg0->unkC, arg0->unk10 + arg3->unk1B0, arg0->unk14, arg0->unk0, 0.0f);
+    if (arg4 > 0.01f) {
+        waterfx_func_1B28(transform->transl.x, transform->transl.y + arg3->underwaterDist, transform->transl.z, transform->yaw, 0.0f);
     }
 }
 

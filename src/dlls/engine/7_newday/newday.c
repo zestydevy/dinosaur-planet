@@ -1,6 +1,5 @@
-#include "PR/ultratypes.h"
 #include "sys/gfx/texture.h"
-#include "unktypes.h"
+#include "dlls/engine/7_newday.h"
 
 #define DAYTIME 18000.0f //5am
 #define NIGHTTIME 75600.0f //9pm
@@ -163,28 +162,43 @@ typedef struct
 /*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
 /*0x34*/ static u8 _bss_34[0x28];
 
+// offset: 0x0 | ctor
 void dll_7_ctor(void *self) { }
 
+// offset: 0xC | dtor
 void dll_7_dtor(void *self) { }
 
+// offset: 0x18 | func: 0 | export: 0
+void dll_7_func_18(Object *arg0, Object *arg1, void *arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_18.s")
 
+// offset: 0x910 | func: 1 | export: 1
+void dll_7_func_910(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_910.s")
 
+// offset: 0xA10 | func: 2 | export: 2
+void dll_7_func_A10(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_A10.s")
 
+// offset: 0xC58 | func: 3 | export: 3
+void dll_7_func_C58(Gfx **gdl, Mtx **arg1, u8 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_C58.s")
 
+// offset: 0xCDC | func: 4 | export: 4
 void dll_7_func_CDC(f32* timeSeconds) {
     if (_bss_30 != NULL) {
         *timeSeconds = _bss_30->timeSeconds;
     }
 }
 
+// offset: 0xD08 | func: 5 | export: 5
+void dll_7_func_D08(f32* arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D08.s")
 
+// offset: 0xD50 | func: 6 | export: 6
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D50.s")
 
+// offset: 0xDAC | func: 7 | export: 7
 void dll_7_func_DAC(s32 *param1) {
     if (_bss_30 != NULL) {
         *param1 = (f32)_bss_30->unkE4;
@@ -194,32 +208,36 @@ void dll_7_func_DAC(s32 *param1) {
 }
 
 /** 
-  * Checks if nighttime
-  * Also sets the argument float to the seconds until nighttime/daytime 
-  */
-s32 dll_7_func_DF4(f32* timeSeconds) {
+ * offset: 0xDF4 | func: 8 | export: 8
+ * Checks if nighttime
+ * Also sets the argument float to the seconds until nighttime/daytime
+ */
+s32 dll_7_func_DF4(f32* outTime) {
     if (_bss_30 == NULL) {
-        *timeSeconds = 0.0f;
+        *outTime = 0.0f;
         return FALSE;
     }
 
     //If night
     if (_data_5C >= NIGHTTIME || _data_5C < DAYTIME) {
         if (_data_5C >= NIGHTTIME) {
-            *timeSeconds = (_data_5C - NIGHTTIME) + DAYTIME; //seconds into nighttime (added to base daytime?)
+            *outTime = (_data_5C - NIGHTTIME) + DAYTIME; //seconds into nighttime (added to base daytime?)
         } else {
-            *timeSeconds = DAYTIME - _data_5C; //seconds until daytime (when time in 0-to-daytime range)
+            *outTime = DAYTIME - _data_5C; //seconds until daytime (when time in 0-to-daytime range)
         }
 
         return TRUE;
     }
 
     //If day
-    *timeSeconds = NIGHTTIME - _data_5C; //seconds until nighttime
+    *outTime = NIGHTTIME - _data_5C; //seconds until nighttime
     return FALSE;
 }
 
-/** Sets the current time (in seconds), wrapping the value into a 24h range */
+/**
+ * offset: 0xEA0 | func: 9 | export: 9
+ * Sets the current time (in seconds), wrapping the value into a 24h range
+ */
 void dll_7_func_EA0(f32 time) {
     f32 tWrap;
 
@@ -238,11 +256,12 @@ void dll_7_func_EA0(f32 time) {
     _data_8 = tWrap;
 }
 
-s32 dll_7_func_F24() {
+// offset: 0xF24 | func: 10 | export: 10
+s32 dll_7_func_F24(void) {
     return _data_60;
 }
 
-// F40
+// offset: 0xF40 | func: 11 | export: 11
 void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 *seconds) {
     s32 ticks = (s32)ticksF;
     
@@ -255,48 +274,72 @@ void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 
     *seconds = ticks / TICKS_IN_SECOND;
 }
 
+// offset: 0xFFC | func: 12 | export: 12
+s32 dll_7_func_FFC(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_FFC.s")
 
+// offset: 0x102C | func: 13 | export: 13
+void dll_7_func_102C(Gfx **gdl, Mtx **arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_102C.s")
 
+// offset: 0x20D4 | func: 14 | export: 14
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_20D4.s")
 
+// offset: 0x2130 | func: 15 | export: 15
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2130.s")
 
+// offset: 0x21CC | func: 16
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_21CC.s")
 
+// offset: 0x2464 | func: 17
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2464.s")
 
+// offset: 0x30FC | func: 18
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_30FC.s")
 
+// offset: 0x3294 | func: 19
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_3294.s")
 
+// offset: 0x4484 | func: 20
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_4484.s")
 
+// offset: 0x5124 | func: 21
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5124.s")
 
+// offset: 0x56F8 | func: 22
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_56F8.s")
 
+// offset: 0x57C0 | func: 23
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_57C0.s")
 
+// offset: 0x5818 | func: 24
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5818.s")
 
+// offset: 0x5D20 | func: 25 | export: 16
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D20.s")
 
+// offset: 0x5D6C | func: 26 | export: 17
 s32 dll_7_func_5D6C(void) {
     return _bss_27 & 0xF;
 }
 
+// offset: 0x5D90 | func: 27 | export: 18
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D90.s")
 
+// offset: 0x5DBC | func: 28 | export: 19
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5DBC.s")
 
+// offset: 0x5E00 | func: 29 | export: 20
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E00.s")
 
+// offset: 0x5E5C | func: 30 | export: 21
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E5C.s")
 
+// offset: 0x5EB4 | func: 31 | export: 22
 u8 dll_7_func_5EB4(void) {
     return _bss_26;
 }
 
+// offset: 0x5ED0 | func: 32 | export: 23
+s32 dll_7_func_5ED0(Gfx **gdl);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5ED0.s")

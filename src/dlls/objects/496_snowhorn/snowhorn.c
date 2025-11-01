@@ -360,8 +360,8 @@ void dll_496_control(Object* snowhorn) {
     }
     
     if (objdata->unk424 & 1) {
-        gDLL_27->vtbl->func_1e8(snowhorn, &objdata->unk170, gUpdateRateF);
-        gDLL_27->vtbl->func_5a8(snowhorn, &objdata->unk170);
+        gDLL_27->vtbl->func_1E8(snowhorn, &objdata->unk170, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(snowhorn, &objdata->unk170);
         gDLL_27->vtbl->func_624(snowhorn, &objdata->unk170, gUpdateRateF);
     }
 
@@ -816,7 +816,7 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     objdata->someAnimIDList = (s16*)_data_27C;
     objdata->unk48 = _data_280;
 
-    result = gDLL_26_Curves->vtbl->curves_func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
+    result = gDLL_26_Curves->vtbl->func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
     if (!result){
         snowhorn->srt.transl.x = objdata->unk60.unk68;
         snowhorn->srt.transl.z = objdata->unk60.unk70;
@@ -902,7 +902,7 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
             return;
         }
         if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
-            gDLL_26_Curves->vtbl->curves_func_4704(curveStruct);
+            gDLL_26_Curves->vtbl->func_4704(curveStruct);
         }
         dx = curveStruct->unk68 - snowhorn->srt.transl.x;
         dz = curveStruct->unk70 - snowhorn->srt.transl.z;

@@ -598,8 +598,8 @@ void dll_210_control(Object* arg0) {
     data->unk870 = 0;
     data->unk8AD = 0U;
     dll_210_func_2534(arg0, data, data);
-    gDLL_27->vtbl->func_1e8(arg0, &data->unk0.unk4, gUpdateRateF);
-    gDLL_27->vtbl->func_5a8(arg0, &data->unk0.unk4);
+    gDLL_27->vtbl->func_1E8(arg0, &data->unk0.unk4, gUpdateRateF);
+    gDLL_27->vtbl->func_5A8(arg0, &data->unk0.unk4);
     gDLL_27->vtbl->func_624(arg0, &data->unk0.unk4, gUpdateRateF);
     if (data->unk868 != NULL) {
         dll_210_func_47B8(arg0, data);
@@ -1349,7 +1349,7 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
     if (arg1->unk8BA != 0) {
         gDLL_32->vtbl->func5(arg2, arg3, arg0);
     }
-    if (gDLL_7_Newday->vtbl->func12.asVoidS32() != 0) {
+    if (gDLL_7_Newday->vtbl->func12() != 0) {
         dll_210_func_41F4(arg0, arg1);
     }
     if (arg1->flags & 0x60000) {

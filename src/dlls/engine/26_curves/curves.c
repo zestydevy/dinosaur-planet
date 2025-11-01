@@ -14,9 +14,9 @@
 s32 dll_26_func_1880(CurveSetup* arg0);
 s32 dll_26_func_1924(CurveSetup *setup);
 static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* a4, f32 a5);
-s32 dll_26_func_4704(UnkCurvesStruct*);
-s32 dll_26_func_5698(CurveSetup*, s32, s32);
-s32 dll_26_func_577C(CurveSetup*, s32, s32);
+s32 dll_26_func_4704(UnkCurvesStruct* arg0);
+s32 dll_26_func_5698(CurveSetup* setup, s32 arg1, s32 arg2);
+s32 dll_26_func_577C(CurveSetup* setup, s32 arg1, s32 arg2);
 
 // offset: 0x0 | ctor
 void dll_26_ctor(void *dll) { }
@@ -858,6 +858,7 @@ s32 dll_26_func_218C(s32 arg0) {
 }
 
 // offset: 0x21FC | func: 25 | export: 16
+s32 dll_26_func_21FC(s32 arg1, s32 arg2, s32* arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_21FC.s")
 
 // offset: 0x277C | func: 26 | export: 17
@@ -975,12 +976,12 @@ static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* 
 }
 
 // offset: 0x2C20 | func: 29 | export: 30
-s32 dll_26_func_2C20(s32*, f32, f32, f32, f32*, f32*, f32*);
+s32 dll_26_func_2C20(s32 *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4, f32 *arg5, f32 *arg6);
 // https://decomp.me/scratch/229KB
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_2C20.s")
 
 // offset: 0x3018 | func: 30 | export: 31
-CurveSetup* dll_26_func_3018(CurveSetup* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
+CurveSetup *dll_26_func_3018(CurveSetup *arg0, f32 arg1, f32 arg2, f32 arg3, f32 *arg4) {
     f32 sp8C;
     f32 sp88;
     f32 sp84;
@@ -1183,10 +1184,11 @@ s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 #endif
 
 // offset: 0x3930 | func: 35 | export: 25
+s32 dll_26_func_3930(CurveSetup *arg0, f32 arg1, f32 arg2, s32 *arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/26_curves/dll_26_func_3930.s")
 
 // offset: 0x3F00 | func: 36 | export: 5
-s32 dll_26_func_3F00(Object* arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
+s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     f32 temp_fs0;
     f32 temp_fv0;
     f32 temp_fv1;
@@ -1199,9 +1201,9 @@ s32 dll_26_func_3F00(Object* arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 var_v0_2;
     u8 temp_t5;
     u8 spE6;
-    CurveSetup* temp_s0;
-    CurveSetup* spDC;
-    CurveSetup* spD8;
+    CurveSetup *temp_s0;
+    CurveSetup *spDC;
+    CurveSetup *spD8;
     Func_80059C40_Struct sp84;
 
     spDC = NULL;

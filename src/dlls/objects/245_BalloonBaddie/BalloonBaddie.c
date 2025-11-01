@@ -70,7 +70,7 @@ void BalloonBaddie_setup(Object *self, BalloonBaddie_Setup *setup, s32 arg2) {
         if (objdata->curveStruct) {
             bzero(objdata->curveStruct, sizeof(UnkCurvesStruct));
         }
-        if (gDLL_26_Curves->vtbl->curves_func_4288(objdata->curveStruct, self, objdata->attackRange, (s32*)&_data_0, -1) == 0) {
+        if (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, objdata->attackRange, (s32*)&_data_0, -1) == 0) {
             objdata->flags |= BALLOONBADDIE_1;
         }
         objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -242,8 +242,8 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
 
     curveStruct = objdata->curveStruct;
     if (((func_800053B0(curveStruct, objdata->unk8) != 0) || (_bss_0 != curveStruct->unk10))
-        && (gDLL_26_Curves->vtbl->curves_func_4704(curveStruct) != 0)
-        && (gDLL_26_Curves->vtbl->curves_func_4288(objdata->curveStruct, self, 400.0f, (s32*) _data_0, -1) != 0)) {
+        && (gDLL_26_Curves->vtbl->func_4704(curveStruct) != 0)
+        && (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, 400.0f, (s32*) _data_0, -1) != 0)) {
         objdata->flags &= ~1;
     }
     _bss_0 = curveStruct->unk10;

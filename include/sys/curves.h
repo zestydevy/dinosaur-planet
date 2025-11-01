@@ -22,7 +22,7 @@ typedef struct {
 // TODO: some of this depends on the curve type (unk19 not unk18?)
 /*30*/ union {
     struct {
-        s32 unk30;
+        s32 pad30;
         s16 unk34;
     } type15;
     struct {

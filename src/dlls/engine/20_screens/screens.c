@@ -67,7 +67,7 @@ void screens_show_screen(s32 screenNo) {
     sRenderScreen = TRUE;
 }
 
-void screens_hide_screen() {
+void screens_hide_screen(void) {
     if (sLoadedScreen != NULL) {
         mmFree(sLoadedScreen);
         sLoadedScreen = NULL;
