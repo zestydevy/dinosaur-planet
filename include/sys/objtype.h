@@ -13,11 +13,12 @@ enum ObjType {
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7,
     OBJTYPE_10 = 10,
-    OBJTYPE_11 = 11,
+    OBJTYPE_11 = 11, // BWlog, DFlog
     OBJTYPE_16 = 16,
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
-    OBJTYPE_23 = 23,
+    OBJTYPE_22 = 22, // DFriverflow
+    OBJTYPE_23 = 23, // DFdockpoint
     OBJTYPE_32 = 32,
     OBJTYPE_39 = 39,
     OBJTYPE_40 = 40,

@@ -76,6 +76,8 @@ enum ParticleID {
     PARTICLE_3B5 = 0x3B5,
     /* --- DLL 42 START --- */
     PARTICLE_3B6 = 0x3B6,
+    PARTICLE_3C4 = 0x3C4,
+    PARTICLE_3C5 = 0x3C5,
     PARTICLE_3DD = 0x3DD,
     /* --- DLL 42 END --- */
     PARTICLE_Gasvent_Gas = 0x3DF,
