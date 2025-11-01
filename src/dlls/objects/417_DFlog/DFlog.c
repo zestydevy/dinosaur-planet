@@ -575,8 +575,8 @@ static void dll_417_func_E8C(Object* arg0) {
     spBC = sqrtf((spD4 * spD4) + (spDC * spDC));
     arg0->srt.pitch = -arctan2_f(spD8, spBC);
     arg0->srt.yaw = arctan2_f(spD4, spDC);
-    gDLL_27->vtbl->func_1e8(arg0, &objdata->unk28C, gUpdateRateF);
-    gDLL_27->vtbl->func_5a8(arg0, &objdata->unk28C);
+    gDLL_27->vtbl->func_1E8(arg0, &objdata->unk28C, gUpdateRateF);
+    gDLL_27->vtbl->func_5A8(arg0, &objdata->unk28C);
     gDLL_27->vtbl->func_624(arg0, &objdata->unk28C, gUpdateRateF);
     temp_s2 = (objdata->unk28C.hitsTouchBits | objdata->unk28C.unk25C) & 3;
     temp_s1_5 = temp_s2 & (temp_s2 ^ objdata->unk4EE);

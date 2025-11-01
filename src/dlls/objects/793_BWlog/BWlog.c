@@ -206,8 +206,8 @@ void dll_793_control(Object* self) {
     sp178[1] = objdata->unk260[1].y - objdata->unk260[0].y;
     sp178[2] = objdata->unk260[1].z - objdata->unk260[0].z;
     self->srt.pitch = -arctan2_f(sp178[1], sqrtf(SQ(sp178[2]) + SQ(sp178[0])));
-    gDLL_27->vtbl->func_1e8(self, &objdata->unk0, gUpdateRateF);
-    gDLL_27->vtbl->func_5a8(self, &objdata->unk0);
+    gDLL_27->vtbl->func_1E8(self, &objdata->unk0, gUpdateRateF);
+    gDLL_27->vtbl->func_5A8(self, &objdata->unk0);
     gDLL_27->vtbl->func_624(self, &objdata->unk0, gUpdateRateF);
     dll_793_func_2020(self, objdata);
     dll_793_func_2444(self, objdata);
