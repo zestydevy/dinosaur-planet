@@ -632,7 +632,7 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, 
         arg0->unkF8[2] = 2.0f * (fcos16_precise(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
     }
-    if (gDLL_25->vtbl->dll_25_func_21F4(arg0, arg3) != 0)
+    if (gDLL_25->vtbl->func_21F4(arg0, arg3) != 0)
     {
         return 1;
     }

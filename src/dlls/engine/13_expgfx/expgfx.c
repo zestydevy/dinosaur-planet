@@ -383,7 +383,7 @@ void dll_13_func_C18(u8 arg0, s32 updateRate, s32 arg2, s32 arg3) {
 
     if (func_80000824(-1) != 1) {
         D_8008C504 = 1;
-        dll_13_func_2298(arg0, arg1, 0);
+        dll_13_func_2298(arg0, updateRate, 0);
         D_8008C504 = 0;
         i = 30;
         do {
