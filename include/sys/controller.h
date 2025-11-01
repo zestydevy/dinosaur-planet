@@ -7,9 +7,6 @@
 #include "PR/os.h"
 #include "PR/sched.h"
 
-// NOTE: This size is NOT CONFIRMED YET
-#define CONTROLLER_THREAD_STACKSIZE 1152
-
 // The length of gContInterruptBuffer
 #define CONT_INTERRUPT_BUFFER_LENGTH 2
 // The length of gContThreadMesgQueueBuffer
@@ -230,7 +227,6 @@ extern s8 gMenuJoyXSign[MAXCONTROLLERS];
 extern s8 gMenuJoyYSign[MAXCONTROLLERS];
 
 extern OSThread gControllerThread;
-extern u8 gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE];
 
 extern OSScClient gContSchedulerClient;
 /**

@@ -1,5 +1,7 @@
 #include "common.h"
 
+#define THREAD_STACK_CONTROLLER 1024
+
 // .data
 
 s32 gNoControllers = 0;
@@ -7,6 +9,40 @@ u16 D_8008C8A4 = 0xFFFF;
 u16 gButtonMask[MAXCONTROLLERS] = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF };
 u8 gIgnoreJoystick = 0;
 u8 D_8008C8B4 = 0;
+
+// .bss
+
+u8 gPrevContSnapshotsI;
+u8 gApplyContInputs;
+u8 gNumBufContSnapshots[2];
+ControllersSnapshot *gContSnapshots[2];
+ControllersSnapshot gContSnapshotsBuffer0[MAX_BUFFERED_CONT_SNAPSHOTS];
+ControllersSnapshot gContSnapshotsBuffer1[MAX_BUFFERED_CONT_SNAPSHOTS];
+OSMesgQueue gContInterruptQueue;
+OSMesgQueue gContThreadMesgQueue;
+OSMesgQueue gContThreadInputsAppliedQueue;
+OSMesg gContInterruptBuffer[CONT_INTERRUPT_BUFFER_LENGTH];
+OSMesg gContThreadMesgQueueBuffer[CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH];
+OSMesg gContThreadInputsAppliedQueueBuffer[CONT_THREAD_INPUTS_APPLIED_QUEUE_BUFFER_LENGTH];
+OSMesg gContInterruptMessage;
+OSContStatus gContStatuses[MAXCONTROLLERS];
+OSContPad gContPads[MAXCONTROLLERS];
+u16 gButtonPresses[MAXCONTROLLERS];
+u16 gButtonReleases[MAXCONTROLLERS];
+u8 gVirtualContPortMap[MAXCONTROLLERS];
+s8 gLastJoyX[MAXCONTROLLERS];
+s8 gLastJoyY[MAXCONTROLLERS];
+s8 gMenuJoyXHoldTimer[MAXCONTROLLERS];
+s8 gMenuJoyYHoldTimer[MAXCONTROLLERS];
+s8 gMenuJoyXSign[MAXCONTROLLERS];
+s8 gMenuJoyYSign[MAXCONTROLLERS];
+OSThread gControllerThread;
+u64 gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)];
+OSScClient gContSchedulerClient;
+s16 gContQueue2Message;
+u8 _unk800A861A[0x1E]; // gap
+s8 gMenuJoystickDelay;
+
 
 // // //
 
@@ -113,220 +149,144 @@ void start_controller_thread(OSSched *scheduler) {
         /*id*/      CONTROLLER_THREAD_ID,
         /*entry*/   &controller_thread_entry,
         /*arg*/     NULL,
-        /*sp*/      &gControllerThreadStack[CONTROLLER_THREAD_STACKSIZE],
+        /*sp*/      &gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)],
         /*pri*/     12
     );
 
     osStartThread(&gControllerThread);
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/input/controller_thread_entry.s")
-#else
-// Needs work, but isn't too far off
-// May have minor errors still
-void controller_thread_entry(void *_) {
-    s16 *contMesg;
-    u32 stackVar1;
+void controller_thread_entry(void* arg) {
+    ControllersSnapshot* currSnap;
+    ControllersSnapshot* compSnap;
+    s16* message;
+    s32 var_a2_2;
+    s32 var_a3;
+    s32 contIdx;
+    s32 snapIdx;
+    s32 stickX;
+    s32 stickY;
 
-    int i; // t3 in asm
-    int k; // v1 in asm
-
-    int totalStickX;
-    int totalStickY;
-
-    ControllersSnapshot *curSnaps;
-    ControllersSnapshot *nextSnaps;
-    ControllersSnapshot *nextSnap;
-    ControllersSnapshot *curSnap;
-
-    gContSnapshots[0] = &gContSnapshotsBuffer0[0];
-    gContSnapshots[1] = &gContSnapshotsBuffer1[0];
-
+    gContSnapshots[0] = gContSnapshotsBuffer0;
+    gContSnapshots[1] = gContSnapshotsBuffer1;
     gNumBufContSnapshots[0] = 0;
     gNumBufContSnapshots[1] = 0;
-
-    contMesg = 0;
-
+    message = NULL;
     gPrevContSnapshotsI = 0;
-
     while (TRUE) {
-        // Wait for signal to process input
-        osRecvMesg(&gContThreadMesgQueue, (OSMesg*)&contMesg, OS_MESG_BLOCK);
-
-        if (*contMesg != 1) {
-            if (*contMesg != 0xA) { // ???
-
-            }
-
-            // Next time a 1 is received, apply inputs after collecting interrupts
-            gApplyContInputs = TRUE;
-        } else {
-            stackVar1 = gPrevContSnapshotsI;
-
-            // Read available controller inputs into a buffer of snapshots
-            if (gNumBufContSnapshots[gPrevContSnapshotsI] < MAX_BUFFERED_CONT_SNAPSHOTS) {
-                curSnaps = gContSnapshots[gPrevContSnapshotsI ^ 1];
-                nextSnaps = gContSnapshots[gPrevContSnapshotsI];
-                nextSnap = &nextSnaps[gNumBufContSnapshots[gPrevContSnapshotsI]];
-                curSnap = &curSnaps[gNumBufContSnapshots[gPrevContSnapshotsI ^ 1] - 1];
-
-                gNumBufContSnapshots[gPrevContSnapshotsI] += 1;
-
-                if ((nextSnap - 1) >= nextSnaps) {
-                    curSnap = nextSnap - 1;
-                }
-
-                if (osRecvMesg(&gContInterruptQueue, NULL, OS_MESG_NOBLOCK) == 0) {
-                    // Queue not empty
-                    osContGetReadData(nextSnap->pads);
-                    osContStartReadData(&gContInterruptQueue);
-                } else {
-                    // Queue empty
-                    bcopy(curSnap, nextSnap, sizeof(ControllersSnapshot));
-                }
-
-                for (i = 0; i != MAXCONTROLLERS; ++i) {
-                    // If no controllers are inserted, assume no buttons are pressed
-                    if (gNoControllers) {
-                        nextSnap->pads[i].button = 0;
+        osRecvMesg(&gContThreadMesgQueue, (OSMesg *) &message, 1);
+        switch (*message) {
+            case 1:
+                if (gNumBufContSnapshots[gPrevContSnapshotsI] < 4) {
+                    compSnap = gContSnapshots[gPrevContSnapshotsI ^ 1];
+                    compSnap = &compSnap[gNumBufContSnapshots[gPrevContSnapshotsI ^ 1] - 1];
+                    currSnap = &gContSnapshots[gPrevContSnapshotsI][gNumBufContSnapshots[gPrevContSnapshotsI]];
+                    gNumBufContSnapshots[gPrevContSnapshotsI]++;
+                    if ((currSnap - 1) >= gContSnapshots[gPrevContSnapshotsI]) {
+                        compSnap = (currSnap - 1);
                     }
-
-                    // Calculate which buttons were just pressed/released by comparing the next/current
-                    // button inputs
-                    nextSnap->buttonPresses[i] = (nextSnap->pads[i].button & (nextSnap->pads[i].button ^ curSnap->pads[i].button)) & D_8008C8A4;
-                    nextSnap->buttonReleases[i] = (curSnap->pads[i].button & (nextSnap->pads[i].button ^ curSnap->pads[i].button)) & D_8008C8A4;
-                }
-            }
-
-            // If we were not signalled to apply inputs, stop here
-            if (gApplyContInputs == FALSE) {
-                // NOTE: Could also be a separate do-while starting at the beginning of the while (TRUE)
-                continue;
-            }
-
-            // Clear cont pads since we're about to update them
-            bzero(&gContPads[0], sizeof(OSContPad) * MAXCONTROLLERS);
-
-            stackVar1 = gPrevContSnapshotsI;
-            nextSnaps = gContSnapshots[gPrevContSnapshotsI];
-
-            for (i = 0; i != MAXCONTROLLERS; ++i) {
-                totalStickX = 0;
-                totalStickY = 0;
-
-                gButtonPresses[i] = 0;
-                gButtonReleases[i] = 0;
-
-                // Combine each buffered snapshot into a single controller state
-                for (k = 0; k < gNumBufContSnapshots[gPrevContSnapshotsI]; ++k) {
-                    gButtonPresses[i] |= nextSnaps[k].buttonPresses[i];
-                    gButtonReleases[i] |= nextSnaps[k].buttonReleases[i];
-
-                    gContPads[i].button |= nextSnaps[k].pads[i].button;
-
-                    totalStickX += nextSnaps[k].pads[i].stick_x;
-                    totalStickY += nextSnaps[k].pads[i].stick_y;
-                }
-
-                gContPads[i].stick_x = totalStickX / gNumBufContSnapshots[gPrevContSnapshotsI];
-                gContPads[i].stick_y = totalStickY / gNumBufContSnapshots[gPrevContSnapshotsI];
-
-                // Handle menu joystick signs by setting gMenuJoy*Sign to the held direction for one
-                // input frame once initially and again every gMenuJoystickDelay input frames.
-                gMenuJoyXSign[i] = 0;
-                gMenuJoyYSign[i] = 0;
-
-                if (gContPads[i].stick_x < -35 && gLastJoyX[i] > -36) {
-                    gMenuJoyXSign[i] = -1;
-                    gMenuJoyXHoldTimer[i] = 0;
-                }
-
-                if (gContPads[i].stick_x > 35 && gLastJoyX[i] < 36) {
-                    gMenuJoyXSign[i] = 1;
-                    gMenuJoyXHoldTimer[i] = 0;
-                }
-
-                if (gContPads[i].stick_y < -35 && gLastJoyY[i] > -36) {
-                    gMenuJoyYSign[i] = -1;
-                    gMenuJoyYHoldTimer[i] = 0;
-                }
-
-                if (gContPads[i].stick_y > 35 && gLastJoyY[i] < 36) {
-                    gMenuJoyYSign[i] = 1;
-                    gMenuJoyYHoldTimer[i] = 0;
-                }
-
-                gLastJoyY[i] = gContPads[i].stick_y;
-
-                if (gLastJoyY[i] < -35) {
-                    gMenuJoyYHoldTimer[i] += 1;
-                } else {
-                    if (gLastJoyY[i] < 36) {
-                        gMenuJoyYHoldTimer[i] = 0;
+                    if (osRecvMesg(&gContInterruptQueue, NULL, 0) == 0) {
+                        osContGetReadData(currSnap->pads);
+                        osContStartReadData(&gContInterruptQueue);
                     } else {
-                        gMenuJoyYHoldTimer[i] += 1;
+                        bcopy(compSnap, currSnap, 0x28);
+                    }
+
+                    for (contIdx = 0; contIdx < 4; contIdx++) {
+                        if (gNoControllers != 0) {
+                            currSnap->pads[contIdx].button = 0;
+                        }
+                        currSnap->buttonPresses[contIdx] = (currSnap->pads[contIdx].button ^ compSnap->pads[contIdx].button) & currSnap->pads[contIdx].button & D_8008C8A4;
+                        currSnap->buttonReleases[contIdx] = (currSnap->pads[contIdx].button ^ compSnap->pads[contIdx].button) & compSnap->pads[contIdx].button & D_8008C8A4;
                     }
                 }
-
-                if (gMenuJoystickDelay < gMenuJoyYHoldTimer[i]) {
-                    gLastJoyY[i] = 0;
-                    gMenuJoyYHoldTimer[i] = 0;
-                }
-
-                gLastJoyX[i] = gContPads[i].stick_x;
-
-                if (gLastJoyX[i] < -35) {
-                    gMenuJoyXHoldTimer[i] += 1;
-                } else {
-                    if (gMenuJoyXHoldTimer[i] < 36) {
-                        gMenuJoyXHoldTimer[i] = 0;
-                    } else {
-                        gMenuJoyXHoldTimer[i] += 1;
+                if (gApplyContInputs != 0) {
+                    bzero(gContPads, 0x18);
+                    for (contIdx = 0; contIdx < 4; contIdx++) {
+                        var_a2_2 = 0;
+                        var_a3 = 0;
+                        gButtonPresses[contIdx] = 0;
+                        gButtonReleases[contIdx] = 0;
+                        
+                        currSnap = gContSnapshots[gPrevContSnapshotsI];
+                        for (snapIdx = 0; snapIdx < gNumBufContSnapshots[gPrevContSnapshotsI]; snapIdx++) {
+                            gButtonPresses[contIdx] |= currSnap->buttonPresses[contIdx];
+                            gButtonReleases[contIdx] |= currSnap->buttonReleases[contIdx];
+                            gContPads[contIdx].button |= currSnap->pads[contIdx].button;
+                            var_a2_2 += currSnap->pads[contIdx].stick_x;
+                            var_a3 += currSnap->pads[contIdx].stick_y;
+                            currSnap++;
+                        }
+                        gContPads[contIdx].stick_x = var_a2_2 / gNumBufContSnapshots[gPrevContSnapshotsI];
+                        gContPads[contIdx].stick_y = var_a3 / gNumBufContSnapshots[gPrevContSnapshotsI];
+                        stickX = gContPads[contIdx].stick_x;
+                        stickY = gContPads[contIdx].stick_y;
+                        gMenuJoyXSign[contIdx] = 0;
+                        gMenuJoyYSign[contIdx] = 0;
+                        
+                        if ((stickX < -0x23) && (gLastJoyX[contIdx] >= -0x23)) {
+                            gMenuJoyXSign[contIdx] = -1;
+                            gMenuJoyXHoldTimer[contIdx] = 0;
+                        }
+                        if ((stickX >= 0x24) && (gLastJoyX[contIdx] < 0x24)) {
+                            gMenuJoyXSign[contIdx] = 1;
+                            gMenuJoyXHoldTimer[contIdx] = 0;
+                        }
+                        if ((stickY < -0x23) && (gLastJoyY[contIdx] >= -0x23)) {
+                            gMenuJoyYSign[contIdx] = -1;
+                            gMenuJoyYHoldTimer[contIdx] = 0;
+                        }
+                        if ((stickY >= 0x24) && (gLastJoyY[contIdx] < 0x24)) {
+                            gMenuJoyYSign[contIdx] = 1;
+                            gMenuJoyYHoldTimer[contIdx] = 0;
+                        }
+                        gLastJoyY[contIdx] = stickY;
+                        if (gLastJoyY[contIdx] < -0x23) {
+                            gMenuJoyYHoldTimer[contIdx] += 1;
+                        } else if (gLastJoyY[contIdx] >= 0x24) {
+                            gMenuJoyYHoldTimer[contIdx] += 1;
+                        } else {
+                            gMenuJoyYHoldTimer[contIdx] = 0;
+                        }
+                        if (gMenuJoystickDelay < gMenuJoyYHoldTimer[contIdx]) {
+                            gLastJoyY[contIdx] = 0;
+                            gMenuJoyYHoldTimer[contIdx] = 0;
+                        }
+                        gLastJoyX[contIdx] = stickX;
+                        if (gLastJoyX[contIdx] < -0x23) {
+                            gMenuJoyXHoldTimer[contIdx] += 1;
+                        } else if (gLastJoyX[contIdx] >= 0x24) {
+                            gMenuJoyXHoldTimer[contIdx] += 1;
+                        } else {
+                            gMenuJoyXHoldTimer[contIdx] = 0;
+                        }
+                        if (gMenuJoystickDelay < gMenuJoyXHoldTimer[contIdx]) {
+                            gLastJoyX[contIdx] = 0;
+                            gMenuJoyXHoldTimer[contIdx] = 0;
+                        }
+                        gButtonMask[contIdx] = 0xFFFF;
                     }
+                    gIgnoreJoystick = 0;
+                    gApplyContInputs = 0;
+                    gPrevContSnapshotsI ^= 1;
+                    gNumBufContSnapshots[gPrevContSnapshotsI] = 0;
+                    osSendMesg(&gContThreadInputsAppliedQueue, &gContQueue2Message, 0);
                 }
-
-                if (gMenuJoystickDelay < gMenuJoyXHoldTimer[i]) {
-                    gLastJoyX[i] = 0;
-                    gMenuJoyXHoldTimer[i] = 0;
-                }
-
-                // Reset button mask to allow all buttons
-                gButtonMask[i] = 0xffff;
-            }
-
-            // Reset ignore joystick
-            gIgnoreJoystick = FALSE;
-
-            // Reset flag for applying inputs
-            gApplyContInputs = FALSE;
-
-            // Reset buffered snapshot count (since we've handled them all)
-            gNumBufContSnapshots[(gPrevContSnapshotsI ^ 1) & 0xff] = 0;
-
-            // Swap snapshot arrays
-            gPrevContSnapshotsI = gPrevContSnapshotsI ^ 1;
-
-            // Signal that inputs were applied
-            osSendMesg(&gContThreadInputsAppliedQueue, &gContQueue2Message, OS_MESG_NOBLOCK);
+                break;
+            case 0xA:
+            default:
+                gApplyContInputs = 1;
+                break;
         }
     }
 }
-#endif
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/input/init_virtual_cont_port_map.s")
-#else
-// Functionally equivalent
-// Making gVirtualContPortMap static fixes it
-void _init_virtual_cont_port_map() {
-    int i;
-
-    for (i = 0; i < MAXCONTROLLERS; ++i) {
+void init_virtual_cont_port_map(void) {
+    s32 i;
+    for (i = 0; i < 4; i++) {
         gVirtualContPortMap[i] = i;
     }
 }
-#endif
 
 /**
  * TODO: Not sure what the intent of this function is, but here's some example in/outs:
