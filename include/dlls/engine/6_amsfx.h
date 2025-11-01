@@ -20,6 +20,8 @@ typedef struct UnkDE8 {
 } UnkDE8;
 
 enum SoundID {
+    SOUND_8F = 0x8F, // used by DFlog
+
     SFX_RECAP_MENU_BACK = 0x5D4,
     SFX_RECAP_MENU_MOVE = 0x5D5,
     SFX_RECAP_MENU_SELECT = 0x5D6,
@@ -121,6 +123,8 @@ enum SoundID {
 
     SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy = 0x74B,
 
+    SOUND_76D = 0x76D, // used by DFlog, BWlog
+
     SOUND_775_Timer_Countdown = 0x775,
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
@@ -145,6 +149,10 @@ enum SoundID {
 
     SOUND_A71_Rattling_1 = 0xA71, // used by MoonSeeds
     SOUND_A72_Rattling_2 = 0xA72, // used by MoonSeeds
+
+    SOUND_A74 = 0xA74, // used by BWlog
+    SOUND_A75 = 0xA75, // used by BWlog
+    SOUND_A77 = 0xA77, // used by BWlog
 
     SOUND_AAE = 0xAAE, // VFP_lavastar sound
 

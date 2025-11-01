@@ -1,23 +1,15 @@
-#include "common.h"
+#include "PR/os.h"
 #include "dlls/engine/27.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/objects/unknown_setups.h"
+#include "sys/gfx/modgfx.h"
+#include "sys/controller.h"
+#include "sys/dll.h"
+#include "sys/objects.h"
 #include "sys/objtype.h"
 #include "functions.h"
-
-// TODO: move to common area
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-} ObjType22Setup;
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    s16 unk1A;
-} ObjType23Setup;
+#include "dll.h"
 
 typedef struct {
     ObjSetup base;
@@ -37,12 +29,11 @@ typedef struct {
     u8 unk4EC;
     u8 unk4ED;
     u8 unk4EE;
-    u8 _unk4EF[0x4F0 - 0x4EF];
     s16 unk4F0[2];
-    Object *unk4F4;
+    Object *unk4F4; // dockpoint
 } DFlog_Data;
 
-/*0x0*/ static DLL_Unknown *_data_0 = NULL;
+/*0x0*/ static DLL_IModgfx *_data_0 = NULL;
 /*0x4*/ static u32 _data_4[] = {
     0x00000000, 
     0x40000102, 0x00000000, 0x00000000, 
@@ -91,12 +82,15 @@ void dll_417_setup(Object* self, DFlog_Setup* setup, s32 arg2) {
     DFlog_Data* objdata;
     s32 i;
 
-    objdata = self->data;
-    _data_0 = dll_load_deferred(0x1020U, 1U);
-    obj_add_object_type(self, 0xB);
+    objdata = (DFlog_Data*)self->data;
+    _data_0 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_136, 1);
+    obj_add_object_type(self, OBJTYPE_11);
     self->animCallback = dll_417_func_3B8;
     self->srt.yaw = (setup->unk18 & 0xFFFF) << 8;
-    gDLL_27->vtbl->init(&objdata->unk28C, 0, 0x40002, 1);
+    gDLL_27->vtbl->init(&objdata->unk28C, 
+        DLL27FLAG_NONE, 
+        DLL27FLAG_40000 | DLL27FLAG_2, 
+        DLL27MODE_1);
     gDLL_27->vtbl->setup_hits_collider(&objdata->unk28C, 2, _data_EC, _data_104, 8);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk28C, 2, _data_C8, _data_E0, _data_E8);
     gDLL_27->vtbl->reset(self, &objdata->unk28C);
@@ -224,7 +218,7 @@ s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
     objdata = (DFlog_Data*)arg0->data;
     if ((objdata->unk4F4 != 0) && (objdata->unk4EC == 2)) {
         temp_v0 = gDLL_2_Camera->vtbl->func3();
-        if ((temp_v0 != 0x56) && (temp_v0 != 0x60) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (get_masked_button_presses(0) & 0x4000)) {
+        if ((temp_v0 != 0x56) && (temp_v0 != 0x60) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (get_masked_button_presses(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
             for (i = 0; i < 2; i++) {
                 var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
@@ -385,7 +379,7 @@ static void dll_417_func_BC8(Object* arg0) {
         sp9C[i] = 0;
     }
 
-    objList = obj_get_all_of_type(0x16, &objListLength);
+    objList = obj_get_all_of_type(OBJTYPE_22, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];
@@ -446,7 +440,7 @@ static void dll_417_func_E8C(Object* arg0) {
     objdata = (DFlog_Data*)arg0->data;
     sp8D = 0;
     spBC = 10000.0f;
-    objdata->unk4F4 = obj_get_nearest_type_to(0x17, arg0, &spBC);
+    objdata->unk4F4 = obj_get_nearest_type_to(OBJTYPE_23, arg0, &spBC);
     if (objdata->unk4F4 != NULL) {
         temp_s0 = (ObjType23Setup*)objdata->unk4F4->setup;
         spBC = vec3_distance(&arg0->positionMirror, &objdata->unk4F4->positionMirror);
@@ -466,17 +460,17 @@ static void dll_417_func_E8C(Object* arg0) {
     }
     if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->func3() != 0x60)) {
         objdata->unk280 = (f32) ((f32) get_joystick_x(0) * 0.01f);
-        if (get_masked_button_presses(0) & 0x8000) {
+        if (get_masked_button_presses(0) & A_BUTTON) {
             var_fa0 = ((1.3f - objdata->unk288) / 1.3f) * 0.8f;
         } else {
             var_fa0 = -0.05f;
         }
         objdata->unk288 = (f32) (objdata->unk288 + var_fa0);
-        if (get_masked_button_presses(0) & 0x8000) {
+        if (get_masked_button_presses(0) & A_BUTTON) {
             objdata->unk258[0].y = (f32) (objdata->unk258[0].y + 0.08f);
             objdata->unk258[1].y = (f32) (objdata->unk258[1].y - 0.06f);
         }
-        if (get_masked_button_presses(0) & 0x8000) {
+        if (get_masked_button_presses(0) & A_BUTTON) {
             var_fa0 = 0.08f;
         } else {
             var_fa0 = -0.02f;
@@ -598,7 +592,7 @@ static void dll_417_func_E8C(Object* arg0) {
         }
     }
     if ((s32) sp8D >= 0xB) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x76DU, sp8D, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_76D, sp8D, NULL, NULL, 0, NULL);
     }
     objdata->unk4EE = temp_s2;
     if ((objdata->unk4EC == 2) && (sp90[0] != 0) && (sp90[1] != 0)) {
@@ -608,8 +602,8 @@ static void dll_417_func_E8C(Object* arg0) {
             sp9C = (spAC.y - spD0) / (spAC.y - spA0.y);
             if ((sp9C >= 0.0f) && (sp9C <= 1.0f)) {
                 if (objdata->unk4ED == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x8FU, 0x7FU, NULL, NULL, 0, NULL);
-                    objdata->unk4ED = 2U;
+                    gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_8F, 0x7F, NULL, NULL, 0, NULL);
+                    objdata->unk4ED = 2;
                 }
                 spE0.transl.x = ((spA0.x - spAC.x) * sp9C) + spAC.x;
                 spE0.transl.y = spC8[0];
@@ -629,8 +623,8 @@ static void dll_417_func_E8C(Object* arg0) {
                 spE0.transl.x -= arg0->srt.transl.x;
                 spE0.transl.y -= arg0->srt.transl.y;
                 spE0.transl.z -= arg0->srt.transl.z;
-                gDLL_17_partfx->vtbl->spawn(arg0, 0x3C4, &spE0, 0, -1, NULL);
-                gDLL_17_partfx->vtbl->spawn(arg0, 0x3C5, &spE0, 0, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_3C5, &spE0, PARTFXFLAG_NONE, -1, NULL);
             } else {
                 if (objdata->unk4ED != 0) {
                     objdata->unk4ED >>= 1;
@@ -664,7 +658,7 @@ static void dll_417_func_E8C(Object* arg0) {
                     spE0.transl.x -= arg0->srt.transl.x;
                     spE0.transl.y -= arg0->srt.transl.y;
                     spE0.transl.z -= arg0->srt.transl.z;
-                    gDLL_17_partfx->vtbl->spawn(arg0, 0x3C4, &spE0, 0, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(arg0, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
                 }
             }
         }

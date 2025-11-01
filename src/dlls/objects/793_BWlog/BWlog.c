@@ -1,4 +1,5 @@
 #include "dlls/objects/210_player.h"
+#include "game/objects/unknown_setups.h"
 #include "sys/controller.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
@@ -13,11 +14,11 @@ typedef struct {
     f32 unk290[2];
     f32 unk298[2];
     Vec4f unk2A0;
-    f32 unk2B0;
+    f32 unk2B0; // wobble (smoothed)
     f32 unk2B4;
-    f32 unk2B8;
+    f32 unk2B8; // move timer (when > 0, move forward)
     f32 unk2BC;
-    f32 unk2C0;
+    f32 unk2C0; // wobble
     f32 unk2C4;
     f32 unk2C8;
     f32 unk2CC;
@@ -32,35 +33,21 @@ typedef struct {
     f32 unk30C;
     f32 unk310;
     u32 unk314;
-    s32 unk318;
+    s32 unk318; // when rolling, the current roll rotation
     u16 unk31C[2];
-    u16 unk320;
-    s16 unk322;
-    s16 unk324;
+    u16 unk320; // controller buttons pressed
+    s16 unk322; // joystick x
+    s16 unk324; // joystick y
     s16 unk326;
     s16 unk328;
-    u8 unk32A;
+    u8 unk32A; // roll state (0 = not rolling, 1 = left, 2 = right)
     u8 unk32B;
-    u8 unk32C;
-    u8 unk32D;
-    u8 unk32E;
-    u8 _unk32E[0x338 - 0x32F];
+    u8 unk32C; // a pressed (turns off automatically after a time or if a is pressed again)
+    u8 unk32D; // bitfield of which side of the log is touching terrain (0x1 = front, 0x2 = back, 0x3 = both)
+    u8 unk32E; // 0 = off log, 1 = hopping on log, 2 = on log, 3 = hopping off log
+    u8 _unk32F[0x338 - 0x32F];
     Object *unk338; // dockpoint
 } BWlog_Data;
-
-// Related to DFriverflow (and more?)
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-} ObjType22Setup;
-
-// Dockpoint?
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    s16 unk1A;
-} ObjType23Setup;
 
 /*0x0*/ static Vec3f _data_0[] = {
     {0.0f, 0.0f, -30.0f}, 
@@ -241,7 +228,7 @@ void dll_793_free(Object *self, s32 a1) {
     BWlog_Data *objdata;
 
     objdata = self->data;
-    obj_free_object_type(self, 0xB);
+    obj_free_object_type(self, OBJTYPE_11);
     if (objdata->unk314 != 0) {
         gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk314);
     }
@@ -422,7 +409,7 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
             var_fv0 = 127.0f;
         }
         if (var_fv0 > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0xA75U, (u8) var_fv0, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A75, (u8) var_fv0, NULL, NULL, 0, NULL);
         }
     } else if ((sp60 < 0.0f) && (objdata->unk300[arg2] > 0.0f)) {
         var_fv0 = objdata->unk278[arg2].y * 127.0f;
@@ -433,7 +420,7 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
             var_fv0 = 127.0f;
         }
         if (var_fv0 > 20.0f) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0xA74U, (u8) var_fv0, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A74, (u8) var_fv0, NULL, NULL, 0, NULL);
         }
     }
     objdata->unk300[arg2] = sp60;
@@ -443,8 +430,8 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
     if (sp60 < 0.0f) {
         sp60 = 0.0f;
     }
-    objdata->unk278[arg2].y = (f32) (objdata->unk278[arg2].y + ((sp60 / 15.0f) * 0.15f * gUpdateRateF));
-    objdata->unk278[arg2].y = (f32) (objdata->unk278[arg2].y - (0.1f * gUpdateRateF));
+    objdata->unk278[arg2].y += ((sp60 / 15.0f) * 0.15f * gUpdateRateF);
+    objdata->unk278[arg2].y -= (0.1f * gUpdateRateF);
     var_v1 = (s32) gUpdateRate;
     diPrintf("[%d]=%f\n", arg2, &sp60);
     if (sp60 > 0.0f) {
@@ -503,7 +490,7 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
 
 // offset: 0x1600 | func: 22
 static void dll_793_func_1600(Object* self, BWlog_Data* objdata) {
-    s32 var_v0;
+    s32 doubleTappedA;
 
     objdata->unk320 = get_masked_button_presses(0);
     objdata->unk322 = get_joystick_x(0);
@@ -513,10 +500,10 @@ static void dll_793_func_1600(Object* self, BWlog_Data* objdata) {
         objdata->unk32C = 0;
         objdata->unk2F8 = 0.0f;
     }
-    var_v0 = 0;
+    doubleTappedA = FALSE;
     if (objdata->unk320 & A_BUTTON) {
         if (objdata->unk32C != 0) {
-            var_v0 = 1;
+            doubleTappedA = TRUE;
             objdata->unk32C = 0;
             objdata->unk2F8 = 0.0f;
         } else {
@@ -524,7 +511,7 @@ static void dll_793_func_1600(Object* self, BWlog_Data* objdata) {
             objdata->unk2F8 = 15.0f;
         }
     }
-    if (var_v0 != 0) {
+    if (doubleTappedA) {
         if (objdata->unk322 >= 0x15) {
             dll_793_func_178C(self, objdata, 0);
             objdata->unk32A = 2;
@@ -717,7 +704,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
     s32 var_v1;
 
     if (arg1->unk314 == 0) {
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xA77, 0x7F, &arg1->unk314, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_A77, 0x7F, &arg1->unk314, NULL, 0, NULL);
     } else {
         arg1->unk30C = arg1->unk310 * 127.0f;
         arg1->unk30C += fsin16_precise(arg1->unk328) * 30.0f;
@@ -755,7 +742,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
         if (var_v1 >= 0x80) {
             var_v1 = 0x7F;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x76D, var_v1, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_76D, var_v1, NULL, NULL, 0, NULL);
     }
     arg1->unk32D = sp3E;
 }
