@@ -4,7 +4,7 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/menu.h"
 #include "sys/rand.h"
 #include "sys/main.h"
@@ -178,7 +178,7 @@ PicMenuAction picmenu_update() {
 
     ret = PICMENU_ACTION_NONE;
 
-    get_joystick_menu_xy_sign(0, &joyXSign, &joyYSign);
+    joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
     if (joyYSign != 0) {
         joyXSign = 0;
     }
@@ -245,10 +245,10 @@ PicMenuAction picmenu_update() {
     }
 
     if (sAllowButtons) {
-        buttons = get_masked_button_presses(0);
+        buttons = joy_get_pressed(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
             if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && main_get_bits(BIT_44F) == 0) {
-                set_button_mask(0, A_BUTTON | START_BUTTON);
+                joy_set_button_mask(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {
                     gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
@@ -261,7 +261,7 @@ PicMenuAction picmenu_update() {
                 gDLL_6_AMSFX->vtbl->play_sound(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
 
-            set_button_mask(0, B_BUTTON);
+            joy_set_button_mask(0, B_BUTTON);
 
             ret = PICMENU_ACTION_BACK;
         }

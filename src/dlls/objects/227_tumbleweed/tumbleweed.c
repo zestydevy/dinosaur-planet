@@ -11,7 +11,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/rand.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "game/objects/object.h"
 #include "types.h"
 
@@ -482,8 +482,8 @@ s32 dll_227_func_1D64(Object* self) {
     
     self->unkAF |= 8;
     objdata->unk268 = 0.0f;
-    if (get_masked_button_presses(0) & A_BUTTON) {
-        set_button_mask(0, A_BUTTON);
+    if (joy_get_pressed(0) & A_BUTTON) {
+        joy_set_button_mask(0, A_BUTTON);
         objdata->unk299 = 0;
     }
     if (self->unkE0 == 1) {
@@ -508,7 +508,7 @@ s32 dll_227_func_1FA0(Object* self) {
     returnVal = 0;
     if (self->unkAF & 1 && self->unkE0 == 0) {
         objdata->unk294 = 0;
-        set_button_mask(0, A_BUTTON);
+        joy_set_button_mask(0, A_BUTTON);
         objdata->unk26C = rand_next(0x78, 0xF0);
         returnVal = 1;
     }

@@ -6,7 +6,7 @@
 #include "dll.h"
 #include "functions.h"
 #include "game/objects/object.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/gfx/texture.h"
 #include "sys/gfx/model.h"
 #include "sys/memory.h"
@@ -88,7 +88,7 @@ void krazoatext_control(Object* self) {
     }
 
     if (objdata->state != 0) {
-        if (!(self->unkAF & 4) || (get_masked_button_presses(0) & B_BUTTON)) {
+        if (!(self->unkAF & 4) || (joy_get_pressed(0) & B_BUTTON)) {
             objdata->state = 0;
         }
     } else if (self->unkAF & 1) {

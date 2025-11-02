@@ -1,6 +1,6 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/211_tricky.h"
 #include "game/gamebits.h"
@@ -184,7 +184,7 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
             }
             break;
         case STATE2_1:
-            get_button_presses(0);
+            joy_get_pressed_raw(0);
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 4) {
                     objdata->demoState = STATE2_2;
@@ -192,14 +192,14 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
                 } else if (animObjData->unk8E[i] == 1)
                     buttonMask = D_CBUTTONS; // simulate C-Down press?
             }
-            buttonMask |= get_button_presses(0) & D_CBUTTONS;
+            buttonMask |= joy_get_pressed_raw(0) & D_CBUTTONS;
             break;
         case STATE2_2:
             for (i = 0; i < animObjData->unk98; i++) {
                 if (animObjData->unk8E[i] == 2)
                     buttonMask = A_BUTTON; // simulate A press?
             }
-            buttonMask |= get_button_presses(0) & A_BUTTON;
+            buttonMask |= joy_get_pressed_raw(0) & A_BUTTON;
             if (buttonMask & A_BUTTON) {
                 objdata->doneDemo = TRUE;
             }

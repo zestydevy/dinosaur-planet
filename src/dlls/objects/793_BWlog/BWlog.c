@@ -1,6 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/objects/unknown_setups.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/print.h"
@@ -299,7 +299,7 @@ s32 dll_793_func_B48(Object *self, Object *a1) {
     s32 i;
 
     objdata = (BWlog_Data*)self->data;
-    if ((objdata->unk338 != NULL) && (objdata->unk32E == 2) && (get_masked_button_presses(0) & B_BUTTON)) {
+    if ((objdata->unk338 != NULL) && (objdata->unk32E == 2) && (joy_get_pressed(0) & B_BUTTON)) {
         var_fs0 = 0.0f;
         for (i = 0; i < 2; i++) {
             var_fs0 += sqrtf(SQ(objdata->unk278[i].x) + SQ(objdata->unk278[i].z));
@@ -492,9 +492,9 @@ static void dll_793_func_EB0(Object* self, BWlog_Data* objdata, s32 arg2) {
 static void dll_793_func_1600(Object* self, BWlog_Data* objdata) {
     s32 doubleTappedA;
 
-    objdata->unk320 = get_masked_button_presses(0);
-    objdata->unk322 = get_joystick_x(0);
-    objdata->unk324 = get_joystick_y(0);
+    objdata->unk320 = joy_get_pressed(0);
+    objdata->unk322 = joy_get_stick_x(0);
+    objdata->unk324 = joy_get_stick_y(0);
     objdata->unk2F8 -= gUpdateRateF;
     if (objdata->unk2F8 <= 0.0f) {
         objdata->unk32C = 0;

@@ -26,7 +26,7 @@
 
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
-void set_button_mask(int port, u16 mask);
+void joy_set_button_mask(int port, u16 mask);
 
 enum SnowHornAnims {
     MODANIM_SnowHorn_Idle = 0,
@@ -394,7 +394,7 @@ void dll_496_control(Object* snowhorn) {
             objdata->unk425 = 0;
         }
         gDLL_3_Animation->vtbl->func17(objdata->chatSequenceList[seqIndex], snowhorn, -1);
-        set_button_mask(0, A_BUTTON);
+        joy_set_button_mask(0, A_BUTTON);
     }
 
 }
@@ -641,7 +641,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
         snowhorn->unkAF &= 0xFFFE;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->func17(objdata->flags, snowhorn, -1);
-            set_button_mask(0, A_BUTTON);
+            joy_set_button_mask(0, A_BUTTON);
         }
     }
 
