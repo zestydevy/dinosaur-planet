@@ -274,7 +274,7 @@ s32 func_80032538(Object* arg0) {
     if (arg0->unkAF & 1 && !gDLL_1_UI->vtbl->func_DC4()) {
         player = get_player();
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
-            set_button_mask(0, A_BUTTON);
+            joy_set_button_mask(0, A_BUTTON);
             return 1;
         }
     }

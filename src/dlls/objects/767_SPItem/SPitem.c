@@ -89,7 +89,7 @@ void SPItem_control(Object* self) {
         } else {
             gDLL_3_Animation->vtbl->func17(3, self, -1);
         }
-        set_button_mask(0, A_BUTTON);
+        joy_set_button_mask(0, A_BUTTON);
     }
 
     func_80024108(self, 0.005f, gUpdateRateF, NULL);

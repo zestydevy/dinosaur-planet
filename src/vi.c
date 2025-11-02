@@ -336,7 +336,7 @@ s32 vi_frame_sync(s32 param1) {
         }
     }
 
-    signal_apply_controller_inputs();
+    joy_read_nonblocking();
     vi_func_8005DEE8();
     osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_BLOCK);
 
