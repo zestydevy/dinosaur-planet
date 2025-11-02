@@ -12,18 +12,22 @@ enum ObjType {
     OBJTYPE_5 = 5,
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7,
-    OBJTYPE_10 = 10,
+    OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop
     OBJTYPE_11 = 11, // BWlog, DFlog
     OBJTYPE_16 = 16,
     OBJTYPE_17 = 17,
     OBJTYPE_18 = 18,
     OBJTYPE_22 = 22, // DFriverflow
     OBJTYPE_23 = 23, // DFdockpoint
+    OBJTYPE_24 = 24,
+    OBJTYPE_29 = 29,
     OBJTYPE_32 = 32,
+    OBJTYPE_37 = 37,
     OBJTYPE_39 = 39,
     OBJTYPE_40 = 40,
     OBJTYPE_51 = 51,
     OBJTYPE_52 = 52,
+    OBJTYPE_59 = 59,
     OBJTYPE_64 = 64
 };
 

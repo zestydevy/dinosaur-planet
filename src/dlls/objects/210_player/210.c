@@ -61,7 +61,6 @@ static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
 /* static */ void dll_210_func_41F4(Object* arg0, Player_Data* arg1);
 /* static */ void dll_210_func_9E00(Object* arg0);
-/* static */ void dll_210_func_1CEFC(Object* player, s32 arg1);
 /* static */ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4);
 /* static */ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
@@ -100,6 +99,7 @@ void dll_210_func_1D4E0(Object* arg0, s32 arg1);
 s32 dll_210_func_1D2A8(Object* arg0, Object* arg1);
 void dll_210_func_1CD6C(Object* player, s32 arg1);
 void dll_210_func_1D07C(Object *player, s32 arg1);
+void dll_210_func_1CEFC(Object* player, s32 arg1);
 
 void func_8004D880(Object *arg0);
 void *func_8005D3A4(int param);
@@ -691,7 +691,7 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
             break;
         case 29:
             spCC = 500.0f;
-            tempObj = obj_get_nearest_type_to(0x18, arg0, &spCC);
+            tempObj = obj_get_nearest_type_to(OBJTYPE_24, arg0, &spCC);
             if (tempObj != NULL) {
                 ((DLL_Unknown *)tempObj->dll)->vtbl->func[7].withThreeArgsCustom(tempObj, arg0, 1.0f);
             }
@@ -836,7 +836,7 @@ void dll_210_func_1CA8(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             return;
         }
         sp28 = 500.0f;
-        arg2->unk0.target = obj_get_nearest_type_to(4, arg0, &sp28);
+        arg2->unk0.target = obj_get_nearest_type_to(OBJTYPE_4, arg0, &sp28);
         return;
     }
     if (temp_v0 != NULL) {
@@ -2116,7 +2116,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 16:
                 sp60 = 400.0f;
-                tempObj = obj_get_nearest_type_to(7, arg0, &sp60);
+                tempObj = obj_get_nearest_type_to(OBJTYPE_7, arg0, &sp60);
                 if (tempObj != NULL) {
                     func_8005B5B8(arg0, tempObj, 1);
                 }
@@ -3126,7 +3126,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
                 case 10:
                     if (spCC < 14.0f) {
                         sp6C = 50.0f;
-                        sp88 = obj_get_nearest_type_to(0x25, arg0, &sp6C);
+                        sp88 = obj_get_nearest_type_to(OBJTYPE_37, arg0, &sp6C);
                         var_s0_2 = TRUE;
                         if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32((s32)sp88) == 0)) {
                             var_s0_2 = FALSE;
@@ -4307,7 +4307,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
             } else {
-                temp_v0_5 = obj_get_nearest_type_to(0x3B, arg0, &sp80);
+                temp_v0_5 = obj_get_nearest_type_to(OBJTYPE_59, arg0, &sp80);
                 if (temp_v0_5 != NULL) {
                     ((DLL_Unknown*)temp_v0_5->dll)->vtbl->func[7].withOneArg((s32)temp_v0_5);
                 }
@@ -6607,7 +6607,6 @@ s32 dll_210_func_18E80(Object* player, Player_Data* objdata, f32 arg2) {
 // dll_210_func_1DC48 (matched)
 // dll_210_func_1DD94 (matched)
 // dll_210_func_1AAD8 (matched)
-// dll_210_func_1CEFC (matched)
 // https://decomp.me/scratch/TtS1w
 s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
     s32 sp9C;
@@ -7233,24 +7232,24 @@ void dll_210_func_1CD04(Object* player, s32 arg1) {
 }
 
 // offset: 0x1CD3C | func: 157 | export: 23
-void dll_210_func_1CD3C(Object* player, s32 arg1) {
+void dll_210_func_1CD3C(Object* player, s32 health) {
     Player_Data* objdata = player->data;
 
-    if (arg1 < 0) {
-        arg1 = 0;
-    } else if (arg1 >= 0x51) {
-        arg1 = 0x50;
+    if (health < 0) {
+        health = 0;
+    } else if (health >= 0x51) {
+        health = 0x50;
     }
-    objdata->stats->healthMax = arg1;
+    objdata->stats->healthMax = health;
 }
 
 // offset: 0x1CD6C | func: 158 | export: 24
-void dll_210_func_1CD6C(Object* player, s32 arg1) {
+void dll_210_func_1CD6C(Object* player, s32 healthDifference) {
     Player_Data* objdata = player->data;
     s32 health;
 
     health = objdata->stats->health;
-    health += arg1;
+    health += healthDifference;
     if (health < 0) {
         health = 0;
     } else if (objdata->stats->healthMax < health) {
@@ -7398,6 +7397,7 @@ void dll_210_func_1D04C(Object* player, s32 arg1) {
 }
 
 // offset: 0x1D07C | func: 171 | export: 19
+void dll_210_func_1D07C(Object* player, s32 scarabsDifference);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D07C.s")
 
 // offset: 0x1D128 | func: 172 | export: 20
@@ -7519,6 +7519,7 @@ s32 dll_210_func_1D390(Object* player, s32 arg1) {
 }
 
 // offset: 0x1D3A4 | func: 188 | export: 39
+void dll_210_func_1D3A4(Object* player, s32 arg1, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D3A4.s")
 
 // offset: 0x1D40C | func: 189 | export: 40
@@ -7625,13 +7626,13 @@ s32 dll_210_func_1D754(Object* player) {
 }
 
 // offset: 0x1D768 | func: 204 | export: 53
-Object *dll_210_func_1D768(Object* player) {
+Object* dll_210_func_1D768(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->unk0.target;
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-Unk80032CF8* dll_210_func_1D778(Object* player) {
+Unk80032CF8 * dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }

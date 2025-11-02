@@ -65,7 +65,7 @@ static Texture *sBackgroundTexture;
 static void dll_64_clean_up();
 static void dll_64_draw_letters(Gfx **gdl, s32 x, s32 y);
 
-void dll_64_ctor(void *self) {
+void dll_64_ctor(void *dll) {
     s32 itemCount;
     s32 i;
     
@@ -93,7 +93,7 @@ void dll_64_ctor(void *self) {
     sMainRedrawFrames = sNameLettersRedrawFrames = 2;
 }
 
-void dll_64_dtor(void *self) {
+void dll_64_dtor(void *dll) {
     dll_64_clean_up();
 }
 

@@ -171,7 +171,7 @@ DLL_INTERFACE(DLL_IPartfx) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func0)(void);
 /*1*/ s32 (*spawn)(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *data);
-/*2*/ void (*func2)(void);
+/*2*/ void (*func2)(s32 arg0);
 };
 
 DLL_INTERFACE(DLL_17) {

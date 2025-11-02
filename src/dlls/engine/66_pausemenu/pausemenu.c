@@ -68,7 +68,7 @@ static PicMenuSounds pauseMenuSounds = {
 /*0x2C*/ static s16 pauseMenuOpacity;
 
 // offset: 0x0 | ctor
-void n_pausemenu_ctor(s32 arg0) {
+void pausemenu_ctor(void *dll) {
     GameTextChunk* temp_v0;
 
     textureSpellStone = queue_load_texture_proxy(0x31E);
@@ -84,7 +84,7 @@ void n_pausemenu_ctor(s32 arg0) {
 }
 
 // offset: 0x14C | dtor
-void n_pausemenu_dtor(s32 arg0) {
+void pausemenu_dtor(void *dll) {
     texture_destroy(textureSpellStone);
     texture_destroy(textureDuster);
     texture_destroy(textureSpirit);
@@ -94,7 +94,7 @@ void n_pausemenu_dtor(s32 arg0) {
 }
 
 // offset: 0x1F8 | func: 0 | export: 0
-s32 n_pausemenu_update(void) {
+s32 pausemenu_update1(void) {
     s32 action;
     s32 index;
     s32 selectedItem;
@@ -156,11 +156,11 @@ s32 n_pausemenu_update(void) {
 }
 
 // offset: 0x524 | func: 1 | export: 1
-void n_pausemenu_func_524(void){
+void pausemenu_update2(void){
 }
 
 // offset: 0x52C | func: 2 | export: 2
-void n_pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
+void pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     s32 ulx;
     s32 uly;
     s32 lrx;
@@ -255,5 +255,5 @@ void n_pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
             break;
     }
 
-    font_window_draw(gfx, 0, 0, 1);
+    font_window_draw(gfx, NULL, NULL, 1);
 }

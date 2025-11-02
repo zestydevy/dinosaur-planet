@@ -2,6 +2,8 @@
 #define _SYS_FONT_H
 
 #include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "types.h"
 #include "sys/gfx/texture.h"
 
 /* Size: 8 bytes */
@@ -163,10 +165,10 @@ void font_window_enable_wordwrap(s32 windowID);
 void font_window_disable_wordwrap(s32 windowID);
 void font_window_enable_verts(s32 windowID);
 void font_window_disable_verts(s32 windowID);
-void font_windows_draw(Gfx **gdl, s32 **mtxs, s32 **vtxs);
+void font_windows_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 void font_number_to_string(char **outString, s32 number);
 void font_render_fill_rect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry);
-void font_window_draw(Gfx **gdl, s32 **mtxs, s32 **vtxs, s32 windowID);
+void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID);
 void font_string_format(char *input, char *output, s32 number);
 
 #endif

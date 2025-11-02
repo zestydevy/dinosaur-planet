@@ -885,9 +885,9 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                     break;
                 case 2:
                     // "findobj %i \n"
-                    var_v0_2 = obj_get_nearest_type_to(0x34, sidekick, NULL);
+                    var_v0_2 = obj_get_nearest_type_to(OBJTYPE_52, sidekick, NULL);
                     if (var_v0_2 == NULL) {
-                        var_v0_2 = obj_get_nearest_type_to(0x33, sidekick, NULL);
+                        var_v0_2 = obj_get_nearest_type_to(OBJTYPE_51, sidekick, NULL);
                     }
                     if (var_v0_2 != NULL) {
                         ((DLL_ISidekick *)sidekick->dll)->vtbl->func22(sidekick, var_v0_2);

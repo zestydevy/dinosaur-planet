@@ -168,7 +168,7 @@ void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     for (index = 0; index < gametext->count; index++, yCoord += 0x1E){
         font_window_add_string_xy(6, -0x8000, yCoord, 
             gametext->strings[index], 1, 4);
-        font_window_draw(gfx, (void*)mtx, (void*)vtx, 6);
+        font_window_draw(gfx, mtx, vtx, 6);
     }
 }
 

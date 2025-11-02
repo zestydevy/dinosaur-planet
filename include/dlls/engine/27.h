@@ -100,7 +100,7 @@ DLL_INTERFACE(DLL_27) {
 /*3*/ void (*func_1E8)(Object *obj, DLL27_Data *data, f32 updateRate);
 /*4*/ void (*func_5A8)(Object* arg0, DLL27_Data* arg1);
 /*5*/ void (*func_624)(Object* arg0, DLL27_Data* arg1, f32 updateRate);
-/*6*/ Func_80057F1C_Struct*(*func_C7C)(Object* arg0, f32 arg1, f32 arg2, s32* arg3, s32 arg4);
+/*6*/ Func_80057F1C_Struct *(*func_C7C)(Object* arg0, f32 arg1, f32 arg2, s32* arg3, s32 arg4);
 /*7*/ void (*reset)(Object* obj, DLL27_Data* data);
 /*8*/ f32 (*func_DF4)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
 };

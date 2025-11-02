@@ -61,7 +61,7 @@ void CCkrazoaTablet_control(Object *self) {
             self->unkAF |= 8;
         } else {
             if (func_80032538(self) != 0) {
-                gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex + 3, obj_get_nearest_type_to(0x11, self, NULL), -1);
+                gDLL_3_Animation->vtbl->func17(setup->objectSeqIndex + 3, obj_get_nearest_type_to(OBJTYPE_17, self, NULL), -1);
             }
         }
     }

@@ -8,6 +8,6 @@ _exports:
 .dword mainmenu_dtor
 
 # export table
-.dword mainmenu_update
-.dword mainmenu_func_764
+.dword mainmenu_update1
+.dword mainmenu_update2
 .dword mainmenu_draw

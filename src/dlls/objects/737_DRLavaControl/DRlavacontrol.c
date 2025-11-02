@@ -168,7 +168,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
     }
     
     distance = 500.0f;
-    waveAnimator = obj_get_nearest_type_to(0x1D, self, &distance);
+    waveAnimator = obj_get_nearest_type_to(OBJTYPE_29, self, &distance);
     if (waveAnimator) {
         // diPrintf(" WAVE OBJ %x ", waveAnimator);
         ((DLL_Unknown*)waveAnimator->dll)->vtbl->func[7].withOneS32OneF32((s32)waveAnimator, temperature_tValue); //blending wave amplitude to 0 as lava cools?
