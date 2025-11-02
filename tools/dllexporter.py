@@ -12,7 +12,7 @@ DLLS_PATH = ROOT_PATH.joinpath("src", "dlls")
 
 DLL_NAME_OVERWRITES = {
     "1": "ui",
-    "3": "animation"
+    "3": "animation",
 }
 
 DLL_BASE_EXPORTS = {
@@ -117,12 +117,8 @@ def main():
             sys.exit(1)
 
         export = exports[export_idx]
-        export_name = f"func{export.index}"
-        if args.by_name or export.is_documented():
-            export_name = export.name()
-
         # skip lines that do not contain the current export
-        if not export_name in line:
+        if not export.name() in line and not f"func{export.index}" in line:
             continue
 
         # Remove /* xx */ comments
