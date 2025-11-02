@@ -6,7 +6,7 @@
 #include "libnaudio/n_unkfuncs.h"
 #include "sys/asset_thread.h"
 #include "sys/audio.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/crash.h"
 #include "sys/exception.h"
 #include "sys/fs.h"
@@ -187,8 +187,8 @@ void game_init(void) {
     if (0) {};
     gFrameBufIdx = 0;
     gCurGfx = gMainGfx[gFrameBufIdx];
-    gLastInsertedControllerIndex = init_controller_data();
-    start_controller_thread(&osscheduler_);
+    gLastInsertedControllerIndex = joy_init();
+    joy_start_controller_thread(&osscheduler_);
     start_crash_thread(&osscheduler_);
     init_textures();
     init_maps();
@@ -405,12 +405,12 @@ void game_tick_no_expansion(void) {
 void func_80013D80(void) {
     s32 button;
 
-    set_button_mask(0, U_JPAD | R_JPAD);
+    joy_set_button_mask(0, U_JPAD | R_JPAD);
     gDLL_2_Camera->vtbl->func19();
     gDLL_22_Subtitles->vtbl->func_4C0();
 
     if (menu_update1() == 0) {
-        button = get_masked_button_presses(0);
+        button = joy_get_pressed(0);
 
         if (gPauseState != 0) {
             draw_pause_screen_freeze_frame(&gCurGfx);
@@ -422,7 +422,7 @@ void func_80013D80(void) {
 
             if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
-                set_button_mask(0, START_BUTTON);
+                joy_set_button_mask(0, START_BUTTON);
                 menu_set(MENU_PAUSE);
             }
 
@@ -609,7 +609,7 @@ void func_80014508(s8 arg0) {
 /**
  * @returns TRUE if no controllers are inserted.
  * @pre game_init must be called first.
- * @see game_init, init_controller_data
+ * @see game_init, joy_init
  */
 s32 are_no_controllers_inserted(void) {
     if (gLastInsertedControllerIndex == -1) {

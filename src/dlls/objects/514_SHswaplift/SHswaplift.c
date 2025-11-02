@@ -3,7 +3,7 @@
 #include "sys/map_enums.h"
 #include "functions.h"
 #include "game/gamebits.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 
 typedef struct {
 /*00*/ ObjSetup base;
@@ -49,7 +49,7 @@ void SHswaplift_control(Object *self) {
                 main_set_bits(BIT_Play_Seq_035F_Rocky_Intro, 1);
             }
 
-            set_button_mask(0, A_BUTTON);
+            joy_set_button_mask(0, A_BUTTON);
         }
     } else {
         self->unkAF |= 0x8;

@@ -22,7 +22,7 @@ extern OSMesg D_800ACB80[5];
 extern OSMesg D_800ACBB0[1];
 
 // pad to 0x800ad6c0
-static u8 _bss_pad[0x5210]; // TODO: remove bss padding
+static u8 _bss_pad[0x5220]; // TODO: remove bss padding
 
 void func_80012A4C();
 void asset_thread_load_single(void);

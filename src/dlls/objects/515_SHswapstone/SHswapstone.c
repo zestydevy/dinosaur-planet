@@ -5,7 +5,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"
@@ -283,7 +283,7 @@ static s32 SHswapstone_func_AD4(Object* self, s32 arg1, s32 arg2) {
     s8 joyYSign;
 
     objdata = self->data;
-    get_joystick_menu_xy_sign(0, &joyXSign, &joyYSign);
+    joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
     switch (arg2) {
     case 20:
         if ((joyXSign < 0) && !(objdata->flags & (SWAPSTONE_PLAYER_HAS_SPIRIT | SWAPSTONE_PLAYER_HAS_SPELLSTONE))) {

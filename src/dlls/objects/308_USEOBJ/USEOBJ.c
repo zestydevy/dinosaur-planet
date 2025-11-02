@@ -3,7 +3,7 @@
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "dll.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "functions.h"
 
 typedef struct {
@@ -89,7 +89,7 @@ void UseObj_control(Object *self) {
                 objdata->unk0 = 1;
                 self->unkDC = 1;
             }
-            set_button_mask(0, A_BUTTON);
+            joy_set_button_mask(0, A_BUTTON);
         }
     } else {
         if (self->unkDC == 0) {

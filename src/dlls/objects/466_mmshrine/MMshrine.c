@@ -4,7 +4,7 @@
 #include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/gfx/texture.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -371,7 +371,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
         if (vec3_distance(&self->positionMirror, &player->positionMirror) > 10.0f) {
             gDLL_3_Animation->vtbl->func18(arg2->unk63);
             objdata->unkF = 7;
-        } else if (get_masked_buttons(0)) {
+        } else if (joy_get_buttons(0)) {
             gDLL_3_Animation->vtbl->func18(arg2->unk63);
             objdata->unkF = 7;
         }

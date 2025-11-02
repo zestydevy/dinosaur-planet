@@ -1,4 +1,6 @@
-#include "common.h"
+#include "sys/joypad.h"
+#include "sys/thread.h"
+#include "macros.h"
 
 #define THREAD_STACK_CONTROLLER 1024
 
@@ -49,12 +51,13 @@ s8 gMenuJoystickDelay;
 /**
  * @returns The message queue associated with SI controller interrupts.
  * This is the same message queue that is passed to osContInit.
+ * Offical name: joyMessageQ
  */
-OSMesgQueue *get_controller_interrupt_queue() {
+OSMesgQueue *joy_get_mesgq() {
     return &gContInterruptQueue;
 }
 
-void signal_apply_controller_inputs() {
+void joy_read_nonblocking() {
     gContQueue2Message = 0xA;
     osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
 }
@@ -66,7 +69,7 @@ void signal_apply_controller_inputs() {
  *
  * @see gContThreadMesgQueue
  */
-void apply_controller_inputs() {
+void joy_read() {
     // Tell controller thread to apply controller inputs
     gContQueue2Message = 0xA;
     osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
@@ -75,7 +78,8 @@ void apply_controller_inputs() {
     osRecvMesg(&gContThreadInputsAppliedQueue, NULL, OS_MESG_BLOCK);
 }
 
-s32 init_controller_data() {
+// Official name: joyInit
+s32 joy_init() {
     s32 lastControllerIndex;
     s32 i;
     // Bits 0-3 specify which controllers are inserted
@@ -97,7 +101,7 @@ s32 init_controller_data() {
     osContStartReadData(&gContInterruptQueue);
 
     // Set default controller virtual->physical port mapping
-    init_virtual_cont_port_map();
+    joy_reset_map();
 
     // Initialize controller input globals and determine how many controllers are inserted
     gNoControllers = FALSE;
@@ -128,7 +132,7 @@ s32 init_controller_data() {
     return lastControllerIndex;
 }
 
-void start_controller_thread(OSSched *scheduler) {
+void joy_start_controller_thread(OSSched *scheduler) {
     osCreateMesgQueue(
         /*mq*/      &gContThreadMesgQueue,
         /*msg*/     &gContThreadMesgQueueBuffer[0],
@@ -147,7 +151,7 @@ void start_controller_thread(OSSched *scheduler) {
     osCreateThread(
         /*t*/       &gControllerThread,
         /*id*/      CONTROLLER_THREAD_ID,
-        /*entry*/   &controller_thread_entry,
+        /*entry*/   &joy_controller_thread_entry,
         /*arg*/     NULL,
         /*sp*/      &gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)],
         /*pri*/     12
@@ -156,7 +160,7 @@ void start_controller_thread(OSSched *scheduler) {
     osStartThread(&gControllerThread);
 }
 
-void controller_thread_entry(void* arg) {
+void joy_controller_thread_entry(void* arg) {
     ControllersSnapshot* currSnap;
     ControllersSnapshot* compSnap;
     s16* message;
@@ -174,10 +178,10 @@ void controller_thread_entry(void* arg) {
     message = NULL;
     gPrevContSnapshotsI = 0;
     while (TRUE) {
-        osRecvMesg(&gContThreadMesgQueue, (OSMesg *) &message, 1);
+        osRecvMesg(&gContThreadMesgQueue, (OSMesg *) &message, OS_MESG_BLOCK);
         switch (*message) {
             case 1:
-                if (gNumBufContSnapshots[gPrevContSnapshotsI] < 4) {
+                if (gNumBufContSnapshots[gPrevContSnapshotsI] < MAX_BUFFERED_CONT_SNAPSHOTS) {
                     compSnap = gContSnapshots[gPrevContSnapshotsI ^ 1];
                     compSnap = &compSnap[gNumBufContSnapshots[gPrevContSnapshotsI ^ 1] - 1];
                     currSnap = &gContSnapshots[gPrevContSnapshotsI][gNumBufContSnapshots[gPrevContSnapshotsI]];
@@ -189,10 +193,10 @@ void controller_thread_entry(void* arg) {
                         osContGetReadData(currSnap->pads);
                         osContStartReadData(&gContInterruptQueue);
                     } else {
-                        bcopy(compSnap, currSnap, 0x28);
+                        bcopy(compSnap, currSnap, sizeof(ControllersSnapshot));
                     }
 
-                    for (contIdx = 0; contIdx < 4; contIdx++) {
+                    for (contIdx = 0; contIdx < MAXCONTROLLERS; contIdx++) {
                         if (gNoControllers != 0) {
                             currSnap->pads[contIdx].button = 0;
                         }
@@ -201,7 +205,7 @@ void controller_thread_entry(void* arg) {
                     }
                 }
                 if (gApplyContInputs != 0) {
-                    bzero(gContPads, 0x18);
+                    bzero(gContPads, sizeof(gContPads));
                     for (contIdx = 0; contIdx < 4; contIdx++) {
                         var_a2_2 = 0;
                         var_a3 = 0;
@@ -224,26 +228,26 @@ void controller_thread_entry(void* arg) {
                         gMenuJoyXSign[contIdx] = 0;
                         gMenuJoyYSign[contIdx] = 0;
                         
-                        if ((stickX < -0x23) && (gLastJoyX[contIdx] >= -0x23)) {
+                        if ((stickX < -35) && (gLastJoyX[contIdx] >= -35)) {
                             gMenuJoyXSign[contIdx] = -1;
                             gMenuJoyXHoldTimer[contIdx] = 0;
                         }
-                        if ((stickX >= 0x24) && (gLastJoyX[contIdx] < 0x24)) {
+                        if ((stickX > 35) && (gLastJoyX[contIdx] <= 35)) {
                             gMenuJoyXSign[contIdx] = 1;
                             gMenuJoyXHoldTimer[contIdx] = 0;
                         }
-                        if ((stickY < -0x23) && (gLastJoyY[contIdx] >= -0x23)) {
+                        if ((stickY < -35) && (gLastJoyY[contIdx] >= -35)) {
                             gMenuJoyYSign[contIdx] = -1;
                             gMenuJoyYHoldTimer[contIdx] = 0;
                         }
-                        if ((stickY >= 0x24) && (gLastJoyY[contIdx] < 0x24)) {
+                        if ((stickY > 35) && (gLastJoyY[contIdx] <= 35)) {
                             gMenuJoyYSign[contIdx] = 1;
                             gMenuJoyYHoldTimer[contIdx] = 0;
                         }
                         gLastJoyY[contIdx] = stickY;
-                        if (gLastJoyY[contIdx] < -0x23) {
+                        if (gLastJoyY[contIdx] < -35) {
                             gMenuJoyYHoldTimer[contIdx] += 1;
-                        } else if (gLastJoyY[contIdx] >= 0x24) {
+                        } else if (gLastJoyY[contIdx] > 35) {
                             gMenuJoyYHoldTimer[contIdx] += 1;
                         } else {
                             gMenuJoyYHoldTimer[contIdx] = 0;
@@ -253,9 +257,9 @@ void controller_thread_entry(void* arg) {
                             gMenuJoyYHoldTimer[contIdx] = 0;
                         }
                         gLastJoyX[contIdx] = stickX;
-                        if (gLastJoyX[contIdx] < -0x23) {
+                        if (gLastJoyX[contIdx] < -35) {
                             gMenuJoyXHoldTimer[contIdx] += 1;
-                        } else if (gLastJoyX[contIdx] >= 0x24) {
+                        } else if (gLastJoyX[contIdx] > 35) {
                             gMenuJoyXHoldTimer[contIdx] += 1;
                         } else {
                             gMenuJoyXHoldTimer[contIdx] = 0;
@@ -281,7 +285,8 @@ void controller_thread_entry(void* arg) {
     }
 }
 
-void init_virtual_cont_port_map(void) {
+// Official name: joyResetMap
+void joy_reset_map(void) {
     s32 i;
     for (i = 0; i < 4; i++) {
         gVirtualContPortMap[i] = i;
@@ -289,31 +294,26 @@ void init_virtual_cont_port_map(void) {
 }
 
 /**
- * TODO: Not sure what the intent of this function is, but here's some example in/outs:
- * ports = [3, 0, 2, 1]
- * gVirtualContPortMap = [0, 2, 3, 1]
+ * Assign the first four player ID's to the index of the connected players.
+ * Assign the next four player ID's to the index of the players who are not connected.
  *
- * ports = [0, 1, 2, 3]
- * gVirtualContPortMap = [1, 2, 3, 0]
- *
- * ports = [1, 3, 2, 0]
- * gVirtualContPortMap = [0, 1, 2, 3]
+ * Official name: joyCreateMap
  */
-void update_virtual_cont_port_map(s8 ports[MAXCONTROLLERS]) {
+void joy_create_map(s8 activePlayers[MAXCONTROLLERS]) {
     int i;
     int k;
 
     k = 0;
 
     for (i = 0; i < MAXCONTROLLERS; ++i) {
-        if (ports[i] != 0) {
+        if (activePlayers[i] != 0) {
             gVirtualContPortMap[k] = i;
             k += 1;
         }
     }
 
     for (i = 0; i < MAXCONTROLLERS; ++i) {
-        if (ports[i] == 0) {
+        if (activePlayers[i] == 0) {
             gVirtualContPortMap[k] = i;
             k += 1;
         }
@@ -322,22 +322,25 @@ void update_virtual_cont_port_map(s8 ports[MAXCONTROLLERS]) {
 
 /**
  * Maps the given virtual controller port to its corresponding physical port.
+ *
+ * Official name: joyGetController
  */
-u8 get_physical_cont_port(int virtualPort) {
+u8 joy_get_controller(int virtualPort) {
     return gVirtualContPortMap[virtualPort];
 }
 
 /**
  * Swaps the first 2 virtual controller ports.
  */
-void swap_controller_port_0_and_1() {
+void joy_swap_controllers() {
     u8 port0 = gVirtualContPortMap[0];
 
     gVirtualContPortMap[0] = gVirtualContPortMap[1];
     gVirtualContPortMap[1] = port0;
 }
 
-u16 get_masked_buttons(int port) {
+// Official name: joyGetButtons
+u16 joy_get_buttons(int port) {
     if (port > 0) {
         return 0;
     }
@@ -345,7 +348,7 @@ u16 get_masked_buttons(int port) {
     return gContPads[gVirtualContPortMap[port]].button & gButtonMask[port];
 }
 
-u16 get_masked_buttons_from_buffer(int port, int buffer) {
+u16 joy_get_buttons_buffered(int port, int buffer) {
     OSContPad *pads;
     ControllersSnapshot *snapshot;
 
@@ -367,7 +370,8 @@ u16 get_masked_buttons_from_buffer(int port, int buffer) {
     return pads[gVirtualContPortMap[port]].button & gButtonMask[port];
 }
 
-u16 get_masked_button_presses(int port) {
+// Official name: joyGetPressed
+u16 joy_get_pressed(int port) {
     if (port > 0) {
         return 0;
     }
@@ -375,7 +379,7 @@ u16 get_masked_button_presses(int port) {
     return gButtonPresses[gVirtualContPortMap[port]] & gButtonMask[port];
 }
 
-u16 get_button_presses(int port) {
+u16 joy_get_pressed_raw(int port) {
     if (port > 0) {
         return 0;
     }
@@ -383,7 +387,7 @@ u16 get_button_presses(int port) {
     return gButtonPresses[gVirtualContPortMap[port]];
 }
 
-u16 get_masked_button_presses_from_buffer(int port, int buffer) {
+u16 joy_get_pressed_buffered(int port, int buffer) {
     ControllersSnapshot *snapshot;
 
     if (port > 0) {
@@ -402,7 +406,8 @@ u16 get_masked_button_presses_from_buffer(int port, int buffer) {
     return snapshot->buttonPresses[gVirtualContPortMap[port]] & gButtonMask[port];
 }
 
-u16 get_masked_button_releases(int port) {
+// Official name: joyGetReleased
+u16 joy_get_released(int port) {
     if (port > 0) {
         return 0;
     }
@@ -410,7 +415,7 @@ u16 get_masked_button_releases(int port) {
     return gButtonReleases[gVirtualContPortMap[port]] & gButtonMask[port];
 }
 
-u16 get_masked_button_releases_from_buffer(int port, int buffer) {
+u16 joy_get_released_buffered(int port, int buffer) {
     ControllersSnapshot *snapshot;
 
     if (port > 0) {
@@ -429,15 +434,16 @@ u16 get_masked_button_releases_from_buffer(int port, int buffer) {
     return snapshot->buttonReleases[gVirtualContPortMap[port]] & gButtonMask[port];
 }
 
-s8 get_joystick_x(int port) {
+// Official name: joyGetStickX
+s8 joy_get_stick_x(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_x);
+        return joy_handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_x);
     }
 }
 
-s8 get_joystick_x_from_buffer(int port, int buffer) {
+s8 joy_get_stick_x_buffered(int port, int buffer) {
     OSContPad *pads;
     ControllersSnapshot *snapshot;
 
@@ -456,18 +462,19 @@ s8 get_joystick_x_from_buffer(int port, int buffer) {
 
     pads = snapshot->pads;
 
-    return handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_x);
+    return joy_handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_x);
 }
 
-s8 get_joystick_y(int port) {
+// Official name: joyGetStickY
+s8 joy_get_stick_y(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_y);
+        return joy_handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_y);
     }
 }
 
-s8 get_joystick_y_from_buffer(int port, int buffer) {
+s8 joy_get_stick_y_buffered(int port, int buffer) {
     OSContPad *pads;
     ControllersSnapshot *snapshot;
 
@@ -486,10 +493,10 @@ s8 get_joystick_y_from_buffer(int port, int buffer) {
 
     pads = snapshot->pads;
 
-    return handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_y);
+    return joy_handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_y);
 }
 
-void get_joystick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
+void joy_get_stick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
     *xSign = gMenuJoyXSign[gVirtualContPortMap[port]];
     *ySign = gMenuJoyYSign[gVirtualContPortMap[port]];
 }
@@ -506,7 +513,7 @@ void get_joystick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
  *
  * Returns a joystick axis value between [-70, 70].
  */
-s8 handle_joystick_deadzone(s8 stick) {
+s8 joy_handle_joystick_deadzone(s8 stick) {
     s8 adjustedStick;
 
     if (gIgnoreJoystick) {
@@ -538,23 +545,25 @@ s8 handle_joystick_deadzone(s8 stick) {
     return adjustedStick;
 }
 
-void func_8001124C() {
+// Official name: joySetSecurity
+void joy_set_security() {
     D_8008C8A4 = 0;
 }
 
-void set_button_mask(int port, u16 mask) {
+void joy_set_button_mask(int port, u16 mask) {
     gButtonMask[port] &= ~mask;
 }
 
-void func_80011290(int _) {
+// Clear joystick x/y to zero until the next controller read.
+void joy_reset_joystick(int _) {
     gIgnoreJoystick = TRUE;
 }
 
-void set_menu_joystick_delay(s8 delay) {
+void joy_set_menu_joystick_delay(s8 delay) {
     gMenuJoystickDelay = delay;
 }
 
-void reset_menu_joystick_delay() {
+void joy_reset_menu_joystick_delay() {
     gMenuJoystickDelay = 5;
 }
 

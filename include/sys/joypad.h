@@ -1,7 +1,7 @@
 /** Controller/gamepad system
  */
-#ifndef _SYS_CONTROLLER_H
-#define _SYS_CONTROLLER_H
+#ifndef _SYS_JOYPAD_H
+#define _SYS_JOYPAD_H
 
 #include "PR/ultratypes.h"
 #include "PR/os.h"
@@ -45,7 +45,7 @@ typedef struct _ControllersSnapshot {
 /**
  * If TRUE, no controllers are inserted.
  *
- * @see init_controller_data
+ * @see joy_init
  */
 extern s32 gNoControllers;
 
@@ -57,7 +57,7 @@ extern u16 D_8008C8A4;
  * Ex. If the mask is 0x0000 then all buttons will be reported as 0
  * regardless of whether they are actually pressed.
  *
- * At the end of each input frame (see controller_thread_entry) this
+ * At the end of each input frame (see joy_controller_thread_entry) this
  * is reset to 0xFFFF for each controller.
  */
 extern u16 gButtonMask[MAXCONTROLLERS];
@@ -75,7 +75,7 @@ extern u8 gPrevContSnapshotsI;
  * Whether the controller thread should apply controller inputs to globals like gContPads
  * after collecting controller interrupts.
  *
- * @see gContThreadMesgQueue and controller_thread_entry for more info.
+ * @see gContThreadMesgQueue and joy_controller_thread_entry for more info.
  */
 extern u8 gApplyContInputs;
 
@@ -95,7 +95,7 @@ extern u8 gNumBufContSnapshots[2];
  * interrupt data as it comes in on the queue, by being able to collect more than one at
  * a time when processing input.
  *
- * @see controller_thread_entry
+ * @see joy_controller_thread_entry
  */
 extern ControllersSnapshot *gContSnapshots[2];
 
@@ -130,7 +130,7 @@ extern OSMesgQueue gContInterruptQueue;
  * Usually, 0xA, 0x1 is repeatedly sent each frame or so (not sure exactly when, but its related
  * to game ticks) to process controller input.
  *
- * See controller_thread_entry for details.
+ * See joy_controller_thread_entry for details.
  */
 extern OSMesgQueue gContThreadMesgQueue;
 /**
@@ -180,13 +180,13 @@ extern u8 gVirtualContPortMap[MAXCONTROLLERS];
 /**
  * Internal joystick X values per controller from last input frame used to set gMenuJoyXSign.
  *
- * @see gMenuJoyXSign, controller_thread_entry
+ * @see gMenuJoyXSign, joy_controller_thread_entry
  */
 extern s8 gLastJoyX[MAXCONTROLLERS];
 /**
  * Internal joystick Y values per controller from last input frame used to set gMenuJoyYSign.
  *
- * @see gMenuJoyYSign, controller_thread_entry
+ * @see gMenuJoyYSign, joy_controller_thread_entry
  */
 extern s8 gLastJoyY[MAXCONTROLLERS];
 /**
@@ -256,7 +256,7 @@ extern s8 gMenuJoystickDelay;
  *
  * @see gContThreadMesgQueue
  */
-void signal_apply_controller_inputs();
+void joy_read_nonblocking();
 
 /**
  * Initializes SI settings and controller globals.
@@ -265,9 +265,9 @@ void signal_apply_controller_inputs();
  * For example, if one controller is inserted, 0 will be returned.
  * If no controllers are inserted, -1 will be returned.
  */
-s32 init_controller_data();
+s32 joy_init();
 
-void start_controller_thread(OSSched *scheduler);
+void joy_start_controller_thread(OSSched *scheduler);
 
 /**
  * Gets a masked bitfield of held buttons on the given controller.
@@ -275,7 +275,7 @@ void start_controller_thread(OSSched *scheduler);
  * @details gButtonMask may cause some buttons to be ignored.
  * Always returns 0 if port is not zero.
  */
-u16 get_masked_buttons(int port);
+u16 joy_get_buttons(int port);
 
 /**
  * Gets a masked bitfield of held buttons on the given controller from the
@@ -288,7 +288,7 @@ u16 get_masked_buttons(int port);
  * gButtonMask may cause some buttons to be ignored.
  * Always returns 0 if port is not zero.
  */
-u16 get_masked_buttons_from_buffer(int port, int buffer);
+u16 joy_get_buttons_buffered(int port, int buffer);
 
 /**
  * Gets a masked bitfield of buttons that were just pressed on the given controller.
@@ -296,14 +296,14 @@ u16 get_masked_buttons_from_buffer(int port, int buffer);
  * @details gButtonMask may cause some buttons to be ignored.
  * Always returns 0 if port is not zero.
  */
-u16 get_masked_button_presses(int port);
+u16 joy_get_pressed(int port);
 
 /**
  * Gets a bitfield of buttons that were just pressed on the given controller.
  *
  * @details Always returns 0 if port is not zero.
  */
-u16 get_button_presses(int port);
+u16 joy_get_pressed_raw(int port);
 
 /**
  * Gets a masked bitfield of buttons that were just pressed on the given
@@ -316,7 +316,7 @@ u16 get_button_presses(int port);
  * gButtonMask may cause some buttons to be ignored.
  * Always returns 0 if port is not zero.
  */
-u16 get_masked_button_presses_from_buffer(int port, int buffer);
+u16 joy_get_pressed_buffered(int port, int buffer);
 
 /**
  * Gets a masked bitfield of buttons that were just released on the given controller.
@@ -324,7 +324,7 @@ u16 get_masked_button_presses_from_buffer(int port, int buffer);
  * @details gButtonMask may cause some buttons to be ignored.
  * Always returns 0 if port is not zero.
  */
-u16 get_masked_button_releases(int port);
+u16 joy_get_released(int port);
 
 /**
  * Gets a masked bitfield of buttons that were just released on the given
@@ -337,14 +337,14 @@ u16 get_masked_button_releases(int port);
  * gButtonMask may cause some buttons to be ignored.
  * Always returns 0 if port is not zero.
  */
-u16 get_masked_button_releases_from_buffer(int port, int buffer);
+u16 joy_get_released_buffered(int port, int buffer);
 
 /**
  * Returns the joystick X value of the controller in the given port with a deadzone applied.
  *
  * @details Always returns 0 if port is not zero.
  */
-s8 get_joystick_x(int port);
+s8 joy_get_stick_x(int port);
 
 /**
  * Gets the joystick X value on the given controller from the
@@ -356,14 +356,14 @@ s8 get_joystick_x(int port);
  *
  * Always returns 0 if port is not zero.
  */
-s8 get_joystick_x_from_buffer(int port, int buffer);
+s8 joy_get_stick_x_buffered(int port, int buffer);
 
 /**
  * Returns the joystick Y value of the controller in the given port with a deadzone applied.
  *
  * @details Always returns 0 if port is not zero.
  */
-s8 get_joystick_y(int port);
+s8 joy_get_stick_y(int port);
 
 /**
  * Gets the joystick Y value on the given controller from the
@@ -375,7 +375,7 @@ s8 get_joystick_y(int port);
  *
  * Always returns 0 if port is not zero.
  */
-s8 get_joystick_y_from_buffer(int port, int buffer);
+s8 joy_get_stick_y_buffered(int port, int buffer);
 
 /**
  * Gets the sign of the X and Y joystick axes of the given controller when menu movement should occur.
@@ -389,9 +389,9 @@ s8 get_joystick_y_from_buffer(int port, int buffer);
  * @param[out] xSign The sign of the X axis, non-zero if X-axis movement should occur.
  * @param[out] ySign The sign of the Y axis, non-zero if Y-axis movement should occur..
  *
- * @see set_menu_joystick_delay
+ * @see joy_set_menu_joystick_delay
  */
-void get_joystick_menu_xy_sign(int port, s8 *xSign, s8 *ySign);
+void joy_get_stick_menu_xy_sign(int port, s8 *xSign, s8 *ySign);
 
 /**
  * Sets the button mask for the given controller.
@@ -401,26 +401,26 @@ void get_joystick_menu_xy_sign(int port, s8 *xSign, s8 *ySign);
  * frame. In other words, setting a button mask only applies to the next set
  * of button inputs.
  */
-void set_button_mask(int port, u16 mask);
+void joy_set_button_mask(int port, u16 mask);
 
 /**
  * Sets the number of input frames that must pass before menu movement occurs due to the
  * joystick being held in a direction.
  *
- * @see get_joystick_menu_xy_sign for more info.
+ * @see joy_get_stick_menu_xy_sign for more info.
  */
-void set_menu_joystick_delay(s8 delay);
+void joy_set_menu_joystick_delay(s8 delay);
 
 /**
  * Resets the number of input frames that must pass before menu movement occurs due to the
  * joystick being held in a direction to 5.
  *
- * @see get_joystick_menu_xy_sign for more info.
+ * @see joy_get_stick_menu_xy_sign for more info.
  */
-void reset_menu_joystick_delay();
+void joy_reset_menu_joystick_delay();
 
-void controller_thread_entry(void *arg);
-s8 handle_joystick_deadzone(s8 stick);
-void init_virtual_cont_port_map();
+void joy_controller_thread_entry(void *arg);
+s8 joy_handle_joystick_deadzone(s8 stick);
+void joy_reset_map();
 
-#endif //_SYS_CONTROLLER_H
+#endif //_SYS_JOYPAD_H

@@ -4,7 +4,7 @@
 #include "dlls/objects/214_animobj.h"
 #include "game/objects/unknown_setups.h"
 #include "sys/gfx/modgfx.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/dll.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
@@ -218,7 +218,7 @@ s32 dll_417_func_5F8(Object* arg0, Object* arg1) {
     objdata = (DFlog_Data*)arg0->data;
     if ((objdata->unk4F4 != 0) && (objdata->unk4EC == 2)) {
         temp_v0 = gDLL_2_Camera->vtbl->func3();
-        if ((temp_v0 != 0x56) && (temp_v0 != 0x60) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (get_masked_button_presses(0) & B_BUTTON)) {
+        if ((temp_v0 != 0x56) && (temp_v0 != 0x60) && (gDLL_1_UI->vtbl->func_DC4() == 0) && (joy_get_pressed(0) & B_BUTTON)) {
             var_fs0 = 0.0f;
             for (i = 0; i < 2; i++) {
                 var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
@@ -459,18 +459,18 @@ static void dll_417_func_E8C(Object* arg0) {
         }
     }
     if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->func3() != 0x60)) {
-        objdata->unk280 = (f32) ((f32) get_joystick_x(0) * 0.01f);
-        if (get_masked_button_presses(0) & A_BUTTON) {
+        objdata->unk280 = (f32) ((f32) joy_get_stick_x(0) * 0.01f);
+        if (joy_get_pressed(0) & A_BUTTON) {
             var_fa0 = ((1.3f - objdata->unk288) / 1.3f) * 0.8f;
         } else {
             var_fa0 = -0.05f;
         }
         objdata->unk288 = (f32) (objdata->unk288 + var_fa0);
-        if (get_masked_button_presses(0) & A_BUTTON) {
+        if (joy_get_pressed(0) & A_BUTTON) {
             objdata->unk258[0].y = (f32) (objdata->unk258[0].y + 0.08f);
             objdata->unk258[1].y = (f32) (objdata->unk258[1].y - 0.06f);
         }
-        if (get_masked_button_presses(0) & A_BUTTON) {
+        if (joy_get_pressed(0) & A_BUTTON) {
             var_fa0 = 0.08f;
         } else {
             var_fa0 = -0.02f;

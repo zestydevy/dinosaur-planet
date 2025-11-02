@@ -1,5 +1,4 @@
 #include "common.h"
-#include "sys/controller.h"
 #include "sys/gfx/gx.h"
 #include "sys/main.h"
 #include "sys/map.h"

@@ -6,7 +6,7 @@
 #include "game/gamebits.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/animation.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/objects.h"
 #include "sys/print.h"
 #include "sys/objanim.h"
@@ -23,7 +23,7 @@
 #include "sys/gfx/map.h"
 #include "sys/dll.h"
 #include "sys/memory.h"
-#include "sys/controller.h"
+#include "sys/joypad.h"
 #include "sys/newshadows.h"
 #include "functions.h"
 #include "dll.h"
@@ -493,7 +493,7 @@ void dll_210_control(Object* arg0) {
         return;
     }
 
-    if (get_masked_buttons(0) & U_JPAD) {
+    if (joy_get_buttons(0) & U_JPAD) {
         dll_210_func_1D07C(arg0, 1);
     }
     _bss_1AC = gUpdateRateF;
@@ -551,7 +551,7 @@ void dll_210_control(Object* arg0) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, (arg0->id != 0 ? _data_4C0 : _data_4CC)[i], 0x7FU, NULL, NULL, 0, NULL);
     }
     dll_210_func_7180(arg0, data, gUpdateRateF);
-    if ((data->unk87C != -1) && ((get_masked_button_presses(0) & 0x4000) || (data->stats->magic == 0))) {
+    if ((data->unk87C != -1) && ((joy_get_pressed(0) & 0x4000) || (data->stats->magic == 0))) {
         data->unk87C = -1;
         data->unk8BF = -1;
         if (*_data_38 != 0) {
@@ -632,11 +632,11 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (!(arg1->flags & 0x200000)) {
         if (arg1->unk884 != -1) {
             if ((arg1->unk8BC != 0x56) && (arg1->unk8BC != 0x60)) {
-                arg1->unk754 = get_joystick_x_from_buffer(arg1->unk884, *_bss_1AA);
-                arg1->unk758 = get_joystick_y_from_buffer(arg1->unk884, *_bss_1AA);
-                arg1->unk764 = get_masked_buttons_from_buffer(arg1->unk884, *_bss_1AA);
-                arg1->unk766 = get_masked_button_presses_from_buffer(arg1->unk884, *_bss_1AA);
-                arg1->unk768 = get_masked_button_releases_from_buffer(arg1->unk884, *_bss_1AA);
+                arg1->unk754 = joy_get_stick_x_buffered(arg1->unk884, *_bss_1AA);
+                arg1->unk758 = joy_get_stick_y_buffered(arg1->unk884, *_bss_1AA);
+                arg1->unk764 = joy_get_buttons_buffered(arg1->unk884, *_bss_1AA);
+                arg1->unk766 = joy_get_pressed_buffered(arg1->unk884, *_bss_1AA);
+                arg1->unk768 = joy_get_released_buffered(arg1->unk884, *_bss_1AA);
             }
         }
     }
@@ -4302,7 +4302,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
 
     if (gDLL_1_UI->vtbl->func_DC4() != 0) {
         if (gDLL_1_UI->vtbl->func_DF4(0x1EE) != 0) {
-            set_button_mask(0, A_BUTTON);
+            joy_set_button_mask(0, A_BUTTON);
             if ((main_get_bits(BIT_3DC) != 0) && (main_get_bits(BIT_Tricky_Dug_Up_Horn_of_Truth_Pad) != 0)) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
@@ -4341,7 +4341,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
     if (gDLL_1_UI->vtbl->func_F40() == 0x387) {
         sp8C = gDLL_1_UI->vtbl->func_E2C(sp38, 0x10);
         if (sp8C != -1 && (arg0->unkC4 == NULL)) {
-            set_button_mask(0, A_BUTTON);
+            joy_set_button_mask(0, A_BUTTON);
             arg0->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)spC4->unk85C->dll)->vtbl->func[20].withOneArgS32(sp8C);
             sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
