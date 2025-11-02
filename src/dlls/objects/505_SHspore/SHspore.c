@@ -50,12 +50,10 @@ static void SHspore_func_A00(Object* arg0, SHSpore_Data* objdata);
 /*0xC*/ static f32 _data_C = 5.0f;
 
 // offset: 0x0 | ctor
-void SHspore_ctor(void *dll) {
-}
+void SHspore_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void SHspore_dtor(void *dll) {
-}
+void SHspore_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
@@ -257,12 +255,10 @@ static void SHspore_func_A00(Object* self, SHSpore_Data* objdata) {
 }
 
 // offset: 0xB88 | func: 4 | export: 2
-void SHspore_update(Object *self) {
-}
+void SHspore_update(Object *self) { }
 
 // offset: 0xB94 | func: 5 | export: 3
-void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-}
+void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0xBAC | func: 6 | export: 4
 void SHspore_free(Object* self, s32 arg1) {

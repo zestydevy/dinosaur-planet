@@ -376,7 +376,7 @@ s32 dll_33_func_F60(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
                 if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) == 0) {
                     var_v1 = 1;
                 } else {
-                    if (((DLL_210_Player*)player->dll)->vtbl->func26(player) <= 0) {
+                    if (((DLL_210_Player*)player->dll)->vtbl->get_health(player) <= 0) {
                         var_v1 = 1;
                     } else {
                         sp3C.x = player->srt.transl.x;
@@ -439,7 +439,7 @@ Object* dll_33_func_10F4(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func66(curObj, 1) == 0) {
                 stop = FALSE;
             }
-            if (((DLL_210_Player*)curObj->dll)->vtbl->func26(curObj) <= 0) {
+            if (((DLL_210_Player*)curObj->dll)->vtbl->get_health(curObj) <= 0) {
                 stop = FALSE;
             } else {
                 spBC.x = arg0->srt.transl.x;

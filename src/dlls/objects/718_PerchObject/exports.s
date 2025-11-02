@@ -4,18 +4,18 @@
 _exports:
 
 # ctor/dtor
-.dword perchObject_ctor
-.dword perchObject_dtor
+.dword perchobject_ctor
+.dword perchobject_dtor
 
 # export table
-/*0*/ .dword perchObject_setup
-/*1*/ .dword perchObject_control
-/*2*/ .dword perchObject_update
-/*3*/ .dword perchObject_print
-/*4*/ .dword perchObject_free
-/*5*/ .dword perchObject_get_model_flags
-/*6*/ .dword perchObject_get_data_size
-/*7*/ .dword perchObject_land_on_perch
-/*8*/ .dword perchObject_func_388
-/*9*/ .dword perchObject_approach_perch
-/*10*/ .dword perchObject_func_460
+/*0*/ .dword perchobject_setup
+/*1*/ .dword perchobject_control
+/*2*/ .dword perchobject_update
+/*3*/ .dword perchobject_print
+/*4*/ .dword perchobject_free
+/*5*/ .dword perchobject_get_model_flags
+/*6*/ .dword perchobject_get_data_size
+/*7*/ .dword perchobject_land_on_perch
+/*8*/ .dword perchobject_func_388
+/*9*/ .dword perchobject_approach_perch
+/*10*/ .dword perchobject_func_460

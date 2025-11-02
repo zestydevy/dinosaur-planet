@@ -392,8 +392,7 @@ void dll_16_dtor(void *dll) { }
 void dll_16_func_18(void) { }
 
 // offset: 0x20 | func: 1 | export: 1
-void dll_16_func_20(void *arg0) {
-}
+void dll_16_func_20(void *arg0) { }
 
 // offset: 0x2C | func: 2 | export: 2
 void dll_16_func_2C(u8 value) {

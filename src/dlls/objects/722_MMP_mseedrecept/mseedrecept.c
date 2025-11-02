@@ -54,21 +54,21 @@ typedef struct {
 
 /*0x0*/ static u8 _bss_0[0x10];
 
-static void moonSeedReceptacle_func_D40(Object* self);
-static int moonSeedReceptacle_anim_callback(Object* self, Object *animObj, AnimObj_Data* animObjData, s8 arg3);
+static void mmp_mseedrecept_func_D40(Object* self);
+static int mmp_mseedrecept_anim_callback(Object* self, Object *animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
-void moonSeedReceptacle_ctor(void *dll) { }
+void mmp_mseedrecept_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void moonSeedReceptacle_dtor(void *dll) { }
+void mmp_mseedrecept_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void moonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32 arg2) {
+void mmp_mseedrecept_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32 arg2) {
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;
-    self->animCallback = moonSeedReceptacle_anim_callback;
+    self->animCallback = mmp_mseedrecept_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     objData->unk0 = 0;
     
@@ -101,7 +101,7 @@ void moonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
 }
 
 // offset: 0x118 | func: 1 | export: 1
-void moonSeedReceptacle_control(Object* self) {
+void mmp_mseedrecept_control(Object* self) {
     MoonSeedReceptacle_Data *objData;
     MoonSeedReceptacle_Setup *objSetup;
     Object *kyte;
@@ -138,7 +138,7 @@ void moonSeedReceptacle_control(Object* self) {
                 self->unk36 = 0xFF;
             }
             if (main_get_bits(objData->gamebitGrown)){
-                moonSeedReceptacle_func_D40(self);
+                mmp_mseedrecept_func_D40(self);
             }
             return;
         
@@ -220,29 +220,29 @@ void moonSeedReceptacle_control(Object* self) {
 }
 
 // offset: 0x998 | func: 2 | export: 2
-void moonSeedReceptacle_update(Object *self) { }
+void mmp_mseedrecept_update(Object *self) { }
 
 // offset: 0x9A4 | func: 3 | export: 3
-void dll_722_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/722_MMP_mseedrecept/dll_722_print.s")
+void mmp_mseedrecept_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/722_MMP_mseedrecept/mmp_mseedrecept_print.s")
 
 // offset: 0xB88 | func: 4 | export: 4
-void moonSeedReceptacle_free(Object* self, s32 a1) {
+void mmp_mseedrecept_free(Object* self, s32 a1) {
     obj_free_object_type(self, 0x30);
 }
 
 // offset: 0xBC8 | func: 5 | export: 5
-u32 moonSeedReceptacle_get_model_flags(Object *self){
+u32 mmp_mseedrecept_get_model_flags(Object *self){
     return 1;
 }
 
 // offset: 0xBD8 | func: 6 | export: 6
-u32 moonSeedReceptacle_get_data_size(Object *self, u32 a1) {
+u32 mmp_mseedrecept_get_data_size(Object *self, u32 a1) {
     return sizeof(MoonSeedReceptacle_Data);
 }
 
 // offset: 0xBEC | func: 7 | export: 7
-s32 moonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
+s32 mmp_mseedrecept_func_BEC(Object* self, s32 arg1) {
     MoonSeedReceptacle_Data* objData;
     s32 returnVal;
 
@@ -259,7 +259,7 @@ s32 moonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
             returnVal = TRUE;
             if (main_get_bits(objData->gamebitPlanted) && 
                 !main_get_bits(objData->gamebitGrown)) {
-                moonSeedReceptacle_func_D40(self);
+                mmp_mseedrecept_func_D40(self);
             }
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -269,22 +269,22 @@ s32 moonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
 }
 
 // offset: 0xD00 | func: 8 | export: 8
-u32 moonSeedReceptacle_func_D00(Object *self, u32 a1, u32 a2) {
+u32 mmp_mseedrecept_func_D00(Object *self, u32 a1, u32 a2) {
     return 0;
 }
 
 // offset: 0xD18 | func: 9 | export: 9
-u32 moonSeedReceptacle_func_D18(Object *self, u32 a1, u32 a2) {
+u32 mmp_mseedrecept_func_D18(Object *self, u32 a1, u32 a2) {
     return 0;
 }
 
 // offset: 0xD30 | func: 10 | export: 10
-u32 moonSeedReceptacle_func_D30(Object *self){
+u32 mmp_mseedrecept_func_D30(Object *self){
     return 2;
 }
 
 // offset: 0xD40 | func: 11
-void moonSeedReceptacle_func_D40(Object* self) {
+void mmp_mseedrecept_func_D40(Object* self) {
     MoonSeedReceptacle_Data* objData;
     MoonSeedReceptacle_Setup* objSetup;
     CurveSetup* curveSetup;
@@ -307,7 +307,7 @@ void moonSeedReceptacle_func_D40(Object* self) {
 }
 
 // offset: 0xE5C | func: 12
-static int moonSeedReceptacle_anim_callback(Object* self, Object *animObj, AnimObj_Data* animObjData, s8 arg3) {
+static int mmp_mseedrecept_anim_callback(Object* self, Object *animObj, AnimObj_Data* animObjData, s8 arg3) {
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;

@@ -47,7 +47,7 @@ typedef struct {
     CurveSetup* curveSetup;
 } PerchObject_Data;
 
-static int perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
+static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 enum PerchObjectStates {
     STATE_0_Initialise = 0,
@@ -55,22 +55,22 @@ enum PerchObjectStates {
 };
 
 // offset: 0x0 | ctor
-void perchObject_ctor(void *dll) { }
+void perchobject_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void perchObject_dtor(void *dll) { }
+void perchobject_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void perchObject_setup(Object* self, s32 arg1, s32 arg2) {
+void perchobject_setup(Object* self, s32 arg1, s32 arg2) {
     PerchObject_Data* objData = self->data;
 
     objData->stateIndex = STATE_0_Initialise;
     obj_add_object_type(self, 0x30);
-    self->animCallback = perchObject_anim_callback;
+    self->animCallback = perchobject_anim_callback;
 }
 
 // offset: 0x74 | func: 1 | export: 1
-void perchObject_control(Object* self) {
+void perchobject_control(Object* self) {
     PerchObject_Data *objData;
     PerchObject_Setup *objSetup;
     Object *kyte;
@@ -129,10 +129,10 @@ void perchObject_control(Object* self) {
 }
 
 // offset: 0x25C | func: 2 | export: 2
-void perchObject_update(Object *self) { }
+void perchobject_update(Object *self) { }
 
 // offset: 0x268 | func: 3 | export: 3
-void perchObject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void perchobject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
@@ -140,23 +140,23 @@ void perchObject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
 
 // offset: 0x2BC | func: 4 | export: 4
-void perchObject_free(Object* self, s32 arg1) {
+void perchobject_free(Object* self, s32 arg1) {
     obj_free_object_type(self, 0x30);
 }
 
 // offset: 0x2FC | func: 5 | export: 5
-u32 perchObject_get_model_flags(Object *self) {
+u32 perchobject_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x30C | func: 6 | export: 6
-u32 perchObject_get_data_size(Object *self, u32 a1) {
+u32 perchobject_get_data_size(Object *self, u32 a1) {
     return sizeof(PerchObject_Data);
 }
 
 // offset: 0x320 | func: 7 | export: 7
 // Called when Kyte finishes landing on unpressed switch (just before switch gets pressed down)
-s32 perchObject_land_on_perch(Object* self, s32 arg1) {
+s32 perchobject_land_on_perch(Object* self, s32 arg1) {
     PerchObject_Data* objData;
     s32 landedOnPerch;
 
@@ -173,13 +173,13 @@ s32 perchObject_land_on_perch(Object* self, s32 arg1) {
 }
 
 // offset: 0x388 | func: 8 | export: 8
-u32 perchObject_func_388(Object *self, s32 arg1, s32 arg2) {
+u32 perchobject_func_388(Object *self, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x3A0 | func: 9 | export: 9
 // Called when Kyte begins landing (entering slower flapping state while close to perch)
-u32 perchObject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
+u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
     Object *kyte;
     s16 flag;
     PerchObject_Data *state;
@@ -204,12 +204,12 @@ u32 perchObject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
 }
 
 // offset: 0x460 | func: 10 | export: 10
-u32 perchObject_func_460(Object *self) {
+u32 perchobject_func_460(Object *self) {
     return 4;
 }
 
 // offset: 0x470 | func: 11
-static int perchObject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
+static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     s32 pad;
     Object* kyte;
     PerchObject_Data* state;

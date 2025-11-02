@@ -46,12 +46,10 @@ static void krazoatext_load_required_glyph_textures(Object* self, KText_Data* ob
 static void krazoatext_unload_all_glyph_textures(Object* self, KText_Data* objdata);
 
 // offset: 0x0 | ctor
-void krazoatext_ctor(void* dll){
-}
+void krazoatext_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void krazoatext_dtor(void* dll){
-}
+void krazoatext_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
@@ -111,8 +109,7 @@ void krazoatext_control(Object* self) {
 }
 
 // offset: 0x324 | func: 2 | export: 2
-void krazoatext_update(Object* self){
-}
+void krazoatext_update(Object* self){ }
 
 // offset: 0x330 | func: 3 | export: 3
 void krazoatext_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {

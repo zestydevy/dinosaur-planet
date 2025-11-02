@@ -691,8 +691,7 @@ s32 dll_3_func_88CC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x88E8 | func: 51 | export: 16
-void dll_3_func_88E8(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-}
+void dll_3_func_88E8(s32 arg0, s32 arg1, s32 arg2, s32 arg3) { }
 
 // offset: 0x8900 | func: 52 | export: 17
 void dll_3_func_8900(s32 objectSeqIndex, Object* object, s32 arg2);

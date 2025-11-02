@@ -48,12 +48,10 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
 static void MMshrine_func_1140(Object *arg0);
 
 // offset: 0x0 | ctor
-void MMshrine_ctor(void *dll) {
-}
+void MMshrine_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void MMshrine_dtor(void *dll) {
-}
+void MMshrine_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
@@ -249,8 +247,7 @@ void MMshrine_control(Object *self) {
 }
 
 // offset: 0xB3C | func: 2 | export: 2
-void MMshrine_update(Object *self) {
-}
+void MMshrine_update(Object *self) { }
 
 // offset: 0xB48 | func: 3 | export: 3
 void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {

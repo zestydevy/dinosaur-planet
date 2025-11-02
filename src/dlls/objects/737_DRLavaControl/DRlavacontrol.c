@@ -99,8 +99,7 @@ void DRLavaControl_update(Object* self) {
 }
 
 // offset: 0x1D8 | func: 3 | export: 3
-void DRLavaControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-}
+void DRLavaControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x1F0 | func: 4 | export: 4
 void DRLavaControl_free(Object* self, s32 arg1) {

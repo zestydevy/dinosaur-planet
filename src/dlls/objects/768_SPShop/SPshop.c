@@ -9,6 +9,97 @@
 
 #define TOTAL_ITEMS 60
 
+typedef enum {
+    //Cold storage
+    SPItem_Fruit = COLD_STORAGE + 0,
+    SPItem_Energy_Egg = COLD_STORAGE + 1,
+    SPItem_Red_Mushroom = COLD_STORAGE + 2,
+    SPItem_Red_Maggot = COLD_STORAGE + 3,
+    SPItem_Green_Magic = COLD_STORAGE + 4,
+    SPItem_Blue_Magic = COLD_STORAGE + 5,
+
+    //Main room
+    SPItem_Fishing_Net = MAIN_ROOM + 0,
+    SPItem_Firefly_Lantern = MAIN_ROOM + 1,
+    SPItem_Translator = MAIN_ROOM + 2,
+    SPItem_Small_Sidekick_Foodbag = MAIN_ROOM + 3,
+    SPItem_Medium_Sidekick_Foodbag = MAIN_ROOM + 4,
+    SPItem_Medium_Magic_Chest = MAIN_ROOM + 5,
+    SPItem_Large_Magic_Chest_= MAIN_ROOM + 6,
+    SPItem_Small_Player_Foodbag = MAIN_ROOM + 7,
+    SPItem_Medium_Player_Foodbag = MAIN_ROOM + 8,
+    SPItem_Large_Player_Foodbag = MAIN_ROOM + 9,
+
+    //Map room
+    SPItem_Dark_Ice_Mines_Map = MAP_ROOM + 0,
+    SPItem_Dragon_Rock_Map = MAP_ROOM + 1,
+    SPItem_SwapStone_Circle_Map = MAP_ROOM + 2,
+    SPItem_Moon_Mountain_Map_= MAP_ROOM + 3,
+    SPItem_Warlock_Replay_Disk = MAP_ROOM + 4,
+    SPItem_Ice_Mountain_Replay_Disk = MAP_ROOM + 5,
+    SPItem_Ice_Mountain_Map = MAP_ROOM + 6
+} ShopItemIndices;
+
+typedef enum {
+    //Cold storage
+    SPText_Fruit = GAMETEXT_BASE + 0,
+    SPText_Energy_Egg = GAMETEXT_BASE + 1,
+    SPText_Red_Mushroom = GAMETEXT_BASE + 2,
+    SPText_Red_Maggot = GAMETEXT_BASE + 3,
+    SPText_Green_Magic = GAMETEXT_BASE + 4,
+    SPText_Blue_Magic = GAMETEXT_BASE + 5,
+
+    //Main room
+    SPText_Fishing_Net = GAMETEXT_BASE + 6,
+    SPText_Firefly_Lantern = GAMETEXT_BASE + 7,
+    SPText_Translator = GAMETEXT_BASE + 8,
+    SPText_Sidekick_Foodbag_S = GAMETEXT_BASE + 9,
+    SPText_Sidekick_Foodbag_M = GAMETEXT_BASE + 10,
+    SPText_Magic_Chest_M = GAMETEXT_BASE + 11,
+    SPText_Magic_Chest_L= GAMETEXT_BASE + 12,
+    SPText_Player_Foodbag_Small = GAMETEXT_BASE + 13,
+    SPText_Player_Foodbag_Medium = GAMETEXT_BASE + 14,
+    SPText_Player_Foodbag_Large = GAMETEXT_BASE + 15,
+
+    //Map room
+    SPText_Dark_Ice_Mines_Map = GAMETEXT_BASE + 16,
+    SPText_Dragon_Rock_Map = GAMETEXT_BASE + 17,
+    SPText_SwapStone_Circle_Map = GAMETEXT_BASE + 18,
+    SPText_Moon_Mountain_Map= GAMETEXT_BASE + 19,
+    SPText_Warlock_Replay_Disk = GAMETEXT_BASE + 20,
+    SPText_Ice_Mountain_Replay_Disk = GAMETEXT_BASE + 21,
+    SPText_Ice_Mountain_Map = GAMETEXT_BASE + 22
+} ShopItemStrings;
+
+typedef struct {
+/*0*/ u8 min;
+/*1*/ u8 possibilities[3];
+/*4*/ u8 specialOffer;
+/*5*/ u8 initial;
+} Price;
+
+typedef struct {
+/*0*/ s16 show;
+/*2*/ s16 hide;
+} CharacterSpecificGamebits;
+
+typedef struct {
+/*0*/ Price price;
+/*6*/ CharacterSpecificGamebits sabre;
+/*A*/ CharacterSpecificGamebits krystal;
+/*C*/ s16 gametextLine;
+} ShopItem;
+
+typedef struct {
+    s8 unk0;
+    u8 itemIndex;
+    s8 unk2;
+    s8 unk3;
+    s8 unk4;
+} SPShop_Data;
+
+static void SPShop_set_random_prices(void);
+
 /*0x0*/ static ShopItem shopItemData[TOTAL_ITEMS] = {
     {3,  {3,  4,  5},  1, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Fruit},
     {5,  {5,  7,  10}, 3, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Energy_Egg},
@@ -268,7 +359,7 @@ void SPShop_buy_item(Object* self, s32 cost) {
     objData = self->data;
 
     //Subtract cost from player's scarabs
-    ((DLL_210_Player*)player->dll)->vtbl->func19(player, -cost);
+    ((DLL_210_Player*)player->dll)->vtbl->add_scarab(player, -cost);
 
     //Handle special cases (player energy/magic refills)
     switch (objData->itemIndex) {  
@@ -280,16 +371,16 @@ void SPShop_buy_item(Object* self, s32 cost) {
         case 45:
             break;
         case SPItem_Fruit:
-            ((DLL_210_Player*)player->dll)->vtbl->func24(player, 1);
+            ((DLL_210_Player*)player->dll)->vtbl->add_health(player, 1);
             break;
         case SPItem_Energy_Egg:
-            ((DLL_210_Player*)player->dll)->vtbl->func24(player, 2);
+            ((DLL_210_Player*)player->dll)->vtbl->add_health(player, 2);
             break;
         case SPItem_Green_Magic:
-            ((DLL_210_Player*)player->dll)->vtbl->func14(player, 5);
+            ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 5);
             break;
         case SPItem_Blue_Magic:
-            ((DLL_210_Player*)player->dll)->vtbl->func14(player, 10);
+            ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 10);
             break;
     }
     

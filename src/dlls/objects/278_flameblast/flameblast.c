@@ -23,12 +23,10 @@ typedef struct {
 } FlameBlast_Data;
 
 // offset: 0x0 | ctor
-void dll_278_ctor(void* dll){
-}
+void dll_278_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void dll_278_dtor(void* dll){
-}
+void dll_278_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void flameblast_setup(Object* self, FlameBlast_Setup* setup, s32 arg2) {
@@ -87,12 +85,10 @@ void flameblast_control(Object* self) {
 }
 
 // offset: 0x274 | func: 2 | export: 2
-void flameblast_update(void){
-}
+void flameblast_update(void){ }
 
 // offset: 0x27C | func: 3 | export: 3
-void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
-}
+void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) { }
 
 // offset: 0x294 | func: 4 | export: 4
 void flameblast_free(Object* self, s32 arg1) {
