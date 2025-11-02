@@ -1616,14 +1616,14 @@ void func_80023464(s32 playerno) {
 
 void func_80023628() {
     Object *player;
-    s32 var;
+    s32 mapType;
     ObjSetup playerSetup;
     PlayerLocation *savedPlayerLocation;
     f32 x, y, z;
     s32 playerno;
 
-    var = func_80048024();
-    if (var == 2 || var == 3) {
+    mapType = map_get_type();
+    if (mapType == MAPTYPE_2 || mapType == MAPTYPE_3) {
         obj_free_all();
         return;
     }

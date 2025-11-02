@@ -1,40 +1,45 @@
-#include "common.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/214_animobj.h"
+#include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
+#include "sys/main.h"
+#include "sys/rand.h"
+#include "dll.h"
 
 typedef struct {
-    f32 unk0;
-    f32 unk4;
-    s16 unk8;
-    s16 unkA;
-    s16 unkC;
-    s16 unkE;
-    u8 _unk10[0x12 - 0x10];
-    s16 unk12;
-    s16 unk14;
-    s16 unk16;
-    s16 unk18;
-    s16 unk1A;
-    u8 unk1C;
+/*00*/ f32 unk0;
+/*04*/ f32 unk4;
+/*08*/ s16 unk8;
+/*0A*/ s16 unkA;
+/*0C*/ s16 unkC;
+/*0E*/ s16 unkE;
+/*10*/ u8 _unk10[0x12 - 0x10];
+/*12*/ s16 unk12;
+/*14*/ s16 toggleGamebit;
+/*16*/ s16 disableGamebit;
+/*18*/ s16 disabled;
+/*1A*/ s16 unk1A;
+/*1C*/ u8 unk1C;
 } FXEmit_Data;
 
 typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s8 unk22;
-    s8 unk23;
-    s8 unk24;
-    s8 unk25;
-    s8 unk26;
-    s8 unk27;
-    u8 unk28;
-    u8 unk29;
-    s16 unk2A;
+/*00*/ ObjSetup base;
+/*18*/ s8 unk18;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 toggleGamebit;
+/*20*/ s16 disableGamebit;
+/*22*/ s8 unk22;
+/*23*/ s8 unk23;
+/*24*/ s8 unk24;
+/*25*/ s8 unk25;
+/*26*/ s8 unk26;
+/*27*/ s8 unk27;
+/*28*/ u8 unk28;
+/*29*/ u8 unk29;
+/*2A*/ s16 unk2A;
 } FXEmit_Setup;
 
 static int dll_332_func_6C0(Object *, Object *, AnimObj_Data *, s8);
@@ -57,17 +62,17 @@ void dll_332_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
     objdata->unkA = (s16) setup->unk1A;
     objdata->unkE = (s16) setup->unk1C;
     self->srt.scale = 0.1f;
-    objdata->unk14 = (s16) setup->unk1E;
-    objdata->unk16 = (s16) setup->unk20;
-    objdata->unk18 = 0;
+    objdata->toggleGamebit = (s16) setup->toggleGamebit;
+    objdata->disableGamebit = (s16) setup->disableGamebit;
+    objdata->disabled = FALSE;
     if (objdata->unkE <= 0) {
         self->unkDC = (s32) objdata->unkE;
     } else {
         self->unkDC = 0;
     }
-    if (objdata->unk16 != -1) {
-        if (main_get_bits(objdata->unk16) != 0) {
-            objdata->unk18 = 1;
+    if (objdata->disableGamebit != -1) {
+        if (main_get_bits(objdata->disableGamebit) != 0) {
+            objdata->disabled = TRUE;
         }
     }
     self->srt.yaw = setup->unk24 << 8;
@@ -105,13 +110,13 @@ void dll_332_control(Object* self) {
         if ((player != NULL) && (setup != NULL)) {
             if ((setup->unk29 != 0) && (setup->unk29 != 0xFF)) {
                 if (objdata->unk1A <= 0) {
-                    objdata->unk18 = 0;
+                    objdata->disabled = FALSE;
                     objdata->unk1A = (s16) (setup->unk29 * 0x64);
                     if (setup->unk2A != 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(self, setup->unk2A, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 } else {
-                    objdata->unk18 = 1;
+                    objdata->disabled = TRUE;
                 }
                 objdata->unk1A = (s16) (objdata->unk1A - gUpdateRate);
             }
@@ -130,21 +135,21 @@ void dll_332_control(Object* self) {
             } else {
                 self->srt.roll += setup->unk25 * gUpdateRate * 0x64;
             }
-            if (((objdata->unk14 == -1) || (main_get_bits(objdata->unk14) != 0)) && (objdata->unk18 == 0)) {
-                if (objdata->unk16 != -1) {
-                    if (main_get_bits(objdata->unk16) != 0) {
-                        objdata->unk18 = 1;
+            if (((objdata->toggleGamebit == -1) || (main_get_bits(objdata->toggleGamebit) != 0)) && !objdata->disabled) {
+                if (objdata->disableGamebit != -1) {
+                    if (main_get_bits(objdata->disableGamebit) != 0) {
+                        objdata->disabled = TRUE;
                     }
                 }
                 if (setup->unk29 == 0xFF) {
-                    objdata->unk18 = 1;
+                    objdata->disabled = TRUE;
                 }
                 if ((objdata->unkE >= 0) || ((objdata->unkE < 0) && (self->unkDC <= 0))) {
                     sp40[0] = self->positionMirror.x - player->positionMirror.x;
                     sp40[1] = self->positionMirror.y - player->positionMirror.y;
                     sp40[2] = self->positionMirror.z - player->positionMirror.z;
                     if (objdata->unkE == 0) {
-                        objdata->unk18 = 1;
+                        objdata->disabled = TRUE;
                     }
                     if ((sqrtf(SQ(sp40[0]) + SQ(sp40[1]) + SQ(sp40[2])) <= objdata->unk0) || (objdata->unk0 == 0.0f)) {
                         dll_332_func_8E8(self);

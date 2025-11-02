@@ -476,7 +476,7 @@ void func_80014074(void) {
         if (D_8008CA30 != 0) {
             func_8003798C(0, 0, 0);
             func_800668A4();
-            func_800484A8();
+            map_func_800484A8();
 
             gCurGfx = gMainGfx[gFrameBufIdx];
             gDPFullSync(gCurGfx++);
@@ -493,7 +493,7 @@ void func_80014074(void) {
             D_8008C968 = -1;
         }
 
-        func_8004773C();
+        map_func_8004773C();
 
         if (gDLL_23 != NULL) {
             gDLL_23->vtbl->func_18(1);
@@ -520,7 +520,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
 
     temp_v0 = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
-    func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
+    map_func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
     gDLL_29_Gplay->vtbl->checkpoint(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
 
     D_800B09C0 = 1;
@@ -529,7 +529,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
 
 void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     func_8001440C(0);
-    func_800483BC(arg0, arg1, arg2);
+    map_func_800483BC(arg0, arg1, arg2);
     clear_PlayerPosBuffer();
     D_800B09C0 = 1;
 }
@@ -549,7 +549,7 @@ void func_800142F0(f32 x, f32 y, f32 z, s32 playerno) {
 }
 
 void func_800143A4(void) {
-    func_80048034();
+    map_func_80048034();
     D_800B09C0 = 1;
 }
 

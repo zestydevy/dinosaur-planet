@@ -29,6 +29,13 @@ typedef enum {
     WARP_SWAPSTONE_SHOP_ENTRANCE = 86
 } WarpID;
 
+typedef struct {
+/*00*/ ObjSetup base;
+/*18*/ u8 mapSetupID;
+/*19*/ u8 unk19;
+/*1C*/ u32 objGroupStatusBits;
+} SetupPoint_Setup;
+
 typedef struct{
 /*00*/    s16 Ax;
 /*02*/    s16 Bx;
@@ -160,6 +167,13 @@ typedef struct {
 /*07*/ u8 unk07; // usually 0?
 } StreamMap;
 
+enum MapTypes {
+    MAPTYPE_REGULAR = 0,
+    MAPTYPE_MOBILE = 1,
+    MAPTYPE_2 = 2,
+    MAPTYPE_3 = 3
+};
+
 typedef struct {
 /*00*/ char name[0x1c];
 /*1c*/ s8 type; //0 = regular map, 1 = mobile map, 3 = debug map?
@@ -276,7 +290,7 @@ typedef struct MapsBinStruct {
     /*0x02*/ s16 unk2;
     /*0x04*/ s16 unk4;
     /*0x06*/ s16 unk6; // new
-    /*0x08*/ s16 unk8;
+    /*0x08*/ u16 unk8;
     /*0x0A*/ s16 _padA;
     /*0x0C*/ s32 *unkC;
     /*0x10*/ s32 unk10;
@@ -372,10 +386,10 @@ extern s8 *D_800B9700[MAP_LAYER_COUNT];
 extern s32 gNumTotalBlocks;
 extern SavedObject* D_800B96B0;
 extern s32* gFile_BLOCKS_TAB; // unknown pointer type
-extern MapsTabStruct* gFile_MAPS_TAB; // unknown pointer type
+extern s32* gFile_MAPS_TAB; // unknown pointer type
 extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
-extern s8 D_80092A8C;
+extern s8 gMapLayer;
 typedef struct Unk800B5508 {
     s32 unk0[32];
     s32 unk80;
@@ -398,9 +412,9 @@ extern f32 D_800B97AC; //x
 extern f32 D_800B97B0; //y
 extern f32 D_800B97B4; //z
 
-extern s16 D_800B4A70;
-extern s16 D_800B4A72;
-extern s8 D_800B96A8;
+extern s16 gMobileMapID;
+extern s16 gMobileMapUnknown;
+extern s8 gMapType;
 
 extern s8 D_80092A78; //gFadeDelayTimer
 extern s8 D_800B4A58; //gStartWarp?
@@ -484,9 +498,9 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
 void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3);
 MapHeader *map_load_streammap(s32, s32);
 void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
-void func_80048034(void);
+void map_func_80048034(void);
 void map_update_objects_streaming(s32);
-s32 func_800485FC(s32, s32, s32, s32, s32);
+s32 map_func_800485FC(s32, s32, s32, s32, s32);
 void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
 void func_800496E4(s32 blockIndex);
 void map_update_streaming(void);

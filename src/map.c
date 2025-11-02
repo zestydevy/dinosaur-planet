@@ -2,10 +2,13 @@
 #include "sys/map.h"
 #include "sys/objtype.h"
 
+#define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
+
 // .data start: 80092a60 ?
 // .bss start: 800b49f0 ?
 
 static void func_8004D328();
+void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
 
 void dl_set_all_dirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
@@ -456,7 +459,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     D_800B51D4 = *vtxs;
     D_800B51D8 = *pols;
     UINT_80092a98 |= 0x21;
-    if ((D_800B96A8 == 1) || (D_800B96A8 == 3)) {
+    if ((gMapType == MAPTYPE_MOBILE) || (gMapType == MAPTYPE_3)) {
         UINT_80092a98 &= ~1;
     }
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
@@ -1682,7 +1685,7 @@ u8 func_800456AC(Object* obj) {
     if (obj->unk37 == 0) {
         return 0;
     }
-    if (obj->id == 0xD4) {
+    if (obj->id == OBJ_FXEmit) {
         return 1;
     }
     return is_sphere_in_frustum(&obj->positionMirror, obj->unkA8);
@@ -1708,75 +1711,35 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius)
     return TRUE;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap.s")
-#else
-void map_restore_saved_objects(MAPSHeader*, s32, s32, s32); //Unsure of argument types, especially last one
-extern s32 *gFile_MAPS_TAB;
-extern MAPSHeader *gMapActiveStreamMap;
-
-typedef struct {
-/*00*/ u32 header;
-/*04*/ u32 blockIDs;
-/*08*/ u32 gridA1;
-/*0c*/ u32 gridA2;
-/*10*/ u32 objCreateInfo;
-/*14*/ u32 gridB1;
-/*18*/ u32 gridB2;
-/*1c*/ u32 end;
-} MapTab;
-
-/* 
-    arg1 = 0 when I was testing!
-*/
-MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
-    s32 new_var;
-    s32 map_size;
-    s32 temp_a0;
+MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     s32 map_start;
-    s32 objectsCount_oneEighth;
-    s32 temp_t4;
-    s32 temp_t6;
-    s32 gridB_size;
-    int objectsMallocSize;
+    s32 map_size; // sp48
+    s32 instanceCount;
+    MapHeader *map;
     s32 var_v0;
-    MapTab *mapTab;
-    s8 *temp_t7_2;
-    u8 *map;
-    void *temp_t3;
+    s32 size; // sp38
+    
+    map_start = READ_MAPS_TAB(mapID, 0);
+    map_size = READ_MAPS_TAB(mapID, 7) - map_start;
+    queue_load_file_region_to_ptr((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MapHeader));
+    gMapActiveStreamMap = (MapHeader*)gMapReadBuffer;
 
+    size = gMapActiveStreamMap->gridB_sixteenthSize;
+    instanceCount = gMapActiveStreamMap->objectInstanceCount;
+    gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 5, 0);
 
+    queue_load_file_region_to_ptr((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
     
-    mapTab = (MapTab *)(&gFile_MAPS_TAB + (mapID * 7));
-    
-    map_start = mapTab->header;
-    map_size = mapTab->end - map_start;
-    queue_load_file_region_to_ptr((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MAPSHeader));
-    gMapActiveStreamMap = (MAPSHeader *) gMapReadBuffer;
-    
-    gridB_size = gMapActiveStreamMap->gridB_sixteenthSize * 16;
-    objectsCount_oneEighth = gMapActiveStreamMap->objectInstanceCount >> 3;
-    objectsMallocSize = objectsCount_oneEighth + 1;
-    map = mmAlloc(((gridB_size << 1) + map_size) + objectsMallocSize, ALLOC_TAG_TRACK_COL, 0);
-    
-    gMapActiveStreamMap = (MAPSHeader *) map;
-    queue_load_file_region_to_ptr((void *) map, MAPS_BIN, map_start, map_size);
-    
-    temp_a0 = objectsCount_oneEighth + 1;
-    temp_t4 = objectsMallocSize & 3;
-
     //Setting up pointers to the 7 MAPS files (excluding the header) (and EOF)
-    gMapActiveStreamMap->blockIDs_ptr = (u32 *) gMapActiveStreamMap + mapTab->blockIDs;
-    gMapActiveStreamMap->grid_A1_ptr = (s8 *) gMapActiveStreamMap + mapTab->gridA1;
-    gMapActiveStreamMap->grid_A2_ptr = (s8 *) gMapActiveStreamMap + mapTab->gridA2;
-    gMapActiveStreamMap->objectInstanceFile_ptr = (s32 *) gMapActiveStreamMap + mapTab->objCreateInfo;
-    new_var = temp_t4;
-    gMapActiveStreamMap->grid_B1_ptr = (s8 *) gMapActiveStreamMap + mapTab->gridB1;
-    gMapActiveStreamMap->grid_B2_ptr = (s8*)(gMapActiveStreamMap->grid_B1_ptr + gridB_size);    
-    gMapActiveStreamMap->end_ptr = (s8*)(gMapActiveStreamMap->grid_B2_ptr + gridB_size);
+    gMapActiveStreamMap->blockIDs_ptr = (u32*)(((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 1) - map_start);
+    gMapActiveStreamMap->grid_A1_ptr =  (s8*) (((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 2) - map_start);
+    gMapActiveStreamMap->grid_A2_ptr =  (s8*) (((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 3) - map_start);
+    gMapActiveStreamMap->objectInstanceFile_ptr = (((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 4) - map_start);
+    gMapActiveStreamMap->grid_B1_ptr =  (s8*) (((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 5) - map_start);
+    gMapActiveStreamMap->grid_B2_ptr =  (s8*) (gMapActiveStreamMap->grid_B1_ptr + size * 16);
+    gMapActiveStreamMap->end_ptr =      (s8*) (gMapActiveStreamMap->grid_B2_ptr + size * 16);
 
-    //Ack, this section needs reworking
-    for (var_v0 = 0; var_v0 != temp_a0; var_v0++){
+    for (var_v0 = 0; var_v0 < (instanceCount >> 3) + 1; var_v0++){
         gMapActiveStreamMap->end_ptr[var_v0] = 0;
     }
     
@@ -1785,20 +1748,19 @@ MAPSHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gMapActiveStreamMap->unk18 = 0;
     gMapActiveStreamMap->unk19 = 0;
     //It ignores the asset's stored length and calculates it instead
-    gMapActiveStreamMap->objectInstancesFileLength = (u32)gMapActiveStreamMap->grid_B2_ptr - (u32)gMapActiveStreamMap->objectInstanceFile_ptr;
+    gMapActiveStreamMap->objectInstancesFileLength = (u32)gMapActiveStreamMap->grid_B1_ptr - (u32)gMapActiveStreamMap->objectInstanceFile_ptr;
     gLoadedMapsDataTable[mapID] = gMapActiveStreamMap;
     
     if (arg1 == 0){
-        func_80045FC4(gMapActiveStreamMap, (mapID * 0x8C) + (&D_800B5508), mapID, 0);
+        func_80045FC4(gMapActiveStreamMap, &D_800B5508[mapID], mapID, 0);
         gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     }
-    else{
-        map_restore_saved_objects(gMapActiveStreamMap, mapID, mapID, 0);
+    else
+    {
+        map_restore_saved_objects(gMapActiveStreamMap, mapID);
     }
     return gMapActiveStreamMap;
 }
-
-#endif
 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_load_streammap_add_to_table.s")
@@ -1855,7 +1817,7 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
 
     var_v0 = &D_800B9768.unk4[0];
     var_v1 = &D_800B9768.unk10[0];
-    arg2 = D_80092A9C[arg2] + D_80092A8C;
+    arg2 = D_80092A9C[arg2] + gMapLayer;
     for (j = 0; j < 64; j += 1) {
         if (arg2 == D_800B9768.unkC[j]) {
             if (arg0 >= var_v0->xMin && var_v0->xMax >= arg0) {
@@ -2179,34 +2141,25 @@ void init_global_map(void)
         D_800B9768.unk8[(buf[i].unk6 << 1) + 1] = buf[i].unkA;
     }
 
-    func_80048034();
+    map_func_80048034();
 
     mmFree(buf);
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/map_read_layout.s")
-#else
-// regalloc
-typedef struct UnkStructUnk4 {
-/*00*/ s16 unk0;
-/*02*/ s16 unk2;
-/*04*/ s16 unk4;
-/*06*/ s16 unk6;
-/*08*/ s8  unk8;
-/*09*/ s8  unk9;
-} UnkStructUnk4;
-void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex)
-{
-    MapsTabStruct* maptabstruct;
+void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 mapID) {
     MapsBinStruct* mapbinstruct;
+    s32 temp_v1;
+    s32 var_v0;
+    s32 temp;
+    s32 size;
 
-    maptabstruct = &gFile_MAPS_TAB[maptabindex];
     mapbinstruct = (MapsBinStruct*)gMapReadBuffer;
+    size = READ_MAPS_TAB(mapID, 2) - READ_MAPS_TAB(mapID, 0);
     
-    queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, maptabstruct->unk0, maptabstruct->unk8 - maptabstruct->unk0);
+    queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, READ_MAPS_TAB(mapID, 0), size);
     
-    mapbinstruct->unkC = (s32 *) (((s8 *)mapbinstruct + gFile_MAPS_TAB[maptabindex].unk4) - gFile_MAPS_TAB[maptabindex].unk0);
+    mapbinstruct->unkC = (s32 *) 
+        (((s8*)mapbinstruct) + READ_MAPS_TAB(mapID, 1) - READ_MAPS_TAB(mapID, 0));
 
     arg0->xMin = arg2 - mapbinstruct->unk4;
     arg0->zMin = arg3 - mapbinstruct->unk6;
@@ -2218,19 +2171,17 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
 
     for (arg3 = 0; arg3 < mapbinstruct->unk2; arg3++) {
         for (arg2 = 0; arg2 < mapbinstruct->unk0; arg2++) {
-            s32 temp_v1 = arg2 + (arg3 * mapbinstruct->unk0);
-            s32 var_v0 = mapbinstruct->unkC[temp_v1];
+            temp_v1 = arg2 + (arg3 * mapbinstruct->unk0);
+            var_v0 = mapbinstruct->unkC[temp_v1];
             if (((var_v0 >> 0x17) & 0x3F) != 0x3F) {
-                s32 temp = 1 << (temp_v1 & 7);
+                temp = 1 << (temp_v1 & 7);
                 arg1[(temp_v1 >> 3)] |= temp;
             }
         }
     }
 }
 
-#endif
-
-void func_80046B58(f32 x, f32 y, f32 z) {
+void map_func_80046B58(f32 x, f32 y, f32 z) {
     u32 temp_t8;
     
     temp_t8 = UINT_80092a98;
@@ -2407,7 +2358,7 @@ void map_update_streaming(void) {
                 for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
                     for (var_s0 = 0; var_s0 != BLOCKS_GRID_SPAN; ) {
                         if (var_s1[0] == -3) {
-                            if (func_800485FC(var_s0, var_s2, gMapCurrentStreamCoordsX + var_s0, gMapCurrentStreamCoordsZ + var_s2, var_s7) == 0) {
+                            if (map_func_800485FC(var_s0, var_s2, gMapCurrentStreamCoordsX + var_s0, gMapCurrentStreamCoordsZ + var_s2, var_s7) == 0) {
                                 var_s1[0] = -2;
                             } else {
                                 D_800B9714[var_s3] = var_s5;
@@ -2455,20 +2406,18 @@ void map_update_streaming(void) {
 }
 #endif
 
-/** Increment something */
-void func_80047374(void) {
-    D_80092A8C += 1;
-    if (D_80092A8C >= 3) {
-        D_80092A8C = 2;
+void map_increment_layer(void) {
+    gMapLayer += 1;
+    if (gMapLayer >= 3) {
+        gMapLayer = 2;
     }
     UINT_80092a98 |= 0x4000;
 }
 
-/** Decrement something */
-void func_800473BC(void) {
-    D_80092A8C -= 1;
-    if (D_80092A8C < -2) {
-        D_80092A8C = -2;
+void map_decrement_layer(void) {
+    gMapLayer -= 1;
+    if (gMapLayer < -2) {
+        gMapLayer = -2;
     }
     UINT_80092a98 |= 0x4000;
 }
@@ -2589,7 +2538,7 @@ void func_80047710(s32 arg0, s32 arg1, s32 arg2) {
 void func_80047724(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
-void func_8004773C(void) {
+void map_func_8004773C(void) {
     s32 i;
     s32 j;
     s32 playerno;
@@ -2645,7 +2594,7 @@ void func_8004773C(void) {
     gWorldZ = D_80092A64;
     D_800B4A50 = -1;
     D_800B4A54 = -1;
-    D_80092A8C = savedPlayerLocation->mapLayer;
+    gMapLayer = savedPlayerLocation->mapLayer;
     gDLL_24_Waterfx->vtbl->func_24C();
     gDLL_11_Newlfx->vtbl->func1();
     gDLL_57->vtbl->func0();
@@ -2664,7 +2613,7 @@ void func_8004773C(void) {
     UINT_80092a98 &= 0x2010;
     UINT_80092a98 |= 0x81E0;
     UINT_80092a98 |= 0x804;
-    func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
+    map_func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
     UINT_80092a98 &= ~4;
     func_800591EC();
     func_80023628();
@@ -2757,91 +2706,86 @@ void func_8004773C(void) {
     }
 }
 
-s32 func_80048024() {
-    return D_800B96A8;
+s32 map_get_type() {
+    return gMapType;
 }
 
-void func_80048034(void) {
-    D_800B96A8 = 0;
-    D_800B4A70 = 0;
-    D_800B4A72 = 0;
+void map_func_80048034(void) {
+    gMapType = MAPTYPE_REGULAR;
+    gMobileMapID = 0;
+    gMobileMapUnknown = 0;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_80048054.s")
-#else
-void func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
-    u8 *sp64;
-    s32 temp_s1;
-    u32 temp_s4;
-    s32 var_s0;
+void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
+    MapInfo *sp64;
+    s32 mapBinSize;
+    u32 mapBinOffset;
+    s32 offset;
     s32 group;
     s32 var_v0;
-    MapsBinUnk20* var_s1;
-    MapsBinStruct *temp_v0_2;
+    SetupPoint_Setup* objsetup;
+    MapHeader *map;
     MapsTabStruct *mapsTab;
-    s32 temp_t1;
+    s32 mapInfoListLength;
 
-    var_v0 = D_800B9768.unkC[mapID];
-    var_s0 = 0;
-    if (var_v0 == -0x80) {
-        map_read_layout((Struct_D_800B9768_unk4* ) &D_800B9768.unk4[mapID], &D_800B9768.unk10[mapID], 0, 0, mapID);
+    offset = 0;
+    if (D_800B9768.unkC[mapID] == -0x80) {
+        map_read_layout(&D_800B9768.unk4[mapID], &D_800B9768.unk10->unk0[mapID], 0, 0, mapID);
         D_800B9768.unkC[mapID] = 0;
-        var_v0 = D_800B9768.unkC[mapID];
     }
-    *arg5 = var_v0;
+    *arg5 = D_800B9768.unkC[mapID];
     if (mapID == 1) {
         *arg2 = 0.0f;
         *arg3 = 0.0f;
-        if ((!gDLL_29_Gplay->vtbl) && (!gDLL_29_Gplay->vtbl)) {}
         *arg4 = 0.0f;
     } else {
-        temp_s4 = gFile_MAPS_TAB[mapID].unk0;
-        temp_s1 = gFile_MAPS_TAB[mapID + 1].unk0 - temp_s4;
-        temp_v0_2 = mmAlloc(temp_s1, ALLOC_TAG_TRACK_COL, NULL);
-        queue_load_file_region_to_ptr((void *)temp_v0_2, 0x1F, temp_s4, temp_s1);
-        temp_v0_2->unk20 = (MapsBinUnk20 *) (gFile_MAPS_TAB[mapID].unk10 + (s8 *)temp_v0_2 - temp_s4);
-        temp_v0_2->unk24 = (D_800B9768.unk4[mapID].xMin + temp_v0_2->unk4) * BLOCKS_GRID_UNIT_F;
-        temp_v0_2->unk28 = (D_800B9768.unk4[mapID].zMin + temp_v0_2->unk6) * BLOCKS_GRID_UNIT_F;
-        var_s1 = temp_v0_2->unk20;
-        while (var_s0 < temp_v0_2->unk8) {
-            if ((var_s1->unk0 == 0xD) && (arg1 == var_s1->unk19)) {
-                *arg2 = var_s1->unk8 + temp_v0_2->unk24;
-                *arg3 = var_s1->unkC;
-                *arg4 = var_s1->unk10 + temp_v0_2->unk28;
-                gDLL_29_Gplay->vtbl->set_map_setup(mapID, (s32) var_s1->unk18);
+        mapBinOffset = READ_MAPS_TAB(mapID, 0);
+        mapBinSize = READ_MAPS_TAB(mapID, 7) - mapBinOffset;
+        map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, NULL);
+        queue_load_file_region_to_ptr((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
+        map->objectInstanceFile_ptr = (ObjSetup *) (READ_MAPS_TAB(mapID, 4) + (s8 *)map - mapBinOffset);
+        map->originWorldX = (D_800B9768.unk4[mapID].xMin + map->originOffsetX) * BLOCKS_GRID_UNIT_F;
+        map->originWorldZ = (D_800B9768.unk4[mapID].zMin + map->originOffsetZ) * BLOCKS_GRID_UNIT_F;
+        objsetup = (SetupPoint_Setup*)map->objectInstanceFile_ptr;
+        while (offset < map->objectInstancesFileLength) {
+            if ((objsetup->base.objId == OBJ_setuppoint) && (arg1 == objsetup->unk19)) {
+                *arg2 = objsetup->base.x + map->originWorldX;
+                *arg3 = objsetup->base.y;
+                *arg4 = objsetup->base.z + map->originWorldZ;
+                gDLL_29_Gplay->vtbl->set_map_setup(mapID, objsetup->mapSetupID);
                 for (group = 0; group < 32; group++) {
-                    if ((var_s1->unk1C >> group) & 1) {
+                    if ((objsetup->objGroupStatusBits >> group) & 1) {
+                        // enable
                         gDLL_29_Gplay->vtbl->set_obj_group_status(mapID, group, -1);
                     } else {
+                        // disable
                         gDLL_29_Gplay->vtbl->set_obj_group_status(mapID, group, -2);
                     }
                 }
                 break;
             }
-            var_s0 += var_s1->unk2 * 4;
-            var_s1 = (MapsBinUnk20 *) ((s8*)var_s1 + var_s1->unk2 * 4);
+            offset += objsetup->base.quarterSize * 4;
+            objsetup = (SetupPoint_Setup*)((s8*)objsetup + objsetup->base.quarterSize * 4);
         }
-        mmFree(temp_v0_2);
+        mmFree(map);
     }
-    temp_t1 = (u32)get_file_size(0x21U) >> 5;
-    if ((mapID < 0) || (mapID >= temp_t1)) {
-        D_800B96A8 = 0;
+    mapInfoListLength = (u32)get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
+    if ((mapID < 0) || (mapID >= mapInfoListLength)) {
+        gMapType = MAPTYPE_REGULAR;
     } else {
-        sp64 = gMapReadBuffer;
-        queue_load_file_region_to_ptr((void** ) sp64, 0x21, mapID << 5, 0x20);
-        D_800B96A8 = ((s8*)sp64)[0x1C]; // possibly s16/u16
+        sp64 = (MapInfo*)gMapReadBuffer;
+        queue_load_file_region_to_ptr((void** ) sp64, MAPINFO_BIN, mapID * sizeof(MapInfo), sizeof(MapInfo));
+        gMapType = sp64->type;
     }
-    D_800B4A72 = 0;
-    if (D_800B96A8 == 1) {
-        D_800B4A70 = mapID;
-        D_800B4A72 = ((s16*)sp64)[0xF]; // possibly s16/u16
+    gMobileMapUnknown = 0;
+    if (gMapType == MAPTYPE_MOBILE) {
+        gMobileMapID = mapID;
+        gMobileMapUnknown = sp64->mobileMapUnknown;
     }
 }
-#endif
 
 /** read_mapinfo_of_map_at_xz */
-void func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
+void map_func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
     s32 mapID;
     s32 mapInfoCount;
     MapInfo* mapInfo;
@@ -2850,34 +2794,34 @@ void func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
     mapInfoCount = get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
 
     if (mapID < 0 || !(mapID < mapInfoCount)) {
-        D_800B96A8 = 0;
+        gMapType = MAPTYPE_REGULAR;
     } else {
         mapInfo = (MapInfo *)gMapReadBuffer;
         queue_load_file_region_to_ptr((void *) mapInfo, MAPINFO_BIN, mapID * (sizeof(MapInfo)), sizeof(MapInfo));
-        D_800B96A8 = mapInfo->type;
+        gMapType = mapInfo->type;
     } 
     
-    D_800B4A72 = 0;
+    gMobileMapUnknown = 0;
     
     //Set values if it's a "mobile map" (the Galleon, "wctemplelift", etc)
-    if (D_800B96A8 == 1) {
-        D_800B4A70 = mapID;
-        D_800B4A72 = mapInfo->mobileMapUnknown;
+    if (gMapType == MAPTYPE_MOBILE) {
+        gMobileMapID = mapID;
+        gMobileMapUnknown = mapInfo->mobileMapUnknown;
     }
 }
 
-s16 func_80048478(s32* arg0) {
-    if (arg0) {
-        *arg0 = (s32) D_800B4A70;
+s16 map_get_mobile_map_vars(s32* outMapID) {
+    if (outMapID) {
+        *outMapID = (s32) gMobileMapID;
     }
-    return D_800B4A72;
+    return gMobileMapUnknown;
 }
 
-s8 func_80048498(void) {
-    return D_80092A8C;
+s8 map_get_layer(void) {
+    return gMapLayer;
 }
 
-void func_800484A8(void) {
+void map_func_800484A8(void) {
     s32 i;
     s32 j;
     s8* var_s1;
@@ -2908,7 +2852,7 @@ void func_800484A8(void) {
     mmSetDelay(2);
 }
 
-s32 func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     GlobalMapCell* currentMap;
     s16 blockID;
     s32 fieldIndex;
@@ -4046,7 +3990,7 @@ void map_update_objects_streaming(s32 arg0) {
                     func_8004B710(temp_s0->unkB2, temp_s0->mapID, 0U);
                 }
             }
-            if (temp_s0->id == 0x72) {
+            if (temp_s0->id == OBJ_IMSnowBike) {
                 func_8004AEFC(temp_s0->mapID, sp70, var_s4);
             }
             obj_destroy_object(temp_s0);

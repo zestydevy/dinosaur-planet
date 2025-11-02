@@ -742,7 +742,7 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
                 if (arg1->stats->health <= 0) {
                     gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg1->unk0, 0x34);
                 } else {
-                    gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, func_80048498());
+                    gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
                     gDLL_29_Gplay->vtbl->start_loaded_game();
                 }
             }
