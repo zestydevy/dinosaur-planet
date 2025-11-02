@@ -2,4 +2,3 @@
 dll_82_ctor = 0x0;
 dll_82_dtor = 0xC;
 dll_82_func_18 = 0x18;
-dll_82_func_30 = 0x30;
