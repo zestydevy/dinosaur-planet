@@ -11,13 +11,15 @@ ROOT_PATH = Path(os.path.dirname(os.path.realpath(__file__))).parent
 DLLS_PATH = ROOT_PATH.joinpath("src", "dlls")
 
 DLL_NAME_OVERWRITES = {
-    "1": "UI",
+    "1": "ui",
     "3": "animation"
 }
 
 DLL_BASE_EXPORTS = {
     "DLL": 0,
     "DLL_IModgfx": 1,
+    "DLL_IPartfx": 3,
+    "DLL_IMenu": 3,
     "DLL_IObject": 7,
 }
 
@@ -83,7 +85,7 @@ def main():
         print(f"Could not find header file for dll {args.id}, aborting")
         sys.exit(1)
 
-    print(f"Reading .h file for DLL {first_export.dll_id}")
+    print(f"Reading header file at {header_file}")
     existing_interface_def = None
     with open(header_file, "r", encoding="utf-8") as h_file:
         content = h_file.read()
@@ -249,7 +251,7 @@ def read_exports(dll_id: str) -> list[DllExport]:
 
     exports_file_path = dll_dir.joinpath("exports.s")
     exports_in_file: list[str] = []
-    print(f"Reading exports for DLL {dll_id}")
+    print(f"Reading exports at {exports_file_path}")
     with open(exports_file_path, "r", encoding="utf-8") as exports_file:
         for line in exports_file.readlines():
             if ".dword" not in line:
@@ -265,9 +267,13 @@ def read_exports(dll_id: str) -> list[DllExport]:
             exports_in_file.append(line[dword_idx + 7:])
 
 
+    # DLL 33 exports ctor and dtor?
+    if dll_id == "33":
+        exports_in_file.insert(0, "dll_33_dtor")
+        exports_in_file.insert(0, "dll_33_ctor")
+
     print(f"Found {len(exports_in_file)} exports")
 
-    print(f"Reading .c file for DLL {dll_id}")
     c_file = read_dll_c_file(dll_dir)
     if c_file is None or c_file == "":
         print(f"Failed to read DLL .c file, aborting")
@@ -300,6 +306,7 @@ def read_dll_c_file(dll_dir: Path):
     if len(c_files) == 0:
         return None
 
+    print(f"Reading .c file at {c_files[0]}")
     with open(c_files[0], "r", encoding="utf-8") as c_file:
         return c_file.read()
     
