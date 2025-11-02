@@ -27,11 +27,9 @@ typedef struct {
 /*00AC*/    f32 fov;
 } TalkCamera;
 
-void dll_94_ctor(s32 arg0) {
-}
+void dll_94_ctor(s32 arg0) { }
 
-void dll_94_dtor(s32 arg0) {
-}
+void dll_94_dtor(s32 arg0) { }
 
 void dll_94_func_18(TalkCamera* camA, s32 unused, TalkCamera* camB) {
     if (camB != NULL) {
@@ -45,11 +43,8 @@ void dll_94_func_18(TalkCamera* camA, s32 unused, TalkCamera* camB) {
     }
 }
 
-void dll_94_func_64(s32 arg0) {
-}
+void dll_94_func_64(s32 arg0) { }
 
-void dll_94_func_70(s32 arg0) {
-}
+void dll_94_func_70(s32 arg0) { }
 
-void dll_94_func_7C(s32 arg0, s32 arg1) {
-}
+void dll_94_func_7C(s32 arg0, s32 arg1) { }

@@ -9,6 +9,38 @@
 
 #define TOTAL_ITEMS 60
 
+typedef struct {
+/*0*/ u8 min;
+/*1*/ u8 possibilities[3];
+/*4*/ u8 specialOffer;
+/*5*/ u8 initial;
+} Price;
+
+typedef struct {
+/*0*/ s16 show;
+/*2*/ s16 hide;
+} CharacterSpecificGamebits;
+
+typedef struct {
+/*0*/ Price price;
+/*6*/ CharacterSpecificGamebits sabre;
+/*A*/ CharacterSpecificGamebits krystal;
+/*C*/ s16 gametextLine;
+} ShopItem;
+
+typedef struct {
+    s8 unk0;
+    u8 itemIndex;
+    s8 unk2;
+    s8 unk3;
+    s8 unk4;
+} SPShop_Data;
+
+static void SPShop_set_random_prices(void);
+
+#define NONE 0xffff
+#define EMPTY_ITEM {0, {0, 0, 0}, 0, 0, NONE, NONE, NONE, NONE, NONE}
+
 /*0x0*/ static ShopItem shopItemData[TOTAL_ITEMS] = {
     {3,  {3,  4,  5},  1, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Fruit},
     {5,  {5,  7,  10}, 3, 0, {BIT_ALWAYS_1, NONE},       {BIT_ALWAYS_1, NONE},       SPText_Energy_Egg},
@@ -268,7 +300,7 @@ void SPShop_buy_item(Object* self, s32 cost) {
     objData = self->data;
 
     //Subtract cost from player's scarabs
-    ((DLL_210_Player*)player->dll)->vtbl->func19(player, -cost);
+    ((DLL_210_Player*)player->dll)->vtbl->add_scarab(player, -cost);
 
     //Handle special cases (player energy/magic refills)
     switch (objData->itemIndex) {  
@@ -280,16 +312,16 @@ void SPShop_buy_item(Object* self, s32 cost) {
         case 45:
             break;
         case SPItem_Fruit:
-            ((DLL_210_Player*)player->dll)->vtbl->func24(player, 1);
+            ((DLL_210_Player*)player->dll)->vtbl->add_health(player, 1);
             break;
         case SPItem_Energy_Egg:
-            ((DLL_210_Player*)player->dll)->vtbl->func24(player, 2);
+            ((DLL_210_Player*)player->dll)->vtbl->add_health(player, 2);
             break;
         case SPItem_Green_Magic:
-            ((DLL_210_Player*)player->dll)->vtbl->func14(player, 5);
+            ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 5);
             break;
         case SPItem_Blue_Magic:
-            ((DLL_210_Player*)player->dll)->vtbl->func14(player, 10);
+            ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 10);
             break;
     }
     

@@ -33,8 +33,7 @@ void screen_fade_ctor(void *self) {
 }
 
 // offset: 0x4C | dtor
-void screen_fade_dtor(void *self) {
-}
+void screen_fade_dtor(void *self) { }
 
 // offset: 0x58 | func: 0 | export: 0
 void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {

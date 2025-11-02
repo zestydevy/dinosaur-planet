@@ -116,7 +116,7 @@ static int dll_638_func_62C(Object* self, Object *arg1, AnimObj_Data *arg2, s8 a
         if (!(DLL_210_Player *) player->dll){} //@fake?
 
         objdata->unk0 = timerValueOriginal - (delay & 0xFFFF);
-        ((DLL_210_Player *) player->dll)->vtbl->func72(player, 0x51E, timerValueOriginal);
+        ((DLL_210_Player *) player->dll)->vtbl->func72(player, 0x51E);
     }
     return 0;
 }

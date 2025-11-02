@@ -28,12 +28,10 @@ typedef struct {
 } WCPushBlock_Setup;
 
 // offset: 0x0 | ctor
-void dll_782_ctor(void* dll){
-}
+void dll_782_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void dll_782_dtor(void* dll){
-}
+void dll_782_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_782_setup(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
@@ -52,8 +50,7 @@ void dll_782_setup(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/782_WCpushblock/dll_782_control.s")
 
 // offset: 0xF38 | func: 2 | export: 2
-void dll_782_update(Object* self) {
-}
+void dll_782_update(Object* self) { }
 
 // offset: 0xF44 | func: 3 | export: 3
 void dll_782_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
@@ -63,8 +60,7 @@ void dll_782_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 }
 
 // offset: 0xF98 | func: 4 | export: 4
-void dll_782_free(Object* self, s32 arg1) {
-}
+void dll_782_free(Object* self, s32 arg1) { }
 
 // offset: 0xFA8 | func: 5 | export: 5
 u32 dll_782_get_model_flags(Object* self) {

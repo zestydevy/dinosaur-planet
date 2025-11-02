@@ -7,20 +7,13 @@
 #include "types.h"
 
 DLL_INTERFACE(DLL_227_Tumbleweed) {
-    /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*00*/ UnknownDLLFunc func0;
-    /*01*/ UnknownDLLFunc func1;
-    /*02*/ UnknownDLLFunc func2;
-    /*03*/ s32 (*func3)(Object*, Vec3f*);
-    /*04*/ s32 (*func4)(Object*);
-    /*05*/ UnknownDLLFunc func5;
-    /*06*/ UnknownDLLFunc func6;
-    /*07*/ UnknownDLLFunc func7;
-    /*08*/ UnknownDLLFunc func8;
-    /*09*/ UnknownDLLFunc func9;
-    /*10*/ UnknownDLLFunc func10;
-    /*11*/ UnknownDLLFunc func11;
-    /*12*/ UnknownDLLFunc func12;
+/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
+/*07*/ u8 (*func7)(Object* self);
+/*08*/ void (*func8)(Object* self, f32 arg1, f32 arg2);
+/*09*/ void (*func9)(Object* self);
+/*10*/ void (*func10)(Object* self, Vec3f* arg1);
+/*11*/ s32 (*func11)(Object* self);
+/*12*/ void (*func12)(Object* self, s32 arg1);
 };
 
 #endif //_DLLS_227_H

@@ -25,12 +25,10 @@ typedef struct {
 } Animator_Setup;
 
 // offset: 0x0 | ctor
-void animator_ctor(void *dll) {
-}
+void animator_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void animator_dtor(void *dll) {
-}
+void animator_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void animator_setup(Object *self, Animator_Setup *setup, s32 arg2) {
@@ -90,12 +88,10 @@ void animator_control(Object *self) {
 }
 
 // offset: 0x300 | func: 2 | export: 2
-void animator_update(Object *self) {
-}
+void animator_update(Object *self) { }
 
 // offset: 0x30C | func: 3 | export: 3
-void animator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-}
+void animator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x324 | func: 4 | export: 4
 void animator_free(Object *self, s32 arg1) {

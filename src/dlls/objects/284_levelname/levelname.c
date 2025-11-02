@@ -62,12 +62,10 @@ enum LevelNameStates{
 static int levelname_anim_callback(Object* arg0, Object *arg1, AnimObj_Data* arg2, s8 arg3);
 
 // offset: 0x0 | ctor
-void levelname_ctor(void* dll){
-}
+void levelname_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void levelname_dtor(void* dll){
-}
+void levelname_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
@@ -143,8 +141,7 @@ void levelname_control(Object* self) {
 }
 
 // offset: 0x304 | func: 2 | export: 2
-void levelname_update(Object* self){
-}
+void levelname_update(Object* self){ }
 
 // offset: 0x310 | func: 3 | export: 3
 void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx) {

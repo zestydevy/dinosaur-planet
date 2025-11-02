@@ -30,8 +30,7 @@ s32 dll_77_func_84(){
 }
 
 // offset: 0x90 | func: 1 | export: 1
-void dll_77_func_90(){
-}
+void dll_77_func_90(){ }
 
 // offset: 0x98 | func: 2 | export: 2
 /** Possibly unused? The UI doesn't call this for the scarab counter, and the Scarab objects don't seem to either */

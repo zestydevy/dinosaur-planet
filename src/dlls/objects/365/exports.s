@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword init
-.dword fini
+.dword dll_365_ctor
+.dword dll_365_dtor
 
 # export table
-.dword dll_365_setup
-.dword dll_365_control
-.dword dll_365_update
-.dword dll_365_print
-.dword dll_365_free
-.dword dll_365_get_model_flags
-.dword dll_365_get_data_size
+/*0*/ .dword dll_365_setup
+/*1*/ .dword dll_365_control
+/*2*/ .dword dll_365_update
+/*3*/ .dword dll_365_print
+/*4*/ .dword dll_365_free
+/*5*/ .dword dll_365_get_model_flags
+/*6*/ .dword dll_365_get_data_size

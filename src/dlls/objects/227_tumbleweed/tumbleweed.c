@@ -72,12 +72,10 @@ typedef struct {
 } Tumbleweed_Data;
 
 // offset: 0x0 | ctor
-void dll_227_ctor(void* dll){
-}
+void dll_227_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void dll_227_dtor(void* dll){
-}
+void dll_227_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* arg2) { // arg2 fakematch, not actually a golden nugget setup pointer
@@ -236,8 +234,7 @@ void dll_227_func_420(Object* self) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_C04.s")
 
 // offset: 0x1518 | func: 5 | export: 2
-void dll_227_update(Object* self){
-}
+void dll_227_update(Object* self){ }
 
 // offset: 0x1524 | func: 6 | export: 3
 void dll_227_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {

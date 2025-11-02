@@ -156,8 +156,7 @@ s32 n_pausemenu_update(void) {
 }
 
 // offset: 0x524 | func: 1 | export: 1
-void n_pausemenu_func_524(void){
-}
+void n_pausemenu_func_524(void){ }
 
 // offset: 0x52C | func: 2 | export: 2
 void n_pausemenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {

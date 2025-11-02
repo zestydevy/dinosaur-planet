@@ -85,7 +85,7 @@ void CCgrub_control(Object* self) {
     while (obj_recv_mesg(self, &sp5C, NULL, NULL) != 0) {
         if (sp5C == 0x7000B) {
             temp_v0 = get_player();
-            sp54 = ((DLL_210_Player*)temp_v0->dll)->vtbl->func66(temp_v0, 0x10);
+            sp54 = ((DLL_210_Player*)temp_v0->dll)->vtbl->func66(temp_v0, 16);
             if (((DLL_Unknown*)sp54->dll)->vtbl->func[7].withOneArgS32((s32)sp54) != 0) {
                 ((DLL_Unknown*)sp54->dll)->vtbl->func[11].withTwoArgs((s32)sp54, 8);
             } else {

@@ -163,7 +163,7 @@ static void VFP_LevelControl_func_8EC(Object *self) {
     if (_data_4 != 0) {
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_4 = 0;
     }
 
@@ -184,7 +184,7 @@ static void VFP_LevelControl_func_A08(Object *self) {
     if (_data_8 != 0) {
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_8 = 0;
     }
 }
@@ -198,7 +198,7 @@ static void VFP_LevelControl_func_AAC(Object *self) {
     if (_data_C != 0) {
         main_set_bits(BIT_Spell_Projectile, 1);
         main_set_bits(BIT_Spell_Forcefield, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_C = 0;
     }
 }

@@ -49,12 +49,10 @@ static s32 WCpressureswitch_is_object_on_switch(Object* self);
 static int WCpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
-void WCpressureswitch_ctor(void* dll){
-}
+void WCpressureswitch_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void WCpressureswitch_dtor(void* dll){
-}
+void WCpressureswitch_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
@@ -173,8 +171,7 @@ void WCpressureswitch_control(Object* self) {
 }
 
 // offset: 0x4B4 | func: 2 | export: 2
-void WCpressureswitch_update(Object* self){
-}
+void WCpressureswitch_update(Object* self){ }
 
 // offset: 0x4C0 | func: 3 | export: 3
 void WCpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {

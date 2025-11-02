@@ -169,8 +169,7 @@ void dll_6_func_338(void) {
 }
 
 // offset: 0x480 | func: 1 | export: 1
-void dll_6_func_480(Object *obj) {
-}
+void dll_6_func_480(Object *obj) { }
 
 // offset: 0x48C | func: 2 | export: 2
 u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *arg4, s32 arg5, char *arg6) {
