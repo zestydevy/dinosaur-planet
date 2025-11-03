@@ -6823,7 +6823,7 @@ s32 dll_210_func_13D08(Object* arg0, Player_Data* arg1, f32 arg2) {
     sp50.x = ((sp64 - objdata->unk738.z) * arg0->animProgress) + objdata->unk738.z;
     gDLL_2_Camera->vtbl->func10(sp50.z, sp50.y, sp50.x);
     if ((arg1->unk0.enteredAnimState == 0) && (arg1->unk0.unk33A != 0)) {
-        func_80023D30(arg0, (s32) *objdata->unk76C, 0.0f, 1U);
+        func_80023D30(arg0, *objdata->unk76C, 0.0f, 1U);
         ((DLL_793_BWLog *)temp_s2->dll)->vtbl->func14(temp_s2, 2);
         if (temp_s2->id == 0x22) {
             return 0x26;
@@ -6881,8 +6881,7 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
         func_800240BC(arg0, sp48->animProgress);
         arg1->unk0.animTickDelta = NULL;
     } else {
-        sp3C = ((DLL_Unknown*)sp48->dll)->vtbl->func[16].withTwoArgsF32((s32)sp48, (s32)&sp44);
-        sp3C = sp3C;
+        sp3C = ((DLL_793_BWLog*)sp48->dll)->vtbl->func16(sp48, &sp44);
         if (sp44 <= 1.0f) {
             arg1->unk0.animTickDelta = sp44;
         } else {
@@ -6890,8 +6889,8 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
         }
     }
     if (temp_s0->unk770 & 1) {
-        ((DLL_Unknown*)sp48->dll)->vtbl->func[15].withThreeArgs((s32)sp48, (s32)&sp40, (s32)&sp34);
-        sp38 = (s32) (sp40 * 1023.0f);
+        ((DLL_793_BWLog*)sp48->dll)->vtbl->func15(sp48, &sp40, &sp34);
+        sp38 = (sp40 * 1023.0f);
         if (sp38 < 0) {
             sp38 = -sp38;
         }
@@ -6908,25 +6907,118 @@ s32 dll_210_func_142C4(Object* arg0, Player_Data* arg1, f32 arg2) {
         func_80024DD0(arg0, 1, 2, 0);
     }
     if (temp_s0->unk770 & 2) {
-        func_80024DD0(arg0, 1, 0, (s16) (s32) (sp3C * 1023.0f));
+        func_80024DD0(arg0, 1, 0, sp3C * 1023.0f);
         func_80025140(arg0, arg1->unk0.animTickDelta, arg2, 0);
     }
-    if (((DLL_Unknown*)sp48->dll)->vtbl->func[10].withTwoArgsS32((s32)sp48, (s32)arg0) != 0) {
+    if (((DLL_793_BWLog*)sp48->dll)->vtbl->func10(sp48, arg0) != 0) {
         return 0x27;
     }
     return 0;
 }
 
 // offset: 0x146D8 | func: 98
-s32 dll_210_func_146D8(Object* arg0, Player_Data* arg1, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_146D8.s")
+s32 dll_210_func_146D8(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* objdata;
+    Object* sp60;
+    s32 var_a0;
+    s32 var_a1;
+    s16* temp_v0;
+    s32 sp50;
+    s32 sp4C;
+    f32 sp48;
+    s32 v1;
+    s32 sp40;
+
+    gDLL_2_Camera->vtbl->func24.withOneArg(2);
+    objdata = arg0->data;
+    arg1->unk0.unk4.mode = 0;
+    arg1->unk0.animExitAction = dll_210_func_14B70;
+    func_800267A4(arg0);
+    sp60 = objdata->unk858;
+    if (sp60 == NULL) {
+        arg0->curModAnimIdLayered = -1;
+        return 0;
+    }
+    sp60 = objdata->unk858;
+    if (((DLL_793_BWLog *)sp60->dll)->vtbl->func10(sp60, arg0) != 0) {
+        temp_v0 = func_80034804(arg0, 9);
+        if (temp_v0 != NULL) {
+            temp_v0[2] = 0;
+            temp_v0[0] = 0;
+        }
+        return 0x27;
+    }
+    temp_v0 = func_80034804(arg0, 9);
+    if (temp_v0 != NULL) {
+        var_a0 = sp60->srt.roll;
+        if (sp60->srt.roll < -0x1555) {
+            var_a0 = -0x1555;
+        } else {
+            if (var_a0 > 0x1555) {
+                v1 = 0x1555;
+            } else {
+                v1 = var_a0;
+            }
+            var_a0 = v1;
+        }
+        temp_v0[2] = -var_a0;
+        var_a1 = sp60->srt.pitch;
+        if (sp60->srt.pitch < -0x1555) {
+            var_a1 = -0x1555;
+        } else {
+            if (var_a1 > 0x1555) {
+                v1 = 0x1555;
+            } else {
+                v1 = var_a1;
+            }
+            var_a1 = v1;
+        }
+        temp_v0[0] = -var_a1;
+    }
+    ((DLL_793_BWLog *)sp60->dll)->vtbl->func15(sp60, &sp48, &sp50);
+    sp4C = arg0->curModAnimId;
+    switch (arg0->curModAnimId) {
+    case 0x1B:
+        arg1->unk0.animTickDelta = 0.007f;
+        sp4C = objdata->unk76C[sp50];
+        if (sp4C == 0x1D) {
+        }
+        break;
+    case 0x453:
+    case 0x454:
+        func_800240BC(arg0, sp48);
+        if (sp48 == 1.0f) {
+            sp4C = objdata->unk76C[0];
+        }
+        break;
+    default:
+        if (arg1->unk0.unk308 & 1) {
+            sp40 = gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xA78U, rand_next(0x50, 0x7F), NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->func_954(sp40, (rand_next(-0xF, 0xF) / 100.0f) + 1.0f);
+        }
+        if ((arg1->unk0.unk308 & 0x80) && (rand_next(0, 0x64) >= 0x47)) {
+            sp40 = gDLL_6_AMSFX->vtbl->play_sound(arg0, objdata->unk3B8[rand_next(0xA, 0xE)], rand_next(0x50, 0x7F), NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->func_954(sp40, (rand_next(-0xF, 0xF) / 100.0f) + 1.0f);
+        }
+        arg1->unk0.animTickDelta = 0.01f;
+        if (arg1->unk0.unk33A != 0) {
+            sp4C = objdata->unk76C[0];
+        }
+        break;
+    }
+    if (sp4C != arg0->curModAnimId) {
+        func_80023D30(arg0, sp4C, 0.0f, 0U);
+    }
+    return 0;
+}
+
 
 // offset: 0x14B70 | func: 99
 static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1) {
     s16* temp_v0_2;
 
     arg0->ptr0x64->flags &= ~0x1000;
-    arg0->srt.flags &= 0xFFF7 ;
+    arg0->srt.flags &= ~8;
     arg0->curModAnimIdLayered = -1;
     temp_v0_2 = func_80034804(arg0, 9);
     if (temp_v0_2 != NULL) {
