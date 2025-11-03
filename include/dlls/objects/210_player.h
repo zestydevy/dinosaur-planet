@@ -162,7 +162,10 @@ typedef struct {
 /*508*/ u8 pad508[0x674 - 0x508];
 /*674*/ f32 unk674;
 /*678*/ f32 unk678;
-/*67C*/ s32 pad67C; // likely a float
+/*67C*/ u8 unk67C;
+/*67D*/ s8 pad67D;
+/*67E*/ s8 pad67E;
+/*67F*/ s8 pad67F;
 /*680*/ UnkArg2 unk680;
 /*6B0*/ UnkArg4 unk6B0;
 /*708*/ Object *unk708;
@@ -201,7 +204,7 @@ typedef struct {
 /*82C*/ f32 unk82C;
 /*830*/ f32 unk830;
 /*834*/ f32 unk834;
-/*838*/ s32 pad838;
+/*838*/ f32 unk838;
 /*83C*/ f32 unk83C;
 /*840*/ f32 unk840;
 /*844*/ f32 unk844;
@@ -229,7 +232,7 @@ typedef struct {
 /*884*/ s16 unk884;
 /*886*/ s16 unk886;
 /*888*/ s16 unk888;
-/*88A*/ s16 unk88A;
+/*88A*/ u16 unk88A;
 /*88C*/ u16 pad88C;
 /*88E*/ u16 unk88E;
 /*890*/ UNK_PTR *unk890;
