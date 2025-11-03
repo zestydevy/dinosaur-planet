@@ -33,6 +33,7 @@
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "dlls/objects/793_BWLog.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
@@ -6723,7 +6724,114 @@ s32 dll_210_func_13524(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x13D08 | func: 95
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_13D08.s")
+s32 dll_210_func_13D08(Object* arg0, Player_Data* arg1, f32 arg2) {
+    s32 pad;
+    s32 sp88;
+    ObjectStruct64* temp_v0_3;
+    s32 temp_v0;
+    Vec3f sp74;
+    Vec3f sp68;
+    f32 sp64;
+    f32 sp60;
+    f32 sp5C;
+    Vec3f sp50;
+    Player_Data* objdata;
+    s8 v0;
+    s16 sp48;
+    ModelInstance* sp44;
+    Object* temp_s2;
+
+    objdata = arg0->data;
+    temp_s2 = objdata->unk858;
+    goto dummy_label_21840; dummy_label_21840: ;
+    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+    if (temp_v0 != 0) {
+        return temp_v0;
+    }
+    // @fake
+    if (((!arg1) && (!arg1)) && (!arg1)) {}
+    if (arg1->unk0.enteredAnimState != 0) {
+        arg1->unk0.unk270 = 0x22;
+    }
+    func_800267A4(arg0);
+    arg0->speed.f[1] = 0.0f;
+    if (arg1->unk0.enteredAnimState != 0) {
+        objdata->unk8A9 = 1;
+        switch (temp_s2->id) {
+        case OBJ_IMSnowBike:
+        case OBJ_CRSnowBike:
+            objdata->unk76C = _data_158;
+            objdata->unk770 = 3;
+            gDLL_2_Camera->vtbl->func6(0x57, 1, 0, 0, NULL, 0, 0xFF);
+            break;
+        case OBJ_DR_CloudRunner:
+            objdata->unk76C = _data_170;
+            gDLL_2_Camera->vtbl->func6(0x65, 1, 0, 0, NULL, 0, 0xFF);
+            break;
+        case OBJ_BWLog:
+            objdata->unk76C = _data_188;
+            objdata->unk770 = 3;
+            gDLL_2_Camera->vtbl->func8(0, 0x29);
+            break;
+        case OBJ_DR_EarthWarrior:
+            objdata->unk76C = _data_170;
+            objdata->unk770 = 4;
+            gDLL_2_Camera->vtbl->func8(0, 0x69);
+            break;
+        default:
+            objdata->unk76C = _data_170;
+            objdata->unk770 = 4;
+            gDLL_2_Camera->vtbl->func8(0, 0x1D);
+            break;
+        }
+        sp88 = ((DLL_793_BWLog *)temp_s2->dll)->vtbl->func8(temp_s2);
+        ((DLL_793_BWLog *)temp_s2->dll)->vtbl->func14(temp_s2, 1);
+        switch (sp88) {
+            case 1:
+                v0 = 6;
+                break;
+            case 2:
+            default:
+                v0 = 7;
+                break;
+        }
+        arg0->srt.yaw = temp_s2->srt.yaw;
+        func_80023D30(arg0, objdata->unk76C[v0], 0.0f, 4U);
+        sp44 = arg0->modelInsts[arg0->modelInstIdx];
+        func_8001A3FC(sp44, 0U, 0, 0.0f, arg0->srt.scale, &sp74, &sp48);
+        func_8001A3FC(sp44, 0U, 0, 1.0f, arg0->srt.scale, &sp68, &sp48);
+        ((DLL_793_BWLog *)temp_s2->dll)->vtbl->func9(temp_s2, &sp5C, &sp60, &sp64);
+        sp5C -= arg0->srt.transl.f[0];
+        sp60 -= arg0->srt.transl.f[1];
+        sp64 -= arg0->srt.transl.f[2];
+        objdata->unk738.f[0] = arg0->srt.transl.f[0];
+        objdata->unk738.f[1] = arg0->srt.transl.f[1];
+        objdata->unk738.f[2] = arg0->srt.transl.f[2];
+        objdata->unk744.f[0] = sp5C;
+        objdata->unk744.f[1] = sp60 - sp68.f[1];
+        objdata->unk744.f[2] = sp64;
+        arg0->srt.flags |= 8;
+        arg0->ptr0x64->flags |= 0x1000;
+        arg1->unk0.animTickDelta = 0.022f;
+    }
+    arg0->srt.transl.f[0] = objdata->unk738.f[0] + (arg0->animProgress * objdata->unk744.x);
+    arg0->srt.transl.f[1] = objdata->unk738.f[1] + (arg0->animProgress * objdata->unk744.y);
+    arg0->srt.transl.f[2] = objdata->unk738.f[2] + (arg0->animProgress * objdata->unk744.z);
+    ((DLL_793_BWLog *)temp_s2->dll)->vtbl->func12(temp_s2, &sp5C, &sp60, &sp64);
+    sp50.z = ((sp5C - objdata->unk738.x) * arg0->animProgress) + objdata->unk738.x;
+    sp50.y = ((sp60 - objdata->unk738.y) * arg0->animProgress) + objdata->unk738.y;
+    sp50.x = ((sp64 - objdata->unk738.z) * arg0->animProgress) + objdata->unk738.z;
+    gDLL_2_Camera->vtbl->func10(sp50.z, sp50.y, sp50.x);
+    if ((arg1->unk0.enteredAnimState == 0) && (arg1->unk0.unk33A != 0)) {
+        func_80023D30(arg0, (s32) *objdata->unk76C, 0.0f, 1U);
+        ((DLL_793_BWLog *)temp_s2->dll)->vtbl->func14(temp_s2, 2);
+        if (temp_s2->id == 0x22) {
+            return 0x26;
+        }
+        return 0x25;
+    }
+    return 0;
+}
 
 // offset: 0x1426C | func: 96
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1426C.s")

@@ -173,7 +173,9 @@ typedef struct {
 /*70E*/ s8 unk70E[0x728 - 0x70E];
 /*728*/ f32 unk728;
 /*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
-/*734*/ u8 pad738[0x754 - 0x738];
+/*738*/ Vec3f unk738;
+/*744*/ Vec3f unk744;
+/*750*/ s32 pad750;
 /*754*/ s32 unk754;
 /*758*/ s32 unk758;
 /*75C*/ f32 unk75C;
@@ -182,7 +184,7 @@ typedef struct {
 /*766*/ u16 unk766;
 /*768*/ u16 unk768;
 /*76A*/ u16 pad76A;
-/*76C*/ s16 *unk76C;
+/*76C*/ s16 *unk76C; // mod anim indexes
 /*770*/ u8 unk770;
 /*771*/ s8 unk771[0x774 - 0x771];
 /*774*/ Vec3f unk774;
