@@ -3,6 +3,7 @@
 #include "PR/os.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/unknown_setups.h"
 #include "game/gamebits.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/animation.h"
@@ -6407,7 +6408,65 @@ s32 dll_210_func_125BC(Object* arg0, Player_Data* arg1, u32 arg2) {
 }
 
 // offset: 0x128F4 | func: 92
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_128F4.s")
+void dll_210_func_128F4(f32* arg0, f32* arg1, f32 arg2, Object* arg3) {
+    Object* curObj;
+    s32 objCount;
+    Object** temp_v0;
+    s32 pad[2];
+    f32 temp_fs0;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 var_fs1;
+    f32 var_fs2;
+    s32 i;
+    s32 var_s5;
+    Player_Data* objdata;
+
+    objdata = arg3->data;
+    var_fs1 = 0.0f;
+    var_fs2 = 0.0f;
+    temp_v0 = obj_get_all_of_type(OBJTYPE_22, &objCount);
+    var_s5 = 0;
+    for (i = 0; i < objCount; i++) {
+        curObj = temp_v0[i];
+        if (((ObjType22Setup*)curObj->setup)->unk1A & 2) {
+            var_s5 = 1;
+            temp_fv0 = curObj->srt.transl.f[1] - arg3->srt.transl.f[1];
+            if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
+                temp_fs0 = curObj->srt.transl.f[0] - arg3->srt.transl.f[0];
+                temp_fv0 = curObj->srt.transl.f[2] - arg3->srt.transl.f[2];
+                temp_fs0 = sqrtf(SQ(temp_fs0) + SQ(temp_fv0));
+                temp_fv1 = ((ObjType22Setup*)curObj->setup)->unk19 * 1.5f;
+                if (temp_fs0 < temp_fv1) {
+                    temp_fs0 = ((temp_fv1 - temp_fs0) / temp_fv1);
+                    temp_fs0 *= (curObj->srt.scale * 10.0f);
+                    var_fs2 += fsin16_precise(curObj->srt.yaw) * temp_fs0;
+                    var_fs1 += fcos16_precise(curObj->srt.yaw) * temp_fs0;
+                }
+            }
+        }
+    }
+
+    if (var_s5 != 0) {
+        var_fs2 /= var_s5;
+        var_fs1 /= var_s5;
+        objdata->unk674 -= var_fs2 * 0.05f;
+        objdata->unk678 -= var_fs1 * 0.05f;
+        objdata->unk674 *= 0.99f;
+        objdata->unk678 *= 0.99f;
+        temp_fv0 = sqrtf(SQ(objdata->unk674) + SQ(objdata->unk678));
+        if (temp_fv0 > 0.85f) {
+            temp_fv1 = 0.85f / temp_fv0;
+            objdata->unk674 *= temp_fv1;
+            objdata->unk678 *= temp_fv1;
+        }
+        *arg0 = objdata->unk674 * arg2;
+        *arg1 = objdata->unk678 * arg2;
+    } else {
+        *arg0 = 0.0f;
+        *arg1 = 0.0f;
+    }
+}
 
 // offset: 0x12BF0 | func: 93
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_12BF0.s")

@@ -159,7 +159,10 @@ typedef struct {
 /*430*/ Player_Data430 unk430;
 /*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
-/*508*/ u8 pad508[0x680 - 0x508];
+/*508*/ u8 pad508[0x674 - 0x508];
+/*674*/ f32 unk674;
+/*678*/ f32 unk678;
+/*67C*/ s32 pad67C; // likely a float
 /*680*/ UnkArg2 unk680;
 /*6B0*/ UnkArg4 unk6B0;
 /*708*/ Object *unk708;
