@@ -84,7 +84,7 @@ DLL_INTERFACE(DLL_74_picmenu) {
                         s32 defaultItem, PicMenuSounds *sounds, s32 param5, s32 param6,
                         s32 textColorR, s32 textColorG, s32 textColorB,
                         s32 textHighlightR, s32 textHighlightG, s32 textHighlightB);
-/*1*/ void (*clear_items)();
+/*1*/ void (*clear_items)(void);
 /*2*/ PicMenuAction (*update)();
 /*3*/ void (*draw)(Gfx **gdl);
 /*4*/ s32 (*get_selected_item)();

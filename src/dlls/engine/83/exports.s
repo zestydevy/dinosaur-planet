@@ -4,9 +4,9 @@
 _exports:
 
 # ctor/dtor
-.dword ctor
-.dword dtor
+.dword dll_83_ctor
+.dword dll_83_dtor
 
 # export table
-.dword func_18
-.dword func_A4
+/*0*/ .dword dll_83_func_18
+/*1*/ .dword dll_83_func_A4

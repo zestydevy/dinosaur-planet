@@ -542,7 +542,7 @@ Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
         }
         
         sp34 = 750.0f;
-        temp_v0 = obj_get_nearest_type_to(5, arg0, &sp34);
+        temp_v0 = obj_get_nearest_type_to(OBJTYPE_5, arg0, &sp34);
         arg0->positionMirror.x = sp40;
         arg0->positionMirror.y = sp3C;
         arg0->positionMirror.z = sp38;

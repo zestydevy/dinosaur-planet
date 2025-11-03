@@ -1,3 +1,4 @@
 .text = 0x0:
-
-.bss = 0x50:
+dll_82_ctor = 0x0;
+dll_82_dtor = 0xC;
+dll_82_func_18 = 0x18;

@@ -26,9 +26,9 @@ _exports:
 .dword dll_210_increase_magic_max
 .dword dll_210_get_magic
 .dword dll_210_get_magic_max
-.dword dll_210_set_scarab_count
+.dword dll_210_set_scarabs
 .dword dll_210_add_scarab
-.dword dll_210_get_scarab_count
+.dword dll_210_get_scarabs
 .dword dll_210_func_1D13C
 .dword dll_210_set_health
 .dword dll_210_set_health_max

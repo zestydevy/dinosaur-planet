@@ -1,8 +1,8 @@
 .text = 0x0:
 mainmenu_ctor = 0x0;
 mainmenu_dtor = 0x310;
-mainmenu_update = 0x31C;
-mainmenu_func_764 = 0x764;
+mainmenu_update1 = 0x31C;
+mainmenu_update2 = 0x764;
 mainmenu_draw = 0x76C;
 mainmenu_clean_up = 0x8AC;
 

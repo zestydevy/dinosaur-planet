@@ -389,7 +389,7 @@ void partfx_func_3A0(s32 arg0) {
 (srt).flags = 0;\
 
 // offset: 0xD74 | func: 2 | export: 1
-s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data) {
+s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *data) {
     ExpgfxStruct sp6C;
     UNUSED f32* sp68;
     s32 sp64;
@@ -407,7 +407,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_4 = dll_load_deferred(DLL_ID_34, 2);
         }
-        return _data_4->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_4->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_258) && (id <= PARTICLE_2BB)) {
         sDLLTimers[1] = 2000;
@@ -415,7 +415,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_8 = dll_load_deferred(DLL_ID_35, 2);
         }
-        return _data_8->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_8->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_1F4) && (id <= PARTICLE_257)) {
         sDLLTimers[2] = 2000;
@@ -423,7 +423,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_C = dll_load_deferred(DLL_ID_36, 2);
         }
-        return _data_C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[2] | void
+        return _data_C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[2] | void
     }
     if ((id >= PARTICLE_190) && (id <= PARTICLE_1F3)) {
         sDLLTimers[3] = 2000;
@@ -431,7 +431,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_10 = dll_load_deferred(DLL_ID_37, 2);
         }
-        return _data_10->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_10->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_C8) && (id <= PARTICLE_12B)) {
         sDLLTimers[4] = 2000;
@@ -439,7 +439,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_14 = dll_load_deferred(DLL_ID_38, 2);
         }
-        return _data_14->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[3] | void
+        return _data_14->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[3] | void
     }
     if ((id >= PARTICLE_41A) && (id <= PARTICLE_44B)) {
         sDLLTimers[5] = 2000;
@@ -447,7 +447,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_18 = dll_load_deferred(DLL_ID_39, 2);
         }
-        return _data_18->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = u8[1] | void
+        return _data_18->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = u8[1] | void
     }
     if ((id >= PARTICLE_73A) && (id <= PARTICLE_76B)) {
         sDLLTimers[0x10] = 2000;
@@ -455,7 +455,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_1C = dll_load_deferred(DLL_ID_50, 2);
         }
-        return _data_1C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_1C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id == PARTICLE_84) || (id == PARTICLE_85) || ((id >= PARTICLE_8A) && (id <= PARTICLE_C7))) {
         sDLLTimers[6] = 2000;
@@ -463,7 +463,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_20 = dll_load_deferred(DLL_ID_40, 2);
         }
-        return _data_20->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = s32 | void
+        return _data_20->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = s32 | void
     }
     if ((id >= PARTICLE_3B6) && (id <= PARTICLE_3DD)) {
         sDLLTimers[8] = 2000;
@@ -471,7 +471,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_28 = dll_load_deferred(DLL_ID_42, 2);
         }
-        return _data_28->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_28->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_352) && (id <= PARTICLE_383)) {
         sDLLTimers[7] = 2000;
@@ -479,7 +479,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_24 = dll_load_deferred(DLL_ID_41, 2);
         }
-        return _data_24->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_24->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_32A) && (id <= PARTICLE_350)) {
         sDLLTimers[9] = 2000;
@@ -487,7 +487,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_2C = dll_load_deferred(DLL_ID_43, 2);
         }
-        return _data_2C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[1] | void
+        return _data_2C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | void
     }
     if ((id >= PARTICLE_12C) && (id <= PARTICLE_18F)) {
         sDLLTimers[10] = 2000;
@@ -495,7 +495,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_30 = dll_load_deferred(DLL_ID_44, 2);
         }
-        return _data_30->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_30->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_47E) && (id <= PARTICLE_4AF)) {
         sDLLTimers[11] = 2000;
@@ -503,7 +503,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_34 = dll_load_deferred(DLL_ID_45, 2);
         }
-        return _data_34->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[1] | void
+        return _data_34->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | void
     }
     if ((id >= PARTICLE_4B0) && (id <= PARTICLE_4E1)) {
         sDLLTimers[12] = 2000;
@@ -511,7 +511,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_38 = dll_load_deferred(DLL_ID_47, 2);
         }
-        return _data_38->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[1] | f32[3] | void
+        return _data_38->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | f32[3] | void
     }
     if ((id >= PARTICLE_3E8) && (id <= PARTICLE_419)) {
         sDLLTimers[13] = 2000;
@@ -519,7 +519,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_3C = dll_load_deferred(DLL_ID_48, 2);
         }
-        return _data_3C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[2] | void
+        return _data_3C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[2] | void
     }
     if ((id >= PARTICLE_44C) && (id <= PARTICLE_47D)) {
         sDLLTimers[14] = 2000;
@@ -527,7 +527,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_40 = dll_load_deferred(DLL_ID_46, 2);
         }
-        return _data_40->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = void
+        return _data_40->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = void
     }
     if ((id >= PARTICLE_6D7) && (id <= PARTICLE_707)) {
         sDLLTimers[15] = 2000;
@@ -535,7 +535,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_44 = dll_load_deferred(DLL_ID_49, 2);
         }
-        return _data_44->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = s32 | void
+        return _data_44->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = s32 | void
     }
     if ((id >= PARTICLE_708) && (id <= PARTICLE_739)) {
         sDLLTimers[17] = 2000;
@@ -543,7 +543,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_48 = dll_load_deferred(DLL_ID_51, 2);
         }
-        return _data_48->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = u8[1] | void
+        return _data_48->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = u8[1] | void
     }
     if ((id >= PARTICLE_76C) && (id <= PARTICLE_79D)) {
         sDLLTimers[18] = 2000;
@@ -551,7 +551,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sLoadedDLLCount += 1;
             _data_4C = dll_load_deferred(DLL_ID_52, 2);
         }
-        return _data_4C->vtbl->spawn(obj, id, arg2, flags, arg4, data); // arg5 = f32[3] | void
+        return _data_4C->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[3] | void
     }
     sp54.z = 0.0f;
     sp54.y = 0.0f;
@@ -572,16 +572,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         return -1;
     }
     if (flags & PARTFXFLAG_200000) {
-        if (arg2 == NULL) {
+        if (transform == NULL) {
             return -1;
         }
-        sp6C.transform.transl.x = arg2->transl.x;
-        sp6C.transform.transl.y = arg2->transl.y;
-        sp6C.transform.transl.z = arg2->transl.z;
-        sp6C.transform.scale = arg2->scale;
-        sp6C.transform.roll = arg2->roll;
-        sp6C.transform.pitch = arg2->pitch;
-        sp6C.transform.yaw = arg2->yaw;
+        sp6C.transform.transl.x = transform->transl.x;
+        sp6C.transform.transl.y = transform->transl.y;
+        sp6C.transform.transl.z = transform->transl.z;
+        sp6C.transform.scale = transform->scale;
+        sp6C.transform.roll = transform->roll;
+        sp6C.transform.pitch = transform->pitch;
+        sp6C.transform.yaw = transform->yaw;
         sp6C.unk62 = arg4;
     }
     sp6C.unk5E = id;
@@ -711,11 +711,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.005f;
             break;
         case 0x55E:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            sp6C.unk30.y = rand_next(-6, 6) + arg2->transl.y;
+            sp6C.unk30.y = rand_next(-6, 6) + transform->transl.y;
             sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.01f;
             sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.01f;
             sp6C.unk8 = 0x12;
@@ -726,9 +726,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.0015f;
             break;
         case 0x551:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x23;
             sp6C.unk60 = 0x9B;
@@ -738,9 +738,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.06f;
             break;
         case 0x552:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x23;
             sp6C.unk60 = 0x9B;
@@ -750,9 +750,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.06f;
             break;
         case 0x554:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x37;
             sp6C.unk60 = 0x9B;
@@ -762,9 +762,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.16f;
             break;
         case 0x553:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.02f;
             sp6C.unk24.y = rand_next(0x14, 0x1E) * 0.06f;
@@ -930,11 +930,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x157;
             break;
         case 0x545:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            sp6C.unk3C = arg2->scale * 0.5f;
+            sp6C.unk3C = transform->scale * 0.5f;
             sp6C.unk8 = 4;
             sp6C.unk44 = 0x480000;
             sp6C.unk48 = 2;
@@ -942,11 +942,11 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk60 = 0x69;
             break;
         case 0x546:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            sp6C.unk3C = arg2->scale * 0.65f;
+            sp6C.unk3C = transform->scale * 0.65f;
             sp6C.unk8 = 4;
             sp6C.unk44 = 0x480000;
             sp6C.unk48 = 0x02000002;
@@ -957,9 +957,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk30.x = 60.0f;
             sp6C.unk30.y = rand_next(-0x50, 0x50);
             sp6C.unk24.y = rand_next(-0x64, 0x64) * 0.01f;
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk3C = 0.0065f;
             sp6C.unk8 = 0x12C;
@@ -980,9 +980,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk44 |= 0x20000;
             break;
         case 0x548:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x50;
             sp6C.unk44 = 0x80201;
@@ -994,14 +994,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         case 0x52B:
         case 0x52C:
         case 0x52D:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
                 sp6C.unk30.x -= sp6C.unk0->positionMirror.x;
                 sp6C.unk30.y -= sp6C.unk0->positionMirror.y;
                 sp6C.unk30.z -= sp6C.unk0->positionMirror.z;
@@ -1019,14 +1019,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         case 0x52F:
         case 0x530:
         case 0x531:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
                 sp6C.unk30.x -= sp6C.unk0->positionMirror.x;
                 sp6C.unk30.y -= sp6C.unk0->positionMirror.y;
                 sp6C.unk30.z -= sp6C.unk0->positionMirror.z;
@@ -1106,16 +1106,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.1f;
             break;
         case 0x532:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.002f;
             sp6C.unk24.y = rand_next(-0x1E, 0x1E) * 0.002f;
             sp6C.unk24.z = rand_next(0x14, 0x1E) * -0.026f;
@@ -1134,16 +1134,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x89;
             break;
         case 0x533:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.002f;
             sp6C.unk24.y = rand_next(8, 0xA) * 0.01f;
             sp6C.unk24.z = rand_next(0xA, 0x1E) * -0.005f;
@@ -1169,16 +1169,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk4C[2] = 0x3CAF;
             break;
         case 0x535:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
             sp6C.unk24.y = rand_next(-0x1E, 0x1E) * 0.01f;
             sp6C.unk24.z = rand_next(0x14, 0x1E) * -0.02f;
@@ -1218,16 +1218,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x156;
             break;
         case 0x52A:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk8 = 0xA;
             sp6C.unk60 = 0xFF;
             sp6C.unk61 = 0x10;
@@ -1289,9 +1289,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x73;
             break;
         case 0x526:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
@@ -1301,8 +1301,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp3C.transl.z = 0.0f;
             sp3C.scale = 1.0f;
             sp3C.roll = obj->srt.roll;
-            if (arg2 != NULL) {
-                sp3C.pitch = arg2->pitch + obj->srt.pitch;
+            if (transform != NULL) {
+                sp3C.pitch = transform->pitch + obj->srt.pitch;
             } else {
                 sp3C.pitch = obj->srt.pitch;
             }
@@ -1315,9 +1315,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x60;
             break;
         case 0x529:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.01f;
@@ -1327,8 +1327,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp3C.transl.z = 0.0f;
             sp3C.scale = 1.0f;
             sp3C.roll = obj->srt.roll;
-            if (arg2 != NULL) {
-                sp3C.pitch = arg2->pitch + obj->srt.pitch;
+            if (transform != NULL) {
+                sp3C.pitch = transform->pitch + obj->srt.pitch;
             } else {
                 sp3C.pitch = obj->srt.pitch;
             }
@@ -1360,18 +1360,18 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x156;
             break;
         case 0x524:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = rand_next(-0x1E, 0x1E) * 0.3f;
             sp6C.unk24.z = rand_next(-0x1E, 0x1E) * 0.3f;
             sp6C.unk24.z = rand_next(-0x1E, 0x1E) * 0.3f;
             sp6C.unk60 = 0xFF;
-            if (arg2 != NULL) {
-                sp6C.unk30.x += arg2->transl.x;
-                sp6C.unk30.y += arg2->transl.y;
-                sp6C.unk30.z += arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x += transform->transl.x;
+                sp6C.unk30.y += transform->transl.y;
+                sp6C.unk30.z += transform->transl.z;
             }
             sp6C.unk3C = rand_next(0xA, 0x14) * 0.00088f;
             sp6C.unk8 = 0xFF;
@@ -1385,14 +1385,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x60;
             break;
         case 0x523:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x += arg2->transl.x;
-                sp6C.unk30.y += arg2->transl.y;
-                sp6C.unk30.z += arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x += transform->transl.x;
+                sp6C.unk30.y += transform->transl.y;
+                sp6C.unk30.z += transform->transl.z;
             }
             sp6C.unk24.x = rand_next(-0xA, 0xA) * 0.03f;
             sp6C.unk24.z = rand_next(-0xA, 0xA) * 0.03f;
@@ -1404,9 +1404,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.00028f;
             break;
         case 0x522:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk30.x = rand_next(-0xA, -0xA) * 0.1f;
             sp6C.unk30.y = rand_next(-0x14, -0xA) * 0.1f;
@@ -1414,10 +1414,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk24.x = rand_next(-0xA, 0xA) * 0.003f;
             sp6C.unk24.z = rand_next(-0xA, 0xA) * 0.003f;
             sp6C.unk60 = 0xFF;
-            if (arg2 != NULL) {
-                sp6C.unk30.x += arg2->transl.x;
-                sp6C.unk30.y += arg2->transl.y;
-                sp6C.unk30.z += arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x += transform->transl.x;
+                sp6C.unk30.y += transform->transl.y;
+                sp6C.unk30.z += transform->transl.z;
             }
             sp6C.unk3C = rand_next(0xA, 0x14) * 0.00088f;
             sp6C.unk8 = 0x55;
@@ -1432,10 +1432,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk48 = 0xA0;
             break;
         case 0x521:
-            if (arg2 != NULL) {
-                sp6C.unk30.x += arg2->transl.x;
-                sp6C.unk30.y += arg2->transl.y;
-                sp6C.unk30.z += arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x += transform->transl.x;
+                sp6C.unk30.y += transform->transl.y;
+                sp6C.unk30.z += transform->transl.z;
             }
             sp6C.unk8 = 0x14;
             sp6C.unk44 = 0x80200;
@@ -1463,16 +1463,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.015565f;
             break;
         case 0x51E:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk8 = 0xA;
             sp6C.unk60 = 0xFF;
             sp6C.unk61 = 0x10;
@@ -1481,17 +1481,17 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.005565f;
             break;
         case 0x53A:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = rand_next(0xA, 0x3C);
             sp6C.unk24.x = rand_next(-0x14, 0x14) * 0.03f;
             sp6C.unk24.y = sp6C.unk8 * 0.02f;
             sp6C.unk24.z = rand_next(-0x14, 0x14) * 0.03f;
             sp6C.unk3C = 0.0015f;
-            if (arg2 != NULL) {
-                sp6C.unk3C = arg2->scale * 0.002f;
+            if (transform != NULL) {
+                sp6C.unk3C = transform->scale * 0.002f;
             }
             sp6C.unk44 = 0x03000000;
             sp6C.unk48 = 0x600020;
@@ -1538,8 +1538,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk8 = 0x3C;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x08100110;
-            if (arg2 != NULL) {
-                sp6C.unk42 = arg2->scale;
+            if (transform != NULL) {
+                sp6C.unk42 = transform->scale;
             } else {
                 sp6C.unk42 = 0x26C;
             }
@@ -1554,9 +1554,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.001f;
             break;
         case 0x514:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.transform.yaw = 0x3E8;
             sp6C.transform.pitch = 0x3E8;
@@ -1564,10 +1564,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.transform.transl.x = 0.0f;
             sp6C.transform.transl.y = 0.0f;
             sp6C.transform.transl.z = 0.0f;
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
             }
             sp6C.unk8 = 6;
             sp6C.unk60 = 0xE1;
@@ -1577,10 +1577,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             } else {
                 sp6C.unk48 = 0x102;
             }
-            if ((arg2 != NULL) && (arg2->scale == 0.0f)) {
+            if ((transform != NULL) && (transform->scale == 0.0f)) {
                 sp6C.unk3C = (rand_next(0, 3) * 0.001f) + 0.003f;
                 sp6C.unk42 = 0x33;
-            } else if ((arg2 != NULL) && (arg2->scale == 2.0f)) {
+            } else if ((transform != NULL) && (transform->scale == 2.0f)) {
                 sp6C.unk3C = (rand_next(0, 3) * 0.001f) + 0.003f;
                 sp6C.unk42 = 0x4F9;
             } else {
@@ -1589,19 +1589,19 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x515:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
             }
             sp6C.unk8 = 0x3C;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x480010;
-            if (arg2->scale == 0.0f) {
+            if (transform->scale == 0.0f) {
                 sp6C.unk42 = 0x88;
                 sp6C.unk3C = 0.009f;
             } else {
@@ -1611,20 +1611,20 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk48 = 2;
             break;
         case 0x516:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
             }
             sp6C.unk8 = 0x3C;
             sp6C.unk60 = 0xFF;
             sp6C.unk44 = 0x480010;
             sp6C.unk48 = 2;
-            if (arg2->scale == 0.0f) {
+            if (transform->scale == 0.0f) {
                 sp6C.unk42 = 0x5C;
                 sp6C.unk3C = 0.027f;
             } else {
@@ -1633,15 +1633,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x517:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x1E;
             sp6C.unk61 = 0;
             sp6C.unk60 = 0x37;
             sp6C.unk44 = 0x180010;
-            if ((arg2 != NULL) && (arg2->scale == 0.0f)) {
+            if ((transform != NULL) && (transform->scale == 0.0f)) {
                 sp6C.unk3C = rand_next(0x14, 0x32) * 0.0004f;
                 sp6C.unk42 = 0x73;
             } else {
@@ -1650,19 +1650,19 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x518:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x3C;
             sp6C.unk61 = 0;
             sp6C.unk60 = 0x37;
             sp6C.unk44 = 0x480010;
             sp6C.unk48 = 2;
-            if (arg2->scale == 0.0f) {
+            if (transform->scale == 0.0f) {
                 sp6C.unk3C = rand_next(0x46, 0x50) * 0.0003f;
                 sp6C.unk42 = 0x73;
-            } else if (arg2->scale == 2.0f) {
+            } else if (transform->scale == 2.0f) {
                 sp6C.unk3C = rand_next(0x46, 0x50) * 0.0003f;
                 sp6C.unk42 = 0x77;
             } else {
@@ -1673,14 +1673,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
         case 0x2BC:
         case 0x2BD:
         case 0x2BE:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
                 sp6C.unk30.x -= sp6C.unk0->positionMirror.x;
                 sp6C.unk30.y -= sp6C.unk0->positionMirror.y;
                 sp6C.unk30.z -= sp6C.unk0->positionMirror.z;
@@ -1796,7 +1796,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x47;
             break;
         case 0x3:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
             sp6C.unk30.y = rand_next(0x14, 0x3C) * 0.3f;
@@ -1805,10 +1805,10 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk61 = 0x14;
             sp6C.unk44 = 0x09100110;
             sp6C.unk3C = 0.15f;
-            sp6C.unk42 = arg2->roll;
+            sp6C.unk42 = transform->roll;
             break;
         case 0x5:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
             sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.18f;
@@ -1819,8 +1819,8 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk8 = rand_next(0x32, 0x50);
             sp6C.unk61 = rand_next(0xA, 0x1E);
             sp6C.unk44 = 0x100218;
-            sp6C.unk42 = arg2->roll;
-            if (arg2->roll == 0x4C) {
+            sp6C.unk42 = transform->roll;
+            if (transform->roll == 0x4C) {
                 sp6C.unk58[0] = 0x6400;
                 sp6C.unk58[1] = 0x3200;
                 sp6C.unk58[2] = 0xA000;
@@ -1831,7 +1831,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x7:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
             sp6C.unk30.x = rand_next(-0x1E, 0x1E) * 0.18f;
@@ -1844,7 +1844,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk8 = rand_next(0x14, 0x32);
             sp6C.unk61 = 0x1E;
             sp6C.unk44 = 0x511;
-            sp6C.unk42 = arg2->roll;
+            sp6C.unk42 = transform->roll;
             break;
         case 0x7B:
             sp6C.unk30.y = rand_next(0, 0xA) + 120.0f;
@@ -1995,21 +1995,21 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x2C;
             break;
         case 0x6D:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
-            sp6C.unk3C = arg2->scale;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
+            sp6C.unk3C = transform->scale;
             sp6C.unk8 = 1;
             sp6C.unk61 = 0;
             sp6C.unk60 = 0x19;
-            if (arg2->roll != 0) {
+            if (transform->roll != 0) {
                 sp6C.unk60 = 0x7D;
             }
             sp6C.unk44 = 0xC0012;
@@ -2054,16 +2054,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.00188f;
             break;
         case 0x65:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk4C[0] = 0xFFFF;
             sp6C.unk4C[1] = 0xFFFF;
             sp6C.unk4C[2] = 0xFFFF;
@@ -2276,9 +2276,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x48:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk30.y = 0.0f;
             sp6C.unk24.y = rand_next(1, 0xA) * 0.2f;
@@ -2540,9 +2540,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.025f;
             break;
         case 0x2B:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = 0.05f;
             sp54.z = rand_next(0, 0xFFFE);
@@ -2592,16 +2592,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x30;
             break;
         case 0x25:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = rand_next(0, 6) + arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = rand_next(0, 6) + arg2->transl.z;
+            sp6C.unk30.x = rand_next(0, 6) + transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = rand_next(0, 6) + transform->transl.z;
             sp6C.unk24.y = rand_next(0, 0xA) * 0.012f;
             sp6C.unk3C = rand_next(4, 8) * 0.003f;
             sp6C.unk8 = 0x24;
@@ -2893,22 +2893,22 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.06f;
             break;
         case 0x6B:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             if (data == NULL) {
                 return -1;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk24.x = ((f32*)data)[0];
             sp6C.unk24.y = ((f32*)data)[1];
             sp6C.unk24.z = ((f32*)data)[2];
             sp6C.unk8 = 0x28;
             sp6C.unk3C = 0.001f;
-            sp6C.unk60 = arg2->scale;
+            sp6C.unk60 = transform->scale;
             sp6C.unk61 = 0xA;
             sp6C.unk44 = 0x200;
             sp6C.unk42 = 0x65;
@@ -2918,7 +2918,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.transform.transl.y = 0.0f;
             sp6C.transform.transl.z = 0.0f;
             sp6C.transform.scale = 1.0f;
-            sp6C.transform.yaw = arg2->yaw;
+            sp6C.transform.yaw = transform->yaw;
             break;
         case 0x6C:
             sp6C.unk8 = 1;
@@ -2929,16 +2929,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.002f;
             break;
         case 0x56:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk30.x = rand_next(-6, 6);
             sp6C.unk30.z = rand_next(-6, 6);
-            sp6C.unk24.x = rand_next(-2, 2) * 0.2f * arg2->scale;
-            sp6C.unk24.y = rand_next(0, 4) * 0.1f * arg2->scale;
-            sp6C.unk24.z = rand_next(-2, 2) * 0.2f * arg2->scale;
-            sp6C.unk3C = arg2->scale * 0.012f;
+            sp6C.unk24.x = rand_next(-2, 2) * 0.2f * transform->scale;
+            sp6C.unk24.y = rand_next(0, 4) * 0.1f * transform->scale;
+            sp6C.unk24.z = rand_next(-2, 2) * 0.2f * transform->scale;
+            sp6C.unk3C = transform->scale * 0.012f;
             sp6C.unk8 = 0x18;
             sp6C.unk44 = 0x01080000;
             sp6C.unk48 = 0x01000000;
@@ -2952,17 +2952,17 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x60;
             break;
         case 0x57:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk30.y = rand_next(0, 0xA);
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.003f * arg2->scale;
-            sp6C.unk24.y = rand_next(0xC8, 0x190) * 0.003f * arg2->scale;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.003f * arg2->scale;
-            sp6C.unk3C = rand_next(8, 0xB) * 0.0001f * arg2->scale;
+            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.003f * transform->scale;
+            sp6C.unk24.y = rand_next(0xC8, 0x190) * 0.003f * transform->scale;
+            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.003f * transform->scale;
+            sp6C.unk3C = rand_next(8, 0xB) * 0.0001f * transform->scale;
             sp6C.unk60 = 0xBE;
-            sp6C.unk8 = arg2->scale * 75.0f;
+            sp6C.unk8 = transform->scale * 75.0f;
             sp6C.unk44 = 0x01200000;
             sp6C.unk48 = 0x01000000;
             sp6C.unk42 = 0x77;
@@ -2974,14 +2974,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x58:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.02f * arg2->scale;
-            sp6C.unk24.y = rand_next(0xA, 0xC8) * 0.02f * arg2->scale;
-            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.02f * arg2->scale;
-            sp6C.unk3C = (rand_next(8, 0xB) * 0.0001f) * arg2->scale;
+            sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.02f * transform->scale;
+            sp6C.unk24.y = rand_next(0xA, 0xC8) * 0.02f * transform->scale;
+            sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.02f * transform->scale;
+            sp6C.unk3C = (rand_next(8, 0xB) * 0.0001f) * transform->scale;
             sp6C.unk8 = 0x4B;
             sp6C.unk44 = 0x01080000;
             sp6C.unk48 = 0x01000000;
@@ -2994,16 +2994,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x323:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk8 = 0x1E;
             sp6C.unk44 = 0x80210;
             sp6C.unk48 |= 0x02000000;
             sp6C.unk3C = 0.025f;
-            if (arg2 != NULL) {
-                sp6C.unk42 = arg2->scale;
+            if (transform != NULL) {
+                sp6C.unk42 = transform->scale;
             } else {
                 sp6C.unk42 = 0x206;
             }
@@ -3012,13 +3012,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             }
             break;
         case 0x324:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk24.x = rand_next(-0x64, 0x64) * 0.0035f;
             sp6C.unk24.y = rand_next(0, 0x64) * 0.0075f;
             sp6C.unk24.z = rand_next(-0x64, 0x64) * 0.0035f;
@@ -3026,7 +3026,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk8 = 0x50;
             sp6C.unk44 = 0x01088200;
             sp6C.unk48 = 0x100000;
-            sp6C.unk42 = arg2->scale;
+            sp6C.unk42 = transform->scale;
             break;
         case 0x325:
             sp6C.unk8 = 0x1E;
@@ -3044,14 +3044,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x5C;
             break;
         case 0x3DE:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            if (arg2 != NULL) {
-                sp6C.unk30.x = arg2->transl.x;
-                sp6C.unk30.y = arg2->transl.y;
-                sp6C.unk30.z = arg2->transl.z;
+            if (transform != NULL) {
+                sp6C.unk30.x = transform->transl.x;
+                sp6C.unk30.y = transform->transl.y;
+                sp6C.unk30.z = transform->transl.z;
             } else {
                 sp6C.unk30.x = rand_next(-0xA, 0xA) * 0.1f;
                 sp6C.unk30.y = rand_next(-0xA, 0xA) * 0.1f;
@@ -3098,16 +3098,16 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk58[2] = 0x0B00;
             break;
         case 0x320:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = rand_next(-2, 2) * 0.05f;
             sp6C.unk24.y = rand_next(2, 5) * 0.07f;
             sp6C.unk24.z = rand_next(1, 3) * -0.1f;
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk8 = 0x28;
             sp6C.unk48 = 0x01000000;
             sp6C.unk44 = 0x1C0208;
@@ -3115,15 +3115,15 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk3C = 0.03f;
             break;
         case 0x321:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.y = rand_next(0, 4) * 0.1f;
             sp6C.unk24.z = rand_next(2, 4) * -0.15f;
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk3C = 0.01f;
             sp6C.unk8 = 0x64;
             sp6C.unk44 = 0x011C0200;
@@ -3131,13 +3131,13 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x60;
             break;
         case 0x322:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk3C = 0.015f;
             sp6C.unk8 = 0x50;
             sp6C.unk44 = 0x1C0200;
@@ -3146,14 +3146,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk60 = 0xA5;
             break;
         case 0x351:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.z = -0.5f;
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
-            sp6C.unk30.z = arg2->transl.z;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
+            sp6C.unk30.z = transform->transl.z;
             sp6C.unk3C = rand_next(0x32, 0x64) * 0.0002f;
             sp6C.unk8 = rand_next(0x28, 0x50);
             sp6C.unk44 = 0x08140200;
@@ -3161,14 +3161,14 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.unk42 = 0x5F;
             break;
         case 0x51D:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.transform.yaw = 0x2BC;
             sp6C.unk42 = 0x462;
-            sp6C.unk30.x = arg2->transl.x;
-            sp6C.unk30.y = arg2->transl.y;
+            sp6C.unk30.x = transform->transl.x;
+            sp6C.unk30.y = transform->transl.y;
             sp6C.unk3C = rand_next(0xA, 0x14) * 0.0001f;
             sp6C.unk8 = 0xAA;
             sp6C.unk44 = 0xA0104;
@@ -3180,9 +3180,9 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *arg2, s32 flags, s8 arg4, void *data)
             sp6C.transform.scale = 1.0f;
             break;
         case 0x55A:
-            if (arg2 == NULL) {
+            if (transform == NULL) {
                 RESET_SRT(_bss_0)
-                arg2 = &_bss_0;
+                transform = &_bss_0;
             }
             sp6C.unk24.x = rand_next(-0x28, 0x28) * 0.004f;
             sp6C.unk24.y = rand_next(0xA, 0x50) * 0.002f;

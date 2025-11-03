@@ -276,9 +276,9 @@ DLL_INTERFACE(DLL_210_Player) {
     /*15*/ void (*increase_magic_max)(Object* player, s32 amount);
     /*16*/ s16 (*get_magic)(Object* player);
     /*17*/ s16 (*get_magic_max)(Object* player);
-    /*18*/ void (*set_scarab_count)(Object* player, s32 scarabCount);
+    /*18*/ void (*set_scarabs)(Object* player, s32 scarabs);
     /*19*/ void (*add_scarab)(Object *player, s32 amount);
-    /*20*/ u16 (*get_scarab_count)(Object* player);
+    /*20*/ u16 (*get_scarabs)(Object* player);
     /*21*/ s8 (*func21)(Object* player);
     /*22*/ void (*set_health)(Object* player, s32 health);
     /*23*/ void (*set_health_max)(Object* player, s32 healthMax);

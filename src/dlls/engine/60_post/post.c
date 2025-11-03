@@ -35,7 +35,7 @@ static GameTextChunk *splashGametext;
 static Texture *bss_18;
 static Texture *bss_1C;
 
-void dll_60_ctor(void *self) {
+void dll_60_ctor(void *dll) {
     font_load(FONT_FUN_FONT);
 
     if (osMemSize != 0x800000) {
@@ -65,7 +65,7 @@ void dll_60_ctor(void *self) {
     bss_5 = 2;
 }
 
-void dll_60_dtor(void *self) {
+void dll_60_dtor(void *dll) {
     if (data_4 == 1) {
         texture_destroy(data_10);
     } else {
@@ -78,7 +78,7 @@ void dll_60_dtor(void *self) {
     mmFree(splashGametext);
 }
 
-s32 dll_60_update1() {
+s32 dll_60_update1(void) {
     if (data_4 == 1) {
         return 0;
     } else {
@@ -116,7 +116,7 @@ s32 dll_60_update1() {
     } 
 }
 
-void dll_60_update2() { }
+void dll_60_update2(void) { }
 
 void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     u32 local4;

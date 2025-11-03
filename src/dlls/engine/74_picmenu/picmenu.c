@@ -148,7 +148,7 @@ void picmenu_set_items(PicMenuItem *items, s32 count,
 }
 
 // export 1
-void picmenu_clear_items() {
+void picmenu_clear_items(void) {
     s32 i;
 
     for (i = 0; i < sItemCount; i++) {

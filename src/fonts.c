@@ -1086,7 +1086,7 @@ void font_window_disable_verts(s32 windowID) {
     gFontWindows[windowID].flags &= ~FONT_WINDOW_VERTS;
 }
 
-void font_windows_draw(Gfx **gdl, s32 **mtxs, s32 **vtxs) {
+void font_windows_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 i;
 
     for (i = 1; i < FONT_WINDOW_COUNT; i++) {
@@ -1160,7 +1160,7 @@ void font_render_fill_rect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
 static const char str_28[] = "FONTS - cannot render a window which is out of range!\n";
 static const char str_29[] = "FONTS - cannot render a window which is out of range!\n";
 static const char str_30[] = "FONTS - cannot render a window which is out of range!\n";
-void font_window_draw(Gfx **gdl, s32 **mtxs, s32 **vtxs, s32 windowID) {
+void font_window_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
     FontWindow *window;
     FontString *string;
     s32 vidMode;

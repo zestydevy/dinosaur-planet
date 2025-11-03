@@ -16,7 +16,7 @@ void task_dtor(void *self) {
 
 }
 
-void task_load_recently_completed() {
+void task_load_recently_completed(void) {
     s32 i;
     u8 val;
 
@@ -106,7 +106,7 @@ void task_mark_task_completed(u8 task) {
     }
 }
 
-u8 task_get_num_recently_completed() {
+u8 task_get_num_recently_completed(void) {
     return sRecentlyCompletedNextIdx + 1;
 }
 
@@ -114,11 +114,11 @@ char *task_get_recently_completed_task_text(u8 idx) {
     return gDLL_21_Gametext->vtbl->get_text(sRecentlyCompleted[idx] + 244, 0);
 }
 
-char *task_get_completion_task_text() {
+char *task_get_completion_task_text(void) {
     return gDLL_21_Gametext->vtbl->get_text(sCompletionIdx + 244, 1);
 }
 
-s16 task_get_completion_percentage() {
+s16 task_get_completion_percentage(void) {
     f32 tmp = sCompletionIdx / 206.0f;
     return tmp * 100.0f;
 }
