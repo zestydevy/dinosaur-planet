@@ -13,12 +13,10 @@ typedef struct {
 } SetupPoint_Setup;
 
 // offset: 0x0 | ctor
-void setuppoint_ctor(void *dll){
-}
+void setuppoint_ctor(void *dll){ }
 
 // offset: 0xC | dtor
-void setuppoint_dtor(void *dll){
-}
+void setuppoint_dtor(void *dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void setuppoint_setup(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
@@ -48,8 +46,7 @@ void setuppoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 }
 
 // offset: 0xC4 | func: 4 | export: 4
-void setuppoint_free(Object *self, s32 arg1){
-}
+void setuppoint_free(Object *self, s32 arg1){ }
 
 // offset: 0xD4 | func: 5 | export: 5
 u32 setuppoint_get_model_flags(Object *self){

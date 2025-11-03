@@ -30,6 +30,8 @@
 #include "types.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
+#include "dlls/objects/277_iceblast.h"
+#include "dlls/objects/338_LFXEmitter.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
@@ -97,9 +99,9 @@ static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 void dll_210_func_1D8B8(Object* player);
 void dll_210_func_1D4E0(Object* arg0, s32 arg1);
 s32 dll_210_func_1D2A8(Object* arg0, Object* arg1);
-void dll_210_func_1CD6C(Object* player, s32 arg1);
-void dll_210_func_1D07C(Object *player, s32 arg1);
-void dll_210_func_1CEFC(Object* player, s32 arg1);
+void dll_210_add_health(Object* player, s32 amount);
+void dll_210_add_scarab(Object *player, s32 amount);
+void dll_210_add_magic(Object* player, s32 amount);
 
 void func_8004D880(Object *arg0);
 void *func_8005D3A4(int param);
@@ -378,8 +380,7 @@ void dll_210_ctor(void *dll) {
 #endif
 
 // offset: 0x438 | dtor
-void dll_210_dtor(void *dll) {
-}
+void dll_210_dtor(void *dll) { }
 
 // offset: 0x444 | func: 1 | export: 0
 #ifndef NON_MATCHING
@@ -494,7 +495,7 @@ void dll_210_control(Object* arg0) {
     }
 
     if (joy_get_buttons(0) & U_JPAD) {
-        dll_210_func_1D07C(arg0, 1);
+        dll_210_add_scarab(arg0, 1);
     }
     _bss_1AC = gUpdateRateF;
     if (_bss_1AC > 4.0f) {
@@ -738,11 +739,11 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
                 sp4C += sp54[0]->unk0[0] - sp54[temp_v0_6 - 1]->unk0[0];
             }
             if (sp4C > 25.0f) {
-                dll_210_func_1CD6C(arg0, -1);
+                dll_210_add_health(arg0, -1);
                 if (arg1->stats->health <= 0) {
                     gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg1->unk0, 0x34);
                 } else {
-                    gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, func_80048498());
+                    gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
                     gDLL_29_Gplay->vtbl->start_loaded_game();
                 }
             }
@@ -910,7 +911,7 @@ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             arg0->speed.x = var_fs0 * 2.5f;
             arg0->speed.z = var_fs1 * 2.5f;
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, 0x4D);
-            dll_210_func_1CD6C(arg0, -sp88);
+            dll_210_add_health(arg0, -sp88);
             if (arg1->unk868 != NULL) {
                 arg1->unk868->unkE0 = 0;
                 arg1->unk868 = NULL;
@@ -928,7 +929,7 @@ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             arg0->speed.x = -var_fs0 * 2.5f;
             arg0->speed.z = -var_fs1 * 2.5f;
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, 0x4D);
-            dll_210_func_1CD6C(arg0, -sp88);
+            dll_210_add_health(arg0, -sp88);
             if (arg1->unk868 != NULL) {
                 arg1->unk868->unkE0 = 0;
                 arg1->unk868 = NULL;
@@ -948,7 +949,7 @@ void dll_210_func_1DDC(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0xDAU, 0x7FU, NULL, NULL, 0, NULL);
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, 0x4D);
             func_80023D30(arg0, 0x450, 0.0f, 0);
-            dll_210_func_1CD6C(arg0, -sp88);
+            dll_210_add_health(arg0, -sp88);
             if (arg1->unk868 != NULL) {
                 arg1->unk868->unkE0 = 0;
                 arg1->unk868 = NULL;
@@ -1090,7 +1091,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
                 case 0x7F:
                 gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x184U, 0x7FU, NULL, NULL, 0, NULL);
                     sp7C = 0;
-                    dll_210_func_1CD6C(arg0, 1);
+                    dll_210_add_health(arg0, 1);
                     break;
                 case 0:
                     if (rand_next(0, 1) != 0) {
@@ -1141,7 +1142,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
                 gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, sp78);
             }
         }
-        dll_210_func_1CD6C(arg0, -sp7C);
+        dll_210_add_health(arg0, -sp7C);
         if (arg1->stats->health <= 0) {
             gDLL_18_objfsa->vtbl->set_anim_state(arg0, &arg2->unk0, 0x34);
         }
@@ -1324,7 +1325,7 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
     if (arg1->unk87C == 0x40) {
         *_data_0 += gUpdateRate;
         if ((*_data_0 >= 0x65) && !(arg0->unkB0 & 0x1000)) {
-            dll_210_func_1CEFC(arg0, -1);
+            dll_210_add_magic(arg0, -1);
             *_data_0 = 0;
         }
     }
@@ -1335,7 +1336,7 @@ void dll_210_func_363C(Object* arg0, Player_Data* arg1, Gfx** arg2, Mtx** arg3, 
         gDLL_32->vtbl->func4(arg2, arg3, arg0);
         *_data_0 += gUpdateRate;
         if ((*_data_0 >= 0x65) && !(arg0->unkB0 & 0x1000)) {
-            dll_210_func_1CEFC(arg0, -1);
+            dll_210_add_magic(arg0, -1);
             *_data_0 = 0;
         }
     }
@@ -4650,7 +4651,7 @@ s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
             }
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x226U, 0x7FU, NULL, NULL, 0, NULL);
             func_80023D30(arg0, 0xB, 0.0f, 0U);
-            dll_210_func_1CD6C(arg0, -4);
+            dll_210_add_health(arg0, -4);
         }
         arg0->speed.f[1] -= 0.1f * arg2;
         arg1->unk0.unk278 *= 0.98f;
@@ -4664,7 +4665,7 @@ s32 dll_210_func_CC24(Object* arg0, Player_Data* arg1, f32 arg2) {
             }
             gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x226U, 0x7FU, NULL, NULL, 0, NULL);
             func_80023D30(arg0, 0xB, 0.0f, 0U);
-            dll_210_func_1CD6C(arg0, -8);
+            dll_210_add_health(arg0, -8);
         }
         if (arg1->unk0.animStateTime >= 0x3D) {
             dll_210_func_4634(arg0, 9, 0);
@@ -6938,7 +6939,7 @@ s32 dll_210_func_18EAC(Object* arg0, Player_Data* arg1, f32 arg2) {
             } else {
                 sp98 = 9;
             }
-            dll_210_func_1CEFC(arg0, -sp98);
+            dll_210_add_magic(arg0, -sp98);
             ((void (*)(Object*, Player_Data*, f32)) *_bss_224)(arg0, arg1, temp_s1->unk830);
             arg1->unk0.animTickDelta = 0.02f;
             func_80023D30(arg0, 0x43F, 0.0f, 0);
@@ -7208,7 +7209,7 @@ void dll_210_func_1CC94(Object* player) {
 }
 
 // offset: 0x1CCB0 | func: 154 | export: 50
-s16 dll_210_func_1CCB0(Object* player) {
+s32 dll_210_func_1CCB0(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->unk87C;
 }
@@ -7217,110 +7218,118 @@ s16 dll_210_func_1CCB0(Object* player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CCC0.s")
 
 // offset: 0x1CD04 | func: 156 | export: 22
-void dll_210_func_1CD04(Object* player, s32 arg1) {
+void dll_210_set_health(Object* player, s32 health) {
     Player_Data* objdata;
 
     objdata = player->data;
-    if (arg1 < 0) {
-        arg1 = 0;
-    } else {
-        if (objdata->stats->healthMax < arg1) {
-            arg1 = objdata->stats->healthMax;
-        }
-    }
-    objdata->stats->health = arg1;
-}
-
-// offset: 0x1CD3C | func: 157 | export: 23
-void dll_210_func_1CD3C(Object* player, s32 health) {
-    Player_Data* objdata = player->data;
-
-    if (health < 0) {
-        health = 0;
-    } else if (health >= 0x51) {
-        health = 0x50;
-    }
-    objdata->stats->healthMax = health;
-}
-
-// offset: 0x1CD6C | func: 158 | export: 24
-void dll_210_func_1CD6C(Object* player, s32 healthDifference) {
-    Player_Data* objdata = player->data;
-    s32 health;
-
-    health = objdata->stats->health;
-    health += healthDifference;
     if (health < 0) {
         health = 0;
     } else if (objdata->stats->healthMax < health) {
         health = objdata->stats->healthMax;
     }
+
     objdata->stats->health = health;
 }
 
+// offset: 0x1CD3C | func: 157 | export: 23
+void dll_210_set_health_max(Object* player, s32 healthMax) {
+    Player_Data* objdata = player->data;
+
+    if (healthMax < 0) {
+        healthMax = 0;
+    } else if (healthMax > MAX_HEALTH) {
+        healthMax = MAX_HEALTH;
+    }
+
+    objdata->stats->healthMax = healthMax;
+}
+
+// offset: 0x1CD6C | func: 158 | export: 24
+void dll_210_add_health(Object* player, s32 amount) {
+    Player_Data* objdata = player->data;
+    s32 newHealth;
+
+    newHealth = objdata->stats->health;
+    newHealth += amount;
+    if (newHealth < 0) {
+        newHealth = 0;
+    } else if (objdata->stats->healthMax < newHealth) {
+        newHealth = objdata->stats->healthMax;
+    }
+
+    objdata->stats->health = newHealth;
+}
+
 // offset: 0x1CDAC | func: 159 | export: 25
-void dll_210_func_1CDAC(Object* player, s32 arg1) {
+void dll_210_increase_health_max(Object* player, s32 amount) {
     Player_Data* objdata;
-    s32 var;
+    s32 newHealthMax;
 
     objdata = player->data;
-    var = objdata->stats->healthMax;
-    var += arg1;
+    newHealthMax = objdata->stats->healthMax;
+    newHealthMax += amount;
 
-    if (var < 0){
-        var = 0;
-    } else if (var >= 0x51){
-        var = 0x50;
+    if (newHealthMax < 0){
+        newHealthMax = 0;
+    } else if (newHealthMax > MAX_HEALTH){
+        newHealthMax = MAX_HEALTH;
     }
-    objdata->stats->healthMax = var;
+
+    objdata->stats->healthMax = newHealthMax;
 }
 
 // offset: 0x1CDE4 | func: 160 | export: 26
-s8 dll_210_func_1CDE4(Object* player) {
+s8 dll_210_get_health(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->stats->health;
 }
 
 // offset: 0x1CDF8 | func: 161 | export: 27
-s8 dll_210_func_1CDF8(Object* player) {
+s8 dll_210_get_health_max(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->stats->healthMax;
 }
 
 // offset: 0x1CE0C | func: 162 | export: 13
-void dll_210_func_1CE0C(Object* player, s32 arg1) {
+void dll_210_set_magic_max(Object* player, s32 magicMax) {
     Player_Data* objdata;
 
     objdata = player->data;
-    if (objdata->unk8BB != 0) {
-        if (arg1 < 0) {
-            arg1 = 0;
-        } else if (arg1 > 0x64) {
-            arg1 = 0x64;
-        }
-        objdata->stats->magicMax = arg1;
+    if (objdata->unk8BB == 0) {
+        return;
     }
+
+    if (magicMax < 0) {
+        magicMax = 0;
+    } else if (magicMax > MAX_MAGIC) {
+        magicMax = MAX_MAGIC;
+    }
+
+    objdata->stats->magicMax = magicMax;
 }
 
 // offset: 0x1CE48 | func: 163 | export: 15
-void dll_210_func_1CE48(Object* player, s32 arg1) {
+void dll_210_increase_magic_max(Object* player, s32 amount) {
     Player_Data* objdata = player->data;
-    s32 var_v1;
+    s32 newMagicMax;
 
-    if (objdata->unk8BB != 0) {
-        var_v1 = objdata->stats->magicMax;
-        var_v1 += arg1;
-        if (var_v1 < 0) {
-            var_v1 = 0;
-        } else if (var_v1 >= 0x65) {
-            var_v1 = 0x64;
-        }
-        objdata->stats->magicMax = var_v1;
+    if (objdata->unk8BB == 0) {
+        return;
     }
+
+    newMagicMax = objdata->stats->magicMax;
+    newMagicMax += amount;
+    if (newMagicMax < 0) {
+        newMagicMax = 0;
+    } else if (newMagicMax > MAX_MAGIC) {
+        newMagicMax = MAX_MAGIC;
+    }
+
+    objdata->stats->magicMax = newMagicMax;
 }
 
 // offset: 0x1CE8C | func: 164 | export: 17
-s16 dll_210_func_1CE8C(Object* player) {
+s16 dll_210_get_magic_max(Object* player) {
     Player_Data* objdata;
 
     objdata = player->data;
@@ -7336,38 +7345,40 @@ s16 dll_210_func_1CE8C(Object* player) {
 // offset: 0x1CEFC | func: 166 | export: 14
 //Plays sound effect when magic refilled?
 //NOTE: Patched in Dinomod to prevent undebounced sound!
-//https://dinosaurpla.net/wiki/Dinomod_Enhanced/Differences/DLLs/210_KrystalSabre#dll_210_func_1CEFC
-void dll_210_func_1CEFC(Object* player, s32 magicDifference) {
+//https://dinosaurpla.net/wiki/Dinomod_Enhanced/Differences/DLLs/210_KrystalSabre#dll_210_add_magic
+void dll_210_add_magic(Object* player, s32 amount) {
     Player_Data* objdata = player->data;
     PlayerStats* stats;
     s32 magic;
 
-    if (objdata->unk8BB != 0) {
-        stats = objdata->stats;
-        magic = stats->magic;
-        magic += magicDifference;
-        if (magic < 0) {
-            magic = 0;
-        } else {
-            if (stats->magicMax < magic) {
-                magic = stats->magicMax;
-            }
-        }
-        stats->magic = magic;
-        if (magicDifference > 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB_Magic_Refill_Chime, MAX_VOLUME, 0, 0, 0, 0);
-        }
+
+    if (objdata->unk8BB == 0) {
+        return;
+    }
+
+    stats = objdata->stats;
+    magic = stats->magic;
+    magic += amount;
+    if (magic < 0) {
+        magic = 0;
+    } else if (stats->magicMax < magic) {
+        magic = stats->magicMax;
+    }
+    stats->magic = magic;
+    if (amount > 0) {
+        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_5EB_Magic_Refill_Chime, MAX_VOLUME, 0, 0, 0, 0);
     }
 }
 
 // offset: 0x1CFA4 | func: 167 | export: 16
-s16 dll_210_func_1CFA4(Object* arg0) {
+s16 dll_210_get_magic(Object* player) {
     Player_Data* objdata;
 
-    objdata = arg0->data;
+    objdata = player->data;
     if (objdata->unk8BB == 0) {
         return 0;
     }
+
     return objdata->stats->magic;
 }
 
@@ -7378,6 +7389,7 @@ s8 dll_210_func_1CFCC(Object* player) {
     if (objdata->unk0.unk4.unk25C & 0x10) {
         return objdata->unk0.unk4.unk68.unk50[0];
     }
+
     return -1;
 }
 
@@ -7385,23 +7397,46 @@ s8 dll_210_func_1CFCC(Object* player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CFF4.s")
 
 // offset: 0x1D04C | func: 170 | export: 18
-void dll_210_func_1D04C(Object* player, s32 arg1) {
+void dll_210_set_scarabs(Object* player, s32 scarabs) {
     Player_Data* objdata = player->data;
 
-    if (arg1 < 0) {
-        arg1 = 0;
-    } else if (arg1 >= 0x3E8) {
-        arg1 = 0x3E7;
+    if (scarabs < 0) {
+        scarabs = 0;
+    } else if (scarabs > MAX_SCARABS) {
+        scarabs = MAX_SCARABS;
     }
-    objdata->stats->scarabs = arg1;
+
+    objdata->stats->scarabs = scarabs;
 }
 
 // offset: 0x1D07C | func: 171 | export: 19
-void dll_210_func_1D07C(Object* player, s32 scarabsDifference);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D07C.s")
+void dll_210_add_scarab(Object* player, s32 amount) {
+    s32 newScarabCount;
+    Player_Data* objdata = player->data;
+
+    newScarabCount = objdata->stats->scarabs;
+    newScarabCount += amount;
+    if (objdata->stats->unkA < amount) {
+        objdata->stats->unkA = amount;
+    }
+
+    if (newScarabCount < 0) {
+        newScarabCount = 0;
+    } else if (newScarabCount > MAX_SCARABS) {
+        newScarabCount = MAX_SCARABS;
+    }
+
+    objdata->stats->scarabs = newScarabCount;
+
+    if (player->id != 0) {
+        main_set_bits(0x3E4, newScarabCount);
+    } else {
+        main_set_bits(0x600, newScarabCount);
+    }
+}
 
 // offset: 0x1D128 | func: 172 | export: 20
-u16 dll_210_func_1D128(Object* player) {
+u16 dll_210_get_scarabs(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->stats->scarabs;
 }
@@ -7519,7 +7554,7 @@ s32 dll_210_func_1D390(Object* player, s32 arg1) {
 }
 
 // offset: 0x1D3A4 | func: 188 | export: 39
-void dll_210_func_1D3A4(Object* player, s32 arg1, s32 arg2);
+void dll_210_func_1D3A4(Object *arg0, s32 arg1, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D3A4.s")
 
 // offset: 0x1D40C | func: 189 | export: 40
@@ -7644,12 +7679,12 @@ f32 dll_210_func_1D788(Object* player) {
 }
 
 // offset: 0x1D798 | func: 207 | export: 55
-void dll_210_func_1D798(Object* player, Player_Data* objdata, void** arg2, s8* arg3, void** arg4) {
+void dll_210_func_1D798(Object* player, Player_Data* objdata, void** arg2, s8* arg3, Vec3f** arg4) {
     Player_Data* objdata2 = player->data;
 
     *arg3 = 0x7F;
     *arg2 = objdata2->unk89C;
-    *arg4 = (s8*)objdata2 + 0x39C;
+    *arg4 = &objdata2->unk39C;
 }
 
 // offset: 0x1D7C4 | func: 208 | export: 57
@@ -7771,12 +7806,11 @@ void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
 
     temp_v0 = arg0->objhitInfo;
     if (temp_v0 != NULL) {
-        sp28 = (f32) temp_v0->unk52;
+        sp28 = temp_v0->unk52;
     } else {
         sp28 = arg0->unkA8;
     }
     sp2C = (arg0->unk74->y - arg0->srt.transl.y) - arg1;
-    sp28 = sp28;
     sp20 = fsin16_precise(arg0->srt.yaw);
     gDLL_3_Animation->vtbl->func31(-sp20 * sp28, sp2C, -fcos16_precise(arg0->srt.yaw) * sp28);
 }
@@ -7784,57 +7818,55 @@ void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
 // offset: 0x1DC48 | func: 218
 void dll_210_func_1DC48(Object* obj) {
     s8 i;
-    ObjSetup* objsetup;
+    Iceblast_Setup* objsetup;
 
     for (i = 0; i < 3; i++) {
         if (_bss_210[i] != 0) {
             continue;
         }
 
-        objsetup = obj_alloc_create_info(0x24, OBJ_iceblast);
+        objsetup = obj_alloc_create_info(sizeof(Iceblast_Setup), OBJ_iceblast);
         if (objsetup == NULL) {
             break;
         }
 
-        objsetup->x = obj->positionMirror.x;
-        objsetup->y = obj->positionMirror.y;
-        objsetup->z = obj->positionMirror.z;
-        objsetup->loadParamA = 2;
-        objsetup->loadParamB = 1;
-        objsetup->loadDistance = 0xFF;
-        objsetup->fadeDistance = 0xFF;
-        ((s16* )objsetup)[13] = i * 0xA;
+        objsetup->base.x = obj->positionMirror.x;
+        objsetup->base.y = obj->positionMirror.y;
+        objsetup->base.z = obj->positionMirror.z;
+        objsetup->base.loadParamA = 2;
+        objsetup->base.loadParamB = 1;
+        objsetup->base.loadDistance = 0xFF;
+        objsetup->base.fadeDistance = 0xFF;
+        objsetup->timer = i * 0xA;
         if (obj->id != 0) {
-            ((u16*)objsetup)[14] = 0;
+            objsetup->unk1C = 0;
         } else {
-            ((u16*)objsetup)[14] = 0x8000;
+            objsetup->unk1C = 0x8000;
         }
-        _bss_210[i] = obj_create(objsetup, 5, obj->mapID, -1, obj->parent);
+        _bss_210[i] = obj_create(&objsetup->base, 5, obj->mapID, -1, obj->parent);
     }
 }
 
 // offset: 0x1DD94 | func: 219
 Object *dll_210_func_1DD94(Object* obj, s32 arg1) {
-    ObjSetup* objsetup;
+    LFXEmitter_Setup* objsetup;
 
-    objsetup = obj_alloc_create_info(0x28, OBJ_LFXEmitter);
-    objsetup->loadParamA = 2;
-    objsetup->loadParamB = 1;
-    objsetup->loadDistance = 0xFF;
-    objsetup->fadeDistance = 0xFF;
-    objsetup->x = obj->srt.transl.x;
-    objsetup->y = obj->srt.transl.y;
-    objsetup->z = obj->srt.transl.z;
-    ((s16*)objsetup)[16] = 0;
-    ((s16*)objsetup)[15] = arg1;
-    ((s16*)objsetup)[17] = -1;
-    return obj_create(objsetup, 5, obj->mapID, -1, obj->parent);
+    objsetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    objsetup->base.loadParamA = 2;
+    objsetup->base.loadParamB = 1;
+    objsetup->base.loadDistance = 0xFF;
+    objsetup->base.fadeDistance = 0xFF;
+    objsetup->base.x = obj->srt.transl.x;
+    objsetup->base.y = obj->srt.transl.y;
+    objsetup->base.z = obj->srt.transl.z;
+    objsetup->unk20 = 0;
+    objsetup->unk1E = arg1;
+    objsetup->unk22 = -1;
+    return obj_create(&objsetup->base, 5, obj->mapID, -1, obj->parent);
 }
 
 // offset: 0x1DE50 | func: 220
-void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2) {
-}
+void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2) { }
 
 // offset: 0x1DE64 | func: 221
-void dll_210_func_1DE64(UNK_TYPE_32 *arg0) {
-}
+void dll_210_func_1DE64(UNK_TYPE_32 *arg0) { }

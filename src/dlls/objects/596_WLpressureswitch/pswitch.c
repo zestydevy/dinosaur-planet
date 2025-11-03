@@ -46,12 +46,10 @@ enum WarlockMountainActs {
 static int WLpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
-void WLpressureswitch_ctor(void* dll){
-}
+void WLpressureswitch_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void WLpressureswitch_dtor(void* dll){
-}
+void WLpressureswitch_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg2) {
@@ -180,8 +178,7 @@ void WLpressureswitch_control(Object* self) {
 }
 
 // offset: 0x598 | func: 2 | export: 2
-void WLpressureswitch_update(Object* self){
-}
+void WLpressureswitch_update(Object* self){ }
 
 // offset: 0x5A4 | func: 3 | export: 3
 void WLpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {

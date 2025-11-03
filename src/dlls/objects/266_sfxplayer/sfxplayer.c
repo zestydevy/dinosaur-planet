@@ -29,12 +29,10 @@ typedef struct {
 } SfxPlayer_Data;
 
 // offset: 0x0 | ctor
-void sfxplayer_ctor(void* dll){
-}
+void sfxplayer_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void sfxplayer_dtor(void* dll){
-}
+void sfxplayer_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void sfxplayer_setup(Object* self, SfxPlayer_Setup* setup, s32 arg2) {
@@ -114,8 +112,7 @@ void sfxplayer_control(Object* self) {
 }
 
 // offset: 0x458 | func: 2 | export: 2
-void sfxplayer_update(Object* arg0) {
-}
+void sfxplayer_update(Object* arg0) { }
 
 // offset: 0x464 | func: 3 | export: 3
 void sfxplayer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){

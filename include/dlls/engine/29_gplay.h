@@ -62,17 +62,21 @@ typedef struct {
     u8 _unk2[1];
 } GplayStruct11;
 
+#define MAX_SCARABS 999
+#define MAX_MAGIC 100
+#define MAX_HEALTH 80
+
 // size: 0xc
 typedef struct {
-    /*0x0*/s8 unk0;
-    /*0x1*/s8 health;
-    /*0x2*/s8 healthMax; //only shows up to 104, code caps it at 80.
-    /*0x3*/s8 unk3;
-    /*0x4*/s16 magic; //only mods when byte at "state"0x8bb is set.
-    /*0x6*/s16 magicMax; //capped at 100.
-    /*0x8*/u16 scarabs; //capped at 999.
-    /*0xA*/u8 unkA;
-    /*0xB*/s8 dusters;
+    /*0x0*/ s8 unk0;
+    /*0x1*/ s8 health;
+    /*0x2*/ s8 healthMax; //only shows up to 104, code caps it at 80 (MAX_HEALTH).
+    /*0x3*/ s8 unk3;
+    /*0x4*/ s16 magic; //only mods when byte at "state"0x8bb is set.
+    /*0x6*/ s16 magicMax; //capped at 100 (MAX_MAGIC).
+    /*0x8*/ u16 scarabs; //capped at 999 (MAX_SCARABS).
+    /*0xA*/ s8 unkA;
+    /*0xB*/ s8 dusters;
 } PlayerStats;
 
 typedef struct {

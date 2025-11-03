@@ -17,12 +17,10 @@
 /*0x8*/ static u8 _bss_8[0x8];
 
 // offset: 0x0 | ctor
-void kamerian_flame_ctor(void* dll){
-}
+void kamerian_flame_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void kamerian_flame_dtor(void* dll){
-}
+void kamerian_flame_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {

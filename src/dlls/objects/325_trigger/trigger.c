@@ -847,20 +847,20 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             main_set_bits(BIT_4E2, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_GAME:
-            gDLL_29_Gplay->vtbl->checkpoint(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, func_80048498());
+            gDLL_29_Gplay->vtbl->checkpoint(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, map_get_layer());
             break;
         case TRG_CMD_MAP_LAYER:
             if (cmd->param1 == 0) {
-                func_80047374();
+                map_increment_layer();
             } else {
-                func_800473BC();
+                map_decrement_layer();
             }
             break;
         case TRG_CMD_RESTART:
             switch (cmd->param1) {
             case 0:
                 // "Restart Set [%d]\n"
-                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, func_80048498());
+                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, map_get_layer());
                 break;
             case 1:
                 // "Restart Clear [%d]\n"

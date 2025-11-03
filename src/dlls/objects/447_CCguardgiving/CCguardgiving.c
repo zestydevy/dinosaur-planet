@@ -117,9 +117,9 @@ void CCguardgiving_control(Object *self) {
     case STATE_3:
         if (gDLL_1_UI->vtbl->func_DF4(BIT_3E4)) {
             player = get_player();
-            count = ((DLL_210_Player*)player->dll)->vtbl->func20(player);
+            count = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
             if (count >= 10) {
-                ((DLL_210_Player*)player->dll)->vtbl->func18(player, count - 10);
+                ((DLL_210_Player*)player->dll)->vtbl->set_scarabs(player, count - 10);
                 gDLL_3_Animation->vtbl->func17(4, self, -1);
                 objdata->state = STATE_4;
                 func_80023BF8(self, 0, 0, 0, 0, 2);

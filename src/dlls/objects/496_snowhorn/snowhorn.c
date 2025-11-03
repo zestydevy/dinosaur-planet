@@ -218,11 +218,9 @@ static s8 _data_300[] = {
     1,1,1,1
 };
 
-void dll_496_ctor(s32 arg0) {
-}
+void dll_496_ctor(s32 arg0) { }
 
-void dll_496_dtor(s32 arg0) {
-}
+void dll_496_dtor(s32 arg0) { }
 
 //https://decomp.me/scratch/tHX03
 //NOTE: dll_496_setup itself matches, it's just that these declared functions need to also be matched in order to be static
@@ -400,8 +398,7 @@ void dll_496_control(Object* snowhorn) {
 }
 #endif
 
-void dll_496_update(u32 a0){
-}
+void dll_496_update(u32 a0){ }
 
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 
@@ -979,8 +976,8 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
-                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func4(frostWeed)) {
-                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func3(frostWeed, &objdata->playerPositionCopy);
+                if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {
+                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, (s32)&objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
                     if (0){
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
@@ -1050,5 +1047,4 @@ void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
     objdata->unk48 = _data_2BC;
 }
 
-void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
-}
+void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) { }

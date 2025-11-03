@@ -22,7 +22,7 @@ void dl_apply_geometry_mode(Gfx **gdl);
 
 u8 func_8001EBE0();
 
-s8 func_80048498();
+s8 map_get_layer();
 void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
 
 void dl_apply_combine(Gfx **gdl);
@@ -49,7 +49,7 @@ void texture_destroy(Texture *texture);
 
 s32 func_80032538(Object* arg0);
 void func_8003273C(Object *obj);
-s32 func_80048024();
+s32 map_get_type();
 void func_8004A67C();
 
 void dl_set_all_dirty();
@@ -69,7 +69,7 @@ void func_800379D0(u32 red, u32 green, s32 blue);
 
 void func_8003CD6C(s32);
 
-void func_80046B58(f32 x, f32 y, f32 z);
+void map_func_80046B58(f32 x, f32 y, f32 z);
 s32 func_8004454C(f32 x, f32 y, f32 z);
 
 void convert_mtxf_to_mtx_in_pool(MatrixSlot *);
@@ -85,9 +85,9 @@ void func_800529C0(u32* arg0, u32 arg1);
  */
 int func_8005BC38(s32*);
 
-void func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
-void func_800484A8();
-void func_8004773C();
+void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
+void map_func_800484A8();
+void map_func_8004773C();
 
 void func_8003798C(u8, u8, u8);
 void func_80041C6C(s32);
@@ -115,8 +115,8 @@ void func_80042174(s32);
 void func_8004225C(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
 void func_800591EC();
 void map_update_streaming();
-void func_80048034();
-void func_800483BC(f32, f32, f32);
+void map_func_80048034();
+void map_func_800483BC(f32, f32, f32);
 
 f32 _depth2Cents(u8 arg0);
 
@@ -130,8 +130,8 @@ void func_8001EBD0(s32);
 void func_80041CA8(s32 arg0);
 void func_80041CE4(s32 arg0);
 void func_80041E24(s32 arg0);
-void func_80047374(void);
-void func_800473BC(void);
+void map_increment_layer(void);
+void map_decrement_layer(void);
 
 /** Applies envFxAction */
 s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3);

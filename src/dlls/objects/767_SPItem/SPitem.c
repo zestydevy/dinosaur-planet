@@ -61,20 +61,20 @@ void SPItem_control(Object* self) {
         objData->shop = obj_get_nearest_type_to(OBJTYPE_10, self, &distance);
         if (objData->shop) {
             //Hide item if not in stock or already purchased
-            if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
-                (((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_is_item_hidden(objData->shop, objSetup->itemIndex))) {
+            if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
+                (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_hidden(objData->shop, objSetup->itemIndex))) {
                 self->srt.flags |= 0x4000;  //don't draw
                 self->unkB0 |= 0x8000;    //don't animate
                 self->unkAF |= 8;         //don't allow targetting
             }
             //Get gametext line index
-            objData->gametextLineIdx = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_get_item_gametext_index(objData->shop, objSetup->itemIndex);
+            objData->gametextLineIdx = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->get_item_gametext_index(objData->shop, objSetup->itemIndex);
         }
     //Check if A pressed while target overhead
     } else if (self->unkAF & 1) {
         scarabCount = ((DLL_Unknown*)player->dll)->vtbl->func[20].withOneArgS32((s32)player);
-        initialPrice = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_get_initial_price(objData->shop, objSetup->itemIndex);
-        ((DLL_768_SPShop*)objData->shop->dll)->vtbl->SPShop_set_current_item_index(objData->shop, objSetup->itemIndex);
+        initialPrice = ((DLL_768_SPShop*)objData->shop->dll)->vtbl->get_initial_price(objData->shop, objSetup->itemIndex);
+        ((DLL_768_SPShop*)objData->shop->dll)->vtbl->set_current_item_index(objData->shop, objSetup->itemIndex);
         
         //Play sequence: "Yoooouuu pay this much!"
         if (scarabCount >= initialPrice) {
@@ -124,8 +124,7 @@ void SPItem_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 
 
 // offset: 0x440 | func: 4 | export: 4
-void SPItem_free(Object *self, s32 a1) {
-}
+void SPItem_free(Object *self, s32 a1) { }
 
 // offset: 0x450 | func: 5 | export: 5
 s32 SPItem_get_model_flags(Object* self) {
@@ -156,7 +155,7 @@ void SPItem_bought_callback(Object* self, s32 arg1, s32 arg2) {
     shop = objData->shop;
 
     //Check if object should be hidden
-    if (((DLL_768_SPShop*) shop->dll)->vtbl->SPShop_is_item_hidden(shop, objSetup->itemIndex)){
+    if (((DLL_768_SPShop*) shop->dll)->vtbl->is_item_hidden(shop, objSetup->itemIndex)){
         self->srt.flags |= 0x4000;  //don't draw
         self->unkB0 |= 0x8000;    //don't update animation
         self->unkAF |= 8;         //don't allow targetting
@@ -164,5 +163,5 @@ void SPItem_bought_callback(Object* self, s32 arg1, s32 arg2) {
     
     //Clear SPShop DLL's current item index
     shop = objData->shop;
-    ((DLL_768_SPShop*)shop->dll)->vtbl->SPShop_set_current_item_index(shop, -1);
+    ((DLL_768_SPShop*)shop->dll)->vtbl->set_current_item_index(shop, -1);
 }

@@ -27,12 +27,10 @@ typedef struct {
 } DBDiamond_Data;
 
 // offset: 0x0 | ctor
-void DBdiamond_ctor(void *dll) {
-}
+void DBdiamond_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void DBdiamond_dtor(void *dll) {
-}
+void DBdiamond_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DBdiamond_setup(Object *self, DBDiamond_Setup *setup, s32 arg2) {
@@ -77,8 +75,7 @@ void DBdiamond_control(Object *self) {
 }
 
 // offset: 0x204 | func: 2 | export: 2
-void DBdiamond_update(Object *self) {
-}
+void DBdiamond_update(Object *self) { }
 
 // offset: 0x210 | func: 3 | export: 3
 void DBdiamond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {

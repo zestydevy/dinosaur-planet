@@ -241,7 +241,7 @@ static void WL_LevelControl_setup2_tick(Object* self) {
         main_set_bits(BIT_Spell_Forcefield, 1);
         player = get_player();
         main_set_bits(BIT_FC, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 1, 1);
         func_80000860(self, self, 0x204, 0);
         func_80000860(self, self, 0x205, 0);
@@ -249,7 +249,7 @@ static void WL_LevelControl_setup2_tick(Object* self) {
         _data_4 = 0;
     }
     if (main_get_bits(BIT_Krystal_Foodbag_M) != 0) {
-        temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
+        temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         if ((temp_v0 != NULL) && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
             ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
             ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
@@ -280,7 +280,7 @@ static void WL_LevelControl_setup3_tick(Object* self) {
         main_set_bits(BIT_Spell_Forcefield, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 2, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_8 = 0;
     } else if (_data_8 != 0) {
         func_80000860(self, self, 0xE4, 0);
@@ -309,7 +309,7 @@ static void WL_LevelControl_setup4_tick(Object* self) {
         main_set_bits(BIT_Set_During_Spirit_Release_1, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 4, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_C = 0;
     }
     for (i = 0; i < 6; i++) {
@@ -355,7 +355,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
         main_set_bits(BIT_Spell_Forcefield, 1);
         main_set_bits(BIT_Spell_Illusion, 1);
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 8, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         main_set_bits(BIT_2DD, 0);
         _data_14 = 0;
     }
@@ -411,7 +411,7 @@ static void WL_LevelControl_setup6_tick(Object* self) {
 
     player = get_player();
     if ((_data_18 != 0) && (main_get_bits(BIT_Play_Seq_020D) == 0)) {
-        temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
+        temp_v0 = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[10].withOneArg((s32)temp_v0);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
         ((DLL_Unknown*)temp_v0->dll)->vtbl->func[11].withTwoArgs((s32)temp_v0, 1);
@@ -446,7 +446,7 @@ static void WL_LevelControl_setup7_tick(Object* self) {
         main_set_bits(BIT_Spell_Forcefield, 1);
         player = get_player();
         ((DLL_210_Player*)player->dll)->vtbl->func39(player, 0x40, 1);
-        ((DLL_210_Player*)player->dll)->vtbl->func14(player, 0x14);
+        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
         _data_1C = 0;
         objdata->unk2 = 1;
         func_80000860(self, self, 0x32, 0);

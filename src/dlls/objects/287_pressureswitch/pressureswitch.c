@@ -173,8 +173,7 @@ void pressureswitch_control(Object* self) {
 }
 
 // offset: 0x524 | func: 2 | export: 2
-void pressureswitch_update(Object* dll){
-}
+void pressureswitch_update(Object* dll){ }
 
 // offset: 0x530 | func: 3 | export: 3
 void pressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {

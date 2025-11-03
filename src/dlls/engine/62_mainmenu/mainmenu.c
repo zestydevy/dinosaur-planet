@@ -134,8 +134,7 @@ void mainmenu_ctor(void *dll) {
 }
 
 // offset: 0x310 | dtor
-void mainmenu_dtor(void *dll){
-}
+void mainmenu_dtor(void *dll){ }
 
 // offset: 0x31C | func: 0 | export: 0
 s32 mainmenu_update1(void) {
@@ -227,8 +226,7 @@ s32 mainmenu_update1(void) {
 }
 
 // offset: 0x764 | func: 1 | export: 1
-void mainmenu_update2(void){
-}
+void mainmenu_update2(void){ }
 
 // offset: 0x76C | func: 2 | export: 2
 void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {

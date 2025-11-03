@@ -11,12 +11,10 @@
 #include "types.h"
 
 // offset: 0x0 | ctor
-void animobj_ctor(void *dll) {
-}
+void animobj_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void animobj_dtor(void *dll) {
-}
+void animobj_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
@@ -100,8 +98,7 @@ void animobj_control(Object *self) {
 }
 
 // offset: 0x318 | func: 2 | export: 2
-void animobj_update(Object *self) {
-}
+void animobj_update(Object *self) { }
 
 // offset: 0x324 | func: 3 | export: 3
 void animobj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {

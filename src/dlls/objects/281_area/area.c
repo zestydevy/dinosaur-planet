@@ -5,12 +5,10 @@
 #include "sys/gfx/model.h"
 
 // offset: 0x0 | ctor
-void area_ctor(void *dll){
-}
+void area_ctor(void *dll){ }
 
 // offset: 0xC | dtor
-void area_dtor(void *dll){
-}
+void area_dtor(void *dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void area_setup(Object* self, s32 arg1) {
@@ -26,8 +24,7 @@ void area_update(Object *self){
 }
 
 // offset: 0x48 | func: 3 | export: 3
-void area_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-}
+void area_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x60 | func: 4 | export: 4
 void area_free(Object *self, s32 arg1){  

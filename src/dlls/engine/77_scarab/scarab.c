@@ -31,8 +31,7 @@ s32 dll_77_update1(void) {
 }
 
 // offset: 0x90 | func: 1 | export: 1
-void dll_77_update2(void) {
-}
+void dll_77_update2(void) { }
 
 // offset: 0x98 | func: 2 | export: 2
 /** Possibly unused? The UI doesn't call this for the scarab counter, and the Scarab objects don't seem to either */
@@ -54,7 +53,7 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     
     object = obj_get_nearest_type_to(OBJTYPE_10, get_player(), &distance);
     if (object) {
-        ((DLL_768_SPShop*)object->dll)->vtbl->SPShop_func_8C0(object, &sp40, &scarabCount, &sp38);
+        ((DLL_768_SPShop*)object->dll)->vtbl->func20(object, &sp40, &scarabCount, &sp38);
     }
     
     func_8003825C(gdl, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, 0);

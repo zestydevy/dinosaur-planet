@@ -45,12 +45,10 @@ typedef struct {
 static void portaltexanimator_animate_vertices(PortalTexAnimator_Data* objdata, PortalTexAnimator_Setup* setup, Block* block);
 
 // offset: 0x0 | ctor
-void portaltexanimator_ctor(void* dll){
-}
+void portaltexanimator_ctor(void* dll){ }
 
 // offset: 0xC | dtor
-void portaltexanimator_dtor(void* dll){
-}
+void portaltexanimator_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void portaltexanimator_setup(Object* self, PortalTexAnimator_Setup* arg1, s32 arg2) {

@@ -102,7 +102,7 @@ void task_mark_task_completed(u8 task) {
 
     // hmm
     if (!task) {
-        gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, func_80048498());
+        gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
     }
 }
 
