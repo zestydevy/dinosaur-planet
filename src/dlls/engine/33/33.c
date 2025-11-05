@@ -589,9 +589,9 @@ Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
     } else {
         var_v0->unk2E = 1;
     }
-    var_v0->base.loadParamA = sp4C->base.loadParamA;
-    var_v0->base.loadDistance = sp4C->base.loadDistance;
-    var_v0->base.loadParamB = sp4C->base.loadParamB;
+    var_v0->base.loadFlags = sp4C->base.loadFlags;
+    var_v0->base.byte6 = sp4C->base.byte6;
+    var_v0->base.byte5 = sp4C->base.byte5;
     var_v0->base.fadeDistance = sp4C->base.fadeDistance;
     temp_v0 = obj_create((ObjSetup*)var_v0, 5, (s32) arg0->mapID, -1, arg0->parent);
     _bss_0 = temp_v0;
@@ -917,7 +917,7 @@ void dll_33_func_2624(Object* arg0, DLL33_Data* arg1) {
         if (arg1->unk3B9 > 0) {
             arg0->linkedObject = obj_create(
                 obj_alloc_create_info(sizeof(ObjSetup), sp3C[arg1->unk3B9 - 1]), 
-                OBJSETUP_FLAG_4, 
+                OBJ_INIT_FLAG4, 
                 -1, 
                 -1, 
                 arg0->parent);

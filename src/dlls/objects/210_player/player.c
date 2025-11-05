@@ -3340,9 +3340,9 @@ void dll_210_func_90A0(Object* arg0, Player_Data* arg1, f32 arg2) {
     mainCam = get_main_camera();
     gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
     while (var_s4) {
-        objsetup = obj_alloc_create_info(0x24, 0x14B);
-        objsetup->loadParamA = 2;
-        objsetup->loadParamB = 1;
+        objsetup = obj_alloc_create_info(0x24, OBJ_projball);
+        objsetup->loadFlags = OBJSETUP_LOAD_FLAG2;
+        objsetup->fadeFlags = OBJSETUP_FADE_DISABLE;
         objsetup->loadDistance = 0xFF;
         objsetup->fadeDistance = 0xFF;
         if (arg1->unk0.target != NULL) {
@@ -3445,9 +3445,9 @@ void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2) {
     var_s4 = 1;
     gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
     while (var_s4) {
-        temp_v0 = obj_alloc_create_info(0x24, 0x4C9);
-        temp_v0->loadParamA = 2;
-        temp_v0->loadParamB = 1;
+        temp_v0 = obj_alloc_create_info(0x24, OBJ_grenade);
+        temp_v0->loadFlags = OBJSETUP_LOAD_FLAG2;
+        temp_v0->fadeFlags = OBJSETUP_FADE_DISABLE;
         temp_v0->loadDistance = 0xFF;
         temp_v0->fadeDistance = 0xFF;
         temp_v0->x = arg0->linkedObject->positionMirror.x;
@@ -3521,9 +3521,9 @@ void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2) {
     DLL_Unknown* dll;
 
     gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x2B8U, 0x7FU, NULL, NULL, 0, NULL);
-    temp_v0 = obj_alloc_create_info(0x24, 0x434);
-    temp_v0->loadParamA = 2;
-    temp_v0->loadParamB = 1;
+    temp_v0 = obj_alloc_create_info(0x24, OBJ_icebeam);
+    temp_v0->loadFlags = OBJSETUP_LOAD_FLAG2;
+    temp_v0->fadeFlags = OBJSETUP_FADE_DISABLE;
     temp_v0->loadDistance = 0xFF;
     temp_v0->fadeDistance = 0xFF;
     temp_v0->x = arg0->linkedObject->positionMirror.x;
@@ -7833,8 +7833,8 @@ void dll_210_func_1DC48(Object* obj) {
         objsetup->base.x = obj->positionMirror.x;
         objsetup->base.y = obj->positionMirror.y;
         objsetup->base.z = obj->positionMirror.z;
-        objsetup->base.loadParamA = 2;
-        objsetup->base.loadParamB = 1;
+        objsetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
+        objsetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
         objsetup->base.loadDistance = 0xFF;
         objsetup->base.fadeDistance = 0xFF;
         objsetup->timer = i * 0xA;
@@ -7852,8 +7852,8 @@ Object *dll_210_func_1DD94(Object* obj, s32 arg1) {
     LFXEmitter_Setup* objsetup;
 
     objsetup = obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
-    objsetup->base.loadParamA = 2;
-    objsetup->base.loadParamB = 1;
+    objsetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
+    objsetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
     objsetup->base.loadDistance = 0xFF;
     objsetup->base.fadeDistance = 0xFF;
     objsetup->base.x = obj->srt.transl.x;

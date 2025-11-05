@@ -115,9 +115,9 @@ void DIMLavaBallGenerator_control(Object *self) {
     if (objdata->lavaball == NULL) {
         lavaballSetup = obj_alloc_create_info(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
         lavaballSetup->base.quarterSize = 9;
-        lavaballSetup->base.loadParamA = 2;
+        lavaballSetup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
         lavaballSetup->base.loadDistance = 0xFF;
-        lavaballSetup->base.loadParamB = 4;
+        lavaballSetup->base.fadeFlags = OBJSETUP_FADE_FLAG4;
         lavaballSetup->base.fadeDistance = 80;
         lavaballSetup->base.x = self->srt.transl.x;
         lavaballSetup->base.y = self->srt.transl.y;

@@ -104,8 +104,8 @@ void DIM_BossSpit_func_2AC(Object *self) {
     lfxemitterSetup->base.z = self->srt.transl.z;
     lfxemitterSetup->unk1E = 0x145;
     lfxemitterSetup->unk22 = -1;
-    lfxemitterSetup->base.loadParamA = 1;
-    lfxemitterSetup->base.loadParamB = 1;
+    lfxemitterSetup->base.loadFlags = OBJSETUP_LOAD_FLAG1;
+    lfxemitterSetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
     lfxemitterSetup->base.loadDistance = 0xFF;
     lfxemitterSetup->base.fadeDistance = 0xFF;
     objdata->lfxEmitter = obj_create((ObjSetup*)lfxemitterSetup, 5, -1, -1, NULL);

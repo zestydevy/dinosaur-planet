@@ -1655,7 +1655,7 @@ u8 func_800456AC(Object* obj) {
         obj->opacityWithFade = 0;
         return FALSE;
     }
-    if ((obj->setup != NULL) && (obj->setup->loadParamB & 1)) {
+    if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_DISABLE)) {
         obj->opacityWithFade = ((obj->opacity + 1) * 255) >> 8;
     } else {
         fadeDist = obj->fadeDistance;
@@ -1663,7 +1663,7 @@ u8 func_800456AC(Object* obj) {
             obj->opacityWithFade = 0;
             return FALSE;
         }
-        if ((obj->setup != NULL) && (obj->setup->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
+        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_PLAYER_RELATIVE) && (playerObj = get_player(), (playerObj != NULL))) {
             dist = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
         } else {
             dist = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
@@ -1891,7 +1891,7 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
                     setupList->curvesOffset = ((u32)objSetup - (u32)map->objectInstanceFile_ptr);
                     foundCurves = TRUE;
                 }
-            } else if (objSetup->loadParamA & 0x10) {
+            } else if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
                 if (!((1 << objSetup->mapObjGroup) & foundGroups)) {
                     setupList->groups[objSetup->mapObjGroup] = (u32)objSetup - (u32)map->objectInstanceFile_ptr;
                     foundGroups |= 1 << objSetup->mapObjGroup;
@@ -3972,8 +3972,8 @@ void map_update_objects_streaming(s32 arg0) {
         objSetup = obj->setup;
         spB8++;
         if (obj->mapID >= 0) {
-            if (!(objSetup->loadParamA & 2)) {
-                if (objSetup->loadParamA & 0x10) {
+            if (!(objSetup->loadFlags & OBJSETUP_LOAD_FLAG2)) {
+                if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
                     if ((obj->group >= GROUP_NONE) && (map_should_obj_unload(obj) != 0)) {
                         unloadObj = TRUE;
                     } else if ((obj->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[obj->mapID] == NULL)) {
@@ -4028,18 +4028,18 @@ void map_update_objects_streaming(s32 arg0) {
             temp_fp = gMapObjSetupLists[temp_v0_3].groupsStart + (s32)var_s1_2;
             while ((u32) var_s1_2 < (u32) temp_fp) {
                 objSetup = var_s1_2;
-                if ((var_s1_2->loadParamA & 0x10)) {
+                if ((var_s1_2->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP)) {
                     break;
                 }
 
                 if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[spB8]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[spB8]) != 0)) {
                     func_8004B710(var_s3, (u32) sp70[spB8], 1U);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJSETUP_FLAG_1, sp70[spB8], var_s3, NULL);
+                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[spB8], var_s3, NULL);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3E, 4U, NULL, var_s1_2, sp70[spB8], var_s3, 0, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJSETUP_FLAG_1, sp70[spB8], var_s3, NULL);
+                        obj_create(var_s1_2, OBJ_INIT_FLAG1, sp70[spB8], var_s3, NULL);
                     }
                 }
                 var_s3++;
@@ -4074,11 +4074,11 @@ void map_update_objects_streaming(s32 arg0) {
                 if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object((ObjSetup* ) var_s1_2, temp_s7, temp_s4) != 0)) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
-                        obj_create((ObjSetup* ) var_s1_2, OBJSETUP_FLAG_1, temp_s4, var_s3, temp_s5);
+                        obj_create((ObjSetup* ) var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
                     } else if (map_get_is_object_streaming_disabled() != 0) {
                         func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
-                        obj_create((ObjSetup* ) var_s1_2, OBJSETUP_FLAG_1, temp_s4, var_s3, temp_s5);
+                        obj_create((ObjSetup* ) var_s1_2, OBJ_INIT_FLAG1, temp_s4, var_s3, temp_s5);
                     }
                 }
                 var_s3++;
@@ -4119,11 +4119,11 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
         return 0;
     }
 
-    if (arg0->loadParamA & 1) {
+    if (arg0->loadFlags & OBJSETUP_LOAD_FLAG1) {
         return 1;
     }
 
-    if (arg0->loadParamA & 2) {
+    if (arg0->loadFlags & OBJSETUP_LOAD_FLAG2) {
         return 0;
     }
 
@@ -4147,12 +4147,12 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
         }
     }
 
-    if (arg0->loadParamA & 0x20) {
+    if (arg0->loadFlags & OBJSETUP_LOAD_FLAG20) {
         return 1;
     }
 
     scaledZOrFlag = 0;
-    if ((arg0->loadParamA & 4) && (arg1 == 0)) {
+    if ((arg0->loadFlags & OBJSETUP_LOAD_FLAG4) && (arg1 == 0)) {
         player = get_player();
         if (player != NULL) {
             sp20 = player->positionMirror.x;
@@ -4210,16 +4210,16 @@ s32 map_should_obj_unload(Object *obj) {
     if (func_8004B4A0(objSetup, obj->mapID) == 0) {
         return TRUE;
     }
-    if (objSetup->loadParamA & 1) {
+    if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG1) {
         return FALSE;
     }
-    if (objSetup->loadParamA & 0x10) {
+    if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(obj->mapID, objSetup->mapObjGroup) != 0) {
             return FALSE;
         }
         return TRUE;
     }
-    if (objSetup->loadParamA & 2) {
+    if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG2) {
         return FALSE;
     }
     if ((obj->unkC0 != NULL) && (obj->unkB4 < 0)) {
@@ -4242,10 +4242,10 @@ s32 map_should_obj_unload(Object *obj) {
             return TRUE;
         }
     }
-    if (objSetup->loadParamA & 0x20) {
+    if (objSetup->loadFlags & OBJSETUP_LOAD_FLAG20) {
         return FALSE;
     }
-    if ((objSetup->loadParamA & 4) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
+    if ((objSetup->loadFlags & OBJSETUP_LOAD_FLAG4) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
         var_fv1 = player->positionMirror.x;
         var_fa0 = player->positionMirror.y;
         var_fa1 = player->positionMirror.z;
@@ -4288,11 +4288,11 @@ s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     }
     if (setupID != 0) {
         if (setupID < 9) {
-            if ((obj->setup >> (setupID - 1)) & 1) {
+            if ((obj->setupExclusions1 >> (setupID - 1)) & 1) {
                 return 0;
             }
         }
-        else if ((obj->loadParamB >> (16 - setupID)) & 1) {
+        else if ((obj->setupExclusions2 >> (16 - setupID)) & 1) {
             return 0;
         }
     }
@@ -4341,7 +4341,7 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
             if (map_get_is_object_streaming_disabled() != 0) {
                 func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
             } else {
-                obj_create((ObjSetup* )s0, OBJSETUP_FLAG_1, mapID, someVar, arg3);
+                obj_create((ObjSetup* )s0, OBJ_INIT_FLAG1, mapID, someVar, arg3);
             }
         }
         someVar += 1;

@@ -44,24 +44,59 @@ typedef struct {
 /*0062*/    s8 unk62;
 } ObjectC0_Data;
 
-typedef enum {
-	OBJSETUP_FLAG_1 = 0x1,
-	OBJSETUP_FLAG_2 = 0x2,
-	OBJSETUP_FLAG_4 = 0x4
-} ObjSetupFlags;
+enum ObjSetupInitFlags {
+	OBJ_INIT_FLAG1 = 0x1,
+	OBJ_INIT_FLAG2 = 0x2,
+	OBJ_INIT_FLAG4 = 0x4
+};
+
+enum ObjSetupLoadFlags {
+	// never unload? unless map unloads or setup changes
+	// skips check for being outside block grid span
+	OBJSETUP_LOAD_FLAG1 = 0x1,
+	// never unload? unless map unloads or setup changes (way less common)
+	// can still unload via object groups, but none also set 0x10 in practice (at least not in maps)
+	// skips check for being outside block grid span
+	OBJSETUP_LOAD_FLAG2 = 0x2,
+	// for distance check, use player position instead of camera(?)
+	OBJSETUP_LOAD_FLAG4 = 0x4,
+	// ?
+	OBJSETUP_LOAD_FLAG8 = 0x8,
+	// load while the map object group the object is in is enabled.
+	OBJSETUP_LOAD_IN_MAP_OBJGROUP = 0x10,
+	// skip unload check for distance to player/camera
+	OBJSETUP_LOAD_FLAG20 = 0x20
+};
+
+enum ObjSetupFadeFlags {
+	// Disable distance based object fadeout.
+	OBJSETUP_FADE_DISABLE = 0x1,
+	// Use player position to calculate fade, instead of the camera position.
+	OBJSETUP_FADE_PLAYER_RELATIVE = 0x2,
+	OBJSETUP_FADE_FLAG4 = 0x4
+};
 
 // Base struct, objects "inherit" from this and add their own setup info.
 // Note: Curves and race checkpoints are an exception and use a different version of this base struct.
 typedef struct ObjSetup {
 /*00*/	s16 objId;
 /*02*/	u8 quarterSize;
-/*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
-/*04*/	u8 loadParamA; // load/unload flags
-/*05*/	u8 loadParamB; // bits 7-4, exclude from map setups 9-12. bits 0-3 fade flags
+        // Bits 0-7: Exclude from map setups 1-8
+/*03*/	u8 setupExclusions1;
+        // Load flags
+/*04*/	u8 loadFlags;
+/*05*/	union {
+			u8 byte5;
+        	// Bits 7-4 (note the reversal): Exclude from map setups 9-12
+			u8 setupExclusions2;
+        	// Bits 0-3: Fade flags
+			u8 fadeFlags;
+		};
 /*06*/	union {
-			// If loadParamA & 0x10 IS set, the map object group this object is a part of.
+			u8 byte6;
+			// If loadFlags & 0x10 IS set, the map object group this object is a part of.
 			u8 mapObjGroup;
-			// If loadParamA & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
+			// If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
 			u8 loadDistance;
 		};
 		// Max distance object is visible at (divided by 8).
@@ -188,7 +223,7 @@ typedef struct Object {
 /*0036*/    u8 opacity;
 /*0037*/    u8 opacityWithFade; // combination of opacity and object fade out due to distance
 /*0038*/    struct Object *next; // the object after this in a linked list
-/*003C*/    f32 loadDistance; // Note: If setup loadParamA & 0x10 is set, this value is garbage
+/*003C*/    f32 loadDistance; // Note: If setup loadFlags & 0x10 is set, this value is garbage
 /*0040*/    f32 fadeDistance;
 /*0044*/    s16 group; // complete guess at a name, needs more investigation
 /*0046*/    s16 id;
