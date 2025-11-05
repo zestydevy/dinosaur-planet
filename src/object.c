@@ -571,10 +571,10 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     objHeader.curModAnimIdLayered = -1;
     objHeader.unkB4 = -1;
     objHeader.srt.scale = def->scale;
-    objHeader.unk36 = 0xFF;
+    objHeader.opacity = 255;
     objHeader.mesgQueue = NULL;
-    objHeader.unk3C = setup->loadDistance << 3;
-    objHeader.unk40 = setup->fadeDistance << 3;
+    objHeader.loadDistance = setup->loadDistance * 8;
+    objHeader.fadeDistance = setup->fadeDistance * 8;
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {

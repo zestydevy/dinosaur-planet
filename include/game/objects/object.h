@@ -55,13 +55,19 @@ typedef enum {
 typedef struct ObjSetup {
 /*00*/	s16 objId;
 /*02*/	u8 quarterSize;
-// TODO: different for curves?
+// TODO: different for curves
 /*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
 /*04*/	union {
 	struct {
-	/*04*/	u8 loadParamA;
-	/*05*/	u8 loadParamB;
-	/*06*/	u8 loadDistance;
+	/*04*/	u8 loadParamA; // load/unload flags
+	/*05*/	u8 loadParamB; // bits 7-4, exclude from map setups 9-12. bits 0-3 fade flags
+	/*06*/	union {
+				// If loadParamA & 0x10 IS set, the map object group this object is a part of.
+				u8 mapObjGroup;
+				// If loadParamA & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
+				u8 loadDistance;
+	        };
+	        // Max distance object is visible at (divided by 8).
 	/*07*/	u8 fadeDistance;
 	};
 	struct { // Curve specific
@@ -195,11 +201,11 @@ typedef struct Object {
 /*0030*/    struct Object *parent; // transform is relative to this object. doesn't form a strict hierarchy
 /*0034*/    u8 unk34; //self-mapID for mobile map objects? (e.g. Galleon)
 /*0035*/    s8 matrixIdx;
-/*0036*/    u8 unk36; // transparency
-/*0037*/    u8 unk37; // also transparency? (set to unk36)
+/*0036*/    u8 opacity;
+/*0037*/    u8 opacityWithFade; // combination of opacity and object fade out due to distance
 /*0038*/    struct Object *next; // the object after this in a linked list
-/*003C*/    f32 unk3C;
-/*0040*/    f32 unk40;
+/*003C*/    f32 loadDistance; // Note: If setup loadParamA & 0x10 is set, this value is garbage
+/*0040*/    f32 fadeDistance;
 /*0044*/    s16 group; // complete guess at a name, needs more investigation
 /*0046*/    s16 id;
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB

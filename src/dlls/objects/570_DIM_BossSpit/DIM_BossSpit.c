@@ -170,7 +170,7 @@ void DIM_BossSpit_func_53C(Object *self) {
     if (i >= 0) {
         func_80026128(self, 5, 2, 0);
         func_80026940(self, self->objhitInfo->unk52 + 2.1f);
-        self->unk36 = i;
+        self->opacity = i;
         lfxEmitter = objdata->lfxEmitter;
         if (lfxEmitter) {
             lfxEmitterData = lfxEmitter->data;
@@ -182,7 +182,7 @@ void DIM_BossSpit_func_53C(Object *self) {
             obj_destroy_object(lfxEmitter);
             objdata->lfxEmitter = NULL;
         }
-        self->unk36 = 0;
+        self->opacity = 0;
         if (((_bss_0 - 0x40) >> 1) > 10.0f) {
             func_80026128(self, 9, 1, 0);
             func_80026940(self, (_bss_0 - 0x40) >> 1);

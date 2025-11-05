@@ -1058,7 +1058,7 @@ void func_80043FD8(s8* arg0) {
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
                 if (object->def->flags & 0x100000) {
                     var_v0 = 150000 - i;
-                } else if ((object->unk37 == 0xFF) && !(object->srt.flags & 0x80)) {
+                } else if ((object->opacityWithFade == 0xFF) && !(object->srt.flags & 0x80)) {
                     var_v0 = 150000 - i;
                 } else {
                     var_v0 = i + 50000;
@@ -1644,49 +1644,50 @@ static const char str_8009a908[] = "%i ";
 static const char str_8009a90c[] = "romdefMove_Set: Mapno overflow!!\n";
 static const char str_8009a930[] = "######  DOING WARP  ########\n";
 u8 func_800456AC(Object* obj) {
-    f32 temp_ft4;
+    f32 fadeDist;
     Object* playerObj;
-    f32 var_fv0;
+    f32 dist;
     f32 temp_fv1;
     f32 temp;
-    s32 var_v0;
+    s32 fadeOpacity;
 
-    if (obj->unk36 == 0) {
-        obj->unk37 = 0;
-        return 0;
+    if (obj->opacity == 0) {
+        obj->opacityWithFade = 0;
+        return FALSE;
     }
     if ((obj->setup != NULL) && (obj->setup->loadParamB & 1)) {
-        obj->unk37 = ((obj->unk36 * 0xFF) + 0xFF) >> 8;
+        obj->opacityWithFade = ((obj->opacity + 1) * 255) >> 8;
     } else {
-        temp_ft4 = obj->unk40;
-        if (temp_ft4 < 40.0f) {
-            obj->unk37 = 0;
-            return 0;
+        fadeDist = obj->fadeDistance;
+        if (fadeDist < 40.0f) {
+            obj->opacityWithFade = 0;
+            return FALSE;
         }
         if ((obj->setup != NULL) && (obj->setup->loadParamB & 2) && (playerObj = get_player(), (playerObj != NULL))) {
-            var_fv0 = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
+            dist = vec3_distance(&obj->positionMirror, &playerObj->positionMirror);
         } else {
-            var_fv0 = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
+            dist = func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z);
         }
-        if (temp_ft4 < var_fv0) {
-            obj->unk37 = 0;
-            return 0;
+        if (fadeDist < dist) {
+            obj->opacityWithFade = 0;
+            return FALSE;
         }
-        var_v0 = 0xFF;
-        temp_fv1 = temp_ft4 - 40.0f;
-        if (temp_fv1 < var_fv0) {
-            temp_ft4 -= temp_fv1;
-            var_fv0 = var_fv0 - temp_fv1;
-            temp = 1.0f - ((var_fv0) / temp_ft4);
-            var_v0 = 255.0f * temp;
+        // Fade from 255 opacity -> 0 from (fadeDist - 40) -> (fadeDist)
+        fadeOpacity = 255;
+        temp_fv1 = fadeDist - 40.0f;
+        if (temp_fv1 < dist) {
+            fadeDist -= temp_fv1;
+            dist = dist - temp_fv1;
+            temp = 1.0f - (dist / fadeDist);
+            fadeOpacity = 255.0f * temp;
         }
-        obj->unk37 = (u8) ((s32) ((obj->unk36 + 1) * var_v0) >> 8);
+        obj->opacityWithFade = ((obj->opacity + 1) * fadeOpacity) >> 8;
     }
-    if (obj->unk37 == 0) {
-        return 0;
+    if (obj->opacityWithFade == 0) {
+        return FALSE;
     }
     if (obj->id == OBJ_FXEmit) {
-        return 1;
+        return TRUE;
     }
     return is_sphere_in_frustum(&obj->positionMirror, obj->unkA8);
 }
@@ -1752,7 +1753,7 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gLoadedMapsDataTable[mapID] = gMapActiveStreamMap;
     
     if (arg1 == 0){
-        func_80045FC4(gMapActiveStreamMap, &D_800B5508[mapID], mapID, 0);
+        map_init_obj_setup_list(gMapActiveStreamMap, &gMapObjSetupLists[mapID], mapID, 0);
         gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     }
     else
@@ -1839,80 +1840,83 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
 /** free_mapID? */
 void func_80045F48(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
-        func_80045FC4(gLoadedMapsDataTable[mapID], &D_800B5508[mapID], mapID, 1);
+        map_init_obj_setup_list(gLoadedMapsDataTable[mapID], &gMapObjSetupLists[mapID], mapID, 1);
         mmFree(gLoadedMapsDataTable[mapID]);
         gLoadedMapsDataTable[mapID] = 0;
     }
 }
 
-void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3) {
-    s32 pad;
-    s32 sp48;
-    s32 var_a0;
-    s8 sp42[4];
-    s32 var_s3;
-    s32 var_s4;
-    ObjSetup *obj;
+void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 param4) {
+    s32 _pad;
+    s32 objSetupFileLength;
+    s32 groupsStart;
+    u8 foundCurves;
+    s8 _sp42;
+    s8 _sp41;
+    s8 _sp40;
+    s32 fileOffset;
+    s32 foundGroups;
+    ObjSetup *objSetup;
     s32 i;
 
-    sp42[3] = FALSE;
-    var_s4 = 0;
-    obj = (ObjSetup *) arg0->objectInstanceFile_ptr;
-    sp48 = arg0->objectInstancesFileLength;
-    if (sp48 == 0) {
+    foundCurves = FALSE;
+    foundGroups = 0;
+    objSetup = (ObjSetup *) map->objectInstanceFile_ptr;
+    objSetupFileLength = map->objectInstancesFileLength;
+    if (objSetupFileLength == 0) {
         return;
     }
-    var_s3 = 0;
+    fileOffset = 0;
 
-    if (arg3 == 0) {
-        arg1->unk84 = -1;
-        for (i = 0; i < 32; i++) { arg1->unk0[i] = -1; }
+    if (!param4) {
+        setupList->curvesOffset = -1;
+        for (i = 0; i < 32; i++) { setupList->groups[i] = -1; }
     }
-    while (var_s3 < sp48) {
-        if (arg3 != 0) {
-            if (obj->objId == OBJ_curve) {
-                gDLL_26_Curves->vtbl->func_10C((CurveSetup*)obj);
+    while (fileOffset < objSetupFileLength) {
+        if (param4) {
+            if (objSetup->objId == OBJ_curve) {
+                gDLL_26_Curves->vtbl->func_10C((CurveSetup*)objSetup);
             }
-            if (obj->objId == OBJ_checkpoint4) {
-                gDLL_4_Race->vtbl->func2(obj);
+            if (objSetup->objId == OBJ_checkpoint4) {
+                gDLL_4_Race->vtbl->func2(objSetup);
             }
         } else {
-            if ((OBJ_curve == obj->objId) || (OBJ_checkpoint4 == obj->objId)) {
-                if (OBJ_curve == obj->objId) {
-                    gDLL_26_Curves->vtbl->func_34((CurveSetup*)obj);
+            if ((OBJ_curve == objSetup->objId) || (OBJ_checkpoint4 == objSetup->objId)) {
+                if (OBJ_curve == objSetup->objId) {
+                    gDLL_26_Curves->vtbl->func_34((CurveSetup*)objSetup);
                 } else {
-                    gDLL_4_Race->vtbl->func1(obj);
+                    gDLL_4_Race->vtbl->func1(objSetup);
                 }
-                if ((u8)sp42[3] == FALSE) {
-                    arg1->unk84 = ((u32)obj - (u32)arg0->objectInstanceFile_ptr);
-                    sp42[3] = TRUE;
+                if (!foundCurves) {
+                    setupList->curvesOffset = ((u32)objSetup - (u32)map->objectInstanceFile_ptr);
+                    foundCurves = TRUE;
                 }
-            } else if (obj->loadParamA & 0x10) {
-                if (!((1 << obj->loadDistance) & var_s4)) {
-                    arg1->unk0[obj->loadDistance] = (u32)obj - (u32)arg0->objectInstanceFile_ptr;
-                    var_s4 |= 1 << obj->loadDistance;
+            } else if (objSetup->loadParamA & 0x10) {
+                if (!((1 << objSetup->mapObjGroup) & foundGroups)) {
+                    setupList->groups[objSetup->mapObjGroup] = (u32)objSetup - (u32)map->objectInstanceFile_ptr;
+                    foundGroups |= 1 << objSetup->mapObjGroup;
                 }
             }
         }
-        var_s3 += obj->quarterSize * 4;
-        obj = (ObjSetup *) &((s8 *)obj)[obj->quarterSize * 4];
+        fileOffset += objSetup->quarterSize * 4;
+        objSetup = (ObjSetup *) &((s8 *)objSetup)[objSetup->quarterSize * 4];
     }
-    if (arg3 == 0) {
-        var_a0 = sp48;
-        if ((arg1->unk84 != -1) && (arg1->unk84 < sp48)) {
-            var_a0 = arg1->unk84;
+    if (!param4) {
+        groupsStart = objSetupFileLength;
+        if ((setupList->curvesOffset != -1) && (setupList->curvesOffset < objSetupFileLength)) {
+            groupsStart = setupList->curvesOffset;
         }
         for (i = 0; i < 32; i++) {
-            if ((arg1->unk0[i] != -1) && (arg1->unk0[i] < var_a0)) {
-                var_a0 = arg1->unk0[i];
+            if ((setupList->groups[i] != -1) && (setupList->groups[i] < groupsStart)) {
+                groupsStart = setupList->groups[i];
             }
         }
-        arg1->unk88 = var_a0;
-        if (arg1->unk84 != -1) {
-            arg1->unk80 = arg1->unk84;
+        setupList->groupsStart = groupsStart;
+        if (setupList->curvesOffset != -1) {
+            setupList->objsListSize = setupList->curvesOffset;
             return;
         }
-        arg1->unk80 = sp48;
+        setupList->objsListSize = objSetupFileLength;
     }
 }
 
@@ -1964,7 +1968,7 @@ void func_80046320(s32 arg0, Object *obj) {
         } 
     }
 
-    func_80045FC4(sp18, &D_800B5508[mapID], mapID, 0);
+    map_init_obj_setup_list(sp18, &gMapObjSetupLists[mapID], mapID, 0);
     gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     obj->unk34 = mapID;
     gDLL_29_Gplay->vtbl->func_1378(arg0, mapID);
@@ -2381,7 +2385,7 @@ void map_update_streaming(void) {
             if ((s8) var_s0_2->unk06 == 0) {
                 if (var_s0_2->header != NULL) {
                     temp_s1 = var_s0_2->mapID;
-                    func_80045FC4(var_s0_2->header, &D_800B5508[temp_s1], temp_s1, 1);
+                    map_init_obj_setup_list(var_s0_2->header, &gMapObjSetupLists[temp_s1], temp_s1, 1);
                     mmFree(var_s0_2->header);
                     gLoadedMapsDataTable[temp_s1] = NULL;
                 }
@@ -3869,7 +3873,7 @@ void func_8004A67C(void) {
     Object* obj;
     Object** actors;
 
-    actors = obj_get_all_of_type(7, &count);
+    actors = obj_get_all_of_type(OBJTYPE_7, &count);
     camera = get_camera();
     update_camera_for_object(camera);
 
@@ -3918,15 +3922,15 @@ void map_update_objects_streaming(s32 arg0) {
     GlobalMapCell* var_a3;
     s32 spB8;
     MapHeader* temp_s6;
-    ObjSetup* temp_s2;
-    Object* temp_s0;
+    ObjSetup* objSetup;
+    Object* obj;
     Object* temp_s5;
     s16 temp_v0_3;
     s16 var_s4;
     s32 var_a1;
     s32 sp9C;
     s32 var_a2;
-    s32 var_s1;
+    s32 unloadObj;
     s32 group;
     s32 var_s3;
     s32 var_v0;
@@ -3963,37 +3967,37 @@ void map_update_objects_streaming(s32 arg0) {
     
     sp68 = get_world_objects(&spB8, &sp9C);
     while (spB8 < sp9C) {
-        var_s1 = 0;
-        temp_s0 = sp68[spB8];
-        temp_s2 = temp_s0->setup;
+        unloadObj = FALSE;
+        obj = sp68[spB8];
+        objSetup = obj->setup;
         spB8++;
-        if (temp_s0->mapID >= 0) {
-            if (!(temp_s2->loadParamA & 2)) {
-                if (temp_s2->loadParamA & 0x10) {
-                    if ((temp_s0->group >= GROUP_NONE) && (func_8004B190(temp_s0) != 0)) {
-                        var_s1 = 1;
-                    } else if ((temp_s0->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[temp_s0->mapID] == NULL)) {
-                        var_s1 = 1;
+        if (obj->mapID >= 0) {
+            if (!(objSetup->loadParamA & 2)) {
+                if (objSetup->loadParamA & 0x10) {
+                    if ((obj->group >= GROUP_NONE) && (map_should_obj_unload(obj) != 0)) {
+                        unloadObj = TRUE;
+                    } else if ((obj->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[obj->mapID] == NULL)) {
+                        unloadObj = TRUE;
                     }
                 } else {
-                    if ((temp_s0->group >= GROUP_NONE) && (func_8004B190(temp_s0) != 0)) {
-                        var_s1 = 1;
-                    } else if ((temp_s0->mapID < MAP_ID_MAX) && (func_8004AEFC(temp_s0->mapID, sp70, var_s4) == 0)) {
-                        var_s1 = 1;
+                    if ((obj->group >= GROUP_NONE) && (map_should_obj_unload(obj) != 0)) {
+                        unloadObj = TRUE;
+                    } else if ((obj->mapID < MAP_ID_MAX) && (func_8004AEFC(obj->mapID, sp70, var_s4) == 0)) {
+                        unloadObj = TRUE;
                     }
                 }
             }
         }
-        if (var_s1 != 0) {
-            if (gLoadedMapsDataTable[temp_s0->mapID] != NULL) {
-                if (temp_s0->unkB2 >= 0) {
-                    func_8004B710(temp_s0->unkB2, temp_s0->mapID, 0U);
+        if (unloadObj) {
+            if (gLoadedMapsDataTable[obj->mapID] != NULL) {
+                if (obj->unkB2 >= 0) {
+                    func_8004B710(obj->unkB2, obj->mapID, 0U);
                 }
             }
-            if (temp_s0->id == OBJ_IMSnowBike) {
-                func_8004AEFC(temp_s0->mapID, sp70, var_s4);
+            if (obj->id == OBJ_IMSnowBike) {
+                func_8004AEFC(obj->mapID, sp70, var_s4);
             }
-            obj_destroy_object(temp_s0);
+            obj_destroy_object(obj);
             spB8 -= 1;
             sp9C -= 1;
         }
@@ -4021,9 +4025,9 @@ void map_update_objects_streaming(s32 arg0) {
             var_s1_2 = (ObjSetup* ) temp_s6->objectInstanceFile_ptr;
             temp_s7 = temp_s6->unk19;
             var_s3 = 0;
-            temp_fp = D_800B5508[temp_v0_3].unk88 + (s32)var_s1_2;
+            temp_fp = gMapObjSetupLists[temp_v0_3].groupsStart + (s32)var_s1_2;
             while ((u32) var_s1_2 < (u32) temp_fp) {
-                temp_s2 = var_s1_2;
+                objSetup = var_s1_2;
                 if ((var_s1_2->loadParamA & 0x10)) {
                     break;
                 }
@@ -4039,11 +4043,11 @@ void map_update_objects_streaming(s32 arg0) {
                     }
                 }
                 var_s3++;
-                var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
+                var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[objSetup->quarterSize];
             }
         }
     }
-    sp68 = obj_get_all_of_type(7, &sp9C);
+    sp68 = obj_get_all_of_type(OBJTYPE_7, &sp9C);
     for (spB8 = 0; spB8 < sp9C; spB8++) {
         temp_s5 = sp68[spB8];
         var_s3 = 0;
@@ -4052,7 +4056,7 @@ void map_update_objects_streaming(s32 arg0) {
         if (temp_s6 != NULL) {
             temp_s7 = temp_s5->matrixIdx + 1;
             var_s1_2 = (ObjSetup* ) temp_s6->objectInstanceFile_ptr;
-            temp_fp = D_800B5508[temp_s4].unk88 + (s32)var_s1_2;
+            temp_fp = gMapObjSetupLists[temp_s4].groupsStart + (s32)var_s1_2;
             objGroupBits = gDLL_29_Gplay->vtbl->world_get_obj_group_bits((s32) temp_s4);
             if (objGroupBits != 0) {
                 gDLL_29_Gplay->vtbl->world_disable_all_obj_groups((s32) temp_s4);
@@ -4066,7 +4070,7 @@ void map_update_objects_streaming(s32 arg0) {
                 }
             }
             while ((u32) var_s1_2 < (u32) temp_fp) {
-                temp_s2 = var_s1_2;
+                objSetup = var_s1_2;
                 if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object((ObjSetup* ) var_s1_2, temp_s7, temp_s4) != 0)) {
                     func_8004B710(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
@@ -4078,7 +4082,7 @@ void map_update_objects_streaming(s32 arg0) {
                     }
                 }
                 var_s3++;
-                var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[temp_s2->quarterSize];
+                var_s1_2 = (ObjSetup* ) &((s32 *)var_s1_2)[objSetup->quarterSize];
             }
         }
     }
@@ -4179,15 +4183,15 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     return 0;
 }
 
-s32 func_8004B190(Object* arg0) {
+s32 map_should_obj_unload(Object *obj) {
     s32 sp54;
     s32 pad[6];
-    f32 sp38;
+    f32 loadDist;
     s32 pad2[6];
-    ObjSetup* sp1C;
+    ObjSetup* objSetup;
     s32 temp_v0_2;
     Object* player;
-    f32 temp_fv1;
+    f32 loadDistAdjusted;
     f32 var_fa0;
     f32 var_fa1;
     f32 var_ft4;
@@ -4199,33 +4203,33 @@ s32 func_8004B190(Object* arg0) {
     s8 *currentBlockIndices;
     s32 i;
 
-    sp1C = arg0->setup;
-    if (sp1C == NULL) {
-        return 0;
+    objSetup = obj->setup;
+    if (objSetup == NULL) {
+        return FALSE;
     }
-    if (func_8004B4A0(sp1C, arg0->mapID) == 0) {
-        return 1;
+    if (func_8004B4A0(objSetup, obj->mapID) == 0) {
+        return TRUE;
     }
-    if (sp1C->loadParamA & 1) {
-        return 0;
+    if (objSetup->loadParamA & 1) {
+        return FALSE;
     }
-    if (sp1C->loadParamA & 0x10) {
-        if (gDLL_29_Gplay->vtbl->get_obj_group_status(arg0->mapID, sp1C->loadDistance) != 0) {
-            return 0;
+    if (objSetup->loadParamA & 0x10) {
+        if (gDLL_29_Gplay->vtbl->get_obj_group_status(obj->mapID, objSetup->mapObjGroup) != 0) {
+            return FALSE;
         }
-        return 1;
+        return TRUE;
     }
-    if (sp1C->loadParamA & 2) {
-        return 0;
+    if (objSetup->loadParamA & 2) {
+        return FALSE;
     }
-    if ((arg0->unkC0 != NULL) && (arg0->unkB4 < 0)) {
-        return 0;
+    if ((obj->unkC0 != NULL) && (obj->unkB4 < 0)) {
+        return FALSE;
     }
-    if (arg0->parent == NULL) {
-        sp54 = floor_f((arg0->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        temp_v0_2 = floor_f((arg0->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+    if (obj->parent == NULL) {
+        sp54 = floor_f((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        temp_v0_2 = floor_f((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
         if ((sp54 < 0) || (temp_v0_2 < 0) || (sp54 >= BLOCKS_GRID_SPAN) || (temp_v0_2 >= BLOCKS_GRID_SPAN)) {
-            return 1;
+            return TRUE;
         }
         sp54 = GRID_INDEX(temp_v0_2, sp54);
         for (var_a1 = FALSE, i = 0; i < MAP_LAYER_COUNT; i++) {
@@ -4235,19 +4239,19 @@ s32 func_8004B190(Object* arg0) {
             }
         }
         if (var_a1 == FALSE) {
-            return 1;
+            return TRUE;
         }
     }
-    if (sp1C->loadParamA & 0x20) {
-        return 0;
+    if (objSetup->loadParamA & 0x20) {
+        return FALSE;
     }
-    if ((sp1C->loadParamA & 4) && (player = get_player(), (player != NULL)) && arg0->parent == NULL) {
+    if ((objSetup->loadParamA & 4) && (player = get_player(), (player != NULL)) && obj->parent == NULL) {
         var_fv1 = player->positionMirror.x;
         var_fa0 = player->positionMirror.y;
         var_fa1 = player->positionMirror.z;
     } else {
-        if (arg0->parent != NULL) {
-            var_a0 = arg0->parent->matrixIdx + 1;
+        if (obj->parent != NULL) {
+            var_a0 = obj->parent->matrixIdx + 1;
         } else {
             var_a0 = 0;
         }
@@ -4255,25 +4259,26 @@ s32 func_8004B190(Object* arg0) {
         var_fa0 = Vec3_Int_array[var_a0].f.y;
         var_fa1 = Vec3_Int_array[var_a0].f.z;
     }
-    sp38 = arg0->unk3C;
-    if (arg0->parent != NULL) {
-        var_fv0 = var_fv1 - arg0->srt.transl.x;
-        var_ft4 = var_fa0 - arg0->srt.transl.y;
-        var_ft5 = var_fa1 - arg0->srt.transl.z;
+    loadDist = obj->loadDistance;
+    if (obj->parent != NULL) {
+        var_fv0 = var_fv1 - obj->srt.transl.x;
+        var_ft4 = var_fa0 - obj->srt.transl.y;
+        var_ft5 = var_fa1 - obj->srt.transl.z;
     } else {
-        var_fv0 = var_fv1 - arg0->positionMirror.x;
-        var_ft4 = var_fa0 - arg0->positionMirror.y;
-        var_ft5 = var_fa1 - arg0->positionMirror.z;
+        var_fv0 = var_fv1 - obj->positionMirror.x;
+        var_ft4 = var_fa0 - obj->positionMirror.y;
+        var_ft5 = var_fa1 - obj->positionMirror.z;
     }
-    temp_fv1 = sp38 + 40.0f;
+    loadDistAdjusted = loadDist + 40.0f;
     var_fv0 = ((var_fv0 * var_fv0) + (var_ft4 * var_ft4) + (var_ft5 * var_ft5));
-    if (var_fv0 < (temp_fv1 * temp_fv1)) {
-        return 0;
+    if (var_fv0 < (loadDistAdjusted * loadDistAdjusted)) {
+        return FALSE;
     }
-    return 1;
+    return TRUE;
 }
 
 /** map_should_object_load? */
+// is_obj_in_current_map_setup
 s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     s32 setupID;
 
@@ -4294,52 +4299,52 @@ s32 func_8004B4A0(ObjSetup* obj, s32 mapID) {
     return 1;
 }
 
-void func_8004B548(MapHeader* arg0, s32 arg1, s32 objGroupIdx, Object* arg3) {
+void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     s8 *s4;
     s8 *s3;
     s8 *s0;
-    s32 mapID;
+    s32 someVar;
     s32 someIndex;
     s32 var_s6;
-    s32* temp_t1;
+    MapObjSetupList* objSetupList;
 
-    temp_t1 = (s32 *) &D_800B5508[arg1];
-    if (temp_t1[objGroupIdx] == -1) {
+    objSetupList = &gMapObjSetupLists[mapID];
+    if (objSetupList->groups[objGroupIdx] == -1) {
         return;
     }
 
     if (arg3 != NULL) {
         var_s6 = arg3->matrixIdx + 1;
     } else {
-        var_s6 = arg0->unk19;
+        var_s6 = map->unk19;
     }
-    s0 = (s8 *) arg0->objectInstanceFile_ptr;
-    mapID = 0;
-    s4 =  &((s8*)s0)[temp_t1[objGroupIdx]];
+    s0 = (s8 *) map->objectInstanceFile_ptr;
+    someVar = 0;
+    s4 =  &((s8*)s0)[objSetupList->groups[objGroupIdx]];
     while ((u32) s0 < (u32) s4) {
-        mapID += 1;
+        someVar += 1;
         s0 += ((ObjSetup *)s0)->quarterSize * 4;
     }
 
     for (someIndex = objGroupIdx + 1; someIndex < 33; someIndex++) {
-        if (temp_t1[someIndex] != -1) {
+        if (objSetupList->groups[someIndex] != -1) {
             break;
         }
     }
 
     s0 = s4;
-    s4 = &((s8 *)arg0->objectInstanceFile_ptr)[temp_t1[someIndex]];
+    s4 = &((s8 *)map->objectInstanceFile_ptr)[objSetupList->groups[someIndex]];
     while ((u32) s0 < (u32) s4) {
         s3 = s0;
-        if ((map_check_some_mapobj_flag(mapID, arg1) == 0) && (func_8004B4A0((ObjSetup *)s0, arg1) != 0)) {
-            func_8004B710(mapID, arg1, 1U);
+        if ((map_check_some_mapobj_flag(someVar, mapID) == 0) && (func_8004B4A0((ObjSetup *)s0, mapID) != 0)) {
+            func_8004B710(someVar, mapID, 1U);
             if (map_get_is_object_streaming_disabled() != 0) {
-                func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, arg1, mapID, arg3, var_s6);
+                func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
             } else {
-                obj_create((ObjSetup* )s0, OBJSETUP_FLAG_1, arg1, mapID, arg3);
+                obj_create((ObjSetup* )s0, OBJSETUP_FLAG_1, mapID, someVar, arg3);
             }
         }
-        mapID += 1;
+        someVar += 1;
         s0 += ((ObjSetup *)s3)->quarterSize * 4;
     }
 }

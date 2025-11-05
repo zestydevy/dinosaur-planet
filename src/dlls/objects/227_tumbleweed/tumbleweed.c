@@ -218,7 +218,7 @@ void dll_227_func_420(Object* self) {
     }
     
     if (objdata->flags & 4){
-        self->unk36 = 0;
+        self->opacity = 0;
         self->unkAF |= 8;
         objdata->unk270 = 4;
         objdata->unk268 = 120.0f;

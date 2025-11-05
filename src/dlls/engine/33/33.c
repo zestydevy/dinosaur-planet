@@ -350,7 +350,7 @@ void dll_33_func_E30(Object* arg0, DLL33_Data* arg1, f32 arg2, s8 arg3) {
 
 // offset: 0xED0 | func: 10 | export: 11
 s32 dll_33_func_ED0(Object* arg0, DLL33_Data* arg1, u8 arg2) {
-    if (arg2 && (arg1->fsa.unk348 <= 0) && (arg0->unk36 == 0)) {
+    if (arg2 && (arg1->fsa.unk348 <= 0) && (arg0->opacity == 0)) {
         return 0;
     }
     if ((arg0->parent == NULL) && (func_8004454C(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
@@ -627,7 +627,7 @@ s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, s32 arg2, s32 arg3, s32 *a
                 objdata->unk3E8 = 0.0f;
                 objdata->unk3B2 &= ~0x40;
                 arg1->unk348 = 0;
-                arg0->unk36 = 0;
+                arg0->opacity = 0;
                 arg0->unkDC = 1;
                 gDLL_29_Gplay->vtbl->add_time(objsetup->base.uID, (f32) (objsetup->unk2C * 60));
             }
@@ -655,12 +655,12 @@ s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, s32 arg2, s32 arg3, s32 *a
         case OBJ_WG_PollenCannon:
             if (sp50->id == OBJ_Pollen) {
                 if (((Pollen_Data*)sp50->data)->unk12 == 0) {
-                    sp50->unk36 = 0;
+                    sp50->opacity = 0;
                 }
                 return 0;
             }
             if (sp50->id == OBJ_PollenFragment) {
-                sp50->unk36 = 0;
+                sp50->opacity = 0;
                 return 0;
             }
             break;
@@ -838,7 +838,7 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
     obj->srt.transl.z = setup->base.z;
     data->unk3E4 = arg7;
     obj->srt.yaw = setup->unk2A << 8;
-    obj->unk36 = 0xFF;
+    obj->opacity = 255;
     obj->unkAF &= ~0x8;
     data->unk39C = setup->unk18;
     if (data->unk39C != -1) {
@@ -909,7 +909,7 @@ void dll_33_func_2624(Object* arg0, DLL33_Data* arg1) {
         OBJ_fishingnet
     };
 
-    if ((arg1->unk3B9 != arg1->unk3BB) && (arg0->unk36 != 0)) {
+    if ((arg1->unk3B9 != arg1->unk3BB) && (arg0->opacity != 0)) {
         if (arg0->linkedObject != NULL) {
             obj_destroy_object(arg0->linkedObject);
             arg0->linkedObject = NULL;

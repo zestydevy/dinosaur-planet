@@ -11,7 +11,7 @@ enum ObjType {
     OBJTYPE_4 = 4,
     OBJTYPE_5 = 5,
     OBJTYPE_6 = 6,
-    OBJTYPE_7 = 7,
+    OBJTYPE_7 = 7, // CFScalesGalleon
     OBJTYPE_10 = 10,
     OBJTYPE_11 = 11, // BWlog, DFlog
     OBJTYPE_16 = 16,
