@@ -20,15 +20,15 @@ struct Object;
 
 // This could be bit fields? so 0, 1, 2, 4, 8 (0 << 0, 0 << 1, 0 << 2 etc)
 enum ObjectGroup {
-	GROUP_NONE = 0,
-	GROUP_UNK1 = 1,
-	GROUP_UNK16 = 16
+    GROUP_NONE = 0,
+    GROUP_UNK1 = 1,
+    GROUP_UNK16 = 16
 };
 
 //used for PlayerPosBuffer and something else
 struct Vec3_Int{
-	Vec3f f;
-	u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
+    Vec3f f;
+    u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
 };
 
 // base objdata of objects in group 16?
@@ -45,78 +45,78 @@ typedef struct {
 } ObjectC0_Data;
 
 enum ObjSetupInitFlags {
-	OBJ_INIT_FLAG1 = 0x1,
-	OBJ_INIT_FLAG2 = 0x2,
-	OBJ_INIT_FLAG4 = 0x4
+    OBJ_INIT_FLAG1 = 0x1,
+    OBJ_INIT_FLAG2 = 0x2,
+    OBJ_INIT_FLAG4 = 0x4
 };
 
 enum ObjSetupLoadFlags {
-	// never unload? unless map unloads or setup changes
-	// skips check for being outside block grid span
-	OBJSETUP_LOAD_FLAG1 = 0x1,
-	// never unload? unless map unloads or setup changes (way less common)
-	// can still unload via object groups, but none also set 0x10 in practice (at least not in maps)
-	// skips check for being outside block grid span
-	OBJSETUP_LOAD_FLAG2 = 0x2,
-	// for distance check, use player position instead of camera(?)
-	OBJSETUP_LOAD_FLAG4 = 0x4,
-	// ?
-	OBJSETUP_LOAD_FLAG8 = 0x8,
-	// load while the map object group the object is in is enabled.
-	OBJSETUP_LOAD_IN_MAP_OBJGROUP = 0x10,
-	// skip unload check for distance to player/camera
-	OBJSETUP_LOAD_FLAG20 = 0x20
+    // never unload? unless map unloads or setup changes
+    // skips check for being outside block grid span
+    OBJSETUP_LOAD_FLAG1 = 0x1,
+    // never unload? unless map unloads or setup changes (way less common)
+    // can still unload via object groups, but none also set 0x10 in practice (at least not in maps)
+    // skips check for being outside block grid span
+    OBJSETUP_LOAD_FLAG2 = 0x2,
+    // for distance check, use player position instead of camera(?)
+    OBJSETUP_LOAD_FLAG4 = 0x4,
+    // ?
+    OBJSETUP_LOAD_FLAG8 = 0x8,
+    // load while the map object group the object is in is enabled.
+    OBJSETUP_LOAD_IN_MAP_OBJGROUP = 0x10,
+    // skip unload check for distance to player/camera
+    OBJSETUP_LOAD_FLAG20 = 0x20
 };
 
 enum ObjSetupFadeFlags {
-	// Disable distance based object fadeout.
-	OBJSETUP_FADE_DISABLE = 0x1,
-	// Use player position to calculate fade, instead of the camera position.
-	OBJSETUP_FADE_PLAYER_RELATIVE = 0x2,
-	OBJSETUP_FADE_FLAG4 = 0x4
+    // Disable distance based object fadeout.
+    OBJSETUP_FADE_DISABLE = 0x1,
+    // Use player position to calculate fade, instead of the camera position.
+    OBJSETUP_FADE_PLAYER_RELATIVE = 0x2,
+    OBJSETUP_FADE_FLAG4 = 0x4
 };
 
 // Base struct, objects "inherit" from this and add their own setup info.
 // Note: Curves and race checkpoints are an exception and use a different version of this base struct.
 typedef struct ObjSetup {
-/*00*/	s16 objId;
-/*02*/	u8 quarterSize;
+/*00*/  s16 objId;
+/*02*/  u8 quarterSize;
         // Bits 0-7: Exclude from map setups 1-8
-/*03*/	u8 setupExclusions1;
+/*03*/  u8 setupExclusions1;
         // Load flags
-/*04*/	u8 loadFlags;
-/*05*/	union {
-			u8 byte5;
-        	// Bits 7-4 (note the reversal): Exclude from map setups 9-12
-			u8 setupExclusions2;
-        	// Bits 0-3: Fade flags
-			u8 fadeFlags;
-		};
-/*06*/	union {
-			u8 byte6;
-			// If loadFlags & 0x10 IS set, the map object group this object is a part of.
-			u8 mapObjGroup;
-			// If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
-			u8 loadDistance;
-		};
-		// Max distance object is visible at (divided by 8).
-/*07*/	u8 fadeDistance;
-/*08*/	f32 x;
-/*0c*/	f32 y;
-/*10*/	f32 z;
-/*14*/	s32 uID;
+/*04*/  u8 loadFlags;
+/*05*/  union {
+            u8 byte5;
+            // Bits 7-4 (note the reversal): Exclude from map setups 9-12
+            u8 setupExclusions2;
+            // Bits 0-3: Fade flags
+            u8 fadeFlags;
+        };
+/*06*/  union {
+            u8 byte6;
+            // If loadFlags & 0x10 IS set, the map object group this object is a part of.
+            u8 mapObjGroup;
+            // If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
+            u8 loadDistance;
+        };
+        // Max distance object is visible at (divided by 8).
+/*07*/  u8 fadeDistance;
+/*08*/  f32 x;
+/*0c*/  f32 y;
+/*10*/  f32 z;
+/*14*/  s32 uID;
 } ObjSetup;
 
 typedef struct {
 /*0000*/    u8 unk0[0x10 - 0x0];
-/*0010*/	u8 *unk10;
-/*0014*/	u8 unk14[0x44 - 0x14];
+/*0010*/    u8 *unk10;
+/*0014*/    u8 unk14[0x44 - 0x14];
 /*0044*/    s32 unk44;
-/*0048*/	u8 unk48[0x5d - 0x48];
-/*005D*/	s8 unk5D;
+/*0048*/    u8 unk48[0x5d - 0x48];
+/*005D*/    s8 unk5D;
 /*005E*/    u8 unk5E[0x71 - 0x5e];
 /*0071*/    u8 unk71;
-/*0072*/	u8 unk72;
+/*0072*/    u8 unk72;
 } ObjectStruct50;
 
 typedef struct {
@@ -144,25 +144,25 @@ typedef struct {
 } ObjectStruct64;
 
 typedef struct {
-	s32 unk0;
-	UNK_PTR *unk4;
+    s32 unk0;
+    UNK_PTR *unk4;
 } ObjectStruct5C;
 
 typedef struct {
-	s32 unk0; // size of thing at unk4
-	UNK_PTR *unk4;
+    s32 unk0; // size of thing at unk4
+    UNK_PTR *unk4;
 } ObjectEvent;
 
 typedef struct {
-	s32 sizeInBytes;
-	UNK_PTR *ptr;
+    s32 sizeInBytes;
+    UNK_PTR *ptr;
 } WeaponDataPtr;
 
 typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
-/*0080*/    MtxF unk80[2]; 				// probably length of 2
+/*0080*/    MtxF unk80[2];              // probably length of 2
 /*0100*/    struct Object *unk100[3];
-/*010c*/    u8 unk10c; 					// index into field 0x80?
+/*010c*/    u8 unk10c;                  // index into field 0x80?
 /*010d*/    u8 unk10d;
 /*010e*/    UNK_TYPE_8 unk10e;
 /*010f*/    s8 unk10f;
@@ -177,9 +177,9 @@ typedef struct {
 } ObjectStruct78;
 
 typedef struct {
-/*0000*/	u32 id;
-/*0004*/	struct Object *sender;
-/*0008*/	void *arg;
+/*0000*/    u32 id;
+/*0004*/    struct Object *sender;
+/*0008*/    void *arg;
 } ObjMesgQueueMessage;
 
 typedef struct {
@@ -194,13 +194,13 @@ typedef struct {
 // Any exports referenced with a higher index are specific to an object or subtype.
 DLL_INTERFACE(DLL_IObject) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-	/*0*/ void (*setup)(struct Object *obj, ObjSetup *setup, s32);
-	/*1*/ void (*control)(struct Object *obj);
-	/*2*/ void (*update)(struct Object *obj);
-	/*3*/ void (*print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-	/*4*/ void (*free)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
-	/*5*/ u32 (*get_model_flags)(struct Object *obj);
-	/*6*/ u32 (*get_data_size)(struct Object *obj, u32);
+    /*0*/ void (*setup)(struct Object *obj, ObjSetup *setup, s32);
+    /*1*/ void (*control)(struct Object *obj);
+    /*2*/ void (*update)(struct Object *obj);
+    /*3*/ void (*print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+    /*4*/ void (*free)(struct Object *obj, s32); // (idk what param2 is, FALSE when from deferred free, TRUE when from non-deferred free)
+    /*5*/ u32 (*get_model_flags)(struct Object *obj);
+    /*6*/ u32 (*get_data_size)(struct Object *obj, u32);
 };
 
 // arg3 and arg4 are unknown types
@@ -247,9 +247,9 @@ typedef struct Object {
 /*0098*/    f32 animProgress;
 /*009C*/    f32 animProgressLayered;
 /*00A0*/    s16 curModAnimId;
-/*00A2*/	s16 curModAnimIdLayered;
-/*00A4*/	f32 unkA4;
-/*00A8*/	f32 unkA8;
+/*00A2*/    s16 curModAnimIdLayered;
+/*00A4*/    f32 unkA4;
+/*00A8*/    f32 unkA8;
 /*00AC*/    s8 mapID;
 /*00AD*/    s8 modelInstIdx;
 /*00AE*/    s8 updatePriority;
@@ -257,11 +257,11 @@ typedef struct Object {
 /*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here)
 /*00B2*/    s16 unkB2;
 /*00B4*/    s16 unkB4;
-/*00B6*/	u8 unkB6[2];
-/*00B8*/	void* data; //type depends on object
-/*00BC*/	AnimationCallback animCallback; // some kind of cutscene anim callback?
-/*00C0*/	struct Object *unkC0; // related to group 16 objects?
-/*00C4*/	struct Object* unkC4; // parent object
+/*00B6*/    u8 unkB6[2];
+/*00B8*/    void* data; //type depends on object
+/*00BC*/    AnimationCallback animCallback; // some kind of cutscene anim callback?
+/*00C0*/    struct Object *unkC0; // related to group 16 objects?
+/*00C4*/    struct Object* unkC4; // parent object
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    ObjectMesgQueue *mesgQueue;
 /*00D0*/    u8 unkD0[0xd4 - 0xd0];
@@ -278,9 +278,9 @@ typedef struct Object {
 } Object;
 
 typedef struct ObjListItem {
-	s16 count;
-	s16 size;
-	Object *obj;
+    s16 count;
+    s16 size;
+    Object *obj;
 } ObjListItem;
 
 typedef struct {
@@ -292,9 +292,9 @@ typedef struct {
   * 
 */
 typedef struct {
-/*00*/	ObjSetup base;
-/*18*/	u8 unk18;
-/*19*/	u8 unk19;
+/*00*/  ObjSetup base;
+/*18*/  u8 unk18;
+/*19*/  u8 unk19;
 } SidekickSetup;
 
 extern struct Object * object_pointer_array[]; //first is always player character.
