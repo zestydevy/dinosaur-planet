@@ -51,38 +51,22 @@ typedef enum {
 } ObjSetupFlags;
 
 // Base struct, objects "inherit" from this and add their own setup info.
-// Curve objects use some of these parameters differently
+// Note: Curves and race checkpoints are an exception and use a different version of this base struct.
 typedef struct ObjSetup {
 /*00*/	s16 objId;
 /*02*/	u8 quarterSize;
-// TODO: different for curves
 /*03*/	u8 setup; //bitfield of which Acts/setupIDs the object shouldn't appear in
-/*04*/	union {
-	struct {
-	/*04*/	u8 loadParamA; // load/unload flags
-	/*05*/	u8 loadParamB; // bits 7-4, exclude from map setups 9-12. bits 0-3 fade flags
-	/*06*/	union {
-				// If loadParamA & 0x10 IS set, the map object group this object is a part of.
-				u8 mapObjGroup;
-				// If loadParamA & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
-				u8 loadDistance;
-	        };
-	        // Max distance object is visible at (divided by 8).
-	/*07*/	u8 fadeDistance;
-	};
-	struct { // Curve specific
-	/*04*/	s8 unk4;
-	/*05*/	s8 unk5;
-	/*06*/	s8 unk6;
-	/*07*/	s8 unk7;
-	} curve_type26;
-	struct { // Curve specific
-	/*04*/	u16 unk4;
-	/*06*/	s8 unk6;
-	/*07*/	s8 unk7;
-	} curve_type22;
-};
-/*08*/	f32 x; // TODO: xyz here is a Vec3f...
+/*04*/	u8 loadParamA; // load/unload flags
+/*05*/	u8 loadParamB; // bits 7-4, exclude from map setups 9-12. bits 0-3 fade flags
+/*06*/	union {
+			// If loadParamA & 0x10 IS set, the map object group this object is a part of.
+			u8 mapObjGroup;
+			// If loadParamA & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
+			u8 loadDistance;
+		};
+		// Max distance object is visible at (divided by 8).
+/*07*/	u8 fadeDistance;
+/*08*/	f32 x;
 /*0c*/	f32 y;
 /*10*/	f32 z;
 /*14*/	s32 uID;
