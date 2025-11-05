@@ -186,12 +186,12 @@ typedef struct {
 
 s32 gplay_load_save(s8 idx, u8 startGame);
 void gplay_save_game(void);
-void gplay_checkpoint(Vec3f *param1, s16 param2, s32 param3, s32 param4);
+void gplay_checkpoint(Vec3f *position, s16 yaw, s32 param3, s32 mapLayer);
 void gplay_start_loaded_game(void);
 static void gplay_start_game(void);
 static void gplay_reset_state(void);
-void gplay_set_map_setup(s32 param1, s32 param2);
-void gplay_world_load_obj_group_bits(s32 param1);
+void gplay_set_map_setup(s32 mapID, s32 setupID);
+void gplay_world_load_obj_group_bits(s32 mapID);
 
 void gplay_ctor(DLLFile *self)  {
     sSavegame = (GplaySaveFlash*)mmAlloc(sizeof(GplaySaveFlash), COLOUR_TAG_YELLOW, NULL);

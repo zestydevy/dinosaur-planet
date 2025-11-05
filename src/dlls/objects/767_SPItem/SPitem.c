@@ -58,7 +58,7 @@ void SPItem_control(Object* self) {
 
     //Get SPShop object
     if (objData->shop == NULL) {
-        objData->shop = obj_get_nearest_type_to(0xA, self, &distance);
+        objData->shop = obj_get_nearest_type_to(OBJTYPE_10, self, &distance);
         if (objData->shop) {
             //Hide item if not in stock or already purchased
             if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 

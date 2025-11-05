@@ -98,7 +98,7 @@
 static void mainmenu_clean_up(void);
 
 // offset: 0x0 | ctor
-void mainmenu_ctor(s32 arg0) {
+void mainmenu_ctor(void *dll) {
     int total_strings;
     s32 index;
 
@@ -137,7 +137,7 @@ void mainmenu_ctor(s32 arg0) {
 void mainmenu_dtor(void *dll){ }
 
 // offset: 0x31C | func: 0 | export: 0
-s32 mainmenu_update(void) {
+s32 mainmenu_update1(void) {
     s32 items;
     s32 index;
     s32 action;
@@ -226,7 +226,7 @@ s32 mainmenu_update(void) {
 }
 
 // offset: 0x764 | func: 1 | export: 1
-void mainmenu_func_764(void){ }
+void mainmenu_update2(void){ }
 
 // offset: 0x76C | func: 2 | export: 2
 void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {

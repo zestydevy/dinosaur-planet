@@ -973,7 +973,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
                 gDLL_3_Animation->vtbl->func17(1, self, -1);
             }
             
-            frostWeed = obj_get_nearest_type_to(4, self, 0);
+            frostWeed = obj_get_nearest_type_to(OBJTYPE_4, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {

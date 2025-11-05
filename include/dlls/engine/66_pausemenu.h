@@ -57,10 +57,7 @@ enum PauseScreenStates {
 #define DROP_SHADOW_MULTIPLIER 150
 
 DLL_INTERFACE(DLL_66_pausemenu) {
-    /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*n_pausemenu_update)(void);
-    /*1*/ void (*n_pausemenu_func_524)(void);
-    /*2*/ void (*n_pausemenu_draw)(Gfx** gfx, Mtx** mtx, Vertex** vtx);
+    DLL_INTERFACE_BASE(DLL_IMenu);
 };
 
 #endif //_DLLS_66_H

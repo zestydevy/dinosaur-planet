@@ -23,7 +23,7 @@ static Texture *bss_10;
 static Texture *bss_14;
 static Texture *bss_18;
 
-void dll_61_ctor(void *self) {
+void dll_61_ctor(void *dll) {
     u8 temp[4];
     *((u32*)temp) = data_8; // wat
 
@@ -40,14 +40,14 @@ void dll_61_ctor(void *self) {
     bss_18 = queue_load_texture_proxy(0x2d5);
 }
 
-void dll_61_dtor(void *self) {
+void dll_61_dtor(void *dll) {
     texture_destroy(bss_C);
     texture_destroy(bss_10);
     texture_destroy(bss_14);
     texture_destroy(bss_18);
 }
 
-s32 dll_61_update1() {
+s32 dll_61_update1(void) {
     s32 delay;
 
     delay = gUpdateRate;
@@ -86,7 +86,7 @@ s32 dll_61_update1() {
     return 0;
 }
 
-void dll_61_update2() { }
+void dll_61_update2(void) { }
 
 void dll_61_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     f32 var1;

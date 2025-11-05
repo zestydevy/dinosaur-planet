@@ -20,7 +20,7 @@ DLL_INTERFACE(DLL_26_curves) {
 /*3*/ CurveNode *(*func_1BC)(s32 *count);
 /*4*/ s32 (*func_1E4)(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5);
 /*5*/ s32 (*func_3F00)(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4);
-/*6*/ CurveSetup*(*func_39C)(s32 curveUID);
+/*6*/ CurveSetup *(*func_39C)(s32 curveUID);
 /*7*/ f32 (*func_14F4)(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5, f32* arg6, f32* arg7);
 /*8*/ f32 (*func_174C)(Object* arg0, s32 arg1);
 /*9*/ f32 (*func_17F4)(f32 arg0, f32 arg1, s32 arg2);

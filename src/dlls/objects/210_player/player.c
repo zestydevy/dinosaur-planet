@@ -692,7 +692,7 @@ void dll_210_func_11A0(Object* arg0, Player_Data* arg1, f32 arg2) {
             break;
         case 29:
             spCC = 500.0f;
-            tempObj = obj_get_nearest_type_to(0x18, arg0, &spCC);
+            tempObj = obj_get_nearest_type_to(OBJTYPE_24, arg0, &spCC);
             if (tempObj != NULL) {
                 ((DLL_Unknown *)tempObj->dll)->vtbl->func[7].withThreeArgsCustom(tempObj, arg0, 1.0f);
             }
@@ -837,7 +837,7 @@ void dll_210_func_1CA8(Object* arg0, Player_Data* arg1, Player_Data* arg2) {
             return;
         }
         sp28 = 500.0f;
-        arg2->unk0.target = obj_get_nearest_type_to(4, arg0, &sp28);
+        arg2->unk0.target = obj_get_nearest_type_to(OBJTYPE_4, arg0, &sp28);
         return;
     }
     if (temp_v0 != NULL) {
@@ -2117,7 +2117,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 16:
                 sp60 = 400.0f;
-                tempObj = obj_get_nearest_type_to(7, arg0, &sp60);
+                tempObj = obj_get_nearest_type_to(OBJTYPE_7, arg0, &sp60);
                 if (tempObj != NULL) {
                     func_8005B5B8(arg0, tempObj, 1);
                 }
@@ -3127,7 +3127,7 @@ static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2,
                 case 10:
                     if (spCC < 14.0f) {
                         sp6C = 50.0f;
-                        sp88 = obj_get_nearest_type_to(0x25, arg0, &sp6C);
+                        sp88 = obj_get_nearest_type_to(OBJTYPE_37, arg0, &sp6C);
                         var_s0_2 = TRUE;
                         if ((sp88 != NULL) && (((DLL_Unknown*)sp88->dll)->vtbl->func[8].withOneArgS32((s32)sp88) == 0)) {
                             var_s0_2 = FALSE;
@@ -4308,7 +4308,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
                 main_set_bits(BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth, 1);
                 main_set_bits(BIT_3D8, 1);
             } else {
-                temp_v0_5 = obj_get_nearest_type_to(0x3B, arg0, &sp80);
+                temp_v0_5 = obj_get_nearest_type_to(OBJTYPE_59, arg0, &sp80);
                 if (temp_v0_5 != NULL) {
                     ((DLL_Unknown*)temp_v0_5->dll)->vtbl->func[7].withOneArg((s32)temp_v0_5);
                 }
@@ -7397,16 +7397,16 @@ s8 dll_210_func_1CFCC(Object* player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CFF4.s")
 
 // offset: 0x1D04C | func: 170 | export: 18
-void dll_210_set_scarab_count(Object* player, s32 scarabCount) {
+void dll_210_set_scarabs(Object* player, s32 scarabs) {
     Player_Data* objdata = player->data;
 
-    if (scarabCount < 0) {
-        scarabCount = 0;
-    } else if (scarabCount > MAX_SCARABS) {
-        scarabCount = MAX_SCARABS;
+    if (scarabs < 0) {
+        scarabs = 0;
+    } else if (scarabs > MAX_SCARABS) {
+        scarabs = MAX_SCARABS;
     }
 
-    objdata->stats->scarabs = scarabCount;
+    objdata->stats->scarabs = scarabs;
 }
 
 // offset: 0x1D07C | func: 171 | export: 19
@@ -7436,7 +7436,7 @@ void dll_210_add_scarab(Object* player, s32 amount) {
 }
 
 // offset: 0x1D128 | func: 172 | export: 20
-u16 dll_210_get_scarab_count(Object* player) {
+u16 dll_210_get_scarabs(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->stats->scarabs;
 }
@@ -7661,13 +7661,13 @@ s32 dll_210_func_1D754(Object* player) {
 }
 
 // offset: 0x1D768 | func: 204 | export: 53
-Object *dll_210_func_1D768(Object* player) {
+Object* dll_210_func_1D768(Object* player) {
     Player_Data* objdata = player->data;
     return objdata->unk0.target;
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-Unk80032CF8* dll_210_func_1D778(Object* player) {
+Unk80032CF8 * dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }
