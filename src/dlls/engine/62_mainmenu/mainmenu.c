@@ -12,6 +12,7 @@
 #include "sys/main.h"
 #include "sys/menu.h"
 #include "sys/memory.h"
+#include "sys/rcp.h"
 #include "types.h"
 
 /*0x0*/ static PicMenuItem pressStartItem[] = {
@@ -105,7 +106,7 @@ void mainmenu_ctor(void *dll) {
     total_strings = 8;
     
     logoDinosaurPlanet = queue_load_texture_proxy(0xC5);
-    func_800379D0(0, 0, 0);
+    rcp_set_border_color(0, 0, 0);
 
     //Set language and get text
     options = gDLL_29_Gplay->vtbl->get_game_options();

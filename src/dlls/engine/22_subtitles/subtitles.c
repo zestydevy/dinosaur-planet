@@ -11,6 +11,7 @@
 #include "sys/memory.h"
 #include "dll.h"
 #include "functions.h"
+#include "sys/rcp.h"
 #include "types.h"
 #include "prevent_bss_reordering.h"
 

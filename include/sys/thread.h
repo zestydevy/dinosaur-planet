@@ -31,6 +31,6 @@ extern OSThread gMainThread;
 /**
  * @returns The address of s->interruptQ.
  */
-OSMesgQueue *get_sched_interrupt_queue(OSSched *s);
+OSMesgQueue *osScGetInterruptQ(OSSched *s);
 
 #endif //_SYS_THREAD_H

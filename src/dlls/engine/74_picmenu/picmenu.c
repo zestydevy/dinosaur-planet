@@ -13,6 +13,7 @@
 #include "game/gamebits.h"
 #include "functions.h"
 #include "macros.h"
+#include "sys/rcp.h"
 
 static const char str_1[] = "PICMENU: maxitems exceeded\n";
 static const char str_2[] = "UPLINK overflow=%d\n";

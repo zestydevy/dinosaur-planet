@@ -12,6 +12,7 @@
 #include "dll.h"
 #include "functions.h"
 #include "macros.h"
+#include "sys/rcp.h"
 #include "types.h"
 
 #define NAME_ENTRY_PICMENU_ITEM(textX, textY, itemX, itemY, flags, upLink, downLink, leftLink, rightLink) \
