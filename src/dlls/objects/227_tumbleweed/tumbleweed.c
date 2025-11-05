@@ -218,7 +218,7 @@ void dll_227_func_420(Object* self) {
     }
     
     if (objdata->flags & 4){
-        self->unk36 = 0;
+        self->opacity = 0;
         self->unkAF |= 8;
         objdata->unk270 = 4;
         objdata->unk268 = 120.0f;
@@ -532,12 +532,12 @@ void dll_227_func_2038(Object* self) {
     setup->base.y = self->srt.transl.y;
     setup->base.z = self->srt.transl.z;
     setup->base.fadeDistance = 0xFF;
-    setup->base.loadParamA = 0x20;
-    setup->base.loadParamB = 2;
+    setup->base.loadFlags = OBJSETUP_LOAD_FLAG20;
+    setup->base.fadeFlags = OBJSETUP_FADE_PLAYER_RELATIVE;
     setup->roll = self->srt.roll;
     setup->pitch = self->srt.pitch;
     setup->yaw = self->srt.yaw;
     setup->unk1B = 0;
     setup->unk1C = 64.0f;
-    obj_create((ObjSetup*)setup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+    obj_create((ObjSetup*)setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
 }

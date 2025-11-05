@@ -81,7 +81,7 @@ void WLgalleon_control(Object* self) {
 
     if (!main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
         if (self->id == OBJ_SB_ShipShadow) {
-            self->unk36 = 0x80;
+            self->opacity = 128;
             return;
         }
 

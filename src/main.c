@@ -504,7 +504,7 @@ void func_80014074(void) {
     }
 }
 
-void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
+void func_800141A4(s32 mapID, s32 arg1, s32 playerno, s32 arg3) {
     PlayerLocation *temp_v0;
 
     func_8001440C(0);
@@ -520,7 +520,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
 
     temp_v0 = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
-    map_func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
+    map_func_80048054(mapID, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
     gDLL_29_Gplay->vtbl->checkpoint(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
 
     D_800B09C0 = 1;

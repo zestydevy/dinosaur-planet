@@ -56,9 +56,9 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         gDLL_25->vtbl->func_1D30(&sp3C->unk0, temp_v0_2, sp34, gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp34, -1)));
         CCgrub_func_AB0(self, sp3C, 0.2f);
         func_800053B0(&sp3C->unk0, 0.1f);
-        self->srt.transl.x = temp_v0_2->base.x;
-        self->srt.transl.y = temp_v0_2->base.y;
-        self->srt.transl.z = temp_v0_2->base.z;
+        self->srt.transl.x = temp_v0_2->pos.x;
+        self->srt.transl.y = temp_v0_2->pos.y;
+        self->srt.transl.z = temp_v0_2->pos.z;
         self->ptr0x64->flags |= 0x20200;
         obj_init_mesg_queue(self, 1);
     }

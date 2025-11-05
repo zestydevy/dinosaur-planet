@@ -259,8 +259,8 @@ static void dll_703_func_A7C(Object* self, s32 arg1) {
     if (curveUID != -1) {
         curve = gDLL_26_Curves->vtbl->func_39C(curveUID);
         if (curve != NULL) {
-            self->srt.transl.x = curve->base.x;
-            self->srt.transl.z = curve->base.z;
+            self->srt.transl.x = curve->pos.x;
+            self->srt.transl.z = curve->pos.z;
         }
     }
 }
