@@ -108,7 +108,7 @@ void DIM_BossSpit_func_2AC(Object *self) {
     lfxemitterSetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
     lfxemitterSetup->base.loadDistance = 0xFF;
     lfxemitterSetup->base.fadeDistance = 0xFF;
-    objdata->lfxEmitter = obj_create((ObjSetup*)lfxemitterSetup, 5, -1, -1, NULL);
+    objdata->lfxEmitter = obj_create((ObjSetup*)lfxemitterSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
 }
 
 // offset: 0x360 | func: 8

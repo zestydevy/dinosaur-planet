@@ -44,7 +44,7 @@ void DFdockpoint_control(Object *self) {
             logsetup->base.y = self->srt.transl.y;
             logsetup->base.z = self->srt.transl.z;
             logsetup->yaw = setup->yaw;
-            obj_create((ObjSetup*)logsetup, 5, self->mapID, -1, self->parent);
+            obj_create((ObjSetup*)logsetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
         }
     }
 }

@@ -127,7 +127,7 @@ void DIMLavaBallGenerator_control(Object *self) {
         lavaballSetup->unk1C = setup->unk1B;
         lavaballSetup->base.uID = setup->base.uID;
 
-        objdata->lavaball = obj_create((ObjSetup*)lavaballSetup, 5, self->mapID, -1, NULL);
+        objdata->lavaball = obj_create((ObjSetup*)lavaballSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, NULL);
     }
 
     lavaball = objdata->lavaball;

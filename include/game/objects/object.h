@@ -73,7 +73,8 @@ enum ObjSetupFadeFlags {
     OBJSETUP_FADE_DISABLE = 0x1,
     // Use player position to calculate fade, instead of the camera position.
     OBJSETUP_FADE_PLAYER_RELATIVE = 0x2,
-    OBJSETUP_FADE_FLAG4 = 0x4
+    OBJSETUP_FADE_FLAG4 = 0x4,
+    OBJSETUP_FADE_FLAG8 = 0x8
 };
 
 // Base struct, objects "inherit" from this and add their own setup info.
@@ -83,7 +84,6 @@ typedef struct ObjSetup {
 /*02*/  u8 quarterSize;
         // Bits 0-7: Exclude from map setups 1-8
 /*03*/  u8 setupExclusions1;
-        // Load flags
 /*04*/  u8 loadFlags;
 /*05*/  union {
             u8 byte5;
