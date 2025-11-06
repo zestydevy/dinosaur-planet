@@ -7557,7 +7557,29 @@ s32 dll_210_func_16220(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x164DC | func: 106
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_164DC.s")
+s32 dll_210_func_164DC(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Player_Data* sp24;
+
+    sp24 = arg0->data;
+    arg1->unk0.animExitAction = dll_210_func_1660C;
+    arg1->unk0.unk27C = 0.0f;
+    func_800267A4(arg0);
+    sp24->unk8A9 = 1;
+    if (arg0->curModAnimId == 0xC7) {
+        arg1->unk0.animTickDelta = 0.02f;
+        arg1->unk0.unk278 = 0.0f;
+        sp24->unk708->srt.flags |= 0x4000;
+        func_800267A4(sp24->unk708);
+        if (arg0->animProgress > 0.8f) {
+            sp24->unk708 = NULL;
+            return 2;
+        }
+        sp24->unk708->srt.scale = sp24->unk708->def->scale * (1.0f - arg0->animProgress);
+    } else {
+        func_80023D30(arg0, 0xC7, 0.0f, 0U);
+    }
+    return 0;
+}
 
 // offset: 0x1660C | func: 107
 static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa) {
@@ -7565,24 +7587,31 @@ static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa) {
 }
 
 // offset: 0x16648 | func: 108
+s32 dll_210_func_16648(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_16648.s")
 
 // offset: 0x16EB4 | func: 109
+s32 dll_210_func_16EB4(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_16EB4.s")
 
 // offset: 0x178A0 | func: 110
+s32 dll_210_func_178A0(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_178A0.s")
 
 // offset: 0x178EC | func: 111
+s32 dll_210_func_178EC(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_178EC.s")
 
 // offset: 0x17A88 | func: 112
+s32 dll_210_func_17A88(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17A88.s")
 
 // offset: 0x17B5C | func: 113
+s32 dll_210_func_17B5C(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17B5C.s")
 
 // offset: 0x17C14 | func: 114
+s32 dll_210_func_17C14(Object* arg0, Player_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17C14.s")
 
 // offset: 0x17DA8 | func: 115
