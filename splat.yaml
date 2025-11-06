@@ -318,7 +318,7 @@ segments:
     - [0x92320, .data, segment_334F0]
     - [0x92350, data, objprint]
     - [0x92370, .data, crash]
-    - [0x92380, data, rcp]
+    - [0x92380, .data, rcp]
     - [0x924B0, .data, rarezip]
     - [0x924D0, .data, scheduler]
     - [0x92510, data, texture]

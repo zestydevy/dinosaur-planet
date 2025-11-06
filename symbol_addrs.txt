@@ -777,6 +777,7 @@ BYTE_80091758 = 0x80091758; // size:0x1
 sBGPrimColourR = 0x800917A0; // size:0x1
 sBGPrimColourG = 0x800917A4; // size:0x1
 sBGPrimColourB = 0x800917A8; // size:0x1
+sBackgroundFillColour = 0x800917AC;
 gGfxTaskIsRunning = 0x800917C8;
 gGfxBufCounter = 0x800917C0;
 __additional_scanline = 0x800930d0; // size:0x4

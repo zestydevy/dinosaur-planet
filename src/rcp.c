@@ -6,16 +6,56 @@
 #include "sys/rcp.h"
 #include "sys/rsp_segment.h"
 
-extern u8 sBGPrimColourR;
-extern u8 sBGPrimColourG;
-extern u8 sBGPrimColourB;
-extern u32 D_800917AC;
-extern s32 D_800917BC;
-extern s32 gGfxBufCounter;
-extern s32 gGfxTaskIsRunning;
-extern u8 D_800917CC;
-extern Gfx D_80091828[6];
-extern Gfx D_80091868[6];
+// .data
+
+s16 D_80091780[16] = { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+u8 sBGPrimColourR = 0;
+u8 sBGPrimColourG = 0;
+u8 sBGPrimColourB = 0;
+u32 sBackgroundFillColour = GPACK_RGBA5551(0, 0, 0, 1) | (GPACK_RGBA5551(0, 0, 0, 1) << 16);
+u32 D_800917B0 = 64;
+s32 D_800917B4 = 0;
+s32 D_800917B8 = 0;
+s32 D_800917BC = 0;
+s32 gGfxBufCounter = 0;
+s32 D_800917C4 = 0;
+s32 gGfxTaskIsRunning = 0;
+u8 D_800917CC = 1;
+Gfx D_800917D0[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPClipRatio(FRUSTRATIO_3),
+    gsSPEndDisplayList()
+};
+Gfx D_80091800[] = {
+    gsDPPipeSync(),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_FILL | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2),
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_PRIMITIVE, G_CC_PRIMITIVE),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2)
+};
+Gfx D_80091828[] = {
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_OPA_SURF | G_RM_AA_OPA_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_OPA_SURF | G_RM_AA_OPA_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2)
+};
+Gfx D_80091868[] = {
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_XLU_SURF | G_RM_AA_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_XLU_SURF | G_RM_AA_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2),
+    gsDPNoOp()
+};
+
+// .bss
 
 extern u8 gGfxDramStack[SP_DRAM_STACK_SIZE8];
 extern OSMesgQueue gRCPUnusedMesgQueue1;
@@ -27,9 +67,9 @@ extern OSMesg gGfxTaskMesgBuf[8];
 extern OSScTask gGfxTasks[2];
 extern OSMesgQueue *gScInterruptQ;
 
+// .bss but in the next segment
 extern u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 
-extern Gfx D_800917D0[];
 void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8); 
 Texture* func_8003E904(Texture* arg0, s32 arg1);
 
@@ -131,8 +171,8 @@ void rcp_set_screen_color(u8 red, u8 green, u8 blue) {
  * Official name: rcpSetBorderColour
  */
 void rcp_set_border_color(u32 red, u32 green, s32 blue) {
-    D_800917AC = GPACK_RGBA5551(red, green, blue, 1);
-    D_800917AC |= (D_800917AC << 16);
+    sBackgroundFillColour = GPACK_RGBA5551(red, green, blue, 1);
+    sBackgroundFillColour |= (sBackgroundFillColour << 16);
 }
 
 void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
