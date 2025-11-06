@@ -159,7 +159,22 @@ typedef struct {
 /*430*/ Player_Data430 unk430;
 /*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
-/*508*/ u8 pad508[0x674 - 0x508];
+/*508*/ u8 pad508[0x550 - 0x508];
+/*550*/ Vec3f unk550;
+/*55C*/ Vec3f unk55C;
+/*568*/ UNK_TYPE_32 unk568;
+/*56C*/ f32 *unk56C;
+/*570*/ f32 *unk570;
+/*574*/ f32 *unk574;
+/*578*/ s32 unk578;
+/*57C*/ void *unk57C;
+/*580*/ void *unk580;
+/*584*/ f32 unk584;
+/*588*/ u8 pad588[0x5D4 - 0x588];
+/*5D4*/ f32 unk5D4;
+/*5D8*/ u8 pad5D8[0x624 - 0x5D8];
+/*624*/ f32 unk624;
+/*628*/ u8 pad628[0x674 - 0x628];
 /*674*/ f32 unk674;
 /*678*/ f32 unk678;
 /*67C*/ u8 unk67C;
@@ -175,7 +190,10 @@ typedef struct {
 /*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
 /*738*/ Vec3f unk738;
 /*744*/ Vec3f unk744;
-/*750*/ s32 pad750;
+/*750*/ u8 unk750;
+/*751*/ u8 pad751;
+/*752*/ u8 pad752;
+/*753*/ u8 pad753;
 /*754*/ s32 unk754;
 /*758*/ s32 unk758;
 /*75C*/ f32 unk75C;
