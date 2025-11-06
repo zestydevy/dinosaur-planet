@@ -133,7 +133,7 @@ typedef struct UnkArg2 {
     f32 unk20;
     f32 unk24;
     s32 unk28;
-    u8 pad2C;
+    s8 unk2C;
     s8 unk2D;
     s8 unk2E;
     u8 pad2F;
