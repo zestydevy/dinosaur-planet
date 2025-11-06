@@ -59,6 +59,7 @@ static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
 static void dll_210_func_12514(Object* arg0, ObjFSA_Data *arg1);
 static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1);
 static void dll_210_func_16204(Object *obj, ObjFSA_Data *fsa);
+static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa);
 
 // These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
@@ -7507,21 +7508,61 @@ static void dll_210_func_16204(Object *obj, ObjFSA_Data *fsa) {
 }
 
 // offset: 0x16220 | func: 105
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_16220.s")
+s32 dll_210_func_16220(Object* arg0, Player_Data* arg1, f32 arg2) {
+    Object* temp_v0;
+    Object* temp_v0_2;
+    f32 var_fv0;
+    Player_Data* temp_s0;
+
+    temp_s0 = arg0->data;
+    func_800267A4(arg0);
+    arg1->unk0.unk27C = 0.0f;
+    arg1->unk0.animExitAction = dll_210_func_1660C;
+    temp_s0->unk8A9 = 1;
+    if (arg0->curModAnimId == 0xC7) {
+        arg1->unk0.animTickDelta = 0.01f;
+        arg1->unk0.unk278 = 0.0f;
+        if (arg0->animProgress > 0.5f) {
+            if (temp_s0->unk708->srt.flags & 0x4000) {
+                temp_s0->unk710 -= 0.04f * arg2;
+            } else {
+                gDLL_28_ScreenFade->vtbl->fade(0x3C, 1);
+            }
+            temp_v0 = temp_s0->unk708;
+            temp_v0->srt.flags |= 0x4000;
+            func_800267A4(temp_s0->unk708);
+            if (temp_s0->unk710 < 0.0f) {
+                temp_s0->unk710 = 0.0f;
+            }
+        } else {
+            temp_s0->unk710 = 1.0f;
+            arg0->srt.yaw += (s32) (func_80031DD8(arg0, temp_s0->unk708, 0) * (s32) arg2) >> 4;
+        }
+        temp_v0_2 = temp_s0->unk708;
+        temp_v0_2->srt.scale = temp_v0_2->def->scale * (0.5f + (temp_s0->unk710 * 0.5f));
+        if ((arg1->unk0.unk33A != 0) && (gDLL_28_ScreenFade->vtbl->is_complete != NULL)) {
+            gDLL_3_Animation->vtbl->func17(0, arg0, -1);
+            gDLL_28_ScreenFade->vtbl->fade_reversed(0x3C, 1);
+            arg1->unk0.animStateTime = 0;
+        }
+    } else {
+        var_fv0 = (temp_s0->unk708->srt.transl.f[1] - arg0->srt.transl.f[1]) / 70.0f;
+        if (var_fv0 > 0.2f) {
+            var_fv0 += 0.4f;
+        }
+        func_80023D30(arg0, 0xC7, var_fv0, 0U);
+        temp_s0->unk710 = 1.0f;
+    }
+    return 0;
+}
 
 // offset: 0x164DC | func: 106
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_164DC.s")
 
 // offset: 0x1660C | func: 107
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1660C.s")
-#else
-static void func_8002674C(); 
-
-void dll_210_func_1660C(Object* player) {
-    func_8002674C();
+static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa) {
+    func_8002674C(obj);
 }
-#endif
 
 // offset: 0x16648 | func: 108
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_16648.s")

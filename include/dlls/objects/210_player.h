@@ -185,7 +185,9 @@ typedef struct {
 /*6B0*/ UnkArg4 unk6B0;
 /*708*/ Object *unk708;
 /*70C*/ s16 unk70C;
-/*70E*/ s8 unk70E[0x728 - 0x70E];
+/*70E*/ u16 pad70E;
+/*710*/ f32 unk710;
+/*70E*/ s8 unk714[0x728 - 0x714];
 /*728*/ f32 unk728;
 /*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
 /*738*/ Vec3f unk738;
