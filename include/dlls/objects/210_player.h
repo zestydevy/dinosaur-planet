@@ -69,7 +69,8 @@ typedef enum {
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;
-    u8 padC[0x1C - 0xC];
+    Vec3f unkC;
+    UNK_TYPE_32 pad18;
     Vec3f unk1C;
     u8 pad28[0x34 - 0x28];
     Object *unk34;
