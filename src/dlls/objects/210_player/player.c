@@ -4757,44 +4757,38 @@ static void dll_210_func_D510(Player_Data* arg0, f32 arg1) {
 }
 
 // offset: 0xD5F0 | func: 74
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_D5F0.s")
-#else
-// https://decomp.me/scratch/9mAUT
 s32 dll_210_func_D5F0(Object* arg0, Player_Data* arg1, f32 arg2) {
     Player_Data* sp2C;
-    s32 temp_v0;
 
     sp2C = arg0->data;
-    if (arg1->unk0.enteredAnimState != 0) {
-        arg1->unk0.unk270 = 0x10;
+    if (arg1->unk272 != 0) {
+        arg1->unk270 = 0x10;
     }
-    temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
-    if (temp_v0 != 0) {
-        return temp_v0;
+    {
+        s32 temp_v0 = dll_210_func_EFB4(arg0, arg1, arg2);
+        if (temp_v0) { return temp_v0; }
     }
-    arg0->speed.f[1] = 0.0f;
+    arg0->speed.f[1] = 0;
     if (arg0->curModAnimId == 0x419) {
-        if (arg1->unk0.unk33A != 0) {
+        if (arg1->unk32E[0xC] != 0) {
             _bss_200 = 3;
             gDLL_2_Camera->vtbl->func10(arg0->srt.transl.f[0], sp2C->unk490.unk10, arg0->srt.transl.f[2]);
             return -0x13;
         }
     } else {
-        func_80023D30(arg0, 0x419, 0.0f, 1U);
-        arg0->srt.yaw = arctan2_f(sp2C->unk490.unk1C.x, sp2C->unk490.unk1C.z);
+        func_80023D30(arg0, 0x419, 0, 1U);
+        arg0->srt.yaw = arctan2_f(sp2C->unk490.unk1C.x, sp2C->unk490.unk1C.z); 
         arg0->srt.transl.f[0] = sp2C->unk490.unk2C.x;
         arg0->srt.transl.f[1] = sp2C->unk490.unk4;
         arg0->srt.transl.f[2] = sp2C->unk490.unk2C.z;
         sp2C->unk490.unkC = sp2C->unk490.unk2C.x;
         sp2C->unk490.unk10 = (sp2C->unk490.unk4 - 26.0f);
         sp2C->unk490.unk14 = sp2C->unk490.unk2C.z;
-        arg1->unk0.animTickDelta = 0.04f;
+        arg1->unk298 = 0.04f;
     }
     gDLL_2_Camera->vtbl->func10(arg0->srt.transl.f[0], sp2C->unk490.unk10, arg0->srt.transl.f[2]);
     return 0;
 }
-#endif
 
 // offset: 0xD788 | func: 75
 typedef struct {
