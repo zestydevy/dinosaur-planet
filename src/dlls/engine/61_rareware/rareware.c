@@ -5,6 +5,7 @@
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/menu.h"
+#include "sys/rcp.h"
 #include "functions.h"
 #include "dll.h"
 #include "types.h"
@@ -27,7 +28,7 @@ void dll_61_ctor(void *dll) {
     u8 temp[4];
     *((u32*)temp) = data_8; // wat
 
-    func_800379D0(0, 0, 0);
+    rcp_set_border_color(0, 0, 0);
     func_80010018(0);
     data_0 = 0;
     data_4 = 0;

@@ -12,6 +12,7 @@
 #include "sys/memory.h"
 #include "sys/objmsg.h"
 #include "game/gametexts.h"
+#include "sys/rcp.h"
 #include "types.h"
 
 #define KRAZOA_ALPHABET_ICONS 0x187

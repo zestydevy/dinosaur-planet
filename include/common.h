@@ -30,6 +30,7 @@
 #include "sys/asset_thread.h"
 #include "sys/generic_stack.h"
 #include "sys/generic_queue.h"
+#include "sys/rcp.h"
 #include "game/gamebits.h"
 #include "game/objects/object_def.h"
 #include "game/objects/object_id.h"

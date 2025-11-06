@@ -44,7 +44,7 @@ typedef struct {
 /*0062*/    s8 unk62;
 } ObjectC0_Data;
 
-enum ObjSetupInitFlags {
+enum ObjInitFlags {
     OBJ_INIT_FLAG1 = 0x1,
     OBJ_INIT_FLAG2 = 0x2,
     OBJ_INIT_FLAG4 = 0x4

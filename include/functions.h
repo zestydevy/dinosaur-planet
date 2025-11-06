@@ -9,9 +9,6 @@
 #include "types.h"
 #include "unktypes.h"
 
-void dl_segment(Gfx **gdl, u32 segment, void *base);
-
-
 void func_800267A4(Object *obj);
 s32 func_80025F40(Object*,Object **,s32 *,s32 *);
 
@@ -55,18 +52,6 @@ void func_8004A67C();
 void dl_set_all_dirty();
 void func_8003DB5C();
 
-void draw_pause_screen_freeze_frame(Gfx** gdl);
-
-void func_80037A14(Gfx**, Mtx **, s32);
-
-/** Draws a 2D texture to screen, scaling it down horizontally (from its left edge) if
-  * widescreen is enabled in order to maintain aspect ratio 
-  */
-void func_8003825C(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
-void func_800382AC(Gfx **gdl, Texture*, s32, s32, s32, s32, s32, s32);
-
-void func_800379D0(u32 red, u32 green, s32 blue);
-
 void func_8003CD6C(s32);
 
 void map_func_80046B58(f32 x, f32 y, f32 z);
@@ -89,11 +74,8 @@ void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
 void map_func_800484A8();
 void map_func_8004773C();
 
-void func_8003798C(u8, u8, u8);
 void func_80041C6C(s32);
 void func_80041D20(s32);
-
-void create_3_megs_quues(OSSched *sched);
 
 void init_textures();
 void init_maps();
@@ -105,9 +87,6 @@ void func_8005C780();
 
 void init_global_map();
 
-s32 schedule_gfx_task(Gfx*, Gfx*, s32);
-s32 func_80037924();
-void func_80037EC8(Gfx**);
 void func_8003E9F0(Gfx **gdl, s32 updateRate);
 s32 func_80041D5C();
 u32 func_80041D74();
@@ -136,8 +115,6 @@ void map_decrement_layer(void);
 /** Applies envFxAction */
 s32 func_80000860(Object *arg0, Object *arg1, u16 arg2, s32 arg3);
 s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
-
-void func_80037F9C(Gfx**, Func_80037F9C_Struct*, s32, s32, s32, s32, s32, s32);
 
 void func_80036438(Object*);
 

@@ -1,15 +1,20 @@
-#include "common.h"
 #include "PR/os_internal.h"
 #include "sys/audio.h"
 #include "sys/dl_debug.h"
+#include "sys/gfx/gx.h"
+#include "sys/main.h"
+#include "sys/print.h"
+#include "sys/rsp_segment.h"
+#include "sys/thread.h"
 #include "sys/scheduler.h"
+#include "functions.h"
 
-UnkSchedStruct D_800918D0 = {0, 0};
-UnkSchedStruct D_800918D8 = {0, 8};
-f32 floatTimer0 = 0.0f;
-f32 floatTimer1 = 0.0f;
-f32 floatTimer2 = 0.0f;
-f32 floatTimer3 = 0.0f;
+GfxTaskMesg D_800918D0 = {0, 0};
+GfxTaskMesg D_800918D8 = {0, 8};
+f32 gAudTaskTimer0 = 0.0f;
+f32 gAudTaskTimer1 = 0.0f;
+f32 gAudTaskTimer2 = 0.0f;
+f32 gAudTaskTimer3 = 0.0f;
 s32 gRetraceCounter32 = 0;
 s32 gCurRSPTaskCounter = 0;
 s32 gCurRDPTaskCounter = 0;
@@ -17,6 +22,9 @@ u64 gRetraceCounter64 = 0;
 
 OSTime gLastGfxYield;
 
+/***********************************************************************
+ * Scheduler API
+ **********************************************************************/
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount) {
     // Initialize scheduler structure
     s->curRSPTask       = NULL;
@@ -52,6 +60,9 @@ void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retr
     osStartThread(&s->thread);
 }
 
+/*
+ * Add a client to the scheduler.  Clients receive messages at retrace time
+ */
 void osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ, u8 id) {
     OSIntMask mask;
 
@@ -94,24 +105,27 @@ OSMesgQueue *osScGetCmdQ(OSSched *s) {
     return &s->cmdQ;
 }
 
-OSMesgQueue *get_sched_interrupt_queue(OSSched *s) {
+OSMesgQueue *osScGetInterruptQ(OSSched *s) {
     return &s->interruptQ;
 }
 
-void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2) {
+void osScGetAudioSPStats(f32 *timer0, f32 *timer1, f32 *timer2) {
     f32 temp = 1.15f;
 
-    *timer0 = floatTimer0 * temp;
-    *timer1 = floatTimer2 * temp;
-    *timer2 = floatTimer3 * temp;
+    *timer0 = gAudTaskTimer0 * temp;
+    *timer1 = gAudTaskTimer2 * temp;
+    *timer2 = gAudTaskTimer3 * temp;
 }
 
+/***********************************************************************
+ * Scheduler implementation
+ **********************************************************************/
 void __scMain(void *arg) {
-    OSMesg msg = 0;
+    OSMesg msg = NULL;
     s32 state;
     OSSched *sc = (OSSched*)arg;
     OSScClient *client;
-    OSScTask *sp = 0, *dp = 0;
+    OSScTask *sp = NULL, *dp = NULL;
 
     while (TRUE) {
         osRecvMesg(&sc->interruptQ, &msg, OS_MESG_BLOCK);
@@ -130,8 +144,8 @@ void __scMain(void *arg) {
                 __scHandleRDP(sc);
                 break;
 
-            case 0x63:
-                func_8003B9C0(sc);
+            case UNK_MSG:
+                sc_signal_do_audio(sc);
                 break;
 
             case PRE_NMI_MSG:
@@ -153,15 +167,15 @@ void __scMain(void *arg) {
     }
 }
 
-void func_8003B9C0(OSSched *sc) {
+void sc_signal_do_audio(OSSched *sc) {
     s32 state;
-    OSScTask *sp = 0, *dp = 0;
+    OSScTask *sp = NULL, *dp = NULL;
 
     if (sc->audioListHead) {
-        sc->doAudio = 1;
+        sc->doAudio = TRUE;
     }
 
-    if (sc->doAudio != 0 && sc->curRSPTask) {
+    if (sc->doAudio && sc->curRSPTask != NULL) {
         __scYield(sc);
         return;
     }
@@ -172,7 +186,7 @@ void func_8003B9C0(OSSched *sc) {
     }
 }
 
-char *get_task_type_string(u32 taskType) {
+char *sc_get_task_type_string(u32 taskType) {
     switch (taskType) {
         case OS_SC_TASK_AUDIO:
             return "(Audio task)";
@@ -213,7 +227,7 @@ static const char str_8009a254[] = "scheduler: Looks like the DP has crashed %s"
 
 void some_dummied_task_func(OSScTask *task) { }
 
-Gfx *func_8003BAD0(OSSched *sc, 
+Gfx *sc_func_8003BAD0(OSSched *sc, 
     char **retFile, u32 *retunkC, s32 *retunk10,
     char **retFile_2, u32 *retunkC_2, s32 *retunk10_2) {
 
@@ -400,11 +414,11 @@ void __scHandleRetrace(OSSched *sc) {
 
     if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
         if (gCurRSPTaskIsSet) {
-            get_task_type_string(sc->curRSPTask->taskType);
+            sc_get_task_type_string(sc->curRSPTask->taskType);
             some_dummied_task_func(sc->curRSPTask);
 
             if (sc->curRSPTask->list.t.type == OS_SC_TASK_AUDIO) {
-                displayListPtr1 = func_8003BAD0(sc, 
+                displayListPtr1 = sc_func_8003BAD0(sc, 
                     &sp_dldi_file, &sp_dldi_unkC, &sp_dldi_unk10, 
                     &sp_dldi_file_2, &sp_dldi_unkC_2, &sp_dldi_unk10_2);
             }
@@ -428,11 +442,11 @@ void __scHandleRetrace(OSSched *sc) {
         }
 
         if (gCurRDPTaskIsSet) {
-            get_task_type_string(sc->curRDPTask->taskType);
+            sc_get_task_type_string(sc->curRDPTask->taskType);
             some_dummied_task_func(sc->curRDPTask);
 
             if (sc->curRDPTask->list.t.type == OS_SC_TASK_AUDIO) {
-                displayListPtr2 = func_8003BAD0(sc, 
+                displayListPtr2 = sc_func_8003BAD0(sc, 
                     &dp_dldi_file, &dp_dldi_unkC, &dp_dldi_unk10, 
                     &dp_dldi_file_2, &dp_dldi_unkC_2, &dp_dldi_unk10_2);
             }
@@ -464,10 +478,10 @@ void __scHandleRetrace(OSSched *sc) {
         unkTask2 = sc->curRSPTask != NULL ? sc->curRSPTask : sc->curRDPTask;
         taskDataPtr = unkTask2->list.t.data_ptr;
 
-        dl_segment((Gfx**)&taskDataPtr, 0, NULL);
-        dl_segment((Gfx**)&taskDataPtr, 1, gFramebufferCurrent);
-        dl_segment((Gfx**)&taskDataPtr, 2, D_800BCCB4);
-        dl_segment((Gfx**)&taskDataPtr, 4, gFramebufferNext - 0x280);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_MAIN, (void*)0);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_ZBUFFER, D_800BCCB4);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_4, gFramebufferNext - 0x280);
 
         diPrintfSetBG(0, 0, 0, 128);
 
@@ -574,7 +588,7 @@ void __scHandleRetrace(OSSched *sc) {
             if (gRetraceCounter64 % 2 == 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
                 if (sc->audioListHead) {
-                    func_8003B9C0(sc);
+                    sc_signal_do_audio(sc);
                 }
             }
         } else if (client->id == OS_SC_ID_VIDEO) {
@@ -583,27 +597,31 @@ void __scHandleRetrace(OSSched *sc) {
     }
 }
 
+/*
+ * __scHandleRSP is called when an RSP task signals that it has
+ * finished or yielded (at the hosts request)
+ */
 void __scHandleRSP(OSSched *sc) {
-    OSScTask *t, *sp = 0, *dp = 0;
+    OSScTask *t, *sp = NULL, *dp = NULL;
     s32 state;
 
     t = sc->curRSPTask;
-    sc->curRSPTask = 0;
+    sc->curRSPTask = NULL;
 
     if (t->list.t.type == M_AUDTASK) {
-        countRegB = osGetCount();
+        gRSPAudTaskDoneTime = osGetCount();
 
-        floatTimer3 = ((countRegB - countRegA) * 60.0f) / 468750.0f;
-        floatTimer1 += floatTimer3;
+        gAudTaskTimer3 = ((gRSPAudTaskDoneTime - gRSPAudTaskFlushTime) * 60.0f) / 468750.0f;
+        gAudTaskTimer1 += gAudTaskTimer3;
 
-        if (floatTimer3 > floatTimer0) {
-            floatTimer0 = floatTimer3;
+        if (gAudTaskTimer3 > gAudTaskTimer0) {
+            gAudTaskTimer0 = gAudTaskTimer3;
         }
 
         if ((gRetraceCounter32 % 1000 == 1) || (gRetraceCounter32 % 1000 == 2)) {
-            floatTimer2 = floatTimer1 / 500.0f;
-            floatTimer1 = 0.0f;
-            floatTimer0 = 0.0f;
+            gAudTaskTimer2 = gAudTaskTimer1 / 500.0f;
+            gAudTaskTimer1 = 0.0f;
+            gAudTaskTimer0 = 0.0f;
         }
     }
 
@@ -625,10 +643,7 @@ void __scHandleRSP(OSSched *sc) {
         } else {
             t->state &= ~OS_SC_NEEDS_RSP;
 
-            // NOTE: added by permuter, doesn't match without it.
-            //       maybe this and the other empty ifs are some kind of asserts
-            //       that didn't get fully compiled out?
-            if (!sc) { }
+            if (!sc) { } // @fake
         }
 
         if ((t->flags & OS_SC_TYPE_MASK) != OS_SC_XBUS) { } // ??
@@ -643,12 +658,16 @@ void __scHandleRSP(OSSched *sc) {
     }
 }
 
+/*
+ * __scHandleRDP is called when an RDP task signals that it has
+ * finished
+ */
 void __scHandleRDP(OSSched *sc) {
-    OSScTask *t, *sp = 0, *dp = 0;
+    OSScTask *t, *sp = NULL, *dp = NULL;
     s32 state;
 
     t = sc->curRDPTask;
-    sc->curRDPTask = 0;
+    sc->curRDPTask = NULL;
 
     t->state &= ~OS_SC_NEEDS_RDP;
 
@@ -660,6 +679,11 @@ void __scHandleRDP(OSSched *sc) {
     }
 }
 
+
+/*
+ * __scTaskReady checks to see if the graphics task is able to run
+ * based on the current state of the RCP.
+ */
 OSScTask *__scTaskReady(OSScTask *t) {
     if (t) {
         // If there is a pending swap bail out til later (next retrace).
@@ -673,11 +697,16 @@ OSScTask *__scTaskReady(OSScTask *t) {
     return NULL;
 }
 
+/*
+ * __scTaskComplete checks to see if the task is complete (all RCP
+ * operations have been performed) and sends the done message to the
+ * client if it is.
+ */
 s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
     if ((t->state & OS_SC_RCP_MASK) == 0) { /* none of the needs bits set */
         if (t->msgQ) {
             if (t->flags & OS_SC_LAST_TASK) {
-                if ((u32)sc->frameCount < 2u) {
+                if (sc->frameCount < 2) {
                     sc->unkTask = t;
                     return 1;
                 }
@@ -706,6 +735,9 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
     return 0;
 }
 
+/*
+ * Place task on either the audio or graphics queue
+ */
 void __scAppendList(OSSched *s, OSScTask *t) {
     u32 type = t->list.t.type;
 
@@ -735,7 +767,7 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
     if (sp) {
         if (sp->list.t.type == M_AUDTASK) {
             osWritebackDCacheAll(); // flush the cache
-            countRegA = osGetCount();
+            gRSPAudTaskFlushTime = osGetCount();
         }
 
         sp->state &= ~(OS_SC_YIELD | OS_SC_YIELDED);
@@ -770,6 +802,9 @@ void __scYield(OSSched *sc) {
     }
 }
 
+/*
+ * Schedules the tasks to be run on the RCP
+ */
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
     s32 avail = availRCP;
     OSScTask *gfx = sc->gfxListHead;
@@ -782,7 +817,7 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
         } else {
             *sp = audio;
             avail &= ~OS_SC_SP;
-            sc->doAudio = 0;
+            sc->doAudio = FALSE;
             sc->audioListHead = sc->audioListHead->next;
 
             if (sc->audioListHead == NULL) {
