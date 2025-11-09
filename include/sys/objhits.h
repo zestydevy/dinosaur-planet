@@ -19,7 +19,7 @@ typedef struct Unk80026DF4 {
 
 // size: 0x6C
 typedef struct Unk80027934 {
-    u8 pad0[64];
+    Vec4f unk0[4];
     f32 unk40[4];
     s8 unk50[4];
     s8 unk54[4];
@@ -136,5 +136,6 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 void func_80026184(Object* arg0, Object* arg1);
 void func_8002681C(Object* obj);
 void func_80028D2C(Object* obj);
+void func_80026B84(Object* obj);
 
 #endif

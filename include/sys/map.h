@@ -556,5 +556,6 @@ Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);
 Texture* func_8004A1E8(s32 match_value);
+ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
 
 #endif
