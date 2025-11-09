@@ -20,9 +20,11 @@ struct Object;
 
 // This could be bit fields? so 0, 1, 2, 4, 8 (0 << 0, 0 << 1, 0 << 2 etc)
 enum ObjectGroup {
-    GROUP_NONE = 0,
-    GROUP_UNK1 = 1,
-    GROUP_UNK16 = 16
+	GROUP_NONE = 0,
+	GROUP_UNK1 = 1, // player?
+	GROUP_UNK16 = 16,
+	GROUP_UNK46 = 46,
+	GROUP_UNK48 = 48
 };
 
 //used for PlayerPosBuffer and something else
@@ -144,19 +146,11 @@ typedef struct {
 } ObjectStruct64;
 
 typedef struct {
-    s32 unk0;
-    UNK_PTR *unk4;
-} ObjectStruct5C;
+    s32 size; // size of data
+    void *data;
+} BinFileEntry;
 
-typedef struct {
-    s32 unk0; // size of thing at unk4
-    UNK_PTR *unk4;
-} ObjectEvent;
-
-typedef struct {
-    s32 sizeInBytes;
-    UNK_PTR *ptr;
-} WeaponDataPtr;
+typedef BinFileEntry ObjectEvent;
 
 typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
@@ -233,12 +227,12 @@ typedef struct Object {
 /*0050*/    ObjDef* def;
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectStruct58 *unk58;
-/*005C*/    ObjectStruct5C *ptr0x5c;
+/*005C*/    BinFileEntry *unk5C;
 /*0060*/    ObjectEvent *curEvent;
-/*0064*/    ObjectStruct64* ptr0x64; //ShadowData?
+/*0064*/    ObjectStruct64* unk64; //ShadowData?
 /*0068*/    DLL_IObject *dll;
-/*006C*/    s16 (*ptr0x6c)[9];
-/*0070*/    void* ptr0x70;
+/*006C*/    s16 (*unk6C)[9];
+/*0070*/    void* unk70;
 /*0074*/    Vec3f* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts;

@@ -103,7 +103,7 @@ s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3) {
     animState->unkC[0] = 0.0f;
     animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * animProgress;
     
-    if (object->linkedObject && object->linkedObject->group == 0x30) {
+    if (object->linkedObject && object->linkedObject->group == GROUP_UNK48) {
         ((ObjectAnim_Data_2*)object->linkedObject->data)->unk84 &= 0xFFFE;
     }
     

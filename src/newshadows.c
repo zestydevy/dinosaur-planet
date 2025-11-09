@@ -132,7 +132,7 @@ void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 
 void func_8004D844(Object *obj, f32 x, f32 y, f32 z)
 {
-    ObjectStruct64 *temp_v0 = obj->ptr0x64;
+    ObjectStruct64 *temp_v0 = obj->unk64;
 
     if (temp_v0) {
         temp_v0->tr.x = x;
@@ -145,8 +145,8 @@ void func_8004D844(Object *obj, f32 x, f32 y, f32 z)
 void func_8004D880(Object *arg0) {
     ObjectStruct64* temp_v0;
 
-    if (arg0->ptr0x64 != NULL) {
-        arg0->ptr0x64->flags &= ~0x20;
+    if (arg0->unk64 != NULL) {
+        arg0->unk64->flags &= ~0x20;
     }
 }
 
@@ -154,7 +154,7 @@ u32 func_8004D8A4(Object* obj, u32 addr, s32 arg2) {
     ObjectStruct64 *obj64;
 
     obj64 = (ObjectStruct64 *) mmAlign4(addr);
-    obj->ptr0x64 = obj64;
+    obj->unk64 = obj64;
     addr = (u32)(obj64 + 1);
     obj64->unk4 = texture_load((s32) -obj->def->shadowTexture, 0);
     obj64->unk0 = obj->def->unk00;
@@ -248,25 +248,25 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     // @fake
     if (1) {}
     if (func_80041DA4() == 0) {
-        arg0->ptr0x64->gdl = NULL;
+        arg0->unk64->gdl = NULL;
         return 0;
     }
     if (D_80092C24 >= 0x1C3) {
-        arg0->ptr0x64->gdl = NULL;
+        arg0->unk64->gdl = NULL;
         return 0;
     }
     if (D_80092C2C >= 0x1A5) {
-        arg0->ptr0x64->gdl = NULL;
+        arg0->unk64->gdl = NULL;
         return 0;
     }
     if (D_80092C34 >= 0x141) {
-        arg0->ptr0x64->gdl = NULL;
+        arg0->unk64->gdl = NULL;
         return 0;
     }
     D_800BB140 = D_800BB144;
     D_800BB148 = D_800BB14C;
     D_800BB170 = 0;
-    temp_s1 = arg0->ptr0x64;
+    temp_s1 = arg0->unk64;
     if (temp_s1->flags & 0x1000) {
         temp_s1->unk36 -= updateRate * 2;
         if (temp_s1->unk36 <= 0) {
@@ -312,7 +312,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     }
     if (!(temp_s1->flags & 4)) {
         if (arg2 == 0) {
-            arg0->ptr0x64->gdl = NULL;
+            arg0->unk64->gdl = NULL;
             return 1;
         }
         D_800BB170 = 1;
@@ -440,7 +440,7 @@ void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     Vec3f sp50;
     Vec3f sp44;
 
-    temp_s0 = arg0->ptr0x64;
+    temp_s0 = arg0->unk64;
     if (temp_s0->gdl == NULL) {
         return;
     }
@@ -485,24 +485,24 @@ void func_8004E7A8(Object* arg0) {
     f32 sp50[8] = D_80092C74.unk0;
 
     if (func_80041DA4() == 0) {
-        arg0->ptr0x64->gdl = NULL;
+        arg0->unk64->gdl = NULL;
         return;
     }
     D_800BB170 = 0;
-    temp_s1 = arg0->ptr0x64;
+    temp_s1 = arg0->unk64;
     if (D_80092BE8 != 0) {
         temp_s1->gdl2 = NULL;
         D_80092BFC = 1;
         if (D_80092C28 >= 0x227) {
-            arg0->ptr0x64->gdl = NULL;
+            arg0->unk64->gdl = NULL;
             return;
         }
         if (D_80092C30 >= 0x26D) {
-            arg0->ptr0x64->gdl = NULL;
+            arg0->unk64->gdl = NULL;
             return;
         }
         if (D_80092C38 >= 0x209) {
-            arg0->ptr0x64->gdl = NULL;
+            arg0->unk64->gdl = NULL;
             return;
         }
         D_800BB174 = D_800BB178;
@@ -942,7 +942,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
 
     sp280 = 0;
     sp26C = 0;
-    spAC = arg0->ptr0x64;
+    spAC = arg0->unk64;
     camera = get_camera();
     if (arg0->parent != NULL) {
         inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8, &spDC, &spE0, arg0->parent);
@@ -1108,7 +1108,7 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
     ObjectStruct64* spAC;
 
     sp344 = 0;
-    spAC = arg0->ptr0x64;
+    spAC = arg0->unk64;
     bzero(&D_800B9B10, 0x4C);
     temp_fs4 = (f32) spAC->unk36 * 0.015625f;
     camera = get_camera();
@@ -1252,7 +1252,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
     f32 f2;
     f32 sp2C;
 
-    sp2C = arg0->ptr0x64->unk2c;
+    sp2C = arg0->unk64->unk2c;
     if (D_800BB170 != 0) {
         f0 = (arg1->x * arg2->pos.x) + (arg1->z * arg2->pos.z) + arg2->pos.w;
         f0 = -f0;
@@ -1300,7 +1300,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
     if (temp_ft3 != 0.0f) {
         temp_ft3 = (sqrtf(temp_ft3) / (100.0f * (sp2C / 3.0f))) * 255.0f;
     }
-    if (arg0->ptr0x64->flags & 0x40) {
+    if (arg0->unk64->flags & 0x40) {
         arg9[0] = 0xFF;
     } else {
         arg9[0] = 255.0f - (s16) temp_ft3;
@@ -1448,7 +1448,7 @@ void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) ^ 0;
     sp30 = fsin16_precise(-sp2A);
     temp_fv0 = fcos16_precise(-sp2A);
-    temp_fa1 = obj->ptr0x64->unk2c * 0.3333f;
+    temp_fa1 = obj->unk64->unk2c * 0.3333f;
     for (i = 0; i < 8; i++) {
         sp40[0] = D_800B9840[i * 3 + 0] * arg2;
         sp40[1] = D_800B9840[i * 3 + 1] * arg2;
@@ -1488,9 +1488,9 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     srt.scale = 1.0f;
     srt.roll = 0;
 
-    temp_fs1 = arg1->ptr0x64->unk14.x;
-    temp_fa1 = arg1->ptr0x64->unk14.y;
-    temp_fs2 = arg1->ptr0x64->unk14.z;
+    temp_fs1 = arg1->unk64->unk14.x;
+    temp_fa1 = arg1->unk64->unk14.y;
+    temp_fs2 = arg1->unk64->unk14.z;
     s8 = 8;
     if (temp_fs1 < 0.0f) {
         var_fv1 = -temp_fs1;
@@ -1510,7 +1510,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     } else {
         var_v0 = arctan2_f(var_fa0, temp_fa1);
     }
-    if (arg1->ptr0x64->flags & 0x200) {
+    if (arg1->unk64->flags & 0x200) {
         srt.yaw = arg1->srt.yaw;
     } else {
         srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
@@ -1523,7 +1523,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     temp_fs4 = 0.3333f;
     var_s1 = 0;
     for (i = 0; var_s1 < s8; var_s1++, arg2++, i++) {
-        if (arg1->ptr0x64->flags & 0x100) {
+        if (arg1->unk64->flags & 0x100) {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
             pos.y = (D_800B97E0[i * 3 + 1] - 8.0f) * arg3;
             pos.z = D_800B97E0[i * 3 + 2] * 1.5f;
@@ -1531,7 +1531,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
             temp_fv0 = temp_s7 * ((0x4000 - var_v0) / 16384.0f);
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
-            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->ptr0x64->unk2c * temp_fs4)) - temp_fv0;
+            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->unk64->unk2c * temp_fs4)) - temp_fv0;
         }
         rotate_vec3(&srt, pos.f);
         arg2->x = pos.x;

@@ -881,7 +881,7 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     var_fs0 = -1.0f;
     for (i = 0; i < objCount; i++) {
         obj = objs[i];
-        if ((obj->group == 0x2E) && (arg3 != obj->mapID)) {
+        if ((obj->group == GROUP_UNK46) && (arg3 != obj->mapID)) {
             curveSetup = (CurveSetup*)obj->setup;
             if ((curveSetup != NULL) && (curveSetup->unk19 == 0x16)) {
                 temp_fv0 = obj->positionMirror.x - arg0, 

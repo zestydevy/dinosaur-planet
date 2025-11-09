@@ -34,7 +34,7 @@ void SHswaplift_control(Object *self) {
     if (self->unk58->unk10f > 0) {
         for (index = 0; index < self->unk58->unk10f; index++) {
             listedObject = (Object*)self->unk58->unk100[index];
-            if (listedObject->group == 1) {
+            if (listedObject->group == GROUP_UNK1) {
                 dostuff = TRUE;
             }
         }
