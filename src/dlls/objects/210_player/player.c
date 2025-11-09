@@ -443,7 +443,7 @@ void dll_210_setup(Object* arg0, u32 arg1) {
         data->unk8A0 = 6U;
     }
     for (i = 0; i < data->unk8A0; i++) {
-        data->unk3B4[i].unk34.ptr = mmAlloc(0x320, 0x1A, NULL);
+        data->unk3B4[i].unk34.data = mmAlloc(0x320, 0x1A, NULL);
         obj_load_weapondata(arg0, arg0->id, &data->unk3B4[i].unk34, data->unk3B4[i].unk0, 0U);
     }
     data->unk8BA = main_get_bits(BIT_Spirit_Bits);
