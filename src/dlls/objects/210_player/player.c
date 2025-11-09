@@ -3640,7 +3640,7 @@ void dll_210_func_9F1C(Object* arg0, s32 arg1) {
 }
 
 // offset: 0xA018 | func: 53
-s32 dll_210_func_A018(void) {
+static s32 dll_210_func_A018(void) {
     return 1;
 }
 
@@ -7935,8 +7935,20 @@ s32 dll_210_func_178EC(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x17A88 | func: 112
-s32 dll_210_func_17A88(Object* arg0, Player_Data* arg1, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17A88.s")
+s32 dll_210_func_17A88(Object* arg0, Player_Data* arg1, f32 arg2) {
+    arg1->unk0.unk341 = 3;
+    if (arg1->unk0.enteredAnimState != 0) {
+        func_80023D30(arg0, 0x88, 0.25f, 0U);
+    }
+
+    arg1->unk0.animTickDelta = 0.01f;
+    arg1->unk0.unk278 = 0.0f;
+    gDLL_18_objfsa->vtbl->func7(arg0, &arg1->unk0, arg2, 2);
+    if (arg1->unk0.unk33A != 0) {
+        return dll_210_func_A018() + 1;
+    }
+    return 0;
+}
 
 // offset: 0x17B5C | func: 113
 s32 dll_210_func_17B5C(Object* arg0, Player_Data* arg1, f32 arg2);
