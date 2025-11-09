@@ -8033,8 +8033,17 @@ s32 dll_210_func_17DA8(Object* player, Player_Data* objdata, f32 arg2) {
 }
 
 // offset: 0x17EF0 | func: 116
-s32 dll_210_func_17EF0(Object *player, Player_Data *objdata, f32 arg2) {}
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17EF0.s")
+s32 dll_210_func_17EF0(Object* player, Player_Data* objdata, f32 arg2) {
+    if (objdata->unk0.enteredAnimState != 0) {
+        dll_210_func_9F1C(player, 0);
+        gDLL_3_Animation->vtbl->func17(8, player, -1);
+    }
+    objdata->unk0.unk341 = 3;
+    objdata->unk0.unk278 = 0.0f;
+    objdata->unk0.unk27C = 0.0f;
+    return 0;
+}
+
 
 // offset: 0x17F90 | func: 117
 s32 dll_210_func_17F90(Object *player, Player_Data *objdata, f32 arg2) {}
