@@ -61,6 +61,7 @@ static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1);
 static void dll_210_func_16204(Object *obj, ObjFSA_Data *fsa);
 static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa);
 static void dll_210_func_18DB0(Object* obj, ObjFSA_Data* fsa);
+static  s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
 
 // These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
@@ -97,7 +98,6 @@ static void dll_210_func_18DB0(Object* obj, ObjFSA_Data* fsa);
 /* static */ void dll_210_func_A058(Object* arg0);
 /* static */ int dll_210_func_24FC(Object *player, Player_Data *data);
 /* static */ void dll_210_func_1DAB0(Object *player);
-/* static */ s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -8037,11 +8037,6 @@ s32 dll_210_func_17EF0(Object *player, Player_Data *objdata, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17EF0.s")
 
 // offset: 0x17F90 | func: 117
-#ifndef NON_MATCHING
-s32 dll_210_func_17F90(Object *player, Player_Data *objdata, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_17F90.s")
-#else
-// Matches but requires dll_210_func_18E10 as static
 s32 dll_210_func_17F90(Object* player, Player_Data* objdata, f32 arg2) {
     s32 temp_v0;
 
@@ -8062,14 +8057,8 @@ s32 dll_210_func_17F90(Object* player, Player_Data* objdata, f32 arg2) {
     }
     return 0;
 }
-#endif
 
 // offset: 0x180D4 | func: 118
-#ifndef NON_MATCHING
-s32 dll_210_func_180D4(Object *player, Player_Data *objdata, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_180D4.s")
-#else
-// Matches but requires dll_210_func_18E10 as static
 s32 dll_210_func_180D4(Object* player, Player_Data* objdata, f32 arg2) {
     u8 temp_t4;
     u8 sp56;
@@ -8161,7 +8150,6 @@ s32 dll_210_func_180D4(Object* player, Player_Data* objdata, f32 arg2) {
     }
     return 0;
 }
-#endif
 
 // offset: 0x18630 | func: 119
 s32 dll_210_func_18630(Object* player, Player_Data* objdata, f32 arg2) {
@@ -8281,8 +8269,27 @@ static void dll_210_func_18DB0(Object* obj, ObjFSA_Data* fsa) {
 }
 
 // offset: 0x18E10 | func: 121
-s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_18E10.s")
+static s32 dll_210_func_18E10(Object* player, Player_Data* objdata, f32 arg2) {
+    Player_Data *objdata2 = player->data;
+
+    if (objdata->unk0.unk33D != 1) {
+        return -1;
+    }
+
+    if (objdata2->unk878 == 1 || objdata2->unk878 == 2) {
+        return 0;
+    }
+
+    if (objdata->unk0.unk310 & 0x8000) {
+        return 0x3C;
+    }
+
+    if (objdata->unk0.unk310 & 0x4000) {
+        return 0x3E;
+    }
+
+    return 0;
+}
 
 // offset: 0x18E80 | func: 122
 s32 dll_210_func_18E80(Object* player, Player_Data* objdata, f32 arg2) {
