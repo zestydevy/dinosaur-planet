@@ -678,13 +678,13 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if (def->numSequenceBones != 0) {
-        obj->ptr0x6c = (void*)mmAlign4(addr);
-        addr = (u32)obj->ptr0x6c + (def->numSequenceBones * 0x12);
+        obj->unk6C = (void*)mmAlign4(addr);
+        addr = (u32)obj->unk6C + (def->numSequenceBones * 0x12);
     }
 
     if (def->numAnimatedFrames != 0) {
-        obj->ptr0x70 = (void*)mmAlign4(addr);
-        addr = (u32)obj->ptr0x70 + (def->numAnimatedFrames * 0x10);
+        obj->unk70 = (void*)mmAlign4(addr);
+        addr = (u32)obj->unk70 + (def->numAnimatedFrames * 0x10);
     }
 
     if (def->unk9b != 0) {
@@ -807,7 +807,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if (modflags & MODFLAGS_100) {
         size = mmAlign4(size);
-        size = mmAlign8(size + sizeof(ObjectStruct5C));
+        size = mmAlign8(size + sizeof(BinFileEntry));
         size += 0x400;
     }
 
@@ -1115,7 +1115,7 @@ u32 obj_init_event_data(s32 objId, Object *obj, u32 addr) {
     obj->curEvent = (ObjectEvent*)mmAlign4(addr);
 
     addr = mmAlign8((u32)obj->curEvent + sizeof(ObjectEvent));
-    obj->curEvent->unk4 = (UNK_PTR*)addr;
+    obj->curEvent->data = (UNK_PTR*)addr;
 
     addr += 0x50;
 
@@ -1132,7 +1132,7 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
     
     eventList = obj->def->pEvent;
 
-    outEvent->unk0 = 0;
+    outEvent->size = 0;
     
     if (eventList == NULL) {
         return;
@@ -1144,18 +1144,18 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
 
             offset = event->fileOffsetInBytes;
 
-            outEvent->unk0 = event->fileSizeInBytes;
+            outEvent->size = event->fileSizeInBytes;
 
-            if (outEvent->unk0 > 80) {
-                outEvent->unk0 = 80;
+            if (outEvent->size > 80) {
+                outEvent->size = 80;
             }
 
             if (eventList) {}
 
             if (!dontQueueLoad) {
-                queue_load_file_region_to_ptr((void**)outEvent->unk4, OBJEVENT_BIN, offset, outEvent->unk0);
+                queue_load_file_region_to_ptr((void**)outEvent->data, OBJEVENT_BIN, offset, outEvent->size);
             } else {
-                read_file_region(OBJEVENT_BIN, outEvent->unk4, offset, outEvent->unk0);
+                read_file_region(OBJEVENT_BIN, outEvent->data, offset, outEvent->size);
             }
 
             break;
@@ -1166,23 +1166,23 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
 u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
-    } else {
-        obj->ptr0x5c = (ObjectStruct5C*)mmAlign4(addr);
-
-        addr = mmAlign8((u32)obj->ptr0x5c + sizeof(ObjectStruct5C));
-        obj->ptr0x5c->unk4 = (UNK_PTR*)addr;
-
-        return addr + 0x400;
     }
+
+    obj->unk5C = (ObjectEvent*)mmAlign4(addr);
+
+    addr = mmAlign8((u32)obj->unk5C + sizeof(ObjectEvent));
+    obj->unk5C->data = (UNK_PTR*)addr;
+
+    return addr + 0x400;
 }
 
-void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
+void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 queueLoad) {
     ObjDefWeaponData *weaponDataList;
     ObjDefWeaponData *weaponData;
     
     weaponDataList = obj->def->pWeaponData;
 
-    outParam->sizeInBytes = 0;
+    outParam->size = 0;
     
     if (weaponDataList == NULL) {
         return;
@@ -1194,18 +1194,18 @@ void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 i
 
             offset = weaponData->fileOffsetInBytes;
 
-            outParam->sizeInBytes = weaponData->fileSizeInBytes;
+            outParam->size = weaponData->fileSizeInBytes;
 
-            if (outParam->sizeInBytes > 1024) {
-                outParam->sizeInBytes = 1024;
+            if (outParam->size > 1024) {
+                outParam->size = 1024;
             }
 
             if (weaponDataList) {}
 
             if (queueLoad) {
-                queue_load_file_region_to_ptr((void**)outParam->ptr, WEAPONDATA_BIN, offset, outParam->sizeInBytes);
+                queue_load_file_region_to_ptr((void**)outParam->data, WEAPONDATA_BIN, offset, outParam->size);
             } else {
-                read_file_region(WEAPONDATA_BIN, outParam->ptr, offset, outParam->sizeInBytes);
+                read_file_region(WEAPONDATA_BIN, outParam->data, offset, outParam->size);
             }
 
             break;
@@ -1506,17 +1506,17 @@ void obj_free_object(Object *obj, s32 param2) {
         gDLL_11_Newlfx->vtbl->func0(obj, obj, &newLfxStruct, 0, 0, 0);
     }
 
-    if (obj->ptr0x64 != NULL) {
+    if (obj->unk64 != NULL) {
         if (obj->def->shadowType == 1) {
             func_8004D974(1);
         }
 
-        if (obj->ptr0x64->unk4 != NULL) {
-            texture_destroy(obj->ptr0x64->unk4);
+        if (obj->unk64->unk4 != NULL) {
+            texture_destroy(obj->unk64->unk4);
         }
 
-        if (obj->ptr0x64->unk8 != NULL) {
-            texture_destroy(obj->ptr0x64->unk8);
+        if (obj->unk64->unk8 != NULL) {
+            texture_destroy(obj->unk64->unk8);
         }
     }
 

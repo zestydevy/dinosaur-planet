@@ -59,7 +59,7 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         self->srt.transl.x = temp_v0_2->pos.x;
         self->srt.transl.y = temp_v0_2->pos.y;
         self->srt.transl.z = temp_v0_2->pos.z;
-        self->ptr0x64->flags |= 0x20200;
+        self->unk64->flags |= 0x20200;
         obj_init_mesg_queue(self, 1);
     }
 }

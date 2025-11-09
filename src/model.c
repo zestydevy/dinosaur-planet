@@ -1165,7 +1165,7 @@ void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
     {
         if (object->ptr0x50->unk10[object->modelInstIdx + j + 1] != 0xff)
         {
-            s16 *src = &object->ptr0x6c[i * 9];
+            s16 *src = &object->unk6C[i * 9];
             u32 code = amap[object->ptr0x50->unk10[object->modelInstIdx + j + 1]] << 6;
 
             for (k = 0; k < 3; k++)

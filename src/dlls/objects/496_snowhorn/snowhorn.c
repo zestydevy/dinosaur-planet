@@ -275,7 +275,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
             gDLL_27->vtbl->setup_terrain_collider(&objdata->unk170, 4, _data_230, _data_260, &sp34);
             gDLL_27->vtbl->reset(snowhorn, &objdata->unk170);
         }
-        snowhorn->ptr0x64->flags |= 0xA10;
+        snowhorn->unk64->flags |= 0xA10;
     }
 }
 #endif

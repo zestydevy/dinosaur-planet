@@ -43,9 +43,9 @@ void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
         }
     }
 
-    if (self->ptr0x64){
-        self->ptr0x64->unk3A = 0x64;
-        self->ptr0x64->unk3B = 0x96;
+    if (self->unk64){
+        self->unk64->unk3A = 0x64;
+        self->unk64->unk3B = 0x96;
     }
 }
 
@@ -82,7 +82,7 @@ void animobj_control(Object *self) {
             matchObject = object;
         }
 
-        if (object->unkB4 == -2 && object->group == 0x10) {
+        if (object->unkB4 == -2 && object->group == GROUP_UNK16) {
             objdata = object->data;    
             if (new_var == objdata->unk63){
                 matches++;

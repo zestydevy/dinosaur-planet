@@ -102,9 +102,9 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
         objdata->soundID2 = SOUND_371;
     }
 
-    if (self->ptr0x64 != NULL) {
-        self->ptr0x64->flags |= 0x8000;
-        self->ptr0x64->unk2c = self->ptr0x64->unk0 + self->ptr0x64->unk0;
+    if (self->unk64 != NULL) {
+        self->unk64->flags |= 0x8000;
+        self->unk64->unk2c = self->unk64->unk0 + self->unk64->unk0;
     }
 }
 

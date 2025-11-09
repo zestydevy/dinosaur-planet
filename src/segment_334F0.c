@@ -794,7 +794,7 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
         for (index = 0; index < romdef->numSequenceBones; index++){
             jointID = romdef->pSequenceBones[(listPosition + 1) + obj->modelInstIdx];
             if (jointID != 0xFF && sequenceBoneID == romdef->pSequenceBones[listPosition])
-                sequenceBoneData = obj->ptr0x6c[index];
+                sequenceBoneData = obj->unk6C[index];
 
             listPosition += 1 + romdef->numModels;
         }
@@ -818,7 +818,7 @@ void* func_800348A0(Object* arg0, s32 texType, s32 arg2) {
             temp = i << 1;
             if (texType == *(temp + texData)) {
                 temp2 = i << 4;
-                var_v1 = &((u8*)arg0->ptr0x70)[temp2];
+                var_v1 = &((u8*)arg0->unk70)[temp2];
             }
         }
     }
