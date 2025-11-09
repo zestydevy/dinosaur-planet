@@ -17,6 +17,7 @@ class Obj(TypedDict):
     dll_id: int
     group: int
     name: str
+    folder: str
 
 def emit_header(objects: list[Obj]):
     dir = SCRIPT_DIR.joinpath("objh")
@@ -75,15 +76,15 @@ def emit_markdown(objects: list[Obj]):
 
 def print_objects(objects: Iterable[Obj], dll_ids: bool):
     print("{:>5} {:>6} {:>6} {:>6} {}".format(
-            "id", "tabidx", "dll", "group", "name"))
+            "id", "tabidx", "dll", "group", "folder", "name"))
     for obj in objects:
         if dll_ids:
             id_str = "0x{:X}".format(obj["dll_id"])
-            print("{:>5} {:>6} {:>6} {:>6} {}".format(
-                obj["id"], obj["tabidx"], id_str, obj["group"], obj["name"]))
+            print("{:>5} {:>6} {:>6} {:>6} {:>6} {}".format(
+                obj["id"], obj["tabidx"], id_str, obj["group"], obj["folder"], obj["name"]))
         else:
-            print("{:>5} {:>6} {:>6} {:>6} {}".format(
-                obj["id"], obj["tabidx"], obj["dll_num"], obj["group"], obj["name"]))
+            print("{:>5} {:>6} {:>6} {:>6} {:>6} {}".format(
+                obj["id"], obj["tabidx"], obj["dll_num"], obj["group"], obj["folder"], obj["name"]))
 
 def list_objects(objects: list[Obj], sort_key: str, dll_ids: bool):
     objects.sort(key=lambda o: o[sort_key])
@@ -136,6 +137,8 @@ def read_objects(objects_bin: BufferedReader,
         objects_bin.seek(offset + 0x58, os.SEEK_SET)
         dll_id = struct.unpack_from(">H", objects_bin.read(2))[0]
         obj_group = struct.unpack_from(">h", objects_bin.read(2))[0]
+        objects_bin.seek(offset + 0x6f, os.SEEK_SET)
+        folder = struct.unpack_from(">B", objects_bin.read(1))[0]
 
         if dll_id >= 0x8000:
             dll_num = (dll_id - 0x8000) + 209
@@ -154,7 +157,8 @@ def read_objects(objects_bin: BufferedReader,
             "dll_num": dll_num,
             "dll_id": dll_id,
             "group": obj_group,
-            "name": name
+            "name": name,
+            "folder": folder
         })
 
         tabidx += 1
@@ -164,12 +168,13 @@ def read_objects(objects_bin: BufferedReader,
 def main():
     parser = argparse.ArgumentParser(description="Lists Dinosaur Planet object definitions.")
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
-    parser.add_argument("--by", type=str, choices=["dll", "group", "tabidx", "id"], help="Group/sort by.")
+    parser.add_argument("--by", type=str, choices=["dll", "group", "tabidx", "id", "folder"], help="Group/sort by.")
     parser.add_argument("--id", type=str, help="Filter by object ID.")
     parser.add_argument("--tabidx", type=str, help="Filter by object tab index.")
     parser.add_argument("--dll", type=str, help="Filter by DLL.")
     parser.add_argument("--group", type=str, help="Filter by object group.")
     parser.add_argument("--name", type=str, help="Filter by object name.")
+    parser.add_argument("--folder", type=str, help="Filter by folder.")
     parser.add_argument("--dll-id", action="store_true", default=False, dest="dll_id", 
                         help="Use DLL IDs instead of tab indexes. Affects filter inputs and display.")
     parser.add_argument("--markdown", action="store_true", default=False, help="Generate Markdown tables.")
@@ -208,6 +213,9 @@ def main():
     if args.group != None:
         group = int(args.group, base=0)
         objects = [o for o in objects if o["group"] == group]
+    if args.folder != None:
+        folder = int(args.folder, base=0)
+        objects = [o for o in objects if o["folder"] == folder]
     if args.name != None:
         name = args.name.lower()
         objects = [o for o in objects if name in o["name"].lower()]
@@ -216,6 +224,8 @@ def main():
         list_grouped(objects, group_key="dll_num", dll_ids=args.dll_id)
     elif args.by == "group":
         list_grouped(objects, group_key="group", dll_ids=args.dll_id)
+    elif args.by == "folder":
+        list_grouped(objects, group_key="folder", dll_ids=args.dll_id)
     elif args.by == "tabidx":
         list_objects(objects, sort_key="tabidx", dll_ids=args.dll_id)
     else:
