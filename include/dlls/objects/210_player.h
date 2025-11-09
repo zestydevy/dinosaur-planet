@@ -72,7 +72,7 @@ typedef struct UnkArg4 {
     Vec3f unkC;
     UNK_TYPE_32 pad18;
     Vec3f unk1C;
-    u8 pad28[0x34 - 0x28];
+    Vec3f unk28;
     Object *unk34;
     Object *unk38;
     f32 unk3C;
@@ -83,7 +83,7 @@ typedef struct UnkArg4 {
     u8 pad47;
     f32 unk48;
     f32 unk4C;
-    u32 pad50;
+    f32 unk50;
     s16 unk54;
 } UnkArg4;
 
