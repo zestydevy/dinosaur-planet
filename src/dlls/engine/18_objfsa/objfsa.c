@@ -457,7 +457,7 @@ void objfsa_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x1008 | func: 11 | export: 11
-void objfsa_func_1008(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
+void objfsa_func_1008(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
     f32 var_fv0;
     f32 var_fv1;
     s32 var_v1;

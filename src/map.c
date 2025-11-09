@@ -1049,10 +1049,10 @@ void func_80043FD8(s8* arg0) {
             var_s2[0] = 0;
         } else {
             var_s2[0] = func_800456AC(object);
-            if ((var_s2[0] != 0) && (object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
+            if ((var_s2[0] != 0) && (object->unk64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
                 func_8004DBAC(object, 0, 0, gUpdateRate);
             }
-            if ((object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
+            if ((object->unk64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
                 func_8004E7A8(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {

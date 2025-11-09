@@ -29,10 +29,10 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
 
     self->unk36 = 0xFF;
     func_800267A4(self);
-    temp_v0 = self->ptr0x64;
-    if (self->ptr0x64) {
+    temp_v0 = self->unk64;
+    if (self->unk64) {
         temp_v0->flags |= 0x810;
-        temp_v0_2 = self->ptr0x64;
+        temp_v0_2 = self->unk64;
         temp_v0_2->unk2c = temp_v0_2->unk0 * 2.5f;
     }
 

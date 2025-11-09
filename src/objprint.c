@@ -139,7 +139,7 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
         yaw = obj->srt.yaw;
     }
 
-    unk64 = obj->ptr0x64;
+    unk64 = obj->unk64;
     if (unk64 != NULL)
     {
         if (unk64->gdl != NULL)
@@ -170,7 +170,7 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
 
             func_800032C4(&mygdl, &myrspMtxs, &srt, 1.0f, 0, NULL);
 
-            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(obj->ptr0x64->gdl));
+            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(obj->unk64->gdl));
             dl_set_all_dirty();
             func_8003DB5C();
         }
@@ -345,11 +345,11 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param
 void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;
 
-    if (object->ptr0x64->gdl) {
-        if (object->ptr0x64->flags & 0x20) {
-            shadowTransform.transl.x = object->ptr0x64->tr.x;
-            shadowTransform.transl.y = object->ptr0x64->tr.y;
-            shadowTransform.transl.z = object->ptr0x64->tr.z;
+    if (object->unk64->gdl) {
+        if (object->unk64->flags & 0x20) {
+            shadowTransform.transl.x = object->unk64->tr.x;
+            shadowTransform.transl.y = object->unk64->tr.y;
+            shadowTransform.transl.z = object->unk64->tr.z;
         } else {
             shadowTransform.transl.x = object->srt.transl.x;
             shadowTransform.transl.y = object->srt.transl.y;
@@ -361,7 +361,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.scale = 0.05f;
 
         func_800032C4(gdl, mtx, (SRT* ) &shadowTransform, 1.0f, 0.0f, NULL);
-        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->ptr0x64->gdl));
+        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->unk64->gdl));
 
         if (object->parent) {
             setup_rsp_matrices_for_object(gdl, mtx, object->parent);

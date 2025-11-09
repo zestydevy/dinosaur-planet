@@ -17,7 +17,8 @@ typedef struct Player_Data3B4 {
     s16 unk0;
     s16 unk2;
     u32 unk4;
-    s16 unk8;
+    s8 unk8;
+    s8 unk9;
     s16 padA;
     f32 unkC;
     f32 unk10;
@@ -29,7 +30,10 @@ typedef struct Player_Data3B4 {
     f32 unk28;
     s16 unk2C;
     s16 unk2E;
-    u32 pad30;
+    u8 unk30;
+    u8 pad31;
+    u8 pad32;
+    u8 pad33;
     WeaponDataPtr unk34;
 } Player_Data3B4;
 
@@ -263,7 +267,8 @@ typedef struct {
 /*898*/ s16 *unk898;
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
-/*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];
+/*8A1*/ u8 unk8A1;
+/*8A2*/ u8 pad8A2[0x8A4 - 0x8A2];
 /*8A4*/ u8 unk8A4;
 /*8A5*/ u8 unk8A5;
 /*8A6*/ u8 unk8A6;

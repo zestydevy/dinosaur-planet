@@ -678,13 +678,13 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     }
 
     if (def->numSequenceBones != 0) {
-        obj->ptr0x6c = (void*)mmAlign4(addr);
-        addr = (u32)obj->ptr0x6c + (def->numSequenceBones * 0x12);
+        obj->unk6C = (void*)mmAlign4(addr);
+        addr = (u32)obj->unk6C + (def->numSequenceBones * 0x12);
     }
 
     if (def->numAnimatedFrames != 0) {
-        obj->ptr0x70 = (void*)mmAlign4(addr);
-        addr = (u32)obj->ptr0x70 + (def->numAnimatedFrames * 0x10);
+        obj->unk70 = (void*)mmAlign4(addr);
+        addr = (u32)obj->unk70 + (def->numAnimatedFrames * 0x10);
     }
 
     if (def->unk9b != 0) {
@@ -807,7 +807,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if (modflags & MODFLAGS_100) {
         size = mmAlign4(size);
-        size = mmAlign8(size + sizeof(ObjectStruct5C));
+        size = mmAlign8(size + sizeof(WeaponDataPtr));
         size += 0x400;
     }
 
@@ -1167,10 +1167,10 @@ u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
     } else {
-        obj->ptr0x5c = (ObjectStruct5C*)mmAlign4(addr);
+        obj->unk5C = (WeaponDataPtr*)mmAlign4(addr);
 
-        addr = mmAlign8((u32)obj->ptr0x5c + sizeof(ObjectStruct5C));
-        obj->ptr0x5c->unk4 = (UNK_PTR*)addr;
+        addr = mmAlign8((u32)obj->unk5C + sizeof(WeaponDataPtr));
+        obj->unk5C->ptr = (UNK_PTR*)addr;
 
         return addr + 0x400;
     }
@@ -1506,17 +1506,17 @@ void obj_free_object(Object *obj, s32 param2) {
         gDLL_11_Newlfx->vtbl->func0(obj, obj, &newLfxStruct, 0, 0, 0);
     }
 
-    if (obj->ptr0x64 != NULL) {
+    if (obj->unk64 != NULL) {
         if (obj->def->shadowType == 1) {
             func_8004D974(1);
         }
 
-        if (obj->ptr0x64->unk4 != NULL) {
-            texture_destroy(obj->ptr0x64->unk4);
+        if (obj->unk64->unk4 != NULL) {
+            texture_destroy(obj->unk64->unk4);
         }
 
-        if (obj->ptr0x64->unk8 != NULL) {
-            texture_destroy(obj->ptr0x64->unk8);
+        if (obj->unk64->unk8 != NULL) {
+            texture_destroy(obj->unk64->unk8);
         }
     }
 
