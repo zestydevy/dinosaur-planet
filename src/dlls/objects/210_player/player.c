@@ -7896,8 +7896,10 @@ s32 dll_210_func_16EB4(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x178A0 | func: 110
-s32 dll_210_func_178A0(Object* arg0, Player_Data* arg1, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_178A0.s")
+s32 dll_210_func_178A0(Object* arg0, Player_Data* arg1, f32 arg2) {
+    dll_210_func_7260(arg0, arg0->data);
+    return 0xE;
+}
 
 // offset: 0x178EC | func: 111
 s32 dll_210_func_178EC(Object* arg0, Player_Data* arg1, f32 arg2);
