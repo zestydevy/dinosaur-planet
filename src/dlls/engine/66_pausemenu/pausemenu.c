@@ -18,6 +18,7 @@
 #include "sys/menu.h"
 
 #include "dlls/engine/66_pausemenu.h"
+#include "sys/rcp.h"
 #include "types.h"
 
 #include "prevent_bss_reordering.h"

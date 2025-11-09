@@ -497,18 +497,18 @@ void *func_800213A0(s32 idx) {
     return (void*)((u32)gFile_TABLES_BIN + gFile_TABLES_TAB[idx] * 4);
 }
 
-Object *obj_create(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4, Object *parent) {
+Object *obj_create(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, Object *parent) {
     Object *obj;
 
     obj = NULL;
-    queue_load_map_object(&obj, setup, setupFlags, mapID, param4, parent, 0);
-    obj_add_object(obj, setupFlags);
+    queue_load_map_object(&obj, setup, initFlags, mapID, param4, parent, 0);
+    obj_add_object(obj, initFlags);
 
     return obj;
 }
 
 // actual name: objSetupObjectActual ?
-Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4, Object *parent, s32 param6) {
+Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, Object *parent, s32 param6) {
     ObjDef *def;
     s32 modelCount;
     s32 var;
@@ -526,7 +526,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
 
     update_pi_manager_array(0, objId);
 
-    if (setupFlags & OBJSETUP_FLAG_2) {
+    if (initFlags & OBJ_INIT_FLAG2) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
@@ -556,7 +556,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
         objHeader.unkB0 |= 0x80;
     }
 
-    if (setupFlags & OBJSETUP_FLAG_4) {
+    if (initFlags & OBJ_INIT_FLAG4) {
         objHeader.srt.flags |= 0x2000;
     }
 
@@ -571,10 +571,10 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     objHeader.curModAnimIdLayered = -1;
     objHeader.unkB4 = -1;
     objHeader.srt.scale = def->scale;
-    objHeader.unk36 = 0xFF;
+    objHeader.opacity = 255;
     objHeader.mesgQueue = NULL;
-    objHeader.unk3C = setup->loadDistance << 3;
-    objHeader.unk40 = setup->fadeDistance << 3;
+    objHeader.loadDistance = setup->loadDistance * 8;
+    objHeader.fadeDistance = setup->fadeDistance * 8;
     objHeader.dll = NULL;
 
     if (def->dllID != 0) {
@@ -714,7 +714,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 setupFlags, s32 mapID, s32 param4,
     return obj;
 }
 
-void obj_add_object(Object *obj, u32 setupFlags) {
+void obj_add_object(Object *obj, u32 initFlags) {
     if (obj->parent != NULL) {
         transform_point_by_object(
             obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z,
@@ -765,7 +765,7 @@ void obj_add_object(Object *obj, u32 setupFlags) {
         }
     }
 
-    if (setupFlags & OBJSETUP_FLAG_1) {
+    if (initFlags & OBJ_INIT_FLAG1) {
         obj->unkB0 |= 0x10;
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
@@ -807,7 +807,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if (modflags & MODFLAGS_100) {
         size = mmAlign4(size);
-        size = mmAlign8(size + sizeof(WeaponDataPtr));
+        size = mmAlign8(size + sizeof(ObjectEvent));
         size += 0x400;
     }
 
@@ -1115,7 +1115,7 @@ u32 obj_init_event_data(s32 objId, Object *obj, u32 addr) {
     obj->curEvent = (ObjectEvent*)mmAlign4(addr);
 
     addr = mmAlign8((u32)obj->curEvent + sizeof(ObjectEvent));
-    obj->curEvent->unk4 = (UNK_PTR*)addr;
+    obj->curEvent->ptr = (UNK_PTR*)addr;
 
     addr += 0x50;
 
@@ -1132,7 +1132,7 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
     
     eventList = obj->def->pEvent;
 
-    outEvent->unk0 = 0;
+    outEvent->size = 0;
     
     if (eventList == NULL) {
         return;
@@ -1144,18 +1144,18 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
 
             offset = event->fileOffsetInBytes;
 
-            outEvent->unk0 = event->fileSizeInBytes;
+            outEvent->size = event->fileSizeInBytes;
 
-            if (outEvent->unk0 > 80) {
-                outEvent->unk0 = 80;
+            if (outEvent->size > 80) {
+                outEvent->size = 80;
             }
 
             if (eventList) {}
 
             if (!dontQueueLoad) {
-                queue_load_file_region_to_ptr((void**)outEvent->unk4, OBJEVENT_BIN, offset, outEvent->unk0);
+                queue_load_file_region_to_ptr((void**)outEvent->ptr, OBJEVENT_BIN, offset, outEvent->size);
             } else {
-                read_file_region(OBJEVENT_BIN, outEvent->unk4, offset, outEvent->unk0);
+                read_file_region(OBJEVENT_BIN, outEvent->ptr, offset, outEvent->size);
             }
 
             break;
@@ -1167,22 +1167,22 @@ u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
     } else {
-        obj->unk5C = (WeaponDataPtr*)mmAlign4(addr);
+        obj->unk5C = (ObjectEvent*)mmAlign4(addr);
 
-        addr = mmAlign8((u32)obj->unk5C + sizeof(WeaponDataPtr));
+        addr = mmAlign8((u32)obj->unk5C + sizeof(ObjectEvent));
         obj->unk5C->ptr = (UNK_PTR*)addr;
 
         return addr + 0x400;
     }
 }
 
-void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad) {
+void obj_load_weapondata(Object *obj, s32 param2, ObjectEvent *outParam, s32 id, u8 queueLoad) {
     ObjDefWeaponData *weaponDataList;
     ObjDefWeaponData *weaponData;
     
     weaponDataList = obj->def->pWeaponData;
 
-    outParam->sizeInBytes = 0;
+    outParam->size = 0;
     
     if (weaponDataList == NULL) {
         return;
@@ -1194,18 +1194,18 @@ void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 i
 
             offset = weaponData->fileOffsetInBytes;
 
-            outParam->sizeInBytes = weaponData->fileSizeInBytes;
+            outParam->size = weaponData->fileSizeInBytes;
 
-            if (outParam->sizeInBytes > 1024) {
-                outParam->sizeInBytes = 1024;
+            if (outParam->size > 1024) {
+                outParam->size = 1024;
             }
 
             if (weaponDataList) {}
 
             if (queueLoad) {
-                queue_load_file_region_to_ptr((void**)outParam->ptr, WEAPONDATA_BIN, offset, outParam->sizeInBytes);
+                queue_load_file_region_to_ptr((void**)outParam->ptr, WEAPONDATA_BIN, offset, outParam->size);
             } else {
-                read_file_region(WEAPONDATA_BIN, outParam->ptr, offset, outParam->sizeInBytes);
+                read_file_region(WEAPONDATA_BIN, outParam->ptr, offset, outParam->size);
             }
 
             break;
@@ -1558,8 +1558,8 @@ void *obj_alloc_create_info(s32 size, s32 objId) {
     setup->uID = -1;
     setup->loadDistance = 100;
     setup->fadeDistance = 50;
-    setup->loadParamA = 8;
-    setup->loadParamB = 4;
+    setup->loadFlags = OBJSETUP_LOAD_FLAG8;
+    setup->fadeFlags = OBJSETUP_FADE_FLAG4;
     setup->objId = objId;
 
     return (void*)setup;
@@ -1594,10 +1594,10 @@ void func_80023464(s32 playerno) {
         if (playerno > PLAYER_NONE) {
             bzero(&playerSetup, sizeof(playerSetup));
             playerSetup.uID = -1;
-            playerSetup.setup = 0;
-            playerSetup.loadParamA = 1;
-            playerSetup.loadParamB = 4;
-            playerSetup.loadDistance = -1;
+            playerSetup.setupExclusions1 = 0;
+            playerSetup.loadFlags = OBJSETUP_LOAD_FLAG1;
+            playerSetup.fadeFlags = OBJSETUP_FADE_FLAG4;
+            playerSetup.loadDistance = 255;
             playerSetup.fadeDistance = 100;
             playerSetup.objId = D_80091664[playerno];
             playerSetup.quarterSize = 24;
@@ -1605,7 +1605,7 @@ void func_80023464(s32 playerno) {
             playerSetup.y = y;
             playerSetup.z = z;
 
-            newPlayer = obj_create(&playerSetup, OBJSETUP_FLAG_1, -1, -1, NULL);
+            newPlayer = obj_create(&playerSetup, OBJ_INIT_FLAG1, -1, -1, NULL);
         }
 
         gDLL_2_Camera->vtbl->func0(newPlayer, x - 50.0f, y, z - 50.0f);
@@ -1640,10 +1640,10 @@ void func_80023628() {
     if (playerno > PLAYER_NONE) {
         bzero(&playerSetup, sizeof(playerSetup));
         playerSetup.uID = -1;
-        playerSetup.setup = 0;
-        playerSetup.loadParamA = 1;
-        playerSetup.loadParamB = 4;
-        playerSetup.loadDistance = -1;
+        playerSetup.setupExclusions1 = 0;
+        playerSetup.loadFlags = OBJSETUP_LOAD_FLAG1;
+        playerSetup.fadeFlags = OBJSETUP_FADE_FLAG4;
+        playerSetup.loadDistance = 255;
         playerSetup.fadeDistance = 100;
         playerSetup.objId = D_80091664[playerno];
         playerSetup.quarterSize = 24;
@@ -1651,7 +1651,7 @@ void func_80023628() {
         playerSetup.y = y;
         playerSetup.z = z;
 
-        player = obj_create(&playerSetup, OBJSETUP_FLAG_1, -1, -1, NULL);
+        player = obj_create(&playerSetup, OBJ_INIT_FLAG1, -1, -1, NULL);
     }
 
     D_80091668.unk8 = fsin16_precise(savedPlayerLocation->rotationY << 8) * 60.0f + x;
@@ -1679,7 +1679,7 @@ void func_80023894(Object* object, s32 objectId) {
     D_80091688.unk18 = sidekickSetup->unk18;
     D_80091688.unk19 = sidekickSetup->unk19;
 
-    obj_create((ObjSetup*)&D_80091688, OBJSETUP_FLAG_1, -1, -1, NULL);
+    obj_create((ObjSetup*)&D_80091688, OBJ_INIT_FLAG1, -1, -1, NULL);
 }
 
 Object *get_player(void) {

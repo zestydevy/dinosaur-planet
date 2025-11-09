@@ -44,7 +44,7 @@ void dll_26_func_34(CurveSetup* arg0) {
     }
     
     var_v1 = 0;
-    while (var_v1 < _bss_28A8 && _bss_8[var_v1].uID < arg0->base.uID) {
+    while (var_v1 < _bss_28A8 && _bss_8[var_v1].uID < arg0->uID) {
         var_v1 += 1;
     }
     
@@ -57,7 +57,7 @@ void dll_26_func_34(CurveSetup* arg0) {
 
     _bss_28A8 += 1;
     _bss_8[var_v1].setup = arg0;
-    _bss_8[var_v1].uID = arg0->base.uID;
+    _bss_8[var_v1].uID = arg0->uID;
 }
 #endif
 
@@ -66,7 +66,7 @@ void dll_26_func_10C(CurveSetup* setup) {
     s32 i;
     
     i = 0;
-    while (i < _bss_28A8 && setup->base.uID != _bss_8[i].uID) {
+    while (i < _bss_28A8 && setup->uID != _bss_8[i].uID) {
         i++;
     }
 
@@ -112,9 +112,9 @@ s32 dll_26_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
 
         do {
             if ((arg4 <= 0) || (curveSetup->unk19 == arg3[k])) {
-                xDiff = curveSetup->base.x - x;
-                yDiff = curveSetup->base.y - y;
-                zDiff = curveSetup->base.z - z;
+                xDiff = curveSetup->pos.x - x;
+                yDiff = curveSetup->pos.y - y;
+                zDiff = curveSetup->pos.z - z;
                 dist = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
                 if (dist < var_fs0) {
                     var_fs0 = dist;
@@ -134,7 +134,7 @@ s32 dll_26_func_1E4(f32 x, f32 y, f32 z, s32 *arg3, s32 arg4, s32 arg5) {
         var_s4 = var_s5;
     }
     if (var_s4 != NULL) {
-        return var_s4->base.uID;
+        return var_s4->uID;
     }
     return -1;
 }
@@ -325,17 +325,17 @@ s32 dll_26_func_854(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
     spAC[0] = spAC[1] = -1;
     sp9C[0] = sp9C[1] = 0.0f;
-    sp6C[0].x = arg0->base.x;
-    sp6C[0].y = arg0->base.y;
-    sp6C[0].z = arg0->base.z;
+    sp6C[0].x = arg0->pos.x;
+    sp6C[0].y = arg0->pos.y;
+    sp6C[0].z = arg0->pos.z;
     for (var_s1 = 0, s3 = 1; var_s1 < 4; var_s1++, s3 <<= 1) {
         if (arg0->unk1C[var_s1] >= 0) {
             temp_v0 = dll_26_func_39C(arg0->unk1C[var_s1]);
             if (temp_v0 != NULL) {
                 temp_s2 = arg1 == arg0->unk1C[var_s1];
-                sp6C[1].x = temp_v0->base.x;
-                sp6C[1].y = temp_v0->base.y;
-                sp6C[1].z = temp_v0->base.z;
+                sp6C[1].x = temp_v0->pos.x;
+                sp6C[1].y = temp_v0->pos.y;
+                sp6C[1].z = temp_v0->pos.z;
                 dll_26_func_648(arg2, arg3, arg4, sp6C);
                 temp_fv0 = sp6C[2].x - arg2;
                 temp_fv1 = sp6C[2].y - arg3;
@@ -369,7 +369,7 @@ void dll_26_func_A34(CurveSetup* arg0, s32* arg1) {
     arg1[2] = -1;
     arg1[3] = -1;
     if (arg0 != NULL) {
-        arg1[1] = arg0->base.uID;
+        arg1[1] = arg0->uID;
         
         for (var_a0 = 0; var_a0 < 4; var_a0++) {
             if (arg0->unk1C[var_a0] != -1) {
@@ -405,9 +405,9 @@ s32 dll_26_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
     for (i = 0; i < 4; i++) {
         sp50[i] = dll_26_func_39C(arg0[i]);
         if (sp50[i] != NULL) {
-            arg1[i] = sp50[i]->base.x;
-            arg2[i] = sp50[i]->base.y;
-            arg3[i] = sp50[i]->base.z;
+            arg1[i] = sp50[i]->pos.x;
+            arg2[i] = sp50[i]->pos.y;
+            arg3[i] = sp50[i]->pos.z;
             var_s3++;
         }
     }
@@ -418,13 +418,13 @@ s32 dll_26_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
     for (i = 0; i < 4; i++) {
         if (sp50[i] == NULL) {
             if (i == 0) {
-                arg1[i] = sp50[1]->base.x + (sp50[1]->base.x - sp50[2]->base.x);
-                arg2[i] = sp50[1]->base.y + (sp50[1]->base.y - sp50[2]->base.y);
-                arg3[i] = sp50[1]->base.z + (sp50[1]->base.z - sp50[2]->base.z);
+                arg1[i] = sp50[1]->pos.x + (sp50[1]->pos.x - sp50[2]->pos.x);
+                arg2[i] = sp50[1]->pos.y + (sp50[1]->pos.y - sp50[2]->pos.y);
+                arg3[i] = sp50[1]->pos.z + (sp50[1]->pos.z - sp50[2]->pos.z);
             } else if (i == 3) {
-                arg1[i] = sp50[2]->base.x + (sp50[2]->base.x - sp50[1]->base.x);
-                arg2[i] = sp50[2]->base.y + (sp50[2]->base.y - sp50[1]->base.y);
-                arg3[i] = sp50[2]->base.z + (sp50[2]->base.z - sp50[1]->base.z);
+                arg1[i] = sp50[2]->pos.x + (sp50[2]->pos.x - sp50[1]->pos.x);
+                arg2[i] = sp50[2]->pos.y + (sp50[2]->pos.y - sp50[1]->pos.y);
+                arg3[i] = sp50[2]->pos.z + (sp50[2]->pos.z - sp50[1]->pos.z);
             }
         }
     }
@@ -465,13 +465,13 @@ s32 dll_26_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
                 if (arg4 != NULL) {
                     arg4[var_s5 >> 2] = arg0->unk19;
                 }
-                arg1[var_s5] = arg0->base.x;
-                arg2[var_s5] = arg0->base.y;
-                arg3[var_s5] = arg0->base.z;
+                arg1[var_s5] = arg0->pos.x;
+                arg2[var_s5] = arg0->pos.y;
+                arg3[var_s5] = arg0->pos.z;
                 var_s5 = var_s5 + 1;
-                arg1[var_s5] = temp_v0->base.x;
-                arg2[var_s5] = temp_v0->base.y;
-                arg3[var_s5] = temp_v0->base.z;
+                arg1[var_s5] = temp_v0->pos.x;
+                arg2[var_s5] = temp_v0->pos.y;
+                arg3[var_s5] = temp_v0->pos.z;
                 var_s5 = var_s5 + 1;
                 arg1[var_s5] = 2.0f * (fsin16_precise((s16) (arg0->unk2C << 8)) * (f32) arg0->unk2E);
                 arg2[var_s5] = 2.0f * (fsin16_precise((s16) (arg0->unk2D << 8)) * (f32) arg0->unk2E);
@@ -491,13 +491,13 @@ s32 dll_26_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
                 if (arg4 != NULL) {
                     arg4[var_s5 >> 2] = arg0->unk19;
                 }
-                arg1[var_s5] = arg0->base.x;
-                arg2[var_s5] = arg0->base.y;
-                arg3[var_s5] = arg0->base.z;
+                arg1[var_s5] = arg0->pos.x;
+                arg2[var_s5] = arg0->pos.y;
+                arg3[var_s5] = arg0->pos.z;
                 var_s5 = var_s5 + 1;
-                arg1[var_s5] = temp_v0->base.x;
-                arg2[var_s5] = temp_v0->base.y;
-                arg3[var_s5] = temp_v0->base.z;
+                arg1[var_s5] = temp_v0->pos.x;
+                arg2[var_s5] = temp_v0->pos.y;
+                arg3[var_s5] = temp_v0->pos.z;
                 var_s5 = var_s5 + 1;
                 arg1[var_s5] = 2.0f * (fsin16_precise((s16) (arg0->unk2C << 8)) * (f32) arg0->unk2E);
                 arg2[var_s5] = 2.0f * (fsin16_precise((s16) (arg0->unk2D << 8)) * (f32) arg0->unk2E);
@@ -574,16 +574,16 @@ f32 dll_26_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5
     for (spAC = 0; spAC < _bss_28A8; spAC++) {
         temp_s2 = _bss_8[spAC].setup;
         if ((arg1 == temp_s2->unk18) && (arg0 == temp_s2->unk19)) {
-            sp7C[0].x = temp_s2->base.x;
-            sp7C[0].y = temp_s2->base.y;
-            sp7C[0].z = temp_s2->base.z;
+            sp7C[0].x = temp_s2->pos.x;
+            sp7C[0].y = temp_s2->pos.y;
+            sp7C[0].z = temp_s2->pos.z;
             for (var_s1 = 0; var_s1 < 4; var_s1++) {
                 if (!(temp_s2->unk1B & (1 << var_s1))) {
                     temp_v0 = dll_26_func_39C(temp_s2->unk1C[var_s1]);
                     if (temp_v0 != NULL) {
-                        sp7C[1].x = temp_v0->base.x;
-                        sp7C[1].y = temp_v0->base.y;
-                        sp7C[1].z = temp_v0->base.z;
+                        sp7C[1].x = temp_v0->pos.x;
+                        sp7C[1].y = temp_v0->pos.y;
+                        sp7C[1].z = temp_v0->pos.z;
                         temp_fv0 = dll_26_func_648(arg2, arg3, arg4, sp7C);
                         if (temp_fv0 < 0) {
                             var_fa0 = -temp_fv0;
@@ -621,9 +621,9 @@ f32 dll_26_func_174C(Object* arg0, s32 arg1) {
 
     temp_v0 = dll_26_func_39C(arg1);
     if ((temp_v0 != NULL) && (arg0 != NULL)) {
-        temp_fv0 = temp_v0->base.x - arg0->srt.transl.x;
-        temp_fv1 = temp_v0->base.y - arg0->srt.transl.y;
-        temp_fa1 = temp_v0->base.z - arg0->srt.transl.z;
+        temp_fv0 = temp_v0->pos.x - arg0->srt.transl.x;
+        temp_fv1 = temp_v0->pos.y - arg0->srt.transl.y;
+        temp_fa1 = temp_v0->pos.z - arg0->srt.transl.z;
         return sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1) + (temp_fa1 * temp_fa1));
     }
     return -1.0f;
@@ -637,8 +637,8 @@ f32 dll_26_func_17F4(f32 arg0, f32 arg1, s32 arg2) {
 
     temp_v0 = dll_26_func_39C(arg2);
     if (temp_v0 != NULL) {
-        temp_fv0 = temp_v0->base.x - arg0;
-        temp_fv1 = temp_v0->base.z - arg1;
+        temp_fv0 = temp_v0->pos.x - arg0;
+        temp_fv1 = temp_v0->pos.z - arg1;
         return sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1));
     }
     return -1.0f;
@@ -702,7 +702,7 @@ s32 dll_26_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
         return -1;
     }
     if (var_s2 == 1) {
-        *arg3 = arg0->base.uID;
+        *arg3 = arg0->uID;
         return sp50[0];
     }
     if (var_s2 >= 2) {
@@ -716,7 +716,7 @@ s32 dll_26_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
                 }
             }
         }
-        *arg3 = arg0->base.uID;
+        *arg3 = arg0->uID;
         var_s2 = rand_next(0, var_s2 - 1);
         return sp50[var_s2];
     }
@@ -757,7 +757,7 @@ s32 dll_26_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
     if (arg0 == NULL) {
         return -1;
     }
-    dll_26_func_1420(arg0->base.uID, &sp6F0);
+    dll_26_func_1420(arg0->uID, &sp6F0);
     sp720 = 0;
     for (sp70 = 0; sp70 < 4; sp70++) {
         if (arg0->unk1C[sp70] >= 0) {
@@ -765,7 +765,7 @@ s32 dll_26_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
             var_s0 = 1;
             sp1BC[sp6F0] = 1;
             temp_v0 = dll_26_func_1420(arg0->unk1C[sp70], &sp6F4);
-            sp7C[0] = SQ(temp_v0->base.x - arg0->base.x) + SQ(temp_v0->base.y - arg0->base.y) + SQ(temp_v0->base.z - arg0->base.z);
+            sp7C[0] = SQ(temp_v0->pos.x - arg0->pos.x) + SQ(temp_v0->pos.y - arg0->pos.y) + SQ(temp_v0->pos.z - arg0->pos.z);
             sp11C[0] = sp6F4;
             sp1BC[sp6F4] = 1;
             sp70C = 0;
@@ -787,7 +787,7 @@ s32 dll_26_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
                         if (temp_s4->unk1C[var_s2] >= 0) {
                             temp_v0 = dll_26_func_1420(temp_s4->unk1C[var_s2], &sp6F4);
                             if (temp_v0 != NULL && sp1BC[sp6F4] == 0 && var_s0 < 40) {
-                                temp_fa1 = SQ(temp_s4->base.x - temp_v0->base.x) + temp_fs0 + SQ(temp_s4->base.y - temp_v0->base.y) + SQ(temp_s4->base.z - temp_v0->base.z);
+                                temp_fa1 = SQ(temp_s4->pos.x - temp_v0->pos.x) + temp_fs0 + SQ(temp_s4->pos.y - temp_v0->pos.y) + SQ(temp_s4->pos.z - temp_v0->pos.z);
                                 var_a2 = 0;
                                 while (var_a2 < var_s0 && temp_fa1 < sp7C[var_a2]) {
                                     var_a2++;
@@ -816,7 +816,7 @@ s32 dll_26_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
         return -1;
     }
     if (sp720 == 1) {
-        *arg3 = arg0->base.uID;
+        *arg3 = arg0->uID;
         return sp6F8[0];
     }
     if (sp720 >= 2) {
@@ -831,7 +831,7 @@ s32 dll_26_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
                 sp720--;
             }
         }
-        *arg3 = arg0->base.uID;
+        *arg3 = arg0->uID;
         for (var_a3 = 0; var_a3 < sp720; var_a3++) {
             if (sp6D8[var_a3] < sp6D8[temp]) {
                 temp = var_a3;
@@ -851,7 +851,7 @@ s32 dll_26_func_218C(s32 arg0) {
     for (i = 0; i < _bss_28A8; i++) {
         temp_a0 = _bss_8[i].setup;
         if ((temp_a0->unk19 == 0x15) && (arg0 == temp_a0->type15.unk34)) {
-            return temp_a0->base.uID;
+            return temp_a0->uID;
         }
     }
     return -1;
@@ -891,7 +891,7 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 
                 if (var_fs0 == -1.0f || temp_fv0_2 < var_fs1) {
                     var_fs1 = temp_fv0_2;
-                    var_fs0 = (f32) (u32) curveSetup->base.uID;
+                    var_fs0 = (f32) (u32) curveSetup->uID;
                 }
             }
         }
@@ -929,9 +929,9 @@ s32 dll_26_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
         if (var_s0 != -1) {
             temp_v0 = dll_26_func_39C(var_s0);
             if (dll_26_func_2AE8(arg1, arg2, arg3, var_s1, temp_v0, 1000.0f) != 0) {
-                temp_fv0 = var_s1->base.x - arg1;
-                temp_fv1 = var_s1->base.y - arg2;
-                temp_fa1 = var_s1->base.z - arg3;
+                temp_fv0 = var_s1->pos.x - arg1;
+                temp_fv1 = var_s1->pos.y - arg2;
+                temp_fa1 = var_s1->pos.z - arg3;
                 temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa1));
                 if (temp_fv0 < arg4[0]) {
                     arg4[0] = temp_fv0;
@@ -960,10 +960,10 @@ static s32 dll_26_func_2AE8(f32 a0, f32 a1, f32 a2, CurveSetup* a3, CurveSetup* 
     f32 temp_ft1;
     f32 temp_fv1;
 
-    temp_fv0 = a3->base.x;
-    temp_fv1 = a3->base.z;
-    temp_fa1 = a4->base.x;
-    temp_ft4 = a4->base.z;
+    temp_fv0 = a3->pos.x;
+    temp_fv1 = a3->pos.z;
+    temp_fa1 = a4->pos.x;
+    temp_ft4 = a4->pos.z;
     temp_ft5 = (temp_fa1 * temp_fv1) - (temp_fv0 * temp_ft4);
     temp_ft1 = ((temp_ft4 - temp_fv1) * a0) + ((temp_fv0 - temp_fa1) * a2) + temp_ft5;
     if ((temp_ft1 <= 0.0f && temp_ft5 >= 0.0f) || (temp_ft1 >= 0.0f && temp_ft5 < 0.0f)) {
@@ -1006,19 +1006,19 @@ void dll_26_func_31E0(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg
 
     temp_v0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
     if (temp_v0 == NULL) {
-        *arg1 = arg0->base.x;
-        *arg2 = arg0->base.y;
-        *arg3 = arg0->base.z;
+        *arg1 = arg0->pos.x;
+        *arg2 = arg0->pos.y;
+        *arg3 = arg0->pos.z;
         return;
     }
 
-    xDiff = temp_v0->base.x - arg0->base.x;
-    yDiff = temp_v0->base.y - arg0->base.y;
-    zDiff = temp_v0->base.z - arg0->base.z;
+    xDiff = temp_v0->pos.x - arg0->pos.x;
+    yDiff = temp_v0->pos.y - arg0->pos.y;
+    zDiff = temp_v0->pos.z - arg0->pos.z;
     
-    *arg1 = arg0->base.x + xDiff * arg4;
-    *arg2 = arg0->base.y + yDiff * arg4;
-    *arg3 = arg0->base.z + zDiff * arg4;
+    *arg1 = arg0->pos.x + xDiff * arg4;
+    *arg2 = arg0->pos.y + yDiff * arg4;
+    *arg3 = arg0->pos.z + zDiff * arg4;
 }
 
 // offset: 0x32D8 | func: 32 | export: 33
@@ -1068,22 +1068,22 @@ f32 dll_26_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
             arg3 = temp_v0_2;
         }
         arg0 = dll_26_func_39C(dll_26_func_438(arg0, 0));
-        xDiff = arg0->base.x - arg2[0];
-        yDiff = arg0->base.y - arg2[1];
-        zDiff = arg0->base.z - arg2[2];
+        xDiff = arg0->pos.x - arg2[0];
+        yDiff = arg0->pos.y - arg2[1];
+        zDiff = arg0->pos.z - arg2[2];
         magnitude = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
         do {
             if (arg0 == arg1) {
-                xDiff = arg3[0] - arg0->base.x;
-                yDiff = arg3[1] - arg0->base.y;
-                zDiff = arg3[2] - arg0->base.z;
+                xDiff = arg3[0] - arg0->pos.x;
+                yDiff = arg3[1] - arg0->pos.y;
+                zDiff = arg3[2] - arg0->pos.z;
                 var_s2 = 1;
                 magnitude += sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
             } else {
                 temp_v0_4 = dll_26_func_39C(dll_26_func_438(arg0, 0));
-                xDiff = temp_v0_4->base.x - arg0->base.x;
-                yDiff = temp_v0_4->base.y - arg0->base.y;
-                zDiff = temp_v0_4->base.z - arg0->base.z;
+                xDiff = temp_v0_4->pos.x - arg0->pos.x;
+                yDiff = temp_v0_4->pos.y - arg0->pos.y;
+                zDiff = temp_v0_4->pos.z - arg0->pos.z;
                 magnitude += sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
                 arg0 = temp_v0_4;
             }
@@ -1108,7 +1108,7 @@ s32 dll_26_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
     for (var_v0 = 0; var_v0 < _bss_28A8 && var_s1 < 0x14; var_v0++) {
         temp_v1 = _bss_8[var_v0].setup;
         if (temp_v1->unk19 == 0x17) {
-            sp6C[var_s1] = temp_v1->base.uID;
+            sp6C[var_s1] = temp_v1->uID;
             var_s1 += 1;
         }
     }
@@ -1150,17 +1150,17 @@ s32 dll_26_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
     spAC[0] = spAC[1] = -1;
     sp9C[0] = sp9C[1] = 5000000.0f;
-    sp6C[0].x = arg0->base.x;
-    sp6C[0].y = arg0->base.y;
-    sp6C[0].z = arg0->base.z;
+    sp6C[0].x = arg0->pos.x;
+    sp6C[0].y = arg0->pos.y;
+    sp6C[0].z = arg0->pos.z;
     for (var_s1 = 0, s3 = 1; var_s1 < 4; var_s1++, s3 <<= 1) {
         if (arg0->unk1C[var_s1] >= 0) {
             temp_v0 = dll_26_func_39C(arg0->unk1C[var_s1]);
             if (temp_v0 != NULL) {
                 temp_s2 = arg1 == arg0->unk1C[var_s1];
-                sp6C[1].x = temp_v0->base.x;
-                sp6C[1].y = temp_v0->base.y;
-                sp6C[1].z = temp_v0->base.z;
+                sp6C[1].x = temp_v0->pos.x;
+                sp6C[1].y = temp_v0->pos.y;
+                sp6C[1].z = temp_v0->pos.z;
                 dll_26_func_648(arg2, arg3, arg4, sp6C);
                 temp_fv0 = sp6C[2].x - arg2;
                 temp_fv1 = sp6C[2].y - arg3;
@@ -1219,14 +1219,14 @@ s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
         var_v0_2 = 0;
         do {
             if ((temp_s0->unk19 == arg1[var_v0_2]) || (arg2 <= 0)) {
-                temp_fs0 = temp_s0->base.x - arg0->srt.transl.f[0];
-                temp_fv0 = temp_s0->base.y - arg0->srt.transl.f[1];
-                temp_fv1 = temp_s0->base.z - arg0->srt.transl.f[2];
+                temp_fs0 = temp_s0->pos.x - arg0->srt.transl.f[0];
+                temp_fv0 = temp_s0->pos.y - arg0->srt.transl.f[1];
+                temp_fv1 = temp_s0->pos.z - arg0->srt.transl.f[2];
                 temp_fs0 = sqrtf((temp_fs0 * temp_fs0) + (temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1));
                 if ((temp_fs0 < var_fs2)) {
-                    spF0.x = temp_s0->base.x;
-                    spF0.y = temp_s0->base.y + 10.0f;
-                    spF0.z = temp_s0->base.z;
+                    spF0.x = temp_s0->pos.x;
+                    spF0.y = temp_s0->pos.y + 10.0f;
+                    spF0.z = temp_s0->pos.z;
                     func_80007EE0(&spF0, &sp104);
                     temp_t5 = func_80008048(&sp104, &spFC, NULL, &spE6, 0);
     
@@ -1236,9 +1236,9 @@ s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
                     }
                 }
                 if ((arg3 == temp_s0->unk18) && (temp_fs0 < var_fs3)) {
-                    spF0.x = temp_s0->base.x;
-                    spF0.y = temp_s0->base.y + 10.0f;
-                    spF0.z = temp_s0->base.z;
+                    spF0.x = temp_s0->pos.x;
+                    spF0.y = temp_s0->pos.y + 10.0f;
+                    spF0.z = temp_s0->pos.z;
                     func_80007EE0(&spF0, &sp104);
                     temp_t5 = func_80008048(&sp104, &spFC, NULL, &spE6, 0);
     
@@ -1257,7 +1257,7 @@ s32 dll_26_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
         spDC = spD8;
     }
     if (spDC != NULL) {
-        return spDC->base.uID;
+        return spDC->uID;
     } else {
         return -1;
     }
@@ -1305,31 +1305,31 @@ s32 dll_26_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s
             return 1;
         }
         if (arg0->unk80 != 0) {
-            xDiff = arg0->unkA4->base.x - arg1->srt.transl.x;
-            yDiff = arg0->unkA4->base.y - arg1->srt.transl.y;
-            zDiff = arg0->unkA4->base.z - arg1->srt.transl.z;
+            xDiff = arg0->unkA4->pos.x - arg1->srt.transl.x;
+            yDiff = arg0->unkA4->pos.y - arg1->srt.transl.y;
+            zDiff = arg0->unkA4->pos.z - arg1->srt.transl.z;
         } else {
-            xDiff = arg0->unkA0->base.x - arg1->srt.transl.x;
-            yDiff = arg0->unkA0->base.y - arg1->srt.transl.y;
-            zDiff = arg0->unkA0->base.z - arg1->srt.transl.z;
+            xDiff = arg0->unkA0->pos.x - arg1->srt.transl.x;
+            yDiff = arg0->unkA0->pos.y - arg1->srt.transl.y;
+            zDiff = arg0->unkA0->pos.z - arg1->srt.transl.z;
         }
         
         if (arg2 < sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff))) {
             return 1;
         }
         
-        arg0->unkB8[0] = arg0->unkA0->base.x;
-        arg0->unkB8[1] = arg0->unkA4->base.x;
+        arg0->unkB8[0] = arg0->unkA0->pos.x;
+        arg0->unkB8[1] = arg0->unkA4->pos.x;
         arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         
-        arg0->unkD8[0] = arg0->unkA0->base.y;
-        arg0->unkD8[1] = arg0->unkA4->base.y;
+        arg0->unkD8[0] = arg0->unkA0->pos.y;
+        arg0->unkD8[1] = arg0->unkA4->pos.y;
         arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2D << 8)) * (f32) arg0->unkA4->unk2E);
         
-        arg0->unkF8[0] = arg0->unkA0->base.z;
-        arg0->unkF8[1] = arg0->unkA4->base.z;
+        arg0->unkF8[0] = arg0->unkA0->pos.z;
+        arg0->unkF8[1] = arg0->unkA4->pos.z;
         arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         
@@ -1376,33 +1376,33 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
         arg0->unkA4 = dll_26_func_39C(var_v0);
         if (arg0->unkA4 != NULL) {
             if (arg0->unk80 != 0) {
-                arg0->unkB8[0] = arg0->unkA0->base.x;
-                arg0->unkB8[1] = arg0->unk9C->base.x;
+                arg0->unkB8[0] = arg0->unkA0->pos.x;
+                arg0->unkB8[1] = arg0->unk9C->pos.x;
                 arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk9C->unk2C << 8)) * (f32) arg0->unk9C->unk2E);
                 
-                arg0->unkD8[0] = arg0->unkA0->base.y;
-                arg0->unkD8[1] = arg0->unk9C->base.y;
+                arg0->unkD8[0] = arg0->unkA0->pos.y;
+                arg0->unkD8[1] = arg0->unk9C->pos.y;
                 arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk9C->unk2D << 8)) * (f32) arg0->unk9C->unk2E);
                 
-                arg0->unkF8[0] = arg0->unkA0->base.z;
-                arg0->unkF8[1] = arg0->unk9C->base.z;
+                arg0->unkF8[0] = arg0->unkA0->pos.z;
+                arg0->unkF8[1] = arg0->unk9C->pos.z;
                 arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk9C->unk2C << 8)) * (f32) arg0->unk9C->unk2E);
             } else {
-                arg0->unkB8[0] = arg0->unkA0->base.x;
-                arg0->unkB8[1] = arg0->unkA4->base.x;
+                arg0->unkB8[0] = arg0->unkA0->pos.x;
+                arg0->unkB8[1] = arg0->unkA4->pos.x;
                 arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
                 
-                arg0->unkD8[0] = arg0->unkA0->base.y;
-                arg0->unkD8[1] = arg0->unkA4->base.y;
+                arg0->unkD8[0] = arg0->unkA0->pos.y;
+                arg0->unkD8[1] = arg0->unkA4->pos.y;
                 arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32)  arg0->unkA0->unk2E);
                 arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2D << 8)) * (f32) arg0->unkA4->unk2E);
                 
-                arg0->unkF8[0] = arg0->unkA0->base.z;
-                arg0->unkF8[1] = arg0->unkA4->base.z;
+                arg0->unkF8[0] = arg0->unkA0->pos.z;
+                arg0->unkF8[1] = arg0->unkA4->pos.z;
                 arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
             }
@@ -1443,18 +1443,18 @@ s32 dll_26_func_4CB4(UnkCurvesStruct* arg0, s32 arg1) {
     arg0->unk9C = arg0->unkA4;
     arg0->unkA4 = temp_t7;
     
-    arg0->unkB8[0] = arg0->unkA0->base.x;
-    arg0->unkB8[1] = arg0->unkA4->base.x;
+    arg0->unkB8[0] = arg0->unkA0->pos.x;
+    arg0->unkB8[1] = arg0->unkA4->pos.x;
     arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
     arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
     
-    arg0->unkD8[0] = arg0->unkA0->base.y;
-    arg0->unkD8[1] = arg0->unkA4->base.y;
+    arg0->unkD8[0] = arg0->unkA0->pos.y;
+    arg0->unkD8[1] = arg0->unkA4->pos.y;
     arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32) arg0->unkA0->unk2E);
     arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2D << 8)) * (f32) arg0->unkA4->unk2E);
     
-    arg0->unkF8[0] = arg0->unkA0->base.z;
-    arg0->unkF8[1] = arg0->unkA4->base.z;
+    arg0->unkF8[0] = arg0->unkA0->pos.z;
+    arg0->unkF8[1] = arg0->unkA4->pos.z;
     arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
     arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
     
@@ -1479,13 +1479,13 @@ void dll_26_func_4FA8(UnkCurvesStruct* arg0, CurveSetup* arg1) {
     if ((arg1 != NULL) && (arg1 != arg0->unkA4)) {
         arg0->unkA4 = arg1;
         
-        arg0->unkB8[1] = arg1->base.x;
+        arg0->unkB8[1] = arg1->pos.x;
         arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg1->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         
-        arg0->unkD8[1] = arg0->unkA4->base.y;
+        arg0->unkD8[1] = arg0->unkA4->pos.y;
         arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2D << 8)) * (f32) arg0->unkA4->unk2E);
         
-        arg0->unkF8[1] = arg0->unkA4->base.z;
+        arg0->unkF8[1] = arg0->unkA4->pos.z;
         arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
     }
 }
@@ -1515,33 +1515,33 @@ s32 dll_26_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
         arg0->unkA4 = dll_26_func_39C(var_v0);
         if (arg0->unkA4 != NULL) {
             if (arg0->unk80 != 0) {
-                arg0->unkB8[0] = arg0->unkA0->base.x;
-                arg0->unkB8[1] = arg0->unk9C->base.x;
+                arg0->unkB8[0] = arg0->unkA0->pos.x;
+                arg0->unkB8[1] = arg0->unk9C->pos.x;
                 arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk9C->unk2C << 8)) * (f32) arg0->unk9C->unk2E);
                 
-                arg0->unkD8[0] = arg0->unkA0->base.y;
-                arg0->unkD8[1] = arg0->unk9C->base.y;
+                arg0->unkD8[0] = arg0->unkA0->pos.y;
+                arg0->unkD8[1] = arg0->unk9C->pos.y;
                 arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unk9C->unk2D << 8)) * (f32) arg0->unk9C->unk2E);
                 
-                arg0->unkF8[0] = arg0->unkA0->base.z;
-                arg0->unkF8[1] = arg0->unk9C->base.z;
+                arg0->unkF8[0] = arg0->unkA0->pos.z;
+                arg0->unkF8[1] = arg0->unk9C->pos.z;
                 arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unk9C->unk2C << 8)) * (f32) arg0->unk9C->unk2E);
             } else {
-                arg0->unkB8[0] = arg0->unkA0->base.x;
-                arg0->unkB8[1] = arg0->unkA4->base.x;
+                arg0->unkB8[0] = arg0->unkA0->pos.x;
+                arg0->unkB8[1] = arg0->unkA4->pos.x;
                 arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
                 
-                arg0->unkD8[0] = arg0->unkA0->base.y;
-                arg0->unkD8[1] = arg0->unkA4->base.y;
+                arg0->unkD8[0] = arg0->unkA0->pos.y;
+                arg0->unkD8[1] = arg0->unkA4->pos.y;
                 arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2D << 8)) * (f32) arg0->unkA4->unk2E);
                 
-                arg0->unkF8[0] = arg0->unkA0->base.z;
-                arg0->unkF8[1] = arg0->unkA4->base.z;
+                arg0->unkF8[0] = arg0->unkA0->pos.z;
+                arg0->unkF8[1] = arg0->unkA4->pos.z;
                 arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
                 arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
             }
@@ -1669,18 +1669,18 @@ s32 dll_26_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
             return 1;
         }
         
-        arg0->unkB8[0] = arg0->unkA0->base.x;
-        arg0->unkB8[1] = arg0->unkA4->base.x;
+        arg0->unkB8[0] = arg0->unkA0->pos.x;
+        arg0->unkB8[1] = arg0->unkA4->pos.x;
         arg0->unkB8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkB8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         
-        arg0->unkD8[0] = arg0->unkA0->base.y;
-        arg0->unkD8[1] = arg0->unkA4->base.y;
+        arg0->unkD8[0] = arg0->unkA0->pos.y;
+        arg0->unkD8[1] = arg0->unkA4->pos.y;
         arg0->unkD8[2] = 2.0f * (fsin16_precise((s16) (arg0->unkA0->unk2D << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkD8[3] = 2.0f * (fsin16_precise((s16) (arg0->unkA4->unk2D << 8)) * (f32) arg0->unkA4->unk2E);
         
-        arg0->unkF8[0] = arg0->unkA0->base.z;
-        arg0->unkF8[1] = arg0->unkA4->base.z;
+        arg0->unkF8[0] = arg0->unkA0->pos.z;
+        arg0->unkF8[1] = arg0->unkA4->pos.z;
         arg0->unkF8[2] = 2.0f * (fcos16_precise((s16) (arg0->unkA0->unk2C << 8)) * (f32) arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (fcos16_precise((s16) (arg0->unkA4->unk2C << 8)) * (f32) arg0->unkA4->unk2E);
         

@@ -34,7 +34,7 @@ typedef struct Player_Data3B4 {
     u8 pad31;
     u8 pad32;
     u8 pad33;
-    WeaponDataPtr unk34;
+    ObjectEvent unk34;
 } Player_Data3B4;
 
 // size: 0x48

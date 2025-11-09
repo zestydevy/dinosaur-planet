@@ -360,7 +360,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scorpionSetup->base.z = rand_next(-10, 10) + self->srt.transl.z;
                 scorpionSetup->unk1A = 49;
                 scorpionSetup->unk19 = 7;
-                obj_create((ObjSetup*)scorpionSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj_create((ObjSetup*)scorpionSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 break;
             }
             case 1: {
@@ -369,7 +369,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->unk1A = 400;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -402,7 +402,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->unk1A = 400;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -435,7 +435,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->unk1A = 2000;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = self->srt.transl.x - player->srt.transl.x;
                 obj->speed.z = self->srt.transl.z - player->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -468,7 +468,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
                 scarabSetup->unk1A = 2000;
-                obj = obj_create((ObjSetup*)scarabSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)scarabSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->speed.x = player->srt.transl.x - self->srt.transl.x;
                 obj->speed.z = player->srt.transl.z - self->srt.transl.z;
                 magnitude = obj->speed.x * obj->speed.x + obj->speed.z * obj->speed.z;
@@ -508,7 +508,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 foodPickupSetup->base.y = self->srt.transl.y + 5.0f;
                 foodPickupSetup->base.z = self->srt.transl.z;
                 foodPickupSetup->unk24 = -1;
-                obj = obj_create((ObjSetup*)foodPickupSetup, OBJSETUP_FLAG_1 | OBJSETUP_FLAG_4, self->mapID, -1, self->parent);
+                obj = obj_create((ObjSetup*)foodPickupSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
                 obj->unkE0 = 21600;
                 break;
             }

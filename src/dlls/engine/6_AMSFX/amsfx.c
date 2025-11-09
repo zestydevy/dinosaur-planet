@@ -18,6 +18,7 @@
 #include "sys/memory.h"
 #include "unktypes.h"
 #include "sys/objects.h"
+#include "prevent_bss_reordering.h"
 
 /*0x0*/ static const char str_0[] = "AMSFX: Error sound effects bank missing!\n";
 /*0x2C*/ static const char str_2C[] = "amSfxPlayEx failed\n";

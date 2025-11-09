@@ -10,6 +10,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "dlls/objects/768_SPshop.h"
+#include "sys/rcp.h"
 
 BSS_GLOBAL s8 D_800A7D94;
 

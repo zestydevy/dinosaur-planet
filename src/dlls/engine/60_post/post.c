@@ -14,6 +14,7 @@
 #include "sys/menu.h"
 #include "dll.h"
 #include "functions.h"
+#include "sys/rcp.h"
 #include "types.h"
 
 static u8 data_0 = 0;

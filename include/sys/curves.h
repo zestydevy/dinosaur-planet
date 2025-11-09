@@ -7,10 +7,28 @@
 typedef f32 (*unk_curve_func)(Vec4f*, f32, f32*); // TODO: first arg is actually f32[4]
 typedef void (*unk_curve_func_2)(f32*, f32*);
 
+// Note: This is a curve-specific version of the base ObjSetup struct, with additions
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18; // curveType?  2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
-/*19*/ s8 unk19;
+/*00*/ s16 objId;
+/*02*/ u8 quarterSize;
+/*03*/ u8 unk3;
+/*04*/ union {
+	struct {
+	/*04*/ s8 unk4;
+	/*05*/ s8 unk5;
+	/*06*/ s8 unk6;
+	/*07*/ s8 unk7;
+	} base_type26;
+	struct {
+	/*04*/ u16 unk4;
+	/*06*/ s8 unk6;
+	/*07*/ s8 unk7;
+	} base_type22;
+};
+/*08*/ Vec3f pos;
+/*14*/ s32 uID;
+/*18*/ s8 unk18;
+/*19*/ s8 unk19; // curveType?  2) KTrex, 3) RedEye, 1A) camera?, 1B) camera?, 1D) ThornTail, 1F) crawlSpace, 22) Kyte, 24) Tricky
 /*1A*/ s8 unk1A;
 /*1B*/ s8 unk1B;
 /*1C*/ s32 unk1C[4];
@@ -19,7 +37,7 @@ typedef struct {
 /*2D*/ s8 unk2D;
 /*2E*/ u8 unk2E; 
 /*2E*/ s8 unk2F; 
-// TODO: some of this depends on the curve type (unk19 not unk18?)
+// TODO: some of this depends on the curve type
 /*30*/ union {
     struct {
         s32 pad30;
@@ -41,7 +59,6 @@ typedef struct {
         /*34*/ s8 unk34[4][4];
     } type26;
 };
-
 } CurveSetup;
 
 // NOTE: If the size of this struct changes, SnowHorn_Data must also be adjusted!

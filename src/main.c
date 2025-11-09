@@ -15,10 +15,12 @@
 #include "sys/objects.h"
 #include "sys/print.h"
 #include "sys/rarezip.h"
+#include "sys/rcp.h"
 #include "sys/menu.h"
 #include "sys/fonts.h"
 #include "sys/boot.h"
 #include "sys/dl_debug.h"
+#include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
 #include "dll.h"
 #include "constants.h"
@@ -182,7 +184,7 @@ void game_init(void) {
     osCreateScheduler(&osscheduler_, &ossceduler_stack[OS_SC_STACKSIZE], 0xD, tvMode, 1);
     start_pi_manager_thread();
     init_filesystem();
-    create_3_megs_quues(&osscheduler_);
+    gfxtask_init(&osscheduler_);
     alloc_frame_buffers();
     if (0) {};
     gFrameBufIdx = 0;
@@ -271,15 +273,15 @@ void game_init(void) {
 void game_tick(void) {
     u8 phi_v1;
     u32 updateRate;
-    Gfx **tmp_s0;
+    Gfx **gdl;
 
     osSetTime(0);
     dl_next_debug_info_set();
 
-    tmp_s0 = &gCurGfx;
+    gdl = &gCurGfx;
 
     // unused return type
-    schedule_gfx_task(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    gfxtask_run_xbus(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -288,42 +290,42 @@ void game_tick(void) {
     gCurPol = gMainPol[gFrameBufIdx];
 
     dl_add_debug_info(gCurGfx, 0, "main/main.c", 0x28E);
-    dl_segment(&gCurGfx, 0, (void *)0x80000000);
-    dl_segment(&gCurGfx, 1, gFramebufferCurrent);
-    dl_segment(&gCurGfx, 2, D_800BCCB4);
+    rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
+    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
+    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, D_800BCCB4);
     func_8003E9F0(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
     func_8003DB5C();
 
     if (gDLBuilder->needsPipeSync != 0) {
-        gDLBuilder->needsPipeSync = 0U;
+        gDLBuilder->needsPipeSync = 0;
         gDPPipeSync(gCurGfx++);
     }
 
-    gDPSetDepthImage(gCurGfx++, 0x02000000);
+    gDPSetDepthImage(gCurGfx++, SEGMENT_ZBUFFER << 24);
 
-    func_80037EC8(&gCurGfx);
-    phi_v1 = 2U;
+    rsp_init(&gCurGfx);
+    phi_v1 = 2;
 
     if (func_80041D5C() == 0)
-        phi_v1 = 0U;
+        phi_v1 = 0;
     else if (func_80041D74() == 0)
-        phi_v1 = 3U;
+        phi_v1 = 3;
 
     func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
     func_80007178();
     func_80013D80();
     audio_func_800121DC();
-    gDLL_28_ScreenFade->vtbl->draw(tmp_s0, &gCurMtx, &gCurVtx);
-    gDLL_22_Subtitles->vtbl->func_578(tmp_s0);
+    gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);
+    gDLL_22_Subtitles->vtbl->func_578(gdl);
     camera_tick();
     func_800129E4();
-    diPrintfAll(tmp_s0);
+    diPrintfAll(gdl);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
 
-    func_80037924();
+    gfxtask_wait();
     obj_do_deferred_free();
     mmFreeTick();
 
@@ -356,7 +358,7 @@ void game_tick_no_expansion(void) {
 
     tmp_s0 = &gCurGfx;
 
-    schedule_gfx_task(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    gfxtask_run_xbus(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -364,9 +366,9 @@ void game_tick_no_expansion(void) {
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    dl_segment(&gCurGfx, 0, (void *)0x80000000);
-    dl_segment(&gCurGfx, 1, gFramebufferCurrent);
-    dl_segment(&gCurGfx, 2, D_800BCCB4);
+    rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
+    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
+    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, D_800BCCB4);
     dl_set_all_dirty();
     func_8003DB5C();
 
@@ -375,9 +377,9 @@ void game_tick_no_expansion(void) {
         gDPPipeSync(gCurGfx++);
     }
 
-    gDPSetDepthImage(gCurGfx++, 0x02000000);
+    gDPSetDepthImage(gCurGfx++, SEGMENT_ZBUFFER << 24);
 
-    func_80037EC8(&gCurGfx);
+    rsp_init(&gCurGfx);
     menu_update1(); // ignored return value
     menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
     func_800129E4();
@@ -386,7 +388,7 @@ void game_tick_no_expansion(void) {
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
 
-    func_80037924();
+    gfxtask_wait();
     mmFreeTick();
 
     gUpdateRate = vi_frame_sync(0);
@@ -474,7 +476,7 @@ void func_80014074(void) {
     if (D_800B09C0 != 0) {
         mmSetDelay(0);
         if (D_8008CA30 != 0) {
-            func_8003798C(0, 0, 0);
+            rcp_set_screen_color(0, 0, 0);
             func_800668A4();
             map_func_800484A8();
 
@@ -504,7 +506,7 @@ void func_80014074(void) {
     }
 }
 
-void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
+void func_800141A4(s32 mapID, s32 arg1, s32 playerno, s32 arg3) {
     PlayerLocation *temp_v0;
 
     func_8001440C(0);
@@ -520,7 +522,7 @@ void func_800141A4(s32 arg0, s32 arg1, s32 playerno, s32 arg3) {
 
     temp_v0 = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
-    map_func_80048054(arg0, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
+    map_func_80048054(mapID, arg1, &temp_v0->vec.x, &temp_v0->vec.y, &temp_v0->vec.z, &temp_v0->mapLayer);
     gDLL_29_Gplay->vtbl->checkpoint(&temp_v0->vec, 0, 0, temp_v0->mapLayer);
 
     D_800B09C0 = 1;

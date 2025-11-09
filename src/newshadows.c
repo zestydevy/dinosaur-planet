@@ -431,7 +431,7 @@ s32 func_8004E540(Object* arg0, ObjectStruct64* arg1) {
         var_fv1 = 1.0f;
     }
     sp1C = (arg1->unk3A + ((arg1->unk3B - arg1->unk3A) * var_fv1));
-    sp1C = (arg0->unk37 + 1) * (s32)sp1C;
+    sp1C = (arg0->opacityWithFade + 1) * (s32)sp1C;
     return sp1C >> 8;
 }
 
@@ -791,7 +791,7 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
         } else {
             var_s0 = (s32) arg2->unk40;
         }
-        sp1D0 = (s16) ((((arg3->unk37 + 1) * var_s0) >> 8) * sp1C0);
+        sp1D0 = (s16) ((((arg3->opacityWithFade + 1) * var_s0) >> 8) * sp1C0);
         if (sp1D0 >= 0x100) {
             sp1D0 = 0xFF;
         } else if (sp1D0 < 0) {

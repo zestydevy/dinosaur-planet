@@ -3,48 +3,95 @@
 #include "functions.h"
 #include "sys/map.h"
 #include "sys/gfx/map.h"
+#include "sys/rcp.h"
+#include "sys/rsp_segment.h"
 
-extern u8 D_800917A0;
-extern u8 D_800917A4;
-extern u8 D_800917A8;
-extern u32 D_800917AC;
-extern s32 D_800917BC;
-extern s32 D_800917C0;
-extern s32 D_800917C8;
-extern u8 D_800917CC;
-extern Gfx D_80091828[6];
-extern Gfx D_80091868[6];
+// .data
 
-extern u8 gGfxDramStack[1024];
-extern OSMesgQueue D_800B3B90;
-extern OSMesg D_800B3BA8[1];
-extern OSMesgQueue D_800B3BB0;
-extern OSMesgQueue D_800B3BC8;
-extern OSMesg D_800B3BE0[8];
-extern OSMesg D_800B3C00[8];
+s16 D_80091780[16] = { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+u8 sBGPrimColourR = 0;
+u8 sBGPrimColourG = 0;
+u8 sBGPrimColourB = 0;
+u32 sBackgroundFillColour = GPACK_RGBA5551(0, 0, 0, 1) | (GPACK_RGBA5551(0, 0, 0, 1) << 16);
+u32 D_800917B0 = 64;
+s32 D_800917B4 = 0;
+s32 D_800917B8 = 0;
+s32 D_800917BC = 0;
+s32 gGfxBufCounter = 0;
+s32 D_800917C4 = 0;
+s32 gGfxTaskIsRunning = 0;
+u8 D_800917CC = 1;
+Gfx D_800917D0[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_OFF),
+    gsSPClipRatio(FRUSTRATIO_3),
+    gsSPEndDisplayList()
+};
+Gfx D_80091800[] = {
+    gsDPPipeSync(),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_FILL | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2),
+    gsDPPipeSync(),
+    gsDPSetCombineMode(G_CC_PRIMITIVE, G_CC_PRIMITIVE),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2)
+};
+Gfx D_80091828[] = {
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_OPA_SURF | G_RM_AA_OPA_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_OPA_SURF | G_RM_AA_OPA_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2)
+};
+Gfx D_80091868[] = {
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_XLU_SURF | G_RM_AA_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_AA_XLU_SURF | G_RM_AA_XLU_SURF2),
+    gsDPSetCombineMode(G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM),
+    gsDPSetOtherMode(G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2),
+    gsDPNoOp()
+};
+
+// .bss
+
+extern u8 gGfxDramStack[SP_DRAM_STACK_SIZE8];
+extern OSMesgQueue gRCPUnusedMesgQueue1;
+extern OSMesg gRCPUnusedMesgBuf1[1];
+extern OSMesgQueue gRCPUnusedMesgQueue2;
+extern OSMesgQueue gGfxTaskMesgQueue;
+extern OSMesg gRCPUnusedMesgBuf2[8];
+extern OSMesg gGfxTaskMesgBuf[8];
 extern OSScTask gGfxTasks[2];
-extern OSMesgQueue *sched_intQ_ptr;
+extern OSMesgQueue *gScInterruptQ;
 
+// .bss but in the next segment
 extern u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 
-extern Gfx D_800917D0[];
 void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8); 
 Texture* func_8003E904(Texture* arg0, s32 arg1);
 
-s32 schedule_gfx_task(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
+/**
+ * Prepare the gfx task for the F3DEX2 XBus microcode.
+ * Sends a message to the scheduler to start processing an RSP task once set up.
+ * Official Name: rcpFast3d
+ */
+s32 gfxtask_run_xbus(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     OSScTask *task;
     
-    D_800917C8 = 1;
+    gGfxTaskIsRunning = TRUE;
 
-    task = &gGfxTasks[D_800917C0];
+    task = &gGfxTasks[gGfxBufCounter];
 
-    D_800917C0++;
-    if (D_800917C0 == ARRAYCOUNT(gGfxTasks)) {
-        D_800917C0 = 0;
+    gGfxBufCounter++;
+    if (gGfxBufCounter == ARRAYCOUNT(gGfxTasks)) {
+        gGfxBufCounter = 0;
     }
 
     task->flags = OS_SC_NEEDS_RDP | OS_SC_NEEDS_RSP | OS_SC_LAST_TASK;
-    task->msgQ = &D_800B3BC8;
+    task->msgQ = &gGfxTaskMesgQueue;
     task->unk58 = 0xff0000ff;
     task->unk5C = 0xff0000ff;
     task->taskType = OS_SC_TASK_GAME;
@@ -58,9 +105,9 @@ s32 schedule_gfx_task(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
         task->list.t.ucode = (u64*)gspF3DEX2_xbusTextStart;
         task->list.t.ucode_data = (u64*)gspF3DEX2_xbusDataStart;
     }
-    task->list.t.ucode_data_size = 0x800;
+    task->list.t.ucode_data_size = SP_UCODE_DATA_SIZE;
     task->list.t.dram_stack = (u64*)gGfxDramStack;
-    task->list.t.dram_stack_size = sizeof(gGfxDramStack);
+    task->list.t.dram_stack_size = SP_DRAM_STACK_SIZE8;
     if (D_800917CC != 0) {
         task->list.t.output_buff = NULL;
         task->list.t.output_buff_size = NULL;
@@ -74,7 +121,7 @@ s32 schedule_gfx_task(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
 
     osWritebackDCacheAll();
 
-    osSendMesg(sched_intQ_ptr, (OSMesg)task, OS_MESG_BLOCK);
+    osSendMesg(gScInterruptQ, (OSMesg)task, OS_MESG_BLOCK);
 
     return 0;
 }
@@ -91,17 +138,15 @@ void func_80037910(s32 a0, s32 a1, s32 a2) {
 
 }
 
-s32 func_80037924() {
-    UnkSchedStruct *mesg;
+s32 gfxtask_wait(void) {
+    GfxTaskMesg *mesg = NULL;
 
-    mesg = 0;
-
-    if (D_800917C8 == 0) {
+    if (!gGfxTaskIsRunning) {
         return 0;
     }
 
-    osRecvMesg(&D_800B3BC8, (OSMesg)&mesg, OS_MESG_BLOCK);
-    D_800917C8 = 0;
+    osRecvMesg(&gGfxTaskMesgQueue, (OSMesg)&mesg, OS_MESG_BLOCK);
+    gGfxTaskIsRunning = FALSE;
 
     return mesg->unk4;
 }
@@ -110,15 +155,24 @@ void func_80037978(s32 a0, s32 a1, s32 a2) {
 
 }
 
-void func_8003798C(u8 param1, u8 param2, u8 param3) {
-    D_800917A0 = param1;
-    D_800917A4 = param2;
-    D_800917A8 = param3;
+/**
+ * Sets the primitive colour for the cyclemode fillrect background.
+ * Official name: rcpSetScreenColour
+ */
+void rcp_set_screen_color(u8 red, u8 green, u8 blue) {
+    sBGPrimColourR = red;
+    sBGPrimColourG = green;
+    sBGPrimColourB = blue;
 }
 
-void func_800379D0(u32 red, u32 green, s32 blue) {
-    D_800917AC = GPACK_RGBA5551(red, green, blue, 1);
-    D_800917AC |= (D_800917AC << 16);
+/**
+ * Sets the fill colour for the fillmode fillrect background.
+ * Uses RGBA5551
+ * Official name: rcpSetBorderColour
+ */
+void rcp_set_border_color(u32 red, u32 green, s32 blue) {
+    sBackgroundFillColour = GPACK_RGBA5551(red, green, blue, 1);
+    sBackgroundFillColour |= (sBackgroundFillColour << 16);
 }
 
 void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
@@ -150,7 +204,7 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, 0x02000000);
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ZBUFFER << 24);
 
     if ((param3 & 2) != 0) {
         dl_set_fill_color(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
@@ -165,12 +219,12 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, 0x01000000);
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_FRAMEBUFFER << 24);
 
     if ((param3 & 1) != 0 || var1 != 0) {
         dl_set_fill_color(gdl, 
-            (GPACK_RGBA5551(D_800917A0, D_800917A4, D_800917A8, 1) << 16) 
-                | GPACK_RGBA5551(D_800917A0, D_800917A4, D_800917A8, 1));
+            (GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1) << 16) 
+                | GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1));
 
         if ((param3 & 1) != 0) {
             gDPFillRectangle((*gdl)++, 0, 0, resWidth - 1, resHeight - 1);
@@ -187,7 +241,8 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
     func_80002490(gdl);
 }
 
-void func_80037DB8(Gfx **gdl) {
+// unused
+void rdp_init(Gfx **gdl) {
     s32 resolution;
     s32 resWidth;
 
@@ -199,14 +254,14 @@ void func_80037DB8(Gfx **gdl) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, 0x01000000);
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_FRAMEBUFFER << 24);
 
     if (gDLBuilder->needsPipeSync) {
         gDLBuilder->needsPipeSync = FALSE;
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetDepthImage((*gdl)++, 0x02000000);
+    gDPSetDepthImage((*gdl)++, SEGMENT_ZBUFFER << 24);
 
     gDPSetCombineMode((*gdl), G_CC_DECALRGB, G_CC_DECALRGB);
     dl_apply_combine(gdl);
@@ -217,7 +272,7 @@ void func_80037DB8(Gfx **gdl) {
     dl_apply_other_mode(gdl);
 }
 
-void func_80037EC8(Gfx **gdl) {
+void rsp_init(Gfx **gdl) {
     // Clear all
     gSPClearGeometryMode((*gdl), 0xFFFFFF);
     dl_apply_geometry_mode(gdl);
@@ -225,20 +280,21 @@ void func_80037EC8(Gfx **gdl) {
     gSPDisplayList((*gdl)++, OS_K0_TO_PHYSICAL(D_800917D0));
 }
 
-void create_3_megs_quues(OSSched *sched) {
-    sched_intQ_ptr = get_sched_interrupt_queue(sched);
+void gfxtask_init(OSSched *sched) {
+    gScInterruptQ = osScGetInterruptQ(sched);
 
-    osCreateMesgQueue(&D_800B3B90, D_800B3BA8, ARRAYCOUNT(D_800B3BA8));
-    osCreateMesgQueue(&D_800B3BB0, D_800B3BE0, ARRAYCOUNT(D_800B3BE0));
-    osCreateMesgQueue(&D_800B3BC8, D_800B3C00, ARRAYCOUNT(D_800B3C00));
+    osCreateMesgQueue(&gRCPUnusedMesgQueue1, gRCPUnusedMesgBuf1, ARRAYCOUNT(gRCPUnusedMesgBuf1));
+    osCreateMesgQueue(&gRCPUnusedMesgQueue2, gRCPUnusedMesgBuf2, ARRAYCOUNT(gRCPUnusedMesgBuf2));
+    osCreateMesgQueue(&gGfxTaskMesgQueue, gGfxTaskMesgBuf, ARRAYCOUNT(gGfxTaskMesgBuf));
 }
 
 void func_80037F8C(s32 param1) {
     D_800917BC = param1;
 }
 
+// https://github.com/DavidSM64/Diddy-Kong-Racing/blob/master/src/rcp_dkr.c#L670 ?
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_80037F9C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/rcp/func_80037F9C.s")
 #else
 typedef struct Unk {
     Texture *unk0;
@@ -662,7 +718,7 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_38380/func_800390A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/rcp/func_800390A4.s")
 #else
 // https://decomp.me/scratch/vcSVM
 typedef struct Unk2 {

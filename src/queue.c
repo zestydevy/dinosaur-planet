@@ -107,12 +107,12 @@ void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 leng
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_map_object(Object **dest, ObjSetup *setup, u32 setupFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
+void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
     assetLoadMsg.loadCategory  = 1;
     assetLoadMsg.loadType      = ASSET_TYPE_OBJECT;
     assetLoadMsg.p.object.mapID = mapID;
     assetLoadMsg.p.object.setup = setup;
-    assetLoadMsg.p.object.setupFlags = setupFlags;
+    assetLoadMsg.p.object.initFlags = initFlags;
     assetLoadMsg.p.object.arg4 = arg4;
     assetLoadMsg.p.object.parent = parent;
     assetLoadMsg.p.object.arg6 = arg6;
@@ -390,7 +390,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             break;
         case ASSET_TYPE_OBJECT:
             *load->p.object.dest = obj_setup_object(load->p.object.setup,
-                load->p.object.setupFlags, load->p.object.mapID, load->p.object.arg4,
+                load->p.object.initFlags, load->p.object.mapID, load->p.object.arg4,
                 load->p.object.parent, load->p.object.arg6);
             break;
         case ASSET_TYPE_TEXTURE:

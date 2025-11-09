@@ -99,7 +99,7 @@ void BalloonBaddie_control(Object* self) {
         // check respawn timer
         if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID)) {
             self->unkDC = BALLOONBADDIE_ALIVE;
-            self->unk36 = OBJECT_OPACITY_MAX;
+            self->opacity = OBJECT_OPACITY_MAX;
             self->unkAF &= ~8;
             objdata->flags |= BALLOONBADDIE_RESPAWNED;
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -116,7 +116,7 @@ void BalloonBaddie_control(Object* self) {
                 objdata->flags &= ~(BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2);
             } else {
                 // fadeout from 1.0 (fully opaque) to 2.0 (fully transparent)
-                self->unk36 = ((2.0f - objdata->fadeoutTimer) * 255.0f);
+                self->opacity = ((2.0f - objdata->fadeoutTimer) * 255.0f);
             }
             func_800267A4(self);
         } else {

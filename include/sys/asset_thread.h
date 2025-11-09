@@ -38,7 +38,7 @@ struct AssetLoadThreadMsg {
             /* 10 */ s32 unused10;
             /* 14 */ Object *parent;
             /* 18 */ ObjSetup *setup;
-            /* 1C */ u32 setupFlags;
+            /* 1C */ u32 initFlags;
             /* 20 */ s32 arg4;
             /* 24 */ s32 mapID;
             /* 28 */ s32 arg6;
@@ -111,7 +111,7 @@ void func_80012584(s32 param1, u8 param2, u32 *param3, ObjSetup *param4, s32 par
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
-void queue_load_map_object(Object **dest, ObjSetup *setup, u32 setupFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6);
+void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6);
 void queue_load_texture(Texture **dest, s32 id);
 void queue_load_dll(void **dest, s32 id, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);

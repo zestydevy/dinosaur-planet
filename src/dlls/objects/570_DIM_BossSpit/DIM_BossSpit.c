@@ -104,11 +104,11 @@ void DIM_BossSpit_func_2AC(Object *self) {
     lfxemitterSetup->base.z = self->srt.transl.z;
     lfxemitterSetup->unk1E = 0x145;
     lfxemitterSetup->unk22 = -1;
-    lfxemitterSetup->base.loadParamA = 1;
-    lfxemitterSetup->base.loadParamB = 1;
+    lfxemitterSetup->base.loadFlags = OBJSETUP_LOAD_FLAG1;
+    lfxemitterSetup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
     lfxemitterSetup->base.loadDistance = 0xFF;
     lfxemitterSetup->base.fadeDistance = 0xFF;
-    objdata->lfxEmitter = obj_create((ObjSetup*)lfxemitterSetup, 5, -1, -1, NULL);
+    objdata->lfxEmitter = obj_create((ObjSetup*)lfxemitterSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
 }
 
 // offset: 0x360 | func: 8
@@ -170,7 +170,7 @@ void DIM_BossSpit_func_53C(Object *self) {
     if (i >= 0) {
         func_80026128(self, 5, 2, 0);
         func_80026940(self, self->objhitInfo->unk52 + 2.1f);
-        self->unk36 = i;
+        self->opacity = i;
         lfxEmitter = objdata->lfxEmitter;
         if (lfxEmitter) {
             lfxEmitterData = lfxEmitter->data;
@@ -182,7 +182,7 @@ void DIM_BossSpit_func_53C(Object *self) {
             obj_destroy_object(lfxEmitter);
             objdata->lfxEmitter = NULL;
         }
-        self->unk36 = 0;
+        self->opacity = 0;
         if (((_bss_0 - 0x40) >> 1) > 10.0f) {
             func_80026128(self, 9, 1, 0);
             func_80026940(self, (_bss_0 - 0x40) >> 1);

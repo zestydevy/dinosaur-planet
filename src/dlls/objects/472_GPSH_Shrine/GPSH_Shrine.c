@@ -16,7 +16,6 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
-#include "prevent_bss_reordering.h"
 #include "sys/print.h"
 #include "types.h"
 

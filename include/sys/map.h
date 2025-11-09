@@ -390,13 +390,17 @@ extern s32* gFile_MAPS_TAB; // unknown pointer type
 extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 gMapLayer;
-typedef struct Unk800B5508 {
-    s32 unk0[32];
-    s32 unk80;
-    s32 unk84;
-    s32 unk88;
-} Unk800B5508;
-extern Unk800B5508 D_800B5508[120];
+typedef struct MapObjSetupList {
+       // Byte offset to the list of each object setup group
+/*00*/ s32 groups[32];
+       // Byte size of object setup list, up to and not including curves/race checkpoints
+/*80*/ s32 objsListSize;
+       // Byte offset of when curve/race checkpoint setups start
+/*84*/ s32 curvesOffset;
+       // Byte offset to the first setups that are in object groups
+/*88*/ s32 groupsStart;
+} MapObjSetupList;
+extern MapObjSetupList gMapObjSetupLists[120];
 
 extern DLBuilder D_800B4A20;
 extern DLBuilder D_800B49F0;
@@ -495,7 +499,7 @@ void track_c_func(void);
 u8 func_800456AC(Object* obj);
 u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
 void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
-void func_80045FC4(MapHeader* arg0, Unk800B5508* arg1, s32 mapID, s32 arg3);
+void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
 MapHeader *map_load_streammap(s32, s32);
 void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void map_func_80048034(void);
@@ -505,7 +509,7 @@ void func_80047404(s32, s32, s32*, s32*, s32*, s32*, s32, s32, s32);
 void func_800496E4(s32 blockIndex);
 void map_update_streaming(void);
 s32 func_8004A058(Texture* tex, u32 flags, s32 arg2);
-s32 func_8004B190(Object*);
+s32 map_should_obj_unload(Object*);
 void func_8004B548(MapHeader*, s32, s32, Object*);
 s32 map_should_stream_load_object(ObjSetup*, s8, s32);
 s32 map_check_some_mapobj_flag(s32, u32);

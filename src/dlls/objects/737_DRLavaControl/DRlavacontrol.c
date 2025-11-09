@@ -193,8 +193,8 @@ Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
 
     setup = (LFXEmitter_Setup*)obj_alloc_create_info(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     
-    setup->base.loadParamA = 2;
-    setup->base.loadParamB = 1;
+    setup->base.loadFlags = OBJSETUP_LOAD_FLAG2;
+    setup->base.fadeFlags = OBJSETUP_FADE_DISABLE;
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.x = self->srt.transl.x;
@@ -211,7 +211,7 @@ Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     setup->unk24 = 1;
     setup->unk25 = 50;
     
-    return obj_create((ObjSetup*)setup, 5, self->mapID, -1, self->parent);
+    return obj_create((ObjSetup*)setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, self->parent);
 }
 
 // offset: 0x720 | func: 10

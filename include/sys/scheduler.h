@@ -5,6 +5,10 @@
 #include "PR/sched.h"
 #include "PR/os.h"
 
+/*
+ * private typedefs and defines
+ */
+#define UNK_MSG         99
 #define VIDEO_MSG       666
 #define RSP_DONE_MSG    667
 #define RDP_DONE_MSG    668
@@ -39,13 +43,13 @@
 typedef struct {
     s32 unk0;
     s32 unk4;
-} UnkSchedStruct;
+} GfxTaskMesg;
 
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 
-extern u32 countRegA;
-extern u32 countRegB;
+extern u32 gRSPAudTaskFlushTime;
+extern u32 gRSPAudTaskDoneTime;
 
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount);
 
@@ -53,22 +57,22 @@ void osScRemoveClient(OSSched *s, OSScClient *c);
 
 OSMesgQueue *osScGetCmdQ(OSSched *s);
 
-OSMesgQueue *get_sched_interrupt_queue(OSSched *s);
+OSMesgQueue *osScGetInterruptQ(OSSched *s);
 
-void get_float_timers(f32 *timer0, f32 *timer1, f32 *timer2);
+void osScGetAudioSPStats(f32 *timer0, f32 *timer1, f32 *timer2);
 
 void __scMain(void *arg);
 
-void func_8003B9C0(OSSched *sc);
+void sc_signal_do_audio(OSSched *sc);
 
 /**
  * Gets a string for a OSScTask task type.
  */
-char *get_task_type_string(u32 taskType);
+char *sc_get_task_type_string(u32 taskType);
 
 void some_dummied_task_func(OSScTask *task);
 
-Gfx *func_8003BAD0(OSSched *sc, 
+Gfx *sc_func_8003BAD0(OSSched *sc, 
     char **retFile, u32 *retunkC, s32 *retunk10,
     char **retFile_2, u32 *retunkC_2, s32 *retunk10_2);
 

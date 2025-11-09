@@ -27,7 +27,7 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
     ObjectStruct64* temp_v0;
     ObjectStruct64* temp_v0_2;
 
-    self->unk36 = 0xFF;
+    self->opacity = 255;
     func_800267A4(self);
     temp_v0 = self->unk64;
     if (self->unk64) {
@@ -81,16 +81,16 @@ void kamerian_flame_control(Object* self) {
     u8 temp_v0;
 
     dOpacity = gUpdateRate * 3;
-    if (dOpacity >= self->unk36) {
+    if (dOpacity >= self->opacity) {
         //Destroy if faded out
-        self->unk36 = 0;
+        self->opacity = 0;
         obj_destroy_object(self);
         return;
     }
 
     //Fade out if not fully opaque
-    if (self->unk36 != 255) {
-        self->unk36 -= dOpacity;
+    if (self->opacity != 255) {
+        self->opacity -= dOpacity;
         return;
     }
 
@@ -117,7 +117,7 @@ void kamerian_flame_control(Object* self) {
         }
 
         //Hide fireball
-        self->unk36 = 0;
+        self->opacity = 0;
         func_800267A4(self);
     } else {
         kamerian_flame_create_flame_billboards(self);
@@ -136,7 +136,7 @@ void kamerian_flame_update(Object* self) {
         self->speed.x = 0.0f;
         self->speed.y = 0.0f;
         self->speed.z = 0.0f;
-        self->unk36 = 0xFE;
+        self->opacity = 254;
         func_800267A4(self);
         impactSoundID = SOUND_9B4_Flamethrower;
     }

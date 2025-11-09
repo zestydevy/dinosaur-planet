@@ -522,7 +522,7 @@ void objfsa_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
         data->unk2B4 = 0.0f;
         return;
     }
-    objfsa_func_1F64(obj, data, temp_v0->base.x, temp_v0->base.z, arg2, 1);
+    objfsa_func_1F64(obj, data, temp_v0->pos.x, temp_v0->pos.z, arg2, 1);
     if (data->unk2B4 < 20.0f) {
         objfsa_func_13E4(data, NULL);
     }

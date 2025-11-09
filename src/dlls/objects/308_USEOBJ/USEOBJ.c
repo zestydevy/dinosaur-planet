@@ -49,7 +49,7 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 arg2) {
     objdata->unk0 = main_get_bits(setup->gamebit);
     obj_add_object_type(self, OBJTYPE_17);
     if (setup->flags & 1 && objdata->unk0 != 0) {
-        self->unk36 = 0;
+        self->opacity = 0;
     }
 }
 

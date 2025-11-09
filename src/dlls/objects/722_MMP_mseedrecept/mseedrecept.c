@@ -118,7 +118,7 @@ void mmp_mseedrecept_control(Object* self) {
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
         objData->unk1 &= 0xFFFE;
-        self->unk36 = 0xFF;
+        self->opacity = 255;
     }
     
     if (gDLL_7_Newday->vtbl->func8(&time) || objData->unk0 == 3){
@@ -135,7 +135,7 @@ void mmp_mseedrecept_control(Object* self) {
             if (main_get_bits(objData->gamebitPlanted)){
                 objData->unk0 = 2;
                 self->srt.transl.y = objSetup->base.y;
-                self->unk36 = 0xFF;
+                self->opacity = 255;
             }
             if (main_get_bits(objData->gamebitGrown)){
                 mmp_mseedrecept_func_D40(self);
@@ -147,7 +147,7 @@ void mmp_mseedrecept_control(Object* self) {
                 count = main_get_bits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
-                    self->unk36 = 0;
+                    self->opacity = 0;
                     gDLL_3_Animation->vtbl->func17(0, self, -1);
                     main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
                 }

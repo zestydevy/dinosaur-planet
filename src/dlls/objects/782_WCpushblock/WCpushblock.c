@@ -37,7 +37,7 @@ void dll_782_dtor(void* dll){ }
 void dll_782_setup(Object* self, WCPushBlock_Setup* setup, s32 arg2) {
     WCPushBlock_Data* objdata = self->data;
 
-    self->unk36 = 0;
+    self->opacity = 0;
     self->modelInstIdx = setup->modelIndex;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;

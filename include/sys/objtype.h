@@ -11,7 +11,7 @@ enum ObjType {
     OBJTYPE_4 = 4,
     OBJTYPE_5 = 5,
     OBJTYPE_6 = 6,
-    OBJTYPE_7 = 7,
+    OBJTYPE_7 = 7, // CFScalesGalleon
     OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop
     OBJTYPE_11 = 11, // BWlog, DFlog
     OBJTYPE_16 = 16,
