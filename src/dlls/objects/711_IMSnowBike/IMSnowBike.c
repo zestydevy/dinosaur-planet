@@ -172,8 +172,8 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     dll_711_func_3C30(self, objdata);
     dll_711_func_1ED0(self, &objdata->unk2AC);
     func_80023D30(self, 0, 0.0f, 0);
-    if (self->ptr0x64 != NULL) {
-        self->ptr0x64->flags |= 0x4A10;
+    if (self->unk64 != NULL) {
+        self->unk64->flags |= 0x4A10;
     }
     if (setup->unk19 != 0) {
         objdata->flags |= SNOWBIKEFLAG_IS_CPU;
