@@ -49,7 +49,13 @@ enum SoundID {
 
     SOUND_287_SB_Kyte_Empty = 0x287,
 
+    SOUND_289 = 0x289,
+    
+    SOUND_28E = 0x28E,
+    SOUND_28F = 0x28F,
     SOUND_290 = 0x290,
+
+    SOUND_292 = 0x292, // used by IMSnowBike
 
     SOUND_342 = 0x342, // used in DLL 466
 
@@ -67,6 +73,9 @@ enum SoundID {
 
     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
+
+    SOUND_50C = 0x50C,
+    SOUND_50D = 0x50D,
 
     SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
 

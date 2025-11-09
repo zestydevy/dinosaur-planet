@@ -5,84 +5,84 @@
 #include "prevent_bss_reordering.h"
 
 typedef struct {
-    Vec3f unk0;
-    Vec3f unkC;
-    f32 unk18;
-    f32 unk1C;
-    f32 unk20;
-    f32 _unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
+/*00*/ Vec3f unk0;
+/*0C*/ Vec3f unkC;
+/*18*/ f32 unk18;
+/*1C*/ f32 unk1C;
+/*20*/ f32 unk20;
+/*24*/ f32 _unk24;
+/*28*/ f32 unk28;
+/*2C*/ f32 unk2C;
+/*30*/ f32 unk30;
 } IMSnowBike_Data_2AC;
 
 typedef struct {
-    u8 _unk0[0xE - 0x0];
-    s8 unkE;
-    s8 unkF;
-    s32 unk10;
+/*00*/ u8 _unk0[0xE - 0x0];
+/*0E*/ s8 unkE;
+/*0F*/ s8 unkF;
+/*10*/ s32 unk10;
 } IMSnowBike_Data_2E0;
 
 typedef struct {
-    SRT unk0;
-    RaceStruct unk18;
-    u8 _unk3C[0x48 - 0x3C];
-    u8 unk48;
-    u8 unk49;
-    u8 _unk4A[0x4C - 0x4A];
-    DLL27_Data unk4C;
-    IMSnowBike_Data_2AC unk2AC;
-    IMSnowBike_Data_2E0 unk2E0;
-    DLL_IModgfx *unk2F4;
-    DLL_IModgfx *unk2F8;
-    u8 _unk2FC[0x32C - 0x2FC];
-    Vec3f unk32C[5];
-    u8 _unk368[0x380 - 0x368];
-    f32 unk380;
-    f32 unk384;
-    f32 unk388;
-    f32 unk38C;
-    f32 unk390;
-    f32 unk394;
-    f32 unk398;
-    f32 unk39C;
-    f32 unk3A0;
-    f32 unk3A4;
-    f32 unk3A8;
-    f32 unk3AC;
-    f32 unk3B0;
-    u32 unk3B4;
-    u32 unk3B8;
-    u32 unk3BC;
-    u32 unk3C0;
-    s32 unk3C4;
-    s16 unk3C8;
-    s16 unk3CA;
-    s16 unk3CC;
-    s16 unk3CE;
-    s16 unk3D0;
-    s16 unk3D2;
-    u8 _unk3D4[0x3D6 - 0x3D4];
-    s16 unk3D6;
-    s16 unk3D8;
-    s8 unk3DA;
-    u8 unk3DB;
-    u8 unk3DC;
-    u8 unk3DD;
-    s8 unk3DE;
-    s8 unk3DF;
-    s8 unk3E0;
-    s8 unk3E1;
+/*000*/ SRT unk0;
+/*018*/ RaceStruct unk18;
+/*03C*/ u8 _unk3C[0x48 - 0x3C];
+/*048*/ u8 unk48;
+/*049*/ u8 unk49;
+/*04A*/ u8 _unk4A[0x4C - 0x4A];
+/*04C*/ DLL27_Data unk4C;
+/*2AC*/ IMSnowBike_Data_2AC unk2AC;
+/*2E0*/ IMSnowBike_Data_2E0 unk2E0;
+/*2F4*/ DLL_IModgfx *unk2F4;
+/*2F8*/ DLL_IModgfx *unk2F8;
+/*2FC*/ u8 _unk2FC[0x32C - 0x2FC];
+/*32C*/ Vec3f unk32C[5];
+/*368*/ u8 _unk368[0x380 - 0x368];
+/*380*/ f32 unk380;
+/*384*/ f32 unk384;
+/*388*/ f32 unk388;
+/*38C*/ f32 unk38C;
+/*390*/ f32 unk390;
+/*394*/ f32 unk394;
+/*398*/ f32 unk398;
+/*39C*/ f32 unk39C;
+/*3A0*/ f32 unk3A0;
+/*3A4*/ f32 unk3A4;
+/*3A8*/ f32 unk3A8;
+/*3AC*/ f32 unk3AC;
+/*3B0*/ f32 unk3B0;
+/*3B4*/ u32 unk3B4; // sound handle
+/*3B8*/ u32 unk3B8;
+/*3BC*/ u32 unk3BC;
+/*3C0*/ u32 unk3C0;
+/*3C4*/ s32 unk3C4;
+/*3C8*/ s16 unk3C8;
+/*3CA*/ s16 unk3CA;
+/*3CC*/ s16 unk3CC;
+/*3CE*/ s16 unk3CE;
+/*3D0*/ s16 unk3D0;
+/*3D2*/ s16 unk3D2;
+/*3D4*/ u8 _unk3D4[0x3D6 - 0x3D4];
+/*3D6*/ s16 unk3D6;
+/*3D8*/ s16 unk3D8;
+/*3DA*/ s8 unk3DA;
+/*3DB*/ u8 unk3DB;
+/*3DC*/ u8 unk3DC;
+/*3DD*/ u8 unk3DD;
+/*3DE*/ s8 unk3DE;
+/*3DF*/ s8 unk3DF;
+/*3E0*/ s8 unk3E0;
+/*3E1*/ s8 unk3E1;
 } IMSnowBike_Data;
 
 typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    s16 unk1A;
-    u8 unk1C;
-    u8 unk1D;
-    s16 unk1E;
+/*00*/ ObjSetup base;
+/*18*/ u8 unk18;
+/*19*/ u8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ u8 unk1C;
+/*1D*/ u8 unk1D;
+/*1E*/ s16 unk1E;
 } IMSnowBike_Setup;
 
 /*0x0*/ static Vec3f _data_0[] = {
@@ -115,18 +115,18 @@ typedef struct {
 /*0x8*/ static SRT _bss_8;
 
 void dll_711_func_1760(Object *self);
-static void dll_711_func_1870(Object* self, IMSnowBike_Data* objdata, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
+static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
 static void dll_711_func_1ED0(Object *self, IMSnowBike_Data_2AC *a1);
-static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike_Data_2AC* arg2, f32 updateRate, s32 arg4);
-static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike_Data_2AC* arg2, f32 updateRate, s32 arg4);
+static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike_Data_2AC *arg2, f32 updateRate, s32 arg4);
+static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike_Data_2AC *arg2, f32 updateRate, s32 arg4);
 static void dll_711_func_33B4(Object *self, IMSnowBike_Data_2E0 *arg1, u8 port, s32 buffer);
-static void dll_711_func_3430(Object* self, IMSnowBike_Data* objdata, MtxF* a2, s32 a3, s32 a4, s32 a5);
-static void dll_711_func_34E4(Object* arg0, IMSnowBike_Data* arg1);
+static void dll_711_func_3430(Object *self, IMSnowBike_Data *objdata, MtxF *a2, s32 a3, s32 a4, s32 a5);
+static void dll_711_func_34E4(Object *self, IMSnowBike_Data *objdata);
 static int dll_711_func_3598(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3);
-static void dll_711_func_3780(Object* self, IMSnowBike_Data* objdata, DLL27_Data* arg2);
+static void dll_711_func_3780(Object *self, IMSnowBike_Data *objdata, DLL27_Data *arg2);
 static void dll_711_func_3C30(Object *self, IMSnowBike_Data *objdata);
-static void dll_711_func_3D4C(Object* self, IMSnowBike_Data* objdata, f32 arg2, s32 arg3, s32 arg5, u8 arg6);
-static s32 dll_711_func_3A34(Object* arg0, void *arg1, IMSnowBike_Data* arg2, IMSnowBike_Data_2E0* arg3);
+static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, s32 arg3, s32 *arg5, u8 arg6);
+static s32 dll_711_func_3A34(Object *arg0, void *arg1, IMSnowBike_Data *arg2, IMSnowBike_Data_2E0 *arg3);
 
 // offset: 0x0 | ctor
 void dll_711_ctor(void *dll) { }
@@ -135,9 +135,9 @@ void dll_711_ctor(void *dll) { }
 void dll_711_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_711_setup(Object* self, IMSnowBike_Setup* setup, s32 arg2) {
-    IMSnowBike_Data* objdata = (IMSnowBike_Data*)self->data;
-    IMSnowBike_Setup* setup2 = (IMSnowBike_Setup*)self->setup;
+void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
+    IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
+    IMSnowBike_Setup *setup2 = (IMSnowBike_Setup*)self->setup;
     s32 _pad[2];
     u8 sp3C[] = {0x05, 0x05, 0x05, 0x05}; // _data_AC
     s32 var_v0;
@@ -146,10 +146,13 @@ void dll_711_setup(Object* self, IMSnowBike_Setup* setup, s32 arg2) {
     objdata->unk3CC = (s16) ((setup->unk18 & 0xFFFF) << 8);
     objdata->unk2F4 = 0;
     objdata->unk2F8 = 0;
-    _data_A8 = dll_load_deferred(DLL_ID_106, 1);
+    _data_A8 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_106, 1);
     self->srt.yaw = objdata->unk3CC;
     self->animCallback = dll_711_func_3598;
-    gDLL_27->vtbl->init(&objdata->unk4C, 0, 0x40007, 1);
+    gDLL_27->vtbl->init(&objdata->unk4C, 
+        DLL27FLAG_NONE, 
+        DLL27FLAG_40000 | DLL27FLAG_4 | DLL27FLAG_2 | DLL27FLAG_1, 
+        1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk4C, 4, _data_0, _data_30, sp3C);
     if (setup->unk19 != 0) {
         objdata->unk3DC = 3;
@@ -158,7 +161,7 @@ void dll_711_setup(Object* self, IMSnowBike_Setup* setup, s32 arg2) {
     }
     dll_711_func_3C30(self, objdata);
     dll_711_func_1ED0(self, &objdata->unk2AC);
-    func_80023D30(self, 0, 0.0f, 0U);
+    func_80023D30(self, 0, 0.0f, 0);
     if (self->ptr0x64 != NULL) {
         self->ptr0x64->flags |= 0x4A10;
     }
@@ -173,7 +176,7 @@ void dll_711_setup(Object* self, IMSnowBike_Setup* setup, s32 arg2) {
     objdata->unk0.transl.x = self->srt.transl.x;
     objdata->unk0.transl.y = self->srt.transl.y;
     objdata->unk0.transl.z = self->srt.transl.z;
-    obj_add_object_type(self, 0xB);
+    obj_add_object_type(self, OBJTYPE_11);
     _bss_0 = queue_load_texture_proxy(0x89);
     _bss_4 = queue_load_texture_proxy(0x3C);
     if (main_get_bits(setup2->unk1E) != 0) {
@@ -185,10 +188,10 @@ void dll_711_setup(Object* self, IMSnowBike_Setup* setup, s32 arg2) {
 }
 
 // offset: 0x2A0 | func: 1 | export: 1
-void dll_711_control(Object* self) {
-    IMSnowBike_Data* objdata;
-    IMSnowBike_Setup* setup;
-    Object* player;
+void dll_711_control(Object *self) {
+    IMSnowBike_Data *objdata;
+    IMSnowBike_Setup *setup;
+    Object *player;
     f32 spB8;
     MtxF sp78;
     f32 sp74;
@@ -200,8 +203,8 @@ void dll_711_control(Object* self) {
     s32 _pad1;
     s32 _pad2;
     s32 sp54;
-    IMSnowBike_Data_2AC* sp44;
-    IMSnowBike_Data_2E0* sp40;
+    IMSnowBike_Data_2AC *sp44;
+    IMSnowBike_Data_2E0 *sp40;
     
     objdata = self->data;
     setup = (IMSnowBike_Setup*)self->setup;
@@ -234,9 +237,9 @@ void dll_711_control(Object* self) {
 
     player = get_player();
     self->unkAF |= 8;
-    objdata->unk39C = (f32) self->srt.transl.f[0];
-    objdata->unk3A0 = (f32) self->srt.transl.f[1];
-    objdata->unk3A4 = (f32) self->srt.transl.f[2];
+    objdata->unk39C = self->srt.transl.x;
+    objdata->unk3A0 = self->srt.transl.y;
+    objdata->unk3A4 = self->srt.transl.z;
     if (objdata->unk3DD & 0x10) {
         objdata->unk3DD = objdata->unk3DD & ~0x10;
         if (!(objdata->unk3DD & 0x20)) {
@@ -247,13 +250,13 @@ void dll_711_control(Object* self) {
             objdata->unk3CA = 0;
             objdata->unk3E0 = 0;
             objdata->unk3D2 = 0;
-            objdata->unk3CC = (s16) self->srt.yaw;
-            objdata->unk3CE = (s16) self->srt.pitch;
-            objdata->unk3D0 = (s16) self->srt.roll;
+            objdata->unk3CC = self->srt.yaw;
+            objdata->unk3CE = self->srt.pitch;
+            objdata->unk3D0 = self->srt.roll;
             dll_711_func_3C30(self, objdata);
         }
     }
-    switch (objdata->unk3DE) {                        /* irregular */
+    switch (objdata->unk3DE) {
     case 0:
         if (!(objdata->unk3DD & 0x20)) {
             self->objhitInfo->unk5B = 0;
@@ -313,7 +316,7 @@ void dll_711_control(Object* self) {
             objdata->unk18.unk14 = -1;
             objdata->unk18.unk18 = -1;
             objdata->unk18.unk1C = 0;
-            if (main_get_bits(0x3A2) != 0) {
+            if (main_get_bits(BIT_IM_Race_Started) != 0) {
                 objdata->unk3DD |= 8;
             } else {
                 objdata->unk3DD &= ~0x8;
@@ -326,7 +329,7 @@ void dll_711_control(Object* self) {
                 }
                 gDLL_4_Race->vtbl->func9(&objdata->unk18);
             }
-        } else if (main_get_bits(0x3A3) != 0) {
+        } else if (main_get_bits(BIT_IM_Race_Ended) != 0) {
             objdata->unk3DD &= ~0x8;
         }
         dll_711_func_34E4(self, objdata);
@@ -334,7 +337,7 @@ void dll_711_control(Object* self) {
             if (objdata->unk3DD & 8) {
                 if (func_8004454C(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
                     if (objdata->unk3DD & 2) {
-                        sp54 = gDLL_4_Race->vtbl->func5(&objdata->unk0, &objdata->unk18, 2.8f * gUpdateRateF, 1, 1U, 0U);
+                        sp54 = gDLL_4_Race->vtbl->func5(&objdata->unk0, &objdata->unk18, 2.8f * gUpdateRateF, 1, 1, 0);
                         gDLL_4_Race->vtbl->func4(self, &objdata->unk18);
                         gDLL_4_Race->vtbl->func10(&objdata->unk18);
                         if (sp54 == 0) {
@@ -349,9 +352,9 @@ void dll_711_control(Object* self) {
                             objdata->unk3CA = 0;
                             objdata->unk3E0 = 0;
                             objdata->unk3D2 = 0;
-                            objdata->unk3CC = (s16) self->srt.yaw;
-                            objdata->unk3CE = (s16) self->srt.pitch;
-                            objdata->unk3D0 = (s16) self->srt.roll;
+                            objdata->unk3CC = self->srt.yaw;
+                            objdata->unk3CE = self->srt.pitch;
+                            objdata->unk3D0 = self->srt.roll;
                             dll_711_func_3C30(self, objdata);
                             func_80058680(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spB8, 0);
                             self->srt.transl.y -= spB8;
@@ -391,22 +394,22 @@ void dll_711_control(Object* self) {
             for (i = 0; i < gUpdateRate; i++) {
                 dll_711_func_33B4(self, sp40, 0, i);
                 dll_711_func_1F54(self, objdata, sp44, gUpdateRateF, (i + 1) == gUpdateRate);
-                objdata->unk3C8 += ((s16) (s32) (((f32) -objdata->unk2E0.unkE * 60.0f) - (f32) objdata->unk3C8) >> 4);
-                objdata->unk3CA += ((s16) (s32) (((f32) -objdata->unk2E0.unkE * 105.0f) - (f32) objdata->unk3CA) >> 4);
+                objdata->unk3C8 += (s16) (((f32) -objdata->unk2E0.unkE * 60.0f) - (f32) objdata->unk3C8) >> 4;
+                objdata->unk3CA += (s16) (((f32) -objdata->unk2E0.unkE * 105.0f) - (f32) objdata->unk3CA) >> 4;
                 self->srt.yaw = objdata->unk3CC + objdata->unk3C8;
                 self->srt.roll = objdata->unk3D0 + objdata->unk3CA;
             }
         } else {
             for (i = 0; i < gUpdateRate; i++) {
                 dll_711_func_2BA0(self, objdata, sp44, gUpdateRateF, (i + 1) == gUpdateRate);
-                objdata->unk3C8 += ((s16) (s32) (((f32) -objdata->unk2E0.unkE * 60.0f) - (f32) objdata->unk3C8) >> 4);
-                objdata->unk3CA += ((s16) (s32) (((f32) -objdata->unk2E0.unkE * 105.0f) - (f32) objdata->unk3CA) >> 4);
+                objdata->unk3C8 += (s16) (((f32) -objdata->unk2E0.unkE * 60.0f) - (f32) objdata->unk3C8) >> 4;
+                objdata->unk3CA += (s16) (((f32) -objdata->unk2E0.unkE * 105.0f) - (f32) objdata->unk3CA) >> 4;
                 self->srt.yaw = objdata->unk3CC + objdata->unk3C8;
                 self->srt.roll = objdata->unk3D0 + objdata->unk3CA;
             }
         }
         if (!(objdata->unk3DD & 0x20)) {
-            dll_711_func_3D4C(self, objdata, objdata->unk2AC.unkC.z, (s32) sp40->unkF, (s32) &sp40->unk10, 7);
+            dll_711_func_3D4C(self, objdata, objdata->unk2AC.unkC.z, sp40->unkF, &sp40->unk10, 7);
             return;
         }
         if (objdata->unk3B4 != 0) {
@@ -431,9 +434,9 @@ void dll_711_control(Object* self) {
 }
 
 // offset: 0xF34 | func: 2 | export: 2
-void dll_711_update(Object* self) {
-    IMSnowBike_Data* objdata;
-    IMSnowBike_Data_2AC* temp_v0;
+void dll_711_update(Object *self) {
+    IMSnowBike_Data *objdata;
+    IMSnowBike_Data_2AC *temp_v0;
     Vec3f spBC;
     MtxF sp7C;
     MtxF sp3C;
@@ -459,11 +462,11 @@ void dll_711_update(Object* self) {
 }
 
 // offset: 0x10D4 | func: 3 | export: 3
-void dll_711_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    IMSnowBike_Data* objdata = self->data;
+void dll_711_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+    IMSnowBike_Data *objdata = self->data;
     s8 sp3B;
     
-    if (!(objdata->unk3DD & 1) && ((main_get_bits(0x6E) == 0) || (main_get_bits(0x382) != 0))) {
+    if (!(objdata->unk3DD & 1) && ((main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro) == 0) || (main_get_bits(BIT_382) != 0))) {
         if (visibility == -1) {
             sp3B = gDLL_13_Expgfx->vtbl->func10(self);
             if (!(objdata->unk3DD & 0x20)) {
@@ -490,8 +493,8 @@ void dll_711_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 }
 
 // offset: 0x12F4 | func: 4 | export: 4
-void dll_711_free(Object* self, s32 a1) {
-    IMSnowBike_Data* objdata;
+void dll_711_free(Object *self, s32 a1) {
+    IMSnowBike_Data *objdata;
 
     objdata = self->data;
     if (objdata->unk3B4 != 0) {
@@ -521,7 +524,7 @@ void dll_711_free(Object* self, s32 a1) {
     if (_data_A8 != NULL) {
         dll_unload(_data_A8);
     }
-    obj_free_object_type(self, 0xB);
+    obj_free_object_type(self, OBJTYPE_11);
     texture_destroy(_bss_0);
     texture_destroy(_bss_4);
 }
@@ -566,7 +569,7 @@ s32 dll_711_func_1534(Object *self, s32 arg1) {
     if (objdata->unk3DD & 8) {
         return 0;
     }
-    if (!(joy_get_pressed(0) & 0x4000)) {
+    if (!(joy_get_pressed(0) & B_BUTTON)) {
         return 0;
     }
     return 2;
@@ -597,7 +600,7 @@ void dll_711_func_15E8(Object *self, s32 arg1) {
 
     objdata->unk3DE = arg1;
     if (arg1 == 2) {
-        main_set_bits(0x42D, 1);
+        main_set_bits(BIT_42D, 1);
     }
 }
 
@@ -615,8 +618,8 @@ void dll_711_func_1638(Object* self, f32* arg1, s32* arg2) {
 }
 
 // offset: 0x16C4 | func: 16 | export: 16
-f32 dll_711_func_16C4(Object* arg0, f32* arg1) {
-    IMSnowBike_Data* objdata;
+f32 dll_711_func_16C4(Object *arg0, f32 *arg1) {
+    IMSnowBike_Data *objdata;
     f32 magnitude;
 
     objdata = arg0->data;
@@ -665,19 +668,19 @@ void dll_711_func_1760(Object *self) {
 void dll_711_func_1860(UNK_TYPE_32 a0, UNK_TYPE_32 a1) { }
 
 // offset: 0x1870 | func: 20
-static void dll_711_func_1870(Object* self, IMSnowBike_Data* objdata, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
-    static u32 _bss_20;
-    Vertex* spA4;
-    Gfx* spA0;
-    Triangle* sp9C;
+static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+    static u32 soundHandle; // bss+0x20
+    Vertex *spA4;
+    Gfx *spA0;
+    Triangle *sp9C;
     f32 var_fv0;
     s32 pad[5];
     SRT sp6C;
     s32 sp68;
     s32 pad_sp54[3];
-    IMSnowBike_Data_2AC* sp3C;
+    IMSnowBike_Data_2AC *sp3C;
     u32 sp48[] = {0x00000006, 0x00000069, 0x00000069, 0x000000ff};
-    s32 sp44;
+    s32 volume;
 
     sp3C = &objdata->unk2AC;
     spA0 = *gdl;
@@ -694,20 +697,20 @@ static void dll_711_func_1870(Object* self, IMSnowBike_Data* objdata, Gfx** gdl,
     sp6C.transl.x = var_fv0;
     dl_set_prim_color(&spA0, 0xFF, 0xFF, 0xFF, 0xFF);
     if (sp3C->unkC.z < -0.5f) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x12E, &sp6C, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12E, &sp6C, 4, -1, NULL);
     }
     if (sp3C->unkC.z < -1.5f) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x12F, &sp6C, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_12F, &sp6C, 4, -1, NULL);
     }
     if (sp3C->unkC.z < -2.1f) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x130, &sp6C, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_130, &sp6C, 4, -1, NULL);
     }
     sp68 = 0;
     if (objdata->unk2E0.unkF > 0) {
-        sp68 = 0xA;
+        sp68 = 10;
     }
     while (sp68 != 0) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x131, NULL, 4, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_131, NULL, 4, -1, NULL);
         sp68 -= 1;
     }
     sp6C.yaw = 0;
@@ -716,30 +719,30 @@ static void dll_711_func_1870(Object* self, IMSnowBike_Data* objdata, Gfx** gdl,
     sp6C.scale = 1.0f;
     objdata->unk3D8 -= gUpdateRate;
     if (objdata->unk398 < -1.2f) {
-        sp48[1] += rand_next(0, 0x9B);
-        sp48[2] += rand_next(0, 0x9B);
-        sp44 = (0.0f - objdata->unk398) * 21.0f;
+        sp48[1] += rand_next(0, 155);
+        sp48[2] += rand_next(0, 155);
+        volume = (0.0f - objdata->unk398) * 21.0f;
         if ((objdata->unk3E1 & 0xF) && (objdata->unk3D8 <= 0)) {
             sp6C.transl.x = objdata->unk32C[0].x - self->positionMirror.x;
             sp6C.transl.y = objdata->unk32C[0].y - self->positionMirror.y;
             sp6C.transl.z = objdata->unk32C[0].z - self->positionMirror.z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x292, sp44, &_bss_20, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(_bss_20, (sp44 / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
         } else if ((objdata->unk3E1 & 2) && (objdata->unk3D8 <= 0)) {
             sp6C.transl.x = objdata->unk32C[1].x;
             sp6C.transl.y = objdata->unk32C[1].y;
             sp6C.transl.z = objdata->unk32C[1].z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x292, sp44, &_bss_20, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(_bss_20, (sp44 / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
         } else if ((objdata->unk3E1 & 4) && (objdata->unk3D8 <= 0)) {
             sp6C.transl.x = objdata->unk32C[2].x;
             sp6C.transl.y = objdata->unk32C[2].y;
             sp6C.transl.z = objdata->unk32C[2].z;
             _data_A8->vtbl->func0(self, 0, &sp6C, 1, -1, sp48);
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x292, sp44, &_bss_20, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->func_954(_bss_20, (sp44 / 127.0f) + 0.5f);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_292, volume, &soundHandle, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->func_954(soundHandle, (volume / 127.0f) + 0.5f);
         }
     }
     if (objdata->unk3D8 <= 0) {
@@ -770,12 +773,12 @@ static void dll_711_func_1ED0(Object *self, IMSnowBike_Data_2AC *a1) {
 }
 
 // offset: 0x1F54 | func: 22
-static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike_Data_2AC* arg2, f32 updateRate, s32 arg4) {
+static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike_Data_2AC *arg2, f32 updateRate, s32 arg4) {
     MtxF sp140;
     MtxF sp100;
     MtxF spC0;
     f32 temp2;
-    DLL27_Data* temp_v1;
+    DLL27_Data *dll27Data;
     f32 temp3;
     f32 temp4;
     f32 temp1;
@@ -799,7 +802,7 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
     f32 sp4C;
     f32 sp48;
 
-    temp_v1 = &objdata->unk4C;
+    dll27Data = &objdata->unk4C;
     if (objdata->unk3DA != 0) {
         arg2->unkC.x *= objdata->unk380;
         arg2->unkC.y *= objdata->unk380;
@@ -872,7 +875,7 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
     arg2->unkC.x = arg2->unk0.x + arg2->unkC.x;
     arg2->unkC.y = arg2->unk0.y + arg2->unkC.y;
     arg2->unkC.z = arg2->unk0.z + arg2->unkC.z;
-    if (temp_v1->unk25D != 0) {
+    if (dll27Data->unk25D != 0) {
         var_fv0 = arg2->unk2C * sp94.y;
         if (arg2->unkC.z < 0.0f) {
             if (var_fv0 < 0.0f) {
@@ -924,7 +927,7 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
         objdata->unk3D2 = 0;
     } else {
         objdata->unk3E0 += 1;
-        if (objdata->unk3E0 >= 0x65) {
+        if (objdata->unk3E0 > 0x64) {
             objdata->unk3E0 = 0x64;
         }
     }
@@ -953,10 +956,10 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
     obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
     if (arg4 != 0) {
         spA4 = 1.0f / updateRate;
-        dll_711_func_3780(self, objdata, temp_v1);
-        gDLL_27->vtbl->func_1E8(self, temp_v1, gUpdateRateF);
-        gDLL_27->vtbl->func_5A8(self, temp_v1);
-        gDLL_27->vtbl->func_624(self, temp_v1, updateRate);
+        dll_711_func_3780(self, objdata, dll27Data);
+        gDLL_27->vtbl->func_1E8(self, dll27Data, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, dll27Data);
+        gDLL_27->vtbl->func_624(self, dll27Data, updateRate);
         self->speed.x = (self->srt.transl.x - self->positionMirror2.x) * spA4;
         self->speed.y = (self->srt.transl.y - self->positionMirror2.y) * spA4;
         self->speed.z = (self->srt.transl.z - self->positionMirror2.z) * spA4;
@@ -967,17 +970,17 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
         sp7C.f[0] = 0.0f;
         sp7C.f[1] = 1.0f;
         sp7C.f[2] = 0.0f;
-        if (temp_v1->unk25C & 0xF) {
+        if (dll27Data->unk25C & 0xF) {
             objdata->unk3DD |= 0x4;
         } else {
             objdata->unk3DD &= ~0x4;
         }
         var_a0 = 0;
         for (var_v1 = 0; var_v1 < 4; var_v1++) {
-            if (temp_v1->unk25C & (1 << var_v1)) {
-                sp7C.x = temp_v1->unk68.unk0[var_v1].x + sp7C.x;
-                sp7C.y = temp_v1->unk68.unk0[var_v1].y + sp7C.y;
-                sp7C.z = temp_v1->unk68.unk0[var_v1].z + sp7C.z;
+            if (dll27Data->unk25C & (1 << var_v1)) {
+                sp7C.x = dll27Data->unk68.unk0[var_v1].x + sp7C.x;
+                sp7C.y = dll27Data->unk68.unk0[var_v1].y + sp7C.y;
+                sp7C.z = dll27Data->unk68.unk0[var_v1].z + sp7C.z;
                 var_a0 += 1;
             }
         }
@@ -1004,11 +1007,11 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
         var_v0 = -(0x4000 - arctan2_f(sp7C.f[1], sp7C.f[0]));
         sp64 -= (objdata->unk3CE & 0xFFFF);
         CIRCLE_WRAP(sp64);
-        objdata->unk3CE += (((s32) (sp64 >> 2) / 3) * (s32) updateRate);
+        objdata->unk3CE += (((sp64 >> 2) / 3) * (s32) updateRate);
         self->srt.pitch = objdata->unk3CE + objdata->unk3D2;
         var_v0 -= (objdata->unk3D0 & 0xFFFF);
         CIRCLE_WRAP(var_v0);
-        objdata->unk3D0 += (((s32) (var_v0 >> 2) / 3) * (s32) updateRate);
+        objdata->unk3D0 += (((var_v0 >> 2) / 3) * (s32) updateRate);
     }
     objdata->unk3CC -= (s16) (objdata->unk2E0.unkE * (70.0f - ((f32) objdata->unk2E0.unkF * 0.05f)) * 0.0666f);
     if (objdata->unk3DD & 8) {
@@ -1034,8 +1037,8 @@ static void dll_711_func_1F54(Object* self, IMSnowBike_Data* objdata, IMSnowBike
 }
 
 // offset: 0x2BA0 | func: 23
-static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike_Data_2AC* arg2, f32 updateRate, s32 arg4) {
-    DLL27_Data* temp_s1;
+static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike_Data_2AC *arg2, f32 updateRate, s32 arg4) {
+    DLL27_Data *dll27Data;
     MtxF sp11C;
     MtxF spDC;
     MtxF sp9C;
@@ -1052,7 +1055,7 @@ static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike
     s32 var_s0;
     s32 var_v1;
 
-    temp_s1 = &objdata->unk4C;
+    dll27Data = &objdata->unk4C;
 
     if (objdata->unk3DA != 0) {
         arg2->unkC.x *= objdata->unk380;
@@ -1099,7 +1102,7 @@ static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike
     arg2->unkC.x = arg2->unk0.x + arg2->unkC.x;
     arg2->unkC.y = arg2->unk0.y + arg2->unkC.y;
     arg2->unkC.z = arg2->unk0.z + arg2->unkC.z;
-    if (temp_s1->unk25D != 0) {
+    if (dll27Data->unk25D != 0) {
         arg2->unkC.x = 0.0f;
         var_fv1 = arg2->unk2C * sp7C.y;
         if (arg2->unkC.z < 0.0f) {
@@ -1133,9 +1136,9 @@ static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike
     obj_integrate_speed(self, self->speed.x, self->speed.y, self->speed.z);
     if (arg4 != 0) {
         sp8C = (1.0f / updateRate);
-        gDLL_27->vtbl->func_1E8(self, temp_s1, gUpdateRateF);
-        gDLL_27->vtbl->func_5A8(self, temp_s1);
-        gDLL_27->vtbl->func_624(self, temp_s1, updateRate);
+        gDLL_27->vtbl->func_1E8(self, dll27Data, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, dll27Data);
+        gDLL_27->vtbl->func_624(self, dll27Data, updateRate);
         self->speed.x = (self->srt.transl.x - self->positionMirror2.x) * sp8C;
         self->speed.y = (self->srt.transl.y - self->positionMirror2.y) * sp8C;
         self->speed.z = (self->srt.transl.z - self->positionMirror2.z) * sp8C;
@@ -1146,17 +1149,17 @@ static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike
         sp70.f[0] = 0.0f;
         sp70.f[1] = 1.0f;
         sp70.f[2] = 0.0f;
-        if (temp_s1->unk25C & 0xF) {
+        if (dll27Data->unk25C & 0xF) {
             objdata->unk3DD |= 0x4;
         } else {
             objdata->unk3DD &= ~0x4;
         }
         var_a0 = 0;
         for (var_v1 = 0; var_v1 < 4; var_v1++) {
-            if (temp_s1->unk25C & (1 << var_v1)) {
-                sp70.x = temp_s1->unk68.unk0[var_v1].x + sp70.x;
-                sp70.y = temp_s1->unk68.unk0[var_v1].y + sp70.y;
-                sp70.z = temp_s1->unk68.unk0[var_v1].z + sp70.z;
+            if (dll27Data->unk25C & (1 << var_v1)) {
+                sp70.x = dll27Data->unk68.unk0[var_v1].x + sp70.x;
+                sp70.y = dll27Data->unk68.unk0[var_v1].y + sp70.y;
+                sp70.z = dll27Data->unk68.unk0[var_v1].z + sp70.z;
                 var_a0++;
             }
         }
@@ -1179,11 +1182,11 @@ static void dll_711_func_2BA0(Object* self, IMSnowBike_Data* objdata, IMSnowBike
         temp_a1 = -(0x4000 - arctan2_f(sp70.f[1], sp70.f[0]));
         var_s0 -= (objdata->unk3CE & 0xFFFF);
         CIRCLE_WRAP(var_s0);
-        objdata->unk3CE += (((s32) (var_s0 >> 2) / 3) * (s32) updateRate);
+        objdata->unk3CE += (((var_s0 >> 2) / 3) * (s32) updateRate);
         self->srt.pitch = objdata->unk3CE + objdata->unk3D2;
         temp_a1 -= (objdata->unk3D0 & 0xFFFF);
         CIRCLE_WRAP(temp_a1);
-        objdata->unk3D0 += (((s32) (temp_a1 >> 2) / 3) * (s32) updateRate);
+        objdata->unk3D0 += (((temp_a1 >> 2) / 3) * (s32) updateRate);
     }
     objdata->unk3CC -= (s16) (objdata->unk2E0.unkE * (70.0f - (objdata->unk2E0.unkF * 0.05f)) * 0.0666f);
 }
@@ -1195,7 +1198,7 @@ static void dll_711_func_33B4(Object *self, IMSnowBike_Data_2E0 *arg1, u8 port, 
 }
 
 // offset: 0x3430 | func: 25
-static void dll_711_func_3430(Object* self, IMSnowBike_Data* objdata, MtxF* a2, s32 a3, s32 a4, s32 a5) {
+static void dll_711_func_3430(Object *self, IMSnowBike_Data *objdata, MtxF *a2, s32 a3, s32 a4, s32 a5) {
     SRT sp20;
 
     sp20.yaw = objdata->unk3CC;
@@ -1220,44 +1223,44 @@ static void dll_711_func_3430(Object* self, IMSnowBike_Data* objdata, MtxF* a2, 
 }
 
 // offset: 0x34E4 | func: 26
-static void dll_711_func_34E4(Object* arg0, IMSnowBike_Data* arg1) {
+static void dll_711_func_34E4(Object *self, IMSnowBike_Data *objdata) {
     s32 temp_v0;
     s32 sp30;
     s32 sp2C;
-    Object* sp28;
+    Object *sp28;
 
-    temp_v0 = func_80025F40(arg0, &sp28, &sp30, &sp2C);
-    if ((arg0->objhitInfo->unk58 & 1) && (temp_v0 != 0)) {
+    temp_v0 = func_80025F40(self, &sp28, &sp30, &sp2C);
+    if ((self->objhitInfo->unk58 & 1) && (temp_v0 != 0)) {
         switch (temp_v0) {
         case 13:
-            arg1->unk3DA = 0x14;
-            arg1->unk380 = 0.8f;
+            objdata->unk3DA = 0x14;
+            objdata->unk380 = 0.8f;
             return;
         case 15:
-            arg1->unk3DA = 0xC;
-            arg1->unk380 = 0.5f;
+            objdata->unk3DA = 0xC;
+            objdata->unk380 = 0.5f;
             break;
         }
     }
 }
 
 // offset: 0x3598 | func: 27
-static int dll_711_func_3598(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
-    IMSnowBike_Data* temp_s0;
+static int dll_711_func_3598(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3) {
+    IMSnowBike_Data* objdata;
     IMSnowBike_Data_2AC* sp44;
     IMSnowBike_Data_2E0* temp_v0;
     f32 spA0[3];
     SRT sp88;
     MtxF sp48;
 
-    temp_s0 = a0->data;
-    sp44 = &temp_s0->unk2AC;
-    temp_v0 = &temp_s0->unk2E0;
+    objdata = a0->data;
+    sp44 = &objdata->unk2AC;
+    temp_v0 = &objdata->unk2E0;
     
-    if (temp_s0->unk3DE == 2) {
-        spA0[0] = (a0->srt.transl.x - temp_s0->unk39C) * gUpdateRateInverseF;
-        spA0[1] = (a0->srt.transl.y - temp_s0->unk3A0) * gUpdateRateInverseF;
-        spA0[2] = (a0->srt.transl.z - temp_s0->unk3A4) * gUpdateRateInverseF;
+    if (objdata->unk3DE == 2) {
+        spA0[0] = (a0->srt.transl.x - objdata->unk39C) * gUpdateRateInverseF;
+        spA0[1] = (a0->srt.transl.y - objdata->unk3A0) * gUpdateRateInverseF;
+        spA0[2] = (a0->srt.transl.z - objdata->unk3A4) * gUpdateRateInverseF;
         spA0[0] = spA0[0] * 0.93749994f;
         spA0[1] = spA0[1] * 0.93749994f;
         spA0[2] = spA0[2] * 0.93749994f;
@@ -1270,22 +1273,22 @@ static int dll_711_func_3598(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
         sp88.roll = -a0->srt.roll;
         matrix_from_srt_reversed(&sp48, &sp88);
         vec3_transform(&sp48, spA0[0], spA0[1], spA0[2], &sp44->unkC.x, &sp44->unkC.y, &sp44->unkC.z);
-        temp_v0->unkF = (s8) (temp_v0->unkF + (gUpdateRate * 8));
-        if (temp_v0->unkF >= 0x47) {
+        temp_v0->unkF += (gUpdateRate * 8);
+        if (temp_v0->unkF > 0x46) {
             temp_v0->unkF = 0x46;
         }
-        dll_711_func_3D4C(a0, temp_s0, sp44->unkC.z, (s32) temp_v0->unkF, (s32)&temp_v0->unk10, 4);
+        dll_711_func_3D4C(a0, objdata, sp44->unkC.z, temp_v0->unkF, &temp_v0->unk10, 4);
     }
-    temp_s0->unk39C = a0->srt.transl.x;
-    temp_s0->unk3A0 = a0->srt.transl.y;
-    temp_s0->unk3A4 = a0->srt.transl.z;
-    temp_s0->unk3DD |= 0x10;
-    temp_s0->unk3DD &= ~0x8;
+    objdata->unk39C = a0->srt.transl.x;
+    objdata->unk3A0 = a0->srt.transl.y;
+    objdata->unk3A4 = a0->srt.transl.z;
+    objdata->unk3DD |= 0x10;
+    objdata->unk3DD &= ~0x8;
     return 0;
 }
 
 // offset: 0x3780 | func: 28
-static void dll_711_func_3780(Object* self, IMSnowBike_Data* objdata, DLL27_Data* arg2) {
+static void dll_711_func_3780(Object *self, IMSnowBike_Data *objdata, DLL27_Data *arg2) {
     s32 var_s2;
     MtxF spDC;
     Vec3f sp88[7];
@@ -1327,7 +1330,7 @@ static void dll_711_func_3780(Object* self, IMSnowBike_Data* objdata, DLL27_Data
 }
 
 // offset: 0x3A34 | func: 29
-static s32 dll_711_func_3A34(Object* arg0, void *arg1, IMSnowBike_Data* arg2, IMSnowBike_Data_2E0* arg3) {
+static s32 dll_711_func_3A34(Object *self, void *arg1, IMSnowBike_Data *objdata, IMSnowBike_Data_2E0 *arg3) {
     f32 zDiff;
     f32 var_fv1;
     s32 sp44;
@@ -1335,24 +1338,24 @@ static s32 dll_711_func_3A34(Object* arg0, void *arg1, IMSnowBike_Data* arg2, IM
     s32 var_a0;
     s32 var_v1;
 
-    xDiff = arg0->srt.transl.x - arg2->unk0.transl.x;
-    zDiff = arg0->srt.transl.z - arg2->unk0.transl.z;
+    xDiff = self->srt.transl.x - objdata->unk0.transl.x;
+    zDiff = self->srt.transl.z - objdata->unk0.transl.z;
     zDiff = sqrtf(SQ(xDiff) + SQ(zDiff));
     var_fv1 = 100.0f - zDiff;
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     }
-    sp44 = gDLL_4_Race->vtbl->func5(&arg2->unk0, &arg2->unk18, var_fv1, 1, 0, 0);
-    gDLL_4_Race->vtbl->func4(arg0, &arg2->unk18);
-    gDLL_4_Race->vtbl->func10(&arg2->unk18);
+    sp44 = gDLL_4_Race->vtbl->func5(&objdata->unk0, &objdata->unk18, var_fv1, 1, 0, 0);
+    gDLL_4_Race->vtbl->func4(self, &objdata->unk18);
+    gDLL_4_Race->vtbl->func10(&objdata->unk18);
     if (sp44 != 0) {
         arg3->unkE = 0;
         arg3->unkF = 0;
         return 1;
     }
-    xDiff = arg0->srt.transl.x - arg2->unk0.transl.x;
-    zDiff = arg0->srt.transl.z - arg2->unk0.transl.z;
-    var_v1 = arctan2_f(xDiff, zDiff) - (arg0->srt.yaw & 0xFFFF);
+    xDiff = self->srt.transl.x - objdata->unk0.transl.x;
+    zDiff = self->srt.transl.z - objdata->unk0.transl.z;
+    var_v1 = arctan2_f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(var_v1)
     var_a0 = var_v1 >> 5;
     if (var_a0 > 0x41) {
@@ -1369,7 +1372,7 @@ static s32 dll_711_func_3A34(Object* arg0, void *arg1, IMSnowBike_Data* arg2, IM
 }
 
 // offset: 0x3C30 | func: 30
-static void dll_711_func_3C30(Object* self, IMSnowBike_Data* objdata) {
+static void dll_711_func_3C30(Object *self, IMSnowBike_Data *objdata) {
     MtxF sp60;
     s32 i;
 
@@ -1383,7 +1386,7 @@ static void dll_711_func_3C30(Object* self, IMSnowBike_Data* objdata) {
 }
 
 // offset: 0x3D4C | func: 31
-static void dll_711_func_3D4C(Object* self, IMSnowBike_Data* objdata, f32 arg2, s32 arg3, s32 arg5, u8 arg6) {
+static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, s32 arg3, s32 *arg5, u8 arg6) {
     static f32 _bss_24;
     f32 sp54;
     SRT sp3C;
@@ -1392,7 +1395,7 @@ static void dll_711_func_3D4C(Object* self, IMSnowBike_Data* objdata, f32 arg2, 
     sp54 = 1.0f;
     if (arg6 & 1) {
         if (objdata->unk3B4 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x289, 0x7F, &objdata->unk3B4, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_289, MAX_VOLUME, &objdata->unk3B4, NULL, 0, NULL);
         }
         if (objdata->unk3B4 != 0) {
             _bss_24 = arg2 * 11.6f;
@@ -1422,7 +1425,7 @@ static void dll_711_func_3D4C(Object* self, IMSnowBike_Data* objdata, f32 arg2, 
     }
     if (arg6 & 2) {
         if (objdata->unk3BC == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x28F, 0x7F, &objdata->unk3BC, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_28F, MAX_VOLUME, &objdata->unk3BC, NULL, 0, NULL);
         }
         if (objdata->unk3BC != 0) {
             if (arg2 != 0.0f) {
@@ -1453,22 +1456,22 @@ static void dll_711_func_3D4C(Object* self, IMSnowBike_Data* objdata, f32 arg2, 
     if (arg6 & 4) {
         if (objdata->unk3D6 <= 0) {
             if (objdata->unk3B8 == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x50D, 0x7F, &objdata->unk3B8, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x28E, 0x7F, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50D, MAX_VOLUME, &objdata->unk3B8, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (objdata->unk3C0 == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x50C, 0x7F, &objdata->unk3C0, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50C, MAX_VOLUME, &objdata->unk3C0, NULL, 0, NULL);
             }
         }
         if (objdata->unk3B8 != 0) {
             gDLL_6_AMSFX->vtbl->func_954(objdata->unk3B8, (objdata->unk394 * 0.00048828125f) + 0.5f);
             if (arg3 >= 6) {
-                objdata->unk394 = (f32) (objdata->unk394 + gUpdateRateF);
+                objdata->unk394 += gUpdateRateF;
             } else {
                 if (objdata->unk394 > 55.0f) {
-                    objdata->unk394 = (f32) (objdata->unk394 - (0.5f * gUpdateRateF));
+                    objdata->unk394 -= (0.5f * gUpdateRateF);
                 } else {
-                    objdata->unk394 = (f32) (objdata->unk394 + (0.2f * gUpdateRateF));
+                    objdata->unk394 += (0.2f * gUpdateRateF);
                 }
             }
             if (objdata->unk394 > 90.0f) {
@@ -1482,7 +1485,7 @@ static void dll_711_func_3D4C(Object* self, IMSnowBike_Data* objdata, f32 arg2, 
                 objdata->unk390 = (arg3 * 0.6f) + 15.0f;
             } else {
                 if (((0.5f * gUpdateRateF)) < objdata->unk390) {
-                    objdata->unk390 = (objdata->unk390 - ((0.5f * gUpdateRateF)));
+                    objdata->unk390 -= (0.5f * gUpdateRateF);
                 } else {
                     objdata->unk390 = 0.0f;
                 }
