@@ -807,7 +807,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if (modflags & MODFLAGS_100) {
         size = mmAlign4(size);
-        size = mmAlign8(size + sizeof(ObjectEvent));
+        size = mmAlign8(size + sizeof(BinFileEntry));
         size += 0x400;
     }
 

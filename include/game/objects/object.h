@@ -146,14 +146,11 @@ typedef struct {
 } ObjectStruct64;
 
 typedef struct {
-    s32 size; // size of thing at ptr
-    UNK_PTR *data;
-} ObjectEvent;
-
-typedef struct {
     s32 size; // size of data
     void *data;
 } BinFileEntry;
+
+typedef BinFileEntry ObjectEvent;
 
 typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
