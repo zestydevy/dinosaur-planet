@@ -27,7 +27,7 @@ void obj_add_tick(Object *obj);
 void obj_destroy_object(Object *obj);
 
 void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad);
-void obj_load_weapondata(Object *obj, s32 param2, ObjectEvent *outParam, s32 id, u8 queueLoad);
+void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 queueLoad);
 
 Object *get_player(void);
 Object *get_sidekick(void);

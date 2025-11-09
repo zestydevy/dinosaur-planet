@@ -1458,8 +1458,8 @@ void dll_210_free(Object* arg0, UNK_TYPE_32 arg1) {
 
     arg0->linkedObject = NULL;
     for (i = 0; i < data->unk8A0; i++) {
-        if (data->unk3B4[i].unk34.ptr != NULL) {
-            mmFree(data->unk3B4[i].unk34.ptr);
+        if (data->unk3B4[i].unk34.data != NULL) {
+            mmFree(data->unk3B4[i].unk34.data);
         }
     }
 
@@ -9358,7 +9358,7 @@ void dll_210_func_1D668(Object* player, f32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D6E0.s")
 
 // offset: 0x1D754 | func: 203 | export: 52
-s32 dll_210_func_1D754(Object* player) {
+void *dll_210_func_1D754(Object* player) {
     Player_Data* objdata = player->data;
     objdata->unk854 = 0;
     return 0;

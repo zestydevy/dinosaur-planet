@@ -146,9 +146,14 @@ typedef struct {
 } ObjectStruct64;
 
 typedef struct {
-    s32 size; // size of thing at unk4
-    UNK_PTR *ptr;
+    s32 size; // size of thing at ptr
+    UNK_PTR *data;
 } ObjectEvent;
+
+typedef struct {
+    s32 size; // size of data
+    void *data;
+} BinFileEntry;
 
 typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
@@ -225,7 +230,7 @@ typedef struct Object {
 /*0050*/    ObjDef* def;
 /*0054*/    ObjectHitInfo* objhitInfo;
 /*0058*/    ObjectStruct58 *unk58;
-/*005C*/    ObjectEvent *unk5C;
+/*005C*/    BinFileEntry *unk5C;
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectStruct64* unk64; //ShadowData?
 /*0068*/    DLL_IObject *dll;

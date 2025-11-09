@@ -1115,7 +1115,7 @@ u32 obj_init_event_data(s32 objId, Object *obj, u32 addr) {
     obj->curEvent = (ObjectEvent*)mmAlign4(addr);
 
     addr = mmAlign8((u32)obj->curEvent + sizeof(ObjectEvent));
-    obj->curEvent->ptr = (UNK_PTR*)addr;
+    obj->curEvent->data = (UNK_PTR*)addr;
 
     addr += 0x50;
 
@@ -1153,9 +1153,9 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
             if (eventList) {}
 
             if (!dontQueueLoad) {
-                queue_load_file_region_to_ptr((void**)outEvent->ptr, OBJEVENT_BIN, offset, outEvent->size);
+                queue_load_file_region_to_ptr((void**)outEvent->data, OBJEVENT_BIN, offset, outEvent->size);
             } else {
-                read_file_region(OBJEVENT_BIN, outEvent->ptr, offset, outEvent->size);
+                read_file_region(OBJEVENT_BIN, outEvent->data, offset, outEvent->size);
             }
 
             break;
@@ -1166,17 +1166,17 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
 u32 func_8002298C(s32 objId, ModelInstance *param2, Object *obj, u32 addr) {
     if (param2 == 0) {
         return addr;
-    } else {
-        obj->unk5C = (ObjectEvent*)mmAlign4(addr);
-
-        addr = mmAlign8((u32)obj->unk5C + sizeof(ObjectEvent));
-        obj->unk5C->ptr = (UNK_PTR*)addr;
-
-        return addr + 0x400;
     }
+
+    obj->unk5C = (ObjectEvent*)mmAlign4(addr);
+
+    addr = mmAlign8((u32)obj->unk5C + sizeof(ObjectEvent));
+    obj->unk5C->data = (UNK_PTR*)addr;
+
+    return addr + 0x400;
 }
 
-void obj_load_weapondata(Object *obj, s32 param2, ObjectEvent *outParam, s32 id, u8 queueLoad) {
+void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 queueLoad) {
     ObjDefWeaponData *weaponDataList;
     ObjDefWeaponData *weaponData;
     
@@ -1203,9 +1203,9 @@ void obj_load_weapondata(Object *obj, s32 param2, ObjectEvent *outParam, s32 id,
             if (weaponDataList) {}
 
             if (queueLoad) {
-                queue_load_file_region_to_ptr((void**)outParam->ptr, WEAPONDATA_BIN, offset, outParam->size);
+                queue_load_file_region_to_ptr((void**)outParam->data, WEAPONDATA_BIN, offset, outParam->size);
             } else {
-                read_file_region(WEAPONDATA_BIN, outParam->ptr, offset, outParam->size);
+                read_file_region(WEAPONDATA_BIN, outParam->data, offset, outParam->size);
             }
 
             break;

@@ -34,7 +34,7 @@ typedef struct Player_Data3B4 {
     u8 pad31;
     u8 pad32;
     u8 pad33;
-    ObjectEvent unk34;
+    BinFileEntry unk34;
 } Player_Data3B4;
 
 // size: 0x48
@@ -344,7 +344,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*49*/ s16 (*func49)(Object* player);
     /*50*/ s32 (*func50)(Object* player);
     /*51*/ UnknownDLLFunc func51;
-    /*52*/ s32 (*func52)(Object* player);
+    /*52*/ void *(*func52)(Object* player);
     /*53*/ Object *(*func53)(Object* player);
     /*54*/ Unk80032CF8 *(*func54)(Object* player);
     /*55*/ void (*func55)(Object* player, Player_Data* objdata, void** arg2, s8* arg3, Vec3f** arg4);
