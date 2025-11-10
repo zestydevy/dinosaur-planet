@@ -203,6 +203,10 @@ def scan_dll_elf(
 
         if sym.name.endswith(".NON_MATCHING"):
             continue
+        if ":" in sym.name:
+            # IDO emits these sometimes when there are globals/statics with a size < 4.
+            # e.g. "_bss_20:1"
+            continue
 
         if st_shndx == "SHN_ABS":
             sec_offset = dll.header.size
