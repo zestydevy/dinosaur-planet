@@ -49,5 +49,5 @@ jobs:
     - name: Build (non-matching, non-equivalent)
       run: |
         . .venv/bin/activate
-        python3 ./dino.py configure --non-matching --non-equivalent
+        python3 ./dino.py configure --all-code
         python3 ./dino.py build --no-verify

@@ -183,8 +183,9 @@ class DinoCommandRunner:
         print()
         self.configure()
 
-    def configure(self, non_matching: bool = False, non_equivalent: bool = False):
-        print("Configuring build script...")
+    def configure(self, args: "list[str]"=[]):
+        if not "-h" in args and not "--help" in args:
+            print("Configuring build script...")
 
         self.__assert_project_built()
 
@@ -194,10 +195,7 @@ class DinoCommandRunner:
             "--target", TARGET
         ]
 
-        if non_matching:
-            cmd.append("--non-matching")
-        if non_equivalent:
-            cmd.append("--non-equivalent")
+        cmd.extend(args)
 
         self.__run_cmd(cmd)
 
@@ -577,9 +575,7 @@ def main():
     extract_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
     extract_dll_cmd.add_argument("--disassemble-all", dest="disassemble_all", action="store_true", help="Disasemble matched functions and migrated data.", default=False)
 
-    configure_cmd = subparsers.add_parser("configure", help="Re-configure the build script.")
-    configure_cmd.add_argument("--non-matching", dest="non_matching", action="store_true", help="Define NON_MATCHING.", default=False)
-    configure_cmd.add_argument("--non-equivalent", dest="non_equivalent", action="store_true", help="Define NON_EQUIVALENT.", default=False)
+    subparsers.add_parser("configure", help="Re-configure the build script.", add_help=False)
 
     build_cmd = subparsers.add_parser("build", help="Build ROM and verify that it matches.")
     build_cmd.add_argument("-c", "--configure", action="store_true", help="Re-configure the build script before building.", default=False)
@@ -641,10 +637,9 @@ def main():
         elif cmd == "build-expected":
             runner.create_expected_dir(force=args.force)
         elif cmd == "configure":
-            runner.configure(
-                non_matching=args.non_matching,
-                non_equivalent=args.non_equivalent
-            )
+            configure_index = sys.argv.index("configure")
+            full_args = sys.argv[configure_index + 1:]
+            runner.configure(full_args)
         elif cmd == "verify":
             runner.verify()
         elif cmd == "baseverify":

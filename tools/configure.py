@@ -75,8 +75,7 @@ class BuildConfig:
                  link_script: "str | None"=None,
                  link_script_dll="src/dlls/dll.ld",
                  skip_dlls=False,
-                 non_matching=False,
-                 non_equivalent=False,
+                 defines: list[str]=[],
                  default_opt_flags="-O2 -g3"):
         self.target = target
         self.build_dir = build_dir
@@ -84,8 +83,7 @@ class BuildConfig:
         self.link_script = link_script or f"{target}.ld"
         self.link_script_dll = link_script_dll
         self.skip_dlls = skip_dlls
-        self.non_matching = non_matching
-        self.non_equivalent = non_equivalent
+        self.defines = defines
         self.default_opt_flags = default_opt_flags
 
 class BuildNinjaWriter:
@@ -136,10 +134,8 @@ class BuildNinjaWriter:
             "-DF3DEX_GBI_2", 
         ]
 
-        if self.config.non_matching:
-            cc_defines.append("-DNON_MATCHING")
-        if self.config.non_equivalent:
-            cc_defines.append("-DNON_EQUIVALENT")
+        for define in self.config.defines:
+            cc_defines.append(f"-D{define}")
 
         self.writer.variable("CC_DEFINES", " ".join(cc_defines))
 
@@ -775,17 +771,24 @@ def main():
     parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
     parser.add_argument("--target", type=str, help="The filename of the ROM to create (excluding extension suffix, default=dino).", default="dino")
     parser.add_argument("--skip-dlls", dest="skip_dlls", action="store_true", help="Don't recompile DLLs (use original).")
-    parser.add_argument("--non-matching", dest="non_matching", action="store_true", help="Define NON_MATCHING.")
-    parser.add_argument("--non-equivalent", dest="non_equivalent", action="store_true", help="Define NON_EQUIVALENT.")
+    parser.add_argument("-D", "--define", nargs="*", action="extend", help="Define a macro.")
+    parser.add_argument("--all-code", dest="all_code", action="store_true", 
+                        help="Compile *all* code, including NON_MATCHING, NON_EQUIVALENT, and code gated behind AVOID_UB. " +
+                            "This is useful for ensuring that all code in the project compiles successfully (not necessarily that it matches).")
     
     args = parser.parse_args()
 
     # Create config
+    defines = args.define
+    if defines == None:
+        defines = []
+    if args.all_code:
+        defines.extend(["NON_MATCHING", "NON_EQUIVALENT", "AVOID_UB"])
+
     config = BuildConfig(
         target=args.target,
         skip_dlls=args.skip_dlls or False,
-        non_matching=args.non_matching or False,
-        non_equivalent=args.non_equivalent or False
+        defines=defines
     )
 
     # Do all path lookups from the base directory

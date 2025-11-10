@@ -155,9 +155,16 @@ f32 fsin16(s16 theta);
 
 f32 sinf(f32);
 
+// Returning s16 causes good compilers to optimise out parts of the resultant, causing bugs. They most likely intended u16.
+#ifdef AVOID_UB
+u16 arctan2s(s32 x, s32 z);
+u16 arctan2_f(f32 x, f32 z);
+u16 atan2f_to_s(f32 x, f32 z);
+#else
 s16 arctan2s(s32 x, s32 z);
 s16 arctan2_f(f32 x, f32 z);
 s16 atan2f_to_s(f32 x, f32 z);
+#endif
 f32 atan2f(f32 x, f32 z);
 
 f32 acosf(f32);
