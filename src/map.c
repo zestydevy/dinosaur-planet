@@ -1878,14 +1878,14 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
                 gDLL_26_Curves->vtbl->func_10C((CurveSetup*)objSetup);
             }
             if (objSetup->objId == OBJ_checkpoint4) {
-                gDLL_4_Race->vtbl->func2(objSetup);
+                gDLL_4_Race->vtbl->func2((RaceCheckpointSetup*)objSetup);
             }
         } else {
             if ((OBJ_curve == objSetup->objId) || (OBJ_checkpoint4 == objSetup->objId)) {
                 if (OBJ_curve == objSetup->objId) {
                     gDLL_26_Curves->vtbl->func_34((CurveSetup*)objSetup);
                 } else {
-                    gDLL_4_Race->vtbl->func1(objSetup);
+                    gDLL_4_Race->vtbl->func1((RaceCheckpointSetup*)objSetup);
                 }
                 if (!foundCurves) {
                     setupList->curvesOffset = ((u32)objSetup - (u32)map->objectInstanceFile_ptr);

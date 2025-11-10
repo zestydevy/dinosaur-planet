@@ -1364,9 +1364,9 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
     }
     arg0->unk9C = arg0->unkA0;
     arg0->unkA0 = arg0->unkA4;
-    memcpy(arg0->unkA8, arg0->unkB8, 0x10U);
-    memcpy(arg0->unkC8, arg0->unkD8, 0x10U);
-    memcpy(arg0->unkE8, arg0->unkF8, 0x10U);
+    memcpy(arg0->unkA8, arg0->unkB8, sizeof(f32) * 4);
+    memcpy(arg0->unkC8, arg0->unkD8, sizeof(f32) * 4);
+    memcpy(arg0->unkE8, arg0->unkF8, sizeof(f32) * 4);
     if (arg0->unk80 != 0) {
         var_v0 = dll_26_func_590(arg0->unkA0, -1);
     } else {

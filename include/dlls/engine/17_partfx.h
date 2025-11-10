@@ -22,6 +22,10 @@ enum ParticleID {
     /* --- DLL 38 END --- */
     /* --- DLL 44 START --- */
     PARTICLE_12C = 0x12C,
+    PARTICLE_12E = 0x12E,
+    PARTICLE_12F = 0x12F,
+    PARTICLE_130 = 0x130,
+    PARTICLE_131 = 0x131,
     PARTICLE_136 = 0x136,
     PARTICLE_18F = 0x18F,
     /* --- DLL 44 END --- */

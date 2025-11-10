@@ -113,6 +113,8 @@ enum DLL_ID {
     DLL_ID_107 = 0x1003,
     DLL_ID_122 = 0x1012,
     DLL_ID_136 = 0x1020,
+    DLL_ID_141 = 0x1025,
+    DLL_ID_142 = 0x1026,
     DLL_ID_147 = 0x102B,
     DLL_ID_148 = 0x102C,
     DLL_ID_149 = 0x102D,
