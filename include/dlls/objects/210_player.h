@@ -304,7 +304,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*9*/ void (*func9)(Object* player, s32 arg1);
     /*10*/ s32 (*func10)(Object* player, Object** arg1);
     /*11*/ s32 (*func11)(Object* arg0, Object* arg1);
-    /*12*/ UnknownDLLFunc func12;
+    /*12*/ void (*set_magic)(Object* player, s32 amount);
     /*13*/ void (*set_magic_max)(Object* player, s32 magicMax);
     /*14*/ void (*add_magic)(Object* player, s32 amount);
     /*15*/ void (*increase_magic_max)(Object* player, s32 amount);

@@ -9044,7 +9044,23 @@ s16 dll_210_get_magic_max(Object* player) {
 }
 
 // offset: 0x1CEB4 | func: 165 | export: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CEB4.s")
+void dll_210_set_magic(Object* player, s32 amount) {
+    s32 temp_a0;
+    s32 var_a1;
+    Player_Data* objdata;
+
+    objdata = player->data;
+    if (objdata->unk8BB == 0) {
+        return;
+    }
+
+    if (amount < 0) {
+        amount = 0;
+    } else if (objdata->stats->magicMax < amount) {
+        amount = objdata->stats->magicMax;
+    }
+    objdata->stats->magic = amount;
+}
 
 // offset: 0x1CEFC | func: 166 | export: 14
 //Plays sound effect when magic refilled?
