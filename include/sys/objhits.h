@@ -95,6 +95,7 @@ typedef struct Unk800B20B8 {
     Object *unk8;
 } Unk800B20B8;
 
+s32 func_80025F40(Object*,Object **,s32 *,s32 *);
 s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 s32 func_80026724(Object*);

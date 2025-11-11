@@ -63,6 +63,7 @@
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
+307 = objects/307
 308 = objects/308_USEOBJ
 309 = objects/309_SEQOBJ
 311 = objects/311_IMMultiSeq
@@ -140,6 +141,8 @@
 737 = objects/737_DRLavaControl
 767 = objects/767_SPItem
 768 = objects/768_SPShop
+779 = objects/779_WCLevelControl
+780 = objects/780_WCBeacon
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock
 793 = objects/793_BWlog

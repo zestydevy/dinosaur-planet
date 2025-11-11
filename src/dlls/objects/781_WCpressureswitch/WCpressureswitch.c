@@ -27,14 +27,14 @@ typedef struct {
 } PressureSwitch_Data;
 
 typedef struct {
-ObjSetup base;
-u8 yaw;
-u8 modelIdx;
-s16 gameBitPressed;             //flag to set when switch is pressed down
-u8 yOffsetAnimation;            //how far down the switch should move when pressed
-u8 yThreshold;                  //threshold for other objects pressing switch
-u8 distanceSidekickBehaviour;   //player distance at which special sidekick behaviour is activated
-s16 gameBitActivated;            //flag to check if switch is deactivated
+/*00*/ ObjSetup base;
+/*18*/ u8 yaw;
+/*19*/ u8 modelIdx;
+/*1A*/ s16 gameBitPressed;             //flag to set when switch is pressed down
+/*1C*/ u8 yOffsetAnimation;            //how far down the switch should move when pressed
+/*1D*/ u8 yThreshold;                  //threshold for other objects pressing switch
+/*1E*/ u8 distanceSidekickBehaviour;   //player distance at which special sidekick behaviour is activated
+/*20*/ s16 gameBitActivated;            //flag to check if switch is deactivated
 } PressureSwitch_Setup;
 
 enum WCPressureSwitchStates {

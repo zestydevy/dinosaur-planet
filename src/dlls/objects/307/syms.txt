@@ -1,0 +1,15 @@
+.text = 0x0:
+dll_307_ctor = 0x0;
+dll_307_dtor = 0xC;
+dll_307_setup = 0x18;
+dll_307_control = 0x1C8;
+dll_307_update = 0x2A8;
+dll_307_print = 0x2B4;
+dll_307_free = 0x308;
+dll_307_get_model_flags = 0x318;
+dll_307_get_data_size = 0x328;
+dll_307_func_33C = 0x33C;
+dll_307_func_6E4 = 0x6E4;
+
+.rodata = 0x864:
+_oob_rodata_0 = 0x0; // absolute:0x864

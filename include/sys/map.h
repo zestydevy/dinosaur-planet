@@ -557,5 +557,6 @@ void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);
 Texture* func_8004A1E8(s32 match_value);
 ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
+void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
 
 #endif

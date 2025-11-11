@@ -150,6 +150,8 @@ enum SoundID {
 
     SOUND_99a_Mechanical_Ratcheting = 0x99a,
 
+    SOUND_9A3 = 0x9A3,
+
     SOUND_9B1_Flames_Venting = 0x9B1, // kamerian related
     SOUND_9B2_Fire_Burning = 0x9B2, // kamerian related
 

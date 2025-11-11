@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_780_ctor = 0x0;
+dll_780_dtor = 0xC;
+dll_780_setup = 0x18;
+dll_780_control = 0x11C;
+dll_780_update = 0x4E8;
+dll_780_print = 0x4F4;
+dll_780_free = 0x548;
+dll_780_get_model_flags = 0x558;
+dll_780_get_data_size = 0x58C;
+
+.rodata = 0x5EC:

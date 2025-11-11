@@ -1,0 +1,42 @@
+.text = 0x0:
+dll_779_ctor = 0x0;
+dll_779_dtor = 0xC;
+dll_779_setup = 0x18;
+dll_779_control = 0x1B4;
+dll_779_update = 0x3A0;
+dll_779_print = 0x3AC;
+dll_779_free = 0x400;
+dll_779_get_model_flags = 0x440;
+dll_779_get_data_size = 0x450;
+dll_779_func_464 = 0x464;
+dll_779_func_534 = 0x534;
+dll_779_func_64C = 0x64C;
+dll_779_func_6C0 = 0x6C0;
+dll_779_func_730 = 0x730;
+dll_779_func_7FC = 0x7FC;
+dll_779_func_8C8 = 0x8C8;
+dll_779_func_BA8 = 0xBA8;
+dll_779_func_C78 = 0xC78;
+dll_779_func_D90 = 0xD90;
+dll_779_func_E04 = 0xE04;
+dll_779_func_E74 = 0xE74;
+dll_779_func_F40 = 0xF40;
+dll_779_func_100C = 0x100C;
+dll_779_func_12EC = 0x12EC;
+dll_779_func_1444 = 0x1444;
+dll_779_func_1928 = 0x1928;
+dll_779_func_1CF4 = 0x1CF4;
+dll_779_func_1D54 = 0x1D54;
+
+.rodata = 0x1E88:
+str_0 = 0x0; // absolute:0x1E88
+
+.data = 0x1FD8:
+_data_0 = 0x0; // absolute:0x1FD8
+_data_40 = 0x40; // absolute:0x2018
+_data_80 = 0x80; // absolute:0x2058
+_data_C0 = 0xC0; // absolute:0x2098
+
+.bss = 0x20D8:
+_bss_0 = 0x0; // absolute:0x20D8
+_bss_40 = 0x40; // absolute:0x2118
