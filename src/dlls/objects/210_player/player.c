@@ -9499,7 +9499,21 @@ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2) {
 }
 
 // offset: 0x1DAB0 | func: 216
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1DAB0.s")
+void dll_210_func_1DAB0(Object* player) {
+    ObjSetup* temp_v0;
+
+    temp_v0 = obj_alloc_create_info(0x24, 0x43B);
+    temp_v0->objId = 0x43B;
+    temp_v0->quarterSize = 9;
+    temp_v0->loadFlags = 2;
+    temp_v0->byte6 = 0xFF;
+    temp_v0->byte5 = 1;
+    temp_v0->fadeDistance = 0xFF;
+    temp_v0->x = player->srt.transl.f[0];
+    temp_v0->y = player->srt.transl.f[1] + 15.0f;
+    temp_v0->z = player->srt.transl.f[2];
+    obj_create(temp_v0, 5U, -1, -1, player->parent);
+}
 
 // offset: 0x1DB6C | func: 217
 void dll_210_func_1DB6C(Object* arg0, f32 arg1) {
