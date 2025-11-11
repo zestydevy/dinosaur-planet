@@ -52,6 +52,7 @@ static void dll_210_func_7CF8(Player_Data* arg0, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* arg0, Player_Data* arg1, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* arg0, Player_Data* arg1, Player_Data* arg2, Player_Data3B4* arg3, f32 arg4, s32 arg5);
 static void dll_210_func_8EA4(Object* arg0, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
+static void dll_210_func_9F1C(Object* arg0, s32 arg1);
 static void dll_210_func_A024(Object* player, Player_Data* objdata);
 static s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2);
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
@@ -72,7 +73,6 @@ static  s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
 /* static */ void dll_210_func_3B40(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
 /* static */ void dll_210_func_1DB6C(Object* arg0, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* arg0, f32 updateRate);
-/* static */ void dll_210_func_9F1C(Object* arg0, s32 arg1);
 /* static */ void dll_210_func_60A8(Object* arg0, s32 arg1, s32 arg2);
 /* static */ void dll_210_func_1DE64(UNK_TYPE_32 *arg0);
 /* static */ void dll_210_func_1DE50(s32 arg0, s32 arg1, s32 arg2);
@@ -1743,7 +1743,6 @@ void dll_210_func_47B8(Object* arg0, Player_Data* arg1) {
 // Needs these as static:
 // dll_210_func_1DB6C (matched)
 // dll_210_func_63F0 (matched)
-// dll_210_func_9F1C (matched)
 // dll_210_func_60A8 (matched)
 
 int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
@@ -3623,7 +3622,7 @@ void dll_210_func_9E00(Object* arg0) {
 #endif
 
 // offset: 0x9F1C | func: 52
-void dll_210_func_9F1C(Object* arg0, s32 arg1) {
+static void dll_210_func_9F1C(Object* arg0, s32 arg1) {
     if (arg1 != 0) {
         if (gDLL_29_Gplay->vtbl->restart_is_set() != 0) {
             gDLL_29_Gplay->vtbl->restart_goto();
@@ -8848,25 +8847,90 @@ void dll_210_func_1BF8C(Object* player, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1BFAC.s")
 
 // offset: 0x1C02C | func: 141
+s32 dll_210_func_1C02C(Object* player, ObjFSA_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C02C.s")
 
 // offset: 0x1C07C | func: 142
+s32 dll_210_func_1C07C(Object* player, ObjFSA_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C07C.s")
 
 // offset: 0x1C230 | func: 143
+s32 dll_210_func_1C230(Object* player, ObjFSA_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C230.s")
 
 // offset: 0x1C460 | func: 144
+s32 dll_210_func_1C460(Object* player, ObjFSA_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C460.s")
 
 // offset: 0x1C564 | func: 145
+s32 dll_210_func_1C564(Object* player, ObjFSA_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C564.s")
 
 // offset: 0x1C620 | func: 146
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C620.s")
+s32 dll_210_func_1C620(Object* player, ObjFSA_Data* arg1, f32 arg2) {
+    f32 f0;
+    s32 var_v1;
+    Player_Data* objdata;
+
+    objdata = player->data;
+    switch (player->curModAnimId) {
+        case 0x450:
+            arg1->animTickDelta = 0.02f;
+            if ((player->speed.f[1] < 1.0f) && (arg1->unk4.unk25C & 0x10)) {
+                gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[0x227], 0x7FU, NULL, NULL, 0, NULL);
+                func_80023D30(player, 0xC3, 0.0f, 0U);
+            }
+            f0 = SQ(player->speed.x) + SQ(player->speed.z);
+            if (f0 > 1.0f) {
+                var_v1 = arctan2_f(player->speed.x, player->speed.z) - (player->srt.yaw & 0xFFFF);
+                CIRCLE_WRAP(var_v1)
+                player->srt.yaw += (var_v1 * (s32) arg2) >> 3;
+            }
+            break;
+        case 0xC1:
+            arg1->animTickDelta = 0.05f;
+            if ((player->speed.f[1] < 1.0f) && (arg1->unk4.unk25C & 0x10)) {
+                gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[0x227], 0x7FU, NULL, NULL, 0, NULL);
+                func_80023D30(player, 0xC3, 0.0f, 0U);
+            }
+            f0 = SQ(player->speed.x) + SQ(player->speed.z);
+            if (f0 > 1.0f) {
+                var_v1 = arctan2_f(player->speed.x, player->speed.z) - (player->srt.yaw & 0xFFFF);
+                CIRCLE_WRAP(var_v1)
+                player->srt.yaw += (var_v1 * (s32) arg2) >> 3;
+            }
+            break;
+        case 0xC3:
+            arg1->animTickDelta = 0.05f;
+            if (arg1->unk33A != 0) {
+                if (objdata->stats->health > 0) {
+                    func_80023D30(player, 0xC5, 0.0f, 0U);
+                } else {
+                    dll_210_func_9F1C(player, 0);
+                    return -0x4E;
+                }
+            }
+            player->speed.x = 0.0f;
+            player->speed.z = 0.0f;
+            break;
+        case 0xC5:
+            arg1->animTickDelta = 0.01f;
+            if (arg1->unk33A != 0) {
+                return -1;
+            }
+            break;
+        default:
+            func_80023D30(player, 0xC1, 0.0f, 0U);
+            break;
+    }
+    arg1->unk340 |= 2;
+    player->speed.f[0] *= 0.96f;
+    player->speed.f[2] *= 0.96f;
+    return 0;
+}
 
 // offset: 0x1C9D8 | func: 147
-s32 dll_210_func_1C9D8(Object* player, ObjFSA_Data* arg1, s32 arg2) {
+s32 dll_210_func_1C9D8(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     Player_Data* objdata = player->data;
 
     arg1->unk341 = 3;
