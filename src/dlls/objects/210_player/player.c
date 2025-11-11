@@ -64,6 +64,7 @@ static void dll_210_func_16204(Object *obj, ObjFSA_Data *fsa);
 static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa);
 static void dll_210_func_18DB0(Object* obj, ObjFSA_Data* fsa);
 static s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
+static void dll_210_func_1BAC8(Object* player, ObjFSA_Data *fsa);
 static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa);
 
 // These funcs are already matched but other funcs requires these are static
@@ -8813,11 +8814,45 @@ s32 dll_210_func_1B640(Object *player, ObjFSA_Data *fsa, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B640.s")
 
 // offset: 0x1B878 | func: 133
-s32 dll_210_func_1B878(Object *player, ObjFSA_Data *fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B878.s")
+s32 dll_210_func_1B878(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+    Player_Data* objdata;
+
+    objdata = player->data;
+    if (fsa->enteredAnimState != 0) {
+        objdata->flags = (s32) (objdata->flags | 0x800);
+        fsa->animExitAction = dll_210_func_1BAC8;
+        func_80023D30(player, 0x97, 0.0f, 0U);
+        fsa->animTickDelta = 0.018f;
+        dll_210_func_A024(player, (Player_Data* ) fsa);
+    }
+    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 0x10);
+    gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 1);
+    if (!(fsa->unk34A & 1) && (player->animProgress > 0.2f)) {
+        gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[7], 0x7FU, NULL, NULL, 0, NULL);
+        fsa->unk34A |= 1;
+    }
+    if (!(fsa->unk34A & 2) && (player->animProgress > 0.7f)) {
+        gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[5], 0x7FU, NULL, NULL, 0, NULL);
+        fsa->unk34A |= 2;
+    }
+
+    if (fsa->unk33A != 0) {
+        return 0x4C;
+    }
+
+    if (player->animProgress > 0.85f) {
+        if (fsa->unk310 & 0x4000) {
+            return -0x3D;
+        }
+        if (fsa->unk310 & 0x8000) {
+            return -0x3B;
+        }
+    }
+    return 0;
+}
 
 // offset: 0x1BAC8 | func: 134
-void dll_210_func_1BAC8(Object* player, ObjFSA_Data *fsa) {
+static void dll_210_func_1BAC8(Object* player, ObjFSA_Data *fsa) {
     Player_Data* objdata = player->data;
     objdata->flags &= ~0x800;
 }
