@@ -8855,8 +8855,37 @@ s32 dll_210_func_1C07C(Object* player, ObjFSA_Data* arg1, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C07C.s")
 
 // offset: 0x1C230 | func: 143
-s32 dll_210_func_1C230(Object* player, ObjFSA_Data* arg1, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C230.s")
+s32 dll_210_func_1C230(Object* player, ObjFSA_Data* arg1, f32 arg2) {
+    Player_Data* objdata;
+    f32 var_fv0;
+    Vec3f sp34;
+
+    objdata = player->data;
+    arg1->flags |= 0x200000;
+    if (objdata->unk8A4 == 0) {
+        return 0xE;
+    }
+    gDLL_18_objfsa->vtbl->func16(player, arg1, arg2, 1.0f);
+    arg1->unk2B0 = 16.0f;
+    if (objdata->unk820 != NULL) {
+        sp34.f[0] = objdata->unk820->positionMirror.f[0] - player->positionMirror.f[0];
+        sp34.f[1] = objdata->unk820->positionMirror.f[1] - player->positionMirror.f[1];
+        sp34.f[2] = objdata->unk820->positionMirror.f[2] - player->positionMirror.f[2];
+        player->speed.f[0] += (sp34.f[0] / 3000.0f) * arg2;
+        player->speed.f[1] += (sp34.f[1] / 3000.0f) * arg2;
+        player->speed.f[2] += (sp34.f[2] / 3000.0f) * arg2;
+    }
+    if (arg1->enteredAnimState != 0) {
+        func_80023D30(player, 0x12, 0.0f, 1U);
+    }
+    var_fv0 = player->speed.y;
+    CLAMP(var_fv0, 0.0f, 1.0f)
+    var_fv0 = 1.0f - var_fv0;
+    func_800240BC(player, var_fv0);
+    arg1->animTickDelta = 0.01f;
+    gDLL_18_objfsa->vtbl->func8(player, arg1, arg2, (f32) arg1->unk32A, 32.0f);
+    return 0;
+}
 
 // offset: 0x1C460 | func: 144
 s32 dll_210_func_1C460(Object* player, ObjFSA_Data* arg1, f32 arg2) {

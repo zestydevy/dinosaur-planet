@@ -225,7 +225,7 @@ typedef struct {
 /*814*/ s32 aimZ;
 /*818*/ f32 unk818;
 /*81C*/ f32 unk81C;
-/*820*/ s32 unk820;
+/*820*/ Object *unk820;
 /*824*/ f32 unk824;
 /*828*/ f32 unk828;
 /*82C*/ f32 unk82C;
