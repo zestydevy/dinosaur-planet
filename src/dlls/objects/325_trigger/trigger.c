@@ -309,7 +309,7 @@ void trigger_control(Object* self) {
     Trigger_Data* objdata;
     Trigger_Setup* setup;
     Object* player;
-    Object* temp_v0_2;
+    Object* vehicle;
     Object* sidekick;
     Object* activatorObj;
     s32 i;
@@ -324,9 +324,9 @@ void trigger_control(Object* self) {
    
     player = get_player();
     if (player != NULL) {
-        temp_v0_2 = ((DLL_210_Player*)player->dll)->vtbl->func7(player);
-        if (temp_v0_2 != NULL) {
-            player = temp_v0_2;
+        vehicle = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
+        if (vehicle != NULL) {
+            player = vehicle;
         }
     }
     

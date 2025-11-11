@@ -6,7 +6,7 @@
 #include "functions.h"
 #include "game/gamebits.h"
 #include "sys/gfx/gx.h"
-#include "dlls/objects/711_IMSnowBike.h"
+#include "dlls/objects/common/vehicle.h"
 
 typedef struct {
     u8 state;
@@ -237,9 +237,9 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
         main_set_bits(BIT_IM_Race_Ended, 0);
         main_set_bits(BIT_IM_Race_Started, 0);
         player = get_player();
-        snowbike = ((DLL_210_Player*)player->dll)->vtbl->func7(player);
+        snowbike = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (snowbike) {
-            racePosition = ((DLL_711_IMSnowBike*)snowbike->dll)->vtbl->get_race_position(snowbike);
+            racePosition = ((DLL_IVehicle*)snowbike->dll)->vtbl->func17(snowbike);
         } else {
             racePosition = 0;
         }

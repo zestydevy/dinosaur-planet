@@ -239,7 +239,7 @@ typedef struct {
 /*84C*/ f32 unk84C;
 /*850*/ Object *unk850;
 /*854*/ s32 unk854;
-/*858*/ Object *unk858;
+/*858*/ Object *unk858; // vehicle
 /*85C*/ Object *unk85C;
 /*860*/ Object *unk860;
 /*864*/ s32 unk864;
@@ -299,7 +299,7 @@ typedef struct {
 // AKA. krystal
 DLL_INTERFACE(DLL_210_Player) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ Object *(*func7)(Object* player);
+    /*7*/ Object *(*get_vehicle)(Object* player);
     /*8*/ s32 (*func8)(Object* player, Object** arg1);
     /*9*/ UnknownDLLFunc func9;
     /*10*/ s32 (*func10)(Object* player, Object** arg1);

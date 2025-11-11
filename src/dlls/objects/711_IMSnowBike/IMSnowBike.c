@@ -550,7 +550,7 @@ u32 dll_711_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x14D4 | func: 7 | export: 7
-u8 dll_711_func_14D4(Object *self, s32 arg1) {
+s32 dll_711_func_14D4(Object *self, Object *rider) {
     IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
 
     if (objdata->flags & SNOWBIKEFLAG_IS_CPU) {
@@ -560,7 +560,7 @@ u8 dll_711_func_14D4(Object *self, s32 arg1) {
 }
 
 // offset: 0x1500 | func: 8 | export: 8
-u8 dll_711_func_1500(Object *self) {
+s32 dll_711_func_1500(Object *self) {
     IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
     return objdata->unk3DB;
 }
@@ -574,7 +574,7 @@ void dll_711_func_1510(Object *self, f32 *a1, f32 *a2, f32 *a3) {
 }
 
 // offset: 0x1534 | func: 10 | export: 10
-s32 dll_711_func_1534(Object *self, s32 arg1) {
+s32 dll_711_func_1534(Object *self, Object *rider) {
     IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
     if (objdata->flags & SNOWBIKEFLAG_8) {
         return 0;
@@ -586,7 +586,7 @@ s32 dll_711_func_1534(Object *self, s32 arg1) {
 }
 
 // offset: 0x15A4 | func: 11 | export: 11
-UNK_TYPE_32 dll_711_func_15A4(Object *self) {
+s32 dll_711_func_15A4(Object *self) {
     return 2;
 }
 
@@ -599,7 +599,7 @@ void dll_711_func_15B4(Object *self, f32 *a1, f32 *a2, f32 *a3) {
 }
 
 // offset: 0x15D8 | func: 13 | export: 13
-s8 dll_711_func_15D8(Object *self) {
+s32 dll_711_func_15D8(Object *self) {
     IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
     return objdata->unk3DE;
 }
@@ -615,7 +615,7 @@ void dll_711_func_15E8(Object *self, s32 arg1) {
 }
 
 // offset: 0x1638 | func: 15 | export: 15
-void dll_711_func_1638(Object* self, f32* arg1, s32* arg2) {
+void dll_711_func_1638(Object *self, f32 *arg1, s32 *arg2) {
     IMSnowBike_Data *objdata = self->data;
     
     *arg1 = (f32) objdata->unk3C8 / 2500.0f;
@@ -628,11 +628,11 @@ void dll_711_func_1638(Object* self, f32* arg1, s32* arg2) {
 }
 
 // offset: 0x16C4 | func: 16 | export: 16
-f32 dll_711_func_16C4(Object *arg0, f32 *arg1) {
+f32 dll_711_func_16C4(Object *self, f32 *arg1) {
     IMSnowBike_Data *objdata;
     f32 magnitude;
 
-    objdata = arg0->data;
+    objdata = self->data;
     *arg1 = 5.0f;
     magnitude = sqrtf(SQ(objdata->unk2AC.unkC.f[0]) + SQ(objdata->unk2AC.unkC.f[1]) + SQ(objdata->unk2AC.unkC.f[2])) * 0.2f;
     if (magnitude > 1.0f) {
@@ -642,7 +642,7 @@ f32 dll_711_func_16C4(Object *arg0, f32 *arg1) {
 }
 
 // offset: 0x1750 | func: 17 | export: 17
-s8 dll_711_func_1750(Object *self) {
+s32 dll_711_func_1750(Object *self) {
     IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
     return objdata->unk3DF;
 }
@@ -675,7 +675,7 @@ void dll_711_func_1760(Object *self) {
 }
 
 // offset: 0x1860 | func: 19 | export: 19
-void dll_711_func_1860(UNK_TYPE_32 a0, UNK_TYPE_32 a1) { }
+void dll_711_func_1860(Object *self, f32 scale) { }
 
 // offset: 0x1870 | func: 20
 static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {

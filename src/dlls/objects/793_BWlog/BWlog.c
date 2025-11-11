@@ -246,10 +246,10 @@ u32 dll_793_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x950 | func: 7 | export: 7
-s32 dll_793_func_950(Object *self, Object *a1) {
+s32 dll_793_func_950(Object *self, Object *rider) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     if ((objdata->unk32E == 0) && (objdata->unk338 != NULL)) {
-        return vec3_distance(&a1->positionMirror, &self->positionMirror) < 50.0f;
+        return vec3_distance(&rider->positionMirror, &self->positionMirror) < 50.0f;
     }
     return 0;
 }
@@ -293,7 +293,7 @@ void dll_793_func_B28(Object *self, f32 *a1, f32 *a2, f32 *a3) {
 }
 
 // offset: 0xB48 | func: 10 | export: 10
-s32 dll_793_func_B48(Object *self, Object *a1) {
+s32 dll_793_func_B48(Object *self, Object *rider) {
     BWlog_Data *objdata;
     f32 var_fs0;
     s32 i;
@@ -310,7 +310,7 @@ s32 dll_793_func_B48(Object *self, Object *a1) {
 }
 
 // offset: 0xC3C | func: 11 | export: 11
-UNK_TYPE_32 dll_793_func_C3C(Object *self) {
+s32 dll_793_func_C3C(Object *self) {
     return 0;
 }
 
@@ -331,7 +331,7 @@ void dll_793_func_C4C(Object *self, f32 *a1, f32 *a2, f32 *a3) {
 }
 
 // offset: 0xD08 | func: 13 | export: 13
-UNK_TYPE_8 dll_793_func_D08(Object *self) {
+s32 dll_793_func_D08(Object *self) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     return objdata->unk32E;
 }
@@ -355,28 +355,28 @@ void dll_793_func_D18(Object *self, s32 a1) {
 }
 
 // offset: 0xE2C | func: 15 | export: 15
-void dll_793_func_E2C(Object *self, f32 *a1, UNK_TYPE_32 *a2) {
+void dll_793_func_E2C(Object *self, f32 *a1, s32 *a2) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     *a1 = objdata->unk2CC;
     *a2 = objdata->unk32B;
 }
 
 // offset: 0xE48 | func: 16 | export: 16
-f32 dll_793_func_E48(UNK_TYPE_32 a0, f32 *a1) {
+f32 dll_793_func_E48(Object *self, f32 *a1) {
     *a1 = -0.006000000052f;
     return 0.0f;
 }
 
 // offset: 0xE70 | func: 17 | export: 17
-s32 dll_793_func_E70(UNK_TYPE_32 a0) {
+s32 dll_793_func_E70(Object *self) {
     return 0;
 }
 
 // offset: 0xE80 | func: 18 | export: 18
-void dll_793_func_E80(UNK_TYPE_32 a0) { }
+void dll_793_func_E80(Object *self) { }
 
 // offset: 0xE8C | func: 19 | export: 19
-void dll_793_func_E8C(UNK_TYPE_32 a0, UNK_TYPE_32 a1) { }
+void dll_793_func_E8C(Object *self, f32 scale) { }
 
 // offset: 0xE9C | func: 20 | export: 20
 void dll_793_func_E9C(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
