@@ -9355,7 +9355,26 @@ void dll_210_func_1D668(Object* player, f32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D680.s")
 
 // offset: 0x1D6E0 | func: 202 | export: 71
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D6E0.s")
+void dll_210_func_1D6E0(Object* player, Vec3f* arg1, SRT* arg2, UNK_TYPE_32 arg3) {
+    Player_Data* objdata;
+
+    objdata = player->data;
+    objdata->flags &= ~0x4000;
+
+    if (arg1 != NULL) {
+        player->srt.transl.f[0] = arg1->f[0];
+        player->srt.transl.f[1] = arg1->f[1];
+        player->srt.transl.f[2] = arg1->f[2];
+        objdata->flags |= 0x4000;
+    }
+
+    if (arg2 != NULL) {
+        player->srt.yaw = arg2->yaw;
+        player->srt.pitch = arg2->pitch;
+        player->srt.roll = arg2->roll;
+        objdata->flags |= 0x4000;
+    }
+}
 
 // offset: 0x1D754 | func: 203 | export: 52
 void *dll_210_func_1D754(Object* player) {

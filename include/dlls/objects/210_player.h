@@ -364,7 +364,8 @@ DLL_INTERFACE(DLL_210_Player) {
     /*68*/ void (*func68)(Object* player);
     /*69*/ void (*func69)(Object* player, s32 arg1);
     /*70*/ s8 (*func70)(Object* player);
-    /*71*/ UnknownDLLFunc func71;
+    // arg2 might be an s16 *
+    /*71*/ void (*func71)(Object* player, Vec3f* arg1, SRT* arg2, UNK_TYPE_32 arg3);
     /*72*/ void (*func72)(Object* player, s16 arg1);
     /*73*/ void (*func73)(s32 arg0, f32 arg1, f32 arg2);
     /*74*/ s16 (*func74)(s32 arg0);
