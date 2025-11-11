@@ -8866,11 +8866,10 @@ void dll_210_func_1BF8C(Object* player, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C620.s")
 
 // offset: 0x1C9D8 | func: 147
-s32 dll_210_func_1C9D8(Object* player, Player_Data* arg1, s32 arg2) {
+s32 dll_210_func_1C9D8(Object* player, ObjFSA_Data* arg1, s32 arg2) {
     Player_Data* objdata = player->data;
 
-    //NOTE: not sure whether arg1 is really a Player_Data struct
-    arg1->unk0.unk341 = 3;
+    arg1->unk341 = 3;
     if (objdata->stats->health > 0) {
         func_80023D30(player, 0xC5, 0.0f, 0);
         return -0x4D;
@@ -8879,7 +8878,29 @@ s32 dll_210_func_1C9D8(Object* player, Player_Data* arg1, s32 arg2) {
 }
 
 // offset: 0x1CA44 | func: 148
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CA44.s")
+s32 dll_210_func_1CA44(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
+    Player_Data* objdata;
+    s32 var_v0;
+
+    objdata = arg0->data;
+    arg1->unk341 = 3;
+    if (arg1->enteredAnimState != 0) {
+        func_80023D30(arg0, 0xA2, 0.0f, 0U);
+        arg1->unk33A = 0;
+    }
+    arg1->unk27C = 0.0f;
+    arg1->animTickDelta = 0.025f;
+    gDLL_18_objfsa->vtbl->func7(arg0, arg1, arg2, 3);
+    var_v0 = 0;
+    if (arg1->unk33A != 0) {
+        if (objdata->stats->health <= 0) {
+            return 0x35;
+        }
+        return dll_210_func_A018() + 1;
+    }
+    return 0;
+}
+
 
 // offset: 0x1CB3C | func: 149
 s32 dll_210_func_1CB3C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
