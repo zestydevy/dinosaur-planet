@@ -8847,8 +8847,16 @@ void dll_210_func_1BF8C(Object* player, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1BFAC.s")
 
 // offset: 0x1C02C | func: 141
-s32 dll_210_func_1C02C(Object* player, ObjFSA_Data* arg1, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1C02C.s")
+s32 dll_210_func_1C02C(Object* player, ObjFSA_Data* arg1, f32 arg2) {
+    if (arg1->enteredAnimState != 0) {
+        arg1->unk34B = 0;
+    }
+    arg1->unk34B++;
+    if (arg1->unk33A != 0 && arg1->unk34B >= 0x1F) {
+        return 2;
+    }
+    return 0;
+}
 
 // offset: 0x1C07C | func: 142
 s32 dll_210_func_1C07C(Object* player, ObjFSA_Data* arg1, f32 arg2) {

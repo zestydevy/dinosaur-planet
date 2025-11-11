@@ -107,7 +107,7 @@ typedef struct ObjFSA_Data {
 /*348*/ s8 unk348;
 /*349*/ u8 _unk349;
 /*34A*/ u8 unk34A;
-/*34B*/ u8 _unk34B;
+/*34B*/ s8 unk34B;
 } ObjFSA_Data;
 
 DLL_INTERFACE(DLL_18_objfsa) {
