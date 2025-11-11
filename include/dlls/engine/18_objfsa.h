@@ -97,7 +97,7 @@ typedef struct ObjFSA_Data {
 /*33A*/ s8 unk33A; // whether the current animation is finished?
 /*33B*/ u8 _unk33B[0x33D - 0x33B];
 /*33D*/ u8 unk33D;
-/*33E*/ u8 _unk33E;
+/*33E*/ u8 unk33E;
 /*33F*/ u8 unk33F;
 /*340*/ s8 unk340; // bit 0 set when turning?
 /*341*/ s8 unk341;
