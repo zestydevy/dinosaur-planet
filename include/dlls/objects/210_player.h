@@ -333,7 +333,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*38*/ s32 (*func38)(Object* player, s32 arg1);
     /*39*/ void (*func39)(Object *arg0, s32 arg1, s32 arg2);
     /*40*/ s32 (*func40)(Object* player, u32 arg1);
-    /*41*/ UnknownDLLFunc func41;
+    /*41*/ void (*func41)(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
     /*42*/ u8 (*func42)(Object* player);
     /*43*/ int (*func43)(Object* player);
     /*44*/ s32 (*func44)(Object* player);

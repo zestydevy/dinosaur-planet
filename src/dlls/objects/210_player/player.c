@@ -9271,7 +9271,21 @@ s32 dll_210_func_1D40C(Object* player, u32 arg1) {
 }
 
 // offset: 0x1D438 | func: 190 | export: 41
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D438.s")
+void dll_210_func_1D438(Object* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+    Player_Data* objdata;
+
+    objdata = arg0->data;
+    if (arg1 >= 8U) {
+        return;
+    }
+
+    if (arg2 != 0) {
+        objdata->unk8BB |= 1 << arg1;
+    } else {
+        objdata->unk8BB &= ~(1 << arg1);
+    }
+    main_set_bits(_data_4E0[arg1], arg2);
+}
 
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
