@@ -354,7 +354,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*59*/ void (*func59)(Object* player, u8 arg1, f32 arg2, f32 arg3, s32 arg4);
     /*60*/ s32 (*func60)(Object* player);
     /*61*/ void (*func61)(Object* player, s32 arg1);
-    /*62*/ UnknownDLLFunc func62;
+    /*62*/ void (*func62)(Object* player, s16* arg1, s16* arg2);
     /*63*/ s32 (*func63)(Object* arg0);
     /*64*/ void (*func64)(Object* arg0, Object *arg1, s32 arg2);
     /*65*/ void (*func65)(Object* arg0, f32 arg1, f32 arg2, f32 arg3);

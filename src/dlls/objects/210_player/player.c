@@ -9098,7 +9098,13 @@ s8 dll_210_func_1CFCC(Object* player) {
 }
 
 // offset: 0x1CFF4 | func: 169 | export: 62
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CFF4.s")
+void dll_210_func_1CFF4(Object* player, s16* arg1, s16* arg2) {
+    Player_Data* objdata;
+
+    objdata = player->data;
+    *arg1 = objdata->unk82C * 10240.0f;
+    *arg2 = objdata->unk830 * 14336.0f;
+}
 
 // offset: 0x1D04C | func: 170 | export: 18
 void dll_210_set_scarabs(Object* player, s32 scarabs) {
