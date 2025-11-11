@@ -225,9 +225,9 @@ typedef struct {
 /*814*/ s32 aimZ;
 /*818*/ f32 unk818;
 /*81C*/ f32 unk81C;
-/*820*/ s32 pad820;
-/*824*/ s32 pad824;
-/*828*/ s32 pad828;
+/*820*/ s32 unk820;
+/*824*/ f32 unk824;
+/*828*/ f32 unk828;
 /*82C*/ f32 unk82C;
 /*830*/ f32 unk830;
 /*834*/ f32 unk834;
@@ -351,7 +351,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*56*/ f32 (*func56)(Object* player);
     /*57*/ s32 (*func57)(Object* player);
     /*58*/ void (*func58)(Object* player, f32 arg1);
-    /*59*/ UnknownDLLFunc func59;
+    /*59*/ void (*func59)(Object* player, u8 arg1, f32 arg2, f32 arg3, s32 arg4);
     /*60*/ s32 (*func60)(Object* player);
     /*61*/ void (*func61)(Object* player, s32 arg1);
     /*62*/ UnknownDLLFunc func62;

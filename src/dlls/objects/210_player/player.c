@@ -9352,7 +9352,22 @@ void dll_210_func_1D668(Object* player, f32 arg1) {
 }
 
 // offset: 0x1D680 | func: 201 | export: 59
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D680.s")
+void dll_210_func_1D680(Object* player, u8 arg1, f32 arg2, f32 arg3, s32 arg4) {
+    Player_Data* objdata;
+
+    objdata = player->data;
+    if (arg1 != 0) {
+        objdata->unk8A4 = 1;
+        objdata->unk824 = arg2;
+        objdata->unk828 = arg3;
+        objdata->unk820 = arg4;
+    } else {
+        objdata->unk8A4 = 0;
+        objdata->unk820 = 0;
+        objdata->unk824 = 0.0f;
+        objdata->unk828 = 0.0f;
+    }
+}
 
 // offset: 0x1D6E0 | func: 202 | export: 71
 void dll_210_func_1D6E0(Object* player, Vec3f* arg1, SRT* arg2, UNK_TYPE_32 arg3) {
