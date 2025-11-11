@@ -8882,7 +8882,28 @@ s32 dll_210_func_1C9D8(Object* player, Player_Data* arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CA44.s")
 
 // offset: 0x1CB3C | func: 149
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CB3C.s")
+s32 dll_210_func_1CB3C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
+    Player_Data* objdata;
+
+    objdata = arg0->data;
+    arg1->unk341 = 3;
+    if (arg1->enteredAnimState != 0) {
+        func_80023D30(arg0, 0xA3, 0.0f, 0U);
+        arg1->unk33A = 0;
+    }
+    arg1->unk27C = 0.0f;
+    arg1->animTickDelta = 0.025f;
+    gDLL_18_objfsa->vtbl->func7(arg0, arg1, arg2, 3);
+    if (arg1->unk33A != 0) {
+        if (objdata->stats->health <= 0) {
+            return 0x35;
+        }
+
+        return dll_210_func_A018() + 1;
+    }
+
+    return 0;
+}
 
 // offset: 0x1CC34 | func: 150
 s32 dll_210_func_1CC34(Object* player, s32 arg1, s32 arg2) {
@@ -8919,7 +8940,14 @@ s32 dll_210_func_1CCB0(Object* player) {
 }
 
 // offset: 0x1CCC0 | func: 155 | export: 51
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1CCC0.s")
+#else
+// Match but requires dll_210_func_6DD8 as static
+void dll_210_func_1CCC0(Object* arg0, s32 arg1) {
+    dll_210_func_6DD8(arg0, arg0->data, arg1);
+}
+#endif
 
 // offset: 0x1CD04 | func: 156 | export: 22
 void dll_210_set_health(Object* player, s32 health) {

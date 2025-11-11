@@ -343,7 +343,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*48*/ s16 (*func48)(Object* player);
     /*49*/ s16 (*func49)(Object* player);
     /*50*/ s32 (*func50)(Object* player);
-    /*51*/ UnknownDLLFunc func51;
+    /*51*/ void (*func51)(Object* arg0, s32 arg1);
     /*52*/ void *(*func52)(Object* player);
     /*53*/ Object *(*func53)(Object* player);
     /*54*/ Unk80032CF8 *(*func54)(Object* player);
