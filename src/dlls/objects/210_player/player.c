@@ -4456,7 +4456,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     switch (player->curModAnimId) {
         case 0x417:
             fsa->animTickDelta = 0.1f;
-            gDLL_18_objfsa->vtbl->func7(player, &fsa-> 1.0f, 1);
+            gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
             if (player->animProgress > 0.99f) {
                 func_80023D30(player, 0x12, 0.0f, 0U);
                 fsa->unk278 = 2.0f;
@@ -4522,7 +4522,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             fsa->unk27C *= 0.99f;
             break;
         case 0x11:
-            gDLL_18_objfsa->vtbl->func7(player, &fsa-> 1.0f, 1);
+            gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
             player->speed.f[1] += -0.1f * arg2;
             if (player->animProgress > 0.99f) {
                 player->speed.f[1] = 0.0f;
@@ -4612,7 +4612,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->unk278 *= 0.98f;
         break;
     case 0x13:
-        gDLL_18_objfsa->vtbl->func7(player, &fsa-> 1.0f, 1);
+        gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
         player->speed.f[1] = 0.0f;
         if (player->animProgress > 0.99f) {
             return 2;
@@ -4620,7 +4620,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp38->unk8B8 = 3;
         break;
     case 0x418:
-        gDLL_18_objfsa->vtbl->func7(player, &fsa-> 1.0f, 1);
+        gDLL_18_objfsa->vtbl->func7(player, fsa, 1.0f, 1);
         player->speed.f[1] = 0.0f;
         if (player->animProgress > 0.99f) {
             if ((fsa->unk294 >= 0.42000002f) && (fsa->unk290 >= 0.42000002f) && (*_data_6FC <= fsa->speed)) {
