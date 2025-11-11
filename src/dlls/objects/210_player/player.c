@@ -56,14 +56,15 @@ static void dll_210_func_9F1C(Object* arg0, s32 arg1);
 static void dll_210_func_A024(Object* player, Player_Data* objdata);
 static s32 dll_210_func_C1F4(Object* arg0, Player_Data* arg1, f32 arg2);
 static void dll_210_func_D510(Player_Data* arg0, f32 arg1);
-static void dll_210_func_EF8C(Object *arg0, ObjFSA_Data *arg1);
+static void dll_210_func_EF8C(Object *arg0, ObjFSA_Data *fsa);
 static s32 dll_210_func_EFB4(Object* arg0, Player_Data* arg1, f32 arg2);
-static void dll_210_func_12514(Object* arg0, ObjFSA_Data *arg1);
-static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1);
+static void dll_210_func_12514(Object* arg0, ObjFSA_Data *fsa);
+static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *fsa);
 static void dll_210_func_16204(Object *obj, ObjFSA_Data *fsa);
 static void dll_210_func_1660C(Object* obj, ObjFSA_Data* fsa);
 static void dll_210_func_18DB0(Object* obj, ObjFSA_Data* fsa);
-static  s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
+static s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
+static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa);
 
 // These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* arg0, Player_Data* arg1, s32 arg2);
@@ -80,8 +81,8 @@ static  s32 dll_210_func_18E10(Object *player, Player_Data *objdata, f32 arg2);
 /* static */ void dll_210_func_955C(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_98CC(Object* arg0, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_6DD8(Object* obj, Player_Data* data, s32 arg2);
-/* static */ void dll_210_func_B4C8(Object* player, ObjFSA_Data *arg1);
-/* static */ void dll_210_func_1AAD8(Object* arg0, ObjFSA_Data *arg1);
+/* static */ void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa);
+/* static */ void dll_210_func_1AAD8(Object* arg0, ObjFSA_Data *fsa);
 /* static */ s32 dll_210_func_18E80(Object* player, Player_Data* objdata, f32 arg2);
 /* static */ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5);
 /* static */ Object *dll_210_func_1DD94(Object* obj, s32 arg1);
@@ -4099,7 +4100,7 @@ s32 dll_210_func_AE34(Object* player, Player_Data* arg1, f32 arg2) {
 #endif
 
 // offset: 0xB4C8 | func: 61
-void dll_210_func_B4C8(Object* player, ObjFSA_Data *arg1) {
+void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa) {
     Player_Data* objdata = player->data;
 
     objdata->unk89C = objdata->unk894;
@@ -5255,7 +5256,7 @@ s32 dll_210_func_EB1C(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0xEF8C | func: 79
-static void dll_210_func_EF8C(Object *arg0, ObjFSA_Data *arg1) {
+static void dll_210_func_EF8C(Object *arg0, ObjFSA_Data *fsa) {
 
 }
 
@@ -6324,7 +6325,7 @@ s32 dll_210_func_1209C(Object* arg0, Player_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x12514 | func: 90
-static void dll_210_func_12514(Object* arg0, ObjFSA_Data *arg1) {
+static void dll_210_func_12514(Object* arg0, ObjFSA_Data *fsa) {
     Player_Data *objdata = arg0->data;
 
     if ((objdata->unk818 > 0.0f) && (gDLL_2_Camera->vtbl->func3() != 0x54)) {
@@ -6984,7 +6985,7 @@ s32 dll_210_func_146D8(Object* arg0, Player_Data* arg1, f32 arg2) {
 
 
 // offset: 0x14B70 | func: 99
-static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *arg1) {
+static void dll_210_func_14B70(Object* arg0, ObjFSA_Data *fsa) {
     s16* temp_v0_2;
 
     arg0->unk64->flags &= ~0x1000;
@@ -8761,7 +8762,7 @@ s32 dll_210_func_1A9D4(Object* arg0, s32* arg1, s32* arg2, s32* arg3, f32 arg4, 
 }
 
 // offset: 0x1AAD8 | func: 125
-void dll_210_func_1AAD8(Object* arg0, ObjFSA_Data *arg1) {
+void dll_210_func_1AAD8(Object* arg0, ObjFSA_Data *fsa) {
     Object* temp_a0;
     s16* temp_v0;
     s32 i;
@@ -8800,45 +8801,68 @@ s32 dll_210_func_1ADA4(Object *player, Player_Data *objdata, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1ADA4.s")
 
 // offset: 0x1AFF8 | func: 128
+s32 dll_210_func_1AFF8(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1AFF8.s")
 
 // offset: 0x1B0A8 | func: 129
+s32 dll_210_func_1B0A8(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B0A8.s")
 
 // offset: 0x1B1E8 | func: 130
+s32 dll_210_func_1B1E8(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B1E8.s")
 
 // offset: 0x1B414 | func: 131
+s32 dll_210_func_1B414(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B414.s")
 
 // offset: 0x1B640 | func: 132
+s32 dll_210_func_1B640(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B640.s")
 
 // offset: 0x1B878 | func: 133
+s32 dll_210_func_1B878(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B878.s")
 
 // offset: 0x1BAC8 | func: 134
-void dll_210_func_1BAC8(Object* player, s32 arg1) {
+void dll_210_func_1BAC8(Object* player, ObjFSA_Data *fsa) {
     Player_Data* objdata = player->data;
     objdata->flags &= ~0x800;
 }
 
 // offset: 0x1BAE8 | func: 135
+s32 dll_210_func_1BAE8(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1BAE8.s")
 
 // offset: 0x1BC14 | func: 136
-s32 dll_210_func_1BC14(Object* player, s32 arg1, s32 arg2) {
+s32 dll_210_func_1BC14(Object* player, ObjFSA_Data *fsa, s32 arg2) {
     return 0;
 }
 
 // offset: 0x1BC2C | func: 137
+s32 dll_210_func_1BC2C(Object *player, ObjFSA_Data *fsa, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1BC2C.s")
 
 // offset: 0x1BEBC | func: 138
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1BEBC.s")
+s32 dll_210_func_1BEBC(Object* player, ObjFSA_Data *arg1, s32 arg2) {
+    Player_Data* objdata;
+
+    if (arg1->enteredAnimState != 0) {
+        player->unk64->flags |= 0x1000;
+        arg1->animExitAction = dll_210_func_1BF8C;
+    }
+    gDLL_1_UI->vtbl->func_2B8(7U);
+    objdata = player->data;
+    objdata->flags &= ~2;
+    if (player->curModAnimId != 0x300) {
+        func_80023D30(player, 0x300, 0.0f, 0U);
+    }
+    arg1->animTickDelta = 0.005f;
+    return 0;
+}
 
 // offset: 0x1BF8C | func: 139
-void dll_210_func_1BF8C(Object* player, s32 arg1) {
+static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa) {
     ObjectStruct64* shadow;
     player->unk64->flags &= ~0x1000;
 }
