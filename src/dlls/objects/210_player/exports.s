@@ -20,7 +20,7 @@ _exports:
 .dword dll_210_func_1D210
 .dword dll_210_func_1D288
 .dword dll_210_func_1D2A8
-.dword dll_210_func_1CEB4
+.dword dll_210_set_magic
 .dword dll_210_set_magic_max
 .dword dll_210_add_magic
 .dword dll_210_increase_magic_max
