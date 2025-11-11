@@ -301,7 +301,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ Object *(*get_vehicle)(Object* player);
     /*8*/ s32 (*func8)(Object* player, Object** arg1);
-    /*9*/ UnknownDLLFunc func9;
+    /*9*/ void (*func9)(Object* player, s32 arg1);
     /*10*/ s32 (*func10)(Object* player, Object** arg1);
     /*11*/ s32 (*func11)(Object* arg0, Object* arg1);
     /*12*/ UnknownDLLFunc func12;
