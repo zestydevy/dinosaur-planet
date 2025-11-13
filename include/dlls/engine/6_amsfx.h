@@ -165,7 +165,14 @@ enum SoundID {
     SOUND_A75 = 0xA75, // used by BWlog
     SOUND_A77 = 0xA77, // used by BWlog
 
+    SOUND_A83 = 0xA83,
+
+    SOUND_AA4 = 0xAA4,
+    SOUND_AA5 = 0xAA5,
+
     SOUND_AAE = 0xAAE, // VFP_lavastar sound
+
+    SOUND_AB4 = 0xAB4,
 
     SOUND_B1F = 0xB1F,
     SOUND_B20 = 0xB20,

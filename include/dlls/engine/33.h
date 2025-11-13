@@ -31,7 +31,7 @@ typedef struct {
 /*3A4*/ s16 unk3A4;
 /*3A6*/ s16 unk3A6;
 /*3A8*/ u32 unk3A8;
-/*3AC*/ u8 _unk3AC[0x3B0 - 0x3AC];
+/*3AC*/ Object *unk3AC;
 /*3B0*/ u8 unk3B0;
 /*3B1*/ u8 _unk3B1;
 /*3B2*/ u16 unk3B2;
@@ -54,6 +54,7 @@ typedef struct {
 /*3F8*/ UnkCurvesStruct *unk3F8;
 } DLL33_Data;
 
+// size:0x38
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s16 unk18;
@@ -83,23 +84,23 @@ DLL_INTERFACE(DLL_33) {
 /*1*/ void (*dtor)(void *dll);
 /*2*/ f32 (*func2)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4);
 /*3*/ void (*func3)(Object* arg0, DLL33_Data* arg1, u32 arg2, f32 arg3, f32 arg4);
-/*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, s16* arg5);
+/*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, u16* arg3, u16* arg4, u16* arg5);
 /*5*/ s32 (*func5)(Object* arg0, DLL33_Data* arg1, f32 arg2);
 /*6*/ s32 (*func6)(UNK_PTR *arg0, UNK_PTR *arg1);
 /*7*/ u16 (*func7)(Object* arg0);
 /*8*/ f32 (*func8)(Object* arg0);
 /*9*/ void (*func9)(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s32 arg7, s8 arg8);
-/*10*/ void (*func10)(Object* arg0, DLL33_Data* arg1, f32 arg2, s8 arg3);
+/*10*/ void (*func10)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3);
 /*11*/ s32 (*func11)(Object* arg0, DLL33_Data* arg1, u8 arg2);
 /*12*/ s32 (*func12)(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_StateCallback *arg3, ObjFSA_StateCallback *arg4, s16 arg5);
 /*13*/ s32 (*func13)(Object* arg0, DLL33_Data* arg1, ObjFSA_StateCallback *arg2, ObjFSA_StateCallback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7);
 // TODO: arg count might be off
 /*14*/ void (*func14)(Object* arg0, DLL33_Data* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 /*15*/ void (*func15)(Object* arg0, DLL33_Data* arg1, u8 arg2);
-/*16*/ s32 (*func16)(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3);
-/*17*/ Object *(*func17)(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3);
+/*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
+/*17*/ Object *(*func17)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
 /*18*/ Object *(*func18)(Object* arg0, s32 arg1, s32 arg2, u8 arg3);
-/*19*/ s32 (*func19)(Object* arg0, ObjFSA_Data* arg1, s32 arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8);
+/*19*/ s32 (*func19)(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8);
 /*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s16 arg7);
 /*21*/ void (*func21)(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7);
 /*22*/ void (*func22)(Object* arg0, DLL33_Data* arg1);

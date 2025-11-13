@@ -24,6 +24,7 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*21*/ void (*func21)(Object *, s32, s32);
 	/*22*/ void (*func22)(Object *, Object *);
 	/*23*/ void (*func23)(Object *);
+	/*24*/ s32 (*func24)(Object *);
 };
 
 #endif //_DLLS_210_H
