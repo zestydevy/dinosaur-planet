@@ -57,7 +57,11 @@ enum SoundID {
 
     SOUND_292 = 0x292, // used by IMSnowBike
 
+    SOUND_33E = 0x33E,
+
     SOUND_342 = 0x342, // used in DLL 466
+
+    SOUND_344 = 0x344,
 
     SOUND_371 = 0x371, // used by MediumMetalCrat
     SOUND_372 = 0x372, // used by MediumMetalCrat

@@ -91,6 +91,7 @@
 463 = objects/463_CCgasvent
 464 = objects/464_CCgasventControl
 466 = objects/466_mmshrine
+469 = objects/469_ECSHshrine
 472 = objects/472_GPSH_Shrine
 475 = objects/475_GPSH_flybaddie
 496 = objects/496_snowhorn
