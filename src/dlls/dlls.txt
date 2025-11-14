@@ -64,6 +64,7 @@
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
+305 = objects/305_PortalSpellDoor
 307 = objects/307
 308 = objects/308_USEOBJ
 309 = objects/309_SEQOBJ
