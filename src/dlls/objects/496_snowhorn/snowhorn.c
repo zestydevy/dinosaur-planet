@@ -979,7 +979,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
-                    if (0){
+                    if (DEBUG){
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
                     objdata->garundaTe_weedsEaten++;
