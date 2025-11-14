@@ -3651,19 +3651,19 @@ s32 block_setup_textures(Block* block) {
         if (temp_a3->flags & 0x4000) {
             var_s6++;
         }
-        if (temp_a3->flags & 0x10000 && temp_a3->unk14 != 0) {
+        if (temp_a3->flags & 0x10000 && temp_a3->animatorID != 0) {
             var_a1 = FALSE;
             for (j = 0; j < var_s1; j++) {
-                if (block->unk28[j].unk2 == temp_a3->unk14) {
+                if (block->unk28[j].unk2 == temp_a3->animatorID) {
                     var_a1 = TRUE;
                     break;
                 }
             }
-            var_a2 = temp_a3->unk14;
+            var_a2 = temp_a3->animatorID;
             if (var_a1 == FALSE) {
                 var_a1 = temp_a3->flags;
                 block->unk28[var_s1].texIdx = func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
-                block->unk28[var_s1].unk2 = block->shapes[i].unk14;
+                block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
                 var_s1++;
             } else {
                 var_a1 = temp_a3->flags;
@@ -3868,7 +3868,7 @@ s32 func_8004A528(Object* obj, u8 animatorID) {
     anim_vertex_count = 0;
     blockShapes = block->shapes;
     for (index = 0; index < block->shapeCount; index++){
-        if (animatorID == (blockShapes[index]).unk14){
+        if (animatorID == (blockShapes[index]).animatorID){
             anim_vertex_count += blockShapes[index + 1].vtxBase - blockShapes[index].vtxBase;
         }
     }
@@ -3876,23 +3876,26 @@ s32 func_8004A528(Object* obj, u8 animatorID) {
     return anim_vertex_count;
 }
 
-s32 func_8004A5D8(Object* obj, u8 arg1) {
+/** count_local_block_shapes_using_animatorID */
+s32 func_8004A5D8(Object* obj, u8 animatorID) {
     Block* block;
-    s32 out;
+    s32 matches;
     s32 i;
     BlockShape *shapes;
 
+    //Get object's local Blocks model
     block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return 0;
     }
 
-    for (i = 0, out = 0, shapes = block->shapes; i < block->shapeCount; i++) {
-        if (arg1 == shapes[i].unk14) {
-            out += 1;
+    //Iterate over Block's shapes, counting those with matching animatorID
+    for (i = 0, matches = 0, shapes = block->shapes; i < block->shapeCount; i++) {
+        if (animatorID == shapes[i].animatorID) {
+            matches++;
         }
     }
-    return out;
+    return matches;
 }
 
 void func_8004A67C(void) {
