@@ -18,6 +18,16 @@
 s32* func_800349B0(void);
 
 typedef struct {
+Vec3f unk0; 
+s8 unkC;
+} CameraFunc15Unk_unk74;
+
+typedef struct {
+    s8 unk0[0x74 - 0];
+    CameraFunc15Unk_unk74* unk74; 
+} CameraFunc15Unk;
+
+typedef struct {
     s32 unk0;
     s32 unk4;
 } AnimBSS0;
@@ -875,7 +885,24 @@ void dll_3_func_9C94(s32 index, Object* object, Object* overrideObject) {
 }
 
 // offset: 0x9CE8 | func: 68
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_9CE8.s")
+void dll_3_func_9CE8(s32 arg0) {
+    //TODO: figure out what these structs really are
+    CameraFunc15Unk* temp_v0;
+    CameraFunc15Unk_unk74 sp34;
+
+    if (gDLL_2_Camera->vtbl->func3() == 0x5F) {
+        return;
+    }
+    
+    temp_v0 = (CameraFunc15Unk*)gDLL_2_Camera->vtbl->func15();
+    if ((temp_v0 != NULL) && (temp_v0->unk74 != NULL)) {
+        sp34.unk0.x = temp_v0->unk74->unk0.x;
+        sp34.unk0.y = temp_v0->unk74->unk0.y;
+        sp34.unk0.z = temp_v0->unk74->unk0.z;
+        sp34.unkC = arg0;
+        gDLL_2_Camera->vtbl->func6(0x5F, 1, 0, 0x10, &sp34, 0x3C, 0xFF);
+    }
+}
 
 // offset: 0x9DD4 | func: 69
 void dll_3_func_9DD4(void) {
@@ -903,6 +930,7 @@ s32 dll_3_func_9E88(f32 arg0, f32 arg1, f32 arg2) {
 
 // offset: 0x9EC8 | func: 72
 void dll_3_func_9EC8(Object* arg0, SequenceBoneStructUnk* arg1, s32 arg2) {
+    //TODO: figure out what these structs are
     SequenceBoneStructUnk *temp_v0;
     s32 *temp_v1;
     s32 i;
