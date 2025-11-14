@@ -1,6 +1,8 @@
 #ifndef _GAME_GAMEBITS_H
 #define _GAME_GAMEBITS_H
 
+#define NO_GAMEBIT -1
+
 typedef enum {
     BIT_0 = 0x0, // len:1 group:0
     BIT_1 = 0x1, // len:1 group:1
