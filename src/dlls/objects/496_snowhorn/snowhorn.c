@@ -24,6 +24,12 @@
 #include "types.h"
 #include "segment_334F0.h"
 
+#ifdef DEBUG
+#define FROSTWEED_QUEST_CHEAT 1  
+#else  
+#define FROSTWEED_QUEST_CHEAT 0  
+#endif 
+
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
 void joy_set_button_mask(int port, u16 mask);
@@ -979,7 +985,7 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
-                    if (0){
+                    if (FROSTWEED_QUEST_CHEAT){
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
                     objdata->garundaTe_weedsEaten++;

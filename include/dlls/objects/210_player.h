@@ -342,8 +342,8 @@ DLL_INTERFACE(DLL_210_Player) {
     /*47*/ u8 (*func47)(Object* player, s32 arg1, s8* arg2);
     /*48*/ s16 (*func48)(Object* player);
     /*49*/ s16 (*func49)(Object* player);
-    /*50*/ s32 (*func50)(Object* player);
-    /*51*/ UnknownDLLFunc func51;
+    /*50*/ s32 (*func50)(Object* player); //get used spell gamebitID
+    /*51*/ void (*func51)(Object* player, s32 arg1); //unequip spells
     /*52*/ void *(*func52)(Object* player);
     /*53*/ Object *(*func53)(Object* player);
     /*54*/ Unk80032CF8 *(*func54)(Object* player);

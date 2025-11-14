@@ -22,16 +22,16 @@ typedef struct {
 /*22*/ s8 unk22;
 /*23*/ u8 unk23;
 /*24*/ u8 iterations;
-} Animator_Setup;
+} WaterFallSpray_Setup;
 
 // offset: 0x0 | ctor
-void animator_ctor(void *dll) { }
+void WaterFallSpray_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void animator_dtor(void *dll) { }
+void WaterFallSpray_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void animator_setup(Object *self, Animator_Setup *setup, s32 arg2) {
+void WaterFallSpray_setup(Object *self, WaterFallSpray_Setup *setup, s32 arg2) {
     self->srt.roll = setup->roll << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.yaw = setup->yaw << 8;
@@ -40,16 +40,16 @@ void animator_setup(Object *self, Animator_Setup *setup, s32 arg2) {
 }
 
 // offset: 0x58 | func: 1 | export: 1
-void animator_control(Object *self) {
+void WaterFallSpray_control(Object *self) {
     Object *player;
     f32 dz;
     f32 dx;
     f32 dy;
     s16 i;
-    Animator_Setup *setup;
+    WaterFallSpray_Setup *setup;
     SRT srt;
 
-    setup = (Animator_Setup *)self->setup;
+    setup = (WaterFallSpray_Setup *)self->setup;
     player = get_player();
     if (!player)
         return;
@@ -88,22 +88,22 @@ void animator_control(Object *self) {
 }
 
 // offset: 0x300 | func: 2 | export: 2
-void animator_update(Object *self) { }
+void WaterFallSpray_update(Object *self) { }
 
 // offset: 0x30C | func: 3 | export: 3
-void animator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void WaterFallSpray_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x324 | func: 4 | export: 4
-void animator_free(Object *self, s32 arg1) {
+void WaterFallSpray_free(Object *self, s32 arg1) {
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
 // offset: 0x36C | func: 5 | export: 5
-u32 animator_get_model_flags(Object *self) {
+u32 WaterFallSpray_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x37C | func: 6 | export: 6
-u32 animator_get_data_size(Object *self, s32 arg1) {
+u32 WaterFallSpray_get_data_size(Object *self, s32 arg1) {
     return 0;
 }

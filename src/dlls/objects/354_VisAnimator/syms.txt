@@ -1,0 +1,13 @@
+.text = 0x0:
+VisAnimator_ctor = 0x0;
+VisAnimator_dtor = 0xC;
+VisAnimator_setup = 0x18;
+VisAnimator_control = 0x138;
+VisAnimator_update = 0x254;
+VisAnimator_print = 0x260;
+VisAnimator_free = 0x278;
+VisAnimator_get_model_flags = 0x288;
+VisAnimator_get_data_size = 0x298;
+VisAnimator_animate_block_shapes = 0x2AC;
+
+.rodata = 0x390:

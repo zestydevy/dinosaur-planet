@@ -1,0 +1,13 @@
+.text = 0x0:
+animator_ctor = 0x0;
+animator_dtor = 0xC;
+animator_setup = 0x18;
+animator_control = 0x2C;
+animator_update = 0x38;
+animator_print = 0x44;
+animator_free = 0x98;
+animator_get_model_flags = 0xA8;
+animator_get_data_size = 0xB8;
+
+.rodata = 0xF4:
+_oob_rodata_0 = 0x0; // absolute:0xF4

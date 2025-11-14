@@ -1,5 +1,8 @@
 #include "common.h"
 
+extern s8 D_800BB538;
+extern s8 D_800BB539;
+
 static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
 static const char str_8009aaa0[] = "1: track/intersect.c: OVERFLOW error\n";
 static const char str_8009aac8[] = "2: track/intersect.c: OVERFLOW error\n";
@@ -218,7 +221,9 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058F3C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058F50.s")
+int func_80058F50(void) {
+    return (D_800BB539 != 0) || (D_800BB538 != 0);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058F7C.s")
 

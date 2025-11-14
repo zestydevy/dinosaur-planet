@@ -360,70 +360,71 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_422C.s")
 
 // offset: 0x4698 | func: 19
-void dll_3_func_4698(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
-    AnimationCallback temp_v1;
-    s32 temp_v0;
+void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3) {
+    AnimationCallback animCallback;
+    s32 callbackResult;
     AnimObjSetup *setup;
 
-    setup = (AnimObjSetup*)arg1->setup;
-    arg0->positionMirror2.f[0] = arg0->srt.transl.f[0];
-    arg0->positionMirror2.f[1] = arg0->srt.transl.f[1];
-    arg0->positionMirror2.f[2] = arg0->srt.transl.f[2];
-    arg0->positionMirror3.f[0] = arg0->positionMirror.f[0];
-    arg0->positionMirror3.f[1] = arg0->positionMirror.f[1];
-    arg0->positionMirror3.f[2] = arg0->positionMirror.f[2];
-    if (arg0->animCallback != NULL) {
+    setup = (AnimObjSetup*)override->setup;
+    actor->positionMirror2.f[0] = actor->srt.transl.f[0];
+    actor->positionMirror2.f[1] = actor->srt.transl.f[1];
+    actor->positionMirror2.f[2] = actor->srt.transl.f[2];
+    actor->positionMirror3.f[0] = actor->positionMirror.f[0];
+    actor->positionMirror3.f[1] = actor->positionMirror.f[1];
+    actor->positionMirror3.f[2] = actor->positionMirror.f[2];
+
+    if (actor->animCallback != NULL) {
         // a re-cast to use the actual struct instead of a forward declaration is fine here
-        temp_v1 = arg0->animCallback;
-        temp_v0 = temp_v1(arg0, arg1, arg2, arg3);
-        if (temp_v0 == 4) {
+        animCallback = actor->animCallback;
+        callbackResult = animCallback(actor, override, animObjData, arg3);
+        if (callbackResult == 4) {
             *_bss_A4 = 1;
-        } else if (temp_v0 != 0) {
-            if (_bss_D8[arg2->unk63] < 2) {
-                _bss_D8[arg2->unk63] = temp_v0;
+        } else if (callbackResult != 0) {
+            if (_bss_D8[animObjData->unk63] < 2) {
+                _bss_D8[animObjData->unk63] = callbackResult;
             }
         }
-        arg2->unk98 = 0;
-        arg2->unk8D = 0;
+        animObjData->unk98 = 0;
+        animObjData->unk8D = 0;
     } else {
-        if (arg2->unk84[3] != 0) {
-            arg2->unk62 = 0;
+        if (animObjData->unk84[3] != 0) {
+            animObjData->unk62 = 0;
             return;
         }
-        if (arg2->unk62 >= 4) {
-            if (dll_3_func_9524(arg0, arg2, 6, 0x1E, 0x50, -1, -1) != 0) {
-                if (_bss_D8[arg2->unk63] < 2) {
-                    _bss_D8[arg2->unk63] = 1;
+        if (animObjData->unk62 >= 4) {
+            if (dll_3_func_9524(actor, animObjData, 6, 0x1E, 0x50, -1, -1) != 0) {
+                if (_bss_D8[animObjData->unk63] < 2) {
+                    _bss_D8[animObjData->unk63] = 1;
                 }
             }
-        } else if (arg2->unk62 != 0) {
-            if (arg2->unk62 != 2) {
-                arg2->unk58 = 1.0f;
-                arg2->unk4C.x = arg0->srt.transl.f[0] - arg1->srt.transl.f[0];
-                arg2->unk4C.y = arg0->srt.transl.f[1] - arg1->srt.transl.f[1];
-                arg2->unk4C.z = arg0->srt.transl.f[2] - arg1->srt.transl.f[2];
-                arg2->unk62 = 2;
+        } else if (animObjData->unk62 != 0) {
+            if (animObjData->unk62 != 2) {
+                animObjData->unk58 = 1.0f;
+                animObjData->unk4C.x = actor->srt.transl.f[0] - override->srt.transl.f[0];
+                animObjData->unk4C.y = actor->srt.transl.f[1] - override->srt.transl.f[1];
+                animObjData->unk4C.z = actor->srt.transl.f[2] - override->srt.transl.f[2];
+                animObjData->unk62 = 2;
             }
             if (setup->unk20 == 1) {
-                arg2->unk24 = 0.016666668f;
-                if (_bss_D8[arg2->unk63] < 2) {
-                    _bss_D8[arg2->unk63] = 1;
+                animObjData->unk24 = 0.016666668f; //1/6?
+                if (_bss_D8[animObjData->unk63] < 2) {
+                    _bss_D8[animObjData->unk63] = 1;
                 }
             }
-            arg2->unk58 = arg2->unk58 - (arg2->unk24 * gUpdateRateF);
-            if (arg2->unk58 <= 0.0f) {
-                arg2->unk62 = 0;
+            animObjData->unk58 -= animObjData->unk24 * gUpdateRateF;
+            if (animObjData->unk58 <= 0.0f) {
+                animObjData->unk62 = 0;
             }
         }
     }
-    arg0->unkAF &= 0xFFF8;
-    get_object_child_position(arg0, arg0->positionMirror.f, &arg0->positionMirror.f[1], &arg0->positionMirror.f[2]);
-    if (arg0->objhitInfo != NULL) {
-        arg0->objhitInfo->unk48 = 0;
-        arg0->objhitInfo->unk62 = 0;
+    actor->unkAF &= 0xFFF8;
+    get_object_child_position(actor, actor->positionMirror.f, &actor->positionMirror.f[1], &actor->positionMirror.f[2]);
+    if (actor->objhitInfo != NULL) {
+        actor->objhitInfo->unk48 = 0;
+        actor->objhitInfo->unk62 = 0;
     }
-    if (arg0->unk58 != NULL) {
-        arg0->unk58->unk10f = 0;
+    if (actor->unk58 != NULL) {
+        actor->unk58->unk10f = 0;
     }
 }
 

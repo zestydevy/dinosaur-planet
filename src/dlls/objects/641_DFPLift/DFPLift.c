@@ -16,21 +16,21 @@
 typedef struct {
 /*0x00*/ ObjSetup base;
 /*0x18*/ s8 rotation;
-/*0x1A*/ s16 unk1A;
-/*0x1C*/ s16 unk1C;
-/*0x1E*/ s16 unk1E;
-/*0x20*/ s16 unk20;
+/*0x1A*/ s16 unused1A;          //Sets value for objdata->unused0, but otherwise unused
+/*0x1C*/ s16 alreadyEnabled;    //Lift ignores activation gamebit and silently ascends into position
+/*0x1E*/ s16 unused1E;          //Sets value for objdata->unusedC, but otherwise unused
+/*0x20*/ s16 gamebitActivated;
 } DFPLift_Setup;
 
 typedef struct {
-/*0x00*/ f32 unk0;
+/*0x00*/ f32 unused0;
 /*0x04*/ u32 soundHandle;
 /*0x08*/ s16 state;
-/*0x0A*/ s16 unkA;
-/*0x0C*/ s16 unkC;
-/*0x0E*/ s16 cooldown;
-/*0x10*/ u8 unk10;
-/*0x11*/ u8 unk11;
+/*0x0A*/ s16 gamebitActivated;  //Gamebit ID that activates the lift
+/*0x0C*/ s16 unusedC;
+/*0x0E*/ s16 cooldown;          //Delay (in frames) before the lift moves again during LIFT_STATE_STOPPED 
+/*0x10*/ u8 alreadyEnabled;     //Lift ignores activation gamebit and silently ascends into position
+/*0x11*/ u8 playerOnLift;       //Not used for anything, but set during LIFT_STATE_STOPPED
 } DFPLift_Data;
 
 typedef enum {
@@ -65,10 +65,10 @@ void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
     self->srt.yaw = setup->rotation * 256;
 
     objdata->state = LIFT_STATE_INIT;
-    objdata->unkA = setup->unk20;
-    objdata->unkC = setup->unk1E;
-    objdata->unk0 = setup->unk1A;
-    objdata->unk10 = setup->unk1C;
+    objdata->gamebitActivated = setup->gamebitActivated;
+    objdata->unusedC = setup->unused1E;
+    objdata->unused0 = setup->unused1A;
+    objdata->alreadyEnabled = setup->alreadyEnabled;
 
     self->srt.transl.y -= LIFT_DOWN;
     self->unkB0 |= 0x2000;
@@ -90,16 +90,17 @@ void DFPLift_control(Object* self) {
     
     switch (objdata->state) {
     case LIFT_STATE_INIT:
-        if ((main_get_bits(objdata->unkA) != 0) && (objdata->unk10 != 1) && 
+        if ((main_get_bits(objdata->gamebitActivated) != 0) && (objdata->alreadyEnabled != TRUE) && 
                 (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_INIT_ACTIVATE_RANGE)) {
             // go up with sound
             if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
                 if (objdata->soundHandle == 0) {
                     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x75, &objdata->soundHandle, NULL, 0, NULL);
-                    objdata->unk11 = 1;
+                    objdata->playerOnLift = 1;
                 }
                 self->srt.transl.y += gUpdateRateF;
                 if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
+                    //At top
                     self->srt.transl.y = (setup->base.y + LIFT_UP);
                     objdata->state = LIFT_STATE_INIT_DONE;
                     if (objdata->soundHandle != 0) {
@@ -109,7 +110,7 @@ void DFPLift_control(Object* self) {
                 }
                 return;
             }
-        } else if (objdata->unk10 == 1) {
+        } else if (objdata->alreadyEnabled == TRUE) {
             if (vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_INIT_ACTIVATE_RANGE) {
                 // go up without sound
                 if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
@@ -141,27 +142,27 @@ void DFPLift_control(Object* self) {
                     objdata->state = LIFT_STATE_GO_DOWN;
                     if (objdata->soundHandle == 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x6B, &objdata->soundHandle, NULL, 0, NULL);
-                        objdata->unk11 = 1;
+                        objdata->playerOnLift = TRUE;
                     }
                 } else if (self->srt.transl.y == (setup->base.y - LIFT_DOWN)) {
                     // at bottom, start going up
                     objdata->state = LIFT_STATE_GO_UP;
                     if (objdata->soundHandle == 0) {
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6EC_Mechanical_Hum_Loop, 0x43, &objdata->soundHandle, NULL, 0, NULL);
-                        objdata->unk11 = 1;
+                        objdata->playerOnLift = TRUE;
                     }
                 }
             } else {
                 // player is not on the lift, move to where they are
                 if (player->srt.transl.y < setup->base.y) {
                     objdata->state = LIFT_STATE_GO_DOWN;
-                    if (objdata->unk11 == 1) {
-                        objdata->unk11 = 0;
+                    if (objdata->playerOnLift == TRUE) {
+                        objdata->playerOnLift = FALSE;
                     }
                 } else if (setup->base.y < player->srt.transl.y) {
                     objdata->state = LIFT_STATE_GO_UP;
-                    if (objdata->unk11 == 1) {
-                        objdata->unk11 = 0;
+                    if (objdata->playerOnLift == TRUE) {
+                        objdata->playerOnLift = FALSE;
                     }
                 }
             }
@@ -181,7 +182,7 @@ void DFPLift_control(Object* self) {
                 }
                 objdata->cooldown = LIFT_COOLDOWN;
             }
-            if ((vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) && (objdata->unk11 == 1)) {
+            if ((vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == 1)) {
                 
             }
         } else {
@@ -209,7 +210,7 @@ void DFPLift_control(Object* self) {
                     objdata->soundHandle = 0;
                 }
             }
-            if ((vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) && (objdata->unk11 == 1)) {
+            if ((vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == 1)) {
                 
             }
         } else {
@@ -220,7 +221,7 @@ void DFPLift_control(Object* self) {
                 gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
                 objdata->soundHandle = 0;
             }
-            if ((vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) && (objdata->unk11 == 1)) {
+            if ((vec3_distance_xz(&self->positionMirror, &player->positionMirror) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == 1)) {
 
             }
         }
@@ -235,7 +236,7 @@ void DFPLift_update(Object *self) { }
 
 // offset: 0x7F8 | func: 3 | export: 3
 void DFPLift_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    if (visibility != 0) {
+    if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
