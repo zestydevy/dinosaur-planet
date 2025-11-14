@@ -156,6 +156,8 @@
 780 = objects/780_WCBeacon
 781 = objects/781_WCpressureswitch
 782 = objects/782_WCpushblock
+783 = objects/783_WCTile
 786 = objects/786_WCTempleLift
+787 = objects/787_WCApertureSymbol
 793 = objects/793_BWlog
 795 = objects/795_BWLevelControl
