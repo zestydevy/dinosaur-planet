@@ -26,13 +26,13 @@ typedef s32 (*AnimObj_DataF8Callback)(Object *arg0, s32 arg1, s32 arg2);
 
 typedef struct AnimObj_Data {
 /*00*/ s8 unk0[0x24 - 0];
-/*24*/ f32 unk24;
+/*24*/ f32 unk24; //some speed
 /*28*/ s32 unk28;
 /*2C*/ void *unk2C;
 /*30*/ u32 unk30;
 /*34*/ u32 unk34[4];
 /*44*/ s8 unk44[0x4C - 0x44];
-/*4C*/ Vec3f unk4C;
+/*4C*/ Vec3f unk4C; //position diff between parent "override" animObj and child "actor" object?
 /*58*/ f32 unk58;
 /*5C*/ s16 yawDiff;
 /*5E*/ s16 pitchDiff;

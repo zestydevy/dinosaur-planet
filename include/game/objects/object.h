@@ -155,11 +155,11 @@ typedef BinFileEntry ObjectEvent;
 typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
 /*0080*/    MtxF unk80[2];              // probably length of 2
-/*0100*/    struct Object *unk100[3];
+/*0100*/    struct Object *unk100[3];   // other Objects colliding with this Object?
 /*010c*/    u8 unk10c;                  // index into field 0x80?
 /*010d*/    u8 unk10d;
 /*010e*/    UNK_TYPE_8 unk10e;
-/*010f*/    s8 unk10f;
+/*010f*/    s8 unk10f;                  // number of Objects listed in field unk100?
 } ObjectStruct58;
 
 typedef struct {
@@ -243,7 +243,7 @@ typedef struct Object {
 /*00A0*/    s16 curModAnimId;
 /*00A2*/    s16 curModAnimIdLayered;
 /*00A4*/    f32 unkA4;
-/*00A8*/    f32 unkA8;
+/*00A8*/    f32 unkA8; //scale-related?
 /*00AC*/    s8 mapID;
 /*00AD*/    s8 modelInstIdx;
 /*00AE*/    s8 updatePriority;
