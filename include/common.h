@@ -27,7 +27,6 @@
 #include "sys/gfx/map.h"
 #include "sys/exception.h"
 #include "sys/crash.h"
-#include "sys/debug.h"
 #include "sys/asset_thread.h"
 #include "sys/generic_stack.h"
 #include "sys/generic_queue.h"

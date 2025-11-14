@@ -117,18 +117,14 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     //Get TABLES.bin subfile #14 ("scroll table")
     scrollTable = func_800213A0(14);
     if (scrollTable == NULL) {
-        if (DEBUG){
-            STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
-        }
+        STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
         return;
     }
 
     //Get texture from table
     texture = func_8003E960(-scrollTable[objSetup->textureIndex]);
     if (texture == NULL) {
-        if (DEBUG){
-            STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d' %f %f %f %d\n");
-        }
+        STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d' %f %f %f %d\n");
         return;
     }
 

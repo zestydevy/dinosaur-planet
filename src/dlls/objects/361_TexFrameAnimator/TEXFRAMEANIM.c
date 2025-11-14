@@ -41,7 +41,7 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
     objData->speed = objSetup->speed;
     objData->loopStartFrame = objSetup->loopStartFrame << 8;
 
-    if (DEBUG && objSetup->speed == 0){
+    if (0 && objSetup->speed == 0){
         diPrintf(" TFRAME ANIMATOR: no speed give \n");
     }
 
@@ -105,7 +105,7 @@ void TexFrameAnimator_control(Object* self) {
     } else if (objData->frame > objData->endFrame) {
         if (objSetup->gamebitFinished != NO_GAMEBIT) {
             main_set_bits(objSetup->gamebitFinished, TRUE);
-            if (DEBUG){
+            if (0){
                 diPrintf(" Set bit %i ", objSetup->gamebitFinished);
             }
             objData->playing = FALSE;

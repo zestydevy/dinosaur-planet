@@ -53,9 +53,7 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        if (DEBUG){
-            STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
-        }
+        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
         self->modelInstIdx = 0;
     }
 

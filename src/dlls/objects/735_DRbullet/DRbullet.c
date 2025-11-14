@@ -78,12 +78,10 @@ void DRbullet_control(Object* self) {
                 objData->state = BULLET_STATE_IMPACT;
                 objData->timer = 0;
                 if (self->objhitInfo->unk58 & 8) {
-                    if (DEBUG){
-                        STUBBED_PRINTF(" hit sometime ");
-                    }
+                    STUBBED_PRINTF(" hit sometime ");
                     gDLL_6_AMSFX->vtbl->play_sound(self, 0x851, 0x7F, NULL, NULL, 0, NULL);
                 }
-                if (DEBUG && objData->timer == 0){
+                if (0 && objData->timer == 0){
                     STUBBED_PRINTF(" long time ");
                 }
             }
@@ -99,9 +97,7 @@ void DRbullet_control(Object* self) {
             break;
         case BULLET_STATE_INACTIVE:
             //Bullets can be recycled while in this state (via exports)
-            if (DEBUG){
-                STUBBED_PRINTF(" Kill Me ");
-            }
+            STUBBED_PRINTF(" Kill Me ");
             break;
     }
 

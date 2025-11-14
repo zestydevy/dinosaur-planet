@@ -3,8 +3,6 @@
 
 #include "PR/ultratypes.h"
 
-#define DEBUG FALSE
-
 void debug_toggle(s8 enabled);
 s8 debug_is_enabled();
 s32 debug_tick();

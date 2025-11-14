@@ -257,18 +257,14 @@ void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objDat
     //Get TABLES.bin subfile #14 ("scroll table")
     scroll_table = func_800213A0(14);
     if (scroll_table == NULL){
-        if (DEBUG){
-            STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
-        }
+        STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
         return;
     }
 
     //Get texture from table
     texture = func_8003E960(-scroll_table[objSetup->textureIndex]);
     if (texture == NULL){
-        if (DEBUG){
-            STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d'\n");
-        }
+        STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d'\n");
         return;
     }
 
