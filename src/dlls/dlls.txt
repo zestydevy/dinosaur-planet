@@ -78,6 +78,7 @@
 347 = objects/347_texscroll2
 348 = objects/348_texscroll
 353 = objects/353_HitAnimator
+354 = objects/354_VisAnimator
 362 = objects/362_portaltexanimator
 363 = objects/363_FElevControl
 364 = objects/364_FEseqobject
