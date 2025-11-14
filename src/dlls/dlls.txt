@@ -72,6 +72,7 @@
 325 = objects/325_trigger
 332 = objects/332_FXEmit
 345 = objects/345_WaterFallSpray
+346 = objects/346_animator
 362 = objects/362_portaltexanimator
 363 = objects/363_FElevControl
 364 = objects/364_FEseqobject
