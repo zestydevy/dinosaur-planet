@@ -71,6 +71,7 @@
 311 = objects/311_IMMultiSeq
 321 = objects/321_Duster
 325 = objects/325_trigger
+331 = objects/331_genprops
 332 = objects/332_FXEmit
 345 = objects/345_WaterFallSpray
 346 = objects/346_animator
