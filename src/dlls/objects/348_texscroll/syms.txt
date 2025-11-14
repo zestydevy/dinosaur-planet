@@ -1,0 +1,14 @@
+.text = 0x0:
+TexScroll_ctor = 0x0;
+TexScroll_dtor = 0xC;
+TexScroll_setup = 0x18;
+TexScroll_control = 0xA4;
+TexScroll_update = 0x4F4;
+TexScroll_print = 0x500;
+TexScroll_free = 0x554;
+TexScroll_get_model_flags = 0x564;
+TexScroll_get_data_size = 0x574;
+TexScroll_find_animated_material_index = 0x588;
+
+.rodata = 0x6D8:
+str_0 = 0x0; // absolute:0x6D8
