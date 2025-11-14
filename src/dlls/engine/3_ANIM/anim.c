@@ -15,6 +15,19 @@
 
 #include "prevent_bss_reordering.h"
 
+s32* func_800349B0(void);
+
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+} AnimBSS0;
+
+typedef struct {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+} SequenceBoneStructUnk;
+
 void dll_3_func_7B64(AnimObj_Data*);
 s32 dll_3_func_9524(Object * arg0, AnimObj_Data *arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 
@@ -137,8 +150,8 @@ typedef struct {
 };
 
 /*0x0*/ static ANIMBSSUnk0 _bss_0[4];
-/*0x20*/ static s8 _bss_20[0x4];
-/*0x24*/ static u8 _bss_24[0x4];
+/*0x20*/ static s8 _bss_20; //count of items in bss0?
+/*0x24*/ static u32 _bss_24;
 /*0x28*/ static u8 _bss_28[0x4];
 /*0x2C*/ static u8 _bss_2C[0x4];
 /*0x30*/ static u8 _bss_30[0x2];
@@ -446,7 +459,28 @@ void dll_3_func_4924(Object* arg0, Object** arg1, ModelInstance** arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_495C.s")
 
 // offset: 0x4A7C | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4A7C.s")
+s32 dll_3_func_4A7C(AnimObj_Data* objData, s32 arg1) {
+    AnimCurvesEvent* event;
+    s32 subevent;
+    s32 index;
+    u32 delay;
+
+    delay = 0;
+    for (index = 0; index < objData->animCurvesEventCount; index++, delay += event->delay){
+        event = &objData->animCurvesEvents[index];
+        if (event->type == ANIMCURVES_EVENTS_timing){
+            delay = event->params;
+        } else if (event->type == ANIMCURVES_EVENTS_subEvent && event->params > 0){
+            subevent = *((s32 *)(event + 1));
+            if (((subevent & 0x3F) == 9) && (arg1 == (u16)(subevent >> 0x10))){
+                return delay;
+            }
+            index += event->params;
+        }
+    }
+    
+    return -1;
+}
 
 // offset: 0x4B20 | func: 23
 #ifndef NON_MATCHING
@@ -705,19 +739,42 @@ void dll_3_func_906C(s32 arg0);
 // offset: 0x9358 | func: 54 | export: 20
 void dll_3_func_9358(Object *arg0, s32 arg1) {
     ANIMBSSUnk0 *temp;
-    s8 currentValue;
+    s8 count;
 
-    currentValue = _bss_20[0];    
-    if (currentValue < 4) {
-        temp = &_bss_0[currentValue];
+    count = _bss_20;    
+    if (count < 4) {
+        temp = &_bss_0[count];
         temp->unk0 = arg0;
         temp->unk4 = arg1;
-        _bss_20[0] = currentValue + 1;
+        _bss_20 = count + 1;
     }
 }
 
 // offset: 0x93A0 | func: 55
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_93A0.s")
+s32 dll_3_func_93A0(Object* actor) {
+    s32 objectValue;
+    s32 i;
+    s32 j;
+
+    for (i = 0; i < _bss_20; i++){
+        if (actor == (&_bss_0[i])->unk0) {
+            _bss_20 -= 1;
+            objectValue = (&_bss_0[i])->unk4;
+
+            //Remove item from array and shift subsequent items up in array
+            while (i < _bss_20){
+                (&_bss_0[i])->unk0 = (&_bss_0[i + 1])->unk0;
+                (&_bss_0[i])->unk4 = (&_bss_0[i + 1])->unk4;
+                i++;
+            }
+
+            //Return actor's associated value
+            return objectValue;
+        }
+    }
+    
+    return 0;    
+}
 
 // offset: 0x9440 | func: 56 | export: 21
 void dll_3_func_9440(AnimObj_Data* arg0, s32 arg1) {
@@ -845,7 +902,33 @@ s32 dll_3_func_9E88(f32 arg0, f32 arg1, f32 arg2) {
 }
 
 // offset: 0x9EC8 | func: 72
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_9EC8.s")
+void dll_3_func_9EC8(Object* arg0, SequenceBoneStructUnk* arg1, s32 arg2) {
+    SequenceBoneStructUnk *temp_v0;
+    s32 *temp_v1;
+    s32 i;
+    s32 *var_s0;
+    
+    var_s0 = func_800349B0();
+    temp_v1 = var_s0;
+    if (arg2 == 0){
+        arg2 = 9;
+    }
+    
+    if (arg1 == NULL){
+        return;
+    }
+    
+    for (i = 1; i < arg2; i++){
+        temp_v0 = (SequenceBoneStructUnk *) func_80034804(arg0, var_s0[i]);
+        if (temp_v0 != NULL){
+            temp_v0->unk2 = arg1->unk2;
+            temp_v0->unk0 = arg1->unk0;
+            temp_v0->unk4 = arg1->unk4;
+        }
+    }
+    
+    var_s0 = temp_v1 + 1;
+}
 
 // offset: 0x9F90 | func: 73 | export: 32
 s32 dll_3_func_9F90(s32 arg0, s32 arg1) {
