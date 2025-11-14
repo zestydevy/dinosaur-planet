@@ -1,0 +1,15 @@
+.text = 0x0:
+TexFrameAnimator_ctor = 0x0;
+TexFrameAnimator_dtor = 0xC;
+TexFrameAnimator_setup = 0x18;
+TexFrameAnimator_control = 0xDC;
+TexFrameAnimator_update = 0x2B8;
+TexFrameAnimator_print = 0x2C4;
+TexFrameAnimator_free = 0x318;
+TexFrameAnimator_get_model_flags = 0x328;
+TexFrameAnimator_get_data_size = 0x338;
+
+.rodata = 0x39C:
+str_0 = 0x0; // absolute:0x39C
+str_24 = 0x24; // absolute:0x3C0
+str_56 = 0x56; // absolute:0x3F2
