@@ -1,17 +1,6 @@
 //May have been stored as "game/anim.c" (based off leftover string at 0x2F1560 in SFA Kiosk's "default.dol")
 
-#include "PR/ultratypes.h"
-#include "dll.h"
-#include "dlls/engine/3_animation.h"
-#include "sys/asset_thread.h"
-#include "sys/fs.h"
-#include "sys/gfx/model.h"
-#include "sys/main.h"
-#include "sys/math.h"
-#include "sys/memory.h"
-#include "game/objects/object.h"
-
-#include "dlls/objects/214_animobj.h"
+#include "common.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -191,7 +180,7 @@ typedef struct {
 /*0xDA*/ static u8 _bss_DA[0x2];
 /*0xDC*/ static u8 _bss_DC[0x4];
 /*0xE0*/ static u8 _bss_E0[0x28];
-/*0x108*/ static u8 _bss_108[0x1];
+/*0x108*/ static s8 _bss_108[0x1];
 /*0x109*/ static u8 _bss_109[0x1];
 /*0x10A*/ static u8 _bss_10A[0x2];
 /*0x10C*/ static u8 _bss_10C[0x4];
@@ -206,7 +195,7 @@ typedef struct {
 /*0x16A*/ static u8 _bss_16A[0x2];
 /*0x16C*/ static u8 _bss_16C[0x4];
 /*0x170*/ static u8 _bss_170[0x28];
-/*0x198*/ static u8 _bss_198[0x1];
+/*0x198*/ static s8 _bss_198[0x1];
 /*0x199*/ static u8 _bss_199[0x1];
 /*0x19A*/ static u8 _bss_19A[0x2];
 /*0x19C*/ static u8 _bss_19C[0x4];
@@ -350,7 +339,27 @@ s32 dll_3_func_3D0(Object* object, s32 updateRate);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_2FE8.s")
 
 // offset: 0x3170 | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3170.s")
+//TODO: verify argument structs are correct, and investigate lengths of BSS arrays
+void dll_3_func_3170(s32 arg0, s32 arg1, AnimObj_Data* arg2) {
+    if (arg2->unk9D & 1) {
+        _bss_108[arg2->unk63] = 1;
+    }
+    if (arg2->unk9D & 2) {
+        _bss_108[arg2->unk63] = 0;
+    }
+    if (arg2->unk9D & 4) {
+        _bss_138[arg2->unk63] = 1;
+    }
+    if (arg2->unk9D & 8) {
+        _bss_138[arg2->unk63] = 0;
+    }
+    if (arg2->unk9D & 0x10) {
+        _bss_198[arg2->unk63] = 1;
+    }
+    if (arg2->unk9D & 0x20) {
+        _bss_198[arg2->unk63] = 0;
+    }
+}
 
 // offset: 0x3268 | func: 13
 s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) {
@@ -532,7 +541,33 @@ void dll_3_func_4B20(Object* animObj, AnimObjSetup* setup) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5A48.s")
 
 // offset: 0x5D78 | func: 30
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5D78.s")
+/** Called when sequence is waiting for button presses (e.g. menu when talking with Rocky) */
+s32 dll_3_func_5D78(Object* override, s32 arg1, AnimObj_Data* objData) {
+    switch (arg1) {
+        case 18:
+            if (joy_get_pressed(0) & A_BUTTON) {
+                return 1;
+            }
+        default:
+            break;
+        case 19:
+            if (joy_get_pressed(0) & B_BUTTON) {
+                return 1;
+            }
+            break;
+        case 20:
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 25:
+            if (objData->unkF8 != NULL) {
+                return objData->unkF8(objData->unk11C, override, arg1);
+            }
+            break;
+    }
+    return 0;
+}
 
 // offset: 0x5E50 | func: 31
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5E50.s")
