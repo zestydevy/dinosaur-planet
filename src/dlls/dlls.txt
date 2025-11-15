@@ -94,6 +94,7 @@
 449 = objects/449_CClightfoot
 450 = objects/450_CCspellpage
 452 = objects/452_CCfirecrystal
+453 = objects/453_CCfirecrystalin
 454 = objects/454_CCgrub
 458 = objects/458_CCkrazoaBits
 459 = objects/459_CCkrazoaTablet

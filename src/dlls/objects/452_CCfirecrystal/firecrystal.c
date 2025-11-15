@@ -1,18 +1,7 @@
 #include "common.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/338_LFXEmitter.h"
-#include "game/gamebits.h"
-#include "macros.h"
-#include "sys/map.h"
-#include "sys/objmsg.h"
-
-typedef struct {
-    ObjSetup base;
-    Object* fireCrystal;
-    s8 colourR;
-    s8 colourG;
-    s8 colourB;
-} CCfirecrystalin_Setup; //0x20
+#include "dlls/objects/453_CCfirecrystalin.h"
 
 typedef struct {
     ObjSetup base;
@@ -21,7 +10,7 @@ typedef struct {
 
 typedef struct {
     u8 state;
-    Object* lfxEmitters[4];
+    Object* flameObjects[4];        //"CCfirecrystalin" objects (for a flame effect) 
     NewLfxStruct* lfxEmitterSetup;
 } CCfirecrystal_Data;
 
@@ -33,7 +22,7 @@ typedef enum {
 } CCfirecrystal_States;
 
 void CCfirecrystal_free(Object* self, s32 arg1);
-static Object* CCfirecrystal_create_light(Object* self, s8 colourR, s8 colourG, u8 colourB);
+static Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scrollSpeed);
 static s32 CCfirecrystal_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3);
 
 // offset: 0x0 | ctor
@@ -62,20 +51,20 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
     if (objData->state == FireCrystal_State_1) {
         self->unkAF = 8;
         self->objhitInfo->unk58 = 256;
-        objData->lfxEmitters[3] = 0;
-        objData->lfxEmitters[2] = 0;
-        objData->lfxEmitters[1] = 0;
-        objData->lfxEmitters[0] = 0;
+        objData->flameObjects[3] = NULL;
+        objData->flameObjects[2] = NULL;
+        objData->flameObjects[1] = NULL;
+        objData->flameObjects[0] = NULL;
     } else {
         lfxBuffer = mmAlloc(sizeof(LFXEmitter_Setup), ALLOC_TAG_LFX_COL, NULL);
         objData->lfxEmitterSetup = lfxBuffer;
         queue_load_file_region_to_ptr(lfxBuffer, LACTIONS_BIN, 0x6158, 0x28);
         objData->lfxEmitterSetup->unk10 = 0xFFFE;
         gDLL_11_Newlfx->vtbl->func0(self, self, (LFXEmitter_Setup*)objData->lfxEmitterSetup, 0, 0, 0);
-        objData->lfxEmitters[0] = CCfirecrystal_create_light(self, 0x40, 0, 0x18);
-        objData->lfxEmitters[1] = CCfirecrystal_create_light(self, 0x40, 0x40, 0x18);
-        objData->lfxEmitters[2] = CCfirecrystal_create_light(self, 0xC8, 0, 0x18);
-        objData->lfxEmitters[3] = CCfirecrystal_create_light(self, 0xC8, 0x40, 0x18);
+        objData->flameObjects[0] = CCfirecrystal_create_flame(self, 0x40, 0, 0x18);
+        objData->flameObjects[1] = CCfirecrystal_create_flame(self, 0x40, 0x40, 0x18);
+        objData->flameObjects[2] = CCfirecrystal_create_flame(self, -56, 0, 0x18);
+        objData->flameObjects[3] = CCfirecrystal_create_flame(self, -56, 0x40, 0x18);
     }
     
     obj_init_mesg_queue(self, 1);
@@ -140,9 +129,9 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
 
     if (arg1 == 0){
         for (index = 0; index < 4; index++){
-            if (objData->lfxEmitters[index] != NULL) {
-                obj_destroy_object(objData->lfxEmitters[index]);
-                objData->lfxEmitters[index] = NULL;
+            if (objData->flameObjects[index] != NULL) {
+                obj_destroy_object(objData->flameObjects[index]);
+                objData->flameObjects[index] = NULL;
             }
         }
     }
@@ -170,7 +159,7 @@ u32 CCfirecrystal_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x53C | func: 7
-Object* CCfirecrystal_create_light(Object* self, s8 colourR, s8 colourG, u8 colourB) {
+Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scrollSpeed) {
     CCfirecrystalin_Setup* lightSetup;
     CCfirecrystal_Setup* objSetup;
 
@@ -186,9 +175,9 @@ Object* CCfirecrystal_create_light(Object* self, s8 colourR, s8 colourG, u8 colo
     lightSetup->base.fadeDistance = objSetup->base.fadeDistance;
     lightSetup->fireCrystal = self;
     //r, g, b for light, maybe?
-    lightSetup->colourR = colourR; 
-    lightSetup->colourG = colourG;
-    lightSetup->colourB = colourB;
+    lightSetup->rotateSpeed = rotateSpeed; 
+    lightSetup->yaw = yaw;
+    lightSetup->scrollSpeed = scrollSpeed;
     return obj_create((ObjSetup*)lightSetup, 5, -1, -1, self->parent);
 }
 
