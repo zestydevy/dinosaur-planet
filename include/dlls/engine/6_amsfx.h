@@ -184,6 +184,8 @@ enum SoundID {
 
     SOUND_B31_Item_Collection_Chime = 0xB31,
 
+    SOUND_B5C_Machinery_Clunk = 0xB5C,
+
     SOUND_B72_Game_Saved = 0xB72,
     SOUND_B73_Option_Selected = 0xB73,
     SOUND_B74 = 0xB74,
