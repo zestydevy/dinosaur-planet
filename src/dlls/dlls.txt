@@ -41,6 +41,7 @@
 
 # objects
 210 = objects/210_player
+211 = objects/211_Tricky
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
