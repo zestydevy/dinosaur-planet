@@ -21,24 +21,23 @@ void CCfirecrystalin_setup(Object* self, CCfirecrystalin_Setup* objSetup, s32 ar
 
 // offset: 0x3C | func: 1 | export: 1
 void CCfirecrystalin_control(Object* self) {
-    s32 pad;
-    f32 scaleFactor;
+    s32 pad[2];
     CCfirecrystalin_Setup *objSetup;
     Object *fireCrystal;
     UnkStruct_func_800348A0 *unkStruct;
-    s16 dScroll;
-    s32 temp_ft0;
+    s16 scroll;
+    f32 scaleFactor;
     
     objSetup = (CCfirecrystalin_Setup *) self->setup;
     unkStruct = func_800348A0(self, 0, 0);
 
     //Update model texture UV scroll, maybe?
-    dScroll = -unkStruct->unkA;
-    dScroll += gUpdateRateF * objSetup->scrollSpeed;
-    if (dScroll > 2048){
-        dScroll -= 2048;
+    scroll = -unkStruct->unkA;
+    scroll += gUpdateRateF * objSetup->scrollSpeed;
+    if (scroll > 2048){
+        scroll -= 2048;
     }
-    unkStruct->unkA = -dScroll;
+    unkStruct->unkA = -scroll;
 
     //Update Object's transform
     self->srt.yaw += gUpdateRateF * objSetup->rotateSpeed;
