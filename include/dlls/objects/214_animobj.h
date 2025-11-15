@@ -57,7 +57,7 @@ typedef struct AnimObj_Data {
 /*084*/ s8 unk84[0x87 - 0x84];
 /*087*/ s8 unk87;
 /*088*/ s8 unk88[0x8B - 0x88];
-/*08B*/ s8 unk8B;
+/*08B*/ u8 unk8B;
 /*08C*/ s8 unk8C;
 /*08D*/ u8 unk8D;
 /*08E*/ u8 unk8E[0x98 - 0x8E];

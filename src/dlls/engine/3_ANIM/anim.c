@@ -616,7 +616,33 @@ f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_6F3C.s")
 
 // offset: 0x71C0 | func: 37
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_71C0.s")
+void dll_3_func_71C0(s32 arg0, Object* arg1, AnimObj_Data* arg2) {
+    s32 i;
+    u32 soundHandle;
+
+    if (arg2->unkF4 != NULL) {
+        arg2->unkF4(arg2->unk11C, arg0, arg2);
+    }
+
+    for (i = 0; i < 4; i++){
+        soundHandle = arg2->unk34[i];
+        if (soundHandle && (gDLL_6_AMSFX->vtbl->func_B48(soundHandle) == 0)) {
+            gDLL_6_AMSFX->vtbl->func_A1C(arg2->unk34[i]);
+        }
+    }
+    
+    if (arg2->unk8B != 0) {
+        if (arg2->unk87 != 0) {
+            arg2->unk87 = 0;
+        }
+        if (arg2->actor != 0) {
+            arg1->unkC0 = 0;
+            arg1->unkB0 &= ~0x1000;
+            arg2->actor = 0;
+        }
+    }
+    arg2->unk8B = 0;
+}
 
 // offset: 0x72E0 | func: 38
 void dll_3_func_72E0(s32 arg0) {
