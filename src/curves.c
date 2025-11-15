@@ -7,10 +7,16 @@
 s32 D_8008C7D0 = -1;
 s32 D_8008C7D4 = -1;
 
+// .bss
+
+f32 D_800A7C30[4];
+f32 D_800A7C40;
+f32 D_800A7C48[7];
+f32 D_800A7C64;
+
+
 // // // 
 
-extern f32 D_800A7C30[4];
-extern f32 D_800A7C40;
 
 static const char str_800983b0[] = "curvesMove: There must be at least four control points\n";
 static const char str_800983e8[] = "curvesMove: There must be a multiple of four control points for bezier or hermite curves\n";
@@ -461,8 +467,6 @@ void func_8000598C(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4, f32* a
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/curves/func_80005E60.s")
 #else
-extern f32 D_800A7C48[7];
-extern f32 D_800A7C64;
 void func_80005E60(f32 *arg0, f32 *arg1, f32* arg2, f32* arg3, f32 *arg4, f32 *arg5, f32 *arg6, f32 *arg7, f32 *arg8, s32 arg9, void (*arg10)(f32*, f32*, f32*, f32*)) {
     f32 spC0[4];
     f32 spB0[4];
