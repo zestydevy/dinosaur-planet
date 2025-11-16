@@ -1,0 +1,20 @@
+.text = 0x0:
+SHLevelControl_ctor = 0x0;
+SHLevelControl_dtor = 0xC;
+SHLevelControl_setup = 0x18;
+SHLevelControl_control = 0x118;
+SHLevelControl_update = 0x124;
+SHLevelControl_print = 0x130;
+SHLevelControl_free = 0x148;
+SHLevelControl_get_model_flags = 0x198;
+SHLevelControl_get_data_size = 0x1A8;
+
+.rodata = 0x1E8:
+
+.data = 0x1E8:
+_data_0 = 0x0; // absolute:0x1E8
+_data_38 = 0x38; // absolute:0x220
+_data_70 = 0x70; // absolute:0x258
+_data_A8 = 0xA8; // absolute:0x290
+_data_E0 = 0xE0; // absolute:0x2C8
+_data_118 = 0x118; // absolute:0x300

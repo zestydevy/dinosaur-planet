@@ -1,0 +1,13 @@
+.text = 0x0:
+WCTrexChase_ctor = 0x0;
+WCTrexChase_dtor = 0xC;
+WCTrexChase_setup = 0x18;
+WCTrexChase_control = 0x2C;
+WCTrexChase_func_38 = 0x38;
+WCTrexChase_print = 0x44;
+WCTrexChase_free = 0x98;
+WCTrexChase_get_model_flags = 0xA8;
+WCTrexChase_get_data_size = 0xB8;
+
+.rodata = 0xF4:
+_oob_rodata_0 = 0x0; // absolute:0xF4

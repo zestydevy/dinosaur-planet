@@ -1,0 +1,13 @@
+.text = 0x0:
+Transporter_ctor = 0x0;
+Transporter_dtor = 0xC;
+Transporter_setup = 0x18;
+Transporter_control = 0xBC;
+Transporter_update = 0xC00;
+Transporter_print = 0xCA0;
+Transporter_free = 0xCB8;
+Transporter_get_model_flags = 0xD68;
+Transporter_get_data_size = 0xD78;
+Transporter_anim_callback = 0xD8C;
+
+.rodata = 0xE3C:
