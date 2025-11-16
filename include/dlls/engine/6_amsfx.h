@@ -22,6 +22,8 @@ typedef struct UnkDE8 {
 enum SoundID {
     SOUND_8F = 0x8F, // used by DFlog
 
+    SOUND_9B = 0x9B,
+
     SFX_RECAP_MENU_BACK = 0x5D4,
     SFX_RECAP_MENU_MOVE = 0x5D5,
     SFX_RECAP_MENU_SELECT = 0x5D6,
@@ -72,6 +74,8 @@ enum SoundID {
     SOUND_386 = 0x386,
 
     SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274)
+
+    SOUND_43D = 0x43D,
 
     SOUND_4BC = 0x4BC,
 

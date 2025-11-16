@@ -32,11 +32,11 @@ DLL_INTERFACE(DLL_7_newday) {
 /*13*/ void (*func13)(Gfx **gdl, Mtx **arg1);
 /*14*/ UnknownDLLFunc func14;
 /*15*/ UnknownDLLFunc func15;
-/*16*/ UnknownDLLFunc func16;
+/*16*/ void (*func16)(s32);
 /*17*/ s32 (*func17)(void);
-/*18*/ UnknownDLLFunc func18;
-/*19*/ UnknownDLLFunc func19;
-/*20*/ UnknownDLLFunc func20;
+/*18*/ void (*func18)(s32, s32, s32, s32);
+/*19*/ void (*func19)(s32, s32, s32, s32);
+/*20*/ void (*func20)(s32, s32, s32, s32);
 /*21*/ UnknownDLLFunc func21;
 /*22*/ u8 (*func22)(void);
 // Unmatched

@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_762_ctor = 0x0;
+dll_762_dtor = 0xC;
+dll_762_setup = 0x18;
+dll_762_control = 0x2C;
+dll_762_update = 0x174;
+dll_762_print = 0x180;
+dll_762_free = 0x1D4;
+dll_762_get_model_flags = 0x1E4;
+dll_762_get_data_size = 0x1F4;
+
+.rodata = 0x24C:

@@ -1,0 +1,13 @@
+.text = 0x0:
+MMP_levelcontrol_ctor = 0x0;
+MMP_levelcontrol_dtor = 0xC;
+MMP_levelcontrol_setup = 0x18;
+MMP_levelcontrol_control = 0x54;
+MMP_levelcontrol_update = 0x1A0;
+MMP_levelcontrol_print = 0x1AC;
+MMP_levelcontrol_free = 0x200;
+MMP_levelcontrol_get_model_flags = 0x290;
+MMP_levelcontrol_get_data_size = 0x2A0;
+MMP_levelcontrol_anim_callback = 0x2B4;
+
+.rodata = 0x48C:
