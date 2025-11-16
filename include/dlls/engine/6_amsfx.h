@@ -75,6 +75,8 @@ enum SoundID {
 
     SOUND_4BC = 0x4BC,
 
+    SOUND_LightFoot_Shout = 0x4B7,
+
     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
 

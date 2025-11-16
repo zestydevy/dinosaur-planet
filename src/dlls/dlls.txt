@@ -91,6 +91,7 @@
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
 447 = objects/447_CCguardgiving
+448 = objects/448_CCcage
 449 = objects/449_CClightfoot
 450 = objects/450_CCspellpage
 452 = objects/452_CCfirecrystal
