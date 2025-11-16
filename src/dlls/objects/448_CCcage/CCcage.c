@@ -1,6 +1,4 @@
 #include "common.h"
-#include "game/gamebits.h"
-#include "macros.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 
