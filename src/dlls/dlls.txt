@@ -20,6 +20,7 @@
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash
+32 = engine/32
 33 = engine/33
 60 = engine/60_post
 61 = engine/61_rareware
