@@ -919,7 +919,7 @@ typedef enum {
     BIT_390 = 0x390, // len:1 group:2
     BIT_391 = 0x391, // len:1 group:0
     BIT_392 = 0x392, // len:1 group:1
-    BIT_CC_Kyte_Pulled_All_Four_Levers = 0x393, // len:1 group:2
+    BIT_CC_Kyte_Pulled_All_Four_Levers = 0x393, // len:1 group:2 //lowers lantern shutters in Cape Claw Courtyard
     BIT_394 = 0x394, // len:1 group:3
     BIT_Gold_Nugget_CC = 0x395, // len:1 group:2    [INVENTORY]
     BIT_396 = 0x396, // len:1 group:1
@@ -944,7 +944,7 @@ typedef enum {
     BIT_3A9 = 0x3A9, // len:1 group:2
     BIT_3AA = 0x3AA, // len:1 group:2
     BIT_3AB = 0x3AB, // len:1 group:2
-    BIT_3AC = 0x3AC, // len:1 group:2 task:136
+    BIT_CC_Courtyard_Crossfade_Lever_Icons = 0x3AC, // len:1 group:2 task:136
     BIT_IM_ObjGroup_Bits = 0x3AD, // len:32 group:3
     BIT_3AE = 0x3AE, // len:1 group:2
     BIT_3AF = 0x3AF, // len:1 group:0
@@ -993,9 +993,9 @@ typedef enum {
     BIT_3DA = 0x3DA, // len:1 group:1
     BIT_3DB = 0x3DB, // len:1 group:1
     BIT_3DC = 0x3DC, // len:1 group:0
-    BIT_3DD = 0x3DD, // len:1 group:2
-    BIT_3DE = 0x3DE, // len:1 group:2
-    BIT_3DF = 0x3DF, // len:1 group:2
+    BIT_CC_Placed_Fire_Crystal_Cliff_Beacon = 0x3DD, // len:1 group:2     The beacon beyond the Shiny Nugget, overlooking the cannon
+    BIT_CC_Placed_Fire_Crystal_Courtyard_Beacon = 0x3DE, // len:1 group:2 The beacon beyond the Portal Door
+    BIT_CC_Placed_Fire_Crystal_Island_Beacon = 0x3DF, // len:1 group:2    The beacon on the island at the back of Cape Claw
     BIT_Front_End_ObjGroup_Bits = 0x3E0, // len:32 group:3
     BIT_3E1 = 0x3E1, // len:1 group:1
     BIT_3E2 = 0x3E2, // len:1 group:0
@@ -1016,8 +1016,8 @@ typedef enum {
     BIT_Play_Summoning_SnowHorn_with_Horn_of_Truth = 0x3F1, // len:1 group:0
     BIT_3F2 = 0x3F2, // len:1 group:1
     BIT_3F3 = 0x3F3, // len:1 group:1
-    BIT_3F4 = 0x3F4, // len:1 group:0
-    BIT_3F5 = 0x3F5, // len:1 group:0
+    BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever = 0x3F4, // len:1 group:0 (position noted from left, while facing towards ocean)
+    BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever = 0x3F5, // len:1 group:0 (position noted from left, while facing towards ocean)
     BIT_3F6 = 0x3F6, // len:1 group:0
     BIT_3F7 = 0x3F7, // len:1 group:0
     BIT_3F8 = 0x3F8, // len:1 group:2
@@ -1058,7 +1058,7 @@ typedef enum {
     BIT_41B = 0x41B, // len:1 group:0
     BIT_41C = 0x41C, // len:1 group:2
     BIT_41D = 0x41D, // len:1 group:2
-    BIT_41E = 0x41E, // len:1 group:2
+    BIT_CC_Courtyard_Gate_Left_Lever_or_Lantern = 0x41E, // len:1 group:2
     BIT_41F = 0x41F, // len:1 group:1
     BIT_420 = 0x420, // len:1 group:1
     BIT_Galleon_Inside_ObjGroup_Bits = 0x421, // len:32 group:3
@@ -1242,9 +1242,9 @@ typedef enum {
     BIT_4D3 = 0x4D3, // len:1 group:2 task:8
     BIT_4D4 = 0x4D4, // len:1 group:2
     BIT_4D5 = 0x4D5, // len:1 group:0
-    BIT_4D6 = 0x4D6, // len:1 group:2
-    BIT_4D7 = 0x4D7, // len:1 group:0
-    BIT_4D8 = 0x4D8, // len:1 group:0
+    BIT_CC_Courtyard_Gate_Reopened = 0x4D6, // len:1 group:2 After Kyte lights the two lanterns allowing you leave the Courtyard
+    BIT_CC_Courtyard_Kyte_Pulled_4th_Lever = 0x4D7, // len:1 group:0 (position noted from left, while facing towards ocean)
+    BIT_CC_Courtyard_Kyte_Pulled_1st_Lever = 0x4D8, // len:1 group:0 (position noted from left, while facing towards ocean)
     BIT_4D9 = 0x4D9, // len:1 group:0
     BIT_4DA = 0x4DA, // len:1 group:1
     BIT_4DB = 0x4DB, // len:1 group:1
@@ -1544,7 +1544,7 @@ typedef enum {
     BIT_SwapStone_Store_ObjGroup_Bits = 0x601, // len:32 group:3
     BIT_602 = 0x602, // len:1 group:2
     BIT_603 = 0x603, // len:1 group:2
-    BIT_604 = 0x604, // len:1 group:2
+    BIT_CC_Courtyard_Gate_Right_Lever_or_Lantern = 0x604, // len:1 group:2
     BIT_605 = 0x605, // len:1 group:1
     BIT_606 = 0x606, // len:1 group:1
     BIT_607 = 0x607, // len:1 group:1

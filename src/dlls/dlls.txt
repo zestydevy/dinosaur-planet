@@ -98,6 +98,7 @@
 453 = objects/453_CCfirecrystalin
 454 = objects/454_CCgrub
 456 = objects/456_CCfloor
+457 = objects/457_CCkrazoabright
 458 = objects/458_CCkrazoaBits
 459 = objects/459_CCkrazoaTablet
 460 = objects/460_CClevcontrol
