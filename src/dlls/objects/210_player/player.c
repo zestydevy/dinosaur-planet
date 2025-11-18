@@ -7004,11 +7004,6 @@ static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
 }
 
 // offset: 0x14BE8 | func: 100
-#ifndef NON_MATCHING
-s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_14BE8.s")
-#else
-// https://decomp.me/scratch/JVr7y
 s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Object* temp_s2;
     s32 spA0;
@@ -7083,6 +7078,9 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     sp54.transl.x = temp_fv0;
     sp4C = func_80034804(player, 5);
     temp_fv0 = sp54.transl.x;
+    // @fake
+    sp4C++;
+    sp4C--;
     if (sp4C != NULL) {
         sp4C[0] = temp_s2->srt.pitch * temp_fv0;
         sp4C[2] = temp_s2->srt.roll * temp_fv0;
@@ -7113,7 +7111,6 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     return 0;
 }
-#endif
 
 // offset: 0x151A0 | func: 101
 s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
