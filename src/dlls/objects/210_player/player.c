@@ -8806,8 +8806,40 @@ s32 dll_210_func_1B0A8(Object *player, ObjFSA_Data *fsa, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B0A8.s")
 
 // offset: 0x1B1E8 | func: 130
-s32 dll_210_func_1B1E8(Object *player, ObjFSA_Data *fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B1E8.s")
+s32 dll_210_func_1B1E8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+    Player_Data* objdata;
+
+    objdata = player->data;
+    if (fsa->enteredAnimState != 0) {
+        objdata->flags = (s32) (objdata->flags | 0x800);
+        fsa->animExitAction = dll_210_func_1BAC8;
+        func_80023D30(player, 0x94, 0.0f, 0U);
+        fsa->animTickDelta = 0.021f;
+        fsa->unk34A = 0;
+        dll_210_func_A024(player, fsa);
+    }
+    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 1);
+    gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 2);
+    if (fsa->unk308 & 1) {
+        gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[5], 0x7FU, NULL, NULL, 0, NULL);
+    }
+    if (!(fsa->unk34A & 1) && (player->animProgress > 0.2f)) {
+        gDLL_6_AMSFX->vtbl->play_sound(player, objdata->unk3B8[7], 0x7FU, NULL, NULL, 0, NULL);
+        fsa->unk34A |= 1;
+    }
+    if (fsa->unk33A != 0) {
+        return 0x4C;
+    }
+    if (player->animProgress > 0.85f) {
+        if (fsa->unk310 & 0x4000) {
+            return -0x3D;
+        }
+        if (fsa->unk310 & 0x8000) {
+            return -0x3B;
+        }
+    }
+    return 0;
+}
 
 // offset: 0x1B414 | func: 131
 s32 dll_210_func_1B414(Object* player, ObjFSA_Data* fsa, f32 arg2) {
