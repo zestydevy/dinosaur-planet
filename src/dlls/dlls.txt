@@ -62,6 +62,7 @@
 287 = objects/287_pressureswitch
 289 = objects/289_CClogpush
 292 = objects/292_TrickyWarp
+293 = objects/293_TrickyGuard
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
