@@ -20,6 +20,7 @@
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash
+32 = engine/32
 33 = engine/33
 60 = engine/60_post
 61 = engine/61_rareware
@@ -54,6 +55,7 @@
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
 274 = objects/274_pushpull
+275 = objects/275_WarpPoint
 277 = objects/277_iceblast
 278 = objects/278_flameblast
 281 = objects/281_area
@@ -75,7 +77,8 @@
 325 = objects/325_trigger
 331 = objects/331_genprops
 332 = objects/332_FXEmit
-339 = objects/339_prop
+334 = objects/334_Transporter
+339 = objects/339
 345 = objects/345_WaterFallSpray
 346 = objects/346_animator
 347 = objects/347_texscroll2
@@ -92,6 +95,8 @@
 408 = objects/408_IMIceMountain
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
+427 = objects/427_DFlevelcontrol
+441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
 448 = objects/448_CCcage
 449 = objects/449_CClightfoot
@@ -115,6 +120,7 @@
 501 = objects/501_SHtricky
 505 = objects/505_SHspore
 507 = objects/507_SHqueenearthwalker
+512 = objects/512_SHLevelControl
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
 519 = objects/519_SC_levelcontrol
@@ -150,17 +156,22 @@
 702 = objects/702_KTrex
 703 = objects/703_KT_RexFloorSwitch
 704 = objects/704_KT_Lazerwall
+710 = objects/710_AnimTest
 711 = objects/711_IMSnowBike
 712 = objects/712_DIMSnowHorn1
 713 = objects/713_DR_EarthWarrior
 714 = objects/714_DR_CloudRunner
 718 = objects/718_PerchObject
+720 = objects/720_FindKyteObject
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
+762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop
+777 = objects/777_WCTrexChase
+778 = objects/778_WCSabreChase
 779 = objects/779_WCLevelControl
 780 = objects/780_WCBeacon
 781 = objects/781_WCpressureswitch
