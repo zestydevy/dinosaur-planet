@@ -8794,8 +8794,67 @@ s32 dll_210_func_1AC3C(Object *player, Player_Data *objdata, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1AC3C.s")
 
 // offset: 0x1ADA4 | func: 127
-s32 dll_210_func_1ADA4(Object *player, Player_Data *objdata, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1ADA4.s")
+s32 dll_210_func_1ADA4(Object* player, Player_Data* objdata, f32 arg2) {
+    s32 pad[2];
+    f32 sp4C;
+    f32 temp_fv0;
+    f32 sp44;
+    Object* sp40;
+    u8 sp3F;
+    u8 sp3E;
+    Vec3f sp30;
+    Player_Data* temp_s0;
+
+    temp_s0 = player->data;
+    sp3F = 0;
+    sp3E = 1;
+    sp44 = 100.0f;
+    sp40 = obj_get_nearest_type_to(0x3F, player, &sp44);
+    if (sp40 != NULL) {
+        sp30.f[0] = sp40->srt.transl.f[0] - player->srt.transl.f[0];
+        sp30.f[1] = sp40->srt.transl.f[1] - player->srt.transl.f[1];
+        sp30.f[2] = sp40->srt.transl.f[2] - player->srt.transl.f[2];
+        sp30.f[1] = 0.0f;
+        vec3_normalize(&sp30);
+        sp4C = fsin16_precise(player->srt.yaw);
+        temp_fv0 = fcos16_precise(player->srt.yaw);
+        switch (sp40->def->_unk9e[0]) {
+            case 3:
+                if ((sp30.f[0] * temp_fv0) < (sp30.f[2] * sp4C)) {
+                    sp3E = 3;
+                }
+                sp3F = sp3E;
+                break;
+            case 2:
+                sp3E = 0;
+                break;
+            case 1:
+                sp3F = 1;
+                sp3E = 0;
+                break;
+            case 0:
+            default:
+                temp_s0->unk8A2 ^= 1;
+                if (temp_s0->unk8A2) {
+                    sp3E = 3;
+                }
+                break;
+        }
+    } else {
+        temp_s0->unk8A2 ^= 1;
+        if (temp_s0->unk8A2) {
+            sp3E = 3;
+        }
+    }
+    if ((objdata->unk0.unk33F == 2) && (objdata->unk0.unk290 > 0.3f)) {
+        func_80023D30(player, temp_s0->unk3B4[sp3F].unk2, 0.0f, 0U);
+        temp_s0->unk8A1 = sp3F;
+        return 0x38;
+    }
+    func_80023D30(player, temp_s0->unk3B4[sp3E].unk2, 0.0f, 0U);
+    temp_s0->unk8A1 = sp3E;
+    return 0x38;
+}
 
 // offset: 0x1AFF8 | func: 128
 s32 dll_210_func_1AFF8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
