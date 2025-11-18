@@ -18,7 +18,7 @@ typedef struct {
 typedef struct {
 /*00*/ u8 spokeToPlayer;
 /*01*/ u8 _unk1[0x4-0x1];
-/*04*/ Unk80032CF8 unk4;
+/*04*/ HeadAnimation unk4;
 } CClightfoot_Data;
 
 // @bug: no arg3?
@@ -49,10 +49,10 @@ void CClightfoot_control(Object *self) {
     objdata = self->data;
     player = get_player();
     if (!objdata->spokeToPlayer) {
-        objdata->unk4.x = player->srt.transl.x;
-        objdata->unk4.y = player->srt.transl.y;
-        objdata->unk4.z = player->srt.transl.z;
-        objdata->unk4.unk0 = 1;
+        objdata->unk4.headAimX = player->srt.transl.x;
+        objdata->unk4.headAimY = player->srt.transl.y;
+        objdata->unk4.headAimZ = player->srt.transl.z;
+        objdata->unk4.aimIsActive = 1;
         func_800328F0(self, &objdata->unk4, 0.0f);
         func_80032A08(self, &objdata->unk4);
         if (self->curModAnimId != 10) {

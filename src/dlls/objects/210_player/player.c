@@ -1846,10 +1846,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
             arg2->unk62 = 5;
-            temp_fp->unk354.unk16 = func_80034804(arg0, 0)[1];
-            temp_fp->unk378.unk16 = 0;
-            temp_fp->unk354.unk14 = arg2->yawDiff;
-            temp_fp->unk378.unk14 = arg2->pitchDiff;
+            temp_fp->unk354.headStartAngle = func_80034804(arg0, 0)[1];
+            temp_fp->unk378.headStartAngle = 0;
+            temp_fp->unk354.headGoalAngle = arg2->yawDiff;
+            temp_fp->unk378.headGoalAngle = arg2->pitchDiff;
             _bss_0 = 0;
             sp6C[0] = temp_s0->x;
             sp6C[1] = temp_s0->y;
@@ -1886,8 +1886,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 temp_s0_2[1] = _bss_2 - (arg0->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(temp_s0_2[1])
             } else {
-                _bss_0 |= func_800343B8((Unk80032CF8 *)&temp_fp->unk354, temp_s0_2, 100.0f, 2000.0f);
-                _bss_0 |= func_80034518((Unk80032CF8 *)&temp_fp->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
+                _bss_0 |= func_800343B8((HeadAnimation *)&temp_fp->unk354, temp_s0_2, 100.0f, 2000.0f);
+                _bss_0 |= func_80034518((HeadAnimation *)&temp_fp->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
             }
             return 1;
         } else if (arg2->unk62 == 6) {
@@ -9276,7 +9276,7 @@ s32 dll_210_func_1D40C(Object* player, u32 arg1) {
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk354.unk1E == 1;
+    return objdata->unk354.blinkState == 1;
 }
 
 // offset: 0x1D4E0 | func: 192 | export: 33
@@ -9371,7 +9371,7 @@ Object* dll_210_func_1D768(Object* player) {
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-Unk80032CF8 * dll_210_func_1D778(Object* player) {
+HeadAnimation * dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }

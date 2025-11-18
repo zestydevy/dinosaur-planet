@@ -148,8 +148,8 @@ typedef struct {
 /*000*/ ObjFSA_Data unk0;
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
-/*354*/ Unk80032CF8 unk354;
-/*378*/ Unk80032CF8 unk378;
+/*354*/ HeadAnimation unk354;
+/*378*/ HeadAnimation unk378;
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
 /*3B4*/ Player_Data3B4* unk3B4;
@@ -346,7 +346,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*51*/ void (*func51)(Object* player, s32 arg1); //unequip spells
     /*52*/ void *(*func52)(Object* player);
     /*53*/ Object *(*func53)(Object* player);
-    /*54*/ Unk80032CF8 *(*func54)(Object* player);
+    /*54*/ HeadAnimation *(*func54)(Object* player);
     /*55*/ void (*func55)(Object* player, Player_Data* objdata, void** arg2, s8* arg3, Vec3f** arg4);
     /*56*/ f32 (*func56)(Object* player);
     /*57*/ s32 (*func57)(Object* player);
