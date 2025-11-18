@@ -79,10 +79,20 @@ void func_80025E58(void) {
     }
 }
 
+typedef enum {
+    Collision_Type_Projectile_Spell = 0xF,
+    Collision_Type_Ice_Spell = 0x19,        //Speeder bike checks this type, strangely?
+    Collision_Type_15 = 0x21,               //Speeder bike checks for this
+    Collision_Type_None = 0x7F
+} CollisionTypes;
+
+/** Checks for collisions (Projectile/Ice Blast Spell, etc.) 
+  * Lower collisionType values have higher priority.
+  */
 s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
     ObjectHitInfo* objHitInfo;
-    s8 var_a0;
-    s8 var_a1;
+    s8 collisionType;
+    s8 collisionIndex;
     s32 i;
 
     objHitInfo = obj->objhitInfo;
@@ -90,25 +100,25 @@ s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
         return 0;
     }
     if (objHitInfo->unk62 != 0) {
-        var_a0 = 0x7F;
-        var_a1 = -1;
+        collisionType = 0x7F;
+        collisionIndex = -1;
         for (i = 0; i < objHitInfo->unk62; i++) {
-            if (objHitInfo->unk66[i] < var_a0) {
-                var_a0 = objHitInfo->unk66[i];
-                var_a1 = i;
+            if (objHitInfo->unk66[i] < collisionType) {
+                collisionType = objHitInfo->unk66[i];
+                collisionIndex = i;
             }
         }
-        if (var_a1 != -1) {
+        if (collisionIndex != -1) {
             if (arg1 != 0) {
-                *arg1 = objHitInfo->unk6C[var_a1];
+                *arg1 = objHitInfo->unk6C[collisionIndex];
             }
             if (arg2 != 0) {
-                *arg2 = objHitInfo->unk63[var_a1];
+                *arg2 = objHitInfo->unk63[collisionIndex];
             }
             if (arg3 != 0) {
-                *arg3 = objHitInfo->unk69[var_a1];
+                *arg3 = objHitInfo->unk69[collisionIndex];
             }
-            return var_a0;
+            return collisionType;
         }
     }
     return 0;
