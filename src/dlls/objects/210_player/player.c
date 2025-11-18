@@ -8790,8 +8790,36 @@ void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa) {
 }
 
 // offset: 0x1AC3C | func: 126
-s32 dll_210_func_1AC3C(Object *player, Player_Data *objdata, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1AC3C.s")
+s32 dll_210_func_1AC3C(Object* player, Player_Data* objdata, f32 arg2) {
+    Player_Data* temp_s0;
+
+    temp_s0 = player->data;
+    if (temp_s0->unk87C == 0x2D) {
+        return 0x3B;
+    }
+
+    if (objdata->unk0.unk33F == 2 && objdata->unk0.unk290 > 0.3f) {
+        func_80023D30(player, temp_s0->unk3B4->unk0, 0.0f, 0U);
+        temp_s0->unk8A1 = 0;
+        return 0x38;
+    }
+
+    if (objdata->unk0.unk33F == 3 && objdata->unk0.unk290 > 0.3f) {
+        func_80023D30(player, temp_s0->unk3B4[3].unk0, 0.0f, 0U);
+        temp_s0->unk8A1 = 3;
+        return 0x38;
+    }
+
+    if (objdata->unk0.unk33F == 1 && objdata->unk0.unk290 > 0.3f) {
+        func_80023D30(player, temp_s0->unk3B4[1].unk0, 0.0f, 0U);
+        temp_s0->unk8A1 = 1;
+        return 0x38;
+    }
+
+    func_80023D30(player, temp_s0->unk3B4[1].unk0, 0.0f, 0U);
+    temp_s0->unk8A1 = 1;
+    return 0x38;
+}
 
 // offset: 0x1ADA4 | func: 127
 s32 dll_210_func_1ADA4(Object* player, Player_Data* objdata, f32 arg2) {
