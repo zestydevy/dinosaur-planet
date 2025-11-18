@@ -4,11 +4,11 @@ extern Block_0x28Struct* func_8004A284(Block*, s32);
 extern BlockTexture* func_8004A2CC(s32);
 
 typedef struct {
-    f32 timer;          //
-    f32 iconBlendTimer; //used to crossfade two sets of icon textures on Kyte's lever columns
+    f32 timer;          //manages delay and blending strength for updating the Krazoa symbol
+    f32 iconBlendTimer; //manages crossfading two sets of icon textures on Kyte's lever columns
     u8 updateNeeded;
     u8 state;
-    u8 prevPoints[6]; //Booleans: apply colour to each point of courtyard's Krazoa symbol (clockwise from south-east point)
+    u8 prevPoints[6];   //Booleans: apply colour to each point of courtyard's Krazoa symbol (clockwise from south-east point)
     u8 pointsLit[6];
 } CCkrazoabright_Data;
 
