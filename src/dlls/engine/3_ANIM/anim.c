@@ -386,7 +386,34 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3614.s")
 
 // offset: 0x4158 | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4158.s")
+typedef struct {
+   s8 unk0[0x34 - 0];
+   u32 unk34[21];
+   u16 unk87;
+   s8 unk8A;
+} AnimFunc4158Unk;
+
+s8 dll_3_func_4158(AnimFunc4158Unk* arg0) {
+    s32 temp_t0;
+    u32 var_v1;
+    void* var_v0;
+
+    var_v1 = 0;
+    if (arg0->unk34[arg0->unk8A] != 0) {
+
+        while (arg0->unk34[var_v1] && var_v1 < 3){ 
+            var_v1++;
+        }
+        
+        if (var_v1 == 4) {
+            gDLL_6_AMSFX->vtbl->func_A1C(arg0->unk34[arg0->unk8A]);
+            arg0->unk34[arg0->unk8A] = 0;
+        } else {
+            arg0->unk8A = var_v1 - 1;
+        }
+    }
+    return arg0->unk8A;
+}
 
 // offset: 0x422C | func: 18
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_422C.s")
@@ -419,7 +446,7 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
         animObjData->unk98 = 0;
         animObjData->unk8D = 0;
     } else {
-        if (animObjData->unk84[3] != 0) {
+        if (animObjData->unk87 != 0) {
             animObjData->unk62 = 0;
             return;
         }
