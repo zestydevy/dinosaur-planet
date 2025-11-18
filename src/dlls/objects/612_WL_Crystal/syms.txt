@@ -1,0 +1,27 @@
+.text = 0x0:
+dll_612_ctor = 0x0;
+dll_612_dtor = 0xC;
+dll_612_setup = 0x18;
+dll_612_control = 0x47C;
+dll_612_update = 0x1604;
+dll_612_print = 0x1610;
+dll_612_free = 0x16C4;
+dll_612_get_model_flags = 0x1794;
+dll_612_get_data_size = 0x17A4;
+dll_612_func_17B8 = 0x17B8;
+
+.rodata = 0x1FB0:
+
+.data = 0x2010:
+_data_0 = 0x0; // absolute:0x2010
+_data_4 = 0x4; // absolute:0x2014
+_data_10 = 0x10; // absolute:0x2020
+_data_1C = 0x1C; // absolute:0x202C
+_data_20 = 0x20; // absolute:0x2030
+
+.bss = 0x2040:
+_bss_0 = 0x0; // absolute:0x2040
+_bss_2 = 0x2; // absolute:0x2042
+_bss_4 = 0x4; // absolute:0x2044
+_bss_6 = 0x6; // absolute:0x2046
+_bss_8 = 0x8; // absolute:0x2048
