@@ -8802,8 +8802,30 @@ s32 dll_210_func_1AFF8(Object *player, ObjFSA_Data *fsa, f32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1AFF8.s")
 
 // offset: 0x1B0A8 | func: 129
-s32 dll_210_func_1B0A8(Object *player, ObjFSA_Data *fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1B0A8.s")
+s32 dll_210_func_1B0A8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+    if (fsa->enteredAnimState != 0) {
+        func_80023D30(player, 0xF8, 0.0f, 0U);
+        fsa->animTickDelta = 0.017f;
+        dll_210_func_A024(player, fsa);
+    }
+
+    gDLL_18_objfsa->vtbl->func11(player, fsa, arg2, 1);
+    gDLL_18_objfsa->vtbl->func7(player, fsa, arg2, 2);
+    if (fsa->unk33A != 0) {
+        return 0x4C;
+    }
+
+    if (player->animProgress > 0.8f) {
+        if (fsa->unk310 & 0x4000) {
+            return -0x3D;
+        }
+        if (fsa->unk310 & 0x8000) {
+            return -0x3B;
+        }
+    }
+
+    return 0;
+}
 
 // offset: 0x1B1E8 | func: 130
 s32 dll_210_func_1B1E8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
