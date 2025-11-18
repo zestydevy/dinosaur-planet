@@ -75,6 +75,7 @@
 325 = objects/325_trigger
 331 = objects/331_genprops
 332 = objects/332_FXEmit
+339 = objects/339_prop
 345 = objects/345_WaterFallSpray
 346 = objects/346_animator
 347 = objects/347_texscroll2
