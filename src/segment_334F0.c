@@ -17,8 +17,15 @@ typedef enum {
 typedef enum {
     HEAD_TURN_Goal_Reached = 0,
     HEAD_TURN_Wait = 1,
-    HEAD_TURN_Animate = 2,
+    HEAD_TURN_Animate = 2
 } HeadTurnStates;
+
+typedef enum {
+    HEAD_ANIMATION_TAG_Pupil_L = 0,
+    HEAD_ANIMATION_TAG_Pupil_R = 1,
+    HEAD_ANIMATION_TAG_Eyelid_L = 4,
+    HEAD_ANIMATION_TAG_Eyelid_R = 5
+} HeadAnimationTags;
 
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
@@ -29,8 +36,9 @@ s32 D_80091720[] = { 0x0, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13 };
 s32 D_80091748[] = { 0, 0 };
 
 void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
-    Object* temp_v0; // could also be SRT*
+    Object* target; // could also be SRT*
 
+    //Handle player head aim
     if (obj->group == GROUP_UNK1) {
         arg1 = ((DLL_210_Player*)obj->dll)->vtbl->func54(obj);
         arg2 = ((DLL_210_Player*)obj->dll)->vtbl->func56(obj);
@@ -38,11 +46,11 @@ void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
             arg2 = 1.0f;
         }
 
-        temp_v0 = ((DLL_210_Player*)obj->dll)->vtbl->func52(obj);
-        if (temp_v0 != NULL) {
-            arg1->headAimX = temp_v0->srt.transl.x;
-            arg1->headAimY = temp_v0->srt.transl.y;
-            arg1->headAimZ = temp_v0->srt.transl.z;
+        target = ((DLL_210_Player*)obj->dll)->vtbl->func52(obj);
+        if (target != NULL) {
+            arg1->headAimX = target->srt.transl.x;
+            arg1->headAimY = target->srt.transl.y;
+            arg1->headAimZ = target->srt.transl.z;
             arg1->aimIsActive = 1;
         } else {
             arg1->aimIsActive = 0;
@@ -50,6 +58,8 @@ void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
         func_80033B68(obj, arg1, arg2);
         return;
     }
+
+    //Handle non-player head aim
     func_80033B68(obj, arg1, 0.0f);
 }
 
@@ -61,10 +71,10 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
     s32* eyelidL;
     s32 eyelidValue;
 
-    eyelidR = func_800348A0(obj, 5, 0);
-    eyelidL = func_800348A0(obj, 4, 0);
+    eyelidR = func_800348A0(obj, HEAD_ANIMATION_TAG_Eyelid_R, 0);
+    eyelidL = func_800348A0(obj, HEAD_ANIMATION_TAG_Eyelid_L, 0);
 
-    if ((eyelidR == NULL)  || (eyelidL == NULL)) {
+    if (!eyelidR || !eyelidL) {
         return;
     }
 
@@ -790,8 +800,8 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     s16* pupilR;
     s32 animationFinished;
 
-    pupilL = func_800348A0(arg0, 1, 0);
-    pupilR = func_800348A0(arg0, 0, 0);
+    pupilL = func_800348A0(arg0, HEAD_ANIMATION_TAG_Pupil_R, 0);
+    pupilR = func_800348A0(arg0, HEAD_ANIMATION_TAG_Pupil_L, 0);
 
     if ((pupilL == NULL) || (pupilR == NULL)) {
         return;
@@ -857,7 +867,7 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     return sequenceBoneData;
 }
 
-void* func_800348A0(Object* arg0, s32 texType, s32 arg2) {
+void* func_800348A0(Object* obj, s32 texType, s32 arg2) {
     u8 *texData;
     s32 i;
     s32 temp;
@@ -866,14 +876,14 @@ void* func_800348A0(Object* arg0, s32 texType, s32 arg2) {
     s32 frameCount;
 
     var_v1 = NULL;
-    if (arg0->def != NULL) {
-        texData = arg0->def->pTextures;
-        frameCount = arg0->def->numAnimatedFrames;
+    if (obj->def != NULL) {
+        texData = obj->def->pTextures;
+        frameCount = obj->def->numAnimatedFrames;
         for (i = 0; i < frameCount; i++) {
             temp = i << 1;
             if (texType == *(temp + texData)) {
                 temp2 = i << 4;
-                var_v1 = &((u8*)arg0->unk70)[temp2];
+                var_v1 = &((u8*)obj->unk70)[temp2];
             }
         }
     }
