@@ -1,0 +1,22 @@
+.text = 0x0:
+DRbullet_ctor = 0x0;
+DRbullet_dtor = 0xC;
+DRbullet_setup = 0x18;
+DRbullet_control = 0x104;
+DRbullet_update = 0x2E0;
+DRbullet_print = 0x2EC;
+DRbullet_free = 0x350;
+DRbullet_get_model_flags = 0x3A0;
+DRbullet_get_data_size = 0x3B0;
+DRbullet_check_if_recycleable = 0x3C4;
+DRbullet_recycle = 0x3DC;
+DRbullet_free_if_inactive = 0x750;
+DRbullet_set_explode_state = 0x7A0;
+DRbullet_tick_impact = 0x7C4;
+DRbullet_create_lfxEmitter = 0xA1C;
+
+.rodata = 0xB50:
+str_0 = 0x0; // absolute:0xB50
+
+.data = 0xB80:
+_data_0 = 0x0; // absolute:0xB80

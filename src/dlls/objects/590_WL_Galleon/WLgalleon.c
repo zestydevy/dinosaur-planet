@@ -65,7 +65,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
 
     self->unkB0 |= 8;
 
-    func_80059038(0, (s32) self, 0);
+    func_80059038(0, self, 0);
 
     for (index = 0; index < 5; index++){
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->unk34, index, 0);

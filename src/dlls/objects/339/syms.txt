@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_339_ctor = 0x0;
+dll_339_dtor = 0xC;
+dll_339_setup = 0x18;
+dll_339_control = 0xD4;
+dll_339_update = 0xE0;
+dll_339_print = 0xEC;
+dll_339_free = 0x140;
+dll_339_get_model_flags = 0x150;
+dll_339_get_data_size = 0x160;
+
+.rodata = 0x1A8:

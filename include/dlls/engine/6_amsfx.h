@@ -22,6 +22,8 @@ typedef struct UnkDE8 {
 enum SoundID {
     SOUND_8F = 0x8F, // used by DFlog
 
+    SOUND_9B = 0x9B,
+
     SFX_RECAP_MENU_BACK = 0x5D4,
     SFX_RECAP_MENU_MOVE = 0x5D5,
     SFX_RECAP_MENU_SELECT = 0x5D6,
@@ -57,7 +59,11 @@ enum SoundID {
 
     SOUND_292 = 0x292, // used by IMSnowBike
 
+    SOUND_33E = 0x33E,
+
     SOUND_342 = 0x342, // used in DLL 466
+
+    SOUND_344 = 0x344,
 
     SOUND_371 = 0x371, // used by MediumMetalCrat
     SOUND_372 = 0x372, // used by MediumMetalCrat
@@ -68,6 +74,8 @@ enum SoundID {
     SOUND_386 = 0x386,
 
     SOUND_3D8_Water_Splash = 0x3D8, // used in pushpull (DLL 274)
+
+    SOUND_43D = 0x43D,
 
     SOUND_4BC = 0x4BC,
 
@@ -165,7 +173,14 @@ enum SoundID {
     SOUND_A75 = 0xA75, // used by BWlog
     SOUND_A77 = 0xA77, // used by BWlog
 
+    SOUND_A83 = 0xA83,
+
+    SOUND_AA4 = 0xAA4,
+    SOUND_AA5 = 0xAA5,
+
     SOUND_AAE = 0xAAE, // VFP_lavastar sound
+
+    SOUND_AB4 = 0xAB4,
 
     SOUND_B1F = 0xB1F,
     SOUND_B20 = 0xB20,

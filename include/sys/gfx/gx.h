@@ -206,4 +206,6 @@ s32 vi_frame_sync(s32);
 
 void func_8005CA5C(u32 param1);
 
+int vi_contains_point(s32 x, s32 y);
+
 #endif //_SYS_GFX_GX_H

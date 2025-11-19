@@ -17,7 +17,6 @@ jobs:
         submodules: recursive
     - name: Install system packages
       run: |
-        sudo rm /var/lib/man-db/auto-update
         sudo apt-get update
         sudo apt-get install -y $(cat packages.txt | tr '\n' ' ')
     - name: Install Python packages and setup environment

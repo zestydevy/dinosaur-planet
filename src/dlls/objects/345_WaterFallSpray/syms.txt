@@ -1,0 +1,10 @@
+.text = 0x0:
+WaterFallSpray_ctor = 0x0;
+WaterFallSpray_dtor = 0xC;
+WaterFallSpray_setup = 0x18;
+WaterFallSpray_control = 0x58;
+WaterFallSpray_update = 0x300;
+WaterFallSpray_print = 0x30C;
+WaterFallSpray_free = 0x324;
+WaterFallSpray_get_model_flags = 0x36C;
+WaterFallSpray_get_data_size = 0x37C;

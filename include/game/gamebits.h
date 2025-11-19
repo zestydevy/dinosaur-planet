@@ -1,6 +1,8 @@
 #ifndef _GAME_GAMEBITS_H
 #define _GAME_GAMEBITS_H
 
+#define NO_GAMEBIT -1
+
 typedef enum {
     BIT_0 = 0x0, // len:1 group:0
     BIT_1 = 0x1, // len:1 group:1
@@ -15,10 +17,10 @@ typedef enum {
     BIT_A = 0xA, // len:1 group:2
     BIT_B = 0xB, // len:1 group:1
     BIT_C = 0xC, // len:1 group:1
-    BIT_D = 0xD, // len:1 group:1
-    BIT_E = 0xE, // len:1 group:1
-    BIT_F = 0xF, // len:1 group:1
-    BIT_10 = 0x10, // len:1 group:1
+    BIT_DF_Shrine_Door_Light_Activated_One = 0xD, // len:1 group:1
+    BIT_DF_Shrine_Door_Light_Activated_Two = 0xE, // len:1 group:1
+    BIT_DF_Shrine_Door_Light_Activated_Three = 0xF, // len:1 group:1
+    BIT_DF_Shrine_Door_Light_Activated_Four = 0x10, // len:1 group:1
     BIT_GP_Shown_Heat_Cutscene = 0x11, // len:1 group:0
     BIT_12 = 0x12, // len:1 group:1
     BIT_13 = 0x13, // len:1 group:1
@@ -2231,7 +2233,7 @@ typedef enum {
     BIT_8B2 = 0x8B2, // len:1 group:1
     BIT_8B3 = 0x8B3, // len:1 group:1
     BIT_8B4 = 0x8B4, // len:1 group:1
-    BIT_8B5 = 0x8B5, // len:1 group:0
+    BIT_DF_Returned_From_Shrine_With_Spirit = 0x8B5, // len:1 group:0
     BIT_8B6 = 0x8B6, // len:1 group:1
     BIT_8B7 = 0x8B7, // len:1 group:1
     BIT_8B8 = 0x8B8, // len:1 group:1
@@ -2324,7 +2326,7 @@ typedef enum {
     BIT_90F = 0x90F, // len:1 group:2
     BIT_910 = 0x910, // len:1 group:2
     BIT_911 = 0x911, // len:1 group:2
-    BIT_912 = 0x912, // len:1 group:2
+    BIT_Shown_ZLock_Interact_Message = 0x912, // len:1 group:2
     BIT_913 = 0x913, // len:1 group:2
     BIT_914 = 0x914, // len:1 group:2
     BIT_915 = 0x915, // len:1 group:2

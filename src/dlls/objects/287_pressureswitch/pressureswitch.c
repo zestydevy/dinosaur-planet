@@ -1,17 +1,5 @@
-#include "PR/gbi.h"
-#include "PR/ultratypes.h"
-#include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
-#include "functions.h"
-#include "game/objects/object.h"
-#include "sys/math.h"
-#include "sys/gfx/model.h"
-#include "sys/objects.h"
+#include "common.h"
 #include "sys/objtype.h"
-#include "sys/main.h"
-#include "functions.h"
-#include "types.h"
 
 typedef struct {
 f32 x;
@@ -58,7 +46,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        // diPrintf("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
+        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
         self->modelInstIdx = 0;
     }
 
@@ -270,7 +258,6 @@ static int pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_D
     return 0;
 }
 
-/*0x0*/ static const char str_0[] = "PRESSURESWITCH.c: modelno out of range romdefno=%d\n";
 /*0x34*/ static const char str_34[] = "";
 /*0x38*/ static const char str_38[] = "";
 /*0x3C*/ static const char str_3C[] = "";

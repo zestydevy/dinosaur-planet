@@ -1,0 +1,15 @@
+.text = 0x0:
+DFlevelcontrol_ctor = 0x0;
+DFlevelcontrol_dtor = 0xC;
+DFlevelcontrol_setup = 0x18;
+DFlevelcontrol_control = 0xC0;
+DFlevelcontrol_update = 0x2F4;
+DFlevelcontrol_print = 0x300;
+DFlevelcontrol_free = 0x354;
+DFlevelcontrol_get_model_flags = 0x364;
+DFlevelcontrol_get_data_size = 0x374;
+DFlevelcontrol_func_388 = 0x388;
+DFlevelcontrol_func_420 = 0x420;
+
+.rodata = 0x544:
+_oob_rodata_0 = 0x0; // absolute:0x544

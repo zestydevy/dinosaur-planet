@@ -1227,24 +1227,24 @@ void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, 
 #pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_800287E4.s")
 #else
 // https://decomp.me/scratch/ujKZh
-void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5) {
+void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5) {
     f32 sp74;
-    f32 temp_fa0;
+    f32 cosSquared;
     f32 temp_fa1;
-    f32 temp_ft0;
+    u8 temp;
     ObjectHitInfo* objhitInfo;
     ObjectHitInfo* otherObjhitInfo;
     s32 v0;
-    s32 var_a2;
-    f32 temp_fv0;
-    f32 sp50;
-    f32 sp4C;
-    f32 sp48;
-    f32 sp44;
-    f32 sp40;
-    f32 sp3C;
+    s32 thetaB;
+    f32 cos;
+    f32 ox;
+    f32 oy;
+    f32 oz;
+    f32 dx;
+    f32 dy;
+    f32 dz;
     f32 temp_fv1;
-    s32 var_v1;
+    s32 thetaA;
 
     func_80032804(obj, otherObj);
     objhitInfo = obj->objhitInfo;
@@ -1254,107 +1254,109 @@ void func_800287E4(Object* obj, Object* otherObj, f32 arg2, f32 arg3, f32 arg4, 
     objhitInfo->unk0 = otherObj;
     otherObjhitInfo->unk0 = obj;
     if (obj->parent != NULL) {
-        inverse_rotate_point_by_object(arg2, arg3, arg4, &sp50, &sp4C, &sp48, obj->parent);
+        inverse_rotate_point_by_object(x, y, z, &ox, &oy, &oz, obj->parent);
     } else {
-        sp50 = arg2;
-        sp4C = arg3;
-        sp48 = arg4;
+        ox = x;
+        oy = y;
+        oz = z;
     }
 
     if (otherObj->parent != NULL) {
-        inverse_rotate_point_by_object(arg2, arg3, arg4, &sp44, &sp40, &sp3C, otherObj->parent);
+        inverse_rotate_point_by_object(x, y, z, &dx, &dy, &dz, otherObj->parent);
     } else {
-        sp44 = arg2;
-        sp40 = arg3;
-        sp3C = arg4;
+        dx = x;
+        dy = y;
+        dz = z;
     }
 
     if ((obj->group == GROUP_UNK1) && !(otherObjhitInfo->unk58 & 0x400)) {
-        obj->srt.transl.x -= sp50;
-        obj->srt.transl.y -= sp4C;
-        obj->srt.transl.z -= sp48;
+        obj->srt.transl.x -= ox;
+        obj->srt.transl.y -= oy;
+        obj->srt.transl.z -= oz;
         if (arg5 == 0) {
             return;
         }
 
-        obj->positionMirror.x -= arg2;
-        obj->positionMirror.y -= arg3;
-        obj->positionMirror.z -= arg4;
+        obj->positionMirror.x -= x;
+        obj->positionMirror.y -= y;
+        obj->positionMirror.z -= z;
         return;
     }
-
-    if ((otherObj->group == GROUP_UNK1) && !(objhitInfo->unk58 & 0x400)) {
-        otherObj->srt.transl.x += sp44;
-        otherObj->srt.transl.y += sp40;
-        otherObj->srt.transl.z += sp3C;
+    
+    if ((otherObj->group == GROUP_UNK1) && !((objhitInfo->unk58) & 0x400)) {
+        otherObj->srt.transl.x += dx;
+        otherObj->srt.transl.y += dy;
+        otherObj->srt.transl.z += dz;
         if (arg5 == 0) {
             return;
         }
 
-        obj->positionMirror.x += arg2;
-        obj->positionMirror.y += arg3;
-        obj->positionMirror.z += arg4;
+        obj->positionMirror.x += x;
+        obj->positionMirror.y += y;
+        obj->positionMirror.z += z;
         return;
     }
 
-    var_v1 = otherObjhitInfo->unk5B;
-    if (var_v1 == 0) {
-        if (objhitInfo->unk5B == 0) {
+    temp = otherObjhitInfo->unk5B;
+    if ((temp) == 0) {
+        if ((objhitInfo->unk5B) == 0) {
             return;
         }
 
-        obj->srt.transl.x -= sp50;
-        obj->srt.transl.y -= sp4C;
-        obj->srt.transl.z -= sp48;
+        obj->srt.transl.x -= ox;
+        obj->srt.transl.y -= oy;
+        obj->srt.transl.z -= oz;
         if (arg5 == 0) {
             return;
         }
 
-        obj->positionMirror.x -= arg2;
-        obj->positionMirror.y -= arg3;
-        obj->positionMirror.z -= arg4;
+        obj->positionMirror.x -= x;
+        obj->positionMirror.y -= y;
+        obj->positionMirror.z -= z;
         return;
     }
-
-    if (objhitInfo->unk5B == 0) {
-        if (var_v1 == 0) {
+  
+    if ((objhitInfo->unk5B) == 0) {
+        if ((temp) == 0) {
             return;
         }
 
-        otherObj->srt.transl.x += sp44;
-        otherObj->srt.transl.y += sp40;
-        otherObj->srt.transl.z += sp3C;
+        otherObj->srt.transl.x += dx;
+        otherObj->srt.transl.y += dy;
+        otherObj->srt.transl.z += dz;
         if (arg5 == 0) {
             return;
         }
 
-        otherObj->positionMirror.x += arg2;
-        otherObj->positionMirror.y += arg3;
-        otherObj->positionMirror.z += arg4;
+        otherObj->positionMirror.x += x;
+        otherObj->positionMirror.y += y;
+        otherObj->positionMirror.z += z;
         return;
     }
 
-    v0 = arctan2_f(-arg2, -arg4);
-    var_v1 = obj->srt.yaw - ((u16)v0);
-    CIRCLE_WRAP(var_v1)
-    var_a2 = otherObj->srt.yaw - ((v0 + 0x8000) & 0xFFFF);
-    CIRCLE_WRAP(var_a2)
-    temp_fv0 = fcos16_precise(var_v1);
-    temp_fa0 = temp_fv0 * temp_fv0;
-    sp74 = (objhitInfo->unk5B * temp_fa0) + (objhitInfo->unk5C * (1.0f - temp_fa0));
-    temp_fv0 = fcos16_precise((s16) var_a2);
-    temp_fa0 = temp_fv0 * temp_fv0;
-    temp_ft0 = 1.0f - temp_fa0;
-    temp_fa1 = (otherObjhitInfo->unk5B * temp_fa0) + (otherObjhitInfo->unk5C * temp_ft0);
+    v0 = arctan2_f(-x, -z);
+    thetaA = obj->srt.yaw - (((u16) v0 + 0x0) & 0xFFFF);
+    CIRCLE_WRAP(thetaA);
+    thetaB = otherObj->srt.yaw - ((v0 + 0x8000) & 0xFFFF);
+    CIRCLE_WRAP(thetaB);
+    
+    cos = fcos16_precise(thetaA);
+    cosSquared = cos * cos;
+    sp74 = (objhitInfo->unk5B * cosSquared) + (objhitInfo->unk5C * (1.0f - cosSquared));
+    
+    cos = fcos16_precise(thetaB);
+    cosSquared = cos * cos;
+    temp_fa1 = (otherObjhitInfo->unk5B * cosSquared) + (otherObjhitInfo->unk5C * (1.0f - cosSquared));
+    
     temp_fv1 = temp_fa1 / (sp74 + temp_fa1);
-    obj->srt.transl.x -= sp50 * temp_fv1;
-    obj->srt.transl.y -= sp4C * temp_fv1;
-    obj->srt.transl.z -= sp48 * temp_fv1;
-    otherObj->srt.transl.x += sp44 * (1.0f - temp_fv1);
-    otherObj->srt.transl.y += sp40 * (1.0f - temp_fv1);
-    otherObj->srt.transl.z += sp3C * (1.0f - temp_fv1);
+    
+    obj->srt.transl.x -= ox * temp_fv1;
+    obj->srt.transl.y -= oy * temp_fv1;
+    obj->srt.transl.z -= oz * temp_fv1;
+    otherObj->srt.transl.x += dx * (1.0f - temp_fv1);
+    otherObj->srt.transl.y += dy * (1.0f - temp_fv1);
+    otherObj->srt.transl.z += dz * (1.0f - temp_fv1);
 }
-
 #endif
 
 void func_80028D2C(Object* obj) {

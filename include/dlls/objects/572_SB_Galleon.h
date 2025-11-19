@@ -7,7 +7,7 @@
 
 DLL_INTERFACE(DLL_572_SB_Galleon) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ s32 (*func7)(Object *self, Object *arg1);
+    /*7*/ s32 (*func7)(Object *self);
     /*8*/ s8 (*func8)(Object *self);
 };
 

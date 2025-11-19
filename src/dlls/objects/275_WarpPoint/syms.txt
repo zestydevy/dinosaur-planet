@@ -1,0 +1,14 @@
+.text = 0x0:
+WarpPoint_ctor = 0x0;
+WarpPoint_dtor = 0xC;
+WarpPoint_setup = 0x18;
+WarpPoint_control = 0xAC;
+WarpPoint_update = 0x83C;
+WarpPoint_print = 0x848;
+WarpPoint_free = 0x868;
+WarpPoint_get_model_flags = 0x878;
+WarpPoint_get_data_size = 0x888;
+WarpPoint_anim_callback = 0x89C;
+
+.rodata = 0x970:
+str_0 = 0x0; // absolute:0x970

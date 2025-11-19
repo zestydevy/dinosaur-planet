@@ -174,9 +174,14 @@ typedef struct {
 } ModelInstanceBlendshape;
 
 typedef struct {
+    s16 unk0[3];
+    u8 _unk6[0x10 - 0x6];
+} ModelInstance_0x4;
+
+typedef struct {
     // TODO
 /*0000*/    Model *model;
-/*0004*/    void *unk4[2];
+/*0004*/    ModelInstance_0x4 *unk4[2];
 /*000C*/    MtxF *matrices[2];
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;

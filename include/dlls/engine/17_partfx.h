@@ -8,6 +8,11 @@
 enum ParticleID {
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
+    PARTICLE_75 = 0x75,
+    PARTICLE_77 = 0x77,
+    PARTICLE_78 = 0x78,
+    PARTICLE_79 = 0x79,
+    PARTICLE_7A = 0x7A,
     PARTICLE_84 = 0x84, // implemented by DLL 40
     PARTICLE_85 = 0x85, // implemented by DLL 40
     /* --- DLL 40 START --- */
@@ -149,6 +154,11 @@ enum ParticleID {
     PARTICLE_70D = 0x70D,
     PARTICLE_70E = 0x70E,
     PARTICLE_70F = 0x70F,
+    PARTICLE_710 = 0x710,
+    PARTICLE_711 = 0x711,
+    PARTICLE_713 = 0x713,
+    PARTICLE_717 = 0x717,
+    PARTICLE_718 = 0x718,
     PARTICLE_739 = 0x739,
     /* --- DLL 51 END --- */
     /* --- DLL 50 START --- */

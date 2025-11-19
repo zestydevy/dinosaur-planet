@@ -1,17 +1,5 @@
-#include "PR/gbi.h"
-#include "PR/ultratypes.h"
-#include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
-#include "functions.h"
-#include "game/objects/object.h"
-#include "segment_334F0.h"
-#include "sys/gfx/model.h"
+#include "common.h"
 #include "sys/objtype.h"
-#include "sys/main.h"
-#include "functions.h"
-#include "sys/print.h"
-#include "types.h"
 
 typedef struct {
 f32 x;
@@ -65,7 +53,7 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        // diPrintf("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
+        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
         self->modelInstIdx = 0;
     }
 
@@ -81,8 +69,6 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
 
     self->animCallback = WCpressureswitch_anim_callback;
 }
-
-/*0x0*/ static const char str_0[] = "PRESSURESWITCH.c: modelno out of range romdefno=%d\n";
 
 // offset: 0x150 | func: 1 | export: 1
 void WCpressureswitch_control(Object* self) {

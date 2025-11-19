@@ -543,7 +543,7 @@ s32 partfx_spawn(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *
             sLoadedDLLCount += 1;
             _data_48 = dll_load_deferred(DLL_ID_51, 2);
         }
-        return _data_48->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = u8[1] | void
+        return _data_48->vtbl->spawn(obj, id, transform, flags, arg4, data); // arg5 = f32[1] | s32[1] | u8[1] | void
     }
     if ((id >= PARTICLE_76C) && (id <= PARTICLE_79D)) {
         sDLLTimers[18] = 2000;

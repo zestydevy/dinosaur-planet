@@ -559,7 +559,7 @@ static void dll_779_func_1928(Object *self, WCLevelControl_Data *objdata) {
     }
 
     if (!(objdata->unk5 & 0x10)) {
-        temp = main_get_bits(BIT_810);
+        temp = main_get_bits(BIT_810); // get sun block puzzle pieces in correct place
         if (temp == 4) {
             main_set_bits(BIT_812, 1);
             objdata->unk5 |= 0x10;
@@ -568,7 +568,7 @@ static void dll_779_func_1928(Object *self, WCLevelControl_Data *objdata) {
         }
     }
     if (!(objdata->unk5 & 0x20)) {
-        temp = main_get_bits(BIT_811);
+        temp = main_get_bits(BIT_811); // get moon block puzzle pieces in correct place
         if (temp == 4) {
             main_set_bits(BIT_813, 1);
             objdata->unk5 |= 0x20;

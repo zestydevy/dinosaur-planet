@@ -40,12 +40,22 @@ typedef struct {
 /*0000*/    u32 flags;
 /*0004*/    s16 vtxBase;
 /*0006*/    s16 triBase;
-/*0008*/    u8 unk8[0x12 - 0x8];
-/*0012*/    u8 tileIdx0;
-/*0013*/    u8 alpha;
-/*0014*/    u8 unk14; // animator ID?
-/*0015*/    u8 tileIdx1;
-/*0016*/    u8 unk16;
+/*0008*/    u8 unk8[0x12 - 0x8];    //bounds
+                                    //s16 Ymin;
+                                    //s16 Ymax;
+                                    //s8 Xmin; //Divided by 4
+                                    //s8 Xmax; //Divided by 4
+                                    //s8 Zmin; //Divided by 4
+                                    //s8 Zmax; //Divided by 4
+/*0012*/    u8 tileIdx0;    //materialIdx
+/*0013*/    u8 alpha;       //envColourMode 
+                            //00 = use ambient envFX colour
+                            //FE = ignore ambient envFX colour
+                            //FF = use flickering vertices' colour
+                            //    (used very rarely, in blocks 327 & 0843)
+/*0014*/    u8 animatorID;
+/*0015*/    u8 tileIdx1;    //blendMaterialIdx
+/*0016*/    u8 unk16;       //texture scroll effect handler index? (at runtime)
 /*0017*/    u8 unk17;
 } BlockShape;
 

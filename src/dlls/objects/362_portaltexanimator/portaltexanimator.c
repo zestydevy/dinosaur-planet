@@ -147,7 +147,7 @@ void portaltexanimator_animate_vertices(PortalTexAnimator_Data* objdata, PortalT
     //Iterate over shapes, and update all vertices' alpha on shapes with matching animatorID tag
     while (shapeIndex < block->shapeCount){
 
-        if (objdata->animatorID == shapes[shapeIndex].unk14){
+        if (objdata->animatorID == shapes[shapeIndex].animatorID){
             for (vertexIndex = shapes[shapeIndex].vtxBase; vertexIndex < shapes[shapeIndex + 1].vtxBase; vertexIndex++){
                 vertices[vertexIndex].cn[3] = objdata->vertexOpacity; //@bug: setting a 16-bit value on an 8-bit colour field
             }
