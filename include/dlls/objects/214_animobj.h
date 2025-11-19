@@ -19,14 +19,17 @@ typedef struct {
     s8 unk22;
     s8 unk23;
     u8 unk24;
-} AnimObjSetup;
+} AnimObj_Setup;
 
 typedef void (*AnimObj_DataF4Callback)(Object *arg0, s32 arg1, struct AnimObj_Data* arg2);
 typedef s32 (*AnimObj_DataF8Callback)(Object *arg0, Object *override, s32 arg2);
 
 typedef struct AnimObj_Data {
 /*000*/ Object* actor;
-/*004*/ s8 unk4[0x24 - 4];
+/*004*/ s8 unk4[0x1A - 4];
+/*01A*/ s16 unk1A; //angle
+/*004*/ s8 unk1C[0x20 - 0x1C];
+/*020*/ f32 unk20;
 /*024*/ f32 unk24; //some speed
 /*028*/ s32 unk28;
 /*02C*/ void *unk2C;
@@ -47,14 +50,16 @@ typedef struct AnimObj_Data {
 /*06C*/ s16 unk6C;
 /*06E*/ s16 animCurvesEventCount;
 /*070*/ s16 animCurvesKeyframeCount;
-/*072*/ s8 unk72[0x76 - 0x72];
+/*072*/ s16 unk72;
+/*074*/ s16 unk74;
 /*076*/ s16 unk76;
 /*078*/ s8 unk78[0x7A - 0x78];
 /*07A*/ s16 unk7A;
 /*07C*/ s16 unk7C;
 /*07E*/ s8 unk7E[0x80 - 0x7E];
 /*08B*/ s32 unk80;
-/*084*/ s8 unk84[0x87 - 0x84];
+/*084*/ s8 unk84[0x86 - 0x84];
+/*086*/ s8 unk86;
 /*087*/ s8 unk87;
 /*088*/ s8 unk88[0x8A - 0x88];
 /*08A*/ s8 unk8A;                   //soundHandle-related

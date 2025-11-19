@@ -163,11 +163,9 @@ typedef struct {
 /*0x94*/ static s32 _bss_94;
 /*0x98*/ static s32 _bss_98;
 /*0x9C*/ static u8 _bss_9C[0x4];
-/*0xA0*/ static u8 _bss_A0[0x4];
+/*0xA0*/ static s32 _bss_A0;
 /*0xA4*/ static s8 _bss_A4[0x4];
-/*0xA8*/ static u8 _bss_A8[0x1];
-/*0xA9*/ static u8 _bss_A9[0x1];
-/*0xAA*/ static u8 _bss_AA[0x2];
+/*0xA8*/ static u32 _bss_A8;
 /*0xAC*/ static u8 _bss_AC[0x4];
 /*0xB0*/ static u8 _bss_B0[0x28];
 /*0xD8*/ static s8 _bss_D8[0x1];
@@ -204,8 +202,7 @@ typedef struct {
 /*0x1FA*/ static u8 _bss_1FA[0x2];
 /*0x1FC*/ static u8 _bss_1FC[0x4];
 /*0x200*/ static u8 _bss_200[0x58];
-/*0x258*/ static u8 _bss_258[0x2];
-/*0x25A*/ static u8 _bss_25A[0x2];
+/*0x258*/ static s32 _bss_258;
 /*0x25C*/ static u8 _bss_25C[0x4];
 /*0x260*/ static u8 _bss_260[0x58];
 /*0x2B8*/ static u8 _bss_2B8[0x8];
@@ -328,7 +325,50 @@ s32 dll_3_func_3D0(Object* object, s32 updateRate);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_2760.s")
 
 // offset: 0x2EB4 | func: 10
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_2EB4.s")
+void dll_3_func_2EB4(s32 arg0, s32 arg1, AnimObj_Data* objData) {
+    s16 frame;
+    s16 temp_t0;
+    s32 finished;
+    s8 type;
+    AnimCurvesEvent* event;
+
+    if (objData->animCurvesEvents == NULL) {
+        return;
+    }
+    
+    objData->unk72 = 0;
+    objData->unk74 = -1;
+    objData->unk20 = 0.0f;
+
+    finished = FALSE;
+    while (!finished && (objData->unk72 < objData->animCurvesEventCount)){
+        event = &objData->animCurvesEvents[objData->unk72];
+        if (event->type == ANIMCURVES_EVENTS_timing) {
+            if (objData->animCurvesCurrentFrameA >= event->params) {
+                objData->unk74 = event->params;
+                objData->unk72++;
+            } else {
+                finished = TRUE;
+            }
+        } else {
+            if ((event->type == ANIMCURVES_EVENTS_subEvent) && (event->params > 0)) {
+                if (objData->animCurvesCurrentFrameA >= objData->unk74) {
+                    objData->unk74 += event->delay;
+                    objData->unk72 += event->params + 1;
+                } else {
+                    finished = TRUE;
+                }
+            } else if (objData->animCurvesCurrentFrameA >= objData->unk74) {
+                if (event->type != ANIMCURVES_EVENTS_soundOther) {
+                    objData->unk74 += event->delay;
+                }
+                objData->unk72++;
+            } else {
+                finished = TRUE;
+            }
+        }
+    }
+}
 
 // offset: 0x2FE8 | func: 11
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_2FE8.s")
@@ -434,9 +474,9 @@ s8 dll_3_func_4158(AnimObj_Data* animObjData) {
 void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3) {
     AnimationCallback animCallback;
     s32 callbackResult;
-    AnimObjSetup *setup;
+    AnimObj_Setup *setup;
 
-    setup = (AnimObjSetup*)override->setup;
+    setup = (AnimObj_Setup*)override->setup;
     actor->positionMirror2.f[0] = actor->srt.transl.f[0];
     actor->positionMirror2.f[1] = actor->srt.transl.f[1];
     actor->positionMirror2.f[2] = actor->srt.transl.f[2];
@@ -545,9 +585,9 @@ s32 dll_3_func_4A7C(AnimObj_Data* objData, s32 arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4B20.s")
 #else
-s32 dll_3_func_4BAC(Object*, Object*, f32, f32, f32, f32*, f32);
+s32 dll_3_func_4BAC(Object* obj, Object* a1, f32 x, f32 y, f32 z, f32* arg5, f32 setupY);
 
-void dll_3_func_4B20(Object* animObj, AnimObjSetup* setup) {
+void dll_3_func_4B20(Object* animObj, AnimObj_Setup* setup) {
     f32 floatVal;
 
     if (dll_3_func_4BAC(animObj, 
@@ -695,7 +735,7 @@ void dll_3_func_730C(void);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_730C.s")
 
 // offset: 0x7974 | func: 40 | export: 6
-void dll_3_func_7974(AnimObj_Data* arg0, AnimObjSetup* setup) {
+void dll_3_func_7974(AnimObj_Data* arg0, AnimObj_Setup* setup) {
     s32 animcurves_bin_offset;
     s32 size;
     s32 animCurvesIndex;
