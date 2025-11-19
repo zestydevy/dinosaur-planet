@@ -1829,7 +1829,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         } else if (arg2->unk62 == 4) {
             arg2->unk7A &= 0xFFF3;
             arg2->unk7C &= 0xFFF7;
-            temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15();
             if (temp_v0_6 == NULL || temp_v0_6->unk74 == NULL) {
                 return 0;
             }
@@ -2542,7 +2542,7 @@ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
             break;
         case 0x5FC:
             arg2 = -1;
-            sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp3C = (Object *)gDLL_2_Camera->vtbl->func15();
             if (sp3C != NULL) {
                 if ((sp3C->def->unk40->unk10 & 0xF) == 3) {
                     obj->unkDC = 4;
@@ -2558,7 +2558,7 @@ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
             }
         case 0x5BD:
             arg2 = -1;
-            sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp3C = (Object *)gDLL_2_Camera->vtbl->func15();
             if ((sp3C != NULL) && (sp3C->id == 0x414 || sp3C->id == 0x4A9)) {
                 gDLL_3_Animation->vtbl->func17(5, obj, -1);
                 arg2 = 0x5BD;
@@ -4339,7 +4339,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
             joy_set_button_mask(0, A_BUTTON);
             arg0->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)spC4->unk85C->dll)->vtbl->func[20].withOneArgS32(sp8C);
-            sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp88 = (Object *)gDLL_2_Camera->vtbl->func15();
             if ((sp88 != NULL) && ((sp88->def->unk40->unk10 & 0xF) == 3)) {
                 sp88 = sp88;
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
