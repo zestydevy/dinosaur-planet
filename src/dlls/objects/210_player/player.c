@@ -54,6 +54,8 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
 static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
 static void dll_210_func_9F1C(Object* player, s32 arg1);
 static void dll_210_func_A024(Object* player, ObjFSA_Data* fsa);
+static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2);
+static void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa);
 static s32 dll_210_func_C1F4(Object* player, ObjFSA_Data* fsa, f32 arg2);
 static void dll_210_func_D510(ObjFSA_Data* fsa, f32 arg1);
 static void dll_210_func_EF8C(Object *player, ObjFSA_Data *fsa);
@@ -64,8 +66,10 @@ static void dll_210_func_16204(Object* player, ObjFSA_Data *fsa);
 static void dll_210_func_1660C(Object* player, ObjFSA_Data* fsa);
 static void dll_210_func_18DB0(Object* player, ObjFSA_Data* fsa);
 static s32 dll_210_func_18E10(Object *player, ObjFSA_Data *fsa, f32 arg2);
+static s32 dll_210_func_18E80(Object* player, ObjFSA_Data* fsa, f32 arg2);
 static void dll_210_func_1BAC8(Object* player, ObjFSA_Data *fsa);
 static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa);
+static void dll_210_func_1DAB0(Object *player);
 
 // These funcs are already matched but other funcs requires these are static
 /* static */ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2);
@@ -82,14 +86,11 @@ static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa);
 /* static */ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2);
 /* static */ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2);
 /* static */ void dll_210_func_6DD8(Object* player, Player_Data* data, s32 arg2);
-/* static */ void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa);
 /* static */ void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa);
-/* static */ s32 dll_210_func_18E80(Object* player, ObjFSA_Data* fsa, f32 arg2);
 /* static */ s32 dll_210_func_1A9D4(Object* player, s32* arg1, s32* arg2, s32* arg3, f32 arg4, f32 arg5);
 /* static */ Object *dll_210_func_1DD94(Object* player, s32 arg1);
 /* static */ void dll_210_func_1DC48(Object* player);
 /* static */ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2);
-/* static */ s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2);
 /* static */ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2);
 /* static */ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2);
 /* static */ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3);
@@ -100,7 +101,6 @@ static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa);
 /* static */ void dll_210_func_7180(Object* player, Player_Data* arg1, f32 updateRate);
 /* static */ void dll_210_func_A058(Object* player);
 /* static */ int dll_210_func_24FC(Object *player, ObjFSA_Data *fsa);
-/* static */ void dll_210_func_1DAB0(Object *player);
 
 // Used before declared / implemented
 void dll_210_func_1D8B8(Object* player);
@@ -304,10 +304,7 @@ s32 func_80031DD8(Object*, Object*, s32);
     0x000001fd
 };
 /*0x7BC*/ static s8 _data_7BC = 0;
-#ifndef NON_MATCHING
-// part of dll_210_func_18EAC
 /*0x7C0*/ static DLL_Unknown *_data_7C0 = NULL;
-#endif
 /*0x7C4*/ static s16 _data_7C4[2] = { 0, 0 };
 /*0x7C8*/ static u8 _data_7C8[] = { 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0xFF, 0x00, 0x00, 0x00 };
 /*0x7D4*/ static u8 _data_7D4[] = { 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x08, 0x00, 0x00, 0x00 };
@@ -320,16 +317,12 @@ s32 func_80031DD8(Object*, Object*, s32);
 /*0x14*/ static u8 _bss_14[0x4];
 /*0x18*/ static u8 _bss_18[0x4];
 /*0x1C*/ static f32 _bss_1C;
-
-#ifndef NON_MATCHING
-// part of dll_210_func_18EAC
 /*0x20*/ static f32 _bss_20;
 /*0x24*/ static f32 _bss_24;
 /*0x28*/ static f32 _bss_28;
 /*0x2C*/ static f32 _bss_2C;
 /*0x30*/ static f32 _bss_30;
 /*0x34*/ static s8 _bss_34;
-#endif
 /*0x38*/ static f32 _bss_38;
 /*0x3C*/ static f32 _bss_3C;
 /*0x40*/ static u8 _bss_40[0xc]; // srt *?
@@ -1746,10 +1739,25 @@ void dll_210_func_47B8(Object* player, Player_Data* arg1) {
 // dll_210_func_63F0 (matched)
 // dll_210_func_60A8 (matched)
 
-int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
+typedef struct DLL_IFoodbag { 
+struct DLL_IFoodbag_Vtbl* vtbl;
+} DLL_IFoodbag;
+typedef struct DLL_IFoodbag_Vtbl DLL_IFoodbag_Vtbl;
+struct DLL_IFoodbag_Vtbl {
+	/*:*/ struct DLL_IObject_Vtbl base;
+	/*7*/ UnknownDLLFunc func7;
+	/*8*/ UnknownDLLFunc func8;
+	/*9*/ UnknownDLLFunc func9;
+	/*10*/ UnknownDLLFunc func10;
+	/*11*/ UnknownDLLFunc func11;
+	/*12*/ void (*func12)(Object *self, s16 a1);
+};
+int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
-    ObjSetup* temp_s1;
+    static f32 _data_528 = 0.0f;
+    static s8 _data_52C = 0;
+    AnimObjSetup* animSetup;
     Object* temp_a0_4;
     s32 var_v0;
     s32 spC8;
@@ -1769,55 +1777,59 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
     s32 temp_v1_8;
     Object* var_s0; // sp8C
     s32 var_s1;
-    Player_Data* temp_fp;
+    Player_Data* objdata;
     Vec3f* temp_s0;
     Object* temp_v0_6;
-    f32 *temp_data_528 = &_data_528;
+    void *pad;
+    //f32 *temp_data_528 = &_data_528;
     f32 sp6C[3];
     s16 sp6A;
-    s8 *temp_data_52C = &_data_52C;
-    f32 sp60;
+    //s8 *temp_data_52C = &_data_52C;
     Object *tempObj;
+    f32 sp60;
 
-    temp_fp = player->data;
-    temp_s1 = arg1->setup;
+    objdata = arg0->data;
+    animSetup = (AnimObjSetup*)arg1->setup;
     spC8 = 0;
     arg2->unkF4 = (AnimObj_DataF4Callback)dll_210_func_60A8;
-    temp_fp->unk818 = 0.0f;
-    _bss_1AC = dll_210_func_63F0(temp_fp, gUpdateRateF);
+    objdata->unk818 = 0.0f;
+    _bss_1AC = dll_210_func_63F0(objdata, gUpdateRateF);
     if (_bss_1AC > 4.0f) {
         _bss_1AC = 4.0f;
     }
-    if (temp_fp->flags & 0x8000) {
-        if (temp_fp->stats->health > 0) {
-            gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 1);
-            temp_fp->flags &= 0xFFFF7FFF;
+    if (objdata->flags & 0x8000) {
+        if (objdata->stats->health > 0) {
+            gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 1);
+            objdata->flags &= ~0x8000;
             return 0;
         }
         return 1;
     }
-    if (player->linkedObject == NULL) {
-        player->linkedObject = obj_create(obj_alloc_create_info(0x18, _data_24[temp_fp->unk8B4]), OBJ_INIT_FLAG4, -1, -1, player->parent);
+    if (arg0->linkedObject == NULL) {
+        arg0->linkedObject = obj_create(obj_alloc_create_info(0x18, _data_24[objdata->unk8B4]), OBJ_INIT_FLAG4, -1, -1, arg0->parent);
     } else {
-        player->linkedObject->parent = player->parent;
+        arg0->linkedObject->parent = arg0->parent;
     }
-    func_800267A4(player);
-    temp_fp->flags &= ~2;
+    func_800267A4(arg0);
+    objdata->flags &= ~2;
+    if (objdata->unk8A9 == OBJ_DIMSnowHorn1) {} // 0x18F
+    if (objdata->unk8A9 == OBJ_DR_CloudRunner) {} // 0x419
+    if (objdata->unk8A9 == OBJ_DR_EarthWarrior) {} // 0x416
     if (arg2->unk62 != 0) {
-        temp_fp->unk8A9 = 1;
-        temp_fp->flags &= ~0x400;
-        if ((((s8*)temp_s1)[0x20] == 0) || arg2->unk62 == 3 || arg2->unk62 == 2) {
+        objdata->unk8A9 = 1;
+        objdata->flags &= ~0x400;
+        if ((animSetup->unk20 == 0) || arg2->unk62 == 3 || arg2->unk62 == 2) {
             arg2->unk7A = arg2->unk7C;
             if (arg2->unk62 != 2) {
                 arg2->unk58 = 1.0f;
-                arg2->unk4C.x = player->srt.transl.x - arg1->srt.transl.x;
-                arg2->unk4C.y = player->srt.transl.y - arg1->srt.transl.y;
-                arg2->unk4C.z = player->srt.transl.z - arg1->srt.transl.z;
-                arg2->yawDiff = player->srt.yaw - (arg1->srt.yaw & 0xFFFF);
+                arg2->unk4C.x = arg0->srt.transl.x - arg1->srt.transl.x;
+                arg2->unk4C.y = arg0->srt.transl.y - arg1->srt.transl.y;
+                arg2->unk4C.z = arg0->srt.transl.z - arg1->srt.transl.z;
+                arg2->yawDiff = arg0->srt.yaw - (arg1->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(arg2->yawDiff)
-                arg2->pitchDiff = player->srt.pitch - (arg1->srt.pitch & 0xFFFF);
+                arg2->pitchDiff = arg0->srt.pitch - (arg1->srt.pitch & 0xFFFF);
                 CIRCLE_WRAP(arg2->pitchDiff)
-                arg2->rollDiff = (arg1->srt.roll  & 0xFFFF) - (player->srt.roll & 0xFFFF);
+                arg2->rollDiff = (arg1->srt.roll  & 0xFFFF) - (arg0->srt.roll & 0xFFFF);
                 CIRCLE_WRAP(arg2->rollDiff)
                 arg2->unk62 = 2;
             }
@@ -1825,43 +1837,43 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
             if (arg2->unk58 <= 0.0f) {
                 arg2->unk62 = 0;
             }
-            player->curModAnimIdLayered = -1;
+            arg0->curModAnimIdLayered = -1;
         } else if (arg2->unk62 == 4) {
-            arg2->unk7A &= 0xFFF3;
-            arg2->unk7C &= 0xFFF7;
+            arg2->unk7A &= ~0xC;
+            arg2->unk7C &= ~0x8;
             temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
             if (temp_v0_6 == NULL || temp_v0_6->unk74 == NULL) {
                 return 0;
             }
             temp_s0 = temp_v0_6->unk74;
-            spB4 = player->srt.transl.x - temp_s0->x;
-            spB0 = player->srt.transl.z - temp_s0->z;
-            spA4 = (player->srt.transl.y + 30.0f) - temp_s0->y;
+            spB4 = arg0->srt.transl.x - temp_s0->x;
+            spB0 = arg0->srt.transl.z - temp_s0->z;
+            spA4 = (arg0->srt.transl.y + 30.0f) - temp_s0->y;
             _bss_2 = arctan2_f(spB4, spB0);
             temp_fv0_4 = sqrtf(SQ(spB4) + SQ(spB0));
-            arg2->yawDiff = _bss_2 - (player->srt.yaw & 0xFFFF);
+            arg2->yawDiff = _bss_2 - (arg0->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(arg2->yawDiff)
             arg2->pitchDiff = -arctan2_f(spA4, temp_fv0_4);
             arg2->rollDiff = 0;
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
             arg2->unk62 = 5;
-            temp_fp->unk354.unk16 = func_80034804(player, 0)[1];
-            temp_fp->unk378.unk16 = 0;
-            temp_fp->unk354.unk14 = arg2->yawDiff;
-            temp_fp->unk378.unk14 = arg2->pitchDiff;
+            objdata->unk354.unk16 = func_80034804(arg0, 0)[1];
+            objdata->unk354.unk14 = arg2->yawDiff;
+            objdata->unk378.unk16 = 0;
+            objdata->unk378.unk14 = arg2->pitchDiff;
             _bss_0 = 0;
             sp6C[0] = temp_s0->x;
             sp6C[1] = temp_s0->y;
             sp6C[2] = temp_s0->z;
-            if (player->curModAnimId != 0) {
-                func_80023D30(player, 0, 0.0f, 0U);
+            if (arg0->curModAnimId != 0) {
+                func_80023D30(arg0, 0, 0.0f, 0U);
             }
             return 1;
         } else if (arg2->unk62 == 5) {
-            arg2->unk7A &= 0xFFFB;
-            func_8002674C(player);
-            temp_s0_2 = func_80034804(player, 0);
+            arg2->unk7A &= ~0x4;
+            func_8002674C(arg0);
+            temp_s0_2 = func_80034804(arg0, 0);
             if (_bss_0 == 3) {
                 if ((arg2->unk58 >= 1.0f) && (gDLL_2_Camera->vtbl->func18.asVoidS32() == 0)) {
                     if (arg3 == 0) {
@@ -1869,11 +1881,11 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
                     } else {
                         arg2->unk62 = 6;
                     }
-                    if (temp_fp->unk858 != NULL) {
-                        gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 0x24);
+                    if (objdata->unk858 != NULL) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 0x24);
                         return 1;
                     }
-                    gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 1);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 1);
                     return 1;
                 }
                 temp_fv0_2 = arg2->unk58;
@@ -1882,12 +1894,12 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
                     arg2->unk58 = 1.0f;
                 }
                 temp_fv0_2 = arg2->unk58 - temp_fv0_2;
-                player->srt.yaw += (s16) (temp_fv0_2 * arg2->yawDiff);
-                temp_s0_2[1] = _bss_2 - (player->srt.yaw & 0xFFFF);
+                arg0->srt.yaw += (s16) (temp_fv0_2 * arg2->yawDiff);
+                temp_s0_2[1] = _bss_2 - (arg0->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(temp_s0_2[1])
             } else {
-                _bss_0 |= func_800343B8((Unk80032CF8 *)&temp_fp->unk354, temp_s0_2, 100.0f, 2000.0f);
-                _bss_0 |= func_80034518((Unk80032CF8 *)&temp_fp->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
+                _bss_0 |= func_800343B8(&objdata->unk354, temp_s0_2, 100.0f, 2000.0f);
+                _bss_0 |= func_80034518(&objdata->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
             }
             return 1;
         } else if (arg2->unk62 == 6) {
@@ -1895,88 +1907,92 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
                 arg2->unk62 = 0;
                 return 0;
             }
-            func_8002674C(player);
+            func_8002674C(arg0);
             return 0;
         } else {
             if (arg2->unk62 != 1) {
-                arg2->unk4C.x = player->srt.transl.x;
-                arg2->unk4C.y = player->srt.transl.y;
-                arg2->unk4C.z = player->srt.transl.z;
-                *temp_data_528 = 10000.0f;
-                *temp_data_52C = 0;
+                arg2->unk4C.x = arg0->srt.transl.x;
+                arg2->unk4C.y = arg0->srt.transl.y;
+                arg2->unk4C.z = arg0->srt.transl.z;
+                _data_528 = 10000.0f;
+                _data_52C = 0;
             }
             spC8 = 1;
             arg2->unk7A = 0;
             arg2->unk62 = 1;
-            sp9C = sqrtf(SQ(arg2->unk4C.x - player->srt.transl.x) + SQ(arg2->unk4C.z - player->srt.transl.z));
+            sp9C = sqrtf(SQ(arg2->unk4C.x - arg0->srt.transl.x) + SQ(arg2->unk4C.z - arg0->srt.transl.z));
             spAC = arg1->srt.transl.x - arg2->unk4C.x;
             spA8 = arg1->srt.transl.z - arg2->unk4C.z;
             temp_fv0_4 = sqrtf(SQ(spAC) + SQ(spA8));
-            if (sp9C <= *temp_data_528) {
-                *temp_data_52C += 1;
+            if (sp9C <= _data_528) {
+                _data_52C += 1;
             }
-            if ((temp_fv0_4 <= sp9C) || (*temp_data_52C >= 6)) {
-                var_v0 = player->srt.yaw - (arg1->srt.yaw & 0xFFFF & 0xFFFF);
+            if ((temp_fv0_4 <= sp9C) || (_data_52C >= 6)) {
+                var_v0 = arg0->srt.yaw - (arg1->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(var_v0)
-                WRAP(var_v0 , -0x4000, 0x4000)
-                player->srt.yaw -= (var_v0 * gUpdateRate) >> 3;
-                if (*temp_data_52C >= 7) {
+                // CLAMP
+                if (var_v0 > 0x4000) { var_v0 = 0x4000; }
+                if (var_v0 < -0x4000) { var_v0 = -0x4000; }
+
+                arg0->srt.yaw -= (var_v0 * gUpdateRate) >> 3;
+                if (_data_52C >= 7) {
                     var_v0 = 0;
                 }
                 if ((var_v0 < 0x100) && (var_v0 >= -0xFF)) {
-                    player->curModAnimIdLayered = -1;
                     arg2->unk7A = arg2->unk7C;
                     arg2->unk62 = 0;
                     arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA - 1;
+                    arg0->curModAnimIdLayered = -1;
                     spC8 = 0;
                 } else {
-                    temp_fp->unk0.unk288 = 0.0f;
-                    temp_fp->unk0.unk284 = 0.0f;
-                    gDLL_18_objfsa->vtbl->func3(&player->srt);
-                    temp_fp->unk0.unk310 = 0;
-                    temp_fp->unk0.unk30C = 0;
-                    player->unkDC = 0;
-                    temp_fp->unk0.unk324 = 0;
-                    temp_fp->unk0.unk4.mode = 1;
-                    temp_fp->unk8B8 = 0;
-                    gDLL_18_objfsa->vtbl->tick(player, &temp_fp->unk0, gUpdateRateF, gUpdateRateF, _bss_58, _bss_19C);
+                    objdata->unk0.unk288 = 0.0f;
+                    objdata->unk0.unk284 = 0.0f;
+                    gDLL_18_objfsa->vtbl->func3(&arg1->srt);
+                    objdata->unk0.unk310 = 0;
+                    objdata->unk0.unk30C = 0;
+                    arg0->unkDC = 0;
+                    objdata->unk0.unk324 = 0;
+                    objdata->unk0.unk4.mode = 1;
+                    objdata->unk8B8 = 0;
+                    gDLL_18_objfsa->vtbl->tick(arg0, &objdata->unk0, gUpdateRateF, gUpdateRateF, _bss_58, _bss_19C);
                 }
             } else {
-                spAC = spAC / temp_fv0_4;
-                spA8 = spA8 / temp_fv0_4;
-                temp_fp->unk0.unk288 = -spAC * 40.0f;
-                temp_fp->unk0.unk284 = spA8 * 40.0f;
-                player = player;
-                player->srt.transl.x = arg2->unk4C.x + (sp9C * spAC);
-                player->srt.transl.z = arg2->unk4C.z + (sp9C * spA8);
-                gDLL_18_objfsa->vtbl->func3(&player->srt);
-                temp_fp->unk0.unk310 = 0;
-                temp_fp->unk0.unk30C = 0;
-                player->unkDC = 0;
-                temp_fp->unk0.unk324 = 0;
-                temp_fp->unk0.unk4.mode = 1;
-                temp_fp->unk8B8 = 0;
-                gDLL_18_objfsa->vtbl->tick(player, &temp_fp->unk0, gUpdateRateF, gUpdateRateF, _bss_58, _bss_19C);
+                spAC /= temp_fv0_4;
+                spA8 /= temp_fv0_4;
+                objdata->unk0.unk288 = -spAC * 40.0f;
+                objdata->unk0.unk284 = spA8 * 40.0f;
+                arg0->srt.transl.x = arg2->unk4C.x + (sp9C * spAC);
+                arg0->srt.transl.z = arg2->unk4C.z + (sp9C * spA8);
+                gDLL_18_objfsa->vtbl->func3(&arg1->srt);
+                objdata->unk0.unk310 = 0;
+                objdata->unk0.unk30C = 0;
+                arg0->unkDC = 0;
+                objdata->unk0.unk324 = 0;
+                objdata->unk0.unk4.mode = 1;
+                objdata->unk8B8 = 0;
+                gDLL_18_objfsa->vtbl->tick(arg0, &objdata->unk0, gUpdateRateF, gUpdateRateF, _bss_58, _bss_19C);
             }
-            *temp_data_528 = sp9C;
+            _data_528 = sp9C;
         }
         if (arg2->unk62 == 0) {
-            gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 1);
+            gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 1);
         }
     } else {
-        arg2->unk7A |= arg2->unk7C & 0xFBFF;
-        temp_fp->unk0.unk340 = 0;
-        temp_fp->unk0.unk324 = 0;
-        temp_fp->unk0.unk310 = 0;
-        temp_fp->unk0.unk30C = 0;
-        temp_fp->unk0.unk4.mode = 0;
-        temp_fp->unk0.unk288 = 0.0f;
-        temp_fp->unk0.unk284 = 0.0f;
+        arg2->unk7A |= arg2->unk7C & ~0x400;
+        objdata->unk0.unk340 = 0;
+        objdata->unk0.unk324 = 0;
+        objdata->unk0.unk310 = 0;
+        objdata->unk0.unk30C = 0;
+        objdata->unk0.unk4.mode = 0;
+        objdata->unk0.unk288 = 0.0f;
+        objdata->unk0.unk284 = 0.0f;
         for (var_s1 = 0; var_s1 < arg2->unk98; var_s1++) {
             switch (arg2->unk8E[var_s1]) {
             case 3:
                 objects = obj_get_all_of_type(0xB, &spC0);
                 for (var_s1 = 0; var_s1 < spC0; var_s1++) {
+                    // @fake
+                    if (var_s1) {}
                     var_s0 = objects[var_s1];
                     if (
                         var_s0->id == OBJ_IMSnowBike
@@ -1986,65 +2002,66 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
                         || var_s0->id == OBJ_DR_EarthWarrior
                         || var_s0->id == OBJ_DR_CloudRunner
                     ) {
-                        temp_fp->unk858 = var_s0;
+                        objdata->unk858 = var_s0;
                     }
                 }
                 if (var_s0 != NULL) {
-                    var_s0 = temp_fp->unk858;
-                    temp_fp->unk728 = 1.0f;
-                    temp_fp->unk72C.x = temp_fp->unk7EC.x;
-                    temp_fp->unk72C.y = temp_fp->unk7EC.y;
-                    temp_fp->unk72C.z = temp_fp->unk7EC.z;
-                    ((DLL_Unknown *)var_s0->dll)->vtbl->func[14].withTwoArgs((s32)var_s0, 2);
-                    player->srt.flags |= 8;
-                    player->unk64->flags |= 0x1000;
-                    arg2->unk7A &= 0xFFFB;
-                    temp_v1_8 = var_s0->id;
-                    // incorrect branching logic but this helps match for now
-                    if (temp_v1_8 != OBJ_BWLog) {
-                        if ((temp_v1_8 == OBJ_IMSnowBike) || (temp_v1_8 == OBJ_CRSnowBike)) {
-                            temp_fp->unk770 = 3;
-                            temp_fp->unk76C = _data_158;
-                            func_80023D30(player, 0x17, 0.0f, 1U);
-                        } else {
-                        temp_fp->unk770 = 3;
-                        temp_fp->unk76C = _data_188;
-                        }
-                    } else {
-                            temp_fp->unk770 = 4;
-                            temp_fp->unk76C = _data_170;
-                            func_80023D30(player, 0xF5, 0.0f, 1U);
+                    var_s0 = objdata->unk858;
+                    objdata->unk728 = 1.0f;
+                    objdata->unk72C.x = objdata->unk7EC.x;
+                    objdata->unk72C.y = objdata->unk7EC.y;
+                    objdata->unk72C.z = objdata->unk7EC.z;
+                    ((DLL_IVehicle*)var_s0->dll)->vtbl->func14(var_s0, 2);
+                    arg0->srt.flags |= 8;
+                    arg0->unk64->flags |= 0x1000;
+                    arg2->unk7A &= ~0x4;
+                    switch (var_s0->id) {
+                        case OBJ_IMSnowBike:
+                        case OBJ_CRSnowBike:
+                            objdata->unk76C = _data_158;
+                            objdata->unk770 = 3;
+                            func_80023D30(arg0, 0x17, 0.0f, 1);
+                            break;
+                        case OBJ_BWLog:
+                            objdata->unk76C = _data_188;
+                            objdata->unk770 = 3;
+                            break;
+                        default:
+                            objdata->unk76C = _data_170;
+                            objdata->unk770 = 4;
+                            func_80023D30(arg0, 0xF5, 0.0f, 1);
+                            break;
                     }
-                    gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 0x24);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 0x24);
                 }
                 break;
             case 2:
                 gDLL_2_Camera->vtbl->func8(0, 1);
                 gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
-                var_s0 = temp_fp->unk858;
+                var_s0 = objdata->unk858;
                 if (var_s0 != NULL) {
-                    ((DLL_Unknown *)var_s0->dll)->vtbl->func[14].withTwoArgs((s32)var_s0, 0);
-                    player->srt.flags &= 0xFFF7;
-                    player->unk64->flags &= ~0x1000;
+                    ((DLL_IVehicle*)var_s0->dll)->vtbl->func14(var_s0, 0);
+                    arg0->srt.flags &= ~0x8;
+                    arg0->unk64->flags &= ~0x1000;
                     var_s0 = NULL;
                     arg2->unk7A |= 4;
-                    temp_fp->unk858 = NULL;
-                    player->curModAnimIdLayered = -1;
-                    gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 1);
+                    objdata->unk858 = NULL;
+                    arg0->curModAnimIdLayered = -1;
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 1);
                 }
                 break;
             case 4:
-                var_s0 = temp_fp->unk858;
+                var_s0 = objdata->unk858;
                 gDLL_3_Animation->vtbl->func19(0x57, 0, 0, 0);
-                temp_fp->unk76C = NULL;
+                objdata->unk76C = NULL;
                 if ((var_s0 != NULL) && (var_s0->id == 0x22)) {
-                    gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 0x22);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 0x22);
                 } else {
-                    gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 0x24);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 0x24);
                 }
                 break;
             case 11:
-                var_s0 = temp_fp->unk858;
+                var_s0 = objdata->unk858;
                 if ((var_s0 != NULL) && (var_s0->id == 0x416)) {
                     gDLL_2_Camera->vtbl->func8(0, 0x69);
                     gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
@@ -2057,110 +2074,109 @@ int dll_210_func_4910(Object* player, Object* arg1, AnimObj_Data* arg2, s8 arg3)
                 break;
             case 6:
                 gDLL_3_Animation->vtbl->func19(0x56, 0, 0, 0);
-                gDLL_18_objfsa->vtbl->set_anim_state(player, &temp_fp->unk0, 0x23);
+                gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 0x23);
                 break;
             case 7:
-                arg2->unk7A &= 0xFFFC;
-                dll_210_func_1D4E0(player, 1);
-                player->srt.flags |= 8;
+                arg2->unk7A &= ~0x3;
+                dll_210_func_1D4E0(arg0, 1);
+                arg0->srt.flags |= 8;
                 break;
             case 8:
                 arg2->unk7A = arg2->unk7C;
-                dll_210_func_1D4E0(player, 0);
-                player->srt.flags &= ~8;
+                dll_210_func_1D4E0(arg0, 0);
+                arg0->srt.flags &= ~8;
                 break;
             case 10:
-                temp_fp->unk878 = 2;
-                temp_fp->unk8A9 = 2;
-                temp_fp->unk8A8 = 1;
+                objdata->unk878 = 2;
+                objdata->unk8A9 = 2;
+                objdata->unk8A8 = 1;
                 break;
             case 12:
-                sp6A = gDLL_22_Subtitles->vtbl->func_214C((s32) player->unkC4->id);
-                gDLL_22_Subtitles->vtbl->func_2248(1U);
-                gDLL_22_Subtitles->vtbl->func_368((u16) sp6A);
-                player->unkC4 = NULL;
+                sp6A = gDLL_22_Subtitles->vtbl->func_214C(arg0->unkC4->id);
+                gDLL_22_Subtitles->vtbl->func_2248(1);
+                gDLL_22_Subtitles->vtbl->func_368(sp6A);
+                arg0->unkC4 = NULL;
                 break;
             case 13:
-                tempObj = player->unkC4;
-                gDLL_3_Animation->vtbl->func30(tempObj->id, tempObj, 0);
-                dll_210_func_1DB6C(player->unkC4, 29.0f);
-                gDLL_3_Animation->vtbl->func17(player->unkDC, player, -1);
+                gDLL_3_Animation->vtbl->func30(arg0->unkC4->id, arg0->unkC4, 0);
+                dll_210_func_1DB6C(arg0->unkC4, 29.0f);
+                gDLL_3_Animation->vtbl->func17(arg0->unkDC, arg0, -1);
                 break;
             case 14:
                 if (*_data_14 == 1) {
                     *_data_18 = -1;
-                    tempObj = temp_fp->unk85C;
-                    ((DLL_Unknown*)tempObj->dll)->vtbl->func[12].withTwoArgs((s32)tempObj, (s16)player->unkE0);
+                    tempObj = objdata->unk85C;
+                    ((DLL_IFoodbag*)tempObj->dll)->vtbl->func12(tempObj, arg0->unkE0);
                     arg2->unk9D |= 4;
-                    player->unkC4 = NULL;
+                    arg0->unkC4 = NULL;
                     return 4;
                 }
-                if ((*_data_14 != 0) || (player->unkDC < 0)) {
+                if (*_data_14 != 0 || arg0->unkDC < 0) {
                     arg2->unk9D |= 4;
-                    player->unkC4 = NULL;
+                    arg0->unkC4 = NULL;
                 } else {
-                    *_data_18 = player->unkE0;
+                    *_data_18 = arg0->unkE0;
                 }
-                player->unkDC -= 1;
+                arg0->unkDC -= 1;
                 break;
             case 17:
-                dll_210_func_1D8B8(player);
+                dll_210_func_1D8B8(arg0);
                 break;
             case 15:
-                func_8005B5B8(player, NULL, 1);
+                func_8005B5B8(arg0, NULL, 1);
                 break;
             case 16:
                 sp60 = 400.0f;
-                tempObj = obj_get_nearest_type_to(OBJTYPE_7, player, &sp60);
+                tempObj = obj_get_nearest_type_to(OBJTYPE_7, arg0, &sp60);
                 if (tempObj != NULL) {
-                    func_8005B5B8(player, tempObj, 1);
+                    func_8005B5B8(arg0, tempObj, 1);
                 }
                 break;
             case 23:
-                dll_210_func_1D2A8(player, NULL);
+                dll_210_func_1D2A8(arg0, NULL);
                 break;
             case 20:
-                temp_fp->flags |= 0x40000;
+                objdata->flags |= 0x40000;
                 break;
             case 21:
-                temp_fp->flags &= 0xFFFBFFFF;
+                objdata->flags &= ~0x40000;
                 break;
             case 22:
-                temp_fp->flags |= 0x20000;
+                objdata->flags |= 0x20000;
                 break;
             case 18:
-                temp_fp->flags |= 0x8000;
+                objdata->flags |= 0x8000;
                 break;
             case 19:
                 menu_set(1);
                 break;
             case 25:
-                dll_210_func_9F1C(player, 1);
+                dll_210_func_9F1C(arg0, 1);
                 break;
             }
         }
 
-        if (temp_fp->unk708 != NULL) {
-            if (temp_fp->unk708->def->unkAA >= 0) {
+        if (objdata->unk708 != NULL) {
+            if (objdata->unk708->def->unkAA >= 0) {
                 if (arg2->unk8D == 0x1A) {
-                    gDLL_1_UI->vtbl->func_1338(temp_fp->unk708->def->unkAA, 0xA0, 0x8C);
+                    gDLL_1_UI->vtbl->func_1338(objdata->unk708->def->unkAA, 0xA0, 0x8C);
                 }
             } else {
-                gDLL_1_UI->vtbl->func_130C(temp_fp->unk708->def->unkA2, 0xA0, 0x8C);
+                gDLL_1_UI->vtbl->func_130C(objdata->unk708->def->unkA2, 0xA0, 0x8C);
             }
             if (arg2->unk8D == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
-                obj_send_mesg(temp_fp->unk708, 0x7000BU, player, NULL);
-                temp_fp->unk708 = NULL;
+                obj_send_mesg(objdata->unk708, 0x7000B, arg0, NULL);
+                objdata->unk708 = NULL;
             }
         }
     }
-    temp_a0_4 = temp_fp->unk858;
-    if ((temp_a0_4 != NULL) && (((DLL_Unknown*)temp_a0_4->dll)->vtbl->func[13].withOneArgS32((s32)temp_a0_4) == 2)) {
-        arg2->unk7A &= 0xFFFC;
+    if ((objdata->unk858 != NULL) &&
+        (((DLL_IVehicle*)objdata->unk858->dll)->vtbl->func13(objdata->unk858) == 2)) {
+        arg2->unk7A &= ~0x3;
     }
-    ((void (*)(Object*, Player_Data*, f32)) temp_fp->unk3BC)(player, temp_fp, gUpdateRateF);
-    dll_210_func_1BC0(player, temp_fp);
+    ((void (*)(Object*, Player_Data*, f32)) objdata->unk3BC)(arg0, objdata, gUpdateRateF);
+    dll_210_func_1BC0(arg0, objdata);
     return spC8;
 }
 #endif
@@ -2825,7 +2841,7 @@ static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, UnkArg
 }
 
 // offset: 0x7BC4 | func: 42
-s32 dll_210_func_7BC4(Object* player, Player_Data* arg1, u32* arg2, UnkArg4* arg3) {
+static s32 dll_210_func_7BC4(Object* player, Player_Data* arg1, u32* arg2, UnkArg4* arg3) {
     Object* temp_a0;
     s32 var_v1;
     s32 temp;
@@ -3708,12 +3724,7 @@ s32 dll_210_func_A3E4(Object* player, s32 arg1, s32 arg2) {
     return 2;
 }
 
-#ifndef NON_MATCHING
 // offset: 0xA3FC | func: 57
-s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_A3FC.s")
-#else
-// Matches but requires dll_210_func_BA38 as static
 s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Player_Data* sp4C;
     s32 pad[3];
@@ -3809,15 +3820,8 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     return 0;
 }
-#endif
 
-#ifndef NON_MATCHING
 // offset: 0xA8CC | func: 58
-s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_A8CC.s")
-#else
-// this should match but requires dll_210_func_BA38 as static
-// https://decomp.me/scratch/C3L5B
 s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s32 sp24;
     s32 temp_v0;
@@ -3825,9 +3829,11 @@ s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     objdata = player->data;
     objdata->unk8BD &= 0xFFFE;
-    temp_v0 = dll_210_func_BA38(player, fsa, arg2);
-    if (temp_v0 != 0) {
-        return temp_v0;
+    {
+        s32 temp_v0 = dll_210_func_BA38(player, fsa, arg2);
+        if (temp_v0 != 0) {
+            return temp_v0;
+        }
     }
 
     temp_v0 = dll_210_func_C1F4(player, fsa, arg2);
@@ -3851,14 +3857,8 @@ s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     return 0;
 }
-#endif
 
-#ifndef NON_MATCHING
 // offset: 0xAA80 | func: 59
-s32 dll_210_func_AA80(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_AA80.s")
-#else
-// matches but requires dll_210_func_BA38 as static
 s32 dll_210_func_AA80(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     f32 var_fv0;
     Player_Data* sp20;
@@ -3927,16 +3927,8 @@ s32 dll_210_func_AA80(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     return 0;
 }
-#endif
 
 // offset: 0xAE34 | func: 60
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_AE34.s")
-#else
-// matches but requires dll_210_func_B4C8, dll_210_func_BA38 as static
-
-//arg1 seems to point to Krystal's Player_Data struct!
-//krystal.c: objGetAnimChange()?
 s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     f32 temp_fv0;
     f32 temp_fv1;
@@ -3960,19 +3952,19 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     
     if (objdata->unk868 != 0){
         objdata->unk3C4 = &_data_6F8;
-        objdata->modAnims = (s16 *) (&_data_F8);
+        objdata->modAnims = _data_F8;
         if (objdata->unk870 == 0){
             return 8;
         }
     } else if (objdata->unk8A8 != 0){
         objdata->unk3C4 = &_data_6F8;
-        objdata->modAnims = (s16 *) (&_data_C8);
+        objdata->modAnims = _data_C8;
     } else {
         objdata->unk3C4 = &_data_6F8;
-        objdata->modAnims = (s16 *) (&_data_98);
+        objdata->modAnims = _data_98;
     }
     
-    objdata->unk8BD = objdata->unk8BD & 0xFFFE;
+    objdata->unk8BD &= ~1;
     fsa->flags |= 0x800000;
     if (!objdata->unk868){
         temp_v0 = dll_210_func_BA38(player, fsa, arg2);
@@ -4020,7 +4012,7 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         var_fa0 = -var_fa0;
     }
     
-    fsa->speed = (f32) (fsa->speed + (((var_fa0 - fsa->speed) / fsa->unk2B0) * arg2));
+    fsa->speed += ((var_fa0 - fsa->speed) / fsa->unk2B0) * arg2;
     if (fsa->unk4.relativeFloorPitchSmooth > 0){
         var_fa0 -= fsin16_precise(fsa->unk4.relativeFloorPitchSmooth) * 0.65f;
     }
@@ -4056,7 +4048,7 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     
     temp_t1 = (objdata->unk8C0 / 3) * 2;    
     objdata->unk8A5 = (temp_t1 >> 1) + 1;
-    if ((u8)objdata->unk8A5 >= 4) {
+    if (objdata->unk8A5 >= 4) {
         objdata->unk89C = objdata->unk894;
     }
     else {
@@ -4095,14 +4087,13 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
 
     if (!func_8002493C(player, fsa->unk278, &fsa->animTickDelta)){
-        diPrintf("krystal.c: objGetAnimChange Error\n");
+        diPrintf("krystal.c: objGetAnimChange Error\n\0\0 Looking For Horny\0\0 Found Horn Platform \0\0\0 Giving Food \0\0\0 Have Lock %i  \0 Seting Stuff \0\0CANNOT FIND CRAWL NODE\n");
     }
     return 0;
 }
-#endif
 
 // offset: 0xB4C8 | func: 61
-void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa) {
+static void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa) {
     Player_Data* objdata = player->data;
 
     objdata->unk89C = objdata->unk894;
@@ -4202,57 +4193,55 @@ s32 dll_210_func_B864(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
 
 // offset: 0xBA38 | func: 65
-#ifndef NON_EQUIVALENT
-s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_BA38.s")
-#else
-// Requires dll_210_func_7BC4, dll_210_func_1DAB0, dll_210_func_18E80 as static
-// https://decomp.me/scratch/3CYBi
-s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+    Player_Data *v1objdata = player->data;
     Player_Data* spC4;
     u32 sp90[12];
+    s8 temp_v0_4;
     s8 sp8E;
     s16 sp8C;
     Object* sp88;
     Object* temp_v0_5;
-    s32 temp_v0_6;
     f32 sp80 = 200.0f;
     s32 temp_v0;
     u32 sp38[17] = _data_778;
-    s8 temp_v0_4;
 
-    spC4 = player->data;
-    if (spC4->unk834 > 20.0f) {
-        if (spC4->unk8BB != 0) {
+    spC4 = v1objdata;
+    if (v1objdata->unk834 > 20.0f) {
+        if (v1objdata->unk8BB != 0) {
             temp_v0 = gDLL_2_Camera->vtbl->func3();
             if ((temp_v0 != 0x64) && (temp_v0 != 0x5E)) {
+                goto dummy_label_865524; dummy_label_865524: ;
                 gDLL_2_Camera->vtbl->func6(0x64, 1, 0, 0, NULL, 0x3C, 0xFF);
-                spC4->flags &= 0xFFBFFFFF;
+                v1objdata->flags &= ~0x400000;
                 return 0x3B;
             }
         }
-        spC4->unk834 = 20.0f;
+        v1objdata->unk834 = 20.0f;
     }
-    if (spC4->unk708 != NULL && spC4->unk708->id == 0x112) {
+    if (v1objdata->unk708 != NULL && v1objdata->unk708->id == 0x112) {
+        // @fake
+        dummy_label_995066: ;
         if (fsa->unk310 & 0x8000) {
             return 0x30;
         }
         return 0;
     }
-    temp_v0_4 = dll_210_func_7E6C(player, spC4, fsa, sp90, arg2, -0x81);
+
+    temp_v0_4 = dll_210_func_7E6C(player, v1objdata, fsa, sp90, arg2, -0x81);
     if (temp_v0_4 == -1) {
-        spC4->unk8B5 = -1;
-        spC4->unk8B6 = 0U;
-    } else if (temp_v0_4 == spC4->unk8B5) {
-        spC4->unk8B6++;
-        if (spC4->unk8B6 > 0xC8) {
-            spC4->unk8B6 = 0xC8;
+        v1objdata->unk8B5 = -1;
+        v1objdata->unk8B6 = 0U;
+    } else if (temp_v0_4 == v1objdata->unk8B5) {
+        v1objdata->unk8B6++;
+        if (v1objdata->unk8B6 > 0xC8) {
+            v1objdata->unk8B6 = 0xC8;
         }
     } else {
-        spC4->unk8B5 = temp_v0_4;
-        spC4->unk8B6 = 0U;
+        v1objdata->unk8B5 = temp_v0_4;
+        v1objdata->unk8B6 = 0U;
     }
-    switch (spC4->unk8B5) {
+    switch (v1objdata->unk8B5) {
     case 0:
         if (fsa->unk4.unk25C & 0x10) {
             return 0x18;
@@ -4279,12 +4268,12 @@ s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 10:
         return 0x12;
     case 14:
-        if (spC4->unk8B6 >= 0xD) {
+        if (v1objdata->unk8B6 >= 0xD) {
             return 0x28;
         }
         break;
     case 15:
-        if (spC4->unk8B6 >= 0xD) {
+        if (v1objdata->unk8B6 >= 0xD) {
             return 0xB;
         }
         break;
@@ -4292,12 +4281,11 @@ s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         return 0x23;
     case 7:
         _bss_200 = -1;
-        if (dll_210_func_7BC4(player, spC4, sp90, &spC4->unk6B0) == 1) {
+        if (dll_210_func_7BC4(player, v1objdata, sp90, &v1objdata->unk6B0) == 1) {
             return -0x2C;
         }
         break;
     }
-
     if (gDLL_1_UI->vtbl->func_DC4() != 0) {
         if (gDLL_1_UI->vtbl->func_DF4(0x1EE) != 0) {
             joy_set_button_mask(0, A_BUTTON);
@@ -4313,25 +4301,27 @@ s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
             return 0;
         }
+        sp8E = 0;
         if (player->id != 0) {
-            sp8E = 0;
             if (gDLL_1_UI->vtbl->func_DF4(0x13D) != 0) {
                 sp8E = 0xA;
             }
         } else {
-            sp8E = 0;
             if (gDLL_1_UI->vtbl->func_DF4(0x5D6) != 0) {
                 if (main_get_bits(BIT_7E2) != 0) {
                     sp8E = 0xA;
                 } else {
-                    main_set_bits(BIT_7E2, 1U);
+                    // @fake
+                    if (1) {}
+                    if (1) {}
                     sp8E = 0xA;
+                    main_set_bits(BIT_7E2, 1U);
                 }
             }
         }
-        if (sp8E != 0) {
+        if (sp8E) {
             dll_210_func_1DAB0(player);
-            gDLL_3_Animation->vtbl->func17((s32) sp8E, player, -1);
+            gDLL_3_Animation->vtbl->func17(sp8E, player, -1);
             gDLL_1_UI->vtbl->func_1290();
             return 0;
         }
@@ -4341,10 +4331,9 @@ s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (sp8C != -1 && (player->unkC4 == NULL)) {
             joy_set_button_mask(0, A_BUTTON);
             player->unkE0 = sp8C;
-            sp8C = ((DLL_Unknown*)spC4->unk85C->dll)->vtbl->func[20].withOneArgS32(sp8C);
+            sp8C = ((DLL_Unknown*)v1objdata->unk85C->dll)->vtbl->func[16].withOneArgS32(sp8C);
             sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
             if ((sp88 != NULL) && ((sp88->def->unk40->unk10 & 0xF) == 3)) {
-                sp88 = sp88;
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
                 gDLL_3_Animation->vtbl->func17(2, player, -1);
                 player->unkC4 = sp88;
@@ -4368,13 +4357,15 @@ s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (temp_v0 != 0) {
             return temp_v0;
         }
-    } else if ((fsa->unk310 & 0x8000) && (spC4->unk708 == NULL)) {
-        spC4->unk8A9 = 4;
-        return 0x3D;
+    } else {
+        goto dummy_label_938436; dummy_label_938436: ;
+        if ((fsa->unk310 & 0x8000) && (spC4->unk708 == NULL)) {
+            spC4->unk8A9 = 4;
+            return 0x3D;
+        }
     }
     return 0;
 }
-#endif
 
 // offset: 0xC1F4 | func: 66
 static s32 dll_210_func_C1F4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
@@ -8301,7 +8292,7 @@ static s32 dll_210_func_18E10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x18E80 | func: 122
-s32 dll_210_func_18E80(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+static s32 dll_210_func_18E80(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->unk310 & 0x8000) {
         return 0x3D;
     }
@@ -10120,7 +10111,7 @@ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2) {
 }
 
 // offset: 0x1DAB0 | func: 216
-void dll_210_func_1DAB0(Object* player) {
+static void dll_210_func_1DAB0(Object* player) {
     ObjSetup* temp_v0;
 
     temp_v0 = obj_alloc_create_info(0x24, 0x43B);
