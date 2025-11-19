@@ -43,6 +43,7 @@
 
 # objects
 210 = objects/210_player
+211 = objects/211_Tricky
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
@@ -98,9 +99,14 @@
 427 = objects/427_DFlevelcontrol
 441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
+448 = objects/448_CCcage
 449 = objects/449_CClightfoot
 450 = objects/450_CCspellpage
+452 = objects/452_CCfirecrystal
+453 = objects/453_CCfirecrystalin
 454 = objects/454_CCgrub
+456 = objects/456_CCfloor
+457 = objects/457_CCkrazoabright
 458 = objects/458_CCkrazoaBits
 459 = objects/459_CCkrazoaTablet
 460 = objects/460_CClevcontrol
@@ -134,6 +140,7 @@
 596 = objects/596_WLpressureswitch
 607 = objects/607_WL_LevelControl
 610 = objects/610_WL_spiritplace
+612 = objects/612_WL_Crystal
 613 = objects/613_WL_SpiritSet
 615 = objects/615_crawler
 619 = objects/619_VFP_LevelControl

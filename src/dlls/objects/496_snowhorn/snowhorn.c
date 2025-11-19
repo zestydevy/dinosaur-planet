@@ -99,7 +99,7 @@ typedef struct {
 /*3f4*/ u32 unk3f4;
 /*3f8*/ u32 unk3f8;
 /*3fc*/ u32 unk3fc;
-/*400*/ Unk80032CF8 lookAtUnk;
+/*400*/ HeadAnimation lookAtUnk;
 /*424*/ u8 unk424;
 /*425*/ u8 unk425;
 /*426*/ u8 unk426;
@@ -541,14 +541,14 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     player = get_player();
       
     if (lookAt && player && objdata->distanceFromPlayer < 200.0f){
-      objdata->lookAtUnk.unk0 = 1;
-      objdata->lookAtUnk.x = player->srt.transl.x;
-      objdata->lookAtUnk.y = player->srt.transl.y;
-      objdata->lookAtUnk.z = player->srt.transl.z;
+      objdata->lookAtUnk.aimIsActive = 1;
+      objdata->lookAtUnk.headAimX = player->srt.transl.x;
+      objdata->lookAtUnk.headAimY = player->srt.transl.y;
+      objdata->lookAtUnk.headAimZ = player->srt.transl.z;
       return;
     }
   
-    objdata->lookAtUnk.unk0 = 0;
+    objdata->lookAtUnk.aimIsActive = 0;
 }
 
 void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {

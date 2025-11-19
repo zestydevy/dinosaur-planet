@@ -1,5 +1,4 @@
-#include "sys/main.h"
-#include "sys/objects.h"
+#include "common.h"
 #include "sys/objtype.h"
 #include "dlls/objects/211_tricky.h"
 
@@ -23,21 +22,26 @@ void TrickyGuard_setup(Object *self, TrickyGuard_Setup *setup, s32 arg2) {
 }
 
 // offset: 0x6C | func: 1 | export: 1
-void TrickyGuard_control(Object *self) {
-    TrickyGuard_Setup *setup;
+void TrickyGuard_control(Object* self) {
+    TrickyGuard_Setup *objSetup;
     Object *player;
     Object *tricky;
 
-    setup = (TrickyGuard_Setup*)self->setup;
-    if (setup->gamebit == -1 || main_get_bits(setup->gamebit)) {
-        player = get_player();
-        tricky = get_sidekick();
-        if (tricky) {
-            if (((DLL_211_Tricky*)tricky->dll)->vtbl->func25(tricky) == 0) {
-                if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= SQ(setup->range)) {
-                    ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 3);
-                }
-            }
+    objSetup = (TrickyGuard_Setup*)self->setup;
+    
+    if (objSetup->gamebit != NO_GAMEBIT && !main_get_bits(objSetup->gamebit)) {
+        return;
+    }
+
+    player = get_player();
+    tricky = get_sidekick();
+    if (tricky == NULL) {
+        return;
+    }
+
+    if (((DLL_211_Tricky*)tricky->dll)->vtbl->func25(tricky) == 0) {
+        if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= SQ(objSetup->range)) {
+            ((DLL_211_Tricky*)tricky->dll)->vtbl->base.func14(tricky, 3);
         }
     }
 }

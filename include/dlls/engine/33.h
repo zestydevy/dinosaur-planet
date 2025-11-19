@@ -42,7 +42,7 @@ typedef struct {
 /*3B9*/ s8 unk3B9;
 /*3BA*/ s8 _unk3BA;
 /*3BB*/ s8 unk3BB;
-/*3BC*/ Unk80032CF8 unk3BC;
+/*3BC*/ HeadAnimation unk3BC;
 /*3E0*/ s16 unk3E0;
 /*3E2*/ u16 unk3E2;
 /*3E4*/ f32 unk3E4;

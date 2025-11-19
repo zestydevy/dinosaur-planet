@@ -27,7 +27,7 @@ enum ObjType {
     OBJTYPE_39 = 39,
     OBJTYPE_40 = 40,
     OBJTYPE_48 = 48,
-    OBJTYPE_51 = 51,
+    OBJTYPE_51 = 51, // sidekick-related?
     OBJTYPE_52 = 52,
     OBJTYPE_59 = 59,
     OBJTYPE_64 = 64

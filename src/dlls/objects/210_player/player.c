@@ -1829,7 +1829,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         } else if (arg2->unk62 == 4) {
             arg2->unk7A &= 0xFFF3;
             arg2->unk7C &= 0xFFF7;
-            temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15();
             if (temp_v0_6 == NULL || temp_v0_6->unk74 == NULL) {
                 return 0;
             }
@@ -1846,10 +1846,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
             arg2->unk62 = 5;
-            temp_fp->unk354.unk16 = func_80034804(arg0, 0)[1];
-            temp_fp->unk378.unk16 = 0;
-            temp_fp->unk354.unk14 = arg2->yawDiff;
-            temp_fp->unk378.unk14 = arg2->pitchDiff;
+            temp_fp->unk354.headStartAngle = func_80034804(arg0, 0)[1];
+            temp_fp->unk378.headStartAngle = 0;
+            temp_fp->unk354.headGoalAngle = arg2->yawDiff;
+            temp_fp->unk378.headGoalAngle = arg2->pitchDiff;
             _bss_0 = 0;
             sp6C[0] = temp_s0->x;
             sp6C[1] = temp_s0->y;
@@ -1886,8 +1886,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 temp_s0_2[1] = _bss_2 - (arg0->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(temp_s0_2[1])
             } else {
-                _bss_0 |= func_800343B8((Unk80032CF8 *)&temp_fp->unk354, temp_s0_2, 100.0f, 2000.0f);
-                _bss_0 |= func_80034518((Unk80032CF8 *)&temp_fp->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
+                _bss_0 |= func_800343B8((HeadAnimation *)&temp_fp->unk354, temp_s0_2, 100.0f, 2000.0f);
+                _bss_0 |= func_80034518((HeadAnimation *)&temp_fp->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
             }
             return 1;
         } else if (arg2->unk62 == 6) {
@@ -2542,7 +2542,7 @@ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
             break;
         case 0x5FC:
             arg2 = -1;
-            sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp3C = (Object *)gDLL_2_Camera->vtbl->func15();
             if (sp3C != NULL) {
                 if ((sp3C->def->unk40->unk10 & 0xF) == 3) {
                     obj->unkDC = 4;
@@ -2558,7 +2558,7 @@ void dll_210_func_6DD8(Object* obj, Player_Data* objdata, s32 arg2) {
             }
         case 0x5BD:
             arg2 = -1;
-            sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp3C = (Object *)gDLL_2_Camera->vtbl->func15();
             if ((sp3C != NULL) && (sp3C->id == 0x414 || sp3C->id == 0x4A9)) {
                 gDLL_3_Animation->vtbl->func17(5, obj, -1);
                 arg2 = 0x5BD;
@@ -4339,7 +4339,7 @@ s32 dll_210_func_BA38(Object* arg0, Player_Data* arg1, f32 arg2) {
             joy_set_button_mask(0, A_BUTTON);
             arg0->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)spC4->unk85C->dll)->vtbl->func[20].withOneArgS32(sp8C);
-            sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp88 = (Object *)gDLL_2_Camera->vtbl->func15();
             if ((sp88 != NULL) && ((sp88->def->unk40->unk10 & 0xF) == 3)) {
                 sp88 = sp88;
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
@@ -9276,7 +9276,7 @@ s32 dll_210_func_1D40C(Object* player, u32 arg1) {
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk354.unk1E == 1;
+    return objdata->unk354.blinkState == 1;
 }
 
 // offset: 0x1D4E0 | func: 192 | export: 33
@@ -9371,7 +9371,7 @@ Object* dll_210_func_1D768(Object* player) {
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-Unk80032CF8 * dll_210_func_1D778(Object* player) {
+HeadAnimation * dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }
