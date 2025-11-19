@@ -77,6 +77,8 @@ enum SoundID {
 
     SOUND_43D = 0x43D,
 
+    SOUND_WM_Sun_Whoosh = 0x487, //used by WMsun
+
     SOUND_4BC = 0x4BC,
 
     SOUND_LightFoot_Shout = 0x4B7,

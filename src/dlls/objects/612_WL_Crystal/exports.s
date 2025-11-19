@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_612_ctor
-.dword dll_612_dtor
+.dword WL_Crystal_ctor
+.dword WL_Crystal_dtor
 
 # export table
-/*0*/ .dword dll_612_setup
-/*1*/ .dword dll_612_control
-/*2*/ .dword dll_612_update
-/*3*/ .dword dll_612_print
-/*4*/ .dword dll_612_free
-/*5*/ .dword dll_612_get_model_flags
-/*6*/ .dword dll_612_get_data_size
+/*0*/ .dword WL_Crystal_setup
+/*1*/ .dword WL_Crystal_control
+/*2*/ .dword WL_Crystal_update
+/*3*/ .dword WL_Crystal_print
+/*4*/ .dword WL_Crystal_free
+/*5*/ .dword WL_Crystal_get_model_flags
+/*6*/ .dword WL_Crystal_get_data_size
