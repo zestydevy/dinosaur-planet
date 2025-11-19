@@ -2,6 +2,7 @@
 
 #include "common.h"
 
+#include "dlls/objects/214_animobj.h"
 #include "prevent_bss_reordering.h"
 
 s32* func_800349B0(void);
@@ -88,12 +89,6 @@ typedef struct {
     u16 unk2;
     u16 totalActors; //maybe?
 } ANIMUnk698;
-
-typedef struct {
-/*00*/ Object* object;
-/*04*/ s8 unk4[0xAD - 4];
-/*AD*/ s8 unkAD;
-} ANIMState;
 
 /*0x0*/ static const char str_0[] = "Max activates reached\n";
 /*0x18*/ static const char str_18[] = "CODE OVERFLOW\n";
@@ -377,7 +372,33 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 }
 
 // offset: 0x32B0 | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_32B0.s")
+void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
+    s32 index;
+
+    for (index = 0; index < 4; index++){
+        if (animObjData->unk34[index]) {
+            if (gDLL_6_AMSFX->vtbl->func_B48(animObjData->unk34[index]) == 0) {
+                gDLL_6_AMSFX->vtbl->func_A1C(animObjData->unk34[index]);
+                animObjData->unk34[index] = 0;
+                animObjData->unk44[index] = 0;
+                if (index != 3) {
+                    animObjData->unk8A = index;
+                }
+            }
+            if (gDLL_6_AMSFX->vtbl->func_B48(animObjData->unk34[index]) && (animObjData->unk44[index] <= 0)) {
+                gDLL_6_AMSFX->vtbl->func_A1C(animObjData->unk34[index]);
+                animObjData->unk34[index] = 0;
+                animObjData->unk44[index] = 0;
+                if (index != 3) {
+                    animObjData->unk8A = index;
+                }
+            }
+            if ((animObjData->unk44[index] > 0) && (animObjData->unk44[index] != 32000)) {
+                animObjData->unk44[index] = animObjData->unk44[index] - arg1;
+            }
+        }
+    }
+}
 
 // offset: 0x3414 | func: 15
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3414.s")
@@ -386,33 +407,24 @@ s32 dll_3_func_3268(Object* overrideObject, Object* actor, AnimObj_Data* state) 
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3614.s")
 
 // offset: 0x4158 | func: 17
-typedef struct {
-   s8 unk0[0x34 - 0];
-   u32 unk34[21];
-   u16 unk87;
-   s8 unk8A;
-} AnimFunc4158Unk;
+s8 dll_3_func_4158(AnimObj_Data* animObjData) {
+    u32 index;
 
-s8 dll_3_func_4158(AnimFunc4158Unk* arg0) {
-    s32 temp_t0;
-    u32 var_v1;
-    void* var_v0;
+    index = 0;
+    if (animObjData->unk34[animObjData->unk8A] != 0) {
 
-    var_v1 = 0;
-    if (arg0->unk34[arg0->unk8A] != 0) {
-
-        while (arg0->unk34[var_v1] && var_v1 < 3){ 
-            var_v1++;
+        while (animObjData->unk34[index] && index < 3){ 
+            index++;
         }
         
-        if (var_v1 == 4) {
-            gDLL_6_AMSFX->vtbl->func_A1C(arg0->unk34[arg0->unk8A]);
-            arg0->unk34[arg0->unk8A] = 0;
+        if (index == 4) {
+            gDLL_6_AMSFX->vtbl->func_A1C(animObjData->unk34[animObjData->unk8A]);
+            animObjData->unk34[animObjData->unk8A] = 0;
         } else {
-            arg0->unk8A = var_v1 - 1;
+            animObjData->unk8A = index - 1;
         }
     }
-    return arg0->unk8A;
+    return animObjData->unk8A;
 }
 
 // offset: 0x422C | func: 18
@@ -488,17 +500,18 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
 }
 
 // offset: 0x4924 | func: 20
-void dll_3_func_4924(Object* arg0, Object** arg1, ModelInstance** arg2) {
-    ANIMState *state = arg0->data;
-    Object *obj;
+/** get_actor_object_and_model_instance? */
+void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance) {
+    AnimObj_Data *objData = animObj->data;
+    Object *actor;
 
-    obj = state->object;
-    if (!obj) {
-        obj = arg0;
+    actor = objData->actor;
+    if (!actor) {
+        actor = animObj;
     }
 
-    *arg2 = obj->modelInsts[obj->modelInstIdx];
-    *arg1 = obj;
+    *actorModelInstance = actor->modelInsts[actor->modelInstIdx];
+    *actorObject = actor;
 }
 
 // offset: 0x495C | func: 21

@@ -31,8 +31,8 @@ typedef struct AnimObj_Data {
 /*028*/ s32 unk28;
 /*02C*/ void *unk2C;
 /*030*/ u32 unk30;
-/*034*/ u32 unk34[4];
-/*044*/ s8 unk44[0x4C - 0x44];
+/*034*/ u32 unk34[4];   //soundHandles?
+/*044*/ s16 unk44[4];   //soundHandle related - playback frequency?
 /*04C*/ Vec3f unk4C; //position diff between parent "override" animObj and child "actor" object?
 /*058*/ f32 unk58;
 /*05C*/ s16 yawDiff;
@@ -56,12 +56,13 @@ typedef struct AnimObj_Data {
 /*08B*/ s32 unk80;
 /*084*/ s8 unk84[0x87 - 0x84];
 /*087*/ s8 unk87;
-/*088*/ s8 unk88[0x8B - 0x88];
+/*088*/ s8 unk88[0x8A - 0x88];
+/*08A*/ s8 unk8A;                   //soundHandle-related
 /*08B*/ u8 unk8B;
 /*08C*/ s8 unk8C;
 /*08D*/ u8 unk8D;
-/*08E*/ u8 unk8E[0x98 - 0x8E];
-/*098*/ u8 unk98;
+/*08E*/ u8 unk8E[0x98 - 0x8E];      //sequence subcommand IDs?
+/*098*/ u8 unk98;                   //sequence subcommand count?
 /*099*/ u8 unk99;
 /*09A*/ u8 unk9A;
 /*09B*/ u8 unk9B;
