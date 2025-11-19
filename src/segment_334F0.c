@@ -494,7 +494,7 @@ void func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     }
 }
 
-/** Handles aiming characters' heads towards a point */
+/** Handles characters' procedural head turn animation */
 void func_80033B68(Object* obj, HeadAnimation* arg1, f32 arg2) {
     s16* neckJoint;
     s32 var_v0;
