@@ -20,7 +20,7 @@ typedef struct {
 
 typedef struct {
 /*0*/ s8 type;
-/*1*/ s8 delay;
+/*1*/ u8 delay;
 /*2*/ s16 params;
 } AnimCurvesEvent;
 

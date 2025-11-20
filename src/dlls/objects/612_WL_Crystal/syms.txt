@@ -1,0 +1,27 @@
+.text = 0x0:
+WL_Crystal_ctor = 0x0;
+WL_Crystal_dtor = 0xC;
+WL_Crystal_setup = 0x18;
+WL_Crystal_control = 0x47C;
+WL_Crystal_update = 0x1604;
+WL_Crystal_print = 0x1610;
+WL_Crystal_free = 0x16C4;
+WL_Crystal_get_model_flags = 0x1794;
+WL_Crystal_get_data_size = 0x17A4;
+WL_Crystal_handle_sun_flare_effects = 0x17B8;
+
+.rodata = 0x1FB0:
+
+.data = 0x2010:
+data_sun_modGFX = 0x0; // absolute:0x2010
+unitVector = 0x4; // absolute:0x2014
+vCameraLook = 0x10; // absolute:0x2020
+dataEffectScale = 0x1C; // absolute:0x202C
+dimRoomEffect = 0x20; // absolute:0x2030
+
+.bss = 0x2040:
+fxTimer1 = 0x0; // absolute:0x2040
+fxTimer2 = 0x2; // absolute:0x2042
+fxTimer3 = 0x4; // absolute:0x2044
+fxTimer4 = 0x6; // absolute:0x2046
+fxTimer5 = 0x8; // absolute:0x2048

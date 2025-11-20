@@ -77,7 +77,11 @@ enum SoundID {
 
     SOUND_43D = 0x43D,
 
+    SOUND_WM_Sun_Whoosh = 0x487, //used by WMsun
+
     SOUND_4BC = 0x4BC,
+
+    SOUND_LightFoot_Shout = 0x4B7,
 
     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
@@ -187,6 +191,8 @@ enum SoundID {
     SOUND_B21 = 0xB21,
 
     SOUND_B31_Item_Collection_Chime = 0xB31,
+
+    SOUND_B5C_Machinery_Clunk = 0xB5C,
 
     SOUND_B72_Game_Saved = 0xB72,
     SOUND_B73_Option_Selected = 0xB73,

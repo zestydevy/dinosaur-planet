@@ -15,6 +15,7 @@
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/rand.h"
 #include "sys/camera.h"
 #include "sys/main.h"
@@ -38,7 +39,6 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
-#include "dlls/modgfx/106.h"
 #include "unktypes.h"
 #include "segment_334F0.h"
 
@@ -1172,7 +1172,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     s32 sp7C;
     s32 sp78;
     s32 sp74 = NULL;
-    DLL_106* sp70 = NULL; // This isn't executed?
+    DLL_IModgfx* sp70 = NULL; // This isn't executed?
     s32 sp60[4] = _data_508;
     SRT sp48;
     Player_Data *pad;
@@ -1950,7 +1950,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     static s16 _bss_2;
     static f32 _data_528 = 0.0f;
     static s8 _data_52C = 0;
-    AnimObjSetup* animSetup;
+    AnimObj_Setup* animSetup;
     Object* temp_a0_4;
     s32 var_v0;
     s32 spC8;
@@ -1982,7 +1982,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     f32 sp60;
 
     objdata = arg0->data;
-    animSetup = (AnimObjSetup*)arg1->setup;
+    animSetup = (AnimObj_Setup*)arg1->setup;
     spC8 = 0;
     arg2->unkF4 = (AnimObj_DataF4Callback)dll_210_func_60A8;
     objdata->unk818 = 0.0f;
@@ -2034,7 +2034,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         } else if (arg2->unk62 == 4) {
             arg2->unk7A &= ~0xC;
             arg2->unk7C &= ~0x8;
-            temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            temp_v0_6 = (Object *)gDLL_2_Camera->vtbl->func15();
             if (temp_v0_6 == NULL || temp_v0_6->unk74 == NULL) {
                 return 0;
             }
@@ -2051,10 +2051,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
             arg2->unk62 = 5;
-            objdata->unk354.unk16 = func_80034804(arg0, 0)[1];
-            objdata->unk354.unk14 = arg2->yawDiff;
-            objdata->unk378.unk16 = 0;
-            objdata->unk378.unk14 = arg2->pitchDiff;
+            objdata->unk354.headStartAngle = func_80034804(arg0, 0)[1];
+            objdata->unk378.headStartAngle = 0;
+            objdata->unk354.headGoalAngle = arg2->yawDiff;
+            objdata->unk378.headGoalAngle = arg2->pitchDiff;
             _bss_0 = 0;
             sp6C[0] = temp_s0->x;
             sp6C[1] = temp_s0->y;
@@ -2748,7 +2748,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             break;
         case 0x5FC:
             arg2 = -1;
-            sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp3C = gDLL_2_Camera->vtbl->func15();
             // @fake
             if (temp_v1) {}
             if (sp3C == NULL) {
@@ -2767,7 +2767,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
             }
         case 0x5BD:
             arg2 = -1;
-            sp3C = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp3C = (Object *)gDLL_2_Camera->vtbl->func15();
             if ((sp3C != NULL) && (sp3C->id == 0x414 || sp3C->id == 0x4A9)) {
                 gDLL_3_Animation->vtbl->func17(5, player, -1);
                 arg2 = 0x5BD;
@@ -4528,7 +4528,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             joy_set_button_mask(0, A_BUTTON);
             player->unkE0 = sp8C;
             sp8C = ((DLL_Unknown*)v1objdata->unk85C->dll)->vtbl->func[16].withOneArgS32(sp8C);
-            sp88 = (Object *)gDLL_2_Camera->vtbl->func15.asVoidS32();
+            sp88 = gDLL_2_Camera->vtbl->func15();
             if ((sp88 != NULL) && ((sp88->def->unk40->unk10 & 0xF) == 3)) {
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
                 gDLL_3_Animation->vtbl->func17(2, player, -1);
@@ -10052,7 +10052,7 @@ void dll_210_func_1D438(Object* player, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk354.unk1E == 1;
+    return objdata->unk354.blinkState == 1;
 }
 
 // offset: 0x1D4E0 | func: 192 | export: 33
@@ -10181,7 +10181,7 @@ Object* dll_210_func_1D768(Object* player) {
 }
 
 // offset: 0x1D778 | func: 205 | export: 54
-Unk80032CF8 * dll_210_func_1D778(Object* player) {
+HeadAnimation * dll_210_func_1D778(Object* player) {
     Player_Data* objdata = player->data;
     return &objdata->unk354;
 }
