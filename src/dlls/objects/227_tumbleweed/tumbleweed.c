@@ -143,8 +143,8 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
         }
     }
     
-    obj_add_object_type(self, 4);
-    obj_add_object_type(self, 0x33);
+    obj_add_object_type(self, OBJTYPE_4);
+    obj_add_object_type(self, OBJTYPE_51);
     func_800267A4(self);
 }
 

@@ -28,7 +28,7 @@ void CCspellpage_setup(Object *self, CCspellpage_Setup *setup, s32 arg2) {
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
     self->animCallback = CCspellpage_anim_callback;
-    obj_add_object_type(self, 5);
+    obj_add_object_type(self, OBJTYPE_5);
 }
 
 // offset: 0x90 | func: 1 | export: 1

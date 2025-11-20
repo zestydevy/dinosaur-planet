@@ -250,7 +250,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     snowhorn->animCallback = dll_496_func_84C;
     
     if (arg2 == 0) {
-        obj_add_object_type(snowhorn, 0xC);
+        obj_add_object_type(snowhorn, OBJTYPE_12);
         objdata->unk50 = 0.005f;
         objdata->unkRadius = mapsObj->unkRadius;
         objdata->unk6 = mapsObj->unk1A * 0x3C;
