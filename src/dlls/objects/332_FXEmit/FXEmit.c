@@ -32,7 +32,8 @@ typedef struct {
                                 //2) projgfx DLLs
 /*0A*/ s16 indexInBank;         //index of the effect within its bank
 /*0C*/ s16 defaultFXIndex;      //only used if fxCount <= 0, always set to 0
-/*0E*/ s16 fxCount;             //how many times to spawn the effect
+/*0E*/ s16 fxRate;              //when positive: how many times the emitter runs per tick
+                                //when negative: number of frames to waits between single emit
 /*10*/ u16 _unk10;              //unused
 /*12*/ s16 randomDelay;
 /*14*/ s16 toggleGamebit;
@@ -47,7 +48,7 @@ typedef struct {
 /*18*/ s8 activationRange;
 /*19*/ s8 bank;
 /*1A*/ s16 indexInBank;
-/*1C*/ s16 fxCount;
+/*1C*/ s16 fxRate;
 /*1E*/ s16 toggleGamebit;
 /*20*/ s16 disableGamebit;
 /*22*/ s8 roll;
@@ -81,14 +82,14 @@ void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
     objdata->activationRange = setup->activationRange * 4;
     objdata->bank = setup->bank;
     objdata->indexInBank = setup->indexInBank;
-    objdata->fxCount = setup->fxCount;
+    objdata->fxRate = setup->fxRate;
     self->srt.scale = 0.1f;
     objdata->toggleGamebit = setup->toggleGamebit;
     objdata->disableGamebit = setup->disableGamebit;
     objdata->disabled = FALSE;
 
-    if (objdata->fxCount <= 0) {
-        self->unkDC = objdata->fxCount;
+    if (objdata->fxRate <= 0) {
+        self->unkDC = objdata->fxRate;
     } else {
         self->unkDC = 0;
     }
@@ -182,11 +183,11 @@ void FXEmit_control(Object* self) {
             objdata->disabled = TRUE;
         }
 
-        if ((objdata->fxCount >= 0) || ((objdata->fxCount < 0) && (self->unkDC <= 0))) {
+        if ((objdata->fxRate >= 0) || ((objdata->fxRate < 0) && (self->unkDC <= 0))) {
             vectorToPlayer.f[0] = self->positionMirror.x - player->positionMirror.x;
             vectorToPlayer.f[1] = self->positionMirror.y - player->positionMirror.y;
             vectorToPlayer.f[2] = self->positionMirror.z - player->positionMirror.z;
-            if (objdata->fxCount == 0) {
+            if (objdata->fxRate == 0) {
                 objdata->disabled = TRUE;
             }
 
@@ -194,10 +195,10 @@ void FXEmit_control(Object* self) {
                 FXEmit_emit(self);
             }
 
-            self->unkDC = -objdata->fxCount;
+            self->unkDC = -objdata->fxRate;
             return;
         }
-        if (objdata->fxCount < 0) {
+        if (objdata->fxRate < 0) {
             if (self->unkDC > 0) {
                 self->unkDC -= gUpdateRate;
             }
@@ -334,8 +335,8 @@ static void FXEmit_emit(Object *self) {
         srt.roll = self->srt.roll;
         srt.pitch = self->srt.pitch;
         srt.scale = 1.0f;
-        if (objdata->fxCount > 0) {
-            for (i = 0; i < objdata->fxCount; i++) {
+        if (objdata->fxRate > 0) {
+            for (i = 0; i < objdata->fxRate; i++) {
                 gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, &srt, flags, -1, NULL);
             }
         } else {
@@ -343,8 +344,8 @@ static void FXEmit_emit(Object *self) {
         }
     } else {
         if (objdata->bank == BANK_ParticleFX) {
-            if (objdata->fxCount > 0) {
-                for (i = 0; i < objdata->fxCount; i++) {
+            if (objdata->fxRate > 0) {
+                for (i = 0; i < objdata->fxRate; i++) {
                     gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, NULL, flags, -1, NULL);
                 }
             } else {
@@ -352,8 +353,8 @@ static void FXEmit_emit(Object *self) {
             }
         } else if (objdata->bank == BANK_ModelFX) {
             modfxDLL = dll_load_deferred((objdata->indexInBank + 0x1000), 1);
-            if (objdata->fxCount > 0) {
-                for (i = 0; i < objdata->fxCount; i++) {
+            if (objdata->fxRate > 0) {
+                for (i = 0; i < objdata->fxRate; i++) {
                     modfxDLL->vtbl->func0(self, 0, 0, flags, -1, 0);
                 }
             } else {
@@ -362,8 +363,8 @@ static void FXEmit_emit(Object *self) {
             dll_unload(modfxDLL);
         } else if (objdata->bank == BANK_ProjectileFX) {
             projfxDLL = dll_load_deferred((objdata->indexInBank + 0x2000), 1);
-            if (objdata->fxCount > 0) {
-                for (i = 0; i < objdata->fxCount; i++) {
+            if (objdata->fxRate > 0) {
+                for (i = 0; i < objdata->fxRate; i++) {
                     projfxDLL->vtbl->func0(self, 0, 0, flags, -1, objdata->indexInBank, 0);
                 }
             } else {
