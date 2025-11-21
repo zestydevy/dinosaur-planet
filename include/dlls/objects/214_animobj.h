@@ -21,8 +21,8 @@ typedef struct {
     u8 unk24;
 } AnimObj_Setup;
 
-typedef void (*AnimObj_DataF4Callback)(Object *arg0, s32 arg1, struct AnimObj_Data* arg2);
-typedef s32 (*AnimObj_DataF8Callback)(Object *arg0, Object *override, s32 arg2);
+typedef void (*AnimObj_DataF4Callback)(Object *actor, Object *override, struct AnimObj_Data* arg2);
+typedef s32 (*AnimObj_DataF8Callback)(Object *actor, Object *override, s32 arg2);
 
 typedef struct AnimObj_Data {
 /*000*/ Object* actor;

@@ -687,7 +687,7 @@ typedef struct {
     f32 unkC;
 } Func51E0Arg0;
 
-static void dll_3_func_57A4(Func51E0Arg0* arg0, f32 arg1);
+void dll_3_func_57A4(Func51E0Arg0* arg0, f32 arg1);
 
 s32 dll_3_func_51E0(Func51E0Arg0* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4) {
     CurveSetup* var_s1;
@@ -894,7 +894,7 @@ f32 dll_3_func_6EBC(AnimObj_Data* state, s32 channelIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_6F3C.s")
 
 // offset: 0x71C0 | func: 37
-void dll_3_func_71C0(s32 arg0, Object* arg1, AnimObj_Data* arg2) {
+void dll_3_func_71C0(Object* arg0, Object* arg1, AnimObj_Data* arg2) {
     s32 i;
     u32 soundHandle;
 
