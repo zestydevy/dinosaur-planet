@@ -7,6 +7,49 @@
 
 s32* func_800349B0(void);
 
+typedef enum {
+/*00*/    ANIMCURVES_CHANNEL_headRotateZ = 0,
+/*01*/    ANIMCURVES_CHANNEL_headRotateX = 1,
+/*02*/    ANIMCURVES_CHANNEL_headRotateY = 2,
+/*03*/    ANIMCURVES_CHANNEL_opacity = 3,
+/*04*/    ANIMCURVES_CHANNEL_dayTime = 4,
+/*05*/    ANIMCURVES_CHANNEL_scale = 5,
+/*06*/    ANIMCURVES_CHANNEL_rotateZ = 6,
+/*07*/    ANIMCURVES_CHANNEL_rotateY = 7,
+/*08*/    ANIMCURVES_CHANNEL_rotateX = 8,
+/*09*/    ANIMCURVES_CHANNEL_animSpeed = 9,
+/*0A*/    ANIMCURVES_CHANNEL_animBlendSpeed = 10,
+/*0B*/    ANIMCURVES_CHANNEL_translateZ = 11,
+/*0C*/    ANIMCURVES_CHANNEL_translateY = 12,
+/*0D*/    ANIMCURVES_CHANNEL_translateX = 13,
+/*0E*/    ANIMCURVES_CHANNEL_fieldOfView = 14,
+/*0F*/    ANIMCURVES_CHANNEL_eyeX = 15,
+/*10*/    ANIMCURVES_CHANNEL_eyeY = 16,
+/*11*/    ANIMCURVES_CHANNEL_jaw = 17,
+/*12*/    ANIMCURVES_CHANNEL_soundVolume = 18
+} AnimCurvesKeyframeChannels;
+
+typedef enum {
+/*FF*/    ANIMCURVES_EVENTS_setDuration = -1,
+/*00*/    ANIMCURVES_EVENTS_timing = 0,
+/*01*/    ANIMCURVES_EVENTS_unk1 = 1,
+/*02*/    ANIMCURVES_EVENTS_playAnimation = 2,
+/*03*/    ANIMCURVES_EVENTS_setObj = 3,
+/*04*/    ANIMCURVES_EVENTS_blendShape = 4,
+/*05*/    ANIMCURVES_EVENTS_unk5 = 5,
+/*06*/    ANIMCURVES_EVENTS_sound = 6,
+/*07*/    ANIMCURVES_EVENTS_unk7 = 7,
+/*08*/    ANIMCURVES_EVENTS_unk8 = 8,
+/*09*/    ANIMCURVES_EVENTS_unk9 = 9,
+/*0A*/    ANIMCURVES_EVENTS_unkA = 10,
+/*0B*/    ANIMCURVES_EVENTS_subEvent = 11,
+/*0C*/    ANIMCURVES_EVENTS_unkC = 12,
+/*0D*/    ANIMCURVES_EVENTS_setObjParam = 13,
+/*0E*/    ANIMCURVES_EVENTS_setLoop = 14,
+/*0F*/    ANIMCURVES_EVENTS_soundOther = 15,
+/*7F*/    ANIMCURVES_EVENTS_stopSoundOther = 127
+} AnimCurvesEvents;
+
 typedef struct {
 Vec3f unk0; 
 s8 unkC;
@@ -27,52 +70,6 @@ typedef struct {
     s16 unk2;
     s16 unk4;
 } SequenceBoneStructUnk;
-
-void dll_3_func_7B64(AnimObj_Data*);
-s32 dll_3_func_9524(Object * arg0, AnimObj_Data *arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
-
-enum AnimCurvesKeyframeChannels {
-/*00*/    ANIMCURVES_CHANNEL_headRotateZ = 0,
-/*01*/    ANIMCURVES_CHANNEL_headRotateX = 1,
-/*02*/    ANIMCURVES_CHANNEL_headRotateY = 2,
-/*03*/    ANIMCURVES_CHANNEL_opacity = 3,
-/*04*/    ANIMCURVES_CHANNEL_dayTime = 4,
-/*05*/    ANIMCURVES_CHANNEL_scale = 5,
-/*06*/    ANIMCURVES_CHANNEL_rotateZ = 6,
-/*07*/    ANIMCURVES_CHANNEL_rotateY = 7,
-/*08*/    ANIMCURVES_CHANNEL_rotateX = 8,
-/*09*/    ANIMCURVES_CHANNEL_animSpeed = 9,
-/*0A*/    ANIMCURVES_CHANNEL_animBlendSpeed = 10,
-/*0B*/    ANIMCURVES_CHANNEL_translateZ = 11,
-/*0C*/    ANIMCURVES_CHANNEL_translateY = 12,
-/*0D*/    ANIMCURVES_CHANNEL_translateX = 13,
-/*0E*/    ANIMCURVES_CHANNEL_fieldOfView = 14,
-/*0F*/    ANIMCURVES_CHANNEL_eyeX = 15,
-/*10*/    ANIMCURVES_CHANNEL_eyeY = 16,
-/*11*/    ANIMCURVES_CHANNEL_jaw = 17,
-/*12*/    ANIMCURVES_CHANNEL_soundVolume = 18
-};
-
-enum AnimCurvesEvents {
-/*FF*/    ANIMCURVES_EVENTS_setDuration = -1,
-/*00*/    ANIMCURVES_EVENTS_timing = 0,
-/*01*/    ANIMCURVES_EVENTS_unk1 = 1,
-/*02*/    ANIMCURVES_EVENTS_playAnimation = 2,
-/*03*/    ANIMCURVES_EVENTS_setObj = 3,
-/*04*/    ANIMCURVES_EVENTS_blendShape = 4,
-/*05*/    ANIMCURVES_EVENTS_unk5 = 5,
-/*06*/    ANIMCURVES_EVENTS_sound = 6,
-/*07*/    ANIMCURVES_EVENTS_unk7 = 7,
-/*08*/    ANIMCURVES_EVENTS_unk8 = 8,
-/*09*/    ANIMCURVES_EVENTS_unk9 = 9,
-/*0A*/    ANIMCURVES_EVENTS_unkA = 10,
-/*0B*/    ANIMCURVES_EVENTS_subEvent = 11,
-/*0C*/    ANIMCURVES_EVENTS_unkC = 12,
-/*0D*/    ANIMCURVES_EVENTS_setObjParam = 13,
-/*0E*/    ANIMCURVES_EVENTS_setLoop = 14,
-/*0F*/    ANIMCURVES_EVENTS_soundOther = 15,
-/*7F*/    ANIMCURVES_EVENTS_stopSoundOther = 127
-};
 
 typedef struct {
     Object *unk0;
@@ -157,76 +154,32 @@ typedef struct {
 /*0x88*/ static u8 _bss_88[0x1];
 /*0x89*/ static u8 _bss_89[0x1];
 /*0x8A*/ static u8 _bss_8A[0x1];
-/*0x8B*/ static u8 _bss_8B[0x1];
+/*0x8B*/ static s8 _bss_8B;
 /*0x8C*/ static s32 _bss_8C;
 /*0x90*/ static s32 _bss_90;
 /*0x94*/ static s32 _bss_94;
 /*0x98*/ static s32 _bss_98;
 /*0x9C*/ static u8 _bss_9C[0x4];
-/*0xA0*/ static s32 _bss_A0;
+/*0xA0*/ static f32 _bss_A0;
 /*0xA4*/ static s8 _bss_A4[0x4];
-/*0xA8*/ static u32 _bss_A8;
-/*0xAC*/ static u8 _bss_AC[0x4];
-/*0xB0*/ static u8 _bss_B0[0x28];
-/*0xD8*/ static s8 _bss_D8[0x1];
-/*0xD9*/ static u8 _bss_D9[0x1];
-/*0xDA*/ static u8 _bss_DA[0x2];
-/*0xDC*/ static u8 _bss_DC[0x4];
-/*0xE0*/ static u8 _bss_E0[0x28];
-/*0x108*/ static s8 _bss_108[0x1];
-/*0x109*/ static u8 _bss_109[0x1];
-/*0x10A*/ static u8 _bss_10A[0x2];
-/*0x10C*/ static u8 _bss_10C[0x4];
-/*0x110*/ static u8 _bss_110[0x28];
-/*0x138*/ static s8 _bss_138[0x1];
-/*0x139*/ static u8 _bss_139[0x1];
-/*0x13A*/ static u8 _bss_13A[0x2];
-/*0x13C*/ static u8 _bss_13C[0x4];
-/*0x140*/ static u8 _bss_165[0x28];
-/*0x168*/ static u8 _bss_168[0x1];
-/*0x169*/ static u8 _bss_169[0x1];
-/*0x16A*/ static u8 _bss_16A[0x2];
-/*0x16C*/ static u8 _bss_16C[0x4];
-/*0x170*/ static u8 _bss_170[0x28];
-/*0x198*/ static s8 _bss_198[0x1];
-/*0x199*/ static u8 _bss_199[0x1];
-/*0x19A*/ static u8 _bss_19A[0x2];
-/*0x19C*/ static u8 _bss_19C[0x4];
-/*0x1A0*/ static u8 _bss_1A0[0x28];
-/*0x1C8*/ static u8 _bss_1C8[0x1];
-/*0x1C9*/ static u8 _bss_1C9[0x1];
-/*0x1CA*/ static u8 _bss_1CA[0x2];
-/*0x1CC*/ static u8 _bss_1CC[0x4];
-/*0x1D0*/ static u8 _bss_1D0[0x28];
-/*0x1F8*/ static u8 _bss_1F8[0x2];
-/*0x1FA*/ static u8 _bss_1FA[0x2];
-/*0x1FC*/ static u8 _bss_1FC[0x4];
-/*0x200*/ static u8 _bss_200[0x58];
-/*0x258*/ static s32 _bss_258;
-/*0x25C*/ static u8 _bss_25C[0x4];
-/*0x260*/ static u8 _bss_260[0x58];
+/*0xA8*/ static s8 _bss_A8[ANIMCURVES_SCENES_MAX];
+/*0xD8*/ static s8 _bss_D8[ANIMCURVES_SCENES_MAX];
+/*0x108*/ static s8 _bss_108[ANIMCURVES_SCENES_MAX];
+/*0x138*/ static s8 _bss_138[ANIMCURVES_SCENES_MAX];
+/*0x168*/ static s8 _bss_168[ANIMCURVES_SCENES_MAX];
+/*0x198*/ static s8 _bss_198[ANIMCURVES_SCENES_MAX];
+/*0x1C8*/ static s8 _bss_1C8[ANIMCURVES_SCENES_MAX];
+/*0x1F8*/ static s16 _bss_1F8[ANIMCURVES_SCENES_MAX];
+/*0x258*/ static s16 _bss_258[ANIMCURVES_SCENES_MAX];
 /*0x2B8*/ static u8 _bss_2B8[0x8];
 /*0x2C0*/ static u8 _bss_2C0[0x58];
 /*0x318*/ static u16 _bss_318[0x4];
 /*0x320*/ static u8 _bss_320[0x58];
-/*0x378*/ static u8 _bss_378[0x1];
-/*0x379*/ static u8 _bss_379[0x1];
-/*0x37A*/ static u8 _bss_37A[0x2];
-/*0x37C*/ static u8 _bss_37C[0x4];
-/*0x380*/ static u8 _bss_380[0x28];
+/*0x378*/ static s8 _bss_378[ANIMCURVES_SCENES_MAX];
 /*0x3A8*/ static u8 _bss_3A8[0x8];
 /*0x3B0*/ static u8 _bss_3B0[0x28];
-/*0x3D8*/ static u8 _bss_3D8[0x4];
-/*0x3DC*/ static u8 _bss_3DC[0x4];
-/*0x3E0*/ static u8 _bss_3E0[0xb0];
-/*0x490*/ static u8 _bss_490[0x1];
-/*0x491*/ static u8 _bss_491[0x1];
-/*0x492*/ static u8 _bss_492[0x2];
-/*0x494*/ static u8 _bss_494[0x4];
-/*0x498*/ static u8 _bss_498[0x8];
-/*0x4A0*/ static u8 _bss_4A0[0x1d];
-/*0x4BD*/ static u8 _bss_4BD[0x1];
-/*0x4BE*/ static u8 _bss_4BE[0x2];
+/*0x3D8*/ static s32 _bss_3D8[ANIMCURVES_SCENES_MAX];
+/*0x490*/ static s8 _bss_490[ANIMCURVES_SCENES_MAX];
 /*0x4C0*/ static u8 _bss_4C0[0x30];
 /*0x4F0*/ static u8 _bss_4F0[0xb4];
 /*0x5A4*/ static u8 _bss_5A4[0x4];
@@ -249,41 +202,62 @@ typedef struct {
 /*0x698*/ static ANIMUnk698 _bss_698[1];
 /*0x69E*/ static u8 _bss_69E[0x2];
 /*0x6A0*/ static u8 _bss_6A0[0x58];
-/*0x6F8*/ static s8 _bss_6F8[0x4];
+/*0x6F8*/ static s8 _bss_6F8;
 /*0x6FC*/ static s32 _bss_6FC;
 /*0x700*/ static s16 _bss_700[2];
 /*0x708*/ static ANIMActorOverride _bss_708[44][16];
 /*0x1D0C*/ static u8 _bss_1D0C[0x7C];
 /*0x1D88*/ static u8 _bss_1D88[8];
 
-// offset: 0x0 | ctor
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_ctor.s")
-#else
-// Needs dll_3_func_98 matched 
 void dll_3_func_98(void);
+static s32 dll_3_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup);
+void dll_3_func_7B64(AnimObj_Data*);
+s32 dll_3_func_9524(Object * arg0, AnimObj_Data *arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
 
-void dll_3_ctor(s32 arg0) {
+// offset: 0x0 | ctor
+void dll_3_ctor(void *dll) {
     _bss_5D8 = mmAlloc(0x10, ALLOC_TAG_ANIMSEQ_COL, 0);
     dll_3_func_98();
 }
-#endif
 
 // offset: 0x58 | dtor
-void dll_3_dtor(s32 arg0) {
+void dll_3_dtor(void *dll) {
     mmFree(_bss_5D8);
 }
 
 // offset: 0x98 | func: 0 | export: 0
-void dll_3_func_98(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_98.s")
+void dll_3_func_98(void) {
+    s32 i;
+
+    for (i = 0; i < ANIMCURVES_SCENES_MAX; i++) {
+        _bss_108[i] = 0;
+        _bss_138[i] = 0;
+        _bss_168[i] = 0;
+        _bss_A8[i] = 0;
+        _bss_D8[i] = 0;
+        _bss_198[i] = 0;
+        _bss_1C8[i] = 0;
+        _bss_1F8[i] = 0;
+        _bss_258[i] = -1;
+        _bss_378[i] = 0;
+        _bss_3D8[i] = 0;
+        _bss_490[i] = 0;
+    }
+
+    _bss_20 = 0;
+    _bss_8C = 0;
+    _bss_8B = 0;
+    _bss_A0 = 0.0f;
+    _bss_6FC = 0;
+    _bss_6F8 = 0;
+}
 
 // offset: 0x2C0 | func: 1 | export: 1
 void dll_3_func_2C0(s32 arg0, s32 arg1, s32 arg2) {   
-    if (arg0 >= 0 && arg0 < ANIMCURVES_SCENES_MAX && _bss_6F8[0] < ANIMCURVES_ACTORS_MAX) {
-        (&_bss_698[_bss_6F8[0]])->unk0 = arg0;
-        (&_bss_698[_bss_6F8[0]])->totalActors = arg2;
-        (&_bss_698[_bss_6F8[0]])->unk2 = arg1; _bss_6F8[0]++; 
+    if (arg0 >= 0 && arg0 < ANIMCURVES_SCENES_MAX && _bss_6F8 < ANIMCURVES_ACTORS_MAX) {
+        (&_bss_698[_bss_6F8])->unk0 = arg0;
+        (&_bss_698[_bss_6F8])->totalActors = arg2;
+        (&_bss_698[_bss_6F8])->unk2 = arg1; _bss_6F8++; 
     }
 }
 
@@ -441,7 +415,50 @@ void dll_3_func_32B0(AnimObj_Data* animObjData, s32 arg1) {
 }
 
 // offset: 0x3414 | func: 15
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3414.s")
+#else
+void dll_3_func_1A04(Object* a0, Object *a1, void* a2); //unsure
+void dll_3_func_1C04(Object* actor, Object *a1, void* a2, s32 a3); //unsure
+void dll_3_func_2760(Object* actor, Object *a1, void* a2, s32 a3); //unsure
+void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData, s8 arg3);
+void dll_3_func_4924(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
+void dll_3_func_4B20(Object* animObj, AnimObj_Setup* setup);
+void dll_3_func_4FC4(Object* a0, void* a1); //unsure
+void dll_3_func_71C0(Object *arg0, Object* arg1, AnimObj_Data* arg2);
+
+void dll_3_func_3414(Object* animObj, Object **arg1, AnimObj_Data* arg2, AnimObj_Setup* arg3, ModelInstance **arg4) {
+    Object* temp_s1;
+
+    _bss_90 = 1;
+    _bss_98 = 0x5A;
+    arg2->animCurvesCurrentFrameA = arg2->unk6A;
+    arg2->animCurvesCurrentFrameB = -0x3C;
+    dll_3_func_1C04(animObj, *arg1, arg2, 0);
+    dll_3_func_2760(animObj, *arg1, arg2, 1);
+    dll_3_func_4924(animObj, arg1, arg4);
+    dll_3_func_4FC4(animObj, arg2);
+    if (arg2->unk86 == 1) {
+        dll_3_func_4B20(animObj, arg3);
+    }
+    
+    animObj->srt.yaw += arg2->unk1A;
+    temp_s1 = *arg1;
+    if ((animObj != temp_s1) && (_bss_5CC[0] == 0)) {
+        dll_3_func_4698(temp_s1, animObj, arg2, _bss_A8[arg2->unk63]);
+    }
+    temp_s1 = *arg1;
+    dll_3_func_1A04(animObj, temp_s1, arg2);
+    arg2->unk9A = 0;
+    arg2->unk9B = 0;
+    arg2->unk8B = 1;
+    arg2->animCurvesCurrentFrameB = arg2->animCurvesCurrentFrameA;
+    if (_bss_A4[0] != 0) {
+        dll_3_func_71C0(animObj, *arg1, arg2);
+    }
+    _bss_258[arg2->unk63] = arg2->animCurvesCurrentFrameA;
+}
+#endif
 
 // offset: 0x3614 | func: 16
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_3614.s")
@@ -582,11 +599,6 @@ s32 dll_3_func_4A7C(AnimObj_Data* objData, s32 arg1) {
 }
 
 // offset: 0x4B20 | func: 23
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4B20.s")
-#else
-s32 dll_3_func_4BAC(Object* obj, Object* a1, f32 x, f32 y, f32 z, f32* arg5, f32 setupY);
-
 void dll_3_func_4B20(Object* animObj, AnimObj_Setup* setup) {
     f32 floatVal;
 
@@ -600,19 +612,205 @@ void dll_3_func_4B20(Object* animObj, AnimObj_Setup* setup) {
         animObj->srt.transl.y += floatVal - setup->base.y;
     }
 }
-#endif
 
 // offset: 0x4BAC | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4BAC.s")
+/** Something to do with snapping characters to mesh height? */
+s32 dll_3_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup) {
+    s32 lowestIndex;
+    f32 sampleY;
+    Func_80057F1C_Struct** sp5C;
+    f32 lowestFound;
+    s32 temp_v0;
+    s32 index;
+
+    temp_v0 = func_80057F1C(animObj, x, animObj->positionMirror.f[1], z, &sp5C, 0, 1);
+    if (temp_v0) {
+        lowestIndex = 0;
+        lowestFound = 1000.0f;
+        for (index = 0; index < temp_v0; index++) {
+            if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
+                sampleY = y - sp5C[index]->unk0[0];
+                if (sampleY < 0.0f) {
+                    sampleY = -sampleY;
+                }
+                if (sampleY < lowestFound) {
+                    lowestIndex = index;
+                    lowestFound = sampleY;
+                }
+            }
+        }
+
+        *yOut = sp5C[lowestIndex]->unk0[0];
+        if (parent) {
+            *yOut -= animObj->parent->srt.transl.y;
+        }
+    }
+
+    if (temp_v0) {
+        y += *yOut - ySetup;
+        lowestFound = 1000.0f;
+        lowestIndex = 0;
+        for (index = 0; index < temp_v0; index++) {
+           if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
+                sampleY = y + 5.0f - sp5C[index]->unk0[0];
+                if (sampleY < 0.0f) {
+                    sampleY = -sampleY;
+                }
+                if (sampleY < lowestFound) {
+                    lowestIndex = index;
+                    lowestFound = sampleY;
+                }
+            }
+        }
+
+        *yOut = sp5C[lowestIndex]->unk0[0];
+        if (parent) {
+            *yOut -= animObj->parent->srt.transl.y;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 // offset: 0x4FC4 | func: 25
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_4FC4.s")
 
 // offset: 0x51E0 | func: 26
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_51E0.s")
+#else
+
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    f32 unk8;
+    f32 unkC;
+} Func51E0Arg0;
+
+static void dll_3_func_57A4(Func51E0Arg0* arg0, f32 arg1);
+
+s32 dll_3_func_51E0(Func51E0Arg0* arg0, Vec3f* arg1, Vec3f* arg2, s16* arg3, s8 arg4) {
+    CurveSetup* var_s1;
+    f32 temp_fv0_2;
+    CurveSetup* sp84;
+    f32 sp80;
+    f32 sp7C;
+    Vec4f sp6C;
+    Vec4f sp5C;
+    Vec4f sp4C;
+    f32 sp48;
+    f32 sp44;
+    f32 sp40;
+    f32 sp3C;
+    f32 sp38;
+    s32 var_v1;
+
+    sp80 = arg1->f[2];
+    dll_3_func_57A4(arg0, sp80);
+    var_s1 = gDLL_26_Curves->vtbl->func_39C(arg0->unk0);
+    
+    if (var_s1 != NULL) {
+        if (arg0->unk4 >= 0) {
+            sp84 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+            for (var_v1 = 0; var_v1 < 9 && ((f32*)arg0)[var_v1 + 2] <= sp80; var_v1++) {}
+            var_v1--;
+            sp7C = var_v1;
+            sp7C += ((sp80 - ((f32*)arg0)[var_v1 + 2]) / (((f32*)arg0)[var_v1 + 3] - ((f32*)arg0)[var_v1 + 2]));
+            sp7C /= 8/*.0f*/;
+            sp3C = 2.0f * var_s1->unk2E;
+            sp38 = 2.0f * sp84->unk2E;
+            sp6C.f[0] = var_s1->pos.f[0];
+            sp6C.f[2] = fsin16_precise(var_s1->unk2C << 8) * sp3C;
+            sp6C.f[1] = sp84->pos.f[0];
+            sp6C.f[3] = fsin16_precise(sp84->unk2C << 8) * sp38;
+            sp5C.f[0] = var_s1->pos.f[1];
+            sp5C.f[2] = fsin16_precise(var_s1->unk2D << 8) * sp3C;
+            sp5C.f[1] = sp84->pos.f[1];
+            sp5C.f[3] = fsin16_precise(sp84->unk2D << 8) * sp38;
+            sp4C.f[0] = var_s1->pos.f[2];
+            sp4C.f[2] = fcos16_precise(var_s1->unk2C << 8) * sp3C;
+            sp4C.f[1] = sp84->pos.f[2];
+            sp4C.f[3] = fcos16_precise(sp84->unk2C << 8) * sp38;
+            arg2->f[0] = func_80004C5C(&sp6C, sp7C, &sp48);
+            if (arg4 == 0) {
+                arg2->f[1] = func_80004C5C(&sp5C, sp7C, &sp44);
+            }
+            arg2->f[2] = func_80004C5C(&sp4C, sp7C, &sp40);
+            temp_fv0_2 = sqrtf(SQ(sp48) + SQ(sp40));
+            if (temp_fv0_2 > 0.1f) {
+                sp3C = arg1->f[0] / temp_fv0_2;
+                // @fake
+                if (sp3C) {}
+                *arg3 = arctan2_f(sp48, sp40) + 0x8000;
+                sp48 *= sp3C;
+                sp40 *= sp3C;
+                arg2->f[0] += sp40;
+                arg2->f[2] -= sp48;
+                if (arg4 == 0) {
+                    arg2->f[1] += arg1->f[1];
+                }
+            }
+            goto out;
+        }
+    }
+    if (var_s1 == NULL) {
+        var_s1 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+    }
+    
+    if (var_s1 != NULL) {
+        arg2->f[0] = var_s1->pos.f[0];
+        if (arg4 == 0) {
+            arg2->f[1] = arg1->y + var_s1->pos.y;
+        }
+        arg2->f[2] = var_s1->pos.f[2];
+        arg2->f[0] += arg1->f[0] * fcos16_precise((s16) (var_s1->unk2C << 8));
+        arg2->f[2] += arg1->f[0] * fsin16_precise((s16) (var_s1->unk2C << 8));
+        *arg3 = (var_s1->unk2C << 8) + 0x8000;
+    } else {
+        return 0;
+    }
+
+    out:
+    return 1;
+}
+#endif
 
 // offset: 0x5698 | func: 27
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_5698.s")
+#else
+void dll_3_func_5A48(void* arg0, CurveSetup* a2, CurveSetup* a3, f32 a4, s32 a5);
+
+//NOTE: not sure a0 is AnimObj_Data, could be other struct
+void dll_3_func_5698(AnimObj_Data* objData, Object* arg1) {
+    CurveSetup* temp_v0;
+    s32 pad[2];
+    s32 temp_a1;
+    s32 sp2C;
+    s32 var_a2;
+    s32 index;
+    s32 var_a0;
+
+    objData->actor = arg1;
+    objData->unk4 = -1;
+    temp_v0 = gDLL_26_Curves->vtbl->func_39C((s32)arg1);
+
+    for (var_a0 = 1, index = 0, var_a2 = sp2C; index < 4; index++, var_a0 *= 2){
+        if ((temp_v0->unk1C[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
+            var_a2 = temp_v0->unk1C[index];
+            index = 5;
+        }
+    }
+    
+    if (index != 6) {
+        objData->actor = (Object*)-1;
+        return;
+    }
+    
+    objData->unk4 = var_a2;
+    dll_3_func_5A48(objData, temp_v0, gDLL_26_Curves->vtbl->func_39C(var_a2), 0, 0);
+}
+#endif
 
 // offset: 0x57A4 | func: 28
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_57A4.s")
@@ -725,7 +923,7 @@ void dll_3_func_71C0(s32 arg0, Object* arg1, AnimObj_Data* arg2) {
 }
 
 // offset: 0x72E0 | func: 38
-void dll_3_func_72E0(s32 arg0) {
+void dll_3_func_72E0(Object* arg0) {
     _bss_6FC = arg0;
     _bss_700[0] = gUpdateRate;
 }
