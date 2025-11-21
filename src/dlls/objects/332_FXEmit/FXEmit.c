@@ -1,6 +1,12 @@
-#include "common.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/214_animobj.h"
+#include "sys/dll.h"
+#include "game/gamebits.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
+#include "sys/main.h"
+#include "sys/rand.h"
+#include "dll.h"
 
 #define USE_DEFAULT_SPEED 0x7F
 
