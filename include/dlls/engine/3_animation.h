@@ -6,8 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-#define ANIMCURVES_SCENES_MAX 0x2D //Terminology mightn't be correct
-#define ANIMCURVES_ACTORS_MAX 0x10
+#define ANIMCURVES_SCENES_MAX 45 //Terminology mightn't be correct
+#define ANIMCURVES_ACTORS_MAX 16
 #define ANIMCURVES_KEYFRAME_CHANNELS 19
 #define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
 

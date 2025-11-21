@@ -1,103 +1,127 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
 #include "sys/dll.h"
+#include "game/gamebits.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "dll.h"
 
+#define USE_DEFAULT_SPEED 0x7F
+
+typedef enum {
+    BANK_ParticleFX = 0,
+    BANK_ModelFX = 1,
+    BANK_ProjectileFX = 2
+} FXEmit_Banks;
+
+typedef enum {
+    Preset_0 = 0,   //PARTFXFLAG_2
+    Preset_1 = 1,   //PARTFXFLAG_4
+    Preset_2 = 2,   //PARTFXFLAG_1 (plus PARTFXFLAG_200000 if the effect is from the partFX bank)
+    Preset_3 = 3    //PARTFXFLAG_NONE
+} FXEmit_Flag_Presets;
+
 typedef struct {
-/*00*/ f32 unk0;
-/*04*/ f32 unk4;
-/*08*/ s16 unk8;
-/*0A*/ s16 unkA;
-/*0C*/ s16 unkC;
-/*0E*/ s16 unkE;
-/*10*/ u8 _unk10[0x12 - 0x10];
-/*12*/ s16 unk12;
+/*00*/ f32 activationRange;
+/*04*/ f32 translateX;
+/*08*/ s16 bank;                //where the effect is stored 
+                                //0: partfx DLL (#17)
+                                //1) modgfx DLLs
+                                //2) projgfx DLLs
+/*0A*/ s16 indexInBank;         //index of the effect within its bank
+/*0C*/ s16 defaultFXIndex;      //only used if fxCount <= 0, always set to 0
+/*0E*/ s16 fxRate;              //when positive: how many times the emitter runs per tick
+                                //when negative: number of frames to waits between single emit
+/*10*/ u16 _unk10;              //unused
+/*12*/ s16 randomDelay;
 /*14*/ s16 toggleGamebit;
 /*16*/ s16 disableGamebit;
 /*18*/ s16 disabled;
-/*1A*/ s16 unk1A;
-/*1C*/ u8 unk1C;
+/*1A*/ s16 intervalTimer;
+/*1C*/ u8 animCallbackRotate;   //switches particle rotation on/off when used in sequences
 } FXEmit_Data;
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s8 unk18;
-/*19*/ s8 unk19;
-/*1A*/ s16 unk1A;
-/*1C*/ s16 unk1C;
+/*18*/ s8 activationRange;
+/*19*/ s8 bank;
+/*1A*/ s16 indexInBank;
+/*1C*/ s16 fxRate;
 /*1E*/ s16 toggleGamebit;
 /*20*/ s16 disableGamebit;
-/*22*/ s8 unk22;
-/*23*/ s8 unk23;
-/*24*/ s8 unk24;
-/*25*/ s8 unk25;
-/*26*/ s8 unk26;
-/*27*/ s8 unk27;
-/*28*/ u8 unk28;
-/*29*/ u8 unk29;
-/*2A*/ s16 unk2A;
+/*22*/ s8 roll;
+/*23*/ s8 pitch;
+/*24*/ s8 yaw;
+/*25*/ s8 rollSpeed;        //animation speed for particle's roll   (0x7F for a slower default speed)
+/*26*/ s8 pitchSpeed;       //animation speed for particle's pitch  (0x7F for a slower default speed)
+/*27*/ s8 yawSpeed;         //animation speed for particle's yaw    (0x7F for a slower default speed)
+/*28*/ u8 flagConfig;       //chooses between 4 partfx flag presets
+/*29*/ u8 interval;         //FXEmit activates repeatedly, at multiples of 100 frames 
+                            //interval = 0 skips interval behaviour, 0xFF disables FXEmit
+/*2A*/ s16 intervalSoundID; //soundID to play during interval activation
 } FXEmit_Setup;
 
-static int dll_332_func_6C0(Object *, Object *, AnimObj_Data *, s8);
-static void dll_332_func_8E8(Object *self);
+static int FXEmit_anim_callback(Object *, Object *, AnimObj_Data *, s8);
+static void FXEmit_emit(Object *self);
 
 // offset: 0x0 | ctor
-void dll_332_ctor(void *dll) { }
+void FXEmit_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_332_dtor(void *dll) { }
+void FXEmit_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_332_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
+void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
     FXEmit_Data *objdata = (FXEmit_Data*)self->data;
 
     self->srt.yaw = 0;
-    self->animCallback = dll_332_func_6C0;
-    objdata->unk0 = (f32) (setup->unk18 * 4);
-    objdata->unk8 = (s16) setup->unk19;
-    objdata->unkA = (s16) setup->unk1A;
-    objdata->unkE = (s16) setup->unk1C;
+    self->animCallback = FXEmit_anim_callback;
+
+    objdata->activationRange = setup->activationRange * 4;
+    objdata->bank = setup->bank;
+    objdata->indexInBank = setup->indexInBank;
+    objdata->fxRate = setup->fxRate;
     self->srt.scale = 0.1f;
-    objdata->toggleGamebit = (s16) setup->toggleGamebit;
-    objdata->disableGamebit = (s16) setup->disableGamebit;
+    objdata->toggleGamebit = setup->toggleGamebit;
+    objdata->disableGamebit = setup->disableGamebit;
     objdata->disabled = FALSE;
-    if (objdata->unkE <= 0) {
-        self->unkDC = (s32) objdata->unkE;
+
+    if (objdata->fxRate <= 0) {
+        self->unkDC = objdata->fxRate;
     } else {
         self->unkDC = 0;
     }
-    if (objdata->disableGamebit != -1) {
-        if (main_get_bits(objdata->disableGamebit) != 0) {
-            objdata->disabled = TRUE;
-        }
+
+    if (objdata->disableGamebit != NO_GAMEBIT && main_get_bits(objdata->disableGamebit)) {
+        objdata->disabled = TRUE;
     }
-    self->srt.yaw = setup->unk24 << 8;
-    self->srt.pitch = setup->unk23 << 8;
-    self->srt.roll = setup->unk22 << 8;
-    objdata->unk1A = (s16) (setup->unk29 * 0x64);
-    objdata->unk4 = (f32) self->srt.transl.x;
-    objdata->unk12 = rand_next(0, 0xA);
-    objdata->unkC = 0;
+
+    self->srt.yaw = setup->yaw << 8;
+    self->srt.pitch = setup->pitch << 8;
+    self->srt.roll = setup->roll << 8;
+    objdata->intervalTimer = setup->interval * 100;
+    objdata->translateX = self->srt.transl.x;
+    objdata->randomDelay = rand_next(0, 10);
+    objdata->defaultFXIndex = 0;
 }
 
 // offset: 0x174 | func: 1 | export: 1
-void dll_332_control(Object* self) {
+void FXEmit_control(Object* self) {
     FXEmit_Data* objdata;
-    f32 sp40[3];
+    Vec3f vectorToPlayer;
     s32 _pad;
     FXEmit_Setup* setup;
     Object* player;
 
     objdata = (FXEmit_Data*)self->data;
     setup = (FXEmit_Setup*)self->setup;
-    if (objdata->unk12 != 0) {
-        objdata->unk12 -= (s16)gUpdateRateF;
-        if (objdata->unk12 < 0) {
-            objdata->unk12 = 0;
+    
+    if (objdata->randomDelay) {
+        objdata->randomDelay -= (s16)gUpdateRateF;
+        if (objdata->randomDelay < 0) {
+            objdata->randomDelay = 0;
         }
     } else {
         self->srt.transl.x += self->speed.x * gUpdateRateF;
@@ -106,133 +130,153 @@ void dll_332_control(Object* self) {
         self->positionMirror.x = self->srt.transl.x;
         self->positionMirror.y = self->srt.transl.y;
         self->positionMirror.z = self->srt.transl.z;
+
         player = get_player();
-        if ((player != NULL) && (setup != NULL)) {
-            if ((setup->unk29 != 0) && (setup->unk29 != 0xFF)) {
-                if (objdata->unk1A <= 0) {
-                    objdata->disabled = FALSE;
-                    objdata->unk1A = (s16) (setup->unk29 * 0x64);
-                    if (setup->unk2A != 0) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, setup->unk2A, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    }
-                } else {
-                    objdata->disabled = TRUE;
+        if (!player || !setup) {
+            return;
+        }
+
+        //(Optional) Activate at intervals, playing sound effect
+        if (setup->interval && (setup->interval != 0xFF)) {
+            if (objdata->intervalTimer <= 0) {
+                objdata->disabled = FALSE;
+                objdata->intervalTimer = setup->interval * 100;
+                if (setup->intervalSoundID) {
+                    gDLL_6_AMSFX->vtbl->play_sound(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
-                objdata->unk1A = (s16) (objdata->unk1A - gUpdateRate);
-            }
-            if (setup->unk27 == 0x7F) {
-                self->srt.yaw += gUpdateRate * 0xA;
             } else {
-                self->srt.yaw += setup->unk27 * gUpdateRate * 0x64;
+                objdata->disabled = TRUE;
             }
-            if (setup->unk26 == 0x7F) {
-                self->srt.pitch += gUpdateRate * 0xA;
-            } else {
-                self->srt.pitch += setup->unk26 * gUpdateRate * 0x64;
+            objdata->intervalTimer -= gUpdateRate;
+        }
+
+        //Handle rotations
+        if (setup->yawSpeed == USE_DEFAULT_SPEED) {
+            self->srt.yaw += gUpdateRate * 10;
+        } else {
+            self->srt.yaw += setup->yawSpeed * gUpdateRate * 100;
+        }
+
+        if (setup->pitchSpeed == USE_DEFAULT_SPEED) {
+            self->srt.pitch += gUpdateRate * 10;
+        } else {
+            self->srt.pitch += setup->pitchSpeed * gUpdateRate * 100;
+        }
+
+        if (setup->rollSpeed == USE_DEFAULT_SPEED) {
+            self->srt.roll += gUpdateRate * 10;
+        } else {
+            self->srt.roll += setup->rollSpeed * gUpdateRate * 100;
+        }
+
+        //Bail if not enabled
+        if (((objdata->toggleGamebit != NO_GAMEBIT) && main_get_bits(objdata->toggleGamebit) == FALSE) 
+            || objdata->disabled) {
+          return;
+        }
+
+        //Check if should be disabled (@bug?: continues with this tick when disabled, causing 1 frame flash)
+        if (objdata->disableGamebit != NO_GAMEBIT && main_get_bits(objdata->disableGamebit)) {
+            objdata->disabled = TRUE;
+        }
+        if (setup->interval == 0xFF) {
+            objdata->disabled = TRUE;
+        }
+
+        if ((objdata->fxRate >= 0) || ((objdata->fxRate < 0) && (self->unkDC <= 0))) {
+            vectorToPlayer.f[0] = self->positionMirror.x - player->positionMirror.x;
+            vectorToPlayer.f[1] = self->positionMirror.y - player->positionMirror.y;
+            vectorToPlayer.f[2] = self->positionMirror.z - player->positionMirror.z;
+            if (objdata->fxRate == 0) {
+                objdata->disabled = TRUE;
             }
-            if (setup->unk25 == 0x7F) {
-                self->srt.roll += gUpdateRate * 0xA;
-            } else {
-                self->srt.roll += setup->unk25 * gUpdateRate * 0x64;
+
+            if (VECTOR_MAGNITUDE(vectorToPlayer) <= objdata->activationRange || objdata->activationRange == 0.0f) {
+                FXEmit_emit(self);
             }
-            if (((objdata->toggleGamebit == -1) || (main_get_bits(objdata->toggleGamebit) != 0)) && !objdata->disabled) {
-                if (objdata->disableGamebit != -1) {
-                    if (main_get_bits(objdata->disableGamebit) != 0) {
-                        objdata->disabled = TRUE;
-                    }
-                }
-                if (setup->unk29 == 0xFF) {
-                    objdata->disabled = TRUE;
-                }
-                if ((objdata->unkE >= 0) || ((objdata->unkE < 0) && (self->unkDC <= 0))) {
-                    sp40[0] = self->positionMirror.x - player->positionMirror.x;
-                    sp40[1] = self->positionMirror.y - player->positionMirror.y;
-                    sp40[2] = self->positionMirror.z - player->positionMirror.z;
-                    if (objdata->unkE == 0) {
-                        objdata->disabled = TRUE;
-                    }
-                    if ((sqrtf(SQ(sp40[0]) + SQ(sp40[1]) + SQ(sp40[2])) <= objdata->unk0) || (objdata->unk0 == 0.0f)) {
-                        dll_332_func_8E8(self);
-                    }
-                    self->unkDC = (s32) -objdata->unkE;
-                    return;
-                }
-                if (objdata->unkE < 0) {
-                    if (self->unkDC > 0) {
-                        self->unkDC -= gUpdateRate;
-                    }
-                }
+
+            self->unkDC = -objdata->fxRate;
+            return;
+        }
+        if (objdata->fxRate < 0) {
+            if (self->unkDC > 0) {
+                self->unkDC -= gUpdateRate;
             }
         }
     }
 }
 
 // offset: 0x608 | func: 2 | export: 2
-void dll_332_update(Object *self) { }
+void FXEmit_update(Object *self) { }
 
 // offset: 0x614 | func: 3 | export: 3
-void dll_332_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void FXEmit_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x62C | func: 4 | export: 4
-void dll_332_free(Object *self, s32 a1) {
+void FXEmit_free(Object *self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func5(self);
     gDLL_14_Modgfx->vtbl->func4(self);
 }
 
 // offset: 0x69C | func: 5 | export: 5
-u32 dll_332_get_model_flags(Object *self) {
+u32 FXEmit_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x6AC | func: 6 | export: 6
-u32 dll_332_get_data_size(Object *self, u32 a1) {
+u32 FXEmit_get_data_size(Object *self, u32 a1) {
     return sizeof(FXEmit_Data);
 }
 
 // offset: 0x6C0 | func: 7
-static int dll_332_func_6C0(Object *arg0, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
+static int FXEmit_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     FXEmit_Data *objdata;
     FXEmit_Setup *setup;
     s32 i;
 
-    objdata = (FXEmit_Data*)arg0->data;
-    setup = (FXEmit_Setup*)arg0->setup;
+    objdata = (FXEmit_Data*)self->data;
+    setup = (FXEmit_Setup*)self->setup;
     
-    for (i = 0; i < arg2->unk98; i++) {
-        if (arg2->unk8E[i] == 1) {
-            dll_332_func_8E8(arg0);
+    for (i = 0; i < animObjData->unk98; i++) {
+        if (animObjData->unk8E[i] == 1) {
+            FXEmit_emit(self);
         }
-        if (arg2->unk8E[i] == 2) {
-            objdata->unk1C = (u8) (1 - objdata->unk1C);
+        if (animObjData->unk8E[i] == 2) {
+            objdata->animCallbackRotate = 1 - objdata->animCallbackRotate;
         }
-        arg2->unk8E[i] = 0;
+        animObjData->unk8E[i] = 0;
     }
-    if (objdata->unk1C != 0) {
-        if (setup->unk27 == 0x7F) {
-            arg0->srt.yaw += gUpdateRate * 0xA;
+    
+    if (objdata->animCallbackRotate) {
+        if (setup->yawSpeed == USE_DEFAULT_SPEED) {
+            self->srt.yaw += gUpdateRate * 10;
         } else {
-            arg0->srt.yaw += setup->unk27 * gUpdateRate * 0x64;
+            self->srt.yaw += setup->yawSpeed * gUpdateRate * 100;
         }
-        if (setup->unk26 == 0x7F) {
-            arg0->srt.pitch += gUpdateRate * 0xA;
+
+        if (setup->pitchSpeed == USE_DEFAULT_SPEED) {
+            self->srt.pitch += gUpdateRate * 10;
         } else {
-            arg0->srt.pitch += setup->unk26 * gUpdateRate * 0x64;
+            self->srt.pitch += setup->pitchSpeed * gUpdateRate * 100;
         }
-        if (setup->unk25 == 0x7F) {
-            arg0->srt.roll += gUpdateRate * 0xA;
+
+        if (setup->rollSpeed == USE_DEFAULT_SPEED) {
+            self->srt.roll += gUpdateRate * 10;
         } else {
-            arg0->srt.roll += setup->unk25 * gUpdateRate * 0x64;
+            self->srt.roll += setup->rollSpeed * gUpdateRate * 100;
         }
-        dll_332_func_8E8(arg0);
+
+        FXEmit_emit(self);
     }
     return 0;
 }
 
 // offset: 0x8E8 | func: 8
-static void dll_332_func_8E8(Object *self) {
+/** Creates the effect(s) */
+static void FXEmit_emit(Object *self) {
     FXEmit_Data *objdata;
     FXEmit_Setup *setup;
-    s32 var_s3;
+    s32 flags;
     DLL_IModgfx *modfxDLL;
     DLL_IProjgfx *projfxDLL;
     s16 i;
@@ -240,48 +284,50 @@ static void dll_332_func_8E8(Object *self) {
 
     objdata = self->data;
     setup = (FXEmit_Setup*)self->setup;
-    var_s3 = 0;
-    switch (setup->unk28) {
-    case 3:
+
+    flags = PARTFXFLAG_NONE;
+    switch (setup->flagConfig) {
+    case Preset_3:
         break;
     default:
-        var_s3 = 2;
+        flags = PARTFXFLAG_2;
         break;
-    case 0:
-        if (objdata->unk8 == 0) {
-            var_s3 = 2;
+    case Preset_0:
+        if (objdata->bank == BANK_ParticleFX) {
+            flags = PARTFXFLAG_2;
         }
-        if (objdata->unk8 == 1) {
-            var_s3 = 2;
+        if (objdata->bank == BANK_ModelFX) {
+            flags = PARTFXFLAG_2;
         }
-        if (objdata->unk8 == 2) {
-            var_s3 = 2;
-        }
-        break;
-    case 1:
-        if (objdata->unk8 == 0) {
-            var_s3 = 4;
-        }
-        if (objdata->unk8 == 1) {
-            var_s3 = 4;
-        }
-        if (objdata->unk8 == 2) {
-            var_s3 = 4;
+        if (objdata->bank == BANK_ProjectileFX) {
+            flags = PARTFXFLAG_2;
         }
         break;
-    case 2:
-        if (objdata->unk8 == 0) {
-            var_s3 = 0x200001;
+    case Preset_1:
+        if (objdata->bank == BANK_ParticleFX) {
+            flags = PARTFXFLAG_4;
         }
-        if (objdata->unk8 == 1) {
-            var_s3 = 1;
+        if (objdata->bank == BANK_ModelFX) {
+            flags = PARTFXFLAG_4;
         }
-        if (objdata->unk8 == 2) {
-            var_s3 = 1;
+        if (objdata->bank == BANK_ProjectileFX) {
+            flags = PARTFXFLAG_4;
+        }
+        break;
+    case Preset_2:
+        if (objdata->bank == BANK_ParticleFX) {
+            flags = PARTFXFLAG_200000 + PARTFXFLAG_1;
+        }
+        if (objdata->bank == BANK_ModelFX) {
+            flags = PARTFXFLAG_1;
+        }
+        if (objdata->bank == BANK_ProjectileFX) {
+            flags = PARTFXFLAG_1;
         }
         break;
     }
-    if (var_s3 & 1) {
+
+    if (flags & PARTFXFLAG_1) {
         srt.transl.x = self->srt.transl.x;
         srt.transl.y = self->srt.transl.y;
         srt.transl.z = self->srt.transl.z;
@@ -289,40 +335,40 @@ static void dll_332_func_8E8(Object *self) {
         srt.roll = self->srt.roll;
         srt.pitch = self->srt.pitch;
         srt.scale = 1.0f;
-        if (objdata->unkE > 0) {
-            for (i = 0; i < objdata->unkE; i++) {
-                gDLL_17_partfx->vtbl->spawn(self, objdata->unkA, &srt, var_s3, -1, NULL);
+        if (objdata->fxRate > 0) {
+            for (i = 0; i < objdata->fxRate; i++) {
+                gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, &srt, flags, -1, NULL);
             }
         } else {
-            gDLL_17_partfx->vtbl->spawn(self, objdata->unkC, &srt, var_s3, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, objdata->defaultFXIndex, &srt, flags, -1, NULL);
         }
     } else {
-        if (objdata->unk8 == 0) {
-            if (objdata->unkE > 0) {
-                for (i = 0; i < objdata->unkE; i++) {
-                    gDLL_17_partfx->vtbl->spawn(self, objdata->unkA, NULL, var_s3, -1, NULL);
+        if (objdata->bank == BANK_ParticleFX) {
+            if (objdata->fxRate > 0) {
+                for (i = 0; i < objdata->fxRate; i++) {
+                    gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, NULL, flags, -1, NULL);
                 }
             } else {
-                gDLL_17_partfx->vtbl->spawn(self, objdata->unkA, NULL, var_s3, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, NULL, flags, -1, NULL);
             }
-        } else if (objdata->unk8 == 1) {
-            modfxDLL = dll_load_deferred((objdata->unkA + 0x1000), 1);
-            if (objdata->unkE > 0) {
-                for (i = 0; i < objdata->unkE; i++) {
-                    modfxDLL->vtbl->func0(self, 0, 0, var_s3, -1, 0);
+        } else if (objdata->bank == BANK_ModelFX) {
+            modfxDLL = dll_load_deferred((objdata->indexInBank + 0x1000), 1);
+            if (objdata->fxRate > 0) {
+                for (i = 0; i < objdata->fxRate; i++) {
+                    modfxDLL->vtbl->func0(self, 0, 0, flags, -1, 0);
                 }
             } else {
-                modfxDLL->vtbl->func0(self, 0, 0, var_s3, -1, 0);
+                modfxDLL->vtbl->func0(self, 0, 0, flags, -1, 0);
             }
             dll_unload(modfxDLL);
-        } else if (objdata->unk8 == 2) {
-            projfxDLL = dll_load_deferred((objdata->unkA + 0x2000), 1);
-            if (objdata->unkE > 0) {
-                for (i = 0; i < objdata->unkE; i++) {
-                    projfxDLL->vtbl->func0(self, 0, 0, var_s3, -1, objdata->unkA, 0);
+        } else if (objdata->bank == BANK_ProjectileFX) {
+            projfxDLL = dll_load_deferred((objdata->indexInBank + 0x2000), 1);
+            if (objdata->fxRate > 0) {
+                for (i = 0; i < objdata->fxRate; i++) {
+                    projfxDLL->vtbl->func0(self, 0, 0, flags, -1, objdata->indexInBank, 0);
                 }
             } else {
-                projfxDLL->vtbl->func0(self, 0, 0, var_s3, -1, objdata->unkA, 0);
+                projfxDLL->vtbl->func0(self, 0, 0, flags, -1, objdata->indexInBank, 0);
             }
             dll_unload(projfxDLL);
         }

@@ -18,17 +18,18 @@ void cannon_claw_ctor(void *dll) { }
 void cannon_claw_dtor(void *dll) { }
 
 void cannon_claw_setup(Object *self, ObjSetup *setup, s32 a2) {
-    self->srt.yaw = -32768;
+    self->srt.yaw = -M_180_DEGREES;
     self->srt.transl.y = setup->y + 2.0f;  
 }
 
 void cannon_claw_control(Object *self) {
     s32 temp;
     Object *sidekick;
+    CannonClaw_Setup *setup;
 
     sidekick = get_sidekick();
     
-    if (self->unkDC != 0) {
+    if (self->unkDC) {
         return;
     }
 
@@ -36,21 +37,21 @@ void cannon_claw_control(Object *self) {
         func_80023D30(self, 0x208, 0, 0);
     }
 
-    func_80024108(self, 0.0049999998f, gUpdateRateF, NULL);
+    func_80024108(self, 0.005f, gUpdateRateF, NULL);
     temp = func_80025F40(self, NULL, 0, 0);
     
-    if (temp != 0) {
-        if (self->parent != NULL) {
-            CannonClaw_Setup *setup = (CannonClaw_Setup*)self->parent->setup;
+    if (temp) {
+        if (self->parent) {
+            setup = (CannonClaw_Setup*)self->parent->setup;
             main_set_bits(setup->gamebit, 1);
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
         }
         
         cannon_claw_func_1B4(self);
     } else {
-        if (self->parent != NULL) {
-            CannonClaw_Setup *setup = (CannonClaw_Setup*)self->parent->setup;
-            if (main_get_bits(setup->gamebit) != 0) {
+        if (self->parent) {
+            setup = (CannonClaw_Setup*)self->parent->setup;
+            if (main_get_bits(setup->gamebit)) {
                 cannon_claw_func_1B4(self);
             }
         }
@@ -66,7 +67,7 @@ static void cannon_claw_func_1B4(Object *self) {
 void cannon_claw_update(Object *self) { }
 
 void cannon_claw_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    if (visibility != 0 && self->unkDC == 0) {
+    if (visibility && self->unkDC == 0) {
 		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }

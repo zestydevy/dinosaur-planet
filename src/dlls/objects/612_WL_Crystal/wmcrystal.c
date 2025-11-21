@@ -1,23 +1,6 @@
 #include "common.h"
 #include "sys/memory.h"
 
-#define DOT_PRODUCT(vA, vB) ((vA.f[0] * vB.f[0]) + (vA.f[1] * vB.f[1]) + (vA.f[2] * vB.f[2]))
-#define VECTOR_ADD(vInA, vInB, vOut) vOut.f[0] = vInA.f[0] + vInB.f[0];\
-    vOut.f[1] = vInA.f[1] + vInB.f[1];\
-    vOut.f[2] = vInA.f[2] + vInB.f[2];
-#define VECTOR_SUBTRACT(vInA, vInB, vOut) vOut.f[0] = vInA.f[0] - vInB.f[0];\
-    vOut.f[1] = vInA.f[1] - vInB.f[1];\
-    vOut.f[2] = vInA.f[2] - vInB.f[2];
-#define VECTOR_MAGNITUDE_SQUARED(v) (SQ(v.f[0]) + SQ(v.f[1]) + SQ(v.f[2]))
-#define VECTOR_MAGNITUDE(v) sqrtf(VECTOR_MAGNITUDE_SQUARED(v))
-#define VECTOR_DIVIDE_BY_SCALAR(v, scalar) if (scalar != 0.0f) {\
-    v.x /= scalar;\
-    v.y /= scalar;\
-    v.z /= scalar;\
-}
-#define VECTOR_NORMALISE(v, vMagnitude) vMagnitude = VECTOR_MAGNITUDE(v);\
-    VECTOR_DIVIDE_BY_SCALAR(v, vMagnitude)
-
 void dl_clear_geometry_mode(Gfx **gdl, u32 mode);
 void dl_set_geometry_mode(Gfx **gdl, u32 mode);
 void func_8001EAA4(s32, s32, s32, f32);
