@@ -1,53 +1,37 @@
-#include "PR/gbi.h"
-#include "PR/ultratypes.h"
-#include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "functions.h"
-#include "game/gamebits.h"
-#include "game/objects/object.h"
-#include "game/objects/object_id.h"
-#include "sys/gfx/model.h"
-#include "sys/main.h"
-#include "sys/math.h"
-#include "sys/objects.h"
-#include "sys/objhits.h"
-#include "sys/rand.h"
-#include "types.h"
-
+#include "common.h"
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s16 unk18;
-/*1A*/ s16 unk1A;
-/*1C*/ s16 unk1C;
+/*18*/ s16 unk18;                       //unused
+/*1A*/ s16 angularRange;                //maximum angular distance from desired travel angle
+/*1C*/ s16 windAngle;                   //desired direction the spore should travel in
 } SHSpore_Setup;
 
 typedef struct {
-/*000*/ DLL27_Data unk0;
+/*000*/ DLL27_Data terrainCollider;
 /*260*/ f32 lifetime;
-/*264*/ f32 unk264;
-/*268*/ f32 unk268;
-/*26C*/ f32 unk26C;
-/*270*/ f32 unk270;
-/*274*/ f32 unk274;
-/*278*/ f32 unk278;
-/*27C*/ f32 unk27C;
-/*280*/ f32 unk280;
-/*284*/ f32 unk284;
-/*288*/ f32 unk288;
-/*28C*/ f32 unk28C;
-/*290*/ f32 unk290;
-/*294*/ s16 unk294;
-/*296*/ s16 unk296;
-/*298*/ s16 unk298;
-/*29A*/ s16 unk29A;
+/*264*/ f32 lateralSpeed;
+/*268*/ f32 lateralAcceleration;
+/*26C*/ f32 lateralSpeedGoal;
+/*270*/ f32 angularJitterTimer;         //waiting time between slightly randomising flight angle
+/*274*/ f32 velocityX;
+/*278*/ f32 velocityZ;
+/*27C*/ f32 coefficientX;               //multiplier for lateral acceleration
+/*280*/ f32 coefficientZ;               //multiplier for lateral acceleration
+/*284*/ f32 lateralDecelerationTimer;   //waiting time until lateral acceleration dwindles
+/*288*/ f32 lateralAccelerationGoal;
+/*28C*/ f32 angleChangeTimer;           //waiting time between large randomisation of flight angle
+/*290*/ f32 deletionTimer;      
+/*294*/ s16 angle;                      //lateral direction of travel
+/*296*/ s16 angleJitter;                //lateral direction of travel (plus randomised angular noise)
+/*298*/ s16 angleGoal;
 } SHSpore_Data;
 
-static void SHspore_func_750(Object* self, SHSpore_Data* objdata);
-static void SHspore_func_A00(Object* arg0, SHSpore_Data* objdata);
+static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData);
+static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData);
 
-/*0x0*/ static Vec3f _data_0 = { 0, 0, 0 };
-/*0xC*/ static f32 _data_C = 5.0f;
+/*0x0*/ static Vec3f data_collision_test_point = { 0, 0, 0 };
+/*0xC*/ static f32 data_collision_radius = 5.0f;
 
 // offset: 0x0 | ctor
 void SHspore_ctor(void *dll) { }
@@ -57,84 +41,88 @@ void SHspore_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
-    SHSpore_Data* objdata;
+    SHSpore_Data* objData;
     s8 pad[4];
     u8 sp37;
 
-    objdata = self->data;
+    objData = self->data;
     sp37 = 5;
-    objdata->lifetime = 1500.0f; //25s
+    objData->lifetime = 1500.0f; //25s
     self->unkB0 |= 0x6000;
     self->speed.y = 3.0f;
 
     func_800267A4(self);
-    objdata->unk298 = rand_next(0, 0xFFFF);
-    objdata->unk26C = rand_next(0, 1000) / 1000.0f;
+    objData->angleGoal = rand_next(0, 0xFFFF);
+    objData->lateralSpeedGoal = rand_next(0, 1000) / 1000.0f;
 
-    gDLL_27->vtbl->init(&objdata->unk0, DLL27FLAG_NONE, DLL27FLAG_2 | DLL27FLAG_40000, DLL27MODE_1);
-    gDLL_27->vtbl->setup_terrain_collider(&objdata->unk0, 1, &_data_0, &_data_C, &sp37);
+    gDLL_27->vtbl->init(&objData->terrainCollider, DLL27FLAG_NONE, DLL27FLAG_2 | DLL27FLAG_40000, DLL27MODE_1);
+    gDLL_27->vtbl->setup_terrain_collider(&objData->terrainCollider, 1, &data_collision_test_point, &data_collision_radius, &sp37);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F1, NULL, PARTFXFLAG_4, -1, NULL);
 }
 
 // offset: 0x18C | func: 1 | export: 1
 void SHspore_control(Object* self) {
-    SHSpore_Data* objdata;
+    SHSpore_Data* objData;
     s8 pad[10];
     s32 particleCount;
     f32 temp;
-    f32 temp_fv0;
+    f32 lateralJolt;
     s32 index;
     Object* collidedObject;
 
-    objdata = (SHSpore_Data*)self->data;
-    if (objdata->unk290 != 0.0f) {
+    objData = (SHSpore_Data*)self->data;
+
+    if (objData->deletionTimer != 0.0f) {
         self->srt.yaw += gUpdateRate << 6;
-        objdata->unk290 -= gUpdateRateF;
-        if (objdata->unk290 <= 0.0f) {
+        objData->deletionTimer -= gUpdateRateF;
+        if (objData->deletionTimer <= 0.0f) {
             obj_destroy_object(self);
         }
     } else {
         //Update motion
-        objdata->unk270 -= gUpdateRateF;
-        if (objdata->unk270 < 0.0f) {
-            objdata->unk270 = 0.0f;
+        objData->angularJitterTimer -= gUpdateRateF;
+        if (objData->angularJitterTimer < 0.0f) {
+            objData->angularJitterTimer = 0.0f;
         }
-        objdata->unk28C -= gUpdateRateF;
-        if (objdata->unk28C < 0.0f) {
-            objdata->unk28C = 0.0f;
+        objData->angleChangeTimer -= gUpdateRateF;
+        if (objData->angleChangeTimer < 0.0f) {
+            objData->angleChangeTimer = 0.0f;
         }
+
         self->speed.y += -0.009f * gUpdateRateF;
         if (self->speed.y < -0.2f) {
             self->speed.y = -0.2f;
         }
         if (self->speed.y > 0) {
-            self->speed.y *= 0.97f;
+            self->speed.y *= 0.97f; //framerate dependent? Ascent would slow more rapidly at 60fps
         }
         if (self->speed.y < 0.0f) {
             func_8002674C(self);
         }
-        SHspore_func_750(self, objdata);
-        if ((rand_next(0, 100) < 5) && (objdata->unk270 <= 0.0f)) {
-            SHspore_func_A00(self, objdata);
+
+        SHspore_change_flight_direction(self, objData);
+        if ((rand_next(0, 100) < 5) && (objData->angularJitterTimer <= 0.0f)) {
+            SHspore_jitter_flight_direction(self, objData);
         }
-        objdata->unk284 -= gUpdateRateF;
-        if (objdata->unk284 <= 0.0f) {
-            objdata->unk27C *= 0.97f;
-            objdata->unk280 *= 0.97f;
-            objdata->unk284 = 0.0f;
+
+        objData->lateralDecelerationTimer -= gUpdateRateF;
+        if (objData->lateralDecelerationTimer <= 0.0f) {
+            objData->coefficientX *= 0.97f;
+            objData->coefficientZ *= 0.97f;
+            objData->lateralDecelerationTimer = 0.0f;
         } else {
-            temp_fv0 = objdata->unk288 - objdata->unk268;
-            objdata->unk268 += temp_fv0 * 0.01f * gUpdateRateF;
+            lateralJolt = objData->lateralAccelerationGoal - objData->lateralAcceleration;
+            objData->lateralAcceleration += lateralJolt * 0.01f * gUpdateRateF;
         }
-        self->speed.x = objdata->unk274 + (objdata->unk27C * objdata->unk268);
-        self->speed.z = objdata->unk278 + (objdata->unk280 * objdata->unk268);
+        self->speed.x = objData->velocityX + (objData->coefficientX * objData->lateralAcceleration);
+        self->speed.z = objData->velocityZ + (objData->coefficientZ * objData->lateralAcceleration);
         obj_integrate_speed(self, self->speed.x * gUpdateRateF, self->speed.y * gUpdateRateF, self->speed.z * gUpdateRateF);
-        gDLL_27->vtbl->func_1E8(self, &objdata->unk0, gUpdateRateF);
-        gDLL_27->vtbl->func_5A8(self, &objdata->unk0);
-        gDLL_27->vtbl->func_624(self, &objdata->unk0, gUpdateRateF);
+        gDLL_27->vtbl->func_1E8(self, &objData->terrainCollider, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, &objData->terrainCollider);
+        gDLL_27->vtbl->func_624(self, &objData->terrainCollider, gUpdateRateF);
         func_80026128(self, 0xA, 0, 0);
 
-        //Handle collisions
+        //Handle object collisions
         collidedObject = (Object*)self->objhitInfo->unk48;
         if (collidedObject) {
             particleCount = 20;
@@ -153,14 +141,14 @@ void SHspore_control(Object* self) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F3, NULL, PARTFXFLAG_4, -1, NULL);
                 }
 
-                objdata->unk290 = 200.0f;
+                objData->deletionTimer = 200.0f;
                 self->srt.flags |= 0x4000;
                 func_800267A4(self);
             }
         } else {
-            objdata->lifetime -= gUpdateRateF;
+            objData->lifetime -= gUpdateRateF;
             //Destroy the spore if its lifetime runs out or it collides with terrain
-            if (objdata->lifetime <= 0.0f || objdata->unk0.unk25C & 0x11) {
+            if (objData->lifetime <= 0.0f || objData->terrainCollider.unk25C & 0x11) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_8A2, MAX_VOLUME, NULL, 0, 0, 0);
                 gDLL_13_Expgfx->vtbl->func4(self);
 
@@ -169,7 +157,7 @@ void SHspore_control(Object* self) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3F3, NULL, PARTFXFLAG_4, -1, NULL);
                 }
 
-                objdata->unk290 = 200.0f;
+                objData->deletionTimer = 200.0f;
                 self->srt.flags |= 0x4000;
                 func_800267A4(self);
             }
@@ -178,80 +166,88 @@ void SHspore_control(Object* self) {
 }
 
 // offset: 0x750 | func: 2
-static void SHspore_func_750(Object* self, SHSpore_Data* objdata) {
+static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData) {
     s8 pad[4];
     SHSpore_Setup* setup;
-    f32 temp_fv1;
-    s32 sp20;
-    s32 var_v0;
+    f32 lateralAcceleration;
+    s32 windAngle;
+    s32 deltaTheta;
 
     setup = (SHSpore_Setup*)self->setup;
-    sp20 = setup->unk1C;
 
-    if (rand_next(0, 100) < 0xA && objdata->unk28C <= 0.0f) {
-        objdata->unk298 = rand_next(2000, 4000);
-        if (rand_next(0, 1) != 0) {
-            objdata->unk298 = -objdata->unk298;
-        }
-        objdata->unk298 += objdata->unk294;
-        var_v0 = objdata->unk298 - (sp20 & 0xFFFF);
-        CIRCLE_WRAP(var_v0)
+    windAngle = setup->windAngle;
 
-        if (setup->unk1A < var_v0) {
-            objdata->unk298 = setup->unk1A + sp20;
+    //10% chance of shifting away from current angle (approximately 11 to 22 degree shift)
+    if (rand_next(0, 100) < 10 && objData->angleChangeTimer <= 0.0f) {
+        objData->angleGoal = rand_next(2000, 4000);
+        //Either clockwise or anticlockwise shift
+        if (rand_next(0, 1)) {
+            objData->angleGoal = -objData->angleGoal;
         }
-        if (var_v0 < -setup->unk1A) {
-            objdata->unk298 = sp20 - setup->unk1A;
+        objData->angleGoal += objData->angle;
+
+        //Constrain goal angle based on setup parameters
+        deltaTheta = objData->angleGoal - (windAngle & 0xFFFF);
+        CIRCLE_WRAP(deltaTheta)
+        if (deltaTheta > setup->angularRange) {
+            objData->angleGoal = windAngle + setup->angularRange;
         }
-        objdata->unk28C = 150.0f;
+        if (deltaTheta < -setup->angularRange) {
+            objData->angleGoal = windAngle - setup->angularRange;
+        }
+
+        objData->angleChangeTimer = 150.0f;
     }
 
-    if (rand_next(0, 100) < 0xA && objdata->unk28C <= 0.0f) {
-        objdata->unk26C = (rand_next(-200, 200) / 1000.0f) + objdata->unk264;
-        if (objdata->unk26C < 0.5f) {
-            objdata->unk26C = 0.5f;
-        } else if (objdata->unk26C > 1.0f) {
-            objdata->unk26C = 1.0f;
+    //Randomise lateral speed
+    if (rand_next(0, 100) < 10 && objData->angleChangeTimer <= 0.0f) {
+        objData->lateralSpeedGoal = (rand_next(-200, 200) / 1000.0f) + objData->lateralSpeed;
+        if (objData->lateralSpeedGoal < 0.5f) {
+            objData->lateralSpeedGoal = 0.5f;
+        } else if (objData->lateralSpeedGoal > 1.0f) {
+            objData->lateralSpeedGoal = 1.0f;
         }
     }
 
-    var_v0 = objdata->unk298 - (objdata->unk294 & 0xFFFF);
-    CIRCLE_WRAP(var_v0)
+    deltaTheta = objData->angleGoal - (objData->angle & 0xFFFF);
+    CIRCLE_WRAP(deltaTheta)
 
-    objdata->unk294 += (var_v0 * gUpdateRate) >> 4;
+    objData->angle += (deltaTheta * gUpdateRate) >> 4;
 
-    temp_fv1 = objdata->unk26C - objdata->unk264;
-    objdata->unk264 += temp_fv1 * 0.006f * gUpdateRateF;
-    objdata->unk274 = fsin16_precise(objdata->unk294) * objdata->unk264;
-    objdata->unk278 = fcos16_precise(objdata->unk294) * objdata->unk264;
+    lateralAcceleration = objData->lateralSpeedGoal - objData->lateralSpeed;
+    objData->lateralSpeed += lateralAcceleration * 0.006f * gUpdateRateF;
+    objData->velocityX = fsin16_precise(objData->angle) * objData->lateralSpeed;
+    objData->velocityZ = fcos16_precise(objData->angle) * objData->lateralSpeed;
 }
 
 // offset: 0xA00 | func: 3
-static void SHspore_func_A00(Object* self, SHSpore_Data* objdata) {
+static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData) {
     SHSpore_Setup* setup;
-    s32 sp20;
-    s32 var_v1;
+    s32 windAngle;
+    s32 deltaTheta;
 
     setup = (SHSpore_Setup*)self->setup;
-    sp20 = setup->unk1C;
-    objdata->unk284 = rand_next(0x1E, 0x2D);
-    objdata->unk270 = rand_next(0x78, 0xB4) + objdata->unk284;
-    objdata->unk296 = rand_next(-0x7D0, 0x7D0) + objdata->unk294;
 
-    var_v1 = objdata->unk296 - (sp20 & 0xFFFF);
-    CIRCLE_WRAP(var_v1)
+    windAngle = setup->windAngle;
+    objData->lateralDecelerationTimer = rand_next(30, 45);
+    objData->angularJitterTimer = rand_next(120, 180) + objData->lateralDecelerationTimer;
+    objData->angleJitter = rand_next(-2000, 2000) + objData->angle; //up to ~11 degrees away from current angle
 
-    if (setup->unk1A < var_v1) {
-        objdata->unk296 = setup->unk1A + sp20;
+    deltaTheta = objData->angleJitter - (windAngle & 0xFFFF);
+    CIRCLE_WRAP(deltaTheta)
+
+    //Clamp direction of travel within acceptable range
+    if (deltaTheta > setup->angularRange) {
+        objData->angleJitter = windAngle + setup->angularRange;
     }
-    if (var_v1 < -setup->unk1A) {
-        objdata->unk296 = sp20 - setup->unk1A;
+    if (deltaTheta < -setup->angularRange) {
+        objData->angleJitter = windAngle - setup->angularRange;
     }
 
-    objdata->unk288 = rand_next(0x384, 0x514) / 1000.0f;
-    objdata->unk268 = 0.0f;
-    objdata->unk27C = fsin16_precise(objdata->unk296);
-    objdata->unk280 = fcos16_precise(objdata->unk296);
+    objData->lateralAccelerationGoal = rand_next(900, 1300) / 1000.0f;
+    objData->lateralAcceleration = 0.0f;
+    objData->coefficientX = fsin16_precise(objData->angleJitter);
+    objData->coefficientZ = fcos16_precise(objData->angleJitter);
 }
 
 // offset: 0xB88 | func: 4 | export: 2
