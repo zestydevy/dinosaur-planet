@@ -65,7 +65,7 @@ void perchobject_setup(Object* self, s32 arg1, s32 arg2) {
     PerchObject_Data* objData = self->data;
 
     objData->stateIndex = STATE_0_Initialise;
-    obj_add_object_type(self, 0x30);
+    obj_add_object_type(self, OBJTYPE_48);
     self->animCallback = perchobject_anim_callback;
 }
 

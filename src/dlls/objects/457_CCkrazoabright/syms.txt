@@ -1,0 +1,29 @@
+.text = 0x0:
+dll_457_ctor = 0x0;
+dll_457_dtor = 0xC;
+dll_457_setup = 0x18;
+dll_457_control = 0xB4;
+dll_457_func_298 = 0x298;
+dll_457_func_2F8 = 0x2F8;
+dll_457_func_420 = 0x420;
+dll_457_func_728 = 0x728;
+dll_457_func_808 = 0x808;
+dll_457_func_AAC = 0xAAC;
+dll_457_update = 0xDE4;
+dll_457_print = 0xDF0;
+dll_457_free = 0xE08;
+dll_457_get_model_flags = 0xE18;
+dll_457_get_data_size = 0xE28;
+dll_457_func_E3C = 0xE3C;
+dll_457_func_12AC = 0x12AC;
+dll_457_func_140C = 0x140C;
+
+.rodata = 0x16AC:
+str_0 = 0x0; // absolute:0x16AC
+
+.data = 0x16CC:
+data_coords_well_blocks = 0x0; // absolute:0x16CC
+data_coords_lever_blocks = 0x18; // absolute:0x16E4
+data_krazoa_symbol_shape_animatorIDs = 0x30; // absolute:0x16FC
+data_tablet_quest_gamebits = 0x38; // absolute:0x1704
+_data_44 = 0x44; // absolute:0x1710

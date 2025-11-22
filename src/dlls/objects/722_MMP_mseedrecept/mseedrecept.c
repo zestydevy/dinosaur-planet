@@ -72,7 +72,7 @@ void mmp_mseedrecept_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32 ar
     self->srt.yaw = setup->yaw << 8;
     objData->unk0 = 0;
     
-    obj_add_object_type(self, 0x30);
+    obj_add_object_type(self, OBJTYPE_48);
 
     switch (setup->base.uID) {
         //Soil spot just beyond SharpClaw outpost 

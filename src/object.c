@@ -754,7 +754,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     update_pi_manager_array(0, -1);
 
     if (obj->def->flags & OBJDATA_FLAG44_HasChildren) {
-        obj_add_object_type(obj, 7);
+        obj_add_object_type(obj, OBJTYPE_7);
 
         if (obj->updatePriority != 90) {
             obj_set_update_priority(obj, 90);
@@ -774,7 +774,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     }
 
     if (obj->def->unk5e >= 1) {
-        obj_add_object_type(obj, 9);
+        obj_add_object_type(obj, OBJTYPE_9);
     }
 
     if (obj->def->flags & OBJDATA_FLAG44_HaveModels) {
@@ -782,7 +782,7 @@ void obj_add_object(Object *obj, u32 initFlags) {
     }
 
     if (obj->def->flags & OBJDATA_FLAG44_DifferentLightColor) {
-        obj_add_object_type(obj, 56);
+        obj_add_object_type(obj, OBJTYPE_56);
     }
 
     write_c_file_label_pointers("objects/objects.c", 0x477);
