@@ -55,10 +55,6 @@ Vec3f unk0;
 s8 unkC;
 } CameraFunc15Unk_unk74;
 
-typedef struct {
-    s8 unk0[0x74 - 0];
-    CameraFunc15Unk_unk74* unk74; 
-} CameraFunc15Unk;
 
 typedef struct {
     s32 unk0;
@@ -1225,19 +1221,18 @@ void dll_3_func_9C94(s32 index, Object* object, Object* overrideObject) {
 
 // offset: 0x9CE8 | func: 68
 void dll_3_func_9CE8(s32 arg0) {
-    //TODO: figure out what these structs really are
-    CameraFunc15Unk* temp_v0;
+    Object* temp_v0;
     CameraFunc15Unk_unk74 sp34;
 
     if (gDLL_2_Camera->vtbl->func3() == 0x5F) {
         return;
     }
     
-    temp_v0 = (CameraFunc15Unk*)gDLL_2_Camera->vtbl->func15();
+    temp_v0 = gDLL_2_Camera->vtbl->func15();
     if ((temp_v0 != NULL) && (temp_v0->unk74 != NULL)) {
-        sp34.unk0.x = temp_v0->unk74->unk0.x;
-        sp34.unk0.y = temp_v0->unk74->unk0.y;
-        sp34.unk0.z = temp_v0->unk74->unk0.z;
+        sp34.unk0.x = temp_v0->unk74->x;
+        sp34.unk0.y = temp_v0->unk74->y;
+        sp34.unk0.z = temp_v0->unk74->z;
         sp34.unkC = arg0;
         gDLL_2_Camera->vtbl->func6(0x5F, 1, 0, 0x10, &sp34, 0x3C, 0xFF);
     }

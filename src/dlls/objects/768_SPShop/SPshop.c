@@ -117,7 +117,7 @@ void SPShop_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SPShop_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_add_object_type(self, 0xA);
+    obj_add_object_type(self, OBJTYPE_10);
     main_set_bits(BIT_SP_Exiting_Shop, 0);
     SPShop_set_random_prices();
 }

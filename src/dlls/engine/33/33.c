@@ -786,7 +786,7 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
     sp38 = arg6 & 1;
     sp3C = (s32) arg6;
     if ((sp38 == 0) && !(arg6 & 0x20)) {
-        obj_add_object_type(obj, 4);
+        obj_add_object_type(obj, OBJTYPE_4);
         obj_init_mesg_queue(obj, 4U);
     }
     gDLL_18_objfsa->vtbl->func0(obj, &data->fsa, arg3, arg4);

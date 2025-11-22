@@ -1,5 +1,5 @@
-#ifndef _DLLS_XXX_VEHICLE_H
-#define _DLLS_XXX_VEHICLE_H
+#ifndef _DLLS_COMMON_VEHICLE_H
+#define _DLLS_COMMON_VEHICLE_H
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
@@ -23,4 +23,4 @@ DLL_INTERFACE(DLL_IVehicle) {
 	/*20*/ void (*func20)(s32 a0, s32 a1, s32 a2);
 };
 
-#endif //_DLLS_210_H
+#endif //_DLLS_COMMON_VEHICLE_H

@@ -1,5 +1,6 @@
 #include "sys/objhits.h"
 #include "sys/objanim.h"
+#include "sys/gfx/modgfx.h"
 
 static const char str_80099860[] = "objhits.c: keysize overflow error\n";
 static const char str_80099884[] = " Warning HitModel %x [%d] has no Polyhits\n";
@@ -628,7 +629,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     SRT sp70;
     s32 i;
     Unk80026DF4* sp68;
-    DLL_106* loadedDLL;
+    DLL_IModgfx* loadedDLL;
     ModelInstance *modelInst;
     s32 sp5C;
     f32 sp58;

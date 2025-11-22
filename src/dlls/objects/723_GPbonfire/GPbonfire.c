@@ -85,7 +85,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     objdata->currentState = 0;
     objdata->soundHandles[0] = 0;
     objdata->soundHandles[1] = 0;
-    obj_add_object_type(self, 0x30);
+    obj_add_object_type(self, OBJTYPE_48);
     objdata->gameBitKindlingPlaced = BIT_GP_Bonfire_Kindling_Placed;
     objdata->gameBitBurning = BIT_GP_Bonfire_Burning;
     objdata->sequenceIndexKindling = 0;

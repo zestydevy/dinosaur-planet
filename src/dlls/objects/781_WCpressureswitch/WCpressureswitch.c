@@ -63,7 +63,7 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
         objdata->state = 2;
     }
 
-    obj_add_object_type(self, 0x33);
+    obj_add_object_type(self, OBJTYPE_51);
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 

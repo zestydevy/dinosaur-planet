@@ -12,8 +12,10 @@ enum ObjType {
     OBJTYPE_5 = 5,
     OBJTYPE_6 = 6,
     OBJTYPE_7 = 7, // CFScalesGalleon
+    OBJTYPE_9 = 9,
     OBJTYPE_10 = 10, // Shop? Object DLL(s) might refer to DLL_768_SPShop (also used by WCLevelControl)
     OBJTYPE_11 = 11, // BWlog, DFlog, IMSnowBike
+    OBJTYPE_12 = 12,
     OBJTYPE_13 = 13,
     OBJTYPE_16 = 16,
     OBJTYPE_17 = 17,
@@ -29,6 +31,7 @@ enum ObjType {
     OBJTYPE_48 = 48,
     OBJTYPE_51 = 51, // sidekick-related?
     OBJTYPE_52 = 52,
+    OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,
     OBJTYPE_64 = 64
 };
