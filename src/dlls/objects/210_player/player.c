@@ -30,6 +30,7 @@
 #include "dll.h"
 #include "types.h"
 #include "dlls/objects/common/vehicle.h"
+#include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/277_iceblast.h"
@@ -1739,19 +1740,6 @@ void dll_210_func_47B8(Object* player, Player_Data* arg1) {
 // dll_210_func_63F0 (matched)
 // dll_210_func_60A8 (matched)
 
-typedef struct DLL_IFoodbag { 
-struct DLL_IFoodbag_Vtbl* vtbl;
-} DLL_IFoodbag;
-typedef struct DLL_IFoodbag_Vtbl DLL_IFoodbag_Vtbl;
-struct DLL_IFoodbag_Vtbl {
-	/*:*/ struct DLL_IObject_Vtbl base;
-	/*7*/ UnknownDLLFunc func7;
-	/*8*/ UnknownDLLFunc func8;
-	/*9*/ UnknownDLLFunc func9;
-	/*10*/ UnknownDLLFunc func10;
-	/*11*/ UnknownDLLFunc func11;
-	/*12*/ void (*func12)(Object *self, s16 a1);
-};
 int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     static s8 _bss_0;
     static s16 _bss_2;
@@ -4087,10 +4075,17 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
 
     if (!func_8002493C(player, fsa->unk278, &fsa->animTickDelta)){
-        diPrintf("krystal.c: objGetAnimChange Error\n\0\0 Looking For Horny\0\0 Found Horn Platform \0\0\0 Giving Food \0\0\0 Have Lock %i  \0 Seting Stuff \0\0CANNOT FIND CRAWL NODE\n");
+        diPrintf("krystal.c: objGetAnimChange Error\n");
     }
     return 0;
 }
+
+static const char str_1[] = " Looking For Horny";
+static const char str_2[] = " Found Horn Platform ";
+static const char str_3[] = " Giving Food ";
+static const char str_4[] = " Have Lock %i  ";
+static const char str_5[] = " Seting Stuff ";
+static const char str_6[] = "CANNOT FIND CRAWL NODE\n";
 
 // offset: 0xB4C8 | func: 61
 static void dll_210_func_B4C8(Object* player, ObjFSA_Data *fsa) {
