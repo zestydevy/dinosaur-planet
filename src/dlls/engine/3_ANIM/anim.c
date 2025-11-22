@@ -544,7 +544,7 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
     actor->unkAF &= 0xFFF8;
     get_object_child_position(actor, actor->positionMirror.f, &actor->positionMirror.f[1], &actor->positionMirror.f[2]);
     if (actor->objhitInfo != NULL) {
-        actor->objhitInfo->unk48 = 0;
+        actor->objhitInfo->unk48 = NULL;
         actor->objhitInfo->unk62 = 0;
     }
     if (actor->unk58 != NULL) {

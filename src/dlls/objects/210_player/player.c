@@ -1347,7 +1347,7 @@ void dll_210_update(Object* player) {
     temp_s1 = player->data;
     sp44 = gUpdateRateF;
     gDLL_18_objfsa->vtbl->func2(player, &temp_s1->unk0, _bss_58);
-    if ((temp_s1->unk0.unk341 == 1) && (player->linkedObject->objhitInfo->unk48 != 0 || player->linkedObject->objhitInfo->unk9D != 0)) {
+    if ((temp_s1->unk0.unk341 == 1) && (player->linkedObject->objhitInfo->unk48 != NULL || player->linkedObject->objhitInfo->unk9D != 0)) {
         player->objhitInfo->unk61 = 1;
     }
     if (temp_s1->flags & 2) {
