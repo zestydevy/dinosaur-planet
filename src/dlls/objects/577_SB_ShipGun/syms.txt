@@ -1,0 +1,12 @@
+.text = 0x0:
+SB_ShipGun_ctor = 0x0;
+SB_ShipGun_dtor = 0xC;
+SB_ShipGun_setup = 0x18;
+SB_ShipGun_control = 0x3C;
+SB_ShipGun_update = 0xB40;
+SB_ShipGun_print = 0xB8C;
+SB_ShipGun_free = 0xC70;
+SB_ShipGun_get_model_flags = 0xCB8;
+SB_ShipGun_get_data_size = 0xCC8;
+
+.rodata = 0xD64:

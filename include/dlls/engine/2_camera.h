@@ -30,7 +30,7 @@ DLL_INTERFACE(DLL_2_camera) {
 /*19*/ void (*func19)(void);
 /*20*/ UnknownDLLFunc func20;
 /*21*/ void (*func21)(s32, s32);
-/*22*/ UnknownDLLFunc func22;
+/*22*/ void (*func22)(f32*, s32);
 /*23*/ UnknownDLLFunc func23;
 /*24*/ UnknownDLLFunc func24;
 /*25*/ UnknownDLLFunc func25;

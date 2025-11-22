@@ -28,11 +28,19 @@ enum SoundID {
     SFX_RECAP_MENU_MOVE = 0x5D5,
     SFX_RECAP_MENU_SELECT = 0x5D6,
 
+    SOUND_10A = 0x10A,
+
     SFX_129_SnowHorn_Yawn_1 = 0x129,
     SFX_12A_SnowHorn_SnoreHorn = 0x12A,
     SFX_12B_SnowHorn_Yawn_2 = 0x12B,
 
+    SOUND_140 = 0x140,
+
     SOUND_177 = 0x177,
+
+    SOUND_179 = 0x179,
+    SOUND_17A = 0x17A,
+    SOUND_17B = 0x17B,
 
     SOUND_1e1_Stone_Moving = 0x1e1,
 
@@ -45,6 +53,15 @@ enum SoundID {
 
     SOUND_25B_Magic_Attack_Deflected = 0x25B,
     SOUND_25C_Melee_Attack_Deflected = 0x25C,
+
+    SOUND_25F_SB_CloudRunner_battle_tips_1 = 0x25F,
+    SOUND_260_SB_CloudRunner_battle_tips_2 = 0x260,
+    SOUND_261_SB_CloudRunner_battle_tips_3 = 0x261,
+
+    SOUND_277 = 0x277,
+
+    SOUND_27A = 0x27A,
+    SOUND_27B = 0x27B,
 
     SOUND_284_SB_Kyte_Heeelp = 0x284,
     SOUND_285_SB_Kyte_Find_the_wizard_and_get_me_out_of_here = 0x285,
@@ -203,6 +220,8 @@ enum SoundID {
 
     SOUND_B95_Gasvent_Uncovered = 0xB95,
     SOUND_B96_Gasvent_Covered = 0xB96,
+
+    SOUND_BA3 = 0xBA3,
 
     NO_SOUND = -1
 };

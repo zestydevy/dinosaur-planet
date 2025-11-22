@@ -32,7 +32,7 @@ void FEseqobject_setup(Object *self, ObjSetup *setup, s32 arg2) {
 // offset: 0x6C | func: 1 | export: 1
 void FEseqobject_control(Object *self) {
     self->srt.yaw = 0x2000;
-    if (!main_get_bits(BIT_75)) {
+    if (!main_get_bits(BIT_SB_Battle_Started)) {
         gDLL_3_Animation->vtbl->func17(0, self, -1);
     }
 }
@@ -84,7 +84,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
         transform.scale = 1.0f;
         switch (animObjData->unk8E[i]) {
         case 1:
-            main_set_bits(BIT_75, 1);
+            main_set_bits(BIT_SB_Battle_Started, 1);
             break;
         case 2:
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);

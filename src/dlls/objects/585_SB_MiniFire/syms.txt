@@ -1,0 +1,15 @@
+.text = 0x0:
+SB_MiniFire_ctor = 0x0;
+SB_MiniFire_dtor = 0xC;
+SB_MiniFire_setup = 0x18;
+SB_MiniFire_control = 0x148;
+SB_MiniFire_update = 0x3DC;
+SB_MiniFire_print = 0x3E8;
+SB_MiniFire_free = 0x484;
+SB_MiniFire_get_model_flags = 0x4F4;
+SB_MiniFire_get_data_size = 0x504;
+
+.rodata = 0x57C:
+
+.data = 0x58C:
+_data_0 = 0x0; // absolute:0x58C
