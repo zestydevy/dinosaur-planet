@@ -1,13 +1,13 @@
 .text = 0x0:
-dll_549_ctor = 0x0;
-dll_549_dtor = 0xC;
-dll_549_setup = 0x18;
-dll_549_control = 0xE0;
-dll_549_update = 0x1D0;
-dll_549_print = 0x1DC;
-dll_549_free = 0x230;
-dll_549_get_model_flags = 0x240;
-dll_549_get_data_size = 0x250;
-dll_549_func_264 = 0x264;
+GP_ShrinePillar_ctor = 0x0;
+GP_ShrinePillar_dtor = 0xC;
+GP_ShrinePillar_setup = 0x18;
+GP_ShrinePillar_control = 0xE0;
+GP_ShrinePillar_update = 0x1D0;
+GP_ShrinePillar_print = 0x1DC;
+GP_ShrinePillar_free = 0x230;
+GP_ShrinePillar_get_model_flags = 0x240;
+GP_ShrinePillar_get_data_size = 0x250;
+GP_ShrinePillar_anim_callback = 0x264;
 
 .rodata = 0x5B0:
