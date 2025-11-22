@@ -31,11 +31,22 @@ typedef struct HeadAnimation {
     /* 0x22 */ s8 pupilGoal;        //goal position for current eye dart
 } HeadAnimation;
 
+typedef struct {
+    s32 unk0; //second-lowest byte used as frame offset for animated/multi-frame textures,
+              //lowest byte opacity-blends next frame in (on multi-frame textures)
+    u8 unk4[0x8 - 4];
+    s16 positionU; //U offset
+    s16 positionV; //V offset
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+} TextureAnimator;
+
 void func_80032A08(Object* obj, HeadAnimation* arg1);
 void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2);
 void func_80033B68(Object*, HeadAnimation*, f32);
 void func_80034678(Object*, HeadAnimation*, f32);
-void* func_800348A0(Object*, s32, s32);
+TextureAnimator* func_800348A0(Object*, s32, s32);
 void func_800339E0(Object*, s32, s32, f32);
 void func_80033AA0(Object*, s32, s32, f32);
 s16* func_80034804(Object *obj, s32 sequenceBoneID);
