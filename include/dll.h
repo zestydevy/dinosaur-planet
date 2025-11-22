@@ -114,7 +114,9 @@ enum DLL_ID {
     DLL_ID_122 = 0x1012,
     DLL_ID_129 = 0x1019,
     DLL_ID_130 = 0x101A,
+    DLL_ID_133 = 0x101D,
     DLL_ID_136 = 0x1020,
+    DLL_ID_139 = 0x1023,
     DLL_ID_140 = 0x1024,
     DLL_ID_141 = 0x1025,
     DLL_ID_142 = 0x1026,
@@ -124,6 +126,9 @@ enum DLL_ID {
     DLL_ID_155 = 0x1033,
     DLL_ID_170 = 0x1042,
     DLL_ID_182 = 0x104E,
+
+    // Proj gfx
+    DLL_ID_194 = 0x2008,
 
     // Objects
     DLL_ID_CANNON_CLAW = 0x800E

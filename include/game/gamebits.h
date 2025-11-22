@@ -121,7 +121,7 @@ typedef enum {
     BIT_IM_MultiSeq_3 = 0x72, // len:1 group:2
     BIT_73 = 0x73, // len:1 group:1
     BIT_74 = 0x74, // len:1 group:1
-    BIT_75 = 0x75, // len:1 group:1
+    BIT_SB_Battle_Started = 0x75, // len:1 group:1
     BIT_76 = 0x76, // len:1 group:1
     BIT_77 = 0x77, // len:1 group:1
     BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte = 0x78, // len:1 group:2
@@ -163,8 +163,8 @@ typedef enum {
     BIT_9C = 0x9C, // len:1 group:2
     BIT_9D = 0x9D, // len:1 group:2
     BIT_Tricky_Distract_Learned = 0x9E, // len:1 group:2
-    BIT_9F = 0x9F, // len:1 group:0
-    BIT_A0 = 0xA0, // len:1 group:1 task:2
+    BIT_SB_Scales_Intro = 0x9F, // len:1 group:0
+    BIT_SB_Found_Kyte = 0xA0, // len:1 group:1 task:2
     BIT_A1 = 0xA1, // len:1 group:0
     BIT_A2 = 0xA2, // len:1 group:1
     BIT_CC_Completed_Gas_Chamber_Puzzle = 0xA3, // len:1 group:2
@@ -2314,8 +2314,8 @@ typedef enum {
     BIT_903 = 0x903, // len:1 group:2
     BIT_904 = 0x904, // len:1 group:2
     BIT_WM_Randorn_Hall_Opened = 0x905, // len:1 group:2
-    BIT_906 = 0x906, // len:1 group:1
-    BIT_907 = 0x907, // len:1 group:1
+    BIT_SB_Destroyed_Right_Gun = 0x906, // len:1 group:1
+    BIT_SB_Destroyed_Left_Gun = 0x907, // len:1 group:1
     BIT_908 = 0x908, // len:1 group:0
     BIT_909 = 0x909, // len:1 group:1
     BIT_90A = 0x90A, // len:1 group:0

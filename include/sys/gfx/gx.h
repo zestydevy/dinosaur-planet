@@ -208,4 +208,6 @@ void func_8005CA5C(u32 param1);
 
 int vi_contains_point(s32 x, s32 y);
 
+s32 vi_func_8005DD4C(s32 x, s32 y, s32 arg2);
+
 #endif //_SYS_GFX_GX_H

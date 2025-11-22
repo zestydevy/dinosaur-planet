@@ -1,0 +1,16 @@
+.text = 0x0:
+SB_Lamp_ctor = 0x0;
+SB_Lamp_dtor = 0xC;
+SB_Lamp_setup = 0x18;
+SB_Lamp_control = 0xB8;
+SB_Lamp_update = 0x124;
+SB_Lamp_anim_callback = 0x130;
+SB_Lamp_print = 0x5E4;
+SB_Lamp_free = 0x638;
+SB_Lamp_get_model_flags = 0x6C8;
+SB_Lamp_get_data_size = 0x6D8;
+
+.rodata = 0x770:
+
+.data = 0x770:
+sDLL107 = 0x0; // absolute:0x770

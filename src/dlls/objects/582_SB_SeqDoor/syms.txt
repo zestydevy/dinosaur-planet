@@ -1,0 +1,13 @@
+.text = 0x0:
+SB_SeqDoor_ctor = 0x0;
+SB_SeqDoor_dtor = 0xC;
+SB_SeqDoor_setup = 0x18;
+SB_SeqDoor_control = 0x54;
+SB_SeqDoor_update = 0x68;
+SB_SeqDoor_print = 0x74;
+SB_SeqDoor_free = 0xC8;
+SB_SeqDoor_get_model_flags = 0xD8;
+SB_SeqDoor_get_data_size = 0xE8;
+SB_SeqDoor_anim_callback = 0xFC;
+
+.rodata = 0x148:

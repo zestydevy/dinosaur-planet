@@ -1,0 +1,16 @@
+.text = 0x0:
+SB_ShipHead_ctor = 0x0;
+SB_ShipHead_dtor = 0xC;
+SB_ShipHead_setup = 0x18;
+SB_ShipHead_control = 0x7C;
+SB_ShipHead_update = 0x770;
+SB_ShipHead_print = 0x7BC;
+SB_ShipHead_free = 0xA28;
+SB_ShipHead_get_model_flags = 0xA68;
+SB_ShipHead_get_data_size = 0xA78;
+
+.rodata = 0xB20:
+str_0 = 0x0; // absolute:0xB20
+
+.data = 0xB40:
+_data_0 = 0x0; // absolute:0xB40
