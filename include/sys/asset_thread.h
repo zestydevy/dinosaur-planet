@@ -48,7 +48,7 @@ struct AssetLoadThreadMsg {
             /* 08 */ Texture **dest;
         } texture;
         struct {
-            /* 04 */ s32 id;
+            /* 04 */ s32 idOrIdx;
             /* 08 */ void **dest;
             /* 0C */ s32 exportCount;
         } dll;
@@ -113,7 +113,7 @@ void queue_load_file_to_ptr(void **dest, s32 fileId);
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
 void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6);
 void queue_load_texture(Texture **dest, s32 id);
-void queue_load_dll(void **dest, s32 id, s32 exportCount);
+void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount);
 void queue_load_model(void **dest, s32 id, s32 arg2);
 void queue_load_anim(void **dest, s16 animID, s16 modAnimID, s32 amap, s32 model);
 void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5);
