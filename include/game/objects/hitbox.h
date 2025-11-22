@@ -22,7 +22,7 @@ typedef struct {
     /*0x3C*/ f32 unk3C;
     /*0x40*/ u32 unk40;
     /*0x44*/ u32 unk44;
-    /*0x48*/ s32 unk48;
+    /*0x48*/ struct Object *unk48;
     /*0x4c*/ s32 unk4C;
     /*0x50*/ s16 unk50;
     /*0x52*/ s16 unk52;

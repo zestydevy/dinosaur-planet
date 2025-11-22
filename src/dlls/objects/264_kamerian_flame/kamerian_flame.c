@@ -104,7 +104,7 @@ void kamerian_flame_control(Object* self) {
 
     //Handle object collisions
     if (self->objhitInfo->unk48 && 
-        (((s32)get_player()) == self->objhitInfo->unk48 || ((s32)get_sidekick()) == self->objhitInfo->unk48)) {
+        ((get_player()) == self->objhitInfo->unk48 || (get_sidekick()) == self->objhitInfo->unk48)) {
 
         func_800013BC();
         func_80003B70(1.0f);

@@ -1,0 +1,20 @@
+.text = 0x0:
+CFSupTreasureCh_ctor = 0x0;
+CFSupTreasureCh_dtor = 0xC;
+CFSupTreasureCh_setup = 0x18;
+CFSupTreasureCh_control = 0x124;
+CFSupTreasureCh_update = 0x314;
+CFSupTreasureCh_print = 0x320;
+CFSupTreasureCh_free = 0x374;
+CFSupTreasureCh_get_model_flags = 0x400;
+CFSupTreasureCh_get_data_size = 0x410;
+CFSupTreasureCh_func_424 = 0x424;
+CFSupTreasureCh_func_700 = 0x700;
+CFSupTreasureCh_func_718 = 0x718;
+CFSupTreasureCh_func_7B8 = 0x7B8;
+CFSupTreasureCh_func_9B8 = 0x9B8;
+CFSupTreasureCh_func_BD8 = 0xBD8;
+CFSupTreasureCh_func_C80 = 0xC80;
+
+.rodata = 0xD98:
+str_0 = 0x0; // absolute:0xD98
