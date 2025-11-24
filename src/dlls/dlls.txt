@@ -91,8 +91,11 @@
 363 = objects/363_FElevControl
 364 = objects/364_FEseqobject
 365 = objects/365
+378 = objects/378_CFScalesGalleon
 393 = objects/393_CFMainSlideDoor
+396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall
+400 = objects/400_CFLevelControl
 408 = objects/408_IMIceMountain
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
@@ -177,6 +180,8 @@
 720 = objects/720_FindKyteObject
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
+729 = objects/729_CRCloudRace
+731 = objects/731_CRFuelTank
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
 762 = objects/762_DRSpecialLoader

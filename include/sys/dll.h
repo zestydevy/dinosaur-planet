@@ -7,7 +7,7 @@
 #include "macros.h"
 
 #define MAX_LOADED_DLLS 128
-#define DLL_NONE -1
+#define DLL_NONE (-1)
 
 typedef struct {
 	s32 offset;
@@ -15,10 +15,10 @@ typedef struct {
 } DLLTabEntry;
 
 typedef struct {
-/*0000*/	s32 bank1;
-/*0004*/	s32 bank2;
-/*0008*/	s32 reserved;
-/*000C*/	s32 bank3;
+/*0000*/	s32 bank1; // modgfx
+/*0004*/	s32 bank2; // projgfx
+/*0008*/	s32 bank3; // unused, always 0
+/*000C*/	s32 bank4; // objects
 } DLLTabHeader;
 
 typedef struct {
@@ -27,7 +27,7 @@ typedef struct {
 } DLLTab;
 
 typedef struct {
-/*0000*/	s32 id;
+/*0000*/	s32 tabidx;
 /*0004*/	s32 refCount;
 /*0008*/	u32 *vtblPtr;
 /*000C*/	void *end;
@@ -64,7 +64,7 @@ extern s32 gDLLCount;
 
 void init_dll_system();
 /**
- * Returns the ID of the DLL that the given program counter is executing within, 
+ * Returns the tab index of the DLL that the given program counter is executing within, 
  * or -1 if the PC is not within a DLL.
  * 
  * start and end will also be set to pointers to the start and end 
@@ -73,12 +73,12 @@ void init_dll_system();
 s32 find_executing_dll(u32 pc, void **start, void **end);
 void replace_loaded_dll_list(DLLState list[], s32 count);
 DLLState *get_loaded_dlls(s32 *outLoadedDLLCount);
-void *dll_load_deferred(u16 id, u16 exportCount);
+void *dll_load_deferred(u16 idOrIdx, u16 exportCount);
 /**
- * Loads a DLL by ID and returns a pointer to its loaded interface.
+ * Loads a DLL by ID or tab index and returns a pointer to its loaded interface.
  */
-void *dll_load(u16 id, u16 exportCount, s32 runConstructor);
-void dll_load_from_bytes(u16 id, void *dllBytes, s32 dllBytesSize, s32 bssSize);
+void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor);
+void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSize);
 s32 dll_unload(void *dllInterfacePtr);
 s32 dll_throw_fault();
 

@@ -1,0 +1,12 @@
+.text = 0x0:
+CRFuelTank_ctor = 0x0;
+CRFuelTank_dtor = 0xC;
+CRFuelTank_setup = 0x18;
+CRFuelTank_control = 0xFC;
+CRFuelTank_update = 0x164;
+CRFuelTank_print = 0x258;
+CRFuelTank_free = 0x270;
+CRFuelTank_get_model_flags = 0x280;
+CRFuelTank_get_data_size = 0x290;
+
+.rodata = 0x2F8:

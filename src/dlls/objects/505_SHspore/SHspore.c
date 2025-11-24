@@ -137,7 +137,7 @@ void SHspore_control(Object* self) {
         func_80026128(self, 0xA, 0, 0);
 
         //Handle object collisions
-        collidedObject = (Object*)self->objhitInfo->unk48;
+        collidedObject = self->objhitInfo->unk48;
         if (collidedObject) {
             particleCount = 20;
             if (get_player() == collidedObject) {

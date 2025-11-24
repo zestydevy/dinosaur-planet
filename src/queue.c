@@ -131,11 +131,11 @@ void queue_load_texture(Texture **dest, s32 id) {
     osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
 }
 
-void queue_load_dll(void **dest, s32 id, s32 exportCount) {
+void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount) {
     //XXX verify types
     assetLoadMsg.loadCategory   = 1;
     assetLoadMsg.loadType       = ASSET_TYPE_DLL;
-    assetLoadMsg.p.dll.id       = id;
+    assetLoadMsg.p.dll.idOrIdx  = idOrIdx;
     assetLoadMsg.p.dll.dest     = dest;
     assetLoadMsg.p.dll.exportCount = exportCount;
     osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
@@ -397,7 +397,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             *load->p.texture.dest = texture_load(load->p.texture.id, 0);
             break;
         case ASSET_TYPE_DLL:
-            *load->p.dll.dest = dll_load(load->p.dll.id, load->p.dll.exportCount, FALSE);
+            *load->p.dll.dest = dll_load(load->p.dll.idOrIdx, load->p.dll.exportCount, FALSE);
             break;
         case ASSET_TYPE_MODEL:
             *load->p.model.dest = model_load_create_instance(load->p.model.id,

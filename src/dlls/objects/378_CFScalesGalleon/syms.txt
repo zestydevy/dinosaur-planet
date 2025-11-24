@@ -1,0 +1,16 @@
+.text = 0x0:
+CFScalesGalleon_ctor = 0x0;
+CFScalesGalleon_dtor = 0xC;
+CFScalesGalleon_setup = 0x18;
+CFScalesGalleon_control = 0x80;
+CFScalesGalleon_update = 0xBC;
+CFScalesGalleon_print = 0x120;
+CFScalesGalleon_free = 0x138;
+CFScalesGalleon_get_model_flags = 0x148;
+CFScalesGalleon_get_data_size = 0x158;
+CFScalesGalleon_func_16C = 0x16C;
+
+.rodata = 0x1FC:
+
+.data = 0x1FC:
+_data_0 = 0x0; // absolute:0x1FC

@@ -22,6 +22,8 @@ typedef struct UnkDE8 {
 enum SoundID {
     SOUND_15_Heavy_Stone_Moving = 0x15, // used by door to Randorn's hall
 
+    SOUND_73 = 0x73,
+
     SOUND_8F = 0x8F, // used by DFlog
 
     SOUND_9B = 0x9B,
@@ -233,6 +235,8 @@ enum SoundID {
     SOUND_B96_Gasvent_Covered = 0xB96,
 
     SOUND_BA3 = 0xBA3,
+
+    SOUND_B3C = 0xB3C,
 
     NO_SOUND = -1
 };

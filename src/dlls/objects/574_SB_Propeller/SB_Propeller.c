@@ -93,7 +93,7 @@ void SB_Propeller_control(Object *self) {
         if (var_v1 == 0) {
             if (self->objhitInfo->unk48) {
                 var_v1 = 1;
-                sp48 = (Object*)self->objhitInfo->unk48;
+                sp48 = self->objhitInfo->unk48;
             }
         }
         if ((var_v1 != 0) && (self->unkDC == 0) && sp48) {
