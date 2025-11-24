@@ -161,7 +161,7 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 // offset: 0x47C | func: 1 | export: 1
 void WL_Crystal_control(Object* self) {
     WL_Crystal_Data* objData;
-    TextureAnimator* textureUVs;
+    TextureAnimator* animTexture;
     s16 pad;
     s16 yawAcceleration;
     s16 goal;
@@ -183,11 +183,11 @@ void WL_Crystal_control(Object* self) {
         }
         
         //Scroll texture UVs
-        textureUVs = func_800348A0(self, 1, 0);
-        if (textureUVs) {
-            textureUVs->positionV -= 0x10;
-            if (textureUVs->positionV < -0x3E0) {
-                textureUVs->positionV = 0;
+        animTexture = func_800348A0(self, 1, 0);
+        if (animTexture) {
+            animTexture->positionV -= 0x10;
+            if (animTexture->positionV < -0x3E0) {
+                animTexture->positionV = 0;
             }
         }
 
@@ -256,11 +256,11 @@ void WL_Crystal_control(Object* self) {
             self->opacity = opacity;
 
             //Scroll texture UVs
-            textureUVs = func_800348A0(self, 0, 0);
-            if (textureUVs != NULL) {
-                textureUVs->positionU -= gUpdateRate * 8;
-                if (textureUVs->positionU < -0x3E0) {
-                    textureUVs->positionU = 0;
+            animTexture = func_800348A0(self, 0, 0);
+            if (animTexture != NULL) {
+                animTexture->positionU -= gUpdateRate * 8;
+                if (animTexture->positionU < -0x3E0) {
+                    animTexture->positionU = 0;
                 }
             }
         }
