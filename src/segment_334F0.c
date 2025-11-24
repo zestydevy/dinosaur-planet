@@ -67,8 +67,8 @@ void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
   * @bug: animation is framerate dependent
   */
 void func_80032A08(Object* obj, HeadAnimation* arg1) {
-    s32* eyelidR;
-    s32* eyelidL;
+    TextureAnimator* eyelidR;
+    TextureAnimator* eyelidL;
     s32 eyelidValue;
 
     eyelidR = func_800348A0(obj, HEAD_ANIMATION_TAG_Eyelid_R, 0);
@@ -78,7 +78,7 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
         return;
     }
 
-    eyelidValue = *eyelidL;
+    eyelidValue = eyelidL->unk0;
 
     switch (arg1->blinkState & 0xF) {
     case BLINK_Wait:
@@ -114,8 +114,8 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
                 arg1->blinkDelayTimer = 0;
             }
         }
-        *eyelidR = eyelidValue;
-        *eyelidL = eyelidValue;
+        eyelidR->unk0 = eyelidValue;
+        eyelidL->unk0 = eyelidValue;
         break;
     }
 
@@ -796,8 +796,8 @@ s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
 
 /** Manages character models' randomised eye dart animations (by adjusting the pupil textures' UVs) */
 void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
-    s16* pupilL;
-    s16* pupilR;
+    TextureAnimator* pupilL;
+    TextureAnimator* pupilR;
     s32 animationFinished;
 
     pupilL = func_800348A0(arg0, HEAD_ANIMATION_TAG_Pupil_R, 0);
@@ -812,17 +812,17 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     if (arg1->pupilSpeed == 0) {
         animationFinished = TRUE;
     }
-    if ((arg1->pupilSpeed > 0) && (pupilL[4] >= arg1->pupilGoal)) {
+    if ((arg1->pupilSpeed > 0) && (pupilL->positionU >= arg1->pupilGoal)) {
         animationFinished = TRUE;
     }
-    if ((arg1->pupilSpeed < 0) && (arg1->pupilGoal >= pupilL[4])) {
+    if ((arg1->pupilSpeed < 0) && (arg1->pupilGoal >= pupilL->positionU)) {
         animationFinished = TRUE;
     }
 
     //Set up the next eye dart animation
     if (animationFinished) {
         arg1->pupilGoal = rand_next(-100, 10);
-        if (arg1->pupilGoal < pupilL[4]) {
+        if (arg1->pupilGoal < pupilL->positionU) {
             arg1->pupilSpeed = -5;
         } else {
             arg1->pupilSpeed = 5;
@@ -837,10 +837,10 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     }
 
     //Animate eye dart
-    pupilL[4] += arg1->pupilSpeed * gUpdateRate;
-    pupilL[5] = 0;
-    pupilR[4] = -100 - pupilL[4];
-    pupilR[5] = 0;
+    pupilL->positionU += arg1->pupilSpeed * gUpdateRate;
+    pupilL->positionV = 0;
+    pupilR->positionU = -100 - pupilL->positionU;
+    pupilR->positionV = 0;
 }
 
 /** object_find_seq_bone_data_by_bone_id? */
@@ -867,15 +867,15 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     return sequenceBoneData;
 }
 
-void* func_800348A0(Object* obj, s32 texType, s32 arg2) {
+TextureAnimator* func_800348A0(Object* obj, s32 texType, s32 arg2) {
     u8 *texData;
     s32 i;
     s32 temp;
     s32 temp2;
-    u8* var_v1;
+    TextureAnimator* materialAnimator;
     s32 frameCount;
 
-    var_v1 = NULL;
+    materialAnimator = NULL;
     if (obj->def != NULL) {
         texData = obj->def->pTextures;
         frameCount = obj->def->numAnimatedFrames;
@@ -883,12 +883,12 @@ void* func_800348A0(Object* obj, s32 texType, s32 arg2) {
             temp = i << 1;
             if (texType == *(temp + texData)) {
                 temp2 = i << 4;
-                var_v1 = &((u8*)obj->unk70)[temp2];
+                materialAnimator = (TextureAnimator*)&((u8*)obj->unk70)[temp2];
             }
         }
     }
 
-    return var_v1;
+    return materialAnimator;
 }
 
 s32* func_800349B0(void) {

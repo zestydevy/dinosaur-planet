@@ -35,13 +35,15 @@ void dll_780_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
     WCBeacon_Data *objdata = self->data;
-    s32 *temp_v0;
+    TextureAnimator *animatedTexture;
     
     self->srt.yaw = setup->unk18 << 8;
     self->modelInstIdx = setup->modelIndex;
+
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
+
     if (main_get_bits(setup->unk20) != 0) {
         if (main_get_bits(setup->unk1E) != 0) {
             objdata->state = WCBEACON_STATE_3;
@@ -49,9 +51,10 @@ void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
             objdata->state = WCBEACON_STATE_1;
         }
     }
-    temp_v0 = func_800348A0(self, 0, 0);
-    if ((temp_v0 != NULL) && (objdata->state == WCBEACON_STATE_3)) {
-        *temp_v0 = 0x100;
+
+    animatedTexture = func_800348A0(self, 0, 0);
+    if ((animatedTexture != NULL) && (objdata->state == WCBEACON_STATE_3)) {
+        animatedTexture->unk0 = 0x100;
     }
 }
 

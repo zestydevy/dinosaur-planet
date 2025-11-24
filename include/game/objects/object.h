@@ -267,7 +267,7 @@ typedef struct Object {
 /*00D9*/    u8 unkD9;
 /*00DA*/    u8 unkDA;
 /*00DB*/    u8 unkDB[0xdc - 0xdb];
-/*00DC*/    s32 unkDC;
+/*00DC*/    s32 unkDC; // sometimes stores ID related to object's active sequence?
 /*00E0*/    s32 unkE0; // lifetime?
 } Object;
 

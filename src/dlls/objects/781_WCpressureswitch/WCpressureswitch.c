@@ -75,7 +75,7 @@ void WCpressureswitch_control(Object* self) {
     PressureSwitch_Setup* setup;
     f32 deltaY;
     Object* listedObject;
-    s32* textureFrame;
+    TextureAnimator* animTexture;
     s32 index;
     PressureSwitch_Data* objdata;
 
@@ -145,14 +145,14 @@ void WCpressureswitch_control(Object* self) {
     }
 
     //Change texture frame (sun/moon glowing)
-    textureFrame = func_800348A0(self, 0, 0);
-    if (textureFrame != NULL) {
+    animTexture = func_800348A0(self, 0, 0);
+    if (animTexture != NULL) {
         if (objdata->state == 2) {
-            *textureFrame = 1;
+            animTexture->unk0 = 1;
         } else {
-            *textureFrame = 0;
+            animTexture->unk0 = 0;
         }
-        *textureFrame <<= 8;
+        animTexture->unk0 <<= 8;
     }
 }
 

@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_549_ctor
-.dword dll_549_dtor
+.dword GP_ShrinePillar_ctor
+.dword GP_ShrinePillar_dtor
 
 # export table
-/*0*/ .dword dll_549_setup
-/*1*/ .dword dll_549_control
-/*2*/ .dword dll_549_update
-/*3*/ .dword dll_549_print
-/*4*/ .dword dll_549_free
-/*5*/ .dword dll_549_get_model_flags
-/*6*/ .dword dll_549_get_data_size
+/*0*/ .dword GP_ShrinePillar_setup
+/*1*/ .dword GP_ShrinePillar_control
+/*2*/ .dword GP_ShrinePillar_update
+/*3*/ .dword GP_ShrinePillar_print
+/*4*/ .dword GP_ShrinePillar_free
+/*5*/ .dword GP_ShrinePillar_get_model_flags
+/*6*/ .dword GP_ShrinePillar_get_data_size

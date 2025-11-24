@@ -2,6 +2,7 @@
 #include "dll.h"
 #include "PR/gbi.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "functions.h"
@@ -12,108 +13,125 @@
 
 typedef struct {
     ObjSetup base;
-    s16 gamebitRise;        //TO-DO: double-check
-    s16 gamebitRaised;      //TO-DO: double-check
-    s16 unk1C;
-    s8 sequenceIndex;
+    s16 gamebitRise;      //plays sequence of pillar rising
+    s16 gamebitRaised;    //set when pillar rising sequence has played
+    s16 unk1C;            //sequence-related, value of 0x96 on each pillar instance 
+    s8 sequenceIndex;     //sequence index to play (always index 0 on instances)
     u8 yaw;
-    u8 seqIgnoresCamera;
-    s16 gamebitID_c;        //TO-DO: double-check
+    u8 unk20;             //used as arg2 when playing sequence (values for the 3 pillar instances: 0xFF, 0, 1)
+    s16 gamebitDoorOpen;  //GP_PillarDoor already open, but seems to be intended for playing Seq 0x39A
 } GP_ShrinePillar_Setup;
 
 typedef struct {
     u8 state;
-    u8 unk1;
-    f32 unk4;
+    u8 startSequence;   //used by the control func to invoke sequence, letting animCallback func take over
+    f32 cooledTimer;    //time until pillar heats up after using Ice Blast Spell
 } GP_ShrinePillar_Data;
 
-static int dll_549_func_264(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3);
+typedef enum {
+    STATE_Underground = 0,               //under sand
+    STATE_Rising = 1,                    //emerging from sand
+    STATE_Raised = 6,                    //enters this state at end of pillar rise sequence
+    STATE_Waiting_for_Door_Open = 7,     //likely waiting for GP_PillarDoor to open via sequence, but advances immediately
+    STATE_Hot = 2,                       //waiting for player to cool pillar with Ice Blast Spell
+    STATE_Fade_Texture_to_Cooled = 4,    //blending texture to iced-over stone
+    STATE_Cooled = 3,                    //timer counts down until pillar returns to hot state
+    STATE_Fade_Texture_to_Hot = 5,       //time ran out, blending back to hot stone
+    STATE_Finished = 8                   //unused, but presumably for when Shrine appears (3 pillars cooled)
+} GP_ShrinePillar_States;
+
+static int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 a3);
 
 // offset: 0x0 | ctor
-void dll_549_ctor(void *dll) { }
+void GP_ShrinePillar_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_549_dtor(void *dll) { }
+void GP_ShrinePillar_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_549_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
-    s32* temp_v0;
+void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
+    TextureAnimator* animTexture;
     GP_ShrinePillar_Data* objdata;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
-    if (setup->gamebitRaised != -1) {
-        if (main_get_bits(setup->gamebitRaised) != 0) {
-            objdata->state = 6;
+    if (setup->gamebitRaised != NO_GAMEBIT) {
+        if (main_get_bits(setup->gamebitRaised)) {
+            objdata->state = STATE_Raised;
         }
     } else {
-        objdata->state = 0;
+        objdata->state = STATE_Underground;
     }
-    objdata->unk1 = 1;
+
+    objdata->startSequence = TRUE;
     self->srt.yaw = setup->yaw << 8;
-    self->animCallback = dll_549_func_264;
-    temp_v0 = func_800348A0(self, 0, 0);
-    if (temp_v0 != NULL) {
-        *temp_v0 = 0;
+    self->animCallback = GP_ShrinePillar_anim_callback;
+
+    //Set pillar's animated stone texture to frame 0
+    animTexture = func_800348A0(self, 0, 0);
+    if (animTexture != NULL) {
+        animTexture->unk0 = 0;
     }
 }
 
 // offset: 0xE0 | func: 1 | export: 1
-void dll_549_control(Object* self) {
+void GP_ShrinePillar_control(Object* self) {
     GP_ShrinePillar_Data* objdata;
     GP_ShrinePillar_Setup* setup;
-    s32 seqIgnoresCamera;
+    s32 seqArg2;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
     setup = (GP_ShrinePillar_Setup*)self->setup;
+
     diPrintf("control\n");
-    if (objdata->unk1 != 0) {
-        if ((setup->unk1C != 0) && (objdata->state != 0)) {
-            seqIgnoresCamera = setup->seqIgnoresCamera;
+    if (objdata->startSequence) {
+        if ((setup->unk1C != 0) && (objdata->state != STATE_Underground)) {
+            seqArg2 = setup->unk20;
             gDLL_3_Animation->vtbl->func20(self, setup->unk1C);
         } else {
-            seqIgnoresCamera = -1; 
+            seqArg2 = -1; 
         }
+
         if (setup->sequenceIndex != -1) {
-            gDLL_3_Animation->vtbl->func17(setup->sequenceIndex, self, seqIgnoresCamera);
+            gDLL_3_Animation->vtbl->func17(setup->sequenceIndex, self, seqArg2);
         }
-        objdata->unk1 = 0;
+        objdata->startSequence = FALSE;
     }
 }
 
 static const char str_1[] = " PREMPT %i seqtime %i \n\n";
 
 // offset: 0x1D0 | func: 2 | export: 2
-void dll_549_update(Object *self) { }
+void GP_ShrinePillar_update(Object *self) { }
 
 // offset: 0x1DC | func: 3 | export: 3
-void dll_549_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void GP_ShrinePillar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x230 | func: 4 | export: 4
-void dll_549_free(Object *self, s32 a1) { }
+void GP_ShrinePillar_free(Object *self, s32 a1) { }
 
 // offset: 0x240 | func: 5 | export: 5
-u32 dll_549_get_model_flags(Object *self) {
+u32 GP_ShrinePillar_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x250 | func: 6 | export: 6
-u32 dll_549_get_data_size(Object *self, u32 a1) {
+u32 GP_ShrinePillar_get_data_size(Object *self, u32 a1) {
     return sizeof(GP_ShrinePillar_Data);
 }
 
 // offset: 0x264 | func: 7
-int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
+int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
     GP_ShrinePillar_Setup* setup;
     GP_ShrinePillar_Data* objdata;
-    s32* temp_v0_2;
-    s32* temp_v0;
-    s32 var_v1_3;
+    TextureAnimator* animatedTexture1;
+    TextureAnimator* animatedTexture2;
+    s32 opacity;
     s32 index;
-    s32 var_v1_4;
+    s32 pad;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
     setup = (GP_ShrinePillar_Setup*)self->setup;
@@ -121,70 +139,81 @@ int dll_549_func_264(Object* self, Object* animObj, AnimObj_Data* animObjData, s
     diPrintf("override %d\n", objdata->state);
 
     switch (objdata->state) {
-    case 0:
-        if (main_get_bits(setup->gamebitRise) != 0) {
-            objdata->state = 1;
+    case STATE_Underground:
+        //Waiting for gamebit (set when leaving each act of Desert Force Point Temple)
+        if (main_get_bits(setup->gamebitRise)) {
+            objdata->state = STATE_Rising;
         }
         break;
-    case 1:
+    case STATE_Rising:
+        //Waiting for pillar rising sequence to call subcommand
         for (index = 0; index < animObjData->unk98; index++) {
             if (animObjData->unk8E[index] == 1) {
-                objdata->state = 6;
-                if (setup->gamebitRaised != -1) {
+                objdata->state = STATE_Raised;
+                if (setup->gamebitRaised != NO_GAMEBIT) {
                     main_set_bits(setup->gamebitRaised, 1);
                 }
             }
         }
         break;
-    case 6:
-        if (main_get_bits(setup->gamebitID_c) != 0) {
-            objdata->state = 7;
+    case STATE_Raised:
+        //Waiting for door opening gamebit to be set
+        if (main_get_bits(setup->gamebitDoorOpen)) {
+            objdata->state = STATE_Waiting_for_Door_Open;
         }
         break;
-    case 7:
+    case STATE_Waiting_for_Door_Open:
+        //Waiting for door opening sequence to call subcommand
         for (index = 0; index < animObjData->unk98; index++) {
             if (animObjData->unk8E[index] == 2) {
-                objdata->state = 2;
+                objdata->state = STATE_Hot;
             }
         }
         break;
-    case 2:
-        //If Ice Blast Spell used on pillar
+    case STATE_Hot:
+        //Waiting for Ice Blast Spell to be used on pillar
         if (func_80025F40(self, NULL, NULL, NULL) == 0x19) {
-            objdata->state = 4;
+            objdata->state = STATE_Fade_Texture_to_Cooled;
         }
         break;
-    case 3:
-        objdata->unk4 -= gUpdateRateF;
-        if (objdata->unk4 <= 0.0f) {
-            objdata->state = 5;
+    case STATE_Cooled:
+        //Counting down until returning to hot state
+        objdata->cooledTimer -= gUpdateRateF;
+        if (objdata->cooledTimer <= 0.0f) {
+            objdata->state = STATE_Fade_Texture_to_Hot;
         }
         break;
-    case 4:
-        temp_v0 = func_800348A0(self, 0, 0);
-        if (temp_v0 != NULL) {
-            var_v1_3 = *temp_v0 + (gUpdateRate * 8);
-            if (var_v1_3 > 0x100) {
-                var_v1_3 = 0x100;
-                objdata->state = 3;
-                objdata->unk4 = 800.0f;
+    case STATE_Fade_Texture_to_Cooled:
+        //Fading animated texture from hot stone frame to iced-over stone frame
+        animatedTexture1 = func_800348A0(self, 0, 0);
+        if (animatedTexture1 != NULL) {
+            opacity = animatedTexture1->unk0 + (gUpdateRate * 8);
+            if (opacity > 0x100) {
+                opacity = 0x100;
+                objdata->state = STATE_Cooled;
+                objdata->cooledTimer = 800.0f;
             }
-            *temp_v0 = var_v1_3;
+            animatedTexture1->unk0 = opacity;
         }
         break;
-    case 5:
-        temp_v0_2 = func_800348A0(self, 0, 0);
-        if (temp_v0_2 != NULL) {
-            var_v1_4 = *temp_v0_2 - (gUpdateRate * 8);
-            if (var_v1_4 < 0) {
-                var_v1_4 = 0;
-                objdata->state = 2;
+    case STATE_Fade_Texture_to_Hot:
+        //Fading texture from hot stone frame to iced-over stone frame
+        animatedTexture2 = func_800348A0(self, 0, 0);
+        if (animatedTexture2 != NULL) {
+            opacity = animatedTexture2->unk0 - (gUpdateRate * 8);
+            if (opacity < 0) {
+                opacity = 0;
+                objdata->state = STATE_Hot;
             }
-            *temp_v0_2 = var_v1_4;
+            animatedTexture2->unk0 = opacity;
         }
         break;
     }
-    if ((objdata->state == 1) || (objdata->state == 7) || (objdata->state == 8)) {
+
+    if (objdata->state == STATE_Rising ||
+        objdata->state == STATE_Waiting_for_Door_Open || 
+        objdata->state == STATE_Finished
+    ){
         return 0;
     } else {
         return 1;
