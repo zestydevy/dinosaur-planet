@@ -1,4 +1,5 @@
 #include "common.h"
+#include "segment_334F0.h"
 #include "sys/memory.h"
 
 void dl_clear_geometry_mode(Gfx **gdl, u32 mode);
@@ -160,7 +161,7 @@ void WL_Crystal_setup(Object* self, WL_Crystal_Setup* objSetup, s32 arg2) {
 // offset: 0x47C | func: 1 | export: 1
 void WL_Crystal_control(Object* self) {
     WL_Crystal_Data* objData;
-    s16* textureUVs;
+    TextureAnimator* textureUVs;
     s16 pad;
     s16 yawAcceleration;
     s16 goal;
@@ -184,9 +185,9 @@ void WL_Crystal_control(Object* self) {
         //Scroll texture UVs
         textureUVs = func_800348A0(self, 1, 0);
         if (textureUVs) {
-            textureUVs[5] -= 0x10;
-            if (textureUVs[5] < -0x3E0) {
-                textureUVs[5] = 0;
+            textureUVs->positionV -= 0x10;
+            if (textureUVs->positionV < -0x3E0) {
+                textureUVs->positionV = 0;
             }
         }
 
@@ -257,9 +258,9 @@ void WL_Crystal_control(Object* self) {
             //Scroll texture UVs
             textureUVs = func_800348A0(self, 0, 0);
             if (textureUVs != NULL) {
-                textureUVs[4] -= gUpdateRate * 8;
-                if (textureUVs[4] < -0x3E0) {
-                    textureUVs[4] = 0;
+                textureUVs->positionU -= gUpdateRate * 8;
+                if (textureUVs->positionU < -0x3E0) {
+                    textureUVs->positionU = 0;
                 }
             }
         }
