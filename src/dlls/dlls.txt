@@ -100,6 +100,7 @@
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
 427 = objects/427_DFlevelcontrol
+435 = objects/435_KrazoaSpirit
 441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
 448 = objects/448_CCcage
