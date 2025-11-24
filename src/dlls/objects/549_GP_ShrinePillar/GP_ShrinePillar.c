@@ -2,6 +2,7 @@
 #include "dll.h"
 #include "PR/gbi.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
 #include "functions.h"
@@ -24,7 +25,7 @@ typedef struct {
 typedef struct {
     u8 state;
     u8 startSequence;   //used by the control func to invoke sequence, letting animCallback func take over
-    f32 cooledTimer;    //how much time Kyte has to perch on pillar after cooled with Ice Blast
+    f32 cooledTimer;    //time until pillar heats up after using Ice Blast Spell
 } GP_ShrinePillar_Data;
 
 typedef enum {
@@ -34,9 +35,9 @@ typedef enum {
     STATE_Waiting_for_Door_Open = 7,     //likely waiting for GP_PillarDoor to open via sequence, but advances immediately
     STATE_Hot = 2,                       //waiting for player to cool pillar with Ice Blast Spell
     STATE_Fade_Texture_to_Cooled = 4,    //blending texture to iced-over stone
-    STATE_Cooled = 3,                    //window of opportunity for Kyte to land on cooled pillar
+    STATE_Cooled = 3,                    //timer counts down until pillar returns to hot state
     STATE_Fade_Texture_to_Hot = 5,       //time ran out, blending back to hot stone
-    STATE_Finished = 8                   //unused, but presumably for when Shrine appears (Kyte landed on 3 pillars)
+    STATE_Finished = 8                   //unused, but presumably for when Shrine appears (3 pillars cooled)
 } GP_ShrinePillar_States;
 
 static int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 a3);
@@ -53,15 +54,15 @@ void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2)
     GP_ShrinePillar_Data* objdata;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
-    if (setup->gamebitRaised != -1) {
-        if (main_get_bits(setup->gamebitRaised) != 0) {
+    if (setup->gamebitRaised != NO_GAMEBIT) {
+        if (main_get_bits(setup->gamebitRaised)) {
             objdata->state = STATE_Raised;
         }
     } else {
         objdata->state = STATE_Underground;
     }
 
-    objdata->startSequence = 1;
+    objdata->startSequence = TRUE;
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = GP_ShrinePillar_anim_callback;
 
@@ -149,7 +150,7 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         for (index = 0; index < animObjData->unk98; index++) {
             if (animObjData->unk8E[index] == 1) {
                 objdata->state = STATE_Raised;
-                if (setup->gamebitRaised != -1) {
+                if (setup->gamebitRaised != NO_GAMEBIT) {
                     main_set_bits(setup->gamebitRaised, 1);
                 }
             }
@@ -177,7 +178,6 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         break;
     case STATE_Cooled:
         //Counting down until returning to hot state
-        //Kyte can land on the pillar while it's cooled
         objdata->cooledTimer -= gUpdateRateF;
         if (objdata->cooledTimer <= 0.0f) {
             objdata->state = STATE_Fade_Texture_to_Hot;
