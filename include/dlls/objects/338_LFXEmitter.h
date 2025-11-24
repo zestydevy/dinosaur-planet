@@ -12,11 +12,15 @@ typedef struct {
 
 typedef struct {
     ObjSetup base;
-    u8 unk18[0x1E - 0x18];
+    s16 unk18;
+    s16 unk1A;
+    s16 unk1C;
     s16 unk1E;
     s16 unk20;
     s16 unk22;
-    u8 unk24[0x28 - 0x24];
+    s8 unk24;
+    s8 unk25;
+    s16 unk26;
 } LFXEmitter_Setup;
 
 #endif // _DLLS_338_H
