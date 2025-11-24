@@ -20,6 +20,8 @@ typedef struct UnkDE8 {
 } UnkDE8;
 
 enum SoundID {
+    SOUND_15_Heavy_Stone_Moving = 0x15, // used by door to Randorn's hall
+
     SOUND_8F = 0x8F, // used by DFlog
 
     SOUND_9B = 0x9B,
@@ -46,6 +48,8 @@ enum SoundID {
 
     SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here = 0x1E2,
     SOUND_1E3_SharpClaw_Ah_Shuddup = 0x1E3, // used in DLL 33
+
+    SOUND_1EB_Wooden_Partition_Sliding = 0x1EB, // used when WM transporter room door moves
 
     SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 
@@ -76,11 +80,16 @@ enum SoundID {
 
     SOUND_292 = 0x292, // used by IMSnowBike
 
+    SOUND_2F8_Door_Opening = 0x2f8, // used by doors in Krazoa Shrines
+    SOUND_2F9_Door_Closing = 0x2f9, // used by doors in Krazoa Shrines
+
     SOUND_33E = 0x33E,
 
     SOUND_342 = 0x342, // used in DLL 466
 
     SOUND_344 = 0x344,
+
+    SOUND_36E_Lever_Clunk = 0x36e, // used by many levers (e.g. ones leading to Cape Claw courtyard)
 
     SOUND_371 = 0x371, // used by MediumMetalCrat
     SOUND_372 = 0x372, // used by MediumMetalCrat
@@ -97,6 +106,8 @@ enum SoundID {
     SOUND_WM_Sun_Whoosh = 0x487, //used by WMsun
 
     SOUND_4BC = 0x4BC,
+
+    SOUND_43E_Stone_Block_Moving = 0x43e,
 
     SOUND_LightFoot_Shout = 0x4B7,
 
