@@ -4,6 +4,25 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
+typedef enum {
+    BLINK_Wait = 0,
+    BLINK_Animate = 1,
+    BLINK_Eyelid_Close_Finished = 0x80
+} BlinkStates;
+
+typedef enum {
+    HEAD_TURN_Goal_Reached = 0,
+    HEAD_TURN_Wait = 1,
+    HEAD_TURN_Animate = 2
+} HeadTurnStates;
+
+typedef enum {
+    HEAD_ANIMATION_TAG_Pupil_L = 0,
+    HEAD_ANIMATION_TAG_Pupil_R = 1,
+    HEAD_ANIMATION_TAG_Eyelid_L = 4,
+    HEAD_ANIMATION_TAG_Eyelid_R = 5
+} HeadAnimationTags;
+
 // Size: 0x24
 typedef struct HeadAnimation {
     /** Head aim */
@@ -32,14 +51,14 @@ typedef struct HeadAnimation {
 } HeadAnimation;
 
 typedef struct {
-    s32 unk0; //second-lowest byte used as frame offset for animated/multi-frame textures,
-              //lowest byte opacity-blends next frame in (on multi-frame textures)
-    u8 unk4[0x8 - 4];
+    s32 frame; //second-lowest byte used as frame offset for animated/multi-frame textures,
+              //lowest byte opacity-blends next frame in (on some multi-frame textures)
+    u32 unk4;
     s16 positionU; //U offset
     s16 positionV; //V offset
-    u8 unkC;
-    u8 unkD;
-    u8 unkE;
+    u8 multiplyR; //allows colour to be multiplied with the texture
+    u8 multiplyG; //allows colour to be multiplied with the texture
+    u8 multiplyB; //allows colour to be multiplied with the texture
 } TextureAnimator;
 
 void func_80032A08(Object* obj, HeadAnimation* arg1);

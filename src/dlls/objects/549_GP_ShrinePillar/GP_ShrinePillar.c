@@ -69,7 +69,7 @@ void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2)
     //Set pillar's animated stone texture to frame 0
     animTexture = func_800348A0(self, 0, 0);
     if (animTexture != NULL) {
-        animTexture->unk0 = 0;
+        animTexture->frame = 0;
     }
 }
 
@@ -187,25 +187,25 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         //Fading animated texture from hot stone frame to iced-over stone frame
         animatedTexture1 = func_800348A0(self, 0, 0);
         if (animatedTexture1 != NULL) {
-            opacity = animatedTexture1->unk0 + (gUpdateRate * 8);
+            opacity = animatedTexture1->frame + (gUpdateRate * 8);
             if (opacity > 0x100) {
                 opacity = 0x100;
                 objdata->state = STATE_Cooled;
                 objdata->cooledTimer = 800.0f;
             }
-            animatedTexture1->unk0 = opacity;
+            animatedTexture1->frame = opacity;
         }
         break;
     case STATE_Fade_Texture_to_Hot:
         //Fading texture from hot stone frame to iced-over stone frame
         animatedTexture2 = func_800348A0(self, 0, 0);
         if (animatedTexture2 != NULL) {
-            opacity = animatedTexture2->unk0 - (gUpdateRate * 8);
+            opacity = animatedTexture2->frame - (gUpdateRate * 8);
             if (opacity < 0) {
                 opacity = 0;
                 objdata->state = STATE_Hot;
             }
-            animatedTexture2->unk0 = opacity;
+            animatedTexture2->frame = opacity;
         }
         break;
     }

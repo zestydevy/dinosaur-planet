@@ -8,25 +8,6 @@
 #define TWENTY_DEGREES 0xE38
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
 
-typedef enum {
-    BLINK_Wait = 0,
-    BLINK_Animate = 1,
-    BLINK_Eyelid_Close_Finished = 0x80
-} BlinkStates;
-
-typedef enum {
-    HEAD_TURN_Goal_Reached = 0,
-    HEAD_TURN_Wait = 1,
-    HEAD_TURN_Animate = 2
-} HeadTurnStates;
-
-typedef enum {
-    HEAD_ANIMATION_TAG_Pupil_L = 0,
-    HEAD_ANIMATION_TAG_Pupil_R = 1,
-    HEAD_ANIMATION_TAG_Eyelid_L = 4,
-    HEAD_ANIMATION_TAG_Eyelid_R = 5
-} HeadAnimationTags;
-
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
 static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n";
@@ -78,7 +59,7 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
         return;
     }
 
-    eyelidValue = eyelidL->unk0;
+    eyelidValue = eyelidL->frame;
 
     switch (arg1->blinkState & 0xF) {
     case BLINK_Wait:
@@ -114,8 +95,8 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
                 arg1->blinkDelayTimer = 0;
             }
         }
-        eyelidR->unk0 = eyelidValue;
-        eyelidL->unk0 = eyelidValue;
+        eyelidR->frame = eyelidValue;
+        eyelidL->frame = eyelidValue;
         break;
     }
 
