@@ -848,28 +848,28 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     return sequenceBoneData;
 }
 
-TextureAnimator* func_800348A0(Object* obj, s32 texType, s32 arg2) {
+TextureAnimator* func_800348A0(Object* obj, s32 texTag, s32 arg2) {
     u8 *texData;
     s32 i;
     s32 temp;
     s32 temp2;
-    TextureAnimator* materialAnimator;
-    s32 frameCount;
+    TextureAnimator* animTexture;
+    s32 animatedTextureCount;
 
-    materialAnimator = NULL;
+    animTexture = NULL;
     if (obj->def != NULL) {
         texData = obj->def->pTextures;
-        frameCount = obj->def->numAnimatedFrames;
-        for (i = 0; i < frameCount; i++) {
+        animatedTextureCount = obj->def->numAnimatedFrames;
+        for (i = 0; i < animatedTextureCount; i++) {
             temp = i << 1;
-            if (texType == *(temp + texData)) {
+            if (texTag == *(temp + texData)) {
                 temp2 = i << 4;
-                materialAnimator = (TextureAnimator*)&((u8*)obj->unk70)[temp2];
+                animTexture = (TextureAnimator*)&((u8*)obj->unk70)[temp2];
             }
         }
     }
 
-    return materialAnimator;
+    return animTexture;
 }
 
 s32* func_800349B0(void) {
