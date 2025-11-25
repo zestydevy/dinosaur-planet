@@ -10047,7 +10047,7 @@ void dll_210_func_1D438(Object* player, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
 // offset: 0x1D4C8 | func: 191 | export: 44
 s32 dll_210_func_1D4C8(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk354.blinkState == 1;
+    return objdata->unk354.blinkState == BLINK_Animate;
 }
 
 // offset: 0x1D4E0 | func: 192 | export: 33

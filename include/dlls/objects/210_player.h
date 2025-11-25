@@ -337,7 +337,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*41*/ void (*func41)(Object* player, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
     /*42*/ u8 (*func42)(Object* player);
     /*43*/ int (*func43)(Object* player);
-    /*44*/ s32 (*func44)(Object* player);
+    /*44*/ s32 (*func44)(Object* player); //is player currently blinking
     /*45*/ Object *(*func45)(Object* player);
     /*46*/ u8 (*func46)(Object* player);
     /*47*/ u8 (*func47)(Object* player, s32 arg1, s8* arg2);
