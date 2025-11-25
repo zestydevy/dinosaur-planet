@@ -26,7 +26,7 @@ int dll_413_func_1AC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 //matches but needs anim callback function to be static
 void dll_413_setup(Object *self, ObjSetup *arg1, s32 arg2) {
     s32 index;
-    TextureAnimator* taggedMaterial;
+    TextureAnimator* animTexture;
 
     self->animCallback = dll_413_func_1AC;
     fxTransform.transl.x = 0.0f;
@@ -35,10 +35,10 @@ void dll_413_setup(Object *self, ObjSetup *arg1, s32 arg2) {
 
     //Setting thruster textures' initial colour multiplier to black
     for (index = 2; index < 7; index++){
-        taggedMaterial = func_800348A0(self, index, 0);
-        taggedMaterial->multiplyR = 1;
-        taggedMaterial->multiplyG = 1;
-        taggedMaterial->multiplyB = 1;
+        animTexture = func_800348A0(self, index, 0);
+        animTexture->multiplyR = 1;
+        animTexture->multiplyG = 1;
+        animTexture->multiplyB = 1;
     }
 }
 #endif

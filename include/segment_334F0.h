@@ -44,10 +44,10 @@ typedef struct HeadAnimation {
     /* 0x1E */ s8 blinkState;
     /* 0x1F */ s8 blinkDelayTimer;
 
-    /** Randomised pupil darts */
-    /* 0x20 */ s8 pupilSpeed;       
-    /* 0x21 */ s8 pupilDelayTimer;  //frames until next eye dart
-    /* 0x22 */ s8 pupilGoal;        //goal position for current eye dart
+    /** Randomised eye darts */
+    /* 0x20 */ s8 eyeSpeed;       
+    /* 0x21 */ s8 eyeDelayTimer;  //frames until next eye dart
+    /* 0x22 */ s8 eyeGoal;        //goal position for current eye dart
 } HeadAnimation;
 
 typedef struct {

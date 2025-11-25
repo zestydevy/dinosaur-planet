@@ -790,35 +790,35 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
 
     //Check if the current eye dart is already finished
     animationFinished = FALSE;
-    if (arg1->pupilSpeed == 0) {
+    if (arg1->eyeSpeed == 0) {
         animationFinished = TRUE;
     }
-    if ((arg1->pupilSpeed > 0) && (pupilL->positionU >= arg1->pupilGoal)) {
+    if ((arg1->eyeSpeed > 0) && (pupilL->positionU >= arg1->eyeGoal)) {
         animationFinished = TRUE;
     }
-    if ((arg1->pupilSpeed < 0) && (arg1->pupilGoal >= pupilL->positionU)) {
+    if ((arg1->eyeSpeed < 0) && (arg1->eyeGoal >= pupilL->positionU)) {
         animationFinished = TRUE;
     }
 
     //Set up the next eye dart animation
     if (animationFinished) {
-        arg1->pupilGoal = rand_next(-100, 10);
-        if (arg1->pupilGoal < pupilL->positionU) {
-            arg1->pupilSpeed = -5;
+        arg1->eyeGoal = rand_next(-100, 10);
+        if (arg1->eyeGoal < pupilL->positionU) {
+            arg1->eyeSpeed = -5;
         } else {
-            arg1->pupilSpeed = 5;
+            arg1->eyeSpeed = 5;
         }
-        arg1->pupilDelayTimer = rand_next(30, 100);
+        arg1->eyeDelayTimer = rand_next(30, 100);
     }
 
     //Wait a random amount of time between darts
-    if (arg1->pupilDelayTimer > 0) {
-        arg1->pupilDelayTimer -= gUpdateRate;
+    if (arg1->eyeDelayTimer > 0) {
+        arg1->eyeDelayTimer -= gUpdateRate;
         return;
     }
 
     //Animate eye dart
-    pupilL->positionU += arg1->pupilSpeed * gUpdateRate;
+    pupilL->positionU += arg1->eyeSpeed * gUpdateRate;
     pupilL->positionV = 0;
     pupilR->positionU = -100 - pupilL->positionU;
     pupilR->positionV = 0;
