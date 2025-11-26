@@ -76,7 +76,7 @@ void dll_782_control(Object* self) {
     
     temp_v0 = func_800348A0(self, 0, 0);
     if (temp_v0 != NULL) {
-        temp_v0->unk0 = 0;
+        temp_v0->frame = 0;
     }
     if (objdata->unk274 != 6) {
         isNighttime = gDLL_7_Newday->vtbl->func8(&time);
@@ -292,7 +292,7 @@ void dll_782_control(Object* self) {
     case 4:
         temp_v0 = func_800348A0(self, 0, 0);
         if (temp_v0 != NULL) {
-            temp_v0->unk0 = 0x100;
+            temp_v0->frame = 0x100;
         }
         break;
     }
