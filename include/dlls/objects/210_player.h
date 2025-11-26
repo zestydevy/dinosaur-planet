@@ -137,7 +137,7 @@ typedef struct UnkArg2 {
     f32 unk1C;
     f32 unk20;
     f32 unk24;
-    s32 unk28;
+    Object *unk28;
     s8 unk2C;
     s8 unk2D;
     s8 unk2E;
@@ -340,7 +340,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*44*/ s32 (*func44)(Object* player); //is player currently blinking
     /*45*/ Object *(*func45)(Object* player);
     /*46*/ u8 (*func46)(Object* player);
-    /*47*/ u8 (*func47)(Object* player, s32 arg1, s8* arg2);
+    /*47*/ u8 (*func47)(Object* player, Object *arg1, s8* arg2);
     /*48*/ s16 (*func48)(Object* player);
     /*49*/ s16 (*func49)(Object* player);
     /*50*/ s32 (*func50)(Object* player); //get used spell gamebitID

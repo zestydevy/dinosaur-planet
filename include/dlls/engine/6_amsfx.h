@@ -200,6 +200,13 @@ enum SoundID {
     SOUND_9B4_Flamethrower = 0x9B4, // kamerian related
     SOUND_9B5_Explosion = 0x9B5, // kamerian related
 
+    SOUND_9B9 = 0x9B9,
+    SOUND_9BA = 0x9BA,
+    SOUND_9BB = 0x9BB,
+
+    SOUND_9C5 = 0x9C5,
+    SOUND_9C6 = 0x9C6,
+
     SOUND_A71_Rattling_1 = 0xA71, // used by MoonSeeds
     SOUND_A72_Rattling_2 = 0xA72, // used by MoonSeeds
 

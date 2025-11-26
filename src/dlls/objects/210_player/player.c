@@ -10091,7 +10091,7 @@ int dll_210_func_1D5C0(Object* player) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_1D5E8.s")
 #else
-u8 dll_210_func_1D5E8(Object* player, s32 arg1, s8* arg2) {
+u8 dll_210_func_1D5E8(Object* player, Object* arg1, s8* arg2) {
     Player_Data* objdata = player->data;
 
     *arg2 = objdata->unk680.unk2E;
