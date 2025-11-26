@@ -776,6 +776,9 @@ class DLLSplitter:
                     dir = matching_dir
                 else:
                     continue
+            # Filter non-function pairs
+            if func.function == None:
+                continue
 
             s_path = dir.joinpath(f"{func.getName()}.s")
             
