@@ -1,4 +1,4 @@
-// @DECOMP_OPT_FLAGS=-O1 -g2
+// @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
 #include "common.h"
 #include "PR/gu.h"
@@ -65,9 +65,6 @@ extern s8 D_800A20E4[0x120];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_unpack_scale_fac.s")
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_8006f530.s")
-#else
 s32 mp3_dec_8006f530(Arg0* arg0, UNK_TYPE_32 arg1, s32 arg2) {
     s8 sp70[0x120] = D_800A20E4;
     s32 sp60[4];
@@ -205,11 +202,7 @@ s32 mp3_dec_8006f530(Arg0* arg0, UNK_TYPE_32 arg1, s32 arg2) {
     }
     return 1;
 }
-#endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_func_80070168.s")
-#else
 s32 mp3_dec_func_80070168(Arg0* arg0, s32 arg1, s32 arg2) {
     s32 sp64;
     s32 sp60;
@@ -290,7 +283,6 @@ s32 mp3_dec_func_80070168(Arg0* arg0, s32 arg1, s32 arg2) {
     }
     return 1;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_func_800706f8.s")
 
