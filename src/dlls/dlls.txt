@@ -97,6 +97,7 @@
 398 = objects/398_CFMagicWall
 400 = objects/400_CFLevelControl
 408 = objects/408_IMIceMountain
+413 = objects/413_IMspacecraft
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
 427 = objects/427_DFlevelcontrol
