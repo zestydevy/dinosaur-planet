@@ -46,6 +46,8 @@ typedef struct {
 	u8 unk4418[1][578];
     s32 unk465C[1];
     s32 unk4660[1];
+    f32 unk4664[576];
+    f32 unk4F64[576];
 } Arg0;
 
 s32 mp3_dec_8006f530(Arg0* arg0, UNK_TYPE_32 arg1, s32 arg2);
@@ -58,6 +60,7 @@ extern s16 D_8009FE10[2][3][22];
 extern u8 D_8009FF18[2][3][13];
 extern s32 D_800C09D0[];
 extern s8 D_800A20E4[0x120];
+extern s16 D_800A014C[2][3][576];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_init.s")
 
@@ -203,6 +206,7 @@ s32 mp3_dec_8006f530(Arg0* arg0, UNK_TYPE_32 arg1, s32 arg2) {
     return 1;
 }
 
+// mp3dec00042238 in pd
 s32 mp3_dec_func_80070168(Arg0* arg0, s32 arg1, s32 arg2) {
     s32 sp64;
     s32 sp60;
@@ -284,7 +288,33 @@ s32 mp3_dec_func_80070168(Arg0* arg0, s32 arg1, s32 arg2) {
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_func_800706f8.s")
+// mp3dec000427d8 in pd
+s32 mp3_dec_func_800706f8(Arg0* arg0, s32 arg1) {
+    s16* sp14;
+    f32* sp10;
+    f32* spC;
+    s32 i;
+
+    sp14 = D_800A014C[arg0->unk3BA4][arg0->unk3BB4];
+    sp10 = arg0->unk4F64;
+    spC = arg0->unk4664;
+    i = 0;
+    if ((arg0->unk3C98[arg1][0] != 0) && (arg0->unk3CA0[arg1][0] == 2)) {
+        if (arg0->unk3CA8[arg1][0] != 0) {
+            while (i++ < 36) {
+                (sp10++)[0] = (spC++)[0];
+            }
+        }
+        while (i < 576) {
+            sp10[sp14[i++]] = (spC++)[0];
+        }
+    } else {
+        while (i++ < 576) {
+            (sp10++)[0] = (spC++)[0];
+        }
+    }
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_reduce_aliases.s")
 
