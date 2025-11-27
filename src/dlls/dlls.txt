@@ -74,6 +74,7 @@
 308 = objects/308_USEOBJ
 309 = objects/309_SEQOBJ
 311 = objects/311_IMMultiSeq
+315 = objects/315_sidefoodbag
 321 = objects/321_Duster
 325 = objects/325_trigger
 331 = objects/331_genprops

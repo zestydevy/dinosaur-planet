@@ -1,0 +1,23 @@
+.text = 0x0:
+sidefoodbag_ctor = 0x0;
+sidefoodbag_dtor = 0xC;
+sidefoodbag_setup = 0x18;
+sidefoodbag_control = 0x1A4;
+sidefoodbag_update = 0x38C;
+sidefoodbag_print = 0x398;
+sidefoodbag_free = 0x3B0;
+sidefoodbag_get_model_flags = 0x3F8;
+sidefoodbag_get_data_size = 0x408;
+sidefoodbag_func_41C = 0x41C;
+sidefoodbag_func_440 = 0x440;
+sidefoodbag_func_488 = 0x488;
+sidefoodbag_func_4DC = 0x4DC;
+sidefoodbag_func_530 = 0x530;
+sidefoodbag_func_594 = 0x594;
+
+.rodata = 0x64C:
+str_0 = 0x0; // absolute:0x64C
+
+.data = 0x66C:
+dino_foodbag_items = 0x0; // absolute:0x66C
+dino_foodbag_gamebitIDs = 0x78; // absolute:0x6E4

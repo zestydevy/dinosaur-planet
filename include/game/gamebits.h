@@ -516,7 +516,7 @@ typedef enum {
     BIT_Dino_Bag_Old_Grubs = 0x1FD, // len:6 group:1    [INVENTORY]
     BIT_1FE = 0x1FE, // len:1 group:1
     BIT_1FF = 0x1FF, // len:1 group:1
-    BIT_200 = 0x200, // len:1 group:1
+    BIT_200 = 0x200, // len:1 group:1   set by sidefoodbag during setup
     BIT_WC_Sun_Stone = 0x201, // len:1 group:1          [INVENTORY]
     BIT_WC_Used_Sun_Stone = 0x202, // len:1 group:1     [INVENTORY - HIDE]
     BIT_203 = 0x203, // len:1 group:1
@@ -560,7 +560,7 @@ typedef enum {
     BIT_Boss_Galadon_Map_Setup = 0x229, // len:4 group:1
     BIT_22A = 0x22A, // len:1 group:2
     BIT_SpellStone_DIM_Activated = 0x22B, // len:1 group:1 (SpellStone #1, DarkIce Mines) [INVENTORY]
-    BIT_22C = 0x22C, // len:1 group:1
+    BIT_22C = 0x22C, // len:1 group:1  set by sidefoodbag during setup
     BIT_22D = 0x22D, // len:1 group:3
     BIT_22E = 0x22E, // len:1 group:2 task:39
     BIT_22F = 0x22F, // len:1 group:1

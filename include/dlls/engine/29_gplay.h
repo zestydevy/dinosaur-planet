@@ -44,8 +44,9 @@ typedef struct {
 
 // size: 0xB4
 typedef struct {
-    u8 unk0[0xB4];
-} GplayStruct14;
+    f32 lifetime[30]; //lifetimes of each food bag item (in frames)
+    s16 unk78[30]; //food bag items' types/indices?
+} GplayStruct14; //0xB4
 
 // size: 0x8
 typedef struct {
