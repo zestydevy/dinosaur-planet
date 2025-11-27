@@ -5,16 +5,37 @@
 #include "game/objects/object.h"
 
 typedef struct {
+    ObjSetup base;
+    s8 unk18;
+    s8 unk19;
+    s8 unk1A; //yaw
+    s16 unk1C;
+    s16 unk1E;
+} Food_Setup;
+
+typedef struct {
     s16 expiry;
     u8 healthRestored;
     u8 unk3;
-    s16 unk4;
+    u16 unk4;
     s16 gamebitID; //inventory item
     s16 objectID;  //Object to create when placed
 } FoodbagItem;
 
+typedef struct {
+    u8 nextIndex; //total placed objects?
+    Object* placedObjects[20];
+    u16 foodType[20]; //foodType of each placed object?
+} FoodbagStructUnk; //food objects placed in world?
+
+typedef struct {
+    u16 small;
+    u16 medium;
+    u16 large;
+} FoodbagGamebits;
+
 #define BLANK_FOODBAG_ITEM {0, 0, 0, 0, 0, 0}
-#define NO_FOOD_OBJECT_ID 0xFFFF
+#define NO_FOOD_OBJECT_ID -1
 
 DLL_INTERFACE(DLL_314_Foodbag) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);

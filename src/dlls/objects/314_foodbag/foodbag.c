@@ -8,10 +8,8 @@ typedef struct {
 
 typedef struct {
     DLL_Unknown *dllPutdown; //DLL #56, handling removing food items from bag
-    s16 gamebitSmall;   //gamebitID for obtaining small food bag
-    s16 gamebitMedium;  //gamebitID for obtaining medium food bag
-    s16 gamebitLarge;   //gamebitID for obtaining large food bag
-    u16 unkA;
+    FoodbagGamebits gamebits;
+    u16 capacity;
     GplayStruct14* bagTimers;
     s8 *playerHealth;
     s8 *playerHealthMax;
@@ -19,9 +17,7 @@ typedef struct {
     u8 unk19;
     u8 unk1A;
     u8 unk1B;
-    s8 unk1C;
-    s32 unk20[20];
-    s16 unk70[20];
+    FoodbagStructUnk unk1C;
     f32 unk98;
 } DLL314_Data; //9C
 
@@ -107,27 +103,27 @@ void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
     objData = self->data;
     
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = dll_load_deferred(0x38, 0xA);
-    objData->unk1C = 0;
+    objData->dllPutdown = dll_load_deferred(56, 10);
+    objData->unk1C.nextIndex = 0;
 
     for (index = 0; index < 20; index++){
-        objData->unk20[index] = 0;
-        objData->unk70[index] = 0;
+        objData->unk1C.placedObjects[index] = 0;
+        objData->unk1C.foodType[index] = 0;
     }
     
     objData->unk98 = -1.0f;
     
     if (playerNo == PLAYER_SABRE) {
-        objData->gamebitSmall = BIT_Sabre_Foodbag_S;
-        objData->gamebitMedium = BIT_Sabre_Foodbag_M;
-        objData->gamebitLarge = BIT_Sabre_Foodbag_L;
+        objData->gamebits.small  = BIT_Sabre_Foodbag_S;
+        objData->gamebits.medium = BIT_Sabre_Foodbag_M;
+        objData->gamebits.large  = BIT_Sabre_Foodbag_L;
     } else if (playerNo == PLAYER_KRYSTAL) {
-        objData->gamebitSmall = BIT_Krystal_Foodbag_S;
-        objData->gamebitMedium = BIT_Krystal_Foodbag_M;
-        objData->gamebitLarge = BIT_Krystal_Foodbag_L;
+        objData->gamebits.small  = BIT_Krystal_Foodbag_S;
+        objData->gamebits.medium = BIT_Krystal_Foodbag_M;
+        objData->gamebits.large  = BIT_Krystal_Foodbag_L;
     }
     
-    objData->unkA = 0;
+    objData->capacity = 0;
     objData->bagTimers = gDLL_29_Gplay->vtbl->func_1974();
     
     if (main_get_bits(BIT_383)) {
@@ -235,7 +231,7 @@ u32 Foodbag_get_data_size(Object *self, u32 a1) {
 // offset: 0x590 | func: 7 | export: 7
 int Foodbag_func_590(Object* self) {
     DLL314_Data *objData = self->data;
-    if (objData->unkA) {
+    if (objData->capacity) {
         return 1;
     }
     return 0;
@@ -277,9 +273,9 @@ s32 Foodbag_func_650(Object* self, s32 arg1) {
 void Foodbag_func_708(Object* self, s32 arg1) {
     DLL314_Data* objData = self->data;
 
-    if (((objData->unk18 == 1) && (*objData->playerHealth < *objData->playerHealthMax)) || objData->unkA == 0) {
+    if (((objData->unk18 == 1) && (*objData->playerHealth < *objData->playerHealthMax)) || objData->capacity == 0) {
         Foodbag_eat_food(objData, arg1);
-    } else if (((DLL_Unknown*)objData->dllPutdown)->vtbl->func[4].withFourArgsS32(arg1, objData->unkA, (s32)objData->bagTimers, (s32)&foodbag_items) == 0) {
+    } else if (((DLL_Unknown*)objData->dllPutdown)->vtbl->func[4].withFourArgsS32(arg1, objData->capacity, (s32)objData->bagTimers, (s32)&foodbag_items) == 0) {
         Foodbag_eat_food(objData, arg1);
     }
 }
@@ -293,7 +289,7 @@ void Foodbag_func_7E0(Object* self, s16 arg1) {
 // offset: 0x83C | func: 13 | export: 10
 void Foodbag_func_83C(Object* self) {
     DLL314_Data* objData = self->data;
-    objData->unkA = ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[7].withTwoArgsS32((s32)&objData->gamebitSmall, (s32)self);
+    objData->capacity = ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[7].withOneArgS32((s32)&objData->gamebits);
 }
 
 // offset: 0x890 | func: 14
@@ -331,7 +327,7 @@ s32 Foodbag_eat_food(DLL314_Data* objData, s32 arg1) {
 // offset: 0xA0C | func: 15 | export: 14
 u16 Foodbag_func_A0C(Object* self) {
     DLL314_Data *objData = self->data;
-    return objData->unkA;
+    return objData->capacity;
 }
 
 // offset: 0xA1C | func: 16 | export: 15
@@ -344,8 +340,8 @@ s32 Foodbag_func_A1C(Object* self) {
     index = 0;
     while (objData->bagTimers->unk78[index]) {
         index++;
-        if (index == objData->unkA) {
-            return objData->unkA;
+        if (index == objData->capacity) {
+            return objData->capacity;
         }
     }
     
