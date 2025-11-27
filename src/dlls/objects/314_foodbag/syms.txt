@@ -1,0 +1,30 @@
+.text = 0x0:
+Foodbag_ctor = 0x0;
+Foodbag_dtor = 0xC;
+Foodbag_setup = 0x18;
+Foodbag_control = 0x22C;
+Foodbag_update = 0x500;
+Foodbag_print = 0x50C;
+Foodbag_free = 0x524;
+Foodbag_get_model_flags = 0x56C;
+Foodbag_get_data_size = 0x57C;
+Foodbag_func_590 = 0x590;
+Foodbag_func_5B4 = 0x5B4;
+Foodbag_func_5FC = 0x5FC;
+Foodbag_func_650 = 0x650;
+Foodbag_func_708 = 0x708;
+Foodbag_func_7E0 = 0x7E0;
+Foodbag_func_83C = 0x83C;
+Foodbag_eat_food = 0x890;
+Foodbag_func_A0C = 0xA0C;
+Foodbag_func_A1C = 0xA1C;
+Foodbag_get_anim_objectID_from_food_gamebit = 0xA74;
+
+.rodata = 0xB78:
+str_0 = 0x0; // absolute:0xB78
+
+.data = 0xB98:
+food_anim_gamebitIDs = 0x0; // absolute:0xB98
+food_anim_objectIDs = 0x18; // absolute:0xBB0
+foodbag_items = 0x2C; // absolute:0xBC4
+foodbag_gamebitIDs = 0xA4; // absolute:0xC3C

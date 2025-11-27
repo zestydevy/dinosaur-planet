@@ -121,6 +121,8 @@ enum SoundID {
 
     SOUND_5EB_Magic_Refill_Chime = 0x5EB, // used in DLL 210
 
+    SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
+
     SFX_PAUSE_MENU_BACK = 0x5D4, // Used in DLL 66
     SFX_PAUSE_MENU_MOVE = 0x5D5, // Used in DLL 66
 
