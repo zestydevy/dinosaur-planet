@@ -1,7 +1,6 @@
 #include "common.h"
 
 #include "dlls/objects/314_foodbag.h"
-#include "macros.h"
 
 /*0x0*/ static u32 _data_0[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 // /*0x50*/ static u32 _data_50[] = { 0, 0, 0, 0 };
@@ -58,7 +57,7 @@ int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, Foo
 }
 
 // offset: 0x1B4 | func: 1 | export: 1
-#if 1
+#ifndef NON_MATCHING //matches on decomp.me, but rodata trouble when placing here
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/56_putdown/dll_56_func_1B4.s")
 #else
 Object* dll_56_func_1B4(Object* arg0, Object* arg1, s32 arg2, FoodbagStructUnk* arg3) {
@@ -118,29 +117,31 @@ s32 dll_56_func_3F0(Object* foodObject, FoodbagStructUnk* arg1) {
 }
 
 // offset: 0x47C | func: 3 | export: 3
-u16 dll_56_func_47C(GplayStruct14* arg0, FoodbagItem* arg1) {
+u16 dll_56_func_47C(GplayStruct14* bagTimers, FoodbagItem* foodDefs) {
     u16 pad;
     u16 sp34;
-    f32 var_ft4;
+    f32 fExpiry;
     u16 index;
-    u8 index2;
-    u16 temp_t2;
-    u16 temp_v0_2;
+    u8 ID;
+    u16 uExpiry;
+    u16 foodType;
     
     for (index = 0; index < 12; index++){
-        arg0->lifetime[index] += gUpdateRateF;
+        bagTimers->lifetime[index] += gUpdateRateF;
     }
     
     for (index = 0; index < 12; index++){
-        temp_v0_2 = arg0->unk78[index];
-        if (temp_v0_2){
-            index2 = dll_56_func_AFC(temp_v0_2);
-            temp_t2 = arg1[index2].expiry;
-            var_ft4 = temp_t2 & 0xFFFFu;
-            if (var_ft4 < arg0->lifetime[index]){
-                index2 = dll_56_func_AFC(arg0->unk78[index]);
-                sp34 = arg1[index2].unk4;
-                dll_56_func_80C(index, arg0->unk78[index], arg0, arg1);
+        foodType = bagTimers->foodType[index];
+        if (foodType){
+            ID = dll_56_func_AFC(foodType);
+            uExpiry = foodDefs[ID].expiry;
+            fExpiry = uExpiry & 0xFFFFu;
+
+            //Check if food expired
+            if (bagTimers->lifetime[index] > fExpiry){
+                ID = dll_56_func_AFC(bagTimers->foodType[index]);
+                sp34 = foodDefs[ID].unk4;
+                dll_56_func_80C(index, bagTimers->foodType[index], bagTimers, foodDefs);
                 return sp34;
             }
         }
@@ -150,54 +151,54 @@ u16 dll_56_func_47C(GplayStruct14* arg0, FoodbagItem* arg1) {
 }
 
 // offset: 0x5E8 | func: 4 | export: 4
-s32 dll_56_func_5E8(s32 arg0, s32 arg1, GplayStruct14* arg2, FoodbagItem* arg3) {
-    s8 var_t0;
-    s8 var_v1;
+int dll_56_func_5E8(s32 arg0, s32 arg1, GplayStruct14* bagTimers, FoodbagItem* foodDefs) {
+    s8 index1;
+    s8 index2;
     u8 temp_a0;
-    u32 temp_v0;
+    u32 ID;
 
-    var_t0 = 0;
+    index1 = 0;
     
-    temp_v0 = dll_56_func_AFC(arg0);    
+    ID = dll_56_func_AFC(arg0);    
     
-    while (arg2->unk78[var_t0]) {
-        var_t0++; 
-        if (var_t0 == arg1){
-            return 0;
+    while (bagTimers->foodType[index1]) {
+        index1++; 
+        if (index1 == arg1){
+            return FALSE;
         }
     }   
     
-    temp_a0 = arg3[temp_v0].unk3;
-    if ((s8) (arg1 - var_t0) < temp_a0) {
-        return 0;
+    temp_a0 = foodDefs[ID].unk3;
+    if ((s8) (arg1 - index1) < temp_a0) {
+        return FALSE;
     }
 
-    for (var_v1 = 0; var_v1 < arg3[temp_v0].unk3; var_v1++){
-        arg2->unk78[var_t0 + var_v1] = arg0;
+    for (index2 = 0; index2 < foodDefs[ID].unk3; index2++){
+        bagTimers->foodType[index1 + index2] = arg0;
     }
 
     
-    arg2->lifetime[var_t0] = 0.0f;
-    dll_56_func_9E0(arg2, arg3);
-    return 1;
+    bagTimers->lifetime[index1] = 0.0f;
+    dll_56_func_9E0(bagTimers, foodDefs);
+    return TRUE;
 }
 
 // offset: 0x730 | func: 5 | export: 5
-void dll_56_func_730(s16 arg0, GplayStruct14* arg1, FoodbagItem* arg2) {
+void dll_56_func_730(s16 arg0, GplayStruct14* bagTimers, FoodbagItem* foodDefs) {
     s32 temp_t3;
     u8 index;
-    u8 index2;
+    u8 ID;
     u16 temp_s1;
 
     for (index = 0; index < 30; index++){
-        temp_s1 = arg1->unk78[index];
-        index2 = dll_56_func_AFC(temp_s1);
-        if (arg0 == arg2[index2].gamebitID){
+        temp_s1 = bagTimers->foodType[index];
+        ID = dll_56_func_AFC(temp_s1);
+        if (arg0 == foodDefs[ID].gamebitID){
             break;
         }
     }
     
-    dll_56_func_80C(index, temp_s1, arg1, arg2);
+    dll_56_func_80C(index, temp_s1, bagTimers, foodDefs);
 }
 
 // offset: 0x80C | func: 6 | export: 6
@@ -213,7 +214,7 @@ void dll_56_func_80C(u8 arg0, u16 arg1, GplayStruct14* bagTimers, FoodbagItem* f
     
     for (index = arg0; offset < 30; offset++, index++){
         bagTimers->lifetime[index] = bagTimers->lifetime[offset];
-        bagTimers->unk78[index] = bagTimers->unk78[offset];
+        bagTimers->foodType[index] = bagTimers->foodType[offset];
     }
     
     dll_56_func_9E0(bagTimers, foodItems);
@@ -241,18 +242,18 @@ s32 dll_56_func_900(FoodbagGamebits* gamebitIDs) {
 
 // offset: 0x9E0 | func: 8 | export: 8
 void dll_56_func_9E0(GplayStruct14* bagTimers, FoodbagItem* food) {
-    u8 sp3C[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    u8 food_quantities[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     u8 index;
 
     index = 0;
-    while (bagTimers->unk78[index] != 0) { 
-        sp3C[dll_56_func_AFC(bagTimers->unk78[index])]++;
+    while (bagTimers->foodType[index]) { 
+        food_quantities[dll_56_func_AFC(bagTimers->foodType[index])]++;
         index++;
     }
     
     for (index = 1; index < 12; index++){
         if (food[index].gamebitID > 0){
-            main_set_bits(food[index].gamebitID, sp3C[index]);
+            main_set_bits(food[index].gamebitID, food_quantities[index]);
         }
     }
 }

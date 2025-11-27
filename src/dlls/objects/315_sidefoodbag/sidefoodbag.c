@@ -101,7 +101,7 @@ void SideFoodbag_control(Object* self) {
     
     if (uiValue != NO_GAMEBIT) {
         for (index = 0; index < 30; index++){
-            temp = objData->bagTimers->unk78[index];
+            temp = objData->bagTimers->foodType[index];
             if (!temp){
                 break;
             }

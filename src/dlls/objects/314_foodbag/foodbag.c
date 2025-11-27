@@ -169,7 +169,7 @@ void Foodbag_control(Object* self) {
             Foodbag_func_650(self, 1);
         } else {
             for (index = 0; index < 30; index++){
-                temp = objData->bagTimers->unk78[index];
+                temp = objData->bagTimers->foodType[index];
                 if (!temp){
                     break;
                 }
@@ -338,7 +338,7 @@ s32 Foodbag_func_A1C(Object* self) {
     objData = self->data;
     
     index = 0;
-    while (objData->bagTimers->unk78[index]) {
+    while (objData->bagTimers->foodType[index]) {
         index++;
         if (index == objData->capacity) {
             return objData->capacity;
