@@ -20,4 +20,4 @@ str_0 = 0x0; // absolute:0x64C
 
 .data = 0x66C:
 dino_foodbag_items = 0x0; // absolute:0x66C
-dino_foodbag_gamebitIDs = 0x78; // absolute:0x6E4
+dino_foodbag_cmdmenu_gamebitIDs = 0x78; // absolute:0x6E4

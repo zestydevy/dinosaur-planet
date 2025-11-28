@@ -50,21 +50,21 @@ typedef struct {
 };
 
 /*0x2C*/ static FoodbagItem foodbag_items[] = {
-    {0,      0, 0, 0x000, NO_GAMEBIT,            NO_FOOD_OBJECT_ID}, 
-    {2000,   1, 1, 0x004, BIT_Green_Apple_Count, OBJ_foodbagRedApple},
-    {6000,   4, 1, 0x004, BIT_Red_Apple_Count,   OBJ_foodbagRedApple},
-    {6000,   2, 1, 0x000, BIT_Brown_Apple_Count, OBJ_foodbagRedApple}, 
-    {6000,   4, 2, 0x010, BIT_Fish_Count,        OBJ_foodbagNewFish}, 
-    {6000,   8, 2, 0x000, BIT_Smoked_Fish_Count, OBJ_foodbagNewFish}, 
-    {30000,  8, 1, 0x040, BIT_Dino_Egg_Count,    OBJ_foodbagNewMeat}, 
-    {30000,  4, 1, 0x000, BIT_Moldy_Meat_Count,  OBJ_foodbagNewMeat}, 
-    {30000,  1, 1, 0x200, BIT_Green_Bean_Count,  OBJ_foodbagGreenBea}, 
-    {30000,  4, 1, 0x200, BIT_Red_Bean_Count,    OBJ_foodbagGreenBea}, 
-    {30000, 1, 1, 0x000, BIT_Brown_Bean_Count,   OBJ_foodbagGreenBea}, 
-    {30000, 2, 1, 0x200, BIT_Blue_Bean_Count,    OBJ_foodbagGreenBea}
+    {0,      0, 0, 0,               NO_GAMEBIT,             NO_FOOD_OBJECT_ID}, 
+    {2000,   1, 1, FOOD_TYPE(3),    BIT_Green_Apple_Count,  OBJ_foodbagRedApple},
+    {6000,   4, 1, FOOD_TYPE(3),    BIT_Red_Apple_Count,    OBJ_foodbagRedApple},
+    {6000,   2, 1, NO_SPOIL,        BIT_Brown_Apple_Count,  OBJ_foodbagRedApple}, 
+    {6000,   4, 2, FOOD_TYPE(5),    BIT_Fish_Count,         OBJ_foodbagNewFish}, 
+    {6000,   8, 2, NO_SPOIL,        BIT_Smoked_Fish_Count,  OBJ_foodbagNewFish}, 
+    {30000,  8, 1, FOOD_TYPE(7),    BIT_Dino_Egg_Count,     OBJ_foodbagNewMeat}, 
+    {30000,  4, 1, NO_SPOIL,        BIT_Moldy_Meat_Count,   OBJ_foodbagNewMeat}, 
+    {30000,  1, 1, FOOD_TYPE(10),   BIT_Green_Bean_Count,   OBJ_foodbagGreenBea}, 
+    {30000,  4, 1, FOOD_TYPE(10),   BIT_Red_Bean_Count,     OBJ_foodbagGreenBea}, 
+    {30000, 1, 1, NO_SPOIL,         BIT_Brown_Bean_Count,   OBJ_foodbagGreenBea}, 
+    {30000, 2, 1, FOOD_TYPE(10),    BIT_Blue_Bean_Count,    OBJ_foodbagGreenBea}
 };
 
-/*0xA4*/ static s32 foodbag_gamebitIDs[] = {
+/*0xA4*/ static s32 foodbag_cmdmenu_gamebitIDs[] = {
     BIT_Foodbag_Setting_Eat_First, 
     BIT_Foodbag_Setting_Eat_Later, 
     BIT_Green_Apple_Count, 
@@ -140,7 +140,7 @@ void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
     if (main_get_bits(BIT_Foodbag_Setting_Eat_Later) == FALSE && 
         main_get_bits(BIT_Foodbag_Setting_Eat_First) == FALSE) {
 
-        //Make sure eat, place, give options are available
+        //Make sure eat/place/give options are available
         main_set_bits(BIT_Foodbag_Eat, TRUE);
         main_set_bits(BIT_Foodbag_Place, TRUE);
         main_set_bits(BIT_Foodbag_Give, TRUE);
@@ -163,7 +163,7 @@ void Foodbag_control(Object* self) {
     objData = self->data;
     
     gDLL_1_UI->vtbl->func_70A0(0);
-    uiGamebit = gDLL_1_UI->vtbl->func_E2C(foodbag_gamebitIDs, ARRAYCOUNT(foodbag_gamebitIDs));
+    uiGamebit = gDLL_1_UI->vtbl->func_E2C(foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(foodbag_cmdmenu_gamebitIDs));
     uiSubmenuGamebit = gDLL_1_UI->vtbl->func_F40();
     gDLL_1_UI->vtbl->func_70A0(1);
     Foodbag_set_capacity(self);
@@ -180,7 +180,7 @@ void Foodbag_control(Object* self) {
                 if (!foodType){
                     break;
                 }
-                food = &foodbag_items[objData->dllPutdown->vtbl->putdown_func_AFC(foodType)];
+                food = &foodbag_items[objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(foodType)];
 
                 //If a food item was selected
                 if (uiGamebit == food->gamebitID) {
@@ -207,7 +207,7 @@ void Foodbag_control(Object* self) {
         }
     }
     
-    foodType = objData->dllPutdown->vtbl->putdown_func_47C(objData->bagTimers, foodbag_items);
+    foodType = objData->dllPutdown->vtbl->putdown_tick_food_lifetimes(objData->bagTimers, foodbag_items);
     if (foodType) {
         Foodbag_func_708(self, foodType);
     }
@@ -314,7 +314,7 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 arg1) {
     s32 currentHealth;
     s8 *playerHealth;
     
-    healthRestored = foodbag_items[objData->dllPutdown->vtbl->putdown_func_AFC(arg1)].healthRestored;
+    healthRestored = foodbag_items[objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(arg1)].healthRestored;
     
     if (healthRestored){
         playerHealth = objData->playerHealth;

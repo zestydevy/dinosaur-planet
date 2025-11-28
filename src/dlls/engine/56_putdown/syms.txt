@@ -4,13 +4,13 @@ putdown_dtor = 0xC;
 putdown_place_food = 0x18;
 putdown_get_nearest_placed_food_of_type = 0x1B4;
 putdown_destroy_placed_food = 0x3F0;
-putdown_func_47C = 0x47C;
+putdown_tick_food_lifetimes = 0x47C;
 putdown_func_5E8 = 0x5E8;
 putdown_func_730 = 0x730;
 putdown_func_80C = 0x80C;
 putdown_func_900 = 0x900;
 putdown_update_food_quantity_gamebits = 0x9E0;
-putdown_func_AFC = 0xAFC;
+putdown_get_foodID_from_foodType = 0xAFC;
 
 .rodata = 0xB90:
 str_0 = 0x0; // absolute:0xB90

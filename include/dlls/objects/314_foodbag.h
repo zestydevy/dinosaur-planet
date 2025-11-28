@@ -4,13 +4,22 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
-#define MAX_PLACED_FOOD 20
+#define MAX_FOOD_DEFINITIONS 12 //Number of food types defined in "foodbag_items", "dino_foodbag_items"
+#define MAX_FOOD_PLACED 20      //Max number of items that can be placed in world from a given bag
+#define MAX_FOOD_TIMERS 30      //Same as largest bag capacity
+
+#define BAG_CAPACITY_LARGE 30
+#define BAG_CAPACITY_MEDIUM 20
+#define BAG_CAPACITY_SMALL 10
+
+#define FOOD_TYPE(position) 1 << (position - 1)
+#define NO_SPOIL 0
 
 typedef struct {
     ObjSetup base;
     s8 unk18;
     s8 unk19;
-    s8 yaw; //yaw
+    s8 yaw;
     s16 unk1C;
     s16 unk1E;
 } Food_Setup;
@@ -20,16 +29,16 @@ typedef struct {
     s16 expiry;         //frames until food spoils
     u8 healthRestored;  //when eaten by player
     u8 unk3;
-    u16 unk4;
-    s16 gamebitID; //inventory item gamebit
-    s16 objectID;  //Object to create when placed
+    u16 expiryID;       //bitfield storing foodID to transform into once expired (0 doesn't spoil)
+    s16 gamebitID;      //inventory item gamebit
+    s16 objectID;       //Object to create when placed
 } FoodbagItem;
 
 /** Handles food objects placed in the world */
 typedef struct {
     u8 nextIndex; //index to use when next placing food (eventually wraps around to overwrite oldest)
-    Object* objects[MAX_PLACED_FOOD]; //the actual food objects in the world
-    u16 foodType[MAX_PLACED_FOOD]; //foodType of each placed object?
+    Object* objects[MAX_FOOD_PLACED]; //the actual food objects in the world
+    u16 foodType[MAX_FOOD_PLACED]; //foodType of each placed object?
 } FoodbagPlaced;
 
 typedef struct {

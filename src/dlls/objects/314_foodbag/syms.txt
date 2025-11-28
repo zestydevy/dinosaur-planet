@@ -27,4 +27,4 @@ str_0 = 0x0; // absolute:0xB78
 food_anim_gamebitIDs = 0x0; // absolute:0xB98
 food_anim_objectIDs = 0x18; // absolute:0xBB0
 foodbag_items = 0x2C; // absolute:0xBC4
-foodbag_gamebitIDs = 0xA4; // absolute:0xC3C
+foodbag_cmdmenu_gamebitIDs = 0xA4; // absolute:0xC3C

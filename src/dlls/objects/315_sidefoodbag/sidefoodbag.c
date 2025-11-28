@@ -16,20 +16,20 @@ typedef struct {
 } SideFoodbag_Data;
 
 /*0x0*/ static FoodbagItem dino_foodbag_items[] = {
-    {0,     0, 0, 0,  NO_GAMEBIT,                   NO_FOOD_OBJECT_ID}, 
-    {2000,  2, 1, 4,  BIT_Dino_Bag_Blue_Mushrooms,  OBJ_foodbagBlueMush},
-    {6000,  2, 1, 4,  BIT_Dino_Bag_Red_Mushrooms,   OBJ_foodbagBlueMush},
-    {6000,  1, 1, 0,  BIT_Dino_Bag_Old_Mushrooms,   OBJ_foodbagBlueMush},
-    {6000,  2, 1, 32, BIT_Dino_Bag_Blue_Grubs,      OBJ_foodbagBlueGrub},
-    {6000,  2, 1, 32, BIT_Dino_Bag_Red_Grubs,       OBJ_foodbagBlueGrub},
-    {30000, 1, 1, 0,  BIT_Dino_Bag_Old_Grubs,       OBJ_foodbagBlueGrub},
+    {0,     0, 0, 0,            NO_GAMEBIT,                   NO_FOOD_OBJECT_ID}, 
+    {2000,  2, 1, FOOD_TYPE(3), BIT_Dino_Bag_Blue_Mushrooms,  OBJ_foodbagBlueMush},
+    {6000,  2, 1, FOOD_TYPE(3), BIT_Dino_Bag_Red_Mushrooms,   OBJ_foodbagBlueMush},
+    {6000,  1, 1, NO_SPOIL,     BIT_Dino_Bag_Old_Mushrooms,   OBJ_foodbagBlueMush},
+    {6000,  2, 1, FOOD_TYPE(6), BIT_Dino_Bag_Blue_Grubs,      OBJ_foodbagBlueGrub},
+    {6000,  2, 1, FOOD_TYPE(6), BIT_Dino_Bag_Red_Grubs,       OBJ_foodbagBlueGrub},
+    {30000, 1, 1, NO_SPOIL,     BIT_Dino_Bag_Old_Grubs,       OBJ_foodbagBlueGrub},
     BLANK_FOODBAG_ITEM,
     BLANK_FOODBAG_ITEM,
     BLANK_FOODBAG_ITEM,
     BLANK_FOODBAG_ITEM,
     BLANK_FOODBAG_ITEM
 };
-/*0x78*/ static s32 dino_foodbag_gamebitIDs[] = {
+/*0x78*/ static s32 dino_foodbag_cmdmenu_gamebitIDs[] = {
     BIT_Dino_Bag_Blue_Mushrooms,
     BIT_Dino_Bag_Red_Mushrooms, 
     BIT_Dino_Bag_Old_Mushrooms, 
@@ -87,34 +87,35 @@ void SideFoodbag_setup(Object* self, SideFoodbag_Setup *objSetup, s32 arg2) {
 void SideFoodbag_control(Object* self) {
     s32 dataIndex;
     GplayStruct14 *struct14;
-    s32 uiValue;
     s32 uiGamebit;
+    s32 uiSubmenuGamebit;
     u16 index;
-    u16 temp;
+    u16 foodType;
     SideFoodbag_Data* objData;
 
     objData = self->data;
 
-    uiValue = gDLL_1_UI->vtbl->func_E2C(dino_foodbag_gamebitIDs, ARRAYCOUNT(dino_foodbag_gamebitIDs));
-    uiGamebit = gDLL_1_UI->vtbl->func_F40();
+    uiGamebit = gDLL_1_UI->vtbl->func_E2C(dino_foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(dino_foodbag_cmdmenu_gamebitIDs));
+    uiSubmenuGamebit = gDLL_1_UI->vtbl->func_F40();
 
     SideFoodbag_set_capacity(self);
-    
-    if (uiValue != NO_GAMEBIT) {
+
+    //Check if a relevant food item was selected in the cmdmenu
+    if (uiGamebit != NO_GAMEBIT) {
         for (index = 0; index < 30; index++){
-            temp = objData->bagTimers->foodType[index];
-            if (!temp){
+            foodType = objData->bagTimers->foodType[index];
+            if (!foodType){
                 break;
             }
 
-            dataIndex = objData->dllPutdown->vtbl->putdown_func_AFC(temp);
-            if (uiValue == dino_foodbag_items[dataIndex].gamebitID) {
-                switch (uiGamebit) {
+            dataIndex = objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(foodType);
+            if (uiGamebit == dino_foodbag_items[dataIndex].gamebitID) {
+                switch (uiSubmenuGamebit) {
                 case BIT_Dino_Foodbag_Give:
                     break;
                 case BIT_Dino_Foodbag_Place:
-                    if (objData->dllPutdown->vtbl->putdown_place_food(self, temp, &objData->placedObjects, dino_foodbag_items)) {
-                        SideFoodbag_func_594(self, uiValue);
+                    if (objData->dllPutdown->vtbl->putdown_place_food(self, foodType, &objData->placedObjects, dino_foodbag_items)) {
+                        SideFoodbag_func_594(self, uiGamebit);
                     }
                     break;
                 }
@@ -123,9 +124,9 @@ void SideFoodbag_control(Object* self) {
         }
     }
     
-    temp = objData->dllPutdown->vtbl->putdown_func_47C(objData->bagTimers, dino_foodbag_items);
-    if (temp) {
-        SideFoodbag_func_530(self, temp);
+    foodType = objData->dllPutdown->vtbl->putdown_tick_food_lifetimes(objData->bagTimers, dino_foodbag_items);
+    if (foodType) {
+        SideFoodbag_func_530(self, foodType);
     }
 }
 
@@ -189,10 +190,11 @@ void SideFoodbag_func_530(Object* self, s32 arg1) {
 }
 
 // offset: 0x594 | func: 12 | export: 12
-void SideFoodbag_func_594(Object* self, s16 arg1) {
+// remove food? update food?
+void SideFoodbag_func_594(Object* self, s16 foodGamebit) {
     SideFoodbag_Data* objData = self->data;
 
-    objData->dllPutdown->vtbl->putdown_func_730(arg1, objData->bagTimers, dino_foodbag_items);
+    objData->dllPutdown->vtbl->putdown_func_730(foodGamebit, objData->bagTimers, dino_foodbag_items);
 }
 
 /*0x0*/ static const char str_0[] = "submenu %d\n";
