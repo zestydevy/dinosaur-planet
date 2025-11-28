@@ -111,13 +111,13 @@ void Duster_control(Object *self) {
 
     if (objdata->timer1 == 0 && objdata->timer2 == 0) {
         if (func_80024108(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x87B, 0x25, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_87B_Ting, 0x25, NULL, NULL, 0, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
 
             objdata->rand = rand_next(0, DUSTER_RANDOM_MAX);
             if (objdata->rand == DUSTER_RANDOM_MAX) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x87E, 0x25, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_87E_Duster_Cry, 0x25, NULL, NULL, 0, NULL);
             }
             if (objdata->unk11 != 0) {
                 self->speed.x = 0.2f;
@@ -144,7 +144,7 @@ void Duster_control(Object *self) {
         }
         if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
             objdata->resetTimer2 = TRUE;
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x6BC, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->timer1 != 0) {
@@ -169,7 +169,7 @@ void Duster_control(Object *self) {
         self->srt.yaw += 0xBB8 * (s16)gUpdateRateF;
     }
     if (vec3_distance_xz(&player->positionMirror, &self->positionMirror) < 20.0f) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x6CA, 0x7F, 0, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_6CA_Chime, 0x7F, 0, 0, 0, 0);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);

@@ -28,7 +28,7 @@ typedef struct Player_Data3B4 {
     f32 unk20;
     f32 unk24;
     f32 unk28;
-    s16 unk2C;
+    s16 unk2C; //soundID?
     s16 unk2E;
     u8 unk30;
     u8 pad31;
@@ -153,7 +153,7 @@ typedef struct {
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
 /*3B4*/ Player_Data3B4* unk3B4;
-/*3B8*/ s16 *unk3B8;
+/*3B8*/ s16 *unk3B8; //soundIDs
 /*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, Player_Data*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
@@ -264,7 +264,7 @@ typedef struct {
 /*88E*/ u16 unk88E;
 /*890*/ UNK_PTR *unk890;
 /*894*/ UNK_PTR *unk894;
-/*898*/ s16 *unk898;
+/*898*/ s16 *unk898; //soundIDs
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
 /*8A1*/ u8 unk8A1;

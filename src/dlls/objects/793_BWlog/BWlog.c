@@ -742,7 +742,7 @@ static void dll_793_func_2020(Object* arg0, BWlog_Data* arg1) {
         if (var_v1 >= 0x80) {
             var_v1 = 0x7F;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_76D, var_v1, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_76D_Log_Bump, var_v1, NULL, NULL, 0, NULL);
     }
     arg1->unk32D = sp3E;
 }

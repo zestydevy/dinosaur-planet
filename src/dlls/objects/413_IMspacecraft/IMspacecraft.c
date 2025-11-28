@@ -126,7 +126,7 @@ int dll_413_func_1AC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         case 4:
             objData->unk2 ^= 1 << (subcommandID - 1);
             if (1){}
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x509, 0x7F, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_509_Engine_Boom, 0x7F, NULL, NULL, 0, NULL);
             break;
         case 5:
             objData->unk2 ^= 0x40 | 0x20 | 0x10;

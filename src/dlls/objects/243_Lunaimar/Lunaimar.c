@@ -156,7 +156,7 @@ void dll_243_control(Object *self) {
             if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.base.uID) != 0) {
                 gDLL_33->vtbl->func21(self, &setup->base, temp_s0, 6, 6, 0, 0x26, 20.0f);
                 temp_s0->unk3B6 = 0;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
                 func_80023D30(self, 4, 0.0f, 0x10);
                 temp_s0->fsa.unk33A = 0;
                 self->opacity = 0xFF;
@@ -385,7 +385,7 @@ static void dll_243_func_11C0(Object *self, DLL33_Data *a1, ObjFSA_Data *fsa) {
     }
     if (fsa->unk308 & 0x200) {
         fsa->unk308 &= ~0x200;
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AA4, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AA4_Hock_Up, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (fsa->unk308 & 0x400) {
         sp44->unk10 = 3;
@@ -430,7 +430,7 @@ static void dll_243_func_1614(Object *self, Lunaimar_ActualData *objdata) {
     Object *shield;
 
     objdata->unkC = 255.0f;
-    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AB4, MAX_VOLUME, NULL, NULL, 0, NULL);
+    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AB4_Magic_Barrier_Deflect, MAX_VOLUME, NULL, NULL, 0, NULL);
     for (i = 20; i > 0; i--) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_717, NULL, PARTFXFLAG_4, -1, NULL);
     }
@@ -556,8 +556,8 @@ static s32 dll_243_anim_state_4(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
             func_80023D30(self, 3, 0.0f, 0);
             fsa->unk33A = 0;
         }
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A83, MAX_VOLUME, &temp_v1->unk3A8, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AA5, MAX_VOLUME, &temp_v1->unk3A8, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A83_Lunaimar_Grunt, MAX_VOLUME, &temp_v1->unk3A8, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AA5_Heavy_Thwack, MAX_VOLUME, &temp_v1->unk3A8, NULL, 0, NULL);
     }
     fsa->unk341 = 3;
     fsa->animTickDelta = 0.015f;
@@ -579,14 +579,14 @@ static s32 dll_243_anim_state_5(Object *self, ObjFSA_Data *fsa, f32 updateRate) 
         fsa->unk33A = 0;
     }
     if (!(fsa->unk34A & 1)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A83, MAX_VOLUME, &sp3C->unk3A8, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AA5, MAX_VOLUME, &sp3C->unk3A8, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_A83_Lunaimar_Grunt, MAX_VOLUME, &sp3C->unk3A8, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_AA5_Heavy_Thwack, MAX_VOLUME, &sp3C->unk3A8, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;
         gDLL_33->vtbl->func18(self, (s32) sp3C->unk3E0, -1, 0);
     }
     if (!(fsa->unk34A & 2) && (self->animProgress > 0.3f)) {
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 2;
     }
     return 0;

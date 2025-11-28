@@ -655,7 +655,7 @@ void dll_6_func_16E0(void) {
     } else if (sp50 != 0) {
         if (_bss_18 == 0) {
             _bss_1F = 1;
-            dll_6_play_sound(NULL, SOUND_986, _bss_1F, &_bss_18, "game/amsfx.c", 0x3F8, "");
+            dll_6_play_sound(NULL, SOUND_986_Waterfall_Low_Loop, _bss_1F, &_bss_18, "game/amsfx.c", 0x3F8, "");
         }
         if (sp50 < (u8) _bss_1F) {
             _bss_1F -= 1;
@@ -672,7 +672,7 @@ void dll_6_func_16E0(void) {
     if (sp4C != 0) {
         if (_bss_14 == 0) {
             *_bss_20 = 1;
-            dll_6_play_sound(NULL, SOUND_987, *_bss_20, &_bss_14, "game/amsfx.c", 0x40C, "\0\0\0\0AMSFX: Maximum sfx handles allocated,%d (from %s:%d)\n\0\0\0AMSFX: allocSfxHandle handle out of range, %d\n\0\0AMSFX: freeSfxHandle invalid handle, %d\n\0\0\0\0AMSFX: freeSfxHandle not used, %d\n\0\0AMSFX: Warning min/max range identical\n");
+            dll_6_play_sound(NULL, SOUND_987_Waterfall_High_Loop, *_bss_20, &_bss_14, "game/amsfx.c", 0x40C, "\0\0\0\0AMSFX: Maximum sfx handles allocated,%d (from %s:%d)\n\0\0\0AMSFX: allocSfxHandle handle out of range, %d\n\0\0AMSFX: freeSfxHandle invalid handle, %d\n\0\0\0\0AMSFX: freeSfxHandle not used, %d\n\0\0AMSFX: Warning min/max range identical\n");
         }
         if (sp4C < (u8) *_bss_20) {
             *_bss_20 -= 1;

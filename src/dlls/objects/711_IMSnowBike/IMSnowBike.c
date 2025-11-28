@@ -1407,7 +1407,7 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
     sp54 = 1.0f;
     if (arg6 & 1) {
         if (objdata->unk3B4 == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_289, MAX_VOLUME, &objdata->unk3B4, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objdata->unk3B4, NULL, 0, NULL);
         }
         if (objdata->unk3B4 != 0) {
             _bss_24 = arg2 * 11.6f;
@@ -1468,11 +1468,11 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
     if (arg6 & 4) {
         if (objdata->unk3D6 <= 0) {
             if (objdata->unk3B8 == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50D, MAX_VOLUME, &objdata->unk3B8, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objdata->unk3B8, NULL, 0, NULL);
                 gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (objdata->unk3C0 == 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50C, MAX_VOLUME, &objdata->unk3C0, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objdata->unk3C0, NULL, 0, NULL);
             }
         }
         if (objdata->unk3B8 != 0) {
