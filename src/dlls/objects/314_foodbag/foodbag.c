@@ -3,24 +3,6 @@
 #include "dlls/engine/56_putdown.h"
 #include "dlls/objects/314_foodbag.h"
 
-typedef struct {
-    ObjSetup base;
-} Foodbag_Setup;
-
-typedef struct {
-    DLL_56_Putdown *dllPutdown;         //Handles removing/updating food bag items
-    FoodbagGamebits capacityGamebits;   //Bag size gamebits
-    u16 capacity;                       //Current capacity
-    GplayStruct14* bagTimers;           //Expiry timers for bag items
-    s8 *playerHealth;                   //Pointer to current health
-    s8 *playerHealthMax;                //Pointer to current max health (for Eat First behaviour)
-    u8 eatFirst;                        //Player food bag config (prioritise healing vs. storing)
-    FoodbagPlaced placedObjects;        //Food placed in world
-    f32 playerEatTimer;                 /*Mostly unused, but set when health recovered via eating 
-                                         (Possibly intended as timer: too full to eat for a little while?)
-                                        */
-} Foodbag_Data;
-
 /*0x0*/ static s16 food_anim_gamebitIDs[] = {
     BIT_Green_Apple_Count, 
     BIT_Red_Apple_Count, 
@@ -50,18 +32,18 @@ typedef struct {
 };
 
 /*0x2C*/ static FoodbagItem foodbag_items[] = {
-    {0,      0, 0, 0,               NO_GAMEBIT,             NO_FOOD_OBJECT_ID}, 
-    {2000,   1, 1, FOOD_TYPE(3),    BIT_Green_Apple_Count,  OBJ_foodbagRedApple},
-    {6000,   4, 1, FOOD_TYPE(3),    BIT_Red_Apple_Count,    OBJ_foodbagRedApple},
-    {6000,   2, 1, NO_SPOIL,        BIT_Brown_Apple_Count,  OBJ_foodbagRedApple}, 
-    {6000,   4, 2, FOOD_TYPE(5),    BIT_Fish_Count,         OBJ_foodbagNewFish}, 
-    {6000,   8, 2, NO_SPOIL,        BIT_Smoked_Fish_Count,  OBJ_foodbagNewFish}, 
-    {30000,  8, 1, FOOD_TYPE(7),    BIT_Dino_Egg_Count,     OBJ_foodbagNewMeat}, 
-    {30000,  4, 1, NO_SPOIL,        BIT_Moldy_Meat_Count,   OBJ_foodbagNewMeat}, 
-    {30000,  1, 1, FOOD_TYPE(10),   BIT_Green_Bean_Count,   OBJ_foodbagGreenBea}, 
-    {30000,  4, 1, FOOD_TYPE(10),   BIT_Red_Bean_Count,     OBJ_foodbagGreenBea}, 
-    {30000, 1, 1, NO_SPOIL,         BIT_Brown_Bean_Count,   OBJ_foodbagGreenBea}, 
-    {30000, 2, 1, FOOD_TYPE(10),    BIT_Blue_Bean_Count,    OBJ_foodbagGreenBea}
+    {0,      0, 0,  0,               NO_GAMEBIT,             NO_FOOD_OBJECT_ID}, 
+    {2000,   1, 1,  FOOD_TYPE(3),    BIT_Green_Apple_Count,  OBJ_foodbagRedApple},
+    {6000,   4, 1,  FOOD_TYPE(3),    BIT_Red_Apple_Count,    OBJ_foodbagRedApple},
+    {6000,   2, 1,  FOOD_GONE,       BIT_Brown_Apple_Count,  OBJ_foodbagRedApple}, 
+    {6000,   4, 2,  FOOD_TYPE(5),    BIT_Fish_Count,         OBJ_foodbagNewFish}, 
+    {6000,   8, 2,  FOOD_GONE,       BIT_Smoked_Fish_Count,  OBJ_foodbagNewFish}, 
+    {30000,  8, 1,  FOOD_TYPE(7),    BIT_Dino_Egg_Count,     OBJ_foodbagNewMeat}, 
+    {30000,  4, 1,  FOOD_GONE,       BIT_Moldy_Meat_Count,   OBJ_foodbagNewMeat}, 
+    {30000,  1, 1,  FOOD_TYPE(10),   BIT_Green_Bean_Count,   OBJ_foodbagGreenBea}, 
+    {30000,  4, 1,  FOOD_TYPE(10),   BIT_Red_Bean_Count,     OBJ_foodbagGreenBea}, 
+    {30000, 1, 1,   FOOD_GONE,       BIT_Brown_Bean_Count,   OBJ_foodbagGreenBea}, 
+    {30000, 2, 1,   FOOD_TYPE(10),   BIT_Blue_Bean_Count,    OBJ_foodbagGreenBea}
 };
 
 /*0xA4*/ static s32 foodbag_cmdmenu_gamebitIDs[] = {
@@ -81,8 +63,8 @@ typedef struct {
 };
 
 int Foodbag_set_eat_config(Object* self, s32 eatFirst);
-void Foodbag_func_708(Object* self, s32 arg1);
-void Foodbag_func_7E0(Object* self, s16 arg1);
+void Foodbag_collect_food(Object* self, s32 arg1);
+void Foodbag_delete_food_by_gamebit(Object* self, s16 arg1);
 void Foodbag_set_capacity(Object* self);
 static s32 Foodbag_eat_food(Foodbag_Data* objData, s32 arg1);
 
@@ -124,7 +106,7 @@ void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
     }
     
     objData->capacity = 0;
-    objData->bagTimers = gDLL_29_Gplay->vtbl->func_1974();
+    objData->bagSlots = gDLL_29_Gplay->vtbl->func_1974();
     
     if (main_get_bits(BIT_Foodbag_Setting_Eat_First)) {
         objData->eatFirst = TRUE;
@@ -176,7 +158,7 @@ void Foodbag_control(Object* self) {
             Foodbag_set_eat_config(self, TRUE);
         } else {
             for (index = 0; index < 30; index++){
-                foodType = objData->bagTimers->foodType[index];
+                foodType = objData->bagSlots->foodType[index];
                 if (!foodType){
                     break;
                 }
@@ -192,12 +174,12 @@ void Foodbag_control(Object* self) {
                         if ((*objData->playerHealth < *objData->playerHealthMax) && 
                                 food->healthRestored && 
                                 Foodbag_eat_food(objData, foodType)) {
-                            Foodbag_func_7E0(self, uiGamebit);
+                            Foodbag_delete_food_by_gamebit(self, uiGamebit);
                         }
                         break;
                     case BIT_Foodbag_Place:
                         if (objData->dllPutdown->vtbl->putdown_place_food(self, foodType, &objData->placedObjects, foodbag_items)) {
-                            Foodbag_func_7E0(self, uiGamebit);
+                            Foodbag_delete_food_by_gamebit(self, uiGamebit);
                         }
                         break;
                     }
@@ -207,9 +189,9 @@ void Foodbag_control(Object* self) {
         }
     }
     
-    foodType = objData->dllPutdown->vtbl->putdown_tick_food_lifetimes(objData->bagTimers, foodbag_items);
+    foodType = objData->dllPutdown->vtbl->putdown_tick_food_lifetimes(objData->bagSlots, foodbag_items);
     if (foodType) {
-        Foodbag_func_708(self, foodType);
+        Foodbag_collect_food(self, foodType);
     }
 }
 
@@ -236,26 +218,26 @@ u32 Foodbag_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x590 | func: 7 | export: 7
-int Foodbag_func_590(Object* self) {
+int Foodbag_is_obtained(Object* self) {
     Foodbag_Data *objData = self->data;
     if (objData->capacity) {
-        return 1;
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
 // offset: 0x5B4 | func: 8 | export: 8
-void Foodbag_func_5B4(Object* self, Object* arg1, s32 arg2) {
+Object* Foodbag_get_nearest_placed_food_of_type(Object* self, Object* target, s32 foodType) {
     Foodbag_Data *objData = self->data;
 
-    objData->dllPutdown->vtbl->putdown_get_nearest_placed_food_of_type(self, arg1, arg2, &objData->placedObjects);
+    return objData->dllPutdown->vtbl->putdown_get_nearest_placed_food_of_type(self, target, foodType, &objData->placedObjects);
 }
 
 // offset: 0x5FC | func: 9 | export: 9
-void Foodbag_func_5FC(Object* self, Object* arg1) {
+int Foodbag_destroy_placed_food(Object* self, Object* foodObject) {
     Foodbag_Data *objData = self->data;
 
-    objData->dllPutdown->vtbl->putdown_destroy_placed_food(arg1, &objData->placedObjects);
+    return objData->dllPutdown->vtbl->putdown_destroy_placed_food(foodObject, &objData->placedObjects);
 }
 
 // offset: 0x650 | func: 10 | export: 13
@@ -283,22 +265,29 @@ int Foodbag_set_eat_config(Object* self, s32 eatFirst) {
 }
 
 // offset: 0x708 | func: 11 | export: 11
-void Foodbag_func_708(Object* self, s32 arg1) {
+/**
+  * If "Eat First" is enabled and the player's not at max health, eats the food instead of storing it.
+  * Otherwise, attempts to store the food - if the bag doesn't have room, eats the food instead!
+  */
+void Foodbag_collect_food(Object* self, s32 foodType) {
     Foodbag_Data* objData = self->data;
 
     if ((objData->eatFirst == TRUE && (*objData->playerHealth < *objData->playerHealthMax)) 
         || objData->capacity == 0) {
-        Foodbag_eat_food(objData, arg1);
-    } else if (objData->dllPutdown->vtbl->putdown_func_5E8(arg1, objData->capacity, objData->bagTimers, foodbag_items) == FALSE) {
-        Foodbag_eat_food(objData, arg1);
+        Foodbag_eat_food(objData, foodType);
+    } else if (objData->dllPutdown->vtbl->putdown_add_food(foodType, objData->capacity, objData->bagSlots, foodbag_items) == FALSE) {
+        Foodbag_eat_food(objData, foodType);
     }
 }
 
 // offset: 0x7E0 | func: 12 | export: 12
-void Foodbag_func_7E0(Object* self, s16 arg1) {
+/**
+  * Deletes the first instance of a food item from the bag using its inventory gamebit (also decrements the gamebit's quantity)
+  */
+void Foodbag_delete_food_by_gamebit(Object* self, s16 gamebit) {
     Foodbag_Data* objData = self->data;
 
-    objData->dllPutdown->vtbl->putdown_func_730(arg1, objData->bagTimers, foodbag_items);
+    objData->dllPutdown->vtbl->putdown_delete_food_by_gamebit(gamebit, objData->bagSlots, foodbag_items);
 }
 
 // offset: 0x83C | func: 13 | export: 10
@@ -309,16 +298,16 @@ void Foodbag_set_capacity(Object* self) {
 }
 
 // offset: 0x890 | func: 14
-s32 Foodbag_eat_food(Foodbag_Data* objData, s32 arg1) {
+s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
     u8 healthRestored;
     s32 currentHealth;
     s8 *playerHealth;
     
-    healthRestored = foodbag_items[objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(arg1)].healthRestored;
+    healthRestored = foodbag_items[objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(foodType)].healthRestored;
     
     if (healthRestored){
         playerHealth = objData->playerHealth;
-        currentHealth = playerHealth[0];
+        currentHealth = *playerHealth;
         if (healthRestored + currentHealth > *objData->playerHealthMax) { 
             if (objData->playerHealth && objData->playerHealth && objData->playerHealth) {} //@fake?
             
@@ -341,20 +330,20 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 arg1) {
 }
 
 // offset: 0xA0C | func: 15 | export: 14
-u16 Foodbag_func_A0C(Object* self) {
+u16 Foodbag_get_capacity(Object* self) {
     Foodbag_Data *objData = self->data;
     return objData->capacity;
 }
 
 // offset: 0xA1C | func: 16 | export: 15
-s32 Foodbag_func_A1C(Object* self) {
+s32 Foodbag_count_slots_occupied(Object* self) {
     Foodbag_Data* objData;
     s8 index;
 
     objData = self->data;
     
     index = 0;
-    while (objData->bagTimers->foodType[index]) {
+    while (objData->bagSlots->foodType[index]) {
         index++;
         if (index == objData->capacity) {
             return objData->capacity;

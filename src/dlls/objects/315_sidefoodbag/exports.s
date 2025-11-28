@@ -16,8 +16,8 @@ _exports:
 /*5*/ .dword SideFoodbag_get_model_flags
 /*6*/ .dword SideFoodbag_get_data_size
 /*7*/ .dword SideFoodbag_func_41C
-/*8*/ .dword SideFoodbag_func_440
-/*9*/ .dword SideFoodbag_func_488
+/*8*/ .dword SideFoodbag_get_nearest_placed_food_of_type
+/*9*/ .dword SideFoodbag_destroy_placed_food
 /*10*/ .dword SideFoodbag_set_capacity
-/*11*/ .dword SideFoodbag_func_530
-/*12*/ .dword SideFoodbag_func_594
+/*11*/ .dword SideFoodbag_collect_food
+/*12*/ .dword SideFoodbag_delete_food_by_gamebit

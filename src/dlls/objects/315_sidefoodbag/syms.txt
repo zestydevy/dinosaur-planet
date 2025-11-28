@@ -9,11 +9,11 @@ SideFoodbag_free = 0x3B0;
 SideFoodbag_get_model_flags = 0x3F8;
 SideFoodbag_get_data_size = 0x408;
 SideFoodbag_func_41C = 0x41C;
-SideFoodbag_func_440 = 0x440;
-SideFoodbag_func_488 = 0x488;
+SideFoodbag_get_nearest_placed_food_of_type = 0x440;
+SideFoodbag_destroy_placed_food = 0x488;
 SideFoodbag_set_capacity = 0x4DC;
-SideFoodbag_func_530 = 0x530;
-SideFoodbag_func_594 = 0x594;
+SideFoodbag_collect_food = 0x530;
+SideFoodbag_delete_food_by_gamebit = 0x594;
 
 .rodata = 0x64C:
 str_0 = 0x0; // absolute:0x64C

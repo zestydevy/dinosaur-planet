@@ -9,16 +9,16 @@
 
 DLL_INTERFACE(DLL_56_Putdown) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ int (*putdown_place_food)(Object* arg0, s32 foodType, FoodbagPlaced* placedFood, FoodbagItem* foodDefs);
-    /*1*/ Object* (*putdown_get_nearest_placed_food_of_type)(Object* arg0, Object* arg1, s32 typeMask, FoodbagPlaced* placedObjects);
+    /*0*/ int (*putdown_place_food)(Object* foodbag, s32 foodType, FoodbagPlaced* placed, FoodbagItem* foodDefs);
+    /*1*/ Object* (*putdown_get_nearest_placed_food_of_type)(Object* foodbag, Object* target, s32 foodType, FoodbagPlaced* placedObjects);
     /*2*/ int (*putdown_destroy_placed_food)(Object* foodObject, FoodbagPlaced* placedObjects);
-    /*3*/ u16 (*putdown_tick_food_lifetimes)(GplayStruct14* bagTimers, FoodbagItem* foodDefs);
-    /*4*/ int (*putdown_func_5E8)(s32 arg0, s32 arg1, GplayStruct14* bagTimers, FoodbagItem* foodDefs);
-    /*5*/ void (*putdown_func_730)(s16 foodGamebit, GplayStruct14* bagTimers, FoodbagItem* foodDefs);
-    /*6*/ void (*putdown_func_80C)(u8 arg0, u16 arg1, GplayStruct14* bagTimers, FoodbagItem* foodDefs);
+    /*3*/ u16 (*putdown_tick_food_lifetimes)(FoodbagContents* bagSlots, FoodbagItem* foodDefs);
+    /*4*/ int (*putdown_add_food)(s32 foodType, s32 capacity, FoodbagContents* bagSlots, FoodbagItem* foodDefs);
+    /*5*/ void (*putdown_delete_food_by_gamebit)(s16 foodGamebit, FoodbagContents* bagSlots, FoodbagItem* foodDefs);
+    /*6*/ void (*putdown_delete_food_from_bag)(u8 indexInBag, u16 foodType, FoodbagContents* bagSlots, FoodbagItem* foodDefs);
     /*7*/ s32 (*putdown_get_capacity)(FoodbagGamebits* gamebitIDs);
-    /*8*/ void (*putdown_update_food_quantity_gamebits)(GplayStruct14* bagTimers, FoodbagItem* foodDefs);
-    /*9*/ u32 (*putdown_get_foodID_from_foodType)(s32 arg0); //get foodID from foodType?
+    /*8*/ void (*putdown_update_food_quantity_gamebits)(FoodbagContents* bagSlots, FoodbagItem* foodDefs);
+    /*9*/ u32 (*putdown_get_foodID_from_foodType)(s32 foodTypeBitfield);
 };
 
 #endif // _DLLS_56_H
