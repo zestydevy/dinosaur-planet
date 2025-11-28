@@ -15,6 +15,6 @@ _exports:
 /*4*/ .dword putdown_add_food
 /*5*/ .dword putdown_delete_food_by_gamebit
 /*6*/ .dword putdown_delete_food_from_bag
-/*7*/ .dword putdown_func_900
+/*7*/ .dword putdown_get_capacity
 /*8*/ .dword putdown_update_food_quantity_gamebits
 /*9*/ .dword putdown_get_foodID_from_foodType

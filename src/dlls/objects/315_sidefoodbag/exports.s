@@ -15,7 +15,7 @@ _exports:
 /*4*/ .dword SideFoodbag_free
 /*5*/ .dword SideFoodbag_get_model_flags
 /*6*/ .dword SideFoodbag_get_data_size
-/*7*/ .dword SideFoodbag_func_41C
+/*7*/ .dword SideFoodbag_is_obtained
 /*8*/ .dword SideFoodbag_get_nearest_placed_food_of_type
 /*9*/ .dword SideFoodbag_destroy_placed_food
 /*10*/ .dword SideFoodbag_set_capacity
