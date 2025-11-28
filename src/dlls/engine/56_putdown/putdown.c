@@ -4,7 +4,7 @@
 
 /*0x0*/ static u32 _data_0[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 // /*0x50*/ static u32 _data_50[] = { 0, 0, 0, 0 };
-// /*0x0*/ static const char str_0[] = "about to place object %d\n";
+
 
 void dll_56_func_80C(u8 arg0, u16 arg1, GplayStruct14* bagTimers, FoodbagItem* foodItems);
 void dll_56_func_9E0(GplayStruct14* bagTimers, FoodbagItem* food);
@@ -17,7 +17,7 @@ void dll_56_ctor(void *dll) { }
 void dll_56_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, FoodbagItem* foodItems) {
+int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, FoodbagItem* foodDefs) {
     Food_Setup* foodSetup;
     Object* food;
     Object* player;
@@ -25,7 +25,7 @@ int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, Foo
 
     foodIndex = dll_56_func_AFC(foodType);
 
-    if (foodItems[foodIndex].objectID != NO_FOOD_OBJECT_ID) {
+    if (foodDefs[foodIndex].objectID != NO_FOOD_OBJECT_ID) {
         player = get_player();
         placedFood->nextIndex = (placedFood->nextIndex + 1) % 20;
         
@@ -35,7 +35,7 @@ int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, Foo
         }
         
         foodSetup = obj_alloc_create_info(sizeof(Food_Setup),
-                                           foodItems[foodIndex].objectID);
+                                           foodDefs[foodIndex].objectID);
         foodSetup->base.fadeDistance = 0xFF;
         foodSetup->base.loadFlags = 2;
         foodSetup->base.x = player->srt.transl.x;
@@ -45,7 +45,7 @@ int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, Foo
         foodSetup->unk19 = 0;
         foodSetup->unk18 = 0;
 
-        STUBBED_PRINTF("about to place object %d\n");
+        // STUBBED_PRINTF("about to place object %d\n");
         placedFood->placedObjects[placedFood->nextIndex] = obj_create(
             (ObjSetup*)foodSetup, 
             1, -1, -1, arg0->parent);
@@ -57,14 +57,13 @@ int dll_56_func_18(Object* arg0, s32 foodType, FoodbagStructUnk* placedFood, Foo
 }
 
 // offset: 0x1B4 | func: 1 | export: 1
-#ifndef NON_MATCHING //matches on decomp.me, but rodata trouble when placing here
+#ifndef NON_MATCHING //matches on decomp.me, but trouble placing here
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/56_putdown/dll_56_func_1B4.s")
 #else
 Object* dll_56_func_1B4(Object* arg0, Object* arg1, s32 arg2, FoodbagStructUnk* arg3) {
     f32 distance;
     f32 minDistance;
     s16 index;
-    // Object *new_var;
     s16 closestFoodIndex;
     Object *_data_0[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
     Vec3f position;
@@ -75,7 +74,6 @@ Object* dll_56_func_1B4(Object* arg0, Object* arg1, s32 arg2, FoodbagStructUnk* 
             position.y = arg3->placedObjects[index]->srt.transl.y;
             position.z = arg3->placedObjects[index]->srt.transl.z;
             if (!func_80059C40(&arg1->srt.transl, &position, 0.1f, 0, 0, arg0, 8, -1, 0xFF, 0)){
-                // new_var = arg3->placedObjects[index];
                 if (((DLL_314_Foodbag*) arg3->placedObjects[index]->dll)->vtbl->Foodbag_func_590(arg3->placedObjects[index]) == 0){
                     _data_0[index] = arg3->placedObjects[index];
                 }
@@ -202,22 +200,22 @@ void dll_56_func_730(s16 arg0, GplayStruct14* bagTimers, FoodbagItem* foodDefs) 
 }
 
 // offset: 0x80C | func: 6 | export: 6
-void dll_56_func_80C(u8 arg0, u16 arg1, GplayStruct14* bagTimers, FoodbagItem* foodItems) {
+void dll_56_func_80C(u8 arg0, u16 arg1, GplayStruct14* bagTimers, FoodbagItem* foodDefs) {
     u8 offset;
-    u32 new_var;
+    u32 ID;
     u8 index;
     
     index = arg0;
 
-    new_var = dll_56_func_AFC(arg1);
-    offset = arg0 + foodItems[new_var].unk3;
+    ID = dll_56_func_AFC(arg1);
+    offset = arg0 + foodDefs[ID].unk3;
     
     for (index = arg0; offset < 30; offset++, index++){
         bagTimers->lifetime[index] = bagTimers->lifetime[offset];
         bagTimers->foodType[index] = bagTimers->foodType[offset];
     }
     
-    dll_56_func_9E0(bagTimers, foodItems);
+    dll_56_func_9E0(bagTimers, foodDefs);
 }
 
 // offset: 0x900 | func: 7 | export: 7
@@ -241,7 +239,7 @@ s32 dll_56_func_900(FoodbagGamebits* gamebitIDs) {
 }
 
 // offset: 0x9E0 | func: 8 | export: 8
-void dll_56_func_9E0(GplayStruct14* bagTimers, FoodbagItem* food) {
+void dll_56_func_9E0(GplayStruct14* bagTimers, FoodbagItem* foodDefs) {
     u8 food_quantities[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     u8 index;
 
@@ -252,8 +250,8 @@ void dll_56_func_9E0(GplayStruct14* bagTimers, FoodbagItem* food) {
     }
     
     for (index = 1; index < 12; index++){
-        if (food[index].gamebitID > 0){
-            main_set_bits(food[index].gamebitID, food_quantities[index]);
+        if (foodDefs[index].gamebitID > 0){
+            main_set_bits(foodDefs[index].gamebitID, food_quantities[index]);
         }
     }
 }
@@ -268,3 +266,5 @@ u32 dll_56_func_AFC(s32 arg0) {
     
     return i;
 }
+
+/*0x0*/ static const char str_0[] = "about to place object %d\n";
