@@ -4,17 +4,17 @@
 _exports:
 
 # ctor/dtor
-.dword dll_56_ctor
-.dword dll_56_dtor
+.dword putdown_ctor
+.dword putdown_dtor
 
 # export table
-/*0*/ .dword dll_56_func_18
-/*1*/ .dword dll_56_func_1B4
-/*2*/ .dword dll_56_func_3F0
-/*3*/ .dword dll_56_func_47C
-/*4*/ .dword dll_56_func_5E8
-/*5*/ .dword dll_56_func_730
-/*6*/ .dword dll_56_func_80C
-/*7*/ .dword dll_56_func_900
-/*8*/ .dword dll_56_func_9E0
-/*9*/ .dword dll_56_func_AFC
+/*0*/ .dword putdown_place_food
+/*1*/ .dword putdown_get_nearest_placed_food_of_type
+/*2*/ .dword putdown_destroy_placed_food
+/*3*/ .dword putdown_func_47C
+/*4*/ .dword putdown_func_5E8
+/*5*/ .dword putdown_func_730
+/*6*/ .dword putdown_func_80C
+/*7*/ .dword putdown_func_900
+/*8*/ .dword putdown_update_food_quantity_gamebits
+/*9*/ .dword putdown_func_AFC

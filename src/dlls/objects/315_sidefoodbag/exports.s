@@ -18,6 +18,6 @@ _exports:
 /*7*/ .dword SideFoodbag_func_41C
 /*8*/ .dword SideFoodbag_func_440
 /*9*/ .dword SideFoodbag_func_488
-/*10*/ .dword SideFoodbag_func_4DC
+/*10*/ .dword SideFoodbag_set_capacity
 /*11*/ .dword SideFoodbag_func_530
 /*12*/ .dword SideFoodbag_func_594

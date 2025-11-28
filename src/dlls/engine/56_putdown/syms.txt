@@ -1,20 +1,20 @@
 .text = 0x0:
-dll_56_ctor = 0x0;
-dll_56_dtor = 0xC;
-dll_56_func_18 = 0x18;
-dll_56_func_1B4 = 0x1B4;
-dll_56_func_3F0 = 0x3F0;
-dll_56_func_47C = 0x47C;
-dll_56_func_5E8 = 0x5E8;
-dll_56_func_730 = 0x730;
-dll_56_func_80C = 0x80C;
-dll_56_func_900 = 0x900;
-dll_56_func_9E0 = 0x9E0;
-dll_56_func_AFC = 0xAFC;
+putdown_ctor = 0x0;
+putdown_dtor = 0xC;
+putdown_place_food = 0x18;
+putdown_get_nearest_placed_food_of_type = 0x1B4;
+putdown_destroy_placed_food = 0x3F0;
+putdown_func_47C = 0x47C;
+putdown_func_5E8 = 0x5E8;
+putdown_func_730 = 0x730;
+putdown_func_80C = 0x80C;
+putdown_func_900 = 0x900;
+putdown_update_food_quantity_gamebits = 0x9E0;
+putdown_func_AFC = 0xAFC;
 
 .rodata = 0xB90:
 str_0 = 0x0; // absolute:0xB90
 
 .data = 0xBC0:
-_data_0 = 0x0; // absolute:0xBC0
-_data_50 = 0x50; // absolute:0xC10
+placed_objects = 0x0; // absolute:0xBC0
+food_quantities = 0x50; // absolute:0xC10

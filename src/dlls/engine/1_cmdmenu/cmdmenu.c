@@ -205,21 +205,21 @@ s32 unk24;
 
 /* Food Bag actions (Krystal)
  * 0x4A0*/ static InventoryItem _data_4A0[] = {
-    {0x385, NONE, 0x2c7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
-    {0x386, NONE, 0x2c8, NONE, 0x20, 4, 2}, //Place food down from foodbag
-    {0x387, NONE, 0x2ef, NONE, 0x21, 4, 2}, //Give food from foodbag
-    {0x383, NONE, 0x265, NONE, 0x39, 2, 2}, //Take all food
-    {0x384, NONE, 0x529, NONE, 0x3a, 2, 2}, //Eat first
+    {BIT_Foodbag_Eat,               NONE, 0x2c7, NONE, 0x1f, 4, 2}, //Eat food in foodbag
+    {BIT_Foodbag_Place,             NONE, 0x2c8, NONE, 0x20, 4, 2}, //Place food down from foodbag
+    {BIT_Foodbag_Give,              NONE, 0x2ef, NONE, 0x21, 4, 2}, //Give food from foodbag
+    {BIT_Foodbag_Setting_Eat_First, NONE, 0x265, NONE, 0x39, 2, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {BIT_Foodbag_Setting_Eat_Later, NONE, 0x529, NONE, 0x3a, 2, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     END
 };
 
 /* Food Bag actions (Sabre)
  * 0x4E8*/ static InventoryItem _data_4E8[] = {
-    {0x385, NONE, 0x2c7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
-    {0x386, NONE, 0x2c8, NONE, 0x20, 5, 2}, //Place food down from foodbag
-    {0x387, NONE, 0x2ef, NONE, 0x21, 5, 2}, //Give food from foodbag
-    {0x383, NONE, 0x265, NONE, 0x39, 3, 2}, //Take all food
-    {0x384, NONE, 0x529, NONE, 0x3a, 3, 2}, //Eat first
+    {BIT_Foodbag_Eat,               NONE, 0x2c7, NONE, 0x1f, 5, 2}, //Eat food in foodbag
+    {BIT_Foodbag_Place,             NONE, 0x2c8, NONE, 0x20, 5, 2}, //Place food down from foodbag
+    {BIT_Foodbag_Give,              NONE, 0x2ef, NONE, 0x21, 5, 2}, //Give food from foodbag
+    {BIT_Foodbag_Setting_Eat_First, NONE, 0x265, NONE, 0x39, 3, 2}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {BIT_Foodbag_Setting_Eat_Later, NONE, 0x529, NONE, 0x3a, 3, 2}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     END
 };
 
@@ -299,15 +299,15 @@ s32 unk24;
 
 /* Dinosaur Food Bag Actions (Krystal)
  * 0x7B8*/ static InventoryItem _data_7B8[] = {
-    {0x200, NONE, 0x2c8, NONE, 0x20, 11, 2}, //Place food down from foodbag
-    {0x22c, NONE, 0x561, NONE, 0x21, 11, 2}, //Give food from foodbag
+    {BIT_Dino_Foodbag_Place, NONE, 0x2c8, NONE, 0x20, 11, 2}, //Place food down from foodbag
+    {BIT_Dino_Foodbag_Give,  NONE, 0x561, NONE, 0x21, 11, 2}, //Give food from foodbag
     END
 };
 
 /* Dinosaur Food Bag Actions (Sabre)
  * 0x7DC*/ static InventoryItem _data_7DC[] = {
-    {0x200, NONE, 0x2c8, NONE, 0x20, 12, 2}, //Place food down from foodbag
-    {0x22c, NONE, 0x561, NONE, 0x21, 12, 2}, //Give food from foodbag
+    {BIT_Dino_Foodbag_Place, NONE, 0x2c8, NONE, 0x20, 12, 2}, //Place food down from foodbag
+    {BIT_Dino_Foodbag_Give,  NONE, 0x561, NONE, 0x21, 12, 2}, //Give food from foodbag
     END
 };
 

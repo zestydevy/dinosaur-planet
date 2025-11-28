@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include "dlls/engine/56_putdown.h"
 #include "dlls/objects/314_foodbag.h"
 
 typedef struct {
@@ -7,12 +8,12 @@ typedef struct {
 } SideFoodbag_Setup;
 
 typedef struct {
-    DLL_Unknown *dllPutdown; //DLL #56, handling removing food items from bag
-    FoodbagGamebits gamebits;
-    u16 capacity;
-    GplayStruct14* bagTimers;
-    FoodbagStructUnk unk10;
-} SideFoodbag_Data; //0x8C
+    DLL_56_Putdown *dllPutdown;         //Handles removing/updating food bag items
+    FoodbagGamebits capacityGamebits;   //Bag size gamebits
+    u16 capacity;                       //Current capacity
+    GplayStruct14* bagTimers;           //Expiry timers for bag items
+    FoodbagPlaced placedObjects;        //Food placed in world
+} SideFoodbag_Data;
 
 /*0x0*/ static FoodbagItem dino_foodbag_items[] = {
     {0,     0, 0, 0,  NO_GAMEBIT,                   NO_FOOD_OBJECT_ID}, 
@@ -37,7 +38,7 @@ typedef struct {
     BIT_Dino_Bag_Old_Grubs
 };
 
-void SideFoodbag_func_4DC(Object* self);
+void SideFoodbag_set_capacity(Object* self);
 void SideFoodbag_func_530(Object* self, s32 arg1);
 void SideFoodbag_func_594(Object* self, s16 arg1);
 
@@ -56,29 +57,29 @@ void SideFoodbag_setup(Object* self, SideFoodbag_Setup *objSetup, s32 arg2) {
 
     objData = self->data;
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = (DLL_Unknown*)dll_load_deferred(56, 10);
-    objData->unk10.nextIndex = 0;
+    objData->dllPutdown = dll_load_deferred(56, 10);
+    objData->placedObjects.nextIndex = 0;
     
     for (index = 0; index < 20; index++){
-        objData->unk10.placedObjects[index] = 0;
-        objData->unk10.foodType[index] = 0;
+        objData->placedObjects.objects[index] = NULL;
+        objData->placedObjects.foodType[index] = 0;
     }
     
     if (playerNo == PLAYER_SABRE) {
-        objData->gamebits.small  = BIT_Sabre_Dino_Bag_S;
-        objData->gamebits.medium = BIT_Sabre_Dino_Bag_M;
-        objData->gamebits.large  = BIT_Sabre_Dino_Bag_L;
+        objData->capacityGamebits.small  = BIT_Sabre_Dino_Bag_S;
+        objData->capacityGamebits.medium = BIT_Sabre_Dino_Bag_M;
+        objData->capacityGamebits.large  = BIT_Sabre_Dino_Bag_L;
     } else if (playerNo == PLAYER_KRYSTAL) {
-        objData->gamebits.small  = BIT_Krystal_Dino_Bag_S;
-        objData->gamebits.medium = BIT_Krystal_Dino_Bag_M;
-        objData->gamebits.large  = BIT_Krystal_Dino_Bag_L;
+        objData->capacityGamebits.small  = BIT_Krystal_Dino_Bag_S;
+        objData->capacityGamebits.medium = BIT_Krystal_Dino_Bag_M;
+        objData->capacityGamebits.large  = BIT_Krystal_Dino_Bag_L;
     }
     
     objData->capacity = 0;
     objData->bagTimers = gDLL_29_Gplay->vtbl->func_19B8();
-    main_set_bits(BIT_200, 1);
-    main_set_bits(BIT_22C, 1);
-    ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[8].withTwoArgs((s32)objData->bagTimers, (s32)&dino_foodbag_items);
+    main_set_bits(BIT_Dino_Foodbag_Place, TRUE);
+    main_set_bits(BIT_Dino_Foodbag_Give, TRUE);
+    objData->dllPutdown->vtbl->putdown_update_food_quantity_gamebits(objData->bagTimers, dino_foodbag_items);
     self->unkB0 |= 0x2000;
 }
 
@@ -97,7 +98,7 @@ void SideFoodbag_control(Object* self) {
     uiValue = gDLL_1_UI->vtbl->func_E2C(dino_foodbag_gamebitIDs, ARRAYCOUNT(dino_foodbag_gamebitIDs));
     uiGamebit = gDLL_1_UI->vtbl->func_F40();
 
-    SideFoodbag_func_4DC(self);
+    SideFoodbag_set_capacity(self);
     
     if (uiValue != NO_GAMEBIT) {
         for (index = 0; index < 30; index++){
@@ -106,13 +107,13 @@ void SideFoodbag_control(Object* self) {
                 break;
             }
 
-            dataIndex = ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[9].withOneArgS32(temp);
+            dataIndex = objData->dllPutdown->vtbl->putdown_func_AFC(temp);
             if (uiValue == dino_foodbag_items[dataIndex].gamebitID) {
                 switch (uiGamebit) {
-                case BIT_22C:
+                case BIT_Dino_Foodbag_Give:
                     break;
-                case BIT_200:
-                    if (((DLL_Unknown*)objData->dllPutdown)->vtbl->func[0].withFourArgsS32((s32)self, temp, (s32)&objData->unk10, (s32)&dino_foodbag_items)) {
+                case BIT_Dino_Foodbag_Place:
+                    if (objData->dllPutdown->vtbl->putdown_place_food(self, temp, &objData->placedObjects, dino_foodbag_items)) {
                         SideFoodbag_func_594(self, uiValue);
                     }
                     break;
@@ -122,7 +123,7 @@ void SideFoodbag_control(Object* self) {
         }
     }
     
-    temp = ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[3].withTwoArgsU16((s32)objData->bagTimers, (s32)&dino_foodbag_items);
+    temp = objData->dllPutdown->vtbl->putdown_func_47C(objData->bagTimers, dino_foodbag_items);
     if (temp) {
         SideFoodbag_func_530(self, temp);
     }
@@ -160,38 +161,38 @@ s32 SideFoodbag_func_41C(Object* self) {
 }
 
 // offset: 0x440 | func: 8 | export: 8
-void SideFoodbag_func_440(Object* self, s32 arg1, s32 arg2) {
+void SideFoodbag_func_440(Object* self, Object* arg1, s32 arg2) {
     SideFoodbag_Data* objData = self->data;
 
-    ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[1].withFourArgs((s32)self, arg1, arg2, (s32)&objData->unk10);
+    objData->dllPutdown->vtbl->putdown_get_nearest_placed_food_of_type(self, arg1, arg2, &objData->placedObjects);
 }
 
 // offset: 0x488 | func: 9 | export: 9
-void SideFoodbag_func_488(Object* self, s32 arg1) {
+void SideFoodbag_func_488(Object* self, Object* arg1) {
     SideFoodbag_Data* objData = self->data;
 
-    ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[2].withThreeArgs(arg1, (s32)&objData->unk10, (s32)self);
+    objData->dllPutdown->vtbl->putdown_destroy_placed_food(arg1, &objData->placedObjects);
 }
 
 // offset: 0x4DC | func: 10 | export: 10
-void SideFoodbag_func_4DC(Object* self) {
+void SideFoodbag_set_capacity(Object* self) {
     SideFoodbag_Data* objData = self->data;
 
-    objData->capacity = ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[7].withOneArgS32((s32)&objData->gamebits);
+    objData->capacity = objData->dllPutdown->vtbl->putdown_get_capacity(&objData->capacityGamebits);
 }
 
 // offset: 0x530 | func: 11 | export: 11
 void SideFoodbag_func_530(Object* self, s32 arg1) {
     SideFoodbag_Data* objData = self->data;
 
-    ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[4].withFourArgs(arg1, objData->capacity, (s32)objData->bagTimers, (s32)&dino_foodbag_items);
+    objData->dllPutdown->vtbl->putdown_func_5E8(arg1, objData->capacity, objData->bagTimers, dino_foodbag_items);
 }
 
 // offset: 0x594 | func: 12 | export: 12
 void SideFoodbag_func_594(Object* self, s16 arg1) {
     SideFoodbag_Data* objData = self->data;
 
-    ((DLL_Unknown*)objData->dllPutdown)->vtbl->func[5].withThreeArgs(arg1, (s32)objData->bagTimers, (s32)&dino_foodbag_items);
+    objData->dllPutdown->vtbl->putdown_func_730(arg1, objData->bagTimers, dino_foodbag_items);
 }
 
 /*0x0*/ static const char str_0[] = "submenu %d\n";

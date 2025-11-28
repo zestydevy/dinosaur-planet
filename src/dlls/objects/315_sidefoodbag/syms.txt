@@ -11,7 +11,7 @@ SideFoodbag_get_data_size = 0x408;
 SideFoodbag_func_41C = 0x41C;
 SideFoodbag_func_440 = 0x440;
 SideFoodbag_func_488 = 0x488;
-SideFoodbag_func_4DC = 0x4DC;
+SideFoodbag_set_capacity = 0x4DC;
 SideFoodbag_func_530 = 0x530;
 SideFoodbag_func_594 = 0x594;
 

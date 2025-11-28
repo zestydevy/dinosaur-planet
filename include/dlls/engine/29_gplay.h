@@ -279,8 +279,8 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*37*/ GplayStruct6 *(*func_F60)(void);
     /*38*/ GplayStruct12 *(*func_FA8)(void);
     /*39*/ GplayStruct13 *(*func_FE8)(void);
-    /*40*/ GplayStruct14 *(*func_1974)(void);
-    /*41*/ GplayStruct14 *(*func_19B8)(void);
+    /*40*/ GplayStruct14 *(*func_1974)(void); //get player foodbag struct
+    /*41*/ GplayStruct14 *(*func_19B8)(void); //get dino foodbag struct
     /*42*/ u32 (*get_time_played)(void);
     /*43*/ u32 (*is_cheat_unlocked)(u8 cheatIdx);
     /*44*/ void (*unlock_cheat)(u8 cheatIdx);

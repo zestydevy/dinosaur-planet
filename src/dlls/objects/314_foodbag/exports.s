@@ -18,10 +18,10 @@ _exports:
 /*7*/ .dword Foodbag_func_590
 /*8*/ .dword Foodbag_func_5B4
 /*9*/ .dword Foodbag_func_5FC
-/*10*/ .dword Foodbag_func_83C
+/*10*/ .dword Foodbag_set_capacity
 /*11*/ .dword Foodbag_func_708
 /*12*/ .dword Foodbag_func_7E0
-/*13*/ .dword Foodbag_func_650
+/*13*/ .dword Foodbag_set_eat_config
 /*14*/ .dword Foodbag_func_A0C
 /*15*/ .dword Foodbag_func_A1C
 /*16*/ .dword Foodbag_get_anim_objectID_from_food_gamebit
