@@ -8701,7 +8701,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                         if (sp98 >= 3) {
                             temp_a0 = player->linkedObject;
                             ((DLL_Unknown*)temp_a0->dll)->vtbl->func[14].withTwoArgs((s32)temp_a0, 1);
-                            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6AC, 0x60U, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6AC_Electric_Zap, 0x60U, NULL, NULL, 0, NULL);
                         } else {
                             _bss_2C = 120.0f;
                         }
@@ -8712,7 +8712,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                         if (sp98 >= 9) {
                             temp_a0 = player->linkedObject;
                             ((DLL_Unknown*)temp_a0->dll)->vtbl->func[14].withTwoArgs((s32)temp_a0, 2);
-                            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6AC, 0x7FU, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6AC_Electric_Zap, MAX_VOLUME, NULL, NULL, 0, NULL);
                         } else {
                             _bss_2C = 300.0f;
                         }
