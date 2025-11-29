@@ -118,7 +118,6 @@ typedef struct {
 	/*0x847c*/ s32 (*setsideinfofunc)(struct asistream *stream);
 } DecoderStream;
 
-void mp3_dec_unpack_scale_fac(void*, s32, s32);
 s32 mp3_util_func_80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077ED0(void*, void*, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077CEC(void*, void*, s32);
@@ -157,6 +156,8 @@ extern f32 *D_800C01C8;
 extern s8 D_800C0A58[];
 extern s8 D_800C2C58[];
 extern mp3decthing *binStringPointers[];
+extern u8 D_800A0124[8];
+extern u8 D_800A012C[2][16];
 
 // mp3dec_init in pd
 s32 mp3_dec_init(void) {
@@ -425,7 +426,75 @@ s32 mp3_dec_8006e0a0(DecoderStream* stream, s32 gr, s32 ch) {
 	return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_unpack_scale_fac.s")
+// mp3dec_unpack_scale_fac in pd
+s32 mp3_dec_unpack_scale_fac(DecoderStream *stream, s32 gr, s32 ch) {
+	s32 i;
+	s32 sfb;
+	s32 window;
+
+	if (stream->window_switching[gr][ch] != 0 && stream->block_type[gr][ch] == 2) {
+		if (stream->mixed_block_flag[gr][ch] != 0) {
+			for (sfb = 0; sfb < 8; sfb++) {
+				stream->scalefac[gr][ch].l[sfb] =
+					D_800A012C[0][stream->scalefac_compress[gr][ch]]
+					? mp3_util_func_80077CEC(stream->unk1C, &stream->unk2020, D_800A012C[0][stream->scalefac_compress[gr][ch]])
+					: 0;
+			}
+
+			for (sfb = 3; sfb < 6; sfb++) {
+				for (window = 0; window < 3; window++) {
+					stream->scalefac[gr][ch].s[window][sfb] =
+						D_800A012C[0][stream->scalefac_compress[gr][ch]]
+						? mp3_util_func_80077CEC(stream->unk1C, &stream->unk2020, D_800A012C[0][stream->scalefac_compress[gr][ch]])
+						: 0;
+				}
+			}
+
+			for (sfb = 6; sfb < 12; sfb++) {
+				for (window = 0; window < 3; window++) {
+					stream->scalefac[gr][ch].s[window][sfb] =
+						D_800A012C[1][stream->scalefac_compress[gr][ch]]
+						? mp3_util_func_80077CEC(stream->unk1C, &stream->unk2020, D_800A012C[1][stream->scalefac_compress[gr][ch]])
+						: 0;
+				}
+			}
+		} else {
+			for (i = 0; i < 2; i++) {
+				for (sfb = D_800A0124[5 + i]; sfb < D_800A0124[6 + i]; sfb++) {
+					for (window = 0; window < 3; window++) {
+						stream->scalefac[gr][ch].s[window][sfb] =
+							D_800A012C[i][stream->scalefac_compress[gr][ch]]
+							? mp3_util_func_80077CEC(stream->unk1C, &stream->unk2020, D_800A012C[i][stream->scalefac_compress[gr][ch]])
+							: 0;
+					}
+				}
+			}
+		}
+
+		for (window = 0; window < 3; window++) {
+			stream->scalefac[gr][ch].s[window][12] = 0;
+		}
+	} else {
+		for (i = 0; i < 4; i++) {
+			if (stream->scfsi[ch][i] == 0 || gr == 0) {
+				for (sfb = D_800A0124[i]; sfb < D_800A0124[i + 1]; sfb++) {
+					stream->scalefac[gr][ch].l[sfb] =
+						D_800A012C[i < 2 ? 0 : 1][stream->scalefac_compress[gr][ch]]
+						? mp3_util_func_80077CEC(stream->unk1C, &stream->unk2020, D_800A012C[i < 2 ? 0 : 1][stream->scalefac_compress[gr][ch]])
+						: 0;
+				}
+			} else {
+				for (sfb = D_800A0124[i]; sfb < D_800A0124[1 + i]; sfb++) {
+					stream->scalefac[1][ch].l[sfb] = stream->scalefac[0][ch].l[sfb];
+				}
+			}
+		}
+
+		stream->scalefac[gr][ch].unk3d60 = 0;
+	}
+
+	return 1;
+}
 
 // mp3dec00041600 in pd
 s32 mp3_dec_8006f530(DecoderStream* stream, UNK_TYPE_32 arg1, s32 arg2) {
