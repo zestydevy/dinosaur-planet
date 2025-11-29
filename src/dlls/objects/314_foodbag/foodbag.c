@@ -162,7 +162,7 @@ void Foodbag_control(Object* self) {
                 if (!foodType){
                     break;
                 }
-                food = &foodbag_items[objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(foodType)];
+                food = &foodbag_items[objData->dllPutdown->vtbl->get_foodID_from_foodType(foodType)];
 
                 //If a food item was selected
                 if (uiGamebit == food->gamebitID) {
@@ -178,7 +178,7 @@ void Foodbag_control(Object* self) {
                         }
                         break;
                     case BIT_Foodbag_Place:
-                        if (objData->dllPutdown->vtbl->putdown_place_food(self, foodType, &objData->placedObjects, foodbag_items)) {
+                        if (objData->dllPutdown->vtbl->place_food(self, foodType, &objData->placedObjects, foodbag_items)) {
                             Foodbag_delete_food_by_gamebit(self, uiGamebit);
                         }
                         break;
@@ -189,7 +189,7 @@ void Foodbag_control(Object* self) {
         }
     }
     
-    foodType = objData->dllPutdown->vtbl->putdown_tick_food_lifetimes(objData->bagSlots, foodbag_items);
+    foodType = objData->dllPutdown->vtbl->tick_food_lifetimes(objData->bagSlots, foodbag_items);
     if (foodType) {
         Foodbag_collect_food(self, foodType);
     }
@@ -230,14 +230,14 @@ int Foodbag_is_obtained(Object* self) {
 Object* Foodbag_get_nearest_placed_food_of_type(Object* self, Object* target, s32 foodType) {
     Foodbag_Data *objData = self->data;
 
-    return objData->dllPutdown->vtbl->putdown_get_nearest_placed_food_of_type(self, target, foodType, &objData->placedObjects);
+    return objData->dllPutdown->vtbl->get_nearest_placed_food_of_type(self, target, foodType, &objData->placedObjects);
 }
 
 // offset: 0x5FC | func: 9 | export: 9
 int Foodbag_destroy_placed_food(Object* self, Object* foodObject) {
     Foodbag_Data *objData = self->data;
 
-    return objData->dllPutdown->vtbl->putdown_destroy_placed_food(foodObject, &objData->placedObjects);
+    return objData->dllPutdown->vtbl->destroy_placed_food(foodObject, &objData->placedObjects);
 }
 
 // offset: 0x650 | func: 10 | export: 13
@@ -275,7 +275,7 @@ void Foodbag_collect_food(Object* self, s32 foodType) {
     if ((objData->eatFirst == TRUE && (*objData->playerHealth < *objData->playerHealthMax)) 
         || objData->capacity == 0) {
         Foodbag_eat_food(objData, foodType);
-    } else if (objData->dllPutdown->vtbl->putdown_add_food(foodType, objData->capacity, objData->bagSlots, foodbag_items) == FALSE) {
+    } else if (objData->dllPutdown->vtbl->add_food(foodType, objData->capacity, objData->bagSlots, foodbag_items) == FALSE) {
         Foodbag_eat_food(objData, foodType);
     }
 }
@@ -287,14 +287,14 @@ void Foodbag_collect_food(Object* self, s32 foodType) {
 void Foodbag_delete_food_by_gamebit(Object* self, s16 gamebit) {
     Foodbag_Data* objData = self->data;
 
-    objData->dllPutdown->vtbl->putdown_delete_food_by_gamebit(gamebit, objData->bagSlots, foodbag_items);
+    objData->dllPutdown->vtbl->delete_food_by_gamebit(gamebit, objData->bagSlots, foodbag_items);
 }
 
 // offset: 0x83C | func: 13 | export: 10
 void Foodbag_set_capacity(Object* self) {
     Foodbag_Data* objData = self->data;
 
-    objData->capacity = objData->dllPutdown->vtbl->putdown_get_capacity(&objData->capacityGamebits);
+    objData->capacity = objData->dllPutdown->vtbl->get_capacity(&objData->capacityGamebits);
 }
 
 // offset: 0x890 | func: 14
@@ -303,7 +303,7 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
     s32 currentHealth;
     s8 *playerHealth;
     
-    healthRestored = foodbag_items[objData->dllPutdown->vtbl->putdown_get_foodID_from_foodType(foodType)].healthRestored;
+    healthRestored = foodbag_items[objData->dllPutdown->vtbl->get_foodID_from_foodType(foodType)].healthRestored;
     
     if (healthRestored){
         playerHealth = objData->playerHealth;

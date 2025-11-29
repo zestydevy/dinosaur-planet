@@ -18,12 +18,12 @@ typedef struct {
 
 DLL_INTERFACE(DLL_315_SideFoodbag) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ int (*SideFoodbag_is_obtained)(Object* self);
-    /*8*/ Object* (*SideFoodbag_get_nearest_placed_food_of_type)(Object* self, Object* target, s32 foodType);
-    /*9*/ int (*SideFoodbag_destroy_placed_food)(Object* self, Object* foodObject);
-    /*10*/ void (*SideFoodbag_set_capacity)(Object* self);
-    /*11*/ int (*SideFoodbag_collect_food)(Object* self, s32 foodType);
-    /*12*/ void (*SideFoodbag_delete_food_by_gamebit)(Object* self, s16 foodGamebit);
+    /*7*/ int (*is_obtained)(Object* self);
+    /*8*/ Object* (*get_nearest_placed_food_of_type)(Object* self, Object* target, s32 foodType);
+    /*9*/ int (*destroy_placed_food)(Object* self, Object* foodObject);
+    /*10*/ void (*set_capacity)(Object* self);
+    /*11*/ int (*collect_food)(Object* self, s32 foodType);
+    /*12*/ void (*delete_food_by_gamebit)(Object* self, s16 foodGamebit);
 };
 
 #endif // _DLLS_315_H

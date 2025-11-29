@@ -34,7 +34,7 @@ typedef struct {
     s16 expiry;         //frames until food spoils
     u8 healthRestored;  //when eaten by player, or for sidekicks: energy restored
     u8 slotsUsed;       //food usually occupies 1 bag slot, but fish seem to occupy 2 slots
-    u16 expiryID;       //bitfield storing foodID to transform into once expired (0 doesn't spoil)
+    u16 expiryID;       //bitfield storing foodID to transform into once expired (or vanishes on expiry if 0)
     s16 gamebitID;      //inventory item gamebit
     s16 objectID;       //Object to create when placed
 } FoodbagItem;
@@ -42,8 +42,8 @@ typedef struct {
 /** Handles food objects placed in the world */
 typedef struct {
     u8 nextIndex; //index to use when next placing food (eventually wraps around to overwrite oldest)
-    Object* objects[MAX_FOOD_PLACED]; //the actual food objects in the world
-    u16 foodType[MAX_FOOD_PLACED]; //foodType of each placed object?
+    Object* objects[MAX_FOOD_PLACED]; //array of food objects placed
+    u16 foodType[MAX_FOOD_PLACED];    //foodType of each placed object
 } FoodbagPlaced;
 
 typedef struct {
@@ -75,16 +75,16 @@ typedef struct {
 
 DLL_INTERFACE(DLL_314_Foodbag) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ int (*Foodbag_is_obtained)(Object* self);
-    /*8*/ Object* (*Foodbag_get_nearest_placed_food_of_type)(Object* self, Object* target, s32 foodType);
-    /*9*/ int (*Foodbag_destroy_placed_food)(Object* self, Object* foodObject);
-    /*10*/ void (*Foodbag_set_capacity)(Object* self);
-    /*11*/ void (*Foodbag_collect_food)(Object* self, s32 foodType);
-    /*12*/ void (*Foodbag_delete_food_by_gamebit)(Object* self, s16 gamebit);
-    /*13*/ int (*Foodbag_set_eat_config)(Object* self, s32 eatFirst);
-    /*14*/ u16 (*Foodbag_get_capacity)(Object* self);
-    /*15*/ s32 (*Foodbag_count_slots_occupied)(Object* self);
-    /*16*/ s16 (*Foodbag_get_anim_objectID_from_food_gamebit)(s16 foodGamebit);
+    /*7*/ int (*is_obtained)(Object* self);
+    /*8*/ Object* (*get_nearest_placed_food_of_type)(Object* self, Object* target, s32 foodType);
+    /*9*/ int (*destroy_placed_food)(Object* self, Object* foodObject);
+    /*10*/ void (*set_capacity)(Object* self);
+    /*11*/ void (*collect_food)(Object* self, s32 foodType);
+    /*12*/ void (*delete_food_by_gamebit)(Object* self, s16 gamebit);
+    /*13*/ int (*set_eat_config)(Object* self, s32 eatFirst);
+    /*14*/ u16 (*get_capacity)(Object* self);
+    /*15*/ s32 (*count_slots_occupied)(Object* self);
+    /*16*/ s16 (*get_anim_objectID_from_food_gamebit)(s16 foodGamebit);
 };
 
 #endif // _DLLS_314_H
