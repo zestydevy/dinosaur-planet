@@ -1,132 +1,18 @@
 // @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
-#include "common.h"
+#include "libnaudio/mp3/decoder.h"
 #include "PR/gu.h"
 #include "PR/os.h"
-
-#define VERSION_2 0x0
-#define VERSION_1 0x1
-
-#define CHANNELMODE_STEREO      0
-#define CHANNELMODE_JOINTSTEREO 1
-#define CHANNELMODE_DUALMONO    2
-#define CHANNELMODE_SINGLEMONO  3
-
-typedef struct {
-	u8 unk0;
-	u8 unk1;
-	u8 unk2;
-	u8 unk3;
-	u8 *unk4;
-} mp3decthing;
-
-typedef struct {
-	s16 unk0[23];
-	s16 unk2E[14];
-} mp3decthing2;
-
-typedef struct {
-	u8 bytes[2];
-	s8 unk2;
-	s8 unk3;
-} mp3decfourbytes;
-
-typedef struct  {
-	/*0x3d08*/ u32 l[22];
-	/*0x3d60*/ u32 unk3d60;
-	/*0x3d64*/ u32 s[3][13];
-} asistream_scalefac;
-
-typedef struct {
-	f32 unk0[18];
-} asistream_4f64;
-
-typedef struct {
-	/*0x0000*/ s32 unk0;
-	/*0x0004*/ s32 (*dmafunc)(s32 stream, void *arg1, s32 arg2, s32 arg3);
-	/*0x0008*/ s32 filesize;
-	/*0x000c*/ s32 unkC;
-	/*0x0010*/ s32 unk10;
-	/*0x0014*/ s32 unk14;
-	/*0x0018*/ s32 unk18;
-	/*0x2000*/ u8 unk1C[0x2000];
-	/*0x201c*/ s32 unk201C;
-	/*0x2020*/ s32 unk2020;
-	/*0x2024*/ u8 buffer[0x40];
-	/*0x2064*/ s32 offset;
-	/*0x2068*/ u32 unk2068;
-	/*0x206c*/ u32 unk206C;
-	/*0x2070*/ u16 unk2070[6][580];
-	/*0x3ba0*/ s32 unk3BA0;
-	/*0x3ba4*/ u32 version;
-	/*0x3ba8*/ u32 layer;
-	/*0x3bac*/ u32 crctype;
-	/*0x3bb0*/ u32 bitrateindex;
-	/*0x3bb4*/ u32 samplerateindex;
-	/*0x3bb8*/ u32 haspadding;
-	/*0x3bbc*/ u32 privatebit;
-	/*0x3bc0*/ u32 channelmode;
-	/*0x3bc4*/ u32 channelmodeext;
-	/*0x3bc8*/ u32 copyright;
-	/*0x3bcc*/ u32 isoriginal;
-	/*0x3bd0*/ u32 emphasis;
-	/*0x3bd4*/ s32 doneinitial;
-	/*0x3bd8*/ u32 initialversion;
-	/*0x3bdc*/ u32 initiallayer;
-	/*0x3be0*/ u32 initialcrctype;
-	/*0x3be4*/ u32 initialsamplerateindex;
-	/*0x3be8*/ u32 initialchannelmode;
-	/*0x3bec*/ u32 initialcopyright;
-	/*0x3bf0*/ u32 initialisoriginal;
-	/*0x3bf4*/ u32 main_data_begin;
-	/*0x3bf8*/ u32 scfsi[1][32];
-	/*0x3c78*/ u32 part2_3_length[2][1];
-	/*0x3c80*/ u32 big_value[2][1];
-	/*0x3c88*/ s32 global_gain[2][1];
-	/*0x3c90*/ u32 scalefac_compress[2][1];
-	/*0x3c98*/ u32 window_switching[2][1];
-	/*0x3ca0*/ u32 block_type[2][1];
-	/*0x3ca8*/ u32 mixed_block_flag[2][1];
-	/*0x3cb0*/ u32 table_select[2][1][3];
-	/*0x3cc8*/ u32 subblock_gain[2][1][3];
-	/*0x3ce0*/ u32 region0_count[2][1];
-	/*0x3ce8*/ u32 region1_count[2][1];
-	/*0x3cf0*/ u32 preflag[2][1];
-	/*0x3cf8*/ u32 scalefac_scale[2][1];
-	/*0x3d00*/ u32 count1table_select[2][1];
-	asistream_scalefac scalefac[2][1];
-	/*0x3ef8*/ u32 unk3EF8;
-	/*0x3efc*/ u32 unk3EFC[6];
-	/*0x3f14*/ u32 unk3F14[26];
-	/*0x3f7c*/ s32 bitrate;
-	/*0x3f80*/ s32 samplerate;
-	/*0x3f84*/ s32 unk3F84;
-	/*0x3f88*/ s32 unk3F88;
-	/*0x3f8c*/ s32 numchannels;
-	/*0x3f90*/ s32 numgranules;
-	/*0x3f94*/ s16 unk3F94[1][578];
-	/*0x4418*/ u8 unk4418[1][578];
-	/*0x465c*/ s32 unk465C[1];
-	/*0x4660*/ s32 unk4660[1];
-	/*0x4664*/ asistream_4f64 unk4664[1][32];
-	/*0x4f64*/ asistream_4f64 unk4F64[2][32];
-	/*0x6164*/ u8 unk6164[0x900];
-	/*0x6a64*/ asistream_4f64 unk6A64[2][32];
-	/*0x7c64*/ u8 unk7C64[0x810];
-	/*0x8474*/ s32 unk8474;
-	/*0x8478*/ s32 (*decodeframefunc)(struct asistream *stream);
-	/*0x847c*/ s32 (*setsideinfofunc)(struct asistream *stream);
-} DecoderStream;
 
 s32 mp3_util_func_80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077ED0(void*, void*, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077CEC(void*, void*, s32);
-void mp3_func_80078070(asistream_4f64 *arg0, s32 arg1, asistream_4f64 *arg2, asistream_4f64 *arg3, void *arg4);
+void mp3_func_80078070(DecoderStream4664 *arg0, s32 arg1, DecoderStream4664 *arg2, DecoderStream4664 *arg3, void *arg4);
 void mp3_func_80078F70(void*, s32, void*, void*);
 s32 mp3_main_func_80071cf0(void*);
 f32 mp3_func_80077900(f32, f32);
 
-extern mp3decthing2 D_8009FF68[6];
+extern DecoderThing2 D_8009FF68[6];
 extern f32 D_800C05D0[256];
 extern f32 D_800C01D0[256];
 extern s32 D_800A208C[22];
@@ -140,7 +26,7 @@ extern f32 D_800A1C6C[8];
 extern u32 g_BitRateTable[2][15];
 extern u32 g_SampleRateTable[2][4];
 extern f32 sine_block[4][36];
-extern mp3decfourbytes *D_800C09D0[];
+extern DecoderBytes *D_800C09D0[];
 extern u8 D_800A2084[8];
 extern f32 D_800A2204;
 extern f32 D_800A2208;
@@ -150,12 +36,12 @@ extern f32 D_800A2214;
 extern f32 D_800A2218;
 extern f32 D_800C0010[36];
 extern f32 D_800C0130[36];
-extern mp3decfourbytes* D_800C01C0; // sizeof 0xA410
+extern DecoderBytes* D_800C01C0; // sizeof 0xA410
 extern f32 *D_800C01C4;
 extern f32 *D_800C01C8;
 extern s8 D_800C0A58[];
 extern s8 D_800C2C58[];
-extern mp3decthing *binStringPointers[];
+extern DecoderThing *binStringPointers[];
 extern u8 D_800A0124[8];
 extern u8 D_800A012C[2][16];
 
@@ -167,8 +53,8 @@ s32 mp3_dec_init(void) {
     s32 sp250 = 1;
     s32 sp24C;
     u8* sp248;
-    mp3decthing* sp244;
-    mp3decfourbytes *sp240;
+    DecoderThing* sp244;
+    DecoderBytes *sp240;
     u8 sp238[8] = D_800A2084;
     s32 sp234;
     u8 sp233;
@@ -212,7 +98,7 @@ s32 mp3_dec_init(void) {
     if (D_800C01C0 == NULL) {
         return 0;
     }
-    bzero(D_800C01C0, 10500 * sizeof(mp3decfourbytes));
+    bzero(D_800C01C0, 10500 * sizeof(DecoderBytes));
     for (sp254 = 0; sp254 < 34; sp254++) {
         sp244 = binStringPointers[sp254];
         if (sp244 == NULL) {
@@ -754,7 +640,7 @@ s32 mp3_dec_reduce_aliases(DecoderStream *stream, s32 arg1, s32 arg2) {
     }
 
 	for (i = 1; i < 32; i++) {
-		asistream_4f64 *sp8 = &stream->unk4F64[arg2][i];
+		DecoderStream4664 *sp8 = &stream->unk4F64[arg2][i];
         f32 sp4;
         f32 sp0;
         sp4 = sp8->unk0[0];
@@ -894,7 +780,7 @@ s32 mp3_dec_decode_frame(DecoderStream* stream) {
 	s32 i;
 	s32 j;
 	u16 *sp934;
-	asistream_4f64 sp34[32];
+	DecoderStream4664 sp34[32];
 	f32 sp30;
 	f32 sp2c;
 	f32 sp28;
@@ -968,8 +854,8 @@ s32 mp3_dec_decode_frame(DecoderStream* stream) {
 		}
 
 		while (i < 32) {
-			bcopy(&stream->unk6A64[ch][i], &sp34[i], sizeof(asistream_4f64));
-			bzero(&stream->unk6A64[ch][i], sizeof(asistream_4f64));
+			bcopy(&stream->unk6A64[ch][i], &sp34[i], sizeof(DecoderStream4664));
+			bzero(&stream->unk6A64[ch][i], sizeof(DecoderStream4664));
 			i++;
 		}
 
