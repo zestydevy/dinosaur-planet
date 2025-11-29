@@ -104,6 +104,11 @@ void mp3_dec_unpack_scale_fac(void*, s32, s32);
 s32 mp3_util_func_80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077ED0(void*, void*, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077CEC(void*, void*, s32);
+void mp3_dec_8006e0a0(void*, s32, s32);
+void mp3_func_80078070(asistream_4f64 *arg0, s32 arg1, asistream_4f64 *arg2, asistream_4f64 *arg3, void *arg4);
+void mp3_func_80078F70(void*, s32, void*, void*);
+s32 mp3_main_func_80071cf0(void*);
+
 extern s32 D_8009FD88[];
 extern s16 D_8009FE10[2][3][22];
 extern u8 D_8009FF18[2][3][13];
@@ -114,6 +119,7 @@ extern f32 D_800A1C4C[8];
 extern f32 D_800A1C6C[8];
 extern u32 g_BitRateTable[2][15];
 extern u32 g_SampleRateTable[2][4];
+extern f32 sine_block[4][36];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_init.s")
 
@@ -126,7 +132,7 @@ s32 mp3_dec_8006f530(DecoderStream* stream, UNK_TYPE_32 arg1, s32 arg2) {
     s32 sp70[2][3][3][4] = D_800A20E4;
     s32 sp60[4];
     s32 sp5C;
-    s32* sp58;
+    u32* sp58;
     s32 sp54;
     s32 sp50;
     s32 sp4C;
@@ -508,4 +514,122 @@ s32 mp3_dec_set_side_info(DecoderStream* stream) {
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_decode_frame.s")
+// mp3dec_decode_frame in pd
+s32 mp3_dec_decode_frame(DecoderStream* stream) {
+	s32 sp954;
+	s32 gr = 0;
+	s32 ch;
+	s32 sp948;
+	s32 sp944;
+	s32 sp940;
+	s32 i;
+	s32 j;
+	u16 *sp934;
+	asistream_4f64 sp34[32];
+	f32 sp30;
+	f32 sp2c;
+	f32 sp28;
+	s32 sp24;
+	s32 sp20;
+
+	sp934 = stream->unk2070[stream->unk3BA0];
+	sp954 = mp3_main_func_80071cf0(stream);
+
+	if (sp954 == -1) {
+		return 0;
+	}
+
+	stream->unk2020 = (sp954 - stream->main_data_begin) * 8;
+
+	if (stream->unk2020 < 0) {
+		return 1;
+	}
+
+	for (ch = 0; ch < stream->numchannels; ch++) {
+		mp3_dec_func_80070168(stream, gr, ch);
+		mp3_dec_8006e0a0(stream, gr, ch);
+	}
+
+	mp3_dec_func_800706f8(stream, gr);
+
+	if (stream->window_switching[gr][0] != 0 && stream->block_type[gr][0] == 2) {
+		sp948 = 32;
+	} else {
+		sp944 = (stream->unk465C[0] - 1) / 18 + 1;
+		sp948 = sp944;
+	}
+
+	for (ch = 0; ch < stream->numchannels; ch++) {
+		mp3_dec_reduce_aliases(stream, gr, ch);
+
+		if (stream->window_switching[gr][ch] != 0
+				&& stream->block_type[gr][ch] == 2
+				&& stream->mixed_block_flag[gr][ch] != 0) {
+			sp940 = 0;
+		} else if (stream->window_switching[gr][ch] == 0) {
+			sp940 = 0;
+		} else {
+			sp940 = stream->block_type[gr][ch];
+		}
+
+		if (sp940 == 2) {
+			for (i = 0; i < 2; i++) {
+				mp3_func_80078F70(&stream->unk4F64[ch][i], i, &sp34[i], &stream->unk6A64[ch][i]);
+			}
+		} else {
+			for (i = 0; i < 2; i++) {
+				mp3_func_80078070(&stream->unk4F64[ch][i], i, &sp34[i], &stream->unk6A64[ch][i], sine_block[sp940]);
+			}
+		}
+
+		if (stream->window_switching[gr][ch]
+					&& stream->block_type[gr][ch] == 2
+					&& stream->mixed_block_flag[gr][ch]) {
+			sp940 = 2;
+		}
+
+		if (sp940 == 2) {
+			for (i = 2; i < sp948; i++) {
+				mp3_func_80078F70(&stream->unk4F64[ch][i], i, &sp34[i], &stream->unk6A64[ch][i]);
+			}
+		} else {
+			for (i = 2; i < sp948; i++) {
+				mp3_func_80078070(&stream->unk4F64[ch][i], i, &sp34[i], &stream->unk6A64[ch][i], sine_block[sp940]);
+			}
+		}
+
+		while (i < 32) {
+			bcopy(&stream->unk6A64[ch][i], &sp34[i], sizeof(asistream_4f64));
+			bzero(&stream->unk6A64[ch][i], sizeof(asistream_4f64));
+			i++;
+		}
+
+		sp30 = 65536;
+		sp28 = 1;
+		sp20 = sp30 * sp28 * 16;
+		*sp934 = sp20 >> 16;
+		sp934++;
+
+		*sp934 = sp20 & 0xffff;
+		sp934++;
+
+		sp20 = -sp20;
+		*sp934 = sp20 >> 16;
+		sp934++;
+
+		*sp934 = sp20 & 0xffff;
+		sp934++;
+
+		sp2c = 2048 / sp28;
+
+		for (j = 0; j < 18; j++) {
+			for (i = 0; i < 32; i++) {
+				sp24 = sp34[i].unk0[j] * sp2c;
+				*sp934 = sp24;
+				sp934++;
+			}
+		}
+	}
+
+	return 1;
+}
