@@ -334,7 +334,7 @@ void dll_469_control(Object* self) {
                             objdata->unk4 = 0xC;
                             objdata->unk12 = 0xA;
                             objdata->unk18 = -1;
-                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                             gDLL_3_Animation->vtbl->func17(3, self, -1);
                         } else if (objdata->unk1B == 4) {
                             objdata->unk1A = rand_next(0, 5);
@@ -344,14 +344,14 @@ void dll_469_control(Object* self) {
                             objdata->unk4 = 0xC;
                             objdata->unk12 = 0x10;
                             objdata->unk18 = -1;
-                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                             gDLL_3_Animation->vtbl->func17(3, self, -1);
                         } else {
                             objdata->unk2 = 0x82;
                             objdata->unk1B = 6;
                             objdata->unk18 = 0;
                             objdata->unk16 = 7;
-                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_33E, MAX_VOLUME, NULL, NULL, 0, NULL);
                         }
                     } else {
@@ -361,7 +361,7 @@ void dll_469_control(Object* self) {
                             objdata->unk1B = 6;
                             objdata->unk18 = 0;
                             objdata->unk16 = 7;
-                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_33E, MAX_VOLUME, NULL, NULL, 0, NULL);
                         }
                     }

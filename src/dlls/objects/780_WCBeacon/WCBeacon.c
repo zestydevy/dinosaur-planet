@@ -54,7 +54,7 @@ void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
 
     animatedTexture = func_800348A0(self, 0, 0);
     if ((animatedTexture != NULL) && (objdata->state == WCBEACON_STATE_3)) {
-        animatedTexture->unk0 = 0x100;
+        animatedTexture->frame = 0x100;
     }
 }
 

@@ -520,14 +520,14 @@ s32 CFLevelControl_func_10BC(Object *self) {
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_73, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_73_Thunder, MAX_VOLUME, NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" you have Passed ");
         sTriggerPassed = main_get_bits(BIT_CF_Entrance_Trigger_Passed);
     } else if ((rand_next(0, 100) == 0) && (main_get_bits(BIT_577))) {
         rand = rand_next(5, 10);
         gDLL_28_ScreenFade->vtbl->func3(rand, SCREEN_FADE_WHITE, 0.1f + rand * 0.05f);
         sDLL190->vtbl->func0(self, 2, NULL, 1, -1, 4, 0);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_73, 77 + rand * 10 , NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_73_Thunder, 77 + rand * 10 , NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" Lighting Flash ");
     }
     return 1;

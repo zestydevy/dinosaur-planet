@@ -46,7 +46,7 @@ DLL_INTERFACE(DLL_1_UI) {
 /*7*/ s32 (*func_DF4)(s32 itemGamebitID); //Checks if a particular item was selected in the inventory (e.g. when giving roots to SnowHorn)?
 /*8*/ s32 (*func_E2C)(s32 *arg0, s32 arg1);
 /*9*/ s8 (*func_F24)(void);
-/*10*/ s16 (*func_F40)(void);
+/*10*/ s16 (*func_F40)(void); //get gamebitID of active submenu?
 /*11*/ void (*func_70A0)(u8 arg0);
 /*12*/ void (*func_130C)(u32 arg0, u32 arg1, u32 arg2);
 /*13*/ void (*func_1338)(s32 gametextID, s32 arg1, s32 arg2);

@@ -188,7 +188,7 @@ void Transporter_control(Object *self) {
                     transform.roll = 0;
                     transform.pitch = 0;
                     func_80003B70(8.0f);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 }
             }
@@ -203,13 +203,13 @@ void Transporter_control(Object *self) {
             transform.scale = 1.0f;
             if (objdata->unk25 != 0) {
                 func_80003B70(8.0f);
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 for (i = 0; i < 80; i++) {
                     gDLL_17_partfx->vtbl->spawn(player, PARTICLE_77, NULL, PARTFXFLAG_NONE, -1, NULL);
                 }
             } else {
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_9B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_9B_Transporter_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                 for (i = 0; i < 100; i++) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_7A, NULL, PARTFXFLAG_NONE, -1, NULL);
                 }

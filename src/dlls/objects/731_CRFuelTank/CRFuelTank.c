@@ -64,7 +64,7 @@ void CRFuelTank_update(Object *self) {
     if (hitinfo->unk48 && hitinfo->unk48->id == OBJ_CRSnowBike) {
         func_80026160(self);
         func_800267A4(self);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B3C, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B3C_Machinery_Charge_Up, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->opacity = 250;
         self->unkE0 = 1;
         if (setup->gamebit != NO_GAMEBIT) {

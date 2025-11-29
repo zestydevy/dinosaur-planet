@@ -121,7 +121,7 @@ void NWtricky_control(Object *self) {
                         trickyballGroundAnimator = func_800211B4(6021);
                         gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
                         if ((vec3_distance_squared(&trickyballGroundAnimator->positionMirror, &player->positionMirror) <= SQ(gaSetup->unk23)) && (vec3_distance_squared(&player->positionMirror, &tricky->positionMirror) <= 10000.0f)) {
-                            gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
                             gDLL_22_Subtitles->vtbl->func_368(0xBE);
                         }
                     }

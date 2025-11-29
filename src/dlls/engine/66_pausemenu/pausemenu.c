@@ -48,9 +48,9 @@ static PicMenuItem pauseMenuItems[2] = {
 };
 
 static PicMenuSounds pauseMenuSounds = {
-    SFX_PAUSE_MENU_MOVE,
+    SFX_PICMENU_MOVE,
     NO_SOUND,
-    SFX_PAUSE_MENU_BACK
+    SFX_PICMENU_BACK
 };
 
 /*0x0*/ static GameTextChunk* gametext;

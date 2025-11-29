@@ -15,7 +15,15 @@ typedef union {
     void (*withFiveArgs)(s32, s32, s32, s32, s32);
     void (*withSixArgs)(s32, s32, s32, s32, s32, s32);
     void (*withSevenArgs)(s32, s32, s32, s32, s32, s32, s32);
-    s32 (*asVoidS32)(void);
+    u16 (*asVoidU16)(void);
+    u16 (*withOneArgU16)(s32);
+    u16 (*withTwoArgsU16)(s32, s32);
+    u16 (*withThreeArgsU16)(s32, s32, s32);
+    u16 (*withFourArgsU16)(s32, s32, s32, s32);
+    u16 (*withFiveArgsU16)(s32, s32, s32, s32, s32);
+    u16 (*withSixArgsU16)(s32, s32, s32, s32, s32, s32);
+    u16 (*withSevenArgsU16)(s32, s32, s32, s32, s32, s32, s32);
+    u32 (*asVoidS32)(void);
     s32 (*withOneArgS32)(s32);
     s32 (*withTwoArgsS32)(s32, s32);
     s32 (*withThreeArgsS32)(s32, s32, s32);

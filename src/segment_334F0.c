@@ -8,25 +8,6 @@
 #define TWENTY_DEGREES 0xE38
 #define HEAD_TURN_LIMIT 0x1FFF //~45 degrees (giving a 90 degree turn range)
 
-typedef enum {
-    BLINK_Wait = 0,
-    BLINK_Animate = 1,
-    BLINK_Eyelid_Close_Finished = 0x80
-} BlinkStates;
-
-typedef enum {
-    HEAD_TURN_Goal_Reached = 0,
-    HEAD_TURN_Wait = 1,
-    HEAD_TURN_Animate = 2
-} HeadTurnStates;
-
-typedef enum {
-    HEAD_ANIMATION_TAG_Pupil_L = 0,
-    HEAD_ANIMATION_TAG_Pupil_R = 1,
-    HEAD_ANIMATION_TAG_Eyelid_L = 4,
-    HEAD_ANIMATION_TAG_Eyelid_R = 5
-} HeadAnimationTags;
-
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
 static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n";
@@ -78,7 +59,7 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
         return;
     }
 
-    eyelidValue = eyelidL->unk0;
+    eyelidValue = eyelidL->frame;
 
     switch (arg1->blinkState & 0xF) {
     case BLINK_Wait:
@@ -114,8 +95,8 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
                 arg1->blinkDelayTimer = 0;
             }
         }
-        eyelidR->unk0 = eyelidValue;
-        eyelidL->unk0 = eyelidValue;
+        eyelidR->frame = eyelidValue;
+        eyelidL->frame = eyelidValue;
         break;
     }
 
@@ -809,35 +790,35 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
 
     //Check if the current eye dart is already finished
     animationFinished = FALSE;
-    if (arg1->pupilSpeed == 0) {
+    if (arg1->eyeSpeed == 0) {
         animationFinished = TRUE;
     }
-    if ((arg1->pupilSpeed > 0) && (pupilL->positionU >= arg1->pupilGoal)) {
+    if ((arg1->eyeSpeed > 0) && (pupilL->positionU >= arg1->eyeGoal)) {
         animationFinished = TRUE;
     }
-    if ((arg1->pupilSpeed < 0) && (arg1->pupilGoal >= pupilL->positionU)) {
+    if ((arg1->eyeSpeed < 0) && (arg1->eyeGoal >= pupilL->positionU)) {
         animationFinished = TRUE;
     }
 
     //Set up the next eye dart animation
     if (animationFinished) {
-        arg1->pupilGoal = rand_next(-100, 10);
-        if (arg1->pupilGoal < pupilL->positionU) {
-            arg1->pupilSpeed = -5;
+        arg1->eyeGoal = rand_next(-100, 10);
+        if (arg1->eyeGoal < pupilL->positionU) {
+            arg1->eyeSpeed = -5;
         } else {
-            arg1->pupilSpeed = 5;
+            arg1->eyeSpeed = 5;
         }
-        arg1->pupilDelayTimer = rand_next(30, 100);
+        arg1->eyeDelayTimer = rand_next(30, 100);
     }
 
     //Wait a random amount of time between darts
-    if (arg1->pupilDelayTimer > 0) {
-        arg1->pupilDelayTimer -= gUpdateRate;
+    if (arg1->eyeDelayTimer > 0) {
+        arg1->eyeDelayTimer -= gUpdateRate;
         return;
     }
 
     //Animate eye dart
-    pupilL->positionU += arg1->pupilSpeed * gUpdateRate;
+    pupilL->positionU += arg1->eyeSpeed * gUpdateRate;
     pupilL->positionV = 0;
     pupilR->positionU = -100 - pupilL->positionU;
     pupilR->positionV = 0;
@@ -867,28 +848,28 @@ s16* func_80034804(Object* obj, s32 sequenceBoneID) {
     return sequenceBoneData;
 }
 
-TextureAnimator* func_800348A0(Object* obj, s32 texType, s32 arg2) {
+TextureAnimator* func_800348A0(Object* obj, s32 texTag, s32 arg2) {
     u8 *texData;
     s32 i;
     s32 temp;
     s32 temp2;
-    TextureAnimator* materialAnimator;
-    s32 frameCount;
+    TextureAnimator* animTexture;
+    s32 animatedTextureCount;
 
-    materialAnimator = NULL;
+    animTexture = NULL;
     if (obj->def != NULL) {
         texData = obj->def->pTextures;
-        frameCount = obj->def->numAnimatedFrames;
-        for (i = 0; i < frameCount; i++) {
+        animatedTextureCount = obj->def->numAnimatedFrames;
+        for (i = 0; i < animatedTextureCount; i++) {
             temp = i << 1;
-            if (texType == *(temp + texData)) {
+            if (texTag == *(temp + texData)) {
                 temp2 = i << 4;
-                materialAnimator = (TextureAnimator*)&((u8*)obj->unk70)[temp2];
+                animTexture = (TextureAnimator*)&((u8*)obj->unk70)[temp2];
             }
         }
     }
 
-    return materialAnimator;
+    return animTexture;
 }
 
 s32* func_800349B0(void) {

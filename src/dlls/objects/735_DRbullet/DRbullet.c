@@ -79,7 +79,7 @@ void DRbullet_control(Object* self) {
                 objData->timer = 0;
                 if (self->objhitInfo->unk58 & 8) {
                     STUBBED_PRINTF(" hit sometime ");
-                    gDLL_6_AMSFX->vtbl->play_sound(self, 0x851, 0x7F, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_851_Laser_Blast, 0x7F, NULL, NULL, 0, NULL);
                 }
                 if (0 && objData->timer == 0){
                     STUBBED_PRINTF(" long time ");
@@ -187,7 +187,7 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
 
     //Set bullet to "fired" state and play sound
     objData->state = BULLET_STATE_FIRED;
-    gDLL_6_AMSFX->vtbl->play_sound(self, 0x927, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
+    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_927_Harsh_Electric_Loop, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
 
     //Set bullet's expiry timer based on 10 second trajectory after being fired
     futurePosition.x = self->speed.x * 600.0f;
@@ -273,8 +273,8 @@ s32 DRbullet_tick_impact(Object* self) {
         }
 
         func_800267A4(self);
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x380, 0x7F, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x386, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_380_Scorching_Impact, 0x7F, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_386_Squelched_Impact, 0x7F, NULL, NULL, 0, NULL);
     }
 
     //Increment timer, and return True if bullet has been in impact state for a while

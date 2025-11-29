@@ -1,0 +1,19 @@
+.text = 0x0:
+dll_413_ctor = 0x0;
+dll_413_dtor = 0xC;
+dll_413_setup = 0x18;
+dll_413_control = 0xC4;
+dll_413_update = 0xE0;
+dll_413_print = 0xEC;
+dll_413_free = 0x140;
+dll_413_get_model_flags = 0x188;
+dll_413_get_data_size = 0x198;
+dll_413_func_1AC = 0x1AC;
+dll_413_func_470 = 0x470;
+dll_413_func_4A4 = 0x4A4;
+dll_413_func_4BC = 0x4BC;
+
+.rodata = 0x638:
+
+.bss = 0x658:
+_bss_0 = 0x0; // absolute:0x658

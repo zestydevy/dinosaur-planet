@@ -99,7 +99,7 @@ void SB_ShipHead_control(Object *self) {
     }
     if ((self->unkE0 <= 0) && ((parentDC == 3) || (parentDC == 4) || (parentDC == 5)) && (func_80025F40(self, &sp4C, NULL, NULL) != 0) && (sp4C->id != OBJ_SB_FireBall)) {
         objdata->counter = 255;
-        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_179, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_179_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func7(parent);
         self->unkE0 = 300;
     }
@@ -117,7 +117,7 @@ void SB_ShipHead_control(Object *self) {
     }
     if ((parentDC == 5) && (_data_0[0] != 5)) {
         self->unkDC += gUpdateRate;
-        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_17A, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_17A_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->srt.transl.y += 50.0f;
         self->srt.transl.z -= 300.0f;
         get_object_child_position(self, &ox, &oy, &oz);
@@ -144,7 +144,7 @@ void SB_ShipHead_control(Object *self) {
         fireballObj->unkE0 = (s32)objdata->cloudrunner;
     }
     if (sp3B == 1) {
-        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_17A, 43, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_17A_Galleon_Roar, 43, NULL, NULL, 0, NULL);
         player = get_player();
         minifireSetup = obj_alloc_create_info(sizeof(ObjSetup), OBJ_SB_MiniFire);
         minifireSetup->x = player->positionMirror.x + 100.0f;

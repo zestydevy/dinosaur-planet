@@ -134,7 +134,7 @@ void SB_ShipGun_control(Object *self) {
             }
         }
         if (objdata->state == STATE_1) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x174U, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_174_Machinery_Move_A, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         self->objhitInfo->unk58 &= ~1;
         break;
@@ -158,7 +158,7 @@ void SB_ShipGun_control(Object *self) {
         self->objhitInfo->unk58 |= 1;
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             objdata->unkA = 0xFF;
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x176U, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_176_Explosion_A, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unkD++;
             if (objdata->unkD == 2) {
                 objdata->state = STATE_3;
@@ -166,7 +166,7 @@ void SB_ShipGun_control(Object *self) {
                     ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func7(parent);
                 }
             } else if (objdata->unkD == 4) {
-                gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x177U, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->state = STATE_3;
                 for (i = 5; i != 0; i--) {
                     gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, 2, -1, NULL);
@@ -233,7 +233,7 @@ void SB_ShipGun_control(Object *self) {
             cannonballObj->unkE0 = (s32) objdata->cloudrunner;
             func_800013BC();
             func_80003B70(0.1f);
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x96U, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10++;
             if (objdata->unk10 == 3) {
                 objdata->unk8 = 0x10E;
@@ -266,7 +266,7 @@ void SB_ShipGun_control(Object *self) {
                 objdata->unkE--;
             }
             func_80023D30(self, 1, 1.0f, 0U);
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, 0x175U, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_175_Machinery_Move_B, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         if (func_80024108(self, -0.01f, gUpdateRate, NULL) != 0) {
             objdata->state = STATE_0;

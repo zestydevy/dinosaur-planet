@@ -76,7 +76,7 @@ void dll_782_control(Object* self) {
     
     temp_v0 = func_800348A0(self, 0, 0);
     if (temp_v0 != NULL) {
-        temp_v0->unk0 = 0;
+        temp_v0->frame = 0;
     }
     if (objdata->unk274 != 6) {
         isNighttime = gDLL_7_Newday->vtbl->func8(&time);
@@ -155,7 +155,7 @@ void dll_782_control(Object* self) {
                 }
             }
             if ((objdata->unk264 != self->srt.transl.x) || (objdata->unk268 != self->srt.transl.y)) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B9, 1, &objdata->unk26C, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B9_Block_Shifting, 1, &objdata->unk26C, 0, 0, 0);
                 objdata->unk274 = 2;
             }
         }
@@ -225,7 +225,7 @@ void dll_782_control(Object* self) {
             self->speed.z = 0.0f;
             if (objdata->unk277 == 2) {
                 objdata->unk274 = 4;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BB, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);
                 if (self->modelInstIdx == 1) {
                     main_increment_bits(BIT_810);
                 } else {
@@ -233,10 +233,10 @@ void dll_782_control(Object* self) {
                 }
             } else if (objdata->unk277 == 1) {
                 objdata->unk274 = 1;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BA, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
             } else {
                 objdata->unk274 = 3;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BA, MAX_VOLUME, NULL, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
             }
             if (objdata->unk274 != 3) {
                 if (self->modelInstIdx == 1) {
@@ -254,7 +254,7 @@ void dll_782_control(Object* self) {
     case 3:
         func_800267A4(self);
         if (self->opacity == 0xFF) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9C5, MAX_VOLUME, NULL, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9C5_Vanish, MAX_VOLUME, NULL, 0, 0, 0);
         }
         var_v0 = self->opacity - (gUpdateRate * 8);
         if (var_v0 < 0) {
@@ -275,7 +275,7 @@ void dll_782_control(Object* self) {
     case 5:
         if (self->opacity == 0) {
             func_8002674C(self);
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9C6, MAX_VOLUME, NULL, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9C6_Appear, MAX_VOLUME, NULL, 0, 0, 0);
         }
         var_v0 = self->opacity + (gUpdateRate * 8);
         if (var_v0 > 0xFF) {
@@ -292,7 +292,7 @@ void dll_782_control(Object* self) {
     case 4:
         temp_v0 = func_800348A0(self, 0, 0);
         if (temp_v0 != NULL) {
-            temp_v0->unk0 = 0x100;
+            temp_v0->frame = 0x100;
         }
         break;
     }

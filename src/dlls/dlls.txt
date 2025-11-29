@@ -23,6 +23,7 @@
 31 = engine/31_flash
 32 = engine/32
 33 = engine/33
+56 = engine/56_putdown
 60 = engine/60_post
 61 = engine/61_rareware
 62 = engine/62_mainmenu
@@ -74,6 +75,8 @@
 308 = objects/308_USEOBJ
 309 = objects/309_SEQOBJ
 311 = objects/311_IMMultiSeq
+314 = objects/314_foodbag
+315 = objects/315_sidefoodbag
 321 = objects/321_Duster
 325 = objects/325_trigger
 331 = objects/331_genprops
@@ -97,6 +100,7 @@
 398 = objects/398_CFMagicWall
 400 = objects/400_CFLevelControl
 408 = objects/408_IMIceMountain
+413 = objects/413_IMspacecraft
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
 427 = objects/427_DFlevelcontrol

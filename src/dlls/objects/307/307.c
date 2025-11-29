@@ -147,13 +147,13 @@ static int dll_307_func_33C(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         }
         if ((temp_v0_3 != 0) && !(objdata->unkE & 1)) {
             if (self->def->numAnimatedFrames != 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A3, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A3_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             objdata->unkE |= 1;
         }
         if ((var_s1 != 0) && !(objdata->unkE & 2)) {
             if (self->def->numAnimatedFrames != 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A3, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9A3_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             objdata->unkE |= 2;
         }

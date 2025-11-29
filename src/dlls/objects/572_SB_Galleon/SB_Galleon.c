@@ -232,7 +232,7 @@ s32 SB_Galleon_func_5C8(Object *self) {
     objdata = self->data;
     if (objdata->unk29 != 1) {
         if (objdata->unk29 >= 2) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_10A, 97, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_10A_Galleon_Roar, 97, NULL, NULL, 0, NULL);
         }
         objdata->unk2B++;
         return 1;
@@ -346,7 +346,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             break;
         case 6:
             if (objdata->soundHandle == 0)
-                objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
             // @fake
             if (&self) {}
@@ -428,10 +428,10 @@ void SB_Galleon_func_B88(Object *self) {
     roll = fsin16_precise(objdata->unk74);
     if (objdata->unk8B == 0) {
         if (roll < -0.9f) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_27A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_27A_Wood_Creak_A, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk8B = 1;
         } else if (roll > 0.9f) {
-            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_27B, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_27B_Wood_Creak_B, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk8B = 1;
         }
     } else if ((roll > -0.1f) && (roll < 0.1f)) {
@@ -531,7 +531,7 @@ void SB_Galleon_func_EAC(Object *self) {
     }
     if (objdata->unk29 >= 2) {
         if (objdata->soundHandle == 0) {
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->soundHandle != 0) {
@@ -701,8 +701,8 @@ void SB_Galleon_func_EAC(Object *self) {
                     objdata->hintCounter = HINT_COUNTER_MAX;
                 }
                 if (objdata->soundHandle2 == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_140, 80, &objdata->soundHandle2, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_277, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_140_Galleon_Propeller_Loop, 80, &objdata->soundHandle2, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_277_Galleon_Creaking, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             case 1:
