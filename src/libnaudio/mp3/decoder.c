@@ -21,6 +21,11 @@ typedef struct {
 } mp3decthing;
 
 typedef struct {
+	s16 unk0[23];
+	s16 unk2E[14];
+} mp3decthing2;
+
+typedef struct {
 	u8 bytes[2];
 	s8 unk2;
 	s8 unk3;
@@ -113,17 +118,19 @@ typedef struct {
 	/*0x847c*/ s32 (*setsideinfofunc)(struct asistream *stream);
 } DecoderStream;
 
-s32 mp3_dec_8006f530(DecoderStream* stream, UNK_TYPE_32 arg1, s32 arg2);
 void mp3_dec_unpack_scale_fac(void*, s32, s32);
 s32 mp3_util_func_80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077ED0(void*, void*, s32, s32, s32, void**, void**);
 s32 mp3_util_func_80077CEC(void*, void*, s32);
-void mp3_dec_8006e0a0(void*, s32, s32);
 void mp3_func_80078070(asistream_4f64 *arg0, s32 arg1, asistream_4f64 *arg2, asistream_4f64 *arg3, void *arg4);
 void mp3_func_80078F70(void*, s32, void*, void*);
 s32 mp3_main_func_80071cf0(void*);
 f32 mp3_func_80077900(f32, f32);
 
+extern mp3decthing2 D_8009FF68[6];
+extern f32 D_800C05D0[256];
+extern f32 D_800C01D0[256];
+extern s32 D_800A208C[22];
 extern s32 D_8009FD88[];
 extern s16 D_8009FE10[2][3][22];
 extern u8 D_8009FF18[2][3][13];
@@ -147,12 +154,11 @@ extern f32 D_800C0130[36];
 extern mp3decfourbytes* D_800C01C0; // sizeof 0xA410
 extern f32 *D_800C01C4;
 extern f32 *D_800C01C8;
-extern f32 D_800C01D0[256];
-extern f32 D_800C05D0[256];
 extern s8 D_800C0A58[];
 extern s8 D_800C2C58[];
 extern mp3decthing *binStringPointers[];
 
+// mp3dec_init in pd
 s32 mp3_dec_init(void) {
     s32 i;
     s32 sp258;
@@ -284,7 +290,140 @@ s32 mp3_dec_init(void) {
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_8006e0a0.s")
+// mp3dec00040164 in pd
+s32 mp3_dec_8006e0a0(DecoderStream* stream, s32 gr, s32 ch) {
+    s32 sp1BC;
+    s32 sp1B8;
+    s32 sp1B4;
+    s32 sp1B0;
+    s32 sp158[22] = D_800A208C;
+	f32 sp100[22];
+	f32 sp64[3][13];
+	f32 sp60;
+	s32 sfb;
+	s32 sp58;
+	s32 scale;
+	s32 sp50;
+	s32 sp4c;
+	s32 sp48;
+	s32 sp44;
+	f32 *sp40;
+	s16 *sp3c;
+	u8 *sp38;
+	s32 sp34;
+	s32 sp30;
+	s32 window_switching;
+	s32 sp28;
+	f32 *sp24;
+
+	sp1BC = stream->samplerateindex + stream->version * 3;
+
+	if (stream->window_switching[gr][ch] && stream->block_type[gr][ch] == 2) {
+		if (stream->mixed_block_flag[gr][ch]) {
+			sp1B8 = D_8009FF68[sp1BC].unk0[1];
+		} else {
+			sp1B8 = D_8009FF68[sp1BC].unk2E[1] * 3;
+			sp1B0 = D_8009FF68[sp1BC].unk2E[1];
+			sp1B4 = 0;
+		}
+	} else {
+		sp1B8 = D_8009FF68[sp1BC].unk0[1];
+	}
+
+	sp60 = mp3_func_80077900(2, (stream->global_gain[gr][ch] - 210.0f) * 0.25f);
+	scale = stream->scalefac_scale[gr][ch];
+
+	for (sfb = 0; sfb < 22; sfb++) {
+		sp4c = (stream->scalefac[gr][ch].l[sfb] + stream->preflag[gr][ch] * sp158[sfb]) * (scale + 1);
+		sp100[sfb] = D_800C01D0[sp4c] * sp60;
+	}
+
+	for (sp58 = 0; sp58 < 3; sp58++) {
+		for (sfb = 0; sfb < 13; sfb++) {
+			sp50 = stream->subblock_gain[gr][ch][sp58];
+			sp4c = stream->scalefac[gr][ch].s[sp58][sfb] * (scale + 1);
+			sp64[sp58][sfb] = sp60 * D_800C05D0[sp50] * D_800C01D0[sp4c];
+		}
+	}
+
+	sfb = 0;
+	sp48 = 0;
+	sp44 = stream->unk465C[ch];
+	sp40 = stream->unk4664[ch][0].unk0;
+	sp3c = stream->unk3F94[ch];
+	sp38 = stream->unk4418[ch];
+	sp34 = stream->block_type[gr][ch] == 2 && stream->mixed_block_flag[gr][ch] == 0;
+	sp30 = stream->block_type[gr][ch] == 2 && stream->mixed_block_flag[gr][ch] != 0;
+	window_switching = stream->window_switching[gr][ch];
+
+	while (sp48 < sp44) {
+		if (sp1B8 > sp44) {
+			sp1B8 = sp44;
+		}
+
+		if (window_switching) {
+			if (sp34 || (sp30 && sp48 >= 36)) {
+				sp58 = (sp48 - sp1B4) / sp1B0;
+				sp28 = sp1B4 + sp1B0;
+			}
+		}
+
+		while (sp48 < sp1B8) {
+			if (window_switching && (sp34 || (sp30 && sp48 >= 36))) {
+				if (sp48 >= sp28) {
+					sp28 += sp1B0;
+					sp58++;
+				}
+
+				sp24 = sp64[sp58];
+
+				if (*sp38++) {
+					*sp40++ = -(D_800C01C8[*sp3c++] * sp24[sfb]);
+				} else {
+					*sp40++ = D_800C01C8[*sp3c++] * sp24[sfb];
+				}
+			} else {
+				if (*sp38++) {
+					*sp40++ = -(D_800C01C8[*sp3c++] * sp100[sfb]);
+				} else {
+					*sp40++ = D_800C01C8[*sp3c++] * sp100[sfb];
+				}
+			}
+
+			sp48++;
+		}
+
+		if (stream->window_switching[gr][ch] && stream->block_type[gr][ch] == 2) {
+			if (stream->mixed_block_flag[gr][ch]) {
+				if (D_8009FF68[sp1BC].unk0[8] == sp48) {
+					sp1B8 = D_8009FF68[sp1BC].unk2E[4] * 3;
+					sfb = 3;
+					sp1B0 = D_8009FF68[sp1BC].unk2E[sfb + 1] - D_8009FF68[sp1BC].unk2E[sfb];
+					sp1B4 = D_8009FF68[sp1BC].unk2E[sfb] * 3;
+				} else if (sp48 < D_8009FF68[sp1BC].unk0[8]) {
+					sp1B8 = D_8009FF68[sp1BC].unk0[++sfb + 1];
+				} else {
+					sp1B8 = D_8009FF68[sp1BC].unk2E[++sfb + 1] * 3;
+					sp1B0 = D_8009FF68[sp1BC].unk2E[sfb + 1] - D_8009FF68[sp1BC].unk2E[sfb];
+					sp1B4 = D_8009FF68[sp1BC].unk2E[sfb] * 3;
+				}
+			} else {
+				sp1B8 = D_8009FF68[sp1BC].unk2E[++sfb + 1] * 3;
+				sp1B0 = D_8009FF68[sp1BC].unk2E[sfb + 1] - D_8009FF68[sp1BC].unk2E[sfb];
+				sp1B4 = D_8009FF68[sp1BC].unk2E[sfb] * 3;
+			}
+		} else {
+			sp1B8 = D_8009FF68[sp1BC].unk0[++sfb + 1];
+		}
+	}
+
+	if (sp48 < 576) {
+		bzero(sp40, stream->unk4660[ch] * 4);
+		return 1;
+	}
+
+	return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_unpack_scale_fac.s")
 
