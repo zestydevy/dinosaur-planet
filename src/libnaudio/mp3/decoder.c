@@ -12,6 +12,20 @@
 #define CHANNELMODE_DUALMONO    2
 #define CHANNELMODE_SINGLEMONO  3
 
+typedef struct {
+	u8 unk0;
+	u8 unk1;
+	u8 unk2;
+	u8 unk3;
+	u8 *unk4;
+} mp3decthing;
+
+typedef struct {
+	u8 bytes[2];
+	s8 unk2;
+	s8 unk3;
+} mp3decfourbytes;
+
 typedef struct  {
 	/*0x3d08*/ u32 l[22];
 	/*0x3d60*/ u32 unk3d60;
@@ -108,11 +122,11 @@ void mp3_dec_8006e0a0(void*, s32, s32);
 void mp3_func_80078070(asistream_4f64 *arg0, s32 arg1, asistream_4f64 *arg2, asistream_4f64 *arg3, void *arg4);
 void mp3_func_80078F70(void*, s32, void*, void*);
 s32 mp3_main_func_80071cf0(void*);
+f32 mp3_func_80077900(f32, f32);
 
 extern s32 D_8009FD88[];
 extern s16 D_8009FE10[2][3][22];
 extern u8 D_8009FF18[2][3][13];
-extern s32 D_800C09D0[];
 extern s32 D_800A20E4[2][3][3][4];
 extern s16 D_800A014C[2][3][576];
 extern f32 D_800A1C4C[8];
@@ -120,8 +134,155 @@ extern f32 D_800A1C6C[8];
 extern u32 g_BitRateTable[2][15];
 extern u32 g_SampleRateTable[2][4];
 extern f32 sine_block[4][36];
+extern mp3decfourbytes *D_800C09D0[];
+extern u8 D_800A2084[8];
+extern f32 D_800A2204;
+extern f32 D_800A2208;
+extern f32 D_800A220C;
+extern f32 D_800A2210;
+extern f32 D_800A2214;
+extern f32 D_800A2218;
+extern f32 D_800C0010[36];
+extern f32 D_800C0130[36];
+extern mp3decfourbytes* D_800C01C0; // sizeof 0xA410
+extern f32 *D_800C01C4;
+extern f32 *D_800C01C8;
+extern f32 D_800C01D0[256];
+extern f32 D_800C05D0[256];
+extern s8 D_800C0A58[];
+extern s8 D_800C2C58[];
+extern mp3decthing *binStringPointers[];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_init.s")
+s32 mp3_dec_init(void) {
+    s32 i;
+    s32 sp258;
+    s32 sp254;
+    s32 sp250 = 1;
+    s32 sp24C;
+    u8* sp248;
+    mp3decthing* sp244;
+    mp3decfourbytes *sp240;
+    u8 sp238[8] = D_800A2084;
+    s32 sp234;
+    u8 sp233;
+    s32 sp22C;
+    s32 sp228;
+    s32 sp224;
+    s32 sp220;
+    s32 sp21C;
+    s32 sp218;
+    s16 sp18[256];
+
+    sp224 = 0;
+    for (i = 0; i < 36; i++) {
+        sine_block[0][i] = sinf((i + 0.5f) * D_800A2204);
+    }
+    for (i = 0; i < 18; i++) {
+        D_800C0010[i] = sinf((i + 0.5f) * D_800A2208);
+    }
+    for (i = 18; i < 24; i++) {
+        D_800C0010[i] = 1.0f;
+    }
+    for (i = 24; i < 30; i++) {
+        D_800C0010[i] = sinf(((i + 0.5f) - 18.0f) * D_800A220C);
+    }
+    for (i = 30; i < 36; i++) {
+        D_800C0010[i] = 0.0f;
+    }
+
+    for (i = 0; i < 6; i++) {
+        D_800C0130[i] = 0.0f;
+    }
+    for (i = 6; i < 12; i++) {
+        D_800C0130[i] = sinf(((i + 0.5f) - 6.0f) * D_800A2210);
+    }
+    for (i = 12; i < 18; i++) {
+        D_800C0130[i] = 1.0f;
+    }
+    for (i = 18; i < 36; i++) {
+        D_800C0130[i] = sinf((i + 0.5f) * D_800A2214);
+    }
+    if (D_800C01C0 == NULL) {
+        return 0;
+    }
+    bzero(D_800C01C0, 10500 * sizeof(mp3decfourbytes));
+    for (sp254 = 0; sp254 < 34; sp254++) {
+        sp244 = binStringPointers[sp254];
+        if (sp244 == NULL) {
+            D_800C09D0[sp254] = 0;
+            continue;
+        }
+
+        D_800C09D0[sp254] = &D_800C01C0[sp224];
+        sp240 = D_800C09D0[sp254];
+        for (sp258 = 0; sp258 < 10500; sp258++) {
+            sp240[sp258].unk2 = -1;
+            sp240[sp258].unk3 = -1;
+        }
+        sp220 = 1;
+        sp218 = 1;
+        bzero(&sp18, sizeof(sp18));
+        sp250 = 1;
+        while (sp218 != 0) {
+            sp218 = 0;
+            for (sp21C = 0, sp244 = binStringPointers[sp254]; sp244->unk0 != 100; sp244++, sp21C++) {
+                sp24C = sp18[sp21C];
+                if (sp220 <= sp244->unk2) {
+                    sp248 = &sp240[sp24C].bytes[sp244->unk4[sp220 - 1]] - 48;
+                    if (*sp248 != 0) {
+                        sp24C = sp18[sp21C] + *sp248;
+                    } else {
+                        *sp248 = sp250 - sp24C;
+                        sp24C = sp250++;
+                    }
+                    if (sp244->unk2 == sp220) {
+                        sp240[sp24C].unk2 = sp244->unk0;
+                        sp240[sp24C].unk3 = sp244->unk1;
+                    } else {
+                        sp218++;
+                    }
+                    sp18[sp21C] = sp24C;
+                }
+            }
+            sp220++;
+        }
+        sp224 += sp250;
+        for (sp244 = binStringPointers[sp254]; sp244->unk0 != 100; sp244++) {
+            sp234 = sp244->unk2 < 8 ? sp244->unk2 : 8;
+            sp233 = 0;
+            for (i = 0; i < sp234; i++) {
+                if (sp244->unk4[i] - 48) {
+                    sp233 |= sp238[i];
+                }
+            }
+
+            if (sp244->unk2 >= 9) {
+                D_800C2C58[sp254 * 256 + sp233] = 0;
+                continue;
+            }
+
+            sp22C = 256 >> sp234;
+            sp228 = (sp244->unk1 * 16) | sp244->unk0;
+            for (i = 0; i < sp22C; i++) {
+                D_800C0A58[sp254 * 256 + (sp233 | i)] = (s8) sp228;
+                D_800C2C58[sp254 * 256 + (sp233 | i)] = (s8) sp234;
+            }
+        }
+    }
+
+    D_800C01C8 = D_800C01C4;
+    if (D_800C01C8 == 0) {
+        return 0;
+    }
+    for (i = 0; i < 8192; i++) {
+        D_800C01C8[i] = mp3_func_80077900(i, D_800A2218);
+    }
+    for (i = 0; i < 256; i++) {
+        D_800C01D0[i] = mp3_func_80077900(2.0f, i * -0.5f);
+        D_800C05D0[i] = mp3_func_80077900(2.0f, i * -2.0f);
+    }
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libnaudio/mp3/decoder/mp3_dec_8006e0a0.s")
 
