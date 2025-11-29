@@ -36,6 +36,9 @@ gMapStreamMapIDTable = 0x800b972c;
 kdebugserver_buffer = 0x800cf110;
 gAudioThreadStack = 0x800a8948;
 
+g_BitRateTable = 0x800A1C8C;
+g_SampleRateTable = 0x800A1D04;
+
 __fstAddress = 0xA4970;
 __file1Address = 0xA4AA0;
 
