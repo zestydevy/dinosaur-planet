@@ -1,30 +1,27 @@
 #!/usr/bin/env python3
 import argparse
-from io import BufferedReader
 import struct
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import Symbol
+from elftools.elf.sections import Symbol, Section
 from elftools.elf.relocation import RelocationSection
-import os
-from typing import BinaryIO
 
 import elf2dll
 
-# Read GOT from a Dino DLL
-def read_got(dll: BufferedReader | BinaryIO):
-    dll.seek(0x8, os.SEEK_SET)
-    rodata_offset = struct.unpack(">I", dll.read(4))[0]
-    if rodata_offset == 0xFFFF_FFFF:
-        return None
-    
+# Read original GOT from ELF.
+# The GOT of the original DLL is linked in for nonmatching DLLs specifically for this function.
+def read_got(obj: ELFFile):
     got: list[int] = []
-    dll.seek(rodata_offset, os.SEEK_SET)
-    while True:
-        word = struct.unpack(">I", dll.read(4))[0]
-        if word == 0xFFFF_FFFE:
-            break
-        got.append(word)
-    
+    orig_got = obj.get_section_by_name(".orig_got")
+
+    if orig_got != None:
+        assert isinstance(orig_got, Section)
+        data = orig_got.data()
+
+        for i in range(len(data) // 4):
+            got.append(struct.unpack_from(">I", data, i * 4)[0])
+    else:
+        print(f"WARN: Couldn't find .orig_got section in {obj.stream.name}.")
+
     return got
 
 # Read export sym indices from an ELF
@@ -122,13 +119,12 @@ def main():
     parser.add_argument("elf", type=argparse.FileType("rb"), help="The DLL .elf file to convert.")
     parser.add_argument("-o", "--output", type=argparse.FileType("wb"), help="The path of the Dinosaur Planet DLL file to output.", required=True)
     parser.add_argument("-b", "--bss", type=argparse.FileType("w", encoding="utf-8"), help="Path to output the .bss size as a text file.", required=True)
-    parser.add_argument("-d", "--dll", type=argparse.FileType("rb"), help="The original DLL to use as a reference.", required=True)
     args = parser.parse_args()
 
     with ELFFile(args.elf) as obj:
         # Set up elf2dll hack callbacks
         export_syms = read_exports(obj)
-        original_got = read_got(args.dll)
+        original_got = read_got(obj)
 
         elf2dll.hack_sym_bind_override = lambda idx,sym: sym_bind_hack(idx, sym, export_syms)
         elf2dll.hack_got_reloc_override = lambda x: got_relocs_hack(x, original_got)
@@ -144,8 +140,7 @@ def main():
     # Done (elf is already closed by the above 'with')
     args.output.close()
     args.bss.close()
-    args.dll.close()
-    
+
     if error:
         exit(1)
 

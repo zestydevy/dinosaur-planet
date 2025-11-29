@@ -241,6 +241,12 @@ class DLLSplitter:
         if nonmatching_funcs == None or len(nonmatching_funcs) > 0 or self.disassemble_all:
             self.__extract_text_asm(nonmatching_asm_path, matching_asm_path, dll, nonmatching_funcs)
 
+        # Extract original GOT (not needed for matching dlls)
+        if nonmatching_funcs == None or len(nonmatching_funcs) > 0:
+            orig_got_s_path = nonmatching_asm_path.joinpath("_orig_got.s")
+            if not orig_got_s_path.exists():
+                self.__create_orig_got_s(orig_got_s_path, dll)
+
         # Create exports.s if it doesn't exist
         exports_s_path = src_path.joinpath("exports.s")
         if not exports_s_path.exists():
@@ -276,11 +282,18 @@ class DLLSplitter:
             dll_s.write(".option pic2\n")
             dll_s.write("\n")
 
+            # Original GOT
+            dll_s.write(".section \".orig_got\"\n")
+            dll_s.write("\n")
+            for entry in dll.meta.reloc_table.global_offset_table:
+                dll_s.write(f".word 0x{entry:X}\n")
+
             # Exports
             funcs_by_address: "dict[int, str]" = {}
             for func in dll.functions:
                 funcs_by_address[func.vram - DLL_VRAM_BASE] = func.getName()
             
+            dll_s.write("\n")
             dll_s.write(".section \".exports\"\n")
             dll_s.write("\n")
             dll_s.write(f".dword {funcs_by_address[dll.meta.header.ctor_offset]}\n")
@@ -349,6 +362,17 @@ class DLLSplitter:
             for i, offset in enumerate(dll.meta.header.export_offsets):
                 func_symbol = funcs_by_address[offset]
                 exports_s.write(f"/*{i}*/ .dword {func_symbol}\n")
+    
+    def __create_orig_got_s(self, path: Path, dll: AnalyzedDLL):
+        with open(path, "w", encoding="utf-8") as orig_got_s:
+            orig_got_s.write(".option pic2\n")
+            orig_got_s.write(".section \".orig_got\"\n")
+            orig_got_s.write(".global _orig_got\n")
+            orig_got_s.write("_orig_got:\n")
+            orig_got_s.write("\n")
+
+            for entry in dll.meta.reloc_table.global_offset_table:
+                orig_got_s.write(f".word 0x{entry:X}\n")
 
     def __create_c_stub(self, 
                         c_path: Path, 

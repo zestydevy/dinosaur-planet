@@ -263,17 +263,9 @@ class BuildNinjaWriter:
         self.writer.rule("to_bin", "$OBJCOPY $in $out -O binary", "Converting $in to $out...")
         self.writer.rule("file_copy", "cp $in $out", "Copying $in to $out...")
         self.writer.rule("dllsyms2ld", "$DLLSYMS2LD -o $out $in", "Converting $in to $out...")
-        if sys.platform == "win32":
-            self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
-            self.writer.rule("elf2dll_wrapper", "$ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT -d $ORIGINAL_DLL $in", "Converting $in to DP DLL $out...")
-        else:
-            # Note: for elf2dll, remove output file first since it might be a symlink and we don't want 
-            # to write through the link to the original DLL (not relevant on Windows, we don't symlink there)
-            self.writer.rule("elf2dll", "rm -f $out && $ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
-            self.writer.rule("elf2dll_wrapper", "rm -f $out && $ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT -d $ORIGINAL_DLL $in", "Converting $in to DP DLL $out...")
+        self.writer.rule("elf2dll", "$ELF2DLL -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
+        self.writer.rule("elf2dll_wrapper", "$ELF2DLL_WRAPPER -o $out -b $DLL_BSS_TXT $in", "Converting $in to DP DLL $out...")
         self.writer.rule("pack_dlls", "$DINODLL pack $DLLS_DIR $DLLS_BIN_OUT $DLLS_TAB_IN -q --tab_out $DLLS_TAB_OUT", "Packing DLLs...")
-        if sys.platform != "win32":
-            self.writer.rule("sym_link", "ln -s -f -r $in $out", "Symbolic linking $in to $out...")
 
         self.writer.newline()
 
@@ -397,10 +389,7 @@ class BuildNinjaWriter:
             elf2dll_implicit = []
             if has_asm:
                 # If nonmatching asm was involved, run the elf2dll wrapper
-                original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
                 elf2dll_cmd = "elf2dll_wrapper"
-                elf2dll_variables["ORIGINAL_DLL"] = original_dll_path
-                elf2dll_implicit.append(original_dll_path)
             self.writer.build(dll_asset_path, elf2dll_cmd, elf_path.as_posix(),
                 variables=elf2dll_variables,
                 implicit=elf2dll_implicit,
@@ -436,13 +425,10 @@ class BuildNinjaWriter:
             # Convert ELF to Dinosaur Planet DLL
             dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
             dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
-            original_dll_path = f"bin/assets/dlls/{dll.number}.dll"
             self.writer.build(dll_asset_path, "elf2dll_wrapper", elf_path.as_posix(),
                 variables={
-                    "DLL_BSS_TXT": dll_bss_asset_path,
-                    "ORIGINAL_DLL": original_dll_path
+                    "DLL_BSS_TXT": dll_bss_asset_path
                 },
-                implicit=[original_dll_path],
                 implicit_outputs=[dll_bss_asset_path])
             pack_deps.append(dll_asset_path)
             pack_deps.append(dll_bss_asset_path)
@@ -453,9 +439,8 @@ class BuildNinjaWriter:
         if any_dlls:
             self.writer.comment("Leftover DLLs that haven't been decompiled yet")
             for dll in self.input.leftover_dlls:
-                # Note: Don't do sym linking on Windows
                 dll_obj_build_path = f"$BUILD_DIR/{dll.obj_path}"
-                self.writer.build(dll_obj_build_path, "file_copy" if sys.platform == "win32" else "sym_link", dll.src_path)
+                self.writer.build(dll_obj_build_path, "file_copy", dll.src_path)
                 pack_deps.append(dll_obj_build_path)
 
         self.writer.newline()
@@ -656,6 +641,7 @@ class InputScanner:
     def __scan_dlls(self):
         # Scan DLLs separately since we need to build them as their own thing
         src_dlls_path = Path("src/dlls")
+        nm_dlls_path = Path("asm/nonmatchings/dlls")
 
         dlls_txt_path = src_dlls_path.joinpath("dlls.txt")
         assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
@@ -663,11 +649,14 @@ class InputScanner:
         with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
             dlls_txt = DLLsTxt.parse(dlls_txt_file)
         
-        dll_dirs = [(n, src_dlls_path.joinpath(path)) for (n, path) in dlls_txt.path_map.items()]
+        dll_dirs = [(n, Path(path)) for (n, path) in dlls_txt.path_map.items()]
 
         to_compile: "set[str]" = set()
         for (number, dir) in dll_dirs:
-            dll_config = self.__get_dll_config(dir, number)
+            dll_src_dir = src_dlls_path.joinpath(dir)
+            dll_nm_dir = nm_dlls_path.joinpath(dir)
+
+            dll_config = self.__get_dll_config(dll_src_dir, number)
             if dll_config == None:
                 continue
 
@@ -675,8 +664,9 @@ class InputScanner:
             if not dll_config.compile:
                 continue
 
-            c_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.c", recursive=True)]
-            asm_paths = [Path(path) for path in glob.glob(f"{dir}/**/*.s", recursive=True)]
+            c_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.c", recursive=True)]
+            asm_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.s", recursive=True)]
+            orig_got_path = dll_nm_dir.joinpath("_orig_got.s")
 
             files: "list[BuildFile]" = []
 
@@ -688,8 +678,12 @@ class InputScanner:
             for src_path in asm_paths:
                 obj_path = self.__make_obj_path(src_path)
                 files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
+
+            if orig_got_path.exists():
+                obj_path = self.__make_obj_path(orig_got_path)
+                files.append(BuildFile(str(orig_got_path), str(obj_path), BuildFileType.ASM))
             
-            self.dlls.append(DLL(str(number), str(dir), files))
+            self.dlls.append(DLL(str(number), str(dll_src_dir), files))
             to_compile.add(str(number))
         
         for number in range(796):
