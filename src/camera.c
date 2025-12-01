@@ -886,8 +886,26 @@ void func_800029C4(f32 param1) {
     D_8008C788.m[1][1] = param1;
 }
 
-// unused
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029D4.s")
+void func_800029D4(Gfx** gdl, Mtx** rspMtxs) {
+    u32 wh;
+    s32 i;
+    s32 width;
+    s32 height;
+
+    wh = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(wh);
+    height = GET_VIDEO_HEIGHT(wh);
+    gRSPViewports[gCameraSelector + 5].vp.vscale[0] = width * 2;
+    gRSPViewports[gCameraSelector + 5].vp.vscale[1] = width * 2;
+    gRSPViewports[gCameraSelector + 5].vp.vtrans[0] = width * 2;
+    gRSPViewports[gCameraSelector + 5].vp.vtrans[1] = height * 2;
+    gSPViewport((*gdl)++, OS_PHYSICAL_TO_K0(&gRSPViewports[gCameraSelector] + 5));
+    for (i = 0; i < 16; i++) { ((f32*)&gViewProjMtx)[i] = ((f32*)&D_8008C788)[i]; }
+    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    gRSPMtxList = *rspMtxs;
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
+    for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
+}
 
 // unused
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002B2C.s")
