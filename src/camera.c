@@ -718,9 +718,6 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
 #endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002490.s")
-#else
 void func_80002490(Gfx **gdl)
 {
     s32 ulx, uly, lrx, lry;
@@ -734,6 +731,8 @@ void func_80002490(Gfx **gdl)
     s32 mode;
     
     wh = vi_get_current_size();
+    height = GET_VIDEO_HEIGHT(wh) & 0xFFFF;
+    width = GET_VIDEO_WIDTH(wh);
     
     mode = UINT_800a66f8;
     
@@ -743,10 +742,10 @@ void func_80002490(Gfx **gdl)
             mode = 3;
         }
 
-        ulx = 0;
-        uly = 0;
-        width = lrx = GET_VIDEO_WIDTH(wh);\
-        height = lry = GET_VIDEO_HEIGHT(wh);
+        lrx = ulx = 0;
+        lry = uly = 0;
+        lrx += width;\
+        lry += height;
 
         centerX = width >> 1;
         centerY = height >> 1;
@@ -776,7 +775,7 @@ void func_80002490(Gfx **gdl)
             switch (gCameraSelector)
             {
             case 0:
-                lrx = centerX - padX;
+                lrx = centerX - padX;\
                 lry = centerY - padY;
                 break;
             case 1:
@@ -790,7 +789,7 @@ void func_80002490(Gfx **gdl)
                 lry = height - padY;
                 break;
             case 3:
-                ulx = centerX + padX;
+                ulx = centerX + padX;\
                 uly = centerY + padY;
                 lry = height - padY;
                 lrx = width - padX;
@@ -803,8 +802,8 @@ void func_80002490(Gfx **gdl)
     {
         ulx = 0;
         uly = 0;
-        lrx = GET_VIDEO_WIDTH(wh);\
-        lry = GET_VIDEO_HEIGHT(wh);
+        lrx = width;\
+        lry = height;
 
         uly += SHORT_8008c524 + 6;
         lry -= SHORT_8008c524 + 6;
@@ -812,7 +811,6 @@ void func_80002490(Gfx **gdl)
 
     gDPSetScissor((*gdl)++, 0, ulx, uly, lrx, lry);
 }
-#endif
 
 void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
     s32 prevCameraSel;
