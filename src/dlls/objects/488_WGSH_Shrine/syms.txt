@@ -1,0 +1,17 @@
+.text = 0x0:
+dll_488_ctor = 0x0;
+dll_488_dtor = 0xC;
+dll_488_setup = 0x18;
+dll_488_control = 0x244;
+dll_488_update = 0xBC4;
+dll_488_print = 0xBD0;
+dll_488_free = 0xC24;
+dll_488_get_model_flags = 0xC6C;
+dll_488_get_data_size = 0xC7C;
+dll_488_func_C90 = 0xC90;
+dll_488_func_FEC = 0xFEC;
+
+.rodata = 0x1170:
+
+.data = 0x11D0:
+_data_0 = 0x0; // absolute:0x11D0

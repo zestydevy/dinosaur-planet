@@ -125,6 +125,7 @@
 469 = objects/469_ECSHshrine
 472 = objects/472_GPSH_Shrine
 475 = objects/475_GPSH_flybaddie
+488 = objects/488_WGSH_Shrine
 496 = objects/496_snowhorn
 497 = objects/497_NWtricky
 501 = objects/501_SHtricky
