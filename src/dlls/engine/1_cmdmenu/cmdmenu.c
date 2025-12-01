@@ -6,8 +6,10 @@
 #include "dlls/engine/21_gametext.h"
 #include "game/gamebits.h"
 #include "sys/memory.h"
+#include "sys/objects.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
+#include "sys/objects.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {
@@ -574,7 +576,72 @@ s16 dll_1_func_F40(void) {
 }
 
 // offset: 0xF5C | func: 10 | export: 5
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_F5C.s")
+#else
+// https://decomp.me/scratch/fX0HX
+s32 dll_1_func_F5C(Object **arg0, s32 arg1, u8 arg2, s32 arg3, f32 arg4) {
+    s32 _pad[2];
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_fv0;
+    Camera* temp_s2;
+    f32 sp9C;
+    f32 sp98;
+    f32 sp94;
+    s32 _sp8C_pad[2];
+    s32 sp88;
+    s32 sp84;
+    Object* temp_s0;
+    Object** temp_v0;
+    Object* temp_a0;
+    Object* temp_v1;
+    s32 var_a3;
+    s32 var_s1;
+    s32 var_s4;
+    s32 var_v1;
+
+    set_camera_selector(0);
+    temp_s2 = get_main_camera();
+    temp_v0 = get_world_objects(&sp84, &sp88);
+    var_s4 = 0;
+    for (var_s1 = sp84; var_s1 < sp88; var_s1++) {
+        temp_s0 = temp_v0[var_s1];
+        if ((temp_s0->def->unk40 != NULL) && (temp_s0->opacity == 0xFF) && !(temp_s0->unkAF & 8) && 
+                (temp_s0->def->unk40->unk10 & arg2) && (var_s4 < arg1) && (arg3 & 1)) {
+            get_object_child_position(temp_s0, &sp9C, &sp98, &sp94);
+            temp_fa0 = sp9C - temp_s2->srt.transl.x;
+            temp_fv0 = sp98 - temp_s2->srt.transl.y;
+            temp_fa1 = sp94 - temp_s2->srt.transl.z;
+            if ((SQ(temp_fa0) + SQ(temp_fv0) + SQ(temp_fa1)) < SQ(arg4)) {
+                var_v1 = temp_s2->srt.yaw - ((0x4000 - arctan2_f(temp_fa0, temp_fa1)) & 0xFFFF);
+                CIRCLE_WRAP(var_v1);
+                if ((var_v1 < -0x2710) && (var_v1 > -0x55F0)) {
+                    arg0[var_s4] = temp_s0;
+                    var_s4 += 1;
+                }
+            }
+        }
+    }
+
+    if (var_s4 > 0) {
+        do {
+            var_a3 = 1;
+            for (var_s1 = 0; var_s1 < (var_s4 - 1); var_s1++) {
+                temp_v1 = arg0[var_s1];
+                temp_a0 = arg0[var_s1 + 1];
+                if ((s32)temp_v1 < (s32)temp_a0) {
+                    arg0[var_s1] = temp_a0;
+                    arg0[var_s1 + 1] = temp_v1;
+                    var_a3 = 0;
+                }
+            }
+        } while (var_a3 == 0);
+    }
+    
+    return var_s4;
+}
+#endif
 
 // offset: 0x1290 | func: 11 | export: 3
 void dll_1_func_1290(void) {

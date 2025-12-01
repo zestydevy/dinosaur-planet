@@ -97,7 +97,7 @@ typedef struct Triangle {
 /* 0x0C */ TexCoords uv2;   // Texture coordinates for the third vertex
 } Triangle;
 
-// size may be 0x28
+// size:0x28
 typedef struct {
 /*0000*/ u16 unk0;
 /*0002*/ u16 unk2;
@@ -128,6 +128,7 @@ typedef struct {
 /*0021*/ u8 unk21;
 /*0022*/ u8 unk22;
 /*0023*/ u8 unk23;
+/*0024*/ u8 unk24[0x28-0x24];
 } NewLfxStruct;
 
 

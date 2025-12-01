@@ -49,7 +49,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*15*/ s32 (*func15)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 /*16*/ void (*func16)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 // Unmatched
-/*17*/ void (*func17)(s32 objectSeqIndex, Object* object, s32 arg2);
+/*17*/ s32 (*func17)(s32 objectSeqIndex, Object* object, s32 arg2);
 // Unmatched
 /*18*/ void (*func18)(s32 arg0);
 /*19*/ void (*func19)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

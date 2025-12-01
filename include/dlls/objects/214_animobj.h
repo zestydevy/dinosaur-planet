@@ -62,10 +62,11 @@ typedef struct AnimObj_Data {
 /*084*/ s8 unk84[0x86 - 0x84];
 /*086*/ s8 unk86;
 /*087*/ s8 unk87;
-/*088*/ s8 unk88[0x8A - 0x88];
+/*088*/ s8 unk88; // unk type
+/*088*/ s8 unk89;
 /*08A*/ s8 unk8A;                   //soundHandle-related
 /*08B*/ u8 unk8B;
-/*08C*/ s8 unk8C;
+/*08C*/ u8 unk8C;
 /*08D*/ u8 unk8D;
 /*08E*/ u8 unk8E[0x98 - 0x8E];      //sequence subcommand IDs?
 /*098*/ u8 unk98;                   //sequence subcommand count?
@@ -83,7 +84,10 @@ typedef struct AnimObj_Data {
 /*0F8*/ AnimObj_DataF8Callback unkF8;
 /*0FC*/ s8 unkFC[0x11C - 0xFC];
 /*11C*/ Object* unk11C;
-/*120*/ s8 unk120[0x144 - 0x120];
+/*120*/ s8 unk120[0x142 - 0x120];
+/*142*/ u8 unk142_4: 4;
+/*142*/ u8 unk142_0: 4;
+/*143*/ s8 unk143[0x144 - 0x143];
 } AnimObj_Data;
 
 #endif

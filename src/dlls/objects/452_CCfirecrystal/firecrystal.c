@@ -1,7 +1,8 @@
-#include "common.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "dlls/objects/453_CCfirecrystalin.h"
+#include "game/objects/object.h"
+#include "sys/objmsg.h"
 
 typedef struct {
     ObjSetup base;
@@ -56,11 +57,11 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         objData->flameObjects[1] = NULL;
         objData->flameObjects[0] = NULL;
     } else {
-        lfxBuffer = mmAlloc(sizeof(LFXEmitter_Setup), ALLOC_TAG_LFX_COL, NULL);
+        lfxBuffer = mmAlloc(sizeof(NewLfxStruct), ALLOC_TAG_LFX_COL, NULL);
         objData->lfxEmitterSetup = lfxBuffer;
         queue_load_file_region_to_ptr(lfxBuffer, LACTIONS_BIN, 0x6158, 0x28);
         objData->lfxEmitterSetup->unk10 = 0xFFFE;
-        gDLL_11_Newlfx->vtbl->func0(self, self, (LFXEmitter_Setup*)objData->lfxEmitterSetup, 0, 0, 0);
+        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lfxEmitterSetup, 0, 0, 0);
         objData->flameObjects[0] = CCfirecrystal_create_flame(self, 0x40, 0, 0x18);
         objData->flameObjects[1] = CCfirecrystal_create_flame(self, 0x40, 0x40, 0x18);
         objData->flameObjects[2] = CCfirecrystal_create_flame(self, -56, 0, 0x18);
@@ -72,7 +73,6 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
 }
 
 // offset: 0x210 | func: 1 | export: 1
-// Credit to "Carnivorous Herring"
 void CCfirecrystal_control(Object* self) {
     CCfirecrystal_Data* objData;
     CCfirecrystal_Setup* objSetup;

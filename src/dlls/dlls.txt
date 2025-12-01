@@ -1,5 +1,6 @@
 # engine
 1 = engine/1_cmdmenu
+2 = engine/2_camera
 3 = engine/3_ANIM
 4 = engine/4_race
 5 = engine/5_AMSEQ

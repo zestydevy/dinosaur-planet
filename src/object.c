@@ -1065,7 +1065,7 @@ void update_object(Object *obj) {
             obj->unk58->unk10f = 0;
         }
 
-        obj->unkAF &= 0xFFF8;
+        obj->unkAF &= ~(0x1 | 0x2 | 0x4);
 
         update_pi_manager_array(1, -1);
     }
@@ -1421,10 +1421,10 @@ s16 func_80022EC0(s32 arg0) {
 
 void obj_free_object(Object *obj, s32 param2) {
     Object *obj2;
-    ObjectAnim_Data *animObjdata;
     /*sp+0xE4*/ NewLfxStruct newLfxStruct;
+    ObjectAnim_Data *animObjdata;
     ModelInstance *modelInst;
-    /*sp+0x40*/ Object *stackObjs[40];
+    /*sp+0x40*/ Object *stackObjs[39]; // unknown exact length
     /*sp+0x3c*/ s32 k;
     /*sp+0x38*/ s32 numModels;
     /*sp+0x34*/ s32 i;

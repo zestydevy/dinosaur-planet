@@ -1,10 +1,11 @@
 #include "common.h"
+#include "sys/fs.h"
 
 s32 func_80000450(Object* arg0, Object* arg1, u16 arg2, s8 arg3, s32 arg4, s32 arg5) {
     NewLfxStruct* temp_v0;
 
-    temp_v0 = mmAlloc(0x28, -1, 0);
-    queue_load_file_region_to_ptr((void *)temp_v0, 0xC, arg2 * 0x28, 0x28);
+    temp_v0 = mmAlloc(sizeof(NewLfxStruct), -1, 0);
+    queue_load_file_region_to_ptr((void *)temp_v0, LACTIONS_BIN, arg2 * sizeof(NewLfxStruct), sizeof(NewLfxStruct));
     if (temp_v0 != NULL) {
         if (arg5 != 0) {
             temp_v0->unk12.asByte |= 0x40;
@@ -32,8 +33,8 @@ s32 func_80000450(Object* arg0, Object* arg1, u16 arg2, s8 arg3, s32 arg4, s32 a
 s32 func_80000608(Object* arg0, Object* arg1, u16 arg2, s8 arg3, s32 arg4, s32 arg5) {
     NewLfxStruct* temp_v0;
 
-    temp_v0 = mmAlloc(0x28, -1, NULL);
-    queue_load_file_region_to_ptr((void *)temp_v0, 0xC, arg2 * 0x28, 0x28);
+    temp_v0 = mmAlloc(sizeof(NewLfxStruct), -1, NULL);
+    queue_load_file_region_to_ptr((void *)temp_v0, LACTIONS_BIN, arg2 * sizeof(NewLfxStruct), sizeof(NewLfxStruct));
     if (temp_v0 != NULL) {
         temp_v0->unk0 = 0xC;
         if (arg5 != 0) {
