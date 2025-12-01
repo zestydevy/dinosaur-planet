@@ -907,8 +907,16 @@ void func_800029D4(Gfx** gdl, Mtx** rspMtxs) {
     for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
 }
 
-// unused
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002B2C.s")
+void func_80002B2C(Gfx** gdl, Mtx** rspMtxs) {
+    s32 i;
+
+    matrix_from_srt_reversed(&gAuxMtx, D_8008C758);
+    matrix_concat(&gAuxMtx, &gProjectionMtx, &gViewProjMtx);
+    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    gRSPMtxList = *rspMtxs;
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
+    for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
+}
 
 void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
 {
