@@ -617,36 +617,39 @@ void func_80002130(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry)
     *lry = height - SHORT_8008c524 - 6;
 }
 
-#ifdef NON_EQUIVALENT
 void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
 {
-    s32 cameraSelPre;
     u32 wh;
-    s32 cameraSelPost;
+    u32 mode;
+    u32 x;
+    u32 y;
+    u32 scaleX;
+    u32 posY;
+    u32 posX;
     u32 width;
     u32 height;
-    s32 scaleX;
-    s32 scaleY;
-    s32 transX;
-    s32 transY;
-    u32 mode;
+    u32 scaleY;
+    s32 origCamSelector;
+    s32 savedCamSelector;
+    s32 tempCamSelector;
 
-    cameraSelPre = gCameraSelector;
+    origCamSelector = gCameraSelector;
+    savedCamSelector = gCameraSelector;
     wh = vi_get_current_size();
-    cameraSelPost = gCameraSelector;
-    width = GET_VIDEO_WIDTH(wh);
     height = GET_VIDEO_HEIGHT(wh);
+    width = GET_VIDEO_WIDTH(wh);
 
-    if (gViewports[cameraSelPre].flags & 0x1)
+    if (gViewports[savedCamSelector].flags & 0x1)
     {
-        gCameraSelector = cameraSelPre;
+        tempCamSelector = gCameraSelector;
+        gCameraSelector = savedCamSelector;
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, gViewports[gCameraSelector].ulx, gViewports[gCameraSelector].uly, gViewports[gCameraSelector].lrx, gViewports[gCameraSelector].lry);
         func_80002C0C(gdl, 0, 0, 0, 0);
+        gCameraSelector = tempCamSelector;
         if (rspMtxs != NULL) {
-            gCameraSelector = cameraSelPost;
             setup_rsp_camera_matrices(gdl, rspMtxs);
         }
-        gCameraSelector = cameraSelPost;
+        gCameraSelector = origCamSelector;
         return;
     }
 
@@ -655,7 +658,8 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
         mode = 3;
     }
 
-    scaleY = height / 2;
+    scaleX = x = width >> 1;
+    scaleY = y = height >> 1;
     if (osTvType == OS_TV_PAL) {
         scaleY = 145;
     }
@@ -663,64 +667,62 @@ void func_800021A0(Gfx **gdl, Mtx **rspMtxs)
     switch (mode)
     {
     case 0:
-        transX = scaleX;
-        transY = scaleY;
+        posY = scaleY;
+        posX = x;
         if (osTvType == OS_TV_PAL) {
-            transY = scaleY - 18;
+            posY -= 18;
         }
         break;
     case 1:
-        if (gCameraSelector == 0) {
-            transY = height / 4;
-            transX = scaleX;
+        posX = x;
+        posY = gCameraSelector;
+        if (posY == 0) {
+            posY = height >> 2;
             if (osTvType == OS_TV_PAL) {
-                transY -= 12;
+                posY -= 12;
             }
         } else {
-            transY = height / 2 + height / 4;
-            transX = scaleX;
+            posY = y;
+            posY += height >> 2;
         }
         break;
     case 2:
-        transX = scaleX + width / 4;
-        transY = scaleY;
+        posY = scaleY;
         if (gCameraSelector == 0) {
-            transX = width / 4;
+            posX = width >> 2;
+        }  else {
+            posX = x;
+            posX += width >> 2;
         }
         break;
     case 3:
-        scaleX = width / 4;
-        transX = scaleX;
-        scaleY = scaleY / 2;
-        transY = height / 2;
+        scaleY >>= 1;
+        scaleX >>= 1;
+        posX = scaleX;
+        posY = scaleY;
         if (osTvType == OS_TV_PAL) {
-            transY = scaleY - 6;
             if (gCameraSelector < 2) {
-                transY = scaleY - 20;
+                posY -= 20;
+            } else {
+                posY -= 6;
             }
         }
         break;
     }
 
     if (osTvType == OS_TV_PAL) {
-        transX -= 4;
+        posX -= 4;
     }
 
-    func_80002C0C(gdl, scaleX, scaleY, transX, transY);
+    func_80002C0C(gdl, scaleX, scaleY, posX, posY);
     if (rspMtxs != NULL) {
         setup_rsp_camera_matrices(gdl, rspMtxs);
     }
     func_80002490(gdl);
 
-    gCameraSelector = cameraSelPre;
+    gCameraSelector = origCamSelector;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800021A0.s")
-#endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002490.s")
-#else
 void func_80002490(Gfx **gdl)
 {
     s32 ulx, uly, lrx, lry;
@@ -734,6 +736,8 @@ void func_80002490(Gfx **gdl)
     s32 mode;
     
     wh = vi_get_current_size();
+    height = GET_VIDEO_HEIGHT(wh) & 0xFFFF;
+    width = GET_VIDEO_WIDTH(wh);
     
     mode = UINT_800a66f8;
     
@@ -743,10 +747,10 @@ void func_80002490(Gfx **gdl)
             mode = 3;
         }
 
-        ulx = 0;
-        uly = 0;
-        width = lrx = GET_VIDEO_WIDTH(wh);\
-        height = lry = GET_VIDEO_HEIGHT(wh);
+        lrx = ulx = 0;
+        lry = uly = 0;
+        lrx += width;\
+        lry += height;
 
         centerX = width >> 1;
         centerY = height >> 1;
@@ -776,7 +780,7 @@ void func_80002490(Gfx **gdl)
             switch (gCameraSelector)
             {
             case 0:
-                lrx = centerX - padX;
+                lrx = centerX - padX;\
                 lry = centerY - padY;
                 break;
             case 1:
@@ -790,7 +794,7 @@ void func_80002490(Gfx **gdl)
                 lry = height - padY;
                 break;
             case 3:
-                ulx = centerX + padX;
+                ulx = centerX + padX;\
                 uly = centerY + padY;
                 lry = height - padY;
                 lrx = width - padX;
@@ -803,8 +807,8 @@ void func_80002490(Gfx **gdl)
     {
         ulx = 0;
         uly = 0;
-        lrx = GET_VIDEO_WIDTH(wh);\
-        lry = GET_VIDEO_HEIGHT(wh);
+        lrx = width;\
+        lry = height;
 
         uly += SHORT_8008c524 + 6;
         lry -= SHORT_8008c524 + 6;
@@ -812,7 +816,6 @@ void func_80002490(Gfx **gdl)
 
     gDPSetScissor((*gdl)++, 0, ulx, uly, lrx, lry);
 }
-#endif
 
 void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
     s32 prevCameraSel;
@@ -888,11 +891,37 @@ void func_800029C4(f32 param1) {
     D_8008C788.m[1][1] = param1;
 }
 
-// unused
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_800029D4.s")
+void func_800029D4(Gfx** gdl, Mtx** rspMtxs) {
+    u32 wh;
+    s32 i;
+    s32 width;
+    s32 height;
 
-// unused
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_80002B2C.s")
+    wh = vi_get_current_size();
+    width = GET_VIDEO_WIDTH(wh);
+    height = GET_VIDEO_HEIGHT(wh);
+    gRSPViewports[gCameraSelector + 5].vp.vscale[0] = width * 2;
+    gRSPViewports[gCameraSelector + 5].vp.vscale[1] = width * 2;
+    gRSPViewports[gCameraSelector + 5].vp.vtrans[0] = width * 2;
+    gRSPViewports[gCameraSelector + 5].vp.vtrans[1] = height * 2;
+    gSPViewport((*gdl)++, OS_PHYSICAL_TO_K0(&gRSPViewports[gCameraSelector] + 5));
+    for (i = 0; i < 16; i++) { ((f32*)&gViewProjMtx)[i] = ((f32*)&D_8008C788)[i]; }
+    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    gRSPMtxList = *rspMtxs;
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
+    for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
+}
+
+void func_80002B2C(Gfx** gdl, Mtx** rspMtxs) {
+    s32 i;
+
+    matrix_from_srt_reversed(&gAuxMtx, D_8008C758);
+    matrix_concat(&gAuxMtx, &gProjectionMtx, &gViewProjMtx);
+    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    gRSPMtxList = *rspMtxs;
+    gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
+    for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
+}
 
 void func_80002C0C(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY)
 {
