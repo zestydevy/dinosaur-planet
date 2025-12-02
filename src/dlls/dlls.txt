@@ -178,6 +178,7 @@
 702 = objects/702_KTrex
 703 = objects/703_KT_RexFloorSwitch
 704 = objects/704_KT_Lazerwall
+707 = objects/707_KamerianBoss
 710 = objects/710_AnimTest
 711 = objects/711_IMSnowBike
 712 = objects/712_DIMSnowHorn1
