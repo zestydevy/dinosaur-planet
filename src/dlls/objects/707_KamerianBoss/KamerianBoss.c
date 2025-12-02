@@ -15,7 +15,7 @@ typedef struct {
     u32 unk0_16 : 1;
     Object *player;
     Object *unk8[2];
-    Object *unk10[1];
+    Object *unk10[1]; // unk length
     u8 _unk14[0x28 - 0x14];
     f32 unk28;
     s16 unk2C;
@@ -28,7 +28,7 @@ typedef struct {
     u32 soundHandle1;
     u32 soundHandle2;
     u32 soundHandle3;
-    Vec3f unk48[1];
+    Vec3f unk48[1]; // unk length (15?)
     u8 _unk54[0xF0 - 0x54];
     f32 unkF0;
     f32 unkF4;
@@ -208,8 +208,64 @@ void dll_707_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
 }
 
 // offset: 0x558 | func: 5
+#ifndef NON_MATCHING
 s16 dll_707_func_558(f32 a0, f32 a1, f32 a2, f32 a3, f32 a4, f32 a5, f32 a6, f32 a7, s32 a8);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/707_KamerianBoss/dll_707_func_558.s")
+#else
+s16 dll_707_func_558(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, s32 arg8) {
+    f32 sp6C;
+    f32 temp_fa0;
+    f32 temp_fs3;
+    f32 temp_fs5;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 var_fa1;
+    f32 temp;
+    s32 var_s1;
+    s32 var_s2;
+    s16 sp7C[2];
+
+    var_s2 = 0;
+    temp_fv0 = arg0 - arg3;
+    temp_fv1 = arg2 - arg5;
+    temp_fs5 = arg4 - arg1;
+    temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
+    sp6C = ((temp_fs5 * arg7) + (arg6 * arg6));
+    temp_fv1 = SQ(sp6C);
+    temp_fa0 = SQ(arg7) * (SQ(temp_fv0) + SQ(temp_fs5));
+    temp = temp_fv1 - temp_fa0;
+    if (temp_fa0 <= temp_fv1) {
+        var_s1 = 2;
+        temp_fs3 = sqrtf(temp);
+        while (var_s1--) {
+            temp = ((SQ(temp_fs5) / (SQ(temp_fv0))) + 1.0f);
+            var_fa1 = (((var_s1 != 0) ? temp_fs3 : -temp_fs3) + sp6C) / (2.0f * temp);
+            if (var_fa1 >= 0.0f) {
+                var_fa1 = sqrtf(var_fa1);
+                if (temp_fv0 < 0.0f) {
+                    var_fa1 = -var_fa1;
+                }
+                sp7C[var_s2] = arctan2_f(((temp_fs5 / temp_fv0) * var_fa1) - ((arg7 * temp_fv0) / (2.0f * var_fa1)), var_fa1);
+                var_s2 += 1;
+            }
+        }
+    }
+
+    switch (var_s2) {
+        case 2:
+            if (sp7C[0] < sp7C[1]) {
+                return (arg8 != 0) ? sp7C[1] : sp7C[0];
+            } else {
+                return (arg8 != 0) ? sp7C[0] : sp7C[1];
+            }
+            break;
+        case 1:
+            return sp7C[0];
+        default:
+            return 0x2000;
+    }
+}
+#endif
 
 // offset: 0x7C0 | func: 6
 #ifndef NON_MATCHING
