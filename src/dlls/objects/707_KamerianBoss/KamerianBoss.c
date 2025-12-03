@@ -1,7 +1,9 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
 #include "dlls/engine/53.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/332_FXEmit.h"
+#include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
@@ -9,19 +11,25 @@
 
 typedef struct {
     u32 unk0_0 : 7;
-    u32 unk0_7 : 7;
+    u32 unk0_7 : 1;
+    u32 unk0_8 : 1;
+    u32 unk0_9 : 1;
+    u32 unk0_10 : 1;
+    u32 unk0_11: 1;
+    u32 unk0_12: 1;
+    u32 unk0_13: 1;
     u32 unk0_14 : 1;
     u32 unk0_15 : 8;
-    u32 unk0_16 : 1;
+    u32 unk0_23 : 1;
+    u32 pad0_32: 8;
     Object *player;
     Object *unk8[2];
-    Object *unk10[1]; // unk length
-    u8 _unk14[0x28 - 0x14];
+    Object *unk10[6];
     f32 unk28;
     s16 unk2C;
     s16 unk2E;
-    s16 unk30;
-    s16 unk32;
+    u16 unk30;
+    u16 unk32;
     s16 unk34;
     u16 unk36;
     u16 unk38;
@@ -30,9 +38,9 @@ typedef struct {
     u32 soundHandle3;
     Vec3f unk48[1]; // unk length (15?)
     u8 _unk54[0xF0 - 0x54];
-    f32 unkF0;
-    f32 unkF4;
-    f32 unkF8;
+    f32 unkF0; // part of unk48
+    f32 unkF4; // part of unk48
+    f32 unkF8; // part of unk48
     f32 unkFC;
 } KamerianBoss_Data;
 
@@ -55,17 +63,9 @@ typedef struct {
 // TODO: the 2nd arg is something else, see rcp.c
 extern void func_800390A4(Gfx**, BSS8*, f32, f32, f32, f32, s32, s32, f32, f32, s32, s32);
 
-/*0x0*/ static u32 _data_0[] = {
-    0x00000100, 0x02000304
-};
+/*0x0*/ static u8 _data_0[] = {0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x03, 0x04};
 /*0x8*/ static Model *_data_8 = NULL;
 /*0xC*/ static s16 _data_C[2] = {0x042d, 0x0422};
-/*0x10*/ static u32 _data_10[] = {
-    0x00020000, 0x00000000
-};
-/*0x18*/ static u32 _data_18[] = {
-    0x00180014, 0x00080000
-};
 
 /*0x0*/ static Texture *_bss_0[2];
 /*0x8*/ static BSS8 _bss_8[2];
@@ -101,9 +101,9 @@ static void dll_707_func_84(s32 arg0) {
 }
 
 // offset: 0xB8 | func: 2
-static Object* dll_707_func_B8(Object* arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4) {
-    FXEmit_Setup* setup;
-    Object* fxEmit;
+static Object* dll_707_func_B8(Object *arg0, f32 arg1, f32 arg2, f32 arg3, s32 arg4) {
+    FXEmit_Setup *setup;
+    Object *fxEmit;
 
     setup = obj_alloc_create_info(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
@@ -135,19 +135,19 @@ static Object* dll_707_func_B8(Object* arg0, f32 arg1, f32 arg2, f32 arg3, s32 a
 }
 
 // offset: 0x1B4 | func: 3
-void dll_707_func_1B4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s16 arg5, f32 arg6, s32 arg7) {
-    ObjSetup* setup;
-    Object* projectile;
+void dll_707_func_1B4(Object *arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s16 arg5, f32 arg6, s32 arg7) {
+    ObjSetup *setup;
+    Object *projectile;
 
     setup = obj_alloc_create_info(0x24, arg7); // KamerianFlame/KamerianAcid
     setup->x = arg1;
     setup->y = arg2;
     setup->z = arg3;
-    setup->loadFlags = 1;
-    setup->byte5 = 1;
-    setup->byte6 = 0xFF;
+    setup->loadFlags = OBJSETUP_LOAD_FLAG1;
+    setup->fadeFlags = OBJSETUP_FADE_DISABLE;
+    setup->loadDistance = 0xFF;
     setup->fadeDistance = 0xFF;
-    projectile = obj_create(setup, 5, -1, -1, NULL);
+    projectile = obj_create(setup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;
@@ -302,7 +302,7 @@ void dll_707_func_7C0(Object *self, KamerianBoss_Data *objdata) {
             objdata->unk34 -= gUpdateRate;
             return;
         }
-        objdata->unk34 = rand_next(0x10E, 0x174);
+        objdata->unk34 = rand_next(270, 372);
         if ((self->curModAnimId != 9) || (objdata->unk28 == 0.0f)) {
             func_80023D30(self, 9, 0.0f, 0);
             objdata->unk28 = 0.0097f;
@@ -339,12 +339,12 @@ void dll_707_func_A0C(Object *arg0, KamerianBoss_Data *arg1, s32 arg2, u16 *arg3
 
     player = arg1->player;
     
-    var_v0 = ((arg2 != 0) ? 0xA3 : -0xA3);
+    var_v0 = ((arg2 != 0) ? 163 : -163);
     if (1){} // @fake
     sp80 = (f32) var_v0 + arg0->positionMirror.x;
     sp7C = arg0->positionMirror.z + 145.0f;
     
-    var_v0 = ((arg2 != 0) ? 0xA3 : -0xA3);
+    var_v0 = ((arg2 != 0) ? 163 : -163);
     sp78 = (f32) var_v0 + arg0->positionMirror.x;
     sp74 = arg0->positionMirror.y + 175.0f;
     sp70 = arg0->positionMirror.z + 145.0f;
@@ -354,7 +354,7 @@ void dll_707_func_A0C(Object *arg0, KamerianBoss_Data *arg1, s32 arg2, u16 *arg3
         return;
     }
     
-    *arg3 = rand_next(0x5A, 0x10E);
+    *arg3 = rand_next(90, 270);
     if (1){} // @fake
     
     temp_fv0_2 = player->positionMirror.x - sp80;
@@ -364,9 +364,9 @@ void dll_707_func_A0C(Object *arg0, KamerianBoss_Data *arg1, s32 arg2, u16 *arg3
         sp68 += 20.0f;
     } else {
         if (arg2 != 0) {
-            sp52 = 0x2710;
+            sp52 = 10000;
         } else {
-            sp52 = -0x2710;
+            sp52 = -10000;
         }
         sp6C = (fsin16(sp52) * 400.0f) + sp80;
         sp68 = player->positionMirror.y;
@@ -379,7 +379,7 @@ void dll_707_func_A0C(Object *arg0, KamerianBoss_Data *arg1, s32 arg2, u16 *arg3
 #endif
 
 // offset: 0xCBC | func: 8
-void dll_707_func_CBC(Object* arg0, s32 arg1) {
+void dll_707_func_CBC(Object *arg0, s32 arg1) {
     KamerianBoss_Data* objdata;
     TextureAnimator* temp_v0;
     f32 temp_fv0;
@@ -422,7 +422,7 @@ void dll_707_func_CBC(Object* arg0, s32 arg1) {
 }
 
 // offset: 0xE94 | func: 9
-void dll_707_func_E94(Object* arg0, s32 arg1) {
+void dll_707_func_E94(Object *arg0, s32 arg1) {
     KamerianBoss_Data* objdata;
     Object* temp_t0;
     s32 sp44;
@@ -447,7 +447,7 @@ void dll_707_func_E94(Object* arg0, s32 arg1) {
     temp_v1 = rand_next(0, 4) + var_a2;
     sp40 = temp_v1 + 1;
     sp44 = temp_v1;
-    temp_fv0 = (f32) rand_next(0, 0x3E8) * 0.001f;
+    temp_fv0 = (f32) rand_next(0, 1000) * 0.001f;
     f2 = objdata->unk48[sp44].x;
     f12 = objdata->unk48[sp44].y;
     f18 = objdata->unk48[sp44].z;
@@ -460,8 +460,257 @@ void dll_707_func_E94(Object* arg0, s32 arg1) {
 }
 
 // offset: 0xFC4 | func: 10 | export: 1
+#ifndef NON_MATCHING
+/*0x10*/ static u16 _data_10[] = {0x0002, 0x0000, 0x0000};
+/*0x18*/ static u16 _data_18[] = {0x0018, 0x0014, 0x0008};
 void dll_707_control(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/707_KamerianBoss/dll_707_control.s")
+#else
+// matches, needs called funcs to be static
+
+void dll_707_control(Object *self) {
+    ObjectHitInfo *temp_t6_3;
+    s32 var_s0;
+    s32 i;
+    s32 j;
+    s32 temp_a0_6;
+    s32 temp_v1_2;
+    s32 var_a0;
+    s32 var_v1;
+    KamerianBoss_Data *objdata;
+
+    objdata = self->data;
+    if (objdata->player == NULL) {
+        objdata->player = get_player();
+        objdata->unkFC = objdata->player->srt.transl.y;
+    }
+    if (objdata->player != NULL) {
+        ((DLL_210_Player*)objdata->player->dll)->vtbl->add_magic(objdata->player, 10);
+        if (objdata->unk36) {
+            if (gUpdateRate < objdata->unk36) {
+                objdata->unk36 -= gUpdateRate;
+                for (i = 0; i < 6; i += 2) {
+                    if (objdata->unk36 > 120.0f) {
+                        dll_707_func_E94(self, i);
+                    } else {
+                        objdata->unk10[i]->srt.transl.x = 0.0f;
+                        objdata->unk10[i]->srt.transl.y = 0.0f;
+                        objdata->unk10[i]->srt.transl.z = 0.0f;
+                    }
+                }
+            } else {
+                objdata->unk36 = 0;
+                for (i = 0; i < 6; i += 2) {
+                    obj_destroy_object(objdata->unk10[i]);
+                    objdata->unk10[i] = NULL;
+                }
+            }
+        }
+        if (objdata->unk38) {
+            if (gUpdateRate < objdata->unk38) {
+                objdata->unk38 -= gUpdateRate;
+                for (i = 1; i < 7; i += 2) {
+                    if (objdata->unk38 > 120.0f) {
+                        dll_707_func_E94(self, i);
+                    } else {
+                        objdata->unk10[i]->srt.transl.x = 0.0f;
+                        objdata->unk10[i]->srt.transl.y = 0.0f;
+                        objdata->unk10[i]->srt.transl.z = 0.0f;
+                    }
+                };
+            } else {
+                objdata->unk38 = 0;
+                for (i = 1; i < 7; i += 2) {
+                    obj_destroy_object(objdata->unk10[i]);
+                    objdata->unk10[i] = NULL;
+                }
+            }
+        }
+        dll_707_func_CBC(self, gUpdateRate);
+        objdata->unk0_8 = func_80024108(self, objdata->unk28, gUpdateRateF, NULL);
+        if (objdata->unk2C != 0) {
+            if (objdata->unk2C < 15000) {
+                objdata->unk2C += gUpdateRate * 50;
+            }
+            func_80034804(self, 4)[7] = objdata->unk2C;
+        }
+        if (objdata->unk2E != 0) {
+            if (objdata->unk2E < 15000) {
+                objdata->unk2E += gUpdateRate * 50;
+            }
+            func_80034804(self, 3)[7] = objdata->unk2E;
+        }
+        // Useless assignment of v1? required to match
+        var_v1 = 0;
+        if (objdata->unk0_9 != 0) {
+            var_v1 |= 1;
+        }
+        if (objdata->unk0_10 != 0) {
+            var_v1 |= 2;
+        }
+        if (objdata->unk0_13 != 0) {
+            var_v1 |= 4;
+        }
+        if (((objdata->unk0_8) != 0) && (objdata->unk28 != 0.0f)) {
+            switch (self->curModAnimId) {
+            case 2:
+            case 3:
+                dll_707_func_18(0);
+                break;
+            case 0:
+            case 1:
+                dll_707_func_18(1);
+                break;
+            case 6:
+            case 7:
+                objdata->unk0_9 = 1;
+                var_a0 = 1;
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                if (objdata->soundHandle1 != 0) {
+                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle1);
+                    objdata->soundHandle1 = 0;
+                }
+                break;
+            case 4:
+            case 5:
+                objdata->unk0_10 = 1;
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                if (objdata->soundHandle2 != 0) {
+                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle2);
+                    objdata->soundHandle2 = 0;
+                }
+                break;
+            case 8:
+                objdata->unk0_13 = 1;
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                if (objdata->soundHandle3 != 0) {
+                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle3);
+                    objdata->soundHandle3 = 0;
+                }
+                break;
+            }
+            objdata->unk28 = 0.0f;
+        }
+        var_s0 = 0;
+        if (objdata->unk0_9 != 0) {
+            var_s0 |= 1;
+        }
+        if (objdata->unk0_10 != 0) {
+            var_s0 |= 2;
+        }
+        if (objdata->unk0_13 != 0) {
+            var_s0 |= 4;
+        }
+        if ((var_s0 == 3) && (self->curModAnimId < 8)) {
+            func_80023D30(self, 8, 0.0f, 0);
+            objdata->unk28 = 0.01f;
+            _bss_38 = gUpdateRate;
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle3, NULL, 0, NULL);
+        }
+        func_800269CC(self, self->objhitInfo, _data_0[var_s0]);
+        i = self->objhitInfo->unk62;
+        while (i--) {
+            temp_a0_6 = self->objhitInfo->unk63[i];
+            temp_v1_2 = self->objhitInfo->unk66[i];
+            if (objdata->unk28 == 0.0f) {
+                switch (temp_a0_6) {
+                case 13:
+                case 14:
+                    if (objdata->unk36 == 0) {
+                        objdata->unk36 = 600;
+                        for (j = 0; j < 6; j += 2) {
+                            objdata->unk10[j] = dll_707_func_B8(self, self->positionMirror.x - 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
+                        }
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    } else if ((temp_v1_2 == 0xF) && (objdata->unk36 > 50)) {
+                        dll_707_func_84(13);
+                        dll_707_func_84(14);
+                        func_80023D30(self, objdata->unk0_10 ? 3 : 2, 0.0f, 0);
+                        objdata->unk28 = 0.005f;
+                        objdata->unk2C = 1;
+                        objdata->unk0_11 = 1;
+                        obj_destroy_object(objdata->unk8[0]);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    }
+                    break;
+                case 8:
+                case 9:
+                    if (objdata->unk38 == 0) {
+                        objdata->unk38 = 600;
+                        for (j = 1; j < 7; j += 2) {
+                            objdata->unk10[j] = dll_707_func_B8(self, self->positionMirror.x + 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
+                        }
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    } else if ((temp_v1_2 == 0xF) && (objdata->unk38 > 50)) {
+                        dll_707_func_84(8);
+                        dll_707_func_84(9);
+                        func_80023D30(self, objdata->unk0_9 ? 1 : 0, 0.0f, 0);
+                        objdata->unk28 = 0.005f;
+                        objdata->unk2E = 1;
+                        objdata->unk0_12 = 1;
+                        obj_destroy_object(objdata->unk8[1]);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    }
+                    break;
+                case 0:
+                    if (temp_v1_2 == 0xF) {
+                        if ((objdata->unk0_12) && (objdata->unk0_11)) {
+                            dll_707_func_84(0);
+                            func_80023D30(self, objdata->unk0_10 ? 7 : 6, 0.0f, 0);
+                            objdata->unk28 = 0.005f;
+                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle1, NULL, 0, NULL);
+                        }
+                    }
+                    break;
+                case 1:
+                    if (temp_v1_2 == 0xF) {
+                        if ((objdata->unk0_12) && (objdata->unk0_11)) {
+                            dll_707_func_84(1);
+                            func_80023D30(self, objdata->unk0_9 ? 5 : 4, 0.0f, 0);
+                            objdata->unk28 = 0.005f;
+                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle2, NULL, 0, NULL);
+                        }
+                    }
+                    /* fallthrough */
+                default:
+                    objdata->unk0_15--;
+                    break;
+                }
+            }
+        }
+        if (objdata->unk0_13 != 0) {
+            dll_707_func_7C0(self, objdata);
+        }
+        if ((objdata->unk0_11) && !(objdata->unk0_9)) {
+            dll_707_func_A0C(self, objdata, 0, &objdata->unk30);
+        }
+        if ((objdata->unk0_12) && !(objdata->unk0_10)) {
+            dll_707_func_A0C(self, objdata, 1, &objdata->unk32);
+        }
+        if ((_bss_38 != 0) && (_bss_38 < 0xFF)) {
+            _bss_38 += gUpdateRate;
+            if (_bss_38 > 0xFF) {
+                _bss_38 = 0xFF;
+            }
+        }
+        if ((objdata->unk0_13) && (objdata->player != NULL)) {
+            if (!(objdata->unk0_23)) {
+                u16 sp8C[3] = {0x0002, 0x0000, 0x0000}; // _data_10
+                u16 sp84[3] = {0x0018, 0x0014, 0x0008}; // _data_18
+                create_temp_dll(53);
+                ((DLL_53*)gTempDLLInsts[1])->vtbl->func2(self, _bss_40, -18000, 9800, 3);
+                ((DLL_53*)gTempDLLInsts[1])->vtbl->func6(_bss_40, &sp84, &sp84, 3);
+                _bss_40[0x4A9] |= 8;
+                objdata->unk0_23 = 1;
+            }
+            ((DLL_53*)gTempDLLInsts[1])->vtbl->func1(_bss_40, objdata->player);
+            ((DLL_53*)gTempDLLInsts[1])->vtbl->func0(self, _bss_40);
+        }
+    }
+}
+#endif
 
 // offset: 0x1E14 | func: 11 | export: 2
 void dll_707_update(Object *self) { }
@@ -487,7 +736,7 @@ void dll_707_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         while(i--) {
             func_80031F6C(self, i, &objdata->unk48[i].x, &objdata->unk48[i].y, &objdata->unk48[i].z, 0);
         }
-        if (objdata->unk0_16) {
+        if (objdata->unk0_23) {
             ((DLL_53*)gTempDLLInsts[1])->vtbl->func3(self, _bss_40, 2);
         }
     }

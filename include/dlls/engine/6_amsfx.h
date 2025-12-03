@@ -267,6 +267,12 @@ enum SoundID {
 
     SOUND_9A3_Magic_Reverse_Cymbal = 0x9A3,
 
+    SOUND_9AA = 0x9AA,
+    SOUND_9AB = 0x9AB,
+    SOUND_9AC = 0x9AC,
+    SOUND_9AD = 0x9AD,
+    SOUND_9AE = 0x9AE,
+
     SOUND_9B1_Flames_Venting = 0x9B1,   // kamerian related
     SOUND_9B2_Fire_Burning = 0x9B2,     // kamerian related
 
