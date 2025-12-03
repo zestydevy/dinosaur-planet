@@ -94,7 +94,8 @@ typedef struct {
 
 typedef struct {
 /*0000*/    s16 jointIndex;
-/*0002*/    u8 pad0[0xA - 0x2];
+/*0002*/    s16 unk2;
+/*0004*/    u8 _unk4[0xA - 0x4];
 /*000A*/    u16 unkA;
 /*000C*/    s8 unkC;
 /*000D*/    s8 unkD;

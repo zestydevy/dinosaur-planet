@@ -8,21 +8,8 @@
 #include "sys/dll.h"
 #include "sys/objtype.h"
 #include "sys/gfx/projgfx.h"
+#include "dlls/engine/53.h"
 #include "dlls/objects/373_CFCloudBaby.h"
-
-DLL_INTERFACE(DLL_TempDLLInsts_1) {
-    /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ void (*func0)(Object*, void*);
-    /*1*/ void (*func1)(void*, Object*);
-    /*2*/ void (*func2)(Object*, void*, s32, s32, s32);
-    /*3*/ void (*func3)(Object*, void*, s32);
-    /*4*/ s32 (*func4)(Object*, AnimObj_Data*, void*, s16, s32);
-    /*5*/ void (*func5)(void*, s32, s32);
-    /*6*/ void (*func6)(void*, s32, void*, s32);
-    /*7*/ void (*func7)(s32, SRT*);
-    /*8*/ UnknownDLLFunc func8;
-    /*9*/ void (*func9)(s32, SRT*);
-};
 
 // CFGuardian/CFSupTreasureCh
 DLL_INTERFACE(DLL_CFGuardianCFSupTreasureCh) {
@@ -464,7 +451,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
         setup = func_80044448(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
-                ((DLL_TempDLLInsts_1*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
+                ((DLL_53*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
                 setup->x = transform.transl.x;
                 setup->y = transform.transl.y;
                 setup->z = transform.transl.z;

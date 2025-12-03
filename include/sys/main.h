@@ -34,6 +34,9 @@ extern u8 alSynFlag;
 
 // TODO: static DLLs
 
+// 0 -> DLL -1 (no DLL)
+// 1 -> DLL 53
+// 2 -> DLL 55
 extern void *gTempDLLInsts[3];
 
 
