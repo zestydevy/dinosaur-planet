@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_707_ctor
-.dword dll_707_dtor
+.dword KamerianBoss_ctor
+.dword KamerianBoss_dtor
 
 # export table
-/*0*/ .dword dll_707_setup
-/*1*/ .dword dll_707_control
-/*2*/ .dword dll_707_update
-/*3*/ .dword dll_707_print
-/*4*/ .dword dll_707_free
-/*5*/ .dword dll_707_get_model_flags
-/*6*/ .dword dll_707_get_data_size
+/*0*/ .dword KamerianBoss_setup
+/*1*/ .dword KamerianBoss_control
+/*2*/ .dword KamerianBoss_update
+/*3*/ .dword KamerianBoss_print
+/*4*/ .dword KamerianBoss_free
+/*5*/ .dword KamerianBoss_get_model_flags
+/*6*/ .dword KamerianBoss_get_data_size
