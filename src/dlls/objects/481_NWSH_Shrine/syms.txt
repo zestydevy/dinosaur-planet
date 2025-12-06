@@ -1,0 +1,18 @@
+.text = 0x0:
+dll_481_ctor = 0x0;
+dll_481_dtor = 0xC;
+dll_481_setup = 0x18;
+dll_481_control = 0x1E8;
+dll_481_update = 0xB08;
+dll_481_print = 0xB14;
+dll_481_free = 0xB5C;
+dll_481_get_model_flags = 0xBEC;
+dll_481_get_data_size = 0xBFC;
+dll_481_func_C10 = 0xC10;
+dll_481_func_1084 = 0x1084;
+
+.rodata = 0x1218:
+str_0 = 0x0; // absolute:0x1218
+
+.data = 0x1298:
+_data_0 = 0x0; // absolute:0x1298
