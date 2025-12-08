@@ -1,0 +1,33 @@
+.text = 0x0:
+dll_697_func_0 = 0x0;
+dll_697_ctor = 0x54;
+dll_697_dtor = 0x94;
+dll_697_setup = 0xA0;
+dll_697_control = 0x160;
+dll_697_update = 0x24C;
+dll_697_print = 0x258;
+dll_697_free = 0x3F0;
+dll_697_get_model_flags = 0x430;
+dll_697_get_data_size = 0x440;
+dll_697_func_454 = 0x454;
+dll_697_func_50C = 0x50C;
+dll_697_func_55C = 0x55C;
+dll_697_func_768 = 0x768;
+dll_697_func_838 = 0x838;
+dll_697_func_8E0 = 0x8E0;
+dll_697_func_99C = 0x99C;
+dll_697_func_ABC = 0xABC;
+dll_697_func_BC8 = 0xBC8;
+dll_697_func_C54 = 0xC54;
+
+.rodata = 0xDA8:
+
+.data = 0xDA8:
+_data_0 = 0x0; // absolute:0xDA8
+_data_1C = 0x1C; // absolute:0xDC4
+_data_50 = 0x50; // absolute:0xDF8
+_data_60 = 0x60; // absolute:0xE08
+
+.bss = 0xE28:
+sAnimStateCallbacks = 0x0; // absolute:0xE28
+sLogicStateCallbacks = 0x8; // absolute:0xE30

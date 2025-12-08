@@ -35,7 +35,7 @@ typedef struct {
 /*3B0*/ u8 unk3B0;
 /*3B1*/ u8 _unk3B1;
 /*3B2*/ u16 unk3B2;
-/*3B4*/ s8 unk3B4;
+/*3B4*/ u8 unk3B4;
 /*3B5*/ u8 _unk3B5;
 /*3B6*/ s16 unk3B6;
 /*3B8*/ u8 unk3B8;
