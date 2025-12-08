@@ -44,6 +44,7 @@ CLEAN_PATHS = [
 
 BUILD_ARTIFACTS = [
     BUILD_PATH,
+    EXPECTED_PATH.joinpath("build/src"),
     SCRIPT_DIR.joinpath(".ninja_log"),
 ]
 
@@ -78,7 +79,7 @@ class DinoCommandRunner:
     def clean_rebuild(self):
         self.clean()
         self.extract(core_only=False, use_cache=False, disassemble_all=False)
-        self.build(configure=False, force=False, skip_expected=False, no_verify=False, target=None)
+        self.build(configure=False, force=False, no_verify=False, target=None)
 
     def update_submodules(self):
         print("Updating Git submodules...")
@@ -91,7 +92,7 @@ class DinoCommandRunner:
         if not use_cache:
             if ASM_PATH.exists():
                 for path in ASM_PATH.glob("*"):
-                    if path.name != "nonmatchings" and path.name != "matchings":
+                    if path.name != "nonmatchings" and path.name != "matchings" and path.name != "dlls":
                         if path.is_dir():
                             if self.verbose:
                                 print(f"rm {path}")
@@ -144,15 +145,19 @@ class DinoCommandRunner:
             print("Extracting DLLs...")
 
             # If not using cache, clear existing DLL extracts
-            if not use_cache:
-                if ASM_PATH.exists():
-                    for dir in [ASM_PATH.joinpath("nonmatchings"), ASM_PATH.joinpath("matchings")]:
-                        if dir.exists():
-                            for path in dir.glob("*"):
-                                if path.name == "dlls":
-                                    if self.verbose:
-                                        print(f"rm {path}")
-                                    shutil.rmtree(path)
+            if not use_cache and ASM_PATH.exists():
+                dlls_dir = ASM_PATH.joinpath("dlls")
+                if dlls_dir.exists():
+                    if self.verbose:
+                        print(f"rm {dlls_dir}")
+                    shutil.rmtree(dlls_dir)
+                for dir in [ASM_PATH.joinpath("nonmatchings"), ASM_PATH.joinpath("matchings")]:
+                    if dir.exists():
+                        for path in dir.glob("*"):
+                            if path.name == "dlls":
+                                if self.verbose:
+                                    print(f"rm {path}")
+                                shutil.rmtree(path)
 
             self.__extract_dlls(disassemble_all=disassemble_all)
 
@@ -201,8 +206,7 @@ class DinoCommandRunner:
 
     def build(self, 
               configure: bool, 
-              force: bool, 
-              skip_expected: bool, 
+              force: bool,  
               no_verify: bool,
               target: "str | None"):
         # Configure build script if it's missing
@@ -253,9 +257,9 @@ class DinoCommandRunner:
             print()
             self.verify()
 
-        if not skip_expected and not no_verify:
+        if not no_verify:
             # If matching, update the 'expected' directory for diff
-            self.create_expected_dir(already_verified=True, quiet=True)
+            self.update_expected_full_rom(already_verified=True, quiet=True)
 
     def check_ido_update(self):
         ido_dir = SCRIPT_DIR.joinpath("tools/ido_static_recomp")
@@ -331,7 +335,7 @@ class DinoCommandRunner:
         ido_version_file.write_text(IDO_STATIC_RECOMP_VERSION)
         print(f"Updated IDO static recomp to {IDO_STATIC_RECOMP_VERSION}.")
 
-    def create_expected_dir(self, already_verified=False, force=False, quiet=False):
+    def update_expected_full_rom(self, already_verified=False, force=False, quiet=False):
         # Ensure the build matches
         if not already_verified:
             try:
@@ -341,20 +345,22 @@ class DinoCommandRunner:
                     print()
             except subprocess.CalledProcessError:
                 print()
-                print("The 'expected' output directory can only be created from a matching build!")
+                print("The 'expected' output directory ROM file can only be updated from a matching build!")
                 sys.exit(1)
-        
+
+        # Determine which files need to be copied (note most of the dir is managed by the build)
+        base_path = BUILD_PATH.relative_to(SCRIPT_DIR)
+        file_paths = [
+            base_path.joinpath(f"{TARGET}.z64"),
+            base_path.joinpath(f"{TARGET}.map")
+        ]
+
         # If force is given, remove any existing files
         if force:
-            if self.verbose:
-                print(f"rm {EXPECTED_PATH}")
-            shutil.rmtree(EXPECTED_PATH)
-
-        # Determine which files need to be copied
-        base_path = BUILD_PATH.relative_to(SCRIPT_DIR)
-        file_paths = [Path(p) for p in glob.glob(f"{base_path}/**/*.o", recursive=True)]
-        file_paths.append(base_path.joinpath(f"{TARGET}.z64"))
-        file_paths.append(base_path.joinpath(f"{TARGET}.map"))
+            for path in file_paths:
+                if self.verbose:
+                    print(f"rm {path}")
+                path.unlink(missing_ok=True)
 
         to_create: "list[tuple[Path, Path]]" = []
         for in_path in file_paths:
@@ -580,12 +586,8 @@ def main():
     build_cmd = subparsers.add_parser("build", help="Build ROM and verify that it matches.")
     build_cmd.add_argument("-c", "--configure", action="store_true", help="Re-configure the build script before building.", default=False)
     build_cmd.add_argument("-f", "--force", action="store_true", help="Force a full rebuild.", default=False)
-    build_cmd.add_argument("--no-expected", dest="skip_expected", action="store_true", help="Don't update the 'expected' directory after a matching build.", default=False)
     build_cmd.add_argument("--no-verify", dest="no_verify", action="store_true", help="Don't verify the build ROM.", default=False)
     build_cmd.add_argument("target", nargs="?", help="The target to build. Don\'t specify to build the full ROM.")
-
-    build_exp_cmd = subparsers.add_parser("build-expected", help="Update the 'expected' directory for diff. Requires a verified build.")
-    build_exp_cmd.add_argument("-f", "--force", action="store_true", help="Fully recreate the directory instead of updating it.", default=False)
 
     subparsers.add_parser("verify", help="Verify that the re-built ROM matches the base ROM.")
     subparsers.add_parser("baseverify", help="Verify that the base ROM is correct.")
@@ -630,12 +632,9 @@ def main():
             runner.build(
                 configure=args.configure, 
                 force=args.force, 
-                skip_expected=args.skip_expected,
                 no_verify=args.no_verify,
                 target=args.target
             )
-        elif cmd == "build-expected":
-            runner.create_expected_dir(force=args.force)
         elif cmd == "configure":
             configure_index = sys.argv.index("configure")
             full_args = sys.argv[configure_index + 1:]

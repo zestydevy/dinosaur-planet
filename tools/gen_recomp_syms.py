@@ -341,7 +341,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         if dll_dir != None:
             dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{dll_dir}/{number}.elf")
         else:
-            dll_elf_path = BUILD_PATH.joinpath(f"asm/nonmatchings/dlls/_asm/{number}.elf")
+            dll_elf_path = BUILD_PATH.joinpath(f"asm/dlls/{number}.elf")
             dll_dir = f"_asm/{number}"
         if dll_elf_path.exists():
             with open(dll_elf_path, "rb") as file:

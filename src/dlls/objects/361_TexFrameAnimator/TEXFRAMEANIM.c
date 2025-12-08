@@ -121,7 +121,7 @@ void TexFrameAnimator_control(Object* self) {
 }
 
 // offset: 0x2B8 | func: 2 | export: 2
-void dll_361_update(Object *self) { }
+void TexFrameAnimator_update(Object *self) { }
 
 // offset: 0x2C4 | func: 3 | export: 3
 void TexFrameAnimator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {

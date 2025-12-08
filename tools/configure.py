@@ -48,24 +48,22 @@ class BuildFile:
         self.config = config
 
 class DLL:
-    def __init__(self, number: str, dir: str, files: "list[BuildFile]"):
+    def __init__(self, 
+                 number: str, 
+                 src_dir: str | None, 
+                 src_files: "list[BuildFile] | None", 
+                 asm_file: BuildFile | None, 
+                 undefined_syms_file: str | None):
         self.number = number
-        self.dir = dir
-        self.files = files
-
-class ASMDLL:
-    def __init__(self, number: str, dir: str, file: BuildFile, undefined_syms_file: str | None):
-        self.number = number
-        self.dir = dir
-        self.file = file
+        self.src_dir = src_dir
+        self.src_files = src_files
+        self.asm_file = asm_file
         self.undefined_syms_file = undefined_syms_file
 
 class BuildFiles:
-    def __init__(self, files: "list[BuildFile]", dlls: "list[DLL]", asm_dlls: "list[ASMDLL]", leftover_dlls: "list[BuildFile]"):
+    def __init__(self, files: "list[BuildFile]", dlls: "list[DLL]"):
         self.files = files # excludes DLLs
         self.dlls = dlls
-        self.asm_dlls = asm_dlls # DLLs without a src directory
-        self.leftover_dlls = leftover_dlls # Uncompiled DLLs
 
 class BuildConfig:
     def __init__(self,
@@ -96,6 +94,7 @@ class BuildNinjaWriter:
             "undefined_funcs.txt", 
             "undefined_syms_auto.txt", 
         ]
+        self.expected_targets: "list[str]" = []
 
     def write(self):
         # Write prelude (variables, rules)
@@ -111,7 +110,8 @@ class BuildNinjaWriter:
         self.__write_linking()
 
         # Write default target
-        self.writer.default(["$BUILD_DIR/$TARGET.z64"])
+        self.writer.build("expected", "phony", self.expected_targets)
+        self.writer.default(["$BUILD_DIR/$TARGET.z64", "expected"])
     
     def close(self):
         self.writer.close()
@@ -121,6 +121,7 @@ class BuildNinjaWriter:
         self.writer.comment("Variables")
 
         self.writer.variable("BUILD_DIR", self.config.build_dir)
+        self.writer.variable("EXPECTED_BUILD_DIR", self.config.expected_build_dir)
         self.writer.variable("TARGET", self.config.target)
         self.writer.variable("LINK_SCRIPT", self.config.link_script)
         self.writer.variable("LINK_SCRIPT_DLL", self.config.link_script_dll)
@@ -270,7 +271,7 @@ class BuildNinjaWriter:
         self.writer.newline()
 
     def __write_file_builds(self):
-        self.writer.comment("Source compilation")
+        self.writer.comment("Core compilation")
 
         for file in self.input.files:
             # Determine variables
@@ -312,6 +313,17 @@ class BuildNinjaWriter:
             self.writer.build(obj_build_path, command, src_build_path, variables=variables)
             self.link_deps.append(obj_build_path)
 
+            # Build expected object file from asm
+            exp_obj_build_path = f"$EXPECTED_BUILD_DIR/{Path(file.obj_path).as_posix()}"
+            exp_src_path: Path | None = None
+            if file.type == BuildFileType.C:
+                exp_src_path = Path("asm").joinpath(Path(file.src_path).relative_to("src")).with_suffix(".s")
+            elif file.type == BuildFileType.ASM:
+                exp_src_path = Path(file.src_path)
+            if exp_src_path != None and exp_src_path.exists():
+                self.writer.build(exp_obj_build_path, "as", exp_src_path.as_posix())
+                self.expected_targets.append(exp_obj_build_path)
+
         self.writer.newline()
     
     def __write_dll_builds(self):
@@ -325,129 +337,139 @@ class BuildNinjaWriter:
         pack_deps: "list[str]" = []
         for dll in self.input.dlls:
             self.writer.comment(f"DLL {dll.number}")
-            obj_dir = f"$BUILD_DIR/{dll.dir}"
 
-            # Compile DLL sources
-            dll_link_deps: "list[str]" = []
-            has_asm = False
-            for file in dll.files:
-                # Determine variables
-                variables: dict[str, str] = self.__file_config_to_variables(file.config)
+            if dll.src_dir != None:
+                # Compile DLL
+                assert(dll.src_files != None)
+                obj_dir = f"$BUILD_DIR/{dll.src_dir}"
 
-                # Determine command
-                command: str
-                if file.type == BuildFileType.C:
-                    if file.config != None and file.config.has_global_asm:
-                        command = "cc_dll"
-                        has_asm = True
+                # Build DLL sources
+                dll_link_deps: "list[str]" = []
+                has_asm = False
+                c_file: "BuildFile | None" = None
+                for file in dll.src_files:
+                    if file.type == BuildFileType.C:
+                        # Only supporting a single C file per DLL at the moment
+                        assert(c_file == None)
+                        c_file = file
+
+                    # Determine variables
+                    variables: dict[str, str] = self.__file_config_to_variables(file.config)
+
+                    # Determine command
+                    command: str
+                    if file.type == BuildFileType.C:
+                        if file.config != None and file.config.has_global_asm:
+                            command = "cc_dll"
+                            has_asm = True
+                        else:
+                            command = "cc_dll_noasmproc"
+                    elif file.type == BuildFileType.ASM:
+                        command = "as_dll"
+                    elif file.type == BuildFileType.BIN:
+                        command = "ld_bin"
                     else:
-                        command = "cc_dll_noasmproc"
-                elif file.type == BuildFileType.ASM:
-                    command = "as_dll"
-                elif file.type == BuildFileType.BIN:
-                    command = "ld_bin"
-                else:
-                    raise NotImplementedError()
+                        raise NotImplementedError()
+                    
+                    # Write command
+                    obj_build_path = f"$BUILD_DIR/{Path(file.obj_path).as_posix()}"
+                    src_build_path = Path(file.src_path).as_posix()
+                    self.writer.build(obj_build_path, command, src_build_path, variables=variables)
+                    dll_link_deps.append(obj_build_path)
                 
-                # Write command
-                obj_build_path = f"$BUILD_DIR/{Path(file.obj_path).as_posix()}"
-                src_build_path = Path(file.src_path).as_posix()
-                self.writer.build(obj_build_path, command, src_build_path, variables=variables)
-                dll_link_deps.append(obj_build_path)
-            
-            # Convert syms.txt to linker script
-            syms_txt_path = f"{dll.dir}/syms.txt"
-            syms_ld_path = f"$BUILD_DIR/{dll.dir}/syms.ld"
-            self.writer.build(syms_ld_path, "dllsyms2ld", syms_txt_path)
+                # One C file is required per DLL with a src dir
+                assert(c_file != None)
+                
+                # Convert syms.txt to linker script
+                syms_txt_path = f"{dll.src_dir}/syms.txt"
+                syms_ld_path = f"$BUILD_DIR/{dll.src_dir}/syms.ld"
+                self.writer.build(syms_ld_path, "dllsyms2ld", syms_txt_path)
 
-            # Link
-            elf_path = Path(f"{obj_dir}/{dll.number}.elf")
-            custom_link_script = Path(f"{dll.dir}/dll.ld")
+                # Link
+                elf_path = Path(f"{obj_dir}/{dll.number}.elf")
+                custom_link_script = Path(f"{dll.src_dir}/dll.ld")
 
-            if custom_link_script.exists():
-                # Use DLL's custom link script
-                # Note: Assume custom script lists all inputs
-                implicit_deps = [str(custom_link_script), syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"]
-                implicit_deps.extend(dll_link_deps)
-                self.writer.build(elf_path.as_posix(), "ld_dll", [], 
-                    implicit=implicit_deps,
-                    variables={
-                        "SYMS_LD": syms_ld_path,
-                        "LINK_SCRIPT_DLL": str(custom_link_script)
-                    })
+                if custom_link_script.exists():
+                    # Use DLL's custom link script
+                    # Note: Assume custom script lists all inputs
+                    implicit_deps = [str(custom_link_script), syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"]
+                    implicit_deps.extend(dll_link_deps)
+                    self.writer.build(elf_path.as_posix(), "ld_dll", [], 
+                        implicit=implicit_deps,
+                        variables={
+                            "SYMS_LD": syms_ld_path,
+                            "LINK_SCRIPT_DLL": str(custom_link_script)
+                        })
+                else:
+                    # Use default DLL link script
+                    self.writer.build(elf_path.as_posix(), "ld_dll", dll_link_deps, 
+                        implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"],
+                        variables={"SYMS_LD": syms_ld_path})
+
+                # Convert ELF to Dinosaur Planet DLL
+                dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
+                dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
+                elf2dll_cmd = "elf2dll"
+                elf2dll_variables = { "DLL_BSS_TXT": dll_bss_asset_path }
+                elf2dll_implicit = []
+                if has_asm:
+                    # If nonmatching asm was involved, run the elf2dll wrapper
+                    elf2dll_cmd = "elf2dll_wrapper"
+                self.writer.build(dll_asset_path, elf2dll_cmd, elf_path.as_posix(),
+                    variables=elf2dll_variables,
+                    implicit=elf2dll_implicit,
+                    implicit_outputs=[dll_bss_asset_path])
+                pack_deps.append(dll_asset_path)
+                pack_deps.append(dll_bss_asset_path)
+
+                # Build expected dir file for DLL
+                if dll.asm_file != None:
+                    # DLLs aren't split into multiple files, so pair up the full asm extract with the single C file
+                    expected_obj_build_path = f"$EXPECTED_BUILD_DIR/{Path(c_file.obj_path).as_posix()}"
+                    asm_file_src_build_path = Path(dll.asm_file.src_path).as_posix()
+                    self.writer.build(expected_obj_build_path, "as_dll", asm_file_src_build_path)
+                    self.expected_targets.append(expected_obj_build_path) 
             else:
-                # Use default DLL link script
-                self.writer.build(elf_path.as_posix(), "ld_dll", dll_link_deps, 
-                    implicit=["$LINK_SCRIPT_DLL", syms_ld_path, "$BUILD_DIR/export_symbol_addrs.ld"],
-                    variables={"SYMS_LD": syms_ld_path})
+                # Assemble DLL
+                assert(dll.asm_file != None)
 
-            # Convert ELF to Dinosaur Planet DLL
-            dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
-            dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
-            elf2dll_cmd = "elf2dll"
-            elf2dll_variables = { "DLL_BSS_TXT": dll_bss_asset_path }
-            elf2dll_implicit = []
-            if has_asm:
-                # If nonmatching asm was involved, run the elf2dll wrapper
-                elf2dll_cmd = "elf2dll_wrapper"
-            self.writer.build(dll_asset_path, elf2dll_cmd, elf_path.as_posix(),
-                variables=elf2dll_variables,
-                implicit=elf2dll_implicit,
-                implicit_outputs=[dll_bss_asset_path])
-            pack_deps.append(dll_asset_path)
-            pack_deps.append(dll_bss_asset_path)
-        
-        self.writer.comment("DLL assembly (DLLs without a src directory)")
-        for dll in self.input.asm_dlls:
-            self.writer.comment(f"DLL {dll.number}")
-            obj_dir = f"$BUILD_DIR/{dll.dir}"
+                obj_build_path = f"$BUILD_DIR/{Path(dll.asm_file.obj_path).as_posix()}"
+                src_build_path = Path(dll.asm_file.src_path).as_posix()
+                self.writer.build(obj_build_path, "as_dll", src_build_path)
 
-            # Assemble DLL
-            dll_link_deps: "list[str]" = []
+                # Link
+                ld_flags = ""
+                if dll.undefined_syms_file != None:
+                    ld_flags += f"-T {dll.undefined_syms_file}"
 
-            obj_build_path = f"$BUILD_DIR/{Path(dll.file.obj_path).as_posix()}"
-            src_build_path = Path(dll.file.src_path).as_posix()
-            self.writer.build(obj_build_path, "as_dll", src_build_path)
-            dll_link_deps.append(obj_build_path)
+                elf_path = Path(f"$BUILD_DIR/asm/dlls/{dll.number}.elf")
+                self.writer.build(elf_path.as_posix(), "ld_asm_dll", [obj_build_path], 
+                    implicit=["$LINK_SCRIPT_DLL", "$BUILD_DIR/export_symbol_addrs.ld"],
+                    variables={
+                        "EXTRA_DLL_LD_FLAGS": ld_flags
+                    })
 
-            # Link
-            ld_flags = ""
-            if dll.undefined_syms_file != None:
-                ld_flags += f"-T {dll.undefined_syms_file}"
-
-            elf_path = Path(f"{obj_dir}/{dll.number}.elf")
-            self.writer.build(elf_path.as_posix(), "ld_asm_dll", dll_link_deps, 
-                implicit=["$LINK_SCRIPT_DLL", "$BUILD_DIR/export_symbol_addrs.ld"],
-                variables={
-                    "EXTRA_DLL_LD_FLAGS": ld_flags
-                })
-
-            # Convert ELF to Dinosaur Planet DLL
-            dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
-            dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
-            self.writer.build(dll_asset_path, "elf2dll_wrapper", elf_path.as_posix(),
-                variables={
-                    "DLL_BSS_TXT": dll_bss_asset_path
-                },
-                implicit_outputs=[dll_bss_asset_path])
-            pack_deps.append(dll_asset_path)
-            pack_deps.append(dll_bss_asset_path)
-
-        any_dlls = len(pack_deps) > 0
-
-        # Leftovers
-        if any_dlls:
-            self.writer.comment("Leftover DLLs that haven't been decompiled yet")
-            for dll in self.input.leftover_dlls:
-                dll_obj_build_path = f"$BUILD_DIR/{dll.obj_path}"
-                self.writer.build(dll_obj_build_path, "file_copy", dll.src_path)
-                pack_deps.append(dll_obj_build_path)
+                # Convert ELF to Dinosaur Planet DLL
+                dll_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll"
+                dll_bss_asset_path = f"$BUILD_DIR/bin/assets/dlls/{dll.number}.dll.bss.txt"
+                self.writer.build(dll_asset_path, "elf2dll_wrapper", elf_path.as_posix(),
+                    variables={
+                        "DLL_BSS_TXT": dll_bss_asset_path
+                    },
+                    implicit_outputs=[dll_bss_asset_path])
+                pack_deps.append(dll_asset_path)
+                pack_deps.append(dll_bss_asset_path)
+            
+                # Build expected dir file for DLL
+                expected_obj_build_path = f"$EXPECTED_BUILD_DIR/{Path(dll.asm_file.obj_path).as_posix()}"
+                self.writer.build(expected_obj_build_path, "file_copy", obj_build_path)
+                self.expected_targets.append(expected_obj_build_path)
 
         self.writer.newline()
         self.writer.comment("DLL packing")
 
         # Pack DLLs
-        if any_dlls:
+        if not self.config.skip_dlls:
             # Pack
             self.writer.build(
                 outputs=["$BUILD_DIR/bin/assets/DLLS.bin", "$BUILD_DIR/bin/assets/DLLS_tab.bin"], 
@@ -523,7 +545,7 @@ class ObjDiffConfigWriter:
         config = {}
 
         config["custom_make"] = "ninja"
-        config["build_target"] = False # We don't have build commands for the expected directory
+        config["build_target"] = True
         config["build_base"] = True
 
         categories = [
@@ -540,9 +562,10 @@ class ObjDiffConfigWriter:
 
         for file in self.input.files:
             if file.type == BuildFileType.C:
+                target = Path(f"{self.config.expected_build_dir}/{file.obj_path}")
                 units.append({
-                    "name": file.obj_path,
-                    "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
+                    "name": Path(file.obj_path).with_suffix("").as_posix(),
+                    "target_path": target.as_posix() if target.exists() else None,
                     "base_path": f"{self.config.build_dir}/{file.obj_path}",
                     "metadata": {
                         "source_path": file.src_path,
@@ -552,7 +575,7 @@ class ObjDiffConfigWriter:
             elif file.type == BuildFileType.ASM:
                 # hasm files
                 units.append({
-                    "name": file.obj_path,
+                    "name": Path(file.obj_path).with_suffix("").as_posix(),
                     "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
                     "base_path": f"{self.config.build_dir}/{file.obj_path}",
                     "metadata": {
@@ -562,36 +585,41 @@ class ObjDiffConfigWriter:
                         "progress_categories": ["core"]
                     }
                 })
-        
+
         for dll in self.input.dlls:
-            for file in dll.files:
-                if file.type == BuildFileType.C or (file.type == BuildFileType.ASM and not file.obj_path.endswith("exports.o")):
-                    units.append({
-                        "name": file.obj_path,
-                        "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
-                        "base_path": f"{self.config.build_dir}/{file.obj_path}",
-                        "metadata": {
-                            "source_path": file.src_path,
-                            "progress_categories": ["dll", f"dll-{dll.number}"]
-                        }
-                    })
+            if dll.src_dir != None:
+                assert(dll.src_files != None)
+                c_file: BuildFile | None = None
+                for file in dll.src_files:
+                    if file.type == BuildFileType.C:
+                        c_file = file
+                        break
+                assert(c_file != None)
+
+                units.append({
+                    "name": dll.src_dir,
+                    "target_path": f"{self.config.expected_build_dir}/{c_file.obj_path}",
+                    "base_path": f"{self.config.build_dir}/{c_file.obj_path}",
+                    "metadata": {
+                        "source_path": c_file.src_path,
+                        "progress_categories": ["dll", f"dll-{dll.number}"]
+                    }
+                })
+            elif dll.asm_file != None:
+                units.append({
+                    "name": dll.asm_file.obj_path,
+                    "target_path": f"{self.config.expected_build_dir}/{dll.asm_file.obj_path}",
+                    "base_path": f"{self.config.build_dir}/{dll.asm_file.obj_path}",
+                    "metadata": {
+                        "source_path": dll.asm_file.src_path,
+                        "auto_generated": True,
+                        "progress_categories": ["dll", f"dll-{dll.number}"]
+                    }
+                })
 
         # Sort directories first, "OS" natsort for paths in the same
         natsort_key = os_sort_keygen(key=lambda u: (-u["name"].count(os.path.sep), u["name"]))
         units.sort(key=lambda u: natsort_key(u))
-
-        # Add ASM DLLs after the sort, we don't need to waste time sorting these since they're hidden
-        for dll in self.input.asm_dlls:
-            file = dll.file
-
-            units.append({
-                "name": file.obj_path,
-                "target_path": f"{self.config.expected_build_dir}/{file.obj_path}",
-                "metadata": {
-                    "auto_generated": True,
-                    "progress_categories": ["dll", f"dll-{dll.number}"]
-                }
-            })
         
         json.dump(config, self.output_file, indent=2)
 
@@ -602,17 +630,15 @@ class InputScanner:
     def scan(self) -> BuildFiles:
         self.files: "list[BuildFile]" = []
         self.dlls: "list[DLL]" = []
-        self.asm_dlls: "list[ASMDLL]" = []
-        self.leftover_dlls: "list[BuildFile]" = []
 
-        self.__scan_c_files()
-        self.__scan_asm_files()
+        c_paths = self.__scan_c_files()
+        self.__scan_asm_files(c_paths)
         self.__scan_bin_files()
 
         if not self.config.skip_dlls:
             self.__scan_dlls()
 
-        return BuildFiles(self.files, self.dlls, self.asm_dlls, self.leftover_dlls)
+        return BuildFiles(self.files, self.dlls)
         
     def __scan_c_files(self):
         # Exclude DLLs here, that's done separately
@@ -621,11 +647,20 @@ class InputScanner:
             obj_path = self.__make_obj_path(src_path)
             file_config = self.__get_file_config(src_path)
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
+        
+        return set(path.relative_to("src") for path in paths)
 
-    def __scan_asm_files(self):
-        # Exclude splat nonmatchings, those are compiled in with their respective C file
-        paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True) if not Path(path).is_relative_to(Path("asm/nonmatchings")) and not Path(path).is_relative_to(Path("asm/matchings"))]
+    def __scan_asm_files(self, c_paths: set[Path]):
+        # Exclude splat nonmatchings, those are compiled in with their respective C file.
+        # Also exclude any asm that is a full extract of a C file we're compiling, we don't want both 
+        # (the asm is for the expected dir in this case).
+        paths = [Path(path) for path in glob.glob("asm/**/*.s", recursive=True)]
         for src_path in paths:
+            if src_path.is_relative_to(Path("asm/nonmatchings")) or \
+                src_path.is_relative_to(Path("asm/matchings")) or \
+                src_path.is_relative_to(Path("asm/dlls")) or \
+                src_path.relative_to("asm").with_suffix(".c") in c_paths:
+                continue
             obj_path = self.__make_obj_path(src_path)
             self.files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
 
@@ -642,77 +677,59 @@ class InputScanner:
         # Scan DLLs separately since we need to build them as their own thing
         src_dlls_path = Path("src/dlls")
         nm_dlls_path = Path("asm/nonmatchings/dlls")
+        asm_dlls_path = Path(f"asm/dlls")
 
         dlls_txt_path = src_dlls_path.joinpath("dlls.txt")
         assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
         
         with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
             dlls_txt = DLLsTxt.parse(dlls_txt_file)
-        
-        dll_dirs = [(n, Path(path)) for (n, path) in dlls_txt.path_map.items()]
 
-        to_compile: "set[str]" = set()
-        for (number, dir) in dll_dirs:
-            dll_src_dir = src_dlls_path.joinpath(dir)
-            dll_nm_dir = nm_dlls_path.joinpath(dir)
-
-            dll_config = self.__get_dll_config(dll_src_dir, number)
-            if dll_config == None:
-                continue
-
-            # Skip if this DLL is configured to use the original DLL instead of recompiling
-            if not dll_config.compile:
-                continue
-
-            c_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.c", recursive=True)]
-            asm_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.s", recursive=True)]
-            orig_got_path = dll_nm_dir.joinpath("_orig_got.s")
-
-            files: "list[BuildFile]" = []
-
-            for src_path in c_paths:
-                obj_path = self.__make_obj_path(src_path)
-                file_config = self.__get_file_config(src_path)
-                files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
-            
-            for src_path in asm_paths:
-                obj_path = self.__make_obj_path(src_path)
-                files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
-
-            if orig_got_path.exists():
-                obj_path = self.__make_obj_path(orig_got_path)
-                files.append(BuildFile(str(orig_got_path), str(obj_path), BuildFileType.ASM))
-            
-            self.dlls.append(DLL(str(number), str(dll_src_dir), files))
-            to_compile.add(str(number))
-        
         for number in range(796):
             number += 1
 
-            if str(number) in to_compile:
-                continue
-                
-            dir = Path(f"asm/nonmatchings/dlls/_asm")
-            src_path = dir.joinpath(f"{number}.s")
-            if src_path.exists():
-                obj_path = self.__make_obj_path(src_path)
-                file = BuildFile(str(src_path), str(obj_path), BuildFileType.ASM)
+            # Scan files in DLL src dir
+            dll_src_dir: "Path | None" = None
+            src_files: "list[BuildFile] | None" = None
+            mapped_dir = dlls_txt.path_map.get(number)
+            if mapped_dir != None:
+                dll_src_dir = src_dlls_path.joinpath(mapped_dir)
+                dll_nm_dir = nm_dlls_path.joinpath(mapped_dir)
 
-                undef_syms_path = dir.joinpath(f"{number}.undefined_syms.ld")
+                dll_config = self.__get_dll_config(dll_src_dir, number)
+                # Skip if this DLL is configured to use the original DLL instead of recompiling
+                if dll_config != None and dll_config.compile:
+                    c_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.c", recursive=True)]
+                    asm_paths = [Path(path) for path in glob.glob(f"{dll_src_dir}/**/*.s", recursive=True)]
+                    orig_got_path = dll_nm_dir.joinpath("_orig_got.s")
+
+                    src_files = []
+
+                    for src_path in c_paths:
+                        obj_path = self.__make_obj_path(src_path)
+                        file_config = self.__get_file_config(src_path)
+                        src_files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.C, file_config))
+                    
+                    for src_path in asm_paths:
+                        obj_path = self.__make_obj_path(src_path)
+                        src_files.append(BuildFile(str(src_path), str(obj_path), BuildFileType.ASM))
+
+                    if orig_got_path.exists():
+                        obj_path = self.__make_obj_path(orig_got_path)
+                        src_files.append(BuildFile(str(orig_got_path), str(obj_path), BuildFileType.ASM))
+            
+            # Scan full asm extract for expected dir and DLLs without a src dir
+            undef_syms_file: str | None = None
+            asm_src_path = asm_dlls_path.joinpath(f"{number}.s")
+            asm_file: BuildFile | None = None
+            if asm_src_path.exists():
+                obj_path = self.__make_obj_path(asm_src_path)
+                asm_file = BuildFile(str(asm_src_path), str(obj_path), BuildFileType.ASM)
+
+                undef_syms_path = asm_dlls_path.joinpath(f"{number}.undefined_syms.ld")
                 undef_syms_file = undef_syms_path.as_posix() if undef_syms_path.exists() else None
 
-                self.asm_dlls.append(ASMDLL(str(number), str(dir), file, undef_syms_file))
-                to_compile.add(str(number))
-
-        # Scan for leftover DLLs that haven't been decompiled yet
-        paths = [Path(path) for path in glob.glob("bin/assets/dlls/*.dll", recursive=True)]
-        for src_path in paths:
-            number = src_path.name.split(".")[0]
-            if number in to_compile:
-                continue
-
-            obj_path = src_path.with_suffix('.dll')
-            self.leftover_dlls.append(BuildFile(str(src_path), str(obj_path), BuildFileType.BIN))
+            self.dlls.append(DLL(str(number), str(dll_src_dir) if dll_src_dir != None else None, src_files, asm_file, undef_syms_file))
 
     def __make_obj_path(self, path: Path) -> Path:
         return path.with_suffix('.o')
