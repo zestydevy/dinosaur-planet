@@ -84,7 +84,7 @@ DLL_INTERFACE(DLL_33) {
 /*1*/ void (*dtor)(void *dll);
 /*2*/ f32 (*func2)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4);
 /*3*/ void (*func3)(Object* arg0, DLL33_Data* arg1, u32 arg2, f32 arg3, f32 arg4);
-/*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, u16* arg3, u16* arg4, u16* arg5);
+/*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5);
 /*5*/ s32 (*func5)(Object* arg0, DLL33_Data* arg1, f32 arg2);
 /*6*/ s32 (*func6)(UNK_PTR *arg0, UNK_PTR *arg1);
 /*7*/ u16 (*func7)(Object* arg0);

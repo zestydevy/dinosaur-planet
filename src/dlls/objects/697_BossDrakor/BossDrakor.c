@@ -11,11 +11,21 @@
 #include "functions.h"
 #include "dll.h"
 
+enum DrakorLogicStates {
+    DRAKOR_LSTATE_0 = 0, // flying (upper area with space background)
+    DRAKOR_LSTATE_1 = 1  // on ground, racing towards the crystal 
+};
+
+enum DrakorAnimStates {
+    DRAKOR_ASTATE_0 = 0,
+    DRAKOR_ASTATE_1 = 1
+};
+
 typedef struct {
-/*0*/ u16 unk0;
-/*2*/ s16 unk2;
-/*4*/ u16 unk4;
-/*6*/ u16 unk6;
+/*0*/ s16 unk0;
+/*2*/ s16 unk2; // rate of yaw spin in logic state 0
+/*4*/ u16 unk4; // dist to target?
+/*6*/ u16 animIndex; // not a mod anim index, index into below anim related statics
 /*8*/ Object *laser;
 } BossDrakor_ActualData;
 
@@ -24,53 +34,57 @@ typedef struct {
 /*3FC*/ BossDrakor_ActualData actualData;
 } DLL697_Data;
 
-/*0x0*/ static s16 _data_0[] = {
+// anim state 1 model animation indices
+/*0x0*/ static s16 sAnimState1ModAnims[] = {
     0x0007, 0x0007, 0x0008, 0x0007, 0x0008, 0x0007, 0x0008, 0x0007, 
-    0x0008, 0x0007, 0x0008, 0x0007, 0x0008, 0x0000
+    0x0008, 0x0007, 0x0008, 0x0007, 0x0008
 };
-/*0x1C*/ static f32 _data_1C[] = {
+// anim state 1 animTickDelta values
+/*0x1C*/ static f32 sAnimState1AnimTickDeltas[] = {
     0.008f, 0.008f, 0.008f, 0.008f, 0.008f, 0.008f, 0.008f, 0.008f, 
     0.008f, 0.008f, 0.008f, 0.008f, 0.008f
 };
-/*0x50*/ static s16 _data_50[] = {
+// anim state 0 model animation indices
+/*0x50*/ static s16 sAnimState0ModAnims[] = {
     0x0001, 0x0001, 0x0006, 0x0001, 0x0001, 0x0006, 0x0001, 0x0006
 };
-/*0x60*/ static f32 _data_60[] = {
+// anim state 0 animTickDelta values
+/*0x60*/ static f32 sAnimState0AnimTickDeltas[] = {
     0.008f, 0.009f, 0.002f, 0.01f, 0.009f, 0.002f, 0.008f, 0.002f
 };
 
 /*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[2];
 /*0x8*/ static ObjFSA_StateCallback sLogicStateCallbacks[2];
 
-static void dll_697_func_454(Object *self, BossDrakor_ActualData *objdata);
-static int dll_697_func_50C(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
-static void dll_697_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa);
-static void dll_697_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa);
-static void dll_697_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa);
-static void dll_697_func_8E0(u8 arg0);
-static s32 dll_697_func_99C(Object *self, ObjFSA_Data *fsa, f32 updateRate);
-static s32 dll_697_func_ABC(Object *self, ObjFSA_Data *fsa, f32 updateRate);
-static s32 dll_697_func_BC8(Object *self, ObjFSA_Data *fsa, f32 updateRate);
-static s32 dll_697_func_C54(Object *self, ObjFSA_Data *fsa, f32 updateRate);
+static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata);
+static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
+static void BossDrakor_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa);
+static void BossDrakor_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa);
+static void BossDrakor_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa);
+static void BossDrakor_func_8E0(u8 arg0);
+static s32 BossDrakor_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate);
+static s32 BossDrakor_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate);
+static s32 BossDrakor_logic_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate);
+static s32 BossDrakor_logic_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-static void dll_697_func_0(void) {
-    sAnimStateCallbacks[0] = dll_697_func_99C;
-    sAnimStateCallbacks[1] = dll_697_func_ABC;
-    sLogicStateCallbacks[0] = dll_697_func_BC8;
-    sLogicStateCallbacks[1] = dll_697_func_C54;
+static void BossDrakor_init_fsa_callbacks(void) {
+    sAnimStateCallbacks[0] = BossDrakor_anim_state_0;
+    sAnimStateCallbacks[1] = BossDrakor_anim_state_1;
+    sLogicStateCallbacks[0] = BossDrakor_logic_state_0;
+    sLogicStateCallbacks[1] = BossDrakor_logic_state_1;
 }
 
 // offset: 0x54 | ctor
-void dll_697_ctor(void *dll) {
-    dll_697_func_0();
+void BossDrakor_ctor(void *dll) {
+    BossDrakor_init_fsa_callbacks();
 }
 
 // offset: 0x94 | dtor
-void dll_697_dtor(void *dll) { }
+void BossDrakor_dtor(void *dll) { }
 
 // offset: 0xA0 | func: 1 | export: 0
-void dll_697_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
+void BossDrakor_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
     DLL33_Data *sp34;
     s32 var_v0;
 
@@ -80,9 +94,9 @@ void dll_697_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
         var_v0 = 7;
     }
     gDLL_33->vtbl->func21(self, setup, sp34, 2, 2, 0x108, (u8) var_v0, 20.0f);
-    self->animCallback = dll_697_func_50C;
-    sp34->fsa.animState = 0;
-    sp34->fsa.logicState = 0;
+    self->animCallback = BossDrakor_anim_callback;
+    sp34->fsa.animState = DRAKOR_ASTATE_0;
+    sp34->fsa.logicState = DRAKOR_LSTATE_0;
     if (self->unk64 != NULL) {
         self->unk64->unk3A = 0x64;
         self->unk64->unk3B = 0x96;
@@ -90,7 +104,7 @@ void dll_697_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
 }
 
 // offset: 0x160 | func: 2 | export: 1
-void dll_697_control(Object *self) {
+void BossDrakor_control(Object *self) {
     DLL33_Data *dll33Data;
     BossDrakor_ActualData *objdata;
 
@@ -102,19 +116,19 @@ void dll_697_control(Object *self) {
         if (gDLL_33->vtbl->func11(self, dll33Data, 1) != 0) {
             objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
             if (objdata->laser == NULL) {
-                dll_697_func_454(self, objdata);
+                BossDrakor_create_laser(self, objdata);
             }
-            dll_697_func_838(self, dll33Data, &dll33Data->fsa);
-            dll_697_func_55C(self, dll33Data, &dll33Data->fsa);
+            BossDrakor_func_838(self, dll33Data, &dll33Data->fsa);
+            BossDrakor_func_55C(self, dll33Data, &dll33Data->fsa);
         }
     }
 }
 
 // offset: 0x24C | func: 3 | export: 2
-void dll_697_update(Object *self) { }
+void BossDrakor_update(Object *self) { }
 
 // offset: 0x258 | func: 4 | export: 3
-void dll_697_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     DLL33_Data *dll33Data;
     BossDrakor_ActualData *objdata;
     f32 sp4C;
@@ -148,22 +162,22 @@ void dll_697_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 }
 
 // offset: 0x3F0 | func: 5 | export: 4
-void dll_697_free(Object *self, s32 a1) {
+void BossDrakor_free(Object *self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_4);
 }
 
 // offset: 0x430 | func: 6 | export: 5
-u32 dll_697_get_model_flags(Object *self) {
+u32 BossDrakor_get_model_flags(Object *self) {
     return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8 | MODFLAGS_EVENTS;
 }
 
 // offset: 0x440 | func: 7 | export: 6
-u32 dll_697_get_data_size(Object *self, u32 a1) {
+u32 BossDrakor_get_data_size(Object *self, u32 a1) {
     return sizeof(DLL697_Data);
 }
 
 // offset: 0x454 | func: 8
-static void dll_697_func_454(Object *self, BossDrakor_ActualData *objdata) {
+static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata) {
     ObjSetup *laserSetup;
     DLL33_ObjSetup *drakorSetup;
 
@@ -180,7 +194,7 @@ static void dll_697_func_454(Object *self, BossDrakor_ActualData *objdata) {
 }
 
 // offset: 0x50C | func: 9
-static int dll_697_func_50C(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
+static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
     DLL33_Data *temp_v1;
     u8 i;
     u8 temp;
@@ -204,7 +218,7 @@ static int dll_697_func_50C(Object *self, Object *arg1, AnimObj_Data *arg2, s8 a
 }
 
 // offset: 0x55C | func: 10
-static void dll_697_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
+static void BossDrakor_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
     BossDrakor_ActualData *objdata = arg1->unk3F4;
     DLL33_ObjSetup *setup = (DLL33_ObjSetup*)self->setup;
 
@@ -216,7 +230,7 @@ static void dll_697_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
         return;
     }
     fsa->target = get_player();
-    if (fsa->logicState == 1) {
+    if (fsa->logicState == DRAKOR_LSTATE_1) {
         gDLL_33->vtbl->func10(self, fsa, 0.17f, 1);
     } else {
         gDLL_33->vtbl->func10(self, fsa, 0.0f, 1);
@@ -225,18 +239,18 @@ static void dll_697_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
     self->unkC0 = NULL;
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
     self->unkC0 = arg1->unk3AC;
-    dll_697_func_768(self, arg1, objdata, fsa);
+    BossDrakor_func_768(self, arg1, objdata, fsa);
 }
 
 // offset: 0x768 | func: 11
-static void dll_697_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa) {
+static void BossDrakor_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa) {
     Object *laser;
 
     if (fsa->unk308 & 0x40) {
-        if (fsa->animState == 0) {
+        if (fsa->animState == DRAKOR_ASTATE_0) {
             laser = objdata->laser;
             ((DLL_Unknown*)laser->dll)->vtbl->func[7].withThreeArgs((s32)laser, 0x78, 0xF0);
-        } else if (fsa->animState == 1) {
+        } else if (fsa->animState == DRAKOR_ASTATE_1) {
             laser = objdata->laser;
             ((DLL_Unknown*)laser->dll)->vtbl->func[7].withThreeArgs((s32)laser, 0x78, 0xF0);
         }
@@ -245,7 +259,7 @@ static void dll_697_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualDa
 }
 
 // offset: 0x838 | func: 12
-static void dll_697_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
+static void BossDrakor_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
     BossDrakor_ActualData *objdata = arg1->unk3F4;
     Object *sp30;
     s32 _pad;
@@ -253,20 +267,20 @@ static void dll_697_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
     s32 sp24;
 
     if (func_80025F40(self, &sp30, &sp28, &sp24) != 0) {
-        if ((sp30->id != OBJ_BossDrakorAster) && (sp30->id != OBJ_BossDrakorFlatR) && (fsa->logicState != 1)) {
-            fsa->logicState = 1;
-            objdata->unk6 = 0;
-            dll_697_func_8E0(1);
+        if ((sp30->id != OBJ_BossDrakorAster) && (sp30->id != OBJ_BossDrakorFlatR) && (fsa->logicState != DRAKOR_LSTATE_1)) {
+            fsa->logicState = DRAKOR_LSTATE_1;
+            objdata->animIndex = 0;
+            BossDrakor_func_8E0(1);
         }
     }
 }
 
 // offset: 0x8E0 | func: 13
-static void dll_697_func_8E0(u8 arg0) {
-    Object** objList;
+static void BossDrakor_func_8E0(u8 arg0) {
+    Object **objList;
     s32 i;
     s32 numObjs;
-    Object* obj;    
+    Object *obj;    
 
     objList = get_world_objects(&i, &numObjs);
     while (i < numObjs) {
@@ -280,7 +294,7 @@ static void dll_697_func_8E0(u8 arg0) {
 }
 
 // offset: 0x99C | func: 14
-static s32 dll_697_func_99C(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
+static s32 BossDrakor_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
     DLL33_Data *dll33Data = self->data;
     BossDrakor_ActualData *objdata = dll33Data->unk3F4;
 
@@ -288,16 +302,16 @@ static s32 dll_697_func_99C(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
         func_80032C0C(self, fsa->target, &dll33Data->unk3BC, 0x19);
     }
     if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
-        func_80023D30(self, (s32) _data_50[objdata->unk6], 0.0f, 0);
+        func_80023D30(self, (s32) sAnimState0ModAnims[objdata->animIndex], 0.0f, 0);
     }
-    fsa->animTickDelta = _data_60[objdata->unk6];
+    fsa->animTickDelta = sAnimState0AnimTickDeltas[objdata->animIndex];
     self->srt.yaw += objdata->unk2;
     gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 0);
     return 0;
 }
 
 // offset: 0xABC | func: 15
-static s32 dll_697_func_ABC(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
+static s32 BossDrakor_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
     DLL33_Data *dll33Data = self->data;
     BossDrakor_ActualData *objdata = dll33Data->unk3F4;
 
@@ -305,31 +319,31 @@ static s32 dll_697_func_ABC(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
         func_80032C0C(self, fsa->target, &dll33Data->unk3BC, 0x19);
     }
     if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
-        func_80023D30(self, (s32) _data_0[objdata->unk6], 0.0f, 0);
+        func_80023D30(self, (s32) sAnimState1ModAnims[objdata->animIndex], 0.0f, 0);
     }
-    fsa->animTickDelta = _data_1C[objdata->unk6];
+    fsa->animTickDelta = sAnimState1AnimTickDeltas[objdata->animIndex];
     gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 1);
     return 0;
 }
 
 // offset: 0xBC8 | func: 16
-static s32 dll_697_func_BC8(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
+static s32 BossDrakor_logic_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
     DLL33_Data *dll33Data = (DLL33_Data*)self->data;
     BossDrakor_ActualData *objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
 
     if (fsa->enteredLogicState != 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
     } else if (fsa->unk33A != 0) {
-        objdata->unk6 += 1;
-        if (objdata->unk6 >= 8) {
-            objdata->unk6 = 0;
+        objdata->animIndex += 1;
+        if (objdata->animIndex >= 8) {
+            objdata->animIndex = 0;
         }
     }
     return 0;
 }
 
 // offset: 0xC54 | func: 17
-static s32 dll_697_func_C54(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
+static s32 BossDrakor_logic_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
     DLL33_Data *dll33Data = (DLL33_Data*)self->data;
     BossDrakor_ActualData *objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
 
@@ -337,11 +351,11 @@ static s32 dll_697_func_C54(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
 
     } else if (fsa->unk33A != 0) {
-        objdata->unk6 += 1;
-        if (objdata->unk6 >= 13) {
-            dll_697_func_8E0(0);
-            objdata->unk6 = 0;
-            return 1;
+        objdata->animIndex += 1;
+        if (objdata->animIndex >= 13) {
+            BossDrakor_func_8E0(0);
+            objdata->animIndex = 0;
+            return DRAKOR_LSTATE_0 + 1;
         }
     }
 

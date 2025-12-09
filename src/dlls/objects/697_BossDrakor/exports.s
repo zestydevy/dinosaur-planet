@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_697_ctor
-.dword dll_697_dtor
+.dword BossDrakor_ctor
+.dword BossDrakor_dtor
 
 # export table
-/*0*/ .dword dll_697_setup
-/*1*/ .dword dll_697_control
-/*2*/ .dword dll_697_update
-/*3*/ .dword dll_697_print
-/*4*/ .dword dll_697_free
-/*5*/ .dword dll_697_get_model_flags
-/*6*/ .dword dll_697_get_data_size
+/*0*/ .dword BossDrakor_setup
+/*1*/ .dword BossDrakor_control
+/*2*/ .dword BossDrakor_update
+/*3*/ .dword BossDrakor_print
+/*4*/ .dword BossDrakor_free
+/*5*/ .dword BossDrakor_get_model_flags
+/*6*/ .dword BossDrakor_get_data_size
