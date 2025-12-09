@@ -1,6 +1,7 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/33.h"
 #include "dlls/objects/214_animobj.h"
+#include "dlls/objects/698_BossDrakor_Laser.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/model.h"
@@ -249,10 +250,10 @@ static void BossDrakor_func_768(Object *self, DLL33_Data *arg1, BossDrakor_Actua
     if (fsa->unk308 & 0x40) {
         if (fsa->animState == DRAKOR_ASTATE_0) {
             laser = objdata->laser;
-            ((DLL_Unknown*)laser->dll)->vtbl->func[7].withThreeArgs((s32)laser, 0x78, 0xF0);
+            ((DLL_698_BossDrakor_Laser*)laser->dll)->vtbl->func7(laser, 0x78, 0xF0);
         } else if (fsa->animState == DRAKOR_ASTATE_1) {
             laser = objdata->laser;
-            ((DLL_Unknown*)laser->dll)->vtbl->func[7].withThreeArgs((s32)laser, 0x78, 0xF0);
+            ((DLL_698_BossDrakor_Laser*)laser->dll)->vtbl->func7(laser, 0x78, 0xF0);
         }
         fsa->unk308 &= ~0x40;
     }

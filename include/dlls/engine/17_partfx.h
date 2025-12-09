@@ -156,6 +156,8 @@ enum ParticleID {
     PARTICLE_684 = 0x684,
     /* --- DLL 49 START --- */
     PARTICLE_6D7 = 0x6D7,
+    PARTICLE_6DB = 0x6DB,
+    PARTICLE_6DC = 0x6DC,
     PARTICLE_707 = 0x707,
     /* --- DLL 49 END --- */
     /* --- DLL 51 START --- */

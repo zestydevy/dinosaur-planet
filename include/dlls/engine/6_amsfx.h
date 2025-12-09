@@ -263,7 +263,13 @@ enum SoundID {
     SOUND_986_Waterfall_Low_Loop = 0x986,   // used in DLL 6
     SOUND_987_Waterfall_High_Loop = 0x987,  // used in DLL 6
 
+    SOUND_98F = 0x98F,
+    SOUND_990 = 0x990,
+
     SOUND_99a_Mechanical_Ratcheting = 0x99a,
+
+    SOUND_9A0 = 0x9A0,
+    SOUND_9A1 = 0x9A1,
 
     SOUND_9A3_Magic_Reverse_Cymbal = 0x9A3,
 
