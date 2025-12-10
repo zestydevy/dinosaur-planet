@@ -4,16 +4,16 @@
 #include "dlls/objects/314_foodbag.h"
 
 /*0x0*/ static s16 food_anim_gamebitIDs[] = {
-    BIT_Green_Apple_Count, 
-    BIT_Red_Apple_Count, 
-    BIT_Brown_Apple_Count, 
-    BIT_Fish_Count, 
-    BIT_Smoked_Fish_Count, 
-    BIT_Dino_Egg_Count, 
-    BIT_Moldy_Meat_Count, 
-    BIT_Green_Bean_Count, 
-    BIT_Red_Bean_Count, 
-    BIT_Brown_Bean_Count, 
+    BIT_Green_Apple_Count,
+    BIT_Red_Apple_Count,
+    BIT_Brown_Apple_Count,
+    BIT_Fish_Count,
+    BIT_Smoked_Fish_Count,
+    BIT_Dino_Egg_Count,
+    BIT_Moldy_Meat_Count,
+    BIT_Green_Bean_Count,
+    BIT_Red_Bean_Count,
+    BIT_Brown_Bean_Count,
     BIT_Blue_Bean_Count
 };
 
@@ -32,33 +32,33 @@
 };
 
 /*0x2C*/ static FoodbagItem foodbag_items[] = {
-    {0,      0, 0,  0,               NO_GAMEBIT,             NO_FOOD_OBJECT_ID}, 
-    {2000,   1, 1,  FOOD_TYPE(3),    BIT_Green_Apple_Count,  OBJ_foodbagRedApple},
-    {6000,   4, 1,  FOOD_TYPE(3),    BIT_Red_Apple_Count,    OBJ_foodbagRedApple},
-    {6000,   2, 1,  FOOD_GONE,       BIT_Brown_Apple_Count,  OBJ_foodbagRedApple}, 
-    {6000,   4, 2,  FOOD_TYPE(5),    BIT_Fish_Count,         OBJ_foodbagNewFish}, 
-    {6000,   8, 2,  FOOD_GONE,       BIT_Smoked_Fish_Count,  OBJ_foodbagNewFish}, 
-    {30000,  8, 1,  FOOD_TYPE(7),    BIT_Dino_Egg_Count,     OBJ_foodbagNewMeat}, 
-    {30000,  4, 1,  FOOD_GONE,       BIT_Moldy_Meat_Count,   OBJ_foodbagNewMeat}, 
-    {30000,  1, 1,  FOOD_TYPE(10),   BIT_Green_Bean_Count,   OBJ_foodbagGreenBea}, 
-    {30000,  4, 1,  FOOD_TYPE(10),   BIT_Red_Bean_Count,     OBJ_foodbagGreenBea}, 
-    {30000, 1, 1,   FOOD_GONE,       BIT_Brown_Bean_Count,   OBJ_foodbagGreenBea}, 
-    {30000, 2, 1,   FOOD_TYPE(10),   BIT_Blue_Bean_Count,    OBJ_foodbagGreenBea}
+    {0,      0, 0,  0,                NO_GAMEBIT,             NO_FOOD_OBJECT_ID},
+    {2000,   1, 1,  FOOD_Brown_Apple, BIT_Green_Apple_Count,  OBJ_foodbagRedApple},
+    {6000,   4, 1,  FOOD_Brown_Apple, BIT_Red_Apple_Count,    OBJ_foodbagRedApple},
+    {6000,   2, 1,  FOOD_GONE,        BIT_Brown_Apple_Count,  OBJ_foodbagRedApple},
+    {6000,   4, 2,  FOOD_Smoked_Fish, BIT_Fish_Count,         OBJ_foodbagNewFish},
+    {6000,   8, 2,  FOOD_GONE,        BIT_Smoked_Fish_Count,  OBJ_foodbagNewFish},
+    {30000,  8, 1,  FOOD_Moldy_Meat,  BIT_Dino_Egg_Count,     OBJ_foodbagNewMeat},
+    {30000,  4, 1,  FOOD_GONE,        BIT_Moldy_Meat_Count,   OBJ_foodbagNewMeat},
+    {30000,  1, 1,  FOOD_Brown_Bean,  BIT_Green_Bean_Count,   OBJ_foodbagGreenBea},
+    {30000,  4, 1,  FOOD_Brown_Bean,  BIT_Red_Bean_Count,     OBJ_foodbagGreenBea},
+    {30000, 1, 1,   FOOD_GONE,        BIT_Brown_Bean_Count,   OBJ_foodbagGreenBea},
+    {30000, 2, 1,   FOOD_Brown_Bean,  BIT_Blue_Bean_Count,    OBJ_foodbagGreenBea}
 };
 
 /*0xA4*/ static s32 foodbag_cmdmenu_gamebitIDs[] = {
-    BIT_Foodbag_Setting_Eat_First, 
-    BIT_Foodbag_Setting_Eat_Later, 
-    BIT_Green_Apple_Count, 
-    BIT_Red_Apple_Count, 
-    BIT_Brown_Apple_Count, 
-    BIT_Fish_Count, 
-    BIT_Smoked_Fish_Count, 
-    BIT_Dino_Egg_Count, 
-    BIT_Moldy_Meat_Count, 
-    BIT_Green_Bean_Count, 
-    BIT_Red_Bean_Count, 
-    BIT_Brown_Bean_Count, 
+    BIT_Foodbag_Setting_Eat_First,
+    BIT_Foodbag_Setting_Eat_Later,
+    BIT_Green_Apple_Count,
+    BIT_Red_Apple_Count,
+    BIT_Brown_Apple_Count,
+    BIT_Fish_Count,
+    BIT_Smoked_Fish_Count,
+    BIT_Dino_Egg_Count,
+    BIT_Moldy_Meat_Count,
+    BIT_Green_Bean_Count,
+    BIT_Red_Bean_Count,
+    BIT_Brown_Bean_Count,
     BIT_Blue_Bean_Count
 };
 
@@ -83,7 +83,7 @@ void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
     Foodbag_Data* objData;
 
     objData = self->data;
-    
+
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
     objData->dllPutdown = dll_load_deferred(56, 10);
     objData->placedObjects.nextIndex = 0;
@@ -92,9 +92,9 @@ void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
         objData->placedObjects.objects[index] = NULL;
         objData->placedObjects.foodType[index] = 0;
     }
-    
+
     objData->playerEatTimer = -1.0f;
-    
+
     if (playerNo == PLAYER_SABRE) {
         objData->capacityGamebits.small  = BIT_Sabre_Foodbag_S;
         objData->capacityGamebits.medium = BIT_Sabre_Foodbag_M;
@@ -104,29 +104,29 @@ void Foodbag_setup(Object *self, Foodbag_Setup *objSetup, s32 arg2) {
         objData->capacityGamebits.medium = BIT_Krystal_Foodbag_M;
         objData->capacityGamebits.large  = BIT_Krystal_Foodbag_L;
     }
-    
+
     objData->capacity = 0;
     objData->bagSlots = gDLL_29_Gplay->vtbl->func_1974();
-    
+
     if (main_get_bits(BIT_Foodbag_Setting_Eat_First)) {
         objData->eatFirst = TRUE;
     } else {
         objData->eatFirst = FALSE;
     }
-    
+
     playerStats = gDLL_29_Gplay->vtbl->get_player_stats();
     objData->playerHealth = &playerStats->health;
     objData->playerHealthMax = &playerStats->healthMax;
-    
+
     //Set initial foodbag config, if none set
-    if (main_get_bits(BIT_Foodbag_Setting_Eat_Later) == FALSE && 
+    if (main_get_bits(BIT_Foodbag_Setting_Eat_Later) == FALSE &&
         main_get_bits(BIT_Foodbag_Setting_Eat_First) == FALSE) {
 
         //Make sure eat/place/give options are available
         main_set_bits(BIT_Foodbag_Eat, TRUE);
         main_set_bits(BIT_Foodbag_Place, TRUE);
         main_set_bits(BIT_Foodbag_Give, TRUE);
-        
+
         //Default to "Eat Later" config
         main_set_bits(BIT_Foodbag_Setting_Eat_Later, TRUE);
     }
@@ -143,13 +143,13 @@ void Foodbag_control(Object* self) {
     FoodbagItem* food;
 
     objData = self->data;
-    
+
     gDLL_1_UI->vtbl->func_70A0(0);
     uiGamebit = gDLL_1_UI->vtbl->func_E2C(foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(foodbag_cmdmenu_gamebitIDs));
     uiSubmenuGamebit = gDLL_1_UI->vtbl->func_F40();
     gDLL_1_UI->vtbl->func_70A0(1);
     Foodbag_set_capacity(self);
-    
+
     //Check if a relevant item was selected in the cmdmenu
     if (uiGamebit != NO_GAMEBIT) {
         if (uiGamebit == BIT_Foodbag_Setting_Eat_First) {
@@ -171,8 +171,8 @@ void Foodbag_control(Object* self) {
                     case BIT_Foodbag_Give:
                         break;
                     case BIT_Foodbag_Eat:
-                        if ((*objData->playerHealth < *objData->playerHealthMax) && 
-                                food->healthRestored && 
+                        if ((*objData->playerHealth < *objData->playerHealthMax) &&
+                                food->healthRestored &&
                                 Foodbag_eat_food(objData, foodType)) {
                             Foodbag_delete_food_by_gamebit(self, uiGamebit);
                         }
@@ -188,7 +188,7 @@ void Foodbag_control(Object* self) {
             }
         }
     }
-    
+
     foodType = objData->dllPutdown->vtbl->tick_food_lifetimes(objData->bagSlots, foodbag_items);
     if (foodType) {
         Foodbag_collect_food(self, foodType);
@@ -249,7 +249,7 @@ int Foodbag_set_eat_config(Object* self, s32 eatFirst) {
     s32 previousSetting;
 
     objData = self->data;
-    
+
     previousSetting = objData->eatFirst;
     if (eatFirst == FALSE) {
         main_set_bits(BIT_Foodbag_Setting_Eat_First, FALSE);
@@ -272,7 +272,7 @@ int Foodbag_set_eat_config(Object* self, s32 eatFirst) {
 void Foodbag_collect_food(Object* self, s32 foodType) {
     Foodbag_Data* objData = self->data;
 
-    if ((objData->eatFirst == TRUE && (*objData->playerHealth < *objData->playerHealthMax)) 
+    if ((objData->eatFirst == TRUE && (*objData->playerHealth < *objData->playerHealthMax))
         || objData->capacity == 0) {
         Foodbag_eat_food(objData, foodType);
     } else if (objData->dllPutdown->vtbl->add_food(foodType, objData->capacity, objData->bagSlots, foodbag_items) == FALSE) {
@@ -302,22 +302,22 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
     u8 healthRestored;
     s32 currentHealth;
     s8 *playerHealth;
-    
+
     healthRestored = foodbag_items[objData->dllPutdown->vtbl->get_foodID_from_foodType(foodType)].healthRestored;
-    
+
     if (healthRestored){
         playerHealth = objData->playerHealth;
         currentHealth = *playerHealth;
-        if (healthRestored + currentHealth > *objData->playerHealthMax) { 
+        if (healthRestored + currentHealth > *objData->playerHealthMax) {
             if (objData->playerHealth && objData->playerHealth && objData->playerHealth) {} //@fake?
-            
+
             if (*objData->playerHealthMax != currentHealth) {
                 gDLL_6_AMSFX->vtbl->play_sound(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
             }
             *objData->playerHealth = *objData->playerHealthMax;
             return TRUE;
         }
-        
+
         *objData->playerHealth = healthRestored + currentHealth;
         if (*objData->playerHealth == *objData->playerHealthMax){
             objData->playerEatTimer = 120.0f;
@@ -341,7 +341,7 @@ s32 Foodbag_count_slots_occupied(Object* self) {
     s8 index;
 
     objData = self->data;
-    
+
     index = 0;
     while (objData->bagSlots->foodType[index]) {
         index++;
@@ -349,7 +349,7 @@ s32 Foodbag_count_slots_occupied(Object* self) {
             return objData->capacity;
         }
     }
-    
+
     return index;
 }
 
@@ -358,12 +358,12 @@ s16 Foodbag_get_anim_objectID_from_food_gamebit(s16 foodGamebit) {
     s32 index;
 
     for (index = 0; index < 10 && foodGamebit != food_anim_gamebitIDs[index]; index++){}
-    
+
     if (index == 10) {
         index = 0;
     }
 
     STUBBED_PRINTF(" Food Type Found %i : Obj %i ");
-    
+
     return food_anim_objectIDs[index];
 }
