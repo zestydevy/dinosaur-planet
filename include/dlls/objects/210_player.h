@@ -313,7 +313,7 @@ typedef enum {
     PLAYER_ASTATE_Falling = 13, //includes landing phase
     PLAYER_ASTATE_14 = 14,
     PLAYER_ASTATE_15 = 15,
-    PLAYER_ASTATE_16 = 16,
+    PLAYER_ASTATE_Ledge_Grab_From_Jump = 16,
     PLAYER_ASTATE_Ledge_Grab_Start = 17,
     PLAYER_ASTATE_Ledge_Climb_Over = 18,
     PLAYER_ASTATE_Ledge_Grab_Holding = 19,
