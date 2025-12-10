@@ -318,7 +318,7 @@ s32 func_80031DD8(Object*, Object*, s32);
 };
 
 //Sidekick command soundIDs
-/*0x4C0*/ static s16 _data_4C0[] = { SOUND_Krystal_Whistle, SOUND_Krystal_Find, SOUND_Krystal_Distract, SOUND_Krystal_Guard, SOUND_Krystal_Flame, SOUND_Krystal_Fetch };
+/*0x4C0*/ static s16 _data_4C0[] = { SOUND_Krystal_Heel, SOUND_Krystal_Find, SOUND_Krystal_Distract, SOUND_Krystal_Guard, SOUND_Krystal_Flame, SOUND_Krystal_Fetch };
 /*0x4CC*/ static s16 _data_4CC[] = { SOUND_Sabre_Heel, SOUND_Sabre_Find, SOUND_Sabre_Distract, SOUND_Sabre_Guard, SOUND_Sabre_Flame, SOUND_Sabre_Fetch };
 
 /*0x4D8*/ static u16 _data_4D8[] = { SOUND_B22_Climb_Sound_A, SOUND_B1E_Climb_Sound_B, SOUND_B22_Climb_Sound_A, 0x0000 };
