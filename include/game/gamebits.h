@@ -1000,12 +1000,12 @@ typedef enum {
     BIT_3E1 = 0x3E1, // len:1 group:1
     BIT_3E2 = 0x3E2, // len:1 group:0
     BIT_3E3 = 0x3E3, // len:1 group:0
-    BIT_3E4 = 0x3E4, // len:8 group:2
+    BIT_Scarab_Count_Krystal = 0x3E4, // len:8 group:2
     BIT_3E5 = 0x3E5, // len:1 group:1
     BIT_3E6 = 0x3E6, // len:1 group:2
     BIT_3E7 = 0x3E7, // len:1 group:2
     BIT_3E8 = 0x3E8, // len:1 group:0
-    BIT_3E9 = 0x3E9, // len:1 group:0
+    BIT_3E9 = 0x3E9, // len:1 group:0 collectable DLL - ate DIMAlpineRoot2 (on SnowHorn?)
     BIT_Play_Seq_00D7_Swapped_to_Krystal = 0x3EA, // len:1 group:1
     BIT_Play_Seq_0107_Rocky_Intro_Unused = 0x3EB, // len:1 group:1
     BIT_3EC = 0x3EC, // len:1 group:0
@@ -1540,7 +1540,7 @@ typedef enum {
     BIT_5FD = 0x5FD, // len:1 group:1
     BIT_5FE = 0x5FE, // len:1 group:1
     BIT_5FF = 0x5FF, // len:1 group:1
-    BIT_600 = 0x600, // len:8 group:2
+    BIT_Scarab_Count_Sabre = 0x600, // len:8 group:2
     BIT_SwapStone_Store_ObjGroup_Bits = 0x601, // len:32 group:3
     BIT_602 = 0x602, // len:1 group:2
     BIT_603 = 0x603, // len:1 group:2
@@ -2099,7 +2099,7 @@ typedef enum {
     BIT_82C = 0x82C, // len:1 group:0
     BIT_82D = 0x82D, // len:1 group:1
     BIT_82E = 0x82E, // len:1 group:1
-    BIT_82F = 0x82F, // len:1 group:1
+    BIT_CC_Bought_GuardClaw_Map = 0x82F, // len:1 group:1 [LEVEL MAP GAMEBITS]
     BIT_830 = 0x830, // len:1 group:1
     BIT_831 = 0x831, // len:1 group:1
     BIT_832 = 0x832, // len:1 group:1
