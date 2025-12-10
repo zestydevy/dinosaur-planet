@@ -701,7 +701,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         obj->unk78 = (ObjectStruct78*)mmAlign4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
-            obj->unk78[j].unk4 = def->unk40[j].unk10;
+            obj->unk78[j].colourIndex = def->unk40[j].unk10;
             obj->unk78[j].unk0 = def->unk40[j].unk0c;
             obj->unk78[j].unk3 = def->unk40[j].unk0f;
             obj->unk78[j].unk1 = def->unk40[j].unk0d;
@@ -1816,7 +1816,8 @@ void obj_free_effect_box(Object *obj) {
     }
 }
 
-void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6) {
+/** Set interaction arrow params? */
+void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 colourIndex) {
     ObjectStruct78 *dst;
 
     if (obj != NULL) {
@@ -1841,8 +1842,8 @@ void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
                 dst->unk3 = param5;
             }
 
-            if (param6 != 0) {
-                dst->unk4 = param6;
+            if (colourIndex != 0) {
+                dst->colourIndex = colourIndex ;
             }
         }
     }
@@ -1863,7 +1864,7 @@ void func_80023C6C(Object *obj) {
             dst->unk1 = src->unk0d;
             dst->unk2 = src->unk0e;
             dst->unk3 = src->unk0f;
-            dst->unk4 = src->unk10;
+            dst->colourIndex = src->unk10;
         }
     }
 }

@@ -2347,7 +2347,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     gDLL_1_UI->vtbl->func_1338(objdata->unk708->def->unkAA, 0xA0, 0x8C);
                 }
             } else {
-                gDLL_1_UI->vtbl->func_130C(objdata->unk708->def->unkA2, 0xA0, 0x8C);
+                gDLL_1_UI->vtbl->func_130C(objdata->unk708->def->gametextIndex, 0xA0, 0x8C);
             }
             if (arg2->unk8D == 1) {
                 gDLL_3_Animation->vtbl->func19(0x54, 3, 0, 0);
@@ -9862,8 +9862,8 @@ void dll_210_add_scarab(Object* player, s32 amount) {
 
     newScarabCount = objdata->stats->scarabs;
     newScarabCount += amount;
-    if (objdata->stats->unkA < amount) {
-        objdata->stats->unkA = amount;
+    if (objdata->stats->scarabsLargestPayday < amount) {
+        objdata->stats->scarabsLargestPayday = amount;
     }
 
     if (newScarabCount < 0) {
@@ -9892,8 +9892,8 @@ s8 dll_210_func_1D13C(Object* player) {
     Player_Data* objdata = player->data;
     s8 previous;
 
-    previous = objdata->stats->unkA;
-    objdata->stats->unkA = 0;
+    previous = objdata->stats->scarabsLargestPayday;
+    objdata->stats->scarabsLargestPayday = 0;
     return previous;
 }
 

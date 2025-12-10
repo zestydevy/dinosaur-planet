@@ -135,7 +135,7 @@ typedef struct {
 /*38*/ UNK_PTR *nextIntersectPoint; // TODO: confirm
 /*3c*/ UNK_PTR *nextIntersectLine; // TODO: confirm
 /*40*/ ObjDefStruct40 *unk40; //z-targetting data
-/*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm
+/*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm (0x10000: uses colour multiplier?)
 /*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
 /*4a*/ s16 shadowTexture; // TODO: confirm
 /*4c*/ UNK_TYPE_8 unk4C;
@@ -164,10 +164,10 @@ typedef struct {
 /*76*/ s16 modLineCount;
 /*78*/ s16 modLineNo;
 /*7a*/ s16 numSequences;
-/*7c*/ s16 helpTexts[4]; //one per model (GameTextId) // TODO: confirm
+/*7c*/ s16 helpTexts[4]; //one per model (GameTextId) // TODO: confirm //NOTE: possibly objHits flags?
 /*84*/ s16 unk84;
 /*86*/ u8 unk86;
-/*86*/ u8 unk87;
+/*87*/ u8 unk87;
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm
 /*8c*/ u8 nLights; // TODO: confirm
 /*8d*/ u8 lightIdx; // TODO: confirm
@@ -181,10 +181,10 @@ typedef struct {
 /*98*/ u8 _unk98[3];
 /*9b*/ u8 unk9b; // length of unk40 (z-targetting data)
 /*9c*/ u8 unk9c;
-/*9d*/ u8 unk9d;
+/*9d*/ u8 unk9d; // camera-related angle?
 /*9e*/ u8 _unk9e[2];
 /*a0*/ s16 unka0;
-/*a2*/ s16 unkA2;
+/*a2*/ s16 gametextIndex; //object description line index in gametext_3 or gametext_568 (appears when holding R) (-1 when unused)
 /*a4*/ u8 _unka4[0xAA - 0xA4];
 /*aa*/ s16 unkAA;
 } ObjDef;

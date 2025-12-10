@@ -76,7 +76,7 @@ typedef struct {
     /*0x4*/ s16 magic; //only mods when byte at "state"0x8bb is set.
     /*0x6*/ s16 magicMax; //capped at 100 (MAX_MAGIC).
     /*0x8*/ u16 scarabs; //capped at 999 (MAX_SCARABS).
-    /*0xA*/ s8 unkA;
+    /*0xA*/ s8 scarabsLargestPayday; //seems to track the highest-value Scarab collected 
     /*0xB*/ s8 dusters;
 } PlayerStats;
 
