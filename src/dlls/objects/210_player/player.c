@@ -683,15 +683,15 @@ void dll_210_control(Object* player) {
         data->unk0.unk324 = _bss_20C->srt.yaw;
     }
     data->unk8BC = gDLL_2_Camera->vtbl->func3();
-    if (data->unk8BC == 0x56 && data->unk0.animState != Player_FSA_Standing) {
-        gDLL_18_objfsa->vtbl->set_anim_state(player, &data->unk0, Player_FSA_Standing);
+    if (data->unk8BC == 0x56 && data->unk0.animState != PLAYER_ASTATE_Standing) {
+        gDLL_18_objfsa->vtbl->set_anim_state(player, &data->unk0, PLAYER_ASTATE_Standing);
     }
     data->unk7FC = 100000.0f;
     data->unk8BD = 1;
     data->unk0.unk304 = 0;
     for (i = 0; i < data->unk8AD; i++) { data->unk0.unk304 |= (1 << (data->unk8AE[i] & 0xFF)) & 0xFF; }
-    if (data->unk0.unk304 & 1 && data->unk0.animState != Player_FSA_Fall_Reset) {
-        gDLL_18_objfsa->vtbl->set_anim_state(player, &data->unk0, Player_FSA_Fall_Reset);
+    if (data->unk0.unk304 & 1 && data->unk0.animState != PLAYER_ASTATE_Fall_Reset) {
+        gDLL_18_objfsa->vtbl->set_anim_state(player, &data->unk0, PLAYER_ASTATE_Fall_Reset);
     }
     if (data->unk858 == NULL) {
         sp70 = sp6C / _bss_1AC;
@@ -901,7 +901,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             if (sp4C > 25.0f) {
                 dll_210_add_health(player, -1);
                 if (arg1->stats->health <= 0) {
-                    gDLL_18_objfsa->vtbl->set_anim_state(player, &arg1->unk0, Player_FSA_Dead);
+                    gDLL_18_objfsa->vtbl->set_anim_state(player, &arg1->unk0, PLAYER_ASTATE_Dead);
                 } else {
                     gDLL_29_Gplay->vtbl->checkpoint(NULL, 0, 1, map_get_layer());
                     gDLL_29_Gplay->vtbl->start_loaded_game();
@@ -1042,7 +1042,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                     temp_v0 = gDLL_2_Camera->vtbl->func3();
                     if ((temp_v0 != 0x64) && (temp_v0 != 0x5E)) {
                         gDLL_2_Camera->vtbl->func6(0x64, 1, 0, 0, NULL, 0x3C, 0xFF);
-                        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Aiming_Spell);
+                        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Aiming_Spell);
                         arg1->flags |= 0x400000;
                     }
                 } else {
@@ -1070,7 +1070,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             player->speed.y = 2.5f;
             player->speed.x = var_fs0 * 2.5f;
             player->speed.z = var_fs1 * 2.5f;
-            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Hurt_Knocked_Down);
+            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             dll_210_add_health(player, -messageArgument);
             if (arg1->unk868 != NULL) {
                 arg1->unk868->unkE0 = 0;
@@ -1088,7 +1088,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             player->speed.y = 2.5f;
             player->speed.x = -var_fs0 * 2.5f;
             player->speed.z = -var_fs1 * 2.5f;
-            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Hurt_Knocked_Down);
+            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             dll_210_add_health(player, -messageArgument);
             if (arg1->unk868 != NULL) {
                 arg1->unk868->unkE0 = 0;
@@ -1107,7 +1107,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             player->speed.x = -var_fs0 * 2.5f;
             player->speed.z = -var_fs1 * 2.5f;
             gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_Krystal_Hurt_Ough, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Hurt_Knocked_Down);
+            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Hurt_Knocked_Down);
             func_80023D30(player, 0x450, 0.0f, 0);
             dll_210_add_health(player, -messageArgument);
             if (arg1->unk868 != NULL) {
@@ -1119,17 +1119,17 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             if (messageArgument > 0) {
                 if (main_get_bits(messageArgument) != 0) {
                     obj_send_mesg(sp8C, 0x7000BU, player, NULL);
-                    if (fsa->animState != Player_FSA_Collecting) {
-                        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Collecting);
+                    if (fsa->animState != PLAYER_ASTATE_Collecting) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Collecting);
                     }
                 } else {
                     main_set_bits(messageArgument, 1U);
-                    if (fsa->animState != Player_FSA_42) {
-                        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_42);
+                    if (fsa->animState != PLAYER_ASTATE_42) {
+                        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_42);
                     }
                 }
-            } else if (fsa->animState != Player_FSA_42) {
-                gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_42);
+            } else if (fsa->animState != PLAYER_ASTATE_42) {
+                gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_42);
             }
             arg1->unk708 = sp8C;
             arg1->unk70C = messageArgument & 0xFFFF;
@@ -1143,7 +1143,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             if (arg1->unk868 == NULL) {
                 arg1->unk868 = sp8C;
                 arg1->unk86C = (messageArgument >> 0x10) / 10.0f;
-                gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Picking_Up);
+                gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Picking_Up);
                 arg1->unk8A9 = 1;
             }
             break;
@@ -1152,7 +1152,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             if (arg1->unk868 == NULL) {
                 arg1->unk868 = sp8C;
                 arg1->unk86C = messageArgument >> 0x10;
-                gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Picking_Up);
+                gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Picking_Up);
                 arg1->unk8A9 = 1;
             }
             break;
@@ -1163,9 +1163,9 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
 
 // offset: 0x24FC | func: 7
 int dll_210_func_24FC(Object *player, ObjFSA_Data *fsa) {
-  return fsa->animState == Player_FSA_Standing || 
-         fsa->animState == Player_FSA_Turning_On_Spot || 
-         fsa->animState == Player_FSA_Walking;
+  return fsa->animState == PLAYER_ASTATE_Standing || 
+         fsa->animState == PLAYER_ASTATE_Turning_On_Spot || 
+         fsa->animState == PLAYER_ASTATE_Walking;
 }
 
 // offset: 0x2534 | func: 8
@@ -1332,7 +1332,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     }
     dll_210_add_health(arg0, -sp7C);
     if (arg1->stats->health <= 0) {
-        gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, Player_FSA_Dead);
+        gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, PLAYER_ASTATE_Dead);
     }
 }
 #endif
@@ -1440,14 +1440,14 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
     data = player->data;
     sp80 = player->modelInsts[player->modelInstIdx];
     if (arg5 == -1 || !(data->flags & 0x4001)) {
-        if ((data->unk858 != NULL) && ((player->unkB0 & 0x1000) || data->unk0.animState == Player_FSA_Vehicle_Riding || data->unk0.animState == Player_FSA_Log_Riding)) {
+        if ((data->unk858 != NULL) && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             dll_210_func_8EA4(player, data, data->unk858, arg1, arg2, arg3, arg4, 1);
         }
         if (data->unk8BE == 1) {
             dll_210_func_3B40(player, arg1, arg2, arg3, arg4);
         }
         gDLL_16->vtbl->func1(player);
-        if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == Player_FSA_Vehicle_Riding || data->unk0.animState == Player_FSA_Log_Riding)) {
+        if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             ((DLL_IVehicle*)data->unk858->dll)->vtbl->func19(data->unk858, player->def->scale);
         }
         if (data->unk818 > 0.0f) {
@@ -1456,7 +1456,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
         player->srt.transl.y += data->unk83C;
         draw_object(player, arg1, arg2, arg3, arg4, 1.0f);
         player->srt.transl.y -= data->unk83C;
-        if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == Player_FSA_Vehicle_Riding || data->unk0.animState == Player_FSA_Log_Riding)) {
+        if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             func_80034FF0(0);
         }
         if (arg5 != 0) {
@@ -1477,7 +1477,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
                 sp8C->srt.scale = sp64;
             }
         }
-        if (data->unk0.animState == Player_FSA_Block_Pushing) {
+        if (data->unk0.animState == PLAYER_ASTATE_Block_Pushing) {
             func_80031F6C(player, 7, &data->unk680.unk1C, &data->unk680.unk20, &data->unk680.unk24, 0);
         }
         if (data->unk868 != NULL && data->unk868->unkE0 == 1) {
@@ -1795,7 +1795,7 @@ void dll_210_func_43EC(Object* player, f32 arg1, f32 arg2, f32 arg3) {
 
     objdata = player->data;
     dll_210_func_7260(player, objdata);
-    gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, Player_FSA_Standing);
+    gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, PLAYER_ASTATE_Standing);
 }
 
 // offset: 0x44A4 | func: 24 | export: 66
@@ -1818,10 +1818,10 @@ s32 dll_210_func_44A4(Object* player, s32 arg1) {
         return 1;
     case 2:
         switch (fsa->animState) {
-            case Player_FSA_Standing:
+            case PLAYER_ASTATE_Standing:
                 temp = 0;
                 break;
-            case Player_FSA_Walking:
+            case PLAYER_ASTATE_Walking:
                 i = 0;
                 while (player->curModAnimId != objdata2->modAnims[i] && i < 15) {
                     i += 3;
@@ -1878,15 +1878,15 @@ void dll_210_func_4634(Object* player, s32 arg1, f32 arg2) {
     default:
         return;
     case 6:
-        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_71);
+        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_71);
         return;
     case 3:
-        if (fsa->animState != Player_FSA_70) {
-            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_70);
+        if (fsa->animState != PLAYER_ASTATE_70) {
+            gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_70);
         }
         break;
     case 5:
-        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, Player_FSA_Standing);
+        gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Standing);
         return;
     case 9:
         if (*_bss_1A0 == 0) {
@@ -1986,7 +1986,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     }
     if (objdata->flags & 0x8000) {
         if (objdata->stats->health > 0) {
-            gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Standing);
+            gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Standing);
             objdata->flags &= ~0x8000;
             return 0;
         }
@@ -2069,10 +2069,10 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                         arg2->unk62 = 6;
                     }
                     if (objdata->unk858 != NULL) {
-                        gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Vehicle_Riding);
+                        gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Vehicle_Riding);
                         return 1;
                     }
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Standing);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Standing);
                     return 1;
                 }
                 temp_fv0_2 = arg2->unk58;
@@ -2162,7 +2162,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             _data_528 = sp9C;
         }
         if (arg2->unk62 == 0) {
-            gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Standing);
+            gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Standing);
         }
     } else {
         arg2->unk7A |= arg2->unk7C & ~0x400;
@@ -2234,7 +2234,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     arg2->unk7A |= 4;
                     objdata->unk858 = NULL;
                     arg0->curModAnimIdLayered = -1;
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Standing);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Standing);
                 }
                 break;
             case 4:
@@ -2242,9 +2242,9 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 gDLL_3_Animation->vtbl->func19(0x57, 0, 0, 0);
                 objdata->unk76C = NULL;
                 if ((vehicle != NULL) && (vehicle->id == OBJ_BWLog)) {
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Vehicle_Getting_On);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Vehicle_Getting_On);
                 } else {
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_Vehicle_Riding);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Vehicle_Riding);
                 }
                 break;
             case 11:
@@ -2261,7 +2261,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 break;
             case 6:
                 gDLL_3_Animation->vtbl->func19(0x56, 0, 0, 0);
-                gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, Player_FSA_35);
+                gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_35);
                 break;
             case 7:
                 arg2->unk7A &= ~0x3;
@@ -2419,7 +2419,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
     arg1->flags &= ~0x2000;
     arg1->unk0.flags |= 0x01000000;
     if ((s8)dll_210_func_7E6C(player, arg1, &arg1->unk0, &sp34, arg3, 0xC0) == 0xA) {
-        gDLL_18_objfsa->vtbl->set_anim_state(player, &arg1->unk0, Player_FSA_Ledge_Grab_Start);
+        gDLL_18_objfsa->vtbl->set_anim_state(player, &arg1->unk0, PLAYER_ASTATE_Ledge_Grab_Start);
     }
     gDLL_18_objfsa->vtbl->tick(player, &arg1->unk0, arg3, _bss_1AC, _bss_58, _bss_19C);
     arg1->unk0.flags &= ~0x01000000;
@@ -2725,7 +2725,7 @@ void dll_210_func_6DD8(Object* player, Player_Data* objdata, s32 arg2) {
                 dll_210_func_1DE50(player, _data_38, 1);
                 func_80023A18(player, 2);
                 *_data_0 = 0;
-                gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, Player_FSA_Standing);
+                gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, PLAYER_ASTATE_Standing);
             }
             gDLL_6_AMSFX->vtbl->play_sound(player, SOUND_6B4_Illusion_Spell, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
@@ -3955,7 +3955,7 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp4C->unk89C = (s32) sp4C->unk890;
         fsa->unk2B0 = 8.0f;
         fsa->animTickDelta = 0.005f;
-        if (fsa->prevAnimState == Player_FSA_Walking) {
+        if (fsa->prevAnimState == PLAYER_ASTATE_Walking) {
             if (player->curModAnimId != sp4C->modAnims[0x12]) {
                 if (player->curModAnimId != sp4C->modAnims[0x13]) {
                     if (player->animProgress <= 0.5f) {
@@ -4177,7 +4177,7 @@ s32 dll_210_func_AE34(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     
     if (fsa->enteredAnimState){
-        if ((fsa->prevAnimState != Player_FSA_Jump) && (fsa->prevAnimState != Player_FSA_Falling)){
+        if ((fsa->prevAnimState != PLAYER_ASTATE_Jump) && (fsa->prevAnimState != PLAYER_ASTATE_Falling)){
             player->srt.yaw += fsa->unk32A * 0xB6;
             fsa->unk328 = 0;
             fsa->unk32A = 0;
@@ -6662,14 +6662,14 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s1->unk88A = 0;
         func_80023D30(player, 0x412, 0.0f, 0U);
         fsa->animTickDelta = 0.015f;
-        if (fsa->prevAnimState == Player_FSA_31) {
+        if (fsa->prevAnimState == PLAYER_ASTATE_31) {
             temp_s1->unk67C = 1;
         } else {
             temp_s1->unk67C = 0;
         }
         temp_s1->unk674 = 0.0f;
         temp_s1->unk678 = 0.0f;
-        if (fsa->prevAnimState != Player_FSA_Swim_Forward) {
+        if (fsa->prevAnimState != PLAYER_ASTATE_Swim_Forward) {
             temp_s1->unk838 = 0.0f;
         }
     }
@@ -6802,7 +6802,7 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         player->srt.yaw += fsa->unk32A * 0xB6;
         fsa->unk328 = 0;
         fsa->unk32A = 0;
-        if (fsa->prevAnimState != Player_FSA_Swim_Treading_In_Place) {
+        if (fsa->prevAnimState != PLAYER_ASTATE_Swim_Treading_In_Place) {
             objdata->unk838 = 0.0f;
         }
     }
@@ -9975,14 +9975,14 @@ s32 dll_210_func_1D2A8(Object* player, Object* arg1) {
     sp24 = player->data;
     if (arg1 != NULL) {
         sp24->unk868 = arg1;
-        gDLL_18_objfsa->vtbl->set_anim_state(player, &sp24->unk0, Player_FSA_Picking_Up);
+        gDLL_18_objfsa->vtbl->set_anim_state(player, &sp24->unk0, PLAYER_ASTATE_Picking_Up);
     } else {
         var_v1 = sp24->unk868;
         if (var_v1 != NULL) {
             var_v1->unkE0 = 0;
             sp24->unk868 = NULL;
             sp24->unk870 = 0;
-            gDLL_18_objfsa->vtbl->set_anim_state(player, &sp24->unk0, Player_FSA_Standing);
+            gDLL_18_objfsa->vtbl->set_anim_state(player, &sp24->unk0, PLAYER_ASTATE_Standing);
         }
     }
 
@@ -10064,10 +10064,10 @@ void dll_210_func_1D4E0(Object* player, s32 arg1) {
 
     objdata = player->data;
     if (arg1 != 0) {
-        gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, Player_FSA_68);
+        gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, PLAYER_ASTATE_68);
         objdata->flags |= 1;
     } else {
-        gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, Player_FSA_Standing);
+        gDLL_18_objfsa->vtbl->set_anim_state(player, &objdata->unk0, PLAYER_ASTATE_Standing);
         objdata->flags &= ~1;
     }
 }
@@ -10093,8 +10093,8 @@ u8 dll_210_func_1D5B0(Object* player) {
 /** is_swimming? */
 int dll_210_func_1D5C0(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk0.animState == Player_FSA_Swim_Treading_In_Place || 
-           objdata->unk0.animState == Player_FSA_Swim_Forward;
+    return objdata->unk0.animState == PLAYER_ASTATE_Swim_Treading_In_Place || 
+           objdata->unk0.animState == PLAYER_ASTATE_Swim_Forward;
 }
 
 // offset: 0x1D5E8 | func: 197 | export: 47
@@ -10105,7 +10105,7 @@ u8 dll_210_func_1D5E8(Object* player, Object* arg1, s8* arg2) {
     Player_Data* objdata = player->data;
 
     *arg2 = objdata->unk680.unk2E;
-    return (objdata->unk0.animState == Player_FSA_Push_Block_Away && objdata->unk680.unk28 == arg1);
+    return (objdata->unk0.animState == PLAYER_ASTATE_Push_Block_Away && objdata->unk680.unk28 == arg1);
 }
 #endif
 
