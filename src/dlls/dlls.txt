@@ -24,6 +24,7 @@
 31 = engine/31_flash
 32 = engine/32
 33 = engine/33
+54 = engine/54_pickup
 56 = engine/56_putdown
 60 = engine/60_post
 61 = engine/61_rareware
