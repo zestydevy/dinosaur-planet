@@ -44,7 +44,7 @@ void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
 
     self->objhitInfo->unk5F = 0x12;
     self->objhitInfo->unk60 = 1;
-    self->objhitInfo->unk58 &= 0xFFFE;
+    self->objhitInfo->unk58 &= ~1;
 
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;

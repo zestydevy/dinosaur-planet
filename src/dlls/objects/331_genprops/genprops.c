@@ -456,7 +456,7 @@ void dll_331_control(Object* self) {
         self->objhitInfo->unk50 = 30;
         self->objhitInfo->unk58 |= 1;
         if (main_get_bits(BIT_1D9) != 0) {
-            self->objhitInfo->unk58 &= 0xFFFE;
+            self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
