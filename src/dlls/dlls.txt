@@ -58,6 +58,7 @@
 267 = objects/267_checkpoint4
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+272 = objects/272_collectable
 274 = objects/274_pushpull
 275 = objects/275_WarpPoint
 277 = objects/277_iceblast
