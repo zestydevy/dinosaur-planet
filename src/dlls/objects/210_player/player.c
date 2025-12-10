@@ -1177,7 +1177,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     s32 sp84;
     s32 sp80;
     s32 sp7C;
-    s32 sp78;
+    s32 aState;
     s32 sp74 = NULL;
     DLL_IModgfx* sp70 = NULL; // This isn't executed?
     s32 sp60[4] = _data_508;
@@ -1215,7 +1215,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
 
     fsa->unk343 = sp84;
     arg0->curModAnimIdLayered = -1;
-    sp78 = -1;
+    aState = -1;
     switch (sp84) {
     // these cases might be incorrect
     case 2:
@@ -1228,17 +1228,17 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     case 8:
     case 9:
     case 11:
-        sp78 = 0x4F;
+        aState = PLAYER_ASTATE_Hurt_Stagger;
         break;
     case 10:
     case 12:
-        sp78 = 0x50;
+        aState = PLAYER_ASTATE_Hurt_Stagger_80;
         break;
     case 4:
-        sp78 = 0x32;
+        aState = PLAYER_ASTATE_Hurt_Flattened;
         break;
     case 5:
-        sp78 = 0x30;
+        aState = PLAYER_ASTATE_Hurt_Tumbling;
         break;
     case 1:
         sp7C = arg1->stats->health;
@@ -1247,10 +1247,10 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
         break;
     case 21:
-        sp78 = 0x31;
+        aState = PLAYER_ASTATE_Hurt_Stunned;
         break;
     case 23:
-        sp78 = 0x33;
+        aState = PLAYER_ASTATE_51;
         break;
     case 24:
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -1258,8 +1258,8 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         func_80003B70(1.0f);
         break;
     case 27:
-        sp78 = fsa->unk270;
-        if (sp78 == 0xD) {
+        aState = fsa->unk270;
+        if (aState == PLAYER_ASTATE_Falling) {
             dll_210_func_A024(arg0, fsa);
             arg0->srt.transl.x += fsin16_precise(arg0->srt.yaw) * 10.0f;
             arg0->srt.transl.z += fcos16_precise(arg0->srt.yaw) * 10.0f;
@@ -1294,7 +1294,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     case 18: // 0x44
     case 25: // 0x60
     default:
-        sp78 = 0x4F;
+        aState = PLAYER_ASTATE_Hurt_Stagger;
         break;
     }
     if (arg1->flags & 0x800) {
@@ -1324,10 +1324,10 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         arg1->unk8B9 = 0xC;
         arg1->unk818 = 90.0f;
         arg1->unk81C = 0.0f;
-        if (sp78 != -1) {
+        if (aState != -1) {
             arg1->unk868 = NULL;
             arg1->unk708 = NULL;
-            gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, sp78);
+            gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, aState);
         }
     }
     dll_210_add_health(arg0, -sp7C);
@@ -2219,7 +2219,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                             func_80023D30(arg0, 0xF5, 0.0f, 1);
                             break;
                     }
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, 0x24);
+                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Vehicle_Riding);
                 }
                 break;
             case 2:
@@ -4632,7 +4632,7 @@ s32 dll_210_func_C3D0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     spAC = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0xD;
+        fsa->unk270 = PLAYER_ASTATE_Falling;
     }
     temp_v0 = dll_210_func_7E6C(player, spAC, fsa, &sp44, arg2, 0x14);
     if (temp_v0 == 0x11) {
@@ -4775,7 +4775,7 @@ s32 dll_210_func_CC24(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     sp38 = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0xD;
+        fsa->unk270 = PLAYER_ASTATE_Falling;
     }
     fsa->unk27C = 0.0f;
     fsa->flags |= 0x200000;
@@ -4951,7 +4951,7 @@ s32 dll_210_func_D5F0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     sp2C = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x10;
+        fsa->unk270 = PLAYER_ASTATE_Ledge_Grab_From_Jump;
     }
     {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
@@ -4999,7 +4999,7 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     temp_s0 = player->data;
     if (fsa->enteredAnimState != 0) {
         gDLL_6_AMSFX->vtbl->play_sound(player, temp_s0->unk3B8[0x17], MAX_VOLUME, NULL, NULL, 0, NULL);
-        fsa->unk270 = 0x11;
+        fsa->unk270 = PLAYER_ASTATE_Ledge_Grab_Start;
     }
     temp_s0->unk7FC = 0;
     goto dummy_label_21840; dummy_label_21840: ;
@@ -5085,7 +5085,7 @@ s32 dll_210_func_DC10(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s32 pad;
 
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x12;
+        fsa->unk270 = PLAYER_ASTATE_Ledge_Climb_Over;
     }
     temp_s1 = player->data;
     {
@@ -5186,7 +5186,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     u8 sp47;
 
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x13;
+        fsa->unk270 = PLAYER_ASTATE_Ledge_Grab_Holding;
         player->speed.f[1] = 0.0f;
     }
     objdata = player->data;
@@ -5352,7 +5352,7 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     f32 var_fv1;
 
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x14;
+        fsa->unk270 = PLAYER_ASTATE_Ledge_Grab_Let_Go;
         fsa->animExitAction = dll_210_func_EF8C;
         _bss_200 = -1;
     }
@@ -5515,7 +5515,7 @@ s32 dll_210_func_F00C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         objdata->unk8A9 = 1;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
-        fsa->unk270 = 0x17;
+        fsa->unk270 = PLAYER_ASTATE_Ladder_Get_On;
         fsa->animExitAction = dll_210_func_12514;
         sp5C.y = 0.0f;
         if (spA4 != 0) {
@@ -5621,7 +5621,7 @@ s32 dll_210_func_F690(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         } else {
             _bss_200 = 9;
         }
-        fsa->unk270 = 0xD;
+        fsa->unk270 = PLAYER_ASTATE_Falling;
         fsa->animExitAction = dll_210_func_12514;
     }
     {
@@ -5879,7 +5879,7 @@ s32 dll_210_func_1034C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s2->unk3CC.unk1C = player->srt.transl.y;
         player->srt.transl.y = temp_s2->unk7EC.y;
         dll_210_func_7260(player, temp_s2);
-        fsa->unk270 = 0xD;
+        fsa->unk270 = PLAYER_ASTATE_Falling;
     }
     if (!(fsa->unk4.unk25C & 0x10) && (fsa->unk4.underwaterDist > 5.0f)) {
         return 0x20;
@@ -5977,7 +5977,7 @@ s32 dll_210_func_10898(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     player->speed.y = 0.0f;
     if (fsa->enteredAnimState != 0) {
         fsa->animExitAction = dll_210_func_12514;
-        fsa->unk270 = 0xD;
+        fsa->unk270 = PLAYER_ASTATE_Falling;
     }
     if (player->curModAnimId == 0x41A) {
         if (fsa->unk33A != 0) {
@@ -6022,7 +6022,7 @@ s32 dll_210_func_10A0C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     player->speed.y = 0.0f;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x1B;
+        fsa->unk270 = PLAYER_ASTATE_Wall_Clambering_Start;
         fsa->animExitAction = dll_210_func_12514;
         temp_s0->unk8A9 = 1;
     }
@@ -6113,7 +6113,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     if (fsa->enteredAnimState) {
         _bss_200 = 0x10;
-        fsa->unk270 = 0xD;
+        fsa->unk270 = PLAYER_ASTATE_Falling;
         fsa->animExitAction = dll_210_func_12514;
     }
     if ((fsa->unk4.underwaterDist > 25.0f) && (fsa->unk4.floorDist < 100.0f)) {
@@ -6433,7 +6433,7 @@ s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
         temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
         player->srt.transl.y = temp_s1->unk430.unk4;
-        fsa->unk270 = 0x1D;
+        fsa->unk270 = PLAYER_ASTATE_Wall_Clambering_Climb_Over;
         fsa->animExitAction = dll_210_func_12514;
     }
     {
@@ -6492,7 +6492,7 @@ s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
         temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
         player->srt.transl.y = temp_s1->unk430.unk8;
-        fsa->unk270 = 0x1E;
+        fsa->unk270 = PLAYER_ASTATE_Wall_Clambering_Drop_Down;
         fsa->animExitAction = dll_210_func_12514;
     }
     {
@@ -6537,7 +6537,7 @@ s32 dll_210_func_125BC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     DLL27_Data *temp_s3;
 
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x1F;
+        fsa->unk270 = PLAYER_ASTATE_31;
     }
     fsa->flags |= 0x200000;
     temp_s3 = &fsa->unk4;
@@ -6653,7 +6653,7 @@ s32 dll_210_func_12BF0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     temp_s1 = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x20;
+        fsa->unk270 = PLAYER_ASTATE_Swim_Treading_In_Place;
     }
     fsa->flags |= 0x200000;
     fsa->unk340 |= 2;
@@ -6788,7 +6788,7 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     objdata = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x21;
+        fsa->unk270 = PLAYER_ASTATE_Swim_Forward;
     }
     if ((fsa->unk4.underwaterDist < 24.0f) && (fsa->unk4.unk25C & 0x10)) {
         return -1;
@@ -6916,7 +6916,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     // @fake
     if (((!fsa) && (!fsa)) && (!fsa)) {}
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x22;
+        fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_On;
     }
     func_800267A4(player);
     player->speed.f[1] = 0.0f;
@@ -7211,7 +7211,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s16* sp4C;
 
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x26;
+        fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_Off;
     }
     temp_s1 = player->data;
     temp_s2 = temp_s1->unk858;
@@ -7313,7 +7313,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     temp_s0 = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x27;
+        fsa->unk270 = PLAYER_ASTATE_Crawl;
     }
     {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
@@ -7414,7 +7414,7 @@ s32 dll_210_func_15744(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
     sp34 = player->data;
     if (fsa->enteredAnimState != 0) {
-        fsa->unk270 = 0x28;
+        fsa->unk270 = PLAYER_ASTATE_Push_Block_Away;
     }
     dll_210_func_A024(player, fsa);
     if (fsa->enteredAnimState != 0) {
@@ -7472,7 +7472,7 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     CameraStruct sp44;
 
     if (arg1->enteredAnimState != 0) {
-        arg1->unk270 = 0x29;
+        arg1->unk270 = PLAYER_ASTATE_Block_Pushing;
     }
     objdata = player->data;
     objdata->unk8BD |= 4;

@@ -44,7 +44,7 @@ typedef struct ObjFSA_Data {
 /*26A*/ s16 prevLogicState;
 /*26C*/ s16 animState; // index of anim state callback to run
 /*26E*/ s16 prevAnimState;
-/*270*/ s16 unk270;
+/*270*/ s16 unk270; //nextAnimState?
         // Whether the current anim state was just entered 
         // (only true for the first call since transitioning to the state)
 /*272*/ s8 enteredAnimState;
