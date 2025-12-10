@@ -1422,7 +1422,7 @@ s16 func_80022EC0(s32 arg0) {
 
 void obj_free_object(Object *obj, s32 param2) {
     Object *obj2;
-    /*sp+0xE4*/ NewLfxStruct newLfxStruct;
+    /*sp+0xE4*/ LightAction lAction;
     ObjectAnim_Data *animObjdata;
     ModelInstance *modelInst;
     /*sp+0x40*/ Object *stackObjs[39]; // unknown exact length
@@ -1499,12 +1499,12 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->def->unk87 & 0x10) {
-        newLfxStruct.unk12.asByte = 2;
-        newLfxStruct.unke = 0;
-        newLfxStruct.unk10 = obj->unkD6;
-        newLfxStruct.unk1b = 0;
+        lAction.unk12.asByte = 2;
+        lAction.unke = 0;
+        lAction.unk10 = obj->unkD6;
+        lAction.unk1b = 0;
 
-        gDLL_11_Newlfx->vtbl->func0(obj, obj, &newLfxStruct, 0, 0, 0);
+        gDLL_11_Newlfx->vtbl->func0(obj, obj, &lAction, 0, 0, 0);
     }
 
     if (obj->unk64 != NULL) {

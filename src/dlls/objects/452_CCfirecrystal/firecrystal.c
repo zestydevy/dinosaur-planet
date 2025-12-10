@@ -12,7 +12,7 @@ typedef struct {
 typedef struct {
     u8 state;
     Object* flameObjects[4];        //"CCfirecrystalin" objects (for a flame effect) 
-    NewLfxStruct* lfxEmitterSetup;
+    LightAction* lfxEmitterSetup;
 } CCfirecrystal_Data;
 
 typedef enum {
@@ -57,7 +57,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         objData->flameObjects[1] = NULL;
         objData->flameObjects[0] = NULL;
     } else {
-        lfxBuffer = mmAlloc(sizeof(NewLfxStruct), ALLOC_TAG_LFX_COL, NULL);
+        lfxBuffer = mmAlloc(sizeof(LightAction), ALLOC_TAG_LFX_COL, NULL);
         objData->lfxEmitterSetup = lfxBuffer;
         queue_load_file_region_to_ptr(lfxBuffer, LACTIONS_BIN, 0x6158, 0x28);
         objData->lfxEmitterSetup->unk10 = 0xFFFE;
@@ -122,7 +122,7 @@ void CCfirecrystal_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 // offset: 0x41C | func: 4 | export: 4
 void CCfirecrystal_free(Object* self, s32 arg1) {
     CCfirecrystal_Data* objData;
-    NewLfxStruct* lfxStruct;
+    LightAction* lfxStruct;
     s32 index;
 
     objData = self->data;

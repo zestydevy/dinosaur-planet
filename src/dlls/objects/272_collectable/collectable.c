@@ -109,7 +109,7 @@ void collectable_dtor(void *dll) { }
 void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     s32 pad1;
     CollectableDef* collectableDef;
-    NewLfxStruct lfxAction;
+    LightAction lfxAction;
     s32 index;
     s16 id;
     Collectable_Data* objData;
@@ -596,7 +596,7 @@ void collectable_collect(Object* self) {
     Object* player;
     Object* sidekick;
     s16 id;
-    NewLfxStruct lfxAction;
+    LightAction lfxAction;
     Object* foodbag;
     ObjDef* objdef;
 

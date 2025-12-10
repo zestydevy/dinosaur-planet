@@ -129,7 +129,7 @@ typedef struct {
 /*0022*/ u8 unk22;
 /*0023*/ u8 unk23;
 /*0024*/ u8 unk24[0x28-0x24];
-} NewLfxStruct; //LActions.bin structs used by NewLfx DLL
+} LightAction; //LActions.bin structs used by NewLfx DLL
 
 // Size: 0x28
 typedef struct Func_80037F9C_Struct {
