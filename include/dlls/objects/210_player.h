@@ -240,7 +240,7 @@ typedef struct {
 /*850*/ Object *unk850;
 /*854*/ s32 unk854;
 /*858*/ Object *unk858; // vehicle
-/*85C*/ Object *unk85C;
+/*85C*/ Object *unk85C; // foodbag
 /*860*/ Object *unk860;
 /*864*/ s32 unk864;
 /*868*/ Object* unk868; //held object (baskets etc.)
@@ -248,7 +248,7 @@ typedef struct {
 /*870*/ u8 unk870;
 /*871*/ u8 unk871;
 /*872*/ u16 unk872;
-/*874*/ s16 unk874;
+/*874*/ s16 unk874; //player yaw?
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
 /*87A*/ s16 unk87A;
@@ -282,20 +282,103 @@ typedef struct {
 /*8AD*/ u8 unk8AD;
 /*8AE*/ s8 unk8AE[4];
 /*8B2*/ u8 unk8B2[0x8B4 - 0x8B2];
-/*8B4*/ u8 unk8B4;
+/*8B4*/ u8 unk8B4; //0 when Krystal, 1 when Sabre
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
 /*8B7*/ u8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
 /*8BA*/ u8 unk8BA;
-/*8BB*/ u8 unk8BB; // player has magic?
+/*8BB*/ u8 unk8BB; // player has magic? (bitfield for magic spells obtained?)
 /*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
 /*8BE*/ u8 unk8BE;
 /*8BF*/ s8 unk8BF;
 /*8C0*/ s8 unk8C0;
 } Player_Data;
+
+typedef enum {
+    Player_FSA_Standing = 1,
+    Player_FSA_Idle_Fidget = 2,
+    Player_FSA_Turning_On_Spot = 3,
+    Player_FSA_Walking = 4,
+    Player_FSA_Picking_Up = 5,
+    Player_FSA_Placing_Down = 6,
+    Player_FSA_Throw = 7, //crashes when no object is held
+    Player_FSA_8 = 8,
+    Player_FSA_9 = 9,
+    Player_FSA_Hop = 10, //used very rarely via HITS lines
+    Player_FSA_Jump = 11,
+    Player_FSA_Fall_Reset = 12, //used with EffectBoxes
+    Player_FSA_Falling = 13, //includes landing phase
+    Player_FSA_14 = 14,
+    Player_FSA_15 = 15,
+    Player_FSA_16 = 16,
+    Player_FSA_Ledge_Grab_Start = 17,
+    Player_FSA_Ledge_Climb_Over = 18,
+    Player_FSA_Ledge_Grab_Holding = 19,
+    Player_FSA_Ledge_Grab_Let_Go = 20,
+    Player_FSA_21 = 21,
+    Player_FSA_22 = 22,
+    Player_FSA_Ladder_Get_On = 23, //from bottom or top
+    Player_FSA_Ladder_Climbing = 24, //includes idle
+    Player_FSA_Ladder_Slide_Down = 25,
+    Player_FSA_26 = 26,
+    Player_FSA_Wall_Clambering_Start = 27,
+    Player_FSA_Wall_Clambering = 28, //e.g. on vines/rock-faces
+    Player_FSA_Wall_Clambering_Climb_Over = 29, //reaching top of vine/rock climb
+    Player_FSA_Wall_Clambering_Drop_Down = 30,
+    Player_FSA_31 = 31, //splash?
+    Player_FSA_Swim_Treading_In_Place = 32,
+    Player_FSA_Swim_Forward = 33,
+    Player_FSA_Vehicle_Getting_On = 34, //includes jetbikes and logs
+    Player_FSA_35 = 35,
+    Player_FSA_Vehicle_Riding = 36, //includes jetbikes and SnowHorns
+    Player_FSA_Log_Riding = 37,
+    Player_FSA_Vehicle_Getting_Off = 38, //includes jetbikes and logs
+    Player_FSA_Crawl = 39, //includes intro/outro
+    Player_FSA_Push_Block_Away = 40, //used by WM Sun/Moon puzzle blocks
+    Player_FSA_Block_Pushing = 41,
+    Player_FSA_42 = 42, //crash?
+    Player_FSA_Collecting = 43, //crashes if there's no object (e.g. Blue Mushrooms)
+    Player_FSA_44 = 44,
+    Player_FSA_45 = 45,
+    Player_FSA_46 = 46,
+    Player_FSA_47 = 47,
+    Player_FSA_Hurt_Tumbling = 48,
+    Player_FSA_Hurt_Stunned = 49, //when hurt by Red Mushrooms' spores or pollen cannons
+    Player_FSA_Hurt_Flattened = 50, //when squashed by DIM snowballs
+    Player_FSA_51 = 51,
+    Player_FSA_Dead = 52,
+    Player_FSA_Targetting_Idle = 53,
+    Player_FSA_Targetting_Moving = 54,
+    Player_FSA_Attacking = 55, //with sword, in case it matters (includes Sabre's forward targetting dodge attack)
+    Player_FSA_56 = 56,
+    Player_FSA_57 = 57,
+    Player_FSA_Aiming_Spell = 58,
+    Player_FSA_59 = 59,
+    Player_FSA_60 = 60,
+    Player_FSA_61 = 61,
+    Player_FSA_Targetting_Dodge_Neutral = 62,
+    Player_FSA_Targetting_Dodge_Left = 63,
+    Player_FSA_Targetting_Dodge_Right = 64,
+    Player_FSA_65 = 65,
+    Player_FSA_Targetting_Dodge_Backflip = 66,
+    Player_FSA_67 = 67,
+    Player_FSA_68 = 68,
+    Player_FSA_70 = 70, //floating?
+    Player_FSA_71 = 71,
+    Player_FSA_72 = 72,
+    Player_FSA_Floating = 73, //when riding CRF's wind lifts
+    Player_FSA_74 = 74,
+    Player_FSA_75 = 75,
+    Player_FSA_76 = 76,
+    Player_FSA_Hurt_Knocked_Down = 77, //when knocked to floor by WM lasers, etc.
+    Player_FSA_78 = 78,
+    Player_FSA_Hurt_Stagger = 79,
+    Player_FSA_Hurt_Stagger_80 = 80, //Diamond Bay tendril enemies cause this state
+    Player_FSA_81 = 81
+} Player_AnimStates; //81 states in total?
 
 // AKA. krystal
 DLL_INTERFACE(DLL_210_Player) {
