@@ -10105,7 +10105,7 @@ u8 dll_210_func_1D5E8(Object* player, Object* arg1, s8* arg2) {
     Player_Data* objdata = player->data;
 
     *arg2 = objdata->unk680.unk2E;
-    return (objdata->unk0.animState == Player_FSA_40 && objdata->unk680.unk28 == arg1);
+    return (objdata->unk0.animState == Player_FSA_Push_Block_Away && objdata->unk680.unk28 == arg1);
 }
 #endif
 
