@@ -437,7 +437,8 @@ Object *get_world_object(s32 idx) {
     return gObjList[idx];
 }
 
-Object *func_800211B4(s32 param1) {
+/** get_world_object_by_uid? */
+Object *func_800211B4(s32 uID) {
     s32 i;
     s32 len;
     Object *obj;
@@ -447,7 +448,7 @@ Object *func_800211B4(s32 param1) {
 
     while (i < len) {
         obj = gObjList[i];
-        if (obj->setup != NULL && obj->setup->uID == param1) {
+        if (obj->setup != NULL && obj->setup->uID == uID) {
             return obj;
         }
 
@@ -1736,21 +1737,21 @@ void obj_set_update_priority(Object *obj, s8 priority) {
     obj->updatePriority = priority;
 }
 
-void func_80023A18(Object *obj, s32 param2) {
+void func_80023A18(Object *obj, s32 modelIdx) {
     obj->unkB0 &= 0xF0FF;
 
-    if (param2 == obj->modelInstIdx) {
+    if (modelIdx == obj->modelInstIdx) {
         return;
     }
 
-    if (param2 < 0) {
-        param2 = 0;
-    } else if (param2 >= obj->def->numModels) {
-        param2 = obj->def->numModels - 1;
+    if (modelIdx < 0) {
+        modelIdx = 0;
+    } else if (modelIdx >= obj->def->numModels) {
+        modelIdx = obj->def->numModels - 1;
     }
 
     obj->unkB0 |= 0x800;
-    obj->unkB0 |= (param2 << 8) & 0x700;
+    obj->unkB0 |= (modelIdx << 8) & 0x700;
 }
 
 void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
