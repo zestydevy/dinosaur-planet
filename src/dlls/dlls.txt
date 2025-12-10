@@ -164,6 +164,7 @@
 610 = objects/610_WL_spiritplace
 612 = objects/612_WL_Crystal
 613 = objects/613_WL_SpiritSet
+614 = objects/614_WM_Planets
 615 = objects/615_crawler
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint
