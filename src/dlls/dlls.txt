@@ -24,6 +24,7 @@
 31 = engine/31_flash
 32 = engine/32
 33 = engine/33
+54 = engine/54_pickup
 56 = engine/56_putdown
 60 = engine/60_post
 61 = engine/61_rareware
@@ -57,6 +58,7 @@
 267 = objects/267_checkpoint4
 268 = objects/268_setuppoint
 270 = objects/270_sidesetup
+272 = objects/272_collectable
 274 = objects/274_pushpull
 275 = objects/275_WarpPoint
 277 = objects/277_iceblast
@@ -164,6 +166,7 @@
 610 = objects/610_WL_spiritplace
 612 = objects/612_WL_Crystal
 613 = objects/613_WL_SpiritSet
+614 = objects/614_WM_Planets
 615 = objects/615_crawler
 619 = objects/619_VFP_LevelControl
 633 = objects/633_VFP_PodiumPoint

@@ -5,6 +5,7 @@
 #include "dlls/objects/214_animobj.h"
 #include "game/objects/object.h"
 #include "functions.h"
+#include "macros.h"
 #include "sys/objects.h"
 #include "sys/math.h"
 #include "sys/main.h"
@@ -12,26 +13,6 @@
 #include "sys/objtype.h"
 #include "game/gamebits.h"
 #include "types.h"
-
-// typedef struct {
-// /*00*/	s16 objId;
-// /*02*/	u8 quarterSize;
-// /*03*/	u8 act;
-// /*04*/	u8 nextCurveGroup;
-// /*05*/	u8 prevCurveGroup;
-// /*06*/	u8 branch1CurveGroup;
-// /*07*/	u8 branch2CurveGroup;
-// /*08*/	f32 x;
-// /*0c*/	f32 y;
-// /*10*/	f32 z;
-// /*14*/	s32 uID;
-// } CurveSetup; //curves use the base objSetup fields differently, so creating a unique base struct
-
-typedef struct {
-/*00*/ CurveSetup base;
-/*36*/ s16 unk36;
-/*38*/ s16 unk38; //gameBit?
-} KyteCurve_Setup;
 
 typedef struct {
 /*00*/ ObjSetup base;
@@ -93,6 +74,7 @@ void perchobject_control(Object* self) {
                 objData->stateIndex = STATE_1_Wait_for_Player_to_Instruct_Kyte;
                 return;
             }
+            STUBBED_PRINTF(" Could Not Find node %i ");
             return;        
         case STATE_1_Wait_for_Player_to_Instruct_Kyte:
             kyte = get_sidekick();
@@ -120,6 +102,7 @@ void perchobject_control(Object* self) {
             if (playerIsNearby){
                 ((DLL_Unknown *) kyte->dll)->vtbl->func[14].withTwoArgs((s32) kyte, 1);
                 if (gDLL_1_UI->vtbl->func_DF4(1)){
+                    STUBBED_PRINTF("should activate the command\n");
                     main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
@@ -162,10 +145,13 @@ s32 perchobject_land_on_perch(Object* self, s32 arg1) {
 
     objData = self->data;
 
+    STUBBED_PRINTF(" Kyte Landed Action ");
+
     landedOnPerch = FALSE;
     if (arg1 == 5) {
-        if (objData->curveSetup->type22.usedBit != -1) {
+        if (objData->curveSetup->type22.usedBit != NO_GAMEBIT) {
             main_set_bits(objData->curveSetup->type22.usedBit, 1);
+            STUBBED_PRINTF("\n\n Setting Used Bit \n\n");
         }
         landedOnPerch = TRUE;
     }
@@ -182,14 +168,14 @@ u32 perchobject_func_388(Object *self, s32 arg1, s32 arg2) {
 u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
     Object *kyte;
     s16 flag;
-    PerchObject_Data *state;
+    PerchObject_Data *objData;
 
     kyte = get_sidekick();
-    state = (PerchObject_Data*)self->data;
+    objData = (PerchObject_Data*)self->data;
 
     switch (arg1){
         case 0:
-            flag = state->curveSetup->type22.usedBit;
+            flag = objData->curveSetup->type22.usedBit;
             return main_get_bits(flag);
         case 1:
             *deltaY = self->srt.transl.y - kyte->srt.transl.y;
@@ -212,28 +198,22 @@ u32 perchobject_func_460(Object *self) {
 static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     s32 pad;
     Object* kyte;
-    PerchObject_Data* state;
-    PerchObject_Setup* createInfo;
+    PerchObject_Data* objData;
+    PerchObject_Setup* objSetup;
 
     get_sidekick(); //@bug: not stored to variable, called again later!
-    state = self->data;
-    createInfo = (PerchObject_Setup*)self->setup;
+    objData = self->data;
+    objSetup = (PerchObject_Setup*)self->setup;
 
     kyte = get_sidekick();    
     if (kyte) {
-        if (vec3_distance_squared(&get_player()->positionMirror, (Vec3f*)&(state->curveSetup)->pos.x) <= (createInfo->interactionDistance * createInfo->interactionDistance)) {
+        if (vec3_distance_squared(&get_player()->positionMirror, (Vec3f*)&(objData->curveSetup)->pos.x) <= (objSetup->interactionDistance * objSetup->interactionDistance)) {
             ((DLL_Unknown*)kyte->dll)->vtbl->func[14].withTwoArgs((s32)kyte, 1);
             if (gDLL_1_UI->vtbl->func_DF4(1)) {
-                main_set_bits(BIT_Kyte_Flight_Curve, createInfo->kyteFlightGroup);
+                STUBBED_PRINTF("should activate the command\n");
+                main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
             }
         }
     }
     return 0;
 }
-
-/*0x0*/ static const char str_0[] = " Could Not Find node %i ";
-/*0x1C*/ static const char str_1C[] = "should activate the command\n";
-/*0x3C*/ static const char str_3C[] = " Kyte Landed Action ";
-/*0x54*/ static const char str_54[] = "\n\n Setting Used Bit \n\n";
-/*0x6C*/ static const char str_6C[] = "should activate the command\n";
-/*0x8C*/ static const char str_8C[] = "";

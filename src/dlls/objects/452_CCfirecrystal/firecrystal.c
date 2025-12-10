@@ -12,7 +12,7 @@ typedef struct {
 typedef struct {
     u8 state;
     Object* flameObjects[4];        //"CCfirecrystalin" objects (for a flame effect) 
-    NewLfxStruct* lfxEmitterSetup;
+    LightAction* lightAction;
 } CCfirecrystal_Data;
 
 typedef enum {
@@ -35,7 +35,7 @@ void CCfirecrystal_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) {
     CCfirecrystal_Data* objData;
-    void* lfxBuffer;
+    void* lightAction;
 
     objData = self->data;
     
@@ -57,11 +57,11 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         objData->flameObjects[1] = NULL;
         objData->flameObjects[0] = NULL;
     } else {
-        lfxBuffer = mmAlloc(sizeof(NewLfxStruct), ALLOC_TAG_LFX_COL, NULL);
-        objData->lfxEmitterSetup = lfxBuffer;
-        queue_load_file_region_to_ptr(lfxBuffer, LACTIONS_BIN, 0x6158, 0x28);
-        objData->lfxEmitterSetup->unk10 = 0xFFFE;
-        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lfxEmitterSetup, 0, 0, 0);
+        lightAction = mmAlloc(sizeof(LightAction), ALLOC_TAG_LFX_COL, NULL);
+        objData->lightAction = lightAction;
+        queue_load_file_region_to_ptr(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
+        objData->lightAction->unk10 = 0xFFFE;
+        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
         objData->flameObjects[0] = CCfirecrystal_create_flame(self, 0x40, 0, 0x18);
         objData->flameObjects[1] = CCfirecrystal_create_flame(self, 0x40, 0x40, 0x18);
         objData->flameObjects[2] = CCfirecrystal_create_flame(self, -56, 0, 0x18);
@@ -122,7 +122,7 @@ void CCfirecrystal_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 // offset: 0x41C | func: 4 | export: 4
 void CCfirecrystal_free(Object* self, s32 arg1) {
     CCfirecrystal_Data* objData;
-    NewLfxStruct* lfxStruct;
+    LightAction* lfxStruct;
     s32 index;
 
     objData = self->data;
@@ -136,15 +136,15 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
         }
     }
     
-    lfxStruct = objData->lfxEmitterSetup;
+    lfxStruct = objData->lightAction;
     if (lfxStruct != NULL) {
         STUBBED_PRINTF("trying to kill fire crystal light\n");
         lfxStruct->unk12.asByte = 2;
-        objData->lfxEmitterSetup->unke = 0;
-        objData->lfxEmitterSetup->unk1b = 0;
-        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lfxEmitterSetup, 0, 0, 0);
-        mmFree(objData->lfxEmitterSetup);
-        objData->lfxEmitterSetup = NULL;
+        objData->lightAction->unke = 0;
+        objData->lightAction->unk1b = 0;
+        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
+        mmFree(objData->lightAction);
+        objData->lightAction = NULL;
     }
 }
 

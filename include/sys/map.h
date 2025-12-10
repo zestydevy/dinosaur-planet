@@ -328,7 +328,8 @@ typedef struct {
 typedef struct Unk8005341C {
     Object *unk0;
     s16 unk4;
-    u8 pad8[0x10 - 0x6];
+    MtxF *unk8;
+    MtxF *unkC;
 } Unk8005341C;
 
 typedef struct Unk80092BC0 {

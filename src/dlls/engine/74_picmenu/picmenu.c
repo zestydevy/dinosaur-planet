@@ -23,9 +23,9 @@ static const char str_5[] = "RIGHTLINK overflow=%d\n";
 static const char str_6[] = "PICMENU: tex overflow\n";
 
 /*0*/ static PicMenuSounds sDefaultSounds = {
-    /*move*/    SFX_PICMENU_MOVE, 
-    /*select*/  SFX_PICMENU_SELECT, 
-    /*back*/    SFX_PICMENU_BACK
+    /*move*/    SOUND_PICMENU_MOVE, 
+    /*select*/  SOUND_PICMENU_SELECT, 
+    /*back*/    SOUND_PICMENU_BACK
 };
 
 /*C*/ static PicMenuTexture sTextures[] = {

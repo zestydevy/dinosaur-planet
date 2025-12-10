@@ -437,7 +437,8 @@ Object *get_world_object(s32 idx) {
     return gObjList[idx];
 }
 
-Object *func_800211B4(s32 param1) {
+/** get_world_object_by_uid? */
+Object *func_800211B4(s32 uID) {
     s32 i;
     s32 len;
     Object *obj;
@@ -447,7 +448,7 @@ Object *func_800211B4(s32 param1) {
 
     while (i < len) {
         obj = gObjList[i];
-        if (obj->setup != NULL && obj->setup->uID == param1) {
+        if (obj->setup != NULL && obj->setup->uID == uID) {
             return obj;
         }
 
@@ -701,7 +702,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         obj->unk78 = (ObjectStruct78*)mmAlign4(addr);
 
         for (j = 0; j < def->unk9b; j++) {
-            obj->unk78[j].unk4 = def->unk40[j].unk10;
+            obj->unk78[j].colourIndex = def->unk40[j].unk10;
             obj->unk78[j].unk0 = def->unk40[j].unk0c;
             obj->unk78[j].unk3 = def->unk40[j].unk0f;
             obj->unk78[j].unk1 = def->unk40[j].unk0d;
@@ -1421,7 +1422,7 @@ s16 func_80022EC0(s32 arg0) {
 
 void obj_free_object(Object *obj, s32 param2) {
     Object *obj2;
-    /*sp+0xE4*/ NewLfxStruct newLfxStruct;
+    /*sp+0xE4*/ LightAction lAction;
     ObjectAnim_Data *animObjdata;
     ModelInstance *modelInst;
     /*sp+0x40*/ Object *stackObjs[39]; // unknown exact length
@@ -1498,12 +1499,12 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->def->unk87 & 0x10) {
-        newLfxStruct.unk12.asByte = 2;
-        newLfxStruct.unke = 0;
-        newLfxStruct.unk10 = obj->unkD6;
-        newLfxStruct.unk1b = 0;
+        lAction.unk12.asByte = 2;
+        lAction.unke = 0;
+        lAction.unk10 = obj->unkD6;
+        lAction.unk1b = 0;
 
-        gDLL_11_Newlfx->vtbl->func0(obj, obj, &newLfxStruct, 0, 0, 0);
+        gDLL_11_Newlfx->vtbl->func0(obj, obj, &lAction, 0, 0, 0);
     }
 
     if (obj->unk64 != NULL) {
@@ -1736,21 +1737,21 @@ void obj_set_update_priority(Object *obj, s8 priority) {
     obj->updatePriority = priority;
 }
 
-void func_80023A18(Object *obj, s32 param2) {
+void func_80023A18(Object *obj, s32 modelIdx) {
     obj->unkB0 &= 0xF0FF;
 
-    if (param2 == obj->modelInstIdx) {
+    if (modelIdx == obj->modelInstIdx) {
         return;
     }
 
-    if (param2 < 0) {
-        param2 = 0;
-    } else if (param2 >= obj->def->numModels) {
-        param2 = obj->def->numModels - 1;
+    if (modelIdx < 0) {
+        modelIdx = 0;
+    } else if (modelIdx >= obj->def->numModels) {
+        modelIdx = obj->def->numModels - 1;
     }
 
     obj->unkB0 |= 0x800;
-    obj->unkB0 |= (param2 << 8) & 0x700;
+    obj->unkB0 |= (modelIdx << 8) & 0x700;
 }
 
 void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
@@ -1816,7 +1817,8 @@ void obj_free_effect_box(Object *obj) {
     }
 }
 
-void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6) {
+/** Set interaction arrow params? */
+void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 colourIndex) {
     ObjectStruct78 *dst;
 
     if (obj != NULL) {
@@ -1841,8 +1843,8 @@ void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
                 dst->unk3 = param5;
             }
 
-            if (param6 != 0) {
-                dst->unk4 = param6;
+            if (colourIndex != 0) {
+                dst->colourIndex = colourIndex ;
             }
         }
     }
@@ -1863,7 +1865,7 @@ void func_80023C6C(Object *obj) {
             dst->unk1 = src->unk0d;
             dst->unk2 = src->unk0e;
             dst->unk3 = src->unk0f;
-            dst->unk4 = src->unk10;
+            dst->colourIndex = src->unk10;
         }
     }
 }

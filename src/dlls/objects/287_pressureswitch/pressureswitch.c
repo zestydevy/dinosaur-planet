@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/objtype.h"
+#include "dlls/objects/211_tricky.h"
 
 typedef struct {
 f32 x;
@@ -137,7 +138,7 @@ void pressureswitch_control(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&objdata->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {
@@ -153,8 +154,7 @@ void pressureswitch_control(Object* self) {
         if (sidekick) {
             if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 
                 (setup->distanceSidekickBehaviour * setup->distanceSidekickBehaviour)) {
-                //TO-DO: use proper sidekick DLL interface
-                ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 3);
+                ((DLL_211_Tricky*)sidekick->dll)->vtbl->base.func14(sidekick, 3);
             }
         }
     }

@@ -6,18 +6,18 @@
 #include "dll_def.h"
 #include "types.h"
 
-typedef struct UnkDE8 {
-    u16 unk0;
-    u8 unk2;
+typedef struct {
+    u16 bankAndClipID; //bankID (1 bit), clipID (15 bit)
+    u8 volume;
     u8 unk3;
-    u8 unk4;
-    u8 unk5;
-    u8 unk6;
-    u8 unk7;
+    u8 pitch; //100 for base pitch (default: 0 interpretted as 100)
+    u8 pan;
+    u8 unk6; //reverb strength?
+    u8 volumeFalloff; //flags? Enables volume falloff
     u16 pad8;
-    u16 unkA;
-    u16 unkC;
-} UnkDE8;
+    u16 falloffNear; //max volume used when within this radius
+    u16 falloffFar; //0 volume used when outside this radius (or linear fade in when between near/far radii)
+} SoundDef;
 
 enum SoundID {
     SOUND_15_Heavy_Stone_Moving = 0x15, // used by door to Randorn's hall
@@ -31,6 +31,7 @@ enum SoundID {
 
     SOUND_73_Thunder = 0x73,
 
+    SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
 
     SOUND_96_Cannon = 0x96, //SB_ShipGun
@@ -40,7 +41,7 @@ enum SoundID {
     SOUND_Krystal_Hurt_Agh = 0xD9,      //player hurt sfx
     SOUND_Krystal_Hurt_Ough = 0xDA,     //player hurt sfx
 
-    SOUND_Krystal_Whistle = 0xE9,       //"*whistle* Come here!"
+    SOUND_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
     SOUND_Krystal_Find = 0xEA,          //"Seek it out!"
     SOUND_Krystal_Flame = 0xEB,         //"Fight!"
     SOUND_Krystal_Distract = 0xEC,      //"Distract them!"
@@ -49,9 +50,9 @@ enum SoundID {
 
     SOUND_10A_Galleon_Roar = 0x10A,
 
-    SFX_129_SnowHorn_Yawn_1 = 0x129,
-    SFX_12A_SnowHorn_SnoreHorn = 0x12A,
-    SFX_12B_SnowHorn_Yawn_2 = 0x12B,
+    SOUND_129_SnowHorn_Yawn_1 = 0x129,
+    SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
+    SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
 
@@ -71,7 +72,7 @@ enum SoundID {
 
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
 
-    SOUND_1e1_Stone_Moving = 0x1e1,
+    SOUND_1e1_Stone_Moving_Loop = 0x1e1,
 
     SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here = 0x1E2,
     SOUND_1E3_SharpClaw_Ah_Shuddup = 0x1E3, // used in DLL 33
@@ -151,6 +152,8 @@ enum SoundID {
 
     SOUND_LightFoot_Shout = 0x4B7,
 
+    SOUND_506_Chomping_Food = 0x506, //collectable
+
     SOUND_509_Engine_Boom = 0x509, //IMspacecraft
     SOUND_50a_Fire_Burning_Low_Loop = 0x50a,
     SOUND_50b_Fire_Burning_High_Loop = 0x50b,
@@ -162,10 +165,10 @@ enum SoundID {
 
     SOUND_5EE_Eating_Food = 0x5EE, //used by DLL 314 foodbag
 
-    SFX_PICMENU_SELECT = 0x5D3,
-    SFX_PICMENU_BACK = 0x5D4, // Used in DLL 66
-    SFX_PICMENU_MOVE = 0x5D5, // Used in DLL 66
-    SFX_RECAP_MENU_SELECT = 0x5D6, // Gong when starting game
+    SOUND_PICMENU_SELECT = 0x5D3,
+    SOUND_PICMENU_BACK = 0x5D4, // Used in DLL 66
+    SOUND_PICMENU_MOVE = 0x5D5, // Used in DLL 66
+    SOUND_RECAP_MENU_SELECT = 0x5D6, // Gong when starting game
 
     SOUND_5F6_Tumbleweed_Roll = 0x5F6, // used in DLL 227
     SOUND_5F7_Tumbleweed_Disintegrate = 0x5F7, // used in DLL 227
@@ -253,6 +256,8 @@ enum SoundID {
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
 
     SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
+
+    SOUND_8FC_Egg_Rattle = 0x8FC, //used by meatPickup (Dino Eggs)
 
     SOUND_912_Object_Refused = 0x912,
 
@@ -342,6 +347,10 @@ enum SoundID {
 };
 
 #define MAX_VOLUME 0x7F
+#define MAX_VOLUME_F 127.0f
+#define HALF_VOLUME 0x3F
+
+#define PAN_CENTRE 0x40
 
 DLL_INTERFACE(DLL_6_AMSFX) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
@@ -357,7 +366,7 @@ DLL_INTERFACE(DLL_6_AMSFX) {
 /*8*/ s32 (*func_B48)(u32 arg0);
 /*9*/ s32 (*func_BBC)(Object* arg0, s32 arg1, s32 arg2, Object **arg3, s32 arg4);
 /*10*/ s32 (*func_DCC)(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3);
-/*11*/ s32 (*func_DE8)(u16 arg0, UnkDE8* arg1);
+/*11*/ s32 (*func_DE8)(u16 arg0, SoundDef* arg1);
 /*12*/ s32 (*func_EE4)(s32 arg0, UNK_TYPE_32 arg1);
 /*13*/ void (*func_F2C)(Object* arg0, u16 arg1, u32* arg2, char *arg3, s32 arg4);
 /*14*/ void (*func_10D0)(Object* obj, u16 soundID, u32* arg2);

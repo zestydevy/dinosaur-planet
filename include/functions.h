@@ -44,6 +44,7 @@ void func_80045F48(s32);
 void func_8004D974(s32);
 void texture_destroy(Texture *texture);
 
+/** check if object talked to by player? */
 s32 func_80032538(Object* arg0);
 void func_8003273C(Object *obj);
 s32 map_get_type();

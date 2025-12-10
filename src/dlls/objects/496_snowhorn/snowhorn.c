@@ -482,7 +482,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
@@ -497,7 +497,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
             }
             objdata->sleepTimer-= gUpdateRate;
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
@@ -512,7 +512,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation

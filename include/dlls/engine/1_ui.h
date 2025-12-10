@@ -16,6 +16,16 @@ typedef struct {
 /*B*/ u8 unkB;
 } InventoryItem;
 
+/** For use with dll_1_func_F24 */
+typedef enum {
+    PAGE_1 = 1,
+    PAGE_Sidekick = 2,
+    PAGE_Inventory = 3,
+    PAGE_Spells = 4,
+    PAGE_5 = 5,
+    PAGE_Foodbag = 6
+} Cmdmenu_Pages;
+
 typedef struct {
 /*00*/ s32 unk0;
 /*04*/ s32 unk4;

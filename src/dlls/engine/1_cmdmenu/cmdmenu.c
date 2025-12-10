@@ -9,7 +9,6 @@
 #include "sys/objects.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
-#include "sys/objects.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {
@@ -381,7 +380,7 @@ s32 unk24;
     (u32)&_data_878, 0x00000000, 0x00080001, 0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-/*0x9D0*/ static s8 _data_9D0 = 0;
+/*0x9D0*/ static s8 _data_9D0 = 0; //index of cmdmenu page currently open
 /*0x9D4*/ static u32 _data_9D4 = 0x00000000;
 /*0x9D8*/ static s16 _data_9D8[] = {
     0x01be, 0x01bf, 0x1c0, 0x01c2, 0x01c3, 0x01c4, 0x01c5, 0x01c6, 
@@ -460,7 +459,7 @@ s32 unk24;
 /*0xC34*/ static Texture* _bss_C34;
 /*0xC38*/ static s16 usedItemGamebitID;
 /*0xC3A*/ static s16 _bss_C3A;
-/*0xC3C*/ static s8 _bss_C3C;
+/*0xC3C*/ static s8 _bss_C3C; //set to 0 when item selection successful
 /*0xC3D*/ static s8 _bss_C3D;
 /*0xC3E*/ static u8 _bss_C3E[0x2];
 /*0xC40*/ static u8 _bss_C40[0x4];
@@ -553,12 +552,13 @@ s32 dll_1_func_DC4(void) {
 }
 
 // offset: 0xDF4 | func: 6 | export: 7
-s32 dll_1_func_DF4(s32 itemGamebitID) {
+//cmdmenu_was_item_selected
+int dll_1_func_DF4(s32 itemGamebitID) {
     if (itemGamebitID == usedItemGamebitID) {
         _bss_C3C = 0;
-        return 1;
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
 // offset: 0xE2C | func: 7 | export: 8
@@ -566,6 +566,7 @@ s32 dll_1_func_E2C(s32 *arg0, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_E2C.s")
 
 // offset: 0xF24 | func: 8 | export: 9
+// cmdmenu_get_pageID?
 s8 dll_1_func_F24(void) {
     return _data_9D0;
 }
