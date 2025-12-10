@@ -48,8 +48,8 @@ void objfsa_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
         var_v1[i] = 0;
         i++;
     }
-    data->unk264 = arg2;
-    data->unk266 = arg3;
+    data->unk264 = arg2; //total states?
+    data->unk266 = arg3; //initial state?
     data->logicState = 0;
     data->animState = 0;
     data->enteredAnimState = 1;
@@ -62,9 +62,9 @@ void objfsa_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 // offset: 0x90 | func: 1 | export: 1
 void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3, 
         ObjFSA_StateCallback *animStateCallbacks, ObjFSA_StateCallback *logicStateCallbacks) {
-    f32 temp_fv0;
+    f32 dx;
     f32 var_fv1;
-    f32 temp_fv1;
+    f32 dz;
     f32 temp_fv0_2;
     f32 temp_fa1;
     f32 temp_ft4;
@@ -76,9 +76,9 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
     sp2F = data->unk341;
     
     if (data->target != NULL) {
-        temp_fv0 = data->target->srt.transl.x - obj->srt.transl.x;
-        temp_fv1 = data->target->srt.transl.z - obj->srt.transl.z;
-        data->targetDist = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
+        dx = data->target->srt.transl.x - obj->srt.transl.x;
+        dz = data->target->srt.transl.z - obj->srt.transl.z;
+        data->targetDist = sqrtf(SQ(dx) + SQ(dz));
     } else {
         data->targetDist = 0.0f;
     }
@@ -117,9 +117,9 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
         temp_ft4 = temp_v0_2->transl.z - _bss_C;
         temp_fv0_2 = sqrtf(SQ(temp_fa1) + SQ(temp_ft4));
         if (temp_fv0_2 < 10.0f) {
-            temp_fv0 = obj->srt.transl.x - _bss_8;
-            temp_fv1 = obj->srt.transl.z - _bss_C;
-            var_fv1 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
+            dx = obj->srt.transl.x - _bss_8;
+            dz = obj->srt.transl.z - _bss_C;
+            var_fv1 = sqrtf(SQ(dx) + SQ(dz));
             if (var_fv1 < 0.1f) {
                 var_fv1 = 0.1f;
             }

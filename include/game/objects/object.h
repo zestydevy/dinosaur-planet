@@ -167,7 +167,7 @@ typedef struct {
 /*0001*/    u8 unk1;
 /*0002*/    u8 unk2;
 /*0003*/    u8 unk3;
-/*0004*/    u8 unk4;
+/*0004*/    u8 colourIndex; //InteractionArrowColour for arrow
 } ObjectStruct78;
 
 typedef struct {
@@ -242,12 +242,12 @@ typedef struct Object {
 /*009C*/    f32 animProgressLayered;
 /*00A0*/    s16 curModAnimId;
 /*00A2*/    s16 curModAnimIdLayered;
-/*00A4*/    f32 unkA4;
+/*00A4*/    f32 unkA4; //angle between camera and Object?
 /*00A8*/    f32 unkA8; //scale-related?
 /*00AC*/    s8 mapID;
 /*00AD*/    s8 modelInstIdx;
 /*00AE*/    s8 updatePriority;
-/*00AF*/    u8 unkAF; //Target arrow-related flags? (Changes when A pressed on highlighted objects)
+/*00AF*/    u8 unkAF; //Target arrow flags (see InteractionArrowFlags)
 /*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here)
 /*00B2*/    s16 unkB2;
 /*00B4*/    s16 unkB4;

@@ -16,6 +16,20 @@
 #define FOOD_TYPE(position) 1 << (position - 1)
 #define FOOD_GONE 0
 
+typedef enum {
+    FOOD_Green_Apple = FOOD_TYPE(1),
+    FOOD_Red_Apple   = FOOD_TYPE(2),
+    FOOD_Brown_Apple = FOOD_TYPE(3),
+    FOOD_Fish        = FOOD_TYPE(4),
+    FOOD_Smoked_Fish = FOOD_TYPE(5),
+    FOOD_Dino_Egg    = FOOD_TYPE(6),
+    FOOD_Moldy_Meat  = FOOD_TYPE(7),
+    FOOD_Green_Bean  = FOOD_TYPE(8),
+    FOOD_Red_Bean    = FOOD_TYPE(9),
+    FOOD_Brown_Bean  = FOOD_TYPE(10),
+    FOOD_Blue_Bean   = FOOD_TYPE(11)
+} FoodTypes;
+
 /** ObjSetup struct for food Objects placed in the world
   * 
   * (e.g. OBJ_foodbagRedApple, OBJ_foodbagNewFish, OBJ_foodbagBlueMush)

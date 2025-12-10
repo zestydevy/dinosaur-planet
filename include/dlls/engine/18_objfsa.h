@@ -44,7 +44,7 @@ typedef struct ObjFSA_Data {
 /*26A*/ s16 prevLogicState;
 /*26C*/ s16 animState; // index of anim state callback to run
 /*26E*/ s16 prevAnimState;
-/*270*/ s16 unk270;
+/*270*/ s16 unk270; //nextAnimState?
         // Whether the current anim state was just entered 
         // (only true for the first call since transitioning to the state)
 /*272*/ s8 enteredAnimState;
@@ -68,7 +68,7 @@ typedef struct ObjFSA_Data {
 /*2AC*/ f32 unk2AC;
 /*2B0*/ f32 unk2B0;
 /*2B4*/ f32 unk2B4;
-/*2B8*/ f32 targetDist; // distance to target
+/*2B8*/ f32 targetDist; // distance to target (2D lateral)
 /*2BC*/ u8 _unk2BC[0x2C8 - 0x2BC];
 /*2C8*/ Object *target;
 /*2CC*/ u8 _unk2CC[0x2EC - 0x2CC];

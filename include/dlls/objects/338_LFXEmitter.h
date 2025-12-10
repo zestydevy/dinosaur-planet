@@ -7,7 +7,7 @@
 
 typedef struct {
     u8 unk0[0x108];
-    NewLfxStruct *unk108;
+    LightAction *unk108;
 } LFXEmitter_Data;
 
 typedef struct {

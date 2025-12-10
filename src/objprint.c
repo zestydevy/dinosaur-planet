@@ -2,14 +2,23 @@
 
 extern s32 PTR_DAT_800b2e1c;
 
+/** toggles Models' multiplier colour */
 extern s8 BYTE_80091754;
+/** toggles Models' blend colour */
 extern s8 BYTE_80091758;
+/** gModelColourMultiplyR? */
 extern s16 SHORT_800b2e14;
+/** gModelColourMultiplyG? */
 extern s16 SHORT_800b2e16;
+/** gModelColourMultiplyB? */
 extern s16 SHORT_800b2e18;
+/** gModelColourBlendR? */
 extern s8 BYTE_800b2e20;
+/** gModelColourBlendG? */
 extern s8 BYTE_800b2e21;
+/** gModelColourBlendB? */
 extern s8 BYTE_800b2e22;
+/** gModelColourBlendA? */
 extern s8 BYTE_800b2e23;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func.s")
@@ -371,26 +380,28 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     }
 }
 
-void func_80036F6C(s16 arg0, s16 arg1, s16 arg2) {
-    SHORT_800b2e14 = arg0;
-    SHORT_800b2e16 = arg1;
-    SHORT_800b2e18 = arg2;
-    BYTE_80091754 = 1;
+/** Sets a multiplier colour (generally lowers model's brightness) */
+void func_80036F6C(s16 r, s16 g, s16 b) {
+    SHORT_800b2e14 = r;
+    SHORT_800b2e16 = g;
+    SHORT_800b2e18 = b;
+    BYTE_80091754 = TRUE;
 }
 
-void func_80036FBC(s16 arg0, s16 arg1, s16 arg2, u8 arg3) {
-    BYTE_800b2e20 = arg0;
-    BYTE_800b2e21 = arg1;
-    BYTE_800b2e22 = arg2;
-    BYTE_80091758 = 1;
-    BYTE_800b2e23 = arg3 & 0xFF;
+/** Sets a blend colour (can increase a model's brightness) */
+void func_80036FBC(s16 r, s16 g, s16 b, u8 a) {
+    BYTE_800b2e20 = r;
+    BYTE_800b2e21 = g;
+    BYTE_800b2e22 = b;
+    BYTE_80091758 = TRUE;
+    BYTE_800b2e23 = a & 0xFF;
 }
 
 void func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
-    f32 productSum;
+    f32 dotProduct;
 
-    productSum = (aX * bX) + (aY * bY) + (aZ * bZ);
-    *outX = bX - (productSum * aX);
-    *outY = bY - (productSum * aY);
-    *outZ = bZ - (productSum * aZ);
+    dotProduct = (aX * bX) + (aY * bY) + (aZ * bZ);
+    *outX = bX - (dotProduct * aX);
+    *outY = bY - (dotProduct * aY);
+    *outZ = bZ - (dotProduct * aZ);
 }

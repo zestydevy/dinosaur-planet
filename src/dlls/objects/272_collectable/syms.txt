@@ -1,0 +1,23 @@
+.text = 0x0:
+collectable_ctor = 0x0;
+collectable_dtor = 0xC;
+collectable_setup = 0x18;
+collectable_control = 0x430;
+collectable_update = 0x994;
+collectable_print = 0x9A0;
+collectable_free = 0xA88;
+collectable_get_model_flags = 0xB00;
+collectable_get_data_size = 0xB10;
+collectable_func_B24 = 0xB24;
+collectable_handle_animation_and_fx = 0xBF8;
+collectable_handle_motion = 0x10C8;
+collectable_collect = 0x1304;
+collectable_is_collected = 0x1780;
+collectable_set_pause_state = 0x178C;
+collectable_get_area_value = 0x179C;
+collectable_set_visibility = 0x1804;
+collectable_get_visibility = 0x1814;
+collectable_set_speed = 0x1824;
+collectable_save_position = 0x1854;
+
+.rodata = 0x19BC:

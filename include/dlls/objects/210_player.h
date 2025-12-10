@@ -240,7 +240,7 @@ typedef struct {
 /*850*/ Object *unk850;
 /*854*/ s32 unk854;
 /*858*/ Object *unk858; // vehicle
-/*85C*/ Object *unk85C;
+/*85C*/ Object *unk85C; // foodbag
 /*860*/ Object *unk860;
 /*864*/ s32 unk864;
 /*868*/ Object* unk868; //held object (baskets etc.)
@@ -248,7 +248,7 @@ typedef struct {
 /*870*/ u8 unk870;
 /*871*/ u8 unk871;
 /*872*/ u16 unk872;
-/*874*/ s16 unk874;
+/*874*/ s16 unk874; //player yaw?
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
 /*87A*/ s16 unk87A;
@@ -282,20 +282,103 @@ typedef struct {
 /*8AD*/ u8 unk8AD;
 /*8AE*/ s8 unk8AE[4];
 /*8B2*/ u8 unk8B2[0x8B4 - 0x8B2];
-/*8B4*/ u8 unk8B4;
+/*8B4*/ u8 unk8B4; //0 when Krystal, 1 when Sabre
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
 /*8B7*/ u8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
 /*8BA*/ u8 unk8BA;
-/*8BB*/ u8 unk8BB; // player has magic?
+/*8BB*/ u8 unk8BB; // player has magic? (bitfield for magic spells obtained?)
 /*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
 /*8BE*/ u8 unk8BE;
 /*8BF*/ s8 unk8BF;
 /*8C0*/ s8 unk8C0;
 } Player_Data;
+
+typedef enum {
+    PLAYER_ASTATE_Standing = 1,
+    PLAYER_ASTATE_Idle_Fidget = 2,
+    PLAYER_ASTATE_Turning_On_Spot = 3,
+    PLAYER_ASTATE_Walking = 4,
+    PLAYER_ASTATE_Picking_Up = 5,
+    PLAYER_ASTATE_Placing_Down = 6,
+    PLAYER_ASTATE_Throw = 7, //crashes when no object is held
+    PLAYER_ASTATE_8 = 8,
+    PLAYER_ASTATE_9 = 9,
+    PLAYER_ASTATE_Hop = 10, //used very rarely via HITS lines
+    PLAYER_ASTATE_Jump = 11,
+    PLAYER_ASTATE_Fall_Reset = 12, //used with EffectBoxes
+    PLAYER_ASTATE_Falling = 13, //includes landing phase
+    PLAYER_ASTATE_14 = 14,
+    PLAYER_ASTATE_15 = 15,
+    PLAYER_ASTATE_Ledge_Grab_From_Jump = 16,
+    PLAYER_ASTATE_Ledge_Grab_Start = 17,
+    PLAYER_ASTATE_Ledge_Climb_Over = 18,
+    PLAYER_ASTATE_Ledge_Grab_Holding = 19,
+    PLAYER_ASTATE_Ledge_Grab_Let_Go = 20,
+    PLAYER_ASTATE_21 = 21,
+    PLAYER_ASTATE_22 = 22,
+    PLAYER_ASTATE_Ladder_Get_On = 23, //from bottom or top
+    PLAYER_ASTATE_Ladder_Climbing = 24, //includes idle
+    PLAYER_ASTATE_Ladder_Slide_Down = 25,
+    PLAYER_ASTATE_26 = 26,
+    PLAYER_ASTATE_Wall_Clambering_Start = 27,
+    PLAYER_ASTATE_Wall_Clambering = 28, //e.g. on vines/rock-faces
+    PLAYER_ASTATE_Wall_Clambering_Climb_Over = 29, //reaching top of vine/rock climb
+    PLAYER_ASTATE_Wall_Clambering_Drop_Down = 30,
+    PLAYER_ASTATE_31 = 31, //splash?
+    PLAYER_ASTATE_Swim_Treading_In_Place = 32,
+    PLAYER_ASTATE_Swim_Forward = 33,
+    PLAYER_ASTATE_Vehicle_Getting_On = 34, //includes jetbikes and logs
+    PLAYER_ASTATE_35 = 35,
+    PLAYER_ASTATE_Vehicle_Riding = 36, //includes jetbikes and SnowHorns
+    PLAYER_ASTATE_Log_Riding = 37,
+    PLAYER_ASTATE_Vehicle_Getting_Off = 38, //includes jetbikes and logs
+    PLAYER_ASTATE_Crawl = 39, //includes intro/outro
+    PLAYER_ASTATE_Push_Block_Away = 40, //used by WM Sun/Moon puzzle blocks
+    PLAYER_ASTATE_Block_Pushing = 41,
+    PLAYER_ASTATE_42 = 42, //crash?
+    PLAYER_ASTATE_Collecting = 43, //crashes if there's no object (e.g. Blue Mushrooms)
+    PLAYER_ASTATE_44 = 44,
+    PLAYER_ASTATE_45 = 45,
+    PLAYER_ASTATE_46 = 46,
+    PLAYER_ASTATE_47 = 47,
+    PLAYER_ASTATE_Hurt_Tumbling = 48,
+    PLAYER_ASTATE_Hurt_Stunned = 49, //when hurt by Red Mushrooms' spores or pollen cannons
+    PLAYER_ASTATE_Hurt_Flattened = 50, //when squashed by DIM snowballs
+    PLAYER_ASTATE_51 = 51,
+    PLAYER_ASTATE_Dead = 52,
+    PLAYER_ASTATE_Targetting_Idle = 53,
+    PLAYER_ASTATE_Targetting_Moving = 54,
+    PLAYER_ASTATE_Attacking = 55, //with sword, in case it matters (includes Sabre's forward targetting dodge attack)
+    PLAYER_ASTATE_56 = 56,
+    PLAYER_ASTATE_57 = 57,
+    PLAYER_ASTATE_Aiming_Spell = 58,
+    PLAYER_ASTATE_59 = 59,
+    PLAYER_ASTATE_60 = 60,
+    PLAYER_ASTATE_61 = 61,
+    PLAYER_ASTATE_Targetting_Dodge_Neutral = 62,
+    PLAYER_ASTATE_Targetting_Dodge_Left = 63,
+    PLAYER_ASTATE_Targetting_Dodge_Right = 64,
+    PLAYER_ASTATE_65 = 65,
+    PLAYER_ASTATE_Targetting_Dodge_Backflip = 66,
+    PLAYER_ASTATE_67 = 67,
+    PLAYER_ASTATE_68 = 68,
+    PLAYER_ASTATE_70 = 70, //floating?
+    PLAYER_ASTATE_71 = 71,
+    PLAYER_ASTATE_72 = 72,
+    PLAYER_ASTATE_Floating = 73, //when riding CRF's wind lifts
+    PLAYER_ASTATE_74 = 74,
+    PLAYER_ASTATE_75 = 75,
+    PLAYER_ASTATE_76 = 76,
+    PLAYER_ASTATE_Hurt_Knocked_Down = 77, //when knocked to floor by WM lasers, etc.
+    PLAYER_ASTATE_78 = 78,
+    PLAYER_ASTATE_Hurt_Stagger = 79,
+    PLAYER_ASTATE_Hurt_Stagger_80 = 80, //Diamond Bay tendril enemies cause this state
+    PLAYER_ASTATE_81 = 81
+} Player_AnimStates; //81 states in total?
 
 // AKA. krystal
 DLL_INTERFACE(DLL_210_Player) {
