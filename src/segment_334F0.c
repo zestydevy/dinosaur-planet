@@ -115,7 +115,7 @@ void func_80032B44(Object *obj, s32 arg1) {
     func_80033AA0(obj, sp1C & 0xFF, v0, (f32) sp18);
 }
 
-void func_80032C0C(Object* obj, Object* otherObj, s16* arg2, s32 arg3) {
+void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3) {
     s32 pad;
     s32 pad2;
     s16* sp1C;
@@ -125,15 +125,15 @@ void func_80032C0C(Object* obj, Object* otherObj, s16* arg2, s32 arg3) {
         return;
     }
 
-    arg2[10] = ((arctan2_f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) & 0xFFFFu) & 0xFFFFu) - obj->srt.yaw;
+    arg2->headGoalAngle = ((arctan2_f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) & 0xFFFFu) & 0xFFFFu) - obj->srt.yaw;
     arg3 = (s16)(arg3 * 182.04f);
-    if (arg3 < arg2[10]) {
-        arg2[10] = arg3;
+    if (arg3 < arg2->headGoalAngle) {
+        arg2->headGoalAngle = arg3;
     }
-    if (arg2[10] < -arg3) {
-        arg2[10] = -arg3;
+    if (arg2->headGoalAngle < -arg3) {
+        arg2->headGoalAngle = -arg3;
     }
-    sp1C[1] = arg2[10];
+    sp1C[1] = arg2->headGoalAngle;
 }
 
 void func_80032CF8(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3) {

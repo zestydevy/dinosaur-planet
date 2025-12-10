@@ -124,7 +124,7 @@ void GPbonfire_control(Object* self) {
 
     if (objdata->updateFireEffect) {
         self->srt.scale = bonfireScaleData[objdata->weedsDeposited];
-        gDLL_14_Modgfx->vtbl->func10.withOneArg((s32)self);
+        gDLL_14_Modgfx->vtbl->func10(self);
         dll = dll_load_deferred(0x104B, 1);
         ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, modgfxScaleData[objdata->weedsDeposited], 0, 0x10004, -1, 0);
         dll_unload(dll);
@@ -328,7 +328,7 @@ void GPbonfire_func_A44(Object* self) {
     objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
-    gDLL_14_Modgfx->vtbl->func10.withOneArg((s32)self);
+    gDLL_14_Modgfx->vtbl->func10(self);
     dll = dll_load_deferred(0x104B, 1); //modgfx #75?
     ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, objdata->weedsDeposited, 0, 0x10004, -1, 0);
     dll_unload(dll);

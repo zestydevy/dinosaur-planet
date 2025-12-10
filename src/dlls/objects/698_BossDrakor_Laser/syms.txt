@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_698_ctor = 0x0;
+dll_698_dtor = 0xC;
+dll_698_setup = 0x18;
+dll_698_control = 0x38;
+dll_698_update = 0x4AC;
+dll_698_print = 0x4B8;
+dll_698_free = 0x4D0;
+dll_698_get_model_flags = 0x540;
+dll_698_get_data_size = 0x550;
+dll_698_func_564 = 0x564;
+dll_698_func_6E4 = 0x6E4;
+
+.rodata = 0xACC:

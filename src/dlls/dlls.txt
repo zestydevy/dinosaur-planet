@@ -178,6 +178,8 @@
 661 = objects/661_DBPlaceHolder
 663 = objects/663_DBlevelControl
 668 = objects/668_db_diamond
+697 = objects/697_BossDrakor
+698 = objects/698_BossDrakor_Laser
 701 = objects/701_KT_RexLevel
 702 = objects/702_KTrex
 703 = objects/703_KT_RexFloorSwitch
