@@ -123,7 +123,7 @@ segments:
     - [0x67E80, c, libnaudio/n_cspgetchlvol]
     - [0x67EB0, c, libnaudio/n_cspsetchlvol]
     - [0x67F20, c, libnaudio/n_cspgetfxmix]
-    - [0x67F50, c, mp3/segment_67F50]
+    - [0x67F50, c, mp3/mp3]
     - [0x68FE0, c, audio/amAudio]
     - [0x6A0C0, c, libnaudio/n_syndelete]
     - [0x6A0E0, c, libnaudio/n_synallocfx]
