@@ -158,7 +158,7 @@ void dll_6_func_338(void) {
                     dll_6_func_1E64(i);
                 }
             } else if (temp_a0 == (sndstate*)-2) {
-                if (mp3_func_800675EC(temp_a0) == 0) {
+                if (mp3_is_busy() == 0) {
                     _bss_4[i].unk1C = (sndstate*)-1;
                 }
             } else if (sndGetState(temp_a0) == 0) {
@@ -223,7 +223,7 @@ u32 dll_6_play_sound(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char
         // @fake
         if (_bss_4[activeSoundIndex].def.bankAndClipID) {}
         mpeg_play((soundDef.bankAndClipID & 0x7FFF) - 1);
-        mp3_func_80067650(volumeCalc << 8, 0);
+        mp3_set_volume(volumeCalc << 8, 0);
         // @fake
         if (_bss_4) {}
     } else {
@@ -275,7 +275,7 @@ void dll_6_func_860(u32 soundHandle, u8 volume) {
     if (vol != (s8) _bss_4[soundHandle].unk13) {
         _bss_4[soundHandle].unk13 = vol;
         if (temp_a0 == (sndstate* )-2) {
-            mp3_func_80067650(vol << 8, soundHandle * 0);
+            mp3_set_volume(vol << 8, soundHandle * 0);
         } else if (temp_a0 != (sndstate* )-1) {
             audioPostEvent(temp_a0, AL_SNDP_VOL_EVT, (void *)(vol << 8));
         }
@@ -787,7 +787,7 @@ static s32 dll_6_func_1E64(u32 arg0) {
             _bss_4->unk1C = 0;
         }
         if (temp_a0 == (sndstate* )-2) {
-            mp3_func_8006758C(temp_a0);
+            mp3_stop();
         } else {
             audioStop(temp_a0);
         }
@@ -828,7 +828,7 @@ static void dll_6_func_1F78(void) {
         if (pan != (s8) _bss_4[i].unk14) {
             _bss_4[i].unk14 = (u8) pan;
             if (temp_s0 == (sndstate* )-2) {
-                mp3_func_800676A4(pan, 0);
+                mp3_set_pan(pan, FALSE);
             } else {
                 audioPostEvent(temp_s0, AL_SNDP_PAN_EVT, (void *)pan);
             }
@@ -840,7 +840,7 @@ static void dll_6_func_1F78(void) {
         if (vol != (s8)_bss_4[i].unk13) {
             _bss_4[i].unk13 = vol;
             if (temp_s0 == (sndstate* )-2) {
-                mp3_func_80067650(vol << 8, 0);
+                mp3_set_volume(vol << 8, 0);
             } else {
                 audioPostEvent(temp_s0, AL_SNDP_VOL_EVT, (void*)(vol << 8));
             }

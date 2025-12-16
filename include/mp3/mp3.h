@@ -6,10 +6,10 @@
 
 void mp3_init(ALHeap *heap);
 void mp3_play_file(s32 romAddr, s32 size);
-void mp3_func_8006758C(sndstate *state);
-s32 mp3_func_800675EC(sndstate*);
-void mp3_func_80067650(s32, s32);
-void mp3_func_800676A4(s8, s32);
+void mp3_stop(void);
+s32 mp3_is_busy(void);
+void mp3_set_volume(s32 vol, s32);
+void mp3_set_pan(s32 pan, s32 immediate);
 s32 mp3_func_800676F0(s32 arg0, Acmd **cmd);
 
 #endif

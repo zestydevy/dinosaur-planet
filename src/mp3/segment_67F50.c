@@ -12,6 +12,7 @@ struct mp3vars g_Mp3Vars; // 0x800bff00
 
 s32 mp3_func_80068278(s32 arg0, u8 *dst, s32 len, s32 dmaoffset);
 void mp3_func_80068260(void *fn);
+void mp3_dma(void);
 
 void mp3_init(ALHeap *heap) {
     bzero(&g_Mp3Vars, sizeof(g_Mp3Vars));
@@ -37,19 +38,69 @@ void mp3_init(ALHeap *heap) {
     mp3_func_80068260(mp3_func_80068278);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_play_file.s")
+void mp3_play_file(s32 romAddr, s32 size) {
+    if (g_Mp3Vars.dmafunc == NULL) {
+        return;
+    }
+    g_Mp3Vars.romaddr = romAddr;
+    g_Mp3Vars.filesize = size;
+    g_Mp3Vars.dmaoffset = 0;
+    g_Mp3Vars.var8009c3e8 = 0;
+    g_Mp3Vars.currentvol = AL_VOL_FULL;
+    g_Mp3Vars.statetimer = 5;
+    
+    mp3_dma();
+    
+    g_Mp3Vars.state = MP3STATE_LOADING;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_8006758C.s")
+void mp3_stop(void) {
+    g_Mp3Vars.state = MP3STATE_STOPPED;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_800675A8.s")
+void mp3_pause(void) {
+    g_Mp3Vars.state = MP3STATE_PAUSED;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_800675C4.s")
+void mp3_unpause(void) {
+    g_Mp3Vars.statetimer = 5;
+    g_Mp3Vars.state = MP3STATE_UNPAUSING;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_800675EC.s")
+s32 mp3_is_busy(void) {
+    if (g_Mp3Vars.state == MP3STATE_PLAYING || 
+        g_Mp3Vars.state == MP3STATE_LOADING || 
+        g_Mp3Vars.state == MP3STATE_UNPAUSING || 
+        g_Mp3Vars.state == MP3STATE_PAUSED) {
+        return (s32) g_Mp3Vars.state;
+    } else {
+        return 0;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_80067650.s")
+void mp3_set_volume(s32 vol, s32 arg1) {
+    if (vol < 0) {
+        g_Mp3Vars.currentvol = 0;
+    } else if (vol > AL_VOL_FULL) {
+        g_Mp3Vars.currentvol = AL_VOL_FULL;
+    } else {
+        g_Mp3Vars.currentvol = (u32) vol;
+    }
+    g_Mp3Vars.var8009c3e8 = (u32) arg1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_800676A4.s")
+void mp3_set_pan(s32 pan, s32 immediate) {
+    if (pan > 127) {
+        pan = 127;
+    }
+    if (pan < 0) {
+        pan = 0;
+    }
+    g_Mp3Vars.targetpan = (s16) pan;
+    if (immediate != 0) {
+        g_Mp3Vars.currentpan = g_Mp3Vars.targetpan;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_800676F0.s")
 
