@@ -122,4 +122,6 @@ typedef struct {
 	/*0x847c*/ s32 (*setsideinfofunc)(struct DecoderStream *stream);
 } DecoderStream;
 
+s32 mp3_dec_init(void);
+
 #endif
