@@ -18,7 +18,7 @@ typedef struct {
 	u8 unk1;
 	u8 unk2;
 	u8 unk3;
-	u8 *unk4;
+	const char *unk4; // string of the characters '0' and '1'
 } DecoderThing;
 
 typedef struct {
