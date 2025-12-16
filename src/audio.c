@@ -51,7 +51,7 @@ BSS_GLOBAL u32 D_800AB960;
 /* -------- .bss end -------- */
 
 // TODO: this is wrong! (but matches here...)
-extern void mpeg_fs_init(void);
+extern void mpeg_init(void);
 
 void __amMain(void *arg);
 void __amHandleFrameMsg(void);
@@ -71,7 +71,7 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
 
     audioTab = NULL;
     
-    mpeg_fs_init();
+    mpeg_init();
     
     c.maxVVoices = c.maxPVoices = 72;
     c.maxUpdates = 96;

@@ -1,5 +1,5 @@
-#ifndef _LIBNAUDIO_MP3_INTERNAL_H
-#define _LIBNAUDIO_MP3_INTERNAL_H
+#ifndef _MP3_INTERNAL_H
+#define _MP3_INTERNAL_H
 
 #include "libnaudio/n_sndplayer.h"
 

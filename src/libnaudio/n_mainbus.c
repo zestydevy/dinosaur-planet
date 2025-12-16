@@ -11,7 +11,7 @@ Acmd *n_alMainBusPull(s32 sampleOffset, Acmd *p) {
 	Acmd *ptr = p;
 	s32 i;
 
-	if (!func_800676F0(FIXED_SAMPLE, &ptr)) {
+	if (!mp3_func_800676F0(FIXED_SAMPLE, &ptr)) {
 		aClearBuffer(ptr++, N_AL_MAIN_L_OUT, N_AL_DIVIDED << 1);
 	}
 
