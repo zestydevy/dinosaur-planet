@@ -4,7 +4,7 @@
 #include "ultra64.h"
 #include "libnaudio/n_sndplayer.h"
 
-void mp3_init(s32 arg0);
+void mp3_init(ALHeap *heap);
 void mp3_play_file(s32 romAddr, s32 size);
 void mp3_func_8006758C(sndstate *state);
 s32 mp3_func_800675EC(sndstate*);

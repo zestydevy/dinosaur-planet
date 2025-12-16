@@ -6,9 +6,9 @@
 
 s32 *gFile_MPEG_TAB = NULL;
 
-void mpeg_init(s32 arg0) {
+void mpeg_init(ALHeap *heap) {
 	queue_alloc_load_file((void**) (&gFile_MPEG_TAB), MPEG_TAB);
-	mp3_init(arg0);
+	mp3_init(heap);
 }
 
 void mpeg_play(s32 id) {

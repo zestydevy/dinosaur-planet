@@ -12,6 +12,18 @@
 #define CHANNELMODE_DUALMONO    2
 #define CHANNELMODE_SINGLEMONO  3
 
+#define MP3RESPONSETYPE_NONE        0
+#define MP3RESPONSETYPE_ACKNOWLEDGE 1
+#define MP3RESPONSETYPE_WHISPER     2
+#define MP3RESPONSETYPE_GREETING    3
+
+#define MP3STATE_IDLE      0
+#define MP3STATE_PLAYING   1
+#define MP3STATE_PAUSED    2
+#define MP3STATE_STOPPED   3
+#define MP3STATE_LOADING   4
+#define MP3STATE_UNPAUSING 5
+
 typedef struct {
 	u8 unk0;
 	u8 unk1;
@@ -159,6 +171,8 @@ struct asistream {
 };
 
 extern struct mp3vars g_Mp3Vars; // 0x800bff00
+extern struct mp3decfourbytes* D_800C01C0; // sizeof 0xA410
+extern f32 *D_800C01C4;
 
 s32 mp3_dec_init(void);
 
