@@ -1,8 +1,9 @@
-// @DECOMP_OPT_FLAGS=-O1 -g2
+// @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
-#include <PR/ultratypes.h>
+#include "PR/ultratypes.h"
 #include "libnaudio/n_synthInternals.h"
 #include "libnaudio/n_unkfuncs.h"
+#include "mp3/mp3_internal.h"
 
 f32 mp3_func_80077900(f32 arg0, f32 arg1) {
 	s32 arg1int = arg1;

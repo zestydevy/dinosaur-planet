@@ -2,16 +2,16 @@
 // @DECOMP_IDO_VERSION=7.1
 #include <PR/ultratypes.h>
 #include "libnaudio/n_synthInternals.h"
+#include "mp3/mp3.h"
 #include "sys/audio/speaker.h"
 
-s32 func_800676F0(s32 arg0, Acmd **cmd);
 void func_8006AEC4(struct fx *fx, f32 outputrate);
 
 Acmd *n_alMainBusPull(s32 sampleOffset, Acmd *p) {
 	Acmd *ptr = p;
 	s32 i;
 
-	if (!func_800676F0(FIXED_SAMPLE, &ptr)) {
+	if (!mp3_make_samples(FIXED_SAMPLE, &ptr)) {
 		aClearBuffer(ptr++, N_AL_MAIN_L_OUT, N_AL_DIVIDED << 1);
 	}
 

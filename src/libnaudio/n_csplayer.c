@@ -7,6 +7,7 @@
 #include "libnaudio/n_seqp.h"
 #include "libultra/audio/cseq.h"
 #include "intrinsics.h"
+#include "sys/mpeg.h"
 
 s32 D_800967A0[127] = {
 	0,         10000,     20000,     30000,
@@ -66,8 +67,6 @@ f32 _depth2Cents(u8 arg0);
 struct auxbus44 *func_8007A8B8(s16 bus);
 void func_8007A974(struct fx *fx, s16 arg1, void *param);
 void func_800794B0(N_ALCSPlayer *seqp);
-
-void mpeg_fs_play(s32 id);
 
 void func_80073518(N_ALCSPlayer *seqp, u8 channel);
 void func_8007346C(N_ALCSPlayer *seqp, u8 channel);
@@ -1010,7 +1009,7 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event) {
 			}
 			break;
 		case (AL_MIDI_FX_CTRL_6):
-			mpeg_fs_play(byte2); //snd_start_mp3_by_filenum
+			mpeg_play(byte2); //snd_start_mp3_by_filenum
 			break;
 		case (0x20):
 			seqp->chanState[chan].unk36 = byte2;
