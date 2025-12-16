@@ -37,10 +37,6 @@ typedef struct {
 	s16 unk2E[14];
 } DecoderThing2;
 
-struct mp3thing {
-	u16 unk00[580];
-};
-
 struct mp3vars {
 	/*0x00*/ s32 romaddr;
 	/*0x04*/ struct asistream *stream;
@@ -62,7 +58,7 @@ struct mp3vars {
 	/*0x2c*/ s32 em_segEnd;
 	/*0x30*/ s32 filesize;
 	/*0x34*/ s32 dmaoffset;
-	/*0x38*/ struct mp3thing *var8009c3c8;
+	/*0x38*/ u16 *var8009c3c8;
 	/*0x3c*/ s32 var8009c3cc;
 	/*0x40*/ s32 var8009c3d0;
 	/*0x44*/ u32 *var8009c3d4[1];
@@ -108,7 +104,7 @@ struct asistream {
 	/*0x2064*/ s32 offset;
 	/*0x2068*/ u32 unk2068;
 	/*0x206c*/ u32 unk206c;
-	/*0x2070*/ struct mp3thing unk2070[6];
+	/*0x2070*/ u16 unk2070[6][580];
 	/*0x3ba0*/ s32 unk3ba0;
 	/*0x3ba4*/ u32 version;
 	/*0x3ba8*/ u32 layer;
@@ -178,7 +174,7 @@ s32 mp3_dec_init(void);
 
 u32 mp3_main_init(void);
 struct asistream* mp3_main_func_80072380(s32 arg0, s32 (*arg1)(s32, void*, s32, s32), s32 arg2);
-s32 mp3_main_func_8007245c(struct asistream* arg0, struct mp3thing** arg1, s32* arg2);
+s32 mp3_main_func_8007245c(struct asistream* arg0, u16** arg1, s32* arg2);
 s32 mp3_main_func_80071cf0(struct asistream* arg0);
 
 s32 mp3_dec_set_side_info(struct asistream* stream);

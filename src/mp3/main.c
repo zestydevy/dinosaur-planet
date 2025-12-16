@@ -152,7 +152,7 @@ struct asistream* mp3_main_func_80072380(s32 arg0, s32 (*arg1)(s32, void*, s32, 
     return sp1C;
 }
 
-s32 mp3_main_func_8007245c(struct asistream* arg0, struct mp3thing** arg1, s32* arg2) {
+s32 mp3_main_func_8007245c(struct asistream* arg0, u16** arg1, s32* arg2) {
     struct asistream* sp1C;
     s32 sp18;
 
@@ -170,7 +170,7 @@ s32 mp3_main_func_8007245c(struct asistream* arg0, struct mp3thing** arg1, s32* 
     if (sp18 == 0) {
 
     } else {
-        *arg1 = &sp1C->unk2070[sp1C->unk3ba0];
+        *arg1 = sp1C->unk2070[sp1C->unk3ba0];
         *arg2 = sp1C->numchannels;
     }
     return sp18;
