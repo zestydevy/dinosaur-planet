@@ -1,5 +1,5 @@
 #include "PR/ultratypes.h"
-#include "libnaudio/mp3/mp3.h"
+#include "mp3/mp3.h"
 #include "sys/asset_thread.h"
 #include "sys/fs.h"
 #include "functions.h"

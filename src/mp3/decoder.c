@@ -1,7 +1,7 @@
 // @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
-#include "libnaudio/mp3/mp3.h"
-#include "libnaudio/mp3/mp3_internal.h"
+#include "mp3/mp3.h"
+#include "mp3/mp3_internal.h"
 #include "PR/gu.h"
 #include "PR/os.h"
 #include "unktypes.h"

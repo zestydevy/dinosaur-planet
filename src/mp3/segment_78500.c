@@ -3,7 +3,7 @@
 #include "PR/ultratypes.h"
 #include "libnaudio/n_synthInternals.h"
 #include "libnaudio/n_unkfuncs.h"
-#include "libnaudio/mp3/mp3_internal.h"
+#include "mp3/mp3_internal.h"
 
 f32 mp3_func_80077900(f32 arg0, f32 arg1) {
 	s32 arg1int = arg1;
