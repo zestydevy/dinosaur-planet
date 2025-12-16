@@ -160,7 +160,7 @@ typedef struct ModelInstance_0x14_0x14 {
 typedef struct ModelInstance_0x14 {
 /*0000*/    Vec3f *unk0;
 /*0004*/    f32 *unk4;
-/*0008*/    s32 pad8;
+/*0008*/    f32 *unk8;
 /*000C*/    f32 *unkC;
 /*0010*/    f32 *unk10;
 /*0014*/    ModelInstance_0x14_0x14 *unk14;

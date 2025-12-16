@@ -72,7 +72,7 @@ u32 obj_get_model_flags(Object *obj);
 u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 flags);
 void obj_free_objdef(s32 tabIdx);
 
-void func_80021E74(f32, ModelInstance*);
+void func_80021E74(f32 scale, ModelInstance *modelInst);
 void func_80022200(Object *obj, s32 param2, s32 param3);
 u32 obj_alloc_object_state(Object *obj, u32 addr);
 u32 obj_init_event_data(s32 param1, Object *obj, u32 addr);
@@ -856,7 +856,52 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
 static const char str_80099614[] = " No Points ";
 
-#pragma GLOBAL_ASM("asm/nonmatchings/object/func_80021E74.s")
+void func_80021E74(f32 scale, ModelInstance *modelInst) {
+    Model *model;
+    ModelInstance_0x14 *temp_v0_2;
+    Vec3f sp2EC;
+    f32 sp94[150];
+    f32 *temp_v1;
+    s32 i;
+    s8 parentJointID;
+
+    model = modelInst->model;
+    if (modelInst->model->jointCount != 0) {
+        temp_v1 = modelInst->model->collisionA;
+        if (temp_v1 != NULL && modelInst->unk14 != NULL) {
+            temp_v0_2 = modelInst->unk14;
+            temp_v0_2->unk4[0] = temp_v1[0] * scale;
+            if (temp_v0_2->unk4[0] == 0.0f) {
+                temp_v0_2->unk4[0] = temp_v1[1] * scale;
+            }
+            temp_v0_2->unk8[0] = SQ(temp_v0_2->unk4[0]);
+            temp_v0_2->unkC[0] = 0.1f;
+            temp_v0_2->unk10[0] = temp_v0_2->unk4[0];
+            sp94[0] = 0;
+            for (i = 1; i < modelInst->model->jointCount; i++) {
+                temp_v0_2->unk4[i] = temp_v1[i] * scale;
+                temp_v0_2->unk8[i] = SQ(temp_v0_2->unk4[i]);
+                parentJointID = model->joints[i].parentJointID;
+                sp2EC.f[0] = model->joints[i].x;
+                sp2EC.f[1] = model->joints[i].y;
+                sp2EC.f[2] = model->joints[i].z;
+                temp_v0_2->unkC[i] = sqrtf(SQ(sp2EC.f[0]) + SQ(sp2EC.f[1]) + SQ(sp2EC.f[2])) * scale;
+                if (temp_v0_2->unkC[i] == 0.0f) {
+                    temp_v0_2->unkC[i] = 0.1f;
+                }
+                if (model->collisionB[i] >= 1.0f) {
+                    temp_v0_2->unkC[i] *= model->collisionB[i];
+                }
+                sp94[i] = sp94[parentJointID] + temp_v0_2->unkC[i];
+                if (temp_v1[i] == 0.0f) {
+                    temp_v0_2->unk10[i] = -100.0f;
+                } else {
+                    temp_v0_2->unk10[i] = sp94[i] + temp_v0_2->unk4[i];
+                }
+            }
+        }
+    }
+}
 
 f32 func_80022150(Object *obj) {
     s32 i;
