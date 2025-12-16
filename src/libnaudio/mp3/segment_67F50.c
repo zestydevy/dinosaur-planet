@@ -1,5 +1,5 @@
 #include "common.h"
-#include "libnaudio/mp3/segment_67F50.h"
+#include "libnaudio/mp3/mp3.h"
 
 // .bss
 extern struct mp3vars g_Mp3Vars; // 0x800bff00

@@ -1,10 +1,10 @@
 // @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
 #include "common.h"
-#include "libnaudio/mp3/decoder.h"
-#include "libnaudio/mp3.h"
+#include "libnaudio/mp3/mp3.h"
+#include "libnaudio/mp3/mp3_internal.h"
 
-s32 mp3_dec_set_side_info(DecoderStream* stream);
+s32 mp3_dec_set_side_info(struct asistream* stream);
 s32 mp3_util_func_80077CEC(u8 *buffer, s32 *offset, s32 numbits);
 s32 mp3_dec_decode_frame(struct asistream *stream);
 
@@ -26,7 +26,7 @@ s32 mp3_main_func_80071cf0(struct asistream* arg0) {
         arg0->unk201c -= sp1C;
         arg0->unk2020 -= sp1C * 8;
     }
-    sp18 = arg0->unk04(arg0->unk00, &arg0->unk1c[arg0->unk201c], arg0->unk3f88, -1);
+    sp18 = arg0->dmafunc(arg0->unk00, &arg0->unk1c[arg0->unk201c], arg0->unk3f88, -1);
     if (sp18 < arg0->unk3f88) {
         bzero(&arg0->unk1c[sp18], arg0->unk3f88 - sp18);
     }
@@ -49,7 +49,7 @@ s32 mp3_main_func_80071e18(struct asistream* stream, s32 arg1) {
     sp1B = 0xFF;
 
     while (TRUE) {
-        sp1C = stream->unk04(stream->unk00, &stream->buffer[sp20], 1, sp24);
+        sp1C = stream->dmafunc(stream->unk00, &stream->buffer[sp20], 1, sp24);
         if (sp1C <= 0) {
             return 0;
         }
@@ -67,24 +67,24 @@ s32 mp3_main_func_80071e18(struct asistream* stream, s32 arg1) {
         sp1B = 0xF0;
     }
     
-    sp1C = stream->unk04(stream->unk00, &stream->buffer[2], 2, -1);
+    sp1C = stream->dmafunc(stream->unk00, &stream->buffer[2], 2, -1);
     if (sp1C <= 0) {
         return 0;
     }
     stream->unk18 += 2;
-    stream->count = 0xC;
-    stream->version = mp3_util_func_80077CEC(stream->buffer, &stream->count, 1);
-    stream->layer = mp3_util_func_80077CEC(stream->buffer, &stream->count, 2);
-    stream->crctype = mp3_util_func_80077CEC(stream->buffer, &stream->count, 1);
-    stream->bitrateindex = mp3_util_func_80077CEC(stream->buffer, &stream->count, 4);
-    stream->samplerateindex = mp3_util_func_80077CEC(stream->buffer, &stream->count, 2);
-    stream->haspadding = mp3_util_func_80077CEC(stream->buffer, &stream->count, 1);
-    stream->privatebit = mp3_util_func_80077CEC(stream->buffer, &stream->count, 1);
-    stream->channelmode = mp3_util_func_80077CEC(stream->buffer, &stream->count, 2);
-    stream->unk3bc4 = mp3_util_func_80077CEC(stream->buffer, &stream->count, 2);
-    stream->unk3bc8 = mp3_util_func_80077CEC(stream->buffer, &stream->count, 1);
-    stream->unk3bcc = mp3_util_func_80077CEC(stream->buffer, &stream->count, 1);
-    stream->unk3bd0 = mp3_util_func_80077CEC(stream->buffer, &stream->count, 2);
+    stream->offset = 0xC;
+    stream->version = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 1);
+    stream->layer = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 2);
+    stream->crctype = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 1);
+    stream->bitrateindex = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 4);
+    stream->samplerateindex = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 2);
+    stream->haspadding = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 1);
+    stream->privatebit = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 1);
+    stream->channelmode = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 2);
+    stream->channelmodeext = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 2);
+    stream->copyright = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 1);
+    stream->isoriginal = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 1);
+    stream->emphasis = mp3_util_func_80077CEC(stream->buffer, &stream->offset, 2);
     if ((stream->bitrateindex == 0xF) || (stream->samplerateindex == 3)) {
         return mp3_main_func_80071e18(stream, -1);
     }
@@ -95,35 +95,35 @@ s32 mp3_main_func_80071e18(struct asistream* stream, s32 arg1) {
         stream->initialcrctype = stream->crctype;
         stream->initialsamplerateindex = stream->samplerateindex;
         stream->initialchannelmode = stream->channelmode;
-        stream->unk3bec = stream->unk3bc8;
-        stream->unk3bf0 = stream->unk3bcc;
+        stream->initialcopyright = stream->copyright;
+        stream->initialisoriginal = stream->isoriginal;
     } else if ((stream->version != stream->initialversion) || 
                (stream->layer != stream->initiallayer) || 
                (stream->crctype != stream->initialcrctype) || 
                (stream->samplerateindex != stream->initialsamplerateindex) || 
                (stream->channelmode != stream->initialchannelmode) || 
-               (stream->unk3bcc != stream->unk3bf0)) {
+               (stream->isoriginal != stream->initialisoriginal)) {
         return mp3_main_func_80071e18(stream, -1);
     }
     stream->unk2068 = 4;
     if (stream->crctype == 0) {
-        sp1C = stream->unk04(stream->unk00, &stream->buffer[4], 2, -1);
+        sp1C = stream->dmafunc(stream->unk00, &stream->buffer[4], 2, -1);
         if (sp1C <= 0) {
             return 0;
         }
         stream->unk18 += 2;
-        stream->count += 0x10;
+        stream->offset += 0x10;
         stream->unk2068 = 6;
     }
     if (stream->layer == 1) {
-        stream->unk8478 = mp3_dec_decode_frame;
-        stream->unk847c = mp3_dec_set_side_info;
+        stream->decoderframefunc = mp3_dec_decode_frame;
+        stream->setsideinfofunc = mp3_dec_set_side_info;
     } else if (stream->layer == 2) {
         return 0;
     } else if (stream->layer == 3) {
         return 0;
     }
-    if (stream->unk847c(stream) == 0) {
+    if (stream->setsideinfofunc(stream) == 0) {
         return 0;
     }
     return 1;
@@ -148,8 +148,8 @@ struct asistream* mp3_main_func_80072380(s32 arg0, s32 (*arg1)(s32, void*, s32, 
     sp1C->unk10 = -1;
     sp1C->unk14 = -1;
     sp1C->unk00 = arg0;
-    sp1C->unk04 = arg1;
-    sp1C->unk08 = arg2;
+    sp1C->dmafunc = arg1;
+    sp1C->filesize = arg2;
     sp1C->unk201c = 0;
     sp1C->unk2020 = 0;
     sp1C->unk3ba0 = 0;
@@ -173,7 +173,7 @@ s32 mp3_main_func_8007245c(struct asistream* arg0, struct mp3thing** arg1, s32* 
         return 0;
     }
     sp1C->unk8474 = -1;
-    sp18 = sp1C->unk8478(sp1C);
+    sp18 = sp1C->decoderframefunc(sp1C);
     if (sp18 == 0) {
 
     } else {

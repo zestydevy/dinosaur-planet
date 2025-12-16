@@ -7,7 +7,7 @@
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_sndp.h"
 #include "libnaudio/n_sndplayer.h"
-#include "libnaudio/mp3/segment_67F50.h"
+#include "libnaudio/mp3/mp3.h"
 #include "macros.h"
 #include "sys/acache.h"
 #include "sys/asset_thread.h"
