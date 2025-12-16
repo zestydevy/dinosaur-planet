@@ -1,10 +1,10 @@
 // @DECOMP_OPT_FLAGS=-O1 -g2
 // @DECOMP_IDO_VERSION=7.1
 #include <PR/ultratypes.h>
+#include "libnaudio/mp3/mp3.h"
 #include "libnaudio/n_synthInternals.h"
 #include "sys/audio/speaker.h"
 
-s32 func_800676F0(s32 arg0, Acmd **cmd);
 void func_8006AEC4(struct fx *fx, f32 outputrate);
 
 Acmd *n_alMainBusPull(s32 sampleOffset, Acmd *p) {

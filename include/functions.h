@@ -100,9 +100,6 @@ void map_func_800483BC(f32, f32, f32);
 
 f32 _depth2Cents(u8 arg0);
 
-void mp3_init(s32 arg0);
-void mp3_play_file(s32 romAddr, s32 size);
-
 ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
 Texture *func_8003E960(s32);
 

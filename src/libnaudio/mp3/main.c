@@ -1,14 +1,7 @@
 // @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
-#include "common.h"
 #include "libnaudio/mp3/mp3.h"
 #include "libnaudio/mp3/mp3_internal.h"
-
-s32 mp3_dec_set_side_info(struct asistream* stream);
-s32 mp3_util_func_80077CEC(u8 *buffer, s32 *offset, s32 numbits);
-s32 mp3_dec_decode_frame(struct asistream *stream);
-
-extern struct mp3vars g_Mp3Vars; // 0x800bff00
 
 // .data
 u32 D_80096790 = 0;

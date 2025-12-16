@@ -6,14 +6,6 @@
 #include "PR/os.h"
 #include "unktypes.h"
 
-s32 mp3_util_func_80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
-s32 mp3_util_func_80077ED0(void*, void*, s32, s32, s32, void**, void**);
-s32 mp3_util_func_80077CEC(void*, void*, s32);
-void mp3_func_80078070(struct asistream_4f64 *arg0, s32 arg1, struct asistream_4f64 *arg2, struct asistream_4f64 *arg3, void *arg4);
-void mp3_func_80078F70(void*, s32, void*, void*);
-s32 mp3_main_func_80071cf0(void*);
-f32 mp3_func_80077900(f32, f32);
-
 // ------ .data start ------ //
 DecoderThing D_80093A70[5] = {
     { 0, 0, 1, 0, "1" },
