@@ -1,14 +1,15 @@
 // @DECOMP_OPT_FLAGS=-g
 // @DECOMP_IDO_VERSION=7.1
-#include "common.h"
 #include "libnaudio/n_abi.h"
 #include "libnaudio/n_synthInternals.h"
 #include "mp3/mp3.h"
 #include "mp3/mp3_internal.h"
+#include "sys/audio/speaker.h"
 
 #define N_EQPOWER_LENGTH 128
 extern s16 n_eqpower[N_EQPOWER_LENGTH];
 extern s16 _getRate(f32 vol, f32 tgt, s32 count, u16 *ratel);
+extern s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
 
 /**
  * These two ABI commands are used in this file, but the format of the data
@@ -28,12 +29,13 @@ extern s16 _getRate(f32 vol, f32 tgt, s32 count, u16 *ratel);
 	_a->words.w1 = a;                    \
 }
 
-// .bss
+// -------- .bss start -------- //
 struct mp3vars g_Mp3Vars; // 0x800bff00
+// -------- .bss end -------- //
 
-void mp3_func_8006804C(struct mp3vars*);
-s32 mp3_func_80068278(s32 arg0, u8 *dst, s32 len, s32 dmaoffset);
-void mp3_func_80068260(void *fn);
+void mp3_update_vars(struct mp3vars*);
+s32 mp3_handle_dma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset);
+void mp3_set_dma_func(mp3_dmafunc fn);
 void mp3_dma(void);
 
 void mp3_init(ALHeap *heap) {
@@ -57,7 +59,7 @@ void mp3_init(ALHeap *heap) {
     g_Mp3Vars.em_dryamt = 0x7FFC;
     g_Mp3Vars.em_wetamt = 0;
     
-    mp3_func_80068260(mp3_func_80068278);
+    mp3_set_dma_func(mp3_handle_dma);
 }
 
 void mp3_play_file(s32 romAddr, s32 size) {
@@ -106,7 +108,7 @@ void mp3_set_volume(s32 vol, s32 arg1) {
     } else if (vol > AL_VOL_FULL) {
         g_Mp3Vars.currentvol = AL_VOL_FULL;
     } else {
-        g_Mp3Vars.currentvol = (u32) vol;
+        g_Mp3Vars.currentvol = vol;
     }
     g_Mp3Vars.var8009c3e8 = (u32) arg1;
 }
@@ -124,7 +126,7 @@ void mp3_set_pan(s32 pan, s32 immediate) {
     }
 }
 
-s32 mp3_func_800676F0(s32 arg0, Acmd** cmd) {
+s32 mp3_make_samples(s32 arg0, Acmd** cmd) {
     s32 i;
     s32 diff;
     s32 numchannels;
@@ -225,16 +227,19 @@ s32 mp3_func_800676F0(s32 arg0, Acmd** cmd) {
             }
             g_Mp3Vars.var8009c3d0 += arg0;
         }
-        mp3_func_8006804C(&g_Mp3Vars);
+        mp3_update_vars(&g_Mp3Vars);
         if (g_Mp3Vars.dualchannel == 0) {
             aClearBuffer((*cmd)++, N_AL_MAIN_L_OUT, N_AL_TEMP_2);
             
             if (g_Mp3Vars.em_first != 0) {
                 g_Mp3Vars.em_first = 0;
-                g_Mp3Vars.em_ltgt = (s16) ((s32) (n_eqpower[g_Mp3Vars.em_pan] * g_Mp3Vars.em_volume) >> 0xF);
-                g_Mp3Vars.em_lratm = _getRate((f32) g_Mp3Vars.em_cvolL, (f32) g_Mp3Vars.em_ltgt, g_Mp3Vars.em_segEnd, &g_Mp3Vars.em_lratl);
-                g_Mp3Vars.em_rtgt = (s16) ((s32) ((&n_eqpower[0x7F])[-g_Mp3Vars.em_pan] * g_Mp3Vars.em_volume) >> 0xF);
-                g_Mp3Vars.em_rratm = _getRate((f32) g_Mp3Vars.em_cvolR, (f32) g_Mp3Vars.em_rtgt, g_Mp3Vars.em_segEnd, &g_Mp3Vars.em_rratl);
+
+                g_Mp3Vars.em_ltgt = (g_Mp3Vars.em_volume * n_eqpower[g_Mp3Vars.em_pan]) >> 15;
+				g_Mp3Vars.em_lratm = _getRate(g_Mp3Vars.em_cvolL, g_Mp3Vars.em_ltgt, g_Mp3Vars.em_segEnd, &g_Mp3Vars.em_lratl);
+
+				g_Mp3Vars.em_rtgt = (g_Mp3Vars.em_volume * n_eqpower[N_EQPOWER_LENGTH - (g_Mp3Vars.em_pan) - 1]) >> 15;
+				g_Mp3Vars.em_rratm = _getRate(g_Mp3Vars.em_cvolR, g_Mp3Vars.em_rtgt, g_Mp3Vars.em_segEnd, &g_Mp3Vars.em_rratl);
+
                 n_aSetVolume((*cmd)++, A_VOL | A_LEFT, g_Mp3Vars.em_cvolL, g_Mp3Vars.em_dryamt, g_Mp3Vars.em_wetamt);
 				n_aSetVolume((*cmd)++, A_VOL | A_RIGHT, g_Mp3Vars.em_rtgt, g_Mp3Vars.em_rratm, g_Mp3Vars.em_rratl);
 				n_aSetVolume((*cmd)++, A_RATE, g_Mp3Vars.em_ltgt, g_Mp3Vars.em_lratm, g_Mp3Vars.em_lratl);
@@ -254,10 +259,65 @@ s32 mp3_func_800676F0(s32 arg0, Acmd** cmd) {
     return TRUE;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_8006804C.s")
+void mp3_update_vars(struct mp3vars* vars) {
+    if ((vars->em_volume != vars->currentvol) || (vars->em_pan != vars->currentpan)) {
+        if (vars->em_delta >= vars->em_segEnd) {
+            vars->em_ltgt = (n_eqpower[vars->em_pan] * vars->em_volume >> 15);
+			vars->em_rtgt = (n_eqpower[N_EQPOWER_LENGTH - (vars->em_pan) - 1] * vars->em_volume >> 15);
+            vars->em_delta = vars->em_segEnd;
+            vars->em_cvolL = vars->em_ltgt;
+            vars->em_cvolR = vars->em_rtgt;
+        } else {
+            vars->em_cvolL = _getVol(vars->em_cvolL, vars->em_delta, vars->em_lratm, vars->em_lratl);
+            vars->em_cvolR = _getVol(vars->em_cvolR, vars->em_delta, vars->em_rratm, vars->em_rratl);
+        }
+        if (vars->em_cvolL == 0) {
+            vars->em_cvolL = 1;
+        }
+        if (vars->em_cvolR == 0) {
+            vars->em_cvolR = 1;
+        }
+        vars->em_volume = (s16) vars->currentvol;
+        if (vars->em_pan != vars->currentpan) {
+            if (D_800BFE82.headphone != 0) {
+                vars->em_pan = ((s16) vars->currentpan >> 1) + 32;
+            } else if (D_800BFE82.mono != 0) {
+                vars->em_pan = AL_PAN_CENTER;
+            } else {
+                vars->em_pan = vars->currentpan;
+            }
+        }
+        vars->em_delta = 0;
+        vars->em_segEnd = SAMPLE184(vars->var8009c3e8);
+        vars->em_first = 1;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_80068260.s")
+void mp3_set_dma_func(mp3_dmafunc fn) {
+    g_Mp3Vars.dmafunc = fn;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_func_80068278.s")
+s32 mp3_handle_dma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset) {
+    u8 *bufptr;
+    ALDMAproc proc;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/mp3/segment_67F50/mp3_dma.s")
+    if (dmaoffset != -1) {
+        g_Mp3Vars.dmaoffset = dmaoffset;
+    }
+    if ((g_Mp3Vars.dmaoffset + len) > g_Mp3Vars.filesize) {
+        len = g_Mp3Vars.filesize - g_Mp3Vars.dmaoffset;
+    }
+    proc = n_syn->dma(&bufptr);
+    bufptr = (u8 *) OS_K0_TO_PHYSICAL(proc(g_Mp3Vars.romaddr + g_Mp3Vars.dmaoffset, len, NULL));
+    bcopy(bufptr, dst, len);
+    g_Mp3Vars.dmaoffset += len;
+    return len;
+}
+
+void mp3_dma(void) {
+    u8 *bufptr;
+    ALDMAproc proc;
+
+    proc = n_syn->dma(&bufptr);
+    proc(g_Mp3Vars.romaddr + g_Mp3Vars.dmaoffset, 0x400, NULL);
+}
