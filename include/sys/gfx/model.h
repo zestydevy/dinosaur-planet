@@ -56,9 +56,9 @@ typedef struct {
 /*0008*/    s16 baseF3DCommandIndex;
 /*000a*/    s8 tagA; //0xFF = glow marker (though not what enables effect)
 /*000b*/    s8 tagB; //UV-animated faces tend to have 1 or 2 here, other values for flipbooks
-/*000c*/    s8 tagC; //0x80 = double-sided faces (no back culling)
-/*000d*/    s8 tagD; //0x11 = decal, 0x20 = not in F3D block
-/*000e*/    s16 tagE; //Upper 4 bits enable envMap, lower bits are baseFaceID
+/*000c*/    s32 tagC; // @ 0xC: 0x80 = double-sided faces (no back culling)
+                      // @ 0xD: 0x11 = decal, 0x20 = not in F3D block
+                      // @ 0xE: Upper 4 bits enable envMap, lower bits are baseFaceID
 } ModelFacebatch;
 
 typedef struct {
@@ -177,8 +177,11 @@ typedef struct {
 } ModelInstanceBlendshape;
 
 typedef struct {
-    s16 unk0[3];
-    u8 _unk6[0x10 - 0x6];
+    s16 unk0[3]; // x,y,z
+    u8 _unk6[0x8 - 0x6];
+    s16 unk8;
+    s16 unkA;
+    u8 _unkC[0x10 - 0xC];
 } ModelInstance_0x4;
 
 typedef struct {
