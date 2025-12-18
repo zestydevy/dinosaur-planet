@@ -24,7 +24,7 @@ typedef struct {
     u32 unk8;
     u8 unkC;
     u8 unkD;
-    s8 unkE;
+    u8 unkE;
 } Voxmap2Struct_0;
 
 // size: 0x8
@@ -40,7 +40,7 @@ typedef struct {
     Voxmap2Struct_4 *unk4; // len: 254
     CurveSetup **unk8; // len: 100
     Vec3f *unkC;
-    UnkVoxmap2Struct *unk10;
+    void *unk10;
     u8 _unk14[0x18 - 0x14];
     CurveSetup *unk18;
     s32 unk1C;
@@ -82,7 +82,7 @@ void func_800395D8(Voxmap2Struct *arg0) {
     }
 }
 
-s32 func_80039610(Voxmap2Struct* arg0, CurveSetup* arg1, Vec3f* arg2, UnkVoxmap2Struct *arg3, s32 arg5) {
+s32 func_80039610(Voxmap2Struct* arg0, CurveSetup* arg1, Vec3f* arg2, void *arg3, s32 arg5) {
     Voxmap2Struct_0* temp_v0;
 
     func_80039DD0(arg0);
@@ -99,8 +99,8 @@ s32 func_80039610(Voxmap2Struct* arg0, CurveSetup* arg1, Vec3f* arg2, UnkVoxmap2
 s32 func_800396B0(Voxmap2Struct* arg0, s32 arg1) {
     Voxmap2Struct_0* temp_s1;
     s32 temp_v0;
-    u32 var_s3;
-    u32 var_s5;
+    s32 var_s3;
+    s32 var_s5;
 
     var_s3 = 0;
     var_s5 = 0;
@@ -214,15 +214,15 @@ void func_8003997C(Voxmap2Struct* arg0, Voxmap2Struct_0* arg1, s32 arg2) {
             temp_v0 = gDLL_26_Curves->vtbl->func_39C(temp_a0);
             if (temp_v0 != NULL) {
                 switch (temp_v0->unk19) {
-                case 34:
-                    if (func_800398AC(temp_v0, arg0->unk10) != 0) {
+                case 0x22: // Kyte
+                    if (func_800398AC(temp_v0, (UnkVoxmap2Struct*)arg0->unk10) != 0) {
                         func_80039C6C(arg0, arg1, arg2, 
                             (u32) (vec3_distance_squared(&temp_s5->pos, &temp_v0->pos) + (f32) arg1->unk8), 
                             temp_v0);
                     }
                     break;
-                case 36:
-                    main_get_bits(0x4E2);
+                case 0x24: // Tricky
+                    main_get_bits(BIT_4E2);
                     if ((temp_v0->type22.unk30 == -1 || main_get_bits(temp_v0->type22.unk30) != 0) &&
                            (temp_v0->type22.usedBit == -1 || main_get_bits(temp_v0->type22.usedBit) == 0)) {
                         func_80039C6C(arg0, arg1, arg2, 
@@ -357,7 +357,20 @@ void func_8003A010(Voxmap2Struct_4* arg0, s32 arg1, u16 arg2, u32 arg3) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3A190/func_8003A0B8.s")
+s32 func_8003A0B8(Voxmap2Struct_4* arg0, s16* arg1) {
+    u16 sp1E;
+    
+    if (*arg1 == 0) {
+        return -1;
+    }
+
+    sp1E = arg0[1].unk4;
+    arg0[1].unk0 = arg0[*arg1].unk0;
+    arg0[1].unk4 = arg0[*arg1].unk4;
+    *arg1 -= 1;
+    func_80039F08(arg0, *arg1, 1);
+    return (s32) sp1E;
+}
 
 Voxmap2Struct_0* func_8003A130(Voxmap2Struct* arg0, CurveSetup *arg1, u32 arg2, u16 arg3) {
     Voxmap2Struct_0* temp_v1;
@@ -373,6 +386,59 @@ Voxmap2Struct_0* func_8003A130(Voxmap2Struct* arg0, CurveSetup *arg1, u32 arg2, 
     return temp_v1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3A190/func_8003A240.s")
+s32 func_8003A240(Voxmap2Struct* arg0, CurveSetup* arg1, s32* arg2) {
+    Voxmap2Struct_0* temp_a0;
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3A190/func_8003A298.s")
+    for (i = 0; i < arg0->unk20; i++) {
+        temp_a0 = &arg0->unk0[i];
+        if (arg1 == temp_a0->unk0) {
+            *arg2 = temp_a0->unkE;
+            return i;
+        }
+    }
+    return -1;
+}
+
+s32 func_8003A298(Voxmap2Struct* arg0, Voxmap2Struct_0* arg1) {
+    UnkVoxmap2Struct *new_var;
+    CurveSetup* temp_a1;
+    void *temp_v0;
+    s32 temp3;
+
+    temp_v0 = arg0->unk10;
+    switch (arg1->unk0->unk19) {
+    case 0x22: // Kyte
+        new_var = (UnkVoxmap2Struct*)arg0->unk10;
+        if (new_var->unk4 != NULL) {
+            return new_var->unk4 == arg1->unk0;
+        }
+        return new_var->unk2 == arg1->unk0->base_type22.unk4;
+    case 0x24: // Tricky
+        if (!(arg1->unkC & 0x80)) {
+            temp3 = arg1->unk0->unk3;
+            if (temp3 != 0) {
+                return (s32)temp_v0 == arg1->unk0->unk3;
+            }
+
+            if (arg0->unk0[arg1->unkC].unk0) {}
+
+            temp_a1 = arg0->unk0[arg1->unkC].unk0;
+            if (arg1->unk0->uID == temp_a1->unk1C[0]) {
+                return (s32)temp_v0 == temp_a1->base_type24.unk4;
+            }
+            if (arg1->unk0->uID == temp_a1->unk1C[1]) {
+                return (s32)temp_v0 == temp_a1->base_type24.unk5;
+            }
+            if (arg1->unk0->uID == temp_a1->unk1C[2]) {
+                return (s32)temp_v0 == temp_a1->base_type24.unk6;
+            }
+            if (arg1->unk0->uID == temp_a1->unk1C[3]) {
+                return (s32)temp_v0 == temp_a1->base_type24.unk7;
+            }
+        }
+        return 0;
+    default:
+      return ((CurveSetup*)temp_v0) == (arg1->unk0);
+    }
+}

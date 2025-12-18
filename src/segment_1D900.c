@@ -37,7 +37,7 @@ void func_8001EBD0(s32 arg0) {
     BYTE_80090cb0 = (u8) arg0;
 }
 
-u8 func_8001EBE0() {
+u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
 
