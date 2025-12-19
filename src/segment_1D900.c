@@ -2,7 +2,20 @@
 
 // -------- .data start -------- // 80090c60
 
+extern u8 D_80090C68;
+extern u8 D_80090C6C;
+extern u8 D_80090C70;
+
+extern u8 D_80090C8C;
+extern u8 D_80090C90;
+extern u8 D_80090C94;
+extern u8 D_80090C98;
+
+extern u8 D_80090CA4;
+extern s32 D_80090CA8;
+
 extern u8 BYTE_80090cb0;
+extern f32 D_80090CB4;
 
 // -------- .data end -------- // 80090D50
 
@@ -11,10 +24,23 @@ extern u8 BYTE_80090cb0;
 extern u8 D_800B1830;
 extern u8 D_800B1831;
 extern u8 D_800B1832;
+extern f32 D_800B1834;
+extern f32 D_800B1838;
+extern f32 D_800B183C;
+extern u8 D_800B1840;
+extern u8 D_800B1841;
+extern u8 D_800B1842;
+extern u8 D_800B1843;
+extern u8 D_800B1844;
+extern s8 D_800B1845;
+extern s8 D_800B1846;
+extern s16 D_800B1850;
+extern s16 D_800B1852;
+extern s16 D_800B1854;
+s32 D_800B1860[30];
 
 // -------- .bss end -------- //
 
-// TODO: or is this the bss for this file?
 extern Vec3f D_800BB198;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001CD00.s")
@@ -29,9 +55,22 @@ extern Vec3f D_800BB198;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001E818.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EAA4.s")
+void func_8001EAA4(u8 arg0, u8 arg1, u8 arg2, f32 arg3) {
+    D_800B1850 = (s16) (s32) -((f32) arg0 * arg3);
+    D_800B1852 = (s16) (s32) -((f32) arg1 * arg3);
+    D_800B1854 = (s16) (s32) -((f32) arg2 * arg3);
+    D_80090CA4 = 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EB80.s")
+void func_8001EB80(void) {
+    s32 i;
+
+    D_800B1845 = 0;
+    D_800B1846 = 1;
+    for (i = 0; i < 30; i++) {
+        D_800B1860[i] = 0;
+    }
+}
 
 void func_8001EBD0(s32 arg0) {
     BYTE_80090cb0 = (u8) arg0;
@@ -41,7 +80,116 @@ u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
 
+#ifndef NON_MATCHING
+// static s16 D_80090D3C = 0;
+// static u8 D_80090D40 = 0;
+// static Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBF0.s")
+#else
+
+void func_8001CDE4(u8, u8, u8, u8, s32);                   /* extern */
+void func_8001D2A8(u8, u8, u8, s32);                     /* extern */
+
+void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 arg7, u8 arg8, u8 arg9) {
+    static s16 D_80090D3C = 0;
+    static u8 D_80090D40 = 0;
+    s16 var_a0;
+    s16 var_v0;
+    s16 var_v1;
+    Vec3f sp2C = { 0.0f, 198.0f, 19.0f }; // D_80090D30
+
+    if (D_80090CA8 != 0) {
+        return;
+    }
+    D_80090D3C += 600.0f;
+    if (arg4 < arg3) {
+        arg3 = arg4;
+    }
+    if (arg6 >= arg5) {
+        if (arg5 < 0x7F) {
+            arg5 += 1;
+        } else {
+            arg6 -= 1;
+        }
+    }
+    if (D_80090D40 != BYTE_80090cb0) {
+        D_80090D40 = BYTE_80090cb0;
+    }
+    if ((BYTE_80090cb0) && (D_80090CB4 != 1.0f)) {
+        D_80090CB4 += gUpdateRateF * 0.003f;
+        if (D_80090CB4 > 1.0f) {
+            D_80090CB4 = 1.0f;
+        }
+        D_800B1834 = ((sp2C.x - arg0) * D_80090CB4) + arg0;
+        D_800B1838 = ((sp2C.y - arg1) * D_80090CB4) + arg1;
+        D_800B183C = ((sp2C.z - arg2) * D_80090CB4) + arg2;
+    } else if (!BYTE_80090cb0 && (D_80090CB4 != 0.0f)) {
+        D_80090CB4 -= gUpdateRateF * 0.003f;
+        if (D_80090CB4 < 0.0f) {
+            D_80090CB4 = 0.0f;
+        }
+        D_800B1834 = ((sp2C.x - arg0) * D_80090CB4) + arg0;
+        D_800B1838 = ((sp2C.y - arg1) * D_80090CB4) + arg1;
+        D_800B183C = ((sp2C.z - arg2) * D_80090CB4) + arg2;
+    } else if (BYTE_80090cb0) {
+        D_800B1834 = sp2C.x;
+        D_800B1838 = sp2C.y;
+        D_800B183C = sp2C.z;
+    } else {
+        D_800B1834 = arg0;
+        D_800B1838 = arg1;
+        D_800B183C = arg2;
+    }
+    D_800B1842 = arg3;
+    D_800B1843 = arg4;
+    D_800B1840 = arg5;
+    D_800B1841 = arg6;
+    D_800B1830 = arg7;
+    D_800B1831 = arg8;
+    D_800B1832 = arg9;
+    D_80090C8C = D_800B1830;
+    D_80090C90 = D_800B1831;
+    D_80090C94 = D_800B1832;
+    func_8001CDE4(0, 0, 0, 0, 0);
+    if (D_80090C98 != 0) {
+        D_800B1830 = D_80090C68;
+        D_800B1831 = D_80090C6C;
+        D_800B1832 = D_80090C70;
+    } else {
+        D_800B1830 = arg7;
+        D_800B1831 = arg8;
+        D_800B1832 = arg9;
+    }
+    if (D_80090CA4 != 0) {
+        var_v0 = D_800B1830 + D_800B1850;
+        var_v1 = D_800B1831 + D_800B1852;
+        var_a0 = D_800B1832 + D_800B1854;
+        var_v0 = MIN(0xFF, var_v0);
+        var_v1 = MIN(0xFF, var_v1);
+        var_a0 = MIN(0xFF, var_a0);
+        var_v0 = MAX(0, var_v0);
+        var_v1 = MAX(0, var_v1);
+        var_a0 = MAX(0, var_a0);
+        D_800B1830 = var_v0;
+        D_800B1831 = var_v1;
+        D_800B1832 = var_a0;
+    }
+    // @fake?
+    if (D_800B1830) {}
+    if (D_800B1831) {}
+    if (D_800B1832) {}
+    if ((D_800B1830 != 0xFF) || (D_800B1831 != 0xFF) || (D_800B1832 != 0xFF)) {
+        D_800B1844 = 1;
+        func_8001D2A8(D_800B1830, D_800B1831, D_800B1832, -1);
+    } else {
+        D_800B1844 = 0;
+    }
+    D_80090CA4 = 0;
+    D_800B1850 = 0;
+    D_800B1852 = 0;
+    D_800B1854 = 0;
+}
+#endif
 
 void func_8001F094(ModelInstance* arg0) {
     Camera* camera;
