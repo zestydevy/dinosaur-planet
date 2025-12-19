@@ -21,3 +21,7 @@ levenshtein>=0.26.0
 # decomp_permuter
 pycparser>=2.22
 toml>=0.10.2
+
+# TODO: remove when intervaltree is fixed
+# splat depends on intervaltree but its most recent version has a broken dependency list
+intervaltree==3.1.0

@@ -17,7 +17,7 @@ void func_80036FBC(s16 arg0, s16 arg1, s16 arg2, u8 arg3);
 
 void dl_apply_geometry_mode(Gfx **gdl);
 
-u8 func_8001EBE0();
+u8 func_8001EBE0(void);
 
 s8 map_get_layer();
 void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
