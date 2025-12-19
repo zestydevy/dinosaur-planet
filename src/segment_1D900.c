@@ -80,7 +80,8 @@ u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
 
-#ifndef NON_MATCHING
+// TODO: .data for this file needs to be mapped in splat config
+#if 1
 // static s16 D_80090D3C = 0;
 // static u8 D_80090D40 = 0;
 // static Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
