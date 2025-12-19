@@ -1816,3 +1816,22 @@ __am_g = 0x800AA948;
 
 sCallbackPairIndex = 0x80091710;
 sObjectPairCallbacks = 0x800B2D40; // size:0xc0
+
+route_init = 0x80039590; // type:func
+route_free = 0x800395D8; // type:func
+route_setup = 0x80039610; // type:func
+route_find = 0x800396B0; // type:func
+route_reconstruct = 0x80039798; // type:func
+route_next = 0x80039870; // type:func
+route_is_allowed_kyte_curve = 0x800398AC; // type:func
+route_scan_neighbors = 0x8003997C; // type:func
+route_add_neighbor = 0x80039C6C; // type:func
+route_clear = 0x80039DD0; // type:func
+route_up_heap = 0x80039E78; // type:func
+route_down_heap = 0x80039F08; // type:func
+route_heap_insert = 0x80039FA4; // type:func
+route_heap_change_priority = 0x8003A010; // type:func
+route_heap_extract = 0x8003A0B8; // type:func
+route_add_point = 0x8003A130; // type:func
+route_find_point = 0x8003A240; // type:func
+route_is_goal = 0x8003A298; // type:func
