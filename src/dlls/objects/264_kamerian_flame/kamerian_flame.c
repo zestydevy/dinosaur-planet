@@ -29,10 +29,10 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
 
     self->opacity = 255;
     func_800267A4(self);
-    temp_v0 = self->ptr0x64;
-    if (self->ptr0x64) {
+    temp_v0 = self->unk64;
+    if (self->unk64) {
         temp_v0->flags |= 0x810;
-        temp_v0_2 = self->ptr0x64;
+        temp_v0_2 = self->unk64;
         temp_v0_2->unk2c = temp_v0_2->unk0 * 2.5f;
     }
 
@@ -104,7 +104,7 @@ void kamerian_flame_control(Object* self) {
 
     //Handle object collisions
     if (self->objhitInfo->unk48 && 
-        (((s32)get_player()) == self->objhitInfo->unk48 || ((s32)get_sidekick()) == self->objhitInfo->unk48)) {
+        ((get_player()) == self->objhitInfo->unk48 || (get_sidekick()) == self->objhitInfo->unk48)) {
 
         func_800013BC();
         func_80003B70(1.0f);

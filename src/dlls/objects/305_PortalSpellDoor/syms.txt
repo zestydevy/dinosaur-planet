@@ -1,0 +1,14 @@
+.text = 0x0:
+PortalSpellDoor_ctor = 0x0;
+PortalSpellDoor_dtor = 0xC;
+PortalSpellDoor_setup = 0x18;
+PortalSpellDoor_control = 0x1A8;
+PortalSpellDoor_update = 0x3FC;
+PortalSpellDoor_print = 0x408;
+PortalSpellDoor_free = 0x45C;
+PortalSpellDoor_get_model_flags = 0x4B0;
+PortalSpellDoor_get_data_size = 0x4C0;
+PortalSpellDoor_create_anim_obj = 0x4D4;
+
+.rodata = 0x5F4:
+str_0 = 0x0; // absolute:0x5F4

@@ -99,8 +99,8 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
     self->speed.y = 0.0f;
     self->speed.z = 0.0f;
      
-    if (self->ptr0x64) {
-        self->ptr0x64->flags |= 0x810;
+    if (self->unk64) {
+        self->unk64->flags |= 0x810;
     }
     
     objdata->unk296 = 0x32;
@@ -143,8 +143,8 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
         }
     }
     
-    obj_add_object_type(self, 4);
-    obj_add_object_type(self, 0x33);
+    obj_add_object_type(self, OBJTYPE_4);
+    obj_add_object_type(self, OBJTYPE_51);
     func_800267A4(self);
 }
 
@@ -353,14 +353,11 @@ void dll_227_func_1840(Object* self, s32 arg1) {
 }
 
 // offset: 0x1850 | func: 16
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/227_tumbleweed/dll_227_func_1850.s")
-#else
-void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
-    f32 var_fv0;
+void dll_227_func_1850(Object* self, Tumbleweed_Data* objData) {
+    f32 sampleValue;
     s32 sampleCount;
     s32 minimumIndex;
-    Func_80057F1C_Struct **samples;
+    f32 **samples;
     f32 minimum;
     s32 volume;
     s32 i;
@@ -370,13 +367,13 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
     sampleCount = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);
 
     for (i = 0, minimumIndex = 0; i < sampleCount; i++){
-        var_fv0 = self->srt.transl.y - samples[i]->unk0[0];
-        if (var_fv0 < 0.0f) {
-            var_fv0 = (var_fv0 * -1.0f) + 10.0f;
+        sampleValue = self->srt.transl.y - *samples[i];
+        if (sampleValue < 0.0f) {
+            sampleValue = (sampleValue * -1.0f) + 10.0f;
         }
-        if (var_fv0 < minimum) {
+        if (sampleValue < minimum) {
             minimumIndex = i;
-            minimum = var_fv0;
+            minimum = sampleValue;
         }
     }
 
@@ -386,7 +383,7 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
         self->speed.x = -1.0f;
     }
     
-    if (self->id == 0x39D || self->id == 0x40A) {
+    if (self->id == OBJ_Tumbleweed1 || self->id == OBJ_Tumbleweed1twig) {
         if (self->speed.y > 1.0f) {
             self->speed.y = 1.0f;
         } else if (self->speed.y < -1.0f) {
@@ -410,22 +407,22 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
     self->srt.transl.x += self->speed.x * gUpdateRateF;
     self->srt.transl.y += self->speed.y * gUpdateRateF;
     self->srt.transl.z += self->speed.z * gUpdateRateF;
-    self->srt.roll += objdata->unk274 * gUpdateRateF;
-    self->srt.pitch += objdata->unk276 * gUpdateRateF;
-    self->srt.yaw += objdata->unk278 * gUpdateRateF;
+    self->srt.roll += objData->unk274 * gUpdateRateF;
+    self->srt.pitch += objData->unk276 * gUpdateRateF;
+    self->srt.yaw += objData->unk278 * gUpdateRateF;
     
     if (samples){        
-        minimum = samples[minimumIndex]->unk0[0] + 7.0f;
+        minimum = *samples[minimumIndex] + 7.0f;
         if (minimum < self->srt.transl.y) {
-            self->speed.y = self->speed.y - 0.17f;
+            self->speed.y = self->speed.y + (-0.17f);
             return;
         }
         
         self->srt.transl.y = minimum;
         if (self->id == OBJ_Tumbleweed2 || self->id == OBJ_Tumbleweed2twig) {
-            self->speed.y = 0.0f - (((f32)objdata->unk260 / rand_next(0x8C, 0xB4)) * (self->speed.y * 0.8f));
+            self->speed.y = 0.0f - (((f32)objData->unk260 / rand_next(140, 180)) * (self->speed.y * 0.8f));
         } else {
-            self->speed.y = 0.0f - (((f32) objdata->unk260 / rand_next(0x14, 0x28)) * (self->speed.y * 0.8f));
+            self->speed.y = 0.0f - (((f32) objData->unk260 / rand_next(20, 40)) * (self->speed.y * 0.8f));
         }
         
         volume = self->speed.y * 32.0f;
@@ -434,7 +431,7 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
         }
         
         //Noises when bouncing
-        if (volume > 0x10) {
+        if (volume >= 0x11) {
             gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_5F6_Tumbleweed_Roll, volume, 0, 0, 0, 0);
             if (rand_next(0, 5) == 0) {
                 gDLL_6_AMSFX->vtbl->play_sound(self, rand_next(SOUND_614_Tumbleweed_Squeak_1, SOUND_615_Tumbleweed_Squeak_2), volume, 0, 0, 0, 0);
@@ -442,7 +439,6 @@ void dll_227_func_1850(Object* self, Tumbleweed_Data* objdata) {
         }
     }
 }
-#endif
 
 // offset: 0x1D64 | func: 17
 s32 dll_227_func_1D64(Object* self) {

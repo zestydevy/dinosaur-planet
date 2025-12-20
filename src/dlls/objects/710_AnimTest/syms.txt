@@ -1,0 +1,13 @@
+.text = 0x0:
+AnimTest_ctor = 0x0;
+AnimTest_dtor = 0xC;
+AnimTest_setup = 0x18;
+AnimTest_control = 0x2C;
+AnimTest_update = 0xA8;
+AnimTest_print = 0xB4;
+AnimTest_free = 0x108;
+AnimTest_get_model_flags = 0x118;
+AnimTest_get_data_size = 0x128;
+
+.rodata = 0x174:
+_oob_rodata_0 = 0x0; // absolute:0x174

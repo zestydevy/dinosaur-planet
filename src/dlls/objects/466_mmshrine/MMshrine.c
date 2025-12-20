@@ -349,7 +349,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                 case 12:
                     func_80000860(self, self, 0xCE, 0);
                     main_set_bits(BIT_Test_of_Fear_Particles, 1);
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342, MAX_VOLUME, 0, 0, 0, 0);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_342_Low_Whoosh, MAX_VOLUME, 0, 0, 0, 0);
                     break;
                 case 13:
                     if (D_80092A7C == -1) {

@@ -17,7 +17,8 @@ typedef struct Player_Data3B4 {
     s16 unk0;
     s16 unk2;
     u32 unk4;
-    s16 unk8;
+    s8 unk8;
+    s8 unk9;
     s16 padA;
     f32 unkC;
     f32 unk10;
@@ -27,10 +28,13 @@ typedef struct Player_Data3B4 {
     f32 unk20;
     f32 unk24;
     f32 unk28;
-    s16 unk2C;
+    s16 unk2C; //soundID?
     s16 unk2E;
-    u32 pad30;
-    WeaponDataPtr unk34;
+    u8 unk30;
+    u8 pad31;
+    u8 pad32;
+    u8 pad33;
+    BinFileEntry unk34;
 } Player_Data3B4;
 
 // size: 0x48
@@ -69,9 +73,10 @@ typedef enum {
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;
-    u8 padC[0x1C - 0xC];
+    Vec3f unkC;
+    UNK_TYPE_32 pad18;
     Vec3f unk1C;
-    u8 pad28[0x34 - 0x28];
+    Vec3f unk28;
     Object *unk34;
     Object *unk38;
     f32 unk3C;
@@ -82,7 +87,7 @@ typedef struct UnkArg4 {
     u8 pad47;
     f32 unk48;
     f32 unk4C;
-    u32 pad50;
+    f32 unk50;
     s16 unk54;
 } UnkArg4;
 
@@ -132,8 +137,8 @@ typedef struct UnkArg2 {
     f32 unk1C;
     f32 unk20;
     f32 unk24;
-    s32 unk28;
-    u8 pad2C;
+    Object *unk28;
+    s8 unk2C;
     s8 unk2D;
     s8 unk2E;
     u8 pad2F;
@@ -143,12 +148,12 @@ typedef struct {
 /*000*/ ObjFSA_Data unk0;
 /*34C*/ PlayerStats* stats; //health, Dusters, etc!
 /*350*/ s32 flags;
-/*354*/ Unk80032CF8 unk354;
-/*378*/ Unk80032CF8 unk378;
+/*354*/ HeadAnimation unk354;
+/*378*/ HeadAnimation unk378;
 /*39C*/ Vec3f unk39C;
 /*3A8*/ u8 pad3A8[0x3B4 - 0x3A8];
 /*3B4*/ Player_Data3B4* unk3B4;
-/*3B8*/ s16 *unk3B8;
+/*3B8*/ s16 *unk3B8; //soundIDs
 /*3BC*/ void *unk3BC; // callback with prototype (void (*)(Object*, Player_Data*, f32))
 /*3C0*/ s16* modAnims; //current modanim index array?
 /*3C4*/ f32* unk3C4; //array of floats - seem to be speed thresholds for different walking animations?
@@ -159,15 +164,43 @@ typedef struct {
 /*430*/ Player_Data430 unk430;
 /*490*/ Player_Data490 unk490;
 /*4D8*/ UnkArg2 unk4D8;
-/*508*/ u8 pad508[0x680 - 0x508];
+/*508*/ u8 pad508[0x550 - 0x508];
+/*550*/ Vec3f unk550;
+/*55C*/ Vec3f unk55C;
+/*568*/ UNK_TYPE_32 unk568;
+/*56C*/ f32 *unk56C;
+/*570*/ f32 *unk570;
+/*574*/ f32 *unk574;
+/*578*/ s32 unk578;
+/*57C*/ void *unk57C;
+/*580*/ void *unk580;
+/*584*/ f32 unk584;
+/*588*/ u8 pad588[0x5D4 - 0x588];
+/*5D4*/ f32 unk5D4;
+/*5D8*/ u8 pad5D8[0x624 - 0x5D8];
+/*624*/ f32 unk624;
+/*628*/ u8 pad628[0x674 - 0x628];
+/*674*/ f32 unk674;
+/*678*/ f32 unk678;
+/*67C*/ u8 unk67C;
+/*67D*/ s8 pad67D;
+/*67E*/ s8 pad67E;
+/*67F*/ s8 pad67F;
 /*680*/ UnkArg2 unk680;
 /*6B0*/ UnkArg4 unk6B0;
 /*708*/ Object *unk708;
 /*70C*/ s16 unk70C;
-/*70E*/ s8 unk70E[0x728 - 0x70E];
+/*70E*/ u16 pad70E;
+/*710*/ f32 unk710;
+/*70E*/ s8 unk714[0x728 - 0x714];
 /*728*/ f32 unk728;
 /*72C*/ Vec3f unk72C; // This might be the end of an SRT? unk728 would be the scale
-/*734*/ u8 pad738[0x754 - 0x738];
+/*738*/ Vec3f unk738;
+/*744*/ Vec3f unk744;
+/*750*/ u8 unk750;
+/*751*/ u8 pad751;
+/*752*/ u8 pad752;
+/*753*/ u8 pad753;
 /*754*/ s32 unk754;
 /*758*/ s32 unk758;
 /*75C*/ f32 unk75C;
@@ -176,7 +209,7 @@ typedef struct {
 /*766*/ u16 unk766;
 /*768*/ u16 unk768;
 /*76A*/ u16 pad76A;
-/*76C*/ s16 *unk76C;
+/*76C*/ s16 *unk76C; // mod anim indexes
 /*770*/ u8 unk770;
 /*771*/ s8 unk771[0x774 - 0x771];
 /*774*/ Vec3f unk774;
@@ -192,13 +225,13 @@ typedef struct {
 /*814*/ s32 aimZ;
 /*818*/ f32 unk818;
 /*81C*/ f32 unk81C;
-/*820*/ s32 pad820;
-/*824*/ s32 pad824;
-/*828*/ s32 pad828;
+/*820*/ Object *unk820;
+/*824*/ f32 unk824;
+/*828*/ f32 unk828;
 /*82C*/ f32 unk82C;
 /*830*/ f32 unk830;
 /*834*/ f32 unk834;
-/*838*/ s32 pad838;
+/*838*/ f32 unk838;
 /*83C*/ f32 unk83C;
 /*840*/ f32 unk840;
 /*844*/ f32 unk844;
@@ -206,8 +239,8 @@ typedef struct {
 /*84C*/ f32 unk84C;
 /*850*/ Object *unk850;
 /*854*/ s32 unk854;
-/*858*/ Object *unk858;
-/*85C*/ Object *unk85C;
+/*858*/ Object *unk858; // vehicle
+/*85C*/ Object *unk85C; // foodbag
 /*860*/ Object *unk860;
 /*864*/ s32 unk864;
 /*868*/ Object* unk868; //held object (baskets etc.)
@@ -215,7 +248,7 @@ typedef struct {
 /*870*/ u8 unk870;
 /*871*/ u8 unk871;
 /*872*/ u16 unk872;
-/*874*/ s16 unk874;
+/*874*/ s16 unk874; //player yaw?
 /*876*/ u16 pad876;
 /*878*/ s16 unk878;
 /*87A*/ s16 unk87A;
@@ -226,15 +259,17 @@ typedef struct {
 /*884*/ s16 unk884;
 /*886*/ s16 unk886;
 /*888*/ s16 unk888;
-/*88A*/ s16 unk88A;
+/*88A*/ u16 unk88A;
 /*88C*/ u16 pad88C;
 /*88E*/ u16 unk88E;
 /*890*/ UNK_PTR *unk890;
 /*894*/ UNK_PTR *unk894;
-/*898*/ s16 *unk898;
+/*898*/ s16 *unk898; //soundIDs
 /*89C*/ UNK_PTR *unk89C;
 /*8A0*/ u8 unk8A0;
-/*8A1*/ u8 pad8A1[0x8A4 - 0x8A1];
+/*8A1*/ u8 unk8A1;
+/*8A2*/ u8 unk8A2;
+/*8A3*/ u8 pad8A3;
 /*8A4*/ u8 unk8A4;
 /*8A5*/ u8 unk8A5;
 /*8A6*/ u8 unk8A6;
@@ -247,14 +282,14 @@ typedef struct {
 /*8AD*/ u8 unk8AD;
 /*8AE*/ s8 unk8AE[4];
 /*8B2*/ u8 unk8B2[0x8B4 - 0x8B2];
-/*8B4*/ u8 unk8B4;
+/*8B4*/ u8 unk8B4; //0 when Krystal, 1 when Sabre
 /*8B5*/ s8 unk8B5;
 /*8B6*/ u8 unk8B6;
 /*8B7*/ u8 unk8B7;
 /*8B8*/ s8 unk8B8;
 /*8B9*/ s8 unk8B9;
 /*8BA*/ u8 unk8BA;
-/*8BB*/ u8 unk8BB; // player has magic?
+/*8BB*/ u8 unk8BB; // player has magic? (bitfield for magic spells obtained?)
 /*8BC*/ u8 unk8BC;
 /*8BD*/ u8 unk8BD;
 /*8BE*/ u8 unk8BE;
@@ -262,15 +297,98 @@ typedef struct {
 /*8C0*/ s8 unk8C0;
 } Player_Data;
 
+typedef enum {
+    PLAYER_ASTATE_Standing = 1,
+    PLAYER_ASTATE_Idle_Fidget = 2,
+    PLAYER_ASTATE_Turning_On_Spot = 3,
+    PLAYER_ASTATE_Walking = 4,
+    PLAYER_ASTATE_Picking_Up = 5,
+    PLAYER_ASTATE_Placing_Down = 6,
+    PLAYER_ASTATE_Throw = 7, //crashes when no object is held
+    PLAYER_ASTATE_8 = 8,
+    PLAYER_ASTATE_9 = 9,
+    PLAYER_ASTATE_Hop = 10, //used very rarely via HITS lines
+    PLAYER_ASTATE_Jump = 11,
+    PLAYER_ASTATE_Fall_Reset = 12, //used with EffectBoxes
+    PLAYER_ASTATE_Falling = 13, //includes landing phase
+    PLAYER_ASTATE_14 = 14,
+    PLAYER_ASTATE_15 = 15,
+    PLAYER_ASTATE_Ledge_Grab_From_Jump = 16,
+    PLAYER_ASTATE_Ledge_Grab_Start = 17,
+    PLAYER_ASTATE_Ledge_Climb_Over = 18,
+    PLAYER_ASTATE_Ledge_Grab_Holding = 19,
+    PLAYER_ASTATE_Ledge_Grab_Let_Go = 20,
+    PLAYER_ASTATE_21 = 21,
+    PLAYER_ASTATE_22 = 22,
+    PLAYER_ASTATE_Ladder_Get_On = 23, //from bottom or top
+    PLAYER_ASTATE_Ladder_Climbing = 24, //includes idle
+    PLAYER_ASTATE_Ladder_Slide_Down = 25,
+    PLAYER_ASTATE_26 = 26,
+    PLAYER_ASTATE_Wall_Clambering_Start = 27,
+    PLAYER_ASTATE_Wall_Clambering = 28, //e.g. on vines/rock-faces
+    PLAYER_ASTATE_Wall_Clambering_Climb_Over = 29, //reaching top of vine/rock climb
+    PLAYER_ASTATE_Wall_Clambering_Drop_Down = 30,
+    PLAYER_ASTATE_31 = 31, //splash?
+    PLAYER_ASTATE_Swim_Treading_In_Place = 32,
+    PLAYER_ASTATE_Swim_Forward = 33,
+    PLAYER_ASTATE_Vehicle_Getting_On = 34, //includes jetbikes and logs
+    PLAYER_ASTATE_35 = 35,
+    PLAYER_ASTATE_Vehicle_Riding = 36, //includes jetbikes and SnowHorns
+    PLAYER_ASTATE_Log_Riding = 37,
+    PLAYER_ASTATE_Vehicle_Getting_Off = 38, //includes jetbikes and logs
+    PLAYER_ASTATE_Crawl = 39, //includes intro/outro
+    PLAYER_ASTATE_Push_Block_Away = 40, //used by WM Sun/Moon puzzle blocks
+    PLAYER_ASTATE_Block_Pushing = 41,
+    PLAYER_ASTATE_42 = 42, //crash?
+    PLAYER_ASTATE_Collecting = 43, //crashes if there's no object (e.g. Blue Mushrooms)
+    PLAYER_ASTATE_44 = 44,
+    PLAYER_ASTATE_45 = 45,
+    PLAYER_ASTATE_46 = 46,
+    PLAYER_ASTATE_47 = 47,
+    PLAYER_ASTATE_Hurt_Tumbling = 48,
+    PLAYER_ASTATE_Hurt_Stunned = 49, //when hurt by Red Mushrooms' spores or pollen cannons
+    PLAYER_ASTATE_Hurt_Flattened = 50, //when squashed by DIM snowballs
+    PLAYER_ASTATE_51 = 51,
+    PLAYER_ASTATE_Dead = 52,
+    PLAYER_ASTATE_Targetting_Idle = 53,
+    PLAYER_ASTATE_Targetting_Moving = 54,
+    PLAYER_ASTATE_Attacking = 55, //with sword, in case it matters (includes Sabre's forward targetting dodge attack)
+    PLAYER_ASTATE_56 = 56,
+    PLAYER_ASTATE_57 = 57,
+    PLAYER_ASTATE_Aiming_Spell = 58,
+    PLAYER_ASTATE_59 = 59,
+    PLAYER_ASTATE_60 = 60,
+    PLAYER_ASTATE_61 = 61,
+    PLAYER_ASTATE_Targetting_Dodge_Neutral = 62,
+    PLAYER_ASTATE_Targetting_Dodge_Left = 63,
+    PLAYER_ASTATE_Targetting_Dodge_Right = 64,
+    PLAYER_ASTATE_65 = 65,
+    PLAYER_ASTATE_Targetting_Dodge_Backflip = 66,
+    PLAYER_ASTATE_67 = 67,
+    PLAYER_ASTATE_68 = 68,
+    PLAYER_ASTATE_70 = 70, //floating?
+    PLAYER_ASTATE_71 = 71,
+    PLAYER_ASTATE_72 = 72,
+    PLAYER_ASTATE_Floating = 73, //when riding CRF's wind lifts
+    PLAYER_ASTATE_74 = 74,
+    PLAYER_ASTATE_75 = 75,
+    PLAYER_ASTATE_76 = 76,
+    PLAYER_ASTATE_Hurt_Knocked_Down = 77, //when knocked to floor by WM lasers, etc.
+    PLAYER_ASTATE_78 = 78,
+    PLAYER_ASTATE_Hurt_Stagger = 79,
+    PLAYER_ASTATE_Hurt_Stagger_80 = 80, //Diamond Bay tendril enemies cause this state
+    PLAYER_ASTATE_81 = 81
+} Player_AnimStates; //81 states in total?
+
 // AKA. krystal
 DLL_INTERFACE(DLL_210_Player) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ Object *(*func7)(Object* player);
+    /*7*/ Object *(*get_vehicle)(Object* player);
     /*8*/ s32 (*func8)(Object* player, Object** arg1);
-    /*9*/ UnknownDLLFunc func9;
+    /*9*/ void (*func9)(Object* player, s32 arg1);
     /*10*/ s32 (*func10)(Object* player, Object** arg1);
-    /*11*/ s32 (*func11)(Object* arg0, Object* arg1);
-    /*12*/ UnknownDLLFunc func12;
+    /*11*/ s32 (*func11)(Object* player, Object* arg1);
+    /*12*/ void (*set_magic)(Object* player, s32 amount);
     /*13*/ void (*set_magic_max)(Object* player, s32 magicMax);
     /*14*/ void (*add_magic)(Object* player, s32 amount);
     /*15*/ void (*increase_magic_max)(Object* player, s32 amount);
@@ -291,50 +409,51 @@ DLL_INTERFACE(DLL_210_Player) {
     /*30*/ s32 (*func30)(Object* player);
     /*31*/ void (*func31)(Object* player, s32 arg1);
     /*32*/ u8 (*func32)(Object* player);
-    /*33*/ void (*func33)(Object* arg0, s32 arg1);
+    /*33*/ void (*func33)(Object* player, s32 arg1);
     /*34*/ s32 (*func34)(Object* player);
-    /*35*/ s32 (*func35)(s32 arg0);
+    /*35*/ s32 (*func35)(s32 player);
     /*36*/ u8 (*func36)(Object* player, f32* arg1);
     /*37*/ void (*func37)(Object* player, s32 arg1);
     /*38*/ s32 (*func38)(Object* player, s32 arg1);
-    /*39*/ void (*func39)(Object *arg0, s32 arg1, s32 arg2);
+    /*39*/ void (*func39)(Object* player, s32 arg1, s32 arg2);
     /*40*/ s32 (*func40)(Object* player, u32 arg1);
-    /*41*/ UnknownDLLFunc func41;
+    /*41*/ void (*func41)(Object* player, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
     /*42*/ u8 (*func42)(Object* player);
     /*43*/ int (*func43)(Object* player);
-    /*44*/ s32 (*func44)(Object* player);
+    /*44*/ s32 (*func44)(Object* player); //is player currently blinking
     /*45*/ Object *(*func45)(Object* player);
-    /*46*/ u8 (*func46)(Object* arg0);
-    /*47*/ u8 (*func47)(Object* player, s32 arg1, s8* arg2);
+    /*46*/ u8 (*func46)(Object* player);
+    /*47*/ u8 (*func47)(Object* player, Object *arg1, s8* arg2);
     /*48*/ s16 (*func48)(Object* player);
     /*49*/ s16 (*func49)(Object* player);
-    /*50*/ s32 (*func50)(Object* player);
-    /*51*/ UnknownDLLFunc func51;
-    /*52*/ s32 (*func52)(Object* player);
+    /*50*/ s32 (*func50)(Object* player); //get used spell gamebitID
+    /*51*/ void (*func51)(Object* player, s32 arg1); //unequip spells
+    /*52*/ void *(*func52)(Object* player);
     /*53*/ Object *(*func53)(Object* player);
-    /*54*/ Unk80032CF8 *(*func54)(Object* player);
+    /*54*/ HeadAnimation *(*func54)(Object* player);
     /*55*/ void (*func55)(Object* player, Player_Data* objdata, void** arg2, s8* arg3, Vec3f** arg4);
     /*56*/ f32 (*func56)(Object* player);
     /*57*/ s32 (*func57)(Object* player);
     /*58*/ void (*func58)(Object* player, f32 arg1);
-    /*59*/ UnknownDLLFunc func59;
+    /*59*/ void (*func59)(Object* player, u8 arg1, f32 arg2, f32 arg3, Object *arg4);
     /*60*/ s32 (*func60)(Object* player);
     /*61*/ void (*func61)(Object* player, s32 arg1);
-    /*62*/ UnknownDLLFunc func62;
-    /*63*/ s32 (*func63)(Object* arg0);
-    /*64*/ void (*func64)(Object* arg0, Object *arg1, s32 arg2);
-    /*65*/ void (*func65)(Object* arg0, f32 arg1, f32 arg2, f32 arg3);
+    /*62*/ void (*func62)(Object* player, s16* arg1, s16* arg2);
+    /*63*/ s32 (*func63)(Object* player);
+    /*64*/ void (*func64)(Object* player, Object *arg1, s32 arg2);
+    /*65*/ void (*func65)(Object* player, f32 arg1, f32 arg2, f32 arg3);
     // Returns an object pointer if arg1 is 15 or 16
-    /*66*/ s32 (*func66)(Object* arg0, s32 arg1);
-    /*67*/ void (*func67)(Object* arg0, s32 arg1, f32 arg2);
+    /*66*/ s32 (*func66)(Object* player, s32 arg1);
+    /*67*/ void (*func67)(Object* player, s32 arg1, f32 arg2);
     /*68*/ void (*func68)(Object* player);
     /*69*/ void (*func69)(Object* player, s32 arg1);
     /*70*/ s8 (*func70)(Object* player);
-    /*71*/ UnknownDLLFunc func71;
+    // arg2 might be an s16 *
+    /*71*/ void (*func71)(Object* player, Vec3f* arg1, SRT* arg2, UNK_TYPE_32 arg3);
     /*72*/ void (*func72)(Object* player, s16 arg1);
     /*73*/ void (*func73)(s32 arg0, f32 arg1, f32 arg2);
-    /*74*/ s16 (*func74)(s32 arg0);
-    /*75*/ s32 (*func75)(s32 arg0, s32 arg1);
+    /*74*/ s16 (*func74)(s32 player);
+    /*75*/ s32 (*func75)(s32 player, s32 arg1);
     /*76*/ void (*func76)(Object* player);
     /*77*/ s32 (*func77)(Object* player, s32* arg1, s32* arg2);
     /*78*/ s32 (*func78)(Object* player);

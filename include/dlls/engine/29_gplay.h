@@ -44,8 +44,9 @@ typedef struct {
 
 // size: 0xB4
 typedef struct {
-    u8 unk0[0xB4];
-} GplayStruct14;
+    f32 lifetime[30]; //lifetimes of each food bag item (in frames)
+    u16 foodType[30]; //bitfield representation of foodID
+} FoodbagContents; //0xB4
 
 // size: 0x8
 typedef struct {
@@ -75,7 +76,7 @@ typedef struct {
     /*0x4*/ s16 magic; //only mods when byte at "state"0x8bb is set.
     /*0x6*/ s16 magicMax; //capped at 100 (MAX_MAGIC).
     /*0x8*/ u16 scarabs; //capped at 999 (MAX_SCARABS).
-    /*0xA*/ s8 unkA;
+    /*0xA*/ s8 scarabsLargestPayday; //seems to track the highest-value Scarab collected 
     /*0xB*/ s8 dusters;
 } PlayerStats;
 
@@ -93,8 +94,8 @@ typedef struct {
     PlayerStats players[2];
     GplayStruct11 unk18[2];
     u8 _unk1E[0x2];
-    GplayStruct14 unk20[2];
-    GplayStruct14 unk188[2];
+    FoodbagContents unk20[2];
+    FoodbagContents unk188[2];
     /*0x2F0*/char name[6]; // name of save
     u8 isEmpty; // whether this savefile is empty
     /*0x2f7*/u8 playerno; // currently active player (sabre or krystal)
@@ -278,8 +279,8 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*37*/ GplayStruct6 *(*func_F60)(void);
     /*38*/ GplayStruct12 *(*func_FA8)(void);
     /*39*/ GplayStruct13 *(*func_FE8)(void);
-    /*40*/ GplayStruct14 *(*func_1974)(void);
-    /*41*/ GplayStruct14 *(*func_19B8)(void);
+    /*40*/ FoodbagContents *(*func_1974)(void); //get player foodbag struct
+    /*41*/ FoodbagContents *(*func_19B8)(void); //get dino foodbag struct
     /*42*/ u32 (*get_time_played)(void);
     /*43*/ u32 (*is_cheat_unlocked)(u8 cheatIdx);
     /*44*/ void (*unlock_cheat)(u8 cheatIdx);

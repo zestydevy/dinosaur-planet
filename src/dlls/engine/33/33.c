@@ -86,7 +86,7 @@ s32 dll_33_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
 }
 
 // offset: 0x278 | func: 2 | export: 4
-void dll_33_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, s16* arg5) {
+void dll_33_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5) {
     DLL33_Data* sp2C;
     Vec3f sp20;
     Object* temp_v1;
@@ -332,20 +332,20 @@ s32 dll_33_func_C88(Object* arg0, DLL33_Data* arg1, ObjFSA_StateCallback *arg2, 
 }
 
 // offset: 0xE30 | func: 9 | export: 10
-void dll_33_func_E30(Object* arg0, DLL33_Data* arg1, f32 arg2, s8 arg3) {
-    arg1->fsa.unk324 = 0;
-    arg1->fsa.flags |= 0x8000;
+void dll_33_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
+    fsa->unk324 = 0;
+    fsa->flags |= 0x8000;
     if (arg0->objhitInfo != NULL) {
         func_80026128(arg0, 0, 0, -1);
     }
     if (arg3 != -1) {
-        arg1->fsa.unk4.mode = arg3;
+        fsa->unk4.mode = arg3;
     }
-    arg1->fsa.unk29C = arg2;
-    arg1->fsa.unk288 = 0.0f;
-    arg1->fsa.unk284 = 0.0f;
-    arg1->fsa.unk310 = 0;
-    arg1->fsa.unk30C = 0;
+    fsa->unk29C = arg2;
+    fsa->unk288 = 0.0f;
+    fsa->unk284 = 0.0f;
+    fsa->unk310 = 0;
+    fsa->unk30C = 0;
 }
 
 // offset: 0xED0 | func: 10 | export: 11
@@ -360,7 +360,7 @@ s32 dll_33_func_ED0(Object* arg0, DLL33_Data* arg1, u8 arg2) {
 }
 
 // offset: 0xF60 | func: 11 | export: 16
-s32 dll_33_func_F60(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
+s32 dll_33_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     Object* player;
     Func_80059C40_Struct sp48;
     Vec3f sp3C;
@@ -368,9 +368,9 @@ s32 dll_33_func_F60(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
 
     player = get_player();
     var_v1 = 0;
-    if (arg1->fsa.unk33A != 0) {
-        if ((player == arg1->fsa.target) && (arg1->fsa.unk348 != 0)) {
-            if ((arg2 < arg1->fsa.targetDist) && (arg3 != 0)) {
+    if (fsa->unk33A != 0) {
+        if ((player == fsa->target) && (fsa->unk348 != 0)) {
+            if ((arg2 < fsa->targetDist) && (arg3 != 0)) {
                 var_v1 = 1;
             } else {
                 if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) == 0) {
@@ -396,7 +396,7 @@ s32 dll_33_func_F60(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x10F4 | func: 12 | export: 17
-Object* dll_33_func_10F4(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
+Object* dll_33_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     Object* curObj;
     s32 pad5;
     Object* spF8[2];
@@ -421,7 +421,7 @@ Object* dll_33_func_10F4(Object* arg0, DLL33_Data* arg1, f32 arg2, s32 arg3) {
         spE0[0] = curObj->positionMirror.x - arg0->positionMirror.x;
         spE0[1] = curObj->positionMirror.y - arg0->positionMirror.y;
         spE0[2] = curObj->positionMirror.z - arg0->positionMirror.z;
-        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (arg1->fsa.unk348 != 0)) {
+        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (fsa->unk348 != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
             }
@@ -599,7 +599,7 @@ Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
 }
 
 // offset: 0x18E4 | func: 15 | export: 19
-s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, s32 arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8) {
+s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8) {
     DLL33_Data* objdata;
     Object* player;
     s32 sp5C;
@@ -786,7 +786,7 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
     sp38 = arg6 & 1;
     sp3C = (s32) arg6;
     if ((sp38 == 0) && !(arg6 & 0x20)) {
-        obj_add_object_type(obj, 4);
+        obj_add_object_type(obj, OBJTYPE_4);
         obj_init_mesg_queue(obj, 4U);
     }
     gDLL_18_objfsa->vtbl->func0(obj, &data->fsa, arg3, arg4);

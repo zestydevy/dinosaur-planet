@@ -79,7 +79,7 @@ void func_8005BC58(Object* arg0, s32 arg1, s32 arg2) {
     } else {
         func_800529C0(D_800BB550[arg2], D_800BB558[arg2]);
     }
-    arg0->ptr0x64->unk41 ^= 1;
+    arg0->unk64->unk41 ^= 1;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_5C470/func_8005BCE0.s")

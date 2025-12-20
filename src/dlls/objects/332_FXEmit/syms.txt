@@ -1,14 +1,14 @@
 .text = 0x0:
-dll_332_ctor = 0x0;
-dll_332_dtor = 0xC;
-dll_332_setup = 0x18;
-dll_332_control = 0x174;
-dll_332_update = 0x608;
-dll_332_print = 0x614;
-dll_332_free = 0x62C;
-dll_332_get_model_flags = 0x69C;
-dll_332_get_data_size = 0x6AC;
-dll_332_func_6C0 = 0x6C0;
-dll_332_func_8E8 = 0x8E8;
+FXEmit_ctor = 0x0;
+FXEmit_dtor = 0xC;
+FXEmit_setup = 0x18;
+FXEmit_control = 0x174;
+FXEmit_update = 0x608;
+FXEmit_print = 0x614;
+FXEmit_free = 0x62C;
+FXEmit_get_model_flags = 0x69C;
+FXEmit_get_data_size = 0x6AC;
+FXEmit_anim_callback = 0x6C0;
+FXEmit_emit = 0x8E8;
 
 .rodata = 0xDC0:

@@ -2,14 +2,23 @@
 
 extern s32 PTR_DAT_800b2e1c;
 
+/** toggles Models' multiplier colour */
 extern s8 BYTE_80091754;
+/** toggles Models' blend colour */
 extern s8 BYTE_80091758;
+/** gModelColourMultiplyR? */
 extern s16 SHORT_800b2e14;
+/** gModelColourMultiplyG? */
 extern s16 SHORT_800b2e16;
+/** gModelColourMultiplyB? */
 extern s16 SHORT_800b2e18;
+/** gModelColourBlendR? */
 extern s8 BYTE_800b2e20;
+/** gModelColourBlendG? */
 extern s8 BYTE_800b2e21;
+/** gModelColourBlendB? */
 extern s8 BYTE_800b2e22;
+/** gModelColourBlendA? */
 extern s8 BYTE_800b2e23;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func.s")
@@ -139,7 +148,7 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
         yaw = obj->srt.yaw;
     }
 
-    unk64 = obj->ptr0x64;
+    unk64 = obj->unk64;
     if (unk64 != NULL)
     {
         if (unk64->gdl != NULL)
@@ -170,7 +179,7 @@ void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *para
 
             func_800032C4(&mygdl, &myrspMtxs, &srt, 1.0f, 0, NULL);
 
-            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(obj->ptr0x64->gdl));
+            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(obj->unk64->gdl));
             dl_set_all_dirty();
             func_8003DB5C();
         }
@@ -345,11 +354,11 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param
 void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;
 
-    if (object->ptr0x64->gdl) {
-        if (object->ptr0x64->flags & 0x20) {
-            shadowTransform.transl.x = object->ptr0x64->tr.x;
-            shadowTransform.transl.y = object->ptr0x64->tr.y;
-            shadowTransform.transl.z = object->ptr0x64->tr.z;
+    if (object->unk64->gdl) {
+        if (object->unk64->flags & 0x20) {
+            shadowTransform.transl.x = object->unk64->tr.x;
+            shadowTransform.transl.y = object->unk64->tr.y;
+            shadowTransform.transl.z = object->unk64->tr.z;
         } else {
             shadowTransform.transl.x = object->srt.transl.x;
             shadowTransform.transl.y = object->srt.transl.y;
@@ -361,7 +370,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.scale = 0.05f;
 
         func_800032C4(gdl, mtx, (SRT* ) &shadowTransform, 1.0f, 0.0f, NULL);
-        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->ptr0x64->gdl));
+        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->unk64->gdl));
 
         if (object->parent) {
             setup_rsp_matrices_for_object(gdl, mtx, object->parent);
@@ -371,26 +380,28 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     }
 }
 
-void func_80036F6C(s16 arg0, s16 arg1, s16 arg2) {
-    SHORT_800b2e14 = arg0;
-    SHORT_800b2e16 = arg1;
-    SHORT_800b2e18 = arg2;
-    BYTE_80091754 = 1;
+/** Sets a multiplier colour (generally lowers model's brightness) */
+void func_80036F6C(s16 r, s16 g, s16 b) {
+    SHORT_800b2e14 = r;
+    SHORT_800b2e16 = g;
+    SHORT_800b2e18 = b;
+    BYTE_80091754 = TRUE;
 }
 
-void func_80036FBC(s16 arg0, s16 arg1, s16 arg2, u8 arg3) {
-    BYTE_800b2e20 = arg0;
-    BYTE_800b2e21 = arg1;
-    BYTE_800b2e22 = arg2;
-    BYTE_80091758 = 1;
-    BYTE_800b2e23 = arg3 & 0xFF;
+/** Sets a blend colour (can increase a model's brightness) */
+void func_80036FBC(s16 r, s16 g, s16 b, u8 a) {
+    BYTE_800b2e20 = r;
+    BYTE_800b2e21 = g;
+    BYTE_800b2e22 = b;
+    BYTE_80091758 = TRUE;
+    BYTE_800b2e23 = a & 0xFF;
 }
 
 void func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
-    f32 productSum;
+    f32 dotProduct;
 
-    productSum = (aX * bX) + (aY * bY) + (aZ * bZ);
-    *outX = bX - (productSum * aX);
-    *outY = bY - (productSum * aY);
-    *outZ = bZ - (productSum * aZ);
+    dotProduct = (aX * bX) + (aY * bY) + (aZ * bZ);
+    *outX = bX - (dotProduct * aX);
+    *outY = bY - (dotProduct * aY);
+    *outZ = bZ - (dotProduct * aZ);
 }

@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_787_ctor = 0x0;
+dll_787_dtor = 0xC;
+dll_787_setup = 0x18;
+dll_787_control = 0xFC;
+dll_787_update = 0x358;
+dll_787_print = 0x364;
+dll_787_free = 0x3E4;
+dll_787_get_model_flags = 0x3F4;
+dll_787_get_data_size = 0x428;
+dll_787_func_43C = 0x43C;
+dll_787_func_490 = 0x490;
+
+.rodata = 0x808:

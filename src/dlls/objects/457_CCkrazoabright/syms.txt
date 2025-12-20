@@ -1,0 +1,29 @@
+.text = 0x0:
+CCkrazoabright_ctor = 0x0;
+CCkrazoabright_dtor = 0xC;
+CCkrazoabright_setup = 0x18;
+CCkrazoabright_control = 0xB4;
+CCkrazoabright_clear_point_colours = 0x298;
+CCkrazoabright_colour_krazoa_symbol_tablet_quest = 0x2F8;
+CCkrazoabright_handle_lever_puzzle_1 = 0x420;
+CCkrazoabright_handle_lighting_lanterns = 0x728;
+CCkrazoabright_handle_krazoa_tablet_quest = 0x808;
+CCkrazoabright_handle_lever_puzzle_2 = 0xAAC;
+CCkrazoabright_update = 0xDE4;
+CCkrazoabright_print = 0xDF0;
+CCkrazoabright_free = 0xE08;
+CCkrazoabright_get_model_flags = 0xE18;
+CCkrazoabright_get_data_size = 0xE28;
+CCkrazoabright_anim_callback = 0xE3C;
+CCkrazoabright_apply_blending_krazoa_symbol = 0x12AC;
+CCkrazoabright_apply_blending_lever_icons = 0x140C;
+
+.rodata = 0x16AC:
+str_0 = 0x0; // absolute:0x16AC
+
+.data = 0x16CC:
+data_coords_well_blocks = 0x0; // absolute:0x16CC
+data_coords_lever_blocks = 0x18; // absolute:0x16E4
+data_krazoa_symbol_shape_animatorIDs = 0x30; // absolute:0x16FC
+data_tablet_quest_gamebits = 0x38; // absolute:0x1704
+_data_44 = 0x44; // absolute:0x1710

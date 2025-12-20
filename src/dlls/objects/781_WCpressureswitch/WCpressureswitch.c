@@ -1,17 +1,5 @@
-#include "PR/gbi.h"
-#include "PR/ultratypes.h"
-#include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
-#include "functions.h"
-#include "game/objects/object.h"
-#include "segment_334F0.h"
-#include "sys/gfx/model.h"
+#include "common.h"
 #include "sys/objtype.h"
-#include "sys/main.h"
-#include "functions.h"
-#include "sys/print.h"
-#include "types.h"
 
 typedef struct {
 f32 x;
@@ -27,14 +15,14 @@ typedef struct {
 } PressureSwitch_Data;
 
 typedef struct {
-ObjSetup base;
-u8 yaw;
-u8 modelIdx;
-s16 gameBitPressed;             //flag to set when switch is pressed down
-u8 yOffsetAnimation;            //how far down the switch should move when pressed
-u8 yThreshold;                  //threshold for other objects pressing switch
-u8 distanceSidekickBehaviour;   //player distance at which special sidekick behaviour is activated
-s16 gameBitActivated;            //flag to check if switch is deactivated
+/*00*/ ObjSetup base;
+/*18*/ u8 yaw;
+/*19*/ u8 modelIdx;
+/*1A*/ s16 gameBitPressed;             //flag to set when switch is pressed down
+/*1C*/ u8 yOffsetAnimation;            //how far down the switch should move when pressed
+/*1D*/ u8 yThreshold;                  //threshold for other objects pressing switch
+/*1E*/ u8 distanceSidekickBehaviour;   //player distance at which special sidekick behaviour is activated
+/*20*/ s16 gameBitActivated;            //flag to check if switch is deactivated
 } PressureSwitch_Setup;
 
 enum WCPressureSwitchStates {
@@ -65,7 +53,7 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        // diPrintf("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
+        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
         self->modelInstIdx = 0;
     }
 
@@ -75,21 +63,19 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
         objdata->state = 2;
     }
 
-    obj_add_object_type(self, 0x33);
+    obj_add_object_type(self, OBJTYPE_51);
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
     self->animCallback = WCpressureswitch_anim_callback;
 }
 
-/*0x0*/ static const char str_0[] = "PRESSURESWITCH.c: modelno out of range romdefno=%d\n";
-
 // offset: 0x150 | func: 1 | export: 1
 void WCpressureswitch_control(Object* self) {
     PressureSwitch_Setup* setup;
     f32 deltaY;
     Object* listedObject;
-    s32* textureFrame;
+    TextureAnimator* animTexture;
     s32 index;
     PressureSwitch_Data* objdata;
 
@@ -159,14 +145,14 @@ void WCpressureswitch_control(Object* self) {
     }
 
     //Change texture frame (sun/moon glowing)
-    textureFrame = func_800348A0(self, 0, 0);
-    if (textureFrame != NULL) {
+    animTexture = func_800348A0(self, 0, 0);
+    if (animTexture != NULL) {
         if (objdata->state == 2) {
-            *textureFrame = 1;
+            animTexture->frame = 1;
         } else {
-            *textureFrame = 0;
+            animTexture->frame = 0;
         }
-        *textureFrame <<= 8;
+        animTexture->frame <<= 8;
     }
 }
 

@@ -24,7 +24,7 @@ typedef struct {
 } DIMLavaBall_Setup;
 
 typedef struct {
-    NewLfxStruct *lfxStructs[2];
+    LightAction *lfxStructs[2];
     Object *lavaball;
     s16 timer;
     s16 timerMax;
@@ -50,11 +50,6 @@ typedef struct {
     s16 gamebit3;
 } DIMLavaBallGenerator_Setup;
 
-typedef struct {
-    NewLfxStruct base;
-    u8 unk24[0x28-0x24];
-} NewLfxStruct_Local;
-
 // offset: 0x0 | ctor
 void DIMLavaBallGenerator_ctor(void *dll) { }
 
@@ -76,8 +71,8 @@ void DIMLavaBallGenerator_setup(Object *self, DIMLavaBallGenerator_Setup *setup,
         objdata->unk17 = 1;
     }
     if ((objdata->index != 0) && (arg2 == 0)) {
-        objdata->lfxStructs[0] = mmAlloc(sizeof(NewLfxStruct_Local), ALLOC_TAG_OBJECTS_COL, NULL);
-        objdata->lfxStructs[1] = mmAlloc(sizeof(NewLfxStruct_Local), ALLOC_TAG_OBJECTS_COL, NULL);
+        objdata->lfxStructs[0] = mmAlloc(sizeof(LightAction), ALLOC_TAG_OBJECTS_COL, NULL);
+        objdata->lfxStructs[1] = mmAlloc(sizeof(LightAction), ALLOC_TAG_OBJECTS_COL, NULL);
     }
     self->unkB0 |= 0x6000;
 }
@@ -95,7 +90,7 @@ void DIMLavaBallGenerator_control(Object *self) {
     setup = (DIMLavaBallGenerator_Setup*)self->setup;
 
     if (objdata->index != 0 && !objdata->loaded) {
-        size = sizeof(NewLfxStruct_Local);
+        size = sizeof(LightAction);
         queue_load_file_region_to_ptr((void**)objdata->lfxStructs[0], LACTIONS_BIN,
             (objdata->index * size), size);
         queue_load_file_region_to_ptr((void**)objdata->lfxStructs[1], LACTIONS_BIN,

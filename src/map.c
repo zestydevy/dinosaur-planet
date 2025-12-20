@@ -426,8 +426,8 @@ void init_maps(void) {
     D_800B4A5E = -2;
     gBlockTextures = mmAlloc(sizeof(BlockTexture) * 20, ALLOC_TAG_TRACK_COL, NULL);
     bzero(gBlockTextures, sizeof(BlockTexture) * 20);
-    D_800B97A8 = mmAlloc(sizeof(UnkTextureStruct) * 58, ALLOC_TAG_TRACK_COL, NULL);
-    bzero(D_800B97A8, sizeof(UnkTextureStruct) * 58);
+    D_800B97A8 = mmAlloc(sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS, ALLOC_TAG_TRACK_COL, NULL);
+    bzero(D_800B97A8, sizeof(BlockTextureScroller) * MAX_TEXTURE_SCROLLERS);
     bzero(gRenderList, sizeof(u32) * MAX_RENDER_LIST_LENGTH);
     gRenderList[0] = -0x4000;
 }
@@ -1049,10 +1049,10 @@ void func_80043FD8(s8* arg0) {
             var_s2[0] = 0;
         } else {
             var_s2[0] = func_800456AC(object);
-            if ((var_s2[0] != 0) && (object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
+            if ((var_s2[0] != 0) && (object->unk64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
                 func_8004DBAC(object, 0, 0, gUpdateRate);
             }
-            if ((object->ptr0x64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
+            if ((object->unk64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
                 func_8004E7A8(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
@@ -1878,14 +1878,14 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
                 gDLL_26_Curves->vtbl->func_10C((CurveSetup*)objSetup);
             }
             if (objSetup->objId == OBJ_checkpoint4) {
-                gDLL_4_Race->vtbl->func2(objSetup);
+                gDLL_4_Race->vtbl->func2((RaceCheckpointSetup*)objSetup);
             }
         } else {
             if ((OBJ_curve == objSetup->objId) || (OBJ_checkpoint4 == objSetup->objId)) {
                 if (OBJ_curve == objSetup->objId) {
                     gDLL_26_Curves->vtbl->func_34((CurveSetup*)objSetup);
                 } else {
-                    gDLL_4_Race->vtbl->func1(objSetup);
+                    gDLL_4_Race->vtbl->func1((RaceCheckpointSetup*)objSetup);
                 }
                 if (!foundCurves) {
                     setupList->curvesOffset = ((u32)objSetup - (u32)map->objectInstanceFile_ptr);
@@ -3443,135 +3443,169 @@ HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine*
 void func_800499B4(){
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/map/func_800499BC.s")
-#else
+/** Updates all the block texture scrollers */
 void func_800499BC(void) {
-    s32 var_a1;
-    s32 var_a2;
-    s32 var_a3;
-    s32 var_t1;
+    BlockTextureScroller *scroll;
     s32 i;
-    UnkTextureStruct *temp_a0;
+    s32 dU;
+    s32 dV;
+    s32 dU_adjusted;
+    s32 dV_adjusted;
 
-    for (i = 0; i < 58; i++){
-        temp_a0 = &D_800B97A8[i];
-        if (temp_a0->unk20 != 0) {
-            var_a1 = temp_a0->unk8;
-            var_a3 = temp_a0->unk4 * gUpdateRate;
-            var_t1 = temp_a0->unk6 * gUpdateRate;
-            temp_a0->unk8 = (var_a1 + var_a3) & 3;
-            temp_a0->unk0 += (var_a1 + var_a3) >> 2;
-            var_a2 = temp_a0->unkA;
-            temp_a0->unkA = (var_a2 + var_t1) & 3;
-            temp_a0->unk2 += (var_a2 + var_t1) >> 2;
-            if (temp_a0->unkC < temp_a0->unk0) {
-                temp_a0->unk0 -= temp_a0->unkC;
-            } else if (temp_a0->unk0 < -temp_a0->unkC) {
-                temp_a0->unk0 += temp_a0->unkC;
+    for (i = 0; i < MAX_TEXTURE_SCROLLERS; i++){
+        if (D_800B97A8[i].refCount != 0) {
+            scroll = &D_800B97A8[i];
+
+            //Primary material
+            dU_adjusted = scroll->uRemainderA;
+            dV_adjusted = scroll->vRemainderA;
+            dU = scroll->uSpeedA * gUpdateRate;
+            dV = scroll->vSpeedA * gUpdateRate;
+            dU_adjusted += dU;
+            dV_adjusted += dV;
+            //Store remainders to account for scroll progress lost to integer division
+            scroll->uRemainderA = dU_adjusted & 3;
+            scroll->vRemainderA = dV_adjusted & 3;
+            scroll->uOffsetA += dU_adjusted >> 2; //dividing delta by 4 before it's applied
+            scroll->vOffsetA += dV_adjusted >> 2;
+            
+            if (scroll->widthA < scroll->uOffsetA) {
+                scroll->uOffsetA -= scroll->widthA;
+            } else if (scroll->uOffsetA < -scroll->widthA) {
+                scroll->uOffsetA += scroll->widthA;
             }
-            if (temp_a0->unkE < temp_a0->unk2) {
-                temp_a0->unk2 -= temp_a0->unkE;
-            } else if (temp_a0->unk2 < -temp_a0->unkE) {
-                temp_a0->unk2 += temp_a0->unkE;
+    
+            if (scroll->heightA < scroll->vOffsetA) {
+                scroll->vOffsetA -= scroll->heightA;
+            } else if (scroll->vOffsetA < -scroll->heightA) {
+                scroll->vOffsetA += scroll->heightA;
             }
-            var_a1 = temp_a0->unk18;
-            var_a3 = temp_a0->unk14 * gUpdateRate;
-            var_t1 = temp_a0->unk16 * gUpdateRate;
-            temp_a0->unk18 = (var_a1 + var_a3) & 3;
-            temp_a0->unk10 += (var_a1 + var_a3) >> 2;
-            var_a2 = temp_a0->unk1A;
-            temp_a0->unk1A = (var_a2 + var_t1) & 3;
-            temp_a0->unk12 += (var_a2 + var_t1) >> 2;
-            if (temp_a0->unk1C < temp_a0->unk10) {
-                temp_a0->unk10 -= temp_a0->unk1C;
-            } else if (temp_a0->unk10 < -temp_a0->unk1C) {
-                temp_a0->unk10 += temp_a0->unk1C;
+    
+            //Secondary blend material
+            dU_adjusted = scroll->uRemainderB;
+            dV_adjusted = scroll->vRemainderB;
+            dU = scroll->uSpeedB * gUpdateRate;
+            dV = scroll->vSpeedB * gUpdateRate;
+            dU_adjusted += dU;
+            dV_adjusted += dV;
+            //Store remainders to account for scroll progress lost to integer division
+            scroll->uRemainderB = dU_adjusted & 3;
+            scroll->vRemainderB = dV_adjusted & 3;
+            scroll->uOffsetB += dU_adjusted >> 2; //dividing delta by 4 before it's applied
+            scroll->vOffsetB += dV_adjusted >> 2;
+            
+            if (scroll->widthB < scroll->uOffsetB) {
+                scroll->uOffsetB -= scroll->widthB;
+            } else if (scroll->uOffsetB < -scroll->widthB) {
+                scroll->uOffsetB += scroll->widthB;
             }
-            if (temp_a0->unk1E < temp_a0->unk12) {
-                temp_a0->unk12 -= temp_a0->unk1E;
-            } else if (temp_a0->unk12 < -temp_a0->unk1E) {
-                temp_a0->unk12 += temp_a0->unk1E;
+    
+            if (scroll->heightB < scroll->vOffsetB) {
+                scroll->vOffsetB -= scroll->heightB;
+            } else if (scroll->vOffsetB < -scroll->heightB) {
+                scroll->vOffsetB += scroll->heightB;
             }
         }
     }
 }
-#endif
 
-// unused?
-s32 func_80049B84(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
-    UnkTextureStruct* temp;
+/** Setup texture scroll handler (reusing existing handlers where possible) 
+  *
+  * Block texture scrollers can scroll two materials independently.
+  * MaterialA is the primary texture,
+  * MaterialB is an optional blend texture, mostly used for texture-blended animated water
+  */
+s32 func_80049B84(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
+    BlockTextureScroller* scroll;
     s32 index;
-    s32 i;
+    s32 scrollHandlerID;
 
-    i = 0;
+    //Iterate through scroll handlers
+    scrollHandlerID = 0;
     while (1) {
-        temp = &D_800B97A8[i];
+        scroll = &D_800B97A8[scrollHandlerID];
+
+        //Reuse an existing scroll handler if it has the same animation config as what's specified in args
         if (
-            (arg0 == temp->unk4) &&
-            (arg1 == temp->unk6) &&
-            (arg2 == temp->unkC) &&
-            (arg3 == temp->unkE) &&
-            (arg4 == temp->unk14) &&
-            (arg5 == temp->unk16) &&
-            (arg6 == temp->unk1C) &&
-            (arg7 == temp->unk1E)
+            (uSpeedA == scroll->uSpeedA) &&
+            (vSpeedA == scroll->vSpeedA) &&
+            (widthA == scroll->widthA) &&
+            (heightA == scroll->heightA) &&
+            (uSpeedB == scroll->uSpeedB) &&
+            (vSpeedB == scroll->vSpeedB) &&
+            (widthB == scroll->widthB) &&
+            (heightB == scroll->heightB)
         ) {
-            temp->unk20++;
-            return i;
+            scroll->refCount++;
+            return scrollHandlerID;
         }
-        i++;
-        if (i >= 0x3A) {
+        scrollHandlerID++;
+
+        //If no reusable handler was found, search through the handlers again to find an unused slot
+        if (scrollHandlerID >= MAX_TEXTURE_SCROLLERS) {
             index = -1;
-            for (i = 0; i < 0x3A; i++) {
-                if (D_800B97A8[i].unk20 == 0) {
-                    index = i;
+            for (scrollHandlerID = 0; scrollHandlerID < MAX_TEXTURE_SCROLLERS; scrollHandlerID++) {
+                if (D_800B97A8[scrollHandlerID].refCount == 0) {
+                    index = scrollHandlerID;
                     break;
                 }
             }
+            //Bail if no unreferenced scroller slot was found
             if (index == -1) {
                 return -1;
             }
-            temp = &D_800B97A8[index];
-            temp->unk4 = arg0;
-            temp->unk6 = arg1;
-            temp->unkC = arg2;
-            temp->unkE = arg3;
-            temp->unk0 = 0;
-            temp->unk2 = 0;
-            temp->unk8 = 0;
-            temp->unkA = 0;
-            temp->unk14 = arg4;
-            temp->unk16 = arg5;
-            temp->unk1C = arg6;
-            temp->unk1E = arg7;
-            temp->unk10 = 0;
-            temp->unk12 = 0;
-            temp->unk18 = 0;
-            temp->unk1A = 0;
-            temp->unk20 += 1;
+
+            //If an unused slot was found, store the scroll's anim params and return its ID
+            scroll = &D_800B97A8[index];
+            scroll->uSpeedA = uSpeedA;
+            scroll->vSpeedA = vSpeedA;
+            scroll->widthA = widthA;
+            scroll->heightA = heightA;
+            scroll->uOffsetA = 0;
+            scroll->vOffsetA = 0;
+            scroll->uRemainderA = 0;
+            scroll->vRemainderA = 0;
+            scroll->uSpeedB = uSpeedB;
+            scroll->vSpeedB = vSpeedB;
+            scroll->widthB = widthB;
+            scroll->heightB = heightB;
+            scroll->uOffsetB = 0;
+            scroll->vOffsetB = 0;
+            scroll->uRemainderB = 0;
+            scroll->vRemainderB = 0;
+            scroll->refCount++;
             return index;
         }
     }
 }
 
-void func_80049CE4(u32 a0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8){
-    UnkTextureStruct *temp_v0;
+/** Setup texture scroll handler (using specific handler index) 
+  *
+  * Block texture scrollers can scroll two materials independently.
+  * MaterialA is the primary texture,
+  * MaterialB is an optional blend texture, mostly used for texture-blended animated water
+  */
+void func_80049CE4(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB){
+    BlockTextureScroller *scroll;
 
-    temp_v0 = &D_800B97A8[a0];
-    temp_v0->unk4 = arg1;
-    temp_v0->unk6 = arg2;
-    temp_v0->unkC = arg3;
-    temp_v0->unkE = (s16) arg4; 
-    temp_v0->unk14 = (s16) arg5; 
-    temp_v0->unk16 = (s16) arg6; 
-    temp_v0->unk1C = (s16) arg7; 
-    temp_v0->unk1E = (s16) arg8; 
+    scroll = &D_800B97A8[scrollerID];
+
+    //Primary material
+    scroll->uSpeedA = uSpeedA;
+    scroll->vSpeedA = vSpeedA;
+    scroll->widthA = widthA;
+    scroll->heightA = heightA; 
+
+    //Secondary blend material
+    scroll->uSpeedB = uSpeedB; 
+    scroll->vSpeedB = vSpeedB; 
+    scroll->widthB = widthB; 
+    scroll->heightB = heightB; 
 }
 
 void func_80049D38(u32 arg0) {
-    if ((s32) D_800B97A8[arg0].unk20 > 0) {
-        D_800B97A8[arg0].unk20 -= 1;
+    if (D_800B97A8[arg0].refCount > 0) {
+        D_800B97A8[arg0].refCount--;
     }
 }
 
@@ -3617,19 +3651,19 @@ s32 block_setup_textures(Block* block) {
         if (temp_a3->flags & 0x4000) {
             var_s6++;
         }
-        if (temp_a3->flags & 0x10000 && temp_a3->unk14 != 0) {
+        if (temp_a3->flags & 0x10000 && temp_a3->animatorID != 0) {
             var_a1 = FALSE;
             for (j = 0; j < var_s1; j++) {
-                if (block->unk28[j].unk2 == temp_a3->unk14) {
+                if (block->unk28[j].unk2 == temp_a3->animatorID) {
                     var_a1 = TRUE;
                     break;
                 }
             }
-            var_a2 = temp_a3->unk14;
+            var_a2 = temp_a3->animatorID;
             if (var_a1 == FALSE) {
                 var_a1 = temp_a3->flags;
                 block->unk28[var_s1].texIdx = func_8004A058(block->tiles[temp_a3->tileIdx0].texture, var_a1, var_a2);
-                block->unk28[var_s1].unk2 = block->shapes[i].unk14;
+                block->unk28[var_s1].unk2 = block->shapes[i].animatorID;
                 var_s1++;
             } else {
                 var_a1 = temp_a3->flags;
@@ -3834,7 +3868,7 @@ s32 func_8004A528(Object* obj, u8 animatorID) {
     anim_vertex_count = 0;
     blockShapes = block->shapes;
     for (index = 0; index < block->shapeCount; index++){
-        if (animatorID == (blockShapes[index]).unk14){
+        if (animatorID == (blockShapes[index]).animatorID){
             anim_vertex_count += blockShapes[index + 1].vtxBase - blockShapes[index].vtxBase;
         }
     }
@@ -3842,23 +3876,26 @@ s32 func_8004A528(Object* obj, u8 animatorID) {
     return anim_vertex_count;
 }
 
-s32 func_8004A5D8(Object* obj, u8 arg1) {
+/** count_local_block_shapes_using_animatorID */
+s32 func_8004A5D8(Object* obj, u8 animatorID) {
     Block* block;
-    s32 out;
+    s32 matches;
     s32 i;
     BlockShape *shapes;
 
+    //Get object's local Blocks model
     block = func_80044BB0(func_8004454C(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return 0;
     }
 
-    for (i = 0, out = 0, shapes = block->shapes; i < block->shapeCount; i++) {
-        if (arg1 == shapes[i].unk14) {
-            out += 1;
+    //Iterate over Block's shapes, counting those with matching animatorID
+    for (i = 0, matches = 0, shapes = block->shapes; i < block->shapeCount; i++) {
+        if (animatorID == shapes[i].animatorID) {
+            matches++;
         }
     }
-    return out;
+    return matches;
 }
 
 void func_8004A67C(void) {

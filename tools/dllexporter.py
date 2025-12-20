@@ -122,9 +122,9 @@ def main():
             continue
 
         # Remove /* xx */ comments
-        line = re.sub("/\\*.*?\\*/", "", line, 0)
+        line = re.sub("/\\*.*?\\*/", "", line, count=0)
         # Remove everything after //
-        line = re.sub("//.*$", "", line, 0)
+        line = re.sub("//.*$", "", line, count=0)
         # Remove trailing / leading whitespace
         line = str.strip(line)
 

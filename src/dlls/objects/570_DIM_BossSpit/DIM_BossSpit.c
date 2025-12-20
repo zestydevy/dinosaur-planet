@@ -157,8 +157,8 @@ void DIM_BossSpit_func_53C(Object *self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_340, NULL, PARTFXFLAG_1, -1, NULL);
         }
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4BB, NULL, PARTFXFLAG_1, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_380, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_386, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_380_Scorching_Impact, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_386_Squelched_Impact, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_80003B70(3.0f);
     }
     objdata->unk0 += gUpdateRate;

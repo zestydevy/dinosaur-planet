@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_332_ctor
-.dword dll_332_dtor
+.dword FXEmit_ctor
+.dword FXEmit_dtor
 
 # export table
-/*0*/ .dword dll_332_setup
-/*1*/ .dword dll_332_control
-/*2*/ .dword dll_332_update
-/*3*/ .dword dll_332_print
-/*4*/ .dword dll_332_free
-/*5*/ .dword dll_332_get_model_flags
-/*6*/ .dword dll_332_get_data_size
+/*0*/ .dword FXEmit_setup
+/*1*/ .dword FXEmit_control
+/*2*/ .dword FXEmit_update
+/*3*/ .dword FXEmit_print
+/*4*/ .dword FXEmit_free
+/*5*/ .dword FXEmit_get_model_flags
+/*6*/ .dword FXEmit_get_data_size

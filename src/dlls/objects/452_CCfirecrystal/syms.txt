@@ -1,0 +1,15 @@
+.text = 0x0:
+CCfirecrystal_ctor = 0x0;
+CCfirecrystal_dtor = 0xC;
+CCfirecrystal_setup = 0x18;
+CCfirecrystal_control = 0x210;
+CCfirecrystal_update = 0x3A8;
+CCfirecrystal_print = 0x3B4;
+CCfirecrystal_free = 0x41C;
+CCfirecrystal_get_model_flags = 0x518;
+CCfirecrystal_get_data_size = 0x528;
+CCfirecrystal_create_light = 0x53C;
+CCfirecrystal_anim_callback = 0x614;
+
+.rodata = 0x6FC:
+str_0 = 0x0; // absolute:0x6FC

@@ -3,16 +3,16 @@
 #include "sys/objtype.h"
 
 typedef struct {
-    ObjSetup base;
-    s16 gamebitPlay;        //The sequence will play when this gamebit is set
-    s16 gamebitFinished;    //This gamebit will be set when the sequence has played
-    u8 rotate;
-    u8 playbackOptions;
-    s8 seqIndex;            //The index of the sequence in the Object.bin entry's sequence list
-    s8 modelInstIdx;        //Choose between 3D models, visible when debugging (usually a clapperboard)
-    s16 unk20;
-    u16 unk22;
-    u8 warpID;              //Optionally warp the player
+/*00*/ ObjSetup base;
+/*18*/ s16 gamebitPlay;        //The sequence will play when this gamebit is set
+/*1A*/ s16 gamebitFinished;    //This gamebit will be set when the sequence has played
+/*1C*/ u8 rotate;
+/*1D*/ u8 playbackOptions;
+/*1E*/ s8 seqIndex;            //The index of the sequence in the Object.bin entry's sequence list
+/*1F*/ s8 modelInstIdx;        //Choose between 3D models, visible when debugging (usually a clapperboard)
+/*20*/ s16 unk20;
+/*22*/ u16 unk22;
+/*24*/ u8 warpID;              //Optionally warp the player
 } SeqObj_Setup;
 
 typedef struct {
@@ -57,7 +57,7 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
         self->modelInstIdx = 0;
     }
     
-    obj_add_object_type(self, 0x11);
+    obj_add_object_type(self, OBJTYPE_17);
     
     objData->flags = SEQOBJ_FLAG_None;
     if (objSetup->gamebitPlay != -1) {
@@ -105,14 +105,18 @@ void SeqObj_control(Object* self) {
         }
 
         //If "finished" gamebit is set, and objData->finished isn't set?
-        if (objData->finished != (sequencePlayed = main_get_bits(objSetup->gamebitFinished)) && 
-                (objData->finished = sequencePlayed, sequencePlayed)) {
-            if (objSetup->seqIndex != -1) {
-                gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, -1);
-            }
-            if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) == FALSE && 
-                (objSetup->playbackOptions & (SEQOBJ_OPTIONS_2 | SEQOBJ_OPTIONS_8)) == FALSE) {
-                main_set_bits(objSetup->gamebitPlay, TRUE);
+        sequencePlayed = main_get_bits(objSetup->gamebitFinished);
+        if (sequencePlayed != objData->finished) {
+            objData->finished = sequencePlayed;
+
+            if (sequencePlayed) {
+                if (objSetup->seqIndex != -1) {
+                    gDLL_3_Animation->vtbl->func17(objSetup->seqIndex, self, -1);
+                }
+                if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_Stoppable) == FALSE && 
+                    (objSetup->playbackOptions & (SEQOBJ_OPTIONS_2 | SEQOBJ_OPTIONS_8)) == FALSE) {
+                    main_set_bits(objSetup->gamebitPlay, TRUE);
+                }
             }
         }
     } else {

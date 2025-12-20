@@ -1,0 +1,12 @@
+.text = 0x0:
+TrickyGuard_ctor = 0x0;
+TrickyGuard_dtor = 0xC;
+TrickyGuard_setup = 0x18;
+TrickyGuard_control = 0x6C;
+TrickyGuard_update = 0x18C;
+TrickyGuard_print = 0x198;
+TrickyGuard_free = 0x1B0;
+TrickyGuard_get_model_flags = 0x1F0;
+TrickyGuard_get_data_size = 0x200;
+
+.rodata = 0x260:

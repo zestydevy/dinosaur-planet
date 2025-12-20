@@ -3,6 +3,7 @@
 
 #include "PR/gbi.h"
 #include "game/objects/object.h"
+#include "segment_334F0.h"
 #include "sys/camera.h"
 #include "sys/scheduler.h"
 #include "libc/stdarg.h"
@@ -10,14 +11,13 @@
 #include "unktypes.h"
 
 void func_800267A4(Object *obj);
-s32 func_80025F40(Object*,Object **,s32 *,s32 *);
 
 void draw_object(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, f32 yPrescale);
 void func_80036FBC(s16 arg0, s16 arg1, s16 arg2, u8 arg3);
 
 void dl_apply_geometry_mode(Gfx **gdl);
 
-u8 func_8001EBE0();
+u8 func_8001EBE0(void);
 
 s8 map_get_layer();
 void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
@@ -44,6 +44,7 @@ void func_80045F48(s32);
 void func_8004D974(s32);
 void texture_destroy(Texture *texture);
 
+/** check if object talked to by player? */
 s32 func_80032538(Object* arg0);
 void func_8003273C(Object *obj);
 s32 map_get_type();
@@ -99,9 +100,6 @@ void map_func_800483BC(f32, f32, f32);
 
 f32 _depth2Cents(u8 arg0);
 
-void mp3_init(s32 arg0);
-void mp3_play_file(s32 romAddr, s32 size);
-
 ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
 Texture *func_8003E960(s32);
 
@@ -119,7 +117,7 @@ s32 func_80000450(Object*,Object*,u16,s8,s32,s32);
 void func_80036438(Object*);
 
 s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg5);
-void func_80059038(s32, s32, s32);
+void func_80059038(s32, Object*, s32);
 
 s32 func_80057F1C(Object*, f32, f32, f32, Func_80057F1C_Struct***, s32, s32);
 s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, Func_80059C40_Struct*, Object*, s8, s8, u8, s8);
@@ -127,5 +125,9 @@ s32 func_80059C40(Vec3f*, Vec3f*, f32, s32, Func_80059C40_Struct*, Object*, s8, 
 MtxF *func_80032170(Object* obj, s32 arg1);
 
 s16 func_80000824(s32 arg0);
+
+void func_80058680(Object*, f32, f32, f32, f32*, s32);
+void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3);
+s32 func_80056BCC(Vec3f*, Vec3f*, Vec3f*, Vec4f*, Vec3f*, f32);
 
 #endif //_FUNCTIONS_H

@@ -358,8 +358,8 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     objdata->fsa.unk33D = 0;
     self->unkAF |= 0x88;
     func_8002674C(self);
-    if (self->ptr0x64 != NULL) {
-        self->ptr0x64->flags |= 0x810;
+    if (self->unk64 != NULL) {
+        self->unk64->flags |= 0x810;
     }
     ktdata = (KTrex_Data*)objdata->unk3F4;
     ktdata->stateStack = generic_stack_new(4, sizeof(s32));
@@ -426,7 +426,7 @@ void dll_702_control(Object* self) {
         }
         dll_702_func_1EF0(self, &dll33Data->fsa);
         dll_702_fx_tick(self);
-        gDLL_33->vtbl->func10(self, dll33Data, 0.0f, 0);
+        gDLL_33->vtbl->func10(self, &dll33Data->fsa, 0.0f, 0);
         func_80026128(self, 0x17, 1, -1);
         gDLL_18_objfsa->vtbl->tick(self, &dll33Data->fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
         self->srt.transl.y = sKTData->pos.y;

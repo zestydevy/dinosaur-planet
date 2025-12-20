@@ -20,16 +20,21 @@ typedef struct {
     /*0x34*/ f32 unk34;
     /*0x38*/ f32 unk38;
     /*0x3C*/ f32 unk3C;
-    /*0x40*/ u32 unk40;
+    /*0x40*/ u32 unk40; //collision radius (on lowest byte)?
     /*0x44*/ u32 unk44;
-    /*0x48*/ s32 unk48;
+    /*0x48*/ struct Object *unk48;
     /*0x4c*/ s32 unk4C;
     /*0x50*/ s16 unk50;
     /*0x52*/ s16 unk52;
     /*0x54*/ s16 unk54;
     /*0x56*/ s16 unk56;
-    /*0x58*/ s16 unk58;
-    /*0x5a*/ u8 unk5A;
+    /*0x58*/ s16 unk58; //flags, bit0 collision toggle
+                        //       bit1 ignore player but allow projectiles etc. to collide?
+                        //       bit2 ?
+                        //       bit3 currently colliding with something?
+                        //       bit4 ?
+                        //       bit5 ?
+    /*0x5a*/ u8 unk5A;  //bitfield, unk93 in ObjDef, collision size/shape?
     /*0x5b*/ u8 unk5B;
     /*0x5c*/ u8 unk5C;
     /*0x5d*/ s8 unk5D;

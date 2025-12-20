@@ -78,14 +78,14 @@ typedef struct{
 /*00*/    Texture *textureID; //textureID in ROM, but a pointer to the Texture object at runtime
 /*04*/    u32 pad4;
 /*08*/    u8  width;
-/*0a*/    u8  height;
+/*09*/    u8  height;
 
             //bits 6-7: unused
             //bit  5:   greyscale
             //bit  4:   opaque
             //bit  0-3: type (RGBA/CI/IA/etc.)
-/*0b*/    u8  format;
-/*0c*/    u8  terrain_type; //Affects footstep/weapon foley sfx 
+/*0A*/    u8  format;
+/*0B*/    u8  terrain_type; //Affects footstep/weapon foley sfx 
                             //(some values create dust/snow particles too, 
                             //or force water behaviour - overriding facebatch water setting!)
 } BlocksMaterial;
@@ -202,25 +202,30 @@ typedef struct {
 
 // Size: 0x22
 typedef struct {
-/*00*/ s16 unk0;
-/*02*/ s16 unk2;
-/*04*/ s16 unk4;
-/*06*/ s16 unk6;
-/*08*/ s16 unk8;
-/*0A*/ s16 unkA;
-/*0C*/ s16 unkC;
-/*0E*/ s16 unkE;
-/*10*/ s16 unk10;
-/*12*/ s16 unk12;
-/*14*/ s16 unk14;
-/*16*/ s16 unk16;
-/*18*/ s16 unk18;
-/*1a*/ s16 unk1A;
-/*1c*/ s16 unk1C;
-/*1e*/ s16 unk1E;
-/*20*/ u8 unk20;
-/*21*/ u8 unk21;
-} UnkTextureStruct;
+/** Primary scroll material */
+/*00*/ s16 uOffsetA;    //scroll position for U component
+/*02*/ s16 vOffsetA;    //scroll position for V component
+/*04*/ s16 uSpeedA;     //scroll speed for U component
+/*06*/ s16 vSpeedA;     //scroll speed for V component
+/*08*/ s16 uRemainderA; //accumulated dU remainders from previous ticks
+/*0A*/ s16 vRemainderA; //accumulated dV remainders from previous ticks
+/*0C*/ s16 widthA;      //texture tile width
+/*0E*/ s16 heightA;     //texture tile height
+
+/** Secondary scroll material (used by texture-blended water, etc.)*/
+/*10*/ s16 uOffsetB;    //scroll position for U component 
+/*12*/ s16 vOffsetB;    //scroll position for V component 
+/*14*/ s16 uSpeedB;     //scroll speed for U component
+/*16*/ s16 vSpeedB;     //scroll speed for V component
+/*18*/ s16 uRemainderB; //accumulated dU remainders from previous ticks
+/*1A*/ s16 vRemainderB; //accumulated dV remainders from previous ticks
+/*1C*/ s16 widthB;      //texture tile width
+/*1E*/ s16 heightB;     //texture tile height
+
+/** Stats */
+/*20*/ u8 refCount;     //how many BlockShapes make use of this scroll handler
+/*21*/ u8 animating;    //Boolean - scrolling can be paused
+} BlockTextureScroller;
 
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {
@@ -323,7 +328,8 @@ typedef struct {
 typedef struct Unk8005341C {
     Object *unk0;
     s16 unk4;
-    u8 pad8[0x10 - 0x6];
+    MtxF *unk8;
+    MtxF *unkC;
 } Unk8005341C;
 
 typedef struct Unk80092BC0 {
@@ -341,6 +347,7 @@ typedef struct Unk80092BC0 {
 #define MAP_ID_MAX 80
 // The map grid always has 5 layers: -2, -1, 0, 1, 2
 #define MAP_LAYER_COUNT 5
+#define MAX_TEXTURE_SCROLLERS 58
 
 #define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
 
@@ -366,7 +373,7 @@ extern StreamMap gMapStreamMapTable[];
 extern MapHeader* gMapActiveStreamMap;
 extern MapHeader* gLoadedMapsDataTable[120];
 
-extern UnkTextureStruct *D_800B97A8;
+extern BlockTextureScroller *D_800B97A8; //gMapTextureScrollers?
 
 /** An array of 5 pointers to 16*16 blockIndex arrays, one for each map layer (maybe called visGrids based on print strings?) */
 extern s8 *gBlockIndices[MAP_LAYER_COUNT];
@@ -556,5 +563,9 @@ Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);
 Texture* func_8004A1E8(s32 match_value);
+ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, s32* arg3, s32* arg4);
+void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
+void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
+u32 func_80041D8C(void);
 
 #endif

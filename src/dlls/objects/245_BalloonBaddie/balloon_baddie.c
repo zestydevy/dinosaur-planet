@@ -73,7 +73,7 @@ void BalloonBaddie_setup(Object *self, BalloonBaddie_Setup *setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, objdata->attackRange, (s32*)&_data_0, -1) == 0) {
             objdata->flags |= BALLOONBADDIE_1;
         }
-        objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->unkB0 |= 0x2000;
 }
@@ -102,8 +102,8 @@ void BalloonBaddie_control(Object* self) {
             self->opacity = OBJECT_OPACITY_MAX;
             self->unkAF &= ~8;
             objdata->flags |= BALLOONBADDIE_RESPAWNED;
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->fadeoutTimer > 0.0f) {
@@ -129,9 +129,9 @@ void BalloonBaddie_control(Object* self) {
                 objdata->flags |= (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2);
                 objdata->fadeoutTimer = 1.0f;
                 self->unkAF |= 8;
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_33->vtbl->func18(self, setup->unk18, -1, 0);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, setup->respawnTimer * 60);

@@ -24,6 +24,12 @@
 #include "types.h"
 #include "segment_334F0.h"
 
+#ifdef DEBUG
+#define FROSTWEED_QUEST_CHEAT 1  
+#else  
+#define FROSTWEED_QUEST_CHEAT 0  
+#endif 
+
 s32 func_80031BBC(f32, f32, f32);
 s32 func_80032538(Object* self);
 void joy_set_button_mask(int port, u16 mask);
@@ -93,7 +99,7 @@ typedef struct {
 /*3f4*/ u32 unk3f4;
 /*3f8*/ u32 unk3f8;
 /*3fc*/ u32 unk3fc;
-/*400*/ Unk80032CF8 lookAtUnk;
+/*400*/ HeadAnimation lookAtUnk;
 /*424*/ u8 unk424;
 /*425*/ u8 unk425;
 /*426*/ u8 unk426;
@@ -244,7 +250,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     snowhorn->animCallback = dll_496_func_84C;
     
     if (arg2 == 0) {
-        obj_add_object_type(snowhorn, 0xC);
+        obj_add_object_type(snowhorn, OBJTYPE_12);
         objdata->unk50 = 0.005f;
         objdata->unkRadius = mapsObj->unkRadius;
         objdata->unk6 = mapsObj->unk1A * 0x3C;
@@ -275,7 +281,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
             gDLL_27->vtbl->setup_terrain_collider(&objdata->unk170, 4, _data_230, _data_260, &sp34);
             gDLL_27->vtbl->reset(snowhorn, &objdata->unk170);
         }
-        snowhorn->ptr0x64->flags |= 0xA10;
+        snowhorn->unk64->flags |= 0xA10;
     }
 }
 #endif
@@ -476,7 +482,7 @@ s32 dll_496_func_980(Object* snowhorn) {
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
@@ -491,7 +497,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
             }
             objdata->sleepTimer-= gUpdateRate;
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
@@ -506,7 +512,7 @@ s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SFX_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
+                gDLL_6_AMSFX->vtbl->play_sound(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
                 func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
@@ -535,14 +541,14 @@ void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     player = get_player();
       
     if (lookAt && player && objdata->distanceFromPlayer < 200.0f){
-      objdata->lookAtUnk.unk0 = 1;
-      objdata->lookAtUnk.x = player->srt.transl.x;
-      objdata->lookAtUnk.y = player->srt.transl.y;
-      objdata->lookAtUnk.z = player->srt.transl.z;
+      objdata->lookAtUnk.aimIsActive = 1;
+      objdata->lookAtUnk.headAimX = player->srt.transl.x;
+      objdata->lookAtUnk.headAimY = player->srt.transl.y;
+      objdata->lookAtUnk.headAimZ = player->srt.transl.z;
       return;
     }
   
-    objdata->lookAtUnk.unk0 = 0;
+    objdata->lookAtUnk.aimIsActive = 0;
 }
 
 void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj) {
@@ -977,9 +983,9 @@ void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* set
             setup = (SnowHorn_Setup*)self->setup;
             if (frostWeed && frostWeed->id == 0x3FB && vec3_distance_xz_squared(&self->positionMirror, &frostWeed->positionMirror) < setup->unkRadius * setup->unkRadius) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->func11(frostWeed)) {
-                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, (s32)&objdata->playerPositionCopy);
+                    ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->func10(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
-                    if (0){
+                    if (FROSTWEED_QUEST_CHEAT){
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
                     objdata->garundaTe_weedsEaten++;

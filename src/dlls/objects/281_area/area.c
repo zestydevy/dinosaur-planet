@@ -4,6 +4,8 @@
 #include "types.h"
 #include "sys/gfx/model.h"
 
+#include "dlls/objects/281_area.h"
+
 // offset: 0x0 | ctor
 void area_ctor(void *dll){ }
 

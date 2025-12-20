@@ -203,6 +203,10 @@ def scan_dll_elf(
 
         if sym.name.endswith(".NON_MATCHING"):
             continue
+        if ":" in sym.name:
+            # IDO emits these sometimes when there are globals/statics with a size < 4.
+            # e.g. "_bss_20:1"
+            continue
 
         if st_shndx == "SHN_ABS":
             sec_offset = dll.header.size
@@ -337,7 +341,7 @@ def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO
         if dll_dir != None:
             dll_elf_path = BUILD_PATH.joinpath(f"src/dlls/{dll_dir}/{number}.elf")
         else:
-            dll_elf_path = BUILD_PATH.joinpath(f"asm/nonmatchings/dlls/_asm/{number}.elf")
+            dll_elf_path = BUILD_PATH.joinpath(f"asm/dlls/{number}.elf")
             dll_dir = f"_asm/{number}"
         if dll_elf_path.exists():
             with open(dll_elf_path, "rb") as file:

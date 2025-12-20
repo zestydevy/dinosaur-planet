@@ -56,9 +56,9 @@ typedef struct {
 /*0008*/    s16 baseF3DCommandIndex;
 /*000a*/    s8 tagA; //0xFF = glow marker (though not what enables effect)
 /*000b*/    s8 tagB; //UV-animated faces tend to have 1 or 2 here, other values for flipbooks
-/*000c*/    s8 tagC; //0x80 = double-sided faces (no back culling)
-/*000d*/    s8 tagD; //0x11 = decal, 0x20 = not in F3D block
-/*000e*/    s16 tagE; //Upper 4 bits enable envMap, lower bits are baseFaceID
+/*000c*/    s32 tagC; // @ 0xC: 0x80 = double-sided faces (no back culling)
+                      // @ 0xD: 0x11 = decal, 0x20 = not in F3D block
+                      // @ 0xE: Upper 4 bits enable envMap, lower bits are baseFaceID
 } ModelFacebatch;
 
 typedef struct {
@@ -94,7 +94,10 @@ typedef struct {
 
 typedef struct {
 /*0000*/    s16 jointIndex;
-/*0002*/    u8 pad0[0xA - 0x2];
+/*0002*/    s16 unk2; // radius?
+/*0004*/    s16 x;
+/*0006*/    s16 y;
+/*0008*/    s16 z;
 /*000A*/    u16 unkA;
 /*000C*/    s8 unkC;
 /*000D*/    s8 unkD;
@@ -157,7 +160,7 @@ typedef struct ModelInstance_0x14_0x14 {
 typedef struct ModelInstance_0x14 {
 /*0000*/    Vec3f *unk0;
 /*0004*/    f32 *unk4;
-/*0008*/    s32 pad8;
+/*0008*/    f32 *unk8;
 /*000C*/    f32 *unkC;
 /*0010*/    f32 *unk10;
 /*0014*/    ModelInstance_0x14_0x14 *unk14;
@@ -174,9 +177,17 @@ typedef struct {
 } ModelInstanceBlendshape;
 
 typedef struct {
+    s16 unk0[3]; // x,y,z
+    u8 _unk6[0x8 - 0x6];
+    s16 unk8;
+    s16 unkA;
+    u8 _unkC[0x10 - 0xC];
+} ModelInstance_0x4;
+
+typedef struct {
     // TODO
 /*0000*/    Model *model;
-/*0004*/    void *unk4[2];
+/*0004*/    ModelInstance_0x4 *unk4[2];
 /*000C*/    MtxF *matrices[2];
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;

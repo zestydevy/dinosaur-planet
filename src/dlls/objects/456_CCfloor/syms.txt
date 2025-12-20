@@ -1,0 +1,12 @@
+.text = 0x0:
+CCfloor_ctor = 0x0;
+CCfloor_dtor = 0xC;
+CCfloor_setup = 0x18;
+CCfloor_control = 0x64;
+CCfloor_update = 0x70;
+CCfloor_print = 0x7C;
+CCfloor_free = 0x1B4;
+CCfloor_get_model_flags = 0x1C4;
+CCfloor_get_data_size = 0x1D4;
+
+.rodata = 0x220:

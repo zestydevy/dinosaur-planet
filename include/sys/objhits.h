@@ -4,7 +4,6 @@
 #include "sys/map.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
-#include "dlls/modgfx/106.h"
 
 // size: 0x14
 typedef struct Unk80026DF4 {
@@ -19,7 +18,7 @@ typedef struct Unk80026DF4 {
 
 // size: 0x6C
 typedef struct Unk80027934 {
-    u8 pad0[64];
+    Vec4f unk0[4];
     f32 unk40[4];
     s8 unk50[4];
     s8 unk54[4];
@@ -95,6 +94,7 @@ typedef struct Unk800B20B8 {
     Object *unk8;
 } Unk800B20B8;
 
+s32 func_80025F40(Object*,Object **,s32 *,s32 *);
 s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 s32 func_80026724(Object*);
@@ -136,5 +136,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 void func_80026184(Object* arg0, Object* arg1);
 void func_8002681C(Object* obj);
 void func_80028D2C(Object* obj);
+void func_80026B84(Object* obj);
+void func_800269CC(Object* obj, ObjectHitInfo* objHitInfo, s32 arg2);
 
 #endif

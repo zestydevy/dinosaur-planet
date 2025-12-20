@@ -50,8 +50,12 @@ BSS_GLOBAL OSMesg audDMAMessageBuf[NUM_DMA_MESSAGES];
 BSS_GLOBAL u32 D_800AB960;
 /* -------- .bss end -------- */
 
-// TODO: this is wrong! (but matches here...)
-extern void mpeg_fs_init(void);
+// @bug: This file uses the wrong signature for mpeg_init
+#ifdef AVOID_UB
+#include "sys/mpeg.h" 
+#else
+extern void mpeg_init(void);
+#endif
 
 void __amMain(void *arg);
 void __amHandleFrameMsg(void);
@@ -71,7 +75,11 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
 
     audioTab = NULL;
     
-    mpeg_fs_init();
+#ifdef AVOID_UB
+    mpeg_init(NULL);
+#else
+    mpeg_init();
+#endif
     
     c.maxVVoices = c.maxPVoices = 72;
     c.maxUpdates = 96;

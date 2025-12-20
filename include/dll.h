@@ -99,6 +99,7 @@ enum DLL_ID {
     DLL_ID_50 = 50, // partfx related
     DLL_ID_51 = 51, // partfx related
     DLL_ID_52 = 52, // partfx related
+    DLL_ID_53 = 53,
     DLL_ID_54 = 54,
     DLL_ID_56 = 56,
     DLL_ID_57 = 57,
@@ -112,13 +113,25 @@ enum DLL_ID {
     DLL_ID_106 = 0x1002,
     DLL_ID_107 = 0x1003,
     DLL_ID_122 = 0x1012,
+    DLL_ID_129 = 0x1019,
+    DLL_ID_130 = 0x101A,
+    DLL_ID_133 = 0x101D,
     DLL_ID_136 = 0x1020,
+    DLL_ID_139 = 0x1023,
+    DLL_ID_140 = 0x1024,
+    DLL_ID_141 = 0x1025,
+    DLL_ID_142 = 0x1026,
     DLL_ID_147 = 0x102B,
     DLL_ID_148 = 0x102C,
     DLL_ID_149 = 0x102D,
     DLL_ID_155 = 0x1033,
     DLL_ID_170 = 0x1042,
+    DLL_ID_177 = 0x1049,
     DLL_ID_182 = 0x104E,
+
+    // Proj gfx
+    DLL_ID_190 = 0x2004,
+    DLL_ID_194 = 0x2008,
 
     // Objects
     DLL_ID_CANNON_CLAW = 0x800E

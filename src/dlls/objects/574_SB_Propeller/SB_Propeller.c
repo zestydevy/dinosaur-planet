@@ -34,94 +34,94 @@ void SB_Propeller_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
 // offset: 0x4C | func: 1 | export: 1
 void SB_Propeller_control(Object *self) {
-    s32 new_var;
+    s32 _pad;
     SB_Propeller_Data *objdata;
-    Object *parent;
-    Object *parentagain;
-    s32 sp54;
     Object *player;
+    Object *parent;
+    s32 sp54;
+    s32 torque;
     s32 parent_unkDC;
     Object *sp48;
-    s32 torque;
     s32 var_v1;
+    s32 i;
 
     parent = self->parent;
     objdata = self->data;
 
-    if (parent) {
-        parent_unkDC = parent->unkDC;
-        if (parent->id == OBJ_WL_Galleon) {
-            self->objhitInfo->unk58 &= ~1;
-            if (!objdata->soundHandle) {
-                if (parent_unkDC > 10) {
-                    gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_290, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, 1);
-                    objdata->counter = 1;
-                }
-            } else {
-                objdata->counter++;
-                if (objdata->counter > 80) {
-                    objdata->counter = 80;
-                }
-                gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, objdata->counter);
+    if (!parent)
+        return;
+
+    parent_unkDC = self->parent->unkDC;
+    if (self->parent->id == OBJ_WL_Galleon) {
+        self->objhitInfo->unk58 &= ~1;
+        if (!objdata->soundHandle) {
+            if (parent_unkDC > 10) {
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_290_Propeller_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, 1);
+                objdata->counter = 1;
             }
         } else {
-            sp54 = ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func8(parent);
-            if (parent_unkDC < 4) {
-                torque = (1800 - objdata->torque) >> 3;
-                CLAMP(torque, -2, 2)
-                objdata->torque += torque * gUpdateRate;
-                objdata->torqueFloat = objdata->torque / 1600.0f;
-                if (objdata->torqueFloat < 0.0f) {
-                    objdata->torqueFloat = -objdata->torqueFloat;
-                }
-                if (objdata->torqueFloat < 0.2f) {
-                    objdata->torqueFloat = 0.2f;
-                }
-            } else {
-                if (objdata->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
-                }
+            objdata->counter++;
+            if (objdata->counter > 80) {
+                objdata->counter = 80;
             }
-            self->unkDC -= gUpdateRate;
-            if (self->unkDC < 0) {
-                self->unkDC = 0;
+            gDLL_6_AMSFX->vtbl->func_860(objdata->soundHandle, objdata->counter);
+        }
+    } else {
+        sp54 = ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func8(self->parent);
+        if (parent_unkDC < 4) {
+            torque = (1800 - objdata->torque) >> 3;
+            CLAMP(torque, -2, 2);
+            objdata->torque += torque * gUpdateRate;
+            objdata->torqueFloat = objdata->torque / 1600.0f;
+            if (objdata->torqueFloat < 0.0f) {
+                objdata->torqueFloat = -objdata->torqueFloat;
             }
-            var_v1 = func_80025F40(self, &sp48, NULL, NULL);
-            if (var_v1 == 0) {
-                if (self->objhitInfo->unk48 != 0) {
-                    var_v1 = 1;
-                    sp48 = (Object*)self->objhitInfo->unk48;
-                }
+            if (objdata->torqueFloat < 0.2f) {
+                objdata->torqueFloat = 0.2f;
             }
-            if ((var_v1 != 0) && (self->unkDC == 0) && (sp48)) {
-                player = get_player();
-                if (sp48 != player) {
-                    self->unkDC = 20;
-                    if ((self->parent) && ((sp54 == 2) || (sp54 == 5))) {
-                        gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_177, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        objdata->torque /= 3;
-                        parentagain = self->parent;
-                        ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func7(parentagain, self->parent);
-                        for (var_v1 = 10; var_v1 != 0; var_v1--) {
-                            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Explosion, NULL, PARTFXFLAG_2, -1, NULL);
-                        }
-                    }
-                } else {
-                    self->unkDC = 60;
-                }
-            }
-            if (self->unkDC == 0) {
-                self->objhitInfo->unk5F = 6;
-                self->objhitInfo->unk60 = 1;
-                self->objhitInfo->unk40 = 0x10;
-                self->objhitInfo->unk44 = 0x10;
-            } else {
-                self->objhitInfo->unk5D = 0;
+        } else {
+            if (objdata->soundHandle) {
+                gDLL_6_AMSFX->vtbl->func_A1C(objdata->soundHandle);
             }
         }
-        self->srt.roll += objdata->torque * gUpdateRate;
+        self->unkDC -= gUpdateRate;
+        if (self->unkDC < 0) {
+            self->unkDC = 0;
+        }
+        var_v1 = func_80025F40(self, &sp48, NULL, NULL);
+        if (var_v1 == 0) {
+            if (self->objhitInfo->unk48) {
+                var_v1 = 1;
+                sp48 = self->objhitInfo->unk48;
+            }
+        }
+        if ((var_v1 != 0) && (self->unkDC == 0) && sp48) {
+            player = get_player();
+            if (sp48 != player) {
+                self->unkDC = 20;
+                if ((self->parent) && ((sp54 == 2) || (sp54 == 5))) {
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    objdata->torque /= 3;
+                    ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func7(self->parent);
+                    for (i = 10; i != 0; i--) {
+                        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Explosion, NULL, PARTFXFLAG_2, -1, NULL);
+                    }
+                }
+            } else {
+                self->unkDC = 60;
+            }
+        }
+        if (self->unkDC == 0) {
+            self->objhitInfo->unk5F = 6;
+            self->objhitInfo->unk60 = 1;
+            self->objhitInfo->unk40 = 0x10;
+            self->objhitInfo->unk44 = 0x10;
+        } else {
+            self->objhitInfo->unk5D = 0;
+        }
     }
+    self->srt.roll += objdata->torque * gUpdateRate;
 }
 
 // offset: 0x464 | func: 2 | export: 2

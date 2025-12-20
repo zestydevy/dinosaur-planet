@@ -19,6 +19,12 @@ typedef struct {
 	/*06*/ s8 unk6;
 	/*07*/ s8 unk7;
 	} base_type26;
+    struct {
+	/*04*/ u8 unk4;
+	/*05*/ u8 unk5;
+	/*06*/ u8 unk6;
+	/*07*/ u8 unk7;
+	} base_type24;
 	struct {
 	/*04*/ u16 unk4;
 	/*06*/ s8 unk6;

@@ -7,6 +7,7 @@
 #include "dll.h"
 #include "sys/main.h"
 #include "sys/objects.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
     u8 state;
@@ -88,7 +89,7 @@ void NWtricky_control(Object *self) {
                 main_set_bits(BIT_8, 1);
                 main_set_bits(BIT_4E4, 1);
                 objdata->state = STATE_2;
-            } else if (((DLL_211_Tricky*)tricky->dll)->vtbl->func24(tricky) != 0) {
+            } else if (((DLL_211_Tricky*)tricky->dll)->vtbl->base.func24(tricky) != 0) {
                 objdata->state = STATE_1;
                 objdata->timer = 0.0f;
             }
@@ -120,7 +121,7 @@ void NWtricky_control(Object *self) {
                         trickyballGroundAnimator = func_800211B4(6021);
                         gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
                         if ((vec3_distance_squared(&trickyballGroundAnimator->positionMirror, &player->positionMirror) <= SQ(gaSetup->unk23)) && (vec3_distance_squared(&player->positionMirror, &tricky->positionMirror) <= 10000.0f)) {
-                            gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            gDLL_6_AMSFX->vtbl->play_sound(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
                             gDLL_22_Subtitles->vtbl->func_368(0xBE);
                         }
                     }

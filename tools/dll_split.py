@@ -54,7 +54,7 @@ class DLLSplitter:
         core_export_syms = self.__read_symbols_file(Path("export_symbol_addrs.txt"))
         assert core_export_syms, "Missing export_symbol_addrs.txt"
         
-        # Extract each DLL that has a src directory
+        # Get DLL src dir map
         dlls_src_path = SRC_PATH.joinpath("dlls")
         dlls_txt_path = dlls_src_path.joinpath("dlls.txt")
         assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
@@ -62,26 +62,37 @@ class DLLSplitter:
         with open(dlls_txt_path, "r", encoding="utf-8") as dlls_txt_file:
             dlls_txt = DLLsTxt.parse(dlls_txt_file)
 
+        # Extract DLLs
         i = 0
         count = 796 if len(only_dlls) == 0 else len(only_dlls)
-        for (number, dll_dir) in dlls_txt.path_map.items():
+        for number in range(796):
+            number += 1
+
             # Skip DLL if not in list
             if len(only_dlls) > 0 and not str(number) in only_dlls:
                 continue
 
+            # Get src dir, if any
+            dll_dir = dlls_txt.path_map.get(number)
+            dir = None
+            if dll_dir != None:
+                dir = dlls_src_path.joinpath(dll_dir)
+                if not dir.exists():
+                    raise DLLSplitterException(f"No such DLL src directory {dir}! Check mapping in dlls.txt for DLL {number}.")
+
             if not self.verbose:
                 if sys.stdout.isatty():
                     print("\033[K", end="\r")
-                    print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir), end="")
+                    if dll_dir == None:
+                        print("[{}/{}] DLL {}: ASM".format(i + 1, count, number), end="")
+                    else:
+                        print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir), end="")
                 else:
-                    print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir))
-
+                    if dll_dir == None:
+                        print("[{}/{}] DLL {}: ASM".format(i + 1, count, number))
+                    else:
+                        print("[{}/{}] DLL {}: {}".format(i + 1, count, number, dll_dir))
             i += 1
-
-            dir = dlls_src_path.joinpath(dll_dir)
-
-            if not dir.exists():
-                raise DLLSplitterException(f"No such DLL src directory {dir}!")
 
             # Check DLL path
             dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
@@ -90,9 +101,11 @@ class DLLSplitter:
 
             # Load known symbols for DLL
             symbol_files: list[DLLSymsTxt] = [core_export_syms]
-            dll_syms = self.__read_symbols_file(dir.joinpath("syms.txt"))
-            if dll_syms != None:
-                symbol_files.append(dll_syms)
+            dll_syms = None
+            if dir != None:
+                dll_syms = self.__read_symbols_file(dir.joinpath("syms.txt"))
+                if dll_syms != None:
+                    symbol_files.append(dll_syms)
 
             # Load DLL
             with open(dll_path, "rb") as dll_file:
@@ -115,70 +128,14 @@ class DLLSplitter:
                 end = timer()
                 if self.verbose:
                     print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
-            
+
                 # Create DLL config if it doesn't exist
-                dll_config_path = dir.joinpath("dll.yaml")
-                if not dll_config_path.exists():
-                    dll_config = DLLBuildConfig(compile=True)
-                    with open(dll_config_path, "w") as file:
-                        dll_config.save(file)
-
-                # Extract DLL
-                if self.verbose:
-                    print("[{}] Extracting...".format(number))
-                start = timer()
-
-                self.extract_dll(analyzed_dll, dll_dir)
-
-                end = timer()
-                if self.verbose:
-                    print("[{}] Extracting complete (took {:.3} seconds).".format(number, end - start))
-        
-        # Extract DLLs *without* a src directory as an asm stub
-        for number in range(796):
-            number += 1
-
-            # Skip if DLL has a src directory
-            if number in dlls_txt.path_map:
-                continue
-
-            # Skip DLL if not in list
-            if len(only_dlls) > 0 and not str(number) in only_dlls:
-                continue
-
-            if not self.verbose:
-                if sys.stdout.isatty():
-                    print("\033[K", end="\r")
-                    print("[{}/{}] DLL {}: ASM".format(i + 1, count, number), end="")
-                else:
-                    print("[{}/{}] DLL {}: ASM".format(i + 1, count, number))
-            i += 1
-
-            # Check DLL path
-            dll_path = BIN_PATH.joinpath(f"assets/dlls/{number}.dll")
-            if not dll_path.exists():
-                raise DLLSplitterException(f"No such DLL {dll_path}!")
-
-            # Load DLL
-            with open(dll_path, "rb") as dll_file:
-                if self.verbose:
-                    print("[{}] Parsing...".format(number))
-                start = timer()
-
-                # Get DLL .bss size
-                bss_size = tab.entries[number - 1].bss_size
-                
-                # Parse DLL header
-                data = bytearray(dll_file.read())
-                dll = DLL.parse(data)
-                
-                # Analyze DLL
-                analyzed_dll = analyze_dll(dll, number, data, [core_export_syms], bss_size)
-                self.__default_symbol_names(analyzed_dll)
-                
-                end = timer()
-                if self.verbose:
-                    print("[{}] Parsing complete (took {:.3} seconds).".format(number, end - start))
+                if dir != None:
+                    dll_config_path = dir.joinpath("dll.yaml")
+                    if not dll_config_path.exists():
+                        dll_config = DLLBuildConfig(compile=True)
+                        with open(dll_config_path, "w") as file:
+                            dll_config.save(file)
 
                 # Extract DLL
                 if self.verbose:
@@ -186,6 +143,8 @@ class DLLSplitter:
                 start = timer()
 
                 self.extract_asm_dll(analyzed_dll)
+                if dll_dir != None:
+                    self.extract_dll(analyzed_dll, dll_dir)
 
                 end = timer()
                 if self.verbose:
@@ -241,6 +200,12 @@ class DLLSplitter:
         if nonmatching_funcs == None or len(nonmatching_funcs) > 0 or self.disassemble_all:
             self.__extract_text_asm(nonmatching_asm_path, matching_asm_path, dll, nonmatching_funcs)
 
+        # Extract original GOT (not needed for matching dlls)
+        if nonmatching_funcs == None or len(nonmatching_funcs) > 0:
+            orig_got_s_path = nonmatching_asm_path.joinpath("_orig_got.s")
+            if not orig_got_s_path.exists():
+                self.__create_orig_got_s(orig_got_s_path, dll)
+
         # Create exports.s if it doesn't exist
         exports_s_path = src_path.joinpath("exports.s")
         if not exports_s_path.exists():
@@ -258,7 +223,7 @@ class DLLSplitter:
 
     def extract_asm_dll(self, dll: AnalyzedDLL):
         # Determine path
-        s_path = ASM_PATH.joinpath(f"nonmatchings/dlls/_asm/{dll.number}.s")
+        s_path = ASM_PATH.joinpath(f"dlls/{dll.number}.s")
         
         # Create directory if necessary
         os.makedirs(s_path.parent, exist_ok=True)
@@ -276,11 +241,18 @@ class DLLSplitter:
             dll_s.write(".option pic2\n")
             dll_s.write("\n")
 
+            # Original GOT
+            dll_s.write(".section \".orig_got\"\n")
+            dll_s.write("\n")
+            for entry in dll.meta.reloc_table.global_offset_table:
+                dll_s.write(f".word 0x{entry:X}\n")
+
             # Exports
             funcs_by_address: "dict[int, str]" = {}
             for func in dll.functions:
                 funcs_by_address[func.vram - DLL_VRAM_BASE] = func.getName()
             
+            dll_s.write("\n")
             dll_s.write(".section \".exports\"\n")
             dll_s.write("\n")
             dll_s.write(f".dword {funcs_by_address[dll.meta.header.ctor_offset]}\n")
@@ -349,6 +321,17 @@ class DLLSplitter:
             for i, offset in enumerate(dll.meta.header.export_offsets):
                 func_symbol = funcs_by_address[offset]
                 exports_s.write(f"/*{i}*/ .dword {func_symbol}\n")
+    
+    def __create_orig_got_s(self, path: Path, dll: AnalyzedDLL):
+        with open(path, "w", encoding="utf-8") as orig_got_s:
+            orig_got_s.write(".option pic2\n")
+            orig_got_s.write(".section \".orig_got\"\n")
+            orig_got_s.write(".global _orig_got\n")
+            orig_got_s.write("_orig_got:\n")
+            orig_got_s.write("\n")
+
+            for entry in dll.meta.reloc_table.global_offset_table:
+                orig_got_s.write(f".word 0x{entry:X}\n")
 
     def __create_c_stub(self, 
                         c_path: Path, 
@@ -776,6 +759,9 @@ class DLLSplitter:
                     dir = matching_dir
                 else:
                     continue
+            # Filter non-function pairs
+            if func.function == None:
+                continue
 
             s_path = dir.joinpath(f"{func.getName()}.s")
             

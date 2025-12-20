@@ -34,7 +34,7 @@ typedef struct {
     u8 bShowScreen;
     u8 flags;
     u8 unk3;
-    u8 unk4;
+    u8 awake;
     s16 bitSwapStoneSpokenTo; // game bits ID
     s16 bitIntroSeq; // game bits ID
     s16 bitSwappedToSeq; // game bits ID
@@ -82,9 +82,9 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
         self->modelInstIdx = 0;
     }
     if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
-        objdata->unk4 = 1;
+        objdata->awake = TRUE;
     } else {
-        objdata->unk4 = 0;
+        objdata->awake = FALSE;
     }
     main_set_bits(objdata->bitIntroSeq, 0);
 }
@@ -94,13 +94,13 @@ void SHswapstone_control(Object* self) {
     SHswapstone_Data* objdata;
 
     objdata = self->data;
-    if (objdata->unk4 == 0) {
+    if (objdata->awake == FALSE) {
         if (self->curModAnimId != 0xC) {
             func_80023D30(self, 0xC, 0.0f, 0);
         }
         func_80024108(self, 0.008f, gUpdateRateF, NULL);
         if ((main_get_bits(BIT_Talking_to_Rocky) != 0) && (main_get_bits(BIT_Talked_to_Rocky) != 0)) {
-            objdata->unk4 = 1;
+            objdata->awake = TRUE;
         }
     } else {
         if (self->curModAnimId != 0) {
@@ -108,7 +108,7 @@ void SHswapstone_control(Object* self) {
         }
         func_80024108(self, 0.008f, gUpdateRateF, NULL);
         if (main_get_bits(BIT_Talking_to_Rocky) == 0) {
-            objdata->unk4 = 0;
+            objdata->awake = FALSE;
         }
     }
 }

@@ -1,0 +1,20 @@
+.option pic2
+.section ".exports"
+.global _exports
+_exports:
+
+# ctor/dtor
+.dword putdown_ctor
+.dword putdown_dtor
+
+# export table
+/*0*/ .dword putdown_place_food
+/*1*/ .dword putdown_get_nearest_placed_food_of_type
+/*2*/ .dword putdown_destroy_placed_food
+/*3*/ .dword putdown_tick_food_lifetimes
+/*4*/ .dword putdown_add_food
+/*5*/ .dword putdown_delete_food_by_gamebit
+/*6*/ .dword putdown_delete_food_from_bag
+/*7*/ .dword putdown_get_capacity
+/*8*/ .dword putdown_update_food_quantity_gamebits
+/*9*/ .dword putdown_get_foodID_from_foodType

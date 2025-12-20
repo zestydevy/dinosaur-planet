@@ -105,7 +105,7 @@ static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID) {
         shapeIdx = 0;
         shapes = block->shapes;
         while (shapeIdx < block->shapeCount) {
-            if (animatorID == shapes[shapeIdx].unk14) {
+            if (animatorID == shapes[shapeIdx].animatorID) {
                 for (vertexIdx = shapes[shapeIdx].vtxBase; vertexIdx < shapes[shapeIdx + 1].vtxBase; vertexIdx++) {
                     vtxs[vertexIdx].cn[3] = opacity;
                 }

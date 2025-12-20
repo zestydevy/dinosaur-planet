@@ -1,0 +1,12 @@
+.text = 0x0:
+SB_ShipMast_ctor = 0x0;
+SB_ShipMast_dtor = 0xC;
+SB_ShipMast_setup = 0x18;
+SB_ShipMast_control = 0x2C;
+SB_ShipMast_update = 0x190;
+SB_ShipMast_print = 0x19C;
+SB_ShipMast_free = 0x1F0;
+SB_ShipMast_get_model_flags = 0x200;
+SB_ShipMast_get_data_size = 0x210;
+
+.rodata = 0x264:

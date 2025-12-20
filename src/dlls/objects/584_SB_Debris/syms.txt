@@ -1,0 +1,15 @@
+.text = 0x0:
+SB_Debris_ctor = 0x0;
+SB_Debris_dtor = 0xC;
+SB_Debris_setup = 0x18;
+SB_Debris_control = 0x170;
+SB_Debris_update = 0x3C0;
+SB_Debris_print = 0x3CC;
+SB_Debris_free = 0x4D0;
+SB_Debris_get_model_flags = 0x518;
+SB_Debris_get_data_size = 0x528;
+
+.rodata = 0x594:
+
+.data = 0x5A4:
+sSpeed = 0x0; // absolute:0x5A4

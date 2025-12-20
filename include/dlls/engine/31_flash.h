@@ -6,7 +6,7 @@
 
 // size: 0x1800
 typedef struct {
-    /*0x0*/   u8 data[0x1800 - (sizeof(u64) * 2)];
+    /*0x0*/   u8 data[0x17F0];
     /*0x17f0*/u64 xor;
     /*0x17f8*/u64 sum;
 } FlashStruct;

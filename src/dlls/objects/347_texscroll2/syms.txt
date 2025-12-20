@@ -1,0 +1,15 @@
+.text = 0x0:
+TexScroll2_ctor = 0x0;
+TexScroll2_dtor = 0xC;
+TexScroll2_setup = 0x18;
+TexScroll2_control = 0x80;
+TexScroll2_update = 0x128;
+TexScroll2_print = 0x134;
+TexScroll2_free = 0x188;
+TexScroll2_get_model_flags = 0x198;
+TexScroll2_get_data_size = 0x1A8;
+TexScroll2_setup_texture_scrolling = 0x1BC;
+TexScroll2_change_scroll_speed = 0x468;
+
+.rodata = 0x4E8:
+str_0 = 0x0; // absolute:0x4E8

@@ -17,7 +17,7 @@ void animobj_ctor(void *dll) { }
 void animobj_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
+void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     AnimObj_Data *objdata;
 
     obj_set_update_priority(self, 0x64);
@@ -43,9 +43,9 @@ void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
         }
     }
 
-    if (self->ptr0x64){
-        self->ptr0x64->unk3A = 0x64;
-        self->ptr0x64->unk3B = 0x96;
+    if (self->unk64){
+        self->unk64->unk3A = 0x64;
+        self->unk64->unk3B = 0x96;
     }
 }
 
@@ -53,7 +53,7 @@ void animobj_setup(Object *self, AnimObjSetup *setup, s32 arg2) {
 void animobj_control(Object *self) {
     s32 index;
     AnimObj_Data *objdata;
-    AnimObjSetup *setup;
+    AnimObj_Setup *setup;
     s8 new_var;
     Object *object;
     Object *matchObject;
@@ -61,7 +61,7 @@ void animobj_control(Object *self) {
     s32 count;
     Object **objects;
 
-    setup = (AnimObjSetup *) self->setup;
+    setup = (AnimObj_Setup *) self->setup;
     if (!setup || setup->sequenceIdBitfield == -1){
         return;
     }
@@ -82,7 +82,7 @@ void animobj_control(Object *self) {
             matchObject = object;
         }
 
-        if (object->unkB4 == -2 && object->group == 0x10) {
+        if (object->unkB4 == -2 && object->group == GROUP_UNK16) {
             objdata = object->data;    
             if (new_var == objdata->unk63){
                 matches++;

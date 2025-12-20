@@ -48,7 +48,7 @@ void flameblast_control(Object* self) {
         return;
 
     if (objdata->sound == 0)
-        gDLL_6_AMSFX->vtbl->play_sound(self, 0x304, 0x7F, &objdata->sound, 0, 0, 0);
+        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_304_Burning_Loop, 0x7F, &objdata->sound, 0, 0, 0);
 
     objdata->timer -= (s16) gUpdateRateF;
     if (objdata->timer <= 0) {

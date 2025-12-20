@@ -61,16 +61,17 @@ void func_80004B78(Vec4f *a0, Vec4f *a1) {
     a1->w *= ONE_OVER_SIX;
 }
 
-f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2) {
+/** Returns rate of change of curve at tValue along its path? */
+f32 func_80004C5C(Vec4f *a0, f32 tValue, f32 *a2) {
     Vec4f v;
 
     func_80004CE8(a0, &v);
 
     if (a2 != NULL) {
-        *a2 = (v.z * 1.0f) + (((3.0f * v.x * a1) + (v.y + v.y)) * a1);
+        *a2 = (v.z * 1.0f) + (((3.0f * v.x * tValue) + (v.y + v.y)) * tValue);
     }
 
-    return (v.w * 1.0f) + ((((v.x * a1 + v.y) * a1) + v.z) * a1);
+    return (v.w * 1.0f) + ((((v.x * tValue + v.y) * tValue) + v.z) * tValue);
 }
 
 void func_80004CE8(Vec4f *in, Vec4f *out) {

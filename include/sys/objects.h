@@ -27,7 +27,7 @@ void obj_add_tick(Object *obj);
 void obj_destroy_object(Object *obj);
 
 void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad);
-void obj_load_weapondata(Object *obj, s32 param2, WeaponDataPtr *outParam, s32 id, u8 queueLoad);
+void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id, u8 queueLoad);
 
 Object *get_player(void);
 Object *get_sidekick(void);
@@ -49,6 +49,9 @@ void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u
 s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz);
 Object *func_800211B4(s32 param1);
 
-void func_80036F6C(s16 arg0, s16 arg1, s16 arg2);
+/** Sets a multiplier colour for models (generally lowers brightness) */
+void func_80036F6C(s16 r, s16 g, s16 b);
+/** Sets a blend colour for models (can increase brightness) */
+void func_80036FBC(s16 r, s16 g, s16 b, u8 a);
 
 #endif

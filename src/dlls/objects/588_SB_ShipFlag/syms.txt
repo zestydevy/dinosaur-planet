@@ -1,0 +1,12 @@
+.text = 0x0:
+SB_ShipFlag_ctor = 0x0;
+SB_ShipFlag_dtor = 0xC;
+SB_ShipFlag_setup = 0x18;
+SB_ShipFlag_control = 0x74;
+SB_ShipFlag_update = 0xE0;
+SB_ShipFlag_print = 0xEC;
+SB_ShipFlag_free = 0x140;
+SB_ShipFlag_get_model_flags = 0x150;
+SB_ShipFlag_get_data_size = 0x160;
+
+.rodata = 0x1B8:

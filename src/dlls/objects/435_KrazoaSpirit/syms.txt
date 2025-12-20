@@ -1,0 +1,16 @@
+.text = 0x0:
+Spirit_ctor = 0x0;
+Spirit_dtor = 0xC;
+Spirit_setup = 0x18;
+Spirit_control = 0x1FC;
+Spirit_update = 0x5A0;
+Spirit_print = 0x5AC;
+Spirit_free = 0x834;
+Spirit_get_model_flags = 0x91C;
+Spirit_get_data_size = 0x92C;
+
+.rodata = 0x99C:
+
+.data = 0x99C:
+data_modGfx = 0x0; // absolute:0x99C
+data_lfxEmitter = 0x4; // absolute:0x9A0

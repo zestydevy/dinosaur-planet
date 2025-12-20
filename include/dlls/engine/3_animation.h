@@ -6,8 +6,8 @@
 #include "dll_def.h"
 #include "types.h"
 
-#define ANIMCURVES_SCENES_MAX 0x2D //Terminology mightn't be correct
-#define ANIMCURVES_ACTORS_MAX 0x10
+#define ANIMCURVES_SCENES_MAX 45 //Terminology mightn't be correct
+#define ANIMCURVES_ACTORS_MAX 16
 #define ANIMCURVES_KEYFRAME_CHANNELS 19
 #define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
 
@@ -20,7 +20,7 @@ typedef struct {
 
 typedef struct {
 /*0*/ s8 type;
-/*1*/ s8 delay;
+/*1*/ u8 delay;
 /*2*/ s16 params;
 } AnimCurvesEvent;
 
@@ -49,7 +49,7 @@ DLL_INTERFACE(DLL_3_animation) {
 /*15*/ s32 (*func15)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 /*16*/ void (*func16)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);
 // Unmatched
-/*17*/ void (*func17)(s32 objectSeqIndex, Object* object, s32 arg2);
+/*17*/ s32 (*func17)(s32 objectSeqIndex, Object* object, s32 arg2);
 // Unmatched
 /*18*/ void (*func18)(s32 arg0);
 /*19*/ void (*func19)(s32 arg0, s32 arg1, s32 arg2, s32 arg3);

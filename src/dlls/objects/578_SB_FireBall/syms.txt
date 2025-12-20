@@ -1,0 +1,13 @@
+.text = 0x0:
+SB_FireBall_ctor = 0x0;
+SB_FireBall_dtor = 0xC;
+SB_FireBall_setup = 0x18;
+SB_FireBall_control = 0xCC;
+SB_FireBall_update = 0x2CC;
+SB_FireBall_print = 0x2D8;
+SB_FireBall_free = 0x374;
+SB_FireBall_get_model_flags = 0x3E4;
+SB_FireBall_get_data_size = 0x3F4;
+SB_FireBall_func_408 = 0x408;
+
+.rodata = 0x5BC:

@@ -63,7 +63,7 @@ Before opening a pull request, you should make sure that:
 2. The ROM builds successfully in both matching and non-matching configurations.
     - CI will test against:
         - `./dino.py configure && ./dino.py build`
-        - `./dino.py configure --non-matching --non-equivalent && ./dino.py build --no-verify`
+        - `./dino.py configure --all-code && ./dino.py build --no-verify`
     - Non-matching (but equivalent) code should be `#ifdef`'d with `NON_MATCHING` and non-equivalent WIP code with `NON_EQUIVALENT`. When those defines are not set, the original assembly code of the function should be included via `#pragma GLOBAL_ASM`.
 
 

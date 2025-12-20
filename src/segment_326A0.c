@@ -3,6 +3,8 @@
 #include "dlls/objects/210_player.h"
 #include "sys/map.h"
 
+#include "dlls/objects/281_area.h"
+
 extern s32 sCallbackPairIndex;
 typedef struct ObjectPairCallback {
     Object *primary;
@@ -11,85 +13,80 @@ typedef struct ObjectPairCallback {
 } ObjectPairCallback;
 extern ObjectPairCallback sObjectPairCallbacks[16];
 
-typedef struct SomeObjSetup {
-    ObjSetup base;
-    u16 unk18;
-    u16 unk1A;
-    u16 unk1C;
-    u16 unk1E;
-    u8 unk20;
-    u8 unk21;
-} SomeObjSetup;
+/** Transforms a mapSpace point into an objectSpace point, relative to an Area object*/
+void func_80031AA0(Area_Setup* area, f32* ox, f32* oy, f32* oz) {
+    f32 sinYaw;
+    f32 cosYaw;
+    f32 sinPitch;
+    f32 cosPitch;
+    f32 dx;
+    f32 dy;
+    f32 dz;
 
-void func_80031AA0(SomeObjSetup* arg0, f32* ox, f32* oy, f32* oz) {
-    f32 sp2C;
-    f32 sp28;
-    f32 sp24;
-    f32 zDiff;
-    f32 yDiff;
-    f32 temp_fv0;
-    f32 xDiff;
+    sinYaw = fsin16_precise(-(area->yaw << 0x8));
+    cosYaw = fcos16_precise(-(area->yaw << 0x8));
+    sinPitch = fsin16_precise(-(area->pitch << 0x8));
+    cosPitch = fcos16_precise(-(area->pitch << 0x8));
 
-    sp2C = fsin16_precise(-(arg0->unk20 << 0x8));
-    sp28 = fcos16_precise(-(arg0->unk20 << 0x8));
-    sp24 = fsin16_precise(-(arg0->unk21 << 0x8));
-    temp_fv0 = fcos16_precise(-(arg0->unk21 << 0x8));
-    xDiff = *ox - arg0->base.x;
-    yDiff = *oy - arg0->base.y;
-    zDiff = *oz - arg0->base.z;
-    *ox = (xDiff * sp28) - ((zDiff) * sp2C);
-    zDiff = (xDiff * sp2C) + ((zDiff) * sp28);
-    *oy = (yDiff * temp_fv0) - (zDiff * sp24);
-    *oz = (yDiff * sp24) + (zDiff * temp_fv0);
+    dx = *ox - area->base.x;
+    dy = *oy - area->base.y;
+    dz = *oz - area->base.z;
+
+    *ox = (dx * cosYaw) - (dz * sinYaw);
+    dz = (dx * sinYaw) + (dz * cosYaw);
+    *oy = (dy * cosPitch) - (dz * sinPitch);
+    *oz = (dy * sinPitch) + (dz * cosPitch);
 }
 
-u16 func_80031BBC(f32 arg0, f32 arg1, f32 arg2) {
+u16 func_80031BBC(f32 x, f32 y, f32 z) {
     s32 pad;
     s32 out;
-    u8* objsetup;
+    Area_Setup* objsetup;
     s32 i;
     s32 j;
-    MapHeader** sp68;
-    f32 sp7C;
-    f32 sp78;
-    f32 sp74;
+    MapHeader** maps;
+    f32 ox;
+    f32 oy;
+    f32 oz;
     MapHeader *current;
 
     out = -1U;
-    sp68 = func_80044A10();
+    maps = func_80044A10();
     for (i = 0; i < MAP_ID_MAX; i++) {
-        if (sp68[i] == NULL) {
+        if (maps[i] == NULL) {
             continue;
         }
 
-        current = sp68[i];
+        current = maps[i];
         objsetup = current->objectInstanceFile_ptr;
         j = 0;
         while (j < current->objectInstancesFileLength) {
-            if (((SomeObjSetup *)objsetup)->base.objId == OBJ_Area) {
-                sp7C = arg0;
-                sp78 = arg1;
-                sp74 = arg2;
-                func_80031AA0(((SomeObjSetup *)objsetup), &sp7C, &sp78, &sp74);
-                if (sp7C < 0.0f) {
-                    sp7C = -sp7C;
+            if (objsetup->base.objId == OBJ_Area) {
+                ox = x;
+                oy = y;
+                oz = z;
+                func_80031AA0(objsetup, &ox, &oy, &oz);
+
+                if (ox < 0.0f) {
+                    ox = -ox;
                 }
-                if (sp78 < 0.0f) {
-                    sp78 = -sp78;
+                if (oy < 0.0f) {
+                    oy = -oy;
                 }
-                if (sp74 < 0.0f) {
-                    sp74 = -sp74;
+                if (oz < 0.0f) {
+                    oz = -oz;
                 }
-                if (sp7C <= ((SomeObjSetup *)objsetup)->unk1A) {
-                    if (sp78 <= ((SomeObjSetup *)objsetup)->unk1C) {
-                        if (sp74 <= ((SomeObjSetup *)objsetup)->unk1E) {
-                            out = ((SomeObjSetup *)objsetup)->unk18;
-                        }
-                    }
+
+                //Check if in bounds of Area
+                if (ox <= objsetup->halfWidth && 
+                    oy <= objsetup->halfHeight && 
+                    oz <= objsetup->halfDepth
+                ) {
+                    out = objsetup->value;
                 }
             }
-            j += ((SomeObjSetup *)objsetup)->base.quarterSize << 2;
-            objsetup += ((SomeObjSetup *)objsetup)->base.quarterSize << 2;
+            j += objsetup->base.quarterSize << 2;
+            objsetup = (Area_Setup*)((u32)objsetup + (objsetup->base.quarterSize << 2));
         }
     }
     return out;

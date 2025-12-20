@@ -814,11 +814,11 @@ void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
     }
 }
 
-GplayStruct14 *gplay_func_1974(void) {
+FoodbagContents *gplay_func_1974(void) {
     return &sState.save.file.unk20[sState.save.file.playerno];
 }
 
-GplayStruct14 *gplay_func_19B8(void) {
+FoodbagContents *gplay_func_19B8(void) {
     return &sState.save.file.unk188[sState.save.file.playerno];
 }
 

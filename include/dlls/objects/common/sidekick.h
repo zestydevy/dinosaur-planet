@@ -1,5 +1,5 @@
-#ifndef _DLLS_XXX_SIDEKICK_H
-#define _DLLS_XXX_SIDEKICK_H
+#ifndef _DLLS_COMMON_SIDEKICK_H
+#define _DLLS_COMMON_SIDEKICK_H
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
@@ -24,6 +24,7 @@ DLL_INTERFACE(DLL_ISidekick) {
 	/*21*/ void (*func21)(Object *, s32, s32);
 	/*22*/ void (*func22)(Object *, Object *);
 	/*23*/ void (*func23)(Object *);
+	/*24*/ s32 (*func24)(Object *);
 };
 
-#endif //_DLLS_210_H
+#endif //_DLLS_COMMON_SIDEKICK_H

@@ -1,0 +1,15 @@
+.text = 0x0:
+CRCloudRace_ctor = 0x0;
+CRCloudRace_dtor = 0xC;
+CRCloudRace_setup = 0x18;
+CRCloudRace_control = 0x4C;
+CRCloudRace_update = 0xBC;
+CRCloudRace_print = 0xC8;
+CRCloudRace_free = 0x11C;
+CRCloudRace_get_model_flags = 0x12C;
+CRCloudRace_get_data_size = 0x13C;
+CRCloudRace_anim_callback = 0x150;
+CRCloudRace_do = 0x178;
+CRCloudRace_do_race = 0x308;
+
+.rodata = 0x590:

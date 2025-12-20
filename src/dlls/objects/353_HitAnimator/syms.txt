@@ -1,0 +1,13 @@
+.text = 0x0:
+HitAnimator_ctor = 0x0;
+HitAnimator_dtor = 0xC;
+HitAnimator_setup = 0x18;
+HitAnimator_control = 0x160;
+HitAnimator_update = 0x354;
+HitAnimator_print = 0x360;
+HitAnimator_free = 0x3B4;
+HitAnimator_get_model_flags = 0x3C4;
+HitAnimator_get_data_size = 0x3D4;
+HitAnimator_animate_blocks_shapes = 0x3E8;
+
+.rodata = 0x4E0:

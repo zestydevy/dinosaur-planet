@@ -1,17 +1,6 @@
-#include "PR/gbi.h"
-#include "PR/ultratypes.h"
-#include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/214_animobj.h"
-#include "functions.h"
-#include "game/objects/object.h"
-#include "sys/math.h"
-#include "sys/gfx/model.h"
-#include "sys/objects.h"
+#include "common.h"
 #include "sys/objtype.h"
-#include "sys/main.h"
-#include "functions.h"
-#include "types.h"
+#include "dlls/objects/211_tricky.h"
 
 typedef struct {
 f32 x;
@@ -58,7 +47,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        // diPrintf("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
+        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
         self->modelInstIdx = 0;
     }
 
@@ -67,7 +56,7 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
         objdata->pressed = 30;
     }
 
-    obj_add_object_type(self, 0x33);
+    obj_add_object_type(self, OBJTYPE_51);
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
@@ -149,7 +138,7 @@ void pressureswitch_control(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving, 0x7F, (u32*)&objdata->soundHandle, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {
@@ -165,8 +154,7 @@ void pressureswitch_control(Object* self) {
         if (sidekick) {
             if (vec3_distance_squared(&self->positionMirror, &player->positionMirror) <= 
                 (setup->distanceSidekickBehaviour * setup->distanceSidekickBehaviour)) {
-                //TO-DO: use proper sidekick DLL interface
-                ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs((s32)sidekick, 3);
+                ((DLL_211_Tricky*)sidekick->dll)->vtbl->base.func14(sidekick, 3);
             }
         }
     }
@@ -270,7 +258,6 @@ static int pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_D
     return 0;
 }
 
-/*0x0*/ static const char str_0[] = "PRESSURESWITCH.c: modelno out of range romdefno=%d\n";
 /*0x34*/ static const char str_34[] = "";
 /*0x38*/ static const char str_38[] = "";
 /*0x3C*/ static const char str_3C[] = "";

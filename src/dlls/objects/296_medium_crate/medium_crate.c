@@ -81,8 +81,8 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 
     objdata->unk15 = setup->unk19;
 
-    _data_0 = dll_load(DLL_ID_107, 1, /*runConstructor=*/FALSE);
-    _data_4 = dll_load(DLL_ID_106, 1, /*runConstructor=*/FALSE);
+    _data_0 = dll_load(DLL_ID_107, 1, /*bRunConstructor=*/FALSE);
+    _data_4 = dll_load(DLL_ID_106, 1, /*bRunConstructor=*/FALSE);
 
     objdata->unk8 = 0;
     objdata->unkE = rand_next(0, 100) + 300;
@@ -94,17 +94,17 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 
     if (self->id == OBJ_MediumBasket) {
         objdata->unk15 = local_10[objdata->unk15];
-        objdata->soundID1 = SOUND_6B5;
-        objdata->soundID2 = SOUND_6B6;
+        objdata->soundID1 = SOUND_6B5_Crate_Struck;
+        objdata->soundID2 = SOUND_6B6_Crate_Smash;
     } else if (self->id == OBJ_MediumMetalCrat) {
         objdata->unk15 = local_18[objdata->unk15];
-        objdata->soundID1 = SOUND_372;
-        objdata->soundID2 = SOUND_371;
+        objdata->soundID1 = SOUND_372_Crate_Struck;
+        objdata->soundID2 = SOUND_371_Crate_Smash;
     }
 
-    if (self->ptr0x64 != NULL) {
-        self->ptr0x64->flags |= 0x8000;
-        self->ptr0x64->unk2c = self->ptr0x64->unk0 + self->ptr0x64->unk0;
+    if (self->unk64 != NULL) {
+        self->unk64->flags |= 0x8000;
+        self->unk64->unk2c = self->unk64->unk0 + self->unk64->unk0;
     }
 }
 
@@ -210,16 +210,16 @@ void medium_crate_control(Object *self) {
             objdata->unkE = rand_next(0, 100) + 300;
             if (temp_fv0_2 < 8100.0f) {
                 if ((objdata->unk15 == 5) || (objdata->unk15 == 6) || (objdata->unk15 == 7) || (objdata->unk15 == 8)) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_64D, 0x39, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_64D_Wooden_Rattle, 0x39, NULL, NULL, 0, NULL);
                 } else if (objdata->unk15 == 0) {
-                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_6B7, 0x39, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_6B7_Crate_Hiss, 0x39, NULL, NULL, 0, NULL);
                 }
             }
         } else {
             if ((objdata->unk15 == 1) || (objdata->unk15 == 2) || (objdata->unk15 == 3) || (objdata->unk15 == 4)) {
                 if (objdata->unk8 == 0) {
                     if (temp_fv0_2 < 8100.0f) {
-                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_64C, 0x39, &objdata->unk8, NULL, 0, NULL);
+                        gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_64C_Wicker_Rattle, 0x39, &objdata->unk8, NULL, 0, NULL);
                     }
                 } else if (temp_fv0_2 >= 8100.0f) {
                     gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk8);

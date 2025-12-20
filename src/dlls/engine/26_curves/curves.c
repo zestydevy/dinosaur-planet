@@ -881,7 +881,7 @@ s32 dll_26_func_277C(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     var_fs0 = -1.0f;
     for (i = 0; i < objCount; i++) {
         obj = objs[i];
-        if ((obj->group == 0x2E) && (arg3 != obj->mapID)) {
+        if ((obj->group == GROUP_UNK46) && (arg3 != obj->mapID)) {
             curveSetup = (CurveSetup*)obj->setup;
             if ((curveSetup != NULL) && (curveSetup->unk19 == 0x16)) {
                 temp_fv0 = obj->positionMirror.x - arg0, 
@@ -1364,9 +1364,9 @@ s32 dll_26_func_4704(UnkCurvesStruct* arg0) {
     }
     arg0->unk9C = arg0->unkA0;
     arg0->unkA0 = arg0->unkA4;
-    memcpy(arg0->unkA8, arg0->unkB8, 0x10U);
-    memcpy(arg0->unkC8, arg0->unkD8, 0x10U);
-    memcpy(arg0->unkE8, arg0->unkF8, 0x10U);
+    memcpy(arg0->unkA8, arg0->unkB8, sizeof(f32) * 4);
+    memcpy(arg0->unkC8, arg0->unkD8, sizeof(f32) * 4);
+    memcpy(arg0->unkE8, arg0->unkF8, sizeof(f32) * 4);
     if (arg0->unk80 != 0) {
         var_v0 = dll_26_func_590(arg0->unkA0, -1);
     } else {

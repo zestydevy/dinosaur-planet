@@ -1,0 +1,12 @@
+.text = 0x0:
+CCfirecrystalin_ctor = 0x0;
+CCfirecrystalin_dtor = 0xC;
+CCfirecrystalin_setup = 0x18;
+CCfirecrystalin_control = 0x3C;
+CCfirecrystalin_update = 0x198;
+CCfirecrystalin_print = 0x1A4;
+CCfirecrystalin_free = 0x1F8;
+CCfirecrystalin_get_model_flags = 0x208;
+CCfirecrystalin_get_data_size = 0x218;
+
+.rodata = 0x260:

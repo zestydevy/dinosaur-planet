@@ -1,0 +1,17 @@
+.text = 0x0:
+dll_331_ctor = 0x0;
+dll_331_dtor = 0xC;
+dll_331_setup = 0x18;
+dll_331_control = 0x7CC;
+dll_331_update = 0x1D28;
+dll_331_func_1D34 = 0x1D34;
+dll_331_print = 0x1F2C;
+dll_331_free = 0x1FB8;
+dll_331_get_model_flags = 0x2000;
+dll_331_get_data_size = 0x2010;
+
+.rodata = 0x20BC:
+
+.data = 0x22FC:
+_data_0 = 0x0; // absolute:0x22FC
+_data_4 = 0x4; // absolute:0x2300

@@ -1,0 +1,24 @@
+.text = 0x0:
+SB_Galleon_ctor = 0x0;
+SB_Galleon_dtor = 0xC;
+SB_Galleon_setup = 0x18;
+SB_Galleon_control = 0x16C;
+SB_Galleon_update = 0x42C;
+SB_Galleon_print = 0x438;
+SB_Galleon_free = 0x48C;
+SB_Galleon_get_model_flags = 0x5A4;
+SB_Galleon_get_data_size = 0x5B4;
+SB_Galleon_func_5C8 = 0x5C8;
+SB_Galleon_func_68C = 0x68C;
+SB_Galleon_func_69C = 0x69C;
+SB_Galleon_func_700 = 0x700;
+SB_Galleon_func_710 = 0x710;
+SB_Galleon_anim_callback = 0x770;
+SB_Galleon_func_B5C = 0xB5C;
+SB_Galleon_func_B88 = 0xB88;
+SB_Galleon_func_EAC = 0xEAC;
+
+.rodata = 0x2BEC:
+
+.data = 0x2CDC:
+_data_0 = 0x0; // absolute:0x2CDC

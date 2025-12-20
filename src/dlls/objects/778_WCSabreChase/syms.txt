@@ -1,0 +1,13 @@
+.text = 0x0:
+WCSabreChase_ctor = 0x0;
+WCSabreChase_dtor = 0xC;
+WCSabreChase_setup = 0x18;
+WCSabreChase_control = 0x2C;
+WCSabreChase_func_38 = 0x38;
+WCSabreChase_print = 0x44;
+WCSabreChase_free = 0x98;
+WCSabreChase_get_model_flags = 0xA8;
+WCSabreChase_get_data_size = 0xB8;
+
+.rodata = 0xF4:
+_oob_rodata_0 = 0x0; // absolute:0xF4

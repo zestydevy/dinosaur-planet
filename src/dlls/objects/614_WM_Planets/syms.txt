@@ -1,0 +1,15 @@
+.text = 0x0:
+WMPlanets_ctor = 0x0;
+WMPlanets_dtor = 0xC;
+WMPlanets_setup = 0x18;
+WMPlanets_control = 0x168;
+WMPlanets_update = 0x2C4;
+WMPlanets_print = 0x2D0;
+WMPlanets_free = 0x324;
+WMPlanets_get_model_flags = 0x334;
+WMPlanets_get_data_size = 0x344;
+
+.rodata = 0x39C:
+
+.data = 0x3AC:
+_data_0 = 0x0; // absolute:0x3AC

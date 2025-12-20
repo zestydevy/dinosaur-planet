@@ -1,0 +1,13 @@
+.text = 0x0:
+SB_ShipGunBroke_ctor = 0x0;
+SB_ShipGunBroke_dtor = 0xC;
+SB_ShipGunBroke_setup = 0x18;
+SB_ShipGunBroke_control = 0x2C;
+SB_ShipGunBroke_update = 0xC0;
+SB_ShipGunBroke_print = 0xCC;
+SB_ShipGunBroke_free = 0x150;
+SB_ShipGunBroke_get_model_flags = 0x1B8;
+SB_ShipGunBroke_get_data_size = 0x1C8;
+
+.rodata = 0x214:
+_oob_rodata_0 = 0x0; // absolute:0x214

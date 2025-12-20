@@ -44,7 +44,7 @@ typedef struct ObjFSA_Data {
 /*26A*/ s16 prevLogicState;
 /*26C*/ s16 animState; // index of anim state callback to run
 /*26E*/ s16 prevAnimState;
-/*270*/ s16 unk270;
+/*270*/ s16 unk270; //nextAnimState?
         // Whether the current anim state was just entered 
         // (only true for the first call since transitioning to the state)
 /*272*/ s8 enteredAnimState;
@@ -68,7 +68,7 @@ typedef struct ObjFSA_Data {
 /*2AC*/ f32 unk2AC;
 /*2B0*/ f32 unk2B0;
 /*2B4*/ f32 unk2B4;
-/*2B8*/ f32 targetDist; // distance to target
+/*2B8*/ f32 targetDist; // distance to target (2D lateral)
 /*2BC*/ u8 _unk2BC[0x2C8 - 0x2BC];
 /*2C8*/ Object *target;
 /*2CC*/ u8 _unk2CC[0x2EC - 0x2CC];
@@ -97,7 +97,7 @@ typedef struct ObjFSA_Data {
 /*33A*/ s8 unk33A; // whether the current animation is finished?
 /*33B*/ u8 _unk33B[0x33D - 0x33B];
 /*33D*/ u8 unk33D;
-/*33E*/ u8 _unk33E;
+/*33E*/ u8 unk33E;
 /*33F*/ u8 unk33F;
 /*340*/ s8 unk340; // bit 0 set when turning?
 /*341*/ s8 unk341;
@@ -107,7 +107,7 @@ typedef struct ObjFSA_Data {
 /*348*/ s8 unk348;
 /*349*/ u8 _unk349;
 /*34A*/ u8 unk34A;
-/*34B*/ u8 _unk34B;
+/*34B*/ s8 unk34B;
 } ObjFSA_Data;
 
 DLL_INTERFACE(DLL_18_objfsa) {
@@ -123,7 +123,7 @@ DLL_INTERFACE(DLL_18_objfsa) {
 /*8*/ void (*func8)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4);
 /*9*/ void (*func9)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
 /*10*/ void (*func10)(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3);
-/*11*/ void (*func11)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3);
+/*11*/ void (*func11)(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3);
 /*12*/ void (*func12)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4);
 /*13*/ void (*func13)(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, ObjFSA_Func_11BC_Struct *arg4, f32 arg5, u8 volume);
 /*14*/ void (*func14)(Object *obj, ObjFSA_Data *data, s32 arg2);

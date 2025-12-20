@@ -85,7 +85,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     objdata->currentState = 0;
     objdata->soundHandles[0] = 0;
     objdata->soundHandles[1] = 0;
-    obj_add_object_type(self, 0x30);
+    obj_add_object_type(self, OBJTYPE_48);
     objdata->gameBitKindlingPlaced = BIT_GP_Bonfire_Kindling_Placed;
     objdata->gameBitBurning = BIT_GP_Bonfire_Burning;
     objdata->sequenceIndexKindling = 0;
@@ -124,7 +124,7 @@ void GPbonfire_control(Object* self) {
 
     if (objdata->updateFireEffect) {
         self->srt.scale = bonfireScaleData[objdata->weedsDeposited];
-        gDLL_14_Modgfx->vtbl->func10.withOneArg((s32)self);
+        gDLL_14_Modgfx->vtbl->func10(self);
         dll = dll_load_deferred(0x104B, 1);
         ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, modgfxScaleData[objdata->weedsDeposited], 0, 0x10004, -1, 0);
         dll_unload(dll);
@@ -328,7 +328,7 @@ void GPbonfire_func_A44(Object* self) {
     objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
-    gDLL_14_Modgfx->vtbl->func10.withOneArg((s32)self);
+    gDLL_14_Modgfx->vtbl->func10(self);
     dll = dll_load_deferred(0x104B, 1); //modgfx #75?
     ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, objdata->weedsDeposited, 0, 0x10004, -1, 0);
     dll_unload(dll);

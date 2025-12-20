@@ -93,7 +93,7 @@ void krazoatext_control(Object* self) {
     } else if (self->unkAF & 1) {
         objdata->state = 1;
         if (objdata->sound == 0) {
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
         }
     }
 
