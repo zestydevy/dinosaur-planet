@@ -2,15 +2,14 @@
 #include "sys/main.h"
 #include "sys/thread.h"
 #include "macros.h"
-#include "bss.h"
 
-// .bss
-
+/* -------- .bss start 800a3d70 -------- */
 u64 gIdleThreadStack[STACKSIZE(IDLE_THREAD_SIZE) + 1];
 u64 gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE) + 1];
 OSThread gIdleThread;
 OSThread gMainThread;
 u8 D_800A6220[0x50];
+/* -------- .bss end 800a6270 -------- */
 
 void idle(void * arg);
 

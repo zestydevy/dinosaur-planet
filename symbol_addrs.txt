@@ -1146,7 +1146,6 @@ osClockRate = 0x80096c40;
 romfunc_zero_speed = 0xb39235f0; // type:func
 romfunc_mod_player_HPMax = 0xb3936378; // type:func
 Vec3_Int_array = 0x800b51e8; // size:0x140
-controller_thread_stack_start = 0x800a8600;
 PlayerPosBuffer = 0x800ae2b0; // size:0x3c0
 PlayerPosBuffer_index = 0x800ae670; // size:0x4
 gUpdateRate = 0x8008c950; // size:0x1

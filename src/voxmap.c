@@ -12,6 +12,9 @@ static const char str_80098670[] = "**** HEAP INSERT ****\n";
 static const char str_80098688[] = "VOXMAPS: route nodes list overflow\n";
 static const char str_800986ac[] = "**** NODE FIND ****\n";
 
+// .bss 800a7c70-800a7d10
+u8 _bss_800a7c70[0x800a7d10 - 0x800a7c70]; // size:0xA0
+
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_80006F50.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_800070FC.s")

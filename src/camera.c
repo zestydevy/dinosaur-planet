@@ -22,8 +22,7 @@ static const char str_80098338[] = "\n";
 static const char str_8009833c[] = "\n";
 static const char str_80098340[] = "CAM Error!! Convlist overflow.\n";
 
-// .bss
-
+/* -------- .bss start 800a6270 -------- */
 f32 D_800A6270;
 f32 D_800A6274;
 Camera gCameras[CAMERA_COUNT];
@@ -53,9 +52,7 @@ MtxF gObjectMatrices[30];
 MtxF gInverseObjectMatrices[30];
 Mtx *gRSPMatrices[30];
 s8 gMatrixIndex;
-
-
-// .data
+/* -------- .bss end 800a7c30 -------- */
 
 // The viewport z-range below is half of the max (511)
 #define G_HALFZ (G_MAXZ / 2) /* 9 bits of integer screen-Z precision */
@@ -70,6 +67,7 @@ s8 gMatrixIndex;
     0, 0, 320 - 1, 240 - 1, \
     0
 
+/* -------- .data start -------- */
 f32 gNearPlane = 4.0f;
 f32 gFarPlane = 10000.0f;
 s16 D_8008C518 = 0;
@@ -116,6 +114,7 @@ MtxF D_8008C788 = {
     { 0.0f, 0.0f, 0.0f, 160.0f },
     }
 };
+/* -------- .data end -------- */
 
 // ROM address
 extern u32 D_B0000578;
