@@ -5,7 +5,8 @@
 
 // TODO: from DKR decomp, double check
 #define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
+// DKR defines this as 240
+#define SCREEN_HEIGHT 260
 #define HIGH_RES_SCREEN_WIDTH 640
 #define HIGH_RES_SCREEN_HEIGHT 480
 
@@ -77,12 +78,12 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
         osScAddClient(scheduler, &gVideoSched, &gVideoMesgQueue, OS_SC_ID_VIDEO);
     }
 
-    width = 320;
-    height = 260;
+    width = SCREEN_WIDTH;
+    height = SCREEN_HEIGHT;
 
     if (videoMode == OS_VI_PAL_LPN1) {
-        width = 640;
-        height = 480;
+        width = HIGH_RES_SCREEN_WIDTH;
+        height = HIGH_RES_SCREEN_HEIGHT;
     }
 
     vi_init_framebuffers(someBool, width, height);

@@ -10,10 +10,10 @@ typedef struct {
     void *unk8;
 } SomeVoxmapAllocStruct;
 
-void func_80007178();
+void func_80007178(void);
 
-s32 func_80007468(s32, s32, s32, s32); // unknown args/ret
-s32 func_80007620(s32, s32); // unknown args/ret
+u8 *func_80007468(s32, s32, s32, s32);
+u8 *func_80007620(s32, s32);
 
 void func_80007E2C(Vec3f*, Vec3s16*);
 void func_80007EE0(Vec3f*, Vec3s16*);
