@@ -14,26 +14,22 @@ static const char str_80098670[] = "**** HEAP INSERT ****\n";
 static const char str_80098688[] = "VOXMAPS: route nodes list overflow\n";
 static const char str_800986ac[] = "**** NODE FIND ****\n";
 
-extern s32* D_800A7C70;
-extern s32* D_800A7C74;
-extern void* D_800A7C78;
-extern void* D_800A7C80[6];
-extern void* D_800A7C98;
+s32* D_800A7C70;
+s32* D_800A7C74;
+void* D_800A7C78;
+void* D_800A7C80[6];
+void* D_800A7C98;
 // missing 0x800A7C9C
-extern s32 D_800A7CA0[5];
-extern s32 D_800A7CB8[6];
-extern s32 D_800A7CD0[6];
-extern u8 D_800A7CE8[6];
-extern s16 D_800A7CF0[6][2];
-extern s32 D_800A7D08;
-extern s32 D_800A7D0C;
+s32 D_800A7CA0[5];
+s32 D_800A7CB8[6];
+s32 D_800A7CD0[6];
+u8 D_800A7CE8[6];
+s16 D_800A7CF0[6][2];
+s32 D_800A7D08;
+s32 D_800A7D0C;
 
 #define SOME_VALUE 0x40000000
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_80006F50.s")
-#else
-// https://decomp.me/scratch/aGcnb
 void func_80006F50(void) {
     s32 i;
 
@@ -56,7 +52,6 @@ void func_80006F50(void) {
     D_800A7C98 = D_800A7C78;
     D_800A7D08 = 0;
 }
-#endif
 
 void func_800070FC(void) {
     void *temp_a0;
