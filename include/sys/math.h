@@ -119,7 +119,14 @@ typedef struct {
 typedef f32 Vec2[2];
 typedef f32 Vec3[3];
 typedef f32 Vec4[4];
-typedef s16 Vec3s16[3];
+typedef union {
+    struct {
+        s16 unk0;
+        s16 unk2;
+        s16 unk4;
+    };
+    s16 s[3];
+} Vec3s16;
 
 typedef struct {
     Vec3s32 min;

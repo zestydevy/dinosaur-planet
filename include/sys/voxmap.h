@@ -17,7 +17,7 @@ u8 *func_80007620(s32, s32);
 
 void func_80007E2C(Vec3f*, Vec3s16*);
 void func_80007EE0(Vec3f*, Vec3s16*);
-s32 func_80008048(Vec3s16*, Vec3s16*, Vec3s16*, u8*, s32);
+s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4);
 
 void func_80008DC0(SomeVoxmapAllocStruct*);
 void func_80008E08(SomeVoxmapAllocStruct*);

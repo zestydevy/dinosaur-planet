@@ -55,7 +55,7 @@ enum ObjDataFlags5F { //copied from SFA; may be incorrect
 //A point on a model where something like a weapon can be attached.
 typedef struct AttachPoint { //copied from SFA; may be incorrect
 /*00*/ Vec3f pos; //offset from bone
-/*0C*/ Vec3s16 rot; //offset from bone
+/*0C*/ s16 rot[3]; //offset from bone
 /*12*/ s8 bones[6]; //bone idx to use
 } AttachPoint;
 
@@ -164,7 +164,13 @@ typedef struct {
 /*76*/ s16 modLineCount;
 /*78*/ s16 modLineNo;
 /*7a*/ s16 numSequences;
-/*7c*/ s16 helpTexts[4]; //one per model (GameTextId) // TODO: confirm //NOTE: possibly objHits flags?
+/*7c*/ s16 helpText; //one per model (GameTextId) // TODO: confirm //NOTE: possibly objHits flags?
+/*7E*/ s8 unk7E;
+/*7F*/ u8 unk7F;
+/*80*/ s8 unk80;
+/*81*/ u8 pad81;
+/*82*/ s8 unk82;
+/*83*/ u8 pad83;
 /*84*/ s16 unk84;
 /*86*/ u8 unk86;
 /*87*/ u8 unk87;

@@ -323,7 +323,7 @@ void func_800264D0(Object* arg0) {
         return;
     }
 
-    objHitInfo->unk58 = arg0->def->helpTexts[0];
+    objHitInfo->unk58 = arg0->def->helpText;
     objHitInfo->unk5A = arg0->def->unk93;
     objHitInfo->unk5B = arg0->def->_unk91[0];
     objHitInfo->unk5C = arg0->def->_unk91[1];
