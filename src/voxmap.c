@@ -633,7 +633,7 @@ void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg
     s32 spDC[0x14];
     s32 sp8C[0x14];
 
-    temp_fv0 = sqrtf(SQ(arg0[0] - arg1->s) + SQ(arg0[2] - arg1[2]));
+    temp_fv0 = sqrtf(SQ(arg0->s[0] - arg1->s[0]) + SQ(arg0->s[2] - arg1->s[2]));
     var_a3 = 0;
     var_v0 = temp_fv0;
     if (var_v0 < (temp_fv0 - 0.5f)) {
@@ -667,23 +667,23 @@ void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg
     var_t1 = 0;
     temp_a2 = sp138 * 2;
     while (var_t1 <= sp138) {
-        s32 var_s2 = ((arg0[1] + sp8C[var_t1]) << 0x10);
-        s32 var_s0 = ((arg0[1] + spDC[var_t1]) << 0x10);
-        s32 temp = ((arg0[1] - spDC[var_t1]) << 0x10);
-        s32 temp2 = ((arg0[1] - sp8C[var_t1]) << 0x10);
+        s32 var_s2 = ((arg0->s[1] + sp8C[var_t1]) << 0x10);
+        s32 var_s0 = ((arg0->s[1] + spDC[var_t1]) << 0x10);
+        s32 temp = ((arg0->s[1] - spDC[var_t1]) << 0x10);
+        s32 temp2 = ((arg0->s[1] - sp8C[var_t1]) << 0x10);
         temp_t3 = temp_a2 - var_t1;
         var_a0 = var_t1 + temp_a2;
         var_a1 = temp_t3 + temp_a2;
-        temp_v0_3 = arg0[0] + spDC[var_t1];
-        temp_v1_3 = arg0[0] + sp8C[var_t1];
+        temp_v0_3 = arg0->s[0] + spDC[var_t1];
+        temp_v1_3 = arg0->s[0] + sp8C[var_t1];
         D_800A7C98[var_t1] = temp_v0_3 | var_s2;
         D_800A7C98[temp_t3] = temp_v1_3 | var_s0;
         D_800A7C98[var_a0] = temp_v1_3 | temp;
         D_800A7C98[var_a1] = temp_v0_3 | temp2;
         var_a0 += temp_a2;
         var_a1 += temp_a2;
-        temp_v0_3 = arg0[0] - spDC[var_t1];
-        temp_v1_3 = arg0[0] - sp8C[var_t1];
+        temp_v0_3 = arg0->s[0] - spDC[var_t1];
+        temp_v1_3 = arg0->s[0] - sp8C[var_t1];
         D_800A7C98[var_a0] = temp_v0_3 | temp2;
         D_800A7C98[var_a1] = temp_v1_3 | temp;
         D_800A7C98[var_a0 + temp_a2] = temp_v1_3 | var_s0;
@@ -693,14 +693,14 @@ void* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg
     *arg2 = sp138 * 8;
     *arg3 = -2;
     *arg4 = -2;
-    temp_a2 = (arg1->s & 0xFFFF) | (arg1[2] << 0x10);
+    temp_a2 = (arg1->s[0] & 0xFFFF) | (arg1->s[2] << 0x10);
     var_t1 = 0;
     while (var_t1 < *arg2 && (temp_a2 != D_800A7C98[var_t1])) {
         var_t1 += 1;
     }
     if (var_t1 == *arg2) {
-        temp_t2 = (arg1->s & 0xFFFF) |  ((arg1[2] - 1) << 0x10);
-        temp_a2 = (arg1->s & 0xFFFF) |  ((arg1[2] + 1) << 0x10);
+        temp_t2 = (arg1->s[0] & 0xFFFF) |  ((arg1->s[2] - 1) << 0x10);
+        temp_a2 = (arg1->s[0] & 0xFFFF) |  ((arg1->s[2] + 1) << 0x10);
         var_t1 = 0;
         while (var_t1 < *arg2 && *arg3 == -2 && *arg4 == -2) {
             if (temp_t2 == D_800A7C98[var_t1]) {

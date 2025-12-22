@@ -7,7 +7,7 @@
 
 #define M_PI_F    3.141592741f
 #define DEG_TO_RAD(deg)  ((deg) * M_PI_F / 180.0f)
-#define SQ(a) (a) * (a)
+#define SQ(a) ((a) * (a))
 
 #define M_45_DEGREES  0x2000    // 45 degrees in the game's angle system
 #define M_90_DEGREES  0x4000    // 90 degrees in the game's angle system
