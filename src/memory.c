@@ -24,6 +24,7 @@ s32 memMonVal1 = 0;
 s32 memMonVal2 = 0;
 /* -------- .data end -------- */
 
+// TODO: bss size for this file is correct but IDO reorders it
 /* -------- .bss start 800b09d0 -------- */
 MemoryPool gMemoryPools[8];
 u8 gNumMemoryPools;

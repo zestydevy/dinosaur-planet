@@ -5,9 +5,11 @@
 #define OBJECT_TYPE_LIST_LENGTH 256
 #define OBJECT_MAX_TYPES 65
 
-extern s16 gObjectTypeIndices[OBJECT_MAX_TYPES + 1];
-extern s16 gObjectTypeListCount;
-extern Object *gObjectTypeList[OBJECT_TYPE_LIST_LENGTH];
+// -------- .bss start 800b28b0 -------- //
+s16 gObjectTypeIndices[OBJECT_MAX_TYPES + 1];
+s16 gObjectTypeListCount;
+Object *gObjectTypeList[OBJECT_TYPE_LIST_LENGTH];
+// -------- .bss end 800b2d40 -------- //
 
 static const char str_80099b00[] = "objAddObjectType: obj romdefno %d, type %d\n";
 static const char str_80099b2c[] = "objAddObjectType: Reached MAXTYPES!!\n";

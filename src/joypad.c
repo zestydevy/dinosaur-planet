@@ -12,6 +12,7 @@ u8 gIgnoreJoystick = 0;
 u8 D_8008C8B4 = 0;
 /* -------- .data end -------- */
 
+// TODO: bss size for this file is correct but IDO reorders it
 /* -------- .bss start 800a7db0 -------- */
 u8 gPrevContSnapshotsI;
 u8 gApplyContInputs;

@@ -1,25 +1,28 @@
 #include "common.h"
 
-extern s32 PTR_DAT_800b2e1c;
-
 /** toggles Models' multiplier colour */
 extern s8 BYTE_80091754;
 /** toggles Models' blend colour */
 extern s8 BYTE_80091758;
+
+// -------- .bss start 800b2e10 -------- //
+s32 D_800B2E10;
 /** gModelColourMultiplyR? */
-extern s16 SHORT_800b2e14;
+s16 SHORT_800b2e14;
 /** gModelColourMultiplyG? */
-extern s16 SHORT_800b2e16;
+s16 SHORT_800b2e16;
 /** gModelColourMultiplyB? */
-extern s16 SHORT_800b2e18;
+s16 SHORT_800b2e18;
+s32 PTR_DAT_800b2e1c;
 /** gModelColourBlendR? */
-extern s8 BYTE_800b2e20;
+s8 BYTE_800b2e20;
 /** gModelColourBlendG? */
-extern s8 BYTE_800b2e21;
+s8 BYTE_800b2e21;
 /** gModelColourBlendB? */
-extern s8 BYTE_800b2e22;
+s8 BYTE_800b2e22;
 /** gModelColourBlendA? */
-extern s8 BYTE_800b2e23;
+s8 BYTE_800b2e23;
+// -------- .bss end 800b2e30 -------- //
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func.s")
 

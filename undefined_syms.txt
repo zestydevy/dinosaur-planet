@@ -29,7 +29,6 @@ ossceduler_stack = 0x800ae9c0;
 gControllerThreadStack = 0x800A8200;
 gPiManagerThreadStack = 0x800beb10;
 viThreadStack = 0x800bd0a8;
-gCrashThreadStack = 0x800B34C8;
 __osBaseTimer = 0x800cee90;
 piThreadStack = 0x800CD840;
 piRamRomThreadStack = 0x800CE9F0;
