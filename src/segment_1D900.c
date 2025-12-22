@@ -1,4 +1,5 @@
 #include "common.h"
+#include "unktypes.h"
 
 // -------- .data start -------- // 80090c60
 
@@ -19,27 +20,29 @@ extern f32 D_80090CB4;
 
 // -------- .data end -------- // 80090D50
 
-// -------- .bss start -------- //
-
-extern u8 D_800B1830;
-extern u8 D_800B1831;
-extern u8 D_800B1832;
-extern f32 D_800B1834;
-extern f32 D_800B1838;
-extern f32 D_800B183C;
-extern u8 D_800B1840;
-extern u8 D_800B1841;
-extern u8 D_800B1842;
-extern u8 D_800B1843;
-extern u8 D_800B1844;
-extern s8 D_800B1845;
-extern s8 D_800B1846;
-extern s16 D_800B1850;
-extern s16 D_800B1852;
-extern s16 D_800B1854;
+// -------- .bss start 800b1830 -------- //
+u8 D_800B1830;
+u8 D_800B1831;
+u8 D_800B1832;
+f32 D_800B1834;
+f32 D_800B1838;
+f32 D_800B183C;
+u8 D_800B1840;
+u8 D_800B1841;
+u8 D_800B1842;
+u8 D_800B1843;
+u8 D_800B1844;
+s8 D_800B1845;
+s8 D_800B1846;
+u8 D_800B1847;
+UNK_PTR *D_800B1848;
+UNK_TYPE_32 D_800B184C;
+s16 D_800B1850;
+s16 D_800B1852;
+s16 D_800B1854;
+UNK_PTR *D_800B1858;
 s32 D_800B1860[30];
-
-// -------- .bss end -------- //
+// -------- .bss end 800b18e0 -------- //
 
 extern Vec3f D_800BB198;
 

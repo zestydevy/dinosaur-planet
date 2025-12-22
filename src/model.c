@@ -12,26 +12,24 @@ static const char str_800992e4[] = "DANGER: createModelInstance: Actual size exc
 static const char str_80099324[] = "ModFreeModel : NULL mod_inst!!\n";
 static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent model!!\n";
 
-
-
-extern s16 *SHORT_ARRAY_800b17d0;
+/* -------- .bss start 800b17a0 -------- */
+s32* gFile_MODELS_TAB;
+ModelSlot* gLoadedModels;
+void* gFreeModelSlots;
+s32 gNumLoadedModels;
+s32 gNumModelsTabEntries;
+s32 gNumFreeModelSlots;
+void* gAuxBuffer;
+u32* D_800B17BC;
+AnimSlot* gLoadedAnims;
+void* gBuffer_ANIM_TAB;
+s32 gNumLoadedAnims;
+s16 SHORT_ARRAY_800b17d0[48]; // TODO: check length, it's at most 48
+/* -------- .bss end 800b1830 -------- */
 
 void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
-
-
-extern u32* D_800B17BC;
-extern AnimSlot* gLoadedAnims;
-extern void* gBuffer_ANIM_TAB;
-extern s32 gNumLoadedAnims;
-extern void* gAuxBuffer;
-extern s32* gFile_MODELS_TAB;
-extern void* gFreeModelSlots;
-extern ModelSlot* gLoadedModels;
-extern s32 gNumFreeModelSlots;
-extern s32 gNumLoadedModels;
-extern s32 gNumModelsTabEntries;
 
 void init_models() {
     u32* temp_v0;    

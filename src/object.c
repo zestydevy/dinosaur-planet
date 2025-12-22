@@ -1,6 +1,4 @@
 #include "common.h"
-
-#include "common.h"
 #include "variables.h"
 #include "sys/gfx/model.h"
 #include "sys/linked_list.h"
@@ -8,18 +6,31 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 
-extern Object **gObjDeferredFreeList;
-extern s32 gObjDeferredFreeListCount;
-extern Object **D_800B1918;
-extern s32 D_800B191C;
-extern s16* D_800B18E4;
-extern int gObjIndexCount; //count of OBJINDEX.BIN entries
-extern int gNumObjectsTabEntries;
-extern ObjDef **gLoadedObjDefs;
-extern u8 *gObjDefRefCount;
-extern int gNumTablesTabEntries;
-extern Object **gObjList; //global object list
-extern LinkedList gObjUpdateList;
+// -------- .bss start 800b18e0 -------- //
+s16 D_800B18E0;
+s16* D_800B18E4;
+u32 D_800B18E8;
+s32  *gFile_OBJECTS_TAB;
+int gNumObjectsTabEntries;
+void *gFile_TABLES_BIN;
+s32  *gFile_TABLES_TAB;
+int gNumTablesTabEntries;
+ObjDef **gLoadedObjDefs;
+u8 *gObjDefRefCount;
+s16  *gFile_OBJINDEX;
+int gObjIndexCount; //count of OBJINDEX.BIN entries
+Object **gObjDeferredFreeList;
+s32 gObjDeferredFreeListCount;
+Object **D_800B1918;
+s32 D_800B191C;
+Object **gObjList; //global object list
+s32 gNumObjs;
+LinkedList gObjUpdateList;
+s8 gEffectBoxCount;
+Object *gEffectBoxes[20];
+s32 D_800B1988;
+// -------- .bss end 800b1990 -------- //
+
 extern s16 D_80091664[2]; // gCharacterObjIds
 
 enum FILE_ID {
@@ -30,11 +41,6 @@ enum FILE_ID {
     FILE_OBJINDEX_BIN = 0x43
 };
 
-extern void *gFile_TABLES_BIN;
-extern s32  *gFile_TABLES_TAB;
-extern s32  *gFile_OBJECTS_TAB;
-extern s16  *gFile_OBJINDEX;
-
 void queue_alloc_load_file(void **dest, s32 fileId);
 void queue_load_file_to_ptr(void **dest, s32 fileId);
 void alloc_some_object_arrays(void); //related to objects
@@ -43,8 +49,6 @@ void obj_clear_all(void);
 void copy_obj_position_mirrors(Object *obj, ObjSetup *setup, s32 param3);
 
 void func_80046320(s16 param1, Object *object);
-
-extern s32 gNumObjs;
 
 extern void func_80058FE8();
 extern void update_obj_hitboxes(s32);
@@ -57,9 +61,6 @@ void update_object(Object *obj);
 void func_8002272C(Object *obj);
 
 extern s32 D_80091660;
-
-extern s16 D_800B18E0;
-extern s32 D_800B1988;
 
 extern void func_80025DF0();
 
@@ -1406,8 +1407,6 @@ s32 func_80022DFC(s32 idx) {
     return gFile_OBJINDEX[idx] != -1;
 }
 
-extern u32 D_800B18E8;
-
 static const char str_800996f0[] = "objGetControlNo objtype out of range %d/%d\n";
 
 // unused
@@ -1831,9 +1830,6 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
 
 static const char str_80099780[] = "warning: objAddEffectBox max effect boxes\n";
 static const char str_800997ac[] = "objFreeEffectBox: Not found\n";
-
-extern s8 gEffectBoxCount;
-extern Object *gEffectBoxes[20];
 
 void obj_add_effect_box(Object *obj) {
     gEffectBoxes[gEffectBoxCount] = obj;
