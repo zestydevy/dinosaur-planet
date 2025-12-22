@@ -62,7 +62,7 @@ void osCreateViManager(OSPri pri)
 }
 
 // pad to 0x800bce70
-static u8 _bss_pad[0xEBC0]; // TODO: remove bss padding
+static u8 _bss_pad[0xC3B0]; // TODO: remove bss padding
 
 void viMgrMain(void* arg) {
     __OSViContext* vc;

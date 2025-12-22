@@ -25,9 +25,8 @@
 #include "dll.h"
 #include "constants.h"
 #include "functions.h"
-#include "bss.h"
 
-// .data
+/* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";
 const char *gGameBuildDateTime = "01/12/00 09:19";
 const char *gGameBuildName = "dragon1";
@@ -102,37 +101,39 @@ DLL_54 *gDLL_54 = NULL;
 s32 gTempDLLIds[3] = {-1, 53, 55};
 void *gTempDLLInsts[3] = {NULL, NULL, NULL};
 u8 D_8008CA30 = 0;
+/* -------- .data end -------- */
 
-// .bss (800ae2a0)
-BSS_GLOBAL GameState *gGplayState;
-BSS_GLOBAL BitTableEntry *gFile_BITTABLE;
-BSS_GLOBAL s16 gSizeBittable;
-BSS_GLOBAL struct Vec3_Int PlayerPosBuffer[60]; // seems to buffer player coords with "timestamp"
-BSS_GLOBAL s32 PlayerPosBuffer_index;
-BSS_GLOBAL u32 D_800AE674;
+/* -------- .bss start 800ae2a0 -------- */
+GameState *gGplayState;
+BitTableEntry *gFile_BITTABLE;
+s16 gSizeBittable;
+struct Vec3_Int PlayerPosBuffer[60]; // seems to buffer player coords with "timestamp"
+s32 PlayerPosBuffer_index;
+u32 D_800AE674;
 // official name: gfxBase
-BSS_GLOBAL Gfx *gMainGfx[2];
+Gfx *gMainGfx[2];
 // official name: gfx
-BSS_GLOBAL Gfx *gCurGfx;
+Gfx *gCurGfx;
 // official name: mtxBase
-BSS_GLOBAL Mtx *gMainMtx[2];
+Mtx *gMainMtx[2];
 // official name: mtx
-BSS_GLOBAL Mtx *gCurMtx;
+Mtx *gCurMtx;
 // official name: vtxBase
-BSS_GLOBAL Vertex *gMainVtx[2];
+Vertex *gMainVtx[2];
 // official name: vtx
-BSS_GLOBAL Vertex *gCurVtx;
+Vertex *gCurVtx;
 // official name: polBase
-BSS_GLOBAL Triangle *gMainPol[2];
+Triangle *gMainPol[2];
 // official name: pol
-BSS_GLOBAL Triangle *gCurPol;
-BSS_GLOBAL OSSched osscheduler_;
-BSS_GLOBAL u8 ossceduler_stack[OS_SC_STACKSIZE];
-BSS_GLOBAL s8 D_800B09C0;
-BSS_GLOBAL u8 gFrameBufIdx;
-BSS_GLOBAL s8 gPauseState;
-BSS_GLOBAL u8 D_800B09C3;
-BSS_GLOBAL s8 D_800B09C4;
+Triangle *gCurPol;
+OSSched osscheduler_;
+u8 ossceduler_stack[OS_SC_STACKSIZE];
+s8 D_800B09C0;
+u8 gFrameBufIdx;
+s8 gPauseState;
+u8 D_800B09C3;
+s8 D_800B09C4;
+/* -------- .bss end 800b09d0 -------- */
 
 void func_8001440C(s32 arg0);
 void clear_PlayerPosBuffer(void);
@@ -142,8 +143,8 @@ void game_tick_no_expansion(void);
 void game_tick(void);
 void func_80014074(void);
 void alloc_frame_buffers(void);
-void func_80013D80();
-s8 func_800143FC();
+void func_80013D80(void);
+s8 func_800143FC(void);
 void update_PlayerPosBuffer();
 void test_write(void);
 void check_dongle(void);

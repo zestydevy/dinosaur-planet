@@ -1686,8 +1686,8 @@ gCurRSPTaskIsSet = 0x800B4980;
 gCurRDPTaskIsSet = 0x800B4984;
 gLastGfxYield = 0x800B4988; // size:0x8
 
-assetThread = 0x800AC918;
-assetThreadStackEnd = 0x800AC910;
+gAssetThread = 0x800AC918;
+gAssetThreadStack = 0x800AB970; // size:0xFA8
 gCurGfx = 0x800AE680;
 gFrameBufIdx = 0x800B09C1;
 gPauseState = 0x800B09C2;
@@ -1700,8 +1700,8 @@ gCurVtx = 0x800AE6A0;
 gCurPol = 0x800AE6B0;
 map_set_object_streaming_disabled = 0x800129D4; // type:func
 
-assetLoadThreadSendQueue = 0x800ACB48;
-assetLoadThreadRecvQueue = 0x800ACB98;
+gAssetLoadThreadSendQueue = 0x800ACB48;
+gAssetLoadThreadRecvQueue = 0x800ACB98;
 assetLoadMsg = 0x800AE270;
 get_loaded_dlls = 0x8000BDE8; // type:func
 main_set_bits = 0x80014670; // type:func
@@ -1742,7 +1742,7 @@ gAssetThreadQueue = 0x800acbc8;
 gAssetThreadQueueData = 0x800acbd0;
 
 gAssetThreadStackInternal = 0x800ae1c0;
-gAssetThreadStack = 0x800ae1d0;
+gAssetThreadGenericStack = 0x800ae1d0;
 gAssetThreadStackData = 0x800ae1d8;
 
 generic_queue_init = 0x8000adf0; // type:func

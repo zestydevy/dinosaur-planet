@@ -11,7 +11,6 @@
 #include "sys/memory.h"
 #include "dll.h"
 #include "macros.h"
-#include "bss.h"
 
 /* -------- .data start -------- */
 s32 gCurAcmdList = 0;
@@ -24,31 +23,31 @@ static u8 _unk[1] = {0};
 u8 D_8008C8DC[4] = {0, 0, 0, 0};
 /* -------- .data end -------- */
 
-/* -------- .bss start -------- */
-BSS_GLOBAL OSSched* gAudioSched;
-BSS_GLOBAL OSScClient gAudioScClient;
-BSS_GLOBAL OSThread gAudioThread;
-BSS_GLOBAL OSScTask gAudioTask;
-BSS_GLOBAL u64 gAudioThreadStack[AUDIO_THREAD_STACK_SIZE];
-BSS_GLOBAL N_ALGlobals __am_g;
-BSS_GLOBAL Acmd *__am_ACMDList[NUM_ACMD_LISTS];
-BSS_GLOBAL void *__am_audioInfo[NUM_OUTPUT_BUFFERS];
-BSS_GLOBAL short gFrameSamplesList[NUM_OUTPUT_BUFFERS];
-BSS_GLOBAL OSMesgQueue __am_audioFrameMsgQ;
-BSS_GLOBAL OSMesgQueue __am_audioReplyMsgQ;
-BSS_GLOBAL OSMesg __am_audioFrameMsgBuf[MAX_MESGS];
-BSS_GLOBAL OSMesg __am_audioReplyMsgBuf[MAX_MESGS];
-BSS_GLOBAL AMDMAState dmaState;
-BSS_GLOBAL AMDMABuffer gAudDmaBuffs[NUM_DMA_BUFFERS];
-BSS_GLOBAL s32 D_800AB078; // gMinFrameSize?
-BSS_GLOBAL s32 D_800AB07C; // gFrameSize?
-BSS_GLOBAL s32 D_800AB080; // gMaxFrameSize?
-BSS_GLOBAL s32 D_800AB084; // gAudioLagFrames?
-BSS_GLOBAL OSIoMesg audDMAIOMesgBuf[NUM_DMA_MESSAGES];
-BSS_GLOBAL OSMesgQueue audDMAMessageQ;
-BSS_GLOBAL OSMesg audDMAMessageBuf[NUM_DMA_MESSAGES];
-BSS_GLOBAL u32 D_800AB960;
-/* -------- .bss end -------- */
+/* -------- .bss start 800a8690 -------- */
+OSSched* gAudioSched;
+OSScClient gAudioScClient;
+OSThread gAudioThread;
+OSScTask gAudioTask;
+u64 gAudioThreadStack[AUDIO_THREAD_STACK_SIZE];
+N_ALGlobals __am_g;
+Acmd *__am_ACMDList[NUM_ACMD_LISTS];
+void *__am_audioInfo[NUM_OUTPUT_BUFFERS];
+short gFrameSamplesList[NUM_OUTPUT_BUFFERS];
+OSMesgQueue __am_audioFrameMsgQ;
+OSMesgQueue __am_audioReplyMsgQ;
+OSMesg __am_audioFrameMsgBuf[MAX_MESGS];
+OSMesg __am_audioReplyMsgBuf[MAX_MESGS];
+AMDMAState dmaState;
+AMDMABuffer gAudDmaBuffs[NUM_DMA_BUFFERS];
+s32 D_800AB078; // gMinFrameSize?
+s32 D_800AB07C; // gFrameSize?
+s32 D_800AB080; // gMaxFrameSize?
+s32 D_800AB084; // gAudioLagFrames?
+OSIoMesg audDMAIOMesgBuf[NUM_DMA_MESSAGES];
+OSMesgQueue audDMAMessageQ;
+OSMesg audDMAMessageBuf[NUM_DMA_MESSAGES];
+u32 D_800AB960;
+/* -------- .bss end 800ab970 -------- */
 
 // @bug: This file uses the wrong signature for mpeg_init
 #ifdef AVOID_UB
