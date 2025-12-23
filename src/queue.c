@@ -236,15 +236,11 @@ void func_80012A4C(void) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/queue/func_80012B54.s")
-#else
 void func_80012B54(s32 param1, s32 param2) {
-    GenericQueue *qptr;
-    UnkStructAssetThreadSingle *ptr;
     UnkStructAssetThreadSingle elementTemp;
     s32 prevIE;
-    ObjSetup *ptr_unk8;
+    GenericQueue *qptr;
+    ObjSetup *new_var;
     
     prevIE = interrupts_disable();
 
@@ -255,19 +251,16 @@ void func_80012B54(s32 param1, s32 param2) {
     qptr = &D_800AD6C0;
 
     while (!generic_queue_is_empty(gAssetThreadQueue)) {
-        ptr = &elementTemp;
-        generic_queue_dequeue(gAssetThreadQueue, ptr);
+        generic_queue_dequeue(gAssetThreadQueue, &elementTemp);
         
-        if (param1 != ptr->unk0) {
-            generic_queue_enqueue(qptr, ptr);
+        if (param1 != elementTemp.unk0) {
+            generic_queue_enqueue(qptr, &elementTemp);
         } else {
-            ptr_unk8 = ptr->unk8;
-            if (param1 == 4 && ptr_unk8->uID != param2) {
-                generic_queue_enqueue(qptr, ptr);
+            if ((param1 == 4) && ((new_var = ((0, elementTemp)).unk8)->uID != param2)) {
+                generic_queue_enqueue(qptr, &elementTemp);
             }
         }
     }
-
 
     gAssetThreadQueue->count = qptr->count;
     gAssetThreadQueue->top = qptr->top;
@@ -288,7 +281,6 @@ void func_80012B54(s32 param1, s32 param2) {
 
     interrupts_enable(prevIE);
 }
-#endif
 
 // FIXME: should be a different name?
 void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 param5) {
