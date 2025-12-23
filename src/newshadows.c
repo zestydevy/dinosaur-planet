@@ -4,6 +4,39 @@
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
 static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
 
+// -------- .bss start 800b97e0 -------- //
+f32 D_800B97E0[24];
+f32 D_800B9840[24];
+Gfx *D_800B98A0[2];
+Unk800B98A8 *D_800B98A8[2];
+Unk8004FA58_Arg5 *D_800B98B0[2];
+s16 D_800B98B8[300];
+u8 D_800B9B10[80];
+s16 D_800B9B60[800];
+Unk8004FA58 D_800BA1A0[200];
+Unk800B98A8 *D_800BB140;
+Unk800B98A8 *D_800BB144;
+Unk8004FA58_Arg5 *D_800BB148;
+Unk8004FA58_Arg5 *D_800BB14C;
+Gfx *D_800BB150;
+Gfx *D_800BB154;
+Gfx *D_800BB158[2];
+Unk8004FA58_Arg5 *D_800BB160[2];
+Unk800BB168 *D_800BB168[2];
+s8 D_800BB170;
+Unk800BB168* D_800BB174;
+Unk800BB168* D_800BB178;
+Unk8004FA58_Arg5* D_800BB17C;
+Unk8004FA58_Arg5* D_800BB180;
+Gfx* D_800BB184;
+Gfx* D_800BB188;
+f32 D_800BB18C;
+Texture* D_800BB190;
+Vec3f D_800BB198;
+Vec3f D_800BB1A8;
+u8 _bss_800bb1b8[0x48];
+// -------- .bss end 800bb200 -------- //
+
 void func_8004D470(void) {
     void *temp_v0;
 
@@ -82,7 +115,6 @@ void func_8004D470(void) {
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004D698.s")
 #else
-extern Vec3f D_800BB1A8;
 extern f32 D_800BB1B0;
 void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     Vec3f sp1C;
@@ -365,7 +397,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     sp2B4 = func_80052300(
         arg0,
         (UnkFunc80051D68Arg3 *) sp88,
-        &D_800BA1A0,
+        D_800BA1A0,
         (UnkFunc80052300Arg3 *) D_800BB140,
         sp2B4,
         // This is just wrong but matches?
@@ -380,7 +412,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     func_800511E8(arg0, 0, sp244, &sp94);
     temp_t0 = ((s8 *)D_800BB148 - (s8 *)D_800B98B0[D_80092C08]) >> 4;
     if (D_800BB170 != 0) {
-        if (func_800502AC(arg0, sp244, &sp94, sp2B4, (Vec3f *)D_800BB144, D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
+        if (func_800502AC(arg0, sp244, &sp94, sp2B4, (Vec3f *)D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C34 = 0x190;
             if (temp_s1->flags & 0x20) {
@@ -391,7 +423,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
         }
         D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, temp_s1, arg0, D_80092C20, &sp2B0);
         goto block_59;
-    } else if (func_8004FA58(arg0, sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, (Unk8004FA58_Arg5* ) D_800BB148, &D_800BA1A0, 0x18F - temp_t0) == 0) {
+    } else if (func_8004FA58(arg0, sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, (Unk8004FA58_Arg5* ) D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
         temp_s1->gdl = NULL;
         D_80092C34 = 0x190;
         if (temp_s1->flags & 0x20) {
@@ -545,11 +577,11 @@ void func_8004E7A8(Object* arg0) {
         func_80053750(arg0, &sp70, 1);
         func_80053408((Vec3f *)spA0);
         func_800533D8(&sp2B4, &sp9C);
-        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, &D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
+        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
         D_800BB174 = (Unk800BB168 *)((s8 *)D_800BB174 + sp2B4 * 0x24);
         func_800511E8(arg0, 0, sp24C, (Unk8004FA58* ) &spA0[2]);
         temp_t0 = ((s8 *)D_800BB17C - (s8*)D_800BB160[D_80092C10]) >> 4;
-        if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, (Unk8004FA58_Arg5* ) D_800BB17C, &D_800BA1A0, 0x257 - temp_t0) == 0) {
+        if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, (Unk8004FA58_Arg5* ) D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C38 = 0x258;
             if (temp_s1->flags & 0x20) {

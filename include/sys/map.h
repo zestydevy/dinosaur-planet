@@ -407,9 +407,6 @@ extern f32 D_8009AA2C;
 extern f32 D_8009AA38; // = -0.200000003f;
 
 extern f32 D_8009AA20;
-extern s16 D_800B98B8[300];
-extern s16 D_800B9B60[800];
-extern u8 D_800B9B10[80];
 extern f32 D_8009AA24;
 extern u8 D_8009A614;
 extern f32 D_80092AAC[24];

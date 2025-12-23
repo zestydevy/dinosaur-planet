@@ -72,7 +72,7 @@ s16 D_800B97C4;
 u8 _bss_800b97c8[0x18];
 // -------- .bss end 800b97e0 -------- //
 
-static void func_8004D328();
+void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
 
 void dl_set_all_dirty(void) {
@@ -5193,7 +5193,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-static void func_8004D328() {
+void func_8004D328(void) {
     SimilarToWarp* var_a2;
     Warp* var_v0;
     u8 temp2;
@@ -5218,7 +5218,7 @@ static void func_8004D328() {
         return;
         
     if (gDLL_28_ScreenFade->vtbl->is_complete() || D_800B4A59 == 0){
-        var_v0 = (Warp*)&D_800B4A60;
+        var_v0 = &D_800B4A60;
         D_800B4A58 = 0;
         var_a2->coord.x = var_v0->coord.x;
         var_a2->coord.y = var_v0->coord.y;
