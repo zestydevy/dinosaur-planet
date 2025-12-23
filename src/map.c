@@ -69,7 +69,7 @@ f32 D_800B97B8;
 f32 D_800B97BC;
 MapsUnk_800B97C0 *D_800B97C0; // 255 items
 s16 D_800B97C4;
-u8 _bss_800b97c8[0x18];
+u8 _bss_800b97c8[0x8];
 // -------- .bss end 800b97e0 -------- //
 
 void func_8004D328(void);
