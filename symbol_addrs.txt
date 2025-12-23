@@ -1230,8 +1230,7 @@ doNothing_80022DD8 = 0x80022DD8; // type:func
 
 gFST = 0x800b2ec0; // size 0x4
 gLastFSTIndex = 0x800b2ec4; // size 0x4
-gFile_TEX0_TAB = 0x800b49a0; // size 0x4
-gFile_TEX1_TAB = 0x800b49a4; // size 0x4
+gFile_TEX_TAB = 0x800b49a0; // size:0x8
 gFile_TEXTABLE = 0x800b49ac; // size 0x4
 gFile_MAPS_TAB = 0x800b9720; // size 0x4
 gFile_HITS_TAB = 0x800b971c; // size 0x4
@@ -1502,9 +1501,7 @@ gMapCurrentStreamCoordsZ = 0x80092a6C;
 gMapNumStreamMaps = 0x80092aa4; // size:0x4
 gMapType = 0x800B96A8; // size:0x1
 gMapActiveStreamMap = 0x800b96ac; // size:0x4
-gMapStreamMapTable = 0x800b9728; // size:0x4
-gMapStreamMapIDTable = 0x800b972c; // size:0x4
-gMapGridTable = 0x800b976c; // size:0x4
+gMapStreamMapTable = 0x800b9728; // size:0x40
 gBlockTextures = 0x800b97a4; // size:0x4
 gDisableObjectStreamingFlag = 0x800ae29c; // size:0x1
 

@@ -475,7 +475,7 @@ segments:
     # - { type: .bss, vram: 0x800b2e30, name: filesystem }
     # - { type: .bss, vram: 0x800b2ed0, name: crash }
     # - { type: .bss, vram: 0x800b3790, name: rcp }
-    # - { type: .bss, vram: 0x800b4920, name: segment_3A190 }
+    # - { type: .bss, vram: 0x800b4920, name: route }
     # - { type: .bss, vram: 0x800b4930, name: rarezip }
     # - { type: .bss, vram: 0x800b4980, name: scheduler }
     # - { type: .bss, vram: 0x800b49a0, name: texture }

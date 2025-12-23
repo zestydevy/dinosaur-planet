@@ -43,6 +43,7 @@
 #include "dlls/engine/27.h"
 #include "unktypes.h"
 #include "segment_334F0.h"
+#include "prevent_bss_reordering.h"
 
 static void dll_210_func_1BC0(Object* player, Player_Data* arg1);
 static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 arg3);

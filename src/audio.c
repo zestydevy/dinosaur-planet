@@ -11,6 +11,7 @@
 #include "sys/memory.h"
 #include "dll.h"
 #include "macros.h"
+#include "prevent_bss_reordering.h"
 
 /* -------- .data start -------- */
 s32 gCurAcmdList = 0;

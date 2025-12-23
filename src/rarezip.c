@@ -9,9 +9,12 @@ u8 *rarezip_inflate_input = NULL;
 u8 *rarezip_inflate_output = NULL;
 void *D_800918C0 = NULL;
 
-extern u32 rarezip_bit_buffer;
-extern u32 rarezip_num_bits;
-extern s32 gHuftTablePos;
+// -------- .bss start 800b4930 -------- //
+u32 rarezip_bit_buffer;
+u32 rarezip_num_bits;
+s32 gHuftTablePos;
+u8 _bss_800b4940[0x40]; // TODO: this is probably unused rarezip_asm.s bss
+// -------- .bss end 800b4980 -------- //
 
 extern s32 rarezip_inflate_block();
 

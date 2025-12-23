@@ -1,6 +1,12 @@
 #include "sys/objhits.h"
+#include "sys/asset_thread.h"
+#include "sys/dll.h"
+#include "sys/fs.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/objanim.h"
 #include "sys/gfx/modgfx.h"
+#include "dll.h"
 
 static const char str_80099860[] = "objhits.c: keysize overflow error\n";
 static const char str_80099884[] = " Warning HitModel %x [%d] has no Polyhits\n";
