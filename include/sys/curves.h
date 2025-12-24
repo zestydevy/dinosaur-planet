@@ -112,6 +112,7 @@ typedef struct Unk80006908 {
 
 void func_80005094(UnkCurvesStruct *arg0);
 f32 func_80004C5C(Vec4f *a0, f32 a1, f32 *a2);
+f32 func_80004D70(Vec4f *a0, f32 a1, f32 *a2);
 void func_80004CE8(Vec4f *in, Vec4f *out);
 void func_8000523C(UnkCurvesStruct *arg0);
 f32 func_80006E04(Unk80006784 *, f32);

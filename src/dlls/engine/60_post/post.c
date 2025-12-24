@@ -16,6 +16,7 @@
 #include "functions.h"
 #include "sys/rcp.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 static u8 data_0 = 0;
 static u8 data_4 = 0;

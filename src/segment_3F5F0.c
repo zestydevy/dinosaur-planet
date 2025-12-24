@@ -762,7 +762,7 @@ void func_80040920(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 
 void func_800409D0(u16 *fb, s32 width, s32 height) {
     // Sets center pixel alpha to 0
-    fb[(width >> 1) + (height >> 1) * width] &= 0xFFFE;
+    fb[(width >> 1) + (height >> 1) * width] &= ~1;
 }
 
 void func_80040A04(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {

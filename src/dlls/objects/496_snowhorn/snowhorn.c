@@ -641,7 +641,7 @@ void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* 
     
     //Play chat sequence
     if (snowhorn->unkAF & 1) {
-        snowhorn->unkAF &= 0xFFFE;
+        snowhorn->unkAF &= ~1;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->func17(objdata->flags, snowhorn, -1);
             joy_set_button_mask(0, A_BUTTON);

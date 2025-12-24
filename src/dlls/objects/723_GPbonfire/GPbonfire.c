@@ -114,11 +114,11 @@ void GPbonfire_control(Object* self) {
 
     playerIsNearby = vec3_distance_xz_squared(&player->positionMirror, &self->positionMirror) <= setup->interactionDistance * setup->interactionDistance;    
 
-    objdata->currentState &= 0xFFFD;
+    objdata->currentState &= ~2;
     if (objdata->currentState & 1) {
         main_set_bits(objdata->gameBitKindlingPlaced, TRUE);
         objdata->stateIndex = STATE_2_WAIT_FOR_KYTE;
-        objdata->currentState &= 0xFFFE;
+        objdata->currentState &= ~1;
         self->modelInstIdx = 1;
     }
 

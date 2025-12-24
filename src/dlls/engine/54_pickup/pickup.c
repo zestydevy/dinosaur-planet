@@ -75,7 +75,7 @@ u8 dll_54_func_6C0(DLL54Unk_Func798* arg0) {
 void dll_54_func_6CC(DLL54Unk_Func798* arg0, u8 arg1) {
     u32 temp = arg1;
     if (temp) {
-        arg0->unk7 &= 0xFFFD;
+        arg0->unk7 &= ~2;
     } else {
         arg0->unk7 |= 2;
     }
