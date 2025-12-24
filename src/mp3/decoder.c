@@ -2056,18 +2056,17 @@ const u32 D_800A207C[1] = {0x3FF746ED};
 const u32 D_800A2080[1] = {0x3FFF069A};
 // ------ .rodata end ------ //
 
-// ------ .bss start ------ //
-extern f32 sine_block[4][36]; // 0x800bff80
-extern struct mp3decfourbytes* D_800C01C0; // sizeof 0xA410
-extern f32 *D_800C01C4;
-extern f32 *D_800C01C8;
-// bss gap? 0x800c01cc size:0x4
-extern f32 D_800C01D0[256];
-extern f32 D_800C05D0[256];
-extern struct mp3decfourbytes *D_800C09D0[34];
-extern s8 D_800C0A58[34 * 256 * sizeof(s8)];
-extern s8 D_800C2C58[34 * 256 * sizeof(s8)];
-// ------ .bss end ------ //
+// ------ .bss start 800bff80 ------ //
+f32 sine_block[4][36]; // 0x800bff80
+struct mp3decfourbytes* D_800C01C0; // sizeof 0xA410
+f32 *D_800C01C4;
+f32 *D_800C01C8;
+f32 D_800C01D0[256];
+f32 D_800C05D0[256];
+struct mp3decfourbytes *D_800C09D0[34];
+s8 D_800C0A58[34 * 256 * sizeof(s8)];
+s8 D_800C2C58[34 * 256 * sizeof(s8)];
+// ------ .bss end 800c4e60 ------ //
 
 // mp3dec_init in pd
 s32 mp3_dec_init(void) {

@@ -4,10 +4,12 @@
 #include "libnaudio/n_synthInternals.h"
 #include "sys/audio/speaker.h"
 
+/* -------- .bss start 800bfe80 -------- */
 u8 D_800BFE80[2];
 struct var800BFE82 D_800BFE82;
 u8 D_800BFE86[2];
 u8 D_800BFE88[2];
+/* -------- .bss end 800bfe90 -------- */
 
 void speaker_set_mode(u8 mode) {
 	s32 i;

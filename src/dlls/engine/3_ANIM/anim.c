@@ -5,7 +5,6 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "sys/menu.h"
-#include "prevent_bss_reordering.h"
 
 s32* func_800349B0(void);
 

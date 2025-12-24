@@ -493,10 +493,10 @@ segments:
     # - { type: .bss, vram: 0x800bfe70, name: dl_debug }
     # - { type: .bss, vram: 0x800bfe80, name: audio/speaker }
     # - { type: .bss, vram: 0x800bfe90, name: libnaudio/n_sndplayer }
-    # - { type: .bss, vram: 0x800bff00, name: libnaudio/mp3/segment_67F50 }
+    # - { type: .bss, vram: 0x800bff00, name: mp3/mp3 }
     # - { type: .bss, vram: 0x800bff70, name: audio/amAudio }
-    # - { type: .bss, vram: 0x800bff80, name: libnaudio/mp3/decoder }
-    # - { type: .bss, vram: 0x800c4e60, name: libnaudio/mp3/main }
+    # - { type: .bss, vram: 0x800bff80, name: mp3/decoder }
+    # - { type: .bss, vram: 0x800c4e60, name: mp3/main }
     # - { type: .bss, vram: 0x800cd2e0, name: libnaudio/n_csplayer }
     # - { type: .bss, vram: 0x800cd320, name: libultra/os/initialize }
     # - { type: .bss, vram: 0x800cd330, name: libultra/os/seteventmesg }

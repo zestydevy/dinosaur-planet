@@ -1,6 +1,7 @@
 // @DECOMP_OPT_FLAGS=-O2 -g0
-#include <PR/os_internal.h>
-#include <libultra/io/controller.h>
+#include "PR/os_internal.h"
+#include "libultra/io/siint.h"
+#include "libultra/io/controller.h"
 
 OSPifRam gMotorData[MAXCONTROLLERS];
 

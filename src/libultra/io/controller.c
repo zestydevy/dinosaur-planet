@@ -8,6 +8,14 @@
 
 u32 __osContinitialized = 0;
 
+// .bss 800cd3f0-800cd480
+OSPifRam __osContPifRam;
+u8 __osContLastCmd;
+u8 __osMaxControllers;
+u8 _bss_800cd438[0x20];
+OSMesgQueue __osEepromTimerQ;
+OSMesg __osEepromTimerMsg;
+
 s32 osContInit(OSMesgQueue *mq, u8 *bitpattern, OSContStatus *data)
 {
     OSMesg dummy;
