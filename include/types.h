@@ -172,4 +172,10 @@ typedef struct Func_80059C40_Struct {
     s8 unk52;
 } Func_80059C40_Struct;
 
+//used for PlayerPosBuffer and something else
+struct Vec3_Int{
+    Vec3f f;
+    u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
+};
+
 #endif

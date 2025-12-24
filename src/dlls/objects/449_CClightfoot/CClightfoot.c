@@ -1,13 +1,14 @@
 #include "PR/ultratypes.h"
+#include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/main.h"
-#include "dll.h"
 #include "sys/objects.h"
-#include "functions.h"
-#include "dlls/objects/214_animobj.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "segment_334F0.h"
+#include "dll.h"
+#include "functions.h"
 
 typedef struct {
 /*00*/ ObjSetup base;

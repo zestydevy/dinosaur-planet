@@ -1,5 +1,6 @@
 #include "common.h"
 #include "PR/os_internal.h"
+#include "macros.h"
 #include "sys/main.h"
 
 /**
@@ -11,6 +12,15 @@ CrashedDlls *gCrashDllListCopy = CRASH_DLL_LIST_COPY;
  * the last NMI reset.
  */
 CrashThreadCopies gCrashThreadCopies = { { CRASH_MAIN_THREAD_COPY, CRASH_ASSET_THREAD_COPY } };
+
+// -------- .bss start 800b2ed0 -------- //
+u64 gCrashThreadStack[STACKSIZE(0x640) + 1];
+OSThread gCrashThread;
+OSScClient gCrashScClient;
+OSMesg gCrashMesgQueueBuffer[1];
+OSMesgQueue gCrashMesgQueue;
+OSScMsg gCrashScMsg;
+// -------- .bss end 800b3790 -------- //
 
 void start_crash_thread(OSSched *scheduler) {
     s32 videoMode = OS_VI_PAL_LPN1;
@@ -26,7 +36,7 @@ void start_crash_thread(OSSched *scheduler) {
         /*id*/      CRASH_THREAD_ID,
         /*entry*/   &crash_thread_entry,
         /*arg*/     NULL,
-        /*sp*/      &gCrashThreadStack[OS_MIN_STACKSIZE],
+        /*sp*/      &gCrashThreadStack[STACKSIZE(0x640)],
         /*pri*/     CRASH_THREAD_PRIORITY
     );
 
@@ -49,7 +59,7 @@ void crash_thread_entry(void *arg) {
     osCreateMesgQueue(
         /*mq*/      &gCrashMesgQueue,
         /*msg*/     gCrashMesgQueueBuffer,
-        /*count*/   CRASH_MESG_QUEUE_BUFFER_LENGTH
+        /*count*/   ARRAYCOUNT(gCrashMesgQueueBuffer)
     );
 
     osScAddClient(scheduler, &gCrashScClient, &gCrashMesgQueue, OS_SC_ID_PRENMI);

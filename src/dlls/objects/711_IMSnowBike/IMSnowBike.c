@@ -1,7 +1,17 @@
+#include "dlls/engine/27.h"
+#include "dlls/engine/4_race.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
+#include "game/objects/object_id.h"
+#include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/joypad.h"
+#include "sys/main.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
+#include "sys/rand.h"
+#include "dll.h"
+#include "functions.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {

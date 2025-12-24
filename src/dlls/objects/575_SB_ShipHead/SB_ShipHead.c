@@ -1,11 +1,17 @@
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/572_SB_Galleon.h"
+#include "dlls/projgfx/194.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "sys/dll.h"
 #include "sys/gfx/model.h"
+#include "sys/main.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
-#include "dlls/objects/572_SB_Galleon.h"
-#include "dlls/projgfx/194.h"
+#include "sys/rand.h"
+#include "dll.h"
+#include "functions.h"
 
 typedef struct {
 /*00*/ Object *cloudrunner;

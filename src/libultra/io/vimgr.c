@@ -1,19 +1,21 @@
-#include <PR/os_internal.h>
-#include <PR/rcp.h>
+#include "PR/os_internal.h"
+#include "PR/rcp.h"
+#include "PRinternal/macros.h"
 #include "libultra/io/viint.h"
 #include "libultra/os/osint.h"
-#include "bss.h"
+#include "macros.h"
 
 OSViMode *gNewViMode = NULL;
 OSDevMgr __osViDevMgr = {0};
 s32 __additional_scanline = 0;
 
-BSS_STATIC OSThread viThread;
-BSS_STATIC unsigned char viThreadStack[OS_VIM_STACKSIZE];
-BSS_STATIC OSMesgQueue viEventQueue;
-BSS_STATIC OSMesg viEventBuf[5];
-BSS_STATIC OSIoMesg viRetraceMsg;
-BSS_STATIC OSIoMesg viCounterMsg;
+static u32 _bss_800bce74;
+static OSThread viThread;
+static u64 viThreadStack[STACKSIZE(OS_VIM_STACKSIZE)];
+static OSMesgQueue viEventQueue;
+static OSMesg viEventBuf[5];
+static OSIoMesg viRetraceMsg;
+static OSIoMesg viCounterMsg;
 
 void viMgrMain(void *arg);
 
@@ -50,7 +52,7 @@ void osCreateViManager(OSPri pri)
 		__osViDevMgr.acsQueue = NULL;
 		__osViDevMgr.dma = NULL;
 		__osViDevMgr.edma = NULL;
-		osCreateThread(&viThread, 0, viMgrMain, &__osViDevMgr, &viThreadStack[OS_VIM_STACKSIZE], pri);
+		osCreateThread(&viThread, 0, viMgrMain, &__osViDevMgr, STACK_START(viThreadStack), pri);
 		__osViInit();
 		osStartThread(&viThread);
 		__osRestoreInt(savedMask);
@@ -61,8 +63,7 @@ void osCreateViManager(OSPri pri)
 	}
 }
 
-// pad to 0x800bce70
-static u8 _bss_pad[0xEBC0]; // TODO: remove bss padding
+#include "prevent_bss_reordering.h"
 
 void viMgrMain(void* arg) {
     __OSViContext* vc;

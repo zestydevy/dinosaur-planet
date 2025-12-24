@@ -5,14 +5,13 @@
 #include "PR/os_flash.h"
 #include "PR/os_internal_flash.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
-BSS_GLOBAL u32 __osFlashID[4] ALIGNED(0x8);
-BSS_GLOBAL OSIoMesg __osFlashMsg ALIGNED(0x8);
-BSS_GLOBAL OSMesgQueue __osFlashMessageQ ALIGNED(0x8);
-BSS_GLOBAL OSPiHandle __osFlashHandler ALIGNED(0x8);
-BSS_GLOBAL OSMesg __osFlashMsgBuf[1];
-BSS_GLOBAL u32 __osFlashVersion;
+u32 __osFlashID[4] ALIGNED(0x8);
+OSIoMesg __osFlashMsg ALIGNED(0x8);
+OSMesgQueue __osFlashMessageQ ALIGNED(0x8);
+OSPiHandle __osFlashHandler ALIGNED(0x8);
+OSMesg __osFlashMsgBuf[1];
+u32 __osFlashVersion;
 
 OSPiHandle *osFlashReInit(u8 latency, u8 pulse, u8 page_size, u8 rel_duration, u32 start) {
     __osFlashHandler.baseAddress = PHYS_TO_K1(start);

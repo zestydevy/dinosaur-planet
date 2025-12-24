@@ -11,7 +11,10 @@
 static const char str_80099c90[] = " WARNING EXPR: This Object has no Head ";
 static const char str_80099cb8[] = " WARNING EXPR: Obj Has No Joint %i ";
 static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n";
-extern u8 D_800B2E00;
+
+// -------- .bss start 800b2e00 -------- //
+u8 D_800B2E00;
+// -------- .bss end 800b2e10 -------- //
 
 s32 D_80091720[] = { 0x0, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13 };
 s32 D_80091748[] = { 0, 0 };

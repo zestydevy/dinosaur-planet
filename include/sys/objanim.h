@@ -1,8 +1,7 @@
 #ifndef _SYS_OBJANIM_H
 #define _SYS_OBJANIM_H
 
-#include "common.h"
-#include "sys/map.h"
+#include "game/objects/object.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
 

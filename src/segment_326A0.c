@@ -5,13 +5,17 @@
 
 #include "dlls/objects/281_area.h"
 
-extern s32 sCallbackPairIndex;
 typedef struct ObjectPairCallback {
     Object *primary;
     Object *secondary;
     void (*callback)(Object*, Object*); // callback that takes in the primary and secondary object
 } ObjectPairCallback;
-extern ObjectPairCallback sObjectPairCallbacks[16];
+
+// -------- .bss start 800b2d40 -------- //
+ObjectPairCallback sObjectPairCallbacks[16];
+// -------- .bss end 800b2e00 -------- //
+
+extern s32 sCallbackPairIndex;
 
 /** Transforms a mapSpace point into an objectSpace point, relative to an Area object*/
 void func_80031AA0(Area_Setup* area, f32* ox, f32* oy, f32* oz) {

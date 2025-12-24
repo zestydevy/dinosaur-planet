@@ -15,23 +15,24 @@ typedef struct Unk800B49A8 {
     s32 unk0;
     Texture *unk4;
 } Unk800B49A8;
-extern Unk800B49A8* D_800B49A8;
-extern s32 D_800B49B0;
-extern s32 D_800B49B8[2];
-extern void *D_800B49C0 ;
-extern s32* gFile_TEX0_TAB[];
-extern void* gFile_TEX1_TAB;
-extern void* gFile_TEXTABLE;
 extern s32 D_80092A40;
 extern s32 UINT_80092a48;
-extern Texture *gCurrTex0;
-extern Texture *gCurrTex1;
-extern Texture *D_800B49CC;
-extern Texture *D_800B49D0;
-extern s32 D_800B49D4;
-extern s32 D_800B49D8;
-extern s8 D_800B49DC;
 
+// -------- .bss start 800b49a0 -------- //
+s32* gFile_TEX_TAB[2]; // TEX0/TEX1 tab
+Unk800B49A8* D_800B49A8;
+void* gFile_TEXTABLE;
+s32 D_800B49B0;
+s32 D_800B49B8[2];
+void *D_800B49C0;
+Texture *gCurrTex0;
+Texture *gCurrTex1;
+Texture *D_800B49CC;
+Texture *D_800B49D0;
+s32 D_800B49D4;
+s32 D_800B49D8;
+s8 D_800B49DC;
+// -------- .bss end 800b49e0 -------- //
 
 void init_textures(void) {
     s32 var_v1;
@@ -40,11 +41,11 @@ void init_textures(void) {
 
     D_800B49A8 = mmAlloc(0x15E0, ALLOC_TAG_TEX_COL, NULL);
     D_800B49B0 = 0;
-    queue_alloc_load_file((void **) &gFile_TEX0_TAB, 0x28);
-    queue_alloc_load_file(&gFile_TEX1_TAB, 0x25);
+    queue_alloc_load_file((void **) &gFile_TEX_TAB[0], 0x28);
+    queue_alloc_load_file((void **) &gFile_TEX_TAB[1], 0x25);
     queue_alloc_load_file(&gFile_TEXTABLE, 0x26);
     for (i = 0; i < 2; i++) {
-        temp_a1 = gFile_TEX0_TAB[i];
+        temp_a1 = gFile_TEX_TAB[i];
         for (var_v1 = 0; temp_a1[var_v1] != -1; var_v1++) {}
         D_800B49B8[i] = (var_v1 - 1);
     }
@@ -123,7 +124,7 @@ Texture* texture_load(s32 id, s32 param2) {
         var_v0_3 = 0;
         sp74 = 0x27;
     }
-    temp_v0_2 = (Unk800B49A8 *)&gFile_TEX0_TAB[var_v0_3][var_a0];
+    temp_v0_2 = (Unk800B49A8 *)&gFile_TEX_TAB[var_v0_3][var_a0];
     temp_v1_2 = temp_v0_2->unk0;
     temp_t0 = temp_v1_2 >> 0x18;
     temp_s0 = temp_v1_2 & 0xFFFFFF;

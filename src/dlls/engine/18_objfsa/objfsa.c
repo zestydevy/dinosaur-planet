@@ -1,7 +1,11 @@
 #include "dlls/engine/18_objfsa.h"
 #include "sys/curves.h"
+#include "sys/dll.h"
+#include "sys/main.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "dll.h"
 
 // This is a modgfx interface?
 DLL_INTERFACE(DLL_18_UnknownDLL) {

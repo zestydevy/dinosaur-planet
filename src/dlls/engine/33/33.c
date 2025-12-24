@@ -4,10 +4,15 @@
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/260_Pollen.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "sys/memory.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/voxmap.h"
+#include "dll.h"
+#include "functions.h"
 
 // Common object setup for objects that drop from defeating a baddie
 typedef struct {

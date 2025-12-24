@@ -1,28 +1,31 @@
 #include "common.h"
+#include "macros.h"
 
-extern Fs * gFST;
-extern u32 gLastFSTIndex;
 extern s32 __fstAddress;
 extern s32 __file1Address;
 
 void read_from_rom(u32 romAddr, u8* dst, s32 size);
 
-
 extern void * romcopy_dat;
-extern OSMesgQueue D_800B2EA8;
-extern OSMesg D_800B2E68;
-extern OSMesg D_800B2E48;
-extern OSIoMesg romcopy_OIMesg;
-extern OSMesgQueue romcopy_mesgq;
+
+// -------- .bss start 800b2e30 -------- //
+OSIoMesg romcopy_OIMesg;
+OSMesg D_800B2E48[1];
+OSMesgQueue romcopy_mesgq;
+OSMesg D_800B2E68[16];
+OSMesgQueue D_800B2EA8;
+Fs *gFST;
+u32 gLastFSTIndex;
+// -------- .bss end 800b2ed0 -------- //
 
 void init_filesystem(void)
 {
     s32 size;
 
-    osCreateMesgQueue(&D_800B2EA8, &D_800B2E68, 0x10);
-    osCreateMesgQueue(&romcopy_mesgq, &D_800B2E48, 1);
+    osCreateMesgQueue(&D_800B2EA8, D_800B2E68, ARRAYCOUNT(D_800B2E68));
+    osCreateMesgQueue(&romcopy_mesgq, D_800B2E48, ARRAYCOUNT(D_800B2E48));
 
-    osCreatePiManager(0x96, &D_800B2EA8, &D_800B2E68, 0x10);
+    osCreatePiManager(0x96, &D_800B2EA8, D_800B2E68, ARRAYCOUNT(D_800B2E68));
 
     // A4AA0 - A4970
     size = (s32)&__file1Address - (s32)&__fstAddress;

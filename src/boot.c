@@ -2,14 +2,14 @@
 #include "sys/main.h"
 #include "sys/thread.h"
 #include "macros.h"
-#include "bss.h"
 
-// .bss
-
-BSS_GLOBAL u64 gIdleThreadStack[IDLE_THREAD_SIZE + 1];
-BSS_GLOBAL u64 gMainThreadStack[MAIN_THREAD_SIZE + 1];
-BSS_GLOBAL OSThread gIdleThread;
-BSS_GLOBAL OSThread gMainThread;
+/* -------- .bss start 800a3d70 -------- */
+u64 gIdleThreadStack[STACKSIZE(IDLE_THREAD_SIZE) + 1];
+u64 gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE) + 1];
+OSThread gIdleThread;
+OSThread gMainThread;
+u8 D_800A6220[0x50];
+/* -------- .bss end 800a6270 -------- */
 
 void idle(void * arg);
 
@@ -18,16 +18,16 @@ void bootproc(void) {
     osInitialize();
     // @bug: The idle thread stack size was shrunk but the call to osCreateThread was not adjusted!
     osCreateThread(&gIdleThread, IDLE_THREAD_ID, &idle, NULL, 
-        &gIdleThreadStack[IDLE_THREAD_SIZE + 0x18], IDLE_THREAD_PRIORITY);
+        &gIdleThreadStack[STACKSIZE(IDLE_THREAD_SIZE) + 0x18], IDLE_THREAD_PRIORITY);
     osStartThread(&gIdleThread);
 }
 
 void idle(void * arg)
 {
     osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainproc, NULL, 
-        &gMainThreadStack[MAIN_THREAD_SIZE], MAIN_THREAD_PRIORITY);
+        &gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)], MAIN_THREAD_PRIORITY);
 
-    gMainThreadStack[MAIN_THREAD_SIZE] = 0;
+    gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)] = 0;
     gMainThreadStack[0] = 0;
 
     osStartThread(&gMainThread);
@@ -38,9 +38,9 @@ void idle(void * arg)
 
 // official name: bootCheckStack
 void thread_timer_tick(void) {
-    gMainThreadStack[MAIN_THREAD_SIZE]++;
+    gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)]++;
     gMainThreadStack[0]++;
-    if (gMainThreadStack[MAIN_THREAD_SIZE] != gMainThreadStack[0]) {
+    if (gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)] != gMainThreadStack[0]) {
         STUBBED_PRINTF("WARNING: Stack overflow/underflow!!!\n");
     }
 }

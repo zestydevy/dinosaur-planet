@@ -102,12 +102,7 @@ extern void *D_80092FE4;
 extern s8 D_80093060;
 extern UnkVidStruct3 D_80093068[];
 
-extern UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
-extern Texture *D_800BCC68;
-extern Texture *D_800BCC6C;
-extern Texture *D_800BCC70;
-extern u8 D_800BCC78;
-extern f32 D_800BCC80[2];
+
 
 extern OSViMode gTvViMode;
 
@@ -156,8 +151,6 @@ extern f32 gViHeightRatio;
 extern s8 gVScaleMod;
 extern s8 gHStartMod;
 
-extern OSMesg D_800bccc0[8];
-extern OSMesgQueue gVideoMesgQueue;
 
 extern u32 gViBlackTimer;
 extern s32 gDisplayHertz;
@@ -171,7 +164,7 @@ extern u8 *D_800BCE18[];
 extern u8 D_800BCE20; // index of D_800BCE22?
 extern u8 D_800BCE22[2];
 
-extern float gAspectRatio; //1.121212 for PAL, 1.333 for NTSC/MPAL.
+extern f32 gAspectRatio; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
 extern OSScClient gVideoSched;
 

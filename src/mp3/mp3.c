@@ -29,9 +29,9 @@ extern s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
 	_a->words.w1 = a;                    \
 }
 
-// -------- .bss start -------- //
-struct mp3vars g_Mp3Vars; // 0x800bff00
-// -------- .bss end -------- //
+/* -------- .bss start 800bff00 -------- */
+struct mp3vars g_Mp3Vars;
+/* -------- .bss end 800bff70 -------- */
 
 void mp3_update_vars(struct mp3vars*);
 s32 mp3_handle_dma(s32 arg0, u8 *dst, s32 len, s32 dmaoffset);

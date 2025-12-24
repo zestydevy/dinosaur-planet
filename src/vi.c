@@ -1,4 +1,12 @@
-#include "common.h"
+#include "PR/os.h"
+#include "PR/sched.h"
+#include "PR/ultratypes.h"
+#include "sys/gfx/gx.h"
+#include "sys/joypad.h"
+#include "sys/main.h"
+#include "sys/memory.h"
+#include "functions.h"
+#include "macros.h"
 
 #define REFRESH_50HZ 50
 #define REFRESH_60HZ 60
@@ -36,9 +44,41 @@ void vi_update_mode(void);
 void vi_func_8005DEE8(void);
 int vi_contains_point(s32 x, s32 y);
 
-extern OSIoMesg D_800BCC90;
 extern OSDevMgr __osViDevMgr;
 extern s8 D_80093064;
+
+/* -------- .bss start 800bcc90 -------- */
+OSIoMesg D_800BCC90;
+u16 *gFramebufferNext;
+u16 *gFramebufferCurrent;
+u16 *D_800BCCB0;
+u16 *D_800BCCB4;
+f32 gViHeightRatio;
+OSMesg D_800bccc0[8];
+OSMesgQueue gVideoMesgQueue;
+u8 _bss_800bccf8[0xA8];
+OSViMode gTvViMode;
+u32 gCurrentResolutionH[2];
+u32 gCurrentResolutionV[2];
+u16 *gFramebufferPointers[2];
+u16 *gFramebufferEnd;
+u32 gFramebufferChoice;
+s32 gVideoMode;
+u32 gViBlackTimer;
+u8 *D_800BCE18[2];
+u8 D_800BCE20; // index of D_800BCE22?
+u8 D_800BCE22[2];
+s8 gHStartMod;
+s8 gVScaleMod;
+s32 gDisplayHertz;
+u8 D_800BCE2C;
+f32 gAspectRatio; //1.121212 for PAL, 1.333 for NTSC/MPAL.
+u8 gViUpdateRateTarget;
+u8 _bss_800bce38[0x20];
+u8 D_800BCE58;
+u8 gViUpdateRate;
+OSScClient gVideoSched;
+/* -------- .bss end 800bce70 -------- */
 
 void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
     int i;

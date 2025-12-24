@@ -1,5 +1,4 @@
 #include "common.h"
-#include "bss.h"
 
 // size: 0x38
 typedef struct {
@@ -37,8 +36,10 @@ typedef struct
 
 extern s32 NOTosContSetch(OSMesgQueue *, void*);
 
-BSS_GLOBAL UnkOSPifRam* D_800A8640;
-BSS_GLOBAL UnkOSPifRam D_800A8648;
+/* -------- .bss start 800a8640 -------- */
+UnkOSPifRam* D_800A8640;
+UnkOSPifRam D_800A8648;
+/* -------- .bss end 800a8690 -------- */
 
 void controller_querey(OSMesgQueue* arg0, ContQueryStruct* arg1) {
     s32 i;

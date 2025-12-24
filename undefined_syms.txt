@@ -24,11 +24,10 @@ D_800917B4 = 0x800917b4;
 D_800917B8 = 0x800917b8;
 D_800917C4 = 0x800917c4;
 D_80091800 = 0x80091800;
+D_800A6220 = 0x800a6220;
 ossceduler_stack = 0x800ae9c0;
 gControllerThreadStack = 0x800A8200;
-gPiManagerThreadStack = 0x800beb10;
 viThreadStack = 0x800bd0a8;
-gCrashThreadStack = 0x800B34C8;
 __osBaseTimer = 0x800cee90;
 piThreadStack = 0x800CD840;
 piRamRomThreadStack = 0x800CE9F0;
@@ -39,7 +38,6 @@ gAudioThreadStack = 0x800a8948;
 __fstAddress = 0xA4970;
 __file1Address = 0xA4AA0;
 
-alSndPlayer_struct = 0x800bfe90;
 __CartRomHandle = 0x800cd5a0;
 __LeoDiskHandle = 0x800cd618;
 

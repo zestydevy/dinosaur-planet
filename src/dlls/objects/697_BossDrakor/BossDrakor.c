@@ -5,6 +5,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/model.h"
+#include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objhits.h"

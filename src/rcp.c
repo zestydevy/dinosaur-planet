@@ -55,20 +55,19 @@ Gfx D_80091868[] = {
     gsDPNoOp()
 };
 
-// .bss
-
-extern u8 gGfxDramStack[SP_DRAM_STACK_SIZE8];
-extern OSMesgQueue gRCPUnusedMesgQueue1;
-extern OSMesg gRCPUnusedMesgBuf1[1];
-extern OSMesgQueue gRCPUnusedMesgQueue2;
-extern OSMesgQueue gGfxTaskMesgQueue;
-extern OSMesg gRCPUnusedMesgBuf2[8];
-extern OSMesg gGfxTaskMesgBuf[8];
-extern OSScTask gGfxTasks[2];
-extern OSMesgQueue *gScInterruptQ;
-
-// .bss but in the next segment
-extern u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
+// -------- .bss start 800b3790 -------- //
+u8 gGfxDramStack[SP_DRAM_STACK_SIZE8];
+OSMesgQueue gRCPUnusedMesgQueue1;
+OSMesg gRCPUnusedMesgBuf1[1];
+OSMesgQueue gRCPUnusedMesgQueue2;
+OSMesgQueue gGfxTaskMesgQueue;
+OSMesg gRCPUnusedMesgBuf2[8];
+OSMesg gGfxTaskMesgBuf[8];
+OSScTask gGfxTasks[2];
+OSMesgQueue *gScInterruptQ;
+u8 _bss_800b3d08[0x18];
+u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
+// -------- .bss end 800b4920 -------- //
 
 void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8); 
 Texture* func_8003E904(Texture* arg0, s32 arg1);

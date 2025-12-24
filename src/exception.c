@@ -1,4 +1,5 @@
 #include "PR/os_internal.h"
+#include "macros.h"
 #include "sys/crash.h"
 #include "libc/stdarg.h"
 #include "common.h"
@@ -151,6 +152,31 @@ s32 D_800937f8[3] = {0};
 u8 gCFileLabelIndex = 0;
 u8 gCFileLabelFlag = 0;
 
+// Length of gPiManagerArray
+#define PI_MANAGER_ARRAY_LENGTH 5
+// Length of gPiManagerEventQueueBuffer
+#define PI_MANAGER_EVENT_QUEUE_LENGTH 8
+// Length of gPiManagerCmdQueueBuffer
+#define PI_MANAGER_CMD_QUEUE_LENGTH 8
+// Length of gCFileLabels and gSomeCFileInts
+#define C_FILE_LABELS_LENGTH 10
+
+/* -------- .bss start 800beb10 -------- */
+u64 gPiManagerThreadStack[STACKSIZE(OS_PIM_STACKSIZE)];
+OSThread gPiManagerThread;
+s32 gPiManagerArray[PI_MANAGER_ARRAY_LENGTH];
+OSMesgQueue gPiManagerEventQueue;
+OSMesg gPiManagerEventQueueBuffer[PI_MANAGER_EVENT_QUEUE_LENGTH];
+OSMesg gPiManagerCmdQueueBuffer[PI_MANAGER_CMD_QUEUE_LENGTH];
+OSMesgQueue gPiManagerCmdQueue;
+OSMesgQueue gCrashControllerMesgQueue;
+OSContPad gCrashContPadArray1[MAXCONTROLLERS];
+OSContPad gCrashContPadArray2[MAXCONTROLLERS];
+u16 gCrashButtons[MAXCONTROLLERS];
+const char *gCFileLabels[C_FILE_LABELS_LENGTH];
+s32 gSomeCFileInts[C_FILE_LABELS_LENGTH];
+/* -------- .bss end 800bfe70 -------- */
+
 void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4);
 void crash_copy_control_inputs();
 void crash_print_line(s32 x, s32 y, char *fmt, ...);
@@ -173,7 +199,7 @@ void start_pi_manager_thread() {
         /*id*/      -1,
         /*entry*/   &pi_manager_entry,
         /*arg*/     NULL,
-        /*sp*/      &gPiManagerThreadStack[OS_PIM_STACKSIZE],
+        /*sp*/      &gPiManagerThreadStack[STACKSIZE(OS_PIM_STACKSIZE)],
         /*pri*/     OS_PRIORITY_MAX
     );
 

@@ -36,11 +36,14 @@ typedef struct oscData_s {
 	} data;
 } oscData;
 
-oscData *freeOscStateList;
-oscData *oscStates;
 
 extern s32 D_800967A0[127];
 extern f32 D_8009699C[100];
+
+/* -------- .bss start 800bff70 -------- */
+oscData *freeOscStateList;
+oscData *oscStates;
+/* -------- .bss end 800bff80 -------- */
 
 ALMicroTime initOsc(void **oscState, f32 *initVal, u8 oscType, u8 oscRate, u8 oscDepth, u8 oscDelay, u8 arg6);
 ALMicroTime updateOsc(void *oscState, f32 *updateVal);

@@ -9,7 +9,7 @@ u32 D_80096790 = 0;
 // -------- .data end -------- //
 
 // -------- .bss start -------- //
-extern struct asistream g_AsiStream; // 0x800c4e60
+struct asistream g_AsiStream; // 0x800c4e60
 // -------- .bss end -------- //
 
 s32 mp3_main_func_80071cf0(struct asistream *stream) {

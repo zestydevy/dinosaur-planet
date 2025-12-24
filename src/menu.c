@@ -9,8 +9,8 @@
 #include "dll.h"
 #include "dll_def.h"
 #include "functions.h"
-#include "bss.h"
 
+/* -------- .data start -------- */
 s32 gMenuDLLIDs[] = {
     /*0*/  -1,
     /*1*/  19,
@@ -35,31 +35,34 @@ s32 gMenuDLLIDs[] = {
 s32 D_8008C888 = -1;
 s8 D_8008C88C = 0;
 s32 D_8008C890 = 0;
+/* -------- .data end -------- */
 
-BSS_GLOBAL s32 D_800A7D50;
-BSS_GLOBAL DLL_IMenu *gActiveMenuDLL;
-BSS_GLOBAL s32 D_800A7D58;
-BSS_GLOBAL s32 D_800A7D5C;
-BSS_GLOBAL s32 D_800A7D60;
-BSS_GLOBAL s32 D_800A7D64;
-BSS_GLOBAL u8 gSaveGameIdx;
-BSS_GLOBAL u8 D_800A7D69;
-BSS_GLOBAL s32 D_800A7D6C;
-BSS_GLOBAL f32 D_800A7D70;
-BSS_GLOBAL f32 D_800A7D74;
-BSS_GLOBAL s8 D_800A7D78;
-BSS_GLOBAL s8 D_800A7D79;
-BSS_GLOBAL u32 D_800A7D7C;
-BSS_GLOBAL s32 gNextMenuID;
-BSS_GLOBAL s32 gCurrentMenuID;
-BSS_GLOBAL s32 gPreviousMenuID;
-BSS_GLOBAL s16 D_800A7D8C;
-BSS_GLOBAL s16 D_800A7D8E;
-BSS_GLOBAL s16 D_800A7D90;
-BSS_GLOBAL s16 D_800A7D92;
-BSS_GLOBAL s8 D_800A7D94;
-BSS_GLOBAL char D_800A7D98[8];
-BSS_GLOBAL char D_800A7DA0[8];
+/* -------- .bss start 800a7d50 -------- */
+s32 D_800A7D50;
+DLL_IMenu *gActiveMenuDLL;
+s32 D_800A7D58;
+s32 D_800A7D5C;
+s32 D_800A7D60;
+s32 D_800A7D64;
+u8 gSaveGameIdx;
+u8 D_800A7D69;
+s32 D_800A7D6C;
+f32 D_800A7D70;
+f32 D_800A7D74;
+s8 D_800A7D78;
+s8 D_800A7D79;
+u32 D_800A7D7C;
+s32 gNextMenuID;
+s32 gCurrentMenuID;
+s32 gPreviousMenuID;
+s16 D_800A7D8C;
+s16 D_800A7D8E;
+s16 D_800A7D90;
+s16 D_800A7D92;
+s8 D_800A7D94;
+char D_800A7D98[8];
+char D_800A7DA0[8];
+/* -------- .bss end 800a7db0 -------- */
 
 void menu_do_menu_swap();
 void func_80010088();

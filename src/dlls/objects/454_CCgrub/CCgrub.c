@@ -1,6 +1,11 @@
 #include "dlls/objects/210_player.h"
+#include "game/gamebits.h"
+#include "sys/curves.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "dll.h"
+#include "functions.h"
 
 typedef struct {
     UnkCurvesStruct unk0;

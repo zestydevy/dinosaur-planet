@@ -4,10 +4,13 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/332_FXEmit.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "dll.h"
+#include "functions.h"
 
 typedef struct {
 /*00:0*/ u32 pad0_0 : 8;

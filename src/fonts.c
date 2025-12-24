@@ -6,13 +6,14 @@
 #include "sys/gfx/texture.h"
 #include "sys/memory.h"
 #include "functions.h"
-#include "bss.h"
 
-BSS_GLOBAL s32 gNumFonts;
-BSS_GLOBAL FontData *gFile_FONTS_BIN;
-BSS_GLOBAL FontWindow *gFontWindows;
-BSS_GLOBAL FontString *gFontStrings;
-BSS_GLOBAL s32 gFontSquash;
+/* -------- .bss start 800a7d30 -------- */
+s32 gNumFonts;
+FontData *gFile_FONTS_BIN;
+FontWindow *gFontWindows;
+FontString *gFontStrings;
+s32 gFontSquash;
+/* -------- .bss end 800a7d50 -------- */
 
 // Descending powers of 10
 s32 gDescPowsOf10[] = {

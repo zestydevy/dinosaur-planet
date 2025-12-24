@@ -1146,7 +1146,6 @@ osClockRate = 0x80096c40;
 romfunc_zero_speed = 0xb39235f0; // type:func
 romfunc_mod_player_HPMax = 0xb3936378; // type:func
 Vec3_Int_array = 0x800b51e8; // size:0x140
-controller_thread_stack_start = 0x800a8600;
 PlayerPosBuffer = 0x800ae2b0; // size:0x3c0
 PlayerPosBuffer_index = 0x800ae670; // size:0x4
 gUpdateRate = 0x8008c950; // size:0x1
@@ -1231,8 +1230,7 @@ doNothing_80022DD8 = 0x80022DD8; // type:func
 
 gFST = 0x800b2ec0; // size 0x4
 gLastFSTIndex = 0x800b2ec4; // size 0x4
-gFile_TEX0_TAB = 0x800b49a0; // size 0x4
-gFile_TEX1_TAB = 0x800b49a4; // size 0x4
+gFile_TEX_TAB = 0x800b49a0; // size:0x8
 gFile_TEXTABLE = 0x800b49ac; // size 0x4
 gFile_MAPS_TAB = 0x800b9720; // size 0x4
 gFile_HITS_TAB = 0x800b971c; // size 0x4
@@ -1503,9 +1501,7 @@ gMapCurrentStreamCoordsZ = 0x80092a6C;
 gMapNumStreamMaps = 0x80092aa4; // size:0x4
 gMapType = 0x800B96A8; // size:0x1
 gMapActiveStreamMap = 0x800b96ac; // size:0x4
-gMapStreamMapTable = 0x800b9728; // size:0x4
-gMapStreamMapIDTable = 0x800b972c; // size:0x4
-gMapGridTable = 0x800b976c; // size:0x4
+gMapStreamMapTable = 0x800b9728; // size:0x40
 gBlockTextures = 0x800b97a4; // size:0x4
 gDisableObjectStreamingFlag = 0x800ae29c; // size:0x1
 
@@ -1687,8 +1683,8 @@ gCurRSPTaskIsSet = 0x800B4980;
 gCurRDPTaskIsSet = 0x800B4984;
 gLastGfxYield = 0x800B4988; // size:0x8
 
-assetThread = 0x800AC918;
-assetThreadStackEnd = 0x800AC910;
+gAssetThread = 0x800AC918;
+gAssetThreadStack = 0x800AB970; // size:0xFA8
 gCurGfx = 0x800AE680;
 gFrameBufIdx = 0x800B09C1;
 gPauseState = 0x800B09C2;
@@ -1701,8 +1697,8 @@ gCurVtx = 0x800AE6A0;
 gCurPol = 0x800AE6B0;
 map_set_object_streaming_disabled = 0x800129D4; // type:func
 
-assetLoadThreadSendQueue = 0x800ACB48;
-assetLoadThreadRecvQueue = 0x800ACB98;
+gAssetLoadThreadSendQueue = 0x800ACB48;
+gAssetLoadThreadRecvQueue = 0x800ACB98;
 assetLoadMsg = 0x800AE270;
 get_loaded_dlls = 0x8000BDE8; // type:func
 main_set_bits = 0x80014670; // type:func
@@ -1743,7 +1739,7 @@ gAssetThreadQueue = 0x800acbc8;
 gAssetThreadQueueData = 0x800acbd0;
 
 gAssetThreadStackInternal = 0x800ae1c0;
-gAssetThreadStack = 0x800ae1d0;
+gAssetThreadGenericStack = 0x800ae1d0;
 gAssetThreadStackData = 0x800ae1d8;
 
 generic_queue_init = 0x8000adf0; // type:func

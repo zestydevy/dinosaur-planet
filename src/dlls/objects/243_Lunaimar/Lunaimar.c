@@ -2,9 +2,15 @@
 #include "dlls/engine/33.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "sys/main.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/rand.h"
 #include "unktypes.h"
+#include "functions.h"
+#include "dll.h"
 
 typedef struct {
     f32 unk0;

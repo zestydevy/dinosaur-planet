@@ -27,12 +27,6 @@ enum ObjectGroup {
 	GROUP_UNK48 = 48
 };
 
-//used for PlayerPosBuffer and something else
-struct Vec3_Int{
-    Vec3f f;
-    u32 i; //seems to be a 32-bit bool. (for player pos buffer it's a frame count)
-};
-
 // base objdata of objects in group 16?
 typedef struct {
 /*0000*/ struct Object *unk0;
@@ -293,7 +287,6 @@ typedef struct {
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
-extern struct Vec3_Int Vec3_Int_array[20];
 extern SidekickSetup D_80091688;
 
 #endif

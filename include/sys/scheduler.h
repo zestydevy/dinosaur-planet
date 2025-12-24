@@ -45,12 +45,6 @@ typedef struct {
     s32 unk4;
 } GfxTaskMesg;
 
-extern s32 gCurRSPTaskIsSet;
-extern s32 gCurRDPTaskIsSet;
-
-extern u32 gRSPAudTaskFlushTime;
-extern u32 gRSPAudTaskDoneTime;
-
 void osCreateScheduler(OSSched *s, void *stack, OSPri priority, u8 mode, u8 retraceCount);
 
 void osScRemoveClient(OSSched *s, OSScClient *c);
