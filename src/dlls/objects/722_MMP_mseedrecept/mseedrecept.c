@@ -117,14 +117,14 @@ void mmp_mseedrecept_control(Object* self) {
         objData->unk0 = 2;
         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
         main_set_bits(objData->gamebitPlanted, 1);
-        objData->unk1 &= 0xFFFE;
+        objData->unk1 &= ~1;
         self->opacity = 255;
     }
     
     if (gDLL_7_Newday->vtbl->func8(&time) || objData->unk0 == 3){
         objData->unk1 |= 2;
     } else {
-        objData->unk1 &= 0xFFFD;
+        objData->unk1 &= ~2;
     }
     
     bssIndex = 0;

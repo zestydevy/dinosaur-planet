@@ -5,6 +5,7 @@
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 #include "unktypes.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
     f32 unk0;
