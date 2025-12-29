@@ -22,7 +22,7 @@ extern OSMesg D_800ACB80[5];
 extern OSMesg D_800ACBB0[1];
 
 // pad to 0x800ad6c0
-static u8 _bss_pad[0x5220]; // TODO: remove bss padding
+static u8 _bss_pad[0x5180]; // TODO: remove bss padding
 
 void func_80012A4C();
 void asset_thread_load_single(void);
@@ -360,7 +360,7 @@ void asset_thread_load_single(void) {
                 block_load(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
                 break;
             case 0:
-                queue_block_emplace(0, sp2C.unk4, func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
+                queue_block_emplace(0, sp2C.unk4, voxmap_load_slot(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
                 break;
             case 6:
                 queue_block_emplace(6, sp2C.unk4, func_80007620(sp2C.unk8, sp2C.unkC), 0, 0);

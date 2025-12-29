@@ -11,7 +11,6 @@
 #include "dll.h"
 #include "constants.h"
 #include "libc/string.h"
-#include "prevent_bss_reordering.h"
 
 /* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";
 

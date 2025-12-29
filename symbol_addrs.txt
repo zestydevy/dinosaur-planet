@@ -1835,3 +1835,13 @@ route_heap_extract = 0x8003A0B8; // type:func
 route_add_point = 0x8003A130; // type:func
 route_find_point = 0x8003A240; // type:func
 route_is_goal = 0x8003A298; // type:func
+
+gVoxmapTextureIndices = 0x800A7C70;
+gVoxmapObjectIndices = 0x800A7C74;
+gVoxmapCacheTimers = 0x800A7CD0;
+gVoxmapSlotUsed = 0x800A7CE8;
+gVoxmapCurrentObject = 0x800A7D08;
+gVoxmapBlockIDs = 0x800A7CB8;
+gVoxmapLastSearchedSlot = 0x800A7CA0;
+
+voxmap_find_closest_slot = 0x80007778; // type:func

@@ -146,9 +146,9 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 arg
         srt.transl.x = obj->def->pAttachPoints[attachIdx].pos.x;
         srt.transl.y = obj->def->pAttachPoints[attachIdx].pos.y;
         srt.transl.z = obj->def->pAttachPoints[attachIdx].pos.z;
-        srt.yaw = obj->def->pAttachPoints[attachIdx].rot[0];
-        srt.pitch = obj->def->pAttachPoints[attachIdx].rot[1];
-        srt.roll = obj->def->pAttachPoints[attachIdx].rot[2];
+        srt.yaw = obj->def->pAttachPoints[attachIdx].rot.x;
+        srt.pitch = obj->def->pAttachPoints[attachIdx].rot.y;
+        srt.roll = obj->def->pAttachPoints[attachIdx].rot.z;
     }
     matrix_from_srt_reversed(&sp5C, (SRT* ) &srt);
     matrix_concat_4x3(&sp5C, sp9C, &sp5C);
