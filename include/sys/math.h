@@ -120,11 +120,7 @@ typedef f32 Vec2[2];
 typedef f32 Vec3[3];
 typedef f32 Vec4[4];
 typedef union {
-    struct {
-        s16 unk0;
-        s16 unk2;
-        s16 unk4;
-    };
+    struct { s16 x, y, z; };
     s16 s[3];
 } Vec3s16;
 

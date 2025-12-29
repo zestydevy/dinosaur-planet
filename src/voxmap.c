@@ -726,10 +726,10 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     arg2[0] = arg1[0];
     var_s2 = FALSE;
     var_s3 = FALSE;
-    sp5C.unk2 = arg1->unk2;
+    sp5C.y = arg1->y;
     while (var_s0 == FALSE) {
-        sp5C.unk0 = temp_v0[sp7C] & 0xFFFF & 0xFFFF;
-        sp5C.unk4 = temp_v0[sp7C] >> 0x10;
+        sp5C.x = temp_v0[sp7C] & 0xFFFF & 0xFFFF;
+        sp5C.z = temp_v0[sp7C] >> 0x10;
         if ((var_s2 == FALSE) && func_80008048(&sp5C, arg0, &sp54, NULL, 0)) {
             var_s5 = -1;
             var_s0 = TRUE;
@@ -740,13 +740,13 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
             } else if (sp7C >= sp6C) {
                 sp7C = 0;
             }
-            if ((sp54.unk0 == sp5C.unk0) && (sp54.unk2 == sp5C.unk2) && (sp54.unk4 == sp5C.unk4)) {
+            if ((sp54.x == sp5C.x) && (sp54.y == sp5C.y) && (sp54.z == sp5C.z)) {
                 var_s2 = TRUE;
             }
         }
         if (var_s0 == FALSE) {
-            sp5C.unk0 = temp_v0[sp80] & 0xFFFF & 0xFFFF;
-            sp5C.unk4 = temp_v0[sp80] >> 0x10;
+            sp5C.x = temp_v0[sp80] & 0xFFFF & 0xFFFF;
+            sp5C.z = temp_v0[sp80] >> 0x10;
             if ((var_s3 == FALSE) && func_80008048(&sp5C, arg0, &sp54, NULL, 0)) {
                 var_s0 = TRUE;
                 var_s5 = 1;
@@ -756,7 +756,7 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
                 if (sp80 < 0) {
                     sp80 = sp6C - 1;
                 }
-                if ((sp54.unk0 == sp5C.unk0) && (sp54.unk2 == sp5C.unk2) && (sp54.unk4 == sp5C.unk4)) {
+                if ((sp54.x == sp5C.x) && (sp54.y == sp5C.y) && (sp54.z == sp5C.z)) {
                     var_s3 = TRUE;
                 }
             }
@@ -1130,7 +1130,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
 
     sp104 = 2;
     sp9C = arg0[0];
-    var_v1 = arg1->unk0 - sp9C.s[0];
+    var_v1 = arg1->s[0] - sp9C.s[0];
     if (var_v1 < 0) {
         sp104 = -2;
         var_v1 = -var_v1;
@@ -1325,7 +1325,7 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
     u8 sp40;
     u8 sp3C[12];
 
-    if ((arg0->unkC.unk0 == arg4->s[0]) && (arg0->unkC.s[2] == arg4->s[2])) {
+    if ((arg0->unkC.s[0] == arg4->s[0]) && (arg0->unkC.s[2] == arg4->s[2])) {
         sp78 = arg0->unk1C;
         func_8000A9AC(arg0, arg4, arg3, arg2);
         func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, 1U);
