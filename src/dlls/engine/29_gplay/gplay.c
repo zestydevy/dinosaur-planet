@@ -14,7 +14,6 @@
 #include "sys/memory.h"
 #include "functions.h"
 #include "dll.h"
-#include "prevent_bss_reordering.h"
 
 static const char str1[] = "gplayLoadGame error: savegame and backup failed to load.\n";
 static const char str2[] = "gplayLoadOptions error: saveoptions failed to load.\n";

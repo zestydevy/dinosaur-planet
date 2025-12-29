@@ -14,151 +14,122 @@ static const char str_80098670[] = "**** HEAP INSERT ****\n";
 static const char str_80098688[] = "VOXMAPS: route nodes list overflow\n";
 static const char str_800986ac[] = "**** NODE FIND ****\n";
 
-typedef struct {
-    s32 pad0;
-    s32 unk4;
-    s32 pad8;
-    s32 unkC;
-    s32 pad10;
-    u8 *unk14;
-    s32 pad18;
-    u8 *unk1C;
-    s32 pad20;
-    u8 *unk24;
-} Unk800A7CA0Inner;
-
-typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s32 unkC;
-    Unk800A7CA0Inner *unk10;
-} Unk800A7CA0;
-
-Unk800A7CA0* func_80007A58(Vec3s16 *arg0);
-
-s32* D_800A7C70;
-s32* D_800A7C74;
-void* D_800A7C78;
-Unk800A7CA0* D_800A7C80[6];
-s32* D_800A7C98;
-// missing 0x800A7C9C
-Unk800A7CA0 D_800A7CA0;
-extern s32 D_800A7CAC;
-s32 D_800A7CB8[6];
-s32 D_800A7CD0[6];
-u8 D_800A7CE8[6];
-s16 D_800A7CF0[6][2];
-Object *D_800A7D08;
-s32 D_800A7D0C;
-
-#define SOME_VALUE 0x40000000
+#define CACHE_TTL 0x40000000
 #define SOME_FACTOR 10
+#define SLOT_COUNT 6
 
-void func_80006F50(void) {
+s32* gVoxmapTextureIndices; // D_800A7C70
+s32* gVoxmapObjectIndices; // D_800A7C74
+void* D_800A7C78; // gVoxelCircleBuffer?
+VoxmapSlot* D_800A7C80[SLOT_COUNT];
+s32* D_800A7C98; // gPathfindingRingBuffer?
+VoxmapSlot gVoxmapLastSearchedSlot;
+s32 gVoxmapBlockIDs[SLOT_COUNT];
+s32 gVoxmapCacheTimers[SLOT_COUNT];
+u8 gVoxmapSlotUsed[SLOT_COUNT]; // gVoxmapInUseFlags?
+s16 D_800A7CF0[6][2]; // gVoxmapOriginPositions?
+Object *gVoxmapCurrentObject;
+s32 D_800A7D0C; // gVoxmapObjectCount?
+
+
+void voxmap_init(void) {
     s32 i;
 
-    queue_alloc_load_file(&D_800A7C70, TEXPRE_TAB);
-    queue_alloc_load_file(&D_800A7C74, VOXOBJ_TAB);
-    for (i = 0; D_800A7C74[i] != -1; i++) {}
+    queue_alloc_load_file((void**)&gVoxmapTextureIndices, TEXPRE_TAB);
+    queue_alloc_load_file((void**)&gVoxmapObjectIndices, VOXOBJ_TAB);
+    for (i = 0; gVoxmapObjectIndices[i] != -1; i++) {}
 
     D_800A7D0C = --i;
-    D_800A7C78 = mmAlloc(0x280, 0x10, NULL);
+    D_800A7C78 = mmAlloc(0x280, ALLOC_TAG_VOX_COL, NULL);
     i = 0;
-    while (i < 6) {
+    while (i < SLOT_COUNT) {
         D_800A7C80[i] = NULL;
-        D_800A7CB8[i] = -2;
-        D_800A7CD0[i] = SOME_VALUE;
-        D_800A7CE8[i] = 0;
+        gVoxmapBlockIDs[i] = -2;
+        gVoxmapCacheTimers[i] = CACHE_TTL;
+        gVoxmapSlotUsed[i] = FALSE;
         D_800A7CF0[i][0] = 0;
         D_800A7CF0[i][1] = 0;
         i++;
     }
     D_800A7C98 = D_800A7C78;
-    D_800A7D08 = NULL;
+    gVoxmapCurrentObject = NULL;
 }
 
-void func_800070FC(void) {
-    Unk800A7CA0 *temp_a0;
+void voxmap_free(void) {
+    VoxmapSlot *temp_a0;
     s32 i;
 
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < SLOT_COUNT; i++) {
         temp_a0 = D_800A7C80[i];
         if (temp_a0 != NULL) {
             mmFree(temp_a0);
             D_800A7C80[i] = NULL;
         }
     }
-    mmFree(D_800A7C70);
-    mmFree(D_800A7C74);
+    mmFree(gVoxmapTextureIndices);
+    mmFree(gVoxmapObjectIndices);
     mmFree(D_800A7C78);
 }
 
-void func_80007178(void) {
+void voxmap_update_cache_timers(void) {
     s32 i;
 
-    for (i = 0; i < 6; i++) {
-        if (SOME_VALUE-1 > D_800A7CD0[i]) {
-            D_800A7CD0[i]++;
+    for (i = 0; i < SLOT_COUNT; i++) {
+        if (CACHE_TTL-1 > gVoxmapCacheTimers[i]) {
+            gVoxmapCacheTimers[i]++;
         }
     }
 }
 
-Unk800A7CA0 *func_80007224(void) {
-    s32 var_v0;
-    s32 var_v1;
+VoxmapSlot *voxmap_reserve_slot(void) {
+    s32 minTTL;
+    s32 cachedItemIdx;
     s32 i;
 
-    var_v0 = -1;
-    var_v1 = -1;
-    for (i = 0; i < 6; i++) {
-        if (D_800A7CE8[i] == 0 && var_v0 < D_800A7CD0[i]) {
-            var_v1 = i;
-            var_v0 = D_800A7CD0[i];
+    minTTL = -1;
+    cachedItemIdx = -1;
+    for (i = 0; i < SLOT_COUNT; i++) {
+        if (gVoxmapSlotUsed[i] == FALSE && minTTL < gVoxmapCacheTimers[i]) {
+            cachedItemIdx = i;
+            minTTL = gVoxmapCacheTimers[i];
         }
     }
 
-    if (var_v1 != -1) {
-        D_800A7CD0[var_v1] = SOME_VALUE;
-        D_800A7CB8[var_v1] = -1;
-        D_800A7CE8[var_v1] = 1;
-        return D_800A7C80[var_v1];
+    if (cachedItemIdx != -1) {
+        gVoxmapCacheTimers[cachedItemIdx] = CACHE_TTL;
+        gVoxmapBlockIDs[cachedItemIdx] = -1;
+        gVoxmapSlotUsed[cachedItemIdx] = TRUE;
+        return D_800A7C80[cachedItemIdx];
     }
 
     return NULL;
 }
 
-void func_80007380(Unk800A7CA0 *arg0) {
+void voxmap_release_slot(VoxmapSlot *slot) {
     s32 i;
 
-    for (i = 0; i < 6; i++) {
-        if (arg0 == D_800A7C80[i]) {
-            D_800A7CE8[i] = 0;
-            i = 6;
+    for (i = 0; i < SLOT_COUNT; i++) {
+        if (slot == D_800A7C80[i]) {
+            gVoxmapSlotUsed[i] = FALSE;
+            i = SLOT_COUNT;
         }
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_800073CC.s")
-#else
-// https://decomp.me/scratch/RcRgq
-s32 func_800073CC(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    Unk800A7CA0 *temp_a0;
-
-    if (D_800A7C70[arg0 + 1] == D_800A7C70[arg0]) {
+s32 voxmap_reload_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex) {
+    if ((gVoxmapTextureIndices[blockID + 1] == gVoxmapTextureIndices[blockID]) != 0) {
         return 0;
     }
-    temp_a0 = D_800A7C80[arg1];
-    if (temp_a0 != 0) {
-        mmFree((void* ) temp_a0);
+
+    if (D_800A7C80[slotIndex]) {
+        mmFree(D_800A7C80[slotIndex]);
     }
-    D_800A7C80[arg1] = func_80007468(arg0, arg1, arg2, arg3);
+
+    D_800A7C80[slotIndex] = (VoxmapSlot*) voxmap_load_slot(blockID, slotIndex, trkBlkIndex, blockIndex);
     return 1;
 }
-#endif
 
-u8 *func_80007468(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+u8 *voxmap_load_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex) {
     s32 sp3C;
     s32 sp38;
     s32 sp34;
@@ -166,16 +137,16 @@ u8 *func_80007468(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     u8* sp2C;
     u8* temp_v0;
 
-    sp34 = D_800A7C70[arg0 + 0];
-    sp3C = D_800A7C70[arg0 + 1] - sp34;
+    sp34 = gVoxmapTextureIndices[blockID];
+    sp3C = gVoxmapTextureIndices[blockID + 1] - sp34;
     if (sp3C == 0) {
         return 0;
     }
-    sp38 = rarezip_uncompress_size_rom(TEXPRE_BIN, D_800A7C70[arg0 + 0], 1);
+    sp38 = rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[blockID], 1);
     if (sp38 > 0x5000) {
         return 0;
     }
-    temp_v0 = mmAlloc(sp38 + 0x80, 0x10, NULL);
+    temp_v0 = mmAlloc(sp38 + 0x80, ALLOC_TAG_VOX_COL, NULL);
     temp_v1 = ((temp_v0 + sp38) - sp3C) + 0x80;
     sp2C = (u8*)(temp_v1 - (temp_v1 % 16));
     read_file_region(TEXPRE_BIN, sp2C, sp34, sp3C);
@@ -206,19 +177,19 @@ u8 *func_80007620(s32 arg0, s32 arg1) {
     u8* sp24;
     s32 temp_v1;
 
-    if ((arg0 < 0) || (arg0 >= D_800A7D0C)) {
+    if (arg0 < 0 || arg0 >= D_800A7D0C) {
         return 0;
     }
-    sp2C = D_800A7C74[arg0];
-    sp34 = D_800A7C74[arg0 + 1] - sp2C;
+    sp2C = gVoxmapObjectIndices[arg0];
+    sp34 = gVoxmapObjectIndices[arg0 + 1] - sp2C;
     if (sp34 == 0) {
         return 0;
     }
-    temp_v0_3 = rarezip_uncompress_size_rom(VOXOBJ_BIN, D_800A7C74[arg0], 1);
+    temp_v0_3 = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[arg0], 1);
     if (temp_v0_3 > 0x5000) {
         return 0;
     }
-    temp_v0 = mmAlloc(temp_v0_3 + 0x80, 0x10, NULL);
+    temp_v0 = mmAlloc(temp_v0_3 + 0x80, ALLOC_TAG_VOX_COL, NULL);
     temp_v1 = ((temp_v0 + temp_v0_3) - sp34) + 0x80;
     sp24 = (u8*)(temp_v1 - (temp_v1 % 16));
     read_file_region(VOXOBJ_BIN, sp24, (u32) sp2C, sp34);
@@ -233,7 +204,7 @@ u8 *func_80007620(s32 arg0, s32 arg1) {
     return temp_v0;
 }
 
-Unk800A7CA0* func_80007778(Vec3s16 *arg0) {
+VoxmapSlot* voxmap_find_closest_slot(Vec3s16 *position) {
     s32 var_s1;
     s32 sp40;
     s32 pad2;
@@ -245,17 +216,18 @@ Unk800A7CA0* func_80007778(Vec3s16 *arg0) {
     GlobalMapCell* mapCell;
     s8 arg3;
 
-    if (D_800A7D08 != 0) {
-        return func_80007A58(arg0);
+    if (gVoxmapCurrentObject != NULL) {
+        return voxmap_find_closest_object_slot(position);
     }
-    var_v0 = ((arg0->s[0] * SOME_FACTOR) - D_80092A60) + 5;
-    var_s1 = ((arg0->s[2] * SOME_FACTOR) - D_80092A64) + 5;
+
+    var_v0 = ((position->s[0] * SOME_FACTOR) - D_80092A60) + 5;
+    var_s1 = ((position->s[2] * SOME_FACTOR) - D_80092A64) + 5;
     var_s0 = floor_f(var_v0 / BLOCKS_GRID_UNIT_F);
     sp40 = floor_f(var_s1 / BLOCKS_GRID_UNIT_F);
-    D_800A7CA0.unk0 = (var_s0 * BLOCKS_GRID_UNIT) + D_80092A60;
-    D_800A7CA0.unk4 = (sp40 * BLOCKS_GRID_UNIT) + D_80092A64;
-    D_800A7CA0.unk8 = D_800A7CA0.unk0 / SOME_FACTOR;
-    D_800A7CA0.unkC = D_800A7CA0.unk4 / SOME_FACTOR;
+    gVoxmapLastSearchedSlot.unk0 = (var_s0 * BLOCKS_GRID_UNIT) + D_80092A60;
+    gVoxmapLastSearchedSlot.unk4 = (sp40 * BLOCKS_GRID_UNIT) + D_80092A64;
+    gVoxmapLastSearchedSlot.unk8 = gVoxmapLastSearchedSlot.unk0 / SOME_FACTOR;
+    gVoxmapLastSearchedSlot.unkC = gVoxmapLastSearchedSlot.unk4 / SOME_FACTOR;
     var_s1 = -1;
     if (func_80044B18(var_s0, sp40, 0) != 0) {
         mapCell = func_80046698(var_s0, sp40);
@@ -264,42 +236,42 @@ Unk800A7CA0* func_80007778(Vec3s16 *arg0) {
     if (var_s1 != -1) {
         i = 0;
         var_s0 = -1;
-        for (; i < 6; i++) {
-            if (var_s1 == D_800A7CB8[i]) {
+        for (; i < SLOT_COUNT; i++) {
+            if (var_s1 == gVoxmapBlockIDs[i]) {
                 var_s0 = i;
-                i = 6;
+                i = SLOT_COUNT;
             }
         }
         if (var_s0 != -1) {
-            D_800A7CD0[var_s0] = 0;
-            D_800A7CA0.unk10 = D_800A7C80[var_s0];
+            gVoxmapCacheTimers[var_s0] = 0;
+            gVoxmapLastSearchedSlot.data = D_800A7C80[var_s0];
         } else {
             var_s0 = -1;
             var_a1 = -1;
             i = 0;
-            for (; i < 6; i++) {
-                if (D_800A7CE8[i] == 0) {
-                    if (var_a1 <  D_800A7CD0[i]) {
+            for (; i < SLOT_COUNT; i++) {
+                if (gVoxmapSlotUsed[i] == FALSE) {
+                    if (var_a1 < gVoxmapCacheTimers[i]) {
                         var_s0 = i;
-                        var_a1 =  D_800A7CD0[i];
+                        var_a1 =  gVoxmapCacheTimers[i];
                     }
                 }
             }
-            if (func_800073CC(var_s1, var_s0, mapCell->trkBlkIndex, mapCell->loadedBlockIndex) != 0) {
-                D_800A7CB8[var_s0] = var_s1;
-                D_800A7CD0[var_s0] = 0;
-                D_800A7CF0[var_s0][0] = D_800A7CA0.unk8;
-                D_800A7CF0[var_s0][1] = D_800A7CA0.unkC;
+            if (voxmap_reload_slot(var_s1, var_s0, mapCell->trkBlkIndex, mapCell->loadedBlockIndex) != 0) {
+                gVoxmapBlockIDs[var_s0] = var_s1;
+                gVoxmapCacheTimers[var_s0] = 0;
+                D_800A7CF0[var_s0][0] = gVoxmapLastSearchedSlot.unk8;
+                D_800A7CF0[var_s0][1] = gVoxmapLastSearchedSlot.unkC;
             }
-            D_800A7CA0.unk10 = 0;
+            gVoxmapLastSearchedSlot.data = 0;
         }
     } else {
-        D_800A7CA0.unk10 = 0;
+        gVoxmapLastSearchedSlot.data = 0;
     }
-    return &D_800A7CA0;
+    return &gVoxmapLastSearchedSlot;
 }
 
-Unk800A7CA0* func_80007A58(Vec3s16* arg0) {
+VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16* position) {
     ObjDef* temp_v1;
     s32 temp_t5;
     s32 temp_t8;
@@ -308,57 +280,57 @@ Unk800A7CA0* func_80007A58(Vec3s16* arg0) {
     s32 temp_s0;
     s32 sp24;
 
-    temp_v1 = D_800A7D08->def;
-    temp_t8 = (arg0->s[0] - temp_v1->unk80) / 64;
-    temp_t5 = (arg0->s[2] - temp_v1->unk82) / 64;
-    D_800A7CA0.unk0 = (temp_t8 * 0x280) + (temp_v1->unk80 * SOME_FACTOR);
-    D_800A7CA0.unk4 = (temp_t5 * 0x280) + (temp_v1->unk82 * SOME_FACTOR);
-    D_800A7CA0.unk8 = D_800A7CA0.unk0 / SOME_FACTOR;
-    D_800A7CA0.unkC = D_800A7CA0.unk4 / SOME_FACTOR;
+    temp_v1 = gVoxmapCurrentObject->def;
+    temp_t8 = (position->s[0] - temp_v1->unk80) / 64;
+    temp_t5 = (position->s[2] - temp_v1->unk82) / 64;
+    gVoxmapLastSearchedSlot.unk0 = (temp_t8 * 0x280) + (temp_v1->unk80 * SOME_FACTOR);
+    gVoxmapLastSearchedSlot.unk4 = (temp_t5 * 0x280) + (temp_v1->unk82 * SOME_FACTOR);
+    gVoxmapLastSearchedSlot.unk8 = gVoxmapLastSearchedSlot.unk0 / SOME_FACTOR;
+    gVoxmapLastSearchedSlot.unkC = gVoxmapLastSearchedSlot.unk4 / SOME_FACTOR;
     temp_s0 = temp_v1->unk7E;
     if (temp_s0 == -1) {
-        D_800A7CA0.unk10 = 0;
-        return &D_800A7CA0;
+        gVoxmapLastSearchedSlot.data = 0;
+        return &gVoxmapLastSearchedSlot;
     }
     i = 0;
     sp24 = -1;
     temp_s0 += (temp_t5 * (temp_v1->unk7F & 0xF)) + temp_t8;
-    for (; i < 6; i++) {
-        if ((temp_s0 + 0x7530) == D_800A7CB8[i]) {
+    for (; i < SLOT_COUNT; i++) {
+        if ((temp_s0 + 30000) == gVoxmapBlockIDs[i]) {
             sp24 = i;
-            i = 6;
+            i = SLOT_COUNT;
         }
     }
     if (sp24 != -1) {
-        D_800A7CD0[sp24] = 0;
-        D_800A7CA0.unk10 = D_800A7C80[sp24];
+        gVoxmapCacheTimers[sp24] = 0;
+        gVoxmapLastSearchedSlot.data = D_800A7C80[sp24];
     } else {
         i = 0;
         var_a1 = -1;
         sp24 = -1;
-        for (; i < 6; i++) {
-            if (var_a1 < D_800A7CD0[i]) {
+        for (; i < SLOT_COUNT; i++) {
+            if (var_a1 < gVoxmapCacheTimers[i]) {
                 sp24 = i;
-                var_a1 = D_800A7CD0[i];
+                var_a1 = gVoxmapCacheTimers[i];
             }
         }
         if (func_800075B0(temp_s0, sp24) != 0) {
-            D_800A7CB8[sp24] = (temp_s0 + 30000);
-            D_800A7CD0[sp24] = 0;
-            D_800A7CA0.unk10 = D_800A7C80[sp24];
+            gVoxmapBlockIDs[sp24] = (temp_s0 + 30000);
+            gVoxmapCacheTimers[sp24] = 0;
+            gVoxmapLastSearchedSlot.data = D_800A7C80[sp24];
         } else {
-            D_800A7CA0.unk10 = 0;
+            gVoxmapLastSearchedSlot.data = 0;
         }
     }
-    return &D_800A7CA0;
+    return &gVoxmapLastSearchedSlot;
 }
 
-Unk800A7CA0* func_80007CBC(void) {
-    return &D_800A7CA0;
+VoxmapSlot* voxmap_get_last_found_slot(void) {
+    return &gVoxmapLastSearchedSlot;
 }
 
 void func_80007CCC(s32 arg0) {
-    rarezip_uncompress_size_rom(TEXPRE_BIN, D_800A7C70[arg0], 1);
+    rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[arg0], 1);
 }
 
 u8 *func_80007D08(u8 *arg0, u8 *arg1, u8 *arg2, s32 arg3, s32 arg4, s32 arg5) {
@@ -403,8 +375,8 @@ void func_80007E2C(Vec3f* arg0, Vec3s16 *arg1) {
     arg0->x = (arg1->s[0] * SOME_FACTOR) + 5;
     arg0->y = (arg1->s[1] * SOME_FACTOR) + 5;
     arg0->z = (arg1->s[2] * SOME_FACTOR) + 5;
-    if (D_800A7D08 != NULL) {
-        transform_point_by_object(arg0->x, arg0->y, arg0->z, arg0->f, &arg0->y, &arg0->z, D_800A7D08);
+    if (gVoxmapCurrentObject != NULL) {
+        transform_point_by_object(arg0->x, arg0->y, arg0->z, arg0->f, &arg0->y, &arg0->z, gVoxmapCurrentObject);
     }
 }
 
@@ -417,8 +389,8 @@ void func_80007EE0(Vec3f* arg0, Vec3s16 *arg1) {
     sp44.z = arg0->x;
     sp44.y = arg0->y;
     sp44.x = arg0->z;
-    if (D_800A7D08 != NULL) {
-        inverse_transform_point_by_object(sp44.z, sp44.y, sp44.x, &sp44.z, &sp44.y, &sp44.x, D_800A7D08);
+    if (gVoxmapCurrentObject != NULL) {
+        inverse_transform_point_by_object(sp44.z, sp44.y, sp44.x, &sp44.z, &sp44.y, &sp44.x, gVoxmapCurrentObject);
     }
     var_a0 = sp44.z;
     var_a1 = sp44.y;
@@ -451,7 +423,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
     s32 spAC;
     s32 spA8;
     s32 spA4;
-    Unk800A7CA0Inner *var_s4;
+    VoxmapSlotData *var_s4;
     s32 sp9C;
     s32 var_s5;
     s32 var_s7;
@@ -460,7 +432,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
     s32 sp88;
     Vec3s16 sp80 = arg0[0];
     Vec3s16 sp78;
-    Unk800A7CA0Inner *tempObj;
+    VoxmapSlotData *tempObj;
     s32 pad;
     s32 temp2;
     u8* sp68;
@@ -489,10 +461,10 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
     var_s2 = spA8 - spB0;
     var_s3 = spAC - spA8;
     spA4 = spB0 + spAC + spA8;
-    func_80007778(&sp80);
-    var_s5 = (sp80.s[0] - D_800A7CA0.unk8);
+    voxmap_find_closest_slot(&sp80);
+    var_s5 = (sp80.s[0] - gVoxmapLastSearchedSlot.unk8);
     var_s5 &= 0x3F;
-    var_s1 = (sp80.s[2] - D_800A7CA0.unkC);
+    var_s1 = (sp80.s[2] - gVoxmapLastSearchedSlot.unkC);
     var_s1 &= 0x3F;
     sp78 = sp80;
     var_s4 = NULL;
@@ -501,7 +473,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
         if (arg4 && sp67 != 0) {
             sp67 = 0;
         } else {
-            tempObj = D_800A7CA0.unk10;
+            tempObj = gVoxmapLastSearchedSlot.data;
             if (tempObj != 0) {
                 if ((tempObj != var_s4) || (sp80.s[1] != sp78.s[1])) {
                     sp88 = 1;
@@ -553,12 +525,12 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 sp80.s[0] += spD4;\
                 var_s2 += spA8 * 2;
                 temp_s0 = var_s5 >> 2;
-                var_v1 = sp80.s[0] - D_800A7CA0.unk8;
+                var_v1 = sp80.s[0] - gVoxmapLastSearchedSlot.unk8;
                 if ((var_v1 >> 6) != 0) {
-                    func_80007778(&sp80);
+                    voxmap_find_closest_slot(&sp80);
                     var_s4 = NULL;
                 }
-                var_v1 = sp80.s[0] - D_800A7CA0.unk8;
+                var_v1 = sp80.s[0] - gVoxmapLastSearchedSlot.unk8;
                 var_s5 = var_v1 & 0x3F;
                 if (temp_s0 != (var_s5 >> 2)) {
                     sp88 = 1;
@@ -569,12 +541,12 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 var_s2 -= spB0 * 2;
                 var_s3 += spAC * 2;
                 temp_s0 = var_s1 >> 2;
-                var_v1 = sp80.s[2] - D_800A7CA0.unkC;
+                var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
                 if ((var_v1 >> 6) != 0) {
-                    func_80007778(&sp80);
+                    voxmap_find_closest_slot(&sp80);
                     var_s4 = NULL;
                 }
-                var_v1 = sp80.s[2] - D_800A7CA0.unkC;
+                var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
                 var_s1 = var_v1 & 0x3F;
                 if (temp_s0 != (var_s1 >> 2)) {
                     sp88 = 1;
@@ -586,13 +558,13 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 sp80.s[2] += spCC;\
                 var_s2 -= spB0 * 2;\
                 var_s3 += spAC * 2;
-                var_v1 = sp80.s[2] - D_800A7CA0.unkC;
+                var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
                 temp_s0 = var_s1 >> 2;
                 if ((var_v1 >> 6) != 0) {
-                    func_80007778(&sp80);
+                    voxmap_find_closest_slot(&sp80);
                     var_s4 = NULL;
                 }
-                var_v1 = sp80.s[2] - D_800A7CA0.unkC;
+                var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
                 var_s1 = var_v1 & 0x3F;
                 if (temp_s0 != (var_s1 >> 2)) {
                     sp88 = 1;
@@ -830,9 +802,9 @@ s32 func_80008BE4(UnkCurvesStruct* arg0, s32 arg1) {
 }
 
 void func_80008D90(Object* arg0) {
-    D_800A7D08 = arg0;
+    gVoxmapCurrentObject = arg0;
     if ((arg0 != NULL) && (arg0->def->unk7E == -1)) {
-        D_800A7D08 = NULL;
+        gVoxmapCurrentObject = NULL;
     }
 }
 
@@ -850,7 +822,7 @@ void func_80008E08(SomeVoxmapAllocStruct* arg0) {
 }
 
 s32 func_80008E40(Unk80008E40* arg0, Vec3f* arg1, Vec3f* arg2) {
-    u16* temp_v0;
+    Unk80008E40Unk0* temp_v0;
     Vec3s16 sp2C;
 
     func_8000A650(arg0);
@@ -863,9 +835,9 @@ s32 func_80008E40(Unk80008E40* arg0, Vec3f* arg1, Vec3f* arg2) {
     if (func_800099D0(&arg0->unk12, &arg0->unkC, &sp2C) != 0) {
         return 1;
     }
-    arg0->unk24 = 0x2710;
+    arg0->unk24 = 10000;
     temp_v0 = func_8000A9AC(arg0, &sp2C, 0, 0xFF);
-    func_8000A80C(arg0->unk4, &arg0->unk1E, arg0->unk1C - 1, temp_v0[4] + temp_v0[3]);
+    func_8000A80C(arg0->unk4, &arg0->unk1E, arg0->unk1C - 1, temp_v0->unk6 + temp_v0->unk8);
     arg0->unk20 = 0;
     return 0;
 }
@@ -967,61 +939,50 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000921C.s")
 #else
+// https://decomp.me/scratch/ZVLXX
 s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     Unk80008E40Unk0* var_s1;
-    Unk80008E40Unk0* var_s2;
+    Unk80008E40Unk0* next;
     Unk80008E40Unk0* var_s5;
     Vec3f sp68;
     s32 var_s3;
-    Vec3s16* var_s2_2;
-    s32 pad[1];
-    s32 pad2;
-    u8 sp57[4];
-    Vec3s16 sp4C;
-    s32 var_a1;
-    u8 var_a0;
-    u8 var_v1;
+    s32 pad[2];
+    Unk80008E40Unk0 sp4C;
+    s32 currentIdx;
+    u8 nextIdx;
 
     if (arg1 < 0) {
         arg1 = 0xA;
     }
-    var_a1 = arg0->unk18;
-    var_s2 = &arg0->unk0[var_a1];
-    var_s2->unkB = 0xFF;
-    var_v1 = var_s2->unkA;
-    while (var_v1 != 0xFF) {
-        var_s2 = &arg0->unk0[var_v1];
-        var_s2->unkB = var_a1;
-        var_a1 = var_v1;
-        var_v1 = var_s2->unkA;
+    currentIdx = arg0->unk18;
+    next = &arg0->unk0[currentIdx];
+    next->unkB = 0xFF;
+    nextIdx = next->unkA;
+    while (nextIdx != 0xFF) {
+        next = &arg0->unk0[nextIdx];
+        next->unkB = currentIdx;
+        currentIdx = nextIdx;
+        nextIdx = next->unkA;
     }
-    sp4C.s[0] = arg0->unk12.s[0];
-    sp4C.s[1] = arg0->unk12.s[1];
-    sp4C.s[2] = arg0->unk12.s[2];
-    sp57[3] = var_a1;
-    if (var_s2->unkB == 0xFF) {
-        var_s1 = NULL;
-    } else {
-        var_s1 = &arg0->unk0[var_s2->unkB];
-    }
-    var_s5 = var_s2;
-    var_s2_2 = &sp4C;
+    sp4C.unk0.s[0] = arg0->unk12.s[0];
+    sp4C.unk0.s[1] = arg0->unk12.s[1];
+    sp4C.unk0.s[2] = arg0->unk12.s[2];
+    sp4C.unkB = currentIdx;
+    var_s1 = next->unkB == 0xFF ? NULL : &arg0->unk0[next->unkB];
+    var_s5 = next;
+    next = &sp4C;
     var_s3 = 0;
     while (arg1 > var_s3 && var_s1 != NULL) {
-        if (((var_s1->unk0.s[0] != var_s2_2->s[0]) || (var_s1->unk0.s[2] != var_s2_2->s[2])) && (func_800099D0(&var_s1->unk0, var_s2_2, NULL) == 0)) {
+        if (((var_s1->unk0.s[0] != next->unk0.s[0]) || (var_s1->unk0.s[2] != next->unk0.s[2])) && (func_800099D0(&var_s1->unk0, &next->unk0, NULL) == 0)) {
             func_80007E2C(&sp68, &var_s5->unk0);
             arg0->unk8[var_s3].x = (s32) sp68.f[0] + 5;
             arg0->unk8[var_s3].y = (s32) sp68.f[1];
             arg0->unk8[var_s3].z = (s32) sp68.f[2] + 5;
             var_s3 += 1;
-            var_s2_2 = &var_s1->unk0;
+            next = var_s1;
         }
         var_s5 = var_s1;
-        if (var_s1->unkB == 0xFF) {
-            var_s1 = NULL;
-        } else {
-            var_s1 = &arg0->unk0[var_s1->unkB];
-        }
+        var_s1 = var_s1->unkB == 0xFF ? NULL : &arg0->unk0[var_s1->unkB];
     }
     if (var_s3 < arg1) {
         func_80007E2C(&sp68, &var_s5->unk0);
@@ -1162,7 +1123,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
     Vec3s16 sp94;
     u8 *temp_v0_3;
     u8 *temp;
-    Unk800A7CA0Inner* temp_s2;
+    VoxmapSlotData* temp_s2;
     u8 sp7C[12];
     s16 *new_var;
     s32 pad[2];
@@ -1185,15 +1146,15 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
     spE0 = var_v0 - var_v1;
     spD8[0] = var_v0;
     spD8[1] = var_v1;
-    func_80007778(&sp9C);
-    spC0 = (sp9C.s[0] - D_800A7CA0.unk8) & 0x3F;
-    spB8 = (sp9C.s[2] - D_800A7CA0.unkC) & 0x3F;
+    voxmap_find_closest_slot(&sp9C);
+    spC0 = (sp9C.s[0] - gVoxmapLastSearchedSlot.unk8) & 0x3F;
+    spB8 = (sp9C.s[2] - gVoxmapLastSearchedSlot.unkC) & 0x3F;
     spCC[0] = (spC0 & 3) << 1;
     spCC[1] = spCC[0] + 2;
     sp94 = sp9C;
     spD4 = (var_a1 = spD8[0] + spD8[1]);
     while (spD4--) {
-        temp_s2 = D_800A7CA0.unk10;
+        temp_s2 = gVoxmapLastSearchedSlot.data;
         new_var = sp9C.s;
         temp_t2 = spC0 >> 2;
         temp_s4 = spB8 >> 2;
@@ -1287,10 +1248,10 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
             sp94.s[0] = new_var[0];
             new_var[0] += sp104;\
             spE0 += spD8[0] * 2;
-            if (((new_var[0] - D_800A7CA0.unk8) >> 6) != 0) {
-                func_80007778(&sp9C);
+            if (((new_var[0] - gVoxmapLastSearchedSlot.unk8) >> 6) != 0) {
+                voxmap_find_closest_slot(&sp9C);
             }
-            spC0 = (new_var[0] - D_800A7CA0.unkC) & 0x3F;
+            spC0 = (new_var[0] - gVoxmapLastSearchedSlot.unkC) & 0x3F;
             spCC[0] = (spC0 & 3) << 1;
             var_v1 = spCC[0];
             spCC[1] = var_v1 + 2;
@@ -1298,11 +1259,11 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
             sp94.s[2] = new_var[2];
             new_var[2] += sp100;\
             spE0 -= spD8[1] * 2;
-            var_v1 = new_var[2] - D_800A7CA0.unkC;
+            var_v1 = new_var[2] - gVoxmapLastSearchedSlot.unkC;
             if ((var_v1 >> 6) != 0) {
-                func_80007778(&sp9C);
+                voxmap_find_closest_slot(&sp9C);
             }
-            var_v1 = new_var[2] - D_800A7CA0.unkC;
+            var_v1 = new_var[2] - gVoxmapLastSearchedSlot.unkC;
             spB8 = var_v1 & 0x3F;
         }
     }
@@ -1312,28 +1273,411 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_80009F5C.s")
+void func_80009F5C(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2) {
+    Vec3s16 sp30;
+    u16 temp_t6;
 
+    temp_t6 = (arg1->unk8 + 1);
+    sp30.s[0] = arg1->unk0.s[0];
+    sp30.s[1] = arg1->unk0.s[1];
+    sp30.s[2] = arg1->unk0.s[2];
+    sp30.s[0] += 2;
+    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    sp30.s[0] -= 4;
+    sp30.s[1] = arg1->unk0.s[1];
+    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    sp30.s[0] += 2;
+    sp30.s[2] += 2;
+    sp30.s[1] = arg1->unk0.s[1];
+    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    sp30.s[2] -= 4;
+    sp30.s[1] = arg1->unk0.s[1];
+    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+}
+
+#ifndef NON_EQUIVALENT
+void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4);
 #pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A078.s")
+#else
+// https://decomp.me/scratch/jUNws
+void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4) {
+    Unk80008E40Unk0* temp_v1_3;
+    s32 var_v0;
+    s32 sp9C;
+    s32 sp98;
+    s32 temp_a0;
+    s32 temp_a2_2;
+    s32 temp_t6;
+    s32 sp84[2];
+    s32 sp7C[2];
+    s32 sp78;
+    s32 temp_v0;
+    s32 sp70;
+    s32 sp6C;
+    u8 *temp_v0_2;
+    s32 new_var;
+    s32 new_var2;
+    s32 var_v1; // sp30
+    s32 var_a0; // sp2C?
+    VoxmapSlotData* sp54;
+    Unk80008E40Unk0* sp50;
+    s32 var_a1;
+    u8 sp40;
+    u8 sp3C[12];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A640.s")
+    if ((arg0->unkC.unk0 == arg4->s[0]) && (arg0->unkC.s[2] == arg4->s[2])) {
+        sp78 = arg0->unk1C;
+        func_8000A9AC(arg0, arg4, arg3, arg2);
+        func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, 1U);
+    }
+    var_v1 = arg4->s[0] - gVoxmapLastSearchedSlot.unk8;
+    var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
+    if ((var_v1 >> 6) || (var_a0 >> 6)) {
+        voxmap_find_closest_slot(arg4);
+    }
+    var_v1 = arg4->s[0] - gVoxmapLastSearchedSlot.unk8;
+    var_v1 &= 0x3F;
+    var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
+    var_a0 &= 0x3F;
+    sp54 = gVoxmapLastSearchedSlot.data;
+    if (sp54 == NULL) {
+        return;
+    }
+    sp84[0] = (var_v1 & 3) << 1;
+    sp84[1] = sp84[0] + 2;
+    sp7C[0] = var_a0 & 3;
+    sp7C[1] = sp7C[0] + 1;
+    sp6C = 0;
+    for (; sp6C < 3; sp6C++) {
+        temp_v0 = (arg4->s[1] + sp6C) - 1;
+        if (temp_v0){}
+        if (temp_v0 < sp54->unk4) {
+            temp_v0 = 0;
+        } else {
+            if (temp_v0 >= sp54->unkC) {
+                temp_v0 = (sp54->unkC - sp54->unk4);
+                temp_v0--;
+            } else {
+                temp_v0 = temp_v0 - sp54->unk4;
+            }
+        }
+        new_var2 = var_v1 >> 2;
+        new_var = var_a0 >> 2;
+        temp_a0 = sp54->unk24[(temp_v0 << 5) | ((new_var * 2) + (new_var2 >> 3))];
+        if ((temp_a0 >> (new_var2 & 7)) & 1) {
+            temp_v0_2 = func_80007D08(sp54->unk1C, sp54->unk14, sp54->unk24, new_var2, temp_v0, new_var);
+            temp_a0 = temp_v0_2[sp7C[0]];
+            sp3C[sp6C * 4 + 0] = (temp_a0 >> sp84[0]) & 3;
+            sp3C[sp6C * 4 + 1] = (temp_a0 >> sp84[1]) & 3;
+            temp_a0 = temp_v0_2[sp7C[1]];
+            sp3C[sp6C * 4 + 2] = (temp_a0 >> sp84[0]) & 3;
+            sp3C[sp6C * 4 + 3] = (temp_a0 >> sp84[1]) & 3;
+        } else {
+            sp3C[sp6C * 4 + 0] = 0;
+            sp3C[sp6C * 4 + 1] = 0;
+            sp3C[sp6C * 4 + 2] = 0;
+            sp3C[sp6C * 4 + 3] = 0;
+        }
+    }
+    if (arg0->unk26 != 0) {
+        sp6C = -1;
+        if ((sp3C[4 + 0] & 2) || (sp3C[4 + 1] & 2) || (sp3C[4 + 2] & 2) || (sp3C[4 + 3] & 2)) {
+            sp98 = 1;
+        }
+    } else {
+        sp6C = 1;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A650.s")
+    while (sp6C >= 0) {
+        temp_a2_2 = sp6C + 1;
+        sp98 = 0;
+        sp70 = sp6C;
+        if ((sp3C[sp6C * 4 + 0] & 2) || (sp3C[sp6C * 4 + 1] & 2) || (sp3C[sp6C * 4 + 2] & 2) || (sp3C[sp6C * 4 + 3] & 2)) {
+            sp98 = 1;
+            sp6C = 0;
+        }
+        if ((sp98 == 0) && (((sp3C[temp_a2_2 * 4 + 0] & 2)) || (sp3C[temp_a2_2 * 4 + 1] & 2) || (sp3C[temp_a2_2 * 4 + 2] & 2) || (sp3C[temp_a2_2 * 4 + 3] & 2))) {
+            sp98 = 1;
+            sp6C = 0;
+        }
+        if (sp98 == 0) {
+            temp_a0 = sp3C[temp_a2_2 * 4 + 0];
+            var_a1 = sp3C[sp6C * 4 + 0];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A6D8.s")
+            temp_a0 += sp3C[temp_a2_2 * 4 + 1];
+            var_a1 += sp3C[sp6C * 4 + 1];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A76C.s")
+            temp_a0 += sp3C[temp_a2_2 * 4 + 2];
+            var_a1 += sp3C[sp6C * 4 + 2];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A80C.s")
+            temp_a0 += sp3C[temp_a2_2 * 4 + 3];
+            var_a1 += sp3C[sp6C * 4 + 3];
+            
+            if (&sp3C[temp_a2_2 * 4] == &sp3C[2 * 4] && temp_a0 == 0) {
+                sp98 = 1;
+            } else {
+                if (&sp3C[temp_a2_2 * 4] == &sp3C[1 * 4]) {
+                    if (var_a1 >= temp_a0) {
+                        sp70 -= 1;
+                    } else {
+                        var_a1 = temp_a0;
+                    }
+                } else if (temp_a0 < var_a1) {
+                    sp70 -= 1;
+                } else {
+                    var_a1 = temp_a0;
+                }
+                if (var_a1 < 2) {
+                    sp98 = 1;
+                } else {
+                    sp6C = 0;
+                }
+            }
+        }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A884.s")
+        sp6C--;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A934.s")
+    if (sp98 != 0) {
+        return;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000A9AC.s")
+    arg4->s[1] += sp70;
+    temp_v0 = func_8000AB18(arg0, arg4->s[0], arg4->s[2], &sp9C);
+    if ((temp_v0 >= 0) && (sp9C == 0)) {
+        temp_v1_3 = &arg0->unk0[temp_v0];
+        if (arg3 < temp_v1_3->unk8) {
+            temp_v1_3->unkA = arg2;
+            temp_v1_3->unk8 = arg3;
+            func_8000A884(arg0->unk4, arg0->unk1E, temp_v0, temp_v1_3->unk6 + arg3);
+        }
+    } else if (temp_v0 < 0) {
+        sp78 = arg0->unk1C;
+        sp50 = func_8000A9AC(arg0, arg4, arg3, arg2);
+        if (sp50 == NULL) {
+            return;
+        }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000AB18.s")
+        if (arg0->unk24 < sp50->unk6) {
+            if (func_8000A640(arg4) == 0) {
+                arg0->unk1C -= 1;
+            } else {
+                func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
+            }
+        } else {
+            sp6C = sp50->unk6;
+            if (sp6C < arg0->unk24) {
+                arg0->unk24 = sp6C;
+            }
+            func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
+        }
+    }
+}
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000AB84.s")
+s32 func_8000A640(Vec3s16* arg0) {
+    return 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/voxmap/func_8000ACD4.s")
+void func_8000A650(Unk80008E40* arg0) {
+    s32 i;
+
+    arg0->unk1E = 0;
+    arg0->unk1C = 0;
+    for (i = 0; i < 200; i++) {
+        arg0->unk4[i].unk0 = 0;
+        arg0->unk0[i].unkC = 0;
+    }
+}
+
+void func_8000A6D8(Unk80008E40Unk4* arg0, s32 arg1) {
+    s32 var_a3;
+    u16 temp_a2;
+    u16 temp_v0;
+
+    temp_v0 = arg0[arg1].unk0;
+    temp_a2 = arg0[arg1].unk2;
+    arg0[0].unk0 = 0xFFFF;
+    var_a3 = arg1 >> 1;
+    while (temp_v0 >= arg0[var_a3].unk0) {
+        arg0[arg1].unk2 = arg0[var_a3].unk2;
+        arg0[arg1].unk0 = arg0[var_a3].unk0;
+        arg1 = var_a3;
+        var_a3 >>= 1;
+    }
+    arg0[arg1].unk0 = temp_v0;
+    arg0[arg1].unk2 = temp_a2;
+}
+
+void func_8000A76C(Unk80008E40Unk4* arg0, s32 arg1, s32 arg2) {
+    Unk80008E40Unk4* var_v1;
+    s32 var_t1;
+    u16 temp_a3;
+    u16 temp_v0;
+
+    temp_v0 = arg0[arg2].unk0;
+    temp_a3 = arg0[arg2].unk2;
+    while ((arg1 >> 1) >= arg2) {
+        var_t1 = arg2 + arg2;
+        if (var_t1 < arg1) {
+            if (arg0[var_t1].unk0 < arg0[var_t1 + 1].unk0) {
+                var_t1 = var_t1 + 1;
+            }
+        }
+
+        if (temp_v0 >= arg0[var_t1].unk0) {
+            break;
+        }
+
+        arg0[arg2].unk0 = arg0[var_t1].unk0;
+        arg0[arg2].unk2 = arg0[var_t1].unk2;
+        arg2 = var_t1;
+    }
+
+    arg0[arg2].unk0 = temp_v0;
+    arg0[arg2].unk2 = temp_a3;
+}
+
+void func_8000A80C(Unk80008E40Unk4 *arg0, s16* arg1, u16 arg2, u16 arg3) {
+    arg1[0] = arg1[0] + 1;
+    arg0[arg1[0]].unk2 = arg2;
+    arg0[arg1[0]].unk0 = 0xFFFF - arg3;
+    func_8000A6D8(arg0, arg1[0]);
+}
+
+void func_8000A884(Unk80008E40Unk4* arg0, s32 arg1, u16 arg2, u16 arg3) {
+    s32 sp1C;
+    s32 i;
+    s32 temp_v1;
+
+    for (i = 0; i <= arg1; i++) {
+        if (arg2 == arg0[i].unk2) {
+            sp1C = i;
+            i = arg1 + 1;
+        }
+    }
+    temp_v1 = arg0[sp1C].unk0;
+    arg0[sp1C].unk0 = arg3;
+    if (arg3 < temp_v1) {
+        func_8000A76C(arg0, arg1, sp1C);
+    } else if (temp_v1 < arg3) {
+        func_8000A6D8(arg0, sp1C);
+    }
+}
+
+s32 func_8000A934(Unk80008E40Unk4 *arg0, s16* arg1) {
+    u16 sp1E;
+    s16 temp_v0;
+
+    if (arg1[0] == 0) {
+        return -1;
+    }
+
+    sp1E = arg0[1].unk2;
+    arg0[1].unk0 = arg0[arg1[0]].unk0;
+    arg0[1].unk2 = arg0[arg1[0]].unk2;
+    arg1[0]--;
+    func_8000A76C(arg0, arg1[0], 1);
+
+    return sp1E;
+}
+
+Unk80008E40Unk0* func_8000A9AC(Unk80008E40* arg0, Vec3s16* arg1, u16 arg2, u16 arg3) {
+    Unk80008E40Unk0* sp24;
+    s32 temp_a0;
+    s32 temp_v0;
+
+    if (arg0->unk1C == 0xC8) {
+        return NULL;
+    }
+    sp24 = &arg0->unk0[arg0->unk1C++];
+    sp24->unk0.s[0] = arg1->s[0];
+    sp24->unk0.s[1] = arg1->s[1];
+    sp24->unk0.s[2] = arg1->s[2];
+    sp24->unk8 = arg2;
+    sp24->unkA = arg3;
+    temp_v0 = sp24->unk0.s[0] - arg0->unkC.s[0];
+    temp_a0 = sp24->unk0.s[2] - arg0->unkC.s[2];
+    sp24->unk6 = sqrtf((SQ(temp_v0) + SQ(temp_a0))) * 2;
+    return sp24;
+}
+
+s32 func_8000AB18(Unk80008E40* arg0, s32 arg1, s32 arg2, s32* arg3) {
+    s32 i;
+    Unk80008E40Unk0 *temp;
+
+    for (i = 0; i < arg0->unk1C; i++) {
+        temp = &arg0->unk0[i];
+        if (arg1 == temp->unk0.s[0] && arg2 == temp->unk0.s[2]) {
+            arg3[0] = temp->unkC;
+            return i;
+        }
+    }
+    return -1;
+}
+
+s32 func_8000AB84(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
+    Vec3s16 sp48;
+    Vec3s16 sp40;
+    f32 sp3C;
+    f32 sp38;
+    f32 sp34;
+    s32 var_v1;
+    s32 pad;
+    s32 sp28;
+
+    sp3C = arg1->srt.transl.x - arg0->srt.transl.x;
+    sp38 = arg1->srt.transl.y - arg0->srt.transl.y;
+    sp34 = arg1->srt.transl.z - arg0->srt.transl.z;
+    sp28 = 0;
+    var_v1 = arg0->srt.yaw - (arctan2_f(-sp3C, -sp34) & 0xFFFF);
+    CIRCLE_WRAP(var_v1);
+    if ((-arg3 < var_v1) && (var_v1 < arg3)) {
+        sp28 = 1;
+        if (arg4 != 0) {
+            func_80007EE0(&arg0->srt.transl, &sp48);
+            func_80007EE0(&arg1->srt.transl, &sp40);
+            sp48.s[1] += 2;
+            sp40.s[1] += 2;
+            sp28 = func_80008048(&sp48, &sp40, NULL, NULL, 0U);
+        }
+        if (sp28 != 0) {
+            *arg2 = SQ(sp3C) + SQ(sp38) + SQ(sp34);
+        }
+    }
+    return sp28;
+}
+
+s32 func_8000ACD4(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
+    Vec3s16 sp50;
+    Vec3s16 sp48;
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    f32 temp;
+    s32 sp30;
+
+    temp_fv0 = arg1->srt.transl.x - arg0->srt.transl.x;
+    temp_fv1 = arg1->srt.transl.y - arg0->srt.transl.y;
+    temp_fa0 = arg1->srt.transl.z - arg0->srt.transl.z;
+    temp = SQ(temp_fv0) + SQ(temp_fv1) + SQ(temp_fa0);
+    temp_fa1 = SQ(*arg2);
+    sp30 = 0;
+    if (temp < temp_fa1) {
+        if (func_800456AC(arg1) != 0) {
+            sp30 = 1;
+            if (arg4 != 0) {
+                func_80007EE0(&arg0->srt.transl, &sp50);
+                func_80007EE0(&arg1->srt.transl, &sp48);
+                sp50.s[1] += 2;
+                sp48.s[1] += 2;
+                sp30 = func_80008048(&sp50, &sp48, NULL, NULL, 0U);
+            }
+            if (sp30 != 0) {
+                *arg2 = temp;
+            }
+        }
+    }
+    return sp30;
+}

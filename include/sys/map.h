@@ -469,8 +469,8 @@ extern f32 D_8009AA30;
 extern f32 D_8009AA34;
 extern f32 D_8009AA3C;
 extern s8 D_80092A9C[8];
-extern s32 D_80092A60;
-extern s32 D_80092A64;
+extern s32 D_80092A60; // something x-coordinate related
+extern s32 D_80092A64; // something z-coordinate related
 extern s32 D_800B4A50;
 extern s32 D_800B4A54;
 extern s16 D_800B97C4;

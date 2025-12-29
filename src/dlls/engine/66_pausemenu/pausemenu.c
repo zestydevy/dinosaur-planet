@@ -21,7 +21,6 @@
 #include "sys/rcp.h"
 #include "types.h"
 
-#include "prevent_bss_reordering.h"
 
 /*0x0*/ static const char formatCompletionPercentage[] = "%3d%%";
 /*0x8*/ static const char formatGameplayTime[] = "%3d:%02d:%02d";

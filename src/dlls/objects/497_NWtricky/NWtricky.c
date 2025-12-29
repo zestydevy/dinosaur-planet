@@ -7,7 +7,6 @@
 #include "dll.h"
 #include "sys/main.h"
 #include "sys/objects.h"
-#include "prevent_bss_reordering.h"
 
 typedef struct {
     u8 state;
