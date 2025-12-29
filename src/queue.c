@@ -365,7 +365,7 @@ void asset_thread_load_single(void) {
                 block_load(sp2C.unk8, sp2C.unkC, sp2C.unk10, 1);
                 break;
             case 0:
-                queue_block_emplace(0, sp2C.unk4, func_80007468(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
+                queue_block_emplace(0, sp2C.unk4, voxmap_load_slot(sp2C.unk8, sp2C.unkC, sp2C.unk10, sp2C.unk14), 0, 0);
                 break;
             case 6:
                 queue_block_emplace(6, sp2C.unk4, func_80007620(sp2C.unk8, sp2C.unkC), 0, 0);

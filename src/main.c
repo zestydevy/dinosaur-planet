@@ -314,7 +314,7 @@ void game_tick(void) {
         phi_v1 = 3;
 
     func_80037A14(&gCurGfx, &gCurMtx, phi_v1);
-    func_80007178();
+    voxmap_update_cache_timers();
     func_80013D80();
     audio_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);

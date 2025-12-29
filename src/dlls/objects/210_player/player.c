@@ -1617,7 +1617,16 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
         curVtx++;
     }
     if (curVtx) {}
-    gDPSetOtherMode(*arg1, 0xEF182C00, 0xCB104B70);
+    gDPSetOtherMode(
+        *arg1,
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
+        G_AC_NONE | G_ZS_PIXEL | Z_CMP | Z_UPD | IM_RD | CVG_DST_SAVE | ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A | GBL_c2(
+            G_BL_CLR_IN,
+            G_BL_0,
+            G_BL_CLR_MEM,
+            G_BL_1MA
+        )
+    )
     dl_apply_other_mode(arg1);
     sp48.transl.x = player->srt.transl.x;
     sp48.transl.y = player->srt.transl.y;
@@ -3924,7 +3933,7 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s32 temp;
 
     sp4C = player->data;
-    sp4C->unk8BD &= 0xFFFE;
+    sp4C->unk8BD &= ~1;
     fsa->unk278 = 0.0f;
     fsa->unk27C = 0.0f;
     fsa->unk278 = _data_C[0];
@@ -4019,7 +4028,7 @@ s32 dll_210_func_A8CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Player_Data* objdata;
 
     objdata = player->data;
-    objdata->unk8BD &= 0xFFFE;
+    objdata->unk8BD &= ~1;
     {
         s32 temp_v0 = dll_210_func_BA38(player, fsa, arg2);
         if (temp_v0 != 0) {

@@ -333,7 +333,7 @@ void func_800264D0(Object* arg0) {
         return;
     }
 
-    objHitInfo->unk58 = arg0->def->helpTexts[0];
+    objHitInfo->unk58 = arg0->def->helpText;
     objHitInfo->unk5A = arg0->def->unk93;
     objHitInfo->unk5B = arg0->def->_unk91[0];
     objHitInfo->unk5C = arg0->def->_unk91[1];
@@ -1595,9 +1595,9 @@ void func_8002949C(Object* obj, Object* obj2, Object* obj3, ObjectHitInfo* objHi
         spEC.transl.x = obj->def->pAttachPoints[attachPointIdx].pos.x;
         spEC.transl.y = obj->def->pAttachPoints[attachPointIdx].pos.y;
         spEC.transl.z = obj->def->pAttachPoints[attachPointIdx].pos.z;
-        spEC.yaw = obj->def->pAttachPoints[attachPointIdx].rot[0];
-        spEC.pitch = obj->def->pAttachPoints[attachPointIdx].rot[1];
-        spEC.roll = obj->def->pAttachPoints[attachPointIdx].rot[2];
+        spEC.yaw = obj->def->pAttachPoints[attachPointIdx].rot.x;
+        spEC.pitch = obj->def->pAttachPoints[attachPointIdx].rot.y;
+        spEC.roll = obj->def->pAttachPoints[attachPointIdx].rot.z;
         spEC.scale = 1.0f;
         sp190 = (MtxF*)(((f32*)sp248->matrices[matrixIdx]) + (sp258 << 4));
         matrix_from_srt(&sp150, &spEC);

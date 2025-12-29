@@ -14,6 +14,7 @@
 #include "sys/memory.h"
 #include "sys/rcp.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 /*0x0*/ static PicMenuItem pressStartItem[] = {
     /*0*/ NEW_PICMENU_ITEM(

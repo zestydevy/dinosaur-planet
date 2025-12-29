@@ -164,7 +164,13 @@ typedef struct {
 /*76*/ s16 modLineCount;
 /*78*/ s16 modLineNo;
 /*7a*/ s16 numSequences;
-/*7c*/ s16 helpTexts[4]; //one per model (GameTextId) // TODO: confirm //NOTE: possibly objHits flags?
+/*7c*/ s16 helpText; //one per model (GameTextId) // TODO: confirm //NOTE: possibly objHits flags?
+/*7E*/ s8 unk7E;
+/*7F*/ u8 unk7F;
+/*80*/ s8 unk80;
+/*81*/ u8 pad81;
+/*82*/ s8 unk82;
+/*83*/ u8 pad83;
 /*84*/ s16 unk84;
 /*86*/ u8 unk86;
 /*87*/ u8 unk87;

@@ -417,8 +417,8 @@ extern f32 D_8009AA30;
 extern f32 D_8009AA34;
 extern f32 D_8009AA3C;
 extern s8 D_80092A9C[8];
-extern s32 D_80092A60;
-extern s32 D_80092A64;
+extern s32 D_80092A60; // something x-coordinate related
+extern s32 D_80092A64; // something z-coordinate related
 
 extern s32 D_80092A7C;
 
@@ -428,6 +428,8 @@ s32 func_80041DBC(void);
 s32 func_80041E08(void);
 void *func_80044A20(f32 worldX, f32 worldZ, s32* objectsFileLength);
 MapHeader** func_80044A10(void);
+BlocksModel* func_80044B18(s32 visGridX, s32 visGridZ, s32 mapLayer);
+GlobalMapCell* func_80046698(s32 gridX, s32 gridZ);
 
 // defined in map.c but used before declared
 void func_800441F4(u32* arg0, s32 arg1);
