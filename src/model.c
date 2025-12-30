@@ -307,115 +307,57 @@ bail:
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/createModelInstance.s")
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/patch_model_display_list_for_textures.s")
-#else
-// void patch_model_display_list_for_textures(Model* model) {
-//     u8 commandID;
-//     s32 var_a1;
-//     s32 var_a1_2;
-//     s32 materialIndex;
-//     s32 materialIndex_2;
-//     u32 *var_t0;
-//     s32 index;
-//     u32* var_t0_2;
-//     ModelTexture* material;
-//     void* temp_a3_2;
-//     Gfx* gfx;
-
-//     gfx = model->displayList;
-//     index = 0;
-//     while (index < model->displayListLength){        
-//         commandID = gfx->words.w0 >> 24;
-        
-//         if (commandID != G_NOOP) {
-//             if (commandID == G_DL) { //Texture load commands!
-//                 materialIndex = gfx->words.w1;
-//                 var_a1 = 0;
-//                 if (gfx->words.w1 & 0x80000000) {
-//                     materialIndex = gfx->words.w1 & 0x7FFFFFFF;
-//                     var_a1 = 1;
-//                 }
-//                 material = &model->materials[materialIndex];
-//                 var_t0 = material->unk8;
-//                 if (var_a1 != 0) {
-//                     var_t0 += material->unk12 << 1;
-//                 }
-//                 gfx->words.w1 = (s32)(0x80000000 + (u32)var_t0);
-//                 gfx->words.w0 = 0xDE000000;
-//             }
-//         } else {
-//             materialIndex = gfx->words.w1;
-//             var_a1 = 0;
-//             if (materialIndex & 0x80000000) {
-//                 materialIndex &= 0x7FFFFFFF;
-//                 var_a1 = 1;
-//             }
-//             material = &model->materials[materialIndex];
-//             var_t0 = material->unk8;
-//             if (var_a1 != 0) {
-//                 var_t0 += material->unk12 << 1;
-//             }
-//             gfx->words.w1 = (s32)(0x80000020 + (u32)var_t0);
-//             gfx->words.w0 = *var_t0;
-//         }
-
-//         gfx++;
-//         index++;        
-//     }
-// }
-
 void patch_model_display_list_for_textures(Model* model) {
     Gfx *gfx;
     s32 i;
+    u32 idx;
+    Gfx *texGdl;
+    Texture *tex;
+    u8 isRelative;
 
-    for (gfx = model->displayList, i = 0; i < model->displayListLength; i++, gfx++){
+    gfx = model->displayList;
+    for (i = 0; i < model->displayListLength; i++, gfx++){
         u8 cmd = gfx->words.w0 >> 24;
 
-        if (cmd != G_NOOP)
-        {
-            if (cmd == G_DL)
-            {
-                u32 idx = gfx->words.w1;
-                Gfx *texGdl;
-                u8 isRelative = 0;
+        switch (cmd) {
+            case G_DL:
+                isRelative = 0;
+
+                idx = gfx->words.w1;
+                if (idx & 0x80000000) {
+                    idx &= 0x7fffffff;
+                    isRelative = 1;
+                }
+
+                tex = model->materials[idx].texture;
+                texGdl = tex->gdl;
+                if (isRelative) {
+                    texGdl += tex->gdlIdx;
+                }
+
+                gSPDisplayList(gfx, OS_K0_TO_PHYSICAL(texGdl));
+                break;
+            case G_NOOP:
+                isRelative = 0;
+                idx = gfx->words.w1;
 
                 if (idx & 0x80000000) {
                     idx &= 0x7fffffff;
                     isRelative = 1;
                 }
 
-                texGdl = model->materials[idx].texture->gdl;
+                tex = model->materials[idx].texture;
+                texGdl = tex->gdl;
                 if (isRelative) {
-                    texGdl += model->materials[idx].texture->gdlIdx;
+                    texGdl += tex->gdlIdx;
                 }
 
-                gSPDisplayList(gfx, OS_K0_TO_PHYSICAL(texGdl));
-            }
-        } else {
-            u32 idx = gfx->words.w1;
-            Texture *tex;
-            Gfx *texGdl;
-            u8 isRelative = 0;
-
-            if (idx & 0x80000000) {
-                idx &= 0x7fffffff;
-                isRelative = 1;
-            }
-
-            tex = model->materials[idx].texture;
-            texGdl = tex->gdl;
-            if (isRelative) {
-                texGdl += tex->gdlIdx;
-            }
-
-            gfx->words.w0 = texGdl->words.w0;
-            gfx->words.w1 = (u32)tex + 0x80000020;
+                gfx->words.w0 = texGdl->words.w0;
+                gfx->words.w1 = (u32)OS_K0_TO_PHYSICAL(tex + 1);
+                break;
         }
     }
 }
-#endif
 
 /** 
   * Calculates various model malloc categories and returns the total size allocated to the model 
