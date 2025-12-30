@@ -31,7 +31,7 @@ extern u32* D_800B17BC;
 extern AnimSlot* gLoadedAnims;
 extern void* gBuffer_ANIM_TAB;
 extern s32 gNumLoadedAnims;
-extern void* gAuxBuffer;
+extern s16* gAuxBuffer;
 extern s32* gFile_MODELS_TAB;
 extern s32* gFreeModelSlots;
 extern ModelSlot* gLoadedModels;
@@ -85,7 +85,7 @@ extern ModelSlot *gLoadedModels;
 void model_destroy(Model *model);
 s32 model_load_anim_remap_table(s32 id, s32 param_2, s32 param_3);
 ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
-u32 modanim_load(Model *model, u32 id, void *modanim);
+s32 modanim_load(Model* model, s32 id, u8* data);
 void func_800186CC(Model *model);
 void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
 ModelInstance *_model_load_create_instance(s32 id, u32 flags)
@@ -528,7 +528,89 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
     return total_size;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/modanim_load.s")
+s32 modanim_load(Model* model, s32 id, u8* data) {
+    s32 temp_t0;
+    s32 temp_t7;
+    s32 temp_v0;
+    s32 i;
+    s32 var_a0;
+    s32 var_s1;
+    s32 var_v1;
+    s32 sp40;
+    s16* temp_s0;
+    s32 pad;
+    s32 var_s0;
+
+    temp_s0 = (s16*)D_800B17BC;
+    var_s1 = 0;
+    read_file_region(MODANIM_TAB, temp_s0, id << 1, 0x10);
+    temp_t0 = temp_s0[0];
+    var_a0 = temp_s0[1];
+    temp_t7 = (var_a0 - temp_t0) >> 1;
+    if (temp_t7 != model->animCount) {
+        model->animCount = temp_t7;
+    }
+    var_s0 = (model->animCount << 1);
+    if (model->animCount == 0) {
+        return 0;
+    }
+    var_s0 += 8;
+    read_file_region(AMAP_TAB, D_800B17BC, (id & ~3) << 2, 0x20);
+    model->unk5C = D_800B17BC[id & 3];
+    sp40 = D_800B17BC[(id & 3) + 1] - D_800B17BC[(id & 3) + 0];
+    if (model->unk71 & 0x40) {
+        model->modAnim = (s16 *)data;
+        while (var_s0 & 7) {
+            var_s0++;
+        }
+        // @fake
+        if (var_s0) {}
+        var_s1 = var_s0;
+        data += var_s0;
+        read_file_region(MODANIM_BIN, model->modAnim, temp_t0, var_s0);
+    } else {
+        read_file_region(MODANIM_BIN, gAuxBuffer, temp_t0, var_s0);
+        model->modAnim = gAuxBuffer;
+    }
+    model->modAnimBankBases[0] = 0;
+    var_v1 = 1;
+    for (i = 0; i < model->animCount; i++) {
+        if (model->modAnim[i] == -1) {
+            model->modAnimBankBases[var_v1] = i + 1;
+            var_v1 += 1;
+        }
+    }
+
+    var_s1 += model->animCount * 4;
+    if (!(model->unk71 & 0x40)) {
+        model->anims = (Animation **)data;
+        model->modAnim = NULL;
+        data += model->animCount * 4;
+        while (var_s1 & 7) {
+            var_s1 += 1;
+            data += 1;
+        }
+        model->amap = (u8*)data;
+        read_file_region(AMAP_BIN, data, model->unk5C, sp40);
+        var_s1 = 0;
+        do {
+            if (gAuxBuffer[var_s1] != -1) {
+                model->anims[var_s1] = anim_load(gAuxBuffer[var_s1], var_s1, NULL, model);
+                if (model->anims[var_s1] == 0) {
+                    for (i = 0; i < var_s1; i++) {
+                        anim_destroy(model->anims[i]);
+                    }
+                    model->anims = NULL;
+                    return 1;
+                }
+            } else {
+                model->anims[var_s1] = 0;
+            }
+            var_s1 += 1;
+        } while (var_s1 < model->animCount);
+    }
+    return 0;
+}
 
 void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
     Model* model;
