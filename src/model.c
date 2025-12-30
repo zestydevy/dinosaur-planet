@@ -13,12 +13,18 @@ static const char str_80099324[] = "ModFreeModel : NULL mod_inst!!\n";
 static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent model!!\n";
 
 
+#define ANIM_SLOT_RC(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[0]
+#define ANIM_SLOT_ANIM(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[1]
+
+#define MODEL_SLOT_ID(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[0]
+#define MODEL_SLOT_MODEL(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[1]
 
 extern s16 *SHORT_ARRAY_800b17d0;
 
 void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
+void model_destroy(Model* model);
 
 
 extern u32* D_800B17BC;
@@ -27,7 +33,7 @@ extern void* gBuffer_ANIM_TAB;
 extern s32 gNumLoadedAnims;
 extern void* gAuxBuffer;
 extern s32* gFile_MODELS_TAB;
-extern void* gFreeModelSlots;
+extern s32* gFreeModelSlots;
 extern ModelSlot* gLoadedModels;
 extern s32 gNumFreeModelSlots;
 extern s32 gNumLoadedModels;
@@ -438,51 +444,42 @@ void load_model_display_list2(Model *model, ModelInstance *modelInst)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/destroy_model_instance.s")
-#else
-extern s32 *gFreeModelSlots;
-extern s32 gNumFreeModelSlots;
-extern ModelSlot *gLoadedModels;
-extern s32 gNumLoadedModels;
-void _destroy_model_instance(ModelInstance *modelInst)
-{
-    Model *model;
+void destroy_model_instance(ModelInstance* modelInst) {
+    Model* sp1C;
+    s32 i;
 
     if (modelInst == NULL) {
         return;
     }
 
-    model = modelInst->model;
-
-    if (model->displayList != modelInst->displayList) {
+    sp1C = modelInst->model;
+    if (modelInst->displayList != sp1C->displayList) {
         mmFree(modelInst->displayList);
     }
+
     mmFree(modelInst);
+    sp1C->refCount--;
+    if (sp1C->refCount > 0) {
+        return;
+    }
 
-    if (--model->refCount <= 0)
-    {
-        s32 slot;
-
-        for (slot = 0; slot < gNumLoadedModels; slot++) {
-            if (gLoadedModels[slot].model == model) {
-                break;
-            }
-        }
-
-        if (slot == gNumLoadedModels)
-        {
-            *(u8*)0x0 = 0; // CRASH!
-        }
-        else
-        {
-            gFreeModelSlots[gNumFreeModelSlots++] = slot;
-            gLoadedModels[slot].id = gLoadedModels[slot].model = -1;
-            model_destroy(model);
+    for (i = 0; i < gNumLoadedModels; i++) {
+        if (sp1C == (Model*)MODEL_SLOT_MODEL(gLoadedModels, i)) {
+            break;
         }
     }
+
+    if (i == gNumLoadedModels) {
+        *(u8*)0x0 = 0; // CRASH!
+    } else {
+        gFreeModelSlots[gNumFreeModelSlots++] = i;
+
+        MODEL_SLOT_ID(gLoadedModels, i) = -1;
+        MODEL_SLOT_MODEL(gLoadedModels, i) = -1;
+        model_destroy(sp1C);
+    }
 }
-#endif
+
 
 void model_destroy(Model* model) {
     s32 i;
@@ -616,15 +613,15 @@ void anim_destroy(Animation* anim) {
         return;
             
     for (matchIndex = -1, index = 0; index < gNumLoadedAnims; index++){
-        if (anim == ((AnimSlot *)((s32*)gLoadedAnims + (index << 1)))->animation) {
+        if (anim == (Animation*)ANIM_SLOT_ANIM(gLoadedAnims, index)) {
             matchIndex = index;
             //@bug?: continues iterating through animations after animation found
         }
     }
     
     if (matchIndex != -1) {
-        ((AnimSlot *)((u8*)gLoadedAnims + (matchIndex << 1 << 2)))->referenceCount = clear;
-        ((AnimSlot *)((u8*)gLoadedAnims + (matchIndex << 1 << 2)))->animation = clear;
+        ANIM_SLOT_RC(gLoadedAnims, matchIndex) = -1;
+        ANIM_SLOT_ANIM(gLoadedAnims, matchIndex) = -1;
         mmFree(anim);
     }        
 }
@@ -1226,28 +1223,19 @@ void func_8001B084(ModelInstance *modelInst, f32 updateRate) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B100.s")
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B49C.s")
-#else
-extern s32 gNumLoadedModels;
-
 void func_8001B49C(void) {
-    ModelSlot* modelSlot;
     s32 index;
-    s32 modelID;
-
+    
     for (index = 0; index < gNumLoadedModels; index++){
-        modelSlot = &gLoadedModels[index];
-        modelID = modelSlot->id;
+        ModelSlot *slot;
+        if (MODEL_SLOT_MODEL(gLoadedModels, index)) {
+        }
 
-        if (modelID < 0){
+        if (MODEL_SLOT_ID(gLoadedModels, index) < 0){
             continue;
         }
-        if (index && modelSlot && modelID)
-        {
-        }
+        index = index ^ 0;
     }
 }
-#endif
 
 void doNothing_8001B4E4(s32 arg) {}
