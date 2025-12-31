@@ -875,152 +875,115 @@ void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3) {
     add_matrix_to_pool(arg0->matrices[sp60], arg1->jointCount);
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_800199A8.s")
-#else
-void _func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animState, f32 param_4, u32 param_5)
-{
-    Model *model;
-    MtxF *modelMtx;
-    AnimState myAnimState;
-    s32 i;
-    u32 flags = 0;
-    s32 j;
+void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 arg3, u32 arg4) {
+    MtxF* spEC;
+    Model* model;
+    s32 var_s0;
+    s32 var_s1;
+    s32 var_v1;
+    s32 var_s4;
+    s32 temp_v0;
+    AnimState sp6C;
 
     model = modelInst->model;
-    modelMtx = modelInst->unk4.matrices[modelInst->unk34 & 0x1];
-
-    animState->unk4[0] = animState->unk14[0] * param_4;
-
-    if (model->unk71 & 0x8)
-    {
-        myAnimState.anims[0] = animState->anims[0];
-        myAnimState.anims[1] = animState->anims[1];
-        myAnimState.anims2[0] = animState->anims2[0];
-        myAnimState.anims2[1] = animState->anims2[1];
-
-        for (i = 0; i < 2; i++)
-        {
-            s32 srci = 0;
-
-            if (animState->unk58 != 0) {
-                srci = i;
+    var_s4 = 0;
+    spEC = modelInst->matrices[modelInst->unk34 & 1];
+    animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * arg3;
+    if (model->unk71 & 8) {
+        sp6C.anims[0] = animState->anims[0];
+        sp6C.anims[1] = animState->anims[1];
+        sp6C.anims2[0] = animState->anims2[0];
+        sp6C.anims2[1] = animState->anims2[1];
+        var_s0 = 0;
+        for (; var_s0 < 2; var_s0++) {
+            if (animState->unk58[0] != 0) {
+                var_s1 = var_s0;
+            } else {
+                var_s1 = 0;
             }
-
-            myAnimState.animIndexes[i] = animState->animIndexes[srci];
-            myAnimState.unk60[i] = animState->unk60[srci];
-            myAnimState.unk4[i] = animState->unk4[srci];
+            sp6C.animIndexes[var_s0] = animState->animIndexes[var_s1];
+            sp6C.unk60[var_s0] = animState->unk60[var_s1];
+            sp6C.totalAnimationFrames[var_s0] = animState->totalAnimationFrames[var_s1];
+            sp6C.curAnimationFrame[var_s0] = animState->curAnimationFrame[var_s1];
+            sp6C.unk34[var_s0] = animState->unk34[var_s1];
         }
-
-        myAnimState.unk58 = animState->unk58;
-
-        func_8001A1D4(model, &myAnimState, 2);
-
-        if (animState->unk63 & 0x1) {
-            flags |= 0x10;
+        sp6C.unk58[0] = animState->unk58[0];
+        func_8001A1D4(model, &sp6C, 2);
+        temp_v0 = animState->unk62[1];
+        if (temp_v0 & 1) {
+            var_s4 = 0x10;
         }
-        if (animState->unk63 & 0x4) {
-            flags |= 0x20;
+        if (temp_v0 & 4) {
+            var_s4 |= 0x20;
         }
-
-        func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, SHORT_ARRAY_800b17d0, param_5, flags | 0x40);
-
+        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, var_s4 | 0x40);
         return;
     }
-
-    for (i = 0; i < 2; i++)
-    {
-        if (i == 0) {
-            myAnimState.unk58 = animState->unk5A;
+    for (var_s0 = 0; var_s0 < 2; var_s0++) {
+        if (var_s0 != 0) {
+            var_v1 = animState->unk5C[0];
         } else {
-            myAnimState.unk58 = animState->unk5C;
+            var_v1 = animState->unk58[1];
         }
-
-        if (myAnimState.unk58 != 0)
-        {
-            u32 bit;
-
-            if (animState->unk58 == 0) {
-                bit = 0;
+        if (var_v1 != 0) {
+            if (animState->unk58[0] != 0) {
+                var_s1 = 4 << var_s0;
             } else {
-                bit = 4 << i;
+                var_s1 = 0;
             }
-
-            myAnimState.unk60[0] = animState->unk60[i];
-            myAnimState.unk14[0] = animState->unk14[i];
-            myAnimState.unk4[0] = animState->unk4[i];
-            myAnimState.unk34[0] = animState->unk34[i];
-            myAnimState.unk60[1] = animState->unk60[i];
-            myAnimState.unk14[1] = animState->unk14[i];
-            myAnimState.unk4[1] = animState->unk4[i];
-            myAnimState.unk34[1] = animState->unk3C[i];
-
+            sp6C.unk60[0] = animState->unk60[var_s0];
+            sp6C.totalAnimationFrames[0] = animState->totalAnimationFrames[var_s0];
+            sp6C.curAnimationFrame[0] = animState->curAnimationFrame[var_s0];
+            sp6C.unk34[0] = animState->unk34[var_s0];
+            sp6C.unk60[1] = animState->unk60[var_s0];
+            sp6C.totalAnimationFrames[1] = animState->totalAnimationFrames[var_s0];
+            sp6C.curAnimationFrame[1] = animState->curAnimationFrame[var_s0];
+            sp6C.unk34[1] = animState->unk3C[var_s0];
             if (model->unk71 & 0x40) {
-                myAnimState.animIndexes[0] = 0;
-                myAnimState.animIndexes[1] = 1;
-                myAnimState.anims[0] = animState->anims[animState->animIndexes[i]];
-                myAnimState.anims[1] = animState->anims2[animState->animIndexes[i + 2]];
+                sp6C.animIndexes[0] = 0;
+                sp6C.animIndexes[1] = 1;
+                sp6C.anims[0] = animState->anims[animState->animIndexes[var_s0]];
+                sp6C.anims[1] = animState->anims2[animState->unk48[var_s0]];
             } else {
-                myAnimState.animIndexes[0] = animState->animIndexes[i];
-                myAnimState.animIndexes[1] = animState->animIndexes[i + 2];
+                sp6C.animIndexes[0] = animState->animIndexes[var_s0];
+                sp6C.animIndexes[1] = animState->unk48[var_s0];
             }
-
-            func_8001A1D4(model, &myAnimState, 2);
-            func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, SHORT_ARRAY_800b17d0, param_5, bit);
-
-            if (bit != 0) {
-                bit |= 1 << i;
+            sp6C.unk58[0] = var_v1;
+            func_8001A1D4(model, &sp6C, 2);
+            func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, var_s1);
+            if (var_s1 != 0) {
+                var_s4 |= 1 << var_s0;
             }
         }
     }
-
-    if (animState->unk5A != 0 || animState->unk5C != 0) {
-        if (flags == 0) {
-            return;
+    if (((animState->unk58[1] == 0) && (animState->unk5C[0] == 0)) || (var_s4 != 0)) {
+        var_s1 = 1;
+        if (animState->unk58[0] != 0) {
+            var_s1 = 2;
         }
-    }
-
-    j = 1;
-    if (animState->unk58) {
-        j = 2;
-    }
-
-    myAnimState.anims[0] = animState->anims[0];
-    myAnimState.anims[1] = animState->anims[1];
-    myAnimState.anims2[0] = animState->anims2[0];
-    myAnimState.anims2[1] = animState->anims2[1];
-
-    if (j != 0)
-    {
-        if (j != 1)
-        {
-            for (i = 0; i < j; i++)
-            {
-                myAnimState.animIndexes[i] = animState->animIndexes[i];
-                myAnimState.unk60[i] = animState->unk60[i];
-                myAnimState.unk14[i] = animState->unk14[i];
-                myAnimState.unk4[i] = animState->unk4[i];
-                myAnimState.unk34[i] = animState->unk34[i];
-            }
-            if (i == 1)
-                goto lab_80019f2c;
+        sp6C.anims[0] = animState->anims[0];
+        sp6C.anims[1] = animState->anims[1];
+        sp6C.anims2[0] = animState->anims2[0];
+        sp6C.anims2[1] = animState->anims2[1];
+        for (var_s0 = 0; var_s0 < var_s1; var_s0++) {
+            sp6C.animIndexes[var_s0] = animState->animIndexes[var_s0];
+            sp6C.unk60[var_s0] = animState->unk60[var_s0];
+            sp6C.totalAnimationFrames[var_s0] = animState->totalAnimationFrames[var_s0];
+            sp6C.curAnimationFrame[var_s0] = animState->curAnimationFrame[var_s0];
+            sp6C.unk34[var_s0] = animState->unk34[var_s0];
         }
-
-        // TODO
+        sp6C.unk58[0] = animState->unk58[0];
+        func_8001A1D4(model, &sp6C, var_s1);
+        temp_v0 = animState->unk62[1];
+        if (temp_v0 & 1) {
+            var_s4 |= 0x10;
+        }
+        if (temp_v0 & 4) {
+            var_s4 |= 0x20;
+        }
+        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, var_s4);
     }
-
-    lab_80019f2c:
-    myAnimState.unk58 = animState->unk58;
-    func_8001A1D4(model, &myAnimState, 1);
-    if (animState->unk63 & 0x1) {
-        flags |= 0x10;
-    }
-    if (animState->unk63 & 0x4) {
-        flags |= 0x20;
-    }
-    func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, SHORT_ARRAY_800b17d0, param_5, flags);
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_80019FC0.s")
