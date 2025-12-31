@@ -12,10 +12,18 @@ static const char str_80098804[] = "DLLS: free fail, DLL not loaded.\n";
 static const char str_80098828[] = "warning: using default DLL entry point.\n";
 static const char str_80098854[] = "DLL %d usage %d %08x:%08x\n";
 
+/* -------- .bss start 800a7d10 -------- */
+DLLState *gLoadedDLLList;
+s32 gLoadedDLLCount;
+DLLTab *gFile_DLLS_TAB;
+s32 gDLLCount;
+u32 *gFile_DLLSIMPORTTAB;
+/* -------- .bss end 800a7d30 -------- */
+
 void dll_relocate(DLLFile *dll);
 DLLFile *dll_load_from_tab(u16 tabidx, s32 *sizeOut);
 
-void init_dll_system() {
+void init_dll_system(void) {
     s32 dllNone = DLL_NONE;
 
     queue_alloc_load_file((void**)&gFile_DLLS_TAB, DLLS_TAB);
@@ -265,7 +273,7 @@ s32 dll_unload(void *dllInterfacePtr) {
     return FALSE;
 }
 
-s32 dll_throw_fault() {
+s32 dll_throw_fault(void) {
     u8 *nullPtr = NULL;
     *nullPtr = 0;
 
@@ -364,7 +372,7 @@ void dll_relocate(DLLFile *dll) {
     }
 }
 
-void dll_unused_8000C648() {
+void dll_unused_8000C648(void) {
     s32 v0 = 0;
     s32 count = gLoadedDLLCount;
 

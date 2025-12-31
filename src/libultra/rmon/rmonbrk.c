@@ -5,7 +5,6 @@
 #include "libultra/rmon/dbgproto.h"
 #include "libultra/rmon/rmonint.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
 #define TMP_BP 0
 #define NUM_BREAKPOINTS 16
@@ -22,11 +21,11 @@ typedef struct {
     u32 oldInstruction;
 } BREAKINFO;
 
-BSS_STATIC BREAKINFO breakpoints[NUM_BREAKPOINTS] ALIGNED(0x8);
-BSS_STATIC BREAKINFO altBreak;
-BSS_STATIC BREAKINFO RCPbreakpoints[NUM_BREAKPOINTS] ALIGNED(0x8);
+static BREAKINFO breakpoints[NUM_BREAKPOINTS] ALIGNED(0x8);
+static BREAKINFO altBreak;
+static BREAKINFO RCPbreakpoints[NUM_BREAKPOINTS] ALIGNED(0x8);
 
-BSS_GLOBAL u8 __rmonRcpAtBreak;
+u8 __rmonRcpAtBreak;
 
 static void rmonFindFaultedThreads(void);
 

@@ -22,42 +22,37 @@ static const char str_80098338[] = "\n";
 static const char str_8009833c[] = "\n";
 static const char str_80098340[] = "CAM Error!! Convlist overflow.\n";
 
-// .bss
-// pad to 0x800a7c20
-static u8 _bss_pad[0x3E38]; // TODO: remove bss padding
-
-extern f32 D_800A6270;
-extern f32 D_800A6274;
-extern Camera gCameras[CAMERA_COUNT];
-extern u32 UINT_800a66f8;
-extern s32 gCameraSelector;
-extern s32 D_800A6700;
-extern SRT gCameraSRT;
-extern f32 gFovY;
-extern f32 gAspect;
-extern s8 gTriggerUseAlternateCamera;
-extern s8 gUseAlternateCamera;
-extern MatrixSlot gMatrixPool[100];
-extern u32 gMatrixCount;
-extern u32 UINT_800a6a54;
-extern u16 gPerspNorm;
-extern MtxF MtxF_800a6a60;
-extern MtxF gViewProjMtx;
-extern Mtx *gRSPMtxList; // FIXME: not a list
-extern MtxF gProjectionMtx;
-extern MtxF gViewMtx;
-extern MtxF gViewMtx2;
-extern Mtx gRSPProjectionMtx;
-extern Mtx gRSPViewMtx2;
-extern MtxF gAuxMtx;
-extern MtxF gAuxMtx2;
-extern MtxF gObjectMatrices[30];
-extern MtxF gInverseObjectMatrices[30];
-static Mtx *gRSPMatrices[30];                        // <----- NOTE: static!
-extern s8 gMatrixIndex;
-
-
-// .data
+/* -------- .bss start 800a6270 -------- */
+f32 D_800A6270;
+f32 D_800A6274;
+Camera gCameras[CAMERA_COUNT];
+u32 UINT_800a66f8;
+s32 gCameraSelector;
+s32 D_800A6700;
+SRT gCameraSRT;
+f32 gFovY;
+f32 gAspect;
+s8 gTriggerUseAlternateCamera;
+s8 gUseAlternateCamera;
+MatrixSlot gMatrixPool[100];
+u32 gMatrixCount;
+u32 UINT_800a6a54;
+u16 gPerspNorm;
+MtxF MtxF_800a6a60;
+MtxF gViewProjMtx;
+Mtx *gRSPMtxList; // FIXME: not a list
+MtxF gProjectionMtx;
+MtxF gViewMtx;
+MtxF gViewMtx2;
+Mtx gRSPProjectionMtx;
+Mtx gRSPViewMtx2;
+MtxF gAuxMtx;
+MtxF gAuxMtx2;
+MtxF gObjectMatrices[30];
+MtxF gInverseObjectMatrices[30];
+Mtx *gRSPMatrices[30];
+s8 gMatrixIndex;
+/* -------- .bss end 800a7c30 -------- */
 
 // The viewport z-range below is half of the max (511)
 #define G_HALFZ (G_MAXZ / 2) /* 9 bits of integer screen-Z precision */
@@ -72,6 +67,7 @@ extern s8 gMatrixIndex;
     0, 0, 320 - 1, 240 - 1, \
     0
 
+/* -------- .data start -------- */
 f32 gNearPlane = 4.0f;
 f32 gFarPlane = 10000.0f;
 s16 D_8008C518 = 0;
@@ -118,6 +114,7 @@ MtxF D_8008C788 = {
     { 0.0f, 0.0f, 0.0f, 160.0f },
     }
 };
+/* -------- .data end -------- */
 
 // ROM address
 extern u32 D_B0000578;

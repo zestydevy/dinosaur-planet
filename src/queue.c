@@ -9,22 +9,31 @@
 #include "functions.h"
 #include "macros.h"
 
-extern GenericStack gAssetThreadStackInternal;
-extern AssetThreadStackElement gAssetThreadStackData[5];
+/* -------- .bss start 800ab970 -------- */
+u64 gAssetThreadStack[STACKSIZE(0xFA0) + 1];
+OSThread gAssetThread;
+OSMesgQueue gAssetLoadThreadSendQueue; //send load requests to asset thread
+OSMesg D_800ACB60[1];
+OSMesgQueue D_800ACB68;
+OSMesg D_800ACB80[5];
+OSMesgQueue gAssetLoadThreadRecvQueue; //receive acknowledgement from asset thread
+OSMesg D_800ACBB0[1];
+GenericQueue gAssetThreadQueueInternal;
+GenericQueue *gAssetThreadQueue;
+UnkStructAssetThreadSingle gAssetThreadQueueData[100];
+GenericQueue D_800AD6C0;
+UnkStructAssetThreadSingle D_800AD6D0[100];
+GenericStack gAssetThreadStackInternal;
+GenericStack *gAssetThreadGenericStack;
+AssetThreadStackElement gAssetThreadStackData[5];
+struct AssetLoadThreadMsg D_800AE240;
+struct AssetLoadThreadMsg assetLoadMsg;
+u8 gDisableObjectStreamingFlag;
+u8 D_800AE29D;
+u8 D_800AE29E;
+/* -------- .bss end 800ae2a0 -------- */
 
-extern GenericQueue gAssetThreadQueueInternal;
-extern UnkStructAssetThreadSingle gAssetThreadQueueData[100];
-
-extern u8 D_800AE240;
-
-extern OSMesg D_800ACB60[1];
-extern OSMesg D_800ACB80[5];
-extern OSMesg D_800ACBB0[1];
-
-// pad to 0x800ad6c0
-static u8 _bss_pad[0x5180]; // TODO: remove bss padding
-
-void func_80012A4C();
+void func_80012A4C(void);
 void asset_thread_load_single(void);
 void asset_thread_load_asset(struct AssetLoadThreadMsg *load);
 
@@ -37,15 +46,15 @@ void create_asset_thread(void) {
         100, 
         sizeof(UnkStructAssetThreadSingle));
     
-    gAssetThreadStack = generic_stack_init(
+    gAssetThreadGenericStack = generic_stack_init(
         &gAssetThreadStackInternal, 
         (void*)&gAssetThreadStackData, 
         5, 
         sizeof(AssetThreadStackElement));
     
-    osCreateThread(&assetThread, ASSET_THREAD_ID, &asset_thread_main, 0,
-        &assetThreadStackEnd, ASSET_THREAD_PRIORITY);
-    osStartThread(&assetThread);
+    osCreateThread(&gAssetThread, ASSET_THREAD_ID, &asset_thread_main, 0,
+        &gAssetThreadStack[STACKSIZE(0xFA0)], ASSET_THREAD_PRIORITY);
+    osStartThread(&gAssetThread);
 }
 
 void func_80012584(
@@ -83,8 +92,8 @@ void queue_alloc_load_file(void **dest, s32 fileId) {
     assetLoadMsg.loadType       = ASSET_TYPE_FILE;
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1); //wait for acknowledge
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1); //wait for acknowledge
 }
 
 void queue_load_file_to_ptr(void **dest, s32 fileId) {
@@ -92,8 +101,8 @@ void queue_load_file_to_ptr(void **dest, s32 fileId) {
     assetLoadMsg.loadType       = ASSET_TYPE_ALLOCATED_FILE;
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length) {
@@ -103,8 +112,8 @@ void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 leng
     assetLoadMsg.p.file.id      = fileId;
     assetLoadMsg.p.file.dest    = dest;
     assetLoadMsg.p.file.offset  = offset;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6) {
@@ -117,8 +126,8 @@ void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 ma
     assetLoadMsg.p.object.parent = parent;
     assetLoadMsg.p.object.arg6 = arg6;
     assetLoadMsg.p.object.dest = dest;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_texture(Texture **dest, s32 id) {
@@ -127,8 +136,8 @@ void queue_load_texture(Texture **dest, s32 id) {
     assetLoadMsg.loadType       = ASSET_TYPE_TEXTURE;
     assetLoadMsg.p.texture.id   = id;
     assetLoadMsg.p.texture.dest = dest;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount) {
@@ -138,8 +147,8 @@ void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount) {
     assetLoadMsg.p.dll.idOrIdx  = idOrIdx;
     assetLoadMsg.p.dll.dest     = dest;
     assetLoadMsg.p.dll.exportCount = exportCount;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 void queue_load_model(void **dest, s32 id, s32 arg2) {
@@ -149,8 +158,8 @@ void queue_load_model(void **dest, s32 id, s32 arg2) {
     assetLoadMsg.p.model.id     = id;
     assetLoadMsg.p.model.dest   = dest;
     assetLoadMsg.p.model.unkC   = arg2;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 const char load_error[] = "UNKNOWN load request\n";
@@ -164,8 +173,8 @@ void queue_load_anim(void **dest, s16 id, s16 arg2, s32 arg3, s32 arg4) {
     assetLoadMsg.p.animation.dest = dest;
     assetLoadMsg.p.animation.arg2 = arg2;
     assetLoadMsg.p.animation.arg4 = arg4;
-    osSendMesg(&assetLoadThreadSendQueue, &assetLoadMsg, 0);
-    osRecvMesg(&assetLoadThreadRecvQueue, 0, 1);
+    osSendMesg(&gAssetLoadThreadSendQueue, &assetLoadMsg, 0);
+    osRecvMesg(&gAssetLoadThreadRecvQueue, 0, 1);
 }
 
 u8 map_get_is_object_streaming_disabled(void) {
@@ -184,11 +193,11 @@ void func_800129E4() {
 
     func_80012A4C();
 
-    if (gAssetThreadQueue->count != 0 && assetLoadThreadSendQueue.validCount == 0) {
+    if (gAssetThreadQueue->count != 0 && gAssetLoadThreadSendQueue.validCount == 0) {
         if (gAssetThreadQueue->count) {} // fake match
 
-        D_800AE240 = 0;
-        osSendMesg(&assetLoadThreadSendQueue, &D_800AE240, OS_MESG_NOBLOCK);
+        D_800AE240.loadCategory = 0;
+        osSendMesg(&gAssetLoadThreadSendQueue, &D_800AE240, OS_MESG_NOBLOCK);
     }
 
     interrupts_enable(prevIE);
@@ -199,8 +208,8 @@ void func_80012A4C(void) {
 
     while (osRecvMesg(&D_800ACB68, NULL, 0) != -1);
 
-    while (gAssetThreadStack->count != 0) {
-        generic_stack_pop(gAssetThreadStack, &sp24);
+    while (gAssetThreadGenericStack->count != 0) {
+        generic_stack_pop(gAssetThreadGenericStack, &sp24);
 
         switch (sp24.unk0) {
             case 5:
@@ -228,13 +237,10 @@ void func_80012A4C(void) {
 }
 
 void func_80012B54(s32 param1, s32 param2) {
-    static GenericQueue D_800AD6C0;
-    static UnkStructAssetThreadSingle D_800AD6D0[100];
-
     UnkStructAssetThreadSingle elementTemp;
     s32 prevIE;
-    UnkStructAssetThreadSingle *ptr;
-    ObjSetup *ptr_unk8;
+    GenericQueue *qptr;
+    ObjSetup *new_var;
     
     prevIE = interrupts_disable();
 
@@ -242,27 +248,26 @@ void func_80012B54(s32 param1, s32 param2) {
 
     // Note: does not allocate, effectively just resets the temp queue
     generic_queue_init(&D_800AD6C0, (void*)&D_800AD6D0, 100, sizeof(UnkStructAssetThreadSingle));
+    qptr = &D_800AD6C0;
 
     while (!generic_queue_is_empty(gAssetThreadQueue)) {
-        ptr = &elementTemp;
-        generic_queue_dequeue(gAssetThreadQueue, ptr);
+        generic_queue_dequeue(gAssetThreadQueue, &elementTemp);
         
-        if (param1 != ptr->unk0) {
-            generic_queue_enqueue(&D_800AD6C0, ptr);
+        if (param1 != elementTemp.unk0) {
+            generic_queue_enqueue(qptr, &elementTemp);
         } else {
-            ptr_unk8 = ptr->unk8;
-            if (param1 == 4 && ptr_unk8->uID != param2) {
-                generic_queue_enqueue(&D_800AD6C0, ptr);
+            if ((param1 == 4) && ((new_var = ((0, elementTemp)).unk8)->uID != param2)) {
+                generic_queue_enqueue(qptr, &elementTemp);
             }
         }
     }
 
-    gAssetThreadQueue->count = D_800AD6C0.count;
-    gAssetThreadQueue->top = D_800AD6C0.top;
-    gAssetThreadQueue->bottom = D_800AD6C0.bottom;
-    gAssetThreadQueue->unk6 = D_800AD6C0.unk6;
+    gAssetThreadQueue->count = qptr->count;
+    gAssetThreadQueue->top = qptr->top;
+    gAssetThreadQueue->bottom = qptr->bottom;
+    gAssetThreadQueue->unk6 = qptr->unk6;
 
-    bcopy(D_800AD6C0.data, gAssetThreadQueue->data, D_800AD6C0.capacity * sizeof(UnkStructAssetThreadSingle));
+    bcopy(qptr->data, gAssetThreadQueue->data, qptr->capacity * sizeof(UnkStructAssetThreadSingle));
 
     if (D_800AE29D != 0 && param1 == D_800AE29E) {
         interrupts_enable(prevIE);
@@ -284,7 +289,7 @@ void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 pa
 
     prevIE = interrupts_disable();
 
-    if ((gAssetThreadStack->count + 1) != gAssetThreadStack->capacity) { // !is_stack_empty
+    if ((gAssetThreadGenericStack->count + 1) != gAssetThreadGenericStack->capacity) { // !is_stack_empty
         element.unk0 = (u8)param1;
         element.unk4 = param2;
         element.unk8 = param3;
@@ -292,7 +297,7 @@ void queue_block_emplace(s32 param1, u32 *param2, s32 param3, s32 param4, s32 pa
         element.unk10 = param5;
 
         // Copy element into stack
-        generic_stack_push(gAssetThreadStack, &element);
+        generic_stack_push(gAssetThreadGenericStack, &element);
     }
 
     interrupts_enable(prevIE);
@@ -306,12 +311,12 @@ void asset_thread_main(void *arg) {
     D_800AE29D = 0;
     D_800AE29E = 0;
 
-    osCreateMesgQueue(&assetLoadThreadSendQueue, D_800ACB60, ARRAYCOUNT(D_800ACB60));
+    osCreateMesgQueue(&gAssetLoadThreadSendQueue, D_800ACB60, ARRAYCOUNT(D_800ACB60));
     osCreateMesgQueue(&D_800ACB68, D_800ACB80, ARRAYCOUNT(D_800ACB80));
-    osCreateMesgQueue(&assetLoadThreadRecvQueue, D_800ACBB0, ARRAYCOUNT(D_800ACBB0));
+    osCreateMesgQueue(&gAssetLoadThreadRecvQueue, D_800ACBB0, ARRAYCOUNT(D_800ACBB0));
 
     while (1) {
-        osRecvMesg(&assetLoadThreadSendQueue, &msg, OS_MESG_BLOCK);
+        osRecvMesg(&gAssetLoadThreadSendQueue, &msg, OS_MESG_BLOCK);
 
         msg2 = (struct AssetLoadThreadMsg *)msg;
 
@@ -407,7 +412,5 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
             *load->p.animation.dest = anim_load((s16)load->p.animation.id,
                 (s16)load->p.animation.arg2, load->p.animation.arg3, load->p.animation.arg4);
     }
-    osSendMesg(&assetLoadThreadRecvQueue, NULL, 0);
+    osSendMesg(&gAssetLoadThreadRecvQueue, NULL, 0);
 }
-
-

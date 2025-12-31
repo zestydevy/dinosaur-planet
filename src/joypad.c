@@ -4,16 +4,16 @@
 
 #define THREAD_STACK_CONTROLLER 1024
 
-// .data
-
+/* -------- .data start -------- */
 s32 gNoControllers = 0;
 u16 D_8008C8A4 = 0xFFFF;
 u16 gButtonMask[MAXCONTROLLERS] = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF };
 u8 gIgnoreJoystick = 0;
 u8 D_8008C8B4 = 0;
+/* -------- .data end -------- */
 
-// .bss
-
+// TODO: bss size for this file is correct but IDO reorders it
+/* -------- .bss start 800a7db0 -------- */
 u8 gPrevContSnapshotsI;
 u8 gApplyContInputs;
 u8 gNumBufContSnapshots[2];
@@ -39,14 +39,12 @@ s8 gMenuJoyYHoldTimer[MAXCONTROLLERS];
 s8 gMenuJoyXSign[MAXCONTROLLERS];
 s8 gMenuJoyYSign[MAXCONTROLLERS];
 OSThread gControllerThread;
-u64 gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)];
+u64 gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)+1];
 OSScClient gContSchedulerClient;
 s16 gContQueue2Message;
 u8 _unk800A861A[0x1E]; // gap
 s8 gMenuJoystickDelay;
-
-
-// // //
+/* -------- .bss end 800a8640 -------- */
 
 /**
  * @returns The message queue associated with SI controller interrupts.

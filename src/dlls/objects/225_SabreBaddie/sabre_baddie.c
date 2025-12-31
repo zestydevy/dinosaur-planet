@@ -5,6 +5,7 @@
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*000*/ s8 unk0[0x33A - 0];

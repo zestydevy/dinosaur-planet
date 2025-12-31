@@ -5,7 +5,6 @@
 #include "PR/rcp.h"
 #include "PR/sptask.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
 void __rmonMaskIdleThreadInts(void) {
     register OSThread* tptr = __osGetActiveQueue();

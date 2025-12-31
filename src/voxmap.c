@@ -18,11 +18,13 @@ static const char str_800986ac[] = "**** NODE FIND ****\n";
 #define SOME_FACTOR 10
 #define SLOT_COUNT 6
 
+/* -------- .bss start 800a7c70 -------- */
 s32* gVoxmapTextureIndices; // D_800A7C70
 s32* gVoxmapObjectIndices; // D_800A7C74
 void* D_800A7C78; // gVoxelCircleBuffer?
 VoxmapSlot* D_800A7C80[SLOT_COUNT];
 s32* D_800A7C98; // gPathfindingRingBuffer?
+s32 _bss_800a7c9c;
 VoxmapSlot gVoxmapLastSearchedSlot;
 s32 gVoxmapBlockIDs[SLOT_COUNT];
 s32 gVoxmapCacheTimers[SLOT_COUNT];
@@ -30,7 +32,7 @@ u8 gVoxmapSlotUsed[SLOT_COUNT]; // gVoxmapInUseFlags?
 s16 D_800A7CF0[6][2]; // gVoxmapOriginPositions?
 Object *gVoxmapCurrentObject;
 s32 D_800A7D0C; // gVoxmapObjectCount?
-
+/* -------- .bss end 800a7d10 -------- */
 
 void voxmap_init(void) {
     s32 i;

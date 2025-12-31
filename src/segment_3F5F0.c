@@ -12,7 +12,10 @@ u16 func_8003FB88(u16, u16, u16, u16);
 
 extern s32 D_80092A50;
 extern s32 D_80092A54[3];
-extern s32 D_800B49E0;
+
+// -------- .bss start 800b49e0 -------- //
+s32 D_800B49E0;
+// -------- .bss end 800b49f0 -------- //
 
 void func_8003E9F0(Gfx** gdl, s32 updateRate) {
     s32 temp_v0;

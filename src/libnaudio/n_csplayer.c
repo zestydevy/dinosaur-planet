@@ -59,6 +59,7 @@ f32 D_8009699C[100] = {
 
 s32 D_80096B2C = 0;
 
+// .bss 800cd2e0-800cd320
 u32 D_800CD2E0[16];
 
 u8 n_seqplayer_func_80079e1c(N_ALVoiceState *vs, N_ALCSPlayer *seqp);

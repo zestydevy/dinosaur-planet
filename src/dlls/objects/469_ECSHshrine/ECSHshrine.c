@@ -1,9 +1,13 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
+#include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "dll.h"
+#include "functions.h"
 
 typedef struct {
     s16 unk0;

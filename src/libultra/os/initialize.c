@@ -157,15 +157,15 @@ void func_8007CC9C() {}
  * @see __osCurrentHandle
  */
 void __createSpeedParam() {
-    __CartRomHandle.type = DEVICE_TYPE_INIT;
-    __CartRomHandle.latency = (u8)IO_READ(PI_BSD_DOM1_LAT_REG);
-    __CartRomHandle.pulse = (u8)IO_READ(PI_BSD_DOM1_PWD_REG);
-    __CartRomHandle.pageSize = (u8)IO_READ(PI_BSD_DOM1_PGS_REG);
-    __CartRomHandle.relDuration = (u8)IO_READ(PI_BSD_DOM1_RLS_REG);
+    __Dom1SpeedParam.type = DEVICE_TYPE_INIT;
+    __Dom1SpeedParam.latency = (u8)IO_READ(PI_BSD_DOM1_LAT_REG);
+    __Dom1SpeedParam.pulse = (u8)IO_READ(PI_BSD_DOM1_PWD_REG);
+    __Dom1SpeedParam.pageSize = (u8)IO_READ(PI_BSD_DOM1_PGS_REG);
+    __Dom1SpeedParam.relDuration = (u8)IO_READ(PI_BSD_DOM1_RLS_REG);
 
-    __LeoDiskHandle.type = DEVICE_TYPE_INIT;
-    __LeoDiskHandle.latency = (u8)IO_READ(PI_BSD_DOM2_LAT_REG);
-    __LeoDiskHandle.pulse = (u8)IO_READ(PI_BSD_DOM2_PWD_REG);
-    __LeoDiskHandle.pageSize = (u8)IO_READ(PI_BSD_DOM2_PGS_REG);
-    __LeoDiskHandle.relDuration = (u8)IO_READ(PI_BSD_DOM2_RLS_REG);
+    __Dom2SpeedParam.type = DEVICE_TYPE_INIT;
+    __Dom2SpeedParam.latency = (u8)IO_READ(PI_BSD_DOM2_LAT_REG);
+    __Dom2SpeedParam.pulse = (u8)IO_READ(PI_BSD_DOM2_PWD_REG);
+    __Dom2SpeedParam.pageSize = (u8)IO_READ(PI_BSD_DOM2_PGS_REG);
+    __Dom2SpeedParam.relDuration = (u8)IO_READ(PI_BSD_DOM2_RLS_REG);
 }

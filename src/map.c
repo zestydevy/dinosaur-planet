@@ -5,9 +5,74 @@
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
 // .data start: 80092a60 ?
-// .bss start: 800b49f0 ?
 
-static void func_8004D328();
+// -------- .bss start 800b49f0 -------- //
+DLBuilder D_800B49F0;
+DLBuilder D_800B4A20;
+s32 D_800B4A50;
+s32 D_800B4A54;
+s8 D_800B4A58; //gStartWarp?
+s8 D_800B4A59;
+s16 D_800B4A5C;
+s16 D_800B4A5E; //gFadeDelayTimerStarted
+Warp D_800B4A60;
+s16 gMobileMapID;
+s16 gMobileMapUnknown;
+Plane gFrustumPlanes[MAP_LAYER_COUNT];
+u32 gRenderList[MAX_RENDER_LIST_LENGTH];
+s16 gRenderListLength;
+Block *gBlocksToDraw[MAX_BLOCKS];
+s16 gBlocksToDrawIdx;
+Gfx* gMainDL;
+Mtx* gWorldRSPMatrices;
+Vertex* D_800B51D4;
+Triangle* D_800B51D8;
+s16 SHORT_800b51dc;
+u32 UINT_800b51e0;
+Camera* D_800B51E4;
+struct Vec3_Int Vec3_Int_array[20];
+MapHeader* gLoadedMapsDataTable[120];
+MapObjSetupList gMapObjSetupLists[120];
+s8 gMapType;
+MapHeader* gMapActiveStreamMap;
+SavedObject* D_800B96B0;
+BlocksModel **gLoadedBlocks;
+u8 gLoadedBlockCount;
+s16 *gLoadedBlockIds;
+s16 gNumTRKBLKEntries;
+u8 *gBlockRefCounts;
+s32* gFile_BLOCKS_TAB; // unknown pointer type
+s32 gNumTotalBlocks;
+/** An array of 5 pointers to 16*16 blockIndex arrays, one for each map layer (maybe called visGrids based on print strings?) */
+s8 *gBlockIndices[MAP_LAYER_COUNT];
+GlobalMapCell *gDecodedGlobalMap[MAP_LAYER_COUNT]; //16*16 grid of GlobalMapCell structs, one for each layer!
+s8 *D_800B9700[MAP_LAYER_COUNT];
+s8 *D_800B9714;
+u16 *gFile_TRKBLK;
+u32 *gFile_HITS_TAB;
+s32* gFile_MAPS_TAB; // unknown pointer type
+u8 *gMapReadBuffer;
+StreamMap gMapStreamMapTable[8];
+Struct_D_800B9768 D_800B9768;
+BitStream D_800B9780;
+u8 D_800B9794;
+u8 *D_800B9798;
+u8 D_800B979C;
+s16 D_800B979E;
+s16 *D_800B97A0;
+BlockTexture *gBlockTextures;
+BlockTextureScroller *D_800B97A8; //gMapTextureScrollers?
+f32 D_800B97AC; //x
+f32 D_800B97B0; //y
+f32 D_800B97B4; //z
+f32 D_800B97B8;
+f32 D_800B97BC;
+MapsUnk_800B97C0 *D_800B97C0; // 255 items
+s16 D_800B97C4;
+u8 _bss_800b97c8[0x8];
+// -------- .bss end 800b97e0 -------- //
+
+void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
 
 void dl_set_all_dirty(void) {
@@ -464,7 +529,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     }
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
     mtx = get_some_model_view_mtx();
-    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_LOAD);
+    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
     func_800021A0(&gMainDL, 0);
     func_80044BEC();
     if (func_80010048() != 0) {
@@ -538,8 +603,6 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
 // static const char str_8009a5a4[] = "mapno not found\n";
 // static const char str_8009a5b8[] = "error\n";
 extern Gfx *gMainDL;
-extern s16 SHORT_800b51dc;
-extern u32 UINT_800b51e0;
 extern BlockTexture *gBlockTextures;
 typedef void (*DLL57Func)(u32*, u32*, u32*, u32*, u32*, u32*);
 void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
@@ -844,10 +907,6 @@ typedef struct UnkArg0 {
 void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3);
 s32 func_80045600(s32, BitStream*, s16, s16, s32);          /* extern */
 extern Plane D_800B4ADC; // ????? unsure about the type of this
-extern BitStream D_800B9780;
-extern u8 D_800B979C;
-extern f32 D_800B97B8;
-extern f32 D_800B97BC;
 void func_80043950(UnkArg0* arg0, s16 arg1, s16 arg2, s16 arg3) {
     s32 i;
     Arg0Unk8* temp_v0;
@@ -1996,8 +2055,8 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         }
         gMapStreamMapTable[mapIndex].unk06 = 1;
         sp24 = gMapStreamMapTable[mapIndex].header;
-        sp20[0] = D_800B9770[sp30][0];
-        sp20[1] = D_800B9770[sp30][1];
+        sp20[0] = D_800B9768.unk8[sp30][0];
+        sp20[1] = D_800B9768.unk8[sp30][1];
         cell->mapIDs[0] = sp30;
         cell->mapIDs[1] = sp20[0];
         cell->mapIDs[2] = sp20[1];
@@ -2016,8 +2075,8 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
             ((s8 *)&gMapStreamMapTable[mapIndex])[2] = 1;
         }
 
-        worldGridX -= gMapGridTable[sp30][0];
-        worldGridZ -= gMapGridTable[sp30][2];
+        worldGridX -= D_800B9768.unk4[sp30].xMin;
+        worldGridZ -= D_800B9768.unk4[sp30].zMin;
         temp_v1_2 = ((s32*) &((s8 *)sp24->blockIDs_ptr)[worldGridX * 4 + ((worldGridZ *  sp24->gridSizeX) * 4)])[0];
         cell->loadedBlockIndex = (temp_v1_2 >> 0x11) & 0x3F;
         cell->trkBlkIndex = (temp_v1_2 >> 0x17) & 0x3F;
@@ -2127,8 +2186,8 @@ void init_global_map(void)
         thisunk4->unk8 = 0x80;
         thisunk4->unk9 = 0x80;
 
-        D_800B9768.unk8[(i << 1) + 0] = -1;
-        D_800B9768.unk8[(i << 1) + 1] = -1;
+        D_800B9768.unk8[0][(i << 1) + 0] = -1;
+        D_800B9768.unk8[0][(i << 1) + 1] = -1;
     }
     for (i = 0; i < size && (buf[i].unk6 >= 0); i++) {
         D_800B9768.unkC[buf[i].unk6] = buf[i].unk4;
@@ -2141,8 +2200,8 @@ void init_global_map(void)
             buf[i].unk6
         );
 
-        D_800B9768.unk8[(buf[i].unk6 << 1) + 0] = buf[i].unk8;
-        D_800B9768.unk8[(buf[i].unk6 << 1) + 1] = buf[i].unkA;
+        D_800B9768.unk8[0][(buf[i].unk6 << 1) + 0] = buf[i].unk8;
+        D_800B9768.unk8[0][(buf[i].unk6 << 1) + 1] = buf[i].unkA;
     }
 
     map_func_80048034();
@@ -2203,31 +2262,27 @@ void map_func_80046B58(f32 x, f32 y, f32 z) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/map_update_streaming.s")
 #else
-extern s8 *D_800B9714;
 typedef struct UnkStruct {
     s16 unk0;
     s16 unk2;
     s16 unk4;
     s16 unk6;
 } UnkStruct;
-
-// Size TBD
-extern ObjSetup gMapStreamMapIDTable[16];
 void map_update_streaming(void) {
     GlobalMapCell **var_a1;
     f32 sp308;
     GlobalMapCell *var_v1;
-    StreamMap* var_s0_2;
+    s32 pad2;
     f32 tempX;
     f32 tempZ;
     s32 sp2F4;
     s32 sp2F0;
-    s32 temp_s1;
+    s32 var_s1;
     s32 var_s7;
     s32 var_s3;
     s32 var_s5;
     s8* temp_a3;
-    s8* var_s1;
+    s8* s1_bytes;
     s32 sp2C8[4];
     s32 sp2B8[4];
     s32 sp2A8[4];
@@ -2242,8 +2297,8 @@ void map_update_streaming(void) {
     f32 f2;
     f32 f14;
     s32 pad;
-    s8 **sp70;
-    s32 **sp6C;
+    s8** sp70;
+    s32** sp6C;
 
     if (!(UINT_80092a98 & 2)) {
         return;
@@ -2254,8 +2309,8 @@ void map_update_streaming(void) {
     f2 = D_800B97B4;
     f14 = f0 - gWorldX;
     sp308 = f2 - gWorldZ;
-    sp2F4 = floor_f(f14 / BLOCKS_GRID_UNIT_F);
-    sp2F0 = floor_f(sp308 / BLOCKS_GRID_UNIT_F);
+    sp2F4 = floor_f(f14 / 640.0f);
+    sp2F0 = floor_f(sp308 / 640.0f);
     sp294 = UINT_80092a98 & 0x800;
     UINT_80092a98 &= ~0x800;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (UINT_80092a98 & 0x4000)) {
@@ -2263,47 +2318,44 @@ void map_update_streaming(void) {
         func_80012B54(1, 0);
         var_fp = 0;
         var_a1 = (GlobalMapCell **) &gDecodedGlobalMap;
-        sp70 = gBlockIndices;\
-        sp6C = &D_800B9700;\
-        for (var_s7 = 0; var_s7 < MAP_LAYER_COUNT; ) {
-            var_s1 = *sp70;
+        for (sp70 = gBlockIndices, sp6C = &D_800B9700, var_s7 = 0; var_s7 < 5; sp70++, sp6C++, var_s7++) {
+            s1_bytes = *sp70;
             D_800B9714 = (s8 *) *sp6C;
             var_v1 = &*var_a1[var_s7];
             var_s3 = 0;
-            for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
-                for (var_s0 = 0; var_s0 != BLOCKS_GRID_SPAN; var_s0++) {
-                    if (var_s1[0] >= 0) {
+            for (var_s2 = 0; var_s2 < 16; var_s2++) {
+                for (var_s0 = 0; var_s0 != 16; var_s0++) {
+                    if (s1_bytes[0] >= 0) {
                         sp84[var_fp].unk6 = var_s7;
                         sp84[var_fp].unk0 = gMapCurrentStreamCoordsX + var_s0;
                         sp84[var_fp].unk2 = gMapCurrentStreamCoordsZ + var_s2;
-                        sp84[var_fp].unk4 = var_s1[0];
+                        sp84[var_fp].unk4 = s1_bytes[0];
+                        // @fake
+                        if (var_s2 && var_s2) {}
                         var_fp++;
                     }
-                    var_s1[0] = -2;
+                    s1_bytes[0] = -2;
                     D_800B9714[var_s3] = -1;
                     var_v1[var_s3].blockID = -3;
                     var_v1[var_s3].mapIDs[0] = -1;
                     var_v1[var_s3].mapIDs[1] = -1;
                     var_v1[var_s3].mapIDs[2] = -1;
                     var_s3++;
-                    var_s1++;
+                    s1_bytes++;
                 }
             }
-            sp70++;\
-            sp6C++;
-            var_s7++;
         }
         tempX = gWorldX;
         tempZ = gWorldZ;
         gMapCurrentStreamCoordsX = (gMapCurrentStreamCoordsX + sp2F4) - 7;
         gMapCurrentStreamCoordsZ = (gMapCurrentStreamCoordsZ + sp2F0) - 7;
-        gWorldX = gMapCurrentStreamCoordsX * BLOCKS_GRID_UNIT_F;
-        gWorldZ = gMapCurrentStreamCoordsZ * BLOCKS_GRID_UNIT_F;
+        gWorldX = gMapCurrentStreamCoordsX * 640.0f;
+        gWorldZ = gMapCurrentStreamCoordsZ * 640.0f;
         D_80092A60 = gWorldX;
         D_80092A64 = gWorldZ;
         func_800307C4(tempX - gWorldX, tempZ - gWorldZ);
-        for (var_s0 = 0; var_s0 < gMapNumStreamMaps; var_s0++) {
-            gMapStreamMapTable[var_s0].unk06 = 0;
+        for (var_s3 = 0; var_s3 < gMapNumStreamMaps; var_s3++) {
+            gMapStreamMapTable[var_s3].unk06 = 0;
         }
         D_800B4A50 = func_80045DC0(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 0);
         D_800B4A54 = -1;
@@ -2312,11 +2364,9 @@ void map_update_streaming(void) {
             if (sp284 == -1) {
                 sp284 = map_load_streammap_add_to_table(D_800B4A50);
             }
-            gMapStreamMapIDTable[sp284].quarterSize = 1;
+            gMapStreamMapTable[sp284].unk06 = 1;
             D_800B4A54 = sp284;
-            sp70 = gBlockIndices;\
-            sp6C = &D_800B9700;
-            for (var_s7 = 0; var_s7 < MAP_LAYER_COUNT; ) {
+            for (sp70 = gBlockIndices, sp6C = &D_800B9700, var_s7 = 0; var_s7 < 5; sp70++, sp6C++, var_s7++) {
                 func_80047404(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
                 temp_a3 = *sp70;
                 var_s2 = sp2C8[2];
@@ -2330,7 +2380,7 @@ void map_update_streaming(void) {
                     var_s2++;
                 }
                 var_s2 = sp2B8[2];
-                var_s1 = temp_a3;
+                s1_bytes = temp_a3;
                 while (sp2B8[3] >= var_s2) {
                     var_s0 = sp2B8[0];
                     while (sp2B8[1] >= var_s0) {
@@ -2359,41 +2409,35 @@ void map_update_streaming(void) {
                 }
                 var_s3 = 0;
                 var_s5 = 0;
-                for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
-                    for (var_s0 = 0; var_s0 != BLOCKS_GRID_SPAN; ) {
-                        if (var_s1[0] == -3) {
+                for (var_s2 = 0; var_s2 < 16; var_s2++) {
+                    for (var_s0 = 0; var_s0 != 16; ) {
+                        if (s1_bytes[0] == -3) {
                             if (map_func_800485FC(var_s0, var_s2, gMapCurrentStreamCoordsX + var_s0, gMapCurrentStreamCoordsZ + var_s2, var_s7) == 0) {
-                                var_s1[0] = -2;
+                                s1_bytes[0] = -2;
                             } else {
                                 D_800B9714[var_s3] = var_s5;
                                 var_s5++;
                             }
                         }
-                        var_s3++;
-                        var_s1++;
-                        var_s0++;
+                        var_s3++; s1_bytes++; var_s0++;
                     }
                 }
-                sp70++;\
-                var_s7++;\
-                sp6C++;
             }
         }
         var_s2 = TRUE;
         for (var_s3 = gMapNumStreamMaps - 1; var_s3 >= 0; var_s3--) {
-            var_s0_2 = &gMapStreamMapTable[var_s3];
-            if ((s8) var_s0_2->unk06 == 0) {
-                if (var_s0_2->header != NULL) {
-                    temp_s1 = var_s0_2->mapID;
-                    map_init_obj_setup_list(var_s0_2->header, &gMapObjSetupLists[temp_s1], temp_s1, 1);
-                    mmFree(var_s0_2->header);
-                    gLoadedMapsDataTable[temp_s1] = NULL;
+            if ((s8) gMapStreamMapTable[var_s3].unk06 == 0) {
+                if (gMapStreamMapTable[var_s3].header != NULL) {
+                    var_s1 = gMapStreamMapTable[var_s3].mapID;
+                    map_init_obj_setup_list(gMapStreamMapTable[var_s3].header, &gMapObjSetupLists[var_s1], var_s1, 1);
+                    mmFree(gMapStreamMapTable[var_s3].header);
+                    gLoadedMapsDataTable[var_s1] = NULL;
                 }
-                var_s0_2->header = NULL;
-                var_s0_2->mapID = -1;
+                gMapStreamMapTable[var_s3].header = NULL;
+                gMapStreamMapTable[var_s3].mapID = -1;
             }
             if (var_s2 != FALSE) {
-                if (var_s0_2->header == NULL) {
+                if (gMapStreamMapTable[var_s3].header == NULL) {
                     gMapNumStreamMaps -= 1;
                 } else {
                     var_s2 = FALSE;
@@ -2441,7 +2485,7 @@ void func_80047404(s32 arg0, s32 arg1, s32* arg2, s32* arg3, s32* arg4, s32* arg
     s32 *var_v0;
     s16* temp_v1;
 
-    temp_v1 = &gMapGridTable[gMapStreamMapTable[arg8].mapID][0];
+    temp_v1 = &D_800B9768.unk4[gMapStreamMapTable[arg8].mapID].xMin;
     temp_t1 = gMapStreamMapTable[arg8].header;
     arg0 -= temp_v1[0];
     arg1 -= temp_v1[2];
@@ -5149,7 +5193,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-static void func_8004D328() {
+void func_8004D328(void) {
     SimilarToWarp* var_a2;
     Warp* var_v0;
     u8 temp2;
@@ -5174,7 +5218,7 @@ static void func_8004D328() {
         return;
         
     if (gDLL_28_ScreenFade->vtbl->is_complete() || D_800B4A59 == 0){
-        var_v0 = (Warp*)&D_800B4A60;
+        var_v0 = &D_800B4A60;
         D_800B4A58 = 0;
         var_a2->coord.x = var_v0->coord.x;
         var_a2->coord.y = var_v0->coord.y;

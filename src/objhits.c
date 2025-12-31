@@ -1,6 +1,12 @@
 #include "sys/objhits.h"
+#include "sys/asset_thread.h"
+#include "sys/dll.h"
+#include "sys/fs.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/objanim.h"
 #include "sys/gfx/modgfx.h"
+#include "dll.h"
 
 static const char str_80099860[] = "objhits.c: keysize overflow error\n";
 static const char str_80099884[] = " Warning HitModel %x [%d] has no Polyhits\n";
@@ -21,23 +27,27 @@ static const char str_80099a94[] = " x %f y %f z %f \n";
 static const char str_80099aa8[] = " Result2 ";
 static const char str_80099ab4[] = " x %f y %f z %f \n";
 
+// -------- .bss start 800b1990 -------- //
+f32 D_800B1990;
+Object **D_800B1994;
+s32 D_800B1998;
+Unk800B199C *D_800B199C; // 30 elements
+Unk800B19A0 D_800B19A0[64];
+MtxF* D_800B20A0;
+s32 D_800B20A4; // unused
+void* D_800B20A8;
+void* D_800B20AC;
+void* D_800B20B0;
+void* D_800B20B4;
+Unk800B20B8 D_800B20B8[64];
+Unk800B20B8* D_800B23B8;
+Unk800B20B8* D_800B23BC;
+u8 _bss_800B23C0[0xF8];
+Unk80030A24 D_800B24B8[21]; // TODO: unknown length
+// -------- .bss end 800b28b0 -------- //
 
 extern Object *D_800916E0[5];
 extern s32 D_800916F4[4];
-extern f32 D_800B1990;
-extern Object **D_800B1994;
-extern s32 D_800B1998;
-extern Unk800B199C *D_800B199C; // 30 elements
-extern Unk800B19A0 D_800B19A0[64];
-extern MtxF* D_800B20A0;
-extern void* D_800B20A8;
-extern void* D_800B20AC;
-extern void* D_800B20B0;
-extern void* D_800B20B4;
-extern Unk800B20B8 D_800B20B8[];
-extern Unk800B20B8* D_800B23B8;
-extern Unk800B20B8* D_800B23BC;
-extern Object D_800B24B8;
 
 void alloc_some_object_arrays(void) {
     D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, NULL);
@@ -803,9 +813,9 @@ void obj_do_hit_detection(s32 arg0) {
                                         if (!(currentObjHitInfo->unk58 & 0x40) && !(parentObjInfo->unk58 & 0x40) && (!(parentObjInfo->unk58 & 4) || (var_s6 >= sp74))) {
                                             if ((parentObj->def->_unk98[0] & currentObj->def->_unk98[2]) && (currentObj->def->_unk98[0] & parentObj->def->_unk98[2])) {
                                                 if (parentObjInfo->unk5A & 0x20) {
-                                                    func_80027DAC(parentObj, currentObj, &D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
+                                                    func_80027DAC(parentObj, currentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
                                                 } else if (currentObjHitInfo->unk5A & 0x20) {
-                                                        func_80027DAC(currentObj, parentObj, &D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
+                                                        func_80027DAC(currentObj, parentObj, D_800B24B8, &sp55C, &sp14C, &spE8, &sp84, 0);
                                                 } else if ((currentObjHitInfo->unk5A == 0x10) || parentObjInfo->unk5A == 0x10) {
                                                     if (currentObjHitInfo->unk5B || parentObjInfo->unk5B) {
                                                         func_80029C04(currentObj, parentObj, currentObj, 0, 1, -1U, 0U);

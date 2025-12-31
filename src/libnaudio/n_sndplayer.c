@@ -15,7 +15,11 @@
 #define SNDSTATEFLAG_10 0x10
 #define SNDSTATEFLAG_20 0x20
 
-extern N_ALSndPlayer alSndPlayer_struct;
+/* -------- .bss start 800bfe90 -------- */
+N_ALSndPlayer alSndPlayer_struct;
+u8 _bss_800bfee8[0xC];
+s16 *D_800BFEF4;
+/* -------- .bss end 800bff00 -------- */
 
 sndstate *g_SndpAllocStatesHead = NULL; // TODO: volatile?
 sndstate *g_SndpAllocStatesTail = NULL;
@@ -23,8 +27,6 @@ sndstate *g_SndpFreeStatesHead = NULL;
 
 N_ALSndPlayer *g_SndPlayer = &alSndPlayer_struct;
 s16 D_800938D0 = 0;
-
-s16 *D_800BFEF4;
 
 void func_80065D7C(sndstate *state);
 void func_80065DEC(sndstate *state);

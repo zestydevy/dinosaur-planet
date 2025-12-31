@@ -41,6 +41,8 @@ enum MenuID {
     MENU_17 = 17
 };
 
+extern s8 D_800A7D94;
+
 void menu_init(void);
 void menu_set(s32 id);
 s32 menu_get_current(void);

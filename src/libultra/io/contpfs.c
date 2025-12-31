@@ -3,9 +3,8 @@
 #include "PR/rmon.h"
 #include "libultra/io/controller.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
-BSS_GLOBAL __OSInode __osPfsInodeCache ALIGNED(0x8);
+__OSInode __osPfsInodeCache ALIGNED(0x8);
 s32 __osPfsInodeCacheChannel = -1;
 u8 __osPfsInodeCacheBank = 250;
 
