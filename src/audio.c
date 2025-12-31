@@ -29,7 +29,7 @@ OSSched* gAudioSched;
 OSScClient gAudioScClient;
 OSThread gAudioThread;
 OSScTask gAudioTask;
-u64 gAudioThreadStack[AUDIO_THREAD_STACK_SIZE];
+u64 gAudioThreadStack[STACKSIZE(AUDIO_THREAD_STACK_SIZE)];
 N_ALGlobals __am_g;
 Acmd *__am_ACMDList[NUM_ACMD_LISTS];
 void *__am_audioInfo[NUM_OUTPUT_BUFFERS];
@@ -148,7 +148,7 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     osCreateMesgQueue(&__am_audioFrameMsgQ, __am_audioFrameMsgBuf, MAX_MESGS);
     osCreateMesgQueue(&audDMAMessageQ, audDMAMessageBuf, NUM_DMA_MESSAGES);
     osCreateThread(&gAudioThread, 4, __amMain, NULL, 
-        &gAudioThreadStack[AUDIO_THREAD_STACK_SIZE], threadPriority);
+        &gAudioThreadStack[STACKSIZE(AUDIO_THREAD_STACK_SIZE)], threadPriority);
     
     speaker_set_mode(4);
     speaker_func_80063bb4(0, 4);

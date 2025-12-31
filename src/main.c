@@ -127,7 +127,7 @@ Triangle *gMainPol[2];
 // official name: pol
 Triangle *gCurPol;
 OSSched osscheduler_;
-u8 ossceduler_stack[OS_SC_STACKSIZE];
+u64 ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)];
 s8 D_800B09C0;
 u8 gFrameBufIdx;
 s8 gPauseState;
@@ -182,7 +182,7 @@ void game_init(void) {
         tvMode = OS_VI_NTSC_LAN1;
     }
 
-    osCreateScheduler(&osscheduler_, &ossceduler_stack[OS_SC_STACKSIZE], 0xD, tvMode, 1);
+    osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
     start_pi_manager_thread();
     init_filesystem();
     gfxtask_init(&osscheduler_);

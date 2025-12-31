@@ -26,7 +26,7 @@
                                        /* be deleted as quickly. This results in fewer  */
                                        /* DMA's but you need more buffers.              */
 
-#define AUDIO_THREAD_STACK_SIZE 0x400
+#define AUDIO_THREAD_STACK_SIZE 0x2000
 
 typedef union {
 

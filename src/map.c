@@ -529,7 +529,7 @@ void func_8004225C(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex
     }
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
     mtx = get_some_model_view_mtx();
-    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_LOAD);
+    gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
     func_800021A0(&gMainDL, 0);
     func_80044BEC();
     if (func_80010048() != 0) {

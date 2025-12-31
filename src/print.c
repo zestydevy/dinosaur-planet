@@ -1,7 +1,6 @@
 #include "common.h"
 #include "libc/stdarg.h"
 #include "sys/string.h"
-#include "bss.h"
 
 /* -------- .bss start 800be1d0 -------- */
 char gDebugPrintBufferStart[0x900];

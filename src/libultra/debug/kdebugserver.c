@@ -2,12 +2,18 @@
 #include "PR/os_internal.h"
 #include "PR/rcp.h"
 #include "PR/rdb.h"
-#include "bss.h"
+
+// not included in final rom, but __osThreadSave is here for some reason
+#ifndef AVOID_UB
+OSThread_Old __osThreadSave;
+#else
+OSThread __osThreadSave;
+#endif
 
 extern OSThread *__osRunningThread;
 extern u32 __osRdb_IP6_Empty;
 
-BSS_STATIC u8 kdebugserver_buffer[12]; // original name: buffer
+static u8 kdebugserver_buffer[12]; // original name: buffer
 static u32 numChars = 0;
 
 static u32 string_to_u32(u8* s) {

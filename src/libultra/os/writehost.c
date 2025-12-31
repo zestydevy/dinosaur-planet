@@ -5,9 +5,9 @@
 #include <PR/ultratypes.h>
 #include <libultra/os/rdbint.h>
 
-s32 gWriteHostInitialized = 0;
-OSMesgQueue gWriteHostQueue;
-OSMesg gWriteHostQueueBuffer[1];
+static s32 gWriteHostInitialized = 0;
+static OSMesgQueue gWriteHostQueue;
+static OSMesg gWriteHostQueueBuffer[1];
 
 void osWriteHost(void *dramAddr, u32 nbytes) {
     u8 *dramPtr;

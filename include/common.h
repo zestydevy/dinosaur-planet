@@ -41,6 +41,5 @@
 #include "types.h"
 #include "macros.h"
 #include "dll.h"
-#include "bss.h"
 
 #endif //_COMMON_H

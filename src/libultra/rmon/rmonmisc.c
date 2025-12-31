@@ -4,7 +4,6 @@
 #include "PR/os_internal.h"
 #include "PR/sptask.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
 int __rmonSetFault(KKHeader* req) {
     KKFaultRequest* request = (KKFaultRequest*)req;
@@ -20,26 +19,18 @@ int __rmonSetFault(KKHeader* req) {
     return TV_ERROR_NO_ERROR;
 }
 
-typedef struct OSThread_Original_s {
-	struct OSThread_s	*next;		/* run/mesg queue link */
-	OSPri			priority;	/* run/mesg queue priority */
-	struct OSThread_s	**queue;	/* queue thread is on */
-	struct OSThread_s	*tlnext;	/* all threads queue link */
-	u16			state;		/* OS_STATE_* */
-	u16			flags;		/* flags for rmon */
-	OSId			id;		/* id for debugging */
-	int			fp;		/* thread has used fp unit */
-	__OSThreadContext	context;	/* register/interrupt mask */
-} OSThread_Original;
-
-BSS_GLOBAL OSMesgQueue __rmonMQ ALIGNED(0x8);
-// bug? It appears that OSThread has an extra 128 bytes in the rest of the codebase but here it seems
+OSMesgQueue __rmonMQ ALIGNED(0x8);
+// @bug? It appears that OSThread has an extra 128 bytes in the rest of the codebase but here it seems
 // like rmon was compiled before this change... doesn't seem like it will necessarily break anything tho
-BSS_STATIC OSThread_Original rmonIOThread ALIGNED(0x8);
-BSS_STATIC OSMesg rmonMsgs[8] ALIGNED(0x8);
-BSS_STATIC STACK(rmonIOStack, 0x4000) ALIGNED(0x10);
-BSS_STATIC OSMesg rmonPiMsgs[8] ALIGNED(0x8);
-BSS_STATIC OSMesgQueue rmonPiMQ ALIGNED(0x8);
+#ifndef AVOID_UB
+static OSThread_Old rmonIOThread ALIGNED(0x8);
+#else
+static OSThread rmonIOThread ALIGNED(0x8);
+#endif
+static OSMesg rmonMsgs[8] ALIGNED(0x8);
+static STACK(rmonIOStack, 0x4000) ALIGNED(0x10);
+static OSMesg rmonPiMsgs[8] ALIGNED(0x8);
+static OSMesgQueue rmonPiMQ ALIGNED(0x8);
 
 void __rmonInit(void) {
     osCreateMesgQueue(&__rmonMQ, rmonMsgs, ARRLEN(rmonMsgs));

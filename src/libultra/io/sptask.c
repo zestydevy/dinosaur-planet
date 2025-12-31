@@ -1,6 +1,4 @@
 // @DECOMP_OPT_FLAGS=-O1
-#define F3DEX_GBI // Needed to get the correct OS_YIELD_DATA_SIZE used in osSpTaskLoad
-
 #include <PR/os.h>
 #include <PR/os_internal.h>
 #include <PR/sptask.h>
@@ -13,7 +11,7 @@
 		ptr = (void *)osVirtualToPhysical(ptr); \
 	}
 
-OSTask sp_task;
+static OSTask sp_task;
 
 static OSTask *_VirtualToPhysicalTask(OSTask *intp)
 {

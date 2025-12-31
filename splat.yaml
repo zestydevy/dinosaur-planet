@@ -509,8 +509,7 @@ segments:
     # - { type: .bss, vram: 0x800ceef0, name: libultra/os/writehost }
     # - { type: .bss, vram: 0x800cef10, name: libultra/os/readhost }
     # - { type: .bss, vram: 0x800cef40, name: libultra/io/piacs }
-    # - { type: bss, vram: 0x800cef60, name: bss_800cef60 }
-    # - { type: .bss, vram: 0x800cf110, name: libultra/debug/kdebugserver }
+    # - { type: .bss, vram: 0x800cef60, name: libultra/debug/kdebugserver }
     # - { type: .bss, vram: 0x800cf120, name: libultra/rmon/rmonsio }
     # - { type: .bss, vram: 0x800cf940, name: libultra/os/initrdb }
     # - { type: .bss, vram: 0x800cf960, name: libultra/io/pfsisplug }
