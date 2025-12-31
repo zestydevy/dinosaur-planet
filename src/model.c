@@ -29,7 +29,7 @@ void model_destroy(Model* model);
 
 extern u32* D_800B17BC;
 extern AnimSlot* gLoadedAnims;
-extern void* gBuffer_ANIM_TAB;
+extern s32* gBuffer_ANIM_TAB;
 extern s32 gNumLoadedAnims;
 extern s16* gAuxBuffer;
 extern s32* gFile_MODELS_TAB;
@@ -384,9 +384,7 @@ u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 b
 
     if (model->unk71 & 0x40){
         stats->unk14 = model->unk68;
-        while (stats->unk14 & 7) {
-            stats->unk14++;
-        }
+        PAD16(stats->unk14);
         stats->unkC = stats->unk14 * 4;
     }
 
@@ -560,9 +558,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
     sp40 = D_800B17BC[(id & 3) + 1] - D_800B17BC[(id & 3) + 0];
     if (model->unk71 & 0x40) {
         model->modAnim = (s16 *)data;
-        while (var_s0 & 7) {
-            var_s0++;
-        }
+        PAD16(var_s0);
         // @fake
         if (var_s0) {}
         var_s1 = var_s0;
@@ -677,7 +673,64 @@ Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
     return anim;
 }
 
+#ifndef NON_MATCHING
+Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
+#else
+Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
+    Animation* temp_v0;
+    s32 sp28;
+    s32 sp24;
+    s32 sp20;
+    Animation* var_s1;
+    s32 i;
+
+    if (anim == NULL) {
+        sp28 = -1;
+        for (i = 0; i < gNumLoadedAnims; i++) {
+            if (animId == ANIM_SLOT_RC(gLoadedAnims, i)) {
+                temp_v0 = (Animation*) ANIM_SLOT_ANIM(gLoadedAnims, i);
+                temp_v0->referenceCount++;
+                return temp_v0;
+            }
+            if (ANIM_SLOT_RC(gLoadedAnims, i) == -1) {
+                sp28 = i;
+            }
+        }
+    }
+
+    read_file_region(ANIM_TAB, gBuffer_ANIM_TAB, (animId & ~1) << 2, 0x10);
+    sp24 = gBuffer_ANIM_TAB[(animId & 1) + 0];
+    sp20 = gBuffer_ANIM_TAB[(animId & 1) + 1] - sp24;
+    if (anim == NULL) {
+        var_s1 = mmAlloc(sp20, ALLOC_TAG_ANIMS_COL, NULL);
+    } else {
+        var_s1 = &anim->anim;
+    }
+    if (var_s1 == NULL) {
+        return NULL;
+    }
+    read_file_region(ANIM_BIN, var_s1, sp24, sp20);
+    if (anim != NULL) {
+        sp20 = ALIGN8(model->jointCount - 1);
+        read_file_region(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
+        if (gNumLoadedAnims) {}
+    }
+    if (anim == NULL) {
+        var_s1->referenceCount = 1;
+        if (sp28 == -1) {
+            sp28 = gNumLoadedAnims;
+            gNumLoadedAnims++;
+            if (gNumLoadedAnims == 0x80) {
+                gNumLoadedAnims--;
+            }
+        }
+        ANIM_SLOT_RC(gLoadedAnims, sp28) = animId;
+        ANIM_SLOT_ANIM(gLoadedAnims, sp28) = var_s1;
+    }
+    return var_s1;
+}
+#endif
 
 void anim_destroy(Animation* anim) {
     AnimSlot* slot;
@@ -714,54 +767,36 @@ static const char str_8009949c[] = "%d : %d\n";
 static const char str_800994a8[] = "\n";
 static const char str_800994ac[] = "blend_frames: %x\n";
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001943C.s")
-#else
-extern f32 gWorldX;
-extern f32 gWorldZ;
-typedef s16 (*ObjectDLLFunc0x20)(Object *object);
-void _func_8001943C(Object *object, MtxF *mf, f32 yPrescale)
-{
+void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     if (object->parent == NULL) {
-        object->srt.tx -= gWorldX;
-        object->srt.tz -= gWorldZ;
+        object->srt.transl.f[0] -= gWorldX;
+        object->srt.transl.f[2] -= gWorldZ;
     }
 
-    if (object->srt.tx > *(f32*)0x800994c0 /* 32767.0f */ || object->srt.tx < *(f32*)0x800994c4 /* -32767.0f */ ||
-        object->srt.tz > *(f32*)0x800994c0 /* 32767.0f */ || object->srt.tz < *(f32*)0x800994c4 /* -32767.0f */)
-    {
-        bzero(mf, sizeof(MtxF));
+    if (object->srt.transl.f[0] > 32767.0f || object->srt.transl.f[0] < -32767.0f || object->srt.transl.f[2] > 32767.0f || object->srt.transl.f[2] < -32767.0f) {
+        bzero(mf, 0x40);
         mf->m[0][0] = 1.0f;
         mf->m[1][1] = 1.0f;
         mf->m[2][2] = 1.0f;
         mf->m[3][3] = 1.0f;
-
         if (object->parent == NULL) {
-            object->srt.tx += gWorldX;
-            object->srt.tz += gWorldZ;
+            object->srt.transl.f[0] += gWorldX;
+            object->srt.transl.f[2] += gWorldZ;
         }
-    }
-    else
-    {
+    } else {
         matrix_from_srt(mf, &object->srt);
-
-        if (object->id == 0x427) { // if == OBJ_ScorpionRobot
-            ObjectDLLFunc0x20 func = *(ObjectDLLFunc0x20*)((u8*)*object->dll + 0x20);
-            s16 theta = func(object);
-            matrix_from_yaw(theta, mf);
+        if (object->id == OBJ_ScorpionRobot) {
+            matrix_from_yaw(((DLL_Unknown *)object->dll)->vtbl->func[7].withOneArgS32((s32)object), mf);
         }
-
         if (yPrescale != 1.0f) {
             matrix_prescale_y(mf, yPrescale);
         }
-
         if (object->parent == NULL) {
-            object->srt.tx += gWorldX;
-            object->srt.tz += gWorldZ;
+            object->srt.transl.f[0] += gWorldX;
+            object->srt.transl.f[2] += gWorldZ;
         }
     }
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_800195F8.s")
 
