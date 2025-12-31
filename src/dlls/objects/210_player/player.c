@@ -199,7 +199,6 @@ void func_8004E64C(Object* player, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_80032238(Object* player, s32 arg1, s32 arg2, Vec3f* arg3);
 void func_80034FF0(s32);
 void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32, void*, s32, s32);
-void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, s16 *param_7);
 void func_8005B5B8(Object*, Object*, s32);
 void func_80023894(Object* playerect, s32 objectId);
 s32 func_80031DD8(Object*, Object*, s32);

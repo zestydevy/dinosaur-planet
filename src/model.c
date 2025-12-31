@@ -39,6 +39,10 @@ extern s32 gNumFreeModelSlots;
 extern s32 gNumLoadedModels;
 extern s32 gNumModelsTabEntries;
 
+extern s16 D_800903DC;
+extern s16 D_800903DE;
+extern s16 D_800903E0;
+
 void init_models() {
     u32* temp_v0;    
 
@@ -836,63 +840,40 @@ void func_800195F8(f32 arg0, UNK_TYPE_32 arg1, Model* arg2, MtxF* arg3, f32 *arg
         }
     }
 }
+void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3) {
+    AnimState* temp_a2;
+    s32 sp60;
+    s32 pad;
+    AnimState* sp58;
+    Vec3f sp4C;
+    s16 sp44[3];
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80019730.s")
-#else
-void func_800199A8(MtxF *param_1, ModelInstance *modelInst, AnimState *animState, f32 param_4, s32 param_5);
-void func_80019FC0(MtxF *param_1, ModelInstance *modelInst, AnimState *animState, f32 param_4, u32 param_5, u8 animIdx0, u8 param_7, u8 animIdx1, u32 flags, u16 param_10);
-void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, s16 *param_7);
-void func_8001CAA4(AnimState *animState, s16 *out0, s16 *out1);
-void _func_80019730(ModelInstance *modelInst, Model *model, Object *object, MtxF *param_4)
-{
-    s32 mtxSelector;
-    AnimState *animState0;
-
-    func_8001A640(object, modelInst, model);
-
-    modelInst->unk34 ^= 0x1;
-    mtxSelector = modelInst->unk34 & 0x1;
-
-    animState0 = modelInst->animState0;
-
-    if (animState0->unk63 & 0x4)
-    {
-        short xyz[3];
-        Vec3f v;
-        func_8001A3FC(modelInst, 0, 0, object->unk98, object->srt.scale, &v, xyz);
-        *(s16*)0x800903dc = xyz[0];
-        *(s16*)0x800903de = xyz[1];
-        *(s16*)0x800903e0 = xyz[2];
+    func_8001A640(arg2, arg0, arg1);
+    arg0->unk34 ^= 1;
+    sp60 = arg0->unk34 & 1;
+    temp_a2 = arg0->animState0;
+    if (temp_a2->unk62[1] & 4) {
+        func_8001A3FC(arg0, 0, 0, arg2->animProgress, arg2->srt.scale, &sp4C, sp44);
+        D_800903DC = sp44[0];
+        D_800903DE = sp44[1];
+        D_800903E0 = sp44[2];
     }
-
-    if (modelInst->model->unk71 & 0x8)
-    {
-        func_800199A8(param_4, modelInst, animState0, object->unk98, 0x7f);
-    }
-    else
-    {
-        if (modelInst->animState0->unk63 & 0x8)
-        {
-            AnimState *animState1 = modelInst->animState1;
-
-            func_80019FC0(param_4, modelInst, animState0, object->unk98, 0x7f, 0, 0, 2, 0x14, animState0->unk5A);
-            func_80019FC0(param_4, modelInst, animState1, object->unk9C, 0x7f, 0, 0, 2, 0x18, animState0->unk5A);
-            func_80019FC0(param_4, modelInst, animState0, object->unk98, 0x7f, 0, 0, 0, 7, animState1->unk58);
-            func_80019FC0(param_4, modelInst, animState0, object->unk98, 0x7f, 0, 1, 1, 1, animState0->unk58);
-        }
-        else
-        {
-            func_800199A8(param_4, modelInst, animState0, object->unk98, 0x7f);
-            if (modelInst->animState1 != NULL && object->curModAnimIdLayered >= 0) {
-                func_800199A8(param_4, modelInst, modelInst->animState1, object->unk9C, -1);
-            }
+    if (arg0->model->unk71 & 8) {
+        func_800199A8(arg3, arg0, arg0->animState0, arg2->animProgress, 0x7F);
+    } else if (arg0->animState0->unk62[1] & 8) {
+        sp58 = arg0->animState1;
+        func_80019FC0(arg3, arg0, temp_a2, arg2->animProgress, 0x7F, 0, 0, 2, 0x14, temp_a2->unk58[1]);
+        func_80019FC0(arg3, arg0, sp58, arg2->animProgressLayered, 0x7F, 0, 0, 2, 0x18, sp58->unk58[1]);
+        func_80019FC0(arg3, arg0, temp_a2, arg2->animProgress, 0x7F, 0, 0, 0, 7, sp58->unk58[0]);
+        func_80019FC0(arg3, arg0, temp_a2, arg2->animProgress, 0x7F, 0, 1, 1, 1, temp_a2->unk58[0]);
+    } else {
+        func_800199A8(arg3, arg0, arg0->animState0, arg2->animProgress, 0x7F);
+        if ((arg0->animState1 != NULL) && (arg2->curModAnimIdLayered >= 0)) {
+            func_800199A8(arg3, arg0, arg0->animState1, arg2->animProgressLayered, -1U);
         }
     }
-
-    pointerIntArray2_func(modelInst->unk4.matrices[mtxSelector], model->unk6F);
+    add_matrix_to_pool(arg0->matrices[sp60], arg1->jointCount);
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_800199A8.s")
