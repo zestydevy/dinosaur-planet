@@ -86,7 +86,7 @@ segments:
     - [0x3F5F0, c, segment_3F5F0]
     - [0x41BD0, c, map]
     - [0x4E070, c, newshadows]
-    - [0x535C0, c, segment_535C0] # shadow hasm?
+    - [0x535C0, asm, segment_535C0] # shadow hasm?
     - [0x53F00, c, segment_53F00] # track/intersect.c ?
     - [0x5C470, c, segment_5C470] # more shadow code
     - [0x5D380, c, video]
@@ -403,7 +403,7 @@ segments:
     - [0x9B080, .rodata, segment_3F5F0]
     - [0x9B110, .rodata, map]
     - [0x9B5D0, .rodata, newshadows]
-    - [0x9B650, rodatabin] # TODO: this is for segment_535C0 but .late_rodata migration isn't working
+    - [0x9B650, rodata, segment_535C0]
     - [0x9B670, .rodata, segment_53F00]
     - [0x9B870, .rodata, segment_5C470]
     - [0x9B8C0, .rodata, video]
