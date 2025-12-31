@@ -798,7 +798,44 @@ void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_800195F8.s")
+void func_800195F8(f32 arg0, UNK_TYPE_32 arg1, Model* arg2, MtxF* arg3, f32 *arg4) {
+    s32 i;
+    s32 j;
+    MtxF* temp_a1;
+    MtxF* temp_t1;
+    ModelJoint* var_a3;
+
+    var_a3 = arg2->joints;
+    for (i = 0, j = 0; i < arg2->jointCount; j += 4, i++) {
+        temp_a1 = (MtxF *)(arg4 + (j * 4));
+        temp_a1->m[0][0] = arg0;
+        temp_a1->m[0][1] = 0.0f;
+        temp_a1->m[0][2] = 0.0f;
+        temp_a1->m[0][3] = 0.0f;
+        temp_a1->m[1][0] = 0.0f;
+        temp_a1->m[1][1] = arg0;
+        temp_a1->m[1][2] = 0.0f;
+        temp_a1->m[1][3] = 0.0f;
+        temp_a1->m[2][0] = 0.0f;
+        temp_a1->m[2][1] = 0.0f;
+        temp_a1->m[2][2] = arg0;
+        temp_a1->m[2][3] = 0.0f;
+        temp_a1->m[3][0] = 0.0f;
+        temp_a1->m[3][1] = 0.0f;
+        temp_a1->m[3][2] = 0.0f;
+        temp_a1->m[3][3] = 1.0f;
+        if (var_a3[i].parentJointID == -1) {
+            temp_a1->m[3][0] = arg3->m[3][0] + (var_a3[i].x * arg0);
+            temp_a1->m[3][1] = arg3->m[3][1] + (var_a3[i].y * arg0);
+            temp_a1->m[3][2] = arg3->m[3][2] + (var_a3[i].z * arg0);
+        } else {
+            temp_t1 = (MtxF *) &arg4[var_a3[i].parentJointID << 4];
+            temp_a1->m[3][0] = temp_t1->m[3][0] + (var_a3[i].x * arg0);
+            temp_a1->m[3][1] = temp_t1->m[3][1] + (var_a3[i].y * arg0);
+            temp_a1->m[3][2] = temp_t1->m[3][2] + (var_a3[i].z * arg0);
+        }
+    }
+}
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_80019730.s")
