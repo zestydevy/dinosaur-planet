@@ -287,6 +287,5 @@ typedef struct {
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
-extern SidekickSetup D_80091688;
 
 #endif

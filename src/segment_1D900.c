@@ -1,23 +1,42 @@
 #include "common.h"
 #include "unktypes.h"
 
+typedef struct {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+} Struct80090CE8;
+
 // -------- .data start -------- // 80090c60
-
-extern u8 D_80090C68;
-extern u8 D_80090C6C;
-extern u8 D_80090C70;
-
-extern u8 D_80090C8C;
-extern u8 D_80090C90;
-extern u8 D_80090C94;
-extern u8 D_80090C98;
-
-extern u8 D_80090CA4;
-extern s32 D_80090CA8;
-
-extern u8 BYTE_80090cb0;
-extern f32 D_80090CB4;
-
+f32 D_80090C60 = 0.0f;
+f32 D_80090C64 = 0.0f;
+u8 D_80090C68 = 0;
+u8 D_80090C6C = 0;
+u8 D_80090C70 = 0;
+u8 D_80090C74 = 0;
+u8 D_80090C78 = 0;
+u8 D_80090C7C = 0;
+u8 D_80090C80 = 0;
+u8 D_80090C84 = 0;
+u8 D_80090C88 = 0;
+u8 D_80090C8C = 0;
+u8 D_80090C90 = 0;
+u8 D_80090C94 = 0;
+u8 D_80090C98 = 0;
+u8 D_80090C9C = 0;
+u8 D_80090CA0 = 0;
+u8 D_80090CA4 = 0;
+s32 D_80090CA8 = 0;
+f32 D_80090CAC = 1.0f;
+u8 BYTE_80090cb0 = 0;
+f32 D_80090CB4 = 0.0f;
+Struct80090CE8 D_80090CB8[16] = {0};
+Struct80090CE8 D_80090CE8[16] = {0};
+u8 D_80090D18 = 0;
+u8 D_80090D1C = 0;
+u8 D_80090D20 = 0;
+Vec3s32 D_80090D24 = {0, 0, 0};
+// func statics start here
 // -------- .data end -------- // 80090D50
 
 // -------- .bss start 800b1830 -------- //
@@ -48,8 +67,10 @@ extern Vec3f D_800BB198;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001CD00.s")
 
+void func_8001CDE4(u8, u8, u8, u8, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001CDE4.s")
 
+void func_8001D2A8(u8, u8, u8, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001D2A8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001D548.s")
@@ -83,17 +104,12 @@ u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
 
-// TODO: .data for this file needs to be mapped in splat config
-#if 1
-// static s16 D_80090D3C = 0;
-// static u8 D_80090D40 = 0;
-// static Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
+#ifndef NON_MATCHING
+Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
+s16 D_80090D3C = 0;
+u8 D_80090D40 = 0;
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBF0.s")
 #else
-
-void func_8001CDE4(u8, u8, u8, u8, s32);                   /* extern */
-void func_8001D2A8(u8, u8, u8, s32);                     /* extern */
-
 void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 arg7, u8 arg8, u8 arg9) {
     static s16 D_80090D3C = 0;
     static u8 D_80090D40 = 0;
