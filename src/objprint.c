@@ -331,7 +331,7 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param
 
     d = modelInst->matrices[modelInst->unk34 & 1];
     gSPSegment(mygdl++, 3, d);
-    gSPSegment(mygdl++, 5, modelInst2->unk4[(modelInst2->unk34 >> 1) & 0x1]);
+    gSPSegment(mygdl++, 5, modelInst2->vertices[(modelInst2->unk34 >> 1) & 0x1]);
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
     dl_set_all_dirty();

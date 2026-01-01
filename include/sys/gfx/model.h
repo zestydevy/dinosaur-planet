@@ -177,17 +177,9 @@ typedef struct {
 } ModelInstanceBlendshape;
 
 typedef struct {
-    s16 unk0[3]; // x,y,z
-    u8 _unk6[0x8 - 0x6];
-    s16 unk8;
-    s16 unkA;
-    u8 _unkC[0x10 - 0xC];
-} ModelInstance_0x4;
-
-typedef struct {
     // TODO
 /*0000*/    Model *model;
-/*0004*/    ModelInstance_0x4 *unk4[2];
+/*0004*/    Vtx *vertices[2];
 /*000C*/    MtxF *matrices[2];
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;
@@ -196,7 +188,7 @@ typedef struct {
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstanceBlendshape *blendshapes;
-/*0034*/    u16 unk34;
+/*0034*/    u16 unk34; // stores index for matrices / vertices, first bit = matrix index, second bit = vertex index
 } ModelInstance;
 
 typedef struct{
@@ -231,5 +223,6 @@ void func_800199A8(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f
 void func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u32 flags, u16 arg9);
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
 void func_8001A640(void *object, ModelInstance *modelInst, Model *model);
+void func_8001B100(ModelInstance* modelInst);
 
 #endif //_SYS_GFX_MODEL_H

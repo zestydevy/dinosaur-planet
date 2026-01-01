@@ -25,6 +25,7 @@ void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
 void model_destroy(Model* model);
+void func_800202E8(s32, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
 
 
 extern u32* D_800B17BC;
@@ -42,6 +43,10 @@ extern s32 gNumModelsTabEntries;
 extern s16 D_800903DC;
 extern s16 D_800903DE;
 extern s16 D_800903E0;
+
+extern u8 D_8008EAC8[8]; // = {0};
+extern s32 D_8008EAB0[3]; // = {0};
+extern s32 D_8008EABC[3]; // = {0};
 
 void init_models() {
     u32* temp_v0;    
@@ -1319,7 +1324,112 @@ void func_8001B084(ModelInstance *modelInst, f32 updateRate) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001B100.s")
+void func_8001B100(ModelInstance* modelInst) {
+    BlendshapeHeader* temp_v0;
+    Model* temp_s2;
+    Vtx* var_a1;
+    s32 temp_s4;
+    s32 var_t3;
+    ModelInstanceBlendshape* sp88;
+    u8* var_t0;
+    u8* var_t1;
+    s32 pad2;
+    s32 var_t2;
+    s32 i;
+    s32 sp68[3] = D_8008EAB0;
+    s32 sp5C[3] = D_8008EABC;
+    s32 pad;
+
+    temp_s2 = modelInst->model;
+    if (temp_s2->blendshapes == NULL) {
+        return;
+    }
+    temp_v0 = temp_s2->blendshapes;
+    temp_s4 = temp_v0->totalInfluences;
+    for (i = 0; i < 3; i++) {
+        sp88 = &modelInst->blendshapes[i];
+        if (sp88->strength != sp88->unk4) {
+            sp88->unkE &= ~0xC;
+            sp88->unkE |= 4;
+        }
+        sp5C[i] = sp88->unkE & 0xC;
+        if ((sp88->unkC != -1) || (sp88->id != -1) || (sp88->unkE & 0xC)) {
+            sp68[i] = 1;
+        }
+        if (sp5C[i] & 4) {
+            sp88->unkE &= ~4;
+            sp88->unkE |= 8;
+        } else if (sp5C[i] & 8) {
+            sp88->unkE &= ~8;
+        }
+    }
+    if (sp68[0] == 0 && sp68[1] == 0 && sp68[2] == 0) {
+        return;
+    }
+
+    if (sp68[1] != 0) {
+        sp68[0] = 0;
+    }
+    if (sp5C[2] != 0) {
+        sp5C[0] = 1;
+        sp5C[1] = 1;
+    }
+
+    for (i = 0; i < 3; i++, sp88->unk4 = sp88->strength) {
+        sp88 = &modelInst->blendshapes[i];
+        if (sp88->unkE & 2) {
+            sp88->unkE &= ~2;
+            sp88->strength = 0.0f;
+        }
+
+        if (sp68[i] == 0 || sp5C[i] == 0) {
+            continue;
+        }
+
+        var_t0 = temp_v0->headerLength + ((u8*)temp_s2->blendshapes);
+        if (sp88->unkC >= 0) {
+            var_t1 = var_t0;
+            var_t1 += (temp_s4 * 4 * sp88->unkC);
+            var_t2 = 4;
+        } else {
+            var_t1 = D_8008EAC8;
+            var_t2 = 0;
+        }
+        if (sp88->id >= 0) {
+            var_t0 += temp_s4 * 4 * sp88->id;
+            var_t3 = 4;
+        } else {
+            var_t0 = D_8008EAC8;
+            var_t3 = 0;
+        }
+        if (i == 2) {
+            if (sp68[0] == 0 && sp68[1] == 0) {
+                var_a1 = temp_s2->vertices;
+            } else {
+                var_a1 = (Vtx*) modelInst->vertices[(modelInst->unk34 >> 1) & 1];
+            }
+        } else {
+            var_a1 = temp_s2->vertices;
+        }
+        if (sp88->strength > 1.0f) {
+            sp88->strength = 1.0f;
+        } else if (sp88->strength < 0.0f) {
+            sp88->strength = 0.0f;
+        }
+        func_800202E8(
+            modelInst->vertices[(modelInst->unk34 >> 1) & 1],
+            var_a1,
+            temp_s2->vertexGroups,
+            &temp_v0->influences,
+            var_t1,
+            var_t0,
+            var_t2,
+            var_t3,
+            (sp88->strength * 255.0f),
+            i < 2
+        );
+    }
+}
 
 void func_8001B49C(void) {
     s32 index;
