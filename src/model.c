@@ -26,8 +26,10 @@ void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
 void model_destroy(Model* model);
-void func_800202E8(s32, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
 
+// model_asm funcs
+void func_800202E8(s32, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
+void func_8001CAA4(AnimState*, s16*, s16*);
 
 extern u32* D_800B17BC;
 extern AnimSlot* gLoadedAnims;
@@ -1203,72 +1205,55 @@ void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
     }
 }
 
-// regalloc
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A3FC.s")
-#else
-void _func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 param_4, f32 scale, Vec3f *param_6, short *param_7)
-{
-    AnimState *animState;
-    Animation *anim;
-    u8 *old_unk34;
-    f32 unk14;
-    s32 iunk14;
-    u8 unk34;
-    s16 xyz[3];
+void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f* arg5, s16* arg6) {
+    AnimState* sp44;
+    Animation* var_a3;
+    s32 temp;
+    s32 pad;
+    s32 temp_t1;
+    s16 sp2C[3];
+    AnimationHeader* sp28;
 
     if (selector != 0) {
-        animState = modelInst->animState1;
+        sp44 = modelInst->animState1;
     } else {
-        animState = modelInst->animState0;
+        sp44 = modelInst->animState0;
     }
-
-    old_unk34 = animState->unk34[0];
-    animState->unk34[0] = animState->unk34[idx];
-
-    if (modelInst->model->unk71 & 0x40)
-    {
+    sp28 = sp44->unk34[0];
+    sp44->unk34[0] = sp44->unk34[idx];
+    if (modelInst->model->unk71 & 0x40) {
         if (idx >= 2) {
-            anim = animState->anims2[animState->animIndexes[idx]] + 0x80;
+            var_a3 = &sp44->anims2[sp44->animIndexes[idx]]->anim;
         } else {
-            anim = animState->anims[animState->animIndexes[idx]] + 0x80;
+            var_a3 = &sp44->anims[sp44->animIndexes[idx]]->anim;
         }
     } else {
-        anim = modelInst->model->anims[animState->animIndexes[idx]];
+        var_a3 = modelInst->model->anims[sp44->animIndexes[idx]];
     }
-
-    unk14 = animState->unk14[0] * param_4;
-    iunk14 = (int)unk14;
-    animState->unk4[0] = unk14;
-    unk34 = animState->unk34[0][2];
-    if (iunk14 != unk14) {
-        animState->unk4C[0][0] = unk34;
+    sp44->curAnimationFrame[0] = sp44->totalAnimationFrames[0] * arg3;
+    temp_t1 = sp44->unk34[0]->keyframeStride & 0xFF;
+    temp = sp44->curAnimationFrame[0];
+    if (temp != sp44->curAnimationFrame[0]) {
+        sp44->unk4C[0][0] = temp_t1;
     } else {
-        animState->unk4C[0][0] = 0;
+        sp44->unk4C[0][0] = 0;
     }
-
-    if (animState->unk60[0] != 0 && iunk14 == animState->unk14[0] - 1.0f) {
-        animState->unk4C[0][0] = -unk34 * iunk14;
+    if ((sp44->unk60[0] != 0) && (temp == (sp44->totalAnimationFrames[0] - 1.0f))) {
+        sp44->unk4C[0][0] = -temp_t1 * temp;
     }
-
-    animState->unk2C[0] = (u8*)anim + anim->unk2 + unk34 * iunk14;
-
-    func_8001CAA4(animState, xyz, param_7);
-
-    animState->unk34[0] = old_unk34;
-
-    param_6->x = xyz[0] / 32.0f;
-    param_6->y = xyz[1] / 32.0f;
-    param_6->z = xyz[2] / 32.0f;
-    param_6->x += modelInst->model->unk20->x;
-    param_6->y += modelInst->model->unk20->y;
-    param_6->z += modelInst->model->unk20->z;
-    param_6->x *= scale;
-    param_6->y *= scale;
-    param_6->z *= scale;
-
+    sp44->unk2C[0] = (u8*)var_a3 + var_a3->unk2 + (temp_t1 * temp);
+    func_8001CAA4(sp44, sp2C, arg6);
+    sp44->unk34[0] = sp28;
+    arg5->f[0] = sp2C[0] * 0.03125f;
+    arg5->f[1] = sp2C[1] * 0.03125f;
+    arg5->f[2] = sp2C[2] * 0.03125f;
+    arg5->f[0] += modelInst->model->joints->x;
+    arg5->f[1] += modelInst->model->joints->y;
+    arg5->f[2] += modelInst->model->joints->z;
+    arg5->f[0] *= scale;
+    arg5->f[1] *= scale;
+    arg5->f[2] *= scale;
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A640.s")
