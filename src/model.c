@@ -20,12 +20,13 @@ static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent 
 #define MODEL_SLOT_ID(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[0]
 #define MODEL_SLOT_MODEL(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[1]
 
-extern s16 *SHORT_ARRAY_800b17d0;
+extern s16 SHORT_ARRAY_800b17d0[];
 
 void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 void anim_destroy(Animation*);
 void model_destroy(Model* model);
+void func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
 
 // model_asm funcs
 void func_800202E8(s32, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
@@ -68,9 +69,9 @@ void init_models() {
     gNumModelsTabEntries--;
     
     temp_v0 = mmAlloc(0x830, ALLOC_TAG_ANIMS_COL, NULL);
-    gAuxBuffer = temp_v0;
+    gAuxBuffer = (s16*)temp_v0;
     D_800B17BC = temp_v0 + 0x200;
-    gBuffer_ANIM_TAB = temp_v0 + 0x204;
+    gBuffer_ANIM_TAB = (s32*)(temp_v0 + 0x204);
     gLoadedAnims = mmAlloc(0x400, ALLOC_TAG_ANIMS_COL, NULL);
     gNumLoadedAnims = 0;
 }
@@ -1041,7 +1042,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
         if (temp_v0 & 4) {
             var_s4 |= 0x20;
         }
-        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, var_s4 | 0x40);
+        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s4 | 0x40);
         return;
     }
     for (var_s0 = 0; var_s0 < 2; var_s0++) {
@@ -1075,7 +1076,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
             }
             sp6C.unk58[0] = var_v1;
             func_8001A1D4(model, &sp6C, 2);
-            func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, var_s1);
+            func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s1);
             if (var_s1 != 0) {
                 var_s4 |= 1 << var_s0;
             }
@@ -1106,7 +1107,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
         if (temp_v0 & 4) {
             var_s4 |= 0x20;
         }
-        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, var_s4);
+        func_8001B4F0(&spEC, arg0, &sp6C, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s4);
     }
 }
 
@@ -1155,7 +1156,7 @@ void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
             flags |= 0x20;
         }
     }
-    func_8001B4F0(&spA4, arg0, &sp38, temp_s1->joints, (s32) temp_s1->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, flags);
+    func_8001B4F0(&spA4, arg0, &sp38, temp_s1->joints, (s32) temp_s1->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, flags);
 }
 
 void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
@@ -1255,54 +1256,73 @@ void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f3
     arg5->f[2] *= scale;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A640.s")
-#else
-void _func_8001A640(Object *object, ModelInstance *modelInst, Model *model)
-{
+void func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {
+    s8* var_v1;
+    AnimState* temp_v0;
+    ObjDef* temp_a0;
+    s32 temp_t8;
+    s16* temp_t1;
+    s32 var_a1;
     s32 i;
-    s32 j;
-    s32 k;
-    s32 m;
-    s32 n;
-    s8* amap;
+    s32 var_v0;
+    u8 temp_t0;
 
+    var_v0 = 0;
     if (model->unk71 & 0x40) {
-        amap = modelInst->animState0->anims[modelInst->animState0->animIndexes[0]];
+        temp_v0 = modelInst->animState0;
+        var_v1 = (s8*) temp_v0->anims[temp_v0->animIndexes[0]];
     } else {
-        amap = model->amap + modelInst->animState0->animIndexes[0] * ALIGN8(model->unk6F);
+        var_v1 = (s8*) &model->amap[modelInst->animState0->animIndexes[0] * ALIGN8(model->jointCount - 1)];
     }
-
-    j = 0;
-    m = 0;
-    for (i = 0; i < object->ptr0x50->unk72; i++)
-    {
-        if (object->ptr0x50->unk10[object->modelInstIdx + j + 1] != 0xff)
-        {
-            s16 *src = &object->unk6C[i * 9];
-            u32 code = amap[object->ptr0x50->unk10[object->modelInstIdx + j + 1]] << 6;
-
-            for (k = 0; k < 3; k++)
-            {
-                if (src[3 * k] != 0) {
-                    SHORT_ARRAY_800b17d0[m++] = 12 * k + code;
-                    SHORT_ARRAY_800b17d0[m++] = src[3 * k];
-                }
-                if (src[3 * k + 1] != 0) {
-                    SHORT_ARRAY_800b17d0[m++] = 12 * k + code + 2;
-                    SHORT_ARRAY_800b17d0[m++] = src[3 * k + 1];
-                }
-                if (src[3 * k + 2] != 0) {
-                    SHORT_ARRAY_800b17d0[m++] = 12 * k + code + 4;
-                    SHORT_ARRAY_800b17d0[m++] = src[3 * k + 2];
-                }
+    temp_a0 = object->def;
+    var_a1 = 0;
+    var_v0 = 0;
+    for (i = 0; i < temp_a0->numSequenceBones; i++) {
+        temp_t0 = temp_a0->pSequenceBones[var_a1 + object->modelInstIdx + 1];
+        if (temp_t0 != 0xFF) {
+            temp_t1 = object->unk6C[i];
+            temp_t8 = var_v1[temp_t0] << 6;
+            if (temp_t1[0] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[0];
+            }
+            if (temp_t1[1] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 2;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[1];
+            }
+            if (temp_t1[2] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 4;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[2];
+            }
+            if (temp_t1[3] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0xC;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[3];
+            }
+            if (temp_t1[4] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0xE;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[4];
+            }
+            if (temp_t1[5] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x10;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[5];
+            }
+            if (temp_t1[6] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x18;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[6];
+            }
+            if (temp_t1[7] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x1A;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[7];
+            }
+            if (temp_t1[8] != 0) {
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t8 + 0x1C;
+                SHORT_ARRAY_800b17d0[var_v0++] = temp_t1[8];
             }
         }
-
-        j += object->ptr0x50->unk5D + 1;
+        var_a1 += temp_a0->numModels + 1;
     }
+    SHORT_ARRAY_800b17d0[var_v0] = 0x1000;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A8EC.s")
 

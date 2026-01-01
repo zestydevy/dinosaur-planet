@@ -222,7 +222,6 @@ void anim_destroy(Animation*);
 void func_800199A8(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4);
 void func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9);
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
-void func_8001A640(void *object, ModelInstance *modelInst, Model *model);
 void func_8001B100(ModelInstance* modelInst);
 void load_model_display_list(Model *model, ModelInstance *modelInst);
 u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting);
