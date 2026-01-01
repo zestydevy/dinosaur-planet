@@ -28,7 +28,7 @@ typedef struct {
 } Animation;
 
 typedef struct {
-/*0000*/    u8 boneRemaps[0x80];
+/*0000*/    s8 boneRemaps[0x80];
 /*0080*/	Animation anim;
 } AmapPlusAnimation;
 

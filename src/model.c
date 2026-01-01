@@ -1156,67 +1156,52 @@ void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
     func_8001B4F0(&spA4, arg0, &sp38, temp_s1->joints, (s32) temp_s1->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, flags);
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A1D4.s")
-#else
-void _func_8001A1D4(Model *model, AnimState *animState, s32 count)
-{
-    s8* amap;
-    Animation *anim;
-    s32 i;
+void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
+    AmapPlusAnimation* var_a1;
+    Animation* var_t0;
+    s32 var_t1;
+    s32 temp_a1;
     s32 j;
+    s32 i;
     s32 k;
-    s16 m;
-    u8 n;
 
-    for (i = 0; i < count; i++)
-    {
+    for (i = 0; i < count; i++) {
+        k = i;
         if (model->unk71 & 0x40) {
-            amap = animState->anims[animState->animIndexes[i]];
-            anim = (Animation*)(amap + 0x80);
+            var_a1 = animState->anims[animState->animIndexes[k]];
+            var_t0 = &var_a1->anim;
         } else {
-            amap = model->amap + animState->animIndexes[i] * ALIGN8(model->unk6F);
-            anim = model->anims[animState->animIndexes[i]];
+            var_a1 = (AmapPlusAnimation* ) &model->amap[animState->animIndexes[k] * ALIGN8(model->jointCount - 1)];
+            var_t0 = model->anims[animState->animIndexes[k]];
         }
-
-        for (j = 0; j < model->unk6F; j++) {
-            *(u8*)((u8*)model->unk20 + j + i * 0x10 + 2) = amap[j];
+        for (j = 0; j < model->jointCount; j++) {
+            ((u8*)&model->joints[j])[k + 2] = var_a1->boneRemaps[j];
         }
-
-        n = animState->unk34[i][2];
-
-        k = (int)animState->unk4[i] - 1;
-        if (k < 0 && animState->unk60[i] != 0) {
-            k += (int)animState->unk14[i];
+        temp_a1 = animState->unk34[k]->keyframeStride & 0xFF;
+        var_t1 = (s32) animState->curAnimationFrame[i] - 1;
+        if ((var_t1 < 0) && (animState->unk60[i] != 0)) {
+            var_t1 += (s32) animState->totalAnimationFrames[k];
         }
-
-        animState->unk4C[i][0] = n;
-        animState->unk4C[i][1] = n * 2;
-        animState->unk4C[i][2] = n * 3;
-
-        if (k < 0) {
-            k = 0;
+        animState->unk4C[i][0] = temp_a1;
+        animState->unk4C[i][1] = temp_a1 * 2;
+        animState->unk4C[i][2] = temp_a1 * 3;
+        if (var_t1 < 0) {
+            var_t1 = 0;
         }
-
-        m = (s16)animState->unk4[i];
-        n = animState->unk34[i][2];
-
-        animState->unk2C[i] = (u8*)anim + n * k + anim->unk2;
-
-        if (m == animState->unk4[i]) {
-            animState->unk4C[i][0] = n;
+        animState->unk2C[k] = (u8*)var_t0 + var_t0->unk2 + (temp_a1 * var_t1);
+        temp_a1 = animState->unk34[k]->keyframeStride & 0xFF;
+        var_t1 = animState->curAnimationFrame[i];
+        if (var_t1 != animState->curAnimationFrame[i]) {
+            animState->unk4C[0][k] = temp_a1;
         } else {
-            animState->unk4C[i][0] = 0;
+            animState->unk4C[0][k] = 0;
         }
-
-        if (animState->unk60[i] != 0 && animState->unk4[i] == m - 1.0f) {
-            animState->unk4C[i][0] = -n * m;
+        if ((animState->unk60[i] != 0) && (var_t1 == (animState->totalAnimationFrames[k] - 1.0f))) {
+            animState->unk4C[0][k] = -temp_a1 * var_t1;
         }
-
-        animState->unk2C[i] = (u8*)anim + n * m + anim->unk2;
+        animState->unk2C[k] = (u8*)var_t0 + var_t0->unk2 + (temp_a1 * var_t1);
     }
 }
-#endif
 
 // regalloc
 #if 1
