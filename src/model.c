@@ -2,6 +2,7 @@
 #include "sys/rarezip.h"
 
 #define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
+#define ALIGN16(a)  ((u32) (a) & ~0xF)
 #define PAD16(a) while (a & 7){a++;}
 
 static const char str_80099240[] = "Error: Model no. %d out of range on load. !!\n";
@@ -320,7 +321,124 @@ bail:
 }
 #endif
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/model/createModelInstance.s")
+#else
+// https://decomp.me/scratch/znF3e
+ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
+    ModelInstance* temp_v0;
+    s32 i;
+    AnimState *temp_a1;
+    s32 sp58;
+    AnimState *temp_v1_4;
+    ModelInstanceBlendshape* temp_v0_8;
+    u8 *s0;
+    ModelStats sp30;
+
+    if (model == NULL) {
+        STUBBED_PRINTF(str_800992a8);
+        return NULL;
+    }
+    sp58 = model_get_stats(model, flags, &sp30, model->envMapCount != 0 || model->textureAnimationCount != 0);
+    temp_v0 = mmAlloc(sp58, 0x89, NULL);
+    // @fake
+    if (&sp58) {}
+    if (temp_v0 == NULL) {
+        return NULL;
+    }
+    bzero(temp_v0, sp58);
+    temp_v0->matrices[0] = (MtxF *) mmAlign16((u32) (temp_v0 + 1));
+    s0 = (u8*)temp_v0->matrices[0] + (sp30.jointsMalloc >> 1);
+    temp_v0->matrices[1] =  (MtxF *) s0;
+    s0 += (sp30.jointsMalloc >> 1);
+    if ((flags & 1) || (model->blendshapes != NULL) || (model->textureAnimationCount != 0) || (model->envMapCount != 0)) {
+        temp_v0->vertices[0] = (Vtx *) mmAlign16((u32)s0);
+        s0 = (u8*) &temp_v0->vertices[0][model->vertexCount];
+        temp_v0->vertices[1] = (Vtx *) s0;
+        s0 += model->vertexCount * sizeof(Vtx);
+        bcopy(model->vertices, temp_v0->vertices[0], model->vertexCount * sizeof(Vtx));
+        bcopy(model->vertices, temp_v0->vertices[1], model->vertexCount * sizeof(Vtx));
+    } else {
+        temp_v0->vertices[0] = model->vertices;
+        temp_v0->vertices[1] = model->vertices;
+    }
+    temp_v0->animState0 = mmAlign4((u32)s0);
+    s0 = (u8*)(temp_v0->animState0 + 1);
+    if (flags & 0x80) {
+        temp_v0->animState1 = (AnimState*)s0;
+        s0 += sizeof(AnimState);
+    }
+    if (model->unk71 & 0x40) {
+        s0 = (u8*)mmAlign8((u32)s0);
+        temp_v1_4 = temp_v0->animState0;
+        temp_v1_4->anims[0] = (AmapPlusAnimation *)s0;
+        s0 += sp30.unk14;
+        temp_v1_4->anims[1] = (AmapPlusAnimation *)s0;
+        s0 += sp30.unk14;
+        temp_v1_4->anims2[0] = (AmapPlusAnimation *)s0;
+        s0 += sp30.unk14;
+        temp_v1_4->anims2[1] = (AmapPlusAnimation *)s0;
+        temp_a1 = temp_v0->animState1;
+        s0 += sp30.unk14;
+        if (temp_a1 != 0) {
+            temp_a1->anims[0] = (AmapPlusAnimation *)s0;
+            s0 += sp30.unk14;
+            temp_a1->anims[1] = (AmapPlusAnimation *)s0;
+            s0 += sp30.unk14;
+            temp_a1->anims2[0] = (AmapPlusAnimation *)s0;
+            s0 += sp30.unk14;
+            temp_a1->anims2[1] = (AmapPlusAnimation *)s0;
+            s0 += sp30.unk14;
+        }
+    }
+    if (model->blendshapes != NULL) {
+        temp_v0->blendshapes = mmAlign4((u32)s0);
+        s0 = (u8*) (temp_v0->blendshapes + 3);
+        for (i = 0; i < 3; i++) {
+            temp_v0_8 = &temp_v0->blendshapes[i];
+            temp_v0_8->unkC = -1;
+            temp_v0_8->id = -1;
+            temp_v0_8->strength = 0.0f;
+            temp_v0_8->unk4 = 0.0f;
+            temp_v0_8->unk8 = 0.0f;
+        }
+    }
+    if (sp30.hitSphereMalloc > 0) {
+        temp_v0->unk1C[0] = mmAlign4((u32)s0);
+        s0 = (u8*)(temp_v0->unk1C[0] + (model->hitSphereCount * 0x10));
+        temp_v0->unk1C[1] = s0;
+        s0 += (model->hitSphereCount * 0x10);
+        temp_v0->unk24 = temp_v0->unk1C[0];
+    }
+    if ((model->joints != NULL) && (model->jointCount != 0) && (model->collisionA != NULL) && (model->collisionB != NULL)) {
+        s0 = (u8*) mmAlign4((u32)s0);
+        temp_v0->unk14 = (ModelInstance_0x14*)s0;
+        s0 += 0x1C;
+        temp_v0->unk14->unk0 = (Vec3f*)s0;
+        s0 += (model->jointCount * sizeof(Vec3f));
+        temp_v0->unk14->unk4 = (f32*)s0;
+        s0 += model->jointCount * sizeof(f32 *);
+        temp_v0->unk14->unk8 = (f32*)s0;
+        s0 += model->jointCount * sizeof(f32 *);
+        temp_v0->unk14->unkC = (f32*)s0;
+        s0 += model->jointCount * sizeof(f32 *);
+        temp_v0->unk14->unk10 = (f32*)s0;
+        s0 += model->jointCount * sizeof(f32 *);
+        temp_v0->unk14->unk18 = (s8*)s0;
+    } else {
+        temp_v0->unk14 = NULL;
+    }
+    if (arg2 == 0) {
+        temp_v0->displayList = mmAlloc(model->displayListLength * sizeof(Gfx), ALLOC_TAG_MODELS_COL, 0);
+        bcopy(model->displayList, temp_v0->displayList, model->displayListLength * sizeof(Gfx));
+    } else {
+        temp_v0->displayList = model->displayList;
+    }
+    load_model_display_list(model, temp_v0);
+    temp_v0->model = model;
+    return temp_v0;
+}
+#endif
 
 void patch_model_display_list_for_textures(Model* model) {
     Gfx *gfx;
@@ -990,69 +1108,53 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_80019FC0.s")
-#else
-// Blend between animations?
-void _func_80019FC0(MtxF *param_1, ModelInstance *modelInst, AnimState *animState, f32 param_4, u32 param_5, u8 animIdx0, u8 param_7, u8 animIdx1, u32 flags, u16 param_10)
-{
-    Model *model = modelInst->model;
-    MtxF *modelMtx = modelInst->unk4.matrices[modelInst->unk34 & 1];
-    AnimState myAnimState;
-    u8 flags2;
+void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9) {
+    MtxF* spA4;
+    Model* temp_s1;
+    AnimState sp38;
 
+    temp_s1 = modelInst->model;
+    spA4 = modelInst->matrices[modelInst->unk34 & 1];
     if (flags & 0x10) {
-        animState->unk4[0] = animState->unk14[0] * param_4;
+        animState->curAnimationFrame[0] = animState->totalAnimationFrames[0] * arg3;
     }
-
-    myAnimState.unk60[0] = animState->unk60[animIdx0];
-    myAnimState.unk14[0] = animState->unk14[animIdx0];
-    myAnimState.unk4[0] = animState->unk4[animIdx0];
-    myAnimState.unk34[0] = animState->unk34[animIdx0];
-    myAnimState.unk60[1] = animState->unk60[param_7];
-    myAnimState.unk14[1] = animState->unk14[param_7];
-    myAnimState.unk4[1] = animState->unk4[param_7];
-    myAnimState.unk34[1] = animState->unk34[animIdx1];
-
-    if (model->unk71 & 0x40)
-    {
-        myAnimState.animIndexes[0] = 0;
-        myAnimState.animIndexes[1] = 1;
-        myAnimState.anims[0] = animState->anims[animState->animIndexes[animIdx0]];
+    sp38.unk60[0] = animState->unk60[animIdx0];
+    sp38.totalAnimationFrames[0] = animState->totalAnimationFrames[animIdx0];
+    sp38.curAnimationFrame[0] = animState->curAnimationFrame[animIdx0];
+    sp38.unk34[0] = animState->unk34[animIdx0];
+    sp38.unk60[1] = animState->unk60[arg6];
+    sp38.totalAnimationFrames[1] = animState->totalAnimationFrames[arg6];
+    sp38.curAnimationFrame[1] = animState->curAnimationFrame[arg6];
+    sp38.unk34[1] = animState->unk34[animIdx1];
+    if (temp_s1->unk71 & 0x40) {
+        sp38.animIndexes[0] = 0;
+        sp38.animIndexes[1] = 1;
+        sp38.anims[0] = animState->anims[animState->animIndexes[animIdx0]];
         if (animIdx1 < 2) {
-            myAnimState.anims[1] = animState->anims[animState->animIndexes[animIdx1]];
+            sp38.anims[1] = animState->anims[animState->animIndexes[animIdx1]];
         } else {
-            myAnimState.anims[1] = animState->anims2[animState->animIndexes[animIdx1]];
+            sp38.anims[1] = animState->anims2[animState->animIndexes[animIdx1]];
         }
-    }
-    else
-    {
-        myAnimState.animIndexes[0] = animState->animIndexes[animIdx0];
-        myAnimState.animIndexes[1] = animState->animIndexes[animIdx1];
-    }
-
-    if (param_10 == 0) {
-        myAnimState.unk58 = 1;
     } else {
-        myAnimState.unk58 = param_10;
+        sp38.animIndexes[0] = animState->animIndexes[animIdx0];
+        sp38.animIndexes[1] = animState->animIndexes[animIdx1];
     }
-
-    func_8001A1D4(model, &myAnimState, 2);
-
-    flags2 = flags & 0xf;
-    if (!(flags & 0xc))
-    {
-        if (animState->unk63 & 0x1) {
-            flags2 |= 0x10;
+    if (arg9 == 0) {
+        arg9 = 1;
+    }
+    sp38.unk58[0] = arg9;
+    func_8001A1D4(temp_s1, &sp38, 2);
+    flags &= 0xF;
+    if (!(flags & 0xC)) {
+        if (animState->unk62[1] & 1) {
+            flags |= 0x10;
         }
-        if (animState->unk63 & 0x4) {
-            flags2 |= 0x20;
+        if (animState->unk62[1] & 4) {
+            flags |= 0x20;
         }
     }
-
-    func_8001B4F0(&modelMtx, param_1, &myAnimState, model->unk20, model->unk6F, 0x800b17d0, param_5, flags2);
+    func_8001B4F0(&spA4, arg0, &sp38, temp_s1->joints, (s32) temp_s1->jointCount, (s16* ) &SHORT_ARRAY_800b17d0, (s32) arg4, flags);
 }
-#endif
 
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A1D4.s")
