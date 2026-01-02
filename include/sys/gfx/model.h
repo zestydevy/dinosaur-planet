@@ -218,12 +218,17 @@ void func_8001AF04(ModelInstance *modelInst, s32 param2, s32 param3, f32 param4,
 void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
 void func_8001B084(ModelInstance *modelInst, f32 updateRate);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
+s32 modanim_load(Model* model, s32 id, u8* data);
 void anim_destroy(Animation*);
 void func_800199A8(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4);
 void func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9);
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
 void func_8001B100(ModelInstance* modelInst);
 void load_model_display_list(Model *model, ModelInstance *modelInst);
+void patch_model_display_list_for_textures(Model* model);
+s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount);
+void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState);
+ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
 u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting);
 
 #endif //_SYS_GFX_MODEL_H

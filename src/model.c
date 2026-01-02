@@ -83,248 +83,172 @@ ModelInstance* func_80017D2C(s32 arg0, s32 arg1) {
     return model;
 }
 
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/model/model_load_create_instance.s")
-#else
-#define MAX_LOADED_MODELS 70
-extern void *gAuxBuffer;
-extern s32 gNumLoadedModels;
-extern s32 gNumModelsTabEntries;
-extern s32 *gFile_MODELS_TAB;
-extern s32 gNumFreeModelSlots;
-extern s32 *gFreeModelSlots;
-extern ModelSlot *gLoadedModels;
-void model_destroy(Model *model);
-s32 model_load_anim_remap_table(s32 id, s32 param_2, s32 param_3);
-ModelInstance *createModelInstance(Model *model, u32 flags, s32 initial);
-s32 modanim_load(Model* model, s32 id, u8* data);
-void func_800186CC(Model *model);
-void model_setup_anim_playback(ModelInstance *modelInst, void *param_2);
-ModelInstance *_model_load_create_instance(s32 id, u32 flags)
-{
-    s32 slot;
-    u32 offset;
-    u32 loadSize;
-    u32 modelSize;
-    u32 uncompressedSize;
-    u8* compressedData;
-    s8 fail;
-    ModelHeader *header;
-    s16 animCount;
-    s16 unk2_aligned;
-    s16 unk4;
+ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     s32 i;
-    s8 isOldSlot;
+    s32 sp50;
+    s32 sp4C;
+    s32 sp48;
+    s32 uncompressedSize;
+    s16 sp42;
+    s16 sp40;
+    s16 sp3E;
+    Model* model;
+    ModelInstance* modelInst;
+    s8 sp33;
     s8 isNewSlot;
-    Model *model;
-    ModelInstance *modelInst;
-    void *modanim;
-    s16 unk68;
+    s8 isOldSlot;
+    s32 temp;
+    s32 sp28;
 
     if (id < 0) {
         id = -id;
     } else {
-        s16 *idbuf = gAuxBuffer;
-        read_file_region(MODELIND_BIN, idbuf, id * sizeof(s16), 8);
-        id = *idbuf;
+        read_file_region(MODELIND_BIN, gAuxBuffer, id * 2, 8);
+        id = gAuxBuffer[0];
     }
-
-    // Check to see if model is already loaded
-    for (i = 0; i < gNumLoadedModels; i++)
-    {
-        ModelSlot *modelSlot = &gLoadedModels[i];
-        if (id == modelSlot->id)
-        {
-            model = modelSlot->model;
-            modelInst = createModelInstance(model, flags, 0);
-            if (modelInst != NULL)
-            {
-                model->refCount++;
-
-                model_setup_anim_playback(modelInst, modelInst->unk28);
-                if (modelInst->unk2C != 0) {
-                    model_setup_anim_playback(modelInst, modelInst->unk2C);
-                }
-            }
-
-            return modelInst;
+    for (i = 0; i < gNumLoadedModels; i++) {
+        if (id != MODEL_SLOT_ID(gLoadedModels, i)) {
+            continue;
         }
-    }
 
+        model = (Model *)MODEL_SLOT_MODEL(gLoadedModels, i);
+        modelInst = createModelInstance(model, flags, 0);
+        if (modelInst != NULL) {
+            model->refCount++;
+            model_setup_anim_playback(modelInst, modelInst->animState0);
+            if (modelInst->animState1 != NULL) {
+                model_setup_anim_playback(modelInst, modelInst->animState1);
+            }
+        }
+        return modelInst;
+    }
     if (id >= gNumModelsTabEntries) {
         id = 0;
     }
-
     isNewSlot = FALSE;
     isOldSlot = FALSE;
     if (gNumFreeModelSlots > 0) {
         gNumFreeModelSlots--;
-        slot = gFreeModelSlots[gNumFreeModelSlots];
-        isOldSlot = TRUE;
-    } else {
-        slot = gNumLoadedModels;
-        gNumLoadedModels++;
         isNewSlot = TRUE;
+        sp50 = gFreeModelSlots[gNumFreeModelSlots];
+    } else {
+        sp50 = gNumLoadedModels;
+        isOldSlot = TRUE;
+        gNumLoadedModels++;
     }
-
-    offset = gFile_MODELS_TAB[id];
-    loadSize = gFile_MODELS_TAB[id + 1] - offset;
-    read_file_region(MODELS_BIN, gAuxBuffer, offset, 0x10);
-
-    header = gAuxBuffer;
-    animCount = header->animCount;
-    unk4 = header->unk4;
-    unk2_aligned = mmAlign8(header->unk2);
-    unk68 = unk2_aligned + 0x90;
-    uncompressedSize = rarezip_uncompress_size(&header->uncompressedSize);
-    modelSize = model_load_anim_remap_table(id, unk4, animCount);
-    modelSize += uncompressedSize + 500;
-
-    model = mmAlloc(modelSize, ALLOC_TAG_MODELS_COL, 0);
-    if (!model) {
-        if (isOldSlot) {
+    sp4C = gFile_MODELS_TAB[id + 0];
+    sp48 = gFile_MODELS_TAB[id + 1] - sp4C;
+    read_file_region(MODELS_BIN, gAuxBuffer, sp4C, 0x10);
+    sp42 = gAuxBuffer[0];
+    sp3E = gAuxBuffer[2];
+    sp40 = ((u16)mmAlign8(gAuxBuffer[1]) & 0xFFFF) + 0x90;
+    uncompressedSize = rarezip_uncompress_size((u8*)(gAuxBuffer + 4));
+    sp28 = model_load_anim_remap_table(id, sp3E, sp42);
+    sp28 += uncompressedSize + 500;
+    model = mmAlloc(sp28, 9, NULL);
+    if (model == NULL) {
+        if (isNewSlot) {
             gNumFreeModelSlots++;
         }
-
-        if (isNewSlot) {
+        if (isOldSlot) {
             gNumLoadedModels--;
         }
-        
         return NULL;
     }
-
-    // In order to save memory, load compressed data into the latter portion of the output buffer,
-    // then decompress it in-place.
-    // We must pray that rarezip_uncompress does not overrun its input stream.
-    compressedData = (u8*)model + modelSize - loadSize - 0x10;
-    if ((s32)compressedData < 0) {
-        // Align to 16 bytes
-        u32 align = (u32)compressedData & 0xf;
-        if (align != 0) {
-            align -= 0x10;
-        }
-        compressedData -= align;
+    temp = (((u32)model + sp28) - sp48) - 0x10;
+    modelInst = (ModelInstance *) (temp - (temp % 16));
+    read_file_region(MODELS_BIN, (void*) modelInst, sp4C, sp48);
+    rarezip_uncompress((u8*)modelInst + 8, (u8*)model, sp28);
+    model->materials = (ModelTexture*) ((u32)model->materials + (u32)model);
+    model->vertices = (Vtx*) ((u32)model->vertices + (u32)model);
+    model->faces = (ModelFacebatch*) ((u32)model->faces + (u32)model);
+    model->hitSpheres = (HitSphere*) ((u32)model->hitSpheres + (u32)model);
+    model->vertexGroups = (void*) ((u32)model->vertexGroups + (u32)model);
+    model->vertexGroupOffsets = (void *) ((u32)model->vertexGroupOffsets + (u32)model);
+    // @fake
+    if (model->textureAnimations) {}
+    model->displayList = (Gfx *) ((u32)model->displayList + (u32)model);
+    if (model->textureAnimations != NULL) {
+        model->textureAnimations = (void*) ((u32)model->textureAnimations + (u32)model);
     }
-
-    read_file_region(MODELS_BIN, compressedData, offset, loadSize);
-    rarezip_uncompress(compressedData + 8, model);
-
-    // Convert offsets to pointers
-    model->textures = (ModelTexture*)((u32)model->textures + (u32)model);
-    model->unk4 = (void*)((u32)model->unk4 + (u32)model);
-    model->unk8 = (void*)((u32)model->unk8 + (u32)model);
-    model->unk28 = (void*)((u32)model->unk28 + (u32)model);
-    model->unk18 = (void*)((u32)model->unk18 + (u32)model);
-    model->unk14 = (void*)((u32)model->unk14 + (u32)model);
-    model->unkC = (void*)((u32)model->unkC + (u32)model);
-    if (model->unk3C != NULL) {
-        model->unk3C = (void*)((u32)model + (u32)model->unk3C);
+    if (model->drawModes != NULL) {
+        model->drawModes = (void*) ((u32)model->drawModes + (u32)model);
     }
-    if (model->unk38 != NULL) {
-        model->unk38 = (void*)((u32)model + (u32)model->unk38);
+    if (model->blendshapes != NULL) {
+        model->blendshapes = (BlendshapeHeader*) ((u32)model->blendshapes + (u32)model);
     }
-    if (model->unk1C != NULL) {
-        model->unk1C = (void*)((u32)model + (u32)model->unk1C);
-    }
-
     model->anims = NULL;
-
-    model->unk24 = 0;
-
-    if (model->unk20 != NULL) {
-        model->unk20 = (void*)((u32)model + (u32)model->unk20);
-        if (model->unk50 != NULL) {
-            model->unk50 = (void*)((u32)model + (u32)model->unk50);
+    model->amap = NULL;
+    if (model->joints != NULL) {
+        model->joints = (ModelJoint*) ((u32)model->joints + (u32)model);
+        if (model->collisionA != NULL) {
+            model->collisionA = (f32*) ((u32)model->collisionA + (u32)model);
         }
-        if (model->unk54 != NULL) {
-            model->unk54 = (void*)((u32)model + (u32)model->unk54);
+        if (model->collisionB != NULL) {
+            model->collisionB = (f32*) ((u32)model->collisionB + (u32)model);
         }
     } else {
-        model->unk50 = NULL;
-        model->unk54 = NULL;
+        model->collisionA = NULL;
+        model->collisionB = NULL;
     }
-
-    if (model->unk2C != NULL) {
-        model->unk2C = (void*)((u32)model + (u32)model->unk2C);
+    if (model->edgeVectors != NULL) {
+        model->edgeVectors = (void*) ((u32)model->edgeVectors + (u32)model);
     }
-    if (model->unk34 != NULL) {
-        model->unk34 = (void*)((u32)model + (u32)model->unk34);
+    if (model->facebatchBounds != NULL) {
+        model->facebatchBounds = (void*) ((u32)model->facebatchBounds + (u32)model);
     }
-
-    model->unk68 = unk68;
+    model->unk68 = sp40;
     model->modelId = id;
     model->refCount = 1;
-    model->animCount = animCount;
-
+    model->animCount = sp42;
     model->unk71 &= ~0x40;
-    if (unk4 != 0) {
+    if (sp3E != 0) {
         model->unk71 |= 0x40;
     }
-
-    fail = FALSE;
-    for (i = 0; i < model->textureCount; i++)
-    {
-        model->textures[i].texture = texture_load(-((u32)model->textures[i].texture | 0x8000));
-        if (!model->textures[i].texture) {
-            fail = TRUE;
+    sp33 = 0;
+    for (i = 0; i < model->textureCount; i++) {
+        model->materials[i].texture = texture_load(-((u32)model->materials[i].texture | 0x8000), 0);
+        if (model->materials[i].texture == NULL) {
+            sp33 = 1;
         }
     }
-
-    if (fail) {
-        goto bail;
-    }
-
-    for (i = 0; i < model->unk70; i++)
-    {
-        if (model->unk8[i].unk0 != 0xff && model->unk8[i].unk0 >= model->textureCount) {
-            goto bail;
+    if (sp33 == 0) {
+        for (i = 0; i < model->unk70; i++) {
+            if (model->faces[i].materialID != 0xFF && model->faces[i].materialID >= model->textureCount) {
+                goto bail;
+            }
+        }
+        patch_model_display_list_for_textures(model);
+        uncompressedSize += (u32)model;
+        uncompressedSize = mmAlign8(uncompressedSize);
+        if (modanim_load(model, id, (u8*)uncompressedSize) == 0) {
+            modelInst = createModelInstance(model, flags, 1);
+            if (modelInst != NULL) {
+                model_setup_anim_playback(modelInst, modelInst->animState0);
+                if (modelInst->animState1 != NULL) {
+                    model_setup_anim_playback(modelInst, modelInst->animState1);
+                }
+                MODEL_SLOT_ID(gLoadedModels, sp50) = id;
+                MODEL_SLOT_MODEL(gLoadedModels, sp50) = (s32)model;
+                if (gNumLoadedModels < 70) {
+                    return modelInst;
+                }
+            }
         }
     }
-
-    func_800186CC(model);
-
-    modanim = (void*)mmAlign8((u32)model + uncompressedSize);
-
-    if (modanim_load(model, id, modanim) != 0) {
-        goto bail;
-    }
-
-    modelInst = createModelInstance(model, flags, 1);
-    if (!modelInst) {
-        goto bail;
-    }
-
-    model_setup_anim_playback(modelInst, modelInst->unk28);
-    if (modelInst->unk2C != 0) {
-        model_setup_anim_playback(modelInst, modelInst->unk2C);
-    }
-
-    gLoadedModels[slot].id = id;
-    gLoadedModels[slot].model = model;
-
-    // How strange to perform this check after the model has already been loaded.
-    if (gNumLoadedModels >= MAX_LOADED_MODELS) {
-        goto bail;
-    }
-
-    return modelInst;
-
 bail:
-    if (isNewSlot) {
+    if (isOldSlot) {
         gNumLoadedModels--;
     }
-
-    if (isOldSlot) {
+    if (isNewSlot) {
         gNumFreeModelSlots++;
     }
-
     model_destroy(model);
     return NULL;
 }
-#endif
 
 #ifndef NON_MATCHING
+ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/model/createModelInstance.s")
 #else
 // https://decomp.me/scratch/znF3e
@@ -632,7 +556,7 @@ void model_destroy(Model* model) {
     mmFree(model);
 }
 
-s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount){
+s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount) {
     s32 *offset;
     s32 amap_size;
     s32 total_size;
@@ -807,6 +731,7 @@ Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
 #pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
 #else
+// https://decomp.me/scratch/cSAZB
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
     Animation* temp_v0;
     s32 sp28;
