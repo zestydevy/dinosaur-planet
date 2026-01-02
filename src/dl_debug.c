@@ -44,41 +44,73 @@ void dl_add_debug_info(Gfx *gdl, u32 param_2, const char *file, u32 param_4)
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dl_debug/dl_get_debug_info_for_gdl.s")
-#else
-void dl_get_debug_info_for_gdl(Gfx *gdl, char **file, u32 *param_3, u32 *param_4)
-{
+void dl_get_debug_info_for_gdl(Gfx *gdl, const char** file, s32* arg2, s32* arg3) {
+    Gfx* curr;
+    Gfx* prev;
     s32 i;
-    DLDebugInfo *curr;
-    DLDebugInfo *prev;
 
     *file = NULL;
-
-    for (i = 0; i < gDLDebugInfoLengths[gDLDebugInfoIdx]; i++)
-    {
-        curr = &gDLDebugInfos[gDLDebugInfoIdx][i];
-        prev = &gDLDebugInfos[1 - gDLDebugInfoIdx][i];
-
-        if (gdl == curr->gdl) {
-            *file = curr->file;
-            *param_3 = gDLDebugInfos[gDLDebugInfoIdx][i].unkC;
-            *param_4 = gDLDebugInfos[gDLDebugInfoIdx][i].unk4;
-            return;
+    for (i = 0; i < gDLDebugInfoLengths[gDLDebugInfoIdx]; i++) {
+        curr = gDLDebugInfos[gDLDebugInfoIdx][i].gdl;
+        prev = gDLDebugInfos[1 - gDLDebugInfoIdx][i].gdl;
+        if (gdl == curr) {
+            *file = gDLDebugInfos[gDLDebugInfoIdx][i].file;
+            *arg2 = gDLDebugInfos[gDLDebugInfoIdx][i].unkC;
+            *arg3 = gDLDebugInfos[gDLDebugInfoIdx][i].unk4;
+            break;
         }
 
-        if (gdl == prev->gdl) {
-            *file = prev->file;
-            *param_3 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].unkC;
-            *param_4 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].unk4;
-            return;
+        if (gdl == prev) {
+            *file = gDLDebugInfos[1 - gDLDebugInfoIdx][i].file;
+            *arg2 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].unkC;
+            *arg3 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].unk4;
+            break;
         }
 
-        if (gdl < curr->gdl && gdl < prev->gdl) {
-            return;
+        if (gdl < curr && gdl < prev) {
+            break;
         }
     }
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/dl_debug/dl_get_debug_info2.s")
+void dl_get_debug_info2(Gfx* arg0, u32* arg1, const char** arg2, u32* arg3, Gfx** arg4, u32* arg5, const char** arg6, u32* arg7, Gfx** arg8) {
+    s32 i;
+    Gfx *temp_a0;
+    Gfx *var_t0;
+    Gfx *var_v1;
+    DLDebugInfo* var_t1;
+    DLDebugInfo* var_v0;
+
+    var_v1 = (Gfx *)-1U;
+    var_t0 = NULL;
+    var_v0 = NULL;
+    var_t1 = NULL;
+    for (i = 0; i < gDLDebugInfoLengths[1 - gDLDebugInfoIdx]; i++) {
+        temp_a0 = gDLDebugInfos[1 - gDLDebugInfoIdx][i].gdl;
+        if ((arg0 >= temp_a0) && ((arg0 - temp_a0) < (arg0 - var_t0))) {
+            var_t0 = temp_a0;
+            var_t1 = &gDLDebugInfos[1 - gDLDebugInfoIdx][i];
+        }
+        if ((temp_a0 >= arg0) && ((temp_a0 - arg0) < (var_v1 - arg0))) {
+            var_v1 = temp_a0;
+            var_v0 = &gDLDebugInfos[1 - gDLDebugInfoIdx][i];
+        }
+    }
+    if (var_t1 != NULL) {
+        *arg2 = var_t1->file;
+        *arg3 = var_t1->unkC;
+        *arg4 = var_t1->gdl;
+        *arg1 = var_t1->unk4;
+    } else {
+        *arg2 = NULL;
+    }
+
+    if (var_v0 != NULL) {
+        *arg6 = var_v0->file;
+        *arg7 = var_v0->unkC;
+        *arg8 = var_v0->gdl;
+        *arg5 = var_v0->unk4;
+    } else {
+        *arg6 = NULL;
+    }
+}
