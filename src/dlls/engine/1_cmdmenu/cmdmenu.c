@@ -9,6 +9,7 @@
 #include "sys/objects.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*0*/ Texture* unk0;

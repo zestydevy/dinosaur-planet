@@ -5,7 +5,6 @@
 #include "sys/interrupt_util.h"
 #include "sys/print.h"
 #include "macros.h"
-#include "bss.h"
 
 extern s32 get_stack_();
 
@@ -19,18 +18,20 @@ extern s32 get_stack_();
 // Note: Most of the function names here come from the Jet Force Gemini kiosk symbols,
 // however some were made up for the sake of completeness
 
-// .data
+/* -------- .data start -------- */
 s32 memMonVal0 = 0;
 s32 memMonVal1 = 0;
 s32 memMonVal2 = 0;
+/* -------- .data end -------- */
 
-// .bss
-BSS_GLOBAL MemoryPool gMemoryPools[8];
-BSS_GLOBAL u8 gNumMemoryPools;
-// 4 byte gap?
-BSS_GLOBAL MemoryFreeQueueElement gMemoryFreeQueue[420];
-BSS_GLOBAL s16 gMemoryFreeQueueLength;
-BSS_GLOBAL s32 gMemoryFreeDelay;
+// TODO: bss size for this file is correct but IDO reorders it
+/* -------- .bss start 800b09d0 -------- */
+MemoryPool gMemoryPools[8];
+u8 gNumMemoryPools;
+MemoryFreeQueueElement gMemoryFreeQueue[420];
+s16 gMemoryFreeQueueLength;
+s32 gMemoryFreeDelay;
+/* -------- .bss end 800b17a0 -------- */
 
 void mmInit(void) {
     // Start pool memory at the end of .bss

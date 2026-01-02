@@ -6,11 +6,10 @@
 #include "PR/sptask.h"
 #include "PR/rdb.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
-BSS_STATIC u32 RCPpc;
-BSS_STATIC u32 oldIMEMvalue;
-BSS_STATIC u32 DMEMbuffer[4] ALIGNED(0x8);
+static u32 RCPpc;
+static u32 oldIMEMvalue;
+static u32 DMEMbuffer[4] ALIGNED(0x8);
 
 typedef union {
     u32 everything;

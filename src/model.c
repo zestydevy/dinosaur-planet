@@ -13,14 +13,33 @@ static const char str_800992e4[] = "DANGER: createModelInstance: Actual size exc
 static const char str_80099324[] = "ModFreeModel : NULL mod_inst!!\n";
 static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent model!!\n";
 
+/* -------- .bss start 800b17a0 -------- */
+u32* D_800B17BC;
+AnimSlot* gLoadedAnims;
+s32* gBuffer_ANIM_TAB;
+s32 gNumLoadedAnims;
+s16* gAuxBuffer;
+s32* gFile_MODELS_TAB;
+s32* gFreeModelSlots;
+ModelSlot* gLoadedModels;
+s32 gNumFreeModelSlots;
+s32 gNumLoadedModels;
+s32 gNumModelsTabEntries;
+s16 SHORT_ARRAY_800b17d0[48]; // TODO: check length, it's at most 48
+/* -------- .bss end 800b1830 -------- */
+
+extern u8 D_8008EAC8[8]; // = {0};
+extern s32 D_8008EAB0[3]; // = {0};
+extern s32 D_8008EABC[3]; // = {0};
+extern s16 D_800903DC; // = 0;
+extern s16 D_800903DE; // = 0;
+extern s16 D_800903E0; // = 0;
 
 #define ANIM_SLOT_RC(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[0]
 #define ANIM_SLOT_ANIM(animationRef, idx) ((((s32*)animationRef) + (idx << 1)))[1]
 
 #define MODEL_SLOT_ID(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[0]
 #define MODEL_SLOT_MODEL(modelRef, idx) ((((s32*)modelRef) + (idx << 1)))[1]
-
-extern s16 SHORT_ARRAY_800b17d0[];
 
 void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
 Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
@@ -31,26 +50,6 @@ void func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
 // model_asm funcs
 void func_800202E8(Vtx*, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
 void func_8001CAA4(AnimState*, s16*, s16*);
-
-extern u32* D_800B17BC;
-extern AnimSlot* gLoadedAnims;
-extern s32* gBuffer_ANIM_TAB;
-extern s32 gNumLoadedAnims;
-extern s16* gAuxBuffer;
-extern s32* gFile_MODELS_TAB;
-extern s32* gFreeModelSlots;
-extern ModelSlot* gLoadedModels;
-extern s32 gNumFreeModelSlots;
-extern s32 gNumLoadedModels;
-extern s32 gNumModelsTabEntries;
-
-extern s16 D_800903DC;
-extern s16 D_800903DE;
-extern s16 D_800903E0;
-
-extern u8 D_8008EAC8[8]; // = {0};
-extern s32 D_8008EAB0[3]; // = {0};
-extern s32 D_8008EABC[3]; // = {0};
 
 void init_models() {
     u32* temp_v0;    
@@ -332,7 +331,7 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     }
     if (sp30.hitSphereMalloc > 0) {
         temp_v0->unk1C[0] = mmAlign4((u32)s0);
-        s0 = (u8*)(temp_v0->unk1C[0] + (model->hitSphereCount * 0x10));
+        s0 = (u8*)temp_v0->unk1C[0] + (model->hitSphereCount * 0x10);
         temp_v0->unk1C[1] = s0;
         s0 += (model->hitSphereCount * 0x10);
         temp_v0->unk24 = temp_v0->unk1C[0];

@@ -451,6 +451,74 @@ segments:
 
     # bss
     # vram start: 0x800a3d70
+    # - { type: .bss, vram: 0x800a3d70, name: boot }
+    # - { type: .bss, vram: 0x800a6270, name: camera }
+    # - { type: .bss, vram: 0x800a7c30, name: curves }
+    # - { type: .bss, vram: 0x800a7c70, name: voxmap }
+    # - { type: .bss, vram: 0x800a7d10, name: dll }
+    # - { type: .bss, vram: 0x800a7d30, name: fonts }
+    # - { type: .bss, vram: 0x800a7d50, name: menu }
+    # - { type: .bss, vram: 0x800a7db0, name: joypad }
+    # - { type: .bss, vram: 0x800a8640, name: segment_11F70 }
+    # - { type: .bss, vram: 0x800a8690, name: audio }
+    # - { type: .bss, vram: 0x800ab970, name: queue }
+    # - { type: .bss, vram: 0x800ae2a0, name: main }
+    # - { type: .bss, vram: 0x800b09d0, name: memory }
+    # - { type: .bss, vram: 0x800b17a0, name: model }
+    # - { type: .bss, vram: 0x800b1830, name: segment_1D900 }
+    # - { type: .bss, vram: 0x800b18e0, name: object }
+    # - { type: .bss, vram: 0x800b1990, name: objhits }
+    # - { type: .bss, vram: 0x800b28b0, name: objtype }
+    # - { type: .bss, vram: 0x800b2d40, name: segment_326A0 }
+    # - { type: .bss, vram: 0x800b2e00, name: segment_334F0 }
+    # - { type: .bss, vram: 0x800b2e10, name: objprint }
+    # - { type: .bss, vram: 0x800b2e30, name: filesystem }
+    # - { type: .bss, vram: 0x800b2ed0, name: crash }
+    # - { type: .bss, vram: 0x800b3790, name: rcp }
+    # - { type: .bss, vram: 0x800b4920, name: route }
+    # - { type: .bss, vram: 0x800b4930, name: rarezip }
+    # - { type: .bss, vram: 0x800b4980, name: scheduler }
+    # - { type: .bss, vram: 0x800b49a0, name: texture }
+    # - { type: .bss, vram: 0x800b49e0, name: segment_3F5F0 }
+    # - { type: .bss, vram: 0x800b49f0, name: map }
+    # - { type: .bss, vram: 0x800b97e0, name: newshadows }
+    # - { type: .bss, vram: 0x800bb200, name: segment_53F00 }
+    # - { type: .bss, vram: 0x800bb540, name: segment_5C470 }
+    # - { type: .bss, vram: 0x800bb590, name: video }
+    # - { type: .bss, vram: 0x800bcc90, name: vi }
+    # - { type: .bss, vram: 0x800bce70, name: libultra/io/vimgr }
+    # - { type: .bss, vram: 0x800be110, name: libultra/flash }
+    # - { type: .bss, vram: 0x800be1d0, name: print }
+    # - { type: .bss, vram: 0x800beb10, name: exception }
+    # - { type: .bss, vram: 0x800bfe70, name: dl_debug }
+    # - { type: .bss, vram: 0x800bfe80, name: audio/speaker }
+    # - { type: .bss, vram: 0x800bfe90, name: libnaudio/n_sndplayer }
+    # - { type: .bss, vram: 0x800bff00, name: mp3/mp3 }
+    # - { type: .bss, vram: 0x800bff70, name: audio/amAudio }
+    # - { type: .bss, vram: 0x800bff80, name: mp3/decoder }
+    # - { type: .bss, vram: 0x800c4e60, name: mp3/main }
+    # - { type: .bss, vram: 0x800cd2e0, name: libnaudio/n_csplayer }
+    # - { type: .bss, vram: 0x800cd320, name: libultra/os/initialize }
+    # - { type: .bss, vram: 0x800cd330, name: libultra/os/seteventmesg }
+    # - { type: .bss, vram: 0x800cd3f0, name: libultra/io/controller }
+    # - { type: .bss, vram: 0x800cd480, name: libultra/io/siacs }
+    # - { type: .bss, vram: 0x800cd4a0, name: libultra/io/motor }
+    # - { type: .bss, vram: 0x800cd5a0, name: libultra/io/pimgr }
+    # - { type: .bss, vram: 0x800cee50, name: libultra/io/sptask }
+    # - { type: .bss, vram: 0x800cee90, name: libultra/os/timerintr }
+    # - { type: .bss, vram: 0x800ceef0, name: libultra/os/writehost }
+    # - { type: .bss, vram: 0x800cef10, name: libultra/os/readhost }
+    # - { type: .bss, vram: 0x800cef40, name: libultra/io/piacs }
+    # - { type: .bss, vram: 0x800cef60, name: libultra/debug/kdebugserver }
+    # - { type: .bss, vram: 0x800cf120, name: libultra/rmon/rmonsio }
+    # - { type: .bss, vram: 0x800cf940, name: libultra/os/initrdb }
+    # - { type: .bss, vram: 0x800cf960, name: libultra/io/pfsisplug }
+    # - { type: .bss, vram: 0x800cf9a0, name: libultra/io/contpfs }
+    # - { type: .bss, vram: 0x800cfaa0, name: libultra/rmon/rmonmem }
+    # - { type: .bss, vram: 0x800cfba0, name: libultra/rmon/rmonmisc }
+    # - { type: .bss, vram: 0x800d3dc0, name: libultra/rmon/rmonregs }
+    # - { type: .bss, vram: 0x800d3de0, name: libultra/rmon/rmonbrk }
+    # - { type: .bss, vram: 0x800d3ef0, name: libultra/rmon/rmonmain }
 
   - name: assets
     type: code

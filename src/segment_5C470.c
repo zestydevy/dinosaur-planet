@@ -9,12 +9,15 @@ static const char str_8009ac90[] = "maketex: buffer out of range\n";
  */
 extern u32  D_80092E90[];
 extern s32  D_80092E9C; // Usually 0x40 (64)
-extern u32* D_800BB540[4];
-extern u32* D_800BB550[];
-extern u32  D_800BB558[];
-extern u32* D_800BB560[4];
-extern u32  D_800BB570[];
-extern u32* D_800BB578[4];
+
+// -------- .bss start 800bb540 -------- //
+u32* D_800BB540[4];
+u32* D_800BB550[2];
+u32  D_800BB558[2];
+u32* D_800BB560[4];
+u32  D_800BB570[2];
+u32* D_800BB578[4];
+// -------- .bss end 800bb590 -------- //
 
 void func_8005B870(void) {
     D_800BB540[0] = mmAlloc((gPossiblyScreenWidthOrHeight * D_80092E9C << 1) + 0x30, ALLOC_TAG_SHAD_COL, 0);

@@ -14,7 +14,9 @@ static const char str_80099e3c[] = "net_route: No support for this type of node 
 static const char str_80099e7c[] = "**** HEAP INSERT ****\n";
 static const char str_80099e94[] = "**** NODE FIND ****\n";
 
-extern CurveSetup* D_800B4920;
+// -------- .bss start 800b4920 -------- //
+CurveSetup* D_800B4920;
+// -------- .bss end 800b4930 -------- //
 
 void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx);
 void route_add_neighbor(Route* route, RoutePoint* prevPoint, s32 prevPointIdx, u32 dist, CurveSetup* curve);

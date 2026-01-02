@@ -74,6 +74,22 @@ typedef struct OSThread_s {
 	/* 0x1B0 */ u8			unk1B0[128]; /* NOTE: Not from the original os.h! */
 } OSThread;
 
+// @bug: Not all libultra code was recompiled with the modified OSThread definition.
+//       The original is available below for matching purposes.
+#ifndef AVOID_UB
+typedef struct OSThread_Old_s {
+	/* 0x000 */ struct OSThread_s	*next;		/* run/mesg queue link */
+	/* 0x004 */ OSPri			priority;	/* run/mesg queue priority */
+	/* 0x008 */ struct OSThread_s	**queue;	/* queue thread is on */
+	/* 0x00C */ struct OSThread_s	*tlnext;	/* all threads queue link */
+	/* 0x010 */ u16			state;		/* OS_STATE_* */
+	/* 0x012 */ u16			flags;		/* flags for rmon */
+	/* 0x014 */ OSId			id;		/* id for debugging */
+	/* 0x018 */ int			fp;		/* thread has used fp unit */
+	/* 0x01C */ __OSThreadContext	context;	/* register/interrupt mask */
+} OSThread_Old;
+#endif
+
 typedef u32 OSEvent;
 typedef u32 OSIntMask;
 typedef u32 OSPageMask;

@@ -5,9 +5,9 @@
 #include <PR/ultratypes.h>
 #include <libultra/os/rdbint.h>
 
-s32 gReadHostInitialized = 0;
-OSMesgQueue gReadHostQueue;
-OSMesg gReadHostQueueBuffer[1];
+static s32 gReadHostInitialized = 0;
+static OSMesgQueue gReadHostQueue;
+static OSMesg gReadHostQueueBuffer[1];
 
 u8 *__osRdb_Read_Data_Buf;
 u32 __osRdb_Read_Data_Ct;

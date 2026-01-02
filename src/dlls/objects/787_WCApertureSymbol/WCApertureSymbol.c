@@ -3,6 +3,10 @@
 #include "sys/gfx/gx.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
+#include "sys/print.h"
+#include "dll.h"
+#include "functions.h"
 
 typedef struct {
 /*0*/ s16 targetOpacity;

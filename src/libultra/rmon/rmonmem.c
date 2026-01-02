@@ -6,9 +6,8 @@
 #include "PR/sptask.h"
 #include "PR/rdb.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
-BSS_GLOBAL u8 __rmonUtilityBuffer[256] ALIGNED(0x8);
+u8 __rmonUtilityBuffer[256] ALIGNED(0x8);
 
 void __rmonWriteWordTo(u32* addr, u32 val) {
     while (__osSpRawWriteIo((u32)addr, val) != 0) {

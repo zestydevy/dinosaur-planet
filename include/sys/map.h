@@ -250,7 +250,7 @@ typedef struct Struct_D_800B9768_unk10 {
 typedef struct Struct_D_800B9768 {
     s32                      unk0;
     Struct_D_800B9768_unk4  *unk4;
-    s16  *unk8;
+    s16  (*unk8)[2];
     s8  *unkC;
     Struct_D_800B9768_unk10 *unk10;
 } Struct_D_800B9768;
@@ -336,6 +336,17 @@ typedef struct Unk80092BC0 {
     s16 unk0[3];
 } Unk80092BC0;
 
+typedef struct MapObjSetupList {
+       // Byte offset to the list of each object setup group
+/*00*/ s32 groups[32];
+       // Byte size of object setup list, up to and not including curves/race checkpoints
+/*80*/ s32 objsListSize;
+       // Byte offset of when curve/race checkpoint setups start
+/*84*/ s32 curvesOffset;
+       // Byte offset to the first setups that are in object groups
+/*88*/ s32 groupsStart;
+} MapObjSetupList;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -351,98 +362,42 @@ typedef struct Unk80092BC0 {
 
 #define GRID_INDEX(z, x) (((z) * BLOCKS_GRID_SPAN + (x)))
 
-extern Camera* D_800B51E4;
-extern Gfx* gMainDL;
-extern Mtx* gWorldRSPMatrices;
-extern Vertex* D_800B51D4;
-extern Triangle* D_800B51D8;
+extern s16 D_800B4A5E; //gFadeDelayTimerStarted
 
 extern f32 gWorldX;
 extern f32 gWorldZ;
-extern Plane gFrustumPlanes[MAP_LAYER_COUNT];
-extern u32 gRenderList[MAX_RENDER_LIST_LENGTH];
-extern s16 gRenderListLength;
-extern Block *gBlocksToDraw[MAX_BLOCKS];
-extern s16 gBlocksToDrawIdx;
-extern BlockTexture *gBlockTextures;
-extern u32 *gFile_HITS_TAB;
 
-extern u8 *gMapReadBuffer;
+
 extern s8 gMapNumStreamMaps;
-extern StreamMap gMapStreamMapTable[];
-extern MapHeader* gMapActiveStreamMap;
-extern MapHeader* gLoadedMapsDataTable[120];
 
-extern BlockTextureScroller *D_800B97A8; //gMapTextureScrollers?
 
-/** An array of 5 pointers to 16*16 blockIndex arrays, one for each map layer (maybe called visGrids based on print strings?) */
-extern s8 *gBlockIndices[MAP_LAYER_COUNT];
-extern u8 gLoadedBlockCount;
-extern BlocksModel **gLoadedBlocks;
-extern s16 *gLoadedBlockIds;
-extern u8 *gBlockRefCounts;
 
-extern u16 *gFile_TRKBLK;
-extern s16 gNumTRKBLKEntries;
+
 
 extern s32 gMapCurrentStreamCoordsX;
 extern s32 gMapCurrentStreamCoordsZ;
 
-extern GlobalMapCell *gDecodedGlobalMap[MAP_LAYER_COUNT]; //16*16 grid of GlobalMapCell structs, one for each layer!
-extern s8 *D_800B9700[MAP_LAYER_COUNT];
-extern s32 gNumTotalBlocks;
-extern SavedObject* D_800B96B0;
-extern s32* gFile_BLOCKS_TAB; // unknown pointer type
-extern s32* gFile_MAPS_TAB; // unknown pointer type
-extern MapsUnk_800B97C0 *D_800B97C0; // 255 items
 
 extern s8 gMapLayer;
-typedef struct MapObjSetupList {
-       // Byte offset to the list of each object setup group
-/*00*/ s32 groups[32];
-       // Byte size of object setup list, up to and not including curves/race checkpoints
-/*80*/ s32 objsListSize;
-       // Byte offset of when curve/race checkpoint setups start
-/*84*/ s32 curvesOffset;
-       // Byte offset to the first setups that are in object groups
-/*88*/ s32 groupsStart;
-} MapObjSetupList;
-extern MapObjSetupList gMapObjSetupLists[120];
 
-extern DLBuilder D_800B4A20;
-extern DLBuilder D_800B49F0;
 
-extern u8 D_800B9794;
-extern s16 D_800B979E;
+
 
 extern s32 D_80092A94;
 
 extern s32 D_80092BBC;
 
-extern f32 D_800B97AC; //x
-extern f32 D_800B97B0; //y
-extern f32 D_800B97B4; //z
 
-extern s16 gMobileMapID;
-extern s16 gMobileMapUnknown;
-extern s8 gMapType;
+
 
 extern s8 D_80092A78; //gFadeDelayTimer
-extern s8 D_800B4A58; //gStartWarp?
-extern s8 D_800B4A59;
-extern s16 D_800B4A5C;
-extern s16 D_800B4A5E; //gFadeDelayTimerStarted
-extern Warp *D_800B4A60;
 
 extern f32 D_8009A950;
 extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
 
-extern u8 *D_800B9798;
-extern s16 D_800B97C4;
 
-extern Struct_D_800B9768 D_800B9768;
 extern Unk80092BC0 D_80092BC0;
 extern u8 D_800B1847;
 
@@ -452,17 +407,10 @@ extern f32 D_8009AA2C;
 extern f32 D_8009AA38; // = -0.200000003f;
 
 extern f32 D_8009AA20;
-extern s16 D_800B98B8[300];
-extern s16 D_800B9B60[800];
-extern u8 D_800B9B10[80];
 extern f32 D_8009AA24;
 extern u8 D_8009A614;
-extern s16 *D_800B97A0;
 extern f32 D_80092AAC[24];
 
-extern s16 (*D_800B9770)[2];
-extern s16 (*gMapGridTable)[5];
-extern s16 gNumTRKBLKEntries;
 
 extern f32 D_8009AA1C;
 extern f32 D_8009AA30;
@@ -471,9 +419,6 @@ extern f32 D_8009AA3C;
 extern s8 D_80092A9C[8];
 extern s32 D_80092A60; // something x-coordinate related
 extern s32 D_80092A64; // something z-coordinate related
-extern s32 D_800B4A50;
-extern s32 D_800B4A54;
-extern s16 D_800B97C4;
 
 extern s32 D_80092A7C;
 

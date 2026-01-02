@@ -1,28 +1,28 @@
 #include "common.h"
 #include "libc/stdarg.h"
 #include "sys/string.h"
-#include "bss.h"
 
-// .bss
-BSS_GLOBAL char gDebugPrintBufferStart[0x900];
-BSS_GLOBAL Texture *gDiTextures[3];
-BSS_GLOBAL u16 D_800BEADC;
-BSS_GLOBAL u16 D_800BEADE;
-BSS_GLOBAL u16 D_800BEAE0;
-BSS_GLOBAL u16 D_800BEAE2;
-BSS_GLOBAL s32 D_800BEAE4;
-BSS_GLOBAL s32 D_800BEAE8;
-BSS_GLOBAL s32 D_800BEAEC;
-BSS_GLOBAL s32 D_800BEAF0;
-BSS_GLOBAL s32 D_800BEAF4;
-BSS_GLOBAL s32 D_800BEAF8;
-BSS_GLOBAL s32 D_800BEAFC;
-BSS_GLOBAL u16 D_800BEB00; // gDebugScreenWidth?
-BSS_GLOBAL u16 D_800BEB02; // gDebugScreenHeight?
-BSS_GLOBAL u8 D_800BEB04;
-BSS_GLOBAL u8 D_800BEB05;
-BSS_GLOBAL u8 D_800BEB06;
-BSS_GLOBAL u8 D_800BEB07;
+/* -------- .bss start 800be1d0 -------- */
+char gDebugPrintBufferStart[0x900];
+Texture *gDiTextures[3];
+u16 D_800BEADC;
+u16 D_800BEADE;
+u16 D_800BEAE0;
+u16 D_800BEAE2;
+s32 D_800BEAE4;
+s32 D_800BEAE8;
+s32 D_800BEAEC;
+s32 D_800BEAF0;
+s32 D_800BEAF4;
+s32 D_800BEAF8;
+s32 D_800BEAFC;
+u16 D_800BEB00; // gDebugScreenWidth?
+u16 D_800BEB02; // gDebugScreenHeight?
+u8 D_800BEB04;
+u8 D_800BEB05;
+u8 D_800BEB06;
+u8 D_800BEB07;
+/* -------- .bss end 800beb10 -------- */
 
 // .data
 s32 gSprintfSpacingCodes = 0;

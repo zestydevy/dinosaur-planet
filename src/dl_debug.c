@@ -14,7 +14,10 @@ typedef struct {
 
 extern DLDebugInfo *gDLDebugInfos[2]; // There are two sets of 128 infos each.
 extern u32 gDLDebugInfoIdx;
-extern s32 gDLDebugInfoLengths[2];
+
+/* -------- .bss start 800bfe70 -------- */
+s32 gDLDebugInfoLengths[2];
+/* -------- .bss end 800bfe80 -------- */
 
 void dl_init_debug_infos()
 {

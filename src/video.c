@@ -9,8 +9,17 @@
 // for this file to be aligned correctly!
 u8 D_80092ff0[] = { 0x07, 0xb1, 0x04, 0x03, 0x07, 0xb1, 0x00, 0x00 };
 
+/* -------- .bss start 800bb590 -------- */
+UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
 UnkHeapVidStruct *D_800BCC10;
 UnkVidStruct2 D_800BCC18[4]; // size:0x50
+Texture *D_800BCC68;
+Texture *D_800BCC6C;
+Texture *D_800BCC70;
+u32 _bss_800BCC74;
+u8 D_800BCC78;
+f32 D_800BCC80[2];
+/* -------- .bss end 800bcc90 -------- */
 
 void func_8005C780() {
     s32 i;

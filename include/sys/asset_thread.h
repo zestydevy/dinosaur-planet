@@ -82,12 +82,6 @@ typedef struct {
     u32 unk18;
 } UnkStructAssetThreadSingle;
 
-extern struct AssetLoadThreadMsg assetLoadMsg;
-
-extern OSMesgQueue assetLoadThreadSendQueue, //send load requests to asset thread
-    D_800ACB68,
-    assetLoadThreadRecvQueue; //receive acknowledgement from asset thread
-
 typedef struct {
     u8 unk0;
     u32 *unk4;
@@ -95,15 +89,6 @@ typedef struct {
     u32 unkC;
     u32 unk10;
 } AssetThreadStackElement;
-
-extern GenericQueue *gAssetThreadQueue;
-extern GenericStack *gAssetThreadStack;
-
-extern u8 gDisableObjectStreamingFlag;
-extern u8 D_800AE29D, D_800AE29E;
-
-extern u64 *assetThreadStackEnd; // end of stack
-extern OSThread assetThread;
 
 void create_asset_thread(void);
 void asset_thread_main(void *arg);

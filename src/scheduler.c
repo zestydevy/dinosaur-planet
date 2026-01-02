@@ -20,7 +20,13 @@ s32 gCurRSPTaskCounter = 0;
 s32 gCurRDPTaskCounter = 0;
 u64 gRetraceCounter64 = 0;
 
+// -------- .bss start 800b4980 -------- //
+s32 gCurRSPTaskIsSet;
+s32 gCurRDPTaskIsSet;
 OSTime gLastGfxYield;
+u32 gRSPAudTaskFlushTime;
+u32 gRSPAudTaskDoneTime;
+// -------- .bss end 800b49a0 -------- //
 
 /***********************************************************************
  * Scheduler API

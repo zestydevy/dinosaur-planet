@@ -6,16 +6,15 @@
 #include "PR/sptask.h"
 #include "PR/rdb.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
 int __rmonActive = 0;
 
-BSS_STATIC volatile u32 somethingToDo;
-BSS_STATIC s32 inbuffer[280] ALIGNED(0x10);
-BSS_STATIC u8 cmdinptr;
-BSS_STATIC u8 cmdoutptr;
-BSS_STATIC int state;
-BSS_STATIC char *inPointer;
+static volatile u32 somethingToDo;
+static s32 inbuffer[280] ALIGNED(0x10);
+static u8 cmdinptr;
+static u8 cmdoutptr;
+static int state;
+static char *inPointer;
 
 void __rmonSendHeader(KKHeader* const block, u32 blockSize, u32 type) {
     int sent;

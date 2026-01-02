@@ -7,7 +7,6 @@
 #include "PR/rdb.h"
 #include "PR/rmon.h"
 #include "PRinternal/macros.h"
-#include "bss.h"
 
 typedef struct OSThread_Original_s {
 	struct OSThread_s	*next;		/* run/mesg queue link */
@@ -21,11 +20,11 @@ typedef struct OSThread_Original_s {
 	__OSThreadContext	context;	/* register/interrupt mask */
 } OSThread_Original;
 
-BSS_STATIC OSMesgQueue IOmq;
-BSS_STATIC OSMesg IOmsgs[1];
+static OSMesgQueue IOmq;
+static OSMesg IOmsgs[1];
 
-BSS_GLOBAL void* __osRdb_DbgRead_Buf;
-BSS_GLOBAL u8 rmonRdbReadBuf[RMON_DBG_BUF_SIZE] ALIGNED(0x10);
+void* __osRdb_DbgRead_Buf;
+u8 rmonRdbReadBuf[RMON_DBG_BUF_SIZE] ALIGNED(0x10);
 
 void __rmonSendFault(OSThread* thread) {
     volatile float f UNUSED;

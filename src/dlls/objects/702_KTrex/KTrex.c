@@ -1,6 +1,11 @@
+#include "libc/string.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/33.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
+#include "game/gamebits.h"
+#include "sys/dll.h"
+#include "sys/generic_stack.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
@@ -9,7 +14,11 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "segment_334F0.h"
+#include "sys/rand.h"
+#include "dll.h"
+#include "functions.h"
 #include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 enum KTLogicStates {
     KT_LSTATE_0 = 0,

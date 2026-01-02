@@ -8,9 +8,6 @@
 #include "PR/sched.h"
 #include "sys/dll.h"
 
-// Length of gCrashMesgQueueBuffer
-#define CRASH_MESG_QUEUE_BUFFER_LENGTH 1
-
 #define CRASH_ASSET_THREAD_COPY ((OSThread *)0x807FF000)
 #define CRASH_MAIN_THREAD_COPY ((OSThread *)0x807FF230)
 #define CRASH_DLL_LIST_COPY ((CrashedDlls *)0x807FF460)
@@ -24,17 +21,6 @@ typedef struct {
 typedef struct {
     /*0x0*/  OSThread *threads[2];
 } CrashThreadCopies;
-
-// Note: Unsure of actual stack size
-extern u8 gCrashThreadStack[OS_MIN_STACKSIZE];
-extern OSThread gCrashThread;
-
-extern OSScClient gCrashScClient;
-
-extern OSMesg gCrashMesgQueueBuffer[CRASH_MESG_QUEUE_BUFFER_LENGTH];
-extern OSMesgQueue gCrashMesgQueue;
-
-extern OSScMsg gCrashScMsg;
 
 void start_crash_thread(OSSched *scheduler);
 

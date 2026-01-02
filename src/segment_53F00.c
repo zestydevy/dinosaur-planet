@@ -79,6 +79,9 @@ extern s16 D_800BB4D8;
 extern s8 D_800BB538;
 extern s8 D_800BB539;
 
+// .bss 800bb200-800bb540
+u8 _bss_800bb200[0x800bb540 - 0x800bb200]; // size:0x340
+
 void func_80053300(void) {
     if (D_80092E70 == NULL) {
         D_80092E70 = mmAlloc(250*sizeof(D_80092E70_Struct), 0xFFFF00FF, 0);

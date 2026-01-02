@@ -1,6 +1,5 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "bss.h"
 #include "functions.h"
 #include "game/objects/object.h"
 #include "sys/fonts.h"
@@ -11,8 +10,6 @@
 #include "sys/objtype.h"
 #include "dlls/objects/768_SPshop.h"
 #include "sys/rcp.h"
-
-BSS_GLOBAL s8 D_800A7D94;
 
 /*0x0*/ static Texture* scarabTexture;
 
