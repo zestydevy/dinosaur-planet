@@ -14,17 +14,17 @@ static const char str_80099324[] = "ModFreeModel : NULL mod_inst!!\n";
 static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent model!!\n";
 
 /* -------- .bss start 800b17a0 -------- */
+s32* gFile_MODELS_TAB;
+ModelSlot* gLoadedModels;
+s32* gFreeModelSlots;
+s32 gNumLoadedModels;
+s32 gNumModelsTabEntries;
+s32 gNumFreeModelSlots;
+s16* gAuxBuffer;
 u32* D_800B17BC;
 AnimSlot* gLoadedAnims;
 s32* gBuffer_ANIM_TAB;
 s32 gNumLoadedAnims;
-s16* gAuxBuffer;
-s32* gFile_MODELS_TAB;
-s32* gFreeModelSlots;
-ModelSlot* gLoadedModels;
-s32 gNumFreeModelSlots;
-s32 gNumLoadedModels;
-s32 gNumModelsTabEntries;
 s16 SHORT_ARRAY_800b17d0[48]; // TODO: check length, it's at most 48
 /* -------- .bss end 800b1830 -------- */
 
