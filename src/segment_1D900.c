@@ -220,7 +220,7 @@ void func_8001F094(ModelInstance* arg0) {
     s32 sp98;
     f32 temp_fa0;
     s8* temp_v0_4;
-    ModelInstance_0x4* sp8C;
+    Vtx* sp8C;
     f32 temp_ft4;
     f32 pad;
 
@@ -234,7 +234,7 @@ void func_8001F094(ModelInstance* arg0) {
     spE8 = camera->srt.transl.f[1];
     spE4 = camera->srt.transl.f[2] - gWorldZ;
     sp98 = -1;
-    sp8C = arg0->unk4[((s32) arg0->unk34 >> 1) & 1];
+    sp8C = arg0->vertices[((s32) arg0->unk34 >> 1) & 1];
     for (spA4 = 0; spA4 < spF0->unk70; spA4++) {
         var_s7 = 0;
         if (spF0->faces[spA4].tagC & 0x4000) {
@@ -297,8 +297,8 @@ void func_8001F094(ModelInstance* arg0) {
                 var_fv1 = 2.0f * ((spD8.f[0] * spD4) + (spD8.f[1] * spD0) + (spD8.f[2] * spCC));
                 temp_fa0 = ((spD8.f[0] * var_fv1) - spD4);
                 pad = ((spD8.f[1] * var_fv1) - spD0);
-                sp8C[var_s2].unk8 = (temp_fa0 + 1.0f) * 256.0f;
-                sp8C[var_s2].unkA = (pad + 1.0f) * 256.0f;
+                sp8C[var_s2].n.tc[0] = (temp_fa0 + 1.0f) * 256.0f;
+                sp8C[var_s2].n.tc[1] = (pad + 1.0f) * 256.0f;
                 var_s2 += 1;
                 var_s7 += 1;
             }
