@@ -183,12 +183,12 @@ typedef struct {
 /*000C*/    MtxF *matrices[2];
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;
-/*001C*/    s32 unk1C[2];
-/*0024*/    f32 *unk24;
+/*001C*/    void *unk1C[2];
+/*0024*/    Vec4f *unk24;
 /*0028*/    AnimState *animState0;
 /*002C*/    AnimState *animState1;
 /*0030*/    ModelInstanceBlendshape *blendshapes;
-/*0034*/    u16 unk34; // stores index for matrices / vertices, first bit = matrix index, second bit = vertex index
+/*0034*/    u16 unk34; // stores index for matrices / vertices, first bit = matrix index, second bit = vertex index, third bit = unk1C index
 } ModelInstance;
 
 typedef struct{

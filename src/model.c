@@ -29,7 +29,7 @@ void model_destroy(Model* model);
 void func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
 
 // model_asm funcs
-void func_800202E8(s32, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
+void func_800202E8(Vtx*, Vtx*, void *, s16 *, u8*, u8*, s32, s32, s32, s32);
 void func_8001CAA4(AnimState*, s16*, s16*);
 
 extern u32* D_800B17BC;
@@ -1324,10 +1324,104 @@ void func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {
     SHORT_ARRAY_800b17d0[var_v0] = 0x1000;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001A8EC.s")
+void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2) {
+    MtxF* var_s0;
+    s32 temp_t8;
+    f32 f0;
+    s32 i;
+    s32 var_v0;
+    s32 var_t1;
+    s32 sp7C;
+    f32 sp70[3];
+    u32 *temp;
 
-void func_8001AC44(ModelInstance*, Model*, Object*, MtxF*, MtxF*, u32, f32);
-#pragma GLOBAL_ASM("asm/nonmatchings/model/func_8001AC44.s")
+    var_t1 = 0;
+    if (obj2->objhitInfo != NULL && obj2->def->unk74 != 0) {
+        temp_t8 = obj2->objhitInfo->unk4 >> 2;
+        // @fake
+        if (!modelInst->unk34) {}
+        if (temp_t8 > 0) {
+            var_v0 = obj2->animProgress * temp_t8;
+            temp = obj2->objhitInfo->unk8;
+            if (var_v0 >= temp_t8) {
+                var_v0 = temp_t8 - 1;
+            }
+            var_t1 = temp[var_v0];
+        }
+    }
+    if (obj->objhitInfo != NULL) {
+        obj->objhitInfo->unk9F -= 1;
+        if (obj->objhitInfo->unk9F < 0) {
+            obj->objhitInfo->unk9F = 0;
+        }
+        obj->objhitInfo->unk44 = obj->objhitInfo->unk40;
+        obj->objhitInfo->unk40 = var_t1;
+    }
+    modelInst->unk34 ^= 4;
+    temp_t8 = (modelInst->unk34 >> 2) & 1;
+    sp7C = modelInst->unk34 & 1;
+    modelInst->unk24 = modelInst->unk1C[temp_t8];
+    for (i = 0; i < model->hitSphereCount; i++) {
+        if (arg3 == NULL) {
+            var_s0 = (MtxF*) &((f32*)modelInst->matrices[sp7C])[model->hitSpheres[i].jointIndex << 4];
+        } else {
+            var_s0 = arg3;
+        }
+        if (i == 0 && obj2 != obj) {
+            vec3_transform(var_s0, 0.0f, 0.0f, 0.0f, &sp70[2], &sp70[1], &sp70[0]);
+            obj->srt.transl.f[0] = sp70[2] + gWorldX;
+            obj->srt.transl.f[1] = sp70[1];
+            obj->srt.transl.f[2] = sp70[0] + gWorldZ;
+        }
+        sp70[2] = model->hitSpheres[i].x;
+        sp70[1] = model->hitSpheres[i].y;
+        sp70[0] = model->hitSpheres[i].z;
+        f0 = model->hitSpheres[i].unk2;
+        modelInst->unk24[i].f[0] = obj2->srt.scale * f0;
+        vec3_transform(var_s0, sp70[2], sp70[1], sp70[0], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
+        if (obj2->parent != NULL) {
+            transform_point_by_object(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj2->parent);
+            modelInst->unk24[i].f[1] -= gWorldX;
+            modelInst->unk24[i].f[3] -= gWorldZ;
+        }
+    }
+}
+
+void func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, MtxF* arg4, u32 arg5, f32 arg6) {
+    MtxF* var_s6;
+    s32 i;
+    f32 f0;
+    Vec3f pos;
+
+    modelInst->unk34 ^= 4;
+    modelInst->unk24 = (Vec4f* ) modelInst->unk1C[(modelInst->unk34 >> 2) & 1];
+    if (obj->objhitInfo != NULL) {
+        obj->objhitInfo->unk9F--;
+        if (obj->objhitInfo->unk9F < 0) {
+            obj->objhitInfo->unk9F = 0;
+        }
+    }
+
+    var_s6 = arg3;
+    for (i = 0; i < model->hitSphereCount; i++) {
+        if ((1 << model->hitSpheres[i].unkD) & arg5) {
+            if (arg3 == NULL) {
+                var_s6 = (MtxF*) &((f32*)arg4)[model->hitSpheres[i].jointIndex << 4];
+            }
+            pos.x = model->hitSpheres[i].x;
+            pos.y = model->hitSpheres[i].y;
+            pos.z = model->hitSpheres[i].z;
+            f0 = model->hitSpheres[i].unk2;
+            modelInst->unk24[i].f[0] = f0 * arg6;
+            vec3_transform(var_s6, pos.x, pos.y, pos.z, &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
+            if (obj->parent != NULL) {
+                transform_point_by_object(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj->parent);
+                modelInst->unk24[i].f[1] -= gWorldX;
+                modelInst->unk24[i].f[3] -= gWorldZ;
+            }
+        }
+    }
+}
 
 void func_8001AE74(ModelInstance *modelInst) {
     if (modelInst->model->blendshapes != NULL) {
