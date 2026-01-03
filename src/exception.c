@@ -302,9 +302,213 @@ void crash_controller_getter() {
     some_crash_print(&thread, 1, 0);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/some_crash_print.s")
+void some_crash_print(OSThread** threads, s32 count, s32 offset) {
+    OSThread* thread;
+    __OSThreadContext* ctx;
+    s32 temp_s1;
+    s32 j;
+    s32 var_s2;
+    u32 raDllStart;
+    u32 raDllEnd;
+    s32* var_s0;
+    u32 pcDllStart;
+    u32 pcDllEnd;
+    u32 temp_a3;
+    u32 var_a3;
 
+    while (1) {
+        thread = threads[offset];
+        var_s2 = find_executing_dll((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
+        temp_s1 = find_executing_dll(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
+        clear_framebuffer_current();
+        D_800937F0 = 6;
+        crash_print_line(0xCC, 0xD6, "CPU + DLL INFO");
+        D_800937F0 = 0;
+        ctx = &thread->context;
+        crash_print_line(0x10, 0x18, "fault in thread %d", thread->id);
+        D_800937F0 = 3;
+        crash_print_line(0x10, 0x22, "epc\t\t\t\t%08x", ctx->pc);
+        if (temp_s1 != -1) {
+            D_800937F0 = 5;
+            var_a3 = thread->context.pc;
+            if ((var_a3 >= (u32) pcDllStart) && ((u32) pcDllEnd >= var_a3)) {
+                var_a3 -= (u32)pcDllStart;
+            }
+            crash_print_line(0x10, 0x28, "dll epc\t\t%08x  (in DLL #%d)", var_a3, temp_s1);
+            D_800937F0 = 3;
+        }
+        temp_a3 = ctx->cause;
+        if (temp_a3 == -1U) {
+            crash_print_line(0x10, 0x2E, "cause\t\tmmAlloc(%d,%8x)\n",  (u32)ctx->a0, (u32)ctx->a1);
+        } else {
+            crash_print_line(0x10, 0x2E, "cause\t\t\t%08x", temp_a3);
+            get_err_string(0xA8, 0x2E, ctx->cause, errStringArray_cause);
+        }
+        crash_print_line(0x10, 0x34, "sr\t\t\t\t%08x", ctx->sr);
+        crash_print_line(0x10, 0x3A, "badvaddr\t%08x", ctx->badvaddr);
+        D_800937F0 = 5;
+        if (var_s2 != -1) {
+            var_a3 = (u32)thread->context.ra;
+            if ((var_a3 >= (u32) raDllStart) && ((u32) raDllEnd >= var_a3)) {
+                var_a3 -= (u32)raDllStart;
+            }
+            crash_print_line(0x10, 0x40, "ra\t\t\t\t%08x  (in DLL #%d)", var_a3, var_s2);
+            crash_print_line(0x10, 0x4C, "dll start\t%08x", raDllStart);
+            crash_print_line(0x10, 0x52, "dll end\t\t%08x", raDllEnd);
+        } else {
+            D_800937F0 = 3;
+            crash_print_line(0x10, 0x40, "ra\t\t\t\t%08x", (u32)ctx->ra);
+        }
+        D_800937F0 = 4;
+        var_s2 = 0x5E;
+        for (j = 0; j < 5; j++) {
+            if (gPiManagerArray[j] != -1) {
+                crash_print_line(0x10, var_s2, "Fault in object: (%s) (%d) ", crash_screen_strings[j], gPiManagerArray[j]);
+                var_s2 += 6;
+            }
+        }
+        D_800937F0 = 2;
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "at %08x v0 %08x v1 %08x", (u32)ctx->at, (u32)ctx->v0, (u32)ctx->v1);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "a0 %08x a1 %08x a2 %08x", (u32)ctx->a0, (u32)ctx->a1, (u32)ctx->a2);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "a3 %08x t0 %08x t1 %08x", (u32)ctx->a3, (u32)ctx->t0, (u32)ctx->t1);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "t2 %08x t3 %08x t4 %08x", (u32)ctx->t2, (u32)ctx->t3, (u32)ctx->t4);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "t5 %08x t6 %08x t7 %08x", (u32)ctx->t5, (u32)ctx->t6, (u32)ctx->t7);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "s0 %08x s1 %08x s2 %08x", (u32)ctx->s0, (u32)ctx->s1, (u32)ctx->s2);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "s3 %08x s4 %08x s5 %08x", (u32)ctx->s3, (u32)ctx->s4, (u32)ctx->s5);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "s6 %08x s7 %08x t8 %08x", (u32)ctx->s6, (u32)ctx->s7, (u32)ctx->t8);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "t9 %08x gp %08x sp %08x", (u32)ctx->t9, (u32)ctx->gp, (u32)ctx->sp);
+        var_s2 += 6;
+        crash_print_line(0x10, var_s2, "s8 %08x", (u32)ctx->s8);
+        D_800937F0 = 0;
+        crash_print_line(0x60, 0xDC, "press button for stack trace");
+        while (1) {
+            crash_copy_control_inputs();
+            if (gCrashButtons[0] == 0) {
+                continue;
+            }
+            if (count == 1) {
+                print_stack_trace(threads, count, offset);
+                continue;
+            }
+
+            break;
+        }
+
+        offset++;
+        if (offset >= count) {
+            offset = 0;
+        }
+    }
+}
+
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/print_stack_trace.s")
+#else
+void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
+    OSThread* thread;
+    __OSThreadContext* ctx;
+    s32 temp_v0_2;
+    u32 *var_s2;
+    s32 var_s3;
+    s32 sp60;
+    s32 var_s4;
+    u32 *var_s0;
+    void* sp54;
+    void* sp50;
+    u32 *var_s1;
+
+    sp60 = 0x1C;
+    thread = threads[arg2];
+    clear_framebuffer_current();
+    D_800937F0 = 6;
+    crash_print_line(0xDC, 0xD6, "STACK TRACE");
+    D_800937F0 = 0;
+    crash_print_line(0x10, 0x18, "Fault in thread %d", thread->id);
+    D_800937F0 = 0;
+    ctx = &thread->context;
+    crash_print_line(0x50, 0xDC, "press button for FPU registers");
+    var_s1 = (u32*) ctx->ra;
+    var_s0 = (u32*) ctx->pc;
+    var_s2 = (u32*) ctx->sp;
+    D_800937F0 = 3;
+    crash_print_line(0x10, 0x24, "J#\tPC\t\t\t\tSP");
+    crash_print_line(0xC8, 0x24, "DLL#\tDLL ADDR");
+    D_800937F0 = 2;
+    crash_print_line(0x10, 0x2A, "%02d\t%08x\t%08x", 0, var_s0, var_s2);
+    temp_v0_2 = find_executing_dll(var_s1, &sp54, &sp50);
+    if (temp_v0_2 != -1) {
+        D_800937F0 = 5;
+        crash_print_line(0xC8, 0x2A, "%d", temp_v0_2);
+        crash_print_line(0xF0, 0x2A, "%08x", sp54);
+        D_800937F0 = 2;
+    }
+    var_s3 = 0x30;
+    var_s4 = 1;
+    while (var_s0 != NULL && sp60 > var_s4) {
+        if ((var_s0[0] & 0xFC1FFFFF) == 0xF809) {
+            var_s1 = var_s0[1];
+            var_s0 += 1;
+            continue;
+        }
+
+        switch (var_s0[0] >> 0x10) {
+            case 0xDFBF:
+                var_s1 = (var_s2 + (((u32) (var_s0[0] & 0xFFFF) >> 2)))[1];
+                break;
+            case 0x8FBF:
+                // @fake *0
+                var_s1 = (var_s2 + (((u32) (var_s0[0] & 0xFFFF)) >> 2))[var_s0[0] * 0];
+                break;
+            case 0x3E0:
+                if ((var_s0[0] & 0xFFFF) != 8) {
+                    break;
+                }
+
+                // ????????
+                if (&var_s0[1]) {
+                    switch (var_s0[1] >> 0x10) {
+                        case 0x27BD:
+                            var_s2 += ((u32) (var_s0[1] & 0xFFFF) >> 2);
+                            break;
+                    }
+                }
+                var_s0 = var_s1;
+                if (var_s1) {
+                    crash_print_line(0x10, var_s3, "%02d\t%08x\t%08x", var_s4, var_s1, var_s2);
+                    temp_v0_2 = find_executing_dll(var_s1, &sp54, &sp50);
+                    if (temp_v0_2 != -1) {
+                        D_800937F0 = 5;
+                        crash_print_line(0xC8, var_s3, "%d", temp_v0_2);
+                        crash_print_line(0xF0, var_s3, "%08x", sp54);
+                        D_800937F0 = 2;
+                    }
+                    var_s3 += 6;
+                    var_s4 += 1;
+                }
+                continue;
+            case 0x27BD:
+                var_s2 += ((u32) (var_s0[0] & 0xFFFF) >> 2);
+                break;
+        }
+        var_s0 += 1;
+    }
+    while (1) {
+        crash_copy_control_inputs();
+        if (gCrashButtons[0] != 0) {
+            other_crash_print(threads, arg1, arg2);
+        }
+    }
+}
+#endif
 
 void other_crash_print(OSThread **threads, s32 count, s32 threadIdx) {
     OSThread *thread;
@@ -340,29 +544,16 @@ void other_crash_print(OSThread **threads, s32 count, s32 threadIdx) {
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/crash_copy_control_inputs.s")
-#else
-// Functionally equivalent
-void _crash_copy_control_inputs() {
-    int i;
+void crash_copy_control_inputs(void) {
+    s32 i;
 
-    osContGetReadData(&gCrashContPadArray1[0]);
+    osContGetReadData(gCrashContPadArray1);
     osContStartReadData(&gCrashControllerMesgQueue);
-
-    // TODO: This loop unrolls differently than it should
-    for (i = 0; i < MAXCONTROLLERS; ++i) {
-        gCrashButtons[i] = gCrashContPadArray1[i].button &
-            (u16)(gCrashContPadArray1[i].button ^ gCrashContPadArray2[i].button);
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        gCrashButtons[i] = (gCrashContPadArray1[i].button ^ gCrashContPadArray2[i].button) & gCrashContPadArray1[i].button & 0xFFFF;
     }
-
-    bcopy(
-        &gCrashContPadArray1[0],
-        &gCrashContPadArray2[0],
-        sizeof(OSContPad) * MAXCONTROLLERS
-    );
+    bcopy(gCrashContPadArray1, gCrashContPadArray2, sizeof(OSContPad) * MAXCONTROLLERS);
 }
-#endif
 
 void check_video_mode_crash_and_clear_framebuffer() {
     int i;
@@ -382,60 +573,37 @@ void check_video_mode_crash_and_clear_framebuffer() {
     }
 }
 
-void func_80062D38(s32 col, s32 row, char *param3);
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/func_80062D38.s")
-#else
-// Super super close, pretty sure is functionally equiv
-void func_80062D38(s32 col, s32 row, char *param3) {
-    int k;
-    u16 *fbTemp;
-    u32 res;
-    s32 resWidth;
-    int i;
-    u16 *fb;
-    u16 *someArray;
-    char temp;
-    u16 *pixelPtr;
-    char c;
+void func_80062D38(s32 col, s32 row, u8* arg2) {
+    u32 width;
+    s32 var_a3;
+    s32 i;
+    u16* fb;
+    u16* tempFb;
+    u8 var_a1;
+    u16 *a2;
 
-    res = vi_get_current_size();
-    resWidth = res & 0xffff;
-    fb = &gFramebufferCurrent[(row * resWidth) + col];
-    someArray = &D_800933C4[D_800937F0 << 2];
-
-    i = 4;
-    do {
-        k = 1;
-        //v0 = k;
-
+    width = vi_get_current_size() & 0xFFFF;
+    fb = &gFramebufferCurrent[(row * width) + col];
+    a2 = (u16*)&((u8*)D_800933C4)[D_800937F0 * 8];
+    i = MAXCONTROLLERS + 1;
+    while (i--) {
+        var_a3 = 1;
         if (gSomeCrashVideoFlag != 0) {
-            k = 2;
+            var_a3 = 2;
         }
-
-        while (k--) {
-            fbTemp = fb;
-            temp = *param3;
-            while (temp != 0) {
-                //pixelPtr = &someArray[temp & 3];
-                //temp >>= 2;
-
-                *fbTemp++ = someArray[temp & 3];
-                *fbTemp++ = someArray[temp & 3];
-
-                temp >>= 2;
+        while (var_a3--) {
+            tempFb = fb;
+            fb += width;
+            var_a1 = arg2[0];
+            while (var_a1) {
+                (tempFb++)[0] = a2[var_a1 & 3];
+                (tempFb++)[0] = a2[var_a1 & 3];
+                var_a1 >>= 2;
             }
-            
-            fb += resWidth;
-
-            //v0 = k;
         }
-
-        //v0 = i;
-        param3 = param3 + 1;
-    } while (i--);
+        arg2++;
+    }
 }
-#endif
 
 void func_80062E38(s32 x, s32 y, char *str) {
     char c;
@@ -559,38 +727,26 @@ void write_c_file_label_pointers(const char *cFileLabel, s32 a1) {
 }
 
 // diRcpTrace?
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/exception/func_800631E0.s")
-#else
-// Functionally equivalent
-char **_func_800631E0() {
-    // TODO: Every time gCFileLabels is referenced in the original assembly, it's address is
-    // fully recomputed. But the code below calculates it once and reuses a register holding the addr
-
+s32 func_800631E0(void) {
     s32 labelsIndex;
-    char **label;
     s32 i;
+    s32 max;
 
-    labelsIndex = gCFileLabelIndex + 1;
+    labelsIndex = gCFileLabelIndex;
+    for (i = 0; i < C_FILE_LABELS_LENGTH; i++) {
+        u8 *label;
 
-    if (labelsIndex == C_FILE_LABELS_LENGTH) {
-        labelsIndex = 0;
-    }
-
-    label = &gCFileLabels[labelsIndex];
-
-    // TODO: it looks like this loop could be for i 0-10 instead of 1-10 merging the above code,
-    //       but doing so seems to result in the loop not getting unrolled...
-    for (i = 1; i != C_FILE_LABELS_LENGTH; ++i) {
-        ++labelsIndex;
-        ++label;
-
-        if (labelsIndex == C_FILE_LABELS_LENGTH) {
-            label = &gCFileLabels[0];
+        labelsIndex++;
+        if ((labelsIndex ^ 0) == (max = C_FILE_LABELS_LENGTH)) {
             labelsIndex = 0;
+        }
+        label = gCFileLabels[labelsIndex];
+        if (gCFileLabelIndex){}
+        if (label) {
+            // maybe?
+            STUBBED_PRINTF(label);
         }
     }
 
-    return label;
+    return labelsIndex ^ 0;
 }
-#endif
