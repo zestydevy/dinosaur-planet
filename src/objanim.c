@@ -12,6 +12,44 @@
 
 static const char str_80099800[] = "Error in loading Model Inst in ObjAnimSetMove ";
 
+/* -------- .data start 800916B0 -------- */
+u8 D_800916B0[33] = {
+    0x00,
+    0x01,
+    0x02,
+    0x03,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x03,
+    0x00,
+    0x00,
+    0x00,
+    0x07,
+    0x05,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x03,
+    0x05,
+    0x00,
+    0x04,
+    0x06,
+    0x00,
+    0x07,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x08
+};
+/* -------- .data start 800916E0 -------- */
+
 Animation* func_80019118(s16 animID, s16 modAnimID, u8* amap, Model* model);
 
 //sets new modAnimIndex on model
@@ -339,10 +377,8 @@ void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objanim/func_80025780.s")
 
-extern u8 D_800916B0[];
-
 u8 func_80025CD4(s32 arg0) {
-    if (arg0 >= 0x21)
+    if (arg0 >= (s32)ARRAYCOUNT(D_800916B0))
         return 0;
     return D_800916B0[arg0];
 }

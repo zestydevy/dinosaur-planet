@@ -1,9 +1,13 @@
 #include "common.h"
 
+// -------- .data start 80091750 -------- //
+s32 D_80091750 = 0; // unused bytes
 /** toggles Models' multiplier colour */
-extern s8 BYTE_80091754;
+s8 BYTE_80091754 = 0;
 /** toggles Models' blend colour */
-extern s8 BYTE_80091758;
+s8 BYTE_80091758 = 0;
+u8 _data_8009175c[0x14] = {0}; // unused bytes
+// -------- .data end 80091770 -------- //
 
 // -------- .bss start 800b2e10 -------- //
 s32 D_800B2E10;
@@ -35,8 +39,6 @@ void func_80034FF0(s32 arg0) {
 #else
 extern f32 gWorldX;
 extern f32 gWorldZ;
-extern u8 BYTE_80091754;
-extern u8 BYTE_80091758;
 extern s16 SHORT_800b2e14;
 extern s16 SHORT_800b2e16;
 extern s16 SHORT_800b2e18;
