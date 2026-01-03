@@ -207,7 +207,6 @@ void font_print_window_xy(Gfx **gdl, s32 windowID, s32 xPos, s32 yPos, char *tex
 }
 
 static const char str_5[] = "FONTS - You must specify a font to use before attempting to print anything\n";
-#if NON_MATCHING
 void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags alignmentFlags, f32 scisScale) {
     s32 charIndex; // spDC
     s32 charSpace;
@@ -227,13 +226,13 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
     s32 textureUly;
     s32 textureUlx;
     s32 lastTextureIndex;
-    s32 textureIndex;
+    s32 temp;
     FontData* fontData;
     s16 newData;
     u8 curChar;
 
-    lastTextureIndex = -1;
     xAlignmentDiff = -1;
+    lastTextureIndex = -1;
     if (window->font == 0xFF) {
         return;
     }
@@ -280,11 +279,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
         textureLrx = (xpos + xAlignmentDiff) - 1;
         textureLry = (ypos + fontData->y) - 1;
         
-        gDPSetCombineLERP((*gdl), 
-            0, 0, 0, ENVIRONMENT, 
-            0, 0, 0, ENVIRONMENT, 
-            0, 0, 0, ENVIRONMENT, 
-            0, 0, 0, ENVIRONMENT);
+        gDPSetCombineLERP((*gdl), 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT);
         dl_apply_combine(gdl);
 
         gDPSetOtherMode((*gdl),
@@ -300,11 +295,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
     dl_set_prim_color(gdl, 255, 255, 255, window->opacity);
     dl_set_env_color(gdl, window->textColourR, window->textColourG, window->textColourB, window->textColourA);
     
-    gDPSetCombineLERP(*gdl, 
-        ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, 
-        TEXEL0,      0,      PRIMITIVE, 0, 
-        ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, 
-        TEXEL0,      0,      PRIMITIVE, 0);
+    gDPSetCombineLERP(*gdl, ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
     dl_apply_combine(gdl);
 
     gDPSetOtherMode(*gdl, 
@@ -351,11 +342,10 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
                 }
             } else {
                 curChar -= 0x20;
-                textureIndex = fontData->letters[curChar].textureIndex;
-                if (0xFF != textureIndex) {
-                    if (lastTextureIndex != textureIndex) {
-                        lastTextureIndex = textureIndex;
-                        tex = fontData->texturePointers[textureIndex];
+                if (0xFF != fontData->letters[curChar].textureIndex) {
+                    if (lastTextureIndex != fontData->letters[curChar].textureIndex) {
+                        lastTextureIndex = fontData->letters[curChar].textureIndex;
+                        tex = fontData->texturePointers[lastTextureIndex];
                         set_textures_on_gdl(gdl, tex, NULL, 0, 0, 0, 0);
                     }
                     newData = TRUE;
@@ -391,11 +381,15 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
                 gDLBuilder->needsPipeSync = 1;
             }
             charIndex -= 1;
-            xpos -= (s32)(window->extraCharacterSpacing * 255.0f);
+            temp = (window->extraCharacterSpacing * 255.0f);
+            xpos -= temp;
         }
     } else {
-        for (charIndex = 0; (text[charIndex] != '\0') && (text[charIndex] != (char)0xFF) && (window->y2 >= ypos); charIndex++) {
-            curChar = (u8)text[charIndex];
+        charIndex = 0;
+        // @fake
+        dummy_label_315584: ;
+        while ((text[charIndex] != '\0') && (text[charIndex] != (char)0xFF) && (window->y2 >= ypos)) {
+            curChar = text[charIndex];
             newData = FALSE;
             charSpace = 0;
             if (curChar <= 0x20) {
@@ -422,11 +416,10 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
                 }
             } else {
                 curChar -= 0x20;
-                textureIndex = fontData->letters[curChar].textureIndex;
-                if (0xFF != textureIndex) {
-                    if (lastTextureIndex != textureIndex) {
-                        lastTextureIndex = textureIndex;
-                        tex = fontData->texturePointers[textureIndex];
+                if (0xFF != fontData->letters[curChar].textureIndex) {
+                    if (lastTextureIndex != fontData->letters[curChar].textureIndex) {
+                        lastTextureIndex = fontData->letters[curChar].textureIndex;
+                        tex = fontData->texturePointers[lastTextureIndex];
                         set_textures_on_gdl(gdl, tex, NULL, 0, 0, 0, 0);
                     }
                     newData = TRUE;
@@ -441,7 +434,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
             }
 
             if (newData) {
-                textureUlx = ((window->x1 + textureWidth) * 4) + (xpos >> 6);
+                textureUlx = (xpos >> 6) + ((window->x1 + textureWidth) * 4);
                 textureUly = ((window->y1 + ypos) + textureHeight) * 4;
                 textureLrx = (xAlignmentDiff * 4) + textureUlx;
                 textureLry = (yAlignmentDiff * 4) + textureUly;
@@ -467,7 +460,9 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
             }
             
             xpos += (charSpace << 8);
-            xpos += (s32)(window->extraCharacterSpacing * 255.0f);
+            temp = (window->extraCharacterSpacing * 255.0f);
+            xpos += temp;
+            charIndex++;
         }
     }
     
@@ -478,9 +473,6 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
         func_80002490(gdl);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/fonts/font_render_text.s")
-#endif
 
 s32 font_get_text_width(s32 windowID, const char *text, s32 x, s32 fontID) {
     gFontWindows[windowID].extraCharacterSpacing = 0.0f;
@@ -650,10 +642,8 @@ void font_window_reset_text_offset(s32 windowID) {
 }
 
 static const char str_16[] = "FONTS - cannot word wrap a string using an unspecified font.\n";
-#if NON_EQUIVALENT
 void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 scisScale) {
-    u8 charBuffer[128];
-    u8 lastTextureIndex;
+    s32 loopCond;
     FontData* fontData;
     s32 ypos;
     s32 xpos;
@@ -661,18 +651,18 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     s32 rectUly;
     s32 scisPos;
     s32 rectUlx;
-    s32 yStart;
     s32 wordWidth;
-    s32 loopCond;
     s32 xStart;
     s32 bufIdx;
     s32 wordCharCount;
+    s32 yStart;
     s32 wordWrapped;
-    u8 textureIndex;
-    u8 curChar;
-    s32 charIndex;
     s32 rectLrx;
     s32 rectLry;
+    Texture *tex;
+    u8 charBuffer[128];
+    u8 curChar;
+    u8 lastTextureIndex; // sp8A
     s32 textureS;
     s32 textureT;
 
@@ -692,10 +682,12 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     gSPLoadGeometryMode(*gdl, G_SHADE | G_SHADING_SMOOTH);
     dl_apply_geometry_mode(gdl);
     
+    // @fake
+    if (window) {}
     if (window != gFontWindows) {
-        scisPos = (s32) (window->y2 + window->y1) >> 1;
         scisOffset = (s32) (((f32) ((window->y2 - window->y1) + 1) / 2) * scisScale);
-        gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, window->x1, scisPos - scisOffset, window->x2, scisPos + scisOffset);
+        scisPos = (s32) (window->y1 + window->y2) >> 1;
+        gDPSetScissor((*gdl)++, 0, window->x1,  scisPos - scisOffset, window->x2,  scisPos + scisOffset);
     }
     
     dl_set_prim_color(gdl, 255, 255, 255, window->opacity);
@@ -713,7 +705,6 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
     dl_apply_other_mode(gdl);
     
-    charIndex = 0;
     loopCond = 0;
     
     while (loopCond >= 0) {
@@ -726,14 +717,14 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
         }
 
         if ((window->textOffsetY + ypos) >= window->height) {
-            // end if beyond box height
+            // end if beyond window height
             loopCond = -1;
         } else {
             loopCond = 0;
         }
         
         while (loopCond == 0) {
-            curChar = (u8) text[charIndex];
+            curChar = *text;
             // if non-printable char
             if ((curChar <= 0x20) || (curChar >= 0x80)) {
                 switch (curChar) {
@@ -741,7 +732,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                     loopCond = -1;
                     break;
                 case '\t':
-                    xpos = (xpos + fontData->charHeight) - (xpos % fontData->charHeight);
+                    xpos += fontData->charHeight - (xpos % fontData->charHeight);
                     break;
                 case '\n':
                     wordWrapped = 0;
@@ -770,21 +761,20 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                 if ((window->textOffsetY + ypos) >= window->height) {
                     loopCond = -1;
                 }
-                charIndex += 1;
+                text++;
             } else {
                 loopCond = 1;
             }
         }
         
-        wordWidth = 0;
         if (loopCond > 0) {
             wordCharCount = 0;
+            wordWidth = 0;
 
             do {
                 charBuffer[wordCharCount] = curChar;
                 curChar = (curChar - 0x20);
                 wordCharCount += 1;
-                charIndex += 1;
                 if (fontData->letters[curChar].textureIndex != 0xFF) {
                     if (fontData->x != 0) {
                         wordWidth += fontData->x;
@@ -794,7 +784,8 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                 } else {
                     wordWidth += fontData->charWidth;
                 }
-                curChar = (u8) text[charIndex];
+                text++;
+                curChar = *text;
             } while (wordCharCount < 128 && ((s32) curChar > 0x20) && ((s32) curChar < 0x100));
 
             if (((xpos + wordWidth) >= window->width) && (xpos != 0)) {
@@ -808,11 +799,11 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                 if ((fontData->y + yStart) > 0) {
                     for (bufIdx = 0; bufIdx < wordCharCount; bufIdx++) {
                         curChar = (charBuffer[bufIdx] - 0x20);
-                        textureIndex = fontData->letters[curChar].textureIndex;
-                        if (textureIndex != 0xFF) {
-                            if (lastTextureIndex != textureIndex) {
-                                lastTextureIndex = textureIndex;
-                                set_textures_on_gdl(gdl, fontData->texturePointers[textureIndex], NULL, 0, 0, 0, 0);
+                        if (fontData->letters[curChar].textureIndex != 0xFF) {
+                            if (lastTextureIndex != fontData->letters[curChar].textureIndex) {
+                                lastTextureIndex = fontData->letters[curChar].textureIndex;
+                                tex = fontData->texturePointers[lastTextureIndex];
+                                set_textures_on_gdl(gdl, tex, NULL, 0, 0, 0, 0);
                             }
                             rectUlx = (fontData->letters[curChar].offsetX + window->x1 + xStart) * 4;
                             rectUly = (fontData->letters[curChar].offsetY + window->y1 + yStart) * 4;
@@ -848,9 +839,6 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
         func_80002490(gdl);
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/fonts/font_render_text_wordwrap.s")
-#endif
 
 static const char str_17[] = "FONTS - can't add a string to window %d, out of range./n";
 FontString *font_window_add_string(s32 windowID, char *text, s32 priority, AlignmentFlags alignmentFlags) {
