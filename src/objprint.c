@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/objects/common/group48.h"
 
 /** toggles Models' multiplier colour */
 extern u8 BYTE_80091754;
@@ -440,11 +441,11 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             arg8->positionMirror.f[1] = arg8->srt.transl.f[1];
             arg8->positionMirror.f[2] = arg8->srt.transl.f[2];
         }
-        if (((s32) arg8->def->numAttachPoints >= 2) && (arg8->group == GROUP_UNK48)) {
+        if (arg8->def->numAttachPoints >= 2 && arg8->group == GROUP_UNK48) {
             if (arg8->parent != NULL) {
                 func_80004224(arg0);
             }
-            ((DLL_Unknown *)arg8->dll)->vtbl->func[10].withFiveArgs(arg8, arg0, arg1, arg2, arg3);
+            ((DLL_IGROUP_48 *)arg8->dll)->vtbl->func10(arg8, arg0, arg1, arg2, arg3);
             if (arg8->parent != NULL) {
                 setup_rsp_matrices_for_object(arg0, arg1, arg8->parent);
             }
