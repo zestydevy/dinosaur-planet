@@ -78,282 +78,204 @@ void func_80034FF0(MtxF* arg0) {
     PTR_DAT_800b2e1c = arg0;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/draw_object.s")
-#else
-extern f32 gWorldX;
-extern f32 gWorldZ;
-extern u8 BYTE_80091754;
-extern u8 BYTE_80091758;
-extern s16 SHORT_800b2e14;
-extern s16 SHORT_800b2e16;
-extern s16 SHORT_800b2e18;
-// wtf, why don't these externs work
-//extern void **PTR_DAT_800b2e1c;
-#define PTR_DAT_800b2e1c (*(void***)0x800b2e1c) 
-extern u8 BYTE_800b2e20;
-extern u8 BYTE_800b2e21;
-extern u8 BYTE_800b2e22;
-//extern u8 BYTE_800b2e23;
-#define BYTE_800b2e23 (*(u8*)0x800b2e23)
-void func_8001F81C(u8*, u8*, u8*);
-void func_8001943C(Object *obj, MtxF *mf, f32 yPrescale);
-void _draw_object(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 *param_4, u32 *param_5, f32 yPrescale)
-{
-    ModelInstance *modelInst;
-    Model *model;
-    ObjectStruct50 *unk50;
-    u8 r = 0xff, g = 0xff, b = 0xff, a, r_, g_, b_;
-    Gfx *mygdl;
-    Mtx *myrspMtxs;
-    f32 tx, ty, tz;
-    s16 yaw;
-    ObjectStruct64* unk64;
-    SRT srt;
-    MtxF mtxf;
-    u32 out_param_4;
-    u32 out_param_5;
-    u32 xxx;
+void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
+    s32 spFC;
+    ModelInstance* modelInst;
+    Model* model;
+    SRT spDC;
+    Object* parentObj;
+    u8 spD7;
+    u8 spD6;
+    u8 spD5;
+    s32 var_v0;
+    s32 var_v1;
+    s32 var_a0;
+    f32 spC4;
+    f32 spC0;
+    f32 spBC;
+    s16 spBA;
+    MtxF sp78;
+    s32 pad;
+    MtxF* sp70;
+    u8 sp6F;
+    u8 sp6E;
+    u8 sp6D;
+    Gfx* tempGdl;
+    Mtx* tempMtxs;
+    Vertex* tempVtxs;
+    Triangle* tempTris;
 
-    func_8001F81C(&r_, &g_, &b_);
-
-    mygdl = *gdl;
-    myrspMtxs = *rspMtxs;
-
+    func_8001F81C(&sp6F, &sp6E, &sp6D);
+    tempGdl = *gdl;
+    tempMtxs = *mtxs;
+    tempVtxs = *vtxs;
+    tempTris = *tris;
     modelInst = obj->modelInsts[obj->modelInstIdx];
     if (modelInst == NULL) {
         return;
     }
 
     model = modelInst->model;
-    unk50 = obj->ptr0x50;
-    a = obj->unk37;
-
-    // A piece of very strange code occurs here:
-    //
-    // 35c8c:    lbu     t9,0x37(s0) ; t9 == a
-    // 35c90:    slti    at,t9,0x100
-    // 35c94:    bnez    at,0x35ca0 ~>
-    // 35c98:    sw      t9,0xfc(sp)
-    // 35c9c:    sw      t1,0xfc(sp)
-    // 35ca0:    ....
-    //
-    // Note the condition tested by slti/bnez, a >= 256, will never be true.
-
-    if ((unk50->unk44 & 0x10000) || !func_8001EBE0())
-    {
-        r = 0xff;
-        g = 0xff;
-        b = 0xff;
+    spFC = obj->opacityWithFade;
+    if (spFC > 0xFF) {
+        spFC = 0xFF;
     }
-    else
-    {
-        r = r_;
-        g = g_;
-        b = b_;
+    if (obj->def->flags & 0x10000) {
+        if (func_8001EBE0() != 0) {
+            spD5 = spD6 = spD7 = 0xFF;
+        } else {
+            spD7 = sp6F;
+            spD6 = sp6E;
+            spD5 = sp6D;
+        }
+    } else {
+        spD5 = spD6 = spD7 = 0xFF;
     }
-
-    if (unk50->unk71 != 0) {
-        func_80036890(obj);
+    if (obj->def->numAnimatedFrames > 0) {
+        func_80036890(obj, 2);
     }
-
-    if (BYTE_80091754)
-    {
-        s32 r2 = ((s32)r * SHORT_800b2e14) >> 8;
-        s32 g2 = ((s32)g * SHORT_800b2e16) >> 8;
-        s32 b2 = ((s32)b * SHORT_800b2e18) >> 8;
-        if (r2 > 0xff) {
-            r2 = 0xff;
+    if (BYTE_80091754 != 0) {
+        var_v0 = (spD7 * SHORT_800b2e14) >> 8;
+        var_v1 = (spD6 * SHORT_800b2e16) >> 8;
+        var_a0 = (spD5 * SHORT_800b2e18) >> 8;
+        if (var_v0 > 0xFF) {
+            var_v0 = 0xFF;
         }
-        if (g2 > 0xff) {
-            g2 = 0xff;
+        if (var_v1 > 0xFF) {
+            var_v1 = 0xFF;
         }
-        if (b2 > 0xff) {
-            b2 = 0xff;
+        if (var_a0 > 0xFF) {
+            var_a0 = 0xFF;
         }
-        r = r2;
-        g = g2;
-        b = b2;
-
+        spD7 = var_v0;
+        spD6 = var_v1;
+        spD5 = var_a0;
         BYTE_80091754 = 0;
     }
-
-    if (BYTE_80091758)
-    {
+    if (BYTE_80091758 != 0) {
+        spD7 = BYTE_800b2e20;
+        spD6 = BYTE_800b2e21;
+        spD5 = BYTE_800b2e22;
         BYTE_80091758 = 0;
-        r = BYTE_800b2e20;
-        g = BYTE_800b2e21;
-        b = BYTE_800b2e22;
-    }
-    else
-    {
+    } else {
         BYTE_800b2e23 = 0;
     }
-
-    if (obj->parent != NULL)
-    {
-        setup_rsp_matrices_for_object(&mygdl, &myrspMtxs, obj->parent);
-        tx = obj->srt.tx;
-        ty = obj->srt.ty;
-        tz = obj->srt.tz;
-        yaw = obj->srt.yaw;
+    parentObj = obj->parent;
+    if (parentObj != NULL) {
+        setup_rsp_matrices_for_object(&tempGdl, &tempMtxs, parentObj);
+        spC4 = obj->srt.transl.f[0];
+        spC0 = obj->srt.transl.f[1];
+        spBC = obj->srt.transl.f[2];
+        spBA = obj->srt.yaw;
     }
-
-    unk64 = obj->unk64;
-    if (unk64 != NULL)
-    {
-        if (unk64->gdl != NULL)
-        {
-            if (unk64->unk30 & 0x20)
-            {
-                srt.tx = unk64->tx;
-                srt.ty = unk64->ty;
-                srt.tz = unk64->tz;
-            }
-            else
-            {
-                srt.tx = obj->srt.tx;
-                srt.ty = obj->srt.ty;
-                srt.tz = obj->srt.tz;
-            }
-
-            srt.yaw = 0;
-            srt.roll = 0;
-            srt.pitch = 0;
-            srt.scale = *(f32*)0x80099d78; // 0.05f
-
-            if (obj->parent != NULL && model->animCount != 0)
-            {
-                srt.tx += gWorldX;
-                srt.tz += gWorldZ;
-            }
-
-            func_800032C4(&mygdl, &myrspMtxs, &srt, 1.0f, 0, NULL);
-
-            gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(obj->unk64->gdl));
-            dl_set_all_dirty();
-            func_8003DB5C();
+    if ((obj->unk64 != NULL) && (obj->unk64->gdl != NULL)) {
+        if (obj->unk64->flags & 0x20) {
+            spDC.transl.f[0] = obj->unk64->tr.f[0];
+            spDC.transl.f[1] = obj->unk64->tr.f[1];
+            spDC.transl.f[2] = obj->unk64->tr.f[2];
+        } else {
+            spDC.transl.f[0] = obj->srt.transl.f[0];
+            spDC.transl.f[1] = obj->srt.transl.f[1];
+            spDC.transl.f[2] = obj->srt.transl.f[2];
         }
+        spDC.yaw = 0;
+        spDC.roll = 0;
+        spDC.pitch = 0;
+        spDC.scale = 0.05f;
+        if (parentObj != NULL && model->animCount != 0) {
+            spDC.transl.f[0] += gWorldX;
+            spDC.transl.f[2] += gWorldZ;
+        }
+        func_800032C4(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
+        gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->unk64->gdl));
+        dl_set_all_dirty();
+        func_8003DB5C();
     }
-
-    if (!(obj->srt.flags & 0x1000))
-    {
-        if (!(modelInst->unk34 & 0x8))
-        {
-            if (model->animCount != 0 && !(model->unk71 & 0x2))
-            {
-                if (*(MtxF**)0x800b2e1c == NULL) {
-                    func_8001943C(obj, &mtxf, yPrescale);
-                    func_80019730(modelInst, model, obj, &mtxf);
+    if (!(obj->srt.flags & 0x1000)) {
+        if (!(modelInst->unk34 & 8)) {
+            if ((model->animCount != 0) && !(model->unk71 & 2)) {
+                if (PTR_DAT_800b2e1c == 0) {
+                    func_8001943C(obj, &sp78, yPrescale, 0.0f);
+                    func_80019730(modelInst, model, obj, &sp78);
                 } else {
-                    func_80019730(modelInst, model, obj, *PTR_DAT_800b2e1c);
+                    func_80019730(modelInst, model, obj, PTR_DAT_800b2e1c);
                 }
-            }
-            else
-            {
-                MtxF *mf;
-                
-                modelInst->unk34 ^= 0x1;
-                mf = modelInst->unk4.matrices[modelInst->unk34 & 0x1];
-                if (*(MtxF**)0x800b2e1c == NULL) {
-                    func_8001943C(obj, mf, yPrescale);
+            } else {
+                modelInst->unk34 ^= 1;
+                sp70 = modelInst->matrices[modelInst->unk34 & 1];
+                if (PTR_DAT_800b2e1c == 0) {
+                    func_8001943C(obj, sp70, yPrescale, 0.0f);
                 } else {
-                    bcopy(*PTR_DAT_800b2e1c, mf, sizeof(MtxF));
+                    bcopy((void* ) PTR_DAT_800b2e1c, sp70, 0x40);
                 }
-
-                pointerIntArray2_func(mf, 1);
+                add_matrix_to_pool(sp70, 1);
             }
-
-            modelInst->unk34 ^= 0x2;
-
-            unk50 = obj->ptr0x50;
-            if ((unk50->unk44 & 0x10) || model->unk1C != NULL)
-            {
-                if (model->unk1C != NULL) {
+            modelInst->unk34 ^= 2;
+            if ((obj->def->flags & 0x10) || (model->blendshapes != NULL)) {
+                if (model->blendshapes != NULL) {
                     func_8001B100(modelInst);
                 }
-                if (unk50->unk44 & 0x10) {
+                if (obj->def->flags & 0x10) {
                     func_8001DF60(obj, modelInst);
                 }
             }
-
-            if (unk50->unk71) {
+            if (obj->def->numAnimatedFrames != 0) {
                 func_8001E818(obj, model, modelInst);
             }
-
-            if (model->unk74) {
+            if (model->envMapCount != 0) {
                 func_8001F094(modelInst);
             }
-
-            if (obj->unk74) {
+            if (obj->unk74 != NULL) {
                 func_80036438(obj);
             }
-
-            if (model->unk6E != 0) {
-                func_8001A8EC(modelInst, model, obj, NULL, obj);
-            } else {
-                if (obj->objhitInfo != NULL && (obj->objhitInfo->unk5A & 0x20) && obj->objhitInfo->unk9F != 0) {
+            if (model->hitSphereCount != 0) {
+                func_8001A8EC(modelInst, model, obj, 0, obj);
+            } else if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20)) {
+                if (obj->objhitInfo->unk9F != 0) {
                     obj->objhitInfo->unk9F--;
                 }
             }
         }
-    }
-
-    if (model->unk71 & 0x4) {
-        dl_set_env_color(&mygdl, r, g, b, BYTE_800b2e23);
-    }
-    dl_set_prim_color(&mygdl, r, g, b, a);
-
-    if (!(obj->srt.flags & 0x200))
-    {
-        gMoveWd(mygdl++, 0x0c, 0x06, modelInst->unk4.matrices[modelInst->unk34 & 0x1]);
-        gMoveWd(mygdl++, 0x14, 0x6, modelInst->unk4.unk0[(modelInst->unk34 >> 1) & 0x1]);
-
-        if (a == 0xff)
-        {
-            if (modelInst->unk34 & 0x10) {
-                load_model_display_list(model, modelInst);
+        if (model->unk71 & 4) {
+            dl_set_env_color(&tempGdl, spD7, spD6, spD5, BYTE_800b2e23);
+        }
+        dl_set_prim_color(&tempGdl, spD7, spD6, spD5, spFC);
+        if (!(obj->srt.flags & 0x200)) {
+            gMoveWd(tempGdl++, 6, 0xC, modelInst->matrices[modelInst->unk34 & 1]);
+            gMoveWd(tempGdl++, 6, 0x14, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
+            if (spFC == 0xFF) {
+                if (modelInst->unk34 & 0x10) {
+                    load_model_display_list(model, modelInst);
+                    modelInst->unk34 ^= 0x10;
+                }
+            } else if (!(modelInst->unk34 & 0x10)) {
+                load_model_display_list2(model, modelInst);
                 modelInst->unk34 ^= 0x10;
             }
+            gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
+            dl_set_all_dirty();
+            func_8003DB5C();
         }
-        else
-        {
-            if (!(modelInst->unk34 & 0x10)) {
-                func_800189A8(model, modelInst);
-                modelInst->unk34 ^= 0x10;
-            }
+        if (obj->linkedObject != NULL) {
+            func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, obj->linkedObject, obj->unkB0 & 3, (u8)spFC);
         }
-
-        gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(model->displayList));
-        dl_set_all_dirty();
-        func_8003DB5C();
     }
-
-    if (obj->linkedObject != NULL) {
-        func_80035AF4(&mygdl, &myrspMtxs, &out_param_4, &out_param_5, obj, modelInst, &mtxf, 0, obj->linkedObject, obj->unkB0 & 0x3, a);
-    }
-
-    if (obj->objhitInfo != NULL && (obj->objhitInfo->unk5A & 0x20) && modelInst->unk14) {
+    if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20) && (modelInst->unk14 != NULL)) {
         func_800357B4(obj, modelInst, modelInst->model);
     }
-
-    modelInst->unk34 |= 0x8;
-
-    if (obj->parent != NULL)
-    {
-        obj->srt.tx = tx;
-        obj->srt.ty = ty;
-        obj->srt.tz = tz;
-        obj->srt.yaw = yaw;
-        func_80004224(&mygdl);
+    modelInst->unk34 |= 8;
+    if (parentObj != NULL) {
+        obj->srt.transl.f[0] = spC4;
+        obj->srt.transl.f[1] = spC0;
+        obj->srt.transl.f[2] = spBC;
+        obj->srt.yaw = spBA;
+        func_80004224(&tempGdl);
     }
-
-    *gdl = mygdl;
-    *rspMtxs = myrspMtxs;
-    *param_4 = out_param_4;
-    *param_5 = out_param_5;
+    *gdl = tempGdl;
+    *mtxs = tempMtxs;
+    *vtxs = tempVtxs;
+    *tris = tempTris;
 }
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_800357B4.s")
 
