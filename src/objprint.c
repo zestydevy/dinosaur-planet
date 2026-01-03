@@ -277,7 +277,43 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
     *tris = tempTris;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_800357B4.s")
+void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
+    f32* temp_v0_2;
+    Vec3f* var_s0;
+    MtxF* var_v1;
+    MtxF sp54;
+    s32 i;
+
+    if (!(arg1->unk34 & 0x20)) {
+        var_v1 = (MtxF*)arg1->matrices[arg1->unk34 & 1]->m[3];
+        var_s0 = arg1->unk14->unk0;
+        for (i = 0; i < arg2->jointCount; i++) {
+            var_s0->f[0] = var_v1->m[0][0];
+            var_s0->f[1] = var_v1->m[0][1];
+            var_s0->f[2] = var_v1->m[0][2];
+            if ( arg2->collisionB[i] > 1.0f) {
+                temp_v0_2 = &((f32*)arg1->matrices[arg1->unk34 & 1])[arg2->joints[i].parentJointID << 4] + 12;
+                var_s0->f[0] += (var_s0->f[0] - temp_v0_2[0]) * (arg2->collisionB[i] - 1.0f);
+                var_s0->f[1] += (var_s0->f[1] - temp_v0_2[1]) * (arg2->collisionB[i] - 1.0f);
+                var_s0->f[2] += (var_s0->f[2] - temp_v0_2[2]) * (arg2->collisionB[i] - 1.0f);
+            }
+            var_s0 += 1;
+            var_v1 += 1;
+        }
+    }
+    if (arg0->parent == NULL) {
+        return;
+    }
+
+    matrix_from_srt(&sp54, &arg0->parent->srt);
+    var_s0 = arg1->unk14->unk0;
+    for (i = 0; i < arg2->jointCount; i++) {
+        vec3_transform(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], var_s0->f, &var_s0->f[1], &var_s0->f[2]);
+        var_s0->f[0] -= gWorldX;
+        var_s0->f[2] -= gWorldZ;
+        var_s0 += 1;
+    }
+}
 
 void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
 {
