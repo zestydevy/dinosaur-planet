@@ -1,9 +1,9 @@
 #include "common.h"
 
 /** toggles Models' multiplier colour */
-extern s8 BYTE_80091754;
+extern u8 BYTE_80091754;
 /** toggles Models' blend colour */
-extern s8 BYTE_80091758;
+extern u8 BYTE_80091758;
 
 // -------- .bss start 800b2e10 -------- //
 s32 D_800B2E10;
@@ -13,20 +13,68 @@ s16 SHORT_800b2e14;
 s16 SHORT_800b2e16;
 /** gModelColourMultiplyB? */
 s16 SHORT_800b2e18;
-s32 PTR_DAT_800b2e1c;
+MtxF *PTR_DAT_800b2e1c;
 /** gModelColourBlendR? */
-s8 BYTE_800b2e20;
+u8 BYTE_800b2e20;
 /** gModelColourBlendG? */
-s8 BYTE_800b2e21;
+u8 BYTE_800b2e21;
 /** gModelColourBlendB? */
-s8 BYTE_800b2e22;
+u8 BYTE_800b2e22;
 /** gModelColourBlendA? */
-s8 BYTE_800b2e23;
+u8 BYTE_800b2e23;
 // -------- .bss end 800b2e30 -------- //
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func.s")
+void func_8001DF60(Object*, ModelInstance*);
+void func_8001E818(Object*, Model*, ModelInstance*);
+void func_8001F094(ModelInstance*);
+void func_800357B4(Object*, ModelInstance*, Model*);
+void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, s32, Object*, s32, s32);
+void func_80036890(Object*, s32);
+// should be in model.h
+void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
+void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);
 
-void func_80034FF0(s32 arg0) {
+void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* arg4, s8 arg5) {
+    if (arg4->unkB0 & 0x40) {
+        return;
+    }
+
+    if (arg5 == 0) {
+        if (arg4->objhitInfo != NULL && (arg4->objhitInfo->unk5A & 0x30)) {
+            arg4->objhitInfo->unk9F = 2;
+        }
+    }
+
+    if (arg4->srt.flags & 0x4000) {
+        return;
+    }
+
+    if (arg4->parent != NULL && (arg4->parent->srt.flags & 0x4000)) {
+        return;
+    }
+
+    update_pi_manager_array(2, arg4->id);
+    dl_add_debug_info(*gdl, arg4->id, "objects/objprint.c", 0x1AAU);
+    if (arg4->dll != NULL) {
+        if (!(arg4->unkB0 & 0x4000)) {
+            arg4->dll->vtbl->print(arg4, gdl, mtxs, vtxs, tris, arg5);
+        } else if (arg5 != 0) {
+            draw_object(arg4, gdl, mtxs, vtxs, tris, 1.0f);
+        }
+    } else if (arg5 != 0) {
+        draw_object(arg4, gdl, mtxs, vtxs, tris, 1.0f);
+    }
+    if (arg4->unkB0 & 0x800) {
+        func_80023A78(arg4, arg4->modelInsts[arg4->modelInstIdx], arg4->modelInsts[arg4->modelInstIdx]->model);
+    }
+    if (arg4->linkedObject != NULL && (arg4->linkedObject->unkB0 & 0x800)) {
+        func_80023A78(arg4->linkedObject, arg4->linkedObject->modelInsts[arg4->modelInstIdx], arg4->linkedObject->modelInsts[arg4->modelInstIdx]->model);
+    }
+    dl_add_debug_info(*gdl, (u32) -arg4->id, "objects/objprint.c", 0x1E9U);
+    update_pi_manager_array(2, -1);
+}
+
+void func_80034FF0(MtxF* arg0) {
     PTR_DAT_800b2e1c = arg0;
 }
 

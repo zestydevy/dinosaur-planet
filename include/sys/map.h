@@ -495,7 +495,7 @@ void func_80023628(void);
 s32 func_80048E04(u8, u8, u8, u8);
 void func_8003E648(Texture*, s32 *, s32 *);
 u8 map_get_is_object_streaming_disabled(void);
-void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s32);
+void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s8);
 void func_8001F81C(u8*, u8*, u8*);
 void func_8005C740(s32 arg0, u32* arg1, u32* arg2, u32 arg3);
 void func_8003DB7C(void);

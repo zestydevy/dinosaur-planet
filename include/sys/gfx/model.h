@@ -225,6 +225,7 @@ void func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
 void func_8001B100(ModelInstance* modelInst);
 void load_model_display_list(Model *model, ModelInstance *modelInst);
+void load_model_display_list2(Model *model, ModelInstance *modelInst);
 void patch_model_display_list_for_textures(Model* model);
 s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount);
 void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState);

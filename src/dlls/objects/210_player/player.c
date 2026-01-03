@@ -197,7 +197,7 @@ MtxF* func_80032170(Object*, s32);
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
 void func_8004E64C(Object* player, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_80032238(Object* player, s32 arg1, s32 arg2, Vec3f* arg3);
-void func_80034FF0(s32);
+void func_80034FF0(MtxF* arg0);
 void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32, void*, s32, s32);
 void func_8005B5B8(Object*, Object*, s32);
 void func_80023894(Object* playerect, s32 objectId);
@@ -1457,7 +1457,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
         draw_object(player, arg1, arg2, arg3, arg4, 1.0f);
         player->srt.transl.y -= data->unk83C;
         if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
-            func_80034FF0(0);
+            func_80034FF0(NULL);
         }
         if (arg5 != 0) {
             dll_210_func_363C(player, data, arg1, arg2, arg3);
