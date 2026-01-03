@@ -413,6 +413,7 @@ void some_crash_print(OSThread** threads, s32 count, s32 offset) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/exception/print_stack_trace.s")
 #else
+// https://decomp.me/scratch/EZR1D
 void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
     OSThread* thread;
     __OSThreadContext* ctx;
