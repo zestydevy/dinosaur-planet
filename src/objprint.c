@@ -455,7 +455,70 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
     return modelInst;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036058.s")
+void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+    MtxF* tempMtx;
+    s32 j;
+    s32 boneId;
+    s32 i;
+    Vec3f sp7C;
+    Vec3f sp70;
+    ObjGroup48_Data* objData;
+
+    if (obj->def->numAttachPoints < 2 || obj->group != GROUP_UNK48) {
+        return;
+    }
+
+    objData = obj->data;
+    for (i = 0; i < objData->unk8A; i++) {
+        j = i << 1;
+        if (j < obj->def->numAttachPoints) {
+            boneId = obj->def->pAttachPoints[j + 1].bones[obj->modelInstIdx];
+            tempMtx = (MtxF*) &((f32*)modelInst->matrices[modelInst->unk34 & 1])[boneId << 4];
+            sp7C.f[0] = obj->def->pAttachPoints[j + 1].pos.f[0];
+            sp7C.f[1] = obj->def->pAttachPoints[j + 1].pos.f[1];
+            sp7C.f[2] = obj->def->pAttachPoints[j + 1].pos.f[2];
+            vec3_transform(tempMtx, sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2]);
+            if (otherObj->parent != NULL) {
+                transform_point_by_object(sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2], otherObj->parent);
+            } else {
+                sp7C.f[0] += gWorldX;
+                sp7C.f[2] += gWorldZ;
+            }
+            objData->unk30[i] = sp7C.f[0];
+            objData->unk38[i] = sp7C.f[1];
+            objData->unk40[i] = sp7C.f[2];
+        }
+        if (j < obj->def->numAttachPoints) {
+            boneId = obj->def->pAttachPoints[j].bones[obj->modelInstIdx];
+            tempMtx = (MtxF*) &((f32*)modelInst->matrices[modelInst->unk34 & 1])[boneId << 4];
+            sp70.f[0] = obj->def->pAttachPoints[j].pos.f[0];
+            sp70.f[1] = obj->def->pAttachPoints[j].pos.f[1];
+            sp70.f[2] = obj->def->pAttachPoints[j].pos.f[2];
+            vec3_transform(tempMtx, sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2]);
+            if (otherObj->parent != NULL) {
+                transform_point_by_object(sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2], otherObj->parent);
+            } else {
+                sp70.f[0] += gWorldX;
+                sp70.f[2] += gWorldZ;
+            }
+            objData->unk18[i] = sp70.f[0];
+            objData->unk20[i] = sp70.f[1];
+            objData->unk28[i] = sp70.f[2];
+        }
+    }
+    if (objData->unk8A != 0) {
+        sp7C.f[0] = objData->unk30[objData->unk8C];
+        sp7C.f[1] = objData->unk38[objData->unk8C];
+        sp7C.f[2] = objData->unk40[objData->unk8C];
+        ((DLL_IGROUP_48*)obj->dll)->vtbl->func9(obj, otherObj, &sp70);
+        sp7C.f[0] -= sp70.f[0];
+        sp7C.f[1] -= sp70.f[1];
+        sp7C.f[2] -= sp70.f[2];
+        obj->srt.yaw = arctan2_f(sp7C.x, sp7C.z);
+        obj->srt.pitch = 0x4000 - arctan2_f(sp7C.y, sqrtf(SQ(sp7C.z) + SQ(sp7C.x)));
+        obj->srt.roll = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036438.s")
 
