@@ -157,6 +157,11 @@ typedef struct {
 } ObjectStruct58;
 
 typedef struct {
+    Vec3f unk0;
+    Vec3f unkC;
+} ObjectStruct74;
+
+typedef struct {
 /*0000*/    u8 unk0;
 /*0001*/    u8 unk1;
 /*0002*/    u8 unk2;
@@ -227,7 +232,7 @@ typedef struct Object {
 /*0068*/    DLL_IObject *dll;
 /*006C*/    s16 (*unk6C)[9];
 /*0070*/    void* unk70;
-/*0074*/    Vec3f* unk74;
+/*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts;
 /*0080*/    Vec3f positionMirror2; //gets copied twice.

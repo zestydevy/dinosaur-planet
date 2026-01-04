@@ -10353,7 +10353,7 @@ void dll_210_func_1DB6C(Object* player, f32 arg1) {
     } else {
         sp28 = player->unkA8;
     }
-    sp2C = (player->unk74->y - player->srt.transl.y) - arg1;
+    sp2C = (player->unk74->unk0.y - player->srt.transl.y) - arg1;
     sp20 = fsin16_precise(player->srt.yaw);
     gDLL_3_Animation->vtbl->func31(-sp20 * sp28, sp2C, -fcos16_precise(player->srt.yaw) * sp28);
 }

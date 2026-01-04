@@ -32,6 +32,8 @@ void func_800357B4(Object*, ModelInstance*, Model*);
 ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
 void func_80036890(Object*, s32);
 void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
+s32 func_80003278(Gfx**, Mtx**, s32, Object*, ModelInstance*, s32, s32);
+void func_8001F848(Gfx**);
 // should be in model.h
 void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
 void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);
@@ -310,7 +312,7 @@ void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     matrix_from_srt(&sp54, &arg0->parent->srt);
     var_s0 = arg1->unk14->unk0;
     for (i = 0; i < arg2->jointCount; i++) {
-        vec3_transform(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], var_s0->f, &var_s0->f[1], &var_s0->f[2]);
+        vec3_transform(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], &var_s0->f[0], &var_s0->f[1], &var_s0->f[2]);
         var_s0->f[0] -= gWorldX;
         var_s0->f[2] -= gWorldZ;
         var_s0 += 1;
@@ -520,11 +522,281 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036438.s")
+void func_80036438(Object* arg0) {
+    ObjDefStruct40* sp11C;
+    ObjectStruct74* sp118;
+    MtxF* temp_s4;
+    f32 temp_fs0;
+    f32 temp_fs1;
+    f32 temp_fs2;
+    s32 i; // sp104
+    s32 mtxId;
+    MtxF spC0;
+    SRT spA8;
+    ModelInstance* spA4;
 
+    sp11C = arg0->def->unk40;
+    sp118 = arg0->unk74;
+    if (arg0->unkAF & 0x28) {
+        return;
+    }
+    spA4 = arg0->modelInsts[arg0->modelInstIdx];
+    for (i = 0; i < arg0->def->unk9b; i++) {
+        mtxId = sp11C[i].unk11[arg0->modelInstIdx];
+        if (mtxId >= 0) {
+            temp_s4 = (MtxF *)&((f32*)spA4->matrices[spA4->unk34 & 1])[mtxId << 4];
+            temp_fs0 = sp11C[i].unk00 * 2;
+            temp_fs1 = sp11C[i].unk02 * 2;
+            temp_fs2 = sp11C[i].unk04 * 2;
+            if (sp11C->unk10 & 0x10) {
+                vec3_transform(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].unk0.f[0], &sp118[i].unk0.f[1], &sp118[i].unk0.f[2]);
+                sp118[i].unkC.f[0] += temp_fs0;
+                sp118[i].unkC.f[1] += temp_fs1;
+                sp118[i].unkC.f[2] += temp_fs2;
+            } else {
+                vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unk0.f[0], &sp118[i].unk0.f[1], &sp118[i].unk0.f[2]);
+            }
+            if (arg0->parent == NULL) {
+                sp118[i].unk0.f[0] += gWorldX;
+                sp118[i].unk0.f[2] += gWorldZ;
+            } else {
+                transform_point_by_object_matrix(&sp118[i].unk0, &sp118[i].unk0, arg0->parent->matrixIdx);
+            }
+            temp_fs0 = sp11C[i].unk06 * 2;
+            temp_fs1 = sp11C[i].unk08 * 2;
+            temp_fs2 = sp11C[i].unk0a * 2;
+            vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unkC.f[0], &sp118[i].unkC.f[1], &sp118[i].unkC.f[2]);
+            if (arg0->parent == NULL) {
+                sp118[i].unkC.f[0] += gWorldX;
+                sp118[i].unkC.f[2] += gWorldZ;
+            } else {
+                transform_point_by_object_matrix(&sp118[i].unkC, &sp118[i].unkC, arg0->parent->matrixIdx);
+            }
+        } else {
+            spA8.transl.f[0] = arg0->positionMirror.f[0];
+            spA8.transl.f[1] = arg0->positionMirror.f[1];
+            spA8.transl.f[2] = arg0->positionMirror.f[2];
+            if (sp11C->unk10 & 0x10) {
+                spA8.yaw = 0;
+                spA8.pitch = 0;
+                spA8.roll = 0;
+            } else {
+                spA8.yaw = arg0->srt.yaw;
+                spA8.pitch = arg0->srt.pitch;
+                spA8.roll = arg0->srt.roll;
+            }
+            spA8.scale = 1.0f;
+            matrix_from_srt(&spC0, &spA8);
+            temp_fs0 = sp11C[i].unk00 * 2;
+            temp_fs1 = sp11C[i].unk02 * 2;
+            temp_fs2 = sp11C[i].unk04 * 2;
+            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unk0.f[0], &sp118[i].unk0.f[1], &sp118[i].unk0.f[2]);
+            temp_fs0 = sp11C[i].unk06 * 2;
+            temp_fs1 = sp11C[i].unk08 * 2;
+            temp_fs2 = sp11C[i].unk0a * 2;
+            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].unkC.f[0], &sp118[i].unkC.f[1], &sp118[i].unkC.f[2]);
+        }
+    }
+}
+
+#ifndef NON_EQUIVALENT
+void func_80036890(Object* arg0, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036890.s")
+#else
+// https://decomp.me/scratch/cjUgO
+// size: 0xC
+typedef struct {
+    u32 pad0;
+    s32 unk4; // display list index?
+    u8 pad8[0xB-8];
+    s8 unkB;
+} TextureAnimation;
 
+// size: 0x10
+typedef struct {
+    s32 unk0;
+    s32 pad4;
+    s16 unk8;
+    s16 unkA;
+    s32 padC;
+} UnkS6;
+
+void func_80036890(Object* arg0, s32 arg1) {
+    s32 i; // sp6C
+    Gfx* temp_a1_2;
+    s32 sp64;
+    Gfx* temp_t0;
+    Model* temp_t5;
+    ModelFacebatch* temp_t4;
+    ModelInstance* modelInst;
+    Texture* temp_a2;
+    Texture* var_v1;
+    Vtx* temp_a1_4;
+    Vtx* temp_v0_2;
+    Vtx* var_a2;
+    Vtx* var_v1_3;
+    s32 temp_s3;
+    u16 temp_t6_2;
+    u16 *sp34;
+    s32 var_a0;
+    s32 j;
+    s32 k;
+    TextureAnimation* temp_v1_2;
+    UnkS6* var_s6;
+
+    modelInst = arg0->modelInsts[arg0->modelInstIdx];
+    temp_t5 = modelInst->model;
+    sp34 = arg0->def->pTextures;
+    sp64 = arg0->def->numAnimatedFrames;
+    var_s6 = arg0->unk70;
+    for (i = 0; i < sp64; i++) {
+        for (j = 0; j < temp_t5->textureAnimationCount; j++) {
+            temp_v1_2 = &((TextureAnimation*)temp_t5->textureAnimations)[j];
+            temp_t4 = &temp_t5->faces[temp_v1_2->unkB];
+            if (temp_t4->tagB == (u8)sp34[i]) {
+                if (temp_t4->materialID != 0xFF) {
+                    temp_s3 = var_s6->unk0;
+                    temp_a2 = temp_t5->materials[temp_t4->materialID].texture;
+                    var_a0 = (temp_s3 >> 8) & 0xFF;
+                    temp_s3 &= 0xFF;
+                    temp_t6_2 = temp_a2->levels >> 8;
+                    if (temp_v1_2->unk4 >= 0) {
+                        if (var_a0 >= temp_t6_2) {
+                            var_a0 = temp_t6_2 - 1;
+                        }
+                        var_v1 = temp_a2;
+                        k = 0;
+                        while (k < var_a0 && var_v1 != NULL) {
+                            k++;
+                            var_v1 = var_v1->next;
+                        }
+                        temp_t0 = var_v1->gdl;
+                        temp_a1_2 = &modelInst->displayList[temp_v1_2->unk4];
+                        gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
+                        temp_t0 += var_v1->gdlIdx + 1;
+                        if (temp_t6_2 >= 2) {
+                            var_a0++;
+                            if (temp_a2->flags & 0x40) {
+                                if (var_a0 >= temp_t6_2) {
+                                    if (temp_a2->unk1A != 0) {
+                                        var_a0 = 0;
+                                    } else {
+                                        var_a0 = temp_t6_2 - 1;
+                                    }
+                                }
+                                var_v1 = temp_a2;
+                                k = 0;
+                                while (k < var_a0 && var_v1 != NULL) {
+                                    k++;
+                                    var_v1 = var_v1->next;
+                                }
+                                (temp_a1_2 + 1)[0].words.w1 = (u32)OS_PHYSICAL_TO_K0(var_v1 + 1);
+                                temp_a1_2 += 2;
+                                gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
+                                temp_a1_2++;
+                                gDPSetEnvColor(temp_a1_2, temp_s3, temp_s3, temp_s3, 0);
+                            }
+                        }
+                    }
+                    temp_v0_2 = modelInst->vertices[(((s32) modelInst->unk34 >> 1) & 1) ^ 1];
+                    temp_a1_4 = &temp_v0_2[temp_t4[1].baseVertexID];
+                    var_a2 = &temp_v0_2[temp_t4->baseVertexID];
+                    var_v1_3 = &temp_t5->vertices[temp_t4->baseVertexID];
+                    // while current vertex ID < next vertex ID
+                    while ((u32) var_a2 < (u32) temp_a1_4) {
+                        var_a2->v.tc[0] = var_v1_3->v.tc[0] + var_s6->unk8;
+                        var_a2->v.tc[1] = var_v1_3->v.tc[1] + var_s6->unkA;
+                        var_a2 += 1;
+                        var_v1_3 += 1;
+                    }
+                }
+            }
+        }
+        var_s6 += 1;
+    }
+}
+#endif
+
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036B78.s")
+#else
+// https://decomp.me/scratch/9dRNa
+void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
+    s32 sp6C;
+    s32 sp68;
+    s32 sp64;
+    f32 sp60;
+    Gfx* temp_v1;
+    SRT sp44;
+    ModelInstance* temp_t0;
+
+    sp6C = arg0->srt.flags | 0x88;
+    sp68 = arg0->opacityWithFade & 0xFF;
+    sp64 = 0;
+    if (sp68 > 0xFF) {
+        sp68 = 0xFF;
+    }
+    if (sp68 < 0xFF) {
+        sp6C |= 4;
+        sp64 = 1;
+    }
+    if ((arg0->unk64 != NULL) && (arg0->unk64->gdl != NULL)) {
+        sp44.transl.f[0] = arg0->srt.transl.f[0];
+        sp44.transl.f[1] = 0.0f;
+        sp44.transl.f[2] = arg0->srt.transl.f[2];
+        sp44.yaw = 0;
+        sp44.roll = 0;
+        sp44.pitch = 0;
+        sp44.scale = 1.0f;
+        func_800032C4(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
+        gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->unk64->gdl));
+        dl_set_all_dirty();
+        func_8003DB5C();
+        sp64 = 1;
+        if (sp68 == 0xFF) {
+            sp64 = 2;
+        }
+    }
+    if (arg0->def->flags & 0x1000) {
+        if ((sp64 == 1) || (arg0->def->flags & 0x20)) {
+            func_8001F848(arg1);
+        }
+    } else {
+        if (arg0->def->flags & 0x20) {
+            dl_set_prim_color(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
+        } else if (sp64 != 0) {
+            func_8001F848(arg1);
+        }
+        temp_t0 = arg0->modelInsts[arg0->modelInstIdx];
+        if (arg0->setup != NULL) {
+            switch (arg0->setup->objId) {                    /* irregular */
+            case 0x4B:
+            case 0x4C:
+            case 0x4D:
+            case 0x4E:
+            case 0x4F:
+            case 0x50:
+            case 0x54:
+            case 0xF4:
+            case 0x230:
+                sp60 = arg0->srt.scale;
+                arg0->srt.scale = 2.0f;
+                func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                arg0->srt.scale = sp60;
+                break;
+            default:
+                func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                break;
+            }
+        } else {
+            func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+        }
+        if ((sp64 == 1) || (arg0->def->flags & 0x20)) {
+            func_8001F848(arg1);
+        }
+    }
+}
+#endif
 
 void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;

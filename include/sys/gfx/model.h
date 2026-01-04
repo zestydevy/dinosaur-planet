@@ -55,7 +55,7 @@ typedef struct {
 /*0006*/    s16 baseVertexID;
 /*0008*/    s16 baseF3DCommandIndex;
 /*000a*/    s8 tagA; //0xFF = glow marker (though not what enables effect)
-/*000b*/    s8 tagB; //UV-animated faces tend to have 1 or 2 here, other values for flipbooks
+/*000b*/    u8 tagB; //UV-animated faces tend to have 1 or 2 here, other values for flipbooks
 /*000c*/    s32 tagC; // @ 0xC: 0x80 = double-sided faces (no back culling)
                       // @ 0xD: 0x11 = decal, 0x20 = not in F3D block
                       // @ 0xE: Upper 4 bits enable envMap, lower bits are baseFaceID
