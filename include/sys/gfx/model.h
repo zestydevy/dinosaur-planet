@@ -55,7 +55,7 @@ typedef struct {
 /*0006*/    s16 baseVertexID;
 /*0008*/    s16 baseF3DCommandIndex;
 /*000a*/    s8 tagA; //0xFF = glow marker (though not what enables effect)
-/*000b*/    s8 tagB; //UV-animated faces tend to have 1 or 2 here, other values for flipbooks
+/*000b*/    u8 tagB; //UV-animated faces tend to have 1 or 2 here, other values for flipbooks
 /*000c*/    s32 tagC; // @ 0xC: 0x80 = double-sided faces (no back culling)
                       // @ 0xD: 0x11 = decal, 0x20 = not in F3D block
                       // @ 0xE: Upper 4 bits enable envMap, lower bits are baseFaceID
@@ -225,6 +225,7 @@ void func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f
 void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
 void func_8001B100(ModelInstance* modelInst);
 void load_model_display_list(Model *model, ModelInstance *modelInst);
+void load_model_display_list2(Model *model, ModelInstance *modelInst);
 void patch_model_display_list_for_textures(Model* model);
 s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount);
 void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState);

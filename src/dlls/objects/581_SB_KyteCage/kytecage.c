@@ -16,7 +16,7 @@
 #include "sys/objects.h"
 #include "types.h"
 
-void func_80034FF0(s32); //arg seems to be a MtxF*
+void func_80034FF0(MtxF* arg0);
 
 // This is the cage object ("DLL 583 CageKyte" is the baby version of Kyte in the cage)
 
@@ -153,7 +153,7 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.roll = 0;
                     matrix_from_srt(&resultMatrix, &boneTransform);
                     matrix_concat_4x3(&resultMatrix, boneMatrix, &resultMatrix);
-                    func_80034FF0((s32)&resultMatrix);
+                    func_80034FF0(&resultMatrix);
                     draw_object(kyte, gfx, mtxs, vtxs, pols, 1.0f);
                     func_80034FF0(NULL);
                 }
