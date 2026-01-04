@@ -1035,7 +1035,7 @@ void func_80003168(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale)
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_LOAD);
 }
 
-u32 func_80003278(u32 a0, u32 a1, u32 a2, u32 a3)
+u32 func_80003278(u32 a0, u32 a1, u32 a2, u32 a3, s32 a4, s32 a5, s32 a6)
 {
     return 1;
 }

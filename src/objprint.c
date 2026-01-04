@@ -245,8 +245,8 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         }
         dl_set_prim_color(&tempGdl, spD7, spD6, spD5, spFC);
         if (!(obj->srt.flags & 0x200)) {
-            gMoveWd(tempGdl++, 6, 0xC, modelInst->matrices[modelInst->unk34 & 1]);
-            gMoveWd(tempGdl++, 6, 0x14, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
+            gSPSegment(tempGdl++, 3, modelInst->matrices[modelInst->unk34 & 1]);
+            gSPSegment(tempGdl++, 5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
             if (spFC == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
                     load_model_display_list(model, modelInst);
@@ -414,8 +414,8 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
         }
         if (!(arg4->srt.flags & 0x200)) {
-            gMoveWd((*arg0)++, 6, 0xC, sp74);
-            gMoveWd((*arg0)++, 6, 0x14, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
+            gSPSegment((*arg0)++, 3, sp74);
+            gSPSegment((*arg0)++, 5, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
             if ((u8) arg10 == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
                     load_model_display_list(sp64, modelInst);

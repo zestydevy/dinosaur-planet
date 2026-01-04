@@ -71,38 +71,28 @@ void controller_querey(OSMesgQueue* arg0, ContQueryStruct* arg1) {
     }
 }
 
-// regalloc
-// https://decomp.me/scratch/80VvQ
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_11F70/func_80011490.s")
-s32 func_80011490(OSMesgQueue *arg0, UnkOSPifRam* arg1, ContQueryStruct* arg2);
-#else
 s32 func_80011490(OSMesgQueue *arg0, UnkOSPifRam* arg1, ContQueryStruct* arg2) {
     s32 i;
     s32 temp_v0;
-    u8* sp1C;
-    UnkPifRequest *req;
+    UnkPifRequest* sp1C;
+    u64 temp;
 
-    sp1C = (u8*)&D_800A8640->unk0;
+    sp1C = D_800A8640->unk0;
     bzero(D_800A8640, sizeof(UnkOSPifRam));
-    for (i = 0; i < 4; i++) {
-        req = (UnkPifRequest*)sp1C;
-        req->tx = 3;
-        req->rx = 8;
-        req->cmd = 0x40;
-        req->arg0 = 0;
-        req->arg1 = arg2->unk8;
-
-        sp1C += sizeof(UnkPifRequest);
-        arg2++;
+    for (i = 0; i < 4; i++, arg2++, sp1C++) {
+        sp1C->tx = 3;
+        sp1C->rx = 8;
+        sp1C->cmd = 0x40;
+        sp1C->arg0 = 0;
+        sp1C->arg1 = arg2->unk8;
     }
-    sp1C[0] = 0xfe;
+    sp1C->tx = 0xFE;
     D_800A8640->pifstatus = 1;
     temp_v0 = NOTosContSetch(arg0, D_800A8640);
-    bcopy(D_800A8640, arg1, sizeof(UnkOSPifRam));
+    sp1C = D_800A8640->unk0;
+    bcopy(sp1C, arg1, sizeof(UnkOSPifRam));
     return temp_v0;
 }
-#endif
 
 s32 func_80011588(OSMesgQueue* arg0, ContQueryStruct* arg1) {
     s32 i;
