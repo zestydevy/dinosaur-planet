@@ -37,13 +37,14 @@ void obj_infer_map_id(Object *obj);
 void obj_set_update_priority(Object *object, s8 param2);
 
 void func_80023A18(Object *obj, s32 param2);
+void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model);
 
 void obj_add_effect_box(Object *obj);
 void obj_free_effect_box(Object *obj);
 
 void *obj_alloc_create_info(s32 size, s32 objId);
 
-void func_800210DC();
+void func_800210DC(void);
 void func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6);
 
 s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz);

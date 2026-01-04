@@ -1424,9 +1424,9 @@ void dll_3_func_9CE8(s32 arg0) {
     
     temp_v0 = gDLL_2_Camera->vtbl->func15();
     if ((temp_v0 != NULL) && (temp_v0->unk74 != NULL)) {
-        sp34.unk0.x = temp_v0->unk74->x;
-        sp34.unk0.y = temp_v0->unk74->y;
-        sp34.unk0.z = temp_v0->unk74->z;
+        sp34.unk0.x = temp_v0->unk74->unk0.x;
+        sp34.unk0.y = temp_v0->unk74->unk0.y;
+        sp34.unk0.z = temp_v0->unk74->unk0.z;
         sp34.unkC = arg0;
         gDLL_2_Camera->vtbl->func6(0x5F, 1, 0, 0x10, &sp34, 0x3C, 0xFF);
     }

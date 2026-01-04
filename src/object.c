@@ -420,7 +420,7 @@ void func_80020EE4(s32 param1, s32 param2) {
     }
 }
 
-void func_800210DC() {
+void func_800210DC(void) {
     s32 i;
     Object *obj;
     Object *var;
