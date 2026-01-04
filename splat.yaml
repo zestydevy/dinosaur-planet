@@ -322,7 +322,7 @@ segments:
     - [0x92380, .data, rcp]
     - [0x924B0, .data, rarezip]
     - [0x924D0, .data, scheduler]
-    - [0x92510, data, texture]
+    - [0x92510, .data, texture]
     - [0x93650, data, segment_3F5F0]
     - [0x93660, data, map]
     - [0x937D0, data, newshadows]
