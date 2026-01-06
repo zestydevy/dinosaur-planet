@@ -486,13 +486,13 @@ u8 func_8001EBE0(void) {
 // static Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBF0.s")
 #else
+extern s16 D_80090D3C; // = 0;
+extern u8 D_80090D40; // = 0;
 void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 arg7, u8 arg8, u8 arg9) {
-    static s16 D_80090D3C = 0;
-    static u8 D_80090D40 = 0;
     s16 var_a0;
     s16 var_v0;
     s16 var_v1;
-    Vec3f sp2C = { 0.0f, 198.0f, 19.0f }; // D_80090D30
+    Vec3f sp2C; //  = { 0.0f, 198.0f, 19.0f }; // D_80090D30
 
     if (D_80090CA8 != 0) {
         return;

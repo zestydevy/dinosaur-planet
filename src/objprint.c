@@ -604,13 +604,6 @@ void func_80036890(Object* arg0, s32 arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036890.s")
 #else
 // https://decomp.me/scratch/cjUgO
-// size: 0xC
-typedef struct {
-    u32 pad0;
-    s32 unk4; // display list index?
-    u8 pad8[0xB-8];
-    s8 unkB;
-} TextureAnimation;
 
 // size: 0x10
 typedef struct {
