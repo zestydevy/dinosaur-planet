@@ -392,16 +392,6 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
     obj->srt.transl.f[2] += gWorldZ;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001E818.s")
-#else
-typedef struct {
-    u32 pad0;
-    s32 unk4; // display list index?
-    u8 pad8[0xB-8];
-    u8 unkB;
-} TextureAnimation;
-
 typedef struct {
     u8 pad0;
     u8 unk1;
@@ -421,15 +411,17 @@ void func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
     Vtx* sp34;
     UnkSp30 *sp30;
     s32 i;
+    u8 *new_var;
 
     sp34 = arg0->unk70;
     sp30 = arg0->def->pTextures;
     sp5C = arg0->def->numAnimatedFrames;
     vtx = arg2->vertices[(arg2->unk34 >> 1) & 1];
     for (i = 0; i < sp5C; i++) {
+        new_var = &(sp30 = sp30)[i].unk1;
         for (j = 0; j < arg1->textureAnimationCount; j += 1) {
             faceBatch = &arg1->faces[((TextureAnimation*)arg1->textureAnimations)[j].unkB];
-            if (faceBatch->tagB == sp30[i].unk1) {
+            if (faceBatch->tagB == *new_var) {
                 fromVtxID = faceBatch->baseVertexID;
                 toVtxID = faceBatch[1].baseVertexID;
                 r = sp34[i].v.cn[0];
@@ -457,9 +449,10 @@ void func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
                 }
             }
         }
+        // @fake
+        if (arg1 && arg1) {}
     }
 }
-#endif
 
 void func_8001EAA4(u8 arg0, u8 arg1, u8 arg2, f32 arg3) {
     D_800B1850 = (s16) (s32) -((f32) arg0 * arg3);
