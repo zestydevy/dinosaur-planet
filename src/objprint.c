@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/common/group48.h"
+#include "sys/rsp_segment.h"
 
 /** toggles Models' multiplier colour */
 extern u8 BYTE_80091754;
@@ -245,8 +246,8 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         }
         dl_set_prim_color(&tempGdl, spD7, spD6, spD5, spFC);
         if (!(obj->srt.flags & 0x200)) {
-            gSPSegment(tempGdl++, 3, modelInst->matrices[modelInst->unk34 & 1]);
-            gSPSegment(tempGdl++, 5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
+            gSPSegment(tempGdl++, SEGMENT_3, modelInst->matrices[modelInst->unk34 & 1]);
+            gSPSegment(tempGdl++, SEGMENT_COUNT, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
             if (spFC == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
                     load_model_display_list(model, modelInst);
@@ -343,8 +344,8 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param
     modelInst2 = obj->modelInsts[otherIdx];
 
     d = modelInst->matrices[modelInst->unk34 & 1];
-    gSPSegment(mygdl++, 3, d);
-    gSPSegment(mygdl++, 5, modelInst2->vertices[(modelInst2->unk34 >> 1) & 0x1]);
+    gSPSegment(mygdl++, SEGMENT_3, d);
+    gSPSegment(mygdl++, SEGMENT_COUNT, modelInst2->vertices[(modelInst2->unk34 >> 1) & 0x1]);
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
     dl_set_all_dirty();
@@ -414,8 +415,8 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
         }
         if (!(arg4->srt.flags & 0x200)) {
-            gSPSegment((*arg0)++, 3, sp74);
-            gSPSegment((*arg0)++, 5, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
+            gSPSegment((*arg0)++, SEGMENT_3, sp74);
+            gSPSegment((*arg0)++, SEGMENT_COUNT, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
             if ((u8) arg10 == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
                     load_model_display_list(sp64, modelInst);
