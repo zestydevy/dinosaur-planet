@@ -270,7 +270,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     u32 temp_v0;
     Unk8004FA58 sp94;
     s32 sp90;
-    s32 *sp8C[1];
+    Vec3s32 *sp8C;
     s32 sp88 = 0;
     s32 temp_t0;
     s32 i;
@@ -391,7 +391,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     }
     fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
     func_80053750(arg0, &sp68, 1);
-    func_80053408((Vec3f *)sp8C);
+    func_80053408(&sp8C);
     func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
     sp2B4 = func_80052300(
@@ -401,14 +401,14 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
         (UnkFunc80052300Arg3 *) D_800BB140,
         sp2B4,
         // This is just wrong but matches?
-        sp8C[0][0],
-        sp8C[0][2],
+        sp8C->x,
+        sp8C->z,
         arg1,
         temp_s1->flags & 0x40000
     );
     D_80092BDC = sp90;
     D_80092C1C = sp2B4;
-    D_80092BE0 = (s32)sp8C[0];
+    D_80092BE0 = sp8C;
     func_800511E8(arg0, 0, sp244, &sp94);
     temp_t0 = ((s8 *)D_800BB148 - (s8 *)D_800B98B0[D_80092C08]) >> 4;
     if (D_800BB170 != 0) {
@@ -505,8 +505,7 @@ void func_8004E7A8(Object* arg0) {
     Vec3f sp1E0;
     Vec3f sp1D4;
     u8 pad[0x128];
-    s32 pad2[2];
-    s32 *spA0[1];
+    Vec3s32 *spA0[3];
     s32 sp9C = 0;
     ObjectStruct64* temp_s1;
     s32 alpha;
@@ -575,9 +574,9 @@ void func_8004E7A8(Object* arg0) {
         }
         fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
         func_80053750(arg0, &sp70, 1);
-        func_80053408((Vec3f *)spA0);
+        func_80053408(spA0);
         func_800533D8(&sp2B4, &sp9C);
-        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
+        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0]->x, spA0[0]->z, 0, temp_s1->flags & 0x40000);
         D_800BB174 = (Unk800BB168 *)((s8 *)D_800BB174 + sp2B4 * 0x24);
         func_800511E8(arg0, 0, sp24C, (Unk8004FA58* ) &spA0[2]);
         temp_t0 = ((s8 *)D_800BB17C - (s8*)D_800BB160[D_80092C10]) >> 4;

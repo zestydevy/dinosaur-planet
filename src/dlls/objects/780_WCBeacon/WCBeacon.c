@@ -26,6 +26,8 @@ enum WCBeaconState {
     WCBEACON_STATE_3 = 3
 };
 
+#define MAX_FRAME 0x100
+
 // offset: 0x0 | ctor
 void dll_780_ctor(void *dll) { }
 
@@ -54,7 +56,7 @@ void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
 
     animatedTexture = func_800348A0(self, 0, 0);
     if ((animatedTexture != NULL) && (objdata->state == WCBEACON_STATE_3)) {
-        animatedTexture->frame = 0x100;
+        animatedTexture->frame = MAX_FRAME;
     }
 }
 
@@ -62,7 +64,7 @@ void dll_780_setup(Object *self, WCBeacon_Setup *setup, s32 arg2) {
 void dll_780_control(Object *self) {
     WCBeacon_Setup *setup;
     WCBeacon_Data *objdata;
-    s32 *temp_v0_2;
+    TextureAnimator *temp_v0_2;
     s16 var_v1;
 
     objdata = (WCBeacon_Data*)self->data;
@@ -92,20 +94,20 @@ void dll_780_control(Object *self) {
         if (objdata->unk0 >= 90.0f) {
             objdata->state = WCBEACON_STATE_3;
         }
-        var_v1 = (s16) ((objdata->unk0 / 45.0f) * 256.0f);
-        if (var_v1 >= 0x101) {
-            var_v1 = 0x100;
+        var_v1 = (objdata->unk0 / 45.0f) * 256.0f;
+        if (var_v1 > MAX_FRAME) {
+            var_v1 = MAX_FRAME;
         }
         temp_v0_2 = func_800348A0(self, 0, 0);
         if (temp_v0_2 != NULL) {
-            *temp_v0_2 = (s32) var_v1;
+            temp_v0_2->frame = var_v1;
         }
     } else if (objdata->state == WCBEACON_STATE_3) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73A, NULL, PARTFXFLAG_2, -1, NULL);
         main_set_bits(setup->unk1E, 1);
         temp_v0_2 = func_800348A0(self, 0, 0);
         if (temp_v0_2 != NULL) {
-            *temp_v0_2 = 0x100;
+            temp_v0_2->frame = MAX_FRAME;
         }
         if (self->unkDC == 0) {
             gDLL_3_Animation->vtbl->func20(self, 0x69);

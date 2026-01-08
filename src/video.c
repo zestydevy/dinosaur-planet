@@ -107,14 +107,14 @@ void func_8005CA5C(u32 param1) {
     }
 }
 
-void func_8005CA88(f32 *a0, f32 *a1, u8 a2) {
+void func_8005CA88(Object *a0, Vec3f *a1, u8 a2) {
     static s32 D_80092FF8 = 0;
 
     if (D_800BCC78 != 0) {
         D_800BCC18[D_80092FF8].unk10 = a0;
-        D_800BCC18[D_80092FF8].unk0 = a1[0];
-        D_800BCC18[D_80092FF8].unk4 = a0[4] + a1[1];
-        D_800BCC18[D_80092FF8].unk8 = a1[2];
+        D_800BCC18[D_80092FF8].unk0 = a1->f[0];
+        D_800BCC18[D_80092FF8].unk4 = a0->srt.transl.y + a1->f[1];
+        D_800BCC18[D_80092FF8].unk8 = a1->f[2];
         D_800BCC18[D_80092FF8].unkC = a2;
 
         D_80092FF8 = D_80092FF8 + 1;
@@ -239,7 +239,7 @@ void func_8005CDFC(s32 _) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/video/func_8005CF4C.s")
 #else
-extern s32 D_80092BDC;
+extern UnkFunc80051D68Arg3 *D_80092BDC;
 s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5); /* extern */
 void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     s16 var_s2;
@@ -266,7 +266,7 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     if (D_80093000 == 0x27) {
         D_80093000 = 0;
     }
-    if (func_80051D68(arg0, arg1->unk0 - ((Vec3s32 *)D_80092BE0)->x, arg1->unk8 - ((Vec3s32 *)D_80092BE0)->z, (UnkFunc80051D68Arg3* ) D_80092BDC, D_80092C1C, &sp68) == 0) {
+    if (func_80051D68(arg0, arg1->unk0 - D_80092BE0->x, arg1->unk8 - D_80092BE0->z, D_80092BDC, D_80092C1C, &sp68) == 0) {
         return;
     }
 

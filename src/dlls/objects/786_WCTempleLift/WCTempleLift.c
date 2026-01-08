@@ -37,8 +37,8 @@ void dll_786_control(Object *self) {
         objdata->unk0 = 0.0f;
     }
     if (objdata->unk4 == 0) {
-        if (self->unk58->unk10f > 0) {
-            for (i = 0; i < self->unk58->unk10f; i++) {
+        if (self->unk58->unk10F > 0) {
+            for (i = 0; i < self->unk58->unk10F; i++) {
                 obj = self->unk58->unk100[i];
                 if (obj->id == 0) {
                     player = get_player();
@@ -51,8 +51,8 @@ void dll_786_control(Object *self) {
             }
         }
     } else {
-        if (self->unk58->unk10f > 0) {
-            for (i = 0; i < self->unk58->unk10f; i++) {
+        if (self->unk58->unk10F > 0) {
+            for (i = 0; i < self->unk58->unk10F; i++) {
                 obj = self->unk58->unk100[i];
                 if (obj->id == 0) {
                     player = get_player();

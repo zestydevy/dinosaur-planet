@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/newshadows.h"
 
 static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
 static const char str_8009aaa0[] = "1: track/intersect.c: OVERFLOW error\n";
@@ -10,10 +11,6 @@ static const char str_8009ab5c[] = "intersectModLineBuild point list overflow, %
 static const char str_8009ab90[] = "trackIntersect: FUNC OVERFLOW %d\n";
 static const char str_8009abb4[] = "insertPoint array overrun %d/%d\n";
 static const char str_8009abd8[] = "NO FREE LAST LINE\n";
-
-typedef struct {
-    u8 _unk0[0x34];
-} D_80092E70_Struct;
 
 typedef struct {
 /*00*/ s16 unk0;    
@@ -54,41 +51,40 @@ typedef struct {
     u8 _unk2[14];
 } D_800BB26C_Struct;
 
-s32 func_80055458(Object*, D_80092E70_Struct *, D_80092E70_Struct *, f32*, f32 *, s32, s8*, s32);
-s32 func_800564C8(D_80092E70_Struct *, D_80092E70_Struct *, f32 *, s32, s8*, s32);
+s32 func_80055458(Object*, UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32*, f32 *, s32, s8*, s32);
+s32 func_800564C8(UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32 *, s32, s8*, s32);
 void func_80058F8C(void);
 
-typedef struct Unk800BB268 {
-    Object *unk0;
-    s16 unk4;
-    MtxF *unk8;
-    MtxF *unkC;
-} Unk800BB268;
-
-extern D_80092E70_Struct *D_80092E70; // 250 length
+extern UnkFunc80051D68Arg3 *D_80092E70; // 250 length
 extern HitsLineReencoded* D_80092E74;
 extern s32 D_80092E78;
 extern s32 D_80092E7C;
 extern s8 D_80092E80;
 extern HitsUnk* D_80092E84;
-extern Unk800BB268 D_800BB268[];
-extern D_800BB26C_Struct D_800BB26C[];
-extern u8 D_800BB3A8;
-extern s16 D_800BB4D6;
-extern s16 D_800BB4D8;
-extern s8 D_800BB538;
-extern s8 D_800BB539;
+
 
 // .bss 800bb200-800bb540
-u8 _bss_800bb200[0x800bb540 - 0x800bb200]; // size:0x340
+Vec3s32 D_800BB200;
+u32 _bss_800BB20C;
+u8 _bss_800BB210[0x800BB268-0x800BB210];
+Unk8005341C D_800BB268[];
+D_800BB26C_Struct D_800BB26C[];
+u8 _bss_800BB270[0x800BB3A8 - 0x800BB270];
+u8 D_800BB3A8;
+u8 _bss_800BB3A9[0x800BB4D6 - 0x800BB3A9];
+s16 D_800BB4D6;
+s16 D_800BB4D8;
+u8 _bss_800BB4DA[0x800BB538 - 0x800BB4DA];
+s8 D_800BB538;
+s8 D_800BB539;
 
 void func_80053300(void) {
     if (D_80092E70 == NULL) {
-        D_80092E70 = mmAlloc(250*sizeof(D_80092E70_Struct), 0xFFFF00FF, 0);
-        D_80092E74 = mmAlloc(400*sizeof(HitsLineReencoded), 0xFFFF00FF, 0);
-        D_80092E78 = mmAlloc(4800, 0xFFFF00FF, 0);
-        D_80092E7C = mmAlloc(800, 0xFFFF00FF, 0);
-        D_80092E84 = mmAlloc(20*sizeof(HitsUnk), 0xFFFF00FF, 0);
+        D_80092E70 = mmAlloc(250*sizeof(UnkFunc80051D68Arg3), COLOUR_TAG_YELLOW, 0);
+        D_80092E74 = mmAlloc(400*sizeof(HitsLineReencoded), COLOUR_TAG_YELLOW, 0);
+        D_80092E78 = mmAlloc(4800, COLOUR_TAG_YELLOW, 0);
+        D_80092E7C = mmAlloc(800, COLOUR_TAG_YELLOW, 0);
+        D_80092E84 = mmAlloc(20*sizeof(HitsUnk), COLOUR_TAG_YELLOW, 0);
     }
     func_80058F8C();
     D_800BB4D6 = 0;
@@ -97,14 +93,19 @@ void func_80053300(void) {
     D_800BB538 = 0;
 }
 
-void func_800533D8(s32* arg0, s32* arg1) {
+void func_800533D8(s32* arg0, UnkFunc80051D68Arg3** arg1) {
     *arg0 = D_800BB26C[D_800BB3A8].unk0;
     *arg1 = D_80092E70;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053408.s")
+void func_80053408(Vec3s32** arg0) {
+    *arg0 = &D_800BB200;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005341C.s")
+Unk8005341C* func_8005341C(s32* arg0) {
+    *arg0 = D_800BB3A8;
+    return D_800BB268;
+}
 
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength) {
     aabb->min.x = 1000000;

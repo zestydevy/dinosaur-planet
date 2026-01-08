@@ -1109,7 +1109,7 @@ void update_object(Object *obj) {
         }
 
         if (obj->unk58 != NULL) {
-            obj->unk58->unk10f = 0;
+            obj->unk58->unk10F = 0;
         }
 
         obj->unkAF &= ~(0x1 | 0x2 | 0x4);

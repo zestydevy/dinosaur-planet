@@ -347,6 +347,19 @@ typedef struct MapObjSetupList {
 /*88*/ s32 groupsStart;
 } MapObjSetupList;
 
+
+typedef struct UnkFunc80051D68Arg3 {
+    f32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA[6];
+    s16 unk16[6];
+    u8 pad22[0x2F - 0x22];
+    s8 unk30;
+    u8 pad31[3];
+} UnkFunc80051D68Arg3;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -503,8 +516,8 @@ void func_8003DBCC(void);
 void func_8005B870(void);
 u8 map_get_is_object_streaming_disabled(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
-void func_800533D8(s32*, s32*);
-void func_80053408(Vec3f *);
+void func_800533D8(s32*, UnkFunc80051D68Arg3**);
+void func_80053408(Vec3s32 **);
 void func_80053750(Object*, AABBs32*, s32);
 Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
