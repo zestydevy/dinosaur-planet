@@ -55,6 +55,15 @@ s32 func_80055458(Object*, UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32*, f
 s32 func_800564C8(UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32 *, s32, s8*, s32);
 void func_80058F8C(void);
 
+UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3*, s32, s32, s32, s32, s32, s32, u8);
+UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3*, Unk8005341C*, ModelInstance*, f32, f32, f32, f32, f32, f32, u8);
+void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
+
+// move to objhits.h
+Object **func_80025DD4(s32 *arg0);
+
+
+// .data
 extern UnkFunc80051D68Arg3 *D_80092E70; // 250 length
 extern HitsLineReencoded* D_80092E74;
 extern s32 D_80092E78;
@@ -65,12 +74,13 @@ extern HitsUnk* D_80092E84;
 
 // .bss 800bb200-800bb540
 Vec3s32 D_800BB200;
-u32 _bss_800BB20C;
-u8 _bss_800BB210[0x800BB268-0x800BB210];
-Unk8005341C D_800BB268[];
-D_800BB26C_Struct D_800BB26C[];
-u8 _bss_800BB270[0x800BB3A8 - 0x800BB270];
-u8 D_800BB3A8;
+// extra 0xC bytes?
+u8 _bss_800BB210[0x800BB260-0x800BB218];
+UnkFunc80051D68Arg3* D_800BB260;
+s16 D_800BB264;
+Unk8005341C D_800BB268[2]; // unknown size
+u8 _bss_800BB288[0x800BB3A8 - 0x800BB288];
+u8 D_800BB3A8; // count for D_800BB268
 u8 _bss_800BB3A9[0x800BB4D6 - 0x800BB3A9];
 s16 D_800BB4D6;
 s16 D_800BB4D8;
@@ -94,7 +104,7 @@ void func_80053300(void) {
 }
 
 void func_800533D8(s32* arg0, UnkFunc80051D68Arg3** arg1) {
-    *arg0 = D_800BB26C[D_800BB3A8].unk0;
+    *arg0 = D_800BB268[D_800BB3A8].unk4;
     *arg1 = D_80092E70;
 }
 
@@ -187,7 +197,75 @@ void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f3
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053750.s")
+void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
+    UnkFunc80051D68Arg3* s2;
+    Model* temp_a0_2;
+    ModelInstance* temp_a2;
+    Object* curObj;
+    Object** objects;
+    ObjectHitInfo* temp_a0;
+    ObjectStruct58* temp_v1_2;
+    Unk8005341C* var_s0;
+    f32 temp_fa0;
+    f32 temp_fv1;
+    f32 temp_fs0;
+    UnkFunc80051D68Arg3* spB8;
+    f32 temp_fv1_2;
+    s32 objCount;
+    f32 temp_fs1;
+    f32 temp_fs2;
+    f32 temp_fs3;
+    f32 temp_fs4;
+    f32 temp_fs5;
+    f32 temp_fv0;
+    f32 temp_fv1_3;
+    s16 i;
+
+    temp_fs0 = arg1->min.x - 5;
+    temp_fs1 = arg1->max.x + 5;
+    temp_fs2 = arg1->min.y - 5;
+    temp_fs3 = arg1->max.y + 5;
+    temp_fs4 = arg1->min.z - 5;
+    temp_fs5 = arg1->max.z + 5;
+    var_s0 = &D_800BB268[1];
+    D_800BB268->unk0 = 0;
+    D_800BB268->unk4 = 0;
+    D_800BB260 = D_80092E70 + 250;
+    if (!(arg2 & 0x10)) {
+        s2 = func_80053B24(D_80092E70, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);
+    } else {
+        s2 = D_80092E70;
+    }
+    if ((arg2 & 1) && arg0 != NULL) {
+        spB8 = s2;
+        objects = func_80025DD4(&objCount);
+        for (i = 0; i < objCount; i++) {
+            curObj = objects[i];
+            if (curObj->objhitInfo != NULL && curObj->unk58 != NULL && curObj->unk58->unk10D == 0 && curObj->unk58->unk10E == 0) {
+                temp_a2 = curObj->modelInsts[curObj->objhitInfo->unkA0];
+                if (temp_a2 != NULL && temp_a2->model->facebatchBounds != NULL) {
+                    temp_fv0 = temp_a2->model->maxAnimatedVertDistance;
+                    if (
+                        !((temp_fv1 = curObj->srt.transl.x - temp_fv0) > temp_fs1) && !((temp_fv1 = curObj->srt.transl.x + temp_fv0) < temp_fs0)
+                        && !((temp_fv1_2 = curObj->srt.transl.y - temp_fv0) > temp_fs3) && !((temp_fv1_2 = curObj->srt.transl.y + temp_fv0) < temp_fs2)
+                        && !((temp_fv1_3 = curObj->srt.transl.z - temp_fv0) > temp_fs5) && !((temp_fv1_3 = curObj->srt.transl.z + temp_fv0) < temp_fs4)
+                    ) {
+                            var_s0->unkC = (MtxF* ) &((f32*)curObj->unk58)[(curObj->unk58->unk10C + 2) << 4];
+                            var_s0->unk8 = (MtxF* ) &((f32*)curObj->unk58)[curObj->unk58->unk10C << 4];
+                            var_s0->unk4 = ((s32)s2 - (s32)D_80092E70) / 52;
+                            var_s0->unk0 = curObj;
+                            s2 = func_8005471C(s2, var_s0, temp_a2, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);
+                            var_s0 += 1;
+                    }
+                }
+            }
+        }
+        func_80054DF8(spB8, s2, arg2);
+    }
+    D_800BB264 = ((s32)s2 - (s32)D_80092E70) / 52;
+    D_800BB3A8 = var_s0 - D_800BB268;
+    var_s0->unk4 = D_800BB264;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
 

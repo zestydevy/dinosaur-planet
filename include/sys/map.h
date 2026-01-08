@@ -518,7 +518,7 @@ u8 map_get_is_object_streaming_disabled(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
 void func_800533D8(s32*, UnkFunc80051D68Arg3**);
 void func_80053408(Vec3s32 **);
-void func_80053750(Object*, AABBs32*, s32);
+void func_80053750(Object*, AABBs32*, u8);
 Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);
