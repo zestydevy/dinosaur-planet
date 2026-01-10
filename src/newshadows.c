@@ -4,6 +4,40 @@
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
 static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
 
+// -------- .data start 80092bd0 -------- //
+f32 D_80092BD0 = 100.0f;
+f32 D_80092BD4 = 100.0f;
+f32 D_80092BD8 = 0.0f;
+s32 D_80092BDC = 0;
+s32 D_80092BE0 = 0;
+f32 D_80092BE4 = 1.0f;
+s8 D_80092BE8 = 10;
+s32 D_80092BEC = 0; // unused
+s32 D_80092BF0 = 0; // unused
+s8 D_80092BF4 = 0;
+s8 D_80092BF8 = 0;
+s8 D_80092BFC = 0;
+s8 D_80092C00 = 0;
+s8 D_80092C04 = 0;
+s8 D_80092C08 = 0;
+s8 D_80092C0C = 0;
+s8 D_80092C10 = 0;
+s8 D_80092C14 = 0;
+s16 D_80092C18 = 100;
+s16 D_80092C1C = 0;
+s16 D_80092C20 = 0;
+s16 D_80092C24 = 0;
+s16 D_80092C28 = 0;
+s16 D_80092C2C = 0;
+s16 D_80092C30 = 0;
+s16 D_80092C34 = 0;
+s16 D_80092C38 = 0;
+f32 D_80092C3C = 0;
+s32 D_80092C40 = 1;
+f32 D_80092C44 = 0;
+// function statics start here...
+// -------- .data end 80092cc0 -------- //
+
 // -------- .bss start 800b97e0 -------- //
 f32 D_800B97E0[24];
 f32 D_800B9840[24];
@@ -275,7 +309,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     s32 temp_t0;
     s32 i;
     AABBs32 sp68;
-    f32 sp48[8] = D_80092C48.unk0;
+    f32 sp48[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // D_80092C48
 
     // @fake
     if (1) {}
@@ -496,6 +530,8 @@ void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
+static u8 _data_pad_80092c68[0xC] = {0};
+
 void func_8004E7A8(Object* arg0) {
     s32 sp2B4 = 0;
     s32 sp2B0;
@@ -514,7 +550,7 @@ void func_8004E7A8(Object* arg0) {
     s32 j;
     s32 temp_t0;
     AABBs32 sp70;
-    f32 sp50[8] = D_80092C74.unk0;
+    f32 sp50[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // D_80092C74
 
     if (func_80041DA4() == 0) {
         arg0->unk64->gdl = NULL;
@@ -934,10 +970,13 @@ s32 func_8004FA4C(void) {
 }
 
 #ifndef NON_EQUIVALENT
+static s32 _data_pad[3] = {0}; // <- should go away once D_80092CA0 is in func_8004FA58 ?
+s32 D_80092CA0 = 1;
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004FA58.s")
 #else
-// https://decomp.me/scratch/1Xf9d
+// https://decomp.me/scratch/GRoDG
 s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max) {
+    static s32 D_80092CA0 = 1;
     s32 sp28C;
     Camera* camera;
     Vec3f* var_v0;
@@ -1101,16 +1140,18 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
         }
         sp280 += 3;
     }
-    D_80092CA0 = D_80092CA0 == 1;
+    D_80092CA0 ^= 1;
     return 1;
 }
 #endif
 
 #ifndef NON_EQUIVALENT
+s32 D_80092CA4 = 1;
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_800502AC.s")
 #else
 // https://decomp.me/scratch/W9sJo
 s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 arg7) {
+    static s32 D_80092CA4 = 1;
     s32 sp354;
     s32 var_s3;
     s32 sp34C;
@@ -1654,17 +1695,15 @@ s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3) {
     s16 temp_t3;
     s16 temp_t4;
     s16 temp_v1;
-    Unk80092CA8 sp38;
-    Unk80092CA8 sp30;
+    s16 sp38[3] = {0,1,2};
+    s16 sp30[3] = {1,2,0};
     s16 var_v0;
 
-    sp38 = D_80092CA8;
-    sp30 = D_80092CB0;
     for (var_v0 = 0; var_v0 < 3; var_v0++) {
-        temp_v1 = arg2[sp30.unk0[var_v0]] - arg2[sp38.unk0[var_v0]];
-        temp_t1 = arg3[sp30.unk0[var_v0]] - arg3[sp38.unk0[var_v0]];
-        temp_t3 = arg0 - arg2[sp38.unk0[var_v0]];
-        temp_t4 = arg1 - arg3[sp38.unk0[var_v0]];
+        temp_v1 = arg2[sp30[var_v0]] - arg2[sp38[var_v0]];
+        temp_t1 = arg3[sp30[var_v0]] - arg3[sp38[var_v0]];
+        temp_t3 = arg0 - arg2[sp38[var_v0]];
+        temp_t4 = arg1 - arg3[sp38[var_v0]];
         if ((temp_t1 * temp_t3) < (temp_v1 * temp_t4)) {
             return 0;
         }

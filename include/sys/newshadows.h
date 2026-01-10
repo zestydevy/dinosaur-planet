@@ -9,10 +9,6 @@
 #include "game/objects/object.h"
 #include "sys/map.h"
 
-typedef struct Unk80092CA8 {
-    s16 unk0[3];
-} Unk80092CA8;
-
 typedef struct Unk800B98A0 {
     u8 unk0[4000];
 } Unk800B98A0;
@@ -139,8 +135,6 @@ extern Unk80092C48 D_80092C48;
 extern Unk80092C48 D_80092C74;
 extern s32 D_80092CA0;
 extern s32 D_80092CA4;
-extern Unk80092CA8 D_80092CA8;
-extern Unk80092CA8 D_80092CB0;
 
 void func_8004D880(Object *arg0);
 s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5);
