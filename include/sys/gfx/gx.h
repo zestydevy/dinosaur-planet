@@ -144,7 +144,7 @@ extern s32 gPossiblyScreenWidthOrHeight;
 /**
  * Some boolean.
  */
-extern int gSomeVideoFlag;
+extern s32 gSomeVideoFlag;
 
 extern f32 gViHeightRatio;
 
