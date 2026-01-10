@@ -1842,4 +1842,13 @@ gVoxmapCurrentObject = 0x800A7D08;
 gVoxmapBlockIDs = 0x800A7CB8;
 gVoxmapLastSearchedSlot = 0x800A7CA0;
 
+voxmap_init = 0x80006f50; // type:func
+voxmap_free = 0x800070fc; // type:func
+voxmap_update_cache_timers = 0x80007178; // type:func
+voxmap_reserve_slot = 0x80007224; // type:func
+voxmap_release_slot = 0x80007380; // type:func
+voxmap_reload_slot = 0x800073cc; // type:func
+voxmap_load_slot = 0x80007468; // type:func
 voxmap_find_closest_slot = 0x80007778; // type:func
+voxmap_find_closest_object_slot = 0x80007a58; // type:func
+voxmap_get_last_found_slot = 0x80007cbc; // type:func
