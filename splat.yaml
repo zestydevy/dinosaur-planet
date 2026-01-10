@@ -329,8 +329,7 @@ segments:
     - [0x938C0, data, segment_535C0]
     - [0x93A70, .data, segment_53F00]
     - [0x93A90, .data, segment_5C470]
-    - [0x93AC0, databin] # TODO: part of video?
-    - [0x93BF0, .data, video]
+    - [0x93AC0, .data, video]
     - [0x93C10, data, vi]
     - [0x93CB0, .data, libultra/io/vimgr]
     - [0x93CE0, .data, print]

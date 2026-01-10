@@ -29,7 +29,35 @@ enum SoundID {
     SOUND_Sabre_Guard = 0x24,           //"Look after it!"
     SOUND_Sabre_Fetch = 0x25,           //"Fetch!" (play command) 
 
+    SOUND_40 = 0x40,
+    SOUND_41 = 0x41,
+    SOUND_42 = 0x42,
+    SOUND_43 = 0x43,
+    SOUND_44 = 0x44,
+    SOUND_45 = 0x45,
+
+    SOUND_61 = 0x61,
+    SOUND_62 = 0x62,
+    SOUND_63 = 0x63,
+    SOUND_64 = 0x64,
+    SOUND_65 = 0x65,
+    SOUND_66 = 0x66,
+    SOUND_67 = 0x67,
+    SOUND_68 = 0x68,
+
+    SOUND_6D = 0x6D,
+    SOUND_6E = 0x6E,
+    SOUND_6F = 0x6F,
+    SOUND_70 = 0x70,
+
     SOUND_73_Thunder = 0x73,
+
+    SOUND_86 = 0x86,
+    SOUND_87 = 0x87,
+    SOUND_88 = 0x88,
+    SOUND_89 = 0x89,
+    SOUND_8A = 0x8A,
+    SOUND_8B = 0x8B,
 
     SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
@@ -96,6 +124,15 @@ enum SoundID {
 
     SOUND_27A_Wood_Creak_A = 0x27A,
     SOUND_27B_Wood_Creak_B = 0x27B,
+    SOUND_27C = 0x27C,
+    SOUND_27D = 0x27D,
+    SOUND_27E = 0x27E,
+    SOUND_27F = 0x27F,
+
+    SOUND_280 = 0x280,
+    SOUND_281 = 0x281,
+    SOUND_282 = 0x282,
+    SOUND_283 = 0x283,
 
     SOUND_284_SB_Kyte_Heeelp = 0x284,
     SOUND_285_SB_Kyte_Find_the_wizard_and_get_me_out_of_here = 0x285,
@@ -126,6 +163,11 @@ enum SoundID {
     SOUND_35A_Low_Whoosh = 0x35A, // WMrock
     SOUND_35B_Rock_Slide = 0x35B, // WMrock
 
+    SOUND_368 = 0x368,
+    SOUND_369 = 0x369,
+    SOUND_36A = 0x36A,
+    SOUND_36B = 0x36B,
+
     SOUND_36E_Lever_Clunk = 0x36e, // used by many levers (e.g. ones leading to Cape Claw courtyard)
 
     SOUND_371_Crate_Smash = 0x371,  // used by MediumMetalCrat
@@ -141,6 +183,13 @@ enum SoundID {
 
     SOUND_3EC_Water_Wade_Slow_A = 0x3EC,
     SOUND_3ED_Water_Wade_Slow_B = 0x3ED,
+
+    SOUND_402 = 0x402,
+    SOUND_403 = 0x403,
+    SOUND_404 = 0x404,
+
+    SOUND_406 = 0x406,
+    SOUND_407 = 0x407,
 
     SOUND_43D_Transporter_Fire = 0x43D,
 
@@ -243,6 +292,9 @@ enum SoundID {
 
     SOUND_798_Puzzle_Solved = 0x798, // louder than B89, used when placing MoonSeeds
 
+    SOUND_7B0 = 0x7B0,
+    SOUND_7B1 = 0x7B1,
+
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
@@ -254,6 +306,8 @@ enum SoundID {
 
     SOUND_883_Footstep_Mud_1 = 0x883, //player 
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
+
+    SOUND_88D = 0x88D,
 
     SOUND_8A2_Spore_Disintegrate = 0x8A2, // used in SHspore
 

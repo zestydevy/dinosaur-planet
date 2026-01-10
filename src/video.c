@@ -5,9 +5,59 @@
 #include "sys/newshadows.h"
 #include "PR/gbi.h"
 
-// TODO: This is part of a larger data structure and is only here to allow the current .data section
-// for this file to be aligned correctly!
-u8 D_80092ff0[] = { 0x07, 0xb1, 0x04, 0x03, 0x07, 0xb1, 0x00, 0x00 };
+/* -------- .data start 80092ec0 -------- */
+s32 D_80092EC0 = 0; // unused
+u16 D_80092EC4[36] = {
+    SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
+    SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
+    SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
+    SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
+    SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
+    SOUND_44, SOUND_45, 0, 0, 
+    0, 0, 0, 0, 
+    0, 0, 0, 0, 
+    0, 0, 0, 0
+};
+u16 D_80092F0C[36] = {
+    SOUND_86, SOUND_87, 0, 0, 
+    SOUND_88, SOUND_89, 0, 0, 
+    SOUND_8A, SOUND_89, 0, 0, 
+    SOUND_8A, SOUND_89, 0, 0, 
+    SOUND_8A, SOUND_8B, 0, 0, 
+    0, 0, 0, 0, 
+    0, 0, 0, 0, 
+    0, 0, 0, 0, 
+    0, 0, 0, 0
+};
+u16 D_80092F54[36] = {
+    SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
+    SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
+    SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
+    SOUND_65, SOUND_66, SOUND_368, SOUND_369, 
+    SOUND_27C, SOUND_27D, SOUND_27C, SOUND_27D, 
+    SOUND_6D, SOUND_6E, SOUND_6D, SOUND_6E, 
+    SOUND_280, SOUND_281, SOUND_280, SOUND_281, 
+    SOUND_406, SOUND_404, SOUND_406, SOUND_404, 
+    0, SOUND_88D, 0, SOUND_88D
+};
+u16 D_80092F9C[36] = {
+    SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
+    SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
+    SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
+    SOUND_67, SOUND_68, SOUND_36A, SOUND_36B, 
+    SOUND_27E, SOUND_27F, SOUND_27E, SOUND_27F, 
+    SOUND_6F, SOUND_70, SOUND_6F, SOUND_70, 
+    SOUND_282, SOUND_283, SOUND_282, SOUND_283, 
+    SOUND_407, SOUND_402, SOUND_407, SOUND_402, 
+    0, SOUND_88D, 0, SOUND_88D
+};
+u16 D_80092FE4[10] = {
+    SOUND_7B1, SOUND_7B1, SOUND_7B1, SOUND_7B1, 
+    SOUND_7B0, SOUND_7B1, SOUND_7B1, SOUND_403, 
+    SOUND_7B1, 0
+};
+// data continued below in function statics, etc
+/* -------- .data end 80093010 -------- */
 
 /* -------- .bss start 800bb590 -------- */
 UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
@@ -358,22 +408,20 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
 }
 #endif
 
-
-// Note: Return type is void* because the real type is unclear
-void *func_8005D3A4(int param) {
+u16 *func_8005D3A4(s32 param) {
     switch (param) {
         case 1:
-            return &D_80092EC4;
+            return D_80092EC4;
         case 2:
-            return &D_80092F0C;
+            return D_80092F0C;
         case 3:
-            return &D_80092F54;
+            return D_80092F54;
         case 4:
-            return &D_80092F9C;
+            return D_80092F9C;
         case 5:
-            return &D_80092FE4;  
+            return D_80092FE4;  
         case 0:
         default:
-            return &D_80092F54;
+            return D_80092F54;
     } 
 }
