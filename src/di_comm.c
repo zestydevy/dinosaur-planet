@@ -1,6 +1,12 @@
 #include "common.h"
 #include "sys/debug.h"
 
+// not sure which file this should be in, it's unused
+static s32 D_80093860[] = {
+    -1, 0, -1, 0,
+    0, 0, 0, 0,
+    0, 0, 0, 0
+};
 static s32 D_80093890[6] = {0, -1, -1, -1, -1, -1};
 static u8 D_800938A8 = 0;
 

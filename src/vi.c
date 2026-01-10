@@ -46,7 +46,35 @@ void vi_func_8005DEE8(void);
 int vi_contains_point(s32 x, s32 y);
 
 extern OSDevMgr __osViDevMgr;
-extern s8 D_80093064;
+
+/* -------- .data start 80093010 -------- */
+u16 *gFramebufferStart = NULL;
+s32 D_80093014 = 0; // unused
+s32 D_80093018 = 0x02000000; // unused
+s32 D_8009301C = 0; // unused
+VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT] = {
+    {320, 240},
+    {320, 240},
+    {512, 240},
+    {512, 240},
+    {640, 480},
+    {640, 480},
+    {640, 480},
+    {384, 192}
+};
+s8 D_80093060 = 0;
+s8 D_80093064 = 0;
+UnkVidStruct3 D_80093068[8] = {
+    {6, 0x00000},
+    {5, 0x20000},
+    {4, 0x30000},
+    {3, 0x38000},
+    {2, 0x3C000},
+    {1, 0x3E000},
+    {0, 0x3F000},
+    {0, 0x3F800}
+};
+/* -------- .data end 800930B0 -------- */
 
 /* -------- .bss start 800bcc90 -------- */
 OSIoMesg D_800BCC90;

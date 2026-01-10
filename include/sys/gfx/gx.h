@@ -93,10 +93,7 @@ typedef struct UnkVidStruct3 {
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
-extern s8 D_80093060;
 extern UnkVidStruct3 D_80093068[];
-
-
 
 extern OSViMode gTvViMode;
 
