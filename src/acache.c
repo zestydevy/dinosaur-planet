@@ -9,48 +9,34 @@ static const char str_8009823c[] = "in cache %d\n";
 static const char str_8009824c[] = "flush\n";
 static const char str_80098254[] = "in load %d\n";
 
-// https://decomp.me/scratch/Uiv2B
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/acache/acache_init.s")
-#else
 ACache* acache_init(u8 fileID, u8 arg1, u8 arg2, u8 arg3, ACacheCallback arg4) {
-    ACache* cache;
-    s32 i;
-    s32 temp_a0; // sp+44
-    s32 temp_t4; // sp+40
-    s32 temp_t3; // sp+3c
-    s32 temp_t2; // sp+38
-    s32 temp_v0_2; // sp+34
     u8* var_a0;
+    ACache* cache;
+    s32 temp_v0_2[5];
+    s32 i;
 
-    temp_v0_2 = mmAlign16(sizeof(ACache));
+    temp_v0_2[0] = mmAlign16(sizeof(ACache));
+    temp_v0_2[1] = temp_v0_2[0] + (arg1 * arg2);
+    temp_v0_2[2] = temp_v0_2[1] + (arg3 * arg2);
+    temp_v0_2[3] = temp_v0_2[2] + (arg3 * 2);
+    i = temp_v0_2[3] + (arg3 * 4);
+    temp_v0_2[4] = i;
     
-    temp_t2 = temp_v0_2;
-    temp_t2 += (arg1 * arg2);
-    
-    temp_t3 = temp_t2;
-    temp_t3 += (arg3 * arg2);
-    
-    temp_t4 = temp_t3;
-    temp_t4 += (arg3 * 2);
-    
-    temp_a0 = temp_t4;
-    temp_a0 += (arg3 * 4);
-    
-    cache = mmAlloc(temp_a0, COLOUR_TAG_GREY, NULL);
+    cache = mmAlloc(temp_v0_2[4], COLOUR_TAG_GREY, NULL);
     if (cache != NULL) {
+        if ((!cache->unkC) && (!cache->unkC)) {}
         cache->fileID = fileID;
         cache->unk1 = arg1;
         cache->unk2 = arg2;
         cache->unk3 = arg3;
         cache->unk18 = arg4;
-        cache->unk8 = (void* ) (temp_v0_2 + (u32)cache);
-        cache->unkC = (void* ) (temp_t2 + (u32)cache);
-        cache->unk10 = (void* ) (temp_t3 + (u32)cache);
-        cache->unk14 = (void* ) (temp_t4 + (u32)cache);
+        cache->unk8 = (u8* ) (temp_v0_2[0] + (u32)cache);
+        cache->unkC = (u8* ) (temp_v0_2[1] + (u32)cache);
+        cache->unk10 = (s16* ) (temp_v0_2[2] + (u32)cache);
+        cache->unk14 = (u8** ) (temp_v0_2[3] + (u32)cache);
         cache->unk6 = -arg2 - 1;
-        cache->unk4 = 0;
         var_a0 = cache->unkC;
+        cache->unk4 = 0;
         for (i = 0; i < arg3; i++) {
             cache->unk10[i] = -1;
             cache->unk14[i] = var_a0;
@@ -58,11 +44,8 @@ ACache* acache_init(u8 fileID, u8 arg1, u8 arg2, u8 arg3, ACacheCallback arg4) {
         }
     }
     
-    if ((!temp_a0) && (!temp_a0)){} // @fake
-    
     return cache;
 }
-#endif
 
 void acache_free(ACache *cache) {
     mmFree(cache);

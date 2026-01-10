@@ -170,8 +170,9 @@ typedef struct {
 /*80*/ s8 unk80;
 /*81*/ u8 pad81;
 /*82*/ s8 unk82;
-/*83*/ u8 pad83;
-/*84*/ s16 unk84;
+/*83*/ s8 unk83;
+/*84*/ s8 unk84;
+/*85*/ u8 unk85;
 /*86*/ u8 unk86;
 /*87*/ u8 unk87;
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm

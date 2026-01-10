@@ -70,6 +70,7 @@ typedef enum {
     PLAYER_SPIRIT_ANY = 0xFF
 } PlayerSpiritFlags;
 
+// It's possible this is the same as ObjectStruct74
 // size: 0x58
 typedef struct UnkArg4 {
     Vec3f unk0;

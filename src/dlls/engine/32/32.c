@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
+#include "prevent_bss_reordering.h"
 
 /*0x0*/ static u32 _data_0[] = {
     0xfc121603, 0xfffffff8, 0xfc121603, 0xfffffff8

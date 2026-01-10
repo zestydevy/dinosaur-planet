@@ -79,6 +79,7 @@ u8 _bss_800bce38[0x20];
 u8 D_800BCE58;
 u8 gViUpdateRate;
 OSScClient gVideoSched;
+static u8 _bss_pad[0x10];
 /* -------- .bss end 800bce70 -------- */
 
 void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {

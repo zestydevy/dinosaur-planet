@@ -704,17 +704,17 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     if (def->numSequenceBones != 0) {
         obj->unk6C = (void*)mmAlign4(addr);
-        addr = (u32)obj->unk6C + (def->numSequenceBones * 0x12);
+        addr = (u32)obj->unk6C + (def->numSequenceBones * sizeof(s16) * 9);
     }
 
     if (def->numAnimatedFrames != 0) {
-        obj->unk70 = (void*)mmAlign4(addr);
-        addr = (u32)obj->unk70 + (def->numAnimatedFrames * 0x10);
+        obj->unk70 = (Vtx*)mmAlign4(addr);
+        addr = (u32)obj->unk70 + (def->numAnimatedFrames * sizeof(Vtx));
     }
 
     if (def->unk9b != 0) {
-        obj->unk74 = (void*)mmAlign4(addr);
-        addr = (u32)obj->unk74 + (def->unk9b * 0x18);
+        obj->unk74 = (ObjectStruct74*)mmAlign4(addr);
+        addr = (u32)obj->unk74 + (def->unk9b * sizeof(ObjectStruct74));
     }
 
     if (def->unk8F != 0 && def->unk74 != 0) {

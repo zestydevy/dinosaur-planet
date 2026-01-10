@@ -103,6 +103,13 @@ typedef struct {
 /*000D*/    s8 unkD;
 } HitSphere;
 
+typedef struct {
+/*0000*/ u32 pad0;
+/*0004*/ s32 unk4; // display list index?
+/*0008*/ u8 pad8[0xB-8];
+/*000B*/ u8 unkB;
+} TextureAnimation;
+
 typedef struct{
     // TODO
 /*0000*/    ModelTexture *materials;
@@ -120,7 +127,7 @@ typedef struct{
 /*0030*/    s16 *modAnim;
 /*0034*/    void *facebatchBounds; //bounding boxes for each facebatch
 /*0038*/    ModelDLInfo *drawModes; //stores command indices of f3dex2 block's EF command settings, plus 2 settings to swap between
-/*003C*/    void *textureAnimations; //for animating pupil UVs/eyelid flipbooks
+/*003C*/    TextureAnimation *textureAnimations; //for animating pupil UVs/eyelid flipbooks
 /*0040*/    s16 modAnimBankBases[8]; //the base modanim index of each modanim bank
 /*0050*/    f32 *collisionA; //joint pushback collision A
 /*0054*/    f32 *collisionB; //joint pushback collision B
