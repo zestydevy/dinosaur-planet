@@ -367,28 +367,11 @@ extern s16 D_800B4A5E; //gFadeDelayTimerStarted
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
-
 extern s8 gMapNumStreamMaps;
-
-
-
-
-
-extern s32 gMapCurrentStreamCoordsX;
-extern s32 gMapCurrentStreamCoordsZ;
-
 
 extern s8 gMapLayer;
 
-
-
-
-extern s32 D_80092A94;
-
 extern s32 D_80092BBC;
-
-
-
 
 extern s8 D_80092A78; //gFadeDelayTimer
 
@@ -396,7 +379,6 @@ extern f32 D_8009A950;
 extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
-
 
 extern Unk80092BC0 D_80092BC0;
 extern u8 D_800B1847;
@@ -411,16 +393,15 @@ extern f32 D_8009AA24;
 extern u8 D_8009A614;
 extern f32 D_80092AAC[24];
 
-
 extern f32 D_8009AA1C;
 extern f32 D_8009AA30;
 extern f32 D_8009AA34;
 extern f32 D_8009AA3C;
-extern s8 D_80092A9C[8];
 extern s32 D_80092A60; // something x-coordinate related
 extern s32 D_80092A64; // something z-coordinate related
 
-extern s32 D_80092A7C;
+extern s32 D_80092A7C[2];
+extern s32 D_80092A84[2];
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);

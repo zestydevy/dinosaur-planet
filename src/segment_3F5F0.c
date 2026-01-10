@@ -10,12 +10,16 @@ void func_8003F2C4(u16*, u16, u16, s32);
 u16 func_8003FD48(u16, u16, u16, u16);
 u16 func_8003FB88(u16, u16, u16, u16);
 
-extern s32 D_80092A50;
-extern s32 D_80092A54[3];
+// -------- .data start 80092a50 -------- //
+s32 D_80092A50 = 0;
+s32 D_80092A54[1] = {0}; // probably not an array?
+// -------- .data end 80092a60 -------- //
 
 // -------- .bss start 800b49e0 -------- //
 s32 D_800B49E0;
 // -------- .bss end 800b49f0 -------- //
+
+void func_8003FE70(Gfx **gdl, s32, s32, s32);
 
 void func_8003E9F0(Gfx** gdl, s32 updateRate) {
     s32 temp_v0;

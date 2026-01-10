@@ -232,7 +232,7 @@ void Transporter_control(Object *self) {
         if ((objdata->unk22 != 0) && (objdata->unk26 != 0)) {
             objdata->unk22 -= gUpdateRate;
             if (objdata->unk22 <= 0) {
-                func_80000860(self, self, ((s16*)&D_80092A7C)[1], 0);
+                func_80000860(self, self, D_80092A7C[0], 0);
                 objdata->unk22 = 0;
             }
         }
