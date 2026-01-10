@@ -93,16 +93,7 @@ typedef struct UnkVidStruct3 {
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
-extern void *D_80092EC4;
-extern void *D_80092F0C;
-extern void *D_80092F54;
-extern void *D_80092F9C;
-extern void *D_80092FE4;
-
-extern s8 D_80093060;
 extern UnkVidStruct3 D_80093068[];
-
-
 
 extern OSViMode gTvViMode;
 
@@ -144,7 +135,7 @@ extern s32 gPossiblyScreenWidthOrHeight;
 /**
  * Some boolean.
  */
-extern int gSomeVideoFlag;
+extern s32 gSomeVideoFlag;
 
 extern f32 gViHeightRatio;
 

@@ -3,13 +3,6 @@
 static const char str_8009ac70[] = "maketex: buffer out of range\n";
 static const char str_8009ac90[] = "maketex: buffer out of range\n";
 
-/** 
- * D_80092E9C could be one of the dimensions (height) for rendering dynamic shadow texture?
- * gPossiblyScreenWidthOrHeight might be the width!
- */
-extern u32  D_80092E90[];
-extern s32  D_80092E9C; // Usually 0x40 (64)
-
 // -------- .bss start 800bb540 -------- //
 u32* D_800BB540[4];
 u32* D_800BB550[2];
@@ -18,6 +11,21 @@ u32* D_800BB560[4];
 u32  D_800BB570[2];
 u32* D_800BB578[4];
 // -------- .bss end 800bb590 -------- //
+
+// -------- .data start 80092E90 -------- //
+/** 
+ * D_80092E9C could be one of the dimensions (height) for rendering dynamic shadow texture?
+ * gPossiblyScreenWidthOrHeight might be the width!
+ */
+u32 D_80092E90[2] = {0, 0};
+s32 gPossiblyScreenWidthOrHeight = 64;
+s32 D_80092E9C = 64; // Usually 0x40 (64)
+s32 gSomeVideoFlag = 0;
+s32 D_80092EA4 = 0; // unused
+s32 D_80092EA8 = 0; // unused
+s32 D_80092EAC = 0;
+s32 D_80092EB0 = 0;
+// -------- .data start 80092EC0 -------- //
 
 void func_8005B870(void) {
     D_800BB540[0] = mmAlloc((gPossiblyScreenWidthOrHeight * D_80092E9C << 1) + 0x30, ALLOC_TAG_SHAD_COL, 0);

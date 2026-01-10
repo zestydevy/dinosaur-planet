@@ -192,7 +192,7 @@ void dll_210_add_scarab(Object *player, s32 amount);
 void dll_210_add_magic(Object* player, s32 amount);
 
 void func_8004D880(Object *player);
-void *func_8005D3A4(int param);
+u16 *func_8005D3A4(s32 param);
 s32 func_80025140(Object*, f32, f32, s32);
 MtxF* func_80032170(Object*, s32);
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);

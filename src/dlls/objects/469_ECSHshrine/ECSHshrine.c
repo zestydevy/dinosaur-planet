@@ -543,10 +543,10 @@ static int dll_469_func_15E0(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) 
                 func_80000860(self, self, 0xCB, 0);
                 break;
             case 2:
-                if (D_80092A7C == -1) {
+                if (D_80092A7C[0] == -1) {
                     func_80000860(self, self, 0x14, 0);
                 } else {
-                    func_80000860(self, self, D_80092A7C, 0);
+                    func_80000860(self, self, D_80092A7C[0], 0);
                 }
                 break;
             case 3:

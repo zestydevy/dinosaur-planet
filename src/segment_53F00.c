@@ -65,12 +65,6 @@ typedef struct Unk800BB268 {
     MtxF *unkC;
 } Unk800BB268;
 
-extern D_80092E70_Struct *D_80092E70; // 250 length
-extern HitsLineReencoded* D_80092E74;
-extern s32 D_80092E78;
-extern s32 D_80092E7C;
-extern s8 D_80092E80;
-extern HitsUnk* D_80092E84;
 extern Unk800BB268 D_800BB268[];
 extern D_800BB26C_Struct D_800BB26C[];
 extern u8 D_800BB3A8;
@@ -81,6 +75,14 @@ extern s8 D_800BB539;
 
 // .bss 800bb200-800bb540
 u8 _bss_800bb200[0x800bb540 - 0x800bb200]; // size:0x340
+
+// .data 80092E70-80092E90
+D_80092E70_Struct *D_80092E70 = NULL; // 250 length
+HitsLineReencoded* D_80092E74 = NULL;
+s32 D_80092E78 = 0;
+s32 D_80092E7C = 0;
+s8 D_80092E80 = 0;
+HitsUnk* D_80092E84 = NULL;
 
 void func_80053300(void) {
     if (D_80092E70 == NULL) {

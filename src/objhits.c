@@ -27,6 +27,11 @@ static const char str_80099a94[] = " x %f y %f z %f \n";
 static const char str_80099aa8[] = " Result2 ";
 static const char str_80099ab4[] = " x %f y %f z %f \n";
 
+// -------- .data start 800916e0 -------- //
+Object *D_800916E0[5] = {NULL};
+// function statics start here
+// -------- .data start 80091710 -------- //
+
 // -------- .bss start 800b1990 -------- //
 f32 D_800B1990;
 Object **D_800B1994;
@@ -45,9 +50,6 @@ Unk800B20B8* D_800B23BC;
 u8 _bss_800B23C0[0xF8];
 Unk80030A24 D_800B24B8[21]; // TODO: unknown length
 // -------- .bss end 800b28b0 -------- //
-
-extern Object *D_800916E0[5];
-extern s32 D_800916F4[4];
 
 void alloc_some_object_arrays(void) {
     D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, NULL);
@@ -241,7 +243,7 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
     if (arg1 != NULL) {
         objHitInfo2 = arg1->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk48 = (s32)arg0;
+            objHitInfo2->unk48 = arg0;
         }
     }
 
@@ -290,7 +292,7 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
     if (arg1 != NULL) {
         objHitInfo2 = arg1->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk48 = (s32) arg0;
+            objHitInfo2->unk48 = arg0;
         }
     }
 
@@ -643,7 +645,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     ModelInstance *modelInst;
     s32 sp5C;
     f32 sp58;
-    s32 sp48[4] = D_800916F4;
+    s32 sp48[4] = {0x08, 0xB4, 0xF0, 0xFF};
 
     if (arg3 != 0 && func_80024108(obj, *arg4, gUpdateRateF, NULL)) {
         arg3 = 0;

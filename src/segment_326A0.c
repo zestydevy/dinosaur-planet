@@ -11,11 +11,13 @@ typedef struct ObjectPairCallback {
     void (*callback)(Object*, Object*); // callback that takes in the primary and secondary object
 } ObjectPairCallback;
 
+// -------- .data start 80091710 -------- //
+s32 sCallbackPairIndex = 0;
+// -------- .data end 80091720 -------- //
+
 // -------- .bss start 800b2d40 -------- //
 ObjectPairCallback sObjectPairCallbacks[16];
 // -------- .bss end 800b2e00 -------- //
-
-extern s32 sCallbackPairIndex;
 
 /** Transforms a mapSpace point into an objectSpace point, relative to an Area object*/
 void func_80031AA0(Area_Setup* area, f32* ox, f32* oy, f32* oz) {

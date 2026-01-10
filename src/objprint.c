@@ -2,10 +2,14 @@
 #include "dlls/objects/common/group48.h"
 #include "sys/rsp_segment.h"
 
+// -------- .data start 80091750 -------- //
+s32 D_80091750 = 0; // unused bytes
 /** toggles Models' multiplier colour */
-extern u8 BYTE_80091754;
+u8 BYTE_80091754 = 0;
 /** toggles Models' blend colour */
-extern u8 BYTE_80091758;
+u8 BYTE_80091758 = 0;
+u8 _data_8009175c[0x14] = {0}; // unused bytes
+// -------- .data end 80091770 -------- //
 
 // -------- .bss start 800b2e10 -------- //
 MtxF *D_800B2E10;
