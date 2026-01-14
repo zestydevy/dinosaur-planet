@@ -501,32 +501,32 @@ s32 func_8004E540(Object* arg0, ObjectStruct64* arg1) {
     return sp1C >> 8;
 }
 
-void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     ObjectStruct64* temp_s0;
     Vec3f sp50;
     Vec3f sp44;
 
-    temp_s0 = arg0->unk64;
+    temp_s0 = obj->unk64;
     if (temp_s0->gdl == NULL) {
         return;
     }
 
     if (temp_s0->flags & 0x20) {
-        bcopy(&arg0->srt.transl, &sp44, 0xC);
-        bcopy(&arg0->positionMirror, &sp50, 0xC);
-        bcopy(&temp_s0->tr, &arg0->srt.transl, 0xC);
-        if (arg0->parent != NULL) {
-            transform_point_by_object(temp_s0->tr.x, temp_s0->tr.y, temp_s0->tr.z, &temp_s0->tr.x, &temp_s0->tr.y, &temp_s0->tr.z, arg0->parent);
+        bcopy(&obj->srt.transl, &sp44, 0xC);
+        bcopy(&obj->positionMirror, &sp50, 0xC);
+        bcopy(&temp_s0->tr, &obj->srt.transl, 0xC);
+        if (obj->parent != NULL) {
+            transform_point_by_object(temp_s0->tr.x, temp_s0->tr.y, temp_s0->tr.z, &temp_s0->tr.x, &temp_s0->tr.y, &temp_s0->tr.z, obj->parent);
         } else {
-            bcopy(&temp_s0->tr, &arg0->positionMirror, 0xC);
+            bcopy(&temp_s0->tr, &obj->positionMirror, 0xC);
         }
     }
     if (temp_s0->flags & 8) {
-        func_8005BCE0(arg0, D_80092C18, arg1, arg2, arg3, arg4, (s32) D_800BB170, D_800BB18C, temp_s0->flags & 3);
+        func_8005BCE0(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, temp_s0->flags & 3);
     }
     if (temp_s0->flags & 0x20) {
-        bcopy(&sp44, &arg0->srt.transl, 0xC);
-        bcopy(&sp50, &arg0->positionMirror, 0xC);
+        bcopy(&sp44, &obj->srt.transl, 0xC);
+        bcopy(&sp50, &obj->positionMirror, 0xC);
     }
 }
 

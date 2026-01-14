@@ -139,6 +139,7 @@ extern s32 D_80092CA4;
 void func_8004D880(Object *arg0);
 s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5);
 void func_8004D844(Object *obj, f32 x, f32 y, f32 z);
+void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
 
 // defined in newshadows.c but used before declared
 s32 func_8004FA4C(void);
@@ -158,6 +159,6 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
 
 // other funcs that are used
 u32 func_80041DA4(void);
-void func_8005BCE0(Object*, s16, s32, s32, s32, s32, s32, f32, s32);
+void func_8005BCE0(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 arg8);
 
 #endif

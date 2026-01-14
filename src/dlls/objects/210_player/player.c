@@ -196,7 +196,6 @@ u16 *func_8005D3A4(s32 param);
 s32 func_80025140(Object*, f32, f32, s32);
 MtxF* func_80032170(Object*, s32);
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
-void func_8004E64C(Object* player, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_80032238(Object* player, s32 arg1, s32 arg2, Vec3f* arg3);
 void func_80034FF0(MtxF* arg0);
 void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32, void*, s32, s32);
@@ -1495,7 +1494,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             data->unk868->srt.yaw = player->srt.yaw;
             data->unk868->dll->vtbl->print(data->unk868, arg1, arg2, arg3, arg4, -1);
         }
-        func_8004E64C(player, (s32) arg1, (s32) arg2, (s32) arg3, (s32) arg4);
+        func_8004E64C(player, arg1, arg2, arg3, arg4);
     }
 }
 #endif
