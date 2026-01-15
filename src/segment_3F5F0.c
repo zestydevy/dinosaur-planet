@@ -1,9 +1,9 @@
 #include "common.h"
+#include "sys/segment_535C0.h"
 
 static const char str_8009a480[] = "Freak a0 %x  a1 %x \n";
 static const char str_8009a498[] = " size %x ";
 
-void func_8005324C(u16 *fb1, u16 *fb2, s32);
 void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 void func_8003EC8C(u16*, u16 *, s32);
 void func_8003F2C4(u16*, u16, u16, s32);

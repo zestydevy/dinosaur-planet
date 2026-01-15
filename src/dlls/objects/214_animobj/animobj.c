@@ -43,9 +43,9 @@ void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
         }
     }
 
-    if (self->unk64){
-        self->unk64->unk3A = 0x64;
-        self->unk64->unk3B = 0x96;
+    if (self->shadow){
+        self->shadow->unk3A = 0x64;
+        self->shadow->unk3B = 0x96;
     }
 }
 
