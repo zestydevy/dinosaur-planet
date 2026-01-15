@@ -42,20 +42,6 @@ typedef struct Unk8004FA58 {
     u8 unk10;
 } Unk8004FA58;
 
-// Might be incorrect definition but size should be correct
-typedef struct Unk8004FA58_Arg5 {
-    s16 x;
-    s16 y;
-    s16 z;
-    s16 pad6;
-    s16 unk8;
-    s16 unkA;
-    u8 padC;
-    u8 padD;
-    s8 padE;
-    s8 unkF;
-} Unk8004FA58_Arg5;
-
 // Size: 0x2C
 typedef struct Unk80092C48 {
     f32 unk0[8];
@@ -153,10 +139,10 @@ void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, UnkFunc80052300Arg3* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
 void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA);
-s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
+s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
 s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1);
-s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 arg7);
+s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7);
 s32 func_8004EEC0(Vtx* arg0, Gfx* gdl, ObjectShadow* arg2, Object *arg3, s32 arg4, s32* arg5);
-s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max);
+s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max);
 
 #endif
