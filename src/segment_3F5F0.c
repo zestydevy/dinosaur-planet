@@ -77,8 +77,8 @@ void func_8003EBD4(s32 hOffset) {
     resolution = vi_get_current_size();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
-    nextFB = gFramebufferNext;
-    currentFB = gFramebufferCurrent;
+    nextFB = gBackFramebuffer;
+    currentFB = gFrontFramebuffer;
     hOffset = width - hOffset;
     while (height--) {
         weird_resize_copy(&nextFB[hOffset], width - (hOffset << 1), width, currentFB);
@@ -167,8 +167,8 @@ void func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, v
     resolution = vi_get_current_size();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
-    currentFB = gFramebufferCurrent;
-    nextFB = gFramebufferNext;
+    currentFB = gFrontFramebuffer;
+    nextFB = gBackFramebuffer;
     i = 0;
     if (height > i) {
         s1 = arg0;
@@ -317,9 +317,9 @@ void func_8003F4C0(s32 arg0) {
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg0 == 0) {
-        nextFB = gFramebufferNext;
+        nextFB = gBackFramebuffer;
         nextFB[-1] = 0;
-        currentFB = gFramebufferCurrent;
+        currentFB = gFrontFramebuffer;
         for (i = 0; i < height - 1; i++) {
             for (j = 0; j < width; j++) {
                 currentFB[0] = func_8003FD48(currentFB[0], *(nextFB - width), nextFB[0], nextFB[width]);
@@ -328,9 +328,9 @@ void func_8003F4C0(s32 arg0) {
             }
         }
     } else {
-        nextFB = gFramebufferNext;
+        nextFB = gBackFramebuffer;
         nextFB[-1] = 0;
-        currentFB = gFramebufferCurrent;
+        currentFB = gFrontFramebuffer;
         for (i = 0; i < height - 1; i++) {
             for (j = 0; j < width; j++) {
                 v0 = 0xFFFF >> (0x10 - arg0);
@@ -377,9 +377,9 @@ void func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     }
     if (arg0 == 0) {
         s8 = var_v0;
-        currentFB = &(&(&gFramebufferCurrent[width * var_v0])[arg1])[arg2 * width];
+        currentFB = &(&(&gFrontFramebuffer[width * var_v0])[arg1])[arg2 * width];
         currentFB[-1] = 0;
-        currentFB2 = &gFramebufferCurrent[width * var_v0];
+        currentFB2 = &gFrontFramebuffer[width * var_v0];
         if (s8 < height) {
             do {
                 j = 0;
@@ -401,9 +401,9 @@ void func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
         }
     } else {
         s8 = var_v0;
-        currentFB = &(&(&gFramebufferCurrent[width * var_v0])[arg1])[arg2 * width];
+        currentFB = &(&(&gFrontFramebuffer[width * var_v0])[arg1])[arg2 * width];
         currentFB[-1] = 0;
-        currentFB2 = &gFramebufferCurrent[width * var_v0];
+        currentFB2 = &gFrontFramebuffer[width * var_v0];
         if (s8 < height) {
             do {
                 j = 0;
@@ -639,6 +639,7 @@ void func_800403AC(u16* arg0, u16* arg1, u32 arg2, u32 arg3, s32 arg4) {
 }
 #endif
 
+// cross blend
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_80040468.s")
 #else
@@ -693,8 +694,8 @@ void func_80040590(s32 arg0, s32 arg1) {
     resolution = vi_get_current_size();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
-    nextFB = gFramebufferNext;
-    currentFB = gFramebufferCurrent;
+    nextFB = gBackFramebuffer;
+    currentFB = gFrontFramebuffer;
     for (i = 0; i < height; i++) {
         var_s1 = arg0 - (cos16(((((arg0 >> 1) + i) << 0xF) / (u32)(height >> 2))) >> 0xC);
         if ((width >> 1) < var_s1) {

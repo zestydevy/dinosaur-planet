@@ -49,7 +49,7 @@ int vi_contains_point(s32 x, s32 y);
 extern OSDevMgr __osViDevMgr;
 
 /* -------- .data start 80093010 -------- */
-u16 *gFramebufferStart = NULL;
+u16 *gDepthBuffer = NULL;
 s32 D_80093014 = 0; // unused
 s32 D_80093018 = 0x02000000; // unused
 s32 D_8009301C = 0; // unused
@@ -79,10 +79,10 @@ UnkVidStruct3 D_80093068[8] = {
 
 /* -------- .bss start 800bcc90 -------- */
 OSIoMesg D_800BCC90;
-u16 *gFramebufferNext;
-u16 *gFramebufferCurrent;
-u16 *D_800BCCB0;
-u16 *D_800BCCB4;
+u16 *gBackFramebuffer;
+u16 *gFrontFramebuffer;
+u16 *gBackDepthBuffer;
+u16 *gFrontDepthBuffer;
 f32 gViHeightRatio;
 OSMesg D_800bccc0[8];
 OSMesgQueue gVideoMesgQueue;
@@ -92,7 +92,7 @@ u32 gCurrentResolutionH[2];
 u32 gCurrentResolutionV[2];
 u16 *gFramebufferPointers[2];
 u16 *gFramebufferEnd;
-u32 gFramebufferChoice;
+u32 gCurrFramebufferIdx;
 s32 gVideoMode;
 u32 gViBlackTimer;
 u8 *D_800BCE18[2];
@@ -158,7 +158,7 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
 
     vi_init_framebuffers(someBool, width, height);
 
-    gFramebufferChoice = 1;
+    gCurrFramebufferIdx = 1;
 
     vi_swap_buffers();
     vi_update_mode();
@@ -207,7 +207,7 @@ OSMesgQueue *vi_get_mesg_queue() {
  */
 void vi_update_fb_size_from_current_mode(int framebufferIndex) {
     // Note: framebufferIndex was decided on because another function calls this
-    //       with gFramebufferChoice (which is either 0 or 1 presumably) and
+    //       with gCurrFramebufferIdx (which is either 0 or 1 presumably) and
     //       gCurrentResolutionH and gCurrentResolutionV both conveniently contain
     //       2 integers, which are likely for each framebuffer.
     gCurrentResolutionH[framebufferIndex] = gResolutionArray[gVideoMode & 7].h;
@@ -221,8 +221,8 @@ u32 vi_get_current_size(void) {
     shadowTexActive = shadowtex_get_status(&shadowTexWidth);
 
     if (shadowTexActive == FALSE) {
-        return (gCurrentResolutionV[gFramebufferChoice] << 0x10) |
-                gCurrentResolutionH[gFramebufferChoice];
+        return (gCurrentResolutionV[gCurrFramebufferIdx] << 0x10) |
+                gCurrentResolutionH[gCurrFramebufferIdx];
     } else {
         return (shadowTexWidth << 0x10) | shadowTexWidth;
     }
@@ -231,11 +231,11 @@ u32 vi_get_current_size(void) {
 /**
  * Returns the resolution of the framebuffer not currently in use encoded as 0xVVVV_HHHH.
  *
- * Note: The resolution is found by gCurrentResolution*[gFramebufferChoice < 1]
+ * Note: The resolution is found by gCurrentResolution*[gCurrFramebufferIdx < 1]
  */
 u32 vi_get_backbuffer_size(void) {
-    return (gCurrentResolutionV[gFramebufferChoice < 1] << 0x10) |
-            gCurrentResolutionH[gFramebufferChoice < 1];
+    return (gCurrentResolutionV[gCurrFramebufferIdx < 1] << 0x10) |
+            gCurrentResolutionH[gCurrFramebufferIdx < 1];
 }
 
 void vi_update_mode(void) {
@@ -306,7 +306,7 @@ void vi_init_framebuffers(int someBool, s32 width, s32 height) {
         gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
         gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK + ((width * height) * 2));
         
-        gFramebufferStart = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
+        gDepthBuffer = (u16*)(FRAMEBUFFER_ADDRESS_NO_EXP_PAK);
         return;
     }
     
@@ -315,14 +315,14 @@ void vi_init_framebuffers(int someBool, s32 width, s32 height) {
         gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
         gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2));
         
-        gFramebufferStart = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
+        gDepthBuffer = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
     } else {
         // NTSC/M-PAL framebuffer height
         gFramebufferPointers[0] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK);
         gFramebufferPointers[1] = (u16*)(FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2));
         
         gFramebufferEnd = (u16*)(((int) (FRAMEBUFFER_ADDRESS_EXP_PAK + ((width * height) * 2))) + ((width * height) * 2));
-        gFramebufferStart = (u16*)0x80200000;
+        gDepthBuffer = (u16*)0x80200000;
     }
 }
 
@@ -374,16 +374,16 @@ s32 vi_frame_sync(s32 param1) {
 
         if (D_80093060 == 3) {
             vi_set_mode(vidMode);
-            vi_update_fb_size_from_current_mode(gFramebufferChoice);
-            osViSwapBuffer(gFramebufferCurrent);
+            vi_update_fb_size_from_current_mode(gCurrFramebufferIdx);
+            osViSwapBuffer(gFrontFramebuffer);
         } else if (D_80093060 == 2) {
-            vi_update_fb_size_from_current_mode(gFramebufferChoice);
-            osViSwapBuffer(gFramebufferCurrent);
+            vi_update_fb_size_from_current_mode(gCurrFramebufferIdx);
+            osViSwapBuffer(gFrontFramebuffer);
         } else {
             D_800BCC90.hdr.type = 0x11;
             D_800BCC90.hdr.retQueue = (OSMesgQueue*)&gTvViMode;
             osSendMesg(__osViDevMgr.evtQueue, &D_800BCC90, OS_MESG_BLOCK);
-            osViSwapBuffer(gFramebufferCurrent);
+            osViSwapBuffer(gFrontFramebuffer);
             D_80093064 ^= 1;
         }
 
@@ -392,9 +392,9 @@ s32 vi_frame_sync(s32 param1) {
         if (get_pause_state() == 1) {
             // Create pause screen screenshot
             set_pause_state(2);
-            bcopy(gFramebufferNext, gFramebufferEnd, 0x25800);
+            bcopy(gBackFramebuffer, gFramebufferEnd, 0x25800);
         } else {
-            osViSwapBuffer(gFramebufferCurrent);
+            osViSwapBuffer(gFrontFramebuffer);
         }
     }
 
@@ -413,38 +413,18 @@ s32 vi_get_current_frame_rate(void) {
     return (s32)((f32)gDisplayHertz / (f32)gViUpdateRate);
 }
 
-/**
- * Swaps gFramebufferCurrent and gFramebufferNext.
- *
- * Uses gFramebufferChoice to keep track of the index for the next framebuffer to swap to.
- */
 void vi_swap_buffers(void) {
-    // Set the current framebuffer to the one last chosen for framebufferNext (see below)
-    gFramebufferCurrent = gFramebufferPointers[gFramebufferChoice];
+    gFrontFramebuffer = gFramebufferPointers[gCurrFramebufferIdx];
+    gFrontDepthBuffer = gDepthBuffer;
 
-    // TODO: what is this doing?
-    D_800BCCB4 = gFramebufferStart; // D_800BCCB4 = &framebufferCurrent+8
+    gCurrFramebufferIdx ^= 1;
 
-    // Swap choice to the other framebuffer index
-    //
-    // Assuming there are 2 framebuffers, this will flip between 0 and 1:
-    //   0 ^ 1 = 1
-    //   1 ^ 1 = 0
-    gFramebufferChoice = gFramebufferChoice ^ 1;
-
-    // Set next framebuffer to the swapped index
-    gFramebufferNext = gFramebufferPointers[gFramebufferChoice];
-
-    // TODO: what is this doing?
-    D_800BCCB0 = gFramebufferStart; // D_800BCCB0 = &framebufferCurrent+4
+    gBackFramebuffer = gFramebufferPointers[gCurrFramebufferIdx];
+    gBackDepthBuffer = gDepthBuffer;
 }
 
-// TODO: these function names are not right
-/**
- * Returns gFramebufferStart.
- */
-u16 *vi_get_framebuffer_start() {
-    return gFramebufferStart;
+u16 *vi_get_depth_buffer() {
+    return gDepthBuffer;
 }
 
 /**
@@ -480,7 +460,7 @@ s32 vi_func_8005DD4C(s32 x, s32 y, s32 arg2) {
     if (vi_contains_point(x, y) == 0) {
         temp_t6 = -1;
     } else {
-        temp_t6 = (gCurrentResolutionH[gFramebufferChoice] * y) + x;
+        temp_t6 = (gCurrentResolutionH[gCurrFramebufferIdx] * y) + x;
     }
 
     sp24[*sp1C].y = temp_t6;
@@ -494,9 +474,9 @@ s32 vi_func_8005DD4C(s32 x, s32 y, s32 arg2) {
  */
 int vi_contains_point(s32 x, s32 y) {
     return x >= 0
-        && (u32)x < gCurrentResolutionH[gFramebufferChoice]
+        && (u32)x < gCurrentResolutionH[gCurrFramebufferIdx]
         && y >= 0
-        && (u32)y < gCurrentResolutionV[gFramebufferChoice];
+        && (u32)y < gCurrentResolutionV[gCurrFramebufferIdx];
 }
 
 void vi_func_8005DEE8(void) {
@@ -516,7 +496,7 @@ void vi_func_8005DEE8(void) {
         new_var2 = temp2[i].y;
         temp_t5 = new_var2;
         if (new_var2 >= 0) {
-            temp_t5 = gFramebufferStart[new_var2] >> 2;
+            temp_t5 = gDepthBuffer[new_var2] >> 2;
             // temp_t5 >> 0xB loads the first 21 bits
             temp_a3 = &D_80093068[((temp_t5 >> 0xB) & 7)];
             // temp_t5 & 0x7FF loads the last 11 bits
