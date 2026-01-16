@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/rsp_segment.h"
 #include "sys/segment_535C0.h"
 
 static const char str_8009a480[] = "Freak a0 %x  a1 %x \n";
@@ -20,6 +21,17 @@ s32 D_800B49E0;
 // -------- .bss end 800b49f0 -------- //
 
 void func_8003FE70(Gfx **gdl, s32, s32, s32);
+void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height);
+void func_800403AC(u16* arg0, u16* arg1, u32 arg2, u32 arg3, s32 arg4);
+void func_80040590(s32 arg0, s32 arg1);
+void func_80040754(u16* arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_80040870(u16* arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4);
+void func_80040920(u16* arg0, s32 arg1, s32 arg2, s32 arg3);
+void func_800409D0(u16 *fb, s32 width, s32 height);
+void func_80040A04(u16* arg0, s32 arg1, s32 arg2, s32 arg3);
+void show_framebuffer_corners_kinda(u16 *framebuffer, s32 width, s32 height);
+void func_80040CD0(u16* arg0, u16* arg1, s32 arg2, s32 arg3);
+void func_80040EFC(u16* arg0, u16* arg1, s32 arg2, s32 arg3);
 
 void func_8003E9F0(Gfx** gdl, s32 updateRate) {
     s32 temp_v0;
@@ -592,7 +604,114 @@ u16 func_8003FD48(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
     return (var_a1 + var_a3 + var_v1);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_8003FE70.s")
+void func_8003FE70(Gfx** gdl, s32 arg1, s32 arg2, s32 arg3) {
+    s32 var_t0;
+    s32 var_v1;
+    s32 viSize;
+    s32 viWidth;
+    s32 viHeight;
+    s32 var_v1_2;
+    s32 var_a0;
+    s32 var_fp;
+    s32 var_s7;
+
+    var_s7 = 0;
+    var_fp = 0;
+    var_v1 = (s32) ((f32) arg1 - 12.0f);
+    if (var_v1 < 0) {
+        var_v1 = 0;
+    }
+    viSize = vi_get_current_size();
+    viWidth = GET_VIDEO_WIDTH(viSize);
+    viHeight = GET_VIDEO_HEIGHT(viSize);
+    gfxtask_wait();
+    switch (arg2) {
+    case 5:
+        break;
+    case 6:
+        func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        func_80040920(gFrontFramebuffer, viWidth, viHeight, 0xA);
+        break;
+    case 7:
+        func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        func_800409D0(gFrontFramebuffer, viWidth, viHeight);
+        break;
+    case 8:
+        func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        func_80040A04(gFrontFramebuffer, viWidth, viHeight, 4);
+        break;
+    case 9:
+        func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        show_framebuffer_corners_kinda(gFrontFramebuffer, viWidth, viHeight);
+        break;
+    case 11:
+        var_s7 = -1;
+        break;
+    case 12:
+        var_s7 = 1;
+        break;
+    case 13:
+        var_fp = -1;
+        break;
+    case 14:
+        var_fp = 1;
+        break;
+    case 10:
+        func_80040378(gBackFramebuffer, gFrontFramebuffer, viWidth, viHeight);
+        return;
+    }
+
+    for (var_t0 = 0; var_t0 < arg1; var_t0++) {
+        var_v1_2 = (arg1 - var_t0) / 3;
+        if (var_v1_2 >= 5) {
+            var_v1_2 = -1;
+        }
+        rsp_segment(gdl, 1U, gFrontFramebuffer);
+        switch (arg2) {
+        case 1:
+            func_80040590((viWidth >> 1) - ((s32) ((s32) (viWidth * (var_t0 + 1)) / arg1) >> 1), viWidth >> 4);
+            break;
+        case 3:
+            if (var_v1_2 != -1) {
+                func_800403AC(gFrontFramebuffer, gBackFramebuffer, (u32) viWidth, (u32) viHeight, var_v1_2);
+            }
+            break;
+        case 4:
+            if ((var_t0 % 2)) {
+                func_80040754(gFrontFramebuffer, viWidth, viHeight, (s32) (viWidth * 2) / arg1);
+            } else {
+                func_80040870(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight, (s32) (viWidth * var_t0) / arg1);
+            }
+            break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+            func_80040CD0(gFrontFramebuffer, gBackFramebuffer, viHeight, viWidth);
+            break;
+        case 2:
+        case 11:
+        case 12:
+        case 13:
+        case 14:
+            if (var_t0 < var_v1) {
+                if (var_v1 < var_t0) {
+                    var_a0 = 1;
+                } else {
+                    var_a0 = 0;
+                }
+                func_8003F660(var_a0, var_s7, var_fp, arg3);
+            } else {
+                func_800403AC(gFrontFramebuffer, gBackFramebuffer, (u32) viWidth, (u32) viHeight, 2);
+            }
+            break;
+        case 15:
+            func_8003F660(0, var_s7, var_fp, arg3);
+            break;
+        }
+    }
+    return;
+}
 
 void func_800402F8(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
     u16 i;
@@ -600,7 +719,7 @@ void func_800402F8(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
 
     for (i = 0; i < arg3; i++) {
         for (j = 0; j < arg2; j++) {
-            arg0[0] = ((arg1[0] & (1 << arg4) | arg0[0] & ~(1 << arg4)));
+            arg0[0] = (((arg1[0] & (1 << arg4)) | (arg0[0] & ~(1 << arg4))));
             arg0 += 1;
             arg1 += 1;
         }
@@ -756,14 +875,14 @@ void func_80040870(u16* arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
-void func_80040920(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void func_80040920(u16* arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 temp_s2;
     s32 i;
     u16* temp_v1;
 
     for (i = 0; i < arg3; i++) {
         temp_s2 = rand_next(0, arg1);
-        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0 + (temp_s2 * 2));
+        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + (s32)arg0 + (temp_s2 * 2));
         temp_v1[0] &= ~1;
     }
 }
@@ -773,12 +892,12 @@ void func_800409D0(u16 *fb, s32 width, s32 height) {
     fb[(width >> 1) + (height >> 1) * width] &= ~1;
 }
 
-void func_80040A04(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void func_80040A04(u16* arg0, s32 arg1, s32 arg2, s32 arg3) {
     s32 i;
     u16* temp_v1;
 
     for (i = 0; i < arg3; i++) {
-        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0);
+        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + (s32)arg0);
         temp_v1[0] &= ~1;
     }
 }
