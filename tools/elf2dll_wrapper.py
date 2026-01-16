@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import argparse
+from io import BufferedWriter
 import struct
+from typing import TextIO
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import Symbol, Section
 from elftools.elf.relocation import RelocationSection
@@ -114,25 +116,29 @@ def got_relocs_hack(got_and_relocs: elf2dll.GOTAndRelocations, target_got: list[
 
     got_and_relocs["gp_relocs"].sort()
 
+def convert(obj: ELFFile, writer: BufferedWriter, bss_writer: TextIO, syms_writer: TextIO | None):
+    # Set up elf2dll hack callbacks
+    export_syms = read_exports(obj)
+    original_got = read_got(obj)
+
+    elf2dll.hack_sym_bind_override = lambda idx,sym: sym_bind_hack(idx, sym, export_syms)
+    elf2dll.hack_got_reloc_override = lambda x: got_relocs_hack(x, original_got)
+
+    # Run elf2dll
+    elf2dll.convert(obj, writer, bss_writer, syms_writer)
+
 def main():
     parser = argparse.ArgumentParser(description="Runs elf2dll while handling quirks from nonmatching asm.")
     parser.add_argument("elf", type=argparse.FileType("rb"), help="The DLL .elf file to convert.")
     parser.add_argument("-o", "--output", type=argparse.FileType("wb"), help="The path of the Dinosaur Planet DLL file to output.", required=True)
     parser.add_argument("-b", "--bss", type=argparse.FileType("w", encoding="utf-8"), help="Path to output the .bss size as a text file.", required=True)
+    parser.add_argument("-s", "--syms-map", dest="syms_output", type=argparse.FileType("w", encoding="utf-8"), help="Path to output symbol mapping for debugging.")
     args = parser.parse_args()
 
+    error = False
     with ELFFile(args.elf) as obj:
-        # Set up elf2dll hack callbacks
-        export_syms = read_exports(obj)
-        original_got = read_got(obj)
-
-        elf2dll.hack_sym_bind_override = lambda idx,sym: sym_bind_hack(idx, sym, export_syms)
-        elf2dll.hack_got_reloc_override = lambda x: got_relocs_hack(x, original_got)
-
-        # Run elf2dll
-        error = False
         try:
-            elf2dll.convert(obj, args.output, args.bss, syms_writer=None)
+            convert(obj, args.output, args.bss, args.syms_output)
         except elf2dll.ELF2DLLException as ex:
             print(f"ERROR: {ex}")
             error = True
