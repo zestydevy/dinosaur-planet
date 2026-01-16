@@ -177,11 +177,11 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         spBC = obj->srt.transl.f[2];
         spBA = obj->srt.yaw;
     }
-    if ((obj->unk64 != NULL) && (obj->unk64->gdl != NULL)) {
-        if (obj->unk64->flags & 0x20) {
-            spDC.transl.f[0] = obj->unk64->tr.f[0];
-            spDC.transl.f[1] = obj->unk64->tr.f[1];
-            spDC.transl.f[2] = obj->unk64->tr.f[2];
+    if ((obj->shadow != NULL) && (obj->shadow->gdl != NULL)) {
+        if (obj->shadow->flags & 0x20) {
+            spDC.transl.f[0] = obj->shadow->tr.f[0];
+            spDC.transl.f[1] = obj->shadow->tr.f[1];
+            spDC.transl.f[2] = obj->shadow->tr.f[2];
         } else {
             spDC.transl.f[0] = obj->srt.transl.f[0];
             spDC.transl.f[1] = obj->srt.transl.f[1];
@@ -196,7 +196,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             spDC.transl.f[2] += gWorldZ;
         }
         func_800032C4(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
-        gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->unk64->gdl));
+        gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
         func_8003DB5C();
     }
@@ -324,7 +324,7 @@ void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     }
 }
 
-void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, u32 param_4, u32 param_5, u32 param_6)
+void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs,Vertex **vtxs, Triangle **pols, u32 param_6)
 {
     Gfx *mygdl;
     Mtx *outRspMtxs;
@@ -738,7 +738,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         sp6C |= 4;
         sp64 = 1;
     }
-    if ((arg0->unk64 != NULL) && (arg0->unk64->gdl != NULL)) {
+    if ((arg0->shadow != NULL) && (arg0->shadow->gdl != NULL)) {
         sp44.transl.f[0] = arg0->srt.transl.f[0];
         sp44.transl.f[1] = 0.0f;
         sp44.transl.f[2] = arg0->srt.transl.f[2];
@@ -747,7 +747,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         sp44.pitch = 0;
         sp44.scale = 1.0f;
         func_800032C4(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
-        gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->unk64->gdl));
+        gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
         dl_set_all_dirty();
         func_8003DB5C();
         sp64 = 1;
@@ -799,11 +799,11 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
 void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;
 
-    if (object->unk64->gdl) {
-        if (object->unk64->flags & 0x20) {
-            shadowTransform.transl.x = object->unk64->tr.x;
-            shadowTransform.transl.y = object->unk64->tr.y;
-            shadowTransform.transl.z = object->unk64->tr.z;
+    if (object->shadow->gdl) {
+        if (object->shadow->flags & 0x20) {
+            shadowTransform.transl.x = object->shadow->tr.x;
+            shadowTransform.transl.y = object->shadow->tr.y;
+            shadowTransform.transl.z = object->shadow->tr.z;
         } else {
             shadowTransform.transl.x = object->srt.transl.x;
             shadowTransform.transl.y = object->srt.transl.y;
@@ -815,7 +815,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.scale = 0.05f;
 
         func_800032C4(gdl, mtx, (SRT* ) &shadowTransform, 1.0f, 0.0f, NULL);
-        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->unk64->gdl));
+        gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->shadow->gdl));
 
         if (object->parent) {
             setup_rsp_matrices_for_object(gdl, mtx, object->parent);

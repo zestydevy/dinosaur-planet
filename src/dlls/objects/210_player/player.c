@@ -196,7 +196,6 @@ u16 *func_8005D3A4(s32 param);
 s32 func_80025140(Object*, f32, f32, s32);
 MtxF* func_80032170(Object*, s32);
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
-void func_8004E64C(Object* player, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_80032238(Object* player, s32 arg1, s32 arg2, Vec3f* arg3);
 void func_80034FF0(MtxF* arg0);
 void func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, void*, s32, s32, void*, s32, s32);
@@ -590,9 +589,9 @@ void dll_210_setup(Object* player, u32 arg1) {
     player->objhitInfo->unkA1 = 0x29;
     player->opacity = 0xFF;
     *_bss_1A0 = 0;
-    if (player->unk64 != NULL) {
-        player->unk64->flags |= 0x4008;
-        player->unk64->unk2c = player->unk64->unk0 * 0.5f;
+    if (player->shadow != NULL) {
+        player->shadow->flags |= (OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_8 | OBJ_SHADOW_FLAG_MAKE_TEX_SLOT(0));
+        player->shadow->unk2c = player->shadow->unk0 * 0.5f;
     }
     gDLL_1_UI->vtbl->func_12EC();
     data->unk85C = obj_create(obj_alloc_create_info(0x24, OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
@@ -1134,8 +1133,8 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             }
             arg1->unk708 = sp8C;
             arg1->unk70C = messageArgument & 0xFFFF;
-            if (arg1->unk708->unk64 != NULL) {
-                arg1->unk708->unk64->flags = 0x20000;
+            if (arg1->unk708->shadow != NULL) {
+                arg1->unk708->shadow->flags = OBJ_SHADOW_FLAG_20000;
             }
             arg1->unk8A9 = 1;
             break;
@@ -1495,7 +1494,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
             data->unk868->srt.yaw = player->srt.yaw;
             data->unk868->dll->vtbl->print(data->unk868, arg1, arg2, arg3, arg4, -1);
         }
-        func_8004E64C(player, (s32) arg1, (s32) arg2, (s32) arg3, (s32) arg4);
+        func_8004E64C(player, arg1, arg2, arg3, arg4);
     }
 }
 #endif
@@ -2210,7 +2209,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     objdata->unk72C.z = objdata->unk7EC.z;
                     ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 2);
                     arg0->srt.flags |= 8;
-                    arg0->unk64->flags |= 0x1000;
+                    arg0->shadow->flags |= OBJ_SHADOW_FLAG_1000;
                     arg2->unk7A &= ~0x4;
                     switch (vehicle->id) {
                         case OBJ_IMSnowBike:
@@ -2239,7 +2238,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 if (vehicle != NULL) {
                     ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 0);
                     arg0->srt.flags &= ~0x8;
-                    arg0->unk64->flags &= ~0x1000;
+                    arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_1000;
                     vehicle = NULL;
                     arg2->unk7A |= 4;
                     objdata->unk858 = NULL;
@@ -6904,7 +6903,7 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     s32 pad;
     s32 sp88;
-    ObjectStruct64* temp_v0_3;
+    ObjectShadow* temp_v0_3;
     Object* temp_s2;
     Vec3f sp74;
     Vec3f sp68;
@@ -6986,7 +6985,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         objdata->unk744.f[1] = sp60 - sp68.f[1];
         objdata->unk744.f[2] = sp64;
         player->srt.flags |= 8;
-        player->unk64->flags |= 0x1000;
+        player->shadow->flags |= OBJ_SHADOW_FLAG_1000;
         fsa->animTickDelta = 0.022f;
     }
     player->srt.transl.f[0] = objdata->unk738.f[0] + (player->animProgress * objdata->unk744.x);
@@ -7192,7 +7191,7 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
     s16* temp_v0_2;
 
-    player->unk64->flags &= ~0x1000;
+    player->shadow->flags &= ~OBJ_SHADOW_FLAG_1000;
     player->srt.flags &= ~8;
     player->curModAnimIdLayered = -1;
     temp_v0_2 = func_80034804(player, 9);
@@ -7292,7 +7291,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             sp4C[0] = 0;
             sp4C[2] = 0;
         }
-        player->unk64->flags &= ~0x1000;
+        player->shadow->flags &= ~OBJ_SHADOW_FLAG_1000;
         player->positionMirror.x = temp_s1->unk7EC.x;
         player->positionMirror.z = temp_s1->unk7EC.z;
         inverse_transform_point_by_object(player->positionMirror.x, 0.0f, player->positionMirror.z, player->srt.transl.f, &sp54.scale, &player->srt.transl.z, player->parent);
@@ -9349,7 +9348,7 @@ s32 dll_210_func_1BEBC(Object* player, ObjFSA_Data *arg1, f32 arg2) {
     Player_Data* objdata;
 
     if (arg1->enteredAnimState != 0) {
-        player->unk64->flags |= 0x1000;
+        player->shadow->flags |= OBJ_SHADOW_FLAG_1000;
         arg1->animExitAction = dll_210_func_1BF8C;
     }
     gDLL_1_UI->vtbl->func_2B8(7U);
@@ -9364,8 +9363,8 @@ s32 dll_210_func_1BEBC(Object* player, ObjFSA_Data *arg1, f32 arg2) {
 
 // offset: 0x1BF8C | func: 139
 static void dll_210_func_1BF8C(Object* player, ObjFSA_Data *fsa) {
-    ObjectStruct64* shadow;
-    player->unk64->flags &= ~0x1000;
+    ObjectShadow* shadow;
+    player->shadow->flags &= ~OBJ_SHADOW_FLAG_1000;
 }
 
 // offset: 0x1BFAC | func: 140

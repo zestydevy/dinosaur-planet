@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sys/newshadows.h"
+#include "sys/shadowtex.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
 static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
@@ -43,25 +44,25 @@ f32 D_800B97E0[24];
 f32 D_800B9840[24];
 Gfx *D_800B98A0[2];
 Unk800B98A8 *D_800B98A8[2];
-Unk8004FA58_Arg5 *D_800B98B0[2];
+Vtx *D_800B98B0[2];
 s16 D_800B98B8[300];
 u8 D_800B9B10[80];
 s16 D_800B9B60[800];
 Unk8004FA58 D_800BA1A0[200];
 Unk800B98A8 *D_800BB140;
 Unk800B98A8 *D_800BB144;
-Unk8004FA58_Arg5 *D_800BB148;
-Unk8004FA58_Arg5 *D_800BB14C;
+Vtx *D_800BB148;
+Vtx *D_800BB14C;
 Gfx *D_800BB150;
 Gfx *D_800BB154;
 Gfx *D_800BB158[2];
-Unk8004FA58_Arg5 *D_800BB160[2];
+Vtx *D_800BB160[2];
 Unk800BB168 *D_800BB168[2];
 s8 D_800BB170;
 Unk800BB168* D_800BB174;
 Unk800BB168* D_800BB178;
-Unk8004FA58_Arg5* D_800BB17C;
-Unk8004FA58_Arg5* D_800BB180;
+Vtx* D_800BB17C;
+Vtx* D_800BB180;
 Gfx* D_800BB184;
 Gfx* D_800BB188;
 f32 D_800BB18C;
@@ -80,16 +81,16 @@ void func_8004D470(void) {
     D_800B98A0[1] = (Gfx *)              ((u32)temp_v0 + sizeof(Unk800B98A0));
     D_800B98A8[0] = (Unk800B98A8 *)      ((u32)temp_v0 + sizeof(Unk800B98A0) * 2);
     D_800B98A8[1] = (Unk800B98A8 *)      ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8));
-    D_800B98B0[0] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
-    D_800B98B0[1] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
+    D_800B98B0[0] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
+    D_800B98B0[1] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
 
     temp_v0 = (void *) mmAlloc(0xC800, ALLOC_TAG_SHAD_COL, NULL);
     D_800BB158[0] = (Gfx *)                    temp_v0;
     D_800BB158[1] = (Gfx *)              ((u32)temp_v0 + sizeof(Unk800BB158));
     D_800BB168[0] = (Unk800BB168 *)      ((u32)temp_v0 + sizeof(Unk800BB158) * 2);
     D_800BB168[1] = (Unk800BB168 *)      ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168));
-    D_800BB160[0] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2);
-    D_800BB160[1] = (Unk8004FA58_Arg5 *) ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2 + sizeof(Unk800BB160));
+    D_800BB160[0] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2);
+    D_800BB160[1] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2 + sizeof(Unk800BB160));
 
     D_800B9840[0] = -8.0f;
     D_800B9840[1] = 0.0f;
@@ -142,7 +143,7 @@ void func_8004D470(void) {
     D_800B9840[21] = 6.0f;
     D_800B9840[22] = 0.0f;
     D_800B9840[23] = 55.0f;
-    func_8005B870();
+    shadowtex_init();
     D_800BB190 = queue_load_texture_proxy(0xD8);
 }
 
@@ -198,42 +199,42 @@ void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 
 void func_8004D844(Object *obj, f32 x, f32 y, f32 z)
 {
-    ObjectStruct64 *temp_v0 = obj->unk64;
+    ObjectShadow *temp_v0 = obj->shadow;
 
     if (temp_v0) {
         temp_v0->tr.x = x;
         temp_v0->tr.y = y;
         temp_v0->tr.z = z;
-        temp_v0->flags |= 0x20;
+        temp_v0->flags |= OBJ_SHADOW_FLAG_20;
     }
 }
 
 void func_8004D880(Object *arg0) {
-    ObjectStruct64* temp_v0;
+    ObjectShadow* temp_v0;
 
-    if (arg0->unk64 != NULL) {
-        arg0->unk64->flags &= ~0x20;
+    if (arg0->shadow != NULL) {
+        arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_20;
     }
 }
 
-u32 func_8004D8A4(Object* obj, u32 addr, s32 arg2) {
-    ObjectStruct64 *obj64;
+u32 shadow_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
+    ObjectShadow *shadow;
 
-    obj64 = (ObjectStruct64 *) mmAlign4(addr);
-    obj->unk64 = obj64;
-    addr = (u32)(obj64 + 1);
-    obj64->unk4 = texture_load((s32) -obj->def->shadowTexture, 0);
-    obj64->unk0 = obj->def->unk00;
-    obj64->unk2c = obj64->unk0;
-    obj64->unk14.x = D_80092BD0;
-    obj64->unk14.y = D_80092BD4;
-    obj64->unk14.z = D_80092BD8;
-    obj64->unk36 = 0x40;
-    obj64->flags = 4;
-    obj64->unk38 = 0x19;
-    obj64->unk39 = 0x4B;
-    obj64->unk3A = 0x96;
-    obj64->unk3B = 0x64;
+    shadow = (ObjectShadow*)mmAlign4(addr);
+    obj->shadow = shadow;
+    addr = (u32)(shadow + 1);
+    shadow->texture = texture_load((s32) -obj->def->shadowTexture, 0);
+    shadow->unk0 = obj->def->unk00;
+    shadow->unk2c = shadow->unk0;
+    shadow->unk14.x = D_80092BD0;
+    shadow->unk14.y = D_80092BD4;
+    shadow->unk14.z = D_80092BD8;
+    shadow->unk36 = 64;
+    shadow->flags = OBJ_SHADOW_FLAG_4;
+    shadow->unk38 = 0x19;
+    shadow->unk39 = 0x4B;
+    shadow->unk3A = 0x96;
+    shadow->unk3B = 0x64;
     func_8004D974(1);
     return addr;
 }
@@ -288,7 +289,7 @@ void func_8004DABC(void) {
     }
 }
 
-s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
+s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2A4; // end of loop
@@ -300,7 +301,7 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     Vec3f sp220; // obj -> srt -> transl copy
     Vec3f sp1C0[8];
     u8 pad[0x110];
-    ObjectStruct64* temp_s1;
+    ObjectShadow* shadow;
     u32 temp_v0;
     Unk8004FA58 sp94;
     s32 sp90;
@@ -314,122 +315,122 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
     // @fake
     if (1) {}
     if (func_80041DA4() == 0) {
-        arg0->unk64->gdl = NULL;
+        obj->shadow->gdl = NULL;
         return 0;
     }
-    if (D_80092C24 >= 0x1C3) {
-        arg0->unk64->gdl = NULL;
+    if (D_80092C24 > 450) {
+        obj->shadow->gdl = NULL;
         return 0;
     }
-    if (D_80092C2C >= 0x1A5) {
-        arg0->unk64->gdl = NULL;
+    if (D_80092C2C > 420) {
+        obj->shadow->gdl = NULL;
         return 0;
     }
-    if (D_80092C34 >= 0x141) {
-        arg0->unk64->gdl = NULL;
+    if (D_80092C34 > 320) {
+        obj->shadow->gdl = NULL;
         return 0;
     }
     D_800BB140 = D_800BB144;
     D_800BB148 = D_800BB14C;
     D_800BB170 = 0;
-    temp_s1 = arg0->unk64;
-    if (temp_s1->flags & 0x1000) {
-        temp_s1->unk36 -= updateRate * 2;
-        if (temp_s1->unk36 <= 0) {
-            temp_s1->unk36 = 0;
+    shadow = obj->shadow;
+    if (shadow->flags & OBJ_SHADOW_FLAG_1000) {
+        shadow->unk36 -= updateRate * 2;
+        if (shadow->unk36 <= 0) {
+            shadow->unk36 = 0;
         }
-        if (temp_s1->unk36 == 0) {
-            temp_s1->gdl = NULL;
+        if (shadow->unk36 == 0) {
+            shadow->gdl = NULL;
             return 0;
         }
-    } else if (arg0->group == GROUP_UNK1) {
+    } else if (obj->group == GROUP_UNK1) {
         if (arg2 == 0) {
             if (D_800BB170 != 0) {
-                if (!(temp_s1->flags & 4)) {
-                    temp_s1->unk36 += updateRate * 2;
-                    if (temp_s1->unk36 >= 0x40) {
-                        temp_s1->unk36 = 0x40;
+                if (!(shadow->flags & OBJ_SHADOW_FLAG_4)) {
+                    shadow->unk36 += updateRate * 2;
+                    if (shadow->unk36 >= 64) {
+                        shadow->unk36 = 64;
                     }
                 } else {
-                    temp_s1->unk36 -= updateRate * 2;
-                    if (temp_s1->unk36 <= 0) {
-                        temp_s1->unk36 = 0;
-                        temp_s1->flags &= ~4;
+                    shadow->unk36 -= updateRate * 2;
+                    if (shadow->unk36 <= 0) {
+                        shadow->unk36 = 0;
+                        shadow->flags &= ~OBJ_SHADOW_FLAG_4;
                     }
                 }
-            } else if (!(temp_s1->flags & 4)) {
-                temp_s1->unk36 -= updateRate * 2;
-                if (temp_s1->unk36 <= 0) {
-                    temp_s1->unk36 = 0;
-                    temp_s1->flags |= 4;
+            } else if (!(shadow->flags & OBJ_SHADOW_FLAG_4)) {
+                shadow->unk36 -= updateRate * 2;
+                if (shadow->unk36 <= 0) {
+                    shadow->unk36 = 0;
+                    shadow->flags |= OBJ_SHADOW_FLAG_4;
                 }
             } else {
-                temp_s1->unk36 += updateRate * 2;
-                if (temp_s1->unk36 >= 0x40) {
-                    temp_s1->unk36 = 0x40;
+                shadow->unk36 += updateRate * 2;
+                if (shadow->unk36 >= 64) {
+                    shadow->unk36 = 64;
                 }
             }
         }
-    } else if (!(temp_s1->flags & 0x10000)) {
-        temp_s1->unk36 += updateRate * 2;
-        if (temp_s1->unk36 >= 0x40) {
-            temp_s1->unk36 = 0x40;
+    } else if (!(shadow->flags & OBJ_SHADOW_FLAG_10000)) {
+        shadow->unk36 += updateRate * 2;
+        if (shadow->unk36 >= 64) {
+            shadow->unk36 = 64;
         }
     }
-    if (!(temp_s1->flags & 4)) {
+    if (!(shadow->flags & OBJ_SHADOW_FLAG_4)) {
         if (arg2 == 0) {
-            arg0->unk64->gdl = NULL;
+            obj->shadow->gdl = NULL;
             return 1;
         }
         D_800BB170 = 1;
     } else {
         D_800BB170 = 0;
     }
-    if (temp_s1->flags & 0x20) {
-        bcopy(&arg0->srt.transl, &sp220, 0xC);
-        bcopy(&arg0->positionMirror, &sp22C, 0xC);
-        if (arg0->parent != NULL) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+        bcopy(&obj->srt.transl, &sp220, sizeof(Vec3f));
+        bcopy(&obj->positionMirror, &sp22C, sizeof(Vec3f));
+        if (obj->parent != NULL) {
             transform_point_by_object(
-                temp_s1->tr.x,
-                temp_s1->tr.y,
-                temp_s1->tr.z,
-                &arg0->positionMirror.x,
-                &arg0->positionMirror.y,
-                &arg0->positionMirror.z,
-                arg0->parent
+                shadow->tr.x,
+                shadow->tr.y,
+                shadow->tr.z,
+                &obj->positionMirror.x,
+                &obj->positionMirror.y,
+                &obj->positionMirror.z,
+                obj->parent
             );
         } else {
-            bcopy(&temp_s1->tr, &arg0->positionMirror, 0xC);
+            bcopy(&shadow->tr, &obj->positionMirror, sizeof(Vec3f));
         }
-        bcopy(&temp_s1->tr, &arg0->srt.transl, 0xC);
+        bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
     }
-    temp_s1->gdl = D_800BB150;
-    if (!(temp_s1->flags & 0x10)) {
-        temp_s1->unk14.x = D_80092BD0;
-        temp_s1->unk14.y = D_80092BD4;
-        temp_s1->unk14.z = D_80092BD8;
-    } else if (temp_s1->flags & 0x800) {
-        temp_s1->unk14.x = 0.0f;
-        temp_s1->unk14.z = 0.0f;
-        temp_s1->unk14.y = 1.0f;
+    shadow->gdl = D_800BB150;
+    if (!(shadow->flags & OBJ_SHADOW_FLAG_10)) {
+        shadow->unk14.x = D_80092BD0;
+        shadow->unk14.y = D_80092BD4;
+        shadow->unk14.z = D_80092BD8;
+    } else if (shadow->flags & OBJ_SHADOW_FLAG_800) {
+        shadow->unk14.x = 0.0f;
+        shadow->unk14.z = 0.0f;
+        shadow->unk14.y = 1.0f;
     }
     if (D_800BB170 != 0) {
-        func_800516BC(arg0, sp244, temp_s1->unk0 * 0.7f);
+        func_800516BC(obj, sp244, shadow->unk0 * 0.7f);
     } else {
-        func_80051944(0, arg0, sp244, temp_s1->unk0, 0);
+        func_80051944(0, obj, sp244, shadow->unk0, 0);
     }
     for (i = 0, j = 0; i < 8; i++, j++) {
-        sp1C0[j].x = sp244[i].x + arg0->positionMirror.x;
-        sp1C0[j].y = sp244[i].y + arg0->positionMirror.y;
-        sp1C0[j].z = sp244[i].z + arg0->positionMirror.z;
+        sp1C0[j].x = sp244[i].x + obj->positionMirror.x;
+        sp1C0[j].y = sp244[i].y + obj->positionMirror.y;
+        sp1C0[j].z = sp244[i].z + obj->positionMirror.z;
     }
     fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
-    func_80053750(arg0, &sp68, 1);
+    func_80053750(obj, &sp68, 1);
     func_80053408((Vec3f *)sp8C);
     func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
     sp2B4 = func_80052300(
-        arg0,
+        obj,
         (UnkFunc80051D68Arg3 *) sp88,
         D_800BA1A0,
         (UnkFunc80052300Arg3 *) D_800BB140,
@@ -438,52 +439,52 @@ s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate) {
         sp8C[0][0],
         sp8C[0][2],
         arg1,
-        temp_s1->flags & 0x40000
+        shadow->flags & OBJ_SHADOW_FLAG_40000
     );
     D_80092BDC = sp90;
     D_80092C1C = sp2B4;
     D_80092BE0 = (s32)sp8C[0];
-    func_800511E8(arg0, 0, sp244, &sp94);
+    func_800511E8(obj, 0, sp244, &sp94);
     temp_t0 = ((s8 *)D_800BB148 - (s8 *)D_800B98B0[D_80092C08]) >> 4;
     if (D_800BB170 != 0) {
-        if (func_800502AC(arg0, sp244, &sp94, sp2B4, (Vec3f *)D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
-            temp_s1->gdl = NULL;
+        if (func_800502AC(obj, sp244, &sp94, sp2B4, (Vec3f *)D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
+            shadow->gdl = NULL;
             D_80092C34 = 0x190;
-            if (temp_s1->flags & 0x20) {
-                bcopy(&sp220, &arg0->srt.transl, 0xC);
-                bcopy(&sp22C, &arg0->positionMirror, 0xC);
+            if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+                bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
+                bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
             }
             return 0;
         }
-        D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, temp_s1, arg0, D_80092C20, &sp2B0);
-        goto block_59;
-    } else if (func_8004FA58(arg0, sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, (Unk8004FA58_Arg5* ) D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
-        temp_s1->gdl = NULL;
-        D_80092C34 = 0x190;
-        if (temp_s1->flags & 0x20) {
-            bcopy(&sp220, &arg0->srt.transl, 0xC);
-            bcopy(&sp22C, &arg0->positionMirror, 0xC);
-        }
+        D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+    } else {
+        if (func_8004FA58(obj, sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
+            shadow->gdl = NULL;
+            D_80092C34 = 0x190;
+            if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+                bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
+                bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
+            }
 
-        return 0;
+            return 0;
+        }
+        D_800BB150 += func_8004F378(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     }
 
-    D_800BB150 += func_8004F378(D_800BB148, D_800BB150, temp_s1, arg0, D_80092C20, &sp2B0);
-block_59:
     D_800BB14C += sp2B0;
     D_800BB144 = D_800BB140;
     D_80092C24 = ((Gfx *) D_800BB150 - (Gfx *) D_800B98A0[D_80092C00]) ;
     D_80092C2C = ((s8 *) D_800BB140 - (s8 *) D_800B98A8[D_80092C04]) / 12;
     D_80092C34 = ((s8 *) D_800BB148 - (s8 *) D_800B98B0[D_80092C08]) >> 4;
-    if (temp_s1->flags & 0x20) {
-        bcopy(&sp220, &arg0->srt.transl, 0xC);
-        bcopy(&sp22C, &arg0->positionMirror, 0xC);
+    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+        bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
+        bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
     }
     return 0;
 }
 
 
-s32 func_8004E540(Object* arg0, ObjectStruct64* arg1) {
+s32 func_8004E540(Object* arg0, ObjectShadow* arg1) {
     s32 sp1C;
     s32 sp18;
     f32 var_fv1;
@@ -501,32 +502,32 @@ s32 func_8004E540(Object* arg0, ObjectStruct64* arg1) {
     return sp1C >> 8;
 }
 
-void func_8004E64C(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
-    ObjectStruct64* temp_s0;
+void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+    ObjectShadow* shadow;
     Vec3f sp50;
     Vec3f sp44;
 
-    temp_s0 = arg0->unk64;
-    if (temp_s0->gdl == NULL) {
+    shadow = obj->shadow;
+    if (shadow->gdl == NULL) {
         return;
     }
 
-    if (temp_s0->flags & 0x20) {
-        bcopy(&arg0->srt.transl, &sp44, 0xC);
-        bcopy(&arg0->positionMirror, &sp50, 0xC);
-        bcopy(&temp_s0->tr, &arg0->srt.transl, 0xC);
-        if (arg0->parent != NULL) {
-            transform_point_by_object(temp_s0->tr.x, temp_s0->tr.y, temp_s0->tr.z, &temp_s0->tr.x, &temp_s0->tr.y, &temp_s0->tr.z, arg0->parent);
+    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+        bcopy(&obj->srt.transl, &sp44, sizeof(Vec3f));
+        bcopy(&obj->positionMirror, &sp50, sizeof(Vec3f));
+        bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
+        if (obj->parent != NULL) {
+            transform_point_by_object(shadow->tr.x, shadow->tr.y, shadow->tr.z, &shadow->tr.x, &shadow->tr.y, &shadow->tr.z, obj->parent);
         } else {
-            bcopy(&temp_s0->tr, &arg0->positionMirror, 0xC);
+            bcopy(&shadow->tr, &obj->positionMirror, sizeof(Vec3f));
         }
     }
-    if (temp_s0->flags & 8) {
-        func_8005BCE0(arg0, D_80092C18, arg1, arg2, arg3, arg4, (s32) D_800BB170, D_800BB18C, temp_s0->flags & 3);
+    if (shadow->flags & OBJ_SHADOW_FLAG_8) {
+        shadowtex_draw(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     }
-    if (temp_s0->flags & 0x20) {
-        bcopy(&sp44, &arg0->srt.transl, 0xC);
-        bcopy(&sp50, &arg0->positionMirror, 0xC);
+    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+        bcopy(&sp44, &obj->srt.transl, sizeof(Vec3f));
+        bcopy(&sp50, &obj->positionMirror, sizeof(Vec3f));
     }
 }
 
@@ -544,7 +545,7 @@ void func_8004E7A8(Object* arg0) {
     s32 pad2[2];
     s32 *spA0[1];
     s32 sp9C = 0;
-    ObjectStruct64* temp_s1;
+    ObjectShadow* temp_s1;
     s32 alpha;
     s32 i;
     s32 j;
@@ -553,29 +554,29 @@ void func_8004E7A8(Object* arg0) {
     f32 sp50[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // D_80092C74
 
     if (func_80041DA4() == 0) {
-        arg0->unk64->gdl = NULL;
+        arg0->shadow->gdl = NULL;
         return;
     }
     D_800BB170 = 0;
-    temp_s1 = arg0->unk64;
+    temp_s1 = arg0->shadow;
     if (D_80092BE8 != 0) {
         temp_s1->gdl2 = NULL;
         D_80092BFC = 1;
         if (D_80092C28 >= 0x227) {
-            arg0->unk64->gdl = NULL;
+            arg0->shadow->gdl = NULL;
             return;
         }
         if (D_80092C30 >= 0x26D) {
-            arg0->unk64->gdl = NULL;
+            arg0->shadow->gdl = NULL;
             return;
         }
         if (D_80092C38 >= 0x209) {
-            arg0->unk64->gdl = NULL;
+            arg0->shadow->gdl = NULL;
             return;
         }
         D_800BB174 = D_800BB178;
         D_800BB17C = D_800BB180;
-        if (temp_s1->flags & 0x20) {
+        if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
             bcopy(&arg0->srt.transl, &sp1D4, 0xC);
             bcopy(&arg0->positionMirror, &sp1E0, 0xC);
             if (arg0->parent != NULL) {
@@ -594,11 +595,11 @@ void func_8004E7A8(Object* arg0) {
             bcopy(&temp_s1->tr, &arg0->srt.transl, 0xC);
         }
         temp_s1->gdl = D_800BB184;
-        if (!(temp_s1->flags & 0x10)) {
+        if (!(temp_s1->flags & OBJ_SHADOW_FLAG_10)) {
             temp_s1->unk14.x = D_80092BD0;
             temp_s1->unk14.y = D_80092BD4;
             temp_s1->unk14.z = D_80092BD8;
-        } else if (temp_s1->flags & 0x800) {
+        } else if (temp_s1->flags & OBJ_SHADOW_FLAG_800) {
             temp_s1->unk14.x = 0.0f;
             temp_s1->unk14.z = 0.0f;
             temp_s1->unk14.y = 1.0f;
@@ -613,14 +614,14 @@ void func_8004E7A8(Object* arg0) {
         func_80053750(arg0, &sp70, 1);
         func_80053408((Vec3f *)spA0);
         func_800533D8(&sp2B4, &sp9C);
-        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & 0x40000);
+        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0][0], spA0[0][2], 0, temp_s1->flags & OBJ_SHADOW_FLAG_40000);
         D_800BB174 = (Unk800BB168 *)((s8 *)D_800BB174 + sp2B4 * 0x24);
         func_800511E8(arg0, 0, sp24C, (Unk8004FA58* ) &spA0[2]);
         temp_t0 = ((s8 *)D_800BB17C - (s8*)D_800BB160[D_80092C10]) >> 4;
-        if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, (Unk8004FA58_Arg5* ) D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
+        if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C38 = 0x258;
-            if (temp_s1->flags & 0x20) {
+            if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
                 bcopy(&sp1E0, &arg0->positionMirror, 0xC);
             }
@@ -633,7 +634,7 @@ void func_8004E7A8(Object* arg0) {
             D_80092C30 = ((s8 *) D_800BB174 - (s8 *)D_800BB168[D_80092C14]) / 12;
             D_80092C38 = ((s8 *) D_800BB17C - (s8 *)D_800BB160[D_80092C10]) >> 4;
             D_80092BFC = 0;
-            if (temp_s1->flags & 0x20) {
+            if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
                 bcopy(&sp1E0, &arg0->positionMirror, 0xC);
             }
@@ -641,7 +642,7 @@ void func_8004E7A8(Object* arg0) {
     }
 
     if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
-        if (!(temp_s1->flags & 0x400)) {
+        if (!(temp_s1->flags & OBJ_SHADOW_FLAG_400)) {
             alpha = func_8004E540(arg0, temp_s1);
         } else {
             alpha = temp_s1->unk40;
@@ -650,10 +651,7 @@ void func_8004E7A8(Object* arg0) {
     }
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004EEC0.s")
-#else
-s32 func_8004EEC0(Unk8004FA58_Arg5 *arg0, Gfx* gdl, ObjectStruct64* arg2, Object *arg3, s32 arg4, s32* arg5) {
+s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg4, s32 *arg5) {
     DLTri* currentTri;
     s16 temp_v0_2;
     s16* var_s0;
@@ -661,44 +659,40 @@ s32 func_8004EEC0(Unk8004FA58_Arg5 *arg0, Gfx* gdl, ObjectStruct64* arg2, Object
     s32 var_a2;
     s32 var_a3;
     s32 var_s1;
-    s32 var_s2;
+    Vtx* var_s2;
     s32 var_s5;
     Gfx* sp1C0;
     s32 var_s6;
-    s32 sp1B8;
-    s32 sp1B4;
+    void *sp1B8;
+    void *sp1B4;
     s32 var_v1;
     s32 var_a0;
+    s32 var_s3;
     DLTri spA8[16];
 
     sp1C0 = gdl;
-    // macro correct, invalid params
-    gSPLoadGeometryMode(gdl, G_SHADE | G_ZBUFFER | G_SHADING_SMOOTH |0x400);
-    // gdl->words.w0 = 0xD9000000;
-    // gdl->words.w1 = 0x10405;
+    gSPLoadGeometryMode(gdl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG);
     dl_apply_geometry_mode(&gdl);
-    // macro correct, invalid params
-    gDPSetCombineLERP(gdl,
-        0, 0, 0, ENVIRONMENT,
-        0, 0, 0, ENVIRONMENT,
-        0, 0, 0, ENVIRONMENT,
-        0, 0, 0, ENVIRONMENT);
+    gDPSetCombineLERP(gdl, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0);
     dl_apply_combine(&gdl);
-    if (arg2->unk30 & 0x80) {
-        // TODO: Find/use correct flags
-        gDPSetOtherMode(gdl, 0xEF182C00, 0xC8104340);
+    if (arg2->flags & OBJ_SHADOW_FLAG_80) {
+        gDPSetOtherMode(gdl, 
+            G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
+            G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2);
         dl_apply_other_mode(&gdl);
     } else {
-        // TODO: Find/use correct flags
-        gDPSetOtherMode(gdl, 0xEF182C00, 0xC8104B50);
+        gDPSetOtherMode(gdl,
+            G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
+            G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2);
         dl_apply_other_mode(&gdl);
     }
-    arg2->gdl = gdl;
+    arg2->gdl2 = gdl;
     dl_set_prim_color_no_sync(&gdl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
-    func_8005C740(arg2->unk41 ^ 1, &sp1B8, &sp1B4, arg2->unk30 & 3);
+    shadowtex_get_textures(arg2->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(arg2->flags));
     var_s5 = 0;
-    for (var_s6 = 0; var_s6 < 5; var_s6++) {
-        var_s2 = arg0;
+    var_s6 = 0;
+    while (var_s6 < 4) {
+        var_s3 = 0;
         if (var_s6 == 0) {
             var_a2 = 0;
             var_a3 = 0xF;
@@ -712,109 +706,84 @@ s32 func_8004EEC0(Unk8004FA58_Arg5 *arg0, Gfx* gdl, ObjectStruct64* arg2, Object
                 var_a3 = temp_v0 + 0x10;
             }
         }
-        {
-            // gDPSetTextureImage
-            Gfx *_g = gdl++;\
-            _g->words.w0 = 0xFD10003F;\
-            _g->words.w1 = sp1B8 + 0x80000000;
-        }
-        {
-            // gDPSetTile(gdl++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0);
-            Gfx *_g = gdl++;\
-            _g->words.w0 = 0xF5102000;\
-            _g->words.w1 = 0x07080200;
-        }
 
-        gDPLoadSync(gdl++);
-
-        {
-            // gDPLoadTile(gdl++, 0x070F, 1, var_a2 * 4, 12, var_a3 * 4);
-            Gfx *_g = gdl++;\
-            _g->words.w0 = ((var_a2 * 4) & 0xFFF) | 0xF4000000;\
-            _g->words.w1 = ((var_a3 * 4) & 0xFFF) | 0x070FC000;
-        }
-
-        gDPPipeSync(gdl++);
-        gDPSetTile(gdl++, G_IM_FMT_RGBA, G_IM_SIZ_16b, 16, 0, 0, 0, 2, 0, 0, 2, 0, 0);
-        {
-            // gDPSetTileSize(gdl++, 100, var_a2 * 4, 12, var_a3 * 4, 0);
-            Gfx *_g = gdl++;\
-            _g->words.w0 = ((var_a2 * 4) & 0xFFF) | 0xF2000000;\
-            _g->words.w1 = ((var_a3 * 4) & 0xFFF) | 0xFC000;
-        }
+        gDPLoadTextureTile(gdl++, 
+            /*timg*/OS_PHYSICAL_TO_K0(sp1B8), 
+            /*fmt*/G_IM_FMT_RGBA, 
+            /*siz*/G_IM_SIZ_16b, 
+            /*width*/64, 
+			/*height*/0, 
+			/*uls*/0, 
+			/*ult*/var_a2, 
+			/*lrs*/63, 
+			/*lrt*/var_a3, 
+			/*pal*/0, 
+            /*cms*/G_TX_NOMIRROR | G_TX_CLAMP, 
+			/*cmt*/G_TX_NOMIRROR | G_TX_CLAMP, 
+            /*masks*/G_TX_NOMASK, 
+			/*maskt*/G_TX_NOMASK, 
+            /*shifts*/G_TX_NOLOD, 
+			/*shiftt*/G_TX_NOLOD);
         if (!(var_s6 & 1)) {
-            {
-                // gDPSetTextureImage
-                Gfx *_g = gdl++;\
-                _g->words.w0 = 0xFD88001F;\
-                _g->words.w1 = sp1B4 + 0x80000000;
-            }
-            {
-                // gDPSetTile
-                Gfx *_g = gdl++;\
-                _g->words.w0 = 0xF5880940;\
-                _g->words.w1 = 0x07080200;
-            }
-            gDPLoadSync(gdl++);
-            {
-                // gDPLoadTile
-                Gfx *_g = gdl++;\
-                _g->words.w0 = ((var_a2 * 4) & 0xFFF) | 0xF4000000;\
-                _g->words.w1 = (((var_a3 + 0x10) * 4) & 0xFFF) | 0x0707E000;
-            }
-            gDPPipeSync(gdl++);
-            {
-                // gDPSetTile
-                Gfx *_g = gdl++;\
-                _g->words.w0 = 0xF5800940;\
-                _g->words.w1 = 0x01080200;
-            }
-            {
-                // gDPSetTileSize
-                Gfx *_g = gdl++;\
-                _g->words.w0 = ((var_a2 * 4) & 0xFFF) | 0xF2000000;\
-                _g->words.w1 = (((var_a3 + 0x10) * 4) & 0xFFF) | 0x010FC000;
-            }
+            gDPLoadMultiTile_4b(gdl++, 
+                /*timg*/OS_PHYSICAL_TO_K0(sp1B4), 
+                /*tmem*/0x0140, 
+                /*rtile*/1, 
+                /*fmt*/G_IM_FMT_I, 
+                /*width*/64, 
+                /*height*/0, 
+                /*uls*/0, 
+                /*ult*/var_a2, 
+                /*lrs*/63, 
+                /*lrt*/var_a3+16, 
+                /*pal*/0, 
+                /*cms*/G_TX_NOMIRROR | G_TX_CLAMP, 
+                /*cmt*/G_TX_NOMIRROR | G_TX_CLAMP, 
+                /*masks*/G_TX_NOMASK, 
+                /*maskt*/G_TX_NOMASK, 
+                /*shifts*/G_TX_NOLOD, 
+                /*shiftt*/G_TX_NOLOD);
         }
-        var_s0 = &D_800B98B8;
-        for (var_s1 = 0; var_s1 < arg4; var_s1++) {
+        var_s2 = arg0;
+        var_s1 = 0;
+        while (var_s1 < arg4) {
             var_v1 = 0;
-            if ((((s32) *(&D_800B9B10 + (var_s1 >> 2)) >> ((var_s1 & 3) * 2)) & 3) == var_s6) {
+            temp_v0 = ((s32) (D_800B9B10[(var_s1 >> 2)] ) >> ((var_s1 & 3) * 2)) & 3;
+            if (temp_v0 == var_s6) {
                 var_v1 = 1;
             }
             if (var_v1 != 0) {
-                // maybe correct?
-                gSPVertex(gdl++, OS_K0_TO_PHYSICAL(var_s2), *var_s0, 0)
-                // {
-                //     Gfx *_g = gdl++;\
-                //     _g->words.w0 = ((*var_s0 & 0x7F) * 2) | 0x01000000 | ((*var_s0 & 0xFF) << 0xC);\
-                //     _g->words.w1 = var_s2 + 0x80000000;
-                // }
+                gSPVertex(gdl++, OS_PHYSICAL_TO_K0(var_s2), D_800B98B8[var_s1], 0);
 
-                for (var_a0 = 0; var_a0 < (*var_s0 - 2); var_a0++) {
-                    currentTri = &spA8[var_a0];
+                // Convert triangle strip into individual triangles
+                currentTri = spA8;
+                var_a0 = 0;
+                while (var_a0 < (D_800B98B8[var_s1] - 2)) {
                     currentTri->unk0 = 0;
                     currentTri->v0 = 0;
                     currentTri->v1 = var_a0 + 1;
                     currentTri->v2 = var_a0 + 2;
+                    currentTri++;
+                    var_a0++;
                 }
-                dl_triangles(&gdl, spA8, (*var_s0 - 2));
-                var_s5 += *var_s0;
+                
+                dl_triangles(&gdl, spA8, (D_800B98B8[var_s1] - 2));
+                var_s5 += D_800B98B8[var_s1];
             }
-            temp_v0_2 = *var_s0;
-            var_s0 += 1;
-            var_s2 += temp_v0_2 * 0x10;
+            var_s2 += D_800B98B8[var_s1];
+            var_s3 += D_800B98B8[var_s1];
+            var_s1++;
         }
+        var_s6++;
     }
     *arg5 = var_s5;
-    return (gdl - sp1C0) >> 3;
+    return (gdl - sp1C0);
 }
-#endif
 
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004F378.s")
 #else
-s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Object* arg3, s32 arg4, s32* arg5) {
+s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 arg4, s32* arg5) {
     s32 sp1E4;
     s32 var_s0;
     s32 var_s4;
@@ -827,37 +796,37 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
     f32 sp1C0;
     u8 pad[0xf0];
     DLTri* var_v1;
-    Unk8004FA58_Arg5* var_s3;
+    Vtx* var_s3;
     f32 var_ft5;
     s16 temp_a1;
     DLTri *spB8[2];
-    s32 spB4;
-    s32 spB0;
+    void *spB4;
+    void *spB0;
 
     var_s3 = arg0;
     sp1C4 = NULL;
     sp1C8 = arg1;
     var_s4 = 0;
-    sp1C0 = (f32) arg2->unk36 * 0.015625f;
-    if (arg2->flags & 0x40) {
-        sp1C0 = arg2->unk3F;
+    sp1C0 = (f32) shadow->unk36 * (1.0f / 64.0f);
+    if (shadow->flags & OBJ_SHADOW_FLAG_40) {
+        sp1C0 = shadow->unk3F;
     } else if ((arg3->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
         sp1C0 *= ((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4;
     } else {
         sp1C0 *= D_80092BE4;
     }
-    if (arg2->flags & 8) {
-        func_8005C740(arg2->unk41 ^ 1, &spB4, &spB0, arg2->flags & 3);
+    if (shadow->flags & OBJ_SHADOW_FLAG_8) {
+        shadowtex_get_textures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
         sp1D4 = 0;
     } else {
         sp1D4 = 1;
-        sp1C4 = arg2->unk4;
+        sp1C4 = shadow->texture;
     }
-    if (arg2->flags & 0x40) {
-        if ((arg3->def->shadowType == 2) && !(arg2->flags & 0x400)) {
-            var_s0 = func_8004E540( arg3, arg2);
+    if (shadow->flags & OBJ_SHADOW_FLAG_40) {
+        if ((arg3->def->shadowType == 2) && !(shadow->flags & OBJ_SHADOW_FLAG_400)) {
+            var_s0 = func_8004E540( arg3, shadow);
         } else {
-            var_s0 = (s32) arg2->unk40;
+            var_s0 = (s32) shadow->unk40;
         }
         sp1D0 = (s16) ((((arg3->opacityWithFade + 1) * var_s0) >> 8) * sp1C0);
         if (sp1D0 >= 0x100) {
@@ -874,7 +843,7 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
     if (sp1D4 != 0) {
         gDPSetCombineLERP(arg1, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
         dl_apply_combine(&arg1);
-        if (arg2->flags & 0x80) {
+        if (shadow->flags & OBJ_SHADOW_FLAG_80) {
             gDPSetOtherMode(
                 arg1,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
@@ -893,7 +862,7 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
     } else {
         gDPSetCombineLERP(arg1, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
         dl_apply_combine(&arg1);
-        if (arg2->flags & 0x80) {
+        if (shadow->flags & OBJ_SHADOW_FLAG_80) {
             gDPSetOtherMode(
                 arg1,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
@@ -927,9 +896,9 @@ s32 func_8004F378(Unk8004FA58_Arg5* arg0, Gfx* arg1, ObjectStruct64* arg2, Objec
         gDPSetTile(arg1++, G_IM_FMT_I, G_IM_SIZ_4b, 4, 0x0100, 1, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD)
         gDPSetTileSize(arg1++, 1, 0, 0, 252, 252)
     }
-    arg2->gdl2 = arg1;
-    if (arg2->flags & 0x40) {
-        dl_set_prim_color_no_sync(&arg1, arg2->unk3C, arg2->unk3D, arg2->unk3E, (s16)(sp1C0 * 255.0f));
+    shadow->gdl2 = arg1;
+    if (shadow->flags & OBJ_SHADOW_FLAG_40) {
+        dl_set_prim_color_no_sync(&arg1, shadow->unk3C, shadow->unk3D, shadow->unk3E, (s16)(sp1C0 * 255.0f));
     } else {
         dl_set_prim_color_no_sync(&arg1, 0, 0, 0, sp1D0);
     }
@@ -975,7 +944,7 @@ s32 D_80092CA0 = 1;
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004FA58.s")
 #else
 // https://decomp.me/scratch/GRoDG
-s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 max) {
+s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max) {
     static s32 D_80092CA0 = 1;
     s32 sp28C;
     Camera* camera;
@@ -1002,18 +971,18 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
     s16 spD6;
     s16 spD4;
     s16 spD2;
-    Unk8004FA58_Arg5* temp_v0_3;
+    Vtx* temp_v0_3;
     Vec3f* temp_v1_3;
-    Unk8004FA58_Arg5* var_s0;
+    Vtx* var_s0;
     Unk8004FA58* var_s3;
     s32 var_v0_2;
-    ObjectStruct64* spAC;
+    ObjectShadow* spAC;
     s32 spA0;
     s32 sp90;
 
     sp280 = 0;
     sp26C = 0;
-    spAC = arg0->unk64;
+    spAC = arg0->shadow;
     camera = get_camera();
     if (arg0->parent != NULL) {
         inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8, &spDC, &spE0, arg0->parent);
@@ -1036,7 +1005,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
     }
     var_fv0 = 1.0f - var_fv0;
     var_fs3 = var_fv0 * var_fv0;
-    if (spAC->flags & 0x80) {
+    if (spAC->flags & OBJ_SHADOW_FLAG_80) {
         var_fs3 = 0.0f;
         var_fs2 = 0.0f;
     }
@@ -1046,7 +1015,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
         spDC *= temp_fv0;
         spE0 *= temp_fv0;
     }
-    if (spAC->flags & 0x40000) {
+    if (spAC->flags & OBJ_SHADOW_FLAG_40000) {
         var_fs3 = 0.0f;
         spDC = 0.0f;
         spD8 = 0.0f;
@@ -1109,26 +1078,26 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                         } else {
                             func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->unk0, &spD2, 1);
                         }
-                        if (spAC->flags & 0x8000) {
+                        if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                             spD2 = 0xFF;
                         }
                         D_800B9B60[sp26C * 2 + 0] = spD6;
                         D_800B9B60[sp26C * 2 + 1] = spD4;
                         if (arg0->def->shadowType == 2) {
-                            var_s0->x = (sp1A4[var_s4].x + spD8) * 20.0f;
-                            var_s0->y = (sp1A4[var_s4].y + spDC + var_fs3) * 20.0f;
-                            var_s0->z = (sp1A4[var_s4].z + spE0) * 20.0f;
+                            var_s0->v.ob[0] = (sp1A4[var_s4].x + spD8) * 20.0f;
+                            var_s0->v.ob[1] = (sp1A4[var_s4].y + spDC + var_fs3) * 20.0f;
+                            var_s0->v.ob[2] = (sp1A4[var_s4].z + spE0) * 20.0f;
                         } else {
-                            var_s0->x = sp1A4[var_s4].x * 20.0f;
-                            var_s0->y = sp1A4[var_s4].y * 20.0f;
-                            if (!(spAC->flags & 0x80)) {
-                                var_s0->y += 0x1E;
+                            var_s0->v.ob[0] = sp1A4[var_s4].x * 20.0f;
+                            var_s0->v.ob[1] = sp1A4[var_s4].y * 20.0f;
+                            if (!(spAC->flags & OBJ_SHADOW_FLAG_80)) {
+                                var_s0->v.ob[1] += 0x1E;
                             }
-                            var_s0->z = sp1A4[var_s4].z * 20.0f;
+                            var_s0->v.ob[2] = sp1A4[var_s4].z * 20.0f;
                         }
                         temp_v0_3 = &arg5[sp26C];
-                        temp_v0_3->unk8 = spD6;
-                        temp_v0_3->unkA = spD4;
+                        temp_v0_3->v.tc[0] = spD6;
+                        temp_v0_3->v.tc[1] = spD4;
                         var_s0++;
                         sp26C++;
                         if (sp26C >= max) {
@@ -1150,7 +1119,7 @@ s32 D_80092CA4 = 1;
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_800502AC.s")
 #else
 // https://decomp.me/scratch/W9sJo
-s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Unk8004FA58_Arg5 *arg5, Unk8004FA58* arg6, s32 arg7) {
+s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7) {
     static s32 D_80092CA4 = 1;
     s32 sp354;
     s32 var_s3;
@@ -1177,11 +1146,11 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
     s32 var_s4;
     s32 var_s5;
     s32 var_v0_2;
-    Unk8004FA58_Arg5* var_s0;
-    ObjectStruct64* spAC;
+    Vtx* var_s0;
+    ObjectShadow* spAC;
 
     sp344 = 0;
-    spAC = arg0->unk64;
+    spAC = arg0->shadow;
     bzero(&D_800B9B10, 0x4C);
     temp_fs4 = (f32) spAC->unk36 * 0.015625f;
     camera = get_camera();
@@ -1189,7 +1158,7 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
     spD0.y = camera->ty - arg0->positionMirror.y;
     spD0.z = camera->tz - arg0->positionMirror.z;
     var_fv1 = sqrtf((spD0.x * spD0.x) + (spD0.y * spD0.y) + (spD0.z * spD0.z));
-    if (spAC->flags & 0x80) {
+    if (spAC->flags & OBJ_SHADOW_FLAG_80) {
         var_fv1 = 0.0f;
     }
     if (var_fv1 != 0.0f) {
@@ -1280,7 +1249,7 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
                 var_s0 = &arg5[sp330];
 
                 func_80050B88(arg0, &spE8[var_s4], &arg2[4], &arg2[2], &arg2[0], &arg2[1], &spCC, &spCE, spAC->unk0 * 0.75f, &spCA, 0);
-                if (spAC->flags & 0x8000) {
+                if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                     spCA = 0xFF;
                 }
 
@@ -1288,12 +1257,12 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
                 D_800B9B60[sp330 * 2 + 1] = spCC;
 
                 var_s0++;
-                var_s0[-1].x = spE8[var_s4].x * 20.0f;
-                var_s0[-1].y = spE8[var_s4].y * 20.0f;
-                var_s0[-1].z = spE8[var_s4].z * 20.0f;
-                var_s0[-1].unkF = spCA * D_80092BE4 * temp_fs4;
-                var_s0[-1].unk8 = spCE;
-                arg5[sp330].unkA = spCC;
+                var_s0[-1].v.ob[0] = spE8[var_s4].x * 20.0f;
+                var_s0[-1].v.ob[1] = spE8[var_s4].y * 20.0f;
+                var_s0[-1].v.ob[2] = spE8[var_s4].z * 20.0f;
+                var_s0[-1].v.cn[3] = spCA * D_80092BE4 * temp_fs4;
+                var_s0[-1].v.tc[0] = spCE;
+                arg5[sp330].v.tc[1] = spCC;
                 sp330++;
                 if (sp330 >= arg7) {
                     return 0;
@@ -1325,7 +1294,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
     f32 f2;
     f32 sp2C;
 
-    sp2C = arg0->unk64->unk2c;
+    sp2C = arg0->shadow->unk2c;
     if (D_800BB170 != 0) {
         f0 = (arg1->x * arg2->pos.x) + (arg1->z * arg2->pos.z) + arg2->pos.w;
         f0 = -f0;
@@ -1373,7 +1342,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
     if (temp_ft3 != 0.0f) {
         temp_ft3 = (sqrtf(temp_ft3) / (100.0f * (sp2C / 3.0f))) * 255.0f;
     }
-    if (arg0->unk64->flags & 0x40) {
+    if (arg0->shadow->flags & OBJ_SHADOW_FLAG_40) {
         arg9[0] = 0xFF;
     } else {
         arg9[0] = 255.0f - (s16) temp_ft3;
@@ -1521,7 +1490,7 @@ void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) ^ 0;
     sp30 = fsin16_precise(-sp2A);
     temp_fv0 = fcos16_precise(-sp2A);
-    temp_fa1 = obj->unk64->unk2c * 0.3333f;
+    temp_fa1 = obj->shadow->unk2c * 0.3333f;
     for (i = 0; i < 8; i++) {
         sp40[0] = D_800B9840[i * 3 + 0] * arg2;
         sp40[1] = D_800B9840[i * 3 + 1] * arg2;
@@ -1561,9 +1530,9 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     srt.scale = 1.0f;
     srt.roll = 0;
 
-    temp_fs1 = arg1->unk64->unk14.x;
-    temp_fa1 = arg1->unk64->unk14.y;
-    temp_fs2 = arg1->unk64->unk14.z;
+    temp_fs1 = arg1->shadow->unk14.x;
+    temp_fa1 = arg1->shadow->unk14.y;
+    temp_fs2 = arg1->shadow->unk14.z;
     s8 = 8;
     if (temp_fs1 < 0.0f) {
         var_fv1 = -temp_fs1;
@@ -1583,7 +1552,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     } else {
         var_v0 = arctan2_f(var_fa0, temp_fa1);
     }
-    if (arg1->unk64->flags & 0x200) {
+    if (arg1->shadow->flags & OBJ_SHADOW_FLAG_200) {
         srt.yaw = arg1->srt.yaw;
     } else {
         srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
@@ -1596,7 +1565,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     temp_fs4 = 0.3333f;
     var_s1 = 0;
     for (i = 0; var_s1 < s8; var_s1++, arg2++, i++) {
-        if (arg1->unk64->flags & 0x100) {
+        if (arg1->shadow->flags & OBJ_SHADOW_FLAG_100) {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
             pos.y = (D_800B97E0[i * 3 + 1] - 8.0f) * arg3;
             pos.z = D_800B97E0[i * 3 + 2] * 1.5f;
@@ -1604,7 +1573,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
             temp_fv0 = temp_s7 * ((0x4000 - var_v0) / 16384.0f);
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
-            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->unk64->unk2c * temp_fs4)) - temp_fv0;
+            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->shadow->unk2c * temp_fs4)) - temp_fv0;
         }
         rotate_vec3(&srt, pos.f);
         arg2->x = pos.x;

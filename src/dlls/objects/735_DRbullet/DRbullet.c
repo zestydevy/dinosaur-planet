@@ -37,7 +37,7 @@ void DRbullet_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
-    ObjectStruct64* shadowData;
+    ObjectShadow* shadowData;
     DRbullet_Data* objData;
 
     objData = self->data;
@@ -53,9 +53,9 @@ void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
     self->speed.y = objSetup->speedY;
     self->speed.z = objSetup->speedZ;
 
-    shadowData = self->unk64;
+    shadowData = self->shadow;
     if (shadowData != NULL) {
-        shadowData->flags |= 0xA10;
+        shadowData->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_200 | OBJ_SHADOW_FLAG_10);
     }
 
     objData->state = BULLET_STATE_INACTIVE;

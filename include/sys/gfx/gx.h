@@ -131,12 +131,6 @@ extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT];
 
-extern s32 gPossiblyScreenWidthOrHeight;
-/**
- * Some boolean.
- */
-extern s32 gSomeVideoFlag;
-
 extern f32 gViHeightRatio;
 
 extern s8 gVScaleMod;
@@ -169,7 +163,8 @@ s32 vi_get_mode();
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  *
- * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
+ * If the result of shadowtex_get_status is 0, then it will be the current framebuffer's resolution.
+ * Otherwise, it will be the active shadow framebuffer texture's resolution.
  */
 u32 vi_get_current_size(void);
 

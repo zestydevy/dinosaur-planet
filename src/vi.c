@@ -5,6 +5,7 @@
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/memory.h"
+#include "sys/shadowtex.h"
 #include "functions.h"
 #include "macros.h"
 
@@ -213,26 +214,17 @@ void vi_update_fb_size_from_current_mode(int framebufferIndex) {
     gCurrentResolutionV[framebufferIndex] = gResolutionArray[gVideoMode & 7].v;
 }
 
-/**
- * Returns a video resolution encoded as 0xVVVV_HHHH.
- *
- * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
- */
 u32 vi_get_current_size(void) {
-    s32 var1;
-    int flag;
+    s32 shadowTexWidth;
+    s32 shadowTexActive;
 
-    flag = func_8005BC38(&var1);
+    shadowTexActive = shadowtex_get_status(&shadowTexWidth);
 
-    if (flag == FALSE) {
+    if (shadowTexActive == FALSE) {
         return (gCurrentResolutionV[gFramebufferChoice] << 0x10) |
                 gCurrentResolutionH[gFramebufferChoice];
     } else {
-        // Turns 0x0000_XXXX into 0xXXXX_XXXX
-        //
-        // Maybe this is to default to a square resolution?
-        // Say, var1 is 480, this encodes the res as 480x480
-        return (var1 << 0x10) | var1;
+        return (shadowTexWidth << 0x10) | shadowTexWidth;
     }
 }
 

@@ -1610,8 +1610,9 @@ vi_get_framebuffer_end = 0x8005DD3C; // type:func
 vi_contains_point = 0x8005DE94; // type:func
 vi_get_current_size = 0x8005D6C8; // type:func
 
-gPossiblyScreenWidthOrHeight = 0x80092e98; // size:0x4
-gSomeVideoFlag = 0x80092ea0; // size:0x4
+gShadowTexWidth = 0x80092e98; // size:0x4
+gShadowTexHeight = 0x80092E9C; // size:0x4
+gIsShadowTexActive = 0x80092ea0; // size:0x4
 gUnknownVideoStructs = 0x800bb590; // size:0x1680
 gVideoMesgQueue = 0x800bcce0;
 gDisplayHertz = 0x800bce28; // size:0x4
@@ -1852,3 +1853,16 @@ voxmap_load_slot = 0x80007468; // type:func
 voxmap_find_closest_slot = 0x80007778; // type:func
 voxmap_find_closest_object_slot = 0x80007a58; // type:func
 voxmap_get_last_found_slot = 0x80007cbc; // type:func
+
+shadow_update_obj = 0x8004DBAC; // type:func
+shadow_init_obj_shadow = 0x8004D8A4; // type:func
+
+shadowtex_init = 0x8005B870; // type:func
+shadowtex_swap_buffer = 0x8005BBF0; // type:func
+shadowtex_get_status = 0x8005BC38; // type:func
+shadowtex_func_8005BC58 = 0x8005BC58; // type:func
+shadowtex_draw = 0x8005BCE0; // type:func
+shadowtex_get_textures = 0x8005C740; // type:func
+gShadowTexFramebuffers = 0x800BB540; // size:0x10
+gShadowTexCurrFb = 0x800BB550; // size:0x8
+gShadowTexCurrFbIdx = 0x80092E90; // size:0x8

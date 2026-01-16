@@ -32,7 +32,6 @@ s16 map_get_map_id_from_xz_ws(f32 arg0, f32 arg1);
 
 ModelInstance *model_load_create_instance(s32 id, u32 flags);
 void destroy_model_instance(ModelInstance *modelInst);
-u32 func_8004D8A4(Object *obj, u32 addr, s32);
 
 u32 func_8002667C(Object *obj, u32 addr);
 u32 func_80026BD8(Object *obj, u32 addr);
@@ -59,17 +58,6 @@ void map_func_80046B58(f32 x, f32 y, f32 z);
 s32 func_8004454C(f32 x, f32 y, f32 z);
 
 void convert_mtxf_to_mtx_in_pool(MatrixSlot *);
-
-void func_8005BBF0(u32 arg0);
-void func_80052DC0(u32* arg0, u32 arg1, u32 arg2, s32 arg3);
-void func_800529C0(u32* arg0, u32 arg1);
-
-/**
- * If param1 isn't null, sets it to gPossiblyScreenWidthOrHeight.
- *
- * Returns gSomeVideoFlag.
- */
-int func_8005BC38(s32*);
 
 void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
 void map_func_800484A8();

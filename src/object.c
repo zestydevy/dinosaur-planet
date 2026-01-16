@@ -5,6 +5,7 @@
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/newshadows.h"
 
 typedef struct {
 /*00*/  u8 _unk0[0x8 - 0x0];
@@ -689,7 +690,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
-        addr = func_8004D8A4(obj, addr, 0);
+        addr = shadow_init_obj_shadow(obj, addr, 0);
     }
 
     obj->unkA8 = func_80022150(obj) * obj->srt.scale;
@@ -838,7 +839,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
         size = mmAlign4(size);
-        size += sizeof(ObjectStruct64);
+        size += sizeof(ObjectShadow);
     }
 
     if (def->unk8F != 0) {
@@ -1574,17 +1575,17 @@ void obj_free_object(Object *obj, s32 param2) {
         gDLL_11_Newlfx->vtbl->func0(obj, obj, &lAction, 0, 0, 0);
     }
 
-    if (obj->unk64 != NULL) {
+    if (obj->shadow != NULL) {
         if (obj->def->shadowType == 1) {
             func_8004D974(1);
         }
 
-        if (obj->unk64->unk4 != NULL) {
-            texture_destroy(obj->unk64->unk4);
+        if (obj->shadow->texture != NULL) {
+            texture_destroy(obj->shadow->texture);
         }
 
-        if (obj->unk64->unk8 != NULL) {
-            texture_destroy(obj->unk64->unk8);
+        if (obj->shadow->unk8 != NULL) {
+            texture_destroy(obj->shadow->unk8);
         }
     }
 

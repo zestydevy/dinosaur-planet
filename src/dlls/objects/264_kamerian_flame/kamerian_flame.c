@@ -24,15 +24,15 @@ void kamerian_flame_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
-    ObjectStruct64* temp_v0;
-    ObjectStruct64* temp_v0_2;
+    ObjectShadow* temp_v0;
+    ObjectShadow* temp_v0_2;
 
     self->opacity = 255;
     func_800267A4(self);
-    temp_v0 = self->unk64;
-    if (self->unk64) {
-        temp_v0->flags |= 0x810;
-        temp_v0_2 = self->unk64;
+    temp_v0 = self->shadow;
+    if (self->shadow) {
+        temp_v0->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10);
+        temp_v0_2 = self->shadow;
         temp_v0_2->unk2c = temp_v0_2->unk0 * 2.5f;
     }
 
