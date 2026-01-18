@@ -97,8 +97,8 @@ extern UnkVidStruct3 D_80093068[];
 
 extern OSViMode gTvViMode;
 
-extern u16 *gBackFramebuffer;
-extern u16 *gFrontFramebuffer;
+extern u16 *gBackFramebuffer; // next frame
+extern u16 *gFrontFramebuffer; // current frame
 extern u16 *gFrontDepthBuffer;
 extern u16 *gBackDepthBuffer;
 

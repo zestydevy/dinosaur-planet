@@ -22,6 +22,7 @@
 #include "sys/dl_debug.h"
 #include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
+#include "sys/framebuffer_fx.h"
 #include "dll.h"
 #include "constants.h"
 #include "functions.h"
@@ -294,7 +295,7 @@ void game_tick(void) {
     rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
     rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
-    func_8003E9F0(&gCurGfx, gUpdateRate);
+    fbfx_tick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
     func_8003DB5C();
 
