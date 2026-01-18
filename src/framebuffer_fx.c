@@ -271,41 +271,31 @@ void weird_resize_copy(u16* src, s32 srcWidth, s32 destWidth, u16* dest) {
     bcopy(buffer, &dest[destWidth], destWidth << 1);
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003F2C4.s")
-#else
 void fbfx_func_8003F2C4(u16* arg0, u16 arg1, u16 arg2, s32 arg3) {
-    u16* var_s3;
-    s32 var_a3;
-    u16 var_a1;
-    u16 var_t0;
-    u16 var_v1;
-    u16 t1;
-    u16 t2;
-    u16 t3;
+    u16 temp;
+    u16 temp2;
+    u16 temp3;
+    u16 temp4;
+    u16 temp5;
+    u16 temp6;
 
     if (arg3 == 0) {
         return;
     }
-    var_s3 = arg0;
-    var_a3 = arg3 - 1;
-    if (arg3 != 0) {
-        var_v1 = (((arg1 & 0xF800) >> 0xB) << 8);
-        var_a1 = (((arg1 & 0x7C0) >> 6) << 8);
-        var_t0 = (((arg1 & 0x3E) >> 1) << 8);
-        do {
-            t1 = ((((arg2 & 0xF800) >> 0xB) - ((arg1 & 0xF800) >> 0xB)) << 8) / arg3;
-            var_v1 += t1;
-            t2 = ((((arg2 & 0x7C0) >> 6) - ((arg1 & 0x7C0) >> 6)) << 8) / arg3;
-            var_a1 += t2;
-            t3 = ((((arg2 & 0x3E) >> 1) - ((arg1 & 0x3E) >> 1)) << 8) / arg3;
-            var_t0 += t3;
-            *var_s3 = ((var_v1 >> 8) << 0xB) + ((var_a1 >> 8) << 6) + ((var_t0 >> 8) << 1);
-            var_s3 += 1;
-        } while (var_a3--);
+
+    temp4 = ((((arg2 & 0xF800) >> 0xB) - ((arg1 & 0xF800) >> 0xB)) << 8) / arg3;
+    temp5 = ((((arg2 & 0x7C0) >> 6) - ((arg1 & 0x7C0) >> 6)) << 8) / arg3;
+    temp6 = ((((arg2 & 0x3E) >> 1) - ((arg1 & 0x3E) >> 1)) << 8) / arg3;
+    temp = ((arg1 & 0xF800) >> 0xB) << 8;
+    temp2 = ((arg1 & 0x7C0) >> 6) << 8;
+    temp3 = ((arg1 & 0x3E) >> 1) << 8;  
+    while (arg3--) {
+        temp += temp4, temp2 += temp5, temp3 += temp6;
+        arg0[0] = ((temp >> 8) << 0xB) + ((temp2 >> 8) << 6) + ((temp3 >> 8) << 1);
+        arg0++;
     }
 }
-#endif
+
 
 void fbfx_play(s32 effectID, s32 duration) {
     gFbfxEffectID = effectID;
@@ -353,30 +343,32 @@ void fbfx_func_8003F4C0(s32 arg0) {
     }
 }
 
-#ifndef NON_EQUIVALENT
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003F660.s")
 #else
-// https://decomp.me/scratch/4XcTd
+// https://decomp.me/scratch/wArrS
 void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
-    s32 height;
     s32 width;
+    s32 height;
     s32 resolution;
+    s32 i;
     s32 j;
     s32 var_v0;
-    u16 temp_a1;
-    u16 temp_v1;
-    u16 t1;
-    u16 t2;
+    s32 temp_a1;
+    s32 temp_v1;
     u16* currentFB;
     u16* currentFB2;
-    u32 a2;
-    s32 a3;
-    s32 v0;
-    s32 temp;
-    s32 s8;
+
+    s32 otherTemp;
+    u16 temp;
+    u16 temp2;
+    u16 temp3;
+    u16 temp4;
+    u16 temp5;
+    u16 temp6;
 
     resolution = vi_get_current_size();
-    width = GET_VIDEO_WIDTH(resolution);
+    width = GET_VIDEO_WIDTH(resolution);  
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg3 != 0) {
         var_v0 = (height - ((height * 0xB6) / 240)) >> 1;
@@ -385,50 +377,36 @@ void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
         var_v0 = 0;
     }
     if (arg0 == 0) {
-        s8 = var_v0;
         currentFB = &(&(&gFrontFramebuffer[width * var_v0])[arg1])[arg2 * width];
         currentFB[-1] = 0;
         currentFB2 = &gFrontFramebuffer[width * var_v0];
-        if (s8 < height) {
-            do {
-                j = 0;
-                while (j < width) {
-                    t1 = currentFB[width];
-                    t2 = currentFB[-1];
-                    temp_a1 = *(currentFB - width);
-                    temp_v1 = currentFB[1];
-                    j += 1;
-                    temp = ((u32)((currentFB[width] & 0xF800) + (currentFB[-1] & 0xF800) + (temp_a1 & 0xF800) + (temp_v1 & 0xF800)) >> 2) & 0xF800;
-                    temp += (((currentFB[width] & 0x7C0) + (currentFB[-1] & 0x7C0) + (temp_a1 & 0x7C0) + (temp_v1 & 0x7C0)) >> 2) & 0x7C0;
-                    temp += ((((currentFB[width] & 0x3E) + (currentFB[-1] & 0x3E) + (temp_a1 & 0x3E) + (temp_v1 & 0x3E)) >> 2) & 0x3E);
-                    *currentFB2 = temp;
-                    currentFB2 += 1;
-                    currentFB += 1;
-                }
-                s8 += 1;
-            } while (s8 != height);
+        for (i = var_v0; i < height; i++) {
+            for (j = 0; j < width; j++) {
+                temp_v1 = currentFB[width];
+                temp_a1 = (currentFB - width)[0];
+                if (1){}
+                temp = (((u32)temp_v1 & 0xF800) + (temp_a1 & 0xF800) + (currentFB[1] & 0xF800) + (currentFB[-1] & 0xF800)) >> 2;
+                temp2 = (((s32)temp_v1 & 0x7C0) + (temp_a1 & 0x7C0) + (currentFB[1] & 0x7C0) + (currentFB[-1] & 0x7C0)) >> 2;
+                temp3 = (((s32)temp_v1 & 0x3E) + (temp_a1 & 0x3E) + (currentFB[1] & 0x3E) + (currentFB[-1] & 0x3E)) >> 2;
+                currentFB2[0] = (temp & 0xF800) + (temp2 & 0x7C0) + (temp3 & 0x3E);
+                currentFB2++;
+                currentFB++;
+            }
         }
     } else {
-        s8 = var_v0;
         currentFB = &(&(&gFrontFramebuffer[width * var_v0])[arg1])[arg2 * width];
         currentFB[-1] = 0;
         currentFB2 = &gFrontFramebuffer[width * var_v0];
-        if (s8 < height) {
-            do {
-                j = 0;
-                while (j < width) {
-                    v0 = 0xFFFF >> (0x10 - arg0);
-                    // apparently this is v0 * 0x842
-                    v0 = ~((v0 << 0xB) + (v0 << 6) + (v0 << 1));
-                    temp = (fbfx_func_8003FB88(currentFB[-1], *(currentFB - width), currentFB[1], currentFB[width]) & v0);
-                    temp >>= arg0;
-                    j += 1;
-                    currentFB2[0] = temp;
-                    currentFB2 += 1;
-                    currentFB += 1;
-                }
-                s8 += 1;
-            } while (s8 != height);
+        for (i = var_v0; i < height; i++) {
+            for (j = 0; j < width; j++) {
+                var_v0 = 0xFFFF >> (0x10 - arg0);
+                // apparently this is var_v0 * 0x842
+                var_v0 = ~((var_v0 << 0xB) + (var_v0 << 6) + (var_v0 << 1));
+                otherTemp = fbfx_func_8003FB88(currentFB[-1], *(currentFB - width), currentFB[1], currentFB[width]) & var_v0;
+                currentFB2[0] = otherTemp >> arg0;
+                currentFB2++;
+                currentFB++;
+            }
         }
     }
 }
@@ -476,19 +454,17 @@ u16 fbfx_func_8003FA88(u16 arg0, u16 arg1, u16 arg2, u16 arg3, u16 arg4) {
     return (((u16)temp & 0xF800) + ((u16)temp2 & 0x7C0) + ((u16)temp3 & 0x3E));
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/fbfx_func_8003FB88.s")
-#else
 u16 fbfx_func_8003FB88(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
-    u16 temp;
-    u16 temp2;
-    u16 temp3;
-    temp = (((u32)arg0 & 0xF800) + (arg1 & 0xF800) + (arg2 & 0xF800) + (arg3 & 0xF800) >> 2) & 0xF800;
-    temp2 = ((arg0 & 0x7C0) + (arg1 & 0x7C0) + (arg2 & 0x7C0) + (arg3 & 0x7C0) >> 2) & 0x7C0;
-    temp3 = ((arg0 & 0x3E) + (arg1 & 0x3E) + (arg2 & 0x3E) + (arg3 & 0x3E) >> 2) & 0x3E;
-    return temp + temp2 + temp3;
+    u16 r;
+    u16 g;
+    u16 b;
+
+    r = (u32)((arg0 & 0xF800) + (arg1 & 0xF800) + (arg2 & 0xF800) + (arg3 & 0xF800)) >> 2;
+    g = ((arg0 & 0x7C0) + (arg1 & 0x7C0) + (arg2 & 0x7C0) + (arg3 & 0x7C0)) >> 2;
+    b = ((arg0 & 0x3E) + (arg1 & 0x3E) + (arg2 & 0x3E) + (arg3 & 0x3E)) >> 2;
+
+    return (r & 0xF800) + (g & 0x7C0) + (b & 0x3E);
 }
-#endif
 
 u16 fbfx_func_8003FC3C(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
     return (((((arg0 & ~0x842) >> 1) + ((arg1 & ~0x842) >> 1)) & ~0x842) >> 1) + (((((arg2 & ~0x842) >> 1) + ((arg3 & ~0x842) >> 1)) & ~0x842) >> 1);
