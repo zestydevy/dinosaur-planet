@@ -97,10 +97,10 @@ extern UnkVidStruct3 D_80093068[];
 
 extern OSViMode gTvViMode;
 
-extern u16 *gFramebufferNext;
-extern u16 *gFramebufferCurrent;
-extern u16 *D_800BCCB4;
-extern u16 *D_800BCCB0;
+extern u16 *gBackFramebuffer; // next frame
+extern u16 *gFrontFramebuffer; // current frame
+extern u16 *gFrontDepthBuffer;
+extern u16 *gBackDepthBuffer;
 
 /**
  * Holds the horizontal resolution of each framebuffer.
@@ -118,7 +118,7 @@ extern u32 gCurrentResolutionV[2];
  */
 extern u16 *gFramebufferPointers[2];
 
-extern u16 *gFramebufferStart;
+extern u16 *gDepthBuffer;
 extern u16 *gFramebufferEnd;
 
 /**
@@ -126,7 +126,7 @@ extern u16 *gFramebufferEnd;
  *
  * TODO: figure out more of what this var is used for
  */
-extern u32 gFramebufferChoice;
+extern u32 gCurrFramebufferIdx;
 extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT];
