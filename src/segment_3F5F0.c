@@ -22,7 +22,7 @@ s32 D_800B49E0;
 
 void func_8003FE70(Gfx **gdl, s32, s32, s32);
 void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height);
-void func_800403AC(u16* arg0, u16* arg1, u32 arg2, u32 arg3, s32 arg4);
+void func_800403AC(u16 *arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4);
 void func_80040590(s32 arg0, s32 arg1);
 void func_80040754(u16* arg0, s32 arg1, s32 arg2, s32 arg3);
 void func_80040870(u16* arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4);
@@ -626,37 +626,40 @@ void func_8003FE70(Gfx** gdl, s32 arg1, s32 arg2, s32 arg3) {
     viHeight = GET_VIDEO_HEIGHT(viSize);
     gfxtask_wait();
     switch (arg2) {
-    case 5:
+    case 5: // nop
         break;
-    case 6:
+    case 6: // burn away (from random points) (setup)
         func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
-        func_80040920(gFrontFramebuffer, viWidth, viHeight, 0xA);
+        func_80040920(gFrontFramebuffer, viWidth, viHeight, 10);
         break;
-    case 7:
+    case 7: // burn away (from center) (setup)
         func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
         func_800409D0(gFrontFramebuffer, viWidth, viHeight);
         break;
-    case 8:
+    case 8: // burn away (from right side) (setup)
         func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
         func_80040A04(gFrontFramebuffer, viWidth, viHeight, 4);
         break;
-    case 9:
+    case 9: // burn away (from corners) (setup)
         func_80040EFC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
         show_framebuffer_corners_kinda(gFrontFramebuffer, viWidth, viHeight);
         break;
-    case 11:
+    case 11:  // fade to black (smear right) -> then back in (setup)
         var_s7 = -1;
         break;
-    case 12:
+    case 12: // fade to black (smear left) -> then back in (setup)
         var_s7 = 1;
         break;
-    case 13:
+    case 13: // fade to black (smear down) -> then back in (setup)
         var_fp = -1;
         break;
-    case 14:
+    case 14: // fade to black (smear up) -> then back in (setup)
         var_fp = 1;
         break;
-    case 10:
+    case 10: // accumulation motion blur
+        // - at this point, gfxtask_wait ensured that the rcp is done writing to gBackFramebuffer.
+        // - gBackFramebuffer is the next frame to be displayed, gFrontFramebuffer is the current.
+        // - average the pixels of both and write back to gBackFramebuffer (to be displayed next).
         func_80040378(gBackFramebuffer, gFrontFramebuffer, viWidth, viHeight);
         return;
     }
@@ -666,34 +669,36 @@ void func_8003FE70(Gfx** gdl, s32 arg1, s32 arg2, s32 arg3) {
         if (var_v1_2 >= 5) {
             var_v1_2 = -1;
         }
-        rsp_segment(gdl, 1U, gFrontFramebuffer);
+        // This segment command is unnecessary and can cause a display list buffer overflow if the
+        // framebuffer effect has too many iterations!
+        rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
         switch (arg2) {
-        case 1:
+        case 1: // 2 vertical sine waves moving from the center outward
             func_80040590((viWidth >> 1) - ((s32) ((s32) (viWidth * (var_t0 + 1)) / arg1) >> 1), viWidth >> 4);
             break;
-        case 3:
+        case 3: // modulate to next frame (does nothing while arg1 - var_t0 >= 15)
             if (var_v1_2 != -1) {
-                func_800403AC(gFrontFramebuffer, gBackFramebuffer, (u32) viWidth, (u32) viHeight, var_v1_2);
+                func_800403AC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight, var_v1_2);
             }
             break;
-        case 4:
+        case 4: // slide next frame in from the left
             if ((var_t0 % 2)) {
                 func_80040754(gFrontFramebuffer, viWidth, viHeight, (s32) (viWidth * 2) / arg1);
             } else {
                 func_80040870(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight, (s32) (viWidth * var_t0) / arg1);
             }
             break;
-        case 6:
-        case 7:
-        case 8:
-        case 9:
+        case 6: // burn away effect
+        case 7: // burn away effect
+        case 8: // burn away effect
+        case 9: // burn away effect
             func_80040CD0(gFrontFramebuffer, gBackFramebuffer, viHeight, viWidth);
             break;
-        case 2:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
+        case 2:  // fade to black (blurry/smear) -> then back in
+        case 11: // fade to black (smear right) -> then back in
+        case 12: // fade to black (smear left) -> then back in
+        case 13: // fade to black (smear down) -> then back in
+        case 14: // fade to black (smear up) -> then back in
             if (var_t0 < var_v1) {
                 if (var_v1 < var_t0) {
                     var_a0 = 1;
@@ -702,10 +707,10 @@ void func_8003FE70(Gfx** gdl, s32 arg1, s32 arg2, s32 arg3) {
                 }
                 func_8003F660(var_a0, var_s7, var_fp, arg3);
             } else {
-                func_800403AC(gFrontFramebuffer, gBackFramebuffer, (u32) viWidth, (u32) viHeight, 2);
+                func_800403AC(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight, 2);
             }
             break;
-        case 15:
+        case 15: // fade to black (blurry/smear)
             func_8003F660(0, var_s7, var_fp, arg3);
             break;
         }
@@ -727,78 +732,71 @@ void func_800402F8(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
 }
 
 void func_80040378(u16 *fb1, u16 *fb2, s32 width, s32 height) {
-    func_8005324C(fb1, fb2, width * height >> 2);
+    func_8005324C(fb1, fb2, (width * height) >> 2);
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_800403AC.s")
-#else
-// https://decomp.me/scratch/0S8QE
-void func_800403AC(u16* arg0, u16* arg1, u32 arg2, u32 arg3, s32 arg4) {
-    s32 i;
-    s32 j;
-    u16 temp;
-    u16 temp2;
-    u16 temp3;
-    u16 temp4;
-    u16 temp5;
-
-    for (i = 0; i != arg3; i++) {
-        for (j = 0; j != arg2; j++) {
-            temp4 = arg0[0];
-            temp5 = arg1[0];
-            temp = ((u32) ((((temp4 & 0xF800) << arg4) + (temp5 & 0xF800)) - (temp4 & 0xF800)) >> arg4);
-            temp2 = ((u32) ((((temp4 & 0x7C0) << arg4) + (temp5 & 0x7C0)) - (temp4 & 0x7C0)) >> arg4);
-            temp3 = ((u32) ((((temp4 & 0x3E) << arg4) + (temp5 & 0x3E)) - (temp4 & 0x3E)) >> arg4);
-            arg0[0] = (temp & 0xF800) + (temp2 & 0x7C0) + (temp3 & 0x3E);
-            arg0 += 1;
-            arg1 += 1;
+// interpolating fb1 -> fb2: y = 1 / (2^x), where x is arg4 and y is the progress from fb1 to fb2
+void func_800403AC(u16 *fb1, u16 *fb2, s32 width, s32 height, s32 arg4) {
+    s32 x;
+    s32 y;
+    u32 r;
+    u32 g;
+    u32 b;
+    u32 px1;
+    u32 px2;
+    for (x = 0; x != height; x++) {
+        for (y = 0; y != width; y++) {
+          px1 = *fb1;
+          px2 = *fb2;
+          r = (((px1 & 0xF800) << arg4) + (px2 & 0xF800)) - (px1 & 0xF800);
+          g = (((px1 & 0x7C0) << arg4) + (px2 & 0x7C0)) - (px1 & 0x7C0);
+          b = (((px1 & 0x3E) << arg4) + (px2 & 0x3E)) - (px1 & 0x3E);
+          r >>= arg4;
+          g >>= arg4;
+          b >>= arg4;
+          *fb1 = (r & 0xF800) + (g & 0x7C0) + (b & 0x3E);
+          fb1 += 1;
+          fb2 += 1;
         }
     }
 }
-#endif
 
 // cross blend
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_80040468.s")
-#else
-// https://decomp.me/scratch/NGTZD
 void func_80040468(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
-    s32 temp_s2;
-    s32 temp_s4;
-    s32 temp_t0;
-    s32 temp_t2;
-    s32 temp_t3;
-    s32 temp_t4;
-    s32 temp_t5;
     s32 i;
     s32 j;
-    u16 temp_a0;
-    u16 temp_a1;
+    u32 temp_a0;
+    u32 temp_a1;
+    u32 temp;
+    u32 temp2;
+    u32 temp3;
+    u32 temp4;
+    u32 temp5;
+    u32 temp6;
 
     for (i = 0; i != arg3; i++) {
         for (j = 0; j != arg2; j++) {
-            temp_s4 = arg4 - 1;
             temp_a0 = arg0[0];
             temp_a1 = arg1[0];
-            temp_t0 = temp_a0 & 0xF800;
-            temp_t2 = temp_a1 & 0xF800;
-            temp_t3 = temp_a0 & 0x7C0;
-            temp_t4 = temp_a1 & 0x7C0;
-            temp_t5 = temp_a0 & 0x3E;
-            temp_s2 = temp_a1 & 0x3E;
-            arg0[0] = (((u32) (((temp_t0 << arg4) + temp_t2) - temp_t0) >> arg4) & 0xF800) +
-                (((u32) (((temp_t3 << arg4) + temp_t4) - temp_t3) >> arg4) & 0x7C0) +
-                (((u32) (((temp_t5 << arg4) + temp_s2) - temp_t5) >> arg4) & 0x3E);
-            arg1[0] = (((u32) (((temp_t2 << temp_s4) + temp_t0) - temp_t2) >> temp_s4) & 0xF800) +
-                (((u32) (((temp_t4 << temp_s4) + temp_t3) - temp_t4) >> temp_s4) & 0x7C0) +
-                (((u32) (((temp_s2 << temp_s4) + temp_t5) - temp_s2) >> temp_s4) & 0x3E);
+            temp = ((((temp_a0 & 0xF800) << arg4) + (temp_a1 & 0xF800)) - (temp_a0 & 0xF800));
+            temp2 = ((((temp_a0 & 0x7C0) << arg4) + (temp_a1 & 0x7C0)) - (temp_a0 & 0x7C0));
+            temp3 = ((((temp_a0 & 0x3E) << arg4) + (temp_a1 & 0x3E)) - (temp_a0 & 0x3E));
+            temp >>= arg4;
+            temp2 >>= arg4;
+            temp3 >>= arg4;
+            temp4 = ((((temp_a1 & 0xF800) << (arg4 - 1)) + (temp_a0 & 0xF800)) - (temp_a1 & 0xF800));
+            temp5 = ((((temp_a1 & 0x7C0) << (arg4 - 1)) + (temp_a0 & 0x7C0)) - (temp_a1 & 0x7C0));
+            temp6 = ((((temp_a1 & 0x3E) << (arg4 - 1)) + (temp_a0 & 0x3E)) - (temp_a1 & 0x3E));
+            temp4 >>= (arg4 - 1);
+            temp5 >>= (arg4 - 1);
+            temp6 >>= (arg4 - 1);
+            arg0[0] = (temp & 0xF800) + (temp2 & 0x7C0) + (temp3 & 0x3E);
+            arg1[0] = (temp4 & 0xF800) + (temp5 & 0x7C0) + (temp6 & 0x3E);
             arg0 += 1;
             arg1 += 1;
         }
     }
 }
-#endif
 
 void func_80040590(s32 arg0, s32 arg1) {
     s32 width;
@@ -875,15 +873,15 @@ void func_80040870(u16* arg0, u16 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
-void func_80040920(u16* arg0, s32 arg1, s32 arg2, s32 arg3) {
-    s32 temp_s2;
+void func_80040920(u16* fb, s32 fbWidth, s32 fbHeight, s32 arg3) {
+    s32 x;
     s32 i;
-    u16* temp_v1;
+    u16* pixelPtr;
 
     for (i = 0; i < arg3; i++) {
-        temp_s2 = rand_next(0, arg1);
-        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + (s32)arg0 + (temp_s2 * 2));
-        temp_v1[0] &= ~1;
+        x = rand_next(0, fbWidth);
+        pixelPtr = (u16 *)((rand_next(0, fbHeight) * fbWidth * 2) + (s32)fb + (x * 2));
+        *pixelPtr &= ~1;
     }
 }
 
@@ -892,12 +890,12 @@ void func_800409D0(u16 *fb, s32 width, s32 height) {
     fb[(width >> 1) + (height >> 1) * width] &= ~1;
 }
 
-void func_80040A04(u16* arg0, s32 arg1, s32 arg2, s32 arg3) {
+void func_80040A04(u16* fb, s32 width, s32 height, s32 arg3) {
     s32 i;
     u16* temp_v1;
 
     for (i = 0; i < arg3; i++) {
-        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + (s32)arg0);
+        temp_v1 = (u16 *)((rand_next(0, height) * width * 2) + (s32)fb);
         temp_v1[0] &= ~1;
     }
 }
@@ -958,7 +956,7 @@ void func_80040B8C(u16* arg0, u16* arg1, u16* arg2, s32 arg3, s32 arg4) {
     }
 }
 
-void func_80040CD0(u16* arg0, u16* arg1, s32 arg2, s32 arg3) {
+void func_80040CD0(u16* frontFb, u16* backFb, s32 height, s32 width) {
     s32 temp_a2_2;
     s32 j;
     s32 var_fp;
@@ -972,37 +970,37 @@ void func_80040CD0(u16* arg0, u16* arg1, s32 arg2, s32 arg3) {
     if (!var_s7) {
         var_s7 = 1;
     }
-    var_s5 = (rand_next(0, 3) - 1) * arg3;
-    for (i = 0; i < arg2; i++) {
-        for (j = 0; j < arg3; j++) {
-            if ((~*(arg0 + var_s7) & 1) + (~*(arg0 + var_s5) & 1) + (~*((arg0 - var_s5) + var_s7) & 1)) {
-                if (~arg1[0] & 1) {
-                    sp5C[var_fp][j] = arg1[0];
+    var_s5 = (rand_next(0, 3) - 1) * width;
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+            if ((~*(frontFb + var_s7) & 1) + (~*(frontFb + var_s5) & 1) + (~*((frontFb - var_s5) + var_s7) & 1)) {
+                if (~backFb[0] & 1) {
+                    sp5C[var_fp][j] = backFb[0];
                 } else {
-                    sp5C[var_fp][j] = ((arg0[0] & ~0x842) >> 1) + ((arg1[0] & ~0x842) >> 1);
-                    arg1[0] &= ~1;
+                    sp5C[var_fp][j] = ((frontFb[0] & ~0x842) >> 1) + ((backFb[0] & ~0x842) >> 1);
+                    backFb[0] &= ~1;
                 }
                 sp5C[var_fp][j] &= ~1;
             } else {
-                sp5C[var_fp][j] = arg0[0];
+                sp5C[var_fp][j] = frontFb[0];
             }
-            arg0++;
-            arg1++;
+            frontFb++;
+            backFb++;
         }
 
         var_s7 = rand_next(0, 3) - 1;
         if (!var_s7) {
             var_s7 = 1;
         }
-        temp_a2_2 = arg3 << 1;
-        var_s5 = (rand_next(0, 3) - 1) * arg3;
+        temp_a2_2 = width << 1;
+        var_s5 = (rand_next(0, 3) - 1) * width;
         var_fp ^= 1;
         if (i != 0) {
-            bcopy(&sp5C[var_fp], arg0 - temp_a2_2, temp_a2_2);
+            bcopy(&sp5C[var_fp], frontFb - temp_a2_2, temp_a2_2);
         }
     }
     var_fp ^= 1;
-    bcopy(&sp5C[var_fp], arg0 - arg3, arg3 << 1);
+    bcopy(&sp5C[var_fp], frontFb - width, width << 1);
 }
 
 void func_80040EFC(u16* arg0, u16* arg1, s32 arg2, s32 arg3) {
