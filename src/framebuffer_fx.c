@@ -162,7 +162,7 @@ void func_8003ED00(u16* arg0, u16* arg1, s32 arg2) {
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_8003EF30.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/func_8003EF30.s")
 #else
 // https://decomp.me/scratch/KWLGK
 void func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, void (*arg6)(u16*, s32, s32, u16*)) {
@@ -275,7 +275,7 @@ void weird_resize_copy(u16* src, s32 srcWidth, s32 destWidth, u16* dest) {
 }
 
 #if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_8003F2C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/func_8003F2C4.s")
 #else
 void func_8003F2C4(u16* arg0, u16 arg1, u16 arg2, s32 arg3) {
     u16* var_s3;
@@ -357,7 +357,7 @@ void func_8003F4C0(s32 arg0) {
 }
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_8003F660.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/func_8003F660.s")
 #else
 // https://decomp.me/scratch/4XcTd
 void func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
@@ -480,7 +480,7 @@ u16 func_8003FA88(u16 arg0, u16 arg1, u16 arg2, u16 arg3, u16 arg4) {
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_3F5F0/func_8003FB88.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/framebuffer_fx/func_8003FB88.s")
 #else
 u16 func_8003FB88(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
     u16 temp;

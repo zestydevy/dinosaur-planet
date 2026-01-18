@@ -83,7 +83,7 @@ segments:
     - [0x3C1B0, c, scheduler]
     - [0x3D850, c, rsp_segment]
     - [0x3D890, c, texture]
-    - [0x3F5F0, c, segment_3F5F0]
+    - [0x3F5F0, c, framebuffer_fx]
     - [0x41BD0, c, map]
     - [0x4E070, c, newshadows]
     - [0x535C0, asm, segment_535C0] # shadow hasm?
@@ -323,7 +323,7 @@ segments:
     - [0x924B0, .data, rarezip]
     - [0x924D0, .data, scheduler]
     - [0x92510, .data, texture]
-    - [0x93650, .data, segment_3F5F0]
+    - [0x93650, .data, framebuffer_fx]
     - [0x93660, .data, map]
     - [0x937D0, .data, newshadows]
     - [0x938C0, data, segment_535C0]
@@ -400,7 +400,7 @@ segments:
     - [0x9AB30, rodata, rarezip_asm]
     - [0x9AC20, .rodata, scheduler]
     - [0x9AF70, .rodata, texture]
-    - [0x9B080, .rodata, segment_3F5F0]
+    - [0x9B080, .rodata, framebuffer_fx]
     - [0x9B110, .rodata, map]
     - [0x9B5D0, .rodata, newshadows]
     - [0x9B650, rodata, segment_535C0]
@@ -479,7 +479,7 @@ segments:
     # - { type: .bss, vram: 0x800b4930, name: rarezip }
     # - { type: .bss, vram: 0x800b4980, name: scheduler }
     # - { type: .bss, vram: 0x800b49a0, name: texture }
-    # - { type: .bss, vram: 0x800b49e0, name: segment_3F5F0 }
+    # - { type: .bss, vram: 0x800b49e0, name: framebuffer_fx }
     # - { type: .bss, vram: 0x800b49f0, name: map }
     # - { type: .bss, vram: 0x800b97e0, name: newshadows }
     # - { type: .bss, vram: 0x800bb200, name: segment_53F00 }
