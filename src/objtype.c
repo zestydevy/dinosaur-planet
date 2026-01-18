@@ -23,16 +23,10 @@ void obj_object_type_init() {
     gObjectTypeListCount = 0;
 }
 
-// regalloc
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/objtype/obj_add_object_type.s")
-#else
 void obj_add_object_type(Object *obj, s32 type) {
-    s32 listStart;
-    s32 listEnd;
-    s32 listEnd2;
+    s32 start;
+    s32 end;
     s32 i;
-    s32 b;
 
     if (type < 0 || type >= 65) {
         return;
@@ -42,39 +36,67 @@ void obj_add_object_type(Object *obj, s32 type) {
         return;
     }
 
-    listStart = gObjectTypeIndices[type];
-    listEnd = gObjectTypeIndices[type + 1];
-    listEnd2 = listEnd;
+    start = gObjectTypeIndices[type];
+    end = gObjectTypeIndices[type + 1];
 
-    for (i = listStart; i < listEnd2; i++) {
-        if (gObjectTypeList[i] == obj) {
+    for (; start < end; start++) {
+        if (gObjectTypeList[start] == obj) {
             return;
         }
     }
 
-    if (listEnd == listStart) {
-        i = listStart;
+    if (gObjectTypeIndices[type + 1] == gObjectTypeIndices[type]) {
+        start = gObjectTypeIndices[type];
     } else {
-        i = listEnd - 1;
+        start = gObjectTypeIndices[type + 1] - 1;
     }
 
     gObjectTypeListCount++;
 
-    listEnd2 = gObjectTypeListCount - 1;
-    for (b = listEnd2; b > i; b--) {
-        gObjectTypeList[b] = gObjectTypeList[b - 1];
+    end = gObjectTypeListCount - 1;
+    for (; end > start; end--) {
+        gObjectTypeList[end] = gObjectTypeList[end - 1];
     }
 
-    gObjectTypeList[i] = obj;
+    gObjectTypeList[start] = obj;
 
-    i = type + 1;
-    for (b = i; b < 66; b++) {
-        gObjectTypeIndices[b] += 1;
+    start = type + 1;
+    while (start < 66) {
+        gObjectTypeIndices[start] += 1;
+        start++;
     }
 }
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objtype/obj_free_object_type.s")
+void obj_free_object_type(Object* obj, s32 type) {
+    s32 end;
+    s32 start;
+    s32 i;
+
+    if (type < 0 || type >= 65) {
+        return;
+    }
+
+    start = gObjectTypeIndices[type];
+    end = gObjectTypeIndices[type+1];
+    while (start < end && gObjectTypeList[start] != obj) {
+        start++;
+    }
+
+    if (start < end) {
+        gObjectTypeListCount -= 1;
+
+        while (start < gObjectTypeListCount) {
+            gObjectTypeList[start] = gObjectTypeList[start + 1];
+            start++;
+        }
+
+        i = type + 1;
+        while (i < 66) {
+            gObjectTypeIndices[i]--;
+            i++;
+        }
+    }
+}
 
 Object **obj_get_all_of_type(s32 idx, s32 *count) {
     if (idx < 0 || idx >= OBJECT_MAX_TYPES) {
@@ -165,19 +187,15 @@ Object *obj_get_nearest_type_to_excluding_self(s32 type, Object *object, float *
     return result;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/objtype/obj_get_nearest_type.s")
-#else
 Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
     Object *result;
-    s32 i;
-    s32 iend;
-    Vec3f position;
     f32 minDistSquared;
     f32 distSquared;
+    Vec3f d;
+    s32 i;
+    s32 iend;
 
     result = NULL;
-
     minDistSquared = (*distance) * (*distance);
     
     if (type < 0 || type >= OBJECT_MAX_TYPES) {
@@ -186,20 +204,19 @@ Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
     
     i = gObjectTypeIndices[type];
     iend = gObjectTypeIndices[type + 1];
-
-    while (i < iend)
-    {
-        if (gObjectTypeList[i] != NULL){
-            f32 dx = location->x - gObjectTypeList[i]->positionMirror.x;
-            f32 dy = location->y - gObjectTypeList[i]->positionMirror.y;
-            f32 dz = location->z - gObjectTypeList[i]->positionMirror.z;
-            
-            distSquared = dx*dx + dy*dy + dz*dz;
-            
-            if (distSquared < minDistSquared) {
-                minDistSquared = distSquared;
-                result = gObjectTypeList[i];
-            }
+    while (i < iend) {
+        if (gObjectTypeList[i] == NULL) {
+            continue;
+        }
+        d.f[0] = location->x - gObjectTypeList[i]->positionMirror.x;
+        d.f[1] = location->y - gObjectTypeList[i]->positionMirror.y;
+        d.f[2] = location->z - gObjectTypeList[i]->positionMirror.z;
+        
+        distSquared = SQ(d.f[0]) + SQ(d.f[1]) + SQ(d.f[2]);
+        
+        if (distSquared < minDistSquared) {
+            minDistSquared = distSquared;
+            result = gObjectTypeList[i];
         }
         i++;
     }
@@ -210,8 +227,6 @@ Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
     
     return result;
 }
-#endif
-
 
 s32 obj_is_object_type(Object *obj, s32 type) {
     s32 i;
