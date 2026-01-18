@@ -76,7 +76,6 @@ void func_8005C780();
 
 void init_global_map();
 
-void func_8003E9F0(Gfx **gdl, s32 updateRate);
 s32 func_80041D5C();
 u32 func_80041D74();
 void func_80042174(s32);

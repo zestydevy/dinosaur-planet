@@ -485,9 +485,9 @@ void __scHandleRetrace(OSSched *sc) {
         taskDataPtr = unkTask2->list.t.data_ptr;
 
         rsp_segment((Gfx**)&taskDataPtr, SEGMENT_MAIN, (void*)0);
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_ZBUFFER, D_800BCCB4);
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_4, gFramebufferNext - 0x280);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_4, gBackFramebuffer - 0x280);
 
         diPrintfSetBG(0, 0, 0, 128);
 

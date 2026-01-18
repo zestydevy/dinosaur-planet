@@ -277,8 +277,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         camera_set_aspect(gAspectRatio);
         func_800021A0(gdl, &sp84);
     }
-    rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
-    rsp_segment(gdl, SEGMENT_4, gFramebufferCurrent - (0x500 / sizeof(u16)));
+    rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    rsp_segment(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
         gDPPipeSync((*gdl)++);

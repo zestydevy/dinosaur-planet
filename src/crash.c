@@ -89,7 +89,7 @@ void crash_thread_entry(void *arg) {
 
     // Show screen
     osViBlack(FALSE);
-    osViSwapBuffer(gFramebufferCurrent);
+    osViSwapBuffer(gFrontFramebuffer);
 
     // Stop all threads and do video crash handling stuff
     stop_active_app_threads();

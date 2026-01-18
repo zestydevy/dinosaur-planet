@@ -584,7 +584,7 @@ void func_80062D38(s32 col, s32 row, u8* arg2) {
     u16 *a2;
 
     width = vi_get_current_size() & 0xFFFF;
-    fb = &gFramebufferCurrent[(row * width) + col];
+    fb = &gFrontFramebuffer[(row * width) + col];
     a2 = (u16*)&((u8*)D_800933C4)[D_800937F0 * 8];
     i = MAXCONTROLLERS + 1;
     while (i--) {
@@ -692,12 +692,12 @@ static const char str_8009b658[] = "       ";
 static const char str_8009b660[] = "%s:%d\n";
 
 /**
- * Sets all values of gFramebufferCurrent to 0.
+ * Sets all values of gFrontFramebuffer to 0.
  */
 void clear_framebuffer_current() {
     u32 resEncoded = vi_get_current_size();
     s32 valuesLeft = GET_VIDEO_WIDTH(resEncoded) * (GET_VIDEO_HEIGHT(resEncoded) & 0xffff);
-    u16 *framebufferPtr = gFramebufferCurrent;
+    u16 *framebufferPtr = gFrontFramebuffer;
 
     while (valuesLeft--) {
         *framebufferPtr = 0;

@@ -22,6 +22,7 @@
 #include "sys/dl_debug.h"
 #include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
+#include "sys/framebuffer_fx.h"
 #include "dll.h"
 #include "constants.h"
 #include "functions.h"
@@ -292,9 +293,9 @@ void game_tick(void) {
 
     dl_add_debug_info(gCurGfx, 0, "main/main.c", 0x28E);
     rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
-    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
-    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, D_800BCCB4);
-    func_8003E9F0(&gCurGfx, gUpdateRate);
+    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+    fbfx_tick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
     func_8003DB5C();
 
@@ -303,7 +304,7 @@ void game_tick(void) {
         gDPPipeSync(gCurGfx++);
     }
 
-    gDPSetDepthImage(gCurGfx++, SEGMENT_ZBUFFER << 24);
+    gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0));
 
     rsp_init(&gCurGfx);
     phi_v1 = 2;
@@ -368,8 +369,8 @@ void game_tick_no_expansion(void) {
     gCurPol = gMainPol[gFrameBufIdx];
 
     rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
-    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFramebufferCurrent);
-    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, D_800BCCB4);
+    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     dl_set_all_dirty();
     func_8003DB5C();
 
@@ -378,7 +379,7 @@ void game_tick_no_expansion(void) {
         gDPPipeSync(gCurGfx++);
     }
 
-    gDPSetDepthImage(gCurGfx++, SEGMENT_ZBUFFER << 24);
+    gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     rsp_init(&gCurGfx);
     menu_update1(); // ignored return value
