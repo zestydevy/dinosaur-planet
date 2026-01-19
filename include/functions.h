@@ -72,7 +72,6 @@ void func_8001CD00();
 void init_models();
 void func_80053300();
 void func_8004D470();
-void func_8005C780();
 
 void init_global_map();
 

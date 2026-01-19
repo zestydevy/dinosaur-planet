@@ -89,7 +89,7 @@ segments:
     - [0x535C0, asm, segment_535C0] # shadow hasm?
     - [0x53F00, c, segment_53F00] # track/intersect.c ?
     - [0x5C470, c, shadowtex] # more shadow code
-    - [0x5D380, c, video]
+    - [0x5D380, c, misc]
     - [0x5E010, c, vi]
     - [0x5EE00, c, libultra/io/vimgr]
     - [0x5F150, c, libultra/gu/perspective]
@@ -329,7 +329,7 @@ segments:
     - [0x938C0, data, segment_535C0]
     - [0x93A70, .data, segment_53F00]
     - [0x93A90, .data, shadowtex]
-    - [0x93AC0, .data, video]
+    - [0x93AC0, .data, misc]
     - [0x93C10, .data, vi]
     - [0x93CB0, .data, libultra/io/vimgr]
     - [0x93CE0, .data, print]
@@ -406,7 +406,7 @@ segments:
     - [0x9B650, rodata, segment_535C0]
     - [0x9B670, .rodata, segment_53F00]
     - [0x9B870, .rodata, shadowtex]
-    - [0x9B8C0, .rodata, video]
+    - [0x9B8C0, .rodata, misc]
     - [0x9B8E0, .rodata, vi]
     - [0x9B980, .rodata, libultra/gu/perspective]
     - [0x9B990, .rodata, assert]
@@ -484,7 +484,7 @@ segments:
     # - { type: .bss, vram: 0x800b97e0, name: newshadows }
     # - { type: .bss, vram: 0x800bb200, name: segment_53F00 }
     # - { type: .bss, vram: 0x800bb540, name: shadowtex }
-    # - { type: .bss, vram: 0x800bb590, name: video }
+    # - { type: .bss, vram: 0x800bb590, name: misc }
     # - { type: .bss, vram: 0x800bcc90, name: vi }
     # - { type: .bss, vram: 0x800bce70, name: libultra/io/vimgr }
     # - { type: .bss, vram: 0x800be110, name: libultra/flash }

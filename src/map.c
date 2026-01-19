@@ -3,6 +3,7 @@
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
 #include "prevent_bss_reordering.h"
+#include "sys/oldshadows.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -2704,7 +2705,7 @@ void map_func_8004773C(void) {
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();
-    func_8005C780();
+    oldshadow_init();
     UINT_80092a98 &= 0x2010;
     UINT_80092a98 |= 0x81E0;
     UINT_80092a98 |= 0x804;

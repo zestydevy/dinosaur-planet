@@ -90,7 +90,7 @@ typedef struct Unk8004E540 {
 extern f32 D_80092BD0;
 extern f32 D_80092BD4;
 extern f32 D_80092BD8;
-extern s32 D_80092BDC;
+extern UnkFunc80051D68Arg3 *D_80092BDC;
 extern s32 D_80092BE0;
 extern f32 D_80092BE4;
 extern s8 D_80092BE8;

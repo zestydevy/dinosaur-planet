@@ -9,7 +9,7 @@ static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
 f32 D_80092BD0 = 100.0f;
 f32 D_80092BD4 = 100.0f;
 f32 D_80092BD8 = 0.0f;
-s32 D_80092BDC = 0;
+UnkFunc80051D68Arg3 *D_80092BDC = NULL;
 s32 D_80092BE0 = 0;
 f32 D_80092BE4 = 1.0f;
 s8 D_80092BE8 = 10;
@@ -304,9 +304,9 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     ObjectShadow* shadow;
     u32 temp_v0;
     Unk8004FA58 sp94;
-    s32 sp90;
+    UnkFunc80051D68Arg3 *sp90;
     s32 *sp8C[1];
-    s32 sp88 = 0;
+    UnkFunc80051D68Arg3 *sp88 = NULL;
     s32 temp_t0;
     s32 i;
     AABBs32 sp68;
@@ -431,7 +431,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     sp90 = sp88;
     sp2B4 = func_80052300(
         obj,
-        (UnkFunc80051D68Arg3 *) sp88,
+        sp88,
         D_800BA1A0,
         (UnkFunc80052300Arg3 *) D_800BB140,
         sp2B4,

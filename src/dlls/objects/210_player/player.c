@@ -28,6 +28,7 @@
 #include "sys/memory.h"
 #include "sys/joypad.h"
 #include "sys/newshadows.h"
+#include "sys/footstep.h"
 #include "functions.h"
 #include "dll.h"
 #include "types.h"
@@ -192,7 +193,6 @@ void dll_210_add_scarab(Object *player, s32 amount);
 void dll_210_add_magic(Object* player, s32 amount);
 
 void func_8004D880(Object *player);
-u16 *func_8005D3A4(s32 param);
 s32 func_80025140(Object*, f32, f32, s32);
 MtxF* func_80032170(Object*, s32);
 s32 func_80031F6C(Object*, s32, f32*, f32*, f32*, s32);
@@ -567,9 +567,9 @@ void dll_210_setup(Object* player, u32 arg1) {
     player->srt.yaw = gDLL_29_Gplay->vtbl->get_player_saved_location()->rotationY << 8;
     data->unk87C = -1;
     data->unk800 = 1.0f;
-    data->unk890 = func_8005D3A4(3);
-    data->unk894 = func_8005D3A4(4);
-    data->unk898 = func_8005D3A4(5);
+    data->unk890 = footstep_get_sfx_bank(3);
+    data->unk894 = footstep_get_sfx_bank(4);
+    data->unk898 = footstep_get_sfx_bank(5);
     data->unk89C = data->unk890;
     if (player->id == OBJ_Krystal) {
         data->unk8B4 = 0;

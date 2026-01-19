@@ -14,6 +14,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
+#include "sys/oldshadows.h"
 #include "dll.h"
 #include "dll_def.h"
 #include "types.h"
@@ -724,7 +725,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 5:
-                func_8005CA5C((u32) cmd->param2);
+                oldshadow_toggle((u32) cmd->param2);
                 break;
             case 6:
                 if ((s32) cmd->param2 > 0) {

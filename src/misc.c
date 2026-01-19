@@ -6,11 +6,15 @@
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
+#include "sys/oldshadows.h"
 #include "functions.h"
+#include "macros.h"
+
+/** This file contains both an older shadow renderer and a table of player footstep audio. */
 
 /* -------- .data start 80092ec0 -------- */
 s32 D_80092EC0 = 0; // unused
-u16 D_80092EC4[36] = {
+u16 gFootstepSfxBank1[36] = {
     SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
     SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
     SOUND_40, SOUND_41, SOUND_42, SOUND_43, 
@@ -21,7 +25,7 @@ u16 D_80092EC4[36] = {
     0, 0, 0, 0, 
     0, 0, 0, 0
 };
-u16 D_80092F0C[36] = {
+u16 gFootstepSfxBank2[36] = {
     SOUND_86, SOUND_87, 0, 0, 
     SOUND_88, SOUND_89, 0, 0, 
     SOUND_8A, SOUND_89, 0, 0, 
@@ -32,7 +36,7 @@ u16 D_80092F0C[36] = {
     0, 0, 0, 0, 
     0, 0, 0, 0
 };
-u16 D_80092F54[36] = {
+u16 gFootstepSfxBank3[36] = {
     SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
     SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
     SOUND_61, SOUND_62, SOUND_61, SOUND_62, 
@@ -43,7 +47,7 @@ u16 D_80092F54[36] = {
     SOUND_406, SOUND_404, SOUND_406, SOUND_404, 
     0, SOUND_88D, 0, SOUND_88D
 };
-u16 D_80092F9C[36] = {
+u16 gFootstepSfxBank4[36] = {
     SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
     SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
     SOUND_63, SOUND_64, SOUND_63, SOUND_64, 
@@ -54,7 +58,7 @@ u16 D_80092F9C[36] = {
     SOUND_407, SOUND_402, SOUND_407, SOUND_402, 
     0, SOUND_88D, 0, SOUND_88D
 };
-u16 D_80092FE4[10] = {
+u16 gFootstepSfxBank5[10] = {
     SOUND_7B1, SOUND_7B1, SOUND_7B1, SOUND_7B1, 
     SOUND_7B0, SOUND_7B1, SOUND_7B1, SOUND_403, 
     SOUND_7B1, 0
@@ -63,21 +67,21 @@ u16 D_80092FE4[10] = {
 /* -------- .data end 80093010 -------- */
 
 /* -------- .bss start 800bb590 -------- */
-UnkVidStruct gUnknownVideoStructs[UNKNOWN_VIDEO_STRUCTS_COUNT];
+UnkOldShadowStruct gUnkOldShadowStructs[40];
 Vec3f *D_800BCC10;
-UnkVidStruct2 D_800BCC18[4]; // size:0x50
+UnkOldShadowStruct2 D_800BCC18[4]; // size:0x50
 Texture *D_800BCC68;
 Texture *D_800BCC6C;
 Texture *D_800BCC70;
-u32 _bss_800BCC74;
+u32 _bss_800BCC74; // unused
 u8 D_800BCC78;
 f32 D_800BCC80[2];
 /* -------- .bss end 800bcc90 -------- */
 
-void func_8005CF4C(Object *, UnkVidStruct2*);
-void func_8005CDFC(s32 _);
+void oldshadow_func_8005CF4C(Object *, UnkOldShadowStruct2*);
+void oldshadow_func_8005CDFC(s32 _);
 
-void func_8005C780() {
+void oldshadow_init(void) {
     s32 i;
 
     if (D_800BCC10 != NULL) {
@@ -86,15 +90,13 @@ void func_8005C780() {
 
     D_800BCC10 = mmAlloc(sizeof(Vec3f) * 8, ALLOC_TAG_GFX_COL, NULL);
 
-    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++)
-    {
-        gSPEndDisplayList(&gUnknownVideoStructs[i].dl);
-        gUnknownVideoStructs[i].unk84 = 0;
-        gUnknownVideoStructs[i].unk88 = 0;
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
+        gSPEndDisplayList(&gUnkOldShadowStructs[i].dl);
+        gUnkOldShadowStructs[i].unk84 = 0;
+        gUnkOldShadowStructs[i].unk88 = 0;
     }
 
-    for (i = 0; i < 4; i++)
-    {
+    for (i = 0; i < 4; i++) {
         D_800BCC18[i].unk10 = NULL;
         D_800BCC18[i].unk0.x = 0;
         D_800BCC18[i].unk0.y = 0;
@@ -137,13 +139,13 @@ void func_8005C780() {
     D_800BCC78 = (u8)0;
 }
 
-void func_8005C998() {
+void oldshadow_clear(void) {
     s32 i;
 
-    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
-        gSPEndDisplayList(&gUnknownVideoStructs[i].dl);
-        gUnknownVideoStructs[i].unk84 = 0;
-        gUnknownVideoStructs[i].unk88 = 0;
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
+        gSPEndDisplayList(&gUnkOldShadowStructs[i].dl);
+        gUnkOldShadowStructs[i].unk84 = 0;
+        gUnkOldShadowStructs[i].unk88 = 0;
     }
 
     for (i = 0; i < 4; i++) {
@@ -155,23 +157,23 @@ void func_8005C998() {
     }
 }
 
-void func_8005CA5C(u32 param1) {
-    D_800BCC78 = param1;
+void oldshadow_toggle(u32 enabled) {
+    D_800BCC78 = enabled;
 
-    if (param1 == 0) {
-        func_8005C998();
+    if (enabled == 0) {
+        oldshadow_clear();
     }
 }
 
 // unused
-void func_8005CA88(Object *obj, f32 *a1, u8 a2) {
+void oldshadow_func_8005CA88(Object *obj, Vec3f *a1, u8 a2) {
     static s32 D_80092FF8 = 0;
 
     if (D_800BCC78 != 0) {
         D_800BCC18[D_80092FF8].unk10 = obj;
-        D_800BCC18[D_80092FF8].unk0.x = a1[0];
-        D_800BCC18[D_80092FF8].unk0.y = obj->srt.transl.y + a1[1];
-        D_800BCC18[D_80092FF8].unk0.z = a1[2];
+        D_800BCC18[D_80092FF8].unk0.x = a1->x;
+        D_800BCC18[D_80092FF8].unk0.y = a1->y + obj->srt.transl.y;
+        D_800BCC18[D_80092FF8].unk0.z = a1->z;
         D_800BCC18[D_80092FF8].unkC = a2;
 
         D_80092FF8 = D_80092FF8 + 1;
@@ -182,7 +184,7 @@ void func_8005CA88(Object *obj, f32 *a1, u8 a2) {
     }
 }
 
-void func_8005CB10(Gfx **gdl, Object *obj) {
+void oldshadow_func_8005CB10(Gfx **gdl, Object *obj) {
     s32 i;
     Texture *tex;
 
@@ -202,9 +204,9 @@ void func_8005CB10(Gfx **gdl, Object *obj) {
 
     i = 0;
 
-    while (i < UNKNOWN_VIDEO_STRUCTS_COUNT) {
-        if (obj == gUnknownVideoStructs[i].obj) {
-            gSPDisplayList((*gdl)++, &gUnknownVideoStructs[i].dl);
+    while (i < (s32)ARRAYCOUNT(gUnkOldShadowStructs)) {
+        if (obj == gUnkOldShadowStructs[i].obj) {
+            gSPDisplayList((*gdl)++, &gUnkOldShadowStructs[i].dl);
         }
 
         i++;
@@ -214,7 +216,7 @@ void func_8005CB10(Gfx **gdl, Object *obj) {
 static s32 D_80092FFC = 1;
 
 // unused
-void func_8005CC74(Gfx **gdl, Object *arg1) {
+void oldshadow_func_8005CC74(Gfx **gdl, Object *arg1) {
     s32 i;
 
     if (D_800BCC78 == 0) {
@@ -229,43 +231,43 @@ void func_8005CC74(Gfx **gdl, Object *arg1) {
     if ((gWorldX != D_800BCC80[0]) || (gWorldZ != D_800BCC80[1])) {
         D_800BCC80[0] = gWorldX;
         D_800BCC80[1] = gWorldZ;
-        func_8005CDFC(0);
+        oldshadow_func_8005CDFC(0);
     }
 
     for (i = 0; i < 4; i++) {
         if ((D_800BCC18[i].unk10 != 0) && (arg1 == D_800BCC18[i].unk10)) {
-            func_8005CF4C(arg1, &D_800BCC18[i]);
+            oldshadow_func_8005CF4C(arg1, &D_800BCC18[i]);
         }
     }
-    func_8005CB10(gdl, arg1);
+    oldshadow_func_8005CB10(gdl, arg1);
     D_80092FFC = 0;
 }
 
-void func_8005CD80() {
+void oldshadow_func_8005CD80(void) {
     s32 i;
     s32 k;
     Vtx_t *ptr;
 
-    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
-        ptr = &gUnknownVideoStructs[i].unk18[0];
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
+        ptr = &gUnkOldShadowStructs[i].unk18[0];
         
-        if (gUnknownVideoStructs[i].unk84 != 0) {
-            gUnknownVideoStructs[i].unk88 -= 5;
+        if (gUnkOldShadowStructs[i].unk84 != 0) {
+            gUnkOldShadowStructs[i].unk88 -= 5;
 
-            if (gUnknownVideoStructs[i].unk88 < 0) {
-                gUnknownVideoStructs[i].unk88 = 0;
+            if (gUnkOldShadowStructs[i].unk88 < 0) {
+                gUnkOldShadowStructs[i].unk88 = 0;
             }
 
             for (k = 0; k < 4; k++) {
-                (ptr++)->cn[3] = gUnknownVideoStructs[i].unk88;
+                (ptr++)->cn[3] = gUnkOldShadowStructs[i].unk88;
             }
         }
     }
 }
 
-void func_8005CDFC(s32 _) {
-    float var1;
-    float var2;
+void oldshadow_func_8005CDFC(s32 _) {
+    f32 var1;
+    f32 var2;
     s32 i;
     s32 k;
     Vtx_t *ptr;
@@ -273,15 +275,15 @@ void func_8005CDFC(s32 _) {
     var1 = 0;
     var2 = 0;
 
-    for (i = 0; i < UNKNOWN_VIDEO_STRUCTS_COUNT; i++) {
-        if (gUnknownVideoStructs[i].unk84 != 0) {
-            ptr = &gUnknownVideoStructs[i].unk18[0];
+    for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
+        if (gUnkOldShadowStructs[i].unk84 != 0) {
+            ptr = &gUnkOldShadowStructs[i].unk18[0];
             
-            var1 = gWorldX - gUnknownVideoStructs[i].unk78;
-            var2 = gWorldZ - gUnknownVideoStructs[i].unk7C;
+            var1 = gWorldX - gUnkOldShadowStructs[i].unk78;
+            var2 = gWorldZ - gUnkOldShadowStructs[i].unk7C;
 
-            gUnknownVideoStructs[i].unk78 += var1;
-            gUnknownVideoStructs[i].unk7C += var2;
+            gUnkOldShadowStructs[i].unk78 += var1;
+            gUnkOldShadowStructs[i].unk7C += var2;
 
             for (k = 0; k < 4; k++) {
                 ptr->ob[0] -= var1;
@@ -292,7 +294,7 @@ void func_8005CDFC(s32 _) {
     }
 }
 
-void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
+void oldshadow_func_8005CF4C(Object* arg0, UnkOldShadowStruct2* arg1) {
     static s32 D_80093000 = 0;
     s16 var_s2;
     s16 var_s3;
@@ -317,7 +319,13 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     if (D_80093000 == 39) {
         D_80093000 = 0;
     }
-    if (func_80051D68(arg0, arg1->unk0.x - ((Vec3s32 *)D_80092BE0)->x, arg1->unk0.z - ((Vec3s32 *)D_80092BE0)->z, (UnkFunc80051D68Arg3* ) D_80092BDC, *((s32*)&D_80092C1C), &sp68) == 0) {
+    if (func_80051D68(
+            arg0, 
+            arg1->unk0.x - ((Vec3s32 *)D_80092BE0)->x, 
+            arg1->unk0.z - ((Vec3s32 *)D_80092BE0)->z, 
+            D_80092BDC, 
+            *((s32*)&D_80092C1C), 
+            &sp68) == 0) {
         return;
     }
 
@@ -330,14 +338,14 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
         }
     }
 
-    gUnknownVideoStructs[D_80093000].obj = arg0;
-    var_s0 = gUnknownVideoStructs[D_80093000].unk18;
-    var_s5 = gUnknownVideoStructs[D_80093000].unk58;
-    dl = gUnknownVideoStructs[D_80093000].dl;
-    gUnknownVideoStructs[D_80093000].unk88 = 200;
-    gUnknownVideoStructs[D_80093000].unk84 = 1;
-    gUnknownVideoStructs[D_80093000].unk78 = gWorldX;
-    gUnknownVideoStructs[D_80093000].unk7C = gWorldZ;
+    gUnkOldShadowStructs[D_80093000].obj = arg0;
+    var_s0 = gUnkOldShadowStructs[D_80093000].unk18;
+    var_s5 = gUnkOldShadowStructs[D_80093000].unk58;
+    dl = gUnkOldShadowStructs[D_80093000].dl;
+    gUnkOldShadowStructs[D_80093000].unk88 = 200;
+    gUnkOldShadowStructs[D_80093000].unk84 = 1;
+    gUnkOldShadowStructs[D_80093000].unk78 = gWorldX;
+    gUnkOldShadowStructs[D_80093000].unk7C = gWorldZ;
 
     sp94.transl.x = 0.0f;
     sp94.transl.y = 0.0f;
@@ -366,7 +374,7 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
         var_s0->cn[0] = 0xFF;
         var_s0->cn[1] = 0xE1;
         var_s0->cn[2] = 0xE1;
-        var_s0->cn[3] = gUnknownVideoStructs[D_80093000].unk88;
+        var_s0->cn[3] = gUnkOldShadowStructs[D_80093000].unk88;
     }
     var_s0 -= 4;
     var_s0[0].tc[0] = 0;
@@ -400,27 +408,27 @@ void func_8005CF4C(Object* arg0, UnkVidStruct2* arg1) {
     gSPEndDisplayList(dl++);
     D_80093000 = D_80093000 + 1;
     if (D_80093000 == 39) {
-        gUnknownVideoStructs->unk84 = 0;
+        gUnkOldShadowStructs->unk84 = 0;
     } else {
-        gUnknownVideoStructs[D_80093000].unk84 = 0;
+        gUnkOldShadowStructs[D_80093000].unk84 = 0;
     }
-    func_8005CD80();
+    oldshadow_func_8005CD80();
 }
 
-u16 *func_8005D3A4(s32 param) {
-    switch (param) {
+u16 *footstep_get_sfx_bank(s32 bank) {
+    switch (bank) {
         case 1:
-            return D_80092EC4;
+            return gFootstepSfxBank1;
         case 2:
-            return D_80092F0C;
+            return gFootstepSfxBank2;
         case 3:
-            return D_80092F54;
+            return gFootstepSfxBank3;
         case 4:
-            return D_80092F9C;
+            return gFootstepSfxBank4;
         case 5:
-            return D_80092FE4;  
+            return gFootstepSfxBank5;  
         case 0:
         default:
-            return D_80092F54;
+            return gFootstepSfxBank3;
     } 
 }

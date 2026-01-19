@@ -5,7 +5,6 @@
 
 #include "PR/os.h"
 #include "PR/sched.h"
-#include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "game/objects/object.h"
 
@@ -26,32 +25,10 @@ typedef struct VideoResolution {
     u32 v;
 } VideoResolution;
 
-// size: 0x90
-typedef struct _UnkVidStruct {
-/*00*/ Gfx dl[3];
-/*18*/ Vtx_t unk18[4];
-/*58*/ DLTri unk58[2];
-/*78*/ f32 unk78;
-/*7C*/ f32 unk7C;
-/*80*/ Object *obj;
-/*84*/ s32 unk84;
-/*88*/ s16 unk88;
-} UnkVidStruct;
-
-// size: 0x14
-typedef struct UnkVidStruct2 {
-/*0000*/    Vec3f unk0;
-/*000C*/    u8 unkC;
-/*0010*/    Object *unk10;
-} UnkVidStruct2;
-
 typedef struct UnkVidStruct3 {
     s32 unk0;
     s32 unk4;
 } UnkVidStruct3;
-
-// Length of gUnknownVideoStructs
-#define UNKNOWN_VIDEO_STRUCTS_COUNT 40
 
 // Length of gResolutionArray
 #define VIDEO_RESOLUTIONS_COUNT 8
@@ -148,8 +125,6 @@ s32 vi_frame_sync(s32);
  * The video width is the higher 16 bits of the returned 32 bit value
  */
 #define GET_VIDEO_HEIGHT(width_and_height) (width_and_height >> 16)
-
-void func_8005CA5C(u32 param1);
 
 int vi_contains_point(s32 x, s32 y);
 
