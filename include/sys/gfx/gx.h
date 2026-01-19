@@ -5,6 +5,7 @@
 
 #include "PR/os.h"
 #include "PR/sched.h"
+#include "sys/gfx/map.h"
 #include "sys/gfx/texture.h"
 #include "game/objects/object.h"
 
@@ -25,57 +26,22 @@ typedef struct VideoResolution {
     u32 v;
 } VideoResolution;
 
-#define UNKNOWN_HEAP_VIDEO_STRUCT_SIZE 0x60
-
-typedef struct _UnkHeapVidStruct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    f32 unk14;
-    f32 unk18;
-    f32 unk1C;
-    f32 unk20;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
-    f32 unk34;
-    f32 unk38;
-    f32 unk3C;
-    f32 unk40;
-    f32 unk44;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
-    f32 unk54;
-    f32 unk58;
-    f32 unk5C;
-} UnkHeapVidStruct;
-
 // size: 0x90
 typedef struct _UnkVidStruct {
-    Gfx dl;
-    Gfx *dl2;
-    u8 unkC_pad[12];
-    Vtx_t unk18[4];
-    u8 unk58_pad[0x20];
-    f32 unk78;
-    f32 unk7C;
-    Object *obj;
-    OSViMode *viMode;
-    s16 unk88;
-    u8 unk8A_padd[6];
+/*00*/ Gfx dl[3];
+/*18*/ Vtx_t unk18[4];
+/*58*/ DLTri unk58[2];
+/*78*/ f32 unk78;
+/*7C*/ f32 unk7C;
+/*80*/ Object *obj;
+/*84*/ s32 unk84;
+/*88*/ s16 unk88;
 } UnkVidStruct;
 
 // size: 0x14
 typedef struct UnkVidStruct2 {
-/*0000*/    f32 unk0;
-/*0004*/    f32 unk4;
-/*0008*/    f32 unk8;
+/*0000*/    Vec3f unk0;
 /*000C*/    u8 unkC;
-/*000D*/    // padding
 /*0010*/    Object *unk10;
 } UnkVidStruct2;
 
