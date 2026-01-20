@@ -10,7 +10,7 @@ f32 D_80092BD0 = 100.0f;
 f32 D_80092BD4 = 100.0f;
 f32 D_80092BD8 = 0.0f;
 UnkFunc80051D68Arg3 *D_80092BDC = NULL;
-s32 D_80092BE0 = 0;
+Vec3s32 *D_80092BE0 = 0;
 f32 D_80092BE4 = 1.0f;
 s8 D_80092BE8 = 10;
 s32 D_80092BEC = 0; // unused
@@ -779,9 +779,6 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
     return (gdl - sp1C0);
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004F378.s")
-#else
 s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 arg4, s32* arg5) {
     s32 sp1E4;
     s32 var_s0;
@@ -793,50 +790,58 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     Gfx* sp1C8;
     Texture* sp1C4;
     f32 sp1C0;
-    u8 pad[0xf0];
+    s32 var_s2;
+    ObjectShadow *shadow2;
     DLTri* var_v1;
-    Vtx* var_s3;
     f32 var_ft5;
     s16 temp_a1;
-    DLTri *spB8[2];
+    s32 pad;
+    DLTri spB8[15]; // unknown size
     void *spB4;
     void *spB0;
 
-    var_s3 = arg0;
-    sp1C4 = NULL;
-    sp1C8 = arg1;
     var_s4 = 0;
-    sp1C0 = (f32) shadow->unk36 * (1.0f / 64.0f);
+    sp1C8 = arg1;
+    sp1C4 = NULL;
+    sp1C0 = shadow->unk36 * (1.0f / 64.0f);
     if (shadow->flags & OBJ_SHADOW_FLAG_40) {
         sp1C0 = shadow->unk3F;
     } else if ((arg3->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
-        sp1C0 *= ((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4;
+        sp1C0 = (((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4) * sp1C0;
     } else {
-        sp1C0 *= D_80092BE4;
+        sp1C0 = D_80092BE4 * sp1C0;
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_8) {
         shadowtex_get_textures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
         sp1D4 = 0;
     } else {
-        sp1D4 = 1;
         sp1C4 = shadow->texture;
+        sp1D4 = 1;
     }
-    if (shadow->flags & OBJ_SHADOW_FLAG_40) {
+    if (!(shadow->flags & OBJ_SHADOW_FLAG_40)) {
         if ((arg3->def->shadowType == 2) && !(shadow->flags & OBJ_SHADOW_FLAG_400)) {
-            var_s0 = func_8004E540( arg3, shadow);
+            sp1D0 = func_8004E540(arg3, shadow);
         } else {
-            var_s0 = (s32) shadow->unk40;
+            sp1D0 = shadow->unk40;
         }
-        sp1D0 = (s16) ((((arg3->opacityWithFade + 1) * var_s0) >> 8) * sp1C0);
-        if (sp1D0 >= 0x100) {
+        // @fake
+        if (1) {}
+        if (1) {} 
+        sp1D0 = (arg3->opacityWithFade + 1) * sp1D0;
+        sp1D0 >>= 8;
+        sp1D0 = (s16) (sp1D0 * sp1C0);
+        if (sp1D0 > 0xFF) {
             sp1D0 = 0xFF;
         } else if (sp1D0 < 0) {
             sp1D0 = 0;
         }
     }
+    var_s2 = 0;
     sp1E4 = 0;
     func_80040FF8();
     func_8003DB7C();
+    // @fake
+    if (&arg1) {}
     gSPGeometryMode(arg1, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
     dl_apply_geometry_mode(&arg1);
     if (sp1D4 != 0) {
@@ -876,38 +881,20 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
             )
             dl_apply_other_mode(&arg1);
         }
-        // This should be
-        // gDPLoadTextureBlock(arg1++, OS_PHYSICAL_TO_K0(spB4), G_IM_FMT_I, G_IM_SIZ_4b, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
-        // But the height/width isn't lining up for gDPLoadBlock
-        gDPSetTextureImage(arg1++, G_IM_FMT_I, G_IM_SIZ_16b, 1, OS_PHYSICAL_TO_K0(spB4))
-        gDPSetTile(arg1++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD)
-        gDPLoadSync(arg1++)
-        gDPLoadBlock(arg1++, G_TX_LOADTILE, 0, 0, 1023, 512)
-        gDPPipeSync(arg1++)
-        gDPSetTile(arg1++, G_IM_FMT_I, G_IM_SIZ_4b, 4, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD)
-        gDPSetTileSize(arg1++, G_TX_RENDERTILE, 0, 0, 252, 252)
-        // This should also probably be gDPLoadTextureBlock
-        gDPSetTextureImage(arg1++, G_IM_FMT_I, G_IM_SIZ_16b, 1, (void *)(((u32)(D_800BB190)+0x80000020)))
-        gDPSetTile(arg1++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0100, G_TX_LOADTILE, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD)
-        gDPLoadSync(arg1++);
-        gDPLoadBlock(arg1++, G_TX_LOADTILE, 0, 0, 1023, 0)
-        gDPPipeSync(arg1++);
-        gDPSetTile(arg1++, G_IM_FMT_I, G_IM_SIZ_4b, 4, 0x0100, 1, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOLOD)
-        gDPSetTileSize(arg1++, 1, 0, 0, 252, 252)
+        gDPLoadTextureBlock_4b(arg1++, OS_PHYSICAL_TO_K0(spB4), G_IM_FMT_I, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
+        gDPLoadMultiBlock_4bS(arg1++, OS_PHYSICAL_TO_K0(D_800BB190 + 1), 0x100, 1, G_IM_FMT_I, 64, 64, 0x100, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
     }
-    shadow->gdl2 = arg1;
-    if (shadow->flags & OBJ_SHADOW_FLAG_40) {
-        dl_set_prim_color_no_sync(&arg1, shadow->unk3C, shadow->unk3D, shadow->unk3E, (s16)(sp1C0 * 255.0f));
+    shadow2 = shadow;
+    // @fake
+    if (shadow2) {}
+    shadow2->gdl2 = arg1;
+    if (shadow2->flags & OBJ_SHADOW_FLAG_40) {
+        dl_set_prim_color_no_sync(&arg1, shadow2->unk3C, shadow2->unk3D, shadow2->unk3E, (s16)(sp1C0 * 255.0f));
     } else {
         dl_set_prim_color_no_sync(&arg1, 0, 0, 0, sp1D0);
     }
     for (; sp1E4 < arg4; sp1E4++) {
-        temp_a1 = D_800B98B8[sp1E4];
-        {
-            Gfx *_g = (Gfx *) (arg1++);
-            _g->words.w0 = ((temp_a1 & 0x7F) * 2) | 0x01000000 | ((temp_a1 & 0xFF) << 0xC);\
-            _g->words.w1 = OS_PHYSICAL_TO_K0(var_s3);
-        }
+        gSPVertex(arg1++, OS_PHYSICAL_TO_K0(arg0), D_800B98B8[sp1E4], 0);
         var_v1 = spB8;
         for (var_a0 = 0; var_a0 < D_800B98B8[sp1E4] - 2; ) {
             var_v1->v0 = 0;
@@ -918,8 +905,9 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
         }
         dl_triangles(&arg1, spB8, D_800B98B8[sp1E4] - 2);
 
-        var_s3 = (s8 *)var_s3 +  D_800B98B8[sp1E4] * 0x10;
+        arg0 += D_800B98B8[sp1E4];
         var_s4 += D_800B98B8[sp1E4];
+        var_s2 += D_800B98B8[sp1E4];
     }
     gSPEndDisplayList(arg1++);
     func_80041028();
@@ -927,7 +915,6 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     *arg5 = var_s4;
     return arg1 - sp1C8;
 }
-#endif
 
 s32 func_8004FA3C(s32 arg0) {
     return 0;
@@ -1807,70 +1794,65 @@ s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Un
 }
 #endif
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_80052644.s")
-#else
-// https://decomp.me/scratch/0NfF9
 void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag) {
+    f32 new_var = 1/1000.0f;
     Vec3f* var_s3;
     f32 temp_fs0;
     f32 temp_fs1;
     f32 temp_fv0;
     f32 var_fv0;
     s32 var_s7;
-    f32 new_var;
     Vec3f *sourceAsVec;
     Vec3f *destAsVec;
 
-    new_var = 0.001000000047f;
     *outCount = 0;
-    if (arg2 != 0) {
-        if (1) {}
-        var_s3 = (Vec3f *)((arg2 - 1) * length + (s8 *)source);
-        var_fv0 = (var_s3->x * arg4->x) + (var_s3->y * arg4->y) + (var_s3->z * arg4->z) + arg4->w;
-        for (var_s7 = 0; var_s7 < arg2; var_s7++) {
-            sourceAsVec = (Vec3f *) source;
-            destAsVec = (Vec3f *) dest;
-            temp_fs0 = (sourceAsVec->x * arg4->x) + (sourceAsVec->y * arg4->y) + (sourceAsVec->z * arg4->z) + arg4->w;
-            if (temp_fs0 < new_var) {
-                if (var_fv0 < new_var) {
-                    bcopy(source, dest, length);
-                    dest += length;
-                    *outCount += 1;
-                } else {
-                    temp_fv0 = func_800528AC(var_s3, sourceAsVec, destAsVec, arg4);
-                    if (arg6 != NULL) {
-                        arg6(var_s3, sourceAsVec, destAsVec, temp_fv0);
-                    }
-                    dest += length;
-                    bcopy(source, dest, length);
-                    dest += length;
-                    *outCount += 2;
-                }
-            } else if (var_fv0 < new_var) {
-                temp_fv0 = func_800528AC(sourceAsVec, var_s3, destAsVec, arg4);
-                if (arg6 != NULL) {
-                    arg6(sourceAsVec, var_s3, destAsVec, temp_fv0);
-                }
+    if (arg2 == 0) {
+        return;
+    }
+    if (1) {}
+    var_s3 = (Vec3f *)((arg2 - 1) * length + (s8 *)source);
+    var_fv0 = (var_s3->x * arg4->x) + (var_s3->y * arg4->y) + (var_s3->z * arg4->z) + arg4->w;
+    for (var_s7 = 0; var_s7 < arg2; var_s7++) {
+        sourceAsVec = (Vec3f *) source;
+        destAsVec = (Vec3f *) dest;
+        temp_fs0 = (sourceAsVec->x * arg4->x) + (sourceAsVec->y * arg4->y) + (sourceAsVec->z * arg4->z) + arg4->w;
+        if (temp_fs0 < new_var) {
+            if (var_fv0 < new_var) {
+                bcopy(source, dest, length);
                 dest += length;
                 *outCount += 1;
-                if (someFlag) {
-                    bcopy(source, dest, length);
-                    dest += length;
-                    *outCount += 1;
+            } else {
+                temp_fv0 = func_800528AC(var_s3, sourceAsVec, destAsVec, arg4);
+                if (arg6 != NULL) {
+                    arg6(var_s3, sourceAsVec, destAsVec, temp_fv0);
                 }
-            } else if (someFlag) {
+                dest += length;
+                bcopy(source, dest, length);
+                dest += length;
+                *outCount += 2;
+            }
+        } else if (var_fv0 < new_var) {
+            temp_fv0 = func_800528AC(sourceAsVec, var_s3, destAsVec, arg4);
+            if (arg6 != NULL) {
+                arg6(sourceAsVec, var_s3, destAsVec, temp_fv0);
+            }
+            dest += length;
+            *outCount += 1;
+            if (someFlag) {
                 bcopy(source, dest, length);
                 dest += length;
                 *outCount += 1;
             }
-            var_fv0 = temp_fs0;
-            var_s3 = sourceAsVec;
-            source += length;
+        } else if (someFlag) {
+            bcopy(source, dest, length);
+            dest += length;
+            *outCount += 1;
         }
+        var_fv0 = temp_fs0;
+        var_s3 = sourceAsVec;
+        source += length;
     }
 }
-#endif
 
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3) {
     f32 zDiff;

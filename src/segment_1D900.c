@@ -483,9 +483,9 @@ u8 func_8001EBE0(void) {
 
 // TODO: .data for this file needs to be mapped in splat config
 #ifndef NON_MATCHING
-// static s16 D_80090D3C = 0;
-// static u8 D_80090D40 = 0;
-// static Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
+static Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
+static s16 D_80090D3C = 0;
+static u8 D_80090D40 = 0;
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBF0.s")
 #else
 extern s16 D_80090D3C; // = 0;
