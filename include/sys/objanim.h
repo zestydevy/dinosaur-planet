@@ -5,7 +5,6 @@
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
 
-extern u8 D_800916B0[];
 extern f32 gAnimBlendDivisor; //1023
 
 typedef struct {

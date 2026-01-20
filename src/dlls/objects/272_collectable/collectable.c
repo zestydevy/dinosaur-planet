@@ -10,7 +10,7 @@
 #include "types.h"
 
 extern u16 func_80031BBC(f32 x, f32 y, f32 z);
-s32 func_8004E540(Object* arg0, ObjectStruct64* arg1);
+s32 func_8004E540(Object* arg0, ObjectShadow* arg1);
 
 #define COLLECT_OFF 1
 
@@ -210,11 +210,11 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
         self->unkD6 = lfxAction.unk10;
     }
 
-    if (self->unk64){
-        self->unk64->flags = 0x800 | 0x10;
+    if (self->shadow){
+        self->shadow->flags = OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10;
         id = self->id;
         if (id == OBJ_BoneDust || id == OBJ_WM_PureMagic){
-            self->unk64->flags |= 0x400;
+            self->shadow->flags |= OBJ_SHADOW_FLAG_400;
         }
     }
 
@@ -440,7 +440,7 @@ int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animO
 void collectable_handle_animation_and_fx(Object* self) {
     s16 id;
     Collectable_Data* objdata;
-    ObjectStruct64* shadow;
+    ObjectShadow* shadow;
     s32 opacity;
     CollectableDef* collectableDef;
     s32 temp;
@@ -473,7 +473,7 @@ void collectable_handle_animation_and_fx(Object* self) {
                 objdata->shadowOpacity = 0;
             }
         } else {
-            shadow = self->unk64;
+            shadow = self->shadow;
             if (shadow) {
                 opacity = objdata->shadowOpacity + (gUpdateRate * 8);
                 if (opacity > 0xFF) {

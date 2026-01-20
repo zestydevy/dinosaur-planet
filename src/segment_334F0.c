@@ -14,10 +14,12 @@ static const char str_80099cdc[] = " WARNING: Expr Contrl Flag does not exist \n
 
 // -------- .bss start 800b2e00 -------- //
 u8 D_800B2E00;
-// -------- .bss end 800b2e10 -------- //
+// -------- .bss end 80091754 -------- //
 
+// -------- .data start 80091720 -------- //
 s32 D_80091720[] = { 0x0, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13 };
 s32 D_80091748[] = { 0, 0 };
+// -------- .data end 80091750 -------- //
 
 void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
     Object* target; // could also be SRT*

@@ -99,8 +99,8 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
     self->speed.y = 0.0f;
     self->speed.z = 0.0f;
      
-    if (self->unk64) {
-        self->unk64->flags |= 0x810;
+    if (self->shadow) {
+        self->shadow->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10);
     }
     
     objdata->unk296 = 0x32;

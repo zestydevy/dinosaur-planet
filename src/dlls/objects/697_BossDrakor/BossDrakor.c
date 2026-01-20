@@ -99,9 +99,9 @@ void BossDrakor_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
     self->animCallback = BossDrakor_anim_callback;
     sp34->fsa.animState = DRAKOR_ASTATE_0;
     sp34->fsa.logicState = DRAKOR_LSTATE_0;
-    if (self->unk64 != NULL) {
-        self->unk64->unk3A = 0x64;
-        self->unk64->unk3B = 0x96;
+    if (self->shadow != NULL) {
+        self->shadow->unk3A = 0x64;
+        self->shadow->unk3B = 0x96;
     }
 }
 

@@ -5,6 +5,44 @@
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
+#include "sys/newshadows.h"
+
+typedef struct {
+/*00*/  u8 _unk0[0x8 - 0x0];
+/*08*/  f32 unk8;
+/*0C*/  f32 unkC;
+/*10*/  f32 unk10;
+/*14*/  u8 _unk14[0x20 - 0x14];
+} UnkStruct_80091668;
+
+// -------- .data start 80091660 -------- //
+s32 D_80091660 = 2;
+s16 D_80091664[2] = {0x00, 0x1F}; // gCharacterObjIds
+UnkStruct_80091668 D_80091668 = {
+    { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 },
+    0.0f,
+    0.0f,
+    0.0f,
+    { 0x00,0x00,0x00,0x00,0xFF,0x3C,0x00,0x5C,0x00,0x5A,0x1E,0x14 }
+};
+SidekickSetup D_80091688 = {
+    {
+        /*objId=*/-1,
+        /*quarterSize=*/7,
+        /*setupExclusions1=*/0,
+        /*loadFlags=*/OBJSETUP_LOAD_FLAG1,
+        /*fadeFlags=*/OBJSETUP_FADE_FLAG4,
+        /*loadDistance=*/0xFF,
+        /*fadeDistance=*/0xFF,
+        /*x=*/0.0f,
+        /*y=*/0.0f,
+        /*z=*/0.0f,
+        /*uID=*/-1
+    },
+    /*unk18=*/0,
+    /*unk19=*/0
+};
+// -------- .data end 800916b0 -------- //
 
 // -------- .bss start 800b18e0 -------- //
 s16 D_800B18E0;
@@ -30,8 +68,6 @@ s8 gEffectBoxCount;
 Object *gEffectBoxes[20];
 s32 D_800B1988;
 // -------- .bss end 800b1990 -------- //
-
-extern s16 D_80091664[2]; // gCharacterObjIds
 
 enum FILE_ID {
     FILE_TABLES_BIN   = 0x16,
@@ -60,8 +96,6 @@ void update_obj_models();
 void update_object(Object *obj);
 void func_8002272C(Object *obj);
 
-extern s32 D_80091660;
-
 extern void func_80025DF0();
 
 ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount);
@@ -82,16 +116,6 @@ u32 func_8002298C(s32 param1, ModelInstance *param2, Object *obj, u32 addr);
 f32 func_80022150(Object *obj);
 
 void obj_free_object(Object *obj, s32 param2);
-
-typedef struct {
-/*00*/  u8 _unk0[0x8 - 0x0];
-/*08*/  f32 unk8;
-/*0C*/  f32 unkC;
-/*10*/  f32 unk10;
-/*14*/  u8 _unk14[0x20 - 0x14];
-} UnkStruct_80091668;
-
-extern UnkStruct_80091668 D_80091668;
 
 void init_objects(void) {
     int i;
@@ -666,7 +690,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
-        addr = func_8004D8A4(obj, addr, 0);
+        addr = shadow_init_obj_shadow(obj, addr, 0);
     }
 
     obj->unkA8 = func_80022150(obj) * obj->srt.scale;
@@ -815,7 +839,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
 
     if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
         size = mmAlign4(size);
-        size += sizeof(ObjectStruct64);
+        size += sizeof(ObjectShadow);
     }
 
     if (def->unk8F != 0) {
@@ -1551,17 +1575,17 @@ void obj_free_object(Object *obj, s32 param2) {
         gDLL_11_Newlfx->vtbl->func0(obj, obj, &lAction, 0, 0, 0);
     }
 
-    if (obj->unk64 != NULL) {
+    if (obj->shadow != NULL) {
         if (obj->def->shadowType == 1) {
             func_8004D974(1);
         }
 
-        if (obj->unk64->unk4 != NULL) {
-            texture_destroy(obj->unk64->unk4);
+        if (obj->shadow->texture != NULL) {
+            texture_destroy(obj->shadow->texture);
         }
 
-        if (obj->unk64->unk8 != NULL) {
-            texture_destroy(obj->unk64->unk8);
+        if (obj->shadow->unk8 != NULL) {
+            texture_destroy(obj->shadow->unk8);
         }
     }
 

@@ -88,11 +88,11 @@ void dll_793_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->unk31C[1] = 0x2000;
     objdata->unk2B4 = 15.0f;
     
-    self->unk64->flags |= 0x40A50;
-    self->unk64->unk3C = 0xFF;
-    self->unk64->unk3D = 0xFF;
-    self->unk64->unk3E = 0xFF;
-    self->unk64->unk3F = 0x7F;
+    self->shadow->flags |= (OBJ_SHADOW_FLAG_40000 | OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_200 | OBJ_SHADOW_FLAG_40 | OBJ_SHADOW_FLAG_10);
+    self->shadow->unk3C = 0xFF;
+    self->shadow->unk3D = 0xFF;
+    self->shadow->unk3E = 0xFF;
+    self->shadow->unk3F = 0x7F;
 
     for (i = 0; i < 2; i++) {
         objdata->unk260[i].x = self->srt.transl.x;

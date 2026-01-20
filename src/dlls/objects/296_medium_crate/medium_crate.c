@@ -102,9 +102,9 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
         objdata->soundID2 = SOUND_371_Crate_Smash;
     }
 
-    if (self->unk64 != NULL) {
-        self->unk64->flags |= 0x8000;
-        self->unk64->unk2c = self->unk64->unk0 + self->unk64->unk0;
+    if (self->shadow != NULL) {
+        self->shadow->flags |= OBJ_SHADOW_FLAG_8000;
+        self->shadow->unk2c = self->shadow->unk0 + self->shadow->unk0;
     }
 }
 

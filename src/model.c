@@ -13,6 +13,8 @@ static const char str_800992e4[] = "DANGER: createModelInstance: Actual size exc
 static const char str_80099324[] = "ModFreeModel : NULL mod_inst!!\n";
 static const char str_80099344[] = "MOD Error: Tryed to deallocate non-existent model!!\n";
 
+// .data 8008eab0-8008ead0 (all function statics, see below)
+
 /* -------- .bss start 800b17a0 -------- */
 s32* gFile_MODELS_TAB;
 ModelSlot* gLoadedModels;
@@ -28,9 +30,6 @@ s32 gNumLoadedAnims;
 s16 SHORT_ARRAY_800b17d0[48]; // TODO: check length, it's at most 48
 /* -------- .bss end 800b1830 -------- */
 
-extern u8 D_8008EAC8[8]; // = {0};
-extern s32 D_8008EAB0[3]; // = {0};
-extern s32 D_8008EABC[3]; // = {0};
 extern s16 D_800903DC; // = 0;
 extern s16 D_800903DE; // = 0;
 extern s16 D_800903E0; // = 0;
@@ -1446,9 +1445,10 @@ void func_8001B100(ModelInstance* modelInst) {
     s32 pad2;
     s32 var_t2;
     s32 i;
-    s32 sp68[3] = D_8008EAB0;
-    s32 sp5C[3] = D_8008EABC;
+    s32 sp68[3] = {0, 0, 0};
+    s32 sp5C[3] = {0, 0, 0};
     s32 pad;
+    static u8 D_8008EAC8[8] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     temp_s2 = modelInst->model;
     if (temp_s2->blendshapes == NULL) {

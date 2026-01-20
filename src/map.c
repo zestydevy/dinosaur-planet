@@ -1,10 +1,11 @@
 #include "common.h"
 #include "sys/map.h"
+#include "sys/newshadows.h"
 #include "sys/objtype.h"
+#include "prevent_bss_reordering.h"
+#include "sys/oldshadows.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
-
-// .data start: 80092a60 ?
 
 // -------- .bss start 800b49f0 -------- //
 DLBuilder D_800B49F0;
@@ -71,6 +72,55 @@ MapsUnk_800B97C0 *D_800B97C0; // 255 items
 s16 D_800B97C4;
 u8 _bss_800b97c8[0x8];
 // -------- .bss end 800b97e0 -------- //
+
+// -------- .data start 80092a60 -------- //
+s32 D_80092A60 = 0;
+s32 D_80092A64 = 0;
+s32 gMapCurrentStreamCoordsX = 0;
+s32 gMapCurrentStreamCoordsZ = 0;
+f32 gWorldX = 0.0f;
+f32 gWorldZ = 0.0f;
+s8 D_80092A78 = 0; //gFadeDelayTimer
+s32 D_80092A7C[2] = {0};
+s32 D_80092A84[2] = {0};
+s8 gMapLayer = 0;
+DLBuilder *gDLBuilder = &D_800B49F0;
+s32 D_80092A94 = -1;
+u32 UINT_80092a98 = 0;
+s8 D_80092A9C[8] = {0, -2, -1, 1, 2, 0, 0, 0};
+s8 gMapNumStreamMaps = 0;
+s32 D_80092AA8 = 0; // unused
+f32 D_80092AAC[24] = {
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f
+};
+u8 D_80092B0C[] = { 
+    0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00, 0x08, 0x09, 0x0a, 
+    0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 
+    0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 
+    0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x38, 
+    0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x00, 0x00, 
+    0x38, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x00, 0x00, 0x40, 0x00, 0x00, 
+    0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 
+    0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 
+    0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 
+    0x34, 0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 
+    0x00, 0x38, 0x00, 0x00, 0x00, 0x44, 0x00, 0x00, 0x00, 0x34, 0x00, 
+    0x00, 0x00, 0x3c, 0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, 0x34, 
+    0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x00, 0x00, 
+    0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 
+    0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x34, 0x00, 
+    0x00, 0x00, 0x34, 0x00, 0x00, 0x00, 0x44, 0x00, 0x00, 0x00, 0x34
+};
+s32 D_80092BBC = -1;
+Unk80092BC0 D_80092BC0 = {0};
+// -------- .data end 80092bd0 -------- //
 
 void func_8004D328(void);
 void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
@@ -1108,10 +1158,10 @@ void func_80043FD8(s8* arg0) {
             var_s2[0] = 0;
         } else {
             var_s2[0] = func_800456AC(object);
-            if ((var_s2[0] != 0) && (object->unk64 != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
-                func_8004DBAC(object, 0, 0, gUpdateRate);
+            if ((var_s2[0] != 0) && (object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
+                shadow_update_obj(object, 0, 0, gUpdateRate);
             }
-            if ((object->unk64 != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
+            if ((object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
                 func_8004E7A8(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
@@ -1417,8 +1467,6 @@ Block* func_80044BB0(s32 blockIndex) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/map/func_80044BEC.s")
 #else
-extern f32 D_80092AAC[24];
-
 void func_80044BEC(void) {
     f32 spDC;
     f32 spD8;
@@ -2657,7 +2705,7 @@ void map_func_8004773C(void) {
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();
-    func_8005C780();
+    oldshadow_init();
     UINT_80092a98 &= 0x2010;
     UINT_80092a98 |= 0x81E0;
     UINT_80092a98 |= 0x804;

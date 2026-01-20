@@ -25,67 +25,10 @@ typedef struct VideoResolution {
     u32 v;
 } VideoResolution;
 
-#define UNKNOWN_HEAP_VIDEO_STRUCT_SIZE 0x60
-
-typedef struct _UnkHeapVidStruct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    f32 unk10;
-    f32 unk14;
-    f32 unk18;
-    f32 unk1C;
-    f32 unk20;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
-    f32 unk34;
-    f32 unk38;
-    f32 unk3C;
-    f32 unk40;
-    f32 unk44;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
-    f32 unk54;
-    f32 unk58;
-    f32 unk5C;
-} UnkHeapVidStruct;
-
-// size: 0x90
-typedef struct _UnkVidStruct {
-    Gfx dl;
-    Gfx *dl2;
-    u8 unkC_pad[12];
-    Vtx_t unk18[4];
-    u8 unk58_pad[0x20];
-    f32 unk78;
-    f32 unk7C;
-    Object *obj;
-    OSViMode *viMode;
-    s16 unk88;
-    u8 unk8A_padd[6];
-} UnkVidStruct;
-
-// size: 0x14
-typedef struct UnkVidStruct2 {
-/*0000*/    f32 unk0;
-/*0004*/    f32 unk4;
-/*0008*/    f32 unk8;
-/*000C*/    u8 unkC;
-/*000D*/    // padding
-/*0010*/    Object *unk10;
-} UnkVidStruct2;
-
 typedef struct UnkVidStruct3 {
     s32 unk0;
     s32 unk4;
 } UnkVidStruct3;
-
-// Length of gUnknownVideoStructs
-#define UNKNOWN_VIDEO_STRUCTS_COUNT 40
 
 // Length of gResolutionArray
 #define VIDEO_RESOLUTIONS_COUNT 8
@@ -93,23 +36,14 @@ typedef struct UnkVidStruct3 {
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
-extern void *D_80092EC4;
-extern void *D_80092F0C;
-extern void *D_80092F54;
-extern void *D_80092F9C;
-extern void *D_80092FE4;
-
-extern s8 D_80093060;
 extern UnkVidStruct3 D_80093068[];
-
-
 
 extern OSViMode gTvViMode;
 
-extern u16 *gFramebufferNext;
-extern u16 *gFramebufferCurrent;
-extern u16 *D_800BCCB4;
-extern u16 *D_800BCCB0;
+extern u16 *gBackFramebuffer; // next frame
+extern u16 *gFrontFramebuffer; // current frame
+extern u16 *gFrontDepthBuffer;
+extern u16 *gBackDepthBuffer;
 
 /**
  * Holds the horizontal resolution of each framebuffer.
@@ -127,7 +61,7 @@ extern u32 gCurrentResolutionV[2];
  */
 extern u16 *gFramebufferPointers[2];
 
-extern u16 *gFramebufferStart;
+extern u16 *gDepthBuffer;
 extern u16 *gFramebufferEnd;
 
 /**
@@ -135,16 +69,10 @@ extern u16 *gFramebufferEnd;
  *
  * TODO: figure out more of what this var is used for
  */
-extern u32 gFramebufferChoice;
+extern u32 gCurrFramebufferIdx;
 extern s32 gVideoMode;
 
 extern VideoResolution gResolutionArray[VIDEO_RESOLUTIONS_COUNT];
-
-extern s32 gPossiblyScreenWidthOrHeight;
-/**
- * Some boolean.
- */
-extern int gSomeVideoFlag;
 
 extern f32 gViHeightRatio;
 
@@ -178,7 +106,8 @@ s32 vi_get_mode();
 /**
  * Returns a video resolution encoded as 0xVVVV_HHHH.
  *
- * If the result of func_8005BC38 is 0, then it will be the current framebuffer's resolution.
+ * If the result of shadowtex_get_status is 0, then it will be the current framebuffer's resolution.
+ * Otherwise, it will be the active shadow framebuffer texture's resolution.
  */
 u32 vi_get_current_size(void);
 
@@ -196,8 +125,6 @@ s32 vi_frame_sync(s32);
  * The video width is the higher 16 bits of the returned 32 bit value
  */
 #define GET_VIDEO_HEIGHT(width_and_height) (width_and_height >> 16)
-
-void func_8005CA5C(u32 param1);
 
 int vi_contains_point(s32 x, s32 y);
 

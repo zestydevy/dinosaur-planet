@@ -12,8 +12,10 @@ typedef struct {
 /*0010*/    s32 unk10;
 } DLDebugInfo;
 
-extern DLDebugInfo *gDLDebugInfos[2]; // There are two sets of 128 infos each.
-extern u32 gDLDebugInfoIdx;
+/* -------- .data start 80093810 -------- */
+DLDebugInfo *gDLDebugInfos[2] = {NULL, NULL}; // There are two sets of 128 infos each.
+u32 gDLDebugInfoIdx = 0;
+/* -------- .data end 80093820 -------- */
 
 /* -------- .bss start 800bfe70 -------- */
 s32 gDLDebugInfoLengths[2];

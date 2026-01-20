@@ -114,7 +114,7 @@ s32 gfxtask_run_xbus(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     task->list.t.yield_data_ptr = (u64*)gGfxYieldData;
     task->list.t.yield_data_size = sizeof(gGfxYieldData);
     task->next = NULL;
-    task->framebuffer = (void*)gFramebufferNext;
+    task->framebuffer = (void*)gBackFramebuffer;
     task->unk60 = 0xff;
     task->unk64 = 0xff;
 
@@ -203,7 +203,7 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ZBUFFER << 24);
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     if ((param3 & 2) != 0) {
         dl_set_fill_color(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
@@ -218,7 +218,7 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_FRAMEBUFFER << 24);
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
 
     if ((param3 & 1) != 0 || var1 != 0) {
         dl_set_fill_color(gdl, 
@@ -253,14 +253,14 @@ void rdp_init(Gfx **gdl) {
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_FRAMEBUFFER << 24);
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, resWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
 
     if (gDLBuilder->needsPipeSync) {
         gDLBuilder->needsPipeSync = FALSE;
         gDPPipeSync((*gdl)++);
     }
 
-    gDPSetDepthImage((*gdl)++, SEGMENT_ZBUFFER << 24);
+    gDPSetDepthImage((*gdl)++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     gDPSetCombineMode((*gdl), G_CC_DECALRGB, G_CC_DECALRGB);
     dl_apply_combine(gdl);

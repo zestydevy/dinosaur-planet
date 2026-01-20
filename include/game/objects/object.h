@@ -115,18 +115,42 @@ typedef struct {
 /*0072*/    u8 unk72;
 } ObjectStruct50;
 
+#define OBJ_SHADOW_FLAG_GET_TEX_SLOT(flags) (flags & 0x3)
+#define OBJ_SHADOW_FLAG_MAKE_TEX_SLOT(slot) (slot & 0x3)
+
+// First two bytes are the dynamic shadow texture slot index
+enum ObjShadowFlags {
+    OBJ_SHADOW_FLAG_4 = 0x4,
+    OBJ_SHADOW_FLAG_8 = 0x8, // use dynamic shadow texture rendering
+    OBJ_SHADOW_FLAG_10 = 0x10,
+    OBJ_SHADOW_FLAG_20 = 0x20,
+    OBJ_SHADOW_FLAG_40 = 0x40,
+    OBJ_SHADOW_FLAG_80 = 0x80,
+    OBJ_SHADOW_FLAG_100 = 0x100,
+    OBJ_SHADOW_FLAG_200 = 0x200,
+    OBJ_SHADOW_FLAG_400 = 0x400,
+    OBJ_SHADOW_FLAG_800 = 0x800,
+    OBJ_SHADOW_FLAG_1000 = 0x1000, // fade out
+    OBJ_SHADOW_FLAG_2000 = 0x2000,
+    OBJ_SHADOW_FLAG_4000 = 0x4000,
+    OBJ_SHADOW_FLAG_8000 = 0x8000,
+    OBJ_SHADOW_FLAG_10000 = 0x10000,
+    OBJ_SHADOW_FLAG_20000 = 0x20000,
+    OBJ_SHADOW_FLAG_40000 = 0x40000
+};
+
 typedef struct {
 /* 0x0 */ f32 unk0;
-/* 0x4 */ Texture *unk4;
+/* 0x4 */ Texture *texture;
 /* 0x8 */ Texture *unk8;
 /* 0xC */ Gfx *gdl;
 /* 0x10 */ Gfx *gdl2;
 /* 0x14 */ Vec3f unk14;
 /* 0x20 */ Vec3f tr;
 /* 0x2C */ f32 unk2c;
-/* 0x30 */ u32 flags;
+/* 0x30 */ u32 flags; // ObjShadowFlags
 /* 0x34 */ u16 unk34;
-/* 0x36 */ s16 unk36;
+/* 0x36 */ s16 unk36; // fade timer
 /* 0x38 */ u8 unk38;
 /* 0x39 */ u8 unk39;
 /* 0x3A */ u8 unk3A;
@@ -136,8 +160,8 @@ typedef struct {
 /* 0x3e */ u8 unk3E;
 /* 0x3f */ u8 unk3F;
 /* 0x40 */ u8 unk40;
-/* 0x41 */ s8 unk41; //shadows toggle this each frame
-} ObjectStruct64;
+/* 0x41 */ s8 bufferIdx; //shadows toggle this each frame (front/back buffer)
+} ObjectShadow;
 
 typedef struct {
     s32 size; // size of data
@@ -228,7 +252,7 @@ typedef struct Object {
 /*0058*/    ObjectStruct58 *unk58;
 /*005C*/    BinFileEntry *unk5C;
 /*0060*/    ObjectEvent *curEvent;
-/*0064*/    ObjectStruct64* unk64; //ShadowData?
+/*0064*/    ObjectShadow* shadow;
 /*0068*/    DLL_IObject *dll;
 /*006C*/    s16 (*unk6C)[9];
 /*0070*/    Vtx* unk70;
@@ -292,6 +316,5 @@ typedef struct {
 
 extern struct Object * object_pointer_array[]; //first is always player character.
 extern u16 objectCount;
-extern SidekickSetup D_80091688;
 
 #endif

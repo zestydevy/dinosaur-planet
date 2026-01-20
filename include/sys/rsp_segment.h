@@ -9,8 +9,7 @@ enum RSPSegments {
     SEGMENT_ZBUFFER,
     SEGMENT_3,
     SEGMENT_4,
-
-    SEGMENT_COUNT
+    SEGMENT_5
 };
 
 void rsp_segment(Gfx **gdl, u32 segment, void *base);

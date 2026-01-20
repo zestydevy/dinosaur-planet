@@ -380,28 +380,11 @@ extern s16 D_800B4A5E; //gFadeDelayTimerStarted
 extern f32 gWorldX;
 extern f32 gWorldZ;
 
-
 extern s8 gMapNumStreamMaps;
-
-
-
-
-
-extern s32 gMapCurrentStreamCoordsX;
-extern s32 gMapCurrentStreamCoordsZ;
-
 
 extern s8 gMapLayer;
 
-
-
-
-extern s32 D_80092A94;
-
 extern s32 D_80092BBC;
-
-
-
 
 extern s8 D_80092A78; //gFadeDelayTimer
 
@@ -409,7 +392,6 @@ extern f32 D_8009A950;
 extern f32 D_8009A954;
 extern f32 D_8009A958;
 extern f32 D_8009A95C;
-
 
 extern Unk80092BC0 D_80092BC0;
 extern u8 D_800B1847;
@@ -424,16 +406,15 @@ extern f32 D_8009AA24;
 extern u8 D_8009A614;
 extern f32 D_80092AAC[24];
 
-
 extern f32 D_8009AA1C;
 extern f32 D_8009AA30;
 extern f32 D_8009AA34;
 extern f32 D_8009AA3C;
-extern s8 D_80092A9C[8];
 extern s32 D_80092A60; // something x-coordinate related
 extern s32 D_80092A64; // something z-coordinate related
 
-extern s32 D_80092A7C;
+extern s32 D_80092A7C[2];
+extern s32 D_80092A84[2];
 
 // Used in other .c files
 void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount);
@@ -491,7 +472,6 @@ void func_800436DC(Object* arg0, s32 arg1);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
-s32 func_8004DBAC(Object* arg0, s32 arg1, s32 arg2, s32 updateRate);
 void func_8004E7A8(Object* arg0);
 
 // other funcs that are used
@@ -510,10 +490,8 @@ void func_8003E648(Texture*, s32 *, s32 *);
 u8 map_get_is_object_streaming_disabled(void);
 void objprint_func(Gfx**, Mtx**, Vertex**, Triangle**, Object*, s8);
 void func_8001F81C(u8*, u8*, u8*);
-void func_8005C740(s32 arg0, u32* arg1, u32* arg2, u32 arg3);
 void func_8003DB7C(void);
 void func_8003DBCC(void);
-void func_8005B870(void);
 u8 map_get_is_object_streaming_disabled(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
 void func_800533D8(s32*, UnkFunc80051D68Arg3**);
@@ -527,5 +505,9 @@ ObjSetup* func_80044448(s32 match_uID, s32* match_indexInMap, s32* match_mapID, 
 void func_8004478C(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldOriginX, f32* blockWorldOriginZ);
 void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z);
 u32 func_80041D8C(void);
+void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
+u32 func_80041DA4(void);
+void func_80041028(void);
+void func_80040FF8(void);
 
 #endif

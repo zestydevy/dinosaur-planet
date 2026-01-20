@@ -62,16 +62,6 @@ void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
 // move to objhits.h
 Object **func_80025DD4(s32 *arg0);
 
-
-// .data
-extern UnkFunc80051D68Arg3 *D_80092E70; // 250 length
-extern HitsLineReencoded* D_80092E74;
-extern s32 D_80092E78;
-extern s32 D_80092E7C;
-extern s8 D_80092E80;
-extern HitsUnk* D_80092E84;
-
-
 // .bss 800bb200-800bb540
 Vec3s32 D_800BB200;
 // extra 0xC bytes?
@@ -87,6 +77,15 @@ s16 D_800BB4D8;
 u8 _bss_800BB4DA[0x800BB538 - 0x800BB4DA];
 s8 D_800BB538;
 s8 D_800BB539;
+
+// .data 80092E70-80092E90
+UnkFunc80051D68Arg3 *D_80092E70 = NULL; // 250 length
+HitsLineReencoded* D_80092E74 = NULL;
+s32 D_80092E78 = 0;
+s32 D_80092E7C = 0;
+s8 D_80092E80 = 0;
+HitsUnk* D_80092E84 = NULL;
+
 
 void func_80053300(void) {
     if (D_80092E70 == NULL) {
