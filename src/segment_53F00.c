@@ -63,9 +63,8 @@ void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
 Object **func_80025DD4(s32 *arg0);
 
 // .bss 800bb200-800bb540
-Vec3s32 D_800BB200;
+Vec3s32 D_800BB200[7];
 // extra 0xC bytes?
-u8 _bss_800BB210[0x800BB260-0x800BB218];
 UnkFunc80051D68Arg3* D_800BB260;
 s16 D_800BB264;
 Unk8005341C D_800BB268[2]; // unknown size
@@ -81,8 +80,8 @@ s8 D_800BB539;
 // .data 80092E70-80092E90
 UnkFunc80051D68Arg3 *D_80092E70 = NULL; // 250 length
 HitsLineReencoded* D_80092E74 = NULL;
-s32 D_80092E78 = 0;
-s32 D_80092E7C = 0;
+void *D_80092E78 = NULL;
+void *D_80092E7C = NULL;
 s8 D_80092E80 = 0;
 HitsUnk* D_80092E84 = NULL;
 
@@ -108,7 +107,7 @@ void func_800533D8(s32* arg0, UnkFunc80051D68Arg3** arg1) {
 }
 
 void func_80053408(Vec3s32** arg0) {
-    *arg0 = &D_800BB200;
+    *arg0 = D_800BB200;
 }
 
 Unk8005341C* func_8005341C(s32* arg0) {
@@ -266,7 +265,283 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     var_s0->unk4 = D_800BB264;
 }
 
+#ifndef NON_EQUIVALENT
+UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
+#else
+// https://decomp.me/scratch/yoG09
+UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7) {
+    BlocksModel* temp_s0;
+    BlocksModel* temp_v0;
+    FaceBatch* temp_t9;
+    FaceBatch* var_s3;
+    BlocksModel *sp138[6]; // unknown size, max 10
+    f32 temp_fs1;
+    Vtx_t* sp128[3];
+    Vtx_t *sp124;
+    s16 sp122;
+    s32 sp11C;
+    s32 sp118;
+    f32 temp_fs0;
+    f32 temp_fs2;
+    s32 sp10C;
+    s32 sp108;
+    s32 sp104;
+    s32 sp100;
+    s32 spFC;
+    s32 spF8;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 var_a0_3;
+    s32 var_a1_3;
+    s32 var_ra_2;
+    s32 var_t1;
+    s32 var_t2;
+    s32 var_t3;
+    s32 var_t4_2;
+    s32 var_t5;
+    s16 var_v0;
+    s32 var_v1_2;
+    s32 temp_a3_3;
+    s32 temp_s3;
+    s32 temp_s4;
+    s32 temp_s5;
+    s32 temp_s6;
+    s32 temp_s7;
+    s32 temp_t9_4;
+    s32 var_t0;
+    u8 var_v0_3;
+    u8 spA6;
+    u8 spA5;
+    u8 spA4;
+    s32 var_v0_2;
+    FaceBatch* sp9C;
+    s16* var_v1_3;
+
+    arg1 -= D_80092A60;
+    arg4 -= D_80092A60;
+    arg3 -= D_80092A64;
+    arg6 -= D_80092A64;
+    if (arg4 < arg1) {
+        arg1 ^= arg4;
+        arg4 ^= arg1;
+        arg1 ^= arg4;
+    }
+    if (arg6 < arg3) {
+        arg3 ^= arg6;
+        arg6 ^= arg3;
+        arg3 ^= arg6;
+    }
+    temp_s4 = floor_f(arg1 / 640.0f);
+    temp_s7 = floor_f(arg3 / 640.0f);
+    temp_s5 = floor_f(arg4 / 640.0f);
+    temp_s3 = floor_f(arg6 / 640.0f);
+    sp108 = 0;
+    for (sp118 = 0; sp118 < 5; sp118++) {
+        temp_v0 = func_80044B18(temp_s4, temp_s7, sp118);
+        if (temp_v0 != NULL) {
+            sp138[sp108] = temp_v0;
+            D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
+            D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
+            sp108++;
+        }
+        if (temp_s5 != temp_s4) {
+            temp_v0 = func_80044B18(temp_s5, temp_s7, sp118);
+            if (temp_v0 != NULL) {
+                sp138[sp108] = temp_v0;
+                D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
+                D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
+                sp108++;
+            }
+        }
+        if (temp_s3 != temp_s7) {
+            temp_v0 = func_80044B18(temp_s4, temp_s3, sp118);
+            if (temp_v0 != NULL) {
+                sp138[sp108] = temp_v0;
+                D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
+                D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
+                sp108++;
+            }
+            if (temp_s5 != temp_s4) {
+                temp_v0 = func_80044B18(temp_s5, temp_s3, sp118);
+                if (temp_v0 != NULL) {
+                    sp138[sp108] = temp_v0;
+                    D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
+                    D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
+                    sp108++;
+                }
+            }
+        }
+    }
+
+    for (sp118 = 0; sp118 < sp108; sp118++) {
+        sp104 = arg1 - D_800BB200[sp118].x;
+        sp100 = arg4 - D_800BB200[sp118].x;
+        spFC = arg3 - D_800BB200[sp118].z;
+        spF8 = arg6 - D_800BB200[sp118].z;
+        D_800BB200[sp118].x += D_80092A60;
+        D_800BB200[sp118].z += D_80092A64;
+        // sp104 = MAX(0, sp104);
+        if (sp104 < 0) {
+            sp104 = 0;
+        }
+        // sp100 = MIN(BLOCKS_GRID_UNIT, sp100);
+        if (sp100 > BLOCKS_GRID_UNIT) {
+            sp100 = BLOCKS_GRID_UNIT;
+        }
+        // spFC = MAX(0, spFC);
+        if (spFC < 0) {
+            spFC = 0;
+        }
+        // spF8 = MIN(BLOCKS_GRID_UNIT, spF8);
+        if (spF8 > BLOCKS_GRID_UNIT) {
+            spF8 = BLOCKS_GRID_UNIT;
+        }
+        temp_s6 = D_800BB200[sp118].x - D_800BB200->x;
+        temp_s7 = D_800BB200[sp118].z - D_800BB200->z;
+        temp_s0 = sp138[sp118];
+        var_v0 = 1;
+        sp122 = 0;
+        for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
+            if ((var_t0 + 80) >= sp104 && sp100 >= var_t0) {
+                sp122 |= var_v0;
+            }
+            var_v0 <<= 1;
+        }
+        for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
+            if (var_t0 >= (spFC - 80) && spF8 >= var_t0) {
+                sp122 |= var_v0;
+            }
+            var_v0 <<= 1;
+        }
+        var_s3 = temp_s0->ptr_faceBatches;
+        temp_t9 = &var_s3[temp_s0->faceBatch_count];
+        sp9C = temp_t9;
+        while ((u32) var_s3 < (u32) sp9C) {
+            if (var_s3->renderSettingBitfield & 0x2000) {
+                if (!(var_s3->renderSettingBitfield & 0x300000)) {
+                    spA6 = 4;
+                    if (!(arg7 & 0x20)) {
+                        spA6 = 0x14;
+                    }
+                    goto block_55;
+                }
+            } else if (!(var_s3->renderSettingBitfield & 0x800) || (arg7 & 0x20)) {
+                spA6 = 2;
+block_55:
+                if ((arg5 >= var_s3->Ymin) && (var_s3->Ymax >= arg2) && ((sp100 >> 2) >= (u8) var_s3->Xmin) && ((u8) var_s3->Xmax >= (sp104 >> 2)) && ((spF8 >> 2) >= (u8) var_s3->Zmin) && ((u8) var_s3->Zmax >= (spFC >> 2))) {
+                    if (var_s3->renderSettingBitfield & 0x1000) {
+                        spA6 |= 8;
+                    }
+                    sp124 = &temp_s0->unk20[temp_s0->flags & 1][var_s3->baseVertexID];
+                    sp11C = var_s3->baseFaceID;
+                    sp10C = var_s3[1].baseFaceID;
+                    for (; sp11C < sp10C; sp11C++) {
+                        var_t0 = temp_s0->unk14[sp11C] & sp122;
+                        if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
+                            #define SOME_MIN 100000
+                            // Idk where this random 34 is coming from, hex value is 0xFFFE7960
+                            #define SOME_MAX (2 ^ 32) - SOME_MIN - 34
+                            var_t1 = SOME_MIN;
+                            var_t2 = SOME_MAX;
+                            var_t3 = SOME_MIN;
+                            var_t4_2 = SOME_MAX;
+                            var_t5 = SOME_MIN;
+                            var_ra_2 = SOME_MAX;
+                            sp128[0] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 0xD) & 0x1F];
+                            sp128[1] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 7) & 0x1F];
+                            sp128[2] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 1) & 0x1F];
+                            for (var_t0 = 0; var_t0 < 3; var_t0++) {
+                                var_a0_3 = sp128[var_t0]->ob[0];
+                                var_v1_2 = sp128[var_t0]->ob[1];
+                                var_a1_3 = sp128[var_t0]->ob[2];
+                                if (var_s3->renderSettingBitfield & 0x20000000) {
+                                    var_a0_3 *= 1.0f; // not necessary, forces a float cast tho
+                                    var_v1_2 *= 0.05f;
+                                    var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
+                                    var_v1_2 += temp_s0->minY;
+                                }
+                                if (var_t2 < var_a0_3) {
+                                    var_t2 = var_a0_3;
+                                }
+                                if (var_a0_3 < var_t1) {
+                                    var_t1 = var_a0_3;
+                                }
+                                if (var_t4_2 < var_v1_2) {
+                                    var_t4_2 = var_v1_2;
+                                    spA4 = var_t0;
+                                }
+                                if (var_v1_2 < var_t3) {
+                                    var_t3 = var_v1_2;
+                                    spA5 = var_t0;
+                                }
+                                if (var_ra_2 < var_a1_3) {
+                                    var_ra_2 = var_a1_3;
+                                }
+                                if (var_a1_3 < var_t5) {
+                                    var_t5 = var_a1_3;
+                                }
+                                arg0->unkA[var_t0] = var_a0_3 + temp_s6;
+                                arg0->unk10[var_t0] = var_v1_2;
+                                arg0->unk16[var_t0] = var_a1_3 + temp_s7;
+                            }
+                            if ((arg5 >= var_t3) && (var_t4_2 >= arg2) && (sp100 >= var_t1) && (var_t2 >= sp104) && (spF8 >= var_t5) && (var_ra_2 >= spFC)) {
+                                if (var_s3->animatorID != 0) {
+                                    temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
+                                    temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
+                                    temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
+                                    temp_fv0 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1) + SQ(temp_fs2));
+                                    if (temp_fv0 > 0.0f) {
+                                        temp_fv1 = 8191.0f / temp_fv0;
+                                        arg0->unk4 = temp_fs0 * temp_fv1;
+                                        arg0->unk6 = temp_fs1 * temp_fv1;
+                                        arg0->unk8 = temp_fs2 * temp_fv1;
+                                    }
+                                } else {
+                                    arg0->unk4 = temp_s0->ptr_faces[sp11C].unk0 >> 0x12;
+                                    arg0->unk6 = (temp_s0->ptr_faces[sp11C].unk4 << 0xE) >> 0x12;
+                                    arg0->unk8 = temp_s0->ptr_faces[sp11C].unk4 >> 0x12;
+                                }
+                                if (((arg7 & 8) == 0 || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
+                                    arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * 0.00012208521f;
+
+                                    // This loop should write arg0->unk1C but I have no idea how it's actually indexed
+                                    temp_t9_4 = sp11C * 9;
+                                    temp_a3_3 = temp_t9_4 + 9;
+                                    if (temp_t9_4 < temp_a3_3) {
+                                        var_v0_2 = sp11C * 18;
+                                        var_v1_3 = arg0 + (sp11C * 18) + -(sp11C * 18);
+                                        do {
+                                            var_v1_3[14] = *((s16*)temp_s0->ptr_faceEdgeVectors + var_v0_2);
+                                            var_v1_3 += 1 ;
+                                            var_v0_2 += 1 ;
+                                        } while (var_v0_2 < (temp_a3_3 * 2));
+                                    }
+                                    if (var_s3->renderSettingBitfield & 0x2000) {
+                                        var_v0_3 = 0xE;
+                                    } else {
+                                        if (var_s3->materialID == 0xFF) {
+                                            var_v0_3 = 0;
+                                        } else {
+                                            var_v0_3 = temp_s0->ptr_materials[var_s3->materialID].terrain_type;
+                                        }
+                                    }
+                                    arg0->unk2E = var_v0_3;
+                                    arg0->unk30 = (spA4 * 0x10) | spA5;
+                                    arg0->unk2F = (temp_s0->ptr_faces[sp11C].unk4 & 1) | spA6;
+                                    arg0++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            var_s3++;
+        }
+    }
+    return arg0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005471C.s")
 

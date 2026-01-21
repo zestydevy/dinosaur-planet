@@ -3258,7 +3258,7 @@ void block_emplace(BlocksModel *block, s32 id, s32 param_3, s32 globalMapIdx)
     gLoadedBlockIds[slot] = id;
     gBlockRefCounts[slot] = 1;
 
-    if (block->unk_3e != 0) {
+    if (block->unk3E != 0) {
         block_compute_vertex_colors((Block *) block, 0, 0, 1);
     }
 
@@ -3464,7 +3464,7 @@ void func_800496E4(s32 blockIndex) {
         func_80048C24((Block *) block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
-        if (block->unk_48 != 0) {
+        if (block->unk48 != 0) {
             func_80049FA8(block);
         }
 
@@ -3481,8 +3481,8 @@ void func_800496E4(s32 blockIndex) {
             texture_destroy((&block->ptr_materials[i])->textureID);
         }
         
-        if ((u32*)block->unk_1c != NULL) {
-            mmFree((u32*)block->unk_1c);
+        if ((u32*)block->unk1C != NULL) {
+            mmFree((u32*)block->unk1C);
         }
         
         func_80058F3C();
@@ -3525,8 +3525,8 @@ HitsLine* block_load_hits(BlocksModel *block, s32 blockID, u32 unused, HitsLine*
         }
     }
                 
-    block->unk_1c = 0;
-    block->unk_3c = 0;
+    block->unk1C = 0;
+    block->unk3C = 0;
     block->flags &= ~0x40;
     
     return hits_ptr;
@@ -3847,9 +3847,9 @@ Texture* func_8004A1E8(s32 match_value) {
         block = gLoadedBlocks[blockIndex];
         
         if (block){
-            for (textureIndex = 0; textureIndex < block->unk_48; textureIndex++){
-                if (match_value == (&block->unk_28[textureIndex])->unk02){
-                    textureIndex = (&block->unk_28[textureIndex])->textureIndex;
+            for (textureIndex = 0; textureIndex < block->unk48; textureIndex++){
+                if (match_value == (&block->unk28[textureIndex])->unk02){
+                    textureIndex = (&block->unk28[textureIndex])->textureIndex;
                     return gBlockTextures[textureIndex].texture;
                 }
             }
