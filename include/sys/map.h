@@ -61,8 +61,8 @@ typedef struct {
 /*0d*/    s8 Xmax; //Divided by 4
 /*0e*/    s8 Zmin; //Divided by 4
 /*0f*/    s8 Zmax; //Divided by 4
-/*10*/    s8 unk_10;
-/*11*/    s8 unk_11;
+/*10*/    s8 unk10;
+/*11*/    s8 unk11;
 /*12*/    u8 materialID;
 /*13*/    s8 envColourMode;     //00 = use ambient envFX colour
                                 //FE = ignore ambient envFX colour
@@ -97,29 +97,32 @@ typedef struct {
 } BlocksTextureIndexData;
 
 typedef struct {
+    s32 unk0;
+    s32 unk4;
+} PtrFace;
+
+typedef struct {
 /*00*/    BlocksMaterial *ptr_materials;
 /*04*/    u32 ptr_vertices;
-/*08*/    u32 ptr_faces;
+/*08*/    PtrFace *ptr_faces;
 /*0c*/    FaceBatch *ptr_faceBatches;
 /*10*/    u32 ptr_faceEdgeVectors;
-/*14*/    u32 unk_14; // in ROM, sometimes matches grid row
+/*14*/    s16 *unk14; // in ROM, sometimes matches grid row
 /*18*/    HitsLine *ptr_hits_lines; // in ROM, sometimes matches grid column (HITS.bin data pointer at runtime)
-/*1c*/    s32 unk_1c;
-/*20*/    s16 unk_20;
-/*22*/    s16 unk_22;
-/*24*/    s32 unk_24;
-/*28*/    BlocksTextureIndexData *unk_28; //textureIDs_ptr
-/*2c*/    s16 unk_2c;
-/*2e*/    s16 unk_2e;  
+/*1c*/    s32 unk1C;
+/*20*/    Vtx *unk20[2]; // unknnown size, 2 is probably correct
+/*28*/    BlocksTextureIndexData *unk28; //textureIDs_ptr
+/*2c*/    s16 unk2C;
+/*2e*/    s16 unk2E;  
 /*30*/    s16 flags; //Typical values: 0x10, 0x18 (affects malloc size - more needed needed for blocks with animated verts)
 /*32*/    s16 vertex_count;
 /*34*/    s16 face_count;
 /*36*/    s16 faceBatch_count;
 /*38*/    s16 hits_line_count; //value only present at runtime
-/*3a*/    s8  unk_3a;
-/*3b*/    s8  unk_3b;
-/*3c*/    s16 unk_3c;
-/*3e*/    s16 unk_3e; //pointer to animated vertices, maybe?
+/*3a*/    s8  unk3A;
+/*3b*/    s8  unk3B;
+/*3c*/    s16 unk3C;
+/*3e*/    s16 unk3E; //pointer to animated vertices, maybe?
 /*40*/    s16 minY; //lowest vertex elevation
 /*42*/    s16 maxY; //highest vertex elevation
 /*44*/    s16 modelSize; //length of decompressed model
@@ -129,11 +132,11 @@ typedef struct {
 //change while going through the block's F3DEX2 commands
 /*46*/    s16 textureLoadCount;
 
-/*48*/    u8 unk_48; //texture_count (at runtime, distinct from material count since different materials can use same texture)
-/*49*/    s8 unk_49;
+/*48*/    u8 unk48; //texture_count (at runtime, distinct from material count since different materials can use same texture)
+/*49*/    s8 unk49;
 /*4a*/    u8  material_count;
-/*4b*/    s32 unk_4b;
-/*4e*/    s8  unk_4e;
+/*4b*/    s32 unk4B;
+/*4e*/    s8  unk4E;
 } BlocksModel; //NOTE: this is describing the same thing as the "Block" struct (TODO: consolidate!)
 
 typedef struct {
@@ -347,6 +350,22 @@ typedef struct MapObjSetupList {
 /*88*/ s32 groupsStart;
 } MapObjSetupList;
 
+
+typedef struct UnkFunc80051D68Arg3 {
+    f32 unk0;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA[3]; // x pos?
+    s16 unk10[3]; // y pos?
+    s16 unk16[3]; // z pos?
+    s16 unk1C[8];
+    UNK_TYPE_8 unk2E;
+    UNK_TYPE_8 unk2F;
+    s8 unk30;
+    u8 pad31[3];
+} UnkFunc80051D68Arg3;
+
 #define MAX_RENDER_LIST_LENGTH 400
 #define MAX_BLOCKS 40
 
@@ -481,9 +500,9 @@ void func_8003DB7C(void);
 void func_8003DBCC(void);
 u8 map_get_is_object_streaming_disabled(void);
 void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength);
-void func_800533D8(s32*, s32*);
-void func_80053408(Vec3f *);
-void func_80053750(Object*, AABBs32*, s32);
+void func_800533D8(s32*, UnkFunc80051D68Arg3**);
+void func_80053408(Vec3s32 **);
+void func_80053750(Object*, AABBs32*, u8);
 Unk8005341C *func_8005341C(s32*);
 void warpPlayer(s32 warpID, s8 fadeToBlack);
 Block* func_80044BB0(s32 blockIndex);

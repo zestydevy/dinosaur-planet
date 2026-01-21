@@ -48,18 +48,6 @@ typedef struct Unk80092C48 {
     u8 pad20[0xC];
 } Unk80092C48;
 
-typedef struct UnkFunc80051D68Arg3 {
-        f32 unk0;
-        s16 unk4;
-        s16 unk6;
-        s16 unk8;
-        s16 unkA[6];
-        s16 unk16[6];
-        u8 pad22[0x2F - 0x22];
-        s8 unk30;
-        u8 pad31[3];
-} UnkFunc80051D68Arg3;
-
 typedef struct UnkFunc80052300Arg3 {
     Vec3f unk0[3];
 } UnkFunc80052300Arg3;
@@ -91,7 +79,7 @@ extern f32 D_80092BD0;
 extern f32 D_80092BD4;
 extern f32 D_80092BD8;
 extern UnkFunc80051D68Arg3 *D_80092BDC;
-extern s32 D_80092BE0;
+extern Vec3s32 *D_80092BE0;
 extern f32 D_80092BE4;
 extern s8 D_80092BE8;
 extern s8 D_80092BF4;

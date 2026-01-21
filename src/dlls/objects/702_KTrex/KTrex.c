@@ -18,7 +18,6 @@
 #include "dll.h"
 #include "functions.h"
 #include "prevent_bss_reordering.h"
-#include "prevent_bss_reordering2.h"
 
 enum KTLogicStates {
     KT_LSTATE_0 = 0,

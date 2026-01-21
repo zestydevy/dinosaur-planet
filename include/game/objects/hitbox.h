@@ -54,7 +54,7 @@ typedef struct {
     /*0x9d*/ s8 unk9D;
     /*0x9e*/ u8 unk9E;
     /*0x9f*/ s8 unk9F;
-    /*0xa0*/ u8 unkA0;
+    /*0xa0*/ s8 unkA0;
     /*0xa1*/ u8 unkA1;
 } ObjectHitInfo;
 

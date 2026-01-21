@@ -549,7 +549,7 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
         actor->objhitInfo->unk62 = 0;
     }
     if (actor->unk58 != NULL) {
-        actor->unk58->unk10f = 0;
+        actor->unk58->unk10F = 0;
     }
 }
 

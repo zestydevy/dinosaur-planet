@@ -34,8 +34,8 @@ Object *D_800916E0[5] = {NULL};
 
 // -------- .bss start 800b1990 -------- //
 f32 D_800B1990;
-Object **D_800B1994;
-s32 D_800B1998;
+Object **D_800B1994; // object list
+s32 D_800B1998; // count for D_800B1994
 Unk800B199C *D_800B199C; // 30 elements
 Unk800B19A0 D_800B19A0[64];
 MtxF* D_800B20A0;
@@ -213,16 +213,16 @@ void func_80026184(Object* arg0, Object* arg1) {
     s32 i;
 
     obj58 = arg0->unk58;
-    if (obj58->unk10f < 3) {
-        for (i = 0; i < obj58->unk10f; i++) {
+    if (obj58->unk10F < 3) {
+        for (i = 0; i < obj58->unk10F; i++) {
             if (arg1 == obj58->unk100[i]) {
                 return;
             }
         }
         
-        obj58->unk100[obj58->unk10f] = arg1;
+        obj58->unk100[obj58->unk10F] = arg1;
         obj58 = arg0->unk58;
-        obj58->unk10f += 1;
+        obj58->unk10F += 1;
     }
 }
 
@@ -595,9 +595,9 @@ void func_80026B84(Object* obj) {
 
     obj58 = obj->unk58;
     if (obj58 != NULL) {
-        obj58->unk10c = 0;
-        obj->unk58->unk10d = 0xA;
-        obj->unk58->unk10f = 0;
+        obj58->unk10C = 0;
+        obj->unk58->unk10D = 0xA;
+        obj->unk58->unk10F = 0;
         func_8002B410(obj, 1);
         func_8002B410(obj, 1);
     }
@@ -1000,7 +1000,7 @@ void func_80027934(Object* obj, Object* otherObj) {
     }
 
     fit_aabb_around_cubes(&spD8, (Vec3f *) sp78, (Vec3f *) spA8, spF0.unk40, var_s0);
-    func_80053750(otherObj, (Vec3f** ) &spD8, objectHitInfo->unkA1);
+    func_80053750(otherObj, &spD8, objectHitInfo->unkA1);
     temp_v1_3 = func_8005509C(otherObj, (Vec3f *) sp78, (Vec3f *) spA8, var_s0, &spF0, 0);
     if (!temp_v1_3) {
         return;
@@ -2202,9 +2202,9 @@ void func_8002B410(Object* obj, s32 arg1) {
     sp24 = obj->unk58;
     if (sp24 != NULL) {
         if (arg1 != 0) {
-            sp24->unk10c = (sp24->unk10c + 1) & 1;
+            sp24->unk10C = (sp24->unk10C + 1) & 1;
         }
-        a0 = (MtxF *)((f32 *)sp24 + (sp24->unk10c << 4));
+        a0 = (MtxF *)((f32 *)sp24 + (sp24->unk10C << 4));
         srt.yaw = -obj->srt.yaw;
         if (obj->objhitInfo->unk58 & 0x800) {
             srt.pitch = 0;
@@ -2236,9 +2236,9 @@ void func_8002B410(Object* obj, s32 arg1) {
         srt.transl.x = obj->srt.transl.x;
         srt.transl.y = obj->srt.transl.y;
         srt.transl.z = obj->srt.transl.z;
-        matrix_from_srt((MtxF *)((f32 *)sp24 + ((sp24->unk10c + 2) << 4)), &srt);
-        if (sp24->unk10d > 0) {
-            sp24->unk10d--;
+        matrix_from_srt((MtxF *)((f32 *)sp24 + ((sp24->unk10C + 2) << 4)), &srt);
+        if (sp24->unk10D > 0) {
+            sp24->unk10D--;
         }
     }
 }

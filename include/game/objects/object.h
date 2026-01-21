@@ -174,10 +174,10 @@ typedef struct {
 /*0000*/    u8 unk0[0x80 - 0x00];
 /*0080*/    MtxF unk80[2];              // probably length of 2
 /*0100*/    struct Object *unk100[3];   // other Objects colliding with this Object?
-/*010c*/    u8 unk10c;                  // index into field 0x80?
-/*010d*/    u8 unk10d;
-/*010e*/    UNK_TYPE_8 unk10e;
-/*010f*/    s8 unk10f;                  // number of Objects listed in field unk100?
+/*010c*/    u8 unk10C;                  // index into field 0x80?
+/*010d*/    u8 unk10D;
+/*010e*/    UNK_TYPE_8 unk10E;
+/*010f*/    s8 unk10F;                  // number of Objects listed in field unk100?
 } ObjectStruct58;
 
 typedef struct {

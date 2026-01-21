@@ -31,8 +31,8 @@ void SHswaplift_control(Object *self) {
     s32 dostuff;
 
     dostuff = FALSE;
-    if (self->unk58->unk10f > 0) {
-        for (index = 0; index < self->unk58->unk10f; index++) {
+    if (self->unk58->unk10F > 0) {
+        for (index = 0; index < self->unk58->unk10F; index++) {
             listedObject = (Object*)self->unk58->unk100[index];
             if (listedObject->group == GROUP_UNK1) {
                 dostuff = TRUE;

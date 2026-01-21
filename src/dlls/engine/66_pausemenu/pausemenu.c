@@ -20,6 +20,7 @@
 #include "dlls/engine/66_pausemenu.h"
 #include "sys/rcp.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 
 /*0x0*/ static const char formatCompletionPercentage[] = "%3d%%";

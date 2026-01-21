@@ -184,7 +184,7 @@ void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 updateRate) {
 // offset: 0x5A8 | func: 4 | export: 4
 // run objhit code for map (terrain and hits)
 void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
-    s32 var_a2;
+    u8 var_a2;
 
     var_a2 = 0;
     if ((arg1->mode == DLL27MODE_1) || (arg1->mode == DLL27MODE_2)) {
@@ -192,7 +192,7 @@ void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
             var_a2 = 1;
         }
         if (arg1->flags & DLL27FLAG_1000000) {
-            var_a2 = (var_a2 | 0x20) & 0xFF;
+            var_a2 |= 0x20;
         }
         func_80053750(arg0, &arg1->aabb, var_a2);
     }

@@ -41,7 +41,7 @@ u8 D_80090C8C = 0;
 u8 D_80090C90 = 0;
 u8 D_80090C94 = 0;
 u8 D_80090C98 = 0;
-u8 D_80090C9C = 0;
+s8 D_80090C9C = 0;
 u8 D_80090CA0 = 0;
 u8 D_80090CA4 = 0;
 s32 D_80090CA8 = 0;
@@ -481,19 +481,15 @@ u8 func_8001EBE0(void) {
     return BYTE_80090cb0;
 }
 
-#ifndef NON_MATCHING
-Vec3f D_80090D30 = { 0.0f, 198.0f, 19.0f };
-s16 D_80090D3C = 0;
-u8 D_80090D40 = 0;
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_1D900/func_8001EBF0.s")
-#else
 void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 arg7, u8 arg8, u8 arg9) {
     static s16 D_80090D3C = 0;
     static u8 D_80090D40 = 0;
     s16 var_a0;
     s16 var_v0;
     s16 var_v1;
-    Vec3f sp2C = { 0.0f, 198.0f, 19.0f }; // D_80090D30
+    u8 temp;
+    Vec3f sp2C = { 0.0f, 198.0f, 19.0f };
+    f32 new_var;
 
     if (D_80090CA8 != 0) {
         return;
@@ -512,8 +508,9 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
     if (D_80090D40 != BYTE_80090cb0) {
         D_80090D40 = BYTE_80090cb0;
     }
+    new_var = 0.003f;
     if ((BYTE_80090cb0) && (D_80090CB4 != 1.0f)) {
-        D_80090CB4 += (gUpdateRateF * 0.003f);
+        D_80090CB4 += (gUpdateRateF * new_var);
         if (D_80090CB4 > 1.0f) {
             D_80090CB4 = 1.0f;
         }
@@ -521,7 +518,7 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
         D_800B1838 = ((sp2C.y - arg1) * D_80090CB4) + arg1;
         D_800B183C = ((sp2C.z - arg2) * D_80090CB4) + arg2;
     } else if (!BYTE_80090cb0 && (D_80090CB4 != 0.0f)) {
-        D_80090CB4 -= gUpdateRateF * 0.003f;
+        D_80090CB4 -= gUpdateRateF * new_var;
         if (D_80090CB4 < 0.0f) {
             D_80090CB4 = 0.0f;
         }
@@ -574,10 +571,11 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
     // @fake?
     if (D_800B1830) {}
     if (D_800B1831) {}
-    if (D_800B1832) {}
-    if ((D_800B1830 != 0xFF) || (D_800B1831 != 0xFF) || (D_800B1832 != 0xFF)) {
+    temp = D_800B1832;
+    if (temp) {}
+    if ((D_800B1830 != 0xFF) || (D_800B1831 != 0xFF) || (temp != 0xFF)) {
         D_800B1844 = 1;
-        func_8001D2A8(D_800B1830, D_800B1831, D_800B1832, -1);
+        func_8001D2A8(D_800B1830, D_800B1831, temp, -1);
     } else {
         D_800B1844 = 0;
     }
@@ -586,7 +584,6 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
     D_800B1852 = 0;
     D_800B1854 = 0;
 }
-#endif
 
 void func_8001F094(ModelInstance* arg0) {
     Camera* camera;

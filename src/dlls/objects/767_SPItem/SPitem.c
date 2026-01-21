@@ -20,7 +20,7 @@ typedef struct {
 } SPItem_Setup;
 
 static int SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
-static void SPItem_bought_callback(Object* self, s32 arg1, s32 arg2);
+static void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* arg2);
 
 // offset: 0x0 | ctor
 void SPItem_ctor(void *dll) { }
@@ -145,7 +145,7 @@ static int SPItem_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
 }
 
 // offset: 0x4AC | func: 8
-void SPItem_bought_callback(Object* self, s32 arg1, s32 arg2) {
+void SPItem_bought_callback(Object* self, Object *override, AnimObj_Data* arg2) {
     SPItem_Data *objData;
     SPItem_Setup *objSetup;
     Object *shop;

@@ -94,8 +94,8 @@ void WLpressureswitch_control(Object* self) {
     }
 
     //Handle objects on/near the switch
-    if (self->unk58->unk10f > 0) {
-        for (index = 0; index < self->unk58->unk10f; index++){
+    if (self->unk58->unk10F > 0) {
+        for (index = 0; index < self->unk58->unk10F; index++){
             listedObject = (Object*)self->unk58->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > 8.9f) {
