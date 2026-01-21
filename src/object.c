@@ -615,7 +615,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         modflags |= MODFLAGS_1;
     }
 
-    if (def->shadowType != 0) {
+    if (def->shadowType != OBJ_SHADOW_NONE) {
         modflags |= MODFLAGS_SHADOW;
     } else {
         modflags &= ~MODFLAGS_SHADOW;
@@ -689,7 +689,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         addr = func_8002298C(obj->id, obj->modelInsts[0], obj, addr);
     }
 
-    if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
+    if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != OBJ_SHADOW_NONE)) {
         addr = shadow_init_obj_shadow(obj, addr, 0);
     }
 
@@ -837,7 +837,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
         size += 0x400;
     }
 
-    if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != 0)) {
+    if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != OBJ_SHADOW_NONE)) {
         size = mmAlign4(size);
         size += sizeof(ObjectShadow);
     }
@@ -1576,7 +1576,7 @@ void obj_free_object(Object *obj, s32 param2) {
     }
 
     if (obj->shadow != NULL) {
-        if (obj->def->shadowType == 1) {
+        if (obj->def->shadowType == OBJ_SHADOW_BOX) {
             func_8004D974(1);
         }
 

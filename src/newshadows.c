@@ -43,24 +43,24 @@ f32 D_80092C44 = 0;
 f32 D_800B97E0[24];
 f32 D_800B9840[24];
 Gfx *D_800B98A0[2];
-Unk800B98A8 *D_800B98A8[2];
+Vec3f *D_800B98A8[2];
 Vtx *D_800B98B0[2];
 s16 D_800B98B8[300];
 u8 D_800B9B10[80];
 s16 D_800B9B60[800];
 Unk8004FA58 D_800BA1A0[200];
-Unk800B98A8 *D_800BB140;
-Unk800B98A8 *D_800BB144;
+Vec3f *D_800BB140;
+Vec3f *D_800BB144;
 Vtx *D_800BB148;
 Vtx *D_800BB14C;
 Gfx *D_800BB150;
 Gfx *D_800BB154;
 Gfx *D_800BB158[2];
 Vtx *D_800BB160[2];
-Unk800BB168 *D_800BB168[2];
+Vec3f *D_800BB168[2];
 s8 D_800BB170;
-Unk800BB168* D_800BB174;
-Unk800BB168* D_800BB178;
+Vec3f* D_800BB174;
+Vec3f* D_800BB178;
 Vtx* D_800BB17C;
 Vtx* D_800BB180;
 Gfx* D_800BB184;
@@ -75,22 +75,30 @@ u8 _bss_800bb1b8[0x48];
 void func_8004D470(void) {
     void *temp_v0;
 
-    D_80092BE8 = 0xA;
-    temp_v0 = (void *) mmAlloc(0x8020, ALLOC_TAG_SHAD_COL, NULL);
-    D_800B98A0[0] = (Gfx *)                    temp_v0;
-    D_800B98A0[1] = (Gfx *)              ((u32)temp_v0 + sizeof(Unk800B98A0));
-    D_800B98A8[0] = (Unk800B98A8 *)      ((u32)temp_v0 + sizeof(Unk800B98A0) * 2);
-    D_800B98A8[1] = (Unk800B98A8 *)      ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8));
-    D_800B98B0[0] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2);
-    D_800B98B0[1] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800B98A0) * 2 + sizeof(Unk800B98A8) * 2 + sizeof(Unk800B98B0));
+    D_80092BE8 = 10;
+    // @bug: The size of the second Gfx buffer is not included in this malloc! 
+    //       So, the end of the second Vtx array will overflow into unrelated memory!
+    temp_v0 = (void *) mmAlloc(
+        ((sizeof(Gfx) * 500) * 1) + ((sizeof(Vec4f) * 500) * 2) + ((sizeof(Vtx) * 400) * 2), 
+        ALLOC_TAG_SHAD_COL, 
+        NULL);
+    D_800B98A0[0] = (Gfx*)        temp_v0;
+    D_800B98A0[1] = (Gfx*)  ((u32)temp_v0 +  (sizeof(Gfx) * 500));
+    D_800B98A8[0] = (Vec3f*)((u32)temp_v0 +  (sizeof(Gfx) * 500) * 2);
+    D_800B98A8[1] = (Vec3f*)((u32)temp_v0 + ((sizeof(Gfx) * 500) * 2) +  (sizeof(Vec4f) * 500));
+    D_800B98B0[0] = (Vtx*)  ((u32)temp_v0 + ((sizeof(Gfx) * 500) * 2) +  (sizeof(Vec4f) * 500) * 2);
+    D_800B98B0[1] = (Vtx*)  ((u32)temp_v0 + ((sizeof(Gfx) * 500) * 2) + ((sizeof(Vec4f) * 500) * 2) + (sizeof(Vtx) * 400));
 
-    temp_v0 = (void *) mmAlloc(0xC800, ALLOC_TAG_SHAD_COL, NULL);
-    D_800BB158[0] = (Gfx *)                    temp_v0;
-    D_800BB158[1] = (Gfx *)              ((u32)temp_v0 + sizeof(Unk800BB158));
-    D_800BB168[0] = (Unk800BB168 *)      ((u32)temp_v0 + sizeof(Unk800BB158) * 2);
-    D_800BB168[1] = (Unk800BB168 *)      ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168));
-    D_800BB160[0] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2);
-    D_800BB160[1] = (Vtx *)              ((u32)temp_v0 + sizeof(Unk800BB158) * 2 + sizeof(Unk800BB168) * 2 + sizeof(Unk800BB160));
+    temp_v0 = (void *) mmAlloc(
+        ((sizeof(Gfx) * 600) * 2) + ((sizeof(Vec4f) * 700) * 2) + ((sizeof(Vtx) * 600) * 2), 
+        ALLOC_TAG_SHAD_COL, 
+        NULL);
+    D_800BB158[0] = (Gfx*)        temp_v0;
+    D_800BB158[1] = (Gfx*)  ((u32)temp_v0 +  (sizeof(Gfx) * 600));
+    D_800BB168[0] = (Vec3f*)((u32)temp_v0 +  (sizeof(Gfx) * 600) * 2);
+    D_800BB168[1] = (Vec3f*)((u32)temp_v0 + ((sizeof(Gfx) * 600) * 2) +  (sizeof(Vec4f) * 700));
+    D_800BB160[0] = (Vtx*)  ((u32)temp_v0 + ((sizeof(Gfx) * 600) * 2) +  (sizeof(Vec4f) * 700) * 2);
+    D_800BB160[1] = (Vtx*)  ((u32)temp_v0 + ((sizeof(Gfx) * 600) * 2) + ((sizeof(Vec4f) * 700) * 2) + (sizeof(Vtx) * 600));
 
     D_800B9840[0] = -8.0f;
     D_800B9840[1] = 0.0f;
@@ -300,10 +308,10 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     Vec3f sp22C; // obj -> positionMirror copy
     Vec3f sp220; // obj -> srt -> transl copy
     Vec3f sp1C0[8];
-    u8 pad[0x110];
+    u8 pad[0x34];
     ObjectShadow* shadow;
     u32 temp_v0;
-    Unk8004FA58 sp94;
+    Unk8004FA58 sp94[12];
     UnkFunc80051D68Arg3 *sp90;
     Vec3s32 *sp8C;
     UnkFunc80051D68Arg3 *sp88 = NULL;
@@ -433,9 +441,8 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         obj,
         sp88,
         D_800BA1A0,
-        (UnkFunc80052300Arg3 *) D_800BB140,
+        D_800BB140,
         sp2B4,
-        // This is just wrong but matches?
         sp8C->x,
         sp8C->z,
         arg1,
@@ -444,10 +451,10 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     D_80092BDC = sp90;
     D_80092C1C = sp2B4;
     D_80092BE0 = sp8C;
-    func_800511E8(obj, 0, sp244, &sp94);
-    temp_t0 = ((s8 *)D_800BB148 - (s8 *)D_800B98B0[D_80092C08]) >> 4;
+    func_800511E8(obj, 0, sp244, sp94);
+    temp_t0 = D_800BB148 - D_800B98B0[D_80092C08];
     if (D_800BB170 != 0) {
-        if (func_800502AC(obj, sp244, &sp94, sp2B4, (Vec3f *)D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
+        if (func_800502AC(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
             D_80092C34 = 0x190;
             if (shadow->flags & OBJ_SHADOW_FLAG_20) {
@@ -458,7 +465,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         }
         D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     } else {
-        if (func_8004FA58(obj, sp244, &sp94, sp2B4, (Vec3f* ) D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
+        if (func_8004FA58(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
             D_80092C34 = 0x190;
             if (shadow->flags & OBJ_SHADOW_FLAG_20) {
@@ -473,9 +480,9 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
     D_800BB14C += sp2B0;
     D_800BB144 = D_800BB140;
-    D_80092C24 = ((Gfx *) D_800BB150 - (Gfx *) D_800B98A0[D_80092C00]) ;
-    D_80092C2C = ((s8 *) D_800BB140 - (s8 *) D_800B98A8[D_80092C04]) / 12;
-    D_80092C34 = ((s8 *) D_800BB148 - (s8 *) D_800B98B0[D_80092C08]) >> 4;
+    D_80092C24 = D_800BB150 - D_800B98A0[D_80092C00];
+    D_80092C2C = D_800BB140 - D_800B98A8[D_80092C04];
+    D_80092C34 = D_800BB148 - D_800B98B0[D_80092C08];
     if (shadow->flags & OBJ_SHADOW_FLAG_20) {
         bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
         bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
@@ -541,9 +548,11 @@ void func_8004E7A8(Object* arg0) {
     Vec3f sp1EC[8];
     Vec3f sp1E0;
     Vec3f sp1D4;
-    u8 pad[0x128];
-    Vec3s32 *spA0[3];
-    s32 sp9C = 0;
+    u8 pad[0x3C];
+    Unk8004FA58 spA8[12];
+    s32 pad2;
+    Vec3s32 *spA0;
+    UnkFunc80051D68Arg3 *sp9C = NULL;
     ObjectShadow* temp_s1;
     s32 alpha;
     s32 i;
@@ -561,15 +570,15 @@ void func_8004E7A8(Object* arg0) {
     if (D_80092BE8 != 0) {
         temp_s1->gdl2 = NULL;
         D_80092BFC = 1;
-        if (D_80092C28 >= 0x227) {
+        if (D_80092C28 > 550) {
             arg0->shadow->gdl = NULL;
             return;
         }
-        if (D_80092C30 >= 0x26D) {
+        if (D_80092C30 > 620) {
             arg0->shadow->gdl = NULL;
             return;
         }
-        if (D_80092C38 >= 0x209) {
+        if (D_80092C38 > 520) {
             arg0->shadow->gdl = NULL;
             return;
         }
@@ -611,13 +620,14 @@ void func_8004E7A8(Object* arg0) {
         }
         fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
         func_80053750(arg0, &sp70, 1);
-        func_80053408(spA0);
+        func_80053408(&spA0);
         func_800533D8(&sp2B4, &sp9C);
-        sp2B4 = func_80052300(arg0, (UnkFunc80051D68Arg3 *)sp9C, D_800BA1A0, (UnkFunc80052300Arg3* ) D_800BB174, sp2B4, spA0[0]->x, spA0[0]->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_40000);
-        D_800BB174 = (Unk800BB168 *)((s8 *)D_800BB174 + sp2B4 * 0x24);
-        func_800511E8(arg0, 0, sp24C, (Unk8004FA58* ) &spA0[2]);
-        temp_t0 = ((s8 *)D_800BB17C - (s8*)D_800BB160[D_80092C10]) >> 4;
-        if (func_8004FA58(arg0, sp24C, (Unk8004FA58* ) &spA0[2], sp2B4, (Vec3f* ) D_800BB178, D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
+        sp2B4 = func_80052300(arg0, sp9C, D_800BA1A0, 
+            D_800BB174, sp2B4, spA0->x, spA0->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_40000);
+        D_800BB174 += sp2B4 * 3;
+        func_800511E8(arg0, 0, sp24C, spA8);
+        temp_t0 = D_800BB17C - D_800BB160[D_80092C10];
+        if (func_8004FA58(arg0, sp24C, spA8, sp2B4, D_800BB178, D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C38 = 0x258;
             if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
@@ -629,9 +639,9 @@ void func_8004E7A8(Object* arg0) {
             D_800BB184 += func_8004F378(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
             D_800BB180 += sp2B0;
             D_800BB178 = D_800BB174;
-            D_80092C28 = (Gfx *) D_800BB184 - (Gfx *)D_800BB158[D_80092C0C];
-            D_80092C30 = ((s8 *) D_800BB174 - (s8 *)D_800BB168[D_80092C14]) / 12;
-            D_80092C38 = ((s8 *) D_800BB17C - (s8 *)D_800BB160[D_80092C10]) >> 4;
+            D_80092C28 = D_800BB184 - D_800BB158[D_80092C0C];
+            D_80092C30 = D_800BB174 - D_800BB168[D_80092C14];
+            D_80092C38 = D_800BB17C - D_800BB160[D_80092C10];
             D_80092BFC = 0;
             if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
@@ -666,7 +676,7 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
     void *sp1B4;
     s32 var_v1;
     s32 var_a0;
-    s32 var_s3;
+    UNUSED s32 var_s3;
     DLTri spA8[16];
 
     sp1C0 = gdl;
@@ -790,7 +800,7 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     Gfx* sp1C8;
     Texture* sp1C4;
     f32 sp1C0;
-    s32 var_s2;
+    UNUSED s32 var_s2;
     ObjectShadow *shadow2;
     DLTri* var_v1;
     f32 var_ft5;
@@ -819,7 +829,7 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
         sp1D4 = 1;
     }
     if (!(shadow->flags & OBJ_SHADOW_FLAG_40)) {
-        if ((arg3->def->shadowType == 2) && !(shadow->flags & OBJ_SHADOW_FLAG_400)) {
+        if ((arg3->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_400)) {
             sp1D0 = func_8004E540(arg3, shadow);
         } else {
             sp1D0 = shadow->unk40;
@@ -1059,7 +1069,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                 if (var_s7 > 0) {
                     var_s0 = &arg5[sp26C];
                     for (var_s4 = 0; var_s4 != var_s7; var_s4++) {
-                        if (arg0->def->shadowType == 2) {
+                        if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
                             func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->unk0, &spD2, 0);
                         } else {
                             func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->unk0, &spD2, 1);
@@ -1069,7 +1079,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                         }
                         D_800B9B60[sp26C * 2 + 0] = spD6;
                         D_800B9B60[sp26C * 2 + 1] = spD4;
-                        if (arg0->def->shadowType == 2) {
+                        if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
                             var_s0->v.ob[0] = (sp1A4[var_s4].x + spD8) * 20.0f;
                             var_s0->v.ob[1] = (sp1A4[var_s4].y + spDC + var_fs3) * 20.0f;
                             var_s0->v.ob[2] = (sp1A4[var_s4].z + spE0) * 20.0f;
@@ -1377,7 +1387,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
 }
 #endif
 
-void func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58* arg3) {
+void func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58 arg3[12]) {
     Vec3f normalizedPos;
     s32 i;
     f32 wSum;
@@ -1530,7 +1540,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     } else {
         var_fa0 = temp_fs2;
     }
-    if (arg1->def->shadowType != 2) {
+    if (arg1->def->shadowType != OBJ_SHADOW_GEOM) {
         arg4 = -5;
     }
     if (var_fa0 < var_fv1) {
@@ -1731,7 +1741,7 @@ void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_80052300.s")
 #else
-s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, UnkFunc80052300Arg3* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8) {
+s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8) {
     s32 sp44;
     s32 var_a2;
     Unk8005341C* temp_t2;
@@ -1768,16 +1778,16 @@ s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Un
                         var_v1 = FALSE;
                     }
                     if (var_v1 != FALSE) {
-                        arg3->unk0[0].x = arg1[sp44].unkA[0] - sp34;
-                        arg3->unk0[0].y = arg1[sp44].unkA[3] - arg0->srt.transl.y;
-                        arg3->unk0[0].z = arg1[sp44].unk16[0] - sp30;
-                        arg3->unk0[1].x = arg1[sp44].unkA[1] - sp34;
-                        arg3->unk0[1].y = arg1[sp44].unkA[4] - arg0->srt.transl.y;
-                        arg3->unk0[1].z = arg1[sp44].unk16[1] - sp30;
-                        arg3->unk0[2].x = arg1[sp44].unkA[2] - sp34;
-                        arg3->unk0[2].y = arg1[sp44].unkA[5] - arg0->srt.transl.y;
-                        arg3->unk0[2].z = arg1[sp44].unk16[2] - sp30;
-                        arg3 += 1;
+                        arg3[0].x = arg1[sp44].unkA[0] - sp34;
+                        arg3[0].y = arg1[sp44].unk10[0] - arg0->srt.transl.y;
+                        arg3[0].z = arg1[sp44].unk16[0] - sp30;
+                        arg3[1].x = arg1[sp44].unkA[1] - sp34;
+                        arg3[1].y = arg1[sp44].unk10[1] - arg0->srt.transl.y;
+                        arg3[1].z = arg1[sp44].unk16[1] - sp30;
+                        arg3[2].x = arg1[sp44].unkA[2] - sp34;
+                        arg3[2].y = arg1[sp44].unk10[2] - arg0->srt.transl.y;
+                        arg3[2].z = arg1[sp44].unk16[2] - sp30;
+                        arg3 += 3;
                         arg2[var_a2].pos.x = arg1[sp44].unk4 * f0;
                         arg2[var_a2].pos.y = arg1[sp44].unk6 * f0;
                         arg2[var_a2].pos.z = arg1[sp44].unk8 * f0;

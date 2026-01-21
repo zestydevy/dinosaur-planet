@@ -31,7 +31,7 @@ void dll_54_func_18(Object* arg0, Object* arg1, s16 arg2) {
 int dll_54_func_5DC(Object* obj, s32 arg1) {
     ObjectShadow* shadowData;
 
-    if (obj->def->shadowType == 2) {
+    if (obj->def->shadowType == OBJ_SHADOW_GEOM) {
         if (obj->unkB4 == -1) {
             shadowData = obj->shadow;
             shadowData->flags &= ~OBJ_SHADOW_FLAG_1000;

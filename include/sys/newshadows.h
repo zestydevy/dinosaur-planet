@@ -9,33 +9,6 @@
 #include "game/objects/object.h"
 #include "sys/map.h"
 
-typedef struct Unk800B98A0 {
-    u8 unk0[4000];
-} Unk800B98A0;
-
-// Might be a list of Vec3fs?
-typedef struct Unk800B98A8 {
-    u8 unk0[8000];
-} Unk800B98A8;
-
-typedef struct Unk800B98B0 {
-    u8 unk0[6400];
-} Unk800B98B0;
-
-typedef struct Unk800BB158 {
-    u8 unk0[4800];
-} Unk800BB158;
-
-typedef struct Unk800BB160 {
-    u8 unk0[9600];
-} Unk800BB160;
-
-// Should probably have size of 0x24
-// Might be the same as UnkFunc80052300Arg3
-typedef struct Unk800BB168 {
-    u8 unk0[11200];
-} Unk800BB168;
-
 // Might be incorrect definition but size should be correct
 typedef struct Unk8004FA58 {
     Vec4f pos;
@@ -123,9 +96,9 @@ s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3);
 void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D);
 void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4);
 void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2);
-void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58*);
+void func_800511E8(Object*, s32, Vec3f*, Unk8004FA58 arg3[12]);
 f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
-s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, UnkFunc80052300Arg3* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
+s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
 void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA);
 s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
 s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1);
