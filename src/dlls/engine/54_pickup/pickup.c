@@ -34,10 +34,10 @@ int dll_54_func_5DC(Object* obj, s32 arg1) {
     if (obj->def->shadowType == OBJ_SHADOW_GEOM) {
         if (obj->unkB4 == -1) {
             shadowData = obj->shadow;
-            shadowData->flags &= ~OBJ_SHADOW_FLAG_1000;
+            shadowData->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
         } else {
             shadowData = obj->shadow;
-            shadowData->flags |= OBJ_SHADOW_FLAG_1000;
+            shadowData->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
         }
     }
 

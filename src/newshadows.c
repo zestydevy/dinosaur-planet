@@ -213,7 +213,7 @@ void func_8004D844(Object *obj, f32 x, f32 y, f32 z)
         temp_v0->tr.x = x;
         temp_v0->tr.y = y;
         temp_v0->tr.z = z;
-        temp_v0->flags |= OBJ_SHADOW_FLAG_20;
+        temp_v0->flags |= OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
     }
 }
 
@@ -221,7 +221,7 @@ void func_8004D880(Object *arg0) {
     ObjectShadow* temp_v0;
 
     if (arg0->shadow != NULL) {
-        arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_20;
+        arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
     }
 }
 
@@ -232,17 +232,17 @@ u32 shadow_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
     obj->shadow = shadow;
     addr = (u32)(shadow + 1);
     shadow->texture = texture_load((s32) -obj->def->shadowTexture, 0);
-    shadow->unk0 = obj->def->unk00;
-    shadow->unk2c = shadow->unk0;
-    shadow->unk14.x = D_80092BD0;
-    shadow->unk14.y = D_80092BD4;
-    shadow->unk14.z = D_80092BD8;
-    shadow->unk36 = 64;
-    shadow->flags = OBJ_SHADOW_FLAG_4;
-    shadow->unk38 = 0x19;
-    shadow->unk39 = 0x4B;
-    shadow->unk3A = 0x96;
-    shadow->unk3B = 0x64;
+    shadow->scale = obj->def->shadowScale;
+    shadow->maxDistScale = shadow->scale;
+    shadow->dir.x = D_80092BD0;
+    shadow->dir.y = D_80092BD4;
+    shadow->dir.z = D_80092BD8;
+    shadow->visibility = 64;
+    shadow->flags = OBJ_SHADOW_FLAG_ENABLED;
+    shadow->distFadeStart = 25;
+    shadow->distFadeEnd = 75;
+    shadow->distFadeMaxOpacity = 150;
+    shadow->distFadeMinOpacity = 100;
     func_8004D974(1);
     return addr;
 }
@@ -342,50 +342,52 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     D_800BB148 = D_800BB14C;
     D_800BB170 = 0;
     shadow = obj->shadow;
-    if (shadow->flags & OBJ_SHADOW_FLAG_1000) {
-        shadow->unk36 -= updateRate * 2;
-        if (shadow->unk36 <= 0) {
-            shadow->unk36 = 0;
+    if (shadow->flags & OBJ_SHADOW_FLAG_FADE_OUT) {
+        shadow->visibility -= updateRate * 2;
+        if (shadow->visibility <= 0) {
+            shadow->visibility = 0;
         }
-        if (shadow->unk36 == 0) {
+        if (shadow->visibility == 0) {
             shadow->gdl = NULL;
             return 0;
         }
     } else if (obj->group == GROUP_UNK1) {
         if (arg2 == 0) {
             if (D_800BB170 != 0) {
-                if (!(shadow->flags & OBJ_SHADOW_FLAG_4)) {
-                    shadow->unk36 += updateRate * 2;
-                    if (shadow->unk36 >= 64) {
-                        shadow->unk36 = 64;
+                if (!(shadow->flags & OBJ_SHADOW_FLAG_ENABLED)) {
+                    shadow->visibility += updateRate * 2;
+                    if (shadow->visibility >= 64) {
+                        shadow->visibility = 64;
                     }
                 } else {
-                    shadow->unk36 -= updateRate * 2;
-                    if (shadow->unk36 <= 0) {
-                        shadow->unk36 = 0;
-                        shadow->flags &= ~OBJ_SHADOW_FLAG_4;
+                    shadow->visibility -= updateRate * 2;
+                    if (shadow->visibility <= 0) {
+                        shadow->visibility = 0;
+                        shadow->flags &= ~OBJ_SHADOW_FLAG_ENABLED;
                     }
                 }
-            } else if (!(shadow->flags & OBJ_SHADOW_FLAG_4)) {
-                shadow->unk36 -= updateRate * 2;
-                if (shadow->unk36 <= 0) {
-                    shadow->unk36 = 0;
-                    shadow->flags |= OBJ_SHADOW_FLAG_4;
-                }
             } else {
-                shadow->unk36 += updateRate * 2;
-                if (shadow->unk36 >= 64) {
-                    shadow->unk36 = 64;
+                if (!(shadow->flags & OBJ_SHADOW_FLAG_ENABLED)) {
+                    shadow->visibility -= updateRate * 2;
+                    if (shadow->visibility <= 0) {
+                        shadow->visibility = 0;
+                        shadow->flags |= OBJ_SHADOW_FLAG_ENABLED;
+                    }
+                } else {
+                    shadow->visibility += updateRate * 2;
+                    if (shadow->visibility >= 64) {
+                        shadow->visibility = 64;
+                    }
                 }
             }
         }
-    } else if (!(shadow->flags & OBJ_SHADOW_FLAG_10000)) {
-        shadow->unk36 += updateRate * 2;
-        if (shadow->unk36 >= 64) {
-            shadow->unk36 = 64;
+    } else if (!(shadow->flags & OBJ_SHADOW_FLAG_PREVENT_FADE_IN)) {
+        shadow->visibility += updateRate * 2;
+        if (shadow->visibility >= 64) {
+            shadow->visibility = 64;
         }
     }
-    if (!(shadow->flags & OBJ_SHADOW_FLAG_4)) {
+    if (!(shadow->flags & OBJ_SHADOW_FLAG_ENABLED)) {
         if (arg2 == 0) {
             obj->shadow->gdl = NULL;
             return 1;
@@ -394,7 +396,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     } else {
         D_800BB170 = 0;
     }
-    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&obj->srt.transl, &sp220, sizeof(Vec3f));
         bcopy(&obj->positionMirror, &sp22C, sizeof(Vec3f));
         if (obj->parent != NULL) {
@@ -413,19 +415,19 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
     }
     shadow->gdl = D_800BB150;
-    if (!(shadow->flags & OBJ_SHADOW_FLAG_10)) {
-        shadow->unk14.x = D_80092BD0;
-        shadow->unk14.y = D_80092BD4;
-        shadow->unk14.z = D_80092BD8;
-    } else if (shadow->flags & OBJ_SHADOW_FLAG_800) {
-        shadow->unk14.x = 0.0f;
-        shadow->unk14.z = 0.0f;
-        shadow->unk14.y = 1.0f;
+    if (!(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_DIR)) {
+        shadow->dir.x = D_80092BD0;
+        shadow->dir.y = D_80092BD4;
+        shadow->dir.z = D_80092BD8;
+    } else if (shadow->flags & OBJ_SHADOW_FLAG_TOP_DOWN) {
+        shadow->dir.x = 0.0f;
+        shadow->dir.z = 0.0f;
+        shadow->dir.y = 1.0f;
     }
     if (D_800BB170 != 0) {
-        func_800516BC(obj, sp244, shadow->unk0 * 0.7f);
+        func_800516BC(obj, sp244, shadow->scale * 0.7f);
     } else {
-        func_80051944(0, obj, sp244, shadow->unk0, 0);
+        func_80051944(0, obj, sp244, shadow->scale, 0);
     }
     for (i = 0, j = 0; i < 8; i++, j++) {
         sp1C0[j].x = sp244[i].x + obj->positionMirror.x;
@@ -446,7 +448,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         sp8C->x,
         sp8C->z,
         arg1,
-        shadow->flags & OBJ_SHADOW_FLAG_40000
+        shadow->flags & OBJ_SHADOW_FLAG_WATER_SURFACE
     );
     D_80092BDC = sp90;
     D_80092C1C = sp2B4;
@@ -456,8 +458,8 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     if (D_800BB170 != 0) {
         if (func_800502AC(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
-            D_80092C34 = 0x190;
-            if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+            D_80092C34 = 400;
+            if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
                 bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
             }
@@ -467,8 +469,8 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     } else {
         if (func_8004FA58(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
-            D_80092C34 = 0x190;
-            if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+            D_80092C34 = 400;
+            if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
                 bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
             }
@@ -483,7 +485,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     D_80092C24 = D_800BB150 - D_800B98A0[D_80092C00];
     D_80092C2C = D_800BB140 - D_800B98A8[D_80092C04];
     D_80092C34 = D_800BB148 - D_800B98B0[D_80092C08];
-    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
         bcopy(&sp22C, &obj->positionMirror, sizeof(Vec3f));
     }
@@ -496,15 +498,15 @@ s32 func_8004E540(Object* arg0, ObjectShadow* arg1) {
     s32 sp18;
     f32 var_fv1;
 
-    sp1C = arg1->unk38 * 4;
-    sp18 = arg1->unk39 * 4;
+    sp1C = arg1->distFadeStart * 4;
+    sp18 = arg1->distFadeEnd * 4;
     var_fv1 = (func_80001884(arg0->positionMirror.x, arg0->positionMirror.y, arg0->positionMirror.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {
         var_fv1 = 1.0f;
     }
-    sp1C = (arg1->unk3A + ((arg1->unk3B - arg1->unk3A) * var_fv1));
+    sp1C = (arg1->distFadeMaxOpacity + ((arg1->distFadeMinOpacity - arg1->distFadeMaxOpacity) * var_fv1));
     sp1C = (arg0->opacityWithFade + 1) * (s32)sp1C;
     return sp1C >> 8;
 }
@@ -519,7 +521,7 @@ void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
         return;
     }
 
-    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&obj->srt.transl, &sp44, sizeof(Vec3f));
         bcopy(&obj->positionMirror, &sp50, sizeof(Vec3f));
         bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
@@ -529,10 +531,10 @@ void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
             bcopy(&shadow->tr, &obj->positionMirror, sizeof(Vec3f));
         }
     }
-    if (shadow->flags & OBJ_SHADOW_FLAG_8) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
         shadowtex_draw(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     }
-    if (shadow->flags & OBJ_SHADOW_FLAG_20) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&sp44, &obj->srt.transl, sizeof(Vec3f));
         bcopy(&sp50, &obj->positionMirror, sizeof(Vec3f));
     }
@@ -584,7 +586,7 @@ void func_8004E7A8(Object* arg0) {
         }
         D_800BB174 = D_800BB178;
         D_800BB17C = D_800BB180;
-        if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
+        if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
             bcopy(&arg0->srt.transl, &sp1D4, 0xC);
             bcopy(&arg0->positionMirror, &sp1E0, 0xC);
             if (arg0->parent != NULL) {
@@ -603,16 +605,16 @@ void func_8004E7A8(Object* arg0) {
             bcopy(&temp_s1->tr, &arg0->srt.transl, 0xC);
         }
         temp_s1->gdl = D_800BB184;
-        if (!(temp_s1->flags & OBJ_SHADOW_FLAG_10)) {
-            temp_s1->unk14.x = D_80092BD0;
-            temp_s1->unk14.y = D_80092BD4;
-            temp_s1->unk14.z = D_80092BD8;
-        } else if (temp_s1->flags & OBJ_SHADOW_FLAG_800) {
-            temp_s1->unk14.x = 0.0f;
-            temp_s1->unk14.z = 0.0f;
-            temp_s1->unk14.y = 1.0f;
+        if (!(temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_DIR)) {
+            temp_s1->dir.x = D_80092BD0;
+            temp_s1->dir.y = D_80092BD4;
+            temp_s1->dir.z = D_80092BD8;
+        } else if (temp_s1->flags & OBJ_SHADOW_FLAG_TOP_DOWN) {
+            temp_s1->dir.x = 0.0f;
+            temp_s1->dir.z = 0.0f;
+            temp_s1->dir.y = 1.0f;
         }
-        func_80051944(0, arg0, sp24C, temp_s1->unk0 * 0.5f, 0);
+        func_80051944(0, arg0, sp24C, temp_s1->scale * 0.5f, 0);
         for (i = 0, j = 0; i < 8; i++, j++) {
             sp1EC[j].x = sp24C[i].x + arg0->positionMirror.x;
             sp1EC[j].y = sp24C[i].y + arg0->positionMirror.y;
@@ -623,14 +625,14 @@ void func_8004E7A8(Object* arg0) {
         func_80053408(&spA0);
         func_800533D8(&sp2B4, &sp9C);
         sp2B4 = func_80052300(arg0, sp9C, D_800BA1A0, 
-            D_800BB174, sp2B4, spA0->x, spA0->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_40000);
+            D_800BB174, sp2B4, spA0->x, spA0->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_WATER_SURFACE);
         D_800BB174 += sp2B4 * 3;
         func_800511E8(arg0, 0, sp24C, spA8);
         temp_t0 = D_800BB17C - D_800BB160[D_80092C10];
         if (func_8004FA58(arg0, sp24C, spA8, sp2B4, D_800BB178, D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C38 = 0x258;
-            if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
+            if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
                 bcopy(&sp1E0, &arg0->positionMirror, 0xC);
             }
@@ -643,7 +645,7 @@ void func_8004E7A8(Object* arg0) {
             D_80092C30 = D_800BB174 - D_800BB168[D_80092C14];
             D_80092C38 = D_800BB17C - D_800BB160[D_80092C10];
             D_80092BFC = 0;
-            if (temp_s1->flags & OBJ_SHADOW_FLAG_20) {
+            if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
                 bcopy(&sp1D4, &arg0->srt.transl, 0xC);
                 bcopy(&sp1E0, &arg0->positionMirror, 0xC);
             }
@@ -651,10 +653,10 @@ void func_8004E7A8(Object* arg0) {
     }
 
     if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
-        if (!(temp_s1->flags & OBJ_SHADOW_FLAG_400)) {
+        if (!(temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
             alpha = func_8004E540(arg0, temp_s1);
         } else {
-            alpha = temp_s1->unk40;
+            alpha = temp_s1->opacity;
         }
         gDPSetPrimColor(temp_s1->gdl2, 0, 0, 0, 0, 0, alpha);
     }
@@ -684,7 +686,7 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
     dl_apply_geometry_mode(&gdl);
     gDPSetCombineLERP(gdl, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0);
     dl_apply_combine(&gdl);
-    if (arg2->flags & OBJ_SHADOW_FLAG_80) {
+    if (arg2->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         gDPSetOtherMode(gdl, 
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2);
@@ -813,26 +815,26 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     var_s4 = 0;
     sp1C8 = arg1;
     sp1C4 = NULL;
-    sp1C0 = shadow->unk36 * (1.0f / 64.0f);
-    if (shadow->flags & OBJ_SHADOW_FLAG_40) {
-        sp1C0 = shadow->unk3F;
+    sp1C0 = shadow->visibility * (1.0f / 64.0f);
+    if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
+        sp1C0 = shadow->a;
     } else if ((arg3->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
         sp1C0 = (((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4) * sp1C0;
     } else {
         sp1C0 = D_80092BE4 * sp1C0;
     }
-    if (shadow->flags & OBJ_SHADOW_FLAG_8) {
+    if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
         shadowtex_get_textures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
         sp1D4 = 0;
     } else {
         sp1C4 = shadow->texture;
         sp1D4 = 1;
     }
-    if (!(shadow->flags & OBJ_SHADOW_FLAG_40)) {
-        if ((arg3->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_400)) {
+    if (!(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR)) {
+        if ((arg3->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
             sp1D0 = func_8004E540(arg3, shadow);
         } else {
-            sp1D0 = shadow->unk40;
+            sp1D0 = shadow->opacity;
         }
         // @fake
         if (1) {}
@@ -857,7 +859,7 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     if (sp1D4 != 0) {
         gDPSetCombineLERP(arg1, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
         dl_apply_combine(&arg1);
-        if (shadow->flags & OBJ_SHADOW_FLAG_80) {
+        if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
                 arg1,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
@@ -876,7 +878,7 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     } else {
         gDPSetCombineLERP(arg1, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
         dl_apply_combine(&arg1);
-        if (shadow->flags & OBJ_SHADOW_FLAG_80) {
+        if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
                 arg1,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
@@ -898,8 +900,8 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     // @fake
     if (shadow2) {}
     shadow2->gdl2 = arg1;
-    if (shadow2->flags & OBJ_SHADOW_FLAG_40) {
-        dl_set_prim_color_no_sync(&arg1, shadow2->unk3C, shadow2->unk3D, shadow2->unk3E, (s16)(sp1C0 * 255.0f));
+    if (shadow2->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
+        dl_set_prim_color_no_sync(&arg1, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
     } else {
         dl_set_prim_color_no_sync(&arg1, 0, 0, 0, sp1D0);
     }
@@ -1001,7 +1003,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
     }
     var_fv0 = 1.0f - var_fv0;
     var_fs3 = var_fv0 * var_fv0;
-    if (spAC->flags & OBJ_SHADOW_FLAG_80) {
+    if (spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         var_fs3 = 0.0f;
         var_fs2 = 0.0f;
     }
@@ -1011,7 +1013,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
         spDC *= temp_fv0;
         spE0 *= temp_fv0;
     }
-    if (spAC->flags & OBJ_SHADOW_FLAG_40000) {
+    if (spAC->flags & OBJ_SHADOW_FLAG_WATER_SURFACE) {
         var_fs3 = 0.0f;
         spDC = 0.0f;
         spD8 = 0.0f;
@@ -1026,7 +1028,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
             sp1A4[var_s4].z = var_v0->z;
         }
         if (arg6[sp28C].unk10 & 1) {
-            if (func_80051CFC(&spAC->unk14, (Vec3f *)&arg6[sp28C].pos) == 1) {
+            if (func_80051CFC(&spAC->dir, (Vec3f *)&arg6[sp28C].pos) == 1) {
                 var_s7 = 3;
                 for (sp90 = 0; sp90 < 6 && var_s7 != 0; sp90++) {
                     var_s3 = &arg2[sp90];
@@ -1070,9 +1072,9 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                     var_s0 = &arg5[sp26C];
                     for (var_s4 = 0; var_s4 != var_s7; var_s4++) {
                         if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
-                            func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->unk0, &spD2, 0);
+                            func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
                         } else {
-                            func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->unk0, &spD2, 1);
+                            func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
                         }
                         if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                             spD2 = 0xFF;
@@ -1086,7 +1088,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                         } else {
                             var_s0->v.ob[0] = sp1A4[var_s4].x * 20.0f;
                             var_s0->v.ob[1] = sp1A4[var_s4].y * 20.0f;
-                            if (!(spAC->flags & OBJ_SHADOW_FLAG_80)) {
+                            if (!(spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER)) {
                                 var_s0->v.ob[1] += 0x1E;
                             }
                             var_s0->v.ob[2] = sp1A4[var_s4].z * 20.0f;
@@ -1148,13 +1150,13 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
     sp344 = 0;
     spAC = arg0->shadow;
     bzero(&D_800B9B10, 0x4C);
-    temp_fs4 = (f32) spAC->unk36 * 0.015625f;
+    temp_fs4 = (f32) spAC->visibility * 0.015625f;
     camera = get_camera();
     spD0.x = camera->tx - arg0->positionMirror.x;
     spD0.y = camera->ty - arg0->positionMirror.y;
     spD0.z = camera->tz - arg0->positionMirror.z;
     var_fv1 = sqrtf((spD0.x * spD0.x) + (spD0.y * spD0.y) + (spD0.z * spD0.z));
-    if (spAC->flags & OBJ_SHADOW_FLAG_80) {
+    if (spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         var_fv1 = 0.0f;
     }
     if (var_fv1 != 0.0f) {
@@ -1244,7 +1246,7 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
             for (var_s4 = 0; var_s4 < sp338; var_s4++) {
                 var_s0 = &arg5[sp330];
 
-                func_80050B88(arg0, &spE8[var_s4], &arg2[4], &arg2[2], &arg2[0], &arg2[1], &spCC, &spCE, spAC->unk0 * 0.75f, &spCA, 0);
+                func_80050B88(arg0, &spE8[var_s4], &arg2[4], &arg2[2], &arg2[0], &arg2[1], &spCC, &spCE, spAC->scale * 0.75f, &spCA, 0);
                 if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                     spCA = 0xFF;
                 }
@@ -1290,7 +1292,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
     f32 f2;
     f32 sp2C;
 
-    sp2C = arg0->shadow->unk2c;
+    sp2C = arg0->shadow->maxDistScale;
     if (D_800BB170 != 0) {
         f0 = (arg1->x * arg2->pos.x) + (arg1->z * arg2->pos.z) + arg2->pos.w;
         f0 = -f0;
@@ -1338,7 +1340,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
     if (temp_ft3 != 0.0f) {
         temp_ft3 = (sqrtf(temp_ft3) / (100.0f * (sp2C / 3.0f))) * 255.0f;
     }
-    if (arg0->shadow->flags & OBJ_SHADOW_FLAG_40) {
+    if (arg0->shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
         arg9[0] = 0xFF;
     } else {
         arg9[0] = 255.0f - (s16) temp_ft3;
@@ -1483,10 +1485,10 @@ void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
 
     set_camera_selector(0);
     camera = get_camera();
-    sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) ^ 0;
+    sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) & 0xFFFF;
     sp30 = fsin16_precise(-sp2A);
     temp_fv0 = fcos16_precise(-sp2A);
-    temp_fa1 = obj->shadow->unk2c * 0.3333f;
+    temp_fa1 = obj->shadow->maxDistScale * 0.3333f;
     for (i = 0; i < 8; i++) {
         sp40[0] = D_800B9840[i * 3 + 0] * arg2;
         sp40[1] = D_800B9840[i * 3 + 1] * arg2;
@@ -1526,9 +1528,9 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     srt.scale = 1.0f;
     srt.roll = 0;
 
-    temp_fs1 = arg1->shadow->unk14.x;
-    temp_fa1 = arg1->shadow->unk14.y;
-    temp_fs2 = arg1->shadow->unk14.z;
+    temp_fs1 = arg1->shadow->dir.x;
+    temp_fa1 = arg1->shadow->dir.y;
+    temp_fs2 = arg1->shadow->dir.z;
     s8 = 8;
     if (temp_fs1 < 0.0f) {
         var_fv1 = -temp_fs1;
@@ -1548,7 +1550,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     } else {
         var_v0 = arctan2_f(var_fa0, temp_fa1);
     }
-    if (arg1->shadow->flags & OBJ_SHADOW_FLAG_200) {
+    if (arg1->shadow->flags & OBJ_SHADOW_FLAG_USE_OBJ_YAW) {
         srt.yaw = arg1->srt.yaw;
     } else {
         srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
@@ -1569,7 +1571,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
             pos.x = D_800B97E0[i * 3 + 0] * arg3;
             temp_fv0 = temp_s7 * ((0x4000 - var_v0) / 16384.0f);
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
-            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->shadow->unk2c * temp_fs4)) - temp_fv0;
+            pos.z = (D_800B97E0[i * 3 + 2] * (arg1->shadow->maxDistScale * temp_fs4)) - temp_fv0;
         }
         rotate_vec3(&srt, pos.f);
         arg2->x = pos.x;

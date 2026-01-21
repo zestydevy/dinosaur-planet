@@ -281,7 +281,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
             gDLL_27->vtbl->setup_terrain_collider(&objdata->unk170, 4, _data_230, _data_260, &sp34);
             gDLL_27->vtbl->reset(snowhorn, &objdata->unk170);
         }
-        snowhorn->shadow->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_200 | OBJ_SHADOW_FLAG_10);
+        snowhorn->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
 }
 #endif

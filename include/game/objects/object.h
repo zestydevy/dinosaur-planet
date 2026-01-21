@@ -118,49 +118,75 @@ typedef struct {
 #define OBJ_SHADOW_FLAG_GET_TEX_SLOT(flags) (flags & 0x3)
 #define OBJ_SHADOW_FLAG_MAKE_TEX_SLOT(slot) (slot & 0x3)
 
-// First two bytes are the dynamic shadow texture slot index
+// Note: First two bits are the dynamic shadow texture slot index and not flags.
 enum ObjShadowFlags {
-    OBJ_SHADOW_FLAG_4 = 0x4,
-    OBJ_SHADOW_FLAG_8 = 0x8, // use dynamic shadow texture rendering
-    OBJ_SHADOW_FLAG_10 = 0x10,
-    OBJ_SHADOW_FLAG_20 = 0x20,
-    OBJ_SHADOW_FLAG_40 = 0x40,
-    OBJ_SHADOW_FLAG_80 = 0x80,
+    // Whether the shadow is enabled.
+    OBJ_SHADOW_FLAG_ENABLED = 0x4,
+    // Use dynamic shadow texture rendering.
+    // If set, the first two bits of the flags are the texture slot.
+    OBJ_SHADOW_FLAG_DYNAMIC_TEX = 0x8,
+    // Use custom shadow direction.
+    OBJ_SHADOW_FLAG_CUSTOM_DIR = 0x10,
+    // Use custom object position when calculating shadow.
+    OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS = 0x20,
+    // Use custom shadow color.
+    OBJ_SHADOW_FLAG_CUSTOM_COLOR = 0x40,
+    // Disables Z-buffering when rendering the shadow texture to a surface.
+    OBJ_SHADOW_FLAG_NO_Z_BUFFER = 0x80, 
+    // ?
     OBJ_SHADOW_FLAG_100 = 0x100,
-    OBJ_SHADOW_FLAG_200 = 0x200,
-    OBJ_SHADOW_FLAG_400 = 0x400,
-    OBJ_SHADOW_FLAG_800 = 0x800,
-    OBJ_SHADOW_FLAG_1000 = 0x1000, // fade out
+    // Rotate shadow with object yaw.
+    OBJ_SHADOW_FLAG_USE_OBJ_YAW = 0x200,
+    // Use custom opacity.
+    OBJ_SHADOW_FLAG_CUSTOM_OPACITY = 0x400,
+    // Top down shadow angle, i.e. always assume the light source is right above the object.
+    // Requires custom direction to be enabled.
+    OBJ_SHADOW_FLAG_TOP_DOWN = 0x800,
+    // If set, the shadow fades out. If unset after, the shadow fades back in.
+    OBJ_SHADOW_FLAG_FADE_OUT = 0x1000,
+    // Not used by shadow renderer.
     OBJ_SHADOW_FLAG_2000 = 0x2000,
+    // Not used by shadow renderer.
     OBJ_SHADOW_FLAG_4000 = 0x4000,
+    // Related to opacity?
     OBJ_SHADOW_FLAG_8000 = 0x8000,
-    OBJ_SHADOW_FLAG_10000 = 0x10000,
+    // Prevents shadow from fading back in if set. 
+    // Ignored if the object is in group 1 (the player's group).
+    OBJ_SHADOW_FLAG_PREVENT_FADE_IN = 0x10000,
+    // Not used by shadow renderer.
     OBJ_SHADOW_FLAG_20000 = 0x20000,
-    OBJ_SHADOW_FLAG_40000 = 0x40000
+    // Only cast shadow on the surface of water.
+    // If not set, the shadow will ignore the water surface and instead cast below on the ground.
+    OBJ_SHADOW_FLAG_WATER_SURFACE = 0x40000
 };
 
 typedef struct {
-/* 0x0 */ f32 unk0;
+/* 0x0 */ f32 scale;
 /* 0x4 */ Texture *texture;
-/* 0x8 */ Texture *unk8;
+/* 0x8 */ Texture *unk8; // unused?
 /* 0xC */ Gfx *gdl;
 /* 0x10 */ Gfx *gdl2;
-/* 0x14 */ Vec3f unk14;
-/* 0x20 */ Vec3f tr;
-/* 0x2C */ f32 unk2c;
+/* 0x14 */ Vec3f dir; // Direction of the shadow (effectively the negation of the light angle).
+/* 0x20 */ Vec3f tr; // If the "custom object position" flag is set, this position will be used instead of the object's position.
+           // Scales how far away the shadow can render.
+           // Technically, this affects how much surrounding geometry is searched when building lift planes.
+/* 0x2C */ f32 maxDistScale;
 /* 0x30 */ u32 flags; // ObjShadowFlags
-/* 0x34 */ u16 unk34;
-/* 0x36 */ s16 unk36; // fade timer
-/* 0x38 */ u8 unk38;
-/* 0x39 */ u8 unk39;
-/* 0x3A */ u8 unk3A;
-/* 0x3B */ u8 unk3B;
-/* 0x3c */ u8 unk3C;
-/* 0x3d */ u8 unk3D;
-/* 0x3e */ u8 unk3E;
-/* 0x3f */ u8 unk3F;
-/* 0x40 */ u8 unk40;
-/* 0x41 */ s8 bufferIdx; //shadows toggle this each frame (front/back buffer)
+/* 0x34 */ u16 unk34; // unused?
+/* 0x36 */ s16 visibility; // How visible the shadow is (on a scale from 0-64).
+           // Camera distance to object between start-end fades between max-min opacity.
+           // i.e. dist <= start = max opacity, dist >= end = min opacity.
+           // Ignored if a custom opacity is in use.
+/* 0x38 */ u8 distFadeStart;
+/* 0x39 */ u8 distFadeEnd;
+/* 0x3A */ u8 distFadeMaxOpacity;
+/* 0x3B */ u8 distFadeMinOpacity;
+/* 0x3c */ u8 r; // Requires custom shadow color to be enabled.
+/* 0x3d */ u8 g; // Requires custom shadow color to be enabled.
+/* 0x3e */ u8 b; // Requires custom shadow color to be enabled.
+/* 0x3f */ u8 a; // Requires custom shadow color to be enabled.
+/* 0x40 */ u8 opacity; // Requires custom opacity to be enabled. Ignored if custom color is enabled.
+/* 0x41 */ s8 bufferIdx; // Shadows toggle this each frame (front/back buffer)
 } ObjectShadow;
 
 typedef struct {

@@ -206,31 +206,31 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     Unk8005341C* var_s0;
     f32 temp_fa0;
     f32 temp_fv1;
-    f32 temp_fs0;
+    f32 minX;
     UnkFunc80051D68Arg3* spB8;
     f32 temp_fv1_2;
     s32 objCount;
-    f32 temp_fs1;
-    f32 temp_fs2;
-    f32 temp_fs3;
-    f32 temp_fs4;
-    f32 temp_fs5;
+    f32 maxX;
+    f32 minY;
+    f32 maxY;
+    f32 minZ;
+    f32 maxZ;
     f32 temp_fv0;
     f32 temp_fv1_3;
     s16 i;
 
-    temp_fs0 = arg1->min.x - 5;
-    temp_fs1 = arg1->max.x + 5;
-    temp_fs2 = arg1->min.y - 5;
-    temp_fs3 = arg1->max.y + 5;
-    temp_fs4 = arg1->min.z - 5;
-    temp_fs5 = arg1->max.z + 5;
+    minX = arg1->min.x - 5;
+    maxX = arg1->max.x + 5;
+    minY = arg1->min.y - 5;
+    maxY = arg1->max.y + 5;
+    minZ = arg1->min.z - 5;
+    maxZ = arg1->max.z + 5;
     var_s0 = &D_800BB268[1];
     D_800BB268->unk0 = 0;
     D_800BB268->unk4 = 0;
     D_800BB260 = D_80092E70 + 250;
     if (!(arg2 & 0x10)) {
-        s2 = func_80053B24(D_80092E70, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);
+        s2 = func_80053B24(D_80092E70, minX, minY, minZ, maxX, maxY, maxZ, arg2);
     } else {
         s2 = D_80092E70;
     }
@@ -244,15 +244,15 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
                 if (temp_a2 != NULL && temp_a2->model->facebatchBounds != NULL) {
                     temp_fv0 = temp_a2->model->maxAnimatedVertDistance;
                     if (
-                        !((temp_fv1 = curObj->srt.transl.x - temp_fv0) > temp_fs1) && !((temp_fv1 = curObj->srt.transl.x + temp_fv0) < temp_fs0)
-                        && !((temp_fv1_2 = curObj->srt.transl.y - temp_fv0) > temp_fs3) && !((temp_fv1_2 = curObj->srt.transl.y + temp_fv0) < temp_fs2)
-                        && !((temp_fv1_3 = curObj->srt.transl.z - temp_fv0) > temp_fs5) && !((temp_fv1_3 = curObj->srt.transl.z + temp_fv0) < temp_fs4)
+                        !((temp_fv1 = curObj->srt.transl.x - temp_fv0) > maxX) && !((temp_fv1 = curObj->srt.transl.x + temp_fv0) < minX)
+                        && !((temp_fv1_2 = curObj->srt.transl.y - temp_fv0) > maxY) && !((temp_fv1_2 = curObj->srt.transl.y + temp_fv0) < minY)
+                        && !((temp_fv1_3 = curObj->srt.transl.z - temp_fv0) > maxZ) && !((temp_fv1_3 = curObj->srt.transl.z + temp_fv0) < minZ)
                     ) {
                             var_s0->unkC = (MtxF* ) &((f32*)curObj->unk58)[(curObj->unk58->unk10C + 2) << 4];
                             var_s0->unk8 = (MtxF* ) &((f32*)curObj->unk58)[curObj->unk58->unk10C << 4];
                             var_s0->unk4 = ((s32)s2 - (s32)D_80092E70) / 52;
                             var_s0->unk0 = curObj;
-                            s2 = func_8005471C(s2, var_s0, temp_a2, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);
+                            s2 = func_8005471C(s2, var_s0, temp_a2, minX, minY, minZ, maxX, maxY, maxZ, arg2);
                             var_s0 += 1;
                     }
                 }
@@ -281,7 +281,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
     Vtx_t *sp124;
     s16 sp122;
     s32 sp11C;
-    s32 sp118;
+    s32 i;
     f32 temp_fs0;
     f32 temp_fs2;
     s32 sp10C;
@@ -332,13 +332,13 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
         arg6 ^= arg3;
         arg3 ^= arg6;
     }
-    temp_s4 = floor_f(arg1 / 640.0f);
-    temp_s7 = floor_f(arg3 / 640.0f);
-    temp_s5 = floor_f(arg4 / 640.0f);
-    temp_s3 = floor_f(arg6 / 640.0f);
+    temp_s4 = floor_f(arg1 / 640.0f); // minX
+    temp_s7 = floor_f(arg3 / 640.0f); // minZ
+    temp_s5 = floor_f(arg4 / 640.0f); // maxX
+    temp_s3 = floor_f(arg6 / 640.0f); // maxZ
     sp108 = 0;
-    for (sp118 = 0; sp118 < 5; sp118++) {
-        temp_v0 = func_80044B18(temp_s4, temp_s7, sp118);
+    for (i = 0; i < 5; i++) {
+        temp_v0 = func_80044B18(temp_s4, temp_s7, i);
         if (temp_v0 != NULL) {
             sp138[sp108] = temp_v0;
             D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
@@ -346,7 +346,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
             sp108++;
         }
         if (temp_s5 != temp_s4) {
-            temp_v0 = func_80044B18(temp_s5, temp_s7, sp118);
+            temp_v0 = func_80044B18(temp_s5, temp_s7, i);
             if (temp_v0 != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
@@ -355,7 +355,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
             }
         }
         if (temp_s3 != temp_s7) {
-            temp_v0 = func_80044B18(temp_s4, temp_s3, sp118);
+            temp_v0 = func_80044B18(temp_s4, temp_s3, i);
             if (temp_v0 != NULL) {
                 sp138[sp108] = temp_v0;
                 D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
@@ -363,7 +363,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
                 sp108++;
             }
             if (temp_s5 != temp_s4) {
-                temp_v0 = func_80044B18(temp_s5, temp_s3, sp118);
+                temp_v0 = func_80044B18(temp_s5, temp_s3, i);
                 if (temp_v0 != NULL) {
                     sp138[sp108] = temp_v0;
                     D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
@@ -374,13 +374,13 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
         }
     }
 
-    for (sp118 = 0; sp118 < sp108; sp118++) {
-        sp104 = arg1 - D_800BB200[sp118].x;
-        sp100 = arg4 - D_800BB200[sp118].x;
-        spFC = arg3 - D_800BB200[sp118].z;
-        spF8 = arg6 - D_800BB200[sp118].z;
-        D_800BB200[sp118].x += D_80092A60;
-        D_800BB200[sp118].z += D_80092A64;
+    for (i = 0; i < sp108; i++) {
+        sp104 = arg1 - D_800BB200[i].x;
+        sp100 = arg4 - D_800BB200[i].x;
+        spFC = arg3 - D_800BB200[i].z;
+        spF8 = arg6 - D_800BB200[i].z;
+        D_800BB200[i].x += D_80092A60;
+        D_800BB200[i].z += D_80092A64;
         // sp104 = MAX(0, sp104);
         if (sp104 < 0) {
             sp104 = 0;
@@ -397,9 +397,9 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
         if (spF8 > BLOCKS_GRID_UNIT) {
             spF8 = BLOCKS_GRID_UNIT;
         }
-        temp_s6 = D_800BB200[sp118].x - D_800BB200->x;
-        temp_s7 = D_800BB200[sp118].z - D_800BB200->z;
-        temp_s0 = sp138[sp118];
+        temp_s6 = D_800BB200[i].x - D_800BB200->x;
+        temp_s7 = D_800BB200[i].z - D_800BB200->z;
+        temp_s0 = sp138[i];
         var_v0 = 1;
         sp122 = 0;
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {

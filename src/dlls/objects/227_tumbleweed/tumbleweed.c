@@ -100,7 +100,7 @@ void dll_227_setup(Object* self, Tumbleweed_Setup* setup, GoldenNugget_Setup* ar
     self->speed.z = 0.0f;
      
     if (self->shadow) {
-        self->shadow->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10);
+        self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
     
     objdata->unk296 = 0x32;

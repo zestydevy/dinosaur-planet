@@ -367,7 +367,7 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     self->unkAF |= 0x88;
     func_8002674C(self);
     if (self->shadow != NULL) {
-        self->shadow->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10);
+        self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
     ktdata = (KTrex_Data*)objdata->unk3F4;
     ktdata->stateStack = generic_stack_new(4, sizeof(s32));

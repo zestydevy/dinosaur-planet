@@ -37,7 +37,7 @@ void dll_783_setup(Object *self, WCTile_Setup *setup, s32 arg2) {
         self->modelInstIdx = 0;
     }
     objdata->unkC = (s16) setup->unk1A;
-    self->shadow->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10);
+    self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     self->opacity = 0;
 }
 

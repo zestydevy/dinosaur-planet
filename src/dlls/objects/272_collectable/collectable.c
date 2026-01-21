@@ -211,10 +211,10 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     }
 
     if (self->shadow){
-        self->shadow->flags = OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10;
+        self->shadow->flags = OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
         id = self->id;
         if (id == OBJ_BoneDust || id == OBJ_WM_PureMagic){
-            self->shadow->flags |= OBJ_SHADOW_FLAG_400;
+            self->shadow->flags |= OBJ_SHADOW_FLAG_CUSTOM_OPACITY;
         }
     }
 
@@ -481,7 +481,7 @@ void collectable_handle_animation_and_fx(Object* self) {
                 }
                 objdata->shadowOpacity = opacity;
                 temp = func_8004E540(self, shadow);
-                shadow->unk40 = (temp * (opacity + 1)) >> 8;
+                shadow->opacity = (temp * (opacity + 1)) >> 8;
             }
         }
 
