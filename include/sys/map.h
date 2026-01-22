@@ -363,7 +363,8 @@ typedef struct UnkFunc80051D68Arg3 {
     UNK_TYPE_8 unk2E;
     UNK_TYPE_8 unk2F;
     s8 unk30;
-    u8 pad31[3];
+    s8 unk31;
+    u8 pad32[2];
 } UnkFunc80051D68Arg3;
 
 #define MAX_RENDER_LIST_LENGTH 400

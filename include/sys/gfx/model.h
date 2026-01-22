@@ -110,6 +110,15 @@ typedef struct {
 /*000B*/ u8 unkB;
 } TextureAnimation;
 
+typedef struct {
+    s16 unk0;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+} FacebatchBound;
+
 typedef struct{
     // TODO
 /*0000*/    ModelTexture *materials;
@@ -125,7 +134,7 @@ typedef struct{
 /*0028*/    HitSphere *hitSpheres;
 /*002C*/    void *edgeVectors; //only on mobile map models?
 /*0030*/    s16 *modAnim;
-/*0034*/    void *facebatchBounds; //bounding boxes for each facebatch
+/*0034*/    FacebatchBound *facebatchBounds; //bounding boxes for each facebatch
 /*0038*/    ModelDLInfo *drawModes; //stores command indices of f3dex2 block's EF command settings, plus 2 settings to swap between
 /*003C*/    TextureAnimation *textureAnimations; //for animating pupil UVs/eyelid flipbooks
 /*0040*/    s16 modAnimBankBases[8]; //the base modanim index of each modanim bank
