@@ -177,7 +177,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
                     spC0.y = -1.0f;
                     spC0.z = 0.0f;
                     spC0.w = objList[objIdx]->srt.transl.y;
-                    var_fv1 = func_800528AC(&self->srt.transl, arg1, &sp9C, &spC0);
+                    var_fv1 = shadows_func_800528AC(&self->srt.transl, arg1, &sp9C, &spC0);
                     if (self->srt.transl.y < objList[objIdx]->srt.transl.y) {
                         var_fv1 = -var_fv1;
                     }

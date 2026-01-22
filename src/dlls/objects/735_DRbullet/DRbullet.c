@@ -55,7 +55,7 @@ void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
 
     shadowData = self->shadow;
     if (shadowData != NULL) {
-        shadowData->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_200 | OBJ_SHADOW_FLAG_10);
+        shadowData->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
 
     objData->state = BULLET_STATE_INACTIVE;

@@ -100,8 +100,8 @@ void BossDrakor_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
     sp34->fsa.animState = DRAKOR_ASTATE_0;
     sp34->fsa.logicState = DRAKOR_LSTATE_0;
     if (self->shadow != NULL) {
-        self->shadow->unk3A = 0x64;
-        self->shadow->unk3B = 0x96;
+        self->shadow->distFadeMaxOpacity = 0x64;
+        self->shadow->distFadeMinOpacity = 0x96;
     }
 }
 

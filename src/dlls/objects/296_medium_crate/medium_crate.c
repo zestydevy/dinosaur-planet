@@ -104,7 +104,7 @@ void medium_crate_setup(Object *self, MediumCrate_Setup *setup, s32 param3) {
 
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_8000;
-        self->shadow->unk2c = self->shadow->unk0 + self->shadow->unk0;
+        self->shadow->maxDistScale = self->shadow->scale + self->shadow->scale;
     }
 }
 

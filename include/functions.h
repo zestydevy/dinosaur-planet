@@ -40,7 +40,6 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
 
 
 void func_80045F48(s32);
-void func_8004D974(s32);
 void texture_destroy(Texture *texture);
 
 /** check if object talked to by player? */
@@ -71,7 +70,6 @@ void init_maps();
 void func_8001CD00();
 void init_models();
 void func_80053300();
-void func_8004D470();
 
 void init_global_map();
 

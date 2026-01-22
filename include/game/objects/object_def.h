@@ -118,8 +118,8 @@ typedef struct {
  * Size: 0xAC. In OBJECTS.BIN, this is followed by variable size data related to the definition.
  */
 typedef struct {
-/*00*/ float unk00; //copied to shadow field 0 // TODO: confirm (shadow texture dimensions?)
-/*04*/ float scale;
+/*00*/ f32 shadowScale;
+/*04*/ f32 scale;
 /*08*/ u32 *pModelList;         // list of model IDs (offset in file, pointer after load)
 /*0c*/ UNK_PTR *pTextures;      // list of texture IDs? (offset in file, pointer after load)
 /*10*/ u8 *pSequenceBones; // list of sequenceBoneID + jointIDs (one for each modelIndex) that ANIMCURVES use to apply additive head/jaw animation

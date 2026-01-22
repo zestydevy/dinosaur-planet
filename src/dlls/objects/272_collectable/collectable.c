@@ -4,13 +4,13 @@
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/newshadows.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/314_foodbag.h"
 #include "types.h"
 
 extern u16 func_80031BBC(f32 x, f32 y, f32 z);
-s32 func_8004E540(Object* arg0, ObjectShadow* arg1);
 
 #define COLLECT_OFF 1
 
@@ -211,10 +211,10 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     }
 
     if (self->shadow){
-        self->shadow->flags = OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10;
+        self->shadow->flags = OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
         id = self->id;
         if (id == OBJ_BoneDust || id == OBJ_WM_PureMagic){
-            self->shadow->flags |= OBJ_SHADOW_FLAG_400;
+            self->shadow->flags |= OBJ_SHADOW_FLAG_CUSTOM_OPACITY;
         }
     }
 
@@ -469,7 +469,7 @@ void collectable_handle_animation_and_fx(Object* self) {
             self->srt.transl.y += self->speed.y;
             self->speed.y += 0.03f;
             if (self->speed.y >= 0.0f) {
-                func_8004D974(1);
+                shadows_func_8004D974(1);
                 objdata->shadowOpacity = 0;
             }
         } else {
@@ -480,8 +480,8 @@ void collectable_handle_animation_and_fx(Object* self) {
                     opacity = 0xFF;
                 }
                 objdata->shadowOpacity = opacity;
-                temp = func_8004E540(self, shadow);
-                shadow->unk40 = (temp * (opacity + 1)) >> 8;
+                temp = shadows_calc_opacity(self, shadow);
+                shadow->opacity = (temp * (opacity + 1)) >> 8;
             }
         }
 

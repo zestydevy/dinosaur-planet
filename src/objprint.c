@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/common/group48.h"
+#include "game/objects/object.h"
 #include "sys/rsp_segment.h"
 
 // -------- .data start 80091750 -------- //
@@ -178,7 +179,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         spBA = obj->srt.yaw;
     }
     if ((obj->shadow != NULL) && (obj->shadow->gdl != NULL)) {
-        if (obj->shadow->flags & 0x20) {
+        if (obj->shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
             spDC.transl.f[0] = obj->shadow->tr.f[0];
             spDC.transl.f[1] = obj->shadow->tr.f[1];
             spDC.transl.f[2] = obj->shadow->tr.f[2];
@@ -768,15 +769,15 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         temp_t0 = arg0->modelInsts[arg0->modelInstIdx];
         if (arg0->setup != NULL) {
             switch (arg0->setup->objId) {                    /* irregular */
-            case 0x4B:
-            case 0x4C:
-            case 0x4D:
-            case 0x4E:
-            case 0x4F:
-            case 0x50:
-            case 0x54:
-            case 0xF4:
-            case 0x230:
+            case OBJ_TriggerPoint:
+            case OBJ_TriggerPlane:
+            case OBJ_TriggerArea:
+            case OBJ_TriggerTime:
+            case OBJ_TriggerButton:
+            case OBJ_TriggerSetup:
+            case OBJ_TriggerBits:
+            case OBJ_TriggerCurve:
+            case OBJ_TriggerCylinder:
                 sp60 = arg0->srt.scale;
                 arg0->srt.scale = 2.0f;
                 func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
@@ -800,7 +801,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;
 
     if (object->shadow->gdl) {
-        if (object->shadow->flags & 0x20) {
+        if (object->shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
             shadowTransform.transl.x = object->shadow->tr.x;
             shadowTransform.transl.y = object->shadow->tr.y;
             shadowTransform.transl.z = object->shadow->tr.z;
@@ -814,7 +815,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.pitch = 0;
         shadowTransform.scale = 0.05f;
 
-        func_800032C4(gdl, mtx, (SRT* ) &shadowTransform, 1.0f, 0.0f, NULL);
+        func_800032C4(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
         gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->shadow->gdl));
 
         if (object->parent) {
