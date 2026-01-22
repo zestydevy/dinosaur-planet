@@ -31,9 +31,9 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
     func_800267A4(self);
     temp_v0 = self->shadow;
     if (self->shadow) {
-        temp_v0->flags |= (OBJ_SHADOW_FLAG_800 | OBJ_SHADOW_FLAG_10);
+        temp_v0->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
         temp_v0_2 = self->shadow;
-        temp_v0_2->unk2c = temp_v0_2->unk0 * 2.5f;
+        temp_v0_2->maxDistScale = temp_v0_2->scale * 2.5f;
     }
 
     gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9B1_Flames_Venting, MAX_VOLUME, NULL, 0, 0, 0);

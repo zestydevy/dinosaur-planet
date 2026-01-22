@@ -12,6 +12,7 @@
 #include "sys/fs.h"
 #include "sys/gfx/map.h"
 #include "sys/memory.h"
+#include "sys/newshadows.h"
 #include "sys/objects.h"
 #include "sys/oldshadows.h"
 #include "sys/print.h"
@@ -203,7 +204,7 @@ void game_init(void) {
     init_objects();
     diPrintfInit();
     func_80053300();
-    func_8004D470();
+    shadows_init();
     oldshadow_init();
     fonts_init();
     menu_init();

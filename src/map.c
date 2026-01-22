@@ -1159,10 +1159,10 @@ void func_80043FD8(s8* arg0) {
         } else {
             var_s2[0] = func_800456AC(object);
             if ((var_s2[0] != 0) && (object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
-                shadow_update_obj(object, 0, 0, gUpdateRate);
+                shadows_update_obj_geom(object, 0, 0, gUpdateRate);
             }
             if ((object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
-                func_8004E7A8(object);
+                shadows_update_obj_box(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
                 if (object->def->flags & 0x100000) {
@@ -2362,7 +2362,7 @@ void map_update_streaming(void) {
     sp294 = UINT_80092a98 & 0x800;
     UINT_80092a98 &= ~0x800;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (UINT_80092a98 & 0x4000)) {
-        func_8004D974(1);
+        shadows_func_8004D974(1);
         func_80012B54(1, 0);
         var_fp = 0;
         var_a1 = (GlobalMapCell **) &gDecodedGlobalMap;

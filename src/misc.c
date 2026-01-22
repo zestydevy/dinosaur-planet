@@ -319,7 +319,7 @@ void oldshadow_func_8005CF4C(Object* arg0, UnkOldShadowStruct2* arg1) {
     if (D_80093000 == 39) {
         D_80093000 = 0;
     }
-    if (func_80051D68(
+    if (shadows_func_80051D68(
             arg0, 
             arg1->unk0.x - D_80092BE0->x,
             arg1->unk0.z - D_80092BE0->z,

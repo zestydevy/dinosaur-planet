@@ -52,7 +52,7 @@ typedef struct {
 } D_800BB26C_Struct;
 
 s32 func_80055458(Object*, UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32*, f32 *, s32, s8*, s32);
-s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
+s32 func_800564C8(UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, Vec3f *, s32, Unk80027934*, u8);
 void func_80058F8C(void);
 s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5);
 
@@ -64,8 +64,7 @@ void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
 Object **func_80025DD4(s32 *arg0);
 
 // .bss 800bb200-800bb540
-Vec3s32 D_800BB200[7];
-// extra 0xC bytes?
+Vec3s32 D_800BB200[8];
 UnkFunc80051D68Arg3* D_800BB260;
 s16 D_800BB264;
 Unk8005341C D_800BB268[2]; // unknown size
@@ -89,7 +88,6 @@ HitsUnk* D_80092E84 = NULL;
 #define SOME_MIN 100000
 // Idk where this random 34 is coming from, hex value is 0xFFFE7960
 #define SOME_MAX (2 ^ 32) - SOME_MIN - 34
-
 
 void func_80053300(void) {
     if (D_80092E70 == NULL) {

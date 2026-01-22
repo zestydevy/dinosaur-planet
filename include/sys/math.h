@@ -116,8 +116,9 @@ typedef struct Vec4f {
     };
 } Vec4f;
 
-typedef struct {
-    s32 x, y, z;
+typedef union {
+    struct { s32 x, y, z; };
+    s32 s[3];
 } Vec3s32;
 
 typedef f32 Vec2[2];

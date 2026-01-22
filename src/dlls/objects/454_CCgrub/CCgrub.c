@@ -64,7 +64,7 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         self->srt.transl.x = temp_v0_2->pos.x;
         self->srt.transl.y = temp_v0_2->pos.y;
         self->srt.transl.z = temp_v0_2->pos.z;
-        self->shadow->flags |= (OBJ_SHADOW_FLAG_20000 | OBJ_SHADOW_FLAG_200);
+        self->shadow->flags |= (OBJ_SHADOW_FLAG_20000 | OBJ_SHADOW_FLAG_USE_OBJ_YAW);
         obj_init_mesg_queue(self, 1);
     }
 }

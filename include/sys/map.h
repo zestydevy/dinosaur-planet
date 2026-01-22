@@ -350,7 +350,6 @@ typedef struct MapObjSetupList {
 /*88*/ s32 groupsStart;
 } MapObjSetupList;
 
-
 typedef struct UnkFunc80051D68Arg3 {
     f32 unk0;
     s16 unk4;
@@ -472,15 +471,11 @@ s32 map_check_some_mapobj_flag(s32, u32);
 void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
 s32 func_8004B4A0(ObjSetup* obj, s32 mapID);
-void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
-s32 func_80052148(Vec3f* arg0, Vec3f* arg1);
-void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
 void block_add_to_render_list(Block *block, f32 x, f32 z);
 void func_800436DC(Object* arg0, s32 arg1);
 s32 func_80045DC0(s32, s32, s32); //unsure of last arg
 s32 map_find_streammap_index(s32);
 s32 map_load_streammap_add_to_table(s32);  //unsure of worldGridZ here
-void func_8004E7A8(Object* arg0);
 
 // other funcs that are used
 void func_80058F3C(void);
