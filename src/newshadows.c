@@ -1,6 +1,10 @@
-#include "common.h"
+#include "PR/ultratypes.h"
+#include "PR/gbi.h"
 #include "sys/newshadows.h"
+#include "sys/memory.h"
 #include "sys/shadowtex.h"
+#include "functions.h"
+#include "macros.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
 static const char str_8009a9f0[] = "newshadows.c: max lift planes exceeded\n";
@@ -72,7 +76,24 @@ Vec3f D_800BB1A8;
 u8 _bss_800bb1b8[0x48];
 // -------- .bss end 800bb200 -------- //
 
-void func_8004D470(void) {
+s32 shadows_func_8004FA4C(void);
+s32 shadows_func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3);
+void shadows_func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D);
+void shadows_func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4);
+void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2);
+void shadows_func_800511E8(Object*, s32, Vec3f*, Unk8004FA58 arg3[12]);
+s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
+void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA);
+s32 shadows_draw2(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
+s32 shadows_func_80051CFC(Vec3f* arg0, Vec3f* arg1);
+s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7);
+s32 shadows_draw1(Vtx* arg0, Gfx* gdl, ObjectShadow* arg2, Object *arg3, s32 arg4, s32* arg5);
+s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max);
+void shadows_func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
+s32 shadows_func_80052148(Vec3f* arg0, Vec3f* arg1);
+void shadows_func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
+
+void shadows_init(void) {
     void *temp_v0;
 
     D_80092BE8 = 10;
@@ -156,10 +177,10 @@ void func_8004D470(void) {
 }
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004D698.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_8004D698.s")
 #else
 extern f32 D_800BB1B0;
-void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     Vec3f sp1C;
     f32 var_fv0;
 
@@ -186,7 +207,7 @@ void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
         D_80092BD4 = 80.0f;
     }
     D_80092BD8 = arg3 * arg2;
-    func_80052230(&sp1C, &D_800BB1A8, &D_80092C44);
+    shadows_func_80052230(&sp1C, &D_800BB1A8, &D_80092C44);
     var_fv0 = D_80092C44;
     if (var_fv0 < 0.0f) {
         var_fv0 *= -1.0f;
@@ -200,32 +221,29 @@ void func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
         D_800BB1A8.y = sp1C.y;
         D_800BB1A8.z = sp1C.z;
         D_80092C40 = 0;
-        func_8004D974(1);
+        shadows_func_8004D974(1);
     }
 }
 #endif
 
-void func_8004D844(Object *obj, f32 x, f32 y, f32 z)
-{
-    ObjectShadow *temp_v0 = obj->shadow;
+void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
+    ObjectShadow *shadow = obj->shadow;
 
-    if (temp_v0) {
-        temp_v0->tr.x = x;
-        temp_v0->tr.y = y;
-        temp_v0->tr.z = z;
-        temp_v0->flags |= OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
+    if (shadow) {
+        shadow->tr.x = x;
+        shadow->tr.y = y;
+        shadow->tr.z = z;
+        shadow->flags |= OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
     }
 }
 
-void func_8004D880(Object *arg0) {
-    ObjectShadow* temp_v0;
-
-    if (arg0->shadow != NULL) {
-        arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
+void shadows_clear_custom_obj_pos(Object *obj) {
+    if (obj->shadow != NULL) {
+        obj->shadow->flags &= ~OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
     }
 }
 
-u32 shadow_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
+u32 shadows_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
     ObjectShadow *shadow;
 
     shadow = (ObjectShadow*)mmAlign4(addr);
@@ -243,27 +261,26 @@ u32 shadow_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
     shadow->distFadeEnd = 75;
     shadow->distFadeMaxOpacity = 150;
     shadow->distFadeMinOpacity = 100;
-    func_8004D974(1);
+    shadows_func_8004D974(1);
     return addr;
 }
 
-
-void func_8004D974(s32 arg0) {
+void shadows_func_8004D974(s32 arg0) {
     D_80092BE8 = (s8) arg0;
 }
 
-void func_8004D984(s32 arg0) {
+void shadows_func_8004D984(s32 arg0) {
     D_80092BE8 = 1;
 }
 
-void func_8004D99C(s32 arg0) {
+void shadows_func_8004D99C(s32 arg0) {
     D_80092BF8 = arg0;
 }
 
-void func_8004D9AC(s32 arg0) {
+void shadows_func_8004D9AC(s32 arg0) {
 }
 
-void func_8004D9B8(void) {
+void shadows_func_8004D9B8(void) {
     D_80092C2C = 0;
     D_80092C34 = 0;
     D_80092C24 = 0;
@@ -277,10 +294,10 @@ void func_8004D9B8(void) {
     D_800BB144 = D_800BB140;
     D_800BB14C = D_800BB148;
     D_80092BF8 = 0;
-    D_80092BF4 = func_8004FA4C();
+    D_80092BF4 = shadows_func_8004FA4C();
 }
 
-void func_8004DABC(void) {
+void shadows_func_8004DABC(void) {
     if (D_80092BE8 != 0) {
         D_80092C30 = 0;
         D_80092C38 = 0;
@@ -297,7 +314,7 @@ void func_8004DABC(void) {
     }
 }
 
-s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
+s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2A4; // end of loop
@@ -425,9 +442,9 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         shadow->dir.y = 1.0f;
     }
     if (D_800BB170 != 0) {
-        func_800516BC(obj, sp244, shadow->scale * 0.7f);
+        shadows_func_800516BC(obj, sp244, shadow->scale * 0.7f);
     } else {
-        func_80051944(0, obj, sp244, shadow->scale, 0);
+        shadows_func_80051944(0, obj, sp244, shadow->scale, 0);
     }
     for (i = 0, j = 0; i < 8; i++, j++) {
         sp1C0[j].x = sp244[i].x + obj->positionMirror.x;
@@ -439,7 +456,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     func_80053408(&sp8C);
     func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
-    sp2B4 = func_80052300(
+    sp2B4 = shadows_func_80052300(
         obj,
         sp88,
         D_800BA1A0,
@@ -453,10 +470,10 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     D_80092BDC = sp90;
     D_80092C1C = sp2B4;
     D_80092BE0 = sp8C;
-    func_800511E8(obj, 0, sp244, sp94);
+    shadows_func_800511E8(obj, 0, sp244, sp94);
     temp_t0 = D_800BB148 - D_800B98B0[D_80092C08];
     if (D_800BB170 != 0) {
-        if (func_800502AC(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
+        if (shadows_func_800502AC(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
             D_80092C34 = 400;
             if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
@@ -465,9 +482,9 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             }
             return 0;
         }
-        D_800BB150 += func_8004EEC0(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+        D_800BB150 += shadows_draw1(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     } else {
-        if (func_8004FA58(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
+        if (shadows_func_8004FA58(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
             D_80092C34 = 400;
             if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
@@ -477,7 +494,7 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
             return 0;
         }
-        D_800BB150 += func_8004F378(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+        D_800BB150 += shadows_draw2(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     }
 
     D_800BB14C += sp2B0;
@@ -492,26 +509,25 @@ s32 shadow_update_obj(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     return 0;
 }
 
-
-s32 func_8004E540(Object* arg0, ObjectShadow* arg1) {
+s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
     s32 sp1C;
     s32 sp18;
     f32 var_fv1;
 
-    sp1C = arg1->distFadeStart * 4;
-    sp18 = arg1->distFadeEnd * 4;
-    var_fv1 = (func_80001884(arg0->positionMirror.x, arg0->positionMirror.y, arg0->positionMirror.z) - sp1C) / (sp18 - sp1C);
+    sp1C = shadow->distFadeStart * 4;
+    sp18 = shadow->distFadeEnd * 4;
+    var_fv1 = (func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {
         var_fv1 = 1.0f;
     }
-    sp1C = (arg1->distFadeMaxOpacity + ((arg1->distFadeMinOpacity - arg1->distFadeMaxOpacity) * var_fv1));
-    sp1C = (arg0->opacityWithFade + 1) * (s32)sp1C;
+    sp1C = (shadow->distFadeMaxOpacity + ((shadow->distFadeMinOpacity - shadow->distFadeMaxOpacity) * var_fv1));
+    sp1C = (obj->opacityWithFade + 1) * (s32)sp1C;
     return sp1C >> 8;
 }
 
-void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     ObjectShadow* shadow;
     Vec3f sp50;
     Vec3f sp44;
@@ -542,7 +558,7 @@ void func_8004E64C(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 
 static u8 _data_pad_80092c68[0xC] = {0};
 
-void func_8004E7A8(Object* arg0) {
+void shadows_update_obj_box(Object* arg0) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2AC;
@@ -614,7 +630,7 @@ void func_8004E7A8(Object* arg0) {
             temp_s1->dir.z = 0.0f;
             temp_s1->dir.y = 1.0f;
         }
-        func_80051944(0, arg0, sp24C, temp_s1->scale * 0.5f, 0);
+        shadows_func_80051944(0, arg0, sp24C, temp_s1->scale * 0.5f, 0);
         for (i = 0, j = 0; i < 8; i++, j++) {
             sp1EC[j].x = sp24C[i].x + arg0->positionMirror.x;
             sp1EC[j].y = sp24C[i].y + arg0->positionMirror.y;
@@ -624,12 +640,12 @@ void func_8004E7A8(Object* arg0) {
         func_80053750(arg0, &sp70, 1);
         func_80053408(&spA0);
         func_800533D8(&sp2B4, &sp9C);
-        sp2B4 = func_80052300(arg0, sp9C, D_800BA1A0, 
+        sp2B4 = shadows_func_80052300(arg0, sp9C, D_800BA1A0, 
             D_800BB174, sp2B4, spA0->x, spA0->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_WATER_SURFACE);
         D_800BB174 += sp2B4 * 3;
-        func_800511E8(arg0, 0, sp24C, spA8);
+        shadows_func_800511E8(arg0, 0, sp24C, spA8);
         temp_t0 = D_800BB17C - D_800BB160[D_80092C10];
-        if (func_8004FA58(arg0, sp24C, spA8, sp2B4, D_800BB178, D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
+        if (shadows_func_8004FA58(arg0, sp24C, spA8, sp2B4, D_800BB178, D_800BB17C, D_800BA1A0, 0x257 - temp_t0) == 0) {
             temp_s1->gdl = NULL;
             D_80092C38 = 0x258;
             if (temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
@@ -638,7 +654,7 @@ void func_8004E7A8(Object* arg0) {
             }
             return;
         } else {
-            D_800BB184 += func_8004F378(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
+            D_800BB184 += shadows_draw2(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
             D_800BB180 += sp2B0;
             D_800BB178 = D_800BB174;
             D_80092C28 = D_800BB184 - D_800BB158[D_80092C0C];
@@ -654,7 +670,7 @@ void func_8004E7A8(Object* arg0) {
 
     if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
         if (!(temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
-            alpha = func_8004E540(arg0, temp_s1);
+            alpha = shadows_calc_opacity(arg0, temp_s1);
         } else {
             alpha = temp_s1->opacity;
         }
@@ -662,7 +678,7 @@ void func_8004E7A8(Object* arg0) {
     }
 }
 
-s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg4, s32 *arg5) {
+s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4, s32 *arg5) {
     DLTri* currentTri;
     s16 temp_v0_2;
     s16* var_s0;
@@ -681,25 +697,25 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
     UNUSED s32 var_s3;
     DLTri spA8[16];
 
-    sp1C0 = gdl;
-    gSPLoadGeometryMode(gdl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG);
-    dl_apply_geometry_mode(&gdl);
-    gDPSetCombineLERP(gdl, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0);
-    dl_apply_combine(&gdl);
-    if (arg2->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
-        gDPSetOtherMode(gdl, 
+    sp1C0 = dl;
+    gSPLoadGeometryMode(dl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG);
+    dl_apply_geometry_mode(&dl);
+    gDPSetCombineLERP(dl, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0);
+    dl_apply_combine(&dl);
+    if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
+        gDPSetOtherMode(dl, 
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2);
-        dl_apply_other_mode(&gdl);
+        dl_apply_other_mode(&dl);
     } else {
-        gDPSetOtherMode(gdl,
+        gDPSetOtherMode(dl,
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2);
-        dl_apply_other_mode(&gdl);
+        dl_apply_other_mode(&dl);
     }
-    arg2->gdl2 = gdl;
-    dl_set_prim_color_no_sync(&gdl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
-    shadowtex_get_textures(arg2->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(arg2->flags));
+    shadow->gdl2 = dl;
+    dl_set_prim_color_no_sync(&dl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
+    shadowtex_get_textures(shadow->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     var_s5 = 0;
     var_s6 = 0;
     while (var_s6 < 4) {
@@ -718,7 +734,7 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
             }
         }
 
-        gDPLoadTextureTile(gdl++, 
+        gDPLoadTextureTile(dl++, 
             /*timg*/OS_PHYSICAL_TO_K0(sp1B8), 
             /*fmt*/G_IM_FMT_RGBA, 
             /*siz*/G_IM_SIZ_16b, 
@@ -736,7 +752,7 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
             /*shifts*/G_TX_NOLOD, 
 			/*shiftt*/G_TX_NOLOD);
         if (!(var_s6 & 1)) {
-            gDPLoadMultiTile_4b(gdl++, 
+            gDPLoadMultiTile_4b(dl++, 
                 /*timg*/OS_PHYSICAL_TO_K0(sp1B4), 
                 /*tmem*/0x0140, 
                 /*rtile*/1, 
@@ -764,7 +780,7 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
                 var_v1 = 1;
             }
             if (var_v1 != 0) {
-                gSPVertex(gdl++, OS_PHYSICAL_TO_K0(var_s2), D_800B98B8[var_s1], 0);
+                gSPVertex(dl++, OS_PHYSICAL_TO_K0(var_s2), D_800B98B8[var_s1], 0);
 
                 // Convert triangle strip into individual triangles
                 currentTri = spA8;
@@ -778,7 +794,7 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
                     var_a0++;
                 }
                 
-                dl_triangles(&gdl, spA8, (D_800B98B8[var_s1] - 2));
+                dl_triangles(&dl, spA8, (D_800B98B8[var_s1] - 2));
                 var_s5 += D_800B98B8[var_s1];
             }
             var_s2 += D_800B98B8[var_s1];
@@ -788,10 +804,10 @@ s32 func_8004EEC0(Vtx *arg0, Gfx *gdl, ObjectShadow *arg2, Object *arg3, s32 arg
         var_s6++;
     }
     *arg5 = var_s5;
-    return (gdl - sp1C0);
+    return (dl - sp1C0);
 }
 
-s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 arg4, s32* arg5) {
+s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4, s32* arg5) {
     s32 sp1E4;
     s32 var_s0;
     s32 var_s4;
@@ -813,12 +829,12 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     void *spB0;
 
     var_s4 = 0;
-    sp1C8 = arg1;
+    sp1C8 = dl;
     sp1C4 = NULL;
     sp1C0 = shadow->visibility * (1.0f / 64.0f);
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
         sp1C0 = shadow->a;
-    } else if ((arg3->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
+    } else if ((obj->group == GROUP_UNK1) && (D_80092C3C > 0.0f)) {
         sp1C0 = (((1.0f - D_80092BE4) * D_80092C3C) + D_80092BE4) * sp1C0;
     } else {
         sp1C0 = D_80092BE4 * sp1C0;
@@ -831,15 +847,15 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
         sp1D4 = 1;
     }
     if (!(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR)) {
-        if ((arg3->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
-            sp1D0 = func_8004E540(arg3, shadow);
+        if ((obj->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
+            sp1D0 = shadows_calc_opacity(obj, shadow);
         } else {
             sp1D0 = shadow->opacity;
         }
         // @fake
         if (1) {}
         if (1) {} 
-        sp1D0 = (arg3->opacityWithFade + 1) * sp1D0;
+        sp1D0 = (obj->opacityWithFade + 1) * sp1D0;
         sp1D0 >>= 8;
         sp1D0 = (s16) (sp1D0 * sp1C0);
         if (sp1D0 > 0xFF) {
@@ -853,60 +869,60 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
     func_80040FF8();
     func_8003DB7C();
     // @fake
-    if (&arg1) {}
-    gSPGeometryMode(arg1, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
-    dl_apply_geometry_mode(&arg1);
+    if (&dl) {}
+    gSPGeometryMode(dl, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
+    dl_apply_geometry_mode(&dl);
     if (sp1D4 != 0) {
-        gDPSetCombineLERP(arg1, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
-        dl_apply_combine(&arg1);
+        gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
+        dl_apply_combine(&dl);
         if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
-                arg1,
+                dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2
             )
-            dl_apply_other_mode(&arg1);
+            dl_apply_other_mode(&dl);
         } else {
             gDPSetOtherMode(
-                arg1,
+                dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2
             );
-            dl_apply_other_mode(&arg1);
+            dl_apply_other_mode(&dl);
         }
-        set_textures_on_gdl(&arg1, sp1C4, NULL, 0U, 0, 0U, 0U);
+        set_textures_on_gdl(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
     } else {
-        gDPSetCombineLERP(arg1, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
-        dl_apply_combine(&arg1);
+        gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
+        dl_apply_combine(&dl);
         if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
-                arg1,
+                dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2
             )
-            dl_apply_other_mode(&arg1);
+            dl_apply_other_mode(&dl);
         } else {
             gDPSetOtherMode(
-                arg1,
+                dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2
             )
-            dl_apply_other_mode(&arg1);
+            dl_apply_other_mode(&dl);
         }
-        gDPLoadTextureBlock_4b(arg1++, OS_PHYSICAL_TO_K0(spB4), G_IM_FMT_I, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
-        gDPLoadMultiBlock_4bS(arg1++, OS_PHYSICAL_TO_K0(D_800BB190 + 1), 0x100, 1, G_IM_FMT_I, 64, 64, 0x100, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
+        gDPLoadTextureBlock_4b(dl++, OS_PHYSICAL_TO_K0(spB4), G_IM_FMT_I, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
+        gDPLoadMultiBlock_4bS(dl++, OS_PHYSICAL_TO_K0(D_800BB190 + 1), 0x100, 1, G_IM_FMT_I, 64, 64, 0x100, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
     }
     shadow2 = shadow;
     // @fake
     if (shadow2) {}
-    shadow2->gdl2 = arg1;
+    shadow2->gdl2 = dl;
     if (shadow2->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
-        dl_set_prim_color_no_sync(&arg1, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
+        dl_set_prim_color_no_sync(&dl, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
     } else {
-        dl_set_prim_color_no_sync(&arg1, 0, 0, 0, sp1D0);
+        dl_set_prim_color_no_sync(&dl, 0, 0, 0, sp1D0);
     }
     for (; sp1E4 < arg4; sp1E4++) {
-        gSPVertex(arg1++, OS_PHYSICAL_TO_K0(arg0), D_800B98B8[sp1E4], 0);
+        gSPVertex(dl++, OS_PHYSICAL_TO_K0(arg0), D_800B98B8[sp1E4], 0);
         var_v1 = spB8;
         for (var_a0 = 0; var_a0 < D_800B98B8[sp1E4] - 2; ) {
             var_v1->v0 = 0;
@@ -915,34 +931,34 @@ s32 func_8004F378(Vtx* arg0, Gfx* arg1, ObjectShadow* shadow, Object* arg3, s32 
             var_v1++;
             var_a0++;
         }
-        dl_triangles(&arg1, spB8, D_800B98B8[sp1E4] - 2);
+        dl_triangles(&dl, spB8, D_800B98B8[sp1E4] - 2);
 
         arg0 += D_800B98B8[sp1E4];
         var_s4 += D_800B98B8[sp1E4];
         var_s2 += D_800B98B8[sp1E4];
     }
-    gSPEndDisplayList(arg1++);
+    gSPEndDisplayList(dl++);
     func_80041028();
     func_8003DBCC();
     *arg5 = var_s4;
-    return arg1 - sp1C8;
+    return dl - sp1C8;
 }
 
-s32 func_8004FA3C(s32 arg0) {
+s32 shadows_func_8004FA3C(s32 arg0) {
     return 0;
 }
 
-s32 func_8004FA4C(void) {
+s32 shadows_func_8004FA4C(void) {
     return 0;
 }
 
 #ifndef NON_EQUIVALENT
-static s32 _data_pad[3] = {0}; // <- should go away once D_80092CA0 is in func_8004FA58 ?
+static s32 _data_pad[3] = {0}; // <- should go away once D_80092CA0 is in shadows_func_8004FA58 ?
 s32 D_80092CA0 = 1;
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_8004FA58.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_8004FA58.s")
 #else
 // https://decomp.me/scratch/GRoDG
-s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max) {
+s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max) {
     static s32 D_80092CA0 = 1;
     s32 sp28C;
     Camera* camera;
@@ -1028,7 +1044,7 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
             sp1A4[var_s4].z = var_v0->z;
         }
         if (arg6[sp28C].unk10 & 1) {
-            if (func_80051CFC(&spAC->dir, (Vec3f *)&arg6[sp28C].pos) == 1) {
+            if (shadows_func_80051CFC(&spAC->dir, (Vec3f *)&arg6[sp28C].pos) == 1) {
                 var_s7 = 3;
                 for (sp90 = 0; sp90 < 6 && var_s7 != 0; sp90++) {
                     var_s3 = &arg2[sp90];
@@ -1045,14 +1061,14 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                                 spE4[var_s2].z = sp1A4[var_s4].z;
                                 var_s2++;
                             } else {
-                                func_800528AC(&sp1A4[var_v0_2], &sp1A4[var_s4], &spE4[var_s2++], &var_s3->pos);
+                                shadows_func_800528AC(&sp1A4[var_v0_2], &sp1A4[var_s4], &spE4[var_s2++], &var_s3->pos);
                                 spE4[var_s2].x = sp1A4[var_s4].x;
                                 spE4[var_s2].y = sp1A4[var_s4].y;
                                 spE4[var_s2].z = sp1A4[var_s4].z;
                                 var_s2++;
                             }
                         } else if (var_fa1 <= 0.0f) {
-                            func_800528AC(&sp1A4[var_v0_2], &sp1A4[var_s4], &spE4[var_s2++], &var_s3->pos);
+                            shadows_func_800528AC(&sp1A4[var_v0_2], &sp1A4[var_s4], &spE4[var_s2++], &var_s3->pos);
                         }
                         var_fa1 = temp_fs0_2;
                         var_v0_2 = var_s4;
@@ -1072,9 +1088,9 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
                     var_s0 = &arg5[sp26C];
                     for (var_s4 = 0; var_s4 != var_s7; var_s4++) {
                         if (arg0->def->shadowType == OBJ_SHADOW_GEOM) {
-                            func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
+                            shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], arg2, 0, &arg2[1], &spD4, &spD6, spAC->scale, &spD2, 0);
                         } else {
-                            func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
+                            shadows_func_80050B88(arg0, &sp1A4[var_s4], &arg2[5], &arg2[2], 0, &arg2[3], &spD4, &spD6, spAC->scale, &spD2, 1);
                         }
                         if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                             spD2 = 0xFF;
@@ -1114,10 +1130,10 @@ s32 func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f 
 
 #ifndef NON_EQUIVALENT
 s32 D_80092CA4 = 1;
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_800502AC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_800502AC.s")
 #else
 // https://decomp.me/scratch/W9sJo
-s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7) {
+s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7) {
     static s32 D_80092CA4 = 1;
     s32 sp354;
     s32 var_s3;
@@ -1178,7 +1194,7 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
         spDC.x = arg6[sp354].pos.x;
         spDC.y = arg6[sp354].pos.y;
         spDC.z = arg6[sp354].pos.z;
-        if (func_80052148((Vec3f* ) &spD0, (Vec3f* ) &spDC) != 1) {
+        if (shadows_func_80052148((Vec3f* ) &spD0, (Vec3f* ) &spDC) != 1) {
             continue;
         }
 
@@ -1198,14 +1214,14 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
                         sp1A8[var_s5].z = sp268[var_s4].z;
                         var_s5++;
                     } else {
-                        func_800528AC(&sp268[var_v0_2], &sp268[var_s4], &sp1A8[var_s5++], &var_s2->pos);
+                        shadows_func_800528AC(&sp268[var_v0_2], &sp268[var_s4], &sp1A8[var_s5++], &var_s2->pos);
                         sp1A8[var_s5].x = sp268[var_s4].x;
                         sp1A8[var_s5].y = sp268[var_s4].y;
                         sp1A8[var_s5].z = sp268[var_s4].z;
                         var_s5++;
                     }
                 } else if (var_fa1 <= 0.0f) {
-                    func_800528AC(&sp268[var_v0_2], &sp268[var_s4], &sp1A8[var_s5++], &var_s2->pos);
+                    shadows_func_800528AC(&sp268[var_v0_2], &sp268[var_s4], &sp1A8[var_s5++], &var_s2->pos);
                 }
                 var_v0_2 = var_s4;
                 var_fa1 = temp_fs0;
@@ -1228,15 +1244,15 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
 
         while (sp34C < 4) {
             if (sp34C == 0) {
-                func_80052644(sp1A8, spE8, sp33C, &sp338, &arg2[11].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, spE8, sp33C, &sp338, &arg2[11].pos, 0xC, NULL, 0U);
             } else if (sp34C == 1) {
-                func_80052644(sp1A8, sp268, sp33C, &sp33C, &arg2[10].pos, 0xC, NULL, 0U);
-                func_80052644(sp268, spE8, sp33C, &sp338, &arg2[9].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, sp268, sp33C, &sp33C, &arg2[10].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp268, spE8, sp33C, &sp338, &arg2[9].pos, 0xC, NULL, 0U);
             } else if (sp34C == 2) {
-                func_80052644(sp1A8, sp268, sp33C, &sp33C, &arg2[8].pos, 0xC, NULL, 0U);
-                func_80052644(sp268, spE8, sp33C, &sp338, &arg2[7].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, sp268, sp33C, &sp33C, &arg2[8].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp268, spE8, sp33C, &sp338, &arg2[7].pos, 0xC, NULL, 0U);
             } else {
-                func_80052644(sp1A8, spE8, sp33C, &sp338, &arg2[6].pos, 0xC, NULL, 0U);
+                shadows_func_80052644(sp1A8, spE8, sp33C, &sp338, &arg2[6].pos, 0xC, NULL, 0U);
             }
             if (sp338 != 0) {
                 D_800B98B8[D_80092C20] = sp338;
@@ -1246,7 +1262,7 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
             for (var_s4 = 0; var_s4 < sp338; var_s4++) {
                 var_s0 = &arg5[sp330];
 
-                func_80050B88(arg0, &spE8[var_s4], &arg2[4], &arg2[2], &arg2[0], &arg2[1], &spCC, &spCE, spAC->scale * 0.75f, &spCA, 0);
+                shadows_func_80050B88(arg0, &spE8[var_s4], &arg2[4], &arg2[2], &arg2[0], &arg2[1], &spCC, &spCE, spAC->scale * 0.75f, &spCA, 0);
                 if (spAC->flags & OBJ_SHADOW_FLAG_8000) {
                     spCA = 0xFF;
                 }
@@ -1276,10 +1292,10 @@ s32 func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f 
 #endif
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_80050B88.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_80050B88.s")
 #else
 // https://decomp.me/scratch/IurnK
-void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA) {
+void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA) {
     s32 pad;
     f32 temp_fa0;
     f32 temp_fa1;
@@ -1389,7 +1405,7 @@ void func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* ar
 }
 #endif
 
-void func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58 arg3[12]) {
+void shadows_func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58 arg3[12]) {
     Vec3f normalizedPos;
     s32 i;
     f32 wSum;
@@ -1398,42 +1414,42 @@ void func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58 arg3[12]) {
         for (i = 0; i < 8; i++) { arg2[i].y += arg1; }
     }
 
-    func_80051C54(&arg2[3], &arg2[7], &arg2[2], &normalizedPos);
+    shadows_func_80051C54(&arg2[3], &arg2[7], &arg2[2], &normalizedPos);
     guNormalize(&normalizedPos.x, &normalizedPos.y, &normalizedPos.z);
     arg3[0].pos.x = -normalizedPos.x;
     arg3[0].pos.y = -normalizedPos.y;
     arg3[0].pos.z = -normalizedPos.z;
     arg3[0].pos.w = -(((arg3[0].pos.x * arg2[3].x) + (arg3[0].pos.y * arg2[3].y)) + (arg3[0].pos.z * arg2[3].z));
 
-    func_80051C54(&arg2[5], &arg2[1], &arg2[6], &normalizedPos);
+    shadows_func_80051C54(&arg2[5], &arg2[1], &arg2[6], &normalizedPos);
     guNormalize(&normalizedPos.x, &normalizedPos.y, &normalizedPos.z);
     arg3[1].pos.x = -normalizedPos.x;
     arg3[1].pos.y = -normalizedPos.y;
     arg3[1].pos.z = -normalizedPos.z;
     arg3[1].pos.w = -(((arg3[1].pos.x * arg2[5].x) + (arg3[1].pos.y * arg2[5].y)) + (arg3[1].pos.z * arg2[5].z));
 
-    func_80051C54(&arg2[4], &arg2[0], &arg2[5], &normalizedPos);
+    shadows_func_80051C54(&arg2[4], &arg2[0], &arg2[5], &normalizedPos);
     guNormalize(&normalizedPos.x, &normalizedPos.y, &normalizedPos.z);
     arg3[2].pos.x = -normalizedPos.x;
     arg3[2].pos.y = -normalizedPos.y;
     arg3[2].pos.z = -normalizedPos.z;
     arg3[2].pos.w = -(((arg3[2].pos.x * arg2[4].x) + (arg3[2].pos.y * arg2[4].y)) + (arg3[2].pos.z * arg2[4].z));
 
-    func_80051C54(&arg2[0], &arg2[4], &arg2[3], &normalizedPos);
+    shadows_func_80051C54(&arg2[0], &arg2[4], &arg2[3], &normalizedPos);
     guNormalize(&normalizedPos.x, &normalizedPos.y, &normalizedPos.z);
     arg3[3].pos.x = -normalizedPos.x;
     arg3[3].pos.y = -normalizedPos.y;
     arg3[3].pos.z = -normalizedPos.z;
     arg3[3].pos.w = -(((arg3[3].pos.x * arg2[0].x) + (arg3[3].pos.y * arg2[0].y)) + (arg3[3].pos.z * arg2[0].z));
 
-    func_80051C54(&arg2[7], &arg2[4], &arg2[6], &normalizedPos);
+    shadows_func_80051C54(&arg2[7], &arg2[4], &arg2[6], &normalizedPos);
     guNormalize(&normalizedPos.x, &normalizedPos.y, &normalizedPos.z);
     arg3[4].pos.x = -normalizedPos.x;
     arg3[4].pos.y = -normalizedPos.y;
     arg3[4].pos.z = -normalizedPos.z;
     arg3[4].pos.w = -(((arg3[4].pos.x * arg2[7].x) + (arg3[4].pos.y * arg2[7].y)) + (arg3[4].pos.z * arg2[7].z));
 
-    func_80051C54(&arg2[0], &arg2[3], &arg2[1], &normalizedPos);
+    shadows_func_80051C54(&arg2[0], &arg2[3], &arg2[1], &normalizedPos);
     guNormalize(&normalizedPos.x, &normalizedPos.y, &normalizedPos.z);
     arg3[5].pos.x = -normalizedPos.x;
     arg3[5].pos.y = -normalizedPos.y;
@@ -1473,7 +1489,7 @@ void func_800511E8(Object *arg0, s32 arg1, Vec3f* arg2, Unk8004FA58 arg3[12]) {
     }
 }
 
-void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
+void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     f32 temp_fv0;
     f32 temp_fa1;
     Camera* camera;
@@ -1502,7 +1518,7 @@ void func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     }
 }
 
-void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
+void shadows_func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     f32 temp_fa1;
     f32 temp_fs1;
     f32 temp_fs2;
@@ -1580,7 +1596,7 @@ void func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 arg4) {
     }
 }
 
-void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
+void shadows_func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
     f32 temp_fa0;
     f32 temp_ft4;
     f32 temp_fv0;
@@ -1600,8 +1616,7 @@ void func_80051C54(Vec3f* A, Vec3f* B, Vec3f* C, Vec3f* D) {
     D->z = ((sp0) * temp_fa0) - (sp4 * temp_fv0);
 }
 
-
-s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
+s32 shadows_func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
     s32 var_v1;
     float product;
 
@@ -1618,7 +1633,7 @@ s32 func_80051CFC(Vec3f* arg0, Vec3f* arg1) {
     return var_v1;
 }
 
-s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5) {
+s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5) {
     UnkFunc80051D68Arg3* var_s3;
     s32 i;
     f32 f0;
@@ -1630,7 +1645,7 @@ s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s
 
     for (i = 0; i < arg4; i++) {
         var_s3 = &arg3[i];
-        if (func_80051F64(arg1, arg2, var_s3->unkA, var_s3->unk16) == 1) {
+        if (shadows_func_80051F64(arg1, arg2, var_s3->unkA, var_s3->unk16) == 1) {
             sp70.x = arg1;
             sp70.y = arg0->srt.transl.y;
             sp70.z = arg2;
@@ -1649,7 +1664,7 @@ s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s
             sp44.y = var_s3->unk6 * 0.00012208521f;
             sp44.z = var_s3->unk8 * 0.00012208521f;
             sp44.w = var_s3->unk0;
-            func_800528AC(&sp70, &sp64, &sp58, &sp44);
+            shadows_func_800528AC(&sp70, &sp64, &sp58, &sp44);
             return sp58.y - sp70.y;
         }
     }
@@ -1657,7 +1672,7 @@ s32 func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s
     return 0;
 }
 
-s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3) {
+s32 shadows_func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3) {
     s16 temp_t1;
     s16 temp_t3;
     s16 temp_t4;
@@ -1687,8 +1702,7 @@ s32 func_80051F64(s16 arg0, s16 arg1, s16 *arg2, s16 *arg3) {
     return 1;
 }
 
-
-s32 func_80052148(Vec3f* arg0, Vec3f* arg1) {
+s32 shadows_func_80052148(Vec3f* arg0, Vec3f* arg1) {
     f32 sp44;
     s32 pad;
     f32 sp3C;
@@ -1715,8 +1729,7 @@ s32 func_80052148(Vec3f* arg0, Vec3f* arg1) {
 /** 
   * Seems to have something to do with getting the dot product of two vectors?
   */
-void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
-{
+void shadows_func_80052230(Vec3f *A, Vec3f *B, f32 *arg2) {
     f32 AdotB;
     f32 AdotA;
     f32 BdotB;
@@ -1741,9 +1754,9 @@ void func_80052230(Vec3f *A, Vec3f *B, f32 *arg2)
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/func_80052300.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/newshadows/shadows_func_80052300.s")
 #else
-s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8) {
+s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8) {
     s32 sp44;
     s32 var_a2;
     Unk8005341C* temp_t2;
@@ -1806,7 +1819,7 @@ s32 func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Ve
 }
 #endif
 
-void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag) {
+void shadows_func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag) {
     f32 new_var = 1/1000.0f;
     Vec3f* var_s3;
     f32 temp_fs0;
@@ -1834,7 +1847,7 @@ void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s
                 dest += length;
                 *outCount += 1;
             } else {
-                temp_fv0 = func_800528AC(var_s3, sourceAsVec, destAsVec, arg4);
+                temp_fv0 = shadows_func_800528AC(var_s3, sourceAsVec, destAsVec, arg4);
                 if (arg6 != NULL) {
                     arg6(var_s3, sourceAsVec, destAsVec, temp_fv0);
                 }
@@ -1844,7 +1857,7 @@ void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s
                 *outCount += 2;
             }
         } else if (var_fv0 < new_var) {
-            temp_fv0 = func_800528AC(sourceAsVec, var_s3, destAsVec, arg4);
+            temp_fv0 = shadows_func_800528AC(sourceAsVec, var_s3, destAsVec, arg4);
             if (arg6 != NULL) {
                 arg6(sourceAsVec, var_s3, destAsVec, temp_fv0);
             }
@@ -1866,7 +1879,7 @@ void func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s
     }
 }
 
-f32 func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3) {
+f32 shadows_func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3) {
     f32 zDiff;
     f32 yDiff;
     f32 xDiff;

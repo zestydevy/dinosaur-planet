@@ -4,13 +4,13 @@
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+#include "sys/newshadows.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/314_foodbag.h"
 #include "types.h"
 
 extern u16 func_80031BBC(f32 x, f32 y, f32 z);
-s32 func_8004E540(Object* arg0, ObjectShadow* arg1);
 
 #define COLLECT_OFF 1
 
@@ -469,7 +469,7 @@ void collectable_handle_animation_and_fx(Object* self) {
             self->srt.transl.y += self->speed.y;
             self->speed.y += 0.03f;
             if (self->speed.y >= 0.0f) {
-                func_8004D974(1);
+                shadows_func_8004D974(1);
                 objdata->shadowOpacity = 0;
             }
         } else {
@@ -480,7 +480,7 @@ void collectable_handle_animation_and_fx(Object* self) {
                     opacity = 0xFF;
                 }
                 objdata->shadowOpacity = opacity;
-                temp = func_8004E540(self, shadow);
+                temp = shadows_calc_opacity(self, shadow);
                 shadow->opacity = (temp * (opacity + 1)) >> 8;
             }
         }

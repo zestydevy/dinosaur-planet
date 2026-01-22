@@ -690,7 +690,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     }
 
     if ((modflags & MODFLAGS_SHADOW) && (def->shadowType != OBJ_SHADOW_NONE)) {
-        addr = shadow_init_obj_shadow(obj, addr, 0);
+        addr = shadows_init_obj_shadow(obj, addr, 0);
     }
 
     obj->unkA8 = func_80022150(obj) * obj->srt.scale;
@@ -1577,7 +1577,7 @@ void obj_free_object(Object *obj, s32 param2) {
 
     if (obj->shadow != NULL) {
         if (obj->def->shadowType == OBJ_SHADOW_BOX) {
-            func_8004D974(1);
+            shadows_func_8004D974(1);
         }
 
         if (obj->shadow->texture != NULL) {
