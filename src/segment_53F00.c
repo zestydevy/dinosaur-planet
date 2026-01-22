@@ -52,8 +52,9 @@ typedef struct {
 } D_800BB26C_Struct;
 
 s32 func_80055458(Object*, UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32*, f32 *, s32, s8*, s32);
-s32 func_800564C8(UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32 *, s32, s8*, s32);
+s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_80058F8C(void);
+s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5);
 
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3*, s32, s32, s32, s32, s32, s32, u8);
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3*, Unk8005341C*, ModelInstance*, f32, f32, f32, f32, f32, f32, u8);
@@ -858,7 +859,7 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
                     var_s2++;
                 }
                 if (arg5 & 2) {
-                    sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], &spA0[0], arg3, (s8* ) arg4, 1);
+                    sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], &spA0[0], arg3, arg4, 1);
                 } else {
                     temp_v0_3 = func_80055458(sp64, &D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], &sp70[0], &spA0[0], arg3, (s8* ) arg4, 1);
                     if (temp_v0_3) {
@@ -878,7 +879,7 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
                     var_s1 += 3;
                 }
             } else if (arg5 & 2) {
-                sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], arg2, arg3, (s8* ) arg4, 0);
+                sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], arg2, arg3, arg4, 0);
             } else {
                 sp6F |= func_80055458(sp64, &D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], arg1, arg2, arg3, (s8* ) arg4, 0);
             }
@@ -890,13 +891,270 @@ u8 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80055458.s")
 
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800564C8.s")
+#else
+// https://decomp.me/scratch/iUTQF
+s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_fs4;
+    f32 temp_ft3;
+    f32 temp_ft4;
+    f32 temp_ft5;
+    f32 temp_fv1;
+    s32 var_v0;
+    f32 sp7C;
+    f32 sp78;
+    f32 var_fs1;
+    f32 var_fs2;
+    s32 var_a0;
+    s32 var_a1;
+    f32 sp64;
+    f32 sp60;
+    s32 var_v1;
+    s32 var_v1_2;
+    s32 i;
+    UnkFunc80051D68Arg3 *temp;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800567F4.s")
+    var_a0 = 0;
+    var_a1 = 1;
+    if (arg5 != 0) {
+        sp64 = 0;
+        sp60 = 0;
+    } else {
+        sp64 = D_800BB200->x;
+        sp60 = D_800BB200->z;
+    }
+    i = 0;
+    do {
+        temp_fs4 = arg2[i].f[1];
+        var_fs1 = arg2[i].f[0];
+        var_fs2 = arg2[i].f[2];
+        sp7C = arg4->unk40[i];
+        sp78 = sp7C + 0.1f;
+        var_fs1 -= sp64;
+        var_fs2 -= sp60;
+        var_v0 = 0;
+        do {
+            var_v1 = FALSE;
+            temp = arg0;
+            for (; (u32) temp < (u32) arg1; temp++) {
+                temp_fa1 = temp->unk4 * 0.00012208521f;
+                temp_fa0 = temp->unk6 * 0.00012208521f;
+                temp_ft4 = temp->unk8 * 0.00012208521f;
+                temp_ft5 = temp->unk0;
+                if (temp_fa0 >= 0.707f) {
+                    continue;
+                }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80056BCC.s")
+                temp_fv1 = ((temp_fa1 * var_fs1) + (temp_fa0 * temp_fs4) + (temp_ft4 * var_fs2) + temp_ft5) - sp7C;
+                if ((2.0f * -sp7C) <= temp_fv1 && temp_fv1 <= 0.0f) {
+                    if (temp_fs4 < (temp->unk10[temp->unk32 & 0xF] - sp78)) {
+                        continue;
+                    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80056E50.s")
+                    if ((temp->unk10[temp->unk32 >> 4] + sp78) < temp_fs4) {
+                        continue;
+                    }
+
+                    var_v1_2 = 0;
+                    var_fs1 -= temp_fv1 * temp_fa1;
+                    var_fs2 -= temp_fv1 * temp_ft4;
+                    while (var_v1_2 < 0x65 && ((var_fs1 * temp_fa1) + (temp_fa0 * temp_fs4) + (var_fs2 * temp_ft4) + temp_ft5) < sp78) {
+                        var_v1_2++;
+                        var_fs1 += temp_fa1 * 0.1f;
+                        var_fs2 += temp_ft4 * 0.1f;
+                    }
+                    var_v0++;
+                    var_v1 = TRUE;
+                    if (var_v0 > 20) {
+                        var_v1 = FALSE;
+                    }
+                    arg2[i].f[0] = var_fs1 + sp64;
+                    arg2[i].f[2] = var_fs2 + sp60;
+                    break;
+                }
+            }
+        } while (var_v1 != FALSE);
+        if (var_v0 != 0) {
+            var_a0 |= var_a1;
+            arg4->unk68++;
+        }
+        var_a1 <<= 1;
+        i++;
+    } while (i < arg3);
+
+    return var_a0;
+}
+#endif
+
+s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, Vec4f* arg5) {
+    Vec3f sp64;
+    Vec3f sp58;
+    Vec3f sp4C;
+    f32 sp48;
+    f32 sp44;
+    f32 sp40;
+
+    vec3_cross_product(arg2, &arg0[2], &sp64);
+    sp44 = vec3_normalize(&sp64);
+    if (sp44 == 0.0f) {
+        return 0;
+    }
+    VECTOR_SUBTRACT((*arg1), (*arg0), sp58);
+    sp48 = DOT_PRODUCT(sp64, sp58);
+    sp48 = SQ(sp48);
+    if (sp48 <= arg0[3].f[1]) {
+        vec3_cross_product(&sp58, &arg0[2], &sp4C);
+        sp40 = -DOT_PRODUCT(sp4C, sp64) / sp44;
+        vec3_cross_product(&sp64, &arg0[2], &sp4C);
+        vec3_normalize(&sp4C);
+        sp48 = sqrtf(arg0[3].f[1] - sp48) / DOT_PRODUCT((*arg2), sp4C);
+        if (sp48 < 0.0f) {
+            sp48 = -sp48;
+        }
+        sp40 -= sp48;
+        if ((sp40 >= 0.0f) && (sp40 <= arg3)) {
+            arg4->x = arg2->x * sp40;
+            arg4->y = arg2->y * sp40;
+            arg4->z = arg2->z * sp40;
+            arg4->x += arg1->x;
+            arg4->y += arg1->y;
+            arg4->z += arg1->z;
+            sp40 = (DOT_PRODUCT((*arg4), arg0[2])) - DOT_PRODUCT(arg0[2], (*arg0));
+            if ((sp40 >= 0.0f) && (sp40 <= arg0[3].f[2])) {
+                sp4C.f[0] = arg0[2].f[0] * sp40;
+                sp4C.f[1] = arg0[2].f[1] * sp40;
+                sp4C.f[2] = arg0[2].f[2] * sp40;
+                sp4C.f[0] += arg0->x;
+                sp4C.f[1] += arg0->y;
+                sp4C.f[2] += arg0->z;
+                VECTOR_SUBTRACT(*arg4, sp4C, (*arg5));
+                vec3_normalize((Vec3f*)arg5);
+                arg5->f[3] = -DOT_PRODUCT((*arg4), (*arg5));
+                return 3;
+            }
+            if (sp40 < 0.0f) {
+                if (func_80056BCC(arg1, arg2, arg4, arg5, arg0, arg0[3].f[1]) != 0) { return 1; }
+            } else if (func_80056BCC(arg1, arg2, arg4, arg5, &arg0[1], arg0[3].f[1]) != 0) {
+                return 2;
+            }
+        }
+    }
+    return 0;
+}
+
+s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5) {
+    f32 sp3C;
+    f32 sp38;
+    f32 temp_ft5;
+    f32 sp1C;
+    f32 sp18;
+    Vec3f sp20;
+
+    if (arg5 == 0.0f) {
+        return 0;
+    }
+
+    VECTOR_SUBTRACT((*arg0), (*arg4), sp20);
+    temp_ft5 = (SQ(sp20.f[0]) + SQ(sp20.f[1]) + SQ(sp20.f[2])) - arg5;
+    if (temp_ft5 < 0.0f) {
+        return 0;
+    }
+    sp38 = DOT_PRODUCT(sp20, (*arg1));
+    sp3C = SQ(arg1->f[0]) + SQ(arg1->f[1]) + SQ(arg1->f[2]);
+    sp1C = SQ(sp38);
+    sp18 = 4.0f * sp3C * temp_ft5;
+    if (sp18 < sp1C) {
+        sp1C = (-sp38 - sqrtf(sp1C - sp18)) / (2.0f * sp3C);
+        if ((sp1C >= 0.0f) && (sp1C <= 1.0f)) {
+            arg2->f[0] = arg1->f[0] * sp1C;
+            arg2->f[1] = arg1->f[1] * sp1C;
+            arg2->f[2] = arg1->f[2] * sp1C;
+            arg2->f[0] += arg0->f[0];
+            arg2->f[1] += arg0->f[1];
+            arg2->f[2] += arg0->f[2];
+            VECTOR_SUBTRACT((*arg2), (*arg4), (*arg3));
+            vec3_normalize((Vec3f* ) arg3);
+            arg3->f[3] = -DOT_PRODUCT((*arg2), (*arg3));
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, u8 arg6) {
+    Vec3f sp64;
+    Vec3f sp58;
+    f32 sp54;
+    f32 sp50;
+    s16 i;
+
+    if ((arg6 == 3) || (arg6 == 6)) {
+        arg2->f[0] = arg3->f[0];
+        arg2->f[1] = arg3->f[1];
+        arg2->f[2] = arg3->f[2];
+        VECTOR_SUBTRACT((*arg2), (*arg1), sp58);
+        vec3_normalize(&sp58);
+        // @fake
+        if (arg4) {}
+        for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+            arg2->f[0] -= sp58.f[0] * 0.1f;
+            arg2->f[1] -= sp58.f[1] * 0.1f;
+            arg2->f[2] -= sp58.f[2] * 0.1f;
+        }
+        return 1;
+    }
+    sp54 = arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4));
+    if (arg4->f[1] < 0.707f) {
+        if (arg6 == 4) {
+            arg2->f[0] = arg3->f[0];
+            arg2->f[1] = arg3->f[1];
+            arg2->f[2] = arg3->f[2];
+            VECTOR_SUBTRACT((*arg2), (*arg1), sp58);
+            sp50 = sqrtf(SQ(sp58.f[2]) + SQ(sp58.f[0]));
+            if (sp50 > 0.0f) {
+                sp58.f[0] /= sp50;
+                sp58.f[2] /= sp50;
+            } else {
+                sp58.f[2] = 0.0f;
+                sp58.f[0] = 1.0f;
+            }
+            for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+                arg2->f[0] -= sp58.f[0] * 0.1f;
+                arg2->f[2] -= sp58.f[2] * 0.1f;
+            }
+        } else {
+            sp54 += sp54; // used to be temp_ft5
+            arg2->f[0] -= (sp54 * arg4->f[0]);
+            arg2->f[1] -= (sp54 * arg4->f[1]);
+            arg2->f[2] -= (sp54 * arg4->f[2]);
+            sp50 = DOT_PRODUCT((*arg2), arg0[2]) - DOT_PRODUCT(arg0[2], (*arg0));
+            sp64.f[0] = arg0[2].f[0] * sp50;
+            sp64.f[1] = arg0[2].f[1] * sp50;
+            sp64.f[2] = arg0[2].f[2] * sp50;
+            sp64.f[0] += arg0->f[0];
+            sp64.f[1] += arg0->f[1];
+            sp64.f[2] += arg0->f[2];
+            VECTOR_SUBTRACT((*arg2), sp64, sp58);
+            vec3_normalize(&sp58);
+            sp58.f[0] *= arg5;
+            sp58.f[1] *= arg5;
+            sp58.f[2] *= arg5;
+            VECTOR_ADD(sp64, sp58, (*arg2));
+        }
+    } else if (arg6 != 2) {
+        arg2->f[1] = arg3->f[1];
+        sp54 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
+        if (sp54 > 0/*.0f*/) {
+            sp54 = sp54 / fsin16_precise(arctan2_f(arg4->f[1], sqrtf(SQ(arg4->f[2]) + SQ(arg4->f[0]))));
+            arg2->f[1] += sp54 * arg4->f[1];
+        }
+    }
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800573D8.s")
 
