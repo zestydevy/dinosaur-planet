@@ -495,6 +495,7 @@ enum AL_MIDIstatus {
 
 enum AL_MIDIctrl {
     AL_MIDI_VOLUME_CTRL         = 0x07,
+    AL_MIDI_AMSEQ_VOLUME_CTRL   = 0x08, // custom
     AL_MIDI_PAN_CTRL            = 0x0A,
     AL_MIDI_PRIORITY_CTRL       = 0x10, /* use general purpose controller for priority */
     AL_MIDI_FX_CTRL_0           = 0x14,
@@ -697,8 +698,8 @@ typedef struct {
     u8 unk34;
     u8 unk35;
     u8 unk36;
-    u8 unk37;
-    u8 unk38;
+    u8 amseqVol; // current volume requested by amseq
+    u8 seqVol; // current volume requested by the midi sequence
     u8 unk39;
     u8 unk3a;
     u8 unk3b;

@@ -362,7 +362,7 @@ void    n_alCSPSetTempo(N_ALCSPlayer *seqp, s32 tempo);
 void    n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol);
 void    n_alCSPStop(N_ALCSPlayer *seqp);
 void    func_8006721C(N_ALCSPlayer *seqp, u8 arg1, f32 arg2);
-void    func_80075DCC(N_ALCSPlayer *seqp, u8 chan, u8 param3);
+void    n_alCSPSetAmSeqChlVol(N_ALCSPlayer *seqp, u8 chan, u8 volume); // custom
 void    func_80075E38(N_ALCSPlayer *seqp, u8 param2);
 void    func_80075E9C(N_ALCSPlayer *seqp, u8 param2);
 
