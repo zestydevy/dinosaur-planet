@@ -66,7 +66,7 @@ typedef struct {
     MusicAction unk4;
     s16 unk24;
     s16 unk26;
-    u16 unk28;
+    s16 unk28;
 } AMSEQBss20; 
 
 /*0x0*/ static u8 _data_0 = 0;
@@ -98,7 +98,7 @@ static void dll_5_func_14A0(AMSEQBss0 *arg0);
                                    u8 oscRate, u8 oscDepth, u8 oscDelay, u8 unk07);
 /*static*/ ALMicroTime dll_5_func_3038(void *oscState, f32 *updateVal);
 /*static*/ void dll_5_func_3434(void *oscState);
-/*static*/ s32 dll_5_func_1E8C(MusicAction *a0, s8 a1, s16 a2);
+static s32 dll_5_func_1E8C(MusicAction *a0, s8 a1, s16 a2);
 
 // offset: 0x0 | ctor
 #ifndef NON_MATCHING
@@ -217,49 +217,45 @@ void dll_5_dtor(void* dll) {
 }
 
 // offset: 0x930 | func: 0 | export: 0
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/5_AMSEQ/dll_5_func_930.s")
-#else
 s32 dll_5_func_930(Object* arg0, u16 arg1, s32 arg2, s32 arg3, s32 arg4) {
-    s32 temp_v1;
     s32 var_v1;
+    s32 temp_v1;
 
-    if (arg1 == 0) {
+    if (!arg1) {
         return -1;
     }
-    queue_load_file_region_to_ptr((void** ) _data_C, MUSICACTIONS_BIN, (arg1 - 1) * 0x20, 0x20);
-    if (arg0 != NULL) {
-        temp_v1 = _data_C->unk18 & _data_C->unk1A;
-        if (temp_v1 != 0) {
-            if (temp_v1 != 0) {
-                for (var_v1 = 0; var_v1 < _bss_24; var_v1++) {
-                    if (_bss_20[var_v1].unk0 == arg0) {
-                        break;
-                    }
+    queue_load_file_region_to_ptr((void** ) _data_C, MUSICACTIONS_BIN, (arg1 - 1) * sizeof(MusicAction), sizeof(MusicAction));
+    if (arg0 != NULL && (_data_C->unk18 & _data_C->unk1A) != 0) {
+        temp_v1 = _data_C->unk18 & _data_C->unk1A;;
+        if (temp_v1 != 0) { // lolwat
+            for (var_v1 = 0; var_v1 < _bss_24; var_v1++) {
+                if (_bss_20[var_v1].unk0 == arg0) {
+                    break;
                 }
-                if (var_v1 == _bss_24) {
-                    _bss_24 += 1;
-                    _bss_20[var_v1].unk24 = arg1;
-                    _bss_20[var_v1].unk0 = arg0;
-                    _bss_20[var_v1].unk28 = -1;
-                    _bss_20[var_v1].unk26 = _bss_20[var_v1].unk28;
-                    bcopy(_data_C, &_bss_20[var_v1].unk4, 0x20);
-                }
-                if (temp_v1 != 0xFFFF) {
-                    return dll_5_func_1E8C(_data_C, 0, arg1);
-                }
-                //goto block_14;
             }
-//block_14:
-            return -1;
+            if (var_v1 == _bss_24) {
+                _bss_24++;
+                if (var_v1){} // @fake
+                _bss_20[var_v1].unk24 = arg1;
+                _bss_20[var_v1].unk0 = arg0;
+                _bss_20[var_v1].unk28 = -1;
+                _bss_20[var_v1].unk26 = _bss_20[var_v1].unk28;
+                bcopy(_data_C, &_bss_20[var_v1].unk4, 0x20);
+            }
+            if (temp_v1 != 0xFFFF) {
+                return dll_5_func_1E8C(_data_C, 0, arg1);
+            }
         }
+        goto bail;
     }
     return dll_5_func_1E8C(_data_C, 0, arg1);
+
+    bail:
+    return -1;
 }
-#endif
 
 // offset: 0xB0C | func: 1 | export: 1
-void dll_5_func_B0C(Object *arg0, u16 arg1, s32 arg2, s32 arg3) {
+void dll_5_func_B0C(Object *arg0, u16 arg1, s32 arg2, s32 arg3, s32 arg4) {
     s32 i;
 
     if (_bss_24 > 0) {
@@ -716,7 +712,7 @@ void dll_5_func_1924(u8 arg0) {
 }
 
 // offset: 0x1C08 | func: 39
-s32 dll_5_func_1C08(u8 arg0, s32 arg1, s8* arg2, s8* arg3) {
+static s32 dll_5_func_1C08(u8 arg0, s32 arg1, s8* arg2, s8* arg3) {
     switch (arg0) {
     case 0:
     case 1:
@@ -750,7 +746,7 @@ s32 dll_5_func_1C08(u8 arg0, s32 arg1, s8* arg2, s8* arg3) {
 }
 
 // offset: 0x1D60 | func: 40
-void dll_5_func_1D60(u8 arg0, s8* arg1, s8* arg2, u8 arg3) {
+static void dll_5_func_1D60(u8 arg0, s8* arg1, s8* arg2, u8 arg3) {
     switch (arg0) {
     case 0:
         if (arg3 == 0) {
@@ -782,30 +778,28 @@ void dll_5_func_1D60(u8 arg0, s8* arg1, s8* arg2, u8 arg3) {
 }
 
 // offset: 0x1E8C | func: 41
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/5_AMSEQ/dll_5_func_1E8C.s")
-#else
-// https://decomp.me/scratch/TbDs7
-s32 dll_5_func_1E8C(MusicAction* a0, s8 a1, s16 a2) {
+static s32 dll_5_func_1E8C(MusicAction* a0, s8 a1, s16 a2) {
+    AMSEQBss0* temp_s1;
     s8 sp83;
     s8 sp82;
-    s8 sp64[16];
-    AMSEQBss0* temp_s1;
     GplayStruct13* temp_v0;
     s32 temp_s6;
-    s32 temp_v0_2;
     s32 var_s4;
-    s32 temp_v1;
+    s8 sp64[16];
+    u16 temp_v1;
     s32 temp;
 
     temp_v0 = gDLL_29_Gplay->vtbl->func_FE8();
     sp83 = -1;
     sp82 = -1;
     if (a0->unk11 != 0) {
+        // @fake
+        if (a0->unk10) {}
         temp_v0->unk0[a0->unk10] = a2;
+        var_s4 = dll_5_func_1C08(a0->unk10, (s32) a0->unk11, &sp83, &sp82) == 0;
         temp_v1 = a0->unk1A;
         temp_s6 = (temp_v1 & a0->unk16);
-        if ((dll_5_func_1C08(a0->unk10, (s32) a0->unk11, &sp83, &sp82) == 0) || (temp_s6 != 0)) {
+        if (var_s4 || (temp_s6 != 0)) {
             if (temp_s6 == 0) {
                 dll_5_func_1D60(a0->unk10, &sp83, &sp82, temp_v1);
             } else {
@@ -818,18 +812,18 @@ s32 dll_5_func_1E8C(MusicAction* a0, s8 a1, s16 a2) {
             temp_s1->unk1FC = a0->unk11;
             temp_s1->unk202 = a0->unk12 * 0x10;
             temp_s1->unk1FE = (s16) a0->unk13;
-            temp_v0_2 = (a0->unk18 | a0->unk1A);
-            temp_s1->unk204 &= ~temp_v0_2;
-            temp_s1->unk206 &= ~temp_v0_2;
-            temp_s1->unk208 &= ~temp_v0_2;
+            temp_s6 = (a0->unk18 | a0->unk1A);
+            temp_s1->unk204 &= ~temp_s6;
+            temp_s1->unk206 &= ~temp_s6;
+            temp_s1->unk208 &= ~temp_s6;
             temp_s1->unk204 |= a0->unk16;
             temp_s1->unk206 |= a0->unk18;
             temp_s1->unk208 |= a0->unk1A;
             temp_s1->unk200 = 0xFFFF;
             temp_s1->unk200 &= a0->unk1A & ~a0->unk16;
             if (a0->unk15 != 0) {
-                temp_s1->unk20A = (u8) (u32) ((f32) (a0->unk12 * 0x10) / (f32) (a0->unk15 * 6));
-                temp_s1->unk20B = (u8) (u32) ((f32) (a0->unk12 * 0x10) / (f32) (a0->unk15 * 6));
+                temp_s1->unk20A = (f32) (a0->unk12 * 0x10) / (f32) (a0->unk15 * 6);
+                temp_s1->unk20B = (f32) (a0->unk12 * 0x10) / (f32) (a0->unk15 * 6);
             } else {
                 temp_s1->unk20A = 0;
                 temp_s1->unk20B = 0;
@@ -838,22 +832,22 @@ s32 dll_5_func_1E8C(MusicAction* a0, s8 a1, s16 a2) {
                 _bss_0[sp82]->unk18C = 0;
                 _bss_0[sp82]->unk202 = 0;
                 if (_bss_0[sp82]->unk19B == 0) {
-                    _bss_0[sp82]->unk19B = (u8) (u32) ((f32) _bss_0[sp82]->unk190 / 6.0f);
+                    _bss_0[sp82]->unk19B = _bss_0[sp82]->unk190 / 6.0f;
                 }
             }
         } else {
             temp_s1 = _bss_0[sp83];
             temp_s1->unk202 = a0->unk12 * 0x10;
-            temp_s1->unk1FE = (s16) a0->unk13;
-            temp_v0_2 = (a0->unk18 | a0->unk1A);
-            temp_s1->unk194 &= ~temp_v0_2;
-            temp_s1->unk196 &= ~temp_v0_2;
-            temp_s1->unk198 &= ~temp_v0_2;
+            temp_s1->unk1FE = a0->unk13;
+            temp_s6 = (a0->unk18 | a0->unk1A);
+            temp_s1->unk194 &= ~temp_s6;
+            temp_s1->unk196 &= ~temp_s6;
+            temp_s1->unk198 &= ~temp_s6;
             temp_s1->unk194 |= a0->unk16;
             temp_s1->unk196 |= a0->unk18;
             temp_s1->unk198 |= a0->unk1A;
             dll_5_func_2AE0(0, temp_s1->seqp.maxChannels, a0->unk18, a0->unk1A, a0->unk16, sp64);
-            for (var_s4 = 0, temp = 1; var_s4 < (s32) temp_s1->seqp.maxChannels; var_s4++, temp <<= 1) {
+            for (var_s4 = 0, temp_s6 = 1; var_s4 < (s32) temp_s1->seqp.maxChannels; var_s4++, temp_s6 <<= 1) {
                 switch (sp64[var_s4]) {
                     case -1:
                         func_80075E38(&temp_s1->seqp, var_s4);
@@ -902,13 +896,8 @@ s32 dll_5_func_1E8C(MusicAction* a0, s8 a1, s16 a2) {
 
     return sp83;
 }
-#endif
 
 // offset: 0x26D0 | func: 42
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/5_AMSEQ/dll_5_func_26D0.s")
-#else
-// needs dll_5_func_1E8C to be static
 void dll_5_func_26D0(void) {
     Camera* temp_v0;
     MusicAction* musicAction;
@@ -1019,7 +1008,6 @@ void dll_5_func_26D0(void) {
         dll_5_func_1E8C(musicAction, var_fv1, -1);
     }
 }
-#endif
 
 // offset: 0x2AE0 | func: 43
 static void dll_5_func_2AE0(u8 arg0, u8 arg1, u16 arg2, u16 arg3, u16 arg4, s8* arg5) {
