@@ -272,8 +272,8 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
 #else
-// https://decomp.me/scratch/yoG09
-UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7) {
+// https://decomp.me/scratch/s5P5f
+UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
     BlocksModel* temp_s0;
     BlocksModel* temp_v0;
     FaceBatch* temp_t9;
@@ -289,37 +289,36 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
     f32 temp_fs2;
     s32 sp10C;
     s32 sp108;
-    s32 sp104;
-    s32 sp100;
-    s32 spFC;
-    s32 spF8;
+    s32 lowerX;
+    s32 upperX;
+    s32 lowerZ;
+    s32 upperZ;
     f32 temp_fv0;
     f32 temp_fv1;
     s32 var_a0_3;
     s32 var_a1_3;
-    s32 var_ra_2;
-    s32 var_t1;
-    s32 var_t2;
-    s32 var_t3;
-    s32 var_t4_2;
-    s32 var_t5;
+    s32 maxZ;
+    s32 minX;
+    s32 maxX;
+    s32 minY;
+    s32 maxY;
+    s32 minZ;
     s16 var_v0;
     s32 var_v1_2;
-    s32 temp_a3_3;
-    s32 temp_s3;
-    s32 temp_s4;
-    s32 temp_s5;
-    s32 temp_s6;
-    s32 temp_s7;
+    s32 pad;
+    u32 temp_s3;
+    u32 temp_s4;
+    u32 temp_s5;
+    u32 xDiff;
+    u32 temp_s7;
     s32 temp_t9_4;
     s32 var_t0;
     u8 var_v0_3;
     u8 spA6;
-    u8 spA5;
-    u8 spA4;
-    s32 var_v0_2;
+    u8 lowestYIndex;
+    u8 highestYIndex;
+    s32 temp;
     FaceBatch* sp9C;
-    s16* var_v1_3;
 
     arg1 -= D_80092A60;
     arg4 -= D_80092A60;
@@ -335,10 +334,10 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
         arg6 ^= arg3;
         arg3 ^= arg6;
     }
-    temp_s4 = floor_f(arg1 / 640.0f);
-    temp_s7 = floor_f(arg3 / 640.0f);
-    temp_s5 = floor_f(arg4 / 640.0f);
-    temp_s3 = floor_f(arg6 / 640.0f);
+    temp_s4 = floor_f(arg1 / BLOCKS_GRID_UNIT_F);
+    temp_s7 = floor_f(arg3 / BLOCKS_GRID_UNIT_F);
+    temp_s5 = floor_f(arg4 / BLOCKS_GRID_UNIT_F);
+    temp_s3 = floor_f(arg6 / BLOCKS_GRID_UNIT_F);
     sp108 = 0;
     for (sp118 = 0; sp118 < 5; sp118++) {
         temp_v0 = func_80044B18(temp_s4, temp_s7, sp118);
@@ -378,61 +377,66 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2
     }
 
     for (sp118 = 0; sp118 < sp108; sp118++) {
-        sp104 = arg1 - D_800BB200[sp118].x;
-        sp100 = arg4 - D_800BB200[sp118].x;
-        spFC = arg3 - D_800BB200[sp118].z;
-        spF8 = arg6 - D_800BB200[sp118].z;
+        lowerX = arg1 - D_800BB200[sp118].x;
+        upperX = arg4 - D_800BB200[sp118].x;
+        lowerZ = arg3 - D_800BB200[sp118].z;
+        upperZ = arg6 - D_800BB200[sp118].z;
         D_800BB200[sp118].x += D_80092A60;
         D_800BB200[sp118].z += D_80092A64;
-        // sp104 = MAX(0, sp104);
-        if (sp104 < 0) {
-            sp104 = 0;
+        // lowerX = MAX(0, lowerX);
+        if (lowerX < 0) {
+            lowerX = 0;
         }
-        // sp100 = MIN(BLOCKS_GRID_UNIT, sp100);
-        if (sp100 > BLOCKS_GRID_UNIT) {
-            sp100 = BLOCKS_GRID_UNIT;
+        // upperX = MIN(BLOCKS_GRID_UNIT, upperX);
+        if (upperX > BLOCKS_GRID_UNIT) {
+            upperX = BLOCKS_GRID_UNIT;
         }
-        // spFC = MAX(0, spFC);
-        if (spFC < 0) {
-            spFC = 0;
+        // lowerZ = MAX(0, lowerZ);
+        if (lowerZ < 0) {
+            lowerZ = 0;
         }
-        // spF8 = MIN(BLOCKS_GRID_UNIT, spF8);
-        if (spF8 > BLOCKS_GRID_UNIT) {
-            spF8 = BLOCKS_GRID_UNIT;
+        // upperZ = MIN(BLOCKS_GRID_UNIT, upperZ);
+        if (upperZ > BLOCKS_GRID_UNIT) {
+            upperZ = BLOCKS_GRID_UNIT;
         }
-        temp_s6 = D_800BB200[sp118].x - D_800BB200->x;
-        temp_s7 = D_800BB200[sp118].z - D_800BB200->z;
+        xDiff = D_800BB200->x - D_800BB200[sp118].x;
+        temp_s7 = D_800BB200->z - D_800BB200[sp118].z;
         temp_s0 = sp138[sp118];
         var_v0 = 1;
         sp122 = 0;
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
-            if ((var_t0 + 80) >= sp104 && sp100 >= var_t0) {
+            if ((var_t0 + 80) >= lowerX && upperX >= var_t0) {
                 sp122 |= var_v0;
             }
             var_v0 <<= 1;
         }
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
-            if (var_t0 >= (spFC - 80) && spF8 >= var_t0) {
+            if (var_t0 >= (lowerZ - 80) && upperZ >= var_t0) {
                 sp122 |= var_v0;
             }
             var_v0 <<= 1;
         }
-        var_s3 = temp_s0->ptr_faceBatches;
-        temp_t9 = &var_s3[temp_s0->faceBatch_count];
-        sp9C = temp_t9;
-        while ((u32) var_s3 < (u32) sp9C) {
+        sp9C = &temp_s0->ptr_faceBatches[temp_s0->faceBatch_count];
+        for (var_s3 = temp_s0->ptr_faceBatches; var_s3 < sp9C; var_s3++) {
             if (var_s3->renderSettingBitfield & 0x2000) {
                 if (!(var_s3->renderSettingBitfield & 0x300000)) {
                     spA6 = 4;
                     if (!(arg7 & 0x20)) {
-                        spA6 = 0x14;
+                        spA6 |= 0x10;
                     }
                     goto block_55;
                 }
             } else if (!(var_s3->renderSettingBitfield & 0x800) || (arg7 & 0x20)) {
                 spA6 = 2;
 block_55:
-                if ((arg5 >= var_s3->Ymin) && (var_s3->Ymax >= arg2) && ((sp100 >> 2) >= (u8) var_s3->Xmin) && ((u8) var_s3->Xmax >= (sp104 >> 2)) && ((spF8 >> 2) >= (u8) var_s3->Zmin) && ((u8) var_s3->Zmax >= (spFC >> 2))) {
+                if (
+                    lowerY >= var_s3->Ymin &&
+                    var_s3->Ymax >= upperY &&
+                    (upperX >> 2) >= var_s3->Xmin &&
+                    var_s3->Xmax >= (lowerX >> 2) &&
+                    (upperZ >> 2) >= var_s3->Zmin &&
+                    var_s3->Zmax >= (lowerZ >> 2)
+                ) {
                     if (var_s3->renderSettingBitfield & 0x1000) {
                         spA6 |= 8;
                     }
@@ -440,15 +444,16 @@ block_55:
                     sp11C = var_s3->baseFaceID;
                     sp10C = var_s3[1].baseFaceID;
                     for (; sp11C < sp10C; sp11C++) {
+                        if ((!temp_s0) && (!temp_s0)) {}
                         var_t0 = temp_s0->unk14[sp11C] & sp122;
                         if ((var_t0 & 0xFF) && (var_t0 & 0xFF00)) {
-                            var_t1 = SOME_MIN;
-                            var_t2 = SOME_MAX;
-                            var_t3 = SOME_MIN;
-                            var_t4_2 = SOME_MAX;
-                            var_t5 = SOME_MIN;
-                            var_ra_2 = SOME_MAX;
-                            sp128[0] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 0xD) & 0x1F];
+                            minX = SOME_MIN;
+                            maxX = SOME_MAX;
+                            minY = SOME_MIN;
+                            maxY = SOME_MAX;
+                            minZ = SOME_MIN;
+                            maxZ = SOME_MAX;
+                            sp128[0] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 13) & 0x1F];
                             sp128[1] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 7) & 0x1F];
                             sp128[2] = &sp124[(temp_s0->ptr_faces[sp11C].unk0 >> 1) & 0x1F];
                             for (var_t0 = 0; var_t0 < 3; var_t0++) {
@@ -461,31 +466,40 @@ block_55:
                                     var_a1_3 *= 1.0f; // not necessary, forces a float cast tho
                                     var_v1_2 += temp_s0->minY;
                                 }
-                                if (var_t2 < var_a0_3) {
-                                    var_t2 = var_a0_3;
+                                if (maxX < var_a0_3) {
+                                    maxX = var_a0_3;
                                 }
-                                if (var_a0_3 < var_t1) {
-                                    var_t1 = var_a0_3;
+                                if (var_a0_3 < minX) {
+                                    minX = var_a0_3;
                                 }
-                                if (var_t4_2 < var_v1_2) {
-                                    var_t4_2 = var_v1_2;
-                                    spA4 = var_t0;
+                                if (maxY < var_v1_2) {
+                                    maxY = var_v1_2;
+                                    highestYIndex = var_t0;
                                 }
-                                if (var_v1_2 < var_t3) {
-                                    var_t3 = var_v1_2;
-                                    spA5 = var_t0;
+                                if (var_v1_2 < minY) {
+                                    minY = var_v1_2;
+                                    lowestYIndex = var_t0;
                                 }
-                                if (var_ra_2 < var_a1_3) {
-                                    var_ra_2 = var_a1_3;
+                                if (maxZ < var_a1_3) {
+                                    maxZ = var_a1_3;
                                 }
-                                if (var_a1_3 < var_t5) {
-                                    var_t5 = var_a1_3;
+                                if (var_a1_3 < minZ) {
+                                    minZ = var_a1_3;
                                 }
-                                arg0->unkA[var_t0] = var_a0_3 + temp_s6;
+                                // @fake
+                                if ((!temp_s7) && (!temp_s7)) {}
+                                arg0->unkA[var_t0] = var_a0_3 + xDiff;
                                 arg0->unk10[var_t0] = var_v1_2;
                                 arg0->unk16[var_t0] = var_a1_3 + temp_s7;
                             }
-                            if ((arg5 >= var_t3) && (var_t4_2 >= arg2) && (sp100 >= var_t1) && (var_t2 >= sp104) && (spF8 >= var_t5) && (var_ra_2 >= spFC)) {
+                            if (
+                                lowerY >= minY &&
+                                maxY >= upperY &&
+                                upperX >= minX &&
+                                maxX >= lowerX &&
+                                upperZ >= minZ &&
+                                maxZ >= lowerZ
+                            ) {
                                 if (var_s3->animatorID != 0) {
                                     temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
                                     temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
@@ -504,18 +518,9 @@ block_55:
                                 }
                                 if (((arg7 & 8) == 0 || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
                                     arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * 0.00012208521f;
-
-                                    // This loop should write arg0->unk1C but I have no idea how it's actually indexed
-                                    temp_t9_4 = sp11C * 9;
-                                    temp_a3_3 = temp_t9_4 + 9;
-                                    if (temp_t9_4 < temp_a3_3) {
-                                        var_v0_2 = sp11C * 18;
-                                        var_v1_3 = arg0 + (sp11C * 18) + -(sp11C * 18);
-                                        do {
-                                            var_v1_3[14] = *((s16*)temp_s0->ptr_faceEdgeVectors + var_v0_2);
-                                            var_v1_3 += 1 ;
-                                            var_v0_2 += 1 ;
-                                        } while (var_v0_2 < (temp_a3_3 * 2));
+                                    temp = (sp11C) * 9;
+                                    for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
+                                        arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
                                     }
                                     if (var_s3->renderSettingBitfield & 0x2000) {
                                         var_v0_3 = 0xE;
@@ -527,7 +532,7 @@ block_55:
                                         }
                                     }
                                     arg0->unk2E = var_v0_3;
-                                    arg0->unk30 = (spA4 * 0x10) | spA5;
+                                    arg0->unk30 = (highestYIndex * 0x10) | lowestYIndex;
                                     arg0->unk2F = (temp_s0->ptr_faces[sp11C].unk4 & 1) | spA6;
                                     arg0++;
                                 }
@@ -536,248 +541,139 @@ block_55:
                     }
                 }
             }
-            var_s3++;
         }
     }
     return arg0;
 }
 #endif
 
-#ifndef NON_EQUIVALENT
+#ifndef NON_MATCHING
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, u8 arg9);
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005471C.s")
 #else
-UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, f32 arg8, u8 arg9) {
+// https://decomp.me/scratch/Nabui
+UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 upperX, f32 upperY, f32 upperZ, f32 lowerX, f32 lowerY, f32 lowerZ, u8 arg9) {
+    s32 var_s1;
     s16 spDC[3];
+    u32* var_s5;
+    Vtx* currVtx;
+    s32 minY;
+    s32 minX;
+    s32 maxX;
+    s32 maxY;
+    s32 minZ;
+    s32 maxZ;
+    s32 var_s0;
     s32 spB4;
     s32 spB0;
-    u8 spAB; // s4
-    u8 spAA; // s3
-    f32 sp9C[3];
-    f32 sp98;
-    f32 sp8C[3];
-    f32 sp88;
-    f32 sp84;
-    Model* sp7C;
-    u32* var_s5;
-    UnkFunc80051D68Arg3* var_a2;
-    Vtx* temp_v1_3;
-    f32 temp_fv0;
-    f32 temp_fv0_2;
-    f32 var_fa0;
-    f32 var_fa1;
-    f32 var_fs0;
-    f32 var_fv1;
-    s16 temp_a1;
-    s16 temp_t6_2;
-    s16 temp_t7_2;
-    s16 temp_t9;
-    s16 temp_v0_3;
-    s16 temp_v0_4;
-    s32 var_ra;
-    s32 var_t0;
-    s32 var_t1;
-    s32 var_t2;
-    s32 var_t3;
-    s32 var_t4;
-    s16* var_a3;
-    s32 temp_a0;
-    s32 temp_a2;
-    s32 temp_a2_2;
-    s32 temp_t0;
-    s32 temp_t0_2;
-    s32 temp_t6_3;
-    s32 temp_t7;
-    s32 temp_t9_2;
-    s32 var_a0;
-    s32 var_a0_2;
-    s32 var_a0_3;
-    s32 var_s0;
-    s32 var_s7;
-    s32 var_v0_2;
-    s32 var_v1_2;
-    s32 var_v1_3;
-    u32 temp_t6;
-    u32 temp_v0_2;
-    u32 temp_v1_2;
-    u8 temp_t8;
-    u8 temp_v0_5;
-    FacebatchBound* temp_v0;
-    ModelFacebatch* temp_v1;
-    s16* var_v0_3;
-    s16* var_v0_5;
     s32 i;
+    u8 lowestYIndex; // s4
+    u8 highestYIndex; // s3
+    f32 xBounds[4]; // sp98
+    f32 zBounds[4]; // sp88
+    f32 sp84;
+    s32 pad;
+    Model* sp7C;
 
     sp7C = arg2->model;
-    vec3_transform(arg1->unk8, arg3, arg4, arg5, &sp98, &sp84, &sp88);
-    vec3_transform(arg1->unk8, arg3, arg4, arg8, &sp9C[0], &arg4, &sp8C[0]);
-    vec3_transform(arg1->unk8, arg6, arg7, arg5, &sp9C[1], &sp84, &sp8C[1]);
-    vec3_transform(arg1->unk8, arg6, arg7, arg8, &sp9C[2], &arg7, &sp8C[2]);
-    var_fv1 = sp98;
-    var_fa1 = sp88;
-    var_fa0 = var_fv1;
-    var_fs0 = var_fa1;
-    for (i = 0; i < 3; i++) {
-        if (sp9C[i] < var_fa0) {
-            var_fa0 = sp9C[i];
-        }
-        if (var_fv1 < sp9C[i]) {
-            var_fv1 = sp9C[i];
-        }
-        if (sp8C[i] < var_fs0) {
-            var_fs0 = sp8C[i];
-        }
-        if (var_fa1 < sp8C[i]) {
-            var_fa1 = sp8C[i];
-        }
+
+    vec3_transform(arg1->unk8, upperX, upperY, upperZ, &xBounds[0], &sp84, &zBounds[0]);
+    vec3_transform(arg1->unk8, upperX, upperY, lowerZ, &xBounds[1], &upperY, &zBounds[1]);
+    vec3_transform(arg1->unk8, lowerX, lowerY, upperZ, &xBounds[2], &sp84, &zBounds[2]);
+    vec3_transform(arg1->unk8, lowerX, lowerY, lowerZ, &xBounds[3], &lowerY, &zBounds[3]);
+
+    upperX = lowerX = xBounds[0];
+    upperZ = lowerZ = zBounds[0];
+    for (i = 1; i < 4; i++) {
+        if (xBounds[i] < upperX) { upperX = xBounds[i]; }
+        if (lowerX < xBounds[i]) { lowerX = xBounds[i]; }
+        if (zBounds[i] < upperZ) { upperZ = zBounds[i]; }
+        if (lowerZ < zBounds[i]) { lowerZ = zBounds[i]; }
     }
+
     spB0 = sp7C->unk70;
-    var_s7 = 0;
-    for (spB4 = 0; spB4 < spB0; spB4++, var_s7++) {
-        temp_v1 = &sp7C->faces[var_s7];
-        temp_a0 = temp_v1->tagC;
-        // early returns might be incorrect, shifts some t regs by 1
-        if ((temp_a0 & 0x100000)) {
-            continue;
-        }
-        if ((temp_a0 & 0x800) && (arg9 & 0x20)) {
-            continue;
-        }
-        temp_v0 = &sp7C->facebatchBounds[spB4];
-        if ((temp_v0->unk0 < var_fa0) || (var_fv1 < temp_v0->unk2) || (temp_v0->unk4 < arg4) || (arg7 < temp_v0->unk6) || (temp_v0->unk8 < var_fs0)) {
-            continue;
-        }
-
-        var_t0 = SOME_MIN;
-        var_t1 = SOME_MAX;
-        var_t3 = SOME_MIN;
-        var_t2 = SOME_MAX;
-        var_ra = SOME_MIN;
-        var_t4 = SOME_MAX;
-        var_s0 = (temp_a0 & 0x7FF) * 9;
-        if (var_fa1 < temp_v0->unkA) {
-            continue;
-        }
-
-        var_s5 = (u32*)&sp7C->displayList[temp_v1->baseF3DCommandIndex];
-        while ((var_s5[0] >> 24) == 6 || (var_s5[0] >> 24) == 5) {
-            spDC[0] = (var_s5[0] >> 17) & 0x1F;
-            spDC[1] = (var_s5[0] >> 9) & 0x1F;
-            spDC[2] = (var_s5[0] >> 1) & 0x1F;
-            var_s5 += 1;
-            var_a2 = arg0;
-            for (var_a0 = 0; var_a0 < 3; var_a0++) {
-                temp_v1_3 = &sp7C->vertices[spDC[var_a0] + temp_v1->baseVertexID];
-                if (var_t1 < temp_v1_3->v.ob[0]) {
-                    var_t1 = temp_v1_3->v.ob[0];
+    for (spB4 = 0; spB4 < spB0; spB4++) {
+        if (
+            (sp7C->faces[spB4].tagC & 0x100000) == 0 &&
+            (!(sp7C->faces[spB4].tagC & 0x800) || (arg9 & 0x20)) &&
+            !(sp7C->facebatchBounds[(0, spB4)].minX < upperX) &&
+            !(lowerX < sp7C->facebatchBounds[(0, spB4)].maxX) &&
+            !(sp7C->facebatchBounds[(0, spB4)].minY < upperY) &&
+            !(lowerY < sp7C->facebatchBounds[(0, spB4)].maxY) &&
+            !(sp7C->facebatchBounds[(0, spB4)].minZ < upperZ) &&
+            !(lowerZ < sp7C->facebatchBounds[(0, spB4)].maxZ)
+       ) {
+            var_s0 = (sp7C->faces[spB4].tagC & 0x7FF);
+            var_s0 *= 9;
+            var_s1 = sp7C->faces[spB4].baseVertexID;
+            pad = sp7C->faces[spB4].baseF3DCommandIndex;
+            var_s5 = (u32*)&sp7C->displayList[pad];
+            for (;; var_s0 += 9) {
+                minX = SOME_MIN;
+                maxX = SOME_MAX;
+                minY = SOME_MIN;
+                maxY = SOME_MAX;
+                minZ = SOME_MIN;
+                maxZ = SOME_MAX;
+                if ((var_s5[0] >> 24) != 6 && (var_s5[0] >> 24) != 5) {
+                    break;
                 }
-                if (temp_v1_3->v.ob[0] < var_t0) {
-                    var_t0 = temp_v1_3->v.ob[0];
+                spDC[0] = (var_s5[0] >> 17) & 0x1F;
+                spDC[1] = (var_s5[0] >> 9) & 0x1F;
+                spDC[2] = (var_s5[0] >> 1) & 0x1F;
+                var_s5 += 1;
+                for (i = 0; i < 3; i++) {
+                    currVtx = &sp7C->vertices[spDC[i] + var_s1];
+                    if (maxX < currVtx->v.ob[0]) {
+                        maxX = currVtx->v.ob[0];
+                    }
+                    if (currVtx->v.ob[0] < minX) {
+                        minX = currVtx->v.ob[0];
+                    }
+                    if (maxY < currVtx->v.ob[1]) {
+                        maxY = currVtx->v.ob[1];
+                        highestYIndex = i;
+                    }
+                    if (currVtx->v.ob[1] < minY) {
+                        minY = currVtx->v.ob[1];
+                        lowestYIndex = i;
+                    }
+                    if (maxZ < currVtx->v.ob[2]) {
+                        if (1) maxZ = currVtx->v.ob[2];
+                    }
+                    if (currVtx->v.ob[2] < minZ) {
+                        minZ = currVtx->v.ob[2];
+                    }
+                    arg0->unkA[i] = currVtx->v.ob[0];
+                    arg0->unk10[i] = currVtx->v.ob[1];
+                    arg0->unk16[i] = currVtx->v.ob[2];
                 }
-                if (var_t2 < temp_v1_3->v.ob[1]) {
-                    var_t2 = temp_v1_3->v.ob[1];
-                    spAA = var_a0;
-                }
-                if (temp_v1_3->v.ob[1] < var_ra) {
-                    var_ra = temp_v1_3->v.ob[1];
-                    spAB = var_a0;
-                }
-                if (var_t4 < temp_v1_3->v.ob[2]) {
-                    var_t4 = temp_v1_3->v.ob[2];
-                }
-                if (temp_v1_3->v.ob[2] < var_t3) {
-                    var_t3 = temp_v1_3->v.ob[2];
-                }
-                var_a2->unkA[var_a0] = temp_v1_3->v.ob[0];
-                var_a2->unk10[var_a0] = temp_v1_3->v.ob[1];
-                var_a2->unk16[var_a0] = temp_v1_3->v.ob[2];
-            }
-            if (!(arg7 < var_ra)) {
-                if (!(var_t2 < arg4) && !(var_fv1 < var_t0) && !(var_t1 < var_fa0) && !(var_fa1 < var_t3) && !(var_t4 < var_fs0)) {
-                    temp_a2 = var_s0 + 9;
+                if (!(lowerY < minY) && !(maxY < upperY) && !(lowerX < minX) && !(maxX < upperX) && !(lowerZ < minZ) && !(maxZ < upperZ)) {
                     if (sp7C->edgeVectors != NULL) {
-                        temp_a2_2 = var_s0 + 9;
-                        var_a0_2 = var_s0;
-                        if (var_s0 < temp_a2_2) {
-                            temp_t9_2 = ((var_s0 * 0) + 9) & 3;
-                            temp_t0 = var_s0 * 2;
-                            if (temp_t9_2 != 0) {
-                                var_v0_3 = (s16*)arg0 + (var_a0_2 * 2) + -temp_t0;
-                                var_v1_2 = var_a0_2 * 2;
-                                do {
-                                    var_a0_2 += 1;
-                                    var_v0_3 += 2;
-                                    var_v0_3[9] = sp7C->edgeVectors[var_v1_2];
-                                    var_v1_2 += 2;
-                                } while ((temp_t9_2 + var_s0) != var_a0_2);
-                                // if (var_a0_2 != temp_a2_2) {
-                                //     goto block_52;
-                                // }
-//                                         } else {
-// block_52:
-//                                             var_v0_4 = arg0 + (var_a0_2 * 2) + -temp_t0;
-//                                             var_v1_3 = var_a0_2 * 2;
-//                                             do {
-//                                                 var_v0_4 += 8;
-//                                                 var_v0_4->unk14 = (s16) *(sp7C->edgeVectors + var_v1_3);
-//                                                 var_v0_4->unk16 = (s16) (sp7C->edgeVectors + var_v1_3)->unk2;
-//                                                 var_v0_4->unk18 = (s16) (sp7C->edgeVectors + var_v1_3)->unk4;
-//                                                 temp_t7_2 = (sp7C->edgeVectors + var_v1_3)->unk6;
-//                                                 var_v1_3 += 8;
-//                                                 var_v0_4->unk1A = temp_t7_2;
-//                                             } while (var_v1_3 != (temp_a2_2 * 2));
-                            }
+                        for (i = var_s0; i < (var_s0 + 9); i++) {
+                            arg0->unk1C[i-var_s0] = sp7C->edgeVectors[i];
                         }
                     } else {
-                        var_a0_3 = var_s0;
-                        if (var_s0 < temp_a2) {
-                            temp_t6_3 = ((var_s0 * 0) + 9) & 3;
-                            temp_t0_2 = var_s0 * 2;
-                            if (temp_t6_3 != 0) {
-                                var_v0_5 = (s16*)arg0 + (var_a0_3 * 2) + -temp_t0_2;
-                                do {
-                                    var_a0_3 += 1;
-                                    var_v0_5[9] = 0;
-                                    var_v0_5 += 2;
-                                } while ((temp_t6_3 + var_s0) != var_a0_3);
-                                // if (var_a0_3 != temp_a2) {
-                                //     goto block_60;
-                                // }
-//                                         } else {
-// block_60:
-//                                             var_v0_6 = arg0 + (var_a0_3 * 2) + -temp_t0_2;
-//                                             do {
-//                                                 var_a0_3 += 4;
-//                                                 var_v0_6->unk1E = 0;
-//                                                 var_v0_6->unk20 = 0;
-//                                                 var_v0_6->unk22 = 0;
-//                                                 var_v0_6 += 8;
-//                                                 var_v0_6->unk14 = 0;
-//                                             } while (var_a0_3 != temp_a2);
-                            }
+                        for (i = var_s0; i < (var_s0 + 9); i++) {
+                            arg0->unk1C[i-var_s0] = 0;
                         }
-                        arg0->unk1C[1] = 0x7FFF;
-                        arg0->unk1C[4] = 0x7FFF;
-                        arg0->unk1C[7] = 0x7FFF;
+                        // @fake
+                        do {
+                            arg0->unk1C[1] = 0x7FFF;
+                            arg0->unk1C[4] = 0x7FFF;
+                            arg0->unk1C[7] = 0x7FFF;
+                        } while (0);
                     }
-                    temp_v0_5 = sp7C->faces[var_s7].materialID;
-                    if (temp_v0_5 == 0xFF) {
+                    if (sp7C->faces[spB4].materialID == 0xFF) {
                         arg0->unk30 = 0;
                     } else {
-                        arg0->unk30 = (s8) sp7C->materials[temp_v0_5].unk4;
+                        arg0->unk30 = sp7C->materials[sp7C->faces[spB4].materialID].unk7;
                     }
-                    arg0->pad31[1] = (spAA * 0x10) | spAB;
-                    arg0->pad31[0] = 1;
+                    arg0->unk32 = (highestYIndex * 0x10) | lowestYIndex;
+                    arg0->unk31 = 1;
                     arg0 += 1;
                 }
             }
-            var_t0 = SOME_MIN;
-            var_t1 = SOME_MAX;
-            var_t3 = SOME_MIN;
-            var_t2 = SOME_MAX;
-            var_ra = SOME_MIN;
-            var_t4 = SOME_MAX;
-            var_s0 += 9;
         }
     }
     return arg0;
@@ -1154,7 +1050,93 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800573D8.s")
+s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, u8 arg6) {
+    Vec3f sp3C;
+    f32 temp_fv0;
+    f32 sp34;
+    s16 i;
+
+    if ((arg6 == 3) || (arg6 == 6)) {
+        arg2->f[0] = arg3->f[0];
+        arg2->f[1] = arg3->f[1];
+        arg2->f[2] = arg3->f[2];
+        VECTOR_SUBTRACT((*arg2), (*arg1), sp3C);
+        vec3_normalize(&sp3C);
+        // @fake
+        if (arg4) {}
+        for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+            arg2->f[0] -= sp3C.f[0] * 0.1f;
+            arg2->f[1] -= sp3C.f[1] * 0.1f;
+            arg2->f[2] -= sp3C.f[2] * 0.1f;
+        }
+        return 1;
+    }
+
+    if (arg4->f[1] < 0.707f) {
+        switch (arg6) {
+            case 4:
+                arg2->f[0] = arg3->f[0];
+                arg2->f[1] = arg3->f[1];
+                arg2->f[2] = arg3->f[2];
+                VECTOR_SUBTRACT((*arg2), (*arg1), sp3C);
+                temp_fv0 = sqrtf(SQ(sp3C.x) + SQ(sp3C.z));
+                if (temp_fv0 > 0.0f) {
+                    sp3C.f[0] /= temp_fv0;
+                    sp3C.f[2] /= temp_fv0;
+                } else {
+                    sp3C.f[2] = 0.0f;
+                    sp3C.f[0] = 1.0f;
+                }
+                for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+                    arg2->f[0] -= sp3C.f[0] * 0.1f;
+                    arg2->f[2] -= sp3C.f[2] * 0.1f;
+                }
+                break;
+            case 1:
+                arg2->f[0] -= arg0 * arg4->f[0];
+                arg2->f[2] -= arg0 * arg4->f[2];
+                sp34 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
+                if (sp34 > 0.0f) {
+                    i = arctan2_f(arg4->f[1], sqrtf(SQ(arg4->x) + SQ(arg4->z)));
+                    temp_fv0 = fcos16_precise(i);
+                    if (temp_fv0 > 0/*.0f*/) {
+                        sp34 /= temp_fv0;
+                    }
+                    arg2->f[0] += sp34 * arg4->f[0];
+                    arg2->f[2] += sp34 * arg4->f[2];
+                }
+                break;
+            default:
+                arg2->f[0] -= arg0 * arg4->f[0];
+                arg2->f[1] -= arg0 * arg4->f[1];
+                arg2->f[2] -= arg0 * arg4->f[2];
+                sp34 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
+                arg2->f[0] += sp34 * arg4->f[0];
+                arg2->f[1] += sp34 * arg4->f[1];
+                arg2->f[2] += sp34 * arg4->f[2];
+                break;
+        }
+    } else if (arg6 != 2) {
+        if (arg6 == 5) {
+            arg2->f[0] -= arg0 * arg4->f[0];
+            arg2->f[1] -= arg0 * arg4->f[1];
+            arg2->f[2] -= arg0 * arg4->f[2];
+            sp34 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
+            arg2->f[0] += sp34 * arg4->f[0];
+            arg2->f[1] += sp34 * arg4->f[1];
+            arg2->f[2] += sp34 * arg4->f[2];
+        } else {
+            arg2->f[1] = arg3->f[1];
+            sp34 = arg5 - (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4)));
+            if (sp34 > 0.0f) {
+                i = arctan2_f(arg4->f[1], sqrtf(SQ(arg4->x) + SQ(arg4->z)));
+                sp34 = sp34 / fsin16_precise(i);
+                arg2->f[1] += sp34 * arg4->f[1];
+            }
+        }
+    }
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80057A30.s")
 

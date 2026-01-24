@@ -30,7 +30,9 @@ typedef enum {
 
 typedef struct {
 /*0000*/    Texture *texture; //textureID in ROM
-/*0004*/    u32 unk4;
+/*0004*/    u16 unk4;
+/*0004*/    u8 pad6;
+/*0004*/    u8 unk7;
 } ModelTexture;
 
 typedef struct {
@@ -111,12 +113,12 @@ typedef struct {
 } TextureAnimation;
 
 typedef struct {
-    s16 unk0;
-    s16 unk2;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA;
+    s16 minX;
+    s16 maxX;
+    s16 minY;
+    s16 maxY;
+    s16 minZ;
+    s16 maxZ;
 } FacebatchBound;
 
 typedef struct{
@@ -132,7 +134,7 @@ typedef struct{
 /*0020*/    ModelJoint *joints;
 /*0024*/    u8 *amap;
 /*0028*/    HitSphere *hitSpheres;
-/*002C*/    void *edgeVectors; //only on mobile map models?
+/*002C*/    s16 *edgeVectors; //only on mobile map models?
 /*0030*/    s16 *modAnim;
 /*0034*/    FacebatchBound *facebatchBounds; //bounding boxes for each facebatch
 /*0038*/    ModelDLInfo *drawModes; //stores command indices of f3dex2 block's EF command settings, plus 2 settings to swap between
