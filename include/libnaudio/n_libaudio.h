@@ -194,12 +194,17 @@ ALMicroTime     n_alEvtqNextEvent(ALEventQueue *evtq, N_ALEvent *evt);
 void            n_alEvtqPostEvent(ALEventQueue *evtq, N_ALEvent *evt, ALMicroTime delta, s32 param4);
 void        	n_alEvtqFlushType(ALEventQueue *evtq, s16 type);
 
+// TODO: merge with oscData
 struct oscstate {
-	u32 unk00;
+	struct oscstate* unk00;
 	u8 unk04;
-	u32 unk08;
+	s32 unk08;
 	f32 unk0c;
 	f32 unk10;
+    u16 unk14;
+    u16 unk16;
+    f32 unk18;
+    f32 unk1C;
 };
 
 struct fx {
@@ -357,7 +362,9 @@ void    n_alCSPSetTempo(N_ALCSPlayer *seqp, s32 tempo);
 void    n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol);
 void    n_alCSPStop(N_ALCSPlayer *seqp);
 void    func_8006721C(N_ALCSPlayer *seqp, u8 arg1, f32 arg2);
-
+void    func_80075DCC(N_ALCSPlayer *seqp, u8 chan, u8 param3);
+void    func_80075E38(N_ALCSPlayer *seqp, u8 param2);
+void    func_80075E9C(N_ALCSPlayer *seqp, u8 param2);
 
 /*
  * Sound Player stuff

@@ -761,6 +761,7 @@ typedef struct {
     void        *initOsc;
     void        *updateOsc;
     void        *stopOsc;
+    s8          unk1C; // NOTE: Not in original definition!
 } ALSeqpConfig;
 
 typedef ALMicroTime   (*ALOscInit)(void **oscState,f32 *initVal, u8 oscType,
