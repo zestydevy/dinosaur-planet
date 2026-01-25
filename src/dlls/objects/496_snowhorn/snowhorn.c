@@ -821,8 +821,8 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 
     result = gDLL_26_Curves->vtbl->func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
     if (!result){
-        snowhorn->srt.transl.x = objdata->unk60.unk68;
-        snowhorn->srt.transl.z = objdata->unk60.unk70;
+        snowhorn->srt.transl.x = objdata->unk60.unk68.x;
+        snowhorn->srt.transl.z = objdata->unk60.unk68.z;
         
         objdata->flags = 1;
         objdata->walkSpeed = 0.5f;
