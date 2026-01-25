@@ -96,8 +96,10 @@ s8 D_800BB4D4;
 u8 _bss_800BB4D5;
 s16 D_800BB4D6;
 s16 D_800BB4D8;
-u8 _bss_800BB4DA[0x800BB538 - 0x800BB4DA]; // 0x5E
-s32 pad_bss_800BB4DA; // required for .bss alignment, redundant once it's all mapped
+u8 _bss_800BB4DA[0x800BB52C - 0x800BB4DA]; // 0x5E
+f32 D_800BB52C;
+f32 D_800BB530;
+f32 D_800BB534;
 s8 D_800BB538;
 s8 D_800BB539;
 u8 D_800BB53A;
@@ -1704,7 +1706,71 @@ s32 func_8005A2BC(f32 arg0, f32 arg1, f32 arg2, s32 arg3, s16* arg4) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B204.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B274.s")
+s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5) {
+    f32 sp54;
+    f32 sp50;
+    f32 sp4C;
+    f32 sp48;
+    f32 sp44;
+    f32 var_ft4;
+    f32 sp20;
+    f32 sp38;
+    f32 sp34;
+    f32 sp30;
+
+    if (arg4 == 0.0f) {
+        return 0;
+    }
+    sp38 = sp20 = (SQ((arg0[0] - arg2)) + SQ((arg1[0] - arg3))) - SQ(arg4);
+    if (sp38 < 0/*.0f*/) {
+        if (arg5 != 0) {
+            arg0[1] = arg0[0] + D_800BB530;
+            arg1[1] = arg1[0] + D_800BB534;
+        }
+        return 0;
+    }
+    sp54 = arg0[1] - arg0[0];
+    sp50 = arg1[1] - arg1[0];
+    sp4C = SQ(sp54) + SQ(sp50);
+    if (sp4C > 0.0f) {
+        sp48 = sp4C;
+        sp44 = 2.0f * ((sp54 * (arg0[0] - arg2)) + (sp50 * (arg1[0] - arg3)));
+        sp4C = SQ(sp44) - (4.0f * sp4C * sp38);
+        if (sp4C >= 0.0f) {
+            sp20 = sqrtf(sp4C);
+            var_ft4 = (-sp44 + sp20) / (2.0f * sp48);
+            sp38 = (-sp44 - sp20) / (2.0f * sp48);
+            if (var_ft4 < 0.0f) {
+                var_ft4 = 10.0f;
+            }
+            if (sp38 < 0.0f) {
+                sp38 = 10.0f;
+            }
+            if (sp38 < var_ft4) {
+                var_ft4 = sp38;
+            }
+            if ((var_ft4 >= 0.0f) && (var_ft4 <= 1.0f)) {
+                D_800BB52C = var_ft4;
+                if (arg5 != 0) {
+                    sp34 = arg0[0] + (var_ft4 * sp54);
+                    sp30 = arg1[0] + (var_ft4 * sp50);
+                    sp48 = (sp34 - arg2) / arg4;
+                    sp44 = (sp30 - arg3) / arg4;
+                    sp20 = -((sp34 * sp48) + (sp30 * sp44));
+                    var_ft4 = ((sp48 * arg0[1]) + (arg1[1] * sp44) + sp20);
+                    arg0[1] -= var_ft4 * sp48;
+                    arg1[1] -= var_ft4 * sp44;
+                    while (((arg0[1] * sp48) + (arg1[1] * sp44) + sp20) < 0.1f) {
+                        arg0[1] += sp48 * 0.1f;
+                        arg1[1] += sp44 * 0.1f;
+                    }
+                }
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
 
 //parent_object_to_mobile_map_object?
 void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
