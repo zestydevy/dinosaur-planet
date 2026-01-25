@@ -328,6 +328,7 @@ typedef struct {
 /*0x8*/ s16 unk8; // some sort of index?
 } MapsUnk_800B97C0;
 
+// size: 0x10
 typedef struct Unk8005341C {
     Object *unk0;
     s16 unk4;

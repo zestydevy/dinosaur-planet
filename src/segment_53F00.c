@@ -59,6 +59,7 @@ s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3*, s32, s32, s32, s32, s32, s32, u8);
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3*, Unk8005341C*, ModelInstance*, f32, f32, f32, f32, f32, f32, u8);
 void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
+void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5);
 
 // move to objhits.h
 Object **func_80025DD4(s32 *arg0);
@@ -67,13 +68,23 @@ Object **func_80025DD4(s32 *arg0);
 Vec3s32 D_800BB200[8];
 UnkFunc80051D68Arg3* D_800BB260;
 s16 D_800BB264;
-Unk8005341C D_800BB268[2]; // unknown size
-u8 _bss_800BB288[0x800BB3A8 - 0x800BB288];
+Unk8005341C D_800BB268[2]; // unknown size, maybe 14
+u8 _bss_800BB288[0x800BB3A8 - 0x800BB288]; // 0x120
 u8 D_800BB3A8; // count for D_800BB268
-u8 _bss_800BB3A9[0x800BB4D6 - 0x800BB3A9];
+u8 _bss_800BB3A9[0x800BB3B0-0x800BB3A9];
+Func_80057F1C_Struct D_800BB3B0[10];
+u32 _bss_800BB49C;
+Func_80057F1C_Struct* D_800BB4A0;
+u32 _bss_800BB4A4;
+Func_80057F1C_Struct* D_800BB4A8;
+u8 _bss_800BB4AC[0x800BB4D0-0x800BB4AC]; // 0x24
+Func_80057F1C_Struct** D_800BB4D0;
+s8 D_800BB4D4;
+u8 _bss_800BB4D5;
 s16 D_800BB4D6;
 s16 D_800BB4D8;
-u8 _bss_800BB4DA[0x800BB538 - 0x800BB4DA];
+u8 _bss_800BB4DA[0x800BB538 - 0x800BB4DA]; // 0x5E
+s32 pad_bss_800BB4DA; // required for .bss alignment, redundant once it's all mapped
 s8 D_800BB538;
 s8 D_800BB539;
 
@@ -517,7 +528,7 @@ block_55:
                                     arg0->unk8 = temp_s0->ptr_faces[sp11C].unk4 >> 0x12;
                                 }
                                 if (((arg7 & 8) == 0 || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
-                                    arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * 0.00012208521f;
+                                    arg0->unk0 = (f32) -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
                                     temp = (sp11C) * 9;
                                     for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
                                         arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
@@ -834,9 +845,9 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
             var_v1 = FALSE;
             temp = arg0;
             for (; (u32) temp < (u32) arg1; temp++) {
-                temp_fa1 = temp->unk4 * 0.00012208521f;
-                temp_fa0 = temp->unk6 * 0.00012208521f;
-                temp_ft4 = temp->unk8 * 0.00012208521f;
+                temp_fa1 = temp->unk4 * (1.0f / 8191.0f);
+                temp_fa0 = temp->unk6 * (1.0f / 8191.0f);
+                temp_ft4 = temp->unk8 * (1.0f / 8191.0f);
                 temp_ft5 = temp->unk0;
                 if (temp_fa0 >= 0.707f) {
                     continue;
@@ -1198,9 +1209,140 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80057F1C.s")
+s32 func_80057F1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Func_80057F1C_Struct*** arg4, s32 arg5, s32 arg6) {
+    AABBs32 sp78;
+    f32 sp74;
+    f32 sp70;
+    f32 sp6C;
+    Unk8005341C* var_s0;
+    Unk8005341C* temp_s4;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058144.s")
+    var_s0 = D_800BB268;
+    if (arg5 >= 0) {
+        sp78.min.x = arg1;
+        sp78.max.x = arg1;
+        sp78.min.y = arg2 - 10000.0f;
+        sp78.max.y = arg2 + 10000.0f;
+        sp78.min.z = arg3;
+        sp78.max.z = arg3;
+        func_80053750(arg0, &sp78, arg6);
+    } else {
+        arg5 = 0;
+    }
+    D_800BB4A0 = &D_800BB3B0;
+    D_800BB4D0 = &D_800BB4A8;
+    D_800BB4D4 = 0;
+    temp_s4 = &D_800BB268[D_800BB3A8];
+    while (var_s0 < temp_s4) {
+        if (var_s0->unk0 != NULL) {
+            vec3_transform(var_s0->unk8, arg1, 0.0f, arg3, &sp74, &sp70, &sp6C);
+            func_80058144(&D_80092E70[var_s0->unk4], &D_80092E70[var_s0[1].unk4], var_s0, sp74, sp6C, arg5);
+        } else {
+            func_80058144(&D_80092E70[var_s0->unk4], &D_80092E70[var_s0[1].unk4], var_s0, arg1, arg3, arg5);
+        }
+        var_s0 += 1;
+    }
+    *arg4 = &D_800BB4A8;
+    return D_800BB4D4;
+}
+
+void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5) {
+    s32 sp134;
+    u8 pad_sp118[0x134-0x118];
+    Vec4f sp108;
+    u8 pad_spFC[0x108-0xFC];
+    Vec4f spEC;
+    UnkFunc80051D68Arg3* var_s4;
+    Func_80057F1C_Struct *temp_a0;
+    Func_80057F1C_Struct* temp_a1;
+    Vec4f spD0;
+    f32 spCC;
+    f32 spC8;
+    f32 spC4;
+    s32 isSorted;
+    Vec3f spB4;
+    f32 spB0;
+    f32 spAC;
+    f32 spA8;
+    f32 spA4;
+    s32 var_v0_2;
+    s32 i;
+
+    arg3 = arg3;
+    if (arg2->unk0 == NULL) {
+        arg3 -= (f32) D_800BB200->x;
+        arg4 -= (f32) D_800BB200->s[2];
+    }
+    for (var_s4 = arg0; (u32) var_s4 < (u32) arg1; var_s4++) {
+        // not quite correct yet
+        if ((var_s4->unk31 & 0x10) && !(var_s4->unk31 & 4)) {
+            continue;
+        }
+        spB4.x = var_s4->unk4 * (1.0f / 8191.0f);
+        spB4.y = var_s4->unk6 * (1.0f / 8191.0f);
+        spB4.z = var_s4->unk8 * (1.0f / 8191.0f);
+        if ((spB4.y > 0.0f) || !((arg5 == 0) || (spB4.y == 0.0f))) {
+            spC8 = -((spB4.x * arg3) + (spB4.z * arg4) + var_s4->unk0) / spB4.y;
+            sp134 = 1;
+            for (i = 0; i < 3; i++) {
+                sp108.f[i] = var_s4->unkA[i];
+                spEC.f[i] = var_s4->unk10[i];
+                spD0.f[i] = var_s4->unk16[i];
+            }
+            for (i = 0; i < 3; i++) {
+                var_v0_2 = i + 1;
+                if (var_v0_2 >= 3) {
+                    var_v0_2 = 0;
+                }
+                sp108.f[3] = (spB4.x * 10.0f) + sp108.f[i];
+                spEC.f[3] = (spB4.y * 10.0f) + spEC.f[i];
+                spD0.f[3] = (spB4.z * 10.0f) + spD0.f[i];
+                func_80058D54(&sp108, &spEC, &spD0, i, var_v0_2, 3, &spB0, &spAC, &spA8, &spA4);
+                if (((spB0 * arg3) + (spAC * spC8) + (spA8 * arg4) + spA4) > 0.2f) {
+                    sp134 = 0;
+                    break;
+                }
+            }
+            if (sp134 != 0) {
+                if (arg2->unk0 != NULL) {
+                    vec3_transform(arg2->unkC, arg3, spC8, arg4, &spCC, &spC8, &spC4);
+                    vec3_transform_no_translate(arg2->unkC, &spB4, &spB4);
+                }
+                D_800BB4A0->unk0[0] = spC8;
+                D_800BB4A0->unk14 = var_s4->unk30;
+                D_800BB4A0->unk0[1] = spB4.x;
+                D_800BB4A0->unk0[2] = spB4.y;
+                D_800BB4A0->unk0[3] = spB4.z;
+                D_800BB4A0->unk10 = arg2->unk0;
+                D_800BB4A0++;
+                D_800BB4D4++;
+                if (D_800BB4D4 > 9) {
+                    // break
+                    var_s4 = arg1;
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < D_800BB4D4; i++) {
+        D_800BB4D0[i] = &D_800BB3B0[i];
+    }
+
+    // Sort elements of D_800BB4D0
+    do {
+        isSorted = TRUE;
+        for (i = 0; i < D_800BB4D4 - 1; i++) {
+            temp_a0 = D_800BB4D0[i];
+            temp_a1 = D_800BB4D0[i + 1];
+            if (temp_a0->unk0[0] < temp_a1->unk0[0]) {
+                D_800BB4D0[i] = D_800BB4D0[i + 1];
+                D_800BB4D0[i + 1] = temp_a0;
+                isSorted = FALSE;
+            }
+        }
+    } while (isSorted == FALSE);
+}
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058680.s")
 
