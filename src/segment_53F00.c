@@ -60,6 +60,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3*, s32, s32, s32, s32, s32
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3*, Unk8005341C*, ModelInstance*, f32, f32, f32, f32, f32, f32, u8);
 void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
 void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5);
+void func_80058D54(Vec4f* arg0, Vec4f* arg1, Vec4f* arg2, s32 arg3, s32 arg4, s32 arg5, f32* arg6, f32* arg7, f32* arg8, f32* arg9);
 
 // move to objhits.h
 Object **func_80025DD4(s32 *arg0);
@@ -1350,7 +1351,27 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058B1C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058D54.s")
+void func_80058D54(Vec4f* arg0, Vec4f* arg1, Vec4f* arg2, s32 arg3, s32 arg4, s32 arg5, f32* arg6, f32* arg7, f32* arg8, f32* arg9) {
+    f32 sp5C;
+    f32 sp58;
+    f32 sp54;
+    f32 temp_fv0;
+
+    sp5C = (arg1->f[arg3] * (arg2->f[arg4] - arg2->f[arg5])) + (arg1->f[arg4] * (arg2->f[arg5] - arg2->f[arg3])) + (arg1->f[arg5] * (arg2->f[arg3] - arg2->f[arg4]));
+    sp58 = (arg2->f[arg3] * (arg0->f[arg4] - arg0->f[arg5])) + (arg2->f[arg4] * (arg0->f[arg5] - arg0->f[arg3])) + (arg2->f[arg5] * (arg0->f[arg3] - arg0->f[arg4]));
+    sp54 = (arg0->f[arg3] * (arg1->f[arg4] - arg1->f[arg5])) + (arg0->f[arg4] * (arg1->f[arg5] - arg1->f[arg3])) + (arg0->f[arg5] * (arg1->f[arg3] - arg1->f[arg4]));
+    temp_fv0 = sqrtf(SQ(sp5C) + SQ(sp58) + SQ(sp54));
+    if (temp_fv0 > 0.0f) {
+        temp_fv0 = 1.0f / temp_fv0;
+        sp5C *= temp_fv0;
+        sp58 *= temp_fv0;
+        sp54 *= temp_fv0;
+    }
+    *arg9 = -((arg0->f[arg3] * sp5C) + (arg1->f[arg3] * sp58) + (arg2->f[arg3] * sp54));
+    *arg6 = sp5C;
+    *arg7 = sp58;
+    *arg8 = sp54;
+}
 
 void func_80058F3C(void) {
     D_800BB539 = 1;
