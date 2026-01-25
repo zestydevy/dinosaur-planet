@@ -1379,7 +1379,35 @@ s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800588D4.s")
+s32 func_800588D4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5) {
+    f32 temp_fv1;
+    f32 var_fa0;
+    s32 temp_v0;
+    s32 i;
+    Func_80057F1C_Struct** sp44;
+
+    temp_v0 = func_80057F1C(arg0, arg1, arg2, arg3, &sp44, 0, arg5);
+    if (temp_v0 != 0) {
+        var_fa0 = arg2 - sp44[0]->unk0[0];
+        for (i = 1; i < temp_v0; i++) {
+            temp_fv1 = arg2 - sp44[i]->unk0[0];
+            if ((temp_fv1 >= 0.0f) && ((var_fa0 < 0.0f) || (temp_fv1 < var_fa0))) {
+                var_fa0 = temp_fv1;
+            }
+        }
+
+        if (var_fa0 >= 0.0f) {
+            *arg4 = var_fa0;
+            return 1;
+        }
+
+        *arg4 = 0.0f;
+        return 0;
+    }
+
+    *arg4 = 0.0f;
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058B1C.s")
 
