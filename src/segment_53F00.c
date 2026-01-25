@@ -1707,7 +1707,22 @@ Unk8005B17C* func_8005B17C(Object* arg0, Object* arg1, u8 arg2) {
     return NULL;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B204.s")
+Unk8005B17C* func_8005B204(Object* arg0, Object* arg1, u8 arg2) {
+    Unk8005B17C* temp_v1;
+    s16 i = 0;
+
+    for (;i < 20; i++) {
+        temp_v1 = &D_80092E84[i];
+        if (temp_v1->unk14 == 0) {
+            temp_v1->unk0 = arg0;
+            temp_v1->unk4 = arg1;
+            temp_v1->unk15 = arg2;
+            temp_v1->unk14 = 2;
+            return temp_v1;
+        }
+    }
+    return NULL;
+}
 
 s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5) {
     f32 sp54;
