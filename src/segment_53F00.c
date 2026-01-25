@@ -1344,8 +1344,40 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
     } while (isSorted == FALSE);
 }
 
+s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5) {
+    f32 var_fa1;
+    f32 var_fv0;
+    s32 temp_v0;
+    s32 var_a1;
+    s32 i;
+    Func_80057F1C_Struct** sp38;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80058680.s")
+    temp_v0 = func_80057F1C(arg0, arg1, arg2, arg3, &sp38, 0, arg5);
+    if (temp_v0 != 0) {
+        var_a1 = 0;
+        if (sp38[0]->unk0[0] <= arg2) {
+            var_fa1 = arg2 - sp38[0]->unk0[0];
+        } else {
+            var_fa1 = -(arg2 - sp38[0]->unk0[0]);
+        }
+        for (i = 1; i < temp_v0; i++) {
+            if (sp38[i]->unk0[0] <= arg2) {
+                var_fv0 = arg2 - sp38[i]->unk0[0];
+            } else {
+                var_fv0 = -(arg2 - sp38[i]->unk0[0]);
+            }
+            if (var_fv0 < var_fa1) {
+                var_fa1 = var_fv0;
+                var_a1 = i;
+            }
+        }
+        *arg4 = arg2 - sp38[var_a1]->unk0[0];
+        return 0;
+    }
+
+    *arg4 = 0.0f;
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_800588D4.s")
 
