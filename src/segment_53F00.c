@@ -13,22 +13,6 @@ static const char str_8009ab90[] = "trackIntersect: FUNC OVERFLOW %d\n";
 static const char str_8009abb4[] = "insertPoint array overrun %d/%d\n";
 static const char str_8009abd8[] = "NO FREE LAST LINE\n";
 
-typedef struct {
-/*00*/ s16 unk0;    
-/*02*/ s16 unk2;    
-/*04*/ s16 unk4;    
-/*06*/ s16 unk6;    
-/*08*/ s16 unk8;    
-/*0A*/ s16 unkA;    
-/*0C*/ s16 unkC;    
-/*0E*/ s16 unkE;    
-/*10*/ s16 unk10;    
-/*12*/ s16 unk12;    
-/*14*/ u8 unk14;    
-/*15*/ s8 unk15;    
-/*16*/ s16 unk16;    
-} HitsUnk;
-
 /** HitsLines seem to end up reencoded into this format
   * The point data seems to be missing and index values are introduced,
   * so maybe they're combining coincident points across different lines,
@@ -53,8 +37,11 @@ typedef struct {
 } D_800BB26C_Struct;
 
 typedef struct {
-    u8 pad[0x8];
+    Object *unk0;
+    Object *unk4;
     Vec3f unk8;
+    u8 unk14;
+    u8 unk15;
 } Unk8005B17C;
 
 s32 func_80055458(Object*, UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, f32*, f32 *, s32, s8*, s32);
@@ -110,7 +97,7 @@ HitsLineReencoded* D_80092E74 = NULL; // 400 length
 Vec3f *D_80092E78 = NULL; // 400 length
 void *D_80092E7C = NULL;
 s8 D_80092E80 = 0;
-HitsUnk* D_80092E84 = NULL;
+Unk8005B17C* D_80092E84 = NULL;
 
 #define SOME_MIN 100000
 // Idk where this random 34 is coming from, hex value is 0xFFFE7960
@@ -122,7 +109,7 @@ void func_80053300(void) {
         D_80092E74 = mmAlloc(400*sizeof(HitsLineReencoded), COLOUR_TAG_YELLOW, 0);
         D_80092E78 = mmAlloc(400*sizeof(Vec3f), COLOUR_TAG_YELLOW, 0);
         D_80092E7C = mmAlloc(800, COLOUR_TAG_YELLOW, 0);
-        D_80092E84 = mmAlloc(20*sizeof(HitsUnk), COLOUR_TAG_YELLOW, 0);
+        D_80092E84 = mmAlloc(20*sizeof(Unk8005B17C), COLOUR_TAG_YELLOW, 0);
     }
     func_80058F8C();
     D_800BB4D6 = 0;
@@ -1486,7 +1473,7 @@ s8 func_80058F7C(void) {
 
 void func_80058F8C(void) {
     s32 index;
-    HitsUnk* temp;
+    Unk8005B17C* temp;
 
     for (index = 0; index < 20; index++){ 
         temp = &D_80092E84[index];
@@ -1496,7 +1483,7 @@ void func_80058F8C(void) {
 
 void func_80058FE8(void) {
     s16 index;
-    HitsUnk *temp;
+    Unk8005B17C *temp;
 
     index = 0;
     while (index < 20){
@@ -1702,7 +1689,23 @@ s32 func_8005A2BC(f32 arg0, f32 arg1, f32 arg2, s32 arg3, s16* arg4) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005A3F8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B17C.s")
+Unk8005B17C* func_8005B17C(Object* arg0, Object* arg1, u8 arg2) {
+    Unk8005B17C* temp_v1;
+    s16 i = 0;
+
+    for (;i < 20; i++) {
+        temp_v1 = &D_80092E84[i];
+        if (temp_v1->unk14 == 0) {continue;}
+        if (arg0 != temp_v1->unk0) {continue;}
+        if (arg1 != temp_v1->unk4) {continue;}
+        if (temp_v1->unk15 != arg2) {continue;}
+
+        temp_v1->unk14 = 0U;
+        return temp_v1;
+    }
+
+    return NULL;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_8005B204.s")
 
