@@ -76,9 +76,7 @@ typedef struct {
     /* 0010 */ s32 unk10;
     /* 0014 */ f32 unk14[20];
     /* 0064 */ f32 unk64;
-    /* 0068 */ f32 unk68; //lerp_result_x?
-    /* 006C */ f32 unk6C; //lerp_result_y?
-    /* 0070 */ f32 unk70; //lerp_result_z?
+    /* 0068 */ Vec3f unk68; //lerp_result_x?
     /* 0074 */ f32 unk74; //some x component
     /* 0078 */ f32 unk78; //some y component
     /* 007C */ f32 unk7C; //some z component

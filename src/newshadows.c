@@ -447,9 +447,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         shadows_func_80051944(0, obj, sp244, shadow->scale, 0);
     }
     for (i = 0, j = 0; i < 8; i++, j++) {
-        sp1C0[j].x = sp244[i].x + obj->positionMirror.x;
-        sp1C0[j].y = sp244[i].y + obj->positionMirror.y;
-        sp1C0[j].z = sp244[i].z + obj->positionMirror.z;
+        VECTOR_ADD(obj->positionMirror, sp244[i], sp1C0[j]);
     }
     fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
     func_80053750(obj, &sp68, 1);
@@ -632,9 +630,7 @@ void shadows_update_obj_box(Object* arg0) {
         }
         shadows_func_80051944(0, arg0, sp24C, temp_s1->scale * 0.5f, 0);
         for (i = 0, j = 0; i < 8; i++, j++) {
-            sp1EC[j].x = sp24C[i].x + arg0->positionMirror.x;
-            sp1EC[j].y = sp24C[i].y + arg0->positionMirror.y;
-            sp1EC[j].z = sp24C[i].z + arg0->positionMirror.z;
+            VECTOR_ADD(arg0->positionMirror, sp24C[i], sp1EC[j]);
         }
         fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
         func_80053750(arg0, &sp70, 1);
@@ -1177,9 +1173,7 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     }
     if (var_fv1 != 0.0f) {
         var_fv1 = 1.0f / var_fv1;
-        spD0.x *= var_fv1;
-        spD0.y *= var_fv1;
-        spD0.z *= var_fv1;
+        VECTOR_SCALE(spD0, var_fv1);
     }
     D_80092C20 = 0;
     sp330 = 0;

@@ -81,9 +81,7 @@ void WMPlanets_control(Object* self) {
     rotate_vec3(&srt, v.f);
 
     //Set planet's coords in world
-    self->srt.transl.x = objdata->orbitOrigin.x + v.x;
-    self->srt.transl.y = objdata->orbitOrigin.y + v.y;
-    self->srt.transl.z = objdata->orbitOrigin.z + v.z;
+    VECTOR_ADD(v, objdata->orbitOrigin, self->srt.transl);
 
     //Advance planet's axial rotation
     self->srt.yaw += objdata->spinSpeed * (s16)gUpdateRateF;

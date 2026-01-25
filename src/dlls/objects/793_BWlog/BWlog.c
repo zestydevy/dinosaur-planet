@@ -106,7 +106,7 @@ void dll_793_control(Object* self) {
     BWlog_Data* objdata;
     f32 var_fv1;
     f32 sp184[3];
-    f32 sp178[3];
+    Vec3f sp178;
     SRT sp160;
     MtxF sp120;
     MtxF spE0;
@@ -196,16 +196,12 @@ void dll_793_control(Object* self) {
         objdata->unk260[i].y = objdata->unk260[i].y + sp184[1];
         objdata->unk260[i].z = objdata->unk260[i].z + sp184[2];
     }
-    sp178[0] = objdata->unk260[0].x + objdata->unk260[1].x;
-    sp178[1] = objdata->unk260[0].y + objdata->unk260[1].y;
-    sp178[2] = objdata->unk260[0].z + objdata->unk260[1].z;
-    self->srt.transl.x = sp178[0] * 0.5f;
-    self->srt.transl.y = sp178[1] * 0.5f;
-    self->srt.transl.z = sp178[2] * 0.5f;
-    sp178[0] = objdata->unk260[1].x - objdata->unk260[0].x;
-    sp178[1] = objdata->unk260[1].y - objdata->unk260[0].y;
-    sp178[2] = objdata->unk260[1].z - objdata->unk260[0].z;
-    self->srt.pitch = -arctan2_f(sp178[1], sqrtf(SQ(sp178[2]) + SQ(sp178[0])));
+    VECTOR_ADD(objdata->unk260[0], objdata->unk260[1], sp178);
+    self->srt.transl.x = sp178.f[0] * 0.5f;
+    self->srt.transl.y = sp178.f[1] * 0.5f;
+    self->srt.transl.z = sp178.f[2] * 0.5f;
+    VECTOR_SUBTRACT(objdata->unk260[1], objdata->unk260[0], sp178);
+    self->srt.pitch = -arctan2_f(sp178.f[1], sqrtf(SQ(sp178.f[2]) + SQ(sp178.f[0])));
     gDLL_27->vtbl->func_1E8(self, &objdata->unk0, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->unk0);
     gDLL_27->vtbl->func_624(self, &objdata->unk0, gUpdateRateF);

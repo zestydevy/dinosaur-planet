@@ -183,13 +183,13 @@ void func_80005094(UnkCurvesStruct *arg0) {
     }
 
     if (arg0->unk84 != NULL) {
-        arg0->unk68 = arg0->unk94(arg0->unk84, arg0->unk0, &arg0->unk74);
+        arg0->unk68.x = arg0->unk94(arg0->unk84, arg0->unk0, &arg0->unk74);
     }
     if (arg0->unk88 != NULL) {
-        arg0->unk6C = arg0->unk94(arg0->unk88, arg0->unk0, &arg0->unk78);
+        arg0->unk68.y = arg0->unk94(arg0->unk88, arg0->unk0, &arg0->unk78);
     }
     if (arg0->unk8C != NULL) {
-        arg0->unk70 = arg0->unk94(arg0->unk8C, arg0->unk0, &arg0->unk7C);
+        arg0->unk68.z = arg0->unk94(arg0->unk8C, arg0->unk0, &arg0->unk7C);
     }
 }
 

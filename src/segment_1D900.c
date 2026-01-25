@@ -673,7 +673,7 @@ void func_8001F094(ModelInstance* arg0) {
                     temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fa1) + SQ(temp_ft4));
                 }
                 vec3_transform_no_translate(spBC, &spD8, &spD8);
-                temp_fv0 = sqrtf(SQ(spD8.f[0]) + SQ(spD8.f[1]) + SQ(spD8.f[2]));
+                temp_fv0 = VECTOR_MAGNITUDE(spD8);
                 if (temp_fv0 != 0.0f) {
                     var_fv1 = 1.0f / temp_fv0;
                 } else {
@@ -681,9 +681,7 @@ void func_8001F094(ModelInstance* arg0) {
                 }
                 // @fake
                 if (1) {}
-                spD8.f[0] *= var_fv1;
-                spD8.f[1] *= var_fv1;
-                spD8.f[2] *= var_fv1;
+                VECTOR_SCALE(spD8, var_fv1);
                 var_fv1 = 2.0f * ((spD8.f[0] * spD4) + (spD8.f[1] * spD0) + (spD8.f[2] * spCC));
                 temp_fa0 = ((spD8.f[0] * var_fv1) - spD4);
                 pad = ((spD8.f[1] * var_fv1) - spD0);
@@ -762,7 +760,7 @@ void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
 
                 // @fake
                 if (1) {}
-                temp_fv0 = sqrtf(SQ(sp88.f[0]) + SQ(sp88.f[1]) + SQ(sp88.f[2]));
+                temp_fv0 = VECTOR_MAGNITUDE(sp88);
                 if (temp_fv0 != 0.0f) {
                     var_fv1 = 1.0f / temp_fv0;
                 } else {
@@ -770,9 +768,7 @@ void func_8001F4C0(Block* arg0, s32 arg1, s32 arg2) {
                 }
                 // @fake
                 if (1) {}
-                sp88.f[0] *= var_fv1;
-                sp88.f[1] *= var_fv1;
-                sp88.f[2] *= var_fv1;
+                VECTOR_SCALE(sp88, var_fv1);
 
                 var_fv1 = 2.0f * ((sp88.f[0] * sp84) + (sp88.f[1] * sp80) + (sp88.f[2] * sp7C));
                 temp_fa0 = ((sp88.f[0] * var_fv1) - sp84);

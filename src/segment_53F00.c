@@ -1034,9 +1034,7 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
             sp64.f[2] += arg0->f[2];
             VECTOR_SUBTRACT((*arg2), sp64, sp58);
             vec3_normalize(&sp58);
-            sp58.f[0] *= arg5;
-            sp58.f[1] *= arg5;
-            sp58.f[2] *= arg5;
+            VECTOR_SCALE(sp58, arg5);
             VECTOR_ADD(sp64, sp58, (*arg2));
         }
     } else if (arg6 != 2) {
@@ -1185,9 +1183,7 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
             arg3->f[2] -= (sp38 * arg5->f[2]);
             VECTOR_SUBTRACT((*arg3), (*arg0), sp3C);
             vec3_normalize(&sp3C);
-            sp3C.f[0] *= arg6;
-            sp3C.f[1] *= arg6;
-            sp3C.f[2] *= arg6;
+            VECTOR_SCALE(sp3C, arg6);
             VECTOR_ADD((*arg0), sp3C, (*arg3));
         }
     } else if (arg7 != 2) {

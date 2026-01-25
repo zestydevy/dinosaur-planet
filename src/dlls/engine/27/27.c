@@ -684,9 +684,7 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
             arg0->positionMirror.y += arg1->unk38[0].f[i+1];
             arg0->positionMirror.z += arg1->unk38[0].f[i+2];
         }
-        arg0->positionMirror.x *= 1.0f / temp_t7;
-        arg0->positionMirror.y *= 1.0f / temp_t7;
-        arg0->positionMirror.z *= 1.0f / temp_t7;
+        VECTOR_SCALE(arg0->positionMirror, 1.0f / temp_t7);
         if (!(arg1->flags & (DLL27FLAG_400 | DLL27FLAG_HAS_TERRAIN_COLLIDER | DLL27FLAG_8000))) {
             return;
         }

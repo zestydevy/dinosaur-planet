@@ -199,9 +199,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
                     // @bug?
                     /* fallthrough */
                 case OBJ_BossDrakorAster:
-                    spA8.x = arg1->x - self->srt.transl.x;
-                    spA8.y = arg1->y - self->srt.transl.y;
-                    spA8.z = arg1->z - self->srt.transl.z;
+                    VECTOR_SUBTRACT(*arg1, self->srt.transl, spA8);
                     if (func_80056BCC(&self->srt.transl, &spA8, &spB4, &spC0, &objList[objIdx]->srt.transl, 
                                       SQ((f32) objList[objIdx]->objhitInfo->unk52 * 4.0f)) != 0) {
                         func_8002635C(objList[objIdx], self, 0xA, 1, 1);

@@ -1115,7 +1115,7 @@ void get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *o
     *oy = camera->srt.transl.y - y;
     *oz = camera->srt.transl.z - z;
 
-    nrm = sqrtf(*ox * *ox + *oy * *oy + *oz * *oz);
+    nrm = sqrtf(SQ(*ox) + SQ(*oy) + SQ(*oz));
     if (nrm != 0.0f)
     {
         nrm = 1.0f / nrm;

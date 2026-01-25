@@ -208,12 +208,9 @@ Object* obj_get_nearest_type(s32 type, Vec3f* location, f32* distance) {
         if (gObjectTypeList[i] == NULL) {
             continue;
         }
-        d.f[0] = location->x - gObjectTypeList[i]->positionMirror.x;
-        d.f[1] = location->y - gObjectTypeList[i]->positionMirror.y;
-        d.f[2] = location->z - gObjectTypeList[i]->positionMirror.z;
+        VECTOR_SUBTRACT(*location, gObjectTypeList[i]->positionMirror, d);
         
-        distSquared = SQ(d.f[0]) + SQ(d.f[1]) + SQ(d.f[2]);
-        
+        distSquared = VECTOR_MAGNITUDE_SQUARED(d);
         if (distSquared < minDistSquared) {
             minDistSquared = distSquared;
             result = gObjectTypeList[i];
