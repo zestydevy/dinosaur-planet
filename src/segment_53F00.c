@@ -1138,7 +1138,69 @@ s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, 
     return 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80057A30.s")
+s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, Vec4f* arg5, f32 arg6, u8 arg7) {
+    Vec3f sp3C;
+    f32 sp38;
+    s16 i;
+
+    if ((arg7 == 3) || (arg7 == 6)) {
+        arg3->f[0] = arg4->f[0];
+        arg3->f[1] = arg4->f[1];
+        arg3->f[2] = arg4->f[2];
+        VECTOR_SUBTRACT((*arg3), (*arg2), sp3C);
+        vec3_normalize(&sp3C);
+        // @fake
+        if (arg5) {}
+        for (i = 0; i < 0x65 && (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5))) < arg6; i++) {
+            arg3->f[0] -= sp3C.f[0] * 0.1f;
+            arg3->f[1] -= sp3C.f[1] * 0.1f;
+            arg3->f[2] -= sp3C.f[2] * 0.1f;
+        }
+        return 1;
+    }
+
+    sp38 = (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5)));
+    if (arg5->f[1] < 0.707f) {
+        if (arg7 == 4) {
+            arg3->f[0] = arg4->f[0];
+            arg3->f[1] = arg4->f[1];
+            arg3->f[2] = arg4->f[2];
+            VECTOR_SUBTRACT((*arg3), (*arg2), sp3C);
+            sp38 = sqrtf(SQ(sp3C.x) + SQ(sp3C.z));
+            if (sp38 > 0.0f) {
+                sp3C.f[0] /= sp38;
+                sp3C.f[2] /= sp38;
+            } else {
+                sp3C.f[2] = 0.0f;
+                sp3C.f[0] = 1.0f;
+            }
+            for (i = 0; i < 0x65 && (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5))) < arg6; i++) {
+                arg3->f[0] -= sp3C.f[0] * 0.1f;
+                arg3->f[2] -= sp3C.f[2] * 0.1f;
+            }
+        } else {
+            sp38 += sp38;
+            arg3->f[0] -= (sp38 * arg5->f[0]);
+            arg3->f[1] -= (sp38 * arg5->f[1]);
+            arg3->f[2] -= (sp38 * arg5->f[2]);
+            VECTOR_SUBTRACT((*arg3), (*arg0), sp3C);
+            vec3_normalize(&sp3C);
+            sp3C.f[0] *= arg6;
+            sp3C.f[1] *= arg6;
+            sp3C.f[2] *= arg6;
+            VECTOR_ADD((*arg0), sp3C, (*arg3));
+        }
+    } else if (arg7 != 2) {
+        arg3->f[1] = arg4->f[1];
+        sp38 = arg6 - (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5)));
+        if (sp38 > 0.0f) {
+            i = arctan2_f(arg5->f[1], sqrtf(SQ(arg5->x) + SQ(arg5->z)));
+            sp38 = sp38 / fsin16_precise(i);
+            arg3->f[1] += sp38 * arg5->f[1];
+        }
+    }
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80057F1C.s")
 
