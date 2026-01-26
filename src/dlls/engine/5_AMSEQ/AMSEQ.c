@@ -49,27 +49,6 @@ typedef struct {
 /*4*/ u8 _unk4[4];
 } AMSEQBss18; 
 
-typedef struct MusicAction {
-/*00*/ u8 unk0; // unused, always 0
-/*01*/ u8 unk1; // unused, always 0
-/*02*/ u8 distFalloffExp; // if 2, distance fade uses a squared falloff. does nothing with any other value
-/*03*/ u8 unk3; // does something if 1 or 2, always 0 in this build EXCEPT for action 6 (which is 2)
-/*04*/ u16 distFalloffStart; // full volume less than this dist
-/*06*/ u16 distFalloffEnd; // zero volume more than this dist
-/*08*/ u32 unk8; // unused, always 0
-/*0C*/ u32 unkC; // unused, always 0
-/*10*/ u8 playerNo; // amseq channel? 0-3?
-/*11*/ u8 seqID; // music/ambient ID
-/*12*/ u8 volume; // 0-127
-/*13*/ u8 bpm;
-/*14*/ u8 unk14; // unused, by set by some actions
-/*15*/ u8 fadeTimeDs; // the time it takes to fade volume in/out in tenths of a second (deciseconds)
-/*16*/ u16 unk16;
-/*18*/ u16 unk18;
-/*1A*/ u16 unk1A;
-/*1C*/ u32 unk1C; // unused, always 0
-} MusicAction;
-
 typedef struct {
 /*00*/ Object *obj;
 /*04*/ MusicAction action;
