@@ -879,10 +879,10 @@ static void dll_63_act_game_confirm(PicMenuAction action, s32 selected) {
         } else {
             sExitToGame = TRUE;
             gDLL_28_ScreenFade->vtbl->fade(20, SCREEN_FADE_BLACK);
-            gDLL_5_AMSEQ->vtbl->func6(0);
-            gDLL_5_AMSEQ->vtbl->func6(1);
-            gDLL_5_AMSEQ->vtbl->func6(2);
-            gDLL_5_AMSEQ->vtbl->func6(3);
+            gDLL_5_AMSEQ->vtbl->stop(0);
+            gDLL_5_AMSEQ->vtbl->stop(1);
+            gDLL_5_AMSEQ->vtbl->stop(2);
+            gDLL_5_AMSEQ->vtbl->stop(3);
             sExitTransitionTimer = 35;
         }
     }
@@ -898,10 +898,10 @@ static void dll_63_act_game_recap(PicMenuAction action, s32 selected) {
     } else if (action == PICMENU_ACTION_SELECT) {
         sExitToGame = TRUE;
         gDLL_28_ScreenFade->vtbl->fade(20, SCREEN_FADE_BLACK);
-        gDLL_5_AMSEQ->vtbl->func6(0);
-        gDLL_5_AMSEQ->vtbl->func6(1);
-        gDLL_5_AMSEQ->vtbl->func6(2);
-        gDLL_5_AMSEQ->vtbl->func6(3);
+        gDLL_5_AMSEQ->vtbl->stop(0);
+        gDLL_5_AMSEQ->vtbl->stop(1);
+        gDLL_5_AMSEQ->vtbl->stop(2);
+        gDLL_5_AMSEQ->vtbl->stop(3);
         sExitTransitionTimer = 35;
     }
 }

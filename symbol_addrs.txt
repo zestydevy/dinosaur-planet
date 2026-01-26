@@ -1951,3 +1951,5 @@ gFootstepSfxBank3 = 0x80092F54;
 gFootstepSfxBank4 = 0x80092F9C;
 gFootstepSfxBank5 = 0x80092FE4;
 footstep_get_sfx_bank = 0x8005D3A4; // type:func
+
+n_alCSPSetAmSeqChlVol = 0x80075DCC; // type:func

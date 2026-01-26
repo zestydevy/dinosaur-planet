@@ -468,9 +468,9 @@ void func_80013FB4(void) {
     vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
     func_80041D20(0);
     func_80041C6C(0);
-    gDLL_5_AMSEQ->vtbl->func6(3);
-    gDLL_5_AMSEQ->vtbl->func6(0);
-    gDLL_5_AMSEQ->vtbl->func6(1);
+    gDLL_5_AMSEQ->vtbl->stop(3);
+    gDLL_5_AMSEQ->vtbl->stop(0);
+    gDLL_5_AMSEQ->vtbl->stop(1);
     gDLL_22_Subtitles->vtbl->func_448();
     unpause();
     func_800141A4(1, 0, PLAYER_KRYSTAL, -1);

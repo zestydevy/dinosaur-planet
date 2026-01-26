@@ -90,7 +90,7 @@ void GPSH_Shrine_setup(Object* self, GPSH_Shrine_Setup* setup, s32 arg2) {
     objdata->unk4 = 0xC;
     objdata->unk8 = 0x1E;
     objdata->unk2 = 0xC8;
-    gDLL_5_AMSEQ->vtbl->func5(2, 0x2B, 0x50, 1, 0);
+    gDLL_5_AMSEQ->vtbl->play_ex(2, 0x2B, 0x50, 1, 0);
     objdata->unk6 = 0;
     objdata->unkA = 0;
     objdata->unk18 = 0;
@@ -155,7 +155,7 @@ void GPSH_Shrine_control(Object* self) {
             objdata->unk4 = 0x46;
             objdata->unk6 = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(2, objdata->unk4);
+        gDLL_5_AMSEQ->vtbl->set_volume(2, objdata->unk4);
     }
     if (objdata->unkA != 0) {
         objdata->unk8 += objdata->unkA;
@@ -166,14 +166,14 @@ void GPSH_Shrine_control(Object* self) {
             objdata->unk8 = 0x46;
             objdata->unkA = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
+        gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
     if (objdata->unk2 > 0) {
         objdata->unk2 -= gUpdateRate;
         if (objdata->unk2 <= 0) {
             objdata->unk2 = 0;
             if (objdata->unk18 == 0) {
-                gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, objdata->unk8, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, objdata->unk8, 0);
                 objdata->unk18 = 1;
             }
         }
@@ -195,12 +195,12 @@ void GPSH_Shrine_control(Object* self) {
                 if (var_v0 <= 0) {
                     var_v0 = 1;
                 }
-                gDLL_5_AMSEQ->vtbl->func13(3, var_v0);
+                gDLL_5_AMSEQ->vtbl->set_volume(3, var_v0);
                 var_v0 = ((f32) objdata->unk4 * ((200.0f - (sp3C - 100.0f)) / 200.0f));
                 if (var_v0 <= 0) {
                     var_v0 = 1;
                 }
-                gDLL_5_AMSEQ->vtbl->func13(2, var_v0);
+                gDLL_5_AMSEQ->vtbl->set_volume(2, var_v0);
             }
         }
         switch (objdata->unk15) {
@@ -274,14 +274,14 @@ void GPSH_Shrine_control(Object* self) {
         case 4:
             if (main_get_bits(BIT_SP_Map_MMP) != 0) {
                 objdata->unk8 = 1;
-                gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 1);
                 objdata->unk15 = 6;
                 return;
             }
             main_set_bits(BIT_DB_Entered_Shrine_1, 0);
-            gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
+            gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
             objdata->unkA = 1;
             gDLL_3_Animation->vtbl->func17(1, self, -1);
             objdata->unk15 = 5;
@@ -334,8 +334,8 @@ void GPSH_Shrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 // offset: 0xF70 | func: 4 | export: 4
 void GPSH_Shrine_free(Object *self, s32 a1) {
     gDLL_14_Modgfx->vtbl->func5(self);
-    gDLL_5_AMSEQ->vtbl->func13(3, 0);
-    gDLL_5_AMSEQ->vtbl->func13(2, 0);
+    gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
+    gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }
 
 // offset: 0x1000 | func: 5 | export: 5
@@ -368,7 +368,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
             objdata->unk8 = 0x46;
             objdata->unkA = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
+        gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
     for (i = 0; i < a2->unk98; i++) {
         temp_v0_2 = a2->unk8E[i];
@@ -418,7 +418,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
                 break;
             case 11:
                 objdata->unk8 = 0x64;
-                gDLL_5_AMSEQ->vtbl->func5(3, 0x30, 0x50, (u8)objdata->unk8, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x30, 0x50, (u8)objdata->unk8, 0);
                 break;
             case 12:
                 main_set_bits(BIT_Test_of_Fear_Particles, 0);

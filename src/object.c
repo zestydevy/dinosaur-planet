@@ -1679,7 +1679,7 @@ void func_80023464(s32 playerno) {
 
         gDLL_2_Camera->vtbl->func0(newPlayer, x - 50.0f, y, z - 50.0f);
         gDLL_6_AMSFX->vtbl->func_480(newPlayer);
-        gDLL_5_AMSEQ->vtbl->func3(newPlayer);
+        gDLL_5_AMSEQ->vtbl->set_focus_obj(newPlayer);
     }
 }
 
@@ -1731,7 +1731,7 @@ void func_80023628() {
     gDLL_2_Camera->vtbl->func6(0x54, 0, 0, 0x20, &D_80091668, 0, 0xFF);
     gDLL_2_Camera->vtbl->func1(1);
     gDLL_6_AMSFX->vtbl->func_480(player);
-    gDLL_5_AMSEQ->vtbl->func3(player);
+    gDLL_5_AMSEQ->vtbl->set_focus_obj(player);
 
     D_800B1988 = 0;
     func_8004A67C();

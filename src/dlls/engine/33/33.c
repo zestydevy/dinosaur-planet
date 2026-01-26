@@ -891,10 +891,10 @@ void dll_33_func_24FC(Object* arg0, DLL33_Data* arg1, u8 arg2) {
     }
     if (!(arg1->unk3B0 & arg2)) {
         if (arg1->unk3A6 != 0) {
-            gDLL_5_AMSEQ2->vtbl->func1(arg0, arg1->unk3A6, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A6, 0, 0, 0);
         }
         if (arg1->unk3A4 != 0) {
-            gDLL_5_AMSEQ2->vtbl->func1(arg0, arg1->unk3A4, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A4, 0, 0, 0);
         }
     }
     func_80008E08(&arg1->unk374);

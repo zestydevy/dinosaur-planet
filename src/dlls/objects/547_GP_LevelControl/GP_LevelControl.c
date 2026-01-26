@@ -140,7 +140,7 @@ void GP_LevelControl_func_4C8(Object *self) {
     s32 mapSetup;
 
     mapSetup = gDLL_29_Gplay->vtbl->get_map_setup(MAP_GOLDEN_PLAINS);
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0xEE, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0xEE, 0, 0, 0);
     GP_LevelControl_func_58C(self, 1);
     if (mapSetup == 3) {
         main_set_bits(BIT_GP_Sharpclaw_Taken_Spellstone, 1);
