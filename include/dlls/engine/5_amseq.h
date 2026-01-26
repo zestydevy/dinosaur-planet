@@ -8,25 +8,25 @@
 
 DLL_INTERFACE(DLL_5_AMSEQ) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*func0)(Object* arg0, u16 arg1, s32 arg2, s32 arg3, s32 arg4);
-    /*1*/ void (*func1)(Object *arg0, u16 arg1, s32 arg2, s32 arg3, s32 arg4);
-    /*2*/ s32 (*func2)(Object *arg0, u16 arg1);
-    /*3*/ void (*func3)(Object *arg0);
-    /*4*/ void (*func4)(u8 arg0, u8 arg1);
-    /*5*/ void (*func5)(u8 arg0, u8 arg1, s16 arg2, s16 arg3, u16 arg4);
-    /*6*/ void (*func6)(u8 arg0);
-    /*7*/ u8 (*func7)(u8 arg0);
-    /*8*/ u16 (*func8)(void);
-    /*9*/ void (*func9)(u32 volume);
+    /*0*/ s32 (*set)(Object *arg0, u16 actionNo, s32 arg2, s32 arg3, s32 arg4);
+    /*1*/ void (*free)(Object *arg0, u16 actionNo, s32 arg2, s32 arg3, s32 arg4);
+    /*2*/ s32 (*is_set)(Object *arg0, u16 arg1);
+    /*3*/ void (*set_focus_obj)(Object *arg0);
+    /*4*/ void (*play)(u8 arg0, u8 arg1);
+    /*5*/ void (*play_ex)(u8 arg0, u8 arg1, s16 arg2, s16 arg3, u16 arg4);
+    /*6*/ void (*stop)(u8 arg0);
+    /*7*/ u8 (*get_no)(u8 arg0);
+    /*8*/ u16 (*get_volume_option)(void);
+    /*9*/ void (*set_volume_option)(u32 volume);
     /*10*/ UNK_TYPE_32 (*func10)(void);
     /*11*/ void (*func11)(UNK_TYPE_32 arg0);
-    /*12*/ u8 (*func12)(u8 arg0);
-    /*13*/ void (*func13)(u8 arg0, u8 arg1);
+    /*12*/ u8 (*get_volume)(u8 arg0);
+    /*13*/ void (*set_volume)(u8 arg0, u8 arg1);
     /*14*/ UNK_TYPE_32 (*func14)(UNK_TYPE_32 arg0);
     /*15*/ void (*func15)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1);
     /*16*/ void (*func16)(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1);
     /*17*/ void (*func17)(Object *obj);
-    /*18*/ void (*func18)(void);
+    /*18*/ void (*tick)(void);
     /*19*/ void (*func19)(UNK_TYPE_32 arg0);
     /*20*/ void (*func20)(UNK_TYPE_32 arg0);
     /*21*/ void (*func21)(UNK_TYPE_32 arg0);

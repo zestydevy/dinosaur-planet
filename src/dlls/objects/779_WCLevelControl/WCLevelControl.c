@@ -450,12 +450,12 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
     switch (objdata->unk4) {
     case 1:
         if (objdata->unk5 & 1) {
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x106, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
             func_8000F64C(0x11, 0x3C);
             func_8000F6CC();
         } else if (main_get_bits(BIT_7F9) != 0) {
             objdata->unk5 |= 4;
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x104, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
             if (main_get_bits(BIT_7FA) != 0) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
@@ -465,7 +465,7 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
                 objdata->unk4 = 0;
             }
         } else if (func_8000FB1C() != 0) {
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x104, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             main_set_bits(BIT_7EF, 0);
             main_set_bits(BIT_7ED, 0);
             objdata->unk4 = 0;
@@ -473,12 +473,12 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
         break;
     case 2:
         if (objdata->unk5 & 1) {
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x106, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
             func_8000F64C(0x11, 0x3C);
             func_8000F6CC();
         } else if (main_get_bits(BIT_7FA) != 0) {
             objdata->unk5 |= 8;
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x104, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             func_8000FAC8();
             if (main_get_bits(BIT_7F9) != 0) {
                 gDLL_3_Animation->vtbl->func17(0, self, -1);
@@ -488,7 +488,7 @@ static void dll_779_func_1444(Object *self, WCLevelControl_Data *objdata) {
                 objdata->unk4 = 0;
             }
         } else if (func_8000FB1C() != 0) {
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x104, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
             main_set_bits(BIT_7F0, 0);
             main_set_bits(BIT_7EE, 0);
             objdata->unk4 = 0;
@@ -523,14 +523,14 @@ static void dll_779_func_1928(Object *self, WCLevelControl_Data *objdata) {
     sp37 = gDLL_7_Newday->vtbl->func8(&sp30);
     switch(objdata->unk4) {
         case 6:
-            gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x106, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(NULL, 0x106, 0, 0, 0);
             func_8000F64C(0x11, 0x3C);
             func_8000F6CC();
             objdata->unk4 = 4;
             break;
         case 4:
             if (func_8000FB1C() != 0) {
-                gDLL_5_AMSEQ2->vtbl->func0(NULL, 0x104, 0, 0, 0);
+                gDLL_5_AMSEQ2->vtbl->set(NULL, 0x104, 0, 0, 0);
                 if (main_get_bits(BIT_2A5) != 0) {
                     objdata->unk5 |= 0x40;
                 } else {

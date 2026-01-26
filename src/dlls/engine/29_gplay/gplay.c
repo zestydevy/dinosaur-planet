@@ -267,7 +267,7 @@ void gplay_init_save(s8 idx, char *filename) {
         sState.save.map.unk171C[i].unk3C = 1;
 
         for (k = 0; k < 4; k++) {
-            sState.save.map.unk179C[i].unk0[k] = -1;
+            sState.save.map.unk179C[i].actionNums[k] = -1;
         }
     }
 
@@ -588,7 +588,7 @@ GplayStruct12 *gplay_func_FA8(void) {
     return &sState.save.map.unk171C[sState.save.file.playerno];
 }
 
-GplayStruct13 *gplay_func_FE8(void) {
+PlayerMusicAction *gplay_func_FE8(void) {
     return &sState.save.map.unk179C[sState.save.file.playerno];
 }
 

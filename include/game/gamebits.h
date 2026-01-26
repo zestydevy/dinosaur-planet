@@ -1357,7 +1357,7 @@ typedef enum {
     BIT_Blue_Bean_Count = 0x546, // len:6 group:1     [INVENTORY]
     BIT_Boss_Klanadack_Map_Setup = 0x547, // len:4 group:1
     BIT_Boss_Klanadack_ObjGroup_Bits = 0x548, // len:32 group:3
-    BIT_549 = 0x549, // len:1 group:1
+    BIT_DisableMusic = 0x549, // len:1 group:1  AMSEQ will not allow new music to start while set
     BIT_54A = 0x54A, // len:2 group:0
     BIT_54B = 0x54B, // len:1 group:0
     BIT_54C = 0x54C, // len:1 group:0

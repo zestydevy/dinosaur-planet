@@ -120,7 +120,7 @@ void animobj_free(Object *self, s32 arg1) {
         }
     }
 
-    gDLL_5_AMSEQ2->vtbl->func1(self, 0xFFFF, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     if (objdata->unk30 != 0){
         gDLL_6_AMSFX->vtbl->func_A1C(objdata->unk30);
     }

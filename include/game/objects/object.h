@@ -297,7 +297,7 @@ typedef struct Object {
 /*00AD*/    s8 modelInstIdx;
 /*00AE*/    s8 updatePriority;
 /*00AF*/    u8 unkAF; //Target arrow flags (see InteractionArrowFlags)
-/*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here)
+/*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here). if 0x40 is set, this object was deleted
 /*00B2*/    s16 unkB2;
 /*00B4*/    s16 unkB4;
 /*00B6*/    u8 unkB6[2];

@@ -30,7 +30,7 @@ void MMP_levelcontrol_control(Object *self) {
         func_80000860(self, player, 0x138, 0);
         func_80000860(self, player, 0x139, 0);
         func_80000450(self, player, 0x1DC, 0, 0, 0);
-        gDLL_5_AMSEQ2->vtbl->func0(self, 0xF, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->set(self, 0xF, 0, 0, 0);
         self->unkDC = 0;
     }
     gDLL_6_AMSFX->vtbl->func_16E0();
@@ -48,8 +48,8 @@ void MMP_levelcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
 
 // offset: 0x200 | func: 4 | export: 4
 void MMP_levelcontrol_free(Object *self, s32 a1) {
-    gDLL_5_AMSEQ2->vtbl->func1(self, 0xF, 0, 0, 0);
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0x107, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->free(self, 0xF, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0x107, 0, 0, 0);
 }
 
 // offset: 0x290 | func: 5 | export: 5

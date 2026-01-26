@@ -2724,7 +2724,7 @@ void map_func_8004773C(void) {
     if ((D_800B4A5E == -2) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
         sp40 = gDLL_29_Gplay->vtbl->func_F60();
         sp3C = gDLL_29_Gplay->vtbl->func_FA8();
-        sp38 = gDLL_29_Gplay->vtbl->func_FE8()->unk0;
+        sp38 = gDLL_29_Gplay->vtbl->func_FE8()->actionNums;
         if (D_800B4A5E == -2) {
             if (sp40->unk0 != -1) {
                 func_80000608(player, player, sp40->unk0, 0, 0, 0);
@@ -2763,7 +2763,7 @@ void map_func_8004773C(void) {
             gDLL_12_Minic->vtbl->func6(sp3C->unk3C & 1);
             for (i = 0; i < 4; i++) {
                 if (sp38[i] != -1) {
-                    gDLL_5_AMSEQ2->vtbl->func0(NULL, sp38[i], 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->set(NULL, sp38[i], 0, 0, 0);
                 }
             }
             if (sp40->unk12 != -1) {

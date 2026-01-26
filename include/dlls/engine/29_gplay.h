@@ -141,8 +141,8 @@ typedef struct {
 
 // size: 0x8
 typedef struct {
-    s16 unk0[4];
-} GplayStruct13;
+    s16 actionNums[4];
+} PlayerMusicAction;
 
 // size: 0x17ac
 typedef struct {
@@ -151,7 +151,7 @@ typedef struct {
     PlayerLocation playerLocations[2]; // saved locations of each player
     GplayStruct6 unk16F4[2];
     GplayStruct12 unk171C[2];
-    GplayStruct13 unk179C[2];
+    PlayerMusicAction unk179C[2];
 } MapSaveData;
 
 enum Languages {
@@ -278,7 +278,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*36*/ GplayStruct11 *(*func_F30)(void);
     /*37*/ GplayStruct6 *(*func_F60)(void);
     /*38*/ GplayStruct12 *(*func_FA8)(void);
-    /*39*/ GplayStruct13 *(*func_FE8)(void);
+    /*39*/ PlayerMusicAction *(*func_FE8)(void);
     /*40*/ FoodbagContents *(*func_1974)(void); //get player foodbag struct
     /*41*/ FoodbagContents *(*func_19B8)(void); //get dino foodbag struct
     /*42*/ u32 (*get_time_played)(void);

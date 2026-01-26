@@ -81,7 +81,7 @@ void DRLavaControl_setup(Object* self, DRLavaControl_Setup* objSetup, s32 arg2) 
         return;
     }
     DRLavaControl_freeze_update_effects(self, objData, 3);
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0x102, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0x102, 0, 0, 0);
 }
 
 // offset: 0x130 | func: 1 | export: 1
@@ -146,7 +146,7 @@ void DRLavaControl_freeze(Object* self) {
             main_set_bits(objSetup->gameBitFrozen, TRUE);
             // diPrintf(" bit set %i ", objSetup->gameBitFrozen);
             main_increment_bits(BIT_DR_Lava_Pools_Cooled_Count);
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0x102, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0x102, 0, 0, 0);
         }
     }
 

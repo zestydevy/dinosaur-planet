@@ -51,7 +51,7 @@ void dll_60_ctor(void *dll) {
         func_80014B1C();
         data_4 = 0;
         func_800141A4(1, 0, PLAYER_NONE, -1);
-        gDLL_5_AMSEQ->vtbl->func0(NULL, 0x20, 0, 0x2f, 0);
+        gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
         main_set_bits(BIT_44F, 1);
         gDLL_2_Camera->vtbl->func21(30, 1);
         data_8 = queue_load_texture_proxy(0x2d2);

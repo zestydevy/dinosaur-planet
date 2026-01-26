@@ -196,7 +196,7 @@ void        	n_alEvtqFlushType(ALEventQueue *evtq, s16 type);
 
 // TODO: merge with oscData
 struct oscstate {
-	struct oscstate* unk00;
+	struct oscstate* next;
 	u8 unk04;
 	s32 unk08;
 	f32 unk0c;

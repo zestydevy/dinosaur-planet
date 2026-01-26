@@ -169,9 +169,9 @@ void SC_levelcontrol_control(Object *self) {
         } else if ((main_get_bits(BIT_Dont_Repeat_Swapstone_Intro)) && (func_8000FB1C() != 0)) {
             main_set_bits(BIT_SC_Pond_Platform_Raised, 0);
             if (objdata->isNighttime) {
-                gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
+                gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
             } else {
-                gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
+                gDLL_5_AMSEQ2->vtbl->set(self, 0x12, 0, 0, 0);
             }
             objdata->unk2 = 0;
         }
@@ -201,14 +201,14 @@ void SC_levelcontrol_free(Object *self, s32 arg1) {
     }
     main_set_bits(BIT_SC_UNKNOWN_2BA, objdata->index1);
     func_8000FA2C();
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0xBB, 0, 0, 0);
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0xDA, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0xBB, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0xDA, 0, 0, 0);
     if (objdata->isNighttime) {
-        gDLL_5_AMSEQ2->vtbl->func1(self, 0xEC, 0, 0, 0);
-        gDLL_5_AMSEQ2->vtbl->func1(self, 0xBA, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->free(self, 0xEC, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->free(self, 0xBA, 0, 0, 0);
     } else {
-        gDLL_5_AMSEQ2->vtbl->func1(self, 0x12, 0, 0, 0);
-        gDLL_5_AMSEQ2->vtbl->func1(self, 0xB9, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->free(self, 0x12, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->free(self, 0xB9, 0, 0, 0);
     }
 }
 
@@ -233,16 +233,16 @@ void SC_levelcontrol_func_660(Object *self, u8 arg1) {
     if (objdata->unk2 == 1) {
         main_set_bits(BIT_SC_Pond_Platform_Raised, 1);
         main_set_bits(BIT_SC_Platform_Rises_Totem_Challenge_Begins, 1);
-        gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
         func_8000F64C(0x1D, 0x2D);
         func_8000F6CC();
     } else if (objdata->unk2 == 3) {
         if (gDLL_7_Newday->vtbl->func8(&time)) {
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0xBA, 0, 0, 0);
         } else {
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0x12, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0xB9, 0, 0, 0);
         }
         objdata->unk2 = 0;
     } else if (objdata->unk2 == 5) {
@@ -306,7 +306,7 @@ void SC_levelcontrol_func_8B4(Object *self) {
     SC_levelcontrol_func_BBC(self, 1);
     switch (mapSetup) {
     case 1:
-        gDLL_5_AMSEQ2->vtbl->func0(self, 0xCB, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->set(self, 0xCB, 0, 0, 0);
         objdata->unk2 = 7;
         break;
     case 6:
@@ -341,12 +341,12 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
         func_80000450(self, player, _data_E8[objdata->index1], 0, 0, 0);
         func_80000450(self, player, _data_120[objdata->index1], 0, 0, 0);
         if (isNighttime) {
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0xBA, 0, 0, 0);
             func_80000450(self, player, 0x1E3, 0, 0, 0);
         } else {
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
-            gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0x12, 0, 0, 0);
+            gDLL_5_AMSEQ2->vtbl->set(self, 0xB9, 0, 0, 0);
             func_80000450(self, player, 0x1E4, 0, 0, 0);
         }
         main_set_bits(BIT_SC_UNKNOWN_2BA, objdata->index1);
@@ -389,14 +389,14 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
         if (objdata->unk3 <= 0) {
             if (isNighttime) {
                 if (objdata->unk2 == 0) {
-                    gDLL_5_AMSEQ2->vtbl->func0(self, 0xEC, 0, 0, 0);
-                    gDLL_5_AMSEQ2->vtbl->func0(self, 0xBA, 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->set(self, 0xBA, 0, 0, 0);
                 }
                 func_80000450(self, player, 0x1E3, 0, 0, 0);
             } else {
                 if (objdata->unk2 == 0) {
-                    gDLL_5_AMSEQ2->vtbl->func0(self, 0x12, 0, 0, 0);
-                    gDLL_5_AMSEQ2->vtbl->func0(self, 0xB9, 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->set(self, 0x12, 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->set(self, 0xB9, 0, 0, 0);
                 }
                 func_80000450(self, player, 0x1E4, 0, 0, 0);
             }
