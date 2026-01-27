@@ -134,8 +134,8 @@ u64 ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)];
 s8 D_800B09C0;
 u8 gFrameBufIdx;
 s8 gPauseState;
-u8 D_800B09C3;
-s8 D_800B09C4;
+u8 gDemoState;
+s8 gDemoFinished;
 /* -------- .bss end 800b09d0 -------- */
 
 void func_8001440C(s32 arg0);
@@ -540,7 +540,7 @@ void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     D_800B09C0 = 1;
 }
 
-void func_800142F0(f32 x, f32 y, f32 z, s32 playerno) {
+void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
     Vec3f pos;
     pos.x = x;
     pos.y = y;
@@ -855,14 +855,14 @@ s32 remove_temp_dll(s32 id) {
     return 1;
 }
 
-void func_80014B1C(void) {
+void main_load_frontend(void) {
     if (gDLL_76 == 0) {
         gDLL_75 = dll_load_deferred(DLL_ID_75, 10);
         gDLL_76 = dll_load_deferred(DLL_ID_76, 3);
     }
 }
 
-void func_80014B6C(void) {
+void main_unload_frontend(void) {
     if (gDLL_76 != 0) {
         dll_unload(gDLL_75);
         gDLL_75 = 0;
@@ -871,35 +871,35 @@ void func_80014B6C(void) {
     }
 }
 
-void func_80014BBC(void) {
-    D_800B09C3 = 0;
-    D_800B09C4 = 0;
+void main_demo_reset(void) {
+    gDemoState = 0;
+    gDemoFinished = 0;
 }
 
-void func_80014BD4(f32 x, f32 y, f32 z, s32 playerno) {
-    D_800B09C3++;
+void main_demo_start(f32 x, f32 y, f32 z, s32 playerno) {
+    gDemoState++;
 
-    if (D_800B09C3 >= 5) {
-        D_800B09C3 = 0;
-        D_800B09C4 = 1;
+    if (gDemoState >= 5) {
+        gDemoState = 0;
+        gDemoFinished = 1;
     }
 
-    func_800142F0(x, y, z, playerno);
+    main_start_game(x, y, z, playerno);
 }
 
-s32 func_80014C28(void) {
-    s32 _v1 = D_800B09C3 + 1;
+s32 main_demo_next(void) {
+    s32 _v1 = gDemoState + 1;
     if (_v1 >= 5)
         _v1 = 0;
     return _v1;
 }
 
-u8 func_80014C50(void) {
-    return D_800B09C3;
+u8 main_demo_state(void) {
+    return gDemoState;
 }
 
-u8 func_80014C60(void) {
-    return D_800B09C4;
+u8 main_demo_finished(void) {
+    return gDemoFinished;
 }
 
 void clear_PlayerPosBuffer(void) {

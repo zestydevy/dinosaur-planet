@@ -48,7 +48,7 @@ void dll_60_ctor(void *dll) {
         bss_0 = 0.0f;
         font_load(FONT_DINO_MEDIUM_FONT_IN);
         font_load(FONT_DINO_MEDIUM_FONT_OUT);
-        func_80014B1C();
+        main_load_frontend();
         data_4 = 0;
         func_800141A4(1, 0, PLAYER_NONE, -1);
         gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
