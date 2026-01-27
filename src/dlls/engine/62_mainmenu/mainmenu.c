@@ -236,7 +236,7 @@ void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
         font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
         font_window_flush_strings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
-        if (func_80014C60()) {
+        if (main_demo_finished()) {
             func_8003825C(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, 0);
         }
         font_window_draw(gfx, NULL, NULL, 1);

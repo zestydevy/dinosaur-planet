@@ -346,8 +346,8 @@ s32 dll_63_update1() {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             } else {
                 // Exit to main menu
-                func_80014BBC();
-                func_800142F0(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
+                main_demo_reset();
+                main_start_game(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
                 menu_set(MENU_TITLE_SCREEN);
             }
         }
@@ -536,7 +536,7 @@ static void dll_63_clean_up(s32 leavingMenus) {
         font_unload(FONT_DINO_MEDIUM_FONT_IN);
         font_unload(FONT_DINO_MEDIUM_FONT_OUT);
         font_unload(FONT_FUN_FONT);
-        func_80014B6C();
+        main_unload_frontend();
     }
 }
 
