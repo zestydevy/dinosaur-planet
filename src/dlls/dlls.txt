@@ -80,6 +80,7 @@
 311 = objects/311_IMMultiSeq
 314 = objects/314_foodbag
 315 = objects/315_sidefoodbag
+318 = objects/318_fish
 321 = objects/321_Duster
 325 = objects/325_trigger
 331 = objects/331_genprops

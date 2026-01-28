@@ -1807,7 +1807,7 @@ void dll_210_func_43EC(Object* player, f32 arg1, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x44A4 | func: 24 | export: 66
-s32 dll_210_func_44A4(Object* player, s32 arg1) {
+void *dll_210_func_44A4(Object* player, s32 arg1) {
     s32 i;
     Player_Data* objdata2;
     ObjFSA_Data* fsa;
@@ -1818,12 +1818,12 @@ s32 dll_210_func_44A4(Object* player, s32 arg1) {
     switch (arg1) {
     case 1:
         if (fsa->unk304 & 0x1000) {
-            return 0;
+            return (void*)0;
         }
         if (player->unkB0 & 0x1000) {
-            return 0;
+            return (void*)0;
         }
-        return 1;
+        return (void*)1;
     case 2:
         switch (fsa->animState) {
             case PLAYER_ASTATE_Standing:
@@ -1840,28 +1840,28 @@ s32 dll_210_func_44A4(Object* player, s32 arg1) {
                 temp = 5;
                 break;
         }
-        return temp;
+        return (void*)temp;
     case 8:
-        return _bss_1A8 > 0;
+        return (void*)(_bss_1A8 > 0);
     case 9:
-        return fsa->unk341 == 3;
+        return (void*)(fsa->unk341 == 3);
     case 10:
-        return objdata2->flags & 0x200;
+        return (void*)(objdata2->flags & 0x200);
     case 11:
-        return objdata2->flags & 0x100;
+        return (void*)(objdata2->flags & 0x100);
     case 13:
-        return fsa->unk33D == 1;
+        return (void*)(fsa->unk33D == 1);
     case 14:
-        return objdata2->unk87C;
+        return (void*)(s32)objdata2->unk87C;
     case 15:
-        return (s32)objdata2->unk85C;
+        return (void*)objdata2->unk85C;
     case 16:
-        return (s32)objdata2->unk860;
+        return (void*)objdata2->unk860;
     case 18:
-        return objdata2->unk872;
+        return (void*)(s32)objdata2->unk872;
     case 19:
         if (objdata2->unk858 != NULL) {
-            return objdata2->unk858->id;
+            return (void*)(s32)objdata2->unk858->id;
         }
         return 0;
     default:

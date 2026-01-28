@@ -114,4 +114,6 @@ void func_80058680(Object*, f32, f32, f32, f32*, s32);
 void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3);
 s32 func_80056BCC(Vec3f*, Vec3f*, Vec3f*, Vec4f*, Vec3f*, f32);
 
+s32 func_80058B1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
+
 #endif //_FUNCTIONS_H
