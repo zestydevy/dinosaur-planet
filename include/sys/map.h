@@ -57,10 +57,10 @@ typedef struct {
 /*06*/    s16 baseFaceID;
 /*08*/    s16 Ymin;
 /*0a*/    s16 Ymax;
-/*0c*/    s8 Xmin; //Divided by 4
-/*0d*/    s8 Xmax; //Divided by 4
-/*0e*/    s8 Zmin; //Divided by 4
-/*0f*/    s8 Zmax; //Divided by 4
+/*0c*/    u8 Xmin; //Divided by 4
+/*0d*/    u8 Xmax; //Divided by 4
+/*0e*/    u8 Zmin; //Divided by 4
+/*0f*/    u8 Zmax; //Divided by 4
 /*10*/    s8 unk10;
 /*11*/    s8 unk11;
 /*12*/    u8 materialID;
@@ -106,7 +106,7 @@ typedef struct {
 /*04*/    u32 ptr_vertices;
 /*08*/    PtrFace *ptr_faces;
 /*0c*/    FaceBatch *ptr_faceBatches;
-/*10*/    u32 ptr_faceEdgeVectors;
+/*10*/    s16 *ptr_faceEdgeVectors;
 /*14*/    s16 *unk14; // in ROM, sometimes matches grid row
 /*18*/    HitsLine *ptr_hits_lines; // in ROM, sometimes matches grid column (HITS.bin data pointer at runtime)
 /*1c*/    s32 unk1C;
@@ -328,6 +328,7 @@ typedef struct {
 /*0x8*/ s16 unk8; // some sort of index?
 } MapsUnk_800B97C0;
 
+// size: 0x10
 typedef struct Unk8005341C {
     Object *unk0;
     s16 unk4;
@@ -350,7 +351,6 @@ typedef struct MapObjSetupList {
 /*88*/ s32 groupsStart;
 } MapObjSetupList;
 
-
 typedef struct UnkFunc80051D68Arg3 {
     f32 unk0;
     s16 unk4;
@@ -363,7 +363,9 @@ typedef struct UnkFunc80051D68Arg3 {
     UNK_TYPE_8 unk2E;
     UNK_TYPE_8 unk2F;
     s8 unk30;
-    u8 pad31[3];
+    s8 unk31;
+    u8 unk32;
+    u8 pad33;
 } UnkFunc80051D68Arg3;
 
 #define MAX_RENDER_LIST_LENGTH 400
