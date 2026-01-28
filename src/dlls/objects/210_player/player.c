@@ -1117,6 +1117,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
         case 0x7000A:
             if (messageArgument > 0) {
                 if (main_get_bits(messageArgument) != 0) {
+                    // Not the first time this item was collected, skip sequence
                     obj_send_mesg(sp8C, 0x7000BU, player, NULL);
                     if (fsa->animState != PLAYER_ASTATE_Collecting) {
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Collecting);
@@ -7670,50 +7671,50 @@ static void dll_210_func_16204(Object* player, ObjFSA_Data *fsa) {
 }
 
 // offset: 0x16220 | func: 105
-s32 dll_210_func_16220(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+s32 dll_210_func_16220(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Object* temp_v0;
     Object* temp_v0_2;
     f32 var_fv0;
-    Player_Data* temp_s0;
+    Player_Data* objdata;
 
-    temp_s0 = player->data;
-    func_800267A4(player);
+    objdata = self->data;
+    func_800267A4(self);
     fsa->unk27C = 0.0f;
     fsa->animExitAction = dll_210_func_1660C;
-    temp_s0->unk8A9 = 1;
-    if (player->curModAnimId == 0xC7) {
+    objdata->unk8A9 = 1;
+    if (self->curModAnimId == 0xC7) {
         fsa->animTickDelta = 0.01f;
         fsa->unk278 = 0.0f;
-        if (player->animProgress > 0.5f) {
-            if (temp_s0->unk708->srt.flags & 0x4000) {
-                temp_s0->unk710 -= 0.04f * arg2;
+        if (self->animProgress > 0.5f) {
+            if (objdata->unk708->srt.flags & 0x4000) {
+                objdata->unk710 -= 0.04f * updateRate;
             } else {
                 gDLL_28_ScreenFade->vtbl->fade(0x3C, 1);
             }
-            temp_v0 = temp_s0->unk708;
+            temp_v0 = objdata->unk708;
             temp_v0->srt.flags |= 0x4000;
-            func_800267A4(temp_s0->unk708);
-            if (temp_s0->unk710 < 0.0f) {
-                temp_s0->unk710 = 0.0f;
+            func_800267A4(objdata->unk708);
+            if (objdata->unk710 < 0.0f) {
+                objdata->unk710 = 0.0f;
             }
         } else {
-            temp_s0->unk710 = 1.0f;
-            player->srt.yaw += (s32) (func_80031DD8(player, temp_s0->unk708, 0) * (s32) arg2) >> 4;
+            objdata->unk710 = 1.0f;
+            self->srt.yaw += (s32) (func_80031DD8(self, objdata->unk708, 0) * (s32) updateRate) >> 4;
         }
-        temp_v0_2 = temp_s0->unk708;
-        temp_v0_2->srt.scale = temp_v0_2->def->scale * (0.5f + (temp_s0->unk710 * 0.5f));
+        temp_v0_2 = objdata->unk708;
+        temp_v0_2->srt.scale = temp_v0_2->def->scale * (0.5f + (objdata->unk710 * 0.5f));
         if ((fsa->unk33A != 0) && (gDLL_28_ScreenFade->vtbl->is_complete != NULL)) {
-            gDLL_3_Animation->vtbl->func17(0, player, -1);
+            gDLL_3_Animation->vtbl->func17(0, self, -1);
             gDLL_28_ScreenFade->vtbl->fade_reversed(0x3C, 1);
             fsa->animStateTime = 0;
         }
     } else {
-        var_fv0 = (temp_s0->unk708->srt.transl.f[1] - player->srt.transl.f[1]) / 70.0f;
+        var_fv0 = (objdata->unk708->srt.transl.f[1] - self->srt.transl.f[1]) / 70.0f;
         if (var_fv0 > 0.2f) {
             var_fv0 += 0.4f;
         }
-        func_80023D30(player, 0xC7, var_fv0, 0U);
-        temp_s0->unk710 = 1.0f;
+        func_80023D30(self, 0xC7, var_fv0, 0U);
+        objdata->unk710 = 1.0f;
     }
     return 0;
 }

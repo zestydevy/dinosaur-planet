@@ -108,7 +108,7 @@ typedef struct {
     0, 0
 };
 /*0x1C*/ static s8 _data_1C[4] = {0,0,0,0};
-/*0x20*/ static s32 _data_20 = -1;
+/*0x20*/ static s32 _data_20 = -1; // object ID of the thing the player should hold when playing the first time pickup sequence
 /*0x24*/ static Object *_data_24 = 0;
 /*0x28*/ static s8 _data_28[] = {
     0, 0, 0, 0
@@ -200,7 +200,7 @@ typedef struct {
 /*0x69E*/ static u8 _bss_69E[0x2];
 /*0x6A0*/ static u8 _bss_6A0[0x58];
 /*0x6F8*/ static s8 _bss_6F8;
-/*0x6FC*/ static s32 _bss_6FC;
+/*0x6FC*/ static Object *_bss_6FC;
 /*0x700*/ static s16 _bss_700[2];
 /*0x708*/ static ANIMActorOverride _bss_708[44][16];
 /*0x1D0C*/ static u8 _bss_1D0C[0x7C];
@@ -210,6 +210,7 @@ void dll_3_func_98(void);
 static s32 dll_3_func_4BAC(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup);
 void dll_3_func_7B64(AnimObj_Data*);
 s32 dll_3_func_9524(Object * arg0, AnimObj_Data *arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
+static void dll_3_func_9DD4(void);
 
 // offset: 0x0 | ctor
 void dll_3_ctor(void *dll) {
@@ -1272,8 +1273,46 @@ s32 dll_3_func_8900(s32 objectSeqIndex, Object* object, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_8900.s")
 
 // offset: 0x906C | func: 53 | export: 18
-void dll_3_func_906C(s32 arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/3_ANIM/dll_3_func_906C.s")
+void dll_3_func_906C(s32 arg0) {
+    s32 i;
+    Object* obj;
+    AnimObj_Data *animObjData;
+    s32 _pad;
+    Object *sp48[12];
+    s32 numObjs;
+    s32 sp40;
+    s32 var_a1;
+    Object** objList;
+    
+    objList = get_world_objects(&sp40, &numObjs);
+    var_a1 = 0;
+
+    for (i = 0; i < numObjs; i++) {
+        obj = objList[i];
+        if (arg0 == obj->unkB4) {
+            obj->unkB4 = -1;
+        }
+        if (obj->group == 0x10) {
+            animObjData = (AnimObj_Data*)obj->data;
+            if (arg0 == animObjData->unk63) {
+                if (obj == _bss_6FC) {
+                    _bss_6FC = 0;
+                }
+                sp48[var_a1] = obj;
+                var_a1 += 1;
+                if (var_a1 == 12) {
+                    var_a1 = 11;
+                }
+            }
+        }
+    }
+    for (i = 0; i < var_a1; i++) {
+        obj_destroy_object(sp48[i]);
+    }
+    dll_3_func_9DD4();
+    _data_24 = NULL;
+    _bss_168[arg0] = 0;
+}
 
 // offset: 0x9358 | func: 54 | export: 20
 void dll_3_func_9358(Object *arg0, s32 arg1) {
