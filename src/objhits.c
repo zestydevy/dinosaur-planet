@@ -109,8 +109,8 @@ s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
         collisionType = 0x7F;
         collisionIndex = -1;
         for (i = 0; i < objHitInfo->unk62; i++) {
-            if (objHitInfo->unk66[i] < collisionType) {
-                collisionType = objHitInfo->unk66[i];
+            if (objHitInfo->hitCollisionTypes[i] < collisionType) {
+                collisionType = objHitInfo->hitCollisionTypes[i];
                 collisionIndex = i;
             }
         }
@@ -130,10 +130,11 @@ s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
     return 0;
 }
 
+/** Checks for collisions, see func_80025F40. Returns a collision type. */
 s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f32* arg5, f32* arg6) {
     ObjectHitInfo* objHitInfo;
-    s8 var_a0;
-    s8 var_a1;
+    s8 collisionType;
+    s8 collisionIndex;
     s32 i;
 
     objHitInfo = arg0->objhitInfo;
@@ -142,30 +143,30 @@ s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f
     }
 
     if (objHitInfo->unk62 != 0) {
-        var_a0 = 0x7F;
-        var_a1 = -1;
+        collisionType = 0x7F;
+        collisionIndex = -1;
         for (i = 0; i < objHitInfo->unk62; i++) {
-            if (objHitInfo->unk66[i] < var_a0) {
-                var_a0 = objHitInfo->unk66[i];
-                var_a1 = i;
+            if (objHitInfo->hitCollisionTypes[i] < collisionType) {
+                collisionType = objHitInfo->hitCollisionTypes[i];
+                collisionIndex = i;
             }
         }
-        if (var_a1 != -1) {
+        if (collisionIndex != -1) {
             if (arg1 != 0) {
-                *arg1 = objHitInfo->unk6C[var_a1];
+                *arg1 = objHitInfo->unk6C[collisionIndex];
             }
             if (arg2 != 0) {
-                *arg2 = objHitInfo->unk63[var_a1];
+                *arg2 = objHitInfo->unk63[collisionIndex];
             }
             if (arg3 != 0) {
-                *arg3 = objHitInfo->unk69[var_a1];
+                *arg3 = objHitInfo->unk69[collisionIndex];
             }
             if (arg4 != NULL) {
-                *arg4 = objHitInfo->unk78[var_a1];
-                *arg5 = objHitInfo->unk84[var_a1];
-                *arg6 = objHitInfo->unk90[var_a1];
+                *arg4 = objHitInfo->unk78[collisionIndex];
+                *arg5 = objHitInfo->unk84[collisionIndex];
+                *arg6 = objHitInfo->unk90[collisionIndex];
             }
-            return var_a0;
+            return collisionType;
         }
     }
     return 0;
@@ -219,12 +220,12 @@ void func_80026184(Object* arg0, Object* arg1) {
     }
 }
 
-s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg5, f32 arg6, f32 arg7) {
+s32 func_800261E8(Object* arg0, Object* arg1, s8 collisionType, s8 arg3, s8 arg4, f32 arg5, f32 arg6, f32 arg7) {
     ObjectHitInfo* objHitInfo;
     ObjectHitInfo* objHitInfo2;
     s32 i;
 
-    if (arg2 == 0) {
+    if (collisionType == 0) {
         return FALSE;
     }
 
@@ -242,9 +243,9 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
 
     for (i = 0; i < objHitInfo->unk62; i++) {
         if (arg1 == objHitInfo->unk6C[i]) {
-            if (arg2 < objHitInfo->unk66[i]) {
+            if (collisionType < objHitInfo->hitCollisionTypes[i]) {
                 objHitInfo->unk63[i] = arg4;
-                objHitInfo->unk66[i] = arg2;
+                objHitInfo->hitCollisionTypes[i] = collisionType;
                 objHitInfo->unk69[i] = arg3;
                 objHitInfo->unk78[i] = arg5;
                 objHitInfo->unk84[i] = arg6;
@@ -256,7 +257,7 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
 
     if (i == objHitInfo->unk62 && objHitInfo->unk62 < 3) {
         objHitInfo->unk63[objHitInfo->unk62] = arg4;
-        objHitInfo->unk66[objHitInfo->unk62] = arg2;
+        objHitInfo->hitCollisionTypes[objHitInfo->unk62] = collisionType;
         objHitInfo->unk69[objHitInfo->unk62] = arg3;
         objHitInfo->unk6C[objHitInfo->unk62] = arg1;
         objHitInfo->unk78[objHitInfo->unk62] = arg5;
@@ -268,12 +269,12 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4, f32 arg
     return TRUE;
 }
 
-s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
+s32 func_8002635C(Object* arg0, Object* arg1, s8 collisionType, s8 arg3, s8 arg4) {
     ObjectHitInfo* objHitInfo;
     ObjectHitInfo* objHitInfo2;
     s32 i;
 
-    if (arg2 == 0) {
+    if (collisionType == 0) {
         return FALSE;
     }
 
@@ -291,9 +292,9 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
 
     for (i = 0; i < objHitInfo->unk62; i++) {
         if (arg1 == objHitInfo->unk6C[i]) {
-            if (arg2 < objHitInfo->unk66[i]) {
+            if (collisionType < objHitInfo->hitCollisionTypes[i]) {
                 objHitInfo->unk63[i] = arg4;
-                objHitInfo->unk66[i] = arg2;
+                objHitInfo->hitCollisionTypes[i] = collisionType;
                 objHitInfo->unk69[i] = arg3;
                 objHitInfo->unk78[i] = arg0->srt.transl.x;
                 objHitInfo->unk84[i] = arg0->srt.transl.y;
@@ -305,7 +306,7 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 arg2, s8 arg3, s8 arg4) {
 
     if ((i == objHitInfo->unk62) && (objHitInfo->unk62 < 3)) {
         objHitInfo->unk63[objHitInfo->unk62] = arg4;
-        objHitInfo->unk66[objHitInfo->unk62] = arg2;
+        objHitInfo->hitCollisionTypes[objHitInfo->unk62] = collisionType;
         objHitInfo->unk69[objHitInfo->unk62] = arg3;
         objHitInfo->unk6C[objHitInfo->unk62] = arg1;
         objHitInfo->unk78[objHitInfo->unk62] = arg0->srt.transl.x;
@@ -707,7 +708,7 @@ void obj_do_hit_detection(s32 arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/objhits/obj_do_hit_detection.s")
 #else
 // https://decomp.me/scratch/om8Pt
-void obj_do_hit_detection(s32 arg0) {
+void obj_do_hit_detection(s32 numObjs) {
     u8 pad[0x9A0 - 0x984];
     Object* sp980;
     u8 pad2[0x980 - 0x560];
@@ -741,7 +742,7 @@ void obj_do_hit_detection(s32 arg0) {
     D_800B20B8->unk4 = -36288576.0f;
     D_800B20B8->unk0 = D_800B20B8->unk4;
     D_800B23B8 = D_800B20B8;
-    for (var_s6 = 0, var_s7 = 1; var_s6 < arg0; var_s6++) {
+    for (var_s6 = 0, var_s7 = 1; var_s6 < numObjs; var_s6++) {
         currentObj = objects[var_s6];
         currentObjHitInfo = currentObj->objhitInfo;
         if (currentObjHitInfo != NULL) {
