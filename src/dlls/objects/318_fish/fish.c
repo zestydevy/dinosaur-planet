@@ -3,6 +3,7 @@
 #include "game/objects/object_id.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
+#include "sys/objhits.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/314_foodbag.h"
@@ -62,34 +63,34 @@ typedef struct {
     u8 unk28;
 } fish_Setup;
 
-void dll_318_func_10BC(Object* self);
-static void dll_318_func_11C8(Object *self, s16 a1, u8 a2);
-s32 dll_318_func_1978(Object* self);
-s32 dll_318_func_1EF4(Object* self);
-void dll_318_func_2150(Object* self);
-static void dll_318_func_84(Object* self);
-s32 dll_318_func_F74(Object* self);
-static s32 dll_318_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2);
+static void fish_func_10BC(Object* self);
+static void fish_func_11C8(Object *self, s16 a1, u8 a2);
+static s32 fish_func_1978(Object* self);
+static s32 fish_func_1EF4(Object* self);
+static void fish_func_2150(Object* self);
+static void fish_func_84(Object* self);
+static s32 fish_func_F74(Object* self);
+static s32 fish_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2);
 
 // offset: 0x0 | ctor
-void dll_318_ctor(void *dll) { }
+void fish_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_318_dtor(void *dll) { }
+void fish_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_318_setup(Object *self, fish_Setup *setup, s32 arg2) {
+void fish_setup(Object *self, fish_Setup *setup, s32 arg2) {
     fish_Data *objdata = self->data;
     if (setup->unk28 == 0) {
         setup->unk28 = 1U;
     }
     objdata->unk7C = 0;
-    dll_318_func_84(self);
+    fish_func_84(self);
     self->unkB0 |= 0x2000;
 }
 
 // offset: 0x84 | func: 1
-static void dll_318_func_84(Object* self) {
+static void fish_func_84(Object* self) {
     fish_Data* objdata;
     fish_Setup* setup;
     f32 temp_fa1;
@@ -153,11 +154,7 @@ static void dll_318_func_84(Object* self) {
 }
 
 // offset: 0x630 | func: 2 | export: 1
-#ifndef NON_MATCHING
-void dll_318_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/318_fish/dll_318_control.s")
-#else
-void dll_318_control(Object* self) {
+void fish_control(Object* self) {
     s32 temp_v0;
     fish_Setup* setup;
     f32 var_fa1;
@@ -172,7 +169,7 @@ void dll_318_control(Object* self) {
     
     player = get_player();
     if (objdata->unk7C == 0) {
-        dll_318_func_84(self);
+        fish_func_84(self);
     }
     if (player->id == 0x1F) {
         if (main_get_bits(BIT_2EA) == 0) {
@@ -188,8 +185,8 @@ void dll_318_control(Object* self) {
         }
     }
     temp_v0 = func_80025F40(self, NULL, NULL, NULL);
-    if ((temp_v0 != 0) && (temp_v0 == 0x11)) {
-        dll_318_func_2150(self);
+    if ((temp_v0 != 0) && (temp_v0 == Collision_Type_Fishingnet)) {
+        fish_func_2150(self);
         return;
     }
     objdata->unk4 += gUpdateRateF;
@@ -205,23 +202,23 @@ void dll_318_control(Object* self) {
         if (objdata->unk4 <= 60.0f) {
             self->unkAF |= 8;
             self->opacity = (u8) (s32) ((objdata->unk4 / 60.0f) * 255.0f);
-            dll_318_func_11C8(self, NULL, 0);
+            fish_func_11C8(self, NULL, 0);
         } else {
             self->opacity = 0xFF;
             self->objhitInfo->unk58 = objdata->unk30;
             objdata->unk18 = 2U;
             objdata->unk4 -= 60.0f;
-            dll_318_func_11C8(self, NULL, 0);
+            fish_func_11C8(self, NULL, 0);
         }
         break;
     case 2:
         if (objdata->unk4 <= (f32) setup->unk1C) {
-            dll_318_func_10BC(self);
+            fish_func_10BC(self);
         } else {
             self->srt.transl.f[1] = setup->base.y;
             objdata->unk18 = 3U;
             objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk1C);
-            dll_318_func_11C8(self, NULL, 0);
+            fish_func_11C8(self, NULL, 0);
             func_80023D30(self, 2, 0.0f, 0U);
             func_80024D74(self, 0x1E);
         }
@@ -229,19 +226,19 @@ void dll_318_control(Object* self) {
     case 3:
         if (objdata->unk4 <=  (f32) setup->unk1A) {
             self->srt.transl.f[1] = setup->base.y + (((objdata->unk2C - setup->base.y) * objdata->unk4) /  (f32) setup->unk1A);
-            dll_318_func_10BC(self);
+            fish_func_10BC(self);
         } else {
             self->srt.transl.f[1] = objdata->unk2C;
             objdata->unk18 = 4U;
             objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk1A);
-            dll_318_func_11C8(self, NULL, 0);
+            fish_func_11C8(self, NULL, 0);
             func_80023D30(self, 0, 0.0f, 0U);
             func_80024D74(self, 0x1E);
         }
         break;
     case 4:
         if ((f32) setup->unk26 <= objdata->unk4) {
-            if (dll_318_func_F74(self) != 0) {
+            if (fish_func_F74(self) != 0) {
                 objdata->unk4 = (f32) gUpdateRateF;
                 objdata->unk18 = 5U;
                 objdata->unk58 = (f32) self->srt.transl.f[0];
@@ -251,12 +248,12 @@ void dll_318_control(Object* self) {
                 
                 func_80023D30(self, 1, 0.0f, 0U);
                 func_80024D74(self, 0x1E);
-                dll_318_func_1EF4(self);
+                fish_func_1EF4(self);
             } else {
-                dll_318_func_11C8(self, NULL, 0);
+                fish_func_11C8(self, NULL, 0);
             }
         } else {
-            dll_318_func_10BC(self);
+            fish_func_10BC(self);
         }
         temp_fv1_2 = objdata->unk4 * objdata->unk4;
         temp_fa0 = temp_fv1_2 * temp_fv1_2;
@@ -274,27 +271,27 @@ void dll_318_control(Object* self) {
         }
         break;
     case 5:
-        if (dll_318_func_1EF4(self) == 0) {
+        if (fish_func_1EF4(self) == 0) {
             objdata->unk58 = (f32) self->srt.transl.f[0];
             objdata->unk5C = (f32) self->srt.transl.f[1];
             objdata->unk60 = (f32) self->srt.transl.f[2];
-            dll_318_func_1978(self);
+            fish_func_1978(self);
         }
         break;
     case 6:
-        if (dll_318_func_1978(self) == 0) {
-            dll_318_func_11C8(self, NULL, 0);
+        if (fish_func_1978(self) == 0) {
+            fish_func_11C8(self, NULL, 0);
         }
         break;
     case 7:
         if (objdata->unk4 <= (f32) setup->unk24) {
             self->srt.transl.f[1] = objdata->unk2C - (((objdata->unk2C - setup->base.y) * objdata->unk4) / (f32) setup->unk24);
-            dll_318_func_10BC(self);
+            fish_func_10BC(self);
         } else {
             self->srt.transl.f[1] = setup->base.y;
             objdata->unk18 = 2U;
             objdata->unk4 = (f32) (objdata->unk4 - (f32) setup->unk24);
-            dll_318_func_11C8(self, NULL, 0);
+            fish_func_11C8(self, NULL, 0);
             func_80023D30(self, 0, 0.0f, 0U);
             func_80024D74(self, 0x1E);
         }
@@ -302,13 +299,12 @@ void dll_318_control(Object* self) {
     }
     func_80024108(self, objdata->unk0, gUpdateRateF, NULL);
 }
-#endif
 
 // offset: 0xEA8 | func: 3 | export: 2
-void dll_318_update(Object *self) { }
+void fish_update(Object *self) { }
 
 // offset: 0xEB4 | func: 4 | export: 3
-void dll_318_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void fish_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     fish_Data* objdata = self->data;
     if ((objdata->unk18 != 0) && (visibility != 0)) {
         self->srt.yaw -= 0x8000;
@@ -318,20 +314,20 @@ void dll_318_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 }
 
 // offset: 0xF40 | func: 5 | export: 4
-void dll_318_free(Object *self, s32 a1) { }
+void fish_free(Object *self, s32 a1) { }
 
 // offset: 0xF50 | func: 6 | export: 5
-u32 dll_318_get_model_flags(Object *self) {
+u32 fish_get_model_flags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0xF60 | func: 7 | export: 6
-u32 dll_318_get_data_size(Object *self, u32 a1) {
+u32 fish_get_data_size(Object *self, u32 a1) {
     return sizeof(fish_Data);
 }
 
 // offset: 0xF74 | func: 8
-s32 dll_318_func_F74(Object *self) {
+static s32 fish_func_F74(Object *self) {
     fish_Data* objdata;
     Vec3s16 sp64;
     s32 _pad[3];
@@ -364,22 +360,22 @@ s32 dll_318_func_F74(Object *self) {
 }
 
 // offset: 0x10BC | func: 9
-void dll_318_func_10BC(Object *self) {
+static void fish_func_10BC(Object *self) {
     fish_Data *objdata = self->data;
 
     if (objdata->unk19 == 0) {
         if (rand_next(0, 0x63) == 0) {
-            dll_318_func_11C8(self, rand_next(-0x100, 0x100), rand_next(1, 0x64));
+            fish_func_11C8(self, rand_next(-0x100, 0x100), rand_next(1, 0x64));
         } else {
-            dll_318_func_11C8(self, rand_next(-0x100, 0x100), 0U);
+            fish_func_11C8(self, rand_next(-0x100, 0x100), 0U);
         }
     } else {
-        dll_318_func_11C8(self, 0, 0U);
+        fish_func_11C8(self, 0, 0U);
     }
 }
 
 // offset: 0x11C8 | func: 10
-static void dll_318_func_11C8(Object *self, s16 a1, u8 a2) {
+static void fish_func_11C8(Object *self, s16 a1, u8 a2) {
     fish_Data *objdata;
     Vec3s16 sp5C;
     Vec3f sp50;
@@ -467,7 +463,7 @@ static void dll_318_func_11C8(Object *self, s16 a1, u8 a2) {
     self->srt.transl.f[1] += sp50.y;
     self->srt.transl.f[2] += sp50.z;
     if (func_80059C40(&self->srt.transl, &sp44, 1.0f, 0, NULL, self, 4, -1, 0xFFU, 0) != 0) {
-        dll_318_func_1880(self, &sp44, &sp5C);
+        fish_func_1880(self, &sp44, &sp5C);
         if (objdata->unk28 < objdata->unk24) {
             objdata->unk28 += ((objdata->unk20 / 100.0f) * gUpdateRateF);
             return;
@@ -486,7 +482,7 @@ static void dll_318_func_11C8(Object *self, s16 a1, u8 a2) {
 }
 
 // offset: 0x1880 | func: 11
-static s32 dll_318_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2) {
+static s32 fish_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2) {
     fish_Data* objdata;
 
     objdata = self->data;
@@ -511,10 +507,7 @@ static s32 dll_318_func_1880(Object *self, Vec3f* arg1, Vec3s16* arg2) {
 }
 
 // offset: 0x1978 | func: 12
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/318_fish/dll_318_func_1978.s")
-#else
-s32 dll_318_func_1978(Object *self) {
+static s32 fish_func_1978(Object *self) {
     fish_Data* objdata;
     fish_Setup* setup;
     Vec3f sp6C;
@@ -534,7 +527,7 @@ s32 dll_318_func_1978(Object *self) {
             sp54.f[0] = objdata->unk64 * objdata->unk50;
             sp54.f[1] = 0.0f;
             sp54.f[2] = 0.0f;
-            rotate_vec3(&sp64, sp54.f);
+            rotate_vec3((SRT*)&sp64, sp54.f);
             sp54.f[0] = sp54.f[0] + objdata->unk58;
             sp54.f[1] = (f32) setup->unk28 + objdata->unk2C;
             sp54.f[2] = sp54.f[2] + objdata->unk60;
@@ -550,7 +543,7 @@ s32 dll_318_func_1978(Object *self) {
             sp48.f[0] = objdata->unk68 * objdata->unk50;
             sp48.f[1] = 0.0f;
             sp48.f[2] = 0.0f;
-            rotate_vec3(&sp64, sp48.f);
+            rotate_vec3((SRT*)&sp64, sp48.f);
             sp48.f[0] = sp48.f[0] + objdata->unk58;
             sp48.f[1] = (f32) setup->unk28 + objdata->unk2C;
             sp48.f[2] = sp48.f[2] + objdata->unk60;
@@ -576,31 +569,26 @@ s32 dll_318_func_1978(Object *self) {
         sp6C.f[1] = (objdata->unk4C * objdata->unk4) + (-0.04f * objdata->unk4 * objdata->unk4);
         sp6C.f[2] = 0.0f;
         if (objdata->unk4 < (objdata->unk48 * 0.5f)) {
-            self->srt.roll = (s16) (s32) -((sp6C.f[1] * objdata->unk78) + (objdata->unk70 * sp6C.f[1] * sp6C.f[1]));
+            self->srt.roll = (s16) (s32) -((sp6C.f[1] * objdata->unk78) + (objdata->unk70 * sp6C.y * sp6C.y));
         } else {
-            self->srt.roll = (s16) (s32) ((sp6C.f[1] * objdata->unk78) + (objdata->unk70 * sp6C.f[1] * sp6C.f[1]));
+            self->srt.roll = (s16) (s32) ((sp6C.f[1] * objdata->unk78) + (objdata->unk70 * sp6C.y * sp6C.y));
         }
         objdata->unk54 = (f32) objdata->unk4;
     }
-    rotate_vec3(&sp64, sp6C.f);
+    rotate_vec3((SRT*)&sp64, sp6C.f);
     self->srt.transl.f[0] = objdata->unk58 + sp6C.f[0];
     self->srt.transl.f[1] = objdata->unk5C + sp6C.f[1];
     self->srt.transl.f[2] = objdata->unk60 + sp6C.f[2];
     return sp60;
 }
-#endif
 
 // offset: 0x1EF4 | func: 13
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/318_fish/dll_318_func_1EF4.s")
-#else
-s32 dll_318_func_1EF4(Object* self) {
+static s32 fish_func_1EF4(Object* self) {
     fish_Data* objdata;
     fish_Setup* setup;
     Vec3f sp34;
     Vec3s16 sp2C;
     s32 var_a2;
-    f32 temp;
 
     setup = (fish_Setup*)self->setup;
     objdata = self->data;
@@ -622,27 +610,25 @@ s32 dll_318_func_1EF4(Object* self) {
         var_a2 = 0;
     } else {
         sp34.f[0] = (objdata->unk34 * objdata->unk4 * objdata->unk4) + (objdata->unk20 * objdata->unk4);
-        sp34.f[1] = (sp34.f[0] * (objdata->unk40 * sp34.f[0])) + (objdata->unk3C * sp34.f[0]);
+        sp34.f[1] = ((objdata->unk40 * sp34.f[0]) * sp34.f[0]) + (objdata->unk3C * sp34.x);
         sp34.f[2] = 0.0f;
         if (sp34.f[0] < (objdata->unk38 * 0.5f)) {
-            self->srt.roll = (s16) (s32) ((sp34.f[1] * objdata->unk74) + (objdata->unk6C * sp34.f[1] * sp34.f[1]));
+            self->srt.roll = (s16) (s32) ((sp34.f[1] * objdata->unk74) + (objdata->unk6C * sp34.y * sp34.y));
         } else {
-            temp =  sp34.f[1] * sp34.f[1];
-            self->srt.roll = (s16) (s32) -((sp34.f[1] * objdata->unk74) + (objdata->unk6C * temp));
+            self->srt.roll = (s16) (s32) -((sp34.f[1] * objdata->unk74) + ((objdata->unk6C * sp34.y) * sp34.y));
         }
         objdata->unk54 = (f32) objdata->unk4;
         objdata->unk0 = 0.12f;
     }
-    rotate_vec3(&sp2C, sp34.f);
+    rotate_vec3(sp2C.s, sp34.f);
     self->srt.transl.f[0] = objdata->unk58 + sp34.f[0];
     self->srt.transl.f[1] = objdata->unk5C - sp34.f[1];
     self->srt.transl.f[2] = objdata->unk60 + sp34.f[2];
     return var_a2;
 }
-#endif
 
 // offset: 0x2150 | func: 14
-void dll_318_func_2150(Object *self) {
+static void fish_func_2150(Object *self) {
     fish_Data *objdata;
     s32 _pad;
     Object* player;

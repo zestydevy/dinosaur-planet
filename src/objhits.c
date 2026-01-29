@@ -92,13 +92,6 @@ void func_80025E58(void) {
     }
 }
 
-typedef enum {
-    Collision_Type_Projectile_Spell = 0xF,
-    Collision_Type_Ice_Spell = 0x19,        //Speeder bike checks this type, strangely?
-    Collision_Type_15 = 0x21,               //Speeder bike checks for this
-    Collision_Type_None = 0x7F
-} CollisionTypes;
-
 /** Checks for collisions (Projectile/Ice Blast Spell, etc.) 
   * Lower collisionType values have higher priority.
   */
