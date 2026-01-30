@@ -624,7 +624,7 @@ void KamerianBoss_control(Object *self) {
         i = self->objhitInfo->unk62;
         while (i--) {
             hitSphereIdx = self->objhitInfo->unk63[i];
-            collisionType = self->objhitInfo->unk66[i];
+            collisionType = self->objhitInfo->hitCollisionTypes[i];
             if (objdata->animTickDelta == 0.0f) {
                 switch (hitSphereIdx) {
                 case 13:
