@@ -97,17 +97,49 @@ typedef struct {
 
 // size: 0x14
 typedef struct {
-/*0000*/    s16 unk0;
-/*0002*/    u8 unk2[0x4 - 0x2];
-/*0004*/    s16 unk4;
-/*0006*/    u8 unk6[0xC - 0x6];
-/*000C*/    u8 unkC;
-/*000D*/    u8 unkD;
-/*000E*/    u8 unkE;
-/*000F*/    u8 unkF;
-/*0010*/    s16 unk10;
-/*0012*/    u8 unk12[0x14 - 0x12];
+    union {
+        struct {
+/*00*/    s16 Ax;
+/*02*/    s16 Bx;
+/*04*/    s16 Ay;
+/*06*/    s16 By;
+/*08*/    s16 Az;
+/*0a*/    s16 Bz;
+        };
+
+        s16 somePos[6];
+    };
+/*0c*/    s8 heightA; //height can be treated as a single value "(heightA << 8) + heightB", depending on top settings bit
+/*0d*/    s8 heightB;
+/*0e*/    s8 settingsA;
+/*0f*/    s8 settingsB;
+/*10*/    s16 animatorID;
+/*12*/    s16 pad;
 } ModLine;
+
+/** ModLine seem to end up reencoded into this format
+  * The point data seems to be missing and index values are introduced,
+  * so maybe they're combining coincident points across different lines,
+  * and referencing those verts by index?
+*/
+// size: 0x10
+typedef struct{
+/*00*/    s8 heightA;
+/*01*/    s8 heightB;
+/*02*/    s8 settingsA;
+/*03*/    s8 settingsB;
+union {
+    struct {
+    /*04*/    s16 indexA; 
+    /*06*/    s16 indexB; 
+    /*08*/    s16 indexC; 
+    /*0a*/    s16 indexD;
+    };
+    s16 indexes[4];
+};
+/*0c*/    s16 animatorID;
+/*0e*/    s16 unkE;
+} ModLineReencoded;
 
 /**
  * Object definition.
@@ -131,9 +163,9 @@ typedef struct {
 /*28*/ ObjDefWeaponData *pWeaponData;   // [optional] table of WEAPONDATA offsets (offset in file, pointer after load)
 /*2c*/ AttachPoint *pAttachPoints;      // (offset in file, pointer after load)
 /*30*/ ModLine *pModLines; //ignored in file (zeroed on load) // TODO: confirm
-/*34*/ UNK_PTR *pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
-/*38*/ UNK_PTR *nextIntersectPoint; // TODO: confirm
-/*3c*/ UNK_PTR *nextIntersectLine; // TODO: confirm
+/*34*/ ModLineReencoded* pIntersectPoints; //ignored in file (zeroed on load) (wObjList?) // TODO: confirm
+/*38*/ u8 *nextIntersectPoint; // TODO: confirm
+/*3c*/ Vec3f *nextIntersectLine; // TODO: confirm
 /*40*/ ObjDefStruct40 *unk40; //z-targetting data
 /*44*/ u32 flags; //ObjDataFlags44 // TODO: confirm (0x10000: uses colour multiplier?)
 /*48*/ s16 shadowType; //ObjShadowType // TODO: confirm
