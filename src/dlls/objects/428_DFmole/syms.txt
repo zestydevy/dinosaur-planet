@@ -1,0 +1,40 @@
+.text = 0x0:
+dll_428_func_0 = 0x0;
+dll_428_ctor = 0xD8;
+dll_428_dtor = 0x118;
+dll_428_setup = 0x124;
+dll_428_control = 0x1DC;
+dll_428_update = 0x2D4;
+dll_428_print = 0x324;
+dll_428_free = 0x384;
+dll_428_get_model_flags = 0x428;
+dll_428_get_data_size = 0x438;
+dll_428_func_44C = 0x44C;
+dll_428_func_468 = 0x468;
+dll_428_func_644 = 0x644;
+dll_428_func_704 = 0x704;
+dll_428_func_7A0 = 0x7A0;
+dll_428_func_97C = 0x97C;
+dll_428_func_A0C = 0xA0C;
+dll_428_func_A9C = 0xA9C;
+dll_428_func_BC4 = 0xBC4;
+dll_428_func_D1C = 0xD1C;
+dll_428_func_F8C = 0xF8C;
+dll_428_func_10BC = 0x10BC;
+dll_428_func_1264 = 0x1264;
+dll_428_func_1408 = 0x1408;
+dll_428_func_1420 = 0x1420;
+dll_428_func_1438 = 0x1438;
+dll_428_func_1698 = 0x1698;
+dll_428_func_1728 = 0x1728;
+dll_428_func_19DC = 0x19DC;
+
+.rodata = 0x1B48:
+
+.data = 0x1B88:
+_data_0 = 0x0; // absolute:0x1B88
+_data_4 = 0x4; // absolute:0x1B8C
+
+.bss = 0x1B98:
+_bss_0 = 0x0; // absolute:0x1B98
+_bss_28 = 0x28; // absolute:0x1BC0
