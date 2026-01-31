@@ -109,5 +109,6 @@ VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16 *position);
 
 void func_80008DC0(SomeVoxmapAllocStruct*); // init/alloc struct
 void func_80008E08(SomeVoxmapAllocStruct*); // free struct
+s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1);
 
 #endif

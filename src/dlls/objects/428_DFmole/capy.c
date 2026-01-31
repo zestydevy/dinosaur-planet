@@ -7,7 +7,8 @@ typedef struct {
 
 // size:0x14
 typedef struct {
-    s32 unk0;
+    u8 unk0; 
+    u8 _unk1 [3];
     u16 unk4;
 } capy_data;
 
@@ -127,7 +128,67 @@ s32 dll_428_func_97C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/428_DFmole/dll_428_func_1698.s")
 
 // offset: 0x1728 | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/428_DFmole/dll_428_func_1728.s")
+s32 dll_428_func_1728(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
+    DLL33_Data* sp44;
+    Object* temp_v1;
+    capy_data* sp3C;
+    u8 sp3B;
+    Unk80009024* temp_s1;
+    f32 temp_fv0;
+ 
+    
+
+    sp44 = arg0->data;
+    sp3C = sp44->unk3F4;
+    if (arg1->target != 0) {
+        sp3B = get_player() == arg1->target;
+        arg1->animState = 8;
+        arg1->unk288 = 0.0f;
+        arg1->unk284 = 0.0f;
+        temp_s1 = &sp44 -> unk34C;
+        bcopy(&arg0-> srt.transl , temp_s1, 0xC);
+        bcopy(&arg1-> target -> srt.transl , &sp44 -> unk34C.unkC, 0xC);
+        func_80009024(temp_s1, &sp44 -> unk374);
+        if (sp3B != 0) {
+            if ((arg1->targetDist < 50.0f) || (sp3C->unk0 == 0)) {
+                arg1->animState = 0;
+            }
+        
+        } else { 
+            temp_fv0 = arg1->targetDist;
+            if ((temp_fv0 < 20.0f) || (((s32) sp3C->unk4 >= 0xB) && (temp_fv0 < 30.0f))) {
+                temp_v1 = arg1->target;
+                arg1->animState = 4;
+                temp_v1->unkAF = (u8) (temp_v1->unkAF | 8);
+                return 4;
+            }
+       }
+        if (temp_s1->unk25 == 0) {
+            gDLL_18_objfsa->vtbl->func6(arg0, arg1, temp_s1->unk18.f[0], temp_s1->unk18.f[2], 0.0f, 0.0f, 60.0f);
+        } else if (sp3B != 0) {
+            gDLL_18_objfsa->vtbl->func6(arg0, arg1, temp_s1->unk18.f[0], temp_s1->unk18.f[2], 20.0f, 30.0f, 60.0f);
+        } else {
+            gDLL_18_objfsa->vtbl->func6(arg0, arg1, temp_s1->unk18.f[0], temp_s1->unk18.f[2], 10.0f, 10.0f, 60.0f);
+        }
+    } else {
+        arg1->animState = 3;
+        arg1->enteredAnimState = 1;
+        arg1->unk33A = 0;
+        return 6;
+    }
+    return 0;
+}
 
 // offset: 0x19DC | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/428_DFmole/dll_428_func_19DC.s")
+s32 dll_428_func_19DC(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
+    DLL33_Data* baddie = arg0->data;
+    capy_data* objdata = baddie ->unk3F4;
+    
+    if ((arg1->target != NULL) && (arg1->animState == 1) && (objdata->unk4 == 0)) {
+        gDLL_18_objfsa->vtbl->func11(arg0, arg1, 3.0f, 1);
+        arg1->animState = 2;
+        arg1->enteredAnimState = 1;
+        arg1->unk33A = 0;
+    }
+    return 0;
+}

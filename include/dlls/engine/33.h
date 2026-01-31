@@ -6,12 +6,15 @@
 #include "game/objects/object.h"
 #include "segment_334F0.h"
 #include "sys/curves.h"
+#include "sys/math.h"
 #include "sys/voxmap.h"
 #include "dll_def.h"
 #include "types.h"
 
 typedef struct {
-/*00*/ u8 _unk0[0x24 - 0x0];
+/*00*/ u8 _unk0[0xC - 0x0];
+/*0C*/ Vec3f unkC;
+/*18*/ u8 _unk18 [0x24 - 0x18];
 /*24*/ s8 unk24;
 /*25*/ u8 unk25;
 /*26*/ s8 unk26;
