@@ -53,6 +53,8 @@
 227 = objects/227_tumbleweed
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
+248 = objects/248_PirahnaBaddie
+254 = objects/254_PineCone
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
 267 = objects/267_checkpoint4
