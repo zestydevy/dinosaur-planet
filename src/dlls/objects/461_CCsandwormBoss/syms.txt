@@ -1,0 +1,29 @@
+.text = 0x0:
+dll_461_ctor = 0x0;
+dll_461_dtor = 0xC;
+dll_461_setup = 0x18;
+dll_461_control = 0x2C8;
+dll_461_func_330 = 0x330;
+dll_461_func_564 = 0x564;
+dll_461_func_5E0 = 0x5E0;
+dll_461_func_1030 = 0x1030;
+dll_461_func_1090 = 0x1090;
+dll_461_func_1250 = 0x1250;
+dll_461_func_12B0 = 0x12B0;
+dll_461_func_1384 = 0x1384;
+dll_461_func_14B0 = 0x14B0;
+dll_461_func_1540 = 0x1540;
+dll_461_update = 0x1634;
+dll_461_print = 0x1640;
+dll_461_free = 0x1A20;
+dll_461_get_model_flags = 0x1AC0;
+dll_461_get_data_size = 0x1AD0;
+dll_461_func_1AE4 = 0x1AE4;
+
+.rodata = 0x1CC8:
+str_0 = 0x0; // absolute:0x1CC8
+
+.data = 0x1EE8:
+_data_0 = 0x0; // absolute:0x1EE8
+_data_C = 0xC; // absolute:0x1EF4
+_data_1C = 0x1C; // absolute:0x1F04

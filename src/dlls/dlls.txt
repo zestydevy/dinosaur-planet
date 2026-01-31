@@ -124,6 +124,7 @@
 458 = objects/458_CCkrazoaBits
 459 = objects/459_CCkrazoaTablet
 460 = objects/460_CClevcontrol
+461 = objects/461_CCsandwormBoss
 463 = objects/463_CCgasvent
 464 = objects/464_CCgasventControl
 466 = objects/466_mmshrine
