@@ -493,7 +493,7 @@ void picmenu_calculate_redraw_area() {
             }
 
             if (tex != NULL) {
-                height = tex->height | ((tex->unk1B & 0xF) << 8);
+                height = tex->height | ((tex->widthHeightHi & 0xF) << 8);
                 y = item->itemY;
             } else {
                 height = font_get_y_spacing(item->fontID) + 2;
@@ -537,7 +537,7 @@ void picmenu_calculate_items_to_redraw() {
     }
 
     if (tex != NULL) {
-        selectedItemHeight = tex->height | ((tex->unk1B & 0xF) << 8);
+        selectedItemHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
         selectedItemY = item1->itemY;
     } else {
         selectedItemHeight = font_get_y_spacing(item1->fontID) + 2;
@@ -555,7 +555,7 @@ void picmenu_calculate_items_to_redraw() {
             }
 
             if (tex2 != NULL) {
-                otherItemHeight = tex2->height | ((tex2->unk1B & 0xF) << 8);
+                otherItemHeight = tex2->height | ((tex2->widthHeightHi & 0xF) << 8);
                 otherItemY = item2->itemY;
             } else {
                 otherItemHeight = font_get_y_spacing(item2->fontID) + 2;

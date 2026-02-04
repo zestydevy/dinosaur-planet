@@ -849,8 +849,7 @@ Texture* texture_load(s32 id, s32 param2) {
 }
 #endif
 
-Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
-{
+Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl) {
     Gfx *mygdl;
     u32 tile;
     u32 tmem;
@@ -858,7 +857,7 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
     mygdl = gdl;
     texture->gdl = gdl;
 
-    if (texture->flags & 0x8000) {
+    if (texture->flags & TEX_FLAG_8000) {
         tile = 1;
         tmem = 0x100;
     } else {
@@ -869,8 +868,7 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
     load_texture_to_tmem2(&mygdl, texture, tile, tmem, 0);
     texture->gdlIdx = mygdl - texture->gdl;
 
-    if ((texture->flags & 0xc000) == 0 && (texture->flags & 0x40) != 0)
-    {
+    if (!(texture->flags & (TEX_FLAG_4000 | TEX_FLAG_8000)) && (texture->flags & TEX_FLAG_40)) {
         if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32) {
             load_texture_to_tmem2(&mygdl, texture, 1, (0x1000 - texture->unk18) >> 3, 0);
         } else if (TEX_FORMAT(texture->format) == TEX_FORMAT_CI4) {
@@ -883,77 +881,73 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl)
     return mygdl;
 }
 
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/load_texture_to_tmem2.s")
-#else
-extern Gfx Gfx_ARRAY_80092880[8]; // wtf why doesn't this work
-extern Gfx Gfx_ARRAY_800928c0[8];
-extern Gfx Gfx_ARRAY_80092900[8];
-extern Gfx Gfx_ARRAY_80092a00[8];
-void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette)
-{
-    Gfx *mygdl = *gdl;
-    s32 fmt;
+void load_texture_to_tmem2(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 palette) {
     s32 siz;
-    s32 siz2;
-    s32 width;
+    Gfx* dl;
+    u32 texFormat;
+    s32 temp_t7;
+    s32 var_ra;
+    s32 fmt;
+    s32 sizLoad;
+    s32 sizIncr;
+    s32 sizShift;
+    s32 sizLineBytes;
+    s32 temp_v1;
     s32 height;
-    s32 sizincr;
-    s32 sizshift;
-    s32 line2;
+    s32 width;
 
-    width = texture->width | (texture->unk1B & 0xf0) << 4;
-    height = texture->height | (texture->unk1B & 0xf) << 8;
-
-    // This implements a dynamic version of gDPLoadTextureBlock
-    switch (TEX_FORMAT(texture->format))
-    {
+    dl = *gdl;
+    texFormat = TEX_FORMAT(texture->format);
+    temp_t7 = (texture->format >> 4) & 0xF;
+    width  = texture->width & 0xFF;
+    height = texture->height & 0xFF;
+    width  |= ((texture->widthHeightHi & 0xF0) << 4);
+    height |= ((texture->widthHeightHi & 0x0F) << 8);
+    switch (texFormat) {
     case TEX_FORMAT_RGBA32:
         siz = G_IM_SIZ_32b;
-        siz2 = G_IM_SIZ_32b;
-        sizincr = G_IM_SIZ_32b_INCR;
-        sizshift = G_IM_SIZ_32b_SHIFT;
-        line2 = 2;
+        sizLoad = G_IM_SIZ_32b_LOAD_BLOCK;
+        sizIncr = G_IM_SIZ_32b_INCR;
+        sizShift = G_IM_SIZ_32b_SHIFT;
+        sizLineBytes = G_IM_SIZ_32b_LINE_BYTES;
         break;
     case TEX_FORMAT_RGBA16:
     case TEX_FORMAT_IA16:
         siz = G_IM_SIZ_16b;
-        siz2 = G_IM_SIZ_16b;
-        sizincr = G_IM_SIZ_16b_INCR;
-        sizshift = G_IM_SIZ_16b_SHIFT;
-        line2 = 2;
+        sizLoad = G_IM_SIZ_16b_LOAD_BLOCK;
+        sizIncr = G_IM_SIZ_16b_INCR;
+        sizShift = G_IM_SIZ_16b_SHIFT;
+        sizLineBytes = G_IM_SIZ_16b_LINE_BYTES;
         break;
     case TEX_FORMAT_I8:
     case TEX_FORMAT_IA8:
-        siz = G_IM_SIZ_16b;
-        siz2 = G_IM_SIZ_8b;
-        sizincr = G_IM_SIZ_8b_INCR;
-        sizshift = G_IM_SIZ_8b_SHIFT;
-        line2 = 1;
+        siz = G_IM_SIZ_8b;
+        sizLoad = G_IM_SIZ_8b_LOAD_BLOCK;
+        sizIncr = G_IM_SIZ_8b_INCR;
+        sizShift = G_IM_SIZ_8b_SHIFT;
+        sizLineBytes = G_IM_SIZ_8b_LINE_BYTES;
         break;
     default:
-        siz = G_IM_SIZ_16b;
-        siz2 = G_IM_SIZ_4b;
-        sizincr = G_IM_SIZ_4b_INCR;
-        sizshift = G_IM_SIZ_4b_SHIFT;
-        line2 = 0;
+        siz = G_IM_SIZ_4b;
+        sizLoad = G_IM_SIZ_4b_LOAD_BLOCK;
+        sizIncr = G_IM_SIZ_4b_INCR;
+        sizShift = G_IM_SIZ_4b_SHIFT;
+        sizLineBytes = G_IM_SIZ_4b_LINE_BYTES;
         break;
     }
-
-    switch (TEX_FORMAT(texture->format))
-    {
+    switch (texFormat) {
     case TEX_FORMAT_RGBA32:
     case TEX_FORMAT_RGBA16:
         fmt = G_IM_FMT_RGBA;
-        if ((texture->format >> 4) == 0 || (texture->format >> 4) == 2) {
-            texture->flags |= 0x4;
+        if ((temp_t7 == 0) || (temp_t7 == 2)) {
+            texture->flags |= TEX_FLAG_4;
         }
         break;
-    case TEX_FORMAT_I8:
-    case TEX_FORMAT_I4:
     case TEX_FORMAT_IA16:
+    case TEX_FORMAT_IA8:
+    case TEX_FORMAT_IA4:
         fmt = G_IM_FMT_IA;
-        texture->flags |= 0x4;
+        texture->flags |= TEX_FLAG_4;
         break;
     case TEX_FORMAT_CI4:
         fmt = G_IM_FMT_CI;
@@ -962,88 +956,110 @@ void _load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32
         fmt = G_IM_FMT_I;
         break;
     }
-
-    if (siz2 == G_IM_SIZ_4b) {
-        line2 = width / 2;
+    if (siz == G_IM_SIZ_4b) {
+        var_ra = width >> 1;
     } else {
-        line2 *= width;
+        var_ra = width * sizLineBytes;
     }
-
-    if (texture->flags & 0xc000)
-    {
-        gDPSetTextureImage(mygdl++, fmt, siz, 0, OS_K0_TO_PHYSICAL((u8*)texture + sizeof(Texture)));
-        gDPSetTile(mygdl++, fmt, siz, 0, tmem, 7, 0, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
-        gDPLoadSync(mygdl++);
-        gDPLoadBlock(mygdl++, 7, 0, 0, ((width * height + sizincr) >> sizshift) - 1, 0);
-        gDPPipeSync(mygdl++);
-        gDPSetTile(mygdl++, fmt, siz2, (line2 + 7) / 8, tmem, tile, palette, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
-    }
-    else
-    {
-        gDPSetTextureImage(mygdl++, fmt, siz, 0, OS_K0_TO_PHYSICAL((u8*)texture + sizeof(Texture)));
-        gDPSetTile(mygdl++, fmt, siz, 0, tmem, 7, 0, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
-        gDPLoadSync(mygdl++);
-        gDPLoadBlock(mygdl++, 7, 0, 0, ((width * height + sizincr) >> sizshift) - 1, 0);
-        gDPPipeSync(mygdl++);
-
-        if (!(texture->flags & 0x100)) {
-            gDPSetTile(mygdl++, fmt, siz2, (line2 + 7) / 8, tmem, tile, palette, texture->cmt, texture->maskt, 0, texture->cms, texture->masks, 0);
-            gDPSetTileSize(mygdl++, 0, 0, 0, (width - 1) * 2, (height - 1) * 2);
+    if (texture->flags & (TEX_FLAG_4000 | TEX_FLAG_8000)) {
+        gDPSetTextureImage(dl++, fmt, sizLoad, 1, OS_PHYSICAL_TO_K0((u32)texture + sizeof(Texture)));
+        gDPSetTile(dl++, fmt, sizLoad, 0, tmem, 
+                   G_TX_LOADTILE, 
+                   0, 
+                   texture->cmt, 
+                   texture->maskt, 
+                   G_TX_NOLOD, 
+                   texture->cms, 
+                   texture->masks, 
+                   G_TX_NOLOD);
+        gDPLoadSync(dl++);
+        gDPLoadBlock(dl++, G_TX_LOADTILE, 0, 0, 
+                     ((((width * height) + sizIncr) >> sizShift) - 1), 
+                     0);
+        gDPPipeSync(dl++);
+        gDPSetTile(dl++, fmt, siz, ((var_ra + 7) >> 3), tmem, 
+                   tile, 
+                   palette, 
+                   texture->cmt, 
+                   texture->maskt, 
+                   G_TX_NOLOD, 
+                   texture->cms, 
+                   texture->masks, 
+                   G_TX_NOLOD);
+    } else {
+        gDPSetTextureImage(dl++, fmt, sizLoad, 1, OS_PHYSICAL_TO_K0((u32)texture + sizeof(Texture)));
+        gDPSetTile(dl++, fmt, sizLoad, 0, tmem, 
+                   G_TX_LOADTILE, 
+                   0, 
+                   texture->cmt, 
+                   texture->maskt, 
+                   G_TX_NOLOD, 
+                   texture->cms, 
+                   texture->masks, 
+                   G_TX_NOLOD);
+        gDPLoadSync(dl++);
+        gDPLoadBlock(dl++, G_TX_LOADTILE, 0, 0, 
+                     ((((width * height) + sizIncr) >> sizShift) - 1), 
+                     0);
+        gDPPipeSync(dl++);
+        
+        if (!(texture->flags & TEX_FLAG_MIPMAPS)) {
+            gDPSetTile(dl++, fmt, siz, 
+                       ((var_ra + 7) >> 3), 
+                       tmem, 
+                       tile, 
+                       palette, 
+                       texture->cmt, 
+                       texture->maskt, 
+                       G_TX_NOLOD, 
+                       texture->cms, 
+                       texture->masks, 
+                       G_TX_NOLOD);
+            gDPSetTileSize(dl++, tile, 0, 0, 
+                           ((width - 1) << G_TEXTURE_IMAGE_FRAC), 
+                           ((height - 1) << G_TEXTURE_IMAGE_FRAC));
         }
-
         if (fmt == G_IM_FMT_CI) {
-            gDPLoadTLUT(mygdl++, 0x3c, palette, OS_K0_TO_PHYSICAL((u8*)texture + sizeof(Texture) + width * height / 2));
+            gDPLoadTLUT(dl++, 16, 
+                        (((palette & 0xF) << 4) + 0x100), 
+                        (OS_PHYSICAL_TO_K0((u32)texture + ((width * height) >> 1) + sizeof(Texture))));
         }
-
-        if (texture->flags & 0x100)
-        {
-            if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32)
-            {
-                bcopy(Gfx_ARRAY_80092a00, mygdl, 8 * sizeof(Gfx));
-                mygdl += 8;
-            }
-            else
-            {
-                Gfx *mygdl2 = mygdl;
-
-                if ((texture->cmt & 0x2) != 0 && (texture->cms & 0x2) == 0) {
-                    bcopy(Gfx_ARRAY_800928c0, mygdl2, 8 * sizeof(Gfx));
-                } else if ((texture->cmt & 0x2) == 0 && (texture->cms & 0x2) != 0) {
-                    bcopy(Gfx_ARRAY_80092900, mygdl2, 8 * sizeof(Gfx));
+        if (texture->flags & TEX_FLAG_MIPMAPS) {
+            if (texFormat == TEX_FORMAT_RGBA32) {
+                bcopy(Gfx_ARRAY_80092a00, dl, sizeof(Gfx) * 8);
+                dl += 8;
+            } else {
+                if ((texture->cmt & G_TX_CLAMP) && !(texture->cms & G_TX_CLAMP)) {
+                    bcopy(Gfx_ARRAY_800928c0, dl, sizeof(Gfx) * 8);
+                } else if (!(texture->cmt & G_TX_CLAMP) && (texture->cms & G_TX_CLAMP)) {
+                    bcopy(Gfx_ARRAY_80092900, dl, sizeof(Gfx) * 8);
                 } else {
-                    _(Gfx_ARRAY_80092880, mygdl2, 8 * sizeof(Gfx));
+                    bcopy(Gfx_ARRAY_80092880, dl, sizeof(Gfx) * 8);
                 }
-
-                mygdl += 8;
-
-                mygdl2[0].words.w1 &= ~0xc0000;
-                mygdl2[0].words.w1 |= (texture->cmt & 0x3) << 18;
-                mygdl2[0].words.w1 &= ~0x300;
-                mygdl2[0].words.w1 |= (texture->cms & 0x3) << 8;
-
-                mygdl2[2].words.w1 &= ~0xc0000;
-                mygdl2[2].words.w1 |= (texture->cmt & 0x3) << 18;
-                mygdl2[2].words.w1 &= ~0x300;
-                mygdl2[2].words.w1 |= (texture->cms & 0x3) << 8;
-
-                mygdl2[4].words.w1 &= ~0xc0000;
-                mygdl2[4].words.w1 |= (texture->cmt & 0x3) << 18;
-                mygdl2[4].words.w1 &= ~0x300;
-                mygdl2[4].words.w1 |= (texture->cms & 0x3) << 8;
-
-                mygdl2[6].words.w1 &= ~0xc0000;
-                mygdl2[6].words.w1 |= (texture->cmt & 0x3) << 18;
-                mygdl2[6].words.w1 &= ~0x300;
-                mygdl2[6].words.w1 |= (texture->cms & 0x3) << 8;
+                dl[0].words.w1 &= ~0xC0000;
+                dl[0].words.w1 |= ((texture->cmt & 3) << 18);
+                dl[0].words.w1 &= ~0x300;
+                dl[0].words.w1 |= ((texture->cms & 3) << 8);
+                dl[2].words.w1 &= ~0xC0000;
+                dl[2].words.w1 |= ((texture->cmt & 3) << 18);
+                dl[2].words.w1 &= ~0x300;
+                dl[2].words.w1 |= ((texture->cms & 3) << 8);
+                dl[4].words.w1 &= ~0xC0000;
+                dl[4].words.w1 |= ((texture->cmt & 3) << 18);
+                dl[4].words.w1 &= ~0x300;
+                dl[4].words.w1 |= ((texture->cms & 3) << 8);
+                dl[6].words.w1 &= ~0xC0000;
+                dl[6].words.w1 |= ((texture->cmt & 3) << 18);
+                dl[6].words.w1 &= ~0x300;
+                dl[6].words.w1 |= ((texture->cms & 3) << 8);
+                
+                dl += 8;
             }
         }
     }
-
-    gSPEndDisplayList(mygdl++);
-
-    *gdl = mygdl;
+    gSPEndDisplayList(dl++);
+    *gdl = dl;
 }
-#endif
 
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_destroy.s")
@@ -1524,12 +1540,13 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
     }
 }
 
-Texture* func_8003E904(Texture* arg0, s32 arg1) {
+// tex_get_frame_img?
+void* func_8003E904(Texture* arg0, s32 arg1) {
     Texture* var_v0;
-    Texture* var_v1;
+    void* texData;
     s32 i;
 
-    var_v1 = arg0 + 1;
+    texData = arg0 + 1;
     if (arg1 > 0) {
         if (arg1 < arg0->levels) {
             arg1>>= 8;
@@ -1537,11 +1554,11 @@ Texture* func_8003E904(Texture* arg0, s32 arg1) {
                 var_v0 = var_v0->next;
             }
             if (var_v0 != NULL) {
-                var_v1 = var_v0 + 1;
+                texData = var_v0 + 1;
             }
         }
     }
-    return var_v1;
+    return texData;
 }
 
 #ifndef NON_MATCHING

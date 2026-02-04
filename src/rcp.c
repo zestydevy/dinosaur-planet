@@ -70,7 +70,6 @@ u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 // -------- .bss end 800b4920 -------- //
 
 void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8); 
-Texture* func_8003E904(Texture* arg0, s32 arg1);
 
 /**
  * Prepare the gfx task for the F3DEX2 XBus microcode.
@@ -376,7 +375,7 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
 #endif
 
 void func_8003825C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
-    s32 temp = tex->height | ((tex->unk1B & 0xF) << 8);
+    s32 temp = tex->height | ((tex->widthHeightHi & 0xF) << 8);
     func_8003833C(gdl, tex, arg2, arg3, 0, temp, arg5, arg6, arg7);
 }
 
@@ -386,7 +385,7 @@ void func_800382AC(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     s32 var_v0;
 
     arg4 -= arg3;
-    temp_v1 = tex->height | ((tex->unk1B & 0xF) << 8);
+    temp_v1 = tex->height | ((tex->widthHeightHi & 0xF) << 8);
     if (arg4 < 0) {
         arg4 = 0;
     }
@@ -430,9 +429,9 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     }
     gSPGeometryMode(*gdl, 0xFFFFFF, 0);
     dl_apply_geometry_mode(gdl);
-    width = tex->width | ((tex->unk1B & 0xF0) * 16);
+    width = tex->width | ((tex->widthHeightHi & 0xF0) << 4);
     if (sp12C != 0) {
-        sp148 = (s32) ((f32)tex->width * 1) | ((tex->unk1B & 0xF0) * 16);
+        sp148 = (s32) ((f32)tex->width * 1) | ((tex->widthHeightHi & 0xF0) << 4);
     } else {
         sp148 = width;
     }

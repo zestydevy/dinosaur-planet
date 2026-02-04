@@ -8,39 +8,65 @@
 // Gets the texture type. E.g: rgba16
 #define TEX_FORMAT(x) (x & 0xF)
 
-// Taken from DKR, might be incorrect
-#define TEX_FORMAT_RGBA32 0
-#define TEX_FORMAT_RGBA16 1
-#define TEX_FORMAT_I8 2
-#define TEX_FORMAT_I4 3
-#define TEX_FORMAT_IA16 4
-#define TEX_FORMAT_IA8 5
-#define TEX_FORMAT_IA4 6
-#define TEX_FORMAT_CI4 7
-#define TEX_FORMAT_CI8 8
+enum TextureFormat {
+    TEX_FORMAT_RGBA32 = 0,
+    TEX_FORMAT_RGBA16 = 1,
+    TEX_FORMAT_I8 = 2,
+    TEX_FORMAT_I4 = 3,
+    TEX_FORMAT_IA16 = 4,
+    TEX_FORMAT_IA8 = 5,
+    TEX_FORMAT_IA4 = 6,
+    TEX_FORMAT_CI4 = 7
+};
 
-typedef struct Texture
-{
-/*0000*/	u8 width;
-/*0001*/	u8 height;
-/*0002*/	u8 format;
-/*0003*/	u8 unk3;
-/*0004*/	u8 unk4;
-/*0005*/	u8 unk5;
-/*0006*/	s16 flags;
-/*0008*/	Gfx *gdl;
-/*000C*/	u16 levels;
-/*000E*/	u16 unkE;
-/*0010*/	u16 unk10;
-/*0012*/	s16 gdlIdx;
-/*0014*/	struct Texture *next;
-/*0018*/	s16 unk18;
-/*001A*/	u8 unk1A;
-/*001B*/	u8 unk1B;
-/*001C*/	u8 cms;
-/*001D*/	u8 masks;
-/*001E*/	u8 cmt;
-/*001F*/	u8 maskt;
+enum TextureFlags {
+    TEX_FLAG_1 = 0x1,
+    TEX_FLAG_2 = 0x2,
+    TEX_FLAG_4 = 0x4,
+    TEX_FLAG_8 = 0x8,
+    TEX_FLAG_10 = 0x10,
+    TEX_FLAG_20 = 0x20,
+    TEX_FLAG_40 = 0x40,
+    TEX_FLAG_80 = 0x80,
+    TEX_FLAG_MIPMAPS = 0x100,
+    TEX_FLAG_200 = 0x200,
+    TEX_FLAG_400 = 0x400,
+    TEX_FLAG_800 = 0x800,
+    TEX_FLAG_1000 = 0x1000,
+    TEX_FLAG_2000 = 0x2000,
+    TEX_FLAG_4000 = 0x4000,
+    TEX_FLAG_8000 = 0x8000
+};
+
+typedef struct Texture {
+       /**
+        * Width/height are split across two fields. The first width/height fields
+        * specify the lower 8 bits of the width/height and the widthHeightHi field
+        * specifies the upper 4 bits of the width/height, for a total of 12 bits.
+        *
+        * i.e. width  = width  | ((widthHeightHi & 0xF0) << 4)
+        *      height = height | ((widthHeightHi & 0x0F) << 8)
+        */
+/*00*/ u8 width;
+/*01*/ u8 height;
+/*02*/ u8 format; // lower 4 bits = TEX_FORMAT_*
+/*03*/ u8 unk3;
+/*04*/ u8 unk4;
+/*05*/ u8 unk5;
+/*06*/ s16 flags; // TextureFlags
+/*08*/ Gfx *gdl;
+/*0C*/ u16 levels; // numFrames?
+/*0E*/ u16 unkE;
+/*10*/ u16 unk10;
+/*12*/ s16 gdlIdx;
+/*14*/ struct Texture *next;
+/*18*/ s16 unk18;
+/*1A*/ u8 unk1A;
+/*1B*/ u8 widthHeightHi; // upper 4 bits = width hi, lower 4 bits = height hi
+/*1C*/ u8 cms;
+/*1D*/ u8 masks;
+/*1E*/ u8 cmt;
+/*1F*/ u8 maskt;
 } Texture; // Size: 0x20, followed by texture data
 
 /**
@@ -51,5 +77,6 @@ Texture *texture_load(s32 id, s32 param2);
 s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void func_8003E9B4(s32 arg0);
 void func_8003E9D0(s32 arg0);
+void* func_8003E904(Texture* arg0, s32 arg1);
 
 #endif //_SYS_GFX_TEXTURE_H
