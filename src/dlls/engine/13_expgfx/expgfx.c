@@ -239,8 +239,8 @@ s16 dll_13_func_228(ExpgfxStruct* arg0, s32 arg1) {
     }
     temp_a0 = _bss_370[sp50].unk0;
     if (temp_a0 != NULL) {
-        temp_a0->unk5 += 1;
-        temp_a0->unkE = (u16) (u8) arg0->unk61;
+        temp_a0->refCount += 1;
+        temp_a0->animSpeed = (u16) (u8) arg0->unk61;
     }
     temp_v0_2 = var_a3->unk7C;
     var_a2 = NULL;
@@ -408,7 +408,7 @@ void dll_13_func_CEC(void) {
         for (k = 0; k < 30; k++) {
             if (_bss_78[i] & (1 << k)) {
                 if (_bss_190[var_s0->unk8A].unk8 != NULL) {
-                    _bss_190[var_s0->unk8A].unk8->unk5 -= 1;
+                    _bss_190[var_s0->unk8A].unk8->refCount -= 1;
                 }
                 dll_13_func_2254(var_s0->unk8A);
                 var_s0->unk0[2].unk6 = -1;
@@ -641,7 +641,7 @@ static void dll_13_func_4DCC(void) {
         for (k = 0; k < 30; k++) {
             if (_bss_78[i] & (1 << k)) {
                 if (_bss_190[var_s0->unk8A].unk8 != NULL) {
-                    _bss_190[var_s0->unk8A].unk8->unk5 -= 1;
+                    _bss_190[var_s0->unk8A].unk8->refCount -= 1;
                 }
                 dll_13_func_2254(var_s0->unk8A);
                 var_s0->unk0[2].unk6 = -1;
@@ -664,7 +664,7 @@ static void dll_13_func_4F2C(s32 arg0, s32 arg1, s32 arg2) {
         temp_v1->unk7C = 0;
         if (arg2 == 0) {
             if (_bss_190[temp_v1->unk8A].unk8 != NULL) {
-                _bss_190[temp_v1->unk8A].unk8->unk5 -= 1;
+                _bss_190[temp_v1->unk8A].unk8->refCount -= 1;
                 dll_13_func_2254(temp_v1->unk8A);
             }
         }
@@ -687,7 +687,7 @@ s16 dll_13_func_5068(s32 textureID) {
     while (TRUE) {
         if (textureID == _bss_370[i].unk8) {
             // Existing found
-            if ((_bss_370[i].unk0 != NULL) && (_bss_370[i].unk0->unk5 >= 0xFE)) {
+            if ((_bss_370[i].unk0 != NULL) && (_bss_370[i].unk0->refCount >= 254)) {
                 return -1;
             }
             _bss_370[i].unk4 = 1000;
@@ -701,7 +701,7 @@ s16 dll_13_func_5068(s32 textureID) {
                 if (_bss_370[i].unk0 == NULL) {
                     // Empty slot found
                     _bss_370[i].unk0 = queue_load_texture_proxy(textureID);
-                    if ((_bss_370[i].unk0 != NULL) && (_bss_370[i].unk0->unk5 >= 0xFE)) {
+                    if ((_bss_370[i].unk0 != NULL) && (_bss_370[i].unk0->refCount >= 254)) {
                         if (_bss_370[i].unk0 != NULL) {
                             texture_destroy(_bss_370[i].unk0);
                         }
@@ -711,7 +711,7 @@ s16 dll_13_func_5068(s32 textureID) {
                     if (_bss_370[i].unk0 != NULL) {
                         _bss_370[i].unk4 = 1000;
                         _bss_370[i].unk8 = textureID;
-                        _bss_370[i].unkC = (s32) (_bss_370[i].unk0->levels * _bss_370[i].unk0->unk18) >> 3;
+                        _bss_370[i].unkC = (s32) (_bss_370[i].unk0->animDuration * _bss_370[i].unk0->unk18) >> 3;
                         return (s16) i;
                     }
                     return -2;
@@ -734,7 +734,7 @@ s16 dll_13_func_5068(s32 textureID) {
                     if (_bss_370[var_a3].unk0 != NULL) {
                         _bss_370[var_a3].unk4 = 1000;
                         _bss_370[var_a3].unk8 = textureID;
-                        _bss_370[var_a3].unkC = (s32) (_bss_370[var_a3].unk0->levels * _bss_370[var_a3].unk0->unk18) >> 3;
+                        _bss_370[var_a3].unkC = (s32) (_bss_370[var_a3].unk0->animDuration * _bss_370[var_a3].unk0->unk18) >> 3;
                         return (s16) var_a3;
                     }
                     return -3;

@@ -3714,8 +3714,8 @@ void func_80049D88(void)
         if (gBlockTextures[i].refCount != 0) {
             texture = gBlockTextures[i].texture;
 
-            if ((texture != NULL) && (texture->levels != 0x100)) {
-                if (texture->unkE != 0) {
+            if ((texture != NULL) && (texture->animDuration != 0x100)) {
+                if (texture->animSpeed != 0) {
                     func_8003E648(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
                 }
             }

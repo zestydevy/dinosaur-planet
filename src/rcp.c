@@ -409,21 +409,21 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     s32 sp130;
     s32 sp12C;
     s32 sp128;
-    s32 var_v0;
+    s32 numFrames;
     Texture* var_s6;
     Texture* sp11C;
 
     sp12C = func_80041DBC();
     sp128 = func_80041E08();
     
-    if (tex->levels != 0) {
-        var_v0 = (s32) tex->levels >> 8;
+    if (tex->animDuration != 0) {
+        numFrames = (s32) tex->animDuration >> 8;
     } else {
-        var_v0 = 0;    
+        numFrames = 0;    
     }
     sp11C = tex;
-    if ((var_v0 >= 2) && (arg6 < var_v0)) {
-        for (var_v0 = 0; var_v0 < arg6 && sp11C != NULL; var_v0++) {
+    if ((numFrames > 1) && (arg6 < numFrames)) {
+        for (numFrames = 0; numFrames < arg6 && sp11C != NULL; numFrames++) {
             sp11C = sp11C->next;
         }
     }

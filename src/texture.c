@@ -675,18 +675,18 @@ Gfx Gfx_ARRAY_80092a00[] = {
     /* 00093638: */ gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, qu102(3), qu102(3))
 };
 
-s32 D_80092A40 = 6;
+s32 D_80092A40 = ALLOC_TAG_TEX_COL;
 s32 D_80092A44 = 1;
 s32 UINT_80092a48 = 0;
 // -------- .data end 80092a50 -------- //
 
 // -------- .bss start 800b49a0 -------- //
 s32* gFile_TEX_TAB[2]; // TEX0/TEX1 tab
-Unk800B49A8* D_800B49A8;
-void* gFile_TEXTABLE;
+s32* D_800B49A8;
+s32* gFile_TEXTABLE;
 s32 D_800B49B0;
 s32 D_800B49B8[2];
-void *D_800B49C0;
+s32 *D_800B49C0;
 Texture *gCurrTex0;
 Texture *gCurrTex1;
 Texture *D_800B49CC;
@@ -696,22 +696,24 @@ s32 D_800B49D8;
 s8 D_800B49DC;
 // -------- .bss end 800b49e0 -------- //
 
+Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl);
+
 void init_textures(void) {
     s32 var_v1;
     s32* temp_a1;
     s32 i;
 
-    D_800B49A8 = mmAlloc(0x15E0, ALLOC_TAG_TEX_COL, NULL);
+    D_800B49A8 = mmAlloc(700 * 8, ALLOC_TAG_TEX_COL, NULL);
     D_800B49B0 = 0;
-    queue_alloc_load_file((void **) &gFile_TEX_TAB[0], 0x28);
-    queue_alloc_load_file((void **) &gFile_TEX_TAB[1], 0x25);
-    queue_alloc_load_file(&gFile_TEXTABLE, 0x26);
+    queue_alloc_load_file((void **) &gFile_TEX_TAB[0], TEX0_TAB);
+    queue_alloc_load_file((void **) &gFile_TEX_TAB[1], TEX1_TAB);
+    queue_alloc_load_file((void **) &gFile_TEXTABLE, TEXTABLE_BIN);
     for (i = 0; i < 2; i++) {
         temp_a1 = gFile_TEX_TAB[i];
         for (var_v1 = 0; temp_a1[var_v1] != -1; var_v1++) {}
         D_800B49B8[i] = (var_v1 - 1);
     }
-    D_800B49C0 = mmAlloc(0x108, ALLOC_TAG_TEX_COL, NULL);
+    D_800B49C0 = mmAlloc((32 + 1) * 8, ALLOC_TAG_TEX_COL, NULL);
 }
 
 void func_8003CD6C(s32 arg0) {
@@ -725,127 +727,113 @@ Texture *queue_load_texture_proxy(s32 id) {
     return texture;
 }
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_load.s")
 #else
-// https://decomp.me/scratch/Uk770
+// https://decomp.me/scratch/ht6r3
 Texture* texture_load(s32 id, s32 param2) {
-    u32 sp74;
-    s32 sp68;
-    u32 sp58;
-    Texture* sp44;
-    Texture* sp40;
-    Unk800B49A8* temp_v1;
-    s32 temp_s4;
-    s32 temp_s5;
-    s32 temp_s5_2;
-    s32 temp_s7;
-    u8 temp_t0;
-    u16 temp_t4;
-    s32 temp_t7;
-    s32 temp_t8;
-    Texture *temp_v0;
-    s32 temp_v0_4;
-    s32 temp_v1_2;
-    s32 temp_v1_4;
-    s32 var_a0;
-    s32 var_a2;
-    s32 var_s1;
-    s32 var_s6;
+    u32 binFileID; // sp74
+    Texture* tex;
+    s32 temp;
+    s32 texID; // sp68
+    s32 uncompressedSize;
+    s32 compressedSize;
+    s32 numFrames;
+    s32 offset; // sp58
     s32 i;
-    s32 var_v0_3;
-    s32 var_v0_4;
-    Unk800B49A8* temp_v0_2;
-    u32 temp_s0;
+    s32 tabEntry;
+    s32 frame;
+    s32 tab;
+    Texture* firstTex; // sp44
+    Texture* prevTex; // sp40
     u8* temp_s3;
-    Texture* temp_v0_3;
-    u8* var_v0;
-    Unk800B49C0* temp_v1_3;
 
     for (i = 0; i < D_800B49B0; i++) {
-        temp_v1 = &D_800B49A8[i];
-        if (id == temp_v1->unk0) {
-            temp_v0 = temp_v1->unk4;
-            ((u8*)temp_v0)[5]++;
-            return temp_v0;
+        if (id == D_800B49A8[ASSETCACHE_ID(i)]) {
+            tex = (Texture*)D_800B49A8[ASSETCACHE_PTR(i)];
+            tex->refCount += 1;
+            return tex;
         }
     }
-    sp68 = id;
+
+    texID = id;
     if (id < 0) {
-        sp68 = -id;
+        id = -id;
     } else {
-        sp68 = gFile_TEXTABLE[id];
+        id = gFile_TEXTABLE[id];
     }
-    temp_t4 = sp68 & 0xFFFF;
-    var_a0 = temp_t4;
-    if (temp_t4 & 0x8000) {
-        var_v0_3 = 1;
-        sp74 = 0x24;
-        var_a0 = temp_t4 & 0x7FFF;
+    tabEntry = id & 0xFFFF;
+    if (tabEntry & 0x8000) {
+        tab = 1; // TEX1
+        binFileID = TEX1_BIN;
+        tabEntry &= 0x7FFF;
     } else {
-        var_v0_3 = 0;
-        sp74 = 0x27;
+        tab = 0; // TEX0
+        binFileID = TEX0_BIN;
     }
-    temp_v0_2 = (Unk800B49A8 *)&gFile_TEX_TAB[var_v0_3][var_a0];
-    temp_v1_2 = temp_v0_2->unk0;
-    temp_t0 = temp_v1_2 >> 0x18;
-    temp_s0 = temp_v1_2 & 0xFFFFFF;
-    temp_s5 = ((u32)temp_v0_2->unk4 & 0xFFFFFF) - temp_s0;
-    if (temp_t0 >= 2) {
-        read_file_region(sp74, D_800B49C0, temp_s0, (temp_t0 + 1) * 8);
+    
+    offset = gFile_TEX_TAB[tab][tabEntry] & 0xFFFFFF;
+    numFrames = (gFile_TEX_TAB[tab][tabEntry] >> 24) & 0xFF;
+    compressedSize = (gFile_TEX_TAB[tab][tabEntry + 1] & 0xFFFFFF) - offset;
+    if (numFrames > 1) {
+        read_file_region(binFileID, D_800B49C0, offset, (numFrames + 1) << 3);
     } else {
-        D_800B49C0->unk0 = 0;
-        D_800B49C0->unk4 = rarezip_uncompress_size_rom(sp74, temp_s0, 1);
-        D_800B49C0->unk8 = temp_s5;
+        D_800B49C0[0] = 0;
+        D_800B49C0[1] = rarezip_uncompress_size_rom(binFileID, offset, 1);
+        D_800B49C0[2] = compressedSize;
     }
-    sp44 = NULL;
-    sp40 = NULL;
-    for (var_s1 = 0; var_s1 < temp_t0; var_s1++) {
-        temp_s4 = D_800B49C0[var_s1].unk4;
-        temp_s7 = temp_s4 + 0xE4;
-        temp_s5_2 = (u32)D_800B49C0[var_s1+1].unk0 - (u32)D_800B49C0[var_s1].unk0;
-        sp44 = mmAlloc(temp_s7, D_80092A40, NULL);
-        if (sp44 == NULL) {
-            var_s1++;
-            if ((var_s1) == 1) {
+    
+    firstTex = NULL;
+    prevTex = NULL;
+    for (frame = 0; frame < numFrames; frame++) {
+        uncompressedSize = D_800B49C0[(frame << 1) + 1];
+        compressedSize = D_800B49C0[(frame + 1) << 1] - D_800B49C0[frame << 1];
+        tex = mmAlloc((uncompressedSize + 0xE4), D_80092A40, NULL);
+        if (tex == NULL) {
+            if ((frame + 1) == 1) {
                 return NULL;
             }
-            var_s1 = temp_t0 + 1;
-            sp44->levels = (temp_t0 << 8);
+            firstTex->animDuration = (s16) (numFrames << 8);
+            frame = numFrames;
         } else {
-            temp_v0_4 = (((u32) &sp44[temp_s4]) - temp_s5_2) + 0xE4;
-            temp_s3 = temp_v0_4 - (temp_v0_4 % 16);
-            read_file_region(sp74, temp_s3, D_800B49C0[var_s1].unk0 + temp_s0, temp_s5_2);
-            rarezip_uncompress(temp_s3, (u8*)sp44, temp_s4);
-            sp44->next = 0;
-            if (sp40 != NULL) {
-                sp40->next = sp44;
+            temp = (s32)((((u8*)tex + uncompressedSize) - compressedSize) + 0xE4);
+            temp_s3 = (u8*)(temp - (temp % 16));
+            read_file_region(binFileID, temp_s3, D_800B49C0[frame << 1] + offset, compressedSize);
+            rarezip_uncompress(temp_s3, (u8*)tex, uncompressedSize);
+            tex->next = NULL;
+            if (prevTex != NULL) {
+                prevTex->next = tex;
             }
-            sp40 = sp44;
-            if (var_s1 == 0) {
-                sp44->levels = temp_t0 << 8;
+            prevTex = tex;
+            if (frame == 0) {
+                firstTex = tex;
+                tex->animDuration = (s16) (numFrames << 8);
             } else {
-                sp44->levels = 1;
+                tex->animDuration = 1;
             }
-            sp44->unk10 = (u32) temp_s7 >> 2;
-            mmRealloc(sp44, (load_texture_to_tmem(sp44, mmAlign16((u32) &sp44[temp_s4])) - (u32)sp44) + 1, 0);
+            tex->unk10 = (u32) (uncompressedSize + 0xE4) >> 2;
+            mmRealloc(tex, 
+                ((u8*)load_texture_to_tmem(tex, (Gfx*)mmAlign16((u32) ((u8*)tex) + uncompressedSize)) - (u8*)tex) + 8, 
+                NULL);
         }
     }
+
     for (i = 0; i < D_800B49B0; i++) {
-        temp_v1 = &D_800B49A8[i];
-        if (temp_v1->unk0 == -1) {
+        if (D_800B49A8[ASSETCACHE_ID(i)] == -1) {
             break;
         }
     }
+    
     if (i == D_800B49B0) {
         D_800B49B0 += 1;
     }
-    D_800B49A8[i].unk0 = id;
-    D_800B49A8[i].unk4 = sp44;
-    if (D_800B49B0 >= 0x2BD) {
+    i <<= 1;
+    D_800B49A8[i] = texID;
+    D_800B49A8[i + 1] = (s32)firstTex;
+    if (D_800B49B0 > 700) {
         return NULL;
     }
-    return sp44;
+    return firstTex;
 }
 #endif
 
@@ -1061,9 +1049,6 @@ void load_texture_to_tmem2(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
     *gdl = dl;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_destroy.s")
-#else
 void texture_destroy(Texture* texture) {
     Texture* temp_s1;
     Texture* var_s0;
@@ -1073,13 +1058,13 @@ void texture_destroy(Texture* texture) {
         return;
     }
 
-    ((u8*)texture)[5]--;
-    if ((((u8*)texture)[5]) > 0) {
+    texture->refCount--;
+    if (texture->refCount > 0) {
         return;
     }
 
     for (i = 0; i < D_800B49B0; i++) {
-        if (texture == (D_800B49A8 + i)->unk4) {
+        if (texture == (Texture*)D_800B49A8[ASSETCACHE_PTR(i)]) {
             var_s0 = texture->next;
             while (var_s0 != NULL) {
                 if (((u32) var_s0 < 0x80000000U) || ((u32) var_s0 >= 0xA0000000U)) {
@@ -1091,13 +1076,12 @@ void texture_destroy(Texture* texture) {
                 }
             }
             mmFree(texture);
-            (D_800B49A8 + i)->unk0 = -1;
-            (D_800B49A8 + i)->unk4 = -1;
-            return;
+            D_800B49A8[ASSETCACHE_ID(i)] = -1;
+            D_800B49A8[ASSETCACHE_PTR(i)] = -1;
+            break;
         }
     }
 }
-#endif
 
 void func_8003DB5C(void) {
     UINT_80092a48 = 0;
@@ -1151,7 +1135,7 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
         var_t0 = 0;
         if (arg1 != NULL) {
             var_a0 = arg3 >> 0x10;
-            var_a2 = arg1->levels != 0 ? arg1->levels >> 8 : 0;
+            var_a2 = arg1->animDuration != 0 ? arg1->animDuration >> 8 : 0;
             var_a3 = arg1;
             var_t0_2 = arg1;
             if (var_a2 >= 2 && var_a0 < var_a2) {
@@ -1327,8 +1311,8 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
     sp4C = *gdl;
     if (tex0 != NULL) {
         temp_a1 = level >> 0x10;
-        if (tex0->levels != 0) {
-            var_a2_2 = tex0->levels >> 8;
+        if (tex0->animDuration != 0) {
+            var_a2_2 = tex0->animDuration >> 8;
         } else {
             var_a2_2 = level * 0;
         }
@@ -1478,9 +1462,9 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         }
 
         if (temp_t2 == 0) {
-            *arg2 +=(arg0->unkE * gUpdateRate);
-            if (*arg2 >= arg0->levels) {
-                *arg2 = ((arg0->levels * 2) - *arg2) - 1;
+            *arg2 +=(arg0->animSpeed * gUpdateRate);
+            if (*arg2 >= arg0->animDuration) {
+                *arg2 = ((arg0->animDuration * 2) - *arg2) - 1;
                 if (*arg2 < 0) {
                     *arg2 = 0;
                     *arg1 &= 0xFFF3FFFF;
@@ -1491,7 +1475,7 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
             return;
         }
 
-        *arg2 -= arg0->unkE * gUpdateRate;
+        *arg2 -= arg0->animSpeed * gUpdateRate;
         if (*arg2 < 0) {
             *arg2 = 0;
             *arg1 &= 0xFFF3FFFF;
@@ -1501,9 +1485,9 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
 
     if (temp_t1) {
         if (temp_t2 == 0) {
-            *arg2 += arg0->unkE * gUpdateRate;
+            *arg2 += arg0->animSpeed * gUpdateRate;
         } else {
-            *arg2 -= arg0->unkE * gUpdateRate;
+            *arg2 -= arg0->animSpeed * gUpdateRate;
         }
         do {
             var_a0 = 0;
@@ -1513,14 +1497,14 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
                 *arg1 &= 0xFFF7FFFF;
             }
             if (arg0->flags & 0x40) {
-                temp_a1 = arg0->levels - 0x100;
+                temp_a1 = arg0->animDuration - 0x100;
                 if (*arg2 >= temp_a1) {
                     *arg2 = ((temp_a1 * 2) - (s32) *arg2) - 1;
                     var_a0 = 1;
                     *arg1 |= 0x80000;
                 }
-            } else if ((s32) *arg2 >= (s32) arg0->levels) {
-                *arg2 = ((arg0->levels * 2) - (s32) *arg2) - 1;
+            } else if ((s32) *arg2 >= (s32) arg0->animDuration) {
+                *arg2 = ((arg0->animDuration * 2) - (s32) *arg2) - 1;
                 var_a0 = 1;
                 *arg1 |= 0x80000;
             }
@@ -1528,14 +1512,14 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         return;
     }
     if (temp_t2 == 0) {
-        *arg2 += arg0->unkE * gUpdateRate;
-        while ((s32) *arg2 >= arg0->levels) {
-            *arg2 -= arg0->levels;
+        *arg2 += arg0->animSpeed * gUpdateRate;
+        while ((s32) *arg2 >= arg0->animDuration) {
+            *arg2 -= arg0->animDuration;
         }
     } else {
-        *arg2 -= arg0->unkE * gUpdateRate;
+        *arg2 -= arg0->animSpeed * gUpdateRate;
         while ((s32) *arg2 < 0) {
-            *arg2 += arg0->levels;
+            *arg2 += arg0->animDuration;
         }
     }
 }
@@ -1548,7 +1532,7 @@ void* func_8003E904(Texture* arg0, s32 arg1) {
 
     texData = arg0 + 1;
     if (arg1 > 0) {
-        if (arg1 < arg0->levels) {
+        if (arg1 < arg0->animDuration) {
             arg1>>= 8;
             for (var_v0 = arg0, i = 0; i < arg1 && var_v0 != NULL; i++) {
                 var_v0 = var_v0->next;
@@ -1561,20 +1545,16 @@ void* func_8003E904(Texture* arg0, s32 arg1) {
     return texData;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003E960.s")
-#else
 Texture* func_8003E960(s32 arg0) {
     s32 i;
-
+    
     for (i = 0; i < D_800B49B0; i++) {
-        if (arg0 == ((D_800B49A8 + i)->unk0 & 0xFFFFFFFF)) {
-            return (D_800B49A8 + i)->unk4;
+        if (D_800B49A8[ASSETCACHE_ID(i)] == arg0) {
+            return (Texture*)D_800B49A8[ASSETCACHE_PTR(i)];
         }
     }
     return NULL;
 }
-#endif
 
 void func_8003E9B4(s32 arg0) {
     UINT_80092a48 |= arg0;

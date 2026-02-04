@@ -52,11 +52,11 @@ typedef struct Texture {
 /*02*/ u8 format; // lower 4 bits = TEX_FORMAT_*
 /*03*/ u8 unk3;
 /*04*/ u8 unk4;
-/*05*/ u8 unk5;
+/*05*/ u8 refCount;
 /*06*/ s16 flags; // TextureFlags
 /*08*/ Gfx *gdl;
-/*0C*/ u16 levels; // numFrames?
-/*0E*/ u16 unkE;
+/*0C*/ u16 animDuration;
+/*0E*/ u16 animSpeed;
 /*10*/ u16 unk10;
 /*12*/ s16 gdlIdx;
 /*14*/ struct Texture *next;

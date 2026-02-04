@@ -500,12 +500,12 @@ void dll_1_ctor(s32 arg0) {
     }
 
     _bss_C34 = queue_load_texture_proxy(0x500);
-    _bss_C34->unkE = 0x28;
+    _bss_C34->animSpeed = 0x28;
     _bss_5B8 = 0x80000;
     _bss_5C0[0] = 0;
     _bss_6B0[0] = queue_load_texture_proxy(0x3A7);
     _bss_5A0 = queue_load_texture_proxy(0x274);
-    _bss_5A0->unkE = 0x28;
+    _bss_5A0->animSpeed = 0x28;
     
     dll_1_func_69CC(&_bss_C88);
 }
