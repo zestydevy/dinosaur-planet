@@ -94,9 +94,9 @@ void WLpressureswitch_control(Object* self) {
     }
 
     //Handle objects on/near the switch
-    if (self->unk58->unk10F > 0) {
-        for (index = 0; index < self->unk58->unk10F; index++){
-            listedObject = (Object*)self->unk58->unk100[index];
+    if (self->polyhits->unk10F > 0) {
+        for (index = 0; index < self->polyhits->unk10F; index++){
+            listedObject = (Object*)self->polyhits->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > 8.9f) {
                 objdata->pressed = 5; //considered pressed for next 5 updates

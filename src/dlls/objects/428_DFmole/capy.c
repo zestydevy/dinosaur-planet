@@ -111,7 +111,7 @@ void dll_428_control(Object* self) {
     
     gDLL_18_objfsa->vtbl->tick(self, (ObjFSA_Data* ) baddie, 1.0f, 1.0f, (s32 (**)(Object*, ObjFSA_Data*, f32)) _bss_0, (s32 (**)(Object*, ObjFSA_Data*, f32)) _bss_28);
     dll_428_func_468(self, (Baddie* ) baddie, (ObjFSA_Data* ) baddie);
-    if ((baddie->fsa.target != 0) || (baddie->fsa.unk348 == 0)) { 
+    if ((baddie->fsa.target != 0) || (baddie->fsa.hitpoints == 0)) { 
         dll_428_func_644(self, 0, (Baddie* ) baddie, (ObjFSA_Data* ) baddie);
         return;
     }

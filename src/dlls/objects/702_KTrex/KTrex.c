@@ -428,9 +428,9 @@ void dll_702_control(Object* self) {
         sKTData->laserWallBitfield = dll_702_get_laser_wall_bitfield(sKTData->selfSegmentBitfield);
         gDLL_33_BaddieControl->vtbl->func20(self, &baddie->fsa, &sBaddie->unk34C, sBaddie->unk39E, &sBaddie->unk3B4, 2, 2, 0);
         if (sKTData->flags & KTFLAG_VULNERABLE) {
-            baddie->fsa.unk348 = 2;
+            baddie->fsa.hitpoints = 2;
         } else {
-            baddie->fsa.unk348 = 0;
+            baddie->fsa.hitpoints = 0;
         }
         dll_702_func_1EF0(self, &baddie->fsa);
         dll_702_fx_tick(self);
@@ -886,7 +886,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     if (sp60 != 0) {
         modelInst = self->modelInsts[self->modelInstIdx];
         temp_v1 = modelInst->unk24;
-        if ((fsa->unk348 != 0) && ((sp5C == 3) || (sp5C == 2))) {
+        if ((fsa->hitpoints != 0) && ((sp5C == 3) || (sp5C == 2))) {
             _bss_60.transl.x = temp_v1->m[sp5C][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[sp5C][2];
             _bss_60.transl.z = temp_v1->m[sp5C][3] + gWorldZ;
@@ -897,8 +897,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             sKTData->flags &= ~KTFLAG_VULNERABLE;
             sKTData->flags |= KTFLAG_DAMAGED;
-            fsa->unk343 = (s8) sp60;
-            fsa->unk348 -= 1;
+            fsa->lastHitType = (s8) sp60;
+            fsa->hitpoints -= 1;
         } else {
             gDLL_6_AMSFX->vtbl->play_sound(self, sSndDeflectAttack[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
@@ -918,8 +918,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             sp3C[2] += rand_next(0, 0x9B);
             _data_E4->vtbl->func0(self, 0, &_bss_60, 1, -1, &sp3C);
         }
-        if (fsa->unk348 <= 0) {
-            fsa->unk348 = 0;
+        if (fsa->hitpoints <= 0) {
+            fsa->hitpoints = 0;
         }
         obj_send_mesg(sp54, 0xE0001, self, NULL);
     }

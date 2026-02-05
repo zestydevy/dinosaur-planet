@@ -865,7 +865,7 @@ u32 obj_calc_mem_size(Object *obj, ObjDef *def, u32 modflags) {
         size += sizeof(ObjectHitInfo);
 
         if (def->unk93 & 8) {
-            size += sizeof(ObjectStruct58);
+            size += sizeof(ObjectPolyhits);
         }
     }
 
@@ -1148,8 +1148,8 @@ void update_object(Object *obj) {
             obj->objhitInfo->unk62 = 0;
         }
 
-        if (obj->unk58 != NULL) {
-            obj->unk58->unk10F = 0;
+        if (obj->polyhits != NULL) {
+            obj->polyhits->unk10F = 0;
         }
 
         obj->unkAF &= ~(0x1 | 0x2 | 0x4);

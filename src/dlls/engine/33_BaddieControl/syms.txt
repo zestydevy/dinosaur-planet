@@ -16,13 +16,13 @@ BaddieControl_func_F60 = 0xF60;
 BaddieControl_func_10F4 = 0x10F4;
 BaddieControl_func_148C = 0x148C;
 BaddieControl_func_15CC = 0x15CC;
-BaddieControl_func_18E4 = 0x18E4;
+BaddieControl_check_hit = 0x18E4;
 BaddieControl_func_1D88 = 0x1D88;
 BaddieControl_func_1FAC = 0x1FAC;
 BaddieControl_setup = 0x2000;
 BaddieControl_func_24FC = 0x24FC;
-BaddieControl_func_2624 = 0x2624;
-BaddieControl_func_2718 = 0x2718;
+BaddieControl_change_weapon = 0x2624;
+BaddieControl_get_health_ratio = 0x2718;
 
 .rodata = 0x2890:
 

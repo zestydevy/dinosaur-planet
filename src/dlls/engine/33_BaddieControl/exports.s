@@ -27,8 +27,8 @@ _exports:
 /*16*/ .dword BaddieControl_func_F60
 /*17*/ .dword BaddieControl_func_10F4
 /*18*/ .dword BaddieControl_func_15CC
-/*19*/ .dword BaddieControl_func_18E4
+/*19*/ .dword BaddieControl_check_hit
 /*20*/ .dword BaddieControl_func_1D88
 /*21*/ .dword BaddieControl_setup
-/*22*/ .dword BaddieControl_func_2624
-/*23*/ .dword BaddieControl_func_2718
+/*22*/ .dword BaddieControl_change_weapon
+/*23*/ .dword BaddieControl_get_health_ratio

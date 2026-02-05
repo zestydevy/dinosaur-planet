@@ -357,7 +357,7 @@ void BaddieControl_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
 
 // offset: 0xED0 | func: 10 | export: 11
 s32 BaddieControl_func_ED0(Object* arg0, Baddie* arg1, u8 arg2) {
-    if (arg2 && (arg1->fsa.unk348 <= 0) && (arg0->opacity == 0)) {
+    if (arg2 && (arg1->fsa.hitpoints <= 0) && (arg0->opacity == 0)) {
         return 0;
     }
     if ((arg0->parent == NULL) && (func_8004454C(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
@@ -376,7 +376,7 @@ s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     player = get_player();
     var_v1 = 0;
     if (fsa->unk33A != 0) {
-        if ((player == fsa->target) && (fsa->unk348 != 0)) {
+        if ((player == fsa->target) && (fsa->hitpoints != 0)) {
             if ((arg2 < fsa->targetDist) && (arg3 != 0)) {
                 var_v1 = 1;
             } else {
@@ -428,7 +428,7 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
         spE0[0] = curObj->positionMirror.x - arg0->positionMirror.x;
         spE0[1] = curObj->positionMirror.y - arg0->positionMirror.y;
         spE0[2] = curObj->positionMirror.z - arg0->positionMirror.z;
-        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (fsa->unk348 != 0)) {
+        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (fsa->hitpoints != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
             }
@@ -606,54 +606,55 @@ Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
 }
 
 // offset: 0x18E4 | func: 15 | export: 19
-s32 BaddieControl_func_18E4(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8) {
-    Baddie* objdata;
+s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, 
+        s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT) {
+    Baddie* baddie;
     Object* player;
-    s32 sp5C;
+    s32 hitType;
     s32 sp58;
-    s32 sp54;
+    s32 damage;
     Object* sp50;
-    f32 sp4C;
-    f32 sp48;
-    f32 sp44;
+    f32 hitX;
+    f32 hitY;
+    f32 hitZ;
 
-    objdata = (Baddie*)arg0->data;
+    baddie = (Baddie*)obj->data;
     player = get_player();
-    if (objdata->unk3E8 > 0.0f) {
-        objdata->unk3E8 += (gUpdateRateF * objdata->unk3EC);
-        if (objdata->unk3B2 & 0x20) {
-            objdata->unk3B2 &= ~0x20;
-            objdata->unk3B2 |= 0x40;
-            if (objdata->unk3E8 > 2.0f) {
-                objdata->unk3E8 = 0.0f;
-                objdata->unk3B2 &= ~0x40;
+    if (baddie->unk3E8 > 0.0f) {
+        baddie->unk3E8 += (gUpdateRateF * baddie->unk3EC);
+        if (baddie->unk3B2 & 0x20) {
+            baddie->unk3B2 &= ~0x20;
+            baddie->unk3B2 |= 0x40;
+            if (baddie->unk3E8 > 2.0f) {
+                baddie->unk3E8 = 0.0f;
+                baddie->unk3B2 &= ~0x40;
             }
-        } else if (objdata->unk3B2 & 0x40) {
-            if (objdata->unk3E8 > 2.0f) {
-                Baddie_Setup* objsetup = (Baddie_Setup*)arg0->setup;
-                objdata->unk3E8 = 0.0f;
-                objdata->unk3B2 &= ~0x40;
-                arg1->unk348 = 0;
-                arg0->opacity = 0;
-                arg0->unkDC = 1;
+        } else if (baddie->unk3B2 & 0x40) {
+            if (baddie->unk3E8 > 2.0f) {
+                Baddie_Setup* objsetup = (Baddie_Setup*)obj->setup;
+                baddie->unk3E8 = 0.0f;
+                baddie->unk3B2 &= ~0x40;
+                fsa->hitpoints = 0;
+                obj->opacity = 0;
+                obj->unkDC = 1;
                 gDLL_29_Gplay->vtbl->add_time(objsetup->base.uID, (f32) (objsetup->unk2C * 60));
             }
         } else {
-            if (objdata->unk3E8 < 0.0f) {
-                objdata->unk3E8 = 0.0f;
-            } else if (objdata->unk3E8 > 120.0f) {
-                objdata->unk3E8 = (120.0f - (objdata->unk3E8 - 120.0f));
-                objdata->unk3EC = -objdata->unk3EC;
+            if (baddie->unk3E8 < 0.0f) {
+                baddie->unk3E8 = 0.0f;
+            } else if (baddie->unk3E8 > 120.0f) {
+                baddie->unk3E8 = (120.0f - (baddie->unk3E8 - 120.0f));
+                baddie->unk3EC = -baddie->unk3EC;
             }
         }
     }
-    if (arg1->unk348 == 0) {
+    if (fsa->hitpoints == 0) {
         return 0;
     }
-    sp5C = func_8002601C(arg0, &sp50, &sp58, &sp54, &sp4C, &sp48, &sp44);
-    objdata->unk3F0 = (s8) sp58;
-    if ((arg0 != NULL) && (sp5C != 0) && (sp50 != NULL)) {
-        switch (arg0->id) {
+    hitType = func_8002601C(obj, &sp50, &sp58, &damage, &hitX, &hitY, &hitZ);
+    baddie->unk3F0 = (s8) sp58;
+    if ((obj != NULL) && (hitType != 0) && (sp50 != NULL)) {
+        switch (obj->id) {
         case OBJ_ScorpionRobot:
             if ((sp50->id != OBJ_sword) && (sp50->id != OBJ_staff) && (sp50->id != OBJ_projball)) {
                 return 0;
@@ -674,50 +675,50 @@ s32 BaddieControl_func_18E4(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, 
         }
     }
     
-    if (sp5C != 0) {
-        sp54 *= 4;
-        if (arg8 != NULL) {
-            arg8->transl.x = sp4C + gWorldX;
-            arg8->transl.y = sp48;
-            arg8->transl.z = sp44 + gWorldZ;
+    if (hitType != 0) {
+        damage *= 4;
+        if (hitSRT != NULL) {
+            hitSRT->transl.x = hitX + gWorldX;
+            hitSRT->transl.y = hitY;
+            hitSRT->transl.z = hitZ + gWorldZ;
         }
-        if (arg5 != 0) {
-            if (arg5[sp5C - 2] != -1) {
-                sp54 = (s32) arg5[sp5C - 2];
+        if (hitDamageMap != 0) {
+            if (hitDamageMap[hitType - 2] != -1) {
+                damage = (s32) hitDamageMap[hitType - 2];
             }
         } else {
-            sp54 = 0;
+            damage = 0;
         }
-        // STUBBED_PRINTF("%s hit by type %d for %d points\n", arg0->def->name, sp5C, sp54); (default.dol)
-        arg1->unk348 -= sp54;
-        if (arg1->unk348 <= 0) {
-            objdata->unk3B2 |= 0x20;
-            objdata->unk3E8 = 1.0f;
-            objdata->unk3EC = 0.01f;
-            arg1->logicState = arg6;
-            arg1->unk348 = 0;
-        } else if (sp54 != 0) {
-            if ((arg1->target == NULL) && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) != 0)) {
-                arg1->target = player;
-                arg1->unk33D = 0;
+        // STUBBED_PRINTF("%s hit by type %d for %d points\n", obj->def->name, hitType, damage); (default.dol)
+        fsa->hitpoints -= damage;
+        if (fsa->hitpoints <= 0) {
+            baddie->unk3B2 |= 0x20;
+            baddie->unk3E8 = 1.0f;
+            baddie->unk3EC = 0.01f;
+            fsa->logicState = hitLogicState;
+            fsa->hitpoints = 0;
+        } else if (damage != 0) {
+            if ((fsa->target == NULL) && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) != 0)) {
+                fsa->target = player;
+                fsa->unk33D = 0;
             }
-            objdata->unk3E8 = 1.0f;
-            objdata->unk3EC = 12.0f;
-            if (arg4 != 0) {
-                if (arg4[sp5C - 2] != -1) {
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, arg1, arg4[sp5C - 2]);
-                    arg1->logicState = arg6;
+            baddie->unk3E8 = 1.0f;
+            baddie->unk3EC = 12.0f;
+            if (hitAnimStateMap != 0) {
+                if (hitAnimStateMap[hitType - 2] != -1) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(obj, fsa, hitAnimStateMap[hitType - 2]);
+                    fsa->logicState = hitLogicState;
                 }
             }
-            arg1->unk343 = (s8) sp5C;
+            fsa->lastHitType = (s8) hitType;
         }
         if (*arg7 != 0) {
             gDLL_6_AMSFX->vtbl->func_A1C(*arg7);
             *arg7 = 0;
         }
-        obj_send_mesg(sp50, 0xE0001, arg0, NULL);
+        obj_send_mesg(sp50, 0xE0001, obj, NULL);
     }
-    return sp5C;
+    return hitType;
 }
 
 // offset: 0x1D88 | func: 16 | export: 20
@@ -784,7 +785,7 @@ void BaddieControl_func_1FAC(Object* arg0, Baddie* arg1, s32 arg2, s32 arg3, s32
 void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7) {
     s32 sp4C[] = { 0x2 };
     u8 sp4B;
-    u8 temp_v0;
+    u8 hitpoints;
     s32 sp3C;
     s32 sp38;
 
@@ -802,11 +803,11 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     baddie->fsa.unk33D = 0;
     baddie->fsa.unk278 = 0.0f;
     baddie->fsa.unk27C = 0.0f;
-    temp_v0 = setup->unk32;
-    if (temp_v0 != 0) {
-        baddie->fsa.unk348 = temp_v0 * 4;
+    hitpoints = setup->quarterHitpoints;
+    if (hitpoints != 0) {
+        baddie->fsa.hitpoints = hitpoints * 4;
     } else {
-        baddie->fsa.unk348 = 0x18;
+        baddie->fsa.hitpoints = 6 * 4; // default to 6 HP
     }
     baddie->unk39E = setup->unk30;
     baddie->unk3A0 = setup->unk1A;
@@ -828,7 +829,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     baddie->unk3B0 = setup->unk2B;
     baddie->unk3E0 = setup->unk22;
     baddie->unk3B8 = setup->unk2F;
-    baddie->unk3B9 = setup->unk27;
+    baddie->nextWeaponID = setup->initialWeaponID;
     baddie->unk3BA = setup->unk28;
     obj->unkB0 |= baddie->unk3BA & 3;
     if (sp3C & 8) {
@@ -910,7 +911,7 @@ void BaddieControl_func_24FC(Object* arg0, Baddie* arg1, u8 arg2) {
 }
 
 // offset: 0x2624 | func: 20 | export: 22
-void BaddieControl_func_2624(Object *obj, Baddie *baddie) {
+void BaddieControl_change_weapon(Object *obj, Baddie *baddie) {
     s16 weaponObjIDs[] = { 
         OBJ_sword, 
         OBJ_staff, 
@@ -919,36 +920,36 @@ void BaddieControl_func_2624(Object *obj, Baddie *baddie) {
         OBJ_fishingnet
     };
 
-    if ((baddie->unk3B9 != baddie->unk3BB) && (obj->opacity != 0)) {
+    if ((baddie->nextWeaponID != baddie->weaponID) && (obj->opacity != 0)) {
         if (obj->linkedObject != NULL) {
             obj_destroy_object(obj->linkedObject);
             obj->linkedObject = NULL;
         }
-        if (baddie->unk3B9 > 0) {
+        if (baddie->nextWeaponID > 0) {
             obj->linkedObject = obj_create(
-                obj_alloc_create_info(sizeof(ObjSetup), weaponObjIDs[baddie->unk3B9 - 1]), 
+                obj_alloc_create_info(sizeof(ObjSetup), weaponObjIDs[baddie->nextWeaponID - 1]), 
                 OBJ_INIT_FLAG4, 
                 -1, 
                 -1, 
                 obj->parent);
         }
-        baddie->unk3BB = baddie->unk3B9;
+        baddie->weaponID = baddie->nextWeaponID;
     }
 }
 
 // offset: 0x2718 | func: 21 | export: 23
-f32 BaddieControl_func_2718(Object* arg0) {
-    f32 var_fv1;
+f32 BaddieControl_get_health_ratio(Object* obj) {
+    f32 healthRatio;
     Baddie_Setup *setup;
     Baddie *objdata;
 
-    objdata = (Baddie*)arg0->data;
-    setup = (Baddie_Setup*)arg0->setup;
+    objdata = (Baddie*)obj->data;
+    setup = (Baddie_Setup*)obj->setup;
 
-    if ((setup->unk32 != 0) && (objdata->fsa.unk348 != 0)) {
-        var_fv1 = (f32) objdata->fsa.unk348 / (f32) (setup->unk32 * 4);
+    if ((setup->quarterHitpoints != 0) && (objdata->fsa.hitpoints != 0)) {
+        healthRatio = (f32) objdata->fsa.hitpoints / (f32) (setup->quarterHitpoints * 4);
     } else {
-        var_fv1 = 0.0f;
+        healthRatio = 0.0f;
     }
-    return var_fv1;
+    return healthRatio;
 }

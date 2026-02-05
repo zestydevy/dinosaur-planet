@@ -260,7 +260,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 4);
     gDLL_33_BaddieControl->vtbl->func4(self, player, 4, &sp62, &sp60, &sp5E);
     if ((sp62 == 1) || (sp62 == 2)) {
-        if (gDLL_33_BaddieControl->vtbl->func19(self, fsa, &baddie->unk34C, (s32) baddie->unk39E, _data_2C, _data_9C, 1, &baddie->unk3A8, &_bss_30) != 0) {
+        if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, (s32) baddie->unk39E, _data_2C, _data_9C, 1, &baddie->unk3A8, &_bss_30) != 0) {
             for (i = 50; i != 0; i--) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_711, NULL, PARTFXFLAG_4, -1, NULL);
             }
@@ -280,7 +280,7 @@ static void dll_243_func_700(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &_bss_30, PARTFXFLAG_2, -1, NULL);
             }
         }
-    } else if (gDLL_33_BaddieControl->vtbl->func19(self, fsa, &baddie->unk34C, (s32) baddie->unk39E, NULL, NULL, 1, &baddie->unk3A8, &_bss_30) != 0) {
+    } else if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, (s32) baddie->unk39E, NULL, NULL, 1, &baddie->unk3A8, &_bss_30) != 0) {
         dll_243_func_1614(self, objdata);
     }
     if (objdata->unk14 != NULL) {
@@ -617,7 +617,7 @@ static s32 dll_243_logic_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate)
 
 // offset: 0x1FE4 | func: 23
 static s32 dll_243_logic_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
-    if (fsa->unk348 <= 0) {
+    if (fsa->hitpoints <= 0) {
         return LUNAIMAR_LSTATE_2 + 1;
     }
     if (fsa->unk33A != 0) {

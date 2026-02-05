@@ -90,9 +90,9 @@ void pressureswitch_control(Object* self) {
     }
 
     //Handle adding objects to switch
-    if (self->unk58->unk10F > 0) {
-        for (index = 0; index < self->unk58->unk10F; index++){
-            listedObject = (Object*)self->unk58->unk100[index];
+    if (self->polyhits->unk10F > 0) {
+        for (index = 0; index < self->polyhits->unk10F; index++){
+            listedObject = (Object*)self->polyhits->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > setup->yThreshold) {
                 pressureswitch_add_object(self, listedObject);

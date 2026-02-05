@@ -202,7 +202,7 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     Object* curObj;
     Object** objects;
     ObjectHitInfo* temp_a0;
-    ObjectStruct58* temp_v1_2;
+    s32 _pad;
     Unk8005341C* var_s0;
     f32 temp_fa0;
     f32 temp_fv1;
@@ -239,7 +239,7 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
         objects = func_80025DD4(&objCount);
         for (i = 0; i < objCount; i++) {
             curObj = objects[i];
-            if (curObj->objhitInfo != NULL && curObj->unk58 != NULL && curObj->unk58->unk10D == 0 && curObj->unk58->unk10E == 0) {
+            if (curObj->objhitInfo != NULL && curObj->polyhits != NULL && curObj->polyhits->unk10D == 0 && curObj->polyhits->unk10E == 0) {
                 temp_a2 = curObj->modelInsts[curObj->objhitInfo->unkA0];
                 if (temp_a2 != NULL && temp_a2->model->facebatchBounds != NULL) {
                     temp_fv0 = temp_a2->model->maxAnimatedVertDistance;
@@ -248,8 +248,8 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
                         && !((temp_fv1_2 = curObj->srt.transl.y - temp_fv0) > maxY) && !((temp_fv1_2 = curObj->srt.transl.y + temp_fv0) < minY)
                         && !((temp_fv1_3 = curObj->srt.transl.z - temp_fv0) > maxZ) && !((temp_fv1_3 = curObj->srt.transl.z + temp_fv0) < minZ)
                     ) {
-                            var_s0->unkC = (MtxF* ) &((f32*)curObj->unk58)[(curObj->unk58->unk10C + 2) << 4];
-                            var_s0->unk8 = (MtxF* ) &((f32*)curObj->unk58)[curObj->unk58->unk10C << 4];
+                            var_s0->unkC = (MtxF* ) &((f32*)curObj->polyhits)[(curObj->polyhits->unk10C + 2) << 4];
+                            var_s0->unk8 = (MtxF* ) &((f32*)curObj->polyhits)[curObj->polyhits->unk10C << 4];
                             var_s0->unk4 = ((s32)s2 - (s32)D_80092E70) / 52;
                             var_s0->unk0 = curObj;
                             s2 = func_8005471C(s2, var_s0, temp_a2, minX, minY, minZ, maxX, maxY, maxZ, arg2);

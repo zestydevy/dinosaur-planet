@@ -11,6 +11,15 @@
 #include "dll_def.h"
 #include "types.h"
 
+enum BaddieWeapon {
+    BADDIE_WEAPON_NONE,
+    BADDIE_WEAPON_SWORD,
+    BADDIE_WEAPON_STAFF,
+    BADDIE_WEAPON_CLUB,
+    BADDIE_WEAPON_ICE_BALL,
+    BADDIE_WEAPON_FISHINGNET
+};
+
 // size:0x3FC
 typedef struct {
 /*000*/ ObjFSA_Data fsa;
@@ -31,9 +40,9 @@ typedef struct {
 /*3B5*/ u8 _unk3B5;
 /*3B6*/ s16 unk3B6;
 /*3B8*/ u8 unk3B8;
-/*3B9*/ s8 unk3B9;
+/*3B9*/ s8 nextWeaponID; // BaddieWeapon
 /*3BA*/ s8 unk3BA;
-/*3BB*/ s8 unk3BB;
+/*3BB*/ s8 weaponID; // BaddieWeapon
 /*3BC*/ HeadAnimation unk3BC;
 /*3E0*/ s16 unk3E0;
 /*3E2*/ u16 unk3E2;
@@ -56,7 +65,7 @@ typedef struct {
 /*20*/ s16 unk20;
 /*22*/ s16 unk22;
 /*24*/ u8 _unk24[0x27 - 0x24];
-/*27*/ s8 unk27;
+/*27*/ s8 initialWeaponID;
 /*28*/ s8 unk28;
 /*29*/ u8 unk29;
 /*2A*/ s8 unk2A;
@@ -65,7 +74,7 @@ typedef struct {
 /*2E*/ s8 unk2E;
 /*2F*/ u8 unk2F;
 /*30*/ s16 unk30;
-/*32*/ u8 unk32;
+/*32*/ u8 quarterHitpoints; // HP / 4
 /*33*/ u8 pad33;
 /*34*/ u16 unk34;
 } Baddie_Setup;
@@ -92,11 +101,11 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
 /*17*/ Object *(*func17)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
 /*18*/ Object *(*func18)(Object* arg0, s32 arg1, s32 arg2, u8 arg3);
-/*19*/ s32 (*func19)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8);
+/*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
 /*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s16 arg7);
 /*21*/ void (*setup)(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7);
-/*22*/ void (*func22)(Object* arg0, Baddie* baddie);
-/*23*/ f32 (*func23)(Object* arg0);
+/*22*/ void (*change_weapon)(Object* obj, Baddie* baddie);
+/*23*/ f32 (*get_health_ratio)(Object* obj); // Gets current health on a scale from 0-1
 };
 
 #endif // _DLL_33_H

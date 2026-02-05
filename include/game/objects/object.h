@@ -204,7 +204,7 @@ typedef struct {
 /*010d*/    u8 unk10D;
 /*010e*/    UNK_TYPE_8 unk10E;
 /*010f*/    s8 unk10F;                  // number of Objects listed in field unk100?
-} ObjectStruct58;
+} ObjectPolyhits;
 
 typedef struct {
     Vec3f unk0;
@@ -275,7 +275,7 @@ typedef struct Object {
 /*004C*/    ObjSetup *setup; // exact type depends on object
 /*0050*/    ObjDef* def; // called "objdata" in default.dol
 /*0054*/    ObjectHitInfo* objhitInfo;
-/*0058*/    ObjectStruct58 *unk58;
+/*0058*/    ObjectPolyhits *polyhits;
 /*005C*/    BinFileEntry *unk5C;
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectShadow* shadow;

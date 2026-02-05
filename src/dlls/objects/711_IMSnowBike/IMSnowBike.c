@@ -238,7 +238,7 @@ void dll_711_control(Object *self) {
         objdata->flags |= SNOWBIKEFLAG_1;
         return;
     }
-    if (self->unk58 != NULL) {
+    if (self->polyhits != NULL) {
         if (objdata->unk3DE == 0) {
             if (self->objhitInfo->unk5A != 8) {
                 self->objhitInfo->unk9F = 2;

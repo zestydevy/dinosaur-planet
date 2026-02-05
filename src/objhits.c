@@ -8,25 +8,6 @@
 #include "sys/gfx/modgfx.h"
 #include "dll.h"
 
-static const char str_80099860[] = "objhits.c: keysize overflow error\n";
-static const char str_80099884[] = " Warning HitModel %x [%d] has no Polyhits\n";
-static const char str_800998b0[] = "OBJHITS: hitmodel overflow\n";
-static const char str_800998cc[] = "objHitReact.c: sphere overflow!\n";
-static const char str_800998f0[] = " WARNING : OBJHITS hitlist has overflowed \n\n";
-static const char str_80099920[] = "ACTIVE POLY HITS overflow\n";
-static const char str_8009993c[] = "ACTIVE POLY HITS overflow\n";
-static const char str_80099958[] = " Guard 1 ";
-static const char str_80099964[] = " player 1 ";
-static const char str_80099970[] = "OBJHITS: Temporary array overflow in 'hitVolumes'\n";
-static const char str_800999a4[] = "HIT VOLUMES: an object has too many hit spheres\n";
-static const char str_800999d8[] = " No Joints On Given Skeleton Object Error ";
-static const char str_80099a04[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n";
-static const char str_80099a48[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n";
-static const char str_80099a88[] = " Result1 ";
-static const char str_80099a94[] = " x %f y %f z %f \n";
-static const char str_80099aa8[] = " Result2 ";
-static const char str_80099ab4[] = " x %f y %f z %f \n";
-
 // -------- .data start 800916e0 -------- //
 Object *D_800916E0[5] = {NULL};
 // function statics start here
@@ -95,7 +76,7 @@ void func_80025E58(void) {
 /** Checks for collisions (Projectile/Ice Blast Spell, etc.) 
   * Lower collisionType values have higher priority.
   */
-s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
+s32 func_80025F40(Object* obj, Object **hitBy, s32 *arg2, s32 *damage) {
     ObjectHitInfo* objHitInfo;
     s8 collisionType;
     s8 collisionIndex;
@@ -109,20 +90,20 @@ s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
         collisionType = 0x7F;
         collisionIndex = -1;
         for (i = 0; i < objHitInfo->unk62; i++) {
-            if (objHitInfo->hitCollisionTypes[i] < collisionType) {
-                collisionType = objHitInfo->hitCollisionTypes[i];
+            if (objHitInfo->hitTypeList[i] < collisionType) {
+                collisionType = objHitInfo->hitTypeList[i];
                 collisionIndex = i;
             }
         }
         if (collisionIndex != -1) {
-            if (arg1 != 0) {
-                *arg1 = objHitInfo->unk6C[collisionIndex];
+            if (hitBy != 0) {
+                *hitBy = objHitInfo->hitByList[collisionIndex];
             }
             if (arg2 != 0) {
                 *arg2 = objHitInfo->unk63[collisionIndex];
             }
-            if (arg3 != 0) {
-                *arg3 = objHitInfo->unk69[collisionIndex];
+            if (damage != 0) {
+                *damage = objHitInfo->hitDamageList[collisionIndex];
             }
             return collisionType;
         }
@@ -131,13 +112,13 @@ s32 func_80025F40(Object* obj, Object **arg1, s32 *arg2, s32 *arg3) {
 }
 
 /** Checks for collisions, see func_80025F40. Returns a collision type. */
-s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f32* arg5, f32* arg6) {
+s8 func_8002601C(Object* obj, Object** hitBy, s32* arg2, s32* damage, f32* hitX, f32* hitY, f32* hitZ) {
     ObjectHitInfo* objHitInfo;
     s8 collisionType;
     s8 collisionIndex;
     s32 i;
 
-    objHitInfo = arg0->objhitInfo;
+    objHitInfo = obj->objhitInfo;
     if (objHitInfo == NULL) {
         return 0;
     }
@@ -146,25 +127,25 @@ s8 func_8002601C(Object* arg0, Object** arg1, s32* arg2, s32* arg3, f32* arg4, f
         collisionType = 0x7F;
         collisionIndex = -1;
         for (i = 0; i < objHitInfo->unk62; i++) {
-            if (objHitInfo->hitCollisionTypes[i] < collisionType) {
-                collisionType = objHitInfo->hitCollisionTypes[i];
+            if (objHitInfo->hitTypeList[i] < collisionType) {
+                collisionType = objHitInfo->hitTypeList[i];
                 collisionIndex = i;
             }
         }
         if (collisionIndex != -1) {
-            if (arg1 != 0) {
-                *arg1 = objHitInfo->unk6C[collisionIndex];
+            if (hitBy != 0) {
+                *hitBy = objHitInfo->hitByList[collisionIndex];
             }
             if (arg2 != 0) {
                 *arg2 = objHitInfo->unk63[collisionIndex];
             }
-            if (arg3 != 0) {
-                *arg3 = objHitInfo->unk69[collisionIndex];
+            if (damage != 0) {
+                *damage = objHitInfo->hitDamageList[collisionIndex];
             }
-            if (arg4 != NULL) {
-                *arg4 = objHitInfo->unk78[collisionIndex];
-                *arg5 = objHitInfo->unk84[collisionIndex];
-                *arg6 = objHitInfo->unk90[collisionIndex];
+            if (hitX != NULL) {
+                *hitX = objHitInfo->hitXList[collisionIndex];
+                *hitY = objHitInfo->hitYList[collisionIndex];
+                *hitZ = objHitInfo->hitZList[collisionIndex];
             }
             return collisionType;
         }
@@ -202,54 +183,54 @@ void func_80026160(Object* obj) {
     }
 }
 
-void func_80026184(Object* arg0, Object* arg1) {
-    ObjectStruct58* obj58;
+void func_80026184(Object* obj, Object* arg1) {
+    ObjectPolyhits* polyhits;
     s32 i;
 
-    obj58 = arg0->unk58;
-    if (obj58->unk10F < 3) {
-        for (i = 0; i < obj58->unk10F; i++) {
-            if (arg1 == obj58->unk100[i]) {
+    polyhits = obj->polyhits;
+    if (polyhits->unk10F < 3) {
+        for (i = 0; i < polyhits->unk10F; i++) {
+            if (arg1 == polyhits->unk100[i]) {
                 return;
             }
         }
         
-        obj58->unk100[obj58->unk10F] = arg1;
-        obj58 = arg0->unk58;
-        obj58->unk10F += 1;
+        polyhits->unk100[polyhits->unk10F] = arg1;
+        polyhits = obj->polyhits;
+        polyhits->unk10F += 1;
     }
 }
 
-s32 func_800261E8(Object* arg0, Object* arg1, s8 collisionType, s8 arg3, s8 arg4, f32 arg5, f32 arg6, f32 arg7) {
+s32 func_800261E8(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4, f32 hitX, f32 hitY, f32 hitZ) {
     ObjectHitInfo* objHitInfo;
     ObjectHitInfo* objHitInfo2;
     s32 i;
 
-    if (collisionType == 0) {
+    if (hitType == 0) {
         return FALSE;
     }
 
-    objHitInfo = arg0->objhitInfo;
+    objHitInfo = obj->objhitInfo;
     if (!(objHitInfo->unk58 & 1)) {
         return FALSE;
     }
 
-    if (arg1 != NULL) {
-        objHitInfo2 = arg1->objhitInfo;
+    if (hitBy != NULL) {
+        objHitInfo2 = hitBy->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk48 = arg0;
+            objHitInfo2->unk48 = obj;
         }
     }
 
     for (i = 0; i < objHitInfo->unk62; i++) {
-        if (arg1 == objHitInfo->unk6C[i]) {
-            if (collisionType < objHitInfo->hitCollisionTypes[i]) {
+        if (hitBy == objHitInfo->hitByList[i]) {
+            if (hitType < objHitInfo->hitTypeList[i]) {
                 objHitInfo->unk63[i] = arg4;
-                objHitInfo->hitCollisionTypes[i] = collisionType;
-                objHitInfo->unk69[i] = arg3;
-                objHitInfo->unk78[i] = arg5;
-                objHitInfo->unk84[i] = arg6;
-                objHitInfo->unk90[i] = arg7;
+                objHitInfo->hitTypeList[i] = hitType;
+                objHitInfo->hitDamageList[i] = damage;
+                objHitInfo->hitXList[i] = hitX;
+                objHitInfo->hitYList[i] = hitY;
+                objHitInfo->hitZList[i] = hitZ;
             }
             i = objHitInfo->unk62 + 1;
         }
@@ -257,48 +238,48 @@ s32 func_800261E8(Object* arg0, Object* arg1, s8 collisionType, s8 arg3, s8 arg4
 
     if (i == objHitInfo->unk62 && objHitInfo->unk62 < 3) {
         objHitInfo->unk63[objHitInfo->unk62] = arg4;
-        objHitInfo->hitCollisionTypes[objHitInfo->unk62] = collisionType;
-        objHitInfo->unk69[objHitInfo->unk62] = arg3;
-        objHitInfo->unk6C[objHitInfo->unk62] = arg1;
-        objHitInfo->unk78[objHitInfo->unk62] = arg5;
-        objHitInfo->unk84[objHitInfo->unk62] = arg6;
-        objHitInfo->unk90[objHitInfo->unk62] = arg7;
+        objHitInfo->hitTypeList[objHitInfo->unk62] = hitType;
+        objHitInfo->hitDamageList[objHitInfo->unk62] = damage;
+        objHitInfo->hitByList[objHitInfo->unk62] = hitBy;
+        objHitInfo->hitXList[objHitInfo->unk62] = hitX;
+        objHitInfo->hitYList[objHitInfo->unk62] = hitY;
+        objHitInfo->hitZList[objHitInfo->unk62] = hitZ;
         objHitInfo->unk62 += 1;
     }
 
     return TRUE;
 }
 
-s32 func_8002635C(Object* arg0, Object* arg1, s8 collisionType, s8 arg3, s8 arg4) {
+s32 func_8002635C(Object* obj, Object* hitBy, s8 hitType, s8 damage, s8 arg4) {
     ObjectHitInfo* objHitInfo;
     ObjectHitInfo* objHitInfo2;
     s32 i;
 
-    if (collisionType == 0) {
+    if (hitType == 0) {
         return FALSE;
     }
 
-    objHitInfo = arg0->objhitInfo;
+    objHitInfo = obj->objhitInfo;
     if (!(objHitInfo->unk58 & 1)) {
         return FALSE;
     }
 
-    if (arg1 != NULL) {
-        objHitInfo2 = arg1->objhitInfo;
+    if (hitBy != NULL) {
+        objHitInfo2 = hitBy->objhitInfo;
         if (objHitInfo2 != NULL) {
-            objHitInfo2->unk48 = arg0;
+            objHitInfo2->unk48 = obj;
         }
     }
 
     for (i = 0; i < objHitInfo->unk62; i++) {
-        if (arg1 == objHitInfo->unk6C[i]) {
-            if (collisionType < objHitInfo->hitCollisionTypes[i]) {
+        if (hitBy == objHitInfo->hitByList[i]) {
+            if (hitType < objHitInfo->hitTypeList[i]) {
                 objHitInfo->unk63[i] = arg4;
-                objHitInfo->hitCollisionTypes[i] = collisionType;
-                objHitInfo->unk69[i] = arg3;
-                objHitInfo->unk78[i] = arg0->srt.transl.x;
-                objHitInfo->unk84[i] = arg0->srt.transl.y;
-                objHitInfo->unk90[i] = arg0->srt.transl.z;
+                objHitInfo->hitTypeList[i] = hitType;
+                objHitInfo->hitDamageList[i] = damage;
+                objHitInfo->hitXList[i] = obj->srt.transl.x;
+                objHitInfo->hitYList[i] = obj->srt.transl.y;
+                objHitInfo->hitZList[i] = obj->srt.transl.z;
             }
             i = objHitInfo->unk62 + 1;
         }
@@ -306,12 +287,12 @@ s32 func_8002635C(Object* arg0, Object* arg1, s8 collisionType, s8 arg3, s8 arg4
 
     if ((i == objHitInfo->unk62) && (objHitInfo->unk62 < 3)) {
         objHitInfo->unk63[objHitInfo->unk62] = arg4;
-        objHitInfo->hitCollisionTypes[objHitInfo->unk62] = collisionType;
-        objHitInfo->unk69[objHitInfo->unk62] = arg3;
-        objHitInfo->unk6C[objHitInfo->unk62] = arg1;
-        objHitInfo->unk78[objHitInfo->unk62] = arg0->srt.transl.x;
-        objHitInfo->unk84[objHitInfo->unk62] = arg0->srt.transl.y;
-        objHitInfo->unk90[objHitInfo->unk62] = arg0->srt.transl.z;
+        objHitInfo->hitTypeList[objHitInfo->unk62] = hitType;
+        objHitInfo->hitDamageList[objHitInfo->unk62] = damage;
+        objHitInfo->hitByList[objHitInfo->unk62] = hitBy;
+        objHitInfo->hitXList[objHitInfo->unk62] = obj->srt.transl.x;
+        objHitInfo->hitYList[objHitInfo->unk62] = obj->srt.transl.y;
+        objHitInfo->hitZList[objHitInfo->unk62] = obj->srt.transl.z;
         objHitInfo->unk62 += 1;
     }
 
@@ -444,6 +425,7 @@ void func_800267C4(Object* obj) {
 
     objhitInfo = obj->objhitInfo;
     if (objhitInfo == NULL) {
+        // "Failed assertion object->hits" (default.dol)
         return;
     }
 
@@ -572,34 +554,35 @@ void func_80026AB8(Object* obj, ModelInstance* modelInstance, s32 arg2, ObjectHi
         temp_a2_2 = temp_a2[i].fileOffsetInBytes;
         objHitInfo->unk4 = temp_a2[i].fileSizeInBytes;
         if (objHitInfo->unk6 < objHitInfo->unk4) {
+            STUBBED_PRINTF("objhits.c: keysize overflow error\n");
             objHitInfo->unk4 = objHitInfo->unk6;
         }
 
         if (arg5 == 0) {
-            queue_load_file_region_to_ptr((void **)objHitInfo->unk8, 0x45, temp_a2_2, objHitInfo->unk4);
+            queue_load_file_region_to_ptr((void **)objHitInfo->unk8, OBJHITS_BIN, temp_a2_2, objHitInfo->unk4);
         } else {
-            read_file_region(0x45U, (void *)objHitInfo->unk8, temp_a2_2, objHitInfo->unk4);
+            read_file_region(OBJHITS_BIN, (void *)objHitInfo->unk8, temp_a2_2, objHitInfo->unk4);
         }
         return;
     }
 }
 
 void func_80026B84(Object* obj) {
-    ObjectStruct58* obj58;
+    ObjectPolyhits* obj58;
 
-    obj58 = obj->unk58;
+    obj58 = obj->polyhits;
     if (obj58 != NULL) {
         obj58->unk10C = 0;
-        obj->unk58->unk10D = 0xA;
-        obj->unk58->unk10F = 0;
+        obj->polyhits->unk10D = 0xA;
+        obj->polyhits->unk10F = 0;
         func_8002B410(obj, 1);
         func_8002B410(obj, 1);
     }
 }
 
 u32 func_80026BD8(Object* obj, u32 addr) {
-    obj->unk58 = (ObjectStruct58 *)mmAlign4(addr);
-    addr = (u32)(obj->unk58 + 1);
+    obj->polyhits = (ObjectPolyhits *)mmAlign4(addr);
+    addr = (u32)(obj->polyhits + 1);
     func_80026B84(obj);
     return addr;
 }
@@ -619,11 +602,14 @@ void update_obj_hitboxes(s32 arg0) {
         curObj = objects[j];
         objhitInfo = curObj->objhitInfo;
         if (objhitInfo != NULL && (objhitInfo->unk58 & 1) && (objhitInfo->unk5A & 8)) {
+            if (curObj->polyhits == NULL) {
+                STUBBED_PRINTF(" Warning HitModel %x [%d] has no Polyhits\n", curObj, curObj->id);
+            }
             if (D_800B1998 < 40) {
                 D_800B1994[D_800B1998++] = curObj;
+            } else {
+                STUBBED_PRINTF("OBJHITS: hitmodel overflow\n");
             }
-            // @fake
-            if ((!arg0) && (!arg0)) {}
             objhitInfo->unk0 = 0;
             objhitInfo->unk58 &= ~8;
             objhitInfo->unk50 = 0x400;
@@ -641,8 +627,11 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     f32 sp58;
     s32 sp48[4] = {0x08, 0xB4, 0xF0, 0xFF};
 
-    if (arg3 != 0 && func_80024108(obj, *arg4, gUpdateRateF, NULL)) {
-        arg3 = 0;
+    if (arg3 != 0) {
+        // STUBBED_PRINTF("hitstate frame=%f\n", obj->animProgress); // (default.dol)
+        if (func_80024108(obj, *arg4, gUpdateRateF, NULL)) {
+            arg3 = 0;
+        }
     }
     i = func_8002601C(obj, NULL, &sp5C, NULL, &sp70.transl.x, &sp70.transl.y, &sp70.transl.z);
     if (i != 0) {
@@ -655,6 +644,8 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
         sp70.scale = 1.0f;
         sp5C = modelInst->model->hitSpheres[sp5C].unkC;
         if (sp5C >= arg2) {
+            STUBBED_PRINTF("objHitReact.c: sphere overflow!\n");
+            // STUBBED_PRINTF("objHitReact.c: sphere overflow! %d\n", sp5C); // (default.dol)
             sp5C = 0;
         }
         sp68 = &arg1[sp5C];
@@ -703,11 +694,12 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
     return arg3;
 }
 
+static const char str_800998f0[] = " WARNING : OBJHITS hitlist has overflowed \n\n";
 #ifndef NON_EQUIVALENT
 void obj_do_hit_detection(s32 arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/objhits/obj_do_hit_detection.s")
 #else
-// https://decomp.me/scratch/om8Pt
+// https://decomp.me/scratch/ftxul
 void obj_do_hit_detection(s32 numObjs) {
     u8 pad[0x9A0 - 0x984];
     Object* sp980;
@@ -757,6 +749,9 @@ void obj_do_hit_detection(s32 numObjs) {
                 (*temp_v1)->unk4 = currentObj->positionMirror.x - currentObjHitInfo->unk30;
                 (*temp_v1)->unk0 = currentObj->positionMirror.x + currentObjHitInfo->unk30;
                 var_s7++;
+                if (var_s7 > 0x100) {
+                    // " WARNING : OBJHITS hitlist has overflowed \n\n"
+                }
             }
             currentObjHitInfo->unk9D = 0;
             currentObjHitInfo->unk9C = -1;
@@ -894,6 +889,8 @@ void obj_do_hit_detection(s32 numObjs) {
 }
 #endif
 
+static const char str_80099920[] = "ACTIVE POLY HITS overflow\n";
+static const char str_8009993c[] = "ACTIVE POLY HITS overflow\n";
 #ifndef NON_EQUIVALENT
 void func_80027934(Object *obj, Object *otherObj);
 #pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80027934.s")
@@ -958,20 +955,26 @@ void func_80027934(Object* obj, Object* otherObj) {
                             spF0.unk50[var_s0] = -1;
                             spF0.unk54[var_s0] = 6;
                             var_s0++;
+                        } else {
+                            // "ACTIVE POLY HITS overflow\n"
                         }
                     }
-                } else if (var_s0 < 4) {
-                    new_var = var_s0 * 3;
-                    spA8[new_var + 0] = temp_s2[i * 4 + 1] + gWorldX;
-                    spA8[new_var + 1] = temp_s2[i * 4 + 2];
-                    spA8[new_var + 2] = temp_s2[i * 4 + 3] + gWorldZ;
-                    sp78[new_var + 0] = temp_s3[i * 4 + 1] + gWorldX;
-                    sp78[new_var + 1] = temp_s3[i * 4 + 2];
-                    sp78[new_var + 2] = temp_s3[i * 4 + 3] + gWorldZ;
-                    spF0.unk40[var_s0] = temp_s2[i * 4 + 0];
-                    spF0.unk50[var_s0] = -1;
-                    spF0.unk54[var_s0] = 6;
-                    var_s0++;
+                } else {
+                    if (var_s0 < 4) {
+                        new_var = var_s0 * 3;
+                        spA8[new_var + 0] = temp_s2[i * 4 + 1] + gWorldX;
+                        spA8[new_var + 1] = temp_s2[i * 4 + 2];
+                        spA8[new_var + 2] = temp_s2[i * 4 + 3] + gWorldZ;
+                        sp78[new_var + 0] = temp_s3[i * 4 + 1] + gWorldX;
+                        sp78[new_var + 1] = temp_s3[i * 4 + 2];
+                        sp78[new_var + 2] = temp_s3[i * 4 + 3] + gWorldZ;
+                        spF0.unk40[var_s0] = temp_s2[i * 4 + 0];
+                        spF0.unk50[var_s0] = -1;
+                        spF0.unk54[var_s0] = 6;
+                        var_s0++;
+                    } else {
+                        // "ACTIVE POLY HITS overflow\n"
+                    }
                 }
             }
             
@@ -1239,19 +1242,14 @@ void func_80028238(Object* obj, Object* otherObj) {
 }
 #endif
 
-#ifndef NON_MATCHING
-void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_800287E4.s")
-#else
-// https://decomp.me/scratch/ujKZh
 void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5) {
     f32 sp74;
     f32 cosSquared;
     f32 temp_fa1;
-    u8 temp;
+    s32 v0;
     ObjectHitInfo* objhitInfo;
     ObjectHitInfo* otherObjhitInfo;
-    s32 v0;
+    f32 temp_fv1;
     s32 thetaB;
     f32 cos;
     f32 ox;
@@ -1260,7 +1258,6 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
     f32 dx;
     f32 dy;
     f32 dz;
-    f32 temp_fv1;
     s32 thetaA;
 
     func_80032804(obj, otherObj);
@@ -1313,10 +1310,9 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
         obj->positionMirror.z += z;
         return;
     }
-
-    temp = otherObjhitInfo->unk5B;
-    if ((temp) == 0) {
-        if ((objhitInfo->unk5B) == 0) {
+    
+    if (otherObjhitInfo->unk5B == 0) {
+        if (objhitInfo->unk5B == 0) {
             return;
         }
 
@@ -1332,9 +1328,16 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
         obj->positionMirror.z -= z;
         return;
     }
-  
-    if ((objhitInfo->unk5B) == 0) {
-        if ((temp) == 0) {
+
+    if (objhitInfo->unk5B == 0) {
+        if (objhitInfo->unk58 & 0x400) {
+            STUBBED_PRINTF(" Guard 1 ");
+        }
+        if (objhitInfo->unk58 & 0x400) {
+            STUBBED_PRINTF(" player 1 ");
+        }
+        
+        if (otherObjhitInfo->unk5B == 0) {
             return;
         }
 
@@ -1352,7 +1355,7 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
     }
 
     v0 = arctan2_f(-x, -z);
-    thetaA = obj->srt.yaw - (((u16) v0 + 0x0) & 0xFFFF);
+    thetaA = obj->srt.yaw - (v0 & 0xFFFF);
     CIRCLE_WRAP(thetaA);
     thetaB = otherObj->srt.yaw - ((v0 + 0x8000) & 0xFFFF);
     CIRCLE_WRAP(thetaB);
@@ -1374,7 +1377,6 @@ void func_800287E4(Object* obj, Object* otherObj, f32 x, f32 y, f32 z, s32 arg5)
     otherObj->srt.transl.y += dy * (1.0f - temp_fv1);
     otherObj->srt.transl.z += dz * (1.0f - temp_fv1);
 }
-#endif
 
 void func_80028D2C(Object* obj) {
     s32 i = 0;
@@ -1691,11 +1693,14 @@ void func_80029AB4(ModelJoint* joints, s32 jointsCount, HitSphere* hitSpheres, s
     }
 }
 
+static const char str_80099970[] = "OBJHITS: Temporary array overflow in 'hitVolumes'\n";
+
+static const char str_800999a4[] = "HIT VOLUMES: an object has too many hit spheres\n";
 #ifndef NON_EQUIVALENT
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 #pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_80029C04.s")
 #else
-// https://decomp.me/scratch/aFdcV
+// https://decomp.me/scratch/WeRFa
 u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6) {
     f32 sp1CC;
     f32 sp1C8;
@@ -1833,6 +1838,9 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
         sp11A.unkA = 0;
         sp1B0 = sp128.m[1][0];
     }
+    if (spFC > 0x40 || sphereCount > 0x40) {
+        // "HIT VOLUMES: an object has too many hit spheres\n"
+    }
     var_fs1 = obj->positionMirror.x - obj2->positionMirror.x;
     var_fs4 = obj->positionMirror.y - obj2->positionMirror.y;
     var_fs2 = obj->positionMirror.z - obj2->positionMirror.z;
@@ -1961,28 +1969,32 @@ u8 func_80029C04(Object* obj, Object* obj2, Object* obj3, s8 arg3, s8 arg4, u32 
                                 }
                             }
                         }
-                        if (spF4 != 0 && var_s4 < 64) {
-                            if (arg4 != 0) {
-                                if (var_fs5 > 0.0f) {
-                                    sp18C = (sp18C - var_fs5) / sp18C;
-                                    D_800B19A0[var_s4].unk14 = sp18C;
-                                    D_800B19A0[var_s4].unk0 = var_fs1 * sp18C;
-                                    D_800B19A0[var_s4].unk4 = var_fs2 * sp18C;
+                        if (spF4 != 0) {
+                            if (var_s4 < 64) {
+                                if (arg4 != 0) {
+                                    if (var_fs5 > 0.0f) {
+                                        sp18C = (sp18C - var_fs5) / sp18C;
+                                        D_800B19A0[var_s4].unk14 = sp18C;
+                                        D_800B19A0[var_s4].unk0 = var_fs1 * sp18C;
+                                        D_800B19A0[var_s4].unk4 = var_fs2 * sp18C;
+                                    }
+                                } else {
+                                    sp18C = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
+                                    if (sp18C > 0.0f) {
+                                        var_fs1 /= sp18C;
+                                        var_fs4 /= sp18C;
+                                        var_fs2 /= sp18C;
+                                    }
+                                    D_800B19A0[var_s4].unk8 = temp_s1[0] * var_fs1;
+                                    D_800B19A0[var_s4].unkC = temp_s1[0] * var_fs4;
+                                    D_800B19A0[var_s4].unk10 = temp_s1[0] * var_fs2;
                                 }
-                            } else {
-                                sp18C = sqrtf(SQ(var_fs1) + SQ(var_fs4) + SQ(var_fs2));
-                                if (sp18C > 0.0f) {
-                                    var_fs1 /= sp18C;
-                                    var_fs4 /= sp18C;
-                                    var_fs2 /= sp18C;
-                                }
-                                D_800B19A0[var_s4].unk8 = temp_s1[0] * var_fs1;
-                                D_800B19A0[var_s4].unkC = temp_s1[0] * var_fs4;
-                                D_800B19A0[var_s4].unk10 = temp_s1[0] * var_fs2;
-                            }
-                            D_800B19A0[var_s4].unk18 = i;
-                            D_800B19A0[var_s4].unk19 = j;
-                            var_s4 += 1;
+                                D_800B19A0[var_s4].unk18 = i;
+                                D_800B19A0[var_s4].unk19 = j;
+                                var_s4 += 1;
+                            } /*else {
+                                // "objhits.c: MAX_HITSTORE overflow\n" (default.dol)
+                            }*/
                         }
                     } 
                 }
@@ -2190,10 +2202,10 @@ void func_8002B2D0(s32* arg0, s32 arg1, s32 arg2, HitSphere *hitSpheres) {
 
 void func_8002B410(Object* obj, s32 arg1) {
     SRT srt;
-    ObjectStruct58* sp24;
+    ObjectPolyhits* sp24;
     MtxF *a0;
 
-    sp24 = obj->unk58;
+    sp24 = obj->polyhits;
     if (sp24 != NULL) {
         if (arg1 != 0) {
             sp24->unk10C = (sp24->unk10C + 1) & 1;
@@ -3668,6 +3680,10 @@ void func_8002F498(Vec3f* arg0, ModelInstance_0x14* arg1, Model* model, ModelIns
     arg3->unk0[0] = -1;
 }
 
+static const char str_800999d8[] = " No Joints On Given Skeleton Object Error ";
+
+static const char str_80099a04[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n";
+static const char str_80099a48[] = "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n";
 #ifndef NON_EQUIVALENT
 s32 func_8002F998(ModelInstance_0x14 *arg0, Model* arg1, Vec3f *arg2, ModelInstance_0x14_0x14* arg3, ModelInstance_0x14_0x14* arg4, s32* arg5, s32* arg6, ModelInstance_0x14 *arg7, Model* arg8, Vec3f* arg9, ModelInstance_0x14_0x14* argA, ModelInstance_0x14_0x14* argB, Unk80030A24* argC, f32* argD);
 #pragma GLOBAL_ASM("asm/nonmatchings/objhits/func_8002F998.s")
@@ -3827,8 +3843,14 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
                     temp_v0 -= 1;
                 } while (sp138 == 0);
             }
+            if (sp124 + 1 > 25) {
+                // "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt2 \n"
+            }
             sp124 += 1;
             argA = &sp114[arg6[sp124]];
+        }
+        if (sp128 + 1 > 25) {
+            // "\nWARNING : OBJHITS skeleton vs skeleton hits overflow for cnt \n"
         }
         sp128 += 1;
         arg3 = &sp110[arg5[sp128]];
@@ -3838,6 +3860,11 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
     return !((u32) var_s3 == (u32) argC);
 }
 #endif
+
+static const char str_80099a88[] = " Result1 ";
+static const char str_80099a94[] = " x %f y %f z %f \n";
+static const char str_80099aa8[] = " Result2 ";
+static const char str_80099ab4[] = " x %f y %f z %f \n";
 
 void func_800302B4(u8* arg0, u8 arg1, ModelInstance_0x14_0x14* arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6) {
     if (arg0[0] & arg1) {
