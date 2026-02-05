@@ -488,6 +488,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 8: {
+                    // "Trigger [%d], Death drop" (from default.dol)
                     s16 pad;
                     obj = get_player();
                     if (obj != NULL) {
@@ -496,6 +497,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 9: {
+                    // "Trigger [%d], Dangerous Water" (from default.dol)
                     s16 pad;
                     obj = get_player();
                     if (obj != NULL) {
@@ -504,6 +506,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 10: {
+                    // "Trigger [%d], Safe Water" (from default.dol)
                     s32 pad;
                     obj = get_player();
                     if (obj != NULL) {
@@ -536,6 +539,8 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_CAMERA_ACTION: 
             // "Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]"
             gDLL_2_Camera->vtbl->func8(cmd->param1, cmd->param2);
+            // Printf3("Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]",
+            //       (int)param_1[0x22],pbVar9[2],pbVar9[3],(int)cVar8);
             break;
         case TRG_CMD_TRACK: 
             // "Trigger [%d], Track Sky On"
@@ -710,8 +715,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_WORLD_SET_MAP_SETUP:
             gDLL_29_Gplay->vtbl->set_map_setup((s32) cmd->param2, (s32) cmd->param1);
             break;
-        case TRG_CMD_11:
-            // Tricky related?
+        case TRG_CMD_TRICKY_TALK_SEQ:
             main_set_bits(BIT_4E2, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_GAME:

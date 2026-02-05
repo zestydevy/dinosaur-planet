@@ -43,7 +43,7 @@ void screens_show_screen(s32 screenNo) {
 
         if (screenNo < 0 || screenNo >= numScreens) {
             screenNo = 0;
-            STUBBED_PRINTF(("SCREEN: No out of range!!\n"));
+            STUBBED_PRINTF("SCREEN: No out of range!!\n");
         }
 
         offset = screensTab[screenNo];

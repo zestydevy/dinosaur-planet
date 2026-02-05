@@ -8,9 +8,9 @@ void debug_toggle(s8 enabled) {
     gDebugEnabled = enabled;
 
     if (gDebugEnabled) {
-        STUBBED_PRINTF(("debug:enabled\n"));
+        STUBBED_PRINTF("debug:enabled\n");
     } else {
-        STUBBED_PRINTF(("debug:disabled\n"));
+        STUBBED_PRINTF("debug:disabled\n");
     }
 }
 

@@ -124,7 +124,10 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     //Get texture from table
     texture = tex_get_cached(-scrollTable[objSetup->textureIndex]);
     if (texture == NULL) {
-        STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d' %f %f %f %d\n");
+        STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d' %f %f %f %d\n",
+            scrollTable[objSetup->textureIndex],
+            self->srt.transl.x, self->srt.transl.y, self->srt.transl.z,
+            objSetup->base.uID);
         return;
     }
 

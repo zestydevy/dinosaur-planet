@@ -359,11 +359,11 @@ s16 Foodbag_get_anim_objectID_from_food_gamebit(s16 foodGamebit) {
 
     for (index = 0; index < 10 && foodGamebit != food_anim_gamebitIDs[index]; index++){}
 
+    STUBBED_PRINTF(" Food Type Found %i : Obj %i ", index, food_anim_objectIDs[index]);
+
     if (index == 10) {
         index = 0;
     }
-
-    STUBBED_PRINTF(" Food Type Found %i : Obj %i ");
 
     return food_anim_objectIDs[index];
 }

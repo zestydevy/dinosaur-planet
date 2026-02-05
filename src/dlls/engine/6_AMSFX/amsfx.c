@@ -258,13 +258,13 @@ void dll_6_func_860(u32 soundHandle, u8 volume) {
 
     if (1) {
         if (_bss_8 < soundHandle) {
-            STUBBED_PRINTF("amSfxSetVol: Warning,sound handle '%d' out of range.\n");
+            STUBBED_PRINTF("amSfxSetVol: Warning,sound handle '%d' out of range.\n", soundHandle);
             return;
         }
         
         temp_a0 = _bss_4[soundHandle].unk1C;
         if (temp_a0 == NULL) {
-            STUBBED_PRINTF("amSfxSetVol: Warning,invalid handle '%d'.\n");
+            STUBBED_PRINTF("amSfxSetVol: Warning,invalid handle '%d'.\n", soundHandle);
             return;
         }
         
@@ -288,13 +288,13 @@ void dll_6_func_954(u32 soundHandle, f32 pitch) {
     sndstate *temp_a0;
 
     if ((u32) _bss_8 < soundHandle) {
-        STUBBED_PRINTF("amSfxSetPitch: Warning,sound handle '%d' out of range.\n");
+        STUBBED_PRINTF("amSfxSetPitch: Warning,sound handle '%d' out of range.\n", soundHandle);
         return;
     }
 
     temp_a0 = _bss_4[soundHandle].unk1C;
     if (temp_a0 == NULL) {
-        STUBBED_PRINTF("amSfxSetPitch: Warning,invalid handle '%d'.\n");
+        STUBBED_PRINTF("amSfxSetPitch: Warning,invalid handle '%d'.\n", soundHandle);
         return;
     }
 
@@ -306,11 +306,11 @@ void dll_6_func_954(u32 soundHandle, f32 pitch) {
 
 // offset: 0xA1C | func: 6 | export: 6
 //amSfxStop?
-void dll_6_func_A1C(u32 arg0) {
-    if ((u32) _bss_8 >= arg0) {
-        dll_6_func_1E64(arg0);
+void dll_6_func_A1C(u32 soundHandle) {
+    if ((u32) _bss_8 >= soundHandle) {
+        dll_6_func_1E64(soundHandle);
     } else {
-        STUBBED_PRINTF("amSfxStop: Warning,sound handle '%d' out of range.\n");
+        STUBBED_PRINTF("amSfxStop: Warning,sound handle '%d' out of range.\n", soundHandle);
     }
 }
 
@@ -339,7 +339,7 @@ s32 dll_6_func_B48(u32 soundHandle) {
     }
 
     if ((u32) _bss_8 < soundHandle) {
-        STUBBED_PRINTF("amSfxIsPlaying: Warning,sound handle '%d' out of range.\n");
+        STUBBED_PRINTF("amSfxIsPlaying: Warning,sound handle '%d' out of range.\n", soundHandle);
         return 0;
     }
 
@@ -411,7 +411,7 @@ s32 dll_6_func_DE8(u16 soundID, SoundDef* soundDef) {
     void* temp_v0;
 
     if (soundID <= 0 || (s32)_bss_10 < soundID) {
-        STUBBED_PRINTF("amSfxGetDefault: Warning,sound effect value '%d' out of range.\n");
+        STUBBED_PRINTF("amSfxGetDefault: Warning,sound effect value '%d' out of range.\n", soundID);
         bzero(soundDef, sizeof(SoundDef));
         return 0;
     }
@@ -494,8 +494,13 @@ void dll_6_func_1174(Object* obj, u16 soundID, u8 volume, u32* arg3) {
         return;
     }
 
-    dll_6_play_sound(obj, soundID, volume, NULL, "game/amsfx.c", 0x2C6, "\0\0\0\0AMSFX: Software bug in object (controlfunc %d)\n\0       amSfxStop is required to release effect %d.\n\0AMSFX: Software bug in object (controlfunc %d)\n\0       amSfxStop is required to stop effect %d.\n");
+    dll_6_play_sound(obj, soundID, volume, NULL, "game/amsfx.c", 0x2C6, "");
 }
+
+static const char str_4[] = "AMSFX: Software bug in object (controlfunc %d)\n";
+static const char str_5[] = "       amSfxStop is required to release effect %d.\n";
+static const char str_6[] = "AMSFX: Software bug in object (controlfunc %d)\n";
+static const char str_7[] = "       amSfxStop is required to stop effect %d.\n";
 
 // offset: 0x1218 | func: 16 | export: 16
 void dll_6_func_1218(Object *obj) {

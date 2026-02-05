@@ -24,6 +24,7 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
     s32 foodIndex;
 
     foodIndex = putdown_get_foodID_from_foodType(foodType);
+    STUBBED_PRINTF("about to place object %d\n", foodDefs[foodIndex].objectID);
 
     if (foodDefs[foodIndex].objectID != NO_FOOD_OBJECT_ID) {
         player = get_player();
@@ -45,7 +46,6 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
         foodSetup->unk19 = 0;
         foodSetup->unk18 = 0;
 
-        STUBBED_PRINTF("about to place object %d\n");
         placed->objects[placed->nextIndex] = obj_create(
             (ObjSetup*)foodSetup, 
             1, -1, -1, foodbag->parent);
