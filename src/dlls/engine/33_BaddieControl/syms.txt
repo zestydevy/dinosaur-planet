@@ -1,0 +1,40 @@
+.text = 0x0:
+BaddieControl_ctor = 0x0;
+BaddieControl_dtor = 0xC;
+BaddieControl_func_18 = 0x18;
+BaddieControl_func_264 = 0x264;
+BaddieControl_func_278 = 0x278;
+BaddieControl_func_4EC = 0x4EC;
+BaddieControl_func_768 = 0x768;
+BaddieControl_func_884 = 0x884;
+BaddieControl_func_8A4 = 0x8A4;
+BaddieControl_func_8B4 = 0x8B4;
+BaddieControl_func_C88 = 0xC88;
+BaddieControl_func_E30 = 0xE30;
+BaddieControl_func_ED0 = 0xED0;
+BaddieControl_func_F60 = 0xF60;
+BaddieControl_func_10F4 = 0x10F4;
+BaddieControl_func_148C = 0x148C;
+BaddieControl_func_15CC = 0x15CC;
+BaddieControl_func_18E4 = 0x18E4;
+BaddieControl_func_1D88 = 0x1D88;
+BaddieControl_func_1FAC = 0x1FAC;
+BaddieControl_setup = 0x2000;
+BaddieControl_func_24FC = 0x24FC;
+BaddieControl_func_2624 = 0x2624;
+BaddieControl_func_2718 = 0x2718;
+
+.rodata = 0x2890:
+
+.data = 0x28D0:
+_data_0 = 0x0; // absolute:0x28D0
+_data_4 = 0x4; // absolute:0x28D4
+_data_8 = 0x8; // absolute:0x28D8
+_data_14 = 0x14; // absolute:0x28E4
+_data_18 = 0x18; // absolute:0x28E8
+_data_24 = 0x24; // absolute:0x28F4
+_data_28 = 0x28; // absolute:0x28F8
+_data_2C = 0x2C; // absolute:0x28FC
+
+.bss = 0x2910:
+_bss_0 = 0x0; // absolute:0x2910

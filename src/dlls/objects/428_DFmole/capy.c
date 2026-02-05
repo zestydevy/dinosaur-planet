@@ -30,9 +30,9 @@ typedef struct {
 /*0x28*/ static ObjFSA_StateCallback _bss_28[6];
 
 
-static void dll_428_func_468(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2);
-static void dll_428_func_644(Object* arg0, s32 arg1, DLL33_Data* arg2, ObjFSA_Data* arg3);
-static void dll_428_func_704(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2);
+static void dll_428_func_468(Object* arg0, Baddie* arg1, ObjFSA_Data* arg2);
+static void dll_428_func_644(Object* arg0, s32 arg1, Baddie* arg2, ObjFSA_Data* arg3);
+static void dll_428_func_704(Object* arg0, Baddie* arg1, ObjFSA_Data* arg2);
 static int dll_428_func_44C(Object * arg0, Object * arg1, AnimObj_Data *  arg2, s8 arg3);
 static s32 dll_428_func_7A0(Object* self, ObjFSA_Data* fsa, f32 arg2);
 static s32 dll_428_func_97C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
@@ -81,9 +81,9 @@ void dll_428_ctor(void* dll) {
 void dll_428_dtor(void *dll) { }
 
 // offset: 0x124 | func: 1 | export: 0
-void dll_428_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
+void dll_428_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     s32 var_v0;
-    DLL33_Data* baddie;
+    Baddie* baddie;
     
     baddie = self->data;
     var_v0 = 0x16;
@@ -94,7 +94,7 @@ void dll_428_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
     if (!(setup->unk2B & 1)) {
         var_v0 = (var_v0 | 8) & 0xFF;
     }
-    gDLL_33->vtbl->func21(self, (DLL33_ObjSetup* ) setup, (DLL33_Data* ) baddie, 9, 6, 0x102, (u8) var_v0, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, (Baddie_Setup* ) setup, (Baddie* ) baddie, 9, 6, 0x102, (u8) var_v0, 20.0f);
     self->animCallback = dll_428_func_44C;
     baddie ->fsa.animState = 1;
     baddie->fsa.logicState = 0;
@@ -105,17 +105,17 @@ void dll_428_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
 // offset: 0x1DC | func: 2 | export: 1
 void dll_428_control(Object *self);
 void dll_428_control(Object* self) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
 
     baddie = self->data;
     
     gDLL_18_objfsa->vtbl->tick(self, (ObjFSA_Data* ) baddie, 1.0f, 1.0f, (s32 (**)(Object*, ObjFSA_Data*, f32)) _bss_0, (s32 (**)(Object*, ObjFSA_Data*, f32)) _bss_28);
-    dll_428_func_468(self, (DLL33_Data* ) baddie, (ObjFSA_Data* ) baddie);
+    dll_428_func_468(self, (Baddie* ) baddie, (ObjFSA_Data* ) baddie);
     if ((baddie->fsa.target != 0) || (baddie->fsa.unk348 == 0)) { 
-        dll_428_func_644(self, 0, (DLL33_Data* ) baddie, (ObjFSA_Data* ) baddie);
+        dll_428_func_644(self, 0, (Baddie* ) baddie, (ObjFSA_Data* ) baddie);
         return;
     }
-    dll_428_func_704(self, (DLL33_Data* ) baddie, (ObjFSA_Data* ) baddie);
+    dll_428_func_704(self, (Baddie* ) baddie, (ObjFSA_Data* ) baddie);
 }
 
 // offset: 0x2D4 | func: 3 | export: 2
@@ -133,7 +133,7 @@ void dll_428_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x384 | func: 5 | export: 4
 void dll_428_free(Object* self, s32 a1) {
-    DLL33_Data* sp24;
+    Baddie* sp24;
 
     sp24 = self->data;
     obj_free_object_type(self, 4);
@@ -141,7 +141,7 @@ void dll_428_free(Object* self, s32 a1) {
         obj_destroy_object(self->linkedObject);
         self->linkedObject = NULL;
     }
-    gDLL_33->vtbl->func15(self, sp24, 1U);
+    gDLL_33_BaddieControl->vtbl->func15(self, sp24, 1U);
 }
 
 
@@ -162,18 +162,18 @@ static int dll_428_func_44C(Object * arg0, Object * arg1, AnimObj_Data *  arg2, 
 
 
 // offset: 0x468 | func: 9
-static void dll_428_func_468(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2) {
+static void dll_428_func_468(Object* arg0, Baddie* arg1, ObjFSA_Data* arg2) {
     Vec3f sp44;
     Object* temp_v0_2;
     Object* sp3C;
     capy_data* capydata;
-    DLL33_Data* baddie;
+    Baddie* baddie;
 
     Object* temp_v0_3; 
 
 
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
 
     sp3C = NULL;
 
@@ -186,7 +186,7 @@ static void dll_428_func_468(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2) 
         sp44.f[2] = arg2->target->positionMirror.f[2] - arg0->positionMirror.f[2];
         arg2->targetDist = sqrtf(SQ(sp44.f[0]) + SQ(sp44.f[1]) + SQ(sp44.f[2]));
     }
-    gDLL_33->vtbl->func20(arg0, arg2, &arg1 -> unk34C, arg1->unk39E, &arg1 -> unk3B4, 0, 0, 0);
+    gDLL_33_BaddieControl->vtbl->func20(arg0, arg2, &arg1 -> unk34C, arg1->unk39E, &arg1 -> unk3B4, 0, 0, 0);
     temp_v0_2 = get_player();
     if ((temp_v0_2 == arg2->target) || ((arg2->target != NULL) && (arg2->target->id == 0x313))) {
         temp_v0_3 = ((DLL_210_Player*)temp_v0_2->dll)->vtbl->func66(temp_v0_2, 15);
@@ -202,7 +202,7 @@ static void dll_428_func_468(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2) 
 }
 
 // offset: 0x644 | func: 10
-static void dll_428_func_644(Object* arg0, s32 arg1, DLL33_Data* arg2, ObjFSA_Data* arg3) {
+static void dll_428_func_644(Object* arg0, s32 arg1, Baddie* arg2, ObjFSA_Data* arg3) {
     Object* temp_v0;
     ObjectHitInfo* temp_v1;
     f32 var_ft0;
@@ -212,14 +212,14 @@ static void dll_428_func_644(Object* arg0, s32 arg1, DLL33_Data* arg2, ObjFSA_Da
     temp_v1 = arg0->objhitInfo;
     temp_v1->unk58 |= 1;
     if (temp_v0 == arg3->target) {
-        if (gDLL_33->vtbl->func16(arg0, arg3, arg2->unk3E2, 1) != 0) {
+        if (gDLL_33_BaddieControl->vtbl->func16(arg0, arg3, arg2->unk3E2, 1) != 0) {
             arg3->target = NULL;
         }
     }
 }
 
 // offset: 0x704 | func: 11
-static void dll_428_func_704(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2) {
+static void dll_428_func_704(Object* arg0, Baddie* arg1, ObjFSA_Data* arg2) {
     Object* temp_v0_2;
     ObjectHitInfo* hitinfo;
     u16 temp_t9;
@@ -227,7 +227,7 @@ static void dll_428_func_704(Object* arg0, DLL33_Data* arg1, ObjFSA_Data* arg2) 
     hitinfo = arg0->objhitInfo;
     hitinfo->unk58 &= 0xFFFE;
     
-    temp_v0_2 = gDLL_33->vtbl->func17(arg0, arg2, arg1->unk3E2, 0x8000);
+    temp_v0_2 = gDLL_33_BaddieControl->vtbl->func17(arg0, arg2, arg1->unk3E2, 0x8000);
     if (temp_v0_2 != NULL) {
         arg2->target = temp_v0_2;
         arg2->unk33D = 0;
@@ -241,11 +241,11 @@ s32 dll_428_func_7A0(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     Object** objlist;
     s32 i;
     s32 distflag;
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
 
     baddie = self->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
         func_80023D30(self, 3, 0.0f, 0U);
         fsa->unk33A = 0;
@@ -279,10 +279,10 @@ s32 dll_428_func_7A0(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x97C | func: 13
 s32 dll_428_func_97C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    DLL33_Data *objdata = self->data;
+    Baddie *objdata = self->data;
     capy_data* capydata;
 
-    capydata = objdata->unk3F4;
+    capydata = objdata->objdata;
     if (fsa->enteredAnimState != 0) {
         func_80023D30(self, 1, 0.0f, 0U);
         fsa->unk33A = 0;
@@ -298,12 +298,12 @@ s32 dll_428_func_97C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
 // offset: 0xA0C | func: 14
 s32 dll_428_func_A0C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
 
     
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     
     if (arg1->enteredAnimState != 0) {
         func_80023D30(arg0, 1, 0.0f, 0U);
@@ -323,14 +323,14 @@ s32 dll_428_func_A0C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0xA9C | func: 15
 s32 dll_428_func_A9C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
     CurveSetup* temp_v0_2;
     s32 temp_v0;
     s32 sp34;
 
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     if (arg1->enteredAnimState != 0) {
         func_80023D30(arg0, 0, 0.0f, 0U);
         arg1->unk33A = 0;
@@ -354,13 +354,13 @@ s32 dll_428_func_A9C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0xBC4 | func: 16
 s32 dll_428_func_BC4(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
     s32 temp_v0;
     s32 var_v0;
 
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     if (arg1->enteredAnimState != 0) {
         func_80023D30(arg0, 5, 0.0f, 0U);
         arg1->unk33A = 0;
@@ -387,11 +387,11 @@ s32 dll_428_func_D1C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
     Object* temp_s0;
     Object* temp_v0_2;
     Object* temp_v0_3;
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
     
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     if (arg1->enteredAnimState != 0) {
         func_80023D30(arg0, 6, 0.0f, 0U);
         arg1->unk33A = 0;
@@ -438,7 +438,7 @@ s32 dll_428_func_D1C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0xF8C | func: 18
 s32 dll_428_func_F8C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
 
     baddie = arg0->data;
     if (arg1->enteredAnimState != 0) {
@@ -462,12 +462,12 @@ s32 dll_428_func_F8C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0x10BC | func: 19
 s32 dll_428_func_10BC(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
     s32 temp_v0;
 
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     if (arg1->enteredAnimState != 0) {
         func_80023D30(arg0, 2, 0.0f, 0U);
         arg1->unk33A = 0;
@@ -493,14 +493,14 @@ s32 dll_428_func_10BC(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0x1264 | func: 20
 s32 dll_428_func_1264(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie;
+    Baddie* baddie;
     capy_data* capydata;
     f32 temp_fa0;
     f32 temp_fv1;
     
 
     baddie = arg0->data;
-    capydata = baddie->unk3F4;
+    capydata = baddie->objdata;
     if (arg1->enteredAnimState != 0) {
         func_80023D30(arg0, 4, 0.0f, 0U);
         arg1->unk33A = 0;
@@ -527,7 +527,7 @@ s32 dll_428_func_1264(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
     }
     arg1->animTickDelta = 0.08f;
     gDLL_18_objfsa->vtbl->func7(arg0, arg1, arg2, 1);
-    gDLL_33->vtbl->func3(arg0, (DLL33_Data* ) arg1, (u32) baddie, 2.0f, 12.0f);
+    gDLL_33_BaddieControl->vtbl->func3(arg0, (Baddie* ) arg1, (u32) baddie, 2.0f, 12.0f);
     return 0;
 }
 
@@ -550,7 +550,7 @@ s32 dll_428_func_1438(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
     s32 temp3;
     capy_data* sp3C;
     UnkCurvesStruct* baddieCurves;
-    DLL33_Data* baddie;
+    Baddie* baddie;
     f32 var_ft0;
     f32 var_fv0;
     f32 temp;
@@ -559,7 +559,7 @@ s32 dll_428_func_1438(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
     baddie = arg0->data;
     baddieCurves = baddie->unk3F8;
-    sp3C = baddie->unk3F4;
+    sp3C = baddie->objdata;
     temp2 = func_800053B0(baddieCurves, 5.0f / (SQ(baddieCurves->unk70 - arg0->srt.transl.f[2]) + SQ(baddieCurves->unk68 - arg0->srt.transl.f[0])));
     if (((temp2 != 0) || (baddieCurves->unk10 != 0)) && (gDLL_26_Curves->vtbl->func_4704(baddieCurves) != 0)) {
         arg1->animState = 7;
@@ -607,7 +607,7 @@ s32 dll_428_func_1698(Object *arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0x1728 | func: 25
 s32 dll_428_func_1728(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* sp44;
+    Baddie* sp44;
     Object* temp_v1;
     capy_data* sp3C;
     u8 sp3B;
@@ -617,13 +617,13 @@ s32 dll_428_func_1728(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
     
 
     sp44 = arg0->data;
-    sp3C = sp44->unk3F4;
+    sp3C = sp44->objdata;
     if (arg1->target != 0) {
         sp3B = get_player() == arg1->target;
         arg1->animState = 8;
         arg1->unk288 = 0.0f;
         arg1->unk284 = 0.0f;
-        temp_s1 = &sp44 -> unk34C;
+        temp_s1 = &sp44->unk34C;
         bcopy(&arg0-> srt.transl , temp_s1, 0xC);
         bcopy(&arg1-> target -> srt.transl , &sp44 -> unk34C.unkC, 0xC);
         func_80009024(temp_s1, &sp44 -> unk374);
@@ -659,8 +659,8 @@ s32 dll_428_func_1728(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
 
 // offset: 0x19DC | func: 26
 s32 dll_428_func_19DC(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
-    DLL33_Data* baddie = arg0->data;
-    capy_data* objdata = baddie ->unk3F4;
+    Baddie* baddie = arg0->data;
+    capy_data* objdata = baddie ->objdata;
     
     if ((arg1->target != NULL) && (arg1->animState == 1) && (objdata->unk4 == 0)) {
         gDLL_18_objfsa->vtbl->func11(arg0, arg1, 3.0f, 1);

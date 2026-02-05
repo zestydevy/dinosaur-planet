@@ -1,6 +1,6 @@
 #include "libc/string.h"
 #include "dlls/engine/18_objfsa.h"
-#include "dlls/engine/33.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/214_animobj.h"
 #include "game/gamebits.h"
@@ -128,7 +128,7 @@ typedef struct {
 } KTrex_Data;
 
 typedef struct {
-/*00*/ DLL33_ObjSetup base;
+/*00*/ Baddie_Setup base;
 /*38*/ f32 speeds[3]; // Movement speed, per "anger" level.
 /*44*/ u16 roarTime[3]; // How long a roar lasts.
 /*4A*/ u16 vulnerableTime[4]; // How long the boss is vulnerable for.
@@ -271,7 +271,7 @@ enum KTFxFlags {
 
 /*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[9];
 /*0x28*/ static ObjFSA_StateCallback sLogicStateCallbacks[12];
-/*0x58*/ static DLL33_Data* sDLL33Data;
+/*0x58*/ static Baddie* sBaddie;
 /*0x5C*/ static KTrex_Data *sKTData;
 
 static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
@@ -345,31 +345,31 @@ void dll_702_setup(Object *self, ObjSetup *setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_setup.s")
 #else
 // missing static refs
-void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
+void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     CurveSetup* curve;
     s32 i;
     s32 var_v0;
-    DLL33_Data* objdata;
+    Baddie* baddie;
     KTrex_Data* ktdata;
 
-    objdata = (DLL33_Data*)self->data;
+    baddie = (Baddie*)self->data;
     var_v0 = 0x10;
     if (arg2 != 0) {
         var_v0 = 0x11;
     }
-    gDLL_33->vtbl->func21(self, setup, objdata, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, setup, baddie, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
     self->animCallback = dll_702_func_119C;
-    gDLL_18_objfsa->vtbl->set_anim_state(self, &objdata->fsa, KT_ASTATE_0);
-    objdata->fsa.logicState = KT_LSTATE_2_WALK; // set initial state
-    objdata->fsa.target = NULL;
-    objdata->fsa.unk4.mode = 0;
-    objdata->fsa.unk33D = 0;
+    gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, KT_ASTATE_0);
+    baddie->fsa.logicState = KT_LSTATE_2_WALK; // set initial state
+    baddie->fsa.target = NULL;
+    baddie->fsa.unk4.mode = 0;
+    baddie->fsa.unk33D = 0;
     self->unkAF |= 0x88;
     func_8002674C(self);
     if (self->shadow != NULL) {
         self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
-    ktdata = (KTrex_Data*)objdata->unk3F4;
+    ktdata = (KTrex_Data*)baddie->objdata;
     ktdata->stateStack = generic_stack_new(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
@@ -406,37 +406,37 @@ void dll_702_setup(Object* self, DLL33_ObjSetup* setup, s32 arg2) {
 
 // offset: 0x448 | func: 2 | export: 1
 void dll_702_control(Object* self) {
-    DLL33_Data* dll33Data;
+    Baddie* baddie;
     f32 vec[3];
 
     if (self->unkDC == 0) {
-        dll33Data = (DLL33_Data*)self->data;
-        sDLL33Data = dll33Data;
-        sKTData = sDLL33Data->unk3F4;
+        baddie = (Baddie*)self->data;
+        sBaddie = baddie;
+        sKTData = sBaddie->objdata;
         func_80028D2C(self);
-        dll33Data->fsa.target = get_player();
-        if (dll33Data->fsa.target != NULL) {
-            vec[0] = dll33Data->fsa.target->positionMirror.x - self->positionMirror.x;
-            vec[1] = dll33Data->fsa.target->positionMirror.y - self->positionMirror.y;
-            vec[2] = dll33Data->fsa.target->positionMirror.z - self->positionMirror.z;
-            dll33Data->fsa.targetDist = sqrtf(SQ(vec[0]) + SQ(vec[1]) + SQ(vec[2]));
+        baddie->fsa.target = get_player();
+        if (baddie->fsa.target != NULL) {
+            vec[0] = baddie->fsa.target->positionMirror.x - self->positionMirror.x;
+            vec[1] = baddie->fsa.target->positionMirror.y - self->positionMirror.y;
+            vec[2] = baddie->fsa.target->positionMirror.z - self->positionMirror.z;
+            baddie->fsa.targetDist = sqrtf(SQ(vec[0]) + SQ(vec[1]) + SQ(vec[2]));
         }
-        func_80032A08(self, &sDLL33Data->unk3BC);
+        func_80032A08(self, &sBaddie->unk3BC);
         sKTData->playerSegmentBitfield = dll_702_get_player_segment_bitfield();
-        sKTData->playerSegmentPos = dll_702_get_obj_segment_pos(dll33Data->fsa.target, sKTData);
+        sKTData->playerSegmentPos = dll_702_get_obj_segment_pos(baddie->fsa.target, sKTData);
         sKTData->selfSegmentBitfield = dll_702_get_self_segment_bitfield(sKTData->flags);
         sKTData->laserWallBitfield = dll_702_get_laser_wall_bitfield(sKTData->selfSegmentBitfield);
-        gDLL_33->vtbl->func20(self, &dll33Data->fsa, &sDLL33Data->unk34C, sDLL33Data->unk39E, &sDLL33Data->unk3B4, 2, 2, 0);
+        gDLL_33_BaddieControl->vtbl->func20(self, &baddie->fsa, &sBaddie->unk34C, sBaddie->unk39E, &sBaddie->unk3B4, 2, 2, 0);
         if (sKTData->flags & KTFLAG_VULNERABLE) {
-            dll33Data->fsa.unk348 = 2;
+            baddie->fsa.unk348 = 2;
         } else {
-            dll33Data->fsa.unk348 = 0;
+            baddie->fsa.unk348 = 0;
         }
-        dll_702_func_1EF0(self, &dll33Data->fsa);
+        dll_702_func_1EF0(self, &baddie->fsa);
         dll_702_fx_tick(self);
-        gDLL_33->vtbl->func10(self, &dll33Data->fsa, 0.0f, 0);
+        gDLL_33_BaddieControl->vtbl->func10(self, &baddie->fsa, 0.0f, 0);
         func_80026128(self, 0x17, 1, -1);
-        gDLL_18_objfsa->vtbl->tick(self, &dll33Data->fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
+        gDLL_18_objfsa->vtbl->tick(self, &baddie->fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
         self->srt.transl.y = sKTData->pos.y;
     }
 }
@@ -449,10 +449,10 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     MtxF sp48;
     s32 _pad;
  
-    sDLL33Data = (DLL33_Data* ) self->data;
+    sBaddie = (Baddie* ) self->data;
     if ((visibility != 0) && (self->unkDC == 0)) {
-        if (sDLL33Data->unk3E8 != 0.0f) {
-            func_80036FBC(0xC8, 0, 0, sDLL33Data->unk3E8);
+        if (sBaddie->unk3E8 != 0.0f) {
+            func_80036FBC(0xC8, 0, 0, sBaddie->unk3E8);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         func_80031F6C(self, 1, &sKTData->unk124.transl.x, &sKTData->unk124.transl.y, &sKTData->unk124.transl.z, 0);
@@ -473,10 +473,10 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0xA78 | func: 5 | export: 4
 void dll_702_free(Object* self, s32 a1) {
-    sDLL33Data = (DLL33_Data* ) self->data;
-    sKTData = sDLL33Data->unk3F4;
+    sBaddie = (Baddie* ) self->data;
+    sKTData = sBaddie->objdata;
     obj_free_object_type(self, 4);
-    gDLL_33->vtbl->func15(self, sDLL33Data, 0);
+    gDLL_33_BaddieControl->vtbl->func15(self, sBaddie, 0);
     generic_stack_free(sKTData->stateStack);
     if (_data_E4 != NULL) {
         dll_unload(_data_E4);
@@ -491,15 +491,15 @@ u32 dll_702_get_model_flags(Object *self) {
 
 // offset: 0xB4C | func: 7 | export: 6
 u32 dll_702_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL33_Data) + sizeof(KTrex_Data);
+    return sizeof(Baddie) + sizeof(KTrex_Data);
 }
 
 // offset: 0xB60 | func: 8 | export: 7
 s16 dll_702_get_fsa_anim_state(Object* self) {
-    DLL33_Data *dll33data;
+    Baddie *baddie;
     
-    dll33data = (sDLL33Data = (DLL33_Data*)self->data);
-    return dll33data->fsa.animState;
+    baddie = (sBaddie = (Baddie*)self->data);
+    return baddie->fsa.animState;
 }
 
 // offset: 0xB88 | func: 9 | export: 8
@@ -708,7 +708,7 @@ static void dll_702_fx_tick(Object *self) {
     s32 i;
     f32 sp48; // camera shake amount?
 
-    sp48 = 1.0f - (sDLL33Data->fsa.targetDist / 2000.0f);
+    sp48 = 1.0f - (sBaddie->fsa.targetDist / 2000.0f);
     if (sp48 < 0.0f) {
         sp48 = 0.0f;
     } else if (sp48 > 1.0f) {
@@ -855,8 +855,8 @@ static void dll_702_anim_event_to_fx(s32 modAnimEvent, s32 fxFlags) {
     s32 mask;
 
     mask = 1 << modAnimEvent;
-    if (sDLL33Data->fsa.unk308 & mask) {
-        sDLL33Data->fsa.unk308 &= ~mask;
+    if (sBaddie->fsa.unk308 & mask) {
+        sBaddie->fsa.unk308 &= ~mask;
         sKTData->fxFlags |= fxFlags;
     }
 }
@@ -864,7 +864,7 @@ static void dll_702_anim_event_to_fx(s32 modAnimEvent, s32 fxFlags) {
 // offset: 0x1EF0 | func: 21
 static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     static SRT _bss_60;
-    DLL33_Data* dll33Data = (DLL33_Data*)self->data;
+    Baddie* baddie = (Baddie*)self->data;
     s32 sp60;
     s32 sp5C;
     s32 sp58;
@@ -873,13 +873,13 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     ModelInstance* modelInst;
     u32 sp3C[] = {0x00000006, 0x00000069, 0x00000069, 0x000000ff};
 
-    if (dll33Data->unk3E8 > 0.0f) {
-        dll33Data->unk3E8 += (gUpdateRateF * dll33Data->unk3EC);
-        if (dll33Data->unk3E8 < 0.0f) {
-            dll33Data->unk3E8 = 0.0f;
-        } else if (dll33Data->unk3E8 > 120.0f) {
-            dll33Data->unk3E8 = 120.0f - (dll33Data->unk3E8 - 120.0f);
-            dll33Data->unk3EC = -dll33Data->unk3EC;
+    if (baddie->unk3E8 > 0.0f) {
+        baddie->unk3E8 += (gUpdateRateF * baddie->unk3EC);
+        if (baddie->unk3E8 < 0.0f) {
+            baddie->unk3E8 = 0.0f;
+        } else if (baddie->unk3E8 > 120.0f) {
+            baddie->unk3E8 = 120.0f - (baddie->unk3E8 - 120.0f);
+            baddie->unk3EC = -baddie->unk3EC;
         }
     }
     sp60 = func_80025F40(self, &sp54, &sp5C, &sp58);

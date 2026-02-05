@@ -811,13 +811,14 @@ void func_80008D90(Object* arg0) {
     }
 }
 
-void func_80008DC0(SomeVoxmapAllocStruct* arg0) {
-    arg0->unk0 = (SomeVoxmapAllocStructUnk0*) mmAlloc(sizeof(SomeVoxmapAllocStructUnk0) + sizeof(SomeVoxmapAllocStructUnk4) + sizeof(SomeVoxmapAllocStructUnk8), ALLOC_TAG_VOX_COL, ALLOC_NAME("vox:route"));
-    arg0->unk4 = (SomeVoxmapAllocStructUnk4*) ((u8*)arg0->unk0 + sizeof(SomeVoxmapAllocStructUnk0));
-    arg0->unk8 = (SomeVoxmapAllocStructUnk8*) ((u8*)arg0->unk4 + sizeof(SomeVoxmapAllocStructUnk4));
+void func_80008DC0(Unk80008E40* arg0) {
+    s32 allocSize = (sizeof(Unk80008E40Unk0) * 200) + (sizeof(Unk80008E40Unk4) * 200) + (sizeof(Vec3f) * 10);
+    arg0->unk0 = (Unk80008E40Unk0*) mmAlloc(allocSize, ALLOC_TAG_VOX_COL, ALLOC_NAME("vox:route"));
+    arg0->unk4 = (Unk80008E40Unk4*) ((u8*)arg0->unk0 + (sizeof(Unk80008E40Unk0) * 200));
+    arg0->unk8 = (Vec3f*)           ((u8*)arg0->unk4 + (sizeof(Unk80008E40Unk4) * 200));
 }
 
-void func_80008E08(SomeVoxmapAllocStruct* arg0) {
+void func_80008E08(Unk80008E40* arg0) {
     if (arg0->unk0 != NULL) {
         mmFree(arg0->unk0);
         arg0->unk0 = NULL;

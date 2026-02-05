@@ -97,7 +97,7 @@ DLL_30_task *gDLL_30_Task = NULL;
 DLL_31_flash *gDLL_31_Flash = NULL;
 DLL_76 *gDLL_76 = NULL;
 DLL_32 *gDLL_32 = NULL;
-DLL_33 *gDLL_33 = NULL;
+DLL_33_BaddieControl *gDLL_33_BaddieControl = NULL;
 DLL_59_minimap *gDLL_59_Minimap = NULL;
 DLL_54 *gDLL_54 = NULL;
 
@@ -251,7 +251,7 @@ void game_init(void) {
         gDLL_30_Task = dll_load_deferred(DLL_ID_TASK, 6);
         gDLL_31_Flash = dll_load_deferred(DLL_ID_FLASH, 2); // param is 0x24 in SFA
         gDLL_32 = dll_load_deferred(DLL_ID_32, 6);          // 0x18 in SFA
-        gDLL_33 = dll_load_deferred(DLL_ID_33, 22);         // 0x19 in SFA
+        gDLL_33_BaddieControl = dll_load_deferred(DLL_ID_33, 22);         // 0x19 in SFA
         gDLL_59_Minimap = dll_load_deferred(DLL_ID_MINIMAP, 2);
         gDLL_54 = dll_load_deferred(DLL_ID_54, 12); // 0x2F in SFA
         gDLL_57 = dll_load_deferred(DLL_ID_57, 4);
