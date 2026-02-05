@@ -52,13 +52,13 @@ Unk80030A24 D_800B24B8[21]; // TODO: unknown length
 // -------- .bss end 800b28b0 -------- //
 
 void alloc_some_object_arrays(void) {
-    D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B20A8 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B20AC = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B20B0 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B20B4 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, NULL);
+    D_800B1994 = mmAlloc(0xA0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitmods"));
+    D_800B199C = mmAlloc(0x708, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:lasthits"));
+    D_800B20A0 = mmAlloc(0x1900, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitvols"));
+    D_800B20A8 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitspheres"));
+    D_800B20AC = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitspheres2"));
+    D_800B20B0 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitspheres3"));
+    D_800B20B4 = mmAlloc(0x400, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("ohits:hitspheres4"));
     D_800B1990 = 2.0f;
     func_80028D90();
 }

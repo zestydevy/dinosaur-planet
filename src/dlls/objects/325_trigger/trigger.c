@@ -488,7 +488,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 8: {
-                    // "Trigger [%d], Death drop" (from default.dol)
+                    // "Trigger [%d], Death drop" (default.dol)
                     s16 pad;
                     obj = get_player();
                     if (obj != NULL) {
@@ -497,7 +497,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 9: {
-                    // "Trigger [%d], Dangerous Water" (from default.dol)
+                    // "Trigger [%d], Dangerous Water" (default.dol)
                     s16 pad;
                     obj = get_player();
                     if (obj != NULL) {
@@ -506,7 +506,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 10: {
-                    // "Trigger [%d], Safe Water" (from default.dol)
+                    // "Trigger [%d], Safe Water" (default.dol)
                     s32 pad;
                     obj = get_player();
                     if (obj != NULL) {
@@ -539,20 +539,8 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_CAMERA_ACTION: 
             // "Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]"
             gDLL_2_Camera->vtbl->func8(cmd->param1, cmd->param2);
-            // Printf3("Trigger [%d], Camera,             Action [%d], Camera Num [%d], PassDir [%d]",
-            //       (int)param_1[0x22],pbVar9[2],pbVar9[3],(int)cVar8);
             break;
         case TRG_CMD_TRACK: 
-            // "Trigger [%d], Track Sky On"
-            // "Trigger [%d], Track Sky Off"
-            // "Trigger [%d], Track AntiAlias On"
-            // "Trigger [%d], Track AntiAlias Off"
-            // "Trigger [%d], Track SkyObjects On"
-            // "Trigger [%d], Track SkyObjects Off"
-            // "Trigger [%d], Track Dome On"
-            // "Trigger [%d], Track Dome Off"
-            // "Trigger [%d], Track MrSheen On %d"
-            // "Trigger [%d], Track MrSheen Off"
             switch (cmd->param1) {
             case 0:
                 if ((s32) cmd->param2 >= 2) {
@@ -560,7 +548,9 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 func_80041C6C(cmd->param2);
                 if (cmd->param2 != 0) {
-
+                    // "Trigger [%d], Track Sky On"
+                } else {
+                    // "Trigger [%d], Track Sky Off"
                 }
                 break;
             case 1:
@@ -569,7 +559,9 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 func_80041CA8((s32) cmd->param2);
                 if (cmd->param2 != 0) {
-
+                    // "Trigger [%d], Track AntiAlias On"
+                } else {
+                    // "Trigger [%d], Track AntiAlias Off"
                 }
                 break;
             case 2:
@@ -578,7 +570,9 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 func_80041CE4((s32) cmd->param2);
                 if (cmd->param2 != 0) {
-
+                    // "Trigger [%d], Track SkyObjects On"
+                } else {
+                    // "Trigger [%d], Track SkyObjects Off"
                 }
                 break;
             case 3:
@@ -587,30 +581,39 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 gDLL_12_Minic->vtbl->func6(cmd->param2);
                 if (cmd->param2 != 0) {
-
+                    // "Trigger [%d], Track Dome On"
+                } else {
+                    // "Trigger [%d], Track Dome Off"
                 }
                 break;
             case 4:
                 gDLL_16->vtbl->func2(cmd->param2);
                 if (cmd->param2 != 0) {
-
+                    // "Trigger [%d], Track MrSheen On %d"
+                } else {
+                    // "Trigger [%d], Track MrSheen Off"
                 }
                 break;
             case 5:
                 oldshadow_toggle((u32) cmd->param2);
+                // "Trigger [%d], footstepsTurnOn %d" (default.dol)
                 break;
             case 6:
                 if ((s32) cmd->param2 > 0) {
                     func_8001EBD0(1);
+                    // "Trigger [%d], newlightInside(1)" (default.dol)
                 } else {
                     func_8001EBD0(0);
+                    // "Trigger [%d], newlightInside(0)" (default.dol)
                 }
                 break;
             case 7:
                 if ((s32) cmd->param2 > 0) {
                     func_80041E24(1);
+                    // "Trigger [%d], trackSetSunGlareOn(1)" (default.dol)
                 } else {
                     func_80041E24(0);
+                    // "Trigger [%d], trackSetSunGlareOn(0)" (default.dol)
                 }
                 break;
             }
@@ -649,22 +652,24 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             // "Trigger [%d], Trigger,            Local ID   [%d]"
             trigger_func_29C0((cmd->param2 | (cmd->param1 << 8)), activator, dir, activatorDistSquared);
             break;
-        // case TRG_CMD_?
+        case TRG_CMD_STORYBOARD:
             // "Storyboard disabled, please remove trigger\n"
+            break;
         case TRG_CMD_LOD_MODEL:
             // "Trigger [%d], LOD Model [%d]"
             func_80023A18(get_player(), (s32) cmd->param1);
             break;
-        case TRG_CMD_F:
+        case TRG_CMD_SETUP_POINT:
             // "Trigger [%d], Setup Point,        Level      [%d], SetupPoint [%d]"
-            // ?
             trigger_func_1754(cmd->param1, cmd->param2);
             break;
         case TRG_CMD_FLAG:
             // "Trigger [%d], Bits\n"
+            // "Trigger [%d], Bits No %d \n" (default.dol)
             trigger_func_1764((cmd->param2 | (cmd->param1 << 8)));
             break;
         case TRG_CMD_FLAG_TOGGLE:
+            // "Trigger [%d], toggleBits (%d)"(default.dol)
             trigger_func_17FC((cmd->param2 | (cmd->param1 << 8)));
             break;
         case TRG_CMD_ENABLE_OBJ_GROUP:
@@ -689,14 +694,16 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             trigger_func_1920((cmd->param2 | (cmd->param1 << 8)));
             break;
         case TRG_CMD_SET_MAP_SETUP:
+            // "Trigger [%d], act changed to %d" (default.dol)
             gDLL_29_Gplay->vtbl->set_map_setup((s32) self->mapID, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SCRIPT:
-            // "TRIGGER: warning DLL not loaded\n"
-            // "Script [%d], Subscript [%d]\n"
             if (objdata->scripts[i] != NULL) {
                 objdata->scripts[i]->vtbl->subscripts[cmd->param2](self, activator, dir, activatorDistSquared);
+            } else {
+                // "TRIGGER: warning DLL not loaded\n"
             }
+            // "Script [%d], Subscript [%d]\n"
             break;
         case TRG_CMD_WORLD_ENABLE_OBJ_GROUP:
             // "Trigger [%d], Object Load\n"
@@ -707,24 +714,31 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             gDLL_29_Gplay->vtbl->set_obj_group_status((s32) cmd->param2, (s32) cmd->param1, 0);
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
+            // "Trigger [%d], kyte flight group change\n" (default.dol)
             main_set_bits(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_KYTE_TALK_SEQ:
+            // "Trigger [%d], kyte flight talk sequence set\n" (default.dol)
             main_set_bits(BIT_488, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_MAP_SETUP:
+            // "Trigger [%d], Act change on map %d to act %d\n" (default.dol)
             gDLL_29_Gplay->vtbl->set_map_setup((s32) cmd->param2, (s32) cmd->param1);
             break;
         case TRG_CMD_TRICKY_TALK_SEQ:
+            // "Trigger [%d], Tricky talk sequence set to %d\n" (default.dol)
             main_set_bits(BIT_4E2, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_GAME:
+            // "Trigger [%d], Save Point\n" (default.dol)
             gDLL_29_Gplay->vtbl->checkpoint(&self->srt.transl, (s16) ((s16) self->srt.yaw >> 8), (s32) cmd->param2, map_get_layer());
             break;
         case TRG_CMD_MAP_LAYER:
             if (cmd->param1 == 0) {
+                // "Trigger [%d],trackIncMapLayer\n" (default.dol)
                 map_increment_layer();
             } else {
+                // "Trigger [%d],trackIncMapLayer\n" (default.dol)
                 map_decrement_layer();
             }
             break;
@@ -742,6 +756,13 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 // "Restart Goto [%d]\n"
                 gDLL_29_Gplay->vtbl->restart_goto();
                 break;
+            /*
+            // default.dol
+            case 3:
+                // "Trigger [%d],Restart Set Dazed [%d]\n"
+                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, map_get_layer(), 1);
+                break;
+            */
             }
             break;
         case TRG_CMD_SIDEKICK:
@@ -749,10 +770,12 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             if (sidekick != NULL) {
                 switch (cmd->param1) {
                 case 0:
+                    // "Trigger [%d], Sidekick Auto Heel\n" (default.dol)
                     ((DLL_ISidekick *)sidekick->dll)->vtbl->func23(sidekick);
                     break;
                 case 1:
                     // "killing sidekick\n"
+                    // "Trigger [%d], Unloading Sidekick\n" (default.dol)
                     obj_destroy_object(get_sidekick());
                     break;
                 case 2:
@@ -762,6 +785,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                         var_v0_2 = obj_get_nearest_type_to(OBJTYPE_51, sidekick, NULL);
                     }
                     if (var_v0_2 != NULL) {
+                        // "Trigger [%d], Sidekick Find On Object %d\n"
                         ((DLL_ISidekick *)sidekick->dll)->vtbl->func22(sidekick, var_v0_2);
                     }
                     break;

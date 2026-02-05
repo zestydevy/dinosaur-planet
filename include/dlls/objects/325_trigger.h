@@ -112,10 +112,10 @@ typedef enum {
     TRG_CMD_ANIM_SEQ = 0xB,
     TRG_CMD_TRIGGER = 0xC,
     TRG_CMD_LIGHTING = 0xD,
-    TRG_CMD_E = 0xE, // not implemented
-    TRG_CMD_F = 0xF,
+    TRG_CMD_STORYBOARD = 0xE, // not implemented
+    TRG_CMD_SETUP_POINT = 0xF,
     TRG_CMD_LOD_MODEL = 0x10,
-    TRG_CMD_11 = 0x11, // TRG_CMD_TRICKY_?
+    TRG_CMD_TRICKY_TALK_SEQ = 0x11,
     TRG_CMD_FLAG = 0x12,
     TRG_CMD_ENABLE_OBJ_GROUP = 0x13,
     TRG_CMD_DISABLE_OBJ_GROUP = 0x14,

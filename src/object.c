@@ -121,9 +121,9 @@ void init_objects(void) {
     int i;
 
     //allocate some buffers
-    gObjDeferredFreeList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
-    D_800B1918     = mmAlloc(0x60, ALLOC_TAG_OBJECTS_COL,  NULL);
-    D_800B18E4     = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL,  NULL);
+    gObjDeferredFreeList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:dellist"));
+    D_800B1918     = mmAlloc(0x60, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:locklist"));
+    D_800B18E4     = mmAlloc(0x10, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:contnobuf"));
 
     //load OBJINDEX.BIN and count number of entries
     queue_alloc_load_file((void **) (&gFile_OBJINDEX), FILE_OBJINDEX_BIN);
@@ -137,8 +137,8 @@ void init_objects(void) {
     gNumObjectsTabEntries--;
 
     //init ref count and pointers
-    gLoadedObjDefs = mmAlloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, NULL);
-    gObjDefRefCount   = mmAlloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, NULL);
+    gLoadedObjDefs = mmAlloc(gNumObjectsTabEntries * 4, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:deflist"));
+    gObjDefRefCount   = mmAlloc(gNumObjectsTabEntries,     ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:defno"));
     for(i = 0; i < gNumObjectsTabEntries; i++) gObjDefRefCount[i] = 0; //why not memset?
 
     //load TABLES.BIN and TABLES.TAB and count number of entries
@@ -148,7 +148,7 @@ void init_objects(void) {
     while(gFile_TABLES_TAB[gNumTablesTabEntries] != -1) gNumTablesTabEntries++;
 
     //allocate global object list and some other buffers
-    gObjList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, NULL);
+    gObjList = mmAlloc(0x2D0, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:ObjList"));
     alloc_some_object_arrays();
     obj_clear_all();
 }
@@ -556,6 +556,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
+            // "objSetupObjectActual objtype out of range %d/%d\n"
             update_pi_manager_array(0, -1);
             return NULL;
         }
@@ -569,6 +570,8 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
     def = objHeader.def;
 
     if (def == NULL || (u32)def == 0xFFFFFFFF) {
+        // "Warning: Unknown object type '%d/%d romdefno %d', using DummyObject (128)\n"
+        // "Warning: Object romdefno is -1, check the object is in objects.spec" (default.dol)
         return NULL;
     } 
     
@@ -605,6 +608,7 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     if (def->dllID != 0) {
         objHeader.dll = (DLL_IObject*)dll_load(def->dllID, 6, 1);
+        // "OBJECTS: warning DLL load failed\n" (default.dol)
     }
 
     modflags = obj_get_model_flags(&objHeader);
@@ -627,9 +631,10 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
 
     var = obj_calc_mem_size(&objHeader, def, modflags);
 
-    obj = (Object*)mmAlloc(var, ALLOC_TAG_OBJECTS_COL, NULL);
+    obj = (Object*)mmAlloc(var, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj"));
 
     if (obj == NULL) {
+        // "ObjSetupObject(3) Memory fail!!\n"
         obj_free_objdef(tabIdx);
         return NULL;
     }
@@ -733,7 +738,14 @@ Object *obj_setup_object(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, 
             obj->unk78[j].unk1 = def->unk40[j].unk0d;
             obj->unk78[j].unk2 = def->unk40[j].unk0e;
         }
+
+        // addr = (u32)obj->unk78 + (def->unk9b * sizeof(ObjectStruct78)); // default.dol
     }
+
+    // default.dol (size is mmAlloc size)
+    // if (size != (addr - (s32)obj)) {
+    //     // "objects.c: objSetupObject: sizes do not match\n"
+    // }
 
     obj->parent = parent;
     
@@ -795,6 +807,12 @@ void obj_add_object(Object *obj, u32 initFlags) {
         obj->unkB0 |= 0x10;
         gObjList[gNumObjs] = obj;
         gNumObjs += 1;
+
+        /* default.dol
+        if (gNumObjs > 349) {
+            // "Failed assertion ObjListSize<MAX_OBJECTS"
+        }
+        */
 
         obj_add_tick(obj);
     }
@@ -962,8 +980,6 @@ void func_80022200(Object *obj, s32 param2, s32 param3) {
     }
 }
 
-static const char str_80099620[] = "objFreeTick %08x locked %d,already on list\n";
-
 // name guessed from leftover strings
 void obj_free_tick(Object *obj) {
     if (obj->unkB0 & 0x10) {
@@ -993,13 +1009,12 @@ void obj_add_tick(Object *obj) {
     }
 }
 
-static const char str_8009964c[] = "objFreeObject: delete list size overrun\n";
-
 void obj_destroy_object(Object *obj) {
     s32 i;
     s32 k;
 
     if (obj == NULL) {
+        // "Failed assertion obj" (default.dol)
         *((volatile s8*)NULL) = 0;
         return;
     }
@@ -1041,7 +1056,7 @@ void obj_destroy_object(Object *obj) {
                 D_800B1918[D_800B191C] = obj;
                 D_800B191C += 1;
             } else {
-                
+                STUBBED_PRINTF("objFreeTick %08x locked %d,already on list\n", obj, obj->unkDA);
             }
         } else if (D_80091660 == 2) {
             i = gObjDeferredFreeListCount;
@@ -1059,6 +1074,7 @@ void obj_destroy_object(Object *obj) {
                 gObjDeferredFreeListCount++;
                 
                 if (gObjDeferredFreeListCount == 180) {
+                    STUBBED_PRINTF("objFreeObject: delete list size overrun\n");
                     gObjDeferredFreeListCount--;
                 }
             }
@@ -1195,8 +1211,6 @@ u32 obj_init_event_data(s32 objId, Object *obj, u32 addr) {
     return addr;
 }
 
-static const char str_80099678[] = "objects.c: event data size overflow\n";
-
 void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 dontQueueLoad) {
     ObjDefEvent *eventList;
     ObjDefEvent *event;
@@ -1218,6 +1232,7 @@ void obj_load_event(Object *obj, s32 objId, ObjectEvent *outEvent, s32 id, u8 do
             outEvent->size = event->fileSizeInBytes;
 
             if (outEvent->size > 80) {
+                STUBBED_PRINTF("objects.c: event data size overflow\n");
                 outEvent->size = 80;
             }
 
@@ -1268,6 +1283,7 @@ void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id
             outParam->size = weaponData->fileSizeInBytes;
 
             if (outParam->size > 1024) {
+                // "Weapon data array size overflow\n" (default.dol)
                 outParam->size = 1024;
             }
 
@@ -1283,9 +1299,6 @@ void obj_load_weapondata(Object *obj, s32 param2, BinFileEntry *outParam, s32 id
         }
     }
 }
-
-static const char str_800996a0[] = "ob %d fileno %d\n";
-static const char str_800996b4[] = "Objects out of ram(1) !!\n";
 
 ObjDef *obj_load_objdef(s32 tabIdx) {
     ObjDef *def;
@@ -1305,7 +1318,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
     fileOffset = gFile_OBJECTS_TAB[tabIdx];
     fileSize = gFile_OBJECTS_TAB[tabIdx + 1] - fileOffset;
 
-    def = (ObjDef*)mmAlloc(fileSize, ALLOC_TAG_OBJECTS_COL, NULL);
+    def = (ObjDef*)mmAlloc(fileSize, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("obj:def"));
     if (def != NULL) {
         read_file_region(OBJECTS_BIN, (void*)def, fileOffset, fileSize);
 
@@ -1344,6 +1357,7 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
         def->pIntersectPoints = NULL;
 
         if (def->modLineNo > -1) {
+            STUBBED_PRINTF("ob %d fileno %d\n", tabIdx, def->modLineNo);
             def->pModLines = obj_load_objdef_modlines(def->modLineNo, &def->modLineCount);
             func_800596BC(def);
         }
@@ -1352,13 +1366,12 @@ ObjDef *obj_load_objdef(s32 tabIdx) {
         gObjDefRefCount[tabIdx] = 1;
 
     } else {
+        STUBBED_PRINTF("Objects out of ram(1) !!\n");
         return NULL;
     }
 
     return def;
 }
-
-static const char str_800996d0[] = "objFreeObjdef: Error!! (%d)\n";
 
 void obj_free_objdef(s32 tabIdx) {
     if (gObjDefRefCount[tabIdx] != 0) {
@@ -1379,6 +1392,8 @@ void obj_free_objdef(s32 tabIdx) {
 
             mmFree(def);
         }
+    } else {
+        STUBBED_PRINTF("objFreeObjdef: Error!! (%d)\n", tabIdx);
     }
 }
 
@@ -1399,14 +1414,14 @@ ModLine *obj_load_objdef_modlines(s32 modLineNo, s16 *modLineCount) {
         return NULL;
     }
 
-    tabEntry = (s32*)mmAlloc(16, ALLOC_TAG_TEST_COL, NULL);
+    tabEntry = (s32*)mmAlloc(16, ALLOC_TAG_TEST_COL, ALLOC_NAME("obj:tempindex"));
     read_file_region(MODLINES_TAB, (void*)tabEntry, modLineNo << 2, 8);
 
     offset = tabEntry[0];
     size = tabEntry[1] - tabEntry[0];
 
     if (size > 0) {
-        modLines = (ModLine*)mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
+        modLines = (ModLine*)mmAlloc(size, ALLOC_TAG_TRACK_COL, ALLOC_NAME("obj:templine"));
         read_file_region(MODLINES_BIN, (void*)modLines, offset, size);
     }
 
@@ -1431,8 +1446,6 @@ s32 func_80022DFC(s32 idx) {
     return gFile_OBJINDEX[idx] != -1;
 }
 
-static const char str_800996f0[] = "objGetControlNo objtype out of range %d/%d\n";
-
 // unused
 s16 func_80022E3C(s32 param1) {
     ObjDef *def;
@@ -1456,30 +1469,26 @@ s16 func_80022E3C(s32 param1) {
     return -1;
 }
 
-//https://decomp.me/scratch/CPQVO
 s16 func_80022EC0(s32 arg0) {
-    s8 pad_sp8C[76];
-    s8 *var_v0;
-    s8 pad_sp87;
-    s8 sp86;
-    s32 pad_sp80;
-    s8 sp2C[84];
-    s16 pad_sp28;
-    s32 pad_sp24;
-    s32 var_v1;
+    ObjDef def;
+    s32 objtype;
+    u32 var_v0;
+    u32 var_v1;
 
     if (gObjIndexCount < arg0) {
         return 0;
     }    
 
+    objtype = arg0;
     arg0 = gFile_OBJINDEX[arg0];
     if (arg0 == -1) {
+        STUBBED_PRINTF("objGetControlNo objtype out of range %d/%d\n", objtype, gObjIndexCount);
         return 0;
     }
-    var_v0 = (s8*)(&sp86 - sp2C);
 
+    var_v0 = (u32)&def.group - (u32)&def;
     var_v1 = 0;
-    while ((u32)var_v0 & 1){
+    while (var_v0 & 1) {
         var_v0 -= 1;
         var_v1 += 1;        
     }
@@ -1529,6 +1538,11 @@ void obj_free_object(Object *obj, s32 param2) {
                     if (obj2->setup != NULL) {
                         stackObjs[numStackObjs] = obj2;
                         numStackObjs++;
+                        /* default.dol
+                        if (39 < numStackObjs) {
+                            // "world free obj list overflow\n"
+                        }
+                        */
                     }
                 }
             }
@@ -1621,7 +1635,7 @@ void obj_free_object(Object *obj, s32 param2) {
 void *obj_alloc_create_info(s32 size, s32 objId) {
     ObjSetup *setup;
 
-    setup = (ObjSetup*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, NULL);
+    setup = (ObjSetup*)mmAlloc(size, ALLOC_TAG_OBJECTS_COL, ALLOC_NAME("romdef"));
     bzero(setup, size);
 
     setup->uID = -1;
@@ -1802,6 +1816,11 @@ s32 obj_integrate_speed(Object *obj, f32 dx, f32 dy, f32 dz) {
 }
 
 void obj_set_update_priority(Object *obj, s8 priority) {
+    /* default.dol
+    if (priority == 90 && !(obj->def->flags & 0x40)) {
+        // "WARNING Cannot set priority Level to WORLD if not world object  \n"
+    }
+    */
     obj->updatePriority = priority;
 }
 
@@ -1852,14 +1871,16 @@ void func_80023A78(Object *obj, ModelInstance *modelInst, Model *model) {
     obj->unkB0 &= 0xF0FF;
 }
 
-static const char str_80099780[] = "warning: objAddEffectBox max effect boxes\n";
-static const char str_800997ac[] = "objFreeEffectBox: Not found\n";
-
 void obj_add_effect_box(Object *obj) {
     gEffectBoxes[gEffectBoxCount] = obj;
     gEffectBoxCount += 1;
+
+    if (gEffectBoxCount > (s32)ARRAYCOUNT(gEffectBoxes)) {
+        STUBBED_PRINTF("warning: objAddEffectBox max effect boxes\n");
+    }
 }
 
+static const char str_800997ac[] = "objFreeEffectBox: Not found\n";
 void obj_free_effect_box(Object *obj) {
     s32 i;
     s32 newCount;

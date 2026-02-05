@@ -400,6 +400,7 @@ void set_camera_selector(s32 selector)
     if (selector >= 0 && selector < 4) {
         gCameraSelector = selector;
     } else {
+        // "Camera Error: Illegal player no!\n"
         gCameraSelector = 0;
     }
 }
@@ -841,6 +842,7 @@ void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
     z = camera->tz - gWorldZ;
 
     if (x > 32767.0f || -32767.0f > x || z > 32767.0f || -32767.0f > z) {
+        // "Camera out of range: %d, (%.1f,%.1f,%.1f) (%.1f,%.1f)\n"
         return;
     }
     

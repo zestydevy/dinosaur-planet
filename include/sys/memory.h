@@ -98,6 +98,10 @@ enum AllocTag {
 // Weather(?)
 #define COLOUR_TAG_LIGHT_ORANGE 0xFFAA55FF
 
+// mmAlloc name arguments are always NULL in the December 2000 build but exist in default.dol.
+// This macro can be used to add the names back to source code without breaking matches.
+#define ALLOC_NAME(name) NULL
+
 typedef struct {
 /*0000*/    u8 *data;
 /*0004*/    s32 size;

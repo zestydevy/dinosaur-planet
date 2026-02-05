@@ -508,14 +508,14 @@ void init_maps(void) {
     s32 i;
 
     UINT_80092a98 = 0;
-    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, NULL);
-    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
-    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
-    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
-    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, ALLOC_TAG_TRACK_COL, NULL);
-    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, NULL);
-    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, ALLOC_TAG_TRACK_COL, NULL);
-    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:cblocks"));
+    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blknos"));
+    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkusage"));
+    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:mapinfo"));
+    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:tempbuf"));
+    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkmaps"));
+    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:entrymaps"));
+    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:vismap"));
     for (i = 1; i < MAP_LAYER_COUNT; i++) {
         gBlockIndices[i] = gBlockIndices[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
@@ -1834,7 +1834,8 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
 
     size = gMapActiveStreamMap->gridB_sixteenthSize;
     instanceCount = gMapActiveStreamMap->objectInstanceCount;
-    gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 5, 0);
+    gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 
+        ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
 
     queue_load_file_region_to_ptr((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
     
@@ -2217,10 +2218,10 @@ void init_global_map(void)
     size /= sizeof(StructBuf);
 
     D_800B9768.unk0  = -1;
-    D_800B9768.unk4  = mmAlloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unk8  = mmAlloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unkC  = mmAlloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unk10 = mmAlloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk4  = mmAlloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
+    D_800B9768.unk8  = mmAlloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
+    D_800B9768.unkC  = mmAlloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
+    D_800B9768.unk10 = mmAlloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
 
     bzero(D_800B9768.unk10, sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH);
 
@@ -2837,7 +2838,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
     } else {
         mapBinOffset = READ_MAPS_TAB(mapID, 0);
         mapBinSize = READ_MAPS_TAB(mapID, 7) - mapBinOffset;
-        map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, NULL);
+        map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
         queue_load_file_region_to_ptr((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
         map->objectInstanceFile_ptr = (ObjSetup *) (READ_MAPS_TAB(mapID, 4) + (s8 *)map - mapBinOffset);
         map->originWorldX = (D_800B9768.unk4[mapID].xMin + map->originOffsetX) * BLOCKS_GRID_UNIT_F;

@@ -4,7 +4,7 @@
 s32 func_80000450(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 arg4, s32 arg5) {
     LightAction* lAction;
 
-    lAction = mmAlloc(sizeof(LightAction), -1, 0);
+    lAction = mmAlloc(sizeof(LightAction), -1, ALLOC_NAME("lfx:action1"));
     queue_load_file_region_to_ptr((void *)lAction, LACTIONS_BIN, actionIndex * sizeof(LightAction), sizeof(LightAction));
     if (lAction) {
         if (arg5) {
@@ -33,7 +33,7 @@ s32 func_80000450(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 arg4
 s32 func_80000608(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 arg4, s32 arg5) {
     LightAction* lAction;
 
-    lAction = mmAlloc(sizeof(LightAction), -1, NULL);
+    lAction = mmAlloc(sizeof(LightAction), -1, ALLOC_NAME("lfx:action1"));
     queue_load_file_region_to_ptr((void *)lAction, LACTIONS_BIN, actionIndex * sizeof(LightAction), sizeof(LightAction));
     if (lAction != NULL) {
         lAction->unk0 = 0xC;

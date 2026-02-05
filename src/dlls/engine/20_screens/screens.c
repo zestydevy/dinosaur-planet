@@ -54,7 +54,7 @@ void screens_show_screen(s32 screenNo) {
                 mmFree(sLoadedScreen);
             }
 
-            sLoadedScreen = mmAlloc(length, ALLOC_TAG_SCREEN_COL, NULL);
+            sLoadedScreen = mmAlloc(length, ALLOC_TAG_SCREEN_COL, ALLOC_NAME("screen:screen"));
         }
 
         sLoadedScreenByteLength = length;

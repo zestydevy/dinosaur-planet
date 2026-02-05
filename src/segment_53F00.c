@@ -88,11 +88,11 @@ HitsUnk* D_80092E84 = NULL;
 
 void func_80053300(void) {
     if (D_80092E70 == NULL) {
-        D_80092E70 = mmAlloc(250*sizeof(UnkFunc80051D68Arg3), COLOUR_TAG_YELLOW, 0);
-        D_80092E74 = mmAlloc(400*sizeof(HitsLineReencoded), COLOUR_TAG_YELLOW, 0);
-        D_80092E78 = mmAlloc(4800, COLOUR_TAG_YELLOW, 0);
-        D_80092E7C = mmAlloc(800, COLOUR_TAG_YELLOW, 0);
-        D_80092E84 = mmAlloc(20*sizeof(HitsUnk), COLOUR_TAG_YELLOW, 0);
+        D_80092E70 = mmAlloc(250*sizeof(UnkFunc80051D68Arg3), COLOUR_TAG_YELLOW, ALLOC_NAME("int:pllist"));
+        D_80092E74 = mmAlloc(400*sizeof(HitsLineReencoded), COLOUR_TAG_YELLOW, ALLOC_NAME("int:linelist"));
+        D_80092E78 = mmAlloc(4800, COLOUR_TAG_YELLOW, ALLOC_NAME("int:pointlist"));
+        D_80092E7C = mmAlloc(800, COLOUR_TAG_YELLOW, ALLOC_NAME("int:lineindex"));
+        D_80092E84 = mmAlloc(20*sizeof(HitsUnk), COLOUR_TAG_YELLOW, ALLOC_NAME("int:lastlines"));
     }
     func_80058F8C();
     D_800BB4D6 = 0;

@@ -404,6 +404,7 @@ void gplay_save_game(void) {
     }
 }
 
+// official name: gplayLoadOptions
 u32 gplay_load_game_options(void) {
     u32 ret;
     s32 loadStatus;
@@ -415,6 +416,7 @@ u32 gplay_load_game_options(void) {
     
     if (!loadStatus) {
         // Failed to load
+        // "gplayLoadOptions error: saveoptions failed to load.\n" (default.dol)
         bzero(sGameOptions, sizeof(GplayOptions));
         ret = 0;
         sGameOptions->volumeMusic = 0x7f;
@@ -487,8 +489,9 @@ void gplay_start_loaded_game(void) {
 
 void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     if (sRestartSave == NULL) {
-        sRestartSave = (Savegame*)mmAlloc(sizeof(Savegame), COLOUR_TAG_YELLOW, NULL);
+        sRestartSave = (Savegame*)mmAlloc(sizeof(Savegame), COLOUR_TAG_YELLOW, ALLOC_NAME("flash"));
         if (sRestartSave == NULL) {
+            // " WARNING : Not Enough Memort for Restart Point " (default.dol)
             return;
         }
     }
@@ -512,6 +515,8 @@ void gplay_restart_goto(void) {
     if (sRestartSave != NULL) {
         bcopy(sRestartSave, &sState.save, sizeof(Savegame));
         gplay_start_game();
+    } else {
+        // "\nWARNING gplay : Restart Point Not Set \n" (default.dol)
     }
 }
 
@@ -555,6 +560,10 @@ u8 gplay_get_playerno(void) {
 }
 
 void gplay_set_playerno(u8 playerno) {
+    /* default.dol
+    if (1 < sState.save.file.playerno) {
+        STUBBED_PRINTF("playerno set to %d!\n", sState.save.file.playerno);
+    }*/
     sState.save.file.playerno = playerno;
 }
 
@@ -572,6 +581,7 @@ GplayStruct11 *gplay_func_F30(void) {
 
 // gplayGetCurrentPlayerLactions ?
 GplayStruct6 *gplay_func_F60(void) {
+    // "gameplay.c: gplayGetCurrentPlayerLactions: playerno overflow\n" (default.dol)
     if (sState.save.file.playerno >= PLAYER_NUM_PLAYERS) {
         return &sState.save.map.unk16F4[0];
     }
@@ -581,6 +591,7 @@ GplayStruct6 *gplay_func_F60(void) {
 
 // gplayGetCurrentPlayerEnvactions ?
 GplayStruct12 *gplay_func_FA8(void) {
+    // "gameplay.c: gplayGetCurrentPlayerEnvactions: playerno overflow\n" (default.dol)
     if (sState.save.file.playerno >= PLAYER_NUM_PLAYERS) {
         return &sState.save.map.unk171C[0];
     }
@@ -596,6 +607,7 @@ void gplay_add_time(s32 uid, f32 time) {
     s32 i;
 
     if (sState.save.file.timeSaveCount == MAX_TIMESAVES) {
+        // "gplayAddTime: MAX_TIMESAVES reached\n" (default.dol)
         return;
     }
 
@@ -694,6 +706,11 @@ void gplay_set_map_setup(s32 mapID, s32 setupID) {
     if (mapID >= 80) {
         mapID = bss_1840[mapID - 80];
     }
+    
+    // "gplaySetAct error: mapno (%d) number too high!\n" (default.dol)
+    // "gplaySetAct error: negative mapno (%d)\n" (default.dol)
+    // "gplaySetAct: mapno(%d) doesn't have an entry in the bitflags\n" (default.dol)
+    // "bitflags" is sMapSetupBitKeys (default.dol)
 
     main_set_bits(sMapSetupBitKeys[mapID], setupID);
 
@@ -725,6 +742,8 @@ u8 gplay_get_obj_group_status(s32 mapID, s32 group) {
     if (mapID >= 80) {
         mapID = bss_1840[mapID - 80];
     }
+
+    // "Error in gplayGetObjGroupStatus (mapno %d, groupno %d)\n" (default.dol)
 
     if (mapID != sMapObjGroups.mapID) {
         sMapObjGroups.mapID = mapID;
@@ -771,6 +790,7 @@ void gplay_set_obj_group_status(s32 mapID, s32 group, s32 status) {
     if (mapID >= 80) {
         mapID = bss_1840[mapID - 80];
     }
+    // "Error in gplaySetObjGroupStatus (mapno %d, groupno %d)\n" (default.dol)
 
     if ((mapID < 120 && sMapObjGroupBitKeys[mapID] != 0) || (status >= 0 && 0)) {
         if (status == -1) {
@@ -823,6 +843,7 @@ FoodbagContents *gplay_func_19B8(void) {
 
 u32 gplay_is_cheat_unlocked(u8 cheatIdx) {
     if (cheatIdx >= 32) {
+        // "CHEAT OUT OF RANGE\n" (default.dol)
         return 0;
     }
 
@@ -832,24 +853,19 @@ u32 gplay_is_cheat_unlocked(u8 cheatIdx) {
 void gplay_unlock_cheat(u8 cheatIdx) {
     if (cheatIdx < 32) {
         sGameOptions->cheatsUnlocked |= (1 << cheatIdx);
+    } else {
+        // "CHEAT OUT OF RANGE\n" (default.dol)
     }
 }
 
-s32 gplay_is_cheat_active(u8 cheatIdx) {
-    s32 ret;
-
-    ret = FALSE;
-
+int gplay_is_cheat_active(u8 cheatIdx) {
     if (cheatIdx >= 32) {
+        // "CHEAT OUT OF RANGE\n" (default.dol)
         return FALSE;
     } 
 
-    ret = (sGameOptions->cheatsUnlocked & (1 << cheatIdx)) != 0;
-    if (ret) {
-        return (sGameOptions->cheatsEnabled & (1 << cheatIdx)) != 0;
-    }
-
-    // hmm...
+    return (sGameOptions->cheatsUnlocked & (1 << cheatIdx)) != 0 && 
+        (sGameOptions->cheatsEnabled & (1 << cheatIdx)) != 0;
 }
 
 void gplay_set_cheat_enabled(u8 cheatIdx, u8 enabled) {
@@ -860,10 +876,12 @@ void gplay_set_cheat_enabled(u8 cheatIdx, u8 enabled) {
             sGameOptions->cheatsEnabled &= ~(1 << cheatIdx);
         }
     }
+    // "CHEAT OUT OF RANGE\n" (default.dol)
 }
 
 u32 gplay_is_cinema_unlocked(u8 cinemaIdx) {
     if (cinemaIdx >= 32) {
+        // "CINEMA OUT OF RANGE\n"
         return 0;
     }
 
@@ -873,5 +891,7 @@ u32 gplay_is_cinema_unlocked(u8 cinemaIdx) {
 void gplay_unlock_cinema(u8 cinemaIdx) {
     if (cinemaIdx < 32) {
         sGameOptions->cinemasUnlocked |= (1 << cinemaIdx);
+    } else {
+        // "CINEMA OUT OF RANGE\n"
     }
 }

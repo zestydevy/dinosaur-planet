@@ -478,6 +478,7 @@ void func_80013FB4(void) {
 
 void func_80014074(void) {
     if (D_800B09C0 != 0) {
+        // "$$$$$  CHANGEMAP \n" (default.dol)
         mmSetDelay(0);
         if (D_8008CA30 != 0) {
             rcp_set_screen_color(0, 0, 0);
@@ -510,8 +511,11 @@ void func_80014074(void) {
     }
 }
 
+// officialName: mainChangeMap
 void func_800141A4(s32 mapID, s32 arg1, s32 playerno, s32 arg3) {
     PlayerLocation *temp_v0;
+
+    // "mainChangeMap(%d,%d,%d)\n" (default.dol)
 
     func_8001440C(0);
 
@@ -808,7 +812,6 @@ s32 main_decrement_bits(s32 entry) {
     return 0;
 }
 
-static const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
 s32 create_temp_dll(s32 id) {
     u32 idx;
 
@@ -823,6 +826,7 @@ s32 create_temp_dll(s32 id) {
     }
 
     if (gTempDLLInsts[idx] != NULL) {
+        STUBBED_PRINTF(" WARNING : temp dll no %i is alreadly created \n");
     }
 
     gTempDLLInsts[idx] = dll_load_deferred(id, 1);
@@ -830,7 +834,6 @@ s32 create_temp_dll(s32 id) {
     return 1;
 }
 
-static const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 s32 remove_temp_dll(s32 id) {
     u32 idx;
 
@@ -845,6 +848,7 @@ s32 remove_temp_dll(s32 id) {
     }
 
     if (gTempDLLInsts[idx] == NULL) {
+        STUBBED_PRINTF(" WARNING : temp dll no %i is alreadly removed \n");
         return 0;
     }
 

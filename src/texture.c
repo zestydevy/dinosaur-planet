@@ -707,7 +707,7 @@ void tex_init(void) {
     s32 *tab;
     s32 i;
 
-    gTextureCache = mmAlloc(700 * 8, ALLOC_TAG_TEX_COL, NULL);
+    gTextureCache = mmAlloc(700 * 8, ALLOC_TAG_TEX_COL, ALLOC_NAME("tex:textab"));
     gNumCachedTextures = 0;
     queue_alloc_load_file((void **) &gFile_TEX_TAB[0], TEX0_TAB);
     queue_alloc_load_file((void **) &gFile_TEX_TAB[1], TEX1_TAB);
@@ -717,7 +717,7 @@ void tex_init(void) {
         for (texIdx = 0; tab[texIdx] != -1; texIdx++) {}
         gTexTabTextureCounts[i] = (texIdx - 1);
     }
-    gTexLoadBuffer = mmAlloc((32 + 1) * 8, ALLOC_TAG_TEX_COL, NULL);
+    gTexLoadBuffer = mmAlloc((32 + 1) * 8, ALLOC_TAG_TEX_COL, ALLOC_NAME("tex:frametable"));
 }
 
 // official name: setTexMemColour

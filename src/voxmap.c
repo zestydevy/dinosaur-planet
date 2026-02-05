@@ -42,7 +42,7 @@ void voxmap_init(void) {
     for (i = 0; gVoxmapObjectIndices[i] != -1; i++) {}
 
     D_800A7D0C = --i;
-    D_800A7C78 = mmAlloc(0x280, ALLOC_TAG_VOX_COL, NULL);
+    D_800A7C78 = mmAlloc(0x280, ALLOC_TAG_VOX_COL, ALLOC_NAME("vox:voxmem"));
     i = 0;
     while (i < SLOT_COUNT) {
         D_800A7C80[i] = NULL;
@@ -148,7 +148,7 @@ u8 *voxmap_load_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex
     if (sp38 > 0x5000) {
         return 0;
     }
-    temp_v0 = mmAlloc(sp38 + 0x80, ALLOC_TAG_VOX_COL, NULL);
+    temp_v0 = mmAlloc(sp38 + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
     temp_v1 = ((temp_v0 + sp38) - sp3C) + 0x80;
     sp2C = (u8*)(temp_v1 - (temp_v1 % 16));
     read_file_region(TEXPRE_BIN, sp2C, sp34, sp3C);
@@ -165,6 +165,7 @@ u8 *voxmap_load_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex
 
 s32 func_800075B0(s32 arg0, s32 arg1) {
     if ((arg0 < 0) || (arg0 >= D_800A7D0C)) {
+        // "VOXMAP: attempt to load invalid object voxmap '%d'\n"
         return 0;
     }
     func_80012584(0x3C, 6U, (u32* ) &D_800A7C80[arg1], (ObjSetup* ) arg0, 0, 0, NULL, 0);
@@ -811,7 +812,7 @@ void func_80008D90(Object* arg0) {
 }
 
 void func_80008DC0(SomeVoxmapAllocStruct* arg0) {
-    arg0->unk0 = (SomeVoxmapAllocStructUnk0*) mmAlloc(sizeof(SomeVoxmapAllocStructUnk0) + sizeof(SomeVoxmapAllocStructUnk4) + sizeof(SomeVoxmapAllocStructUnk8), ALLOC_TAG_VOX_COL, NULL);
+    arg0->unk0 = (SomeVoxmapAllocStructUnk0*) mmAlloc(sizeof(SomeVoxmapAllocStructUnk0) + sizeof(SomeVoxmapAllocStructUnk4) + sizeof(SomeVoxmapAllocStructUnk8), ALLOC_TAG_VOX_COL, ALLOC_NAME("vox:route"));
     arg0->unk4 = (SomeVoxmapAllocStructUnk4*) ((u8*)arg0->unk0 + sizeof(SomeVoxmapAllocStructUnk0));
     arg0->unk8 = (SomeVoxmapAllocStructUnk8*) ((u8*)arg0->unk4 + sizeof(SomeVoxmapAllocStructUnk4));
 }

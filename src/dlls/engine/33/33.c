@@ -14,6 +14,8 @@
 #include "dll.h"
 #include "functions.h"
 
+// baddieControl.c (default.dol)
+
 // Common object setup for objects that drop from defeating a baddie
 typedef struct {
     ObjSetup base;
@@ -686,6 +688,7 @@ s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s32 a
         } else {
             sp54 = 0;
         }
+        // STUBBED_PRINTF("%s hit by type %d for %d points\n", arg0->def->name, sp5C, sp54); (default.dol)
         arg1->unk348 -= sp54;
         if (arg1->unk348 <= 0) {
             objdata->unk3B2 |= 0x20;
@@ -871,7 +874,7 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
     }
     if (sp3C & 0x10) {
         if ((data->unk3F8 == NULL) && !(sp3C & 0x20)) {
-            data->unk3F8 = mmAlloc(sizeof(UnkCurvesStruct), ALLOC_TAG_TEST_COL, NULL);
+            data->unk3F8 = mmAlloc(sizeof(UnkCurvesStruct), ALLOC_TAG_TEST_COL, ALLOC_NAME("BaddieControlDLL"));
         }
         if (data->unk3F8 != NULL) {
             bzero(data->unk3F8, sizeof(UnkCurvesStruct));
@@ -891,9 +894,11 @@ void dll_33_func_24FC(Object* arg0, DLL33_Data* arg1, u8 arg2) {
     }
     if (!(arg1->unk3B0 & arg2)) {
         if (arg1->unk3A6 != 0) {
+            // "baddie->fightlockbreakmusic" (default.dol)
             gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A6, 0, 0, 0);
         }
         if (arg1->unk3A4 != 0) {
+            // "baddie->fightlockmusic" (default.dol)
             gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A4, 0, 0, 0);
         }
     }

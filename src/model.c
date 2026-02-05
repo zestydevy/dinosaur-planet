@@ -265,7 +265,7 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
         return NULL;
     }
     sp58 = model_get_stats(model, flags, &sp30, model->envMapCount != 0 || model->textureAnimationCount != 0);
-    temp_v0 = mmAlloc(sp58, 0x89, NULL);
+    temp_v0 = mmAlloc(sp58, 0x89, ALLOC_NAME("minst"));
     // @fake
     if (&sp58) {}
     if (temp_v0 == NULL) {
