@@ -68,9 +68,7 @@ void SB_MiniFire_control(Object *self) {
     transform.transl.y = dy / 3.0f;
     transform.transl.z = dz / 3.0f;
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A0, &transform, PARTFXFLAG_1, -1, NULL);
-    transform.transl.x *= 2.0f;
-    transform.transl.y *= 2.0f;
-    transform.transl.z *= 2.0f;
+    VECTOR_SCALE(transform.transl, 2.0f);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A0, &transform, PARTFXFLAG_1, -1, NULL);
     self->srt.yaw += gUpdateRate * 0x374;
     self->srt.pitch += gUpdateRate * 0x12C;

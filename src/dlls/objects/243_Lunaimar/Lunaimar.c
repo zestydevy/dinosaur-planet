@@ -252,10 +252,8 @@ static void dll_243_func_700(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
 
     player = get_player();
     if (fsa->target != NULL) {
-        sp6C.f[0] = fsa->target->positionMirror.x - self->positionMirror.x;
-        sp6C.f[1] = fsa->target->positionMirror.y - self->positionMirror.y;
-        sp6C.f[2] = fsa->target->positionMirror.z - self->positionMirror.z;
-        fsa->targetDist = sqrtf(SQ(sp6C.f[0]) + SQ(sp6C.f[1]) + SQ(sp6C.f[2]));
+        VECTOR_SUBTRACT(fsa->target->positionMirror, self->positionMirror, sp6C);
+        fsa->targetDist = VECTOR_MAGNITUDE(sp6C);
     }
     gDLL_33->vtbl->func20(self, fsa, &arg1->unk34C, arg1->unk39E, NULL, 0, 0, 4);
     gDLL_33->vtbl->func4(self, player, 4, &sp62, &sp60, &sp5E);
@@ -310,10 +308,8 @@ static void dll_243_func_C44(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
     sp3C = func_800348A0(self, 0, 0);
     objdata->unk12 += 0x1000;
     *sp3C = (s32) ((fsin16_precise(objdata->unk12) + 1.0f) * 127.0f);
-    sp44.f[0] = sidekick->positionMirror.x - self->positionMirror.x;
-    sp44.f[1] = sidekick->positionMirror.y - self->positionMirror.y;
-    sp44.f[2] = sidekick->positionMirror.z - self->positionMirror.z;
-    sp40 = sqrtf(SQ(sp44.f[0]) + SQ(sp44.f[1]) + SQ(sp44.f[2]));
+    VECTOR_SUBTRACT(sidekick->positionMirror, self->positionMirror, sp44);
+    sp40 = VECTOR_MAGNITUDE(sp44);
     if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < (f32) arg1->unk3E2)) {
         arg1->unk3B2 |= 4;
     } else {

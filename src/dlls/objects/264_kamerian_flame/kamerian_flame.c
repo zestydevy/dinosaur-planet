@@ -67,9 +67,7 @@ static void kamerian_flame_create_flame_billboards(Object* self) {
 
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_680, &transform, PARTFXFLAG_1, -1, NULL);
 
-    transform.transl.x *= 4.0f;
-    transform.transl.y *= 4.0f;
-    transform.transl.z *= 4.0f;
+    VECTOR_SCALE(transform.transl, 4.0f);
 
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_680, &transform, PARTFXFLAG_1, -1, NULL);
 }

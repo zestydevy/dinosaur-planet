@@ -593,10 +593,8 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
     spD8.scale = 1.0f;
     camera = get_camera();
     if (camera != NULL) {
-        spA8.x = camera->srt.transl.x - a2->srt.transl.x;
-        spA8.y = camera->srt.transl.y - a2->srt.transl.y;
-        spA8.z = camera->srt.transl.z - a2->srt.transl.z;
-        var_fs0 = SQ(spA8.f[0]) + SQ(spA8.f[1]) + SQ(spA8.f[2]);
+        VECTOR_SUBTRACT(camera->srt.transl, a2->srt.transl, spA8);
+        var_fs0 = VECTOR_MAGNITUDE_SQUARED(spA8);
         if (var_fs0 != 0) {
             var_fs0 = sqrtf(var_fs0);
         }
