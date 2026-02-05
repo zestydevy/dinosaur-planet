@@ -132,9 +132,9 @@ void oldshadow_init(void) {
     D_800BCC10[7].y = 0.0f;
     D_800BCC10[7].z = -3.0f;
 
-    D_800BCC68 = queue_load_texture_proxy(0x18);
-    D_800BCC6C = queue_load_texture_proxy(0x19);
-    D_800BCC70 = queue_load_texture_proxy(0x1a);
+    D_800BCC68 = tex_load_deferred(0x18);
+    D_800BCC6C = tex_load_deferred(0x19);
+    D_800BCC70 = tex_load_deferred(0x1a);
 
     D_800BCC78 = (u8)0;
 }
@@ -200,7 +200,7 @@ void oldshadow_func_8005CB10(Gfx **gdl, Object *obj) {
             break;
     }
 
-    set_textures_on_gdl(gdl, tex, NULL, 0x1a, 0, 0, 1);
+    tex_gdl_set_textures(gdl, tex, NULL, 0x1a, 0, 0, 1);
 
     i = 0;
 

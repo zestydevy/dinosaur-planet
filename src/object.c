@@ -1581,11 +1581,11 @@ void obj_free_object(Object *obj, s32 param2) {
         }
 
         if (obj->shadow->texture != NULL) {
-            texture_destroy(obj->shadow->texture);
+            tex_free(obj->shadow->texture);
         }
 
         if (obj->shadow->unk8 != NULL) {
-            texture_destroy(obj->shadow->unk8);
+            tex_free(obj->shadow->unk8);
         }
     }
 

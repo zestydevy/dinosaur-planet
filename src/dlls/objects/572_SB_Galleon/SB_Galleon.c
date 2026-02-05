@@ -119,8 +119,8 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->srt.yaw = M_90_DEGREES;
     self->srt.pitch = 0;
     self->srt.roll = 0;
-    _data_0.tex1 = queue_load_texture_proxy(365);
-    _data_0.tex2 = queue_load_texture_proxy(137);
+    _data_0.tex1 = tex_load_deferred(365);
+    _data_0.tex2 = tex_load_deferred(137);
     if (0) { }
     objdata->soundHandle2 = 0;
     objdata->unk8E = 100;
@@ -195,11 +195,11 @@ void SB_Galleon_free(Object *self, s32 a1) {
 
     objdata = self->data;
     if (_data_0.tex1) {
-        texture_destroy(_data_0.tex1);
+        tex_free(_data_0.tex1);
         _data_0.tex1 = NULL;
     }
     if (_data_0.tex2) {
-        texture_destroy(_data_0.tex2);
+        tex_free(_data_0.tex2);
         _data_0.tex2 = NULL;
     }
     if (objdata->soundHandle) {

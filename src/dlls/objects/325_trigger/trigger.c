@@ -825,7 +825,7 @@ static void trigger_func_1868(u16 param1) {
     ptr = func_800213A0(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
-            tex = func_8003E960(*ptr2);
+            tex = tex_get_cached(*ptr2);
             if (tex == NULL) {
                 func_80012584(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
             }
@@ -841,9 +841,9 @@ static void trigger_func_1920(u16 param1) {
     ptr = func_800213A0(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
-            tex = func_8003E960(*ptr2);
+            tex = tex_get_cached(*ptr2);
             if (tex != NULL) {
-                texture_destroy(tex);
+                tex_free(tex);
             }
         }
     }

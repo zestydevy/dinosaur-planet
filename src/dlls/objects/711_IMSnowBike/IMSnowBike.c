@@ -197,8 +197,8 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     objdata->unk0.transl.y = self->srt.transl.y;
     objdata->unk0.transl.z = self->srt.transl.z;
     obj_add_object_type(self, OBJTYPE_11);
-    _bss_0 = queue_load_texture_proxy(0x89);
-    _bss_4 = queue_load_texture_proxy(0x3C);
+    _bss_0 = tex_load_deferred(0x89);
+    _bss_4 = tex_load_deferred(0x3C);
     if (main_get_bits(setup2->unk1E) != 0) {
         var_v0 = SNOWBIKEFLAG_1;
     } else {
@@ -545,8 +545,8 @@ void dll_711_free(Object *self, s32 a1) {
         dll_unload(_data_A8);
     }
     obj_free_object_type(self, OBJTYPE_11);
-    texture_destroy(_bss_0);
-    texture_destroy(_bss_4);
+    tex_free(_bss_0);
+    tex_free(_bss_4);
 }
 
 // offset: 0x14B0 | func: 5 | export: 5

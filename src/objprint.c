@@ -199,7 +199,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         func_800032C4(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
-        func_8003DB5C();
+        tex_render_reset();
     }
     if (!(obj->srt.flags & 0x1000)) {
         if (!(modelInst->unk34 & 8)) {
@@ -264,7 +264,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             }
             gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
-            func_8003DB5C();
+            tex_render_reset();
         }
         if (obj->linkedObject != NULL) {
             func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, obj->linkedObject, obj->unkB0 & 3, (u8)spFC);
@@ -354,7 +354,7 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs,Vertex **vtxs, Triangle
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 
     *gdl = mygdl;
     *rspMtxs = outRspMtxs;
@@ -433,7 +433,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             }
             gSPDisplayList((*arg0)++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
-            func_8003DB5C();
+            tex_render_reset();
             // @fake
             if (D_800B2E10) {}
         }
@@ -750,7 +750,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         func_800032C4(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
         dl_set_all_dirty();
-        func_8003DB5C();
+        tex_render_reset();
         sp64 = 1;
         if (sp68 == 0xFF) {
             sp64 = 2;
@@ -822,7 +822,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
             setup_rsp_matrices_for_object(gdl, mtx, object->parent);
         }
         dl_set_all_dirty();
-        func_8003DB5C();
+        tex_render_reset();
     }
 }
 

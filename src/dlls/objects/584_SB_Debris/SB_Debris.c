@@ -101,9 +101,9 @@ void SB_Debris_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     self->opacityWithFade = opacity;
     self->opacity = opacity;
     if (visibility) {
-        func_8003E9B4(8);
+        tex_disable_modes(8);
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_8003E9D0(8);
+        tex_enable_modes(8);
     }
 }
 

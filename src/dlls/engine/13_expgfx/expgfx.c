@@ -174,7 +174,7 @@ void dll_13_func_158(void) {
 
     for (i = 0; i < 8; i++) {
         if (_bss_370[i].unk0 != NULL) {
-            texture_destroy(_bss_370[i].unk0);
+            tex_free(_bss_370[i].unk0);
         }
 
         _bss_370[i].unk0 = NULL;
@@ -426,7 +426,7 @@ void dll_13_func_CEC(void) {
 
     for (i = 0; i < 8; i++) {
         if (_bss_370[i].unk0 != NULL) {
-            texture_destroy(_bss_370[i].unk0);
+            tex_free(_bss_370[i].unk0);
         }
 
         _bss_370[i].unk0 = NULL;
@@ -700,10 +700,10 @@ s16 dll_13_func_5068(s32 textureID) {
             while (TRUE) {
                 if (_bss_370[i].unk0 == NULL) {
                     // Empty slot found
-                    _bss_370[i].unk0 = queue_load_texture_proxy(textureID);
+                    _bss_370[i].unk0 = tex_load_deferred(textureID);
                     if ((_bss_370[i].unk0 != NULL) && (_bss_370[i].unk0->refCount >= 254)) {
                         if (_bss_370[i].unk0 != NULL) {
-                            texture_destroy(_bss_370[i].unk0);
+                            tex_free(_bss_370[i].unk0);
                         }
                         _bss_370[i].unk0 = NULL;
                         return -1;
@@ -727,10 +727,10 @@ s16 dll_13_func_5068(s32 textureID) {
                         }
                     }
                     if (_bss_370[var_a3].unk0 != NULL) {
-                        texture_destroy(_bss_370[var_a3].unk0);
+                        tex_free(_bss_370[var_a3].unk0);
                     }
                     _bss_370[var_a3].unk0 = NULL;
-                    _bss_370[var_a3].unk0 = queue_load_texture_proxy(textureID);
+                    _bss_370[var_a3].unk0 = tex_load_deferred(textureID);
                     if (_bss_370[var_a3].unk0 != NULL) {
                         _bss_370[var_a3].unk4 = 1000;
                         _bss_370[var_a3].unk8 = textureID;
@@ -757,7 +757,7 @@ void dll_13_func_52B4(s32 arg0) {
                 var_s0->unk8 = 0;
                 var_s0->unk4 = 0;
                 var_s0->unkC = 0;
-                texture_destroy(var_s0->unk0);
+                tex_free(var_s0->unk0);
                 var_s0->unk0 = NULL;
             }
         }

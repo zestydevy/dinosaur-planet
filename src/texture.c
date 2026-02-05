@@ -1,21 +1,23 @@
-#include "common.h"
-#include "sys/rarezip.h"
+#include "PR/ultratypes.h"
 #include "PR/gbi.h"
+#include "PR/mbi.h"
+#include "sys/gfx/texture.h"
+#include "sys/asset_thread.h"
+#include "sys/fs.h"
+#include "sys/main.h"
+#include "sys/map.h"
+#include "sys/memory.h"
+#include "sys/rand.h"
+#include "sys/rarezip.h"
 #include "gbi_extra.h"
+#include "variables.h"
+#include "functions.h"
 
 static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
 static const char str_8009a3a8[] = "Multiple texture fail!!\n";
 static const char str_8009a3c4[] = "TEX Error: TexTab overflow %d,%d!!\n";
 static const char str_8009a3e8[] = "texFreeTexture: NULL tex!!\n";
 static const char str_8009a404[] = "TEX Error: Tryed to deallocate non-existent texture!!\n";
-
-void load_texture_to_tmem2(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
-void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-
-typedef struct Unk800B49A8 {
-    s32 unk0;
-    Texture *unk4;
-} Unk800B49A8;
 
 // -------- .data start 80091910 -------- //
 Gfx D_80091910[] = {
@@ -675,63 +677,67 @@ Gfx Gfx_ARRAY_80092a00[] = {
     /* 00093638: */ gsDPSetTileSize(G_TX_RENDERTILE, 0, 0, qu102(3), qu102(3))
 };
 
-s32 D_80092A40 = ALLOC_TAG_TEX_COL;
+s32 gTexAllocTag = ALLOC_TAG_TEX_COL;
 s32 D_80092A44 = 1;
-s32 UINT_80092a48 = 0;
+s32 gTexBlockedRenderFlags = 0;
 // -------- .data end 80092a50 -------- //
 
 // -------- .bss start 800b49a0 -------- //
 s32* gFile_TEX_TAB[2]; // TEX0/TEX1 tab
-s32* D_800B49A8;
+s32* gTextureCache;
 s32* gFile_TEXTABLE;
-s32 D_800B49B0;
-s32 D_800B49B8[2];
-s32 *D_800B49C0;
+s32 gNumCachedTextures;
+s32 gTexTabTextureCounts[2]; // Number of textures in TEX0/TEX1
+s32 *gTexLoadBuffer; // scratch space used when loading texture bin header data
 Texture *gCurrTex0;
 Texture *gCurrTex1;
-Texture *D_800B49CC;
-Texture *D_800B49D0;
-s32 D_800B49D4;
+Texture *gTexSavedCurrTex0;
+Texture *gTexSavedCurrTex1;
+s32 gTexSavedBlockedRenderFlags;
 s32 D_800B49D8;
 s8 D_800B49DC;
 // -------- .bss end 800b49e0 -------- //
 
-Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl);
+Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl);
+void tex_make_display_list(Gfx **gdl, Texture *texture, u32 tile, u32 tmem, u32 palette);
 
-void init_textures(void) {
-    s32 var_v1;
-    s32* temp_a1;
+// official name: texInitTextures?
+void tex_init(void) {
+    s32 texIdx;
+    s32 *tab;
     s32 i;
 
-    D_800B49A8 = mmAlloc(700 * 8, ALLOC_TAG_TEX_COL, NULL);
-    D_800B49B0 = 0;
+    gTextureCache = mmAlloc(700 * 8, ALLOC_TAG_TEX_COL, NULL);
+    gNumCachedTextures = 0;
     queue_alloc_load_file((void **) &gFile_TEX_TAB[0], TEX0_TAB);
     queue_alloc_load_file((void **) &gFile_TEX_TAB[1], TEX1_TAB);
     queue_alloc_load_file((void **) &gFile_TEXTABLE, TEXTABLE_BIN);
     for (i = 0; i < 2; i++) {
-        temp_a1 = gFile_TEX_TAB[i];
-        for (var_v1 = 0; temp_a1[var_v1] != -1; var_v1++) {}
-        D_800B49B8[i] = (var_v1 - 1);
+        tab = gFile_TEX_TAB[i];
+        for (texIdx = 0; tab[texIdx] != -1; texIdx++) {}
+        gTexTabTextureCounts[i] = (texIdx - 1);
     }
-    D_800B49C0 = mmAlloc((32 + 1) * 8, ALLOC_TAG_TEX_COL, NULL);
+    gTexLoadBuffer = mmAlloc((32 + 1) * 8, ALLOC_TAG_TEX_COL, NULL);
 }
 
-void func_8003CD6C(s32 arg0) {
-    D_80092A40 = arg0;
+// official name: setTexMemColour
+void tex_set_alloc_tag(s32 tag) {
+    gTexAllocTag = tag;
 }
 
-Texture *queue_load_texture_proxy(s32 id) {
+Texture *tex_load_deferred(s32 id) {
     Texture *texture = NULL;
     queue_load_texture(&texture, id);
 
     return texture;
 }
 
+// official name: texLoadTexture
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texture_load.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_load.s")
 #else
 // https://decomp.me/scratch/ht6r3
-Texture* texture_load(s32 id, s32 param2) {
+Texture* tex_load(s32 id, s32 param2) {
     u32 binFileID; // sp74
     Texture* tex;
     s32 temp;
@@ -748,9 +754,9 @@ Texture* texture_load(s32 id, s32 param2) {
     Texture* prevTex; // sp40
     u8* temp_s3;
 
-    for (i = 0; i < D_800B49B0; i++) {
-        if (id == D_800B49A8[ASSETCACHE_ID(i)]) {
-            tex = (Texture*)D_800B49A8[ASSETCACHE_PTR(i)];
+    for (i = 0; i < gNumCachedTextures; i++) {
+        if (id == gTextureCache[ASSETCACHE_ID(i)]) {
+            tex = (Texture*)gTextureCache[ASSETCACHE_PTR(i)];
             tex->refCount += 1;
             return tex;
         }
@@ -776,19 +782,19 @@ Texture* texture_load(s32 id, s32 param2) {
     numFrames = (gFile_TEX_TAB[tab][tabEntry] >> 24) & 0xFF;
     compressedSize = (gFile_TEX_TAB[tab][tabEntry + 1] & 0xFFFFFF) - offset;
     if (numFrames > 1) {
-        read_file_region(binFileID, D_800B49C0, offset, (numFrames + 1) << 3);
+        read_file_region(binFileID, gTexLoadBuffer, offset, (numFrames + 1) << 3);
     } else {
-        D_800B49C0[0] = 0;
-        D_800B49C0[1] = rarezip_uncompress_size_rom(binFileID, offset, 1);
-        D_800B49C0[2] = compressedSize;
+        gTexLoadBuffer[0] = 0;
+        gTexLoadBuffer[1] = rarezip_uncompress_size_rom(binFileID, offset, 1);
+        gTexLoadBuffer[2] = compressedSize;
     }
     
     firstTex = NULL;
     prevTex = NULL;
     for (frame = 0; frame < numFrames; frame++) {
-        uncompressedSize = D_800B49C0[(frame << 1) + 1];
-        compressedSize = D_800B49C0[(frame + 1) << 1] - D_800B49C0[frame << 1];
-        tex = mmAlloc((uncompressedSize + 0xE4), D_80092A40, NULL);
+        uncompressedSize = gTexLoadBuffer[(frame << 1) + 1];
+        compressedSize = gTexLoadBuffer[(frame + 1) << 1] - gTexLoadBuffer[frame << 1];
+        tex = mmAlloc((uncompressedSize + 0xE4), gTexAllocTag, NULL);
         if (tex == NULL) {
             if ((frame + 1) == 1) {
                 return NULL;
@@ -798,7 +804,7 @@ Texture* texture_load(s32 id, s32 param2) {
         } else {
             temp = (s32)((((u8*)tex + uncompressedSize) - compressedSize) + 0xE4);
             temp_s3 = (u8*)(temp - (temp % 16));
-            read_file_region(binFileID, temp_s3, D_800B49C0[frame << 1] + offset, compressedSize);
+            read_file_region(binFileID, temp_s3, gTexLoadBuffer[frame << 1] + offset, compressedSize);
             rarezip_uncompress(temp_s3, (u8*)tex, uncompressedSize);
             tex->next = NULL;
             if (prevTex != NULL) {
@@ -813,31 +819,31 @@ Texture* texture_load(s32 id, s32 param2) {
             }
             tex->unk10 = (u32) (uncompressedSize + 0xE4) >> 2;
             mmRealloc(tex, 
-                ((u8*)load_texture_to_tmem(tex, (Gfx*)mmAlign16((u32) ((u8*)tex) + uncompressedSize)) - (u8*)tex) + 8, 
+                ((u8*)tex_setup_display_lists(tex, (Gfx*)mmAlign16((u32)tex + uncompressedSize)) - (u8*)tex) + 8, 
                 NULL);
         }
     }
 
-    for (i = 0; i < D_800B49B0; i++) {
-        if (D_800B49A8[ASSETCACHE_ID(i)] == -1) {
+    for (i = 0; i < gNumCachedTextures; i++) {
+        if (gTextureCache[ASSETCACHE_ID(i)] == -1) {
             break;
         }
     }
     
-    if (i == D_800B49B0) {
-        D_800B49B0 += 1;
+    if (i == gNumCachedTextures) {
+        gNumCachedTextures += 1;
     }
     i <<= 1;
-    D_800B49A8[i] = texID;
-    D_800B49A8[i + 1] = (s32)firstTex;
-    if (D_800B49B0 > 700) {
+    gTextureCache[i] = texID;
+    gTextureCache[i + 1] = (s32)firstTex;
+    if (gNumCachedTextures > 700) {
         return NULL;
     }
     return firstTex;
 }
 #endif
 
-Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl) {
+Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl) {
     Gfx *mygdl;
     u32 tile;
     u32 tmem;
@@ -853,23 +859,23 @@ Gfx *load_texture_to_tmem(Texture *texture, Gfx *gdl) {
         tmem = 0;
     }
 
-    load_texture_to_tmem2(&mygdl, texture, tile, tmem, 0);
-    texture->gdlIdx = mygdl - texture->gdl;
+    tex_make_display_list(&mygdl, texture, tile, tmem, 0);
+    texture->gdl2Offset = mygdl - texture->gdl;
 
     if (!(texture->flags & (TEX_FLAG_4000 | TEX_FLAG_8000)) && (texture->flags & TEX_FLAG_40)) {
         if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32) {
-            load_texture_to_tmem2(&mygdl, texture, 1, (0x1000 - texture->unk18) >> 3, 0);
+            tex_make_display_list(&mygdl, texture, 1, (0x1000 - texture->unk18) >> 3, 0);
         } else if (TEX_FORMAT(texture->format) == TEX_FORMAT_CI4) {
-            load_texture_to_tmem2(&mygdl, texture, 1, 0x80, 1);
+            tex_make_display_list(&mygdl, texture, 1, 0x80, 1);
         } else {
-            load_texture_to_tmem2(&mygdl, texture, 1, 0x100, 0);
+            tex_make_display_list(&mygdl, texture, 1, 0x100, 0);
         }
     }
 
     return mygdl;
 }
 
-void load_texture_to_tmem2(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 palette) {
+void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 palette) {
     s32 siz;
     Gfx* dl;
     u32 texFormat;
@@ -1049,7 +1055,8 @@ void load_texture_to_tmem2(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
     *gdl = dl;
 }
 
-void texture_destroy(Texture* texture) {
+// official name: texFreeTexture
+void tex_free(Texture* texture) {
     Texture* temp_s1;
     Texture* var_s0;
     s32 i;
@@ -1063,8 +1070,8 @@ void texture_destroy(Texture* texture) {
         return;
     }
 
-    for (i = 0; i < D_800B49B0; i++) {
-        if (texture == (Texture*)D_800B49A8[ASSETCACHE_PTR(i)]) {
+    for (i = 0; i < gNumCachedTextures; i++) {
+        if (texture == (Texture*)gTextureCache[ASSETCACHE_PTR(i)]) {
             var_s0 = texture->next;
             while (var_s0 != NULL) {
                 if (((u32) var_s0 < 0x80000000U) || ((u32) var_s0 >= 0xA0000000U)) {
@@ -1076,39 +1083,39 @@ void texture_destroy(Texture* texture) {
                 }
             }
             mmFree(texture);
-            D_800B49A8[ASSETCACHE_ID(i)] = -1;
-            D_800B49A8[ASSETCACHE_PTR(i)] = -1;
+            gTextureCache[ASSETCACHE_ID(i)] = -1;
+            gTextureCache[ASSETCACHE_PTR(i)] = -1;
             break;
         }
     }
 }
 
-void func_8003DB5C(void) {
-    UINT_80092a48 = 0;
+void tex_render_reset(void) {
+    gTexBlockedRenderFlags = 0;
     gCurrTex0 = 0;
     gCurrTex1 = 0;
 }
 
-void func_8003DB7C(void) {
-    D_800B49D4 = UINT_80092a48;
-    D_800B49CC = gCurrTex0;
-    D_800B49D0 = gCurrTex1;
-    UINT_80092a48 = 0;
+void tex_render_save_state(void) {
+    gTexSavedBlockedRenderFlags = gTexBlockedRenderFlags;
+    gTexSavedCurrTex0 = gCurrTex0;
+    gTexSavedCurrTex1 = gCurrTex1;
+    gTexBlockedRenderFlags = 0;
     gCurrTex0 = 0;
     gCurrTex1 = 0;
 }
 
-void func_8003DBCC(void) {
-    UINT_80092a48 = D_800B49D4;
-    gCurrTex0 = D_800B49CC;
-    gCurrTex1 = D_800B49D0;
+void tex_render_restore_state(void) {
+    gTexBlockedRenderFlags = gTexSavedBlockedRenderFlags;
+    gCurrTex0 = gTexSavedCurrTex0;
+    gCurrTex1 = gTexSavedCurrTex1;
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/func_8003DC04.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_gdl_set_texture_simple.s")
 #else
 // https://decomp.me/scratch/fpYm1
-s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
+s32 tex_gdl_set_texture_simple(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 force, s32 arg5) {
     s32 pad_sp84;
     Texture* var_a3;
     s32 var_a2; // sp7c
@@ -1177,7 +1184,7 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
             }
             temp_v1 = (arg1->flags & 0xFEBF);
             arg2 = temp_v1 | arg2;
-            if ((var_a3 != gCurrTex0) || (var_t0_2 != gCurrTex1) || (arg4 != 0)) {
+            if ((var_a3 != gCurrTex0) || (var_t0_2 != gCurrTex1) || (force != 0)) {
                 gCurrTex0 = var_a3;
                 gCurrTex1 = var_t0_2;
                 temp_gdl = var_a3->gdl;
@@ -1214,7 +1221,7 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
         }
     }
     if (arg5 & 1) {
-        arg2 &= ~UINT_80092a48;
+        arg2 &= ~gTexBlockedRenderFlags;
         temp = (s32) (arg2 & 0x70) >> 4;
         if (var_a0 != 0) {
             if (arg2 & 0x400) {
@@ -1285,10 +1292,10 @@ s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 a
 #endif
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/set_textures_on_gdl.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_gdl_set_textures.s")
 #else
 // https://decomp.me/scratch/0L3c5
-void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32 level, u32 force, u32 setModes) {
+void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32 arg4, u32 force, u32 setModes) {
     Gfx* temp_v0_2;
     Texture* var_a3;
     Texture* var_t2;
@@ -1310,11 +1317,11 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
     var_a2 = 0;
     sp4C = *gdl;
     if (tex0 != NULL) {
-        temp_a1 = level >> 0x10;
+        temp_a1 = arg4 >> 0x10;
         if (tex0->animDuration != 0) {
             var_a2_2 = tex0->animDuration >> 8;
         } else {
-            var_a2_2 = level * 0;
+            var_a2_2 = arg4 * 0;
         }
         
         var_t2 = tex0;
@@ -1372,10 +1379,10 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
                 dl_set_env_color(&sp4C, 0x7F, 0x7F, 0x7F, 0x7F);
             } else {
                 if ((tex0->flags & 0x40) && (flags & 0x40)) {
-                    temp_v0_2 += var_t2->gdlIdx;
+                    temp_v0_2 += var_t2->gdl2Offset;
                     gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
-                    level >>= 8;
-                    dl_set_env_color_no_sync(&sp4C, level, level, level, 0);
+                    arg4 >>= 8;
+                    dl_set_env_color_no_sync(&sp4C, arg4, arg4, arg4, 0);
                 } else if (flags & 0x2000) {
                     dl_set_env_color(&sp4C, 0xA0, 0xA0, 0xA0, 0xA0);
                 }
@@ -1390,7 +1397,7 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
         var_a3_2 = pointersIntsArray + 38;
     }
     if (setModes != 0) {
-        flags &= ~UINT_80092a48;
+        flags &= ~gTexBlockedRenderFlags;
         var_a0 = (s32) (flags & 0x70) >> 4;
         if (var_a1 != 0) {
             if (flags & 0x400) {
@@ -1441,7 +1448,8 @@ void set_textures_on_gdl(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32
 }
 #endif
 
-void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
+// official Name: texAnimateTexture
+void tex_animate(Texture *tex, s32 *arg1, s32 *arg2) {
     s32 temp_a1;
     s32 temp_t1;
     s32 temp_t2;
@@ -1462,9 +1470,9 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         }
 
         if (temp_t2 == 0) {
-            *arg2 +=(arg0->animSpeed * gUpdateRate);
-            if (*arg2 >= arg0->animDuration) {
-                *arg2 = ((arg0->animDuration * 2) - *arg2) - 1;
+            *arg2 +=(tex->animSpeed * gUpdateRate);
+            if (*arg2 >= tex->animDuration) {
+                *arg2 = ((tex->animDuration * 2) - *arg2) - 1;
                 if (*arg2 < 0) {
                     *arg2 = 0;
                     *arg1 &= 0xFFF3FFFF;
@@ -1475,7 +1483,7 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
             return;
         }
 
-        *arg2 -= arg0->animSpeed * gUpdateRate;
+        *arg2 -= tex->animSpeed * gUpdateRate;
         if (*arg2 < 0) {
             *arg2 = 0;
             *arg1 &= 0xFFF3FFFF;
@@ -1485,9 +1493,9 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
 
     if (temp_t1) {
         if (temp_t2 == 0) {
-            *arg2 += arg0->animSpeed * gUpdateRate;
+            *arg2 += tex->animSpeed * gUpdateRate;
         } else {
-            *arg2 -= arg0->animSpeed * gUpdateRate;
+            *arg2 -= tex->animSpeed * gUpdateRate;
         }
         do {
             var_a0 = 0;
@@ -1496,15 +1504,15 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
                 var_a0 = 1;
                 *arg1 &= 0xFFF7FFFF;
             }
-            if (arg0->flags & 0x40) {
-                temp_a1 = arg0->animDuration - 0x100;
+            if (tex->flags & 0x40) {
+                temp_a1 = tex->animDuration - 0x100;
                 if (*arg2 >= temp_a1) {
                     *arg2 = ((temp_a1 * 2) - (s32) *arg2) - 1;
                     var_a0 = 1;
                     *arg1 |= 0x80000;
                 }
-            } else if ((s32) *arg2 >= (s32) arg0->animDuration) {
-                *arg2 = ((arg0->animDuration * 2) - (s32) *arg2) - 1;
+            } else if ((s32) *arg2 >= (s32) tex->animDuration) {
+                *arg2 = ((tex->animDuration * 2) - (s32) *arg2) - 1;
                 var_a0 = 1;
                 *arg1 |= 0x80000;
             }
@@ -1512,54 +1520,55 @@ void func_8003E648(Texture* arg0, s32* arg1, s32* arg2) {
         return;
     }
     if (temp_t2 == 0) {
-        *arg2 += arg0->animSpeed * gUpdateRate;
-        while ((s32) *arg2 >= arg0->animDuration) {
-            *arg2 -= arg0->animDuration;
+        *arg2 += tex->animSpeed * gUpdateRate;
+        while ((s32) *arg2 >= tex->animDuration) {
+            *arg2 -= tex->animDuration;
         }
     } else {
-        *arg2 -= arg0->animSpeed * gUpdateRate;
+        *arg2 -= tex->animSpeed * gUpdateRate;
         while ((s32) *arg2 < 0) {
-            *arg2 += arg0->animDuration;
+            *arg2 += tex->animDuration;
         }
     }
 }
 
-// tex_get_frame_img?
-void* func_8003E904(Texture* arg0, s32 arg1) {
-    Texture* var_v0;
-    void* texData;
+void* tex_get_frame_img(Texture *tex, s32 arg1) {
+    Texture *frame;
+    void *texData;
     s32 i;
 
-    texData = arg0 + 1;
+    texData = tex + 1;
     if (arg1 > 0) {
-        if (arg1 < arg0->animDuration) {
+        if (arg1 < tex->animDuration) {
             arg1>>= 8;
-            for (var_v0 = arg0, i = 0; i < arg1 && var_v0 != NULL; i++) {
-                var_v0 = var_v0->next;
+            for (frame = tex, i = 0; i < arg1 && frame != NULL; i++) {
+                frame = frame->next;
             }
-            if (var_v0 != NULL) {
-                texData = var_v0 + 1;
+            if (frame != NULL) {
+                texData = frame + 1;
             }
         }
     }
     return texData;
 }
 
-Texture* func_8003E960(s32 arg0) {
+Texture* tex_get_cached(s32 id) {
     s32 i;
     
-    for (i = 0; i < D_800B49B0; i++) {
-        if (D_800B49A8[ASSETCACHE_ID(i)] == arg0) {
-            return (Texture*)D_800B49A8[ASSETCACHE_PTR(i)];
+    for (i = 0; i < gNumCachedTextures; i++) {
+        if (gTextureCache[ASSETCACHE_ID(i)] == id) {
+            return (Texture*)gTextureCache[ASSETCACHE_PTR(i)];
         }
     }
     return NULL;
 }
 
-void func_8003E9B4(s32 arg0) {
-    UINT_80092a48 |= arg0;
+// official name: texDisableModes
+void tex_disable_modes(s32 modes) {
+    gTexBlockedRenderFlags |= modes;
 }
 
-void func_8003E9D0(s32 arg0) {
-    UINT_80092a48 &= ~arg0;
+// official name: texEnableModes
+void tex_enable_modes(s32 modes) {
+    gTexBlockedRenderFlags &= ~modes;
 }
