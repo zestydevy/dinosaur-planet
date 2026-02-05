@@ -35,17 +35,17 @@ void dll_61_ctor(void *dll) {
     bss_0 = 0;
     bss_1 = 0;
     bss_2 = 0;
-    bss_C = queue_load_texture_proxy(0x2d6);
-    bss_10 = queue_load_texture_proxy(0x2d7);
-    bss_14 = queue_load_texture_proxy(0x2d4);
-    bss_18 = queue_load_texture_proxy(0x2d5);
+    bss_C = tex_load_deferred(0x2d6);
+    bss_10 = tex_load_deferred(0x2d7);
+    bss_14 = tex_load_deferred(0x2d4);
+    bss_18 = tex_load_deferred(0x2d5);
 }
 
 void dll_61_dtor(void *dll) {
-    texture_destroy(bss_C);
-    texture_destroy(bss_10);
-    texture_destroy(bss_14);
-    texture_destroy(bss_18);
+    tex_free(bss_C);
+    tex_free(bss_10);
+    tex_free(bss_14);
+    tex_free(bss_18);
 }
 
 s32 dll_61_update1(void) {

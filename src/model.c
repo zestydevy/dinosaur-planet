@@ -205,7 +205,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     sp33 = 0;
     for (i = 0; i < model->textureCount; i++) {
-        model->materials[i].texture = texture_load(-((u32)model->materials[i].texture | 0x8000), 0);
+        model->materials[i].texture = tex_load(-((u32)model->materials[i].texture | 0x8000), 0);
         if (model->materials[i].texture == NULL) {
             sp33 = 1;
         }
@@ -390,7 +390,7 @@ void patch_model_display_list_for_textures(Model* model) {
                 tex = model->materials[idx].texture;
                 texGdl = tex->gdl;
                 if (isRelative) {
-                    texGdl += tex->gdlIdx;
+                    texGdl += tex->gdl2Offset;
                 }
 
                 gSPDisplayList(gfx, OS_K0_TO_PHYSICAL(texGdl));
@@ -407,7 +407,7 @@ void patch_model_display_list_for_textures(Model* model) {
                 tex = model->materials[idx].texture;
                 texGdl = tex->gdl;
                 if (isRelative) {
-                    texGdl += tex->gdlIdx;
+                    texGdl += tex->gdl2Offset;
                 }
 
                 gfx->words.w0 = texGdl->words.w0;
@@ -537,7 +537,7 @@ void model_destroy(Model* model) {
     for (i = 0; i < model->textureCount; i++)
     {
         if ((&model->materials[i])->texture) {
-            texture_destroy((&model->materials[i])->texture);
+            tex_free((&model->materials[i])->texture);
         }
     }
 

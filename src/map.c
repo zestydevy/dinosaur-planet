@@ -779,7 +779,7 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
                 tex1 = NULL;
             }
 
-            set_textures_on_gdl(&gMainDL, tex0, tex1, flags, level, force, 0);
+            tex_gdl_set_textures(&gMainDL, tex0, tex1, flags, level, force, 0);
 
             if (shape->unk16 != 0xff)
             {
@@ -3029,13 +3029,13 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
     block->unk10 = (void*)((u32)block->unk10 + (u32)block);
     block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
 
-    func_8003CD6C(7);
+    tex_set_alloc_tag(7);
 
     for (i = 0; i < block->textureCount; i++) {
-        block->tiles[i].texture = texture_load(-((s32)block->tiles[i].texture | 0x8000), queue);
+        block->tiles[i].texture = tex_load(-((s32)block->tiles[i].texture | 0x8000), queue);
     }
 
-    func_8003CD6C(6);
+    tex_set_alloc_tag(6);
 
     block_setup_vertices(block);
 
@@ -3317,20 +3317,20 @@ void block_setup_gdl_groups(Block *block)
             if (flags & 0x200)
             {
                 flags &= ~0x200;
-                func_8003E9B4(0x4);
+                tex_disable_modes(0x4);
             }
             else
             {
                 if ((flags & 0x2000) || (flags & 0x4) || (flags & 0x100000)) {
                     flags |= 0x4;
                 } else {
-                    func_8003E9B4(0x4);
+                    tex_disable_modes(0x4);
                 }
             }
         }
 
         mygdl = &block->gdlGroups[i * 3];
-        func_8003DC04(&mygdl, texture, flags | 0x80000000, 0, 1, 5);
+        tex_gdl_set_texture_simple(&mygdl, texture, flags | 0x80000000, 0, 1, 5);
 
         if ((flags & 0x2000) && texture != NULL && (texture->flags & 0xc000))
         {
@@ -3361,7 +3361,7 @@ void block_setup_gdl_groups(Block *block)
         }
 
         if (flags & 0x400) {
-            func_8003E9D0(0x4);
+            tex_enable_modes(0x4);
         }
     }
 }
@@ -3478,7 +3478,7 @@ void func_800496E4(s32 blockIndex) {
 
         //Loop over materials and free their textures
         for (i = 0; i < block->material_count; i++){
-            texture_destroy((&block->ptr_materials[i])->textureID);
+            tex_free((&block->ptr_materials[i])->textureID);
         }
         
         if ((u32*)block->unk1C != NULL) {
@@ -3714,9 +3714,9 @@ void func_80049D88(void)
         if (gBlockTextures[i].refCount != 0) {
             texture = gBlockTextures[i].texture;
 
-            if ((texture != NULL) && (texture->levels != 0x100)) {
-                if (texture->unkE != 0) {
-                    func_8003E648(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
+            if ((texture != NULL) && (texture->animDuration != 0x100)) {
+                if (texture->animSpeed != 0) {
+                    tex_animate(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
                 }
             }
         }

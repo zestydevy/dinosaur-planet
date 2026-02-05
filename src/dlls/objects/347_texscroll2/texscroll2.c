@@ -122,7 +122,7 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     }
 
     //Get texture from table
-    texture = func_8003E960(-scrollTable[objSetup->textureIndex]);
+    texture = tex_get_cached(-scrollTable[objSetup->textureIndex]);
     if (texture == NULL) {
         STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d' %f %f %f %d\n");
         return;
@@ -148,7 +148,7 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
 
     //Iterate over Block's materials until finding one that uses the blended texture (if it's in use)
     if (objSetup->blendTextureIndex != -1) {
-        textureBlended = func_8003E960(-scrollTable[objSetup->blendTextureIndex]);
+        textureBlended = tex_get_cached(-scrollTable[objSetup->blendTextureIndex]);
         if (textureBlended != NULL) {
             for (materialIndex = 0; materialIndex < block->textureCount; materialIndex++) {
                 if (textureBlended == block->tiles[materialIndex].texture) {

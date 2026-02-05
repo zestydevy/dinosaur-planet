@@ -309,9 +309,9 @@ void diPrintfInit() {
     D_800931B4 = 0;
     D_800931B8 = 0;
 
-    gDiTextures[0] = queue_load_texture_proxy(0);
-    gDiTextures[1] = queue_load_texture_proxy(1);
-    gDiTextures[2] = queue_load_texture_proxy(2);
+    gDiTextures[0] = tex_load_deferred(0);
+    gDiTextures[1] = tex_load_deferred(1);
+    gDiTextures[2] = tex_load_deferred(2);
 
     gDebugPrintBufferEnd = &gDebugPrintBufferStart[0];
 }
@@ -352,7 +352,7 @@ void diPrintfAll(Gfx **gdl) {
 
     dl_set_all_dirty();
 
-    func_8003DB5C();
+    tex_render_reset();
 
     buffer = gDebugPrintBufferStart;
     diPrintfOrigin();
@@ -383,7 +383,7 @@ void diPrintfAll(Gfx **gdl) {
     gDebugPrintBufferEnd = gDebugPrintBufferStart;
 
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 }
 
 // guessed name

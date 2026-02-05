@@ -52,13 +52,13 @@ typedef struct Texture {
 /*02*/ u8 format; // lower 4 bits = TEX_FORMAT_*
 /*03*/ u8 unk3;
 /*04*/ u8 unk4;
-/*05*/ u8 unk5;
+/*05*/ u8 refCount;
 /*06*/ s16 flags; // TextureFlags
 /*08*/ Gfx *gdl;
-/*0C*/ u16 levels; // numFrames?
-/*0E*/ u16 unkE;
+/*0C*/ u16 animDuration;
+/*0E*/ u16 animSpeed;
 /*10*/ u16 unk10;
-/*12*/ s16 gdlIdx;
+/*12*/ s16 gdl2Offset;
 /*14*/ struct Texture *next;
 /*18*/ s16 unk18;
 /*1A*/ u8 unk1A;
@@ -67,16 +67,25 @@ typedef struct Texture {
 /*1D*/ u8 masks;
 /*1E*/ u8 cmt;
 /*1F*/ u8 maskt;
-} Texture; // Size: 0x20, followed by texture data
+} Texture; // Size: 0x20, followed by texture data, then followed by its display list
 
+void tex_init(void);
+void tex_set_alloc_tag(s32 tag);
 /**
- * Loads a texture via queue_load_texture.
+ * Loads a texture via the asset thread.
  */
-Texture *queue_load_texture_proxy(s32 id);
-Texture *texture_load(s32 id, s32 param2);
-s32 func_8003DC04(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
-void func_8003E9B4(s32 arg0);
-void func_8003E9D0(s32 arg0);
-void* func_8003E904(Texture* arg0, s32 arg1);
+Texture *tex_load_deferred(s32 id);
+Texture *tex_load(s32 id, s32 param2);
+void tex_free(Texture *texture);
+void tex_render_reset(void);
+void tex_render_save_state(void);
+void tex_render_restore_state(void);
+s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 arg2, s32 arg3, s32 force, s32 arg5);
+void tex_gdl_set_textures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 arg5, u32 force, u32 setModes);
+void tex_animate(Texture *tex, s32 *, s32 *);
+void* tex_get_frame_img(Texture *tex, s32 arg1);
+Texture *tex_get_cached(s32 id);
+void tex_disable_modes(s32 modes);
+void tex_enable_modes(s32 modes);
 
 #endif //_SYS_GFX_TEXTURE_H

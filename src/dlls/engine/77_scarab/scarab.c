@@ -15,12 +15,12 @@
 
 // offset: 0x0 | ctor
 void dll_77_ctor(void *dll) {
-    scarabTexture = queue_load_texture_proxy(1146);
+    scarabTexture = tex_load_deferred(1146);
 }
 
 // offset: 0x44 | dtor
 void dll_77_dtor(void *dll) {
-    texture_destroy(scarabTexture);
+    tex_free(scarabTexture);
 }
 
 // offset: 0x84 | func: 0 | export: 0

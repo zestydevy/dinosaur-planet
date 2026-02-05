@@ -356,7 +356,7 @@ void asset_thread_load_single(void) {
                 queue_block_emplace(5, obj_setup_object(sp2C.unk8, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), 1, 0, 0);
                 break;
             case 3:
-                tmp = texture_load(sp2C.unk8, 0);
+                tmp = tex_load(sp2C.unk8, 0);
                 if (sp2C.unk4 != 0) {
                     queue_block_emplace(3, sp2C.unk4, tmp, 0, 0);
                 }
@@ -399,7 +399,7 @@ void asset_thread_load_asset(struct AssetLoadThreadMsg *load) {
                 load->p.object.parent, load->p.object.arg6);
             break;
         case ASSET_TYPE_TEXTURE:
-            *load->p.texture.dest = texture_load(load->p.texture.id, 0);
+            *load->p.texture.dest = tex_load(load->p.texture.id, 0);
             break;
         case ASSET_TYPE_DLL:
             *load->p.dll.dest = dll_load(load->p.dll.idOrIdx, load->p.dll.exportCount, FALSE);

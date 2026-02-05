@@ -192,7 +192,7 @@ void krazoatext_load_required_glyph_textures(Object* self, KText_Data* objdata) 
         if (ASCII_A <= objdata->text[charIndex] && objdata->text[charIndex] <= ASCII_Z){
             glyphIndex = (u32)objdata->text[charIndex] - ASCII_A;
             if (objdata->glyphs[glyphIndex] == NULL) {
-                objdata->glyphs[glyphIndex] = queue_load_texture_proxy(KRAZOA_ALPHABET_ICONS + glyphIndex);
+                objdata->glyphs[glyphIndex] = tex_load_deferred(KRAZOA_ALPHABET_ICONS + glyphIndex);
             }
         }
         charIndex++;
@@ -208,7 +208,7 @@ void krazoatext_unload_all_glyph_textures(Object* self, KText_Data* objdata) {
     if (objdata->glyphsLoaded) {
         for (index = 0; index < KRAZOA_ALPHABET_LENGTH; index++){
             if (objdata->glyphs[index]) {
-                texture_destroy(objdata->glyphs[index]);
+                tex_free(objdata->glyphs[index]);
             }
             objdata->glyphs[index] = NULL;
         }

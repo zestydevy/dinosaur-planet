@@ -86,9 +86,9 @@ void SB_MiniFire_update(Object *self) { }
 // offset: 0x3E8 | func: 3 | export: 3
 void SB_MiniFire_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        func_8003E9B4(8);
+        tex_disable_modes(8);
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_8003E9D0(8);
+        tex_enable_modes(8);
     }
 }
 

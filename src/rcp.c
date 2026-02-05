@@ -369,7 +369,7 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
         }
         j++;
     }
-    func_8003DB5C();
+    tex_render_reset();
     *gdl = sp68;
 }
 #endif
@@ -409,21 +409,21 @@ void func_8003833C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 ar
     s32 sp130;
     s32 sp12C;
     s32 sp128;
-    s32 var_v0;
+    s32 numFrames;
     Texture* var_s6;
     Texture* sp11C;
 
     sp12C = func_80041DBC();
     sp128 = func_80041E08();
     
-    if (tex->levels != 0) {
-        var_v0 = (s32) tex->levels >> 8;
+    if (tex->animDuration != 0) {
+        numFrames = (s32) tex->animDuration >> 8;
     } else {
-        var_v0 = 0;    
+        numFrames = 0;    
     }
     sp11C = tex;
-    if ((var_v0 >= 2) && (arg6 < var_v0)) {
-        for (var_v0 = 0; var_v0 < arg6 && sp11C != NULL; var_v0++) {
+    if ((numFrames > 1) && (arg6 < numFrames)) {
+        for (numFrames = 0; numFrames < arg6 && sp11C != NULL; numFrames++) {
             sp11C = sp11C->next;
         }
     }
@@ -798,7 +798,7 @@ void func_800390A4(Gfx** arg0, Unk2* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
                     }
                     temp_s0 = (Gfx *)var_s7->gdl;
                     spA8->words.w0 = temp_s0->words.w0;
-                    spA8->words.w1 = OS_PHYSICAL_TO_K0(func_8003E904((Texture* ) var_s7, var_s4->unk4));
+                    spA8->words.w1 = OS_PHYSICAL_TO_K0(tex_get_frame_img((Texture* ) var_s7, var_s4->unk4));
                     spA8++;
                     temp_s0++;
                     gSPDisplayList(spA8++, OS_PHYSICAL_TO_K0(temp_s0));
@@ -820,7 +820,7 @@ void func_800390A4(Gfx** arg0, Unk2* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
             var_s4 += 1;
         } while (var_s7 != NULL);
     }
-    func_8003DB5C();
+    tex_render_reset();
     *arg0 = spA8;
 }
 #endif

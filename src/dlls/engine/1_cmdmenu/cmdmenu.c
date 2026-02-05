@@ -491,21 +491,21 @@ void dll_1_ctor(s32 arg0) {
     _bss_5B0 = -1;
 
     for (i = 0; i < 58; i++) {
-        _bss_5C8[i] = queue_load_texture_proxy(_data_9D8[i]);
-        _bss_6B8[i].unk0 = queue_load_texture_proxy(_data_9D8[i]);
+        _bss_5C8[i] = tex_load_deferred(_data_9D8[i]);
+        _bss_6B8[i].unk0 = tex_load_deferred(_data_9D8[i]);
         _bss_6B8[i].unk4 = 0;
         _bss_6B8[i].unk8 = 0;
         _bss_6B8[i].unkA = 0;
         _bss_6B8[i].unkC = 0;
     }
 
-    _bss_C34 = queue_load_texture_proxy(0x500);
-    _bss_C34->unkE = 0x28;
+    _bss_C34 = tex_load_deferred(0x500);
+    _bss_C34->animSpeed = 0x28;
     _bss_5B8 = 0x80000;
     _bss_5C0[0] = 0;
-    _bss_6B0[0] = queue_load_texture_proxy(0x3A7);
-    _bss_5A0 = queue_load_texture_proxy(0x274);
-    _bss_5A0->unkE = 0x28;
+    _bss_6B0[0] = tex_load_deferred(0x3A7);
+    _bss_5A0 = tex_load_deferred(0x274);
+    _bss_5A0->animSpeed = 0x28;
     
     dll_1_func_69CC(&_bss_C88);
 }
@@ -833,7 +833,7 @@ void dll_1_func_69F8(s32 arg0, s32 arg1, s32 arg2);
 
 // offset: 0x6B00 | func: 43 | export: 18
 void dll_1_func_6B00(s16 textureID, s32 arg1, s32 arg2) {   
-    if ((_bss_C88.unk0 = queue_load_texture_proxy(textureID))){
+    if ((_bss_C88.unk0 = tex_load_deferred(textureID))){
         _bss_C88.unk4 = arg1;
         _bss_C88.unkC = arg2;
         _bss_C88.unk8 = 0.0f;
@@ -871,8 +871,8 @@ void dll_1_func_7550(void) {
 
     temp_v0 = _bss_90;
     temp_v0->unk14 = 0;
-    texture_destroy(temp_v0->unk18);
-    texture_destroy(temp_v0->unk30);
+    tex_free(temp_v0->unk18);
+    tex_free(temp_v0->unk30);
     mmFree(_bss_90);
     _bss_90 = NULL;
 }

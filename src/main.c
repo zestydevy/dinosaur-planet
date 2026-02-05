@@ -196,7 +196,7 @@ void game_init(void) {
     gLastInsertedControllerIndex = joy_init();
     joy_start_controller_thread(&osscheduler_);
     start_crash_thread(&osscheduler_);
-    init_textures();
+    tex_init();
     init_maps();
     func_8001CD00();
     init_models();
@@ -299,7 +299,7 @@ void game_tick(void) {
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     fbfx_tick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
@@ -374,7 +374,7 @@ void game_tick_no_expansion(void) {
     rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0U;
