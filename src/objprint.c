@@ -658,7 +658,7 @@ void func_80036890(Object* arg0, s32 arg1) {
                     temp_a2 = temp_t5->materials[temp_t4->materialID].texture;
                     var_a0 = (temp_s3 >> 8) & 0xFF;
                     temp_s3 &= 0xFF;
-                    temp_t6_2 = temp_a2->levels >> 8;
+                    temp_t6_2 = temp_a2->animDuration >> 8;
                     if (temp_v1_2->unk4 >= 0) {
                         if (var_a0 >= temp_t6_2) {
                             var_a0 = temp_t6_2 - 1;
@@ -672,7 +672,7 @@ void func_80036890(Object* arg0, s32 arg1) {
                         temp_t0 = var_v1->gdl;
                         temp_a1_2 = &modelInst->displayList[temp_v1_2->unk4];
                         gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
-                        temp_t0 += var_v1->gdlIdx + 1;
+                        temp_t0 += var_v1->gdl2Offset + 1;
                         if (temp_t6_2 >= 2) {
                             var_a0++;
                             if (temp_a2->flags & 0x40) {
