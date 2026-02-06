@@ -79,6 +79,6 @@ _data_EC = 0xEC; // absolute:0x3ED0
 .bss = 0x3EE4:
 sAnimStateCallbacks = 0x0; // absolute:0x3EE4
 sLogicStateCallbacks = 0x28; // absolute:0x3F0C
-sDLL33Data = 0x58; // absolute:0x3F3C
+sBaddie = 0x58; // absolute:0x3F3C
 sKTData = 0x5C; // absolute:0x3F40
 _bss_60 = 0x60; // absolute:0x3F44

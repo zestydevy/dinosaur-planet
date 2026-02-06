@@ -1,5 +1,5 @@
 #include "dlls/engine/18_objfsa.h"
-#include "dlls/engine/33.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/260_Pollen.h"
@@ -13,6 +13,8 @@
 #include "sys/voxmap.h"
 #include "dll.h"
 #include "functions.h"
+
+// baddieControl.c (default.dol)
 
 // Common object setup for objects that drop from defeating a baddie
 typedef struct {
@@ -31,13 +33,13 @@ typedef struct {
 /*0x0*/ static Object *_bss_0;
 
 // offset: 0x0 | ctor | export: 0
-void dll_33_ctor(void *dll) { }
+void BaddieControl_ctor(void *dll) { }
 
 // offset: 0xC | dtor | export: 1
-void dll_33_dtor(void *dll) { }
+void BaddieControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 5
-s32 dll_33_func_18(Object* arg0, DLL33_Data* arg1, f32 arg2) {
+s32 BaddieControl_func_18(Object* arg0, Baddie* arg1, f32 arg2) {
     Object* temp_v1;
     Vec3s16 spEC;
     Vec3s16 spE4;
@@ -86,13 +88,13 @@ s32 dll_33_func_18(Object* arg0, DLL33_Data* arg1, f32 arg2) {
 }
 
 // offset: 0x264 | func: 1 | export: 6
-s32 dll_33_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
+s32 BaddieControl_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
     return 0;
 }
 
 // offset: 0x278 | func: 2 | export: 4
-void dll_33_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5) {
-    DLL33_Data* sp2C;
+void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5) {
+    Baddie* sp2C;
     Vec3f sp20;
     Object* temp_v1;
     s32 temp_a0;
@@ -131,7 +133,7 @@ void dll_33_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, 
 }
 
 // offset: 0x4EC | func: 3 | export: 2
-f32 dll_33_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4) {
+f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4) {
     f32 sp5C;
     f32 sp58;
     f32 temp_fa0;
@@ -175,7 +177,7 @@ f32 dll_33_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4) {
 }
 
 // offset: 0x768 | func: 4 | export: 3
-void dll_33_func_768(Object* arg0, DLL33_Data* arg1, u32 arg2, f32 arg3, f32 arg4) {
+void BaddieControl_func_768(Object* arg0, Baddie* arg1, u32 arg2, f32 arg3, f32 arg4) {
     if (arg1->fsa.unk290 < 0.005f) {
         arg1->fsa.unk328 = 0;
         arg1->fsa.unk32A = 0;
@@ -195,10 +197,10 @@ void dll_33_func_768(Object* arg0, DLL33_Data* arg1, u32 arg2, f32 arg3, f32 arg
 }
 
 // offset: 0x884 | func: 5 | export: 7
-u16 dll_33_func_884(Object* arg0) {
-    DLL33_ObjSetup* temp_v1;
+u16 BaddieControl_func_884(Object* arg0) {
+    Baddie_Setup* temp_v1;
 
-    temp_v1 = (DLL33_ObjSetup *) arg0->setup;
+    temp_v1 = (Baddie_Setup *) arg0->setup;
     if (temp_v1 != NULL) {
         return temp_v1->unk34;
     }
@@ -206,13 +208,13 @@ u16 dll_33_func_884(Object* arg0) {
 }
 
 // offset: 0x8A4 | func: 6 | export: 8
-f32 dll_33_func_8A4(Object* arg0) {
-    DLL33_Data *objdata = arg0->data;
+f32 BaddieControl_func_8A4(Object* arg0) {
+    Baddie *objdata = arg0->data;
     return objdata->unk3E4;
 }
 
 // offset: 0x8B4 | func: 7 | export: 12
-s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_StateCallback *arg3, ObjFSA_StateCallback *arg4, s16 arg5) {
+s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFSA_StateCallback *arg3, ObjFSA_StateCallback *arg4, s16 arg5) {
     static f32 _data_0 = 0.0f;
     static s8 _data_4 = 0;
     Object* temp_v0;
@@ -297,7 +299,7 @@ s32 dll_33_func_8B4(Object* arg0, AnimObj_Data* arg1, DLL33_Data* arg2, ObjFSA_S
 }
 
 // offset: 0xC88 | func: 8 | export: 13
-s32 dll_33_func_C88(Object* arg0, DLL33_Data* arg1, ObjFSA_StateCallback *arg2, ObjFSA_StateCallback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7) {
+s32 BaddieControl_func_C88(Object* arg0, Baddie* arg1, ObjFSA_StateCallback *arg2, ObjFSA_StateCallback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7) {
     f32 sp2C;
     f32 sp28;
     f32 temp_fv0;
@@ -337,7 +339,7 @@ s32 dll_33_func_C88(Object* arg0, DLL33_Data* arg1, ObjFSA_StateCallback *arg2, 
 }
 
 // offset: 0xE30 | func: 9 | export: 10
-void dll_33_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
+void BaddieControl_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
     fsa->unk324 = 0;
     fsa->flags |= 0x8000;
     if (arg0->objhitInfo != NULL) {
@@ -354,8 +356,8 @@ void dll_33_func_E30(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s8 arg3) {
 }
 
 // offset: 0xED0 | func: 10 | export: 11
-s32 dll_33_func_ED0(Object* arg0, DLL33_Data* arg1, u8 arg2) {
-    if (arg2 && (arg1->fsa.unk348 <= 0) && (arg0->opacity == 0)) {
+s32 BaddieControl_func_ED0(Object* arg0, Baddie* arg1, u8 arg2) {
+    if (arg2 && (arg1->fsa.hitpoints <= 0) && (arg0->opacity == 0)) {
         return 0;
     }
     if ((arg0->parent == NULL) && (func_8004454C(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z) < 0)) {
@@ -365,7 +367,7 @@ s32 dll_33_func_ED0(Object* arg0, DLL33_Data* arg1, u8 arg2) {
 }
 
 // offset: 0xF60 | func: 11 | export: 16
-s32 dll_33_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
+s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     Object* player;
     Func_80059C40_Struct sp48;
     Vec3f sp3C;
@@ -374,7 +376,7 @@ s32 dll_33_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     player = get_player();
     var_v1 = 0;
     if (fsa->unk33A != 0) {
-        if ((player == fsa->target) && (fsa->unk348 != 0)) {
+        if ((player == fsa->target) && (fsa->hitpoints != 0)) {
             if ((arg2 < fsa->targetDist) && (arg3 != 0)) {
                 var_v1 = 1;
             } else {
@@ -401,7 +403,7 @@ s32 dll_33_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x10F4 | func: 12 | export: 17
-Object* dll_33_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
+Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     Object* curObj;
     s32 pad5;
     Object* spF8[2];
@@ -426,7 +428,7 @@ Object* dll_33_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
         spE0[0] = curObj->positionMirror.x - arg0->positionMirror.x;
         spE0[1] = curObj->positionMirror.y - arg0->positionMirror.y;
         spE0[2] = curObj->positionMirror.z - arg0->positionMirror.z;
-        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (fsa->unk348 != 0)) {
+        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (fsa->hitpoints != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
             }
@@ -473,7 +475,7 @@ Object* dll_33_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
 }
 
 // offset: 0x148C | func: 13 | export: 9
-void dll_33_func_148C(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s32 arg7, s8 arg8) {
+void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s32 arg7, s8 arg8) {
     if (arg2 != 0) {
         arg2->unk24 = 0;
         arg2->unk25 = 0;
@@ -503,8 +505,8 @@ void dll_33_func_148C(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 
 }
 
 // offset: 0x15CC | func: 14 | export: 18
-Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
-    DLL33_ObjSetup* sp4C;
+Object* BaddieControl_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
+    Baddie_Setup* sp4C;
     BaddieDrop_ObjSetup* var_v0;
     Object* temp_v0;
     f32 sp40;
@@ -512,9 +514,9 @@ Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
     f32 sp38;
     f32 sp34;
     f32 temp_fv0;
-    DLL33_ObjSetup* setup2;
+    Baddie_Setup* setup2;
 
-    sp4C = (DLL33_ObjSetup*)arg0->setup;
+    sp4C = (Baddie_Setup*)arg0->setup;
     
     if (arg1 == 0) {
         return NULL;
@@ -536,7 +538,7 @@ Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
         }
         break;
     case 5:
-        setup2 = (DLL33_ObjSetup*)arg0->setup;
+        setup2 = (Baddie_Setup*)arg0->setup;
         sp40 = arg0->positionMirror.x;
         sp3C = arg0->positionMirror.y;
         sp38 = arg0->positionMirror.z;
@@ -604,54 +606,55 @@ Object* dll_33_func_15CC(Object* arg0, s32 arg1, s32 arg2, u8 arg3) {
 }
 
 // offset: 0x18E4 | func: 15 | export: 19
-s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s32 arg3, s32 *arg4, s8 *arg5, s16 arg6, u32* arg7, SRT* arg8) {
-    DLL33_Data* objdata;
+s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, 
+        s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT) {
+    Baddie* baddie;
     Object* player;
-    s32 sp5C;
+    s32 hitType;
     s32 sp58;
-    s32 sp54;
+    s32 damage;
     Object* sp50;
-    f32 sp4C;
-    f32 sp48;
-    f32 sp44;
+    f32 hitX;
+    f32 hitY;
+    f32 hitZ;
 
-    objdata = (DLL33_Data*)arg0->data;
+    baddie = (Baddie*)obj->data;
     player = get_player();
-    if (objdata->unk3E8 > 0.0f) {
-        objdata->unk3E8 += (gUpdateRateF * objdata->unk3EC);
-        if (objdata->unk3B2 & 0x20) {
-            objdata->unk3B2 &= ~0x20;
-            objdata->unk3B2 |= 0x40;
-            if (objdata->unk3E8 > 2.0f) {
-                objdata->unk3E8 = 0.0f;
-                objdata->unk3B2 &= ~0x40;
+    if (baddie->unk3E8 > 0.0f) {
+        baddie->unk3E8 += (gUpdateRateF * baddie->unk3EC);
+        if (baddie->unk3B2 & 0x20) {
+            baddie->unk3B2 &= ~0x20;
+            baddie->unk3B2 |= 0x40;
+            if (baddie->unk3E8 > 2.0f) {
+                baddie->unk3E8 = 0.0f;
+                baddie->unk3B2 &= ~0x40;
             }
-        } else if (objdata->unk3B2 & 0x40) {
-            if (objdata->unk3E8 > 2.0f) {
-                DLL33_ObjSetup* objsetup = (DLL33_ObjSetup*)arg0->setup;
-                objdata->unk3E8 = 0.0f;
-                objdata->unk3B2 &= ~0x40;
-                arg1->unk348 = 0;
-                arg0->opacity = 0;
-                arg0->unkDC = 1;
+        } else if (baddie->unk3B2 & 0x40) {
+            if (baddie->unk3E8 > 2.0f) {
+                Baddie_Setup* objsetup = (Baddie_Setup*)obj->setup;
+                baddie->unk3E8 = 0.0f;
+                baddie->unk3B2 &= ~0x40;
+                fsa->hitpoints = 0;
+                obj->opacity = 0;
+                obj->unkDC = 1;
                 gDLL_29_Gplay->vtbl->add_time(objsetup->base.uID, (f32) (objsetup->unk2C * 60));
             }
         } else {
-            if (objdata->unk3E8 < 0.0f) {
-                objdata->unk3E8 = 0.0f;
-            } else if (objdata->unk3E8 > 120.0f) {
-                objdata->unk3E8 = (120.0f - (objdata->unk3E8 - 120.0f));
-                objdata->unk3EC = -objdata->unk3EC;
+            if (baddie->unk3E8 < 0.0f) {
+                baddie->unk3E8 = 0.0f;
+            } else if (baddie->unk3E8 > 120.0f) {
+                baddie->unk3E8 = (120.0f - (baddie->unk3E8 - 120.0f));
+                baddie->unk3EC = -baddie->unk3EC;
             }
         }
     }
-    if (arg1->unk348 == 0) {
+    if (fsa->hitpoints == 0) {
         return 0;
     }
-    sp5C = func_8002601C(arg0, &sp50, &sp58, &sp54, &sp4C, &sp48, &sp44);
-    objdata->unk3F0 = (s8) sp58;
-    if ((arg0 != NULL) && (sp5C != 0) && (sp50 != NULL)) {
-        switch (arg0->id) {
+    hitType = func_8002601C(obj, &sp50, &sp58, &damage, &hitX, &hitY, &hitZ);
+    baddie->unk3F0 = (s8) sp58;
+    if ((obj != NULL) && (hitType != 0) && (sp50 != NULL)) {
+        switch (obj->id) {
         case OBJ_ScorpionRobot:
             if ((sp50->id != OBJ_sword) && (sp50->id != OBJ_staff) && (sp50->id != OBJ_projball)) {
                 return 0;
@@ -672,53 +675,54 @@ s32 dll_33_func_18E4(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s32 a
         }
     }
     
-    if (sp5C != 0) {
-        sp54 *= 4;
-        if (arg8 != NULL) {
-            arg8->transl.x = sp4C + gWorldX;
-            arg8->transl.y = sp48;
-            arg8->transl.z = sp44 + gWorldZ;
+    if (hitType != 0) {
+        damage *= 4;
+        if (hitSRT != NULL) {
+            hitSRT->transl.x = hitX + gWorldX;
+            hitSRT->transl.y = hitY;
+            hitSRT->transl.z = hitZ + gWorldZ;
         }
-        if (arg5 != 0) {
-            if (arg5[sp5C - 2] != -1) {
-                sp54 = (s32) arg5[sp5C - 2];
+        if (hitDamageMap != 0) {
+            if (hitDamageMap[hitType - 2] != -1) {
+                damage = (s32) hitDamageMap[hitType - 2];
             }
         } else {
-            sp54 = 0;
+            damage = 0;
         }
-        arg1->unk348 -= sp54;
-        if (arg1->unk348 <= 0) {
-            objdata->unk3B2 |= 0x20;
-            objdata->unk3E8 = 1.0f;
-            objdata->unk3EC = 0.01f;
-            arg1->logicState = arg6;
-            arg1->unk348 = 0;
-        } else if (sp54 != 0) {
-            if ((arg1->target == NULL) && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) != 0)) {
-                arg1->target = player;
-                arg1->unk33D = 0;
+        // STUBBED_PRINTF("%s hit by type %d for %d points\n", obj->def->name, hitType, damage); (default.dol)
+        fsa->hitpoints -= damage;
+        if (fsa->hitpoints <= 0) {
+            baddie->unk3B2 |= 0x20;
+            baddie->unk3E8 = 1.0f;
+            baddie->unk3EC = 0.01f;
+            fsa->logicState = hitLogicState;
+            fsa->hitpoints = 0;
+        } else if (damage != 0) {
+            if ((fsa->target == NULL) && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) != 0)) {
+                fsa->target = player;
+                fsa->unk33D = 0;
             }
-            objdata->unk3E8 = 1.0f;
-            objdata->unk3EC = 12.0f;
-            if (arg4 != 0) {
-                if (arg4[sp5C - 2] != -1) {
-                    gDLL_18_objfsa->vtbl->set_anim_state(arg0, arg1, arg4[sp5C - 2]);
-                    arg1->logicState = arg6;
+            baddie->unk3E8 = 1.0f;
+            baddie->unk3EC = 12.0f;
+            if (hitAnimStateMap != 0) {
+                if (hitAnimStateMap[hitType - 2] != -1) {
+                    gDLL_18_objfsa->vtbl->set_anim_state(obj, fsa, hitAnimStateMap[hitType - 2]);
+                    fsa->logicState = hitLogicState;
                 }
             }
-            arg1->unk343 = (s8) sp5C;
+            fsa->lastHitType = (s8) hitType;
         }
         if (*arg7 != 0) {
             gDLL_6_AMSFX->vtbl->func_A1C(*arg7);
             *arg7 = 0;
         }
-        obj_send_mesg(sp50, 0xE0001, arg0, NULL);
+        obj_send_mesg(sp50, 0xE0001, obj, NULL);
     }
-    return sp5C;
+    return hitType;
 }
 
 // offset: 0x1D88 | func: 16 | export: 20
-s32 dll_33_func_1D88(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s16 arg7) {
+s32 BaddieControl_func_1D88(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2, s16 arg3, s8 *arg4, s16 arg5, s16 arg6, s16 arg7) {
     Object* sp64;
     u32 sp60;
     u32 sp5C;
@@ -745,7 +749,7 @@ s32 dll_33_func_1D88(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 a
             case 0x1:
             case 0xA0001:
                 if (arg6 != arg1->logicState) {
-                    dll_33_func_148C(arg0, arg1, arg2, arg3, arg4, arg5, arg7, 0, 1);
+                    BaddieControl_func_148C(arg0, arg1, arg2, arg3, arg4, arg5, arg7, 0, 1);
                     arg1->logicState = arg6;
                     arg1->unk33D = 0;
                     arg1->target = sp64;
@@ -768,7 +772,7 @@ s32 dll_33_func_1D88(Object* arg0, ObjFSA_Data* arg1, DLL33Data_34C *arg2, s16 a
 
 // offset: 0x1FAC | func: 17 | export: 14
 // TODO: arg count might be off
-void dll_33_func_1FAC(Object* arg0, DLL33_Data* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
+void BaddieControl_func_1FAC(Object* arg0, Baddie* arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
     gDLL_2_Camera->vtbl->func14();
 }
 
@@ -778,76 +782,76 @@ void dll_33_func_1FAC(Object* arg0, DLL33_Data* arg1, s32 arg2, s32 arg3, s32 ar
 /*0x24*/ static f32 _data_24 = 25.0f;
 
 // offset: 0x2000 | func: 18 | export: 21
-void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7) {
+void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7) {
     s32 sp4C[] = { 0x2 };
     u8 sp4B;
-    u8 temp_v0;
+    u8 hitpoints;
     s32 sp3C;
     s32 sp38;
 
     sp4B = 1;
-    data->unk3F4 = (void*)(data + 1);
-    data->unk3B6 = 0;
+    baddie->objdata = (void*)(baddie + 1);
+    baddie->unk3B6 = 0;
     sp38 = arg6 & 1;
     sp3C = (s32) arg6;
     if ((sp38 == 0) && !(arg6 & 0x20)) {
         obj_add_object_type(obj, OBJTYPE_4);
-        obj_init_mesg_queue(obj, 4U);
+        obj_init_mesg_queue(obj, 4);
     }
-    gDLL_18_objfsa->vtbl->func0(obj, &data->fsa, arg3, arg4);
-    data->fsa.flags = 0;
-    data->fsa.unk33D = 0;
-    data->fsa.unk278 = 0.0f;
-    data->fsa.unk27C = 0.0f;
-    temp_v0 = setup->unk32;
-    if (temp_v0 != 0) {
-        data->fsa.unk348 = temp_v0 * 4;
+    gDLL_18_objfsa->vtbl->func0(obj, &baddie->fsa, arg3, arg4);
+    baddie->fsa.flags = 0;
+    baddie->fsa.unk33D = 0;
+    baddie->fsa.unk278 = 0.0f;
+    baddie->fsa.unk27C = 0.0f;
+    hitpoints = setup->quarterHitpoints;
+    if (hitpoints != 0) {
+        baddie->fsa.hitpoints = hitpoints * 4;
     } else {
-        data->fsa.unk348 = 0x18;
+        baddie->fsa.hitpoints = 6 * 4; // default to 6 HP
     }
-    data->unk39E = setup->unk30;
-    data->unk3A0 = setup->unk1A;
-    data->unk3A2 = setup->unk1C;
-    if (data->unk39E != -1) {
-        main_set_bits(data->unk39E, 0U);
+    baddie->unk39E = setup->unk30;
+    baddie->unk3A0 = setup->unk1A;
+    baddie->unk3A2 = setup->unk1C;
+    if (baddie->unk39E != -1) {
+        main_set_bits(baddie->unk39E, 0);
     }
     if (sp3C & 2) {
-        gDLL_27->vtbl->init(&data->fsa.unk4, 0, arg5 | 0x200000, 1);
+        gDLL_27->vtbl->init(&baddie->fsa.unk4, DLL27FLAG_NONE, arg5 | DLL27FLAG_200000, DLL27MODE_1);
     } else {
-        gDLL_27->vtbl->init(&data->fsa.unk4, 0, 0, 0);
+        gDLL_27->vtbl->init(&baddie->fsa.unk4, DLL27FLAG_NONE, DLL27FLAG_NONE, DLL27MODE_DISABLED);
     }
-    gDLL_27->vtbl->setup_hits_collider(&data->fsa.unk4, 1, &_data_18, &_data_24, 4);
+    gDLL_27->vtbl->setup_hits_collider(&baddie->fsa.unk4, 1, &_data_18, &_data_24, 4);
     if (sp3C & 4) {
-        gDLL_27->vtbl->setup_terrain_collider(&data->fsa.unk4, 1, &_data_8, &_data_14, &sp4B);
+        gDLL_27->vtbl->setup_terrain_collider(&baddie->fsa.unk4, 1, &_data_8, &_data_14, &sp4B);
     }
-    gDLL_27->vtbl->reset(obj, &data->fsa.unk4);
-    data->unk3A8 = 0;
-    data->unk3B0 = setup->unk2B;
-    data->unk3E0 = setup->unk22;
-    data->unk3B8 = setup->unk2F;
-    data->unk3B9 = setup->unk27;
-    data->_unk3BA = setup->unk28;
-    obj->unkB0 |= data->_unk3BA & 3;
+    gDLL_27->vtbl->reset(obj, &baddie->fsa.unk4);
+    baddie->unk3A8 = 0;
+    baddie->unk3B0 = setup->unk2B;
+    baddie->unk3E0 = setup->unk22;
+    baddie->unk3B8 = setup->unk2F;
+    baddie->nextWeaponID = setup->initialWeaponID;
+    baddie->unk3BA = setup->unk28;
+    obj->unkB0 |= baddie->unk3BA & 3;
     if (sp3C & 8) {
-        data->unk3A4 = setup->unk20;
-        data->unk3A6 = setup->unk1E;
+        baddie->unk3A4 = setup->unk20;
+        baddie->unk3A6 = setup->unk1E;
     } else {
-        data->unk3A4 = 0;
-        data->unk3A6 = 0;
+        baddie->unk3A4 = 0;
+        baddie->unk3A6 = 0;
     }
-    data->unk3B2 = 0;
-    data->unk3E2 = setup->unk29 * 8;
-    data->unk3B4 = 0;
+    baddie->unk3B2 = 0;
+    baddie->unk3E2 = setup->unk29 * 8;
+    baddie->unk3B4 = 0;
     obj->srt.transl.x = setup->base.x;
     obj->srt.transl.y = setup->base.y;
     obj->srt.transl.z = setup->base.z;
-    data->unk3E4 = arg7;
+    baddie->unk3E4 = arg7;
     obj->srt.yaw = setup->unk2A << 8;
     obj->opacity = 255;
     obj->unkAF &= ~0x8;
-    data->unk39C = setup->unk18;
-    if (data->unk39C != -1) {
-        obj->unkDC = main_get_bits(data->unk39C);
+    baddie->unk39C = setup->unk18;
+    if (baddie->unk39C != -1) {
+        obj->unkDC = main_get_bits(baddie->unk39C);
     } else {
         obj->unkDC = 0;
     }
@@ -865,35 +869,37 @@ void dll_33_func_2000(Object* obj, DLL33_ObjSetup* setup, DLL33_Data* data, s32 
         obj->unkE0 = 0;
     }
     if ((sp38 == 0) && !(sp3C & 0x20)) {
-        func_80008DC0(&data->unk374);
-        data->unk34C.unk26 = 4;
-        data->unk34C.unk27 = 0x14;
+        func_80008DC0(&baddie->unk374);
+        baddie->unk34C.unk26 = 4;
+        baddie->unk34C.unk27 = 0x14;
     }
     if (sp3C & 0x10) {
-        if ((data->unk3F8 == NULL) && !(sp3C & 0x20)) {
-            data->unk3F8 = mmAlloc(sizeof(UnkCurvesStruct), ALLOC_TAG_TEST_COL, NULL);
+        if ((baddie->unk3F8 == NULL) && !(sp3C & 0x20)) {
+            baddie->unk3F8 = mmAlloc(sizeof(UnkCurvesStruct), ALLOC_TAG_TEST_COL, ALLOC_NAME("BaddieControlDLL"));
         }
-        if (data->unk3F8 != NULL) {
-            bzero(data->unk3F8, sizeof(UnkCurvesStruct));
+        if (baddie->unk3F8 != NULL) {
+            bzero(baddie->unk3F8, sizeof(UnkCurvesStruct));
         }
-        if (gDLL_26_Curves->vtbl->func_4288(data->unk3F8, obj, (f32) data->unk3E2, sp4C, -1) == 0) {
-            data->unk3B2 |= 8;
+        if (gDLL_26_Curves->vtbl->func_4288(baddie->unk3F8, obj, (f32) baddie->unk3E2, sp4C, -1) == 0) {
+            baddie->unk3B2 |= 8;
         }
     } else {
-        data->unk3F8 = NULL;
+        baddie->unk3F8 = NULL;
     }
 }
 
 // offset: 0x24FC | func: 19 | export: 15
-void dll_33_func_24FC(Object* arg0, DLL33_Data* arg1, u8 arg2) {
+void BaddieControl_func_24FC(Object* arg0, Baddie* arg1, u8 arg2) {
     if (arg1->unk3A8 != 0) {
         gDLL_6_AMSFX->vtbl->func_A1C(arg1->unk3A8);
     }
     if (!(arg1->unk3B0 & arg2)) {
         if (arg1->unk3A6 != 0) {
+            // "baddie->fightlockbreakmusic" (default.dol)
             gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A6, 0, 0, 0);
         }
         if (arg1->unk3A4 != 0) {
+            // "baddie->fightlockmusic" (default.dol)
             gDLL_5_AMSEQ2->vtbl->free(arg0, arg1->unk3A4, 0, 0, 0);
         }
     }
@@ -905,8 +911,8 @@ void dll_33_func_24FC(Object* arg0, DLL33_Data* arg1, u8 arg2) {
 }
 
 // offset: 0x2624 | func: 20 | export: 22
-void dll_33_func_2624(Object* arg0, DLL33_Data* arg1) {
-    s16 sp3C[] = { 
+void BaddieControl_change_weapon(Object *obj, Baddie *baddie) {
+    s16 weaponObjIDs[] = { 
         OBJ_sword, 
         OBJ_staff, 
         OBJ_club, 
@@ -914,36 +920,36 @@ void dll_33_func_2624(Object* arg0, DLL33_Data* arg1) {
         OBJ_fishingnet
     };
 
-    if ((arg1->unk3B9 != arg1->unk3BB) && (arg0->opacity != 0)) {
-        if (arg0->linkedObject != NULL) {
-            obj_destroy_object(arg0->linkedObject);
-            arg0->linkedObject = NULL;
+    if ((baddie->nextWeaponID != baddie->weaponID) && (obj->opacity != 0)) {
+        if (obj->linkedObject != NULL) {
+            obj_destroy_object(obj->linkedObject);
+            obj->linkedObject = NULL;
         }
-        if (arg1->unk3B9 > 0) {
-            arg0->linkedObject = obj_create(
-                obj_alloc_create_info(sizeof(ObjSetup), sp3C[arg1->unk3B9 - 1]), 
+        if (baddie->nextWeaponID > 0) {
+            obj->linkedObject = obj_create(
+                obj_alloc_create_info(sizeof(ObjSetup), weaponObjIDs[baddie->nextWeaponID - 1]), 
                 OBJ_INIT_FLAG4, 
                 -1, 
                 -1, 
-                arg0->parent);
+                obj->parent);
         }
-        arg1->unk3BB = arg1->unk3B9;
+        baddie->weaponID = baddie->nextWeaponID;
     }
 }
 
 // offset: 0x2718 | func: 21 | export: 23
-f32 dll_33_func_2718(Object* arg0) {
-    f32 var_fv1;
-    DLL33_ObjSetup *setup;
-    DLL33_Data *objdata;
+f32 BaddieControl_get_health_ratio(Object* obj) {
+    f32 healthRatio;
+    Baddie_Setup *setup;
+    Baddie *objdata;
 
-    objdata = (DLL33_Data*)arg0->data;
-    setup = (DLL33_ObjSetup*)arg0->setup;
+    objdata = (Baddie*)obj->data;
+    setup = (Baddie_Setup*)obj->setup;
 
-    if ((setup->unk32 != 0) && (objdata->fsa.unk348 != 0)) {
-        var_fv1 = (f32) objdata->fsa.unk348 / (f32) (setup->unk32 * 4);
+    if ((setup->quarterHitpoints != 0) && (objdata->fsa.hitpoints != 0)) {
+        healthRatio = (f32) objdata->fsa.hitpoints / (f32) (setup->quarterHitpoints * 4);
     } else {
-        var_fv1 = 0.0f;
+        healthRatio = 0.0f;
     }
-    return var_fv1;
+    return healthRatio;
 }

@@ -88,7 +88,7 @@ void oldshadow_init(void) {
         mmFree(D_800BCC10);
     }
 
-    D_800BCC10 = mmAlloc(sizeof(Vec3f) * 8, ALLOC_TAG_GFX_COL, NULL);
+    D_800BCC10 = mmAlloc(sizeof(Vec3f) * 8, ALLOC_TAG_GFX_COL, ALLOC_NAME("foot:vol"));
 
     for (i = 0; i < (s32)ARRAYCOUNT(gUnkOldShadowStructs); i++) {
         gSPEndDisplayList(&gUnkOldShadowStructs[i].dl);
@@ -157,6 +157,7 @@ void oldshadow_clear(void) {
     }
 }
 
+// officialName: footstepsTurnOn
 void oldshadow_toggle(u32 enabled) {
     D_800BCC78 = enabled;
 

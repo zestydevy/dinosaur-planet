@@ -18,7 +18,7 @@ GenericStack *generic_stack_new(s32 capacity, s32 elementSize) {
     stack = mmAlloc(
         /*elementSize*/(elementSize * capacity) + (sizeof(GenericStack)),
         /*tag*/ALLOC_TAG_TEST_COL,
-        /*name*/NULL);
+        /*name*/ALLOC_NAME("dtype:stack"));
     
     stack->data = stack + 1;
     stack->count = 0;

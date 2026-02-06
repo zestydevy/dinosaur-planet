@@ -1,9 +1,6 @@
 #include "PR/ultratypes.h"
 #include "sys/bitstream.h"
-
-static const char str_800986d0[] = "BITSTREAM: failed read\n";
-static const char str_800986e8[] = "BIT STREAM: write overflow\n";
-static const char str_80098704[] = "BIT STREAM: append overflow\n";
+#include "macros.h"
 
 BitStream *bitstream_init(BitStream *stream, u8 *data, s32 bitLength, s32 capacity) {
     stream->byteLength = bitLength >> 3;
@@ -30,7 +27,9 @@ u32 bitstream_read(BitStream *stream, u8 n) {
     data = 0;
     i = 0;
 
-    if (stream->bitPos < stream->bitLength) {}
+    if (stream->bitLength <= stream->bitPos) {
+        STUBBED_PRINTF("BITSTREAM: failed read\n");
+    }
 
     while (n != 0 && stream->bitPos < stream->bitLength) {
         byteIdx = stream->bitPos >> 3;
@@ -46,6 +45,8 @@ u32 bitstream_read(BitStream *stream, u8 n) {
 
     return data;
 }
+
+static const char str_800986e8[] = "BIT STREAM: write overflow\n";
 
 void bitstream_write(BitStream *stream, u32 data, u8 n) {
     s32 i;
@@ -77,6 +78,8 @@ void bitstream_write(BitStream *stream, u32 data, u8 n) {
         n--;
     }
 }
+
+static const char str_80098704[] = "BIT STREAM: append overflow\n";
 
 void bitstream_append(BitStream *stream, u32 data, u8 n) {
     s32 len;

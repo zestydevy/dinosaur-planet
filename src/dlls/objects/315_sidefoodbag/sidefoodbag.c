@@ -86,8 +86,6 @@ void SideFoodbag_control(Object* self) {
     uiGamebit = gDLL_1_UI->vtbl->func_E2C(dino_foodbag_cmdmenu_gamebitIDs, ARRAYCOUNT(dino_foodbag_cmdmenu_gamebitIDs));
     uiSubmenuGamebit = gDLL_1_UI->vtbl->func_F40();
 
-    STUBBED_PRINTF("submenu %d\n");
-
     SideFoodbag_set_capacity(self);
 
     //Check if a relevant food item was selected in the cmdmenu
@@ -100,6 +98,7 @@ void SideFoodbag_control(Object* self) {
 
             dataIndex = objData->dllPutdown->vtbl->get_foodID_from_foodType(foodType);
             if (uiGamebit == dino_foodbag_items[dataIndex].gamebitID) {
+                STUBBED_PRINTF("submenu %d\n", uiSubmenuGamebit);
                 switch (uiSubmenuGamebit) {
                 case BIT_Dino_Foodbag_Give:
                     break;
@@ -176,7 +175,7 @@ void SideFoodbag_set_capacity(Object* self) {
 int SideFoodbag_collect_food(Object* self, s32 foodType) {
     SideFoodbag_Data* objData = self->data;
 
-    STUBBED_PRINTF("add food %d\n");
+    STUBBED_PRINTF("add food %d\n", foodType);
 
     return objData->dllPutdown->vtbl->add_food(foodType, objData->capacity, objData->bagSlots, dino_foodbag_items);
 }

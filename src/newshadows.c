@@ -102,7 +102,7 @@ void shadows_init(void) {
     temp_v0 = (void *) mmAlloc(
         ((sizeof(Gfx) * 500) * 1) + ((sizeof(Vec4f) * 500) * 2) + ((sizeof(Vtx) * 400) * 2), 
         ALLOC_TAG_SHAD_COL, 
-        NULL);
+        ALLOC_NAME("shad:memptr"));
     D_800B98A0[0] = (Gfx*)        temp_v0;
     D_800B98A0[1] = (Gfx*)  ((u32)temp_v0 +  (sizeof(Gfx) * 500));
     D_800B98A8[0] = (Vec3f*)((u32)temp_v0 +  (sizeof(Gfx) * 500) * 2);
@@ -113,7 +113,7 @@ void shadows_init(void) {
     temp_v0 = (void *) mmAlloc(
         ((sizeof(Gfx) * 600) * 2) + ((sizeof(Vec4f) * 700) * 2) + ((sizeof(Vtx) * 600) * 2), 
         ALLOC_TAG_SHAD_COL, 
-        NULL);
+        ALLOC_NAME("shad:memptr"));
     D_800BB158[0] = (Gfx*)        temp_v0;
     D_800BB158[1] = (Gfx*)  ((u32)temp_v0 +  (sizeof(Gfx) * 600));
     D_800BB168[0] = (Vec3f*)((u32)temp_v0 +  (sizeof(Gfx) * 600) * 2);

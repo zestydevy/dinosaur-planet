@@ -3,15 +3,6 @@
 #include "sys/memory.h"
 #include "sys/dll.h"
 
-static const char str_80098730[] = "DLLS: warning DLL entrypoint mismatch, dll %d (%d/%d).\n";
-static const char str_80098768[] = "DLLS: Maximum DLL's loaded, %d.\n";
-static const char str_8009878c[] = "DLLS: Load failed, DLL %d currently executing.\n";
-static const char str_800987bc[] = "DLLS: Maximum DLL's loaded, %d.\n";
-static const char str_800987e0[] = "DLLS: free fail, DLL not loaded.\n";
-static const char str_80098804[] = "DLLS: free fail, DLL not loaded.\n";
-static const char str_80098828[] = "warning: using default DLL entry point.\n";
-static const char str_80098854[] = "DLL %d usage %d %08x:%08x\n";
-
 /* -------- .bss start 800a7d10 -------- */
 DLLState *gLoadedDLLList;
 s32 gLoadedDLLCount;
@@ -34,7 +25,7 @@ void init_dll_system(void) {
         ++gDLLCount;
     }
 
-    gLoadedDLLList = (DLLState*)mmAlloc(sizeof(DLLState) * MAX_LOADED_DLLS, ALLOC_TAG_DLL_COL, NULL);
+    gLoadedDLLList = (DLLState*)mmAlloc(sizeof(DLLState) * MAX_LOADED_DLLS, ALLOC_TAG_DLL_COL, ALLOC_NAME("dllTab"));
 
     gLoadedDLLCount = MAX_LOADED_DLLS;
     while (gLoadedDLLCount != 0) {
@@ -143,6 +134,7 @@ void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
     }
 
     if (dll->exportCount < exportCount) {
+        STUBBED_PRINTF("DLLS: warning DLL entrypoint mismatch, dll %d (%d/%d).\n", idOrIdx, dll->exportCount, exportCount);
         mmFree(dll);
         return NULL;
     }
@@ -157,6 +149,7 @@ void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor) {
     // If no open slots were available, try to add a new slot
     if (i == (u32)gLoadedDLLCount) {
         if (gLoadedDLLCount == MAX_LOADED_DLLS) {
+            STUBBED_PRINTF("DLLS: Maximum DLL's loaded, %d.\n", MAX_LOADED_DLLS);
             mmFree(dll);
             return NULL;
         }
@@ -186,6 +179,7 @@ void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSi
 
     for (i = 0; i < (u32)gLoadedDLLCount; i++) {
         if (gLoadedDLLList[i].tabidx == tabidx) {
+            STUBBED_PRINTF("DLLS: Load failed, DLL %d currently executing.\n", tabidx);
             return;
         }
     }
@@ -209,6 +203,7 @@ void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSi
 
     if ((u32)gLoadedDLLCount == i) {
         if (gLoadedDLLCount == MAX_LOADED_DLLS) {
+            STUBBED_PRINTF("DLLS: Maximum DLL's loaded, %d.\n", MAX_LOADED_DLLS);
             return;
         }
 
@@ -232,12 +227,14 @@ s32 dll_unload(void *dllInterfacePtr) {
     idx = (u32)DLL_INTERFACE_TO_STATE(dllInterfacePtr) - (u32)gLoadedDLLList;
 
     if ((idx % 16) != 0) {
+        STUBBED_PRINTF("DLLS: free fail, DLL not loaded.\n");
         return FALSE;
     }
 
     idx >>= 4;
 
     if (idx >= gLoadedDLLCount) {
+        STUBBED_PRINTF("DLLS: free fail, DLL not loaded.\n");
         return FALSE;
     }
 
@@ -274,8 +271,9 @@ s32 dll_unload(void *dllInterfacePtr) {
 }
 
 s32 dll_throw_fault(void) {
-    u8 *nullPtr = NULL;
-    *nullPtr = 0;
+    STUBBED_PRINTF("warning: using default DLL entry point.\n");
+    
+    *((volatile u8*)0) = 0;
 
     return 0;
 }
@@ -371,6 +369,8 @@ void dll_relocate(DLLFile *dll) {
         }
     }
 }
+
+static const char str_80098854[] = "DLL %d usage %d %08x:%08x\n";
 
 void dll_unused_8000C648(void) {
     s32 v0 = 0;

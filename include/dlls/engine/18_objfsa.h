@@ -102,9 +102,9 @@ typedef struct ObjFSA_Data {
 /*340*/ s8 unk340; // bit 0 set when turning?
 /*341*/ s8 unk341;
 /*342*/ u8 unk342;
-/*343*/ s8 unk343;
+/*343*/ s8 lastHitType;
 /*344*/ u8 _unk344[0x348 - 0x344];
-/*348*/ s8 unk348;
+/*348*/ s8 hitpoints;
 /*349*/ u8 _unk349;
 /*34A*/ u8 unk34A;
 /*34B*/ s8 unk34B;
