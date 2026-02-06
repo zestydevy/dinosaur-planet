@@ -1,29 +1,8 @@
 #include "common.h"
 
 typedef struct {
-/*0x00*/ u8 _unk0;
-}DLL730_Data;
-
-
-typedef struct {
-/*0x00*/ s16 objId;
-/*0x02*/ u8 quarterSize; // Bits 0-7: Exclude from map setups 1-8
-/*0x03*/ u8 setupExclusions1;
-/*0x04*/ u8 loadFlags;
-/*0x05*/ union {
-u8 byte5; // Bits 7-4 (note the reversal): Exclude from map setups 9-12
-u8 setupExclusions2; // Bits 0-3: Fade flags
-u8 fadeFlags; };
-/*0x06*/ union {
-u8 byte6; // If loadFlags & 0x10 IS set, the map object group this object is a part of.
-u8 mapObjGroup; // If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
-u8 loadDistance; }; // Max distance object is visible at (divided by 8).
-/*0x07*/ u8 fadeDistance;
-/*0x08*/ f32 x;
-/*0x0c*/ f32 y;
-/*0x10*/ f32 z;
-/*0x14*/ s32 uID;
-} DLL730_Setup;
+/*00*/ u8 _unk0;
+} DLL730_Data;
 
 /*0x0*/ static u32 _data_0[] = {
     0x049a049a, 0x00000000, 0x00000000, 0x00000000

@@ -1,12 +1,8 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object.h"
-#include "sys/gfx/model.h"
-#include "types.h"
-
-#include "PR/ultratypes.h"
-#include "dll.h"
 #include "game/objects/object.h"
+#include "sys/gfx/model.h"
 #include "sys/dll.h"
 #include "sys/rand.h"
 #include "sys/objects.h"
@@ -16,51 +12,50 @@
 #include "sys/joypad.h"
 #include "sys/objmsg.h"
 #include "dlls/objects/210_player.h"
+#include "types.h"
+#include "dll.h"
 
-
- typedef struct{
-/*0x00*/   s32 unk0;
-/*0x04*/   s32 unk4;
-/*0x08*/   u32 soundHandle;
-/*0xC*/    s16 unkC;
-/*0xE*/    s16 unkE;
-/*0x10*/   s16 unk10;
-/*0x12*/   s16 unk12;
-/*0x14*/   s16 shakeSoundTimer;
-/*0x16*/   s16 unk16;
-/*0x18*/   s8 unk18;
-/*0x19*/   s8 unk19;
-/*0x1A*/   s16 unk1A;
-/*0x1C*/   s16 _unk1C;
-/*0x1E*/   s16 unk1E;
-/*0x20*/   s8 unk20;
-/*0x21*/   s8 unk21;
-/*0x22*/   s8 unk22;
-/*0x23*/   s8 unk23;
-/*0x24*/   s8 unk24;
-/*0x25*/   u8 unk25;
-/*0x26*/   s8 unk26;
-/*0x27*/   s8 unk27;
+typedef struct{
+/*00*/ s32 unk0;
+/*04*/ s32 unk4;
+/*08*/ u32 soundHandle;
+/*0C*/ s16 unkC;
+/*0E*/ s16 unkE;
+/*10*/ s16 unk10;
+/*12*/ s16 unk12;
+/*14*/ s16 shakeSoundTimer;
+/*16*/ s16 unk16;
+/*18*/ s8 unk18;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 _unk1C;
+/*1E*/ s16 unk1E;
+/*20*/ s8 unk20;
+/*21*/ s8 unk21;
+/*22*/ s8 unk22;
+/*23*/ s8 unk23;
+/*24*/ s8 unk24;
+/*25*/ u8 unk25;
+/*26*/ s8 unk26;
+/*27*/ s8 unk27;
 } SmallBasket_Data;
 
 typedef struct {
-/*0x00*/   ObjSetup base;
-/*0x18*/   s8 yaw;
-/*0x19*/   s8 storedItemID;
-/*0x1A*/   s16 storedItemQuantity;
-/*0x1C*/   s16 unk1C;
-/*0x1E*/   s16 unk1E;
-/*0x20*/   s16 autoThrowRadius;
+/*00*/ ObjSetup base;
+/*18*/ s8 yaw;
+/*19*/ s8 storedItemID;
+/*1A*/ s16 storedItemQuantity;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 unk1E;
+/*20*/ s16 autoThrowRadius;
 } SmallBasket_Setup;
 
-/*0x0*/
-    static DLL_Unknown* _data_0[] = {
-    0, 0, 0, 0, 0, 0, 0, 0
-};
+/*0x0*/ static DLL_Unknown* _data_0[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
 s32 dll_295_func_DC0(Object* arg0, Object* arg1, SmallBasket_Data* arg2);
+s8 dll_295_func_E78(Object* a0);
+s8 dll_295_func_1104(Object* a0, Object* a1, void* a2);
 void dll_295_func_2024(Object* arg0, Object* arg1, SmallBasket_Data* arg2);
-//static void dll_295_func_1104(Object* arg0, Object* arg1, SmallBasket_Data* arg2);//
 
 /*0x0*/ static u8 _bss_0[0x10];
 
@@ -111,17 +106,10 @@ void dll_295_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
     temp_s0->unk16 = 0x371;
 }
 
-
-
 // offset: 0x1B8 | func: 1 | export: 1
 #ifndef NON_MATCHING
-
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_control.s")
-
 #else
-s8 dll_295_func_1104(Object* a0, Object* a1, void* a2);
-s8 dll_295_func_E78(Object* a0);
-
 void dll_295_control(Object* self) {
     Object* sp6C;
     ObjSetup* sp68;
@@ -327,7 +315,6 @@ void dll_295_control(Object* self) {
 }
 #endif
 
-
 // offset: 0xC0C | func: 2 | export: 2
 void dll_295_update(Object *self) { }
 
@@ -348,15 +335,12 @@ void dll_295_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (visibility != -1) {
             return;
         }
-        goto draw;
+    } else if (!visibility){
+        return;
     }
 
-    if (visibility != 0) {
-draw:
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    }
+    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
-
 
 // offset: 0xD04 | func: 4 | export: 4
 void dll_295_free(Object* self, s32 arg1) {

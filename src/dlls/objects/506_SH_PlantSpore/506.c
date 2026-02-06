@@ -1,29 +1,17 @@
-#include "common.h"
+#include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "sys/main.h"
+#include "functions.h"
+#include "dll.h"
 
 typedef struct {
-/*0x00*/ s16 objId;
-/*0x02*/ u8 quarterSize; // Bits 0-7: Exclude from map setups 1-8
-/*0x03*/ u8 setupExclusions1;
-/*0x04*/ u8 loadFlags;
-/*0x05*/ union {
-u8 byte5; // Bits 7-4 (note the reversal): Exclude from map setups 9-12
-u8 setupExclusions2; // Bits 0-3: Fade flags
-u8 fadeFlags; };
-/*0x06*/ union {
-u8 byte6; // If loadFlags & 0x10 IS set, the map object group this object is a part of.
-u8 mapObjGroup; // If loadFlags & 0x10 is NOT set, maximum distance object is loaded at (divided by 8).
-u8 loadDistance; }; // Max distance object is visible at (divided by 8).
-/*0x07*/ u8 fadeDistance;
-/*0x08*/ f32 x;
-/*0x0c*/ f32 y;
-/*0x10*/ f32 z;
-/*0x14*/ s32 uID;
-/*0x18*/ s8 unk18;
-/*0x19*/ s8 unk19;
-         s16 unk1A;
-         s16 unk1C;
-         s16 unk1E;
-         s16 unk20;
+/*00*/ ObjSetup base;
+/*18*/ s8 unk18;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 unk1E;
+/*20*/ s16 unk20;
 } DLL506_Setup;
 
 // offset: 0x0 | ctor
@@ -43,22 +31,22 @@ void dll_506_control(Object* self) {
     s16 temp_a1;
 
     temp_a1 = sp24->unk20;
-    if ((temp_a1 != -1) && (main_get_bits((s32) temp_a1) == 0)) {
+    if ((temp_a1 != -1) && (main_get_bits(temp_a1) == 0)) {
         self->unkAF |= 8;
         return;
     }
-    if (main_get_bits(0x66C) == 0) {
+    if (main_get_bits(BIT_Inventory_Purple_Mushrooms) == 0) {
         self->unkAF |= 0x10;
     } else {
-        self->unkAF &= 0xFFEF;
+        self->unkAF &= ~0x10;
     }
-    if ((self->unkAF & 1) && (gDLL_1_UI->vtbl->func_DF4(0x66C) != 0)) {
-        main_decrement_bits(0x66C);
-        main_set_bits((s32) sp24->unk1E, 1U);
-        self->unkAF |= 8;
+    if ((self->unkAF & 1) && (gDLL_1_UI->vtbl->func_DF4(BIT_Inventory_Purple_Mushrooms) != 0)) {
+        main_decrement_bits(BIT_Inventory_Purple_Mushrooms);
+        main_set_bits(sp24->unk1E, 1);
+        self->unkAF |= 0x8;
     }
-    if (main_get_bits((s32) sp24->unk1E) == 0) {
-        self->unkAF &= 0xFFF7;
+    if (main_get_bits(sp24->unk1E) == 0) {
+        self->unkAF &= ~0x8;
     }
     func_80036438(self);
 }
@@ -79,6 +67,6 @@ u32 dll_506_get_model_flags(Object *self) {
 
 // offset: 0x1C8 | func: 6 | export: 6
 u32 dll_506_get_data_size(Object* self, u32 a1) {
-    return 0U;
+    return 0;
 }
 
