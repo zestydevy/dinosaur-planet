@@ -11,6 +11,7 @@
 #include "sys/memory.h"
 #include "dll.h"
 #include "functions.h"
+#include "prevent_bss_reordering.h"
 
 extern s32 D_800967A0[127];
 extern f32 D_8009699C[100];

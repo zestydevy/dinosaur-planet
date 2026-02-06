@@ -508,14 +508,14 @@ void init_maps(void) {
     s32 i;
 
     UINT_80092a98 = 0;
-    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, NULL);
-    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
-    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
-    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, NULL);
-    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, ALLOC_TAG_TRACK_COL, NULL);
-    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, NULL);
-    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, ALLOC_TAG_TRACK_COL, NULL);
-    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B97C0 = mmAlloc(sizeof(MapsUnk_800B97C0) * 255, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:cblocks"));
+    gLoadedBlocks = mmAlloc(sizeof(BlocksModel *) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blknos"));
+    gLoadedBlockIds = mmAlloc(sizeof(s16) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkusage"));
+    gBlockRefCounts = mmAlloc(sizeof(u8) * MAX_BLOCKS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:mapinfo"));
+    gMapReadBuffer = mmAlloc(sizeof(u8) * 700, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:tempbuf"));
+    *gBlockIndices = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:blkmaps"));
+    *gDecodedGlobalMap = mmAlloc(sizeof(GlobalMapCell) * 1280, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:entrymaps"));
+    *D_800B9700 = mmAlloc(BLOCKS_GRID_TOTAL_CELLS * MAP_LAYER_COUNT, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:vismap"));
     for (i = 1; i < MAP_LAYER_COUNT; i++) {
         gBlockIndices[i] = gBlockIndices[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
@@ -779,7 +779,7 @@ void _draw_render_list(Mtx *rspMtxs, s8 *visibilities)
                 tex1 = NULL;
             }
 
-            set_textures_on_gdl(&gMainDL, tex0, tex1, flags, level, force, 0);
+            tex_gdl_set_textures(&gMainDL, tex0, tex1, flags, level, force, 0);
 
             if (shape->unk16 != 0xff)
             {
@@ -1834,7 +1834,8 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
 
     size = gMapActiveStreamMap->gridB_sixteenthSize;
     instanceCount = gMapActiveStreamMap->objectInstanceCount;
-    gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 5, 0);
+    gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 
+        ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
 
     queue_load_file_region_to_ptr((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
     
@@ -2217,10 +2218,10 @@ void init_global_map(void)
     size /= sizeof(StructBuf);
 
     D_800B9768.unk0  = -1;
-    D_800B9768.unk4  = mmAlloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unk8  = mmAlloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unkC  = mmAlloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
-    D_800B9768.unk10 = mmAlloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, NULL);
+    D_800B9768.unk4  = mmAlloc(sizeof(Struct_D_800B9768_unk4)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
+    D_800B9768.unk8  = mmAlloc(sizeof(s16) * 2  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
+    D_800B9768.unkC  = mmAlloc(sizeof(Struct_D_800B9768_unkC)  * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
+    D_800B9768.unk10 = mmAlloc(sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:glmap"));
 
     bzero(D_800B9768.unk10, sizeof(Struct_D_800B9768_unk10) * SOME_LENGTH);
 
@@ -2837,7 +2838,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
     } else {
         mapBinOffset = READ_MAPS_TAB(mapID, 0);
         mapBinSize = READ_MAPS_TAB(mapID, 7) - mapBinOffset;
-        map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, NULL);
+        map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
         queue_load_file_region_to_ptr((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
         map->objectInstanceFile_ptr = (ObjSetup *) (READ_MAPS_TAB(mapID, 4) + (s8 *)map - mapBinOffset);
         map->originWorldX = (D_800B9768.unk4[mapID].xMin + map->originOffsetX) * BLOCKS_GRID_UNIT_F;
@@ -3029,13 +3030,13 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue)
     block->unk10 = (void*)((u32)block->unk10 + (u32)block);
     block->tiles = (Block_0x0Struct*)((u32)block->tiles + (u32)block);
 
-    func_8003CD6C(7);
+    tex_set_alloc_tag(7);
 
     for (i = 0; i < block->textureCount; i++) {
-        block->tiles[i].texture = texture_load(-((s32)block->tiles[i].texture | 0x8000), queue);
+        block->tiles[i].texture = tex_load(-((s32)block->tiles[i].texture | 0x8000), queue);
     }
 
-    func_8003CD6C(6);
+    tex_set_alloc_tag(6);
 
     block_setup_vertices(block);
 
@@ -3317,20 +3318,20 @@ void block_setup_gdl_groups(Block *block)
             if (flags & 0x200)
             {
                 flags &= ~0x200;
-                func_8003E9B4(0x4);
+                tex_disable_modes(0x4);
             }
             else
             {
                 if ((flags & 0x2000) || (flags & 0x4) || (flags & 0x100000)) {
                     flags |= 0x4;
                 } else {
-                    func_8003E9B4(0x4);
+                    tex_disable_modes(0x4);
                 }
             }
         }
 
         mygdl = &block->gdlGroups[i * 3];
-        func_8003DC04(&mygdl, texture, flags | 0x80000000, 0, 1, 5);
+        tex_gdl_set_texture_simple(&mygdl, texture, flags | 0x80000000, 0, 1, 5);
 
         if ((flags & 0x2000) && texture != NULL && (texture->flags & 0xc000))
         {
@@ -3361,7 +3362,7 @@ void block_setup_gdl_groups(Block *block)
         }
 
         if (flags & 0x400) {
-            func_8003E9D0(0x4);
+            tex_enable_modes(0x4);
         }
     }
 }
@@ -3478,7 +3479,7 @@ void func_800496E4(s32 blockIndex) {
 
         //Loop over materials and free their textures
         for (i = 0; i < block->material_count; i++){
-            texture_destroy((&block->ptr_materials[i])->textureID);
+            tex_free((&block->ptr_materials[i])->textureID);
         }
         
         if ((u32*)block->unk1C != NULL) {
@@ -3714,9 +3715,9 @@ void func_80049D88(void)
         if (gBlockTextures[i].refCount != 0) {
             texture = gBlockTextures[i].texture;
 
-            if ((texture != NULL) && (texture->levels != 0x100)) {
-                if (texture->unkE != 0) {
-                    func_8003E648(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
+            if ((texture != NULL) && (texture->animDuration != 0x100)) {
+                if (texture->animSpeed != 0) {
+                    tex_animate(texture, (s32 *)&gBlockTextures[i].flags, (s32 *)&gBlockTextures[i].unk4);
                 }
             }
         }

@@ -196,7 +196,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     KamerianBoss_disable_hit_sphere(1);
 
     for (i = 0; i < 2; i++) {
-        texture = queue_load_texture_proxy(sHealthBarTextureIDs[i]);
+        texture = tex_load_deferred(sHealthBarTextureIDs[i]);
         sHealthBarTextures[i] = texture;
         _bss_8[i].texture = texture;
         _bss_8[i].unk4 = 0;
@@ -624,7 +624,7 @@ void KamerianBoss_control(Object *self) {
         i = self->objhitInfo->unk62;
         while (i--) {
             hitSphereIdx = self->objhitInfo->unk63[i];
-            collisionType = self->objhitInfo->hitCollisionTypes[i];
+            collisionType = self->objhitInfo->hitTypeList[i];
             if (objdata->animTickDelta == 0.0f) {
                 switch (hitSphereIdx) {
                 case 13:
@@ -635,7 +635,7 @@ void KamerianBoss_control(Object *self) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->positionMirror.x - 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    } else if ((collisionType == 0xF) && (objdata->rightPipeTimer > 50)) {
+                    } else if ((collisionType == Collision_Type_Projectile_Spell) && (objdata->rightPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(13);
                         KamerianBoss_disable_hit_sphere(14);
                         func_80023D30(self, 
@@ -656,7 +656,7 @@ void KamerianBoss_control(Object *self) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->positionMirror.x + 163.0f, self->positionMirror.y + 175.0f, self->positionMirror.z + 145.0f, 0x693);
                         }
                         gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
-                    } else if ((collisionType == 0xF) && (objdata->leftPipeTimer > 50)) {
+                    } else if ((collisionType == Collision_Type_Projectile_Spell) && (objdata->leftPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(8);
                         KamerianBoss_disable_hit_sphere(9);
                         func_80023D30(self, 
@@ -670,7 +670,7 @@ void KamerianBoss_control(Object *self) {
                     }
                     break;
                 case 0:
-                    if (collisionType == 0xF) {
+                    if (collisionType == Collision_Type_Projectile_Spell) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(0);
                             func_80023D30(self, 
@@ -683,7 +683,7 @@ void KamerianBoss_control(Object *self) {
                     }
                     break;
                 case 1:
-                    if (collisionType == 0xF) {
+                    if (collisionType == Collision_Type_Projectile_Spell) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(1);
                             func_80023D30(self, 

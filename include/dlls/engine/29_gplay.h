@@ -284,7 +284,7 @@ DLL_INTERFACE(DLL_29_gplay) {
     /*42*/ u32 (*get_time_played)(void);
     /*43*/ u32 (*is_cheat_unlocked)(u8 cheatIdx);
     /*44*/ void (*unlock_cheat)(u8 cheatIdx);
-    /*45*/ s32 (*is_cheat_active)(u8 cheatIdx);
+    /*45*/ int (*is_cheat_active)(u8 cheatIdx);
     /*46*/ void (*set_cheat_enabled)(u8 cheatIdx, u8 enabled);
     /*47*/ u32 (*is_cinema_unlocked)(u8 cinemaIdx);
     /*48*/ void (*unlock_cinema)(u8 cinemaIdx);

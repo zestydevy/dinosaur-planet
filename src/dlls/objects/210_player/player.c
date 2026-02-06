@@ -322,71 +322,6 @@ s32 func_80031DD8(Object*, Object*, s32);
 
 /*0x4D8*/ static u16 _data_4D8[] = { SOUND_B22_Climb_Sound_A, SOUND_B1E_Climb_Sound_B, SOUND_B22_Climb_Sound_A, 0x0000 };
 /*0x4E0*/ static s16 _data_4E0[] = { BIT_Spell_Projectile, BIT_Spell_Illusion, BIT_Spell_Forcefield, BIT_Spell_Portal, BIT_Spell_Ice_Blast, BIT_Spell_Mind_Read, BIT_Spell_Grenade, BIT_0 };
-/*0x4F0*/ static s32 _data_4F0[] = { 0, 1, 2, 3, 4, 5 };
-/*0x508*/ static s32 _data_508[] = { 0x06, 0x69, 0x69, 0xff };
-/*0x518*/ static s16 _data_518[] = {
-    OBJ_Tricky, OBJ_Kyte, OBJ_396, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky
-};
-/*0x528*/ static f32 _data_528 = 0.0f;
-/*0x52C*/ static s8 _data_52C = 0;
-/*0x530*/ static u8 _data_530 = 1;
-/*0x534*/ static u8 _data_534[] = {
-    0x0b, 0x04, 0x06, 0x0a, 0x0a, 0x03, 0x03, 0x0c,
-    0x05, 0x02, 0x0e, 0x0f, 0x10, 0x11, 0x12
-};
-/*0x544*/ static u16 _data_544[] = {
-    0x0001, 0x0002, 0x0004, 0x0008, 0x0008, 0x0010, 0x0010, 0x0020,
-    0x0040, 0x0080, 0x0100, 0x0200, 0x0400, 0x0080, 0x0001
-};
-/*0x564*/ static s16 _data_564[] = { 0x0e, 0x51 };
-/*0x568*/ static s16 _data_568[] = { 0x0f, 0x10, 0x46, 0x46, 0x47, 0x14 };
-/*0x574*/ static s16 _data_574[] = { 0x15, 0x21, 0x0d, 0x22 };
-/*0x57C*/ static s16 _data_57C[] = {
-    0x004f, 0x0050, 0x0052, 0x00eb, 0x0053, 0x00ec, 0x0055, 0x00e7, 0x0056,
-    0x00e8, 0x0058, 0x00e9,0x0059, 0x00ea, 0x0414, 0x0414, 0x0415, 0x0415
-};
-/*0x5A0*/ static s16 _data_5A0[] = { 0x2d, 0x2e, 0x38, 0x39, 0x2f, 0x30, 0x31, 0x32 };
-/*0x5B0*/ static s16 _data_5B0[] = { 0x25, 0x29, 0x33, 0x34 };
-/*0x5B8*/ static s16 _data_5B8[] = { 0x3a, 0x3e };
-/*0x5BC*/ static s16 _data_5BC[] = {
-    0x6e, 0xb6, 0xba, 0xb8, 0x6f, 0xb7, 0xb9, 0xb5,
-    0xbb, 0x68, 0x6c, 0x6a, 0xbc, 0x6b, 0x6d, 0x69
-};
-/*0x5DC*/ static s16 _data_5DC[] = { 0x0066, 0x0071 };
-/*0x5E0*/ static s16 _data_5E0[] = { 0x0072, 0x0403 };
-/*0x5E4*/ static s16 _data_5E4[] = { 0x0404, 0x0070 };
-/*0x5E8*/ static s16 _data_5E8[] = {
-    0x00bd, 0x0000, 0x0077, 0x00e4, 0x0075, 0x00e3, 0x00d1, 0x00e6, 0x00cc, 0x00e5, 0x0077, 0x0075, 0x0078, 0x007e, 0x0076, 0x007d,
-    0x007b, 0x007c, 0x0079, 0x007a, 0x007f, 0x0080, 0x0084, 0x0085, 0x0081, 0x0082, 0x0086, 0x0087, 0x0083, 0x007f, 0x0080, 0x00e4,
-    0x00e3, 0x0000, 0x00d1, 0x00cc, 0x00d2, 0x00d3, 0x00cd, 0x00ce, 0x00d8, 0x00d9, 0x00d6, 0x00d7, 0x00da, 0x00db, 0x00df, 0x00e0,
-    0x00dc, 0x00dd, 0x00e1, 0x00e2, 0x00de, 0x00da, 0x00db, 0x00e6, 0x00e5, 0x00d4, 0x00d4, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000,
-    0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000,
-    0x3f80, 0x0000, 0x4040, 0x0000, 0x3f80, 0x0000, 0x4040, 0x0000, 0xbf80, 0x0000
-};
-/*0x69C*/ static s16 _data_69C[] = { 0x0e, 0x10, 0x5c, 0x47, 0x14, 0x15, 0x21, 0x5c, 0x5d, 0x00 };
-/*0x6B0*/ static s16 _data_6B0[] = { 0x5a, 0x5b, 0x5a, 0x5b, 0x5c, 0x5d, 0x14, 0x14 };
-/*0x6C0*/ static s16 _data_6C0[] = { 0x5a, 0x5b, 0x14, 0x14 };
-/*0x6C8*/ static s16 _data_6C8[] = { 0x5a, 0x5b, 0x1c, 0x1d };
-/*0x6D0*/ static s16 _data_6D0[] = { 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c };
-/*0x6E0*/ static s16 _data_6E0[] = { 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41 };
-/*0x6F0*/ static s16 _data_6F0[] = { 0x66, 0x67 };
-/*0x6F4*/ static s16 _data_6F4[] = { 0xed, 0xee };
-/*0x6F8*/ static f32 _data_6F8 = 0.005f;
-/*0x6FC*/ static f32 _data_6FC[] = { 0.05f, 0.03f, 0.54f, 0.52f, 0.94f, 0.92f, 1.32, 1.3f, 1.65f, 0.005f };
-/*0x724*/ static f32 _data_724[] = { 0.05f };
-/*0x728*/ static f32 _data_728[] = { 0.03f, 0.54f, 0.52f, 0.94f, 0.92f, 1.32, 1.3f, 1.65f };
-/*0x748*/ static f32 _data_748[] = { 0.005f, 0.05f, 0.03f, 0.55f, 0.53f, 1.65f };
-/*0x760*/ static f32 _data_760[] = { 0.005f, 0.05f, 0.03f, 0.55f, 0.53f, 1.65f };
-/*0x778*/ static u32 _data_778[] = {
-    0x0166, 0x0167, 0x0256, 0x036e, 0x037f, 0x0380, 0x0381, 0x0543, 
-    0x0544, 0x0545, 0x0546, 0x012e, 0x0169, 0x01d0, 0x01d6, 0x01ed, 
-    0x01fd
-};
-/*0x7BC*/ static s8 _data_7BC = 0;
-/*0x7C0*/ static DLL_Unknown *_data_7C0 = NULL;
-/*0x7C4*/ static s16 _data_7C4[2] = { 0, 0 };
-/*0x7C8*/ static u8 _data_7C8[] = { 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0xFF, 0x00, 0x00, 0x00 };
-/*0x7D4*/ static u8 _data_7D4[] = { 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x08, 0x00, 0x00, 0x00 };
 
 /*0x0*/ static u8 _bss_0[0x2];
 /*0x2*/ static u8 _bss_2[0x2];
@@ -625,6 +560,7 @@ void dll_210_setup(Object* player, u32 arg1) {
 
 // offset: 0x934 | func: 2 | export: 1
 #ifndef NON_MATCHING
+/*0x4F0*/ static s32 _data_4F0[] = { 0, 1, 2, 3, 4, 5 };
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_control.s")
 #else
 // Requires these as static:
@@ -647,7 +583,7 @@ void dll_210_control(Object* player) {
     Object* tempObj;
     s32 pad;
     s32 pad2;
-    s32 sp48[6] = _data_4F0;
+    s32 sp48[6] = { 0, 1, 2, 3, 4, 5 };
 
     if (menu_get_current() == MENU_TITLE_SCREEN) {
         return;
@@ -706,8 +642,8 @@ void dll_210_control(Object* player) {
         *_bss_1AA = 0;
         dll_210_func_11A0(player, data, _bss_1AC);
     }
-    i = gDLL_1_UI->vtbl->func_E2C((s32)&sp48, 6);
-    if (i != -1U) {
+    i = gDLL_1_UI->vtbl->func_E2C(sp48, 6);
+    if (i != -1) {
         gDLL_6_AMSFX->vtbl->play_sound(player, (player->id != PLAYER_SABRE ? _data_4C0 : _data_4CC)[i], 0x7FU, NULL, NULL, 0, NULL);
     }
     dll_210_func_7180(player, data, gUpdateRateF);
@@ -1169,22 +1105,17 @@ int dll_210_func_24FC(Object *player, ObjFSA_Data *fsa) {
 }
 
 // offset: 0x2534 | func: 8
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_2534.s")
-#else
-// https://decomp.me/scratch/I2VWJ
 void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     s32 sp84;
     s32 sp80;
     s32 sp7C;
     s32 aState;
-    s32 sp74 = NULL;
-    DLL_IModgfx* sp70 = NULL; // This isn't executed?
-    s32 sp60[4] = _data_508;
+    Object *sp74;
+    DLL_IModgfx* sp70 = NULL;
+    s32 sp60[4] = { 0x06, 0x69, 0x69, 0xff };
     SRT sp48;
-    Player_Data *pad;
-    Player_Data *pad2;
-    Vec4f* temp_v1;
+    ModelInstance *new_var3;
+    MtxF *temp;
 
     sp84 = func_80025F40(arg0, &sp74, &sp80, &sp7C);
     if (func_80026724(arg0) == 0) {
@@ -1208,12 +1139,12 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     }
 
     if (fsa->unk341 == 3) {
-        if (sp84 >= fsa->unk343) {
+        if (sp84 >= fsa->lastHitType) {
             return;
         }
     }
 
-    fsa->unk343 = sp84;
+    fsa->lastHitType = sp84;
     arg0->curModAnimIdLayered = -1;
     aState = -1;
     switch (sp84) {
@@ -1277,7 +1208,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
                 if (rand_next(0, 1) != 0) {
                     gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Sabre_Freezing_A, MAX_VOLUME, NULL, NULL, 0, NULL);
                 } else {
-                    gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Sabre_Freezing_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play_sound(arg0, 0x193, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             default:
@@ -1300,10 +1231,11 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     if (arg1->flags & 0x800) {
         sp7C = 0;
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_25B_Magic_Attack_Deflected, MAX_VOLUME, NULL, NULL, 0, NULL);
-        temp_v1 = &((Vec4f*)arg0->modelInsts[arg0->modelInstIdx]->unk24)[sp80];
-        sp48.transl.x = temp_v1->y + gWorldX;
-        sp48.transl.y = temp_v1->z;
-        sp48.transl.z = temp_v1->w + gWorldZ;
+        new_var3 = arg0->modelInsts[arg0->modelInstIdx];
+        temp = new_var3->unk24;
+        sp48.transl.x = temp->m[sp80][1] + gWorldX;
+        sp48.transl.y = temp->m[sp80][2];
+        sp48.transl.z = temp->m[sp80][3] + gWorldZ;
         gDLL_17_partfx->vtbl->spawn(arg0, 0x328, &sp48, 0x200001, -1, NULL);
         sp48.transl.x -= arg0->positionMirror.x;
         sp48.transl.y -= arg0->positionMirror.y;
@@ -1315,15 +1247,16 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         sp48.pitch = 0;
         sp48.roll = 0;
         sp48.scale = 1.0f;
+        if (&sp70) {} // @fake
         sp70->vtbl->func0(arg0, 0, &sp48, 1, -1, &sp60);
         if (sp70 != NULL) {
             dll_unload(sp70);
         }
     } else if (sp7C != 0) {
         gDLL_6_AMSFX->vtbl->play_sound(arg0, arg1->unk3B8[rand_next(19, 21)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        arg1->unk8B9 = 0xC;
         arg1->unk818 = 90.0f;
         arg1->unk81C = 0.0f;
+        arg1->unk8B9 = 0xC;
         if (aState != -1) {
             arg1->unk868 = NULL;
             arg1->unk708 = NULL;
@@ -1335,7 +1268,6 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         gDLL_18_objfsa->vtbl->set_anim_state(arg0, fsa, PLAYER_ASTATE_Dead);
     }
 }
-#endif
 
 // offset: 0x2C7C | func: 9 | export: 2
 void dll_210_update(Object* player) {
@@ -1698,7 +1630,9 @@ s32 dll_210_func_3F64(Object* player) {
 void dll_210_func_4038(Object* player, Object *arg1, s32 arg2) {
     Player_Data* objdata = player->data;
     u16 temp;
-    s16 sp28[8] = _data_518;
+    s16 sp28[8] = {
+        OBJ_Tricky, OBJ_Kyte, OBJ_396, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky, OBJ_Tricky
+    };
 
     if (arg2 != 1) {
         func_80023894(arg1, sp28[arg2]);
@@ -1940,6 +1874,8 @@ void dll_210_func_47B8(Object* player, Player_Data* arg1) {
 
 // offset: 0x4910 | func: 27
 #ifndef NON_MATCHING
+/*0x528*/ static f32 _data_528 = 0.0f;
+/*0x52C*/ static s8 _data_52C = 0;
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_4910.s")
 #else
 // Needs these as static:
@@ -2576,6 +2512,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
 
 // offset: 0x692C | func: 32
 void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
+    /*0x530*/ static u8 _data_530 = 1;
     s32 var_s2;
     s32 var_v0;
     ModelInstance *modelInstance;
@@ -2583,7 +2520,6 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
     Object *linkedObject = player->linkedObject;
     u8 new_var;
     u8 new_var2;
-    u8 *temp;
 
     if (linkedObject == NULL) {
         return;
@@ -2591,7 +2527,6 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
 
     var_v0 = 0;
     do {
-        temp = &_data_530;
         new_var = 1;
         var_s2 = 0;
         switch (arg1->unk878) {
@@ -2600,7 +2535,7 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
                 func_80024E50(player, player->curModAnimId, player->animProgress, 0);
                 func_80024E50(player, 0x8A, 0.0f, 0);
             }
-            if ((player->animProgressLayered > 0.2f) && !*temp) {
+            if ((player->animProgressLayered > 0.2f) && !_data_530) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, arg1->unk3B8[4], MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_530 = new_var;
             }
@@ -2613,7 +2548,7 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 13:
-            if (!*temp) {
+            if (!_data_530) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, arg1->unk3B8[4], MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_530 = new_var;
             }
@@ -2625,7 +2560,7 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
                 func_80024E50(player, player->curModAnimId, player->animProgress, 0);
                 func_80024E50(player, 0x8A, 0.99f, 0);
             }
-            if ((player->animProgressLayered < 0.8f) && !*temp) {
+            if ((player->animProgressLayered < 0.8f) && !_data_530) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, arg1->unk3B8[3], MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_530 = new_var;
             }
@@ -2639,7 +2574,7 @@ void dll_210_func_692C(Object* player, Player_Data* arg1, f32 arg2) {
             }
             break;
         case 14:
-            if (!*temp) {
+            if (!_data_530) {
                 gDLL_6_AMSFX->vtbl->play_sound(player, arg1->unk3B8[3], MAX_VOLUME, NULL, NULL, 0, NULL);
                 _data_530 = new_var;
             }
@@ -2945,7 +2880,7 @@ static s32 dll_210_func_77DC(Object *player, Func_80059C40_Struct* arg1, UnkArg2
     arg2->unk2D = 0;
     if (player != 0) {
         inverse_transform_point_by_object(arg3->x, arg3->y, arg3->z, &arg2->unk10.x, &arg2->unk10.y, &arg2->unk10.z, arg1->unk0);
-        arg2->unk28 = (s32) arg1->unk0;
+        arg2->unk28 = arg1->unk0;
     } else {
         arg2->unk10.x = arg3->x;
         arg2->unk10.y = arg3->y;
@@ -3100,8 +3035,14 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     f32 spCC;
     s32 pad2;
     u8 var_v1;
-    u8 spB8[15] = _data_534;
-    u16 sp98[15] = _data_544;
+    u8 spB8[15] = {
+        0x0b, 0x04, 0x06, 0x0a, 0x0a, 0x03, 0x03, 0x0c,
+        0x05, 0x02, 0x0e, 0x0f, 0x10, 0x11, 0x12
+    };
+    u16 sp98[15] = {
+        0x0001, 0x0002, 0x0004, 0x0008, 0x0008, 0x0010, 0x0010, 0x0020,
+        0x0040, 0x0080, 0x0100, 0x0200, 0x0400, 0x0080, 0x0001
+    };
     u8 pad_sp97;
     u8 sp96;
     u8 sp95;
@@ -3391,6 +3332,44 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     return -1;
 }
 
+// TODO: _data_564 and _data_5A0 should be one array?
+/*0x564*/ static s16 _data_564[] = { 
+    0x0e, 0x51, 0x0f, 0x10, 0x46, 0x46, 0x47, 0x14, 0x15, 0x21, 0x0d, 0x22,
+    0x004f, 0x0050, 0x0052, 0x00eb, 0x0053, 0x00ec, 0x0055, 0x00e7, 0x0056,
+    0x00e8, 0x0058, 0x00e9,0x0059, 0x00ea, 0x0414, 0x0414, 0x0415, 0x0415
+};
+/*0x5A0*/ static s16 _data_5A0[] = { 0x2d, 0x2e, 0x38, 0x39, 0x2f, 0x30, 0x31, 0x32 };
+/*0x5B0*/ static s16 _data_5B0[] = { 0x25, 0x29, 0x33, 0x34 };
+/*0x5B8*/ static s16 _data_5B8[] = { 0x3a, 0x3e };
+/*0x5BC*/ static s16 _data_5BC[] = {
+    0x6e, 0xb6, 0xba, 0xb8, 0x6f, 0xb7, 0xb9, 0xb5,
+    0xbb, 0x68, 0x6c, 0x6a, 0xbc, 0x6b, 0x6d, 0x69
+};
+/*0x5DC*/ static s16 _data_5DC[] = { 0x0066, 0x0071 };
+/*0x5E0*/ static s16 _data_5E0[] = { 0x0072, 0x0403 };
+/*0x5E4*/ static s16 _data_5E4[] = { 0x0404, 0x0070 };
+/*0x5E8*/ static s16 _data_5E8[] = {
+    0x00bd, 0x0000, 0x0077, 0x00e4, 0x0075, 0x00e3, 0x00d1, 0x00e6, 0x00cc, 0x00e5, 0x0077, 0x0075, 0x0078, 0x007e, 0x0076, 0x007d,
+    0x007b, 0x007c, 0x0079, 0x007a, 0x007f, 0x0080, 0x0084, 0x0085, 0x0081, 0x0082, 0x0086, 0x0087, 0x0083, 0x007f, 0x0080, 0x00e4,
+    0x00e3, 0x0000, 0x00d1, 0x00cc, 0x00d2, 0x00d3, 0x00cd, 0x00ce, 0x00d8, 0x00d9, 0x00d6, 0x00d7, 0x00da, 0x00db, 0x00df, 0x00e0,
+    0x00dc, 0x00dd, 0x00e1, 0x00e2, 0x00de, 0x00da, 0x00db, 0x00e6, 0x00e5, 0x00d4, 0x00d4, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000,
+    0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000, 0x3f80, 0x0000,
+    0x3f80, 0x0000, 0x4040, 0x0000, 0x3f80, 0x0000, 0x4040, 0x0000, 0xbf80, 0x0000
+};
+/*0x69C*/ static s16 _data_69C[] = { 0x0e, 0x10, 0x5c, 0x47, 0x14, 0x15, 0x21, 0x5c, 0x5d, 0x00 };
+/*0x6B0*/ static s16 _data_6B0[] = { 0x5a, 0x5b, 0x5a, 0x5b, 0x5c, 0x5d, 0x14, 0x14 };
+/*0x6C0*/ static s16 _data_6C0[] = { 0x5a, 0x5b, 0x14, 0x14 };
+/*0x6C8*/ static s16 _data_6C8[] = { 0x5a, 0x5b, 0x1c, 0x1d };
+/*0x6D0*/ static s16 _data_6D0[] = { 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c };
+/*0x6E0*/ static s16 _data_6E0[] = { 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, 0x41 };
+/*0x6F0*/ static s16 _data_6F0[] = { 0x66, 0x67 };
+/*0x6F4*/ static s16 _data_6F4[] = { 0xed, 0xee };
+/*0x6F8*/ static f32 _data_6F8 = 0.005f;
+/*0x6FC*/ static f32 _data_6FC[] = { 0.05f, 0.03f, 0.54f, 0.52f, 0.94f, 0.92f, 1.32, 1.3f, 1.65f, 0.005f };
+/*0x724*/ static f32 _data_724[] = { 0.05f };
+/*0x728*/ static f32 _data_728[] = { 0.03f, 0.54f, 0.52f, 0.94f, 0.92f, 1.32, 1.3f, 1.65f };
+/*0x748*/ static f32 _data_748[] = { 0.005f, 0.05f, 0.03f, 0.55f, 0.53f, 1.65f };
+/*0x760*/ static f32 _data_760[] = { 0.005f, 0.05f, 0.03f, 0.55f, 0.53f, 1.65f };
 
 // offset: 0x8AE0 | func: 46
 static s32 dll_210_func_8AE0(Object* player, s32 arg1, s32 arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, f32 arg6, u8 arg7, u8 arg8) {
@@ -3886,19 +3865,16 @@ void dll_210_func_A058(Object* player) {
     func_80023D30(player, *_data_5A0, 0.0f, 0U);
     func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[1] = sp78.y;
-    // @ub, _data_564 only has 2 items
     func_80023D30(player, _data_564[3], 0.0f, 0U);
     func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[2] = sp78.y;
     *_bss_1F8 = sp78.z;
-    // @ub, _data_564 only has 2 items
     func_80023D30(player, _data_564[9], 0.0f, 0U);
     func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[3] = sp78.y;
     i = 4;
-    var_s2 = 0xE;
+    var_s2 = 14;
     while (i < 12) {
-        // @ub, _data_564 only has 2 items
         func_80023D30(player, _data_564[var_s2], 0.0f, 0U);
         func_8001A3FC(temp_s4, 0U, 0, 1.0f, player->srt.scale, &sp78, &sp70);
         _bss_1B0[i] = sp78.y;
@@ -3907,7 +3883,7 @@ void dll_210_func_A058(Object* player) {
         var_s2 += 2;
         i++;
     }
-    var_s2 = 0x11;
+    var_s2 = 17;
     while (i < 16) {
         func_80023D30(player, _data_5BC[var_s2], 0.0f, 0U);
         func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
@@ -3961,7 +3937,7 @@ s32 dll_210_func_A3FC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->speed = 0.0f;
         sp4C->unk880 = rand_next(0x1F4, 0x2BC);
         sp4C->unk8A5 = 0;
-        sp4C->unk89C = (s32) sp4C->unk890;
+        sp4C->unk89C = sp4C->unk890;
         fsa->unk2B0 = 8.0f;
         fsa->animTickDelta = 0.005f;
         if (fsa->prevAnimState == PLAYER_ASTATE_Walking) {
@@ -4410,7 +4386,11 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Object* temp_v0_5;
     f32 sp80 = 200.0f;
     s32 temp_v0;
-    u32 sp38[17] = _data_778;
+    u32 sp38[17] = {
+        0x0166, 0x0167, 0x0256, 0x036e, 0x037f, 0x0380, 0x0381, 0x0543, 
+        0x0544, 0x0545, 0x0546, 0x012e, 0x0169, 0x01d0, 0x01d6, 0x01ed, 
+        0x01fd
+    };
 
     spC4 = v1objdata;
     if (v1objdata->unk834 > 20.0f) {
@@ -4572,6 +4552,12 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     return 0;
 }
+
+/*0x7BC*/ static s8 _data_7BC = 0;
+/*0x7C0*/ static DLL_Unknown *_data_7C0 = NULL;
+/*0x7C4*/ static s16 _data_7C4[2] = { 0, 0 };
+/*0x7C8*/ static u8 _data_7C8[] = { 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0xFF, 0x00, 0x00, 0x00 };
+/*0x7D4*/ static u8 _data_7D4[] = { 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x08, 0x00, 0x00, 0x00 };
 
 // offset: 0xC1F4 | func: 66
 static s32 dll_210_func_C1F4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
@@ -5024,7 +5010,7 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp44.unkC = temp_s0->unk490.unk4 + ((temp_s0->unk490.unk10 - temp_s0->unk490.unk4) * player->animProgress);
         gDLL_18_objfsa->vtbl->func9(player, fsa, arg2, 0.2f);
         if (fsa->unk33A != 0) {
-            func_80023D30(player, _data_57C[0], 0.0f, 0U);
+            func_80023D30(player, _data_564[12], 0.0f, 0U);
             fsa->animTickDelta = 0.021f;
             sp44.unk0 = 0;
             sp44.unk2 = 0;
@@ -5035,7 +5021,7 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp44.unkC = temp_s0->unk490.unk4 + ((temp_s0->unk490.unk10 - temp_s0->unk490.unk4) * player->animProgress);
         gDLL_18_objfsa->vtbl->func9(player, fsa, arg2, 0.2f);
         if (fsa->unk33A != 0) {
-            func_80023D30(player, _data_57C[1], 0.0f, 0U);
+            func_80023D30(player, _data_564[13], 0.0f, 0U);
             fsa->animTickDelta = 0.021f;
             sp44.unk0 = 0;
             sp44.unk2 = 0;
@@ -5217,7 +5203,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->positionMirror.f[1] = objdata->unk7EC.y;
             player->positionMirror.f[2] = objdata->unk7EC.z;
             inverse_transform_point_by_object(player->positionMirror.f[0], player->positionMirror.f[1], player->positionMirror.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
-            func_80023D30(player, (s32) *_data_568, 0.0f, 1U);
+            func_80023D30(player, (s32) _data_564[2], 0.0f, 1U);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 2;
             func_8001A3FC(sp58, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
@@ -5402,7 +5388,7 @@ s32 dll_210_func_EB1C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->positionMirror.y = objdata->unk7EC.y;
             player->positionMirror.z = objdata->unk7EC.z;
             inverse_transform_point_by_object(player->positionMirror.x, player->positionMirror.y, player->positionMirror.z, player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
-            func_80023D30(player, *_data_574, 0.0f, 1U);
+            func_80023D30(player, _data_564[8], 0.0f, 1U);
             fsa->animTickDelta = 0.02f;
             _bss_202 = _bss_200 = 8;
             func_8001A3FC(modelInstance, 0U, 0, 0.0f, player->srt.scale, &sp6C, &sp52[2]);
@@ -8774,7 +8760,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                             _data_7C0 = dll_load_deferred(0x1048U, 1U);
                         }
                         if (_data_7C0 != 0) {
-                            _data_7C0->vtbl->func[0].withSixArgs(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);
+                            ((DLL_IModgfx*)_data_7C0)->vtbl->func0(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);
                         }
                         _bss_24 = 35.0f;
                     }
@@ -9957,7 +9943,7 @@ s32 dll_210_func_1D1F0(Object* player, Object** arg1) {
 }
 
 // offset: 0x1D210 | func: 182 | export: 9
-void dll_210_func_1D210(Object* player, s32 arg1) {
+void dll_210_func_1D210(Object* player, Object *arg1) {
     Player_Data* objdata;
 
     objdata = player->data;

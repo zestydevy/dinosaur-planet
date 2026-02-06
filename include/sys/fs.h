@@ -27,15 +27,15 @@ typedef enum {
 /*12*/    CACHEFON2_BIN,
 /*13*/    GAMETEXT_BIN,
 /*14*/    GAMETEXT_TAB,
-/*15*/    GLOBALMAP_BIN,
+/*15*/    GLOBALMAP_BIN, // globalma.bin
 /*16*/    TABLES_BIN,
 /*17*/    TABLES_TAB,
 /*18*/    SCREENS_BIN,
 /*19*/    SCREENS_TAB,
 /*1A*/    VOXMAP_BIN,
 /*1B*/    VOXMAP_TAB,
-/*1C*/    TEXPRE_TAB,
-/*1D*/    TEXPRE_BIN,
+/*1C*/    TEXPRE_TAB, // TODO: VOXMAP_TAB
+/*1D*/    TEXPRE_BIN, // TODO: VOXMAP_BIN
 /*1E*/    WARPTAB_BIN,
 /*1F*/    MAPS_BIN,
 /*20*/    MAPS_TAB,

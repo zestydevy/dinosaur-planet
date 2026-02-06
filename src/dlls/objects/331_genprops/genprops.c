@@ -256,7 +256,7 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
 void dll_331_control(Object* self) {
     s32 index;
     Object* player;
-    ObjectStruct58* temp_v0;
+    ObjectPolyhits* temp_v0;
     s16 id;
     Object** new_var;
     GenProps_Setup *objSetup;
@@ -323,8 +323,8 @@ void dll_331_control(Object* self) {
         break;
     case OBJ_DFturbinelever: //0xae
         
-        new_var = &self->unk58->unk100[0];
-        if ((self->unkDC == 0) && (new_var != NULL) && (*(s16*)(((s32)self->unk58) + 0x146) == 0x2B)) {
+        new_var = &self->polyhits->unk100[0];
+        if ((self->unkDC == 0) && (new_var != NULL) && (*(s16*)(((s32)self->polyhits) + 0x146) == 0x2B)) {
             gDLL_3_Animation->vtbl->func17(0, self, -1);
             self->unkDC = 1;
         }

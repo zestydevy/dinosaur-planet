@@ -262,7 +262,7 @@ void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objDat
     }
 
     //Get texture from table
-    texture = func_8003E960(-scroll_table[objSetup->textureIndex]);
+    texture = tex_get_cached(-scroll_table[objSetup->textureIndex]);
     if (texture == NULL){
         STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d'\n");
         return;

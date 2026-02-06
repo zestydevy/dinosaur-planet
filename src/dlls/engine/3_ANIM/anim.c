@@ -549,8 +549,8 @@ void dll_3_func_4698(Object* actor, Object* override, AnimObj_Data* animObjData,
         actor->objhitInfo->unk48 = NULL;
         actor->objhitInfo->unk62 = 0;
     }
-    if (actor->unk58 != NULL) {
-        actor->unk58->unk10F = 0;
+    if (actor->polyhits != NULL) {
+        actor->polyhits->unk10F = 0;
     }
 }
 

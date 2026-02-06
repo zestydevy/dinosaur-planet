@@ -5,21 +5,6 @@
 #include "unktypes.h"
 
 typedef struct {
-    u8 pad[0xAF0];
-} SomeVoxmapAllocStructUnk0;
-typedef struct {
-    u8 pad[0x320];
-}  SomeVoxmapAllocStructUnk4;
-typedef struct {
-    u8 pad[0x78];
-}  SomeVoxmapAllocStructUnk8;
-typedef struct {
-    SomeVoxmapAllocStructUnk0 *unk0;
-    SomeVoxmapAllocStructUnk4 *unk4;
-    SomeVoxmapAllocStructUnk8 *unk8;
-} SomeVoxmapAllocStruct;
-
-typedef struct {
     s32 pad0;
     s32 unk4;
     s32 pad8;
@@ -107,8 +92,8 @@ s32 func_8000AB18(Unk80008E40*, s32, s32, s32*);
 
 VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16 *position);
 
-void func_80008DC0(SomeVoxmapAllocStruct*); // init/alloc struct
-void func_80008E08(SomeVoxmapAllocStruct*); // free struct
+void func_80008DC0(Unk80008E40*); // init/alloc struct
+void func_80008E08(Unk80008E40*); // free struct
 s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1);
 
 #endif

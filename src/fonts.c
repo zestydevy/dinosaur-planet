@@ -64,7 +64,7 @@ void fonts_init() {
     gFontWindows = (FontWindow*)mmAlloc(
         sizeof(FontWindow) * FONT_WINDOW_COUNT
             + sizeof(FontString) * FONT_STRING_COUNT, 
-        COLOUR_TAG_YELLOW, NULL);
+        COLOUR_TAG_YELLOW, ALLOC_NAME("font:window"));
     gFontStrings = (FontString*)(gFontWindows + FONT_WINDOW_COUNT);
 
     for (i = 0; i < FONT_WINDOW_COUNT; i++) {
@@ -126,7 +126,7 @@ void font_load(s32 fontID) {
         if (fontData->referenceCount == 1) {
             s32 i = 0;
             while (i < FONTDATA_MAX_TEXTURES && fontData->textureID[i] != -1) {
-                fontData->texturePointers[i] = queue_load_texture_proxy(-fontData->textureID[i]);
+                fontData->texturePointers[i] = tex_load_deferred(-fontData->textureID[i]);
                 i++;
             }
         }
@@ -143,7 +143,7 @@ void font_unload(s32 fontID) {
             if (fontData->referenceCount == 0) {
                 s32 i = 0;
                 while (i < FONTDATA_MAX_TEXTURES && fontData->textureID[i] != -1) {
-                    texture_destroy(fontData->texturePointers[i]);
+                    tex_free(fontData->texturePointers[i]);
                     fontData->texturePointers[i] = NULL;
                     i++;
                 }
@@ -346,7 +346,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
                     if (lastTextureIndex != fontData->letters[curChar].textureIndex) {
                         lastTextureIndex = fontData->letters[curChar].textureIndex;
                         tex = fontData->texturePointers[lastTextureIndex];
-                        set_textures_on_gdl(gdl, tex, NULL, 0, 0, 0, 0);
+                        tex_gdl_set_textures(gdl, tex, NULL, 0, 0, 0, 0);
                     }
                     newData = TRUE;
                     textureWidth = fontData->letters[curChar].offsetX;
@@ -420,7 +420,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
                     if (lastTextureIndex != fontData->letters[curChar].textureIndex) {
                         lastTextureIndex = fontData->letters[curChar].textureIndex;
                         tex = fontData->texturePointers[lastTextureIndex];
-                        set_textures_on_gdl(gdl, tex, NULL, 0, 0, 0, 0);
+                        tex_gdl_set_textures(gdl, tex, NULL, 0, 0, 0, 0);
                     }
                     newData = TRUE;
                     textureWidth = fontData->letters[curChar].offsetX;
@@ -803,7 +803,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
                             if (lastTextureIndex != fontData->letters[curChar].textureIndex) {
                                 lastTextureIndex = fontData->letters[curChar].textureIndex;
                                 tex = fontData->texturePointers[lastTextureIndex];
-                                set_textures_on_gdl(gdl, tex, NULL, 0, 0, 0, 0);
+                                tex_gdl_set_textures(gdl, tex, NULL, 0, 0, 0, 0);
                             }
                             rectUlx = (fontData->letters[curChar].offsetX + window->x1 + xStart) * 4;
                             rectUly = (fontData->letters[curChar].offsetY + window->y1 + yStart) * 4;

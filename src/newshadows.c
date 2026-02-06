@@ -102,7 +102,7 @@ void shadows_init(void) {
     temp_v0 = (void *) mmAlloc(
         ((sizeof(Gfx) * 500) * 1) + ((sizeof(Vec4f) * 500) * 2) + ((sizeof(Vtx) * 400) * 2), 
         ALLOC_TAG_SHAD_COL, 
-        NULL);
+        ALLOC_NAME("shad:memptr"));
     D_800B98A0[0] = (Gfx*)        temp_v0;
     D_800B98A0[1] = (Gfx*)  ((u32)temp_v0 +  (sizeof(Gfx) * 500));
     D_800B98A8[0] = (Vec3f*)((u32)temp_v0 +  (sizeof(Gfx) * 500) * 2);
@@ -113,7 +113,7 @@ void shadows_init(void) {
     temp_v0 = (void *) mmAlloc(
         ((sizeof(Gfx) * 600) * 2) + ((sizeof(Vec4f) * 700) * 2) + ((sizeof(Vtx) * 600) * 2), 
         ALLOC_TAG_SHAD_COL, 
-        NULL);
+        ALLOC_NAME("shad:memptr"));
     D_800BB158[0] = (Gfx*)        temp_v0;
     D_800BB158[1] = (Gfx*)  ((u32)temp_v0 +  (sizeof(Gfx) * 600));
     D_800BB168[0] = (Vec3f*)((u32)temp_v0 +  (sizeof(Gfx) * 600) * 2);
@@ -173,7 +173,7 @@ void shadows_init(void) {
     D_800B9840[22] = 0.0f;
     D_800B9840[23] = 55.0f;
     shadowtex_init();
-    D_800BB190 = queue_load_texture_proxy(0xD8);
+    D_800BB190 = tex_load_deferred(0xD8);
 }
 
 #ifndef NON_EQUIVALENT
@@ -249,7 +249,7 @@ u32 shadows_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
     shadow = (ObjectShadow*)mmAlign4(addr);
     obj->shadow = shadow;
     addr = (u32)(shadow + 1);
-    shadow->texture = texture_load((s32) -obj->def->shadowTexture, 0);
+    shadow->texture = tex_load((s32) -obj->def->shadowTexture, 0);
     shadow->scale = obj->def->shadowScale;
     shadow->maxDistScale = shadow->scale;
     shadow->dir.x = D_80092BD0;
@@ -867,7 +867,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     var_s2 = 0;
     sp1E4 = 0;
     func_80040FF8();
-    func_8003DB7C();
+    tex_render_save_state();
     // @fake
     if (&dl) {}
     gSPGeometryMode(dl, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
@@ -890,7 +890,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
             );
             dl_apply_other_mode(&dl);
         }
-        set_textures_on_gdl(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
+        tex_gdl_set_textures(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
     } else {
         gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
         dl_apply_combine(&dl);
@@ -939,7 +939,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     }
     gSPEndDisplayList(dl++);
     func_80041028();
-    func_8003DBCC();
+    tex_render_restore_state();
     *arg5 = var_s4;
     return dl - sp1C8;
 }

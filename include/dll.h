@@ -32,7 +32,7 @@
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
 #include "dlls/engine/32.h"
-#include "dlls/engine/33.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/54.h"
 #include "dlls/engine/56.h"
 #include "dlls/engine/57.h"
@@ -180,7 +180,7 @@ extern DLL_18_objfsa *gDLL_18_objfsa;
 extern DLL_75 *gDLL_75;
 extern DLL_56 *gDLL_56;
 extern DLL_32 *gDLL_32;
-extern DLL_33 *gDLL_33;
+extern DLL_33_BaddieControl *gDLL_33_BaddieControl;
 extern DLL_59_minimap *gDLL_59_Minimap;
 extern DLL_54 *gDLL_54;
 

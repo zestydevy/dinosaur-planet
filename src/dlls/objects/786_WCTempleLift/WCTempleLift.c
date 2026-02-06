@@ -37,9 +37,9 @@ void dll_786_control(Object *self) {
         objdata->unk0 = 0.0f;
     }
     if (objdata->unk4 == 0) {
-        if (self->unk58->unk10F > 0) {
-            for (i = 0; i < self->unk58->unk10F; i++) {
-                obj = self->unk58->unk100[i];
+        if (self->polyhits->unk10F > 0) {
+            for (i = 0; i < self->polyhits->unk10F; i++) {
+                obj = self->polyhits->unk100[i];
                 if (obj->id == 0) {
                     player = get_player();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
@@ -51,9 +51,9 @@ void dll_786_control(Object *self) {
             }
         }
     } else {
-        if (self->unk58->unk10F > 0) {
-            for (i = 0; i < self->unk58->unk10F; i++) {
-                obj = self->unk58->unk100[i];
+        if (self->polyhits->unk10F > 0) {
+            for (i = 0; i < self->polyhits->unk10F; i++) {
+                obj = self->polyhits->unk100[i];
                 if (obj->id == 0) {
                     player = get_player();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {

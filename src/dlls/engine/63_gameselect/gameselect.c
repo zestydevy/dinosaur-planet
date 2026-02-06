@@ -274,20 +274,20 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
 void dll_63_ctor(void *self) {
     s32 i;
 
-    sBackgroundTexture = queue_load_texture_proxy(0x2DD);
-    sLogoTexture = queue_load_texture_proxy(0xC5);
-    sLogoShadowTexture = queue_load_texture_proxy(0x2E1);
+    sBackgroundTexture = tex_load_deferred(0x2DD);
+    sLogoTexture = tex_load_deferred(0xC5);
+    sLogoShadowTexture = tex_load_deferred(0x2E1);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EC_Menu_Managing_Saves);
     }
 
     for (i = 0; i < 18; i++) {
-        sSaveGameBgTextures[i] = queue_load_texture_proxy(sSaveGameBgTextureIDs[i]);
+        sSaveGameBgTextures[i] = tex_load_deferred(sSaveGameBgTextureIDs[i]);
     }
 
     for (i = 0; i < 4; i++) {
-        sSaveGameTextures[i] = queue_load_texture_proxy(sSaveGameTextureIDs[i]);
+        sSaveGameTextures[i] = tex_load_deferred(sSaveGameTextureIDs[i]);
     }
 
     if (menu_get_previous() != MENU_ENTER_NAME) {
@@ -516,21 +516,21 @@ static void dll_63_clean_up(s32 leavingMenus) {
 
     for (i = 0; i < 18; i++) {
         if (sSaveGameBgTextures[i] != NULL) {
-            texture_destroy(sSaveGameBgTextures[i]);
+            tex_free(sSaveGameBgTextures[i]);
             sSaveGameBgTextures[i] = NULL;
         }
     }
 
     for (i = 0; i < 4; i++) {
         if (sSaveGameTextures[i] != NULL) {
-            texture_destroy(sSaveGameTextures[i]);
+            tex_free(sSaveGameTextures[i]);
             sSaveGameTextures[i] = NULL;
         }
     }
 
-    texture_destroy(sBackgroundTexture);
-    texture_destroy(sLogoTexture);
-    texture_destroy(sLogoShadowTexture);
+    tex_free(sBackgroundTexture);
+    tex_free(sLogoTexture);
+    tex_free(sLogoShadowTexture);
 
     if (leavingMenus) {
         font_unload(FONT_DINO_MEDIUM_FONT_IN);

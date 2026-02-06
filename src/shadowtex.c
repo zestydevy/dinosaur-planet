@@ -37,13 +37,13 @@ s32 D_80092EA8 = 0; // unused
 void shadowtex_swap_buffer(s32 slot);
 
 void shadowtex_init(void) {
-    gShadowTexFramebuffers[0] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, 0);
+    gShadowTexFramebuffers[0] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
     gShadowTexFramebuffers[0] = (void*)((u32)(gShadowTexFramebuffers[0]) + 0x3f & ~0x3f); //Makes sure framebuffer addresses are 64-byte-aligned
-    gShadowTexFramebuffers[1] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, 0);
+    gShadowTexFramebuffers[1] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
     gShadowTexFramebuffers[1] = (void*)((u32)(gShadowTexFramebuffers[1]) + 0x3f & ~0x3f);
-    gShadowTexFramebuffers[2] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, 0);
+    gShadowTexFramebuffers[2] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
     gShadowTexFramebuffers[2] = (void*)((u32)(gShadowTexFramebuffers[2]) + 0x3f & ~0x3f);
-    gShadowTexFramebuffers[3] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, 0);
+    gShadowTexFramebuffers[3] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
     gShadowTexFramebuffers[3] = (void*)((u32)(gShadowTexFramebuffers[3]) + 0x3f & ~0x3f);
 
     D_800BB560[0] = mmAlloc(gShadowTexWidth * gShadowTexHeight << 1, ALLOC_TAG_SHAD_COL, 0);

@@ -1,5 +1,5 @@
 #include "dlls/engine/18_objfsa.h"
-#include "dlls/engine/33.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/214_animobj.h"
 #include "dlls/objects/698_BossDrakor_Laser.h"
 #include "game/objects/object.h"
@@ -32,7 +32,7 @@ typedef struct {
 } BossDrakor_ActualData;
 
 typedef struct {
-/*000*/ DLL33_Data unk0;
+/*000*/ Baddie baddie;
 /*3FC*/ BossDrakor_ActualData actualData;
 } DLL697_Data;
 
@@ -60,9 +60,9 @@ typedef struct {
 
 static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata);
 static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
-static void BossDrakor_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa);
-static void BossDrakor_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa);
-static void BossDrakor_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa);
+static void BossDrakor_func_55C(Object *self, Baddie *baddie, ObjFSA_Data *fsa);
+static void BossDrakor_func_768(Object *self, Baddie *baddie, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa);
+static void BossDrakor_func_838(Object *self, Baddie *baddie, ObjFSA_Data *fsa);
 static void BossDrakor_func_8E0(u8 arg0);
 static s32 BossDrakor_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate);
 static s32 BossDrakor_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate);
@@ -86,19 +86,19 @@ void BossDrakor_ctor(void *dll) {
 void BossDrakor_dtor(void *dll) { }
 
 // offset: 0xA0 | func: 1 | export: 0
-void BossDrakor_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
-    DLL33_Data *sp34;
+void BossDrakor_setup(Object *self, Baddie_Setup *setup, s32 arg2) {
+    Baddie *baddie;
     s32 var_v0;
 
-    sp34 = self->data;
+    baddie = self->data;
     var_v0 = 6;
     if (arg2 != 0) {
         var_v0 = 7;
     }
-    gDLL_33->vtbl->func21(self, setup, sp34, 2, 2, 0x108, (u8) var_v0, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, setup, baddie, 2, 2, 0x108, (u8) var_v0, 20.0f);
     self->animCallback = BossDrakor_anim_callback;
-    sp34->fsa.animState = DRAKOR_ASTATE_0;
-    sp34->fsa.logicState = DRAKOR_LSTATE_0;
+    baddie->fsa.animState = DRAKOR_ASTATE_0;
+    baddie->fsa.logicState = DRAKOR_LSTATE_0;
     if (self->shadow != NULL) {
         self->shadow->distFadeMaxOpacity = 0x64;
         self->shadow->distFadeMinOpacity = 0x96;
@@ -107,21 +107,21 @@ void BossDrakor_setup(Object *self, DLL33_ObjSetup *setup, s32 arg2) {
 
 // offset: 0x160 | func: 2 | export: 1
 void BossDrakor_control(Object *self) {
-    DLL33_Data *dll33Data;
+    Baddie *baddie;
     BossDrakor_ActualData *objdata;
 
-    dll33Data = self->data;
+    baddie = self->data;
     if (self->unkDC == 0) {
-        if (dll33Data->unk3B2 & 2) {
-            dll33Data->unk3B2 &= ~2;
+        if (baddie->unk3B2 & 2) {
+            baddie->unk3B2 &= ~2;
         }
-        if (gDLL_33->vtbl->func11(self, dll33Data, 1) != 0) {
-            objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
+        if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 1) != 0) {
+            objdata = (BossDrakor_ActualData*)baddie->objdata;
             if (objdata->laser == NULL) {
                 BossDrakor_create_laser(self, objdata);
             }
-            BossDrakor_func_838(self, dll33Data, &dll33Data->fsa);
-            BossDrakor_func_55C(self, dll33Data, &dll33Data->fsa);
+            BossDrakor_func_838(self, baddie, &baddie->fsa);
+            BossDrakor_func_55C(self, baddie, &baddie->fsa);
         }
     }
 }
@@ -131,7 +131,7 @@ void BossDrakor_update(Object *self) { }
 
 // offset: 0x258 | func: 4 | export: 3
 void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    DLL33_Data *dll33Data;
+    Baddie *baddie;
     BossDrakor_ActualData *objdata;
     f32 sp4C;
     f32 sp48;
@@ -143,10 +143,10 @@ void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
     f32 sp30;
     f32 sp2C;
 
-    dll33Data = (DLL33_Data*)self->data;
+    baddie = (Baddie*)self->data;
     if ((visibility != 0) && (self->unkDC == 0)) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
+        objdata = (BossDrakor_ActualData*)baddie->objdata;
         if (objdata->laser != NULL) {
             func_80031F6C(self, 0, &sp4C, &sp48, &sp44, 0);
             func_80031F6C(self, 1, &sp40, &sp3C, &sp38, 0);
@@ -181,9 +181,9 @@ u32 BossDrakor_get_data_size(Object *self, u32 a1) {
 // offset: 0x454 | func: 8
 static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata) {
     ObjSetup *laserSetup;
-    DLL33_ObjSetup *drakorSetup;
+    Baddie_Setup *drakorSetup;
 
-    drakorSetup = (DLL33_ObjSetup*)self->setup;
+    drakorSetup = (Baddie_Setup*)self->setup;
     laserSetup = obj_alloc_create_info(0x24, OBJ_BossDrakor_Lase);
     laserSetup->x = self->srt.transl.x;
     laserSetup->y = self->srt.transl.y;
@@ -197,12 +197,12 @@ static void BossDrakor_create_laser(Object *self, BossDrakor_ActualData *objdata
 
 // offset: 0x50C | func: 9
 static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3) {
-    DLL33_Data *temp_v1;
+    Baddie *baddie;
     u8 i;
     u8 temp;
 
-    temp_v1 = self->data;
-    temp_v1->unk3B2 |= 2;
+    baddie = self->data;
+    baddie->unk3B2 |= 2;
     for (i = 0; i < arg2->unk98; i++) {
         temp = arg2->unk8E[i];
         // @fake: These case numbers are made up for the match. Check the relevant sequences 
@@ -216,15 +216,15 @@ static int BossDrakor_anim_callback(Object *self, Object *arg1, AnimObj_Data *ar
                 break;
         }
     }
-    return temp_v1->unk3B4 != 0;
+    return baddie->unk3B4 != 0;
 }
 
 // offset: 0x55C | func: 10
-static void BossDrakor_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
-    BossDrakor_ActualData *objdata = arg1->unk3F4;
-    DLL33_ObjSetup *setup = (DLL33_ObjSetup*)self->setup;
+static void BossDrakor_func_55C(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
+    BossDrakor_ActualData *objdata = arg1->objdata;
+    Baddie_Setup *setup = (Baddie_Setup*)self->setup;
 
-    gDLL_33->vtbl->func4(self, get_player(), 0x10, &objdata->unk0, &objdata->unk2, &objdata->unk4);
+    gDLL_33_BaddieControl->vtbl->func4(self, get_player(), 0x10, &objdata->unk0, &objdata->unk2, &objdata->unk4);
     fsa->targetDist = (f32) objdata->unk4;
     if (self->unkE0 == 0) {
         gDLL_3_Animation->vtbl->func17(setup->unk2E, self, -1);
@@ -233,9 +233,9 @@ static void BossDrakor_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa
     }
     fsa->target = get_player();
     if (fsa->logicState == DRAKOR_LSTATE_1) {
-        gDLL_33->vtbl->func10(self, fsa, 0.17f, 1);
+        gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.17f, 1);
     } else {
-        gDLL_33->vtbl->func10(self, fsa, 0.0f, 1);
+        gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, 1);
     }
     arg1->unk3AC = self->unkC0;
     self->unkC0 = NULL;
@@ -245,7 +245,7 @@ static void BossDrakor_func_55C(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa
 }
 
 // offset: 0x768 | func: 11
-static void BossDrakor_func_768(Object *self, DLL33_Data *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa) {
+static void BossDrakor_func_768(Object *self, Baddie *arg1, BossDrakor_ActualData *objdata, ObjFSA_Data *fsa) {
     Object *laser;
 
     if (fsa->unk308 & 0x40) {
@@ -261,8 +261,8 @@ static void BossDrakor_func_768(Object *self, DLL33_Data *arg1, BossDrakor_Actua
 }
 
 // offset: 0x838 | func: 12
-static void BossDrakor_func_838(Object *self, DLL33_Data *arg1, ObjFSA_Data *fsa) {
-    BossDrakor_ActualData *objdata = arg1->unk3F4;
+static void BossDrakor_func_838(Object *self, Baddie *arg1, ObjFSA_Data *fsa) {
+    BossDrakor_ActualData *objdata = arg1->objdata;
     Object *sp30;
     s32 _pad;
     s32 sp28;
@@ -297,11 +297,11 @@ static void BossDrakor_func_8E0(u8 arg0) {
 
 // offset: 0x99C | func: 14
 static s32 BossDrakor_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
-    DLL33_Data *dll33Data = self->data;
-    BossDrakor_ActualData *objdata = dll33Data->unk3F4;
+    Baddie *baddie = self->data;
+    BossDrakor_ActualData *objdata = baddie->objdata;
 
     if (fsa->target != NULL) {
-        func_80032C0C(self, fsa->target, &dll33Data->unk3BC, 0x19);
+        func_80032C0C(self, fsa->target, &baddie->unk3BC, 0x19);
     }
     if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
         func_80023D30(self, (s32) sAnimState0ModAnims[objdata->animIndex], 0.0f, 0);
@@ -314,11 +314,11 @@ static s32 BossDrakor_anim_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRat
 
 // offset: 0xABC | func: 15
 static s32 BossDrakor_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
-    DLL33_Data *dll33Data = self->data;
-    BossDrakor_ActualData *objdata = dll33Data->unk3F4;
+    Baddie *baddie = self->data;
+    BossDrakor_ActualData *objdata = baddie->objdata;
 
     if (fsa->target != NULL) {
-        func_80032C0C(self, fsa->target, &dll33Data->unk3BC, 0x19);
+        func_80032C0C(self, fsa->target, &baddie->unk3BC, 0x19);
     }
     if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
         func_80023D30(self, (s32) sAnimState1ModAnims[objdata->animIndex], 0.0f, 0);
@@ -330,8 +330,8 @@ static s32 BossDrakor_anim_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRat
 
 // offset: 0xBC8 | func: 16
 static s32 BossDrakor_logic_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
-    DLL33_Data *dll33Data = (DLL33_Data*)self->data;
-    BossDrakor_ActualData *objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
+    Baddie *baddie = (Baddie*)self->data;
+    BossDrakor_ActualData *objdata = (BossDrakor_ActualData*)baddie->objdata;
 
     if (fsa->enteredLogicState != 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
@@ -346,8 +346,8 @@ static s32 BossDrakor_logic_state_0(Object *self, ObjFSA_Data *fsa, f32 updateRa
 
 // offset: 0xC54 | func: 17
 static s32 BossDrakor_logic_state_1(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
-    DLL33_Data *dll33Data = (DLL33_Data*)self->data;
-    BossDrakor_ActualData *objdata = (BossDrakor_ActualData*)dll33Data->unk3F4;
+    Baddie *baddie = (Baddie*)self->data;
+    BossDrakor_ActualData *objdata = (BossDrakor_ActualData*)baddie->objdata;
 
     if (fsa->enteredLogicState != 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);

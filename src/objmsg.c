@@ -3,8 +3,7 @@
 #include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
-
-static const char str_80099c50[] = "objmsg (%x): overflow in object %d defno=%d FROM: defno %d\n";
+#include "macros.h"
 
 void obj_init_mesg_queue(Object *obj, u32 count) {
     ObjectMesgQueue *mesgQueue;
@@ -17,7 +16,7 @@ void obj_init_mesg_queue(Object *obj, u32 count) {
             mesgQueue = (ObjectMesgQueue*)mmAlloc(
                 size * 4 + (sizeof(ObjectMesgQueue) - sizeof(ObjMesgQueueMessage)), 
                 ALLOC_TAG_OBJECTS_COL, 
-                NULL);
+                ALLOC_NAME("obj:msgs"));
             mesgQueue->count = 0;
             mesgQueue->capacity = count;
 
@@ -47,6 +46,8 @@ u32 obj_send_mesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
             mesgQueue->count += 1;
             return mesgQueue->count;
         }
+        STUBBED_PRINTF("objmsg (%x): overflow in object %d defno=%d FROM: defno %d\n",
+            mesgID, receiver->group, receiver->id, sender->id);
     }
 
     return 0;

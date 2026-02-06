@@ -143,10 +143,10 @@ void waterfx_ctor(s32 arg0)
     _bss_28 = 0;
     _bss_38 = 0;
     _bss_30 = 0;
-    _bss_40 = queue_load_texture_proxy(0x56);
-    _bss_44 = queue_load_texture_proxy(0x59);
-    _bss_48 = queue_load_texture_proxy(0x22);
-    _bss_4C = queue_load_texture_proxy(0x57);
+    _bss_40 = tex_load_deferred(0x56);
+    _bss_44 = tex_load_deferred(0x59);
+    _bss_48 = tex_load_deferred(0x22);
+    _bss_4C = tex_load_deferred(0x57);
     waterfx_func_24C();
 }
 
@@ -159,22 +159,22 @@ void waterfx_dtor(s32 arg0)
     }
     if (_bss_40 != NULL)
     {
-        texture_destroy(_bss_40);
+        tex_free(_bss_40);
         _bss_40 = NULL;
     }
     if (_bss_44 != NULL)
     {
-        texture_destroy(_bss_44);
+        tex_free(_bss_44);
         _bss_44 = NULL;
     }
     if (_bss_48 != NULL)
     {
-        texture_destroy(_bss_48);
+        tex_free(_bss_48);
         _bss_48 = NULL;
     }
     if (_bss_4C != NULL)
     {
-        texture_destroy(_bss_4C);
+        tex_free(_bss_4C);
         _bss_4C = NULL;
     }
 }
@@ -549,7 +549,7 @@ void waterfx_func_C7C(Gfx** gdl, Mtx** arg1) {
                 dl_triangles(gdl, &_bss_1C[i << 1], 2);
             }
         }
-        func_8003DB5C();
+        tex_render_reset();
     }
 }
 
