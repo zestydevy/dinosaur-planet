@@ -10,6 +10,7 @@
 16 = engine/16
 17 = engine/17_partfx
 18 = engine/18_objfsa
+19 = engine/19_menu_gameplay
 20 = engine/20_screens
 21 = engine/21_gametext
 22 = engine/22_subtitles
