@@ -1208,12 +1208,12 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
     }
 
     if (fsa->unk341 == 3) {
-        if (sp84 >= fsa->unk343) {
+        if (sp84 >= fsa->lastHitType) {
             return;
         }
     }
 
-    fsa->unk343 = sp84;
+    fsa->lastHitType = sp84;
     arg0->curModAnimIdLayered = -1;
     aState = -1;
     switch (sp84) {
