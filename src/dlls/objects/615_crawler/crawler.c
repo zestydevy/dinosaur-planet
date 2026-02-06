@@ -7,6 +7,10 @@ typedef struct {
     u8 _unk0[0x298];
 } DLL615_Data;
 
+typedef struct {
+    u8 _unk0;
+}DLL615_Setup;
+
 /*0x0*/ static u32 _data_0[] = {
     0x00000002, 0x00040001, 0x000c03f7, 0x0167050c
 };

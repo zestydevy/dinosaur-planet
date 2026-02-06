@@ -6,6 +6,7 @@
 5 = engine/5_AMSEQ
 6 = engine/6_AMSFX
 7 = engine/7_newday
+10 = engine/10_newstars
 13 = engine/13_expgfx
 16 = engine/16
 17 = engine/17_partfx
@@ -139,7 +140,9 @@
 497 = objects/497_NWtricky
 501 = objects/501_SHtricky
 505 = objects/505_SHspore
+506 = objects/506
 507 = objects/507_SHqueenearthwalker
+509 = objects/509_SHwaterLily
 512 = objects/512_SHLevelControl
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
@@ -149,6 +152,7 @@
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
 553 = objects/553_WGmutant
+562 = objects/562
 569 = objects/569_MAGICMaker
 570 = objects/570_DIM_BossSpit
 571 = objects/571_DIMbosscrackparticles
@@ -168,6 +172,7 @@
 589 = objects/589_SB_ShipGunBroke
 590 = objects/590_WL_Galleon
 596 = objects/596_WLpressureswitch
+605 = objects/605
 607 = objects/607_WL_LevelControl
 610 = objects/610_WL_spiritplace
 612 = objects/612_WL_Crystal
@@ -201,6 +206,7 @@
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 729 = objects/729_CRCloudRace
+730 = objects/730/CRSpellStone
 731 = objects/731_CRFuelTank
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl
