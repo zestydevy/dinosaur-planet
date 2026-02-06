@@ -527,7 +527,7 @@ s32 dll_428_func_1264(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
     }
     arg1->animTickDelta = 0.08f;
     gDLL_18_objfsa->vtbl->func7(arg0, arg1, arg2, 1);
-    gDLL_33_BaddieControl->vtbl->func3(arg0, (Baddie* ) arg1, (u32) baddie, 2.0f, 12.0f);
+    gDLL_33_BaddieControl->vtbl->func3(arg0, arg1, baddie, 2.0f, 12.0f);
     return 0;
 }
 

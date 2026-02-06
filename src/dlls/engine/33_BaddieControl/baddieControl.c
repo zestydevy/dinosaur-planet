@@ -177,22 +177,22 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
 }
 
 // offset: 0x768 | func: 4 | export: 3
-void BaddieControl_func_768(Object* arg0, Baddie* arg1, u32 arg2, f32 arg3, f32 arg4) {
-    if (arg1->fsa.unk290 < 0.005f) {
-        arg1->fsa.unk328 = 0;
-        arg1->fsa.unk32A = 0;
-        arg1->fsa.unk290 = 0.0f;
-        arg1->fsa.unk278 = 0.0f;
+void BaddieControl_func_768(Object* arg0, ObjFSA_Data* arg1, Baddie *arg2, f32 arg3, f32 arg4) {
+    if (arg1->unk290 < 0.005f) {
+        arg1->unk328 = 0;
+        arg1->unk32A = 0;
+        arg1->unk290 = 0.0f;
+        arg1->unk278 = 0.0f;
     }
-    arg1->fsa.unk27C = 0.0f;
-    arg0->srt.yaw = ((f32) arg0->srt.yaw + ((((f32) arg1->fsa.unk32A * gUpdateRateF) / arg4) * 182.0f));
-    arg1->fsa.speed += ((arg1->fsa.unk290 - arg1->fsa.speed) / arg1->fsa.unk2B0) * gUpdateRateF;
-    arg1->fsa.unk278 += ((arg1->fsa.unk290 - arg1->fsa.unk278) / arg1->fsa.unk2B0) * gUpdateRateF;
-    if (arg3 < arg1->fsa.speed) {
-        arg1->fsa.speed = arg3;
+    arg1->unk27C = 0.0f;
+    arg0->srt.yaw = ((f32) arg0->srt.yaw + ((((f32) arg1->unk32A * gUpdateRateF) / arg4) * 182.0f));
+    arg1->speed += ((arg1->unk290 - arg1->speed) / arg1->unk2B0) * gUpdateRateF;
+    arg1->unk278 += ((arg1->unk290 - arg1->unk278) / arg1->unk2B0) * gUpdateRateF;
+    if (arg3 < arg1->speed) {
+        arg1->speed = arg3;
     }
-    if (arg3 < arg1->fsa.unk278) {
-        arg1->fsa.unk278 = arg3;
+    if (arg3 < arg1->unk278) {
+        arg1->unk278 = arg3;
     }
 }
 
