@@ -58,6 +58,8 @@ typedef struct {
     0, 0, 0, 0, 0, 0, 0, 0
 };
 
+s32 dll_295_func_DC0(Object* arg0, Object* arg1, SmallBasket_Data* arg2);
+void dll_295_func_2024(Object* arg0, Object* arg1, SmallBasket_Data* arg2);
 //static void dll_295_func_1104(Object* arg0, Object* arg1, SmallBasket_Data* arg2);//
 
 /*0x0*/ static u8 _bss_0[0x10];
@@ -112,12 +114,13 @@ void dll_295_setup(Object* self, SmallBasket_Setup* setup, s32 arg2) {
 
 
 // offset: 0x1B8 | func: 1 | export: 1
-void dll_295_control(Object *self);
+#ifndef NON_MATCHING
 
-static s8 dll_295_func_1104(Object* a0, Object* a1, void* a2){}
-static s8 dll_295_func_2024(Object* a0, Object* a1, void* a2){}
-static s8 dll_295_func_DC0(Object* a0, Object* a1, void* a2){}
-static s8 dll_295_func_E78(Object* a0){}
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/295_smallbasket/dll_295_control.s")
+
+#else
+s8 dll_295_func_1104(Object* a0, Object* a1, void* a2);
+s8 dll_295_func_E78(Object* a0);
 
 void dll_295_control(Object* self) {
     Object* sp6C;
@@ -263,7 +266,7 @@ void dll_295_control(Object* self) {
             self->srt.transl.f[2] += self->speed.f[2] * gUpdateRateF;
             dll_295_func_E78(self);
             if ((self->objhitInfo->unk9D) && (smallBasketData->unk23 == 1)) {
-                _data_0->vtbl->func[0].withSixArgs(self, 1, 0, 2, -1, 0);
+                _data_0[0]->vtbl->func[0].withSixArgs((s32)self, 1, 0, 2, -1, 0);
                 gDLL_6_AMSFX->vtbl->play_sound(self, smallBasketData->unk16, MAX_VOLUME, NULL, NULL, 0, NULL);
                 smallBasketData->unk10 = 0x32;
                 smallBasketData->unk23 = 0;
@@ -322,6 +325,7 @@ void dll_295_control(Object* self) {
         }
     }
 }
+#endif
 
 
 // offset: 0xC0C | func: 2 | export: 2
