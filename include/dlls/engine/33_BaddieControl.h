@@ -84,7 +84,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*0*/ void (*ctor)(void *dll); // This DLL exports the ctor/dtor for some reason, don't call these
 /*1*/ void (*dtor)(void *dll);
 /*2*/ f32 (*func2)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4);
-/*3*/ void (*func3)(Object* arg0, Baddie* baddie, u32 arg2, f32 arg3, f32 arg4);
+/*3*/ void (*func3)(Object* arg0, ObjFSA_Data* arg1, Baddie *arg2, f32 arg3, f32 arg4);
 /*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16* arg4, u16* arg5);
 /*5*/ s32 (*func5)(Object* arg0, Baddie* baddie, f32 arg2);
 /*6*/ s32 (*func6)(UNK_PTR *arg0, UNK_PTR *arg1);

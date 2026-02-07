@@ -47,8 +47,8 @@ typedef struct {
 DLL_INTERFACE(DLL_1_UI) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ s32 (*func_308)(void);
-/*1*/ UnknownDLLFunc func_35C;
-/*2*/ UnknownDLLFunc func_BB8;
+/*1*/ void (*func_35C)(void);
+/*2*/ void (*func_BB8)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 /*3*/ void (*func_1290)(void);
 /*4*/ void (*func_12EC)(void);
 /*5*/ UnknownDLLFunc func_F5C;
