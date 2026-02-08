@@ -1176,9 +1176,7 @@ void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f3
     arg5->f[0] += modelInst->model->joints->x;
     arg5->f[1] += modelInst->model->joints->y;
     arg5->f[2] += modelInst->model->joints->z;
-    arg5->f[0] *= scale;
-    arg5->f[1] *= scale;
-    arg5->f[2] *= scale;
+    VECTOR_SCALE((*arg5), scale);
 }
 
 void func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {

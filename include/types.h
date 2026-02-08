@@ -131,20 +131,6 @@ typedef struct {
 /*0024*/ u8 unk24[0x28-0x24];
 } LightAction; //LActions.bin structs used by NewLfx DLL
 
-// Size: 0x28
-typedef struct Func_80037F9C_Struct {
-    Texture *unk0;
-    s32 pad4;
-    s16 unk8;
-    s16 unkA;
-    Texture *unkC;
-    s32 unk10;
-    s16 unk14;
-    s16 unk16;
-    s32 unk18;
-    u8 pad1C[0x28 - 0x1C];
-} Func_80037F9C_Struct;
-
 // size: 0x18
 typedef struct {
     f32 unk0[4]; // maybe Vec4f and not an array
@@ -162,13 +148,14 @@ typedef struct Func_80059C40_Struct {
     f32 unk14;
     f32 unk18;
     Vec4f unk1C;
-    u8 pad2C[0x38 - 0x2C];
+    Vec3f unk2C;
     Vec3f unk38;
     f32 unk44;
     f32 unk48;
-    s32 pad4C;
+    s16 unk4C;
+    s16 unk4E;
     s8 unk50;
-    u8 pad51;
+    s8 unk51;
     s8 unk52;
 } Func_80059C40_Struct;
 

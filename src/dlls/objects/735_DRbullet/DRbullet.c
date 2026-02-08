@@ -162,9 +162,7 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     objData = self->data;
 
     //Get unit vector from point of origin to target point (and then multiply it by speed)
-    velocity.x = pTarget->transl.x - pFired->transl.x;
-    velocity.y = pTarget->transl.y - pFired->transl.y;
-    velocity.z = pTarget->transl.z - pFired->transl.z;
+    VECTOR_SUBTRACT(pTarget->transl, pFired->transl, velocity);
     magnitudeOverSpeed = sqrtf(((velocity.f[0] * velocity.f[0]) + (velocity.f[1] * velocity.f[1])) + (velocity.f[2] * velocity.f[2])) / speed;
     if (magnitudeOverSpeed != 0.0f){
         velocity.f[0] /= magnitudeOverSpeed;

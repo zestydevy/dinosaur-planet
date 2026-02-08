@@ -129,7 +129,7 @@ void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, s16* arg3, s16*
         sp2C->unk3B2 |= 0x10;
     }
     *arg3 = (temp_v0_2 / (0x10000 / arg2));
-    *arg5 = (u32) sqrtf(SQ(sp20.f[2]) + (SQ(sp20.x) + SQ(sp20.y)));
+    *arg5 = (u32) VECTOR_MAGNITUDE(sp20);
 }
 
 // offset: 0x4EC | func: 3 | export: 2
@@ -410,7 +410,7 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
     s32 var_v1;
     s32 stop;
     s32 i;
-    f32 spE0[3];
+    Vec3f spE0;
     s32 pad;
     s32 pad2;
     Vec3s16 spD0;
@@ -425,14 +425,12 @@ Object* BaddieControl_func_10F4(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 ar
     spF8[1] = 0;
     i = 0;
     while (stop == FALSE && (curObj = spF8[i]) != NULL) {
-        spE0[0] = curObj->positionMirror.x - arg0->positionMirror.x;
-        spE0[1] = curObj->positionMirror.y - arg0->positionMirror.y;
-        spE0[2] = curObj->positionMirror.z - arg0->positionMirror.z;
-        if ((sqrtf(SQ(spE0[0]) + SQ(spE0[1]) + SQ(spE0[2])) < arg2) && (fsa->hitpoints != 0)) {
+        VECTOR_SUBTRACT(curObj->positionMirror, arg0->positionMirror, spE0);
+        if ((VECTOR_MAGNITUDE(spE0) < arg2) && (fsa->hitpoints != 0)) {
             if (((DLL_210_Player*)curObj->dll)->vtbl->func56(curObj) > 0.5f) {
                 stop = TRUE;
             }
-            var_v1 = arctan2_f(-spE0[0], -spE0[2]);
+            var_v1 = arctan2_f(-spE0.f[0], -spE0.f[2]);
             if (arg0->parent != NULL) {
                 var_v1 -= ((arg0->srt.yaw + arg0->parent->srt.yaw) & 0xFFFF);
                 CIRCLE_WRAP(var_v1)

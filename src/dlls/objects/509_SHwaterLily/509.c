@@ -32,8 +32,8 @@ void dll_509_setup(Object* self, WaterLily_Setup* setup, s32 arg2) {
   
     if (setup->unk19 == 1) {
         gDLL_26_Curves->vtbl->func_4288(&LilyData->unk0, self, 1000.0f, &sp34, -1);
-        self->srt.transl.f[0] = LilyData->unk0.unk68;
-        self->srt.transl.f[2] = LilyData->unk0.unk70;
+        self->srt.transl.f[0] = LilyData->unk0.unk68.f[0];
+        self->srt.transl.f[2] = LilyData->unk0.unk68.f[2];
         LilyData->unk108 = (setup->unk1A / 10.0f);
     }
     
@@ -53,8 +53,8 @@ void dll_509_control(Object* self) {
         if ((func_800053B0(&WLData->unk0, WLData->unk108) != 0) || (WLData->unk0.unk10 != 0)) {
             gDLL_26_Curves->vtbl->func_4704(&WLData->unk0);
         }
-        self->srt.transl.f[0] = WLData->unk0.unk68;
-        self->srt.transl.f[2] = WLData->unk0.unk70;
+        self->srt.transl.f[0] = WLData->unk0.unk68.f[0];
+        self->srt.transl.f[2] = WLData->unk0.unk68.f[2];
     }
     if (WLData->unk110 > 0.0f) {
         WLData->unk110 = (f32) (WLData->unk110 - gUpdateRateF);

@@ -2378,9 +2378,7 @@ s32 func_8002B910(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, 
     *argC = 0;
     sp2C = arg5 < arg4 ? arg4 : arg5;
     sp30 = arg7 < arg6 ? arg6 : arg7;
-    sp58.x = arg0->x - arg2->x;
-    sp58.y = arg0->y - arg2->y;
-    sp58.z = arg0->z - arg2->z;
+    VECTOR_SUBTRACT(*arg0, *arg2, sp58);
     vec3_cross_product_2(arg1, arg3, argE);
     sp3C = sqrtf((argE->z * argE->z) + ((argE->x * argE->x) + (argE->y * argE->y)));
     if (sp3C == 0.0f) {
@@ -2393,9 +2391,7 @@ s32 func_8002B910(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, 
         *argB = 1.0737418e9f;
         return *argD <= (sp30 + sp2C);
     }
-    argE->x *= 1.0f / sp3C;
-    argE->y *= 1.0f / sp3C;
-    argE->z *= 1.0f / sp3C;
+    VECTOR_SCALE((*argE), 1.0f / sp3C);
     *argD = (argE->z * sp58.z) + ((sp58.x * argE->x) + (sp58.y * argE->y));
     if (*argD > 0.0f) {
         *argD = *argD;
@@ -2532,21 +2528,11 @@ s32 func_8002C278(Vec3f arg0, Vec3f arg1, f32 arg2, f32 arg3, Vec3f arg4, Vec3f 
     s32 sp50;
     f32 temp_fv1;
 
-    sp60.x = arg1.x - arg0.x;
-    sp60.y = arg1.y - arg0.y;
-    sp60.z = arg1.z - arg0.z;
-    sp6C.x = arg5.x - arg4.x;
-    sp6C.y = arg5.y - arg4.y;
-    sp6C.z = arg5.z - arg4.z;
+    VECTOR_SUBTRACT((arg1), (arg0), sp60);
+    VECTOR_SUBTRACT((arg5), (arg4), sp6C);
     if (arg8 != 0.0f) {
-        temp_fv0 = 1.0f / arg8;
-        temp_fv1 = 1.0f / arg9;
-        sp60.x = sp60.x * temp_fv0;
-        sp60.y = sp60.y * temp_fv0;
-        sp60.z = sp60.z * temp_fv0;
-        sp6C.x *= temp_fv1;
-        sp6C.y *= temp_fv1;
-        sp6C.z *= temp_fv1;
+        VECTOR_SCALE(sp60, 1.0f / arg8);
+        VECTOR_SCALE(sp6C, 1.0f / arg9);
     }
     if (func_8002B910(&arg0, &sp60, &arg4, &sp6C, arg2, arg3, arg6, arg7, arg8, arg9, &sp5C, &sp58, &sp50, argA, argB)) {
         if (sp50 != 0) {
@@ -2601,12 +2587,8 @@ Vec3f* func_8002C3EC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, Vec
     } else {
         var_fv0 = 0.0f;
     }
-    argD->x = arg0->x - arg1->x;
-    argD->y = arg0->y - arg1->y;
-    argD->z = arg0->z - arg1->z;
-    argD->x *= var_fv0;
-    argD->y *= var_fv0;
-    argD->z *= var_fv0;
+    VECTOR_SUBTRACT((*arg0), (*arg1), (*argD));
+    VECTOR_SCALE((*argD), var_fv0);
     argD->x += arg1->x;
     argD->y += arg1->y;
     argD->z += arg1->z;
@@ -2623,27 +2605,19 @@ Vec3f* func_8002C658(Vec3f* arg0, f32 arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, 
     Vec3f sp30;
 
     if (arg1 <= 0.0f) {
-        arg7->x = arg0->x - arg3->x;
-        arg7->y = arg0->y - arg3->y;
-        arg7->z = arg0->z - arg3->z;
+        VECTOR_SUBTRACT(*arg0, *arg3, *arg7);
         vec3_normalize(arg7);
         return arg7;
     }
     if (arg6 <= arg1) {
-        arg7->x = arg0->x - arg3->x;
-        arg7->y = arg0->y - arg3->y;
-        arg7->z = arg0->z - arg3->z;
+        VECTOR_SUBTRACT(*arg0, *arg3, *arg7);
         vec3_normalize(arg7);
         return arg7;
     }
-    sp60.x = arg3->x - arg2->x;
-    sp60.y = arg3->y - arg2->y;
-    sp60.z = arg3->z - arg2->z;
+    VECTOR_SUBTRACT(*arg3, *arg2, sp60);
     vec3_normalize(&sp60);
     vec3_add_with_scale(arg2, &sp60, arg1, &sp30);
-    sp54.x = arg0->x - sp30.x;
-    sp54.y = arg0->y - sp30.y;
-    sp54.z = arg0->z - sp30.z;
+    VECTOR_SUBTRACT(*arg0, sp30, sp54);
     vec3_normalize( &sp54);
     if (arg5 == arg4) {
         arg7->x = sp54.x;
@@ -2651,15 +2625,10 @@ Vec3f* func_8002C658(Vec3f* arg0, f32 arg1, Vec3f* arg2, Vec3f* arg3, f32 arg4, 
         arg7->z = sp54.z;
         return arg7;
     }
-    sp60.x *= arg1;
-    sp60.y *= arg1;
-    sp60.z *= arg1;
+    VECTOR_SCALE(sp60, arg1);
     vec3_add_with_scale(&sp60, &sp54, (arg5 - arg4) * (arg1 / arg6), &sp48);
     vec3_normalize(&sp48);
-    temp_fv0 = 1.0f / arg1;
-    sp60.x *= temp_fv0;
-    sp60.y *= temp_fv0;
-    sp60.z *= temp_fv0;
+    VECTOR_SCALE(sp60, 1.0f / arg1);
     vec3_cross_product(&sp54, &sp60, &sp3C);
     vec3_normalize(&sp3C);
     vec3_cross_product(&sp3C, &sp48, arg7);
@@ -2672,14 +2641,10 @@ Vec3f* func_8002C8C0(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
     Vec3f sp2C;
 
     if (arg2 < 0.0f) {
-        arg8->x = arg0->x - arg3->x;
-        arg8->y = arg0->y - arg3->y;
-        arg8->z = arg0->z - arg3->z;
+        VECTOR_SUBTRACT(*arg0, *arg3, *arg8);
         vec3_normalize(arg8);
         arg1 += arg5;
-        arg8->x *= arg1;
-        arg8->y *= arg1;
-        arg8->z *= arg1;
+        VECTOR_SCALE(*arg8, arg1);
         arg8->x += arg3->x;
         arg8->y += arg3->y;
         arg8->z += arg3->z;
@@ -2687,36 +2652,24 @@ Vec3f* func_8002C8C0(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
     }
 
     if (arg7 < arg2) {
-        arg8->x = arg0->x - arg4->x;
-        arg8->y = arg0->y - arg4->y;
-        arg8->z = arg0->z - arg4->z;
+        VECTOR_SUBTRACT(*arg0, *arg4, *arg8);
         vec3_normalize(arg8);
         arg1 += arg6;
-        arg8->x *= arg1;
-        arg8->y *= arg1;
-        arg8->z *= arg1;
+        VECTOR_SCALE(*arg8, arg1);
         arg8->x += arg4->x;
         arg8->y += arg4->y;
         arg8->z += arg4->z;
         return arg8;
     }
 
-    sp38.x = arg4->x - arg3->x;
-    sp38.y = arg4->y - arg3->y;
-    sp38.z = arg4->z - arg3->z;
+    VECTOR_SUBTRACT(*arg4, *arg3, sp38);
     temp_fv0 = 1.0f / arg7;
-    sp38.x *= temp_fv0;
-    sp38.y *= temp_fv0;
-    sp38.z *= temp_fv0;
+    VECTOR_SCALE(sp38, temp_fv0);
     vec3_add_with_scale(arg3, &sp38, arg2, &sp2C);
-    arg8->x = arg0->x - sp2C.x;
-    arg8->y = arg0->y - sp2C.y;
-    arg8->z = arg0->z - sp2C.z;
+    VECTOR_SUBTRACT(*arg0, sp2C, *arg8);
     vec3_normalize(arg8);
     arg1 = arg5 + arg1 + ((arg6 - arg5) * (arg2 / arg7));
-    arg8->x *= arg1;
-    arg8->y *= arg1;
-    arg8->z *= arg1;
+    VECTOR_SCALE(*arg8, arg1);
     arg8->x += sp2C.x;
     arg8->y += sp2C.y;
     arg8->z += sp2C.z;
@@ -2724,7 +2677,7 @@ Vec3f* func_8002C8C0(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
 }
 
 Vec3f* func_8002CBD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f32 arg5, f32 arg6, f32 arg7, Vec3f* arg8) {
-    f32 temp_fv0;
+    f32 pad;
     Vec3f sp38;
     Vec3f sp2C;
 
@@ -2734,9 +2687,7 @@ Vec3f* func_8002CBD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
         arg8->z = arg0->z - arg3->z;
         vec3_normalize(arg8);
         arg1 += arg5;
-        arg8->x *= arg1;
-        arg8->y *= arg1;
-        arg8->z *= arg1;
+        VECTOR_SCALE(*arg8, arg1);
         arg8->x += arg3->x;
         arg8->y += arg3->y;
         arg8->z += arg3->z;
@@ -2748,30 +2699,21 @@ Vec3f* func_8002CBD4(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, 
         arg8->z = arg0->z - arg4->z;
         vec3_normalize(arg8);
         arg1 += arg6;
-        arg8->x *= arg1;
-        arg8->y *= arg1;
-        arg8->z *= arg1;
+        VECTOR_SCALE(*arg8, arg1);
         arg8->x += arg4->x;
         arg8->y += arg4->y;
         arg8->z += arg4->z;
         return arg8;
     }
-    sp38.x = arg4->x - arg3->x;
-    sp38.y = arg4->y - arg3->y;
-    sp38.z = arg4->z - arg3->z;
-    temp_fv0 = 1.0f / arg7;
-    sp38.x *= temp_fv0;
-    sp38.y *= temp_fv0;
-    sp38.z *= temp_fv0;
+    VECTOR_SUBTRACT(*arg4, *arg3, sp38);
+    VECTOR_SCALE(sp38, 1.0f / arg7);
     vec3_add_with_scale(arg3, (Vec3f* ) &sp38, arg2, &sp2C);
     arg8->x = arg0->x - sp2C.x;
     arg8->y = 0.0f;
     arg8->z = arg0->z - sp2C.z;
     vec3_normalize(arg8);
     arg1 = arg5 + arg1 + ((arg6 - arg5) * (arg2 / arg7));
-    arg8->x *= arg1;
-    arg8->y *= arg1;
-    arg8->z *= arg1;
+    VECTOR_SCALE(*arg8, arg1);
     arg8->x += sp2C.x;
     arg8->y += sp2C.y;
     arg8->z += sp2C.z;
@@ -2796,9 +2738,7 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
         arg10->x = arg0->x - arg3->x;
         arg10->y = 0;
         arg10->z = arg0->z - arg3->z;
-        arg10->x *= arg1;
-        arg10->y *= arg1;
-        arg10->z *= arg1;
+        VECTOR_SCALE(*arg10, arg1);
         arg10->x += arg3->x;
         arg10->y += arg3->y;
         arg10->z += arg3->z;
@@ -2809,9 +2749,7 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
         arg10->x = arg0->x - arg4->x;
         arg10->y = 0;
         arg10->z = arg0->z - arg4->z;
-        arg10->x *= arg1;
-        arg10->y *= arg1;
-        arg10->z *= arg1;
+        VECTOR_SCALE(*arg10, arg1);
         arg10->x += arg4->x;
         arg10->y += arg4->y;
         arg10->z += arg4->z;
@@ -2828,9 +2766,7 @@ void func_8002CEC8(Vec3f* arg0, f32 arg1, f32 arg2, Vec3f* arg3, Vec3f* arg4, f3
     arg10->x = arg0->x - sp10;
     arg10->y = 0;
     arg10->z = arg0->z - sp18;
-    arg10->x *= arg1;
-    arg10->y *= arg1;
-    arg10->z *= arg1;
+    VECTOR_SCALE(*arg10, arg1);
     arg10->x += sp10;
     arg10->y += sp14;
     arg10->z += sp18;
@@ -2865,9 +2801,7 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     obj->speed.x = (obj->srt.transl.x - obj->positionMirror2.x) / gUpdateRateF;
     obj->speed.y = (obj->srt.transl.y - obj->positionMirror2.y) / gUpdateRateF;
     obj->speed.z = (obj->srt.transl.z - obj->positionMirror2.z) / gUpdateRateF;
-    spE8.x = obj->srt.transl.x - obj->positionMirror2.x;
-    spE8.y = obj->srt.transl.y - obj->positionMirror2.y;
-    spE8.z = obj->srt.transl.z - obj->positionMirror2.z;
+    VECTOR_SUBTRACT(obj->srt.transl, obj->positionMirror2, spE8);
     sp84 = vec3_length(&spE8);
 
     sp90.x = arg0->x;
@@ -2891,9 +2825,7 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     while (arg3->unk28 != -1) {
         temp_v0 = func_8002C8C0(&sp90, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
         arg3->unk24 /= arg8;
-        temp_v0->x *= arg3->unk24;
-        temp_v0->y *= arg3->unk24;
-        temp_v0->z *= arg3->unk24;
+        VECTOR_SCALE(*temp_v0, arg3->unk24);
         spDC.x += temp_v0->x;
         spDC.y += temp_v0->y;
         spDC.z += temp_v0->z;
@@ -2906,20 +2838,14 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     }
     vec3_normalize(&sp104);
 
-    spF8.x = spDC.x - sp90.x;
-    spF8.y = spDC.y - sp90.y;
-    spF8.z = spDC.z - sp90.z;
+    VECTOR_SUBTRACT(spDC, sp90, spF8);
     temp_fs0 = vec3_length(&spF8);
 
-    spF8.x = spDC.x - arg0->x;
-    spF8.y = spDC.y - arg0->y;
-    spF8.z = spDC.z - arg0->z;
+    VECTOR_SUBTRACT(spDC, *arg0, spF8);
     vec3_normalize(&spE8);
 
     if (temp_fs0 < sp84) {
-        spE8.x *= sp84 - temp_fs0;
-        spE8.y *= sp84 - temp_fs0;
-        spE8.z *= sp84 - temp_fs0;
+        VECTOR_SCALE(spE8, sp84 - temp_fs0);
         vec3_reflect(&sp104, &spE8, &spAC);
     } else {
         spAC.x = 0.0f;
@@ -2938,9 +2864,7 @@ s32 func_8002D0DC(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     arg3 = sp7C;
     while (arg3->unk28 != -1) {
         temp_v0 = func_8002C8C0(&spDC, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
-        temp_v0->x *= arg3->unk24;
-        temp_v0->y *= arg3->unk24;
-        temp_v0->z *= arg3->unk24;
+        VECTOR_SCALE(*temp_v0, arg3->unk24);
         spAC.x += temp_v0->x;
         spAC.y += temp_v0->y;
         spAC.z += temp_v0->z;
@@ -2991,9 +2915,7 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     sp90.y = arg0->y;
     sp90.z = arg0->z;
 
-    spE8.x *= arg7;\
-    spE8.y *= arg7;\
-    spE8.z *= arg7;
+    VECTOR_SCALE(spE8, arg7);
 
     sp90.x -= spE8.x;\
     sp90.y -= spE8.y;\
@@ -3012,9 +2934,7 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     while (arg3->unk28 != -1) {
         temp_v0 = func_8002CBD4(&sp90, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
         arg3->unk24 /= arg8;
-        temp_v0->x *= arg3->unk24;
-        temp_v0->y *= arg3->unk24;
-        temp_v0->z *= arg3->unk24;
+        VECTOR_SCALE(*temp_v0, arg3->unk24);
         spDC.x += temp_v0->x;
         spDC.y += temp_v0->y;
         spDC.z += temp_v0->z;
@@ -3037,9 +2957,7 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     vec3_normalize(&spE8);
     if (temp_fv0 < sp84) {
         arg7 = ((1.0f - arg7) * 0.25f) + 0.75;
-        spE8.x *= (sp84 - temp_fv0) * arg7;
-        spE8.y *= (sp84 - temp_fv0) * arg7;
-        spE8.z *= (sp84 - temp_fv0) * arg7;
+        VECTOR_SCALE(spE8, (sp84 - temp_fv0) * arg7);
         vec3_reflect(&sp104, &spE8, &spAC);
     } else {
         spAC.x = 0.0f;
@@ -3057,9 +2975,7 @@ s32 func_8002D69C(Vec3f* arg0, f32 arg1, Object* obj, Unk80030A24* arg3, ModelIn
     arg3 = sp7C;
     while (arg3->unk28 != -1) {
         temp_v0 = func_8002CBD4(&spDC, arg1, arg3->unk14.x, arg3->unk0, arg3->unk4, arg4->unk4[arg3->unk28], arg4->unk4[arg3->unk2C], arg4->unkC[arg3->unk28], &spB8);
-        temp_v0->x *= arg3->unk24;
-        temp_v0->y *= arg3->unk24;
-        temp_v0->z *= arg3->unk24;
+        VECTOR_SCALE(*temp_v0, arg3->unk24);
         spAC.x += temp_v0->x;
         spAC.y += temp_v0->y;
         spAC.z += temp_v0->z;
@@ -3096,9 +3012,7 @@ s32 func_8002DC58(Unk8002F498* arg0, Unk8002F498* arg1, Unk8002F498* arg2, Unk80
 
     sp104 = arg0->unk0;
     sp100 = arg1->unk0;
-    spE4.x = sp104->x - sp100->x;
-    spE4.y = sp104->y - sp100->y;
-    spE4.z = sp104->z - sp100->z;
+    VECTOR_SUBTRACT(*sp104, *sp100, spE4);
     spC8 = sqrtf(SQ(spE4.x) + SQ(spE4.y) + SQ(spE4.z));
     spE0 = arg0->unk4;
     spDC = arg1->unk4;
@@ -3192,13 +3106,9 @@ s32 func_8002DFB8(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
             temp_fv0 = arg2->unkC[var_s3] + var_fa1 + (2.0f * arg1);
             temp_fv0 *= temp_fv0;
             if ((SQ(temp_ft4) + SQ(zero_f) + SQ(temp_fs1)) < temp_fv0) {
-                sp108.x = temp_s2->x - temp_s1->x;
-                sp108.y = temp_s2->y - temp_s1->y;
-                sp108.z = temp_s2->z - temp_s1->z;
+                VECTOR_SUBTRACT(*temp_s2, *temp_s1, sp108);
                 temp_fv0 = 1.0f / arg2->unkC[var_s3];
-                sp108.x *= temp_fv0;
-                sp108.y *= temp_fv0;
-                sp108.z *= temp_fv0;
+                VECTOR_SCALE(sp108, temp_fv0);
                 if (func_8002BD04(&arg0, arg1, temp_s1, &sp108, temp_s2, temp_fv1, temp_fa0, arg2->unkC[var_s3], &spD4, &spC4, &spC0) != 0) {
                     arg2->unk18[var_s3] = 1;
                     arg2->unk18[temp_s5] = 1;
@@ -3305,15 +3215,11 @@ s32 func_8002E3D0(Vec3f arg0, f32 arg1, ModelInstance_0x14* arg2, Model* model, 
                     temp_fv0 = arg2->unkC[var_s3] + var_fv1 + (2.0f * arg1);
                     temp_fv0 *= temp_fv0;
                     if ((SQ(temp_ft4) + SQ(zero_f) + SQ(temp_ft5)) < (temp_fv0)) {
-                        sp110.x = temp_s2->x - temp_s1->x;
-                        sp110.y = temp_s2->y - temp_s1->y;
-                        sp110.z = temp_s2->z - temp_s1->z;
+                        VECTOR_SUBTRACT(*temp_s2, *temp_s1, sp110);
                         var_fv1 = arg2->unkC[var_s3];
                         if (var_fv1 != 0.0f) {
                             temp_fv0 = 1.0f / var_fv1;
-                            sp110.x *= temp_fv0;
-                            sp110.y *= temp_fv0;
-                            sp110.z *= temp_fv0;
+                            VECTOR_SCALE(sp110, temp_fv0);
                             var_fv1 = arg2->unkC[var_s3];
                         }
                         if (func_8002BF0C(&arg0, arg1, temp_s1, &sp110, temp_s2, temp_fa0, temp_fa1, var_fv1, &spDC, &spCC, &spC8) != 0) {
@@ -3813,9 +3719,7 @@ s32 func_8002F998(ModelInstance_0x14* arg0, Model* arg1, Vec3f* arg2, ModelInsta
                                                 }
                                                 temp_fv0 = (var_fv1 + var_fa0) - var_s3->unk14.y;
                                                 var_s3->unk14.z = temp_fv0;
-                                                var_s3->unk8.x *= temp_fv0;
-                                                var_s3->unk8.y *= temp_fv0;
-                                                var_s3->unk8.z *= temp_fv0;
+                                                VECTOR_SCALE(var_s3->unk8, temp_fv0);
                                                 var_s3->unk28 = sp13C;
                                                 if (sp118 < 20) {
                                                     var_s3 += 1;
@@ -3936,9 +3840,7 @@ void func_80030338(ModelInstance_0x14* arg0, Model* arg1, Vec3f *arg2, ModelInst
                     sp1BC.y = var_s1->y - var_s2->y;
                     sp1BC.z = var_s1->z - var_s2->z;
                     var_fv0 = 1.0f / arg0->unkC[var_s6];
-                    sp1BC.x *= var_fv0;
-                    sp1BC.y *= var_fv0;
-                    sp1BC.z *= var_fv0;
+                    VECTOR_SCALE(sp1BC, var_fv0);
                     if (func_8002BD04(arg7, arg8, var_s2, &sp1BC, var_s1, var_fs1, temp_fs0, arg0->unkC[var_s6], &spC4, &spBC, &spB8) != 0) {
                         if (spD8[temp_var_s0] & 4) {
                             func_8002F04C(sp1A0, var_s2, &arg2[temp_var_s0], sqrtf(var_fs1), sqrtf(temp_fs0));
@@ -4015,17 +3917,12 @@ void func_80030994(ModelInstance* modelInstance, f32 arg1, f32 arg2) {
 }
 
 void func_80030A24(Object *arg0, Object *arg1, Unk80030A24* arg2, f32 arg3, s32 arg4, Vec3f* arg5) {
-    f32 temp_fv0;
-
     arg5->x = 0.0f;
     arg5->y = 0.0f;
     arg5->z = 0.0f;
     arg3 = (2.0f * (1.0f / arg3));
     while (arg2->unk28 != -1) {
-        temp_fv0 = arg2->unk24 * arg3;
-        arg2->unk8.x *= temp_fv0;
-        arg2->unk8.y *= temp_fv0;
-        arg2->unk8.z *= temp_fv0;
+        VECTOR_SCALE(arg2->unk8, arg2->unk24 * arg3);
         arg5->x += arg2->unk8.x;
         arg5->y += arg2->unk8.y;
         arg5->z += arg2->unk8.z;

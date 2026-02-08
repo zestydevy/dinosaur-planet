@@ -9,6 +9,10 @@
 #include "sys/objects.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
+#include "sys/main.h"
+#include "dlls/objects/210_player.h"
+#include "sys/fonts.h"
+#include "sys/rcp.h"
 #include "prevent_bss_reordering.h"
 
 typedef struct {
@@ -768,7 +772,7 @@ void dll_1_func_474C(Gfx** gfx) {
     s32 resolution;
 
     resolution = vi_get_current_size();
-    gDPSetScissor((*gfx)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution))
+    gDPSetScissor((*gfx)++, 0 , 0, 0, GET_VIDEO_WIDTH(resolution), GET_VIDEO_HEIGHT(resolution));
 }
 
 // offset: 0x47E8 | func: 33

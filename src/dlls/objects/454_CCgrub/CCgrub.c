@@ -33,7 +33,7 @@ typedef struct {
 
 static void CCgrub_func_AB0(Object *self, CCgrub_Data *objdata, f32 a2);
 static void CCgrub_func_BE8(Object* self, CCgrub_Data* objdata, f32 a2, f32 a3);
-static void CCgrub_func_CEC(Object* self, f32* a1, f32 a2, f32* a3);
+static void CCgrub_func_CEC(Object* self, Vec3f* a1, f32 a2, f32* a3);
 static void CCgrub_func_DC4(Object *self, CCgrub_Data *objdata);
 static void CCgrub_func_104C(Object* self, CCgrub_Data* objdata);
 
@@ -257,8 +257,8 @@ static void CCgrub_func_BE8(Object* self, CCgrub_Data* objdata, f32 a2, f32 a3) 
     s32 i;
 
     temp_fs1 = SQ(a2 * gUpdateRateF);
-    var_fv0 = objdata->unk0.unk68 - self->srt.transl.x;
-    var_fv1 = objdata->unk0.unk70 - self->srt.transl.z;
+    var_fv0 = objdata->unk0.unk68.x - self->srt.transl.x;
+    var_fv1 = objdata->unk0.unk68.z - self->srt.transl.z;
 
     var_fs0 = objdata->unk0.unk80 != 0 ? -a3 : a3;
     
@@ -269,26 +269,24 @@ static void CCgrub_func_BE8(Object* self, CCgrub_Data* objdata, f32 a2, f32 a3) 
 
         func_800053B0(&objdata->unk0, var_fs0);
 
-        var_fv0 = objdata->unk0.unk68 - self->srt.transl.x;
-        var_fv1 = objdata->unk0.unk70 - self->srt.transl.z;
+        var_fv0 = objdata->unk0.unk68.x - self->srt.transl.x;
+        var_fv1 = objdata->unk0.unk68.z - self->srt.transl.z;
     }
 }
 
 // offset: 0xCEC | func: 9
-static void CCgrub_func_CEC(Object* self, f32* a1, f32 a2, f32* a3) {
+static void CCgrub_func_CEC(Object* self, Vec3f* a1, f32 a2, f32* a3) {
     f32 temp_fa1;
     f32 temp_ft4;
     f32 temp_fv0;
-    f32 temp_fv1;
 
-    temp_fa1 = a1[0] - self->srt.transl.x;
-    temp_ft4 = a1[2] - self->srt.transl.z;
+    temp_fa1 = a1->x - self->srt.transl.x;
+    temp_ft4 = a1->z - self->srt.transl.z;
     temp_fv0 = sqrtf(SQ(temp_fa1) + SQ(temp_ft4));
     if (temp_fv0 != 0.0f) {
-        temp_fv1 = temp_fa1 / temp_fv0;
-        a3[0] = temp_fv1;
-        a3[1] = (f32) (temp_ft4 / temp_fv0);
-        self->srt.transl.x += temp_fv1 * a2 * gUpdateRateF;
+        a3[0] = temp_fa1 / temp_fv0;
+        a3[1] = temp_ft4 / temp_fv0;
+        self->srt.transl.x += a3[0] * a2 * gUpdateRateF;
         self->srt.transl.z += a3[1] * a2 * gUpdateRateF;
     }
 }
@@ -304,7 +302,7 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
         objdata->unk140 -= 10.0f;
     }
     func_8002493C(self, objdata->unk10C, &objdata->unk110);
-    self->srt.transl.y = objdata->unk0.unk6C;
+    self->srt.transl.y = objdata->unk0.unk68.y;
     self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
@@ -348,7 +346,7 @@ void CCgrub_func_104C(Object* self, CCgrub_Data* objdata) {
     }
     CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
     CCgrub_func_CEC(self, &objdata->unk0.unk68, objdata->unk10C, &objdata->unk114);
-    self->srt.transl.y = objdata->unk0.unk6C;
+    self->srt.transl.y = objdata->unk0.unk68.y;
     self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
 }
 

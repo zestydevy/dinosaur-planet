@@ -1954,9 +1954,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             arg2->unk7A = arg2->unk7C;
             if (arg2->unk62 != 2) {
                 arg2->unk58 = 1.0f;
-                arg2->unk4C.x = arg0->srt.transl.x - arg1->srt.transl.x;
-                arg2->unk4C.y = arg0->srt.transl.y - arg1->srt.transl.y;
-                arg2->unk4C.z = arg0->srt.transl.z - arg1->srt.transl.z;
+                VECTOR_SUBTRACT(arg0->srt.transl, arg1->srt.transl, arg2->unk4C);
                 arg2->yawDiff = arg0->srt.yaw - (arg1->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(arg2->yawDiff)
                 arg2->pitchDiff = arg0->srt.pitch - (arg1->srt.pitch & 0xFFFF);
@@ -3700,7 +3698,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     f32 sp84;
     Object* temp_v0_2;
     f32 var_fv1;
-    f32 sp70[3];
+    Vec3f sp70;
     Vec3f sp64;
     Vec3s16 sp5C;
     Vec3s16 sp54;
@@ -3773,10 +3771,8 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     func_80007EE0(&sp64, &sp54);
     if (func_80008048(&sp5C, &sp54, &sp4C, 0, 0) == 0) {
         func_80007E2C(&sp64, &sp4C);
-        sp70[0] = sp64.x - temp_v0_2->srt.transl.x;
-        sp70[1] = sp64.y - temp_v0_2->srt.transl.y;
-        sp70[2] = sp64.z - temp_v0_2->srt.transl.z;
-        var_fv1 = sqrtf(SQ(sp70[0]) + SQ(sp70[1]) + SQ(sp70[2]));
+        VECTOR_SUBTRACT(sp64, temp_v0_2->srt.transl, sp70);
+        var_fv1 = VECTOR_MAGNITUDE(sp70);
     } else {
         var_fv1 = 200.0f;
     }

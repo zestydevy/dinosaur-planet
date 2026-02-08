@@ -103,7 +103,7 @@ MtxF *func_80032170(Object* obj, s32 arg1);
 
 s16 func_80000824(s32 arg0);
 
-void func_80058680(Object*, f32, f32, f32, f32*, s32);
+s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
 void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3);
 s32 func_80056BCC(Vec3f*, Vec3f*, Vec3f*, Vec4f*, Vec3f*, f32);
 

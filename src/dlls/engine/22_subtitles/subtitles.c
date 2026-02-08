@@ -71,7 +71,7 @@ typedef struct StructData1C {
 /*0x4*/ static s32 sWindowID;
 /*0x8*/ static s32 _bss_8;
 /*0xC*/ static s32 _bss_C;
-/*0x10*/ static Func_80037F9C_Struct _bss_10;
+/*0x10*/ static Func_80037F9C_Struct _bss_10[3];
 /*0x38*/ static StructBss38 _bss_38[3];
 /*0x77C*/ static u8 _bss_77C[0x4];
 /*0x780*/ static StructBss38 *_bss_780[3];
@@ -139,16 +139,16 @@ void dll_22_ctor(s32 arg0) {
             var_v0->unkC8[1][j].unkA = NULL;
         }
     }
-    _bss_10.unk0 = tex_load_deferred(0x27B);
-    _bss_10.unkC = tex_load_deferred(0x27C);
-    _bss_10.unk18 = 0;
-    _bss_10.unk8 = 0;
-    _bss_10.unk14 = _bss_10.unk0->width;
-    _bss_7A3 = _bss_10.unkC->width + _bss_10.unk0->width;
-    _bss_10.unkA = -2;
-    _bss_10.unk16 = -2;
-    _bss_10.pad4 = 0;
-    _bss_10.unk10 = 0;
+    _bss_10[0].unk0 = tex_load_deferred(0x27B);
+    _bss_10[1].unk0 = tex_load_deferred(0x27C);
+    _bss_10[2].unk0 = NULL;
+    _bss_10[0].unk8 = 0;
+    _bss_10[1].unk8 = _bss_10[0].unk0->width;
+    _bss_7A3 = _bss_10[0].unk0->width + _bss_10[1].unk0->width;
+    _bss_10[0].unkA = -2;
+    _bss_10[1].unkA = -2;
+    _bss_10[0].unk4 = 0;
+    _bss_10[1].unk4 = 0;
 }
 
 // offset: 0x1D4 | dtor
@@ -172,8 +172,8 @@ void dll_22_dtor(s32 arg0) {
             }
         }
     }
-    tex_free(_bss_10.unk0);
-    tex_free(_bss_10.unkC);
+    tex_free(_bss_10[0].unk0);
+    tex_free(_bss_10[1].unk0);
 }
 
 // offset: 0x2D0 | func: 0 | export: 0

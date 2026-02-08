@@ -46,15 +46,10 @@ void vec3_cross_product_2(const Vec3f *v1, const Vec3f *v2, Vec3f *result) {
  */
 f32 vec3_normalize(Vec3f *v) {
     f32 length;
-    f32 lengthInv;
 
-    length = sqrtf(v->z * v->z + (v->x * v->x + v->y * v->y));
-
+    length = VECTOR_MAGNITUDE(*v);
     if (length != 0.0f) {
-        lengthInv = 1.0f / length;
-        v->x = v->x * lengthInv;
-        v->y = v->y * lengthInv;
-        v->z = v->z * lengthInv;
+        VECTOR_SCALE(*v, 1.0f / length);
     }
 
     return length;
@@ -64,9 +59,7 @@ f32 vec3_normalize(Vec3f *v) {
  * Subtracts v2 from v1 and stores the difference in result.
  */
 void vec3_sub(const Vec3f *v1, const Vec3f *v2, Vec3f *result) {
-    result->x = v1->x - v2->x;
-    result->y = v1->y - v2->y;
-    result->z = v1->z - v2->z;
+    VECTOR_SUBTRACT(*v1, *v2, *result);
 }
 
 /**

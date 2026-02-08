@@ -560,7 +560,7 @@ s32 dll_428_func_1438(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
     baddie = arg0->data;
     baddieCurves = baddie->unk3F8;
     sp3C = baddie->objdata;
-    temp2 = func_800053B0(baddieCurves, 5.0f / (SQ(baddieCurves->unk70 - arg0->srt.transl.f[2]) + SQ(baddieCurves->unk68 - arg0->srt.transl.f[0])));
+    temp2 = func_800053B0(baddieCurves, 5.0f / (SQ(baddieCurves->unk68.f[2] - arg0->srt.transl.f[2]) + SQ(baddieCurves->unk68.f[0] - arg0->srt.transl.f[0])));
     if (((temp2 != 0) || (baddieCurves->unk10 != 0)) && (gDLL_26_Curves->vtbl->func_4704(baddieCurves) != 0)) {
         arg1->animState = 7;
         arg1->enteredAnimState = 0;
@@ -588,7 +588,7 @@ s32 dll_428_func_1438(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
         }
         arg1->unk278 *= (f32) sp3C->unk2 / 100.0f;
         arg1->speed = arg1->unk278;
-        gDLL_18_objfsa->vtbl->func6(arg0, arg1, baddieCurves->unk68, baddieCurves->unk70, 0, 0, 60.0f);
+        gDLL_18_objfsa->vtbl->func6(arg0, arg1, baddieCurves->unk68.f[0], baddieCurves->unk68.f[2], 0, 0, 60.0f);
         arg1->animState = 8;
         return 0;
     }

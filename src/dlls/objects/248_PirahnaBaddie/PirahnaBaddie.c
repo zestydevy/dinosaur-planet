@@ -139,9 +139,9 @@ void dll_248_control(Object* self) {
             objdata->unk10 = sqrtf(SQ(sp54.f[0]) + SQ(sp54.f[1]) + SQ(sp54.f[2]));
         }
         if (sp68 != NULL) {
-            sp54.f[0] = sp68->unk68 - self->positionMirror.f[0];
-            sp54.f[1] = sp68->unk6C - self->positionMirror.f[1];
-            sp54.f[2] = sp68->unk70 - self->positionMirror.f[2];
+            sp54.f[0] = sp68->unk68.f[0] - self->positionMirror.f[0];
+            sp54.f[1] = sp68->unk68.f[1] - self->positionMirror.f[1];
+            sp54.f[2] = sp68->unk68.f[2] - self->positionMirror.f[2];
             objdata->unk14 = sqrtf(SQ(sp54.f[0]) + SQ(sp54.f[1]) + SQ(sp54.f[2]));
         }
         if (objdata->flags & 2) {
@@ -237,13 +237,13 @@ static void dll_248_func_A5C(Object* self, PirahnaBaddie_Data* objdata) {
         self->speed.f[1] += ((objdata->player->srt.transl.f[1] + 60.0f) - self->srt.transl.f[1]) * 0.001f;
         self->speed.f[2] += (objdata->player->srt.transl.f[2] - self->srt.transl.f[2]) * 0.001f;
     } else if (objdata->flags & 4) {
-        self->speed.f[0] += (temp_s2->unk68 - self->srt.transl.f[0]) * 0.001f;
-        self->speed.f[1] += (temp_s2->unk6C - self->srt.transl.f[1]) * 0.001f;
-        self->speed.f[2] += (temp_s2->unk70 - self->srt.transl.f[2]) * 0.001f;
+        self->speed.f[0] += (temp_s2->unk68.f[0] - self->srt.transl.f[0]) * 0.001f;
+        self->speed.f[1] += (temp_s2->unk68.f[1] - self->srt.transl.f[1]) * 0.001f;
+        self->speed.f[2] += (temp_s2->unk68.f[2] - self->srt.transl.f[2]) * 0.001f;
     } else {
-        self->speed.f[0] += (temp_s2->unk68 - self->srt.transl.f[0]) * 0.001f;
-        self->speed.f[1] += ((temp_s2->unk6C + ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2A)) * 10.0f)) - self->srt.transl.f[1]) * 0.001f;
-        self->speed.f[2] += (temp_s2->unk70 - self->srt.transl.f[2]) * 0.001f;
+        self->speed.f[0] += (temp_s2->unk68.f[0] - self->srt.transl.f[0]) * 0.001f;
+        self->speed.f[1] += ((temp_s2->unk68.f[1] + ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2A)) * 10.0f)) - self->srt.transl.f[1]) * 0.001f;
+        self->speed.f[2] += (temp_s2->unk68.f[2] - self->srt.transl.f[2]) * 0.001f;
     }
     self->speed.f[0] *= 0.9f;
     self->speed.f[1] *= 0.9f;

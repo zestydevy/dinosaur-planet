@@ -45,15 +45,23 @@
 
 #define DOT_PRODUCT(vA, vB) ((vA.f[0] * vB.f[0]) + (vA.f[1] * vB.f[1]) + (vA.f[2] * vB.f[2]))
 
-#define VECTOR_ADD(vInA, vInB, vOut) vOut.f[0] = vInA.f[0] + vInB.f[0];\
-    vOut.f[1] = vInA.f[1] + vInB.f[1];\
-    vOut.f[2] = vInA.f[2] + vInB.f[2];
+#define VECTOR_ADD(vInA, vInB, vOut) (vOut).f[0] = (vInA).f[0] + (vInB).f[0];\
+    (vOut).f[1] = (vInA).f[1] + (vInB).f[1];\
+    (vOut).f[2] = (vInA).f[2] + (vInB).f[2];
 
-#define VECTOR_SUBTRACT(vInA, vInB, vOut) vOut.f[0] = vInA.f[0] - vInB.f[0];\
-    vOut.f[1] = vInA.f[1] - vInB.f[1];\
-    vOut.f[2] = vInA.f[2] - vInB.f[2];
+#define VECTOR_SUBTRACT(vInA, vInB, vOut) (vOut).f[0] = (vInA).f[0] - (vInB).f[0];\
+    (vOut).f[1] = (vInA).f[1] - (vInB).f[1];\
+    (vOut).f[2] = (vInA).f[2] - (vInB).f[2];
 
-#define VECTOR_MAGNITUDE_SQUARED(v) (SQ(v.f[0]) + SQ(v.f[1]) + SQ(v.f[2]))
+#define VECTOR_MULTIPLY(vInA, vInB, vOut) (vOut).f[0] = (vInA).f[0] * (vInB).f[0];\
+    (vOut).f[1] = (vInA).f[1] * (vInB).f[1];\
+    (vOut).f[2] = (vInA).f[2] * (vInB).f[2];
+
+#define VECTOR_SCALE(vIn, factor) (vIn).f[0] *= (factor);\
+    (vIn).f[1] *= (factor);\
+    (vIn).f[2] *= (factor);
+
+#define VECTOR_MAGNITUDE_SQUARED(v) (SQ((v).f[0]) + SQ((v).f[1]) + SQ((v).f[2]))
 
 #define VECTOR_MAGNITUDE(v) sqrtf(VECTOR_MAGNITUDE_SQUARED(v))
 

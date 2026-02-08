@@ -821,8 +821,8 @@ void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
 
     result = gDLL_26_Curves->vtbl->func_4288(&objdata->unk60, snowhorn, 1000.0f, &sp2C, -1);
     if (!result){
-        snowhorn->srt.transl.x = objdata->unk60.unk68;
-        snowhorn->srt.transl.z = objdata->unk60.unk70;
+        snowhorn->srt.transl.x = objdata->unk60.unk68.x;
+        snowhorn->srt.transl.z = objdata->unk60.unk68.z;
         
         objdata->flags = 1;
         objdata->walkSpeed = 0.5f;
@@ -907,15 +907,15 @@ void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup*
         if ((func_800053B0(curveStruct, objdata->walkSpeed) != 0) || (curveStruct->unk10 != 0)) {
             gDLL_26_Curves->vtbl->func_4704(curveStruct);
         }
-        dx = curveStruct->unk68 - snowhorn->srt.transl.x;
-        dz = curveStruct->unk70 - snowhorn->srt.transl.z;
+        dx = curveStruct->unk68.x - snowhorn->srt.transl.x;
+        dz = curveStruct->unk68.z - snowhorn->srt.transl.z;
 
         //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf((dx * dx) + (dz * dz)) * gUpdateRateInverseF;
         func_8002493C(snowhorn, speed, &objdata->unk50);
         snowhorn->srt.yaw = arctan2_f(curveStruct->unk74, curveStruct->unk7C) + 0x8000;
-        snowhorn->srt.transl.x = curveStruct->unk68;
-        snowhorn->srt.transl.z = curveStruct->unk70;
+        snowhorn->srt.transl.x = curveStruct->unk68.x;
+        snowhorn->srt.transl.z = curveStruct->unk68.z;
         objdata->unk424 &= 0xFFFB;
         
         if (objdata->walkSpeed <= 0.0f) {

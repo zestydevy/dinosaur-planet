@@ -2,7 +2,6 @@
 #include "sys/map.h"
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
-#include "prevent_bss_reordering.h"
 #include "sys/oldshadows.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])

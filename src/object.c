@@ -928,7 +928,7 @@ void func_80021E74(f32 scale, ModelInstance *modelInst) {
                 sp2EC.f[0] = model->joints[i].x;
                 sp2EC.f[1] = model->joints[i].y;
                 sp2EC.f[2] = model->joints[i].z;
-                temp_v0_2->unkC[i] = sqrtf(SQ(sp2EC.f[0]) + SQ(sp2EC.f[1]) + SQ(sp2EC.f[2])) * scale;
+                temp_v0_2->unkC[i] = VECTOR_MAGNITUDE(sp2EC) * scale;
                 if (temp_v0_2->unkC[i] == 0.0f) {
                     temp_v0_2->unkC[i] = 0.1f;
                 }
