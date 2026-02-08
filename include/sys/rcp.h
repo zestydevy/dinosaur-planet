@@ -15,6 +15,13 @@ void rcp_set_screen_color(u8 red, u8 green, u8 blue);
 void rcp_set_border_color(u32 red, u32 green, s32 blue);
 
 void func_80037A14(Gfx**, Mtx **, s32);
+// Size: 0xC
+typedef struct Func_80037F9C_Struct {
+    Texture *unk0;
+    s32 unk4;
+    s16 unk8;
+    s16 unkA;
+} Func_80037F9C_Struct;
 void func_80037F9C(Gfx**, Func_80037F9C_Struct*, s32, s32, s32, s32, s32, s32);
 /** Draws a 2D texture to screen, scaling it down horizontally (from its left edge) if
   * widescreen is enabled in order to maintain aspect ratio 

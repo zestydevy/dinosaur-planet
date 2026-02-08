@@ -168,7 +168,7 @@ void krazoatext_print_text(Object* self, Gfx** gfx) {
                 ((Func_80037F9C_Struct*)currentGlyph)->unk0 = objdata->glyphs[glyphIndex];
                 ((Func_80037F9C_Struct*)currentGlyph)->unk8 = 0;
                 ((Func_80037F9C_Struct*)currentGlyph)->unkA = 0;
-                ((Func_80037F9C_Struct*)currentGlyph)->pad4 = 0;
+                ((Func_80037F9C_Struct*)currentGlyph)->unk4 = 0;
                 func_80037F9C(gfx, (Func_80037F9C_Struct*)&currentGlyph, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
             }
         }
