@@ -41,23 +41,23 @@ void dll_60_ctor(void *dll) {
 
     if (osMemSize != 0x800000) {
         data_4 = 1;
-        data_10 = queue_load_texture_proxy(0x2da);
+        data_10 = tex_load_deferred(0x2da);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F3_Expansion_Pak_Needed);
     } else {
         bss_4 = 0;
         bss_0 = 0.0f;
         font_load(FONT_DINO_MEDIUM_FONT_IN);
         font_load(FONT_DINO_MEDIUM_FONT_OUT);
-        func_80014B1C();
+        main_load_frontend();
         data_4 = 0;
         func_800141A4(1, 0, PLAYER_NONE, -1);
-        gDLL_5_AMSEQ->vtbl->func0(NULL, 0x20, 0, 0x2f, 0);
+        gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
         main_set_bits(BIT_44F, 1);
         gDLL_2_Camera->vtbl->func21(30, 1);
-        data_8 = queue_load_texture_proxy(0x2d2);
-        data_C = queue_load_texture_proxy(0x2d3);
-        bss_18 = queue_load_texture_proxy(0x2db);
-        bss_1C = queue_load_texture_proxy(0x2dc);
+        data_8 = tex_load_deferred(0x2d2);
+        data_C = tex_load_deferred(0x2d3);
+        bss_18 = tex_load_deferred(0x2db);
+        bss_1C = tex_load_deferred(0x2dc);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F2_Splash_Screen);
         gDLL_29_Gplay->vtbl->get_game_options(); // ignoring return value
     }
@@ -68,12 +68,12 @@ void dll_60_ctor(void *dll) {
 
 void dll_60_dtor(void *dll) {
     if (data_4 == 1) {
-        texture_destroy(data_10);
+        tex_free(data_10);
     } else {
-        texture_destroy(data_8);
-        texture_destroy(data_C);
-        texture_destroy(bss_18);
-        texture_destroy(bss_1C);
+        tex_free(data_8);
+        tex_free(data_C);
+        tex_free(bss_18);
+        tex_free(bss_1C);
     }
 
     mmFree(splashGametext);

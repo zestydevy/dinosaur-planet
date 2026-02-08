@@ -37,19 +37,19 @@ typedef struct {
     /*0x5a*/ u8 unk5A;  //bitfield, unk93 in ObjDef, collision size/shape?
     /*0x5b*/ u8 unk5B;
     /*0x5c*/ u8 unk5C;
-    /*0x5d*/ s8 unk5D;
-    /*0x5e*/ s8 unk5E;
-    /*0x5f*/ u8 unk5F;
-    /*0x60*/ u8 unk60;
+    /*0x5d*/ s8 unk5D; // collision type
+    /*0x5e*/ s8 unk5E; // damage
+    /*0x5f*/ u8 unk5F; // collision type
+    /*0x60*/ u8 unk60; // damage
     /*0x61*/ s8 unk61;
     /*0x62*/ s8 unk62;
     /*0x63*/ s8 unk63[3];
-    /*0x66*/ s8 unk66[3];
-    /*0x69*/ u8 unk69[3];
-    /*0x6c*/ struct Object *unk6C[3];
-    /*0x78*/ f32 unk78[3];
-    /*0x84*/ f32 unk84[3];
-    /*0x90*/ f32 unk90[3];
+    /*0x66*/ s8 hitTypeList[3]; // collision types we were hit with
+    /*0x69*/ u8 hitDamageList[3];
+    /*0x6c*/ struct Object *hitByList[3];
+    /*0x78*/ f32 hitXList[3];
+    /*0x84*/ f32 hitYList[3];
+    /*0x90*/ f32 hitZList[3];
     /*0x9c*/ s8 unk9C;
     /*0x9d*/ s8 unk9D;
     /*0x9e*/ u8 unk9E;

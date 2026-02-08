@@ -4,6 +4,7 @@
 #include "sys/math.h"
 #include "sys/objanim.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
     s32 unk0;

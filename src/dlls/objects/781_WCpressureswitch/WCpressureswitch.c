@@ -53,8 +53,8 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
     objdata = self->data;
     self->modelInstIdx = setup->modelIdx;
     if (self->modelInstIdx >= self->def->numModels) {
-        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n");
         self->modelInstIdx = 0;
+        STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", setup->base.objId);
     }
 
     if (main_get_bits(setup->gameBitPressed)) {
@@ -95,9 +95,9 @@ void WCpressureswitch_control(Object* self) {
     }
 
     //Handle adding objects to switch
-    if (self->unk58->unk10F > 0) {
-        for (index = 0; index < self->unk58->unk10F; index++){
-            listedObject = (Object*)self->unk58->unk100[index];
+    if (self->polyhits->unk10F > 0) {
+        for (index = 0; index < self->polyhits->unk10F; index++){
+            listedObject = (Object*)self->polyhits->unk100[index];
             deltaY = listedObject->srt.transl.y - self->srt.transl.y;
             if (deltaY > setup->yThreshold) {
                 WCpressureswitch_add_object(self, listedObject);

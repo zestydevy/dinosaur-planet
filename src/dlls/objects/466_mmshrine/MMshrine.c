@@ -104,7 +104,7 @@ void MMshrine_control(Object *self) {
         self->positionMirror.x = self->srt.transl.x;
         self->positionMirror.y = self->srt.transl.y;
         self->positionMirror.z = self->srt.transl.z;
-        gDLL_5_AMSEQ->vtbl->func5(2, 0x2B, 0x50, 1, 0);
+        gDLL_5_AMSEQ->vtbl->play_ex(2, 0x2B, 0x50, 1, 0);
         main_set_bits(BIT_DB_Entered_Shrine_2, 1);
         _data_4 = 0;
     }
@@ -118,7 +118,7 @@ void MMshrine_control(Object *self) {
             objdata->unk4 = 0x46;
             objdata->unk6 = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(2, objdata->unk4);
+        gDLL_5_AMSEQ->vtbl->set_volume(2, objdata->unk4);
     }
     if (objdata->unkA != 0) {
         objdata->unk8 = (s16) (objdata->unk8 + objdata->unkA);
@@ -129,14 +129,14 @@ void MMshrine_control(Object *self) {
             objdata->unk8 = 0x46;
             objdata->unkA = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
+        gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
     if (objdata->unk2 > 0) {
         objdata->unk2 = (s16) (objdata->unk2 - gUpdateRate);
         if (objdata->unk2 <= 0) {
             objdata->unk2 = 0;
             if (objdata->unk12 == 0) {
-                gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, objdata->unk8, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, objdata->unk8, 0);
                 objdata->unk12 = 1;
             }
         }
@@ -158,12 +158,12 @@ void MMshrine_control(Object *self) {
                 if (var_v0 <= 0) {
                     var_v0 = 1;
                 }
-                gDLL_5_AMSEQ->vtbl->func13(3, var_v0);
+                gDLL_5_AMSEQ->vtbl->set_volume(3, var_v0);
                 var_v0 = (s16) (s32) ((f32) objdata->unk4 * ((200.0f - (var_fv0 - 100.0f)) / 200.0f));
                 if (var_v0 <= 0) {
                     var_v0 = 1;
                 }
-                gDLL_5_AMSEQ->vtbl->func13(2, var_v0);
+                gDLL_5_AMSEQ->vtbl->set_volume(2, var_v0);
             }
         }
         switch (objdata->unkF) {
@@ -201,19 +201,19 @@ void MMshrine_control(Object *self) {
             gDLL_3_Animation->vtbl->func17(4, self, -1);
             objdata->unkF = 9;
             objdata->unk2 = 0;
-            gDLL_5_AMSEQ->vtbl->func5(3, 0x35, 0x50, (s16) (u8) objdata->unk8, 0);
+            gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (s16) (u8) objdata->unk8, 0);
             objdata->unkA = 1;
             break;
         case 4:
             if (main_get_bits(BIT_SP_Map_MMP) != 0) {
                 objdata->unk8 = 1;
-                gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
                 main_set_bits(BIT_DB_Entered_Shrine_3, 1);
                 objdata->unkF = 6;
             } else {
                 main_set_bits(BIT_DB_Entered_Shrine_1, 0);
-                gDLL_5_AMSEQ->vtbl->func5(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
                 gDLL_3_Animation->vtbl->func17(1, self, -1);
             }
@@ -259,8 +259,8 @@ void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 // offset: 0xB9C | func: 4 | export: 4
 void MMshrine_free(Object *self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
-    gDLL_5_AMSEQ->vtbl->func13(3, 0);
-    gDLL_5_AMSEQ->vtbl->func13(2, 0);
+    gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
+    gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }
 
 // offset: 0xC2C | func: 5 | export: 5
@@ -295,7 +295,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
             objdata->unk8 = 0x46;
             objdata->unkA = 0;
         }
-        gDLL_5_AMSEQ->vtbl->func13(3, objdata->unk8);
+        gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->unk8);
     }
 
     for (i = 0; i < arg2->unk98; i++){
@@ -344,7 +344,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                     break;
                 case 11:
                     objdata->unk8 = 0x64;
-                    gDLL_5_AMSEQ->vtbl->func5(3, 0x2f, 0x50, (u8)objdata->unk8, 0);
+                    gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2f, 0x50, (u8)objdata->unk8, 0);
                     break;
                 case 12:
                     func_80000860(self, self, 0xCE, 0);

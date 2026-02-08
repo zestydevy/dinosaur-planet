@@ -475,7 +475,7 @@ Vec3f *CFLevelControl_get_position_of_saved_obj(s32 uID) {
             return (Vec3f*)&savedObjs[i].x;
         }
     }
-    STUBBED_PRINTF((" Couldn't find romdef %i ", uID));
+    STUBBED_PRINTF(" Couldn't find romdef %i ", uID);
     return NULL;
 }
 

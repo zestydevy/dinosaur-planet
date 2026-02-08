@@ -5,11 +5,20 @@
 
 #define ARRLEN(x) ((s32)(sizeof(x) / sizeof(x[0])))
 
-#define STUBBED_PRINTF(x) ((void)(x))
+#ifdef __sgi
+#define STUBBED_PRINTF 
+#elif __clang__
+#define STUBBED_PRINTF(...) _Pragma("clang diagnostic push") \
+                            _Pragma("clang diagnostic ignored \"-Wunused-value\"") \
+                            (__VA_ARGS__) \
+                            _Pragma("clang diagnostic pop")
+#else
+#define STUBBED_PRINTF 
+#endif
 
 #define UNUSED __attribute__((unused))
 
-#ifndef __GNUC__
+#ifdef __sgi
 #define __attribute__(x)
 #endif
 

@@ -20,7 +20,6 @@ void dl_apply_geometry_mode(Gfx **gdl);
 u8 func_8001EBE0(void);
 
 s8 map_get_layer();
-void set_textures_on_gdl(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 level, u32 force, u32 setModes);
 
 void dl_apply_combine(Gfx **gdl);
 void dl_set_fill_color(Gfx **gdl, u32 color);
@@ -40,7 +39,6 @@ u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHit
 
 
 void func_80045F48(s32);
-void texture_destroy(Texture *texture);
 
 /** check if object talked to by player? */
 s32 func_80032538(Object* arg0);
@@ -49,9 +47,6 @@ s32 map_get_type();
 void func_8004A67C();
 
 void dl_set_all_dirty();
-void func_8003DB5C();
-
-void func_8003CD6C(s32);
 
 void map_func_80046B58(f32 x, f32 y, f32 z);
 s32 func_8004454C(f32 x, f32 y, f32 z);
@@ -65,7 +60,6 @@ void map_func_8004773C();
 void func_80041C6C(s32);
 void func_80041D20(s32);
 
-void init_textures();
 void init_maps();
 void func_8001CD00();
 void init_models();
@@ -85,7 +79,6 @@ void map_func_800483BC(f32, f32, f32);
 f32 _depth2Cents(u8 arg0);
 
 ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
-Texture *func_8003E960(s32);
 
 void func_8001EBD0(s32);
 void func_80041CA8(s32 arg0);
@@ -113,5 +106,7 @@ s16 func_80000824(s32 arg0);
 s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
 void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3);
 s32 func_80056BCC(Vec3f*, Vec3f*, Vec3f*, Vec4f*, Vec3f*, f32);
+
+s32 func_80058B1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5);
 
 #endif //_FUNCTIONS_H

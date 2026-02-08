@@ -97,7 +97,7 @@ DLL_30_task *gDLL_30_Task = NULL;
 DLL_31_flash *gDLL_31_Flash = NULL;
 DLL_76 *gDLL_76 = NULL;
 DLL_32 *gDLL_32 = NULL;
-DLL_33 *gDLL_33 = NULL;
+DLL_33_BaddieControl *gDLL_33_BaddieControl = NULL;
 DLL_59_minimap *gDLL_59_Minimap = NULL;
 DLL_54 *gDLL_54 = NULL;
 
@@ -134,8 +134,8 @@ u64 ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)];
 s8 D_800B09C0;
 u8 gFrameBufIdx;
 s8 gPauseState;
-u8 D_800B09C3;
-s8 D_800B09C4;
+u8 gDemoState;
+s8 gDemoFinished;
 /* -------- .bss end 800b09d0 -------- */
 
 void func_8001440C(s32 arg0);
@@ -196,7 +196,7 @@ void game_init(void) {
     gLastInsertedControllerIndex = joy_init();
     joy_start_controller_thread(&osscheduler_);
     start_crash_thread(&osscheduler_);
-    init_textures();
+    tex_init();
     init_maps();
     func_8001CD00();
     init_models();
@@ -251,7 +251,7 @@ void game_init(void) {
         gDLL_30_Task = dll_load_deferred(DLL_ID_TASK, 6);
         gDLL_31_Flash = dll_load_deferred(DLL_ID_FLASH, 2); // param is 0x24 in SFA
         gDLL_32 = dll_load_deferred(DLL_ID_32, 6);          // 0x18 in SFA
-        gDLL_33 = dll_load_deferred(DLL_ID_33, 22);         // 0x19 in SFA
+        gDLL_33_BaddieControl = dll_load_deferred(DLL_ID_33, 22);         // 0x19 in SFA
         gDLL_59_Minimap = dll_load_deferred(DLL_ID_MINIMAP, 2);
         gDLL_54 = dll_load_deferred(DLL_ID_54, 12); // 0x2F in SFA
         gDLL_57 = dll_load_deferred(DLL_ID_57, 4);
@@ -299,7 +299,7 @@ void game_tick(void) {
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     fbfx_tick(&gCurGfx, gUpdateRate);
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
@@ -374,7 +374,7 @@ void game_tick_no_expansion(void) {
     rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0U;
@@ -468,9 +468,9 @@ void func_80013FB4(void) {
     vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
     func_80041D20(0);
     func_80041C6C(0);
-    gDLL_5_AMSEQ->vtbl->func6(3);
-    gDLL_5_AMSEQ->vtbl->func6(0);
-    gDLL_5_AMSEQ->vtbl->func6(1);
+    gDLL_5_AMSEQ->vtbl->stop(3);
+    gDLL_5_AMSEQ->vtbl->stop(0);
+    gDLL_5_AMSEQ->vtbl->stop(1);
     gDLL_22_Subtitles->vtbl->func_448();
     unpause();
     func_800141A4(1, 0, PLAYER_KRYSTAL, -1);
@@ -478,6 +478,7 @@ void func_80013FB4(void) {
 
 void func_80014074(void) {
     if (D_800B09C0 != 0) {
+        // "$$$$$  CHANGEMAP \n" (default.dol)
         mmSetDelay(0);
         if (D_8008CA30 != 0) {
             rcp_set_screen_color(0, 0, 0);
@@ -510,8 +511,11 @@ void func_80014074(void) {
     }
 }
 
+// officialName: mainChangeMap
 void func_800141A4(s32 mapID, s32 arg1, s32 playerno, s32 arg3) {
     PlayerLocation *temp_v0;
+
+    // "mainChangeMap(%d,%d,%d)\n" (default.dol)
 
     func_8001440C(0);
 
@@ -540,7 +544,7 @@ void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
     D_800B09C0 = 1;
 }
 
-void func_800142F0(f32 x, f32 y, f32 z, s32 playerno) {
+void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
     Vec3f pos;
     pos.x = x;
     pos.y = y;
@@ -808,7 +812,6 @@ s32 main_decrement_bits(s32 entry) {
     return 0;
 }
 
-static const char warning1[] = " WARNING : temp dll no %i is alreadly created \n";
 s32 create_temp_dll(s32 id) {
     u32 idx;
 
@@ -823,6 +826,7 @@ s32 create_temp_dll(s32 id) {
     }
 
     if (gTempDLLInsts[idx] != NULL) {
+        STUBBED_PRINTF(" WARNING : temp dll no %i is alreadly created \n");
     }
 
     gTempDLLInsts[idx] = dll_load_deferred(id, 1);
@@ -830,7 +834,6 @@ s32 create_temp_dll(s32 id) {
     return 1;
 }
 
-static const char warning2[] = " WARNING : temp dll no %i is alreadly removed \n";
 s32 remove_temp_dll(s32 id) {
     u32 idx;
 
@@ -845,6 +848,7 @@ s32 remove_temp_dll(s32 id) {
     }
 
     if (gTempDLLInsts[idx] == NULL) {
+        STUBBED_PRINTF(" WARNING : temp dll no %i is alreadly removed \n");
         return 0;
     }
 
@@ -855,14 +859,14 @@ s32 remove_temp_dll(s32 id) {
     return 1;
 }
 
-void func_80014B1C(void) {
+void main_load_frontend(void) {
     if (gDLL_76 == 0) {
         gDLL_75 = dll_load_deferred(DLL_ID_75, 10);
         gDLL_76 = dll_load_deferred(DLL_ID_76, 3);
     }
 }
 
-void func_80014B6C(void) {
+void main_unload_frontend(void) {
     if (gDLL_76 != 0) {
         dll_unload(gDLL_75);
         gDLL_75 = 0;
@@ -871,35 +875,35 @@ void func_80014B6C(void) {
     }
 }
 
-void func_80014BBC(void) {
-    D_800B09C3 = 0;
-    D_800B09C4 = 0;
+void main_demo_reset(void) {
+    gDemoState = 0;
+    gDemoFinished = 0;
 }
 
-void func_80014BD4(f32 x, f32 y, f32 z, s32 playerno) {
-    D_800B09C3++;
+void main_demo_start(f32 x, f32 y, f32 z, s32 playerno) {
+    gDemoState++;
 
-    if (D_800B09C3 >= 5) {
-        D_800B09C3 = 0;
-        D_800B09C4 = 1;
+    if (gDemoState >= 5) {
+        gDemoState = 0;
+        gDemoFinished = 1;
     }
 
-    func_800142F0(x, y, z, playerno);
+    main_start_game(x, y, z, playerno);
 }
 
-s32 func_80014C28(void) {
-    s32 _v1 = D_800B09C3 + 1;
+s32 main_demo_next(void) {
+    s32 _v1 = gDemoState + 1;
     if (_v1 >= 5)
         _v1 = 0;
     return _v1;
 }
 
-u8 func_80014C50(void) {
-    return D_800B09C3;
+u8 main_demo_state(void) {
+    return gDemoState;
 }
 
-u8 func_80014C60(void) {
-    return D_800B09C4;
+u8 main_demo_finished(void) {
+    return gDemoFinished;
 }
 
 void clear_PlayerPosBuffer(void) {

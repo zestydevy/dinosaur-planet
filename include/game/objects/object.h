@@ -204,7 +204,7 @@ typedef struct {
 /*010d*/    u8 unk10D;
 /*010e*/    UNK_TYPE_8 unk10E;
 /*010f*/    s8 unk10F;                  // number of Objects listed in field unk100?
-} ObjectStruct58;
+} ObjectPolyhits;
 
 typedef struct {
     Vec3f unk0;
@@ -273,9 +273,9 @@ typedef struct Object {
 /*0048*/    s16 tabIdx; // index of ObjDef in OBJECTS.TAB
 /*004A*/    u8 unk4A[0x4c - 0x4a];
 /*004C*/    ObjSetup *setup; // exact type depends on object
-/*0050*/    ObjDef* def;
+/*0050*/    ObjDef* def; // called "objdata" in default.dol
 /*0054*/    ObjectHitInfo* objhitInfo;
-/*0058*/    ObjectStruct58 *unk58;
+/*0058*/    ObjectPolyhits *polyhits;
 /*005C*/    BinFileEntry *unk5C;
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectShadow* shadow;
@@ -284,7 +284,7 @@ typedef struct Object {
 /*0070*/    Vtx* unk70;
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
-/*007C*/    ModelInstance **modelInsts;
+/*007C*/    ModelInstance **modelInsts; // called "frames" in default.dol
 /*0080*/    Vec3f positionMirror2; //gets copied twice.
 /*008C*/    Vec3f positionMirror3; //not sure why.
 /*0098*/    f32 animProgress;
@@ -294,17 +294,17 @@ typedef struct Object {
 /*00A4*/    f32 unkA4; //angle between camera and Object?
 /*00A8*/    f32 unkA8; //scale-related?
 /*00AC*/    s8 mapID;
-/*00AD*/    s8 modelInstIdx;
+/*00AD*/    s8 modelInstIdx; // called "modelno" in default.dol
 /*00AE*/    s8 updatePriority;
 /*00AF*/    u8 unkAF; //Target arrow flags (see InteractionArrowFlags)
-/*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here)
+/*00B0*/    u16 unkB0; //Animation flags? (Animation updating can be switched off here). if 0x40 is set, this object was deleted
 /*00B2*/    s16 unkB2;
 /*00B4*/    s16 unkB4;
 /*00B6*/    u8 unkB6[2];
 /*00B8*/    void* data; //type depends on object
 /*00BC*/    AnimationCallback animCallback; // some kind of cutscene anim callback?
 /*00C0*/    struct Object *unkC0; // related to group 16 objects?
-/*00C4*/    struct Object* unkC4; // parent object
+/*00C4*/    struct Object* unkC4; // parent object (called "parentobject" in default.dol)
 /*00C8*/    struct Object *linkedObject; // child? the linked object's parent is not necessarily set to the current object
 /*00CC*/    ObjectMesgQueue *mesgQueue;
 /*00D0*/    u8 unkD0[0xd4 - 0xd0];

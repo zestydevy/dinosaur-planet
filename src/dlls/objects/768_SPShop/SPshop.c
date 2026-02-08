@@ -142,7 +142,7 @@ void SPShop_control(Object* self) {
         func_80000450(self, self, 0x22F, 0, 0, 0);
         func_80000450(self, self, 0x231, 0, 0, 0);
         main_set_bits(BIT_SP_Entered_Shop, 1);
-        gDLL_5_AMSEQ2->vtbl->func0(NULL, 0xF3, 0, 0, 0);
+        gDLL_5_AMSEQ2->vtbl->set(NULL, 0xF3, 0, 0, 0);
         func_8001EBD0(1);
         self->unkDC = 1;
     }

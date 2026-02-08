@@ -274,20 +274,20 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
 void dll_63_ctor(void *self) {
     s32 i;
 
-    sBackgroundTexture = queue_load_texture_proxy(0x2DD);
-    sLogoTexture = queue_load_texture_proxy(0xC5);
-    sLogoShadowTexture = queue_load_texture_proxy(0x2E1);
+    sBackgroundTexture = tex_load_deferred(0x2DD);
+    sLogoTexture = tex_load_deferred(0xC5);
+    sLogoShadowTexture = tex_load_deferred(0x2E1);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EC_Menu_Managing_Saves);
     }
 
     for (i = 0; i < 18; i++) {
-        sSaveGameBgTextures[i] = queue_load_texture_proxy(sSaveGameBgTextureIDs[i]);
+        sSaveGameBgTextures[i] = tex_load_deferred(sSaveGameBgTextureIDs[i]);
     }
 
     for (i = 0; i < 4; i++) {
-        sSaveGameTextures[i] = queue_load_texture_proxy(sSaveGameTextureIDs[i]);
+        sSaveGameTextures[i] = tex_load_deferred(sSaveGameTextureIDs[i]);
     }
 
     if (menu_get_previous() != MENU_ENTER_NAME) {
@@ -346,8 +346,8 @@ s32 dll_63_update1() {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             } else {
                 // Exit to main menu
-                func_80014BBC();
-                func_800142F0(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
+                main_demo_reset();
+                main_start_game(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
                 menu_set(MENU_TITLE_SCREEN);
             }
         }
@@ -516,27 +516,27 @@ static void dll_63_clean_up(s32 leavingMenus) {
 
     for (i = 0; i < 18; i++) {
         if (sSaveGameBgTextures[i] != NULL) {
-            texture_destroy(sSaveGameBgTextures[i]);
+            tex_free(sSaveGameBgTextures[i]);
             sSaveGameBgTextures[i] = NULL;
         }
     }
 
     for (i = 0; i < 4; i++) {
         if (sSaveGameTextures[i] != NULL) {
-            texture_destroy(sSaveGameTextures[i]);
+            tex_free(sSaveGameTextures[i]);
             sSaveGameTextures[i] = NULL;
         }
     }
 
-    texture_destroy(sBackgroundTexture);
-    texture_destroy(sLogoTexture);
-    texture_destroy(sLogoShadowTexture);
+    tex_free(sBackgroundTexture);
+    tex_free(sLogoTexture);
+    tex_free(sLogoShadowTexture);
 
     if (leavingMenus) {
         font_unload(FONT_DINO_MEDIUM_FONT_IN);
         font_unload(FONT_DINO_MEDIUM_FONT_OUT);
         font_unload(FONT_FUN_FONT);
-        func_80014B6C();
+        main_unload_frontend();
     }
 }
 
@@ -879,10 +879,10 @@ static void dll_63_act_game_confirm(PicMenuAction action, s32 selected) {
         } else {
             sExitToGame = TRUE;
             gDLL_28_ScreenFade->vtbl->fade(20, SCREEN_FADE_BLACK);
-            gDLL_5_AMSEQ->vtbl->func6(0);
-            gDLL_5_AMSEQ->vtbl->func6(1);
-            gDLL_5_AMSEQ->vtbl->func6(2);
-            gDLL_5_AMSEQ->vtbl->func6(3);
+            gDLL_5_AMSEQ->vtbl->stop(0);
+            gDLL_5_AMSEQ->vtbl->stop(1);
+            gDLL_5_AMSEQ->vtbl->stop(2);
+            gDLL_5_AMSEQ->vtbl->stop(3);
             sExitTransitionTimer = 35;
         }
     }
@@ -898,10 +898,10 @@ static void dll_63_act_game_recap(PicMenuAction action, s32 selected) {
     } else if (action == PICMENU_ACTION_SELECT) {
         sExitToGame = TRUE;
         gDLL_28_ScreenFade->vtbl->fade(20, SCREEN_FADE_BLACK);
-        gDLL_5_AMSEQ->vtbl->func6(0);
-        gDLL_5_AMSEQ->vtbl->func6(1);
-        gDLL_5_AMSEQ->vtbl->func6(2);
-        gDLL_5_AMSEQ->vtbl->func6(3);
+        gDLL_5_AMSEQ->vtbl->stop(0);
+        gDLL_5_AMSEQ->vtbl->stop(1);
+        gDLL_5_AMSEQ->vtbl->stop(2);
+        gDLL_5_AMSEQ->vtbl->stop(3);
         sExitTransitionTimer = 35;
     }
 }

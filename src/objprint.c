@@ -199,7 +199,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         func_800032C4(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
-        func_8003DB5C();
+        tex_render_reset();
     }
     if (!(obj->srt.flags & 0x1000)) {
         if (!(modelInst->unk34 & 8)) {
@@ -264,7 +264,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             }
             gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
-            func_8003DB5C();
+            tex_render_reset();
         }
         if (obj->linkedObject != NULL) {
             func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, obj->linkedObject, obj->unkB0 & 3, (u8)spFC);
@@ -354,7 +354,7 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs,Vertex **vtxs, Triangle
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
     dl_set_all_dirty();
-    func_8003DB5C();
+    tex_render_reset();
 
     *gdl = mygdl;
     *rspMtxs = outRspMtxs;
@@ -433,7 +433,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             }
             gSPDisplayList((*arg0)++, OS_PHYSICAL_TO_K0(modelInst->displayList));
             dl_set_all_dirty();
-            func_8003DB5C();
+            tex_render_reset();
             // @fake
             if (D_800B2E10) {}
         }
@@ -658,7 +658,7 @@ void func_80036890(Object* arg0, s32 arg1) {
                     temp_a2 = temp_t5->materials[temp_t4->materialID].texture;
                     var_a0 = (temp_s3 >> 8) & 0xFF;
                     temp_s3 &= 0xFF;
-                    temp_t6_2 = temp_a2->levels >> 8;
+                    temp_t6_2 = temp_a2->animDuration >> 8;
                     if (temp_v1_2->unk4 >= 0) {
                         if (var_a0 >= temp_t6_2) {
                             var_a0 = temp_t6_2 - 1;
@@ -672,7 +672,7 @@ void func_80036890(Object* arg0, s32 arg1) {
                         temp_t0 = var_v1->gdl;
                         temp_a1_2 = &modelInst->displayList[temp_v1_2->unk4];
                         gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
-                        temp_t0 += var_v1->gdlIdx + 1;
+                        temp_t0 += var_v1->gdl2Offset + 1;
                         if (temp_t6_2 >= 2) {
                             var_a0++;
                             if (temp_a2->flags & 0x40) {
@@ -750,7 +750,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         func_800032C4(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
         dl_set_all_dirty();
-        func_8003DB5C();
+        tex_render_reset();
         sp64 = 1;
         if (sp68 == 0xFF) {
             sp64 = 2;
@@ -822,7 +822,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
             setup_rsp_matrices_for_object(gdl, mtx, object->parent);
         }
         dl_set_all_dirty();
-        func_8003DB5C();
+        tex_render_reset();
     }
 }
 

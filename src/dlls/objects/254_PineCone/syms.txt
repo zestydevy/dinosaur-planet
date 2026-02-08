@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_254_ctor = 0x0;
+dll_254_dtor = 0xC;
+dll_254_setup = 0x18;
+dll_254_control = 0x2C;
+dll_254_update = 0x38;
+dll_254_print = 0x44;
+dll_254_free = 0x98;
+dll_254_get_model_flags = 0xE0;
+dll_254_get_data_size = 0xF0;
+
+.rodata = 0x13C:

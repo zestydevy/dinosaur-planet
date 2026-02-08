@@ -23,7 +23,7 @@
 30 = engine/30_task
 31 = engine/31_flash
 32 = engine/32
-33 = engine/33
+33 = engine/33_BaddieControl
 54 = engine/54_pickup
 56 = engine/56_putdown
 60 = engine/60_post
@@ -53,6 +53,8 @@
 227 = objects/227_tumbleweed
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
+248 = objects/248_PirahnaBaddie
+254 = objects/254_PineCone
 264 = objects/264_kamerian_flame
 266 = objects/266_sfxplayer
 267 = objects/267_checkpoint4
@@ -80,6 +82,8 @@
 311 = objects/311_IMMultiSeq
 314 = objects/314_foodbag
 315 = objects/315_sidefoodbag
+318 = objects/318_fish
+319 = objects/319_fishingnet
 321 = objects/321_Duster
 325 = objects/325_trigger
 331 = objects/331_genprops
@@ -107,6 +111,7 @@
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
 427 = objects/427_DFlevelcontrol
+428 = objects/428_DFmole
 435 = objects/435_KrazoaSpirit
 441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
@@ -121,6 +126,7 @@
 458 = objects/458_CCkrazoaBits
 459 = objects/459_CCkrazoaTablet
 460 = objects/460_CClevcontrol
+461 = objects/461_CCsandwormBoss
 463 = objects/463_CCgasvent
 464 = objects/464_CCgasventControl
 466 = objects/466_mmshrine
@@ -133,7 +139,9 @@
 497 = objects/497_NWtricky
 501 = objects/501_SHtricky
 505 = objects/505_SHspore
+506 = objects/506_SH_PlantSpore
 507 = objects/507_SHqueenearthwalker
+509 = objects/509_SHwaterLily
 512 = objects/512_SHLevelControl
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
@@ -143,6 +151,7 @@
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
 553 = objects/553_WGmutant
+562 = objects/562_DIM2Icicle
 569 = objects/569_MAGICMaker
 570 = objects/570_DIM_BossSpit
 571 = objects/571_DIMbosscrackparticles
@@ -162,6 +171,7 @@
 589 = objects/589_SB_ShipGunBroke
 590 = objects/590_WL_Galleon
 596 = objects/596_WLpressureswitch
+605 = objects/605_WL_Worm
 607 = objects/607_WL_LevelControl
 610 = objects/610_WL_spiritplace
 612 = objects/612_WL_Crystal
@@ -195,6 +205,7 @@
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 729 = objects/729_CRCloudRace
+730 = objects/730_CRSpellStone
 731 = objects/731_CRFuelTank
 735 = objects/735_DRbullet
 737 = objects/737_DRLavaControl

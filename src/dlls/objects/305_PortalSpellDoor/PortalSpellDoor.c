@@ -104,7 +104,6 @@ void PortalSpellDoor_control(Object* self) {
     //Handle countdown timer
     if (objData->timer != -1) {
         objData->timer -= gUpdateRate;
-        STUBBED_PRINTF(" t %i ");
         //Play door transformation sequence
         if (objData->timer < 0) {
             self->unkAF |= 8;
@@ -115,6 +114,7 @@ void PortalSpellDoor_control(Object* self) {
             objData->sequencePlayed = TRUE;
             objData->timer = -1;
         }
+        STUBBED_PRINTF(" t %i ", objData->timer);
     }
 }
 

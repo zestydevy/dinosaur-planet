@@ -302,8 +302,8 @@ ALMicroTime __n_CSPVoiceHandler(void *node) {
                 seqp->chanMask = 0xFFFF;
 
                 for (chan = 0; chan < seqp->maxChannels; chan++) {
-                    seqp->chanState[chan].unk37 = 0x7f;
-                    seqp->chanState[chan].vol = seqp->chanState[chan].unk38;
+                    seqp->chanState[chan].amseqVol = 0x7f;
+                    seqp->chanState[chan].vol = seqp->chanState[chan].seqVol;
                 }
 
 				for (vs = seqp->vAllocHead; vs != 0; vs = seqp->vAllocHead) {
@@ -930,8 +930,8 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event) {
 			}
 			break;
         case (AL_MIDI_VOLUME_CTRL):
-			seqp->chanState[chan].unk38 = byte2;
-			seqp->chanState[chan].vol = (byte2 * (f32)seqp->chanState[chan].unk37) / 127.0f;
+			seqp->chanState[chan].seqVol = byte2;
+			seqp->chanState[chan].vol = (byte2 * (f32)seqp->chanState[chan].amseqVol) / 127.0f;
 
 			for (vs = seqp->vAllocHead; vs != 0; vs = vs->next) {
 				if ((vs->channel == chan) && (vs->envPhase != AL_PHASE_RELEASE)) {
@@ -940,9 +940,9 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event) {
 				}
 			}
 			break;
-        case (0x08):
-			seqp->chanState[chan].unk37 = byte2;
-			seqp->chanState[chan].vol = (seqp->chanState[chan].unk38 * seqp->chanState[chan].unk37) / 127.0f;
+        case (AL_MIDI_AMSEQ_VOLUME_CTRL):
+			seqp->chanState[chan].amseqVol = byte2;
+			seqp->chanState[chan].vol = (seqp->chanState[chan].seqVol * seqp->chanState[chan].amseqVol) / 127.0f;
 
 			for (vs = seqp->vAllocHead; vs != 0; vs = vs->next) {
 				if ((vs->channel == chan) && (vs->envPhase != AL_PHASE_RELEASE)) {
@@ -1282,17 +1282,18 @@ void func_80075D84(N_ALCSPlayer *seqp, u8 value) {
 }
 
 u8 func_80075D9C(N_ALCSPlayer *seqp, u8 chan) {
-    return seqp->chanState[chan].unk37;
+    return seqp->chanState[chan].amseqVol;
 }
 
-void func_80075DCC(N_ALCSPlayer *seqp, u8 chan, u8 param3) {
+// custom
+void n_alCSPSetAmSeqChlVol(N_ALCSPlayer *seqp, u8 chan, u8 volume) {
     N_ALEvent evt;
 
     evt.type = AL_SEQP_MIDI_EVT;
     evt.msg.midi.ticks = 0;
     evt.msg.midi.status = AL_MIDI_ControlChange | chan;
-    evt.msg.midi.byte1 = 0x8;
-    evt.msg.midi.byte2 = param3;
+    evt.msg.midi.byte1 = AL_MIDI_AMSEQ_VOLUME_CTRL;
+    evt.msg.midi.byte2 = volume;
 
     n_alEvtqPostEvent(&seqp->evtq, &evt, 0, 0);
 }
@@ -1302,7 +1303,7 @@ void func_80075E38(N_ALCSPlayer *seqp, u8 param2) {
 
     evt.type = AL_SEQP_MIDI_EVT;
     evt.msg.midi.ticks = 0;
-    evt.msg.midi.status = 0xb0;
+    evt.msg.midi.status = AL_MIDI_ControlChange;
     evt.msg.midi.byte1 = 0x6a;
     evt.msg.midi.byte2 = param2;
 
@@ -1314,7 +1315,7 @@ void func_80075E9C(N_ALCSPlayer *seqp, u8 param2) {
 
     evt.type = AL_SEQP_MIDI_EVT;
     evt.msg.midi.ticks = 0;
-    evt.msg.midi.status = 0xb0;
+    evt.msg.midi.status = AL_MIDI_ControlChange;
     evt.msg.midi.byte1 = 0x6c;
     evt.msg.midi.byte2 = param2;
 

@@ -95,8 +95,8 @@ void func_80053300(void) {
     if (D_80092E70 == NULL) {
         D_80092E70 = mmAlloc(250*sizeof(UnkFunc80051D68Arg3), COLOUR_TAG_YELLOW, 0);
         D_80092E74 = mmAlloc(400*sizeof(ModLineReencoded), COLOUR_TAG_YELLOW, 0);
-        D_80092E78 = mmAlloc(400*sizeof(Vec3f), COLOUR_TAG_YELLOW, 0);
-        D_80092E7C = mmAlloc(400*sizeof(s16), COLOUR_TAG_YELLOW, 0);
+        D_80092E78 = mmAlloc(4800, COLOUR_TAG_YELLOW, 0);
+        D_80092E7C = mmAlloc(800, COLOUR_TAG_YELLOW, 0);
         D_80092E84 = mmAlloc(20*sizeof(Unk8005B17C), COLOUR_TAG_YELLOW, 0);
     }
     func_80058F8C();
@@ -207,7 +207,7 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     Object* curObj;
     Object** objects;
     ObjectHitInfo* temp_a0;
-    ObjectStruct58* temp_v1_2;
+    s32 _pad;
     Unk8005341C* var_s0;
     f32 temp_fa0;
     f32 temp_fv1;
@@ -244,7 +244,7 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
         objects = func_80025DD4(&objCount);
         for (i = 0; i < objCount; i++) {
             curObj = objects[i];
-            if (curObj->objhitInfo != NULL && curObj->unk58 != NULL && curObj->unk58->unk10D == 0 && curObj->unk58->unk10E == 0) {
+            if (curObj->objhitInfo != NULL && curObj->polyhits != NULL && curObj->polyhits->unk10D == 0 && curObj->polyhits->unk10E == 0) {
                 temp_a2 = curObj->modelInsts[curObj->objhitInfo->unkA0];
                 if (temp_a2 != NULL && temp_a2->model->facebatchBounds != NULL) {
                     temp_fv0 = temp_a2->model->maxAnimatedVertDistance;
@@ -253,8 +253,8 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
                         && !((temp_fv1_2 = curObj->srt.transl.y - temp_fv0) > temp_fs3) && !((temp_fv1_2 = curObj->srt.transl.y + temp_fv0) < temp_fs2)
                         && !((temp_fv1_3 = curObj->srt.transl.z - temp_fv0) > temp_fs5) && !((temp_fv1_3 = curObj->srt.transl.z + temp_fv0) < temp_fs4)
                     ) {
-                            var_s0->unkC = (MtxF* ) &((f32*)curObj->unk58)[(curObj->unk58->unk10C + 2) << 4];
-                            var_s0->unk8 = (MtxF* ) &((f32*)curObj->unk58)[curObj->unk58->unk10C << 4];
+                            var_s0->unkC = (MtxF* ) &((f32*)curObj->polyhits)[(curObj->polyhits->unk10C + 2) << 4];
+                            var_s0->unk8 = (MtxF* ) &((f32*)curObj->polyhits)[curObj->polyhits->unk10C << 4];
                             var_s0->unk4 = ((s32)s2 - (s32)D_80092E70) / 52;
                             var_s0->unk0 = curObj;
                             s2 = func_8005471C(s2, var_s0, temp_a2, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);

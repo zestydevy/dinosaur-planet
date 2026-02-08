@@ -94,7 +94,7 @@ void dll_703_control(Object* self) {
     if (objdata->unk8 < 0) {
         objdata->unk8 = 0;
     }
-    if ((self->unk58->unk10F > 0) && (self->unkDC == 2)) {
+    if ((self->polyhits->unk10F > 0) && (self->unkDC == 2)) {
         objdata->unk8 = 5;
     }
     sp4B = 0;

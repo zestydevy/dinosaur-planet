@@ -1,0 +1,22 @@
+.text = 0x0:
+dll_248_ctor = 0x0;
+dll_248_dtor = 0xC;
+dll_248_setup = 0x18;
+dll_248_control = 0x178;
+dll_248_update = 0x808;
+dll_248_print = 0x814;
+dll_248_free = 0x99C;
+dll_248_get_model_flags = 0xA38;
+dll_248_get_data_size = 0xA48;
+dll_248_func_A5C = 0xA5C;
+
+.rodata = 0x11C0:
+_rodata_10 = 0x10; // absolute:0x11D0 type:f32 force_migration:True function_owner:dll_248_func_A5C
+_rodata_18 = 0x18; // absolute:0x11D8 type:f32 force_migration:True function_owner:dll_248_func_A5C
+_rodata_1C = 0x1C; // absolute:0x11DC type:f32 force_migration:True function_owner:dll_248_func_A5C
+
+.data = 0x11E0:
+_data_0 = 0x0; // absolute:0x11E0
+
+.bss = 0x11F0:
+_bss_0 = 0x0; // absolute:0x11F0

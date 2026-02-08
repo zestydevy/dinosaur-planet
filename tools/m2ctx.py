@@ -25,12 +25,35 @@ CPP_FLAGS = [
     "-DPERMUTER",
 ]
 
+def remove_big_comments(text: str):
+    # Remove multiline block comments that start at the beginning of a line
+    # and lines where the only content is a single line block comment.
+    #
+    # This greatly trims down the context file size while preserving things
+    # such as struct field offset comments.
+    i = 0
+    while True:
+        start = text.find("\n/*", i)
+        if start == -1:
+            break
+        end = text.find("*/", start + 2)
+        if end == -1:
+            break
+
+        i = end + 2
+        comment = text[start + 1:end + 2]
+        if "\n" in comment or text[end + 2] == "\n":
+            text = text[0:start] + text[end + 2:]
+            i = start
+    return text
+
 def import_c_file(in_file) -> str:
     in_file = os.path.relpath(in_file, root_dir)
     # -E = preprocess only
+    # -CC = preserve comments
     # -P = dont generate #line directives
     # -dM = dump only #define directives
-    cpp_command = ["gcc", "-E", "-P", "-dD", *CPP_FLAGS, in_file]
+    cpp_command = ["gcc", "-E", "-CC", "-P", "-dD", *CPP_FLAGS, in_file]
 
     with tempfile.NamedTemporaryFile(suffix=".c") as tmp:
         stock_macros = subprocess.check_output(["gcc", "-E", "-P", "-dM", tmp.name], cwd=root_dir, encoding="utf-8")
@@ -48,6 +71,8 @@ def import_c_file(in_file) -> str:
     if not out_text:
         print("Output is empty - aborting")
         sys.exit(1)
+
+    out_text = remove_big_comments(out_text)
 
     defines = {}
     source_lines = []

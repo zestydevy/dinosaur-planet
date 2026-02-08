@@ -205,7 +205,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     sp33 = 0;
     for (i = 0; i < model->textureCount; i++) {
-        model->materials[i].texture = texture_load(-((u32)model->materials[i].texture | 0x8000), 0);
+        model->materials[i].texture = tex_load(-((u32)model->materials[i].texture | 0x8000), 0);
         if (model->materials[i].texture == NULL) {
             sp33 = 1;
         }
@@ -265,7 +265,7 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
         return NULL;
     }
     sp58 = model_get_stats(model, flags, &sp30, model->envMapCount != 0 || model->textureAnimationCount != 0);
-    temp_v0 = mmAlloc(sp58, 0x89, NULL);
+    temp_v0 = mmAlloc(sp58, 0x89, ALLOC_NAME("minst"));
     // @fake
     if (&sp58) {}
     if (temp_v0 == NULL) {
@@ -390,7 +390,7 @@ void patch_model_display_list_for_textures(Model* model) {
                 tex = model->materials[idx].texture;
                 texGdl = tex->gdl;
                 if (isRelative) {
-                    texGdl += tex->gdlIdx;
+                    texGdl += tex->gdl2Offset;
                 }
 
                 gSPDisplayList(gfx, OS_K0_TO_PHYSICAL(texGdl));
@@ -407,7 +407,7 @@ void patch_model_display_list_for_textures(Model* model) {
                 tex = model->materials[idx].texture;
                 texGdl = tex->gdl;
                 if (isRelative) {
-                    texGdl += tex->gdlIdx;
+                    texGdl += tex->gdl2Offset;
                 }
 
                 gfx->words.w0 = texGdl->words.w0;
@@ -537,7 +537,7 @@ void model_destroy(Model* model) {
     for (i = 0; i < model->textureCount; i++)
     {
         if ((&model->materials[i])->texture) {
-            texture_destroy((&model->materials[i])->texture);
+            tex_free((&model->materials[i])->texture);
         }
     }
 
@@ -578,6 +578,7 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount) {
     return total_size;
 }
 
+// official name: makeModelAnimation
 s32 modanim_load(Model* model, s32 id, u8* data) {
     s32 temp_t0;
     s32 temp_t7;
@@ -598,6 +599,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
     var_a0 = temp_s0[1];
     temp_t7 = (var_a0 - temp_t0) >> 1;
     if (temp_t7 != model->animCount) {
+        STUBBED_PRINTF("makeModelAnimation() size mismatch!! (%d,%d)\n", model->animCount, temp_t7);
         model->animCount = temp_t7;
     }
     var_s0 = (model->animCount << 1);
@@ -605,14 +607,15 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
         return 0;
     }
     var_s0 += 8;
+    if (var_s0 > 0x800) {
+        STUBBED_PRINTF("Warning: Model animation buffer overflow!! size=%d\n", var_s0);
+    }
     read_file_region(AMAP_TAB, D_800B17BC, (id & ~3) << 2, 0x20);
     model->unk5C = D_800B17BC[id & 3];
     sp40 = D_800B17BC[(id & 3) + 1] - D_800B17BC[(id & 3) + 0];
     if (model->unk71 & 0x40) {
         model->modAnim = (s16 *)data;
         PAD16(var_s0);
-        // @fake
-        if (var_s0) {}
         var_s1 = var_s0;
         data += var_s0;
         read_file_region(MODANIM_BIN, model->modAnim, temp_t0, var_s0);
@@ -628,6 +631,12 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
             var_v1 += 1;
         }
     }
+
+    /* default.dol
+    if (var_v1 > 8) {
+        STUBBED_PRINTF("ANIMBANK overflow\n");
+    }
+    */
 
     var_s1 += model->animCount * 4;
     if (!(model->unk71 & 0x40)) {
@@ -688,9 +697,7 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
         }
         
         animHeader = &anim->animHeader;
-        if (animHeader->totalBones != model->jointCount) {
-            STUBBED_PRINTF("makeModelAnimation() size mismatch!! (%d,%d)\n");
-        }
+        if (animHeader->totalBones != model->jointCount) {}
         animState->unk34[0] = animHeader;
         animState->unk60[0] = anim->unk1 & 0xF0;
 
@@ -714,7 +721,6 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
     }
 }
 
-static const char str_800993ac[] = "Warning: Model animation buffer overflow!! size=%d\n";
 static const char str_800993e0[] = "modLoadAnimActual: anim overflow %d/%d\n";
 
 Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
@@ -815,10 +821,6 @@ void anim_destroy(Animation* anim) {
 }
 
 static const char str_80099440[] = "**Top matrix out of range: (%.1f,%.1f,%.1f) (%.1f,%.1f)\n";
-static const char str_8009947c[] = "Warning! Tiltlist overflow!!\n";
-static const char str_8009949c[] = "%d : %d\n";
-static const char str_800994a8[] = "\n";
-static const char str_800994ac[] = "blend_frames: %x\n";
 
 void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     if (object->parent == NULL) {
@@ -1243,7 +1245,14 @@ void func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {
         var_a1 += temp_a0->numModels + 1;
     }
     SHORT_ARRAY_800b17d0[var_v0] = 0x1000;
+    if (var_v0 > 44) {
+        STUBBED_PRINTF("Warning! Tiltlist overflow!!\n");
+    }
 }
+
+static const char str_8009949c[] = "%d : %d\n";
+static const char str_800994a8[] = "\n";
+static const char str_800994ac[] = "blend_frames: %x\n";
 
 void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2) {
     MtxF* var_s0;

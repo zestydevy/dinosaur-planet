@@ -21,7 +21,7 @@ extern s32 rarezip_inflate_block();
 void rarezip_init() {
     D_800918C0 = (void*)mmAlloc(0x4000, COLOUR_TAG_GREY, NULL);
     gHuftTable = (void*)mmAlloc(sizeof(huft) * 1280, COLOUR_TAG_GREY, NULL);
-    gPackedHeader = (void*)mmAlloc(0x20, COLOUR_TAG_BLACK, NULL);
+    gPackedHeader = (void*)mmAlloc(0x20, COLOUR_TAG_BLACK, ALLOC_NAME("rzip:header"));
 }
 
 s32 rarezip_uncompress_size(u8 *b) {

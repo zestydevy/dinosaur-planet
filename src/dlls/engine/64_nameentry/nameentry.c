@@ -71,7 +71,7 @@ void dll_64_ctor(void *dll) {
     s32 i;
     
     itemCount = ARRAYCOUNT(sMenuItems);
-    sBackgroundTexture = queue_load_texture_proxy(0x2DE);
+    sBackgroundTexture = tex_load_deferred(0x2DE);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0ED_Menu_Name_Entry);
@@ -82,7 +82,7 @@ void dll_64_ctor(void *dll) {
         sMenuItems[i].text = sGameTextChunk->strings[i];
     }
 
-    sLetterBgBoxTexture = queue_load_texture_proxy(0x316);
+    sLetterBgBoxTexture = tex_load_deferred(0x316);
     gDLL_74_Picmenu->vtbl->set_items(sMenuItems, itemCount, 
         /*defaultItem*/0, 
         /*sounds*/NULL, 
@@ -178,7 +178,7 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     if (sNameLettersRedrawFrames != 0) {
         if (sMainRedrawFrames == 0) {
             // Make sure we at least redraw the background behind the name letters
-            lry = (sLetterBgBoxTexture->height | ((sLetterBgBoxTexture->unk1B & 0xF) << 8));
+            lry = (sLetterBgBoxTexture->height | ((sLetterBgBoxTexture->widthHeightHi & 0xF) << 8));
             func_800382AC(gdl, sBackgroundTexture, 0, 0, 110, lry + 110, 0xFF, 2);
         }
 
@@ -201,8 +201,8 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 static void dll_64_clean_up() {
     gDLL_74_Picmenu->vtbl->clear_items();
     mmFree(sGameTextChunk);
-    texture_destroy(sLetterBgBoxTexture);
-    texture_destroy(sBackgroundTexture);
+    tex_free(sLetterBgBoxTexture);
+    tex_free(sBackgroundTexture);
 }
 
 static void dll_64_draw_letters(Gfx **gdl, s32 x, s32 y) {

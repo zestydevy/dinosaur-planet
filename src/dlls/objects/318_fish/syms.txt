@@ -1,0 +1,20 @@
+.text = 0x0:
+fish_ctor = 0x0;
+fish_dtor = 0xC;
+fish_setup = 0x18;
+fish_func_84 = 0x84;
+fish_control = 0x630;
+fish_update = 0xEA8;
+fish_print = 0xEB4;
+fish_free = 0xF40;
+fish_get_model_flags = 0xF50;
+fish_get_data_size = 0xF60;
+fish_func_F74 = 0xF74;
+fish_func_10BC = 0x10BC;
+fish_func_11C8 = 0x11C8;
+fish_func_1880 = 0x1880;
+fish_func_1978 = 0x1978;
+fish_func_1EF4 = 0x1EF4;
+fish_func_2150 = 0x2150;
+
+.rodata = 0x22F4:

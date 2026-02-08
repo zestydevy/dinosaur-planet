@@ -386,7 +386,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ Object *(*get_vehicle)(Object* player);
     /*8*/ s32 (*func8)(Object* player, Object** arg1);
-    /*9*/ void (*func9)(Object* player, s32 arg1);
+    /*9*/ void (*func9)(Object* player, Object *arg1);
     /*10*/ s32 (*func10)(Object* player, Object** arg1);
     /*11*/ s32 (*func11)(Object* player, Object* arg1);
     /*12*/ void (*set_magic)(Object* player, s32 amount);
@@ -444,7 +444,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*64*/ void (*func64)(Object* player, Object *arg1, s32 arg2);
     /*65*/ void (*func65)(Object* player, f32 arg1, f32 arg2, f32 arg3);
     // Returns an object pointer if arg1 is 15 or 16
-    /*66*/ s32 (*func66)(Object* player, s32 arg1);
+    /*66*/ void* (*func66)(Object* player, s32 arg1);
     /*67*/ void (*func67)(Object* player, s32 arg1, f32 arg2);
     /*68*/ void (*func68)(Object* player);
     /*69*/ void (*func69)(Object* player, s32 arg1);

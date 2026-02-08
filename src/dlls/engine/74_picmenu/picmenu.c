@@ -62,7 +62,7 @@ void picmenu_ctor(void *self) {
     s32 i;
 
     for (i = 0; i < (s32)ARRAYCOUNT(sTextures); i++) {
-        sTextures[i].texture = queue_load_texture_proxy(sTextures[i].textureID);
+        sTextures[i].texture = tex_load_deferred(sTextures[i].textureID);
     }
 
     sOpacity = 255;
@@ -72,7 +72,7 @@ void picmenu_dtor(void *self) {
     s32 i;
 
     for (i = 0; i < (s32)ARRAYCOUNT(sTextures); i++) {
-        texture_destroy(sTextures[i].texture);
+        tex_free(sTextures[i].texture);
     }
 }
 
@@ -102,7 +102,7 @@ void picmenu_set_items(PicMenuItem *items, s32 count,
         item = &sItems[i];
 
         if (items[i].texture.asID != -1) {
-            item->texture.asPtr = queue_load_texture_proxy(items[i].texture.asID);
+            item->texture.asPtr = tex_load_deferred(items[i].texture.asID);
         } else {
             item->texture.asPtr = NULL;
         }
@@ -154,7 +154,7 @@ void picmenu_clear_items(void) {
 
     for (i = 0; i < sItemCount; i++) {
         if (sItems[i].texture.asPtr != NULL) {
-            texture_destroy(sItems[i].texture.asPtr);
+            tex_free(sItems[i].texture.asPtr);
         }
     }
 
@@ -493,7 +493,7 @@ void picmenu_calculate_redraw_area() {
             }
 
             if (tex != NULL) {
-                height = tex->height | ((tex->unk1B & 0xF) << 8);
+                height = tex->height | ((tex->widthHeightHi & 0xF) << 8);
                 y = item->itemY;
             } else {
                 height = font_get_y_spacing(item->fontID) + 2;
@@ -537,7 +537,7 @@ void picmenu_calculate_items_to_redraw() {
     }
 
     if (tex != NULL) {
-        selectedItemHeight = tex->height | ((tex->unk1B & 0xF) << 8);
+        selectedItemHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
         selectedItemY = item1->itemY;
     } else {
         selectedItemHeight = font_get_y_spacing(item1->fontID) + 2;
@@ -555,7 +555,7 @@ void picmenu_calculate_items_to_redraw() {
             }
 
             if (tex2 != NULL) {
-                otherItemHeight = tex2->height | ((tex2->unk1B & 0xF) << 8);
+                otherItemHeight = tex2->height | ((tex2->widthHeightHi & 0xF) << 8);
                 otherItemY = item2->itemY;
             } else {
                 otherItemHeight = font_get_y_spacing(item2->fontID) + 2;

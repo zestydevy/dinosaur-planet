@@ -1,18 +1,11 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
+#include "macros.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/route.h"
 #include "dll.h"
-
-static const char str_80099db0[] = "****** GOAL FOUND Iterations=%d ******\n";
-static const char str_80099dd8[] = " VOXMAPS : Overflow in Route Points for Net Route Finding \n";
-static const char str_80099e14[] = " Curve Node %i \n";
-static const char str_80099e28[] = " Curve Node %i \n";
-static const char str_80099e3c[] = "net_route: No support for this type of node %d x=%f y=%f z=%f\n";
-static const char str_80099e7c[] = "**** HEAP INSERT ****\n";
-static const char str_80099e94[] = "**** NODE FIND ****\n";
 
 // -------- .bss start 800b4920 -------- //
 CurveSetup* D_800B4920;
@@ -33,7 +26,7 @@ void route_init(Route *route) {
     route->routePoints = (RoutePoint*)mmAlloc(
         (sizeof(RoutePoint) * ROUTE_HEAP_CAPACITY) + (sizeof(RouteHeapElement) * ROUTE_HEAP_CAPACITY) + (sizeof(CurveSetup*) * ROUTE_MAX_LENGTH), 
         ALLOC_TAG_VOX_COL, 
-        NULL);
+        ALLOC_NAME("vox:route"));
     route->heap = (RouteHeapElement*)(route->routePoints + ROUTE_HEAP_CAPACITY);
     route->route = (CurveSetup**)(route->heap + ROUTE_HEAP_CAPACITY);
 }
@@ -60,6 +53,8 @@ s32 route_setup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void *goal
     route_heap_insert(route->heap, &route->heapLength, (route->routePointsLength - 1), startPoint->goalDist + startPoint->netDist);
     return 0;
 }
+
+static const char str_80099db0[] = "****** GOAL FOUND Iterations=%d ******\n";
 
 // public
 s32 route_find(Route* route, s32 maxIterations) {
@@ -122,6 +117,7 @@ s32 route_reconstruct(Route* route) {
         route->route[var_a1] = var_v1_2->curve;
         var_a1 += 1;
         if (var_a1 >= ROUTE_MAX_LENGTH) {
+            STUBBED_PRINTF(" VOXMAPS : Overflow in Route Points for Net Route Finding \n");
             var_v1_2 = NULL;
         } else if (var_v1_2->nextPointIdx == 0xFF) {
             var_v1_2 = NULL;
@@ -133,6 +129,9 @@ s32 route_reconstruct(Route* route) {
     route->routeCurrIdx = 0;
     return var_a1;
 }
+
+static const char str_80099e14[] = " Curve Node %i \n";
+static const char str_80099e28[] = " Curve Node %i \n";
 
 // public
 CurveSetup* route_next(Route* route) {
@@ -160,6 +159,16 @@ s32 route_is_allowed_kyte_curve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
                 return TRUE;
             }
         }
+    } else {
+        /* default.dol
+        // "bit test on kyteai node failed\n"
+        if ((arg0->type22.unk30 > -1 && main_get_bits(arg0->type22.unk30) == 0)) {
+            // "node is not active yet\n"
+        }
+        if ((arg0->type22.usedBit > -1 || main_get_bits(arg0->type22.usedBit) != 0)) {
+            // "node is has been used\n"
+        }
+        */
     }
     return FALSE;
 }
@@ -202,12 +211,16 @@ void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx)
                     break;
                 default:
                     D_800B4920 = neighbor;
-                    // STUBBED_PRINTF("net_route: No support for this type of node %d x=%f y=%f z=%f\n");
+                    STUBBED_PRINTF("net_route: No support for this type of node %d x=%f y=%f z=%f\n",
+                         neighbor->uID, neighbor->pos.x, neighbor->pos.y, neighbor->pos.z);
                 }
             }
         }
     }
 }
+
+static const char str_80099e7c[] = "**** HEAP INSERT ****\n";
+static const char str_80099e94[] = "**** NODE FIND ****\n";
 
 void route_add_neighbor(Route* route, RoutePoint* prevPoint, s32 prevPointIdx, u32 dist, CurveSetup* curve) {
     s32 visited;
@@ -354,6 +367,7 @@ RoutePoint* route_add_point(Route* route, CurveSetup *curve, u32 dist, u16 prevP
     RoutePoint* point;
 
     if (route->routePointsLength == ROUTE_HEAP_CAPACITY) {
+        // "VOXMAPS: route nodes list overflow\n" (default.dol)
         return NULL;
     }
     point = &route->routePoints[route->routePointsLength++];
@@ -414,6 +428,8 @@ s32 route_is_goal(Route* route, RoutePoint* point) {
             if (point->curve->uID == temp_a1->unk1C[3]) {
                 return (s32)temp_v0 == temp_a1->base_type24.unk7;
             }
+
+            // "isEndNode for tricky failed!\n" (default.dol)
         }
         return 0;
     default:

@@ -28,7 +28,7 @@ void KT_RexLevel_setup(Object *self, ObjSetup *setup, s32 arg2) {
     func_80000860(self, self, 0x18F, 0);
     func_80000450(self, self, 0x1FD, 0, 0, 0);
     func_80000450(self, self, 0x1FE, 0, 0, 0);
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0xD5, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0xD5, 0, 0, 0);
     main_set_bits(BIT_572_KT_FightProgress, 0);
     main_set_bits(BIT_56E, 1);
     main_set_bits(BIT_KT_Player_In_Segment_2, 1);
@@ -93,8 +93,8 @@ void KT_RexLevel_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x4D0 | func: 4 | export: 4
 void KT_RexLevel_free(Object *self, s32 arg1) {
-    gDLL_5_AMSEQ2->vtbl->func0(self, 0xD6, 0, 0, 0);
-    gDLL_5_AMSEQ2->vtbl->func1(self, 0xD5, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->set(self, 0xD6, 0, 0, 0);
+    gDLL_5_AMSEQ2->vtbl->free(self, 0xD5, 0, 0, 0);
 }
 
 // offset: 0x560 | func: 5 | export: 5

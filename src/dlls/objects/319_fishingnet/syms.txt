@@ -1,0 +1,17 @@
+.text = 0x0:
+fishingnet_ctor = 0x0;
+fishingnet_dtor = 0xC;
+fishingnet_setup = 0x18;
+fishingnet_control = 0x5C;
+fishingnet_update = 0x68;
+fishingnet_print = 0x74;
+fishingnet_free = 0x8C;
+fishingnet_get_model_flags = 0x9C;
+fishingnet_get_data_size = 0xAC;
+fishingnet_func_C0 = 0xC0;
+fishingnet_func_DC = 0xDC;
+fishingnet_func_304 = 0x304;
+fishingnet_func_338 = 0x338;
+fishingnet_func_4D4 = 0x4D4;
+
+.rodata = 0x564:

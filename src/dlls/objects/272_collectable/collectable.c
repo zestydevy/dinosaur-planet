@@ -75,7 +75,7 @@ typedef struct {
     s16 category;           //see Collectable_Types
     s8 unk4;
     s8 unk5;
-    s16 unk6;               //sequence-related value
+    s16 unk6;               // object ID of item in pickup sequence animation (the thing being held)
     s8 interactionRadius;   //radius for picking up
     s8 unk9;
     s8 unkA;
