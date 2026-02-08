@@ -152,7 +152,8 @@ typedef struct Func_80059C40_Struct {
     Vec3f unk38;
     f32 unk44;
     f32 unk48;
-    s32 pad4C;
+    s16 unk4C;
+    s16 unk4E;
     s8 unk50;
     s8 unk51;
     s8 unk52;

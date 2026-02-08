@@ -44,6 +44,7 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3*, Unk8005341C*, ModelInst
 void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
 void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5);
 void func_80058D54(Vec4f* arg0, Vec4f* arg1, Vec4f* arg2, s32 arg3, s32 arg4, s32 arg5, f32* arg6, f32* arg7, f32* arg8, f32* arg9);
+s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5);
 
 // move to objhits.h
 Object **func_80025DD4(s32 *arg0);
