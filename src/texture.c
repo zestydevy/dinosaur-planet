@@ -12,6 +12,7 @@
 #include "gbi_extra.h"
 #include "variables.h"
 #include "functions.h"
+#include "prevent_bss_reordering.h"
 
 static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
 static const char str_8009a3a8[] = "Multiple texture fail!!\n";
