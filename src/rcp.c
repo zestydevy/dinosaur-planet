@@ -291,21 +291,9 @@ void func_80037F8C(s32 param1) {
     D_800917BC = param1;
 }
 
-// https://github.com/DavidSM64/Diddy-Kong-Racing/blob/master/src/rcp_dkr.c#L670 ?
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/rcp/func_80037F9C.s")
-#else
-typedef struct Unk {
-    Texture *unk0;
-    s32 unk4;
-    s16 unk8;
-    s16 unkA;
-} Unk;
-
-// https://decomp.me/scratch/MUNuy
-// Type for arg1 is incorrect, current definition (Func_80037F9C_Struct) is also not fully correct
-void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u8 arg6, u8 arg7) {
+void func_80037F9C(Gfx** gdl, Func_80037F9C_Struct* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u8 arg6, u8 arg7) {
     Texture* var_v0;
+    Texture* var_a1;
     s32 temp_s5;
     s32 temp_s6;
     s32 temp_t8;
@@ -329,11 +317,14 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
     );
     dl_apply_other_mode(&sp68);
-    while (arg1[j].unk0 != NULL) {
-        var_s1 = (arg1[j].unk8 * 4) + (arg2 * 4);
-        var_s2 = (arg1[j].unkA * 4) + (arg3 * 4);
-        temp_s5 = (arg1[j].unk0->width * 4) + var_s1;
-        temp_s6 = (arg1[j].unk0->height * 4) + var_s2;
+    arg2 *= 4;
+    arg3 *= 4;
+    var_a1 = arg1->unk0;
+    while (var_a1 != NULL) {
+        var_s1 = (arg1[j].unk8 * 4) + arg2;
+        var_s2 = (arg1[j].unkA * 4) + arg3;
+        temp_s5 = (var_a1->width * 4) + var_s1;
+        temp_s6 = (var_a1->height * 4) + var_s2;
         if (temp_s5 > 0 && temp_s6 > 0) {
             var_s3 = 0;
             var_s4 = 0;
@@ -346,7 +337,7 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
                 var_s2 = 0;
             }
             temp_t8 = (s32) arg1[j].unk4 >> 8;
-            for (var_v0 = arg1[j].unk0, i = 0; i < temp_t8 && var_v0 != NULL; i++) {
+            for (var_v0 = var_a1, i = 0; i < temp_t8 && var_v0 != NULL; i++) {
                 var_v0 = var_v0->next;
             }
             sp68->words.w0 = var_v0->gdl->words.w0;
@@ -357,7 +348,7 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
             dl_set_prim_color(&sp68, arg4, arg5, arg6, arg7);
             gSPTextureRectangle(sp68++, 
             /* xl */ var_s1,
-            /* xl */ var_s2,
+            /* xy */ var_s2,
             /* xh */ temp_s5,
             /* yh */ temp_s6,
             /* tile */ 0,
@@ -369,11 +360,11 @@ void func_80037F9C(Gfx** gdl, Unk* arg1, s32 arg2, s32 arg3, u8 arg4, u8 arg5, u
             gDLBuilder->needsPipeSync = 1;
         }
         j++;
+        var_a1 = arg1[j].unk0;
     }
     func_8003DB5C();
     *gdl = sp68;
 }
-#endif
 
 void func_8003825C(Gfx** gdl, Texture* tex, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
     s32 temp = tex->height | ((tex->unk1B & 0xF) << 8);
