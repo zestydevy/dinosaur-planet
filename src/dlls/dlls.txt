@@ -47,6 +47,7 @@
 # objects
 210 = objects/210_player
 211 = objects/211_Tricky
+213 = objects/213_Unknown
 214 = objects/214_animobj
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
@@ -101,6 +102,7 @@
 363 = objects/363_FElevControl
 364 = objects/364_FEseqobject
 365 = objects/365
+376 = objects/376_CFPrisonUncle
 378 = objects/378_CFScalesGalleon
 393 = objects/393_CFMainSlideDoor
 396 = objects/396_CFSupTreasureCh
@@ -145,6 +147,7 @@
 512 = objects/512_SHLevelControl
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
+517 = objects/517_SCBabyLightFoot
 519 = objects/519_SC_levelcontrol
 530 = objects/530_DIMLavaBallGenerator
 544 = objects/544_DIM_LevelControl
