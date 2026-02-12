@@ -8,7 +8,7 @@
 
 //unknown What this is for.
 struct PointersInts{
-	void *prts[2];
+	Gfx *prts[2];
 	u32 valA;
 	u32 valB;
 };

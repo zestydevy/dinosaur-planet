@@ -2,6 +2,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/textable.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/memory.h"
@@ -132,9 +133,9 @@ void oldshadow_init(void) {
     D_800BCC10[7].y = 0.0f;
     D_800BCC10[7].z = -3.0f;
 
-    D_800BCC68 = tex_load_deferred(0x18);
-    D_800BCC6C = tex_load_deferred(0x19);
-    D_800BCC70 = tex_load_deferred(0x1a);
+    D_800BCC68 = tex_load_deferred(TEXTABLE_18_Footprint1);
+    D_800BCC6C = tex_load_deferred(TEXTABLE_19_Footprint2);
+    D_800BCC70 = tex_load_deferred(TEXTABLE_1A_Footprint3);
 
     D_800BCC78 = (u8)0;
 }

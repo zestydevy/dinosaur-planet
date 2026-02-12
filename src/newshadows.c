@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "sys/newshadows.h"
+#include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
 #include "functions.h"
@@ -173,7 +174,7 @@ void shadows_init(void) {
     D_800B9840[22] = 0.0f;
     D_800B9840[23] = 55.0f;
     shadowtex_init();
-    D_800BB190 = tex_load_deferred(0xD8);
+    D_800BB190 = tex_load_deferred(TEXTABLE_D8);
 }
 
 #ifndef NON_EQUIVALENT

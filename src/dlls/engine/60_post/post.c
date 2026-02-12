@@ -8,6 +8,7 @@
 #include "game/gametexts.h"
 #include "sys/fonts.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -41,7 +42,7 @@ void dll_60_ctor(void *dll) {
 
     if (osMemSize != 0x800000) {
         data_4 = 1;
-        data_10 = tex_load_deferred(0x2da);
+        data_10 = tex_load_deferred(TEXTABLE_2DA_ExpansionPak);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F3_Expansion_Pak_Needed);
     } else {
         bss_4 = 0;
@@ -54,10 +55,10 @@ void dll_60_ctor(void *dll) {
         gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
         main_set_bits(BIT_44F, 1);
         gDLL_2_Camera->vtbl->func21(30, 1);
-        data_8 = tex_load_deferred(0x2d2);
-        data_C = tex_load_deferred(0x2d3);
-        bss_18 = tex_load_deferred(0x2db);
-        bss_1C = tex_load_deferred(0x2dc);
+        data_8 = tex_load_deferred(TEXTABLE_2D2_N64LogoFull);
+        data_C = tex_load_deferred(TEXTABLE_2D3_N64LogoFull_Shadow);
+        bss_18 = tex_load_deferred(TEXTABLE_2DB_DolbySurround);
+        bss_1C = tex_load_deferred(TEXTABLE_2DC_DolbySurround_SmallLogo);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F2_Splash_Screen);
         gDLL_29_Gplay->vtbl->get_game_options(); // ignoring return value
     }
