@@ -57,7 +57,7 @@ void dll_517_ctor(void* dll) {
 void dll_517_dtor(void *dll) { }
 
 // offset: 0x90 | func: 1 | export: 0
-void dll_517_setup(Object* self, ObjSetup* setup, s32 arg2) {
+void dll_517_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     s32 var_v0;
     DLL517_Data* sp38;
     Baddie* baddie;
@@ -81,12 +81,12 @@ void dll_517_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0x178 | func: 2 | export: 1
 void dll_517_control(Object* self) {
-    void* sp24;
+    Baddie* sp24;
 
     sp24 = self->data;
     if (self->unkDC == 0) {
         if (gDLL_33_BaddieControl->vtbl->func11(self, (Baddie* ) sp24, 1U) != 0) {
-            dll_517_func_334(self, (Baddie* )sp24, (ObjFSA_Data* )sp24);
+           dll_517_func_334(self, sp24, &sp24->fsa);
         }
     }
 }
@@ -106,14 +106,14 @@ void dll_517_free(Object* self, s32 arg1) {
     void* sp24;
 
     sp24 = self->data;
-    obj_free_object_type(self, 4);
+    obj_free_object_type(self, OBJTYPE_4);
     gDLL_33_BaddieControl->vtbl->func15(self, (Baddie* ) sp24, 0x20U);
 }
 
 
 // offset: 0x2D8 | func: 6 | export: 5
 u32 dll_517_get_model_flags(Object* self) {
-    return 0x4BU;
+    return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8 | MODFLAGS_EVENTS;
 }
 
 // offset: 0x2E8 | func: 7 | export: 6
@@ -144,7 +144,7 @@ static void dll_517_func_334(Object* arg0, Baddie* baddie, ObjFSA_Data* arg2) {
     gDLL_33_BaddieControl->vtbl->func10(arg0, arg2, 0.17f, 1);
     baddie->unk3AC = (Object* ) arg0->unkC0;
     arg0->unkC0 = NULL;
-    gDLL_18_objfsa->vtbl->tick(arg0, arg2, gUpdateRateF, gUpdateRateF, (s32 (**)(Object*, ObjFSA_Data*, f32)) _bss_0, (s32 (**)(Object*, ObjFSA_Data*, f32)) _bss_8);
+    gDLL_18_objfsa->vtbl->tick(arg0, arg2, gUpdateRateF, gUpdateRateF, _bss_0, _bss_8);
     arg0->unkC0 = baddie->unk3AC;
 }
 
@@ -226,7 +226,7 @@ static s32 dll_517_func_7C4(Object* self, ObjFSA_Data* arg1, f32 arg2) {
         }
 
         if (sp20 < 0x1770 && (self->unkAF & 1)) {
-            joy_set_button_mask(0, 0x8000U);
+            joy_set_button_mask(0, A_BUTTON);
             gDLL_3_Animation->vtbl->func17((s32) sp28->unk8, self, -1);
             sp28->unk8++;
             if (sp28->unk8 >= 2) {

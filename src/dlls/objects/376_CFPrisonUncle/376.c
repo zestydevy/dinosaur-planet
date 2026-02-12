@@ -64,8 +64,8 @@ void dll_376_setup(Object* self, ObjSetup* setup, s32 arg2) {
     objData->unk4C[1] = 0x1D1;
     objData->unk5C = 0;
     objData->unk60 = 0;
-    if (main_get_bits(0x4D)) {
-        main_set_bits(0x50, 1);
+    if (main_get_bits(BIT_4D)) {
+        main_set_bits(BIT_50, 1);
     }
 }
 
@@ -83,7 +83,7 @@ void dll_376_control(Object* self) {
     s16* sp40;
     
     objData = self->data;
-    if (!objData || main_get_bits(0x50)){
+    if (!objData || main_get_bits(BIT_50)){
         return;
     }
     
@@ -101,7 +101,7 @@ void dll_376_control(Object* self) {
         }
     }
     
-    objData->unk5F = main_get_bits(0x4D);
+    objData->unk5F = main_get_bits(BIT_4D);
     if (objData->unk5F == 0) {
         player = get_player();
         
@@ -175,14 +175,14 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
  
     objData = self->data;  
     
-    if (main_get_bits(0x50)) {
+    if (main_get_bits(BIT_50)) {
         if (objData->unk0 && func_800456AC(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
     }
     
-    if (main_get_bits(0x4D) && visibility) {
+    if (main_get_bits(BIT_4D) && visibility) {
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objData->unk0 && func_800456AC(objData->unk0)) {
             draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
@@ -249,7 +249,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         objData->unk60 = 1;
        
         
-        dustSetup = (BoneDust_Setup*)obj_alloc_create_info(0x30, OBJ_BoneDust); 
+        dustSetup = (BoneDust_Setup*)obj_alloc_create_info(sizeof(BoneDust_Setup), OBJ_BoneDust); 
         dustSetup->unk1A = 2;
         dustSetup->unk2C = -1;
         dustSetup->unk1C = -1;
@@ -257,12 +257,12 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         dustSetup->base.y = self->srt.transl.y + 15.0f;
         dustSetup->base.z = self->srt.transl.z;
         dustSetup->unk24 = -1;
-        dustSetup->base.loadFlags = 4;
-        dustSetup->base.byte5 = 4;
-        dustSetup->base.byte6 = 0x28;
+        dustSetup->base.loadFlags = OBJSETUP_LOAD_FLAG4;
+        dustSetup->base.fadeFlags = OBJSETUP_FADE_FLAG4;
+        dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;
-        obj_create((ObjSetup*)dustSetup, 5, self->mapID, -1, NULL);
+        obj_create((ObjSetup*)dustSetup, OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, self->mapID, -1, NULL);
     }
     return 0;
 }
