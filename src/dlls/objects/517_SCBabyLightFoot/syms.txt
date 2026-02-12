@@ -1,0 +1,27 @@
+.text = 0x0:
+dll_517_func_0 = 0x0;
+dll_517_ctor = 0x44;
+dll_517_dtor = 0x84;
+dll_517_setup = 0x90;
+dll_517_control = 0x178;
+dll_517_update = 0x1FC;
+dll_517_print = 0x208;
+dll_517_free = 0x268;
+dll_517_get_model_flags = 0x2D8;
+dll_517_get_data_size = 0x2E8;
+dll_517_func_2FC = 0x2FC;
+dll_517_func_334 = 0x334;
+dll_517_func_4AC = 0x4AC;
+dll_517_func_628 = 0x628;
+dll_517_func_7C4 = 0x7C4;
+
+.rodata = 0x9B4:
+
+.data = 0x9C4:
+_data_0 = 0x0; // absolute:0x9C4
+_data_8 = 0x8; // absolute:0x9CC
+_data_18 = 0x18; // absolute:0x9DC
+
+.bss = 0xA04:
+_bss_0 = 0x0; // absolute:0xA04
+_bss_8 = 0x8; // absolute:0xA0C
