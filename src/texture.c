@@ -913,7 +913,7 @@ Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl) {
     mygdl = gdl;
     texture->gdl = gdl;
 
-    if (texture->flags & TEX_FLAG_8000) {
+    if (texture->flags & RENDER_COMPOSITE_OVERLAY) {
         tile = 1;
         tmem = 0x100;
     } else {
@@ -924,9 +924,10 @@ Gfx *tex_setup_display_lists(Texture *texture, Gfx *gdl) {
     tex_make_display_list(&mygdl, texture, tile, tmem, 0);
     texture->gdl2Offset = mygdl - texture->gdl;
 
-    if (!(texture->flags & (TEX_FLAG_4000 | TEX_FLAG_8000)) && (texture->flags & TEX_FLAG_40)) {
+    if (!(texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) 
+            && (texture->flags & RENDER_TEX_BLEND)) {
         if (TEX_FORMAT(texture->format) == TEX_FORMAT_RGBA32) {
-            tex_make_display_list(&mygdl, texture, 1, (0x1000 - texture->unk18) >> 3, 0);
+            tex_make_display_list(&mygdl, texture, 1, (0x1000 - texture->sizeBytes) >> 3, 0);
         } else if (TEX_FORMAT(texture->format) == TEX_FORMAT_CI4) {
             tex_make_display_list(&mygdl, texture, 1, 0x80, 1);
         } else {
@@ -954,7 +955,7 @@ void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
 
     dl = *gdl;
     texFormat = TEX_FORMAT(texture->format);
-    temp_t7 = (texture->format >> 4) & 0xF;
+    temp_t7 = TEX_FORMAT2(texture->format);
     width  = texture->width & 0xFF;
     height = texture->height & 0xFF;
     width  |= ((texture->widthHeightHi & 0xF0) << 4);
@@ -996,14 +997,14 @@ void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
     case TEX_FORMAT_RGBA16:
         fmt = G_IM_FMT_RGBA;
         if ((temp_t7 == 0) || (temp_t7 == 2)) {
-            texture->flags |= TEX_FLAG_4;
+            texture->flags |= RENDER_SEMI_TRANSPARENT;
         }
         break;
     case TEX_FORMAT_IA16:
     case TEX_FORMAT_IA8:
     case TEX_FORMAT_IA4:
         fmt = G_IM_FMT_IA;
-        texture->flags |= TEX_FLAG_4;
+        texture->flags |= RENDER_SEMI_TRANSPARENT;
         break;
     case TEX_FORMAT_CI4:
         fmt = G_IM_FMT_CI;
@@ -1017,7 +1018,7 @@ void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
     } else {
         var_ra = width * sizLineBytes;
     }
-    if (texture->flags & (TEX_FLAG_4000 | TEX_FLAG_8000)) {
+    if (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
         gDPSetTextureImage(dl++, fmt, sizLoad, 1, OS_PHYSICAL_TO_K0((u32)texture + sizeof(Texture)));
         gDPSetTile(dl++, fmt, sizLoad, 0, tmem, 
                    G_TX_LOADTILE, 
@@ -1059,7 +1060,7 @@ void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
                      0);
         gDPPipeSync(dl++);
         
-        if (!(texture->flags & TEX_FLAG_MIPMAPS)) {
+        if (!(texture->flags & RENDER_MIPMAPS)) {
             gDPSetTile(dl++, fmt, siz, 
                        ((var_ra + 7) >> 3), 
                        tmem, 
@@ -1080,7 +1081,7 @@ void tex_make_display_list(Gfx** gdl, Texture* texture, u32 tile, u32 tmem, u32 
                         (((palette & 0xF) << 4) + 0x100), 
                         (OS_PHYSICAL_TO_K0((u32)texture + ((width * height) >> 1) + sizeof(Texture))));
         }
-        if (texture->flags & TEX_FLAG_MIPMAPS) {
+        if (texture->flags & RENDER_MIPMAPS) {
             if (texFormat == TEX_FORMAT_RGBA32) {
                 bcopy(Gfx_ARRAY_80092a00, dl, sizeof(Gfx) * 8);
                 dl += 8;
@@ -1182,48 +1183,48 @@ void tex_render_restore_state(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_gdl_set_texture_simple.s")
 #else
 // https://decomp.me/scratch/fpYm1
-s32 tex_gdl_set_texture_simple(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s32 force, s32 arg5) {
+s32 tex_gdl_set_texture_simple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options) {
     s32 pad_sp84;
-    Texture* var_a3;
+    Texture* basetex;
     s32 var_a2; // sp7c
-    Texture* var_t0_2;
+    Texture* blendtex;
     Texture* var_v1;
     s32 fogEnabled;
-    s32 var_a1;
+    s32 renderMipmaps;
     s32 var_a0;
-    s32 var_v0;
+    s32 i;
     s32 pad_sp60;
     struct PointersInts* var_a3_2;
     s32 geomMode;
-    Gfx* sp54;
+    Gfx* dl;
     s16 temp_v1;
     Gfx *temp_gdl;
-    s32 var_t0; // sp48
+    s32 hasPalette; // sp48
     s32 temp;
     s32 pad[2];
 
-    sp54 = *arg0;
+    dl = *gdl;
     D_800B49D8 = 0;
-    if (arg5 & 2) {
+    if (options & TEXOPT_VISIBLE) {
         D_800B49DC = 0;
-        var_t0 = 0;
-        if (arg1 != NULL) {
-            var_a0 = arg3 >> 0x10;
-            var_a2 = arg1->animDuration != 0 ? arg1->animDuration >> 8 : 0;
-            var_a3 = arg1;
-            var_t0_2 = arg1;
-            if (var_a2 >= 2 && var_a0 < var_a2) {
-                for (var_v1 = arg1, var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++) {
+        hasPalette = 0;
+        if (tex != NULL) {
+            var_a0 = frameOptions >> 16;
+            var_a2 = tex->animDuration != 0 ? tex->animDuration >> 8 : 0;
+            basetex = tex;
+            blendtex = tex;
+            if (var_a2 > 1 && var_a0 < var_a2) {
+                for (var_v1 = tex, i = 0; i < var_a0 && var_v1 != NULL; i++) {
                     var_v1 = var_v1->next;
                 }
                 if (var_v1 != NULL) {
-                    var_a3 = var_v1;
+                    basetex = var_v1;
                 }
-                if (arg2 & 0x40) {
-                    if (arg2 & 0x80000) {
+                if (renderFlags & RENDER_TEX_BLEND) {
+                    if (renderFlags & RENDER_TEXANIM_REVERSE) {
                         var_a0--;
                         if (var_a0 < 0) {
-                            if (arg2 & 0x40000) {
+                            if (renderFlags & RENDER_TEXANIM_PINGPONG) {
                                 var_a0 += 2;
                             } else {
                                 var_a0 = 0;
@@ -1232,88 +1233,92 @@ s32 tex_gdl_set_texture_simple(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s3
                     } else {
                         var_a0++;
                         if (var_a0 >= var_a2) {
-                            if (arg2 & 0x40000) {
+                            if (renderFlags & RENDER_TEXANIM_PINGPONG) {
                                 var_a0 -= 2;
                             } else {
                                 var_a0 = var_a2 - 1;
                             }
                         }
                     }
-                    for (var_v1 = arg1, var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++) {
+                    for (var_v1 = tex, i = 0; i < var_a0 && var_v1 != NULL; i++) {
                         var_v1 = var_v1->next;
                     }
                     if (var_v1 != NULL) {
-                        var_t0_2 = var_v1;
+                        blendtex = var_v1;
                     }
                 } else {
-                    var_t0_2 = var_a3;
+                    blendtex = basetex;
                 }
             }
-            temp_v1 = (arg1->flags & 0xFEBF);
-            arg2 = temp_v1 | arg2;
-            if ((var_a3 != gCurrTex0) || (var_t0_2 != gCurrTex1) || (force != 0)) {
-                gCurrTex0 = var_a3;
-                gCurrTex1 = var_t0_2;
-                temp_gdl = var_a3->gdl;
-                gSPDisplayList(sp54++, OS_PHYSICAL_TO_K0(temp_gdl));
-                if (arg1->flags & 0x40 && arg2 & 0x40) {
-                    temp_gdl = var_t0_2->gdl;
-                    gSPDisplayList(sp54++, OS_PHYSICAL_TO_K0(temp_gdl));
-                    dl_set_env_color_no_sync(&sp54, (arg3 & 0xFFFF) >> 8, (arg3 & 0xFFFF) >> 8, (arg3 & 0xFFFF) >> 8, 0);
+            temp_v1 = (tex->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
+            renderFlags = temp_v1 | renderFlags;
+            if ((basetex != gCurrTex0) || (blendtex != gCurrTex1) || (force != 0)) {
+                gCurrTex0 = basetex;
+                gCurrTex1 = blendtex;
+                temp_gdl = basetex->gdl;
+                gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(temp_gdl));
+                if (tex->flags & RENDER_TEX_BLEND && renderFlags & RENDER_TEX_BLEND) {
+                    temp_gdl = blendtex->gdl;
+                    gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(temp_gdl));
+                    dl_set_env_color_no_sync(&dl, 
+                        (frameOptions & 0xFFFF) >> 8, (frameOptions & 0xFFFF) >> 8, (frameOptions & 0xFFFF) >> 8, 
+                        0);
                 }
                 D_800B49DC = 1;
             }
-            var_t0 = TEX_FORMAT(arg1->format) == TEX_FORMAT_CI4;
-            var_a1 = arg1->flags & 0x100;
+            hasPalette = TEX_FORMAT(tex->format) == TEX_FORMAT_CI4;
+            renderMipmaps = tex->flags & RENDER_MIPMAPS;
             var_a0 = 1;
             var_a3_2 = pointersIntsArray;
         } else {
-            var_a1 = 0;
+            // No texture
+            renderMipmaps = 0;
             var_a0 = 0;
             var_a3_2 = pointersIntsArray + 38;
         }
     } else {
-        var_t0 = FALSE;
-        var_a1 = 0;
+        hasPalette = FALSE;
+        renderMipmaps = 0;
         var_a0 = 0;
-        if (arg1 != NULL) {
-            temp_v1 = (arg1->flags & 0xFEBF);
-            arg2 = temp_v1 | arg2;
+        if (tex != NULL) {
+            temp_v1 = (tex->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
+            renderFlags = temp_v1 | renderFlags;
             var_a0 = 1;
             var_a3_2 = pointersIntsArray;
-            var_t0 = TEX_FORMAT(arg1->format) == TEX_FORMAT_CI4;
-            var_a1 = arg1->flags & 0x100;
+            hasPalette = TEX_FORMAT(tex->format) == TEX_FORMAT_CI4;
+            renderMipmaps = tex->flags & RENDER_MIPMAPS;
         } else {
+            // No texture
             var_a3_2 = pointersIntsArray + 38;
         }
     }
-    if (arg5 & 1) {
-        arg2 &= ~gTexBlockedRenderFlags;
-        temp = (s32) (arg2 & 0x70) >> 4;
+    if (options & TEXOPT_SET_MODES) {
+        renderFlags &= ~gTexBlockedRenderFlags;
+        temp = (s32) (renderFlags & (RENDER_TEX_BLEND | RENDER_UNK20 | RENDER_UNK10)) >> 4;
         if (var_a0 != 0) {
-            if (arg2 & 0x400) {
-                if (var_a1 != 0) {
-                    temp = 0x23;
+            if (renderFlags & RENDER_DECAL_SIMPLE) {
+                if (renderMipmaps != 0) {
+                    temp = 35;
                 } else {
-                    temp = 0x22;
+                    temp = 34;
                 }
-            } else if (arg2 & 0x100000) {
+            } else if (renderFlags & RENDER_DECAL) {
                 temp += 8;
-            } else if (arg2 & 0x80) {
-                temp += 0x10;
-            } else if (arg2 & 0x40000000) {
-                temp = 0x25;
-            } else if (arg2 & 0x200) {
-                if (var_a1 != 0) {
-                    temp = 0x21;
+            } else if (renderFlags & RENDER_CUTOUT) {
+                temp += 16;
+            } else if (renderFlags & RENDER_UNK_40000000) {
+                temp = 37;
+            } else if (renderFlags & RENDER_SUBSURFACE) {
+                if (renderMipmaps != 0) {
+                    temp = 49;
                 } else {
-                    temp += 0x18;
+                    temp += 24;
                 }
-            } else if (var_a1 != 0) {
-                temp = 0x20;
+            } else if (renderMipmaps != 0) {
+                temp = 32;
             }
         }
-        var_a2 = (arg2 & var_a3_2[temp].valA) | var_a3_2[temp].valB;
+        var_a2 = (renderFlags & var_a3_2[temp].valA) | var_a3_2[temp].valB;
         geomMode = G_SHADING_SMOOTH | G_SHADE;
         if (var_a2 & RENDER_Z_COMPARE) {
             geomMode |= G_ZBUFFER;
@@ -1321,39 +1326,39 @@ s32 tex_gdl_set_texture_simple(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s3
         if (var_a2 & RENDER_FOG_ACTIVE) {
             geomMode |= G_FOG;
         }
-        if (!(arg2 & RENDER_NO_CULL)) {
+        if (!(renderFlags & RENDER_NO_CULL)) {
             geomMode |= G_CULL_BACK;
         }
-        if (arg5 & 4) {
-            gSPGeometryMode(sp54++, 0xFFFFFF, geomMode);
+        if (options & TEXOPT_SKIP_MODE_CACHE) {
+            gSPGeometryMode(dl++, 0xFFFFFF, geomMode);
         } else {
-            gSPGeometryMode(sp54, 0xFFFFFF, geomMode);
-            dl_apply_geometry_mode(&sp54);
+            gSPGeometryMode(dl, 0xFFFFFF, geomMode);
+            dl_apply_geometry_mode(&dl);
         }
         fogEnabled = (var_a2 >> 3);
-        sp54->words.w0 = (((Gfx*)var_a3_2[temp].prts[0])[fogEnabled]).words.w0;
-        sp54->words.w1 = (((Gfx*)var_a3_2[temp].prts[0])[fogEnabled]).words.w1;
-        if (!(arg5 & 4)) {
-            dl_apply_combine(&sp54);
+        dl->words.w0 = (((Gfx*)var_a3_2[temp].prts[0])[fogEnabled]).words.w0;
+        dl->words.w1 = (((Gfx*)var_a3_2[temp].prts[0])[fogEnabled]).words.w1;
+        if (!(options & TEXOPT_SKIP_MODE_CACHE)) {
+            dl_apply_combine(&dl);
         } else {
-            sp54++;
+            dl++;
         }
-        sp54->words.w0 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w0;
-        sp54->words.w1 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w1;
-        if (var_t0 != 0) {
-            sp54->words.w0 |= 0x8000;
+        dl->words.w0 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w0;
+        dl->words.w1 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w1;
+        if (hasPalette != 0) {
+            dl->words.w0 |= G_TT_RGBA16;
         }
-        if (!(arg5 & 4)) {
-            dl_apply_other_mode(&sp54);
+        if (!(options & TEXOPT_SKIP_MODE_CACHE)) {
+            dl_apply_other_mode(&dl);
         } else {
-            sp54++;
+            dl++;
         }
-        if ((var_a2 & 7) < 4) {
+        if ((var_a2 & (RENDER_ANTI_ALIASING | RENDER_Z_COMPARE | RENDER_SEMI_TRANSPARENT)) < 4) {
             var_a2 += 4;
             D_800B49D8 = (((Gfx*)var_a3_2[temp].prts[1])[var_a2]).words.w1;
         }
     }
-    *arg0 = sp54;
+    *gdl = dl;
     return 0;
 }
 #endif
@@ -1362,17 +1367,17 @@ s32 tex_gdl_set_texture_simple(Gfx** arg0, Texture* arg1, s32 arg2, s32 arg3, s3
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/tex_gdl_set_textures.s")
 #else
 // https://decomp.me/scratch/0L3c5
-void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s32 arg4, u32 force, u32 setModes) {
+void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes) {
     Gfx* temp_v0_2;
-    Texture* var_a3;
-    Texture* var_t2;
+    Texture* blendtex;
+    Texture* basetex;
     Texture* var_v1;
     s32 temp_a1;
     s32 temp_a2;
     s32 var_a0;
-    s32 var_a1;
-    s32 var_a2;
-    s32 var_t0;
+    s32 hasTex;
+    s32 renderMipmaps;
+    s32 hasPalette;
     s32 var_v0;
     struct PointersInts* temp_v1;
     Gfx* sp4C;
@@ -1380,31 +1385,31 @@ void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s3
     s32 var_a2_2;
     s32 pad[2];
 
-    var_t0 = 0;
-    var_a2 = 0;
+    hasPalette = 0;
+    renderMipmaps = 0;
     sp4C = *gdl;
     if (tex0 != NULL) {
-        temp_a1 = arg4 >> 0x10;
+        temp_a1 = frameOptions >> 16;
         if (tex0->animDuration != 0) {
             var_a2_2 = tex0->animDuration >> 8;
         } else {
-            var_a2_2 = arg4 * 0;
+            var_a2_2 = frameOptions * 0;
         }
         
-        var_t2 = tex0;
-        var_a3 = tex0;
-        if (var_a2_2 >= 2 && temp_a1 < var_a2_2) {
+        basetex = tex0;
+        blendtex = tex0;
+        if (var_a2_2 > 1 && temp_a1 < var_a2_2) {
             for (var_v1 = tex0, var_v0 = 0; var_v0 < temp_a1 && var_v1 != NULL; var_v0++) {
                 var_v1 = var_v1->next;
             }
             if (var_v1 != NULL) {
-                var_t2 = var_v1;
+                basetex = var_v1;
             }
-            if (flags & 0x40) {
-                if (flags & 0x80000) {
+            if (renderFlags & RENDER_TEX_BLEND) {
+                if (renderFlags & RENDER_TEXANIM_REVERSE) {
                     temp_a1 = temp_a1 - 1;
                     if (temp_a1 < 0) {
-                        if (flags & 0x40000) {
+                        if (renderFlags & RENDER_TEXANIM_PINGPONG) {
                             temp_a1 += 2;
                         } else {
                             temp_a1 = 0;
@@ -1413,7 +1418,7 @@ void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s3
                 } else {
                     temp_a1 = temp_a1 + 1;
                     if (temp_a1 >= var_a2_2) {
-                        if (flags & 0x40000) {
+                        if (renderFlags & RENDER_TEXANIM_PINGPONG) {
                             temp_a1 -= 2;
                         } else {
                             temp_a1 = var_a2_2 - 1;
@@ -1424,80 +1429,81 @@ void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s3
                     var_v1 = var_v1->next;
                 }
                 if (var_v1 != NULL) {
-                    var_a3 = var_v1;
+                    blendtex = var_v1;
                 }
             } else {
-                var_a3 = var_t2;
+                blendtex = basetex;
             }
         }
         if (tex1 != NULL) {
-            var_a3 = tex1;
+            blendtex = tex1;
         }
-        var_v0 = (s16) (tex0->flags & 0xFEBF);
-        flags |= var_v0;
-        if ((var_t2 != gCurrTex0) || (var_a3 != gCurrTex1) || (force != 0)) {
-            gCurrTex0 = var_t2;
-            gCurrTex1 = var_a3;
-            temp_v0_2 = var_t2->gdl;
+        var_v0 = (s16) (tex0->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
+        renderFlags |= var_v0;
+        if ((basetex != gCurrTex0) || (blendtex != gCurrTex1) || (force != 0)) {
+            gCurrTex0 = basetex;
+            gCurrTex1 = blendtex;
+            temp_v0_2 = basetex->gdl;
             gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
-            temp_v0_2 = var_a3->gdl;
+            temp_v0_2 = blendtex->gdl;
             if (tex1 != NULL) {
                 gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
                 dl_set_env_color(&sp4C, 0x7F, 0x7F, 0x7F, 0x7F);
             } else {
-                if ((tex0->flags & 0x40) && (flags & 0x40)) {
-                    temp_v0_2 += var_t2->gdl2Offset;
+                if ((tex0->flags & RENDER_TEX_BLEND) && (renderFlags & RENDER_TEX_BLEND)) {
+                    temp_v0_2 += basetex->gdl2Offset;
                     gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
-                    arg4 >>= 8;
-                    dl_set_env_color_no_sync(&sp4C, arg4, arg4, arg4, 0);
-                } else if (flags & 0x2000) {
+                    frameOptions >>= 8;
+                    dl_set_env_color_no_sync(&sp4C, frameOptions, frameOptions, frameOptions, 0);
+                } else if (renderFlags & RENDER_UNK2000) {
                     dl_set_env_color(&sp4C, 0xA0, 0xA0, 0xA0, 0xA0);
                 }
             }
         }
-        var_a2 = tex0->flags & 0x100;
-        var_a1 = 1;
+        renderMipmaps = tex0->flags & RENDER_MIPMAPS;
+        hasTex = 1;
         var_a3_2 = pointersIntsArray;
-        var_t0 = TEX_FORMAT(tex0->format) == TEX_FORMAT_CI4;
+        hasPalette = TEX_FORMAT(tex0->format) == TEX_FORMAT_CI4;
     } else {
-        var_a1 = 0;
+        // No texture
+        hasTex = 0;
         var_a3_2 = pointersIntsArray + 38;
     }
     if (setModes != 0) {
-        flags &= ~gTexBlockedRenderFlags;
-        var_a0 = (s32) (flags & 0x70) >> 4;
-        if (var_a1 != 0) {
-            if (flags & 0x400) {
-                if (var_a2 != 0) {
+        renderFlags &= ~gTexBlockedRenderFlags;
+        var_a0 = (s32) (renderFlags & (RENDER_TEX_BLEND | RENDER_UNK20 | RENDER_UNK10)) >> 4;
+        if (hasTex != 0) {
+            if (renderFlags & RENDER_DECAL_SIMPLE) {
+                if (renderMipmaps != 0) {
                     var_a0 = 35; // mipmap decal
                 } else {
                     var_a0 = 34; // non-mipmap decal
                 }
-            } else if (flags & 0x100000) {
+            } else if (renderFlags & RENDER_DECAL) {
                 var_a0 += 8; // decal
-            } else if (flags & 0x80) {
+            } else if (renderFlags & RENDER_CUTOUT) {
                 var_a0 += 16; // cutout
-            } else if (flags & 0x200) {
-                if (var_a2 != 0) {
+            } else if (renderFlags & RENDER_SUBSURFACE) {
+                if (renderMipmaps != 0) {
                     var_a0 = 33; // mipmap subsurface
                 } else {
                     var_a0 += 24; // subsurface
                 }
-            } else if (var_a2 != 0) {
+            } else if (renderMipmaps != 0) {
                 var_a0 = 32; // mipmap
             }
         }
         temp_v1 = &var_a3_2[var_a0];
-        temp_a2 = temp_v1->valB | (flags & temp_v1->valA);
-        var_v0 = 0x200004;
-        if (temp_a2 & 2) {
+        temp_a2 = temp_v1->valB | (renderFlags & temp_v1->valA);
+        var_v0 = G_SHADING_SMOOTH | G_SHADE;
+        if (temp_a2 & RENDER_Z_COMPARE) {
             var_v0 |= 1;
         }
-        if (temp_a2 & 8) {
-            var_v0 |= 0x10000;
+        if (temp_a2 & RENDER_FOG_ACTIVE) {
+            var_v0 |= G_FOG;
         }
-        if (!(flags & 0x80000000)) {
-            var_v0 |= 0x400;
+        if (!(renderFlags & RENDER_NO_CULL)) {
+            var_v0 |= G_CULL_BACK;
         }
         gSPLoadGeometryMode(sp4C, var_v0);
         dl_apply_geometry_mode(&sp4C);
@@ -1506,8 +1512,8 @@ void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s3
         dl_apply_combine(&sp4C);
         sp4C->words.w0 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w0;
         sp4C->words.w1 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w1;
-        if (var_t0 != 0) {
-            sp4C->words.w0 |= 0x8000;
+        if (hasPalette != 0) {
+            sp4C->words.w0 |= G_TT_RGBA16;
         }
         dl_apply_other_mode(&sp4C);
     }
@@ -1516,85 +1522,84 @@ void tex_gdl_set_textures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 flags, s3
 #endif
 
 // official Name: texAnimateTexture
-void tex_animate(Texture *tex, s32 *arg1, s32 *arg2) {
+void tex_animate(Texture *tex, s32 *renderFlags, s32 *progress) {
     s32 temp_a1;
-    s32 temp_t1;
-    s32 temp_t2;
-    s32 var_a0;
-    s32 y;
+    s32 pingpong;
+    s32 reverse;
+    s32 stop;
+    s32 random;
 
-    temp_t2 = *arg1 & 0x80000;
-    temp_t1 = *arg1 & 0x40000;
-    y = *arg1 & 0x20000;
+    reverse = *renderFlags & RENDER_TEXANIM_REVERSE;
+    pingpong = *renderFlags & RENDER_TEXANIM_PINGPONG;
+    random = *renderFlags & RENDER_TEXANIM_RANDOM_PINGPONG;
 
-    if (y) {
-        if (temp_t1 == 0) {
-            if (rand_next(0, 1000) >= 986) {
-                *arg1 &= 0xFFF7FFFF;
-                *arg1 |= 0x40000;
+    if (random) {
+        if (pingpong == 0) {
+            if (rand_next(0, 1000) >= 986) { // 1.4% chance
+                *renderFlags &= ~RENDER_TEXANIM_REVERSE;
+                *renderFlags |= RENDER_TEXANIM_PINGPONG;
             }
             return;
         }
 
-        if (temp_t2 == 0) {
-            *arg2 +=(tex->animSpeed * gUpdateRate);
-            if (*arg2 >= tex->animDuration) {
-                *arg2 = ((tex->animDuration * 2) - *arg2) - 1;
-                if (*arg2 < 0) {
-                    *arg2 = 0;
-                    *arg1 &= 0xFFF3FFFF;
+        if (reverse == 0) {
+            *progress += (tex->animSpeed * gUpdateRate);
+            if (*progress >= tex->animDuration) {
+                *progress = ((tex->animDuration * 2) - *progress) - 1;
+                if (*progress < 0) {
+                    *progress = 0;
+                    *renderFlags &= ~(RENDER_TEXANIM_PINGPONG | RENDER_TEXANIM_REVERSE);
                     return;
                 }
-                *arg1 |= 0x80000;
+                *renderFlags |= RENDER_TEXANIM_REVERSE;
             }
-            return;
-        }
-
-        *arg2 -= tex->animSpeed * gUpdateRate;
-        if (*arg2 < 0) {
-            *arg2 = 0;
-            *arg1 &= 0xFFF3FFFF;
+        } else {
+            *progress -= tex->animSpeed * gUpdateRate;
+            if (*progress < 0) {
+                *progress = 0;
+                *renderFlags &= ~(RENDER_TEXANIM_PINGPONG | RENDER_TEXANIM_REVERSE);
+            }
         }
         return;
     }
 
-    if (temp_t1) {
-        if (temp_t2 == 0) {
-            *arg2 += tex->animSpeed * gUpdateRate;
+    if (pingpong) {
+        if (reverse == 0) {
+            *progress += tex->animSpeed * gUpdateRate;
         } else {
-            *arg2 -= tex->animSpeed * gUpdateRate;
+            *progress -= tex->animSpeed * gUpdateRate;
         }
         do {
-            var_a0 = 0;
-            if ((s32) *arg2 < 0) {
-                *arg2 = -*arg2;
-                var_a0 = 1;
-                *arg1 &= 0xFFF7FFFF;
+            stop = 0;
+            if (*progress < 0) {
+                *progress = -*progress;
+                stop = 1;
+                *renderFlags &= ~RENDER_TEXANIM_REVERSE;
             }
-            if (tex->flags & 0x40) {
+            if (tex->flags & RENDER_TEX_BLEND) {
                 temp_a1 = tex->animDuration - 0x100;
-                if (*arg2 >= temp_a1) {
-                    *arg2 = ((temp_a1 * 2) - (s32) *arg2) - 1;
-                    var_a0 = 1;
-                    *arg1 |= 0x80000;
+                if (*progress >= temp_a1) {
+                    *progress = ((temp_a1 * 2) - *progress) - 1;
+                    stop = 1;
+                    *renderFlags |= RENDER_TEXANIM_REVERSE;
                 }
-            } else if ((s32) *arg2 >= (s32) tex->animDuration) {
-                *arg2 = ((tex->animDuration * 2) - (s32) *arg2) - 1;
-                var_a0 = 1;
-                *arg1 |= 0x80000;
+            } else if (*progress >= tex->animDuration) {
+                *progress = ((tex->animDuration * 2) - *progress) - 1;
+                stop = 1;
+                *renderFlags |= RENDER_TEXANIM_REVERSE;
             }
-        } while (var_a0 != 0);
+        } while (stop != 0);
         return;
     }
-    if (temp_t2 == 0) {
-        *arg2 += tex->animSpeed * gUpdateRate;
-        while ((s32) *arg2 >= tex->animDuration) {
-            *arg2 -= tex->animDuration;
+    if (reverse == 0) {
+        *progress += tex->animSpeed * gUpdateRate;
+        while (*progress >= tex->animDuration) {
+            *progress -= tex->animDuration;
         }
     } else {
-        *arg2 -= tex->animSpeed * gUpdateRate;
-        while ((s32) *arg2 < 0) {
-            *arg2 += tex->animDuration;
+        *progress -= tex->animSpeed * gUpdateRate;
+        while (*progress < 0) {
+            *progress += tex->animDuration;
         }
     }
 }

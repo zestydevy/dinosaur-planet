@@ -19,7 +19,7 @@ typedef struct {
 typedef struct {
 /*0000*/    Texture *texture;
 /*0004*/    u32 unk4;
-/*0008*/    u32 flags;
+/*0008*/    u32 flags; // RenderFlags
 /*000C*/    s16 refCount;
 /*000E*/    u8 unkE;
 /*000F*/    u8 unkF;
@@ -37,7 +37,7 @@ typedef struct {
 } Block_0x28Struct;
 
 typedef struct {
-/*0000*/    u32 flags;
+/*0000*/    u32 flags; // RenderFlags
 /*0004*/    s16 vtxBase;
 /*0006*/    s16 triBase;
 /*0008*/    u8 unk8[0x12 - 0x8];    //bounds

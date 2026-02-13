@@ -119,6 +119,7 @@
 
 // Gets the texture type. E.g: rgba16
 #define TEX_FORMAT(x) (x & 0xF)
+#define TEX_FORMAT2(x) ((x >> 4) & 0xF)
 
 enum TextureFormat {
     TEX_FORMAT_RGBA32 = 0,
@@ -131,44 +132,49 @@ enum TextureFormat {
     TEX_FORMAT_CI4 = 7
 };
 
-enum TextureFlags {
-    TEX_FLAG_1 = 0x1,
-    TEX_FLAG_2 = 0x2,
-    TEX_FLAG_4 = 0x4,
-    TEX_FLAG_8 = 0x8,
-    TEX_FLAG_10 = 0x10,
-    TEX_FLAG_20 = 0x20,
-    TEX_FLAG_40 = 0x40,
-    TEX_FLAG_80 = 0x80,
-    TEX_FLAG_MIPMAPS = 0x100,
-    TEX_FLAG_200 = 0x200,
-    TEX_FLAG_400 = 0x400,
-    TEX_FLAG_800 = 0x800,
-    TEX_FLAG_1000 = 0x1000,
-    TEX_FLAG_2000 = 0x2000,
-    TEX_FLAG_4000 = 0x4000,
-    TEX_FLAG_8000 = 0x8000
-};
-
 enum RenderFlags {
-    RENDER_NONE,
-    RENDER_ANTI_ALIASING = (1 << 0), // 0x1
-    RENDER_Z_COMPARE = (1 << 1), // 0x2
-    RENDER_SEMI_TRANSPARENT = (1 << 2), // 0x4
-    RENDER_FOG_ACTIVE = (1 << 3), // 0x8
-    RENDER_UNK10 = (1 << 4), // 0x10
-    RENDER_UNK20 = (1 << 5), // 0x20
-    RENDER_TEX_BLEND = (1 << 6), // 0x40
-    RENDER_CUTOUT = (1 << 7), // 0x80
+       RENDER_NONE = 0x0,
+/*0*/  RENDER_ANTI_ALIASING = 0x1,
+/*1*/  RENDER_Z_COMPARE = 0x2,
+/*2*/  RENDER_SEMI_TRANSPARENT = 0x4,
+/*3*/  RENDER_FOG_ACTIVE = 0x8,
+/*4*/  RENDER_UNK10 = 0x10,
+/*5*/  RENDER_UNK20 = 0x20,
+/*6*/  RENDER_TEX_BLEND = 0x40, // lerp tile 0 -> tile 1
+/*7*/  RENDER_CUTOUT = 0x80, // includes billboards
+/*8*/  RENDER_MIPMAPS = 0x100,
+/*9*/  RENDER_SUBSURFACE = 0x200,
+/*10*/ RENDER_DECAL_SIMPLE = 0x400,
 
-    RENDER_SUBSURFACE = (1 << 9), // 0x200
-    RENDER_DECAL_SIMPLE = (1 << 10), // 0x400
+/*13*/ RENDER_UNK2000 = 0x2000,
+/*14*/ RENDER_COMPOSITE_BASE = 0x4000,
+/*15*/ RENDER_COMPOSITE_OVERLAY = 0x8000,
+/*16*/ RENDER_UNK10000 = 0x10000,
+/*17*/ RENDER_TEXANIM_RANDOM_PINGPONG = 0x20000,
+/*18*/ RENDER_TEXANIM_PINGPONG = 0x40000,
+/*19*/ RENDER_TEXANIM_REVERSE = 0x80000,
+/*20*/ RENDER_DECAL = 0x100000,
 
-    RENDER_DECAL = (1 << 20), // 0x100000
+/*24*/ RENDER_UNK1000000 = 0x1000000,
 
-    RENDER_NO_CULL = (1 << 31) // 0x80000000
+/*28*/ RENDER_UNK10000000 = 0x10000000,
+
+/*30*/ RENDER_UNK_40000000 = 0x40000000,
+/*31*/ RENDER_NO_CULL = 0x80000000
 };
 
+// Option flags for tex_gdl_set_texture_simple
+enum TexSetOptions {
+    TEXOPT_INVISIBLE = 0x0,
+    TEXOPT_SET_MODES = 0x1, // Update geometry, combine, and other modes
+    TEXOPT_VISIBLE = 0x2, // Whether the texture is visible
+    TEXOPT_SKIP_MODE_CACHE = 0x4 // Ignore cached modes from DLBuilder
+};
+// frameOptions builders for tex_gdl_set_texture*
+#define TEX_FRAME(frame) (frame << 16)
+#define TEX_FRAMEBLEND(frame, blendProgress) ((frame << 16) | blendProgress)
+
+// Size: 0x20, followed by pixel data, palette (if present), then by its display list(s)
 typedef struct Texture {
        /**
         * Width/height are split across two fields. The first width/height fields
@@ -181,24 +187,26 @@ typedef struct Texture {
 /*00*/ u8 width;
 /*01*/ u8 height;
 /*02*/ u8 format; // lower 4 bits = TEX_FORMAT_*
-/*03*/ s8 unk3; // related to images that are split into multiple textures
-/*04*/ s8 unk4; // related to images that are split into multiple textures
+/*03*/ s8 spriteX; // related to images that are split into multiple textures
+/*04*/ s8 spriteY; // related to images that are split into multiple textures
 /*05*/ u8 refCount;
-/*06*/ s16 flags; // TextureFlags
+/*06*/ s16 flags; // RenderFlags (note: textures only specify a subset of these)
 /*08*/ Gfx *gdl;
-/*0C*/ u16 animDuration;
-/*0E*/ u16 animSpeed;
+/*0C*/ u16 animDuration; // frame count * 256
+/*0E*/ u16 animSpeed; // frames per 60th of a second * 256
 /*10*/ u16 unk10;
-/*12*/ s16 gdl2Offset;
+/*12*/ s16 gdl2Offset; // offset (in 64-bit words) from gdl to the second gdl that places the texture in tile 1
 /*14*/ struct Texture *next;
-/*18*/ s16 unk18; // TODO: usually image data size in bytes (width * height * bytesPerPx)
+       // The image data size in bytes (width * height * bytesPerPx), 16-byte aligned. 
+       // Does not include the Texture header or palette. Does include all mipmap levels.
+/*18*/ s16 sizeBytes;
 /*1A*/ u8 unk1A;
 /*1B*/ u8 widthHeightHi; // upper 4 bits = width hi, lower 4 bits = height hi
 /*1C*/ u8 cms;
 /*1D*/ u8 masks;
 /*1E*/ u8 cmt;
 /*1F*/ u8 maskt;
-} Texture; // Size: 0x20, followed by texture data, then followed by its display list
+} Texture;
 
 void tex_init(void);
 void tex_set_alloc_tag(s32 tag);
@@ -211,8 +219,23 @@ void tex_free(Texture *texture);
 void tex_render_reset(void);
 void tex_render_save_state(void);
 void tex_render_restore_state(void);
-s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 arg2, s32 arg3, s32 force, s32 arg5);
-void tex_gdl_set_textures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 flags, s32 arg5, u32 force, u32 setModes);
+/**
+ * @param tex - Texture to draw (or NULL to unset the texture (TEXOPT_SET_MODES required to unset tex))
+ * @param renderFlags - RenderFlags enum
+ * @param frameOptions - Upper 16-bits = frame to draw, lower 16-bits = blend progress
+ * @param force - Add texture DL to main DL even if the last texture(s) set on the main DL are the same
+ * @param options - TexSetOptions enum
+ */
+s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options);
+/**
+ * @param tex0 - Base texture to draw (or NULL to unset the texture (setModes required to unset tex))
+ * @param tex1 - Overlay texture to draw (if not blending, this will be drawn at half opacity overlaid)
+ * @param renderFlags - RenderFlags enum
+ * @param frameOptions - Upper 16-bits = frame to draw, lower 16-bits = blend progress
+ * @param force - Add texture DL to main DL even if the last texture(s) set on the main DL are the same
+ * @param setModes - If true, update geometry, combine, and other modes
+ */
+void tex_gdl_set_textures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
 void tex_animate(Texture *tex, s32 *, s32 *);
 void* tex_get_frame_img(Texture *tex, s32 arg1);
 Texture *tex_get_cached(s32 id);
