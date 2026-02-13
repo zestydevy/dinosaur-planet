@@ -681,6 +681,7 @@
 #define	G_BL_1		2
 #define	G_BL_0		3
 
+//             p    a    m    b
 #define	GBL_c1(m1a, m1b, m2a, m2b)	\
 	(m1a) << 30 | (m1b) << 26 | (m2a) << 22 | (m2b) << 18
 #define	GBL_c2(m1a, m1b, m2a, m2b)	\
@@ -1000,7 +1001,9 @@
 #define G_RM_OPA_CI         RM_OPA_CI(1)
 #define G_RM_OPA_CI2        RM_OPA_CI(2)
 
-
+// pamb
+// (a * p + b * m) / (a + b)
+// (shadeAlpha * fogRGB + (1 - muxOut) * in) / (shadeAlpha + in)
 #define	G_RM_FOG_SHADE_A	GBL_c1(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_IN, G_BL_1MA)
 #define	G_RM_FOG_PRIM_A		GBL_c1(G_BL_CLR_FOG, G_BL_A_FOG, G_BL_CLR_IN, G_BL_1MA)
 #define	G_RM_PASS		GBL_c1(G_BL_CLR_IN, G_BL_0, G_BL_CLR_IN, G_BL_1)
