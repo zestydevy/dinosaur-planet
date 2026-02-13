@@ -1100,11 +1100,11 @@ void block_add_to_render_list(Block *block, f32 x, f32 z)
     oldRenderListLength = gRenderListLength;
 
     for (i = 0; i < block->shapeCount; i++) {
-        if ((block->shapes[i].flags & 0x10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
-            if (block->shapes[i].flags & 0x4) {
+        if ((block->shapes[i].flags & RENDER_UNK10000000) && gRenderListLength < MAX_RENDER_LIST_LENGTH) {
+            if (block->shapes[i].flags & RENDER_SEMI_TRANSPARENT) {
                 param = 100000 - (gBlocksToDrawIdx * 400) - i;
 
-                if (block->shapes[i].flags & 0x2000) {
+                if (block->shapes[i].flags & RENDER_UNK2000) {
                     param -= 200;
                 }
             } else {
@@ -3275,7 +3275,7 @@ void block_setup_gdl_groups(Block *block)
         BlockShape *shape;
         Texture *texture;
         s32 texFlags = 0;
-        s32 flags2;
+        s32 aa;
         s32 flags;
         Gfx *mygdl;
 
@@ -3283,7 +3283,7 @@ void block_setup_gdl_groups(Block *block)
         
         shape = &block->shapes[i];
         flags = shape->flags;
-        flags2 = flags & 1;
+        aa = flags & RENDER_ANTI_ALIASING;
 
         if (shape->tileIdx0 == 0xff) {
             texture = NULL;
@@ -3294,49 +3294,54 @@ void block_setup_gdl_groups(Block *block)
             }
         }
 
-        if ((flags & 0x400) == 0) {
-            if ((flags & 0x1000000) != 0) {
-                flags |= 0x1a;
+        if ((flags & RENDER_DECAL_SIMPLE) == 0) {
+            if ((flags & RENDER_UNK1000000) != 0) {
+                flags |= (RENDER_Z_COMPARE | RENDER_FOG_ACTIVE | RENDER_UNK10);
             }
         }
 
-        if (texFlags & 0x80) {
-            flags |= 0x2;
+        if (texFlags & RENDER_CUTOUT) {
+            flags |= RENDER_Z_COMPARE;
         }
 
-        if (flags2 != 0) {
-            flags &= ~0x1;
+        if (aa != 0) {
+            flags &= ~RENDER_ANTI_ALIASING;
         } else {
-            flags |= 0x1;
+            flags |= RENDER_ANTI_ALIASING;
         }
 
-        flags |= 0x2;
+        flags |= RENDER_Z_COMPARE;
 
-        if (flags & 0x400)
+        if (flags & RENDER_DECAL_SIMPLE)
         {
-            if (flags & 0x200)
+            if (flags & RENDER_SUBSURFACE)
             {
-                flags &= ~0x200;
-                tex_disable_modes(0x4);
+                flags &= ~RENDER_SUBSURFACE;
+                tex_disable_modes(RENDER_SEMI_TRANSPARENT);
             }
             else
             {
-                if ((flags & 0x2000) || (flags & 0x4) || (flags & 0x100000)) {
-                    flags |= 0x4;
+                if ((flags & RENDER_UNK2000) || (flags & RENDER_SEMI_TRANSPARENT) || (flags & RENDER_DECAL)) {
+                    flags |= RENDER_SEMI_TRANSPARENT;
                 } else {
-                    tex_disable_modes(0x4);
+                    tex_disable_modes(RENDER_SEMI_TRANSPARENT);
                 }
             }
         }
 
         mygdl = &block->gdlGroups[i * 3];
-        tex_gdl_set_texture_simple(&mygdl, texture, flags | 0x80000000, 0, 1, 5);
+        // only set modes, don't set texture!
+        tex_gdl_set_texture_simple(&mygdl, texture, 
+            flags | RENDER_NO_CULL, 
+            TEX_FRAME(0),
+            TRUE, // force
+            TEXOPT_INVISIBLE | TEXOPT_SET_MODES | TEXOPT_SKIP_MODE_CACHE);
 
-        if ((flags & 0x2000) && texture != NULL && (texture->flags & 0xc000))
+        if ((flags & RENDER_UNK2000) && texture != NULL && (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)))
         {
             mygdl = &block->gdlGroups[i * 3];
             gSPLoadGeometryMode(mygdl++, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH);
-            if (texture->flags & 0xc000) {
+            if (texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
                 gDPSetCombineLERP(
                     mygdl++, 
                     TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, // a0 - d0
@@ -3360,8 +3365,8 @@ void block_setup_gdl_groups(Block *block)
             );
         }
 
-        if (flags & 0x400) {
-            tex_enable_modes(0x4);
+        if (flags & RENDER_DECAL_SIMPLE) {
+            tex_enable_modes(RENDER_SEMI_TRANSPARENT);
         }
     }
 }
@@ -3740,10 +3745,10 @@ s32 block_setup_textures(Block* block) {
     var_s6 = 0;
     for (i = 0; i < block->shapeCount; i++) {
         temp_a3 = &block->shapes[i];
-        if (temp_a3->flags & 0x4000) {
+        if (temp_a3->flags & RENDER_COMPOSITE_BASE) {
             var_s6++;
         }
-        if (temp_a3->flags & 0x10000 && temp_a3->animatorID != 0) {
+        if (temp_a3->flags & RENDER_UNK10000 && temp_a3->animatorID != 0) {
             var_a1 = FALSE;
             for (j = 0; j < var_s1; j++) {
                 if (block->unk28[j].unk2 == temp_a3->animatorID) {
@@ -3787,7 +3792,7 @@ void func_80049FA8(BlocksModel* block) {
     }
 }
 
-s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
+s32 func_8004A058(Texture* tex, u32 flags, s32 animatorID) {
     s32 index;
     s32 indexOfUnref;
     
@@ -3795,7 +3800,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
     for (index = 0; index < 0x14; index++){
         if ((&gBlockTextures[index])->refCount != 0 && 
             tex == (&gBlockTextures[index])->texture && 
-            arg2 == (&gBlockTextures[index])->unkE){
+            animatorID == (&gBlockTextures[index])->unkE){
             
             indexOfUnref = index;
             break;
@@ -3820,7 +3825,7 @@ s32 func_8004A058(Texture* tex, u32 flags, s32 arg2) {
         gBlockTextures[indexOfUnref].unk4 = 0;
         gBlockTextures[indexOfUnref].flags = flags;
         gBlockTextures[indexOfUnref].texture = tex;
-        gBlockTextures[indexOfUnref].unkE = arg2;
+        gBlockTextures[indexOfUnref].unkE = animatorID;
         return indexOfUnref;
     }
     return 0;

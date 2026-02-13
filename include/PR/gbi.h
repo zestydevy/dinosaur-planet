@@ -681,6 +681,7 @@
 #define	G_BL_1		2
 #define	G_BL_0		3
 
+//             p    a    m    b
 #define	GBL_c1(m1a, m1b, m2a, m2b)	\
 	(m1a) << 30 | (m1b) << 26 | (m2a) << 22 | (m2b) << 18
 #define	GBL_c2(m1a, m1b, m2a, m2b)	\

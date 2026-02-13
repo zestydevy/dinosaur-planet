@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "game/gamebits.h"
+#include "sys/gfx/textable.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
 #include "sys/menu.h"
@@ -35,10 +36,10 @@ void dll_61_ctor(void *dll) {
     bss_0 = 0;
     bss_1 = 0;
     bss_2 = 0;
-    bss_C = tex_load_deferred(0x2d6);
-    bss_10 = tex_load_deferred(0x2d7);
-    bss_14 = tex_load_deferred(0x2d4);
-    bss_18 = tex_load_deferred(0x2d5);
+    bss_C = tex_load_deferred(TEXTABLE_2D6_RareLogo);
+    bss_10 = tex_load_deferred(TEXTABLE_2D7_RareLogo_Shadow);
+    bss_14 = tex_load_deferred(TEXTABLE_2D4_RarewareTextLogo);
+    bss_18 = tex_load_deferred(TEXTABLE_2D5_RarewareTextLogo_Shadow);
 }
 
 void dll_61_dtor(void *dll) {

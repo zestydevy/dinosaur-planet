@@ -5,6 +5,7 @@
 #include "dll.h"
 #include "dlls/engine/21_gametext.h"
 #include "game/gamebits.h"
+#include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/gfx/gx.h"
@@ -503,12 +504,12 @@ void dll_1_ctor(s32 arg0) {
         _bss_6B8[i].unkC = 0;
     }
 
-    _bss_C34 = tex_load_deferred(0x500);
+    _bss_C34 = tex_load_deferred(TEXTABLE_500_SpellCrosshair);
     _bss_C34->animSpeed = 0x28;
     _bss_5B8 = 0x80000;
     _bss_5C0[0] = 0;
-    _bss_6B0[0] = tex_load_deferred(0x3A7);
-    _bss_5A0 = tex_load_deferred(0x274);
+    _bss_6B0[0] = tex_load_deferred(TEXTABLE_3A7_InventoryStackNumbers);
+    _bss_5A0 = tex_load_deferred(TEXTABLE_274_AButton_Anim);
     _bss_5A0->animSpeed = 0x28;
     
     dll_1_func_69CC(&_bss_C88);

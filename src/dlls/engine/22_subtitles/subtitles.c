@@ -4,6 +4,7 @@
 
 #include "sys/camera.h"
 #include "sys/gfx/gx.h"
+#include "sys/gfx/textable.h"
 #include "sys/joypad.h"
 #include "sys/fonts.h"
 #include "sys/gfx/texture.h"
@@ -139,8 +140,8 @@ void dll_22_ctor(s32 arg0) {
             var_v0->unkC8[1][j].unkA = NULL;
         }
     }
-    _bss_10[0].unk0 = tex_load_deferred(0x27B);
-    _bss_10[1].unk0 = tex_load_deferred(0x27C);
+    _bss_10[0].unk0 = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
+    _bss_10[1].unk0 = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
     _bss_10[2].unk0 = NULL;
     _bss_10[0].unk8 = 0;
     _bss_10[1].unk8 = _bss_10[0].unk0->width;
