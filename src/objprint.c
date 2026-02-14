@@ -38,7 +38,6 @@ void func_800357B4(Object*, ModelInstance*, Model*);
 ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
 void func_80036890(Object*, s32);
 void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
-s32 func_80003278(Gfx**, Mtx**, s32, Object*, ModelInstance*, s32, s32);
 void func_8001F848(Gfx**);
 // should be in model.h
 void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
@@ -196,7 +195,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             spDC.transl.f[0] += gWorldX;
             spDC.transl.f[2] += gWorldZ;
         }
-        func_800032C4(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
+        camera_setup_object_srt_matrix(&tempGdl, &tempMtxs, (SRT* ) &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
         dl_set_all_dirty();
         tex_render_reset();
@@ -279,7 +278,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         obj->srt.transl.f[1] = spC0;
         obj->srt.transl.f[2] = spBC;
         obj->srt.yaw = spBA;
-        func_80004224(&tempGdl);
+        camera_load_parent_projection(&tempGdl);
     }
     *gdl = tempGdl;
     *mtxs = tempMtxs;
@@ -451,7 +450,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         }
         if (arg8->def->numAttachPoints >= 2 && arg8->group == GROUP_UNK48) {
             if (arg8->parent != NULL) {
-                func_80004224(arg0);
+                camera_load_parent_projection(arg0);
             }
             ((DLL_IGROUP_48 *)arg8->dll)->vtbl->func10(arg8, arg0, arg1, arg2, arg3);
             if (arg8->parent != NULL) {
@@ -747,7 +746,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         sp44.roll = 0;
         sp44.pitch = 0;
         sp44.scale = 1.0f;
-        func_800032C4(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
+        camera_setup_object_srt_matrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
         dl_set_all_dirty();
         tex_render_reset();
@@ -780,15 +779,15 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
             case OBJ_TriggerCylinder:
                 sp60 = arg0->srt.scale;
                 arg0->srt.scale = 2.0f;
-                func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
                 arg0->srt.scale = sp60;
                 break;
             default:
-                func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
                 break;
             }
         } else {
-            func_80003278(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+            camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
         }
         if ((sp64 == 1) || (arg0->def->flags & 0x20)) {
             func_8001F848(arg1);
@@ -815,7 +814,7 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.pitch = 0;
         shadowTransform.scale = 0.05f;
 
-        func_800032C4(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
+        camera_setup_object_srt_matrix(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
         gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->shadow->gdl));
 
         if (object->parent) {

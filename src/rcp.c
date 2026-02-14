@@ -179,9 +179,9 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
     s32 ulx, uly, lrx, lry;
     s32 var1;
 
-    func_80002130(&ulx, &uly, &lrx, &lry);
+    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
 
-    var1 = func_80004A4C();
+    var1 = camera_get_letterbox();
 
     resolution = vi_get_current_size();
     resWidth = GET_VIDEO_WIDTH(resolution);
@@ -236,7 +236,7 @@ void func_80037A14(Gfx **gdl, Mtx **mtx, s32 param3) {
         }
     }
 
-    func_80002490(gdl);
+    camera_apply_scissor(gdl);
 }
 
 // unused

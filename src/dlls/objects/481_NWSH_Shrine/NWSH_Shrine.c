@@ -161,7 +161,7 @@ void dll_481_control(Object *self) {
         case 0:
             if (objdata->unkE <= 0) {
                 main_set_bits(BIT_176, 1);
-                func_80003B70(1.0f);
+                camera_set_shake_offset(1.0f);
                 objdata->unkE = rand_next(0x64, 0x96);
                 objdata->unk10 = 0x91;
             } else {
@@ -352,7 +352,7 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         } else if (objdata->unkE <= 0) {
             main_set_bits(BIT_176, 1);
             main_set_bits(BIT_1CA, 1);
-            func_80003B70(1.0f);
+            camera_set_shake_offset(1.0f);
             objdata->unkE = rand_next(0xC8, 0xFA);
         } else {
             main_set_bits(BIT_176, 0);

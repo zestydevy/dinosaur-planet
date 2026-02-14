@@ -50,8 +50,8 @@ void CFMagicWall_control(Object* self) {
     } else {
         var_fv0 = vec3_distance(&self->positionMirror, &get_sidekick()->positionMirror);
     }
-    if (func_80001884(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) < var_fv0) {
-        var_fv0 = func_80001884(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+    if (camera_get_distance_to_point(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) < var_fv0) {
+        var_fv0 = camera_get_distance_to_point(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
     if (var_fv0 < var_ft1) {
         var_a1 = ((var_fv0 / var_ft1) * 255.0f);

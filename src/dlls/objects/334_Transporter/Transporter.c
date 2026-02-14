@@ -91,7 +91,7 @@ void Transporter_control(Object *self) {
         main_set_bits(BIT_Shown_ZLock_Interact_Message, 1);
         return;
     }
-    func_800013BC();
+    camera_enable_y_offset();
     player = get_player();
     if (player) {
         distToPlayer = vec3_distance_xz(&player->positionMirror, &self->positionMirror);
@@ -167,9 +167,9 @@ void Transporter_control(Object *self) {
                     for (i = 0; i < objdata->unk14; i++) {
                         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_79, NULL, PARTFXFLAG_4, -1, NULL);
                     }
-                    func_80003B70(rand_next(0, 10) * 0.1f);
+                    camera_set_shake_offset(rand_next(0, 10) * 0.1f);
                 } else if ((objdata->unk25 == 0) && (self->unkDC < 200)) {
-                    func_80003B70(rand_next(0, 10) * 0.05f);
+                    camera_set_shake_offset(rand_next(0, 10) * 0.05f);
                 }
                 transform.transl.x = delta.f[0] + self->positionMirror.x;
                 transform.transl.y = delta.f[1] + self->positionMirror.y;
@@ -187,7 +187,7 @@ void Transporter_control(Object *self) {
                     transform.yaw = 0;
                     transform.roll = 0;
                     transform.pitch = 0;
-                    func_80003B70(8.0f);
+                    camera_set_shake_offset(8.0f);
                     gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 }
@@ -202,7 +202,7 @@ void Transporter_control(Object *self) {
             transform.pitch = 0;
             transform.scale = 1.0f;
             if (objdata->unk25 != 0) {
-                func_80003B70(8.0f);
+                camera_set_shake_offset(8.0f);
                 gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
                 for (i = 0; i < 80; i++) {

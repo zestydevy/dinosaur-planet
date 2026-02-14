@@ -470,7 +470,7 @@ void font_render_text(Gfx** gdl, FontWindow* window, char* text, AlignmentFlags 
     window->ypos = ypos - window->textOffsetY;
     
     if (window != gFontWindows) {
-        func_80002490(gdl);
+        camera_apply_scissor(gdl);
     }
 }
 
@@ -836,7 +836,7 @@ void font_render_text_wordwrap(Gfx** gdl, FontWindow* window, char* text, f32 sc
     window->xpos = xpos;
     window->ypos = ypos;
     if (window != gFontWindows) {
-        func_80002490(gdl);
+        camera_apply_scissor(gdl);
     }
 }
 

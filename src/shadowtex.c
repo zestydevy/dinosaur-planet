@@ -204,13 +204,13 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         temp_s0->srt.transl.f[0] += gWorldX;
         temp_s0->srt.transl.f[2] += gWorldZ;
     }
-    spA4 = func_800013E0();
+    spA4 = camera_is_y_offset_enabled();
     if (spA4 != 0) {
-        func_800013D0();
+        camera_disable_y_offset();
     }
-    func_800021A0(gdl, &sp84);
+    camera_setup_viewport_and_matrices(gdl, &sp84);
     if (spA4 != 0) {
-        func_800013BC();
+        camera_enable_y_offset();
     }
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, gShadowTexWidth, gShadowTexHeight);
     rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gShadowTexCurrFb[slot]);
@@ -265,17 +265,17 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         } else {
             camera_set_aspect(1.66f);
         }
-        func_800021A0(gdl, &sp84);
+        camera_setup_viewport_and_matrices(gdl, &sp84);
     } else if (func_80041DBC() != 0) {
         set_camera_selector(0);
         camera_set_fov(sp88);
         camera_set_aspect(1.7777778f);
-        func_800021A0(gdl, &sp84);
+        camera_setup_viewport_and_matrices(gdl, &sp84);
     } else {
         set_camera_selector(0);
         camera_set_fov(sp88);
         camera_set_aspect(gAspectRatio);
-        func_800021A0(gdl, &sp84);
+        camera_setup_viewport_and_matrices(gdl, &sp84);
     }
     rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
     rsp_segment(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));
