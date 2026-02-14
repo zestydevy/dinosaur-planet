@@ -58,7 +58,7 @@ void dll_510_control(Object* self) {
         if (func_80025F40(self, NULL, NULL, NULL) == 0xF) {
             SHrootData->unk10 = rand_next(0x320, 0x4B0);
             SHrootData->unk12 = 3U;
-            gDLL_6_AMSFX->vtbl->play_sound(self, 0x3D6U, 0x7FU, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;
         }
     break;
@@ -96,7 +96,7 @@ void dll_510_control(Object* self) {
         if (SHrootData->unk14 > 0) {
             SHrootData->unk14 = (s16) (SHrootData->unk14 - gUpdateRate);
             if (SHrootData->unk14 <= 0) {
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x3D7U, 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D7, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         self->speed.f[1] -= 0.1f * gUpdateRateF;
@@ -108,7 +108,7 @@ void dll_510_control(Object* self) {
             if (self->srt.transl.f[1] < (SHrootData->unk8 + 10.0f)) {
                 gDLL_24_Waterfx->vtbl->func_174C(self->srt.transl.f[0], SHrootData->unk8, self->srt.transl.f[2], 10.0f);
                 gDLL_24_Waterfx->vtbl->func_1CC8(self->srt.transl.f[0], SHrootData->unk8, self->srt.transl.f[2], 0, 0.0f, 2);
-                gDLL_6_AMSFX->vtbl->play_sound(self, 0x3D8U, 0x7FU, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play_sound(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
                 SHrootData->unk13 |= 1 ;
                // SHrootData->unk13 = SHrootData->unk13 ;
             }

@@ -30,9 +30,7 @@ typedef struct {
     u8 unk23; 
 } curveFishSetup;
 
-/*0x0*/ static s32 _data_0[] = {
-    0x00000023, 0x00000000, 0x00000000, 0x00000000
-};
+/*0x0*/ static s32 _data_0 = 0x00000023;
 
 static void dll_294_func_968(Object* self);
 static void dll_294_func_6C(Object* self);
@@ -61,7 +59,7 @@ static void dll_294_func_6C(Object* self) {
 
     curvefishdata = self->data;
     sp30 = (curveFishSetup*)self->setup;
-    sp2C = *_data_0;
+    sp2C = _data_0;
     if (func_80058B1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &curvefishdata->unk0, 0U) != 0) {
  
         curvefishdata->unk0 = (self->srt.transl.f[1] + curvefishdata->unk0) - sp30->unk23;
@@ -95,19 +93,19 @@ void dll_294_control(Object* self) {
         dll_294_func_6C(self);
     } 
     if (curvefishdata->unk10D != 0) {
-        if (sp3C->id == 0x1F) {
-            if (main_get_bits(0x2EA) == 0) {
+        if (sp3C->id == OBJ_Krystal) {
+            if (main_get_bits(BIT_2EA) == 0) {
                 self->unkAF |= 8;
             } else {
                 self->unkAF &= ~0x8;
             }
-        } else if (main_get_bits(0x3E1) == 0) {
+        } else if (main_get_bits(BIT_3E1) == 0) {
             self->unkAF |= 8;
         } else {
             self->unkAF &= ~0x8;
         }
         temp_v0_2 = func_80025F40(self, NULL, NULL, NULL);
-        if ((temp_v0_2 != 0) && (temp_v0_2 == 0x11)) {
+        if ((temp_v0_2 != 0) && (temp_v0_2 == Collision_Type_Fishingnet)) {
             dll_294_func_968(self);
         } else {
             curvefishdata->unk124 += gUpdateRateF;
@@ -226,7 +224,7 @@ static void dll_294_func_968(Object* self) {
     Object* foodbag;
 
     curvefishdata = self->data;
-    if (self->id == 0x280) {
+    if (self->id == OBJ_DF_Lantern) {
         main_set_bits(BIT_Gold_Nugget_LFV, 1);
     } else {
         player = get_player();
