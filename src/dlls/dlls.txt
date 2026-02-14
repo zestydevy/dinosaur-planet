@@ -73,6 +73,7 @@
 289 = objects/289_CClogpush
 292 = objects/292_TrickyWarp
 293 = objects/293_TrickyGuard
+294 = objects/294_curveFish
 295 = objects/295_smallbasket
 296 = objects/296_medium_crate
 297 = objects/297_scarab
@@ -144,6 +145,7 @@
 506 = objects/506_SH_PlantSpore
 507 = objects/507_SHqueenearthwalker
 509 = objects/509_SHwaterLily
+510 = objects/510_SHroot
 512 = objects/512_SHLevelControl
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
