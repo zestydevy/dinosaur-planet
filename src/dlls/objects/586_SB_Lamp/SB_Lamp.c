@@ -132,15 +132,15 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     x = self->positionMirror.x - gWorldX;
     z = self->positionMirror.z - gWorldZ;
     y = self->positionMirror.y;
-    func_80002D14(x, y, z, &ox1, &oy1, &oz1);
-    func_80002E94(ox1, oy1, oz1, &ox, &oy, NULL);
+    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
+    camera_clip_to_screen(ox1, oy1, oz1, &ox, &oy, NULL);
     sp30 = vi_func_8005DD4C(ox, oy, (s32)self);
     get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
     x += (pdx * 20.0f);
     y += (pdy * 20.0f);
     z += (pdz * 20.0f);
-    func_80002D14(x, y, z, &ox1, &oy1, &oz1);
-    func_80002E94(ox1, oy1, oz1, NULL, NULL, &oz);
+    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
+    camera_clip_to_screen(ox1, oy1, oz1, NULL, NULL, &oz);
     if ((vi_contains_point(ox, oy)) && (oz > 0) && (oz < sp30)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }

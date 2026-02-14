@@ -1185,8 +1185,8 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         break;
     case 24:
         gDLL_6_AMSFX->vtbl->play_sound(arg0, SOUND_Krystal_Hurt_Agh, MAX_VOLUME, NULL, NULL, 0, NULL);
-        func_800013BC();
-        func_80003B70(1.0f);
+        camera_enable_y_offset();
+        camera_set_shake_offset(1.0f);
         break;
     case 27:
         aState = fsa->unk270;
@@ -1566,7 +1566,7 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
     sp48.scale = 0.05f;
     sp48.pitch = 0;
     sp48.roll = 0;
-    func_800032C4(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
+    camera_setup_object_srt_matrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp74), 8, 0);
     dl_triangles(arg1, (DLTri* ) _rodata_0, 0xC);
     if (sp44->unk844 >= 68.0f) {

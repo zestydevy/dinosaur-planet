@@ -334,7 +334,7 @@ void game_tick(void) {
     mmFreeTick();
 
     if (gPauseState == 0) {
-        func_80001A3C();
+        camera_apply_alternate_trigger();
     }
 
     gUpdateRate = vi_frame_sync(0);
@@ -426,7 +426,7 @@ void func_80013D80(void) {
             update_objects();
             func_80042174(0);
 
-            if ((func_80001A2C() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
+            if ((camera_is_alternate_active() == 0) && (D_8008C94C == 0) && (func_800143FC() == 0) && ((button & START_BUTTON) != 0) && (main_get_bits(BIT_44F) == 0)) {
                 gPauseState = 1;
                 joy_set_button_mask(0, START_BUTTON);
                 menu_set(MENU_PAUSE);

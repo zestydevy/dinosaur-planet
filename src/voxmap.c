@@ -1029,7 +1029,7 @@ void func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk
     gfx = *gdl;
     tex_gdl_set_textures(&gfx, NULL, NULL, 3, 0, 0, 1);
     dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
-    func_80003168(&gfx, matrics, 0, 0, 0, 1.0f);
+    camera_setup_world_matrix(&gfx, matrics, 0, 0, 0, 1.0f);
     var_fp = 1;
     var_s4 = 0;
     temp_v0 = 0;

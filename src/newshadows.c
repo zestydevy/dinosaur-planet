@@ -515,7 +515,7 @@ s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
 
     sp1C = shadow->distFadeStart * 4;
     sp18 = shadow->distFadeEnd * 4;
-    var_fv1 = (func_80001884(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z) - sp1C) / (sp18 - sp1C);
+    var_fv1 = (camera_get_distance_to_point(obj->positionMirror.x, obj->positionMirror.y, obj->positionMirror.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {

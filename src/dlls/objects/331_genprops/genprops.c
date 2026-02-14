@@ -471,7 +471,7 @@ void dll_331_control(Object* self) {
             objData->roll *= 2;
             objData->pitch *= 2;
             gDLL_6_AMSFX->vtbl->play_sound(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
-            func_80003B70(0.5f);
+            camera_set_shake_offset(0.5f);
         }
         if (objData->unk3E == 0) {
             if (objData->debugPrintDistance <= 40000.0f) {
