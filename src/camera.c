@@ -319,7 +319,6 @@ f32 camera_get_distance_to_point(f32 x, f32 y, f32 z)
     return sqrtf((dz * dz) + ((dy * dy) + (dx * dx)));
 }
 
-// camera_reset
 void camera_reset(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw)
 {
     gCameras[gCameraSelector].srt.transl.x = tx;
