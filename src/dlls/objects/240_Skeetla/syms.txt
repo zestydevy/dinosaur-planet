@@ -1,0 +1,42 @@
+.text = 0x0:
+dll_240_func_0 = 0x0;
+dll_240_ctor = 0x68;
+dll_240_dtor = 0xA8;
+dll_240_func_B4 = 0xB4;
+dll_240_setup = 0x104;
+dll_240_control = 0x294;
+dll_240_update = 0x970;
+dll_240_func_97C = 0x97C;
+dll_240_print = 0xAA4;
+dll_240_free = 0xC40;
+dll_240_get_model_flags = 0xCE4;
+dll_240_get_data_size = 0xCF4;
+dll_240_func_D08 = 0xD08;
+dll_240_func_F04 = 0xF04;
+dll_240_func_11F4 = 0x11F4;
+dll_240_func_13C0 = 0x13C0;
+dll_240_func_18D8 = 0x18D8;
+dll_240_func_21C8 = 0x21C8;
+dll_240_func_235C = 0x235C;
+dll_240_func_23E8 = 0x23E8;
+dll_240_func_2594 = 0x2594;
+dll_240_func_2A10 = 0x2A10;
+dll_240_func_2C38 = 0x2C38;
+dll_240_func_2F1C = 0x2F1C;
+dll_240_func_2FE8 = 0x2FE8;
+
+.rodata = 0x310C:
+
+.data = 0x319C:
+_data_0 = 0x0; // absolute:0x319C
+_data_68 = 0x68; // absolute:0x3204
+_data_84 = 0x84; // absolute:0x3220
+
+.bss = 0x322C:
+_bss_0 = 0x0; // absolute:0x322C
+_bss_14 = 0x14; // absolute:0x3240
+_bss_18 = 0x18; // absolute:0x3244
+_bss_20 = 0x20; // absolute:0x324C
+_bss_24 = 0x24; // absolute:0x3250
+_bss_28 = 0x28; // absolute:0x3254
+_bss_2C = 0x2C; // absolute:0x3258

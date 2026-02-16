@@ -36,6 +36,7 @@ enum ObjType {
     OBJTYPE_53 = 53,
     OBJTYPE_56 = 56,
     OBJTYPE_59 = 59,
+    OBJTYPE_62 = 62, 
     OBJTYPE_64 = 64
 };
 
