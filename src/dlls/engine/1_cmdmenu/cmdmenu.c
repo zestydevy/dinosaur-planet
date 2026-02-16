@@ -8,6 +8,7 @@
 #include "sys/gfx/textable.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
+#include "sys/rcp.h"
 #include "sys/gfx/gx.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
@@ -546,6 +547,7 @@ s32 dll_1_func_308(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_35C.s")
 
 // offset: 0xBB8 | func: 4 | export: 2
+void dll_1_func_BB8(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/1_cmdmenu/dll_1_func_BB8.s")
 
 // offset: 0xDC4 | func: 5 | export: 6

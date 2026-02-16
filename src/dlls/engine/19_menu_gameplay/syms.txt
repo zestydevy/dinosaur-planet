@@ -1,0 +1,9 @@
+.text = 0x0:
+dll_19_ctor = 0x0;
+dll_19_dtor = 0xC;
+dll_19_func_18 = 0x18;
+dll_19_func_5C = 0x5C;
+dll_19_func_A0 = 0xA0;
+
+.rodata = 0x154:
+_oob_rodata_0 = 0x0; // absolute:0x154
