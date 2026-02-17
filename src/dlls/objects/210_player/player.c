@@ -2236,7 +2236,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 if (*_data_14 == 1) {
                     *_data_18 = -1;
                     tempObj = objdata->foodbag;
-                    ((DLL_IFoodbag*)tempObj->dll)->vtbl->func12(tempObj, arg0->unkE0);
+                    ((DLL_IFoodbag*)tempObj->dll)->vtbl->delete_food_by_gamebit(tempObj, arg0->unkE0);
                     arg2->unk9D |= 4;
                     arg0->unkC4 = NULL;
                     return 4;
