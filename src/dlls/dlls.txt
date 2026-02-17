@@ -124,6 +124,7 @@
 452 = objects/452_CCfirecrystal
 453 = objects/453_CCfirecrystalin
 454 = objects/454_CCgrub
+455 = objects/455_CChightop
 456 = objects/456_CCfloor
 457 = objects/457_CCkrazoabright
 458 = objects/458_CCkrazoaBits
@@ -141,6 +142,7 @@
 496 = objects/496_snowhorn
 497 = objects/497_NWtricky
 501 = objects/501_SHtricky
+502 = objects/502_SHmushroom
 505 = objects/505_SHspore
 506 = objects/506_SH_PlantSpore
 507 = objects/507_SHqueenearthwalker
@@ -151,7 +153,9 @@
 515 = objects/515_SHswapstone
 517 = objects/517_SCBabyLightFoot
 519 = objects/519_SC_levelcontrol
+525 = objects/525_SCtotempuzzle
 530 = objects/530_DIMLavaBallGenerator
+535 = objects/535_DIMicewall
 544 = objects/544_DIM_LevelControl
 547 = objects/547_GP_LevelControl
 549 = objects/549_GP_ShrinePillar
@@ -217,6 +221,7 @@
 762 = objects/762_DRSpecialLoader
 767 = objects/767_SPItem
 768 = objects/768_SPShop
+776 = objects/776_WCbouncycrate
 777 = objects/777_WCTrexChase
 778 = objects/778_WCSabreChase
 779 = objects/779_WCLevelControl
