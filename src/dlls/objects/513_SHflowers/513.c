@@ -35,7 +35,7 @@ void dll_513_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     if (visibility != 0) {
         if (vec3_distance(&self->positionMirror, &get_player()->positionMirror) <= 100.0f) {
             sp30.scale = self->srt.scale * 10.0f;
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EA, &sp30, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3EA, &sp30, PARTFXFLAG_2, -1, NULL);
         }
         draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

@@ -15,8 +15,6 @@ void dll_498_setup(Object* self, ObjSetup* setup, s32 arg2) {
     self->unkB0 |= 0x6000;
     obj_add_object_type(self, OBJTYPE_62);
 }
-//type was 0x3E, I think that is OBJTYPE_62? I had to create it
-//just commenting to make sure that that's right
 
 // offset: 0x74 | func: 1 | export: 1
 void dll_498_control(Object *self) { }
@@ -31,7 +29,6 @@ void dll_498_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 void dll_498_free(Object* self, s32 a1) {
     obj_free_object_type(self, OBJTYPE_62);
 }
-//see line 18 for comment
 
 // offset: 0xE4 | func: 5 | export: 5
 u32 dll_498_get_model_flags(Object *self) {

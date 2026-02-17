@@ -52,7 +52,6 @@
 223 = objects/223_cannon_claw
 225 = objects/225_SabreBaddie
 227 = objects/227_tumbleweed
-240 = objects/240_Skeetla
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie
 248 = objects/248_PirahnaBaddie
@@ -134,7 +133,6 @@
 461 = objects/461_CCsandwormBoss
 463 = objects/463_CCgasvent
 464 = objects/464_CCgasventControl
-465 = objects/465_CCdockdoor
 466 = objects/466_mmshrine
 469 = objects/469_ECSHshrine
 472 = objects/472_GPSH_Shrine
