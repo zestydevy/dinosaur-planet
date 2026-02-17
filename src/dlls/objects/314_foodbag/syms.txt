@@ -1,7 +1,7 @@
 .text = 0x0:
 Foodbag_ctor = 0x0;
 Foodbag_dtor = 0xC;
-Foodbag_setup = 0x18;
+Foodbag_ObjSetup = 0x18;
 Foodbag_control = 0x22C;
 Foodbag_update = 0x500;
 Foodbag_print = 0x50C;

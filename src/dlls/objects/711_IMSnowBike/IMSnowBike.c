@@ -80,7 +80,7 @@ typedef struct {
 /*3DC*/ u8 unk3DC;
 /*3DD*/ u8 flags;
 /*3DE*/ s8 unk3DE; // state?
-/*3DF*/ s8 unk3DF;
+/*3DF*/ s8 unk3DF; // race position?
 /*3E0*/ s8 unk3E0;
 /*3E1*/ s8 unk3E1;
 } IMSnowBike_Data;
@@ -96,13 +96,13 @@ typedef struct {
 } IMSnowBike_Setup;
 
 enum IMSnowBikeFlags {
-    SNOWBIKEFLAG_NONE = 0x0,
-    SNOWBIKEFLAG_1 = 0x1,
-    SNOWBIKEFLAG_2 = 0x2,
-    SNOWBIKEFLAG_GROUNDED = 0x4, // at least one test point touching the ground
-    SNOWBIKEFLAG_8 = 0x8,
-    SNOWBIKEFLAG_10 = 0x10, // currently in sequence?
-    SNOWBIKEFLAG_IS_CPU = 0x20 // is SharpClaw
+    SNOWBIKEFLAG_NONE = 0,
+    SNOWBIKEFLAG_1 = 1 << 0,
+    SNOWBIKEFLAG_2 = 1 << 1,
+    SNOWBIKEFLAG_GROUNDED = 1 << 2, // at least one test point touching the ground
+    SNOWBIKEFLAG_8 = 1 << 3,
+    SNOWBIKEFLAG_10 = 1 << 4, // currently in sequence?
+    SNOWBIKEFLAG_IS_CPU = 1 << 5 // is SharpClaw
 };
 
 /*0x0*/ static Vec3f _data_0[] = {
@@ -1532,6 +1532,6 @@ static void dll_711_func_3D4C(Object *self, IMSnowBike_Data *objdata, f32 arg2, 
 }
 
 // offset: 0x4780 | func: 32 | export: 20
-void dll_711_func_4780(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
+void dll_711_func_4780(s32 a0, s32 a1, s32 a2) { }
 
 /*0x0*/ static const char str_0[] = "Finished Is SEt for Some Reason \n";
