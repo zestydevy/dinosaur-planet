@@ -528,8 +528,8 @@ void dll_210_setup(Object* player, u32 arg1) {
         player->shadow->maxDistScale = player->shadow->scale * 0.5f;
     }
     gDLL_1_UI->vtbl->func_12EC();
-    data->unk85C = obj_create(obj_alloc_create_info(0x24, OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
-    data->unk860 = obj_create(obj_alloc_create_info(0x24, OBJ_sidefoodbagGene), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
+    data->foodbag = obj_create(obj_alloc_create_info(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
+    data->sidekickFoodbag = obj_create(obj_alloc_create_info(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJ_INIT_FLAG1 | OBJ_INIT_FLAG4, -1, -1, player->parent);
     data->modAnims = _data_98;
     if (player->id == 0) {
         data->unk3B4 = _data_2F8;
@@ -628,7 +628,7 @@ void dll_210_control(Object* player) {
     if (data->unk0.unk304 & 1 && data->unk0.animState != PLAYER_ASTATE_Fall_Reset) {
         gDLL_18_objfsa->vtbl->set_anim_state(player, &data->unk0, PLAYER_ASTATE_Fall_Reset);
     }
-    if (data->unk858 == NULL) {
+    if (data->vehicle == NULL) {
         sp70 = sp6C / _bss_1AC;
         for (i = 0; i < sp80; i++) {
             *_bss_1AA = i;
@@ -1126,7 +1126,7 @@ void dll_210_func_2534(Object* arg0, Player_Data* arg1, ObjFSA_Data* fsa) {
         return;
     }
 
-    if (arg1->unk858 != NULL && sp84 != 0) {
+    if (arg1->vehicle != NULL && sp84 != 0) {
         sp84 = 20;
     }
 
@@ -1296,12 +1296,12 @@ void dll_210_update(Object* player) {
             func_8005B5B8(player, NULL, 1);
         }
     }
-    vehicle = objdata->unk858;
+    vehicle = objdata->vehicle;
     objdata->flags |= 2;
     if ((vehicle != NULL) && ((player->unkB0 & 0x1000) || objdata->unk0.animState == 0x24 || objdata->unk0.animState == 0x25)) {
         ((DLL_IVehicle*)vehicle->dll)->vtbl->func12(vehicle, &sp58, &sp54, &sp50);
         gDLL_2_Camera->vtbl->func10(sp58, sp54, sp50);
-        dll_210_func_8EA4(player, objdata, objdata->unk858, NULL, NULL, NULL, NULL, 0);
+        dll_210_func_8EA4(player, objdata, objdata->vehicle, NULL, NULL, NULL, NULL, 0);
     }
     if (objdata->unk0.unk4.mode == 1) {
         if (!(objdata->flags & 0x2000) && (objdata->unk0.unk4.unk25C != 0)) {
@@ -1372,15 +1372,15 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
     data = player->data;
     sp80 = player->modelInsts[player->modelInstIdx];
     if (arg5 == -1 || !(data->flags & 0x4001)) {
-        if ((data->unk858 != NULL) && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
-            dll_210_func_8EA4(player, data, data->unk858, arg1, arg2, arg3, arg4, 1);
+        if ((data->vehicle != NULL) && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
+            dll_210_func_8EA4(player, data, data->vehicle, arg1, arg2, arg3, arg4, 1);
         }
         if (data->unk8BE == 1) {
             dll_210_func_3B40(player, arg1, arg2, arg3, arg4);
         }
         gDLL_16->vtbl->func1(player);
-        if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
-            ((DLL_IVehicle*)data->unk858->dll)->vtbl->func19(data->unk858, player->def->scale);
+        if (data->vehicle != NULL && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
+            ((DLL_IVehicle*)data->vehicle->dll)->vtbl->func19(data->vehicle, player->def->scale);
         }
         if (data->unk818 > 0.0f) {
             func_80036FBC(0xC8U, 0U, 0U, data->unk81C);
@@ -1388,7 +1388,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
         player->srt.transl.y += data->unk83C;
         draw_object(player, arg1, arg2, arg3, arg4, 1.0f);
         player->srt.transl.y -= data->unk83C;
-        if (data->unk858 != 0 && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
+        if (data->vehicle != NULL && ((player->unkB0 & 0x1000) || data->unk0.animState == PLAYER_ASTATE_Vehicle_Riding || data->unk0.animState == PLAYER_ASTATE_Log_Riding)) {
             func_80034FF0(NULL);
         }
         if (arg5 != 0) {
@@ -1789,14 +1789,14 @@ void *dll_210_func_44A4(Object* player, s32 arg1) {
     case 14:
         return (void*)(s32)objdata2->unk87C;
     case 15:
-        return (void*)objdata2->unk85C;
+        return (void*)objdata2->foodbag;
     case 16:
-        return (void*)objdata2->unk860;
+        return (void*)objdata2->sidekickFoodbag;
     case 18:
         return (void*)(s32)objdata2->unk872;
     case 19:
-        if (objdata2->unk858 != NULL) {
-            return (void*)(s32)objdata2->unk858->id;
+        if (objdata2->vehicle != NULL) {
+            return (void*)(s32)objdata2->vehicle->id;
         }
         return 0;
     default:
@@ -2011,7 +2011,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                     } else {
                         arg2->unk62 = 6;
                     }
-                    if (objdata->unk858 != NULL) {
+                    if (objdata->vehicle != NULL) {
                         gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Vehicle_Riding);
                         return 1;
                     }
@@ -2132,11 +2132,11 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                         || vehicle->id == OBJ_DR_EarthWarrior
                         || vehicle->id == OBJ_DR_CloudRunner
                     ) {
-                        objdata->unk858 = vehicle;
+                        objdata->vehicle = vehicle;
                     }
                 }
                 if (vehicle != NULL) {
-                    vehicle = objdata->unk858;
+                    vehicle = objdata->vehicle;
                     objdata->unk728 = 1.0f;
                     objdata->unk72C.x = objdata->unk7EC.x;
                     objdata->unk72C.y = objdata->unk7EC.y;
@@ -2168,20 +2168,20 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             case 2:
                 gDLL_2_Camera->vtbl->func8(0, 1);
                 gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
-                vehicle = objdata->unk858;
+                vehicle = objdata->vehicle;
                 if (vehicle != NULL) {
                     ((DLL_IVehicle*)vehicle->dll)->vtbl->func14(vehicle, 0);
                     arg0->srt.flags &= ~0x8;
                     arg0->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
                     vehicle = NULL;
                     arg2->unk7A |= 4;
-                    objdata->unk858 = NULL;
+                    objdata->vehicle = NULL;
                     arg0->curModAnimIdLayered = -1;
                     gDLL_18_objfsa->vtbl->set_anim_state(arg0, &objdata->unk0, PLAYER_ASTATE_Standing);
                 }
                 break;
             case 4:
-                vehicle = objdata->unk858;
+                vehicle = objdata->vehicle;
                 gDLL_3_Animation->vtbl->func19(0x57, 0, 0, 0);
                 objdata->unk76C = NULL;
                 if ((vehicle != NULL) && (vehicle->id == OBJ_BWLog)) {
@@ -2191,7 +2191,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 }
                 break;
             case 11:
-                vehicle = objdata->unk858;
+                vehicle = objdata->vehicle;
                 if ((vehicle != NULL) && (vehicle->id == OBJ_DR_EarthWarrior)) {
                     gDLL_2_Camera->vtbl->func8(0, 0x69);
                     gDLL_3_Animation->vtbl->func19(0x54, 4, 0, 0);
@@ -2235,8 +2235,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             case 14:
                 if (*_data_14 == 1) {
                     *_data_18 = -1;
-                    tempObj = objdata->unk85C;
-                    ((DLL_IFoodbag*)tempObj->dll)->vtbl->func12(tempObj, arg0->unkE0);
+                    tempObj = objdata->foodbag;
+                    ((DLL_IFoodbag*)tempObj->dll)->vtbl->delete_food_by_gamebit(tempObj, arg0->unkE0);
                     arg2->unk9D |= 4;
                     arg0->unkC4 = NULL;
                     return 4;
@@ -2301,8 +2301,8 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             }
         }
     }
-    if ((objdata->unk858 != NULL) &&
-        (((DLL_IVehicle*)objdata->unk858->dll)->vtbl->func13(objdata->unk858) == 2)) {
+    if ((objdata->vehicle != NULL) &&
+        (((DLL_IVehicle*)objdata->vehicle->dll)->vtbl->func13(objdata->vehicle) == 2)) {
         arg2->unk7A &= ~0x3;
     }
     ((void (*)(Object*, Player_Data*, f32)) objdata->unk3BC)(arg0, objdata, gUpdateRateF);
@@ -3300,7 +3300,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
             for (i = 0; i < sp80; i++) {
                 sp88 = objects[i];
                 if (((DLL_IVehicle*)sp88->dll)->vtbl->func7(sp88, player) != 0) {
-                    arg1->unk858 = sp88;
+                    arg1->vehicle = sp88;
                     return 0xD;
                 }
             }
@@ -4513,7 +4513,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (sp8C != -1 && (player->unkC4 == NULL)) {
             joy_set_button_mask(0, A_BUTTON);
             player->unkE0 = sp8C;
-            sp8C = ((DLL_Unknown*)v1objdata->unk85C->dll)->vtbl->func[16].withOneArgS32(sp8C);
+            sp8C = ((DLL_Unknown*)v1objdata->foodbag->dll)->vtbl->func[16].withOneArgS32(sp8C);
             sp88 = gDLL_2_Camera->vtbl->func15();
             if ((sp88 != NULL) && ((sp88->def->unk40->unk10 & 0xF) == 3)) {
                 gDLL_3_Animation->vtbl->func30(sp8C, sp88, 1);
@@ -6899,7 +6899,7 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     ModelInstance* sp44;
 
     objdata = player->data;
-    temp_s2 = objdata->unk858;
+    temp_s2 = objdata->vehicle;
     {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0 != 0) { return temp_v0; }
@@ -7014,7 +7014,7 @@ s32 dll_210_func_142C4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk4.mode = 0;
     fsa->animExitAction = dll_210_func_14B70;
     func_800267A4(player);
-    sp48 = temp_s0->unk858;
+    sp48 = temp_s0->vehicle;
     if (sp48 == NULL) {
         player->curModAnimIdLayered = -1;
         return 0;
@@ -7090,12 +7090,12 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     fsa->unk4.mode = 0;
     fsa->animExitAction = dll_210_func_14B70;
     func_800267A4(player);
-    sp60 = objdata->unk858;
+    sp60 = objdata->vehicle;
     if (sp60 == NULL) {
         player->curModAnimIdLayered = -1;
         return 0;
     }
-    sp60 = objdata->unk858;
+    sp60 = objdata->vehicle;
     if (((DLL_IVehicle*)sp60->dll)->vtbl->func10(sp60, player) != 0) {
         temp_v0 = func_80034804(player, 9);
         if (temp_v0 != NULL) {
@@ -7205,7 +7205,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_Off;
     }
     temp_s1 = player->data;
-    temp_s2 = temp_s1->unk858;
+    temp_s2 = temp_s1->vehicle;
     {
         s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
         if (temp_v0 != 0) { return temp_v0; }
@@ -7287,7 +7287,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         ((DLL_IVehicle*)temp_s2->dll)->vtbl->func14(temp_s2, 0);
         dll_210_func_7260(player, (Player_Data* ) temp_s1);
         func_8002674C(player);
-        temp_s1->unk858 = 0;
+        temp_s1->vehicle = 0;
         return -1;
     }
     return 0;
@@ -9599,7 +9599,7 @@ s32 dll_210_func_1CC34(Object* player, ObjFSA_Data *fsa, f32 arg2) {
 // offset: 0x1CC4C | func: 151 | export: 7
 Object *dll_210_get_vehicle(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk858;
+    return objdata->vehicle;
 }
 
 // offset: 0x1CC5C | func: 152 | export: 69

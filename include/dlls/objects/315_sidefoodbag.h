@@ -1,12 +1,11 @@
 #ifndef _DLLS_315_H
 #define _DLLS_315_H
 
-#include "dlls/engine/56_putdown.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 
 typedef struct {
     ObjSetup base;
-} SideFoodbag_Setup;
+} SideFoodbag_ObjSetup;
 
 typedef struct {
     DLL_56_Putdown *dllPutdown;         //Handles removing/updating food bag items

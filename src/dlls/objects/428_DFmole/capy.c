@@ -1,7 +1,7 @@
 #include "common.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
-#include "dlls/objects/314_foodbag.h"
+#include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/210_player.h"
 
 typedef struct {
@@ -191,7 +191,7 @@ static void dll_428_func_468(Object* arg0, Baddie* arg1, ObjFSA_Data* arg2) {
     if ((temp_v0_2 == arg2->target) || ((arg2->target != NULL) && (arg2->target->id == 0x313))) {
         temp_v0_3 = ((DLL_210_Player*)temp_v0_2->dll)->vtbl->func66(temp_v0_2, 15);
         if (temp_v0_3 != NULL) {
-            sp3C = ((DLL_314_Foodbag*)temp_v0_3->dll)->vtbl->get_nearest_placed_food_of_type(temp_v0_3, arg0, 0x20);
+            sp3C = ((DLL_IFoodbag*)temp_v0_3->dll)->vtbl->get_nearest_placed_food_of_type(temp_v0_3, arg0, 0x20);
         }
         if ((sp3C != NULL) && (vec3_distance(&arg0->positionMirror, &sp3C->positionMirror) < 150.0f)) {
             arg2->target = sp3C;
@@ -425,7 +425,7 @@ s32 dll_428_func_D1C(Object* arg0, ObjFSA_Data* arg1, f32 arg2) {
                 temp_v0_2 = get_player();
                 temp_v0_3 = ((DLL_210_Player*)temp_v0_2->dll)->vtbl->func66(temp_v0_2, 15);
                 if (temp_v0_3 != NULL) {
-                    ((DLL_314_Foodbag*)temp_v0_3->dll)->vtbl->destroy_placed_food(temp_v0_3, temp_s0);
+                    ((DLL_IFoodbag*)temp_v0_3->dll)->vtbl->destroy_placed_food(temp_v0_3, temp_s0);
                 }
             }
             arg1->target = NULL;

@@ -240,9 +240,9 @@ typedef struct {
 /*84C*/ f32 unk84C;
 /*850*/ Object *unk850;
 /*854*/ s32 unk854;
-/*858*/ Object *unk858; // vehicle
-/*85C*/ Object *unk85C; // foodbag
-/*860*/ Object *unk860;
+/*858*/ Object *vehicle; // the object's DLL is DLL_IVehicle (or one of it's implementations)
+/*85C*/ Object *foodbag; // the object's DLL is DLL_IFoodbag (or one of it's implementations)
+/*860*/ Object *sidekickFoodbag;
 /*864*/ s32 unk864;
 /*868*/ Object* unk868; //held object (baskets etc.)
 /*86C*/ f32 unk86C;
