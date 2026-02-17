@@ -110,6 +110,7 @@
 398 = objects/398_CFMagicWall
 400 = objects/400_CFLevelControl
 408 = objects/408_IMIceMountain
+412 = objects/412_IMicepillar
 413 = objects/413_IMspacecraft
 417 = objects/417_DFlog
 419 = objects/419_DFdockpoint
@@ -140,6 +141,7 @@
 488 = objects/488_WGSH_Shrine
 496 = objects/496_snowhorn
 497 = objects/497_NWtricky
+498 = objects/498_NWanimice
 501 = objects/501_SHtricky
 505 = objects/505_SHspore
 506 = objects/506_SH_PlantSpore
@@ -147,6 +149,7 @@
 509 = objects/509_SHwaterLily
 510 = objects/510_SHroot
 512 = objects/512_SHLevelControl
+513 = objects/513_SHflowers
 514 = objects/514_SHswaplift
 515 = objects/515_SHswapstone
 517 = objects/517_SCBabyLightFoot
