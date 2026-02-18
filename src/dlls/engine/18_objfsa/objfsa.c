@@ -420,9 +420,9 @@ void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3) {
 }
 
 // offset: 0xE60 | func: 8 | export: 8
-void objfsa_func_E60(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4) {
-    if (data->unk290 > 0.1f) {
-        obj->srt.yaw += (((arg3 * arg2) / arg4) * 182.0f);
+void objfsa_func_E60(Object *obj, ObjFSA_Data *data, f32 updateRate, f32 turnRate, f32 arg4) {
+    if (data->analogInputPower > 0.1f) {
+        obj->srt.yaw += (((turnRate * updateRate) / arg4) * 182.0f);
     }
 }
 
@@ -461,7 +461,7 @@ void objfsa_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
 }
 
 // offset: 0x1008 | func: 11 | export: 11
-void objfsa_func_1008(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
+void objfsa_turn_to_target(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 turnDuration) {
     f32 var_fv0;
     f32 var_fv1;
     s32 var_v1;
@@ -476,7 +476,7 @@ void objfsa_func_1008(Object *obj, ObjFSA_Data *data, f32 arg2, s32 arg3) {
         }
         var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v1)
-        obj->srt.yaw += (s32) (((f32) var_v1 * gUpdateRateF) / ((f32) arg3 * 3.0f));
+        obj->srt.yaw += (s32) (((f32) var_v1 * gUpdateRateF) / ((f32) turnDuration * 3.0f));
     }
 }
 
@@ -544,9 +544,9 @@ void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     
     data->unk340 |= 1;
     if (_bss_1C == 0) {
-        var_fa0 = -fsin16_precise(_bss_4) * data->unk290 * arg3;
-        var_fa1 = -fcos16_precise(_bss_4) * data->unk290 * arg3;
-        if (data->unk290 < 0.02f) {
+        var_fa0 = -fsin16_precise(_bss_4) * data->analogInputPower * arg3;
+        var_fa1 = -fcos16_precise(_bss_4) * data->analogInputPower * arg3;
+        if (data->analogInputPower < 0.02f) {
             var_fa0 = 0.0f;
             var_fa1 = 0.0f;
         }
@@ -654,20 +654,20 @@ void objfsa_func_1978(Object *obj, ObjFSA_Data *data, s32 partfxID, s32 arg3, u3
 
 // offset: 0x1AC4 | func: 23
 static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
-    f32 temp_fv0;
-    f32 temp_fv1;
+    f32 xInput;
+    f32 yInput;
     s32 var_v0;
     s32 var_v1;
 
-    temp_fv0 = data->unk288;
-    temp_fv1 = data->unk284;
-    data->unk294 = data->unk290;
-    data->unk290 = sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1));
-    if (data->unk290 > 65.0f) {
-        data->unk290 = 65.0f;
+    xInput = data->xAnalogInput;
+    yInput = data->yAnalogInput;
+    data->prevAnalogInputPower = data->analogInputPower;
+    data->analogInputPower = sqrtf((xInput * xInput) + (yInput * yInput));
+    if (data->analogInputPower > 65.0f) {
+        data->analogInputPower = 65.0f;
     }
-    data->unk290 /= 65.0f;
-    _bss_4 = arctan2_f(data->unk288, -data->unk284);
+    data->analogInputPower /= 65.0f;
+    _bss_4 = arctan2_f(data->xAnalogInput, -data->yAnalogInput);
     _bss_4 -= data->unk324;
     var_v1 = _bss_4;
     var_v1 -= (obj->srt.yaw & 0xFFFF);
@@ -681,7 +681,7 @@ static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
     var_v0 = 0x8000 - -var_v1;
     if (var_v0) {}
     var_v0 += 0x2000;
-    if (data->unk290 < 0.05f) {
+    if (data->analogInputPower < 0.05f) {
         data->unk33F = 0;
         return;
     }
@@ -695,7 +695,7 @@ static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
 }
 
 // offset: 0x1C70 | func: 24
-static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
+static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
     SRT sp88;
     MtxF sp48;
     f32 sp44;
@@ -705,7 +705,7 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
     if (!(data->flags & 0x02000000)) {
         if (!(data->flags & 0x200000)) {
             obj->speed.y *= 0.97f;
-            obj->speed.y -= data->unk29C * arg2;
+            obj->speed.y -= data->unk29C * updateRate;
         }
         
         if (!(data->unk340 & 1) || (data->unk340 & 4)) {
@@ -725,7 +725,7 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 arg2) {
             obj->speed.x = sp40;
             obj->speed.z = sp3C;
         }
-        obj_integrate_speed(obj, obj->speed.x * arg2, obj->speed.y * arg2, obj->speed.z * arg2);
+        obj_integrate_speed(obj, obj->speed.x * updateRate, obj->speed.y * updateRate, obj->speed.z * updateRate);
     }
 }
 
@@ -771,34 +771,35 @@ void objfsa_func_1F64(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 ar
         temp_fv1 /= temp;
         temp_fa1 /= temp;
     }
-    data->unk288 = temp_fv1 * arg4;
-    data->unk284 = -temp_fa1 * arg4;
-    CLAMP(data->unk288, -65.0f, 65.0f)
-    CLAMP(data->unk284, -65.0f, 65.0f)
+    data->xAnalogInput = temp_fv1 * arg4;
+    data->yAnalogInput = -temp_fa1 * arg4;
+    CLAMP(data->xAnalogInput, -65.0f, 65.0f)
+    CLAMP(data->yAnalogInput, -65.0f, 65.0f)
 }
 
 // offset: 0x20CC | func: 27 | export: 6
-void objfsa_func_20CC(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
-    f32 temp_fv1;
-    f32 temp_fa1;
-    f32 temp_fv0;
+void objfsa_func_20CC(Object *obj, ObjFSA_Data *data, f32 x, f32 z, f32 arg4, f32 arg5, f32 power) {
+    f32 dx;
+    f32 dz;
+    f32 dist;
 
-    temp_fv1 = obj->srt.transl.x - arg2;
-    temp_fa1 = obj->srt.transl.z - arg3;
-    temp_fv0 = sqrtf((temp_fv1 * temp_fv1) + (temp_fa1 * temp_fa1));
-    data->unk2B4 = temp_fv0;
-    if (temp_fv0 != 0.0f) {
-        temp_fv1 /= temp_fv0;
-        temp_fa1 /= temp_fv0;
+    dx = obj->srt.transl.x - x;
+    dz = obj->srt.transl.z - z;
+    dist = sqrtf(SQ(dx) + SQ(dz));
+    data->unk2B4 = dist;
+    // normalize
+    if (dist != 0.0f) {
+        dx /= dist;
+        dz /= dist;
     }
     if ((arg4 + arg5) < data->unk2B4) {
-        data->unk288 = temp_fv1 * arg6;
-        data->unk284 = -temp_fa1 * arg6;
+        data->xAnalogInput = dx * power;
+        data->yAnalogInput = -dz * power;
     } else {
         data->speed *= 0.9f;
-        data->unk288 = 0.0f;
-        data->unk284 = 0.0f;
+        data->xAnalogInput = 0.0f;
+        data->yAnalogInput = 0.0f;
     }
-    CLAMP(data->unk288, -65.0f, 65.0f)
-    CLAMP(data->unk284, -65.0f, 65.0f)
+    CLAMP(data->xAnalogInput, -65.0f, 65.0f)
+    CLAMP(data->yAnalogInput, -65.0f, 65.0f)
 }

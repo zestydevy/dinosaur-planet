@@ -476,7 +476,7 @@ void dll_702_free(Object* self, s32 a1) {
     sBaddie = (Baddie* ) self->data;
     sKTData = sBaddie->objdata;
     obj_free_object_type(self, 4);
-    gDLL_33_BaddieControl->vtbl->func15(self, sBaddie, 0);
+    gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
     generic_stack_free(sKTData->stateStack);
     if (_data_E4 != NULL) {
         dll_unload(_data_E4);

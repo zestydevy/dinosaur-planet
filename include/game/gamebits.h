@@ -1339,9 +1339,9 @@ typedef enum {
     BIT_534 = 0x534, // len:1 group:0
     BIT_535 = 0x535, // len:1 group:0
     BIT_536 = 0x536, // len:1 group:0
-    BIT_537 = 0x537, // len:1 group:1
-    BIT_538 = 0x538, // len:1 group:1
-    BIT_539 = 0x539, // len:1 group:1
+    BIT_CapyTunnel1 = 0x537, // len:1 group:1
+    BIT_CapyTunnel2 = 0x538, // len:1 group:1
+    BIT_CapyTunnel3 = 0x539, // len:1 group:1
     BIT_53A = 0x53A, // len:1 group:2
     BIT_53B = 0x53B, // len:1 group:1
     BIT_53C = 0x53C, // len:1 group:1
