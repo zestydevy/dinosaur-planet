@@ -100,6 +100,7 @@ typedef struct ObjSetup {
 /*08*/  f32 x;
 /*0c*/  f32 y;
 /*10*/  f32 z;
+        // Unique ID within map (not globally unique across all maps).
 /*14*/  s32 uID;
 } ObjSetup;
 

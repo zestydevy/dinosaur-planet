@@ -46,7 +46,7 @@ static const char str_80099eb0[] = "WARNING: rzip buffer overflow (%d)\n";
 static const char str_80099ed4[] = "rzipUncompress:overflow i:%08x o:%08x %d\n";
 static const char str_80099f00[] = "rzipUncompress(%08x,%08x,...) overflow %d/%d\n";
 
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/rarezip/rarezip_uncompress.s")
 #else
 u8 *rarezip_uncompress(u8 *compressedInput, u8 *decompressedOutput, s32 outputSize) {

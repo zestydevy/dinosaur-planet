@@ -520,16 +520,16 @@ void init_maps(void) {
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         D_800B9700[i] = D_800B9700[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
     }
-    queue_alloc_load_file((void **) &gFile_MAPS_TAB, 0x20);
-    queue_alloc_load_file((void** ) &gFile_HITS_TAB, 0x2D);
+    queue_alloc_load_file((void **) &gFile_MAPS_TAB, MAPS_TAB);
+    queue_alloc_load_file((void** ) &gFile_HITS_TAB, HITS_TAB);
     for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
-    queue_alloc_load_file((void** ) &gFile_TRKBLK, 0x2B);
+    queue_alloc_load_file((void** ) &gFile_TRKBLK, TRKBLK_BIN);
     gNumTRKBLKEntries = 0;
     while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
         gNumTRKBLKEntries++;
     }
     gNumTRKBLKEntries--;
-    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, 0x2A);
+    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
     gNumTotalBlocks = 0;
     while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
         gNumTotalBlocks++;

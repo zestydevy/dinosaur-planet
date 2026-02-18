@@ -213,7 +213,7 @@ void dll_243_free(Object *self, s32 a1) {
 
     baddie = self->data;
     obj_free_object_type(self, OBJTYPE_4);
-    gDLL_33_BaddieControl->vtbl->func15(self, baddie, 0x20);
+    gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
 }
 
 // offset: 0x6B4 | func: 6 | export: 5
@@ -322,7 +322,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     }
     dll_243_func_11C0(self, baddie, fsa);
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
-    gDLL_18_objfsa->vtbl->func11(self, fsa, gUpdateRateF, 5);
+    gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 5);
     baddie->unk3AC = self->unkC0;
     self->unkC0 = NULL;
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
